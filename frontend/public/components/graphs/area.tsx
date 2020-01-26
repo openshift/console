@@ -43,7 +43,7 @@ const chartStatusColors = {
 
 export const AreaChart: React.FC<AreaChartProps> = ({
   className,
-  data,
+  data = [],
   formatDate = twentyFourHourTime,
   height = DEFAULT_HEIGHT,
   humanize = humanizeNumber,
