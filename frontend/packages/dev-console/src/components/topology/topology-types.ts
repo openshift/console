@@ -48,7 +48,7 @@ export interface Edge {
   type?: string;
   source: string;
   target: string;
-  data?: { sbr?: K8sResourceKind };
+  data?: {};
 }
 
 export interface Group {
@@ -207,6 +207,33 @@ export type GroupProps = ViewGroup &
     dropTarget?: boolean;
     groupRef(element: GroupElementInterface): void;
   };
+
+export type TrafficData = {
+  nodes: KialiNode[];
+  edges: KialiEdge[];
+};
+
+export type KialiNode = {
+  data: {
+    id: string;
+    nodeType: string;
+    namespace: string;
+    workload: string;
+    app: string;
+    version?: string;
+    destServices?: { [key: string]: any }[];
+    traffic?: { [key: string]: any }[];
+  };
+};
+
+export type KialiEdge = {
+  data: {
+    id: string;
+    source: string;
+    target: string;
+    traffic: { [key: string]: any };
+  };
+};
 
 export type NodeProvider = (type: string) => ComponentType<NodeProps>;
 
