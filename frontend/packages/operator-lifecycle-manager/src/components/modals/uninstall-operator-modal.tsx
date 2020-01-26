@@ -12,12 +12,13 @@ import {
   withHandlePromise,
 } from '@console/internal/components/utils';
 import { K8sKind, K8sResourceKind } from '@console/internal/module/k8s';
-import { getActiveNamespace } from '@console/internal/actions/ui';
 import { YellowExclamationTriangleIcon } from '@console/shared';
+import { useActiveNamespace } from '@console/shared/src/hooks';
 import { SubscriptionKind } from '../../types';
 import { ClusterServiceVersionModel, SubscriptionModel } from '../../models';
 
 export const UninstallOperatorModal = withHandlePromise((props: UninstallOperatorModalProps) => {
+  const activeNamespace = useActiveNamespace();
   const submit = (event) => {
     event.preventDefault();
 
@@ -52,7 +53,7 @@ export const UninstallOperatorModal = withHandlePromise((props: UninstallOperato
           window.location.pathname.split('/').includes(subscription.metadata.name) ||
           window.location.pathname.split('/').includes(subscription.status.installedCSV)
         ) {
-          history.push(resourceListPathFromModel(ClusterServiceVersionModel, getActiveNamespace()));
+          history.push(resourceListPathFromModel(ClusterServiceVersionModel, activeNamespace));
         }
       })
       .catch(_.noop);

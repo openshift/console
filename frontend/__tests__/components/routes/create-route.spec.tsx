@@ -4,18 +4,17 @@ import { Button } from '@patternfly/react-core';
 
 import { ButtonBar, Dropdown } from '../../../public/components/utils';
 import {
-  CreateRoute,
+  CreateRoute_,
   CreateRouteState,
   AlternateServicesGroup,
+  CreateRouteProps,
 } from '../../../public/components/routes/create-route';
-import * as UIActions from '../../../public/actions/ui';
 import * as k8sActions from '../../../public/module/k8s';
 
 describe('Create Route', () => {
-  let wrapper: ShallowWrapper<{}, CreateRouteState>;
+  let wrapper: ShallowWrapper<CreateRouteProps, CreateRouteState>;
 
   beforeEach(() => {
-    spyOn(UIActions, 'getActiveNamespace').and.returnValue('default');
     spyOn(k8sActions, 'k8sList').and.returnValue(
       Promise.resolve([
         { metadata: { name: 'service1' } },
@@ -24,7 +23,7 @@ describe('Create Route', () => {
         { metadata: { name: 'service4' } },
       ]),
     );
-    wrapper = shallow(<CreateRoute />);
+    wrapper = shallow(<CreateRoute_ namespace="default" />);
   });
 
   it('should render CreateRoute component', () => {

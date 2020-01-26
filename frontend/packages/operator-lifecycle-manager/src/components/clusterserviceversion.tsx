@@ -7,7 +7,6 @@ import { sortable } from '@patternfly/react-table';
 import { Helmet } from 'react-helmet';
 import { AddCircleOIcon } from '@patternfly/react-icons';
 import { Alert, Card, CardBody, CardFooter, CardHeader } from '@patternfly/react-core';
-import * as UIActions from '@console/internal/actions/ui';
 import {
   ALL_NAMESPACES_KEY,
   ErrorStatus,
@@ -18,6 +17,7 @@ import {
   getNamespace,
   getUID,
 } from '@console/shared';
+import { useActiveNamespace } from '@console/shared/src/hooks';
 import {
   DetailsPage,
   Table,
@@ -415,7 +415,7 @@ export const ClusterServiceVersionList: React.SFC<ClusterServiceVersionListProps
   catalogSources,
   ...rest
 }) => {
-  const ns = UIActions.getActiveNamespace();
+  const ns = useActiveNamespace();
   const noDataDetail = (
     <>
       <div>

@@ -1,14 +1,15 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
 import { Link } from 'react-router-dom';
+import { connect } from 'react-redux';
 import { Alert, ActionGroup, Button } from '@patternfly/react-core';
 import { PlusCircleIcon, MinusCircleIcon } from '@patternfly/react-icons';
-
 import { ButtonBar, Dropdown, history, resourcePathFromModel, ResourceName } from '../utils';
 import { k8sCreate, k8sList, K8sResourceKind } from '../../module/k8s';
-import { getActiveNamespace } from '../../actions/ui';
 import { ServiceModel, RouteModel } from '../../models';
 import { AsyncComponent } from '../utils/async';
+import { getActiveNamespace } from '../../reducers/ui';
+import { RootState } from '../../redux';
 
 const UNNAMED_PORT_KEY = '#unnamed';
 const MAX_ALT_SERVICE_TARGET = 3;
@@ -41,7 +42,7 @@ const DroppableFileInput = (props) => (
   />
 );
 
-export class CreateRoute extends React.Component<{}, CreateRouteState> {
+export class CreateRoute_ extends React.Component<CreateRouteProps, CreateRouteState> {
   state = {
     name: '',
     hostname: '',
@@ -59,7 +60,6 @@ export class CreateRoute extends React.Component<{}, CreateRouteState> {
     loaded: false,
     inProgress: false,
     error: '',
-    namespace: getActiveNamespace(),
     services: [],
     labels: {},
     portOptions: {},
@@ -67,7 +67,7 @@ export class CreateRoute extends React.Component<{}, CreateRouteState> {
   };
 
   componentDidMount() {
-    k8sList(ServiceModel, { ns: this.state.namespace })
+    k8sList(ServiceModel, { ns: this.props.namespace })
       .then((services) =>
         this.setState({
           services,
@@ -172,9 +172,10 @@ export class CreateRoute extends React.Component<{}, CreateRouteState> {
       caCertificate,
       destinationCACertificate,
       secure,
-      namespace,
       alternateServices,
     } = this.state;
+
+    const { namespace } = this.props;
 
     const tls = secure
       ? {
@@ -354,7 +355,7 @@ export class CreateRoute extends React.Component<{}, CreateRouteState> {
           <h1 className="co-m-pane__heading co-m-pane__heading--baseline">
             <div className="co-m-pane__name">{title}</div>
             <div className="co-m-pane__heading-link">
-              <Link to={`/k8s/ns/${this.state.namespace}/routes/~new`} id="yaml-link" replace>
+              <Link to={`/k8s/ns/${this.props.namespace}/routes/~new`} id="yaml-link" replace>
                 Edit YAML
               </Link>
             </div>
@@ -623,6 +624,9 @@ export class CreateRoute extends React.Component<{}, CreateRouteState> {
   }
 }
 
+const mapStateToProps = (state: RootState) => ({ namespace: getActiveNamespace(state) });
+export const CreateRoute = connect(mapStateToProps)(CreateRoute_);
+
 export const AlternateServicesGroup: React.FC<AlternateServiceEntryGroupProps> = (props) => {
   const [weight, setWeight] = React.useState(props.weight);
   const [name, setName] = React.useState(props.name);
@@ -695,6 +699,10 @@ type AlternateServiceEntryGroupProps = {
   availableServiceOptions: any;
 };
 
+export type CreateRouteProps = {
+  namespace: string;
+};
+
 export type CreateRouteState = {
   name: string;
   hostname: string;
@@ -712,7 +720,6 @@ export type CreateRouteState = {
   loaded: boolean;
   inProgress: boolean;
   error: string;
-  namespace: string;
   services: K8sResourceKind[];
   labels: object;
   portOptions: any;

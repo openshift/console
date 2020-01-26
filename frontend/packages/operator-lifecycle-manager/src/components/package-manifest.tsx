@@ -6,8 +6,8 @@ import { Button } from '@patternfly/react-core';
 import { referenceForModel, K8sResourceKind } from '@console/internal/module/k8s';
 import { StatusBox, MsgBox } from '@console/internal/components/utils';
 import { MultiListPage, Table, TableRow, TableData } from '@console/internal/components/factory';
-import { getActiveNamespace } from '@console/internal/actions/ui';
 import { ALL_NAMESPACES_KEY, OPERATOR_HUB_LABEL } from '@console/shared';
+import { useActiveNamespace } from '@console/shared/src/hooks';
 import {
   PackageManifestModel,
   SubscriptionModel,
@@ -56,7 +56,7 @@ export const PackageManifestTableRow: React.SFC<PackageManifestTableRowProps> = 
     key,
     style,
   } = props;
-  const ns = getActiveNamespace();
+  const ns = useActiveNamespace();
   const channel = !_.isEmpty(obj.status.defaultChannel)
     ? obj.status.channels.find((ch) => ch.name === obj.status.defaultChannel)
     : obj.status.channels[0];
@@ -121,6 +121,7 @@ export const PackageManifestList = requireOperatorGroup((props: PackageManifestL
       }),
     new Map<string, CatalogSourceInfo>(),
   );
+  const activeNamespace = useActiveNamespace();
 
   return (
     <StatusBox
@@ -176,7 +177,7 @@ export const PackageManifestList = requireOperatorGroup((props: PackageManifestL
                   props.canSubscribe &&
                   !installedFor(props.subscription.data)(props.operatorGroup.data)(
                     rowProps.obj.status.packageName,
-                  )(getActiveNamespace()) &&
+                  )(activeNamespace) &&
                   props.operatorGroup.data
                     .filter(
                       (og) =>

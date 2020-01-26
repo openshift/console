@@ -1,6 +1,7 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import { Link } from 'react-router-dom';
+import { useActiveNamespace } from '@console/shared/src/hooks';
 import { MsgBox } from '@console/internal/components/utils/status-box';
 import {
   K8sResourceKind,
@@ -9,7 +10,6 @@ import {
   referenceForGroupVersionKind,
 } from '@console/internal/module/k8s';
 import { AsyncComponent } from '@console/internal/components/utils/async';
-import { getActiveNamespace } from '@console/internal/actions/ui';
 import { OperatorGroupModel } from '../models';
 import { OperatorGroupKind, SubscriptionKind, InstallModeType } from '../types';
 
@@ -20,20 +20,23 @@ export const operatorNamespaceFor = (obj: K8sResourceKind) =>
 export const operatorGroupFor = (obj: K8sResourceKind) =>
   _.get(obj, ['metadata', 'annotations', 'olm.operatorGroup']);
 
-export const NoOperatorGroupMsg: React.SFC = () => (
-  <MsgBox
-    title="Namespace Not Enabled"
-    detail={
-      <p>
-        The Operator Lifecycle Manager will not watch this namespace because it is not configured
-        with an OperatorGroup.{' '}
-        <Link to={`/ns/${getActiveNamespace()}/${referenceForModel(OperatorGroupModel)}/~new`}>
-          Create one here.
-        </Link>
-      </p>
-    }
-  />
-);
+export const NoOperatorGroupMsg: React.SFC = () => {
+  const activeNamespace = useActiveNamespace();
+  return (
+    <MsgBox
+      title="Namespace Not Enabled"
+      detail={
+        <p>
+          The Operator Lifecycle Manager will not watch this namespace because it is not configured
+          with an OperatorGroup.{' '}
+          <Link to={`/ns/${activeNamespace}/${referenceForModel(OperatorGroupModel)}/~new`}>
+            Create one here.
+          </Link>
+        </p>
+      }
+    />
+  );
+};
 
 type RequireOperatorGroupProps = {
   operatorGroup: { loaded: boolean; data?: OperatorGroupKind[] };

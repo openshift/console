@@ -1,12 +1,16 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
 import { Link } from 'react-router-dom';
+import * as hooks from '@console/shared/src/hooks';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import TopologyApplicationResourceList from '../TopologyApplicationList';
 import ApplicationGroupResource from '../ApplicationGroupResource';
 import { sampleDeployments } from '../../__tests__/topology-test-data';
 
 describe(ApplicationGroupResource.displayName, () => {
+  beforeEach(() => {
+    jest.spyOn(hooks, 'useActiveNamespace').mockReturnValue('default');
+  });
   it('should component exists', () => {
     const wrapper = shallow(
       <ApplicationGroupResource

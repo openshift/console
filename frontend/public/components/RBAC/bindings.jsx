@@ -6,6 +6,7 @@ import * as classNames from 'classnames';
 import { ActionGroup, Button } from '@patternfly/react-core';
 import { sortable } from '@patternfly/react-table';
 import { FLAGS } from '@console/shared/src/constants';
+import { useActiveNamespace } from '@console/shared/src/hooks';
 import { ClusterRoleBindingModel } from '../../models';
 import { getQN, k8sCreate, k8sPatch, referenceFor } from '../../module/k8s';
 import * as UIActions from '../../actions/ui';
@@ -628,7 +629,7 @@ export const CreateRoleBinding = ({ match: { params }, location }) => {
   const searchParams = new URLSearchParams(location.search);
   const roleKind = searchParams.get('rolekind');
   const roleName = searchParams.get('rolename');
-  const metadata = { namespace: UIActions.getActiveNamespace() };
+  const metadata = { namespace: useActiveNamespace() };
   const clusterAllowed = useAccessReview({
     group: ClusterRoleBindingModel.apiGroup,
     resource: ClusterRoleBindingModel.plural,

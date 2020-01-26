@@ -8,7 +8,6 @@ import {
   ExternalLink,
   StatusBox,
 } from '@console/internal/components/utils';
-import { getActiveNamespace } from '@console/internal/actions/ui';
 import { RoleBindingModel, RoleModel } from '@console/internal/models';
 import { filterRoleBindings, getUserRoleBindings } from './project-access-form-utils';
 import {
@@ -111,9 +110,9 @@ const ProjectAccess: React.FC<ProjectAccessProps> = ({ formName, namespace, role
       <PageHeading title="Project Access">
         Project Access allows you to add or remove a user&apos;s access to the project. More
         advanced management of role-based access control appear in{' '}
-        <Link to={`/k8s/ns/${getActiveNamespace()}/${RoleModel.plural}`}>Roles</Link> and{' '}
-        <Link to={`/k8s/ns/${getActiveNamespace()}/${RoleBindingModel.plural}`}>Role Bindings</Link>
-        . For more information, see the{' '}
+        <Link to={`/k8s/ns/${namespace}/${RoleModel.plural}`}>Roles</Link> and{' '}
+        <Link to={`/k8s/ns/${namespace}/${RoleBindingModel.plural}`}>Role Bindings</Link>. For more
+        information, see the{' '}
         <ExternalLink
           href="https://docs.openshift.com/container-platform/4.1/authentication/using-rbac.html"
           text="role-based access control documentation"
