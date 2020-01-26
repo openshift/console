@@ -1,3 +1,6 @@
 .kubevirt-validation-cell__cell--error {
   color: var(--pf-global--danger-color--100);
 }
+.kubevirt-validation-cell__cell--warning {
+  color: var(--pf-global--Color--200);
+}

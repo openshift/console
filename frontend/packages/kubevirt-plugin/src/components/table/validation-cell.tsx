@@ -20,6 +20,7 @@ export const ValidationCell: React.FC<SimpleCellProps> = ({ children, validation
               ValidationErrorType.Error,
               ValidationErrorType.TrivialError,
             ].includes(validation.type),
+            'kubevirt-validation-cell__cell--warning': validation.type === ValidationErrorType.Warn,
           })}
         >
           {validation.message}
