@@ -1,10 +1,13 @@
+import { RevisionModel, ServiceModel } from '../../models';
+import { RevisionKind, ServiceKind as knativeServiceKind } from '../../types';
+
 export const mockTrafficData = [
   { percent: 50, tag: 'tag-1', revisionName: 'rev-1' },
   { percent: 50, tag: 'tag-2', revisionName: 'rev-2' },
 ];
-export const mockServiceData = {
-  apiVersion: 'serving.knative.dev/v1beta1',
-  kind: 'Service',
+export const mockServiceData: knativeServiceKind = {
+  apiVersion: `${ServiceModel.apiGroup}/${ServiceModel.apiVersion}`,
+  kind: ServiceModel.kind,
   spec: {
     traffic: [
       {
@@ -31,9 +34,9 @@ export const mockServiceData = {
   },
 };
 
-export const mockUpdateRequestObj = {
-  apiVersion: 'serving.knative.dev/v1beta1',
-  kind: 'Service',
+export const mockUpdateRequestObj: knativeServiceKind = {
+  apiVersion: `${ServiceModel.apiGroup}/${ServiceModel.apiVersion}`,
+  kind: ServiceModel.kind,
   spec: {
     traffic: [
       {
@@ -50,26 +53,26 @@ export const mockUpdateRequestObj = {
   },
 };
 
-export const mockRevisions = [
+export const mockRevisions: RevisionKind[] = [
   {
-    apiVersion: 'serving.knative.dev/v1beta1',
-    kind: 'Revision',
+    apiVersion: `${RevisionModel.apiGroup}/${RevisionModel.apiVersion}  `,
+    kind: RevisionModel.kind,
     metadata: {
       name: 'rev-1',
       namespace: 'namespace',
     },
   },
   {
-    apiVersion: 'serving.knative.dev/v1beta1',
-    kind: 'Revision',
+    apiVersion: `${RevisionModel.apiGroup}/${RevisionModel.apiVersion}`,
+    kind: RevisionModel.kind,
     metadata: {
       name: 'rev-2',
       namespace: 'namespace',
     },
   },
   {
-    apiVersion: 'serving.knative.dev/v1beta1',
-    kind: 'Revision',
+    apiVersion: `${RevisionModel.apiGroup}/${RevisionModel.apiVersion}`,
+    kind: RevisionModel.kind,
     metadata: {
       name: 'rev-3',
       namespace: 'namespace',

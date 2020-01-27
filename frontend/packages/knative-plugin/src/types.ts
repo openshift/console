@@ -3,8 +3,8 @@ import { K8sResourceKind, K8sResourceCondition } from '@console/internal/module/
 export type ConfigurationKind = K8sResourceKind;
 
 export type RevisionKind = {
-  status: {
-    conditions: K8sResourceCondition<ConditionTypes>[];
+  status?: {
+    conditions?: K8sResourceCondition<ConditionTypes>[];
   };
 } & K8sResourceKind;
 
@@ -14,6 +14,7 @@ export type ServiceKind = K8sResourceKind & {
   };
   status?: {
     url?: string;
+    traffic?: Traffic[];
   };
 };
 
@@ -35,4 +36,5 @@ export type Traffic = {
   revisionName: string;
   percent: number;
   latestRevision?: boolean;
+  tag?: string;
 };
