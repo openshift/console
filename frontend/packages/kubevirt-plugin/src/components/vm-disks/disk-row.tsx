@@ -5,9 +5,10 @@ import {
   Kebab,
   KebabOption,
   LoadingInline,
+  ResourceLink,
 } from '@console/internal/components/utils';
-import { DASH, dimensifyRow, getDeletetionTimestamp } from '@console/shared';
-import { TemplateModel } from '@console/internal/models';
+import { DASH, dimensifyRow, getDeletetionTimestamp, getNamespace } from '@console/shared';
+import { TemplateModel, PersistentVolumeClaimModel } from '@console/internal/models';
 import { deleteDeviceModal, DeviceType } from '../modals/delete-device-modal';
 import { VMLikeEntityKind } from '../../types/vmLike';
 import { asVM, isVM, isVMI, isVMRunning } from '../../selectors/vm';
@@ -98,7 +99,7 @@ export type VMDiskSimpleRowProps = {
 };
 
 export const DiskSimpleRow: React.FC<VMDiskSimpleRowProps> = ({
-  data: { name, source, size, diskInterface, storageClass },
+  data: { name, namespace, source, size, diskInterface, storageClass, pvc },
   validation = {},
   columnClasses,
   actionsComponent,
@@ -134,6 +135,17 @@ export const DiskSimpleRow: React.FC<VMDiskSimpleRowProps> = ({
           </ValidationCell>
         )}
       </TableData>
+      <TableData className={dimensify()}>
+        <ValidationCell validation={validation.pvc}>
+          <ResourceLink
+            kind={PersistentVolumeClaimModel.kind}
+            name={pvc}
+            namespace={namespace}
+            title={pvc}
+            hideIcon
+          />
+        </ValidationCell>
+      </TableData>
       <TableData className={dimensify(true)}>{actionsComponent}</TableData>
     </TableRow>
   );
@@ -154,7 +166,7 @@ export const DiskRow: React.FC<VMDiskRowProps> = ({
 }) => {
   return (
     <DiskSimpleRow
-      data={restData}
+      data={{ ...restData, namespace: getNamespace(vmLikeEntity) }}
       columnClasses={columnClasses}
       index={index}
       style={style}
