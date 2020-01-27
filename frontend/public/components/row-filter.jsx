@@ -40,7 +40,7 @@ export const CheckBoxControls = ({
             onClick={onSelectAll}
             variant="link"
           >
-            Select All Filters
+            Select all filters
           </Button>
           <span className="co-m-row-filter__items">
             {itemCount === selectedCount ? (
