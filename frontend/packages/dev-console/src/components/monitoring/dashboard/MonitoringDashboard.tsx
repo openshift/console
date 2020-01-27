@@ -11,7 +11,7 @@ import {
   MonitoringQuery,
   topWorkloadMetricsQueries,
 } from '../queries';
-import MonitoringDasboardCountBlock from './MonitoringDashboardCountBlock';
+import MonitoringDasboardPodCount from './MonitoringDashboardPodCount';
 
 interface MonitoringDashboardProps {
   match: RMatch<{
@@ -34,11 +34,11 @@ const MonitoringDashboard: React.FC<MonitoringDashboardProps> = ({ match }) => {
         <title>Dashboard</title>
       </Helmet>
       <Grid className="co-m-pane__body" gutter="md">
-        <GridItem span={4} rowSpan={1}>
-          <MonitoringDasboardCountBlock />
+        <GridItem span={3} rowSpan={1}>
+          <MonitoringDasboardPodCount namespace={namespace} />
         </GridItem>
-        {_.map(queries, (q) => (
-          <GridItem span={4} key={q.title}>
+        {_.map(queries, (q, i) => (
+          <GridItem span={i === 0 ? 5 : 4} key={q.title}>
             <MonitoringDashboardGraph
               title={q.title}
               namespace={namespace}
