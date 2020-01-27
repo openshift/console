@@ -30,6 +30,10 @@ import { connect } from 'react-redux';
 
 import * as UIActions from '../../actions/ui';
 import { RootState } from '../../redux';
+import { PrometheusResponse } from '../graphs';
+import { GraphEmpty } from '../graphs/graph-empty';
+import { getPrometheusURL, PrometheusEndpoint } from '../graphs/helpers';
+import { queryBrowserTheme } from '../graphs/themes';
 import {
   Dropdown,
   humanizeNumberSI,
@@ -45,10 +49,6 @@ import {
   twentyFourHourTimeWithSeconds,
 } from '../utils/datetime';
 import { withFallback } from '../utils/error-boundary';
-import { PrometheusResponse } from '../graphs';
-import { GraphEmpty } from '../graphs/graph-empty';
-import { getPrometheusURL, PrometheusEndpoint } from '../graphs/helpers';
-import { queryBrowserTheme } from '../graphs/themes';
 
 // Prometheus internal labels start with "__"
 const isInternalLabel = (key: string): boolean => _.startsWith(key, '__');
@@ -70,13 +70,13 @@ const formatPositiveValue = (v: number): string =>
   v === 0 || (0.001 <= v && v < 1e23) ? humanizeNumberSI(v).string : v.toExponential(1);
 const formatValue = (v: number): string => (v < 0 ? '-' : '') + formatPositiveValue(Math.abs(v));
 
-export const Error = ({ error, title = 'An error occurred' }) => (
+export const Error: React.FC<ErrorProps> = ({ error, title = 'An error occurred' }) => (
   <Alert isInline className="co-alert" title={title} variant="danger">
     {_.get(error, 'json.error', error.message)}
   </Alert>
 );
 
-const GraphEmptyState = ({ children, title }) => (
+const GraphEmptyState: React.FC<GraphEmptyStateProps> = ({ children, title }) => (
   <div className="query-browser__wrapper graph-empty-state">
     <EmptyState variant={EmptyStateVariant.full}>
       <EmptyStateIcon size="sm" icon={ChartLineIcon} />
@@ -243,8 +243,8 @@ const Graph: React.FC<GraphProps> = React.memo(
 
     if (!isStack) {
       // Set a reasonable Y-axis range based on the min and max values in the data
-      const findMin = (series) => _.minBy(series, 'y');
-      const findMax = (series) => _.maxBy(series, 'y');
+      const findMin = (series: GraphDataPoint[]) => _.minBy(series, 'y');
+      const findMax = (series: GraphDataPoint[]) => _.maxBy(series, 'y');
       let minY = _.get(findMin(_.map(data, findMin)), 'y', 0);
       let maxY = _.get(findMax(_.map(data, findMax)), 'y', 0);
       if (minY === 0 && maxY === 0) {
@@ -259,7 +259,7 @@ const Graph: React.FC<GraphProps> = React.memo(
       domain.y = [minY, maxY];
 
       if (Math.abs(maxY - minY) < 0.005) {
-        yTickFormat = (v) => (v === 0 ? '0' : v.toExponential(1));
+        yTickFormat = (v: number) => (v === 0 ? '0' : v.toExponential(1));
       }
     }
 
@@ -336,7 +336,7 @@ const formatSeriesValues = (
   const start = Number(_.get(newValues, '[0].x'));
   const end = Number(_.get(_.last(newValues), 'x'));
   const step = span / samples;
-  _.range(start, end, step).map((t, i) => {
+  _.range(start, end, step).forEach((t, i) => {
     const x = new Date(t);
     if (_.get(newValues, [i, 'x']) > x) {
       newValues.splice(i, 0, { x, y: null });
@@ -695,8 +695,18 @@ export type FormatLegendLabel = (labels: Labels, i: number) => string;
 
 export type PatchQuery = (index: number, patch: QueryObj) => any;
 
+type ErrorProps = {
+  error: any;
+  title?: string;
+};
+
+type GraphEmptyStateProps = {
+  children: React.ReactNode;
+  title: string;
+};
+
 type GraphProps = {
-  allSeries: Series[];
+  allSeries: Series[][];
   disabledSeries?: Labels[][];
   formatLegendLabel?: FormatLegendLabel;
   isStack?: boolean;
@@ -705,7 +715,7 @@ type GraphProps = {
 };
 
 type ZoomableGraphProps = {
-  allSeries: Series[];
+  allSeries: Series[][];
   disabledSeries?: Labels[][];
   formatLegendLabel?: FormatLegendLabel;
   isStack?: boolean;
@@ -719,10 +729,10 @@ export type QueryBrowserProps = {
   defaultTimespan?: number;
   disabledSeries?: Labels[][];
   filterLabels?: Labels;
+  formatLegendLabel?: FormatLegendLabel;
   GraphLink?: React.ComponentType<{}>;
   hideControls?: boolean;
   hideGraphs: boolean;
-  formatLegendLabel?: FormatLegendLabel;
   isStack?: boolean;
   namespace?: string;
   patchQuery: PatchQuery;
