@@ -146,4 +146,16 @@ describe('addResourceMenuUtils: ', () => {
     expect(kebabOption.href).toEqual(getAddPageUrl(primaryObj, ImportOptions.GIT, hasApplication));
     expect(kebabOption.accessReview).toEqual(asAccessReview(DeploymentModel, primaryObj, 'create'));
   });
+
+  it('it should not return an access review object, if checkAccess is disabled', () => {
+    const primaryObj = getTopologyData(MockResources, ['deployments']).resource;
+    const icon = <GitAltIcon />;
+    const hasApplication = true;
+    const label = 'From Git';
+
+    const kebabAction: KebabAction = createKebabAction(label, icon, ImportOptions.GIT, false); // CheckAccess Disabled
+    const kebabOption: KebabOption = kebabAction(primaryObj, hasApplication);
+
+    expect(kebabOption.accessReview).toBe(undefined);
+  });
 });
