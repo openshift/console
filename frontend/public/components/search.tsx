@@ -1,7 +1,16 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
-import { Button, Chip, ChipGroup, ChipGroupToolbarItem, Expandable } from '@patternfly/react-core';
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionToggle,
+  Button,
+  Chip,
+  ChipGroup,
+  ChipGroupToolbarItem,
+} from '@patternfly/react-core';
 import { CloseIcon } from '@patternfly/react-icons';
 
 import { getBadgeFromType } from '@console/shared';
@@ -13,8 +22,8 @@ import { ResourceListDropdown } from './resource-dropdown';
 import { resourceListPages } from './resource-pages';
 import { withStartGuide } from './start-guide';
 import { split, selectorFromString } from '../module/k8s/selector';
-import { referenceForModel, kindForReference } from '../module/k8s';
-import { LoadingBox, PageHeading, ResourceIcon } from './utils';
+import { kindForReference, modelFor, referenceForModel } from '../module/k8s';
+import { LoadingBox, MsgBox, PageHeading, ResourceIcon } from './utils';
 import { SearchFilterDropdown, searchFilterValues } from './search-filter-dropdown';
 import { setQueryArgument } from './utils/router';
 
@@ -46,7 +55,7 @@ const ResourceList = connectToModel(({ kindObj, mock, namespace, selector, nameF
 
 const SearchPage_: React.FC<SearchProps> = (props) => {
   const [selectedItems, setSelectedItems] = React.useState(new Set<string>([]));
-  const [collaspedState, setCollaspedState] = React.useState(new Set<string>([]));
+  const [collapsedKinds, setCollapsedKinds] = React.useState(new Set<string>([]));
   const [nameFilter, setNameFilter] = React.useState([]);
   const [labelFilter, setLabelFilter] = React.useState([]);
 
@@ -103,14 +112,10 @@ const SearchPage_: React.FC<SearchProps> = (props) => {
     clearLabelFilter();
   };
 
-  const isKindExpanded = (kindView: string) => {
-    return collaspedState.has(kindView);
-  };
-
   const toggleKindExpanded = (kindView: string) => {
-    const newCollasped = new Set(collaspedState);
+    const newCollasped = new Set(collapsedKinds);
     newCollasped.has(kindView) ? newCollasped.delete(kindView) : newCollasped.add(kindView);
-    setCollaspedState(newCollasped);
+    setCollapsedKinds(newCollasped);
   };
 
   const updateNameFilter = (value: string) => {
@@ -142,11 +147,8 @@ const SearchPage_: React.FC<SearchProps> = (props) => {
   };
 
   const getToggleText = (item: string) => {
-    const kindName = kindForReference(item);
-    if (selectedItems.size === 1) {
-      return kindName;
-    }
-    return isKindExpanded(item) ? `Hide ${kindName}` : `Show ${kindName}`;
+    const { labelPlural } = modelFor(item);
+    return labelPlural;
   };
 
   return (
@@ -216,27 +218,41 @@ const SearchPage_: React.FC<SearchProps> = (props) => {
           )}
         </div>
       </PageHeading>
-      <div className="co-search co-m-pane__body">
-        {[...selectedItems].map((item) => {
-          return (
-            <Expandable
-              key={item}
-              toggleText={getToggleText(item)}
-              onToggle={() => toggleKindExpanded(item)}
-              isExpanded={selectedItems.size === 1 ? true : isKindExpanded(item)}
-            >
-              <ResourceList
-                kind={item}
-                selector={selectorFromString(labelFilter.join(','))}
-                nameFilter={nameFilter.join(',')}
-                namespace={namespace}
-                mock={noProjectsAvailable}
-                key={item}
-              />
-            </Expandable>
-          );
-        })}
-        {selectedItems.size === 0 && <div className="text-center">No resources selected</div>}
+      <div className="co-search">
+        <Accordion className="co-search__accordion" asDefinitionList={false} noBoxShadow>
+          {[...selectedItems].map((item) => {
+            const isCollapsed = collapsedKinds.has(item);
+            return (
+              <AccordionItem key={item}>
+                <AccordionToggle
+                  onClick={() => toggleKindExpanded(item)}
+                  isExpanded={!isCollapsed}
+                  id={`${item}-toggle`}
+                >
+                  {getToggleText(item)}
+                </AccordionToggle>
+                <AccordionContent isHidden={isCollapsed}>
+                  {!isCollapsed && (
+                    <ResourceList
+                      kind={item}
+                      selector={selectorFromString(labelFilter.join(','))}
+                      nameFilter={nameFilter.join(',')}
+                      namespace={namespace}
+                      mock={noProjectsAvailable}
+                      key={item}
+                    />
+                  )}
+                </AccordionContent>
+              </AccordionItem>
+            );
+          })}
+        </Accordion>
+        {selectedItems.size === 0 && (
+          <MsgBox
+            title="No resources selected"
+            detail={<p>Select one or more resources from the dropdown.</p>}
+          />
+        )}
       </div>
     </>
   );
