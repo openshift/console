@@ -36,19 +36,19 @@ const evaluateTemplate = (s: string, variables: VariablesMap) =>
   );
 
 const VariableDropdown: React.FC<VariableDropdownProps> = ({
-  buttonClassName,
+  buttonClassName = 'monitoring-dashboards__dropdown-button',
+  items,
   onChange,
-  options,
-  selected,
+  selectedKey,
   title,
 }) => (
   <div className="form-group monitoring-dashboards__dropdown-wrap">
     {title && <label>{title}</label>}
     <Dropdown
       buttonClassName={buttonClassName}
-      items={_.zipObject(options, options)}
+      items={items}
       onChange={onChange}
-      selectedKey={selected}
+      selectedKey={selectedKey}
     />
   </div>
 );
@@ -61,10 +61,10 @@ const AllVariableDropdowns_: React.FC<AllVariableDropdownsProps> = ({
     {_.map(variables.toJS(), ({ options, value }, k) =>
       _.isEmpty(options) ? null : (
         <VariableDropdown
+          items={_.zipObject(options, options)}
           key={k}
           onChange={(v: string) => patchVariable(k, { value: v })}
-          options={options}
-          selected={value}
+          selectedKey={value}
           title={k}
         />
       ),
@@ -78,11 +78,34 @@ const AllVariableDropdowns = connect(
   { patchVariable: UIActions.monitoringDashboardsPatchVariable },
 )(AllVariableDropdowns_);
 
-const timespanOptions = ['5m', '15m', '30m', '1h', '2h', '6h', '12h', '1d', '2d', '1w', '2w'];
+const timespanOptions = {
+  '5m': '5 mintutes',
+  '15m': '15 mintutes',
+  '30m': '30 mintutes',
+  '1h': '1 hour',
+  '2h': '2 hours',
+  '6h': '6 hours',
+  '12h': '12 hours',
+  '1d': '1 day',
+  '2d': '2 days',
+  '1w': '1 week',
+  '2w': '2 weeks',
+};
 const defaultTimespan = '30m';
 
 const pollOffText = 'Off';
-const pollIntervalOptions = [pollOffText, '15s', '30s', '1m', '5m', '15m', '30m', '1h', '2h', '1d'];
+const pollIntervalOptions = {
+  [pollOffText]: pollOffText,
+  '15s': '15 seconds',
+  '30s': '30 seconds',
+  '1m': '1 minute',
+  '5m': '5 mintutes',
+  '15m': '15 mintutes',
+  '30m': '30 mintutes',
+  '1h': '1 hour',
+  '2h': '2 hours',
+  '1d': '1 day',
+};
 const defaultPollInterval = '30s';
 
 // TODO: Dynamically load the list of dashboards
@@ -99,6 +122,7 @@ const boards = [
   'node-cluster-rsrc-use',
   'node-rsrc-use',
 ];
+const boardItems = _.zipObject(boards, boards);
 
 // Matches Prometheus labels surrounded by {{ }} in the graph legend label templates
 const legendTemplateOptions = { interpolate: /{{([a-zA-Z_][a-zA-Z0-9_]*)}}/g };
@@ -298,27 +322,26 @@ const MonitoringDashboardsPage_: React.FC<MonitoringDashboardsPageProps> = ({
       <div className="co-m-nav-title co-m-nav-title--detail">
         <div className="monitoring-dashboards__options">
           <VariableDropdown
-            buttonClassName="monitoring-dashboards__dropdown"
+            items={timespanOptions}
             onChange={(v: string) => setTimespan(parsePrometheusDuration(v))}
-            options={timespanOptions}
-            selected={defaultTimespan}
+            selectedKey={defaultTimespan}
             title="Time Range"
           />
           <VariableDropdown
+            items={pollIntervalOptions}
             onChange={(v: string) =>
               setPollInterval(v === pollOffText ? null : parsePrometheusDuration(v))
             }
-            options={pollIntervalOptions}
-            selected={defaultPollInterval}
+            selectedKey={defaultPollInterval}
             title="Refresh Interval"
           />
         </div>
         <h1 className="co-m-pane__heading">Dashboards</h1>
         <div className="monitoring-dashboards__variables">
           <VariableDropdown
+            items={boardItems}
             onChange={setBoard}
-            options={boards}
-            selected={board}
+            selectedKey={board}
             title="Board Type"
           />
           <AllVariableDropdowns />
@@ -357,9 +380,9 @@ type VariablesMap = { [key: string]: Variable };
 
 type VariableDropdownProps = {
   buttonClassName?: string;
+  items: { [key: string]: string };
   onChange: (v: string) => void;
-  options: string[];
-  selected: string;
+  selectedKey: string;
   title?: string;
 };
 
