@@ -66,16 +66,23 @@ const ResourceRequirements: React.SFC<SpecCapabilityProps> = ({ obj, descriptor 
   </dl>
 );
 
-const K8sResourceLink: React.SFC<SpecCapabilityProps> = (props) =>
-  _.isEmpty(props.value) ? (
-    <span className="text-muted">None</span>
-  ) : (
-    <ResourceLink
-      kind={props.capability.split(SpecCapability.k8sResourcePrefix)[1]}
-      name={props.value}
-      namespace={props.namespace}
-    />
-  );
+const K8sResourceLink: React.SFC<SpecCapabilityProps> = (props) => {
+  if (!props.value) {
+    return <span className="text-muted">None</span>;
+  }
+
+  const kind = props.capability.split(SpecCapability.k8sResourcePrefix)[1];
+  if (!_.isString(props.value)) {
+    return (
+      <>
+        <YellowExclamationTriangleIcon /> Invalid spec descriptor: value at path &apos;
+        {props.descriptor.path}&apos; must be a {kind} resource name.
+      </>
+    );
+  }
+
+  return <ResourceLink kind={kind} name={props.value} namespace={props.namespace} />;
+};
 
 const BasicSelector: React.SFC<SpecCapabilityProps> = ({ value, capability }) => (
   <Selector selector={value} kind={capability.split(SpecCapability.selector)[1]} />
