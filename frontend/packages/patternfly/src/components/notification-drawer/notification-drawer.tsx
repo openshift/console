@@ -17,8 +17,9 @@ const NotificationDrawer: React.FC<NotificationDrawerProps> = ({
     <Drawer isExpanded={isExpanded} isInline={isInline}>
       <DrawerContent>{children}</DrawerContent>
       <DrawerPanelContent noPadding>
-        <NotificationDrawerHeading>{notificationEntries}</NotificationDrawerHeading>
+        {isExpanded && <NotificationDrawerHeading>{notificationEntries}</NotificationDrawerHeading>}
       </DrawerPanelContent>
+      )}
     </Drawer>
   );
 };
