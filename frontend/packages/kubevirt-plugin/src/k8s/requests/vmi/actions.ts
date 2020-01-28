@@ -24,9 +24,7 @@ const VMIActionRequest = async (vmi: VMIKind, action: VMIActionType) => {
   url = `${url}/${action}`;
 
   const response = await coFetch(url, { method });
-  const text = await response.text();
-
-  return text;
+  return await response.text();
 };
 
 export const unpauseVMI = async (vmi: VMIKind) => VMIActionRequest(vmi, VMIActionType.Unpause);

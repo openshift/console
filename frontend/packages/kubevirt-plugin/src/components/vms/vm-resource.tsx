@@ -120,6 +120,7 @@ export const VMDetailsList: React.FC<VMResourceListProps> = ({
   const canEdit = vmiLike && canUpdateVM && kindObj !== VirtualMachineInstanceModel;
 
   const [isStatusModalOpen, setStatusModalOpen] = React.useState<boolean>(false);
+  const onCloseVMStatusModal = React.useCallback(() => setStatusModalOpen(false), []);
 
   const launcherPod = findVMPod(vmiLike, pods);
   const id = getBasicID(vmiLike);
@@ -144,7 +145,7 @@ export const VMDetailsList: React.FC<VMResourceListProps> = ({
         onEditClick={() => setStatusModalOpen(true)}
         idValue={prefixedID(id, 'vm-statuses')}
       >
-        <VMStatusModal isOpen={isStatusModalOpen} setOpen={setStatusModalOpen} vmi={vmi} />
+        <VMStatusModal isOpen={isStatusModalOpen} close={onCloseVMStatusModal} vmi={vmi} />
         <VMStatuses vm={vm} vmi={vmi} pods={pods} migrations={migrations} />
       </VMDetailsItem>
 

@@ -24,9 +24,7 @@ const VMActionRequest = async (vm: VMKind, action: VMActionType) => {
   url = `${url}/${action}`;
 
   const response = await coFetch(url, { method });
-  const text = await response.text();
-
-  return text;
+  return await response.text();
 };
 
 export const VMActionWithPXERequest = async (vm: VMKind, action: VMActionType) => {

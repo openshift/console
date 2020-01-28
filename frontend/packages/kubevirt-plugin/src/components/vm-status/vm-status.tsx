@@ -119,7 +119,13 @@ export const VMStatus: React.FC<VMStatusProps> = ({
 
   const unpauseVM = async (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     event.preventDefault();
-    await unpauseVMI(vmi);
+
+    try {
+      await unpauseVMI(vmi);
+    } catch (e) {
+      console.log(e); // TODO: Figure out best way to handle error
+    }
+
   };
 
   switch (statusDetail.status) {

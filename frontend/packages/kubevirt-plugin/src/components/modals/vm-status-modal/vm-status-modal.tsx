@@ -10,24 +10,20 @@ import { unpauseVMI } from '../../../k8s/requests/vmi/actions';
 const modalTitle = 'Edit pause state';
 
 const VMStatusModal = withHandlePromise<VMStatusModalProps>(
-  ({ vmi, isOpen, setOpen, title = modalTitle, handlePromise, inProgress, errorMessage }) => {
-    const [showPatchError, setPatchError] = React.useState<boolean>(false);
-
+  ({ vmi, isOpen, close, title = modalTitle, handlePromise, inProgress, errorMessage }) => {
     const onSubmit = async (event) => {
       event.preventDefault();
 
       const promise = unpauseVMI(vmi);
-      handlePromise(promise)
-        .then(() => setOpen(false))
-        .catch(() => setPatchError(true));
+      handlePromise(promise).then(() => close());
     };
 
     const footer = (
       <ModalFooter
-        errorMessage={showPatchError && errorMessage}
+        errorMessage={errorMessage}
         inProgress={inProgress}
         onSubmit={onSubmit}
-        onCancel={() => setOpen(false)}
+        onCancel={() => close()}
         submitButtonText="Unpause"
       />
     );
@@ -37,7 +33,7 @@ const VMStatusModal = withHandlePromise<VMStatusModalProps>(
         title={title}
         isOpen={isOpen}
         isSmall
-        onClose={() => setOpen(false)}
+        onClose={() => close()}
         footer={footer}
         isFooterLeftAligned
       >
@@ -52,7 +48,6 @@ export type VMStatusModalProps = HandlePromiseProps &
     vmi: VMIKind;
     title?: string;
     isOpen: boolean;
-    setOpen: (isOpen: boolean) => void;
   };
 
 export default VMStatusModal;
