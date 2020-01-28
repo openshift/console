@@ -14,10 +14,12 @@ const ToggleableFieldBase: React.FC<ToggleableFieldBaseProps> = ({
   helpText,
   required,
   children,
+  value,
+  name,
   ...props
 }) => {
-  const [field, { touched, error }] = useField(props.name);
-  const fieldId = getFieldId(props.name, 'checkbox');
+  const [field, { touched, error }] = useField({ value, name, type: 'checkbox' });
+  const fieldId = getFieldId(name, 'checkbox');
   const isValid = !(touched && error);
   const errorMessage = !isValid ? error : '';
   return (
@@ -32,12 +34,13 @@ const ToggleableFieldBase: React.FC<ToggleableFieldBaseProps> = ({
       {children({
         ...field,
         ...props,
+        value: field.value,
         id: fieldId,
         label,
-        isChecked: field.value,
+        isChecked: field.checked,
         isValid,
         'aria-describedby': `${fieldId}-helper`,
-        onChange: (value, event) => field.onChange(event),
+        onChange: (val, event) => field.onChange(event),
       })}
     </FormGroup>
   );
