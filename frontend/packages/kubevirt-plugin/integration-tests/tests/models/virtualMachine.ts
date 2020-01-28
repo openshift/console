@@ -45,7 +45,7 @@ export class VirtualMachine extends KubevirtDetailView {
   }
 
   async action(action: VM_ACTION, waitForAction?: boolean, timeout?: number) {
-    await this.navigateToTab(TAB.Overview);
+    await this.navigateToTab(TAB.Details);
 
     let confirmDialog = true;
     if ([VM_ACTION.Clone].includes(action)) {
@@ -72,7 +72,7 @@ export class VirtualMachine extends KubevirtDetailView {
   }
 
   async waitForStatus(status: string, timeout?: number) {
-    await this.navigateToTab(TAB.Overview);
+    await this.navigateToTab(TAB.Details);
     await browser.wait(
       until.textToBePresentInElement(vmView.vmDetailStatus(this.namespace, this.name), status),
       resolveTimeout(timeout, VM_BOOTUP_TIMEOUT_SECS),
@@ -80,7 +80,7 @@ export class VirtualMachine extends KubevirtDetailView {
   }
 
   async waitForActionFinished(action: string, timeout?: number) {
-    await this.navigateToTab(TAB.Overview);
+    await this.navigateToTab(TAB.Details);
     switch (action) {
       case VM_ACTION.Start:
         await this.waitForStatus(
@@ -244,7 +244,7 @@ export class VirtualMachine extends KubevirtDetailView {
     await wizard.confirmAndCreate();
     await wizard.waitForCreation();
 
-    await this.navigateToTab(TAB.Overview);
+    await this.navigateToTab(TAB.Details);
     if (startOnCreation === true) {
       // If startOnCreation is true, wait for VM to boot up
       await this.waitForStatus(VM_STATUS.Running, VM_BOOTUP_TIMEOUT_SECS);

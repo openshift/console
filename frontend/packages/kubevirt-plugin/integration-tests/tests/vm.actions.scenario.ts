@@ -92,7 +92,7 @@ describe('Test VM actions', () => {
       testVM.metadata.name = vmName;
       createResource(testVM);
       addLeakableResource(leakedResources, testVM);
-      await vm.navigateToTab(TAB.Overview);
+      await vm.navigateToTab(TAB.Details);
       await vm.waitForStatus(VM_STATUS.Off, VM_IMPORT_TIMEOUT_SECS);
     }, VM_IMPORT_TIMEOUT_SECS);
 

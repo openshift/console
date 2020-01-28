@@ -70,7 +70,7 @@ describe('Test VM dashboard', () => {
 
     await vm.addDisk(hddDisk);
     await vm.addNIC(multusNetworkInterface);
-    await vm.navigateToTab(TAB.Dashboard);
+    await vm.navigateToTab(TAB.Overview);
 
     expect(vmInventoryNICs.getText()).toEqual('2 NICs');
     expect(vmInventoryDisks.getText()).toEqual('3 Disks');
@@ -80,7 +80,7 @@ describe('Test VM dashboard', () => {
     expect(vmStatus.getText()).toEqual(VM_STATUS.Off);
 
     await vm.action(VM_ACTION.Start, true, VM_BOOTUP_TIMEOUT_SECS);
-    await vm.navigateToTab(TAB.Dashboard);
+    await vm.navigateToTab(TAB.Overview);
 
     expect(vmStatus.getText()).toEqual(VM_STATUS.Running);
   });
@@ -92,7 +92,7 @@ describe('Test VM dashboard', () => {
     expect(vmDetailsIPAddress.getText()).not.toEqual(NOT_AVAILABLE);
 
     await vm.action(VM_ACTION.Stop, true, VM_STOP_TIMEOUT_SECS);
-    await vm.navigateToTab(TAB.Dashboard);
+    await vm.navigateToTab(TAB.Overview);
 
     expect(vmDetailsNode.getText()).toEqual(NOT_AVAILABLE);
     expect(vmDetailsIPAddress.getText()).toEqual(NOT_AVAILABLE);
