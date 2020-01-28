@@ -2,14 +2,15 @@ package actions
 
 import (
 	"helm.sh/helm/v3/pkg/action"
+	"helm.sh/helm/v3/pkg/release"
 )
 
-func GetReleaseManifest(releaseName string, conf *action.Configuration) (string, error) {
+func GetReleaseManifest(releaseName string, conf *action.Configuration) (*release.Release, error) {
 	cmd := action.NewGet(conf)
 
 	releases, err := cmd.Run(releaseName)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
-	return releases.Manifest, nil
+	return releases, nil
 }

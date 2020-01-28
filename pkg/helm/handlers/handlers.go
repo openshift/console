@@ -83,11 +83,13 @@ func (h *HelmHandlers) HandleGetReleaseManifest(user *auth.User, w http.Response
 	chartName := queryParams.Get("release_name")
 
 	conf := actions.GetActionConfigurations(h.ApiServerHost, ns, user.Token, &h.Transport)
-	resp, err := actions.GetReleaseManifest(chartName, conf)
+	manifest, err := actions.GetReleaseManifest(chartName, conf)
 	if err != nil {
 		serverutils.SendResponse(w, http.StatusBadGateway, serverutils.ApiError{fmt.Sprintf("Failed to list helm releases: %v", err)})
 	}
 
-	w.Header().Set("Content-Type", "application/yaml")
-	w.Write([]byte(resp))
+	w.Header().Set("Content-Type", "application/json")
+
+	rawManifest, _ := json.Marshal(manifest)
+	w.Write(rawManifest)
 }

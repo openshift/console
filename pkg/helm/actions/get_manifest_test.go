@@ -1,10 +1,10 @@
 package actions
 
 import (
+	"helm.sh/helm/v3/pkg/release"
 	"io/ioutil"
 	"testing"
 
-	"github.com/stretchr/testify/assert"
 	"helm.sh/helm/v3/pkg/action"
 	"helm.sh/helm/v3/pkg/chartutil"
 	kubefake "helm.sh/helm/v3/pkg/kube/fake"
@@ -287,12 +287,17 @@ spec:
 				if err != nil {
 					t.Error("Error occurred while installing chartPath")
 				}
-				manifests, err := GetReleaseManifest(tt.releaseName, actionConfig)
+				rel, err := GetReleaseManifest(tt.releaseName, actionConfig)
 				if err != nil {
-					t.Error("Failed to get manifest", manifests)
+					t.Error("Failed to get Release", rel)
 				}
-				assert.Equal(t, manifests, tt.manifestValue)
-				if tt.manifestValue != manifests {
+				if rel.Name != tt.releaseName {
+					t.Error("Release name aren't matching")
+				}
+				if rel.Info.Status != release.StatusDeployed {
+					t.Error("Chart isn't deployed")
+				}
+				if tt.manifestValue != rel.Manifest {
 					t.Error("Manifest values aren't matching")
 				}
 			} else if tt.testName == "invalid chart path" {
