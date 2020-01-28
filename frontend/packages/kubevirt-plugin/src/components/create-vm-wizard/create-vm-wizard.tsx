@@ -68,6 +68,7 @@ import {
 import { CREATE_VM, CREATE_VM_TEMPLATE, TabTitleResolver, IMPORT_VM } from './strings/strings';
 import { vmWizardActions } from './redux/actions';
 import { ActionType } from './redux/types';
+import { getResultInitialState } from './redux/initial-state/result-tab-initial-state';
 import { iGetCommonData, iGetCreateVMWizardTabs } from './selectors/immutable/selectors';
 import { isStepLocked, isStepPending, isStepValid } from './selectors/immutable/wizard-selectors';
 import { ResourceLoadErrors } from './resource-load-errors';
@@ -333,10 +334,13 @@ export class CreateVMWizardComponent extends React.Component<CreateVMWizardCompo
       .then(() => getResults(enhancedK8sMethods))
       .catch((error) => cleanupAndGetResults(enhancedK8sMethods, error))
       .then(({ requestResults, errors, mainError, isValid }: ResultsWrapper) =>
-        this.props.onResultsChanged({ mainError, requestResults, errors }, isValid, true, false),
+        this.props.onResultsChanged({ mainError, requestResults, errors }, isValid, false, false),
       )
       .catch((e) => console.error(e)); // eslint-disable-line no-console
   };
+
+  goBackToEditingSteps = () =>
+    this.props.onResultsChanged(getResultInitialState({}).value, null, false, false);
 
   render() {
     const { reduxID, stepData } = this.props;
@@ -459,9 +463,22 @@ export class CreateVMWizardComponent extends React.Component<CreateVMWizardCompo
           isInPage
           className="kubevirt-create-vm-modal__wizard-content"
           onClose={this.onClose}
-          onNext={({ id }) => {
+          onNext={({ id }, { prevId }) => {
             if (id === VMWizardTab.RESULT) {
               this.finish();
+            }
+            if (prevId === VMWizardTab.RESULT) {
+              this.goBackToEditingSteps();
+            }
+          }}
+          onBack={(nextStep, { prevId }) => {
+            if (prevId === VMWizardTab.RESULT) {
+              this.goBackToEditingSteps();
+            }
+          }}
+          onGoToStep={(nextStep, { prevId }) => {
+            if (prevId === VMWizardTab.RESULT) {
+              this.goBackToEditingSteps();
             }
           }}
           steps={calculateSteps(steps)}
