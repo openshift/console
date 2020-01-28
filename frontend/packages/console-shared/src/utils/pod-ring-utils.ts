@@ -38,21 +38,27 @@ const applyPods = (podsData: PodRingData, dc: PodRCData) => {
   return podsData;
 };
 
-export const podRingLabel = (obj: K8sResourceKind, canScale: boolean): PodRingLabelType => {
+export const podRingLabel = (
+  obj: K8sResourceKind,
+  canScale: boolean,
+  pods: ExtPodKind[],
+): PodRingLabelType => {
   const {
     spec: { replicas },
     status: { availableReplicas },
     kind,
   } = obj;
 
+  const isPending = (pods?.length === 1 && pods[0].status?.phase === 'Pending') || replicas;
   const pluralize = replicas > 1 || replicas === 0 ? 'pods' : 'pod';
   const knativeSubtitle = canScale ? '' : 'to 0';
   const scalingSubtitle = !replicas ? knativeSubtitle : `scaling to ${replicas}`;
-  const title = availableReplicas || (canScale ? 'Scaled to 0' : 'Autoscaled');
+  const title = availableReplicas || (isPending ? '0' : canScale ? 'Scaled to 0' : 'Autoscaled');
   const subTitle = replicas !== availableReplicas ? scalingSubtitle : pluralize;
-  const titleComponent = !availableReplicas
-    ? React.createElement(ChartLabel, { style: { fontSize: '14px' } })
-    : undefined;
+  const titleComponent =
+    !availableReplicas && !isPending
+      ? React.createElement(ChartLabel, { style: { fontSize: '14px' } })
+      : undefined;
   const subTitleComponent =
     kind === 'Revision'
       ? React.createElement(ChartLabel, { style: { fontSize: '14px' } })
