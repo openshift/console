@@ -12,8 +12,9 @@
       padding: var(--pf-global--spacer--sm) 0;
     }
   }
-  h5 {
-    margin: 0;
+  &__view-monitoring-dashboard {
+    margin: var(--pf-global--spacer--sm) 0;
+    text-align: right;
   }
   .pf-c-accordion__expanded-content.pf-m-expanded {
     --pf-c-accordion__expanded-content--BorderLeftColor: transparent;

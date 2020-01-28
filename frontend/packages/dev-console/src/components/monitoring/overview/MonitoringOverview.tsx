@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash';
+import { Link } from 'react-router-dom';
 import {
   Accordion,
   AccordionItem,
@@ -78,6 +79,15 @@ const MonitoringOverview: React.FC<MonitoringOverviewProps> = ({ resource, event
             Metrics
           </AccordionToggle>
           <AccordionContent id="metrics-content" isHidden={!expanded.includes('metrics')}>
+            <div className="odc-monitoring-overview__view-monitoring-dashboard">
+              <Link
+                to={`/dev-monitoring/ns/${resource?.metadata?.namespace}/?workloadName=${
+                  resource?.metadata?.name
+                }&workloadType=${resource?.kind?.toLowerCase()}`}
+              >
+                View monitoring dashboard
+              </Link>
+            </div>
             <WorkloadGraphs resource={resource} />
           </AccordionContent>
         </AccordionItem>
