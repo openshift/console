@@ -12,7 +12,6 @@ import {
   ChipGroupToolbarItem,
 } from '@patternfly/react-core';
 import { CloseIcon } from '@patternfly/react-icons';
-
 import { getBadgeFromType } from '@console/shared';
 import { AsyncComponent } from './utils/async';
 import { connectToModel } from '../kinds';
@@ -147,8 +146,15 @@ const SearchPage_: React.FC<SearchProps> = (props) => {
   };
 
   const getToggleText = (item: string) => {
-    const { labelPlural } = modelFor(item);
-    return labelPlural;
+    const { labelPlural, apiVersion, apiGroup } = modelFor(item);
+    return (
+      <span className="co-search-group__accordion-label">
+        {labelPlural}{' '}
+        <span className="text-muted show small">
+          {apiGroup || 'core'}/{apiVersion}
+        </span>
+      </span>
+    );
   };
 
   return (

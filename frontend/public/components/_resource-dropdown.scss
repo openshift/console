@@ -23,6 +23,14 @@
   flex: 1 0 auto;
 }
 
+.co-search-group__accordion-label {
+  display: flex;
+  align-items: center;
+  .text-muted {
+    margin-left: 10px;
+  }
+}
+
 .co-search-group__resource {
   margin: 0 15px 15px 0;
 }
