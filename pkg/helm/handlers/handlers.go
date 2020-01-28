@@ -76,3 +76,18 @@ func (h *HelmHandlers) HandleHelmList(user *auth.User, w http.ResponseWriter, r 
 	res, _ := json.Marshal(resp)
 	w.Write(res)
 }
+
+func (h *HelmHandlers) HandleGetReleaseManifest(user *auth.User, w http.ResponseWriter, r *http.Request) {
+	queryParams := r.URL.Query()
+	ns := queryParams.Get("ns")
+	chartName := queryParams.Get("release_name")
+
+	conf := actions.GetActionConfigurations(h.ApiServerHost, ns, user.Token, &h.Transport)
+	resp, err := actions.GetReleaseManifest(chartName, conf)
+	if err != nil {
+		serverutils.SendResponse(w, http.StatusBadGateway, serverutils.ApiError{fmt.Sprintf("Failed to list helm releases: %v", err)})
+	}
+
+	w.Header().Set("Content-Type", "application/yaml")
+	w.Write([]byte(resp))
+}
