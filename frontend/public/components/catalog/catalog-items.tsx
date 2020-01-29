@@ -1,9 +1,13 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
+import { Link } from 'react-router-dom';
 import * as catalogImg from '../../imgs/logos/catalog-icon.svg';
-import { Badge } from '@patternfly/react-core';
-import { CatalogTile, CatalogTileBadge } from '@patternfly/react-catalog-view-extension';
-import { Modal } from 'patternfly-react';
+import { Badge, Modal } from '@patternfly/react-core';
+import {
+  CatalogItemHeader,
+  CatalogTile,
+  CatalogTileBadge,
+} from '@patternfly/react-catalog-view-extension';
 
 import { history } from '../utils/router';
 import { normalizeIconClass } from './catalog-item-icon';
@@ -352,16 +356,41 @@ export class CatalogTileViewPage extends React.Component<
           groupItems={groupItems}
           groupByTypes={GroupByTypes}
         />
-        <Modal
-          show={!!detailsItem}
-          onHide={this.closeOverlay}
-          bsSize={'lg'}
-          className="co-catalog-page__overlay right-side-modal-pf"
-        >
-          {detailsItem && (
+        {detailsItem && (
+          <Modal
+            className="co-catalog-page__overlay co-catalog-page__overlay--right"
+            header={
+              <>
+                <CatalogItemHeader
+                  title={detailsItem.tileName}
+                  vendor={
+                    detailsItem.tileProvider ? `Provided by ${detailsItem.tileProvider}` : null
+                  }
+                  iconClass={
+                    detailsItem.tileIconClass ? normalizeIconClass(detailsItem.tileIconClass) : null
+                  }
+                  iconImg={detailsItem.tileImgUrl}
+                />
+                <div className="co-catalog-page__button">
+                  <Link
+                    className="pf-c-button pf-m-primary co-catalog-page__overlay-create"
+                    to={detailsItem.href}
+                    role="button"
+                    title={detailsItem.createLabel}
+                    onClick={this.closeOverlay}
+                  >
+                    {detailsItem.createLabel}
+                  </Link>
+                </div>
+              </>
+            }
+            isOpen={!!detailsItem}
+            onClose={this.closeOverlay}
+            title={detailsItem.tileName}
+          >
             <CatalogTileDetails item={detailsItem} closeOverlay={this.closeOverlay} />
-          )}
-        </Modal>
+          </Modal>
+        )}
       </>
     );
   }
