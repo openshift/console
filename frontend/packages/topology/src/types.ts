@@ -130,6 +130,8 @@ export interface Edge<E extends EdgeModel = EdgeModel, D = any> extends GraphEle
   setSource(source: Node): void;
   getTarget(): Node;
   setTarget(target: Node): void;
+  getSourceAnchorNode(): Node;
+  getTargetAnchorNode(): Node;
   getStartPoint(): Point;
   setStartPoint(x?: number, y?: number): void;
   getEndPoint(): Point;

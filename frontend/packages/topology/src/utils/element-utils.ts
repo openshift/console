@@ -61,6 +61,29 @@ const getTopCollapsedParent = (node: Node): Node => {
   return returnNode;
 };
 
+const getClosestVisibleParent = (node: Node): Node | null => {
+  if (!node) {
+    return null;
+  }
+
+  let returnNode: Node | null = node.isVisible() ? node : null;
+  try {
+    let parent = node.getParent();
+    while (parent) {
+      if (!parent.isVisible()) {
+        // parent isn't visible so no descendant could be visible
+        returnNode = null;
+      } else if ((parent as Node).isCollapsed() || !returnNode) {
+        // parent is collapsed, no descendant is visible, but parent is
+        returnNode = parent as Node;
+      }
+      parent = parent.getParent();
+    }
+    // eslint-disable-next-line no-empty
+  } catch (e) {}
+  return returnNode;
+};
+
 const getElementPadding = (element: GraphElement): number => {
   const stylePadding = element.getStyle<GroupStyle>().padding;
   if (!stylePadding) {
@@ -95,6 +118,7 @@ export {
   groupNodeElements,
   leafNodeElements,
   getTopCollapsedParent,
+  getClosestVisibleParent,
   getElementPadding,
   getGroupPadding,
 };

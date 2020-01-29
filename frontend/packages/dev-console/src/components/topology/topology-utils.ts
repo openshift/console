@@ -55,6 +55,8 @@ import {
   TYPE_OPERATOR_WORKLOAD,
   TYPE_TRAFFIC_CONNECTOR,
   TYPE_WORKLOAD,
+  TYPE_CONNECTS_TO,
+  TYPE_SERVICE_BINDING,
 } from './const';
 
 export const allowedResources = ['deployments', 'deploymentConfigs', 'daemonSets', 'statefulSets'];
@@ -246,7 +248,7 @@ export const getTopologyNodeItem = (
   }
   return {
     id: uid,
-    type: type || 'workload',
+    type: type || TYPE_WORKLOAD,
     name: label || name,
     ...(children && children.length && { children }),
   };
@@ -286,7 +288,7 @@ export const getTopologyEdgeItems = (
     if (targetNode) {
       edges.push({
         id: `${uid}_${targetNode}`,
-        type: 'connects-to',
+        type: TYPE_CONNECTS_TO,
         source: uid,
         target: targetNode,
       });
@@ -315,7 +317,7 @@ export const getTopologyEdgeItems = (
     if (targetNode) {
       edges.push({
         id: `${uid}_${targetNode}`,
-        type: 'service-binding',
+        type: TYPE_SERVICE_BINDING,
         source: uid,
         target: targetNode,
         data: { sbr },

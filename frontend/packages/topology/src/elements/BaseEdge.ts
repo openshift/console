@@ -1,6 +1,7 @@
 import { observable, computed } from 'mobx';
 import Point from '../geom/Point';
 import { Edge, Node, EdgeModel, ModelKind, AnchorEnd, Anchor } from '../types';
+import { getTopCollapsedParent } from '../utils';
 import BaseElement from './BaseElement';
 
 export default class BaseEdge<E extends EdgeModel = EdgeModel, D = any> extends BaseElement<E, D>
@@ -22,12 +23,12 @@ export default class BaseEdge<E extends EdgeModel = EdgeModel, D = any> extends 
 
   @computed
   private get sourceAnchor(): Anchor {
-    return this.getSource().getAnchor(AnchorEnd.source, this.getType());
+    return this.getSourceAnchorNode().getAnchor(AnchorEnd.source, this.getType());
   }
 
   @computed
   private get targetAnchor(): Anchor {
-    return this.getTarget().getAnchor(AnchorEnd.target, this.getType());
+    return this.getTargetAnchorNode().getAnchor(AnchorEnd.target, this.getType());
   }
 
   getKind(): ModelKind {
@@ -54,6 +55,20 @@ export default class BaseEdge<E extends EdgeModel = EdgeModel, D = any> extends 
 
   setTarget(target: Node) {
     this.target = target;
+  }
+
+  getSourceAnchorNode(): Node {
+    if (!this.source) {
+      throw new Error(`Edge with ID '${this.getId()}' has no source.`);
+    }
+    return getTopCollapsedParent(this.source);
+  }
+
+  getTargetAnchorNode(): Node {
+    if (!this.target) {
+      throw new Error(`Edge with ID '${this.getId()}' has no target.`);
+    }
+    return getTopCollapsedParent(this.target);
   }
 
   getBendpoints(): Point[] {

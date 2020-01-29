@@ -12,7 +12,11 @@ import {
   NODE_COLLAPSE_CHANGE_EVENT,
   NodeCollapseChangeEventListener,
 } from '../types';
-import { leafNodeElements, groupNodeElements, getTopCollapsedParent } from '../utils/element-utils';
+import {
+  leafNodeElements,
+  groupNodeElements,
+  getClosestVisibleParent,
+} from '../utils/element-utils';
 import {
   DRAG_MOVE_OPERATION,
   DRAG_NODE_END_EVENT,
@@ -386,7 +390,7 @@ class BaseLayout implements Layout {
     );
   };
 
-  protected getLayoutNode(nodes: LayoutNode[], node: Node): LayoutNode | undefined {
+  protected getLayoutNode(nodes: LayoutNode[], node: Node | null): LayoutNode | undefined {
     if (!node) {
       return undefined;
     }
@@ -396,7 +400,7 @@ class BaseLayout implements Layout {
       colaNode = _.find(nodes, { id: node.getChildren()[0].getId() });
     }
     if (!colaNode) {
-      colaNode = this.getLayoutNode(nodes, getTopCollapsedParent(node));
+      colaNode = this.getLayoutNode(nodes, getClosestVisibleParent(node));
     }
 
     return colaNode;

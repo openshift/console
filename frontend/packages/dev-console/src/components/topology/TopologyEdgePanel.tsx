@@ -2,7 +2,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import * as classNames from 'classnames';
 import * as _ from 'lodash';
-import { BaseEdge } from '@console/topology';
+import { Edge } from '@console/topology';
 import { RootState } from '@console/internal/redux';
 import { referenceFor, K8sResourceKind } from '@console/internal/module/k8s';
 import {
@@ -27,7 +27,7 @@ type StateProps = {
 };
 
 export type TopologyEdgePanelProps = {
-  edge: BaseEdge;
+  edge: Edge;
   data: TopologyDataModel;
 } & StateProps;
 

@@ -12,6 +12,7 @@ const AggregateEdge: React.FC<AggregateEdgeProps> = ({ element }) => {
   const [hover, hoverRef] = useHover();
   const startPoint = element.getStartPoint();
   const endPoint = element.getEndPoint();
+  const { bidirectional } = element.getData();
 
   return (
     <Layer id={hover ? 'top' : undefined}>
@@ -37,9 +38,10 @@ const AggregateEdge: React.FC<AggregateEdgeProps> = ({ element }) => {
           x2={endPoint.x}
           y2={endPoint.y}
         />
-        {(!element.getSource().isCollapsed() || !element.getTarget().isCollapsed()) && (
-          <EdgeConnectorArrow edge={element} />
-        )}
+        {!bidirectional &&
+          (!element.getSource().isCollapsed() || !element.getTarget().isCollapsed()) && (
+            <EdgeConnectorArrow edge={element} />
+          )}
       </g>
     </Layer>
   );
