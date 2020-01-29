@@ -341,15 +341,12 @@ const PodGraphs = requirePrometheus(({ pod }) => (
   </>
 ));
 
-export const PodStatus: React.FC<PodStatusProps> = ({ pod }) => <Status status={podPhase(pod)} />;
-
 export const PodDetailsList: React.FC<PodDetailsListProps> = ({ pod }) => {
   return (
     <dl className="co-m-pane__details">
-      <dt>Status</dt>
-      <dd>
-        <PodStatus pod={pod} />
-      </dd>
+      <DetailsItem label="Status" obj={pod} path="status.phase">
+        {podPhase(pod)}
+      </DetailsItem>
       <DetailsItem label="Restart Policy" obj={pod} path="spec.restartPolicy">
         {getRestartPolicyLabel(pod)}
       </DetailsItem>
@@ -559,10 +556,6 @@ type ContainerRowProps = {
 type PodContainerTableProps = {
   heading: string;
   containers: ContainerSpec[];
-  pod: PodKind;
-};
-
-type PodStatusProps = {
   pod: PodKind;
 };
 

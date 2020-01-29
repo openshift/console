@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { Link } from 'react-router-dom';
 import { resourceObjPath } from '@console/internal/components/utils';
-import { K8sResourceKind, PodKind } from '@console/internal/module/k8s';
-import { PodStatus } from '@console/internal/components/pod';
+import { K8sResourceKind, PodKind, podPhase } from '@console/internal/module/k8s';
+import { Status } from '../components/status';
 import { PodControllerOverviewItem } from '../types';
 
 export const resourceStatus = (
@@ -22,7 +22,7 @@ export const resourceStatus = (
 };
 
 export const podStatus = (obj: PodKind) => {
-  return <PodStatus pod={obj} />;
+  return <Status status={podPhase(obj)} />;
 };
 
 type OverviewItemReadinessProps = {
