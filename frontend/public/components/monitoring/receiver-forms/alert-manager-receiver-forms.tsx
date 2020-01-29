@@ -435,22 +435,28 @@ const ReceiverWrapper: React.FC<ReceiverFormsWrapperProps> = React.memo(({ obj, 
       setLoadError({ message: `Error alertManagerBaseURL not set` });
       return;
     }
-    coFetchJSON(`${alertManagerBaseURL}/api/v2/status/`).then((data) => {
-      const originalAlertmanagerConfigJSON = data?.config?.original;
-      if (_.isEmpty(originalAlertmanagerConfigJSON)) {
-        setLoadError({ message: 'alertmanager.v2.status.config.original not found.' });
-      } else {
-        try {
-          const { global } = safeLoad(originalAlertmanagerConfigJSON);
-          setAlertmanagerGlobals(global);
-          setLoaded(true);
-        } catch ({ message }) {
-          setLoadError({
-            message: `Error parsing Alertmanager config.original: ${message || 'invalid YAML'}`,
-          });
+    coFetchJSON(`${alertManagerBaseURL}/api/v2/status/`)
+      .then((data) => {
+        const originalAlertmanagerConfigJSON = data?.config?.original;
+        if (_.isEmpty(originalAlertmanagerConfigJSON)) {
+          setLoadError({ message: 'alertmanager.v2.status.config.original not found.' });
+        } else {
+          try {
+            const { global } = safeLoad(originalAlertmanagerConfigJSON);
+            setAlertmanagerGlobals(global);
+            setLoaded(true);
+          } catch ({ message }) {
+            setLoadError({
+              message: `Error parsing Alertmanager config.original: ${message || 'invalid YAML'}`,
+            });
+          }
         }
-      }
-    });
+      })
+      .catch((e) =>
+        setLoadError({
+          message: `Error loading ${alertManagerBaseURL}/api/v2/status/: ${e.message}`,
+        }),
+      );
   }, [alertManagerBaseURL]);
 
   return (
