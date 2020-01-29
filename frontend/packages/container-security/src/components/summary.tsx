@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash';
+import { pluralize } from '@patternfly/react-core';
 import { ChartDonut } from '@patternfly/react-charts';
 import { SecurityIcon } from '@patternfly/react-icons';
 import { URLHealthHandler } from '@console/plugin-sdk';
@@ -115,12 +116,12 @@ export const SecurityBreakdownPopup: React.FC<SecurityBreakdownPopupProps> = (pr
                         v.metadata.name
                       }`}
                     >
-                      {
+                      {pluralize(
                         props.k8sResult.data.filter(
                           ({ metadata }) => metadata.name === v.metadata.name,
-                        ).length
-                      }{' '}
-                      namespaces
+                        ).length,
+                        'namespace',
+                      )}
                     </Link>
                   </div>
                 </div>
