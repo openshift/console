@@ -168,7 +168,6 @@ Run backend tests:
 ```
 ./test-backend.sh
 ```
-
 Run frontend tests:
 ```
 ./test-frontend.sh
