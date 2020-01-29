@@ -225,7 +225,7 @@ const PodTableHeader = () => {
 };
 PodTableHeader.displayName = 'PodTableHeader';
 
-const ContainerLink: React.FC<ContainerLinkProps> = ({ pod, name }) => (
+export const ContainerLink: React.FC<ContainerLinkProps> = ({ pod, name }) => (
   <span className="co-resource-item co-resource-item--inline">
     <ResourceIcon kind="Container" />
     <Link to={`/k8s/ns/${pod.metadata.namespace}/pods/${pod.metadata.name}/containers/${name}`}>
@@ -233,6 +233,7 @@ const ContainerLink: React.FC<ContainerLinkProps> = ({ pod, name }) => (
     </Link>
   </span>
 );
+ContainerLink.displayName = 'ContainerLink';
 
 export const ContainerRow: React.FC<ContainerRowProps> = ({ pod, container }) => {
   const cstatus = getContainerStatus(pod, container.name);

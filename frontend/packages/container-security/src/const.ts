@@ -11,7 +11,7 @@ import {
 import { Map as ImmutableMap } from 'immutable';
 import { ImageManifestVuln } from './types';
 
-export const SecurityLabellerFlag = 'SECURITY_LABELLER';
+export const ContainerSecurityFlag = 'SECURITY_LABELLER';
 
 export enum Priority {
   Defcon1 = 'Defcon1',

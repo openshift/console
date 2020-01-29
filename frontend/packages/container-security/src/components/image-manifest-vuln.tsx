@@ -1,6 +1,7 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import * as classNames from 'classnames';
+import { Tooltip } from '@patternfly/react-core';
 import { sortable } from '@patternfly/react-table';
 import { SecurityIcon } from '@patternfly/react-icons';
 import {
@@ -12,7 +13,8 @@ import {
   ListPage,
   RowFunction,
 } from '@console/internal/components/factory';
-import { referenceForModel, PodKind } from '@console/internal/module/k8s';
+import { GreenCheckCircleIcon } from '@console/shared/';
+import { referenceForModel, PodKind, ContainerStatus } from '@console/internal/module/k8s';
 import { match } from 'react-router';
 import {
   ResourceLink,
@@ -21,6 +23,9 @@ import {
   SectionHeading,
   ResourceSummary,
   DetailsItem,
+  Firehose,
+  FirehoseResult,
+  Loading,
 } from '@console/internal/components/utils';
 import { ChartDonut } from '@patternfly/react-charts';
 import { DefaultList } from '@console/internal/components/default-resource';
@@ -29,6 +34,7 @@ import { ImageManifestVuln, Feature, Vulnerability } from '../types';
 import { ImageManifestVulnModel } from '../models';
 import { quayURLFor } from './summary';
 import './image-manifest-vuln.scss';
+import { ContainerLink } from '@console/internal/components/pod';
 
 const shortenImage = (img: string) =>
   img
@@ -305,10 +311,126 @@ export const ImageManifestVulnPage: React.FC<ImageManifestVulnPageProps> = (prop
       ]}
       flatten={(resources) => _.get(resources.imageManifestVuln, 'data', [])}
       title="Image Manifest Vulnerabilities"
+      canCreate={false}
       showTitle
+      hideNameFilter
+      hideLabelFilter
       ListComponent={ImageManifestVulnList}
     />
   );
+};
+
+const podKey = (pod: PodKind) => [pod.metadata.namespace, pod.metadata.name].join('/');
+
+export const ContainerVulnerabilities: React.FC<ContainerVulnerabilitiesProps> = (props) => {
+  const vulnFor = (containerStatus: ContainerStatus) =>
+    _.get(props.imageManifestVuln, 'data', []).find(
+      (imv) =>
+        imv.status.affectedPods[podKey(props.pod)].some(
+          (id) => containerStatus.containerID === id,
+        ) || containerStatus.imageID.includes(imv.spec.manifest),
+    );
+
+  const withVuln = (
+    vuln: ImageManifestVuln,
+    exists: (vuln: ImageManifestVuln) => JSX.Element,
+    absent: () => JSX.Element,
+  ) => (vuln !== undefined ? exists(vuln) : absent());
+
+  return (
+    <div className="co-m-pane__body">
+      <div className="co-m-table-grid co-m-table-grid--bordered">
+        <div className="row co-m-table-grid__head">
+          <div className="col-md-3">Container</div>
+          <div className="col-md-4">Image</div>
+          <div className="col-md-2">
+            <Tooltip content="Results provided by Quay security scanner">
+              <span>Security Scan</span>
+            </Tooltip>
+          </div>
+        </div>
+        <div className="co-m-table-grid__body">
+          {props.pod.status.containerStatuses.map((status) => (
+            <div className="row" key={status.containerID}>
+              <div className="col-md-3">
+                <ContainerLink pod={props.pod} name={status.name} />
+              </div>
+              <div className="col-md-4 co-truncate co-nowrap co-select-to-copy">
+                {props.pod.spec.containers.find((c) => c.name === status.name).image}
+              </div>
+              <div className="col-md-3">
+                {props.loaded ? (
+                  withVuln(
+                    vulnFor(status),
+                    (vuln) => (
+                      <span style={{ display: 'flex', alignItems: 'center' }}>
+                        <SecurityIcon
+                          color={
+                            vulnPriority.find(({ title }) => vuln.status.highestSeverity === title)
+                              .color.value
+                          }
+                        />
+                        &nbsp;
+                        <ResourceLink
+                          kind={referenceForModel(ImageManifestVulnModel)}
+                          name={vuln.metadata.name}
+                          namespace={props.pod.metadata.namespace}
+                          title={vuln.metadata.uid}
+                          displayName={`${totalFor(
+                            vulnPriority.findKey(
+                              ({ title }) => vuln.status.highestSeverity === title,
+                            ),
+                          )(vuln)} ${vuln.status.highestSeverity}`}
+                          hideIcon
+                        />
+                      </span>
+                    ),
+                    () => (
+                      <span>
+                        <GreenCheckCircleIcon />
+                        &nbsp;No vulnerabilities found
+                      </span>
+                    ),
+                  )
+                ) : (
+                  <div>
+                    <Loading />
+                  </div>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export const ImageManifestVulnPodTab: React.FC<ImageManifestVulnPodTabProps> = (props) => {
+  return (
+    <Firehose
+      resources={[
+        {
+          isList: true,
+          kind: referenceForModel(ImageManifestVulnModel),
+          namespace: props.match.params.ns,
+          selector: {
+            matchLabels: { [podKey(props.obj)]: 'true' },
+          },
+          prop: 'imageManifestVuln',
+        },
+      ]}
+    >
+      {/* FIXME(alecmerdler): Hack because `Firehose` injects props without TypeScript knowing about it */}
+      <ContainerVulnerabilities pod={props.obj} {...(props as any)} />
+    </Firehose>
+  );
+};
+
+export type ContainerVulnerabilitiesProps = {
+  loaded: boolean;
+  pod: PodKind;
+  imageManifestVuln: FirehoseResult<ImageManifestVuln[]>;
 };
 
 export type ImageManifestVulnDetailsPageProps = {
@@ -318,6 +440,7 @@ export type ImageManifestVulnDetailsPageProps = {
 export type ImageManifestVulnPageProps = {
   namespace?: string;
   match?: match<{ ns?: string }>;
+  selector?: { [key: string]: string };
 };
 
 export type ImageManifestVulnListProps = {
@@ -344,8 +467,15 @@ export type ImageVulnerabilityRowProps = {
   packageName: string;
 };
 
+export type ImageManifestVulnPodTabProps = {
+  match: match<{ ns: string; name: string }>;
+  obj: PodKind;
+};
+
 ImageManifestVulnPage.displayName = 'ImageManifestVulnPage';
 ImageManifestVulnList.displayName = 'ImageManifestVulnList';
 AffectedPods.displayName = 'AffectedPods';
 ImageVulnerabilitiesTable.displayName = 'ImageVulnerabilitiesTable';
 ImageVulnerabilityRow.displayName = 'ImageVulnerabilityRow';
+ImageManifestVulnPodTab.displayName = 'ImageManifestVulnPodTab';
+ContainerVulnerabilities.displayName = 'ContainerVulnerabilities';
