@@ -45,7 +45,7 @@ const ODCEmptyState: React.FC<Props> = ({
         )}
       </div>
       <div className="odc-empty-state__content">
-        <Gallery gutter="sm">
+        <Gallery className="co-catalog-tile-view" gutter="sm">
           {createResourceAccess.includes(allImportResourceAccess) && (
             <GalleryItem key="gallery-fromgit">
               <CatalogTile

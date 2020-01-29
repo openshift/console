@@ -9,10 +9,14 @@
 @import '~patternfly/dist/sass/patternfly/icons';
 @import '~patternfly-react/dist/sass/patternfly-react';
 
+// OpenShift variables
+@import '../../../public/style/vars';
+
 $co-affinity-row-margin: 15px;
 
 .co-catalog-tile {
-  height: 290px;
+  height: $co-m-catalog-tile-height;
+  width: $co-m-catalog-tile-width;
 }
 
 .co-clusterserviceversion-list {

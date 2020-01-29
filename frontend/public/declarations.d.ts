@@ -33,7 +33,7 @@ declare interface Window {
     requestTokenURL: string;
     statuspageID: string;
   };
-  windowError?: boolean;
+  windowError?: boolean | string;
   __REDUX_DEVTOOLS_EXTENSION_COMPOSE__?: Function;
   store?: {}; // Redux store
   pluginStore?: {}; // Console plugin store
