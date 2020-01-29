@@ -783,10 +783,13 @@ export const ClusterServiceVersionsDetailsPage: React.FC<ClusterServiceVersionsD
 ) => {
   const instancePagesFor = (obj: ClusterServiceVersionKind) => {
     const internalObjects = getInternalObjects(obj);
-    return (providedAPIsFor(obj).length > 1
-      ? [{ href: 'instances', name: 'All Instances', component: ProvidedAPIsPage }]
-      : ([] as Page[])
-    ).concat(
+    const allInstancesPage: Page = {
+      href: 'instances',
+      name: 'All Instances',
+      component: ProvidedAPIsPage,
+    };
+
+    return (providedAPIsFor(obj).length > 1 ? [allInstancesPage] : ([] as Page[])).concat(
       providedAPIsFor(obj).reduce(
         (acc, desc: CRDDescription) =>
           !isInternalObject(internalObjects, desc.name)
@@ -812,6 +815,7 @@ export const ClusterServiceVersionsDetailsPage: React.FC<ClusterServiceVersionsD
       ),
     );
   };
+
   type ExtraResources = { subscriptions: SubscriptionKind[] };
   const menuActions = (
     model,

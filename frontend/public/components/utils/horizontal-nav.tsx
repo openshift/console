@@ -8,6 +8,8 @@ import { EmptyBox, StatusBox } from '.';
 import { PodsPage } from '../pod';
 import { AsyncComponent } from './async';
 import { K8sResourceKind } from '../../module/k8s';
+import { referenceForModel, referenceFor } from '../../module/k8s/k8s';
+import { useExtensions, HorizontalNavTab, isHorizontalNavTab } from '@console/plugin-sdk';
 
 const editYamlComponent = (props) => (
   <AsyncComponent loader={() => import('../edit-yaml').then((c) => c.EditYAML)} obj={props.obj} />
@@ -40,10 +42,10 @@ class PodsComponent extends React.PureComponent<PodsComponentProps> {
 }
 
 export type Page = {
-  href: string;
+  href?: string;
   path?: string;
   name: string;
-  component?: React.ComponentType<any>;
+  component?: React.ComponentType<PageComponentProps>;
 };
 
 type NavFactory = { [name: string]: (c?: React.ComponentType<any>) => Page };
@@ -156,7 +158,7 @@ export const NavBar = withRouter<NavBarProps>(({ pages, basePath }) => {
 });
 NavBar.displayName = 'NavBar';
 
-export const HorizontalNav: React.FC<HorizontalNavProps> = React.memo((props) => {
+export const HorizontalNav = React.memo((props: HorizontalNavProps) => {
   const renderContent = (routes: JSX.Element[]) => {
     const { noStatusBox, obj, EmptyMsg, label } = props;
     const content = <Switch> {routes} </Switch>;
@@ -201,7 +203,20 @@ export const HorizontalNav: React.FC<HorizontalNavProps> = React.memo((props) =>
     (extraObjs, key) => ({ ...extraObjs, [key]: _.get(props[key], 'data') }),
     {},
   );
-  const pages = props.pages || props.pagesFor(_.get(props.obj, 'data'));
+
+  const navTabExtensions = useExtensions<HorizontalNavTab>(isHorizontalNavTab).filter(
+    (tab) =>
+      props.obj?.data && referenceForModel(tab.properties.model) === referenceFor(props.obj.data),
+  );
+  const pages = (props.pages || props.pagesFor(props.obj?.data)).concat(
+    navTabExtensions.map((tab) => ({
+      ...tab.properties.page,
+      component: (params: PageComponentProps) => (
+        <AsyncComponent {...params} loader={tab.properties.loader} />
+      ),
+    })),
+  );
+
   const routes = pages.map((p) => {
     const path = `${props.match.url}/${p.path || p.href}`;
     const render = (params) => {
@@ -251,6 +266,17 @@ export type HorizontalNavProps = {
   EmptyMsg?: React.ComponentType<any>;
   noStatusBox?: boolean;
   customData?: any;
+};
+
+export type PageComponentProps = {
+  filters?: any;
+  selected?: any;
+  match?: any;
+  obj?: K8sResourceKind;
+  params?: any;
+  customData?: any;
+  showTitle?: boolean;
+  fieldSelector?: string;
 };
 
 HorizontalNav.displayName = 'HorizontalNav';
