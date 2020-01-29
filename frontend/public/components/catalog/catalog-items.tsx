@@ -243,7 +243,7 @@ const keywordCompare = (filterString: string, item: Item): boolean => {
 };
 
 const setURLParams = (params): void => {
-  const url = new URL(window.location.pathname);
+  const url = new URL(window.location.href);
   const searchParams = `?${params.toString()}${url.hash}`;
 
   history.replace(`${url.pathname}${searchParams}`);
