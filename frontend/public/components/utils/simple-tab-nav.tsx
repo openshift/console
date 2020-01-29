@@ -30,30 +30,42 @@ class SimpleTab extends React.PureComponent<SimpleTabProps> {
 export class SimpleTabNav extends React.Component<SimpleTabNavProps, SimpleTabNavState> {
   constructor(props) {
     super(props);
-    this.onClickTab = this.onClickTab.bind(this);
-    const selectedTab = _.find(props.tabs, { name: props.selectedTab }) || _.head(props.tabs);
-    this.state = { selectedTab };
+    this.state = { selectedTab: props.selectedTab };
   }
 
-  onClickTab(name) {
-    const { tabs } = this.props;
+  onClickTab = (name) => {
     this.props.onClickTab && this.props.onClickTab(name);
     this.setState({
-      selectedTab: _.find(tabs, { name }),
+      selectedTab: name,
     });
+  };
+
+  static getDerivedStateFromProps(nextProps, prevState) {
+    const selectedTab = (
+      _.find(nextProps.tabs, { name: prevState.selectedTab }) ||
+      _.find(nextProps.tabs, { name: nextProps.selectedTab }) ||
+      _.head(nextProps.tabs)
+    ).name;
+    if (prevState.selectedTab !== selectedTab) {
+      return {
+        selectedTab,
+      };
+    }
+    return null;
   }
 
   render() {
     const { tabs, tabProps, additionalClassNames } = this.props;
     const { selectedTab } = this.state;
-    const Component = selectedTab.component;
+    const selectedTabData = _.find(tabs, { name: selectedTab }) || _.head(tabs);
+    const Component = selectedTabData.component;
 
     return (
       <>
         <ul className={classNames('co-m-horizontal-nav__menu', additionalClassNames)}>
           {_.map(tabs, (tab) => (
             <SimpleTab
-              active={selectedTab.name === tab.name}
+              active={selectedTabData.name === tab.name}
               key={tab.name}
               onClick={this.onClickTab}
               title={tab.name}
@@ -78,7 +90,7 @@ type SimpleTabNavProps = {
 };
 
 type SimpleTabNavState = {
-  selectedTab: any;
+  selectedTab: string;
 };
 
 type SimpleTabProps = {

@@ -5,6 +5,9 @@ import OperatorBackedOwnerReferences from '@console/internal/components/utils';
 import OverviewDetailsKnativeResourcesTab from '../OverviewDetailsKnativeResourcesTab';
 import KnativeServiceResources from '../KnativeServiceResources';
 import KnativeRevisionResources from '../KnativeRevisionResources';
+import RevisionsOverviewList from '../RevisionsOverviewList';
+import KSRoutesOverviewList from '../RoutesOverviewList';
+import ConfigurationsOverviewList from '../ConfigurationsOverviewList';
 import EventSinkServicesOverviewList from '../EventSinkServicesOverviewList';
 
 type OverviewDetailsKnativeResourcesTabProps = React.ComponentProps<
@@ -54,5 +57,16 @@ describe('OverviewDetailsKnativeResourcesTab', () => {
         .at(0)
         .props().item,
     ).toEqual(knItem.item);
+  });
+
+  it('should render Routes, Configuration and revision list on sidebar in case of kn deployment', () => {
+    knItem.item = {
+      ...knItem.item,
+      obj: MockKnativeResources.deployments.data[0],
+    };
+    const wrapper = shallow(<OverviewDetailsKnativeResourcesTab {...knItem} />);
+    expect(wrapper.find(RevisionsOverviewList)).toHaveLength(1);
+    expect(wrapper.find(KSRoutesOverviewList)).toHaveLength(1);
+    expect(wrapper.find(ConfigurationsOverviewList)).toHaveLength(1);
   });
 });
