@@ -118,7 +118,7 @@ export class CombinedDisk {
       (dataVolumeWrapper) => dataVolumeWrapper.getStorageClassName(),
     );
 
-  getPVCName = (source?: StorageUISource) => {
+  getPVCNameBySource = (source?: StorageUISource) => {
     const resolvedSource = source || this.source;
     if (resolvedSource === StorageUISource.IMPORT_DISK) {
       return this.persistentVolumeClaimWrapper && this.persistentVolumeClaimWrapper.getName();
@@ -142,13 +142,13 @@ export class CombinedDisk {
         return this.dataVolumeWrapper.getURL();
       }
       case StorageUISource.IMPORT_DISK: {
-        return this.getPVCName(this.source);
+        return this.getPVCNameBySource(this.source);
       }
       case StorageUISource.ATTACH_DISK: {
-        return this.getPVCName(this.source);
+        return this.getPVCNameBySource(this.source);
       }
       case StorageUISource.ATTACH_CLONED_DISK: {
-        return this.getPVCName(this.source);
+        return this.getPVCNameBySource(this.source);
       }
       default:
         return null;

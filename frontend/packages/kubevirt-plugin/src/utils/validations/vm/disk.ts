@@ -133,7 +133,7 @@ export const validateDisk = (
       dataVolumeWrapper: dataVolume,
       persistentVolumeClaimWrapper,
       isNewPVC: !!persistentVolumeClaimWrapper,
-    }).getPVCName(source);
+    }).getPVCNameBySource(source);
     addRequired(pvcName);
     validations.pvc = validatePVCName(pvcName, usedPVCNames);
   }
