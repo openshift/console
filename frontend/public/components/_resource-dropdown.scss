@@ -41,9 +41,18 @@
     @media (min-width: 480px) {
       min-width: 350px;
     }
+    .co-resource-item__tech-dev-preview {
+      color: red;
+      margin-left: 10px;
+    }
   }
 }
 
 .span--icon__right-margin {
   margin-right: 6px;
+}
+
+.co-search-group__float-right {
+  float: right;
+  margin-top: 5px;
 }

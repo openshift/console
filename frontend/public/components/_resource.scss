@@ -127,7 +127,8 @@
     }
   }
   &__deleting {
-    animation: co-resource-icon__deleting 1.5s cubic-bezier(0.45, 0.05, 0.55, 0.95) alternate infinite;
+    animation: co-resource-icon__deleting 1.5s cubic-bezier(0.45, 0.05, 0.55, 0.95) alternate
+      infinite;
     flex: 0 0 auto;
     font-size: ($font-size-base - 1);
     font-weight: var(--pf-global--FontWeight--bold);
@@ -154,5 +155,8 @@
         top: 2px;
       }
     }
+  }
+  .co-resource-item__horizontal-text {
+    display: flex;
   }
 }

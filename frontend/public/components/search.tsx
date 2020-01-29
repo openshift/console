@@ -16,6 +16,7 @@ import { referenceForModel, kindForReference } from '../module/k8s';
 import { LoadingBox, PageHeading, ResourceIcon } from './utils';
 import { SearchFilterDropdown, searchFilterValues } from './search-filter-dropdown';
 import { setQueryArgument } from './utils/router';
+import { getBadgeFromType } from '@console/shared';
 
 const ResourceList = connectToModel(({ kindObj, mock, namespace, selector, nameFilter }) => {
   if (!kindObj) {
@@ -28,17 +29,20 @@ const ResourceList = connectToModel(({ kindObj, mock, namespace, selector, nameF
   const ns = kindObj.namespaced ? namespace : undefined;
 
   return (
-    <AsyncComponent
-      loader={componentLoader}
-      namespace={ns}
-      selector={selector}
-      nameFilter={nameFilter}
-      kind={kindObj.crd ? referenceForModel(kindObj) : kindObj.kind}
-      showTitle={false}
-      hideTextFilter
-      autoFocus={false}
-      mock={mock}
-    />
+    <div>
+      <div className="co-search-group__float-right">{getBadgeFromType(kindObj.badge)}</div>
+      <AsyncComponent
+        loader={componentLoader}
+        namespace={ns}
+        selector={selector}
+        nameFilter={nameFilter}
+        kind={kindObj.crd ? referenceForModel(kindObj) : kindObj.kind}
+        showTitle={false}
+        hideTextFilter
+        autoFocus={false}
+        mock={mock}
+      />
+    </div>
   );
 });
 
