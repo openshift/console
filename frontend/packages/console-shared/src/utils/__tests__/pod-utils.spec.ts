@@ -1,4 +1,11 @@
-import { isIdled, isKnativeServing, getPodStatus, getPodData } from '../pod-utils';
+import * as utils from '@console/internal/components/utils';
+import {
+  isIdled,
+  isKnativeServing,
+  getPodStatus,
+  getPodData,
+  checkPodEditAccess,
+} from '../pod-utils';
 import {
   deploymentConfig,
   notIdledDeploymentConfig,
@@ -8,6 +15,8 @@ import {
   allpods,
 } from '../__mocks__/pod-utils-test-data';
 import { PodControllerOverviewItem } from '../../types';
+import { DeploymentConfigModel } from '@console/internal/models';
+import { K8sResourceKind } from '@console/internal/module/k8s';
 
 describe('Pod Utils:', () => {
   it('isIdle should return true', () => {
@@ -72,5 +81,42 @@ describe('Pod Utils:', () => {
       inProgressDeploymentData: [],
       completedDeploymentData: allpods,
     });
+  });
+});
+
+describe('checkPodEditAccess', () => {
+  let obj: K8sResourceKind;
+
+  beforeEach(() => {
+    obj = {
+      metadata: {
+        name: 'abc',
+        namespace: 'ts',
+      },
+      spec: {},
+      status: {},
+    };
+  });
+
+  it('should have access true if check Access return allowed true', () => {
+    jest
+      .spyOn(utils, 'checkAccess')
+      .mockImplementation(() => Promise.resolve({ status: { allowed: true } }));
+    checkPodEditAccess(obj, DeploymentConfigModel, undefined)
+      .then((resp) => {
+        expect(resp.status.allowed).toBe(true);
+      })
+      .catch(() => {});
+  });
+
+  it('should have access false if check Access return allowed false', () => {
+    jest
+      .spyOn(utils, 'checkAccess')
+      .mockImplementation(() => Promise.resolve({ status: { allowed: false } }));
+    checkPodEditAccess(obj, DeploymentConfigModel, undefined)
+      .then((resp) => {
+        expect(resp.status.allowed).toBe(false);
+      })
+      .catch(() => {});
   });
 });
