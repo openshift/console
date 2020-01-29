@@ -1,10 +1,8 @@
 import * as React from 'react';
 import {
-  GreenCheckCircleIcon,
-  YellowExclamationTriangleIcon,
-  RedExclamationCircleIcon,
-} from '@console/shared';
-import { HealthState } from '@console/shared/src/components/dashboard/status-card/states';
+  HealthState,
+  healthStateMapping,
+} from '@console/shared/src/components/dashboard/status-card/states';
 import { PrometheusResponse } from '@console/internal/components/graphs';
 import { getControlPlaneComponentHealth } from './status';
 
@@ -13,12 +11,8 @@ const ResponseRate: React.FC<ResponseRateProps> = ({ response, children, error }
   let icon: React.ReactNode;
   if (health.state === HealthState.LOADING) {
     icon = <div className="skeleton-health" />;
-  } else if (health.state === HealthState.OK) {
-    icon = <GreenCheckCircleIcon />;
-  } else if (health.state === HealthState.WARNING) {
-    icon = <YellowExclamationTriangleIcon />;
-  } else if (health.state === HealthState.ERROR) {
-    icon = <RedExclamationCircleIcon />;
+  } else if (health.state !== HealthState.NOT_AVAILABLE) {
+    icon = healthStateMapping[health.state].icon;
   }
   return (
     <div className="co-overview-status__row">

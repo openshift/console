@@ -54,7 +54,7 @@ export const getControlPlaneComponentHealth = (
       response.status === 'success' &&
       _.isNil(_.get(response, 'data.result[0].value[1]')))
   ) {
-    return { state: HealthState.NOT_AVAILABLE };
+    return { state: HealthState.NOT_AVAILABLE, message: 'Not available' };
   }
   if (!response) {
     return { state: HealthState.LOADING };
@@ -81,7 +81,7 @@ export const getControlPlaneHealth: PrometheusHealthHandler = (responses = [], e
   const errComponents = componentsHealth.filter(({ state }) => errorStates.includes(state));
   if (errComponents.length) {
     return {
-      state: errComponents.length === 4 ? HealthState.UNKNOWN : HealthState.WARNING,
+      state: errComponents.length === 4 ? HealthState.NOT_AVAILABLE : HealthState.WARNING,
       message: errComponents.length === 4 ? null : `${errComponents.length} components degraded`,
     };
   }
