@@ -52,7 +52,9 @@ export const SearchFilterDropdown: React.SFC<SearchFilterDropdownProps> = (props
         <TextInput
           onChange={setInputValue}
           placeholder={
-            selected === searchFilterValues.Label ? 'Filter by label...' : 'Filter by name...'
+            selected === searchFilterValues.Label
+              ? 'Filter by label (Example: app=frontend)'
+              : 'Filter by name (Example: resource-123)'
           }
           name="search-filter-input"
           id="search-filter-input"
