@@ -300,7 +300,7 @@ export class CatalogTileViewPage extends React.Component<
         vendor={vendor}
         description={tileDescription}
         data-test={`${kind}-${obj.metadata.name}`}
-        maxDescriptionLength={55}
+        maxDescriptionLength={-1}
       />
     );
   };

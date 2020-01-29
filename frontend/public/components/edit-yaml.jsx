@@ -220,7 +220,8 @@ const EditYAML_ = connect(stateToProps)(
 
     // Unfortunately, `editor.focus()` doesn't work when hiding the shortcuts
     // popover. We need to find the actual DOM element.
-    focusEditor = () => setTimeout(() => document.querySelector('.monaco-editor textarea').focus());
+    focusEditor = () =>
+      setTimeout(() => document.querySelector('.monaco-editor textarea')?.focus());
 
     reload() {
       this.loadYaml(true);

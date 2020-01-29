@@ -175,7 +175,11 @@ fetchSwagger();
 
 // Used by GUI tests to check for unhandled exceptions
 window.windowError = false;
-window.onerror = window.onunhandledrejection = () => (window.windowError = true);
+window.onerror = window.onunhandledrejection = (e) => {
+  // eslint-disable-next-line no-console
+  console.error('Uncaught error', e);
+  window.windowError = e || true;
+};
 
 if ('serviceWorker' in navigator) {
   if (window.SERVER_FLAGS.loadTestFactor > 1) {
