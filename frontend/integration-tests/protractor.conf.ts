@@ -88,6 +88,7 @@ const testSuites = {
     'tests/deploy-image.scenario.ts',
     'tests/performance.scenario.ts',
     'tests/monitoring.scenario.ts',
+    'tests/alertmanager.scenario.ts',
     'tests/crd-extensions.scenario.ts',
     'tests/devconsole/pipeline.scenario.ts',
   ]),
@@ -114,12 +115,14 @@ const testSuites = {
     'tests/deploy-image.scenario.ts',
     'tests/developer-catalog.scenario.ts',
     'tests/monitoring.scenario.ts',
+    'tests/alertmanager.scenario.ts',
     'tests/devconsole/dev-perspective.scenario.ts',
     'tests/devconsole/git-import-flow.scenario.ts',
     'tests/devconsole/pipeline.scenario.ts',
     'tests/crd-extensions.scenario.ts',
   ]),
   clusterSettings: suite(['tests/cluster-settings.scenario.ts']),
+  alertmanager: suite(['tests/alertmanager.scenario.ts']),
   login: ['tests/login.scenario.ts'],
 };
 

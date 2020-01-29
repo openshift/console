@@ -9,7 +9,9 @@ import { SecretModel } from '../../models';
 
 export const receiverTypes = Object.freeze({
   pagerduty_configs: 'PagerDuty',
-  webhook_configs: 'Webhook Receiver',
+  webhook_configs: 'Webhook',
+  email_configs: 'Email',
+  slack_configs: 'Slack',
 });
 
 export const getAlertmanagerYAML = (secret: K8sResourceKind, setErrorMsg): string => {

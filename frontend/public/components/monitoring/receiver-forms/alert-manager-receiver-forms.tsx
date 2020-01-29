@@ -2,7 +2,10 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
 import { Helmet } from 'react-helmet';
-import { ActionGroup, Button } from '@patternfly/react-core';
+import { ActionGroup, Button, Tooltip } from '@patternfly/react-core';
+import { safeLoad } from 'js-yaml';
+import * as classNames from 'classnames';
+import { BlueInfoCircleIcon } from '@console/shared/src';
 
 import { ButtonBar, Dropdown, Firehose, history, StatusBox } from '../../utils';
 import {
@@ -19,6 +22,9 @@ import {
 import { RoutingLabelEditor } from './routing-labels-editor';
 import * as PagerDutyForm from './pagerduty-receiver-form';
 import * as WebhookForm from './webhook-receiver-form';
+import * as EmailForm from './email-receiver-form';
+import * as SlackForm from './slack-receiver-form';
+import { coFetchJSON } from '../../../co-fetch';
 
 /**
  * Converts routes of a specific Receiver:
@@ -111,11 +117,13 @@ const createRoute = (
  * }
  */
 const createReceiver = (
+  globals,
   formValues,
   createReceiverConfig: Function,
   receiverToEdit: AlertmanagerReceiver,
 ): AlertmanagerReceiver => {
   const receiverConfig = createReceiverConfig(
+    globals,
     formValues,
     receiverToEdit && receiverToEdit[formValues.receiverType]
       ? receiverToEdit[formValues.receiverType][0] // pass in receiver config if editing existing receiver
@@ -133,6 +141,10 @@ const subformFactory = (receiverType: string) => {
       return PagerDutyForm;
     case 'webhook_configs':
       return WebhookForm;
+    case 'email_configs':
+      return EmailForm;
+    case 'slack_configs':
+      return SlackForm;
     default:
       return null;
   }
@@ -166,6 +178,7 @@ const ReceiverBaseForm: React.FC<ReceiverBaseFormProps> = ({
   titleVerb,
   saveButtonText,
   editReceiverNamed,
+  alertmanagerGlobals, // contains default props not in alertmanager.yaml's config.global
 }) => {
   const [errorMsg, setErrorMsg] = React.useState<string>();
   const [inProgress, setInProgress] = React.useState<boolean>(false);
@@ -174,12 +187,19 @@ const ReceiverBaseForm: React.FC<ReceiverBaseFormProps> = ({
     config = getAlertmanagerConfig(secret, setErrorMsg);
   }
 
+  const { route, global } = config || {};
+
+  // default globals to config.global props first, then alertmanagerGlobals
+  const defaultGlobals = { ...alertmanagerGlobals, ...global };
+
   const INITIAL_STATE = {
     receiverName: '',
     receiverType: '',
     routeLabels: [],
-    ...PagerDutyForm.getInitialValues(null),
-    ...WebhookForm.getInitialValues(null),
+    ...PagerDutyForm.getInitialValues(defaultGlobals, null),
+    ...WebhookForm.getInitialValues(defaultGlobals, null),
+    ...EmailForm.getInitialValues(defaultGlobals, null),
+    ...SlackForm.getInitialValues(defaultGlobals, null),
   };
 
   let receiverToEdit: AlertmanagerReceiver;
@@ -193,12 +213,11 @@ const ReceiverBaseForm: React.FC<ReceiverBaseFormProps> = ({
       const receiverConfig = receiverToEdit?.[INITIAL_STATE.receiverType]?.[0];
       _.assign(
         INITIAL_STATE,
-        subformFactory(INITIAL_STATE.receiverType).getInitialValues(receiverConfig),
+        subformFactory(INITIAL_STATE.receiverType).getInitialValues(defaultGlobals, receiverConfig),
       );
     }
   }
 
-  const { route } = config || {};
   const { receiver: defaultReceiver } = route || {}; // top level route.receiver is the default receiver for all alarms
   // if no default receiver defined or editing the default receiver
   const isDefaultReceiver = defaultReceiver === undefined || defaultReceiver === editReceiverNamed;
@@ -218,8 +237,16 @@ const ReceiverBaseForm: React.FC<ReceiverBaseFormProps> = ({
   const save = (e) => {
     e.preventDefault();
 
+    // Update Global params
+    _.assign(config.global, SubForm.updateGlobals(defaultGlobals, formValues));
+
     // Update Receivers
-    const newReceiver = createReceiver(formValues, SubForm.createReceiverConfig, receiverToEdit);
+    const newReceiver = createReceiver(
+      defaultGlobals,
+      formValues,
+      SubForm.createReceiverConfig,
+      receiverToEdit,
+    );
     _.update(config, 'receivers', (receivers = []) => {
       if (editReceiverNamed) {
         const index = _.findIndex(receivers, { name: editReceiverNamed });
@@ -282,7 +309,8 @@ const ReceiverBaseForm: React.FC<ReceiverBaseFormProps> = ({
       </Helmet>
       <form className="co-m-pane__body-group" onSubmit={save}>
         <h1 className="co-m-pane__heading">
-          {titleVerb} {isDefaultReceiver && 'Default'} Receiver
+          {titleVerb} {receiverTypes[formValues.receiverType]} {isDefaultReceiver && 'Default'}{' '}
+          Receiver
         </h1>
         <div className="form-group">
           <label className="control-label co-required">Receiver Name</label>
@@ -324,7 +352,11 @@ const ReceiverBaseForm: React.FC<ReceiverBaseFormProps> = ({
 
         {formValues.receiverType && (
           <>
-            <SubForm.Form formValues={formValues} dispatchFormChange={dispatchFormChange} />
+            <SubForm.Form
+              globals={defaultGlobals}
+              formValues={formValues}
+              dispatchFormChange={dispatchFormChange}
+            />
             <RoutingLabelEditor
               formValues={formValues}
               dispatchFormChange={dispatchFormChange}
@@ -358,10 +390,72 @@ const ReceiverBaseForm: React.FC<ReceiverBaseFormProps> = ({
   );
 };
 
-const ReceiverWrapper: React.FC<ReceiverFormsWrapperProps> = React.memo(({ obj, ...props }) => {
+export const SaveAsDefaultCheckbox: React.FC<SaveAsDefaultCheckboxProps> = ({
+  formField,
+  disabled,
+  label,
+  formValues,
+  dispatchFormChange,
+  tooltip,
+}) => {
+  const saveAsDefaultLabelClass = classNames('checkbox', { 'co-no-bold': disabled });
   return (
-    <StatusBox {...obj}>
-      <ReceiverBaseForm {...props} obj={obj.data} />
+    <label className={saveAsDefaultLabelClass}>
+      <input
+        type="checkbox"
+        name={formField}
+        data-test-id="save-as-default"
+        onChange={(e) =>
+          dispatchFormChange({
+            type: 'setFormValues',
+            payload: { [formField]: e.target.checked },
+          })
+        }
+        checked={formValues[formField]}
+        aria-checked={formValues[formField]}
+        disabled={disabled}
+        aria-disabled={disabled}
+      />
+      <span className="co-alert-manager-config__save-as-default-label">{label}</span>
+      <Tooltip content={<p>{tooltip}</p>}>
+        <BlueInfoCircleIcon />
+      </Tooltip>
+    </label>
+  );
+};
+
+const ReceiverWrapper: React.FC<ReceiverFormsWrapperProps> = React.memo(({ obj, ...props }) => {
+  const { alertManagerBaseURL } = window.SERVER_FLAGS;
+  const [alertmanagerGlobals, setAlertmanagerGlobals] = React.useState();
+  const [loaded, setLoaded] = React.useState(false);
+  const [loadError, setLoadError] = React.useState();
+
+  React.useEffect(() => {
+    if (!alertManagerBaseURL) {
+      setLoadError({ message: `Error alertManagerBaseURL not set` });
+      return;
+    }
+    coFetchJSON(`${alertManagerBaseURL}/api/v2/status/`).then((data) => {
+      const originalAlertmanagerConfigJSON = data?.config?.original;
+      if (_.isEmpty(originalAlertmanagerConfigJSON)) {
+        setLoadError({ message: 'alertmanager.v2.status.config.original not found.' });
+      } else {
+        try {
+          const { global } = safeLoad(originalAlertmanagerConfigJSON);
+          setAlertmanagerGlobals(global);
+          setLoaded(true);
+        } catch ({ message }) {
+          setLoadError({
+            message: `Error parsing Alertmanager config.original: ${message || 'invalid YAML'}`,
+          });
+        }
+      }
+    });
+  }, [alertManagerBaseURL]);
+
+  return (
+    <StatusBox {...obj} label="Alertmanager Globals" loaded={loaded} loadError={loadError}>
+      <ReceiverBaseForm {...props} obj={obj.data} alertmanagerGlobals={alertmanagerGlobals} />
     </StatusBox>
   );
 });
@@ -403,6 +497,7 @@ type ReceiverBaseFormProps = {
   titleVerb: string;
   saveButtonText: string;
   editReceiverNamed?: string;
+  alertmanagerGlobals?: { [key: string]: any };
 };
 
 type RouteEditorLabel = {
@@ -422,4 +517,19 @@ type FormState = {
   receiverType: string;
   routeLabels: any[];
   [key: string]: string | any[];
+};
+
+export type FormProps = {
+  globals: { [key: string]: any };
+  formValues: { [key: string]: any };
+  dispatchFormChange: Function;
+};
+
+type SaveAsDefaultCheckboxProps = {
+  formField: string;
+  disabled: boolean;
+  label: string;
+  formValues: { [key: string]: any };
+  dispatchFormChange: Function;
+  tooltip: string;
 };
