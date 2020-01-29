@@ -401,6 +401,19 @@ describe('Using OLM descriptor components', () => {
       });
     });
 
+  // Delete operand instance created in proir steps. Fixes a failure when trying to create a
+  // duplicate operand in the 'successfully creates operand using form' step.
+  // TODO Test cases need to be fixed so that they will pass independently. They should
+  // be self-contained and not depend on state from previous steps.
+  it('deletes operand', async () => {
+    await browser.get(
+      `${appHost}/ns/${testName}/clusterserviceversions/${testCSV.metadata.name}/${testCRD.spec.group}~${testCRD.spec.version}~${testCRD.spec.names.kind}`,
+    );
+    await crudView.isLoaded();
+    await crudView.resourceRowsPresent();
+    await crudView.deleteRow(testCR.kind)(testCR.metadata.name);
+  });
+
   it('displays form for creating operand', async () => {
     await $$('[data-test-id=breadcrumb-link-1]').click();
     await browser.wait(until.visibilityOf(element(by.buttonText('Create App'))));
@@ -488,7 +501,7 @@ describe('Using OLM descriptor components', () => {
     await browser.wait(until.presenceOf($('#metadata\\.name')));
     await element(by.buttonText('Create')).click();
     await crudView.isLoaded();
-    await browser.wait(until.visibilityOf(operatorView.operandLink(testCR.metadata.name)));
+    await browser.wait(until.elementToBeClickable(operatorView.operandLink(testCR.metadata.name)));
     await operatorView.operandLink(testCR.metadata.name).click();
     await browser.wait(until.presenceOf($('.loading-box__loaded')), 5000);
 
