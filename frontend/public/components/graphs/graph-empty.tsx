@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { EmptyState, EmptyStateVariant, Title } from '@patternfly/react-core';
 
 export const GraphEmpty: React.FC<GraphEmptyProps> = ({ height = 180, loading = false }) => (
   <div
@@ -15,11 +14,7 @@ export const GraphEmpty: React.FC<GraphEmptyProps> = ({ height = 180, loading = 
     {loading ? (
       <div className="skeleton-chart" />
     ) : (
-      <EmptyState variant={EmptyStateVariant.full}>
-        <Title className="graph-empty-state__title text-secondary" size="sm">
-          No datapoints found.
-        </Title>
-      </EmptyState>
+      <div className="text-secondary">No datapoints found.</div>
     )}
   </div>
 );
