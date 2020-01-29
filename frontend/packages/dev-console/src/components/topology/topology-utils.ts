@@ -696,7 +696,7 @@ export const topologyModelFromDataModel = (
         type: d.type,
         label: dataModel.topology[d.id].name,
         data,
-        collapsed: filters && !filters.display.knativeServices,
+        collapsed: d.type === TYPE_KNATIVE_SERVICE && filters && !filters.display.knativeServices,
         children: d.children,
         group: d.children?.length > 0,
         shape: NodeShape.rect,
