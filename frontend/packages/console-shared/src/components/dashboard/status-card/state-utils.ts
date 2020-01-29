@@ -55,7 +55,10 @@ export const getOperatorsStatus = <R extends K8sResourceCommon>(
 export const getOperatorsHealthState = (
   healthStatuses: OperatorHealth[],
 ): { health: HealthState; detailMessage: string } => {
-  if (healthStatuses.some((s) => s.health === HealthState.LOADING)) {
+  if (healthStatuses.some((s) => s.health === HealthState.NOT_AVAILABLE)) {
+    return { health: HealthState.NOT_AVAILABLE, detailMessage: undefined };
+  }
+  if (healthStatuses.some((s) => HealthState.LOADING === s.health)) {
     return { health: HealthState.LOADING, detailMessage: undefined };
   }
   const sortedStatuses = healthStatuses.sort(
