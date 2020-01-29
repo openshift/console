@@ -34,6 +34,7 @@ const cvResource = [
     name: 'version',
     isList: false,
     prop: 'cv',
+    optional: true,
   },
 ];
 
