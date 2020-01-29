@@ -20,7 +20,8 @@ specDescriptors:
   17. [Select](#17-select)
   18. [Advanced](#18-advanced)
   19. [Endpoint List](#19-endpoint-list)
-  20. [DEPRECATED Descriptors](#20-deprecated-descriptors)
+  20. [Field Dependency](#20-field-dependency)
+  21. [DEPRECATED Descriptors](#21-deprecated-descriptors)
 
 statusDescriptors:
   - [ToDo]
@@ -676,7 +677,63 @@ This descriptor is created specifically for Prometheus Operator to specify a lis
 </table>
 
 
-### 20. DEPRECATED Descriptors
+### 20. Field Dependency
+
+**x-descriptors**
+
+This descriptor allows you to specify a field as the dependent of a Control Field and shows the field when the current value of the Control Field is equal to the expected value:
+```yaml
+'urn:alm:descriptor:com.tectonic.ui:fieldDependency:CONTROL_FIELD_PATH:EXPECTED_VALUE'
+```
+
+**Usage**
+1. Add “fieldDependency” to 'x-descriptors' array of the Dependent Field(s).
+2. Replace “CONTROL_FIELD_PATH” with the 'path' property of the Control Field object.
+3. Replace “EXPECTED_VALUE” with the actual expected value.
+
+The Dependent Field(s) will be displayed only when the current value of the Control Field is equal to the expected value.
+
+**Example**
+```yaml
+…
+- displayName: Enable Upgrades
+  description:  >-
+      Set true to enable automatic micro version product upgrades, it is disabled by default.
+  path: upgrades.enabled
+  x-descriptors:
+      - 'urn:alm:descriptor:com.tectonic.ui:booleanSwitch'
+- displayName: Include minor version upgrades
+  description: >-
+      Set true to enable automatic minor product version upgrades, it is
+      disabled by default. Requires spec.upgrades.enabled to be true.
+  path: upgrades.minor
+  x-descriptors:
+      - 'urn:alm:descriptor:com.tectonic.ui:fieldDependency:upgrades.enabled:true'
+      - 'urn:alm:descriptor:com.tectonic.ui:booleanSwitch'
+…
+```
+
+**UI**
+<table style="width:100%">
+  <tr style="vertical-align:top">
+    <td width="50%">CREATION VIEW
+      <img src="img/20-1_fielddependency-new.png" />
+      <br>
+      <small><b>* </b><i> When "Enable Upgrades" (CONTROL FIELD) is TRUE:</i></small>
+      <img src="img/20-2_fielddependency-new.png" />
+      </td></td>
+    <td width="50%">DISPLAY VIEW
+      <img src="img/20-2_fielddependency-dis.png" /></td>
+  </tr>
+  <tr style="vertical-align:top">
+    <td colspan="2">MODIFY VIEW
+      <p><small><b>* </b><i>Currently, this descriptor does not provide “Modify View”.</i></small></p>
+      </td>
+  </tr>
+</table>
+
+
+### 21. DEPRECATED Descriptors
 
 #### Label **[DEPRECATED]**
 
