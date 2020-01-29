@@ -185,16 +185,24 @@ const Board: React.FC<BoardProps> = ({ board, patchVariable, pollInterval, times
   const loadVariableValues = React.useCallback(
     (name: string, rawQuery: string) => {
       // Convert label_values queries to something Prometheus can handle
+      // TODO: Once the Prometheus /series endpoint is available through the API proxy, this should
+      // be converted to use that instead
       const query = rawQuery.replace(/label_values\((.*), (.*)\)/, 'count($1) by ($2)');
+      const url = getPrometheusURL({
+        endpoint: PrometheusEndpoint.QUERY_RANGE,
+        query,
+        samples: 30,
+        timeout: '5s',
+        timespan,
+      });
 
-      const url = getPrometheusURL({ endpoint: PrometheusEndpoint.QUERY, query });
       safeFetch(url).then((response) => {
         const result = _.get(response, 'data.result');
         const options = _.flatMap(result, ({ metric }) => _.values(metric)).sort();
         patchVariable(name, options.length ? { options, value: options[0] } : { value: '' });
       });
     },
-    [patchVariable, safeFetch],
+    [patchVariable, safeFetch, timespan],
   );
 
   React.useEffect(() => {
