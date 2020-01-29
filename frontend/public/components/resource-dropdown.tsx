@@ -21,25 +21,9 @@ const blacklistGroups = ImmutableSet([
 ]);
 
 const blacklistResources = ImmutableSet([
-  // Unfortunately a few resources we want to show like Ingress exist only in extensions/v1beta1,
-  // so we can't blacklist the entire group. The API group is eventually going away.
-  // https://github.com/kubernetes/kubernetes/issues/43214
-
-  // Prefer apps/v1
-  'extensions/v1beta1.DaemonSet',
-  'extensions/v1beta1.Deployment',
-  'extensions/v1beta1.NetworkPolicy',
-  'extensions/v1beta1.ReplicaSet',
-
-  // Prefer policy/v1beta1
-  'extensions/v1beta1.PodSecurityPolicy',
-
   // Prefer core/v1
   'events.k8s.io/v1beta1.Event',
   'security.openshift.io/v1.SecurityContextConstraints',
-
-  // Hide dummy resource
-  'extensions/v1beta1.ReplicationControllerDummy',
 ]);
 
 const DropdownItem: React.SFC<DropdownItemProps> = ({ model, showGroup, checked }) => (
