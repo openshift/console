@@ -97,12 +97,12 @@ const providerTypeSort = (provider) => {
       return 1;
     case ProviderType.Community:
       return 2;
+    case ProviderType.Marketplace:
+      return 3;
     case ProviderType.Custom:
       return 4;
-    case ProviderType.Marketplace:
-      return 5;
     default:
-      return 6;
+      return 5;
   }
 };
 
