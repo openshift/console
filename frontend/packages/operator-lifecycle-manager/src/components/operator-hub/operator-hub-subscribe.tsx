@@ -5,9 +5,11 @@ import { match } from 'react-router';
 import { ActionGroup, Alert, Button, Checkbox, Tooltip } from '@patternfly/react-core';
 import {
   Dropdown,
+  ExternalLink,
   Firehose,
   history,
   NsDropdown,
+  openshiftHelpBase,
   BreadCrumbs,
   MsgBox,
   StatusBox,
@@ -348,10 +350,24 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
             onChange={setEnableMonitoring}
             isChecked={enableMonitoring}
           />
-          <small>
-            Note: Enabling monitoring will allow any operator or workload running on this namespace
-            to contribute metrics to the cluster metric set.
-          </small>
+          {props.packageManifest.data[0].metadata.labels['opsrc-provider'] !== 'redhat' && (
+            <Alert
+              isInline
+              className="co-alert pf-c-alert--top-margin"
+              variant="warning"
+              title="Namespace monitoring"
+            >
+              Please note that installing non Red Hat operators into openshift namespaces and
+              enabling monitoring voids user support. Enabling cluster monitoring for non Red Hat
+              operators can lead to malicious metrics data overriding existing cluster metrics. For
+              more information, see the{' '}
+              <ExternalLink
+                href={`${openshiftHelpBase}monitoring/cluster-monitoring/configuring-the-monitoring-stack.html#maintenance-and-support_configuring-monitoring`}
+                text="cluster monitoring documentation"
+              />{' '}
+              .
+            </Alert>
+          )}
         </div>
       )}
     </>
