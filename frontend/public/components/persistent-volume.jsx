@@ -20,7 +20,9 @@ import { PersistentVolumeModel } from '../models';
 const { common } = Kebab.factory;
 const menuActions = [...Kebab.getExtensionsActionsForKind(PersistentVolumeModel), ...common];
 
-const PVStatus = ({ pv }) => <Status status={pv.status.phase} />;
+const PVStatus = ({ pv }) => (
+  <Status status={pv.metadata.deletionTimestamp ? 'Terminating' : pv.status.phase} />
+);
 
 const tableColumnClasses = [
   classNames('col-lg-2', 'col-md-2', 'col-sm-4', 'col-xs-6'),

@@ -26,7 +26,9 @@ const menuActions = [
   ...common,
 ];
 
-const PVCStatus = ({ pvc }) => <Status status={pvc.status.phase} />;
+const PVCStatus = ({ pvc }) => (
+  <Status status={pvc.metadata.deletionTimestamp ? 'Terminating' : pvc.status.phase} />
+);
 
 const tableColumnClasses = [
   classNames('col-lg-2', 'col-md-2', 'col-sm-4', 'col-xs-6'),
