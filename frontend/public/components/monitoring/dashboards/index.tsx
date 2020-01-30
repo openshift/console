@@ -350,7 +350,7 @@ const MonitoringDashboardsPage_: React.FC<MonitoringDashboardsPageProps> = ({
             items={boardItems}
             onChange={setBoard}
             selectedKey={board}
-            title="Board Type"
+            title="Dashboard"
           />
           <AllVariableDropdowns />
         </div>
