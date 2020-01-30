@@ -34,6 +34,8 @@ export const kindForReference = (ref: K8sResourceKindReference) => isGroupVersio
   ? ref.split('~')[2]
   : ref;
 
+export const apiGroupForReference = (ref: GroupVersionKind) => ref.split('~')[0];
+
 export const versionForReference = (ref: GroupVersionKind) => ref.split('~')[1];
 
 export const apiVersionForModel = (model: K8sKind) => _.isEmpty(model.apiGroup)
