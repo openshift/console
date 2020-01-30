@@ -1,6 +1,6 @@
 import * as _ from 'lodash';
 import { K8sResourceKind } from '@console/internal/module/k8s';
-import { createBasicLookup, getName, getNamespace } from '@console/shared/src';
+import { createBasicLookup, getName, getNamespace, getOwnerReferences } from '@console/shared/src';
 import { FirehoseResult } from '@console/internal/components/utils';
 import { V1Disk } from '../../../types/vm/disk/V1Disk';
 import { V1Volume } from '../../../types/vm/disk/V1Volume';
@@ -12,6 +12,7 @@ import { asVM, getDataVolumeTemplates, isWinToolsImage } from '../../../selector
 import { getLoadedData, isLoaded } from '../../../utils';
 import { StorageUISource } from '../../../components/modals/disk-modal/storage-ui-source';
 import { DYNAMIC } from '../../../utils/strings';
+import { DataVolumeModel } from '../../../models';
 import { DiskWrapper } from './disk-wrapper';
 import { DataVolumeWrapper } from './data-volume-wrapper';
 import { VolumeWrapper } from './volume-wrapper';
@@ -33,6 +34,8 @@ export class CombinedDisk {
 
   readonly persistentVolumeClaimWrapper?: PersistentVolumeClaimWrapper;
 
+  readonly pvcName: string;
+
   constructor({
     diskWrapper,
     volumeWrapper,
@@ -41,6 +44,7 @@ export class CombinedDisk {
     isNewPVC,
     dataVolumesLoading,
     pvcsLoading,
+    pvcName,
   }: {
     diskWrapper: DiskWrapper;
     volumeWrapper: VolumeWrapper;
@@ -49,6 +53,7 @@ export class CombinedDisk {
     dataVolumesLoading?: boolean;
     pvcsLoading?: boolean;
     isNewPVC?: boolean;
+    pvcName: string;
   }) {
     this.diskWrapper = diskWrapper;
     this.volumeWrapper = volumeWrapper;
@@ -61,6 +66,7 @@ export class CombinedDisk {
       dataVolumeWrapper && dataVolumeWrapper.getType(),
       !!persistentVolumeClaimWrapper && isNewPVC,
     );
+    this.pvcName = pvcName;
   }
 
   getSource = () => this.source;
@@ -132,6 +138,8 @@ export class CombinedDisk {
 
     return null;
   };
+
+  getPVCName = () => this.pvcName;
 
   getContent = () => {
     switch (this.source) {
@@ -281,14 +289,16 @@ export class CombinedDiskFactory {
         volumeWrapper.getType() === VolumeType.PERSISTENT_VOLUME_CLAIM
           ? pvcLookup[volumeWrapper.getPersistentVolumeClaimName()]
           : undefined;
+      const dataVolumeWrapper = dataVolume && DataVolumeWrapper.initialize(dataVolume);
 
       return new CombinedDisk({
         diskWrapper,
         volumeWrapper,
-        dataVolumeWrapper: dataVolume && DataVolumeWrapper.initialize(dataVolume),
+        dataVolumeWrapper,
         persistentVolumeClaimWrapper: pvc && PersistentVolumeClaimWrapper.initialize(pvc),
         dataVolumesLoading: this.dataVolumesLoading,
         pvcsLoading: this.pvcsLoading,
+        pvcName: this.lookupPVCNameForDisk(dataVolumeWrapper),
       });
     });
   };
@@ -298,4 +308,19 @@ export class CombinedDiskFactory {
 
   getUsedDataVolumeNames = (excludeName: string): Set<string> =>
     new Set(this.dataVolumes.map((dv) => getName(dv)).filter((n) => n && n !== excludeName));
+
+  private lookupPVCNameForDisk = (dataVolumeWrapper?: DataVolumeWrapper) => {
+    const name = dataVolumeWrapper && dataVolumeWrapper.getName();
+    if (!this.pvcs || name) {
+      return null;
+    }
+
+    const pvc = this.pvcs.find((p) =>
+      getOwnerReferences(p).some(
+        (ownerReference) =>
+          ownerReference.name === name && ownerReference.kind === DataVolumeModel.kind,
+      ),
+    );
+    return getName(pvc) || null;
+  };
 }

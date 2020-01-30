@@ -10,10 +10,10 @@ import { sortable } from '@patternfly/react-table';
 import { DataVolumeModel } from '../../models';
 import { VMGenericLikeEntityKind } from '../../types/vmLike';
 import { VMLikeEntityTabProps } from '../vms/types';
-import { getResource, getLoadedData } from '../../utils';
+import { getResource } from '../../utils';
 import { wrapWithProgress } from '../../utils/utils';
 import { diskModalEnhanced } from '../modals/disk-modal/disk-modal-enhanced';
-import { CombinedDiskFactory, CombinedDisk } from '../../k8s/wrapper/vm/combined-disk';
+import { CombinedDiskFactory } from '../../k8s/wrapper/vm/combined-disk';
 import { V1alpha1DataVolume } from '../../types/vm/disk/V1alpha1DataVolume';
 import { VHW_TYPES } from '../create-vm-wizard/tabs/virtual-hardware-tab/types';
 import { StorageBundle } from './types';
@@ -21,20 +21,6 @@ import { DiskRow } from './disk-row';
 import { diskTableColumnClasses } from './utils';
 import { isVMI } from '../../selectors/vm';
 import { ADD_DISK } from '../../utils/strings';
-
-const lookupPVCName = (pvcs: FirehoseResult<K8sResourceKind[]>, disk: CombinedDisk) => {
-  const loadedPVCs: K8sResourceKind[] = getLoadedData(pvcs) || [];
-  const name = disk.dataVolumeWrapper && disk.dataVolumeWrapper.getName();
-  const pvc =
-    name &&
-    loadedPVCs.find((p) =>
-      p.metadata.ownerReferences.some(
-        (ownerReference) =>
-          ownerReference.name === name && ownerReference.kind === DataVolumeModel.kind,
-      ),
-    );
-  return (pvc && pvc.metadata.name) || null;
-};
 
 const getStoragesData = ({
   vmLikeEntity,
@@ -62,7 +48,7 @@ const getStoragesData = ({
       diskInterface: disk.getDiskInterface(),
       size: disk.getReadableSize(),
       storageClass: disk.getStorageClassName(),
-      pvc: disk.getPVCNameBySource() || lookupPVCName(pvcs, disk),
+      pvc: disk.getPVCNameBySource() || disk.getPVCName(),
     }));
 };
 
