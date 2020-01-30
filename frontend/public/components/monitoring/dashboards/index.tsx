@@ -43,7 +43,7 @@ const VariableDropdown: React.FC<VariableDropdownProps> = ({
   title,
 }) => (
   <div className="form-group monitoring-dashboards__dropdown-wrap">
-    {title && <label>{title}</label>}
+    <label className="monitoring-dashboards__dropdown-title">{title}</label>
     <Dropdown
       buttonClassName={buttonClassName}
       items={items}
@@ -391,7 +391,7 @@ type VariableDropdownProps = {
   items: { [key: string]: string };
   onChange: (v: string) => void;
   selectedKey: string;
-  title?: string;
+  title: string;
 };
 
 type BoardProps = {
