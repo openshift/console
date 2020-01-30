@@ -2,6 +2,7 @@ import * as _ from 'lodash';
 
 export const operatorProviderTypeMap = {
   redhat: 'Red Hat',
+  marketplace: 'Marketplace',
   certified: 'Certified',
   community: 'Community',
   custom: 'Custom',
