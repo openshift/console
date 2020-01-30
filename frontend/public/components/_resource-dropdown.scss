@@ -36,24 +36,10 @@
 }
 
 .co-type-selector {
-  .pf-c-dropdown__toggle .show {
-    display: inline !important;
-    &::before {
-      content: '- ';
-    }
-  }
   .pf-c-dropdown__menu {
     min-width: 290px;
     @media (min-width: 480px) {
       min-width: 350px;
-    }
-    &:active,
-    .active a,
-    .active a:focus,
-    .active a:hover {
-      .co-resource-item__resource-api {
-        color: $dropdown-link-active-color;
-      }
     }
   }
 }
