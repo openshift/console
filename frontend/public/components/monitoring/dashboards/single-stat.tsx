@@ -36,7 +36,7 @@ const SingleStat: React.FC<Props> = ({
       })
       .catch((err) => {
         if (err.name !== 'AbortError') {
-          setError(err);
+          setError(_.get(err, 'json.error', err.message));
           setIsLoading(false);
           setValue(undefined);
         }
