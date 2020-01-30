@@ -8,7 +8,14 @@ import { Helmet } from 'react-helmet';
 import { namespaceProptype } from '../propTypes';
 import { ResourceListDropdown } from './resource-dropdown';
 import { TextFilter } from './factory';
-import { referenceFor, watchURL } from '../module/k8s';
+import {
+  apiGroupForReference,
+  groupVersionFor,
+  isGroupVersionKind,
+  kindForReference,
+  referenceFor,
+  watchURL,
+} from '../module/k8s';
 import { withStartGuide } from './start-guide';
 import { WSFactory } from '../module/ws-factory';
 import { EventModel, NodeModel } from '../models';
@@ -40,8 +47,18 @@ export const categoryFilter = (category, {reason}) => {
   return category === 'error' ? isError : !isError;
 };
 
-const kindFilter = (kind, {involvedObject}) => {
-  return kind === 'all' || involvedObject.kind === kind;
+const kindFilter = (reference, { involvedObject }) => {
+  if (reference === 'all') {
+    return true;
+  }
+
+  if (isGroupVersionKind(reference)) {
+    const group = apiGroupForReference(reference);
+    const kind = kindForReference(reference);
+    const { group: eventGroup } = groupVersionFor(involvedObject.apiVersion);
+    return involvedObject.kind === kind && eventGroup === group;
+  }
+  return involvedObject.kind === reference;
 };
 
 const Inner = connectToFlags(FLAGS.CAN_LIST_NODE)(class Inner extends React.PureComponent {
