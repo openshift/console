@@ -284,6 +284,11 @@ export const FireMan_ = connect(null, { filterList })(
                 />
               </div>
             )}
+            {!title && badge && (
+              <div className="co-m-pane__filter-bar-group co-m-pane__filter-bar-group--badge">
+                {badge}
+              </div>
+            )}
           </div>
           <div className="co-m-pane__body">
             {inject(this.props.children, {

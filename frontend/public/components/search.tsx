@@ -4,6 +4,7 @@ import { Helmet } from 'react-helmet';
 import { Button, Chip, ChipGroup, ChipGroupToolbarItem, Expandable } from '@patternfly/react-core';
 import { CloseIcon } from '@patternfly/react-icons';
 
+import { getBadgeFromType } from '@console/shared';
 import { AsyncComponent } from './utils/async';
 import { connectToModel } from '../kinds';
 import { DefaultPage } from './default-resource';
@@ -16,7 +17,6 @@ import { referenceForModel, kindForReference } from '../module/k8s';
 import { LoadingBox, PageHeading, ResourceIcon } from './utils';
 import { SearchFilterDropdown, searchFilterValues } from './search-filter-dropdown';
 import { setQueryArgument } from './utils/router';
-import { getBadgeFromType } from '@console/shared';
 
 const ResourceList = connectToModel(({ kindObj, mock, namespace, selector, nameFilter }) => {
   if (!kindObj) {
@@ -29,20 +29,18 @@ const ResourceList = connectToModel(({ kindObj, mock, namespace, selector, nameF
   const ns = kindObj.namespaced ? namespace : undefined;
 
   return (
-    <div>
-      <div className="co-search-group__float-right">{getBadgeFromType(kindObj.badge)}</div>
-      <AsyncComponent
-        loader={componentLoader}
-        namespace={ns}
-        selector={selector}
-        nameFilter={nameFilter}
-        kind={kindObj.crd ? referenceForModel(kindObj) : kindObj.kind}
-        showTitle={false}
-        hideTextFilter
-        autoFocus={false}
-        mock={mock}
-      />
-    </div>
+    <AsyncComponent
+      loader={componentLoader}
+      namespace={ns}
+      selector={selector}
+      nameFilter={nameFilter}
+      kind={kindObj.crd ? referenceForModel(kindObj) : kindObj.kind}
+      showTitle={false}
+      hideTextFilter
+      autoFocus={false}
+      mock={mock}
+      badge={getBadgeFromType(kindObj.badge)}
+    />
   );
 });
 
