@@ -648,15 +648,26 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
             />
           )}
           <div className="graph-wrapper graph-wrapper--query-browser">
-            <ZoomableGraph
-              allSeries={graphData}
-              disabledSeries={disabledSeries}
-              formatLegendLabel={formatLegendLabel}
-              isStack={isStack}
-              onZoom={onZoom}
-              span={span}
-              xDomain={xDomain}
-            />
+            {hideControls ? (
+              <Graph
+                allSeries={graphData}
+                disabledSeries={disabledSeries}
+                formatLegendLabel={formatLegendLabel}
+                isStack={isStack}
+                span={span}
+                xDomain={xDomain}
+              />
+            ) : (
+              <ZoomableGraph
+                allSeries={graphData}
+                disabledSeries={disabledSeries}
+                formatLegendLabel={formatLegendLabel}
+                isStack={isStack}
+                onZoom={onZoom}
+                span={span}
+                xDomain={xDomain}
+              />
+            )}
           </div>
         </>
       )}
