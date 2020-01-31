@@ -10,7 +10,7 @@ import { getSuggestedName, getPorts, makePortName } from '../../../utils/imagest
 import { secretModalLauncher } from '../CreateSecretModal';
 
 const ImageSearch: React.FC = () => {
-  const { values, setFieldValue, setFieldError, dirty } = useFormikContext<FormikValues>();
+  const { values, setFieldValue, dirty } = useFormikContext<FormikValues>();
   const [newImageSecret, setNewImageSecret] = React.useState('');
   const [alertVisible, shouldHideAlert] = React.useState(true);
   const namespace = values.project.name;
@@ -64,17 +64,17 @@ const ImageSearch: React.FC = () => {
           } else {
             setFieldValue('isSearchingForImage', false);
             setFieldValue('isi', {});
-            setFieldError('isi.image', status.message);
+            setFieldValue('isi.status', status.message);
             setFieldValue('route.targetPort', null);
           }
         })
         .catch((error) => {
-          setFieldError('isi.image', error.message);
           setFieldValue('isi', {});
+          setFieldValue('isi.status', error.message);
           setFieldValue('isSearchingForImage', false);
         });
     },
-    [setFieldError, setFieldValue, values.application.name, values.name, values.project.name],
+    [setFieldValue, values.application.name, values.name, values.project.name],
   );
 
   const handleSave = (name: string) => {
