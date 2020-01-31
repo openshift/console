@@ -2,6 +2,7 @@ export type ColumnStyle = {
   alias?: string;
   decimals?: number;
   unit?: string;
+  pattern: string;
   type: string;
 };
 
