@@ -1,18 +1,21 @@
 import * as React from 'react';
-import { shallow, ShallowWrapper } from 'enzyme';
+import { Provider } from 'react-redux';
+import { mount, ReactWrapper } from 'enzyme';
 
-import { DetailsPage, DetailsPageProps } from '../../../public/components/factory/details';
-import { PodModel, ConfigMapModel } from '../../../public/models';
-import { referenceForModel } from '../../../public/module/k8s';
-import { Firehose } from '../../../public/components/utils';
+import store from '@console/internal/redux';
+import { DetailsPage, DetailsPageProps } from '@console/internal/components/factory/details';
+import { PodModel, ConfigMapModel } from '@console/internal/models';
+import { referenceForModel } from '@console/internal/module/k8s';
+import { Firehose } from '@console/internal/components/utils';
 
 describe(DetailsPage.displayName, () => {
-  let wrapper: ShallowWrapper<DetailsPageProps>;
+  let wrapper: ReactWrapper<DetailsPageProps>;
 
   beforeEach(() => {
     const match = { params: { ns: 'default' }, isExact: true, path: '', url: '' };
 
-    wrapper = shallow(
+    // Need full mount with redux store since this is a redux-connected component
+    wrapper = mount(
       <DetailsPage
         match={match}
         name="test-name"
@@ -20,9 +23,10 @@ describe(DetailsPage.displayName, () => {
         kind={referenceForModel(PodModel)}
         pages={[]}
       />,
-    )
-      .childAt(0)
-      .shallow();
+      {
+        wrappingComponent: ({ children }) => <Provider store={store}>{children}</Provider>,
+      },
+    );
   });
 
   it('renders a `Firehose` using the given props', () => {

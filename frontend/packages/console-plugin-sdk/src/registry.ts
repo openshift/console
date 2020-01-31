@@ -1,35 +1,38 @@
 import * as _ from 'lodash';
-import { FlagsObject } from '@console/internal/reducers/features';
+
 import {
+  ActivePlugin,
   Extension,
   ExtensionTypeGuard,
-  ActivePlugin,
-  isModelDefinition,
-  isFeatureFlag,
-  isResourceListPage,
-  isResourceDetailsPage,
-  isPerspective,
-  isYAMLTemplate,
-  isRoutePage,
-  isDashboardsOverviewHealthSubsystem,
-  isDashboardsCard,
-  isDashboardsTab,
-  isDashboardsOverviewInventoryItem,
-  isDashboardsInventoryItemGroup,
-  isDashboardsOverviewUtilizationItem,
-  isOverviewResourceTab,
-  isOverviewCRD,
-  isOverviewTabSection,
-  isGlobalConfig,
   isClusterServiceVersionAction,
-  isKebabActions,
-  isDevCatalogModel,
-  isDashboardsOverviewResourceActivity,
+  isDashboardsCard,
+  isDashboardsInventoryItemGroup,
+  isDashboardsOverviewHealthSubsystem,
+  isDashboardsOverviewInventoryItem,
+  isDashboardsOverviewInventoryItemReplacement,
   isDashboardsOverviewPrometheusActivity,
+  isDashboardsOverviewResourceActivity,
+  isDashboardsOverviewUtilizationItem,
+  isDashboardsTab,
+  isDevCatalogModel,
+  isFeatureFlag,
+  isGlobalConfig,
+  isKebabActions,
+  isModelDefinition,
+  isOverviewCRD,
+  isOverviewResourceTab,
+  isOverviewTabSection,
+  isPerspective,
   isProjectDashboardInventoryItem,
   isReduxReducer,
-  isDashboardsOverviewInventoryItemReplacement,
+  isResourceDetailsPage,
+  isResourceListPage,
+  isResourceTabPage,
+  isRoutePage,
+  isYAMLTemplate,
 } from './typings';
+
+import { FlagsObject } from '@console/internal/reducers/features';
 
 // TODO(vojtech): legacy, remove
 
@@ -82,6 +85,10 @@ export class ExtensionRegistry {
 
   public getRoutePages() {
     return this.extensions.filter(isRoutePage);
+  }
+
+  public getResourceTabPages() {
+    return this.extensions.filter(isResourceTabPage);
   }
 
   public getPerspectives() {
