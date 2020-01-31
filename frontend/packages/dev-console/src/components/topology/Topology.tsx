@@ -22,7 +22,7 @@ import {
 import { RootState } from '@console/internal/redux';
 import { TopologyIcon } from '@patternfly/react-icons';
 import TopologySideBar from './TopologySideBar';
-import { TopologyDataModel, TopologyDataObject } from './topology-types';
+import { GraphData, TopologyDataModel, TopologyDataObject } from './topology-types';
 import TopologyResourcePanel from './TopologyResourcePanel';
 import TopologyApplicationPanel from './application-panel/TopologyApplicationPanel';
 import ConnectedTopologyEdgePanel from './TopologyEdgePanel';
@@ -33,10 +33,13 @@ import { TYPE_APPLICATION_GROUP, TYPE_HELM_RELEASE, TYPE_OPERATOR_BACKED_SERVICE
 import TopologyFilterBar from './filters/TopologyFilterBar';
 import { getTopologyFilters, TopologyFilters } from './filters/filter-utils';
 import TopologyHelmReleasePanel from './TopologyHelmReleasePanel';
+import { useAddToProjectAccess } from '../../utils/useAddToProjectAccess';
 
 interface StateProps {
   filters: TopologyFilters;
+  activeNamespace: string;
 }
+
 export interface TopologyProps extends StateProps {
   data: TopologyDataModel;
   serviceBinding: boolean;
@@ -50,12 +53,14 @@ const graphModel: Model = {
   },
 };
 
-const Topology: React.FC<TopologyProps> = ({ data, serviceBinding, filters }) => {
+const Topology: React.FC<TopologyProps> = ({ data, serviceBinding, filters, activeNamespace }) => {
   const visRef = React.useRef<Visualization | null>(null);
   const componentFactoryRef = React.useRef<ComponentFactory | null>(null);
   const [layout, setLayout] = React.useState<string>(graphModel.graph.layout);
   const [model, setModel] = React.useState<Model>();
+  const [graphData, setGraphData] = React.useState<GraphData>();
   const [selectedIds, setSelectedIds] = React.useState<string[]>([]);
+  const createResourceAccess: string[] = useAddToProjectAccess(activeNamespace);
 
   if (!componentFactoryRef.current) {
     componentFactoryRef.current = new ComponentFactory(serviceBinding);
@@ -75,6 +80,15 @@ const Topology: React.FC<TopologyProps> = ({ data, serviceBinding, filters }) =>
     });
     visRef.current.fromModel(graphModel);
   }
+
+  React.useEffect(() => {
+    const newGraphData: GraphData = {
+      createResourceAccess,
+      namespace: activeNamespace,
+    };
+    visRef.current.getGraph().setData(newGraphData);
+    setGraphData(newGraphData);
+  }, [activeNamespace, createResourceAccess]);
 
   React.useEffect(() => {
     componentFactoryRef.current.serviceBinding = serviceBinding;
@@ -189,6 +203,7 @@ const Topology: React.FC<TopologyProps> = ({ data, serviceBinding, filters }) =>
       if (selectedEntity.getType() === TYPE_APPLICATION_GROUP) {
         return (
           <TopologyApplicationPanel
+            graphData={graphData}
             application={{
               id: selectedEntity.getId(),
               name: selectedEntity.getLabel(),
@@ -246,8 +261,10 @@ const Topology: React.FC<TopologyProps> = ({ data, serviceBinding, filters }) =>
 };
 
 const TopologyStateToProps = (state: RootState): StateProps => {
-  const filters = getTopologyFilters(state);
-  return { filters };
+  return {
+    filters: getTopologyFilters(state),
+    activeNamespace: state.UI.get('activeNamespace'),
+  };
 };
 
 export default connect(TopologyStateToProps)(Topology);

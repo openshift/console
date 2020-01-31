@@ -47,12 +47,13 @@ export const groupContextMenu = (element: Node, connectorSource?: Node) => {
     resources: element.getData().groupResources,
   };
 
-  return createMenuItems(kebabOptionsToMenu(groupActions(applicationData, connectorSource)));
+  const graphData = element.getGraph().getData();
+  return createMenuItems(
+    kebabOptionsToMenu(groupActions(graphData, applicationData, connectorSource)),
+  );
 };
 export const nodeContextMenu = (element: Node) =>
   createMenuItems(kebabOptionsToMenu(nodeActions(element.getData())));
 
-export const graphContextMenu = (element: Graph, connectorSource?: Node) =>
-  createMenuItems(
-    kebabOptionsToMenu(graphActions(element.getController().getElements(), connectorSource)),
-  );
+export const graphContextMenu = (graph: Graph, connectorSource?: Node) =>
+  createMenuItems(kebabOptionsToMenu(graphActions(graph.getData(), connectorSource)));

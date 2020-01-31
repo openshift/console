@@ -1,8 +1,7 @@
 import { URL } from 'url';
 import * as React from 'react';
 import { GitAltIcon } from '@patternfly/react-icons';
-import { KebabOption, asAccessReview } from '@console/internal/components/utils';
-import { DeploymentModel } from '@console/internal/models';
+import { KebabOption } from '@console/internal/components/utils';
 import {
   getMenuPath,
   getAddPageUrl,
@@ -38,7 +37,7 @@ describe('addResourceMenuUtils: ', () => {
       connectorSourceObj?.metadata?.name
     }`;
     const url = new URL(
-      getAddPageUrl(primaryResource, ImportOptions.GIT, true, contextSource),
+      getAddPageUrl(primaryResource, '', ImportOptions.GIT, true, contextSource),
       'https://mock.test.com',
     );
 
@@ -53,20 +52,26 @@ describe('addResourceMenuUtils: ', () => {
 
   it('should return the page url without application params in the url', () => {
     const { resource } = getTopologyData(MockResources, ['deployments']);
-    const url = new URL(getAddPageUrl(resource, ImportOptions.GIT, false), 'https://mock.test.com');
+    const url = new URL(
+      getAddPageUrl(resource, '', ImportOptions.GIT, false),
+      'https://mock.test.com',
+    );
     expect(url.searchParams.has('application')).toBe(false);
   });
 
   it('should return the page url without contextSource params in the url', () => {
     const { resource } = getTopologyData(MockResources, ['deployments']);
-    const url = new URL(getAddPageUrl(resource, ImportOptions.GIT, false), 'https://mock.test.com');
+    const url = new URL(
+      getAddPageUrl(resource, '', ImportOptions.GIT, false),
+      'https://mock.test.com',
+    );
     expect(url.searchParams.has('contextSource')).toBe(false);
   });
 
   it('should return the page url with proper queryparams for container image flow', () => {
     const { resource } = getTopologyData(MockResources, ['deployments']);
     const url = new URL(
-      getAddPageUrl(resource, ImportOptions.CONTAINER, true),
+      getAddPageUrl(resource, '', ImportOptions.CONTAINER, true),
       'https://mock.test.com',
     );
     expect(url.pathname).toBe('/deploy-image/ns/testproject1');
@@ -77,7 +82,7 @@ describe('addResourceMenuUtils: ', () => {
   it('should return the page url with proper queryparams for catalog flow', () => {
     const { resource } = getTopologyData(MockResources, ['deployments']);
     const url = new URL(
-      getAddPageUrl(resource, ImportOptions.CATALOG, true),
+      getAddPageUrl(resource, '', ImportOptions.CATALOG, true),
       'https://mock.test.com',
     );
     expect(url.pathname).toBe('/catalog/ns/testproject1');
@@ -88,7 +93,7 @@ describe('addResourceMenuUtils: ', () => {
   it('should return the page url with proper queryparams for dockerfile flow', () => {
     const { resource } = getTopologyData(MockResources, ['deployments']);
     const url = new URL(
-      getAddPageUrl(resource, ImportOptions.DOCKERFILE, true),
+      getAddPageUrl(resource, '', ImportOptions.DOCKERFILE, true),
       'https://mock.test.com',
     );
     expect(url.pathname).toBe('/import/ns/testproject1');
@@ -100,7 +105,7 @@ describe('addResourceMenuUtils: ', () => {
   it('should return the page url with proper queryparams for database flow', () => {
     const { resource } = getTopologyData(MockResources, ['deployments']);
     const url = new URL(
-      getAddPageUrl(resource, ImportOptions.DATABASE, true),
+      getAddPageUrl(resource, '', ImportOptions.DATABASE, true),
       'https://mock.test.com',
     );
     expect(url.pathname).toBe('/catalog/ns/testproject1');
@@ -117,7 +122,12 @@ describe('addResourceMenuUtils: ', () => {
     const label = 'From Git';
 
     const kebabAction: KebabAction = createKebabAction(label, icon, ImportOptions.GIT);
-    const kebabOption: KebabOption = kebabAction(primaryObj, hasApplication, connectorSourceObj);
+    const kebabOption: KebabOption = kebabAction(
+      primaryObj,
+      '',
+      hasApplication,
+      connectorSourceObj,
+    );
     const contextSource: string = `${referenceFor(connectorSourceObj)}/${
       connectorSourceObj?.metadata?.name
     }`;
@@ -126,9 +136,8 @@ describe('addResourceMenuUtils: ', () => {
     expect(kebabOption.icon).toEqual(icon);
     expect(kebabOption.path).toEqual(null);
     expect(kebabOption.href).toEqual(
-      getAddPageUrl(primaryObj, ImportOptions.GIT, hasApplication, contextSource),
+      getAddPageUrl(primaryObj, '', ImportOptions.GIT, hasApplication, contextSource),
     );
-    expect(kebabOption.accessReview).toEqual(asAccessReview(DeploymentModel, primaryObj, 'create'));
   });
 
   it('it should return a valid kebabAction on invoking createKebabAction without connectorSourceObj', () => {
@@ -138,13 +147,14 @@ describe('addResourceMenuUtils: ', () => {
     const label = 'From Git';
 
     const kebabAction: KebabAction = createKebabAction(label, icon, ImportOptions.GIT);
-    const kebabOption: KebabOption = kebabAction(primaryObj, hasApplication);
+    const kebabOption: KebabOption = kebabAction(primaryObj, '', hasApplication);
 
     expect(kebabOption.label).toEqual(label);
     expect(kebabOption.icon).toEqual(icon);
     expect(kebabOption.path).toEqual('Add to Application');
-    expect(kebabOption.href).toEqual(getAddPageUrl(primaryObj, ImportOptions.GIT, hasApplication));
-    expect(kebabOption.accessReview).toEqual(asAccessReview(DeploymentModel, primaryObj, 'create'));
+    expect(kebabOption.href).toEqual(
+      getAddPageUrl(primaryObj, '', ImportOptions.GIT, hasApplication),
+    );
   });
 
   it('it should not return an access review object, if checkAccess is disabled', () => {
@@ -153,8 +163,8 @@ describe('addResourceMenuUtils: ', () => {
     const hasApplication = true;
     const label = 'From Git';
 
-    const kebabAction: KebabAction = createKebabAction(label, icon, ImportOptions.GIT, false); // CheckAccess Disabled
-    const kebabOption: KebabOption = kebabAction(primaryObj, hasApplication);
+    const kebabAction: KebabAction = createKebabAction(label, icon, ImportOptions.GIT);
+    const kebabOption: KebabOption = kebabAction(primaryObj, null, hasApplication);
 
     expect(kebabOption.accessReview).toBe(undefined);
   });
