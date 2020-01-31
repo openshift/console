@@ -2,7 +2,7 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
 import { Helmet } from 'react-helmet';
-import { ActionGroup, Button, Tooltip } from '@patternfly/react-core';
+import { ActionGroup, Alert, Button, Tooltip } from '@patternfly/react-core';
 import { safeLoad } from 'js-yaml';
 import * as classNames from 'classnames';
 import { BlueInfoCircleIcon } from '@console/shared/src';
@@ -312,6 +312,20 @@ const ReceiverBaseForm: React.FC<ReceiverBaseFormProps> = ({
           {titleVerb} {receiverTypes[formValues.receiverType]} {isDefaultReceiver && 'Default'}{' '}
           Receiver
         </h1>
+        {isDefaultReceiver && !formValues.receiverType && (
+          <Alert
+            isInline
+            className="co-alert co-alert--scrollable"
+            variant="info"
+            title="Default Receiver"
+          >
+            <div className="co-pre-line">
+              Because this is your first receiver, it will automatically receive all alerts from
+              this cluster. You can route specific alerts to subsequent receivers that you create.
+              You can also edit your default receiver at a later time.
+            </div>
+          </Alert>
+        )}
         <div className="form-group">
           <label className="control-label co-required">Receiver Name</label>
           <input
