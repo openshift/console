@@ -24,17 +24,4 @@ describe('HelmReleaseResources', () => {
   it('should render the MultiListPage component', () => {
     expect(helmReleaseResources.find(MultiListPage).exists()).toBe(true);
   });
-  it('should render the proper row filters', () => {
-    const expectedHelmReleaseResourcesRowFilters: string[] = [
-      'Deployment',
-      'Service',
-      'StatefulSet',
-      'Pod',
-      'Secret',
-    ];
-    const helmReleaseResourcesRowFilters = helmReleaseResources
-      .find(MultiListPage)
-      .prop('rowFilters')[0].selected;
-    expect(helmReleaseResourcesRowFilters).toEqual(expectedHelmReleaseResourcesRowFilters);
-  });
 });

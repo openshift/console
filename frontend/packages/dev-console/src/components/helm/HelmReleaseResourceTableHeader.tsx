@@ -2,9 +2,9 @@ import { sortable } from '@patternfly/react-table';
 
 export const tableColumnClasses = {
   name: 'col-lg-4 col-md-4 col-sm-4 col-xs-6',
-  kind: 'col-lg-2 col-md-2 col-sm-4 col-xs-6',
+  type: 'col-lg-2 col-md-2 col-sm-4 col-xs-6',
   status: 'col-lg-2 col-md-3 col-sm-4 hidden-xs',
-  timestamp: 'col-lg-4 col-md-4 hidden-sm hidden-xs',
+  created: 'col-lg-4 col-md-3 hidden-sm hidden-xs',
 };
 
 const HelmReleaseResourceTableHeader = () => {
@@ -16,10 +16,10 @@ const HelmReleaseResourceTableHeader = () => {
       props: { className: tableColumnClasses.name },
     },
     {
-      title: 'Kind',
+      title: 'Type',
       sortField: 'kind',
       transforms: [sortable],
-      props: { className: tableColumnClasses.kind },
+      props: { className: tableColumnClasses.type },
     },
     {
       title: 'Status',
@@ -28,10 +28,10 @@ const HelmReleaseResourceTableHeader = () => {
       props: { className: tableColumnClasses.status },
     },
     {
-      title: 'Timestamp',
+      title: 'Created',
       sortField: 'metadata.creationTimestamp',
       transforms: [sortable],
-      props: { className: tableColumnClasses.timestamp },
+      props: { className: tableColumnClasses.created },
     },
   ];
 };

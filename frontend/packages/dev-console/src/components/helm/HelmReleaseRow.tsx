@@ -1,4 +1,5 @@
 import * as React from 'react';
+import * as _ from 'lodash';
 import { Status } from '@console/shared';
 import { TableRow, TableData } from '@console/internal/components/factory';
 import { Timestamp } from '@console/internal/components/utils';
@@ -30,7 +31,7 @@ const HelmReleaseRow: React.FC<HelmReleaseRowProps> = ({ obj, index, key, style 
         <Timestamp timestamp={obj.info.last_deployed} />
       </TableData>
       <TableData className={tableColumnClasses.status}>
-        <Status status={obj.info.status} />
+        <Status status={_.capitalize(obj.info.status)} />
       </TableData>
       <TableData className={tableColumnClasses.chartName}>{obj.chart.metadata.name}</TableData>
       <TableData className={tableColumnClasses.appVersion}>

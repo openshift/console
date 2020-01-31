@@ -6,17 +6,16 @@ import HelmReleaseResourceTableRow from './HelmReleaseResourceTableRow';
 
 const EmptyMsg = () => <MsgBox title="No Resources Found" />;
 
-const HelmResourcesListComponent: React.FC<TableProps> = (props) => {
-  return (
-    <Table
-      {...props}
-      aria-label="Resources"
-      Header={HelmReleaseResourceTableHeader}
-      Row={HelmReleaseResourceTableRow}
-      EmptyMsg={EmptyMsg}
-      virtualize
-    />
-  );
-};
+const HelmResourcesListComponent: React.FC<TableProps> = (props) => (
+  <Table
+    {...props}
+    aria-label="Resources"
+    defaultSortField="kind"
+    Header={HelmReleaseResourceTableHeader}
+    Row={HelmReleaseResourceTableRow}
+    EmptyMsg={EmptyMsg}
+    virtualize
+  />
+);
 
 export default HelmResourcesListComponent;
