@@ -26,12 +26,13 @@ func (c configFlagsWithTransport) ToRESTConfig() (*rest.Config, error) {
 }
 
 func GetActionConfigurations(host, ns, token string, transport *http.RoundTripper) *action.Configuration {
-
+	truePtr := true
 	confFlags := &configFlagsWithTransport{
 		ConfigFlags: &genericclioptions.ConfigFlags{
-			APIServer:   &host,
-			BearerToken: &token,
 			Namespace:   &ns,
+			APIServer:   &host,
+			Insecure:    &truePtr,
+			BearerToken: &token,
 		},
 		Transport: transport,
 	}
