@@ -232,6 +232,13 @@ $co-modal-ignore-warning-icon-width: 30px;
     text-overflow: ellipsis;
   }
 
+  &__overlay-remote-workflow {
+    display: inline-flex !important;
+    margin-right: var(--pf-global--spacer--sm);
+    overflow-x: hidden;
+    text-overflow: ellipsis;
+  }
+
   &__overlay-description {
     margin: 20px 0 0;
     white-space: pre-wrap;
