@@ -206,7 +206,7 @@ export const sampleKnativeConfigurations: FirehoseResult = {
         },
         ownerReferences: [
           {
-            apiVersion: `${ServiceModel.apiGroup}/${ServiceModel.apiVersion}`,
+            apiVersion: `${RouteModel.apiGroup}/${RouteModel.apiVersion}`,
             kind: RouteModel.kind,
             name: 'overlayimage',
             uid: 'cea9496b-8ce0-11e9-bb7b-0ebb55b110b8',
@@ -452,8 +452,8 @@ export const sampleEventSourceCamel: FirehoseResult = {
       },
       spec: {
         sink: {
-          apiVersion: 'serving.knative.dev/v1beta1',
-          kind: 'Service',
+          apiVersion: `${ServiceModel.apiGroup}/${ServiceModel.apiVersion}`,
+          kind: ServiceModel.kind,
           name: 'overlayimage',
         },
       },
@@ -476,8 +476,8 @@ export const sampleEventSourceKafka: FirehoseResult = {
       },
       spec: {
         sink: {
-          apiVersion: 'serving.knative.dev/v1beta1',
-          kind: 'Service',
+          apiVersion: `${ServiceModel.apiGroup}/${ServiceModel.apiVersion}`,
+          kind: ServiceModel.kind,
           name: 'overlayimage',
         },
       },

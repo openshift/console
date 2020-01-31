@@ -58,7 +58,7 @@ describe('RouteRow', () => {
     const trafficColData = wrapper.find(TableData).at(5);
     expect(trafficColData.find(ResourceLink)).toHaveLength(1);
     expect(trafficColData.find(ResourceLink).props().kind).toEqual(
-      'serving.knative.dev~v1beta1~Revision',
+      'serving.knative.dev~v1~Revision',
     );
   });
 
