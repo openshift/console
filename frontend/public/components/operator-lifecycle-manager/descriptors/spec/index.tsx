@@ -44,10 +44,11 @@ const K8sResourceLink: React.SFC<SpecCapabilityProps> = (props) => _.isEmpty(pro
 const BasicSelector: React.SFC<SpecCapabilityProps> = ({value, capability}) => <Selector selector={value} kind={capability.split(SpecCapability.selector)[1]} />;
 
 class BooleanSwitch extends React.Component<SpecCapabilityProps, BooleanSwitchState> {
-  public state = {value: this.props.value, confirmed: false};
+  public convertedValue = !_.isNil(this.props.value) ? this.props.value : false;
+  public state = {value: this.convertedValue, confirmed: false};
 
   render() {
-    const {props, state} = this;
+    const {props, state, convertedValue} = this;
     const patchFor = (value: boolean) => [{op: 'replace', path: `/spec/${props.descriptor.path.replace('.', '/')}`, value}];
 
     const update = () => {
@@ -64,8 +65,8 @@ class BooleanSwitch extends React.Component<SpecCapabilityProps, BooleanSwitchSt
         offText="False"
         bsSize="mini" />
       &nbsp;&nbsp;
-      {state.value !== props.value && state.confirmed && <LoadingInline />}
-      {state.value !== props.value && !state.confirmed && <React.Fragment>
+      {state.value !== convertedValue && state.confirmed && <LoadingInline />}
+      {state.value !== convertedValue && !state.confirmed && <React.Fragment>
         &nbsp;&nbsp;<i className="fa fa-exclamation-triangle text-warning" aria-hidden="true" />
         <button className="btn btn-link" onClick={update}>Confirm change</button>
       </React.Fragment>}
