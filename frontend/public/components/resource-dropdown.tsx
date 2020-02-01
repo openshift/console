@@ -34,14 +34,14 @@ const DropdownItem: React.SFC<DropdownItemProps> = ({ model, showGroup, checked 
         <ResourceIcon kind={referenceForModel(model)} />
       </span>
       <span className="co-resource-item__resource-name">
-        {model.kind}
+        <span>
+          {model.kind}
+          {model.badge && <span className="co-resource-item__tech-dev-preview">{model.badge}</span>}
+        </span>
         {showGroup && (
-          <>
-            &nbsp;
-            <div className="co-resource-item__resource-api text-muted co-truncate show co-nowrap small">
-              {model.apiGroup || 'core'}/{model.apiVersion}
-            </div>
-          </>
+          <span className="co-resource-item__resource-api text-muted co-truncate show co-nowrap small">
+            {model.apiGroup || 'core'}/{model.apiVersion}
+          </span>
         )}
       </span>
     </span>

@@ -3,8 +3,8 @@ import DevPreviewBadge from './DevPreviewBadge';
 import TechPreviewBadge from './TechPreviewBadge';
 
 export enum BadgeType {
-  DEV = 'DevPreview',
-  TECH = 'TechPreview',
+  DEV = 'Dev Preview',
+  TECH = 'Tech Preview',
 }
 
 export const getBadgeFromType = (badge: BadgeType): React.ReactElement => {

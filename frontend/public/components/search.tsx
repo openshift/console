@@ -4,6 +4,7 @@ import { Helmet } from 'react-helmet';
 import { Button, Chip, ChipGroup, ChipGroupToolbarItem, Expandable } from '@patternfly/react-core';
 import { CloseIcon } from '@patternfly/react-icons';
 
+import { getBadgeFromType } from '@console/shared';
 import { AsyncComponent } from './utils/async';
 import { connectToModel } from '../kinds';
 import { DefaultPage } from './default-resource';
@@ -38,6 +39,7 @@ const ResourceList = connectToModel(({ kindObj, mock, namespace, selector, nameF
       hideTextFilter
       autoFocus={false}
       mock={mock}
+      badge={getBadgeFromType(kindObj.badge)}
     />
   );
 });

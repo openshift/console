@@ -63,6 +63,12 @@ $co-external-link-padding-right: 15px;
   min-width: 0;
 }
 
+.co-m-pane__filter-bar-group--badge {
+  // Don't fill the available height.
+  align-self: start;
+}
+
+.co-m-pane__filter-bar-group--badge,
 .co-m-pane__filter-bar-group--filter {
   @media(min-width: $screen-xs-min) {
     flex: 1 0 auto;
