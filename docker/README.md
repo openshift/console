@@ -5,7 +5,12 @@ When using Native Kubernetes, some projects specifically in the RedHat ecosystem
 ## Quick Start
 ```
 #Not sure if RedHat will want to host this in the future but until then you can pull the container from my personal github
-docker pull mjschmidt/okd-ui:latest
+docker pull mjschmidt/okd-ui:release-4.6
+docker run -it \
+           -v ~/.kube/config:/config \
+           -v /root/.minikube/:/root/.minikube/  \
+           -p 9000:9000 \
+           --name okd-ui mjschmidt/okd:release-4.6 bash;
 ```
 
 ## Building the Container
