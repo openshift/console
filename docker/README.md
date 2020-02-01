@@ -10,8 +10,15 @@ docker run -it \
            -v ~/.kube/config:/config \
            -v /root/.minikube/:/root/.minikube/  \
            -p 9000:9000 \
-           --name okd-ui mjschmidt/okd:release-4.6 bash;
+           --name okd-ui mjschmidt/okd-ui:release-4.6 bash;
 ```
+
+Once you have your container running run the startup.sh
+```
+./startup.sh
+```
+
+You will then be able to access the okd-ui via [localhost:9000](http://localhost:9000)
 
 ## Building the Container
 ```
