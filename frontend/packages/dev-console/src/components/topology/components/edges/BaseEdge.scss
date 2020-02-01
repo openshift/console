@@ -8,7 +8,7 @@
   --edge--cursor: pointer;
   --edge--active--fill: var(--pf-global--active-color--400);
   --edge--active--stroke: var(--pf-global--active-color--400);
-  --edge--drag-active--opacity: 0.3;
+  --edge--drag-active--opacity: 0.4;
   --edge__link--stroke: var(--pf-global--BackgroundColor--dark-200);
   --edge__link--stroke-width: 2px;
   --edge__link--active--stroke: var(--pf-global--active-color--400);
@@ -27,7 +27,7 @@
   }
 
   &.is-hover,
-  &.is-highlight {
+  &.is-dragging {
     fill: var(--edge--active--fill);
     stroke: var(--edge--active--stroke);
     .odc-base-edge__link,
@@ -40,7 +40,7 @@
     stroke: var(--edge__link--stroke);
   }
 
-  &.is-highlight {
+  &.is-dragging {
     cursor: var(--edge--drag-active--cursor);
     .topology-connector-arrow {
       cursor: var(--edge--drag-active--cursor);
@@ -51,26 +51,15 @@
 .odc-m-drag-active {
   .odc-base-edge {
     opacity: var(--edge--drag-active--opacity);
-    &.is-highlight {
+    &.is-dragging {
       opacity: var(--edge--opacity);
-    }
-    &.is-hover {
-      &:not(.is-highlight) {
-        fill: var(--edge--fill);
-        stroke: var(--edge--stroke);
-
-        .odc-base-edge__link,
-        .topology-connector-arrow {
-          stroke: var(--edge__link--stroke);
-        }
-      }
     }
   }
 }
 .odc-m-filter-active {
   .odc-base-edge {
     opacity: var(--edge--drag-active--opacity);
-    &.is-highlight {
+    &.is-dragging {
       opacity: var(--edge--opacity);
     }
   }

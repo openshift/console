@@ -12,61 +12,68 @@ import {
 } from '@console/topology';
 import NodeShadows, { NODE_SHADOW_FILTER_ID_HOVER, NODE_SHADOW_FILTER_ID } from '../NodeShadows';
 import SvgBoxedText from '../../../svg/SvgBoxedText';
-import { TopologyFilters } from '../../filters/filter-utils';
-import useFilter from '../../filters/useFilter';
+import useSearchFilter from '../../filters/useSearchFilter';
 
 export type HelmReleaseGroupProps = {
   element: Node;
-  dragging?: boolean;
-  filters: TopologyFilters;
 } & WithSelectionProps;
 
-const HelmReleaseGroup: React.FC<HelmReleaseGroupProps> = ({
-  element,
-  dragging,
-  filters,
-  onSelect,
-  selected,
-}) => {
+const HelmReleaseGroup: React.FC<HelmReleaseGroupProps> = ({ element, onSelect, selected }) => {
   const [hover, hoverRef] = useHover();
+  const [labelHover, labelHoverRef] = useHover();
   const { x, y, width, height } = element.getBounds();
-  const dragNodeRef = useDragNode()[1];
-  const dragLabelRef = useDragNode()[1];
-  const refs = useCombineRefs(dragNodeRef, hoverRef);
-  const filtered = useFilter(filters, { metadata: { name: element.getLabel() } });
-
-  const rectClasses = classNames('odc-helm-release', {
-    'is-selected': selected,
-    'is-hover': hover,
-    'is-filtered': filtered,
+  const [{ dragging }, dragNodeRef] = useDragNode({
+    collect: (monitor) => ({
+      dragging: monitor.isDragging(),
+    }),
   });
-
+  const [{ labelDragging }, dragLabelRef] = useDragNode({
+    collect: (monitor) => ({
+      labelDragging: monitor.isDragging(),
+    }),
+  });
+  const refs = useCombineRefs(dragNodeRef, hoverRef);
+  const [filtered] = useSearchFilter(element.getLabel());
   return (
-    <g>
+    <>
       <NodeShadows />
       <Layer id={dragging ? undefined : 'groups'}>
-        <rect
-          ref={refs}
-          className={rectClasses}
-          onClick={onSelect}
-          x={x}
-          y={y}
-          width={width}
-          height={height}
-          rx="5"
-          ry="5"
-          filter={createSvgIdUrl(
-            hover || dragging ? NODE_SHADOW_FILTER_ID_HOVER : NODE_SHADOW_FILTER_ID,
-          )}
-        />
+        <g
+          className={classNames('odc-helm-release', {
+            'is-dragging': dragging || labelDragging,
+            'is-selected': selected,
+            'is-filtered': filtered,
+          })}
+        >
+          <rect
+            ref={refs}
+            className="odc-helm-release__bg"
+            onClick={onSelect}
+            x={x}
+            y={y}
+            width={width}
+            height={height}
+            rx="5"
+            ry="5"
+            filter={createSvgIdUrl(
+              hover || labelHover || dragging || labelDragging
+                ? NODE_SHADOW_FILTER_ID_HOVER
+                : NODE_SHADOW_FILTER_ID,
+            )}
+          />
+        </g>
       </Layer>
       {element.getLabel() && (
-        <g onClick={onSelect}>
+        <g
+          ref={labelHoverRef}
+          onClick={onSelect}
+          className={classNames('odc-helm-release', {
+            'is-dragging': dragging || labelDragging,
+            'is-filtered': filtered,
+          })}
+        >
           <SvgBoxedText
-            className={classNames('odc-base-node__label', 'odc-helm-release__label', {
-              'is-filtered': filtered,
-              'is-dragging': dragging,
-            })}
+            className="odc-base-node__label"
             x={x + width / 2}
             y={y + height + 20}
             paddingX={8}
@@ -80,7 +87,7 @@ const HelmReleaseGroup: React.FC<HelmReleaseGroupProps> = ({
           </SvgBoxedText>
         </g>
       )}
-    </g>
+    </>
   );
 };
 

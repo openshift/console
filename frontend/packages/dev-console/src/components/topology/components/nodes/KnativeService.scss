@@ -1,46 +1,51 @@
+@import '../../topology-utils';
+
 .odc-knative-service {
-  fill: #e2e2e2;
-  stroke: #bbbbbb;
-  stroke-width: 4px;
+  outline: none;
   cursor: pointer;
 
   .odc-m-drag-active & {
     cursor: grab;
   }
 
-  &__label {
-    cursor: pointer;
-    .odc-m-drag-active & {
-      cursor: grab;
-    }
+  &__bg {
+    fill: #d1d1d1;
+    fill-opacity: 0.5;
+    stroke: #bbbbbb;
+    stroke-width: 5px;
   }
 
-  &.is-selected {
+  &.is-filtered &__bg {
+    stroke: $filtered-color;
+  }
+  &.is-selected &__bg {
     fill: var(--pf-global--active-color--200);
+    stroke: var(--pf-global--active-color--400);
+  }
+  &.is-highlight &__bg {
+    fill: #d1d1d1;
     stroke: var(--pf-global--active-color--100);
   }
-
-  &.is-highlight {
-    stroke: var(--pf-global--active-color--400);
-    stroke-width: 4px;
+  &.is-dropTarget &__bg {
+    fill: var(--pf-global--active-color--200);
   }
 }
 
-.odc-m-drag-active {
-  .odc-knative-service {
-    opacity: 0.3;
-    &.is-dragging {
-      opacity: var(--edge--drag-active--opacity);
-    }
-    &.is-highlight {
-      opacity: var(--edge--opacity);
-    }
-  }
-}
-
+.odc-m-drag-active,
 .odc-m-filter-active {
-  .odc-knative-service,
-  .odc-knative-service__label {
-    opacity: 0.3;
+  .odc-knative-service {
+    opacity: 0.4;
+    &.is-dragging,
+    &.is-highlight {
+      opacity: 1;
+    }
+  }
+}
+
+.odc-m-filter-active:not(.odc-m-drag-active) {
+  .odc-knative-service {
+    &.is-filtered {
+      opacity: 1;
+    }
   }
 }

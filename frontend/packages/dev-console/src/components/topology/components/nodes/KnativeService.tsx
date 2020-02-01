@@ -1,6 +1,4 @@
 import * as React from 'react';
-import { connect } from 'react-redux';
-import { RootState } from '@console/internal/redux';
 import {
   Node,
   observer,
@@ -10,7 +8,6 @@ import {
 } from '@console/topology';
 import { modelFor, referenceFor } from '@console/internal/module/k8s';
 import { useAccessReview } from '@console/internal/components/utils';
-import { getTopologyFilters, TopologyFilters } from '../../filters/filter-utils';
 import { getTopologyResourceObject } from '../../topology-utils';
 import KnativeServiceNode from './KnativeServiceNode';
 import KnativeServiceGroup from './KnativeServiceGroup';
@@ -19,14 +16,9 @@ import './KnativeService.scss';
 
 export type KnativeServiceProps = {
   element: Node;
-  droppable?: boolean;
-  hover?: boolean;
-  dragging: boolean;
   highlight?: boolean;
-  regrouping: boolean;
   canDrop?: boolean;
   dropTarget?: boolean;
-  filters?: TopologyFilters;
 } & WithSelectionProps &
   WithDndDropProps &
   WithContextMenuProps;
@@ -52,9 +44,4 @@ const KnativeService: React.FC<KnativeServiceProps> = (props) => {
   return <KnativeServiceGroup {...props} editAccess={editAccess} />;
 };
 
-const KnativeServiceState = (state: RootState) => {
-  const filters = getTopologyFilters(state);
-  return { filters };
-};
-
-export default connect(KnativeServiceState)(observer(KnativeService));
+export default observer(KnativeService);

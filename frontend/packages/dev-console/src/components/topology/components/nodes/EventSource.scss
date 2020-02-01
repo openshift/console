@@ -1,3 +1,5 @@
+@import '../../topology-utils';
+
 .odc-event-source {
   cursor: pointer;
 
@@ -9,22 +11,28 @@
     fill: var(--pf-global--BackgroundColor--light-100);
   }
 
-  &__selection {
+  &.is-filtered &__bg {
     stroke-width: 2px;
-    fill: none;
-    stroke: var(--pf-global--active-color--300);
+    stroke: $filtered-color;
+  }
+  &.is-selected &__bg {
+    stroke-width: 2px;
+    stroke: var(--pf-global--active-color--400);
   }
 }
 
-.odc-m-drag-active {
-  .odc-event-source {
-    opacity: 0.3;
-  }
-}
-
+.odc-m-drag-active,
 .odc-m-filter-active {
   .odc-event-source {
-    opacity: 0.3;
+    opacity: 0.4;
+    &.is-dragging {
+      opacity: 1;
+    }
+  }
+}
+
+.odc-m-filter-active:not(.odc-m-drag-active) {
+  .odc-event-source {
     &.is-filtered {
       opacity: 1;
     }

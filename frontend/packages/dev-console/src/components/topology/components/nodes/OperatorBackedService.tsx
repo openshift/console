@@ -1,6 +1,5 @@
 import * as React from 'react';
 import * as classNames from 'classnames';
-import { connect } from 'react-redux';
 import {
   Layer,
   useHover,
@@ -10,70 +9,85 @@ import {
   observer,
   useCombineRefs,
 } from '@console/topology';
-import { RootState } from '@console/internal/redux';
 import NodeShadows, { NODE_SHADOW_FILTER_ID_HOVER, NODE_SHADOW_FILTER_ID } from '../NodeShadows';
 import SvgBoxedText from '../../../svg/SvgBoxedText';
-import { getTopologyFilters, TopologyFilters } from '../../filters/filter-utils';
-import useFilter from '../../filters/useFilter';
+import useSearchFilter from '../../filters/useSearchFilter';
 import { nodeDragSourceSpec } from '../../componentUtils';
 import { TYPE_OPERATOR_BACKED_SERVICE } from '../../const';
 import './OperatorBackedService.scss';
 
 export type OperatorBackedServiceProps = {
   element: Node;
-  filters: TopologyFilters;
 };
 
-const OperatorBackedService: React.FC<OperatorBackedServiceProps> = ({ element, filters }) => {
+const OperatorBackedService: React.FC<OperatorBackedServiceProps> = ({ element }) => {
   const [hover, hoverRef] = useHover();
+  const [labelHover, labelHoverRef] = useHover();
   const { x, y, width, height } = element.getBounds();
-  const dragNodeRef = useDragNode(nodeDragSourceSpec(TYPE_OPERATOR_BACKED_SERVICE, true, true), {
-    element,
-  })[1];
-  const dragLabelRef = useDragNode(nodeDragSourceSpec(TYPE_OPERATOR_BACKED_SERVICE, true, true), {
-    element,
-  })[1];
+  const [{ dragging }, dragNodeRef] = useDragNode(
+    nodeDragSourceSpec(TYPE_OPERATOR_BACKED_SERVICE, false),
+    {
+      element,
+    },
+  );
+  const [{ dragging: labelDragging }, dragLabelRef] = useDragNode(
+    nodeDragSourceSpec(TYPE_OPERATOR_BACKED_SERVICE, false),
+    {
+      element,
+    },
+  );
   const refs = useCombineRefs(dragNodeRef, hoverRef);
-  const filtered = useFilter(filters, { metadata: { name: element.getLabel() } });
+  const [filtered] = useSearchFilter(element.getLabel());
   return (
-    <g>
+    <>
       <NodeShadows />
-      <Layer id={'groups2'}>
-        <rect
+      <Layer id={dragging || labelDragging ? undefined : 'groups2'}>
+        <g
           ref={refs}
-          className="odc-operator-group"
-          x={x}
-          y={y}
-          width={width}
-          height={height}
-          rx="5"
-          ry="5"
-          filter={createSvgIdUrl(hover ? NODE_SHADOW_FILTER_ID_HOVER : NODE_SHADOW_FILTER_ID)}
-        />
-      </Layer>
-      {element.getLabel() && (
-        <SvgBoxedText
-          className={classNames('odc-base-node__label', 'odc-operator-group__label', {
+          className={classNames('odc-operator-backed-service', {
+            'is-dragging': dragging || labelDragging,
             'is-filtered': filtered,
           })}
-          x={x + width / 2}
-          y={y + height + 20}
-          paddingX={8}
-          paddingY={4}
-          kind="Operator"
-          truncate={16}
-          dragRef={dragLabelRef}
-          typeIconClass={element.getData().data.builderImage}
         >
-          {element.getLabel()}
-        </SvgBoxedText>
+          <rect
+            className="odc-operator-backed-service__bg"
+            x={x}
+            y={y}
+            width={width}
+            height={height}
+            rx="5"
+            ry="5"
+            filter={createSvgIdUrl(
+              hover || labelHover ? NODE_SHADOW_FILTER_ID_HOVER : NODE_SHADOW_FILTER_ID,
+            )}
+          />
+        </g>
+      </Layer>
+      {element.getLabel() && (
+        <g
+          ref={labelHoverRef}
+          className={classNames('odc-operator-backed-service', {
+            'is-dragging': dragging || labelDragging,
+            'is-filtered': filtered,
+          })}
+        >
+          <SvgBoxedText
+            className="odc-base-node__label"
+            x={x + width / 2}
+            y={y + height + 20}
+            paddingX={8}
+            paddingY={4}
+            kind="Operator"
+            truncate={16}
+            dragRef={dragLabelRef}
+            typeIconClass={element.getData().data.builderImage}
+          >
+            {element.getLabel()}
+          </SvgBoxedText>
+        </g>
       )}
-    </g>
+    </>
   );
 };
 
-const OperatorBackedServiceState = (state: RootState) => ({
-  filters: getTopologyFilters(state),
-});
-
-export default connect(OperatorBackedServiceState)(observer(OperatorBackedService));
+export default observer(OperatorBackedService);

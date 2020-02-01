@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { connect } from 'react-redux';
 import * as classNames from 'classnames';
 import {
   Node,
@@ -15,13 +14,11 @@ import {
   observer,
   createSvgIdUrl,
 } from '@console/topology';
-import { RootState } from '@console/internal/redux';
 import { modelFor, referenceFor } from '@console/internal/module/k8s';
 import { useAccessReview } from '@console/internal/components/utils';
 import SvgBoxedText from '../../../svg/SvgBoxedText';
 import { getTopologyResourceObject } from '../../topology-utils';
-import useFilter from '../../filters/useFilter';
-import { getTopologyFilters, TopologyFilters } from '../../filters/filter-utils';
+import useSearchFilter from '../../filters/useSearchFilter';
 import NodeShadows, { NODE_SHADOW_FILTER_ID_HOVER, NODE_SHADOW_FILTER_ID } from '../NodeShadows';
 
 import './BaseNode.scss';
@@ -34,12 +31,10 @@ export type BaseNodeProps = {
   children?: React.ReactNode;
   attachments?: React.ReactNode;
   element: Node;
-  droppable?: boolean;
   dragging?: boolean;
   edgeDragging?: boolean;
   dropTarget?: boolean;
   canDrop?: boolean;
-  filters: TopologyFilters;
 } & WithSelectionProps &
   WithDragNodeProps &
   WithDndDropProps &
@@ -55,7 +50,6 @@ const BaseNode: React.FC<BaseNodeProps> = ({
   selected,
   onSelect,
   children,
-  filters,
   attachments,
   dragNodeRef,
   dndDropRef,
@@ -81,14 +75,7 @@ const BaseNode: React.FC<BaseNodeProps> = ({
     name: resourceObj.metadata.name,
     namespace: resourceObj.metadata.namespace,
   });
-  const filtered = useFilter(filters, resourceObj);
-  const contentsClasses = classNames('odc-base-node__contents', {
-    'is-hover': hover || contextMenuOpen,
-    'is-highlight': canDrop,
-    'is-dragging': dragging || edgeDragging,
-    'is-droppable': dropTarget && canDrop,
-    'is-filtered': filtered,
-  });
+  const [filtered] = useSearchFilter(element.getLabel());
   const refs = useCombineRefs<SVGEllipseElement>(hoverRef, dragNodeRef);
 
   React.useLayoutEffect(() => {
@@ -102,7 +89,16 @@ const BaseNode: React.FC<BaseNodeProps> = ({
   }, [hover, onShowCreateConnector, onHideCreateConnector, editAccess]);
 
   return (
-    <g className="odc-base-node">
+    <g
+      className={classNames('odc-base-node', {
+        'is-hover': hover || contextMenuOpen,
+        'is-highlight': canDrop,
+        'is-dragging': dragging || edgeDragging,
+        'is-dropTarget': canDrop && dropTarget,
+        'is-filtered': filtered,
+        'is-selected': selected,
+      })}
+    >
       <NodeShadows />
       <g
         data-test-id="base-node-handler"
@@ -111,7 +107,7 @@ const BaseNode: React.FC<BaseNodeProps> = ({
         ref={refs}
       >
         <circle
-          className={classNames('odc-base-node__bg', { 'is-highlight': canDrop })}
+          className="odc-base-node__bg"
           ref={dndDropRef}
           cx={cx}
           cy={cy}
@@ -122,41 +118,33 @@ const BaseNode: React.FC<BaseNodeProps> = ({
               : NODE_SHADOW_FILTER_ID,
           )}
         />
-        <g className={contentsClasses}>
-          {icon && (
-            <image
-              x={cx - innerRadius}
-              y={cy - innerRadius}
-              width={innerRadius * 2}
-              height={innerRadius * 2}
-              xlinkHref={icon}
-            />
-          )}
-          {(kind || element.getLabel()) && (
-            <SvgBoxedText
-              className="odc-base-node__label"
-              x={cx}
-              y={cy + outerRadius + 20}
-              paddingX={8}
-              paddingY={4}
-              kind={kind}
-              truncate={16}
-            >
-              {element.getLabel()}
-            </SvgBoxedText>
-          )}
-          {selected && (
-            <circle className="odc-base-node__selection" cx={cx} cy={cy} r={outerRadius + 1} />
-          )}
-          {children}
-        </g>
+        {icon && (
+          <image
+            x={cx - innerRadius}
+            y={cy - innerRadius}
+            width={innerRadius * 2}
+            height={innerRadius * 2}
+            xlinkHref={icon}
+          />
+        )}
+        {(kind || element.getLabel()) && (
+          <SvgBoxedText
+            className="odc-base-node__label"
+            x={cx}
+            y={cy + outerRadius + 20}
+            paddingX={8}
+            paddingY={4}
+            kind={kind}
+            truncate={16}
+          >
+            {element.getLabel()}
+          </SvgBoxedText>
+        )}
+        {children}
       </g>
-      <g className={contentsClasses}>{attachments}</g>
+      {attachments}
     </g>
   );
 };
-const BaseNodeState = (state: RootState) => {
-  const filters = getTopologyFilters(state);
-  return { filters };
-};
-export default connect(BaseNodeState)(observer(BaseNode));
+
+export default observer(BaseNode);

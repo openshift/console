@@ -27,7 +27,6 @@ interface StateProps {
 
 export type WorkloadNodeProps = {
   element: Node;
-  droppable?: boolean;
   hover?: boolean;
   dragging?: boolean;
   highlight?: boolean;
