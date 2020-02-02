@@ -29,7 +29,7 @@ describe('Application Launcher Menu', () => {
     expect(pageSidebar.getText()).toContain('Topology');
     expect(pageSidebar.getText()).toContain('+Add');
     expect(pageSidebar.getText()).toContain('Builds');
-    expect(pageSidebar.getText()).toContain('Advanced');
+    expect(pageSidebar.getText()).toContain('More');
     expect(pageSidebar.getText()).toContain('Project Details');
     expect(pageSidebar.getText()).toContain('Project Access');
     expect(pageSidebar.getText()).toContain('Search');

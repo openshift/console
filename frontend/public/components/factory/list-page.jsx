@@ -64,6 +64,7 @@ export const TextFilter = ({
         ref={input}
         autoCapitalize="none"
         className={classNames('pf-c-form-control co-text-filter', className)}
+        data-test-id="item-filter"
         value={value}
         defaultValue={defaultValue}
         onChange={onChange}

@@ -348,6 +348,7 @@ export const OperatorHubTileView: React.FC<OperatorHubTileViewProps> = (props) =
       {detailsItem && (
         <Modal
           className="co-catalog-page__overlay co-catalog-page__overlay--right"
+          data-test-id="operator-modal-box"
           header={
             <>
               <CatalogItemHeader
@@ -355,6 +356,7 @@ export const OperatorHubTileView: React.FC<OperatorHubTileViewProps> = (props) =
                 iconImg={detailsItem.imgUrl}
                 title={detailsItem.name}
                 vendor={`${detailsItem.version} provided by ${detailsItem.provider}`}
+                data-test-id="operator-modal-header"
               />
               <div className="co-catalog-page__overlay-actions">
                 {detailsItem.marketplaceRemoteWorkflow && (
@@ -379,6 +381,7 @@ export const OperatorHubTileView: React.FC<OperatorHubTileViewProps> = (props) =
                       { 'pf-m-primary': !detailsItem.marketplaceRemoteWorkflow },
                       'co-catalog-page__overlay-action',
                     )}
+                    data-test-id="operator-install-btn"
                     to={createLink}
                   >
                     Install
@@ -386,6 +389,7 @@ export const OperatorHubTileView: React.FC<OperatorHubTileViewProps> = (props) =
                 ) : (
                   <Button
                     className="co-catalog-page__overlay-action"
+                    data-test-id="operator-uninstall-btn"
                     isDisabled={!detailsItem.installed}
                     onClick={() => history.push(uninstallLink())}
                     variant="secondary"
