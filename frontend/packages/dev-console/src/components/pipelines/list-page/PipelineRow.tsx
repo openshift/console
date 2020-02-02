@@ -35,7 +35,13 @@ const PipelineRow: React.FC<PipelineRowProps> = ({ obj, index, key, style }) => 
     Kebab.factory.Delete,
   ];
   return (
-    <TableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
+    <TableRow
+      id={obj.metadata.uid}
+      data-test-id={`${obj.metadata.namespace}-${obj.metadata.name}`}
+      index={index}
+      trKey={key}
+      style={style}
+    >
       <TableData className={tableColumnClasses[0]}>
         <ResourceLink
           kind={pipelineReference}

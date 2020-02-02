@@ -96,7 +96,7 @@ class PipelineRunLogs extends React.Component<PipelineRunLogsProps, PipelineRunL
     )}/logs/`;
     return (
       <div className="odc-pipeline-run-logs">
-        <div className="odc-pipeline-run-logs__tasklist">
+        <div className="odc-pipeline-run-logs__tasklist" data-test-id="logs-tasklist">
           {taskCount > 0 ? (
             <Nav onSelect={this.onNavSelect}>
               <NavList className="odc-pipeline-run-logs__nav">
