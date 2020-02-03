@@ -1,5 +1,5 @@
 import * as _ from 'lodash';
-import { K8sKind, referenceFor } from '@console/internal/module/k8s';
+import { K8sKind, referenceForModel } from '@console/internal/module/k8s';
 import { KebabAction } from '@console/internal/components/utils';
 import {
   ModifyApplication,
@@ -16,21 +16,21 @@ import {
 } from '../models';
 
 const modifyApplicationRefs = [
-  referenceFor(EventSourceApiServerModel),
-  referenceFor(EventSourceContainerModel),
-  referenceFor(EventSourceCronJobModel),
-  referenceFor(EventSourceCamelModel),
-  referenceFor(EventSourceKafkaModel),
-  referenceFor(ServiceModel),
+  referenceForModel(EventSourceApiServerModel),
+  referenceForModel(EventSourceContainerModel),
+  referenceForModel(EventSourceCronJobModel),
+  referenceForModel(EventSourceCamelModel),
+  referenceForModel(EventSourceKafkaModel),
+  referenceForModel(ServiceModel),
 ];
 
 export const getKebabActionsForKind = (resourceKind: K8sKind): KebabAction[] => {
   const menuActions: KebabAction[] = [];
   if (resourceKind) {
-    if (_.includes(modifyApplicationRefs, referenceFor(resourceKind))) {
+    if (_.includes(modifyApplicationRefs, referenceForModel(resourceKind))) {
       menuActions.push(ModifyApplication);
     }
-    if (resourceKind.kind === ServiceModel.kind) {
+    if (referenceForModel(resourceKind) === referenceForModel(ServiceModel)) {
       menuActions.push(setTrafficDistribution, EditApplication);
     }
   }
