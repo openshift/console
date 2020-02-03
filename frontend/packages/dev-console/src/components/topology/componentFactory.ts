@@ -128,16 +128,23 @@ class ComponentFactory {
         case TYPE_OPERATOR_WORKLOAD:
           return withCreateConnector(createConnectorCallback(this.hasServiceBinding))(
             withEditReviewAccess('patch')(
-              withDragNode(nodeDragSourceSpec(type, false))(
-                withSelection(
-                  false,
-                  true,
-                )(
-                  withContextMenu(
-                    workloadContextMenu,
-                    document.getElementById('modal-container'),
-                    'odc-topology-context-menu',
-                  )(WorkloadNode),
+              withDndDrop<
+                any,
+                any,
+                { droppable?: boolean; hover?: boolean; canDrop?: boolean },
+                NodeProps
+              >(nodeDropTargetSpec)(
+                withDragNode(nodeDragSourceSpec(type, false))(
+                  withSelection(
+                    false,
+                    true,
+                  )(
+                    withContextMenu(
+                      workloadContextMenu,
+                      document.getElementById('modal-container'),
+                      'odc-topology-context-menu',
+                    )(WorkloadNode),
+                  ),
                 ),
               ),
             ),
