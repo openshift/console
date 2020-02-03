@@ -8,6 +8,7 @@
   // There's no way to set a class name on this element with the PF4 component,
   // so use a nested selector.
   h3 {
+    line-height: normal; // fix clipped descenders
     margin-bottom: 0;
   }
   // There's no way to set a class name on this element, so use the PF4 class.
