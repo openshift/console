@@ -89,10 +89,8 @@ const initializeStorage = (params: CreateVMEnhancedParams, vm: MutableVMWrapper)
     return {
       ...storage,
       volume: volumeWrapper.asMutableResource(),
-      dataVolume:
-        !dataVolumeWrapper || isPlainDataVolume ? undefined : dataVolumeWrapper.asMutableResource(),
-      dataVolumeToCreate:
-        dataVolumeWrapper && isPlainDataVolume ? dataVolumeWrapper.asMutableResource() : undefined,
+      dataVolume: isPlainDataVolume ? undefined : dataVolumeWrapper?.asMutableResource(),
+      dataVolumeToCreate: isPlainDataVolume ? dataVolumeWrapper?.asMutableResource() : undefined,
     };
   });
 

@@ -16,8 +16,18 @@ export class PersistentVolumeClaimWrapper extends Wrapper<V1PersistentVolumeClai
 
   static mergeWrappers = (
     ...persistentVolumeWrappers: PersistentVolumeClaimWrapper[]
-  ): PersistentVolumeClaimWrapper =>
-    Wrapper.defaultMergeWrappers(PersistentVolumeClaimWrapper, persistentVolumeWrappers);
+  ): PersistentVolumeClaimWrapper => {
+    const resultWrapper = Wrapper.defaultMergeWrappers(
+      PersistentVolumeClaimWrapper,
+      persistentVolumeWrappers,
+    );
+
+    if (!resultWrapper.data?.spec?.storageClassName && resultWrapper.data?.spec) {
+      delete resultWrapper.data.spec.storageClassName;
+    }
+
+    return resultWrapper;
+  };
 
   static initializeFromSimpleData = (params?: {
     name?: string;

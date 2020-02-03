@@ -47,11 +47,18 @@ export class DataVolumeWrapper extends ObjectWithTypePropertyWrapper<
 > {
   static readonly EMPTY = new DataVolumeWrapper();
 
-  static mergeWrappers = (...datavolumeWrappers: DataVolumeWrapper[]): DataVolumeWrapper =>
-    ObjectWithTypePropertyWrapper.defaultMergeWrappersWithType(
+  static mergeWrappers = (...datavolumeWrappers: DataVolumeWrapper[]): DataVolumeWrapper => {
+    const resultWrapper = ObjectWithTypePropertyWrapper.defaultMergeWrappersWithType(
       DataVolumeWrapper,
       datavolumeWrappers,
     );
+
+    if (!resultWrapper.data?.spec?.pvc?.storageClassName && resultWrapper.data?.spec?.pvc) {
+      delete resultWrapper.data.spec.pvc.storageClassName;
+    }
+
+    return resultWrapper;
+  };
 
   static initializeFromSimpleData = (
     params?: {
@@ -168,25 +175,25 @@ export class MutableDataVolumeWrapper extends DataVolumeWrapper {
   }
 
   setName = (name: string) => {
-    this.ensurePath('metadata', {});
+    this.ensurePath('metadata');
     this.data.metadata.name = name;
     return this;
   };
 
   setNamespace = (namespace: string) => {
-    this.ensurePath('metadata', {});
+    this.ensurePath('metadata');
     this.data.metadata.namespace = namespace;
     return this;
   };
 
   setAccessModes = (accessModes: string[]) => {
-    this.ensurePath('spec.pvc', {});
+    this.ensurePath('spec.pvc');
     this.data.spec.pvc.accessModes = accessModes;
     return this;
   };
 
   setVolumeMode = (volumeMode: string) => {
-    this.ensurePath('spec.pvc', {});
+    this.ensurePath('spec.pvc');
     this.data.spec.pvc.volumeMode = volumeMode;
     return this;
   };
@@ -227,7 +234,7 @@ export class MutableDataVolumeWrapper extends DataVolumeWrapper {
     return this;
   };
 
-  ensurePath = (path: string[] | string, value) => ensurePath(this.data, path, value);
+  ensurePath = (path: string[] | string, value: any = {}) => ensurePath(this.data, path, value);
 
   asMutableResource = () => this.data;
 }

@@ -154,7 +154,7 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
     resultDataVolume = DataVolumeWrapper.initializeFromSimpleData(
       {
         name: resultDataVolumeName,
-        storageClassName: storageClassName || undefined,
+        storageClassName,
         type: source.getDataVolumeSourceType(),
         size,
         unit,
@@ -168,7 +168,7 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
   if (source.requiresNewPVC()) {
     resultPersistentVolumeClaim = PersistentVolumeClaimWrapper.initializeFromSimpleData({
       name,
-      storageClassName: storageClassName || undefined,
+      storageClassName,
       size,
       unit,
     });
@@ -426,7 +426,7 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
               data={storageClasses}
               model={StorageClassModel}
               hasPlaceholder
-              onChange={(sc) => setStorageClassName(sc)}
+              onChange={(sc) => setStorageClassName(sc || '')}
             />
           )}
           {source.isPlainDataVolume(isCreateTemplate) && (
