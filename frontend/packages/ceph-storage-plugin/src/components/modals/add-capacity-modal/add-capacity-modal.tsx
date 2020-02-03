@@ -45,7 +45,7 @@ export const AddCapacityModal = withHandlePromise((props: AddCapacityModalProps)
   const presentCount = _.get(ocsConfig, 'spec.storageDeviceSets[0].count');
   const capacity = _.get(response, 'data.result[0].value[1]');
 
-  const osdSizeWithoutUnit = OSD_CAPACITY_SIZES[osdSizeWithUnit]?.size;
+  const osdSizeWithoutUnit = _.get(OSD_CAPACITY_SIZES[osdSizeWithUnit], 'size');
   const provisionedCapacity = getProvisionedCapacity(osdSizeWithoutUnit);
 
   let currentCapacity: React.ReactNode;

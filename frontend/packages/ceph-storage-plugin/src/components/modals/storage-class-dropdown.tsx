@@ -1,11 +1,10 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import { Firehose, FieldLevelHelp } from '@console/internal/components/utils';
-import { InfrastructureModel } from '@console/internal/models';
-import { K8sResourceKind, StorageClassResourceKind, k8sGet } from '@console/internal/module/k8s';
+import { K8sResourceKind } from '@console/internal/module/k8s';
 import { StorageClassDropdownInner } from '@console/internal/components/utils/storage-class-dropdown';
-import { getInfrastructurePlatform } from '@console/shared';
-import { infraProvisionerMap, storageClassTooltip } from '../../constants/ocs-install';
+import { cephStorageProvisioners } from '@console/shared';
+import { storageClassTooltip } from '../../constants/ocs-install';
 import './storage-class-dropdown.scss';
 
 const StorageClassDropdown = (props: any) => {
@@ -33,7 +32,6 @@ export const OCSStorageClassDropdown: React.FC<OCSStorageClassDropdownProps> = (
   const handleStorageClass = (sc: K8sResourceKind) => {
     onChange(sc.metadata.name);
   };
-
   return (
     <>
       <label className="control-label" htmlFor="storageClass">
