@@ -1,6 +1,7 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import { useFormikContext, FormikValues } from 'formik';
+import { ValidatedOptions } from '@patternfly/react-core';
 import { DropdownField } from '@console/shared';
 import { k8sGet, K8sResourceKind } from '@console/internal/module/k8s';
 import { ImageStreamTagModel } from '@console/internal/models';
@@ -17,9 +18,8 @@ const ImageStreamTagDropdown: React.FC = () => {
   const {
     values: { imageStream, application, formType },
     setFieldValue,
-    setFieldError,
   } = useFormikContext<FormikValues>();
-  const { state, hasImageStreams } = React.useContext(ImageStreamContext);
+  const { state, hasImageStreams, setValidated } = React.useContext(ImageStreamContext);
   const { selectedImageStream, accessLoading, loading } = state;
   imageStreamTagList = getImageStreamTags(selectedImageStream as K8sResourceKind);
   const isNamespaceSelected = imageStream.namespace !== '' && !accessLoading;
@@ -47,11 +47,13 @@ const ImageStreamTagDropdown: React.FC = () => {
           // set default port value
           const targetPort = _.head(ports);
           targetPort && setFieldValue('route.targetPort', makePortName(targetPort));
+          setValidated(ValidatedOptions.success);
         })
         .catch((error) => {
-          setFieldError('isi.image', error.message);
           setFieldValue('isi', {});
+          setFieldValue('isi.status', error.message);
           setFieldValue('isSearchingForImage', false);
+          setValidated(ValidatedOptions.error);
         });
     },
     [
@@ -60,7 +62,7 @@ const ImageStreamTagDropdown: React.FC = () => {
       imageStream.namespace,
       formType,
       application.name,
-      setFieldError,
+      setValidated,
     ],
   );
 
