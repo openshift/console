@@ -46,7 +46,7 @@ class DeleteModal extends PromiseComponent {
   }
 
   render() {
-    const { kind, resource } = this.props;
+    const { kind, resource, message } = this.props;
     return (
       <form onSubmit={this._submit} name="form" className="modal-content ">
         <ModalTitle>Delete {kind.label}</ModalTitle>
@@ -57,6 +57,7 @@ class DeleteModal extends PromiseComponent {
               <p className="lead">
                 Delete <span className="co-break-word">{resource.metadata.name}</span>?
               </p>
+              {message}
               <div>
                 Are you sure you want to delete{' '}
                 <strong className="co-break-word">{resource.metadata.name}</strong>
