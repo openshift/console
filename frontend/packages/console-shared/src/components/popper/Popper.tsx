@@ -94,7 +94,7 @@ const Popper: React.FC<PopperProps> = ({
   const popperRef = React.useRef<PopperJS>(null);
   const popperRefs = useCombineRefs<PopperJS>(popperRef, popperRefIn);
   const [isOpen, setOpenState] = React.useState(openProp);
-  const focusRef = React.useRef<Element>();
+  const focusRef = React.useRef<Element | null>();
   const onRequestCloseRef = React.useRef(onRequestClose);
   onRequestCloseRef.current = onRequestClose;
 
