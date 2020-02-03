@@ -339,11 +339,11 @@ kebabFactory.common = [
   kebabFactory.Delete,
 ];
 
-export const getExtensionsKebabActionsForKind = (kind: K8sKind) => {
+export const getExtensionsKebabActionsForKind = (kind: K8sKind, obj?: K8sResourceKind) => {
   const extensionActions = [];
   _.forEach(plugins.registry.getKebabActions(), (getActions: any) => {
     if (getActions) {
-      _.forEach(getActions.properties.getKebabActionsForKind(kind), (kebabAction) => {
+      _.forEach(getActions.properties.getKebabActionsForKind(kind, obj), (kebabAction) => {
         extensionActions.push(kebabAction);
       });
     }

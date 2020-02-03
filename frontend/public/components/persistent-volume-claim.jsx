@@ -2,7 +2,6 @@ import * as React from 'react';
 import * as _ from 'lodash-es';
 import { sortable } from '@patternfly/react-table';
 import * as classNames from 'classnames';
-
 import { Status, FLAGS } from '@console/shared';
 import { connectToFlags } from '../reducers/features';
 import { Conditions } from './conditions';
@@ -20,11 +19,7 @@ import { ResourceEventStream } from './events';
 import { PersistentVolumeClaimModel } from '../models';
 
 const { common, ExpandPVC } = Kebab.factory;
-const menuActions = [
-  ...Kebab.getExtensionsActionsForKind(PersistentVolumeClaimModel),
-  ExpandPVC,
-  ...common,
-];
+const menuActions = [ExpandPVC, ...common];
 
 const PVCStatus = ({ pvc }) => (
   <Status status={pvc.metadata.deletionTimestamp ? 'Terminating' : pvc.status.phase} />
@@ -82,6 +77,7 @@ PVCTableHeader.displayName = 'PVCTableHeader';
 const kind = 'PersistentVolumeClaim';
 
 const PVCTableRow = ({ obj, index, key, style }) => {
+  const extensionsActions = Kebab.getExtensionsActionsForKind(PersistentVolumeClaimModel, obj);
   return (
     <TableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
       <TableData className={tableColumnClasses[0]}>
@@ -117,7 +113,11 @@ const PVCTableRow = ({ obj, index, key, style }) => {
         {_.get(obj, 'status.capacity.storage', '-')}
       </TableData>
       <TableData className={tableColumnClasses[5]}>
-        <ResourceKebab actions={menuActions} kind={kind} resource={obj} />
+        <ResourceKebab
+          actions={[...extensionsActions, ...menuActions]}
+          kind={kind}
+          resource={obj}
+        />
       </TableData>
     </TableRow>
   );
@@ -236,7 +236,10 @@ export const PersistentVolumeClaimsPage = (props) => {
 export const PersistentVolumeClaimsDetailsPage = (props) => (
   <DetailsPage
     {...props}
-    menuActions={menuActions}
+    menuActions={(resourceKind, obj, extraResources, customData) => {
+      const actions = [...Kebab.getExtensionsActionsForKind(resourceKind, obj), ...menuActions];
+      return actions.map((a) => a(resourceKind, obj, extraResources, customData));
+    }}
     pages={[
       navFactory.details(Details),
       navFactory.editYaml(),
