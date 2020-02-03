@@ -21,14 +21,17 @@ import {
   ResourceDetailsPage,
   ActionFeatureFlag,
 } from '@console/plugin-sdk';
-import { OCS_INDEPENDENT_FLAG, detectIndependentMode } from './features';
-
+import {
+  OCS_INDEPENDENT_FLAG,
+  detectIndependentMode,
+  detectOCSVersion44,
+  OCS_VERSION_4_4_FLAG,
+} from './features';
 import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager/src/models';
 import { GridPosition } from '@console/shared/src/components/dashboard/DashboardGrid';
 import { OverviewQuery } from '@console/internal/components/dashboard/dashboards-page/cluster-dashboard/queries';
 import { referenceForModel, referenceFor } from '@console/internal/module/k8s';
 import { PersistentVolumeClaimModel } from '@console/internal/models';
-import { getKebabActionsForKind } from './utils/kebab-actions';
 import { getCephHealthState } from './components/dashboard-page/storage-dashboard/status-card/utils';
 
 type ConsumedExtensions =
@@ -67,6 +70,13 @@ const plugin: Plugin<ConsumedExtensions> = [
     },
   },
   {
+    type: 'FeatureFlag/Action',
+    properties: {
+      flag: OCS_VERSION_4_4_FLAG,
+      detect: detectOCSVersion44,
+    },
+  },
+  {
     type: 'Page/Resource/Tab',
     properties: {
       href: 'volumesnapshots',
@@ -76,6 +86,9 @@ const plugin: Plugin<ConsumedExtensions> = [
         import('./components/volume-snapshot/volume-snapshot').then(
           (m) => m.VolumeSnapshotPage,
         ) /* webpackChunkName: "ceph-storage-volume-snapshot" */,
+    },
+    flags: {
+      required: [OCS_VERSION_4_4_FLAG, CEPH_FLAG],
     },
   },
   {
@@ -311,11 +324,8 @@ const plugin: Plugin<ConsumedExtensions> = [
         ).then((m) => m.VolumeSnapshotDetails),
       modelParser: referenceFor,
     },
-  },
-  {
-    type: 'KebabActions',
-    properties: {
-      getKebabActionsForKind,
+    flags: {
+      required: [OCS_VERSION_4_4_FLAG, CEPH_FLAG],
     },
   },
 ];
