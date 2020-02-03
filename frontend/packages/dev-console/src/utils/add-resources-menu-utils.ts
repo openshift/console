@@ -78,6 +78,6 @@ export const createKebabAction: KebabFactory = (label, icon, importType, checkAc
     icon,
     path: getMenuPath(hasApplication, connectorSourceContext),
     href: getAddPageUrl(obj, importType, hasApplication, connectorSourceContext),
-    accessReview: checkAccess && asAccessReview(resourceModel, obj, 'create'),
+    accessReview: checkAccess ? asAccessReview(resourceModel, obj, 'create') : undefined,
   };
 };
