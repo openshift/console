@@ -4,7 +4,7 @@ import { browser, by, element } from 'protractor';
 import { isLoaded } from '@console/internal-integration-tests/views/crud.view';
 import * as sidenavView from '@console/internal-integration-tests/views/sidenav.view';
 
-describe('Go to operators page', () => {
+describe('Kubevirt Installation', () => {
  
   beforeAll(async () => {
     await sidenavView.clickNavLink(['Operators', 'OperatorHub']);
@@ -13,7 +13,7 @@ describe('Go to operators page', () => {
     await click(cnvView.openshiftNamespaceButton);
   });
  
-  it('install Kubevirt', async () => {
+  it('Install Kubevirt', async () => {
     await isLoaded();
     element(by.cssContainingText('.catalog-tile-pf-title', 'Container-native virtualization Operator')).click();
     element(by.linkText('Install')).click()
