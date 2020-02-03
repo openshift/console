@@ -57,7 +57,7 @@ export const MultilineUtilizationItem: React.FC<MultilineUtilizationItemProps> =
     });
 
     return (
-      <div className="co-utilization-card__item">
+      <div className="co-utilization-card__item" data-test-id="utilization-item">
         <div className="co-utilization-card__item-description">
           <div className="co-utilization-card__item-section-multiline">
             <h4 className="pf-c-title pf-m-md">{title}</h4>
@@ -124,7 +124,7 @@ export const UtilizationItem: React.FC<UtilizationItemProps> = React.memo(
     );
 
     return (
-      <div className="co-utilization-card__item">
+      <div className="co-utilization-card__item" data-test-id="utilization-item">
         <div className="co-utilization-card__item-description">
           <div className="co-utilization-card__item-section">
             <h4 className="pf-c-title pf-m-md">{title}</h4>

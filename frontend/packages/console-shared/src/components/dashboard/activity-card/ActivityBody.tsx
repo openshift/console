@@ -109,6 +109,7 @@ export const PauseButton: React.FC<PauseButtonProps> = ({ paused, togglePause })
     onClick={togglePause}
     className="co-activity-card__recent-actions"
     icon={paused ? <PlayIcon /> : <PauseIcon />}
+    data-test-id="events-pause-button"
   >
     {paused ? 'Resume' : 'Pause'}
   </DashboardCardButtonLink>

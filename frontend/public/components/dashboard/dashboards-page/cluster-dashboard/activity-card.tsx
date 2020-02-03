@@ -161,7 +161,7 @@ const OngoingActivity = connect(mapStateToProps)(
 );
 
 export const ActivityCard: React.FC<{}> = React.memo(() => (
-  <DashboardCard gradient>
+  <DashboardCard gradient data-test-id="activity-card">
     <DashboardCardHeader>
       <DashboardCardTitle>Activity</DashboardCardTitle>
       <DashboardCardLink to="/k8s/all-namespaces/events">View events</DashboardCardLink>

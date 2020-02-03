@@ -3,7 +3,9 @@ import classNames from 'classnames';
 import './dashboard.scss';
 
 const Dashboard: React.FC<DashboardProps> = ({ className, children }) => (
-  <div className={classNames('co-dashboard-body', className)}>{children}</div>
+  <div data-test-id="dashboard" className={classNames('co-dashboard-body', className)}>
+    {children}
+  </div>
 );
 
 export default Dashboard;

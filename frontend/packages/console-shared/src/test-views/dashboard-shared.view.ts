@@ -1,8 +1,10 @@
-import { browser, ExpectedConditions as until } from 'protractor';
-import { untilNoLoadersPresent } from '@console/internal-integration-tests/views/crud.view';
+import { $, element, by, browser, ExpectedConditions as until } from 'protractor';
+import { waitForNone } from '@console/internal-integration-tests/protractor.conf';
 
-const DASHBOARD_LOAD_WAIT_TIME = 2000;
-export const dashboardIsLoaded = () =>
-  browser
-    .wait(until.and(untilNoLoadersPresent))
-    .then(() => browser.sleep(DASHBOARD_LOAD_WAIT_TIME));
+const dashboard = $('[data-test-id="dashboard"]');
+
+export const loaders = element.all(by.xpath(`//*[contains(@class, 'skeleton-')]`));
+export const isLoaded = async () => {
+  await browser.wait(until.presenceOf(dashboard));
+  await browser.wait(waitForNone(loaders));
+};

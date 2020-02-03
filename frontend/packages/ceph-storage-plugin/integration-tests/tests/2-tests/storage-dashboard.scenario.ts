@@ -1,7 +1,7 @@
 import { execSync } from 'child_process';
 import { browser } from 'protractor';
 import { appHost } from '@console/internal-integration-tests/protractor.conf';
-import { dashboardIsLoaded } from '@console/shared/src/test-views/dashboard-shared.view';
+import { isLoaded } from '@console/shared/src/test-views/dashboard-shared.view';
 import {
   serviceName,
   clusterHealth,
@@ -15,7 +15,7 @@ const STATUS_HEALTHY = 'healthy';
 describe('Check data on Persistent Storage Dashboard.', () => {
   beforeAll(async () => {
     await browser.get(`${appHost}/dashboards/persistent-storage`);
-    await dashboardIsLoaded();
+    await isLoaded();
   });
 
   it('Check cluster is healthy', () => {

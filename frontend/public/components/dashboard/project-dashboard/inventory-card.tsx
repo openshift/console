@@ -118,7 +118,7 @@ export const InventoryCard = connectToFlags(
     verb: 'list',
   });
   return (
-    <DashboardCard>
+    <DashboardCard data-test-id="inventory-card">
       <DashboardCardHeader>
         <DashboardCardTitle>Inventory</DashboardCardTitle>
       </DashboardCardHeader>
