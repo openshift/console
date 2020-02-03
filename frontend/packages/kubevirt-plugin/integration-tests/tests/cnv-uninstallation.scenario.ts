@@ -20,7 +20,7 @@ describe('Uninstall Kubevirt', () => {
     element(by.xpath("//button[@data-test-id='kebab-button']")).click();
     await browser.sleep(1000);
     element(by.xpath("//button[@data-test-action='Uninstall Operator']")).click();
-    await waitFor(kubevirtOperatorStatus, 'Succeeded', 5);
+    await waitFor(cnvView.kubevirtOperatorStatus, 'Succeeded', 5);
     element(by.id('confirm-action')).click();
   })
  })
