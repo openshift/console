@@ -3,9 +3,15 @@ import * as _ from 'lodash';
 import { k8sCreate } from '@console/internal/module/k8s';
 import { ImageStreamImportsModel } from '@console/internal/models';
 import { useFormikContext, FormikValues } from 'formik';
-import { TextInputTypes, Alert, AlertActionCloseButton, Button } from '@patternfly/react-core';
+import {
+  TextInputTypes,
+  Alert,
+  AlertActionCloseButton,
+  Button,
+  ValidatedOptions,
+} from '@patternfly/react-core';
 import { SecretTypeAbstraction } from '@console/internal/components/secrets/create-secret';
-import { InputSearchField } from '@console/shared';
+import { InputField } from '@console/shared';
 import { getSuggestedName, getPorts, makePortName } from '../../../utils/imagestream-utils';
 import { secretModalLauncher } from '../CreateSecretModal';
 
@@ -13,87 +19,108 @@ const ImageSearch: React.FC = () => {
   const { values, setFieldValue, dirty } = useFormikContext<FormikValues>();
   const [newImageSecret, setNewImageSecret] = React.useState('');
   const [alertVisible, shouldHideAlert] = React.useState(true);
+  const [validated, setValidated] = React.useState<ValidatedOptions>(ValidatedOptions.default);
   const namespace = values.project.name;
 
-  const handleSearch = React.useCallback(
-    (searchTerm: string) => {
-      const importImage = {
-        kind: 'ImageStreamImport',
-        apiVersion: 'image.openshift.io/v1',
-        metadata: {
-          name: 'newapp',
-          namespace: values.project.name,
-        },
-        spec: {
-          import: false,
-          images: [
-            {
-              from: {
-                kind: 'DockerImage',
-                name: _.trim(searchTerm),
-              },
+  const handleSearch = React.useCallback(() => {
+    const searchTermImage = values.searchTerm;
+    setFieldValue('isSearchingForImage', true);
+    setValidated(ValidatedOptions.default);
+    const importImage = {
+      kind: 'ImageStreamImport',
+      apiVersion: 'image.openshift.io/v1',
+      metadata: {
+        name: 'newapp',
+        namespace: values.project.name,
+      },
+      spec: {
+        import: false,
+        images: [
+          {
+            from: {
+              kind: 'DockerImage',
+              name: _.trim(searchTermImage),
             },
-          ],
-        },
-        status: {},
-      };
+          },
+        ],
+      },
+      status: {},
+    };
 
-      k8sCreate(ImageStreamImportsModel, importImage)
-        .then((imageStreamImport) => {
-          const status = _.get(imageStreamImport, 'status.images[0].status');
-          if (status.status === 'Success') {
-            const name = _.get(imageStreamImport, 'spec.images[0].from.name');
-            const image = _.get(imageStreamImport, 'status.images[0].image');
-            const tag = _.get(imageStreamImport, 'status.images[0].tag');
-            const isi = { name, image, tag, status };
-            const ports = getPorts(isi);
-            setFieldValue('isSearchingForImage', false);
-            setFieldValue('isi.name', name);
-            setFieldValue('isi.image', image);
-            setFieldValue('isi.tag', tag);
-            setFieldValue('isi.status', status);
-            setFieldValue('isi.ports', ports);
-            setFieldValue('image.ports', ports);
-            setFieldValue('image.tag', tag);
-            !values.name && setFieldValue('name', getSuggestedName(name));
-            !values.application.name &&
-              setFieldValue('application.name', `${getSuggestedName(name)}-app`);
-            // set default port value
-            const targetPort = _.head(ports);
-            targetPort && setFieldValue('route.targetPort', makePortName(targetPort));
-          } else {
-            setFieldValue('isSearchingForImage', false);
-            setFieldValue('isi', {});
-            setFieldValue('isi.status', status.message);
-            setFieldValue('route.targetPort', null);
-          }
-        })
-        .catch((error) => {
-          setFieldValue('isi', {});
-          setFieldValue('isi.status', error.message);
+    k8sCreate(ImageStreamImportsModel, importImage)
+      .then((imageStreamImport) => {
+        const status = _.get(imageStreamImport, 'status.images[0].status');
+        if (status.status === 'Success') {
+          const name = _.get(imageStreamImport, 'spec.images[0].from.name');
+          const image = _.get(imageStreamImport, 'status.images[0].image');
+          const tag = _.get(imageStreamImport, 'status.images[0].tag');
+          const isi = { name, image, tag, status };
+          const ports = getPorts(isi);
           setFieldValue('isSearchingForImage', false);
-        });
-    },
-    [setFieldValue, values.application.name, values.name, values.project.name],
-  );
+          setFieldValue('isi.name', name);
+          setFieldValue('isi.image', image);
+          setFieldValue('isi.tag', tag);
+          setFieldValue('isi.status', status);
+          setFieldValue('isi.ports', ports);
+          setFieldValue('image.ports', ports);
+          setFieldValue('image.tag', tag);
+          !values.name && setFieldValue('name', getSuggestedName(name));
+          !values.application.name &&
+            setFieldValue('application.name', `${getSuggestedName(name)}-app`);
+          // set default port value
+          const targetPort = _.head(ports);
+          targetPort && setFieldValue('route.targetPort', makePortName(targetPort));
+          setValidated(ValidatedOptions.success);
+        } else {
+          setFieldValue('isSearchingForImage', false);
+          setFieldValue('isi', {});
+          setFieldValue('isi.status', status.message);
+          setFieldValue('route.targetPort', null);
+          setValidated(ValidatedOptions.error);
+        }
+      })
+      .catch((error) => {
+        setFieldValue('isi', {});
+        setFieldValue('isi.status', error.message);
+        setFieldValue('isSearchingForImage', false);
+        setValidated(ValidatedOptions.error);
+      });
+  }, [setFieldValue, values.application.name, values.name, values.project.name, values.searchTerm]);
 
   const handleSave = (name: string) => {
     setNewImageSecret(name);
-    values.searchTerm && handleSearch(values.searchTerm);
+    values.searchTerm && handleSearch();
   };
 
+  const getHelpText = () => {
+    if (values.isSearchingForImage) {
+      return 'Validating...';
+    }
+    if (!values.isSearchingForImage && validated === ValidatedOptions.success) {
+      return 'Validated';
+    }
+    return '';
+  };
+
+  const helpTextInvalid = validated === ValidatedOptions.error && (
+    <span>{values.searchTerm === '' ? 'Required' : values.isi.status}</span>
+  );
+
   React.useEffect(() => {
-    !dirty && values.searchTerm && handleSearch(values.searchTerm);
+    !dirty && values.searchTerm && handleSearch();
   }, [dirty, handleSearch, values.searchTerm]);
 
   return (
     <>
-      <InputSearchField
+      <InputField
         type={TextInputTypes.text}
-        data-test-id="deploy-image-search-term"
         name="searchTerm"
-        label="Image Name"
-        onSearch={handleSearch}
+        placeholder="Enter an image name"
+        helpText={getHelpText()}
+        helpTextInvalid={helpTextInvalid}
+        validated={validated}
+        onBlur={handleSearch}
+        data-test-id="deploy-image-search-term"
         required
       />
       <div className="help-block" id="image-name-help">
