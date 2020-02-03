@@ -19,17 +19,6 @@ const getSCConfigMapAttribute = (
   );
 };
 
-export const getDefaultSCAccessMode = (
-  storageClassConfigMap: ConfigMapKind,
-  storageClassName: string,
-) =>
-  getSCConfigMapAttribute(
-    storageClassConfigMap,
-    storageClassName,
-    'accessMode',
-    PVC_ACCESSMODE_DEFAULT,
-  );
-
 export const getDefaultSCVolumeMode = (
   storageClassConfigMap: ConfigMapKind,
   storageClassName: string,
@@ -40,3 +29,19 @@ export const getDefaultSCVolumeMode = (
     'volumeMode',
     PVC_VOLUMEMODE_DEFAULT,
   );
+
+const getDefaultSCAccessMode = (storageClassConfigMap: ConfigMapKind, storageClassName: string) =>
+  getSCConfigMapAttribute(
+    storageClassConfigMap,
+    storageClassName,
+    'accessMode',
+    PVC_ACCESSMODE_DEFAULT,
+  );
+
+export const getDefaultSCAccessModes = (
+  storageClassConfigMap: ConfigMapKind,
+  storageClassName: string,
+) => {
+  const defaultMode = getDefaultSCAccessMode(storageClassConfigMap, storageClassName);
+  return defaultMode ? [defaultMode] : [];
+};

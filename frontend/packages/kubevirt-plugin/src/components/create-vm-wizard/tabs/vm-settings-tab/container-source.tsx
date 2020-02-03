@@ -5,13 +5,13 @@ import { toShallowJS } from '../../../../utils/immutable';
 import { FormFieldRow } from '../../form/form-field-row';
 import { FormField, FormFieldType } from '../../form/form-field';
 import { VMWizardStorage } from '../../types';
-import { VolumeWrapper } from '../../../../k8s/wrapper/vm/volume-wrapper';
+import { MutableVolumeWrapper, VolumeWrapper } from '../../../../k8s/wrapper/vm/volume-wrapper';
 import { VolumeType } from '../../../../constants/vm/storage';
 
 export const ContainerSource: React.FC<ContainerSourceProps> = React.memo(
   ({ field, provisionSourceStorage, onProvisionSourceStorageChange }) => {
     const storage: VMWizardStorage = toShallowJS(provisionSourceStorage);
-    const volumeWrapper = VolumeWrapper.initialize(storage && storage.volume);
+    const volumeWrapper = VolumeWrapper.initialize(storage?.volume);
 
     return (
       <FormFieldRow
@@ -21,19 +21,15 @@ export const ContainerSource: React.FC<ContainerSourceProps> = React.memo(
       >
         <FormField
           value={volumeWrapper.getContainerImage()}
-          isDisabled={!storage || !storage.volume}
+          isDisabled={volumeWrapper.getType() !== VolumeType.CONTAINER_DISK}
         >
           <TextInput
             onChange={(image) =>
               onProvisionSourceStorageChange({
                 ...storage,
-                volume: VolumeWrapper.mergeWrappers(
-                  volumeWrapper,
-                  VolumeWrapper.initializeFromSimpleData({
-                    type: VolumeType.CONTAINER_DISK,
-                    typeData: { image },
-                  }),
-                ).asResource(),
+                volume: new MutableVolumeWrapper(storage?.volume, true)
+                  .appendTypeData({ image }, false)
+                  .asMutableResource(),
               })
             }
           />

@@ -14,6 +14,7 @@ import {
 } from '../../../selectors/dv/selectors';
 import { toIECUnit } from '../../../components/form/size-unit-utils';
 import { DataVolumeModel } from '../../../models';
+import { ensurePath } from '../utils/utils';
 
 type CombinedTypeData = {
   name?: string;
@@ -162,16 +163,46 @@ export class DataVolumeWrapper extends ObjectWithTypePropertyWrapper<
 }
 
 export class MutableDataVolumeWrapper extends DataVolumeWrapper {
-  public constructor(
-    dataVolumeT?: V1alpha1DataVolume,
-    opts?: {
-      initializeWithType?: DataVolumeSourceType;
-      initializeWithTypeData?: any;
-      copy?: boolean;
-    },
-  ) {
-    super(dataVolumeT, opts);
+  public constructor(dataVolume?: V1alpha1DataVolume, copy = false) {
+    super(dataVolume, { copy });
   }
+
+  setName = (name: string) => {
+    this.ensurePath('metadata', {});
+    this.data.metadata.name = name;
+    return this;
+  };
+
+  setNamespace = (namespace: string) => {
+    this.ensurePath('metadata', {});
+    this.data.metadata.namespace = namespace;
+    return this;
+  };
+
+  setAccessModes = (accessModes: string[]) => {
+    this.ensurePath('spec.pvc', {});
+    this.data.spec.pvc.accessModes = accessModes;
+    return this;
+  };
+
+  setVolumeMode = (volumeMode: string) => {
+    this.ensurePath('spec.pvc', {});
+    this.data.spec.pvc.volumeMode = volumeMode;
+    return this;
+  };
+
+  assertDefaultModes = (volumeMode: string, accessModes: string[]) => {
+    const oldAccessModes = this.getAccessModes();
+    if ((!oldAccessModes || oldAccessModes.length === 0) && accessModes) {
+      this.setAccessModes(accessModes);
+    }
+
+    if (!this.getVolumeMode() && volumeMode) {
+      this.setVolumeMode(volumeMode);
+    }
+
+    return this;
+  };
 
   addOwnerReferences = (...additionalOwnerReferences) => {
     if (!getOwnerReferences(this.data)) {
@@ -190,6 +221,13 @@ export class MutableDataVolumeWrapper extends DataVolumeWrapper {
     }
     return this;
   };
+
+  appendTypeData = (typeData: CombinedTypeData, sanitize = true) => {
+    this.addTypeData(sanitize ? sanitizeTypeData(this.getType(), typeData) : typeData);
+    return this;
+  };
+
+  ensurePath = (path: string[] | string, value) => ensurePath(this.data, path, value);
 
   asMutableResource = () => this.data;
 }

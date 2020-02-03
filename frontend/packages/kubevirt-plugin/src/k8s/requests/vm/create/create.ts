@@ -94,7 +94,7 @@ export const createVMTemplate = async (params: CreateVMParams) => {
       // eslint-disable-next-line no-await-in-loop
       await enhancedK8sMethods.k8sCreate(
         DataVolumeModel,
-        new MutableDataVolumeWrapper(storage.dataVolumeToCreate, { copy: true })
+        new MutableDataVolumeWrapper(storage.dataVolumeToCreate, true)
           .addOwnerReferences(
             buildOwnerReference(templateResult, { blockOwnerDeletion: true, controller: true }),
           )

@@ -90,18 +90,20 @@ export class VolumeWrapper extends ObjectWithTypePropertyWrapper<V1Volume, Volum
 }
 
 export class MutableVolumeWrapper extends VolumeWrapper {
-  public constructor(
-    volume?: V1Volume,
-    opts?: { initializeWithType?: VolumeType; initializeWithTypeData?: any; copy?: boolean },
-  ) {
-    super(volume, opts);
+  public constructor(volume?: V1Volume, copy = false) {
+    super(volume, { copy });
   }
 
-  replaceTypeData = (typeData: CombinedTypeData, sanitaze?: boolean) => {
-    const type = this.getType();
-    if (type) {
-      this.data[type.getValue()] = sanitaze ? sanitizeTypeData(type, typeData) : typeData;
-    }
+  replaceType = (type: VolumeType, typeData: CombinedTypeData, sanitize = true) => {
+    this.setType(type, sanitize ? sanitizeTypeData(type, typeData) : typeData);
+    return this;
+  };
+
+  setTypeData = (typeData: CombinedTypeData, sanitize = true) =>
+    this.replaceType(this.getType(), typeData, sanitize);
+
+  appendTypeData = (typeData: CombinedTypeData, sanitize = true) => {
+    this.addTypeData(sanitize ? sanitizeTypeData(this.getType(), typeData) : typeData);
     return this;
   };
 

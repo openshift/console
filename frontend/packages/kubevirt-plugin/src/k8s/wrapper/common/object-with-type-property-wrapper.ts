@@ -74,4 +74,9 @@ export abstract class ObjectWithTypePropertyWrapper<
       typeDataParent[type.getValue()] = typeData ? _.cloneDeep(typeData) : {};
     }
   };
+
+  protected addTypeData = (newTypeData?: any) => {
+    const type = this.getType();
+    this.setType(type, { ...this.getTypeData(type), ...newTypeData });
+  };
 }

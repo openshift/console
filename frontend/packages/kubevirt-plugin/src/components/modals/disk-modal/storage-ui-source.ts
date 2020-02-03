@@ -82,7 +82,7 @@ export class StorageUISource extends ValueEnum<string> {
         storageUIType.volumeType == volumeType && // eslint-disable-line eqeqeq
         storageUIType.dataVolumeSourceType == dataVolumeSourceType && // eslint-disable-line eqeqeq
         storageUIType.hasNewPVC == hasNewPVC, // eslint-disable-line eqeqeq
-    );
+    ) || StorageUISource.OTHER;
 
   getVolumeType = () => this.volumeType;
 

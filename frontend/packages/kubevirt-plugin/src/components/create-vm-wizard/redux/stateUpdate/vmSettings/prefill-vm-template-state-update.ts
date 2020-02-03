@@ -51,7 +51,7 @@ import { getFlavors } from '../../../../../selectors/vm-template/combined-depend
 import { getSimpleName } from '../../../../../selectors/utils';
 import { getNextIDResolver } from '../../../../../utils/utils';
 import { ProvisionSource } from '../../../../../constants/vm/provision-source';
-import { DiskWrapper } from '../../../../../k8s/wrapper/vm/disk-wrapper';
+import { MutableDiskWrapper } from '../../../../../k8s/wrapper/vm/disk-wrapper';
 import { V1Volume } from '../../../../../types/vm/disk/V1Volume';
 import { MutableVolumeWrapper, VolumeWrapper } from '../../../../../k8s/wrapper/vm/volume-wrapper';
 import { getProvisionSourceStorage } from '../../initial-state/storage-tab-initial-state';
@@ -180,7 +180,7 @@ export const prefillVmTemplateUpdater = ({ id, dispatch, getState }: UpdateOptio
 
     // // prefill storage
     const templateStorages: VMWizardStorage[] = getDisks(vm).map((disk) => {
-      const diskWrapper = DiskWrapper.initialize(disk);
+      const diskWrapper = new MutableDiskWrapper(disk, true);
       let volume = volumeLookup[diskWrapper.getName()];
       const volumeWrapper = VolumeWrapper.initialize(volume);
       let dataVolume = dataVolumeTemplatesLookup[volumeWrapper.getDataVolumeName()];
@@ -190,8 +190,8 @@ export const prefillVmTemplateUpdater = ({ id, dispatch, getState }: UpdateOptio
         if (helper.includesOnlyFormValues()) {
           isCloudInitForm = true;
           helper.makeFormCompliant();
-          volume = new MutableVolumeWrapper(volume, { copy: true })
-            .replaceTypeData(helper.asCloudInitNoCloudSource())
+          volume = new MutableVolumeWrapper(volume, true)
+            .setTypeData(helper.asCloudInitNoCloudSource(), false)
             .asMutableResource();
           // do not overwrite with more cloud-init disks
         } else if (isCloudInitForm == null) {
@@ -212,8 +212,8 @@ export const prefillVmTemplateUpdater = ({ id, dispatch, getState }: UpdateOptio
           typeData: { name: volumeWrapper.getDataVolumeName(), namespace: activeNamespace },
         }).asResource();
 
-        volume = new MutableVolumeWrapper(volume, { copy: true })
-          .replaceTypeData({ name: newDataVolumeName })
+        volume = new MutableVolumeWrapper(volume, true)
+          .appendTypeData({ name: newDataVolumeName })
           .asMutableResource();
       }
 
@@ -226,21 +226,16 @@ export const prefillVmTemplateUpdater = ({ id, dispatch, getState }: UpdateOptio
         type = VMWizardStorageType.WINDOWS_GUEST_TOOLS_TEMPLATE;
       }
 
+      if (diskWrapper.getType() === DiskType.DISK && !diskWrapper.getDiskBus()) {
+        diskWrapper.appendTypeData({ bus: DiskBus.VIRTIO });
+      }
+
       return {
         id: getNextStorageID(),
         type,
         volume,
         dataVolume,
-        disk:
-          diskWrapper.getType() === DiskType.DISK && !diskWrapper.getDiskBus()
-            ? DiskWrapper.mergeWrappers(
-                diskWrapper,
-                DiskWrapper.initializeFromSimpleData({
-                  type: DiskType.DISK,
-                  bus: DiskBus.VIRTIO,
-                }),
-              ).asResource()
-            : disk,
+        disk: diskWrapper.asMutableResource(),
       };
     });
     storagesUpdate.unshift(...templateStorages);
