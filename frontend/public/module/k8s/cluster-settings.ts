@@ -75,12 +75,12 @@ export const getClusterUpdateStatus = (cv: ClusterVersionKind): ClusterUpdateSta
     return ClusterUpdateStatus.Failing;
   }
 
-  if (failedToRetrieveUpdates(cv)) {
-    return ClusterUpdateStatus.ErrorRetrieving;
-  }
-
   if (isProgressing(cv)) {
     return ClusterUpdateStatus.Updating;
+  }
+
+  if (failedToRetrieveUpdates(cv)) {
+    return ClusterUpdateStatus.ErrorRetrieving;
   }
 
   return hasAvailableUpdates(cv) ? ClusterUpdateStatus.UpdatesAvailable : ClusterUpdateStatus.UpToDate;
