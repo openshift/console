@@ -157,3 +157,18 @@ export function searchYAML(needle: string, name: string, namespace: string, kind
   const result = execSync(`kubectl get -o yaml -n ${namespace} ${kind} ${name}`).toString();
   return result.search(needle) >= 0;
 }
+
+export const waitFor = async (element, text, count = 1) => {
+  let rowNumber = 0;
+  while (rowNumber !== count) {
+    await browser.wait(until.visibilityOf(element));
+    const elemText = await element.getText();
+    if (elemText.includes(text)) {
+      rowNumber += 1;
+    } else {
+      rowNumber = 0;
+    }
+    /* eslint-disable no-await-in-loop */
+    await browser.sleep(300);
+  }
+};
