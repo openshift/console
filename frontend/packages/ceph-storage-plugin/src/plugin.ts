@@ -21,8 +21,12 @@ import {
   ResourceDetailsPage,
   ActionFeatureFlag,
 } from '@console/plugin-sdk';
-import { OCS_INDEPENDENT_FLAG, detectIndependentMode } from './features';
-
+import {
+  OCS_INDEPENDENT_FLAG,
+  detectIndependentMode,
+  detectOCSVersion44,
+  OCS_VERSION_4_4_FLAG,
+} from './features';
 import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager/src/models';
 import { GridPosition } from '@console/shared/src/components/dashboard/DashboardGrid';
 import { OverviewQuery } from '@console/internal/components/dashboard/dashboards-page/cluster-dashboard/queries';
@@ -64,6 +68,13 @@ const plugin: Plugin<ConsumedExtensions> = [
     properties: {
       model: models.OCSServiceModel,
       flag: CEPH_FLAG,
+    },
+  },
+  {
+    type: 'FeatureFlag/Action',
+    properties: {
+      flag: OCS_VERSION_4_4_FLAG,
+      detect: detectOCSVersion44,
     },
   },
   {
