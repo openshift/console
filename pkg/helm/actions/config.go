@@ -10,6 +10,12 @@ import (
 	"k8s.io/klog"
 )
 
+func getSettings() *cli.EnvSettings {
+	settings := cli.New()
+	settings.RepositoryCache = "/tmp"
+	return settings
+}
+
 var settings = cli.New()
 
 type configFlagsWithTransport struct {
@@ -27,16 +33,17 @@ func (c configFlagsWithTransport) ToRESTConfig() (*rest.Config, error) {
 
 func GetActionConfigurations(host, ns, token string, transport *http.RoundTripper) *action.Configuration {
 
+	truePtr := true
 	confFlags := &configFlagsWithTransport{
 		ConfigFlags: &genericclioptions.ConfigFlags{
 			APIServer:   &host,
 			BearerToken: &token,
 			Namespace:   &ns,
+			Insecure:    &truePtr,
 		},
 		Transport: transport,
 	}
 	conf := new(action.Configuration)
 	conf.Init(confFlags, ns, "secrets", klog.Infof)
-
 	return conf
 }

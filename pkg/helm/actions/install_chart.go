@@ -8,14 +8,15 @@ import (
 
 func InstallChart(ns, name, url string, vals map[string]interface{}, conf *action.Configuration) (*release.Release, error) {
 	cmd := action.NewInstall(conf)
-
 	name, chart, err := cmd.NameAndChart([]string{name, url})
 	if err != nil {
 		return nil, err
 	}
 	cmd.ReleaseName = name
 
-	cp, err := cmd.ChartPathOptions.LocateChart(chart, settings)
+	helmSettings := getSettings()
+	cp, err := cmd.ChartPathOptions.LocateChart(chart, helmSettings)
+
 	if err != nil {
 		return nil, err
 	}
