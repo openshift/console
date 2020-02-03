@@ -23,4 +23,4 @@ describe('Uninstall Kubevirt', () => {
     await waitFor(cnvView.kubevirtOperatorStatus, 'Succeeded', 5);
     element(by.id('confirm-action')).click();
   })
- })
+ });

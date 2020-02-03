@@ -17,8 +17,8 @@ describe('Kubevirt Installation', () => {
   it('Install Kubevirt', async () => {
     await isLoaded();
     element(by.cssContainingText('.catalog-tile-pf-title', 'Container-native virtualization Operator')).click();
-    element(by.linkText('Install')).click()
+    element(by.linkText('Install')).click();
     await waitFor(cnvView.kubevirtOperatorStatus, 'Succeeded', 5);
   })
- })
+ });
  
