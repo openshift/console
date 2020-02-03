@@ -8,7 +8,7 @@ import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboa
 import DetailsBody from '@console/shared/src/components/dashboard/details-card/DetailsBody';
 import DetailItem from '@console/shared/src/components/dashboard/details-card/DetailItem';
 import { getName, getRequester } from '@console/shared';
-import { LabelList, resourcePathFromModel } from '../../utils';
+import { LabelList } from '../../utils';
 import { ProjectModel } from '../../../models';
 import { ProjectDashboardContext } from './project-dashboard-context';
 
@@ -18,12 +18,10 @@ export const DetailsCard: React.FC = () => {
   const labelsSubset = _.take(keys, 3);
   const firstThreelabels = _.pick(obj.metadata.labels, labelsSubset);
   return (
-    <DashboardCard>
+    <DashboardCard data-test-id="details-card">
       <DashboardCardHeader>
         <DashboardCardTitle>Details</DashboardCardTitle>
-        <DashboardCardLink to={`${resourcePathFromModel(ProjectModel, getName(obj))}/overview`}>
-          View all
-        </DashboardCardLink>
+        <DashboardCardLink to="details">View all</DashboardCardLink>
       </DashboardCardHeader>
       <DashboardCardBody>
         <DetailsBody>
@@ -36,13 +34,7 @@ export const DetailsCard: React.FC = () => {
           <DetailItem isLoading={!obj} title="Labels">
             <div className="co-project-dashboard__details-labels">
               <LabelList kind={ProjectModel.kind} labels={firstThreelabels} />
-              {keys.length > 3 && (
-                <DashboardCardLink
-                  to={`${resourcePathFromModel(ProjectModel, getName(obj))}/overview`}
-                >
-                  View all
-                </DashboardCardLink>
-              )}
+              {keys.length > 3 && <DashboardCardLink to="details">View all</DashboardCardLink>}
             </div>
           </DetailItem>
         </DetailsBody>
