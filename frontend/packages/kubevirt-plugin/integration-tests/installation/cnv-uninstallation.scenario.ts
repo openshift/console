@@ -4,7 +4,7 @@ import { browser, by, element } from 'protractor';
 import { isLoaded } from '@console/internal-integration-tests/views/crud.view';
 import * as sidenavView from '@console/internal-integration-tests/views/sidenav.view';
 
-import { waitFor } from './utils/utils';
+import { waitFor } from '../tests/utils/utils';
 
 describe('Uninstall Kubevirt', () => {
  
