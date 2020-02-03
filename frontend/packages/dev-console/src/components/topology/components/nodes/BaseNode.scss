@@ -18,19 +18,19 @@
 
   &.is-filtered &__bg {
     stroke-width: 2px;
-    stroke: $filtered-color;
+    stroke: $filtered-stroke-color;
   }
   &.is-selected &__bg {
     stroke-width: 2px;
-    stroke: var(--pf-global--active-color--400);
+    stroke: $selected-stroke-color;
   }
   &.is-highlight &__bg {
     stroke-width: 4px;
-    stroke: var(--pf-global--active-color--100);
+    stroke: $interactive-stroke-color;
   }
   &.is-dropTarget &__bg {
     stroke-width: 4px;
-    stroke: var(--pf-global--active-color--100);
+    stroke: $interactive-stroke-color;
   }
 
   &__label {
@@ -46,7 +46,7 @@
 .odc-m-drag-active,
 .odc-m-filter-active {
   .odc-base-node {
-    opacity: 0.4;
+    opacity: $de-emphasize-opacity;
     &.is-dragging,
     &.is-highlight {
       opacity: 1;

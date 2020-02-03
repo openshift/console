@@ -15,24 +15,24 @@
   }
 
   &.is-filtered &__bg {
-    stroke: $filtered-color;
+    stroke: $filtered-stroke-color;
   }
   &.is-selected &__bg {
-    fill: var(--pf-global--active-color--200);
-    stroke: var(--pf-global--active-color--400);
+    fill: $selected-fill-color;
+    stroke: $selected-stroke-color;
   }
   &.is-highlight &__bg {
     fill: var(--pf-global--Color--light-100);
-    stroke: var(--pf-global--active-color--100);
+    stroke: $interactive-stroke-color;
   }
   &.is-dropTarget &__bg {
-    fill: var(--pf-global--active-color--200);
+    fill: $interactive-fill-color;
   }
 
   &__label {
     fill: var(--pf-global--Color--300);
     & text {
-      fill: #fff;
+      fill: var(--pf-global--Color--light-100);
       pointer-events: none;
       font-size: var(--pf-global--FontSize--sm);
     }
@@ -42,7 +42,7 @@
 .odc-m-drag-active,
 .odc-m-filter-active {
   .odc-application-group {
-    opacity: 0.4;
+    opacity: $de-emphasize-opacity;
 
     &.is-highlight,
     &.is-dragging {

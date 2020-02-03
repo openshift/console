@@ -1,3 +1,16 @@
 @import '~@patternfly/patternfly/sass-utilities/colors';
 
-$filtered-color: $pf-color-orange-200;
+$filtered-stroke-color: $pf-color-orange-200;
+
+$selected-fill-color: var(--pf-global--active-color--200);
+$selected-stroke-color: var(--pf-global--active-color--400);
+
+$interactive-fill-color: var(--pf-global--active-color--200);
+$interactive-stroke-color: var(--pf-global--active-color--100);
+
+$group-node-stroke-color: #bbbbbb;
+$group-node-fill-color: #d1d1d1;
+
+$de-emphasize-opacity: 0.4;
+
+$default-edge-stroke-color: #bbbbbb;

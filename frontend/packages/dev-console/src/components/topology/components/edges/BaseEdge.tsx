@@ -59,7 +59,8 @@ const BaseEdge: React.FC<BaseEdgeProps> = ({
         data-test-id="edge-handler"
         className={classNames(className, 'odc-base-edge', {
           'is-dragging': dragging,
-          'is-hover': hover || selected,
+          'is-hover': hover,
+          'is-selected': selected,
         })}
         onClick={onSelect}
       >

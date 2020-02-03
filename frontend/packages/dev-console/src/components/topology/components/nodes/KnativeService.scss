@@ -9,32 +9,32 @@
   }
 
   &__bg {
-    fill: #d1d1d1;
+    fill: $group-node-fill-color;
     fill-opacity: 0.5;
-    stroke: #bbbbbb;
+    stroke: $group-node-stroke-color;
     stroke-width: 5px;
   }
 
   &.is-filtered &__bg {
-    stroke: $filtered-color;
+    stroke: $filtered-stroke-color;
   }
   &.is-selected &__bg {
-    fill: var(--pf-global--active-color--200);
-    stroke: var(--pf-global--active-color--400);
+    fill: $selected-fill-color;
+    stroke: $selected-stroke-color;
   }
   &.is-highlight &__bg {
-    fill: #d1d1d1;
-    stroke: var(--pf-global--active-color--100);
+    fill: $group-node-fill-color;
+    stroke: $interactive-stroke-color;
   }
   &.is-dropTarget &__bg {
-    fill: var(--pf-global--active-color--200);
+    fill: $interactive-fill-color;
   }
 }
 
 .odc-m-drag-active,
 .odc-m-filter-active {
   .odc-knative-service {
-    opacity: 0.4;
+    opacity: $de-emphasize-opacity;
     &.is-dragging,
     &.is-highlight {
       opacity: 1;

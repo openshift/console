@@ -13,18 +13,18 @@
 
   &.is-filtered &__bg {
     stroke-width: 2px;
-    stroke: $filtered-color;
+    stroke: $filtered-stroke-color;
   }
   &.is-selected &__bg {
     stroke-width: 2px;
-    stroke: var(--pf-global--active-color--400);
+    stroke: $selected-stroke-color;
   }
 }
 
 .odc-m-drag-active,
 .odc-m-filter-active {
   .odc-event-source {
-    opacity: 0.4;
+    opacity: $de-emphasize-opacity;
     &.is-dragging {
       opacity: 1;
     }
