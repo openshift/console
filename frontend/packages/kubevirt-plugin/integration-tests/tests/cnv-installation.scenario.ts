@@ -1,8 +1,9 @@
 import * as cnvView from '../views/containerNativeVirtualization.view';
 import { click } from '@console/shared/src/test-utils/utils';
-import { browser, by, element } from 'protractor';
+import { by, element } from 'protractor';
 import { isLoaded } from '@console/internal-integration-tests/views/crud.view';
 import * as sidenavView from '@console/internal-integration-tests/views/sidenav.view';
+import { waitFor } from './utils/utils';
 
 describe('Kubevirt Installation', () => {
  
@@ -17,7 +18,7 @@ describe('Kubevirt Installation', () => {
     await isLoaded();
     element(by.cssContainingText('.catalog-tile-pf-title', 'Container-native virtualization Operator')).click();
     element(by.linkText('Install')).click()
-    await browser.sleep(20000);  
+    await waitFor(cnvView.kubevirtOperatorStatus, 'Succeeded', 5);
   })
  })
  
