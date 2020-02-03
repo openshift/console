@@ -25,3 +25,16 @@ export const OCSServiceModel: K8sKind = {
   id: 'ocscluster',
   crd: true,
 };
+
+export const VolumeSnapshotModel: K8sKind = {
+  label: 'Volume Snapshot',
+  apiVersion: 'snapshot.storage.k8s.io/v1alpha1',
+  apiGroup: '',
+  plural: 'volumesnapshots',
+  abbr: 'VS',
+  namespaced: true,
+  kind: 'VolumeSnapshot',
+  id: 'volumesnapshot',
+  labelPlural: 'Volume Snapshots',
+  crd: true,
+};

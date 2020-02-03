@@ -25,12 +25,23 @@ import * as catalogPageView from '../../../../integration-tests/views/catalog-pa
 import * as operatorView from '../../../operator-lifecycle-manager/integration-tests/views/operator.view';
 import * as operatorHubView from '../../../operator-lifecycle-manager/integration-tests/views/operator-hub.view';
 
+const JASMINE_DEFAULT_TIMEOUT_INTERVAL = jasmine.DEFAULT_TIMEOUT_INTERVAL;
+const JASMINE_EXTENDED_TIMEOUT_INTERVAL = 1000 * 60 * 3;
+
 describe('Pipeline', async () => {
   beforeAll(async () => {
     await browser.get(`${appHost}/k8s/cluster/projects`);
     await browser.wait(until.presenceOf(sidenavView.navSectionFor('Operators')));
     await sidenavView.clickNavLink(['Operators', 'OperatorHub']);
     await crudView.isLoaded();
+
+    // Extend the default jasmine timeout interval just in case it takes a while for the htpasswd idp to be ready
+    jasmine.DEFAULT_TIMEOUT_INTERVAL = JASMINE_EXTENDED_TIMEOUT_INTERVAL;
+  });
+
+  afterAll(() => {
+    // Set jasmine timeout interval back to the original value after these tests are done
+    jasmine.DEFAULT_TIMEOUT_INTERVAL = JASMINE_DEFAULT_TIMEOUT_INTERVAL;
   });
 
   afterEach(() => {
@@ -39,12 +50,14 @@ describe('Pipeline', async () => {
   });
 
   it('displays subscription creation form for selected Operator', async () => {
+    await switchPerspective(Perspective.Administrator);
     await catalogView.categoryTabsPresent();
     await catalogView.categoryTabs.get(0).click();
     await catalogPageView.catalogTileFor('Pipelines Operator').click();
     await browser.wait(until.visibilityOf(operatorHubView.operatorModal));
     await browser.wait(until.presenceOf(element(by.id('confirm-action'))));
     await element(by.id('confirm-action')).click();
+    await browser.wait(until.presenceOf(operatorHubView.operatorModalInstallBtn));
     await operatorHubView.operatorModalInstallBtn.click();
     await operatorHubView.createSubscriptionFormLoaded();
 
@@ -93,8 +106,8 @@ describe('Pipeline', async () => {
     expect(pipelinePage.getText()).toContain('Pipelines');
     await pipelineScriptRunner();
     expect(createPipelineYamlError.isPresent()).toBe(false);
-    await browser.wait(until.visibilityOf(pipelineOverviewName));
-    expect(pipelineOverviewName.getText()).toContain('new-pipeline');
+    await browser.wait(until.elementToBeClickable(pipelineOverviewName));
+    await browser.wait(until.textToBePresentInElement(pipelineOverviewName, 'new-pipeline'));
     await execSync(
       `oc create -f ./packages/dev-console/integration-tests/views/simple-pipeline-demo.yaml -n ${testName}`,
     );

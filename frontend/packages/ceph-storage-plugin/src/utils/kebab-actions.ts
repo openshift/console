@@ -1,12 +1,18 @@
+import { ClonePVC } from './clone-workflow';
+import { DeleteSnapshot } from './delete-snapshot-workflow';
 import { K8sKind } from '@console/internal/module/k8s';
 import { KebabAction } from '@console/internal/components/utils';
 import { PersistentVolumeClaimModel } from '@console/internal/models/index';
-import { ClonePVC } from './clone-workflow';
+import { RestorePVC } from './restore-pvc-workflow';
+import { SnapshotPVC } from './snapshot-workflow';
+import { VolumeSnapshotModel } from '../models';
 
 export const getKebabActionsForKind = (resourceKind: K8sKind): KebabAction[] => {
-  const menuActions: KebabAction[] = [];
   if (resourceKind?.kind === PersistentVolumeClaimModel.kind) {
-    menuActions.push(ClonePVC);
+    return [SnapshotPVC, ClonePVC];
   }
-  return menuActions;
+  if (resourceKind?.kind === VolumeSnapshotModel.kind) {
+    return [RestorePVC, DeleteSnapshot];
+  }
+  return [];
 };

@@ -15,6 +15,7 @@ import { ColumnStyle, Panel } from './types';
 import { PrometheusResponse } from '../../graphs';
 import { getPrometheusURL, PrometheusEndpoint } from '../../graphs/helpers';
 import {
+  EmptyBox,
   formatToFractionalDigits,
   humanizeBinaryBytes,
   humanizeDecimalBytesPerSec,
@@ -24,9 +25,10 @@ import {
 } from '../../utils';
 import { TablePagination } from '../metrics';
 
-const formatNumber = (value: number, decimals: number, unit: string): string => {
+const formatNumber = (s: string, decimals: number, unit: string): string => {
+  const value = Number(s);
   if (_.isNil(value) || isNaN(value)) {
-    return '-';
+    return s || '-';
   }
 
   switch (unit) {
@@ -81,16 +83,14 @@ const Table: React.FC<Props> = ({ panel, pollInterval, queries }) => {
         //   https://grafana.com/docs/grafana/latest/features/panels/table_panel/#merge-multiple-queries-per-table
         setData(
           responses.reduce((acc, response, i: number) => {
+            const id = panel.targets[i].refId;
             response.data.result.forEach(({ metric, value }) => {
               const label = _.first(Object.keys(metric));
               const tag = metric[label];
-              // Fill in the array with undefined values and set each value by index. This makes
-              // sure the columns are correct if one of the ealier responses didn't include this
-              // tag.
               if (!acc[tag]) {
-                acc[tag] = [tag, ...Array.from({ length: responses.length }, () => undefined)];
+                acc[tag] = { ...metric };
               }
-              acc[tag][i + 1] = [value[1] || ''];
+              acc[tag][`Value #${id}`] = value[1] || '';
             });
             return acc;
           }, {} as any),
@@ -112,15 +112,26 @@ const Table: React.FC<Props> = ({ panel, pollInterval, queries }) => {
   if (error) {
     return <ErrorAlert message={error} />;
   }
-  // FIXME: It's a little unclear how to associate a column style with the data. This assumes the
-  // styles are in the same order as the queries with the time column at the head of the array and
-  // additional columns at the end.
-  const labelStyle: ColumnStyle = panel.styles[queries.length + 1];
-  const columns: ColumnStyle[] = [labelStyle, ...panel.styles.slice(1, -2)];
-  const sortAsNumber = columns[sortBy.index].type === 'number';
-  const sort = (row: string[]) => {
-    const val = row[sortBy.index];
-    if (!sortAsNumber) {
+  if (_.isEmpty(data)) {
+    return <EmptyBox label="Data" />;
+  }
+
+  // Make a copy of the array and move the first label to the front.
+  // FIXME: Remove magic number for label index.
+  const styles = [...panel.styles];
+  const labelIndex = queries.length + 1;
+  styles.unshift(styles.splice(labelIndex, 1)[0]);
+
+  // Remove hidden and regex columns.
+  const columns: ColumnStyle[] = styles.filter(
+    ({ type, pattern, alias }) => type !== 'hidden' && !pattern.startsWith('/') && alias,
+  );
+
+  // Sort the data.
+  const sort = (row) => {
+    const { pattern, type } = columns[sortBy.index];
+    const val = row[pattern];
+    if (type !== 'number') {
       return val;
     }
     if (_.isNil(val)) {
@@ -131,18 +142,23 @@ const Table: React.FC<Props> = ({ panel, pollInterval, queries }) => {
     return _.isFinite(num) ? num : val;
   };
   const sortedData = _.orderBy(data, [sort], [sortBy.direction]);
-  const formattedRows: string[][] = _.map(sortedData, (values: string[]) => {
-    return values.map((value: string, i: number) => {
-      const { type, decimals = 2, unit = '' } = panel.styles[i];
+
+  // Format the table rows.
+  const formattedRows: string[][] = sortedData.map((values: { [key: string]: string }) => {
+    return columns.reduce((acc, { type, decimals = 2, pattern, unit = '' }) => {
+      const value = values[pattern];
       switch (type) {
         case 'number':
-          return formatNumber(Number(value), decimals, unit);
+          acc.push(formatNumber(value, decimals, unit));
+          break;
         default:
-          return value || '-';
+          acc.push(value || '-');
       }
-    });
+      return acc;
+    }, []);
   });
-  const cells = columns.map(({ alias: title }) => ({
+
+  const headers = columns.map(({ alias: title }) => ({
     title,
     transforms: [sortable],
   }));
@@ -153,7 +169,7 @@ const Table: React.FC<Props> = ({ panel, pollInterval, queries }) => {
       <div className="monitoring-dashboards__table-container">
         <PFTable
           aria-label="query results table"
-          cells={cells}
+          cells={headers}
           onSort={onSort}
           rows={paginatedRows}
           sortBy={sortBy}

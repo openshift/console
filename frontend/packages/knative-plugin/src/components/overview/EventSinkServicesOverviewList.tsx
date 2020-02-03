@@ -29,7 +29,7 @@ const EventSinkServicesOverviewList: React.FC<EventSinkServicesOverviewListProps
             />
             {sinkUri && (
               <>
-                <span className="text-muted">Sink uri: </span>
+                <span className="text-muted">Sink URI: </span>
                 <ExternalLink
                   href={sinkUri}
                   additionalClassName="co-external-link--block"

@@ -2,8 +2,11 @@ import * as React from 'react';
 import { Link } from 'react-router-dom';
 import * as _ from 'lodash';
 import LazyLoad from 'react-lazyload';
-import { Button, Modal } from '@patternfly/react-core';
 import { CatalogItemHeader, CatalogTile } from '@patternfly/react-catalog-view-extension';
+import * as classNames from 'classnames';
+import { Button, Modal } from '@patternfly/react-core';
+import { ExternalLinkAltIcon } from '@patternfly/react-icons';
+
 import {
   COMMUNITY_PROVIDERS_WARNING_LOCAL_STORAGE_KEY,
   GreenCheckCircleIcon,
@@ -323,6 +326,7 @@ export const OperatorHubTileView: React.FC<OperatorHubTileViewProps> = (props) =
   const createLink =
     detailsItem &&
     `/operatorhub/subscribe?pkg=${detailsItem.obj.metadata.name}&catalog=${detailsItem.catalogSource}&catalogNamespace=${detailsItem.catalogSourceNamespace}&targetNamespace=${props.namespace}`;
+
   const uninstallLink = () =>
     detailsItem &&
     `/k8s/ns/${detailsItem.subscription.metadata.namespace}/${SubscriptionModel.plural}/${detailsItem.subscription.metadata.name}?showDelete=true`;
@@ -352,9 +356,22 @@ export const OperatorHubTileView: React.FC<OperatorHubTileViewProps> = (props) =
                 vendor={`${detailsItem.version} provided by ${detailsItem.provider}`}
               />
               <div className="co-catalog-page__button">
+                {detailsItem.marketplaceRemoteWorkflow && (
+                  <Link
+                    className="pf-c-button pf-c-external pf-m-primary co-catalog-page__overlay-remo5e-workflow"
+                    to={detailsItem.marketplaceRemoteWorkflow}
+                  >
+                    {detailsItem.marketplaceActionText || 'View Details'} <ExternalLinkAltIcon />
+                  </Link>
+                )}
                 {!detailsItem.installed ? (
                   <Link
-                    className="pf-c-button pf-m-primary co-catalog-page__overlay-create"
+                    className={classNames(
+                      'pf-c-button',
+                      { 'pf-m-secondary': detailsItem.marketplaceRemoteWorkflow },
+                      { 'pf-m-primary': !detailsItem.marketplaceRemoteWorkflow },
+                      'co-catalog-page__overlay-create',
+                    )}
                     to={createLink}
                   >
                     Install

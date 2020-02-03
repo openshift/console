@@ -31,7 +31,7 @@ describe('RevisionRow', () => {
     expect(wrapper.find(TableData)).toHaveLength(8);
     expect(serviceDataTable.find(ResourceLink)).toHaveLength(1);
     expect(serviceDataTable.find(ResourceLink).props().kind).toEqual(
-      'serving.knative.dev~v1beta1~Service',
+      'serving.knative.dev~v1~Service',
     );
   });
 

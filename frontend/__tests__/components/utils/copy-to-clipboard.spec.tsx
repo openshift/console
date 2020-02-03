@@ -17,7 +17,9 @@ describe(CopyToClipboard.displayName, () => {
       .find<any>(CTC)
       .props()
       .onCopy();
-    wrapper.update();
+
+    // re-render component created via React.memo
+    wrapper.setProps({ value: 'FuzzBizz' });
 
     expect(wrapper.find(Tooltip).props().content[0].props.children).toEqual('Copied');
   });
@@ -28,7 +30,6 @@ describe(CopyToClipboard.displayName, () => {
       .find<any>(CTC)
       .props()
       .onCopy();
-    wrapper.update();
 
     wrapper.find('.co-copy-to-clipboard__btn').simulate('mouseenter');
 

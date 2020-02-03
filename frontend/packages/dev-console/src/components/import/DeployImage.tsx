@@ -50,7 +50,7 @@ const DeployImage: React.FC<Props> = ({
     imageStream: {
       image: '',
       tag: '',
-      namespace: '',
+      namespace: namespace || '',
       grantAccess: true,
     },
     isi: {

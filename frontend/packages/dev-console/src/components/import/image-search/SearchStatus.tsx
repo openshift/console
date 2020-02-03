@@ -7,6 +7,7 @@ import { RedExclamationCircleIcon } from '@console/shared';
 const SearchStatus: React.FC = () => {
   const { values, errors } = useFormikContext<FormikValues>();
   const isiError = _.get(errors, 'isi.image');
+  const isiStatus = values?.isi?.status;
 
   return _.isEmpty(values.isi.image) ? (
     <div className="co-image-name-results">
@@ -22,7 +23,7 @@ const SearchStatus: React.FC = () => {
             <h2 className="h3 co-image-name-results__loading-heading">
               <RedExclamationCircleIcon /> Could not load image metadata.
             </h2>
-            <p className="co-image-name-results__loading-error">{isiError}</p>
+            <p className="co-image-name-results__loading-error">{isiStatus || isiError}</p>
           </>
         )}
       </div>

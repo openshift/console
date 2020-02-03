@@ -284,6 +284,11 @@ export const FireMan_ = connect(null, { filterList })(
                 />
               </div>
             )}
+            {!title && badge && (
+              <div className="co-m-pane__filter-bar-group co-m-pane__filter-bar-group--badge">
+                {badge}
+              </div>
+            )}
           </div>
           <div className="co-m-pane__body">
             {inject(this.props.children, {
@@ -333,7 +338,7 @@ FireMan_.propTypes = {
   title: PropTypes.string,
 };
 
-/** @type {React.SFC<{ListComponent: React.ComponentType<any>, kind: string, helpText?: any, namespace?: string, filterLabel?: string, textFilter?: string, title?: string, hideTextFilter?: boolean, showTitle?: boolean, rowFilters?: any[], selector?: any, fieldSelector?: string, canCreate?: boolean, createButtonText?: string, createProps?: any, mock?: boolean, badge?: React.ReactNode} >} */
+/** @type {React.SFC<{ListComponent: React.ComponentType<any>, kind: string, helpText?: any, namespace?: string, filterLabel?: string, textFilter?: string, title?: string, showTitle?: boolean, rowFilters?: any[], selector?: any, fieldSelector?: string, canCreate?: boolean, createButtonText?: string, createProps?: any, mock?: boolean, badge?: React.ReactNode, createHandler?: any} >} */
 export const ListPage = withFallback((props) => {
   const {
     autoFocus,

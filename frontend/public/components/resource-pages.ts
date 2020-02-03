@@ -67,7 +67,9 @@ const addResourcePage = (
   map: ImmutableMap<ResourceMapKey, ResourceMapValue>,
   page: plugins.ResourcePage,
 ) => {
-  const key = referenceForModel(page.properties.model);
+  const key = page.properties?.modelParser
+    ? page.properties?.modelParser(page.properties.model)
+    : referenceForModel(page.properties.model);
   if (!map.has(key)) {
     map.set(key, page.properties.loader);
   }
