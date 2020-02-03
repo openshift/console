@@ -1,19 +1,16 @@
-import * as sidenavView from '@console/internal-integration-tests/views/sidenav.view';
-import { isLoaded } from '@console/internal-integration-tests/views/crud.view';
-import { $, browser, by, element } from 'protractor';
+import * as cnvView from '../views/containerNativeVirtualization.view';
 import { click } from '@console/shared/src/test-utils/utils';
+import { browser, by, element } from 'protractor';
+import { isLoaded } from '@console/internal-integration-tests/views/crud.view';
+import * as sidenavView from '@console/internal-integration-tests/views/sidenav.view';
 
-const namespaceButton = $('.co-namespace-selector button');
-const openshiftNamespaceButton = $('#openshift-cnv-link');
-
- 
 describe('Go to operators page', () => {
  
   beforeAll(async () => {
     await sidenavView.clickNavLink(['Operators', 'OperatorHub']);
     await isLoaded();
-    await click(namespaceButton);
-    await click(openshiftNamespaceButton);
+    await click(cnvView.namespaceButton);
+    await click(cnvView.openshiftNamespaceButton);
   });
  
   it('install Kubevirt', async () => {
@@ -23,3 +20,4 @@ describe('Go to operators page', () => {
     await browser.sleep(20000);  
   })
  })
+ 
