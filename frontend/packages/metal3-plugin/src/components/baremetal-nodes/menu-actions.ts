@@ -2,6 +2,7 @@ import { Kebab, KebabOption, asAccessReview } from '@console/internal/components
 import {
   MarkAsSchedulable,
   MarkAsUnschedulable,
+  Delete,
 } from '@console/app/src/components/nodes/menu-actions';
 import { K8sKind, NodeKind, K8sResourceKind, MachineKind } from '@console/internal/module/k8s';
 import { getName } from '@console/shared';
@@ -54,6 +55,7 @@ export const menuActions = [
   ModifyLabels,
   ModifyAnnotations,
   Edit,
+  Delete,
 ];
 
 type ExtraResources = {
