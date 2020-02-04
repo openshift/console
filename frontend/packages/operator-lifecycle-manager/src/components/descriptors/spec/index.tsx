@@ -256,13 +256,11 @@ export const SpecDescriptor: React.SFC<DescriptorProps> = (props) => {
 
   return (
     <dl className="olm-descriptor">
-      <div style={{ width: 'max-content' }}>
-        <Tooltip content={descriptor.description}>
-          <dt className="olm-descriptor__title" data-test-descriptor-label={descriptor.displayName}>
-            {descriptor.displayName}
-          </dt>
-        </Tooltip>
-      </div>
+      <Tooltip content={descriptor.description}>
+        <dt className="olm-descriptor__title" data-test-descriptor-label={descriptor.displayName}>
+          {descriptor.displayName}
+        </dt>
+      </Tooltip>
       <dd className="olm-descriptor__value">
         <Capability
           descriptor={descriptor}
