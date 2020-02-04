@@ -21,7 +21,11 @@ const StatusIconAndText: React.FC<StatusIconAndTextProps> = ({
   }
 
   return (
-    <span className="co-icon-and-text" title={iconOnly && !noTooltip ? title : undefined}>
+    <span
+      data-test-id="resource-status"
+      className="co-icon-and-text"
+      title={iconOnly && !noTooltip ? title : undefined}
+    >
       {icon &&
         React.cloneElement(icon, {
           className: classNames(

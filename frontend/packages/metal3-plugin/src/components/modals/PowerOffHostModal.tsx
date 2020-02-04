@@ -58,7 +58,12 @@ const ForcePowerOffDialog: React.FC<ForcePowerOffDialogProps> = ({
       </p>
       <div className="form-group">
         <FormGroup controlId="host-force-off">
-          <Checkbox onChange={() => setForceOff(!forceOff)} checked={forceOff} inline>
+          <Checkbox
+            onChange={() => setForceOff(!forceOff)}
+            checked={forceOff}
+            data-test-id="confirm-power-off-checkbox"
+            inline
+          >
             Power off immediately
           </Checkbox>
           <HelpBlock id="host-force-off-help">

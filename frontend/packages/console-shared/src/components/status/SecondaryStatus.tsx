@@ -10,7 +10,9 @@ const SecondaryStatus: React.FC<SecondaryStatusProps> = ({ status }) => {
   if (statusLabel) {
     return (
       <div>
-        <small className="text-muted">{statusLabel}</small>
+        <small className="text-muted" data-test-id="secondary-status">
+          {statusLabel}
+        </small>
       </div>
     );
   }

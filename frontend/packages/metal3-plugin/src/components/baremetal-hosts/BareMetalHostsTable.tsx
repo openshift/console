@@ -107,7 +107,7 @@ const HostsTableRow: React.FC<HostsTableRowProps> = ({
       <TableData className={tableColumnClasses.node}>
         <NodeLink nodeName={nodeName} />
       </TableData>
-      <TableData className={tableColumnClasses.role}>
+      <TableData className={tableColumnClasses.role} data-test-id="node-roles">
         <BareMetalHostRole machine={machine} node={node} />
       </TableData>
       <TableData className={tableColumnClasses.address}>{address || DASH}</TableData>
