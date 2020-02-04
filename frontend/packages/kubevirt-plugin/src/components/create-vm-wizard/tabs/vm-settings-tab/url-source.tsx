@@ -6,15 +6,12 @@ import { FormFieldRow } from '../../form/form-field-row';
 import { FormField, FormFieldType } from '../../form/form-field';
 import { VMWizardStorage } from '../../types';
 import { DataVolumeSourceType } from '../../../../constants/vm/storage';
-import {
-  DataVolumeWrapper,
-  MutableDataVolumeWrapper,
-} from '../../../../k8s/wrapper/vm/data-volume-wrapper';
+import { DataVolumeWrapper } from '../../../../k8s/wrapper/vm/data-volume-wrapper';
 
 export const URLSource: React.FC<URLSourceProps> = React.memo(
   ({ field, provisionSourceStorage, onProvisionSourceStorageChange }) => {
     const storage: VMWizardStorage = toShallowJS(provisionSourceStorage);
-    const dataVolumeWrapper = DataVolumeWrapper.initialize(storage?.dataVolume);
+    const dataVolumeWrapper = new DataVolumeWrapper(storage?.dataVolume);
 
     return (
       <FormFieldRow
@@ -30,9 +27,9 @@ export const URLSource: React.FC<URLSourceProps> = React.memo(
             onChange={(url) =>
               onProvisionSourceStorageChange({
                 ...storage,
-                dataVolume: new MutableDataVolumeWrapper(storage?.dataVolume, true)
+                dataVolume: new DataVolumeWrapper(storage?.dataVolume, true)
                   .appendTypeData({ url }, false)
-                  .asMutableResource(),
+                  .asResource(),
               })
             }
           />

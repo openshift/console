@@ -10,7 +10,7 @@ import {
   TEMPLATE_TYPE_VM,
 } from '../../../../constants/vm';
 import { DataVolumeModel, VirtualMachineModel } from '../../../../models';
-import { MutableDataVolumeWrapper } from '../../../wrapper/vm/data-volume-wrapper';
+import { DataVolumeWrapper } from '../../../wrapper/vm/data-volume-wrapper';
 import { buildOwnerReference } from '../../../../utils';
 import { VMWrapper } from '../../../wrapper/vm/vm-wrapper';
 import { ProcessedTemplatesModel } from '../../../../models/models';
@@ -91,11 +91,11 @@ export const createVMTemplate = async (params: CreateVMParams) => {
       // eslint-disable-next-line no-await-in-loop
       await enhancedK8sMethods.k8sCreate(
         DataVolumeModel,
-        new MutableDataVolumeWrapper(storage.dataVolumeToCreate, true)
+        new DataVolumeWrapper(storage.dataVolumeToCreate, true)
           .addOwnerReferences(
             buildOwnerReference(templateResult, { blockOwnerDeletion: true, controller: true }),
           )
-          .asMutableResource(),
+          .asResource(),
       );
     }
   }

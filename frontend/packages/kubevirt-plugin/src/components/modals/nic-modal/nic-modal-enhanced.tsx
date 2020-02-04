@@ -21,8 +21,8 @@ const NICModalFirehoseComponent: React.FC<NICModalFirehoseComponentProps> = (pro
   const vmLikeFinal = getLoadedData(vmLikeEntityLoading, vmLikeEntity); // default old snapshot before loading a new one
   const vm = asVM(vmLikeFinal);
 
-  const nicWrapper = nic ? new NetworkInterfaceWrapper(nic) : NetworkInterfaceWrapper.EMPTY;
-  const networkWrapper = network ? new NetworkWrapper(network) : NetworkWrapper.EMPTY;
+  const nicWrapper = nic ? new NetworkInterfaceWrapper(nic, true) : NetworkInterfaceWrapper.EMPTY;
+  const networkWrapper = network ? new NetworkWrapper(network, true) : NetworkWrapper.EMPTY;
 
   const usedNetworksChoices = getUsedNetworks(vm);
 

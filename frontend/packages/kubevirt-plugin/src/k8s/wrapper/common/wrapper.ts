@@ -1,4 +1,5 @@
 import * as _ from 'lodash';
+import { ensurePath } from '../utils/utils';
 
 export class Wrapper<RESOURCE extends {}> {
   protected data: RESOURCE;
@@ -23,4 +24,7 @@ export class Wrapper<RESOURCE extends {}> {
   protected get = (key: string) => (this.data && key ? this.data[key] : null);
 
   protected getIn = (path: string[]) => (this.data && path ? _.get(this.data, path) : null);
+
+  protected ensurePath = (path: string[] | string, value: any[] | {} = {}) =>
+    ensurePath(this.data, path, value);
 }

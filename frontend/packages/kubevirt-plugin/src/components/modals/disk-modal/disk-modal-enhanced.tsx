@@ -27,10 +27,10 @@ const DiskModalFirehoseComponent: React.FC<DiskModalFirehoseComponentProps> = (p
   const vmLikeFinal = getLoadedData(vmLikeEntityLoading, vmLikeEntity); // default old snapshot before loading a new one
   const vm = asVM(vmLikeFinal);
 
-  const diskWrapper = disk ? DiskWrapper.initialize(disk) : DiskWrapper.EMPTY;
-  const volumeWrapper = volume ? VolumeWrapper.initialize(volume) : VolumeWrapper.EMPTY;
+  const diskWrapper = disk ? new DiskWrapper(disk, true) : DiskWrapper.EMPTY;
+  const volumeWrapper = volume ? new VolumeWrapper(volume, true) : VolumeWrapper.EMPTY;
   const dataVolumeWrapper = dataVolume
-    ? DataVolumeWrapper.initialize(dataVolume)
+    ? new DataVolumeWrapper(dataVolume, true)
     : DataVolumeWrapper.EMPTY;
 
   const combinedDiskFactory = CombinedDiskFactory.initializeFromVMLikeEntity(vmLikeFinal);

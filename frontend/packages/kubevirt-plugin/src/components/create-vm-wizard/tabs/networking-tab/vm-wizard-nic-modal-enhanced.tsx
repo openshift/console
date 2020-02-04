@@ -58,8 +58,8 @@ const VMWizardNICModal: React.FC<VMWizardNICModalProps> = (props) => {
       usedInterfacesNames={usedInterfacesNames}
       usedMultusNetworkNames={usedMultusNetworkNames}
       allowPodNetwork={allowPodNetwork}
-      nic={networkInterfaceWrapper}
-      network={networkWrapper}
+      nic={new NetworkInterfaceWrapper(networkInterfaceWrapper.asResource(), true)}
+      network={new NetworkWrapper(networkWrapper.asResource(), true)}
       onSubmit={(resultNetworkInterfaceWrapper, resultNetworkWrapper) => {
         addUpdateNIC({
           id,

@@ -75,7 +75,7 @@ export class ProvisionSource extends ValueEnum<string> {
           error: 'No Volume has been found.',
         };
       }
-      const volumeWrapper = VolumeWrapper.initialize(volume);
+      const volumeWrapper = new VolumeWrapper(volume);
       let dataVolumeWrapper;
 
       if (volumeWrapper.getType() === VolumeType.DATA_VOLUME) {
@@ -102,7 +102,7 @@ export class ProvisionSource extends ValueEnum<string> {
             error: `Datavolume ${volumeWrapper.getDataVolumeName()} does not exist.`,
           };
         }
-        dataVolumeWrapper = DataVolumeWrapper.initialize(dataVolume);
+        dataVolumeWrapper = new DataVolumeWrapper(dataVolume);
       }
 
       const type = StorageUISource.fromTypes(

@@ -63,16 +63,8 @@ export class PersistentVolumeClaimWrapper extends Wrapper<V1PersistentVolumeClai
     });
   };
 
-  static initialize = (persistentVolumeClaim?: V1PersistentVolumeClaim, copy?: boolean) =>
-    new PersistentVolumeClaimWrapper(persistentVolumeClaim, copy && { copy });
-
-  protected constructor(
-    persistentVolumeClaim?: V1PersistentVolumeClaim,
-    opts?: {
-      copy?: boolean;
-    },
-  ) {
-    super(persistentVolumeClaim, opts?.copy);
+  constructor(persistentVolumeClaim?: V1PersistentVolumeClaim, copy = false) {
+    super(persistentVolumeClaim, copy);
   }
 
   getName = () => getName(this.data as any);

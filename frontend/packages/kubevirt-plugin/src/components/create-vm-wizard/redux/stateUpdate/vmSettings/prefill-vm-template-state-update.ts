@@ -51,9 +51,9 @@ import { getFlavors } from '../../../../../selectors/vm-template/combined-depend
 import { getSimpleName } from '../../../../../selectors/utils';
 import { getNextIDResolver } from '../../../../../utils/utils';
 import { ProvisionSource } from '../../../../../constants/vm/provision-source';
-import { MutableDiskWrapper } from '../../../../../k8s/wrapper/vm/disk-wrapper';
+import { DiskWrapper } from '../../../../../k8s/wrapper/vm/disk-wrapper';
 import { V1Volume } from '../../../../../types/vm/disk/V1Volume';
-import { MutableVolumeWrapper, VolumeWrapper } from '../../../../../k8s/wrapper/vm/volume-wrapper';
+import { VolumeWrapper } from '../../../../../k8s/wrapper/vm/volume-wrapper';
 import { getProvisionSourceStorage } from '../../initial-state/storage-tab-initial-state';
 import { CloudInitDataHelper } from '../../../../../k8s/wrapper/vm/cloud-init-data-helper';
 import { getStorages } from '../../../selectors/selectors';
@@ -103,7 +103,7 @@ export const prefillVmTemplateUpdater = ({ id, dispatch, getState }: UpdateOptio
         VMWizardStorageType.PROVISION_SOURCE_TEMPLATE_DISK,
         VMWizardStorageType.WINDOWS_GUEST_TOOLS_TEMPLATE,
       ].includes(storage.type) &&
-      VolumeWrapper.initialize(storage.volume).getType() !== VolumeType.CLOUD_INIT_NO_CLOUD,
+      new VolumeWrapper(storage.volume).getType() !== VolumeType.CLOUD_INIT_NO_CLOUD,
   );
   const getNextStorageID = getNextIDResolver(storagesUpdate);
 
@@ -180,9 +180,8 @@ export const prefillVmTemplateUpdater = ({ id, dispatch, getState }: UpdateOptio
 
     // // prefill storage
     const templateStorages: VMWizardStorage[] = getDisks(vm).map((disk) => {
-      const diskWrapper = new MutableDiskWrapper(disk, true);
-      let volume = volumeLookup[diskWrapper.getName()];
-      const volumeWrapper = VolumeWrapper.initialize(volume);
+      const diskWrapper = new DiskWrapper(disk, true);
+      const volumeWrapper = new VolumeWrapper(volumeLookup[diskWrapper.getName()], true);
       let dataVolume = dataVolumeTemplatesLookup[volumeWrapper.getDataVolumeName()];
 
       if (volumeWrapper.getType() === VolumeType.CLOUD_INIT_NO_CLOUD) {
@@ -190,15 +189,13 @@ export const prefillVmTemplateUpdater = ({ id, dispatch, getState }: UpdateOptio
         if (helper.includesOnlyFormValues()) {
           isCloudInitForm = true;
           helper.makeFormCompliant();
-          volume = new MutableVolumeWrapper(volume, true)
-            .setTypeData(helper.asCloudInitNoCloudSource(), false)
-            .asMutableResource();
+          volumeWrapper.setTypeData(helper.asCloudInitNoCloudSource(), false);
           // do not overwrite with more cloud-init disks
         } else if (isCloudInitForm == null) {
           isCloudInitForm = false;
         }
       } else if (volumeWrapper.getType() === VolumeType.DATA_VOLUME && !dataVolume) {
-        const standaloneDataVolumeWrapper = DataVolumeWrapper.initialize(
+        const standaloneDataVolumeWrapper = new DataVolumeWrapper(
           standaloneDataVolumeLookup[volumeWrapper.getDataVolumeName()],
         );
         const newDataVolumeName = joinIDs(VM_TEMPLATE_NAME_PARAMETER, diskWrapper.getName());
@@ -212,9 +209,7 @@ export const prefillVmTemplateUpdater = ({ id, dispatch, getState }: UpdateOptio
           typeData: { name: volumeWrapper.getDataVolumeName(), namespace: activeNamespace },
         }).asResource();
 
-        volume = new MutableVolumeWrapper(volume, true)
-          .appendTypeData({ name: newDataVolumeName })
-          .asMutableResource();
+        volumeWrapper.appendTypeData({ name: newDataVolumeName });
       }
 
       // TODO: can't be guest tools and provision source at the same time, refactor to flags?
@@ -233,9 +228,9 @@ export const prefillVmTemplateUpdater = ({ id, dispatch, getState }: UpdateOptio
       return {
         id: getNextStorageID(),
         type,
-        volume,
+        volume: volumeWrapper.asResource(),
         dataVolume,
-        disk: diskWrapper.asMutableResource(),
+        disk: diskWrapper.asResource(),
       };
     });
     storagesUpdate.unshift(...templateStorages);

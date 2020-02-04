@@ -1,5 +1,5 @@
 import * as _ from 'lodash';
-import { getName, getNamespace, getOwnerReferences } from '@console/shared/src';
+import { getOwnerReferences } from '@console/shared/src';
 import { validate } from '@console/internal/components/utils';
 import { compareOwnerReference } from '@console/shared/src/utils/owner-references';
 import { apiVersionForModel } from '@console/internal/module/k8s';
@@ -14,7 +14,7 @@ import {
 } from '../../../selectors/dv/selectors';
 import { toIECUnit } from '../../../components/form/size-unit-utils';
 import { DataVolumeModel } from '../../../models';
-import { ensurePath } from '../utils/utils';
+import { K8sResourceObjectWithTypePropertyWrapper } from '../common/k8s-resource-object-with-type-property-wrapper';
 
 type CombinedTypeData = {
   name?: string;
@@ -41,9 +41,10 @@ const sanitizeTypeData = (type: DataVolumeSourceType, typeData: CombinedTypeData
   return null;
 };
 
-export class DataVolumeWrapper extends ObjectWithTypePropertyWrapper<
+export class DataVolumeWrapper extends K8sResourceObjectWithTypePropertyWrapper<
   V1alpha1DataVolume,
-  DataVolumeSourceType
+  DataVolumeSourceType,
+  DataVolumeWrapper
 > {
   static readonly EMPTY = new DataVolumeWrapper();
 
@@ -115,6 +116,7 @@ export class DataVolumeWrapper extends ObjectWithTypePropertyWrapper<
           source: {},
         },
       },
+      false,
       {
         initializeWithType: type,
         initializeWithTypeData:
@@ -123,23 +125,17 @@ export class DataVolumeWrapper extends ObjectWithTypePropertyWrapper<
     );
   };
 
-  static initialize = (dataVolumeTemplate?: V1alpha1DataVolume, copy?: boolean) =>
-    new DataVolumeWrapper(dataVolumeTemplate, copy && { copy });
-
-  protected constructor(
+  constructor(
     dataVolumeTemplate?: V1alpha1DataVolume,
+    copy = false,
     opts?: {
       initializeWithType?: DataVolumeSourceType;
       initializeWithTypeData?: any;
       copy?: boolean;
     },
   ) {
-    super(dataVolumeTemplate, opts?.copy, opts, DataVolumeSourceType, ['spec', 'source']);
+    super(dataVolumeTemplate, copy, opts, DataVolumeSourceType, ['spec', 'source']);
   }
-
-  getName = () => getName(this.data as any);
-
-  getNamespace = () => getNamespace(this.data as any);
 
   getStorageClassName = () => getDataVolumeStorageClassName(this.data as any);
 
@@ -167,24 +163,6 @@ export class DataVolumeWrapper extends ObjectWithTypePropertyWrapper<
   getAccessModes = () => getDataVolumeAccessModes(this.data);
 
   getVolumeMode = () => getDataVolumeVolumeMode(this.data);
-}
-
-export class MutableDataVolumeWrapper extends DataVolumeWrapper {
-  public constructor(dataVolume?: V1alpha1DataVolume, copy = false) {
-    super(dataVolume, { copy });
-  }
-
-  setName = (name: string) => {
-    this.ensurePath('metadata');
-    this.data.metadata.name = name;
-    return this;
-  };
-
-  setNamespace = (namespace: string) => {
-    this.ensurePath('metadata');
-    this.data.metadata.namespace = namespace;
-    return this;
-  };
 
   setAccessModes = (accessModes: string[]) => {
     this.ensurePath('spec.pvc');
@@ -233,8 +211,4 @@ export class MutableDataVolumeWrapper extends DataVolumeWrapper {
     this.addTypeData(sanitize ? sanitizeTypeData(this.getType(), typeData) : typeData);
     return this;
   };
-
-  ensurePath = (path: string[] | string, value: any = {}) => ensurePath(this.data, path, value);
-
-  asMutableResource = () => this.data;
 }

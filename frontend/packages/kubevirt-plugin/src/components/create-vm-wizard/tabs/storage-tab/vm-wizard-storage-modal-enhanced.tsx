@@ -94,10 +94,15 @@ const VMWizardStorageModal: React.FC<VMWizardStorageModalProps> = (props) => {
         usedDiskNames={usedDiskNames}
         usedPVCNames={usedPVCNames}
         templateValidations={templateValidations}
-        disk={diskWrapper}
-        volume={volumeWrapper}
-        dataVolume={dataVolumeWrapper}
-        persistentVolumeClaim={persistentVolumeClaimWrapper}
+        disk={new DiskWrapper(diskWrapper.asResource(), true)}
+        volume={new VolumeWrapper(volumeWrapper.asResource(), true)}
+        dataVolume={
+          dataVolumeWrapper && new DataVolumeWrapper(dataVolumeWrapper.asResource(), true)
+        }
+        persistentVolumeClaim={
+          persistentVolumeClaimWrapper &&
+          new PersistentVolumeClaimWrapper(persistentVolumeClaimWrapper.asResource(), true)
+        }
         disableSourceChange={[
           VMWizardStorageType.PROVISION_SOURCE_DISK,
           VMWizardStorageType.PROVISION_SOURCE_TEMPLATE_DISK,

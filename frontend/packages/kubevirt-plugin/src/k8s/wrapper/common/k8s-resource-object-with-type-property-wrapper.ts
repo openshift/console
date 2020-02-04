@@ -1,13 +1,15 @@
 /* eslint-disable lines-between-class-members */
 import { getName, hasLabel, getLabels } from '@console/shared/src';
 import { apiVersionForModel, K8sKind, K8sResourceKind } from '@console/internal/module/k8s';
-import { Wrapper } from './wrapper';
 import { K8sResourceKindMethods } from '../types/types';
+import { ObjectWithTypePropertyWrapper } from './object-with-type-property-wrapper';
+import { ValueEnum } from '../../../constants';
 
-export class K8sResourceWrapper<
+export class K8sResourceObjectWithTypePropertyWrapper<
   RESOURCE extends K8sResourceKind,
-  SELF extends K8sResourceWrapper<RESOURCE, SELF>
-> extends Wrapper<RESOURCE> implements K8sResourceKindMethods {
+  TYPE extends ValueEnum<string>,
+  SELF extends K8sResourceObjectWithTypePropertyWrapper<RESOURCE, TYPE, SELF>
+> extends ObjectWithTypePropertyWrapper<RESOURCE, TYPE> implements K8sResourceKindMethods {
   getName = () => getName(this.data);
   getLabels = (defaultValue = {}) => getLabels(this.data, defaultValue);
   hasLabel = (label: string) => hasLabel(this.data, label);

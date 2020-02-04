@@ -36,6 +36,7 @@ export class DiskWrapper extends ObjectWithTypePropertyWrapper<V1Disk, DiskType>
         name,
         bootOrder,
       },
+      false,
       {
         initializeWithType: type,
         initializeWithTypeData: bus ? { bus: bus.getValue() } : undefined,
@@ -43,13 +44,12 @@ export class DiskWrapper extends ObjectWithTypePropertyWrapper<V1Disk, DiskType>
     );
   };
 
-  static initialize = (disk?: V1Disk, copy?: boolean) => new DiskWrapper(disk, copy && { copy });
-
-  protected constructor(
+  constructor(
     disk?: V1Disk,
-    opts?: { initializeWithType?: DiskType; initializeWithTypeData?: any; copy?: boolean },
+    copy = false,
+    opts?: { initializeWithType?: DiskType; initializeWithTypeData?: any },
   ) {
-    super(disk, opts?.copy, opts, DiskType);
+    super(disk, copy, opts, DiskType);
   }
 
   getName = () => this.get('name');
@@ -66,17 +66,9 @@ export class DiskWrapper extends ObjectWithTypePropertyWrapper<V1Disk, DiskType>
   isFirstBootableDevice = () => this.getBootOrder() === 1;
 
   hasBootOrder = () => this.getBootOrder() != null;
-}
-
-export class MutableDiskWrapper extends DiskWrapper {
-  public constructor(disk?: V1Disk, copy = false) {
-    super(disk, { copy });
-  }
 
   appendTypeData = (typeData: CombinedTypeData, sanitize = true) => {
     this.addTypeData(sanitize ? sanitizeTypeData(this.getType(), typeData) : typeData);
     return this;
   };
-
-  asMutableResource = () => this.data;
 }

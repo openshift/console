@@ -28,22 +28,31 @@ export const getStorages = (state, id: string): VMWizardStorage[] =>
     iGetIn(getCreateVMWizards(state), [id, 'tabs', VMWizardTab.STORAGE, 'value']),
   );
 
-export const getNetworksWithWrappers = (state, id: string): VMWizardNetworkWithWrappers[] =>
+export const getNetworksWithWrappers = (
+  state,
+  id: string,
+  copyWrappers = false,
+): VMWizardNetworkWithWrappers[] =>
   getNetworks(state, id).map(({ network, networkInterface, ...rest }) => ({
-    networkInterfaceWrapper: new NetworkInterfaceWrapper(networkInterface),
-    networkWrapper: new NetworkWrapper(network),
+    networkInterfaceWrapper: new NetworkInterfaceWrapper(networkInterface, copyWrappers),
+    networkWrapper: new NetworkWrapper(network, copyWrappers),
     networkInterface,
     network,
     ...rest,
   }));
 
-export const getStoragesWithWrappers = (state, id: string): VMWizardStorageWithWrappers[] =>
+export const getStoragesWithWrappers = (
+  state,
+  id: string,
+  copyWrappers = false,
+): VMWizardStorageWithWrappers[] =>
   getStorages(state, id).map(({ disk, volume, dataVolume, persistentVolumeClaim, ...rest }) => ({
-    diskWrapper: DiskWrapper.initialize(disk),
-    volumeWrapper: VolumeWrapper.initialize(volume),
-    dataVolumeWrapper: dataVolume && DataVolumeWrapper.initialize(dataVolume),
+    diskWrapper: new DiskWrapper(disk, copyWrappers),
+    volumeWrapper: new VolumeWrapper(volume, copyWrappers),
+    dataVolumeWrapper: dataVolume && new DataVolumeWrapper(dataVolume, copyWrappers),
     persistentVolumeClaimWrapper:
-      persistentVolumeClaim && PersistentVolumeClaimWrapper.initialize(persistentVolumeClaim),
+      persistentVolumeClaim &&
+      new PersistentVolumeClaimWrapper(persistentVolumeClaim, copyWrappers),
     disk,
     volume,
     dataVolume,

@@ -58,24 +58,19 @@ export class VolumeWrapper extends ObjectWithTypePropertyWrapper<V1Volume, Volum
       return VolumeWrapper.EMPTY;
     }
     const { name, type, typeData } = params;
-    return new VolumeWrapper(
-      { name },
-      {
-        initializeWithType: type,
-        initializeWithTypeData:
-          opts && opts.sanitizeTypeData ? sanitizeTypeData(type, typeData) : _.cloneDeep(typeData),
-      },
-    );
+    return new VolumeWrapper({ name }, false, {
+      initializeWithType: type,
+      initializeWithTypeData:
+        opts && opts.sanitizeTypeData ? sanitizeTypeData(type, typeData) : _.cloneDeep(typeData),
+    });
   };
 
-  static initialize = (volume?: V1Volume, copy?: boolean) =>
-    new VolumeWrapper(volume, copy && { copy });
-
-  protected constructor(
+  constructor(
     volume?: V1Volume,
-    opts?: { initializeWithType?: VolumeType; initializeWithTypeData?: any; copy?: boolean },
+    copy = false,
+    opts?: { initializeWithType?: VolumeType; initializeWithTypeData?: any },
   ) {
-    super(volume, opts?.copy, opts, VolumeType);
+    super(volume, copy, opts, VolumeType);
   }
 
   getName = () => this.get('name');
@@ -87,12 +82,6 @@ export class VolumeWrapper extends ObjectWithTypePropertyWrapper<V1Volume, Volum
   getDataVolumeName = () => getVolumeDataVolumeName(this.data);
 
   getContainerImage = () => getVolumeContainerImage(this.data);
-}
-
-export class MutableVolumeWrapper extends VolumeWrapper {
-  public constructor(volume?: V1Volume, copy = false) {
-    super(volume, { copy });
-  }
 
   replaceType = (type: VolumeType, typeData: CombinedTypeData, sanitize = true) => {
     this.setType(type, sanitize ? sanitizeTypeData(type, typeData) : typeData);
@@ -106,6 +95,4 @@ export class MutableVolumeWrapper extends VolumeWrapper {
     this.addTypeData(sanitize ? sanitizeTypeData(this.getType(), typeData) : typeData);
     return this;
   };
-
-  asMutableResource = () => this.data;
 }

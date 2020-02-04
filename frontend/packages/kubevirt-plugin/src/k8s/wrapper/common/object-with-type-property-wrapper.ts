@@ -26,7 +26,7 @@ export abstract class ObjectWithTypePropertyWrapper<
     return result;
   };
 
-  constructor(
+  protected constructor(
     data: RESOURCE,
     copy = false,
     opts: { initializeWithType?: TYPE; initializeWithTypeData?: any },

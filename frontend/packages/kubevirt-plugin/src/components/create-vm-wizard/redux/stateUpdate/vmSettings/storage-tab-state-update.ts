@@ -33,15 +33,15 @@ export const prefillInitialDiskUpdater = ({ id, prevState, dispatch, getState }:
   const oldType =
     oldSourceStorage &&
     StorageUISource.fromTypes(
-      VolumeWrapper.initialize(oldSourceStorage.volume).getType(),
-      DataVolumeWrapper.initialize(oldSourceStorage.dataVolume).getType(),
+      new VolumeWrapper(oldSourceStorage.volume).getType(),
+      new DataVolumeWrapper(oldSourceStorage.dataVolume).getType(),
     );
 
   const newType =
     newSourceStorage &&
     StorageUISource.fromTypes(
-      VolumeWrapper.initialize(newSourceStorage.volume).getType(),
-      DataVolumeWrapper.initialize(newSourceStorage.dataVolume).getType(),
+      new VolumeWrapper(newSourceStorage.volume).getType(),
+      new DataVolumeWrapper(newSourceStorage.dataVolume).getType(),
     );
 
   if (newType !== oldType) {

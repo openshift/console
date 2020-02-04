@@ -18,7 +18,7 @@ import { CloudInitField, VMWizardStorage, VMWizardStorageType } from '../../type
 import { vmWizardActions } from '../../redux/actions';
 import { ActionType } from '../../redux/types';
 import { iGetCloudInitNoCloudStorage } from '../../selectors/immutable/storage';
-import { MutableVolumeWrapper, VolumeWrapper } from '../../../../k8s/wrapper/vm/volume-wrapper';
+import { VolumeWrapper } from '../../../../k8s/wrapper/vm/volume-wrapper';
 import { iGet, iGetIn, ihasIn, toJS, toShallowJS } from '../../../../utils/immutable';
 import { DiskBus, DiskType, VolumeType } from '../../../../constants/vm/storage';
 import { FormRow } from '../../../form/form-row';
@@ -204,9 +204,9 @@ const CloudInitTabComponent: React.FC<ResultTabComponentProps> = ({
         id: iCloudInitStorage && iCloudInitStorage.get('id'),
         type: iCloudInitStorage && iCloudInitStorage.get('type'),
         disk: toShallowJS(iCloudInitStorage.get('disk')),
-        volume: new MutableVolumeWrapper(toJS(iCloudInitStorage.get('volume')))
+        volume: new VolumeWrapper(toJS(iCloudInitStorage.get('volume')))
           .setTypeData(typeData, false)
-          .asMutableResource(),
+          .asResource(),
       });
     }
   };

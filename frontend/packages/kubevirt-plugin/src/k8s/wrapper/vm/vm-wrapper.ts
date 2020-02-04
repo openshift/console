@@ -136,7 +136,7 @@ export class VMWrapper extends K8sResourceWrapper<VMKind, VMWrapper> implements 
     this.data.spec.template.spec.domain.devices.disks = this.getDisks().filter(
       (disk) => disk.name !== diskName,
     );
-    const volumeWrapper = VolumeWrapper.initialize(
+    const volumeWrapper = new VolumeWrapper(
       this.getVolumes().find((volume) => volume.name === diskName),
     );
     this.data.spec.template.spec.volumes = this.getVolumes().filter(

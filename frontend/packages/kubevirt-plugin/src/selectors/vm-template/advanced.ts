@@ -64,7 +64,7 @@ export const getTemplateHostname = (template: TemplateKind) => {
   }
 
   const cloudInitVolume = getCloudInitVolume(vm);
-  const data = VolumeWrapper.initialize(cloudInitVolume).getCloudInitNoCloud();
+  const data = new VolumeWrapper(cloudInitVolume).getCloudInitNoCloud();
   const cloudInitHelper = new CloudInitDataHelper(data);
   return cloudInitHelper.get(CloudInitDataFormKeys.HOSTNAME);
 };

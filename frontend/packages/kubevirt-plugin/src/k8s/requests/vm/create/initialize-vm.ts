@@ -14,15 +14,12 @@ import { NetworkWrapper } from '../../../wrapper/vm/network-wrapper';
 import { NetworkInterfaceWrapper } from '../../../wrapper/vm/network-interface-wrapper';
 import { VMWrapper } from '../../../wrapper/vm/vm-wrapper';
 import { getVolumeCloudInitNoCloud } from '../../../../selectors/vm';
-import { MutableVolumeWrapper, VolumeWrapper } from '../../../wrapper/vm/volume-wrapper';
+import { VolumeWrapper } from '../../../wrapper/vm/volume-wrapper';
 import {
   CloudInitDataFormKeys,
   CloudInitDataHelper,
 } from '../../../wrapper/vm/cloud-init-data-helper';
-import {
-  DataVolumeWrapper,
-  MutableDataVolumeWrapper,
-} from '../../../wrapper/vm/data-volume-wrapper';
+import { DataVolumeWrapper } from '../../../wrapper/vm/data-volume-wrapper';
 import { StorageUISource } from '../../../../components/modals/disk-modal/storage-ui-source';
 import { insertName, joinIDs } from '../../../../utils';
 import {
@@ -56,8 +53,8 @@ const initializeStorage = (params: CreateVMEnhancedParams, vm: VMWrapper) => {
 
   const resolvedStorages = storages.map((storage) => {
     const { volume, dataVolume, persistentVolumeClaim } = storage;
-    const volumeWrapper = new MutableVolumeWrapper(volume, true);
-    const dataVolumeWrapper = dataVolume && new MutableDataVolumeWrapper(dataVolume, true);
+    const volumeWrapper = new VolumeWrapper(volume, true);
+    const dataVolumeWrapper = dataVolume && new DataVolumeWrapper(dataVolume, true);
 
     const source = StorageUISource.fromTypes(
       volumeWrapper.getType(),
@@ -88,9 +85,9 @@ const initializeStorage = (params: CreateVMEnhancedParams, vm: VMWrapper) => {
 
     return {
       ...storage,
-      volume: volumeWrapper.asMutableResource(),
-      dataVolume: isPlainDataVolume ? undefined : dataVolumeWrapper?.asMutableResource(),
-      dataVolumeToCreate: isPlainDataVolume ? dataVolumeWrapper?.asMutableResource() : undefined,
+      volume: volumeWrapper.asResource(),
+      dataVolume: isPlainDataVolume ? undefined : dataVolumeWrapper?.asResource(),
+      dataVolumeToCreate: isPlainDataVolume ? dataVolumeWrapper?.asResource() : undefined,
     };
   });
 
@@ -130,7 +127,7 @@ export const initializeVM = (params: CreateVMEnhancedParams, vm: VMWrapper) => {
   vm.setRunning(!isTemplate && isRunning);
 
   const cloudInitVolume = storages.map((s) => s.volume).find(getVolumeCloudInitNoCloud);
-  const data = VolumeWrapper.initialize(cloudInitVolume).getCloudInitNoCloud();
+  const data = new VolumeWrapper(cloudInitVolume).getCloudInitNoCloud();
   vm.setHostname(
     new CloudInitDataHelper(data).get(CloudInitDataFormKeys.HOSTNAME) ||
       settings[VMSettingsField.HOSTNAME] ||
