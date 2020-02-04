@@ -124,7 +124,7 @@ class ComponentFactory {
             ),
           );
         case TYPE_OPERATOR_BACKED_SERVICE:
-          return OperatorBackedService;
+          return withSelection(false, true)(OperatorBackedService);
         case TYPE_OPERATOR_WORKLOAD:
           return withCreateConnector(createConnectorCallback(this.hasServiceBinding))(
             withEditReviewAccess('patch')(

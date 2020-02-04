@@ -19,6 +19,11 @@
   &.is-filtered &__bg {
     stroke: $filtered-stroke-color;
   }
+
+  &.is-selected &__bg {
+    fill: $selected-fill-color;
+    stroke: $selected-stroke-color;
+  }
 }
 
 .odc-m-drag-active,

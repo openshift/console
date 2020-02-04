@@ -55,7 +55,7 @@ const HelmReleaseNode: React.FC<HelmReleaseNodeProps> = ({ element, onSelect, se
         rx="5"
         ry="5"
       />
-      <GroupNode kind="HelmRelease" title={element.getLabel()}>
+      <GroupNode kind="HelmRelease" title={element.getLabel()} typeIconClass="icon-helm">
         <ResourceKindsInfo groupResources={element.getData().groupResources} />
       </GroupNode>
     </g>
