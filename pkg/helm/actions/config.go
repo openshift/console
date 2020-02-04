@@ -1,6 +1,7 @@
 package actions
 
 import (
+	"github.com/coreos/pkg/capnslog"
 	"net/http"
 
 	"helm.sh/helm/v3/pkg/action"
@@ -10,11 +11,20 @@ import (
 	"k8s.io/klog"
 )
 
-var settings = cli.New()
+var settings = initSettings()
+var plog = capnslog.NewPackageLogger("github.com/openshift/console", "helm/actions")
+
+
 
 type configFlagsWithTransport struct {
 	*genericclioptions.ConfigFlags
 	Transport *http.RoundTripper
+}
+
+func initSettings() *cli.EnvSettings {
+	conf := cli.New()
+	conf.RepositoryCache = "/tmp"
+	return conf
 }
 
 func (c configFlagsWithTransport) ToRESTConfig() (*rest.Config, error) {
@@ -34,6 +44,13 @@ func GetActionConfigurations(host, ns, token string, transport *http.RoundTrippe
 			Namespace:   &ns,
 		},
 		Transport: transport,
+	}
+	inClusterCfg, err := rest.InClusterConfig()
+
+	if err != nil {
+		plog.Debug("Running outside cluster, CAFile is unset")
+	} else {
+		confFlags.CAFile = &inClusterCfg.CAFile
 	}
 	conf := new(action.Configuration)
 	conf.Init(confFlags, ns, "secrets", klog.Infof)
