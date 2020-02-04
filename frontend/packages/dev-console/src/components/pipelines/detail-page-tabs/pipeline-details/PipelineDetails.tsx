@@ -10,7 +10,7 @@ interface PipelineDetailsProps {
 
 const PipelineDetails: React.FC<PipelineDetailsProps> = ({ obj: pipeline }) => (
   <div className="co-m-pane__body">
-    <SectionHeading text="Pipeline Overview" />
+    <SectionHeading text="Pipeline Details" />
     <PipelineVisualization pipeline={pipeline} />
     <div className="row">
       <div className="col-sm-6">

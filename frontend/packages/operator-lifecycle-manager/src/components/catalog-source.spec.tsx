@@ -88,7 +88,7 @@ describe(CatalogSourceDetailsPage.displayName, () => {
         .find(DetailsPage)
         .props()
         .pages.map((p) => p.name),
-    ).toEqual(['Overview', 'YAML']);
+    ).toEqual(['Details', 'YAML']);
     expect(wrapper.find(DetailsPage).props().pages[0].component).toEqual(CatalogSourceDetails);
     expect(wrapper.find(DetailsPage).props().resources).toEqual([
       {

@@ -689,7 +689,7 @@ export const ClusterServiceVersionDetails: React.SFC<ClusterServiceVersionDetail
         </div>
       </div>
       <div className="co-m-pane__body">
-        <SectionHeading text="ClusterServiceVersion Overview" />
+        <SectionHeading text="ClusterServiceVersion Details" />
         <div className="co-m-pane__body-group">
           <div className="row">
             <div className="col-sm-6">

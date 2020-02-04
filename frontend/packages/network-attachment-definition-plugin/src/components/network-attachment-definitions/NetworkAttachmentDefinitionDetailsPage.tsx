@@ -16,7 +16,7 @@ export const NetworkAttachmentDefinitionsDetailsPage: React.FC<NetworkAttachment
 ) => {
   const overviewPage = {
     href: '', // default landing page
-    name: 'Overview',
+    name: 'Details',
     component: NetworkAttachmentDefinitionDetails,
   };
 

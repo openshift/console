@@ -34,7 +34,7 @@ const NodeDetailsOverview: React.FC<NodeDetailsOverviewProps> = ({ node }) => {
   });
   return (
     <div className="co-m-pane__body">
-      <SectionHeading text="Node Overview" />
+      <SectionHeading text="Node Details" />
       <NodeGraphs node={node} />
       <div className="row">
         <div className="col-md-6 col-xs-12">
