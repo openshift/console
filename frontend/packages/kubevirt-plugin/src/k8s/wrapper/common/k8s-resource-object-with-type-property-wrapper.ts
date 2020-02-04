@@ -21,20 +21,20 @@ export class K8sResourceObjectWithTypePropertyWrapper<
   };
 
   setName = (name: string) => {
-    this.ensurePath('metadata', {});
+    this.ensurePath('metadata');
     this.data.metadata.name = name;
     return (this as any) as SELF;
   };
 
   setNamespace = (namespace: string) => {
-    this.ensurePath('metadata', {});
+    this.ensurePath('metadata');
     this.data.metadata.namespace = namespace;
     return (this as any) as SELF;
   };
 
   addAnotation = (key: string, value: string) => {
     if (key) {
-      this.ensurePath('metadata.annotations', {});
+      this.ensurePath('metadata.annotations');
       this.data.metadata.annotations[key] = value;
     }
     return (this as any) as SELF;
@@ -42,7 +42,7 @@ export class K8sResourceObjectWithTypePropertyWrapper<
 
   addLabel = (key: string, value: string) => {
     if (key) {
-      this.ensurePath('metadata.labels', {});
+      this.ensurePath('metadata.labels');
       this.data.metadata.labels[key] = value;
     }
     return (this as any) as SELF;

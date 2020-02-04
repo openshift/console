@@ -60,7 +60,7 @@ export class VMWrapper extends K8sResourceWrapper<VMKind, VMWrapper> implements 
 
   addTemplateLabel = (key: string, value: string) => {
     if (key) {
-      this.ensurePath('spec.template.metadata.labels', {});
+      this.ensurePath('spec.template.metadata.labels');
       this.data.spec.template.metadata.labels[key] = value;
     }
     return this;
@@ -68,14 +68,14 @@ export class VMWrapper extends K8sResourceWrapper<VMKind, VMWrapper> implements 
 
   addTemplateAnnotation = (key: string, value: string) => {
     if (key) {
-      this.ensurePath('spec.template.metadata.annotations', {});
+      this.ensurePath('spec.template.metadata.annotations');
       this.data.spec.template.metadata.annotations[key] = value;
     }
     return this;
   };
 
   setMemory = (value: string, unit = 'Gi') => {
-    this.ensurePath('spec.template.spec.domain.resources.requests', {});
+    this.ensurePath('spec.template.spec.domain.resources.requests');
     this.data.spec.template.spec.domain.resources.requests.memory = `${value}${unit}`;
     return this;
   };
@@ -95,13 +95,13 @@ export class VMWrapper extends K8sResourceWrapper<VMKind, VMWrapper> implements 
   };
 
   setRunning = (isRunning?: boolean) => {
-    this.ensurePath('spec', {});
+    this.ensurePath('spec');
     this.data.spec.running = !!isRunning;
     return this;
   };
 
   setNetworks = (networks: VMWizardNetwork[]) => {
-    this.ensurePath('spec.template.spec.domain.devices', {});
+    this.ensurePath('spec.template.spec.domain.devices');
     this.data.spec.template.spec.domain.devices.interfaces = _.compact(
       networks.map((network) => network.networkInterface),
     );
@@ -154,7 +154,7 @@ export class VMWrapper extends K8sResourceWrapper<VMKind, VMWrapper> implements 
   };
 
   setStorages = (storages: VMWizardStorage[]) => {
-    this.ensurePath('spec.template.spec.domain.devices', {});
+    this.ensurePath('spec.template.spec.domain.devices');
     this.data.spec.template.spec.domain.devices.disks = _.compact(
       storages.map((storage) => storage.disk),
     );
@@ -166,13 +166,13 @@ export class VMWrapper extends K8sResourceWrapper<VMKind, VMWrapper> implements 
   };
 
   setAutoAttachPodInterface = (autoAttach: boolean) => {
-    this.ensurePath('spec.template.spec.domain.devices', {});
+    this.ensurePath('spec.template.spec.domain.devices');
     this.data.spec.template.spec.domain.devices.autoattachPodInterface = autoAttach;
     return this;
   };
 
   setHostname = (hostname: string) => {
-    this.ensurePath('spec.template.spec', {});
+    this.ensurePath('spec.template.spec');
     this.data.spec.template.spec.hostname = hostname;
     return this;
   };
