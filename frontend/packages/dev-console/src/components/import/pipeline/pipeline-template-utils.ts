@@ -27,7 +27,7 @@ export const createPipelineForImportFlow = async (formData: GitImportFormData) =
   const template = _.cloneDeep(pipeline.template);
 
   template.metadata = {
-    name: `${name}-${template.metadata.name}`,
+    name: `${name}`,
     namespace,
     labels: { ...template.metadata.labels, 'app.kubernetes.io/instance': name },
   };
