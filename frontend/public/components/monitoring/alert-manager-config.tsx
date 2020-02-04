@@ -24,6 +24,7 @@ import {
   receiverTypes,
 } from './alert-manager-utils';
 import { Helmet } from 'react-helmet';
+import { PencilAltIcon } from '@patternfly/react-icons';
 
 let secret: K8sResourceKind = null; // alertmanager-main Secret which holds alertmanager configuration yaml
 let config: AlertmanagerConfig = null; // alertmanager configuration yaml as object
@@ -67,7 +68,7 @@ const AlertRouting = () => {
 
 const tableColumnClasses = [
   classNames('col-lg-3', 'col-md-3', 'col-sm-6', 'col-xs-6'),
-  classNames('col-lg-3', 'col-md-3', 'hidden-sm', 'hidden-xs'),
+  classNames('col-lg-3', 'col-md-3', 'hidden-sm', 'hidden-xs', 'text-center', ''),
   classNames('col-lg-6', 'col-md-6', 'col-sm-6', 'col-xs-6'),
   Kebab.columnClass,
 ];
@@ -174,6 +175,13 @@ const hasSimpleReceiver = (
   return false;
 };
 
+const hasIncompleteDefaultReceiver = () => {
+  const { route, receivers } = config;
+  const { receiver: defaultReceiverName } = route;
+  const defaultReceiver = _.filter(receivers, { name: defaultReceiverName });
+  return defaultReceiver.length === 1 && _.isEmpty(getIntegrationTypes(defaultReceiver[0]));
+};
+
 // Puts sets of key=value pairs into single comma delimited label
 const RoutingLabel: React.FC<RoutingLabelProps> = ({ labels }) => {
   let count = 0;
@@ -270,7 +278,16 @@ const ReceiverTableRow: React.FC<ReceiverTableRowProps> = ({
   return (
     <TableRow id={index} index={index} trKey={key} style={style}>
       <TableData className={tableColumnClasses[0]}>{receiver.name}</TableData>
-      <TableData className={tableColumnClasses[1]}>{integrationTypesLabel}</TableData>
+      <TableData className={tableColumnClasses[1]}>
+        {!integrationTypesLabel ? (
+          <Link to={`/monitoring/alertmanagerconfig/receivers/${receiver.name}/edit`}>
+            <PencilAltIcon className="co-icon-space-r pf-c-button-icon--plain" />
+            Configure
+          </Link>
+        ) : (
+          integrationTypesLabel
+        )}
+      </TableData>
       <TableData className={tableColumnClasses[2]}>
         {isDefaultReceiver && <RoutingLabel labels={{ default: 'all' }} />}
         {_.map(receiverRoutingLabels, (route, i) => {
@@ -327,6 +344,7 @@ const Receivers = () => {
     const filterStr = _.toLower(receiverFilter);
     receivers = receivers.filter((receiver) => fuzzy(filterStr, _.toLower(receiver.name)));
   }
+
   return (
     <div className="co-m-pane__body">
       <SectionHeading text="Receivers" />
@@ -346,6 +364,19 @@ const Receivers = () => {
           />
         </div>
       </div>
+      {hasIncompleteDefaultReceiver() && (
+        <Alert
+          isInline
+          className="co-alert co-alert--scrollable"
+          variant="info"
+          title="Incomplete Default Receiver"
+        >
+          <div className="co-pre-line">
+            Configure this receiver to ensure that you learn about important issues with your
+            cluster.
+          </div>
+        </Alert>
+      )}
       {_.isEmpty(receivers) && !receiverFilter ? (
         <ReceiversEmptyState />
       ) : (
