@@ -1,46 +1,44 @@
+@import '../../topology-utils';
+
 .odc-base-edge {
   --edge--drag-active--cursor: grab;
-  --edge--stroke-width: 1px;
+  --edge--stroke-width: 2px;
   --edge--stroke-dasharray: 0;
-  --edge--stroke: var(--pf-global--BackgroundColor--dark-200);
-  --edge--fill: var(--pf-global--BackgroundColor--dark-200);
+  --edge--stroke: #{$default-edge-stroke-color};
+  --edge--fill: var(--edge--stroke);
   --edge--opacity: 1;
   --edge--cursor: pointer;
-  --edge--active--fill: var(--pf-global--active-color--400);
-  --edge--active--stroke: var(--pf-global--active-color--400);
-  --edge--drag-active--opacity: 0.3;
-  --edge__link--stroke: var(--pf-global--BackgroundColor--dark-200);
-  --edge__link--stroke-width: 2px;
-  --edge__link--active--stroke: var(--pf-global--active-color--400);
+  --edge--active--stroke: #{$selected-stroke-color};
+  --edge--active--fill: var(--edge--active--stroke);
+  --edge--drag-active--opacity: #{$de-emphasize-opacity};
   --edge__arrow--cursor: default;
 
   cursor: var(--edge--cursor);
   stroke: var(--edge--stroke);
-  stroke-width: var(--edge--stroke-width);
-  stroke-dasharray: var(--edge--stroke-dasharray);
   fill: var(--edge--fill);
   opacity: var(--edge--opacity);
 
-  .odc-base-edge__link {
-    stroke: var(--edge__link--stroke);
-    stroke-width: var(--edge__link--stroke-width);
+  &__link {
+    stroke-width: var(--edge--stroke-width);
+    stroke-dasharray: var(--edge--stroke-dasharray);
   }
 
   &.is-hover,
-  &.is-highlight {
+  &.is-selected,
+  &.is-dragging {
     fill: var(--edge--active--fill);
     stroke: var(--edge--active--stroke);
     .odc-base-edge__link,
     .topology-connector-arrow {
-      stroke: var(--edge__link--active--stroke);
+      stroke: var(--edge--active--stroke);
     }
   }
   .topology-connector-arrow {
     cursor: var(--edge__arrow--cursor);
-    stroke: var(--edge__link--stroke);
+    stroke: var(--edge--stroke);
   }
 
-  &.is-highlight {
+  &.is-dragging {
     cursor: var(--edge--drag-active--cursor);
     .topology-connector-arrow {
       cursor: var(--edge--drag-active--cursor);
@@ -51,26 +49,15 @@
 .odc-m-drag-active {
   .odc-base-edge {
     opacity: var(--edge--drag-active--opacity);
-    &.is-highlight {
+    &.is-dragging {
       opacity: var(--edge--opacity);
-    }
-    &.is-hover {
-      &:not(.is-highlight) {
-        fill: var(--edge--fill);
-        stroke: var(--edge--stroke);
-
-        .odc-base-edge__link,
-        .topology-connector-arrow {
-          stroke: var(--edge__link--stroke);
-        }
-      }
     }
   }
 }
 .odc-m-filter-active {
   .odc-base-edge {
     opacity: var(--edge--drag-active--opacity);
-    &.is-highlight {
+    &.is-dragging {
       opacity: var(--edge--opacity);
     }
   }

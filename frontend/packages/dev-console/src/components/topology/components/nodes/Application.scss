@@ -1,80 +1,60 @@
+@import '../../topology-utils';
+
 .odc-application-group {
-  fill: var(--pf-global--Color--light-100);
-  fill-opacity: 0.5;
-  stroke: var(--pf-global--Color--light-100);
-  stroke-width: 4px;
+  outline: none;
   cursor: pointer;
   .odc-m-drag-active & {
     cursor: grab;
   }
 
-  &.is-selected {
-    fill: var(--pf-global--active-color--200);
-    stroke: var(--pf-global--active-color--100);
+  &__bg {
+    fill: var(--pf-global--Color--light-100);
+    fill-opacity: 0.5;
+    stroke: var(--pf-global--Color--light-100);
+    stroke-width: 5px;
+  }
+
+  &.is-filtered &__bg {
+    stroke: $filtered-stroke-color;
+  }
+  &.is-selected &__bg {
+    fill: $selected-fill-color;
+    stroke: $selected-stroke-color;
+  }
+  &.is-highlight &__bg {
+    fill: var(--pf-global--Color--light-100);
+    stroke: $interactive-stroke-color;
+  }
+  &.is-dropTarget &__bg {
+    fill: $interactive-fill-color;
   }
 
   &__label {
-    cursor: pointer;
-    .odc-m-drag-active & {
-      cursor: grab;
-    }
-
+    fill: var(--pf-global--Color--300);
     & text {
-      fill: #fff;
+      fill: var(--pf-global--Color--light-100);
       pointer-events: none;
       font-size: var(--pf-global--FontSize--sm);
     }
   }
-
-  &__node-title {
-    cursor: pointer;
-    font-size: var(--pf-global--FontSize--lg);
-    font-weight: var(--pf-global--FontWeight--bold);
-    .odc-m-drag-active & {
-      cursor: grab;
-    }
-  }
-  &__node-resources {
-    cursor: pointer;
-    .odc-m-drag-active & {
-      cursor: grab;
-    }
-  }
-}
-.odc-m-drag-active {
-  .odc-application-group {
-    opacity: 0.3;
-    &.is-highlight {
-      opacity: 1;
-      stroke: var(--pf-global--active-color--100);
-      &.is-hover {
-        fill: var(--pf-global--active-color--200);
-      }
-    }
-    &.is-selected {
-      fill: var(--pf-global--BackgroundColor--200);
-      stroke: var(--pf-global--Color--light-100);
-      &.is-highlight {
-        stroke: var(--pf-global--active-color--100);
-        &.is-hover {
-          fill: var(--pf-global--active-color--200);
-        }
-      }
-    }
-  }
 }
 
+.odc-m-drag-active,
 .odc-m-filter-active {
   .odc-application-group {
-    opacity: 0.3;
-    &.is-filtered {
+    opacity: $de-emphasize-opacity;
+
+    &.is-highlight,
+    &.is-dragging {
       opacity: 1;
     }
-    &__label {
-      opacity: 0.3;
-      &.is-filtered {
-        opacity: 1;
-      }
+  }
+}
+
+.odc-m-filter-active:not(.odc-m-drag-active) {
+  .odc-application-group {
+    &.is-filtered {
+      opacity: 1;
     }
   }
 }

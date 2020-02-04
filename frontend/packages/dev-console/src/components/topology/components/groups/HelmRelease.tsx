@@ -10,7 +10,6 @@ import './HelmRelease.scss';
 
 export type HelmReleaseProps = {
   element: Node;
-  dragging?: boolean;
   filters: TopologyFilters;
 } & WithSelectionProps;
 

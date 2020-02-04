@@ -19,8 +19,7 @@ import {
   hullPath,
 } from '@console/topology';
 import * as classNames from 'classnames';
-import { TopologyFilters } from '../../filters/filter-utils';
-import useFilter from '../../filters/useFilter';
+import useSearchFilter from '../../filters/useSearchFilter';
 import SvgBoxedText from '../../../svg/SvgBoxedText';
 import NodeShadows, { NODE_SHADOW_FILTER_ID, NODE_SHADOW_FILTER_ID_HOVER } from '../NodeShadows';
 
@@ -30,7 +29,6 @@ type ApplicationGroupProps = {
   canDrop?: boolean;
   dropTarget?: boolean;
   dragging?: boolean;
-  filters?: TopologyFilters;
 } & WithSelectionProps &
   WithDndDropProps &
   WithContextMenuProps;
@@ -71,18 +69,15 @@ const ApplicationGroup: React.FC<ApplicationGroupProps> = ({
   onContextMenu,
   contextMenuOpen,
   dragging,
-  filters,
 }) => {
-  const [groupHover, groupHoverRef] = useHover();
-  const [groupLabelHover, groupLabelHoverRef] = useHover();
+  const [hover, hoverRef] = useHover();
+  const [labelHover, labelHoverRef] = useHover();
   const labelLocation = React.useRef<PointWithSize>();
   const pathRef = React.useRef<string>();
   const dragNodeRef = useDragNode()[1];
   const dragLabelRef = useDragNode()[1];
-  const refs = useCombineRefs<SVGPathElement>(dragNodeRef, dndDropRef);
-  const filtered = useFilter(filters, { metadata: { name: element.getLabel() } });
-  const hover = groupHover || groupLabelHover;
-  const kind = 'application';
+  const refs = useCombineRefs<SVGPathElement>(hoverRef, dragNodeRef);
+  const [filtered] = useSearchFilter(element.getLabel());
 
   // cast to number and coerce
   const padding = maxPadding(element.getStyle<GroupStyle>().padding);
@@ -122,47 +117,56 @@ const ApplicationGroup: React.FC<ApplicationGroupProps> = ({
     labelLocation.current = computeLabelLocation(hullPoints as PointWithSize[]);
   }
 
-  const pathClasses = classNames('odc-application-group', {
-    'is-highlight': canDrop,
-    'is-selected': selected,
-    'is-hover': hover || (canDrop && dropTarget) || contextMenuOpen,
-    'is-filtered': filtered,
-  });
-
   return (
-    <>
+    <g
+      ref={labelHoverRef}
+      onContextMenu={onContextMenu}
+      onClick={onSelect}
+      className={classNames('odc-application-group', {
+        'is-dragging': dragging,
+        'is-highlight': canDrop,
+        'is-filtered': filtered,
+      })}
+    >
       <NodeShadows />
       <Layer id="groups">
-        <g ref={groupHoverRef} onContextMenu={onContextMenu} onClick={onSelect}>
+        <g
+          ref={refs}
+          onContextMenu={onContextMenu}
+          onClick={onSelect}
+          className={classNames('odc-application-group', {
+            'is-dragging': dragging,
+            'is-highlight': canDrop,
+            'is-selected': selected,
+            'is-dropTarget': canDrop && dropTarget,
+            'is-filtered': filtered,
+          })}
+        >
           <path
-            ref={refs}
+            ref={dndDropRef}
+            className="odc-application-group__bg"
             filter={createSvgIdUrl(
-              hover || dragging || contextMenuOpen
+              hover || labelHover || dragging || contextMenuOpen || dropTarget
                 ? NODE_SHADOW_FILTER_ID_HOVER
                 : NODE_SHADOW_FILTER_ID,
             )}
-            className={pathClasses}
             d={pathRef.current}
           />
         </g>
       </Layer>
-      <g ref={groupLabelHoverRef} onContextMenu={onContextMenu} onClick={onSelect}>
-        <SvgBoxedText
-          className={classNames('odc-application-group__label', {
-            'is-filtered': filtered,
-          })}
-          kind={kind}
-          x={labelLocation.current[0]}
-          y={labelLocation.current[1] + hullPadding(labelLocation.current) + 30}
-          paddingX={8}
-          paddingY={5}
-          truncate={16}
-          dragRef={dragLabelRef}
-        >
-          {element.getLabel()}
-        </SvgBoxedText>
-      </g>
-    </>
+      <SvgBoxedText
+        className="odc-application-group__label"
+        kind="application"
+        x={labelLocation.current[0]}
+        y={labelLocation.current[1] + hullPadding(labelLocation.current) + 30}
+        paddingX={8}
+        paddingY={5}
+        truncate={16}
+        dragRef={dragLabelRef}
+      >
+        {element.getLabel()}
+      </SvgBoxedText>
+    </g>
   );
 };
 

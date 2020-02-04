@@ -83,7 +83,15 @@ const nodeDragSourceSpec = (
   type: string,
   allowRegroup: boolean = true,
   canEdit: boolean = false,
-): DragSourceSpec<DragObjectWithType, Node, {}, NodeProps> => ({
+): DragSourceSpec<
+  DragObjectWithType,
+  Node,
+  {
+    dragging?: boolean;
+    regrouping?: boolean;
+  },
+  NodeProps
+> => ({
   item: { type },
   operation: (monitor, props) => {
     return (canEdit || props.canEdit) && allowRegroup
@@ -127,7 +135,7 @@ const nodesEdgeIsDragging = (monitor, props) => {
 const nodeDropTargetSpec: DropTargetSpec<
   GraphElement,
   any,
-  { droppable: boolean; canDrop: boolean; dropTarget: boolean; edgeDragging: boolean },
+  { canDrop: boolean; dropTarget: boolean; edgeDragging: boolean },
   NodeProps
 > = {
   accept: [MOVE_CONNECTOR_DROP_TYPE, CREATE_CONNECTOR_DROP_TYPE],
@@ -141,9 +149,8 @@ const nodeDropTargetSpec: DropTargetSpec<
     return !props.element.getTargetEdges().find((e) => e.getSource() === item);
   },
   collect: (monitor, props) => ({
-    droppable: monitor.isDragging(),
     canDrop: highlightNode(monitor, props),
-    dropTarget: monitor.isOver(),
+    dropTarget: monitor.isOver({ shallow: true }),
     edgeDragging: nodesEdgeIsDragging(monitor, props),
   }),
 };
@@ -185,7 +192,7 @@ const groupWorkloadDropTargetSpec: DropTargetSpec<
     monitor.getItemType() === CREATE_CONNECTOR_DROP_TYPE,
   collect: (monitor) => ({
     droppable: monitor.isDragging() && monitor.getOperation() === REGROUP_OPERATION,
-    dropTarget: monitor.isOver(),
+    dropTarget: monitor.isOver({ shallow: true }),
     canDrop: monitor.canDrop(),
   }),
   dropHint: 'create',
@@ -194,7 +201,7 @@ const groupWorkloadDropTargetSpec: DropTargetSpec<
 const graphEventSourceDropTargetSpec: DropTargetSpec<
   Edge,
   any,
-  { droppable: boolean; canDrop: boolean; dropTarget: boolean; edgeDragging: boolean },
+  { canDrop: boolean; dropTarget: boolean; edgeDragging: boolean },
   NodeProps
 > = {
   accept: [MOVE_EV_SRC_CONNECTOR_DROP_TYPE],
@@ -202,9 +209,8 @@ const graphEventSourceDropTargetSpec: DropTargetSpec<
     return item.getSource() !== props.element;
   },
   collect: (monitor, props) => ({
-    droppable: monitor.isDragging(),
     canDrop: monitor.canDrop(),
-    dropTarget: monitor.isOver(),
+    dropTarget: monitor.isOver({ shallow: true }),
     edgeDragging: nodesEdgeIsDragging(monitor, props),
   }),
 };

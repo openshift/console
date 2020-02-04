@@ -1,26 +1,36 @@
+@import '../../topology-utils';
+
 .odc-base-node {
+  outline: none;
   cursor: pointer;
 
   &:focus {
     outline: none;
   }
 
-  .odc-m-drag-active & {
+  &.is-dragging {
     cursor: grab;
   }
 
   &__bg {
     fill: var(--pf-global--BackgroundColor--light-100);
-    &.is-highlight {
-      stroke: var(--pf-global--active-color--400);
-      stroke-width: 4px;
-    }
   }
 
-  &__selection {
+  &.is-filtered &__bg {
     stroke-width: 2px;
-    fill: none;
-    stroke: var(--pf-global--active-color--300);
+    stroke: $filtered-stroke-color;
+  }
+  &.is-selected &__bg {
+    stroke-width: 2px;
+    stroke: $selected-stroke-color;
+  }
+  &.is-highlight &__bg {
+    stroke-width: 4px;
+    stroke: $interactive-stroke-color;
+  }
+  &.is-dropTarget &__bg {
+    stroke-width: 4px;
+    stroke: $interactive-stroke-color;
   }
 
   &__label {
@@ -33,19 +43,19 @@
   }
 }
 
-.odc-m-drag-active {
-  .odc-base-node__contents {
-    opacity: 0.3;
+.odc-m-drag-active,
+.odc-m-filter-active {
+  .odc-base-node {
+    opacity: $de-emphasize-opacity;
     &.is-dragging,
-    &.is-droppable {
+    &.is-highlight {
       opacity: 1;
     }
   }
 }
 
-.odc-m-filter-active {
-  .odc-base-node__contents {
-    opacity: 0.3;
+.odc-m-filter-active:not(.odc-m-drag-active) {
+  .odc-base-node {
     &.is-filtered {
       opacity: 1;
     }

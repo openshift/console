@@ -1,37 +1,38 @@
+@import '../../topology-utils';
+
 .odc-helm-release {
-  fill: #e2e2e2;
-  stroke: #bbbbbb;
-  stroke-width: 4px;
-  stroke-dasharray: 9;
+  outline: none;
   cursor: pointer;
 
-  &__label {
-    cursor: pointer;
+  .odc-m-drag-active & {
+    cursor: grab;
   }
-  &.is-selected {
-    stroke: var(--pf-global--active-color--100);
-    fill: var(--pf-global--active-color--200);
+
+  &__bg {
+    fill: $group-node-fill-color;
+    fill-opacity: 0.5;
+    stroke: $group-node-stroke-color;
+    stroke-width: 4px;
+    stroke-dasharray: 9;
+  }
+
+  &.is-filtered &__bg {
+    stroke: $filtered-stroke-color;
+  }
+
+  &.is-selected &__bg {
+    stroke: $selected-stroke-color;
+    fill: $selected-fill-color;
   }
 }
 
+.odc-m-drag-active,
 .odc-m-filter-active {
   .odc-helm-release {
-    &__label {
-      opacity: 0.3;
-      &.is-filtered {
-        opacity: 1;
-      }
-    }
-  }
-}
-
-.odc-m-drag-active {
-  .odc-helm-release {
-    &__label {
-      opacity: 0.3;
-      &.is-dragging {
-        opacity: 1;
-      }
+    opacity: $de-emphasize-opacity;
+    &.is-dragging,
+    &.is-filtered {
+      opacity: 1;
     }
   }
 }

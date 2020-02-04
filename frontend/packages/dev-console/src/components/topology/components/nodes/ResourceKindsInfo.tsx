@@ -7,19 +7,12 @@ import { TopologyDataObject } from '../../topology-types';
 type ResourceKindsInfoProps = {
   groupResources: TopologyDataObject;
   emptyKind?: string;
-  offsetX: number;
-  offsetY: number;
 };
 
 const TEXT_MARGIN = 10;
 const ROW_HEIGHT = 20 + TEXT_MARGIN;
 
-const ResourceKindsInfo: React.FC<ResourceKindsInfoProps> = ({
-  groupResources,
-  offsetX,
-  offsetY,
-  emptyKind,
-}) => {
+const ResourceKindsInfo: React.FC<ResourceKindsInfoProps> = ({ groupResources, emptyKind }) => {
   const resourcesData = {};
   _.forEach(groupResources, (res: TopologyDataObject) => {
     const a = getTopologyResourceObject(res);
@@ -31,14 +24,13 @@ const ResourceKindsInfo: React.FC<ResourceKindsInfoProps> = ({
   if (resourceTypes.length) {
     resources = _.map(resourceTypes, (key, index) => {
       const kindObj = modelFor(referenceForOwnerRef(resourcesData[key][0]));
-      const rowX = offsetX;
-      const rowY = offsetY + ROW_HEIGHT * index;
+      const rowY = ROW_HEIGHT * index;
       return (
         <g key={key}>
-          <text x={rowX} y={rowY} textAnchor="end">
+          <text y={rowY} textAnchor="end">
             {resourcesData[key].length}
           </text>
-          <text x={rowX + TEXT_MARGIN} y={rowY}>
+          <text x={TEXT_MARGIN} y={rowY}>
             {resourcesData[key].length > 1 ? kindObj.labelPlural : kindObj.label}
           </text>
         </g>
@@ -48,12 +40,8 @@ const ResourceKindsInfo: React.FC<ResourceKindsInfoProps> = ({
     const kindObj = modelFor(emptyKind);
     resources = (
       <g>
-        <text x={offsetX} y={offsetY} textAnchor="end">
-          0
-        </text>
-        <text x={offsetX + TEXT_MARGIN} y={offsetY}>
-          {kindObj ? kindObj.labelPlural : emptyKind}
-        </text>
+        <text textAnchor="end">0</text>
+        <text x={TEXT_MARGIN}>{kindObj ? kindObj.labelPlural : emptyKind}</text>
       </g>
     );
   }

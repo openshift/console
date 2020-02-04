@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { connect, Dispatch } from 'react-redux';
+import { Dispatch } from 'redux';
+import { connect } from 'react-redux';
 import { Toolbar, ToolbarGroup, ToolbarItem } from '@patternfly/react-core';
 import { RootState } from '@console/internal/redux';
 import { TextFilter } from '@console/internal/components/factory';
@@ -13,45 +14,57 @@ type StateProps = {
 };
 
 type DispatchProps = {
-  onFilterChange: (filter: TopologyFilters) => void;
+  onFiltersChange: (filters: TopologyFilters) => void;
 };
 
-type TopologyFilterBarProps = StateProps & DispatchProps;
+type MergeProps = {
+  onDisplayFiltersChange: (display: DisplayFilters) => void;
+  onSearchQueryChange: (searchQuery: string) => void;
+} & StateProps;
 
-const TopologyFilterBar: React.FC<TopologyFilterBarProps> = ({ filters, onFilterChange }) => {
-  const { display, searchQuery } = filters;
-  const onDisplayFilterChange = (displayFilters: DisplayFilters) =>
-    onFilterChange({ display: displayFilters, searchQuery });
+type TopologyFilterBarProps = MergeProps;
 
-  const onSearchQueryChange = (e: React.KeyboardEvent) =>
-    onFilterChange({
-      display,
-      searchQuery: (e.target as HTMLInputElement).value,
-    });
-  return (
-    <Toolbar className="co-namespace-bar odc-topology-filter-bar">
-      <ToolbarGroup>
-        <ToolbarItem>
-          <FilterDropdown filters={filters.display} onChange={onDisplayFilterChange} />
-        </ToolbarItem>
-      </ToolbarGroup>
-      <ToolbarGroup className="odc-topology-filter-bar__search">
-        <ToolbarItem>
-          <TextFilter label="name" value={filters.searchQuery} onChange={onSearchQueryChange} />
-        </ToolbarItem>
-      </ToolbarGroup>
-    </Toolbar>
-  );
-};
+const TopologyFilterBar: React.FC<TopologyFilterBarProps> = ({
+  filters: { display, searchQuery },
+  onDisplayFiltersChange,
+  onSearchQueryChange,
+}) => (
+  <Toolbar className="co-namespace-bar odc-topology-filter-bar">
+    <ToolbarGroup>
+      <ToolbarItem>
+        <FilterDropdown filters={display} onChange={onDisplayFiltersChange} />
+      </ToolbarItem>
+    </ToolbarGroup>
+    <ToolbarGroup className="odc-topology-filter-bar__search">
+      <ToolbarItem>
+        <TextFilter
+          label="name"
+          value={searchQuery}
+          onChange={(e) => onSearchQueryChange(e.target.value)}
+        />
+      </ToolbarItem>
+    </ToolbarGroup>
+  </Toolbar>
+);
 
 const mapStateToProps = (state: RootState): StateProps => ({
   filters: getTopologyFilters(state),
 });
 
 const dispatchToProps = (dispatch: Dispatch): DispatchProps => ({
-  onFilterChange: (filters: TopologyFilters) => {
+  onFiltersChange: (filters: TopologyFilters) => {
     dispatch(setTopologyFilters(filters));
   },
 });
 
-export default connect(mapStateToProps, dispatchToProps)(TopologyFilterBar);
+const mergeProps = ({ filters }: StateProps, { onFiltersChange }: DispatchProps): MergeProps => ({
+  filters,
+  onDisplayFiltersChange: (display: DisplayFilters) => {
+    onFiltersChange({ ...filters, display });
+  },
+  onSearchQueryChange: (searchQuery) => {
+    onFiltersChange({ ...filters, searchQuery });
+  },
+});
+
+export default connect(mapStateToProps, dispatchToProps, mergeProps)(TopologyFilterBar);
