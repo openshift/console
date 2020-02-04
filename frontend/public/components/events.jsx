@@ -227,7 +227,10 @@ export class EventsList extends React.Component {
         <Helmet>
           <title>Events</title>
         </Helmet>
-        <PageHeading detail={true} title="Events">
+        <PageHeading
+          detail={true}
+          title={this.props.pageTitle !== undefined ? this.props.pageTitle : 'Events'}
+        >
           <div className="co-search-group">
             <ResourceListDropdown
               onChange={this.toggleSelected}

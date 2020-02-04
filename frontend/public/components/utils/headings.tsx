@@ -119,7 +119,10 @@ export const PageHeading = connectToModel((props: PageHeadingProps) => {
           {badge && <SplitItem>{badge}</SplitItem>}
         </Split>
       )}
-      <h1 className={classNames('co-m-pane__heading', { 'co-m-pane__heading--logo': props.icon })}>
+      <h1
+        className={classNames('co-m-pane__heading', { 'co-m-pane__heading--logo': props.icon })}
+        style={resourceTitle ? {} : { margin: 0 }}
+      >
         {props.icon ? (
           <props.icon obj={data} />
         ) : (
