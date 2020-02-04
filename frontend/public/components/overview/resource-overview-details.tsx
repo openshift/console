@@ -1,4 +1,5 @@
 import * as React from 'react';
+import * as _ from 'lodash';
 import { connect } from 'react-redux';
 
 import * as UIActions from '../../actions/ui';
@@ -57,18 +58,33 @@ export const ResourceOverviewDetails = connect<PropsFromState, PropsFromDispatch
     onClickTab,
     selectedDetailsTab,
     tabs,
-  }: ResourceOverviewDetailsProps) => (
-    <div className="overview__sidebar-pane resource-overview">
-      <ResourceOverviewHeading actions={menuActions} kindObj={kindObj} resource={item.obj} />
-      <SimpleTabNav
-        onClickTab={onClickTab}
-        selectedTab={selectedDetailsTab}
-        tabProps={{ item }}
-        tabs={getPluginTabResources(item, tabs)}
-        additionalClassNames="co-m-horizontal-nav__menu--within-sidebar co-m-horizontal-nav__menu--within-overview-sidebar"
-      />
-    </div>
-  ),
+  }: ResourceOverviewDetailsProps) => {
+    const keys = Object.keys(item);
+    const keysRef = React.useRef(keys);
+    const tabsRef = React.useRef(tabs);
+    const pluginTabsRef = React.useRef<React.ComponentProps<typeof SimpleTabNav>['tabs']>();
+    if (
+      !pluginTabsRef.current ||
+      !_.isEqual(keys, keysRef.current) ||
+      !_.isEqual(tabs, tabsRef.current)
+    ) {
+      keysRef.current = keys;
+      tabsRef.current = tabs;
+      pluginTabsRef.current = getPluginTabResources(item, tabs);
+    }
+    return (
+      <div className="overview__sidebar-pane resource-overview">
+        <ResourceOverviewHeading actions={menuActions} kindObj={kindObj} resource={item.obj} />
+        <SimpleTabNav
+          onClickTab={onClickTab}
+          selectedTab={selectedDetailsTab}
+          tabProps={{ item }}
+          tabs={pluginTabsRef.current}
+          additionalClassNames="co-m-horizontal-nav__menu--within-sidebar co-m-horizontal-nav__menu--within-overview-sidebar"
+        />
+      </div>
+    );
+  },
 );
 
 type PropsFromState = {

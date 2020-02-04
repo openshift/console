@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { K8sResourceKind } from '@console/internal/module/k8s';
 import { OverviewItem } from '@console/shared';
 import OperatorBackedOwnerReferences from '@console/internal/components/utils';
 import {
@@ -13,16 +12,12 @@ import {
 } from '../../models';
 import KnativeServiceResources from './KnativeServiceResources';
 import KnativeRevisionResources from './KnativeRevisionResources';
+import RevisionsOverviewList from './RevisionsOverviewList';
+import KSRoutesOverviewList from './RoutesOverviewList';
+import ConfigurationsOverviewList from './ConfigurationsOverviewList';
 import EventSinkServicesOverviewList from './EventSinkServicesOverviewList';
 
-export type KnativeOverviewProps = {
-  ksroutes: K8sResourceKind[];
-  configurations: K8sResourceKind[];
-  revisions: K8sResourceKind[];
-  obj: K8sResourceKind;
-};
-
-export type OverviewDetailsResourcesTabProps = {
+type OverviewDetailsResourcesTabProps = {
   item: OverviewItem;
 };
 
@@ -41,7 +36,13 @@ const getSidebarResources = ({ obj, ksroutes, revisions, configurations }: Overv
     case EventSourceKafkaModel.kind:
       return <EventSinkServicesOverviewList obj={obj} />;
     default:
-      return null;
+      return (
+        <>
+          <RevisionsOverviewList revisions={revisions} service={obj} />
+          <KSRoutesOverviewList ksroutes={ksroutes} resource={obj} />
+          <ConfigurationsOverviewList configurations={configurations} />
+        </>
+      );
   }
 };
 const OverviewDetailsKnativeResourcesTab: React.FC<OverviewDetailsResourcesTabProps> = ({
