@@ -18,6 +18,32 @@ export const handlePipelineRunSubmit = (pipelineRun: PipelineRun) => {
     ),
   );
 };
+
+/**
+ * Migrates a PipelineRun from one version to another to support auto-upgrades with old (and invalid) PipelineRuns.
+ *
+ * Note: Each check within this method should be driven by the apiVersion number if the API is properly up-versioned
+ * for these breaking changes. (should be done moving from 0.10.x forward)
+ */
+export const migratePipelineRun = (pipelineRun: PipelineRun): PipelineRun => {
+  let newPipelineRun = pipelineRun;
+
+  const serviceAccountPath = 'spec.serviceAccount';
+  if (_.has(newPipelineRun, serviceAccountPath)) {
+    // .spec.serviceAccount was removed for .spec.serviceAccountName in 0.9.x
+    // Note: apiVersion was not updated for this change and thus we cannot gate this change behind a version number
+    const serviceAccountName = _.get(newPipelineRun, serviceAccountPath);
+    newPipelineRun = _.omit(newPipelineRun, [serviceAccountPath]);
+    newPipelineRun = _.merge(newPipelineRun, {
+      spec: {
+        serviceAccountName,
+      },
+    });
+  }
+
+  return newPipelineRun;
+};
+
 export const getPipelineRunData = (
   pipeline: Pipeline = null,
   latestRun?: PipelineRun,
@@ -43,8 +69,8 @@ export const getPipelineRunData = (
 
   const params = latestRunParams || getPipelineRunParams(pipelineParams);
 
-  return {
-    apiVersion: `${PipelineRunModel.apiGroup}/${PipelineRunModel.apiVersion}`,
+  const newPipelineRun = {
+    apiVersion: pipeline ? pipeline.apiVersion : latestRun.apiVersion,
     kind: PipelineRunModel.kind,
     metadata: {
       name: `${pipelineName}-${getRandomChars(6)}`,
@@ -57,14 +83,16 @@ export const getPipelineRunData = (
             },
     },
     spec: {
+      ..._.get(latestRun, 'spec', {}),
       pipelineRef: {
         name: pipelineName,
       },
       resources,
       ...(params && { params }),
-      serviceAccount: latestRun && _.get(latestRun, ['spec', 'serviceAccount']),
     },
   };
+
+  return migratePipelineRun(newPipelineRun);
 };
 
 export const triggerPipeline = (
