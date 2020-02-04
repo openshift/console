@@ -1,37 +1,40 @@
 @import '~@patternfly/patternfly/sass-utilities/colors';
 
-.add-capacity-modal__hide {
-  display: none;
+.ceph-add-capacity__current-capacity {
+  display: flex;
 }
 
-.add-capacity-modal__input--width {
-  max-width: 250px !important;
+.ceph-add-capacity__current-capacity--loading {
+  width: 9rem;
+  margin-top: 0.2rem;
 }
 
-.add-capacity-modal__input .dropdown {
-  margin-left: var(--pf-global--spacer--md);
+.ceph-add-capacity__current-capacity--text {
+  margin-right: 0.5rem;
 }
 
-.add-capacity-modal__help-text-error {
-  color: $pf-color-red-100;  
+.ceph-add-capacity__form {
+  display: flex;
+  align-items: center;
 }
 
-.add-capacity-modal__help-text {
-  margin-top: -15px;
+.ceph-add-capacity__input {
+  max-width: 16rem !important;
 }
 
-.add-capacity-modal--padding {
-  .co-storage-class-dropdown {
-    .dropdown {
-      width: 340px;
-        button {
-          width: 100%;
-        }
-    }
-  }
+.ceph-add-capacity__input--info-text {
+  margin-left: 0.5rem;
+}
+
+.ceph-add-capacity__modal {
   padding-top: 2em;
 }
 
-.add-capacity-modal__span {
-  margin-left: 3.5rem;
+.ceph-add-capacity_sc-dropdown {
+  width: 16rem;
+  margin-bottom: 1rem;
+}
+
+.ceph-add-capacity__sc-dropdown--hide {
+  display: none;
 }

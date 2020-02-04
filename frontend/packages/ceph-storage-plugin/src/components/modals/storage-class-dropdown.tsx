@@ -1,16 +1,11 @@
 import * as React from 'react';
 import * as _ from 'lodash';
-import { Firehose } from '@console/internal/components/utils';
-import { StorageClassDropdownInner } from '@console/internal/components/utils/storage-class-dropdown';
+import { Firehose, FieldLevelHelp } from '@console/internal/components/utils';
 import { K8sResourceKind } from '@console/internal/module/k8s';
-
-const cephStorageProvisioners = ['ceph.rook.io/block', 'cephfs.csi.ceph.com', 'rbd.csi.ceph.com'];
-
-export const OCSStorageClassDropdown: React.FC<OCSStorageClassDropdownProps> = (props) => (
-  <Firehose resources={[{ kind: 'StorageClass', prop: 'StorageClass', isList: true }]}>
-    <StorageClassDropdown {...props} />
-  </Firehose>
-);
+import { StorageClassDropdownInner } from '@console/internal/components/utils/storage-class-dropdown';
+import { cephStorageProvisioners } from '@console/shared';
+import { storageClassTooltip } from '../../constants/ocs-install';
+import './storage-class-dropdown.scss';
 
 const StorageClassDropdown = (props: any) => {
   const scConfig = _.cloneDeep(props);
@@ -31,14 +26,32 @@ const StorageClassDropdown = (props: any) => {
   return <StorageClassDropdownInner {...scConfig} />;
 };
 
+export const OCSStorageClassDropdown: React.FC<OCSStorageClassDropdownProps> = (props) => {
+  const { onChange, defaultClass } = props;
+
+  const handleStorageClass = (sc: K8sResourceKind) => {
+    onChange(sc.metadata.name);
+  };
+  return (
+    <>
+      <label className="control-label" htmlFor="storageClass">
+        Storage Class
+        <FieldLevelHelp>{storageClassTooltip}</FieldLevelHelp>
+      </label>
+      <Firehose resources={[{ kind: 'StorageClass', prop: 'StorageClass', isList: true }]}>
+        <StorageClassDropdown
+          onChange={handleStorageClass}
+          name="storageClass"
+          defaultClass={defaultClass}
+          hideClassName="ceph-sc-dropdown__hide-default"
+          required
+        />
+      </Firehose>
+    </>
+  );
+};
+
 type OCSStorageClassDropdownProps = {
-  id?: string;
-  loaded?: boolean;
-  resources?: any;
-  name: string;
-  onChange: (object) => void;
-  describedBy?: string;
-  defaultClass: string;
-  required?: boolean;
-  hideClassName?: string;
+  onChange: React.Dispatch<React.SetStateAction<string>>;
+  defaultClass?: string;
 };
