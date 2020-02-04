@@ -49,6 +49,8 @@ export const vmDetailBootOrder = (namespace, vmName) =>
   $(vmDetailItemId(namespace, vmName, 'boot-order')).$$('li');
 export const vmDetailBootOrderEditButton = (namespace, vmName) =>
   $(vmDetailItemId(namespace, vmName, 'boot-order-edit'));
+export const vmDetailStatusEditButton = (namespace, vmName) =>
+  $(vmDetailItemId(namespace, vmName, 'status-edit'));
 export const vmDetailLabelValue = async (labelKey) => {
   const filteredLabel = $$('.co-m-label').filter((elem) =>
     elem
