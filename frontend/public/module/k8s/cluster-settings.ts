@@ -154,7 +154,8 @@ export const getReportBugLink = (cv: ClusterVersionKind): { label: string; href:
   }
 
   // Show a Bugzilla link for prerelease versions and a support case link for supported versions.
-  const { major, minor, patch, prerelease } = parsed;
+  const { major, minor, prerelease } = parsed;
+  const bugzillaVersion = major === 4 && minor <= 3 ? `${major}.${minor}.0` : `${major}.${minor}`;
   const environment = encodeURIComponent(`Version: ${version}
 Cluster ID: ${cv.spec.clusterID}
 Browser: ${window.navigator.userAgent}
@@ -166,9 +167,7 @@ Browser: ${window.navigator.userAgent}
       }
     : {
         label: 'Report Bug',
-        href: `https://bugzilla.redhat.com/enter_bug.cgi?product=OpenShift%20Container%20Platform&version=${major}.${minor}.${
-          patch ? 'z' : '0'
-        }&cf_environment=${environment}`,
+        href: `https://bugzilla.redhat.com/enter_bug.cgi?product=OpenShift%20Container%20Platform&version=${bugzillaVersion}&cf_environment=${environment}`,
       };
 };
 
