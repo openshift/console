@@ -161,7 +161,6 @@ const ApplicationGroup: React.FC<ApplicationGroupProps> = ({
         y={labelLocation.current[1] + hullPadding(labelLocation.current) + 30}
         paddingX={8}
         paddingY={5}
-        truncate={16}
         dragRef={dragLabelRef}
       >
         {element.getLabel()}

@@ -6,6 +6,7 @@ import {
   useCombineRefs,
   createSvgIdUrl,
 } from '@console/topology';
+import { truncateMiddle } from '@console/internal/components/utils';
 import SvgResourceIcon from '../topology/components/nodes/ResourceIcon';
 import SvgCircledIcon from './SvgCircledIcon';
 import SvgDropShadowFilter from './SvgDropShadowFilter';
@@ -30,13 +31,6 @@ export interface SvgBoxedTextProps {
 
 const FILTER_ID = 'SvgBoxedTextDropShadowFilterId';
 
-const truncateEnd = (text: string = '', length: number): string => {
-  if (text.length <= length) {
-    return text;
-  }
-  return `${text.substr(0, length - 1)}…`;
-};
-
 /**
  * Renders a `<text>` component with a `<rect>` box behind.
  */
@@ -53,7 +47,7 @@ const SvgBoxedText: React.FC<SvgBoxedTextProps> = ({
   typeIconPadding = 4,
   onMouseEnter,
   onMouseLeave,
-  truncate,
+  truncate = 20,
   dragRef,
   ...other
 }) => {
@@ -107,10 +101,10 @@ const SvgBoxedText: React.FC<SvgBoxedTextProps> = ({
         onMouseEnter={onMouseEnter}
         onMouseLeave={onMouseLeave}
       >
-        {typeof truncate === 'number'
+        {truncate > 0
           ? labelHover
             ? children
-            : truncateEnd(children, truncate)
+            : truncateMiddle(children, { length: truncate })
           : children}
       </text>
     </g>

@@ -153,7 +153,6 @@ const KnativeServiceGroup: React.FC<KnativeServiceGroupProps> = ({
             paddingX={8}
             paddingY={4}
             kind={data.kind}
-            truncate={16}
             dragRef={dragLabelRef}
             typeIconClass="icon-knative"
           >

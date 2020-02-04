@@ -135,7 +135,6 @@ const BaseNode: React.FC<BaseNodeProps> = ({
             paddingX={8}
             paddingY={4}
             kind={kind}
-            truncate={16}
           >
             {element.getLabel()}
           </SvgBoxedText>
