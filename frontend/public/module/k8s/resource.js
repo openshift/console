@@ -92,6 +92,12 @@ export const k8sPatch = (kind, resource, data, opts = {}) =>
     _.compact(data),
   );
 
+export const k8sPatchByName = (kind, name, namespace, data, opts = {}) =>
+  coFetchJSON.patch(
+    resourceURL(kind, Object.assign({ ns: namespace, name }, opts)),
+    _.compact(data),
+  );
+
 export const k8sKill = (kind, resource, opts = {}, json = null) =>
   coFetchJSON.delete(
     resourceURL(
