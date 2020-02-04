@@ -37,15 +37,15 @@ export const VirtualMachinesInstanceDetailsPage: React.FC<VirtualMachinesInstanc
     { name: `${match.params.name} Details`, path: `${match.url}` },
   ];
 
-  const dashboardPage = {
+  const overviewPage = {
     href: '', // default landing page
-    name: 'Dashboard',
+    name: 'Overview',
     component: VMDashboard,
   };
 
-  const overviewPage = {
+  const detailsPage = {
     href: VM_DETAIL_DETAILS_HREF,
-    name: 'Overview',
+    name: 'Details',
     component: VMDetailsFirehose,
   };
 
@@ -68,8 +68,8 @@ export const VirtualMachinesInstanceDetailsPage: React.FC<VirtualMachinesInstanc
   };
 
   const pages = [
-    dashboardPage,
     overviewPage,
+    detailsPage,
     navFactory.editYaml(),
     consolePage,
     navFactory.events(VMEvents),
