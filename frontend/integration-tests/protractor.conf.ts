@@ -90,7 +90,6 @@ const testSuites = {
     'tests/monitoring.scenario.ts',
     'tests/alertmanager.scenario.ts',
     'tests/crd-extensions.scenario.ts',
-    'tests/devconsole/pipeline.scenario.ts',
   ]),
   release: suite([
     'tests/crud.scenario.ts',
