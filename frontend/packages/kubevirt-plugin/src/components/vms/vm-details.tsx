@@ -29,9 +29,14 @@ export const VMDetailsFirehose: React.FC<VMTabProps> = ({
   templates,
   customData: { kindObj },
 }) => {
-  const vm = kindObj === VirtualMachineModel && isVM(objProp) ? objProp : isVM(vmProp) && vmProp;
+  const vm =
+    kindObj === VirtualMachineModel && isVM(objProp) ? objProp : isVM(vmProp) ? vmProp : null;
   const vmi =
-    kindObj === VirtualMachineInstanceModel && isVMI(objProp) ? objProp : isVMI(vmiProp) && vmiProp;
+    kindObj === VirtualMachineInstanceModel && isVMI(objProp)
+      ? objProp
+      : isVMI(vmiProp)
+      ? vmiProp
+      : null;
 
   const resources = [
     getResource(ServiceModel, { namespace: getNamespace(objProp), prop: 'services' }),
