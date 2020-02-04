@@ -104,8 +104,9 @@ $co-modal-ignore-warning-icon-width: 30px;
     margin: 0 ($grid-gutter-width / 2) 0 $grid-gutter-width;
   }
 
-  &__button {
-    padding: var(--pf-global--spacer--md) var(--pf-global--spacer--lg) var(--pf-global--spacer--md) var(--pf-global--spacer--lg);
+  &__btn-group__group-by {
+    display: inline;
+    margin-left: var(--pf-global--spacer--xl);
   }
 
   &__content {
@@ -135,6 +136,14 @@ $co-modal-ignore-warning-icon-width: 30px;
     padding: 30px;
   }
 
+  &__grouped-items {
+    margin-bottom: var(--pf-global--spacer--md);
+  }
+
+  &__group-title {
+    margin-bottom: var(--pf-global--spacer--sm);
+  }
+
   &__header {
     margin: 0 $grid-gutter-width 0 0;
   }
@@ -153,22 +162,9 @@ $co-modal-ignore-warning-icon-width: 30px;
     width: auto !important;
   }
 
-  &__btn-group__group-by {
-    display: inline;
-    margin-left: var(--pf-global--spacer--xl);
-  }
-
   &__num-items {
     font-weight: var(--pf-global--FontWeight--bold);
     padding: 0 0 20px;
-  }
-
-  &__group-title {
-    margin-bottom: var(--pf-global--spacer--sm);
-  }
-
-  &__grouped-items {
-    margin-bottom: var(--pf-global--spacer--md);
   }
 
   // Enable scrolling on the modal
@@ -216,6 +212,31 @@ $co-modal-ignore-warning-icon-width: 30px;
     }
   }
 
+  &__overlay-action {
+    align-items: baseline;
+    display: inline-flex !important;
+    margin: var(--pf-global--spacer--sm) var(--pf-global--spacer--sm) 0 0;
+    overflow-x: hidden;
+  }
+
+  &__overlay-action-icon {
+    flex-shrink: 0;
+    font-size: $font-size-base;
+    margin-left: 6px;
+  }
+
+  &__overlay-action-label {
+    overflow-x: hidden;
+    text-overflow: ellipsis;
+  }
+
+  &__overlay-actions {
+    display: flex;
+    flex-wrap: wrap;
+    padding: var(--pf-global--spacer--sm) var(--pf-global--spacer--md) var(--pf-global--spacer--md) var(--pf-global--spacer--lg);
+    white-space: normal;
+  }
+
   &__overlay-body {
     margin: 0;
     padding-left: var(--pf-global--spacer--lg);
@@ -224,19 +245,6 @@ $co-modal-ignore-warning-icon-width: 30px;
     @media(min-width: $screen-sm-min) {
       display: flex;
     }
-  }
-
-  &__overlay-create {
-    display: inline-flex !important;
-    overflow-x: hidden;
-    text-overflow: ellipsis;
-  }
-
-  &__overlay-remote-workflow {
-    display: inline-flex !important;
-    margin-right: var(--pf-global--spacer--sm);
-    overflow-x: hidden;
-    text-overflow: ellipsis;
   }
 
   &__overlay-description {

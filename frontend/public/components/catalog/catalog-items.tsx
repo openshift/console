@@ -371,9 +371,9 @@ export class CatalogTileViewPage extends React.Component<
                   }
                   iconImg={detailsItem.tileImgUrl}
                 />
-                <div className="co-catalog-page__button">
+                <div className="co-catalog-page__overlay-actions">
                   <Link
-                    className="pf-c-button pf-m-primary co-catalog-page__overlay-create"
+                    className="pf-c-button pf-m-primary co-catalog-page__overlay-action"
                     to={detailsItem.href}
                     role="button"
                     title={detailsItem.createLabel}
