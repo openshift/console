@@ -29,8 +29,14 @@ export const VMDetailsFirehose: React.FC<VMTabProps> = ({
   templates,
   customData: { kindObj },
 }) => {
-  const vm = kindObj === VirtualMachineModel && isVM(objProp) ? objProp : vmProp;
-  const vmi = kindObj === VirtualMachineInstanceModel && isVMI(objProp) ? objProp : vmiProp;
+  const vm =
+    kindObj === VirtualMachineModel && isVM(objProp) ? objProp : isVM(vmProp) ? vmProp : null;
+  const vmi =
+    kindObj === VirtualMachineInstanceModel && isVMI(objProp)
+      ? objProp
+      : isVMI(vmiProp)
+      ? vmiProp
+      : null;
 
   const resources = [
     getResource(ServiceModel, { namespace: getNamespace(objProp), prop: 'services' }),
@@ -92,9 +98,9 @@ const VMDetails: React.FC<VMDetailsProps> = (props) => {
 type VMDetailsProps = {
   kindObj: K8sKind;
   vm?: VMKind;
+  vmi?: VMIKind;
   pods?: PodKind[];
   migrations?: K8sResourceKind[];
-  vmi?: VMIKind;
   services?: FirehoseResult<K8sResourceKind[]>;
   templates?: TemplateKind[];
 };
