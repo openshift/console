@@ -23,4 +23,7 @@
       color: var(--pf-global--disabled-color--200);
     }
   }
+  &__empty-message {
+    margin-bottom: var(--pf-global--spacer--sm);
+  }
 }

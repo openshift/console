@@ -2,10 +2,12 @@ import * as React from 'react';
 import * as _ from 'lodash';
 import { FieldArray } from 'formik';
 import { FormGroup } from '@patternfly/react-core';
+import { SecondaryStatus } from '@console/shared';
 import { MultiColumnFieldProps } from '../field-types';
 import MultiColumnFieldHeader from './MultiColumnFieldHeader';
 import MultiColumnFieldRow from './MultiColumnFieldRow';
 import MultiColumnFieldFooter from './MultiColumnFieldFooter';
+import './MultiColumnField.scss';
 
 const MultiColumnField: React.FC<MultiColumnFieldProps> = ({
   children,
@@ -16,6 +18,7 @@ const MultiColumnField: React.FC<MultiColumnFieldProps> = ({
   addLabel,
   headers,
   emptyValues,
+  emptyMessage,
   isReadOnly,
   disableDeleteRow,
   disableAddRow,
@@ -32,7 +35,15 @@ const MultiColumnField: React.FC<MultiColumnFieldProps> = ({
           helperText={helpText}
           isRequired={required}
         >
-          <MultiColumnFieldHeader headers={headers} />
+          {fieldValue.length < 1 ? (
+            emptyMessage && (
+              <div className="odc-multi-column-field__empty-message">
+                <SecondaryStatus status={emptyMessage} />
+              </div>
+            )
+          ) : (
+            <MultiColumnFieldHeader headers={headers} />
+          )}
           {fieldValue.length > 0 &&
             fieldValue.map((value, index) => (
               <MultiColumnFieldRow
