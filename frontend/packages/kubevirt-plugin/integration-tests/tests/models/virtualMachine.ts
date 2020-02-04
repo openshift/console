@@ -147,6 +147,12 @@ export class VirtualMachine extends KubevirtDetailView {
           resolveTimeout(timeout, PAGE_LOAD_TIMEOUT_SECS),
         );
         break;
+      case VM_ACTION.Unpause:
+        await this.waitForStatus(
+          VM_STATUS.Running,
+          resolveTimeout(timeout, VM_ACTIONS_TIMEOUT_SECS),
+        );
+        break;
       default:
         throw Error(UNEXPECTED_ACTION_ERROR);
     }
