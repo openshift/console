@@ -39,7 +39,7 @@ export const VirtualMachinesInstanceDetailsPage: React.FC<VirtualMachinesInstanc
 
   const dashboardPage = {
     href: '', // default landing page
-    name: 'Dashboard',
+    name: 'Details',
     component: VMDashboard,
   };
 
