@@ -1,27 +1,16 @@
 import * as _ from 'lodash';
 
-export const pipelineFilterReducer = (pipeline): string => {
-  if (
-    !pipeline ||
-    !pipeline.latestRun ||
-    !pipeline.latestRun.status ||
-    !pipeline.latestRun.status.succeededCondition
-  ) {
-    return '-';
-  }
-  return pipeline.latestRun.status.succeededCondition;
-};
-
 export const pipelineRunStatus = (pipelineRun): string => {
-  if (
-    !pipelineRun ||
-    !pipelineRun.status ||
-    !pipelineRun.status.conditions ||
-    pipelineRun.status.conditions.length === 0
-  ) {
-    return null;
+  const conditions = _.get(pipelineRun, ['status', 'conditions'], []);
+  const isCancelled = conditions.find((c) =>
+    ['PipelineRunCancelled', 'TaskRunCancelled'].some((cancel) => cancel === c.reason),
+  );
+  if (isCancelled) {
+    return 'Cancelled';
   }
-  const condition = pipelineRun.status.conditions.find((c) => c.type === 'Succeeded');
+  if (conditions.length === 0) return null;
+
+  const condition = conditions.find((c) => c.type === 'Succeeded');
   return !condition || !condition.status
     ? null
     : condition.status === 'True'
@@ -29,6 +18,11 @@ export const pipelineRunStatus = (pipelineRun): string => {
     : condition.status === 'False'
     ? 'Failed'
     : 'Running';
+};
+
+export const pipelineFilterReducer = (pipeline): string => {
+  if (!pipeline.latestRun) return '-';
+  return pipelineRunStatus(pipeline.latestRun) || '-';
 };
 
 export const pipelineRunFilterReducer = (pipelineRun): string => {

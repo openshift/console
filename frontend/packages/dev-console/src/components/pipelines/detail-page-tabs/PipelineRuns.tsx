@@ -12,12 +12,18 @@ import { PipelineRunModel } from '../../../models';
 export const runFilters = [
   {
     type: 'pipelinerun-status',
-    selected: [ListFilterId.Succeeded, ListFilterId.Running, ListFilterId.Failed],
+    selected: [
+      ListFilterId.Succeeded,
+      ListFilterId.Running,
+      ListFilterId.Failed,
+      ListFilterId.Cancelled,
+    ],
     reducer: pipelineRunFilterReducer,
     items: [
       { id: ListFilterId.Succeeded, title: ListFilterLabels[ListFilterId.Succeeded] },
       { id: ListFilterId.Running, title: ListFilterLabels[ListFilterId.Running] },
       { id: ListFilterId.Failed, title: ListFilterLabels[ListFilterId.Failed] },
+      { id: ListFilterId.Cancelled, title: ListFilterLabels[ListFilterId.Cancelled] },
     ],
     filter: pipelineRunStatusFilter,
   },
