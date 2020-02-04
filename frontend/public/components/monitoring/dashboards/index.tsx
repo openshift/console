@@ -5,6 +5,7 @@ import { Helmet } from 'react-helmet';
 import { connect } from 'react-redux';
 import { Map as ImmutableMap } from 'immutable';
 
+import { RedExclamationCircleIcon } from '@console/shared';
 import ErrorAlert from '@console/shared/src/components/alerts/error';
 import Dashboard from '@console/shared/src/components/dashboard/Dashboard';
 import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
@@ -30,53 +31,128 @@ const evaluateTemplate = (s: string, variables: VariablesMap) =>
   _.reduce(
     variables,
     (result: string, v: Variable, k: string): string => {
-      return result.replace(new RegExp(`\\$${k}`, 'g'), v.value);
+      return result.replace(new RegExp(`\\$${k}`, 'g'), v.value === undefined ? '' : v.value);
     },
     s,
   );
 
 const VariableDropdown: React.FC<VariableDropdownProps> = ({
   buttonClassName = 'monitoring-dashboards__dropdown-button',
+  isError = false,
   items,
+  label,
   onChange,
   selectedKey,
-  title,
 }) => (
   <div className="form-group monitoring-dashboards__dropdown-wrap">
-    <label className="monitoring-dashboards__dropdown-title">{title}</label>
-    <Dropdown
-      buttonClassName={buttonClassName}
-      items={items}
-      onChange={onChange}
-      selectedKey={selectedKey}
-    />
+    <label className="monitoring-dashboards__dropdown-title">{label}</label>
+    {isError ? (
+      <Dropdown
+        disabled
+        items={{}}
+        title={
+          <>
+            <RedExclamationCircleIcon /> Error loading options
+          </>
+        }
+      />
+    ) : (
+      <Dropdown
+        buttonClassName={buttonClassName}
+        items={items}
+        onChange={onChange}
+        selectedKey={selectedKey}
+      />
+    )}
   </div>
 );
 
+const SingleVariableDropdown: React.FC<SingleVariableDropdownProps> = ({
+  name,
+  options,
+  patchVariable,
+  query,
+  timespan,
+  value,
+}) => {
+  const safeFetch = React.useCallback(useSafeFetch(), []);
+
+  const [isError, setIsError] = React.useState(false);
+
+  React.useEffect(() => {
+    if (query) {
+      // Convert label_values queries to something Prometheus can handle
+      // TODO: Once the Prometheus /series endpoint is available through the API proxy, this should
+      // be converted to use that instead
+      const prometheusQuery = query.replace(/label_values\((.*), (.*)\)/, 'count($1) by ($2)');
+
+      const url = getPrometheusURL({
+        endpoint: PrometheusEndpoint.QUERY_RANGE,
+        query: prometheusQuery,
+        samples: 30,
+        timeout: '5s',
+        timespan,
+      });
+
+      safeFetch(url)
+        .then(({ data }) => {
+          setIsError(false);
+          const newOptions = _.flatMap(data?.result, ({ metric }) => _.values(metric)).sort();
+          patchVariable(name, { options: newOptions });
+        })
+        .catch((err) => {
+          if (err.name !== 'AbortError') {
+            setIsError(true);
+          }
+        });
+    }
+  }, [name, patchVariable, query, safeFetch, timespan]);
+
+  const onChange = React.useCallback((v: string) => patchVariable(name, { value: v }), [
+    name,
+    patchVariable,
+  ]);
+
+  if (!isError && !options.length) {
+    return null;
+  }
+
+  return (
+    <VariableDropdown
+      isError={isError}
+      items={_.zipObject(options, options)}
+      label={name}
+      onChange={onChange}
+      selectedKey={value}
+    />
+  );
+};
+
 const AllVariableDropdowns_: React.FC<AllVariableDropdownsProps> = ({
   patchVariable,
+  timespan,
   variables,
-}) => (
-  <>
-    {_.map(variables.toJS(), ({ options, value }, k) =>
-      _.isEmpty(options) ? null : (
-        <VariableDropdown
-          items={_.zipObject(options, options)}
-          key={k}
-          onChange={(v: string) => patchVariable(k, { value: v })}
-          selectedKey={value}
-          title={k}
+}) => {
+  const vars = variables.toJS();
+  return (
+    <>
+      {_.map(vars, (v, name) => (
+        <SingleVariableDropdown
+          key={name}
+          name={name}
+          options={v.options}
+          patchVariable={patchVariable}
+          query={v.query ? evaluateTemplate(v.query, vars) : undefined}
+          timespan={timespan}
+          value={v.value}
         />
-      ),
-    )}
-  </>
-);
-const AllVariableDropdowns = connect(
-  ({ UI }: RootState) => ({
-    variables: UI.getIn(['monitoringDashboards', 'variables']),
-  }),
-  { patchVariable: UIActions.monitoringDashboardsPatchVariable },
-)(AllVariableDropdowns_);
+      ))}
+    </>
+  );
+};
+const AllVariableDropdowns = connect(({ UI }: RootState) => ({
+  variables: UI.getIn(['monitoringDashboards', 'variables']),
+}))(AllVariableDropdowns_);
 
 const timespanOptions = {
   '5m': '5 mintutes',
@@ -147,7 +223,8 @@ const Card_: React.FC<CardProps> = ({ panel, pollInterval, timespan, variables }
   if (!rawQueries.length) {
     return null;
   }
-  const queries = rawQueries.map((expr) => evaluateTemplate(expr, variables.toJS()));
+  const variablesJS = variables.toJS();
+  const queries = rawQueries.map((expr) => evaluateTemplate(expr, variablesJS));
 
   return (
     <div className={`col-xs-12 col-sm-${colSpanSm} col-lg-${colSpan}`}>
@@ -206,29 +283,6 @@ const Board: React.FC<BoardProps> = ({ board, patchVariable, pollInterval, times
 
   const safeFetch = React.useCallback(useSafeFetch(), []);
 
-  const loadVariableValues = React.useCallback(
-    (name: string, rawQuery: string) => {
-      // Convert label_values queries to something Prometheus can handle
-      // TODO: Once the Prometheus /series endpoint is available through the API proxy, this should
-      // be converted to use that instead
-      const query = rawQuery.replace(/label_values\((.*), (.*)\)/, 'count($1) by ($2)');
-      const url = getPrometheusURL({
-        endpoint: PrometheusEndpoint.QUERY_RANGE,
-        query,
-        samples: 30,
-        timeout: '5s',
-        timespan,
-      });
-
-      safeFetch(url).then((response) => {
-        const result = _.get(response, 'data.result');
-        const options = _.flatMap(result, ({ metric }) => _.values(metric)).sort();
-        patchVariable(name, options.length ? { options, value: options[0] } : { value: '' });
-      });
-    },
-    [patchVariable, safeFetch, timespan],
-  );
-
   React.useEffect(() => {
     if (!board) {
       return;
@@ -245,19 +299,13 @@ const Board: React.FC<BoardProps> = ({ board, patchVariable, pollInterval, times
           const newData = JSON.parse(json);
           setData(newData);
 
-          const newVars = _.get(newData, 'templating.list') as TemplateVariable[];
-          const optionsVars = _.filter(newVars, (v) => v.type === 'query' || v.type === 'interval');
-
-          _.each(optionsVars, (v) => {
-            if (v.options.length === 1) {
-              patchVariable(v.name, { value: v.options[0].value });
-            } else if (v.options.length > 1) {
-              const options = _.map(v.options, 'value');
-              const selected = _.find(v.options, { selected: true });
-              const value = (selected || v.options[0]).value;
-              patchVariable(v.name, { options, value });
-            } else if (!_.isEmpty(v.query)) {
-              loadVariableValues(v.name, v.query);
+          _.each(newData?.templating?.list as TemplateVariable[], (v) => {
+            if (v.type === 'query' || v.type === 'interval') {
+              patchVariable(v.name, {
+                options: _.map(v.options, 'value'),
+                query: v.type === 'query' ? v.query : undefined,
+                value: _.find(v.options, { selected: true })?.value,
+              });
             }
           });
         }
@@ -267,7 +315,7 @@ const Board: React.FC<BoardProps> = ({ board, patchVariable, pollInterval, times
           setError(_.get(err, 'json.error', err.message));
         }
       });
-  }, [board, loadVariableValues, patchVariable, safeFetch]);
+  }, [board, patchVariable, safeFetch]);
 
   if (!board) {
     return null;
@@ -331,28 +379,28 @@ const MonitoringDashboardsPage_: React.FC<MonitoringDashboardsPageProps> = ({
         <div className="monitoring-dashboards__options">
           <VariableDropdown
             items={timespanOptions}
+            label="Time Range"
             onChange={(v: string) => setTimespan(parsePrometheusDuration(v))}
             selectedKey={defaultTimespan}
-            title="Time Range"
           />
           <VariableDropdown
             items={pollIntervalOptions}
+            label="Refresh Interval"
             onChange={(v: string) =>
               setPollInterval(v === pollOffText ? null : parsePrometheusDuration(v))
             }
             selectedKey={defaultPollInterval}
-            title="Refresh Interval"
           />
         </div>
         <h1 className="co-m-pane__heading">Dashboards</h1>
         <div className="monitoring-dashboards__variables">
           <VariableDropdown
             items={boardItems}
+            label="Dashboard"
             onChange={setBoard}
             selectedKey={board}
-            title="Dashboard"
           />
-          <AllVariableDropdowns />
+          <AllVariableDropdowns patchVariable={patchVariable} timespan={timespan} />
         </div>
       </div>
       <Dashboard>
@@ -381,6 +429,7 @@ type TemplateVariable = {
 
 type Variable = {
   options?: string[];
+  query?: string;
   value?: string;
 };
 
@@ -388,10 +437,20 @@ type VariablesMap = { [key: string]: Variable };
 
 type VariableDropdownProps = {
   buttonClassName?: string;
+  isError?: boolean;
   items: { [key: string]: string };
+  label: string;
   onChange: (v: string) => void;
   selectedKey: string;
-  title: string;
+};
+
+type SingleVariableDropdownProps = {
+  name: string;
+  options?: string[];
+  patchVariable: (key: string, patch: Variable) => undefined;
+  query?: string;
+  timespan: number;
+  value?: string;
 };
 
 type BoardProps = {
@@ -403,6 +462,7 @@ type BoardProps = {
 
 type AllVariableDropdownsProps = {
   patchVariable: (key: string, patch: Variable) => undefined;
+  timespan: number;
   variables: ImmutableMap<string, Variable>;
 };
 
