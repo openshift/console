@@ -38,7 +38,7 @@ import {
   UTILIZATION_QUERY_HOUR_MAP,
   Duration,
 } from '@console/shared/src/components/dashboard/duration-hook';
-import { DataPoint } from '../../../graphs';
+import { DataPoint, PrometheusResponse } from '../../../graphs';
 
 const cpuQueriesPopup = [
   {
@@ -173,15 +173,18 @@ export const PrometheusUtilizationItem = withDashboardResources<PrometheusUtiliz
     humanizeValue,
     byteDataType,
     setTimestamps,
-    namespace,
+    namespace, 
+    isDisabled = false,
   }) => {
     React.useEffect(() => {
-      watchPrometheus(utilizationQuery, namespace, UTILIZATION_QUERY_HOUR_MAP[duration]);
-      totalQuery && watchPrometheus(totalQuery, namespace);
-      return () => {
-        stopWatchPrometheusQuery(utilizationQuery, UTILIZATION_QUERY_HOUR_MAP[duration]);
-        totalQuery && stopWatchPrometheusQuery(totalQuery);
-      };
+      if (!isDisabled) {
+        watchPrometheus(utilizationQuery, namespace, UTILIZATION_QUERY_HOUR_MAP[duration]);
+        totalQuery && watchPrometheus(totalQuery, namespace);
+        return () => {
+          stopWatchPrometheusQuery(utilizationQuery, UTILIZATION_QUERY_HOUR_MAP[duration]);
+          totalQuery && stopWatchPrometheusQuery(totalQuery);
+        };
+      }
     }, [
       watchPrometheus,
       stopWatchPrometheusQuery,
@@ -189,29 +192,39 @@ export const PrometheusUtilizationItem = withDashboardResources<PrometheusUtiliz
       utilizationQuery,
       totalQuery,
       namespace,
+      isDisabled,
     ]);
-    const [utilization, utilizationError] = getPrometheusQueryResponse(
-      prometheusResults,
-      utilizationQuery,
-      UTILIZATION_QUERY_HOUR_MAP[duration],
-    );
-    const [total, totalError] = getPrometheusQueryResponse(prometheusResults, totalQuery);
 
-    const stats = getRangeVectorStats(utilization);
-    const max = getInstantVectorStats(total);
+    let stats = [];
+    let utilization: PrometheusResponse, utilizationError: any;
+    let total: PrometheusResponse, totalError: any;
+    let max: DataPoint<number>[];
+    let isLoading = false;
+    if (!isDisabled) {
+      [utilization, utilizationError] = getPrometheusQueryResponse(
+        prometheusResults,
+        utilizationQuery,
+        UTILIZATION_QUERY_HOUR_MAP[duration],
+      );
+      [total, totalError] = getPrometheusQueryResponse(prometheusResults, totalQuery);
 
-    setTimestamps && setTimestamps(stats.map((stat) => stat.x as Date));
+      stats = getRangeVectorStats(utilization);
+      max = getInstantVectorStats(total);
+
+      setTimestamps && setTimestamps(stats.map((stat) => stat.x as Date));
+      isLoading = !utilization || (totalQuery && !total);
+    }
 
     return (
       <UtilizationItem
         title={title}
         data={stats}
         error={utilizationError || totalError}
-        isLoading={!utilization || (totalQuery && !total)}
+        isLoading={isLoading}
         humanizeValue={humanizeValue}
         byteDataType={byteDataType}
         query={utilizationQuery}
-        max={max.length ? max[0].y : null}
+        max={max && max.length ? max[0].y : null}
         TopConsumerPopover={TopConsumerPopover}
       />
     );
@@ -232,44 +245,45 @@ export const PrometheusMultilineUtilizationItem = withDashboardResources<
     humanizeValue,
     byteDataType,
     namespace,
+    isDisabled = false,
   }) => {
     React.useEffect(() => {
-      queries.forEach((q) =>
-        watchPrometheus(q.query, namespace, UTILIZATION_QUERY_HOUR_MAP[duration]),
-      );
-      return () => {
+      if (!isDisabled) {
         queries.forEach((q) =>
-          stopWatchPrometheusQuery(q.query, UTILIZATION_QUERY_HOUR_MAP[duration]),
+          watchPrometheus(q.query, namespace, UTILIZATION_QUERY_HOUR_MAP[duration]),
         );
       };
-    }, [watchPrometheus, stopWatchPrometheusQuery, duration, queries, namespace]);
+    }, [watchPrometheus, stopWatchPrometheusQuery, duration, queries, namespace, isDisabled]);
+
     const stats = [];
     let hasError = false;
     let isLoading = false;
-    _.forEach(queries, (query) => {
-      const [response, responseError] = getPrometheusQueryResponse(
-        prometheusResults,
-        query.query,
-        UTILIZATION_QUERY_HOUR_MAP[duration],
-      );
-      if (responseError) {
-        hasError = true;
-        return false;
-      }
-      if (!response) {
-        isLoading = true;
-        return false;
-      }
-      stats.push(
-        getRangeVectorStats(response).map((dp) => {
-          dp.x.setSeconds(0, 0);
-          return {
-            ...dp,
-            description: query.desc,
-          } as DataPoint<Date>;
-        }),
-      );
-    });
+    if (!isDisabled) {
+      _.forEach(queries, (query) => {
+        const [response, responseError] = getPrometheusQueryResponse(
+          prometheusResults,
+          query.query,
+          UTILIZATION_QUERY_HOUR_MAP[duration],
+        );
+        if (responseError) {
+          hasError = true;
+          return false;
+        }
+        if (!response) {
+          isLoading = true;
+          return false;
+        }
+        stats.push(
+          getRangeVectorStats(response).map((dp) => {
+            dp.x.setSeconds(0, 0);
+            return {
+              ...dp,
+              description: query.desc,
+            } as DataPoint<Date>;
+          }),
+        );
+      });
+    }
 
     return (
       <MultilineUtilizationItem
@@ -430,6 +444,7 @@ type PrometheusCommonProps = {
   humanizeValue: Humanize;
   byteDataType?: ByteDataTypes;
   namespace?: string;
+  isDisabled?: boolean;
 };
 
 type PrometheusUtilizationItemProps = DashboardItemProps &

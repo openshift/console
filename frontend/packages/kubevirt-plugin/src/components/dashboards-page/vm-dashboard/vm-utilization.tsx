@@ -20,6 +20,7 @@ import {
 import { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
 import { VMDashboardContext } from '../../vms/vm-dashboard-context';
 import { findVMPod } from '../../../selectors/pod/selectors';
+import { isVMRunningWithVMI } from '../../../selectors/vm';
 import { getUtilizationQueries, getMultilineUtilizationQueries, VMQueries } from './queries';
 
 // TODO: extend humanizeCpuCores() from @console/internal for the flexibility of space
@@ -39,6 +40,8 @@ export const VMUtilizationCard: React.FC = () => {
   const vmName = getName(vmiLike);
   const namespace = getNamespace(vmiLike);
   const launcherPodName = getName(findVMPod(vmiLike, pods));
+  const vmIsRunning = isVMRunningWithVMI({ vm, vmi });
+
   const queries = React.useMemo(
     () =>
       getUtilizationQueries({
@@ -73,6 +76,7 @@ export const VMUtilizationCard: React.FC = () => {
           duration={duration}
           setTimestamps={setTimestamps}
           namespace={namespace}
+          isDisabled={!vmIsRunning}
         />
         <PrometheusUtilizationItem
           title="Memory"
@@ -81,6 +85,7 @@ export const VMUtilizationCard: React.FC = () => {
           byteDataType={ByteDataTypes.BinaryBytes}
           duration={duration}
           namespace={namespace}
+          isDisabled={!vmIsRunning}
         />
         <PrometheusUtilizationItem
           title="Filesystem"
@@ -89,6 +94,7 @@ export const VMUtilizationCard: React.FC = () => {
           byteDataType={ByteDataTypes.BinaryBytes}
           duration={duration}
           namespace={namespace}
+          isDisabled={!vmIsRunning}
         />
         <PrometheusMultilineUtilizationItem
           title="Network Transfer"
@@ -97,6 +103,7 @@ export const VMUtilizationCard: React.FC = () => {
           byteDataType={ByteDataTypes.BinaryBytes}
           duration={duration}
           namespace={namespace}
+          isDisabled={!vmIsRunning}
         />
       </UtilizationBody>
     </DashboardCard>
