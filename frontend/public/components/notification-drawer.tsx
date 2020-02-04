@@ -31,12 +31,7 @@ import {
 
 import { coFetchJSON } from '../co-fetch';
 import { FirehoseResult } from './utils';
-import {
-  ClusterUpdate,
-  ClusterVersionKind,
-  hasAvailableUpdates,
-  K8sResourceKind,
-} from '../module/k8s';
+import { ClusterUpdate, ClusterVersionKind } from '../module/k8s';
 import { getSortedUpdates } from './modals/cluster-update-modal';
 import { usePrevious } from '@console/metal3-plugin/src/hooks';
 
@@ -145,10 +140,10 @@ export const ConnectedNotificationDrawer_: React.FC<ConnectedNotificationDrawerP
     }
     return () => pollerTimeout.clearTimeout;
   }, []);
-  const cv: ClusterVersionKind = _.get(resources.cv, 'data') as ClusterVersionKind;
-  const cvLoaded: boolean = _.get(resources.cv, 'loaded');
-  const updateData: ClusterUpdate[] = hasAvailableUpdates(cv) ? getSortedUpdates(cv) : [];
-  const { data, loaded, loadError } = alerts;
+  const cv: ClusterVersionKind = resources.cv?.data;
+  const cvLoaded: boolean = resources.cv?.loaded;
+  const updateData: ClusterUpdate[] = getSortedUpdates(cv);
+  const { data, loaded, loadError } = alerts || {};
 
   const updateList: React.ReactNode[] = getUpdateNotificationEntries(
     cvLoaded,
@@ -176,11 +171,12 @@ export const ConnectedNotificationDrawer_: React.FC<ConnectedNotificationDrawerP
   const [isClusterUpdateExpanded, toggleClusterUpdateExpanded] = React.useState<boolean>(false);
   const prevDrawerToggleState = usePrevious(isDrawerExpanded);
 
+  const hasCriticalAlerts = criticalAlertList.length > 0;
   React.useEffect(() => {
-    if (criticalAlertList.length > 0 && !prevDrawerToggleState && isDrawerExpanded) {
-      toggleAlertExpanded(!_.isEmpty(criticalAlertList));
+    if (hasCriticalAlerts && !prevDrawerToggleState && isDrawerExpanded) {
+      toggleAlertExpanded(true);
     }
-  }, [criticalAlertList, isAlertExpanded, isDrawerExpanded, prevDrawerToggleState]);
+  }, [hasCriticalAlerts, isAlertExpanded, isDrawerExpanded, prevDrawerToggleState]);
 
   const emptyState = !_.isEmpty(loadError) ? (
     <AlertErrorState errorText={loadError.message} />
@@ -246,7 +242,7 @@ type NotificationPoll = (url: string, dataHandler: (data) => any) => void;
 export type WithNotificationsProps = {
   isDrawerExpanded: boolean;
   notificationsRead: boolean;
-  alerts: {
+  alerts?: {
     data: Alert[];
     loaded: boolean;
     loadError?: {
@@ -269,14 +265,14 @@ export type ConnectedNotificationDrawerProps = {
     };
   };
   resources?: {
-    [key: string]: FirehoseResult | FirehoseResult<K8sResourceKind>;
+    cv: FirehoseResult<ClusterVersionKind>;
   };
 };
 
 const notificationStateToProps = ({ UI }: RootState): WithNotificationsProps => ({
   isDrawerExpanded: !!UI.getIn(['notifications', 'isExpanded']),
   notificationsRead: !!UI.getIn(['notifications', 'isRead']),
-  alerts: UI.getIn(['monitoring', 'notificationAlerts']) || {},
+  alerts: UI.getIn(['monitoring', 'notificationAlerts']),
 });
 
 type AlertErrorProps = {
