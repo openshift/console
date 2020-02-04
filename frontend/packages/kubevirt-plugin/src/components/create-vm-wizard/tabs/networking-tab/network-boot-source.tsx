@@ -47,12 +47,12 @@ export const NetworkBootSource: React.FC<NetworkBootSourceProps> = ({
           isDisabled={isDisabled}
         >
           <FormSelectPlaceholderOption isDisabled placeholder={SELECT_PXE_NIC} />
-          {ignoreCaseSort(pxeNetworks, null, (n) => n.networkWrapper.getReadableName()).map(
+          {ignoreCaseSort(pxeNetworks, null, (n) => n.networkInterfaceWrapper.getName()).map(
             (network) => (
               <FormSelectOption
                 key={network.id}
                 value={network.id}
-                label={network.networkWrapper.getReadableName()}
+                label={network.networkWrapper.getName()}
               />
             ),
           )}
