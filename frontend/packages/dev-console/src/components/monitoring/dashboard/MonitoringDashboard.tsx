@@ -3,8 +3,14 @@ import * as _ from 'lodash';
 import { match as RMatch } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
 import { Grid, GridItem } from '@patternfly/react-core';
+import { getURLSearchParams } from '@console/internal/components/utils';
 import MonitoringDashboardGraph from './MonitoringDashboardGraph';
-import { queries } from './monitoringDashboardQueries';
+import {
+  monitoringDashboardQueries,
+  workloadMetricsQueries,
+  MonitoringQuery,
+  topWorkloadMetricsQueries,
+} from '../queries';
 import MonitoringDasboardCountBlock from './MonitoringDashboardCountBlock';
 
 interface MonitoringDashboardProps {
@@ -15,6 +21,12 @@ interface MonitoringDashboardProps {
 
 const MonitoringDashboard: React.FC<MonitoringDashboardProps> = ({ match }) => {
   const namespace = match.params.ns;
+  const params = getURLSearchParams();
+  const { workloadName, workloadType } = params;
+  const queries: MonitoringQuery[] =
+    workloadName && workloadType
+      ? [...topWorkloadMetricsQueries, ...workloadMetricsQueries]
+      : monitoringDashboardQueries;
 
   return (
     <>
@@ -31,7 +43,7 @@ const MonitoringDashboard: React.FC<MonitoringDashboardProps> = ({ match }) => {
               title={q.title}
               namespace={namespace}
               graphType={q.chartType}
-              query={q.query({ namespace })}
+              query={q.query({ namespace, workloadName, workloadType })}
               humanize={q.humanize}
               byteDataType={q.byteDataType}
             />
