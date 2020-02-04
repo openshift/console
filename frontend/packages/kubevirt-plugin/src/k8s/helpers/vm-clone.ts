@@ -26,7 +26,7 @@ import {
   TEMPLATE_OS_NAME_ANNOTATION,
   TEMPLATE_VM_NAME_LABEL,
 } from '../../constants/vm';
-import { MutableVMWrapper } from '../wrapper/vm/vm-wrapper';
+import { VMWrapper } from '../wrapper/vm/vm-wrapper';
 
 export type CloneTo = {
   name: string;
@@ -36,19 +36,19 @@ export type CloneTo = {
 };
 
 export class VMClone {
-  private vm: MutableVMWrapper;
+  private vm: VMWrapper;
 
   private oldVMNamespace: string;
 
   constructor(vm: VMKind, values: CloneTo) {
-    this.vm = new MutableVMWrapper(vm, { copy: true });
+    this.vm = new VMWrapper(vm, true);
     this.oldVMNamespace = getNamespace(vm);
     this.cleanVM();
     this.setValues(values);
   }
 
   private cleanVM = () => {
-    const data = this.vm.asMutableResource();
+    const data = this.vm.asResource();
     const { metadata, spec } = data;
 
     if (metadata) {
@@ -69,7 +69,7 @@ export class VMClone {
   };
 
   private setValues({ name, namespace, description, startVM = false }: CloneTo) {
-    const data = this.vm.asMutableResource();
+    const data = this.vm.asResource();
     const osId = getOperatingSystem(data);
     const osName = getOperatingSystemName(data);
 
@@ -155,7 +155,7 @@ export class VMClone {
   };
 
   build() {
-    const result = this.vm.asResource();
+    const result = this.vm.asResource(true);
     // in case withClonedPVCs was not called
     if (this.vm.getVolumes(null)) {
       result.spec.template.spec.volumes = result.spec.template.spec.volumes.filter(

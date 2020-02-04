@@ -75,7 +75,7 @@ export class VolumeWrapper extends ObjectWithTypePropertyWrapper<V1Volume, Volum
     volume?: V1Volume,
     opts?: { initializeWithType?: VolumeType; initializeWithTypeData?: any; copy?: boolean },
   ) {
-    super(volume, opts, VolumeType);
+    super(volume, opts?.copy, opts, VolumeType);
   }
 
   getName = () => this.get('name');

@@ -49,7 +49,7 @@ export class DiskWrapper extends ObjectWithTypePropertyWrapper<V1Disk, DiskType>
     disk?: V1Disk,
     opts?: { initializeWithType?: DiskType; initializeWithTypeData?: any; copy?: boolean },
   ) {
-    super(disk, opts, DiskType);
+    super(disk, opts?.copy, opts, DiskType);
   }
 
   getName = () => this.get('name');

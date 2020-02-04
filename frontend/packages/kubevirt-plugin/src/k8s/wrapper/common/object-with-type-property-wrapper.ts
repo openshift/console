@@ -28,16 +28,17 @@ export abstract class ObjectWithTypePropertyWrapper<
 
   constructor(
     data: RESOURCE,
-    opts: { initializeWithType?: TYPE; initializeWithTypeData?: any; copy?: boolean },
+    copy = false,
+    opts: { initializeWithType?: TYPE; initializeWithTypeData?: any },
     typeClass: { getAll: () => TYPE[] | Readonly<TYPE[]> },
     typeDataPath: string[] = [],
   ) {
-    super(data, opts);
+    super(data, copy);
     this.TypeClass = typeClass;
     this.typeDataPath = typeDataPath;
 
     if (opts && opts.initializeWithType) {
-      const { initializeWithTypeData, initializeWithType, copy } = opts;
+      const { initializeWithTypeData, initializeWithType } = opts;
 
       const resultTypeData = initializeWithTypeData
         ? copy

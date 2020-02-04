@@ -72,7 +72,7 @@ export class PersistentVolumeClaimWrapper extends Wrapper<V1PersistentVolumeClai
       copy?: boolean;
     },
   ) {
-    super(persistentVolumeClaim, opts);
+    super(persistentVolumeClaim, opts?.copy);
   }
 
   getName = () => getName(this.data as any);

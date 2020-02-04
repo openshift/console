@@ -12,7 +12,7 @@ import {
 } from '../../../../constants/vm';
 import { NetworkWrapper } from '../../../wrapper/vm/network-wrapper';
 import { NetworkInterfaceWrapper } from '../../../wrapper/vm/network-interface-wrapper';
-import { MutableVMWrapper } from '../../../wrapper/vm/vm-wrapper';
+import { VMWrapper } from '../../../wrapper/vm/vm-wrapper';
 import { getVolumeCloudInitNoCloud } from '../../../../selectors/vm';
 import { MutableVolumeWrapper, VolumeWrapper } from '../../../wrapper/vm/volume-wrapper';
 import {
@@ -50,7 +50,7 @@ const resolveDataVolumeName = (
     : finalName;
 };
 
-const initializeStorage = (params: CreateVMEnhancedParams, vm: MutableVMWrapper) => {
+const initializeStorage = (params: CreateVMEnhancedParams, vm: VMWrapper) => {
   const { vmSettings, storages, isTemplate, storageClassConfigMap, namespace } = params;
   const settings = asSimpleSettings(vmSettings);
 
@@ -99,19 +99,16 @@ const initializeStorage = (params: CreateVMEnhancedParams, vm: MutableVMWrapper)
   return { storages: resolvedStorages };
 };
 
-const initializeNetworks = (
-  { networks, vmSettings }: CreateVMEnhancedParams,
-  vm: MutableVMWrapper,
-) => {
+const initializeNetworks = ({ networks, vmSettings }: CreateVMEnhancedParams, vm: VMWrapper) => {
   vm.setNetworks(networks);
   const hasPodNetwork = networks.some((network) =>
-    NetworkWrapper.initialize(network.network).isPodNetwork(),
+    new NetworkWrapper(network.network).isPodNetwork(),
   );
   if (!hasPodNetwork) {
     vm.setAutoAttachPodInterface(false);
   }
   const pxeNetwork = networks.find((network) =>
-    NetworkInterfaceWrapper.initialize(network.networkInterface).isFirstBootableDevice(),
+    new NetworkInterfaceWrapper(network.networkInterface).isFirstBootableDevice(),
   );
   if (pxeNetwork) {
     const isRunning = getFieldValue(vmSettings, VMSettingsField.START_VM);
@@ -120,7 +117,7 @@ const initializeNetworks = (
   }
 };
 
-export const initializeVM = (params: CreateVMEnhancedParams, vm: MutableVMWrapper) => {
+export const initializeVM = (params: CreateVMEnhancedParams, vm: VMWrapper) => {
   const { vmSettings, storages, isTemplate } = params;
   const settings = asSimpleSettings(vmSettings);
   const isRunning = settings[VMSettingsField.START_VM];

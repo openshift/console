@@ -1,9 +1,6 @@
 import { DefaultVMLikeEntityParams } from './types';
 import { TemplateKind } from '@console/internal/module/k8s';
-import {
-  MutableVMTemplateWrapper,
-  VMTemplateWrapper,
-} from '../../../wrapper/vm/vm-template-wrapper';
+import { VMTemplateWrapper } from '../../../wrapper/vm/vm-template-wrapper';
 import { VM_TEMPLATE_NAME_PARAMETER } from '../../../../constants/vm-templates';
 import {
   DiskBus,
@@ -26,9 +23,9 @@ import { VolumeWrapper } from '../../../wrapper/vm/volume-wrapper';
 
 export const resolveDefaultVMTemplate = (params: DefaultVMLikeEntityParams): TemplateKind => {
   const { commonTemplate, name, namespace, containerImage, baseOSName } = params;
-  const template = new MutableVMTemplateWrapper(commonTemplate, { copy: true });
+  const template = new VMTemplateWrapper(commonTemplate, true);
 
-  const vm = template.getMutableVM();
+  const vm = template.getVM();
   const containerDiskName = 'containerdisk';
 
   vm.setHostname(VM_TEMPLATE_NAME_PARAMETER)
@@ -53,7 +50,7 @@ export const resolveDefaultVMTemplate = (params: DefaultVMLikeEntityParams): Tem
     labels: {
       [TEMPLATE_TYPE_LABEL]: TEMPLATE_TYPE_VM,
     },
-    objects: [vm.asMutableResource()],
+    objects: [vm.asResource()],
     parameters: [
       {
         name: TEMPLATE_PARAM_VM_NAME,
@@ -62,8 +59,6 @@ export const resolveDefaultVMTemplate = (params: DefaultVMLikeEntityParams): Tem
       },
     ],
   });
-
-  const mutableFinalTemplate = new MutableVMTemplateWrapper(finalTemplate.asResource());
 
   const osID = findHighestKeyBySuffixValue(
     template.getLabels(),
@@ -83,9 +78,9 @@ export const resolveDefaultVMTemplate = (params: DefaultVMLikeEntityParams): Tem
       osID,
       osName,
     },
-    mutableFinalTemplate,
+    finalTemplate,
     commonTemplate,
   );
 
-  return mutableFinalTemplate.asMutableResource();
+  return finalTemplate.asResource();
 };

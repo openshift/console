@@ -21,7 +21,7 @@ import {
   TEMPLATE_TYPE_LABEL,
   TEMPLATE_WORKLOAD_LABEL,
 } from '../../constants/vm';
-import { MutableVMTemplateWrapper } from '../../k8s/wrapper/vm/vm-template-wrapper';
+import { VMTemplateWrapper } from '../../k8s/wrapper/vm/vm-template-wrapper';
 import { OSSelection } from '../../constants/vm/default-os-selection';
 
 const CreateVMTemplateYAMLConnected = connectToPlural(
@@ -57,14 +57,11 @@ const CreateVMTemplateYAMLConnected = connectToPlural(
           );
         })
         .catch(() => {
-          const templateWrapper = new MutableVMTemplateWrapper(
-            safeLoad(VMTemplateYAMLTemplates.getIn(['vm-template'])),
-          );
           setDefaultTemplate(
-            templateWrapper
+            new VMTemplateWrapper(safeLoad(VMTemplateYAMLTemplates.getIn(['vm-template'])))
               .setModel(TemplateModel)
               .setNamespace(match.params.ns || 'default')
-              .asMutableResource(),
+              .asResource(),
           );
         });
     }, [match.params.ns]);

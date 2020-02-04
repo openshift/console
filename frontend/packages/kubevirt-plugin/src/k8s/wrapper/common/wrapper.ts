@@ -14,11 +14,11 @@ export class Wrapper<RESOURCE extends {}> {
     return new Clazz(mergedWrappers);
   };
 
-  constructor(data: RESOURCE, opts: { copy?: boolean }) {
-    this.data = (data && opts && opts.copy ? _.cloneDeep(data) : data || {}) as any;
+  constructor(data: RESOURCE, copy = false) {
+    this.data = (data && copy ? _.cloneDeep(data) : data || {}) as any;
   }
 
-  asResource = (): RESOURCE => _.cloneDeep(this.data);
+  asResource = (copy = false): RESOURCE => (copy ? _.cloneDeep(this.data) : this.data);
 
   protected get = (key: string) => (this.data && key ? this.data[key] : null);
 

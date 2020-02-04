@@ -30,8 +30,8 @@ export const getStorages = (state, id: string): VMWizardStorage[] =>
 
 export const getNetworksWithWrappers = (state, id: string): VMWizardNetworkWithWrappers[] =>
   getNetworks(state, id).map(({ network, networkInterface, ...rest }) => ({
-    networkInterfaceWrapper: NetworkInterfaceWrapper.initialize(networkInterface),
-    networkWrapper: NetworkWrapper.initialize(network),
+    networkInterfaceWrapper: new NetworkInterfaceWrapper(networkInterface),
+    networkWrapper: new NetworkWrapper(network),
     networkInterface,
     network,
     ...rest,

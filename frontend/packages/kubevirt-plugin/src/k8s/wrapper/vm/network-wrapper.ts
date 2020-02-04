@@ -17,29 +17,24 @@ export class NetworkWrapper extends ObjectWithTypePropertyWrapper<V1Network, Net
       return NetworkWrapper.EMPTY;
     }
     const { name, type, multusNetworkName } = params;
-    return new NetworkWrapper(
-      { name },
-      {
-        initializeWithType: type,
-        initializeWithTypeData:
-          type === NetworkType.MULTUS ? { networkName: multusNetworkName } : undefined,
-      },
-    );
+    return new NetworkWrapper({ name }, false, {
+      initializeWithType: type,
+      initializeWithTypeData:
+        type === NetworkType.MULTUS ? { networkName: multusNetworkName } : undefined,
+    });
   };
 
-  static initialize = (network?: V1Network, copy?: boolean) =>
-    new NetworkWrapper(network, copy && { copy });
-
-  protected constructor(
+  public constructor(
     network?: V1Network,
-    opts?: { initializeWithType?: NetworkType; initializeWithTypeData?: any; copy?: boolean },
+    copy = false,
+    opts?: { initializeWithType?: NetworkType; initializeWithTypeData?: any },
   ) {
-    super(network, opts, NetworkType);
+    super(network, copy, opts, NetworkType);
   }
 
-  getName = () => this.get('name');
+  getName = () => this.data?.name;
 
-  getMultusNetworkName = () => this.getIn(['multus', 'networkName']);
+  getMultusNetworkName = () => this.data?.multus?.networkName;
 
   isPodNetwork = () => this.getType() === NetworkType.POD;
 

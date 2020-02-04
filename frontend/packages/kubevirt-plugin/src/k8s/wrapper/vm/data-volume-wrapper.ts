@@ -134,7 +134,7 @@ export class DataVolumeWrapper extends ObjectWithTypePropertyWrapper<
       copy?: boolean;
     },
   ) {
-    super(dataVolumeTemplate, opts, DataVolumeSourceType, ['spec', 'source']);
+    super(dataVolumeTemplate, opts?.copy, opts, DataVolumeSourceType, ['spec', 'source']);
   }
 
   getName = () => getName(this.data as any);

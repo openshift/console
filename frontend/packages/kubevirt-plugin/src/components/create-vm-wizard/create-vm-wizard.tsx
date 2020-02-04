@@ -129,8 +129,8 @@ const kubevirtInterOP = async ({
   }
 
   const interOPNetworks = clonedNetworks.map(({ networkInterface, network }) => {
-    const networkInterfaceWrapper = NetworkInterfaceWrapper.initialize(networkInterface);
-    const networkWrapper = NetworkWrapper.initialize(network);
+    const networkInterfaceWrapper = new NetworkInterfaceWrapper(networkInterface);
+    const networkWrapper = new NetworkWrapper(network);
 
     return {
       name: networkInterfaceWrapper.getName(),

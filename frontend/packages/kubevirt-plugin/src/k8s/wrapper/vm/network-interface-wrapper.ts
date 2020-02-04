@@ -24,32 +24,31 @@ export class NetworkInterfaceWrapper extends ObjectWithTypePropertyWrapper<
     const { name, model, macAddress, interfaceType, bootOrder } = params;
     return new NetworkInterfaceWrapper(
       { name, model: model && model.getValue(), macAddress, bootOrder },
+      false,
       { initializeWithType: interfaceType },
     );
   };
 
-  static initialize = (nic?: V1NetworkInterface, copy?: boolean) =>
-    new NetworkInterfaceWrapper(nic, copy && { copy });
-
-  protected constructor(
+  public constructor(
     nic?: V1NetworkInterface,
-    opts?: { initializeWithType?: NetworkInterfaceType; copy?: boolean },
+    copy = false,
+    opts?: { initializeWithType?: NetworkInterfaceType },
   ) {
-    super(nic, opts, NetworkInterfaceType);
+    super(nic, copy, opts, NetworkInterfaceType);
   }
 
-  getName = (): string => this.get('name');
+  getName = () => this.data?.name;
 
-  getModel = (): NetworkInterfaceModel => NetworkInterfaceModel.fromString(this.get('model'));
+  getModel = (): NetworkInterfaceModel => NetworkInterfaceModel.fromString(this.data?.model);
 
   getReadableModel = () => {
     const model = this.getModel();
     return model && model.toString();
   };
 
-  getMACAddress = () => this.get('macAddress');
+  getMACAddress = () => this.data?.macAddress;
 
-  getBootOrder = () => this.get('bootOrder');
+  getBootOrder = () => this.data?.bootOrder;
 
   isFirstBootableDevice = () => this.getBootOrder() === 1;
 
