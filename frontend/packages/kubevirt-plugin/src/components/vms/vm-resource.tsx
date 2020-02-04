@@ -27,10 +27,10 @@ import { getOperatingSystemName, getOperatingSystem } from '../../selectors/vm';
 import { getVmiIpAddresses } from '../../selectors/vmi/ip-address';
 import { findVMPod } from '../../selectors/pod/selectors';
 import { isVMIPaused } from '../../selectors/vmi';
-
-import './vm-resource.scss';
 import { VirtualMachineInstanceModel, VirtualMachineModel } from '../../models';
 import { asVMILikeWrapper } from '../../k8s/wrapper/utils/convert';
+
+import './vm-resource.scss';
 
 export const VMDetailsItem: React.FC<VMDetailsItemProps> = ({
   title,

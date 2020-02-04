@@ -32,9 +32,9 @@ import { getVmiIpAddresses, getVMINodeName } from '../../selectors/vmi';
 import { isVM, getVMLikeModel } from '../../selectors/vm';
 import { vmStatusFilter } from './table-filters';
 import { vmMenuActions, vmiMenuActions } from './menu-actions';
+import { VMILikeEntityKind } from '../../types/vmLike';
 
 import './vm.scss';
-import { VMILikeEntityKind } from '../../types/vmLike';
 
 const tableColumnClasses = [
   classNames('col-lg-2', 'col-md-2', 'col-sm-6', 'col-xs-6'),
