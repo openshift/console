@@ -24,7 +24,10 @@ const defaultValueFor = <C extends SpecCapability | StatusCapability>(capability
     case SpecCapability.label:
       return 'app=openshift';
     case SpecCapability.resourceRequirements:
-      return { limits: { cpu: '500m', memory: '50Mi' }, requests: { cpu: '500m', memory: '50Mi' } };
+      return {
+        limits: { cpu: '500m', memory: '50Mi', 'ephemeral-storage': '50Mi' },
+        requests: { cpu: '500m', memory: '50Mi', 'ephemeral-storage': '50Mi' },
+      };
     case SpecCapability.namespaceSelector:
       return { matchNames: ['default'] };
     case SpecCapability.booleanSwitch:
@@ -92,15 +95,23 @@ const inputValueFor = (capability: SpecCapability) => async (el: any) => {
             .$$('input')
             .get(1)
             .getAttribute('value'),
+          'ephemeral-storage': await el
+            .$$('input')
+            .get(2)
+            .getAttribute('value'),
         },
         requests: {
           cpu: await el
             .$$('input')
-            .get(2)
+            .get(3)
             .getAttribute('value'),
           memory: await el
             .$$('input')
-            .get(3)
+            .get(4)
+            .getAttribute('value'),
+          'ephemeral-storage': await el
+            .$$('input')
+            .get(5)
             .getAttribute('value'),
         },
       };
