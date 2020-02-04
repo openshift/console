@@ -794,6 +794,7 @@ export const ClusterServiceVersionsDetailsPage: React.FC<ClusterServiceVersionsD
         (acc, desc: CRDDescription) =>
           !isInternalObject(internalObjects, desc.name)
             ? [
+                ...acc,
                 {
                   href: referenceForProvidedAPI(desc),
                   name: desc.displayName,
@@ -808,7 +809,6 @@ export const ClusterServiceVersionsDetailsPage: React.FC<ClusterServiceVersionsD
                     _.isEqual,
                   ),
                 },
-                ...acc,
               ]
             : acc,
         [],
