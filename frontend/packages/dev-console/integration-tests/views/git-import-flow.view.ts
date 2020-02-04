@@ -21,12 +21,12 @@ export const builderImage = element(
 );
 export const buildImageVersion = element(by.id('form-dropdown-image-tag-field'));
 export const createButton = element(by.css('[data-test-id="import-git-create-button"]'));
-export const builderImageVersionName = element(by.id('8-RHOAR-link'));
+export const builderImageVersionName = element(by.id('8-link'));
 
 export const navigateImportFromGit = async function() {
   await browser.wait(until.elementToBeClickable(addNavigate), 5000);
   await addNavigate.click();
-  await browser.wait(until.elementToBeClickable(gitImportButton), 5000);
+  await browser.wait(until.elementToBeClickable(gitImportButton));
   await gitImportButton.click();
 };
 
@@ -89,6 +89,7 @@ export const addApplication = async function(name: string, nodeName: string) {
 };
 
 export const addApplicationWithExistingApps = async function(name: string, nodeName: string) {
+  await browser.wait(until.elementToBeClickable(applicationSelector));
   await applicationSelector.click();
   await browser.wait(until.presenceOf(applicationDropdown));
   await createApplication.click();

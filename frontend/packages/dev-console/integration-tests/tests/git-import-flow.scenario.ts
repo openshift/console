@@ -3,18 +3,15 @@ import {
   appHost,
   checkLogs,
   checkErrors,
+  testName,
 } from '@console/internal-integration-tests/protractor.conf';
 import {
   navigateImportFromGit,
-  setBuilderImage,
   enterGitRepoUrl,
   addApplication,
   applicationName,
   appName,
-  builderImage,
-  buildImageVersion,
   createButton,
-  builderImageVersionName,
 } from '../views/git-import-flow.view';
 import { newApplicationName, newAppName } from '../views/new-app-name.view';
 import { switchPerspective, Perspective, sideHeader } from '../views/dev-perspective.view';
@@ -25,7 +22,7 @@ describe('git import flow', () => {
   const importFromGitHeader = $('[data-test-id="resource-title"]');
 
   beforeAll(async () => {
-    await browser.get(`${appHost}/k8s/cluster/projects`);
+    await browser.get(`${appHost}/k8s/cluster/projects/${testName}`);
     newApplication = newApplicationName();
     newApp = newAppName();
   });
@@ -36,7 +33,6 @@ describe('git import flow', () => {
   });
 
   it('public git normal flow', async () => {
-    await browser.get(`${appHost}/k8s/cluster/projects`);
     newApplication = newApplicationName();
     newApp = newAppName();
 
@@ -53,13 +49,10 @@ describe('git import flow', () => {
     expect(applicationName.getAttribute('value')).toContain(newApplication);
     expect(appName.getAttribute('value')).toContain(newApp);
 
-    await setBuilderImage(builderImageVersionName);
-    expect(builderImage.isSelected());
-    expect(buildImageVersion.getText()).toContain('8-RHOAR');
     await browser.wait(until.elementToBeClickable(createButton), 5000);
     expect(createButton.isEnabled());
     await createButton.click();
-    await browser.wait(until.urlContains('topology/ns/default'));
-    expect(browser.getCurrentUrl()).toContain('topology/ns/default');
+    await browser.wait(until.urlContains(`${appHost}/topology/ns/${testName}`));
+    expect(browser.getCurrentUrl()).toContain(`${appHost}/topology/ns/${testName}`);
   });
 });
