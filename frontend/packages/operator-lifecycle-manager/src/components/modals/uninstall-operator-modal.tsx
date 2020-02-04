@@ -58,6 +58,15 @@ export const UninstallOperatorModal = withHandlePromise((props: UninstallOperato
       .catch(_.noop);
   };
 
+  const context =
+    props.subscription.metadata.namespace === 'openshift-operators' ? (
+      <strong>all namespaces</strong>
+    ) : (
+      <>
+        the <i>{props.subscription.metadata.namespace}</i> namespace
+      </>
+    );
+
   return (
     <form onSubmit={submit} name="form" className="modal-content co-catalog-install-modal">
       <ModalTitle className="modal-header">Uninstall Operator?</ModalTitle>
@@ -67,9 +76,8 @@ export const UninstallOperatorModal = withHandlePromise((props: UninstallOperato
           <div>
             <p className="lead">Uninstall {props.displayName || props.subscription.spec.name}?</p>
             <div>
-              This will remove the operator from <i>{props.subscription.metadata.namespace}</i>.
-              Your application will keep running, but it will no longer receive updates or
-              configuration changes.
+              This will remove the operator from {context}. Your application will keep running, but
+              it will no longer receive updates or configuration changes.
             </div>
           </div>
         </div>
