@@ -11,7 +11,7 @@ import {
 } from '../../models';
 import { getResource } from '../../utils';
 import {
-  VM_DETAIL_OVERVIEW_HREF,
+  VM_DETAIL_DETAILS_HREF,
   VM_DETAIL_DISKS_HREF,
   VM_DETAIL_NETWORKS_HREF,
   VM_DETAIL_CONSOLES_HREF,
@@ -44,7 +44,7 @@ export const VirtualMachinesInstanceDetailsPage: React.FC<VirtualMachinesInstanc
   };
 
   const overviewPage = {
-    href: VM_DETAIL_OVERVIEW_HREF,
+    href: VM_DETAIL_DETAILS_HREF,
     name: 'Overview',
     component: VMDetailsFirehose,
   };
