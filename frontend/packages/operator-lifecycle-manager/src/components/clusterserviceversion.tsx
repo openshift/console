@@ -224,6 +224,7 @@ export const ClusterServiceVersionTableRow = withFallback<ClusterServiceVersionT
     const namespace = getNamespace(obj);
     const route = resourceObjPath(obj, referenceFor(obj));
     const uid = getUID(obj);
+    const internalObjects = getInternalObjects(obj);
     return (
       <TableRow id={uid} trKey={key} {...rest}>
         {/* Name */}
@@ -270,14 +271,18 @@ export const ClusterServiceVersionTableRow = withFallback<ClusterServiceVersionT
 
         {/* Provided APIs */}
         <TableData className={tableColumnClasses[4]}>
-          {_.take(providedAPIsFor(obj), 4).map((desc) => (
+          {_.take(
+            providedAPIsFor(obj).filter((desc) => !isInternalObject(internalObjects, desc.name)),
+            4,
+          ).map((desc) => (
             <div key={referenceForProvidedAPI(desc)}>
               <Link to={`${route}/${referenceForProvidedAPI(desc)}`} title={desc.name}>
                 {desc.displayName}
               </Link>
             </div>
           ))}
-          {providedAPIsFor(obj).length > 4 && (
+          {providedAPIsFor(obj).filter((desc) => !isInternalObject(internalObjects, desc.name))
+            .length > 4 && (
             <Link
               to={`${route}/instances`}
               title={`View ${providedAPIsFor(obj).length - 4} more...`}
