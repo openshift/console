@@ -12,6 +12,7 @@ import {
   WithSelectionProps,
   WithContextMenuProps,
   createSvgIdUrl,
+  WithCreateConnectorProps,
 } from '@console/topology';
 import useSearchFilter from '../../filters/useSearchFilter';
 import { nodeDragSourceSpec } from '../../componentUtils';
@@ -28,7 +29,8 @@ type KnativeServiceNodeProps = {
   editAccess: boolean;
 } & WithSelectionProps &
   WithDndDropProps &
-  WithContextMenuProps;
+  WithContextMenuProps &
+  WithCreateConnectorProps;
 
 const KnativeServiceNode: React.FC<KnativeServiceNodeProps> = ({
   element,
@@ -40,6 +42,8 @@ const KnativeServiceNode: React.FC<KnativeServiceNodeProps> = ({
   dropTarget,
   dndDropRef,
   editAccess,
+  onHideCreateConnector,
+  onShowCreateConnector,
 }) => {
   useAnchor((e: Node) => new RectAnchor(e, 4));
   const [hover, hoverRef] = useHover();
@@ -53,6 +57,16 @@ const KnativeServiceNode: React.FC<KnativeServiceNodeProps> = ({
   const [filtered] = useSearchFilter(element.getLabel());
   const { kind } = element.getData().data;
   const { width, height } = element.getBounds();
+
+  React.useLayoutEffect(() => {
+    if (editAccess) {
+      if (hover) {
+        onShowCreateConnector && onShowCreateConnector();
+      } else {
+        onHideCreateConnector && onHideCreateConnector();
+      }
+    }
+  }, [editAccess, hover, onShowCreateConnector, onHideCreateConnector]);
 
   return (
     <g

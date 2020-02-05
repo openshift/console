@@ -16,6 +16,7 @@ import {
   useHover,
   createSvgIdUrl,
   useCombineRefs,
+  WithCreateConnectorProps,
 } from '@console/topology';
 import SvgBoxedText from '../../../svg/SvgBoxedText';
 import RevisionTrafficSourceAnchor from '../anchors/RevisionTrafficSourceAnchor';
@@ -33,7 +34,8 @@ export type KnativeServiceGroupProps = {
   editAccess?: boolean;
 } & WithSelectionProps &
   WithDndDropProps &
-  WithContextMenuProps;
+  WithContextMenuProps &
+  WithCreateConnectorProps;
 
 const DECORATOR_RADIUS = 13;
 const KnativeServiceGroup: React.FC<KnativeServiceGroupProps> = ({
@@ -46,6 +48,8 @@ const KnativeServiceGroup: React.FC<KnativeServiceGroupProps> = ({
   dropTarget,
   dndDropRef,
   editAccess,
+  onHideCreateConnector,
+  onShowCreateConnector,
 }) => {
   const [hover, hoverRef] = useHover();
   const [innerHover, innerHoverRef] = useHover();
@@ -76,6 +80,16 @@ const KnativeServiceGroup: React.FC<KnativeServiceGroupProps> = ({
   useAnchor(RectAnchor);
   const [filtered] = useSearchFilter(element.getLabel());
   const { x, y, width, height } = element.getBounds();
+
+  React.useLayoutEffect(() => {
+    if (editAccess) {
+      if (innerHover) {
+        onShowCreateConnector && onShowCreateConnector();
+      } else {
+        onHideCreateConnector && onHideCreateConnector();
+      }
+    }
+  }, [editAccess, innerHover, onShowCreateConnector, onHideCreateConnector]);
 
   return (
     <Tooltip content="Move sink to service" trigger="manual" isVisible={dropTarget && canDrop}>

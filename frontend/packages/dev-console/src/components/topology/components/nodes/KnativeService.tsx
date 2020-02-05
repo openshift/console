@@ -5,6 +5,7 @@ import {
   WithSelectionProps,
   WithContextMenuProps,
   WithDndDropProps,
+  WithCreateConnectorProps,
 } from '@console/topology';
 import { modelFor, referenceFor } from '@console/internal/module/k8s';
 import { useAccessReview } from '@console/internal/components/utils';
@@ -21,7 +22,8 @@ export type KnativeServiceProps = {
   dropTarget?: boolean;
 } & WithSelectionProps &
   WithDndDropProps &
-  WithContextMenuProps;
+  WithContextMenuProps &
+  WithCreateConnectorProps;
 
 const KnativeService: React.FC<KnativeServiceProps> = (props) => {
   const resourceObj = getTopologyResourceObject(props.element.getData());
