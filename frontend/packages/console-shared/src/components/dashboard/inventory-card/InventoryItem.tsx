@@ -59,7 +59,7 @@ const getStatusGroupIcons = (flags: FlagsObject) => {
   return groupStatusIcons;
 };
 
-const InventoryItem: React.FC<InventoryItemProps> = React.memo(
+export const InventoryItem: React.FC<InventoryItemProps> = React.memo(
   ({
     isLoading,
     title,
