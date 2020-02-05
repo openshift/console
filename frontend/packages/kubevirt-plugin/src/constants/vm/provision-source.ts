@@ -1,6 +1,6 @@
 /* eslint-disable lines-between-class-members */
 import { getName, getNamespace, K8sEntityMap } from '@console/shared/src';
-import { ValueEnum } from '../value-enum';
+import { ObjectEnum } from '../object-enum';
 import {
   asVM,
   getDataVolumeTemplates,
@@ -22,7 +22,7 @@ type ProvisionSourceDetails = {
   error?: string;
 };
 
-export class ProvisionSource extends ValueEnum<string> {
+export class ProvisionSource extends ObjectEnum<string> {
   static readonly PXE = new ProvisionSource('PXE');
   static readonly CONTAINER = new ProvisionSource('Container');
   static readonly URL = new ProvisionSource('URL');
@@ -30,7 +30,7 @@ export class ProvisionSource extends ValueEnum<string> {
   static readonly DISK = new ProvisionSource('Disk');
 
   private static readonly ALL = Object.freeze(
-    ValueEnum.getAllClassEnumProperties<ProvisionSource>(ProvisionSource),
+    ObjectEnum.getAllClassEnumProperties<ProvisionSource>(ProvisionSource),
   );
 
   private static readonly stringMapper = ProvisionSource.ALL.reduce(

@@ -1,10 +1,10 @@
 import * as _ from 'lodash';
-import { ValueEnum } from '../../../constants';
+import { ObjectEnum } from '../../../constants';
 import { Wrapper } from './wrapper';
 
 export abstract class ObjectWithTypePropertyWrapper<
   RESOURCE,
-  TYPE extends ValueEnum<string>
+  TYPE extends ObjectEnum<string>
 > extends Wrapper<RESOURCE> {
   private readonly TypeClass: { getAll: () => TYPE[] | Readonly<TYPE[]> };
 

@@ -1,7 +1,7 @@
 /* eslint-disable lines-between-class-members */
 import * as _ from 'lodash';
 import { ValidationErrorType } from '@console/shared/src';
-import { ValueEnum, DiskBus } from '../../../constants';
+import { ObjectEnum, DiskBus } from '../../../constants';
 import { CommonTemplatesValidation } from '../../../types/template';
 import {
   IntervalValidationResult,
@@ -10,7 +10,7 @@ import {
 import { DiskBusValidationResult } from './disk-bus-validation-result';
 
 // TODO: Add all the fields in the form
-export class ValidationJSONPath extends ValueEnum<string> {
+export class ValidationJSONPath extends ObjectEnum<string> {
   static readonly CPU = new ValidationJSONPath('jsonpath::.spec.domain.cpu.cores');
   static readonly MEMORY = new ValidationJSONPath(
     'jsonpath::.spec.domain.resources.requests.memory',

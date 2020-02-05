@@ -1,14 +1,14 @@
 /* eslint-disable lines-between-class-members */
-import { ValueEnum } from '../../value-enum';
+import { ObjectEnum } from '../../object-enum';
 
-export class NetworkInterfaceType extends ValueEnum<string> {
+export class NetworkInterfaceType extends ObjectEnum<string> {
   static readonly MASQUERADE = new NetworkInterfaceType('masquerade');
   static readonly BRIDGE = new NetworkInterfaceType('bridge');
   static readonly SRIOV = new NetworkInterfaceType('sriov');
   static readonly SLIRP = new NetworkInterfaceType('slirp');
 
   private static readonly ALL = Object.freeze(
-    ValueEnum.getAllClassEnumProperties<NetworkInterfaceType>(NetworkInterfaceType),
+    ObjectEnum.getAllClassEnumProperties<NetworkInterfaceType>(NetworkInterfaceType),
   );
 
   private static readonly stringMapper = NetworkInterfaceType.ALL.reduce(

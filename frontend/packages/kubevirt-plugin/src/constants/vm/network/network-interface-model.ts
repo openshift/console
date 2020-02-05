@@ -1,8 +1,8 @@
 /* eslint-disable lines-between-class-members */
-import { ValueEnum } from '../../value-enum';
+import { ObjectEnum } from '../../object-enum';
 import { READABLE_VIRTIO } from '../constants';
 
-export class NetworkInterfaceModel extends ValueEnum<string> {
+export class NetworkInterfaceModel extends ObjectEnum<string> {
   static readonly VIRTIO = new NetworkInterfaceModel('virtio');
   static readonly E1000 = new NetworkInterfaceModel('e1000');
   static readonly E1000E = new NetworkInterfaceModel('e1000e');
@@ -11,7 +11,7 @@ export class NetworkInterfaceModel extends ValueEnum<string> {
   static readonly RTL8139 = new NetworkInterfaceModel('rtl8139');
 
   private static readonly ALL = Object.freeze(
-    ValueEnum.getAllClassEnumProperties<NetworkInterfaceModel>(NetworkInterfaceModel),
+    ObjectEnum.getAllClassEnumProperties<NetworkInterfaceModel>(NetworkInterfaceModel),
   );
 
   private static readonly stringMapper = NetworkInterfaceModel.ALL.reduce(

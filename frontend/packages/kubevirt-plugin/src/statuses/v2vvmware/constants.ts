@@ -1,7 +1,7 @@
-import { ValueEnum } from '../../constants';
+import { ObjectEnum } from '../../constants';
 
 // phases constants conform v2vvmware_controller.go
-export class V2VVMwareStatus extends ValueEnum<string> {
+export class V2VVMwareStatus extends ObjectEnum<string> {
   static readonly CONNECTING = new V2VVMwareStatus('CONNECTING', 'Connecting');
 
   static readonly CONNECTION_TO_VCENTER_FAILED = new V2VVMwareStatus(
@@ -33,7 +33,7 @@ export class V2VVMwareStatus extends ValueEnum<string> {
   static readonly UNKNOWN = new V2VVMwareStatus('UNKNOWN');
 
   private static readonly ALL = Object.freeze(
-    ValueEnum.getAllClassEnumProperties<V2VVMwareStatus>(V2VVMwareStatus),
+    ObjectEnum.getAllClassEnumProperties<V2VVMwareStatus>(V2VVMwareStatus),
   );
 
   private static readonly stringMapper = V2VVMwareStatus.ALL.reduce(

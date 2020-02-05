@@ -1,6 +1,6 @@
 import * as _ from 'lodash';
 
-export abstract class ValueEnum<T> {
+export abstract class ObjectEnum<T> {
   protected static getAllClassEnumProperties = <A>(Clazz: Function) =>
     Object.keys(Clazz)
       .filter((value) => Clazz[value] instanceof Clazz)

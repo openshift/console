@@ -3,11 +3,11 @@ import { getName, hasLabel, getLabels } from '@console/shared/src';
 import { apiVersionForModel, K8sKind, K8sResourceKind } from '@console/internal/module/k8s';
 import { K8sResourceKindMethods } from '../types/types';
 import { ObjectWithTypePropertyWrapper } from './object-with-type-property-wrapper';
-import { ValueEnum } from '../../../constants';
+import { ObjectEnum } from '../../../constants';
 
 export class K8sResourceObjectWithTypePropertyWrapper<
   RESOURCE extends K8sResourceKind,
-  TYPE extends ValueEnum<string>,
+  TYPE extends ObjectEnum<string>,
   SELF extends K8sResourceObjectWithTypePropertyWrapper<RESOURCE, TYPE, SELF>
 > extends ObjectWithTypePropertyWrapper<RESOURCE, TYPE> implements K8sResourceKindMethods {
   getName = () => getName(this.data);
