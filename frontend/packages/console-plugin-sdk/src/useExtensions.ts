@@ -2,9 +2,9 @@ import * as React from 'react';
 // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
 // @ts-ignore: FIXME missing exports due to out-of-sync @types/react-redux version
 import { useSelector } from 'react-redux';
-import * as _ from 'lodash';
+import { createSelectorCreator, defaultMemoize } from 'reselect';
 import { RootState } from '@console/internal/redux';
-import { stateToProps, FlagsObject } from '@console/internal/reducers/features';
+import { stateToFlagsObject, FlagsObject, FeatureState } from '@console/internal/reducers/features';
 import { pluginStore } from '@console/internal/plugins';
 import { getGatingFlagNames, isExtensionInUse } from './store';
 import { Extension, ExtensionTypeGuard } from './typings';
@@ -25,11 +25,17 @@ import { Extension, ExtensionTypeGuard } from './typings';
  * Example usage:
  *
  * ```ts
- * import { useExtensions, NavItem, Perspective, isNavItem, isPerspective } from '@console/plugin-sdk';
+ * import {
+ *   useExtensions,
+ *   NavItem,
+ *   Perspective,
+ *   isNavItem,
+ *   isPerspective,
+ * } from '@console/plugin-sdk';
  *
  * const Example = () => {
- *   const navItems = useExtensions<NavItem>(isNavItem);
- *   const perspectives = useExtensions<Perspective>(isPerspective);
+ *   const navItemExtensions = useExtensions<NavItem>(isNavItem);
+ *   const perspectiveExtensions = useExtensions<Perspective>(isPerspective);
  *   // process extensions and render your component
  * };
  * ```
@@ -49,10 +55,24 @@ export const useExtensions: UseExtensions = (typeGuard) => {
   const gatingFlagNames = React.useMemo(() => getGatingFlagNames(matchedExtensions), [
     matchedExtensions,
   ]);
-  const gatingFlags = useSelector<RootState, FlagsObject>(
-    (state: RootState) => stateToProps(gatingFlagNames, state).flags,
-    _.isEqual,
+  const gatingFlagSelectorCreator = React.useMemo(
+    () =>
+      createSelectorCreator(
+        defaultMemoize as any,
+        (prevFeatureState: FeatureState, nextFeatureState: FeatureState) =>
+          gatingFlagNames.every((f) => prevFeatureState.get(f) === nextFeatureState.get(f)),
+      ),
+    [gatingFlagNames],
   );
+  const gatingFlagSelector = React.useMemo(
+    () =>
+      gatingFlagSelectorCreator(
+        (state: RootState) => state.FLAGS,
+        (featureState) => stateToFlagsObject(featureState, gatingFlagNames),
+      ),
+    [gatingFlagSelectorCreator, gatingFlagNames],
+  );
+  const gatingFlags = useSelector<RootState, FlagsObject>(gatingFlagSelector);
 
   // 3) Gate matched extensions by relevant feature flags
   const extensionsInUse = React.useMemo(
