@@ -232,7 +232,10 @@ const ReceiverBaseForm: React.FC<ReceiverBaseFormProps> = ({
   const SubForm = subformFactory(formValues.receiverType);
 
   const isFormInvalid =
-    !formValues.receiverName || !formValues.receiverType || SubForm.isFormInvalid(formValues);
+    !formValues.receiverName ||
+    !formValues.receiverType ||
+    SubForm.isFormInvalid(formValues) ||
+    !_.isEmpty(formValues.routeLabelFieldErrors);
 
   const save = (e) => {
     e.preventDefault();
