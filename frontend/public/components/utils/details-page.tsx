@@ -15,8 +15,15 @@ import {
 } from './index';
 import { K8sResourceKind, modelFor, referenceFor, Toleration } from '../../module/k8s';
 
-export const pluralize = (i: number, singular: string, plural: string = `${singular}s`) =>
-  `${i || 0} ${i === 1 ? singular : plural}`;
+export const pluralize = (
+  i: number,
+  singular: string,
+  plural: string = `${singular}s`,
+  includeCount: boolean = true,
+) => {
+  const pluralized = `${i === 1 ? singular : plural}`;
+  return includeCount ? `${i || 0} ${pluralized}` : pluralized;
+};
 
 export const detailsPage = <T extends {}>(Component: React.ComponentType<T>) =>
   function DetailsPage(props: T) {

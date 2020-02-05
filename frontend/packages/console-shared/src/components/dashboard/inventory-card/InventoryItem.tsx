@@ -72,7 +72,7 @@ const InventoryItem: React.FC<InventoryItemProps> = React.memo(
   }) => {
     const [expanded, setExpanded] = React.useState(false);
     const onClick = React.useCallback(() => setExpanded(!expanded), [expanded]);
-    const titleMessage = isLoading || error ? title : pluralize(count, title, titlePlural);
+    const titleMessage = pluralize(count, title, titlePlural, !isLoading && !error);
     return ExpandedComponent ? (
       <Accordion
         asDefinitionList={false}
