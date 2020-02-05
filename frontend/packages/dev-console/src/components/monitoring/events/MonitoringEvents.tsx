@@ -9,7 +9,7 @@ interface MonitoringEventsProps {
 }
 
 const MonitoringEvents: React.FC<MonitoringEventsProps> = (props) => {
-  return <EventsList {...props} namespace={props.match.params.ns} pageTitle="" />;
+  return <EventsList {...props} namespace={props.match.params.ns} />;
 };
 
 export default MonitoringEvents;
