@@ -23,6 +23,7 @@ spec:
                 bus: virtio
           interfaces:
           - name: default
+            model: virtio
             masquerade: {}
         resources:
           requests:
