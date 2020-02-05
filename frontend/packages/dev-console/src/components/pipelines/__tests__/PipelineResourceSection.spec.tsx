@@ -4,6 +4,7 @@ import * as Renderer from 'react-test-renderer';
 import PipelineResourceSection, {
   ResourceSectionProps,
 } from '../pipeline-form/PipelineResourceSection';
+import { Formik } from 'formik';
 
 jest.mock('react-dom', () => ({
   findDOMNode: () => ({}),
@@ -34,7 +35,11 @@ describe('PipelineResourceSection component', () => {
   });
 
   it('It should match the previous pipeline snapshot', () => {
-    const tree = Renderer.create(<PipelineResourceSection resources={resources} />).toJSON();
+    const tree = Renderer.create(
+      <Formik onSubmit={() => {}} initialValues={{}}>
+        {() => <PipelineResourceSection resources={resources} />}
+      </Formik>,
+    ).toJSON();
     expect(tree).toMatchSnapshot();
   });
 });

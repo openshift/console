@@ -129,7 +129,7 @@ export const configureMachineAutoscalerModal = createModalLauncher(ConfigureMach
 
 export type ConfigureMachineAutoscalerModalProps = {
   machineSet: K8sResourceKind;
-  cancel: (e: Event) => void;
+  cancel: (e: React.SyntheticEvent<any, Event>) => void;
   close: () => void;
 };
 

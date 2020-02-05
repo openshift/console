@@ -88,7 +88,7 @@
     "d3": "^5.9.2",
     "file-saver": "1.3.x",
     "focus-trap-react": "^6.0.0",
-    "formik": "2.0.1-rc.5",
+    "formik": "2.0.3",
     "fuzzysearch": "1.0.x",
     "history": "4.x",
     "immutable": "3.x",
