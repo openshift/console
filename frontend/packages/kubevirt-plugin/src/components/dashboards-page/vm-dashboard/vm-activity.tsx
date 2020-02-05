@@ -1,13 +1,13 @@
 import * as React from 'react';
+import { CardActions } from '@patternfly/react-core';
 import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
 import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
 import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
-import DashboardCardLink, {
-  DashboardCardButtonLink,
-} from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardLink';
+import DashboardCardLink from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardLink';
 import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
 import ActivityBody, {
   RecentEventsBodyContent,
+  PauseButton,
 } from '@console/shared/src/components/dashboard/activity-card/ActivityBody';
 import { getName, getNamespace } from '@console/shared';
 import { resourcePath, FirehoseResource, FirehoseResult } from '@console/internal/components/utils';
@@ -21,6 +21,8 @@ import { VirtualMachineModel } from '../../../models';
 import { getVmEventsFilters } from '../../../selectors/event';
 import { VMDashboardContext } from '../../vms/vm-dashboard-context';
 import { VMILikeEntityKind } from '../../../types/vmLike';
+
+import './vm-activity.scss';
 
 const combinedVmFilter = (vm: VMILikeEntityKind): EventFilterFuncion => (event) =>
   getVmEventsFilters(vm).some((filter) => filter(event.involvedObject));
@@ -70,10 +72,10 @@ export const VMActivityCard: React.FC = () => {
     <DashboardCard gradient>
       <DashboardCardHeader>
         <DashboardCardTitle>Events</DashboardCardTitle>
-        <DashboardCardLink to={viewEventsLink}>View all</DashboardCardLink>
-        <DashboardCardButtonLink onClick={togglePause}>
-          {paused ? 'Unpause' : 'Pause'}
-        </DashboardCardButtonLink>
+        <CardActions className="kubevirt-activity-card__actions">
+          <DashboardCardLink to={viewEventsLink}>View all</DashboardCardLink>
+          <PauseButton paused={paused} togglePause={togglePause} />
+        </CardActions>
       </DashboardCardHeader>
       <DashboardCardBody>
         <ActivityBody>
