@@ -28,8 +28,8 @@ import { KubevirtDetailView } from './kubevirtDetailView';
 import { ImportWizard } from './importWizard';
 
 export class VirtualMachine extends KubevirtDetailView {
-  constructor(config) {
-    super({ ...config, kind: 'virtualmachines' });
+  constructor(config, kind?: 'virtualmachines' | 'virtualmachineinstances') {
+    super({ ...config, kind: kind || 'virtualmachines' });
   }
 
   async getStatus(): Promise<string> {

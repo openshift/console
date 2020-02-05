@@ -125,6 +125,7 @@ export function getVMManifest(
   namespace: string,
   name?: string,
   cloudinit?: string,
+  kind?: 'VirtualMachine' | 'VirtualMachineInstance',
 ) {
   const vmName = name || `${provisionSource.toLowerCase()}-${namespace.slice(-5)}`;
   const metadata = {
@@ -237,6 +238,49 @@ export function getVMManifest(
       throw Error('Provision source not Implemented');
   }
 
+  const spec = {
+    domain: {
+      cpu: {
+        cores: 1,
+        sockets: 1,
+        threads: 1,
+      },
+      devices: {
+        disks,
+        inputs: [
+          {
+            bus: 'virtio',
+            name: 'tablet',
+            type: 'tablet',
+          },
+        ],
+        interfaces: [
+          {
+            bootOrder: 2,
+            masquerade: {},
+            name: 'nic0',
+            model: 'virtio',
+          },
+        ],
+        rng: {},
+      },
+      resources: {
+        requests: {
+          memory: '1073741824',
+        },
+      },
+    },
+    evictionStrategy: 'LiveMigrate',
+    terminationGracePeriodSeconds: 0,
+    networks: [
+      {
+        name: 'nic0',
+        pod: {},
+      },
+    ],
+    volumes,
+  };
+
   const vmResource = {
     apiVersion: 'kubevirt.io/v1alpha3',
     kind: 'VirtualMachine',
@@ -252,52 +296,19 @@ export function getVMManifest(
             'vm.kubevirt.io/name': metadata.name,
           },
         },
-        spec: {
-          domain: {
-            cpu: {
-              cores: 1,
-              sockets: 1,
-              threads: 1,
-            },
-            devices: {
-              disks,
-              inputs: [
-                {
-                  bus: 'virtio',
-                  name: 'tablet',
-                  type: 'tablet',
-                },
-              ],
-              interfaces: [
-                {
-                  bootOrder: 2,
-                  masquerade: {},
-                  name: 'nic0',
-                  model: 'virtio',
-                },
-              ],
-              rng: {},
-            },
-            resources: {
-              requests: {
-                memory: '1073741824',
-              },
-            },
-          },
-          evictionStrategy: 'LiveMigrate',
-          terminationGracePeriodSeconds: 0,
-          networks: [
-            {
-              name: 'nic0',
-              pod: {},
-            },
-          ],
-          volumes,
-        },
+        spec,
       },
     },
   };
-  return vmResource;
+
+  const vmiResource = {
+    apiVersion: 'kubevirt.io/v1alpha3',
+    kind: 'VirtualMachineInstance',
+    metadata,
+    spec,
+  };
+
+  return kind === 'VirtualMachineInstance' ? vmiResource : vmResource;
 }
 
 export const datavolumeClonerClusterRole = {
