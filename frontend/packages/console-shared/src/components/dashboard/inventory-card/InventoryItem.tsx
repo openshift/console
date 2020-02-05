@@ -201,12 +201,18 @@ export const ResourceInventoryItem = connectToFlags<ResourceInventoryItemProps>(
       Object.keys(groups).filter((key) => groups[key].count > 0),
       flags,
     );
+
+    // The count can depend on additionalResources (like mixing of VM and VMI for kubevirt-plugin)
+    const totalCount = mapper
+      ? Object.keys(groups).reduce((acc, cur) => groups[cur].count + acc, 0)
+      : resources.length;
+
     return (
       <InventoryItem
         isLoading={isLoading}
         title={useAbbr ? kind.abbr : kind.label}
         titlePlural={useAbbr ? undefined : kind.labelPlural}
-        count={resources.length}
+        count={totalCount}
         error={error}
         TitleComponent={showLink ? TitleComponent : null}
         ExpandedComponent={ExpandedComponent}
