@@ -2,7 +2,6 @@ import * as React from 'react';
 import { QueryBrowser } from '@console/internal/components/monitoring/query-browser';
 import { Humanize } from '@console/internal/components/utils';
 import { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
-import { Area } from '@console/internal/components/graphs/area';
 import { PrometheusGraphLink } from '@console/internal/components/graphs/prometheus-graph';
 import './MonitoringDashboardGraph.scss';
 
@@ -27,32 +26,19 @@ const MonitoringDashboardGraph: React.FC<MonitoringDashboardGraphProps> = ({
   namespace,
   title,
   graphType = GraphTypes.area,
-  humanize,
-  byteDataType,
 }) => {
   return (
     <div className="odc-monitoring-dashboard-graph">
-      {graphType === GraphTypes.line ? (
-        <>
-          <h5 className="graph-title">{title}</h5>
-          <PrometheusGraphLink query={query}>
-            <QueryBrowser
-              hideControls
-              defaultTimespan={defaultTimespan}
-              namespace={namespace}
-              queries={[query]}
-            />
-          </PrometheusGraphLink>
-        </>
-      ) : (
-        <Area
-          title={title}
-          humanize={humanize}
-          byteDataType={byteDataType}
+      <h5>{title}</h5>
+      <PrometheusGraphLink query={query}>
+        <QueryBrowser
+          hideControls
+          defaultTimespan={defaultTimespan}
           namespace={namespace}
-          query={query}
+          queries={[query]}
+          isStack={graphType === GraphTypes.area}
         />
-      )}
+      </PrometheusGraphLink>
     </div>
   );
 };

@@ -1,0 +1,6 @@
+.odc-monitoring-dashboard-pod-count {
+  height: 220px;
+  &__count {
+    font-size: var(--pf-global--FontSize--4xl);
+  }
+}
