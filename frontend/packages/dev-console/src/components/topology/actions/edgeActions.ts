@@ -1,7 +1,7 @@
 import { KebabOption } from '@console/internal/components/utils/kebab';
 import { modelFor, referenceFor } from '@console/internal/module/k8s';
 import { asAccessReview } from '@console/internal/components/utils';
-import { BaseEdge, Node } from '@console/topology';
+import { Edge, Node } from '@console/topology';
 import { getTopologyResourceObject } from '../topology-utils';
 import { removeConnection } from '../components/removeConnection';
 import {
@@ -16,7 +16,7 @@ import {
 } from '../const';
 import { moveConnectionModal } from '../components/MoveConnectionModal';
 
-const moveConnection = (edge: BaseEdge, availableTargets: Node[]) => {
+const moveConnection = (edge: Edge, availableTargets: Node[]) => {
   const resourceObj = getTopologyResourceObject(edge.getSource().getData());
   const resourceModel = modelFor(referenceFor(resourceObj));
 
@@ -29,7 +29,7 @@ const moveConnection = (edge: BaseEdge, availableTargets: Node[]) => {
   };
 };
 
-const deleteConnection = (edge: BaseEdge) => {
+const deleteConnection = (edge: Edge) => {
   const resourceObj = getTopologyResourceObject(edge.getSource().getData());
   const resourceModel = modelFor(referenceFor(resourceObj));
   return {
@@ -41,7 +41,7 @@ const deleteConnection = (edge: BaseEdge) => {
   };
 };
 
-export const edgeActions = (edge: BaseEdge, nodes: Node[]): KebabOption[] => {
+export const edgeActions = (edge: Edge, nodes: Node[]): KebabOption[] => {
   const actions: KebabOption[] = [];
 
   const availableTargets = nodes

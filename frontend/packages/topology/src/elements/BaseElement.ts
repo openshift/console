@@ -5,6 +5,7 @@ import {
   Graph,
   GraphElement,
   isGraph,
+  isNode,
   Controller,
   ModelKind,
   ADD_CHILD_EVENT,
@@ -127,7 +128,11 @@ export default abstract class BaseElement<E extends ElementModel = ElementModel,
   }
 
   isVisible(): boolean {
-    return this.visible;
+    return (
+      this.visible &&
+      (!this.parent ||
+        (this.parent.isVisible() && (!isNode(this.parent) || !this.parent.isCollapsed())))
+    );
   }
 
   getData(): D | undefined {

@@ -11,7 +11,7 @@ import {
   ModalBody,
   ModalSubmitFooter,
 } from '@console/internal/components/factory/modal';
-import { BaseEdge, Node } from '@console/topology';
+import { Edge, Node } from '@console/topology';
 import FormSection from '../../import/section/FormSection';
 import { RootState } from '@console/internal/redux';
 import { ALLOW_SERVICE_BINDING } from '../../../const';
@@ -22,7 +22,7 @@ interface StateProps {
   serviceBinding: boolean;
 }
 type MoveConnectionModalProps = {
-  edge: BaseEdge;
+  edge: Edge;
   availableTargets: Node[];
   cancel?: () => void;
   close?: () => void;
