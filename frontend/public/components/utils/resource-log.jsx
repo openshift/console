@@ -104,19 +104,14 @@ const LogControls = ({
             });
             return (
               <React.Fragment key={link.metadata.uid}>
-                <ExternalLink
-                  href={url}
-                  text={link.spec.text}
-                  additionalClassName="co-external-link--within-toolbar"
-                  dataTestID={link.metadata.name}
-                />
+                <ExternalLink href={url} text={link.spec.text} dataTestID={link.metadata.name} />
                 <span aria-hidden="true" className="co-action-divider hidden-xs">
                   |
                 </span>
               </React.Fragment>
             );
           })}
-        <Button variant="link" onClick={onDownload}>
+        <Button variant="link" isInline onClick={onDownload}>
           <DownloadIcon className="co-icon-space-r" />
           Download
         </Button>
@@ -125,7 +120,7 @@ const LogControls = ({
             <span aria-hidden="true" className="co-action-divider hidden-xs">
               |
             </span>
-            <Button variant="link" className="pf-m-link--align-right" onClick={toggleFullscreen}>
+            <Button variant="link" isInline onClick={toggleFullscreen}>
               {isFullscreen ? (
                 <>
                   <CompressIcon className="co-icon-space-r" />
