@@ -3,7 +3,6 @@ import * as _ from 'lodash';
 import { match } from 'react-router';
 import {
   ButtonBar,
-  NsDropdown,
   withHandlePromise,
   HandlePromiseProps,
 } from '@console/internal/components/utils';
@@ -20,10 +19,10 @@ import { getValidJSON, checkError } from './utils';
 import './install.scss';
 
 const ERROR: DataState = {
-  ns: '',
+  clusterName: '',
   fsid: '',
   admin: '',
-  mondata: '',
+  monData: '',
 };
 
 const getErrorText = (text: string) => <span className="im-install-page--error">{text}</span>;
@@ -39,8 +38,7 @@ const InstallExternalCluster = withHandlePromise((props: InstallExternalClusterP
   } = props;
   const [clusterServiceVersion, setClusterServiceVersion] = React.useState(null);
   const [fileData, setFileData] = React.useState('');
-  const [fileName, setFileName] = React.useState('');
-  const [namespace, setNamespace] = React.useState(ns);
+  const [clusterName, setClusterName] = React.useState(null);
   const [externalFSID, setExternalFSID] = React.useState(null);
   const [externalAdminSecret, setExternalAdminSecret] = React.useState(null);
   const [externalMonData, setExternalMonData] = React.useState(null);
@@ -59,12 +57,12 @@ const InstallExternalCluster = withHandlePromise((props: InstallExternalClusterP
 
   const getState = React.useCallback(
     () => ({
-      [Field.NAMESPACE]: namespace,
+      [Field.CLUSTER_NAME]: clusterName,
       [Field.FSID]: externalFSID,
       [Field.ADMIN]: externalAdminSecret,
       [Field.MONDATA]: externalMonData,
     }),
-    [externalAdminSecret, externalFSID, externalMonData, namespace],
+    [externalAdminSecret, externalFSID, externalMonData, clusterName],
   );
 
   React.useEffect(() => {
@@ -76,7 +74,6 @@ const InstallExternalCluster = withHandlePromise((props: InstallExternalClusterP
     event.preventDefault();
     const reader = new FileReader();
     const file = event.target.files[0];
-    setFileName(file.name);
     reader.onload = (ev) => {
       const data = ev.target?.result as string;
       setFileData(data);
@@ -87,19 +84,17 @@ const InstallExternalCluster = withHandlePromise((props: InstallExternalClusterP
   const onSubmit = (event) => {
     event.preventDefault();
     // https://github.com/rook/rook/blob/master/cluster/examples/kubernetes/ceph/import-external-cluster.sh
-    const promises = [];
     const secret = {
       apiVersion: SecretModel.apiVersion,
       kind: SecretModel.kind,
       metadata: {
         name: 'rook-ceph-mon',
-        namespace,
+        ns,
       },
       stringData: {
-        'cluster-name': namespace,
+        'cluster-name': clusterName,
         fsid: externalFSID,
         'admin-secret': externalAdminSecret,
-        'mon-secret': externalMonData,
       },
       type: 'Opaque',
     };
@@ -108,7 +103,7 @@ const InstallExternalCluster = withHandlePromise((props: InstallExternalClusterP
       kind: ConfigMapModel.kind,
       metadata: {
         name: 'rook-ceph-mon-endpoints',
-        namespace,
+        ns,
       },
       data: {
         data: `${externalMonData}`,
@@ -121,19 +116,22 @@ const InstallExternalCluster = withHandlePromise((props: InstallExternalClusterP
       kind: OCSServiceModel.kind,
       metadata: {
         name: 'ocs-independent-storagecluster',
-        namespace,
+        ns,
       },
       spec: {
-        external: {
-          enable: true,
+        externalStorage: {
+          enabled: true,
         },
       },
     };
-    promises.push(k8sCreate(SecretModel, secret));
-    promises.push(k8sCreate(ConfigMapModel, cmap));
-    promises.push(k8sCreate(OCSServiceModel, ocsObj));
 
-    handlePromise(Promise.all(promises))
+    handlePromise(
+      Promise.all([
+        k8sCreate(SecretModel, secret),
+        k8sCreate(ConfigMapModel, cmap),
+        k8sCreate(OCSServiceModel, ocsObj),
+      ]),
+    )
       .then((data) => {
         history.push(
           `/k8s/ns/${ns}/clusterserviceversions/${getName(
@@ -152,20 +150,25 @@ const InstallExternalCluster = withHandlePromise((props: InstallExternalClusterP
   };
 
   const mapValidDataToState = (json: DataState) => {
-    const { ns: ns_, fsid, admin, mondata } = json;
-    setNamespace(ns_);
+    const { clusterName: clusterName_, fsid, admin, monData } = json;
+    setClusterName(clusterName_);
     setExternalFSID(fsid);
     setExternalAdminSecret(admin);
-    setExternalMonData(mondata);
+    setExternalMonData(monData);
   };
 
   const validate = React.useCallback(() => {
-    if (!_.isEmpty(fileName) && !_.isEmpty(fileData)) {
-      const data = getValidJSON(fileName, fileData);
-      !data.isValid ? setFileError(data.errorMessage) : mapValidDataToState(data.parsedData);
+    if (!_.isEmpty(fileData)) {
+      const data = getValidJSON(fileData);
+      if (data.isValid) {
+        mapValidDataToState(data.parsedData);
+        setFileError(null);
+      } else {
+        setFileError(data.errorMessage);
+      }
     }
     setErrors(checkError(getState()));
-  }, [fileData, fileName, getState, setErrors]);
+  }, [fileData, getState, setErrors]);
 
   // File Data validator
   React.useEffect(() => {
@@ -198,12 +201,17 @@ const InstallExternalCluster = withHandlePromise((props: InstallExternalClusterP
         </div>
         <Form className="im-install-page__form" onSubmit={onSubmit}>
           <FormGroup
-            label="Namespace"
+            label="Cluster Name"
             isRequired
             fieldId="namespace-dropdown"
-            helperText={dataError.ns}
+            helperText={getErrorText(dataError.clusterName)}
           >
-            <NsDropdown onChange={setNamespace} selectedKey={namespace} />
+            <TextInput
+              onChange={(val) => setClusterName(val)}
+              value={clusterName}
+              aria-label="Enter Cluster name"
+              placeholder="openshift-storage"
+            />
           </FormGroup>
           <FormGroup
             label="External FSID"
@@ -211,7 +219,12 @@ const InstallExternalCluster = withHandlePromise((props: InstallExternalClusterP
             fieldId="ext-fsid"
             helperText={getErrorText(dataError.fsid)}
           >
-            <TextInput onChange={(val) => setExternalFSID(val)} value={externalFSID} />
+            <TextInput
+              onChange={(val) => setExternalFSID(val)}
+              value={externalFSID ?? ''}
+              aria-label="Enter External FSID"
+              placeholder="asdf-ghjk-qwer-tyui"
+            />
           </FormGroup>
           <FormGroup
             label="External admin secret"
@@ -221,16 +234,23 @@ const InstallExternalCluster = withHandlePromise((props: InstallExternalClusterP
           >
             <TextInput
               onChange={(val) => setExternalAdminSecret(val)}
-              value={externalAdminSecret}
+              value={externalAdminSecret ?? ''}
+              aria-label="Enter Admin secret"
+              placeholder="!123jakajs==djjzla2"
             />
           </FormGroup>
           <FormGroup
             label="External mon data"
             isRequired
             fieldId="ext-mon-data"
-            helperText={getErrorText(dataError.mondata)}
+            helperText={getErrorText(dataError.monData)}
           >
-            <TextInput onChange={(val) => setExternalMonData(val)} value={externalMonData} />
+            <TextInput
+              onChange={(val) => setExternalMonData(val)}
+              value={externalMonData ?? ''}
+              aria-label="Enter Mon Data"
+              placeholder="a='12.22.123.22'"
+            />
           </FormGroup>
 
           <ButtonBar errorMessage={fileError || errorMessage} inProgress={inProgress}>

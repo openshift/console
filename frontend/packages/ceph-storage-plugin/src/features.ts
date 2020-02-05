@@ -5,10 +5,11 @@ import { OCSServiceModel } from './models';
 
 export const OCS_INDEPENDENT_FLAG = 'OCS_INDEPENDENT';
 
-const isIndependent = (data: K8sResourceKind): boolean => !!data.spec?.external;
+const isIndependent = (data: K8sResourceKind): boolean =>
+  data.spec?.externalStorage?.enabled ?? false;
 
 export const detectIndependentMode: ActionFeatureFlagDetector = (dispatch) =>
-  k8sGet(OCSServiceModel, 'ocs-storagecluster', 'openshift-storage').then(
+  k8sGet(OCSServiceModel, 'ocs-independent-storagecluster', 'openshift-storage').then(
     (obj: K8sResourceKind) => dispatch(setFlag(OCS_INDEPENDENT_FLAG, isIndependent(obj))),
     (err) => {
       err?.response?.status === 404
