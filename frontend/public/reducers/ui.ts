@@ -142,12 +142,19 @@ export default (state: UIState, action: UIAction): UIState => {
     case ActionType.MonitoringDashboardsClearVariables:
       return state.setIn(['monitoringDashboards', 'variables'], ImmutableMap());
 
-    case ActionType.MonitoringDashboardsPatchVariable:
-      return state.mergeIn(
-        ['monitoringDashboards', 'variables', action.payload.key],
-        action.payload.patch,
-      );
+    case ActionType.MonitoringDashboardsPatchVariable: {
+      const { key, patch } = action.payload;
 
+      // If we don't have a value, but do have options, use the first option as the value
+      if (
+        patch.value === undefined &&
+        patch.options?.length &&
+        state.getIn(['monitoringDashboards', 'variables', key, 'value']) === undefined
+      ) {
+        patch.value = patch.options[0];
+      }
+      return state.mergeIn(['monitoringDashboards', 'variables', key], patch);
+    }
     case ActionType.SetMonitoringData: {
       const alerts =
         action.payload.key === 'alerts'
