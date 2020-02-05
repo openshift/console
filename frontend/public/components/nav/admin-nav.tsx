@@ -59,31 +59,29 @@ const apiExplorerStartsWith = ['api-explorer', 'api-resource'];
 
 const monitoringNavSectionStateToProps = (state) => ({
   canAccess: !!state[featureReducerName].get(FLAGS.CAN_GET_NS),
-  grafanaURL: state[monitoringReducerName].get(MonitoringRoutes.Grafana),
   kibanaURL: state[monitoringReducerName].get(MonitoringRoutes.Kibana),
 });
 
-const MonitoringNavSection_ = ({ grafanaURL, canAccess, kibanaURL }) => {
-  const showAlerts = canAccess && !!window.SERVER_FLAGS.prometheusBaseURL;
+const MonitoringNavSection_ = ({ canAccess, kibanaURL }) => {
+  const canAccessPrometheus = canAccess && !!window.SERVER_FLAGS.prometheusBaseURL;
   const showSilences = canAccess && !!window.SERVER_FLAGS.alertManagerBaseURL;
-  const showGrafana = canAccess && !!grafanaURL;
-  return showAlerts || showSilences || showGrafana || kibanaURL ? (
+  return canAccessPrometheus || showSilences || kibanaURL ? (
     <NavSection title="Monitoring">
-      {showAlerts && (
+      {canAccessPrometheus && (
         <HrefLink
           href="/monitoring/alerts"
           name="Alerting"
           startsWith={monitoringAlertsStartsWith}
         />
       )}
-      {showAlerts && (
+      {canAccessPrometheus && (
         <HrefLink
           href="/monitoring/query-browser?query0="
           name="Metrics"
           startsWith={['monitoring/query-browser']}
         />
       )}
-      {showGrafana && <ExternalLink href={grafanaURL} name="Dashboards" />}
+      {canAccessPrometheus && <HrefLink href="/monitoring/dashboards" name="Dashboards" />}
       {kibanaURL && <ExternalLink href={kibanaURL} name="Logging" />}
     </NavSection>
   ) : null;
