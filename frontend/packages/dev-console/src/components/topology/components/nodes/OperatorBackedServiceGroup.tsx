@@ -62,6 +62,7 @@ const OperatorBackedServiceGroup: React.FC<OperatorBackedServiceGroupProps> = ({
         <g
           ref={nodeRefs}
           className={classNames('odc-operator-backed-service', {
+            'is-selected': selected,
             'is-dragging': dragging || labelDragging,
             'is-filtered': filtered,
           })}
