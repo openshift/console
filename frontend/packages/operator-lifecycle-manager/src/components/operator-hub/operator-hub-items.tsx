@@ -364,7 +364,7 @@ export const OperatorHubTileView: React.FC<OperatorHubTileViewProps> = (props) =
                     text={
                       <>
                         <div className="co-catalog-page__overlay-action-label">
-                          {detailsItem.marketplaceActionText || 'View Details'}
+                          {detailsItem.marketplaceActionText || 'Purchase'}
                         </div>
                         <ExternalLinkAltIcon className="co-catalog-page__overlay-action-icon" />
                       </>
