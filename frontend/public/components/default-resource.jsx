@@ -17,7 +17,6 @@ import {
 } from './utils';
 
 const { common } = Kebab.factory;
-const menuActions = [...Kebab.getExtensionsActionsForKind(), ...common];
 
 const tableColumnClasses = [
   classNames('col-xs-6', 'col-sm-4'),
@@ -55,6 +54,9 @@ const TableHeader = () => {
 TableHeader.displayName = 'TableHeader';
 
 const TableRowForKind = ({ obj, index, key, style, customData }) => {
+  const kind = referenceFor(obj) || customData.kind;
+  const menuActions = [...Kebab.getExtensionsActionsForKind(kindObj(kind)), ...common];
+
   return (
     <TableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
       <TableData className={tableColumnClasses[0]}>
@@ -80,11 +82,7 @@ const TableRowForKind = ({ obj, index, key, style, customData }) => {
         {fromNow(obj.metadata.creationTimestamp)}
       </TableData>
       <TableData className={tableColumnClasses[3]}>
-        <ResourceKebab
-          actions={menuActions}
-          kind={referenceFor(obj) || customData.kind}
-          resource={obj}
-        />
+        <ResourceKebab actions={menuActions} kind={kind} resource={obj} />
       </TableData>
     </TableRow>
   );
@@ -138,6 +136,8 @@ DefaultPage.displayName = 'DefaultPage';
 
 export const DefaultDetailsPage = (props) => {
   const pages = [navFactory.details(DetailsForKind(props.kind)), navFactory.editYaml()];
+  const menuActions = [...Kebab.getExtensionsActionsForKind(kindObj(props.kind)), ...common];
+
   return <DetailsPage {...props} menuActions={menuActions} pages={pages} />;
 };
 DefaultDetailsPage.displayName = 'DefaultDetailsPage';
