@@ -3,13 +3,15 @@ import { Alert } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { fromNow } from '@console/internal/components/utils/datetime';
 import { EventKind } from '@console/internal/module/k8s';
-import './MonitoringEventsWarning.scss';
+import './MonitoringOverviewEventsWarning.scss';
 
-interface MonitoringEventsWarningProps {
+interface MonitoringOverviewEventsWarningProps {
   events: EventKind[];
 }
 
-const MonitoringEventsWarning: React.FC<MonitoringEventsWarningProps> = ({ events }) => (
+const MonitoringOverviewEventsWarning: React.FC<MonitoringOverviewEventsWarningProps> = ({
+  events,
+}) => (
   <div className="odc-monitoring-events-warning">
     {!_.isEmpty(events) ? (
       _.map(events, (e: EventKind) => {
@@ -30,4 +32,4 @@ const MonitoringEventsWarning: React.FC<MonitoringEventsWarningProps> = ({ event
   </div>
 );
 
-export default MonitoringEventsWarning;
+export default MonitoringOverviewEventsWarning;

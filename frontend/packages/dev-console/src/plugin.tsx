@@ -206,18 +206,6 @@ const plugin: Plugin<ConsumedExtensions> = [
     },
   },
   {
-    type: 'NavItem/ResourceNS',
-    properties: {
-      section: 'Advanced',
-      perspective: 'dev',
-      componentProps: {
-        name: 'Events',
-        resource: 'events',
-        testID: 'advanced-events-header',
-      },
-    },
-  },
-  {
     type: 'Overview/CRD',
     properties: {
       resources: tknPipelineAndPipelineRunsResources,

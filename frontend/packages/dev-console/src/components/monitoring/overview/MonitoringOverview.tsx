@@ -11,8 +11,8 @@ import {
   Badge,
 } from '@patternfly/react-core';
 import { K8sResourceKind, EventKind } from '@console/internal/module/k8s';
-import MonitoringEventsWarning from './MonitoringEventsWarning';
-import MonitoringEvents from './MonitoringEvents';
+import MonitoringOverviewEventsWarning from './MonitoringOverviewEventsWarning';
+import MonitoringOverviewEvents from './MonitoringOverviewEvents';
 import WorkloadGraphs from './MonitoringMetrics';
 import './MonitoringOverview.scss';
 
@@ -64,7 +64,7 @@ const MonitoringOverview: React.FC<MonitoringOverviewProps> = ({ resource, event
             id="events-warning-content"
             isHidden={!expanded.includes('events-warning')}
           >
-            <MonitoringEventsWarning events={eventWarning} />
+            <MonitoringOverviewEventsWarning events={eventWarning} />
           </AccordionContent>
         </AccordionItem>
 
@@ -103,7 +103,7 @@ const MonitoringOverview: React.FC<MonitoringOverviewProps> = ({ resource, event
             All Events
           </AccordionToggle>
           <AccordionContent id="all-events-content" isHidden={!expanded.includes('all-events')}>
-            <MonitoringEvents events={events} />
+            <MonitoringOverviewEvents events={events} />
           </AccordionContent>
         </AccordionItem>
       </Accordion>

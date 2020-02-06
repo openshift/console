@@ -7,6 +7,7 @@ import NamespacedPage, { NamespacedPageVariants } from '../NamespacedPage';
 import ProjectListPage from '../projects/ProjectListPage';
 import MonitoringDashboard from './dashboard/MonitoringDashboard';
 import ConnectedMonitoringMetrics from './metrics/MonitoringMetrics';
+import MonitoringEvents from './events/MonitoringEvents';
 
 export const MONITORING_ALL_NS_PAGE_URI = '/dev-monitoring/all-namespaces';
 
@@ -50,13 +51,18 @@ export const MonitoringPage: React.FC<MonitoringPageProps> = ({ match }) => {
                   name: 'Metrics',
                   component: ConnectedMonitoringMetrics,
                 },
+                {
+                  href: 'events',
+                  name: 'Events',
+                  component: MonitoringEvents,
+                },
               ]}
               match={match}
               noStatusBox
             />
           </>
         ) : (
-          <ProjectListPage badge={<TechPreviewBadge />} title="Monitoring">
+          <ProjectListPage title="Monitoring">
             Select a project to view monitoring metrics
           </ProjectListPage>
         )}
