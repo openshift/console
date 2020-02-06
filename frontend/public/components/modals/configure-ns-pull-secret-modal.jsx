@@ -5,8 +5,8 @@ import { Base64 } from 'js-base64';
 import { Alert } from '@patternfly/react-core';
 
 import { CONST } from '@console/shared';
-import { k8sPatch, k8sCreate } from '../../module/k8s';
-import { SecretModel } from '../../models';
+import { k8sPatch, k8sPatchByName, k8sCreate } from '../../module/k8s';
+import { SecretModel, ServiceAccountModel } from '../../models';
 import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '../factory/modal';
 import { PromiseComponent, ResourceIcon } from '../utils';
 
@@ -152,17 +152,32 @@ class ConfigureNamespacePullSecret extends PromiseComponent {
       promise = k8sPatch(SecretModel, pullSecret, patch);
     } else {
       const data = {};
+      const pullSecretName = event.target.elements['namespace-pull-secret-name'].value;
       data[CONST.PULL_SECRET_DATA] = secretData;
 
       const secret = {
         metadata: {
-          name: event.target.elements['namespace-pull-secret-name'].value,
+          name: pullSecretName,
           namespace: namespace.metadata.name,
         },
         data,
         type: CONST.PULL_SECRET_TYPE,
       };
-      promise = k8sCreate(SecretModel, secret);
+      const defaultServiceAccountPatch = [
+        {
+          op: 'add',
+          path: '/imagePullSecrets/-',
+          value: { name: pullSecretName },
+        },
+      ];
+      promise = k8sCreate(SecretModel, secret).then(() =>
+        k8sPatchByName(
+          ServiceAccountModel,
+          'default',
+          namespace.metadata.name,
+          defaultServiceAccountPatch,
+        ),
+      );
     }
 
     this.handlePromise(promise).then(this.props.close);
