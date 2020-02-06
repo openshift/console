@@ -159,6 +159,7 @@ export const UtilizationCard: React.FC = () => {
           TopConsumerPopover={cpuPopover}
           duration={duration}
           setTimestamps={setTimestamps}
+          namespace={projectName}
         />
         <PrometheusUtilizationItem
           title="Memory"
@@ -167,6 +168,7 @@ export const UtilizationCard: React.FC = () => {
           byteDataType={ByteDataTypes.BinaryBytes}
           TopConsumerPopover={memPopover}
           duration={duration}
+          namespace={projectName}
         />
         <PrometheusUtilizationItem
           title="Filesystem"
@@ -175,6 +177,7 @@ export const UtilizationCard: React.FC = () => {
           byteDataType={ByteDataTypes.BinaryBytes}
           TopConsumerPopover={filesystemPopover}
           duration={duration}
+          namespace={projectName}
         />
         <PrometheusMultilineUtilizationItem
           title="Network Transfer"
@@ -182,12 +185,14 @@ export const UtilizationCard: React.FC = () => {
           queries={multilineQueries[ProjectQueries.NETWORK_UTILIZATION]}
           TopConsumerPopovers={networkPopovers}
           duration={duration}
+          namespace={projectName}
         />
         <PrometheusUtilizationItem
           title="Pod count"
           humanizeValue={humanizeNumber}
           utilizationQuery={queries[ProjectQueries.POD_COUNT]}
           duration={duration}
+          namespace={projectName}
         />
       </UtilizationBody>
     </DashboardCard>

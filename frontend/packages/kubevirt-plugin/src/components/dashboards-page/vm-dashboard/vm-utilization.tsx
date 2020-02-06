@@ -72,6 +72,7 @@ export const VMUtilizationCard: React.FC = () => {
           humanizeValue={humanizeCpuCores}
           duration={duration}
           setTimestamps={setTimestamps}
+          namespace={namespace}
         />
         <PrometheusUtilizationItem
           title="Memory"
@@ -79,6 +80,7 @@ export const VMUtilizationCard: React.FC = () => {
           humanizeValue={humanizeBinaryBytes}
           byteDataType={ByteDataTypes.BinaryBytes}
           duration={duration}
+          namespace={namespace}
         />
         <PrometheusUtilizationItem
           title="Filesystem"
@@ -86,6 +88,7 @@ export const VMUtilizationCard: React.FC = () => {
           humanizeValue={humanizeBinaryBytes}
           byteDataType={ByteDataTypes.BinaryBytes}
           duration={duration}
+          namespace={namespace}
         />
         <PrometheusMultilineUtilizationItem
           title="Network Transfer"
@@ -93,6 +96,7 @@ export const VMUtilizationCard: React.FC = () => {
           humanizeValue={humanizeBinaryBytes}
           byteDataType={ByteDataTypes.BinaryBytes}
           duration={duration}
+          namespace={namespace}
         />
       </UtilizationBody>
     </DashboardCard>

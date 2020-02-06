@@ -173,15 +173,23 @@ export const PrometheusUtilizationItem = withDashboardResources<PrometheusUtiliz
     humanizeValue,
     byteDataType,
     setTimestamps,
+    namespace,
   }) => {
     React.useEffect(() => {
-      watchPrometheus(utilizationQuery, null, UTILIZATION_QUERY_HOUR_MAP[duration]);
-      totalQuery && watchPrometheus(totalQuery);
+      watchPrometheus(utilizationQuery, namespace, UTILIZATION_QUERY_HOUR_MAP[duration]);
+      totalQuery && watchPrometheus(totalQuery, namespace);
       return () => {
         stopWatchPrometheusQuery(utilizationQuery, UTILIZATION_QUERY_HOUR_MAP[duration]);
         totalQuery && stopWatchPrometheusQuery(totalQuery);
       };
-    }, [watchPrometheus, stopWatchPrometheusQuery, duration, utilizationQuery, totalQuery]);
+    }, [
+      watchPrometheus,
+      stopWatchPrometheusQuery,
+      duration,
+      utilizationQuery,
+      totalQuery,
+      namespace,
+    ]);
     const [utilization, utilizationError] = getPrometheusQueryResponse(
       prometheusResults,
       utilizationQuery,
@@ -223,15 +231,18 @@ export const PrometheusMultilineUtilizationItem = withDashboardResources<
     TopConsumerPopovers,
     humanizeValue,
     byteDataType,
+    namespace,
   }) => {
     React.useEffect(() => {
-      queries.forEach((q) => watchPrometheus(q.query, null, UTILIZATION_QUERY_HOUR_MAP[duration]));
+      queries.forEach((q) =>
+        watchPrometheus(q.query, namespace, UTILIZATION_QUERY_HOUR_MAP[duration]),
+      );
       return () => {
         queries.forEach((q) =>
           stopWatchPrometheusQuery(q.query, UTILIZATION_QUERY_HOUR_MAP[duration]),
         );
       };
-    }, [watchPrometheus, stopWatchPrometheusQuery, duration, queries]);
+    }, [watchPrometheus, stopWatchPrometheusQuery, duration, queries, namespace]);
     const stats = [];
     let hasError = false;
     let isLoading = false;
@@ -413,22 +424,24 @@ export const UtilizationCard = connectToFlags(
   );
 });
 
-type PrometheusUtilizationItemProps = DashboardItemProps & {
-  utilizationQuery: string;
-  totalQuery?: string;
-  duration: Duration;
-  title: string;
-  TopConsumerPopover?: React.ComponentType<TopConsumerPopoverProp>;
-  humanizeValue: Humanize;
-  byteDataType?: ByteDataTypes;
-  setTimestamps?: (timestamps: Date[]) => void;
-};
-
-type PrometheusMultilineUtilizationItemProps = DashboardItemProps & {
-  queries: QueryWithDescription[];
+type PrometheusCommonProps = {
   duration: string;
   title: string;
-  TopConsumerPopovers?: React.ComponentType<TopConsumerPopoverProp>[];
   humanizeValue: Humanize;
   byteDataType?: ByteDataTypes;
+  namespace?: string;
 };
+
+type PrometheusUtilizationItemProps = DashboardItemProps &
+  PrometheusCommonProps & {
+    utilizationQuery: string;
+    totalQuery?: string;
+    TopConsumerPopover?: React.ComponentType<TopConsumerPopoverProp>;
+    setTimestamps?: (timestamps: Date[]) => void;
+  };
+
+type PrometheusMultilineUtilizationItemProps = DashboardItemProps &
+  PrometheusCommonProps & {
+    queries: QueryWithDescription[];
+    TopConsumerPopovers?: React.ComponentType<TopConsumerPopoverProp>[];
+  };
