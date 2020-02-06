@@ -270,7 +270,10 @@ const Card: React.FC<CardProps> = ({ panel, pollInterval, timespan }) => {
 
   return (
     <div className={`col-xs-12 col-sm-${colSpanSm} col-lg-${colSpan}`}>
-      <DashboardCard className="monitoring-dashboards__panel">
+      <DashboardCard
+        className="monitoring-dashboards__panel"
+        gradient={panel.type === 'grafana-piechart-panel'}
+      >
         <DashboardCardHeader className="monitoring-dashboards__card-header">
           <DashboardCardTitle>{panel.title}</DashboardCardTitle>
         </DashboardCardHeader>
