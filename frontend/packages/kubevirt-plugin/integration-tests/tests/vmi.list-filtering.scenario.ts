@@ -6,7 +6,7 @@ import {
   removeLeakedResources,
 } from '@console/shared/src/test-utils/utils';
 import { isLoaded } from '@console/internal-integration-tests/views/crud.view';
-import { getVMManifest } from './utils/mocks';
+import { getVMManifest, getVMIManifest } from './utils/mocks';
 import { VM_STATUS } from './utils/consts';
 import { filterBoxCount } from '../views/vms.list.view';
 import { VirtualMachine } from './models/virtualMachine';
@@ -32,13 +32,7 @@ const waitForVMList = async () => {
 describe('Test List View Filtering (VMI)', () => {
   const leakedResources = new Set<string>();
   const testVM = getVMManifest('Container', testName, `${testName}-vm-test`);
-  const testVMI = getVMManifest(
-    'Container',
-    testName,
-    `${testName}-vmi-test`,
-    null,
-    `VirtualMachineInstance`,
-  );
+  const testVMI = getVMIManifest('Container', testName, `${testName}-vmi-test`);
 
   beforeAll(async () => {
     await waitForVM(testVM, VM_STATUS.Off, leakedResources);

@@ -120,12 +120,11 @@ export const cloudInitCustomScriptConfig: CloudInitConfig = {
   customScript: basicVMConfig.cloudInitScript,
 };
 
-export function getVMManifest(
+function getMetadata(
   provisionSource: string,
   namespace: string,
   name?: string,
   cloudinit?: string,
-  kind?: 'VirtualMachine' | 'VirtualMachineInstance',
 ) {
   const vmName = name || `${provisionSource.toLowerCase()}-${namespace.slice(-5)}`;
   const metadata = {
@@ -238,7 +237,7 @@ export function getVMManifest(
       throw Error('Provision source not Implemented');
   }
 
-  const spec = {
+  const vmiSpec = {
     domain: {
       cpu: {
         cores: 1,
@@ -281,6 +280,44 @@ export function getVMManifest(
     volumes,
   };
 
+  return {
+    metadata,
+    dataVolumeTemplates,
+    vmiSpec,
+  };
+}
+
+export function getVMIManifest(
+  provisionSource: string,
+  namespace: string,
+  name?: string,
+  cloudinit?: string,
+) {
+  const { metadata, vmiSpec } = getMetadata(provisionSource, namespace, name, cloudinit);
+
+  const vmiResource = {
+    apiVersion: 'kubevirt.io/v1alpha3',
+    kind: 'VirtualMachineInstance',
+    metadata,
+    vmiSpec,
+  };
+
+  return vmiResource;
+}
+
+export function getVMManifest(
+  provisionSource: string,
+  namespace: string,
+  name?: string,
+  cloudinit?: string,
+) {
+  const { metadata, dataVolumeTemplates, vmiSpec } = getMetadata(
+    provisionSource,
+    namespace,
+    name,
+    cloudinit,
+  );
+
   const vmResource = {
     apiVersion: 'kubevirt.io/v1alpha3',
     kind: 'VirtualMachine',
@@ -296,19 +333,12 @@ export function getVMManifest(
             'vm.kubevirt.io/name': metadata.name,
           },
         },
-        spec,
+        vmiSpec,
       },
     },
   };
 
-  const vmiResource = {
-    apiVersion: 'kubevirt.io/v1alpha3',
-    kind: 'VirtualMachineInstance',
-    metadata,
-    spec,
-  };
-
-  return kind === 'VirtualMachineInstance' ? vmiResource : vmResource;
+  return vmResource;
 }
 
 export const datavolumeClonerClusterRole = {
