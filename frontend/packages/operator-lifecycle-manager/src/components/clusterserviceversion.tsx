@@ -207,7 +207,7 @@ const ClusterServiceVersionStatus: React.FC<ClusterServiceVersionStatusProps> = 
           {showSuccessIcon && <SuccessStatus title={statusString} />}
         </span>
       ) : (
-        <span className="co-error co-icon-and-text">
+        <span className="co-icon-and-text">
           <ErrorStatus title={statusString} />
         </span>
       )}
@@ -328,7 +328,7 @@ export const FailedSubscriptionTableRow: React.FC<FailedSubscriptionTableRowProp
     }
     if (FAILED_SUBSCRIPTION_STATES.includes(subscriptionState)) {
       return (
-        <span className="co-icon-and-text co-error">
+        <span className="co-icon-and-text">
           <ErrorStatus title={subscriptionState} />
         </span>
       );
