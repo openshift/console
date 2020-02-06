@@ -82,30 +82,35 @@ const GitSection: React.FC<GitSectionProps> = ({ showSample }) => {
     values.image.couldNotRecommend && setFieldValue('image.couldNotRecommend', false);
   }, [setFieldValue, values.image.couldNotRecommend, values.image.recommended]);
 
-  const fillSample: React.ReactEventHandler<HTMLButtonElement> = React.useCallback(() => {
-    const url = sampleRepo;
-    const ref = getSampleRef(tag);
-    const dir = getSampleContextDir(tag);
-    const gitType = detectGitType(url);
-    const name = values.name || values.image.selected;
-    values.name !== name && setFieldValue('name', name);
-    !values.application.name && setFieldValue('application.name', `${name}-app`);
-    setFieldValue('git.url', url);
-    setFieldValue('git.dir', dir);
-    setFieldValue('git.ref', ref);
-    setFieldValue('git.type', gitType);
-    setFieldTouched('git.url', true);
-    validateForm();
-  }, [
-    sampleRepo,
-    setFieldTouched,
-    setFieldValue,
-    tag,
-    validateForm,
-    values.application.name,
-    values.image.selected,
-    values.name,
-  ]);
+  const fillSample: React.ReactEventHandler<HTMLButtonElement> = React.useCallback(
+    (event) => {
+      const ref = getSampleRef(tag);
+      const dir = getSampleContextDir(tag);
+      const gitType = detectGitType(sampleRepo);
+      const name = values.name || values.image.selected;
+      values.name !== name && setFieldValue('name', name);
+      !values.application.name && setFieldValue('application.name', `${name}-app`);
+      values.git.url = sampleRepo;
+      values.git.ref = ref;
+      values.git.dir = dir;
+      values.git.type = gitType;
+      setFieldTouched('git.url', true);
+      validateForm();
+      handleGitUrlBlur(event);
+    },
+    [
+      sampleRepo,
+      setFieldTouched,
+      setFieldValue,
+      tag,
+      validateForm,
+      values.application.name,
+      values.image.selected,
+      values.name,
+      values.git,
+      handleGitUrlBlur,
+    ],
+  );
 
   const getHelpText = () => {
     if (values.git.isUrlValidating) {
