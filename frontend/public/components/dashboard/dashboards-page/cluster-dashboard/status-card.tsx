@@ -101,11 +101,7 @@ const ClusterAlerts = connectToFlags(FLAGS.OPENSHIFT)(
       const cvLoaded = _.get(resources.cv, 'loaded');
       const LinkComponent = React.useCallback(
         () => (
-          <Button
-            className="co-status-card__link-button"
-            variant="link"
-            onClick={() => clusterUpdateModal({ cv })}
-          >
+          <Button variant="link" onClick={() => clusterUpdateModal({ cv })} isInline>
             View details
           </Button>
         ),
