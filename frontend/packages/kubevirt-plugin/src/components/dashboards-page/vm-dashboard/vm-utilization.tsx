@@ -4,7 +4,7 @@ import {
   humanizeBinaryBytes,
   humanizeCpuCores as humanizeCpuCoresUtil,
 } from '@console/internal/components/utils';
-import { getName, getNamespace } from '@console/shared';
+import { getName, getNamespace, getCreationTimestamp } from '@console/shared';
 import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
 import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
 import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
@@ -22,6 +22,8 @@ import { VMDashboardContext } from '../../vms/vm-dashboard-context';
 import { findVMPod } from '../../../selectors/pod/selectors';
 import { isVMRunningWithVMI } from '../../../selectors/vm';
 import { getUtilizationQueries, getMultilineUtilizationQueries, VMQueries } from './queries';
+import { getPrometheusQeuryEndTimestamp } from '@console/internal/components/graphs/helpers';
+import { VMIKind } from 'packages/kubevirt-plugin/src/types';
 
 // TODO: extend humanizeCpuCores() from @console/internal for the flexibility of space
 const humanizeCpuCores = (v) => {
@@ -30,6 +32,19 @@ const humanizeCpuCores = (v) => {
   const val = humanized.string.match(/[\d.]+/) || [humanized.string];
   humanized.string = `${val[0]} ${humanized.unit}`;
   return humanized;
+};
+
+const adjustDurationForVMI = (start: number, vmi?: VMIKind): number => {
+  const createdAt: string = getCreationTimestamp(vmi);
+  const endTimestamp = getPrometheusQeuryEndTimestamp();
+  const startTimestamp = getPrometheusQeuryEndTimestamp() - start;
+  if (createdAt) {
+    const createdAtTimestamp = Date.parse(createdAt);
+    const adjustedStart = endTimestamp - createdAtTimestamp;
+    return startTimestamp > createdAtTimestamp ? start : adjustedStart;
+  }
+
+  return start;
 };
 
 export const VMUtilizationCard: React.FC = () => {
@@ -62,6 +77,10 @@ export const VMUtilizationCard: React.FC = () => {
     [vmName, namespace, launcherPodName],
   );
 
+  const adjustDuration = React.useMemo(() => {
+    return (start: number) => adjustDurationForVMI(start, vmi);
+  }, [vmi]);
+
   return (
     <DashboardCard>
       <DashboardCardHeader>
@@ -74,6 +93,7 @@ export const VMUtilizationCard: React.FC = () => {
           utilizationQuery={queries[VMQueries.CPU_USAGE]}
           humanizeValue={humanizeCpuCores}
           duration={duration}
+          adjustDuration={adjustDuration}
           setTimestamps={setTimestamps}
           namespace={namespace}
           isDisabled={!vmIsRunning}
@@ -85,6 +105,7 @@ export const VMUtilizationCard: React.FC = () => {
           byteDataType={ByteDataTypes.BinaryBytes}
           duration={duration}
           namespace={namespace}
+          adjustDuration={adjustDuration}
           isDisabled={!vmIsRunning}
         />
         <PrometheusUtilizationItem
@@ -94,6 +115,7 @@ export const VMUtilizationCard: React.FC = () => {
           byteDataType={ByteDataTypes.BinaryBytes}
           duration={duration}
           namespace={namespace}
+          adjustDuration={adjustDuration}
           isDisabled={!vmIsRunning}
         />
         <PrometheusMultilineUtilizationItem
@@ -103,6 +125,7 @@ export const VMUtilizationCard: React.FC = () => {
           byteDataType={ByteDataTypes.BinaryBytes}
           duration={duration}
           namespace={namespace}
+          adjustDuration={adjustDuration}
           isDisabled={!vmIsRunning}
         />
       </UtilizationBody>

@@ -8,10 +8,12 @@ export enum PrometheusEndpoint {
   QUERY_RANGE = 'api/v1/query_range',
 }
 
+export const getPrometheusQeuryEndTimestamp = () => Date.now();
+
 // Range vector queries require end, start, and step search params
 const getRangeVectorSearchParams = (
   timespan: number,
-  endTime: number = Date.now(),
+  endTime: number = getPrometheusQeuryEndTimestamp(),
   samples: number = 60,
 ): URLSearchParams => {
   const params = new URLSearchParams();
