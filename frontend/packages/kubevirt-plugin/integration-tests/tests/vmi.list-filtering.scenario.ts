@@ -11,6 +11,24 @@ import { VM_STATUS } from './utils/consts';
 import { filterBoxCount } from '../views/vms.list.view';
 import { VirtualMachine } from './models/virtualMachine';
 
+const waitForVM = async (
+  manifest: any,
+  status: VM_STATUS,
+  resourcesSet: Set<string>,
+  kind?: 'virtualmachines' | 'virtualmachineinstances',
+) => {
+  const vm = new VirtualMachine(manifest.metadata, kind || 'virtualmachines');
+
+  createResource(manifest);
+  addLeakableResource(resourcesSet, manifest);
+  await vm.waitForStatus(status);
+};
+
+const waitForVMList = async () => {
+  await browser.get(`${appHost}/k8s/ns/${testName}/virtualmachines`);
+  await isLoaded();
+};
+
 describe('Test List View Filtering (VMI)', () => {
   const leakedResources = new Set<string>();
   const testVM = getVMManifest('Container', testName, `${testName}-vm-test`);
@@ -22,21 +40,11 @@ describe('Test List View Filtering (VMI)', () => {
     `VirtualMachineInstance`,
   );
 
-  const vm = new VirtualMachine(testVM.metadata);
-  const vmi = new VirtualMachine(testVMI.metadata, 'virtualmachineinstances');
-
   beforeAll(async () => {
-    createResource(testVM);
-    addLeakableResource(leakedResources, testVM);
-    await vm.waitForStatus(VM_STATUS.Off);
+    await waitForVM(testVM, VM_STATUS.Off, leakedResources);
+    await waitForVM(testVMI, VM_STATUS.Running, leakedResources, 'virtualmachineinstances');
 
-    createResource(testVMI);
-    addLeakableResource(leakedResources, testVMI);
-    await vmi.waitForStatus(VM_STATUS.Running);
-
-    // Navigate to Virtual Machines page
-    await browser.get(`${appHost}/k8s/ns/${testName}/virtualmachines`);
-    await isLoaded();
+    await waitForVMList();
   });
 
   afterAll(async () => {
