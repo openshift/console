@@ -4,15 +4,16 @@ import { Wrapper } from './wrapper';
 
 export abstract class ObjectWithTypePropertyWrapper<
   RESOURCE,
-  TYPE extends ObjectEnum<string>
-> extends Wrapper<RESOURCE> {
+  TYPE extends ObjectEnum<string>,
+  SELF extends ObjectWithTypePropertyWrapper<RESOURCE, TYPE, SELF>
+> extends Wrapper<RESOURCE, SELF> {
   private readonly TypeClass: { getAll: () => TYPE[] | Readonly<TYPE[]> };
 
   private readonly typeDataPath: string[];
 
   protected static defaultMergeWrappersWithType = <
     A,
-    B extends ObjectWithTypePropertyWrapper<A, any>
+    B extends ObjectWithTypePropertyWrapper<A, any, any>
   >(
     Clazz,
     wrappers: B[],

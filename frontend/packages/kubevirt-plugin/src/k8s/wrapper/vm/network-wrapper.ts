@@ -2,7 +2,11 @@ import { NetworkType, POD_NETWORK } from '../../../constants';
 import { V1Network } from '../../../types/vm';
 import { ObjectWithTypePropertyWrapper } from '../common/object-with-type-property-wrapper';
 
-export class NetworkWrapper extends ObjectWithTypePropertyWrapper<V1Network, NetworkType> {
+export class NetworkWrapper extends ObjectWithTypePropertyWrapper<
+  V1Network,
+  NetworkType,
+  NetworkWrapper
+> {
   static readonly EMPTY = new NetworkWrapper();
 
   static mergeWrappers = (...networks: NetworkWrapper[]): NetworkWrapper =>
@@ -14,7 +18,7 @@ export class NetworkWrapper extends ObjectWithTypePropertyWrapper<V1Network, Net
     multusNetworkName?: string;
   }) => {
     if (!params) {
-      return NetworkWrapper.EMPTY;
+      return new NetworkWrapper();
     }
     const { name, type, multusNetworkName } = params;
     return new NetworkWrapper({ name }, false, {

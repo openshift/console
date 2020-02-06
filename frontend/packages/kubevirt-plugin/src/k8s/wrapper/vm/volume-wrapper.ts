@@ -40,7 +40,12 @@ const sanitizeTypeData = (type: VolumeType, typeData: CombinedTypeData) => {
   return null;
 };
 
-export class VolumeWrapper extends ObjectWithTypePropertyWrapper<V1Volume, VolumeType> {
+export class VolumeWrapper extends ObjectWithTypePropertyWrapper<
+  V1Volume,
+  VolumeType,
+  VolumeWrapper
+> {
+  // TODO: deprecate EMPTY in all Wrappers
   static readonly EMPTY = new VolumeWrapper();
 
   static mergeWrappers = (...volumes: VolumeWrapper[]): VolumeWrapper =>
@@ -55,7 +60,7 @@ export class VolumeWrapper extends ObjectWithTypePropertyWrapper<V1Volume, Volum
     opts?: { sanitizeTypeData: boolean },
   ) => {
     if (!params) {
-      return VolumeWrapper.EMPTY;
+      return new VolumeWrapper();
     }
     const { name, type, typeData } = params;
     return new VolumeWrapper({ name }, false, {

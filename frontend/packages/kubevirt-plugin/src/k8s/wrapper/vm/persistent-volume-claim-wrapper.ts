@@ -11,24 +11,10 @@ import {
 } from '../../../selectors/pvc/selectors';
 import { toIECUnit } from '../../../components/form/size-unit-utils';
 
-export class PersistentVolumeClaimWrapper extends Wrapper<V1PersistentVolumeClaim> {
-  static readonly EMPTY = new PersistentVolumeClaimWrapper();
-
-  static mergeWrappers = (
-    ...persistentVolumeWrappers: PersistentVolumeClaimWrapper[]
-  ): PersistentVolumeClaimWrapper => {
-    const resultWrapper = Wrapper.defaultMergeWrappers(
-      PersistentVolumeClaimWrapper,
-      persistentVolumeWrappers,
-    );
-
-    if (!resultWrapper.data?.spec?.storageClassName && resultWrapper.data?.spec) {
-      delete resultWrapper.data.spec.storageClassName;
-    }
-
-    return resultWrapper;
-  };
-
+export class PersistentVolumeClaimWrapper extends Wrapper<
+  V1PersistentVolumeClaim,
+  PersistentVolumeClaimWrapper
+> {
   static initializeFromSimpleData = (params?: {
     name?: string;
     accessModes?: object[] | string[];
@@ -38,7 +24,7 @@ export class PersistentVolumeClaimWrapper extends Wrapper<V1PersistentVolumeClai
     storageClassName?: string;
   }) => {
     if (!params) {
-      return PersistentVolumeClaimWrapper.EMPTY;
+      return new PersistentVolumeClaimWrapper();
     }
     const { name, accessModes, volumeMode, size, unit, storageClassName } = params;
     const resources =
@@ -89,4 +75,14 @@ export class PersistentVolumeClaimWrapper extends Wrapper<V1PersistentVolumeClai
   getAccessModes = () => getPvcAccessModes(this.data);
 
   getVolumeMode = () => getPvcVolumeMode(this.data);
+
+  public mergeWith(pvcWrapper: PersistentVolumeClaimWrapper) {
+    super.mergeWith(pvcWrapper);
+
+    if (!this.data?.spec?.storageClassName && this.data?.spec) {
+      delete this.data.spec.storageClassName;
+    }
+
+    return this;
+  }
 }

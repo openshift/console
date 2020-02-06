@@ -15,7 +15,7 @@ const sanitizeTypeData = (type: DiskType, typeData: CombinedTypeData) => {
   return { bus: bus?.getValue() };
 };
 
-export class DiskWrapper extends ObjectWithTypePropertyWrapper<V1Disk, DiskType> {
+export class DiskWrapper extends ObjectWithTypePropertyWrapper<V1Disk, DiskType, DiskWrapper> {
   static readonly EMPTY = new DiskWrapper();
 
   static mergeWrappers = (...disks: DiskWrapper[]): DiskWrapper =>
@@ -28,7 +28,7 @@ export class DiskWrapper extends ObjectWithTypePropertyWrapper<V1Disk, DiskType>
     bootOrder?: number;
   }) => {
     if (!params) {
-      return DiskWrapper.EMPTY;
+      return new DiskWrapper();
     }
     const { name, type, bus, bootOrder } = params;
     return new DiskWrapper(

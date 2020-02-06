@@ -1,10 +1,13 @@
 import * as _ from 'lodash';
 import { ensurePath } from '../utils/utils';
 
-export class Wrapper<RESOURCE extends {}> {
+export class Wrapper<RESOURCE extends {}, SELF extends Wrapper<RESOURCE, SELF>> {
   protected data: RESOURCE;
 
-  protected static defaultMergeWrappers = <A, B extends Wrapper<A>>(Clazz, wrappers: B[]): B => {
+  protected static defaultMergeWrappers = <A, B extends Wrapper<A, any>>(
+    Clazz,
+    wrappers: B[],
+  ): B => {
     const nonEmptyWrappers = wrappers.filter((i) => i);
     if (nonEmptyWrappers.length === 0) {
       return new Clazz();
@@ -19,7 +22,12 @@ export class Wrapper<RESOURCE extends {}> {
     this.data = (data && copy ? _.cloneDeep(data) : data || {}) as any;
   }
 
-  asResource = (copy = false): RESOURCE => (copy ? _.cloneDeep(this.data) : this.data);
+  public mergeWith(wrapper: SELF) {
+    this.data = _.merge(this.data, wrapper.data);
+    return this;
+  }
+
+  public asResource = (copy = false): RESOURCE => (copy ? _.cloneDeep(this.data) : this.data);
 
   protected get = (key: string) => (this.data && key ? this.data[key] : null);
 

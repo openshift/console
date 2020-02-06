@@ -9,7 +9,7 @@ export class K8sResourceObjectWithTypePropertyWrapper<
   RESOURCE extends K8sResourceKind,
   TYPE extends ObjectEnum<string>,
   SELF extends K8sResourceObjectWithTypePropertyWrapper<RESOURCE, TYPE, SELF>
-> extends ObjectWithTypePropertyWrapper<RESOURCE, TYPE> implements K8sResourceKindMethods {
+> extends ObjectWithTypePropertyWrapper<RESOURCE, TYPE, SELF> implements K8sResourceKindMethods {
   getName = () => getName(this.data);
   getLabels = (defaultValue = {}) => getLabels(this.data, defaultValue);
   hasLabel = (label: string) => hasLabel(this.data, label);

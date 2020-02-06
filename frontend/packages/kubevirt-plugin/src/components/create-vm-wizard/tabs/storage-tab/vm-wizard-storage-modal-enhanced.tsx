@@ -42,7 +42,7 @@ const VMWizardStorageModal: React.FC<VMWizardStorageModalProps> = (props) => {
   const {
     type,
     diskWrapper = DiskWrapper.EMPTY,
-    volumeWrapper = VolumeWrapper.EMPTY,
+    volumeWrapper = new VolumeWrapper(),
     dataVolumeWrapper,
     persistentVolumeClaimWrapper,
     ...storageRest
@@ -94,14 +94,12 @@ const VMWizardStorageModal: React.FC<VMWizardStorageModalProps> = (props) => {
         usedDiskNames={usedDiskNames}
         usedPVCNames={usedPVCNames}
         templateValidations={templateValidations}
-        disk={new DiskWrapper(diskWrapper.asResource(), true)}
-        volume={new VolumeWrapper(volumeWrapper.asResource(), true)}
-        dataVolume={
-          dataVolumeWrapper && new DataVolumeWrapper(dataVolumeWrapper.asResource(), true)
-        }
+        disk={new DiskWrapper(diskWrapper.asResource(true))}
+        volume={new VolumeWrapper(volumeWrapper.asResource(true))}
+        dataVolume={dataVolumeWrapper && new DataVolumeWrapper(dataVolumeWrapper.asResource(true))}
         persistentVolumeClaim={
           persistentVolumeClaimWrapper &&
-          new PersistentVolumeClaimWrapper(persistentVolumeClaimWrapper.asResource(), true)
+          new PersistentVolumeClaimWrapper(persistentVolumeClaimWrapper.asResource(true))
         }
         disableSourceChange={[
           VMWizardStorageType.PROVISION_SOURCE_DISK,
@@ -128,10 +126,9 @@ const VMWizardStorageModal: React.FC<VMWizardStorageModalProps> = (props) => {
               ).asResource(),
             persistentVolumeClaim:
               resultPersistentVolumeClaim &&
-              PersistentVolumeClaimWrapper.mergeWrappers(
-                persistentVolumeClaimWrapper,
-                resultPersistentVolumeClaim,
-              ).asResource(),
+              new PersistentVolumeClaimWrapper(persistentVolumeClaimWrapper?.asResource(true))
+                .mergeWith(resultPersistentVolumeClaim)
+                .asResource(),
           });
           return Promise.resolve();
         }}

@@ -4,7 +4,8 @@ import { ObjectWithTypePropertyWrapper } from '../common/object-with-type-proper
 
 export class NetworkInterfaceWrapper extends ObjectWithTypePropertyWrapper<
   V1NetworkInterface,
-  NetworkInterfaceType
+  NetworkInterfaceType,
+  NetworkInterfaceWrapper
 > {
   static readonly EMPTY = new NetworkInterfaceWrapper();
 
@@ -19,7 +20,7 @@ export class NetworkInterfaceWrapper extends ObjectWithTypePropertyWrapper<
     bootOrder?: number;
   }) => {
     if (!params) {
-      return NetworkInterfaceWrapper.EMPTY;
+      return new NetworkInterfaceWrapper();
     }
     const { name, model, macAddress, interfaceType, bootOrder } = params;
     return new NetworkInterfaceWrapper(

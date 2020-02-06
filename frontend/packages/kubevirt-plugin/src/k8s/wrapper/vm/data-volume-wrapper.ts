@@ -76,7 +76,7 @@ export class DataVolumeWrapper extends K8sResourceObjectWithTypePropertyWrapper<
     opts?: { sanitizeTypeData: boolean },
   ) => {
     if (!params) {
-      return DataVolumeWrapper.EMPTY;
+      return new DataVolumeWrapper();
     }
     const {
       name,

@@ -7,7 +7,7 @@ import { K8sResourceKindMethods } from '../types/types';
 export class K8sResourceWrapper<
   RESOURCE extends K8sResourceKind,
   SELF extends K8sResourceWrapper<RESOURCE, SELF>
-> extends Wrapper<RESOURCE> implements K8sResourceKindMethods {
+> extends Wrapper<RESOURCE, SELF> implements K8sResourceKindMethods {
   getName = () => getName(this.data);
   getLabels = (defaultValue = {}) => getLabels(this.data, defaultValue);
   hasLabel = (label: string) => hasLabel(this.data, label);
