@@ -7,7 +7,7 @@ import {
   LOG_SOURCE_RUNNING,
   LOG_SOURCE_TERMINATED,
 } from '@console/internal/components/utils';
-import { runStatus } from './pipeline-augment';
+import { PipelineParam, PipelineRunParam, runStatus } from './pipeline-augment';
 
 interface Resources {
   inputs?: Resource[];
@@ -229,4 +229,14 @@ export const containerToLogSourceStatus = (container: ContainerStatus): string =
     return LOG_SOURCE_TERMINATED;
   }
   return LOG_SOURCE_RUNNING;
+};
+
+export const getPipelineRunParams = (pipelineParams: PipelineParam[]): PipelineRunParam[] => {
+  return (
+    pipelineParams &&
+    pipelineParams.map((param) => ({
+      name: param.name,
+      value: param.default,
+    }))
+  );
 };
