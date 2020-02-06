@@ -43,3 +43,20 @@ export const OCS_OPERATOR_NAME = 'ocs-operator';
 export const HOST = 'host';
 export const ZONE = 'zone';
 export const OSD = 'osd';
+
+export enum VOLUME_ACCESS_MODES {
+  RWO = 'ReadWriteOnce',
+  RWX = 'ReadWriteMany',
+  ROX = 'ReadOnlyMany',
+}
+
+export enum SIZE_UNITS {
+  MI = 'Mi',
+  GI = 'Gi',
+  TI = 'Ti',
+}
+
+export enum PVC_STATUS {
+  PENDING = 'Pending',
+  BOUND = 'Bound',
+}

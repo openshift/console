@@ -178,3 +178,12 @@ export type NodeType = {
 export type FormattedOsdTreeType = {
   [key: string]: NodeType;
 };
+
+export type PvcType = {
+  name: string;
+  namespace: string;
+  size: string;
+  sizeUnits: string;
+  storageClass: string;
+  accessMode: string;
+};
