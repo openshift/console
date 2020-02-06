@@ -31,7 +31,7 @@ const evaluateTemplate = (s: string, variables: VariablesMap) =>
   _.reduce(
     variables,
     (result: string, v: Variable, k: string): string => {
-      return result.replace(new RegExp(`\\$${k}`, 'g'), v.value === undefined ? '' : v.value);
+      return result.replace(new RegExp(`\\$${k}`, 'g'), v.value || '');
     },
     s,
   );
