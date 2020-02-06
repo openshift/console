@@ -50,7 +50,6 @@ const OperatorBackedServiceGroup: React.FC<OperatorBackedServiceGroupProps> = ({
       ref={hoverRef}
       onClick={onSelect}
       className={classNames('odc-operator-backed-service', {
-        'is-selected': selected,
         'is-dragging': dragging || labelDragging,
         'is-filtered': filtered,
       })}
@@ -87,7 +86,7 @@ const OperatorBackedServiceGroup: React.FC<OperatorBackedServiceGroupProps> = ({
         <SvgBoxedText
           className="odc-base-node__label"
           x={x + width / 2}
-          y={y + height + 30}
+          y={y + height + 20}
           paddingX={8}
           paddingY={4}
           kind="Operator"

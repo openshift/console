@@ -135,7 +135,7 @@ const KnativeServiceGroup: React.FC<KnativeServiceGroupProps> = ({
           <SvgBoxedText
             className="odc-knative-service__label odc-base-node__label"
             x={x + width / 2}
-            y={y + height + 30}
+            y={y + height + 20}
             paddingX={8}
             paddingY={4}
             kind={data.kind}
