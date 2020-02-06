@@ -21,11 +21,24 @@ type OverviewDetailsResourcesTabProps = {
   item: OverviewItem;
 };
 
-const getSidebarResources = ({ obj, ksroutes, revisions, configurations }: OverviewItem) => {
+const getSidebarResources = ({
+  obj,
+  ksroutes,
+  revisions,
+  configurations,
+  pods,
+  current,
+}: OverviewItem) => {
   switch (obj.kind) {
     case RevisionModel.kind:
       return (
-        <KnativeRevisionResources ksroutes={ksroutes} obj={obj} configurations={configurations} />
+        <KnativeRevisionResources
+          ksroutes={ksroutes}
+          obj={obj}
+          configurations={configurations}
+          pods={pods}
+          current={current}
+        />
       );
     case ServiceModel.kind:
       return <KnativeServiceResources ksroutes={ksroutes} obj={obj} revisions={revisions} />;

@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 
 import { Status } from '@console/shared';
 import { ResourceLink, resourcePath, SidebarSectionHeading } from '../utils';
-import { podPhase, PodKind, K8sResourceKind } from '../../module/k8s';
+import { podPhase, PodKind, K8sResourceKind, referenceFor } from '../../module/k8s';
 
 const kind: string = 'Pod';
 const MAX_PODS: number = 3;
@@ -113,30 +113,33 @@ const PodsOverviewList: React.SFC<PodOverviewListProps> = ({ pods }) => (
 
 PodsOverviewList.displayName = 'PodsOverviewList';
 
-export const PodsOverview: React.SFC<PodsOverviewProps> = ({ pods, obj }) => {
+export const PodsOverview: React.SFC<PodsOverviewProps> = ({
+  pods,
+  obj,
+  allPodsLink,
+  emptyText,
+}) => {
   const {
     metadata: { name, namespace },
   } = obj;
 
   const errorPodCount = _.size(_.filter(pods, (pod) => isPodError(pod)));
   const podsShown = Math.max(Math.min(errorPodCount, MAX_ERROR_PODS), MAX_PODS);
-
+  const linkTo = allPodsLink || `${resourcePath(referenceFor(obj), name, namespace)}/pods`;
+  const emptyMessage = emptyText || 'No Pods found for this resource.';
   pods.sort(podCompare);
 
   return (
     <>
       <SidebarSectionHeading text="Pods">
         {_.size(pods) > podsShown && (
-          <Link
-            className="sidebar__section-view-all"
-            to={`${resourcePath(obj.kind, name, namespace)}/pods`}
-          >
+          <Link className="sidebar__section-view-all" to={linkTo}>
             {`View all (${_.size(pods)})`}
           </Link>
         )}
       </SidebarSectionHeading>
       {_.isEmpty(pods) ? (
-        <span className="text-muted">No Pods found for this resource.</span>
+        <span className="text-muted">{emptyMessage}</span>
       ) : (
         <PodsOverviewList pods={_.take(pods, podsShown)} />
       )}
@@ -151,4 +154,6 @@ type PodOverviewListProps = {
 type PodsOverviewProps = {
   pods: PodKind[];
   obj: K8sResourceKind;
+  allPodsLink?: string;
+  emptyText?: string;
 };
