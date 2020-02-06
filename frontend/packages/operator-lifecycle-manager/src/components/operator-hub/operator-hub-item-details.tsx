@@ -68,6 +68,7 @@ export const OperatorHubItemDetails: React.SFC<OperatorHubItemDetailsProps> = ({
     createdAt,
     support,
     capabilityLevel,
+    marketplaceSupportWorkflow,
   } = item;
   const notAvailable = <span className="properties-side-panel-pf-property-label">N/A</span>;
 
@@ -144,7 +145,16 @@ export const OperatorHubItemDetails: React.SFC<OperatorHubItemDetailsProps> = ({
               <PropertyItem label="Repository" value={repository || notAvailable} />
               <PropertyItem label="Container Image" value={containerImage || notAvailable} />
               <PropertyItem label="Created At" value={createdAt || notAvailable} />
-              <PropertyItem label="Support" value={support || notAvailable} />
+              <PropertyItem
+                label="Support"
+                value={
+                  marketplaceSupportWorkflow ? (
+                    <ExternalLink href={marketplaceSupportWorkflow} text="Get support" />
+                  ) : (
+                    support || notAvailable
+                  )
+                }
+              />
             </PropertiesSidePanel>
             <div className="co-catalog-page__overlay-description">
               {getHintBlock()}
