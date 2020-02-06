@@ -224,10 +224,7 @@ export class EventsList extends React.Component {
 
     return (
       <>
-        <Helmet>
-          <title>Events</title>
-        </Helmet>
-        <PageHeading detail={true} title="Events">
+        <PageHeading detail={true} title={this.props.title}>
           <div className="co-search-group">
             <ResourceListDropdown
               onChange={this.toggleSelected}
@@ -302,7 +299,15 @@ export const ErrorLoadingEvents = () => (
 
 export const EventStreamPage = withStartGuide(({ noProjectsAvailable, ...rest }) => (
   <>
-    <EventsList {...rest} autoFocus={!noProjectsAvailable} mock={noProjectsAvailable} />
+    <Helmet>
+      <title>Events</title>
+    </Helmet>
+    <EventsList
+      {...rest}
+      autoFocus={!noProjectsAvailable}
+      mock={noProjectsAvailable}
+      title="Events"
+    />
   </>
 ));
 

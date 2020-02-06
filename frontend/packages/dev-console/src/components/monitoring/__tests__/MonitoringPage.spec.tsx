@@ -22,7 +22,7 @@ describe('Monitoring Page ', () => {
   });
 
   it('should render all Tabs of Monitoring page for selected project', () => {
-    const expectedTabs: string[] = ['Dashboard', 'Metrics'];
+    const expectedTabs: string[] = ['Dashboard', 'Metrics', 'Events'];
     monPageProps = {
       match: {
         path: '/dev-monitoring/ns/:ns',

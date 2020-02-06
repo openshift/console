@@ -1,5 +1,6 @@
 import * as classNames from 'classnames';
 import * as _ from 'lodash-es';
+import { List as ImmutableList } from 'immutable';
 import {
   ActionGroup,
   Alert,
@@ -848,8 +849,10 @@ const Query = connect(
 const QueryBrowserWrapper_: React.FC<QueryBrowserWrapperProps> = ({
   namespace,
   patchQuery,
-  queries,
+  queriesList,
 }) => {
+  const queries = queriesList.toJS();
+
   const isInitRef = React.useRef(true);
 
   // Initialize queries from URL parameters
@@ -883,7 +886,8 @@ const QueryBrowserWrapper_: React.FC<QueryBrowserWrapperProps> = ({
   }, [queryStrings]);
 
   const insertExampleQuery = () => {
-    const index = _.get(focusedQuery, 'index', 0);
+    const focusedIndex = focusedQuery?.index ?? 0;
+    const index = queries[focusedIndex] ? focusedIndex : 0;
 
     // Pick a suitable example query based on whether we are limiting results to a single namespace
     const text = namespace
@@ -916,7 +920,7 @@ const QueryBrowserWrapper_: React.FC<QueryBrowserWrapperProps> = ({
   );
 };
 const QueryBrowserWrapper = connect(
-  ({ UI }: RootState) => ({ queries: UI.getIn(['queryBrowser', 'queries']).toJS() }),
+  ({ UI }: RootState) => ({ queriesList: UI.getIn(['queryBrowser', 'queries']) }),
   { patchQuery: UIActions.queryBrowserPatchQuery },
 )(QueryBrowserWrapper_);
 
@@ -1031,7 +1035,7 @@ type QueryBrowserPageProps = {
 type QueryBrowserWrapperProps = {
   namespace?: string;
   patchQuery: (index: number, patch: QueryObj) => any;
-  queries: QueryObj[];
+  queriesList: ImmutableList<QueryObj>;
 };
 
 type QueryInputProps = {

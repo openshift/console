@@ -31,7 +31,7 @@ const evaluateTemplate = (s: string, variables: VariablesMap) =>
   _.reduce(
     variables,
     (result: string, v: Variable, k: string): string => {
-      return result.replace(new RegExp(`\\$${k}`, 'g'), v.value === undefined ? '' : v.value);
+      return result.replace(new RegExp(`\\$${k}`, 'g'), v.value || '');
     },
     s,
   );
@@ -68,6 +68,7 @@ const VariableDropdown: React.FC<VariableDropdownProps> = ({
 );
 
 const SingleVariableDropdown: React.FC<SingleVariableDropdownProps> = ({
+  isHidden,
   name,
   options,
   patchVariable,
@@ -113,7 +114,7 @@ const SingleVariableDropdown: React.FC<SingleVariableDropdownProps> = ({
     patchVariable,
   ]);
 
-  if (!isError && !options.length) {
+  if (isHidden || (!isError && !options.length)) {
     return null;
   }
 
@@ -138,6 +139,7 @@ const AllVariableDropdowns_: React.FC<AllVariableDropdownsProps> = ({
     <>
       {_.map(vars, (v, name) => (
         <SingleVariableDropdown
+          isHidden={v.isHidden}
           key={name}
           name={name}
           options={v.options}
@@ -302,6 +304,7 @@ const Board: React.FC<BoardProps> = ({ board, patchVariable, pollInterval, times
           _.each(newData?.templating?.list as TemplateVariable[], (v) => {
             if (v.type === 'query' || v.type === 'interval') {
               patchVariable(v.name, {
+                isHidden: v.hide !== 0,
                 options: _.map(v.options, 'value'),
                 query: v.type === 'query' ? v.query : undefined,
                 value: _.find(v.options, { selected: true })?.value,
@@ -421,6 +424,7 @@ const MonitoringDashboardsPage = connect(null, {
 })(MonitoringDashboardsPage_);
 
 type TemplateVariable = {
+  hide: number;
   name: string;
   options: { selected: boolean; value: string }[];
   query: string;
@@ -428,6 +432,7 @@ type TemplateVariable = {
 };
 
 type Variable = {
+  isHidden?: boolean;
   options?: string[];
   query?: string;
   value?: string;
@@ -445,6 +450,7 @@ type VariableDropdownProps = {
 };
 
 type SingleVariableDropdownProps = {
+  isHidden: boolean;
   name: string;
   options?: string[];
   patchVariable: (key: string, patch: Variable) => undefined;

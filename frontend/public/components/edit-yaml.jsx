@@ -775,7 +775,7 @@ const EditYAML_ = connect(stateToProps)(
                       )}
                       {!showSidebar && hasSidebarContent && (
                         <>
-                          <div className="co-action-divider--spaced">|</div>
+                          <div className="co-action-divider">|</div>
                           <div className="yaml-editor__link">
                             <Button
                               type="button"

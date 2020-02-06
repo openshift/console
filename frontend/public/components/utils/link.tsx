@@ -91,7 +91,7 @@ LinkifyExternal.displayName = 'LinkifyExternal';
 
 type ExternalLinkProps = {
   href: string;
-  text: string;
+  text: React.ReactNode;
   additionalClassName?: string;
   dataTestID?: string;
 };

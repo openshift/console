@@ -141,7 +141,7 @@ const Details_ = ({ flags, obj: pvc }) => {
           <div className="col-sm-6">
             <ResourceSummary resource={pvc}>
               <dt>Label Selector</dt>
-              <dd>
+              <dd data-test-id="pvc-name">
                 <Selector selector={labelSelector} kind="PersistentVolume" />
               </dd>
             </ResourceSummary>
@@ -149,25 +149,25 @@ const Details_ = ({ flags, obj: pvc }) => {
           <div className="col-sm-6">
             <dl>
               <dt>Status</dt>
-              <dd>
+              <dd data-test-id="pvc-status">
                 <PVCStatus pvc={pvc} />
               </dd>
               {storage && (
                 <>
                   <dt>Capacity</dt>
-                  <dd>{storage}</dd>
+                  <dd data-test-id="pvc-capacity">{storage}</dd>
                 </>
               )}
               {!_.isEmpty(accessModes) && (
                 <>
                   <dt>Access Modes</dt>
-                  <dd>{accessModes.join(', ')}</dd>
+                  <dd data-test-id="pvc-access-mode">{accessModes.join(', ')}</dd>
                 </>
               )}
               <dt>Volume Mode</dt>
-              <dd>{volumeMode || 'Filesystem'}</dd>
+              <dd data-test-id="pvc-volume-mode">{volumeMode || 'Filesystem'}</dd>
               <dt>Storage Class</dt>
-              <dd>
+              <dd data-test-id="pvc-storageclass">
                 {storageClassName ? (
                   <ResourceLink kind="StorageClass" name={storageClassName} />
                 ) : (
@@ -177,7 +177,7 @@ const Details_ = ({ flags, obj: pvc }) => {
               {volumeName && canListPV && (
                 <>
                   <dt>Persistent Volume</dt>
-                  <dd>
+                  <dd data-test-id="persistent-volume">
                     <ResourceLink kind="PersistentVolume" name={volumeName} />
                   </dd>
                 </>

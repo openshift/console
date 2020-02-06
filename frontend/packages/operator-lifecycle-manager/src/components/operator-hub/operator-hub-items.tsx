@@ -6,6 +6,7 @@ import { CatalogItemHeader, CatalogTile } from '@patternfly/react-catalog-view-e
 import * as classNames from 'classnames';
 import { Button, Modal } from '@patternfly/react-core';
 import { ExternalLinkAltIcon } from '@patternfly/react-icons';
+import { ExternalLink } from '@console/internal/components/utils';
 
 import {
   COMMUNITY_PROVIDERS_WARNING_LOCAL_STORAGE_KEY,
@@ -357,15 +358,18 @@ export const OperatorHubTileView: React.FC<OperatorHubTileViewProps> = (props) =
               />
               <div className="co-catalog-page__overlay-actions">
                 {detailsItem.marketplaceRemoteWorkflow && (
-                  <Link
-                    className="pf-c-button pf-m-primary co-catalog-page__overlay-action"
-                    to={detailsItem.marketplaceRemoteWorkflow}
-                  >
-                    <div className="co-catalog-page__overlay-action-label">
-                      {detailsItem.marketplaceActionText || 'Purchase'}
-                    </div>
-                    <ExternalLinkAltIcon className="co-catalog-page__overlay-action-icon" />
-                  </Link>
+                  <ExternalLink
+                    additionalClassName="pf-c-button pf-m-primary co-catalog-page__overlay-action"
+                    href={detailsItem.marketplaceRemoteWorkflow}
+                    text={
+                      <>
+                        <div className="co-catalog-page__overlay-action-label">
+                          {detailsItem.marketplaceActionText || 'Purchase'}
+                        </div>
+                        <ExternalLinkAltIcon className="co-catalog-page__overlay-action-icon" />
+                      </>
+                    }
+                  />
                 )}
                 {!detailsItem.installed ? (
                   <Link

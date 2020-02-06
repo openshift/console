@@ -5,12 +5,12 @@ import { twentyFourHourTime } from '@console/internal/components/utils/datetime'
 import { YellowExclamationTriangleIcon } from '@console/shared';
 import { referenceFor, EventKind } from '@console/internal/module/k8s';
 import { ResourceLink } from '@console/internal/components/utils';
-import MonitoringEventsWarning from './MonitoringEventsWarning';
-import './MonitoringEvents.scss';
+import MonitoringOverviewEventsWarning from './MonitoringOverviewEventsWarning';
+import './MonitoringOverviewEvents.scss';
 
-type MonitoringEventsProps = React.ComponentProps<typeof MonitoringEventsWarning>;
+type MonitoringOverviewEventsProps = React.ComponentProps<typeof MonitoringOverviewEventsWarning>;
 
-const MonitoringEvents: React.FC<MonitoringEventsProps> = ({ events }) => (
+const MonitoringOverviewEvents: React.FC<MonitoringOverviewEventsProps> = ({ events }) => (
   <div className="odc-monitoring-events">
     {!_.isEmpty(events) ? (
       _.map(events, (e: EventKind) => {
@@ -44,4 +44,4 @@ const MonitoringEvents: React.FC<MonitoringEventsProps> = ({ events }) => (
   </div>
 );
 
-export default MonitoringEvents;
+export default MonitoringOverviewEvents;

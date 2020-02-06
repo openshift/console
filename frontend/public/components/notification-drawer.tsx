@@ -11,6 +11,7 @@ import {
 import * as UIActions from '@console/internal/actions/ui';
 import store, { RootState } from '@console/internal/redux';
 import { Alert, alertURL } from '@console/internal/components/monitoring';
+import { RedExclamationCircleIcon } from '@console/shared';
 import {
   getAlertDescription,
   getAlertMessage,
@@ -22,6 +23,7 @@ import {
 import {
   EmptyState,
   EmptyStateBody,
+  EmptyStateIcon,
   EmptyStateSecondaryActions,
   EmptyStateVariant,
   Title,
@@ -38,7 +40,20 @@ import {
 import { getSortedUpdates } from './modals/cluster-update-modal';
 import { usePrevious } from '@console/metal3-plugin/src/hooks';
 
-const emptyState = (toggleExpanded: () => void) => (
+const criticalCompare = (a: Alert): boolean => getAlertSeverity(a) === 'critical';
+const otherAlertCompare = (a: Alert): boolean => getAlertSeverity(a) !== 'critical';
+
+const AlertErrorState: React.FC<AlertErrorProps> = ({ errorText }) => (
+  <EmptyState variant={EmptyStateVariant.full}>
+    <EmptyStateIcon className="co-status-card__alerts-icon" icon={RedExclamationCircleIcon} />
+    <Title headingLevel="h5" size="lg">
+      Alerts could not be loaded
+    </Title>
+    {errorText && <EmptyStateBody>{errorText}</EmptyStateBody>}
+  </EmptyState>
+);
+
+const AlertEmptyState: React.FC<AlertEmptyProps> = ({ drawerToggle }) => (
   <EmptyState variant={EmptyStateVariant.full} className="co-status-card__alerts-msg">
     <Title headingLevel="h5" size="lg">
       No critical alerts
@@ -48,14 +63,12 @@ const emptyState = (toggleExpanded: () => void) => (
       or silenced critical alerts however.
     </EmptyStateBody>
     <EmptyStateSecondaryActions>
-      <Link to="/monitoring/alerts" onClick={toggleExpanded}>
+      <Link to="/monitoring/alerts" onClick={drawerToggle}>
         View all alerts
       </Link>
     </EmptyStateSecondaryActions>
   </EmptyState>
 );
-const criticalCompare = (a: Alert): boolean => getAlertSeverity(a) === 'critical';
-const otherAlertCompare = (a: Alert): boolean => getAlertSeverity(a) !== 'critical';
 
 const getAlertNotificationEntries = (
   isLoaded: boolean,
@@ -135,7 +148,7 @@ export const ConnectedNotificationDrawer_: React.FC<ConnectedNotificationDrawerP
   const cv: ClusterVersionKind = _.get(resources.cv, 'data') as ClusterVersionKind;
   const cvLoaded: boolean = _.get(resources.cv, 'loaded');
   const updateData: ClusterUpdate[] = hasAvailableUpdates(cv) ? getSortedUpdates(cv) : [];
-  const { data, loaded } = alerts;
+  const { data, loaded, loadError } = alerts;
 
   const updateList: React.ReactNode[] = getUpdateNotificationEntries(
     cvLoaded,
@@ -169,6 +182,13 @@ export const ConnectedNotificationDrawer_: React.FC<ConnectedNotificationDrawerP
     }
   }, [criticalAlertList, isAlertExpanded, isDrawerExpanded, prevDrawerToggleState]);
 
+  const emptyState = !_.isEmpty(loadError) ? (
+    <AlertErrorState errorText={loadError.message} />
+  ) : (
+    <AlertEmptyState drawerToggle={toggleNotificationDrawer} />
+  );
+
+  const criticalAlerts = _.isEmpty(criticalAlertList) ? emptyState : criticalAlertList;
   const criticalAlertCategory: React.ReactElement = (
     <NotificationCategory
       key="critical-alerts"
@@ -177,7 +197,7 @@ export const ConnectedNotificationDrawer_: React.FC<ConnectedNotificationDrawerP
       count={criticalAlertList.length}
       onExpandContents={toggleAlertExpanded}
     >
-      {_.isEmpty(criticalAlertList) ? emptyState(toggleNotificationDrawer) : criticalAlertList}
+      {criticalAlerts}
     </NotificationCategory>
   );
   const nonCriticalAlertCategory: React.ReactElement = !_.isEmpty(otherAlertList) ? (
@@ -229,7 +249,9 @@ export type WithNotificationsProps = {
   alerts: {
     data: Alert[];
     loaded: boolean;
-    loadError?: string;
+    loadError?: {
+      message?: string;
+    };
   };
 };
 
@@ -242,7 +264,9 @@ export type ConnectedNotificationDrawerProps = {
   alerts: {
     data: Alert[];
     loaded: boolean;
-    loadError?: string;
+    loadError?: {
+      message?: string;
+    };
   };
   resources?: {
     [key: string]: FirehoseResult | FirehoseResult<K8sResourceKind>;
@@ -254,6 +278,14 @@ const notificationStateToProps = ({ UI }: RootState): WithNotificationsProps => 
   notificationsRead: !!UI.getIn(['notifications', 'isRead']),
   alerts: UI.getIn(['monitoring', 'notificationAlerts']) || {},
 });
+
+type AlertErrorProps = {
+  errorText: string;
+};
+
+type AlertEmptyProps = {
+  drawerToggle: (event: React.MouseEvent<HTMLElement>) => void;
+};
 
 const connectToNotifications = connect((state: RootState) => notificationStateToProps(state), {
   toggleNotificationDrawer: UIActions.notificationDrawerToggleExpanded,

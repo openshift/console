@@ -81,15 +81,27 @@ export const getVMStatusGroups: StatusGroupMapper = (
       filterType: 'vm-status',
     },
   };
-  vms.forEach((vm: VMKind) => {
+
+  const vmStatuses = vms.map((vm: VMKind) => {
     const vmi = (vmis || []).find((instance) => getName(vm) === getName(instance));
-    const { status } = getVMStatus({ vm, vmi, pods, migrations });
+    return getVMStatus({ vm, vmi, pods, migrations }).status;
+  });
+
+  const vmisWithoutVM = (vmis || []).filter(
+    (instance) => !vms.find((vm) => getName(vm) === getName(instance)),
+  );
+  const vmiStatuses = vmisWithoutVM.map(
+    (vmi) => getVMStatus({ vm: undefined, vmi, pods, migrations }).status,
+  );
+
+  [...vmStatuses, ...vmiStatuses].forEach((status) => {
     const group =
       Object.keys(VM_STATUS_GROUP_MAPPER).find((key) =>
         VM_STATUS_GROUP_MAPPER[key].includes(status),
       ) || InventoryStatusGroup.UNKNOWN;
     groups[group].count++;
   });
+
   return groups;
 };
 
