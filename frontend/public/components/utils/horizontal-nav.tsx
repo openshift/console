@@ -206,18 +206,23 @@ export const HorizontalNav = React.memo((props: HorizontalNavProps) => {
     {},
   );
 
-  const navTabExtensions = useExtensions<HorizontalNavTab>(isHorizontalNavTab).filter(
-    (tab) =>
-      props.obj?.data && referenceForModel(tab.properties.model) === referenceFor(props.obj.data),
+  const objReference = props.obj?.data ? referenceFor(props.obj.data) : '';
+  const navTabExtensions = useExtensions<HorizontalNavTab>(isHorizontalNavTab);
+
+  const pluginPages = React.useMemo(
+    () =>
+      navTabExtensions
+        .filter((tab) => referenceForModel(tab.properties.model) === objReference)
+        .map((tab) => ({
+          ...tab.properties.page,
+          component: (params: PageComponentProps) => (
+            <AsyncComponent {...params} loader={tab.properties.loader} />
+          ),
+        })),
+    [navTabExtensions, objReference],
   );
-  const pages = (props.pages || props.pagesFor(props.obj?.data)).concat(
-    navTabExtensions.map((tab) => ({
-      ...tab.properties.page,
-      component: (params: PageComponentProps) => (
-        <AsyncComponent {...params} loader={tab.properties.loader} />
-      ),
-    })),
-  );
+
+  const pages = (props.pages || props.pagesFor(props.obj?.data)).concat(pluginPages);
 
   const routes = pages.map((p) => {
     const path = `${props.match.url}/${p.path || p.href}`;

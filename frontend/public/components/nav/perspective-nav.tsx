@@ -13,8 +13,11 @@ type StateProps = {
 };
 
 const PerspectiveNav: React.FC<StateProps> = ({ perspective }) => {
-  const navItemExtensions = useExtensions<NavItem>(isNavItem).filter(
-    (item) => item.properties.perspective === perspective,
+  const navItemExtensions = useExtensions<NavItem>(isNavItem);
+
+  const matchingNavItems = React.useMemo(
+    () => navItemExtensions.filter((item) => item.properties.perspective === perspective),
+    [navItemExtensions, perspective],
   );
 
   // Until admin perspective is contributed through extensions, simply render static `AdminNav`
@@ -28,7 +31,7 @@ const PerspectiveNav: React.FC<StateProps> = ({ perspective }) => {
   return (
     <>
       {_.compact(
-        navItemExtensions.map((item) => {
+        matchingNavItems.map((item) => {
           const { section } = item.properties;
           if (section) {
             if (renderedSections.includes(section)) {

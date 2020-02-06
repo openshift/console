@@ -25,30 +25,37 @@ import { breadcrumbsForDetailsPage } from '../utils/breadcrumbs';
 
 export const DetailsPage = withFallback<DetailsPageProps>(({ pages = [], ...props }) => {
   const resourceKeys = _.map(props.resources, 'prop');
+
+  const renderAsyncComponent = (page: ResourceTabPage, pageProps: DetailsPageProps) => (
+    <AsyncComponent
+      loader={page.properties.loader}
+      namespace={pageProps.namespace}
+      name={pageProps.name}
+      kind={pageProps.kind}
+      match={pageProps.match}
+    />
+  );
+
   const resourcePageExtensions = useExtensions<ResourceTabPage>(isResourceTabPage);
-  let allPages = [
-    ...pages,
-    ...resourcePageExtensions
-      .filter(
-        (p) =>
-          referenceForModel(p.properties.model) ===
-          (props.kindObj ? referenceFor(props.kindObj) : props.kind),
-      )
-      .map((p) => ({
-        href: p.properties.href,
-        name: p.properties.name,
-        component: () => (
-          <AsyncComponent
-            loader={p.properties.loader}
-            namespace={props.namespace}
-            name={props.name}
-            kind={props.kind}
-            match={props.match}
-          />
-        ),
-      })),
-  ];
+  const pluginPages = React.useMemo(
+    () =>
+      resourcePageExtensions
+        .filter(
+          (p) =>
+            referenceForModel(p.properties.model) ===
+            (props.kindObj ? referenceFor(props.kindObj) : props.kind),
+        )
+        .map((p) => ({
+          href: p.properties.href,
+          name: p.properties.name,
+          component: () => renderAsyncComponent(p, props),
+        })),
+    [resourcePageExtensions, props],
+  );
+
+  let allPages = [...pages, ...pluginPages];
   allPages = allPages.length ? allPages : null;
+
   return (
     <Firehose
       resources={[
