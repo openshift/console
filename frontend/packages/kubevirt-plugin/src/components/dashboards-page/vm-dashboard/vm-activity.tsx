@@ -17,7 +17,7 @@ import {
   withDashboardResources,
   DashboardItemProps,
 } from '@console/internal/components/dashboard/with-dashboard-resources';
-import { VirtualMachineModel } from '../../../models';
+import { VirtualMachineModel, VirtualMachineInstanceModel } from '../../../models';
 import { getVmEventsFilters } from '../../../selectors/event';
 import { VMDashboardContext } from '../../vms/vm-dashboard-context';
 import { VMILikeEntityKind } from '../../../types/vmLike';
@@ -64,7 +64,11 @@ export const VMActivityCard: React.FC = () => {
 
   const name = getName(vmiLike);
   const namespace = getNamespace(vmiLike);
-  const viewEventsLink = `${resourcePath(VirtualMachineModel.kind, name, namespace)}/events`;
+  const viewEventsLink = `${resourcePath(
+    vm ? VirtualMachineModel.kind : VirtualMachineInstanceModel.kind,
+    name,
+    namespace,
+  )}/events`;
 
   return (
     <DashboardCard gradient>
