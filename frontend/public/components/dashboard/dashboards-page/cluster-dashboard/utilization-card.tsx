@@ -168,13 +168,13 @@ export const PrometheusUtilizationItem = withDashboardResources<PrometheusUtiliz
     utilizationQuery,
     totalQuery,
     duration,
-    adjustDuration = (start: number) => start,
+    adjustDuration,
     title,
     TopConsumerPopover,
     humanizeValue,
     byteDataType,
     setTimestamps,
-    namespace, 
+    namespace,
     isDisabled = false,
   }) => {
     let stats = [];
@@ -184,7 +184,10 @@ export const PrometheusUtilizationItem = withDashboardResources<PrometheusUtiliz
     let isLoading = false;
 
     const effectiveDuration = React.useMemo(
-      () => adjustDuration(UTILIZATION_QUERY_HOUR_MAP[duration]),
+      () =>
+        adjustDuration
+          ? adjustDuration(UTILIZATION_QUERY_HOUR_MAP[duration])
+          : UTILIZATION_QUERY_HOUR_MAP[duration],
       [adjustDuration, duration],
     );
     React.useEffect(() => {
@@ -246,7 +249,7 @@ export const PrometheusMultilineUtilizationItem = withDashboardResources<
     prometheusResults,
     queries,
     duration,
-    adjustDuration = (start: number) => start,
+    adjustDuration,
     title,
     TopConsumerPopovers,
     humanizeValue,
@@ -255,19 +258,28 @@ export const PrometheusMultilineUtilizationItem = withDashboardResources<
     isDisabled = false,
   }) => {
     const effectiveDuration = React.useMemo(
-      () => adjustDuration(UTILIZATION_QUERY_HOUR_MAP[duration]),
+      () =>
+        adjustDuration
+          ? adjustDuration(UTILIZATION_QUERY_HOUR_MAP[duration])
+          : UTILIZATION_QUERY_HOUR_MAP[duration],
       [adjustDuration, duration],
     );
     React.useEffect(() => {
       if (!isDisabled) {
-        queries.forEach((q) =>
-          watchPrometheus(q.query, namespace, effectiveDuration)
-        );
+        queries.forEach((q) => watchPrometheus(q.query, namespace, effectiveDuration));
         return () => {
           queries.forEach((q) => stopWatchPrometheusQuery(q.query, effectiveDuration));
         };
-      };
-    }, [watchPrometheus, stopWatchPrometheusQuery, duration, queries, namespace, isDisabled]);
+      }
+    }, [
+      watchPrometheus,
+      stopWatchPrometheusQuery,
+      duration,
+      queries,
+      namespace,
+      isDisabled,
+      effectiveDuration,
+    ]);
 
     const stats = [];
     let hasError = false;

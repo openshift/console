@@ -22,8 +22,7 @@ import { VMDashboardContext } from '../../vms/vm-dashboard-context';
 import { findVMPod } from '../../../selectors/pod/selectors';
 import { isVMRunningWithVMI } from '../../../selectors/vm';
 import { getUtilizationQueries, getMultilineUtilizationQueries, VMQueries } from './queries';
-import { getPrometheusQeuryEndTimestamp } from '@console/internal/components/graphs/helpers';
-import { VMIKind } from 'packages/kubevirt-plugin/src/types';
+import { getPrometheusQueryEndTimestamp } from '@console/internal/components/graphs/helpers';
 
 // TODO: extend humanizeCpuCores() from @console/internal for the flexibility of space
 const humanizeCpuCores = (v) => {
@@ -34,17 +33,15 @@ const humanizeCpuCores = (v) => {
   return humanized;
 };
 
-const adjustDurationForVMI = (start: number, vmi?: VMIKind): number => {
-  const createdAt: string = getCreationTimestamp(vmi);
-  const endTimestamp = getPrometheusQeuryEndTimestamp();
-  const startTimestamp = getPrometheusQeuryEndTimestamp() - start;
-  if (createdAt) {
-    const createdAtTimestamp = Date.parse(createdAt);
-    const adjustedStart = endTimestamp - createdAtTimestamp;
-    return startTimestamp > createdAtTimestamp ? start : adjustedStart;
+const adjustDurationForStart = (start: number, createdAt: string): number => {
+  if (!createdAt) {
+    return start;
   }
-
-  return start;
+  const endTimestamp = getPrometheusQueryEndTimestamp();
+  const startTimestamp = endTimestamp - start;
+  const createdAtTimestamp = Date.parse(createdAt);
+  const adjustedStart = endTimestamp - createdAtTimestamp;
+  return startTimestamp > createdAtTimestamp ? start : adjustedStart;
 };
 
 export const VMUtilizationCard: React.FC = () => {
@@ -77,9 +74,11 @@ export const VMUtilizationCard: React.FC = () => {
     [vmName, namespace, launcherPodName],
   );
 
-  const adjustDuration = React.useMemo(() => {
-    return (start: number) => adjustDurationForVMI(start, vmi);
-  }, [vmi]);
+  const createdAt = getCreationTimestamp(vmi);
+  const adjustDuration = React.useCallback(
+    (start: number) => adjustDurationForStart(start, createdAt),
+    [createdAt],
+  );
 
   return (
     <DashboardCard>
