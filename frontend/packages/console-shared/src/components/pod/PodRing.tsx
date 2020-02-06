@@ -35,6 +35,19 @@ const PodRing: React.FC<PodRingProps> = ({
     enableScaling,
     impersonate,
   );
+
+  React.useEffect(
+    () => {
+      if (clickCount !== obj.spec.replicas) {
+        setClickCount(obj.spec.replicas);
+      }
+    },
+    // disabling exhaustive-deps because I do not want to add clickCount to
+    // dependency array. I only want to trigger useEffect when `obj.spec.replicas` changes
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [obj.spec.replicas],
+  );
+
   const handleScaling = _.debounce(
     (operation: number) => {
       const patch = [{ op: 'replace', path, value: operation }];
