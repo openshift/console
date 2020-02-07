@@ -11,6 +11,7 @@ import {
   ExpandedComponentProps,
 } from '@console/shared/src/components/dashboard/inventory-card/InventoryItem';
 import { PrometheusResponse } from '@console/internal/components/graphs';
+import { WatchK8sResources } from '@console/internal/components/utils/k8s-watch-hook';
 import { Extension, LazyLoader } from './base';
 
 export interface DashboardsExtensionProperties {
@@ -133,7 +134,7 @@ namespace ExtensionProperties {
     mapper?: StatusGroupMapper;
 
     /** Additional resources which will be fetched and passed to `mapper` function. */
-    additionalResources?: FirehoseResource[];
+    additionalResources?: WatchK8sResources<any>;
 
     /** Defines whether model's label or abbr should be used when rendering the item. Defaults to false (label). */
     useAbbr?: boolean;

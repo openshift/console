@@ -222,23 +222,20 @@ const plugin: Plugin<ConsumedExtensions> = [
   {
     type: 'Dashboards/Overview/Inventory/Item',
     properties: {
-      additionalResources: [
-        {
+      additionalResources: {
+        vmis: {
           isList: true,
           kind: models.VirtualMachineInstanceModel.kind,
-          prop: 'vmis',
         },
-        {
+        pods: {
           isList: true,
           kind: PodModel.kind,
-          prop: 'pods',
         },
-        {
+        migrations: {
           isList: true,
           kind: models.VirtualMachineInstanceMigrationModel.kind,
-          prop: 'migrations',
         },
-      ],
+      },
       model: models.VirtualMachineModel,
       mapper: getVMStatusGroups,
       useAbbr: true,

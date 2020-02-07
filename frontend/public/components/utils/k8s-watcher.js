@@ -11,7 +11,7 @@ export const makeReduxID = (k8sKind = {}, query) => {
   return `${referenceForModel(k8sKind)}${qs}`;
 };
 
-/** @type {(namespace: string, labelSelector?: any, fieldSelector?: any, name?: string) => {[key: string]: string}} */
+/** @type {(namespace: string, labelSelector?: any, fieldSelector?: any, name?: string, limit?: number) => {[key: string]: string}} */
 export const makeQuery = (namespace, labelSelector, fieldSelector, name, limit) => {
   const query = {};
 
