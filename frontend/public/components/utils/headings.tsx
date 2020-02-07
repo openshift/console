@@ -129,7 +129,10 @@ export const PageHeading = connectToModel((props: PageHeadingProps) => {
           ) : (
             <div className="co-m-pane__name co-resource-item">
               {kind && <ResourceIcon kind={kind} className="co-m-resource-icon--lg" />}{' '}
-              <span data-test-id="resource-title" className="co-resource-item__resource-name">
+              <span
+                data-test-id="resource-title"
+                className="co-resource-item__resource-name co-resource-item__resource-name--lg"
+              >
                 {resourceTitle}
               </span>
               {resourceStatus && (
@@ -204,7 +207,7 @@ export const ResourceOverviewHeading: React.SFC<ResourceOverviewHeadingProps> = 
               resource.metadata.name,
               resource.metadata.namespace,
             )}
-            className="co-resource-item__resource-name"
+            className="co-resource-item__resource-name co-resource-item__resource-name--lg"
           >
             {resource.metadata.name}
           </Link>
