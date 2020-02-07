@@ -52,6 +52,7 @@ export type OperatorHubCSVAnnotations = {
   capabilities?: CapabilityLevel;
   'marketplace.openshift.io/action-text'?: string;
   'marketplace.openshift.io/remote-workflow'?: string;
+  'marketplace.openshift.io/support-workflow'?: string;
 };
 
 type OperatorHubSpec = {

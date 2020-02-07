@@ -624,6 +624,9 @@ export const ClusterServiceVersionDetails: React.SFC<ClusterServiceVersionDetail
   props,
 ) => {
   const { spec, metadata, status } = props.obj;
+  const {
+    'marketplace.openshift.io/support-workflow': marketplaceSupportWorkflow,
+  } = metadata.annotations;
 
   return (
     <>
@@ -652,6 +655,14 @@ export const ClusterServiceVersionDetails: React.SFC<ClusterServiceVersionDetail
                 <dd>
                   {spec.provider && spec.provider.name ? spec.provider.name : 'Not available'}
                 </dd>
+                {marketplaceSupportWorkflow && (
+                  <>
+                    <dt>Support</dt>
+                    <dd>
+                      <ExternalLink href={marketplaceSupportWorkflow} text="Get support" />
+                    </dd>
+                  </>
+                )}
                 <dt>Created At</dt>
                 <dd>
                   <Timestamp timestamp={metadata.creationTimestamp} />

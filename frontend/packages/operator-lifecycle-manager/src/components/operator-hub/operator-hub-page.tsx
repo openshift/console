@@ -50,6 +50,7 @@ export const OperatorHubList: React.SFC<OperatorHubListProps> = (props) => {
         capabilities: capabilityLevel,
         'marketplace.openshift.io/action-text': marketplaceActionText,
         'marketplace.openshift.io/remote-workflow': marketplaceRemoteWorkflow,
+        'marketplace.openshift.io/support-workflow': marketplaceSupportWorkflow,
       } = currentCSVAnnotations;
 
       return {
@@ -90,6 +91,7 @@ export const OperatorHubList: React.SFC<OperatorHubListProps> = (props) => {
         capabilityLevel,
         marketplaceActionText,
         marketplaceRemoteWorkflow,
+        marketplaceSupportWorkflow,
       };
     },
   );
