@@ -20,7 +20,7 @@ const testDetailsPage = (subTitle, alertName, expectLabel = true) => {
   }
 };
 
-xdescribe('Monitoring: Alerts', () => {
+describe('Monitoring: Alerts', () => {
   afterEach(() => {
     checkLogs();
     checkErrors();
@@ -106,7 +106,7 @@ xdescribe('Monitoring: Alerts', () => {
   });
 });
 
-xdescribe('Monitoring: Silences', () => {
+describe('Monitoring: Silences', () => {
   afterEach(() => {
     checkLogs();
     checkErrors();
@@ -186,7 +186,7 @@ xdescribe('Monitoring: Silences', () => {
   });
 });
 
-xdescribe('Alertmanager: YAML', () => {
+describe('Alertmanager: YAML', () => {
   afterEach(() => {
     checkLogs();
     checkErrors();
@@ -214,7 +214,7 @@ xdescribe('Alertmanager: YAML', () => {
   });
 });
 
-xdescribe('Alertmanager: Configuration', () => {
+describe('Alertmanager: Configuration', () => {
   afterAll(() => {
     execSync(
       `kubectl patch secret 'alertmanager-main' -n 'openshift-monitoring' --type='json' -p='[{ op: 'replace', path: '/data/alertmanager.yaml', value: ${monitoringView.defaultAlertmanagerYaml}}]'`,
