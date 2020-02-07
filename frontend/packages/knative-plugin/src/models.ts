@@ -23,7 +23,7 @@ export const ConfigurationModel: K8sKind = {
 };
 
 export const KnativeServingModel: K8sKind = {
-  apiGroup: 'serving.knative.dev',
+  apiGroup: 'operator.knative.dev',
   apiVersion: 'v1alpha1',
   kind: 'KnativeServing',
   label: 'Knative Serving',
