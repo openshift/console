@@ -13,6 +13,8 @@ import {
   OverviewItem,
   getImageForCSVIcon,
   getDefaultOperatorIcon,
+  OperatorBackedServiceKindMap,
+  getOperatorBackedServiceKindMap,
 } from '@console/shared';
 import { getImageForIconClass } from '@console/internal/components/catalog/catalog-item-icon';
 import {
@@ -30,7 +32,6 @@ import {
   createServiceBinding,
   removeServiceBinding,
   edgesFromServiceBinding,
-  getOperatorBackedServiceKindMap,
 } from '../../utils/application-utils';
 import { TopologyFilters } from './filters/filter-utils';
 import {
@@ -41,7 +42,6 @@ import {
   Edge,
   Group,
   TopologyOverviewItem,
-  OperatorBackedServiceKindMap,
   TrafficData,
   KialiNode,
 } from './topology-types';
@@ -58,6 +58,7 @@ import {
   TYPE_CONNECTS_TO,
   TYPE_SERVICE_BINDING,
 } from './const';
+import { ClusterServiceVersionKind } from '@console/operator-lifecycle-manager';
 
 export const allowedResources = ['deployments', 'deploymentConfigs', 'daemonSets', 'statefulSets'];
 
@@ -134,8 +135,12 @@ export const isEventWarning = (resource: OverviewItem): boolean => {
  * @param resources
  * @param utils
  */
-const createInstanceForResource = (resources: TopologyDataResources, utils?: Function[]) => {
-  const transformResourceData = new TransformResourceData(resources, utils);
+const createInstanceForResource = (
+  resources: TopologyDataResources,
+  utils?: Function[],
+  installedOperators?: ClusterServiceVersionKind[],
+) => {
+  const transformResourceData = new TransformResourceData(resources, utils, installedOperators);
 
   return {
     deployments: transformResourceData.createDeploymentItems,
@@ -599,7 +604,7 @@ export const transformTopologyData = (
   resources.deployments.data = filterNonKnativeDeployments(deploymentResources);
   // END: kn call to form topology data
 
-  const transformResourceData = createInstanceForResource(resources, utils);
+  const transformResourceData = createInstanceForResource(resources, utils, installedOperators);
   const allResources = _.flatten(
     allowedResources.map((resourceKind) => {
       return resources[resourceKind]

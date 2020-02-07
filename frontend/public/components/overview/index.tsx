@@ -24,6 +24,7 @@ import { ResourceOverviewPage } from './resource-overview-page';
 import { OverviewSpecialGroup } from './constants';
 import * as plugins from '../../plugins';
 import { OverviewCRD } from '@console/plugin-sdk';
+import { ClusterServiceVersionKind } from '@console/operator-lifecycle-manager';
 
 const asOverviewGroups = (keyedItems: { [name: string]: OverviewItem[] }): OverviewGroup[] => {
   const compareGroups = (a: OverviewGroup, b: OverviewGroup) => {
@@ -315,7 +316,11 @@ class OverviewMainContent_ extends React.Component<
       updateSelectedGroup,
       updateResources,
     } = this.props;
-    this.transformResourceData = new TransformResourceData(this.props, this.props.utils);
+    this.transformResourceData = new TransformResourceData(
+      this.props,
+      this.props.utils,
+      this.props?.clusterServiceVersions?.data,
+    );
     if (!loaded) {
       return;
     }
@@ -565,6 +570,7 @@ type OverviewMainContentOwnProps = {
   selectedItem: OverviewItem;
   statefulSets?: FirehoseResult;
   title?: string;
+  clusterServiceVersions?: FirehoseResult<ClusterServiceVersionKind[]>;
   utils?: Function[];
 };
 
