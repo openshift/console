@@ -6,7 +6,7 @@ import {
   ValidationErrorType,
   ValidationObject,
 } from '@console/shared';
-import { validateTrim, validateURL, validateBus } from '../common';
+import { validateTrim, validateURL } from '../common';
 import { DiskWrapper } from '../../../k8s/wrapper/vm/disk-wrapper';
 import { VolumeWrapper } from '../../../k8s/wrapper/vm/volume-wrapper';
 import { DataVolumeWrapper } from '../../../k8s/wrapper/vm/data-volume-wrapper';
@@ -14,9 +14,9 @@ import { POSITIVE_SIZE_ERROR } from '../strings';
 import { StorageUISource } from '../../../components/modals/disk-modal/storage-ui-source';
 import { CombinedDisk } from '../../../k8s/wrapper/vm/combined-disk';
 import { PersistentVolumeClaimWrapper } from '../../../k8s/wrapper/vm/persistent-volume-claim-wrapper';
-import { DiskBus } from '../../../constants/vm/storage/disk-bus';
 import { DiskType } from '../../../constants/vm/storage/disk-type';
 import { UIDiskValidation } from './types';
+import { TemplateValidations } from '../template/template-validations';
 
 const validateDiskName = (name: string, usedDiskNames: Set<string>): ValidationObject => {
   let validation = validateDNS1123SubdomainValue(name);
@@ -54,11 +54,11 @@ export const validateDisk = (
   {
     usedDiskNames,
     usedPVCNames,
-    allowedBusses,
+    templateValidations,
   }: {
     usedDiskNames?: Set<string>;
     usedPVCNames?: Set<string>;
-    allowedBusses: Set<DiskBus>;
+    templateValidations: TemplateValidations;
   },
 ): UIDiskValidation => {
   const validations = {
@@ -82,6 +82,8 @@ export const validateDisk = (
     dataVolume && dataVolume.getType(),
     !!persistentVolumeClaimWrapper,
   );
+
+  const tValidations = templateValidations || new TemplateValidations();
 
   if (source) {
     if (source.requiresVolume()) {
@@ -139,12 +141,20 @@ export const validateDisk = (
     // TODO: implement CDROM disk bus validation
     if (disk.getType() === DiskType.DISK) {
       addRequired(disk.getDiskBus());
-      validations.diskInterface = validateBus(disk.getDiskBus(), allowedBusses);
+      validations.diskInterface = tValidations.validateBus(disk.getDiskBus()).asValidationObject();
     }
   }
+
   return {
     validations,
     hasAllRequiredFilled: !!hasAllRequiredFilled,
-    isValid: !!hasAllRequiredFilled && !Object.keys(validations).find((key) => validations[key]),
+    isValid:
+      !!hasAllRequiredFilled &&
+      !Object.keys(validations).find(
+        (key) =>
+          validations[key] &&
+          (validations[key].type === ValidationErrorType.Error ||
+            validations[key].type === ValidationErrorType.TrivialError),
+      ),
   };
 };

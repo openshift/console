@@ -7,6 +7,7 @@ import {
   IntervalValidationResult,
   MemoryIntervalValidationResult,
 } from './interval-validation-result';
+import { DiskBusValidationResult } from './disk-bus-validation-result';
 
 // TODO: Add all the fields in the form
 export class ValidationJSONPath extends ValueEnum<string> {
@@ -31,6 +32,45 @@ export class TemplateValidations {
     }
 
     return this.validateMemoryByType(value, ValidationErrorType.Warn);
+  };
+
+  getAllowedBuses = (
+    validationErrorType: ValidationErrorType = ValidationErrorType.Error,
+  ): Set<DiskBus> => {
+    const allowedBuses = this.getAllowedEnumValues(ValidationJSONPath.BUS, validationErrorType).map(
+      DiskBus.fromString,
+    );
+
+    return new Set(allowedBuses.length === 0 ? DiskBus.getAll() : allowedBuses);
+  };
+
+  getRecommendedBuses = (): Set<DiskBus> => {
+    const allowedBuses = this.getAllowedBuses();
+    const recommendedBuses = [...this.getAllowedBuses(ValidationErrorType.Warn)].filter((b) =>
+      allowedBuses.has(b),
+    );
+    return recommendedBuses.length === 0 ? allowedBuses : new Set(recommendedBuses);
+  };
+
+  validateBus = (
+    bus: DiskBus,
+    validationErrorType: ValidationErrorType = ValidationErrorType.Error,
+  ): DiskBusValidationResult => {
+    const allowedBuses = this.getAllowedBuses();
+    if (allowedBuses.has(bus)) {
+      const recommededBuses = this.getRecommendedBuses();
+      return new DiskBusValidationResult({
+        allowedBuses: recommededBuses,
+        type: ValidationErrorType.Warn,
+        isValid: recommededBuses.has(bus),
+      });
+    }
+
+    return new DiskBusValidationResult({
+      allowedBuses,
+      type: validationErrorType,
+      isValid: allowedBuses.has(bus),
+    });
   };
 
   private validateMemoryByType = (
@@ -109,15 +149,6 @@ export class TemplateValidations {
       isMinInclusive,
       isMaxInclusive,
     });
-  };
-
-  getAllowedBusses = (): Set<DiskBus> => {
-    const allowedBusses = this.getAllowedEnumValues(
-      ValidationJSONPath.BUS,
-      ValidationErrorType.Error,
-    ).map(DiskBus.fromString);
-
-    return new Set(allowedBusses.length === 0 ? DiskBus.getAll() : allowedBusses);
   };
 
   // Empty array means all values are allowed

@@ -25,7 +25,6 @@ import { DiskModal } from '../../../modals/disk-modal';
 import { VM_TEMPLATE_NAME_PARAMETER } from '../../../../constants/vm-templates';
 import { PersistentVolumeClaimWrapper } from '../../../../k8s/wrapper/vm/persistent-volume-claim-wrapper';
 import { TemplateValidations } from '../../../../utils/validations/template/template-validations';
-import { DiskBus } from '../../../../constants/vm/storage/disk-bus';
 import { getTemplateValidation } from '../../selectors/template';
 
 const VMWizardStorageModal: React.FC<VMWizardStorageModalProps> = (props) => {
@@ -84,10 +83,6 @@ const VMWizardStorageModal: React.FC<VMWizardStorageModalProps> = (props) => {
     },
   ];
 
-  const allowedBusses: Set<DiskBus> = (
-    templateValidations || new TemplateValidations()
-  ).getAllowedBusses();
-
   return (
     <Firehose resources={resources}>
       <DiskModal
@@ -98,7 +93,7 @@ const VMWizardStorageModal: React.FC<VMWizardStorageModalProps> = (props) => {
         onNamespaceChanged={(n) => setNamespace(n)}
         usedDiskNames={usedDiskNames}
         usedPVCNames={usedPVCNames}
-        allowedBusses={allowedBusses}
+        templateValidations={templateValidations}
         disk={diskWrapper}
         volume={volumeWrapper}
         dataVolume={dataVolumeWrapper}

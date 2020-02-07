@@ -48,6 +48,7 @@ import { CombinedDisk } from '../../../k8s/wrapper/vm/combined-disk';
 import { PersistentVolumeClaimWrapper } from '../../../k8s/wrapper/vm/persistent-volume-claim-wrapper';
 import { BinaryUnit } from '../../form/size-unit-utils';
 import { StorageUISource } from './storage-ui-source';
+import { TemplateValidations } from '../../../utils/validations/template/template-validations';
 
 export const DiskModal = withHandlePromise((props: DiskModalProps) => {
   const {
@@ -69,13 +70,15 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
     handlePromise,
     close,
     cancel,
-    allowedBusses = new Set(DiskBus.getAll()),
+    templateValidations,
   } = props;
   const asId = prefixedID.bind(null, 'disk');
   const disk = props.disk || DiskWrapper.EMPTY;
   const volume = props.volume || VolumeWrapper.EMPTY;
   const dataVolume = props.dataVolume || DataVolumeWrapper.EMPTY;
-  const validAllowedBusses = allowedBusses || new Set(DiskBus.getAll());
+  const tValidations = templateValidations || new TemplateValidations();
+  const validAllowedBuses = tValidations.getAllowedBuses();
+  const recommendedBuses = tValidations.getRecommendedBuses();
 
   const combinedDisk = new CombinedDisk({
     diskWrapper: disk,
@@ -107,9 +110,9 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
     disk.getDiskBus() ||
       (isEditing
         ? null
-        : validAllowedBusses.has(DiskBus.VIRTIO)
+        : validAllowedBuses.has(DiskBus.VIRTIO)
         ? DiskBus.VIRTIO
-        : [...validAllowedBusses][0]),
+        : [...validAllowedBuses][0]),
   );
   const [storageClassName, setStorageClassName] = React.useState<string>(
     combinedDisk.getStorageClassName(),
@@ -185,7 +188,7 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
   } = validateDisk(resultDisk, resultVolume, resultDataVolume, resultPersistentVolumeClaim, {
     usedDiskNames,
     usedPVCNames,
-    allowedBusses,
+    templateValidations,
   });
 
   const [showUIError, setShowUIError] = useShowErrorToggler(false, isValid, isValid);
@@ -395,15 +398,22 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
               isDisabled={inProgress}
             >
               <FormSelectPlaceholderOption isDisabled placeholder="--- Select Interface ---" />
-              {!validAllowedBusses.has(bus) && (
+              {!validAllowedBuses.has(bus) && (
                 <FormSelectOption
+                  isDisabled
                   key={bus.getValue()}
                   value={bus.getValue()}
-                  label={`${bus.toString()} --- Invalid ---`}
+                  label={bus.toString()}
                 />
               )}
-              {[...validAllowedBusses].map((b) => (
-                <FormSelectOption key={b.getValue()} value={b.getValue()} label={b.toString()} />
+              {[...validAllowedBuses].map((b) => (
+                <FormSelectOption
+                  key={b.getValue()}
+                  value={b.getValue()}
+                  label={`${b.toString()}${
+                    !recommendedBuses.has(b) && b !== bus ? ' --- Not Recommended ---' : ''
+                  }`}
+                />
               ))}
             </FormSelect>
           </FormRow>
@@ -466,7 +476,7 @@ export type DiskModalProps = {
   vmNamespace: string;
   namespace: string;
   onNamespaceChanged: (namespace: string) => void;
-  allowedBusses?: Set<DiskBus>;
+  templateValidations?: TemplateValidations;
   usedDiskNames: Set<string>;
   usedPVCNames: Set<string>;
 } & ModalComponentProps &

@@ -84,11 +84,11 @@ export const validateURL = (
   return parseURL(value) ? null : asValidationObject(addMissingSubject(URL_INVALID_ERROR, subject));
 };
 
-export const validateBus = (value: DiskBus, allowedBusses: Set<DiskBus>): ValidationObject => {
-  if (allowedBusses && !allowedBusses.has(value)) {
+export const validateBus = (value: DiskBus, allowedBuses: Set<DiskBus>): ValidationObject => {
+  if (allowedBuses && !allowedBuses.has(value)) {
     return asValidationObject(
       `Invalid interface type. Valid types are: ${joinGrammaticallyListOfItems(
-        [...allowedBusses].map((b) => b.toString()),
+        [...allowedBuses].map((b) => b.toString()),
       )}`,
       ValidationErrorType.Error,
     );

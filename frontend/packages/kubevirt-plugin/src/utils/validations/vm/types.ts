@@ -6,7 +6,7 @@ export type UIDiskValidation = {
     size?: ValidationObject;
     url?: ValidationObject;
     container?: ValidationObject;
-    diskInterface: ValidationObject;
+    diskInterface?: ValidationObject;
     pvc?: ValidationObject;
   };
   isValid: boolean;
