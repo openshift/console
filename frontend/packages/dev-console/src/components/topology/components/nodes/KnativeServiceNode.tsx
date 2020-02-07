@@ -97,7 +97,7 @@ const KnativeServiceNode: React.FC<KnativeServiceNodeProps> = ({
         rx="5"
         ry="5"
       />
-      <GroupNode kind={kind} title={element.getLabel()}>
+      <GroupNode kind={kind} title={element.getLabel()} typeIconClass="icon-knative">
         <ResourceKindsInfo
           groupResources={element.getData().groupResources}
           emptyKind="Revisions"

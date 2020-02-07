@@ -10,10 +10,10 @@
 
   &__bg {
     fill: $group-node-fill-color;
-    fill-opacity: 0.5;
+    fill-opacity: $group-node-fill-opacity;
     stroke: $group-node-stroke-color;
-    stroke-width: 4px;
-    stroke-dasharray: 9;
+    stroke-width: $group-node-stroke-width;
+    stroke-dasharray: $group-node-stroke-dasharray;
   }
 
   &.is-filtered &__bg {

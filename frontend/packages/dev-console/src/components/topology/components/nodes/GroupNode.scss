@@ -3,4 +3,8 @@
     font-size: var(--pf-global--FontSize--lg);
     font-weight: var(--pf-global--FontWeight--bold);
   }
+  &__type-icon {
+    fill: var(--pf-global--Color--light-100);
+    font-size: var(--pf-global--FontSize--md);
+  }
 }

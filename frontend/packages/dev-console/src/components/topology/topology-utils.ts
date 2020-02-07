@@ -698,7 +698,10 @@ export const topologyModelFromDataModel = (
         type: d.type,
         label: dataModel.topology[d.id].name,
         data,
-        collapsed: d.type === TYPE_KNATIVE_SERVICE && filters && !filters.display.knativeServices,
+        collapsed:
+          filters &&
+          ((d.type === TYPE_KNATIVE_SERVICE && !filters.display.knativeServices) ||
+            (d.type === TYPE_OPERATOR_BACKED_SERVICE && !filters.display.operatorGrouping)),
         children: d.children,
         group: d.children?.length > 0,
         shape: NodeShape.rect,
@@ -774,15 +777,28 @@ export const updateTopologyResourceApplication = (
     return Promise.reject();
   }
 
-  const resource = getTopologyResourceObject(item);
+  const resources: K8sResourceKind[] = [];
+  const updates: Promise<any>[] = [];
 
-  const resourceKind = modelFor(referenceFor(resource));
-  if (!resourceKind) {
-    return Promise.reject(
-      new Error(`Unable to update application, invalid resource type: ${resource.kind}`),
-    );
+  resources.push(getTopologyResourceObject(item));
+
+  if (item.type === TYPE_OPERATOR_BACKED_SERVICE) {
+    _.forEach(item.groupResources, (groupResource) => {
+      resources.push(getTopologyResourceObject(groupResource));
+    });
   }
-  return updateResourceApplication(resourceKind, resource, application);
+
+  for (const resource of resources) {
+    const resourceKind = modelFor(referenceFor(resource));
+    if (!resourceKind) {
+      return Promise.reject(
+        new Error(`Unable to update application, invalid resource type: ${resource.kind}`),
+      );
+    }
+    updates.push(updateResourceApplication(resourceKind, resource, application));
+  }
+
+  return Promise.all(updates);
 };
 
 export const createTopologyResourceConnection = (

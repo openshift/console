@@ -29,7 +29,7 @@ import ConnectedTopologyEdgePanel from './TopologyEdgePanel';
 import { topologyModelFromDataModel } from './topology-utils';
 import { layoutFactory, COLA_LAYOUT, COLA_FORCE_LAYOUT } from './layouts/layoutFactory';
 import ComponentFactory from './componentFactory';
-import { TYPE_APPLICATION_GROUP, TYPE_HELM_RELEASE } from './const';
+import { TYPE_APPLICATION_GROUP, TYPE_HELM_RELEASE, TYPE_OPERATOR_BACKED_SERVICE } from './const';
 import TopologyFilterBar from './filters/TopologyFilterBar';
 import { getTopologyFilters, TopologyFilters } from './filters/filter-utils';
 import TopologyHelmReleasePanel from './TopologyHelmReleasePanel';
@@ -200,6 +200,9 @@ const Topology: React.FC<TopologyProps> = ({ data, serviceBinding, filters }) =>
       if (selectedEntity.getType() === TYPE_HELM_RELEASE) {
         return <TopologyHelmReleasePanel helmRelease={selectedEntity} />;
       }
+      if (selectedEntity.getType() === TYPE_OPERATOR_BACKED_SERVICE) {
+        return null;
+      }
       return <TopologyResourcePanel item={selectedEntity.getData() as TopologyDataObject} />;
     }
 
@@ -212,9 +215,14 @@ const Topology: React.FC<TopologyProps> = ({ data, serviceBinding, filters }) =>
   const renderSideBar = () => {
     const selectedEntity =
       selectedIds.length === 0 ? null : visRef.current.getElementById(selectedIds[0]);
+    const details = selectedItemDetails();
+    if (!selectedEntity || !details) {
+      return null;
+    }
+
     return (
-      <TopologySideBar show={!!selectedEntity} onClose={onSidebarClose}>
-        {selectedEntity && selectedItemDetails()}
+      <TopologySideBar show={!!selectedEntity && !!details} onClose={onSidebarClose}>
+        {selectedEntity && details}
       </TopologySideBar>
     );
   };
@@ -223,12 +231,14 @@ const Topology: React.FC<TopologyProps> = ({ data, serviceBinding, filters }) =>
     return null;
   }
 
+  const sideBar = renderSideBar();
+
   return (
     <TopologyView
       viewToolbar={<TopologyFilterBar />}
       controlBar={renderControlBar()}
-      sideBar={renderSideBar()}
-      sideBarOpen={selectedIds.length > 0}
+      sideBar={sideBar}
+      sideBarOpen={!!sideBar}
     >
       <VisualizationSurface visualization={visRef.current} state={{ selectedIds }} />
     </TopologyView>
