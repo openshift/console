@@ -1,11 +1,17 @@
 import * as React from 'react';
 import * as _ from 'lodash';
-import { FirehoseResource, FirehoseResult, ResourceLink } from '@console/internal/components/utils';
+import {
+  FirehoseResource,
+  FirehoseResult,
+  ResourceLink,
+  resourcePathFromModel,
+} from '@console/internal/components/utils';
 import { EventModel, MachineModel, NodeModel } from '@console/internal/models';
 import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
 import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
 import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
 import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
+import DashboardCardLink from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardLink';
 import ActivityBody, {
   RecentEventsBody,
   Activity,
@@ -73,6 +79,15 @@ const EventsCard: React.FC<EventsCardProps> = ({
     <DashboardCard gradient>
       <DashboardCardHeader>
         <DashboardCardTitle>Activity</DashboardCardTitle>
+        <DashboardCardLink
+          to={`${resourcePathFromModel(
+            BareMetalHostModel,
+            getName(obj),
+            getNamespace(obj),
+          )}/events`}
+        >
+          View events
+        </DashboardCardLink>
       </DashboardCardHeader>
       <DashboardCardBody>
         <ActivityBody>
