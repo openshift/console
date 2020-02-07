@@ -36,65 +36,88 @@ const NotificationIcon: React.FC<NotificationIconTypes> = ({ type }) => {
   }
 };
 
+const NotificationAction: React.FC<NotificationActionProps> = ({ onClick, text, path }) => (
+  <div className="pf-c-notification-drawer__header-action">
+    <Link
+      to={path}
+      onClick={(e) => {
+        e.stopPropagation();
+        onClick(e);
+      }}
+    >
+      {text}
+    </Link>
+  </div>
+);
+
 const NotificationEntry: React.FC<NotificationEntryProps> = ({
+  actionText,
+  actionPath,
   title,
   description,
   isRead = false,
   timestamp,
-  targetURL,
+  targetPath,
   toggleNotificationDrawer,
   type,
-}) => {
-  const notificationAction = type === NotificationTypes.update && targetURL && (
-    <div className="pf-c-notification-drawer__header-action">
-      <Link to="">Install Update</Link>
+}) => (
+  <li
+    className={classNames(`pf-c-notification-drawer__list-item pf-m-hoverable pf-m-${type}`, {
+      'pf-m-read': isRead,
+    })}
+    tabIndex={0}
+    onClick={
+      targetPath
+        ? () => {
+            history.push(targetPath);
+            toggleNotificationDrawer();
+          }
+        : null
+    }
+  >
+    <div className="pf-c-notification-drawer__list-item-header">
+      <span className="pf-c-notification-drawer__list-item-header-icon">
+        <NotificationIcon type={type} />
+      </span>
+      <h4 className="pf-c-notification-drawer__list-item-header-title">
+        <span className="pf-screen-reader">{`${_.capitalize(type)} notification:`}</span>
+        {title}
+      </h4>
+      {actionText && actionPath && (
+        <NotificationAction
+          text={actionText}
+          path={actionPath}
+          onClick={toggleNotificationDrawer}
+        />
+      )}
     </div>
-  );
-  return (
-    <li
-      className={classNames(`pf-c-notification-drawer__list-item pf-m-hoverable pf-m-${type}`, {
-        'pf-m-read': isRead,
-      })}
-      tabIndex={0}
-      onClick={
-        targetURL
-          ? () => {
-              history.push(targetURL);
-              toggleNotificationDrawer();
-            }
-          : null
-      }
-    >
-      <div className="pf-c-notification-drawer__list-item-header">
-        <span className="pf-c-notification-drawer__list-item-header-icon">
-          <NotificationIcon type={type} />
-        </span>
-        <h4 className="pf-c-notification-drawer__list-item-header-title">
-          <span className="pf-screen-reader">{`${_.capitalize(type)} notification:`}</span>
-          {title}
-        </h4>
-        {notificationAction}
-      </div>
-      <div className="pf-c-notification-drawer__list-item-description">{description}</div>
-      <div className="pf-c-notification-drawer__list-item-timestamp">
-        {timestamp && <Timestamp simple timestamp={timestamp} />}
-      </div>
-    </li>
-  );
-};
+    <div className="pf-c-notification-drawer__list-item-description">{description}</div>
+    <div className="pf-c-notification-drawer__list-item-timestamp">
+      {timestamp && <Timestamp simple timestamp={timestamp} />}
+    </div>
+  </li>
+);
 
 export type NotificationEntryProps = {
-  title: string;
+  actionText?: string;
+  actionPath?: string;
   description: string;
   isRead?: boolean;
-  targetURL?: string;
+  targetPath?: string;
   timestamp?: string;
+  title: string;
   toggleNotificationDrawer?: () => any;
   type: NotificationTypes;
 };
 
 type NotificationIconTypes = {
   type: NotificationTypes;
+};
+
+type NotificationActionProps = {
+  onClick: (event: React.MouseEvent<HTMLElement>) => void;
+  text: string;
+  path: string;
 };
 
 export default NotificationEntry;
