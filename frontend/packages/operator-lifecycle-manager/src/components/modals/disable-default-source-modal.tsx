@@ -46,19 +46,14 @@ const DisableDefaultSourceModal: React.FC<DisableSourceModalProps> = ({
 
   return (
     <form onSubmit={submit} name="form" className="modal-content ">
-      <ModalTitle>Disable Catalog Source</ModalTitle>
+      <ModalTitle>
+        <YellowExclamationTriangleIcon className="co-icon-space-r" /> Disable Catalog Source?
+      </ModalTitle>
       <ModalBody>
-        <div className="co-delete-modal">
-          <YellowExclamationTriangleIcon className="co-delete-modal__icon" />
-          <div>
-            <p>
-              By disabling a default source, the operators it provides will no longer appear in
-              OperatorHub and any operator that has been installed from this source will no longer
-              receive updates until the source is re-enabled. Disabling the source will also remove
-              the corresponding OperatorSource and CatalogSource resources from the cluster.
-            </p>
-          </div>
-        </div>
+        By disabling a default source, the operators it provides will no longer appear in
+        OperatorHub and any operator that has been installed from this source will no longer receive
+        updates until the source is re-enabled. Disabling the source will also remove the
+        corresponding OperatorSource and CatalogSource resources from the cluster.
       </ModalBody>
       <ModalSubmitFooter
         submitText="Disable"

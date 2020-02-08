@@ -49,39 +49,33 @@ class DeleteModal extends PromiseComponent {
     const { kind, resource, message } = this.props;
     return (
       <form onSubmit={this._submit} name="form" className="modal-content ">
-        <ModalTitle>Delete {kind.label}</ModalTitle>
+        <ModalTitle>
+          <YellowExclamationTriangleIcon className="co-icon-space-r" /> Delete {kind.label}?
+        </ModalTitle>
         <ModalBody className="modal-body">
-          <div className="co-delete-modal">
-            <YellowExclamationTriangleIcon className="co-delete-modal__icon" />
-            <div>
-              <p className="lead">
-                Delete <span className="co-break-word">{resource.metadata.name}</span>?
-              </p>
-              {message}
-              <div>
-                Are you sure you want to delete{' '}
-                <strong className="co-break-word">{resource.metadata.name}</strong>
-                {_.has(resource.metadata, 'namespace') && (
-                  <span>
-                    {' '}
-                    in namespace <strong>{resource.metadata.namespace}</strong>
-                  </span>
-                )}
-                ?
-                {_.has(kind, 'propagationPolicy') && (
-                  <div className="checkbox">
-                    <label className="control-label">
-                      <input
-                        type="checkbox"
-                        onChange={() => this.setState({ isChecked: !this.state.isChecked })}
-                        checked={!!this.state.isChecked}
-                      />
-                      Delete dependent objects of this resource
-                    </label>
-                  </div>
-                )}
+          {message}
+          <div>
+            Are you sure you want to delete{' '}
+            <strong className="co-break-word">{resource.metadata.name}</strong>
+            {_.has(resource.metadata, 'namespace') && (
+              <span>
+                {' '}
+                in namespace <strong>{resource.metadata.namespace}</strong>
+              </span>
+            )}
+            ?
+            {_.has(kind, 'propagationPolicy') && (
+              <div className="checkbox">
+                <label className="control-label">
+                  <input
+                    type="checkbox"
+                    onChange={() => this.setState({ isChecked: !this.state.isChecked })}
+                    checked={!!this.state.isChecked}
+                  />
+                  Delete dependent objects of this resource
+                </label>
               </div>
-            </div>
+            )}
           </div>
         </ModalBody>
         <ModalSubmitFooter

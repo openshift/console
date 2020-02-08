@@ -31,29 +31,27 @@ class DeleteNamespaceModal extends PromiseComponent {
   render() {
     return (
       <form onSubmit={this._submit} name="form" className="modal-content ">
-        <ModalTitle>Delete {this.props.kind.label}</ModalTitle>
+        <ModalTitle className="modal-header">
+          <YellowExclamationTriangleIcon className="co-icon-space-r" /> Delete{' '}
+          {this.props.kind.label}?
+        </ModalTitle>
         <ModalBody>
-          <div className="co-delete-modal">
-            <YellowExclamationTriangleIcon className="co-delete-modal__icon" />
-            <div>
-              <p>
-                This action cannot be undone. It will destroy all pods, services and other objects
-                in the deleted namespace.
-              </p>
-              <p>
-                Confirm deletion by typing{' '}
-                <strong className="co-break-word">{this.props.resource.metadata.name}</strong>{' '}
-                below:
-              </p>
-              <input
-                type="text"
-                className="pf-c-form-control"
-                onKeyUp={this._matchTypedNamespace}
-                placeholder="Enter name"
-                autoFocus={true}
-              />
-            </div>
-          </div>
+          <p>
+            This action cannot be undone. It will destroy all pods, services and other objects in
+            the namespace{' '}
+            <strong className="co-break-word">{this.props.resource.metadata.name}</strong>.
+          </p>
+          <p>
+            Confirm deletion by typing{' '}
+            <strong className="co-break-word">{this.props.resource.metadata.name}</strong> below:
+          </p>
+          <input
+            type="text"
+            className="pf-c-form-control"
+            onKeyUp={this._matchTypedNamespace}
+            placeholder="Enter name"
+            autoFocus={true}
+          />
         </ModalBody>
         <ModalSubmitFooter
           submitText="Delete"

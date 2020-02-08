@@ -89,7 +89,7 @@ export class ConfigureMachineAutoscalerModal extends PromiseComponent<
             This will automatically scale machine set <b>{name}</b>.
           </p>
           <div className="form-group">
-            <label className="co-delete-modal-checkbox-label">
+            <label>
               Minimum Replicas:
               <NumberSpinner
                 className="pf-c-form-control"
@@ -102,7 +102,7 @@ export class ConfigureMachineAutoscalerModal extends PromiseComponent<
             </label>
           </div>
           <div className="form-group">
-            <label className="co-delete-modal-checkbox-label">
+            <label>
               Maximum Replicas:
               <NumberSpinner
                 className="pf-c-form-control"

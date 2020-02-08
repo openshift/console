@@ -74,31 +74,25 @@ export const RemoveVolumeModal: React.FC<RemoveVolumeModalProps> = (props) => {
   const type: string = _.get(getVolumeType(volume.volumeDetail), 'id', '');
   return (
     <form onSubmit={submit} className="modal-content">
-      <ModalTitle>Remove Volume</ModalTitle>
+      <ModalTitle>
+        <YellowExclamationTriangleIcon className="co-icon-space-r" /> Remove Volume?
+      </ModalTitle>
       <ModalBody className="modal-body">
-        <div className="co-delete-modal">
-          <YellowExclamationTriangleIcon className="co-delete-modal__icon" />
-          <div>
-            <p className="lead">
-              Remove volume <span className="co-break-word">{volume.name}</span>?
-            </p>
-            <div>
-              Are you sure you want to remove volume{' '}
-              <strong className="co-break-word">{volume.name}</strong>
-              <span>
-                {' '}
-                from <strong>{kind.label}</strong>: <strong>{resource.metadata.name}</strong>?
-              </span>
-            </div>
-            {type && (
-              <div>
-                <label className="control-label">
-                  Note: This will not remove the underlying {type}.
-                </label>
-              </div>
-            )}
-          </div>
+        <div>
+          Are you sure you want to remove volume{' '}
+          <strong className="co-break-word">{volume.name}</strong>
+          <span>
+            {' '}
+            from <strong>{kind.label}</strong>: <strong>{resource.metadata.name}</strong>?
+          </span>
         </div>
+        {type && (
+          <div>
+            <label className="control-label">
+              Note: This will not remove the underlying {type}.
+            </label>
+          </div>
+        )}
       </ModalBody>
       <ModalSubmitFooter
         errorMessage={errorMessage}

@@ -23,16 +23,11 @@ export const RemoveUserModal = withHandlePromise((props: RemoveUserModalProps) =
 
   return (
     <form onSubmit={submit} name="form" className="modal-content ">
-      <ModalTitle>Remove User from Group</ModalTitle>
+      <ModalTitle>
+        <YellowExclamationTriangleIcon className="co-icon-space-r" /> Remove User from Group?
+      </ModalTitle>
       <ModalBody>
-        <div className="co-delete-modal">
-          <YellowExclamationTriangleIcon className="co-delete-modal__icon" />
-          <div>
-            <p>
-              Remove user {props.user} from group {props.group.metadata.name}?
-            </p>
-          </div>
-        </div>
+        Remove user {props.user} from group {props.group.metadata.name}?
       </ModalBody>
       <ModalSubmitFooter
         errorMessage={props.errorMessage}
