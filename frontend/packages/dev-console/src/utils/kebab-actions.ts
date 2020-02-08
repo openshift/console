@@ -5,7 +5,6 @@ import {
   DaemonSetModel,
   DeploymentConfigModel,
   DeploymentModel,
-  ServiceModel,
   StatefulSetModel,
 } from '@console/internal/models';
 import { ModifyApplication, EditApplication } from '../actions/modify-application';
@@ -15,7 +14,6 @@ const modifyApplicationRefs = [
   referenceFor(DeploymentModel),
   referenceFor(DaemonSetModel),
   referenceFor(StatefulSetModel),
-  referenceFor(ServiceModel),
 ];
 
 export const getKebabActionsForKind = (resourceKind: K8sKind): KebabAction[] => {

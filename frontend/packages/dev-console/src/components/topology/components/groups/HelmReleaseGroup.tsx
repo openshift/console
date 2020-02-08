@@ -79,7 +79,6 @@ const HelmReleaseGroup: React.FC<HelmReleaseGroupProps> = ({ element, onSelect, 
             paddingX={8}
             paddingY={4}
             kind="HelmRelease"
-            truncate={16}
             dragRef={dragLabelRef}
             typeIconClass="icon-helm"
           >

@@ -90,7 +90,6 @@ const OperatorBackedServiceGroup: React.FC<OperatorBackedServiceGroupProps> = ({
           paddingX={8}
           paddingY={4}
           kind="Operator"
-          truncate={16}
           dragRef={dragLabelRef}
           typeIconClass={element.getData().data.builderImage}
         >

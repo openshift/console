@@ -82,7 +82,6 @@ const EventSource: React.FC<EventSourceProps> = ({
           paddingX={8}
           paddingY={4}
           kind={data.kind}
-          truncate={16}
         >
           {element.getLabel()}
         </SvgBoxedText>
