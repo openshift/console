@@ -84,7 +84,7 @@ const HelmReleaseList: React.FC<HelmReleaseListProps> = ({ namespace, secrets })
     return (
       <CheckBoxes
         key={i}
-        applyFilter={applyRowFilter}
+        onFilterChange={applyRowFilter}
         items={items}
         itemCount={_.size(releases)}
         numbers={_.countBy(releases, reducer)}
