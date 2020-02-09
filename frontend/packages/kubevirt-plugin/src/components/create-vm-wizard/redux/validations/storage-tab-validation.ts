@@ -71,7 +71,10 @@ export const validateStorages = (options: UpdateOptions) => {
 export const setStoragesTabValidity = (options: UpdateOptions) => {
   const { id, dispatch, getState } = options;
   const state = getState();
-  const iStorages = iGetStorages(state, id);
+
+  const iStorages = iGetStorages(state, id).filter(
+    (iStorage) => !iGetIn(iStorage, ['disk', 'cdrom']),
+  );
   let error = null;
 
   let hasAllRequiredFilled = iStorages.every((iStorage) =>

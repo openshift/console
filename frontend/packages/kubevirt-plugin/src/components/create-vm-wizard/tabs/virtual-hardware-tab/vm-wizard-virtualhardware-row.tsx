@@ -25,6 +25,7 @@ export const VmWizardVirtualHardwareRow: React.FC<VmWizardVirtualHardwareRowProp
       validation={{
         content: validations.content || validations.url || validations.container || validations.pvc,
         size: validations.size,
+        diskInterface: validations.diskInterface,
       }}
       columnClasses={columnClasses}
       index={index}

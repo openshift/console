@@ -84,6 +84,7 @@ export const validateDisk = (
   );
 
   const tValidations = templateValidations || new TemplateValidations();
+  const diskType = disk.getType();
 
   if (source) {
     if (source.requiresVolume()) {
@@ -138,8 +139,7 @@ export const validateDisk = (
       validations.pvc = validatePVCName(pvcName, usedPVCNames);
     }
 
-    // TODO: implement CDROM disk bus validation
-    if (disk.getType() === DiskType.DISK) {
+    if (diskType !== DiskType.FLOPPY) {
       addRequired(disk.getDiskBus());
       validations.diskInterface = tValidations.validateBus(disk.getDiskBus()).asValidationObject();
     }

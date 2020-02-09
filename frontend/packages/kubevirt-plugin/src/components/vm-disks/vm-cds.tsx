@@ -34,6 +34,11 @@ export const VMCDsTable: React.FC<VMCDsTableProps> = ({
               transforms: [sortable],
             },
             {
+              title: 'Interface',
+              sortField: 'diskInterface',
+              transforms: [sortable],
+            },
+            {
               title: 'Storage Class',
               sortField: 'storageClass',
               transforms: [sortable],

@@ -9,8 +9,14 @@ import {
 } from './validations/vm-settings-tab-validation';
 import { setNetworksTabValidity, validateNetworks } from './validations/networks-tab-validation';
 import { setStoragesTabValidity, validateStorages } from './validations/storage-tab-validation';
+import { setVirtualHardwareTabValidity } from './validations/virtual-hardware-tab-validation';
 
-const UPDATE_TABS = [VMWizardTab.VM_SETTINGS, VMWizardTab.NETWORKING, VMWizardTab.STORAGE];
+const UPDATE_TABS = [
+  VMWizardTab.VM_SETTINGS,
+  VMWizardTab.NETWORKING,
+  VMWizardTab.STORAGE,
+  VMWizardTab.ADVANCED_VIRTUAL_HARDWARE,
+];
 
 const updaterResolver = {
   [VMWizardTab.VM_SETTINGS]: updateVmSettingsState,
@@ -27,6 +33,7 @@ const isTabValidResolver = {
   [VMWizardTab.VM_SETTINGS]: setVmSettingsTabValidity,
   [VMWizardTab.NETWORKING]: setNetworksTabValidity,
   [VMWizardTab.STORAGE]: setStoragesTabValidity,
+  [VMWizardTab.ADVANCED_VIRTUAL_HARDWARE]: setVirtualHardwareTabValidity,
 };
 
 export const updateAndValidateState = (options: UpdateOptions) => {

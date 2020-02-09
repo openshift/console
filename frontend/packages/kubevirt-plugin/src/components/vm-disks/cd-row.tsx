@@ -15,7 +15,7 @@ export type VMCDSimpleRowProps = {
 };
 
 export const CDSimpleRow: React.FC<VMCDSimpleRowProps> = ({
-  data: { source, content, storageClass },
+  data: { source, content, diskInterface, storageClass },
   validation = {},
   columnClasses,
   actionsComponent,
@@ -25,6 +25,7 @@ export const CDSimpleRow: React.FC<VMCDSimpleRowProps> = ({
   const dimensify = dimensifyRow(columnClasses);
 
   const isStorageClassLoading = storageClass === undefined;
+
   return (
     <TableRow id={content} index={index} trKey={content} style={style}>
       <TableData className={dimensify()}>
@@ -32,6 +33,9 @@ export const CDSimpleRow: React.FC<VMCDSimpleRowProps> = ({
       </TableData>
       <TableData className={dimensify()}>
         <ValidationCell validation={validation.source}>{source}</ValidationCell>
+      </TableData>
+      <TableData className={dimensify()}>
+        <ValidationCell validation={validation.diskInterface}>{diskInterface}</ValidationCell>
       </TableData>
       <TableData className={dimensify()}>
         {isStorageClassLoading && <LoadingInline />}
