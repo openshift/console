@@ -22,8 +22,8 @@ export type DiskSourceConfig = {
 };
 
 export type StorageResource = {
-  name: string;
-  size: string;
+  name?: string;
+  size?: string;
   storageClass: string;
   interface: string;
   sourceConfig?: DiskSourceConfig;
@@ -65,6 +65,7 @@ export type VMConfig = {
   startOnCreation: boolean;
   cloudInit: CloudInitConfig;
   storageResources: StorageResource[];
+  CDRoms?: StorageResource[];
   networkResources: NetworkResource[];
   bootableDevice?: string;
 };
@@ -104,6 +105,7 @@ export type ProvisionConfig = {
   provision: ProvisionOption;
   networkResources: NetworkResource[];
   storageResources: StorageResource[];
+  CDRoms?: StorageResource[];
 };
 
 export type VMTemplateConfig = {

@@ -10,6 +10,7 @@ import {
   KUBEVIRT_PROJECT_NAME,
   COMMON_TEMPLATES_NAMESPACE,
   COMMON_TEMPLATES_REVISION,
+  DISK_SOURCE,
 } from './consts';
 import { getRandomMacAddress, getResourceObject, resolveStorageDataAttribute } from './utils';
 import { Flavor, OperatingSystem, WorkloadProfile } from './constants/wizard';
@@ -105,6 +106,15 @@ export const rootDisk: StorageResource = {
   size: '1',
   interface: DISK_INTERFACE.VirtIO,
   storageClass: `${STORAGE_CLASS}`,
+};
+
+export const cdContainerDisk: StorageResource = {
+  source: DISK_SOURCE.Container,
+  interface: DISK_INTERFACE.VirtIO,
+  storageClass: `${STORAGE_CLASS}`,
+  sourceConfig: {
+    container: 'test-container',
+  },
 };
 
 export const hddDisk: StorageResource = {
