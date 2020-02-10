@@ -205,7 +205,7 @@ export class VirtualMachine extends KubevirtDetailView {
     }
     if (provisionSource.method === ProvisionConfigName.PXE && template === undefined) {
       // Select the last NIC as the source for booting
-      await wizard.selectBootableNIC(networkResources[networkResources.length - 1].network);
+      await wizard.selectBootableNIC(networkResources[networkResources.length - 1].name);
     }
     await wizard.next();
 
