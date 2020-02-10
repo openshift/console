@@ -6,6 +6,7 @@ namespace ExtensionProperties {
   export interface KebabActions {
     // no kind should return any actions common for all kinds
     getKebabActionsForKind: (kind: K8sKind, resource?: K8sResourceKind) => KebabAction[];
+    required?: string | string[];
   }
 }
 
