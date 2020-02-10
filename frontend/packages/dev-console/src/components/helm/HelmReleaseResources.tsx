@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { MultiListPage } from '@console/internal/components/factory';
-import { K8sResourceKind, kindForReference } from '@console/internal/module/k8s';
+import { K8sResourceKind } from '@console/internal/module/k8s';
 import { DeploymentModel, StatefulSetModel, PodModel, SecretModel } from '@console/internal/models';
 import HelmResourcesListComponent from './HelmResourcesListComponent';
-import { flattenResources, helmReleaseResourceKindFilter } from './helm-release-resources-utils';
+import { flattenResources } from './helm-release-resources-utils';
 import { ServiceModel } from '../../../../knative-plugin/src/models';
 
 export interface HelmReleaseResourcesProps {
@@ -49,18 +49,6 @@ const HelmReleaseResources: React.FC<HelmReleaseResourcesProps> = ({ obj: resour
     <MultiListPage
       filterLabel={'Resources by name'}
       resources={resources}
-      rowFilters={[
-        {
-          type: 'helmrelease-resource-kind',
-          selected: resources.map(({ kind }) => kindForReference(kind)),
-          reducer: ({ kind }) => kindForReference(kind),
-          items: resources.map(({ kind }) => ({
-            id: kindForReference(kind),
-            title: kindForReference(kind),
-          })),
-          filter: helmReleaseResourceKindFilter,
-        },
-      ]}
       flatten={flattenResources}
       label="Resources"
       namespace={namespace}

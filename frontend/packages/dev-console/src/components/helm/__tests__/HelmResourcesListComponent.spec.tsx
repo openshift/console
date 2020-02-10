@@ -21,7 +21,7 @@ describe('HelmResourcesListComponent', () => {
     expect(helmResourcesListComponent.find(Table).exists()).toBe(true);
   });
   it('should render the proper Headers in the Resources tab', () => {
-    const expectedHelmResourcesPageHeader: string[] = ['Name', 'Kind', 'Status', 'Timestamp'];
+    const expectedHelmResourcesPageHeader: string[] = ['Name', 'Type', 'Status', 'Created'];
 
     const headers = helmResourcesListComponent
       .find(Table)
