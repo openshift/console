@@ -299,7 +299,7 @@ export function getVMIManifest(
     apiVersion: 'kubevirt.io/v1alpha3',
     kind: 'VirtualMachineInstance',
     metadata,
-    vmiSpec,
+    spec: vmiSpec,
   };
 
   return vmiResource;
@@ -333,7 +333,7 @@ export function getVMManifest(
             'vm.kubevirt.io/name': metadata.name,
           },
         },
-        vmiSpec,
+        spec: vmiSpec,
       },
     },
   };
