@@ -102,7 +102,7 @@ export type CreateYAMLProps = {
   header?: string;
   hideHeader?: boolean;
   resourceObjPath?: (obj: K8sResourceKind, kind: K8sResourceKindReference) => string;
-  onChange?: (yaml: string) => void;
+  onChange?: (yaml: string) => any;
 };
 
 export type EditYAMLPageProps = {

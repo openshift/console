@@ -9,8 +9,8 @@ import { CreateYAML } from '@console/internal/components/create-yaml';
 import { BreadCrumbs } from '@console/internal/components/utils';
 import { testClusterServiceVersion, testResourceInstance, testModel, testCRD } from '../../mocks';
 import { ClusterServiceVersionModel } from '../models';
+import { CreateOperandForm } from './create-operand-form';
 import {
-  CreateOperandForm,
   CreateOperandFormProps,
   CreateOperandPage,
   CreateOperandYAML,
@@ -64,12 +64,12 @@ describe(CreateOperand.displayName, () => {
     expect(wrapper.find(CreateOperandForm).exists()).toBe(false);
   });
 
-  it('passes sample object to YAML editor', () => {
+  it('passes buffer object to YAML editor', () => {
     const data = _.cloneDeep(testClusterServiceVersion);
     data.metadata.annotations = { 'alm-examples': JSON.stringify([testResourceInstance]) };
     wrapper = wrapper.setProps({ clusterServiceVersion: { data, loaded: true, loadError: null } });
 
-    expect(wrapper.find(CreateOperandYAML).props().sample).toEqual(testResourceInstance);
+    expect(wrapper.find(CreateOperandYAML).props().buffer).toEqual(testResourceInstance);
   });
 
   it('switches to form component when button is clicked', () => {
