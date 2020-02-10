@@ -62,7 +62,7 @@ export const MonitoringPage: React.FC<MonitoringPageProps> = ({ match }) => {
             />
           </>
         ) : (
-          <ProjectListPage title="Monitoring">
+          <ProjectListPage badge={<TechPreviewBadge />} title="Monitoring">
             Select a project to view monitoring metrics
           </ProjectListPage>
         )}
