@@ -21,7 +21,9 @@ export type Panel = {
   };
   panels: Panel[];
   postfix?: string;
+  postfixFontSize?: string;
   prefix?: string;
+  prefixFontSize?: string;
   span: number;
   stack: boolean;
   styles?: ColumnStyle[];
@@ -33,4 +35,5 @@ export type Panel = {
   transform?: string;
   type: string;
   units?: string;
+  valueFontSize?: string;
 };
