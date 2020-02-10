@@ -742,21 +742,26 @@ export const topologyModelFromDataModel = (
     };
   });
 
-  // create links from data
-  const edges = dataModel.graph.edges.map(
-    (d): EdgeModel => ({
-      data: d,
-      source: d.source,
-      target: d.target,
-      id: `${d.source}_${d.target}`,
-      type: d.type,
-    }),
-  );
+  // create links from data, only include those which have a valid source and target
+  const allNodes = [...nodes, ...groupNodes];
+  const edges = dataModel.graph.edges
+    .filter((d) => {
+      return allNodes.find((n) => n.id === d.source) && allNodes.find((n) => n.id === d.target);
+    })
+    .map(
+      (d): EdgeModel => ({
+        data: d,
+        source: d.source,
+        target: d.target,
+        id: `${d.source}_${d.target}`,
+        type: d.type,
+      }),
+    );
 
   // create topology model
   const model: Model = {
-    nodes: [...nodes, ...groupNodes],
-    edges: createAggregateEdges(TYPE_AGGREGATE_EDGE, edges, [...nodes, ...groupNodes]),
+    nodes: allNodes,
+    edges: createAggregateEdges(TYPE_AGGREGATE_EDGE, edges, allNodes),
   };
 
   return model;
