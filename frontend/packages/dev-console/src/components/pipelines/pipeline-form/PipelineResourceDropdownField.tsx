@@ -2,7 +2,7 @@ import * as React from 'react';
 import cx from 'classnames';
 import { useField, useFormikContext, FormikValues } from 'formik';
 import { FormGroup } from '@patternfly/react-core';
-import { DropdownFieldProps, getFieldId } from '@console/shared';
+import { DropdownFieldProps, getFieldId, useFormikValidationFix } from '@console/shared';
 import PipelineResourceDropdown from '../../dropdown/PipelineResourceDropdown';
 import PipelineResourceForm from '../pipeline-resource/PipelineResourceForm';
 
@@ -48,6 +48,8 @@ const PipelineResourceDropdownField: React.FC<PipelineResourceDropdownFieldProps
     },
     [field, props.name],
   );
+
+  useFormikValidationFix(field.value);
 
   return (
     <>

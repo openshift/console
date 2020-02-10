@@ -4,6 +4,7 @@ import { RequestSizeInput } from '@console/internal/components/utils';
 import { FormGroup } from '@patternfly/react-core';
 import { ResourceLimitFieldProps } from './field-types';
 import { getFieldId } from './field-utils';
+import { useFormikValidationFix } from '../../hooks';
 
 const ResourceLimitField: React.FC<ResourceLimitFieldProps> = ({
   label,
@@ -18,6 +19,9 @@ const ResourceLimitField: React.FC<ResourceLimitFieldProps> = ({
   const fieldId = getFieldId(props.name, 'resource-limit');
   const isValid = !(touched && error);
   const errorMessage = !isValid ? error : '';
+
+  useFormikValidationFix(field.value);
+
   return (
     <FormGroup
       fieldId={fieldId}

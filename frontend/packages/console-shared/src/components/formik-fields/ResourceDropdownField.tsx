@@ -7,6 +7,7 @@ import { Firehose, FirehoseResource } from '@console/internal/components/utils';
 import ResourceDropdown from '../dropdown/ResourceDropdown';
 import { DropdownFieldProps } from './field-types';
 import { getFieldId } from './field-utils';
+import { useFormikValidationFix } from '../../hooks';
 
 export interface ResourceDropdownFieldProps extends DropdownFieldProps {
   dataSelector: string[] | number[] | symbol[];
@@ -30,6 +31,9 @@ const ResourceDropdownField: React.FC<ResourceDropdownFieldProps> = ({
   const fieldId = getFieldId(props.name, 'ns-dropdown');
   const isValid = !(touched && error);
   const errorMessage = !isValid ? error : '';
+
+  useFormikValidationFix(field.value);
+
   return (
     <FormGroup
       fieldId={fieldId}

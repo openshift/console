@@ -1,5 +1,3 @@
-import * as React from 'react';
-import * as _ from 'lodash';
 import * as fuzzy from 'fuzzysearch';
 import { HelmRelease, HelmReleaseStatus, HelmFilterType } from './helm-types';
 
@@ -61,14 +59,4 @@ export const getFilteredItems = (
     default:
       return items;
   }
-};
-
-export const useDeepCompareMemoize = (value) => {
-  const ref = React.useRef();
-
-  if (!_.isEqual(value, ref.current)) {
-    ref.current = value;
-  }
-
-  return ref.current;
 };
