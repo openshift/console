@@ -121,7 +121,7 @@ export const cloudInitCustomScriptConfig: CloudInitConfig = {
 };
 
 function getMetadata(
-  provisionSource: string,
+  provisionSource: 'URL' | 'PXE' | 'Container',
   namespace: string,
   name?: string,
   cloudinit?: string,
@@ -288,7 +288,7 @@ function getMetadata(
 }
 
 export function getVMIManifest(
-  provisionSource: string,
+  provisionSource: 'URL' | 'PXE' | 'Container',
   namespace: string,
   name?: string,
   cloudinit?: string,
@@ -306,7 +306,7 @@ export function getVMIManifest(
 }
 
 export function getVMManifest(
-  provisionSource: string,
+  provisionSource: 'URL' | 'PXE' | 'Container',
   namespace: string,
   name?: string,
   cloudinit?: string,
