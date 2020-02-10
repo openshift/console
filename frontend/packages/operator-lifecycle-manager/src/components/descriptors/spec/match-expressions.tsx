@@ -5,9 +5,12 @@ import { MinusCircleIcon, PlusCircleIcon } from '@patternfly/react-icons';
 import { MatchExpression } from '@console/internal/module/k8s';
 import { Dropdown } from '@console/internal/components/utils';
 
-export const MatchExpressions: React.FC<MatchExpressionsProps> = (props) => {
-  const { matchExpressions, onChangeMatchExpressions, allowedOperators } = props;
-
+export const MatchExpressions: React.FC<MatchExpressionsProps> = ({
+  matchExpressions,
+  onChangeMatchExpressions,
+  allowedOperators,
+  uid = '',
+}) => {
   const changeKey = (key: string, index: number) =>
     onChangeMatchExpressions(
       matchExpressions.map((exp, i) => (i === index ? _.set(exp, 'key', key) : exp)),
@@ -28,8 +31,10 @@ export const MatchExpressions: React.FC<MatchExpressionsProps> = (props) => {
         <div className="col-md-3 text-secondary text-uppercase">Operator</div>
         <div className="col-md-3 text-secondary text-uppercase">Value</div>
       </div>
-      {props.matchExpressions.map((expression, i) => (
-        <div className="row key-operator-value__row" key={JSON.stringify(expression)}>
+      {matchExpressions.map((expression, i) => (
+        // Have to use array index in the key bc any other unique id whould have to use editable fields.
+        // eslint-disable-next-line react/no-array-index-key
+        <div className="row key-operator-value__row" key={`${uid}-match-expression-${i}`}>
           <div className="col-md-4 col-xs-5 key-operator-value__name-field">
             <div className="key-operator-value__heading hidden-md hidden-lg text-secondary text-uppercase">
               Key
@@ -70,9 +75,7 @@ export const MatchExpressions: React.FC<MatchExpressionsProps> = (props) => {
             <Button
               type="button"
               onClick={() =>
-                props.onChangeMatchExpressions(
-                  props.matchExpressions.filter((e, index) => index !== i),
-                )
+                onChangeMatchExpressions(matchExpressions.filter((e, index) => index !== i))
               }
               aria-label="Delete"
               className="key-operator-value__delete-button"
@@ -103,6 +106,7 @@ export type MatchExpressionsProps = {
   matchExpressions: MatchExpression[];
   onChangeMatchExpressions: (matchExpressions: MatchExpression[]) => void;
   allowedOperators: MatchExpression['operator'][];
+  uid?: string;
 };
 
 MatchExpressions.displayName = 'MatchExpressions';
