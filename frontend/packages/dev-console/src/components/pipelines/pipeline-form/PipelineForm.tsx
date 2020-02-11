@@ -3,15 +3,20 @@ import * as _ from 'lodash';
 import { Formik } from 'formik';
 import { k8sUpdate, K8sResourceKind } from '@console/internal/module/k8s';
 import { PipelineModel } from '../../../models';
-import { validationSchema } from './pipelineForm-validation-utils';
 
 export interface PipelineFormProps {
   PipelineFormComponent: React.ComponentType<any>;
   formName: string;
+  validationSchema: any;
   obj: K8sResourceKind;
 }
 
-const PipelineForm: React.FC<PipelineFormProps> = ({ PipelineFormComponent, formName, obj }) => {
+const PipelineForm: React.FC<PipelineFormProps> = ({
+  PipelineFormComponent,
+  formName,
+  validationSchema,
+  obj,
+}) => {
   const initialValues = {
     parameters: _.get(obj.spec, 'params', []),
     resources: _.get(obj.spec, 'resources', []),
