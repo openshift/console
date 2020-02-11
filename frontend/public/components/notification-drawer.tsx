@@ -65,6 +65,14 @@ const AlertEmptyState: React.FC<AlertEmptyProps> = ({ drawerToggle }) => (
   </EmptyState>
 );
 
+const actionAlerts: ActionAlertType[] = [
+  {
+    name: 'AlertmanagerReceiversNotConfigured',
+    text: 'Configure receivers',
+    path: '/monitoring/alertmanagerconfig',
+  },
+];
+
 const getAlertNotificationEntries = (
   isLoaded: boolean,
   alertData: Alert[],
@@ -74,17 +82,24 @@ const getAlertNotificationEntries = (
   isLoaded && !_.isEmpty(alertData)
     ? alertData
         .filter((a) => (isCritical ? criticalCompare(a) : otherAlertCompare(a)))
-        .map((alert, i) => (
-          <NotificationEntry
-            key={`${i}_${alert.activeAt}`}
-            description={getAlertDescription(alert) || getAlertMessage(alert)}
-            timestamp={getAlertTime(alert)}
-            type={NotificationTypes[getAlertSeverity(alert)]}
-            title={getAlertName(alert)}
-            toggleNotificationDrawer={toggleNotificationDrawer}
-            targetURL={alertURL(alert, alert.rule.id)}
-          />
-        ))
+        .map((alert, i) => {
+          const actionAlertMatch = actionAlerts.find(
+            (actionAlert) => actionAlert.name === alert.rule.name,
+          );
+          return (
+            <NotificationEntry
+              key={`${i}_${alert.activeAt}`}
+              description={getAlertDescription(alert) || getAlertMessage(alert)}
+              timestamp={getAlertTime(alert)}
+              type={NotificationTypes[getAlertSeverity(alert)]}
+              title={getAlertName(alert)}
+              toggleNotificationDrawer={toggleNotificationDrawer}
+              targetPath={alertURL(alert, alert.rule.id)}
+              actionText={actionAlertMatch?.text}
+              actionPath={actionAlertMatch?.path}
+            />
+          );
+        })
     : [];
 
 const getUpdateNotificationEntries = (
@@ -100,7 +115,7 @@ const getUpdateNotificationEntries = (
           type={NotificationTypes.update}
           title="Cluster update available"
           toggleNotificationDrawer={toggleNotificationDrawer}
-          targetURL="/settings/cluster"
+          targetPath="/settings/cluster"
         />,
       ]
     : [];
@@ -274,6 +289,12 @@ const notificationStateToProps = ({ UI }: RootState): WithNotificationsProps => 
   notificationsRead: !!UI.getIn(['notifications', 'isRead']),
   alerts: UI.getIn(['monitoring', 'notificationAlerts']),
 });
+
+type ActionAlertType = {
+  name: string;
+  text: string;
+  path: string;
+};
 
 type AlertErrorProps = {
   errorText: string;
