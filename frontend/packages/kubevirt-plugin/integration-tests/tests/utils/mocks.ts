@@ -125,6 +125,7 @@ function getMetadata(
   namespace: string,
   name?: string,
   cloudinit?: string,
+  finalizers?: [string],
 ) {
   const vmName = name || `${provisionSource.toLowerCase()}-${namespace.slice(-5)}`;
   const metadata = {
@@ -133,7 +134,7 @@ function getMetadata(
       'name.os.template.kubevirt.io/rhel7.6': 'Red Hat Enterprise Linux 7.6',
       description: namespace,
     },
-    finalizers: ['k8s.v1.cni.cncf.io/kubeMacPool'],
+    finalizers,
     namespace,
     labels: {
       app: vmName,
@@ -316,6 +317,7 @@ export function getVMManifest(
     namespace,
     name,
     cloudinit,
+    ['k8s.v1.cni.cncf.io/kubeMacPool'],
   );
 
   const vmResource = {
