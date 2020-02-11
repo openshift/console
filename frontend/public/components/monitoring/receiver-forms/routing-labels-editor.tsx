@@ -1,10 +1,23 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
-import { MinusCircleIcon, PlusCircleIcon } from '@patternfly/react-icons';
-import { Button } from '@patternfly/react-core';
+import * as classNames from 'classnames';
+import { MinusCircleIcon, PlusCircleIcon, InfoCircleIcon } from '@patternfly/react-icons';
+import { Button, Tooltip } from '@patternfly/react-core';
+
 import { ExternalLink, SectionHeading } from '../../utils';
 
 const DEFAULT_RECEIVER_LABEL = 'All (default receiver)';
+const labelNamePattern = /^[a-zA-Z_][a-zA-Z0-9_]*$/;
+
+export const getRouteLabelFieldErrors = (labels) => {
+  const routeLabelFieldErrors = {};
+  labels.forEach((label, i) => {
+    if (label.name && !label.name.match(labelNamePattern)) {
+      routeLabelFieldErrors[`${i}_name`] = true;
+    }
+  });
+  return routeLabelFieldErrors;
+};
 
 export const RoutingLabelEditor = ({ formValues, dispatchFormChange, isDefaultReceiver }) => {
   const setRouteLabel = (path: string, v: any): void => {
@@ -14,6 +27,7 @@ export const RoutingLabelEditor = ({ formValues, dispatchFormChange, isDefaultRe
       type: 'setFormValues',
       payload: {
         routeLabels: labels,
+        routeLabelFieldErrors: getRouteLabelFieldErrors(labels),
       },
     });
   };
@@ -44,6 +58,21 @@ export const RoutingLabelEditor = ({ formValues, dispatchFormChange, isDefaultRe
       },
     });
   };
+
+  const InvalidLabelName = () => (
+    <span data-test-id="invalidLabelNameError">
+      Invalid name
+      <Tooltip
+        content={
+          <p>
+            Label name must not begin with a digit and contain only alphanumeric characters or '_'.
+          </p>
+        }
+      >
+        <InfoCircleIcon className="co-icon-space-l" />
+      </Tooltip>
+    </span>
+  );
 
   return (
     <div data-test-id="receiver-routing-labels-editor" className="form-group">
@@ -90,12 +119,17 @@ export const RoutingLabelEditor = ({ formValues, dispatchFormChange, isDefaultRe
         </div>
       )}
       {_.map(formValues.routeLabels, (routeLabel, i: number) => {
+        const hasLabelNameError = formValues?.routeLabelFieldErrors?.[`${i}_name`];
         return (
           <div className="row form-group" key={i}>
             <div className="col-xs-10">
               <div className="row">
                 <div className="col-xs-6 pairs-list__name-field">
-                  <div className="form-group">
+                  <div
+                    className={classNames('form-group', {
+                      'has-error': hasLabelNameError,
+                    })}
+                  >
                     <input
                       type="text"
                       className="pf-c-form-control"
@@ -105,6 +139,7 @@ export const RoutingLabelEditor = ({ formValues, dispatchFormChange, isDefaultRe
                       value={routeLabel.name}
                       required
                     />
+                    <span className="help-block">{hasLabelNameError && <InvalidLabelName />}</span>
                   </div>
                 </div>
                 <div className="col-xs-6 pairs-list__value-field">
