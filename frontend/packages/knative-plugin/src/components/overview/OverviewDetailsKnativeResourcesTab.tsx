@@ -41,7 +41,9 @@ const getSidebarResources = ({
         />
       );
     case ServiceModel.kind:
-      return <KnativeServiceResources ksroutes={ksroutes} obj={obj} revisions={revisions} />;
+      return (
+        <KnativeServiceResources ksroutes={ksroutes} obj={obj} revisions={revisions} pods={pods} />
+      );
     case EventSourceCronJobModel.kind:
     case EventSourceContainerModel.kind:
     case EventSourceApiServerModel.kind:

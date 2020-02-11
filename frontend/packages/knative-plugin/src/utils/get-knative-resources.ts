@@ -1,5 +1,5 @@
 import * as _ from 'lodash';
-import { K8sResourceKind } from '@console/internal/module/k8s';
+import { K8sResourceKind, PodKind } from '@console/internal/module/k8s';
 import { KNATIVE_SERVING_LABEL } from '../const';
 
 export type KnativeItem = {
@@ -12,6 +12,7 @@ export type KnativeItem = {
   eventSourceApiserver?: K8sResourceKind[];
   eventSourceCamel?: K8sResourceKind[];
   eventSourceKafka?: K8sResourceKind[];
+  pods?: PodKind[];
 };
 
 const isKnativeDeployment = (dc: K8sResourceKind) => {
