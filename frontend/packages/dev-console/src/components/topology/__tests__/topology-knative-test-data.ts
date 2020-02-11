@@ -287,7 +287,7 @@ export const revisionObj: RevisionKind = {
     ],
   },
 };
-const sampleKnativeRevisions: FirehoseResult = {
+export const sampleKnativeRevisions: FirehoseResult = {
   loaded: true,
   loadError: '',
   data: [revisionObj],
