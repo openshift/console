@@ -49,8 +49,7 @@ export const VolumeSnapshotModal = withHandlePromise((props: VolumeSnapshotModal
       },
       spec: {
         source: {
-          name: pvcName,
-          kind: PersistentVolumeClaimModel.kind,
+          persistentVolumeClaimName: pvcName,
         },
       },
     };

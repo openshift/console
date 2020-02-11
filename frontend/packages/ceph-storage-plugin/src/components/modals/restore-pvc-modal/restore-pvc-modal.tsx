@@ -27,7 +27,11 @@ export const RestorePVCModal = withHandlePromise((props: RestorePVCModalProps) =
   const [restorePVCName, setPVCName] = React.useState(`${getName(resource) || 'pvc'}-restore`);
 
   React.useEffect(() => {
-    k8sGet(PersistentVolumeClaimModel, resource?.spec?.source?.name, getNamespace(resource))
+    k8sGet(
+      PersistentVolumeClaimModel,
+      resource?.spec?.source?.persistentVolumeClaimName,
+      getNamespace(resource),
+    )
       .then(setResource)
       .catch((error) => {
         setResource(null);
@@ -117,7 +121,7 @@ export const RestorePVCModal = withHandlePromise((props: RestorePVCModalProps) =
                 <div>
                   <p className="ceph-restore-pvc-modal__pvc-details">Persistent Volume Claim</p>
                   <ResourceIcon kind={PersistentVolumeClaimModel.kind} />
-                  {resource?.spec?.source?.name}
+                  {resource?.spec?.source?.persistentVolumeClaimName}
                 </div>
               </GridItem>
             </Grid>

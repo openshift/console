@@ -28,7 +28,7 @@ export const OCSServiceModel: K8sKind = {
 
 export const VolumeSnapshotModel: K8sKind = {
   label: 'Volume Snapshot',
-  apiVersion: 'snapshot.storage.k8s.io/v1alpha1',
+  apiVersion: 'snapshot.storage.k8s.io/v1beta1',
   apiGroup: '',
   plural: 'volumesnapshots',
   abbr: 'VS',
