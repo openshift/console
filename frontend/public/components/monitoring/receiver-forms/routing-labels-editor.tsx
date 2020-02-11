@@ -60,7 +60,7 @@ export const RoutingLabelEditor = ({ formValues, dispatchFormChange, isDefaultRe
   };
 
   const InvalidLabelName = () => (
-    <span data-test-id="invalidLabelNameError">
+    <span data-test-id="invalid-label-name-error">
       Invalid name
       <Tooltip
         content={
