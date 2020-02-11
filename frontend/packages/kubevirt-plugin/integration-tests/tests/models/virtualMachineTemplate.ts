@@ -45,7 +45,7 @@ export class VirtualMachineTemplate extends KubevirtDetailView {
     }
     if (provisionSource.method === ProvisionConfigName.PXE) {
       // Select the last NIC as the source for booting
-      await wizard.selectBootableNIC(networkResources[networkResources.length - 1].network);
+      await wizard.selectBootableNIC(networkResources[networkResources.length - 1].name);
     }
     await wizard.next();
 
@@ -73,6 +73,8 @@ export class VirtualMachineTemplate extends KubevirtDetailView {
     if (cloudInit.useCloudInit) {
       await wizard.configureCloudInit(cloudInit);
     }
+    await wizard.next();
+    // Advanced - Virtual Hardware
     await wizard.next();
 
     // Create VM template
