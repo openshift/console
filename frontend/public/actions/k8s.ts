@@ -286,7 +286,19 @@ export const watchAPIServices = () => (dispatch, getState) => {
 
   k8sList(APIServiceModel, {})
     .then(() =>
-      dispatch(watchK8sList(makeReduxID(APIServiceModel, {}), {}, APIServiceModel, getResources)),
+      dispatch(
+        watchK8sList(
+          makeReduxID(APIServiceModel, {}),
+          {},
+          APIServiceModel,
+          (id: string, events: K8sEvent[]) => {
+            // Only re-run API discovery on added or removed API services. A
+            // misbehaving API service can trigger frequent watch updates,
+            // which could cause console to thrash.
+            return events.some(({ type }) => type !== 'MODIFIED') ? getResources() : _.noop;
+          },
+        ),
+      ),
     )
     .catch(() => {
       const poller = () =>
