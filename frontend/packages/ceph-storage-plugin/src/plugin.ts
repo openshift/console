@@ -88,6 +88,9 @@ const plugin: Plugin<ConsumedExtensions> = [
           (m) => m.VolumeSnapshotPage,
         ) /* webpackChunkName: "ceph-storage-volume-snapshot" */,
     },
+    flags: {
+      required: [OCS_VERSION_4_4_FLAG],
+    },
   },
   {
     type: 'Dashboards/Tab',
