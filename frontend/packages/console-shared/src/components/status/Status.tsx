@@ -34,6 +34,7 @@ export const Status: React.FC<StatusProps> = ({ status, title, children, iconOnl
     case 'Running':
     case 'Updating':
     case 'Upgrading':
+    case 'Provisioned as node':
       return <StatusIconAndText {...statusProps} icon={<SyncAltIcon />} />;
 
     case 'Cancelled':

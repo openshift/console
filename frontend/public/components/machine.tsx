@@ -37,7 +37,8 @@ const tableColumnClasses = [
   classNames('col-lg-2', 'col-md-3', 'col-sm-3', 'hidden-xs'),
   classNames('col-lg-2', 'col-md-3', 'col-sm-3', 'hidden-xs'),
   classNames('col-lg-2', 'hidden-md', 'hidden-sm', 'hidden-xs'),
-  classNames('col-lg-2', 'hidden-md', 'hidden-sm', 'hidden-xs'),
+  classNames('col-lg-1', 'hidden-md', 'hidden-sm', 'hidden-xs'),
+  classNames('col-lg-1', 'hidden-md', 'hidden-sm', 'hidden-xs'),
   Kebab.columnClass,
 ];
 
@@ -68,30 +69,44 @@ const MachineTableHeader = () => {
       props: { className: tableColumnClasses[3] },
     },
     {
+      title: 'Provider State',
+      sortField: 'status.providerStatus.instanceState',
+      transforms: [sortable],
+      props: { className: tableColumnClasses[4] },
+    },
+    {
       title: 'Region',
       sortField: "metadata.labels['machine.openshift.io/region']",
       transforms: [sortable],
-      props: { className: tableColumnClasses[4] },
+      props: { className: tableColumnClasses[5] },
     },
     {
       title: 'Availability Zone',
       sortField: "metadata.labels['machine.openshift.io/zone']",
       transforms: [sortable],
-      props: { className: tableColumnClasses[5] },
+      props: { className: tableColumnClasses[6] },
     },
     {
       title: '',
-      props: { className: tableColumnClasses[6] },
+      props: { className: tableColumnClasses[7] },
     },
   ];
 };
 MachineTableHeader.displayName = 'MachineTableHeader';
 
+const getMachinePhase = (obj: MachineKind) => {
+  const phase = obj?.status?.phase;
+  return phase === 'Running' ? 'Provisioned as node' : phase;
+};
+
+const getMachineProviderState = (obj: MachineKind): string =>
+  obj?.status?.providerStatus?.instanceState;
+
 const MachineTableRow: React.FC<MachineTableRowProps> = ({ obj, index, key, style }) => {
   const nodeName = getMachineNodeName(obj);
-  const status = obj.status ? obj.status.phase : null;
   const region = getMachineRegion(obj);
   const zone = getMachineZone(obj);
+  const providerState = getMachineProviderState(obj);
   return (
     <TableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
       <TableData className={classNames(tableColumnClasses[0], 'co-break-word')}>
@@ -109,11 +124,12 @@ const MachineTableRow: React.FC<MachineTableRowProps> = ({ obj, index, key, styl
         {nodeName ? <NodeLink name={nodeName} /> : '-'}
       </TableData>
       <TableData className={tableColumnClasses[3]}>
-        <Status status={status} />
+        <Status status={getMachinePhase(obj)} />
       </TableData>
-      <TableData className={tableColumnClasses[4]}>{region || '-'}</TableData>
-      <TableData className={tableColumnClasses[5]}>{zone || '-'}</TableData>
-      <TableData className={tableColumnClasses[6]}>
+      <TableData className={tableColumnClasses[4]}>{providerState ?? '-'}</TableData>
+      <TableData className={tableColumnClasses[5]}>{region || '-'}</TableData>
+      <TableData className={tableColumnClasses[6]}>{zone || '-'}</TableData>
+      <TableData className={tableColumnClasses[7]}>
         <ResourceKebab actions={menuActions} kind={machineReference} resource={obj} />
       </TableData>
     </TableRow>
@@ -133,6 +149,7 @@ const MachineDetails: React.SFC<MachineDetailsProps> = ({ obj }: { obj: MachineK
   const instanceType = getMachineInstanceType(obj);
   const region = getMachineRegion(obj);
   const zone = getMachineZone(obj);
+  const providerState = getMachineProviderState(obj);
   return (
     <>
       <div className="co-m-pane__body">
@@ -143,7 +160,16 @@ const MachineDetails: React.SFC<MachineDetailsProps> = ({ obj }: { obj: MachineK
               <ResourceSummary resource={obj} />
             </div>
             <div className="col-sm-6">
-              <DetailsItem label="Status" obj={obj} path="status.phase" />
+              <DetailsItem label="Phase" obj={obj} path="status.phase">
+                <Status status={getMachinePhase(obj)} />
+              </DetailsItem>
+              <DetailsItem
+                label="Provider State"
+                obj={obj}
+                path="status.providerStatus.instanceState"
+              >
+                {providerState}
+              </DetailsItem>
               {nodeName && (
                 <>
                   <dt>Node</dt>
@@ -223,6 +249,7 @@ export const MachineDetailsPage: React.SFC<MachineDetailsPageProps> = (props) =>
       navFactory.editYaml(),
       navFactory.events(ResourceEventStream),
     ]}
+    getResourceStatus={getMachinePhase}
   />
 );
 
