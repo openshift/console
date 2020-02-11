@@ -2,21 +2,13 @@ import * as React from 'react';
 import { Gallery, GalleryItem } from '@patternfly/react-core';
 import { CatalogTile } from '@patternfly/react-catalog-view-extension';
 import { connect } from 'react-redux';
-import { history, PageHeading, useAccessReview } from '@console/internal/components/utils';
+import { history, PageHeading } from '@console/internal/components/utils';
 import { formatNamespacedRouteForResource } from '@console/shared/src/utils/namespace';
-import {
-  BuildConfigModel,
-  ImageStreamModel,
-  DeploymentConfigModel,
-  ImageStreamImportsModel,
-  SecretModel,
-  RouteModel,
-  ServiceModel,
-} from '@console/internal/models';
-import { AccessReviewResourceAttributes, K8sKind } from '@console/internal/module/k8s';
 import * as importGitIcon from '../images/from-git.svg';
 import * as yamlIcon from '../images/yaml.svg';
 import * as dockerfileIcon from '../images/dockerfile.svg';
+import { useAddToProjectAccess } from '../utils/useAddToProjectAccess';
+import { allCatalogImageResourceAccess, allImportResourceAccess } from '../actions/add-resources';
 import './EmptyState.scss';
 
 interface StateProps {
@@ -35,41 +27,12 @@ const navigateTo = (e: React.SyntheticEvent, url: string) => {
   e.preventDefault();
 };
 
-const resourceAttributes = (model: K8sKind, namespace: string): AccessReviewResourceAttributes => {
-  return {
-    group: model.apiGroup || '',
-    resource: model.plural,
-    namespace,
-    verb: 'create',
-  };
-};
-
 const ODCEmptyState: React.FC<Props> = ({
   title,
   activeNamespace,
   hintBlock = 'Select a way to create an application, component or service from one of the options.',
 }) => {
-  const buildConfigsAccess = useAccessReview(resourceAttributes(BuildConfigModel, activeNamespace));
-  const imageStreamAccess = useAccessReview(resourceAttributes(ImageStreamModel, activeNamespace));
-  const deploymentConfigAccess = useAccessReview(
-    resourceAttributes(DeploymentConfigModel, activeNamespace),
-  );
-  const imageStreamImportAccess = useAccessReview(
-    resourceAttributes(ImageStreamImportsModel, activeNamespace),
-  );
-  const secretAccess = useAccessReview(resourceAttributes(SecretModel, activeNamespace));
-  const routeAccess = useAccessReview(resourceAttributes(RouteModel, activeNamespace));
-  const serviceAccess = useAccessReview(resourceAttributes(ServiceModel, activeNamespace));
-
-  const allImportResourceAccess =
-    buildConfigsAccess &&
-    imageStreamAccess &&
-    deploymentConfigAccess &&
-    secretAccess &&
-    routeAccess &&
-    serviceAccess;
-
-  const allCatalogImageResourceAccess = allImportResourceAccess && imageStreamImportAccess;
+  const createResourceAccess: string[] = useAddToProjectAccess(activeNamespace);
 
   return (
     <>
@@ -83,7 +46,7 @@ const ODCEmptyState: React.FC<Props> = ({
       </div>
       <div className="odc-empty-state__content">
         <Gallery gutter="sm">
-          {allImportResourceAccess && (
+          {createResourceAccess.includes(allImportResourceAccess) && (
             <GalleryItem key="gallery-fromgit">
               <CatalogTile
                 className="odc-empty-state__tile"
@@ -96,7 +59,7 @@ const ODCEmptyState: React.FC<Props> = ({
               />
             </GalleryItem>
           )}
-          {allCatalogImageResourceAccess && (
+          {createResourceAccess.includes(allCatalogImageResourceAccess) && (
             <GalleryItem key="gallery-container">
               <CatalogTile
                 className="odc-empty-state__tile"
@@ -120,7 +83,7 @@ const ODCEmptyState: React.FC<Props> = ({
               description="Browse the catalog to discover, deploy and connect to services"
             />
           </GalleryItem>
-          {allImportResourceAccess && (
+          {createResourceAccess.includes(allImportResourceAccess) && (
             <GalleryItem key="gallery-dockerfile">
               <CatalogTile
                 className="odc-empty-state__tile"

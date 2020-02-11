@@ -1,14 +1,18 @@
 import * as React from 'react';
 import { ResourceIcon, ActionsMenu } from '@console/internal/components/utils';
-import { TopologyApplicationObject } from '../topology-types';
+import { GraphData, TopologyApplicationObject } from '../topology-types';
 import { groupActions } from '../actions/groupActions';
 import TopologyApplicationResources from './TopologyApplicationResources';
 
 export type TopologyApplicationPanelProps = {
+  graphData: GraphData;
   application: TopologyApplicationObject;
 };
 
-const TopologyApplicationPanel: React.FC<TopologyApplicationPanelProps> = ({ application }) => (
+const TopologyApplicationPanel: React.FC<TopologyApplicationPanelProps> = ({
+  graphData,
+  application,
+}) => (
   <div className="overview__sidebar-pane resource-overview">
     <div className="overview__sidebar-pane-head resource-overview__heading">
       <h1 className="co-m-pane__heading">
@@ -17,7 +21,7 @@ const TopologyApplicationPanel: React.FC<TopologyApplicationPanelProps> = ({ app
           {application.name}
         </div>
         <div className="co-actions">
-          <ActionsMenu actions={groupActions(application)} />
+          <ActionsMenu actions={groupActions(graphData, application)} />
         </div>
       </h1>
     </div>

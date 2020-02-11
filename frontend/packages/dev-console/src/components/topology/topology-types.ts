@@ -246,3 +246,8 @@ export type ActionProvider = (type: GraphElementType, id: string) => KebabOption
 export type ContextMenuProvider = {
   open: (type: GraphElementType, id: string, eventX: number, eventY: number) => boolean;
 };
+
+export type GraphData = {
+  namespace: string;
+  createResourceAccess: string[];
+};
