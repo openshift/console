@@ -44,7 +44,7 @@ const KnativeServiceNode: React.FC<KnativeServiceNodeProps> = ({
   onHideCreateConnector,
   onShowCreateConnector,
 }) => {
-  useAnchor((e: Node) => new RectAnchor(e, 4));
+  useAnchor((e: Node) => new RectAnchor(e, 1.5));
   const [hover, hoverRef] = useHover();
   const [{ dragging }, dragNodeRef] = useDragNode(
     nodeDragSourceSpec(TYPE_KNATIVE_SERVICE, true, editAccess),

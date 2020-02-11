@@ -13,7 +13,7 @@ export default class RevisionTrafficTargetAnchor extends AbstractAnchor {
   }
 
   getLocation(reference: Point): Point {
-    const bounds = this.getOwner().getBounds();
+    const bounds = this.owner.getBounds();
     if (this.radius) {
       // location is edge of decorator
       const center = new Point(bounds.right() - this.radiusOffset, bounds.y + this.radiusOffset);
@@ -26,7 +26,7 @@ export default class RevisionTrafficTargetAnchor extends AbstractAnchor {
   }
 
   getReferencePoint(): Point {
-    const bounds = this.getOwner().getBounds();
+    const bounds = this.owner.getBounds();
     if (this.radius) {
       // reference point is center of decorator
       return new Point(bounds.right() - this.radiusOffset, bounds.y + this.radiusOffset);

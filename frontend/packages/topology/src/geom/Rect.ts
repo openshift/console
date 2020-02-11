@@ -37,10 +37,6 @@ export default class Rect implements Translatable {
     return this.width <= 0 || this.height <= 0;
   }
 
-  getLocation(): Point {
-    return new Point(this.x, this.y);
-  }
-
   setLocation(x: number, y: number): Rect {
     this.x = x;
     this.y = y;
@@ -104,7 +100,7 @@ export default class Rect implements Translatable {
     return this;
   }
 
-  expand(v: number, h: number): Rect {
+  expand(h: number, v: number): Rect {
     this.y -= v;
     this.height += v * 2;
     this.x -= h;
@@ -122,7 +118,7 @@ export default class Rect implements Translatable {
       } else if (padding.length === 1) {
         this.expand(padding[0], padding[0]);
       } else if (padding.length === 2) {
-        this.expand(padding[0], padding[1]);
+        this.expand(padding[1], padding[0]);
       } else if (padding.length === 3) {
         this.y -= padding[0];
         this.height += padding[0] + padding[2];

@@ -151,7 +151,10 @@ export default class BaseGraph<E extends GraphModel = GraphModel, D = any> exten
     );
   }
 
-  panIntoView = (nodeElement: Node, { offset = 0, minimumVisible = 0 }): void => {
+  panIntoView = (
+    nodeElement: Node,
+    { offset = 0, minimumVisible = 0 }: { offset?: number; minimumVisible?: number } = {},
+  ): void => {
     if (!nodeElement) {
       return;
     }

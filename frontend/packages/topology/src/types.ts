@@ -156,7 +156,7 @@ export interface Graph<E extends GraphModel = GraphModel, D = any> extends Graph
   reset(): void;
   scaleBy(scale: number, location?: Point): void;
   fit(padding?: number): void;
-  panIntoView(element: Node, options: { offset?: number; minimumVisible?: number }): void;
+  panIntoView(element: Node, options?: { offset?: number; minimumVisible?: number }): void;
 }
 
 export const isGraph = (element: GraphElement): element is Graph => {
