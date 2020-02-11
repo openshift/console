@@ -10,17 +10,23 @@ export interface ProjectListPageProps {
   children?: React.ReactNode;
   badge?: React.ReactNode;
 }
-const ProjectListPage: React.FC<ProjectListPageProps> = (props) => (
+const ProjectListPage: React.FC<ProjectListPageProps> = ({
+  badge,
+  title,
+  children,
+  listComponent,
+  ...listPageProps
+}) => (
   <div className="odc-project-list-page">
-    <PageHeading title={props.title} badge={props.badge}>
-      {props.children}
+    <PageHeading title={title} badge={badge}>
+      {children}
     </PageHeading>
     <hr className="odc-project-list-page__section-border" />
     <ListPage
-      {...props}
+      {...listPageProps}
       showTitle={false}
       kind="Project"
-      ListComponent={props.listComponent || ProjectsTable}
+      ListComponent={listComponent || ProjectsTable}
       canCreate={false}
       filterLabel="by name or display name"
       textFilter="project-name"
