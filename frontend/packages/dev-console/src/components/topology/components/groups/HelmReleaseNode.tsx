@@ -13,7 +13,6 @@ import {
 } from '@console/topology';
 import NodeShadows, { NODE_SHADOW_FILTER_ID_HOVER, NODE_SHADOW_FILTER_ID } from '../NodeShadows';
 import useSearchFilter from '../../filters/useSearchFilter';
-import ResourceKindsInfo from '../nodes/ResourceKindsInfo';
 import GroupNode from '../nodes/GroupNode';
 
 export type HelmReleaseNodeProps = {
@@ -55,9 +54,12 @@ const HelmReleaseNode: React.FC<HelmReleaseNodeProps> = ({ element, onSelect, se
         rx="5"
         ry="5"
       />
-      <GroupNode kind="HelmRelease" title={element.getLabel()} typeIconClass="icon-helm">
-        <ResourceKindsInfo groupResources={element.getData().groupResources} />
-      </GroupNode>
+      <GroupNode
+        kind="HelmRelease"
+        element={element}
+        typeIconClass="icon-helm"
+        groupResources={element.getData().groupResources}
+      />
     </g>
   );
 };

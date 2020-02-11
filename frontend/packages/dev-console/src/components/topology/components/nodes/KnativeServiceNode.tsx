@@ -19,7 +19,6 @@ import { nodeDragSourceSpec } from '../../componentUtils';
 import { TYPE_KNATIVE_SERVICE } from '../../const';
 import NodeShadows, { NODE_SHADOW_FILTER_ID, NODE_SHADOW_FILTER_ID_HOVER } from '../NodeShadows';
 import GroupNode from './GroupNode';
-import ResourceKindsInfo from './ResourceKindsInfo';
 
 type KnativeServiceNodeProps = {
   element: Node;
@@ -97,12 +96,13 @@ const KnativeServiceNode: React.FC<KnativeServiceNodeProps> = ({
         rx="5"
         ry="5"
       />
-      <GroupNode kind={kind} title={element.getLabel()} typeIconClass="icon-knative">
-        <ResourceKindsInfo
-          groupResources={element.getData().groupResources}
-          emptyKind="Revisions"
-        />
-      </GroupNode>
+      <GroupNode
+        kind={kind}
+        element={element}
+        typeIconClass="icon-knative"
+        groupResources={element.getData().groupResources}
+        emptyValue="No Revisions"
+      />
     </g>
   );
 };

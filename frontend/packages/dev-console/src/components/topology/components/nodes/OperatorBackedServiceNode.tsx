@@ -16,7 +16,6 @@ import { nodeDragSourceSpec } from '../../componentUtils';
 import { TYPE_OPERATOR_BACKED_SERVICE } from '../../const';
 import NodeShadows, { NODE_SHADOW_FILTER_ID, NODE_SHADOW_FILTER_ID_HOVER } from '../NodeShadows';
 import GroupNode from './GroupNode';
-import ResourceKindsInfo from './ResourceKindsInfo';
 
 export type OperatorBackedServiceNodeProps = {
   element: Node;
@@ -65,11 +64,10 @@ const OperatorBackedServiceNode: React.FC<OperatorBackedServiceNodeProps> = ({
       />
       <GroupNode
         kind={kind}
-        title={element.getLabel()}
+        element={element}
+        groupResources={element.getData().groupResources}
         typeIconClass={element.getData().data.builderImage}
-      >
-        <ResourceKindsInfo groupResources={element.getData().groupResources} />
-      </GroupNode>
+      />
     </g>
   );
 };
