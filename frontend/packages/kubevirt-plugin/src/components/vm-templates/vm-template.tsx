@@ -204,7 +204,7 @@ const VirtualMachineTemplatesPage: React.FC<VirtualMachineTemplatesPageProps &
     <MultiListPage
       {...props}
       createAccessReview={createAccessReview}
-      createButtonText="Create Template"
+      createButtonText="Create Virtual Machine Template"
       canCreate
       title={VM_TEMPLATE_LABEL_PLURAL}
       ListComponent={VirtualMachineTemplates}
