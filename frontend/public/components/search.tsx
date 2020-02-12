@@ -56,8 +56,9 @@ const ResourceList = connectToModel(({ kindObj, mock, namespace, selector, nameF
 const SearchPage_: React.FC<SearchProps> = (props) => {
   const [selectedItems, setSelectedItems] = React.useState(new Set<string>([]));
   const [collapsedKinds, setCollapsedKinds] = React.useState(new Set<string>([]));
-  const [nameFilter, setNameFilter] = React.useState([]);
   const [labelFilter, setLabelFilter] = React.useState([]);
+  const [labelFilterInput, setLabelFilterInput] = React.useState('');
+  const [typeaheadNameFilter, setTypeaheadNameFilter] = React.useState('');
 
   const { namespace, noProjectsAvailable } = props;
 
@@ -77,11 +78,9 @@ const SearchPage_: React.FC<SearchProps> = (props) => {
       setSelectedItems(new Set(kind.split(',')));
     }
     const tags = split(q || '');
-    const nameTags = split(name || '');
     const validTags = _.reject(tags, (tag) => requirementFromString(tag) === undefined);
-    const validNameTags = _.reject(nameTags, (tag) => requirementFromString(tag) === undefined);
     setLabelFilter(validTags);
-    setNameFilter(validNameTags);
+    setTypeaheadNameFilter(name || '');
   }, []);
 
   const updateSelectedItems = (selection: string) => {
@@ -97,7 +96,7 @@ const SearchPage_: React.FC<SearchProps> = (props) => {
   };
 
   const clearNameFilter = () => {
-    setNameFilter([]);
+    setTypeaheadNameFilter('');
     setQueryArgument('name', '');
   };
 
@@ -119,25 +118,25 @@ const SearchPage_: React.FC<SearchProps> = (props) => {
   };
 
   const updateNameFilter = (value: string) => {
-    setNameFilter([...nameFilter, value]);
-    setQueryArgument('name', [...nameFilter, value].join(','));
+    setTypeaheadNameFilter(value);
+    setQueryArgument('name', value);
   };
 
-  const updateLabelFilter = (value: string) => {
+  const updateLabelFilter = (value: string, endOfString: boolean) => {
+    setLabelFilterInput(value);
     if (requirementFromString(value) !== undefined) {
-      setLabelFilter([...labelFilter, value]);
-      setQueryArgument('q', [...labelFilter, value].join(','));
+      if (endOfString) {
+        setLabelFilter([...labelFilter, value]);
+        setQueryArgument('q', [...labelFilter, value].join(','));
+        setLabelFilterInput('');
+      }
     }
   };
 
-  const updateSearchFilter = (type: string, value: string) => {
-    type === searchFilterValues.Label ? updateLabelFilter(value) : updateNameFilter(value);
-  };
-
-  const removeNameFilter = (value: string) => {
-    const newNames = nameFilter.filter((keepItem: string) => keepItem !== value);
-    setNameFilter(newNames);
-    setQueryArgument('name', newNames.join(','));
+  const updateSearchFilter = (type: string, value: string, endOfString: boolean) => {
+    type === searchFilterValues.Label
+      ? updateLabelFilter(value, endOfString)
+      : updateNameFilter(value);
   };
 
   const removeLabelFilter = (value: string) => {
@@ -163,7 +162,11 @@ const SearchPage_: React.FC<SearchProps> = (props) => {
             onChange={updateSelectedItems}
             className="co-search-group__resource"
           />
-          <SearchFilterDropdown onChange={updateSearchFilter} />
+          <SearchFilterDropdown
+            onChange={updateSearchFilter}
+            nameFilterInput={typeaheadNameFilter}
+            labelFilterInput={labelFilterInput}
+          />
         </div>
         <div className="form-group">
           <ChipGroup withToolbar defaultIsOpen={false}>
@@ -197,12 +200,12 @@ const SearchPage_: React.FC<SearchProps> = (props) => {
               )}
             </ChipGroupToolbarItem>
             <ChipGroupToolbarItem key="name-category" categoryName={searchFilterValues.Name}>
-              {nameFilter.map((chip) => (
-                <Chip key={chip} onClick={() => removeNameFilter(chip)}>
-                  {chip}
+              {typeaheadNameFilter !== '' && (
+                <Chip key="typehaed-chip" onClick={clearNameFilter}>
+                  {typeaheadNameFilter}
                 </Chip>
-              ))}
-              {nameFilter.length > 0 && (
+              )}
+              {typeaheadNameFilter !== '' && (
                 <span>
                   <Button variant="plain" aria-label="Close" onClick={clearNameFilter}>
                     <CloseIcon />
@@ -211,7 +214,7 @@ const SearchPage_: React.FC<SearchProps> = (props) => {
               )}
             </ChipGroupToolbarItem>
           </ChipGroup>
-          {(selectedItems.size > 0 || labelFilter.length > 0 || nameFilter.length > 0) && (
+          {(selectedItems.size > 0 || labelFilter.length > 0 || typeaheadNameFilter !== '') && (
             <Button variant="link" key="clear-filters" onClick={clearAll}>
               Clear all filters
             </Button>
@@ -236,7 +239,7 @@ const SearchPage_: React.FC<SearchProps> = (props) => {
                     <ResourceList
                       kind={item}
                       selector={selectorFromString(labelFilter.join(','))}
-                      nameFilter={nameFilter.join(',')}
+                      nameFilter={typeaheadNameFilter}
                       namespace={namespace}
                       mock={noProjectsAvailable}
                       key={item}
