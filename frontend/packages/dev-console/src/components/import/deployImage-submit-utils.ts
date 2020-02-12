@@ -130,11 +130,11 @@ export const createDeployment = (
     registry,
     project: { name: namespace },
     name,
-    isi: { image, ports },
+    isi: { image, ports, tag: imageStreamTag },
     deployment: { env, replicas },
     labels: userLabels,
     limits: { cpu, memory },
-    imageStream: { image: imgName, namespace: imgNamespace, tag },
+    imageStream: { image: imgName, namespace: imgNamespace },
   } = formData;
 
   const defaultAnnotations = {
@@ -144,7 +144,7 @@ export const createDeployment = (
       {
         from: {
           kind: 'ImageStreamTag',
-          name: `${imgName || name}:${tag}`,
+          name: `${imgName || name}:${imageStreamTag}`,
           namespace: imgNamespace || namespace,
         },
         fieldPath: `spec.template.spec.containers[?(@.name=="${name}")].image`,
@@ -156,7 +156,7 @@ export const createDeployment = (
 
   const imageRef =
     registry === RegistryType.External
-      ? `${imgName || name}:${tag}`
+      ? `${name}:${imageStreamTag}`
       : _.get(image, 'dockerImageReference');
 
   const deployment = {

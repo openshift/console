@@ -95,7 +95,7 @@ export interface ImageData {
 
 export interface ImageStreamImageData {
   name: string;
-  image: object;
+  image: { [key: string]: any };
   tag: string;
   status: { metadata: {}; status: string };
   ports: ContainerPort[];
