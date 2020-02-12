@@ -24,8 +24,16 @@ import {
   RequireCreatePermission,
 } from '../utils';
 
-/** @type {React.SFC<{disabled?: boolean, label: string, onChange: React.ChangeEventHandler<any>, defaultValue?: string, value?: string}}>} */
-export const TextFilter = ({ label, onChange, defaultValue, style, className, value }) => {
+/** @type {React.SFC<{disabled?: boolean, label?: string, onChange: React.ChangeEventHandler<any>, defaultValue?: string, value?: string, placeholder?: string,}}>} */
+export const TextFilter = ({
+  label,
+  onChange,
+  defaultValue,
+  style,
+  className,
+  value,
+  placeholder = `Filter ${label}...`,
+}) => {
   const input = React.useRef();
   const onKeyDown = (e) => {
     const { nodeName } = e.target;
@@ -60,7 +68,7 @@ export const TextFilter = ({ label, onChange, defaultValue, style, className, va
         defaultValue={defaultValue}
         onChange={onChange}
         onKeyDown={(e) => e.key === 'Escape' && e.target.blur()}
-        placeholder={`Filter ${label}...`}
+        placeholder={placeholder}
         style={style}
         tabIndex={0}
         type="text"

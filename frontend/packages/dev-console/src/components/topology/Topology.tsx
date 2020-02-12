@@ -250,7 +250,7 @@ const Topology: React.FC<TopologyProps> = ({ data, serviceBinding, filters, acti
 
   return (
     <TopologyView
-      viewToolbar={<TopologyFilterBar />}
+      viewToolbar={<TopologyFilterBar visualization={visRef.current} />}
       controlBar={renderControlBar()}
       sideBar={sideBar}
       sideBarOpen={!!sideBar}
