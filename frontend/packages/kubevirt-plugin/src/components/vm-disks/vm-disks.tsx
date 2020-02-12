@@ -48,7 +48,7 @@ const getStoragesData = ({
       diskInterface: disk.getDiskInterface(),
       size: disk.getReadableSize(),
       storageClass: disk.getStorageClassName(),
-      pvc: disk.getPVCNameBySource() || disk.getPVCName(),
+      pvc: disk.getPVCNameBySource(disk.getSource()) || disk.getPVCName(),
     }));
 };
 
