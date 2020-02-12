@@ -4,12 +4,22 @@ import { resourceObjPath } from '@console/internal/components/utils';
 import { K8sResourceKind, PodKind } from '@console/internal/module/k8s';
 import { PodStatus } from '@console/internal/components/pod';
 import { PodControllerOverviewItem } from '../types';
+import { DaemonSetModel } from '@console/internal/models';
 
 export const resourceStatus = (
   obj: K8sResourceKind,
   current?: PodControllerOverviewItem,
   isRollingOut?: boolean,
 ) => {
+  if (obj.kind === DaemonSetModel.kind) {
+    return (
+      <OverviewItemReadiness
+        desired={obj?.status?.desiredNumberScheduled}
+        ready={obj?.status?.currentNumberScheduled}
+        resource={obj}
+      />
+    );
+  }
   return isRollingOut ? (
     <span className="text-muted">Rollout in progress...</span>
   ) : (
