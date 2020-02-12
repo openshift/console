@@ -2,11 +2,11 @@ export const CD_SIZE = 'size';
 export const CD_STORAGE_CLASS = 'storageClass';
 
 export const WINTOOLS_CONTAINER_NAMES = {
-  openshift: 'virtio-win-container',
-  ocp: 'virtio-win-container',
-  online: 'virtio-win-container',
-  dedicated: 'virtio-win-container',
-  azure: 'virtio-win-container',
+  openshift: 'registry.redhat.io/container-native-virtualization/virtio-win',
+  ocp: 'registry.redhat.io/container-native-virtualization/virtio-win',
+  online: 'registry.redhat.io/container-native-virtualization/virtio-win',
+  dedicated: 'registry.redhat.io/container-native-virtualization/virtio-win',
+  azure: 'registry.redhat.io/container-native-virtualization/virtio-win',
   okd: 'kubevirt/virtio-container-disk',
 };
 
