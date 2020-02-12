@@ -30,3 +30,8 @@ export const getMachineNode = (machine: MachineKind, nodes: NodeKind[] = []): No
   nodes.find((node) => getMachineNodeName(machine) === getName(node));
 
 export const getMachineAddresses = (machine: MachineKind) => machine?.status?.addresses;
+
+export const getMachinePhase = (obj: MachineKind): string => {
+  const phase = obj?.status?.phase;
+  return phase === 'Running' ? 'Provisioned as node' : phase;
+};
