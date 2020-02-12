@@ -11,7 +11,7 @@ import { OperatorHubKind } from '.';
 
 const OperatorHubDetails: React.FC<OperatorHubDetailsProps> = ({ obj }) => (
   <div className="co-m-pane__body">
-    <SectionHeading text="OperatorHub Overview" />
+    <SectionHeading text="OperatorHub Details" />
     <ResourceSummary resource={obj} podSelector="spec.podSelector" showNodeSelector={false} />
   </div>
 );

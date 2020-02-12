@@ -439,6 +439,6 @@ describe(InstallPlanDetailsPage.displayName, () => {
         .find(DetailsPage)
         .props()
         .pages.map((p) => p.name),
-    ).toEqual(['Overview', 'YAML', 'Components']);
+    ).toEqual(['Details', 'YAML', 'Components']);
   });
 });

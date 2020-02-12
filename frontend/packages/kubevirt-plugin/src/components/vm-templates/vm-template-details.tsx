@@ -63,7 +63,7 @@ const VMTemplateDetails: React.FC<VMTemplateDetailsProps> = (props) => {
     <StatusBox data={template} {...restProps} loaded={loaded}>
       <ScrollToTopOnMount />
       <div className="co-m-pane__body">
-        <SectionHeading text="VM Template Overview" />
+        <SectionHeading text="VM Template Details" />
         <div className="row">
           <div className="col-sm-6">
             <VMTemplateResourceSummary template={template} canUpdateTemplate={canUpdate} />

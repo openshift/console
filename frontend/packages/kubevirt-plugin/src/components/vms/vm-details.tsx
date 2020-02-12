@@ -77,7 +77,7 @@ const VMDetails: React.FC<VMDetailsProps> = (props) => {
     <StatusBox data={vmiLike} {...restProps}>
       <ScrollToTopOnMount />
       <div className="co-m-pane__body">
-        <SectionHeading text={`${kindObj.label} Overview`} />
+        <SectionHeading text={`${kindObj.label} Details`} />
         <div className="row">
           <div className="col-sm-6">
             <VMResourceSummary canUpdateVM={canUpdate} {...mainResources} />

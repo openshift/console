@@ -335,7 +335,7 @@ export const SubscriptionDetails: React.FC<SubscriptionDetailsProps> = ({
           title={`${installStatusPhase}: ${installStatusMessage}`}
         />
       )}
-      <SectionHeading text="Subscription Overview" />
+      <SectionHeading text="Subscription Details" />
       <div className="co-m-pane__body-group">
         <SubscriptionUpdates
           catalogSource={catalogSource}

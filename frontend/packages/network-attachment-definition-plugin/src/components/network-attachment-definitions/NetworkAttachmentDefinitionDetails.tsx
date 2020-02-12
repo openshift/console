@@ -7,7 +7,7 @@ import { getConfigAsJSON, getDescription, getType } from '../../selectors';
 import { networkTypes } from '../../constants';
 import { NetworkAttachmentDefinitionKind } from '../../types';
 
-const NET_ATTACH_DEF_OVERVIEW_HEADING = 'Network Attachment Definition Overview';
+const NET_ATTACH_DEF_DETAILS_HEADING = 'Network Attachment Definition Details';
 
 export const getBasicID = <A extends K8sResourceKind = K8sResourceKind>(entity: A) =>
   `${getNamespace(entity)}-${getName(entity)}`;
@@ -70,7 +70,7 @@ export const NetworkAttachmentDefinitionDetails: React.FC<NetAttachDefDetailsPro
     <StatusBox data={netAttachDef} loaded={!!netAttachDef}>
       <ScrollToTopOnMount />
       <div className="co-m-pane__body">
-        <SectionHeading text={NET_ATTACH_DEF_OVERVIEW_HEADING} />
+        <SectionHeading text={NET_ATTACH_DEF_DETAILS_HEADING} />
         <div className="row">
           <div className="col-sm-6">
             <NetAttachDefinitionSummary netAttachDef={netAttachDef} />
