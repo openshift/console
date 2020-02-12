@@ -93,7 +93,7 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
   const suggestedNamespace =
     currentCSVDesc.annotations?.['operatorframework.io/suggested-namespace'];
   const operatorRequestsMonitoring =
-    currentCSVDesc.annotations?.['openshift.io/cluster-monitoring'] === 'true';
+    currentCSVDesc.annotations?.['operatorframework.io/cluster-monitoring'] === 'true';
 
   const globalNS =
     (props.operatorGroup?.data || ([] as OperatorGroupKind[])).find(
