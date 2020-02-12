@@ -120,11 +120,12 @@ export const cloudInitCustomScriptConfig: CloudInitConfig = {
   customScript: basicVMConfig.cloudInitScript,
 };
 
-export function getVMManifest(
-  provisionSource: string,
+function getMetadata(
+  provisionSource: 'URL' | 'PXE' | 'Container',
   namespace: string,
   name?: string,
   cloudinit?: string,
+  finalizers?: [string],
 ) {
   const vmName = name || `${provisionSource.toLowerCase()}-${namespace.slice(-5)}`;
   const metadata = {
@@ -133,7 +134,7 @@ export function getVMManifest(
       'name.os.template.kubevirt.io/rhel7.6': 'Red Hat Enterprise Linux 7.6',
       description: namespace,
     },
-    finalizers: ['k8s.v1.cni.cncf.io/kubeMacPool'],
+    finalizers,
     namespace,
     labels: {
       app: vmName,
@@ -237,6 +238,88 @@ export function getVMManifest(
       throw Error('Provision source not Implemented');
   }
 
+  const vmiSpec = {
+    domain: {
+      cpu: {
+        cores: 1,
+        sockets: 1,
+        threads: 1,
+      },
+      devices: {
+        disks,
+        inputs: [
+          {
+            bus: 'virtio',
+            name: 'tablet',
+            type: 'tablet',
+          },
+        ],
+        interfaces: [
+          {
+            bootOrder: 2,
+            masquerade: {},
+            name: 'nic0',
+            model: 'virtio',
+          },
+        ],
+        rng: {},
+      },
+      resources: {
+        requests: {
+          memory: '1073741824',
+        },
+      },
+    },
+    evictionStrategy: 'LiveMigrate',
+    terminationGracePeriodSeconds: 0,
+    networks: [
+      {
+        name: 'nic0',
+        pod: {},
+      },
+    ],
+    volumes,
+  };
+
+  return {
+    metadata,
+    dataVolumeTemplates,
+    vmiSpec,
+  };
+}
+
+export function getVMIManifest(
+  provisionSource: 'URL' | 'PXE' | 'Container',
+  namespace: string,
+  name?: string,
+  cloudinit?: string,
+) {
+  const { metadata, vmiSpec } = getMetadata(provisionSource, namespace, name, cloudinit);
+
+  const vmiResource = {
+    apiVersion: 'kubevirt.io/v1alpha3',
+    kind: 'VirtualMachineInstance',
+    metadata,
+    spec: vmiSpec,
+  };
+
+  return vmiResource;
+}
+
+export function getVMManifest(
+  provisionSource: 'URL' | 'PXE' | 'Container',
+  namespace: string,
+  name?: string,
+  cloudinit?: string,
+) {
+  const { metadata, dataVolumeTemplates, vmiSpec } = getMetadata(
+    provisionSource,
+    namespace,
+    name,
+    cloudinit,
+    ['k8s.v1.cni.cncf.io/kubeMacPool'],
+  );
+
   const vmResource = {
     apiVersion: 'kubevirt.io/v1alpha3',
     kind: 'VirtualMachine',
@@ -252,51 +335,11 @@ export function getVMManifest(
             'vm.kubevirt.io/name': metadata.name,
           },
         },
-        spec: {
-          domain: {
-            cpu: {
-              cores: 1,
-              sockets: 1,
-              threads: 1,
-            },
-            devices: {
-              disks,
-              inputs: [
-                {
-                  bus: 'virtio',
-                  name: 'tablet',
-                  type: 'tablet',
-                },
-              ],
-              interfaces: [
-                {
-                  bootOrder: 2,
-                  masquerade: {},
-                  name: 'nic0',
-                  model: 'virtio',
-                },
-              ],
-              rng: {},
-            },
-            resources: {
-              requests: {
-                memory: '1073741824',
-              },
-            },
-          },
-          evictionStrategy: 'LiveMigrate',
-          terminationGracePeriodSeconds: 0,
-          networks: [
-            {
-              name: 'nic0',
-              pod: {},
-            },
-          ],
-          volumes,
-        },
+        spec: vmiSpec,
       },
     },
   };
+
   return vmResource;
 }
 
