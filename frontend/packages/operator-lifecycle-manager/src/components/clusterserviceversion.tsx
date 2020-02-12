@@ -99,6 +99,8 @@ export const ClusterServiceVersionTableHeader = () => {
     },
     {
       title: 'Namespace',
+      sortField: 'metadata.namespace',
+      transforms: [sortable],
       props: { className: tableColumnClasses[1] },
     },
     {
@@ -107,6 +109,8 @@ export const ClusterServiceVersionTableHeader = () => {
     },
     {
       title: 'Deployment',
+      sortField: 'spec.install.spec.deployments[0].name',
+      transforms: [sortable],
       props: { className: tableColumnClasses[3] },
     },
     {
