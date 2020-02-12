@@ -112,7 +112,7 @@ const DetailsComponent = ({ obj: volumeSnapshot }) => (
           <dd>
             <ResourceLink
               kind={PersistentVolumeClaimModel.kind}
-              name={volumeSnapshot.spec.source.name}
+              name={volumeSnapshot.spec.source.persistentVolumeClaimName}
               namespace={getNamespace(volumeSnapshot)}
             />
           </dd>
