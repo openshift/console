@@ -1,13 +1,14 @@
 .odc-pod-status-tooltip {
-  align-items: center;
-  display: flex;
-
+  &__content {
+    align-items: center;
+    display: flex;
+  }
   &__status-box {
     width: var(--pf-global--icon--FontSize--sm);
     height: var(--pf-global--icon--FontSize--sm);
     margin-right: var(--pf-global--spacer--sm);
   }
   &__status-count {
-    margin-left: var(--pf-global--spacer--sm);
+    margin-right: var(--pf-global--spacer--xs);
   }
 }
