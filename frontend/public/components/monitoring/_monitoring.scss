@@ -26,14 +26,14 @@
   margin: 0 -5px 20px -5px;
 
   .co-dashboard-card__body--dashboard-graph {
-    padding: 0;
+    padding: 10px;
   }
 
   .query-browser__wrapper {
     border: 0;
     margin: 0;
     overflow: hidden;
-    padding-top: 0;
+    padding: 0;
   }
 }
 
@@ -44,7 +44,7 @@
 
 .monitoring-dashboards__single-stat {
   font-size: var(--pf-global--FontSize--3xl);
-  padding-top: 10px !important;
+  padding-bottom: 0;
 }
 
 .monitoring-dashboards__table {
@@ -65,8 +65,12 @@
   float: right;
 }
 
+.graph-wrapper__horizontal-bar {
+  padding-right: 10px;
+}
+
 .graph-wrapper--query-browser {
-  padding-left: 40px;
+  padding-left: 50px;
   padding-right: 10px;
 }
 
