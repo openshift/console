@@ -25,7 +25,7 @@ describe('Kubevirt create VM using wizard', () => {
   it(
     'Imports VM from VMware Instance',
     async () => {
-      const vm = new VirtualMachine({ name: vmwareVMConfig.name, namespace: testName });
+      const vm = new VirtualMachine({ name: vmwareVMMultiNicConfig.name, namespace: testName });
       await withResource(leakedResources, vm.asResource(), async () => {
         await vm.import(vmwareVMConfig);
         await vm.waitForStatus(VM_STATUS.Off, V2V_VM_IMPORT_TIMEOUT);

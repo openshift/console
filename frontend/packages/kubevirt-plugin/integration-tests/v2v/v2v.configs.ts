@@ -28,8 +28,10 @@ export const vmwareVMMultiNicConfig: VMImportConfig = {
     hostname: V2V_INSTANCE_HOSTNAME,
     username: V2V_INSTANCE_USERNAME,
     password: V2V_INSTANCE_PASSWORD,
-    saveInstance: false,
+    saveInstance: true,
   },
   operatingSystem: OperatingSystem.RHEL7_6,
-  workloadProfile: WorkloadProfile.DESKTOP,
+  workloadProfile: WorkloadProfile.SERVER,
 };
+
+export const importConfig = [vmwareVMConfig, vmwareVMMultiNicConfig];
