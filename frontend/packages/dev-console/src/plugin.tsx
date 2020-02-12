@@ -642,7 +642,6 @@ const plugin: Plugin<ConsumedExtensions> = [
   {
     type: 'Page/Route',
     properties: {
-      perspective: 'dev',
       exact: false,
       path: ['/dev-monitoring/all-namespaces', '/dev-monitoring/ns/:ns'],
       loader: async () =>
