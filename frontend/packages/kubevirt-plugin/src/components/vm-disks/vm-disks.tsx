@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Button, ButtonVariant } from '@patternfly/react-core';
 import { Table } from '@console/internal/components/factory';
 import { PersistentVolumeClaimModel } from '@console/internal/models';
-import { Firehose, FirehoseResult } from '@console/internal/components/utils';
+import { Firehose, FirehoseResult, EmptyBox } from '@console/internal/components/utils';
 import { useSafetyFirst } from '@console/internal/components/safety-first';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { dimensifyHeader, getNamespace } from '@console/shared';
@@ -57,6 +57,8 @@ export type VMDisksTableProps = {
   columnClasses: string[];
 };
 
+const NoDataEmptyMsg = () => <EmptyBox label="Disks" />;
+
 export const VMDisksTable: React.FC<VMDisksTableProps> = ({
   data,
   customData,
@@ -67,6 +69,7 @@ export const VMDisksTable: React.FC<VMDisksTableProps> = ({
     <Table
       aria-label="VM Disks List"
       data={data}
+      NoDataEmptyMsg={NoDataEmptyMsg}
       Header={() =>
         dimensifyHeader(
           [

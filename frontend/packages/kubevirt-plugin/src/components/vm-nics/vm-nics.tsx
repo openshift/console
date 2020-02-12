@@ -3,6 +3,7 @@ import { Table } from '@console/internal/components/factory';
 import { sortable } from '@patternfly/react-table';
 import { useSafetyFirst } from '@console/internal/components/safety-first';
 import { createBasicLookup, dimensifyHeader } from '@console/shared';
+import { EmptyBox } from '@console/internal/components/utils';
 import { Button, ButtonVariant } from '@patternfly/react-core';
 import { VMGenericLikeEntityKind } from '../../types/vmLike';
 import { isVMI } from '../../selectors/vm';
@@ -49,6 +50,8 @@ export type VMNicsTableProps = {
   columnClasses: string[];
 };
 
+const NoDataEmptyMsg = () => <EmptyBox label="Network Interfaces" />;
+
 export const VMNicsTable: React.FC<VMNicsTableProps> = ({
   data,
   customData,
@@ -59,6 +62,7 @@ export const VMNicsTable: React.FC<VMNicsTableProps> = ({
     <Table
       aria-label="VM Nics List"
       data={data}
+      NoDataEmptyMsg={NoDataEmptyMsg}
       Header={() =>
         dimensifyHeader(
           [
