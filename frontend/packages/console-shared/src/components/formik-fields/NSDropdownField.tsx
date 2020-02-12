@@ -4,6 +4,7 @@ import { NsDropdown } from '@console/internal/components/utils';
 import { FormGroup } from '@patternfly/react-core';
 import { DropdownFieldProps } from './field-types';
 import { getFieldId } from './field-utils';
+import { useFormikValidationFix } from '../../hooks';
 
 const NSDropdownField: React.FC<DropdownFieldProps> = ({
   label,
@@ -17,6 +18,9 @@ const NSDropdownField: React.FC<DropdownFieldProps> = ({
   const fieldId = getFieldId(props.name, 'ns-dropdown');
   const isValid = !(touched && error);
   const errorMessage = !isValid ? error : '';
+
+  useFormikValidationFix(field.value);
+
   return (
     <FormGroup
       fieldId={fieldId}

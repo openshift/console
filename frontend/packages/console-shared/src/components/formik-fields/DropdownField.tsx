@@ -5,6 +5,7 @@ import { Dropdown } from '@console/internal/components/utils';
 import { FormGroup } from '@patternfly/react-core';
 import { DropdownFieldProps } from './field-types';
 import { getFieldId } from './field-utils';
+import { useFormikValidationFix } from '../../hooks';
 
 const DropdownField: React.FC<DropdownFieldProps> = ({ label, helpText, required, ...props }) => {
   const [field, { touched, error }] = useField(props.name);
@@ -12,6 +13,9 @@ const DropdownField: React.FC<DropdownFieldProps> = ({ label, helpText, required
   const fieldId = getFieldId(props.name, 'dropdown');
   const isValid = !(touched && error);
   const errorMessage = !isValid ? error : '';
+
+  useFormikValidationFix(field.value);
+
   return (
     <FormGroup
       fieldId={fieldId}

@@ -4,7 +4,7 @@ import { Alert, TextInputTypes } from '@patternfly/react-core';
 import { getGitService, GitProvider } from '@console/git-service';
 import { LoadingInline } from '@console/internal/components/utils';
 import { CheckCircleIcon } from '@patternfly/react-icons';
-import { InputField, DropdownField } from '@console/shared';
+import { InputField, DropdownField, useFormikValidationFix } from '@console/shared';
 import { GitReadableTypes, GitTypes } from '../import-types';
 import { detectGitType, detectGitRepoName } from '../import-validation-utils';
 import { getSampleRepo, getSampleRef, getSampleContextDir } from '../../../utils/imagestream-utils';
@@ -17,7 +17,7 @@ export interface GitSectionProps {
 }
 
 const GitSection: React.FC<GitSectionProps> = ({ showSample }) => {
-  const { values, setFieldValue, setFieldTouched, setFieldError, validateForm } = useFormikContext<
+  const { values, setFieldValue, setFieldTouched, setFieldError } = useFormikContext<
     FormikValues
   >();
   const [, { touched: gitTypeTouched }] = useField('git.type');
@@ -64,13 +64,10 @@ const GitSection: React.FC<GitSectionProps> = ({ showSample }) => {
       setFieldValue('git.isUrlValidated', false);
       setFieldError('git.url', 'Git repository is not reachable.');
     }
-
-    validateForm();
   }, [
     setFieldError,
     setFieldTouched,
     setFieldValue,
-    validateForm,
     values.application.name,
     values.git,
     values.name,
@@ -95,13 +92,11 @@ const GitSection: React.FC<GitSectionProps> = ({ showSample }) => {
     setFieldValue('git.ref', ref);
     setFieldValue('git.type', gitType);
     setFieldTouched('git.url', true);
-    validateForm();
   }, [
     sampleRepo,
     setFieldTouched,
     setFieldValue,
     tag,
-    validateForm,
     values.application.name,
     values.image.selected,
     values.name,
@@ -124,6 +119,8 @@ const GitSection: React.FC<GitSectionProps> = ({ showSample }) => {
     }
     return '';
   };
+
+  useFormikValidationFix(values.git.url);
 
   return (
     <FormSection title="Git">
