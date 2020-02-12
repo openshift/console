@@ -30,20 +30,19 @@ const HelmReleaseList: React.FC<HelmReleaseListProps> = ({ namespace, secrets })
     const activeFilters = queryArgument?.split(',');
 
     const fetchHelmReleases = async () => {
-      let res: HelmRelease[];
+      let namespacedReleases: HelmRelease[];
       try {
-        res = await coFetchJSON('/api/helm/releases');
+        namespacedReleases = await coFetchJSON(`/api/helm/releases?ns=${namespace}`);
       } catch {
         if (ignore) return;
 
         setReleases([]);
         setFetched(true);
       }
-      const namespacedReleases = (res && res.filter((rel) => rel.namespace === namespace)) || [];
 
       if (ignore) return;
 
-      setReleases(namespacedReleases);
+      setReleases(namespacedReleases || []);
       setFetched(true);
 
       if (activeFilters) {

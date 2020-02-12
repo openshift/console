@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash';
+import { safeLoadAll } from 'js-yaml';
 import { match as RMatch } from 'react-router';
 import {
   navFactory,
@@ -7,31 +8,74 @@ import {
   StatusBox,
   FirehoseResult,
 } from '@console/internal/components/utils';
+import { coFetchJSON } from '@console/internal/co-fetch';
 import { SecretModel } from '@console/internal/models';
 import { ErrorPage404 } from '@console/internal/components/error';
 import { DetailsPage } from '@console/internal/components/factory';
-import { K8sResourceKindReference } from '@console/internal/module/k8s';
+import { K8sResourceKindReference, K8sResourceKind } from '@console/internal/module/k8s';
 import HelmReleaseResources from './HelmReleaseResources';
 import HelmReleaseOverview from './HelmReleaseOverview';
+import { HelmRelease } from './helm-types';
 
 const SecretReference: K8sResourceKindReference = 'Secret';
 const HelmReleaseReference = 'HelmRelease';
 export interface HelmReleaseDetailsPageProps {
   match: RMatch<{
     ns?: string;
+    name?: string;
   }>;
   secret?: FirehoseResult;
 }
 
 const HelmReleaseDetailsPage: React.FC<HelmReleaseDetailsPageProps> = ({ secret, match }) => {
   const namespace = match.params.ns;
+  const helmReleaseName = match.params.name;
+  const helmManifestResources = React.useRef([]);
+
+  React.useEffect(() => {
+    let ignore = false;
+
+    const fetchHelmReleases = async () => {
+      let res: HelmRelease[];
+      try {
+        res = await coFetchJSON(`/api/helm/releases?ns=${namespace}`);
+      } catch {
+        return;
+      }
+      const releaseData = res?.filter((rel) => rel.name === helmReleaseName);
+
+      const helmManifest = safeLoadAll(releaseData[0].manifest);
+
+      if (ignore) return;
+
+      helmManifest.forEach((resource: K8sResourceKind) => {
+        helmManifestResources.current.push({
+          kind: resource.kind,
+          isNamespaced: true,
+          namespace,
+          isList: false,
+          name: resource.metadata.name,
+        });
+      });
+    };
+
+    fetchHelmReleases();
+
+    return () => {
+      ignore = true;
+    };
+  }, [helmReleaseName, namespace]);
+
   if (!secret || (!secret.loaded && _.isEmpty(secret.loadError))) {
     return <LoadingBox />;
   }
+
   if (secret.loadError) {
     return <StatusBox loaded={secret.loaded} loadError={secret.loadError} />;
   }
+
   const secretResource = secret.data;
+
   if (!_.isEmpty(secretResource)) {
     return (
       <DetailsPage
@@ -53,13 +97,16 @@ const HelmReleaseDetailsPage: React.FC<HelmReleaseDetailsPageProps> = ({ secret,
           {
             href: 'resources',
             name: 'Resources',
-            component: HelmReleaseResources,
+            component: () => (
+              <HelmReleaseResources helmManifestResources={helmManifestResources.current} />
+            ),
           },
         ]}
         customKind={HelmReleaseReference}
       />
     );
   }
+
   return <ErrorPage404 />;
 };
 
