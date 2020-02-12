@@ -181,17 +181,27 @@ export const ConnectedNotificationDrawer_: React.FC<ConnectedNotificationDrawerP
     !_.isEmpty(criticalAlertList),
   );
   const [isNonCriticalAlertExpanded, toggleNonCriticalAlertExpanded] = React.useState<boolean>(
-    false,
+    true,
   );
   const [isClusterUpdateExpanded, toggleClusterUpdateExpanded] = React.useState<boolean>(false);
   const prevDrawerToggleState = usePrevious(isDrawerExpanded);
 
   const hasCriticalAlerts = criticalAlertList.length > 0;
+  const hasNonCriticalAlerts = otherAlertList.length > 0;
   React.useEffect(() => {
     if (hasCriticalAlerts && !prevDrawerToggleState && isDrawerExpanded) {
       toggleAlertExpanded(true);
     }
-  }, [hasCriticalAlerts, isAlertExpanded, isDrawerExpanded, prevDrawerToggleState]);
+    if (hasNonCriticalAlerts && !prevDrawerToggleState && isDrawerExpanded) {
+      toggleNonCriticalAlertExpanded(true);
+    }
+  }, [
+    hasCriticalAlerts,
+    hasNonCriticalAlerts,
+    isAlertExpanded,
+    isDrawerExpanded,
+    prevDrawerToggleState,
+  ]);
 
   const emptyState = !_.isEmpty(loadError) ? (
     <AlertErrorState errorText={loadError.message} />
