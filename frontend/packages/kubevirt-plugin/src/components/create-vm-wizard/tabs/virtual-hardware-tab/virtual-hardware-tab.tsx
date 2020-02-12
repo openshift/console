@@ -22,7 +22,7 @@ import { cdTableColumnClasses } from '../../../vm-disks/utils';
 import { CombinedDisk } from '../../../../k8s/wrapper/vm/combined-disk';
 import { isLoaded } from '../../../../utils';
 import { ATTACH_CD } from '../../strings/storage';
-import { DiskType, DiskBus } from '../../../../constants/vm';
+import { DiskType } from '../../../../constants/vm';
 import { getAvailableCDName } from '../../../modals/cdrom-vm-modal/helpers';
 import { PersistentVolumeClaimWrapper } from '../../../../k8s/wrapper/vm/persistent-volume-claim-wrapper';
 import { VMWizardStorageBundle } from '../storage-tab/types';
@@ -32,6 +32,8 @@ import { DiskWrapper } from '../../../../k8s/wrapper/vm/disk-wrapper';
 import { VHW_TYPES } from './types';
 import { VmWizardVirtualHardwareRow } from './vm-wizard-virtualhardware-row';
 import './virtual-hardware-tab.scss';
+import { getTemplateValidation } from '../../selectors/template';
+import { TemplateValidations } from 'packages/kubevirt-plugin/src/utils/validations/template/template-validations';
 
 const getVirtualStoragesData = (
   storages: VMWizardStorageWithWrappers[],
@@ -65,6 +67,7 @@ const getVirtualStoragesData = (
         wizardStorageData,
         source: combinedDisk.getCDROMSourceValue(),
         content: combinedDisk.getContent(),
+        diskInterface: combinedDisk.getDiskInterface(),
         storageClass: combinedDisk.getStorageClassName(),
       };
     });
@@ -76,6 +79,7 @@ const VirtualHardwareTabFirehose: React.FC<VirtualHardwareTabFirehoseProps> = ({
   setTabLocked,
   removeStorage,
   storages,
+  templateValidations,
   persistentVolumeClaims,
 }) => {
   const virtualStorages = getVirtualStoragesData(storages, persistentVolumeClaims);
@@ -86,7 +90,7 @@ const VirtualHardwareTabFirehose: React.FC<VirtualHardwareTabFirehoseProps> = ({
   const diskWrapper = DiskWrapper.initializeFromSimpleData({
     name: availableCDName,
     type: DiskType.CDROM,
-    bus: DiskBus.VIRTIO,
+    bus: templateValidations.getDefaultBus(),
   });
 
   const addButton = (
@@ -157,6 +161,7 @@ type VirtualHardwareTabFirehoseProps = {
   isBootDiskRequired: boolean;
   wizardReduxID: string;
   storages: VMWizardStorageWithWrappers[];
+  templateValidations: TemplateValidations;
   removeStorage: (id: string) => void;
   setTabLocked: (isLocked: boolean) => void;
   persistentVolumeClaims: FirehoseResult<K8sResourceKind[]>;
@@ -190,6 +195,7 @@ const stateToProps = (state, { wizardReduxID }) => {
     namespace: iGetCommonData(state, wizardReduxID, VMWizardProps.activeNamespace),
     isLocked: isStepLocked(stepData, VMWizardTab.ADVANCED_VIRTUAL_HARDWARE),
     storages: getStoragesWithWrappers(state, wizardReduxID),
+    templateValidations: getTemplateValidation(state, wizardReduxID),
   };
 };
 

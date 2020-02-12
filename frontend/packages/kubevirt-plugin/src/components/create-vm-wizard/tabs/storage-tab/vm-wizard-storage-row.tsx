@@ -16,10 +16,6 @@ const menuActionEdit = (
 ): KebabOption => {
   return {
     label: 'Edit',
-    isDisabled: [
-      VMWizardStorageType.WINDOWS_GUEST_TOOLS,
-      VMWizardStorageType.WINDOWS_GUEST_TOOLS_TEMPLATE,
-    ].includes(storageWithWrappers.type),
     callback: () =>
       withProgress(
         vmWizardStorageModalEnhanced({

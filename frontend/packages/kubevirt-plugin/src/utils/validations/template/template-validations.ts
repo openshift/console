@@ -73,6 +73,14 @@ export class TemplateValidations {
     });
   };
 
+  getDefaultBus = (defaultBus = DiskBus.VIRTIO): DiskBus => {
+    const allowedBuses = this.getAllowedBuses();
+    if (allowedBuses.size === 0) {
+      return defaultBus;
+    }
+    return allowedBuses.has(defaultBus) ? defaultBus : [...allowedBuses][0];
+  };
+
   private validateMemoryByType = (
     value: number,
     type: ValidationErrorType,

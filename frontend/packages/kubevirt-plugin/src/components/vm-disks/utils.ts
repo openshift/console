@@ -11,8 +11,9 @@ export const diskTableColumnClasses = [
 ];
 
 export const cdTableColumnClasses = [
-  classNames('col-lg-4'),
-  classNames('col-lg-4'),
-  classNames('col-lg-4'),
+  classNames('col-lg-3'),
+  classNames('col-lg-3'),
+  classNames('col-lg-3'),
+  classNames('col-lg-3'),
   Kebab.columnClass,
 ];
