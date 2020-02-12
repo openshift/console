@@ -140,11 +140,11 @@ export const createOrUpdateDeployment = (
     registry,
     project: { name: namespace },
     name,
-    isi: { image, ports },
+    isi: { image, ports, tag: imageStreamTag },
     deployment: { env, replicas },
     labels: userLabels,
     limits: { cpu, memory },
-    imageStream: { image: imgName, namespace: imgNamespace, tag },
+    imageStream: { image: imgName, namespace: imgNamespace },
   } = formData;
 
   const defaultAnnotations = {
@@ -154,7 +154,7 @@ export const createOrUpdateDeployment = (
       {
         from: {
           kind: 'ImageStreamTag',
-          name: `${imgName || name}:${tag}`,
+          name: `${imgName || name}:${imageStreamTag}`,
           namespace: imgNamespace || namespace,
         },
         fieldPath: `spec.template.spec.containers[?(@.name=="${name}")].image`,
@@ -166,7 +166,7 @@ export const createOrUpdateDeployment = (
 
   const imageRef =
     registry === RegistryType.External
-      ? `${imgName || name}:${tag}`
+      ? `${name}:${imageStreamTag}`
       : _.get(image, 'dockerImageReference');
 
   const newDeployment = {
@@ -244,7 +244,6 @@ export const createOrUpdateDeploymentConfig = (
   } = formData;
 
   const { labels, podLabels, volumes, volumeMounts } = getMetadata(formData);
-
   const newDeploymentConfig = {
     kind: 'DeploymentConfig',
     apiVersion: 'apps.openshift.io/v1',
@@ -398,7 +397,7 @@ export const createOrUpdateDeployImageResources = async (
     }
   } else if (!dryRun) {
     // Do not run serverless call during the dry run.
-    let imageStreamRepo: string = _.split(_.get(image, 'dockerImageReference', ''), '@')[0];
+    let imageStreamUrl: string = image?.dockerImageReference;
     if (registry === RegistryType.External) {
       const imageStreamResponse = await createOrUpdateImageStream(
         formData,
@@ -406,11 +405,9 @@ export const createOrUpdateDeployImageResources = async (
         _.get(appResources, 'imageStream.data'),
         verb,
       );
-      imageStreamRepo = imageStreamResponse.status.dockerImageRepository;
+      const imageStreamRepo = imageStreamResponse.status.dockerImageRepository;
+      imageStreamUrl = imageStreamTag ? `${imageStreamRepo}:${imageStreamTag}` : imageStreamRepo;
     }
-    const imageStreamUrl = imageStreamTag
-      ? `${imageStreamRepo}:${imageStreamTag}`
-      : imageStreamRepo;
     const knDeploymentResource = getKnativeServiceDepResource(
       formData,
       imageStreamUrl,
