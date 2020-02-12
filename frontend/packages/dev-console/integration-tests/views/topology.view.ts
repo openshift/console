@@ -1,4 +1,13 @@
-import { by, element } from 'protractor';
+import { by, element, browser, ExpectedConditions as until } from 'protractor';
+
+// Toppology tab in sidebar
+export const topologyNavigate = element(by.css('[data-test-id="topology-header"]'));
+
+//Namespace Bar in topology
+export const namespaceBar = element(by.css('[data-test-id="namespace-bar-dropdown"]'));
+
+//Topology is empty
+export const emptyStateTitle = element(by.className('odc-empty-state__title'));
 
 // The top-level topology container
 export const topologyContainer = element(by.css('[data-id="g1"]'));
@@ -61,3 +70,9 @@ export const valueField = element.all(by.css('[placeholder="value"]')).last();
 export const topologyConnectors = element.all(by.css('[data-test-id="edge-handler"]'));
 
 // Elements in the topology controlbar - TBD
+
+// Navigate to topology tab
+export const navigateTopology = async function() {
+  await browser.wait(until.elementToBeClickable(topologyNavigate));
+  await topologyNavigate.click();
+};

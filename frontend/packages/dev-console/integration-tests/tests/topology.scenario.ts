@@ -3,6 +3,7 @@ import {
   appHost,
   checkLogs,
   checkErrors,
+  testName,
 } from '@console/internal-integration-tests/protractor.conf';
 import {
   navigateImportFromGit,
@@ -13,9 +14,8 @@ import {
   appName,
   builderImage,
   createButton,
-  builderImageVersionName,
   addApplicationWithExistingApps,
-} from '../../../dev-console/integration-tests/views/git-import-flow.view';
+} from '../views/git-import-flow.view';
 import {
   topologyContainer,
   topologyGraph,
@@ -30,25 +30,24 @@ import {
   keyField,
   valueField,
   topologyConnectors,
+  navigateTopology,
+  emptyStateTitle,
+  namespaceBar,
 } from '../views/topology.view';
 import {
   newApplicationShortName,
   newAppShortName,
-} from '../../../dev-console/integration-tests/views/new-app-name.view';
+} from '../views/new-app-name.view';
 import {
   switchPerspective,
   Perspective,
   sideHeader,
-} from '../../../dev-console/integration-tests/views/dev-perspective.view';
+} from '../views/dev-perspective.view';
 
-describe('git import flow', () => {
+describe('Topology', () => {
   const importFromGitHeader = $('[data-test-id="resource-title"]');
 
   const createApp = async function(newProject: boolean, newApplication: string, newApp: string) {
-    await browser.get(`${appHost}/k8s/cluster/projects`);
-
-    await switchPerspective(Perspective.Developer);
-    expect(sideHeader.getText()).toContain('Developer');
     await navigateImportFromGit();
     await browser.wait(until.textToBePresentInElement(importFromGitHeader, 'Import from git'));
     expect(importFromGitHeader.getText()).toContain('Import from git');
@@ -71,15 +70,19 @@ describe('git import flow', () => {
       expect(text).toContain(newApp);
     });
 
-    await setBuilderImage(builderImageVersionName);
+    await setBuilderImage();
     expect(builderImage.isSelected());
     await browser.wait(until.elementToBeClickable(createButton), 5000);
     expect(createButton.isEnabled());
     await createButton.click();
-    await browser.wait(until.urlContains('topology/ns/default'));
+    await browser.wait(until.urlContains(`${appHost}/topology/ns/${testName}`));
   };
 
-  beforeAll(async () => {});
+  beforeAll(async () => {
+    await browser.get(`${appHost}/k8s/cluster/projects/${testName}`);
+    await switchPerspective(Perspective.Developer);
+    expect(sideHeader.getText()).toContain('Developer');
+  });
 
   afterEach(() => {
     checkLogs();
@@ -90,7 +93,19 @@ describe('git import flow', () => {
     // Create (2) apps, keep track of the names
     const newApplication1 = newApplicationShortName();
     const newApp1 = newAppShortName();
-    await createApp(true, newApplication1, newApp1);
+    await navigateTopology();
+    browser.wait(until.presenceOf(namespaceBar));
+
+    //Wait for elements of topology to load to check if it's empty or filled
+    browser.sleep(5000);
+    const topologyFlag = await emptyStateTitle.isPresent().then(function(result) {
+      return result;
+    });
+    if ( topologyFlag) {console.log('a');
+      await createApp(true, newApplication1, newApp1);
+    } else {console.log('b');
+      await createApp(false, newApplication1, newApp1);
+    }
     const newApplication2 = newApplicationShortName();
     const newApp2 = newAppShortName();
     await createApp(false, newApplication2, newApp2);
@@ -100,7 +115,10 @@ describe('git import flow', () => {
     await browser.wait(until.presenceOf(topologyGraph));
     await browser.wait(until.presenceOf(topologyToolbar));
     await browser.wait(until.presenceOf(topologyNodes.first()));
-    await expect(topologyNodes.count()).toBe(4);
+    const topologyNodesNumber = await topologyNodes.count().then(function(value) {
+      return value;
+    });
+    await expect(topologyNodes.count()).toBe(topologyNodesNumber);
 
     // Verify that there are zero connectors displayed in the Topology view
     await expect(topologyConnectors.count()).toBe(0);
