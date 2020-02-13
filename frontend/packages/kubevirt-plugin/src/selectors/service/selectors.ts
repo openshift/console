@@ -13,7 +13,7 @@ const getServiceSelectors = (service: ServiceKind) =>
   service && service.spec && service.spec.selector ? service.spec.selector : {};
 
 export const getServicesForVmi = (services: ServiceKind[], vmi: VMIKind): ServiceKind[] => {
-  const vmLabels = getLabels(vmi);
+  const vmLabels = getLabels(vmi, {});
   return services.filter((service) => {
     const selectors = getServiceSelectors(service);
     const selectorKeys = Object.keys(selectors);
