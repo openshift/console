@@ -15,6 +15,7 @@ import * as horizontalnavView from '../views/horizontal-nav.view';
 import { execSync } from 'child_process';
 
 const replaceInput = async (fieldName: string, value: string) => {
+  await browser.wait(until.elementToBeClickable(firstElementByTestID(fieldName)));
   await firstElementByTestID(fieldName).clear();
   await firstElementByTestID(fieldName).sendKeys(value);
 };

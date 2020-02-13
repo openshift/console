@@ -1,6 +1,6 @@
 import { browser, ExpectedConditions as until } from 'protractor';
 
-import { checkLogs, checkErrors, firstElementByTestID } from '../protractor.conf';
+import { checkLogs, checkErrors, firstElementByTestID, appHost } from '../protractor.conf';
 import { dropdownMenuForTestID } from '../views/form.view';
 import * as crudView from '../views/crud.view';
 import * as yamlView from '../views/yaml.view';
@@ -227,13 +227,7 @@ describe('Alertmanager: Configuration', () => {
   });
 
   it('displays the Alermanager Configuration Details page', async () => {
-    await sidenavView.clickNavLink(['Administration', 'Cluster Settings']);
-    await crudView.isLoaded();
-    await horizontalnavView.clickHorizontalTab('Global Configuration');
-    await crudView.isLoaded();
-    await monitoringView.wait(until.elementToBeClickable(firstElementByTestID('alertmanager')));
-    expect(firstElementByTestID('alertmanager').getText()).toContain('Alertmanager');
-    await firstElementByTestID('alertmanager').click();
+    await browser.get(`${appHost}/monitoring/alertmanagerconfig`);
     await crudView.isLoaded();
     expect(monitoringView.alertRoutingHeader.getText()).toContain('Alert Routing');
   });
