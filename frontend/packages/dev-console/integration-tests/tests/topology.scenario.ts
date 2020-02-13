@@ -34,15 +34,8 @@ import {
   emptyStateTitle,
   namespaceBar,
 } from '../views/topology.view';
-import {
-  newApplicationShortName,
-  newAppShortName,
-} from '../views/new-app-name.view';
-import {
-  switchPerspective,
-  Perspective,
-  sideHeader,
-} from '../views/dev-perspective.view';
+import { newApplicationShortName, newAppShortName } from '../views/new-app-name.view';
+import { switchPerspective, Perspective, sideHeader } from '../views/dev-perspective.view';
 
 describe('Topology', () => {
   const importFromGitHeader = $('[data-test-id="resource-title"]');
@@ -96,14 +89,14 @@ describe('Topology', () => {
     await navigateTopology();
     browser.wait(until.presenceOf(namespaceBar));
 
-    //Wait for elements of topology to load to check if it's empty or filled
+    // Wait for elements of topology to load to check if it's empty or filled
     browser.sleep(5000);
     const topologyFlag = await emptyStateTitle.isPresent().then(function(result) {
       return result;
     });
-    if ( topologyFlag) {console.log('a');
+    if (topologyFlag) {
       await createApp(true, newApplication1, newApp1);
-    } else {console.log('b');
+    } else {
       await createApp(false, newApplication1, newApp1);
     }
     const newApplication2 = newApplicationShortName();

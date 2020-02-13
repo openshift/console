@@ -3,10 +3,10 @@ import { by, element, browser, ExpectedConditions as until } from 'protractor';
 // Toppology tab in sidebar
 export const topologyNavigate = element(by.css('[data-test-id="topology-header"]'));
 
-//Namespace Bar in topology
+// Namespace Bar in topology
 export const namespaceBar = element(by.css('[data-test-id="namespace-bar-dropdown"]'));
 
-//Topology is empty
+// Topology is empty
 export const emptyStateTitle = element(by.className('odc-empty-state__title'));
 
 // The top-level topology container
