@@ -6,13 +6,11 @@ import { Link } from 'react-router-dom';
 
 import { FLAGS } from '@console/shared';
 import { featureReducerName } from '../../reducers/features';
-import { MonitoringRoutes } from '../../reducers/monitoring';
 import { getActivePerspective, getActiveNamespace } from '../../reducers/ui';
 import { RootState } from '../../redux';
 
-export const getPrometheusExpressionBrowserURL = (urls, queries): string => {
-  const base = urls && urls[MonitoringRoutes.Prometheus];
-  if (!base || _.isEmpty(queries)) {
+export const getPrometheusExpressionBrowserURL = (url, queries): string => {
+  if (!url || _.isEmpty(queries)) {
     return null;
   }
   const params = new URLSearchParams();
@@ -21,7 +19,7 @@ export const getPrometheusExpressionBrowserURL = (urls, queries): string => {
     params.set(`g${i}.expr`, query);
     params.set(`g${i}.tab`, '0');
   });
-  return `${base}/graph?${params.toString()}`;
+  return `${url}/graph?${params.toString()}`;
 };
 
 const mapStateToProps = (state: RootState) => ({

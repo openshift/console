@@ -21,14 +21,7 @@ import { withFallback } from '@console/shared/src/components/error/error-boundar
 import * as k8sActions from '../actions/k8s';
 import * as UIActions from '../actions/ui';
 import { coFetchJSON } from '../co-fetch';
-import {
-  alertState,
-  AlertStates,
-  connectToURLs,
-  MonitoringRoutes,
-  silenceState,
-  SilenceStates,
-} from '../reducers/monitoring';
+import { alertState, AlertStates, silenceState, SilenceStates } from '../reducers/monitoring';
 import store from '../redux';
 import { Table, TableData, TableRow, TextFilter } from './factory';
 import { confirmModal } from './modals';
@@ -767,18 +760,15 @@ const AlertsPageDescription = () => (
   </p>
 );
 
-const HeaderAlertmanagerLink_ = ({ path, urls }) =>
-  _.isEmpty(urls[MonitoringRoutes.Alertmanager]) ? null : (
+const HeaderAlertmanagerLink = ({ path }) =>
+  _.isEmpty(window.SERVER_FLAGS.alertManagerPublicURL) ? null : (
     <span className="monitoring-header-link">
       <ExternalLink
-        href={`${urls[MonitoringRoutes.Alertmanager]}${path || ''}`}
+        href={`${window.SERVER_FLAGS.alertManagerPublicURL}${path || ''}`}
         text="Alertmanager UI"
       />
     </span>
   );
-const HeaderAlertmanagerLink = connectToURLs(MonitoringRoutes.Alertmanager)(
-  HeaderAlertmanagerLink_,
-);
 
 const alertsRowFilter = {
   type: 'alert-state',

@@ -91,10 +91,10 @@ describe('<PrometheusGraphLink />', () => {
 });
 
 describe('getPrometheusExpressionBrowserURL()', () => {
-  const urls = {
-    'prometheus-k8s': 'https://mock.prometheus.url',
-  };
-  const url = getPrometheusExpressionBrowserURL(urls, ['test-query-1', 'test-query-2']);
+  const url = getPrometheusExpressionBrowserURL('https://mock.prometheus.url', [
+    'test-query-1',
+    'test-query-2',
+  ]);
   expect(url).toBe(
     'https://mock.prometheus.url/graph?g0.range_input=1h&g0.expr=test-query-1&g0.tab=0&g1.range_input=1h&g1.expr=test-query-2&g1.tab=0',
   );
