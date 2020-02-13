@@ -257,15 +257,7 @@ const Card_: React.FC<CardProps> = ({ panel, pollInterval, timespan, variables }
             </div>
           )}
           {panel.type === 'singlestat' && (
-            <SingleStat
-              decimals={panel.decimals}
-              format={panel.format}
-              pollInterval={pollInterval}
-              postfix={panel.postfix}
-              prefix={panel.prefix}
-              query={queries[0]}
-              units={panel.units}
-            />
+            <SingleStat panel={panel} pollInterval={pollInterval} query={queries[0]} />
           )}
           {panel.type === 'table' && panel.transform === 'table' && (
             <Table panel={panel} pollInterval={pollInterval} queries={queries} />

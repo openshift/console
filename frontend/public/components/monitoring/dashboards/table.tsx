@@ -11,44 +11,12 @@ import {
 
 import ErrorAlert from '@console/shared/src/components/alerts/error';
 
+import { formatNumber } from './format';
 import { ColumnStyle, Panel } from './types';
 import { PrometheusResponse } from '../../graphs';
 import { getPrometheusURL, PrometheusEndpoint } from '../../graphs/helpers';
-import {
-  EmptyBox,
-  formatToFractionalDigits,
-  humanizeBinaryBytes,
-  humanizeDecimalBytesPerSec,
-  humanizePacketsPerSec,
-  usePoll,
-  useSafeFetch,
-} from '../../utils';
+import { EmptyBox, usePoll, useSafeFetch } from '../../utils';
 import { TablePagination } from '../metrics';
-
-const formatNumber = (s: string, decimals: number, unit: string): string => {
-  const value = Number(s);
-  if (_.isNil(value) || isNaN(value)) {
-    return s || '-';
-  }
-
-  switch (unit) {
-    case 'short':
-      return formatToFractionalDigits(value, decimals);
-    case 'percentunit':
-      return Intl.NumberFormat(undefined, {
-        style: 'percent',
-        maximumFractionDigits: decimals,
-      }).format(value);
-    case 'bytes':
-      return humanizeBinaryBytes(value).string;
-    case 'Bps':
-      return humanizeDecimalBytesPerSec(value).string;
-    case 'pps':
-      return humanizePacketsPerSec(value).string;
-    default:
-      return `${formatToFractionalDigits(value, decimals)} ${unit}`;
-  }
-};
 
 const paginationOptions = [5, 10, 20, 50, 100].map((n) => ({
   title: n.toString(),
