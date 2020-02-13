@@ -1,4 +1,3 @@
-import * as classNames from 'classnames';
 import * as _ from 'lodash-es';
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
@@ -234,11 +233,7 @@ const Card_: React.FC<CardProps> = ({ panel, pollInterval, timespan, variables }
         <DashboardCardHeader className="monitoring-dashboards__card-header">
           <DashboardCardTitle>{panel.title}</DashboardCardTitle>
         </DashboardCardHeader>
-        <DashboardCardBody
-          className={classNames({
-            'co-dashboard-card__body--dashboard-graph': panel.type === 'graph',
-          })}
-        >
+        <DashboardCardBody className="co-dashboard-card__body--dashboard-graph">
           {panel.type === 'grafana-piechart-panel' && <BarChart query={queries[0]} />}
           {panel.type === 'graph' && (
             <Graph

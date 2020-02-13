@@ -11,7 +11,9 @@ import { getPrometheusURL, PrometheusEndpoint } from '../../graphs/helpers';
 import { LoadingInline, usePoll, useSafeFetch } from '../../utils';
 
 const Body: React.FC<{ children: React.ReactNode }> = ({ children }) => (
-  <Bullseye className="monitoring-dashboards__single-stat">{children}</Bullseye>
+  <Bullseye className="monitoring-dashboards__single-stat query-browser__wrapper">
+    {children}
+  </Bullseye>
 );
 
 const SingleStat: React.FC<Props> = ({ panel, pollInterval, query }) => {
