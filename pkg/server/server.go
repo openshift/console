@@ -14,7 +14,7 @@ import (
 	"github.com/coreos/pkg/health"
 
 	"github.com/openshift/console/pkg/auth"
-	"github.com/openshift/console/pkg/helm/handlers"
+	helmhandlerspkg "github.com/openshift/console/pkg/helm/handlers"
 	"github.com/openshift/console/pkg/proxy"
 	"github.com/openshift/console/pkg/serverutils"
 	"github.com/openshift/console/pkg/version"
@@ -301,13 +301,10 @@ func (s *Server) HTTPHandler() http.Handler {
 	handle("/api/console/version", authHandler(s.versionHandler))
 
 	// Helm Endpoints
-	helmConfig := &handlers.HelmHandlers{
-		ApiServerHost: s.KubeAPIServerURL,
-		Transport:     s.K8sClient.Transport,
-	}
-	handle("/api/helm/template", authHandlerWithUser(helmConfig.HandleHelmRenderManifests))
-	handle("/api/helm/releases", authHandlerWithUser(helmConfig.HandleHelmList))
-	handle("/api/helm/release", authHandlerWithUser(helmConfig.HandleHelmInstall))
+	helmHandlers := helmhandlerspkg.New(s.KubeAPIServerURL, s.K8sClient.Transport)
+	handle("/api/helm/template", authHandlerWithUser(helmHandlers.HandleHelmRenderManifests))
+	handle("/api/helm/releases", authHandlerWithUser(helmHandlers.HandleHelmList))
+	handle("/api/helm/release", authHandlerWithUser(helmHandlers.HandleHelmInstall))
 
 	helmChartRepoProxy := proxy.NewProxy(s.HelmChartRepoProxyConfig)
 
