@@ -48,7 +48,7 @@ export class VirtualMachine extends KubevirtDetailView {
     await this.navigateToTab(TAB.Details);
 
     let confirmDialog = true;
-    if ([VM_ACTION.Clone].includes(action)) {
+    if ([VM_ACTION.Clone, VM_ACTION.Start].includes(action)) {
       confirmDialog = false;
     }
 
@@ -58,11 +58,11 @@ export class VirtualMachine extends KubevirtDetailView {
     }
   }
 
-  async listViewAction(action: string, waitForAction?: boolean, timeout?: number) {
+  async listViewAction(action: VM_ACTION, waitForAction?: boolean, timeout?: number) {
     await this.navigateToListView();
 
     let confirmDialog = true;
-    if ([VM_ACTION.Clone as string].includes(action)) {
+    if ([VM_ACTION.Clone, VM_ACTION.Start].includes(action)) {
       confirmDialog = false;
     }
     await listViewAction(this.name)(action, confirmDialog);

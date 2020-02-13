@@ -40,13 +40,7 @@ export const menuActionStart = (
   return {
     hidden: isVMImporting(vmStatus) || isVMRunning(vm),
     label: title,
-    callback: () =>
-      confirmModal({
-        title,
-        message: getActionMessage(vm, VMActionType.Start),
-        btnText: _.capitalize(VMActionType.Start),
-        executeFn: () => startVM(vm),
-      }),
+    callback: () => startVM(vm),
     accessReview: asAccessReview(kindObj, vm, 'patch'),
   };
 };
