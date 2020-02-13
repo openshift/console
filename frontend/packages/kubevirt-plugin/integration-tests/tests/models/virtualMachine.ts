@@ -29,6 +29,13 @@ import { appHost, testName } from '@console/internal-integration-tests/protracto
 import { KubevirtDetailView } from './kubevirtDetailView';
 import { ImportWizard } from './importWizard';
 
+const confirmDialogActions = [
+  VM_ACTION.Clone,
+  VM_ACTION.Start,
+  VM_ACTION.Delete,
+  VMI_ACTION.Delete,
+];
+
 export class VirtualMachine extends KubevirtDetailView {
   constructor(config, kind?: 'virtualmachines' | 'virtualmachineinstances') {
     super({ ...config, kind: kind || 'virtualmachines' });
@@ -49,10 +56,7 @@ export class VirtualMachine extends KubevirtDetailView {
   async action(action: VM_ACTION | VMI_ACTION, waitForAction?: boolean, timeout?: number) {
     await this.navigateToTab(TAB.Details);
 
-    let confirmDialog = true;
-    if ([VM_ACTION.Clone, VM_ACTION.Start].includes(action)) {
-      confirmDialog = false;
-    }
+    const confirmDialog = confirmDialogActions.includes(action);
 
     await detailViewAction(action, confirmDialog);
     if (waitForAction !== false) {
@@ -70,13 +74,11 @@ export class VirtualMachine extends KubevirtDetailView {
     }
   }
 
-  async listViewAction(action: VM_ACTION, waitForAction?: boolean, timeout?: number) {
+  async listViewAction(action: VM_ACTION | VMI_ACTION, waitForAction?: boolean, timeout?: number) {
     await this.navigateToListView();
 
-    let confirmDialog = true;
-    if ([VM_ACTION.Clone, VM_ACTION.Start].includes(action)) {
-      confirmDialog = false;
-    }
+    const confirmDialog = confirmDialogActions.includes(action);
+
     await listViewAction(this.name)(action, confirmDialog);
     if (waitForAction !== false) {
       await this.waitForActionFinished(action, timeout);
