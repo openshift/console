@@ -31,7 +31,6 @@ import { ImportWizard } from './importWizard';
 
 const confirmDialogActions = [
   VM_ACTION.Clone,
-  VM_ACTION.Start,
   VM_ACTION.Delete,
   VMI_ACTION.Delete,
 ];
