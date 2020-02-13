@@ -3,53 +3,33 @@ import { V1Disk } from '../../../types/vm/disk/V1Disk';
 import { DiskType, DiskBus } from '../../../constants/vm/storage';
 
 type CombinedTypeData = {
-  bus?: DiskBus;
+  bus?: string;
 };
 
-const sanitizeTypeData = (type: DiskType, typeData: CombinedTypeData) => {
-  if (!type || !typeData || type === DiskType.FLOPPY) {
-    return null;
-  }
-  const { bus } = typeData;
-
-  return { bus: bus?.getValue() };
-};
-
-export class DiskWrapper extends ObjectWithTypePropertyWrapper<V1Disk, DiskType, DiskWrapper> {
-  static readonly EMPTY = new DiskWrapper();
-
-  static mergeWrappers = (...disks: DiskWrapper[]): DiskWrapper =>
-    ObjectWithTypePropertyWrapper.defaultMergeWrappersWithType(DiskWrapper, disks);
-
-  static initializeFromSimpleData = (params?: {
+export class DiskWrapper extends ObjectWithTypePropertyWrapper<
+  V1Disk,
+  DiskType,
+  CombinedTypeData,
+  DiskWrapper
+> {
+  static initializeFromSimpleData = ({
+    name,
+    type,
+    bus,
+    bootOrder,
+  }: {
     name?: string;
     type?: DiskType;
     bus?: DiskBus;
     bootOrder?: number;
-  }) => {
-    if (!params) {
-      return new DiskWrapper();
-    }
-    const { name, type, bus, bootOrder } = params;
-    return new DiskWrapper(
-      {
-        name,
-        bootOrder,
-      },
-      false,
-      {
-        initializeWithType: type,
-        initializeWithTypeData: bus ? { bus: bus.getValue() } : undefined,
-      },
-    );
-  };
+  }) =>
+    new DiskWrapper({
+      name,
+      bootOrder,
+    }).setType(type, { bus: bus?.getValue() });
 
-  constructor(
-    disk?: V1Disk,
-    copy = false,
-    opts?: { initializeWithType?: DiskType; initializeWithTypeData?: any },
-  ) {
-    super(disk, copy, opts, DiskType);
+  constructor(disk?: V1Disk | DiskWrapper, copy = false) {
+    super(disk, copy, DiskType);
   }
 
   getName = () => this.get('name');
@@ -67,8 +47,10 @@ export class DiskWrapper extends ObjectWithTypePropertyWrapper<V1Disk, DiskType,
 
   hasBootOrder = () => this.getBootOrder() != null;
 
-  appendTypeData = (typeData: CombinedTypeData, sanitize = true) => {
-    this.addTypeData(sanitize ? sanitizeTypeData(this.getType(), typeData) : typeData);
-    return this;
-  };
+  protected sanitize(type: DiskType, { bus }: CombinedTypeData) {
+    if (type === DiskType.FLOPPY) {
+      return {};
+    }
+    return { bus };
+  }
 }

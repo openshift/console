@@ -2,38 +2,28 @@ import { NetworkType, POD_NETWORK } from '../../../constants';
 import { V1Network } from '../../../types/vm';
 import { ObjectWithTypePropertyWrapper } from '../common/object-with-type-property-wrapper';
 
+type CombinedTypeData = {
+  networkName?: string;
+};
+
 export class NetworkWrapper extends ObjectWithTypePropertyWrapper<
   V1Network,
   NetworkType,
+  CombinedTypeData,
   NetworkWrapper
 > {
-  static readonly EMPTY = new NetworkWrapper();
-
-  static mergeWrappers = (...networks: NetworkWrapper[]): NetworkWrapper =>
-    ObjectWithTypePropertyWrapper.defaultMergeWrappersWithType(NetworkWrapper, networks);
-
-  static initializeFromSimpleData = (params?: {
+  static initializeFromSimpleData = ({
+    name,
+    type,
+    multusNetworkName,
+  }: {
     name?: string;
     type?: NetworkType;
     multusNetworkName?: string;
-  }) => {
-    if (!params) {
-      return new NetworkWrapper();
-    }
-    const { name, type, multusNetworkName } = params;
-    return new NetworkWrapper({ name }, false, {
-      initializeWithType: type,
-      initializeWithTypeData:
-        type === NetworkType.MULTUS ? { networkName: multusNetworkName } : undefined,
-    });
-  };
+  }) => new NetworkWrapper({ name }).setType(type, { networkName: multusNetworkName });
 
-  public constructor(
-    network?: V1Network,
-    copy = false,
-    opts?: { initializeWithType?: NetworkType; initializeWithTypeData?: any },
-  ) {
-    super(network, copy, opts, NetworkType);
+  public constructor(network?: V1Network | NetworkWrapper, copy = false) {
+    super(network, copy, NetworkType);
   }
 
   getName = () => this.data?.name;
@@ -52,4 +42,11 @@ export class NetworkWrapper extends ObjectWithTypePropertyWrapper<
         return null;
     }
   };
+
+  protected sanitize(type: NetworkType, { networkName }: CombinedTypeData) {
+    if (type === NetworkType.MULTUS) {
+      return { networkName };
+    }
+    return {};
+  }
 }

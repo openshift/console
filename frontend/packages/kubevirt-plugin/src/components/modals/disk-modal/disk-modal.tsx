@@ -80,9 +80,9 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
     templateValidations,
   } = props;
   const asId = prefixedID.bind(null, 'disk');
-  const disk = props.disk || DiskWrapper.EMPTY;
-  const volume = props.volume || VolumeWrapper.EMPTY;
-  const dataVolume = props.dataVolume || DataVolumeWrapper.EMPTY;
+  const disk = props.disk || new DiskWrapper();
+  const volume = props.volume || new VolumeWrapper();
+  const dataVolume = props.dataVolume || new DataVolumeWrapper();
   const tValidations = templateValidations || new TemplateValidations();
   const validAllowedBuses = tValidations.getAllowedBuses();
   const recommendedBuses = tValidations.getRecommendedBuses();
@@ -102,7 +102,7 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
     combinedDisk.getInitialSource(isEditing),
   );
 
-  const [url, setURL] = React.useState<string>(dataVolume.getURL);
+  const [url, setURL] = React.useState<string>(dataVolume.getURL());
 
   const [containerImage, setContainerImage] = React.useState<string>(
     volume.getContainerImage() || '',
@@ -142,33 +142,27 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
   let resultVolume;
   if (source.requiresVolume()) {
     // update just Disk for unknown sources
-    resultVolume = VolumeWrapper.initializeFromSimpleData(
-      {
-        name,
-        type: source.getVolumeType(),
-        typeData: {
-          name: resultDataVolumeName,
-          claimName: pvcName,
-          image: containerImage,
-        },
+    resultVolume = VolumeWrapper.initializeFromSimpleData({
+      name,
+      type: source.getVolumeType(),
+      typeData: {
+        name: resultDataVolumeName,
+        claimName: pvcName,
+        image: containerImage,
       },
-      { sanitizeTypeData: true },
-    );
+    });
   }
 
   let resultDataVolume;
   if (source.requiresDatavolume()) {
-    resultDataVolume = DataVolumeWrapper.initializeFromSimpleData(
-      {
-        name: resultDataVolumeName,
-        storageClassName,
-        type: source.getDataVolumeSourceType(),
-        size,
-        unit,
-        typeData: { name: pvcName, namespace, url },
-      },
-      { sanitizeTypeData: true },
-    );
+    resultDataVolume = DataVolumeWrapper.initializeFromSimpleData({
+      name: resultDataVolumeName,
+      storageClassName,
+      type: source.getDataVolumeSourceType(),
+      size,
+      unit,
+      typeData: { name: pvcName, namespace, url },
+    });
   }
 
   let resultPersistentVolumeClaim;

@@ -189,7 +189,7 @@ export const prefillVmTemplateUpdater = ({ id, dispatch, getState }: UpdateOptio
         if (helper.includesOnlyFormValues()) {
           isCloudInitForm = true;
           helper.makeFormCompliant();
-          volumeWrapper.setTypeData(helper.asCloudInitNoCloudSource(), false);
+          volumeWrapper.setTypeData(helper.asCloudInitNoCloudSource());
           // do not overwrite with more cloud-init disks
         } else if (isCloudInitForm == null) {
           isCloudInitForm = false;
@@ -222,7 +222,7 @@ export const prefillVmTemplateUpdater = ({ id, dispatch, getState }: UpdateOptio
       }
 
       if (diskWrapper.getType() === DiskType.DISK && !diskWrapper.getDiskBus()) {
-        diskWrapper.appendTypeData({ bus: DiskBus.VIRTIO });
+        diskWrapper.appendTypeData({ bus: DiskBus.VIRTIO.getValue() });
       }
 
       return {

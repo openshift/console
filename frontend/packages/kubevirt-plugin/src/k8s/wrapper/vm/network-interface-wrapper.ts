@@ -2,40 +2,33 @@ import { V1NetworkInterface } from '../../../types/vm';
 import { NetworkInterfaceModel, NetworkInterfaceType } from '../../../constants/vm';
 import { ObjectWithTypePropertyWrapper } from '../common/object-with-type-property-wrapper';
 
+type CombinedTypeData = {};
+
 export class NetworkInterfaceWrapper extends ObjectWithTypePropertyWrapper<
   V1NetworkInterface,
   NetworkInterfaceType,
+  CombinedTypeData,
   NetworkInterfaceWrapper
 > {
-  static readonly EMPTY = new NetworkInterfaceWrapper();
-
-  static mergeWrappers = (...interfaces: NetworkInterfaceWrapper[]): NetworkInterfaceWrapper =>
-    ObjectWithTypePropertyWrapper.defaultMergeWrappersWithType(NetworkInterfaceWrapper, interfaces);
-
-  static initializeFromSimpleData = (params?: {
+  static initializeFromSimpleData = ({
+    name,
+    model,
+    macAddress,
+    interfaceType,
+    bootOrder,
+  }: {
     name?: string;
     model?: NetworkInterfaceModel;
     interfaceType?: NetworkInterfaceType;
     macAddress?: string;
     bootOrder?: number;
-  }) => {
-    if (!params) {
-      return new NetworkInterfaceWrapper();
-    }
-    const { name, model, macAddress, interfaceType, bootOrder } = params;
-    return new NetworkInterfaceWrapper(
-      { name, model: model && model.getValue(), macAddress, bootOrder },
-      false,
-      { initializeWithType: interfaceType },
+  }) =>
+    new NetworkInterfaceWrapper({ name, model: model?.getValue(), macAddress, bootOrder }).setType(
+      interfaceType,
     );
-  };
 
-  public constructor(
-    nic?: V1NetworkInterface,
-    copy = false,
-    opts?: { initializeWithType?: NetworkInterfaceType },
-  ) {
-    super(nic, copy, opts, NetworkInterfaceType);
+  public constructor(nic?: V1NetworkInterface | NetworkInterfaceWrapper, copy = false) {
+    super(nic, copy, NetworkInterfaceType);
   }
 
   getName = () => this.data?.name;
@@ -54,4 +47,9 @@ export class NetworkInterfaceWrapper extends ObjectWithTypePropertyWrapper<
   isFirstBootableDevice = () => this.getBootOrder() === 1;
 
   hasBootOrder = () => this.getBootOrder() != null;
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars,no-unused-vars
+  protected sanitize(type: NetworkInterfaceType, typeData: CombinedTypeData): any {
+    return {};
+  }
 }

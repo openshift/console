@@ -3,7 +3,6 @@ import { getOwnerReferences } from '@console/shared/src';
 import { validate } from '@console/internal/components/utils';
 import { compareOwnerReference } from '@console/shared/src/utils/owner-references';
 import { apiVersionForModel } from '@console/internal/module/k8s';
-import { ObjectWithTypePropertyWrapper } from '../common/object-with-type-property-wrapper';
 import { V1alpha1DataVolume } from '../../../types/vm/disk/V1alpha1DataVolume';
 import { DataVolumeSourceType } from '../../../constants/vm/storage';
 import {
@@ -22,73 +21,33 @@ type CombinedTypeData = {
   url?: string;
 };
 
-const sanitizeTypeData = (type: DataVolumeSourceType, typeData: CombinedTypeData) => {
-  if (!type || !typeData) {
-    return null;
-  }
-  const { name, namespace, url } = typeData;
-
-  if (type === DataVolumeSourceType.BLANK) {
-    return {};
-  }
-  if (type === DataVolumeSourceType.HTTP) {
-    return { url };
-  }
-  if (type === DataVolumeSourceType.PVC) {
-    return { name, namespace };
-  }
-
-  return null;
-};
-
 export class DataVolumeWrapper extends K8sResourceObjectWithTypePropertyWrapper<
   V1alpha1DataVolume,
   DataVolumeSourceType,
+  CombinedTypeData,
   DataVolumeWrapper
 > {
-  static readonly EMPTY = new DataVolumeWrapper();
-
-  static mergeWrappers = (...datavolumeWrappers: DataVolumeWrapper[]): DataVolumeWrapper => {
-    const resultWrapper = ObjectWithTypePropertyWrapper.defaultMergeWrappersWithType(
-      DataVolumeWrapper,
-      datavolumeWrappers,
-    );
-
-    if (!resultWrapper.data?.spec?.pvc?.storageClassName && resultWrapper.data?.spec?.pvc) {
-      delete resultWrapper.data.spec.pvc.storageClassName;
-    }
-
-    return resultWrapper;
-  };
-
-  static initializeFromSimpleData = (
-    params?: {
-      name?: string;
-      namespace?: string;
-      type?: DataVolumeSourceType;
-      typeData?: CombinedTypeData;
-      accessModes?: object[] | string[];
-      volumeMode?: object | string;
-      size?: string | number;
-      unit?: string;
-      storageClassName?: string;
-    },
-    opts?: { sanitizeTypeData: boolean },
-  ) => {
-    if (!params) {
-      return new DataVolumeWrapper();
-    }
-    const {
-      name,
-      namespace,
-      type,
-      typeData,
-      accessModes,
-      volumeMode,
-      size,
-      unit,
-      storageClassName,
-    } = params;
+  static initializeFromSimpleData = ({
+    name,
+    namespace,
+    type,
+    typeData,
+    accessModes,
+    volumeMode,
+    size,
+    unit,
+    storageClassName,
+  }: {
+    name?: string;
+    namespace?: string;
+    type?: DataVolumeSourceType;
+    typeData?: CombinedTypeData;
+    accessModes?: object[] | string[];
+    volumeMode?: object | string;
+    size?: string | number;
+    unit?: string;
+    storageClassName?: string;
+  }) => {
     const resources =
       size == null
         ? undefined
@@ -98,43 +57,27 @@ export class DataVolumeWrapper extends K8sResourceObjectWithTypePropertyWrapper<
             },
           };
 
-    return new DataVolumeWrapper(
-      {
-        apiVersion: apiVersionForModel(DataVolumeModel),
-        kind: DataVolumeModel.kind,
-        metadata: {
-          name,
-          namespace,
-        },
-        spec: {
-          pvc: {
-            accessModes: _.cloneDeep(accessModes),
-            volumeMode: _.cloneDeep(volumeMode),
-            resources,
-            storageClassName,
-          },
-          source: {},
-        },
+    return new DataVolumeWrapper({
+      apiVersion: apiVersionForModel(DataVolumeModel),
+      kind: DataVolumeModel.kind,
+      metadata: {
+        name,
+        namespace,
       },
-      false,
-      {
-        initializeWithType: type,
-        initializeWithTypeData:
-          opts && opts.sanitizeTypeData ? sanitizeTypeData(type, typeData) : _.cloneDeep(typeData),
+      spec: {
+        pvc: {
+          accessModes: _.cloneDeep(accessModes),
+          volumeMode: _.cloneDeep(volumeMode),
+          resources,
+          storageClassName,
+        },
+        source: {},
       },
-    );
+    }).setType(type, typeData);
   };
 
-  constructor(
-    dataVolumeTemplate?: V1alpha1DataVolume,
-    copy = false,
-    opts?: {
-      initializeWithType?: DataVolumeSourceType;
-      initializeWithTypeData?: any;
-      copy?: boolean;
-    },
-  ) {
-    super(dataVolumeTemplate, copy, opts, DataVolumeSourceType, ['spec', 'source']);
+  constructor(dataVolumeTemplate?: V1alpha1DataVolume | DataVolumeWrapper, copy = false) {
+    super(dataVolumeTemplate, copy, DataVolumeSourceType, ['spec', 'source']);
   }
 
   getStorageClassName = () => getDataVolumeStorageClassName(this.data as any);
@@ -207,8 +150,27 @@ export class DataVolumeWrapper extends K8sResourceObjectWithTypePropertyWrapper<
     return this;
   };
 
-  appendTypeData = (typeData: CombinedTypeData, sanitize = true) => {
-    this.addTypeData(sanitize ? sanitizeTypeData(this.getType(), typeData) : typeData);
+  public mergeWith(...dataVolumeWrappers: DataVolumeWrapper[]) {
+    super.mergeWith(...dataVolumeWrappers);
+
+    if (!this.data?.spec?.pvc?.storageClassName && this.data?.spec?.pvc) {
+      delete this.data.spec.pvc.storageClassName;
+    }
+
     return this;
-  };
+  }
+
+  protected sanitize(type: DataVolumeSourceType, { name, namespace, url }: CombinedTypeData) {
+    if (type === DataVolumeSourceType.BLANK) {
+      return {};
+    }
+    if (type === DataVolumeSourceType.HTTP) {
+      return { url };
+    }
+    if (type === DataVolumeSourceType.PVC) {
+      return { name, namespace };
+    }
+
+    return {};
+  }
 }

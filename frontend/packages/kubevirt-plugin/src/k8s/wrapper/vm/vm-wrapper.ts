@@ -27,10 +27,6 @@ import { V1Volume } from '../../../types/vm/disk/V1Volume';
 import { V1alpha1DataVolume } from '../../../types/vm/disk/V1alpha1DataVolume';
 
 export class VMWrapper extends K8sResourceWrapper<VMKind, VMWrapper> implements VMILikeMethods {
-  constructor(vm?: VMKind, copy = false) {
-    super(vm, copy);
-  }
-
   hasTemplateLabel = (label: string) => _.has(this.getTemplateLabels(null), label);
 
   getOperatingSystem = () => findKeySuffixValue(this.getLabels(), TEMPLATE_OS_LABEL);

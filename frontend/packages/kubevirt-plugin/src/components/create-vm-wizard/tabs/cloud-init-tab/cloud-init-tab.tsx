@@ -205,7 +205,7 @@ const CloudInitTabComponent: React.FC<ResultTabComponentProps> = ({
         type: iCloudInitStorage && iCloudInitStorage.get('type'),
         disk: toShallowJS(iCloudInitStorage.get('disk')),
         volume: new VolumeWrapper(toJS(iCloudInitStorage.get('volume')))
-          .setTypeData(typeData, false)
+          .setTypeData(typeData)
           .asResource(),
       });
     }

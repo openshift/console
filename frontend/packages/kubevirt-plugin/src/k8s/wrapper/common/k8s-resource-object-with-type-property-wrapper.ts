@@ -8,8 +8,10 @@ import { ObjectEnum } from '../../../constants';
 export class K8sResourceObjectWithTypePropertyWrapper<
   RESOURCE extends K8sResourceKind,
   TYPE extends ObjectEnum<string>,
-  SELF extends K8sResourceObjectWithTypePropertyWrapper<RESOURCE, TYPE, SELF>
-> extends ObjectWithTypePropertyWrapper<RESOURCE, TYPE, SELF> implements K8sResourceKindMethods {
+  COMBINED_TYPE_DATA,
+  SELF extends K8sResourceObjectWithTypePropertyWrapper<RESOURCE, TYPE, COMBINED_TYPE_DATA, SELF>
+> extends ObjectWithTypePropertyWrapper<RESOURCE, TYPE, COMBINED_TYPE_DATA, SELF>
+  implements K8sResourceKindMethods {
   getName = () => getName(this.data);
   getLabels = (defaultValue = {}) => getLabels(this.data, defaultValue);
   hasLabel = (label: string) => hasLabel(this.data, label);

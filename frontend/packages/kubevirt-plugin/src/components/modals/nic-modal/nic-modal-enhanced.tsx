@@ -21,8 +21,8 @@ const NICModalFirehoseComponent: React.FC<NICModalFirehoseComponentProps> = (pro
   const vmLikeFinal = getLoadedData(vmLikeEntityLoading, vmLikeEntity); // default old snapshot before loading a new one
   const vm = asVM(vmLikeFinal);
 
-  const nicWrapper = nic ? new NetworkInterfaceWrapper(nic, true) : NetworkInterfaceWrapper.EMPTY;
-  const networkWrapper = network ? new NetworkWrapper(network, true) : NetworkWrapper.EMPTY;
+  const nicWrapper = new NetworkInterfaceWrapper(nic);
+  const networkWrapper = new NetworkWrapper(network);
 
   const usedNetworksChoices = getUsedNetworks(vm);
 
@@ -51,11 +51,12 @@ const NICModalFirehoseComponent: React.FC<NICModalFirehoseComponentProps> = (pro
       getVMLikeModel(vmLikeEntity),
       vmLikeEntity,
       getUpdateNICPatches(vmLikeEntity, {
-        nic: NetworkInterfaceWrapper.mergeWrappers(
-          nicWrapper,
-          resultNetworkInterfaceWrapper,
-        ).asResource(),
-        network: NetworkWrapper.mergeWrappers(networkWrapper, resultNetworkWrapper).asResource(),
+        nic: new NetworkInterfaceWrapper(nicWrapper, true)
+          .mergeWith(resultNetworkInterfaceWrapper)
+          .asResource(),
+        network: new NetworkWrapper(networkWrapper, true)
+          .mergeWith(resultNetworkWrapper)
+          .asResource(),
         oldNICName: nicWrapper.getName(),
         oldNetworkName: networkWrapper.getName(),
       }),
@@ -67,8 +68,8 @@ const NICModalFirehoseComponent: React.FC<NICModalFirehoseComponentProps> = (pro
       usedInterfacesNames={usedInterfacesNames}
       usedMultusNetworkNames={usedMultusNetworkNames}
       allowPodNetwork={allowPodNetwork}
-      nic={nicWrapper}
-      network={networkWrapper}
+      nic={new NetworkInterfaceWrapper(nicWrapper, true)}
+      network={new NetworkWrapper(networkWrapper, true)}
       onSubmit={onSubmit}
     />
   );

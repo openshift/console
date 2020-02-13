@@ -41,11 +41,11 @@ const DiskModalFirehoseComponent: React.FC<DiskModalFirehoseComponentProps> = (p
       getVMLikeModel(vmLikeEntity),
       vmLikeEntity,
       await getUpdateDiskPatches(vmLikeEntity, {
-        disk: DiskWrapper.mergeWrappers(diskWrapper, resultDisk).asResource(),
-        volume: new VolumeWrapper(volume, true).mergeWith(resultVolume).asResource(),
+        disk: new DiskWrapper(diskWrapper, true).mergeWith(resultDisk).asResource(),
+        volume: new VolumeWrapper(volumeWrapper, true).mergeWith(resultVolume).asResource(),
         dataVolume:
           resultDataVolume &&
-          DataVolumeWrapper.mergeWrappers(dataVolumeWrapper, resultDataVolume).asResource(),
+          new DataVolumeWrapper(dataVolume, true).mergeWith(resultDataVolume).asResource(),
         oldDiskName: diskWrapper.getName(),
         oldVolumeName: volumeWrapper.getName(),
         oldDataVolumeName: dataVolumeWrapper.getName(),
@@ -59,9 +59,9 @@ const DiskModalFirehoseComponent: React.FC<DiskModalFirehoseComponentProps> = (p
       usedPVCNames={combinedDiskFactory.getUsedDataVolumeNames(dataVolumeWrapper.getName())}
       vmName={getName(vm)}
       vmNamespace={getNamespace(vm)}
-      disk={new DiskWrapper(disk, true)}
-      volume={new VolumeWrapper(volume, true)}
-      dataVolume={new DataVolumeWrapper(dataVolume, true)}
+      disk={new DiskWrapper(diskWrapper, true)}
+      volume={new VolumeWrapper(volumeWrapper, true)}
+      dataVolume={new DataVolumeWrapper(dataVolumeWrapper, true)}
       onSubmit={onSubmit}
     />
   );

@@ -123,9 +123,9 @@ export const NICModal = withHandlePromise((props: NICModalProps) => {
     cancel,
   } = props;
   const asId = prefixedID.bind(null, 'nic');
-  const nic = props.nic || NetworkInterfaceWrapper.EMPTY;
-  const network = props.network || NetworkWrapper.EMPTY;
-  const isEditing = nic !== NetworkInterfaceWrapper.EMPTY;
+  const nic = props.nic || new NetworkInterfaceWrapper();
+  const network = props.network || new NetworkWrapper();
+  const isEditing = !!props.nic;
 
   const [name, setName] = React.useState<string>(
     nic.getName() || getSequenceName('nic', usedInterfacesNames),

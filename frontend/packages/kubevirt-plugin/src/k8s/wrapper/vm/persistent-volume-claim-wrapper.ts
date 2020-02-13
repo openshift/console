@@ -49,10 +49,6 @@ export class PersistentVolumeClaimWrapper extends Wrapper<
     });
   };
 
-  constructor(persistentVolumeClaim?: V1PersistentVolumeClaim, copy = false) {
-    super(persistentVolumeClaim, copy);
-  }
-
   getName = () => getName(this.data as any);
 
   getStorageClassName = () => getPvcStorageClassName(this.data as any);
