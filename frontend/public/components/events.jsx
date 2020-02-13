@@ -64,14 +64,19 @@ const kindFilter = (reference, { involvedObject }) => {
   if (reference === 'all') {
     return true;
   }
-
-  if (isGroupVersionKind(reference)) {
-    const group = apiGroupForReference(reference);
-    const kind = kindForReference(reference);
-    const { group: eventGroup } = groupVersionFor(involvedObject.apiVersion);
-    return involvedObject.kind === kind && eventGroup === group;
-  }
-  return involvedObject.kind === reference;
+  const kinds = reference.split(',');
+  return kinds.some((ref) => {
+    if (isGroupVersionKind(ref)) {
+      const group = apiGroupForReference(ref);
+      const kind = kindForReference(ref);
+      if (typeof involvedObject.apiVersion === 'undefined') {
+        return false;
+      }
+      const { group: eventGroup } = groupVersionFor(involvedObject.apiVersion);
+      return involvedObject.kind === kind && eventGroup === group;
+    }
+    return involvedObject.kind === ref;
+  });
 };
 
 const Inner = connectToFlags(FLAGS.CAN_LIST_NODE)(
@@ -175,51 +180,8 @@ export class EventsList extends React.Component {
     this.setState({ selected: new Set(['All']) });
   };
 
-  getEvents = () => {
-    const { selected, type, textFilter } = this.state;
-    const events = [];
-    if (selected.has('All') || selected.size === 0) {
-      events.push(
-        <div key="all">
-          <span>
-            <ResourceIcon kind="All" />
-            All resources
-          </span>
-          <EventStream
-            {...this.props}
-            key="all-resources-event"
-            type={type}
-            kind="all"
-            mock={this.props.mock}
-            textFilter={textFilter}
-          />
-        </div>,
-      );
-    } else {
-      selected.forEach((kind) => {
-        events.push(
-          <div key={kind}>
-            <span>
-              <ResourceIcon kind={kind} />
-              {kindForReference(kind)}
-            </span>
-            <EventStream
-              {...this.props}
-              key={kind}
-              type={type}
-              kind={kind}
-              mock={this.props.mock}
-              textFilter={textFilter}
-            />
-          </div>,
-        );
-      });
-    }
-    return <div className="co-search co-m-pane__body">{events}</div>;
-  };
-
   render() {
-    const { type, selected } = this.state;
+    const { type, selected, textFilter } = this.state;
     const { autoFocus = true } = this.props;
 
     return (
@@ -266,7 +228,14 @@ export class EventsList extends React.Component {
             </ChipGroup>
           </div>
         </PageHeading>
-        {this.getEvents()}
+        <EventStream
+          {...this.props}
+          key={[...selected].join(',')}
+          type={type}
+          kind={selected.has('All') || selected.size === 0 ? 'all' : [...selected].join(',')}
+          mock={this.props.mock}
+          textFilter={textFilter}
+        />
       </>
     );
   }
