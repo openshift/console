@@ -22,8 +22,15 @@ export class Wrapper<RESOURCE extends {}, SELF extends Wrapper<RESOURCE, SELF>> 
     this.data = (data && copy ? _.cloneDeep(data) : data || {}) as any;
   }
 
-  public mergeWith(wrapper: SELF) {
-    this.data = _.merge(this.data, wrapper.data);
+  public mergeWith(...wrappers: SELF[]) {
+    if (wrappers) {
+      const update = _.merge(
+        {},
+        wrappers.filter((w) => w?.data).map((w) => w.data),
+      );
+
+      _.merge(this.data, _.cloneDeep(update)); // clone to dispose of all old references
+    }
     return this;
   }
 

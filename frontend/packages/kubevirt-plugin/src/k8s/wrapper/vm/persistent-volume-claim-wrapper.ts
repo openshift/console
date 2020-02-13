@@ -76,8 +76,8 @@ export class PersistentVolumeClaimWrapper extends Wrapper<
 
   getVolumeMode = () => getPvcVolumeMode(this.data);
 
-  public mergeWith(pvcWrapper: PersistentVolumeClaimWrapper) {
-    super.mergeWith(pvcWrapper);
+  public mergeWith(...pvcWrappers: PersistentVolumeClaimWrapper[]) {
+    super.mergeWith(...pvcWrappers);
 
     if (!this.data?.spec?.storageClassName && this.data?.spec) {
       delete this.data.spec.storageClassName;

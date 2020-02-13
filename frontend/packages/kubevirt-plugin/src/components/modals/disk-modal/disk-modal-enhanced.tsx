@@ -20,6 +20,9 @@ import { getUpdateDiskPatches } from '../../../k8s/patches/vm/vm-disk-patches';
 import { CombinedDiskFactory } from '../../../k8s/wrapper/vm/combined-disk';
 import { DiskModal } from './disk-modal';
 import { TemplateValidations } from '../../../utils/validations/template/template-validations';
+import { V1Disk } from '../../../types/vm/disk/V1Disk';
+import { V1Volume } from '../../../types/vm/disk/V1Volume';
+import { V1alpha1DataVolume } from '../../../types/vm/disk/V1alpha1DataVolume';
 
 const DiskModalFirehoseComponent: React.FC<DiskModalFirehoseComponentProps> = (props) => {
   const { disk, volume, dataVolume, vmLikeEntity, vmLikeEntityLoading, ...restProps } = props;
@@ -27,11 +30,9 @@ const DiskModalFirehoseComponent: React.FC<DiskModalFirehoseComponentProps> = (p
   const vmLikeFinal = getLoadedData(vmLikeEntityLoading, vmLikeEntity); // default old snapshot before loading a new one
   const vm = asVM(vmLikeFinal);
 
-  const diskWrapper = disk ? new DiskWrapper(disk, true) : DiskWrapper.EMPTY;
-  const volumeWrapper = volume ? new VolumeWrapper(volume, true) : VolumeWrapper.EMPTY;
-  const dataVolumeWrapper = dataVolume
-    ? new DataVolumeWrapper(dataVolume, true)
-    : DataVolumeWrapper.EMPTY;
+  const diskWrapper = new DiskWrapper(disk);
+  const volumeWrapper = new VolumeWrapper(volume);
+  const dataVolumeWrapper = new DataVolumeWrapper(dataVolume);
 
   const combinedDiskFactory = CombinedDiskFactory.initializeFromVMLikeEntity(vmLikeFinal);
 
@@ -41,7 +42,7 @@ const DiskModalFirehoseComponent: React.FC<DiskModalFirehoseComponentProps> = (p
       vmLikeEntity,
       await getUpdateDiskPatches(vmLikeEntity, {
         disk: DiskWrapper.mergeWrappers(diskWrapper, resultDisk).asResource(),
-        volume: VolumeWrapper.mergeWrappers(volumeWrapper, resultVolume).asResource(),
+        volume: new VolumeWrapper(volume, true).mergeWith(resultVolume).asResource(),
         dataVolume:
           resultDataVolume &&
           DataVolumeWrapper.mergeWrappers(dataVolumeWrapper, resultDataVolume).asResource(),
@@ -58,18 +59,18 @@ const DiskModalFirehoseComponent: React.FC<DiskModalFirehoseComponentProps> = (p
       usedPVCNames={combinedDiskFactory.getUsedDataVolumeNames(dataVolumeWrapper.getName())}
       vmName={getName(vm)}
       vmNamespace={getNamespace(vm)}
-      disk={diskWrapper}
-      volume={volumeWrapper}
-      dataVolume={dataVolumeWrapper}
+      disk={new DiskWrapper(disk, true)}
+      volume={new VolumeWrapper(volume, true)}
+      dataVolume={new DataVolumeWrapper(dataVolume, true)}
       onSubmit={onSubmit}
     />
   );
 };
 
 type DiskModalFirehoseComponentProps = ModalComponentProps & {
-  disk?: any;
-  volume?: any;
-  dataVolume?: any;
+  disk?: V1Disk;
+  volume?: V1Volume;
+  dataVolume?: V1alpha1DataVolume;
   isEditing?: boolean;
   namespace: string;
   onNamespaceChanged: (namespace: string) => void;
