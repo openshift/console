@@ -190,34 +190,6 @@ const getAvailableFilters = (initialFilters): PageFilters => {
     },
   };
 
-  filters.capabilityLevel = {
-    BasicInstall: {
-      value: 'basicinstall',
-      label: 'Basic Install',
-      active: false,
-    },
-    SeamlessUpgrades: {
-      value: 'seamlessupgrades',
-      label: 'Seamless Upgrades',
-      active: false,
-    },
-    FullLifecycle: {
-      value: 'fulllifecycle',
-      label: 'Full Lifecycle',
-      active: true,
-    },
-    DeepInsights: {
-      value: 'deepinsights',
-      label: 'Deep Insights',
-      active: true,
-    },
-    AutoPilot: {
-      value: 'autopilot',
-      label: 'Auto Pilot',
-      active: true,
-    },
-  };
-
   return filters;
 };
 
