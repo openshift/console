@@ -2,6 +2,7 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import ElementContext from '../../utils/ElementContext';
 import { isNode } from '../../types';
+import { ATTR_DATA_ID, ATTR_DATA_KIND, ATTR_DATA_TYPE } from '../../const';
 
 type LayerContainerProps = {
   children: React.ReactNode;
@@ -12,7 +13,8 @@ const LayerContainer: React.RefForwardingComponent<SVGGElement, LayerContainerPr
   ref,
 ) => {
   // accumulate parent positions
-  let p = React.useContext(ElementContext);
+  const element = React.useContext(ElementContext);
+  let p = element;
   let x = 0;
   let y = 0;
   while (isNode(p)) {
@@ -23,8 +25,13 @@ const LayerContainer: React.RefForwardingComponent<SVGGElement, LayerContainerPr
     }
     p = p.getParent();
   }
+  const commonAttrs = {
+    [ATTR_DATA_ID]: element.getId(),
+    [ATTR_DATA_KIND]: element.getKind(),
+    [ATTR_DATA_TYPE]: element.getType(),
+  };
   return (
-    <g ref={ref} transform={`translate(${x}, ${y})`}>
+    <g ref={ref} transform={`translate(${x}, ${y})`} {...commonAttrs}>
       {children}
     </g>
   );
