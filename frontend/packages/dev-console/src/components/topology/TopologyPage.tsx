@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
 import { connect } from 'react-redux';
-import { matchPath, match as RMatch, Link } from 'react-router-dom';
+import { matchPath, match as RMatch, Link, Redirect } from 'react-router-dom';
 import { Tooltip, Popover, Button } from '@patternfly/react-core';
 import { ListIcon, TopologyIcon, QuestionCircleIcon } from '@patternfly/react-icons';
 import { getActiveApplication } from '@console/internal/reducers/ui';
@@ -18,6 +18,7 @@ import { getCheURL } from './topology-utils';
 import ConnectedTopologyDataController, { RenderProps } from './TopologyDataController';
 import Topology from './Topology';
 import TopologyShortcuts from './TopologyShortcuts';
+import { LAST_TOPOLOGY_VIEW_LOCAL_STORAGE_KEY } from './const';
 import './TopologyPage.scss';
 
 interface StateProps {
@@ -34,6 +35,14 @@ export interface TopologyPageProps {
 }
 
 type Props = TopologyPageProps & StateProps;
+
+const setTopologyActiveView = (id: string) => {
+  localStorage.setItem(LAST_TOPOLOGY_VIEW_LOCAL_STORAGE_KEY, id);
+};
+
+const getTopologyActiveView = () => {
+  return localStorage.getItem(LAST_TOPOLOGY_VIEW_LOCAL_STORAGE_KEY);
+};
 
 const EmptyMsg = () => (
   <EmptyState
@@ -78,6 +87,25 @@ const TopologyPage: React.FC<Props> = ({
     path: '*/list',
     exact: true,
   });
+  const showGraphView = !!matchPath(match.path, {
+    path: '*/graph',
+    exact: true,
+  });
+
+  React.useEffect(() => setTopologyActiveView(showListView && !showGraphView ? 'list' : 'graph'), [
+    showListView,
+    showGraphView,
+  ]);
+
+  if (!showGraphView && !showListView) {
+    return (
+      <Redirect
+        to={`/topology/${namespace ? `ns/${namespace}` : 'all-namespaces'}/${
+          getTopologyActiveView() === 'list' ? 'list' : 'graph'
+        }`}
+      />
+    );
+  }
 
   return (
     <>
@@ -110,7 +138,7 @@ const TopologyPage: React.FC<Props> = ({
               <Link
                 className="pf-c-button pf-m-plain"
                 to={`/topology/${namespace ? `ns/${namespace}` : 'all-namespaces'}${
-                  showListView ? '' : '/list'
+                  showListView ? '/graph' : '/list'
                 }`}
               >
                 {showListView ? <TopologyIcon size="md" /> : <ListIcon size="md" />}
