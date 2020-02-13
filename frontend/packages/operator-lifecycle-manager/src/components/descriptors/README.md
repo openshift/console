@@ -26,7 +26,9 @@ type Descriptor = {
 
 The `x-descriptors` field can be thought of as "capabilities" (and is referenced in the code using this term). Capabilities are defined in `types.ts` provide a mapping between descriptors and different UI components (implemented as React components) using [URN format](https://en.wikipedia.org/wiki/Uniform_Resource_Identifier).
 
-The `value` field is an optional field. If present, the value of this spec is the same for all instances of the CRD and can be found here instead of on the CR. You can specify the default value of the field on CRD in [OpenAPI v3 validation schema](https://kubernetes.io/docs/tasks/access-kubernetes-api/custom-resources/custom-resource-definitions/#defaulting).
+The `value` field is an optional field. If present, the value of this spec is the same for all instances of the CRD and can be found here instead of on the CR. This should not be used to apply a default value to a given custom resource for consumption by the console.
+
+You can assign the default value of the field on CRD in OpenAPI v3 validation schema (see [Defaulting](https://kubernetes.io/docs/tasks/access-kubernetes-api/custom-resources/custom-resource-definitions/#defaulting) feature in Kubernetes 1.17). Alternatively, you can specify the value of a field in [CRD Templates](https://github.com/operator-framework/operator-lifecycle-manager/blob/master/doc/design/building-your-csv.md#crd-templates) in the `ClusterServiceVersion` to set (or override) the default value on the CRD.
 
 
 ## Example
