@@ -160,8 +160,8 @@ const VirtualMachineTemplates: React.FC<React.ComponentProps<typeof Table> &
 };
 const getCreateProps = ({ namespace }: { namespace: string }) => {
   const items: any = {
-    wizard: 'Create with Wizard',
-    yaml: 'Create from YAML',
+    wizard: 'New with Wizard',
+    yaml: 'New from YAML',
   };
 
   return {
