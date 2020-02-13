@@ -16,7 +16,6 @@ import { withFallback } from '@console/shared/src/components/error/error-boundar
 
 import * as UIActions from '../../../actions/ui';
 import { ErrorBoundaryFallback } from '../../error';
-import { connectToURLs, MonitoringRoutes } from '../../../reducers/monitoring';
 import { RootState } from '../../../redux';
 import { getPrometheusURL, PrometheusEndpoint } from '../../graphs/helpers';
 import { ExternalLink, history, LoadingInline, useSafeFetch } from '../../utils';
@@ -402,13 +401,12 @@ const Board: React.FC<BoardProps> = ({ rows }) => (
   </>
 );
 
-const GrafanaLink_ = ({ urls }) =>
-  _.isEmpty(urls[MonitoringRoutes.Grafana]) ? null : (
+const GrafanaLink = () =>
+  _.isEmpty(window.SERVER_FLAGS.grafanaPublicURL) ? null : (
     <span className="monitoring-header-link">
-      <ExternalLink href={urls[MonitoringRoutes.Grafana]} text="Grafana UI" />
+      <ExternalLink href={window.SERVER_FLAGS.grafanaPublicURL} text="Grafana UI" />
     </span>
   );
-const GrafanaLink = connectToURLs(MonitoringRoutes.Grafana)(GrafanaLink_);
 
 const MonitoringDashboardsPage_: React.FC<MonitoringDashboardsPageProps> = ({
   deleteAll,

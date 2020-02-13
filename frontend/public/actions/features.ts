@@ -193,28 +193,6 @@ const detectCanCreateProject = (dispatch) =>
     },
   );
 
-const monitoringConfigMapPath = `${k8sBasePath}/api/v1/namespaces/openshift-monitoring/configmaps/sharing-config`;
-const detectMonitoringURLs = (dispatch) =>
-  coFetchJSON(monitoringConfigMapPath).then(
-    (res) => {
-      const { alertmanagerURL, grafanaURL, prometheusURL } = res.data;
-      if (!_.isEmpty(alertmanagerURL)) {
-        dispatch(setMonitoringURL(MonitoringRoutes.Alertmanager, alertmanagerURL));
-      }
-      if (!_.isEmpty(grafanaURL)) {
-        dispatch(setMonitoringURL(MonitoringRoutes.Grafana, grafanaURL));
-      }
-      if (!_.isEmpty(prometheusURL)) {
-        dispatch(setMonitoringURL(MonitoringRoutes.Prometheus, prometheusURL));
-      }
-    },
-    (err) => {
-      if (!_.includes([401, 403, 404, 500], _.get(err, 'response.status'))) {
-        setTimeout(() => detectMonitoringURLs(dispatch), 15000);
-      }
-    },
-  );
-
 const loggingConfigMapPath = `${k8sBasePath}/api/v1/namespaces/openshift-logging/configmaps/sharing-config`;
 const detectLoggingURL = (dispatch) =>
   coFetchJSON(loggingConfigMapPath).then(
@@ -278,7 +256,6 @@ export const detectFeatures = () => (dispatch: Dispatch) =>
   [
     detectOpenShift,
     detectCanCreateProject,
-    detectMonitoringURLs,
     detectClusterVersion,
     detectUser,
     detectLoggingURL,

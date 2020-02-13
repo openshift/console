@@ -80,7 +80,7 @@ func main() {
 	fK8sModeOffClusterEndpoint := fs.String("k8s-mode-off-cluster-endpoint", "", "URL of the Kubernetes API server.")
 	fK8sModeOffClusterSkipVerifyTLS := fs.Bool("k8s-mode-off-cluster-skip-verify-tls", false, "DEV ONLY. When true, skip verification of certs presented by k8s API server.")
 	fK8sModeOffClusterPrometheus := fs.String("k8s-mode-off-cluster-prometheus", "", "DEV ONLY. URL of the cluster's Prometheus server.")
-	fK8sModeOffClusterThanos := fs.String("k8s-mode-off-cluster-thanos", "", "DEV ONLY. URL of the cluster's Prometheus server.")
+	fK8sModeOffClusterThanos := fs.String("k8s-mode-off-cluster-thanos", "", "DEV ONLY. URL of the cluster's Thanos server.")
 	fK8sModeOffClusterAlertmanager := fs.String("k8s-mode-off-cluster-alertmanager", "", "DEV ONLY. URL of the cluster's AlertManager server.")
 	fK8sModeOffClusterMetering := fs.String("k8s-mode-off-cluster-metering", "", "DEV ONLY. URL of the cluster's metering server.")
 
@@ -107,6 +107,11 @@ func main() {
 	fCustomLogoFile := fs.String("custom-logo-file", "", "Custom product image for console branding.")
 	fStatuspageID := fs.String("statuspage-id", "", "Unique ID assigned by statuspage.io page that provides status info.")
 	fDocumentationBaseURL := fs.String("documentation-base-url", "", "The base URL for documentation links.")
+
+	fAlermanagerPublicURL := fs.String("alermanager-public-url", "", "Public URL of the cluster's AlertManager server.")
+	fGrafanaPublicURL := fs.String("grafana-public-url", "", "Public URL of the cluster's Grafana server.")
+	fPrometheusPublicURL := fs.String("prometheus-public-url", "", "Public URL of the cluster's Prometheus server.")
+	fThanosPublicURL := fs.String("thanos-public-url", "", "Public URL of the cluster's Thanos server.")
 
 	fLoadTestFactor := fs.Int("load-test-factor", 0, "DEV ONLY. The factor used to multiply k8s API list responses for load testing purposes.")
 
@@ -160,6 +165,23 @@ func main() {
 		documentationBaseURL = bridge.ValidateFlagIsURL("documentation-base-url", *fDocumentationBaseURL)
 	}
 
+	alertManagerPublicURL := &url.URL{}
+	if *fAlermanagerPublicURL != "" {
+		alertManagerPublicURL = bridge.ValidateFlagIsURL("alermanager-public-url", *fAlermanagerPublicURL)
+	}
+	grafanaPublicURL := &url.URL{}
+	if *fGrafanaPublicURL != "" {
+		grafanaPublicURL = bridge.ValidateFlagIsURL("grafana-public-url", *fGrafanaPublicURL)
+	}
+	prometheusPublicURL := &url.URL{}
+	if *fPrometheusPublicURL != "" {
+		prometheusPublicURL = bridge.ValidateFlagIsURL("prometheus-public-url", *fPrometheusPublicURL)
+	}
+	thanosPublicURL := &url.URL{}
+	if *fThanosPublicURL != "" {
+		thanosPublicURL = bridge.ValidateFlagIsURL("thanos-public-url", *fThanosPublicURL)
+	}
+
 	branding := *fBranding
 	if branding == "origin" {
 		branding = "okd"
@@ -182,15 +204,19 @@ func main() {
 	}
 
 	srv := &server.Server{
-		PublicDir:            *fPublicDir,
-		BaseURL:              baseURL,
-		LogoutRedirect:       logoutRedirect,
-		Branding:             branding,
-		CustomProductName:    *fCustomProductName,
-		CustomLogoFile:       *fCustomLogoFile,
-		StatuspageID:         *fStatuspageID,
-		DocumentationBaseURL: documentationBaseURL,
-		LoadTestFactor:       *fLoadTestFactor,
+		PublicDir:             *fPublicDir,
+		BaseURL:               baseURL,
+		LogoutRedirect:        logoutRedirect,
+		Branding:              branding,
+		CustomProductName:     *fCustomProductName,
+		CustomLogoFile:        *fCustomLogoFile,
+		StatuspageID:          *fStatuspageID,
+		DocumentationBaseURL:  documentationBaseURL,
+		AlertManagerPublicURL: alertManagerPublicURL,
+		GrafanaPublicURL:      grafanaPublicURL,
+		PrometheusPublicURL:   prometheusPublicURL,
+		ThanosPublicURL:       thanosPublicURL,
+		LoadTestFactor:        *fLoadTestFactor,
 	}
 
 	// if !in-cluster (dev) we should not pass these values to the frontend
