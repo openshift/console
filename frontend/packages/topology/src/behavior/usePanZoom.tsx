@@ -4,7 +4,8 @@ import { observer } from 'mobx-react';
 import { action, autorun, IReactionDisposer } from 'mobx';
 import ElementContext from '../utils/ElementContext';
 import useCallbackRef from '../utils/useCallbackRef';
-import { isGraph } from '../types';
+import { isGraph, ModelKind } from '../types';
+import { ATTR_DATA_KIND } from '../const';
 
 export type PanZoomTransform = {
   x: number;
@@ -55,7 +56,30 @@ export const usePanZoom = (zoomExtent: [number, number] = ZOOM_EXTENT): PanZoomR
                 elementRef.current.setScale(d3.event.transform.k);
               }),
             )
-            .filter(() => !d3.event.ctrlKey && !d3.event.button);
+            .filter(() => {
+              if (d3.event.ctrlKey || d3.event.button) {
+                return false;
+              }
+              // only allow zoom from double clicking the graph directly
+              if (d3.event.type === 'dblclick') {
+                // check if target is not within a node or edge
+                const svg = node.ownerSVGElement;
+                let p: Node | null = d3.event.target;
+                while (p && p !== svg) {
+                  if (p instanceof Element) {
+                    const kind = p.getAttribute(ATTR_DATA_KIND);
+                    if (kind) {
+                      if (kind !== ModelKind.graph) {
+                        return false;
+                      }
+                      break;
+                    }
+                  }
+                  p = p.parentNode;
+                }
+              }
+              return true;
+            });
           zoom($svg);
 
           // Update the d3 transform whenever the scale or bounds change.
