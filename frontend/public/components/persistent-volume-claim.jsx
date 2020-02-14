@@ -31,12 +31,12 @@ const PVCStatus = ({ pvc }) => (
 );
 
 const tableColumnClasses = [
-  classNames('col-lg-2', 'col-md-2', 'col-sm-4', 'col-xs-6'),
-  classNames('col-lg-2', 'col-md-2', 'col-sm-4', 'col-xs-6'),
-  classNames('col-lg-2', 'col-md-2', 'col-sm-4', 'hidden-xs'),
-  classNames('col-lg-2', 'col-md-2', 'hidden-sm', 'hidden-xs'),
-  classNames('col-lg-2', 'col-md-2', 'hidden-sm', 'hidden-xs'),
-  classNames('col-lg-2', 'col-md-2', 'hidden-sm', 'hidden-xs'),
+  '', // name
+  '', // namespace
+  classNames('pf-m-hidden', 'pf-m-visible-on-lg'), // status
+  classNames('pf-m-hidden', 'pf-m-visible-on-xl'), // persistence volume
+  classNames('pf-m-hidden', 'pf-m-visible-on-xl'), // capacity
+  classNames('pf-m-hidden', 'pf-m-visible-on-2xl'), // storage class
   Kebab.columnClass,
 ];
 
@@ -73,8 +73,14 @@ const PVCTableHeader = () => {
       props: { className: tableColumnClasses[4] },
     },
     {
-      title: '',
+      title: 'Storage Class',
+      sortField: 'spec.storageClassName',
+      transforms: [sortable],
       props: { className: tableColumnClasses[5] },
+    },
+    {
+      title: '',
+      props: { className: tableColumnClasses[6] },
     },
   ];
 };
@@ -117,7 +123,18 @@ const PVCTableRow = ({ obj, index, key, style }) => {
       <TableData className={tableColumnClasses[4]}>
         {_.get(obj, 'status.capacity.storage', '-')}
       </TableData>
-      <TableData className={tableColumnClasses[5]}>
+      <TableData className={classNames(tableColumnClasses[5])}>
+        {obj?.spec?.storageClassName ? (
+          <ResourceLink
+            kind="StorageClass"
+            name={obj.spec.storageClassName}
+            title={obj.spec.storageClassName}
+          />
+        ) : (
+          <div className="text-muted">-</div>
+        )}
+      </TableData>
+      <TableData className={tableColumnClasses[6]}>
         <ResourceKebab actions={menuActions} kind={kind} resource={obj} />
       </TableData>
     </TableRow>
