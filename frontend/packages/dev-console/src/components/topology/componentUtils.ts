@@ -21,6 +21,7 @@ import { moveNodeToGroup } from './components/moveNodeToGroup';
 import { TYPE_CONNECTS_TO, TYPE_WORKLOAD, TYPE_KNATIVE_SERVICE, TYPE_EVENT_SOURCE } from './const';
 import './components/GraphComponent.scss';
 import { graphContextMenu, groupContextMenu } from './nodeContextMenu';
+import { errorModal } from '@console/internal/components/modals';
 
 type GraphProps = {
   element: Graph;
@@ -224,6 +225,7 @@ const edgeDragSourceSpec = (
     replaceTargetNode?: Node,
     serviceBindingFlag?: boolean,
   ) => Promise<K8sResourceKind[] | K8sResourceKind>,
+  failureTitle: string = 'Error moving connection',
 ): DragSourceSpec<DragObjectWithType, Node, { dragging: boolean }, EdgeProps> => ({
   item: { type },
   operation: MOVE_CONNECTOR_OPERATION,
@@ -237,7 +239,14 @@ const edgeDragSourceSpec = (
   end: (dropResult, monitor, props) => {
     props.element.setEndPoint();
     if (monitor.didDrop() && dropResult) {
-      callback(props.element.getSource(), dropResult, props.element.getTarget(), serviceBinding);
+      callback(
+        props.element.getSource(),
+        dropResult,
+        props.element.getTarget(),
+        serviceBinding,
+      ).catch((error) => {
+        errorModal({ title: failureTitle, error: error.message, showIcon: true });
+      });
     }
   },
   collect: (monitor) => ({
@@ -249,18 +258,26 @@ const createConnectorCallback = (serviceBinding: boolean) => (
   source: Node,
   target: Node | Graph,
 ): React.ReactElement[] | null => {
+  if (source === target) {
+    return null;
+  }
+
   if (isGraph(target)) {
     return graphContextMenu(target, source);
   }
   if (target.isGroup()) {
     return groupContextMenu(target, source);
   }
-  createConnection(source, target, null, serviceBinding);
+  createConnection(source, target, null, serviceBinding).catch((error) => {
+    errorModal({ title: 'Error creating connection', error: error.message });
+  });
   return null;
 };
 
 const removeConnectorCallback = (edge: Edge): void => {
-  removeConnection(edge);
+  removeConnection(edge).catch((error) => {
+    errorModal({ title: 'Error removing connection', error: error.message });
+  });
   return null;
 };
 
