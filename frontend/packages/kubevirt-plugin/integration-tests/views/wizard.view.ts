@@ -27,6 +27,8 @@ export const workloadProfileSelect = $('#workload-profile-dropdown');
 export const customFlavorMemoryInput = $('#resources-memory');
 export const customFlavorCpusInput = $('#resources-cpu');
 
+export const customFlavorMemoryHintBlock = $('#resources-memory-helper');
+
 export const nameInput = $('#vm-name');
 export const descriptionInput = $('#vm-description');
 export const startVMOnCreation = $('#start-vm');
@@ -38,6 +40,8 @@ export const pxeBootSourceSelect = $('#pxe-bootsource');
 // Storage tab
 export const addDiskButton = $('#add-disk');
 export const storageBootSourceSelect = $('#storage-bootsource');
+export const diskWarning = (resourceName) =>
+  $(`[data-id="${resourceName}"]`).$('.kubevirt-validation-cell__cell--warning');
 
 // Virtual Hardware tab
 export const addCDButton = $('#attach-cdrom');
@@ -51,7 +55,8 @@ export const cloudInitHostname = $('#cloudinit-hostname');
 export const cloudInitSSHKey = (rowNumber) => $(`#cloudinit-ssh-authorized-keys-key-${rowNumber}`);
 
 // Result tab
-export const creationStatus = $('h5.pf-c-title');
+export const creationSuccessResult = $('[data-test-id="kubevirt-wizard-success-result"]');
+export const creationErrorResult = $('[data-test-id="kubevirt-wizard-error-result"]');
 
 export const waitForNoLoaders = async () => {
   await browser.wait(waitForNone($$('.co-m-loader')));

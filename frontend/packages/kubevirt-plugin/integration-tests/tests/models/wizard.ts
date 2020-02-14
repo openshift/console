@@ -1,18 +1,39 @@
 import { browser, ExpectedConditions as until } from 'protractor';
-import { createItemButton } from '@console/internal-integration-tests/views/crud.view';
+import {
+  createItemButton,
+  resourceTitle,
+  isLoaded,
+} from '@console/internal-integration-tests/views/crud.view';
+import { clickNavLink } from '@console/internal-integration-tests/views/sidenav.view';
 import { click, asyncForEach } from '@console/shared/src/test-utils/utils';
 import { fillInput, selectOptionByText } from '../utils/utils';
-import { CloudInitConfig, StorageResource, NetworkResource } from '../utils/types';
-import { WIZARD_CREATE_VM_SUCCESS, PAGE_LOAD_TIMEOUT_SECS } from '../utils/consts';
+import { CloudInitConfig, StorageResource, NetworkResource, FlavorConfig } from '../utils/types';
+import { WIZARD_CREATE_VM_SUCCESS, PAGE_LOAD_TIMEOUT_SECS, KEBAP_ACTION } from '../utils/consts';
 import * as wizardView from '../../views/wizard.view';
 import { NetworkInterfaceDialog } from '../dialogs/networkInterfaceDialog';
 import { DiskDialog } from '../dialogs/diskDialog';
+import { Flavor } from '../utils/constants/wizard';
 
 export class Wizard {
   async openWizard() {
+    if (
+      !(await resourceTitle.isPresent()) ||
+      (await resourceTitle.getText()) !== 'Virtual Machines'
+    ) {
+      await clickNavLink(['Workloads', 'Virtual Machines']);
+      await isLoaded();
+    }
     await click(createItemButton);
     await click(wizardView.createWithWizardButton);
     await wizardView.waitForNoLoaders();
+  }
+
+  async closeWizard() {
+    await click(wizardView.cancelButton);
+    await browser
+      .switchTo()
+      .alert()
+      .accept();
   }
 
   async next() {
@@ -36,8 +57,17 @@ export class Wizard {
     await selectOptionByText(wizardView.operatingSystemSelect, operatingSystem);
   }
 
-  async selectFlavor(flavor: string) {
-    await selectOptionByText(wizardView.flavorSelect, flavor);
+  async selectFlavor(flavor: FlavorConfig) {
+    await selectOptionByText(wizardView.flavorSelect, flavor.flavor);
+    if (flavor.flavor === Flavor.CUSTOM && (!flavor.memory || !flavor.cpu)) {
+      throw Error('Custom Flavor requires memory and cpu values.');
+    }
+    if (flavor.memory) {
+      await fillInput(wizardView.customFlavorMemoryInput, flavor.memory);
+    }
+    if (flavor.cpu) {
+      await fillInput(wizardView.customFlavorCpusInput, flavor.cpu);
+    }
   }
 
   async selectWorkloadProfile(workloadProfile: string) {
@@ -83,7 +113,7 @@ export class Wizard {
    * @param   {NetworkResource}     NIC      NIC with the requested attributes.
    */
   async editNIC(name: string, NIC: NetworkResource) {
-    await wizardView.clickKebabAction(name, 'Edit');
+    await wizardView.clickKebabAction(name, KEBAP_ACTION.Edit);
     const addNICDialog = new NetworkInterfaceDialog();
     await addNICDialog.edit(NIC);
   }
@@ -114,7 +144,7 @@ export class Wizard {
    * @param   {StorageResource}     disk     Disk with the requested attributes.
    */
   async editDisk(name: string, disk: StorageResource) {
-    await wizardView.clickKebabAction(name, 'Edit');
+    await wizardView.clickKebabAction(name, KEBAP_ACTION.Edit);
     const addDiskDialog = new DiskDialog();
     await addDiskDialog.edit(disk);
   }
@@ -125,7 +155,7 @@ export class Wizard {
 
   async waitForCreation() {
     await browser.wait(
-      until.textToBePresentInElement(wizardView.creationStatus, WIZARD_CREATE_VM_SUCCESS),
+      until.textToBePresentInElement(wizardView.creationSuccessResult, WIZARD_CREATE_VM_SUCCESS),
       PAGE_LOAD_TIMEOUT_SECS,
     );
   }

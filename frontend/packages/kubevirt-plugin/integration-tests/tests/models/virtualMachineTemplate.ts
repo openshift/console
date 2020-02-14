@@ -18,7 +18,7 @@ export class VirtualMachineTemplate extends KubevirtDetailView {
     description,
     provisionSource,
     operatingSystem,
-    flavor,
+    flavorConfig,
     workloadProfile,
     cloudInit,
     storageResources,
@@ -32,7 +32,7 @@ export class VirtualMachineTemplate extends KubevirtDetailView {
 
     await wizard.selectProvisionSource(provisionSource);
     await wizard.selectOperatingSystem(operatingSystem);
-    await wizard.selectFlavor(flavor);
+    await wizard.selectFlavor(flavorConfig);
     await wizard.selectWorkloadProfile(workloadProfile);
     await wizard.fillName(name);
     await wizard.fillDescription(description);

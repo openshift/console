@@ -181,7 +181,7 @@ export class VirtualMachine extends KubevirtDetailView {
     template,
     provisionSource,
     operatingSystem,
-    flavor,
+    flavorConfig,
     workloadProfile,
     startOnCreation,
     cloudInit,
@@ -200,7 +200,7 @@ export class VirtualMachine extends KubevirtDetailView {
       await wizard.selectOperatingSystem(operatingSystem);
       await wizard.selectWorkloadProfile(workloadProfile);
     }
-    await wizard.selectFlavor(flavor);
+    await wizard.selectFlavor(flavorConfig);
     await wizard.fillName(name);
     await wizard.fillDescription(description);
     if (startOnCreation) {
@@ -302,7 +302,7 @@ export class VirtualMachine extends KubevirtDetailView {
       await importWizard.selectOperatingSystem(operatingSystem as string);
     }
     if (flavorConfig) {
-      await importWizard.configureFlavor(flavorConfig);
+      await importWizard.selectFlavor(flavorConfig);
     }
     if (workloadProfile) {
       await importWizard.selectWorkloadProfile(workloadProfile);

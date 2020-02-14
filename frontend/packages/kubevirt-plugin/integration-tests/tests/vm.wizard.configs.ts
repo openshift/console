@@ -31,7 +31,7 @@ export const vmConfig = (
     },
     namespace,
     description: `Default description ${namespace}`,
-    flavor: baseConfig.flavor,
+    flavorConfig: baseConfig.flavorConfig,
     operatingSystem: baseConfig.operatingSystem,
     workloadProfile: baseConfig.workloadProfile,
   };
