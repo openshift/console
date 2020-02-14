@@ -382,7 +382,7 @@ const APIResourceOverview: React.FC<APIResourceTabProps> = ({ customData: { kind
         {description && (
           <>
             <dt>Description</dt>
-            <dd className="co-break-word co-pre-line">
+            <dd className="co-break-word co-pre-wrap">
               <LinkifyExternal>{description}</LinkifyExternal>
             </dd>
           </>
