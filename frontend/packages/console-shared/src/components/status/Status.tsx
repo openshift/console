@@ -71,7 +71,6 @@ export const Status: React.FC<StatusProps> = ({ status, title, children, iconOnl
     case 'Bound':
     case 'Complete':
     case 'Completed':
-    case 'Copied':
     case 'Created':
     case 'Enabled':
     case 'Succeeded':
