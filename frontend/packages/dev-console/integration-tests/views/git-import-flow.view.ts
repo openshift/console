@@ -98,8 +98,6 @@ export const addApplicationWithExistingApps = async function(name: string, nodeN
   await safeSendKeys(appName, 'appName', nodeName);
 };
 
-export const setBuilderImage = async function(version) {
+export const setBuilderImage = async function() {
   await builderImage.click();
-  await buildImageVersion.click();
-  await version.click();
 };
