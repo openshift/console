@@ -36,8 +36,10 @@ export const JASMINE_EXTENDED_TIMEOUT_INTERVAL = 500 * SEC;
 export const V2V_INSTANCE_CONNECTION_TIMEOUT = 30 * SEC;
 export const V2V_VM_IMPORT_TIMEOUT = 3600 * SEC;
 
-// Import Wizard strings
+// Wizard strings
 export const IMPORT_WIZARD_CONN_TO_NEW_INSTANCE = 'Connect to New Instance';
+export const NOT_RECOMMENDED_BUS_TYPE_WARN = 'Not recommended bus type';
+
 // Web-UI Exceptions
 export const WAIT_TIMEOUT_ERROR = 'Wait Timeout Error.';
 export const WIZARD_CREATE_VM_SUCCESS = 'Successfully created virtual machine';
@@ -63,7 +65,9 @@ export const COMMON_TEMPLATES_NAMESPACE = 'openshift';
 export const COMMON_TEMPLATES_REVISION = '1';
 
 export const KUBEVIRT_SCRIPTS_PATH =
-  './packages/kubevirt-plugin/integration-tests/tests/utils/scripts/';
+  './packages/kubevirt-plugin/integration-tests/tests/utils/scripts';
+export const KUBEVIRT_TEMPLATES_PATH =
+  './packages/kubevirt-plugin/integration-tests/tests/utils/templates';
 
 export enum TAB {
   Consoles = 'Consoles',
@@ -103,6 +107,11 @@ export enum DISK_SOURCE {
   Blank = 'Blank',
   Container = 'Container',
   Url = 'URL',
+}
+
+export enum KEBAP_ACTION {
+  Edit = 'Edit',
+  Delete = 'Delete',
 }
 
 export enum NIC_MODEL {

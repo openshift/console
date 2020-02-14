@@ -9,3 +9,5 @@ export const diskName = $('#disk-name');
 export const diskSize = $('#disk-size-row-size');
 export const diskInterface = $('#disk-interface');
 export const diskStorageClass = $('#disk-storage-class');
+
+export const diskInterfaceHelper = $('#disk-interface-helper');

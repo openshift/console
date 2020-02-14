@@ -290,7 +290,7 @@ describe('Test clone VM.', () => {
           provisionSource: cloudInitVmProvisionConfig,
           storageResources: [rootDisk],
           networkResources: [],
-          flavor: basicVMConfig.flavor,
+          flavorConfig: basicVMConfig.flavorConfig,
           operatingSystem: basicVMConfig.operatingSystem,
           workloadProfile: basicVMConfig.workloadProfile,
           startOnCreation: false,

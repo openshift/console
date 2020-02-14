@@ -152,7 +152,7 @@ describe('Test network type presets and options', () => {
       source: basicVMConfig.sourceContainer,
     });
     await wizard.selectOperatingSystem(basicVMConfig.operatingSystem);
-    await wizard.selectFlavor(basicVMConfig.flavor);
+    await wizard.selectFlavor(basicVMConfig.flavorConfig);
     await wizard.selectWorkloadProfile(basicVMConfig.workloadProfile);
     await wizard.next();
 

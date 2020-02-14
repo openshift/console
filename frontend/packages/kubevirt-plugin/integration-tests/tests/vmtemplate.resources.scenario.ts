@@ -20,7 +20,7 @@ describe('Test adding/removing discs/nics to/from a VM template', () => {
     },
     namespace: testName,
     description: `Default description ${testName}`,
-    flavor: basicVMConfig.flavor,
+    flavorConfig: basicVMConfig.flavorConfig,
     operatingSystem: basicVMConfig.operatingSystem,
     workloadProfile: basicVMConfig.workloadProfile,
   };

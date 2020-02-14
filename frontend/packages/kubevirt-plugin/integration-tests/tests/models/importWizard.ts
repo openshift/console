@@ -14,8 +14,7 @@ import {
 } from '../utils/consts';
 import * as view from '../../views/importWizard.view';
 import { waitForNoLoaders, clickKebabAction } from '../../views/wizard.view';
-import { InstanceConfig, FlavorConfig } from '../utils/types';
-import { Flavor } from '../utils/constants/wizard';
+import { InstanceConfig } from '../utils/types';
 import { Wizard } from './wizard';
 
 export class ImportWizard extends Wizard {
@@ -67,14 +66,6 @@ export class ImportWizard extends Wizard {
 
   async selectSourceVirtualMachine(sourceVirtualMachine: string) {
     await selectOptionByText(view.virtualMachineSelect, sourceVirtualMachine);
-  }
-
-  async configureFlavor(flavorConfig: FlavorConfig) {
-    if (flavorConfig.flavor === Flavor.CUSTOM) {
-      throw Error('Custom flavor configuration not implemented');
-    } else {
-      await this.selectFlavor(flavorConfig.flavor as string);
-    }
   }
 
   /**
