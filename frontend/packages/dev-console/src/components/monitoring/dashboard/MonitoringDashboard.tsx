@@ -2,7 +2,6 @@ import * as React from 'react';
 import * as _ from 'lodash';
 import { match as RMatch } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
-import { Grid, GridItem } from '@patternfly/react-core';
 import { getURLSearchParams } from '@console/internal/components/utils';
 import ConnectedMonitoringDashboardGraph from './MonitoringDashboardGraph';
 import {
@@ -11,7 +10,6 @@ import {
   MonitoringQuery,
   topWorkloadMetricsQueries,
 } from '../queries';
-import MonitoringDasboardPodCount from './MonitoringDashboardPodCount';
 
 interface MonitoringDashboardProps {
   match: RMatch<{
@@ -33,23 +31,19 @@ const MonitoringDashboard: React.FC<MonitoringDashboardProps> = ({ match }) => {
       <Helmet>
         <title>Dashboard</title>
       </Helmet>
-      <Grid className="co-m-pane__body" gutter="md">
-        <GridItem span={3} rowSpan={1}>
-          <MonitoringDasboardPodCount namespace={namespace} />
-        </GridItem>
-        {_.map(queries, (q, i) => (
-          <GridItem span={i === 0 ? 5 : 4} key={q.title}>
-            <ConnectedMonitoringDashboardGraph
-              title={q.title}
-              namespace={namespace}
-              graphType={q.chartType}
-              query={q.query({ namespace, workloadName, workloadType })}
-              humanize={q.humanize}
-              byteDataType={q.byteDataType}
-            />
-          </GridItem>
+      <div className="co-m-pane__body">
+        {_.map(queries, (q) => (
+          <ConnectedMonitoringDashboardGraph
+            title={q.title}
+            namespace={namespace}
+            graphType={q.chartType}
+            query={q.query({ namespace, workloadName, workloadType })}
+            humanize={q.humanize}
+            byteDataType={q.byteDataType}
+            key={q.title}
+          />
         ))}
-      </Grid>
+      </div>
     </>
   );
 };

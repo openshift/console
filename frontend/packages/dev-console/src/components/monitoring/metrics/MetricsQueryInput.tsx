@@ -57,13 +57,13 @@ const MetricsQueryInput: React.FC = () => {
   }, [queries]);
 
   const onChange = (selectedValue: string) => {
-    setMetric(selectedValue);
+    setMetric(metricsQuery[selectedValue]);
     if (selectedValue && selectedValue === ADD_NEW_QUERY) {
       setTitle(CUSTOM_QUERY);
       setIsPromQlDisabled(true);
       setShowPromQl(true);
     } else {
-      setTitle(selectedValue);
+      setTitle(metricsQuery[selectedValue]);
       setIsPromQlDisabled(false);
     }
   };

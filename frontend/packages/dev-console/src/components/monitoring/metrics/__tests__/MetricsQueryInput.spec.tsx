@@ -56,6 +56,6 @@ describe('Metrics Query Input', () => {
       .props()
       .onChange('PODS_BY_CPU');
     expect(wrapper.find(Button).props().isDisabled).toBe(false);
-    expect(wrapper.find(Dropdown).props().title).toEqual('PODS_BY_CPU');
+    expect(wrapper.find(Dropdown).props().title).toEqual('CPU Usage');
   });
 });
