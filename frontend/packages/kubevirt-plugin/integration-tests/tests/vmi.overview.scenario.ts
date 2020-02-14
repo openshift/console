@@ -9,7 +9,7 @@ import { VirtualMachine } from './models/virtualMachine';
 import { TAB, VM_STATUS, NOT_AVAILABLE } from './utils/consts';
 import { NodePortService } from './utils/types';
 
-describe('Test VMI overview', () => {
+describe('Test VMI Details', () => {
   const vmiName = `vmi-${testName}`;
   const cloudInit = `#cloud-config\nuser: cloud-user\npassword: atomic\nchpasswd: {expire: False}`;
   const serviceCommon = { name: vmiName, kind: 'vmi', type: 'NodePort', namespace: testName };
@@ -51,7 +51,7 @@ describe('Test VMI overview', () => {
     await isLoaded();
   });
 
-  it('Check VMI details in overview', async () => {
+  it('Check VMI data in Details', async () => {
     const expectation = {
       name: vmiName,
       status: VM_STATUS.Running,
