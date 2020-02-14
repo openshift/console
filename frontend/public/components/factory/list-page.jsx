@@ -468,7 +468,7 @@ export const MultiListPage = (props) => {
 
   const resources = _.map(props.resources, (r) => ({
     ...r,
-    isList: true,
+    isList: r.isList !== undefined ? r.isList : true,
     namespace: r.namespaced ? namespace : r.namespace,
     prop: r.prop || r.kind,
   }));

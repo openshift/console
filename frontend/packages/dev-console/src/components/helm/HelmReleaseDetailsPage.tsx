@@ -7,6 +7,7 @@ import {
   LoadingBox,
   StatusBox,
   FirehoseResult,
+  FirehoseResource,
 } from '@console/internal/components/utils';
 import { coFetchJSON } from '@console/internal/co-fetch';
 import { SecretModel } from '@console/internal/models';
@@ -30,7 +31,7 @@ export interface HelmReleaseDetailsPageProps {
 const HelmReleaseDetailsPage: React.FC<HelmReleaseDetailsPageProps> = ({ secret, match }) => {
   const namespace = match.params.ns;
   const helmReleaseName = match.params.name;
-  const helmManifestResources = React.useRef([]);
+  const [helmManifestResources, setHelmManifestResources] = React.useState<FirehoseResource[]>([]);
 
   React.useEffect(() => {
     let ignore = false;
@@ -42,21 +43,21 @@ const HelmReleaseDetailsPage: React.FC<HelmReleaseDetailsPageProps> = ({ secret,
       } catch {
         return;
       }
-      const releaseData = res?.filter((rel) => rel.name === helmReleaseName);
-
-      const helmManifest = safeLoadAll(releaseData[0].manifest);
-
       if (ignore) return;
 
-      helmManifest.forEach((resource: K8sResourceKind) => {
-        helmManifestResources.current.push({
-          kind: resource.kind,
-          isNamespaced: true,
-          namespace,
-          isList: false,
-          name: resource.metadata.name,
-        });
-      });
+      const releaseData = res?.filter((rel) => rel.name === helmReleaseName);
+      const helmManifest = safeLoadAll(releaseData[0].manifest);
+
+      const resources: FirehoseResource[] = helmManifest.map((resource: K8sResourceKind) => ({
+        kind: resource.kind,
+        name: resource.metadata.name,
+        namespace,
+        prop: `${resource.metadata.name}-${resource.kind.toLowerCase()}`,
+        isList: false,
+        optional: true,
+      }));
+
+      setHelmManifestResources(resources);
     };
 
     fetchHelmReleases();
@@ -97,9 +98,7 @@ const HelmReleaseDetailsPage: React.FC<HelmReleaseDetailsPageProps> = ({ secret,
           {
             href: 'resources',
             name: 'Resources',
-            component: () => (
-              <HelmReleaseResources helmManifestResources={helmManifestResources.current} />
-            ),
+            component: () => <HelmReleaseResources helmManifestResources={helmManifestResources} />,
           },
         ]}
         customKind={HelmReleaseReference}

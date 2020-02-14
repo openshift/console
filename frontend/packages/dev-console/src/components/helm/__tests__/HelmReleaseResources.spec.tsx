@@ -8,9 +8,11 @@ describe('HelmReleaseResources', () => {
     helmManifestResources: [
       {
         kind: 'Service',
-        isNamespaced: true,
+        prop: 'service',
         namespace: 'test-helm',
         name: 'nodejs-example',
+        isList: false,
+        optional: true,
       },
     ],
   };
