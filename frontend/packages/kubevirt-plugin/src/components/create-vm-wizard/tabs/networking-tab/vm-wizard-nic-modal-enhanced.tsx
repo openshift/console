@@ -18,6 +18,7 @@ import { NetworkType } from '../../../../constants/vm';
 import { vmWizardActions } from '../../redux/actions';
 import { ActionType } from '../../redux/types';
 import { getNetworksWithWrappers } from '../../selectors/selectors';
+import { ADD } from '../../../../utils/strings';
 
 const VMWizardNICModal: React.FC<VMWizardNICModalProps> = (props) => {
   const {
@@ -60,6 +61,7 @@ const VMWizardNICModal: React.FC<VMWizardNICModalProps> = (props) => {
       allowPodNetwork={allowPodNetwork}
       nic={networkInterfaceWrapper}
       network={networkWrapper}
+      submitButtonText={ADD}
       onSubmit={(resultNetworkInterfaceWrapper, resultNetworkWrapper) => {
         addUpdateNIC({
           id,
