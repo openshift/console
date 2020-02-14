@@ -105,7 +105,7 @@ const defaultValueFor = (field: OperandField) => {
     return '';
   }
   if (field.capabilities.includes(SpecCapability.resourceRequirements)) {
-    return { limits: { cpu: '', memory: '' }, requests: { cpu: '', memory: '' } };
+    return null;
   }
   if (field.capabilities.some((c) => c.startsWith(SpecCapability.k8sResourcePrefix))) {
     return null;

@@ -110,7 +110,11 @@ const stateToProps = ({ k8s }: RootState, { obj }) => ({
 export const ResourceRequirementsModalLink = connect(stateToProps)(
   (props: ResourceRequirementsModalLinkProps) => {
     const { obj, type, path, model } = props;
-    const { cpu, memory } = _.get(obj.spec, `${path}.${type}`, { cpu: 'none', memory: 'none' });
+    const { cpu, memory, 'ephemeral-storage': storage } = _.get(
+      obj.spec,
+      `${path}.${type}`,
+      'none',
+    );
 
     const onClick = () => {
       const modal = createModalLauncher(ResourceRequirementsModal);
@@ -128,7 +132,7 @@ export const ResourceRequirementsModalLink = connect(stateToProps)(
         onClick={onClick}
         variant="link"
       >
-        {`CPU: ${cpu}, Memory: ${memory}`}
+        {`CPU: ${cpu || 'none'}, Memory: ${memory || 'none'}, Storage: ${storage || 'none'}`}
         <PencilAltIcon className="co-icon-space-l pf-c-button-icon--plain" />
       </Button>
     );
