@@ -94,13 +94,16 @@ const SingleVariableDropdown: React.FC<SingleVariableDropdownProps> = ({
         timespan,
       });
 
+      patchVariable(name, { isLoading: true });
+
       safeFetch(url)
         .then(({ data }) => {
           setIsError(false);
           const newOptions = _.flatMap(data?.result, ({ metric }) => _.values(metric)).sort();
-          patchVariable(name, { options: newOptions });
+          patchVariable(name, { isLoading: false, options: newOptions });
         })
         .catch((err) => {
+          patchVariable(name, { isLoading: false });
           if (err.name !== 'AbortError') {
             setIsError(true);
           }
@@ -204,14 +207,7 @@ const boardItems = _.zipObject(boards, boards);
 // Matches Prometheus labels surrounded by {{ }} in the graph legend label templates
 const legendTemplateOptions = { interpolate: /{{([a-zA-Z_][a-zA-Z0-9_]*)}}/g };
 
-const Card_: React.FC<CardProps> = ({ panel, pollInterval, timespan, variables }) => {
-  // If panel doesn't specify a span, default to 12
-  const panelSpan: number = _.get(panel, 'span', 12);
-  // If panel.span is greater than 12, default colSpan to 12
-  const colSpan: number = panelSpan > 12 ? 12 : panelSpan;
-  // If colSpan is less than 7, double it for small
-  const colSpanSm: number = colSpan < 7 ? colSpan * 2 : colSpan;
-
+const CardBody_: React.FC<CardBodyProps> = ({ panel, pollInterval, timespan, variables }) => {
   const formatLegendLabel = React.useCallback(
     (labels, i) => {
       const compiled = _.template(panel.targets?.[i]?.legendFormat, legendTemplateOptions);
@@ -220,12 +216,57 @@ const Card_: React.FC<CardProps> = ({ panel, pollInterval, timespan, variables }
     [panel],
   );
 
+  const variablesJS = variables.toJS();
+
+  if (_.some(variablesJS, 'isLoading')) {
+    return <LoadingInline />;
+  }
+
   const rawQueries = _.map(panel.targets, 'expr');
   if (!rawQueries.length) {
     return null;
   }
-  const variablesJS = variables.toJS();
   const queries = rawQueries.map((expr) => evaluateTemplate(expr, variablesJS));
+
+  return (
+    <>
+      {panel.type === 'grafana-piechart-panel' && <BarChart query={queries[0]} />}
+      {panel.type === 'graph' && (
+        <Graph
+          formatLegendLabel={panel.legend?.show ? formatLegendLabel : undefined}
+          isStack={panel.stack}
+          pollInterval={pollInterval}
+          queries={queries}
+          timespan={timespan}
+        />
+      )}
+      {panel.type === 'row' && !_.isEmpty(panel.panels) && (
+        <div className="row">
+          {_.map(panel.panels, (p) => (
+            <Card key={p.id} panel={p} pollInterval={pollInterval} timespan={timespan} />
+          ))}
+        </div>
+      )}
+      {panel.type === 'singlestat' && (
+        <SingleStat panel={panel} pollInterval={pollInterval} query={queries[0]} />
+      )}
+      {panel.type === 'table' && panel.transform === 'table' && (
+        <Table panel={panel} pollInterval={pollInterval} queries={queries} />
+      )}
+    </>
+  );
+};
+const CardBody = connect(({ UI }: RootState) => ({
+  variables: UI.getIn(['monitoringDashboards', 'variables']),
+}))(CardBody_);
+
+const Card: React.FC<CardProps> = ({ panel, pollInterval, timespan }) => {
+  // If panel doesn't specify a span, default to 12
+  const panelSpan: number = _.get(panel, 'span', 12);
+  // If panel.span is greater than 12, default colSpan to 12
+  const colSpan: number = panelSpan > 12 ? 12 : panelSpan;
+  // If colSpan is less than 7, double it for small
+  const colSpanSm: number = colSpan < 7 ? colSpan * 2 : colSpan;
 
   return (
     <div className={`col-xs-12 col-sm-${colSpanSm} col-lg-${colSpan}`}>
@@ -234,37 +275,12 @@ const Card_: React.FC<CardProps> = ({ panel, pollInterval, timespan, variables }
           <DashboardCardTitle>{panel.title}</DashboardCardTitle>
         </DashboardCardHeader>
         <DashboardCardBody className="co-dashboard-card__body--dashboard-graph">
-          {panel.type === 'grafana-piechart-panel' && <BarChart query={queries[0]} />}
-          {panel.type === 'graph' && (
-            <Graph
-              formatLegendLabel={panel.legend?.show ? formatLegendLabel : undefined}
-              isStack={panel.stack}
-              pollInterval={pollInterval}
-              queries={queries}
-              timespan={timespan}
-            />
-          )}
-          {panel.type === 'row' && !_.isEmpty(panel.panels) && (
-            <div className="row">
-              {_.map(panel.panels, (p) => (
-                <Card key={p.id} panel={p} pollInterval={pollInterval} timespan={timespan} />
-              ))}
-            </div>
-          )}
-          {panel.type === 'singlestat' && (
-            <SingleStat panel={panel} pollInterval={pollInterval} query={queries[0]} />
-          )}
-          {panel.type === 'table' && panel.transform === 'table' && (
-            <Table panel={panel} pollInterval={pollInterval} queries={queries} />
-          )}
+          <CardBody panel={panel} pollInterval={pollInterval} timespan={timespan} />
         </DashboardCardBody>
       </DashboardCard>
     </div>
   );
 };
-const Card = connect(({ UI }: RootState) => ({
-  variables: UI.getIn(['monitoringDashboards', 'variables']),
-}))(Card_);
 
 const Board: React.FC<BoardProps> = ({ board, patchVariable, pollInterval, timespan }) => {
   const [data, setData] = React.useState();
@@ -420,6 +436,7 @@ type TemplateVariable = {
 
 type Variable = {
   isHidden?: boolean;
+  isLoading?: boolean;
   options?: string[];
   query?: string;
   value?: string;
@@ -459,11 +476,17 @@ type AllVariableDropdownsProps = {
   variables: ImmutableMap<string, Variable>;
 };
 
-type CardProps = {
+type CardBodyProps = {
   panel: Panel;
   pollInterval: null | number;
   timespan: number;
   variables: ImmutableMap<string, Variable>;
+};
+
+type CardProps = {
+  panel: Panel;
+  pollInterval: null | number;
+  timespan: number;
 };
 
 type MonitoringDashboardsPageProps = {
