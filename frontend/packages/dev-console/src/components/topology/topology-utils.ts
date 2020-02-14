@@ -813,7 +813,7 @@ export const createTopologyResourceConnection = (
   serviceBindingFlag: boolean,
 ): Promise<K8sResourceKind[] | K8sResourceKind> => {
   if (!source || !target || source === target) {
-    return Promise.reject();
+    return Promise.reject(new Error('Can not create a connection from a node to itself.'));
   }
 
   const sourceObj = getTopologyResourceObject(source);
@@ -830,7 +830,7 @@ export const createTopologyResourceConnection = (
               .then(resolve)
               .catch(reject);
           })
-          .catch(resolve);
+          .catch(reject);
       });
     }
 
