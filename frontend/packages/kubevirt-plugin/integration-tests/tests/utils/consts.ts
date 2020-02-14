@@ -143,3 +143,9 @@ export const diskTabCol = {
   storageClass: 4,
 };
 Object.freeze(diskTabCol);
+
+export enum VMI_ACTION {
+  Delete = 'Delete Virtual Machine Instance',
+  EditAnnotations = 'Edit Annotations',
+  EditLabels = 'Edit Labels',
+}

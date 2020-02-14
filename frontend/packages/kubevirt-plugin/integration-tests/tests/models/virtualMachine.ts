@@ -19,13 +19,17 @@ import {
   VM_ACTIONS_TIMEOUT_SECS,
   VM_STOP_TIMEOUT_SECS,
   VM_STATUS,
+  VMI_ACTION,
 } from '../utils/consts';
 import { detailViewAction, listViewAction } from '../../views/vm.actions.view';
 import { nameInput as cloneDialogNameInput } from '../../views/dialogs/cloneVirtualMachineDialog.view';
 import { ProvisionConfigName } from '../utils/constants/wizard';
 import { Wizard } from './wizard';
+import { appHost, testName } from '@console/internal-integration-tests/protractor.conf';
 import { KubevirtDetailView } from './kubevirtDetailView';
 import { ImportWizard } from './importWizard';
+
+const confirmDialogActions = [VM_ACTION.Clone, VM_ACTION.Delete, VMI_ACTION.Delete];
 
 export class VirtualMachine extends KubevirtDetailView {
   constructor(config, kind?: 'virtualmachines' | 'virtualmachineinstances') {
@@ -44,13 +48,10 @@ export class VirtualMachine extends KubevirtDetailView {
     return vmView.vmDetailBootOrder(this.namespace, this.name).getText();
   }
 
-  async action(action: VM_ACTION, waitForAction?: boolean, timeout?: number) {
+  async action(action: VM_ACTION | VMI_ACTION, waitForAction?: boolean, timeout?: number) {
     await this.navigateToTab(TAB.Details);
 
-    let confirmDialog = true;
-    if ([VM_ACTION.Clone, VM_ACTION.Start].includes(action)) {
-      confirmDialog = false;
-    }
+    const confirmDialog = confirmDialogActions.includes(action);
 
     await detailViewAction(action, confirmDialog);
     if (waitForAction !== false) {
@@ -58,13 +59,21 @@ export class VirtualMachine extends KubevirtDetailView {
     }
   }
 
-  async listViewAction(action: VM_ACTION, waitForAction?: boolean, timeout?: number) {
+  async navigateToListView() {
+    const vmsListUrl = (namespace) =>
+      `${appHost}/k8s/${namespace === 'all-namespaces' ? '' : 'ns/'}${namespace}/virtualmachines`;
+    const currentUrl = await browser.getCurrentUrl();
+    if (![vmsListUrl(testName), vmsListUrl('all-namespaces')].includes(currentUrl)) {
+      await browser.get(vmsListUrl(this.namespace));
+      await isLoaded();
+    }
+  }
+
+  async listViewAction(action: VM_ACTION | VMI_ACTION, waitForAction?: boolean, timeout?: number) {
     await this.navigateToListView();
 
-    let confirmDialog = true;
-    if ([VM_ACTION.Clone, VM_ACTION.Start].includes(action)) {
-      confirmDialog = false;
-    }
+    const confirmDialog = confirmDialogActions.includes(action);
+
     await listViewAction(this.name)(action, confirmDialog);
     if (waitForAction !== false) {
       await this.waitForActionFinished(action, timeout);
