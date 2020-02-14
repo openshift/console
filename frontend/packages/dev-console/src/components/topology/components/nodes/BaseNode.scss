@@ -25,8 +25,7 @@
     stroke: $selected-stroke-color;
   }
   &.is-highlight &__bg {
-    stroke-width: 4px;
-    stroke: $interactive-stroke-color;
+    stroke-width: 0;
   }
   &.is-dropTarget &__bg {
     stroke-width: 4px;
