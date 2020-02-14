@@ -10,6 +10,7 @@ import {
   getSuggestedName,
   makePortName,
 } from '../../../utils/imagestream-utils';
+import { UNASSIGNED_KEY } from '../app/ApplicationSelector';
 import { ImageStreamContext } from './ImageStreamContext';
 
 const ImageStreamTagDropdown: React.FC = () => {
@@ -43,7 +44,9 @@ const ImageStreamTagDropdown: React.FC = () => {
           setFieldValue('isi.ports', ports);
           setFieldValue('image.ports', ports);
           formType !== 'edit' && setFieldValue('name', getSuggestedName(name));
-          !application.name && setFieldValue('application.name', `${getSuggestedName(name)}-app`);
+          application.selectedKey !== UNASSIGNED_KEY &&
+            !application.name &&
+            setFieldValue('application.name', `${getSuggestedName(name)}-app`);
           // set default port value
           const targetPort = _.head(ports);
           targetPort && setFieldValue('route.targetPort', makePortName(targetPort));
@@ -59,6 +62,7 @@ const ImageStreamTagDropdown: React.FC = () => {
       imageStream.image,
       imageStream.namespace,
       formType,
+      application.selectedKey,
       application.name,
       setFieldError,
     ],
