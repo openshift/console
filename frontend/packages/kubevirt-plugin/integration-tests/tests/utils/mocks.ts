@@ -152,7 +152,7 @@ function getMetadata(
       'flavor.template.kubevirt.io/tiny': 'true',
       'os.template.kubevirt.io/rhel7.6': 'true',
       'vm.kubevirt.io/template': `rhel7-desktop-${basicVMConfig.flavorConfig.flavor}-${COMMON_TEMPLATES_VERSION}`,
-      'vm.kubevirt.io/template-namespace': COMMON_TEMPLATES_NAMESPACE,
+      'vm.kubevirt.io/template.namespace': COMMON_TEMPLATES_NAMESPACE,
       'vm.kubevirt.io/template.revision': COMMON_TEMPLATES_REVISION,
       'vm.kubevirt.io/template.version': COMMON_TEMPLATES_VERSION,
       'workload.template.kubevirt.io/desktop': 'true',
