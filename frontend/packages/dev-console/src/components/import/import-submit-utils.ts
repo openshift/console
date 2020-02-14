@@ -17,7 +17,12 @@ import {
 import { SecretType } from '@console/internal/components/secrets/create-secret';
 import * as plugins from '@console/internal/plugins';
 import { history } from '@console/internal/components/utils';
-import { getAppLabels, getPodLabels, getAppAnnotations } from '../../utils/resource-label-utils';
+import {
+  getAppLabels,
+  getPodLabels,
+  getAppAnnotations,
+  mergeData,
+} from '../../utils/resource-label-utils';
 import { createService, createRoute, dryRunOpt } from '../../utils/shared-submit-utils';
 import { AppResources } from '../edit-application/edit-application-types';
 import {
@@ -78,8 +83,7 @@ export const createOrUpdateImageStream = (
       annotations: defaultAnnotations,
     },
   };
-
-  const imageStream = _.merge({}, originalImageStream || {}, newImageStream);
+  const imageStream = mergeData(originalImageStream, newImageStream);
 
   return verb === 'update'
     ? k8sUpdate(ImageStreamModel, imageStream)
@@ -206,7 +210,7 @@ export const createOrUpdateBuildConfig = (
     },
   };
 
-  const buildConfig = _.merge({}, originalBuildConfig || {}, newBuildConfig);
+  const buildConfig = mergeData(originalBuildConfig, newBuildConfig);
 
   return verb === 'update'
     ? k8sUpdate(BuildConfigModel, buildConfig)
@@ -292,8 +296,7 @@ export const createOrUpdateDeployment = (
       },
     },
   };
-
-  const deployment = _.merge({}, originalDeployment || {}, newDeployment);
+  const deployment = mergeData(originalDeployment, newDeployment);
 
   return verb === 'update'
     ? k8sUpdate(DeploymentModel, deployment)
@@ -380,8 +383,7 @@ export const createOrUpdateDeploymentConfig = (
       ],
     },
   };
-
-  const deploymentConfig = _.merge({}, originalDeploymentConfig || {}, newDeploymentConfig);
+  const deploymentConfig = mergeData(originalDeploymentConfig, newDeploymentConfig);
 
   return verb === 'update'
     ? k8sUpdate(DeploymentConfigModel, deploymentConfig)
