@@ -8,16 +8,7 @@ import { Helmet } from 'react-helmet';
 import { AddCircleOIcon } from '@patternfly/react-icons';
 import { Alert, Card, CardBody, CardFooter, CardHeader } from '@patternfly/react-core';
 import * as UIActions from '@console/internal/actions/ui';
-import {
-  ErrorStatus,
-  getName,
-  ProgressStatus,
-  Status,
-  SuccessStatus,
-  WarningStatus,
-  getNamespace,
-  getUID,
-} from '@console/shared';
+import { getName, Status, WarningStatus, getNamespace, getUID } from '@console/shared';
 import {
   DetailsPage,
   Table,
@@ -86,8 +77,6 @@ import { createUninstallOperatorModal } from './modals/uninstall-operator-modal'
 import { operatorGroupFor, operatorNamespaceFor } from './operator-group';
 import { SubscriptionDetails, catalogSourceForSubscription } from './subscription';
 import { ClusterServiceVersionLogo, referenceForProvidedAPI, providedAPIsFor } from './index';
-
-const FAILED_SUBSCRIPTION_STATES = ['Unknown', SubscriptionState.SubscriptionStateFailed];
 
 const subscriptionForCSV = (
   subscriptions: SubscriptionKind[],
@@ -210,10 +199,14 @@ const ClusterServiceVersionStatus: React.FC<ClusterServiceVersionStatusProps> = 
   obj,
   subscription,
 }) => {
-  const statusString = _.get(obj, 'status.reason', ClusterServiceVersionPhase.CSVPhaseUnknown);
-  const showSuccessIcon = statusString === 'Copied' || statusString === 'InstallSucceeded';
+  const status = _.get(obj, 'status.phase');
+
   if (obj.metadata.deletionTimestamp) {
-    return <>Disabling</>;
+    return (
+      <span className="co-icon-and-text">
+        <Status status={ClusterServiceVersionPhase.CSVPhaseDeleting} />
+      </span>
+    );
   }
 
   if (catalogSourceMissing) {
@@ -227,16 +220,14 @@ const ClusterServiceVersionStatus: React.FC<ClusterServiceVersionStatusProps> = 
 
   return (
     <>
-      {_.get(obj, 'status.phase') !== ClusterServiceVersionPhase.CSVPhaseFailed ? (
-        <span className={classNames({ 'co-icon-and-text': showSuccessIcon })}>
-          {showSuccessIcon && <SuccessStatus title={statusString} />}
-        </span>
-      ) : (
-        <span className="co-error co-icon-and-text">
-          <ErrorStatus title="Failed" />
-        </span>
-      )}
-      {subscription && <span className="text-muted">{getSubscriptionState(subscription)}</span>}
+      {status ? (
+        <>
+          <span className="co-icon-and-text">
+            <Status status={status} />
+          </span>
+          {subscription && <span className="text-muted">{getSubscriptionState(subscription)}</span>}
+        </>
+      ) : null}
     </>
   );
 };
@@ -325,7 +316,7 @@ export const ClusterServiceVersionTableRow = withFallback<ClusterServiceVersionT
   },
 );
 
-export const FailedSubscriptionTableRow: React.FC<FailedSubscriptionTableRowProps> = ({
+const SubscriptionTableRow: React.FC<SubscriptionTableRowProps> = ({
   catalogSourceMissing,
   key,
   obj,
@@ -346,22 +337,11 @@ export const FailedSubscriptionTableRow: React.FC<FailedSubscriptionTableRowProp
         </>
       );
     }
-    if (FAILED_SUBSCRIPTION_STATES.includes(subscriptionState)) {
-      return (
-        <span className="co-icon-and-text co-error">
-          <ErrorStatus title={subscriptionState} />
-        </span>
-      );
-    }
-
-    if (subscriptionState === SubscriptionState.SubscriptionStateUpgradePending) {
-      return (
-        <span className="co-icon-and-text">
-          <ProgressStatus title={subscriptionState} />
-        </span>
-      );
-    }
-    return 'Unknown';
+    return (
+      <span className="co-icon-and-text">
+        <Status status={subscriptionState} />
+      </span>
+    );
   };
 
   return (
@@ -425,7 +405,7 @@ const InstalledOperatorTableRow: React.FC<InstalledOperatorTableRowProps> = ({
       subscription={subscription}
     />
   ) : (
-    <FailedSubscriptionTableRow
+    <SubscriptionTableRow
       {...rest}
       catalogSourceMissing={catalogSourceMissing}
       obj={subscription as SubscriptionKind}
@@ -949,7 +929,7 @@ export type ClusterServiceVersionTableRowProps = {
   subscription: SubscriptionKind;
 };
 
-export type FailedSubscriptionTableRowProps = {
+type SubscriptionTableRowProps = {
   catalogSourceMissing: boolean;
   index: number;
   key?: string;
