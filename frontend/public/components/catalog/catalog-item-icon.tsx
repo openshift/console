@@ -70,6 +70,7 @@ import * as playImg from '../../imgs/logos/play.svg';
 import * as postgresqlImg from '../../imgs/logos/postgresql.svg';
 import * as processserverImg from '../../imgs/logos/processserver.svg';
 import * as pythonImg from '../../imgs/logos/python.svg';
+import * as quarkusImg from '../../imgs/logos/quarkus.svg';
 import * as rabbitmqImg from '../../imgs/logos/rabbitmq.svg';
 import * as railsImg from '../../imgs/logos/rails.svg';
 import * as redisImg from '../../imgs/logos/redis.svg';
@@ -160,6 +161,7 @@ const logos = new Map()
   .set('icon-postgresql', postgresqlImg)
   .set('icon-processserver', processserverImg)
   .set('icon-python', pythonImg)
+  .set('icon-quarkus', quarkusImg)
   .set('icon-rabbitmq', rabbitmqImg)
   .set('icon-rails', railsImg)
   .set('icon-redis', redisImg)
