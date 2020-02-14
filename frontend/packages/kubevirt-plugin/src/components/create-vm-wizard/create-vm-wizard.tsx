@@ -38,9 +38,9 @@ import { NetworkWrapper } from '../../k8s/wrapper/vm/network-wrapper';
 import { NetworkInterfaceWrapper } from '../../k8s/wrapper/vm/network-interface-wrapper';
 import { VolumeWrapper } from '../../k8s/wrapper/vm/volume-wrapper';
 import { DiskWrapper } from '../../k8s/wrapper/vm/disk-wrapper';
-import { DataVolumeWrapper } from '../../k8s/wrapper/vm/data-volume-wrapper';
+import { MutableDataVolumeWrapper } from '../../k8s/wrapper/vm/data-volume-wrapper';
 import {
-  getDefaultSCAccessMode,
+  getDefaultSCAccessModes,
   getDefaultSCVolumeMode,
 } from '../../selectors/config-map/sc-defaults';
 import { getStorageClassConfigMap } from '../../k8s/requests/config-map/storage-class';
@@ -146,7 +146,7 @@ const kubevirtInterOP = async ({
     ({ type, disk, volume, dataVolume, persistentVolumeClaim, importData }) => {
       const diskWrapper = DiskWrapper.initialize(disk);
       const volumeWrapper = VolumeWrapper.initialize(volume);
-      const dataVolumeWrapper = dataVolume && DataVolumeWrapper.initialize(dataVolume);
+      const dataVolumeWrapper = dataVolume && new MutableDataVolumeWrapper(dataVolume, true);
       const persistentVolumeClaimWrapper =
         persistentVolumeClaim && PersistentVolumeClaimWrapper.initialize(persistentVolumeClaim);
 
@@ -178,27 +178,15 @@ const kubevirtInterOP = async ({
         };
       }
 
-      const finalDataVolumeWrapper = dataVolumeWrapper
-        ? DataVolumeWrapper.mergeWrappers(
-            dataVolumeWrapper,
-            DataVolumeWrapper.initializeFromSimpleData({
-              accessModes: dataVolumeWrapper.getAccessModes() || [
-                getDefaultSCAccessMode(
-                  storageClassConfigMap,
-                  dataVolumeWrapper.getStorageClassName(),
-                ),
-              ],
-              volumeMode:
-                dataVolumeWrapper.getVolumeMode() ||
-                getDefaultSCVolumeMode(
-                  storageClassConfigMap,
-                  dataVolumeWrapper.getStorageClassName(),
-                ),
-            }),
+      let finalDataVolume;
+      if (dataVolumeWrapper) {
+        finalDataVolume = dataVolumeWrapper
+          .assertDefaultModes(
+            getDefaultSCVolumeMode(storageClassConfigMap, dataVolumeWrapper.getStorageClassName()),
+            getDefaultSCAccessModes(storageClassConfigMap, dataVolumeWrapper.getStorageClassName()),
           )
-        : undefined;
-
-      const finalDataVolume = finalDataVolumeWrapper && finalDataVolumeWrapper.asResource();
+          .asResource();
+      }
 
       return {
         name: diskWrapper.getName(),

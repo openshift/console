@@ -6,12 +6,15 @@ import { FormFieldRow } from '../../form/form-field-row';
 import { FormField, FormFieldType } from '../../form/form-field';
 import { VMWizardStorage } from '../../types';
 import { DataVolumeSourceType } from '../../../../constants/vm/storage';
-import { DataVolumeWrapper } from '../../../../k8s/wrapper/vm/data-volume-wrapper';
+import {
+  DataVolumeWrapper,
+  MutableDataVolumeWrapper,
+} from '../../../../k8s/wrapper/vm/data-volume-wrapper';
 
 export const URLSource: React.FC<URLSourceProps> = React.memo(
   ({ field, provisionSourceStorage, onProvisionSourceStorageChange }) => {
     const storage: VMWizardStorage = toShallowJS(provisionSourceStorage);
-    const dataVolumeWrapper = DataVolumeWrapper.initialize(storage && storage.dataVolume);
+    const dataVolumeWrapper = DataVolumeWrapper.initialize(storage?.dataVolume);
 
     return (
       <FormFieldRow
@@ -19,18 +22,17 @@ export const URLSource: React.FC<URLSourceProps> = React.memo(
         fieldType={FormFieldType.TEXT}
         validation={_.get(storage, ['validation', 'validations', 'url'])}
       >
-        <FormField value={dataVolumeWrapper.getURL()} isDisabled={!storage || !storage.dataVolume}>
+        <FormField
+          value={dataVolumeWrapper.getURL()}
+          isDisabled={dataVolumeWrapper.getType() !== DataVolumeSourceType.HTTP}
+        >
           <TextInput
             onChange={(url) =>
               onProvisionSourceStorageChange({
                 ...storage,
-                dataVolume: DataVolumeWrapper.mergeWrappers(
-                  dataVolumeWrapper,
-                  DataVolumeWrapper.initializeFromSimpleData({
-                    type: DataVolumeSourceType.HTTP,
-                    typeData: { url },
-                  }),
-                ).asResource(),
+                dataVolume: new MutableDataVolumeWrapper(storage?.dataVolume, true)
+                  .appendTypeData({ url }, false)
+                  .asMutableResource(),
               })
             }
           />

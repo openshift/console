@@ -14,20 +14,41 @@ import { NetworkWrapper } from '../../../wrapper/vm/network-wrapper';
 import { NetworkInterfaceWrapper } from '../../../wrapper/vm/network-interface-wrapper';
 import { MutableVMWrapper } from '../../../wrapper/vm/vm-wrapper';
 import { getVolumeCloudInitNoCloud } from '../../../../selectors/vm';
-import { VolumeWrapper } from '../../../wrapper/vm/volume-wrapper';
+import { MutableVolumeWrapper, VolumeWrapper } from '../../../wrapper/vm/volume-wrapper';
 import {
   CloudInitDataFormKeys,
   CloudInitDataHelper,
 } from '../../../wrapper/vm/cloud-init-data-helper';
-import { DataVolumeWrapper } from '../../../wrapper/vm/data-volume-wrapper';
+import {
+  DataVolumeWrapper,
+  MutableDataVolumeWrapper,
+} from '../../../wrapper/vm/data-volume-wrapper';
 import { StorageUISource } from '../../../../components/modals/disk-modal/storage-ui-source';
 import { insertName, joinIDs } from '../../../../utils';
 import {
-  getDefaultSCAccessMode,
+  getDefaultSCAccessModes,
   getDefaultSCVolumeMode,
 } from '../../../../selectors/config-map/sc-defaults';
 import { VM_TEMPLATE_NAME_PARAMETER } from '../../../../constants/vm-templates';
 import { CreateVMEnhancedParams } from './types';
+
+const resolveDataVolumeName = (
+  dataVolumeWrapper: DataVolumeWrapper,
+  {
+    newName,
+    isTemplate,
+    isPlainDataVolume,
+  }: { newName: string; isTemplate: boolean; isPlainDataVolume: boolean },
+) => {
+  const finalName = insertName(
+    dataVolumeWrapper.getName(),
+    !isTemplate || isPlainDataVolume ? newName : VM_TEMPLATE_NAME_PARAMETER,
+  );
+  return dataVolumeWrapper.getType() === DataVolumeSourceType.PVC &&
+    finalName === dataVolumeWrapper.getPesistentVolumeClaimName()
+    ? joinIDs(finalName, 'clone')
+    : finalName;
+};
 
 const initializeStorage = (params: CreateVMEnhancedParams, vm: MutableVMWrapper) => {
   const { vmSettings, storages, isTemplate, storageClassConfigMap, namespace } = params;
@@ -35,67 +56,41 @@ const initializeStorage = (params: CreateVMEnhancedParams, vm: MutableVMWrapper)
 
   const resolvedStorages = storages.map((storage) => {
     const { volume, dataVolume, persistentVolumeClaim } = storage;
-    const volumeWrapper = VolumeWrapper.initialize(volume);
-    const dataVolumeWrapper = dataVolume && DataVolumeWrapper.initialize(dataVolume);
+    const volumeWrapper = new MutableVolumeWrapper(volume, true);
+    const dataVolumeWrapper = dataVolume && new MutableDataVolumeWrapper(dataVolume, true);
 
     const source = StorageUISource.fromTypes(
       volumeWrapper.getType(),
       dataVolumeWrapper && dataVolumeWrapper.getType(),
       !!persistentVolumeClaim,
     );
-    const isPlainDataVolume = source && source.isPlainDataVolume(isTemplate);
+    const isPlainDataVolume = source.isPlainDataVolume(isTemplate);
 
-    let finalDataVolumeWrapper;
     if (dataVolumeWrapper) {
-      let finalDataVolumeName = insertName(
-        dataVolumeWrapper.getName(),
-        !isTemplate || isPlainDataVolume
-          ? settings[VMSettingsField.NAME]
-          : VM_TEMPLATE_NAME_PARAMETER,
-      );
+      dataVolumeWrapper
+        .setName(
+          resolveDataVolumeName(dataVolumeWrapper, {
+            newName: settings[VMSettingsField.NAME],
+            isTemplate,
+            isPlainDataVolume,
+          }),
+        )
+        .setNamespace(isPlainDataVolume ? namespace : undefined)
+        .assertDefaultModes(
+          getDefaultSCVolumeMode(storageClassConfigMap, dataVolumeWrapper.getStorageClassName()),
+          getDefaultSCAccessModes(storageClassConfigMap, dataVolumeWrapper.getStorageClassName()),
+        );
 
-      if (
-        dataVolumeWrapper.getType() === DataVolumeSourceType.PVC &&
-        finalDataVolumeName === dataVolumeWrapper.getPesistentVolumeClaimName()
-      ) {
-        finalDataVolumeName = joinIDs(finalDataVolumeName, 'clone');
+      if (volumeWrapper.getType() === VolumeType.DATA_VOLUME) {
+        volumeWrapper.appendTypeData({ name: dataVolumeWrapper.getName() });
       }
-
-      finalDataVolumeWrapper = DataVolumeWrapper.mergeWrappers(
-        dataVolumeWrapper,
-        DataVolumeWrapper.initializeFromSimpleData({
-          name: finalDataVolumeName,
-          namespace: isPlainDataVolume ? namespace : undefined,
-          accessModes: dataVolumeWrapper.getAccessModes() || [
-            getDefaultSCAccessMode(storageClassConfigMap, dataVolumeWrapper.getStorageClassName()),
-          ],
-          volumeMode:
-            dataVolumeWrapper.getVolumeMode() ||
-            getDefaultSCVolumeMode(storageClassConfigMap, dataVolumeWrapper.getStorageClassName()),
-        }),
-      );
     }
 
     return {
       ...storage,
-      volume:
-        finalDataVolumeWrapper && volumeWrapper.getType() === VolumeType.DATA_VOLUME
-          ? VolumeWrapper.mergeWrappers(
-              volumeWrapper,
-              VolumeWrapper.initializeFromSimpleData({
-                type: VolumeType.DATA_VOLUME,
-                typeData: { name: finalDataVolumeWrapper.getName() },
-              }),
-            ).asResource()
-          : volume,
-      dataVolume:
-        !finalDataVolumeWrapper || isPlainDataVolume
-          ? undefined
-          : finalDataVolumeWrapper.asResource(),
-      dataVolumeToCreate:
-        finalDataVolumeWrapper && isPlainDataVolume
-          ? finalDataVolumeWrapper.asResource()
-          : undefined,
+      volume: volumeWrapper.asMutableResource(),
+      dataVolume: isPlainDataVolume ? undefined : dataVolumeWrapper?.asMutableResource(),
+      dataVolumeToCreate: isPlainDataVolume ? dataVolumeWrapper?.asMutableResource() : undefined,
     };
   });
 

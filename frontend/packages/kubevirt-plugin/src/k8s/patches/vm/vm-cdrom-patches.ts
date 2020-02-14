@@ -3,9 +3,9 @@ import { getName } from '@console/shared';
 import { Volume, k8sGet } from '@console/internal/module/k8s';
 import { PatchBuilder, PatchOperation } from '@console/shared/src/k8s';
 import { StorageType } from '../../../components/modals/cdrom-vm-modal/constants';
-import { DataVolumeWrapper } from '../../wrapper/vm/data-volume-wrapper';
+import { MutableDataVolumeWrapper } from '../../wrapper/vm/data-volume-wrapper';
 import {
-  getDefaultSCAccessMode,
+  getDefaultSCAccessModes,
   getDefaultSCVolumeMode,
 } from '../../../selectors/config-map/sc-defaults';
 import { getStorageClassConfigMap } from '../../requests/config-map/storage-class';
@@ -93,16 +93,15 @@ export const getCDsPatch = async (vm: VMLikeEntityKind, cds: CD[]) => {
           },
         };
 
-        const dataVolumeWrapper = DataVolumeWrapper.initialize(newDataVolume);
+        const dataVolumeWrapper = new MutableDataVolumeWrapper(newDataVolume);
         const storageClassName = dataVolumeWrapper.getStorageClassName();
 
-        finalDataVolume = DataVolumeWrapper.mergeWrappers(
-          DataVolumeWrapper.initializeFromSimpleData({
-            accessModes: [getDefaultSCAccessMode(storageClassConfigMap, storageClassName)],
-            volumeMode: getDefaultSCVolumeMode(storageClassConfigMap, storageClassName),
-          }),
-          dataVolumeWrapper,
-        ).asResource();
+        finalDataVolume = dataVolumeWrapper
+          .assertDefaultModes(
+            getDefaultSCVolumeMode(storageClassConfigMap, storageClassName),
+            getDefaultSCAccessModes(storageClassConfigMap, storageClassName),
+          )
+          .asMutableResource();
 
         volume = {
           name,

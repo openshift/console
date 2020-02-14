@@ -16,9 +16,9 @@ import { V1Disk } from '../../../types/vm/disk/V1Disk';
 import { V1Volume } from '../../../types/vm/disk/V1Volume';
 import { V1alpha1DataVolume } from '../../../types/vm/disk/V1alpha1DataVolume';
 import { getStorageClassConfigMap } from '../../requests/config-map/storage-class';
-import { DataVolumeWrapper } from '../../wrapper/vm/data-volume-wrapper';
+import { MutableDataVolumeWrapper } from '../../wrapper/vm/data-volume-wrapper';
 import {
-  getDefaultSCAccessMode,
+  getDefaultSCAccessModes,
   getDefaultSCVolumeMode,
 } from '../../../selectors/config-map/sc-defaults';
 import { getShiftBootOrderPatches } from './utils';
@@ -92,17 +92,16 @@ export const getUpdateDiskPatches = async (
 ): Promise<Patch[]> => {
   let finalDataVolume;
   if (dataVolume) {
-    const dataVolumeWrapper = DataVolumeWrapper.initialize(dataVolume);
+    const dataVolumeWrapper = new MutableDataVolumeWrapper(dataVolume, true);
     const storageClassConfigMap = await getStorageClassConfigMap({ k8sGet });
     const storageClassName = dataVolumeWrapper.getStorageClassName();
 
-    finalDataVolume = DataVolumeWrapper.mergeWrappers(
-      DataVolumeWrapper.initializeFromSimpleData({
-        accessModes: [getDefaultSCAccessMode(storageClassConfigMap, storageClassName)],
-        volumeMode: getDefaultSCVolumeMode(storageClassConfigMap, storageClassName),
-      }),
-      dataVolumeWrapper,
-    ).asResource();
+    finalDataVolume = dataVolumeWrapper
+      .assertDefaultModes(
+        getDefaultSCVolumeMode(storageClassConfigMap, storageClassName),
+        getDefaultSCAccessModes(storageClassConfigMap, storageClassName),
+      )
+      .asMutableResource();
   }
   return getVMLikePatches(vmLikeEntity, (vm) => {
     const disks = getDisks(vm, null);

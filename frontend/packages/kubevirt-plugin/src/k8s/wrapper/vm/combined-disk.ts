@@ -66,26 +66,23 @@ export class CombinedDisk {
   getSource = () => this.source;
 
   getInitialSource = (isEditing) => {
-    if (this.diskWrapper.getType() === DiskType.CDROM) {
-      return this.source || StorageUISource.URL;
-    }
     if (isEditing) {
-      return this.source || StorageUISource.OTHER;
+      return this.source;
     }
-    return StorageUISource.BLANK;
+    return this.diskWrapper.getType() === DiskType.CDROM
+      ? StorageUISource.URL
+      : StorageUISource.BLANK;
   };
 
-  getSourceValue = () => this.source && this.source.getValue();
+  getSourceValue = () => this.source.getValue();
 
   isEditingSupported = (isTemplate: boolean) => {
     if (isTemplate) {
       // plain dataVolume creates dataVolumes on template creation
-      return this.source && this.source.isPlainDataVolume(isTemplate)
-        ? this.source.isEditingSupported()
-        : true;
+      return this.source.isPlainDataVolume(isTemplate) ? this.source.isEditingSupported() : true;
     }
 
-    return !!this.source && this.source.isEditingSupported();
+    return this.source.isEditingSupported();
   };
 
   getName = () => this.diskWrapper.getName();
@@ -102,7 +99,7 @@ export class CombinedDisk {
       (dataVolumeWrapper) => dataVolumeWrapper.getReadabableSize(),
     );
 
-    if (result === null && this.source && this.source.hasDynamicSize()) {
+    if (result === null && this.source.hasDynamicSize()) {
       result = DYNAMIC;
     }
 
