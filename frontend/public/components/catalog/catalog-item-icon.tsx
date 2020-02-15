@@ -86,6 +86,7 @@ import * as suseImg from '../../imgs/logos/suse.svg';
 import * as symfonyImg from '../../imgs/logos/symfony.svg';
 import * as tomcatImg from '../../imgs/logos/tomcat.svg';
 import * as ubuntuImg from '../../imgs/logos/ubuntu.svg';
+import * as vertxImg from '../../imgs/logos/vertx.svg';
 import * as wildflyImg from '../../imgs/logos/wildfly.svg';
 import * as windowsImg from '../../imgs/logos/windows.svg';
 import * as wordpressImg from '../../imgs/logos/wordpress.svg';
@@ -180,6 +181,7 @@ const logos = new Map()
   .set('icon-symfony', symfonyImg)
   .set('icon-tomcat', tomcatImg)
   .set('icon-ubuntu', ubuntuImg)
+  .set('icon-vertx', vertxImg)
   .set('icon-wildfly', wildflyImg)
   .set('icon-windows', windowsImg)
   .set('icon-wordpress', wordpressImg)
