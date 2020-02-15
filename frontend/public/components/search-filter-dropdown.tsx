@@ -10,9 +10,8 @@ export enum searchFilterValues {
 export const SearchFilterDropdown: React.SFC<SearchFilterDropdownProps> = (props) => {
   const [isOpen, setOpen] = React.useState(false);
   const [selected, setSelected] = React.useState(searchFilterValues.Label);
-  const [inputValue, setInputValue] = React.useState('');
 
-  const { onChange } = props;
+  const { onChange, nameFilterInput, labelFilterInput } = props;
 
   const onToggle = (open: boolean) => setOpen(open);
   const onSelect = (event: React.SyntheticEvent) => {
@@ -29,9 +28,13 @@ export const SearchFilterDropdown: React.SFC<SearchFilterDropdownProps> = (props
   ];
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
-      onChange(selected, inputValue);
-      setInputValue('');
+      const { value } = e.target as HTMLInputElement;
+      onChange(selected, value, true);
     }
+  };
+
+  const handleInputValue = (value: string) => {
+    onChange(selected, value, false);
   };
 
   return (
@@ -50,13 +53,11 @@ export const SearchFilterDropdown: React.SFC<SearchFilterDropdownProps> = (props
           dropdownItems={dropdownItems}
         />
         <TextInput
-          onChange={setInputValue}
-          placeholder={
-            selected === searchFilterValues.Label ? 'Filter by label...' : 'Filter by name...'
-          }
+          onChange={handleInputValue}
+          placeholder={selected === searchFilterValues.Label ? 'app=frontend' : 'my-resource'}
           name="search-filter-input"
           id="search-filter-input"
-          value={inputValue}
+          value={selected === searchFilterValues.Label ? labelFilterInput : nameFilterInput}
           onKeyDown={handleKeyDown}
         />
       </div>
@@ -65,5 +66,7 @@ export const SearchFilterDropdown: React.SFC<SearchFilterDropdownProps> = (props
 };
 
 export type SearchFilterDropdownProps = {
-  onChange: (type: string, value: string) => void;
+  onChange: (type: string, value: string, endOfString: boolean) => void;
+  nameFilterInput: string;
+  labelFilterInput: string;
 };
