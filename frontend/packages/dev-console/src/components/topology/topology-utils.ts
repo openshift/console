@@ -693,7 +693,7 @@ export const topologyModelFromDataModel = (
       data.groupResources = d.children && d.children.map((id) => dataModel.topology[id]);
       return {
         width: 300,
-        height: 100,
+        height: d.type === TYPE_KNATIVE_SERVICE ? 100 : 180,
         id: d.id,
         type: d.type,
         label: dataModel.topology[d.id].name,

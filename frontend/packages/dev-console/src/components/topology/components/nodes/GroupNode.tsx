@@ -5,33 +5,44 @@ import {
   shouldTruncate,
   TruncateOptions,
 } from '@console/internal/components/utils';
-import { useSize, useHover } from '@console/topology';
+import { Node, useSize, useHover } from '@console/topology';
 import SvgResourceIcon from './ResourceIcon';
 import SvgCircledIcon from '../../../svg/SvgCircledIcon';
 
 import './GroupNode.scss';
+import { TopologyDataObject } from '../../topology-types';
+import ResourceKindsInfo from './ResourceKindsInfo';
 
 const TOP_MARGIN = 20;
 const LEFT_MARGIN = 20;
 const TEXT_MARGIN = 10;
-const CONTENT_MARGIN = 40;
 
 const truncateOptions: TruncateOptions = {
   length: 35,
 };
 
 type GroupNodeProps = {
-  title: string;
+  element: Node;
   kind?: string;
+  emptyValue?: React.ReactNode;
+  groupResources?: TopologyDataObject;
   children?: React.ReactNode;
   typeIconClass?: string;
 };
 
-const GroupNode: React.FC<GroupNodeProps> = ({ children, kind, title, typeIconClass }) => {
+const GroupNode: React.FC<GroupNodeProps> = ({
+  element,
+  groupResources,
+  children,
+  kind,
+  emptyValue,
+  typeIconClass,
+}) => {
   const [textHover, textHoverRef] = useHover();
   const [iconSize, iconRef] = useSize([kind]);
   const iconWidth = iconSize ? iconSize.width : 0;
   const iconHeight = iconSize ? iconSize.height : 0;
+  const title = element.getLabel();
   return (
     <>
       {typeIconClass && (
@@ -44,7 +55,7 @@ const GroupNode: React.FC<GroupNodeProps> = ({ children, kind, title, typeIconCl
           iconClass={typeIconClass}
         />
       )}
-      <SvgResourceIcon ref={iconRef} x={TOP_MARGIN} y={LEFT_MARGIN} kind={kind} leftJustified />
+      <SvgResourceIcon ref={iconRef} x={LEFT_MARGIN} y={TOP_MARGIN - 2} kind={kind} leftJustified />
       {title && (
         <Tooltip
           content={title}
@@ -64,12 +75,16 @@ const GroupNode: React.FC<GroupNodeProps> = ({ children, kind, title, typeIconCl
           </text>
         </Tooltip>
       )}
-      {children && (
-        <g
-          transform={`translate(${LEFT_MARGIN + iconWidth}, ${TOP_MARGIN +
-            iconHeight +
-            CONTENT_MARGIN})`}
-        >
+      {(children || groupResources || emptyValue) && (
+        <g transform={`translate(${LEFT_MARGIN}, ${TOP_MARGIN + iconHeight})`}>
+          {(groupResources || emptyValue) && (
+            <ResourceKindsInfo
+              groupResources={groupResources}
+              emptyValue={emptyValue}
+              width={element.getBounds().width - LEFT_MARGIN}
+              height={element.getBounds().height - TOP_MARGIN - iconHeight}
+            />
+          )}
           {children}
         </g>
       )}

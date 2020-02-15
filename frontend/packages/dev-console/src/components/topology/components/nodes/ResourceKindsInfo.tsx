@@ -1,52 +1,66 @@
 import * as React from 'react';
 import * as _ from 'lodash';
-import { modelFor, referenceForOwnerRef } from '@console/internal/module/k8s';
+import { modelFor, referenceFor, referenceForModel } from '@console/internal/module/k8s';
 import { getTopologyResourceObject } from '../../topology-utils';
 import { TopologyDataObject } from '../../topology-types';
+import { ResourceIcon } from '@console/internal/components/utils';
+
+import './ResourceKindsInfo.scss';
 
 type ResourceKindsInfoProps = {
   groupResources: TopologyDataObject;
-  emptyKind?: string;
+  emptyValue?: React.ReactNode;
+  width: number;
+  height: number;
 };
 
-const TEXT_MARGIN = 10;
-const ROW_HEIGHT = 20 + TEXT_MARGIN;
-
-const ResourceKindsInfo: React.FC<ResourceKindsInfoProps> = ({ groupResources, emptyKind }) => {
+const ResourceKindsInfo: React.FC<ResourceKindsInfoProps> = ({
+  groupResources,
+  emptyValue,
+  width,
+  height,
+}) => {
   const resourcesData = {};
   _.forEach(groupResources, (res: TopologyDataObject) => {
     const a = getTopologyResourceObject(res);
-    resourcesData[a.kind] = [...(resourcesData[a.kind] ? resourcesData[a.kind] : []), a];
+    const kindObj = modelFor(referenceFor(a));
+    const key = kindObj.abbr || a.kind;
+    resourcesData[key] = [...(resourcesData[key] ? resourcesData[key] : []), a];
   });
-
   const resourceTypes = _.keys(resourcesData);
-  let resources = null;
-  if (resourceTypes.length) {
-    resources = _.map(resourceTypes, (key, index) => {
-      const kindObj = modelFor(referenceForOwnerRef(resourcesData[key][0]));
-      const rowY = ROW_HEIGHT * index;
-      return (
-        <g key={key}>
-          <text y={rowY} textAnchor="end">
-            {resourcesData[key].length}
-          </text>
-          <text x={TEXT_MARGIN} y={rowY}>
-            {resourcesData[key].length > 1 ? kindObj.labelPlural : kindObj.label}
-          </text>
-        </g>
-      );
-    });
-  } else if (emptyKind) {
-    const kindObj = modelFor(emptyKind);
-    resources = (
-      <g>
-        <text textAnchor="end">0</text>
-        <text x={TEXT_MARGIN}>{kindObj ? kindObj.labelPlural : emptyKind}</text>
-      </g>
+
+  if (!resourceTypes.length) {
+    return (
+      <foreignObject width={width} height={height}>
+        <div className="odc-resource-kinds-info">{emptyValue}</div>
+      </foreignObject>
     );
   }
 
-  return <g className="odc-resource-kinds-info__resources">{resources}</g>;
+  return (
+    <foreignObject width={width} height={height}>
+      <div className="odc-resource-kinds-info">
+        <table className="odc-resource-kinds-info__table">
+          <tbody className="odc-resource-kinds-info__body">
+            {resourceTypes.map((key) => {
+              const kindObj = modelFor(referenceFor(resourcesData[key][0]));
+              return (
+                <tr key={key} className="odc-resource-kinds-info__row">
+                  <td className="odc-resource-kinds-info__count">{resourcesData[key].length}</td>
+                  <td className="odc-resource-kinds-info__resource-icon">
+                    <ResourceIcon kind={kindObj.crd ? referenceForModel(kindObj) : kindObj.kind} />
+                  </td>
+                  <td className="odc-resource-kinds-info__kind">
+                    {resourcesData[key].length > 1 ? kindObj.labelPlural : kindObj.label}
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+    </foreignObject>
+  );
 };
 
 export default ResourceKindsInfo;

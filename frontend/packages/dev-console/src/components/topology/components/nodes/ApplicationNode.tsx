@@ -18,7 +18,6 @@ import useSearchFilter from '../../filters/useSearchFilter';
 import NodeShadows, { NODE_SHADOW_FILTER_ID, NODE_SHADOW_FILTER_ID_HOVER } from '../NodeShadows';
 import { getTopologyResourceObject } from '../../topology-utils';
 import GroupNode from './GroupNode';
-import ResourceKindsInfo from './ResourceKindsInfo';
 import { ApplicationModel } from '../../../../models';
 
 type ApplicationGroupProps = {
@@ -83,9 +82,11 @@ const ApplicationNode: React.FC<ApplicationGroupProps> = ({
         rx="5"
         ry="5"
       />
-      <GroupNode title={element.getLabel()} kind={ApplicationModel.kind}>
-        <ResourceKindsInfo groupResources={element.getData().groupResources} />
-      </GroupNode>
+      <GroupNode
+        element={element}
+        kind={ApplicationModel.kind}
+        groupResources={element.getData().groupResources}
+      />
     </g>
   );
 };
