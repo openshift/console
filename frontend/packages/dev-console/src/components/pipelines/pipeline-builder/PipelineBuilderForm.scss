@@ -1,9 +1,9 @@
 .odc-pipeline-builder-form {
-  height: 100%;
-  overflow: hidden;
+  &__grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
 
   &__content {
-    height: 100%;
     overflow: auto;
     padding: 30px;
   }

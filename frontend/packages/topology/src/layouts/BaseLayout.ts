@@ -196,6 +196,17 @@ type LayoutOptions = {
   layoutOnDrag: boolean;
 };
 
+const LAYOUT_DEFAULTS: LayoutOptions = {
+  linkDistance: 60,
+  nodeDistance: 35,
+  groupDistance: 35,
+  collideDistance: 0,
+  simulationSpeed: 10,
+  chargeStrength: 0,
+  allowDrag: true,
+  layoutOnDrag: true,
+};
+
 class BaseLayout implements Layout {
   private graph: Graph;
 
@@ -218,16 +229,7 @@ class BaseLayout implements Layout {
   constructor(graph: Graph, options?: Partial<LayoutOptions>) {
     this.graph = graph;
     this.options = {
-      ...{
-        linkDistance: 60,
-        nodeDistance: 35,
-        groupDistance: 35,
-        collideDistance: 0,
-        simulationSpeed: 10,
-        chargeStrength: 0,
-        allowDrag: true,
-        layoutOnDrag: true,
-      },
+      ...LAYOUT_DEFAULTS,
       ...options,
     };
 
@@ -630,4 +632,4 @@ class BaseLayout implements Layout {
   }
 }
 
-export { BaseLayout, LayoutNode, LayoutGroup, LayoutLink, LayoutOptions };
+export { BaseLayout, LayoutNode, LayoutGroup, LayoutLink, LayoutOptions, LAYOUT_DEFAULTS };

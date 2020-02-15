@@ -1,5 +1,14 @@
 .odc-task-sidebar {
   &__header {
     font-size: var(--pf-global--FontSize--md);
+    margin: 0;
+  }
+
+  &__header, &__content {
+    padding: 0 var(--pf-global--spacer--lg);
+  }
+
+  &__param, &__resource {
+    margin-bottom: var(--pf-global--spacer--md);
   }
 }

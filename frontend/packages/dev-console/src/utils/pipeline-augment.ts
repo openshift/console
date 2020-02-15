@@ -343,10 +343,13 @@ export const getTaskStatus = (pipelinerun: PipelineRun, pipeline: Pipeline): Tas
   return taskStatus;
 };
 
+export const getResourceModelFromTaskKind = (kind: string): K8sKind =>
+  kind === ClusterTaskModel.kind ? ClusterTaskModel : TaskModel;
+
 export const getResourceModelFromTask = (task: PipelineTask): K8sKind => {
   const {
     taskRef: { kind },
   } = task;
 
-  return kind === ClusterTaskModel.kind ? ClusterTaskModel : TaskModel;
+  return getResourceModelFromTaskKind(kind);
 };

@@ -1,12 +1,9 @@
 import * as React from 'react';
-import * as _ from 'lodash';
 import { useField } from 'formik';
-import { TextInputTypes } from '@patternfly/react-core';
-import { InputField } from '@console/shared';
 import { ActionsMenu, ResourceIcon } from '@console/internal/components/utils';
 import { referenceFor } from '@console/internal/module/k8s';
 import {
-  getResourceModelFromTask,
+  getResourceModelFromTaskKind,
   PipelineResource,
   PipelineResourceTask,
   PipelineResourceTaskResource,
@@ -14,37 +11,38 @@ import {
   PipelineTaskParam,
   PipelineTaskResource,
 } from '../../../../utils/pipeline-augment';
+import { ResourceTarget, TaskErrorMap, UpdateOperationUpdateTaskData } from '../types';
+import { TaskErrorType } from '../const';
 import TaskSidebarParam from './TaskSidebarParam';
-import { convertResourceToTask } from '../utils';
 import TaskSidebarResource from './TaskSidebarResource';
-import { TaskErrorMap } from '../types';
+import TaskSidebarName from './TaskSidebarName';
+
+import './TaskSidebar.scss';
 
 type TaskSidebarProps = {
   errorMap: TaskErrorMap;
   onRemoveTask: (taskName: string) => void;
+  onUpdateTask: (data: UpdateOperationUpdateTaskData) => void;
   resourceList: PipelineResource[];
-  setFieldValue: (formikId: string, newValue: any) => void;
   selectedPipelineTaskIndex: number;
   taskResource: PipelineResourceTask;
-  updateErrorMap: (errorMap: TaskErrorMap) => void;
 };
 
 const TaskSidebar: React.FC<TaskSidebarProps> = (props) => {
   const {
     errorMap,
     onRemoveTask,
+    onUpdateTask,
     resourceList,
-    setFieldValue,
     selectedPipelineTaskIndex,
     taskResource,
-    updateErrorMap,
   } = props;
   const formikTaskReference = `tasks.${selectedPipelineTaskIndex}`;
   const [taskField] = useField<PipelineTask>(formikTaskReference);
 
-  if (!taskField?.value?.name) {
-    return null;
-  }
+  const updateTask = (newData: Partial<UpdateOperationUpdateTaskData>) => {
+    onUpdateTask({ thisPipelineTask: taskField.value, taskResource, ...newData });
+  };
 
   const thisTaskError = errorMap[taskField.value.name];
 
@@ -52,141 +50,106 @@ const TaskSidebar: React.FC<TaskSidebarProps> = (props) => {
   const inputResources = taskResource.spec?.inputs?.resources;
   const outputResources = taskResource.spec?.outputs?.resources;
 
-  const renderResource = (type: 'inputs' | 'outputs') => (
-    resource: PipelineResourceTaskResource,
-  ) => {
+  const renderResource = (type: ResourceTarget) => (resource: PipelineResourceTaskResource) => {
     const taskResources: PipelineTaskResource[] = taskField.value?.resources?.[type] || [];
     const thisResource = taskResources.find(
       (taskFieldResource) => taskFieldResource.name === resource.name,
     );
 
     return (
-      <TaskSidebarResource
-        key={resource.name}
-        availableResources={resourceList}
-        onChange={(resourceName, selectedResource) => {
-          const newResources = [
-            ...taskResources
-              .map((tResource) => {
-                if (tResource.name === resourceName) {
-                  return null;
-                }
-                return taskResource;
-              })
-              .filter((r) => !!r),
-            {
-              name: resourceName,
-              resource: selectedResource.name,
-            },
-          ];
-          setFieldValue(`${formikTaskReference}.resources.${type}`, newResources);
-
-          const id = type === 'inputs' ? 'inputResourceCount' : 'outputResourceCount';
-          if (thisTaskError && thisTaskError[id] === newResources.length) {
-            // Has errors but no longer resource errors
-            if (!thisTaskError[id]) {
-              return;
-            }
-
-            updateErrorMap({
-              ...errorMap,
-              [taskField.value.name]: _.omit(thisTaskError, id),
+      <div key={resource.name} className="odc-task-sidebar__resource">
+        <TaskSidebarResource
+          availableResources={resourceList}
+          onChange={(resourceName, selectedResource) => {
+            updateTask({
+              resources: {
+                resourceTarget: type,
+                selectedPipelineResource: selectedResource,
+                taskResourceName: resourceName,
+              },
             });
-          }
-        }}
-        taskResource={thisResource}
-        resource={resource}
-      />
+          }}
+          taskResource={thisResource}
+          resource={resource}
+        />
+      </div>
     );
   };
 
   return (
     <div className="odc-task-sidebar">
-      <h1 className="co-m-pane__heading">
-        <div className="co-m-pane__name co-resource-item">
-          <ResourceIcon
-            className="co-m-resource-icon--lg"
-            // TODO: wowzers on the indirection
-            kind={referenceFor(getResourceModelFromTask(convertResourceToTask(taskResource)))}
-          />
-          {taskResource.metadata.name}
-        </div>
-        <div className="co-actions">
-          <ActionsMenu
-            actions={[
-              {
-                label: 'Remove Task',
-                callback: () => onRemoveTask(taskField.value.name),
-              },
-            ]}
-          />
-        </div>
-      </h1>
-      <InputField
-        label="Display Name"
-        name={`${formikTaskReference}.name`}
-        type={TextInputTypes.text}
-      />
+      <div className="odc-task-sidebar__header">
+        <h1 className="co-m-pane__heading">
+          <div className="co-m-pane__name co-resource-item">
+            <ResourceIcon
+              className="co-m-resource-icon--lg"
+              kind={referenceFor(getResourceModelFromTaskKind(taskResource.kind))}
+            />
+            {taskResource.metadata.name}
+          </div>
+          <div className="co-actions">
+            <ActionsMenu
+              actions={[
+                {
+                  label: 'Remove Task',
+                  callback: () => onRemoveTask(taskField.value.name),
+                },
+              ]}
+            />
+          </div>
+        </h1>
+      </div>
+      <hr />
 
-      {params && (
-        <>
-          <h2>Parameters</h2>
-          {params.map((param) => {
-            const taskParams = taskField.value?.params || [];
-            const thisParam = taskParams.find(
-              (taskFieldParam) => taskFieldParam.name === param.name,
-            );
-            return (
-              <TaskSidebarParam
-                key={param.name}
-                resourceParam={param}
-                taskParam={thisParam}
-                onChange={(value) => {
-                  const newParams = taskParams.map((taskParam) => {
-                    if (taskParam === thisParam) {
-                      return {
-                        ...taskParam,
-                        value,
-                      } as PipelineTaskParam;
-                    }
-                    return taskParam;
-                  });
-                  setFieldValue(formikTaskReference, {
-                    ...taskField.value,
-                    params: newParams,
-                  });
+      <div className="odc-task-sidebar__content">
+        <TaskSidebarName
+          initialName={taskField.value.name}
+          taskName={taskResource.metadata.name}
+          onChange={(newName) => updateTask({ newName })}
+        />
 
-                  const datalessParams = newParams.filter((p) => !p.value).length > 0;
-                  if (thisTaskError && !datalessParams) {
-                    // Has errors but no longer param errors
-                    if (!thisTaskError.paramsMissingDefaults) {
-                      return;
-                    }
+        {params && (
+          <>
+            <h2>Parameters</h2>
+            {params.map((param) => {
+              const taskParams: PipelineTaskParam[] = taskField.value?.params || [];
+              const thisParam = taskParams.find(
+                (taskFieldParam) => taskFieldParam.name === param.name,
+              );
+              return (
+                <div key={param.name} className="odc-task-sidebar__param">
+                  <TaskSidebarParam
+                    hasParamError={!!thisTaskError?.includes(TaskErrorType.MISSING_REQUIRED_PARAMS)}
+                    resourceParam={param}
+                    taskParam={thisParam}
+                    onChange={(value) => {
+                      updateTask({
+                        params: {
+                          newValue: value,
+                          taskParamName: param.name,
+                        },
+                      });
+                    }}
+                  />
+                </div>
+              );
+            })}
+          </>
+        )}
 
-                    updateErrorMap({
-                      ...errorMap,
-                      [taskField.value.name]: _.omit(thisTaskError, 'paramsMissingDefaults'),
-                    });
-                  }
-                }}
-              />
-            );
-          })}
-        </>
-      )}
-
-      {inputResources && (
-        <>
-          <h2>Input Resources</h2>
-          {inputResources && inputResources.map(renderResource('inputs'))}
-        </>
-      )}
-      {outputResources && (
-        <>
-          <h2>Output Resources</h2>
-          {outputResources && outputResources.map(renderResource('outputs'))}
-        </>
-      )}
+        {inputResources && (
+          <>
+            <h2>Input Resources</h2>
+            {inputResources.map(renderResource('inputs'))}
+          </>
+        )}
+        {outputResources && (
+          <>
+            <h2>Output Resources</h2>
+            {outputResources.map(renderResource('outputs'))}
+          </>
+        )}
+      </div>
     </div>
   );
 };
