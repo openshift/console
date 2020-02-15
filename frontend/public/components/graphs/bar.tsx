@@ -21,6 +21,7 @@ const DEFAULT_BAR_WIDTH = 10;
 const PADDING_RATIO = 1 / 3;
 
 export const BarChart: React.FC<BarChartProps> = ({
+  barSpacing = 15,
   barWidth = DEFAULT_BAR_WIDTH,
   title,
   query,
@@ -36,7 +37,7 @@ export const BarChart: React.FC<BarChartProps> = ({
   const maxHorizontalPadding = PADDING_RATIO * width;
 
   const padding = {
-    bottom: 15,
+    bottom: barSpacing,
     left: 0,
     right: Math.min(100, maxHorizontalPadding),
     top: 0,
@@ -82,10 +83,12 @@ export const Bar: React.FC<BarProps> = ({
   humanize = humanizeNumber,
   metric,
   namespace,
+  barSpacing,
   barWidth,
   theme,
   query,
   title,
+  LabelComponent,
 }) => {
   const [response, , loading] = usePrometheusPoll({
     endpoint: PrometheusEndpoint.QUERY,
@@ -99,9 +102,11 @@ export const Bar: React.FC<BarProps> = ({
       title={title}
       query={query}
       data={data}
+      barSpacing={barSpacing}
       barWidth={barWidth}
       theme={theme}
       loading={loading}
+      LabelComponent={LabelComponent}
     />
   );
 };
@@ -113,6 +118,7 @@ type LabelComponentProps = {
 
 type BarChartProps = {
   LabelComponent?: React.ComponentType<LabelComponentProps>;
+  barSpacing?: number;
   barWidth?: number;
   query?: string;
   theme?: any; // TODO figure out the best way to import VictoryThemeDefinition
@@ -123,9 +129,11 @@ type BarChartProps = {
 };
 
 type BarProps = {
+  LabelComponent?: React.ComponentType<LabelComponentProps>;
   humanize?: Humanize;
   metric: string;
   namespace?: string;
+  barSpacing?: number;
   barWidth?: number;
   query: string;
   theme?: any; // TODO figure out the best way to import VictoryThemeDefinition
