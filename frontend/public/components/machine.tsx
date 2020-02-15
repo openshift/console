@@ -9,6 +9,7 @@ import {
   getMachineRole,
   getMachineZone,
   Status,
+  getMachinePhase,
 } from '@console/shared';
 import { MachineModel } from '../models';
 import { MachineKind, referenceForModel } from '../module/k8s';
@@ -32,13 +33,13 @@ const menuActions = [...Kebab.getExtensionsActionsForKind(MachineModel), ...comm
 export const machineReference = referenceForModel(MachineModel);
 
 const tableColumnClasses = [
-  classNames('col-lg-2', 'col-md-3', 'col-sm-3', 'col-xs-6'),
-  classNames('col-lg-2', 'col-md-3', 'col-sm-3', 'col-xs-6'),
-  classNames('col-lg-2', 'col-md-3', 'col-sm-3', 'hidden-xs'),
-  classNames('col-lg-2', 'col-md-3', 'col-sm-3', 'hidden-xs'),
-  classNames('col-lg-2', 'hidden-md', 'hidden-sm', 'hidden-xs'),
-  classNames('col-lg-1', 'hidden-md', 'hidden-sm', 'hidden-xs'),
-  classNames('col-lg-1', 'hidden-md', 'hidden-sm', 'hidden-xs'),
+  '',
+  '',
+  classNames('pf-m-hidden', 'pf-m-visible-on-sm'),
+  classNames('pf-m-hidden', 'pf-m-visible-on-md'),
+  classNames('pf-m-hidden', 'pf-m-visible-on-lg'),
+  classNames('pf-m-hidden', 'pf-m-visible-on-xl'),
+  classNames('pf-m-hidden', 'pf-m-visible-on-xl'),
   Kebab.columnClass,
 ];
 
@@ -64,7 +65,7 @@ const MachineTableHeader = () => {
     },
     {
       title: 'Phase',
-      sortField: 'status.phase',
+      sortFunc: 'machinePhase',
       transforms: [sortable],
       props: { className: tableColumnClasses[3] },
     },
@@ -93,11 +94,6 @@ const MachineTableHeader = () => {
   ];
 };
 MachineTableHeader.displayName = 'MachineTableHeader';
-
-const getMachinePhase = (obj: MachineKind) => {
-  const phase = obj?.status?.phase;
-  return phase === 'Running' ? 'Provisioned as node' : phase;
-};
 
 const getMachineProviderState = (obj: MachineKind): string =>
   obj?.status?.providerStatus?.instanceState;

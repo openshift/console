@@ -2,7 +2,7 @@ import * as _ from 'lodash-es';
 import * as PropTypes from 'prop-types';
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { getNodeRoles } from '@console/shared';
+import { getNodeRoles, getMachinePhase } from '@console/shared';
 import * as UIActions from '../../actions/ui';
 import { ingressValidHosts } from '../ingress';
 import { alertStateOrder, silenceStateOrder } from '../../reducers/monitoring';
@@ -21,6 +21,7 @@ import {
   podRestarts,
   serviceCatalogStatus,
   serviceClassDisplayName,
+  MachineKind,
 } from '../../module/k8s';
 
 import {
@@ -121,6 +122,7 @@ const sorts = {
     const roles = getNodeRoles(node);
     return roles.sort().join(', ');
   },
+  machinePhase: (machine: MachineKind): string => getMachinePhase(machine),
 };
 
 const stateToProps = (
