@@ -29,6 +29,16 @@
     padding: 10px;
   }
 
+  &.co-dashboard-card--gradient {
+    .pf-c-card__body {
+      max-height: 350px;
+      overflow: scroll;
+    }
+    &:after {
+      width: calc(100% - 10px);
+    }
+  }
+
   .query-browser__wrapper {
     border: 0;
     margin: 0;
