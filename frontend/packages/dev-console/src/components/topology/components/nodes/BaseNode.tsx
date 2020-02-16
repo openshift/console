@@ -132,7 +132,7 @@ const BaseNode: React.FC<BaseNodeProps> = ({
           <SvgBoxedText
             className="odc-base-node__label"
             x={cx}
-            y={cy + outerRadius + 20}
+            y={cy + outerRadius + 24}
             paddingX={8}
             paddingY={4}
             kind={kind}

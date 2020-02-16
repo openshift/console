@@ -18,11 +18,13 @@
 
   &.is-filtered &__bg {
     stroke: $filtered-stroke-color;
+    stroke-width: $group-node-filtered-stroke-width;
   }
 
   &.is-selected &__bg {
     fill: $selected-fill-color;
     stroke: $selected-stroke-color;
+    stroke-width: $group-node-selected-stroke-width;
   }
 }
 

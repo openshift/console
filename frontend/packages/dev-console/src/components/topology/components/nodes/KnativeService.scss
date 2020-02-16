@@ -18,10 +18,12 @@
 
   &.is-filtered &__bg {
     stroke: $filtered-stroke-color;
+    stroke-width: $group-node-filtered-stroke-width;
   }
   &.is-selected &__bg {
     fill: $selected-fill-color;
     stroke: $selected-stroke-color;
+    stroke-width: $group-node-selected-stroke-width;
   }
   &.is-highlight &__bg {
     fill: $group-node-fill-color;
@@ -29,6 +31,7 @@
   }
   &.is-dropTarget &__bg {
     fill: $interactive-fill-color;
+    stroke: $interactive-stroke-color;
   }
 }
 
