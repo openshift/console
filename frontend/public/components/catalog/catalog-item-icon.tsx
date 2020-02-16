@@ -33,7 +33,7 @@ import * as gitImg from '../../imgs/logos/git.svg';
 import * as githubImg from '../../imgs/logos/github.svg';
 import * as gitlabImg from '../../imgs/logos/gitlab.svg';
 import * as glassfishImg from '../../imgs/logos/glassfish.svg';
-import * as goGopherImg from '../../imgs/logos/go-gopher.svg';
+import * as goLangImg from '../../imgs/logos/golang.svg';
 import * as grailsImg from '../../imgs/logos/grails.svg';
 import * as hadoopImg from '../../imgs/logos/hadoop.svg';
 import * as haproxyImg from '../../imgs/logos/haproxy.svg';
@@ -124,8 +124,8 @@ const logos = new Map()
   .set('icon-github', githubImg)
   .set('icon-gitlab', gitlabImg)
   .set('icon-glassfish', glassfishImg)
-  .set('icon-go-gopher', goGopherImg)
-  .set('icon-golang', goGopherImg)
+  .set('icon-go-gopher', goLangImg)
+  .set('icon-golang', goLangImg)
   .set('icon-grails', grailsImg)
   .set('icon-hadoop', hadoopImg)
   .set('icon-haproxy', haproxyImg)
