@@ -1,4 +1,5 @@
 import * as _ from 'lodash-es';
+import { Dropdown, DropdownToggle, DropdownItem } from '@patternfly/react-core';
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
 import { connect } from 'react-redux';
@@ -17,8 +18,8 @@ import { k8sBasePath } from '../../../module/k8s';
 import { ErrorBoundaryFallback } from '../../error';
 import { RootState } from '../../../redux';
 import { getPrometheusURL, PrometheusEndpoint } from '../../graphs/helpers';
-import { Dropdown, history, LoadingInline, useSafeFetch } from '../../utils';
-import { parsePrometheusDuration } from '../../utils/datetime';
+import { history, LoadingInline, useSafeFetch } from '../../utils';
+import { formatPrometheusDuration, parsePrometheusDuration } from '../../utils/datetime';
 import { withFallback } from '../../utils/error-boundary';
 import BarChart from './bar-chart';
 import Graph from './graph';
@@ -26,50 +27,80 @@ import SingleStat from './single-stat';
 import Table from './table';
 import { Panel } from './types';
 
-const evaluateTemplate = (s: string, variables: VariablesMap) =>
-  _.reduce(
-    variables,
-    (result: string, v: Variable, k: string): string => {
-      return result.replace(new RegExp(`\\$${k}`, 'g'), v.value || '');
-    },
-    s,
-  );
+const evaluateTemplate = (s: string, variables: VariablesMap): string => {
+  if (_.isEmpty(s)) {
+    return undefined;
+  }
+  let result = s;
+  _.each(variables, (v, k) => {
+    const re = new RegExp(`\\$${k}`, 'g');
+    if (result.match(re)) {
+      if (v.isLoading) {
+        result = undefined;
+        return false;
+      }
+      result = result.replace(re, v.value || '');
+    }
+  });
+  return result;
+};
+
+const useBoolean = (initialValue: boolean): [boolean, () => void, () => void, () => void] => {
+  const [value, setValue] = React.useState(initialValue);
+  const toggle = React.useCallback(() => setValue((v) => !v), []);
+  const setTrue = React.useCallback(() => setValue(true), []);
+  const setFalse = React.useCallback(() => setValue(false), []);
+  return [value, toggle, setTrue, setFalse];
+};
 
 const VariableDropdown: React.FC<VariableDropdownProps> = ({
-  buttonClassName = 'monitoring-dashboards__dropdown-button',
   isError = false,
   items,
   label,
   onChange,
   selectedKey,
-}) => (
-  <div className="form-group monitoring-dashboards__dropdown-wrap">
-    <label className="monitoring-dashboards__dropdown-title">{label}</label>
-    {isError ? (
-      <Dropdown
-        disabled
-        items={{}}
-        title={
-          <>
-            <RedExclamationCircleIcon /> Error loading options
-          </>
-        }
-      />
-    ) : (
-      <Dropdown
-        buttonClassName={buttonClassName}
-        items={items}
-        onChange={onChange}
-        selectedKey={selectedKey}
-      />
-    )}
-  </div>
-);
+}) => {
+  const [isOpen, toggleIsOpen, , setClosed] = useBoolean(false);
 
-const SingleVariableDropdown: React.FC<SingleVariableDropdownProps> = ({
+  return (
+    <div className="form-group monitoring-dashboards__dropdown-wrap">
+      <label className="monitoring-dashboards__dropdown-title">{label}</label>
+      {isError ? (
+        <Dropdown
+          toggle={
+            <DropdownToggle className="monitoring-dashboards__dropdown-button" isDisabled={true}>
+              <RedExclamationCircleIcon /> Error loading options
+            </DropdownToggle>
+          }
+        />
+      ) : (
+        <Dropdown
+          dropdownItems={_.map(items, (name, key) => (
+            <DropdownItem component="button" key={key} onClick={() => onChange(key)}>
+              {name}
+            </DropdownItem>
+          ))}
+          isOpen={isOpen}
+          onSelect={setClosed}
+          toggle={
+            <DropdownToggle
+              className="monitoring-dashboards__dropdown-button"
+              onToggle={toggleIsOpen}
+            >
+              {items[selectedKey]}
+            </DropdownToggle>
+          }
+        />
+      )}
+    </div>
+  );
+};
+
+const SingleVariableDropdown_: React.FC<SingleVariableDropdownProps> = ({
   isHidden,
   name,
   options,
+  optionsLoaded,
   patchVariable,
   query,
   timespan,
@@ -100,7 +131,7 @@ const SingleVariableDropdown: React.FC<SingleVariableDropdownProps> = ({
         .then(({ data }) => {
           setIsError(false);
           const newOptions = _.flatMap(data?.result, ({ metric }) => _.values(metric)).sort();
-          patchVariable(name, { isLoading: false, options: newOptions });
+          optionsLoaded(name, newOptions);
         })
         .catch((err) => {
           patchVariable(name, { isLoading: false });
@@ -109,14 +140,14 @@ const SingleVariableDropdown: React.FC<SingleVariableDropdownProps> = ({
           }
         });
     }
-  }, [name, patchVariable, query, safeFetch, timespan]);
+  }, [name, patchVariable, query, safeFetch, optionsLoaded, timespan]);
 
   const onChange = React.useCallback((v: string) => patchVariable(name, { value: v }), [
     name,
     patchVariable,
   ]);
 
-  if (isHidden || (!isError && !options.length)) {
+  if (isHidden || (!isError && _.isEmpty(options))) {
     return null;
   }
 
@@ -130,38 +161,39 @@ const SingleVariableDropdown: React.FC<SingleVariableDropdownProps> = ({
     />
   );
 };
+const SingleVariableDropdown = connect(
+  ({ UI }: RootState, { name }: { name: string }) => {
+    const variables = UI.getIn(['monitoringDashboards', 'variables']).toJS();
+    const { isHidden, options, query, value } = variables[name] ?? {};
+    return {
+      isHidden,
+      options,
+      query: evaluateTemplate(query, variables),
+      timespan: UI.getIn(['monitoringDashboards', 'timespan']),
+      value,
+    };
+  },
+  {
+    optionsLoaded: UIActions.monitoringDashboardsVariableOptionsLoaded,
+    patchVariable: UIActions.monitoringDashboardsPatchVariable,
+  },
+)(SingleVariableDropdown_);
 
-const AllVariableDropdowns_: React.FC<AllVariableDropdownsProps> = ({
-  patchVariable,
-  timespan,
-  variables,
-}) => {
-  const vars = variables.toJS();
-  return (
-    <>
-      {_.map(vars, (v, name) => (
-        <SingleVariableDropdown
-          isHidden={v.isHidden}
-          key={name}
-          name={name}
-          options={v.options}
-          patchVariable={patchVariable}
-          query={v.query ? evaluateTemplate(v.query, vars) : undefined}
-          timespan={timespan}
-          value={v.value}
-        />
-      ))}
-    </>
-  );
-};
+const AllVariableDropdowns_: React.FC<AllVariableDropdownsProps> = ({ variables }) => (
+  <>
+    {_.map(_.keys(variables.toJS()), (name) => (
+      <SingleVariableDropdown key={name} name={name} />
+    ))}
+  </>
+);
 const AllVariableDropdowns = connect(({ UI }: RootState) => ({
   variables: UI.getIn(['monitoringDashboards', 'variables']),
 }))(AllVariableDropdowns_);
 
 const timespanOptions = {
-  '5m': '5 mintutes',
-  '15m': '15 mintutes',
-  '30m': '30 mintutes',
+  '5m': '5 minutes',
+  '15m': '15 minutes',
+  '30m': '30 minutes',
   '1h': '1 hour',
   '2h': '2 hours',
   '6h': '6 hours',
@@ -171,7 +203,29 @@ const timespanOptions = {
   '1w': '1 week',
   '2w': '2 weeks',
 };
-const defaultTimespan = '30m';
+
+const TimespanDropdown_: React.FC<TimespanDropdownProps> = ({ timespan, setTimespan }) => {
+  const onChange = React.useCallback((v: string) => setTimespan(parsePrometheusDuration(v)), [
+    setTimespan,
+  ]);
+
+  return (
+    <VariableDropdown
+      items={timespanOptions}
+      label="Time Range"
+      onChange={onChange}
+      selectedKey={formatPrometheusDuration(timespan)}
+    />
+  );
+};
+const TimespanDropdown = connect(
+  ({ UI }: RootState) => ({
+    timespan: UI.getIn(['monitoringDashboards', 'timespan']),
+  }),
+  {
+    setTimespan: UIActions.monitoringDashboardsSetTimespan,
+  },
+)(TimespanDropdown_);
 
 const pollOffText = 'Off';
 const pollIntervalOptions = {
@@ -179,14 +233,40 @@ const pollIntervalOptions = {
   '15s': '15 seconds',
   '30s': '30 seconds',
   '1m': '1 minute',
-  '5m': '5 mintutes',
-  '15m': '15 mintutes',
-  '30m': '30 mintutes',
+  '5m': '5 minutes',
+  '15m': '15 minutes',
+  '30m': '30 minutes',
   '1h': '1 hour',
   '2h': '2 hours',
   '1d': '1 day',
 };
-const defaultPollInterval = '30s';
+
+const PollIntervalDropdown_: React.FC<PollIntervalDropdownProps> = ({
+  pollInterval,
+  setPollInterval,
+}) => {
+  const onChange = React.useCallback(
+    (v: string) => setPollInterval(v === pollOffText ? null : parsePrometheusDuration(v)),
+    [setPollInterval],
+  );
+
+  return (
+    <VariableDropdown
+      items={pollIntervalOptions}
+      label="Refresh Interval"
+      onChange={onChange}
+      selectedKey={formatPrometheusDuration(pollInterval)}
+    />
+  );
+};
+const PollIntervalDropdown = connect(
+  ({ UI }: RootState) => ({
+    pollInterval: UI.getIn(['monitoringDashboards', 'pollInterval']),
+  }),
+  {
+    setPollInterval: UIActions.monitoringDashboardsSetPollInterval,
+  },
+)(PollIntervalDropdown_);
 
 // TODO: Dynamically load the list of dashboards
 const boards = [
@@ -207,7 +287,7 @@ const boardItems = _.zipObject(boards, boards);
 // Matches Prometheus labels surrounded by {{ }} in the graph legend label templates
 const legendTemplateOptions = { interpolate: /{{([a-zA-Z_][a-zA-Z0-9_]*)}}/g };
 
-const CardBody_: React.FC<CardBodyProps> = ({ panel, pollInterval, timespan, variables }) => {
+const CardBody_: React.FC<CardBodyProps> = ({ panel, pollInterval, variables }) => {
   const formatLegendLabel = React.useCallback(
     (labels, i) => {
       const compiled = _.template(panel.targets?.[i]?.legendFormat, legendTemplateOptions);
@@ -216,11 +296,7 @@ const CardBody_: React.FC<CardBodyProps> = ({ panel, pollInterval, timespan, var
     [panel],
   );
 
-  const variablesJS = variables.toJS();
-
-  if (_.some(variablesJS, 'isLoading')) {
-    return <LoadingInline />;
-  }
+  const variablesJS: VariablesMap = variables.toJS();
 
   const rawQueries = _.map(panel.targets, 'expr');
   if (!rawQueries.length) {
@@ -228,16 +304,21 @@ const CardBody_: React.FC<CardBodyProps> = ({ panel, pollInterval, timespan, var
   }
   const queries = rawQueries.map((expr) => evaluateTemplate(expr, variablesJS));
 
+  if (_.some(queries, _.isUndefined)) {
+    return <LoadingInline />;
+  }
+
   return (
     <>
-      {panel.type === 'grafana-piechart-panel' && <BarChart query={queries[0]} />}
+      {panel.type === 'grafana-piechart-panel' && (
+        <BarChart pollInterval={pollInterval} query={queries[0]} />
+      )}
       {panel.type === 'graph' && (
         <Graph
           formatLegendLabel={panel.legend?.show ? formatLegendLabel : undefined}
           isStack={panel.stack}
           pollInterval={pollInterval}
           queries={queries}
-          timespan={timespan}
         />
       )}
       {panel.type === 'singlestat' && (
@@ -250,15 +331,16 @@ const CardBody_: React.FC<CardBodyProps> = ({ panel, pollInterval, timespan, var
   );
 };
 const CardBody = connect(({ UI }: RootState) => ({
+  pollInterval: UI.getIn(['monitoringDashboards', 'pollInterval']),
   variables: UI.getIn(['monitoringDashboards', 'variables']),
 }))(CardBody_);
 
-const Card: React.FC<CardProps> = ({ panel, pollInterval, timespan }) => {
+const Card: React.FC<CardProps> = ({ panel }) => {
   if (panel.type === 'row') {
     return (
       <>
         {_.map(panel.panels, (p) => (
-          <Card key={p.id} panel={p} pollInterval={pollInterval} timespan={timespan} />
+          <Card key={p.id} panel={p} />
         ))}
       </>
     );
@@ -281,14 +363,14 @@ const Card: React.FC<CardProps> = ({ panel, pollInterval, timespan }) => {
           <DashboardCardTitle>{panel.title}</DashboardCardTitle>
         </DashboardCardHeader>
         <DashboardCardBody className="co-dashboard-card__body--dashboard-graph">
-          <CardBody panel={panel} pollInterval={pollInterval} timespan={timespan} />
+          <CardBody panel={panel} />
         </DashboardCardBody>
       </DashboardCard>
     </div>
   );
 };
 
-const Board: React.FC<BoardProps> = ({ board, patchVariable, pollInterval, timespan }) => {
+const Board: React.FC<BoardProps> = ({ board, patchVariable }) => {
   const [data, setData] = React.useState();
   const [error, setError] = React.useState<string>();
 
@@ -308,7 +390,6 @@ const Board: React.FC<BoardProps> = ({ board, patchVariable, pollInterval, times
           setError('Dashboard definition JSON not found');
         } else {
           const newData = JSON.parse(json);
-          setData(newData);
 
           _.each(newData?.templating?.list as TemplateVariable[], (v) => {
             if (v.type === 'query' || v.type === 'interval') {
@@ -316,10 +397,14 @@ const Board: React.FC<BoardProps> = ({ board, patchVariable, pollInterval, times
                 isHidden: v.hide !== 0,
                 options: _.map(v.options, 'value'),
                 query: v.type === 'query' ? v.query : undefined,
-                value: _.find(v.options, { selected: true })?.value,
+                value: _.find(v.options, { selected: true })?.value || v.options?.[0]?.value,
               });
             }
           });
+
+          // Call this after creating the board's variables so we don't trigger a component update
+          // that will fail due to missing variables
+          setData(newData);
         }
       })
       .catch((err) => {
@@ -346,7 +431,7 @@ const Board: React.FC<BoardProps> = ({ board, patchVariable, pollInterval, times
       {_.map(rows, (row, i) => (
         <div className="row monitoring-dashboards__row" key={i}>
           {_.map(row.panels, (panel, j) => (
-            <Card key={j} panel={panel} pollInterval={pollInterval} timespan={timespan} />
+            <Card key={j} panel={panel} />
           ))}
         </div>
       ))}
@@ -357,18 +442,13 @@ const Board: React.FC<BoardProps> = ({ board, patchVariable, pollInterval, times
 const MonitoringDashboardsPage_: React.FC<MonitoringDashboardsPageProps> = ({
   clearVariables,
   deleteAll,
-  patchVariable,
   match,
+  patchVariable,
 }) => {
   const { board } = match.params;
 
   // Clear queries on unmount
   React.useEffect(() => deleteAll, [deleteAll]);
-
-  const [pollInterval, setPollInterval] = React.useState(
-    parsePrometheusDuration(defaultPollInterval),
-  );
-  const [timespan, setTimespan] = React.useState(parsePrometheusDuration(defaultTimespan));
 
   const setBoard = (newBoard: string) => {
     if (newBoard !== board) {
@@ -389,20 +469,8 @@ const MonitoringDashboardsPage_: React.FC<MonitoringDashboardsPageProps> = ({
       </Helmet>
       <div className="co-m-nav-title co-m-nav-title--detail">
         <div className="monitoring-dashboards__options">
-          <VariableDropdown
-            items={timespanOptions}
-            label="Time Range"
-            onChange={(v: string) => setTimespan(parsePrometheusDuration(v))}
-            selectedKey={defaultTimespan}
-          />
-          <VariableDropdown
-            items={pollIntervalOptions}
-            label="Refresh Interval"
-            onChange={(v: string) =>
-              setPollInterval(v === pollOffText ? null : parsePrometheusDuration(v))
-            }
-            selectedKey={defaultPollInterval}
-          />
+          <TimespanDropdown />
+          <PollIntervalDropdown />
         </div>
         <h1 className="co-m-pane__heading">Dashboards</h1>
         <div className="monitoring-dashboards__variables">
@@ -412,16 +480,11 @@ const MonitoringDashboardsPage_: React.FC<MonitoringDashboardsPageProps> = ({
             onChange={setBoard}
             selectedKey={board}
           />
-          <AllVariableDropdowns patchVariable={patchVariable} timespan={timespan} />
+          <AllVariableDropdowns />
         </div>
       </div>
       <Dashboard>
-        <Board
-          board={board}
-          patchVariable={patchVariable}
-          pollInterval={pollInterval}
-          timespan={timespan}
-        />
+        <Board board={board} patchVariable={patchVariable} />
       </Dashboard>
     </>
   );
@@ -451,7 +514,6 @@ type Variable = {
 type VariablesMap = { [key: string]: Variable };
 
 type VariableDropdownProps = {
-  buttonClassName?: string;
   isError?: boolean;
   items: { [key: string]: string };
   label: string;
@@ -465,6 +527,7 @@ type SingleVariableDropdownProps = {
   options?: string[];
   patchVariable: (key: string, patch: Variable) => undefined;
   query?: string;
+  optionsLoaded: (key: string, newOptions: string[]) => undefined;
   timespan: number;
   value?: string;
 };
@@ -472,34 +535,39 @@ type SingleVariableDropdownProps = {
 type BoardProps = {
   board: string;
   patchVariable: (key: string, patch: Variable) => undefined;
-  pollInterval: null | number;
-  timespan: number;
 };
 
 type AllVariableDropdownsProps = {
-  patchVariable: (key: string, patch: Variable) => undefined;
-  timespan: number;
   variables: ImmutableMap<string, Variable>;
+};
+
+type TimespanDropdownProps = {
+  timespan: number;
+  setTimespan: (v: number) => never;
+};
+
+type PollIntervalDropdownProps = {
+  pollInterval: number;
+  setPollInterval: (v: number) => never;
 };
 
 type CardBodyProps = {
   panel: Panel;
   pollInterval: null | number;
-  timespan: number;
   variables: ImmutableMap<string, Variable>;
 };
 
 type CardProps = {
   panel: Panel;
-  pollInterval: null | number;
-  timespan: number;
 };
 
 type MonitoringDashboardsPageProps = {
   clearVariables: () => undefined;
   deleteAll: () => undefined;
+  match: {
+    params: { board: string };
+  };
   patchVariable: (key: string, patch: Variable) => undefined;
-  match: any;
 };
 
 export default withFallback(MonitoringDashboardsPage, ErrorBoundaryFallback);

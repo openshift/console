@@ -28,6 +28,9 @@ export enum ActionType {
   SetCurrentLocation = 'setCurrentLocation',
   MonitoringDashboardsClearVariables = 'monitoringDashboardsClearVariables',
   MonitoringDashboardsPatchVariable = 'monitoringDashboardsPatchVariable',
+  MonitoringDashboardsSetPollInterval = 'monitoringDashboardsSetPollInterval',
+  MonitoringDashboardsSetTimespan = 'monitoringDashboardsSetTimespan',
+  MonitoringDashboardsVariableOptionsLoaded = 'monitoringDashboardsVariableOptionsLoaded',
   SetMonitoringData = 'setMonitoringData',
   ToggleMonitoringGraphs = 'monitoringToggleGraphs',
   NotificationDrawerToggleExpanded = 'notificationDrawerExpanded',
@@ -266,6 +269,12 @@ export const monitoringDashboardsClearVariables = () =>
   action(ActionType.MonitoringDashboardsClearVariables);
 export const monitoringDashboardsPatchVariable = (key: string, patch: any) =>
   action(ActionType.MonitoringDashboardsPatchVariable, { key, patch });
+export const monitoringDashboardsSetPollInterval = (pollInterval: number) =>
+  action(ActionType.MonitoringDashboardsSetPollInterval, { pollInterval });
+export const monitoringDashboardsSetTimespan = (timespan: number) =>
+  action(ActionType.MonitoringDashboardsSetTimespan, { timespan });
+export const monitoringDashboardsVariableOptionsLoaded = (key: string, newOptions: string[]) =>
+  action(ActionType.MonitoringDashboardsVariableOptionsLoaded, { key, newOptions });
 export const monitoringLoading = (key: 'alerts' | 'silences' | 'notificationAlerts') =>
   action(ActionType.SetMonitoringData, {
     key,
@@ -337,6 +346,9 @@ const uiActions = {
   updateOverviewFilterValue,
   monitoringDashboardsClearVariables,
   monitoringDashboardsPatchVariable,
+  monitoringDashboardsSetPollInterval,
+  monitoringDashboardsSetTimespan,
+  monitoringDashboardsVariableOptionsLoaded,
   monitoringLoading,
   monitoringLoaded,
   monitoringErrored,

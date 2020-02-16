@@ -3,6 +3,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 
 import * as UIActions from '../../../actions/ui';
+import { RootState } from '../../../redux';
 import { FormatLegendLabel, PatchQuery, QueryBrowser } from '../query-browser';
 
 // Set the queries in Redux so that other components like the graph tooltip can access them
@@ -10,7 +11,7 @@ const patchAllQueries = (queries: string[], patchQuery: PatchQuery): void => {
   _.each(queries, (query, i) => patchQuery(i, { query }));
 };
 
-const Graph: React.FC<Props> = ({
+const Graph_: React.FC<Props> = ({
   formatLegendLabel,
   isStack,
   patchQuery,
@@ -30,6 +31,9 @@ const Graph: React.FC<Props> = ({
     />
   </div>
 );
+const Graph = connect(({ UI }: RootState) => ({
+  timespan: UI.getIn(['monitoringDashboards', 'timespan']),
+}))(Graph_);
 
 type Props = {
   formatLegendLabel?: FormatLegendLabel;

@@ -80,6 +80,7 @@ export const BarChart: React.FC<BarChartProps> = ({
 };
 
 export const Bar: React.FC<BarProps> = ({
+  delay = undefined,
   humanize = humanizeNumber,
   metric,
   namespace,
@@ -91,6 +92,7 @@ export const Bar: React.FC<BarProps> = ({
   LabelComponent,
 }) => {
   const [response, , loading] = usePrometheusPoll({
+    delay,
     endpoint: PrometheusEndpoint.QUERY,
     namespace,
     query,
@@ -130,6 +132,7 @@ type BarChartProps = {
 
 type BarProps = {
   LabelComponent?: React.ComponentType<LabelComponentProps>;
+  delay?: number;
   humanize?: Humanize;
   metric: string;
   namespace?: string;
