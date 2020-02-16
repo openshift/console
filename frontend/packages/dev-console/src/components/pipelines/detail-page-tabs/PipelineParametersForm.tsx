@@ -36,7 +36,7 @@ const PipelineParametersForm: React.FC<PipelineParametersFormProps> = ({
             isSubmitting={isSubmitting}
             errorMessage={status && status.submitError}
             successMessage={status && !dirty && status.success}
-            disableSubmit={!dirty || !_.isEmpty(errors)}
+            disableSubmit={!dirty || !_.isEmpty(errors.parameters)}
             showAlert={dirty}
           />
         )}
