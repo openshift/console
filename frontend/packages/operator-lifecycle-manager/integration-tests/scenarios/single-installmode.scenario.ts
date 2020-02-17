@@ -226,7 +226,7 @@ describe('Interacting with a `OwnNamespace` install mode Operator (Prometheus)',
   it('uninstalls Operator from the cluster', async () => {
     await operatorHubView.operatorModalUninstallBtn.click();
     await browser.wait(until.visibilityOf($('.co-catalog-install-modal')));
-    await element(by.cssContainingText('#confirm-action', 'Remove')).click();
+    await element(by.cssContainingText('#confirm-action', 'Uninstall')).click();
     await crudView.isLoaded();
     await browser.wait(
       until.invisibilityOf(operatorView.rowForOperator('Prometheus Operator')),

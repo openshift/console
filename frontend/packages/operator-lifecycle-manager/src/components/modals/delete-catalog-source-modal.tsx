@@ -34,28 +34,25 @@ const DeleteCatalogSourceModal: React.FC<DeleteCatalogSourceModalProps> = ({
 
   return (
     <form onSubmit={submit} name="form" className="modal-content ">
-      <ModalTitle>Delete {kind.label}</ModalTitle>
+      <ModalTitle>
+        <YellowExclamationTriangleIcon className="co-icon-space-r" /> Delete {kind.label}?
+      </ModalTitle>
       <ModalBody>
-        <div className="co-delete-modal">
-          <YellowExclamationTriangleIcon className="co-delete-modal__icon" />
-          <div>
-            <p>
-              By deleting a catlog source, any operator that has been installed from this source
-              will no longer receive updates.
-            </p>
-            <p>
-              Confirm deletion by typing &nbsp;
-              <strong className="co-break-word">{resource.metadata.name}</strong>
-              &nbsp; below:
-            </p>
-            <input
-              type="text"
-              className="pf-c-form-control"
-              onKeyUp={isConfirmed}
-              placeholder="Enter name"
-            />
-          </div>
-        </div>
+        <p>
+          By deleting a catlog source, any operator that has been installed from this source will no
+          longer receive updates.
+        </p>
+        <p>
+          Confirm deletion by typing &nbsp;
+          <strong className="co-break-word">{resource.metadata.name}</strong>
+          &nbsp; below:
+        </p>
+        <input
+          type="text"
+          className="pf-c-form-control"
+          onKeyUp={isConfirmed}
+          placeholder="Enter name"
+        />
       </ModalBody>
       <ModalSubmitFooter
         submitText="Delete"
