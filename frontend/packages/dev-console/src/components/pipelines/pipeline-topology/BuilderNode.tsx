@@ -1,6 +1,11 @@
 import * as React from 'react';
 import { Node, observer } from '@console/topology';
-import { AddNodeDirection, BUILDER_NODE_ADD_RADIUS, BUILDER_NODE_ERROR_RADIUS } from './const';
+import {
+  AddNodeDirection,
+  BUILDER_NODE_ADD_RADIUS,
+  BUILDER_NODE_ERROR_RADIUS,
+  BUILDER_NODE_ADD_PADDING,
+} from './const';
 import ErrorNodeDecorator from './ErrorNodeDecorator';
 import PlusNodeDecorator from './PlusNodeDecorator';
 import TaskNode from './TaskNode';
@@ -39,18 +44,18 @@ const BuilderNode: React.FC<{ element: Node }> = ({ element }) => {
       </g>
       <g style={{ display: showAdd ? 'block' : 'none' }}>
         <PlusNodeDecorator
-          x={width + BUILDER_NODE_ADD_RADIUS}
+          x={width + BUILDER_NODE_ADD_RADIUS + BUILDER_NODE_ADD_PADDING}
           y={height / 2}
           onClick={() => onAddNode(AddNodeDirection.AFTER)}
         />
         <PlusNodeDecorator
-          x={-BUILDER_NODE_ADD_RADIUS}
+          x={-BUILDER_NODE_ADD_RADIUS - BUILDER_NODE_ADD_PADDING}
           y={height / 2}
           onClick={() => onAddNode(AddNodeDirection.BEFORE)}
         />
         <PlusNodeDecorator
           x={width / 2}
-          y={height + BUILDER_NODE_ADD_RADIUS}
+          y={height + BUILDER_NODE_ADD_RADIUS + BUILDER_NODE_ADD_PADDING}
           onClick={() => onAddNode(AddNodeDirection.PARALLEL)}
         />
       </g>
