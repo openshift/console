@@ -11,7 +11,9 @@
   "consolePlugin": {
     "entry": "src/plugin.ts",
     "integrationTestSuites": {
-      "noobaa": ["integration-tests/**/*.scenario.ts"]
+      "noobaa": [
+        "integration-tests/**/*.scenario.ts"
+      ]
     }
   }
 }

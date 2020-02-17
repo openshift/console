@@ -24,20 +24,22 @@ const ReviewPage: React.FC<ReviewPageProps> = ({ state }) => {
         <Title size="lg" headingLevel="h4" className="nb-create-bc-step-page-review__item-header">
           Namespace
         </Title>
-        <p>{<ResourceLink kind={ProjectModel.kind} name={namespace} linkTo={false} />}</p>
+        <p data-testid="namespace-value">
+          {<ResourceLink kind={ProjectModel.kind} name={namespace} linkTo={false} />}
+        </p>
       </div>
       <div className="nb-create-bc-step-page-review__item">
         <Title size="lg" headingLevel="h4" className="nb-create-bc-step-page-review__item-header">
           Bucket Class name
         </Title>
-        <p>{bucketClassName}</p>
+        <p data-testid="bc-name">{bucketClassName}</p>
       </div>
       {description && (
         <div className="nb-create-bc-step-page-review__item">
           <Title size="lg" headingLevel="h4" className="nb-create-bc-step-page-review__item-header">
             Description
           </Title>
-          <p>{description}</p>
+          <p data-testid="bc-desc">{description}</p>
         </div>
       )}
       <div className="nb-create-bc-step-page-review__item">
@@ -45,17 +47,17 @@ const ReviewPage: React.FC<ReviewPageProps> = ({ state }) => {
           Placement Policy Details
         </Title>
         <div className="co-nobaa-create-bc-step-page-review__item-tier1">
-          <Title size="md" headingLevel="h5">
+          <Title size="md" headingLevel="h5" data-testid="tier1-policy">
             Tier 1: {tier1Policy}
           </Title>
-          <p>Selected Backing Store: {tier1BackingStore.join(', ')}</p>
+          <p data-testid="tier1-stores">Selected Backing Store: {tier1BackingStore.join(', ')}</p>
         </div>
         {tier2Policy && (
           <>
-            <Title size="md" headingLevel="h5">
+            <Title size="md" headingLevel="h5" data-testid="tier2-policy">
               Tier 2: {tier2Policy}
             </Title>
-            <p>Selected Backing Store: {tier2BackingStore.join(', ')}</p>
+            <p data-testid="tier2-stores">Selected Backing Store: {tier2BackingStore.join(', ')}</p>
           </>
         )}
       </div>

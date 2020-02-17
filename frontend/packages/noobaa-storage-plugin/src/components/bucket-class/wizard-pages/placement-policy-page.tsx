@@ -79,6 +79,7 @@ const PlacementPolicyPage: React.FC<PlacementPolicyPageProps> = ({ dispatch, sta
           icon={<PlusCircleIcon />}
           onClick={() => dispatch({ type: 'setPlacementPolicyTier2', value: 'Spread' })}
           isInline
+          data-testid="add-tier-btn"
         >
           Add Tier
         </Button>
