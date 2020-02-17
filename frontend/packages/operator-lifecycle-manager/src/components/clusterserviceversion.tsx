@@ -207,7 +207,7 @@ const ClusterServiceVersionStatus: React.FC<ClusterServiceVersionStatusProps> = 
 };
 
 export const ClusterServiceVersionTableRow = withFallback<ClusterServiceVersionTableRowProps>(
-  ({ obj, key, subscription, catalogSourceMissing, ...rest }) => {
+  ({ obj, key, subscription, catalogSourceMissing, index, style }) => {
     const { displayName, provider, version } = _.get(obj, 'spec');
     const [icon] = _.get(obj, 'spec.icon', []);
     const deploymentName = _.get(obj, 'spec.install.spec.deployments[0].name');
@@ -216,7 +216,7 @@ export const ClusterServiceVersionTableRow = withFallback<ClusterServiceVersionT
     const uid = getUID(obj);
     const internalObjects = getInternalObjects(obj);
     return (
-      <TableRow id={uid} trKey={key} {...rest}>
+      <TableRow id={uid} trKey={key} index={index} style={style}>
         {/* Name */}
         <TableData className={tableColumnClasses[0]}>
           <Link
@@ -299,7 +299,8 @@ const SubscriptionTableRow: React.FC<SubscriptionTableRowProps> = ({
   catalogSourceMissing,
   key,
   obj,
-  ...rest
+  index,
+  style,
 }) => {
   const csvName = _.get(obj, 'spec.name');
   const menuActions = [Kebab.factory.Edit, () => uninstall(obj, obj.spec.displayName)];
@@ -324,7 +325,7 @@ const SubscriptionTableRow: React.FC<SubscriptionTableRowProps> = ({
   };
 
   return (
-    <TableRow id={uid} trKey={key} {...rest}>
+    <TableRow id={uid} trKey={key} index={index} style={style}>
       {/* Name */}
       <TableData className={tableColumnClasses[0]}>
         <Link to={route}>
