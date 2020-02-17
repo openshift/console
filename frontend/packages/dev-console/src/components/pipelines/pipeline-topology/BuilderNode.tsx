@@ -10,6 +10,7 @@ import ErrorNodeDecorator from './ErrorNodeDecorator';
 import PlusNodeDecorator from './PlusNodeDecorator';
 import TaskNode from './TaskNode';
 import { BuilderNodeModelData } from './types';
+import { TooltipPosition } from '@patternfly/react-core';
 
 const BuilderNode: React.FC<{ element: Node }> = ({ element }) => {
   const [showAdd, setShowAdd] = React.useState(false);
@@ -46,16 +47,20 @@ const BuilderNode: React.FC<{ element: Node }> = ({ element }) => {
         <PlusNodeDecorator
           x={width + BUILDER_NODE_ADD_RADIUS + BUILDER_NODE_ADD_PADDING}
           y={height / 2}
+          tooltip="Add a sequential task after this task"
           onClick={() => onAddNode(AddNodeDirection.AFTER)}
         />
         <PlusNodeDecorator
           x={-BUILDER_NODE_ADD_RADIUS - BUILDER_NODE_ADD_PADDING}
           y={height / 2}
+          tooltip="Add a sequential task before this task"
           onClick={() => onAddNode(AddNodeDirection.BEFORE)}
         />
         <PlusNodeDecorator
           x={width / 2}
           y={height + BUILDER_NODE_ADD_RADIUS + BUILDER_NODE_ADD_PADDING}
+          tooltip="Add a parallel task"
+          tooltipPosition={TooltipPosition.bottom}
           onClick={() => onAddNode(AddNodeDirection.PARALLEL)}
         />
       </g>
