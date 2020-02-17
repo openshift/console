@@ -37,7 +37,7 @@ describe('KubeVirt VM detail - edit flavor', () => {
         await browser.wait(
           until.textToBePresentInElement(
             virtualMachineView.vmDetailFlavor(vm.namespace, vm.name),
-            'Tiny: 1 vCPU, 1 GB Memory',
+            'Tiny: 1 vCPU, 1 GiB Memory',
           ),
         );
         await vm.modalEditFlavor();
@@ -53,7 +53,7 @@ describe('KubeVirt VM detail - edit flavor', () => {
         await browser.wait(
           until.textToBePresentInElement(
             virtualMachineView.vmDetailFlavor(vm.namespace, vm.name),
-            'Large: 2 vCPUs, 6 GB Memory',
+            'Large: 2 vCPUs, 8 GiB Memory',
           ),
         );
         expect(
@@ -82,7 +82,7 @@ describe('KubeVirt VM detail - edit flavor', () => {
         await browser.wait(
           until.textToBePresentInElement(
             virtualMachineView.vmDetailFlavor(vm.namespace, vm.name),
-            'Tiny: 1 vCPU, 1 GB Memory',
+            'Tiny: 1 vCPU, 1 GiB Memory',
           ),
         );
         await vm.modalEditFlavor();
@@ -95,13 +95,13 @@ describe('KubeVirt VM detail - edit flavor', () => {
           until.textToBePresentInElement(editFlavorView.flavorDropdownText(), 'Custom'),
         );
         await fillInput(editFlavorView.cpusInput(), '2');
-        await fillInput(editFlavorView.memoryInput(), '356');
+        await fillInput(editFlavorView.memoryInput(), '3');
         await click(editFlavorView.saveButton());
 
         await browser.wait(
           until.textToBePresentInElement(
             virtualMachineView.vmDetailFlavor(vm.namespace, vm.name),
-            'Custom: 2 vCPUs, 356 MB Memory',
+            'Custom: 2 vCPUs, 3 GiB Memory',
           ),
         );
 

@@ -44,4 +44,3 @@ expect $prompt {
 }
 
 send \003]
-exit

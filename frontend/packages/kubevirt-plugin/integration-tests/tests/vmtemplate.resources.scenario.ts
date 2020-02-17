@@ -3,15 +3,13 @@ import {
   deleteResource,
   deleteResources,
 } from '@console/shared/src/test-utils/utils';
-import { get } from 'lodash';
 import { testName } from '@console/internal-integration-tests/protractor.conf';
 import { TEMPLATE_ACTIONS_TIMEOUT_SECS } from './utils/consts';
-import { basicVMConfig, multusNAD, hddDisk, multusNetworkInterface, rootDisk } from './utils/mocks';
+import { basicVMConfig, multusNAD, hddDisk, multusNetworkInterface } from './utils/mocks';
 import { getProvisionConfigs } from './vm.wizard.configs';
 import { VirtualMachine } from './models/virtualMachine';
 import { VirtualMachineTemplate } from './models/virtualMachineTemplate';
 import { ProvisionConfig } from './utils/types';
-import { getResourceObject } from './utils/utils';
 import { ProvisionConfigName } from './utils/constants/wizard';
 
 describe('Test adding/removing discs/nics to/from a VM template', () => {
@@ -84,13 +82,6 @@ describe('Test adding/removing discs/nics to/from a VM template', () => {
 
     it('Adds a NIC to a VM template', async () => {
       expect(vm.getAttachedNICs()).toContain(multusNetworkInterface);
-    });
-
-    xit('BZ(1779116) Clones disk defined in VM template', async () => {
-      const dataVolumeName = `${vm.name}-${vmTemplate.name}-${rootDisk.name}-clone`;
-      const dataVolume = getResourceObject(dataVolumeName, vm.namespace, 'datavolume');
-      const srcPvc = get(dataVolume, 'spec.source.pvc.name', '');
-      expect(srcPvc).toEqual(`${vmTemplate.name}-${rootDisk.name}`);
     });
   });
 

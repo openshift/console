@@ -29,7 +29,7 @@ import { appHost, testName } from '@console/internal-integration-tests/protracto
 import { KubevirtDetailView } from './kubevirtDetailView';
 import { ImportWizard } from './importWizard';
 
-const confirmDialogActions = [VM_ACTION.Clone, VM_ACTION.Delete, VMI_ACTION.Delete];
+const noConfirmDialogActions: (VM_ACTION | VMI_ACTION)[] = [VM_ACTION.Start, VM_ACTION.Clone];
 
 export class VirtualMachine extends KubevirtDetailView {
   constructor(config, kind?: 'virtualmachines' | 'virtualmachineinstances') {
@@ -51,7 +51,7 @@ export class VirtualMachine extends KubevirtDetailView {
   async action(action: VM_ACTION | VMI_ACTION, waitForAction?: boolean, timeout?: number) {
     await this.navigateToTab(TAB.Details);
 
-    const confirmDialog = confirmDialogActions.includes(action);
+    const confirmDialog = !noConfirmDialogActions.includes(action);
 
     await detailViewAction(action, confirmDialog);
     if (waitForAction !== false) {
@@ -72,8 +72,7 @@ export class VirtualMachine extends KubevirtDetailView {
   async listViewAction(action: VM_ACTION | VMI_ACTION, waitForAction?: boolean, timeout?: number) {
     await this.navigateToListView();
 
-    const confirmDialog = confirmDialogActions.includes(action);
-
+    const confirmDialog = !noConfirmDialogActions.includes(action);
     await listViewAction(this.name)(action, confirmDialog);
     if (waitForAction !== false) {
       await this.waitForActionFinished(action, timeout);
@@ -250,8 +249,10 @@ export class VirtualMachine extends KubevirtDetailView {
     await wizard.next();
 
     // Advanced - Virtual Hardware
-    for (const resource of CDRoms) {
-      await wizard.addCD(resource);
+    if (CDRoms) {
+      for (const resource of CDRoms) {
+        await wizard.addCD(resource);
+      }
     }
     await wizard.next();
 
