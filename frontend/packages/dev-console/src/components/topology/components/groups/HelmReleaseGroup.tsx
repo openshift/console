@@ -7,37 +7,45 @@ import {
   createSvgIdUrl,
   useDragNode,
   WithSelectionProps,
+  WithDndDropProps,
   observer,
   useCombineRefs,
 } from '@console/topology';
 import NodeShadows, { NODE_SHADOW_FILTER_ID_HOVER, NODE_SHADOW_FILTER_ID } from '../NodeShadows';
 import SvgBoxedText from '../../../svg/SvgBoxedText';
 import useSearchFilter from '../../filters/useSearchFilter';
+import { nodeDragSourceSpec } from '../../componentUtils';
+import { TYPE_HELM_RELEASE } from '../../const';
 
 export type HelmReleaseGroupProps = {
   element: Node;
-} & WithSelectionProps;
+} & WithSelectionProps &
+  WithDndDropProps;
 
-const HelmReleaseGroup: React.FC<HelmReleaseGroupProps> = ({ element, onSelect, selected }) => {
+const HelmReleaseGroup: React.FC<HelmReleaseGroupProps> = ({
+  element,
+  onSelect,
+  selected,
+  dndDropRef,
+}) => {
   const [hover, hoverRef] = useHover();
   const [labelHover, labelHoverRef] = useHover();
   const { x, y, width, height } = element.getBounds();
-  const [{ dragging }, dragNodeRef] = useDragNode({
-    collect: (monitor) => ({
-      dragging: monitor.isDragging(),
-    }),
+  const [{ dragging }, dragNodeRef] = useDragNode(nodeDragSourceSpec(TYPE_HELM_RELEASE, false), {
+    element,
   });
-  const [{ labelDragging }, dragLabelRef] = useDragNode({
-    collect: (monitor) => ({
-      labelDragging: monitor.isDragging(),
-    }),
-  });
-  const refs = useCombineRefs(dragNodeRef, hoverRef);
+  const [{ dragging: labelDragging }, dragLabelRef] = useDragNode(
+    nodeDragSourceSpec(TYPE_HELM_RELEASE, false),
+    {
+      element,
+    },
+  );
+  const refs = useCombineRefs(dragNodeRef, dndDropRef, hoverRef);
   const [filtered] = useSearchFilter(element.getLabel());
   return (
     <>
       <NodeShadows />
-      <Layer id={dragging ? undefined : 'groups'}>
+      <Layer id={dragging || labelDragging ? undefined : 'groups'}>
         <g
           className={classNames('odc-helm-release', {
             'is-dragging': dragging || labelDragging,

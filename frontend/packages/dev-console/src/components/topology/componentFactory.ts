@@ -32,6 +32,7 @@ import {
   groupWorkloadDropTargetSpec,
   edgeDragSourceSpec,
   graphEventSourceDropTargetSpec,
+  noDropTargetSpec,
   createConnectorCallback,
   removeConnectorCallback,
   MOVE_CONNECTOR_DROP_TYPE,
@@ -70,6 +71,10 @@ type NodeProps = {
   element: Node;
 };
 
+const withNoDrop = () => {
+  return withDndDrop<any, any, {}, NodeProps>(noDropTargetSpec);
+};
+
 class ComponentFactory {
   private hasServiceBinding: boolean;
 
@@ -85,7 +90,7 @@ class ComponentFactory {
     return (kind, type): ComponentType<{ element: GraphElement }> | undefined => {
       switch (type) {
         case TYPE_HELM_RELEASE:
-          return withSelection(false, true)(HelmRelease);
+          return withSelection(false, true)(withNoDrop()(HelmRelease));
         case TYPE_HELM_WORKLOAD:
           return withCreateConnector(createConnectorCallback(this.hasServiceBinding))(
             withDndDrop<
@@ -124,7 +129,7 @@ class ComponentFactory {
             ),
           );
         case TYPE_OPERATOR_BACKED_SERVICE:
-          return withSelection(false, true)(OperatorBackedService);
+          return withSelection(false, true)(withNoDrop()(OperatorBackedService));
         case TYPE_OPERATOR_WORKLOAD:
           return withCreateConnector(createConnectorCallback(this.hasServiceBinding))(
             withEditReviewAccess('patch')(
@@ -182,7 +187,7 @@ class ComponentFactory {
                   nodeContextMenu,
                   document.getElementById('modal-container'),
                   'odc-topology-context-menu',
-                )(EventSource),
+                )(withNoDrop()(EventSource)),
               ),
             ),
           );
@@ -196,7 +201,7 @@ class ComponentFactory {
                 nodeContextMenu,
                 document.getElementById('modal-container'),
                 'odc-topology-context-menu',
-              )(RevisionNode),
+              )(withNoDrop()(RevisionNode)),
             ),
           );
         case TYPE_REVISION_TRAFFIC:
