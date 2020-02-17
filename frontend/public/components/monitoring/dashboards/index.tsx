@@ -240,13 +240,6 @@ const CardBody_: React.FC<CardBodyProps> = ({ panel, pollInterval, timespan, var
           timespan={timespan}
         />
       )}
-      {panel.type === 'row' && !_.isEmpty(panel.panels) && (
-        <div className="row">
-          {_.map(panel.panels, (p) => (
-            <Card key={p.id} panel={p} pollInterval={pollInterval} timespan={timespan} />
-          ))}
-        </div>
-      )}
       {panel.type === 'singlestat' && (
         <SingleStat panel={panel} pollInterval={pollInterval} query={queries[0]} />
       )}
@@ -261,6 +254,16 @@ const CardBody = connect(({ UI }: RootState) => ({
 }))(CardBody_);
 
 const Card: React.FC<CardProps> = ({ panel, pollInterval, timespan }) => {
+  if (panel.type === 'row') {
+    return (
+      <>
+        {_.map(panel.panels, (p) => (
+          <Card key={p.id} panel={p} pollInterval={pollInterval} timespan={timespan} />
+        ))}
+      </>
+    );
+  }
+
   // If panel doesn't specify a span, default to 12
   const panelSpan: number = _.get(panel, 'span', 12);
   // If panel.span is greater than 12, default colSpan to 12
