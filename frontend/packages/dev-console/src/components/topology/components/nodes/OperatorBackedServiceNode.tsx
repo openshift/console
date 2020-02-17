@@ -4,6 +4,7 @@ import {
   observer,
   Node,
   WithSelectionProps,
+  WithDndDropProps,
   useAnchor,
   RectAnchor,
   useCombineRefs,
@@ -19,12 +20,14 @@ import GroupNode from './GroupNode';
 
 export type OperatorBackedServiceNodeProps = {
   element: Node;
-} & WithSelectionProps;
+} & WithSelectionProps &
+  WithDndDropProps;
 
 const OperatorBackedServiceNode: React.FC<OperatorBackedServiceNodeProps> = ({
   element,
   selected,
   onSelect,
+  dndDropRef,
 }) => {
   useAnchor((e: Node) => new RectAnchor(e, 4));
   const [hover, hoverRef] = useHover();
@@ -34,7 +37,7 @@ const OperatorBackedServiceNode: React.FC<OperatorBackedServiceNodeProps> = ({
       element,
     },
   );
-  const refs = useCombineRefs<SVGRectElement>(hoverRef, dragNodeRef);
+  const refs = useCombineRefs<SVGRectElement>(hoverRef, dragNodeRef, dndDropRef);
   const [filtered] = useSearchFilter(element.getLabel());
   const kind = 'Operator';
   const { width, height } = element.getBounds();

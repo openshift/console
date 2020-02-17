@@ -9,6 +9,8 @@ import { Node, isNode, AnchorEnd, GraphElement, isGraph, Graph } from '../types'
 import { DragSourceSpec, DragSourceMonitor, DragEvent } from './dnd-types';
 import { useDndDrag } from './useDndDrag';
 
+import './CreateConnector.scss';
+
 export const CREATE_CONNECTOR_OPERATION = 'createconnector';
 
 export type ConnectorChoice = {
@@ -141,10 +143,10 @@ const CreateConnectorWidget: React.FC<CreateConnectorWidgetProps> = observer((pr
     <>
       <Layer id="top">
         <g
+          className="topology-create-connector"
           ref={dragRef}
           onMouseEnter={!active ? () => onKeepAlive(true) : undefined}
           onMouseLeave={!active ? () => onKeepAlive(false) : undefined}
-          style={{ cursor: !dragging ? 'pointer' : undefined }}
         >
           {renderConnector(startPoint, endPoint, hintsRef.current)}
           {!active && (
