@@ -193,7 +193,7 @@ const detectCanCreateProject = (dispatch) =>
     },
   );
 
-const monitoringConfigMapPath = `${k8sBasePath}/api/v1/namespaces/openshift-monitoring/configmaps/sharing-config`;
+const monitoringConfigMapPath = `${k8sBasePath}/api/v1/namespaces/openshift-config-managed/configmaps/monitoring-shared-config`;
 const detectMonitoringURLs = (dispatch) =>
   coFetchJSON(monitoringConfigMapPath).then(
     (res) => {
