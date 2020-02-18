@@ -12,7 +12,11 @@ import { VMDashboardContext } from '../../vms/vm-dashboard-context';
 import { getVMLikeModel } from '../../../selectors/vm/vmlike';
 import { getNetworks, getDisks } from '../../../selectors/vm';
 import { getVMINetworks, getVMIDisks } from '../../../selectors/vmi';
-import { VM_DETAIL_DISKS_HREF, VM_DETAIL_NETWORKS_HREF } from '../../../constants';
+import {
+  VM_DETAIL_DETAILS_HREF,
+  VM_DETAIL_DISKS_HREF,
+  VM_DETAIL_NETWORKS_HREF,
+} from '../../../constants';
 
 export const VMInventoryCard: React.FC<VMInventoryCardProps> = () => {
   const vmDashboardContext = React.useContext(VMDashboardContext);
@@ -25,12 +29,18 @@ export const VMInventoryCard: React.FC<VMInventoryCardProps> = () => {
 
   // prefer vmi over vm if available (means: is running)
   const nicCount = vm ? getNetworks(vm).length : getVMINetworks(vmi).length;
-  const diskCount = vm ? getDisks(vm).length : getVMIDisks(vmi).length;
+  const disks = vm ? getDisks(vm) : getVMIDisks(vmi);
+  const diskCount = disks.filter((d) => d?.disk).length;
+  const cdromCount = disks.filter((d) => d?.cdrom).length;
   // TODO: per design, snapshots should be added here (snapshots are not implemented at all atm)
 
   const basePath = resourcePath(getVMLikeModel(vmiLike).kind, name, namespace);
   const DisksTitle = React.useCallback(
     ({ children }) => <Link to={`${basePath}/${VM_DETAIL_DISKS_HREF}`}>{children}</Link>,
+    [basePath],
+  );
+  const CDROMTitle = React.useCallback(
+    ({ children }) => <Link to={`${basePath}/${VM_DETAIL_DETAILS_HREF}`}>{children}</Link>,
     [basePath],
   );
   const NicsTitle = React.useCallback(
@@ -55,6 +65,12 @@ export const VMInventoryCard: React.FC<VMInventoryCardProps> = () => {
           title="Disk"
           count={diskCount}
           TitleComponent={DisksTitle}
+        />
+        <InventoryItem
+          isLoading={isLoading}
+          title="CD-ROM"
+          count={cdromCount}
+          TitleComponent={CDROMTitle}
         />
       </DashboardCardBody>
     </DashboardCard>
