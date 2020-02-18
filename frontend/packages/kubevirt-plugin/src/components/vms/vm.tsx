@@ -11,7 +11,10 @@ import {
   K8sEntityMap,
   dimensifyHeader,
   dimensifyRow,
+  getDeletetionTimestamp,
+  getOwnerReferences,
 } from '@console/shared';
+import { compareOwnerReference } from '@console/shared/src/utils/owner-references';
 import { NamespaceModel, PodModel, NodeModel } from '@console/internal/models';
 import { Table, MultiListPage, TableRow, TableData } from '@console/internal/components/factory';
 import { FirehoseResult, Kebab, ResourceLink } from '@console/internal/components/utils';
@@ -25,7 +28,7 @@ import {
 } from '../../models';
 import { VMIKind, VMKind } from '../../types';
 import { getMigrationVMIName, isMigrating } from '../../selectors/vmi-migration';
-import { getBasicID, getLoadedData, getResource } from '../../utils';
+import { buildOwnerReferenceForModel, getBasicID, getLoadedData, getResource } from '../../utils';
 import { getVMStatus, VMStatus as VMStatusType } from '../../statuses/vm/vm';
 import { getVMStatusSortString } from '../../statuses/vm/constants';
 import { getVmiIpAddresses, getVMINodeName } from '../../selectors/vmi';
@@ -205,30 +208,41 @@ export const VirtualMachinesPage: React.FC<VirtualMachinesPageProps> = (props) =
     );
     const virtualMachines = _.unionBy(loadedVMs, loadedVMIs, getBasicID);
 
-    return virtualMachines.map((obj: VMILikeEntityKind) => {
-      const lookupID = getBasicID(obj);
-      const { vm, vmi } = isVM(obj)
-        ? { vm: obj as VMKind, vmi: vmisLookup[lookupID] as VMIKind }
-        : { vm: null, vmi: obj as VMIKind };
+    return virtualMachines
+      .map((obj: VMILikeEntityKind) => {
+        const lookupID = getBasicID(obj);
+        const { vm, vmi } = isVM(obj)
+          ? { vm: obj as VMKind, vmi: vmisLookup[lookupID] as VMIKind }
+          : { vm: null, vmi: obj as VMIKind };
 
-      const vmStatus = getVMStatus({ vm, vmi, pods: loadedPods, migrations: loadedMigrations });
+        const vmStatus = getVMStatus({ vm, vmi, pods: loadedPods, migrations: loadedMigrations });
 
-      return {
-        metadata: {
-          name: getName(obj),
-          namespace: getNamespace(obj),
-          vmStatus,
-          status: getVMStatusSortString(vmStatus),
-          node: getVMINodeName(vmi),
-          creationTimestamp: getCreationTimestamp(obj),
-          uid: getUID(obj),
-          lookupID,
-        },
-        vm,
-        vmi,
-        migration: migrationLookup[lookupID],
-      };
-    });
+        return {
+          metadata: {
+            name: getName(obj),
+            namespace: getNamespace(obj),
+            vmStatus,
+            status: getVMStatusSortString(vmStatus),
+            node: getVMINodeName(vmi),
+            creationTimestamp: getCreationTimestamp(obj),
+            uid: getUID(obj),
+            lookupID,
+          },
+          vm,
+          vmi,
+          migration: migrationLookup[lookupID],
+        };
+      })
+      .filter(({ vm, vmi }) => {
+        if (vm || !getDeletetionTimestamp(vmi)) {
+          return true;
+        }
+        const vmOwnerReference = buildOwnerReferenceForModel(VirtualMachineModel, getName(vmi));
+
+        return !(getOwnerReferences(vmi) || []).some((o) =>
+          compareOwnerReference(o, vmOwnerReference),
+        );
+      });
   };
 
   const createAccessReview = skipAccessReview ? null : { model: VirtualMachineModel, namespace };
