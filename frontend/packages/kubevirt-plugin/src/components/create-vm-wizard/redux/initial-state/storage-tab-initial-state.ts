@@ -38,7 +38,7 @@ export const windowsToolsStorage: VMWizardStorage = {
   disk: DiskWrapper.initializeFromSimpleData({
     name: WINTOOLS_DISK_NAME,
     type: DiskType.CDROM,
-    bus: DiskBus.SATA,
+    bus: DiskBus.VIRTIO,
   }).asResource(),
   volume: VolumeWrapper.initializeFromSimpleData({
     name: WINTOOLS_DISK_NAME,
