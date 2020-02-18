@@ -95,6 +95,7 @@ export const OperatorHubList: React.SFC<OperatorHubListProps> = (props) => {
       };
     },
   );
+  const uniqueItems = _.uniqBy(items, 'uid');
 
   return (
     <StatusBox
@@ -120,7 +121,7 @@ export const OperatorHubList: React.SFC<OperatorHubListProps> = (props) => {
         />
       )}
     >
-      <OperatorHubTileView items={items} namespace={namespace} />
+      <OperatorHubTileView items={uniqueItems} namespace={namespace} />
     </StatusBox>
   );
 };
