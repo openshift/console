@@ -3,8 +3,9 @@ import * as dagre from 'dagre';
 export const NODE_SEPARATION_HORIZONTAL = 25;
 export const NODE_SEPARATION_VERTICAL = 20;
 export const DROP_SHADOW_SPACING = 5;
-export const BUILDER_NODE_ADD_RADIUS = 10;
+export const BUILDER_NODE_ADD_RADIUS = 9;
 export const BUILDER_NODE_ERROR_RADIUS = 9;
+export const BUILDER_NODE_ADD_PADDING = 4;
 
 export const NODE_WIDTH = 120;
 export const NODE_HEIGHT = 30;
