@@ -477,8 +477,9 @@ const defaultBookmarks = {};
 const namespaceBarDropdownStateToProps = (state) => {
   const activeNamespace = state.UI.get('activeNamespace');
   const canListNS = state[featureReducerName].get(FLAGS.CAN_LIST_NS);
+  const canCreateProject = state[featureReducerName].get(FLAGS.CAN_CREATE_PROJECT);
 
-  return { activeNamespace, canListNS };
+  return { activeNamespace, canListNS, canCreateProject };
 };
 const namespaceBarDropdownDispatchToProps = (dispatch) => ({
   setActiveNamespace: (ns) => dispatch(UIActions.setActiveNamespace(ns)),
@@ -500,6 +501,7 @@ class NamespaceBarDropdowns_ extends React.Component {
       onNamespaceChange,
       setActiveNamespace,
       canListNS,
+      canCreateProject,
       useProjects,
       children,
       disabled,
@@ -527,12 +529,14 @@ class NamespaceBarDropdowns_ extends React.Component {
       // If the currently active namespace is not found in the list of all namespaces, put it in anyway
       items[title] = title;
     }
-    const defaultActionItem = [
-      {
-        actionTitle: `Create ${model.label}`,
-        actionKey: CREATE_NEW_RESOURCE,
-      },
-    ];
+    const defaultActionItem = canCreateProject
+      ? [
+          {
+            actionTitle: `Create ${model.label}`,
+            actionKey: CREATE_NEW_RESOURCE,
+          },
+        ]
+      : [];
 
     const onChange = (newNamespace) => {
       if (newNamespace === CREATE_NEW_RESOURCE) {
