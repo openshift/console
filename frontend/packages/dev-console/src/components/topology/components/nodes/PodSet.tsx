@@ -57,7 +57,11 @@ const PodSet: React.FC<PodSetProps> = ({ size, data, x = 0, y = 0, showPodCount 
     true,
   );
   const obj = get(data, ['current', 'obj'], null) || data.dc;
-  const { title, subTitle, titleComponent, subTitleComponent } = podRingLabel(obj, accessAllowed);
+  const { title, subTitle, titleComponent, subTitleComponent } = podRingLabel(
+    obj,
+    accessAllowed,
+    data?.pods,
+  );
   return (
     <>
       <PodStatus
