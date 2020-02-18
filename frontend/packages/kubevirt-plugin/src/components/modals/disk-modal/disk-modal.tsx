@@ -34,7 +34,14 @@ import {
   asFormSelectValue,
   FormSelectPlaceholderOption,
 } from '../../form/form-select-placeholder-option';
-import { DYNAMIC, getDialogUIError, getSequenceName } from '../../../utils/strings';
+import {
+  CREATE,
+  DYNAMIC,
+  EDIT,
+  getDialogUIError,
+  getSequenceName,
+  SAVE,
+} from '../../../utils/strings';
 import { ModalFooter } from '../modal/modal-footer';
 import { useShowErrorToggler } from '../../../hooks/use-show-error-toggler';
 import { DiskWrapper } from '../../../k8s/wrapper/vm/disk-wrapper';
@@ -71,6 +78,7 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
     close,
     cancel,
     templateValidations,
+    submitButtonText = CREATE,
   } = props;
   const asId = prefixedID.bind(null, 'disk');
   const disk = props.disk || DiskWrapper.EMPTY;
@@ -245,7 +253,7 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
   return (
     <div className="modal-content">
       <ModalTitle>
-        {isEditing ? 'Edit' : 'Add'} {type.toString()}
+        {isEditing ? EDIT : submitButtonText} {type.toString()}
       </ModalTitle>
       <ModalBody>
         <Form>
@@ -440,7 +448,7 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
       </ModalBody>
       <ModalFooter
         id="disk"
-        submitButtonText={isEditing ? 'Save' : 'Add'}
+        submitButtonText={isEditing ? SAVE : submitButtonText}
         errorMessage={errorMessage || (showUIError ? getDialogUIError(hasAllRequiredFilled) : null)}
         isDisabled={inProgress}
         inProgress={inProgress}
@@ -479,6 +487,7 @@ export type DiskModalProps = {
   templateValidations?: TemplateValidations;
   usedDiskNames: Set<string>;
   usedPVCNames: Set<string>;
+  submitButtonText?: string;
 } & ModalComponentProps &
   HandlePromiseProps;
 
