@@ -5,20 +5,16 @@ import HelmReleaseResources from '../HelmReleaseResources';
 
 describe('HelmReleaseResources', () => {
   const helmReleaseResourcesProps: React.ComponentProps<typeof HelmReleaseResources> = {
-    obj: {
-      data: {
-        release: 'SDRzSUFBQUFBQUFDLyt5OUNYT2pTTFl3K2xjVW1vbVk5K0xhTG',
-        kind: 'Secret',
+    helmManifestResources: [
+      {
+        kind: 'Service',
+        prop: 'service',
+        namespace: 'test-helm',
+        name: 'nodejs-example',
+        isList: false,
+        optional: true,
       },
-      metadata: {
-        creationTimestamp: '2020-01-20T05:37:13Z',
-        name: 'sh.helm.release.v1.helm-mysql.v1',
-        namespace: 'deb',
-        labels: {
-          name: 'helm-mysql',
-        },
-      },
-    },
+    ],
   };
   const helmReleaseResources = shallow(<HelmReleaseResources {...helmReleaseResourcesProps} />);
   it('should render the MultiListPage component', () => {
