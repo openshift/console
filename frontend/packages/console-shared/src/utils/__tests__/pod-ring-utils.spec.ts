@@ -71,33 +71,37 @@ describe('usePodScalingAccessStatus', () => {
     };
   });
 
-  it('should return false for scaling when enableScaling is false', () => {
+  it('should return false for scaling when enableScaling is false', (done) => {
     obj.kind = 'Deployment';
     testHook(() => {
       expect(usePodScalingAccessStatus(obj, DeploymentConfigModel, [], false)).toBe(false);
+      done();
     });
   });
 
-  it('should return false for knative revisions', () => {
+  it('should return false for knative revisions', (done) => {
     obj.kind = 'Revision';
     testHook(() => {
       expect(usePodScalingAccessStatus(obj, RevisionModel, [], true)).toBe(false);
+      done();
     });
   });
 
-  it('should return false when api call returns false for a resource', () => {
+  it('should return false when api call returns false for a resource', (done) => {
     obj.kind = 'DeploymentConfig';
     testHook(() => {
       expect(usePodScalingAccessStatus(obj, DeploymentConfigModel, [], true)).toBe(false);
+      done();
     });
   });
 
-  it('should return false when API call results in an error', () => {
+  it('should return false when API call results in an error', (done) => {
     jest
       .spyOn(utils, 'checkPodEditAccess')
       .mockImplementation(() => Promise.reject(new Error('error')));
     testHook(() => {
       expect(usePodScalingAccessStatus(obj, DeploymentConfigModel, [], true)).toBe(false);
+      done();
     });
   });
 });

@@ -98,24 +98,26 @@ describe('checkPodEditAccess', () => {
     };
   });
 
-  it('should have access true if check Access return allowed true', () => {
+  it('should have access true if check Access return allowed true', (done) => {
     jest
       .spyOn(utils, 'checkAccess')
       .mockImplementation(() => Promise.resolve({ status: { allowed: true } }));
     checkPodEditAccess(obj, DeploymentConfigModel, undefined)
       .then((resp) => {
         expect(resp.status.allowed).toBe(true);
+        done();
       })
       .catch(() => {});
   });
 
-  it('should have access false if check Access return allowed false', () => {
+  it('should have access false if check Access return allowed false', (done) => {
     jest
       .spyOn(utils, 'checkAccess')
       .mockImplementation(() => Promise.resolve({ status: { allowed: false } }));
     checkPodEditAccess(obj, DeploymentConfigModel, undefined)
       .then((resp) => {
         expect(resp.status.allowed).toBe(false);
+        done();
       })
       .catch(() => {});
   });
