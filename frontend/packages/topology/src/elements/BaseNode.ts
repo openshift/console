@@ -7,7 +7,7 @@ import {
   isNode,
   isEdge,
   AnchorEnd,
-  GroupStyle,
+  NodeStyle,
   NodeShape,
   Edge,
   GraphElement,
@@ -59,7 +59,12 @@ export default class BaseNode<E extends NodeModel = NodeModel, D = any> extends 
     let rect: Rect | undefined;
     children.forEach((c) => {
       if (isNode(c)) {
-        const b = c.getBounds();
+        const { padding } = c.getStyle<NodeStyle>();
+        let b = c.getBounds();
+        // Currently non-group nodes do not include their padding in the bounds
+        if (!c.isGroup() && padding) {
+          b = b.clone().padding(c.getStyle<NodeStyle>().padding);
+        }
         if (!rect) {
           rect = b.clone();
         } else {
@@ -72,7 +77,7 @@ export default class BaseNode<E extends NodeModel = NodeModel, D = any> extends 
       rect = new Rect();
     }
 
-    const { padding } = this.getStyle<GroupStyle>();
+    const { padding } = this.getStyle<NodeStyle>();
 
     return rect.padding(padding);
   }

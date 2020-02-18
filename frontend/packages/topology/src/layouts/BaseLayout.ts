@@ -11,6 +11,7 @@ import {
   ElementChildEventListener,
   NODE_COLLAPSE_CHANGE_EVENT,
   NodeCollapseChangeEventListener,
+  NodeStyle,
 } from '../types';
 import {
   leafNodeElements,
@@ -26,6 +27,7 @@ import {
 } from '../behavior';
 import { BaseEdge } from '../elements';
 import { ForceSimulation } from './ForceSimulation';
+import { Rect } from '../geom';
 
 class LayoutNode {
   protected readonly node: Node;
@@ -94,12 +96,24 @@ class LayoutNode {
     );
   }
 
+  get nodeBounds(): Rect {
+    const { padding } = this.node.getStyle<NodeStyle>();
+    // Currently non-group nodes do not include their padding in the bounds
+    if (!this.node.isGroup() && padding) {
+      return this.node
+        .getBounds()
+        .clone()
+        .padding(this.node.getStyle<NodeStyle>().padding);
+    }
+    return this.node.getBounds();
+  }
+
   get width(): number {
-    return this.node.getBounds().width + this.distance * 2;
+    return this.nodeBounds.width + this.distance * 2;
   }
 
   get height(): number {
-    return this.node.getBounds().height + this.distance * 2;
+    return this.nodeBounds.height + this.distance * 2;
   }
 
   update() {

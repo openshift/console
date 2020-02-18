@@ -16,3 +16,22 @@ export const TYPE_OPERATOR_BACKED_SERVICE = 'operator-backed-service';
 export const TYPE_OPERATOR_WORKLOAD = 'operator-workload';
 export const TYPE_TRAFFIC_CONNECTOR = 'traffic-connector';
 export const LAST_TOPOLOGY_VIEW_LOCAL_STORAGE_KEY = `${STORAGE_PREFIX}/last-topology-view`;
+
+const DEFAULT_NODE_PAD = 20;
+const DEFAULT_GROUP_PAD = 40;
+
+export const NODE_WIDTH = 104;
+export const NODE_HEIGHT = 104;
+export const NODE_PADDING = [0, DEFAULT_NODE_PAD];
+
+export const GROUP_WIDTH = 300;
+export const GROUP_HEIGHT = 180;
+export const GROUP_PADDING = [DEFAULT_GROUP_PAD];
+
+export const KNATIVE_GROUP_NODE_HEIGHT = 100;
+export const KNATIVE_GROUP_NODE_PADDING = [
+  DEFAULT_GROUP_PAD,
+  DEFAULT_GROUP_PAD,
+  DEFAULT_GROUP_PAD + 10,
+  DEFAULT_GROUP_PAD,
+];

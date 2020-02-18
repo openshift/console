@@ -1,5 +1,5 @@
 import * as _ from 'lodash';
-import { GraphElement, Node, isNode, isGraph, GroupStyle } from '../types';
+import { GraphElement, Node, isNode, isGraph, NodeStyle } from '../types';
 
 const groupNodeElements = (nodes: GraphElement[]): Node[] => {
   if (!_.size(nodes)) {
@@ -85,7 +85,7 @@ const getClosestVisibleParent = (node: Node): Node | null => {
 };
 
 const getElementPadding = (element: GraphElement): number => {
-  const stylePadding = element.getStyle<GroupStyle>().padding;
+  const stylePadding = element.getStyle<NodeStyle>().padding;
   if (!stylePadding) {
     return 0;
   }
