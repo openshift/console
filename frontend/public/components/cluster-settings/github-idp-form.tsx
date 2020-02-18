@@ -193,7 +193,7 @@ export class AddGitHubPage extends PromiseComponent<{}, AddGitHubPageState> {
             />
           </div>
           <div className="form-group">
-            <label className="control-label" htmlFor="hostname">
+            <label className="control-label co-required" htmlFor="hostname">
               Hostname
             </label>
             <input
@@ -203,6 +203,7 @@ export class AddGitHubPage extends PromiseComponent<{}, AddGitHubPageState> {
               value={hostname}
               id="hostname"
               aria-describedby="idp-hostname-help"
+              required
             />
             <p className="help-block" id="idp-hostname-help">
               Optional domain for use with a hosted instance of GitHub Enterprise.
