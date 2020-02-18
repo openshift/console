@@ -23,13 +23,13 @@ const ServiceHeader = () => {
     },
     {
       title: 'Generation',
-      sortField: 'obj.metadata.generation',
+      sortField: 'metadata.generation',
       transforms: [sortable],
       props: { className: tableColumnClasses[3] },
     },
     {
       title: 'Age',
-      sortField: 'obj.metadata.creationTimestamp',
+      sortField: 'metadata.creationTimestamp',
       transforms: [sortable],
       props: { className: tableColumnClasses[4] },
     },
