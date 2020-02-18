@@ -1,5 +1,4 @@
 import * as React from 'react';
-import * as _ from 'lodash';
 import { match } from 'react-router';
 import { k8sGet } from '@console/internal/module/k8s';
 import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager';
@@ -8,7 +7,7 @@ import { Radio, Title } from '@patternfly/react-core';
 import { checkForIndependentSupport } from '../independent-mode/utils';
 import { OCSServiceModel } from '../../models';
 import InstallExternalCluster from '../independent-mode/install';
-import { CreateOCSServiceForm } from './create-form';
+import CreateOCSService from './create-ocs-service';
 import './install-page.scss';
 
 enum MODES {
@@ -25,7 +24,6 @@ const InstallCluster: React.FC<InstallClusterProps> = ({ match }) => {
 
   const [isIndependent, setIsIndependent] = React.useState(false);
   const [mode, setMode] = React.useState(MODES.CONVERGED);
-  const [sample, setSample] = React.useState(null);
   const [clusterServiceVersion, setClusterServiceVersion] = React.useState(null);
 
   const handleModeChange = (_checked: boolean, event: React.FormEvent<HTMLInputElement>) => {
@@ -38,9 +36,6 @@ const InstallCluster: React.FC<InstallClusterProps> = ({ match }) => {
       .then((clusterServiceVersionObj) => {
         setIsIndependent(checkForIndependentSupport(clusterServiceVersionObj));
         try {
-          setSample(
-            JSON.parse(_.get(clusterServiceVersionObj.metadata.annotations, 'alm-examples'))[0],
-          );
           setClusterServiceVersion(clusterServiceVersionObj);
         } catch (e) {
           setClusterServiceVersion(null);
@@ -99,12 +94,7 @@ const InstallCluster: React.FC<InstallClusterProps> = ({ match }) => {
           </div>
         )}
         {(isIndependent === false || mode === MODES.CONVERGED) && (
-          <CreateOCSServiceForm
-            namespace={ns}
-            operandModel={OCSServiceModel}
-            sample={sample}
-            clusterServiceVersion={clusterServiceVersion !== null && clusterServiceVersion}
-          />
+          <CreateOCSService match={match} />
         )}
         {mode === MODES.INDEPENDENT && <InstallExternalCluster match={match} />}
       </div>

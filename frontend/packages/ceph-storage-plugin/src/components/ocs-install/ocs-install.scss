@@ -25,3 +25,8 @@
   font-weight: var(--pf-global--FontWeight--bold);
   font-size: var(--pf-global--FontSize--md);
 }
+
+.ceph-node-list-search {
+  max-width: 50%;
+  padding: var(--pf-global--spacer--sm) 0;
+}

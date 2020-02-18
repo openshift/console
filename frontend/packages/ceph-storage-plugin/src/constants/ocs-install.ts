@@ -1,12 +1,12 @@
 import { K8sResourceKind, Taint } from '@console/internal/module/k8s';
 
 export const minSelectedNode = 3;
-export const ocsTaint: Taint = {
+export const OCS_TAINT: Taint = {
   key: 'node.ocs.openshift.io/storage',
   value: 'true',
   effect: 'NoSchedule',
 };
-Object.freeze(ocsTaint);
+export const OCS_LABEL = 'cluster.ocs.openshift.io/openshift-storage';
 
 export const storageClassTooltip =
   'The Storage Class will be used to request storage from the underlying infrastructure to create the backing persistent volumes that will be used to provide the OpenShift Container Storage (OCS) service.';

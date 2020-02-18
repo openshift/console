@@ -1,57 +1,52 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import * as classNames from 'classnames';
-import { connect } from 'react-redux';
 import {
   Table,
   TableHeader,
   TableBody,
   TableVariant,
   TableGridBreakpoint,
+  IRowData,
 } from '@patternfly/react-table';
 import {
-  getName,
   getNodeRoles,
   getNodeCPUCapacity,
   getNodeAllocatableMemory,
+  getName,
 } from '@console/shared';
-import { Alert, ActionGroup, Button } from '@patternfly/react-core';
-import { tableFilters } from '@console/internal/components/factory/table-filters';
+import { Alert, ActionGroup, Button, TextInput, InputGroup } from '@patternfly/react-core';
 import { ButtonBar } from '@console/internal/components/utils/button-bar';
 import { history } from '@console/internal/components/utils/router';
 import {
-  convertToBaseValue,
   FieldLevelHelp,
   humanizeCpuCores,
-  humanizeBinaryBytes,
   ResourceLink,
+  FirehoseResult,
+  withHandlePromise,
+  HandlePromiseProps,
+  Firehose,
+  Dropdown,
 } from '@console/internal/components/utils/';
-import {
-  k8sCreate,
-  k8sPatch,
-  K8sResourceKind,
-  NodeKind,
-  referenceForModel,
-  Taint,
-} from '@console/internal/module/k8s';
+import { k8sCreate, NodeKind, referenceForModel } from '@console/internal/module/k8s';
 import { NodeModel } from '@console/internal/models';
 import { OCSServiceModel } from '../../models';
-import {
-  minSelectedNode,
-  labelTooltip,
-  ocsRequestData,
-  ocsTaint,
-} from '../../constants/ocs-install';
-import './ocs-install.scss';
+import { minSelectedNode, labelTooltip, ocsRequestData } from '../../constants/ocs-install';
 import { OSDSizeDropdown } from '../../utils/osd-size-dropdown';
-import { hasLabel } from '../../../../console-shared/src/selectors/common';
 import { OCSStorageClassDropdown } from '../modals/storage-class-dropdown';
-
-const ocsLabel = 'cluster.ocs.openshift.io/openshift-storage';
-
-const getConvertedUnits = (value: string) => {
-  return humanizeBinaryBytes(convertToBaseValue(value)).string || '-';
-};
+import {
+  hasTaints,
+  hasOCSTaint,
+  hasMinimumCPU,
+  hasMinimumMemory,
+  getConvertedUnits,
+  filterRows,
+  hasOCSLabel,
+  makeLabelNodesRequest,
+} from '../../utils/install';
+import { match } from 'react-router';
+import { NodeTableRow, FilterMode } from '../../types';
+import './ocs-install.scss';
 
 const tableColumnClasses = [
   classNames('col-md-1', 'col-sm-1', 'col-xs-1'),
@@ -87,20 +82,9 @@ const getColumns = () => {
   ];
 };
 
-const hasTaints = (node: NodeKind) => {
-  return !_.isEmpty(node.spec.taints);
-};
-
-const hasOCSTaint = (node: NodeKind) => {
-  const taints: Taint[] = node.spec.taints || [];
-  return taints.some((taint: Taint) => _.isEqual(taint, ocsTaint));
-};
-
-// return an empty array when there is no data
-const getRows = (nodes: NodeKind[]) => {
-  return nodes
-    .filter((node) => hasOCSTaint(node) || !hasTaints(node))
-    .map((node) => {
+const getRows = (nodes: NodeKind[], currNodes: NodeTableRow[]): NodeTableRow[] => {
+  return nodes.reduce((acc, node) => {
+    if (hasOCSTaint(node) || !hasTaints(node)) {
       const roles = getNodeRoles(node).sort();
       const cpuCapacity: string = getNodeCPUCapacity(node);
       const allocatableMemory: string = getNodeAllocatableMemory(node);
@@ -121,307 +105,211 @@ const getRows = (nodes: NodeKind[]) => {
           title: `${getConvertedUnits(allocatableMemory)}`,
         },
       ];
-      const obj = {
-        cells,
-        selected: false,
-        id: node.metadata.name,
-        metadata: _.clone(node.metadata),
-        spec: _.clone(node.spec),
-        cpuCapacity,
-        allocatableMemory,
-      };
-
-      return obj;
-    });
-};
-
-const getFilteredRows = (filters: {}, objects: any[]) => {
-  if (_.isEmpty(filters)) {
-    return objects;
-  }
-
-  let filteredObjects = objects;
-  _.each(filters, (value, name) => {
-    const filter = tableFilters[name];
-    if (_.isFunction(filter)) {
-      filteredObjects = _.filter(filteredObjects, (o) => filter(value, o));
+      return [
+        ...acc,
+        {
+          cells,
+          selected:
+            currNodes.find((curr) => curr?.id === node.metadata.name)?.selected ??
+            hasOCSLabel(node),
+          id: node.metadata.name,
+          metadata: _.clone(node.metadata),
+          spec: _.clone(node.spec),
+          cpuCapacity,
+          allocatableMemory,
+        },
+      ];
     }
-  });
-
-  return filteredObjects;
-};
-
-const getPreSelectedNodes = (nodes: formattedNodeType[]) => {
-  return nodes.map((node) => ({
-    ...node,
-    selected: _.has(node, ['metadata', 'labels', ocsLabel]),
-  }));
-};
-
-const stateToProps = (obj, { data = [], filters = {}, staticFilters = [{}] }) => {
-  const allFilters = staticFilters ? Object.assign({}, filters, ...staticFilters) : filters;
-  const newData = getFilteredRows(allFilters, data);
-  return {
-    data: newData,
-    unfilteredData: data,
-    isFiltered: !!_.get(filters, 'name'),
-  };
-};
-const CustomNodeTable: React.FC<CustomNodeTableProps> = ({
-  data,
-  unfilteredData,
-  isFiltered,
-  loaded,
-  ocsProps,
-}) => {
-  const columns = getColumns();
-  const [osdSize, setOsdSize] = React.useState('2Ti');
-  const [nodes, setNodes] = React.useState([]);
-  const [unfilteredNodes, setUnfilteredNodes] = React.useState([]);
-  const [error, setError] = React.useState('');
-  const [inProgress, setProgress] = React.useState(false);
-  const [selectedNodesCnt, setSelectedNodesCnt] = React.useState(0);
-  const [nodesWarningMsg, setNodesWarningMsg] = React.useState('');
-  const [storageClass, setStorageClass] = React.useState(null);
-
-  // pre-selection of nodes
-  if (loaded && !unfilteredNodes.length) {
-    const formattedNodes: formattedNodeType[] = getRows(unfilteredData);
-    const preSelectedNodes = getPreSelectedNodes(formattedNodes);
-    setUnfilteredNodes(preSelectedNodes);
-    setNodes(preSelectedNodes);
-  }
-
-  const hasMinimumCPU = (node: formattedNodeType): boolean => {
-    return convertToBaseValue(node.cpuCapacity) >= 16;
-  };
-
-  const hasMinimumMemory = (node: formattedNodeType): boolean => {
-    return convertToBaseValue(node.allocatableMemory) >= convertToBaseValue('64 Gi');
-  };
-
-  const validateNodes = React.useCallback((selectedNodes: formattedNodeType[]): void => {
-    let invalidNodesCount = 0;
-    let nodeName = '';
-    selectedNodes.forEach((node: formattedNodeType) => {
-      if (!hasMinimumCPU(node) || !hasMinimumMemory(node)) {
-        invalidNodesCount += 1;
-        nodeName = node.id;
-      }
-    });
-
-    if (invalidNodesCount > 0) {
-      const msg =
-        invalidNodesCount > 1
-          ? `${invalidNodesCount} of the selected nodes do not meet minimum requirements of 16 cores and 64 GiB Memory`
-          : `Node ${nodeName} does not meet minimum requirements of 16 cores and 64 GiB memory.`;
-      setNodesWarningMsg(msg);
-    } else {
-      setNodesWarningMsg('');
-    }
+    return acc;
   }, []);
+};
 
-  React.useEffect(() => {
-    const selectedNodes = _.filter(unfilteredNodes, 'selected');
-    setSelectedNodesCnt(selectedNodes.length);
-    validateNodes(selectedNodes);
-  }, [nodes, unfilteredNodes, validateNodes]);
-
-  React.useEffect(() => {
-    if (isFiltered || nodes.length !== data.length) {
-      const unfilteredNodesByID = _.keyBy(unfilteredNodes, 'metadata.name');
-      const filterData = _.each(getRows(data), (n) => {
-        n.selected = _.get(unfilteredNodesByID, [n.id, 'selected'], false);
-      });
-      setNodes(filterData);
-    }
-  }, [data, isFiltered, nodes.length, unfilteredNodes]);
-  const onSelect = (
-    event: React.MouseEvent<HTMLButtonElement>,
-    isSelected: boolean,
-    index: number,
-  ) => {
-    event.stopPropagation();
-    let formattedNodes;
-    if (index === -1) {
-      formattedNodes = nodes.map((node) => {
-        node.selected = isSelected;
-        return node;
-      });
-    } else {
-      formattedNodes = [...nodes];
-      formattedNodes[index].selected = isSelected;
-    }
-    setNodes(formattedNodes);
-    const nodesByID = _.keyBy(nodes, 'id');
-    const setSelectedUnfilteredNodes = _.each(unfilteredNodes, (n) => {
-      if (_.get(nodesByID, [n.id, 'id']) === n.metadata.name) {
-        n.selected = _.get(nodesByID, [getName(n), 'selected'], false);
-      }
-    });
-    setUnfilteredNodes(setSelectedUnfilteredNodes);
-  };
-
-  const makeLabelNodesRequest = (selectedNodes: NodeKind[]): Promise<NodeKind>[] => {
-    const patch = [
-      {
-        op: 'add',
-        path: '/metadata/labels/cluster.ocs.openshift.io~1openshift-storage',
-        value: '',
+const NodeTable = withHandlePromise<CustomNodeTableProps & HandlePromiseProps>(
+  React.memo((props) => {
+    const columns = getColumns();
+    const [osdSize, setOsdSize] = React.useState('2Ti');
+    const [storageClass, setStorageClass] = React.useState(null);
+    const [nodesWarningMsg, setNodesWarningMsg] = React.useState('');
+    const {
+      handlePromise,
+      match: {
+        params: { ns, appName },
       },
-    ];
-    return _.reduce(
-      selectedNodes,
-      (accumulator, node) => {
-        return hasLabel(node, ocsLabel)
-          ? accumulator
-          : [...accumulator, k8sPatch(NodeModel, node, patch)];
-      },
-      [],
+      data,
+      errorMessage,
+      inProgress,
+      nodes,
+      setNodes,
+    } = props;
+    const [filterMode, setFilterMode] = React.useState(FilterMode.NAME);
+    const [filterInput, setFilterInput] = React.useState('');
+
+    const selectedNodes = React.useMemo<NodeTableRow[]>(
+      () => _.filter(nodes, (node) => !!node.selected),
+      [nodes],
     );
-  };
 
-  // tainting the selected nodes
-  // const makeTaintNodesRequest = (selectedNode: NodeKind[]): Promise<NodeKind>[] => {
-  //   const taintNodesRequest = selectedNode
-  //     .filter((node: NodeKind) => {
-  //       const roles = getNodeRoles(node);
-  //       // don't taint master nodes as its already tainted
-  //       return roles.indexOf('master') === -1;
-  //     })
-  //     .map((node) => {
-  //       const taints = node.spec && node.spec.taints ? [...node.spec.taints, taintObj] : [taintObj];
-  //       const patch = [
-  //         {
-  //           value: taints,
-  //           path: '/spec/taints',
-  //           op: node.spec.taints ? 'replace' : 'add',
-  //         },
-  //       ];
-  //       return k8sPatch(NodeModel, node, patch);
-  //     });
+    React.useEffect(() => {
+      if (!data?.loadError) setNodes(getRows(data?.data, nodes));
+      // Shallow comparison is not enough
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [JSON.stringify(data)]);
 
-  //   return taintNodesRequest;
-  // };
-
-  const makeOCSRequest = () => {
-    const selectedData: NodeKind[] = _.filter(nodes, 'selected');
-    const promises = makeLabelNodesRequest(selectedData);
-    // intentionally keeping the taint logic as its required in 4.3 and will be handled with checkbox selection
-    // promises.push(...makeTaintNodesRequest(selectedData));
-
-    const ocsObj = _.cloneDeep(ocsRequestData);
-    ocsObj.spec.storageDeviceSets[0].dataPVCTemplate.spec.storageClassName = storageClass;
-    ocsObj.spec.storageDeviceSets[0].dataPVCTemplate.spec.resources.requests.storage = osdSize;
-
-    Promise.all(promises)
-      .then(() => {
-        return k8sCreate(OCSServiceModel, ocsObj);
-      })
-      .then(() => {
-        history.push(
-          `/k8s/ns/${ocsProps.namespace}/clusterserviceversions/${
-            ocsProps.clusterServiceVersion.metadata.name
-          }/${referenceForModel(OCSServiceModel)}/${ocsObj.metadata.name}`,
+    const onSelect = (isSelected: boolean, rowData: IRowData) => {
+      // When select all is getting pressed
+      if (!rowData) {
+        setNodes(nodes.map((node) => Object.assign({}, node, { selected: isSelected })));
+      } else
+        setNodes(
+          nodes.reduce(
+            (acc: NodeTableRow[], node: NodeTableRow) =>
+              node.id === rowData.id
+                ? [...acc, Object.assign(node, { selected: !node.selected })]
+                : [...acc, node],
+            [],
+          ),
         );
-      })
-      .catch((err) => {
-        setProgress(false);
-        setError(err.message);
+    };
+
+    const validateNodes = React.useCallback((selNodes: NodeTableRow[]): void => {
+      let invalidNodesCount = 0;
+      let nodeName = '';
+      selNodes.forEach((node: NodeTableRow) => {
+        if (!hasMinimumCPU(node) || !hasMinimumMemory(node)) {
+          invalidNodesCount += 1;
+          nodeName = node.id;
+        }
       });
-  };
 
-  const submit = (event: React.MouseEvent<HTMLButtonElement>) => {
-    event.preventDefault();
-    setProgress(true);
-    setError('');
-    makeOCSRequest();
-  };
+      if (invalidNodesCount > 0) {
+        const msg =
+          invalidNodesCount > 1
+            ? `${invalidNodesCount} of the selected nodes do not meet minimum requirements of 16 cores and 64 GiB Memory`
+            : `Node ${nodeName} does not meet minimum requirements of 16 cores and 64 GiB memory.`;
+        setNodesWarningMsg(msg);
+      } else {
+        setNodesWarningMsg('');
+      }
+    }, []);
 
-  return (
-    <>
-      <div className="ceph-node-list__max-height">
-        <Table
-          aria-label="node list table"
-          onSelect={onSelect}
-          cells={columns}
-          rows={nodes}
-          variant={TableVariant.compact}
-          gridBreakPoint={TableGridBreakpoint.none}
-        >
-          <TableHeader />
-          <TableBody />
-        </Table>
-      </div>
-      <p className="control-label help-block" id="nodes-selected">
-        {selectedNodesCnt} node(s) selected
-      </p>
-      {nodesWarningMsg.length > 0 && (
-        <Alert
-          className="co-alert ceph-ocs-install__alert"
-          variant="warning"
-          title={nodesWarningMsg}
-          isInline
-        />
-      )}
-      <div className="ceph-ocs-install__ocs-service-capacity--dropdown">
-        <OCSStorageClassDropdown onChange={setStorageClass} />
-      </div>
-      <div className="ceph-ocs-install__ocs-service-capacity">
-        <label className="control-label" htmlFor="ocs-service-stoargeclass">
-          OCS Service Capacity
-          <FieldLevelHelp>{labelTooltip}</FieldLevelHelp>
-        </label>
-        <OSDSizeDropdown
-          className="ceph-ocs-install__ocs-service-capacity--dropdown"
-          selectedKey={osdSize}
-          onChange={setOsdSize}
-        />
-      </div>
-      <ButtonBar errorMessage={error} inProgress={inProgress}>
-        <ActionGroup className="pf-c-form">
-          <Button
-            type="button"
-            variant="primary"
-            onClick={submit}
-            isDisabled={selectedNodesCnt < minSelectedNode}
+    // Shallow comparison is not enough
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    React.useEffect(() => validateNodes(selectedNodes), [JSON.stringify(nodes)]);
+
+    const makeOCSRequest = () => {
+      const selectedData: NodeTableRow[] = _.filter(nodes, 'selected');
+      const promises = makeLabelNodesRequest(selectedData);
+      const ocsObj = _.cloneDeep(ocsRequestData);
+      ocsObj.spec.storageDeviceSets[0].dataPVCTemplate.spec.storageClassName = storageClass;
+      ocsObj.spec.storageDeviceSets[0].dataPVCTemplate.spec.resources.requests.storage = osdSize;
+
+      promises.push(k8sCreate(OCSServiceModel, ocsObj));
+
+      handlePromise(Promise.all(promises))
+        .then(() => {
+          history.push(
+            `/k8s/ns/${ns}/clusterserviceversions/${appName}/${referenceForModel(
+              OCSServiceModel,
+            )}/${getName(ocsObj)}`,
+          );
+        })
+        // eslint-disable-next-line no-console
+        .catch((e) => console.error(e));
+    };
+
+    const submit = (event: React.MouseEvent<HTMLButtonElement>) => {
+      event.preventDefault();
+      makeOCSRequest();
+    };
+
+    return (
+      <>
+        <div className="ceph-node-list__max-height">
+          <InputGroup className="ceph-node-list-search">
+            <Dropdown
+              items={FilterMode}
+              onChange={(v: string) => setFilterMode(FilterMode[v])}
+              selectedKey={filterMode}
+              title={filterMode}
+            />
+            <TextInput onChange={(v) => setFilterInput(v)} value={filterInput} />
+          </InputGroup>
+          <Table
+            aria-label="node list table"
+            cells={columns}
+            rows={filterRows(nodes, filterMode, filterInput)}
+            variant={TableVariant.compact}
+            gridBreakPoint={TableGridBreakpoint.none}
+            onSelect={(event, isSelected, index, rowData) => onSelect(isSelected, rowData)}
           >
-            Create
-          </Button>
-          <Button type="button" variant="secondary" onClick={history.goBack}>
-            Cancel
-          </Button>
-        </ActionGroup>
-      </ButtonBar>
-    </>
+            <TableHeader />
+            <TableBody />
+          </Table>
+        </div>
+        <p className="control-label help-block" id="nodes-selected">
+          {selectedNodes.length} node(s) selected
+        </p>
+        {nodesWarningMsg.length > 0 && (
+          <Alert
+            className="co-alert ceph-ocs-install__alert"
+            variant="warning"
+            title={nodesWarningMsg}
+            isInline
+          />
+        )}
+        <div className="ceph-ocs-install__ocs-service-capacity--dropdown">
+          <OCSStorageClassDropdown onChange={setStorageClass} />
+        </div>
+        <div className="ceph-ocs-install__ocs-service-capacity">
+          <label className="control-label" htmlFor="ocs-service-stoargeclass">
+            OCS Service Capacity
+            <FieldLevelHelp>{labelTooltip}</FieldLevelHelp>
+          </label>
+          <OSDSizeDropdown
+            className="ceph-ocs-install__ocs-service-capacity--dropdown"
+            selectedKey={osdSize}
+            onChange={setOsdSize}
+          />
+        </div>
+        <ButtonBar errorMessage={errorMessage} inProgress={inProgress}>
+          <ActionGroup className="pf-c-form">
+            <Button
+              type="button"
+              variant="primary"
+              onClick={submit}
+              isDisabled={selectedNodes.length < minSelectedNode}
+            >
+              Create
+            </Button>
+            <Button type="button" variant="secondary" onClick={history.goBack}>
+              Cancel
+            </Button>
+          </ActionGroup>
+        </ButtonBar>
+      </>
+    );
+  }),
+);
+
+const NodeTableWithFirehose: React.FC<CustomNodeTableWithFirehoseProps> = (props) => {
+  const [nodes, setNodes] = React.useState<NodeTableRow[]>([]);
+  return (
+    <Firehose resources={[{ kind: NodeModel.kind, prop: 'data', isList: true }]}>
+      <NodeTable {...props} nodes={nodes} setNodes={setNodes} />
+    </Firehose>
   );
 };
 
-export const NodeList = connect<{}, CustomNodeTableProps>(stateToProps)(CustomNodeTable);
+export default NodeTableWithFirehose;
 
 type CustomNodeTableProps = {
-  data: NodeKind[];
-  unfilteredData: UnfilteredDataType[];
-  loaded: boolean;
-  ocsProps: ocsPropsType;
-  isFiltered: boolean;
+  nodes: NodeTableRow[];
+  setNodes: React.Dispatch<React.SetStateAction<NodeTableRow[]>>;
+  data?: FirehoseResult<NodeKind[]>;
+  match?: match<{ ns: string; appName: string }>;
 };
 
-type ocsPropsType = {
-  namespace: string;
-  clusterServiceVersion: K8sResourceKind;
-};
-
-type UnfilteredDataType = NodeKind & {
-  selected: boolean;
-};
-
-type formattedNodeType = {
-  cells: any[];
-  selected: boolean;
-  id: string;
-  metadata: {};
-  spec: {};
-  cpuCapacity: string;
-  allocatableMemory: string;
+type CustomNodeTableWithFirehoseProps = {
+  data?: FirehoseResult<NodeKind[]>;
+  match: match<{ ns: string; appName: string }>;
 };
