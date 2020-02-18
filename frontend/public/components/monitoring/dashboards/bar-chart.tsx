@@ -5,8 +5,12 @@ import { Bar } from '../../graphs';
 
 const Label = ({ metric }) => <>{_.values(metric).join()}</>;
 
-const BarChart: React.FC<{ query: string }> = ({ query }) => (
-  <Bar barSpacing={5} barWidth={8} query={query} LabelComponent={Label} />
+const BarChart: React.FC<BarChartProps> = ({ pollInterval, query }) => (
+  <Bar barSpacing={5} barWidth={8} delay={pollInterval} query={query} LabelComponent={Label} />
 );
 
+type BarChartProps = {
+  pollInterval: number;
+  query: string;
+};
 export default BarChart;

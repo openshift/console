@@ -79,6 +79,8 @@ export default (state: UIState, action: UIAction): UIState => {
       user: {},
       consoleLinks: [],
       monitoringDashboards: ImmutableMap({
+        pollInterval: 30 * 1000,
+        timespan: 30 * 60 * 1000,
         variables: ImmutableMap(),
       }),
       queryBrowser: ImmutableMap({
@@ -142,18 +144,29 @@ export default (state: UIState, action: UIAction): UIState => {
     case ActionType.MonitoringDashboardsClearVariables:
       return state.setIn(['monitoringDashboards', 'variables'], ImmutableMap());
 
-    case ActionType.MonitoringDashboardsPatchVariable: {
-      const { key, patch } = action.payload;
+    case ActionType.MonitoringDashboardsPatchVariable:
+      return state.mergeIn(
+        ['monitoringDashboards', 'variables', action.payload.key],
+        ImmutableMap(action.payload.patch),
+      );
 
-      // If we don't have a value, but do have options, use the first option as the value
-      if (
-        patch.value === undefined &&
-        patch.options?.length &&
-        state.getIn(['monitoringDashboards', 'variables', key, 'value']) === undefined
-      ) {
-        patch.value = patch.options[0];
-      }
-      return state.mergeIn(['monitoringDashboards', 'variables', key], patch);
+    case ActionType.MonitoringDashboardsSetPollInterval:
+      return state.setIn(['monitoringDashboards', 'pollInterval'], action.payload.pollInterval);
+
+    case ActionType.MonitoringDashboardsSetTimespan:
+      return state.setIn(['monitoringDashboards', 'timespan'], action.payload.timespan);
+
+    case ActionType.MonitoringDashboardsVariableOptionsLoaded: {
+      const { key, newOptions } = action.payload;
+      const { options, value } = state.getIn(['monitoringDashboards', 'variables', key]).toJS();
+      const patch = _.isEqual(options, newOptions)
+        ? { isLoading: false }
+        : {
+            isLoading: false,
+            options: newOptions,
+            value: newOptions.includes(value) ? value : newOptions[0],
+          };
+      return state.mergeIn(['monitoringDashboards', 'variables', key], ImmutableMap(patch));
     }
     case ActionType.SetMonitoringData: {
       const alerts =

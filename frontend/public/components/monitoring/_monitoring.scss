@@ -11,6 +11,8 @@
 }
 
 .monitoring-dashboards__dropdown-wrap {
+  display: flex;
+  flex-direction: column;
   margin-right: 20px;
 }
 
