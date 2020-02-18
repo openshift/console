@@ -41,13 +41,13 @@ const PodRingSet: React.FC<PodRingSetProps> = ({ podData, resourceKind, obj, pat
       >
         <SplitItem>
           <PodRing
-            key={inProgressDeploymentData ? 'deploy' : 'notDeploy'}
+            // key={inProgressDeploymentData ? 'deploy' : 'notDeploy'}
             pods={completedDeploymentData}
             rc={completedRC}
             resourceKind={resourceKind}
             obj={obj}
             path={path}
-            enableScaling={!podData.isRollingOut}
+            enableScaling={!inProgressDeploymentData}
           />
         </SplitItem>
       </CSSTransition>
