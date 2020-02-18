@@ -139,7 +139,7 @@ export const VMTemplateDetailsList: React.FC<VMTemplateResourceListProps> = ({
         <EditButton
           id={prefixedID(id, 'flavor-edit')}
           canEdit={canUpdateTemplate}
-          onClick={() => vmFlavorModal({ vmLike: template })}
+          onClick={() => vmFlavorModal({ vmLike: template, blocking: true })}
         >
           {flavorText}
         </EditButton>

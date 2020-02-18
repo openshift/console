@@ -1,7 +1,10 @@
 import * as React from 'react';
+import * as classNames from 'classnames';
 import { TextInput } from '@patternfly/react-core';
 import { getSequence, setNativeValue } from '../../../utils/utils';
 import { isMinus, KEY_CODES, INPUT_NAVIGATION_KEYS } from '../../../constants/keys';
+
+import './integer.scss';
 
 const NON_NEGATIVE_INTEGER_KEYS = [
   ...INPUT_NAVIGATION_KEYS,
@@ -68,6 +71,9 @@ export const Integer: React.FC<IntegerProps> = ({
   isPositive,
   isNonNegative,
   className,
+  isFullWidth,
+  isValid,
+  ...restProps
 }) => {
   let allowedKeys;
   let validRegex;
@@ -120,6 +126,7 @@ export const Integer: React.FC<IntegerProps> = ({
 
   return (
     <TextInput
+      {...restProps}
       id={id}
       type="number"
       onKeyDown={onKeydown}
@@ -130,7 +137,9 @@ export const Integer: React.FC<IntegerProps> = ({
         typeof onBlur === 'function' ? (event) => onBlur(event.target.value || '', event) : null
       }
       onChange={onChange}
-      className={className}
+      className={classNames(className, {
+        'kubevirt-integer-component': isFullWidth,
+      })}
       isDisabled={isDisabled}
     />
   );
@@ -138,6 +147,7 @@ export const Integer: React.FC<IntegerProps> = ({
 
 type IntegerProps = {
   id?: string;
+  isFullWidth?: boolean;
   className?: string;
   value?: string;
   defaultValue?: string;
@@ -146,4 +156,6 @@ type IntegerProps = {
   isPositive?: boolean;
   isNonNegative?: boolean; // is ignored when positive == true
   isDisabled?: boolean;
+  isValid?: boolean;
+  'aria-label'?: string;
 };

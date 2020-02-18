@@ -8,7 +8,7 @@ const FLAVOR_ORDER = {
   large: 3,
 };
 
-export const flavorSort = (array = []) =>
+export const flavorSort = (array: string[] = []) =>
   array.sort((a, b) => {
     if (a === CUSTOM_FLAVOR) {
       return 1;

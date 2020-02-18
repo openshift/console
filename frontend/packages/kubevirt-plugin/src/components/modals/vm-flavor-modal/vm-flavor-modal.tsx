@@ -1,59 +1,55 @@
 import * as React from 'react';
 import * as _ from 'lodash';
-import * as classNames from 'classnames';
+import { Form, FormSelect, FormSelectOption } from '@patternfly/react-core';
 import {
-  HandlePromiseProps,
-  withHandlePromise,
-  Dropdown,
-  convertToBaseValue,
   Firehose,
+  FirehoseResult,
+  HandlePromiseProps,
+  validate,
+  withHandlePromise,
 } from '@console/internal/components/utils';
 import { TemplateModel } from '@console/internal/models';
 import {
   createModalLauncher,
-  ModalTitle,
   ModalBody,
   ModalComponentProps,
-  ModalFooter,
+  ModalTitle,
 } from '@console/internal/components/factory';
 import { k8sPatch, TemplateKind } from '@console/internal/module/k8s';
-import { Form, FormGroup, TextInput } from '@patternfly/react-core';
 import { VMLikeEntityKind } from '../../../types/vmLike';
 import {
+  asVM,
+  getCPU,
   getFlavor,
   getMemory,
-  getCPU,
-  vCPUCount,
-  asVM,
   getVMLikeModel,
+  vCPUCount,
 } from '../../../selectors/vm';
 import { getFlavors } from '../../../selectors/vm-template/selectors';
 import { getUpdateFlavorPatches } from '../../../k8s/patches/vm/vm-patches';
 import {
   CUSTOM_FLAVOR,
   NAMESPACE_OPENSHIFT,
-  TEMPLATE_TYPE_LABEL,
   TEMPLATE_TYPE_BASE,
+  TEMPLATE_TYPE_LABEL,
 } from '../../../constants';
-import { getResource } from '../../../utils';
-import './_vm-flavor-modal.scss';
-
-const Gi = 1024 ** 3;
+import { getLoadedData, getResource } from '../../../utils';
+import { SizeUnitFormRow } from '../../form/size-unit-form-row';
+import { BinaryUnit } from '../../form/size-unit-utils';
+import { ModalFooter } from '../modal/modal-footer';
+import { FormRow } from '../../form/form-row';
+import { Integer } from '../../form/integer/integer';
+import { validateFlavor } from '../../../utils/validations/vm/flavor';
+import { isValidationError } from '../../../utils/validations/common';
+import { useShowErrorToggler } from '../../../hooks/use-show-error-toggler';
+import { getDialogUIError } from '../../../utils/strings';
 
 const getId = (field: string) => `vm-flavor-modal-${field}`;
-const dehumanizeMemory = (memory?: string) => {
-  if (!memory) {
-    return null;
-  }
-
-  return convertToBaseValue(memory) / Gi;
-};
 
 const VMFlavorModal = withHandlePromise((props: VMFlavornModalProps) => {
   const {
     vmLike,
     templates,
-    inProgress,
     errorMessage,
     handlePromise,
     close,
@@ -61,94 +57,139 @@ const VMFlavorModal = withHandlePromise((props: VMFlavornModalProps) => {
     loadError,
     loaded,
   } = props;
+  const inProgress = props.inProgress || !loaded;
   const vm = asVM(vmLike);
-  const flattenTemplates = _.get(templates, 'data', []) as TemplateKind[];
+  const flattenTemplates = getLoadedData(templates, []);
 
-  const vmFlavor = getFlavor(vmLike);
   const flavors = getFlavors(vmLike, flattenTemplates);
+  const vmFlavor = getFlavor(vmLike) || flavors[flavors.length - 1];
 
-  const sourceMemory = getMemory(vm);
-
+  const [sourceMemSize, sourceMemUnit] = validate.split(getMemory(vm) || '');
   const sourceCPURaw = getCPU(vm);
   const sourceCPU = vCPUCount(sourceCPURaw);
 
   const [flavor, setFlavor] = React.useState(vmFlavor);
-  const [mem, setMem] = React.useState(
-    vmFlavor === CUSTOM_FLAVOR ? dehumanizeMemory(sourceMemory) : 1,
+  const isCustom = flavor === CUSTOM_FLAVOR;
+
+  const [memSize, setMemSize] = React.useState<string>(isCustom ? sourceMemSize || '' : '');
+  const [memUnit, setMemUnit] = React.useState<string>(
+    isCustom ? sourceMemUnit || BinaryUnit.Gi : BinaryUnit.Gi,
   );
-  const [cpu, setCpu] = React.useState(vmFlavor === CUSTOM_FLAVOR ? sourceCPU : 1);
+  const [cpus, setCpus] = React.useState<string>(isCustom ? `${sourceCPU}` : '');
+
+  const {
+    validations: { cpus: cpusValidation, memory: memoryValidation },
+    hasAllRequiredFilled,
+    isValid,
+  } = validateFlavor(
+    { cpus, memory: { size: memSize, unit: memUnit } },
+    { isCustomFlavor: isCustom },
+  );
+
+  const [showUIError, setShowUIError] = useShowErrorToggler(false, isValid, isValid);
 
   const submit = (e) => {
     e.preventDefault();
 
-    const patches = getUpdateFlavorPatches(vmLike, flattenTemplates, flavor, cpu, `${mem}Gi`);
-    if (patches.length === 0) {
-      close();
+    if (isValid) {
+      const patches = getUpdateFlavorPatches(
+        vmLike,
+        flattenTemplates,
+        flavor,
+        parseInt(cpus, 10),
+        `${memSize}${memUnit}`,
+      );
+      if (patches.length > 0) {
+        const promise = k8sPatch(getVMLikeModel(vmLike), vmLike, patches);
+        handlePromise(promise).then(close); // eslint-disable-line promise/catch-or-return
+      } else {
+        close();
+      }
     } else {
-      const promise = k8sPatch(getVMLikeModel(vmLike), vmLike, patches);
-      handlePromise(promise).then(close); // eslint-disable-line promise/catch-or-return
+      setShowUIError(true);
     }
   };
 
-  const topClass = classNames('modal-content', {
-    'kubevirt-vm-flavor-modal__content-custom': flavor === CUSTOM_FLAVOR,
-    'kubevirt-vm-flavor-modal__content-generic': flavor !== CUSTOM_FLAVOR,
-  });
-
   return (
-    <div className={topClass}>
+    <div className="modal-content">
       <ModalTitle>Edit Flavor</ModalTitle>
       <ModalBody>
-        <Form onSubmit={submit} className="kubevirt-vm-flavor-modal__form" isHorizontal>
-          <FormGroup label="Flavor" fieldId={getId('flavor')}>
-            <Dropdown
-              items={flavors}
-              id={getId('flavor-dropdown')}
-              onChange={(f) => setFlavor(f)}
-              selectedKey={_.capitalize(flavor) || CUSTOM_FLAVOR}
-              title={_.capitalize(flavor)}
-              className="kubevirt-vm-flavor-modal__dropdown"
-              buttonClassName="kubevirt-vm-flavor-modal__dropdown-button"
-            />
-          </FormGroup>
+        <Form>
+          <FormRow title="Flavor" fieldId={getId('flavor')} isRequired>
+            <FormSelect
+              onChange={(f) => {
+                if (f === CUSTOM_FLAVOR) {
+                  const isSourceCustom = vmFlavor === CUSTOM_FLAVOR;
+                  setMemSize(isSourceCustom ? sourceMemSize || '' : '');
+                  setMemUnit(isSourceCustom ? sourceMemUnit || BinaryUnit.Gi : BinaryUnit.Gi);
+                  setCpus(isSourceCustom ? `${sourceCPU}` : '');
+                }
+                setFlavor(f);
+              }}
+              value={flavor}
+              id={getId('flavor')}
+              isDisabled={inProgress}
+            >
+              {flavors.map((f) => (
+                <FormSelectOption key={f} value={f} label={_.capitalize(f)} />
+              ))}
+            </FormSelect>
+          </FormRow>
 
-          {flavor === CUSTOM_FLAVOR && (
+          {isCustom && (
             <>
-              <FormGroup label="CPUs" isRequired fieldId={getId('cpu')}>
-                <TextInput
-                  isRequired
-                  type="number"
+              <FormRow
+                key="cpu"
+                title="CPUs"
+                fieldId={getId('cpu')}
+                isRequired
+                validation={cpusValidation}
+              >
+                <Integer
+                  isValid={!isValidationError(cpusValidation)}
+                  isDisabled={inProgress}
                   id={getId('cpu')}
-                  value={cpu}
-                  onChange={(v) => setCpu(parseInt(v, 10) || 1)}
+                  value={cpus}
+                  isPositive
+                  onChange={(v) => setCpus(v)}
+                  isFullWidth
                   aria-label="CPU count"
                 />
-              </FormGroup>
-              <FormGroup label="Memory (Gi)" isRequired fieldId={getId('memory')}>
-                <TextInput
-                  isRequired
-                  type="number"
-                  id={getId('memory')}
-                  value={mem}
-                  onChange={(v) => setMem(parseInt(v, 10) || 1)}
-                  aria-label="Memory"
-                />
-              </FormGroup>
+              </FormRow>
+              <SizeUnitFormRow
+                title="Memory"
+                key="memory"
+                id={getId('memory')}
+                size={memSize}
+                unit={memUnit as BinaryUnit}
+                units={[BinaryUnit.Mi, BinaryUnit.Gi, BinaryUnit.Ti]}
+                validation={memoryValidation}
+                isDisabled={inProgress}
+                isRequired
+                onSizeChanged={setMemSize}
+                onUnitChanged={setMemUnit}
+              />
             </>
           )}
         </Form>
       </ModalBody>
       <ModalFooter
-        inProgress={inProgress || !loaded}
-        errorMessage={errorMessage || _.get(loadError, 'message')}
-      >
-        <button type="button" onClick={cancel} className="btn btn-default">
-          Cancel
-        </button>
-        <button type="button" onClick={submit} className="btn btn-primary" id="confirm-action">
-          Save
-        </button>
-      </ModalFooter>
+        id="vm-flavor-modal"
+        errorMessage={
+          errorMessage ||
+          loadError?.message ||
+          (showUIError ? getDialogUIError(hasAllRequiredFilled) : null)
+        }
+        isSimpleError={showUIError}
+        isDisabled={inProgress}
+        inProgress={inProgress}
+        onSubmit={submit}
+        submitButtonText="Save"
+        onCancel={(e) => {
+          e.stopPropagation();
+          cancel();
+        }}
+      />
     </div>
   );
 });
@@ -172,7 +213,7 @@ const VMFlavorModalFirehose = (props) => {
 export type VMFlavornModalProps = HandlePromiseProps &
   ModalComponentProps & {
     vmLike: VMLikeEntityKind;
-    templates?: any;
+    templates?: FirehoseResult<TemplateKind>;
     loadError?: any;
     loaded: boolean;
   };
