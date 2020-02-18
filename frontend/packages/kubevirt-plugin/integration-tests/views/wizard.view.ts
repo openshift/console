@@ -39,6 +39,9 @@ export const pxeBootSourceSelect = $('#pxe-bootsource');
 export const addDiskButton = $('#add-disk');
 export const storageBootSourceSelect = $('#storage-bootsource');
 
+// Virtual Hardware tab
+export const addCDButton = $('#attach-cdrom');
+
 // Advanced -- Cloud-init
 export const cloudInitFormCheckbox = $('#cloud-init-edit-mode-first-option');
 export const cloudInitCustomScriptCheckbox = $('#cloud-init-edit-mode-second-option');

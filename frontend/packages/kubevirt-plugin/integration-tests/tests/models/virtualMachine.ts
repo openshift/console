@@ -187,6 +187,7 @@ export class VirtualMachine extends KubevirtDetailView {
     startOnCreation,
     cloudInit,
     storageResources,
+    CDRoms,
     networkResources,
     bootableDevice,
   }: VMConfig) {
@@ -247,8 +248,13 @@ export class VirtualMachine extends KubevirtDetailView {
       await wizard.configureCloudInit(cloudInit);
     }
     await wizard.next();
+
     // Advanced - Virtual Hardware
+    for (const resource of CDRoms) {
+      await wizard.addCD(resource);
+    }
     await wizard.next();
+
     // Review page
     await wizard.confirmAndCreate();
     await wizard.waitForCreation();

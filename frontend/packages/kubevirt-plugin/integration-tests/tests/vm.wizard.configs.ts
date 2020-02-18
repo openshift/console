@@ -4,6 +4,7 @@ import {
   basicVMConfig,
   multusNetworkInterface,
   rootDisk,
+  cdContainerDisk,
   hddDisk,
   dataVolumeManifest,
 } from './utils/mocks';
@@ -41,6 +42,7 @@ export const vmConfig = (
     name: `${name}-${namespace}`,
     provisionSource: provisionConfig.provision,
     storageResources: provisionConfig.storageResources,
+    CDRoms: provisionConfig.CDRoms,
     networkResources: provisionConfig.networkResources,
   };
 };
@@ -84,6 +86,7 @@ export const getProvisionConfigs = () =>
       },
       networkResources: [multusNetworkInterface],
       storageResources: [rootDisk],
+      CDRoms: [cdContainerDisk],
     })
     .set(ProvisionConfigName.CONTAINER, {
       provision: {
