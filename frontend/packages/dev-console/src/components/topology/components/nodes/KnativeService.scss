@@ -19,19 +19,23 @@
   &.is-filtered &__bg {
     stroke: $filtered-stroke-color;
     stroke-width: $group-node-filtered-stroke-width;
+    stroke-dasharray: none;
   }
   &.is-selected &__bg {
     fill: $selected-fill-color;
     stroke: $selected-stroke-color;
     stroke-width: $group-node-selected-stroke-width;
+    stroke-dasharray: $group-node-stroke-dasharray;
   }
   &.is-highlight &__bg {
     fill: $group-node-fill-color;
     stroke: $interactive-stroke-color;
+    stroke-dasharray: $group-node-stroke-dasharray;
   }
   &.is-dropTarget &__bg {
     fill: $interactive-fill-color;
     stroke: $interactive-stroke-color;
+    stroke-dasharray: $group-node-stroke-dasharray;
   }
 }
 
