@@ -23,10 +23,7 @@ import {
   DaemonSetModel,
   StatefulSetModel,
 } from '@console/internal/models';
-import {
-  ClusterServiceVersionKind,
-  ClusterServiceVersionModel,
-} from '@console/operator-lifecycle-manager';
+import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager';
 import {
   ServiceModel as KnativeServiceModel,
   RouteModel as KnativeRouteModel,
@@ -37,13 +34,11 @@ import {
   EventSourceKafkaModel,
 } from '@console/knative-plugin';
 import { checkAccess } from '@console/internal/components/utils';
-import {
-  OperatorBackedServiceKindMap,
-  TopologyDataObject,
-} from '../components/topology/topology-types';
+import { TopologyDataObject } from '../components/topology/topology-types';
 import { detectGitType } from '../components/import/import-validation-utils';
 import { GitTypes } from '../components/import/import-types';
 import { ServiceBindingRequestModel } from '../models';
+import { getOperatorBackedServiceKindMap } from '@console/shared';
 
 export const edgesFromAnnotations = (annotations): string[] => {
   let edges: string[] = [];
@@ -447,24 +442,6 @@ export const cleanUpWorkload = (
     deleteRequest(SecretModel, obj);
   });
   return Promise.all(reqs);
-};
-
-export const getOperatorBackedServiceKindMap = (
-  installedOperators: ClusterServiceVersionKind[],
-): OperatorBackedServiceKindMap => {
-  let operatorBackedServiceKindMap: OperatorBackedServiceKindMap = {};
-  if (installedOperators) {
-    operatorBackedServiceKindMap = installedOperators.reduce((kindMap, csv) => {
-      (csv?.spec?.customresourcedefinitions?.owned || []).forEach((crd) => {
-        if (!(crd.kind in kindMap)) {
-          kindMap[crd.kind] = csv;
-        }
-      });
-      return kindMap;
-    }, {});
-  }
-
-  return operatorBackedServiceKindMap;
 };
 
 export const doContextualBinding = async (

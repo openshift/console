@@ -7,6 +7,7 @@ import {
   PodTemplate,
   RouteKind,
   apiVersionForModel,
+  referenceForModel,
 } from '@console/internal/module/k8s';
 import {
   DeploymentConfigModel,
@@ -26,6 +27,7 @@ import {
   OverviewItem,
   PodRCData,
   ExtPodKind,
+  OperatorBackedServiceKindMap,
 } from '../types';
 import {
   DEPLOYMENT_REVISION_ANNOTATION,
@@ -39,6 +41,10 @@ import {
 } from '../constants';
 import { resourceStatus, podStatus } from './ResourceStatus';
 import { isKnativeServing, isIdled } from './pod-utils';
+import {
+  ClusterServiceVersionModel,
+  ClusterServiceVersionKind,
+} from '@console/operator-lifecycle-manager';
 
 export const getResourceList = (namespace: string, resList?: any) => {
   let resources: FirehoseResource[] = [
@@ -113,6 +119,13 @@ export const getResourceList = (namespace: string, resList?: any) => {
       kind: 'Event',
       namespace,
       prop: 'events',
+    },
+    {
+      isList: true,
+      kind: referenceForModel(ClusterServiceVersionModel),
+      namespace,
+      prop: 'clusterServiceVersions',
+      optional: true,
     },
   ];
 
@@ -427,12 +440,44 @@ const isReplicationControllerVisible = (resource: K8sResourceKind): boolean => {
   return !!_.get(resource, ['status', 'replicas'], isDeploymentInProgressOrCompleted(resource));
 };
 
+export const getOperatorBackedServiceKindMap = (
+  installedOperators: ClusterServiceVersionKind[],
+): OperatorBackedServiceKindMap =>
+  installedOperators
+    ? installedOperators.reduce((kindMap, csv) => {
+        (csv?.spec?.customresourcedefinitions?.owned || []).forEach((crd) => {
+          if (!(crd.kind in kindMap)) {
+            kindMap[crd.kind] = csv;
+          }
+        });
+        return kindMap;
+      }, {})
+    : {};
+
 export class TransformResourceData {
   private resources: any;
 
-  constructor(resources: any, public utils?: Function[]) {
+  constructor(
+    resources: any,
+    public utils?: Function[],
+    public installedOperators?: ClusterServiceVersionKind[],
+  ) {
     this.resources = { ...resources };
   }
+
+  isOperatorBackedService = (obj: K8sResourceKind): boolean => {
+    const kind = _.get(obj, 'metadata.ownerReferences[0].kind', null);
+    const ownerUid = _.get(obj, 'metadata.ownerReferences[0].uid');
+    const operatBackedServiceKindMap = getOperatorBackedServiceKindMap(this.installedOperators);
+    const operatorResource: K8sResourceKind = _.find(this.installedOperators, {
+      metadata: { uid: ownerUid },
+    }) as K8sResourceKind;
+    return (
+      kind &&
+      operatBackedServiceKindMap &&
+      (!_.isEmpty(operatorResource) || kind in operatBackedServiceKindMap)
+    );
+  };
 
   getPodsForResource = (resource: K8sResourceKind): PodKind[] => {
     const { pods } = this.resources;
@@ -642,6 +687,7 @@ export class TransformResourceData {
       const status = resourceStatus(obj, current, isRollingOut);
       const pods = [..._.get(current, 'pods', []), ..._.get(previous, 'pods', [])];
       const events = this.getEventsForPods(pods);
+      const isOperatorBackedService = this.isOperatorBackedService(obj);
       const overviewItems = {
         alerts,
         buildConfigs,
@@ -654,6 +700,7 @@ export class TransformResourceData {
         services,
         status,
         events,
+        isOperatorBackedService,
       };
 
       if (this.utils) {
@@ -687,6 +734,7 @@ export class TransformResourceData {
       const status = resourceStatus(obj, current, isRollingOut);
       const pods = [..._.get(current, 'pods', []), ..._.get(previous, 'pods', [])];
       const events = this.getEventsForPods(pods);
+      const isOperatorBackedService = this.isOperatorBackedService(obj);
       const overviewItems = {
         alerts,
         buildConfigs,
@@ -699,6 +747,7 @@ export class TransformResourceData {
         services,
         status,
         events,
+        isOperatorBackedService,
       };
 
       if (this.utils) {
@@ -727,6 +776,7 @@ export class TransformResourceData {
       };
       const status = resourceStatus(obj);
       const events = this.getEventsForPods(pods);
+      const isOperatorBackedService = this.isOperatorBackedService(obj);
       return {
         alerts,
         buildConfigs,
@@ -736,6 +786,7 @@ export class TransformResourceData {
         services,
         status,
         events,
+        isOperatorBackedService,
       };
     });
   };
@@ -757,7 +808,7 @@ export class TransformResourceData {
       const routes = this.getRoutesForServices(services);
       const status = resourceStatus(obj);
       const events = this.getEventsForPods(pods);
-
+      const isOperatorBackedService = this.isOperatorBackedService(obj);
       return {
         alerts,
         buildConfigs,
@@ -767,6 +818,7 @@ export class TransformResourceData {
         services,
         status,
         events,
+        isOperatorBackedService,
       };
     });
   };

@@ -4,7 +4,6 @@ import { connect } from 'react-redux';
 import * as plugins from '@console/internal/plugins';
 import { getResourceList } from '@console/shared';
 import { referenceForModel } from '@console/internal/module/k8s';
-import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager/src/models';
 import { RootState } from '@console/internal/redux';
 import { ServiceBindingRequestModel } from '../../models';
 import { TopologyFilters, getTopologyFilters } from './filters/filter-utils';
@@ -85,13 +84,6 @@ export const TopologyDataController: React.FC<TopologyDataControllerProps> = ({
   filters,
 }) => {
   const { resources, utils } = getResourceList(namespace, resourceList);
-  resources.push({
-    isList: true,
-    kind: referenceForModel(ClusterServiceVersionModel),
-    namespace,
-    prop: 'clusterServiceVersions',
-    optional: true,
-  });
   if (serviceBinding) {
     resources.push({
       isList: true,
