@@ -44,7 +44,7 @@ const amqPackageManifest = {
         },
       },
     }],
-    defaultChannel: '',
+    defaultChannel: 'preview',
   },
 };
 
@@ -93,7 +93,7 @@ const etcdPackageManifest = {
         },
       },
     }],
-    defaultChannel: '',
+    defaultChannel: 'alpha',
   },
 };
 
@@ -139,7 +139,7 @@ const federationv2PackageManifest = {
         },
       },
     }],
-    defaultChannel: '',
+    defaultChannel: 'alpha',
   },
 };
 
@@ -186,7 +186,7 @@ const prometheusPackageManifest = {
         },
       },
     }],
-    defaultChannel: '',
+    defaultChannel: 'preview',
   },
 };
 
@@ -232,7 +232,7 @@ const svcatPackageManifest = {
         },
       },
     }],
-    defaultChannel: '',
+    defaultChannel: 'alpha',
   },
 };
 
@@ -278,7 +278,7 @@ const dummyPackageManifest = {
         },
       },
     }],
-    defaultChannel: '',
+    defaultChannel: 'alpha',
   },
 };
 
