@@ -35,7 +35,7 @@ const HelmReleaseNode: React.FC<HelmReleaseNodeProps> = ({ element, onSelect, se
     <g
       ref={refs}
       onClick={onSelect}
-      className={classNames('odc-knative-service', {
+      className={classNames('odc-helm-release', {
         'is-dragging': dragging,
         'is-selected': selected,
         'is-filtered': filtered,

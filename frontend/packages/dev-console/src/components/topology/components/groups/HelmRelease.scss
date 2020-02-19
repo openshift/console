@@ -19,12 +19,14 @@
   &.is-filtered &__bg {
     stroke: $filtered-stroke-color;
     stroke-width: $group-node-filtered-stroke-width;
+    stroke-dasharray: none;
   }
 
   &.is-selected &__bg {
     stroke: $selected-stroke-color;
     fill: $selected-fill-color;
     stroke-width: $group-node-selected-stroke-width;
+    stroke-dasharray: $group-node-stroke-dasharray;
   }
 }
 
