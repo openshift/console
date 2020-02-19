@@ -110,7 +110,6 @@ export interface WorkloadData {
   donutStatus: DonutStatusData;
   connectedPipeline: ConnectedWorkloadPipeline;
   showPodCount?: boolean;
-  eventWarning?: boolean;
 }
 
 export interface DonutStatusData {
