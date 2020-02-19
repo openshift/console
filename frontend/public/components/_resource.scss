@@ -142,11 +142,7 @@
     white-space: nowrap;
   }
   &__resource-name {
-    font-size: $font-size-base;
     min-width: 0; // required so co-break-word works
-    &--lg {
-      font-size: var(--pf-global--FontSize--xl);
-    }
   }
   &__resource-status {
     padding-left: 8px;
