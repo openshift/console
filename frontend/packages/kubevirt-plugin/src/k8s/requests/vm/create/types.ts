@@ -1,4 +1,4 @@
-import { ConfigMapKind } from '@console/internal/module/k8s';
+import { ConfigMapKind, TemplateKind } from '@console/internal/module/k8s';
 import { Map as ImmutableMap } from 'immutable';
 import { EnhancedK8sMethods } from '../../../enhancedK8sMethods/enhancedK8sMethods';
 import { VMSettings } from '../../../../components/create-vm-wizard/redux/initial-state/types';
@@ -19,4 +19,12 @@ export type CreateVMParams = {
 export type CreateVMEnhancedParams = CreateVMParams & {
   storageClassConfigMap: ConfigMapKind;
   isTemplate: boolean;
+};
+
+export type DefaultTemplateParams = {
+  commonTemplate: TemplateKind;
+  namespace: string;
+  name: string;
+  baseOSName: string;
+  containerImage: string;
 };

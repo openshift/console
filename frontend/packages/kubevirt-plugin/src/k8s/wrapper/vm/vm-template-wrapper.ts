@@ -74,11 +74,13 @@ export class MutableVMTemplateWrapper extends VMTemplateWrapper {
   setNamespace = (namespace: string) => {
     this.ensurePath('metadata', {});
     this.data.metadata.namespace = namespace;
+    return this;
   };
 
   setModel = (model: K8sKind) => {
     this.data.kind = model.kind;
     this.data.apiVersion = apiVersionForModel(model);
+    return this;
   };
 
   addAnotation = (key: string, value: string) => {
