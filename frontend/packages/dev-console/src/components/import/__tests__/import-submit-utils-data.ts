@@ -1,3 +1,4 @@
+import { ValidatedOptions } from '@patternfly/react-core';
 import { GitImportFormData, Resources } from '../import-types';
 
 export const mockPipelineTemplate = {
@@ -164,7 +165,7 @@ export const defaultData: GitImportFormData = {
     dir: '/',
     showGitType: false,
     secret: '',
-    isUrlValidated: true,
+    urlValidation: ValidatedOptions.default,
     isUrlValidating: false,
   },
   docker: {
