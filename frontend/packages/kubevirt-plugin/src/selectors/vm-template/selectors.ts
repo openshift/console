@@ -1,13 +1,13 @@
 import * as _ from 'lodash';
-import { getName, getNamespace } from '@console/shared/src/selectors';
+import { getLabel, getName, getNamespace } from '@console/shared/src/selectors';
 import { TemplateKind } from '@console/internal/module/k8s';
 import { VMGenericLikeEntityKind } from '../../types/vmLike';
-import { iGetIn } from '../../utils/immutable';
 import {
   CUSTOM_FLAVOR,
+  LABEL_USED_TEMPLATE_NAME,
+  LABEL_USED_TEMPLATE_NAMESPACE,
   TEMPLATE_FLAVOR_LABEL,
   TEMPLATE_OS_LABEL,
-  TEMPLATE_TYPE_LABEL,
   TEMPLATE_WORKLOAD_LABEL,
 } from '../../constants';
 import { getLabels } from '../selectors';
@@ -22,8 +22,8 @@ export const getVMTemplateNamespacedName = (
     return null;
   }
 
-  const name = vm.metadata.labels['vm.kubevirt.io/template'];
-  const namespace = vm.metadata.labels['vm.kubevirt.io/template-namespace'];
+  const name = getLabel(vm, LABEL_USED_TEMPLATE_NAME);
+  const namespace = getLabel(vm, LABEL_USED_TEMPLATE_NAMESPACE);
   return name && namespace ? { name, namespace } : null;
 };
 
@@ -105,15 +105,12 @@ export const getTemplateForFlavor = (templates: TemplateKind[], vm: VMKind, flav
 export const getFlavors = (vm: VMGenericLikeEntityKind, templates: TemplateKind[]) => {
   const vmTemplate = getVMTemplate(vm, templates);
 
-  const flavors = {
-    // always listed
-    [CUSTOM_FLAVOR]: CUSTOM_FLAVOR,
-  };
+  const flavors = [CUSTOM_FLAVOR];
 
   if (vmTemplate) {
     // enforced by the vm
     const templateFlavors = getTemplateFlavors([vmTemplate]);
-    templateFlavors.forEach((f) => (flavors[f] = _.capitalize(f)));
+    flavors.push(...templateFlavors);
   }
 
   // if VM OS or Workload is set, add flavors of matching templates only. Otherwise list all flavors.
@@ -121,35 +118,7 @@ export const getFlavors = (vm: VMGenericLikeEntityKind, templates: TemplateKind[
   const vmWorkload = getWorkloadProfile(vm);
   const matchingTemplates = getTemplates(templates, vmOS, vmWorkload, undefined);
   const templateFlavors = getTemplateFlavors(matchingTemplates);
-  templateFlavors.forEach((f) => (flavors[f] = _.capitalize(f)));
+  flavors.push(...templateFlavors);
 
-  // Sort flavors
-  const sortedFlavors = {};
-  flavorSort(Object.keys(flavors)).forEach((k) => {
-    sortedFlavors[k] = flavors[k];
-  });
-
-  return sortedFlavors;
-};
-
-export const getRelevantTemplates = (
-  commonTemplates: TemplateKind[],
-  os: string,
-  workloadProfile: string,
-  flavor: string,
-) => {
-  const relevantTemplates = (commonTemplates || []).filter(
-    (template) =>
-      iGetIn(template, ['metadata', 'labels', TEMPLATE_TYPE_LABEL]) === 'base' &&
-      (!os || iGetIn(template, ['metadata', 'labels', `${TEMPLATE_OS_LABEL}/${os}`])) &&
-      (!workloadProfile ||
-        iGetIn(template, [
-          'metadata',
-          'labels',
-          `${TEMPLATE_WORKLOAD_LABEL}/${workloadProfile}`,
-        ])) &&
-      (flavor === 'Custom' ||
-        iGetIn(template, ['metadata', 'labels', `${TEMPLATE_FLAVOR_LABEL}/${flavor}`])),
-  );
-  return relevantTemplates;
+  return _.uniq(flavorSort(flavors).filter((f) => f));
 };

@@ -3,6 +3,7 @@ import { FormSelect, FormSelectOption, Split, SplitItem } from '@patternfly/reac
 import { ValidationObject } from '@console/shared';
 import { prefixedID } from '../../utils';
 import { getStringEnumValues } from '../../utils/types';
+import { isValidationError } from '../../utils/validations/common';
 import { FormRow } from './form-row';
 import { Integer } from './integer/integer';
 import { BinaryUnit, toIECUnit } from './size-unit-utils';
@@ -43,12 +44,14 @@ export const SizeUnitFormRow: React.FC<SizeUnitFormRowProps> = ({
     <Split>
       <SplitItem isFilled>
         <Integer
-          className="kubevirt-size-unit-form-row__size"
+          isFullWidth
+          isValid={!isValidationError(validation)}
           isDisabled={isDisabled}
           id={prefixedID(id, 'size')}
           value={size}
           isPositive
           onChange={React.useCallback((v) => onSizeChanged(v), [onSizeChanged])}
+          aria-label={`${title} size`}
         />
       </SplitItem>
       <SplitItem>
@@ -58,6 +61,7 @@ export const SizeUnitFormRow: React.FC<SizeUnitFormRowProps> = ({
           value={unit}
           id={prefixedID(id, 'unit')}
           isDisabled={isDisabled}
+          aria-label={`${title} unit`}
         >
           {(units || getStringEnumValues<BinaryUnit>(BinaryUnit)).map((u) => (
             <FormSelectOption key={u} value={u} label={toIECUnit(u)} />

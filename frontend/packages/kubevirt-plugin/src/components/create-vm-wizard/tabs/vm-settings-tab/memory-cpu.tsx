@@ -17,7 +17,7 @@ export const MemoryCPU: React.FC<MemoryCPUProps> = React.memo(
       <FormFieldMemoRow field={memoryField} fieldType={FormFieldType.TEXT}>
         <FormField>
           <Integer
-            className="kubevirt-create-vm-modal__memory-input"
+            isFullWidth
             isPositive
             onChange={(value) => onChange(VMSettingsField.MEMORY, value)}
           />
@@ -29,7 +29,7 @@ export const MemoryCPU: React.FC<MemoryCPUProps> = React.memo(
       <FormFieldMemoRow field={cpuField} fieldType={FormFieldType.TEXT}>
         <FormField>
           <Integer
-            className="kubevirt-create-vm-modal__cpu-input"
+            isFullWidth
             isPositive
             onChange={(value) => onChange(VMSettingsField.CPU, value)}
           />
