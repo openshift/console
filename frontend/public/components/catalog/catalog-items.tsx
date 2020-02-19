@@ -9,6 +9,7 @@ import {
   CatalogTileBadge,
 } from '@patternfly/react-catalog-view-extension';
 
+import { DEV_CATALOG_FILTER_KEY as filterKey } from '@console/shared';
 import { history } from '../utils/router';
 import { normalizeIconClass } from './catalog-item-icon';
 import { CatalogTileDetails } from './catalog-item-details';
@@ -157,7 +158,7 @@ const pageDescription =
   'Catalog. Cluster admins can install additional apps which will show up here automatically.';
 
 // Filter property white list
-const filterGroups = ['kind', 'capabilityLevel'];
+const filterGroups = ['kind'];
 
 // initialFilters cannot be typed as it has multiple usages
 const getAvailableFilters = (initialFilters): PageFilters => {
@@ -193,9 +194,9 @@ const getAvailableFilters = (initialFilters): PageFilters => {
   return filters;
 };
 
+const filterPreference = ['kind'];
 const filterGroupNameMap: Record<string, string> = {
   kind: 'Type',
-  capabilityLevel: 'Capability Level',
 };
 
 const GroupByTypes: Record<string, string> = {
@@ -308,7 +309,6 @@ export class CatalogTileViewPage extends React.Component<
   render() {
     const { items } = this.props;
     const { detailsItem } = this.state;
-
     return (
       <>
         <TileViewPage
@@ -320,8 +320,10 @@ export class CatalogTileViewPage extends React.Component<
           // TODO(alecmerdler): Dynamic filters for each Operator and its provided APIs
           getAvailableFilters={getAvailableFilters}
           filterGroups={filterGroups}
+          storeFilterKey={filterKey}
           filterGroupNameMap={filterGroupNameMap}
           keywordCompare={keywordCompare}
+          filterRetentionPreference={filterPreference}
           renderTile={this.renderTile}
           pageDescription={pageDescription}
           emptyStateInfo="No developer catalog items are being shown due to the filters being applied."
