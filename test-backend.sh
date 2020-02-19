@@ -21,7 +21,7 @@ export GOFLAGS="-mod=vendor"
 COVER=${COVER:-"-cover"}
 
 TESTABLE="pkg/auth pkg/proxy pkg/server pkg/helm/actions pkg/helm/handlers"
-FORMATTABLE="${TESTABLE} cmd/bridge pkg/version"
+FORMATTABLE="cmd pkg"
 
 # user has not provided PKG override
 if [ -z "${PKG}" ]; then
