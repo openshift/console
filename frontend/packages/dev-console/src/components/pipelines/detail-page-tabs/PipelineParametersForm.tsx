@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import { Form } from '@patternfly/react-core';
-import { FormikProps, FormikValues } from 'formik';
+import { FormikProps, FormikValues, getIn } from 'formik';
 import { useAccessReview } from '@console/internal/components/utils';
 import { FormFooter } from '@console/shared';
 import PipelineParameters from './PipelineParameters';
@@ -36,7 +36,7 @@ const PipelineParametersForm: React.FC<PipelineParametersFormProps> = ({
             isSubmitting={isSubmitting}
             errorMessage={status && status.submitError}
             successMessage={status && !dirty && status.success}
-            disableSubmit={!dirty || !_.isEmpty(errors.parameters)}
+            disableSubmit={!dirty || !_.isEmpty(_.compact(getIn(errors, 'parameters')))}
             showAlert={dirty}
           />
         )}
