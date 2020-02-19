@@ -16,6 +16,14 @@
   margin-right: 20px;
 }
 
+.monitoring-dashboards__label-column-header {
+  // Set a min-width to avoid aggressive wrapping, which makes the table much taller.
+  min-width: 175px;
+  @media (min-width: $screen-lg-min) {
+    min-width: 225px;
+  }
+}
+
 .monitoring-dashboards__options {
   display: flex;
   float: right;
