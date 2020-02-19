@@ -187,9 +187,9 @@ export const VMDetailsList: React.FC<VMResourceListProps> = ({
       <VMDetailsItem
         title="IP Address"
         idValue={prefixedID(id, 'ip-addresses')}
-        isNotAvail={!ipAddrs}
+        isNotAvail={!launcherPod || !ipAddrs}
       >
-        {ipAddrs}
+        {launcherPod && ipAddrs}
       </VMDetailsItem>
 
       <VMDetailsItem title="Node" idValue={prefixedID(id, 'node')} isNotAvail={!nodeName}>
