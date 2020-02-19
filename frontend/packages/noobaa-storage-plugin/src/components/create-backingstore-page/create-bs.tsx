@@ -99,6 +99,7 @@ const S3EndPointType: React.FC<S3EndpointTypeProps> = (props) => {
             }}
             items={awsRegionItems}
             selectedKey={AWS_REGIONS[0]}
+            aria-label="Region Dropdown"
           />
         </FormGroup>
       )}
@@ -141,11 +142,12 @@ const S3EndPointType: React.FC<S3EndpointTypeProps> = (props) => {
           <FormGroup label={credentialField1Label} fieldId="acess-key">
             <InputGroup>
               <TextInput
-                value={state.accessKey}
+                value={state.secretKey}
                 onChange={(e) => {
-                  dispatch({ type: 'setAccessKey', value: e });
+                  dispatch({ type: 'setSecretKey', value: e });
                 }}
                 aria-label="Access Key Field"
+                type="password"
               />
               <Button variant="plain" onClick={switchToSecret}>
                 Switch to Secret

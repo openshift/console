@@ -10,11 +10,11 @@ import { click } from '@console/shared/src/test-utils/utils';
 import { SECOND } from '@console/ceph-storage-plugin/integration-tests/utils/consts';
 import { ATTACH_TO_DEPLOYMENT, OBC_RESOURCE_PATH } from '../utils/consts';
 
-export const OBCPage = async () => {
+export const goToOBCPage = async () => {
   await sideNavView.clickNavLink(['Storage', 'Object Bucket Claims']);
 };
 
-export const gotoOBPage = async () => {
+export const goToOBPage = async () => {
   await sideNavView.clickNavLink(['Storage', 'Object Buckets']);
 };
 
@@ -52,7 +52,7 @@ export class CreateOBCHandler {
   }
 
   async createBucketClaim() {
-    await OBCPage();
+    await goToOBCPage();
     await this.waitForElement(createOBC);
     await click(createOBC);
     await this.waitForElement(scDropdown);
@@ -86,7 +86,7 @@ export class CreateOBCHandler {
   }
 
   async attachToDeployment(deploymentName: string) {
-    await OBCPage();
+    await goToOBCPage();
     await resourceRowsPresent();
     await clickKebabAction(this.name, ATTACH_TO_DEPLOYMENT);
     await browser.wait(until.visibilityOf(modal));
