@@ -74,14 +74,14 @@ const ImageSearch: React.FC = () => {
         } else {
           setFieldValue('isSearchingForImage', false);
           setFieldValue('isi', {});
-          setFieldValue('isi.status', status.message);
+          setFieldValue('isi.status', status);
           setFieldValue('route.targetPort', null);
           setValidated(ValidatedOptions.error);
         }
       })
       .catch((error) => {
         setFieldValue('isi', {});
-        setFieldValue('isi.status', error.message);
+        setFieldValue('isi.status', { metadata: {}, status: '', message: error.message });
         setFieldValue('isSearchingForImage', false);
         setValidated(ValidatedOptions.error);
       });
@@ -103,7 +103,7 @@ const ImageSearch: React.FC = () => {
   };
 
   const helpTextInvalid = validated === ValidatedOptions.error && (
-    <span>{values.searchTerm === '' ? 'Required' : values.isi.status}</span>
+    <span>{values.searchTerm === '' ? 'Required' : values.isi.status?.message}</span>
   );
 
   React.useEffect(() => {
