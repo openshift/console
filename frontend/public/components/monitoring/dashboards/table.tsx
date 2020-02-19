@@ -5,6 +5,7 @@ import {
   sortable,
   Table as PFTable,
   TableBody,
+  TableGridBreakpoint,
   TableHeader,
   TableVariant,
 } from '@patternfly/react-table';
@@ -18,6 +19,35 @@ import { getPrometheusURL, PrometheusEndpoint } from '../../graphs/helpers';
 import { EmptyBox, usePoll, useSafeFetch } from '../../utils';
 import { TablePagination } from '../metrics';
 
+type AugmentedColumnStyle = ColumnStyle & {
+  className?: string;
+};
+
+// Get the columns from the panel styles. Filters out hidden columns and orders
+// them so the label columns are displayed first.
+const getColumns = (styles: ColumnStyle[]): AugmentedColumnStyle[] => {
+  const labelColumns = [];
+  const valueColumns = [];
+  styles.forEach((col: ColumnStyle) => {
+    // Remove hidden or regex columns.
+    if (col.type === 'hidden' || col.pattern.startsWith('/') || !col.alias) {
+      return;
+    }
+
+    if (col.pattern.startsWith('Value #')) {
+      valueColumns.push(col);
+    } else {
+      labelColumns.push({
+        ...col,
+        className: 'monitoring-dashboards__label-column-header',
+      });
+    }
+  });
+
+  // Show non-value columns first.
+  return [...labelColumns, ...valueColumns];
+};
+
 const paginationOptions = [5, 10, 20, 50, 100].map((n) => ({
   title: n.toString(),
   value: n,
@@ -30,7 +60,8 @@ const Table: React.FC<Props> = ({ panel, pollInterval, queries }) => {
   const [page, setPage] = React.useState(1);
   const [perPage, setPerPage] = React.useState(5);
   const [sortBy, setSortBy] = React.useState<ISortBy>({ index: 0, direction: 'asc' });
-  const onSort = (e, i, direction) => setSortBy({ index: i, direction });
+  const onSort = (e, index: ISortBy['index'], direction: ISortBy['direction']) =>
+    setSortBy({ index, direction });
   const safeFetch = React.useCallback(useSafeFetch(), []);
 
   const tick = () => {
@@ -42,11 +73,10 @@ const Table: React.FC<Props> = ({ panel, pollInterval, queries }) => {
       .then((responses: PrometheusResponse[]) => {
         setError(undefined);
         setLoading(false);
-        // FIXME: This makes the following assumptions about the data:
+        // Note: This makes the following assumptions about the data:
         // 1. The transform is `table`
-        // 2. The results will only have one label, and it is present in all query responses.
-        // 3. The value will be an instance vector (single value).
-        // 4. The time column is hidden.
+        // 2. The value will be an instance vector (single value).
+        // 3. The time column is hidden.
         // The Grafana implementation is much more involved. See
         //   https://grafana.com/docs/grafana/latest/features/panels/table_panel/#merge-multiple-queries-per-table
         setData(
@@ -84,16 +114,7 @@ const Table: React.FC<Props> = ({ panel, pollInterval, queries }) => {
     return <EmptyBox label="Data" />;
   }
 
-  // Make a copy of the array and move the first label to the front.
-  // FIXME: Remove magic number for label index.
-  const styles = [...panel.styles];
-  const labelIndex = queries.length + 1;
-  styles.unshift(styles.splice(labelIndex, 1)[0]);
-
-  // Remove hidden and regex columns.
-  const columns: ColumnStyle[] = styles.filter(
-    ({ type, pattern, alias }) => type !== 'hidden' && !pattern.startsWith('/') && alias,
-  );
+  const columns: AugmentedColumnStyle[] = getColumns(panel.styles);
 
   // Sort the data.
   const sort = (row) => {
@@ -110,27 +131,28 @@ const Table: React.FC<Props> = ({ panel, pollInterval, queries }) => {
     return _.isFinite(num) ? num : val;
   };
   const sortedData = _.orderBy(data, [sort], [sortBy.direction]);
+  const visibleData = sortedData.slice((page - 1) * perPage, page * perPage);
 
   // Format the table rows.
-  const formattedRows: string[][] = sortedData.map((values: { [key: string]: string }) => {
-    return columns.reduce((acc, { type, decimals = 2, pattern, unit = '' }) => {
+  const rows: React.ReactNode[][] = visibleData.map((values: { [key: string]: string }) => {
+    return columns.reduce((acc: React.ReactNode[], { type, decimals = 2, pattern, unit = '' }) => {
       const value = values[pattern];
       switch (type) {
         case 'number':
           acc.push(formatNumber(value, decimals, unit));
           break;
         default:
-          acc.push(value || '-');
+          acc.push(value || <span className="text-muted">-</span>);
       }
       return acc;
     }, []);
   });
 
-  const headers = columns.map(({ alias: title }) => ({
+  const headers = columns.map(({ alias: title, className }) => ({
     title,
     transforms: [sortable],
+    ...(className ? { props: { className } } : {}),
   }));
-  const paginatedRows: string[][] = formattedRows.slice((page - 1) * perPage, page * perPage);
 
   return (
     <>
@@ -138,18 +160,19 @@ const Table: React.FC<Props> = ({ panel, pollInterval, queries }) => {
         <PFTable
           aria-label="query results table"
           cells={headers}
+          className="monitoring-dashboards__table"
+          gridBreakPoint={TableGridBreakpoint.none}
           onSort={onSort}
-          rows={paginatedRows}
+          rows={rows}
           sortBy={sortBy}
           variant={TableVariant.compact}
-          className="monitoring-dashboards__table"
         >
           <TableHeader />
           <TableBody />
         </PFTable>
       </div>
       <TablePagination
-        itemCount={formattedRows.length}
+        itemCount={rows.length}
         paginationOptions={paginationOptions}
         page={page}
         perPage={perPage}
