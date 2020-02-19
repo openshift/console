@@ -3,7 +3,7 @@ import { shallow } from 'enzyme';
 import { QueryBrowser } from '@console/internal/components/monitoring/query-browser';
 import { PrometheusGraphLink } from '@console/internal/components/graphs/prometheus-graph';
 import { monitoringDashboardQueries } from '../../queries';
-import MonitoringDashboardGraph, { GraphTypes } from '../MonitoringDashboardGraph';
+import { MonitoringDashboardGraph, GraphTypes } from '../MonitoringDashboardGraph';
 
 describe('Monitoring Dashboard graph', () => {
   let monitoringDashboardGraphProps: React.ComponentProps<typeof MonitoringDashboardGraph>;
@@ -17,6 +17,7 @@ describe('Monitoring Dashboard graph', () => {
       query: query.query({ namespace: 'test-project' }),
       humanize: query.humanize,
       byteDataType: query.byteDataType,
+      patchQuery: jest.fn(),
     };
   });
 

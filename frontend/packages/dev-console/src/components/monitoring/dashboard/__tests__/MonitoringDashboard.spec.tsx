@@ -2,7 +2,7 @@ import * as React from 'react';
 import { shallow } from 'enzyme';
 import * as link from '@console/internal/components/utils';
 import MonitoringDashboard from '../MonitoringDashboard';
-import MonitoringDashboardGraph from '../MonitoringDashboardGraph';
+import ConnectedMonitoringDashboardGraph from '../MonitoringDashboardGraph';
 import { monitoringDashboardQueries, topWorkloadMetricsQueries } from '../../queries';
 
 type MonitoringDashboardProps = React.ComponentProps<typeof MonitoringDashboard>;
@@ -35,7 +35,7 @@ describe('Monitoring Dashboard Tab', () => {
     const wrapper = shallow(<MonitoringDashboard {...monitoringDashboardProps} />);
     expect(
       wrapper
-        .find(MonitoringDashboardGraph)
+        .find(ConnectedMonitoringDashboardGraph)
         .first()
         .props().query,
     ).toEqual(workloadQuery);
@@ -50,7 +50,7 @@ describe('Monitoring Dashboard Tab', () => {
     const wrapper = shallow(<MonitoringDashboard {...monitoringDashboardProps} />);
     expect(
       wrapper
-        .find(MonitoringDashboardGraph)
+        .find(ConnectedMonitoringDashboardGraph)
         .first()
         .props().query,
     ).toEqual(dashboardQuery);
