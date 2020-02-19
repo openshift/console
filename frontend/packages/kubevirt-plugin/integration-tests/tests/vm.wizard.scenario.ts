@@ -20,7 +20,7 @@ import {
   COMMON_TEMPLATES_REVISION,
   INNER_TEMPLATE_VERSION,
 } from './utils/consts';
-import { multusNAD } from './utils/mocks';
+import { multusNAD, cdGuestTools, basicVMConfig } from './utils/mocks';
 import {
   vmConfig,
   getProvisionConfigs,
@@ -67,6 +67,18 @@ describe('Kubevirt create VM using wizard', () => {
       },
       specTimeout,
     );
+  });
+
+  it('Creates VM with CD ROM added in Wizard', async () => {
+    const vmName = 'vm-with-cdrom';
+    const provisionConfig = provisionConfigs.get(ProvisionConfigName.CONTAINER);
+    provisionConfig.CDRoms = [cdGuestTools];
+    const vmCfg = vmConfig(vmName, testName, provisionConfig, basicVMConfig, false);
+    const vm = new VirtualMachine(vmCfg);
+
+    await withResource(leakedResources, vm.asResource(), async () => {
+      await vm.create(vmCfg);
+    });
   });
 
   it(

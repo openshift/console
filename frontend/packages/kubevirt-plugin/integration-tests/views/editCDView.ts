@@ -15,5 +15,5 @@ export const modalTitle = $('[data-test-id="modal-title"]');
 export const saveButton = $('#cdrom-submit');
 export const cdValue = $('#cdrom-value');
 export const cdAddBtn = $('#vm-cd-add-btn');
-export const cdDeleteBtn = $('.vm-cd-delete-btn');
+export const cdDeleteBtn = $('.kubevirt-cdrom-modal__delete button');
 export const diskSummary = $('.kubevirt-disk-summary');

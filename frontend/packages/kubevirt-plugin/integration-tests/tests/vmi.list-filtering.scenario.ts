@@ -4,6 +4,7 @@ import {
   addLeakableResource,
   createResource,
   removeLeakedResources,
+  removeLeakableResource,
 } from '@console/shared/src/test-utils/utils';
 import {
   resourceRowsPresent,
@@ -47,6 +48,8 @@ describe('Test List View Filtering (VMI)', () => {
   });
 
   afterAll(async () => {
+    removeLeakableResource(leakedResources, testVM);
+    removeLeakableResource(leakedResources, testVMI);
     removeLeakedResources(leakedResources);
   });
 

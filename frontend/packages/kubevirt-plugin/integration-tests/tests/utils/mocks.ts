@@ -88,7 +88,8 @@ export const widowsVMConfig: BaseVMConfig = {
   operatingSystem: OperatingSystem.WINDOWS_10,
   flavor: Flavor.MEDIUM,
   workloadProfile: WorkloadProfile.DESKTOP,
-  sourceURL: 'https://download.cirros-cloud.net/0.4.0/cirros-0.4.0-x86_64-disk.img',
+  sourceURL:
+    'http://cnv-qe-server.rhevdev.lab.eng.rdu2.redhat.com/files/files-https/cirros/cirros-qcow2.img',
   sourceContainer: 'kubevirt/cirros-registry-disk-demo',
   cloudInitScript: `#cloud-config\nuser: cloud-user\npassword: atomic\nchpasswd: {expire: False}\nhostname: vm-${testName}`, // reusing cirros
 };
@@ -108,12 +109,12 @@ export const rootDisk: StorageResource = {
   storageClass: `${STORAGE_CLASS}`,
 };
 
-export const cdContainerDisk: StorageResource = {
+export const cdGuestTools: StorageResource = {
   source: DISK_SOURCE.Container,
   interface: DISK_INTERFACE.VirtIO,
   storageClass: `${STORAGE_CLASS}`,
   sourceConfig: {
-    container: 'test-container',
+    container: 'kubevirt/virtio-container-disk',
   },
 };
 

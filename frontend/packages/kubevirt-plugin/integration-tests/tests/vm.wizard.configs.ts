@@ -4,7 +4,6 @@ import {
   basicVMConfig,
   multusNetworkInterface,
   rootDisk,
-  cdContainerDisk,
   hddDisk,
   dataVolumeManifest,
 } from './utils/mocks';
@@ -86,7 +85,6 @@ export const getProvisionConfigs = () =>
       },
       networkResources: [multusNetworkInterface],
       storageResources: [rootDisk],
-      CDRoms: [cdContainerDisk],
     })
     .set(ProvisionConfigName.CONTAINER, {
       provision: {
