@@ -54,7 +54,7 @@ const ImageStreamTagDropdown: React.FC = () => {
         })
         .catch((error) => {
           setFieldValue('isi', {});
-          setFieldValue('isi.status', error.message);
+          setFieldValue('isi.status', { metadata: {}, status: '', message: error.message });
           setFieldValue('isSearchingForImage', false);
           setValidated(ValidatedOptions.error);
         });
