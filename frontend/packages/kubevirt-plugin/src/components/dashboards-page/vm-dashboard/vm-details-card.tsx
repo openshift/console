@@ -71,11 +71,11 @@ export const VMDetailsCard: React.FC<VMDetailsCardProps> = () => {
           </DetailItem>
           <DetailItem
             title="IP Address"
-            error={!ipAddrs}
+            error={!launcherPod || !ipAddrs}
             isLoading={!vmiLike}
             valueClassName="co-select-to-copy"
           >
-            {ipAddrs}
+            {launcherPod && ipAddrs}
           </DetailItem>
         </DetailsBody>
       </DashboardCardBody>
