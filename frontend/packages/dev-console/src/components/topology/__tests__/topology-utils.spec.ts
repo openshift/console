@@ -17,10 +17,16 @@ import {
   isHelmReleaseNode,
   getTopologyHelmReleaseGroupItem,
   getTrafficConnectors,
+  getTopologyEdgeItems,
 } from '../topology-utils';
 import { DEFAULT_TOPOLOGY_FILTERS } from '../redux/const';
 import { TopologyFilters } from '../filters/filter-utils';
-import { TYPE_HELM_RELEASE, TYPE_OPERATOR_BACKED_SERVICE, TYPE_TRAFFIC_CONNECTOR } from '../const';
+import {
+  TYPE_HELM_RELEASE,
+  TYPE_OPERATOR_BACKED_SERVICE,
+  TYPE_TRAFFIC_CONNECTOR,
+  TYPE_SERVICE_BINDING,
+} from '../const';
 import {
   resources,
   topologyData,
@@ -33,7 +39,11 @@ import {
   MockKialiGraphData,
 } from './topology-test-data';
 import { MockKnativeResources } from './topology-knative-test-data';
-import { serviceBindingRequest } from './service-binding-test-data';
+import {
+  serviceBindingRequest,
+  sbrBackingServiceSelector,
+  sbrBackingServiceSelectors,
+} from './service-binding-test-data';
 
 export function getTranformedTopologyData(
   mockData: TopologyDataResources,
@@ -444,6 +454,43 @@ describe('TopologyUtils ', () => {
     );
     expect(transformedData.graph.edges).toHaveLength(2);
     expect(transformedData.graph.edges[0].type).toEqual(TYPE_TRAFFIC_CONNECTOR);
+  });
+
+  it('should support single  binding service selectors', () => {
+    const testResources = sbrBackingServiceSelector.deployments.data;
+    const deployments = sbrBackingServiceSelector.deployments.data;
+    const sbrs = sbrBackingServiceSelector.serviceBindingRequests.data;
+    expect(getTopologyEdgeItems(deployments[0], testResources, sbrs)).toEqual([
+      {
+        id: `uid-app_uid-db-1`,
+        type: TYPE_SERVICE_BINDING,
+        source: 'uid-app',
+        target: 'uid-db-1',
+        data: { sbr: sbrs[0] },
+      },
+    ]);
+  });
+
+  it('should support multiple binding service selectors', () => {
+    const testResources = sbrBackingServiceSelectors.deployments.data;
+    const deployments = sbrBackingServiceSelectors.deployments.data;
+    const sbrs = sbrBackingServiceSelectors.serviceBindingRequests.data;
+    expect(getTopologyEdgeItems(deployments[0], testResources, sbrs)).toEqual([
+      {
+        id: `uid-app_uid-db-1`,
+        type: TYPE_SERVICE_BINDING,
+        source: 'uid-app',
+        target: 'uid-db-1',
+        data: { sbr: sbrs[0] },
+      },
+      {
+        id: `uid-app_uid-db-2`,
+        type: TYPE_SERVICE_BINDING,
+        source: 'uid-app',
+        target: 'uid-db-2',
+        data: { sbr: sbrs[0] },
+      },
+    ]);
   });
 });
 
