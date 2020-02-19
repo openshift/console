@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as _ from 'lodash';
 import { requirePrometheus } from '@console/internal/components/graphs';
 import { topWorkloadMetricsQueries } from '../queries';
-import MonitoringDashboardGraph from '../dashboard/MonitoringDashboardGraph';
+import ConnectedMonitoringDashboardGraph from '../dashboard/MonitoringDashboardGraph';
 
 const WorkloadGraphs = requirePrometheus(({ resource }) => {
   const namespace = resource?.metadata?.namespace;
@@ -12,7 +12,7 @@ const WorkloadGraphs = requirePrometheus(({ resource }) => {
   return (
     <>
       {_.map(topWorkloadMetricsQueries, (q) => (
-        <MonitoringDashboardGraph
+        <ConnectedMonitoringDashboardGraph
           key={q.title}
           title={q.title}
           namespace={namespace}
