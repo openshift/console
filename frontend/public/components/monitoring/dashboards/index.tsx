@@ -324,7 +324,7 @@ const CardBody_: React.FC<CardBodyProps> = ({ panel, pollInterval, variables }) 
       {panel.type === 'singlestat' && (
         <SingleStat panel={panel} pollInterval={pollInterval} query={queries[0]} />
       )}
-      {panel.type === 'table' && panel.transform === 'table' && (
+      {panel.type === 'table' && (
         <Table panel={panel} pollInterval={pollInterval} queries={queries} />
       )}
     </>
