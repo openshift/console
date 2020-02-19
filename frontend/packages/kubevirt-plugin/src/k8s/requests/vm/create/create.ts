@@ -1,10 +1,7 @@
 import { TemplateModel } from '@console/internal/models';
 import { VMSettingsField } from '../../../../components/create-vm-wizard/types';
 import { getStorageClassConfigMap } from '../../config-map/storage-class';
-import {
-  asSimpleSettings,
-  getFieldValue,
-} from '../../../../components/create-vm-wizard/selectors/vm-settings';
+import { asSimpleSettings } from '../../../../components/create-vm-wizard/selectors/vm-settings';
 import {
   MutableVMTemplateWrapper,
   VMTemplateWrapper,
@@ -24,7 +21,7 @@ import { toShallowJS } from '../../../../utils/immutable';
 import { iGetRelevantTemplate } from '../../../../selectors/immutable/template/combined';
 import { CreateVMEnhancedParams, CreateVMParams } from './types';
 import { initializeVM } from './initialize-vm';
-import { initializeCommonMetadata, initializeCommonVMMetadata } from './common';
+import { getOS, initializeCommonMetadata, initializeCommonVMMetadata } from './common';
 import { selectVM } from '../../../../selectors/vm-template/basic';
 
 export const getInitializedVMTemplate = (params: CreateVMEnhancedParams) => {
@@ -85,7 +82,12 @@ export const createVMTemplate = async (params: CreateVMParams) => {
   });
   const mutableFinalTemplate = new MutableVMTemplateWrapper(finalTemplate.asResource());
 
-  initializeCommonMetadata(enhancedParams, mutableFinalTemplate, template.asMutableResource());
+  initializeCommonMetadata(
+    settings,
+    getOS(enhancedParams),
+    mutableFinalTemplate,
+    template.asMutableResource(),
+  );
 
   const templateResult = await k8sCreate(TemplateModel, mutableFinalTemplate.asMutableResource());
 
@@ -108,6 +110,7 @@ export const createVMTemplate = async (params: CreateVMParams) => {
 export const createVM = async (params: CreateVMParams) => {
   const { enhancedK8sMethods, namespace, vmSettings, openshiftFlag } = params;
   const { k8sGet, k8sCreate, getActualState } = enhancedK8sMethods;
+  const simpleSettings = asSimpleSettings(vmSettings);
 
   const storageClassConfigMap = await getStorageClassConfigMap({ k8sGet });
   const enhancedParams = {
@@ -115,6 +118,7 @@ export const createVM = async (params: CreateVMParams) => {
     storageClassConfigMap,
     isTemplate: false,
   };
+  const operatingSystem = getOS(enhancedParams);
 
   // TODO add VMWARE import
   let vm;
@@ -128,10 +132,7 @@ export const createVM = async (params: CreateVMParams) => {
     // ProcessedTemplates endpoint will reject the request if user cannot post to the namespace
     // common-templates are stored in openshift namespace, default user can read but cannot post
     templateToProcess.setNamespace(namespace);
-    templateToProcess.setParameter(
-      TEMPLATE_PARAM_VM_NAME,
-      getFieldValue(vmSettings, VMSettingsField.NAME),
-    );
+    templateToProcess.setParameter(TEMPLATE_PARAM_VM_NAME, simpleSettings[VMSettingsField.NAME]);
     templateToProcess.unrequireParameters(
       new Set(
         templateToProcess
@@ -150,13 +151,13 @@ export const createVM = async (params: CreateVMParams) => {
 
     vm = new MutableVMWrapper(selectVM(processedTemplate));
     vm.setNamespace(namespace);
-    initializeCommonMetadata(enhancedParams, vm, template.asMutableResource());
+    initializeCommonMetadata(simpleSettings, operatingSystem, vm, template.asMutableResource());
   } else {
     vm = new MutableVMWrapper();
     vm.setModel(VirtualMachineModel)
       .setNamespace(namespace)
-      .setName(getFieldValue(vmSettings, VMSettingsField.NAME));
-    initializeCommonMetadata(enhancedParams, vm);
+      .setName(simpleSettings[VMSettingsField.NAME]);
+    initializeCommonMetadata(simpleSettings, operatingSystem, vm);
     initializeVM(enhancedParams, vm);
   }
   initializeCommonVMMetadata(enhancedParams, vm);
