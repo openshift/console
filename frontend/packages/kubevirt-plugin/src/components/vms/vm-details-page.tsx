@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { navFactory } from '@console/internal/components/utils';
 import { DetailsPage } from '@console/internal/components/factory';
-import { PodModel } from '@console/internal/models';
+import { PodModel, TemplateModel } from '@console/internal/models';
 import { VMDisksFirehose } from '../vm-disks';
 import { VMNics } from '../vm-nics';
 import {
@@ -21,6 +21,7 @@ import { VMConsoleFirehose } from './vm-console';
 import { VMDetailsFirehose } from './vm-details';
 import { vmMenuActionsCreator } from './menu-actions';
 import { VMDashboard } from './vm-dashboard';
+import { TEMPLATE_TYPE_LABEL, TEMPLATE_TYPE_VM } from '../../constants/vm';
 
 export const VirtualMachinesDetailsPage: React.FC<VirtualMachinesDetailsPageProps> = (props) => {
   const { name, ns: namespace } = props.match.params;
@@ -83,6 +84,12 @@ export const VirtualMachinesDetailsPage: React.FC<VirtualMachinesDetailsPageProp
     }),
     getResource(PodModel, { namespace, prop: 'pods' }),
     getResource(VirtualMachineInstanceMigrationModel, { namespace, prop: 'migrations' }),
+    getResource(TemplateModel, {
+      isList: true,
+      namespace,
+      prop: 'templates',
+      matchLabels: { [TEMPLATE_TYPE_LABEL]: TEMPLATE_TYPE_VM },
+    }),
   ];
 
   return (

@@ -27,7 +27,10 @@ export const getVMTemplateNamespacedName = (
   return name && namespace ? { name, namespace } : null;
 };
 
-const getVMTemplate = (vm: VMGenericLikeEntityKind, templates: TemplateKind[]): TemplateKind => {
+export const getVMTemplate = (
+  vm: VMGenericLikeEntityKind,
+  templates: TemplateKind[],
+): TemplateKind => {
   const namespacedName = getVMTemplateNamespacedName(vm);
   return namespacedName
     ? templates.find(
