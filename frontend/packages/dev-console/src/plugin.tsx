@@ -111,6 +111,20 @@ const plugin: Plugin<ConsumedExtensions> = [
     },
   },
   {
+    type: 'NavItem/Href',
+    properties: {
+      perspective: 'dev',
+      componentProps: {
+        name: 'Monitoring',
+        href: '/dev-monitoring',
+        testID: 'monitoring-header',
+      },
+    },
+    flags: {
+      required: [FLAGS.OPENSHIFT],
+    },
+  },
+  {
     type: 'NavItem/ResourceNS',
     properties: {
       perspective: 'dev',
@@ -136,20 +150,6 @@ const plugin: Plugin<ConsumedExtensions> = [
     },
     flags: {
       required: [FLAG_OPENSHIFT_PIPELINE],
-    },
-  },
-  {
-    type: 'NavItem/Href',
-    properties: {
-      perspective: 'dev',
-      componentProps: {
-        name: 'Monitoring',
-        href: '/dev-monitoring',
-        testID: 'monitoring-header',
-      },
-    },
-    flags: {
-      required: [FLAGS.OPENSHIFT],
     },
   },
   {
