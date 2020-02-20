@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useField } from 'formik';
-import { FormGroup, TextInput } from '@patternfly/react-core';
+import { FormGroup, TextInput, ValidatedOptions } from '@patternfly/react-core';
 import { InputFieldProps } from './field-types';
 import { getFieldId } from './field-utils';
 
@@ -9,6 +9,8 @@ const InputField: React.FC<InputFieldProps> = ({
   helpText,
   required,
   onChange,
+  validated,
+  helpTextInvalid,
   ...props
 }) => {
   const [field, { touched, error }] = useField(props.name);
@@ -20,16 +22,16 @@ const InputField: React.FC<InputFieldProps> = ({
       fieldId={fieldId}
       label={label}
       helperText={helpText}
-      helperTextInvalid={errorMessage}
-      isValid={isValid}
+      helperTextInvalid={errorMessage || helpTextInvalid}
+      validated={!isValid ? ValidatedOptions.error : validated}
       isRequired={required}
     >
       <TextInput
         {...field}
         {...props}
         id={fieldId}
-        isValid={isValid}
         isRequired={required}
+        validated={!isValid ? ValidatedOptions.error : validated}
         aria-describedby={`${fieldId}-helper`}
         value={field.value || ''}
         onChange={(value, event) => {
