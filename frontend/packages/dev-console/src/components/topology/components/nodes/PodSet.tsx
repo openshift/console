@@ -1,13 +1,6 @@
 import * as React from 'react';
 import { get } from 'lodash';
-import {
-  PodStatus,
-  calculateRadius,
-  getPodData,
-  podRingLabel,
-  usePodScalingAccessStatus,
-} from '@console/shared';
-import { modelFor, referenceFor } from '@console/internal/module/k8s';
+import { PodStatus, calculateRadius, getPodData, podRingLabel } from '@console/shared';
 import { DonutStatusData } from '../../topology-types';
 
 interface PodSetProps {
@@ -50,16 +43,11 @@ const PodSet: React.FC<PodSetProps> = ({ size, data, x = 0, y = 0, showPodCount 
     data.previous,
     data.isRollingOut,
   );
-  const accessAllowed = usePodScalingAccessStatus(
-    data.dc,
-    modelFor(referenceFor(data.dc)),
-    get(data, ['current', 'pods'], []),
-    true,
-  );
+
   const obj = get(data, ['current', 'obj'], null) || data.dc;
   const { title, subTitle, titleComponent, subTitleComponent } = podRingLabel(
     obj,
-    accessAllowed,
+    data.dc.kind,
     data?.pods,
   );
   return (

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash';
-import { DeploymentConfigModel, DeploymentModel } from '@console/internal/models';
+import { DeploymentConfigModel, DeploymentModel, DaemonSetModel } from '@console/internal/models';
 import { ChartLabel } from '@patternfly/react-charts';
 import {
   K8sResourceKind,
@@ -11,6 +11,7 @@ import { useSafetyFirst } from '@console/internal/components/safety-first';
 import { PodRCData, PodRingResources, PodRingData, ExtPodKind } from '../types';
 import { TransformResourceData } from './resource-utils';
 import { checkPodEditAccess } from './pod-utils';
+import { RevisionModel } from '@console/knative-plugin';
 
 type PodRingLabelType = {
   subTitle: string;
@@ -38,38 +39,104 @@ const applyPods = (podsData: PodRingData, dc: PodRCData) => {
   return podsData;
 };
 
-export const podRingLabel = (
-  obj: K8sResourceKind,
-  canScale: boolean,
-  pods: ExtPodKind[],
-): PodRingLabelType => {
-  const {
-    spec: { replicas },
-    status,
-    kind,
-  } = obj;
-  const { availableReplicas } = status || {};
+const pluralizeString = (count: number, singularString: string, expectedString?: string) =>
+  count && count > 1 ? expectedString || `${singularString}s` : singularString;
 
-  const isPending = (pods?.length === 1 && pods[0].status?.phase === 'Pending') || replicas;
-  const pluralize = replicas > 1 || replicas === 0 ? 'pods' : 'pod';
-  const knativeSubtitle = canScale ? '' : 'to 0';
-  const scalingSubtitle = !replicas ? knativeSubtitle : `scaling to ${replicas}`;
-  const title = availableReplicas || (isPending ? '0' : canScale ? 'Scaled to 0' : 'Autoscaled');
-  const subTitle = replicas !== availableReplicas ? scalingSubtitle : pluralize;
-  const titleComponent =
-    !availableReplicas && !isPending
+const isPendingPods = (
+  pods: ExtPodKind[],
+  currentPodCount: number,
+  desiredPodCount: number,
+): boolean =>
+  (pods?.length === 1 && pods[0].status?.phase === 'Pending') ||
+  (!currentPodCount && !!desiredPodCount);
+const getTitleAndSubtitle = (
+  isPending: boolean,
+  currentPodCount: number,
+  desiredPodCount: number,
+) => {
+  let titlePhrase;
+  let subTitlePhrase;
+
+  // handles the intial state when the first pod is coming up and the state for no pods(scaled to zero)
+  if (!currentPodCount) {
+    titlePhrase = isPending ? '0' : `Scaled to 0`;
+    subTitlePhrase = desiredPodCount ? `scaling to ${desiredPodCount}` : '';
+  }
+
+  // handles the idle state or scaling to desired no. of pods
+  if (currentPodCount) {
+    titlePhrase = currentPodCount.toString();
+    subTitlePhrase =
+      currentPodCount === desiredPodCount
+        ? pluralizeString(currentPodCount, 'pod')
+        : `scaling to ${desiredPodCount}`;
+  }
+
+  return { title: titlePhrase, subTitle: subTitlePhrase };
+};
+
+const getTitleAndSubtitleComponent = (
+  isPending: boolean,
+  currentPodCount: number,
+  kind: string,
+) => ({
+  titleComponent:
+    !currentPodCount && !isPending
       ? React.createElement(ChartLabel, { style: { fontSize: '14px' } })
-      : undefined;
-  const subTitleComponent =
+      : undefined,
+  subTitleComponent:
     kind === 'Revision'
       ? React.createElement(ChartLabel, { style: { fontSize: '14px' } })
-      : undefined;
-  return {
-    title,
-    subTitle,
-    titleComponent,
-    subTitleComponent,
-  };
+      : undefined,
+});
+
+export const podRingLabel = (
+  obj: K8sResourceKind,
+  ownerKind: string,
+  pods: ExtPodKind[],
+): PodRingLabelType => {
+  let currentPodCount;
+  let desiredPodCount;
+  let title;
+  let subTitle;
+  let isPending;
+  switch (ownerKind) {
+    case DaemonSetModel.kind:
+      currentPodCount = obj.status?.currentNumberScheduled;
+      desiredPodCount = obj.status?.desiredNumberScheduled;
+      isPending = isPendingPods(pods, currentPodCount, desiredPodCount);
+      return {
+        ...getTitleAndSubtitle(isPending, currentPodCount, desiredPodCount),
+        ...getTitleAndSubtitleComponent(isPending, currentPodCount, ownerKind),
+      };
+    case RevisionModel.kind:
+      currentPodCount = obj.status?.readyReplicas;
+      desiredPodCount = obj.spec?.replicas;
+      isPending = isPendingPods(pods, currentPodCount, desiredPodCount);
+      if (!isPending && !desiredPodCount) {
+        title = 'Autoscaled';
+        subTitle = 'to 0';
+      } else if (isPending) {
+        title = '0';
+        subTitle = `scaling to ${desiredPodCount}`;
+      } else {
+        title = currentPodCount;
+        subTitle = pluralizeString(currentPodCount, 'pod');
+      }
+      return {
+        title,
+        subTitle,
+        ...getTitleAndSubtitleComponent(isPending, currentPodCount, ownerKind),
+      };
+    default:
+      currentPodCount = obj.status?.readyReplicas;
+      desiredPodCount = obj.spec?.replicas;
+      isPending = isPendingPods(pods, currentPodCount, desiredPodCount);
+      return {
+        ...getTitleAndSubtitle(isPending, currentPodCount, desiredPodCount),
+        ...getTitleAndSubtitleComponent(isPending, currentPodCount, ownerKind),
+      };
+  }
 };
 
 export const usePodScalingAccessStatus = (
