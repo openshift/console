@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { Button, ButtonVariant, Title, Tooltip } from '@patternfly/react-core';
-import { PlusCircleIcon, OutlinedQuestionCircleIcon } from '@patternfly/react-icons';
+import { Title } from '@patternfly/react-core';
 import { Firehose, FirehoseResult } from '@console/internal/components/utils';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { createLookup, getName } from '@console/shared/src';
@@ -34,6 +33,7 @@ import { VmWizardVirtualHardwareRow } from './vm-wizard-virtualhardware-row';
 import './virtual-hardware-tab.scss';
 import { getTemplateValidation } from '../../selectors/template';
 import { TemplateValidations } from 'packages/kubevirt-plugin/src/utils/validations/template/template-validations';
+import { AddCDButton } from '../../../modals/cdrom-vm-modal/cdrom-modal';
 
 const getVirtualStoragesData = (
   storages: VMWizardStorageWithWrappers[],
@@ -94,12 +94,10 @@ const VirtualHardwareTabFirehose: React.FC<VirtualHardwareTabFirehoseProps> = ({
   });
 
   const addButton = (
-    <Button
-      variant={ButtonVariant.link}
+    <AddCDButton
+      className="virtual-hardware-tab-add-btn"
+      text={ATTACH_CD}
       isDisabled={disableAddCD}
-      icon={<PlusCircleIcon />}
-      id="attach-cdrom"
-      className="pf-m-link--align-left virtual-hardware-tab-add-btn"
       onClick={() =>
         withProgress(
           vmWizardStorageModalEnhanced({
@@ -112,9 +110,7 @@ const VirtualHardwareTabFirehose: React.FC<VirtualHardwareTabFirehoseProps> = ({
           }).result,
         )
       }
-    >
-      {ATTACH_CD}
-    </Button>
+    />
   );
 
   return (
@@ -135,14 +131,6 @@ const VirtualHardwareTabFirehose: React.FC<VirtualHardwareTabFirehoseProps> = ({
               row={VmWizardVirtualHardwareRow}
             />
             {addButton}
-            {disableAddCD && (
-              <Tooltip
-                position="bottom"
-                content="You have reached the maximum amount of CD-ROM drives"
-              >
-                <OutlinedQuestionCircleIcon />
-              </Tooltip>
-            )}
           </div>
         </>
       )}
