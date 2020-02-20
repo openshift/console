@@ -41,7 +41,6 @@ describe('Uninstall Kubevirt', () => {
     await cnvView.verifyDelete.sendKeys("openshift-cnv")
     await crudView.isLoaded();
     await confirmAction();
-
   });
 
   it('Verify all CNV related resources are gone', async () => {
