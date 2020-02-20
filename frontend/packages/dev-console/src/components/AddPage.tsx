@@ -131,13 +131,11 @@ const AddPage: React.FC<AddPageProps> = ({ match }) => {
       <NamespacedPage>
         <Firehose resources={[{ kind: 'Project', prop: 'projects', isList: true }]}>
           <ProjectsExistWrapper title="Add">
-            {() =>
-              namespace ? (
-                <RenderEmptyState namespace={namespace} />
-              ) : (
-                <CreateProjectListPage onCreate={handleProjectCreate} title="Add" />
-              )
-            }
+            {namespace ? (
+              <RenderEmptyState namespace={namespace} />
+            ) : (
+              <CreateProjectListPage onCreate={handleProjectCreate} title="Add" />
+            )}
           </ProjectsExistWrapper>
         </Firehose>
       </NamespacedPage>

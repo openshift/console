@@ -14,7 +14,7 @@ import trafficConnectorMock from './__mocks__/traffic-connector.mock';
 export interface RenderProps {
   data?: TopologyDataModel;
   loaded: boolean;
-  loadError: any;
+  loadError: string;
   serviceBinding: boolean;
 }
 

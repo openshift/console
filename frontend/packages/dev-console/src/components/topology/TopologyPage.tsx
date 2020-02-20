@@ -74,7 +74,7 @@ export function renderTopology({ loaded, loadError, serviceBinding, data }: Rend
   );
 }
 
-const TopologyPage: React.FC<Props> = ({
+export const TopologyPage: React.FC<Props> = ({
   match,
   activeApplication,
   knative,
@@ -129,6 +129,7 @@ const TopologyPage: React.FC<Props> = ({
                   variant="link"
                   className="odc-topology__shortcuts-button"
                   icon={<QuestionCircleIcon />}
+                  data-test-id="topology-view-shortcuts"
                 >
                   View shortcuts
                 </Button>
@@ -149,35 +150,33 @@ const TopologyPage: React.FC<Props> = ({
       >
         <Firehose resources={[{ kind: 'Project', prop: 'projects', isList: true }]}>
           <ProjectsExistWrapper title="Topology">
-            {() => {
-              return namespace ? (
-                showListView ? (
-                  <AsyncComponent
-                    mock={false}
-                    match={match}
-                    title=""
-                    loader={() =>
-                      import(
-                        '@console/internal/components/overview' /* webpackChunkName: "topology-overview" */
-                      ).then((m) => m.Overview)
-                    }
-                  />
-                ) : (
-                  <ConnectedTopologyDataController
-                    application={application}
-                    namespace={namespace}
-                    render={renderTopology}
-                    knative={knative}
-                    cheURL={cheURL}
-                    serviceBinding={serviceBinding}
-                  />
-                )
+            {namespace ? (
+              showListView ? (
+                <AsyncComponent
+                  mock={false}
+                  match={match}
+                  title=""
+                  loader={() =>
+                    import(
+                      '@console/internal/components/overview' /* webpackChunkName: "topology-overview" */
+                    ).then((m) => m.Overview)
+                  }
+                />
               ) : (
-                <ProjectListPage title="Topology">
-                  Select a project to view the topology
-                </ProjectListPage>
-              );
-            }}
+                <ConnectedTopologyDataController
+                  application={application}
+                  namespace={namespace}
+                  render={renderTopology}
+                  knative={knative}
+                  cheURL={cheURL}
+                  serviceBinding={serviceBinding}
+                />
+              )
+            ) : (
+              <ProjectListPage title="Topology">
+                Select a project to view the topology
+              </ProjectListPage>
+            )}
           </ProjectsExistWrapper>
         </Firehose>
       </NamespacedPage>

@@ -17,7 +17,7 @@ describe('ProjectsExistWrapper', () => {
         loaded: true,
         loadError: '',
       },
-      children: () => <span />,
+      children: <span />,
     };
   });
 
