@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { ResourceSummary, NodeLink, ResourceLink } from '@console/internal/components/utils';
-import { K8sKind, PodKind } from '@console/internal/module/k8s';
+import { K8sKind, PodKind, TemplateKind } from '@console/internal/module/k8s';
 import { getName, getNamespace, getNodeName } from '@console/shared';
 import { PodModel } from '@console/internal/models';
 import { VMKind, VMIKind } from '../../types';
@@ -12,7 +12,7 @@ import { DedicatedResourcesModal } from '../modals/dedicated-resources-modal/ded
 import { BootOrderModal } from '../modals/boot-order-modal/boot-order-modal';
 import VMStatusModal from '../modals/vm-status-modal/vm-status-modal';
 import { getDescription } from '../../selectors/selectors';
-import { getVMTemplateNamespacedName } from '../../selectors/vm-template/selectors';
+import { getVMTemplate } from '../../selectors/vm-template/selectors';
 import { getFlavorText } from '../flavor-text';
 import { EditButton } from '../edit-button';
 import { VMStatuses } from '../vm-status';
@@ -58,12 +58,13 @@ export const VMResourceSummary: React.FC<VMResourceSummaryProps> = ({
   vm,
   vmi,
   canUpdateVM,
+  templates,
   kindObj,
 }) => {
   const isVM = kindObj === VirtualMachineModel;
   const vmiLike = isVM ? vm : vmi;
 
-  const templateNamespacedName = getVMTemplateNamespacedName(vm);
+  const template = getVMTemplate(vm, templates);
   const id = getBasicID(vmiLike);
   const description = getDescription(vmiLike);
   const os = getOperatingSystemName(vmiLike) || getOperatingSystem(vmiLike);
@@ -89,12 +90,10 @@ export const VMResourceSummary: React.FC<VMResourceSummaryProps> = ({
       </VMDetailsItem>
 
       {isVM && (
-        <VMDetailsItem
-          title="Template"
-          idValue={prefixedID(id, 'template')}
-          isNotAvail={!templateNamespacedName}
-        >
-          {templateNamespacedName && <VMTemplateLink {...templateNamespacedName} />}
+        <VMDetailsItem title="Template" idValue={prefixedID(id, 'template')} isNotAvail={!template}>
+          {template && (
+            <VMTemplateLink name={getName(template)} namespace={getNamespace(template)} />
+          )}
         </VMDetailsItem>
       )}
     </ResourceSummary>
@@ -251,6 +250,7 @@ type VMResourceSummaryProps = {
   kindObj: K8sKind;
   vm?: VMKind;
   vmi?: VMIKind;
+  templates: TemplateKind[];
   canUpdateVM: boolean;
 };
 
