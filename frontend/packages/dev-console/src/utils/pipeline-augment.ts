@@ -321,6 +321,8 @@ export const getTaskStatus = (pipelinerun: PipelineRun, pipeline: Pipeline): Tas
         taskStatus[runStatus.Failed]++;
       } else if (status === 'Cancelled') {
         taskStatus[runStatus.Cancelled]++;
+      } else if (status === 'Skipped') {
+        taskStatus[runStatus.Skipped]++;
       } else {
         taskStatus[runStatus.Pending]++;
       }

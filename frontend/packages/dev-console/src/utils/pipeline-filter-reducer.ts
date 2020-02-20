@@ -8,6 +8,11 @@ export const pipelineRunStatus = (pipelineRun): string => {
   if (isCancelled) {
     return 'Cancelled';
   }
+  const isSkipped = conditions.find((c) => c.reason === 'ConditionCheckFailed');
+  if (isSkipped) {
+    return 'Skipped';
+  }
+
   if (conditions.length === 0) return null;
 
   const condition = conditions.find((c) => c.type === 'Succeeded');
