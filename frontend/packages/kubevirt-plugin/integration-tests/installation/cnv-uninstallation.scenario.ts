@@ -45,7 +45,6 @@ describe('Uninstall Kubevirt', () => {
   });
 
   it('Verify all CNV related resources are gone', async () => {
-    /* clean up the remaining resources - command doesn't work. ask radhim */
-    JSON.parse(execSync(`oc delete apiservices v1alpha3.subresources.kubevirt.io -n openshift-cnv`).toString('utf-8'));
+    execSync('kubectl delete apiservices v1alpha3.subresources.kubevirt.io -n openshift-cnv');
   });
 });
