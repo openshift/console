@@ -102,6 +102,12 @@ export class Wizard {
     await addDiskDialog.create(disk);
   }
 
+  async addCD(cd: StorageResource) {
+    await click(wizardView.addCDButton);
+    const addDiskDialog = new DiskDialog();
+    await addDiskDialog.create(cd);
+  }
+
   /**
    * Edits attributes of a disk.
    * @param   {string}              name     Name of a disk to edit.

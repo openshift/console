@@ -1,6 +1,6 @@
 import { browser, ExpectedConditions as until, Key } from 'protractor';
 import { execSync } from 'child_process';
-import { testName } from '@console/internal-integration-tests/protractor.conf';
+import { appHost, testName } from '@console/internal-integration-tests/protractor.conf';
 import {
   createResource,
   deleteResource,
@@ -56,7 +56,12 @@ describe('KubeVirt VM VNC/Serial consoles', () => {
     await vm.navigateToConsoles();
   }, VM_BOOTUP_TIMEOUT_SECS);
 
-  afterAll(() => {
+  afterAll(async () => {
+    await browser.get(appHost);
+    await browser
+      .switchTo()
+      .alert()
+      .accept();
     deleteResource(vmResource);
   });
 
@@ -74,6 +79,7 @@ describe('KubeVirt VM VNC/Serial consoles', () => {
     await browser.wait(until.presenceOf(serialConsole), PAGE_LOAD_TIMEOUT_SECS);
     await logIntoConsole(serialConsole);
     await sendCommandToConsole(serialConsole, `touch ${serialTestFile}`);
+    await sendCommandToConsole(serialConsole, 'exit');
     const out = execSync(
       `expect ${expectFileExistsScriptPath} ${vm.name} ${vm.namespace} ${serialTestFile}`,
     )

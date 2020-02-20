@@ -4,6 +4,7 @@ import { testName } from '@console/internal-integration-tests/protractor.conf';
 import {
   withResource,
   click,
+  deleteResource,
   waitForStringInElement,
   getDropdownOptions,
   selectDropdownOption,
@@ -38,11 +39,13 @@ const VM_IP = '123.123.123.123';
 
 describe('KubeVirt VM console - RDP', () => {
   beforeAll(async () => {
+    createResource(multusNAD);
     // for cmd-line scripts only
     execSync(`kubectl config set-context --current --namespace=${testName}`, { stdio: 'inherit' });
   });
 
   afterAll(async () => {
+    deleteResource(multusNAD);
     execSync(`kubectl config set-context --current --namespace=default`, { stdio: 'inherit' });
   });
 
@@ -141,7 +144,6 @@ describe('KubeVirt VM console - RDP', () => {
       const windowsConfig = vmConfig(configName.toLowerCase(), testName, provisionConfig);
       const vm = new VirtualMachine(windowsConfig);
       await withResource(leakedResources, vm.asResource(), async () => {
-        createResource(multusNAD);
         /* Pre-requisite:
          * - L2 network is configured on the cluster/node
          * - the Windows-VM has guest-agent installed
