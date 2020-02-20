@@ -17,13 +17,13 @@ const RevisionHeader = () => {
     },
     {
       title: 'Service',
-      sortField: 'obj.metadata.labels["serving.knative.dev/service"]',
+      sortField: 'metadata.labels["serving.knative.dev/service"]',
       transforms: [sortable],
       props: { className: tableColumnClasses[2] },
     },
     {
       title: 'Age',
-      sortField: 'obj.metadata.creationTimestamp',
+      sortField: 'metadata.creationTimestamp',
       transforms: [sortable],
       props: { className: tableColumnClasses[3] },
     },
