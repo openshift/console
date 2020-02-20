@@ -4,7 +4,7 @@ export type ConfigurationKind = K8sResourceKind;
 
 export type RevisionKind = {
   status?: {
-    conditions?: K8sResourceCondition<ConditionTypes>[];
+    conditions?: RevisionCondition[];
   };
 } & K8sResourceKind;
 
@@ -31,6 +31,10 @@ export enum ConditionTypes {
   ContainerHealthy = 'ContainerHealthy',
   ResourcesAvailable = 'ResourcesAvailable',
 }
+
+export type RevisionCondition = {
+  type: keyof typeof ConditionTypes;
+} & K8sResourceCondition;
 
 export type Traffic = {
   revisionName: string;

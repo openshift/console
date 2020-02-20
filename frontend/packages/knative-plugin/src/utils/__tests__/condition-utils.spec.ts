@@ -1,7 +1,7 @@
 import { K8sResourceCondition, K8sResourceConditionStatus } from '@console/internal/module/k8s';
 import { getConditionOKCount, getConditionString, getCondition } from '../condition-utils';
 
-const createCondition = (status: K8sResourceConditionStatus): K8sResourceCondition<any> => ({
+const createCondition = (status: K8sResourceConditionStatus): K8sResourceCondition => ({
   status,
   type: '',
   lastTransitionTime: null,
@@ -9,7 +9,7 @@ const createCondition = (status: K8sResourceConditionStatus): K8sResourceConditi
   message: '',
 });
 
-const createConditionOfType = (type: string): K8sResourceCondition<any> => ({
+const createConditionOfType = (type: string): K8sResourceCondition => ({
   status: K8sResourceConditionStatus.Unknown,
   type,
   lastTransitionTime: null,
