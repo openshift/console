@@ -28,7 +28,7 @@ import { VirtualMachine } from './models/virtualMachine';
 
 describe('Test VM actions', () => {
   const leakedResources = new Set<string>();
-  const testVM = getVMManifest('URL', testName);
+  const testVM = getVMManifest('Container', testName);
 
   afterAll(async () => {
     removeLeakedResources(leakedResources);

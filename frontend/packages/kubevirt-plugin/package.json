@@ -17,7 +17,7 @@
     "entry": "src/plugin.tsx",
     "integrationTestSuites": {
       "kubevirt": [
-        "integration-tests/**/*.scenario.ts"
+        "integration-tests/tests/*.scenario.ts"
       ],
       "kubevirt-v2v": [
         "integration-tests/v2v/*.scenario.ts"

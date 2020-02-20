@@ -1,9 +1,5 @@
 import { testName } from '@console/internal-integration-tests/protractor.conf';
-import {
-  addLeakableResource,
-  removeLeakedResources,
-  createResource,
-} from '@console/shared/src/test-utils/utils';
+import { createResource, deleteResource } from '@console/shared/src/test-utils/utils';
 import { VirtualMachineInstanceModel } from '../../src/models';
 import {
   vmDetailsName,
@@ -21,30 +17,24 @@ import { VM_STATUS, NOT_AVAILABLE } from './utils/consts';
 const waitForVM = async (
   manifest: any,
   status: VM_STATUS,
-  resourcesSet: Set<string>,
   kind?: 'virtualmachines' | 'virtualmachineinstances',
 ) => {
   const vm = new VirtualMachine(manifest.metadata, kind || 'virtualmachines');
-
   createResource(manifest);
-  addLeakableResource(resourcesSet, manifest);
   await vm.waitForStatus(status);
-
   return vm;
 };
 
 describe('Test VMI dashboard', () => {
-  const leakedResources = new Set<string>();
   const testVM = getVMIManifest('Container', testName);
-
   let vm: VirtualMachine;
 
-  afterAll(async () => {
-    removeLeakedResources(leakedResources);
+  afterAll(() => {
+    deleteResource(testVM);
   });
 
   beforeAll(async () => {
-    vm = await waitForVM(testVM, VM_STATUS.Running, leakedResources, 'virtualmachineinstances');
+    vm = await waitForVM(testVM, VM_STATUS.Running, 'virtualmachineinstances');
     await vm.navigateToDashboard();
   });
 

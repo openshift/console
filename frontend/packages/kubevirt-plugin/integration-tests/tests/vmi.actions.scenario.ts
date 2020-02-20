@@ -2,7 +2,6 @@ import { browser, ExpectedConditions as until } from 'protractor';
 import { testName } from '@console/internal-integration-tests/protractor.conf';
 import {
   resourceRows,
-  resourceRowsPresent,
   isLoaded,
   textFilter,
 } from '@console/internal-integration-tests/views/crud.view';
@@ -16,7 +15,7 @@ import {
 import { getVMIManifest } from './utils/mocks';
 import { fillInput } from './utils/utils';
 import {
-  PAGE_LOAD_TIMEOUT_SECS,
+  VM_DELETE_TIMEOUT_SECS,
   VMI_ACTION,
   TAB,
   VM_IMPORT_TIMEOUT_SECS,
@@ -41,12 +40,8 @@ const waitForVM = async (
 
 const waitForVMDelete = async (vm: VirtualMachine) => {
   await vm.navigateToListView();
-  await isLoaded();
-
   await fillInput(textFilter, vm.name);
-  await resourceRowsPresent();
-
-  await browser.wait(until.and(waitForCount(resourceRows, 0)), PAGE_LOAD_TIMEOUT_SECS);
+  await browser.wait(until.and(waitForCount(resourceRows, 0)), VM_DELETE_TIMEOUT_SECS);
 };
 
 describe('Test VMI actions', () => {

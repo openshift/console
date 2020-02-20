@@ -41,6 +41,7 @@ export const vmConfig = (
     name: `${name}-${namespace}`,
     provisionSource: provisionConfig.provision,
     storageResources: provisionConfig.storageResources,
+    CDRoms: provisionConfig.CDRoms,
     networkResources: provisionConfig.networkResources,
   };
 };

@@ -1,64 +1,62 @@
 import { browser, by, element, ExpectedConditions as until } from 'protractor';
 import { testName } from '@console/internal-integration-tests/protractor.conf';
 import {
-  withResource,
   createResources,
   deleteResources,
+  createResource,
+  deleteResource,
   click,
 } from '@console/shared/src/test-utils/utils';
 import * as editCdView from '../views/editCDView';
 import * as virtualMachineView from '../views/virtualMachine.view';
 import { VM_CREATE_AND_EDIT_TIMEOUT_SECS, STORAGE_CLASS, NOT_AVAILABLE } from './utils/consts';
-import { selectOptionByOptionValue } from './utils/utils';
+import { selectOptionByOptionValue, getRandStr } from './utils/utils';
 import { VirtualMachine } from './models/virtualMachine';
-import { vmConfig, getProvisionConfigs, getTestDataVolume } from './vm.wizard.configs';
-import { ProvisionConfigName } from './utils/constants/wizard';
+import { getTestDataVolume } from './vm.wizard.configs';
+import { getVMManifest } from './utils/mocks';
 
 describe('KubeVirt VM detail - edit cdroms', () => {
   const testDataVolume = getTestDataVolume();
+  let testVM;
+  let vm;
 
-  beforeAll(async () => {
+  beforeAll(() => {
     createResources([testDataVolume]);
   });
 
-  afterAll(async () => {
+  afterAll(() => {
     deleteResources([testDataVolume]);
   });
-  const leakedResources = new Set<string>();
-  const provisionConfigs = getProvisionConfigs();
 
-  const configName = ProvisionConfigName.CONTAINER;
-  const provisionConfig = provisionConfigs.get(configName);
+  beforeEach(() => {
+    testVM = getVMManifest('Container', testName, `bootordervm-${getRandStr(5)}`);
+    createResource(testVM);
+    vm = new VirtualMachine(testVM.metadata);
+  });
 
-  provisionConfig.networkResources = [];
-  provisionConfig.storageResources = [];
+  afterEach(() => {
+    deleteResource(vm.asResource());
+  });
 
   it(
     'creates new container CD, then removes it',
     async () => {
-      const vm1Config = vmConfig(configName.toLowerCase(), testName, provisionConfig);
-      vm1Config.startOnCreation = false;
+      await vm.navigateToDetail();
+      await vm.modalEditCDRoms();
 
-      const vm = new VirtualMachine(vmConfig(configName.toLowerCase(), testName, provisionConfig));
-      await withResource(leakedResources, vm.asResource(), async () => {
-        await vm.create(vm1Config);
-        await vm.navigateToDetail();
-        await vm.modalEditCDRoms();
+      await click(editCdView.cdAddBtn);
+      await click(editCdView.saveButton);
+      await browser.wait(until.presenceOf(editCdView.diskSummary));
 
-        await click(editCdView.cdAddBtn);
-        await click(editCdView.saveButton);
-        await browser.wait(until.presenceOf(editCdView.diskSummary));
-
-        await vm.modalEditCDRoms();
-        await click(editCdView.cdDeleteBtn);
-        await click(editCdView.saveButton);
-        await browser.wait(
-          until.textToBePresentInElement(
-            virtualMachineView.vmDetailCd(vm.namespace, vm.name),
-            NOT_AVAILABLE,
-          ),
-        );
-      });
+      await vm.modalEditCDRoms();
+      await click(editCdView.cdDeleteBtn);
+      await click(editCdView.saveButton);
+      await browser.wait(
+        until.textToBePresentInElement(
+          virtualMachineView.vmDetailCd(vm.namespace, vm.name),
+          NOT_AVAILABLE,
+        ),
+      );
     },
     VM_CREATE_AND_EDIT_TIMEOUT_SECS,
   );
@@ -66,37 +64,30 @@ describe('KubeVirt VM detail - edit cdroms', () => {
   it(
     'creates two new container CDs, then ejects and changes them to URL, PVC',
     async () => {
-      const vm1Config = vmConfig(configName.toLowerCase(), testName, provisionConfig);
-      vm1Config.startOnCreation = false;
+      await vm.navigateToDetail();
+      await vm.modalEditCDRoms();
 
-      const vm = new VirtualMachine(vmConfig(configName.toLowerCase(), testName, provisionConfig));
-      await withResource(leakedResources, vm.asResource(), async () => {
-        await vm.create(vm1Config);
-        await vm.navigateToDetail();
-        await vm.modalEditCDRoms();
+      await click(editCdView.cdAddBtn);
+      await click(editCdView.cdAddBtn);
+      await click(editCdView.saveButton);
+      await browser.wait(until.presenceOf(editCdView.diskSummary));
 
-        await click(editCdView.cdAddBtn);
-        await click(editCdView.cdAddBtn);
-        await click(editCdView.saveButton);
-        await browser.wait(until.presenceOf(editCdView.diskSummary));
+      await vm.modalEditCDRoms();
+      await element
+        .all(by.css(editCdView.cdEjectBtn))
+        .then((ejects) => ejects.forEach((eject) => click(eject)));
+      await selectOptionByOptionValue(editCdView.cdTypeSelect(1), 'url');
+      await selectOptionByOptionValue(editCdView.cdStorageClassSelect(1), STORAGE_CLASS);
+      await selectOptionByOptionValue(editCdView.cdTypeSelect(2), 'pvc');
+      await selectOptionByOptionValue(editCdView.cdPVCSelect(2), testDataVolume.metadata.name);
+      await click(editCdView.saveButton);
 
-        await vm.modalEditCDRoms();
-        await element
-          .all(by.css(editCdView.cdEjectBtn))
-          .then((ejects) => ejects.forEach((eject) => click(eject)));
-        await selectOptionByOptionValue(editCdView.cdTypeSelect(1), 'url');
-        await selectOptionByOptionValue(editCdView.cdStorageClassSelect(1), STORAGE_CLASS);
-        await selectOptionByOptionValue(editCdView.cdTypeSelect(2), 'pvc');
-        await selectOptionByOptionValue(editCdView.cdPVCSelect(2), testDataVolume.metadata.name);
-        await click(editCdView.saveButton);
-
-        await browser.wait(
-          until.textToBePresentInElement(editCdView.diskSummary, testDataVolume.metadata.name),
-        );
-        await browser.wait(
-          until.textToBePresentInElement(editCdView.diskSummary, 'http://path/to/iso'),
-        );
-      });
+      await browser.wait(
+        until.textToBePresentInElement(editCdView.diskSummary, testDataVolume.metadata.name),
+      );
+      await browser.wait(
+        until.textToBePresentInElement(editCdView.diskSummary, 'http://path/to/iso'),
+      );
     },
     VM_CREATE_AND_EDIT_TIMEOUT_SECS,
   );
