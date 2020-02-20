@@ -1,4 +1,4 @@
-import { browser, $, element, by, ExpectedConditions as until } from 'protractor';
+import { browser, element, by, ExpectedConditions as until } from 'protractor';
 
 import { appHost, checkLogs, checkErrors, testName } from '../protractor.conf';
 
@@ -35,15 +35,16 @@ describe('Deploy Image', () => {
 
     it('can be used to search for an image', async () => {
       // Put the search term in the search field
-      await element(by.css('[data-test-id="deploy-image-search-term"]')).sendKeys(imageName);
-      // Click the search button
-      await element(by.css('[data-test-id="input-search-field-btn"]')).click();
-      // Wait for the results section to appear
-      await browser.wait(until.presenceOf($('.co-image-name-results__details')));
+      await element(by.css('[data-test-id=deploy-image-search-term]')).sendKeys(imageName);
+
+      //remove focus form image search field
+      await element(by.css('[data-test-id=application-form-app-name]')).click();
+
+      const helperText = 'form-input-searchTerm-field-helper';
+      // Wait for the validation
+      await browser.wait(until.presenceOf(element(by.id(helperText))));
       // Confirm the results appeared
-      expect(
-        element(by.cssContainingText('.co-image-name-results__heading', imageName)).isPresent(),
-      ).toBe(true);
+      expect(element(by.id(helperText)).isPresent()).toBe(true);
     });
 
     it('should auto fill in the application', async () => {

@@ -30,6 +30,7 @@ export interface ImageStreamContextProps {
   dispatch: React.Dispatch<ImageStreamAction>;
   hasImageStreams: boolean;
   setHasImageStreams: (value: boolean) => void;
+  setValidated: (validated: ValidatedOptions) => void;
 }
 export interface SourceToImageFormProps {
   builderImages?: NormalizedBuilderImages;
