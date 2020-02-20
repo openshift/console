@@ -3,7 +3,11 @@
 }
 
 .monitoring-dashboards__dropdown-button {
-  width: 140px;
+  max-width: 280px !important; // allow truncation
+  min-width: 100px;
+  @media (min-width: $screen-sm-min) {
+    max-width: 100% !important;
+  }
 }
 
 .monitoring-dashboards__dropdown-title {
@@ -22,6 +26,12 @@
   @media (min-width: $screen-lg-min) {
     min-width: 225px;
   }
+}
+
+.monitoring-dashboards__header {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
 }
 
 .monitoring-dashboards__options {
@@ -78,6 +88,7 @@
 
 .monitoring-dashboards__variables {
   display: flex;
+  flex-wrap: wrap;
 }
 
 .query-browser__toggle-graph {
