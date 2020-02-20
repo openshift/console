@@ -1,3 +1,5 @@
+import { K8sResourceKind } from '@console/internal/module/k8s';
+
 export interface HelmRelease {
   name: string;
   namespace: string;
@@ -35,6 +37,16 @@ export interface HelmChart {
   values: object;
   lock?: object;
   schema?: string;
+}
+
+export interface HelmReleaseResourcesData {
+  releaseName: string;
+  chartIcon: string;
+  manifestResources: K8sResourceKind[];
+}
+
+export interface HelmReleaseResourcesMap {
+  [name: string]: HelmReleaseResourcesData;
 }
 
 export enum HelmReleaseStatus {
