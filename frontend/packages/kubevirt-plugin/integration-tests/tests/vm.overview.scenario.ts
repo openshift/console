@@ -78,7 +78,7 @@ describe('Test VM overview', () => {
       profile: await vmView.vmDetailWorkloadProfile(testName, vmName).getText(),
       template: await vmView.vmDetailTemplate(testName, vmName).getText(),
       bootOrder: await vmView.vmDetailBootOrder(testName, vmName).getText(),
-      flavor: await vmView.vmDetailFlavor(testName, vmName).getText(),
+      flavorConfig: await vmView.vmDetailFlavor(testName, vmName).getText(),
       ip: await vmView.vmDetailIP(testName, vmName).getText(),
       pod: await vmView.vmDetailPod(testName, vmName).getText(),
       node: await vmView.vmDetailNode(testName, vmName).getText(),

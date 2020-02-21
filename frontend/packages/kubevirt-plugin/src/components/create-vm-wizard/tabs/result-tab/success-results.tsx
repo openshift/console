@@ -34,7 +34,7 @@ const SuccessResultsComponent: React.FC<SuccessResultsProps> = ({
   return (
     <EmptyState variant={EmptyStateVariant.full} className={className}>
       <EmptyStateIcon icon={CheckIcon} color="#92d400" />
-      <Title headingLevel="h5" size="lg">
+      <Title headingLevel="h5" size="lg" data-test-id="kubevirt-wizard-success-result">
         {`Successfully created ${modelName}.`}
       </Title>
       <EmptyStateBody>

@@ -1,10 +1,16 @@
 import { click } from '@console/shared/src/test-utils/utils';
-import { fillInput, selectOptionByText, getSelectedOptionText } from '../utils/utils';
+import {
+  fillInput,
+  selectOptionByText,
+  getSelectedOptionText,
+  getSelectOptions,
+} from '../utils/utils';
 import * as view from '../../views/dialogs/diskDialog.view';
 import { applyButton, saveButton } from '../../views/kubevirtDetailView.view';
 import { StorageResource, DiskSourceConfig } from '../utils/types';
 import { DISK_SOURCE } from '../utils/consts';
-import { waitForNoLoaders } from '../../views/wizard.view';
+import { waitForNoLoaders, modalCancelButton } from '../../views/wizard.view';
+import { browser, ExpectedConditions as until, $ } from 'protractor';
 
 export class DiskDialog {
   sourceMethods = {
@@ -55,6 +61,10 @@ export class DiskDialog {
     return getSelectedOptionText(view.diskSource);
   }
 
+  async getInterfaceOptions() {
+    return getSelectOptions(view.diskInterface);
+  }
+
   async create(disk: StorageResource) {
     await waitForNoLoaders();
     await selectOptionByText(view.diskSource, disk.source || DISK_SOURCE.Blank);
@@ -84,5 +94,10 @@ export class DiskDialog {
     }
     await click(saveButton);
     await waitForNoLoaders();
+  }
+
+  async close() {
+    await click(modalCancelButton);
+    await browser.wait(until.not(until.presenceOf($('.co-overlay'))));
   }
 }

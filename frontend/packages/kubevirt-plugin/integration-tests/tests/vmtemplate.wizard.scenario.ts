@@ -26,7 +26,7 @@ describe('Kubevirt create VM Template using wizard', () => {
     },
     namespace: testName,
     description: `Default description ${testName}`,
-    flavor: basicVMConfig.flavor,
+    flavorConfig: basicVMConfig.flavorConfig,
     operatingSystem: basicVMConfig.operatingSystem,
     workloadProfile: basicVMConfig.workloadProfile,
   };

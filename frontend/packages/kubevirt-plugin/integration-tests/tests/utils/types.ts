@@ -32,8 +32,8 @@ export type StorageResource = {
 
 export type FlavorConfig = {
   flavor: Flavor;
-  memory?: number;
-  cpu?: number;
+  memory?: string;
+  cpu?: string;
 };
 
 export type CloudInitConfig = {
@@ -60,7 +60,7 @@ export type VMConfig = {
   template?: string;
   provisionSource?: ProvisionOption;
   operatingSystem?: string;
-  flavor?: string;
+  flavorConfig?: FlavorConfig;
   workloadProfile?: string;
   startOnCreation: boolean;
   cloudInit: CloudInitConfig;
@@ -94,7 +94,7 @@ export type VMImportConfig = {
 
 export type BaseVMConfig = {
   operatingSystem: OperatingSystem;
-  flavor: Flavor;
+  flavorConfig: FlavorConfig;
   workloadProfile: WorkloadProfile;
   sourceURL: string;
   sourceContainer: string;
@@ -113,7 +113,7 @@ export type VMTemplateConfig = {
   description: string;
   provisionSource?: ProvisionOption;
   operatingSystem?: string;
-  flavor?: string;
+  flavorConfig?: FlavorConfig;
   workloadProfile?: string;
   cloudInit?: CloudInitConfig;
   storageResources?: StorageResource[];
