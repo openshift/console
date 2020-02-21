@@ -1,6 +1,6 @@
 module github.com/openshift/console
 
-go 1.12
+go 1.13
 
 require (
 	github.com/coreos/dex v2.3.0+incompatible
