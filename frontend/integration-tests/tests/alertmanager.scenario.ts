@@ -15,6 +15,7 @@ import * as horizontalnavView from '../views/horizontal-nav.view';
 import { execSync } from 'child_process';
 
 const replaceInput = async (fieldName: string, value: string) => {
+  await browser.wait(until.elementToBeClickable(firstElementByTestID(fieldName)));
   await firstElementByTestID(fieldName).clear();
   await firstElementByTestID(fieldName).sendKeys(value);
 };
@@ -28,7 +29,7 @@ const getGlobalsAndReceiverConfig = (configName: string, yamlStr: string) => {
   };
 };
 
-xdescribe('Alertmanager: PagerDuty Receiver Form', () => {
+describe('Alertmanager: PagerDuty Receiver Form', () => {
   afterAll(() => {
     execSync(
       `kubectl patch secret 'alertmanager-main' -n 'openshift-monitoring' --type='json' -p='[{ op: 'replace', path: '/data/alertmanager.yaml', value: ${monitoringView.defaultAlertmanagerYaml}}]'`,
@@ -125,7 +126,7 @@ xdescribe('Alertmanager: PagerDuty Receiver Form', () => {
   });
 });
 
-xdescribe('Alertmanager: Email Receiver Form', () => {
+describe('Alertmanager: Email Receiver Form', () => {
   afterAll(() => {
     execSync(
       `kubectl patch secret 'alertmanager-main' -n 'openshift-monitoring' --type='json' -p='[{ op: 'replace', path: '/data/alertmanager.yaml', value: ${monitoringView.defaultAlertmanagerYaml}}]'`,
@@ -235,7 +236,7 @@ xdescribe('Alertmanager: Email Receiver Form', () => {
   });
 });
 
-xdescribe('Alertmanager: Slack Receiver Form', () => {
+describe('Alertmanager: Slack Receiver Form', () => {
   afterAll(() => {
     execSync(
       `kubectl patch secret 'alertmanager-main' -n 'openshift-monitoring' --type='json' -p='[{ op: 'replace', path: '/data/alertmanager.yaml', value: ${monitoringView.defaultAlertmanagerYaml}}]'`,
@@ -304,7 +305,7 @@ xdescribe('Alertmanager: Slack Receiver Form', () => {
   });
 });
 
-xdescribe('Alertmanager: Webhook Receiver Form', () => {
+describe('Alertmanager: Webhook Receiver Form', () => {
   afterAll(() => {
     execSync(
       `kubectl patch secret 'alertmanager-main' -n 'openshift-monitoring' --type='json' -p='[{ op: 'replace', path: '/data/alertmanager.yaml', value: ${monitoringView.defaultAlertmanagerYaml}}]'`,
