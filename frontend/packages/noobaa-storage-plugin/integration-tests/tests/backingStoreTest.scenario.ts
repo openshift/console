@@ -24,9 +24,9 @@ describe('Tests creation of Backing Store', () => {
   beforeEach(async () => {
     await operatorsPage();
     await click(ocsOperator);
+    await browser.wait(until.and(crudView.untilNoLoadersPresent));
     const bsLink = await getBackingStoreLink();
     await click(bsLink);
-    await browser.wait(until.and(crudView.untilNoLoadersPresent));
   });
 
   afterEach(async () => {

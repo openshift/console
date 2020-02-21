@@ -13,6 +13,10 @@
     "integrationTestSuites": {
       "noobaa": [
         "integration-tests/**/*.scenario.ts"
+      ],
+      "e2e": [
+        "integration-tests/**/e2e-tests/*.scenario.ts",
+        "integration-tests/**/backingStoreTest.scenario.ts"
       ]
     }
   }

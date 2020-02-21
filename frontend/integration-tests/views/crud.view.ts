@@ -145,8 +145,14 @@ export const modalAnnotationsLink = $(
   '[data-test-id=resource-summary] [data-test-id=edit-annotations]',
 );
 
-export const visitResource = async (resource: string, name: string) => {
-  await browser.get(`${appHost}/k8s/ns/${testName}/${resource}/${name}`);
+export const visitResource = async (
+  resource: string,
+  name: string,
+  isNamespaced: boolean = true,
+) => {
+  isNamespaced
+    ? await browser.get(`${appHost}/k8s/ns/${testName}/${resource}/${name}`)
+    : await browser.get(`${appHost}/k8s/cluster/${resource}/${name}`);
 };
 
 export const clickDetailsPageAction = async (actionID: string) => {
@@ -157,8 +163,13 @@ export const clickDetailsPageAction = async (actionID: string) => {
   await action.click();
 };
 
-export const deleteResource = async (resource: string, kind: string, name: string) => {
-  await visitResource(resource, name);
+export const deleteResource = async (
+  resource: string,
+  kind: string,
+  name: string,
+  isNamespaced: boolean = true,
+) => {
+  await visitResource(resource, name, isNamespaced);
   await isLoaded();
   clickDetailsPageAction(deleteHumanizedKind(kind));
   await browser.wait(until.presenceOf($('#confirm-action')));

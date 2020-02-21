@@ -14,9 +14,9 @@ export const operatorsPage = async () => {
 };
 
 export const getBackingStoreLink = async () => {
-  const index = await getOperatorHubCardIndex('BackingStore');
-  const link = $(`article:nth-child(${index}) a`);
-  return link;
+  // Map index starts from 0 child elements starts from 1
+  const cardIndex = (await getOperatorHubCardIndex('BackingStore')) + 1;
+  return $(`article:nth-child(${cardIndex}) a`);
 };
 
 export const ocsOperator = $('a[data-test-operator-row="OpenShift Container Storage"]');
