@@ -325,6 +325,19 @@ const CardBody = connect(({ UI }: RootState) => ({
   variables: UI.getIn(['monitoringDashboards', 'variables']),
 }))(CardBody_);
 
+// Determine how many columns a panel should span. If panel specifies a `span`, use that. Otherwise
+// look for a `breakpoint` percentage. If neither are specified, default to 12 (full width).
+const getPanelSpan = (panel: Panel): number => {
+  if (panel.span) {
+    return panel.span;
+  }
+  const breakpoint = _.toInteger(_.trimEnd(panel.breakpoint, '%'));
+  if (breakpoint > 0) {
+    return Math.round(12 * (breakpoint / 100));
+  }
+  return 12;
+};
+
 const Card: React.FC<CardProps> = ({ panel }) => {
   if (panel.type === 'row') {
     return (
@@ -336,8 +349,7 @@ const Card: React.FC<CardProps> = ({ panel }) => {
     );
   }
 
-  // If panel doesn't specify a span, default to 12
-  const panelSpan: number = _.get(panel, 'span', 12);
+  const panelSpan: number = getPanelSpan(panel);
   // If panel.span is greater than 12, default colSpan to 12
   const colSpan: number = panelSpan > 12 ? 12 : panelSpan;
   // If colSpan is less than 7, double it for small
