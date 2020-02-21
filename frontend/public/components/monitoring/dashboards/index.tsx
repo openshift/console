@@ -180,7 +180,7 @@ const SingleVariableDropdown = connect(
 
 const AllVariableDropdowns_: React.FC<AllVariableDropdownsProps> = ({ variables }) => (
   <>
-    {_.map(_.keys(variables.toJS()), (name) => (
+    {variables.keySeq().map((name) => (
       <SingleVariableDropdown key={name} name={name} />
     ))}
   </>
@@ -373,10 +373,9 @@ const Board: React.FC<BoardProps> = ({ rows }) => (
 );
 
 const MonitoringDashboardsPage_: React.FC<MonitoringDashboardsPageProps> = ({
-  clearVariables,
   deleteAll,
   match,
-  patchVariable,
+  patchAllVariables,
 }) => {
   const [board, setBoard] = React.useState();
   const [boards, setBoards] = React.useState<Board[]>([]);
@@ -415,31 +414,38 @@ const MonitoringDashboardsPage_: React.FC<MonitoringDashboardsPageProps> = ({
     boards,
   ]);
 
-  const changeBoard = (newBoard: string) => {
-    if (newBoard !== board) {
-      clearVariables();
+  const changeBoard = React.useCallback(
+    (newBoard: string) => {
+      if (newBoard !== board) {
+        const data = _.find(boards, { name: newBoard })?.data;
 
-      const data = _.find(boards, { name: newBoard })?.data;
+        const allVariables = {};
+        _.each(data?.templating?.list, (v) => {
+          if (v.type === 'query' || v.type === 'interval') {
+            allVariables[v.name] = ImmutableMap({
+              isHidden: v.hide !== 0,
+              isLoading: v.type === 'query',
+              options: _.map(v.options, 'value'),
+              query: v.type === 'query' ? v.query : undefined,
+              value: _.find(v.options, { selected: true })?.value || v.options?.[0]?.value,
+            });
+          }
+        });
+        patchAllVariables(allVariables);
 
-      _.each(data?.templating?.list, (v) => {
-        if (v.type === 'query' || v.type === 'interval') {
-          patchVariable(v.name, {
-            isHidden: v.hide !== 0,
-            options: _.map(v.options, 'value'),
-            query: v.type === 'query' ? v.query : undefined,
-            value: _.find(v.options, { selected: true })?.value || v.options?.[0]?.value,
-          });
-        }
-      });
+        setBoard(newBoard);
+        history.replace(`/monitoring/dashboards/${newBoard}`);
+      }
+    },
+    [board, boards, patchAllVariables],
+  );
 
-      setBoard(newBoard);
-      history.replace(`/monitoring/dashboards/${newBoard}`);
+  // Default to displaying the first board
+  React.useEffect(() => {
+    if (!board && !_.isEmpty(boards)) {
+      changeBoard(match.params.board || boards?.[0]?.name);
     }
-  };
-
-  if (!board && !_.isEmpty(boards)) {
-    changeBoard(match.params.board || boards?.[0]?.name);
-  }
+  }, [board, boards, changeBoard, match.params.board]);
 
   if (error) {
     return <ErrorAlert message={error} />;
@@ -478,9 +484,8 @@ const MonitoringDashboardsPage_: React.FC<MonitoringDashboardsPageProps> = ({
   );
 };
 const MonitoringDashboardsPage = connect(null, {
-  clearVariables: UIActions.monitoringDashboardsClearVariables,
   deleteAll: UIActions.queryBrowserDeleteAllQueries,
-  patchVariable: UIActions.monitoringDashboardsPatchVariable,
+  patchAllVariables: UIActions.monitoringDashboardsPatchAllVariables,
 })(MonitoringDashboardsPage_);
 
 type TemplateVariable = {
@@ -541,7 +546,7 @@ type BoardProps = {
 };
 
 type AllVariableDropdownsProps = {
-  variables: ImmutableMap<string, Variable>;
+  variables: ImmutableMap<string, ImmutableMap<string, any>>;
 };
 
 type TimespanDropdownProps = {
@@ -557,7 +562,7 @@ type PollIntervalDropdownProps = {
 type CardBodyProps = {
   panel: Panel;
   pollInterval: null | number;
-  variables: ImmutableMap<string, Variable>;
+  variables: ImmutableMap<string, ImmutableMap<string, any>>;
 };
 
 type CardProps = {
@@ -565,12 +570,11 @@ type CardProps = {
 };
 
 type MonitoringDashboardsPageProps = {
-  clearVariables: () => undefined;
   deleteAll: () => undefined;
   match: {
     params: { board: string };
   };
-  patchVariable: (key: string, patch: Variable) => undefined;
+  patchAllVariables: (variables: VariablesMap) => undefined;
 };
 
 export default withFallback(MonitoringDashboardsPage, ErrorBoundaryFallback);

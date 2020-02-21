@@ -150,6 +150,12 @@ export default (state: UIState, action: UIAction): UIState => {
         ImmutableMap(action.payload.patch),
       );
 
+    case ActionType.MonitoringDashboardsPatchAllVariables:
+      return state.setIn(
+        ['monitoringDashboards', 'variables'],
+        ImmutableMap(action.payload.variables),
+      );
+
     case ActionType.MonitoringDashboardsSetPollInterval:
       return state.setIn(['monitoringDashboards', 'pollInterval'], action.payload.pollInterval);
 
