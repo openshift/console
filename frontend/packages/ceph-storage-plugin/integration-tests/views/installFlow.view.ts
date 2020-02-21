@@ -1,7 +1,7 @@
 import { $, ExpectedConditions as until, browser, $$ } from 'protractor';
 import * as crudView from '@console/internal-integration-tests/views/crud.view';
 import * as sideNavView from '@console/internal-integration-tests/views/sidenav.view';
-import { click } from '@console/shared/src/test-utils/utils';
+import { click, getOperatorHubCardIndex } from '@console/shared/src/test-utils/utils';
 import { appHost } from '@console/internal-integration-tests/protractor.conf';
 import { MINUTE, NS, OCS_OP, SECOND, OCS_OPERATOR_NAME } from '../utils/consts';
 import { waitFor, refreshIfNotVisible } from '../utils/helpers';
@@ -10,7 +10,6 @@ import { waitFor, refreshIfNotVisible } from '../utils/helpers';
 const ocsOperator = $('.co-clusterserviceversion-logo__name__clusterserviceversion');
 export const ocsOperatorStatus = $('.co-clusterserviceversion-row__status');
 const installOperator = $('.pf-m-primary');
-const storageClusterLink = $('article:nth-child(10) a');
 const searchInputOperatorHub = $('input[placeholder="Filter by keyword..."]');
 const searchInputOperators = $('input[placeholder="Filter by name..."]');
 
@@ -158,9 +157,11 @@ export class InstallCluster {
     await browser.wait(until.visibilityOf(searchInputOperators));
     await searchInputOperators.sendKeys(OCS_OPERATOR_NAME);
     await click(ocsOperator);
+    const storageClusterIndex = await getOperatorHubCardIndex('Storage Cluster');
+    const link = $(`article:nth-child(${storageClusterIndex}) a`);
     // Operators page does not directly show tiles so refresh until it shows
-    await refreshIfNotVisible(storageClusterLink, 5);
-    await click(storageClusterLink);
+    await refreshIfNotVisible(link, 5);
+    await click(link);
     await browser.wait(until.and(crudView.untilNoLoadersPresent));
     // Node list fluctautes
     await browser.sleep(20 * SECOND);
