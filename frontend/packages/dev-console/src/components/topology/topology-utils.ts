@@ -120,16 +120,6 @@ export const getRoutesUrl = (resource: OverviewItem): string => {
 };
 
 /**
- * get monitoring status
- */
-export const isEventWarning = (resource: OverviewItem): boolean => {
-  const { events } = resource;
-  if (!events) return false;
-  const eventStatus = _.filter(events, ['type', 'Warning']);
-  return !!eventStatus.length;
-};
-
-/**
  * create instance of TransformResourceData, return object containing all methods
  * @param resources
  * @param utils
@@ -221,7 +211,6 @@ export const createTopologyNodeData = (
         dc: deploymentConfig,
       },
       showPodCount: filters && filters.display.podCount,
-      eventWarning: isEventWarning(dc),
     },
   };
 };
