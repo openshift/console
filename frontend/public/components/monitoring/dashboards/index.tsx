@@ -468,11 +468,13 @@ const MonitoringDashboardsPage_: React.FC<MonitoringDashboardsPageProps> = ({
         <title>Metrics Dashboards</title>
       </Helmet>
       <div className="co-m-nav-title co-m-nav-title--detail">
-        <div className="monitoring-dashboards__options">
-          <TimespanDropdown />
-          <PollIntervalDropdown />
+        <div className="monitoring-dashboards__header">
+          <h1 className="co-m-pane__heading">Dashboards</h1>
+          <div className="monitoring-dashboards__options">
+            <TimespanDropdown />
+            <PollIntervalDropdown />
+          </div>
         </div>
-        <h1 className="co-m-pane__heading">Dashboards</h1>
         <div className="monitoring-dashboards__variables">
           <VariableDropdown
             items={boardItems}
