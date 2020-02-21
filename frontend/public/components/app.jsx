@@ -26,7 +26,7 @@ import '../style.scss';
 import { Page } from '@patternfly/react-core';
 
 const breakpointMD = 768;
-const breakpointLG = 1600;
+const NOTIFICATION_DRAWER_BREAKPOINT = 1800;
 
 const cvResource = [
   {
@@ -48,6 +48,7 @@ class App extends React.PureComponent {
 
     this._onNavToggle = this._onNavToggle.bind(this);
     this._onNavSelect = this._onNavSelect.bind(this);
+    this._onNotificationDrawerToggle = this._onNotificationDrawerToggle.bind(this);
     this._isDesktop = this._isDesktop.bind(this);
     this._onResize = this._onResize.bind(this);
     this.previousDesktopState = this._isDesktop();
@@ -81,7 +82,7 @@ class App extends React.PureComponent {
   }
 
   _isLargeLayout() {
-    return window.innerWidth >= breakpointLG;
+    return window.innerWidth >= NOTIFICATION_DRAWER_BREAKPOINT;
   }
 
   _isDesktop() {
@@ -92,7 +93,7 @@ class App extends React.PureComponent {
     // Some components, like svg charts, need to reflow when nav is toggled.
     // Fire event after a short delay to allow nav animation to complete.
     setTimeout(() => {
-      window.dispatchEvent(new Event('nav_toggle'));
+      window.dispatchEvent(new Event('sidebar_toggle'));
     }, 100);
 
     this.setState((prevState) => {
@@ -100,6 +101,15 @@ class App extends React.PureComponent {
         isNavOpen: !prevState.isNavOpen,
       };
     });
+  }
+
+  _onNotificationDrawerToggle() {
+    if (this._isLargeLayout()) {
+      // Fire event after the drawer animation speed delay.
+      setTimeout(() => {
+        window.dispatchEvent(new Event('sidebar_toggle'));
+      }, 250);
+    }
   }
 
   _onNavSelect() {
@@ -141,7 +151,10 @@ class App extends React.PureComponent {
           }
         >
           <Firehose resources={cvResource}>
-            <ConnectedNotificationDrawer isDesktop={isDrawerInline}>
+            <ConnectedNotificationDrawer
+              isDesktop={isDrawerInline}
+              onDrawerChange={this._onNotificationDrawerToggle}
+            >
               <AppContents />
             </ConnectedNotificationDrawer>
           </Firehose>

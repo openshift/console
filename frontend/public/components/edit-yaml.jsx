@@ -143,13 +143,11 @@ const EditYAML_ = connect(stateToProps)(
     componentDidMount() {
       this.loadYaml();
       window.addEventListener('resize', this.resize);
-      window.addEventListener('nav_toggle', this.resize);
       window.addEventListener('sidebar_toggle', this.resize);
     }
 
     componentWillUnmount() {
       window.removeEventListener('resize', this.resize);
-      window.removeEventListener('nav_toggle', this.resize);
       window.removeEventListener('sidebar_toggle', this.resize);
     }
 

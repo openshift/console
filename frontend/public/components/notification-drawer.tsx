@@ -125,6 +125,7 @@ export const ConnectedNotificationDrawer_: React.FC<ConnectedNotificationDrawerP
   toggleNotificationDrawer,
   toggleNotificationsRead,
   isDrawerExpanded,
+  onDrawerChange,
   notificationsRead,
   alerts,
   resources,
@@ -202,6 +203,9 @@ export const ConnectedNotificationDrawer_: React.FC<ConnectedNotificationDrawerP
     isDrawerExpanded,
     prevDrawerToggleState,
   ]);
+  React.useEffect(() => {
+    onDrawerChange();
+  }, [isDrawerExpanded, onDrawerChange]);
 
   const emptyState = !_.isEmpty(loadError) ? (
     <AlertErrorState errorText={loadError.message} />
@@ -282,6 +286,7 @@ export type ConnectedNotificationDrawerProps = {
   toggleNotificationDrawer: () => any;
   isDrawerExpanded: boolean;
   notificationsRead: boolean;
+  onDrawerChange: () => void;
   alerts: {
     data: Alert[];
     loaded: boolean;
