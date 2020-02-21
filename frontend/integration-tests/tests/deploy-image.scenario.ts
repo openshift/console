@@ -42,9 +42,12 @@ describe('Deploy Image', () => {
 
       const helperText = 'form-input-searchTerm-field-helper';
       // Wait for the validation
+      await browser.wait(
+        until.presenceOf(element(by.css('.pf-m-success[data-test-id=deploy-image-search-term]'))),
+      );
       await browser.wait(until.presenceOf(element(by.id(helperText))));
       // Confirm the results appeared
-      expect(element(by.id(helperText)).isPresent()).toBe(true);
+      expect(element(by.id(helperText)).getText()).toEqual('Validated');
     });
 
     it('should auto fill in the application', async () => {
