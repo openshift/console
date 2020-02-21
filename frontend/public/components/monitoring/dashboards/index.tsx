@@ -379,7 +379,7 @@ const MonitoringDashboardsPage_: React.FC<MonitoringDashboardsPageProps> = ({
   patchVariable,
 }) => {
   const [board, setBoard] = React.useState();
-  const [boards, setBoards] = React.useState([]);
+  const [boards, setBoards] = React.useState<Board[]>([]);
   const [error, setError] = React.useState();
   const [isLoading, , , setLoaded] = useBoolean(true);
 
@@ -394,7 +394,7 @@ const MonitoringDashboardsPage_: React.FC<MonitoringDashboardsPageProps> = ({
         setLoaded();
         setError(undefined);
 
-        const getBoardData = (item) => ({
+        const getBoardData = (item): Board => ({
           data: JSON.parse(_.values(item?.data)[0]),
           name: item.metadata.name,
         });
@@ -421,7 +421,7 @@ const MonitoringDashboardsPage_: React.FC<MonitoringDashboardsPageProps> = ({
 
       const data = _.find(boards, { name: newBoard })?.data;
 
-      _.each(data?.templating?.list as TemplateVariable[], (v) => {
+      _.each(data?.templating?.list, (v) => {
         if (v.type === 'query' || v.type === 'interval') {
           patchVariable(v.name, {
             isHidden: v.hide !== 0,
@@ -491,6 +491,22 @@ type TemplateVariable = {
   type: string;
 };
 
+type Row = {
+  panels: Panel[];
+};
+
+type Board = {
+  data: {
+    panels: Panel[];
+    rows: Row[];
+    templating: {
+      list: TemplateVariable[];
+    };
+    title: string;
+  };
+  name: string;
+};
+
 type Variable = {
   isHidden?: boolean;
   isLoading?: boolean;
@@ -521,7 +537,7 @@ type SingleVariableDropdownProps = {
 };
 
 type BoardProps = {
-  rows: Panel[];
+  rows: Row[];
 };
 
 type AllVariableDropdownsProps = {
