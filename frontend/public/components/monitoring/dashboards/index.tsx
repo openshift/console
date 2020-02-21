@@ -254,7 +254,7 @@ const PollIntervalDropdown_: React.FC<PollIntervalDropdownProps> = ({
       items={pollIntervalOptions}
       label="Refresh Interval"
       onChange={onChange}
-      selectedKey={formatPrometheusDuration(pollInterval)}
+      selectedKey={pollInterval === null ? pollOffText : formatPrometheusDuration(pollInterval)}
     />
   );
 };
