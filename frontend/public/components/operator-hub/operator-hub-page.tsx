@@ -17,9 +17,10 @@ import { OperatorHubItem, OperatorHubCSVAnnotations } from './index';
 export const OperatorHubList: React.SFC<OperatorHubListProps> = (props) => {
   const {operatorGroup, subscription, loaded, loadError, namespace = ''} = props;
   const marketplaceItems = _.get(props.marketplacePackageManifest, 'data', [] as PackageManifestKind[]);
-  const localItems = _.get(props.packageManifest, 'data', [] as PackageManifestKind[]);
+  const localItems = _.get(props, 'packageManifest.data', [] as PackageManifestKind[]);
   const items = marketplaceItems.concat(localItems).map(pkg => {
-    const {currentCSVDesc} = _.get(pkg, 'status.channels[0]', {});
+    const { channels, defaultChannel } = _.get(pkg, 'status');
+    const { currentCSVDesc } = _.find(channels || [], { name: defaultChannel });
     const currentCSVAnnotations: OperatorHubCSVAnnotations = _.get(currentCSVDesc, 'annotations', {});
 
     return {
