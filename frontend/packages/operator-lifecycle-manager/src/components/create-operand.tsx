@@ -536,6 +536,7 @@ export const CreateOperandForm: React.FC<CreateOperandFormProps> = ({
         .split(SpecCapability.k8sResourcePrefix)[1]
         .replace('core~v1~', '');
       const model = modelFor(groupVersionKind);
+      const selectedKey = `${formValues[field.path]}-${model.kind}`;
 
       return (
         <div>
@@ -547,6 +548,7 @@ export const CreateOperandForm: React.FC<CreateOperandFormProps> = ({
               desc={field.displayName}
               placeholder={`Select ${kindForReference(groupVersionKind)}`}
               onChange={(name) => updateFormValues(field.path, name)}
+              selectedKey={selectedKey}
             />
           ) : (
             <span>Cluster does not have resource {groupVersionKind}</span>
