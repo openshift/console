@@ -7,7 +7,7 @@ import {
 } from '@console/shared/src/test-utils/utils';
 import { getDetailActionDropdownOptions } from '../views/vm.actions.view';
 import { vmDetailNode } from '../views/virtualMachine.view';
-import { getRandStr } from './utils/utils';
+import { getRandStr, condSpec, resolveStorageDataAttribute } from './utils/utils';
 import { getVMManifest } from './utils/mocks';
 import {
   VM_BOOTUP_TIMEOUT_SECS,
@@ -15,9 +15,11 @@ import {
   VM_MIGRATION_TIMEOUT_SECS,
   VM_IMPORT_TIMEOUT_SECS,
   PAGE_LOAD_TIMEOUT_SECS,
+  READ_WRITE_MANY_ACCESS_MODE,
   VM_ACTION,
   VM_STATUS,
 } from './utils/consts';
+import { kubevirtStorage } from './vm.wizard.configs';
 import { VirtualMachine } from './models/virtualMachine';
 
 describe('Test VM Migration', () => {
@@ -27,21 +29,26 @@ describe('Test VM Migration', () => {
   const MIGRATE_VM = 'Migrate Virtual Machine';
   const CANCEL_MIGRATION = 'Cancel Virtual Machine Migration';
   const VM_BOOT_AND_MIGRATE_TIMEOUT = VM_BOOTUP_TIMEOUT_SECS + VM_MIGRATION_TIMEOUT_SECS;
+  const STORAGE_ACCESS_MODE = resolveStorageDataAttribute(kubevirtStorage, 'accessMode');
+  const SKIP_REASON = 'SC with RWM accessMode is required';
 
-  beforeEach(async () => {
+  const setup = async () => {
     testVm = getVMManifest('URL', testName, `migrationvm-${getRandStr(4)}`);
     vm = new VirtualMachine(testVm.metadata);
     createResource(testVm);
     await vm.waitForStatus(VM_STATUS.Off, VM_IMPORT_TIMEOUT_SECS);
-  }, VM_IMPORT_TIMEOUT_SECS);
+  };
 
   afterEach(() => {
     deleteResource(testVm);
   });
 
-  it(
+  condSpec(
+    () => STORAGE_ACCESS_MODE !== READ_WRITE_MANY_ACCESS_MODE,
+    SKIP_REASON,
     'Migrate VM action button is displayed appropriately',
     async () => {
+      await setup();
       expect(await getDetailActionDropdownOptions()).not.toContain(MIGRATE_VM);
       expect(await getDetailActionDropdownOptions()).not.toContain(CANCEL_MIGRATION);
 
@@ -57,9 +64,12 @@ describe('Test VM Migration', () => {
     VM_BOOTUP_TIMEOUT_SECS,
   );
 
-  it(
+  condSpec(
+    () => STORAGE_ACCESS_MODE !== READ_WRITE_MANY_ACCESS_MODE,
+    SKIP_REASON,
     'Migrate already migrated VM',
     async () => {
+      await setup();
       await vm.action(VM_ACTION.Start);
       let sourceNode = await vm.getNode();
 
@@ -74,9 +84,12 @@ describe('Test VM Migration', () => {
     VM_BOOT_AND_MIGRATE_TIMEOUT * 2,
   );
 
-  it(
+  condSpec(
+    () => STORAGE_ACCESS_MODE !== READ_WRITE_MANY_ACCESS_MODE,
+    SKIP_REASON,
     'Cancel ongoing VM migration',
     async () => {
+      await setup();
       await vm.waitForStatus(VM_STATUS.Off, VM_IMPORT_TIMEOUT_SECS);
       await vm.action(VM_ACTION.Start);
       const sourceNode = await vm.getNode();

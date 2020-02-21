@@ -2,7 +2,7 @@
 import { execSync } from 'child_process';
 import * as _ from 'lodash';
 import { $, $$, browser, by, ExpectedConditions as until } from 'protractor';
-import { testName, appHost } from '@console/internal-integration-tests/protractor.conf';
+import { config, testName, appHost } from '@console/internal-integration-tests/protractor.conf';
 import {
   isLoaded,
   createYAMLButton,
@@ -11,7 +11,7 @@ import {
   createYAMLLink,
   resourceTitle,
 } from '@console/internal-integration-tests/views/crud.view';
-import { click } from '@console/shared/src/test-utils/utils';
+import { click, resolveTimeout } from '@console/shared/src/test-utils/utils';
 import {
   isLoaded as yamlPageIsLoaded,
   saveButton,
@@ -148,4 +148,14 @@ export function resolveStorageDataAttribute(configMap: any, attribute: string): 
     return _.get(configMap, storageClassAttributePath);
   }
   return _.get(configMap, ['data', attribute]);
+}
+
+export function condSpec(condFunc, skipReason, specName, specFunc, specTimeout) {
+  const skipping = condFunc();
+  const title = skipping ? `${specName} Reason: ${skipReason}` : specName;
+  (skipping ? xit : it)(
+    title,
+    specFunc,
+    resolveTimeout(specTimeout, config.jasmineNodeOpts.defaultTimeoutInterval),
+  );
 }
