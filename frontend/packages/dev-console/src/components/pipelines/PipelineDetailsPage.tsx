@@ -39,6 +39,7 @@ class PipelineDetailsPage extends React.Component<DetailsPageProps, PipelineDeta
       .then((res) => {
         // eslint-disable-next-line promise/no-nesting
         k8sList(PipelineRunModel, {
+          ns: this.props.namespace,
           labelSelector: { 'tekton.dev/pipeline': res.metadata.name },
         })
           .then((listres) => {
