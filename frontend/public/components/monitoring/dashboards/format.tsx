@@ -4,6 +4,7 @@ import * as React from 'react';
 import {
   humanizeBinaryBytes,
   humanizeDecimalBytesPerSec,
+  humanizeNumber,
   humanizePacketsPerSec,
 } from '../../utils';
 
@@ -29,8 +30,6 @@ export const formatNumber = (s: string, decimals = 2, format = 'short'): React.R
     case 'short':
     // fall through
     default:
-      return Intl.NumberFormat(undefined, {
-        maximumFractionDigits: decimals,
-      }).format(value);
+      return humanizeNumber(value).string;
   }
 };
