@@ -172,7 +172,7 @@ const Table: React.FC<Props> = ({ panel, pollInterval, queries }) => {
         </PFTable>
       </div>
       <TablePagination
-        itemCount={rows.length}
+        itemCount={sortedData.length}
         paginationOptions={paginationOptions}
         page={page}
         perPage={perPage}
