@@ -99,7 +99,6 @@ export const RecentEventsBodyContent: React.FC<RecentEventsBodyContentProps> = (
         className="co-activity-card__recent-list"
         events={sortedEvents}
         EventComponent={eventItem}
-        scrollableElementId="activity-body"
       />
     </Accordion>
   );
