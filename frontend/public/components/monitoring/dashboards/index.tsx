@@ -14,7 +14,6 @@ import DashboardCardHeader from '@console/shared/src/components/dashboard/dashbo
 import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
 
 import * as UIActions from '../../../actions/ui';
-import { k8sBasePath } from '../../../module/k8s';
 import { ErrorBoundaryFallback } from '../../error';
 import { RootState } from '../../../redux';
 import { getPrometheusURL, PrometheusEndpoint } from '../../graphs/helpers';
@@ -268,30 +267,21 @@ const PollIntervalDropdown = connect(
   },
 )(PollIntervalDropdown_);
 
-// TODO: Dynamically load the list of dashboards
-const boards = [
-  'etcd',
-  'k8s-resources-cluster',
-  'k8s-resources-namespace',
-  'k8s-resources-workloads-namespace',
-  'k8s-resources-node',
-  'k8s-resources-pod',
-  'k8s-resources-workload',
-  'cluster-total',
-  'prometheus',
-  'node-cluster-rsrc-use',
-  'node-rsrc-use',
-];
-const boardItems = _.zipObject(boards, boards);
-
 // Matches Prometheus labels surrounded by {{ }} in the graph legend label templates
 const legendTemplateOptions = { interpolate: /{{([a-zA-Z_][a-zA-Z0-9_]*)}}/g };
 
 const CardBody_: React.FC<CardBodyProps> = ({ panel, pollInterval, variables }) => {
   const formatLegendLabel = React.useCallback(
     (labels, i) => {
-      const compiled = _.template(panel.targets?.[i]?.legendFormat, legendTemplateOptions);
-      return compiled(labels);
+      const legendFormat = panel.targets?.[i]?.legendFormat;
+      const compiled = _.template(legendFormat, legendTemplateOptions);
+      try {
+        return compiled(labels);
+      } catch (e) {
+        // If we can't format the label (e.g. if one of it's variables is missing from `labels`),
+        // show the template string instead
+        return legendFormat;
+      }
     },
     [panel],
   );
@@ -370,74 +360,17 @@ const Card: React.FC<CardProps> = ({ panel }) => {
   );
 };
 
-const Board: React.FC<BoardProps> = ({ board, patchVariable }) => {
-  const [data, setData] = React.useState();
-  const [error, setError] = React.useState<string>();
-
-  const safeFetch = React.useCallback(useSafeFetch(), []);
-
-  React.useEffect(() => {
-    if (!board) {
-      return;
-    }
-    setData(undefined);
-    setError(undefined);
-    const path = `${k8sBasePath}/api/v1/namespaces/openshift-monitoring/configmaps/grafana-dashboard-${board}`;
-    safeFetch(path)
-      .then((response) => {
-        const json = _.get(response, ['data', `${board}.json`]);
-        if (!json) {
-          setError('Dashboard definition JSON not found');
-        } else {
-          const newData = JSON.parse(json);
-
-          _.each(newData?.templating?.list as TemplateVariable[], (v) => {
-            if (v.type === 'query' || v.type === 'interval') {
-              patchVariable(v.name, {
-                isHidden: v.hide !== 0,
-                options: _.map(v.options, 'value'),
-                query: v.type === 'query' ? v.query : undefined,
-                value: _.find(v.options, { selected: true })?.value || v.options?.[0]?.value,
-              });
-            }
-          });
-
-          // Call this after creating the board's variables so we don't trigger a component update
-          // that will fail due to missing variables
-          setData(newData);
-        }
-      })
-      .catch((err) => {
-        if (err.name !== 'AbortError') {
-          setError(_.get(err, 'json.error', err.message));
-        }
-      });
-  }, [board, patchVariable, safeFetch]);
-
-  if (!board) {
-    return null;
-  }
-  if (error) {
-    return <ErrorAlert message={error} />;
-  }
-  if (!data) {
-    return <LoadingInline />;
-  }
-
-  const rows = _.isEmpty(data.rows) ? [{ panels: data.panels }] : data.rows;
-
-  return (
-    <>
-      {_.map(rows, (row, i) => (
-        <div className="row monitoring-dashboards__row" key={i}>
-          {_.map(row.panels, (panel, j) => (
-            <Card key={j} panel={panel} />
-          ))}
-        </div>
-      ))}
-    </>
-  );
-};
+const Board: React.FC<BoardProps> = ({ rows }) => (
+  <>
+    {_.map(rows, (row, i) => (
+      <div className="row monitoring-dashboards__row" key={i}>
+        {_.map(row.panels, (panel) => (
+          <Card key={panel.id} panel={panel} />
+        ))}
+      </div>
+    ))}
+  </>
+);
 
 const MonitoringDashboardsPage_: React.FC<MonitoringDashboardsPageProps> = ({
   clearVariables,
@@ -445,22 +378,75 @@ const MonitoringDashboardsPage_: React.FC<MonitoringDashboardsPageProps> = ({
   match,
   patchVariable,
 }) => {
-  const { board } = match.params;
+  const [board, setBoard] = React.useState();
+  const [boards, setBoards] = React.useState([]);
+  const [error, setError] = React.useState();
+  const [isLoading, , , setLoaded] = useBoolean(true);
+
+  const safeFetch = React.useCallback(useSafeFetch(), []);
 
   // Clear queries on unmount
   React.useEffect(() => deleteAll, [deleteAll]);
 
-  const setBoard = (newBoard: string) => {
+  React.useEffect(() => {
+    safeFetch('/api/console/monitoring-dashboard-config')
+      .then((response) => {
+        setLoaded();
+        setError(undefined);
+
+        const getBoardData = (item) => ({
+          data: JSON.parse(_.values(item?.data)[0]),
+          name: item.metadata.name,
+        });
+        const newBoards = _.sortBy(_.map(response.items, getBoardData), (v) =>
+          _.toLower(v?.data?.title),
+        );
+        setBoards(newBoards);
+      })
+      .catch((err) => {
+        setLoaded();
+        if (err.name !== 'AbortError') {
+          setError(_.get(err, 'json.error', err.message));
+        }
+      });
+  }, [safeFetch, setLoaded]);
+
+  const boardItems = React.useMemo(() => _.mapValues(_.mapKeys(boards, 'name'), 'data.title'), [
+    boards,
+  ]);
+
+  const changeBoard = (newBoard: string) => {
     if (newBoard !== board) {
       clearVariables();
+
+      const data = _.find(boards, { name: newBoard })?.data;
+
+      _.each(data?.templating?.list as TemplateVariable[], (v) => {
+        if (v.type === 'query' || v.type === 'interval') {
+          patchVariable(v.name, {
+            isHidden: v.hide !== 0,
+            options: _.map(v.options, 'value'),
+            query: v.type === 'query' ? v.query : undefined,
+            value: _.find(v.options, { selected: true })?.value || v.options?.[0]?.value,
+          });
+        }
+      });
+
+      setBoard(newBoard);
       history.replace(`/monitoring/dashboards/${newBoard}`);
     }
   };
 
-  if (!board && boards?.[0]) {
-    setBoard(boards[0]);
-    return null;
+  if (!board && !_.isEmpty(boards)) {
+    changeBoard(match.params.board || boards?.[0]?.name);
   }
+
+  if (error) {
+    return <ErrorAlert message={error} />;
+  }
+
+  const data = _.find(boards, { name: board })?.data;
+  const rows = _.isEmpty(data?.rows) ? [{ panels: data?.panels }] : data?.rows;
 
   return (
     <>
@@ -476,18 +462,18 @@ const MonitoringDashboardsPage_: React.FC<MonitoringDashboardsPageProps> = ({
           </div>
         </div>
         <div className="monitoring-dashboards__variables">
-          <VariableDropdown
-            items={boardItems}
-            label="Dashboard"
-            onChange={setBoard}
-            selectedKey={board}
-          />
-          <AllVariableDropdowns />
+          {!_.isEmpty(boardItems) && (
+            <VariableDropdown
+              items={boardItems}
+              label="Dashboard"
+              onChange={changeBoard}
+              selectedKey={board}
+            />
+          )}
+          <AllVariableDropdowns key={board} />
         </div>
       </div>
-      <Dashboard>
-        <Board board={board} patchVariable={patchVariable} />
-      </Dashboard>
+      <Dashboard>{isLoading ? <LoadingInline /> : <Board key={board} rows={rows} />}</Dashboard>
     </>
   );
 };
@@ -535,8 +521,7 @@ type SingleVariableDropdownProps = {
 };
 
 type BoardProps = {
-  board: string;
-  patchVariable: (key: string, patch: Variable) => undefined;
+  rows: Panel[];
 };
 
 type AllVariableDropdownsProps = {
