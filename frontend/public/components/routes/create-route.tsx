@@ -330,6 +330,7 @@ export class CreateRoute extends React.Component<{}, CreateRouteState> {
                 type="button"
                 onClick={() => this.removeAltServiceEntry(index)}
                 variant="link"
+                isInline
               >
                 <MinusCircleIcon className="co-icon-space-r" />
                 Remove Alternate Service
@@ -379,7 +380,7 @@ export class CreateRoute extends React.Component<{}, CreateRouteState> {
                 required
               />
               <div className="help-block" id="name-help">
-                A unique name for the route within the project.
+                <p>A unique name for the route within the project.</p>
               </div>
             </div>
             <div className="form-group co-create-route__hostname">
@@ -395,7 +396,7 @@ export class CreateRoute extends React.Component<{}, CreateRouteState> {
                 aria-describedby="hostname-help"
               />
               <div className="help-block" id="hostname-help">
-                Public hostname for the route. If not specified, a hostname is generated.
+                <p>Public hostname for the route. If not specified, a hostname is generated.</p>
               </div>
             </div>
             <div className="form-group co-create-route__path">
@@ -411,7 +412,7 @@ export class CreateRoute extends React.Component<{}, CreateRouteState> {
                 aria-describedby="path-help"
               />
               <div className="help-block" id="path-help">
-                Path that the router watches to route traffic to the service.
+                <p>Path that the router watches to route traffic to the service.</p>
               </div>
             </div>
             <div className="form-group co-create-route__service">
@@ -439,7 +440,7 @@ export class CreateRoute extends React.Component<{}, CreateRouteState> {
                 />
               )}
               <div className="help-block" id="service-help">
-                Service to route to.
+                <p>Service to route to.</p>
               </div>
             </div>
             {alternateServicesList.length > 0 && (
@@ -455,8 +456,10 @@ export class CreateRoute extends React.Component<{}, CreateRouteState> {
                     aria-describedby="weight-help"
                   />
                   <div className="help-block" id="weight-help">
-                    A number between 0 and 255 that depicts relative weight compared with other
-                    targets.
+                    <p>
+                      A number between 0 and 255 that depicts relative weight compared with other
+                      targets.
+                    </p>
                   </div>
                 </div>
                 {alternateServicesList}
@@ -470,6 +473,7 @@ export class CreateRoute extends React.Component<{}, CreateRouteState> {
                   onClick={this.addAltServiceEntry}
                   type="button"
                   variant="link"
+                  isInline
                 >
                   <PlusCircleIcon className="co-icon-space-r" />
                   Add Alternate Service
@@ -491,8 +495,10 @@ export class CreateRoute extends React.Component<{}, CreateRouteState> {
                 />
               )}
               <div className="help-block" id="target-port-help">
-                Target port for traffic.
+                <p>Target port for traffic.</p>
               </div>
+            </div>
+            <div className="form-group co-create-route__security">
               <label className="control-label">Security</label>
               <div className="checkbox">
                 <label>
@@ -542,7 +548,7 @@ export class CreateRoute extends React.Component<{}, CreateRouteState> {
                       describedBy="insecure-traffic-help"
                     />
                     <div className="help-block" id="insecure-traffic-help">
-                      Policy for traffic on insecure schemes like HTTP.
+                      <p>Policy for traffic on insecure schemes like HTTP.</p>
                     </div>
                   </div>
                   {termination && termination !== 'passthrough' && (
@@ -642,7 +648,7 @@ export const AlternateServicesGroup: React.FC<AlternateServiceEntryGroupProps> =
   }, [name, weight, index, onChange]);
 
   return (
-    <div className="co-m-pane__body-group">
+    <>
       <div className="form-group">
         <label htmlFor={`${index}-alt-service`}>Alternate Service Target</label>
         <Dropdown
@@ -654,7 +660,7 @@ export const AlternateServicesGroup: React.FC<AlternateServiceEntryGroupProps> =
           describedby={`${index}-alt-service-help`}
         />
         <div className="help-block" id={`${index}-alt-service-help`}>
-          Alternate service to route to.
+          <p>Alternate service to route to.</p>
         </div>
       </div>
       <div className="form-group">
@@ -668,10 +674,12 @@ export const AlternateServicesGroup: React.FC<AlternateServiceEntryGroupProps> =
           aria-describedby={`${index}-alt-weight-help`}
         />
         <div className="help-block" id={`${index}-alt-weight-help`}>
-          A number between 0 and 255 that depicts relative weight compared with other targets.
+          <p>
+            A number between 0 and 255 that depicts relative weight compared with other targets.
+          </p>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 
