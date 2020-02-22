@@ -10,9 +10,11 @@ import {
   vmDetailFlavorEditButton,
   vmDetailCdEditButton,
   vmDetailBootOrderEditButton,
+  vmDetailDedicatedResourcesEditButton,
 } from '../../views/virtualMachine.view';
 import * as editCD from '../../views/editCDView';
 import * as editBootOrder from '../../views/editBootOrderView';
+import * as editDedicatedResourcesView from '../../views/editDedicatedResourcesView';
 import { NetworkInterfaceDialog } from '../dialogs/networkInterfaceDialog';
 import { DiskDialog } from '../dialogs/diskDialog';
 import { DetailView } from './detailView';
@@ -95,5 +97,10 @@ export class KubevirtDetailView extends DetailView {
   async modalEditBootOrder() {
     await click(vmDetailBootOrderEditButton(this.namespace, this.name));
     await browser.wait(until.presenceOf(editBootOrder.bootOrderDialog));
+  }
+
+  async modalEditDedicatedResources() {
+    await click(vmDetailDedicatedResourcesEditButton(this.namespace, this.name));
+    await browser.wait(until.presenceOf(editDedicatedResourcesView.guaranteedPolicyCheckbox));
   }
 }

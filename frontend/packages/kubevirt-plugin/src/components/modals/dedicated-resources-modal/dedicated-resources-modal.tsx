@@ -46,6 +46,7 @@ const ResourceModal = withHandlePromise<ResourceModalProps>(
     };
     const footer = (
       <ModalFooter
+        id="dedicated-resources"
         className="kubevirt-dedicated-resources__footer"
         warningMessage={!loadError && !isNodeAvailable && RESOURCE_NO_NODES_AVAILABLE}
         errorMessage={showPatchError && errorMessage}
@@ -71,7 +72,7 @@ const ResourceModal = withHandlePromise<ResourceModalProps>(
           label="Schedule this workload with dedicated resources (guaranteed policy)"
           isChecked={isPinned}
           isDisabled={isLoading}
-          onChange={setIsPinned}
+          onChange={(flag) => setIsPinned(flag)}
           id="dedicated-resources-checkbox"
         />
         <Text className="kubevirt-dedicated-resources__helper-text" component={TextVariants.small}>
