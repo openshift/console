@@ -122,7 +122,9 @@ export class AddKeystonePage extends PromiseComponent<{}, AddKeystonePageState> 
     // Clear any previous errors.
     this.setState({ errorMessage: '' });
     this.getOAuthResource().then((oauth: OAuthKind) => {
-      this.addKeystoneIDP(oauth, mockNames.secret, mockNames.ca, true)
+      const mockSecret = this.state.certFileContent ? mockNames.secret : '';
+      const mockCA = this.state.caFileContent ? mockNames.ca : '';
+      this.addKeystoneIDP(oauth, mockSecret, mockCA, true)
         .then(() => {
           const promises = [this.createTLSSecret(), this.createCAConfigMap()];
 
