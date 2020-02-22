@@ -62,6 +62,7 @@ export class ListInput extends React.Component<ListInputProps, ListInputState> {
                 }
                 required={missingValues && i === 0}
                 aria-describedby={helpText ? this.helpID : undefined}
+                data-test-list-input-for={label}
               />
             </div>
             <Button
