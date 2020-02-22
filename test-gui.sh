@@ -25,9 +25,9 @@ then
     unzip "${CHROME_DIR}/chrome-linux-${BRANCH_BASE}.zip" -d "${CHROME_DIR}/${BRANCH_BASE}"
 
     # check sha256sum
-    if [ "$(sha256sum ${CHROME_DIR}/chrome-linux-${BRANCH_BASE}.zip | cut -f 1 -d ' ')" != "${FORCE_CHROME_BRANCH_SHA256SUM}" ];
+    if [ "$(sha256sum "${CHROME_DIR}/chrome-linux-${BRANCH_BASE}.zip" | cut -f 1 -d ' ')" != "${FORCE_CHROME_BRANCH_SHA256SUM}" ];
     then
-      rm -rf "${CHROME_DIR}/${BRANCH_BASE}"
+      rm -rf "${CHROME_DIR:?}/${BRANCH_BASE}"
 
       echo "ERROR: chrmoe binary sha256 missmatch"
       exit 1

@@ -7,7 +7,7 @@ set -exuo pipefail
     --ca-file=examples/ca.crt \
     --k8s-auth=openshift \
     --k8s-mode=off-cluster \
-    --k8s-mode-off-cluster-endpoint=$(oc whoami --show-server) \
+    --k8s-mode-off-cluster-endpoint="$(oc whoami --show-server)" \
     --k8s-mode-off-cluster-skip-verify-tls=true \
     --listen=http://127.0.0.1:9000 \
     --public-dir=./frontend/public/dist \
@@ -15,6 +15,6 @@ set -exuo pipefail
     --user-auth-oidc-client-id=console-oauth-client \
     --user-auth-oidc-client-secret-file=examples/console-client-secret \
     --user-auth-oidc-ca-file=examples/ca.crt \
-    --k8s-mode-off-cluster-prometheus=$(oc -n openshift-monitoring get configmap sharing-config -o jsonpath='{.data.prometheusURL}')  \
-    --k8s-mode-off-cluster-alertmanager=$(oc -n openshift-monitoring get configmap sharing-config -o jsonpath='{.data.alertmanagerURL}') \
-    --k8s-mode-off-cluster-thanos=$(oc -n openshift-monitoring get configmap sharing-config -o jsonpath='{.data.prometheusURL}')
+    --k8s-mode-off-cluster-prometheus="$(oc -n openshift-monitoring get configmap sharing-config -o jsonpath='{.data.prometheusURL}')"  \
+    --k8s-mode-off-cluster-alertmanager="$(oc -n openshift-monitoring get configmap sharing-config -o jsonpath='{.data.alertmanagerURL}')" \
+    --k8s-mode-off-cluster-thanos="$(oc -n openshift-monitoring get configmap sharing-config -o jsonpath='{.data.prometheusURL}')"
