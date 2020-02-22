@@ -236,7 +236,7 @@ export class AddGitHubPage extends PromiseComponent<{}, AddGitHubPageState> {
           />
           <ButtonBar errorMessage={this.state.errorMessage} inProgress={this.state.inProgress}>
             <ActionGroup className="pf-c-form">
-              <Button type="submit" variant="primary">
+              <Button type="submit" variant="primary" data-test-id="add-idp">
                 Add
               </Button>
               <Button type="button" variant="secondary" onClick={history.goBack}>
