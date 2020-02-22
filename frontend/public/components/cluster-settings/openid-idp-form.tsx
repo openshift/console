@@ -115,7 +115,8 @@ export class AddOpenIDPage extends PromiseComponent<{}, AddOpenIDIDPPageState> {
     // Clear any previous errors.
     this.setState({ errorMessage: '' });
     this.getOAuthResource().then((oauth: OAuthKind) => {
-      this.addOpenIDIDP(oauth, mockNames.secret, mockNames.ca, true)
+      const mockCA = this.state.caFileContent ? mockNames.ca : '';
+      this.addOpenIDIDP(oauth, mockNames.secret, mockCA, true)
         .then(() => {
           const promises = [this.createClientSecret(), this.createCAConfigMap()];
 

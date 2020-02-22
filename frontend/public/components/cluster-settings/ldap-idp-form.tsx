@@ -126,7 +126,9 @@ export class AddLDAPPage extends PromiseComponent<{}, AddLDAPPageState> {
     // Clear any previous errors.
     this.setState({ errorMessage: '' });
     this.getOAuthResource().then((oauth: OAuthKind) => {
-      this.addLDAPIDP(oauth, mockNames.secret, mockNames.ca, true)
+      const mockSecret = this.state.bindPassword ? mockNames.secret : '';
+      const mockCA = this.state.caFileContent ? mockNames.ca : '';
+      this.addLDAPIDP(oauth, mockSecret, mockCA, true)
         .then(() => {
           const promises = [this.createBindPasswordSecret(), this.createCAConfigMap()];
 

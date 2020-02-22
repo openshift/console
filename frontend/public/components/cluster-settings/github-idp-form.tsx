@@ -105,7 +105,8 @@ export class AddGitHubPage extends PromiseComponent<{}, AddGitHubPageState> {
     // Clear any previous errors.
     this.setState({ errorMessage: '' });
     this.getOAuthResource().then((oauth: OAuthKind) => {
-      this.addGitHubIDP(oauth, mockNames.secret, mockNames.ca, true)
+      const mockCA = this.state.caFileContent ? mockNames.ca : '';
+      this.addGitHubIDP(oauth, mockNames.secret, mockCA, true)
         .then(() => {
           const promises = [this.createClientSecret(), this.createCAConfigMap()];
 
