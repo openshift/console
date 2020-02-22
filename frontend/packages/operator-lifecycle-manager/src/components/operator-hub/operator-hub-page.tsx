@@ -96,6 +96,14 @@ export const OperatorHubList: React.SFC<OperatorHubListProps> = (props) => {
     },
   );
 
+  const uniqueItems = _.uniqBy(items, 'uid');
+  if (uniqueItems.length !== items.length) {
+    // eslint-disable-next-line no-console
+    console.warn(
+      `${items.length - uniqueItems.length} duplicate packagemanifests returned from olm query.`,
+    );
+  }
+
   return (
     <StatusBox
       skeleton={skeletonCatalog}
@@ -120,7 +128,7 @@ export const OperatorHubList: React.SFC<OperatorHubListProps> = (props) => {
         />
       )}
     >
-      <OperatorHubTileView items={items} namespace={namespace} />
+      <OperatorHubTileView items={uniqueItems} namespace={namespace} />
     </StatusBox>
   );
 };
