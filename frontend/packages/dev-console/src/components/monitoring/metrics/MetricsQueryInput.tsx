@@ -1,5 +1,8 @@
 import * as React from 'react';
-import { connect } from 'react-redux';
+// FIXME upgrading redux types is causing many errors at this time
+// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+// @ts-ignore
+import { useSelector, useDispatch } from 'react-redux';
 import * as fuzzy from 'fuzzysearch';
 import { RootState } from '@console/internal/redux';
 import { Button } from '@patternfly/react-core';
@@ -14,27 +17,7 @@ import './MetricsQueryInput.scss';
 const ADD_NEW_QUERY = '#ADD_NEW_QUERY#';
 const CUSTOM_QUERY = 'Custom Query';
 
-type StateProps = {
-  namespace: string;
-  text: string;
-  query: string;
-};
-
-type MetricsQueryInputProps = {
-  patchQuery: (patch: QueryObj) => void;
-  runQueries: () => void;
-  namespace: string;
-  text?: string;
-  query?: string;
-};
-
-export const MetricsQueryInput: React.FC<MetricsQueryInputProps> = ({
-  patchQuery,
-  runQueries,
-  namespace,
-  text,
-  query,
-}) => {
+const MetricsQueryInput: React.FC = () => {
   const items = metricsQuery;
   const autocompleteFilter = (strText, item) => fuzzy(strText, item);
   const defaultActionItem = [
@@ -44,30 +27,38 @@ export const MetricsQueryInput: React.FC<MetricsQueryInputProps> = ({
     },
   ];
 
+  const namespace = useSelector((state: RootState) => getActiveNamespace(state));
+  const queries = useSelector((state: RootState) =>
+    state.UI.getIn(['queryBrowser', 'queries', 0]).toJS(),
+  );
+  const dispatch = useDispatch();
+
   const [title, setTitle] = React.useState('Select Query');
   const [metric, setMetric] = React.useState('');
   const [showPromQl, setShowPromQl] = React.useState(false);
   const [isPromQlDisabled, setIsPromQlDisabled] = React.useState(false);
   React.useEffect(() => {
-    if (metric && metric !== ADD_NEW_QUERY) {
+    const runQueries = () => dispatch(queryBrowserRunQueries());
+    const patchQuery = (v: QueryObj) => dispatch(queryBrowserPatchQuery(0, v));
+    if (metric) {
       const queryMetrics = getTopMetricsQueries(namespace)[metric];
-      patchQuery({ text: queryMetrics });
+      patchQuery({ text: queryMetrics || '' });
       runQueries();
     }
-  }, [metric, namespace, patchQuery, runQueries]);
+  }, [dispatch, metric, namespace]);
 
   React.useEffect(() => {
+    const query = queries?.query;
+    const text = queries?.text;
     if (text && text.localeCompare(query) !== 0) {
       setTitle(CUSTOM_QUERY);
       setIsPromQlDisabled(true);
     }
-  }, [text, query]);
+  }, [queries]);
 
   const onChange = (selectedValue: string) => {
     setMetric(selectedValue);
     if (selectedValue && selectedValue === ADD_NEW_QUERY) {
-      patchQuery({ text: '' });
-      runQueries();
       setTitle(CUSTOM_QUERY);
       setIsPromQlDisabled(true);
       setShowPromQl(true);
@@ -113,15 +104,4 @@ export const MetricsQueryInput: React.FC<MetricsQueryInputProps> = ({
   );
 };
 
-const mapStateToProps = (state: RootState): StateProps => ({
-  namespace: getActiveNamespace(state),
-  text: state.UI.getIn(['queryBrowser', 'queries', 0, 'text']),
-  query: state.UI.getIn(['queryBrowser', 'queries', 0, 'query']),
-});
-
-const mapDispatchToProps = (dispatch) => ({
-  runQueries: () => dispatch(queryBrowserRunQueries()),
-  patchQuery: (v: QueryObj) => dispatch(queryBrowserPatchQuery(0, v)),
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(MetricsQueryInput);
+export default MetricsQueryInput;

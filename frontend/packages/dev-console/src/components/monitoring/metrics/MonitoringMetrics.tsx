@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
-import ConnectedMetricsQueryInput from './MetricsQueryInput';
+import MetricsQueryInput from './MetricsQueryInput';
 import { connect } from 'react-redux';
 import { getURLSearchParams } from '@console/internal/components/utils';
 import { queryBrowserRunQueries, queryBrowserPatchQuery } from '@console/internal/actions/ui';
@@ -26,7 +26,7 @@ export const MonitoringMetrics: React.FC<MonitoringMetricsProps> = ({ patchQuery
         <title>Metrics</title>
       </Helmet>
       <div className="co-m-pane__body">
-        <ConnectedMetricsQueryInput />
+        <MetricsQueryInput />
         <div className="row">
           <div className="col-xs-12">
             <ConnectedMetricsChart />

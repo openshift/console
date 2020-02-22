@@ -1,42 +1,44 @@
 import * as React from 'react';
+import * as redux from 'react-redux';
 import { shallow } from 'enzyme';
 import { Button } from '@patternfly/react-core';
 import { Dropdown } from '@console/internal/components/utils';
 import { QueryInput } from '@console/internal/components/monitoring/metrics';
-import { MetricsQueryInput } from '../MetricsQueryInput';
+import MetricsQueryInput from '../MetricsQueryInput';
 
 describe('Metrics Query Input', () => {
-  let props: React.ComponentProps<typeof MetricsQueryInput>;
-  beforeEach(() => {
-    props = {
-      namespace: 'my-app',
-      patchQuery: jest.fn(),
-      runQueries: jest.fn(),
-    };
-  });
-
+  // FIXME upgrading redux types is causing many errors at this time
+  // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+  // @ts-ignore
+  const spySelector = jest.spyOn(redux, 'useSelector');
+  spySelector.mockReturnValue({ queryBrowser: { queries: [] } });
+  // FIXME upgrading redux types is causing many errors at this time
+  // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+  // @ts-ignore
+  const spyDispatch = jest.spyOn(redux, 'useDispatch');
+  spyDispatch.mockReturnValue(() => {});
   it('should render Dropdown with default title', () => {
-    const wrapper = shallow(<MetricsQueryInput {...props} />);
+    const wrapper = shallow(<MetricsQueryInput />);
     expect(wrapper.find(Dropdown)).toHaveLength(1);
     expect(wrapper.find(Dropdown).props().title).toEqual('Select Query');
   });
 
   it('should render Button with text "Show PromQL" and not render QueryInput', () => {
-    const wrapper = shallow(<MetricsQueryInput {...props} />);
+    const wrapper = shallow(<MetricsQueryInput />);
     expect(wrapper.find(Button)).toHaveLength(1);
     expect(wrapper.find(Button).props().children).toEqual('Show PromQL');
     expect(wrapper.find(QueryInput).exists()).toBe(false);
   });
 
   it('should update Button with text "Hide PromQL" on click and render QueryInput', () => {
-    const wrapper = shallow(<MetricsQueryInput {...props} />);
+    const wrapper = shallow(<MetricsQueryInput />);
     wrapper.find(Button).simulate('click');
     expect(wrapper.find(Button).props().children).toEqual('Hide PromQL');
     expect(wrapper.find(QueryInput)).toHaveLength(1);
   });
 
   it('Custom Querey selection should update Dropdown title, show QueryInput and Button in disabled state', () => {
-    const wrapper = shallow(<MetricsQueryInput {...props} />);
+    const wrapper = shallow(<MetricsQueryInput />);
     wrapper
       .find(Dropdown)
       .props()
@@ -48,7 +50,7 @@ describe('Metrics Query Input', () => {
   });
 
   it('Metric selection should update Dropdown title and show Button in enabled state', () => {
-    const wrapper = shallow(<MetricsQueryInput {...props} />);
+    const wrapper = shallow(<MetricsQueryInput />);
     wrapper
       .find(Dropdown)
       .props()
