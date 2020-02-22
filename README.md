@@ -211,7 +211,7 @@ yarn run webdriver-update --versions.chrome=77.0.3865.120
 Or if you are using macOS (OS X), run:
 ```
 # automatically select the correct Chrome version
-yarn run webdriver-update-webdriver-update-macos
+yarn run webdriver-update-macos
 ```
 
 
