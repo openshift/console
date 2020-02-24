@@ -366,17 +366,14 @@ class EventStream extends React.Component {
         this.flushMessages();
       })
       .onopen(() => {
-        this.messages = {};
         this.setState({ error: false, loading: false });
       })
       .onclose((evt) => {
         if (evt && evt.wasClean === false) {
           this.setState({ error: evt.reason || 'Connection did not close cleanly.' });
         }
-        this.messages = {};
       })
       .onerror(() => {
-        this.messages = {};
         this.setState({ error: true });
       });
   }
