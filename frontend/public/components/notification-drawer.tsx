@@ -120,6 +120,15 @@ const getUpdateNotificationEntries = (
       ]
     : [];
 
+const pollerTimeouts = {};
+const pollers = {};
+
+export const refreshNotificationPollers = () => {
+  _.each(pollerTimeouts, clearTimeout);
+  _.invoke(pollers, 'silences');
+  _.invoke(pollers, 'notificationAlerts');
+};
+
 export const ConnectedNotificationDrawer_: React.FC<ConnectedNotificationDrawerProps> = ({
   isDesktop,
   toggleNotificationDrawer,
@@ -131,29 +140,49 @@ export const ConnectedNotificationDrawer_: React.FC<ConnectedNotificationDrawerP
   children,
 }) => {
   React.useEffect(() => {
-    let pollerTimeout = null;
-    const poll: NotificationPoll = (url, dataHandler) => {
-      const key = 'notificationAlerts';
+    const poll: NotificationPoll = (url, key: 'notificationAlerts' | 'silences', dataHandler) => {
       store.dispatch(UIActions.monitoringLoading(key));
       const notificationPoller = (): void => {
         coFetchJSON(url)
           .then((response) => dataHandler(response))
           .then((data) => store.dispatch(UIActions.monitoringLoaded(key, data)))
           .catch((e) => store.dispatch(UIActions.monitoringErrored(key, e)))
-          .then(() => (pollerTimeout = setTimeout(notificationPoller, 15 * 1000)));
+          .then(() => (pollerTimeouts[key] = setTimeout(notificationPoller, 15 * 1000)));
       };
+      pollers[key] = notificationPoller;
       notificationPoller();
     };
-    const { prometheusBaseURL } = window.SERVER_FLAGS;
+    const { alertManagerBaseURL, prometheusBaseURL } = window.SERVER_FLAGS;
 
     if (prometheusBaseURL) {
-      poll(`${prometheusBaseURL}/api/v1/rules`, getAlerts);
+      poll(`${prometheusBaseURL}/api/v1/rules`, 'notificationAlerts', getAlerts);
     } else {
       store.dispatch(
         UIActions.monitoringErrored('notificationAlerts', new Error('prometheusBaseURL not set')),
       );
     }
-    return () => pollerTimeout.clearTimeout;
+
+    if (alertManagerBaseURL) {
+      poll(`${alertManagerBaseURL}/api/v1/silences`, 'silences', ({ data }) => {
+        // Set a name field on the Silence to make things easier
+        _.each(data, (s) => {
+          s.name = _.get(_.find(s.matchers, { name: 'alertname' }), 'value');
+          if (!s.name) {
+            // No alertname, so fall back to displaying the other matchers
+            s.name = s.matchers
+              .map((m) => `${m.name}${m.isRegex ? '=~' : '='}${m.value}`)
+              .join(', ');
+          }
+        });
+        return data;
+      });
+    } else {
+      store.dispatch(
+        UIActions.monitoringErrored('silences', new Error('alertManagerBaseURL not set')),
+      );
+    }
+
+    return () => _.each(pollerTimeouts, clearTimeout);
   }, []);
   const cv: ClusterVersionKind = resources.cv?.data;
   const cvLoaded: boolean = resources.cv?.loaded;
@@ -262,7 +291,11 @@ export const ConnectedNotificationDrawer_: React.FC<ConnectedNotificationDrawerP
   );
 };
 
-type NotificationPoll = (url: string, dataHandler: (data) => any) => void;
+type NotificationPoll = (
+  url: string,
+  key: 'notificationAlerts' | 'silences',
+  dataHandler: (data) => any,
+) => void;
 
 export type WithNotificationsProps = {
   isDrawerExpanded: boolean;
@@ -274,6 +307,7 @@ export type WithNotificationsProps = {
       message?: string;
     };
   };
+  silences?: any;
 };
 
 export type ConnectedNotificationDrawerProps = {
@@ -298,6 +332,7 @@ const notificationStateToProps = ({ UI }: RootState): WithNotificationsProps => 
   isDrawerExpanded: !!UI.getIn(['notifications', 'isExpanded']),
   notificationsRead: !!UI.getIn(['notifications', 'isRead']),
   alerts: UI.getIn(['monitoring', 'notificationAlerts']),
+  silences: UI.getIn(['monitoring', 'silences']),
 });
 
 type ActionAlertType = {
