@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { getBadgeFromType } from '@console/shared';
 import { ListPage } from '@console/internal/components/factory';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { PipelineRunModel } from '../../models';
@@ -16,6 +17,7 @@ const PipelineRunsResourceList: React.FC<Omit<
       kind={referenceForModel(PipelineRunModel)}
       ListComponent={PipelineRunsList}
       rowFilters={runFilters}
+      badge={getBadgeFromType(PipelineRunModel.badge)}
     />
   );
 };

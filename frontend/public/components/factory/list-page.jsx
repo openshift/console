@@ -6,7 +6,7 @@ import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { Button } from '@patternfly/react-core';
 
-import { KEYBOARD_SHORTCUTS, getBadgeFromType } from '@console/shared';
+import { KEYBOARD_SHORTCUTS } from '@console/shared';
 import { filterList } from '../../actions/k8s';
 import { CheckBoxes, storagePrefix } from '../row-filter';
 import { ErrorPage404, ErrorBoundaryFallback } from '../error';
@@ -434,7 +434,7 @@ export const ListPage = withFallback((props) => {
       showTitle={showTitle}
       textFilter={textFilter}
       title={title}
-      badge={badge || getBadgeFromType(ko.badge)}
+      badge={badge}
     />
   );
 }, ErrorBoundaryFallback);
