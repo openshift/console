@@ -367,18 +367,17 @@ class EventStream extends React.Component {
       })
       .onopen(() => {
         this.messages = {};
-        this.setState({ error: false, loading: false, sortedMessages: [], filteredEvents: [] });
+        this.setState({ error: false, loading: false });
       })
       .onclose((evt) => {
         if (evt && evt.wasClean === false) {
           this.setState({ error: evt.reason || 'Connection did not close cleanly.' });
         }
         this.messages = {};
-        this.setState({ sortedMessages: [], filteredEvents: [] });
       })
       .onerror(() => {
         this.messages = {};
-        this.setState({ error: true, sortedMessages: [], filteredEvents: [] });
+        this.setState({ error: true });
       });
   }
 
