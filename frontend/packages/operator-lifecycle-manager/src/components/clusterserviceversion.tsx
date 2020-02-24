@@ -604,9 +604,8 @@ export const ClusterServiceVersionDetails: React.SFC<ClusterServiceVersionDetail
   props,
 ) => {
   const { spec, metadata, status } = props.obj;
-  const {
-    'marketplace.openshift.io/support-workflow': marketplaceSupportWorkflow,
-  } = metadata.annotations;
+  const { 'marketplace.openshift.io/support-workflow': marketplaceSupportWorkflow } =
+    metadata.annotations || {};
 
   return (
     <>
