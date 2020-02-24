@@ -22,4 +22,4 @@ approvers:
   - Yitzhak123
   - shreekarSS
 labels:
-  - component/ceph
+  - component/ceph-integration-tests
