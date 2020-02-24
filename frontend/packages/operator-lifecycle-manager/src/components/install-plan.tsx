@@ -39,7 +39,7 @@ import {
   OperatorGroupModel,
   CatalogSourceModel,
 } from '../models';
-import { InstallPlanKind, InstallPlanApproval, Step } from '../types';
+import { InstallPlanKind, InstallPlanApproval, Step, InstallPlanPhase } from '../types';
 import { requireOperatorGroup } from './operator-group';
 import { installPlanPreviewModal } from './modals/installplan-preview-modal';
 import { referenceForStepResource } from './index';
@@ -105,6 +105,7 @@ export const InstallPlanTableRow: React.FC<InstallPlanTableRowProps> = ({
   const phaseFor = (phase: InstallPlanKind['status']['phase']) => <Status status={phase} />;
   return (
     <TableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
+      {/* Name */}
       <TableData className={tableColumnClasses[0]}>
         <ResourceLink
           kind={referenceForModel(InstallPlanModel)}
@@ -113,6 +114,8 @@ export const InstallPlanTableRow: React.FC<InstallPlanTableRowProps> = ({
           title={obj.metadata.uid}
         />
       </TableData>
+
+      {/* Namespace */}
       <TableData className={tableColumnClasses[1]}>
         <ResourceLink
           kind="Namespace"
@@ -121,9 +124,13 @@ export const InstallPlanTableRow: React.FC<InstallPlanTableRowProps> = ({
           displayName={obj.metadata.namespace}
         />
       </TableData>
+
+      {/* Status */}
       <TableData className={tableColumnClasses[2]}>
-        {phaseFor(_.get(obj.status, 'phase')) || 'Unknown'}
+        {phaseFor(_.get(obj, 'status.phase') || 'Unknown')}
       </TableData>
+
+      {/* Components */}
       <TableData className={tableColumnClasses[3]}>
         <ul className="list-unstyled">
           {obj.spec.clusterServiceVersionNames.map((csvName) => (
@@ -145,6 +152,8 @@ export const InstallPlanTableRow: React.FC<InstallPlanTableRowProps> = ({
           ))}
         </ul>
       </TableData>
+
+      {/* Subscriptions */}
       <TableData className={tableColumnClasses[4]}>
         {(obj.metadata.ownerReferences || [])
           .filter((ref) => referenceForOwnerRef(ref) === referenceForModel(SubscriptionModel))
@@ -161,6 +170,8 @@ export const InstallPlanTableRow: React.FC<InstallPlanTableRowProps> = ({
             </ul>
           )) || <span className="text-muted">None</span>}
       </TableData>
+
+      {/* Kebab */}
       <TableData className={tableColumnClasses[5]}>
         <ResourceKebab
           actions={Kebab.factory.common}
