@@ -343,10 +343,10 @@ APIResourcesList.displayName = 'APIResourcesList';
 export const APIExplorerPage: React.FC<{}> = () => (
   <>
     <Helmet>
-      <title>Explore API Resources</title>
+      <title>All Types</title>
     </Helmet>
     <div className="co-m-nav-title">
-      <h1 className="co-m-pane__heading">Explore API Resources</h1>
+      <h1 className="co-m-pane__heading">All Types</h1>
     </div>
     <APIResourcesList />
   </>
@@ -640,11 +640,11 @@ const APIResourcePage_ = ({
 
   const breadcrumbs = [
     {
-      name: 'Explore',
+      name: 'All Types',
       path: '/api-explorer',
     },
     {
-      name: 'Resource Details',
+      name: 'Details',
       path: match.url,
     },
   ];

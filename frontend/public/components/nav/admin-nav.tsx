@@ -98,9 +98,10 @@ const AdminNav = () => (
         required={[FLAGS.CAN_LIST_NS, FLAGS.OPENSHIFT]}
       />
       <ResourceClusterLink resource="projects" name="Projects" required={FLAGS.OPENSHIFT} />
-      <HrefLink href="/search" name="Search" startsWith={searchStartsWith} />
-      <HrefLink href="/api-explorer" name="Explore" startsWith={apiExplorerStartsWith} />
       <ResourceNSLink resource="events" name="Events" />
+      <Separator name="HomeSeparator" />
+      <HrefLink href="/search" name="All Resources" startsWith={searchStartsWith} />
+      <HrefLink href="/api-explorer" name="All Types" startsWith={apiExplorerStartsWith} />
     </NavSection>
 
     <NavSection title="Operators" />

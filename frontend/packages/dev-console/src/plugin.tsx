@@ -158,7 +158,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       section: 'More',
       perspective: 'dev',
       componentProps: {
-        name: 'Search',
+        name: 'All Resources',
         href: '/search',
         testID: 'more-search-header',
       },

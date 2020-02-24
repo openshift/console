@@ -159,9 +159,9 @@ const SearchPage_: React.FC<SearchProps> = (props) => {
   return (
     <>
       <Helmet>
-        <title>Search</title>
+        <title>All Resources</title>
       </Helmet>
-      <PageHeading detail={true} title="Search">
+      <PageHeading detail={true} title="All Resources">
         <div className="co-search-group">
           <ResourceListDropdown
             selected={[...selectedItems]}
