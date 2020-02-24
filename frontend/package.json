@@ -201,6 +201,9 @@
     "webpack-dev-server": "^3.8.1",
     "webpack-virtual-modules": "^0.1.10"
   },
+  "optionalDependencies": {
+    "fsevents": "1.x"
+  },
   "engines": {
     "node": ">=8.x"
   }
