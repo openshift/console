@@ -17,6 +17,7 @@ export interface TopologyDataResources {
   buildConfigs: FirehoseResult;
   builds: FirehoseResult;
   daemonSets?: FirehoseResult;
+  secrets?: FirehoseResult;
   ksroutes?: FirehoseResult;
   configurations?: FirehoseResult;
   revisions?: FirehoseResult;

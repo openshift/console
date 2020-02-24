@@ -10,10 +10,12 @@ type ElementWrapperProps = {
 
 // in a separate component so that changes to behaviors do not re-render children
 const ElementComponent: React.FC<ElementWrapperProps> = observer(({ element }) => {
-  const Component = React.useMemo(
-    () => element.getController().getComponent(element.getKind(), element.getType()),
-    [element],
-  );
+  const kind = element.getKind();
+  const type = element.getType();
+
+  const Component = React.useMemo(() => {
+    return element.getController().getComponent(kind, type);
+  }, [element, kind, type]);
 
   return (
     <ElementContext.Provider value={element}>

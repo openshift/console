@@ -343,16 +343,21 @@ describe('TopologyUtils ', () => {
   });
 
   it('should add to groups with helm grouping type for a helm chart node', () => {
-    let groups = getTopologyHelmReleaseGroupItem(
+    const groups = [];
+    getTopologyHelmReleaseGroupItem(
       sampleDeploymentConfigs.data[0],
-      [],
+      groups,
       sampleHelmResourcesMap,
+      [],
+      {},
     );
     expect(groups).toHaveLength(0);
-    groups = getTopologyHelmReleaseGroupItem(
+    getTopologyHelmReleaseGroupItem(
       sampleHelmChartDeploymentConfig,
-      [],
+      groups,
       sampleHelmResourcesMap,
+      [],
+      {},
     );
     expect(groups).toHaveLength(1);
     expect(groups[0].type).toEqual(TYPE_HELM_RELEASE);
