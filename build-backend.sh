@@ -5,8 +5,6 @@ set -e
 # Builds the server-side golang resources for tectonic-console. For a
 # complete build, you must also run build-frontend
 
-PROJECT_DIR=$(basename ${PWD})
-
 # Use deps from vendor dir.
 export GOFLAGS="-mod=vendor"
 

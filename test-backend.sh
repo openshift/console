@@ -21,12 +21,12 @@ export GOFLAGS="-mod=vendor"
 COVER=${COVER:-"-cover"}
 
 TESTABLE="pkg/auth pkg/proxy pkg/server pkg/helm/actions pkg/helm/handlers"
-FORMATTABLE="cmd pkg"
+FORMATTABLE=(cmd pkg)
 
 # user has not provided PKG override
 if [ -z "${PKG}" ]; then
 	TEST=${TESTABLE}
-	FMT=${FORMATTABLE}
+	FMT=("${FORMATTABLE[@]}")
 
 # user has provided PKG override
 else
@@ -35,28 +35,28 @@ else
 	TEST=${TEST//./}
 
 	# only run gofmt on packages provided by user
-	FMT="${TEST}"
+	FMT=("${TEST[@]}")
 fi
 
 # split TEST into an array and prepend repo path to each local package
-split=(${TEST// / })
-TEST=${split[@]/#/github.com/openshift/console/}
+read -ra split <<<"$TEST"
+TEST=("${split[@]/#/github.com/openshift/console/}")
 
 echo "Running tests..."
-go test ${COVER} $@ ${TEST}
+go test "${COVER}" "$@" "${TEST[@]}"
 
 echo "Checking gofmt..."
-fmtRes=$(gofmt -l ${FMT})
+fmtRes=$(gofmt -l "${FMT[@]}")
 if [ -n "${fmtRes}" ]; then
 	echo -e "gofmt checking failed:\n${fmtRes}"
 	exit 255
 fi
 
 echo "Checking govet..."
-vetRes=$(go vet ${TEST})
+vetRes=$(go vet "${TEST[@]}")
 if [ -n "${vetRes}" ]; then
-        echo -e "govet checking failed:\n${vetRes}"
-        exit 255
+	echo -e "govet checking failed:\n${vetRes}"
+	exit 255
 fi
 
 echo "Success"

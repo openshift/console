@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 CONSOLE_URL=$(oc get console.config.openshift.io cluster --template '{{.status.consoleURL}}')
 if [ -z "${CONSOLE_URL}" ]
@@ -22,8 +22,7 @@ VALID_CIPHER_SAMPLE=(
 
 for CIPHER in "${VALID_CIPHER_SAMPLE[@]}"
 do
-  RESULT=$(openssl s_client -connect "${SERVER}" -cipher "${CIPHER}" -CAfile /tmp/default-ingress-cert-file.txt 2>&1)
-  if [[ $? -eq 0 ]]
+  if openssl s_client -connect "${SERVER}" -cipher "${CIPHER}" -CAfile /tmp/default-ingress-cert-file.txt 2>&1
   then
     echo "valid cipher was correctly accepted (${CIPHER})"
   else    
@@ -47,8 +46,7 @@ INVALID_CIPHER_SAMPLE=(
 
 for CIPHER in "${INVALID_CIPHER_SAMPLE[@]}"
 do
-  RESULT=$(openssl s_client -connect "${SERVER}" -cipher "${CIPHER}" -CAfile /tmp/default-ingress-cert-file.txt 2>&1)
-  if [[ $? -eq 0 ]]
+  if openssl s_client -connect "${SERVER}" -cipher "${CIPHER}" -CAfile /tmp/default-ingress-cert-file.txt 2>&1
   then
     echo "invalid cipher suite used to connect to console (${CIPHER})"  
     exit 1  
