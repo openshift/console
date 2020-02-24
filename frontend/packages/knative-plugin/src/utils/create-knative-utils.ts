@@ -33,11 +33,13 @@ export const getKnativeServiceDepResource = (
     project: { name: namespace },
     serverless: { scaling },
     limits,
-    route: { unknownTargetPort, create },
+    route: { unknownTargetPort, create, targetPort },
     labels,
     image: { tag: imageTag },
   } = formData;
-  const contTargetPort: number = parseInt(unknownTargetPort, 10);
+  const contTargetPort = targetPort
+    ? parseInt(targetPort.split('-')[0], 10)
+    : parseInt(unknownTargetPort, 10);
   const { concurrencylimit, concurrencytarget, minpods, maxpods } = scaling;
   const {
     cpu: {
