@@ -16,7 +16,7 @@ import {
   isLoaded as yamlPageIsLoaded,
   saveButton,
 } from '@console/internal-integration-tests/views/yaml.view';
-import { STORAGE_CLASS, PAGE_LOAD_TIMEOUT_SECS } from './consts';
+import { STORAGE_CLASS, PAGE_LOAD_TIMEOUT_SECS, SEC } from './consts';
 import { NodePortService } from './types';
 
 export async function fillInput(elem: any, value: string) {
@@ -149,3 +149,18 @@ export function resolveStorageDataAttribute(configMap: any, attribute: string): 
   }
   return _.get(configMap, ['data', attribute]);
 }
+
+export const waitFor = async (element, text, count = 1) => {
+  let rowNumber = 0;
+  while (rowNumber !== count) {
+    await browser.wait(until.visibilityOf(element));
+    const elemText = await element.getText();
+    if (elemText.includes(text)) {
+      rowNumber += 1;
+    } else {
+      rowNumber = 0;
+    }
+    /* eslint-disable no-await-in-loop */
+    await browser.sleep(5 * SEC);
+  }
+};
