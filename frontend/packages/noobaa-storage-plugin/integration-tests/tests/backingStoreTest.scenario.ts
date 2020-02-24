@@ -8,7 +8,7 @@ import {
   ocsOperator,
   BackingStoreHandler,
   Providers,
-  createBackingStoreLink,
+  getBackingStoreLink,
 } from '../views/createBS.view';
 
 const NAME_BS = `${testName}-bs`;
@@ -24,7 +24,8 @@ describe('Tests creation of Backing Store', () => {
   beforeEach(async () => {
     await operatorsPage();
     await click(ocsOperator);
-    await click(createBackingStoreLink);
+    const bsLink = await getBackingStoreLink();
+    await click(bsLink);
     await browser.wait(until.and(crudView.untilNoLoadersPresent));
   });
 

@@ -2,6 +2,7 @@ import { $, by, element, ExpectedConditions as until, browser } from 'protractor
 import * as sideNavView from '@console/internal-integration-tests/views/sidenav.view';
 import * as crudView from '@console/internal-integration-tests/views/crud.view';
 import { SECOND } from '@console/ceph-storage-plugin/integration-tests/utils/consts';
+import { getOperatorHubCardIndex } from '@console/shared/src/test-utils/utils';
 
 const ENDPOINT = 'http://test-endpoint.com';
 const ACC_KEY = 'my_dummy_test_key';
@@ -12,7 +13,11 @@ export const operatorsPage = async () => {
   await sideNavView.clickNavLink(['Operators', 'Installed Operators']);
 };
 
-export const createBackingStoreLink = $('article:nth-child(1) a');
+export const getBackingStoreLink = async () => {
+  const index = await getOperatorHubCardIndex('BackingStore');
+  const link = $(`article:nth-child(${index}) a`);
+  return link;
+};
 
 export const ocsOperator = $('a[data-test-operator-row="OpenShift Container Storage"]');
 

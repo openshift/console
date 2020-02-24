@@ -11,8 +11,8 @@ import {
   goToInstalledOperators,
   ocsOp,
   storageClusterRow,
-  storageClusterView,
   verifyFields,
+  getStorageClusterLink,
 } from '../../views/add-capacity.view';
 import {
   CLUSTER_STATUS,
@@ -110,7 +110,8 @@ if (clusterStatus && cephHealth) {
 
       await goToInstalledOperators();
       await click(ocsOp);
-      await click(storageClusterView);
+      const storageClusterLink = await getStorageClusterLink();
+      await click(storageClusterLink);
 
       await clickKebabAction(uid, 'Add Capacity');
       await verifyFields();
