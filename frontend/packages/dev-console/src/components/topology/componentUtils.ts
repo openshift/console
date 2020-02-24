@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { action } from 'mobx';
 import {
   Modifiers,
   Edge,
@@ -19,7 +20,13 @@ import { K8sResourceKind } from '@console/internal/module/k8s';
 import { createConnection } from './components/createConnection';
 import { removeConnection } from './components/removeConnection';
 import { moveNodeToGroup } from './components/moveNodeToGroup';
-import { TYPE_WORKLOAD, TYPE_KNATIVE_SERVICE, TYPE_EVENT_SOURCE } from './const';
+import {
+  TYPE_WORKLOAD,
+  TYPE_KNATIVE_SERVICE,
+  TYPE_EVENT_SOURCE,
+  TYPE_OPERATOR_BACKED_SERVICE,
+  TYPE_HELM_RELEASE,
+} from './const';
 import './components/GraphComponent.scss';
 import { graphContextMenu, groupContextMenu } from './nodeContextMenu';
 import { errorModal } from '@console/internal/components/modals';
@@ -45,7 +52,13 @@ const REGROUP_OPERATION = 'regroup';
 
 const editOperations = [REGROUP_OPERATION, MOVE_CONNECTOR_OPERATION, CREATE_CONNECTOR_OPERATION];
 
-const regroupTypes = [TYPE_WORKLOAD, TYPE_KNATIVE_SERVICE, TYPE_EVENT_SOURCE];
+const regroupTypes = [
+  TYPE_WORKLOAD,
+  TYPE_KNATIVE_SERVICE,
+  TYPE_EVENT_SOURCE,
+  TYPE_OPERATOR_BACKED_SERVICE,
+  TYPE_HELM_RELEASE,
+];
 
 const highlightNodeOperations = [MOVE_CONNECTOR_OPERATION, CREATE_CONNECTOR_OPERATION];
 
@@ -108,8 +121,16 @@ const nodeDragSourceSpec = (
   end: async (dropResult, monitor, props) => {
     if (!monitor.isCancelled() && monitor.getOperation() === REGROUP_OPERATION) {
       if (monitor.didDrop() && dropResult && props && props.element.getParent() !== dropResult) {
+        const controller = props.element.getController();
         await moveNodeToGroup(props.element, isNode(dropResult) ? dropResult : null);
-        dropResult.appendChild(props.element);
+
+        // perform the optimistic update in an action so as not to render too soon
+        action(() => {
+          // FIXME: check shouldn't be necessary if we handled the async and backend data refresh correctly
+          if (controller.getNodeById(props.element.getId())) {
+            dropResult.appendChild(props.element);
+          }
+        })();
       } else {
         // cancel operation
         return Promise.reject();
@@ -170,7 +191,10 @@ const graphWorkloadDropTargetSpec: DropTargetSpec<
   canDrop: (item, monitor, props) => {
     return (
       monitor.isOver({ shallow: monitor.getItemType() === CREATE_CONNECTOR_DROP_TYPE }) &&
-      ((monitor.getOperation() === REGROUP_OPERATION && item.getParent() !== props.element) ||
+      ((monitor.getOperation() === REGROUP_OPERATION &&
+        // FIXME: the hasParent check is necessary due to model updates during async actions
+        item.hasParent() &&
+        item.getParent() !== props.element) ||
         monitor.getItemType() === CREATE_CONNECTOR_DROP_TYPE)
     );
   },

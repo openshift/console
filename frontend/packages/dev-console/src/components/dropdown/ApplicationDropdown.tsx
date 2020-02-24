@@ -63,6 +63,12 @@ const ApplicationDropdown: React.FC<ApplicationDropdownProps> = ({ namespace, ..
       prop: 'knativeService',
       optional: true,
     },
+    {
+      isList: true,
+      kind: 'Secret',
+      namespace,
+      prop: 'secrets',
+    },
   ];
   return (
     <Firehose resources={resources}>
