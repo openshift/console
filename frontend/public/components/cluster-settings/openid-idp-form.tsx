@@ -115,7 +115,8 @@ export class AddOpenIDPage extends PromiseComponent<{}, AddOpenIDIDPPageState> {
     // Clear any previous errors.
     this.setState({ errorMessage: '' });
     this.getOAuthResource().then((oauth: OAuthKind) => {
-      this.addOpenIDIDP(oauth, mockNames.secret, mockNames.ca, true)
+      const mockCA = this.state.caFileContent ? mockNames.ca : '';
+      this.addOpenIDIDP(oauth, mockNames.secret, mockCA, true)
         .then(() => {
           const promises = [this.createClientSecret(), this.createCAConfigMap()];
 
@@ -192,7 +193,7 @@ export class AddOpenIDPage extends PromiseComponent<{}, AddOpenIDIDPPageState> {
           </p>
           <IDPNameInput value={name} onChange={this.nameChanged} />
           <div className="form-group">
-            <label className="control-label co-required" htmlFor="clientID">
+            <label className="control-label co-required" htmlFor="client-id">
               Client ID
             </label>
             <input
@@ -200,12 +201,12 @@ export class AddOpenIDPage extends PromiseComponent<{}, AddOpenIDIDPPageState> {
               type="text"
               onChange={this.clientIDChanged}
               value={clientID}
-              id="clientID"
+              id="client-id"
               required
             />
           </div>
           <div className="form-group">
-            <label className="control-label co-required" htmlFor="clientSecret">
+            <label className="control-label co-required" htmlFor="client-secret">
               Client Secret
             </label>
             <input
@@ -213,7 +214,7 @@ export class AddOpenIDPage extends PromiseComponent<{}, AddOpenIDIDPPageState> {
               type="password"
               onChange={this.clientSecretChanged}
               value={clientSecret}
-              id="clientSecret"
+              id="client-secret"
               required
             />
           </div>
@@ -269,7 +270,7 @@ export class AddOpenIDPage extends PromiseComponent<{}, AddOpenIDIDPPageState> {
           />
           <ButtonBar errorMessage={this.state.errorMessage} inProgress={this.state.inProgress}>
             <ActionGroup className="pf-c-form">
-              <Button type="submit" variant="primary">
+              <Button type="submit" variant="primary" data-test-id="add-idp">
                 Add
               </Button>
               <Button type="button" variant="secondary" onClick={history.goBack}>

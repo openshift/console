@@ -28,8 +28,8 @@ describe('Add Identity Provider: OpenID Connect', () => {
   it('should render the form elements of AddOpenIDPage component', () => {
     expect(wrapper.find(IDPNameInput).exists()).toBe(true);
     expect(wrapper.find(IDPCAFileInput).exists()).toBe(true);
-    expect(wrapper.find('input[id="clientID"]').exists()).toBe(true);
-    expect(wrapper.find('input[id="clientSecret"]').exists()).toBe(true);
+    expect(wrapper.find('input[id="client-id"]').exists()).toBe(true);
+    expect(wrapper.find('input[id="client-secret"]').exists()).toBe(true);
     expect(wrapper.find('input[id="issuer"]').exists()).toBe(true);
     expect(wrapper.find(ListInput).length).toEqual(4);
   });
