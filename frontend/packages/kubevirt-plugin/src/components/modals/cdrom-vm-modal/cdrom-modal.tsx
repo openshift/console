@@ -30,6 +30,32 @@ import './cdrom-modal.scss';
 import { CD, CDMap } from './types';
 import { VMKind } from '../../../types/vm';
 
+export const AddCDButton = ({ className, text, onClick, isDisabled }: AddCDButtonProps) => (
+  <div className={className}>
+    <Button
+      className="pf-m-link--align-left"
+      id="vm-cd-add-btn"
+      variant="link"
+      onClick={onClick}
+      isDisabled={isDisabled}
+      icon={<PlusCircleIcon />}
+    >
+      {text}
+    </Button>
+    {isDisabled && (
+      <Tooltip
+        position="bottom"
+        trigger="click mouseenter"
+        entryDelay={0}
+        exitDelay={0}
+        content="You have reached the maximum amount of CD-ROM drives"
+      >
+        <OutlinedQuestionCircleIcon />
+      </Tooltip>
+    )}
+  </div>
+);
+
 export const CDRomModal = withHandlePromise((props: CDRomModalProps) => {
   const {
     vmLikeEntity,
@@ -175,28 +201,12 @@ export const CDRomModal = withHandlePromise((props: CDRomModalProps) => {
               This virtual machine does not have any CD-ROMs attached.
             </Text>
           )}
-          <div className="kubevirt-add-cd-btn">
-            <Button
-              className="pf-m-link--align-left"
-              id="vm-cd-add-btn"
-              variant="link"
-              onClick={onCDAdd}
-              isDisabled={_.size(cds) > 1}
-              icon={<PlusCircleIcon />}
-            >
-              Add CD-ROM
-            </Button>
-            {_.size(cds) > 1 && (
-              <Tooltip
-                position="bottom"
-                trigger="click mouseenter"
-                entryDelay={0}
-                content="You have reached the maximum amount of CD-ROM drives"
-              >
-                <OutlinedQuestionCircleIcon />
-              </Tooltip>
-            )}
-          </div>
+          <AddCDButton
+            className="kubevirt-add-cd-btn"
+            text="Add CD-ROM"
+            onClick={onCDAdd}
+            isDisabled={_.size(cds) > 1}
+          />
         </Form>
       </ModalBody>
       <ModalFooter
@@ -214,6 +224,13 @@ export const CDRomModal = withHandlePromise((props: CDRomModalProps) => {
     </div>
   );
 });
+
+type AddCDButtonProps = {
+  className: string;
+  text: string;
+  isDisabled: boolean;
+  onClick: () => void;
+};
 
 type CDRomModalProps = HandlePromiseProps &
   ModalComponentProps & {
