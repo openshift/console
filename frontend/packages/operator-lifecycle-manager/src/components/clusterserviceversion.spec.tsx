@@ -30,8 +30,8 @@ import {
   testCatalogSource,
   testInstallPlan,
 } from '../../mocks';
-import { ClusterServiceVersionModel, SubscriptionModel } from '../models';
-import { ClusterServiceVersionKind, CSVConditionReason } from '../types';
+import { ClusterServiceVersionModel, SubscriptionModel, CatalogSourceModel } from '../models';
+import { ClusterServiceVersionKind, ClusterServiceVersionPhase } from '../types';
 import {
   ClusterServiceVersionsDetailsPage,
   ClusterServiceVersionsDetailsPageProps,
@@ -48,7 +48,7 @@ import {
   CSVSubscription,
   CSVSubscriptionProps,
 } from './clusterserviceversion';
-import { SubscriptionUpdates } from './subscription';
+import { SubscriptionUpdates, SubscriptionDetails } from './subscription';
 import {
   ClusterServiceVersionLogo,
   ClusterServiceVersionLogoProps,
@@ -128,7 +128,7 @@ describe(ClusterServiceVersionTableRow.displayName, () => {
   });
 
   it('renders column with link to Operator deployment', () => {
-    const col = wrapper.find(TableRow).childAt(2);
+    const col = wrapper.find(TableRow).childAt(3);
 
     expect(col.find(ResourceLink).props().kind).toEqual('Deployment');
     expect(col.find(ResourceLink).props().name).toEqual(
@@ -137,10 +137,10 @@ describe(ClusterServiceVersionTableRow.displayName, () => {
   });
 
   it('renders column for app status', () => {
-    const col = wrapper.find(TableRow).childAt(3);
-    const statusComponent = col.childAt(0).find('SuccessStatus');
+    const col = wrapper.find(TableRow).childAt(2);
+    const statusComponent = col.childAt(0).find('ClusterServiceVersionStatus');
     expect(statusComponent.exists()).toBeTruthy();
-    expect(statusComponent.prop('title')).toEqual(CSVConditionReason.CSVReasonInstallSuccessful);
+    expect(statusComponent.render().text()).toContain(ClusterServiceVersionPhase.CSVPhaseSucceeded);
   });
 
   it('renders "disabling" status if CSV has `deletionTimestamp`', () => {
@@ -149,9 +149,15 @@ describe(ClusterServiceVersionTableRow.displayName, () => {
         k === 'metadata' ? { ...v, deletionTimestamp: Date.now() } : undefined,
       ),
     });
-    const col = wrapper.find(TableRow).childAt(3);
+    const col = wrapper.find(TableRow).childAt(2);
 
-    expect(col.childAt(0).text()).toEqual('Disabling');
+    expect(
+      col
+        .childAt(0)
+        .find('ClusterServiceVersionStatus')
+        .render()
+        .text(),
+    ).toEqual('Deleting');
   });
 
   it('renders column with each CRD provided by the Operator', () => {
@@ -247,9 +253,18 @@ describe(ClusterServiceVersionsPage.displayName, () => {
       {
         kind: referenceForModel(ClusterServiceVersionModel),
         namespace: 'foo',
-        prop: 'clusterServiceVersion',
+        prop: 'clusterServiceVersions',
       },
-      { kind: referenceForModel(SubscriptionModel), optional: true, prop: 'subscription' },
+      {
+        kind: referenceForModel(SubscriptionModel),
+        prop: 'subscriptions',
+        optional: true,
+      },
+      {
+        kind: referenceForModel(CatalogSourceModel),
+        prop: 'catalogSources',
+        optional: true,
+      },
     ]);
     expect(listPage.props().ListComponent).toEqual(ClusterServiceVersionList);
     expect(listPage.props().showTitle).toBe(false);
@@ -459,10 +474,14 @@ describe(CSVSubscription.displayName, () => {
       />,
     );
 
-    expect(wrapper.find(StatusBox).props().data).toEqual(subscription);
-    expect(wrapper.find(SubscriptionUpdates).props().obj).toEqual(subscription);
-    expect(wrapper.find(SubscriptionUpdates).props().installedCSV).toEqual(obj);
-    expect(wrapper.find(SubscriptionUpdates).props().pkg).toEqual(testPackageManifest);
+    const subscriptionUpdates = wrapper
+      .find(StatusBox)
+      .find(SubscriptionDetails)
+      .dive()
+      .find(SubscriptionUpdates);
+    expect(subscriptionUpdates.props().obj).toEqual(subscription);
+    expect(subscriptionUpdates.props().installedCSV).toEqual(obj);
+    expect(subscriptionUpdates.props().pkg).toEqual(testPackageManifest);
   });
 
   it('passes the matching `PackageManifest` if there are multiple with the same `metadata.name`', () => {
@@ -488,7 +507,14 @@ describe(CSVSubscription.displayName, () => {
       />,
     );
 
-    expect(wrapper.find(SubscriptionUpdates).props().pkg).toEqual(testPackageManifest);
+    expect(
+      wrapper
+        .find(StatusBox)
+        .find(SubscriptionDetails)
+        .dive()
+        .find(SubscriptionUpdates)
+        .props().pkg,
+    ).toEqual(testPackageManifest);
   });
 });
 
