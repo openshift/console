@@ -35,7 +35,7 @@ export const createPipelineForImportFlow = async (formData: GitImportFormData) =
   template.spec.params =
     template.spec.params &&
     template.spec.params.map((param) => {
-      if (param.name === 'APP_NAME') {
+      if (param.name === 'APPLICATION_NAME') {
         param.default = name;
       }
       return param;
