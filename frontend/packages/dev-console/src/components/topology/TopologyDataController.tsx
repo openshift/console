@@ -9,7 +9,7 @@ import { RootState } from '@console/internal/redux';
 import { safeLoadAll } from 'js-yaml';
 import { ServiceBindingRequestModel } from '../../models';
 import { TopologyFilters, getTopologyFilters } from './filters/filter-utils';
-import { allowedResources, transformTopologyData } from './topology-utils';
+import { allowedResources, transformTopologyData, getHelmReleaseKey } from './topology-utils';
 import { TopologyDataModel, TopologyDataResources, TrafficData } from './topology-types';
 import trafficConnectorMock from './__mocks__/traffic-connector.mock';
 import { HelmRelease, HelmReleaseResourcesMap } from '../helm/helm-types';
@@ -117,7 +117,7 @@ export const TopologyDataController: React.FC<TopologyDataControllerProps> = ({
         const manifestResources: K8sResourceKind[] = safeLoadAll(release.manifest);
 
         manifestResources.forEach((resource) => {
-          const resourceKindName = `${resource.kind}---${resource.metadata.name}`;
+          const resourceKindName = getHelmReleaseKey(resource);
           if (!acc.hasOwnProperty(resourceKindName)) {
             acc[resourceKindName] = {
               releaseName: release.name,

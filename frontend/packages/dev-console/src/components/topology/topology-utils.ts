@@ -78,12 +78,14 @@ export const getEditURL = (gitURL: string, cheURL: string) => {
   return gitURL && cheURL ? `${cheURL}/f?url=${gitURL}&policies.create=peruser` : gitURL;
 };
 
+export const getHelmReleaseKey = (resource) => `${resource.kind}---${resource.metadata.name}`;
+
 export const isHelmReleaseNode = (
   obj: K8sResourceKind,
   helmResourcesMap: HelmReleaseResourcesMap,
 ): boolean => {
   if (helmResourcesMap) {
-    return helmResourcesMap.hasOwnProperty(`${obj.kind}---${obj.metadata.name}`);
+    return helmResourcesMap.hasOwnProperty(getHelmReleaseKey(obj));
   }
   return false;
 };
@@ -243,19 +245,11 @@ export const getTopologyNodeItem = (
   dc: K8sResourceKind,
   type?: string,
   children?: string[],
-  helmResourcesMap?: HelmReleaseResourcesMap,
 ): Node => {
   const uid = _.get(dc, ['metadata', 'uid']);
   const name = _.get(dc, ['metadata', 'name']);
   const label = _.get(dc, ['metadata', 'labels', 'app.openshift.io/instance']);
-  if (isHelmReleaseNode(dc, helmResourcesMap)) {
-    return {
-      id: uid,
-      type: TYPE_HELM_WORKLOAD,
-      name: label || name,
-      ...(children && children.length && { children }),
-    };
-  }
+
   return {
     id: uid,
     type: type || TYPE_WORKLOAD,
@@ -657,11 +651,14 @@ export const transformTopologyData = (
         );
         if (!_.some(topologyGraphAndNodeData.graph.nodes, { id: uid })) {
           const operatorBacked = dataToShowOnNodes[uid].operatorBackedService;
-          const nodeType = operatorBacked ? TYPE_OPERATOR_WORKLOAD : TYPE_WORKLOAD;
-          nodesData = [
-            ...nodesData,
-            getTopologyNodeItem(deploymentConfig, nodeType, undefined, helmResourcesMap),
-          ];
+
+          const nodeType = operatorBacked
+            ? TYPE_OPERATOR_WORKLOAD
+            : isHelmReleaseNode(deploymentConfig, helmResourcesMap)
+            ? TYPE_HELM_WORKLOAD
+            : TYPE_WORKLOAD;
+
+          nodesData = [...nodesData, getTopologyNodeItem(deploymentConfig, nodeType)];
           edgesData = [
             ...edgesData,
             ...getTopologyEdgeItems(
