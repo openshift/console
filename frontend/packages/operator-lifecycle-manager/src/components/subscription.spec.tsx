@@ -10,6 +10,7 @@ import {
   PackageManifestModel,
   OperatorGroupModel,
   InstallPlanModel,
+  CatalogSourceModel,
 } from '../models';
 import {
   testSubscription,
@@ -33,6 +34,7 @@ import {
   SubscriptionUpdatesProps,
   SubscriptionUpdatesState,
 } from './subscription';
+import { Button } from '@patternfly/react-core';
 
 describe(SubscriptionTableHeader.displayName, () => {
   it('returns column header definition for subscription table header', () => {
@@ -189,7 +191,7 @@ describe(SubscriptionTableRow.displayName, () => {
         .childAt(2)
         .shallow()
         .text(),
-    ).toEqual('Unknown');
+    ).toEqual('Unknown failure');
   });
 
   it('renders column for subscription state when update in progress', () => {
@@ -313,8 +315,8 @@ describe(SubscriptionUpdates.name, () => {
       .parents()
       .at(0)
       .shallow()
-      .find('dd button')
-      .childAt(0)
+      .find(Button)
+      .render()
       .text();
 
     expect(channel).toEqual(testSubscription.spec.channel);
@@ -328,8 +330,8 @@ describe(SubscriptionUpdates.name, () => {
       .parents()
       .at(0)
       .shallow()
-      .find('dd button')
-      .childAt(0)
+      .find(Button)
+      .render()
       .text();
 
     expect(strategy).toEqual(testSubscription.spec.installPlanApproval || 'Automatic');
@@ -341,7 +343,11 @@ describe(SubscriptionDetails.displayName, () => {
 
   beforeEach(() => {
     wrapper = shallow(
-      <SubscriptionDetails obj={testSubscription} packageManifests={[testPackageManifest]} />,
+      <SubscriptionDetails
+        obj={testSubscription}
+        packageManifests={[testPackageManifest]}
+        catalogSources={[testCatalogSource]}
+      />,
     );
   });
 
@@ -431,9 +437,14 @@ describe(SubscriptionDetailsPage.displayName, () => {
       },
       {
         kind: referenceForModel(ClusterServiceVersionModel),
-        namespace: 'default',
         isList: true,
+        namespace: 'default',
         prop: 'clusterServiceVersions',
+      },
+      {
+        kind: referenceForModel(CatalogSourceModel),
+        isList: true,
+        prop: 'catalogSources',
       },
     ]);
   });
