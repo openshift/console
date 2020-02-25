@@ -49,6 +49,12 @@ func fakeGetManifest(mockedManifest string, err error) func(name string, url str
 	}
 }
 
+func fakeGetRelease(mockedRelease *release.Release, err error) func(releaseName string, conf *action.Configuration) (*release.Release, error) {
+	return func(releaseName string, conf *action.Configuration) (r *release.Release, er error) {
+		return mockedRelease, err
+	}
+}
+
 func getFakeActionConfigurations(string, string, string, *http.RoundTripper) *action.Configuration {
 	return &action.Configuration{}
 }
@@ -179,6 +185,48 @@ func TestHelmHandlers_HandleHelmRenderManifest(t *testing.T) {
 			}
 			if response.Header().Get("Content-Type") != tt.expectedContentType {
 				t.Errorf("content type should be %s but got %s", tt.expectedContentType, response.Header().Get("Content-Type"))
+			}
+			if response.Body.String() != tt.expectedResponse {
+				t.Errorf("response body not matching expected is %s and received is %s", tt.expectedResponse, response.Body.String())
+			}
+
+		})
+	}
+}
+
+func TestHelmHandlers_HandleGetRelease(t *testing.T) {
+	tests := []struct {
+		name             string
+		expectedResponse string
+		release          *release.Release
+		error
+		httpStatusCode int
+	}{
+		{
+			name:             "Error occurred at finding release",
+			error:            errors.New("unknown error occurred"),
+			httpStatusCode:   http.StatusBadGateway,
+			expectedResponse: `{"error":"Failed to find helm release: unknown error occurred"}`,
+		},
+		{
+			name:             "Return the requested release serialized in JSON format",
+			expectedResponse: `{"name":"Test"}`,
+			release:          &fakeRelease,
+			httpStatusCode:   http.StatusOK,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			handlers := fakeHelmHandler()
+			handlers.getRelease = fakeGetRelease(tt.release, tt.error)
+
+			request := httptest.NewRequest("", "/foo", strings.NewReader("{}"))
+			response := httptest.NewRecorder()
+
+			handlers.HandleGetRelease(&auth.User{}, response, request)
+
+			if response.Code != tt.httpStatusCode {
+				t.Errorf("response code should be %v but got %v", tt.httpStatusCode, response.Code)
 			}
 			if response.Body.String() != tt.expectedResponse {
 				t.Errorf("response body not matching expected is %s and received is %s", tt.expectedResponse, response.Body.String())

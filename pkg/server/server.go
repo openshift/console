@@ -304,7 +304,17 @@ func (s *Server) HTTPHandler() http.Handler {
 	helmHandlers := helmhandlerspkg.New(s.KubeAPIServerURL, s.K8sClient.Transport)
 	handle("/api/helm/template", authHandlerWithUser(helmHandlers.HandleHelmRenderManifests))
 	handle("/api/helm/releases", authHandlerWithUser(helmHandlers.HandleHelmList))
-	handle("/api/helm/release", authHandlerWithUser(helmHandlers.HandleHelmInstall))
+	handle("/api/helm/release", authHandlerWithUser(func(user *auth.User, w http.ResponseWriter, r *http.Request) {
+		switch r.Method {
+		case http.MethodGet:
+			helmHandlers.HandleGetRelease(user, w, r)
+		case http.MethodPost:
+			helmHandlers.HandleHelmInstall(user, w, r)
+		default:
+			w.Header().Set("Allow", "GET, POST")
+			serverutils.SendResponse(w, http.StatusMethodNotAllowed, serverutils.ApiError{Err: "Unsupported method, supported methods are GET, POST"})
+		}
+	}))
 
 	helmChartRepoProxy := proxy.NewProxy(s.HelmChartRepoProxyConfig)
 
