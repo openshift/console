@@ -51,7 +51,7 @@ export const VMUtilizationCard: React.FC = () => {
   const vmiLike = vm || vmi;
   const vmName = getName(vmiLike);
   const namespace = getNamespace(vmiLike);
-  const launcherPodName = getName(findVMPod(vmiLike, pods));
+  const launcherPodName = getName(findVMPod(vmi, pods));
   const vmIsRunning = isVMRunningWithVMI({ vm, vmi });
 
   const queries = React.useMemo(
