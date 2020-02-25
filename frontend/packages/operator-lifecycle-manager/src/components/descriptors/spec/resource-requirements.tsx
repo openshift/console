@@ -14,11 +14,11 @@ import {
 import { RootState } from '@console/internal/redux';
 
 export const ResourceRequirements: React.FC<ResourceRequirementsProps> = (props) => {
-  const { cpu, memory, onChangeCPU, onChangeMemory, path = '' } = props;
+  const { cpu, memory, storage, onChangeCPU, onChangeMemory, onChangeStorage, path = '' } = props;
 
   return (
     <div className="row co-m-form-row">
-      <div className="col-xs-5">
+      <div className="col-xs-4">
         <label
           style={{ fontWeight: 300 }}
           className="text-muted text-uppercase"
@@ -36,7 +36,7 @@ export const ResourceRequirements: React.FC<ResourceRequirementsProps> = (props)
           placeholder="500m"
         />
       </div>
-      <div className="col-xs-5">
+      <div className="col-xs-4">
         <label
           style={{ fontWeight: 300 }}
           className="text-muted text-uppercase"
@@ -54,6 +54,24 @@ export const ResourceRequirements: React.FC<ResourceRequirementsProps> = (props)
           placeholder="50Mi"
         />
       </div>
+      <div className="col-xs-4">
+        <label
+          style={{ fontWeight: 300 }}
+          className="text-muted text-uppercase"
+          htmlFor={`${path}.ephemeral-storage`}
+        >
+          Storage
+        </label>
+        <input
+          value={storage}
+          onChange={(e) => onChangeStorage(e.target.value)}
+          id={`${path}.ephemeral-storage`}
+          name="ephemeral-storage"
+          type="text"
+          className="pf-c-form-control"
+          placeholder="50Mi"
+        />
+      </div>
     </div>
   );
 };
@@ -65,13 +83,20 @@ export const ResourceRequirementsModal = withHandlePromise(
     const [memory, setMemory] = React.useState<string>(
       _.get(obj.spec, `${path}.${type}.memory`, ''),
     );
+    const [storage, setStorage] = React.useState<string>(
+      _.get(obj.spec, `${path}.${type}.ephemeral-storage`),
+    );
 
     const submit = (e) => {
       e.preventDefault();
 
       let newObj = _.cloneDeep(obj);
-      if (cpu !== '' || memory !== '') {
-        newObj = _.set(newObj, `spec.${path}.${type}`, { cpu, memory });
+      if (cpu !== '' || memory !== '' || storage !== '') {
+        newObj = _.set(newObj, `spec.${path}.${type}`, {
+          cpu,
+          memory,
+          'ephemeral-storage': storage,
+        });
       }
 
       return props.handlePromise(k8sUpdate(model, newObj)).then(props.close);
@@ -87,8 +112,10 @@ export const ResourceRequirementsModal = withHandlePromise(
           <ResourceRequirements
             cpu={cpu}
             memory={memory}
+            storage={storage}
             onChangeCPU={setCPU}
             onChangeMemory={setMemory}
+            onChangeStorage={setStorage}
             path={path}
           />
         </ModalBody>
@@ -156,8 +183,10 @@ export type ResourceRequirementsModalProps = {
 export type ResourceRequirementsProps = {
   cpu: string;
   memory: string;
+  storage: string;
   onChangeCPU: (value: string) => void;
   onChangeMemory: (value: string) => void;
+  onChangeStorage: (value: string) => void;
   path?: string;
 };
 

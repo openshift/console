@@ -62,11 +62,18 @@ describe(ResourceRequirementsModal.name, () => {
   it('calls function to update resource instance when form is submitted', (done) => {
     wrapper.find('input[name="cpu"]').simulate('change', { target: { value: '200m' } });
     wrapper.find('input[name="memory"]').simulate('change', { target: { value: '20Mi' } });
+    wrapper
+      .find('input[name="ephemeral-storage"]')
+      .simulate('change', { target: { value: '50Mi' } });
 
     spyAndExpect(spyOn(k8s, 'k8sUpdate'))(Promise.resolve())
       .then(([model, newObj]: [k8s.K8sKind, k8s.K8sResourceKind]) => {
         expect(model).toEqual(testModel);
-        expect(newObj.spec.resources.requests).toEqual({ cpu: '200m', memory: '20Mi' });
+        expect(newObj.spec.resources.requests).toEqual({
+          cpu: '200m',
+          memory: '20Mi',
+          'ephemeral-storage': '50Mi',
+        });
         done();
       })
       .catch((err) => fail(err));
@@ -82,8 +89,8 @@ describe(ResourceRequirementsModalLink.displayName, () => {
   beforeEach(() => {
     obj = _.cloneDeep(testResourceInstance);
     obj.spec.resources = {
-      limits: { memory: '50Mi', cpu: '500m' },
-      requests: { memory: '50Mi', cpu: '500m' },
+      limits: { memory: '50Mi', cpu: '500m', 'ephemeral-storage': '50Mi' },
+      requests: { memory: '50Mi', cpu: '500m', 'ephemeral-storage': '50Mi' },
     };
     wrapper = shallow(
       <ResourceRequirementsModalLink.WrappedComponent
@@ -96,7 +103,7 @@ describe(ResourceRequirementsModalLink.displayName, () => {
   });
 
   it('renders a button link with the resource requests limits', () => {
-    const { memory, cpu } = obj.spec.resources.limits;
+    const { memory, cpu, 'ephemeral-storage': storage } = obj.spec.resources.limits;
     wrapper = wrapper.setProps({ type: 'requests' });
 
     expect(
@@ -104,17 +111,17 @@ describe(ResourceRequirementsModalLink.displayName, () => {
         .find('button')
         .childAt(0)
         .text(),
-    ).toEqual(`CPU: ${cpu}, Memory: ${memory}`);
+    ).toEqual(`CPU: ${cpu}, Memory: ${memory}, Storage: ${storage}`);
   });
 
   it('renders a button link with the resource limits', () => {
-    const { memory, cpu } = obj.spec.resources.requests;
+    const { memory, cpu, 'ephemeral-storage': storage } = obj.spec.resources.requests;
     expect(
       wrapper
         .find('button')
         .childAt(0)
         .text(),
-    ).toEqual(`CPU: ${cpu}, Memory: ${memory}`);
+    ).toEqual(`CPU: ${cpu}, Memory: ${memory}, Storage: ${storage}`);
   });
 
   it('renders default values if undefined', () => {
@@ -126,7 +133,7 @@ describe(ResourceRequirementsModalLink.displayName, () => {
         .find('button')
         .childAt(0)
         .text(),
-    ).toEqual('CPU: none, Memory: none');
+    ).toEqual('CPU: none, Memory: none, Storage: none');
   });
 
   it('opens resource requirements modal when clicked', (done) => {
