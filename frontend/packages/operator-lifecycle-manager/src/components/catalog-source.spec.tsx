@@ -23,7 +23,6 @@ import {
   CreateSubscriptionYAMLProps,
 } from './catalog-source';
 import { PackageManifestList } from './package-manifest';
-import { windowsToolsStorage } from '@console/kubevirt-plugin/src/components/create-vm-wizard/redux/initial-state/storage-tab-initial-state';
 
 describe(CatalogSourceDetails.displayName, () => {
   let wrapper: ShallowWrapper<CatalogSourceDetailsProps>;

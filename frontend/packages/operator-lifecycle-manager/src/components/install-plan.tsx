@@ -39,7 +39,7 @@ import {
   OperatorGroupModel,
   CatalogSourceModel,
 } from '../models';
-import { InstallPlanKind, InstallPlanApproval, Step, InstallPlanPhase } from '../types';
+import { InstallPlanKind, InstallPlanApproval, Step } from '../types';
 import { requireOperatorGroup } from './operator-group';
 import { installPlanPreviewModal } from './modals/installplan-preview-modal';
 import { referenceForStepResource } from './index';
