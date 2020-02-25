@@ -6,7 +6,7 @@ import {
   Node,
   PointTuple,
   NodeShape,
-  GroupStyle,
+  NodeStyle,
   maxPadding,
   observer,
   useCombineRefs,
@@ -80,7 +80,7 @@ const ApplicationGroup: React.FC<ApplicationGroupProps> = ({
   const [filtered] = useSearchFilter(element.getLabel());
 
   // cast to number and coerce
-  const padding = maxPadding(element.getStyle<GroupStyle>().padding);
+  const padding = maxPadding(element.getStyle<NodeStyle>().padding);
   const hullPadding = (point: PointWithSize | PointTuple) => (point[2] || 0) + padding;
 
   if (!droppable || !pathRef.current || !labelLocation.current) {

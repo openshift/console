@@ -57,6 +57,14 @@ import {
   TYPE_WORKLOAD,
   TYPE_CONNECTS_TO,
   TYPE_SERVICE_BINDING,
+  NODE_WIDTH,
+  NODE_HEIGHT,
+  NODE_PADDING,
+  GROUP_WIDTH,
+  GROUP_HEIGHT,
+  GROUP_PADDING,
+  KNATIVE_GROUP_NODE_HEIGHT,
+  KNATIVE_GROUP_NODE_PADDING,
 } from './const';
 import { ClusterServiceVersionKind } from '@console/operator-lifecycle-manager';
 
@@ -691,8 +699,8 @@ export const topologyModelFromDataModel = (
       const data: TopologyDataObject = dataModel.topology[d.id] || dataObjectFromModel(d);
       data.groupResources = d.children && d.children.map((id) => dataModel.topology[id]);
       return {
-        width: 300,
-        height: d.type === TYPE_KNATIVE_SERVICE ? 100 : 180,
+        width: GROUP_WIDTH,
+        height: d.type === TYPE_KNATIVE_SERVICE ? KNATIVE_GROUP_NODE_HEIGHT : GROUP_HEIGHT,
         id: d.id,
         type: d.type,
         label: dataModel.topology[d.id].name,
@@ -705,17 +713,20 @@ export const topologyModelFromDataModel = (
         group: d.children?.length > 0,
         shape: NodeShape.rect,
         style: {
-          padding: [40, 50, 40, 40],
+          padding: d.type === TYPE_KNATIVE_SERVICE ? KNATIVE_GROUP_NODE_PADDING : GROUP_PADDING,
         },
       };
     }
     return {
-      width: 104,
-      height: 104,
+      width: NODE_WIDTH,
+      height: NODE_HEIGHT,
       id: d.id,
       type: d.type,
       label: dataModel.topology[d.id].name,
       data: dataModel.topology[d.id],
+      style: {
+        padding: NODE_PADDING,
+      },
     };
   });
 
@@ -723,8 +734,8 @@ export const topologyModelFromDataModel = (
     const data: TopologyDataObject = dataModel.topology[d.id] || dataObjectFromModel(d);
     data.groupResources = d.nodes.map((id) => dataModel.topology[id]);
     return {
-      width: 300,
-      height: 180,
+      width: GROUP_WIDTH,
+      height: GROUP_HEIGHT,
       id: d.id,
       group: true,
       type: d.type,
@@ -736,7 +747,7 @@ export const topologyModelFromDataModel = (
       children: d.nodes,
       label: d.name,
       style: {
-        padding: 40,
+        padding: GROUP_PADDING,
       },
     };
   });
