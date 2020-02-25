@@ -18,14 +18,14 @@ import { VMDashboardContext } from '../../vms/vm-dashboard-context';
 import { VirtualMachineModel, VirtualMachineInstanceModel } from '../../../models';
 import { getVmiIpAddresses, getVMINodeName } from '../../../selectors/vmi';
 import { VM_DETAIL_DETAILS_HREF } from '../../../constants';
-import { findVMPod } from '../../../selectors/pod/selectors';
+import { findVMIPod } from '../../../selectors/pod/selectors';
 
 export const VMDetailsCard: React.FC<VMDetailsCardProps> = () => {
   const vmDashboardContext = React.useContext(VMDashboardContext);
   const { vm, vmi, pods } = vmDashboardContext;
   const vmiLike = vm || vmi;
 
-  const launcherPod = findVMPod(vmi, pods);
+  const launcherPod = findVMIPod(vmi, pods);
 
   const ipAddrs = getVmiIpAddresses(vmi).join(', ');
 

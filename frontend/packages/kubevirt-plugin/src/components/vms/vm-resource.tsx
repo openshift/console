@@ -25,7 +25,7 @@ import {
 } from '../modals/dedicated-resources-modal/consts';
 import { getOperatingSystemName, getOperatingSystem } from '../../selectors/vm';
 import { getVmiIpAddresses } from '../../selectors/vmi/ip-address';
-import { findVMPod as findVMIPod } from '../../selectors/pod/selectors';
+import { findVMIPod } from '../../selectors/pod/selectors';
 import { isVMIPaused, getVMINodeName } from '../../selectors/vmi';
 import { VirtualMachineInstanceModel, VirtualMachineModel } from '../../models';
 import { asVMILikeWrapper } from '../../k8s/wrapper/utils/convert';
