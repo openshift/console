@@ -13,6 +13,7 @@ import { getDescription } from '../../selectors/selectors';
 import { getCDRoms } from '../../selectors/vm/selectors';
 import { getVMTemplateNamespacedName } from '../../selectors/vm-template/selectors';
 import { getVMStatus } from '../../statuses/vm/vm';
+import { getVMINodeName } from '../../selectors/vmi/basic';
 import { getFlavorText } from '../flavor-text';
 import { EditButton } from '../edit-button';
 import { getVmiIpAddressesString } from '../ip-addresses';
@@ -91,7 +92,7 @@ export const VMDetailsList: React.FC<VMResourceListProps> = ({
   const { launcherPod } = vmStatus;
   const cds = getCDRoms(vm);
   const sortedBootableDevices = getBootableDevicesInOrder(vm);
-  const nodeName = getNodeName(launcherPod);
+  const nodeName = getVMINodeName(vmi) || getNodeName(launcherPod);
   const ipAddrs = getVmiIpAddressesString(vmi, vmStatus);
   const workloadProfile = getWorkloadProfile(vm);
   const flavorText = getFlavorText(vm);
@@ -139,8 +140,12 @@ export const VMDetailsList: React.FC<VMResourceListProps> = ({
         {ipAddrs}
       </VMDetailsItem>
 
-      <VMDetailsItem title="Node" idValue={prefixedID(id, 'node')} isNotAvail={!nodeName}>
-        {nodeName && <NodeLink name={nodeName} />}
+      <VMDetailsItem
+        title="Node"
+        idValue={prefixedID(id, 'node')}
+        isNotAvail={!launcherPod || !nodeName}
+      >
+        {launcherPod && nodeName && <NodeLink name={nodeName} />}
       </VMDetailsItem>
 
       <VMDetailsItem title="Flavor" idValue={prefixedID(id, 'flavor')} isNotAvail={!flavorText}>

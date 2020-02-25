@@ -45,6 +45,13 @@ export const isPodSchedulable = (pod: PodKind) => {
   );
 };
 
+const isPodReady = (pod: PodKind): boolean =>
+  pod &&
+  pod.status &&
+  pod.status.phase === 'Running' &&
+  pod.status.containerStatuses &&
+  pod.status.containerStatuses.every((s) => s.ready);
+
 export const findVMPod = (
   vm: VMKind,
   pods?: PodKind[],
@@ -73,10 +80,12 @@ export const findVMPod = (
     );
   });
 
-  // Return the newet Pod created
-  return prefixedPods.sort((a: PodKind, b: PodKind) =>
-    a.metadata.creationTimestamp > b.metadata.creationTimestamp ? -1 : 1,
-  )[0];
+  // Return the newet most ready Pod created
+  return prefixedPods
+    .sort((a: PodKind, b: PodKind) =>
+      a.metadata.creationTimestamp > b.metadata.creationTimestamp ? -1 : 1,
+    )
+    .sort((a: PodKind) => (isPodReady(a) ? -1 : 1))[0];
 };
 
 export const getVMImporterPods = (
