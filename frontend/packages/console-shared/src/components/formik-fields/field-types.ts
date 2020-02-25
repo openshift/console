@@ -1,9 +1,10 @@
-import { TextInputTypes } from '@patternfly/react-core';
+import { TextInputTypes, ValidatedOptions } from '@patternfly/react-core';
 
 export interface FieldProps {
   name: string;
   label?: string;
   helpText?: React.ReactNode;
+  helpTextInvalid?: React.ReactNode;
   required?: boolean;
   style?: React.CSSProperties;
   isReadOnly?: boolean;
@@ -11,6 +12,7 @@ export interface FieldProps {
   disableAddRow?: boolean;
   className?: string;
   isDisabled?: boolean;
+  validated?: ValidatedOptions;
 }
 
 export interface InputFieldProps extends FieldProps {

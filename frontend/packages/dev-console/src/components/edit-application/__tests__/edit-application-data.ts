@@ -1,7 +1,8 @@
+import { ValidatedOptions } from '@patternfly/react-core';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { ServiceModel } from '@console/knative-plugin';
 import { AppResources } from '../edit-application-types';
-import { GitImportFormData, Resources, DeployImageFormData } from '../../import/import-types';
+import { DeployImageFormData, GitImportFormData, Resources } from '../../import/import-types';
 import { UNASSIGNED_KEY } from '../../import/app/ApplicationSelector';
 
 export const knativeService: K8sResourceKind = {
@@ -416,7 +417,7 @@ export const gitImportInitialValues: GitImportFormData = {
     dir: '/',
     showGitType: false,
     secret: '',
-    isUrlValidated: false,
+    urlValidation: ValidatedOptions.default,
     isUrlValidating: false,
   },
   docker: { dockerfilePath: 'Dockerfile', containerPort: 8080 },

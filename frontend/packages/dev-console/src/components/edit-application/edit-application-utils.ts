@@ -1,4 +1,5 @@
 import * as _ from 'lodash';
+import { ValidatedOptions } from '@patternfly/react-core';
 import { K8sResourceKind, referenceFor, referenceForModel } from '@console/internal/module/k8s';
 import { BuildStrategyType } from '@console/internal/components/build';
 import { DeploymentConfigModel, DeploymentModel } from '@console/internal/models';
@@ -51,7 +52,7 @@ export const getGitData = (buildConfig: K8sResourceKind) => {
     dir: _.get(buildConfig, 'spec.source.contextDir', ''),
     showGitType: false,
     secret: _.get(buildConfig, 'spec.source.sourceSecret.name', ''),
-    isUrlValidated: false,
+    urlValidation: ValidatedOptions.default,
     isUrlValidating: false,
   };
   return gitData;
