@@ -359,9 +359,12 @@ export const createOrUpdateDeployImageResources = async (
   }
   if (formData.resources !== Resources.KnativeService) {
     registry === RegistryType.External &&
-      requests.push(
-        createOrUpdateImageStream(formData, dryRun, _.get(appResources, 'imageStream.data'), verb),
-      );
+      (await createOrUpdateImageStream(
+        formData,
+        dryRun,
+        _.get(appResources, 'imageStream.data'),
+        verb,
+      ));
     if (formData.resources === Resources.Kubernetes) {
       requests.push(
         createOrUpdateDeployment(

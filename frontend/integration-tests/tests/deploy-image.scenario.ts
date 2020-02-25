@@ -23,9 +23,6 @@ describe('Deploy Image', () => {
     });
 
     it('should render applications dropdown disabled', async () => {
-      // Navigate to the deploy-image page
-      await browser.get(`${appHost}/deploy-image/ns/${testName}?preselected-ns=${testName}`);
-
       const dropdown = '[data-test-id=namespace-bar-dropdown] > *:nth-child(2) button:disabled';
       // Wait for the Applications dropdown to appear
       await browser.wait(until.presenceOf(element(by.css(dropdown))));
