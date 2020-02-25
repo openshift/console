@@ -377,13 +377,14 @@ export const testCRD: CustomResourceDefinitionKind = {
 
 export const testModel: K8sKind = {
   abbr: 'TR',
+  apiGroup: 'testapp.coreos.com',
+  apiVersion: 'v1alpha1',
+  crd: true,
   kind: 'TestResource',
   label: 'Test Resource',
   labelPlural: 'Test Resources',
+  namespaced: true,
   plural: 'testresources',
-  apiVersion: 'v1alpha1',
-  apiGroup: 'testapp.coreos.com',
-  crd: true,
 };
 
 const amqPackageManifest = {
