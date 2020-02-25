@@ -19,11 +19,9 @@ import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboa
 import AlertsBody from '@console/shared/src/components/dashboard/status-card/AlertsBody';
 import HealthBody from '@console/shared/src/components/dashboard/status-card/HealthBody';
 import { withDashboardResources, DashboardItemProps } from '../../with-dashboard-resources';
-import { getAlerts } from '@console/shared/src/components/dashboard/status-card/alert-utils';
 import AlertItem, {
   StatusItem,
 } from '@console/shared/src/components/dashboard/status-card/AlertItem';
-import { ALERTS_KEY } from '../../../../actions/dashboards';
 import {
   connectToFlags,
   FlagsObject,
@@ -32,7 +30,7 @@ import {
 } from '../../../../reducers/features';
 import * as plugins from '../../../../plugins';
 import { FirehoseResource } from '../../../utils';
-import { PrometheusRulesResponse, alertURL } from '../../../monitoring';
+import { alertURL } from '../../../monitoring';
 import {
   ClusterVersionKind,
   referenceForModel,
@@ -70,32 +68,21 @@ const cvResource: FirehoseResource = {
 
 const ClusterAlerts = connectToFlags(FLAGS.OPENSHIFT)(
   withDashboardResources<WithFlagsProps & DashboardItemProps>(
-    ({
-      watchAlerts,
-      stopWatchAlerts,
-      alertsResults,
-      watchK8sResource,
-      stopWatchK8sResource,
-      resources,
-      flags,
-    }) => {
+    ({ notificationAlerts, watchK8sResource, stopWatchK8sResource, resources, flags }) => {
       const isOpenshift = flags[FLAGS.OPENSHIFT];
       React.useEffect(() => {
-        watchAlerts();
         if (isOpenshift) {
           watchK8sResource(cvResource);
         }
         return () => {
-          stopWatchAlerts();
           if (isOpenshift) {
             stopWatchK8sResource(cvResource);
           }
         };
-      }, [watchAlerts, stopWatchAlerts, watchK8sResource, stopWatchK8sResource, isOpenshift]);
+      }, [watchK8sResource, stopWatchK8sResource, isOpenshift]);
 
-      const alertsResponse = alertsResults.getIn([ALERTS_KEY, 'data']) as PrometheusRulesResponse;
-      const alertsResponseError = alertsResults.getIn([ALERTS_KEY, 'loadError']);
-      const alerts = getAlerts(alertsResponse);
+      const { data: alerts, loaded: alertsLoaded, loadError: alertsResponseError } =
+        notificationAlerts || {};
 
       const cv = _.get(resources.cv, 'data') as ClusterVersionKind;
       const cvLoaded = _.get(resources.cv, 'loaded');
@@ -114,7 +101,7 @@ const ClusterAlerts = connectToFlags(FLAGS.OPENSHIFT)(
 
       let items: React.ReactNode;
       if (!flagPending(isOpenshift)) {
-        if (isOpenshift && (hasAvailableUpdates(cv) || alerts.length)) {
+        if (isOpenshift && (hasAvailableUpdates(cv) || !_.isEmpty(alerts))) {
           items = (
             <>
               {hasAvailableUpdates(cv) && (
@@ -129,7 +116,7 @@ const ClusterAlerts = connectToFlags(FLAGS.OPENSHIFT)(
               ))}
             </>
           );
-        } else if (alerts.length) {
+        } else if (!_.isEmpty(alerts)) {
           items = alerts.map((alert) => (
             <AlertItem key={alertURL(alert, alert.rule.id)} alert={alert} />
           ));
@@ -139,8 +126,7 @@ const ClusterAlerts = connectToFlags(FLAGS.OPENSHIFT)(
       return (
         <AlertsBody
           isLoading={
-            flagPending(isOpenshift) ||
-            (isOpenshift ? !(alertsResponse && cvLoaded) : !alertsResponse)
+            flagPending(isOpenshift) || (isOpenshift ? !(alertsLoaded && cvLoaded) : !alertsLoaded)
           }
           error={alertsResponseError}
           emptyMessage="No cluster alerts or messages"

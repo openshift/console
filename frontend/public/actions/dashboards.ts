@@ -19,8 +19,6 @@ export enum ActionType {
 
 const REFRESH_TIMEOUT = 5000;
 
-export const ALERTS_KEY = 'alerts';
-
 export const stopWatch = (type: RESULTS_TYPE, key: string) =>
   action(ActionType.StopWatch, { type, key });
 export const setData = (type: RESULTS_TYPE, key: string, data) =>
@@ -121,33 +119,9 @@ export const watchURL: WatchURLAction = (url, fetch = coFetchJSON) => (dispatch,
   }
 };
 
-export const watchAlerts: WatchAlertsAction = () => (dispatch, getState) => {
-  const isActive = isWatchActive(getState().dashboards, RESULTS_TYPE.ALERTS, ALERTS_KEY);
-  dispatch(activateWatch(RESULTS_TYPE.ALERTS, ALERTS_KEY));
-  if (!isActive) {
-    const { prometheusBaseURL } = window.SERVER_FLAGS;
-    if (!prometheusBaseURL) {
-      dispatch(
-        setError(RESULTS_TYPE.ALERTS, ALERTS_KEY, new Error('Prometheus URL is not available')),
-      );
-    } else {
-      const prometheusURL = () => `${prometheusBaseURL}/api/v1/rules`;
-      fetchPeriodically(
-        dispatch,
-        RESULTS_TYPE.ALERTS,
-        ALERTS_KEY,
-        prometheusURL,
-        getState,
-        coFetchJSON,
-      );
-    }
-  }
-};
-
 export const stopWatchPrometheusQuery: StopWatchPrometheusAction = (query, timespan) =>
   stopWatch(RESULTS_TYPE.PROMETHEUS, getQueryKey(query, timespan));
 export const stopWatchURL = (url: string) => stopWatch(RESULTS_TYPE.URL, url);
-export const stopWatchAlerts = () => stopWatch(RESULTS_TYPE.ALERTS, ALERTS_KEY);
 
 type ThunkAction = (dispatch: Dispatch, getState: () => RootState) => void;
 
@@ -157,10 +131,8 @@ export type WatchPrometheusQueryAction = (
   namespace?: string,
   timespan?: number,
 ) => ThunkAction;
-export type WatchAlertsAction = () => ThunkAction;
 export type StopWatchURLAction = (url: string) => void;
 export type StopWatchPrometheusAction = (query: string, timespan?: number) => void;
-export type StopWatchAlertsAction = () => void;
 
 export type Fetch = (url: string) => Promise<any>;
 

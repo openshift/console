@@ -4,16 +4,11 @@ import * as _ from 'lodash-es';
 
 import { RESULTS_TYPE, RequestMap } from '../../reducers/dashboards';
 import {
-  ALERTS_KEY,
   Fetch,
-  stopWatchAlerts,
-  StopWatchAlertsAction,
   StopWatchPrometheusAction,
   stopWatchPrometheusQuery,
   stopWatchURL,
   StopWatchURLAction,
-  watchAlerts,
-  WatchAlertsAction,
   watchPrometheusQuery,
   WatchPrometheusQueryAction,
   watchURL,
@@ -33,8 +28,6 @@ const mapDispatchToProps: DispatchToProps = (dispatch) => ({
     dispatch(watchPrometheusQuery(query, namespace, timespan)),
   stopWatchPrometheusQuery: (query, timespan) =>
     dispatch(stopWatchPrometheusQuery(query, timespan)),
-  watchAlerts: () => dispatch(watchAlerts()),
-  stopWatchAlerts: () => dispatch(stopWatchAlerts()),
 });
 
 const mapStateToProps = (state: RootState) => ({
@@ -42,9 +35,7 @@ const mapStateToProps = (state: RootState) => ({
   [RESULTS_TYPE.PROMETHEUS]: state.dashboards.get(RESULTS_TYPE.PROMETHEUS) as RequestMap<
     PrometheusResponse
   >,
-  [RESULTS_TYPE.ALERTS]: state.dashboards.get(RESULTS_TYPE.ALERTS) as RequestMap<
-    PrometheusRulesResponse
-  >,
+  notificationAlerts: state.UI.getIn(['monitoring', 'notificationAlerts']),
 });
 
 type StateProps = ReturnType<typeof mapStateToProps>;
@@ -63,7 +54,6 @@ export const withDashboardResources = <P extends DashboardItemProps>(
     > {
       private urls: Array<string> = [];
       private queries: Array<string> = [];
-      private watchingAlerts: boolean = false;
 
       constructor(props) {
         super(props);
@@ -91,10 +81,8 @@ export const withDashboardResources = <P extends DashboardItemProps>(
               nextProps[RESULTS_TYPE.PROMETHEUS].getIn([query, 'loadError']),
         );
         const alertsResultChanged =
-          this.props[RESULTS_TYPE.ALERTS].getIn([ALERTS_KEY, 'data']) !==
-            nextProps[RESULTS_TYPE.ALERTS].getIn([ALERTS_KEY, 'data']) ||
-          this.props[RESULTS_TYPE.ALERTS].getIn([ALERTS_KEY, 'loadError']) !==
-            nextProps[RESULTS_TYPE.ALERTS].getIn([ALERTS_KEY, 'loadError']);
+          this.props?.notificationAlerts?.data !== nextProps?.notificationAlerts?.data ||
+          this.props?.notificationAlerts?.loadError !== nextProps?.notificationAlerts?.loadError;
         const k8sResourcesChanged = this.state.k8sResources !== nextState.k8sResources;
 
         const nextExternalProps = this.getExternalProps(nextProps);
@@ -104,7 +92,7 @@ export const withDashboardResources = <P extends DashboardItemProps>(
           urlResultChanged ||
           queryResultChanged ||
           k8sResourcesChanged ||
-          (this.watchingAlerts && alertsResultChanged) ||
+          alertsResultChanged ||
           Object.keys(nextExternalProps).length !== Object.keys(externalProps).length ||
           Object.keys(nextExternalProps).some(
             (key) => nextExternalProps[key] !== externalProps[key],
@@ -126,16 +114,6 @@ export const withDashboardResources = <P extends DashboardItemProps>(
         const queryKey = getQueryKey(query, timespan);
         this.queries = this.queries.filter((q) => q !== queryKey);
         this.props.stopWatchPrometheusQuery(query, timespan);
-      };
-
-      watchAlerts: WatchAlerts = () => {
-        this.watchingAlerts = true;
-        this.props.watchAlerts();
-      };
-
-      stopWatchAlerts: StopWatchAlerts = () => {
-        this.watchingAlerts = false;
-        this.props.stopWatchAlerts();
       };
 
       watchK8sResource: WatchK8sResource = (resource) => {
@@ -161,7 +139,7 @@ export const withDashboardResources = <P extends DashboardItemProps>(
           'stopWatchAlerts',
           RESULTS_TYPE.URL,
           RESULTS_TYPE.PROMETHEUS,
-          RESULTS_TYPE.ALERTS,
+          'notificationAlerts',
         );
       };
 
@@ -173,11 +151,9 @@ export const withDashboardResources = <P extends DashboardItemProps>(
               stopWatchURL={this.props.stopWatchURL}
               watchPrometheus={this.watchPrometheus}
               stopWatchPrometheusQuery={this.stopWatchPrometheusQuery}
-              watchAlerts={this.watchAlerts}
-              stopWatchAlerts={this.stopWatchAlerts}
               urlResults={this.props[RESULTS_TYPE.URL]}
               prometheusResults={this.props[RESULTS_TYPE.PROMETHEUS]}
-              alertsResults={this.props[RESULTS_TYPE.ALERTS]}
+              notificationAlerts={this.props.notificationAlerts}
               watchK8sResource={this.watchK8sResource}
               stopWatchK8sResource={this.stopWatchK8sResource}
               {...this.getExternalProps(this.props)}
@@ -195,8 +171,6 @@ type DispatchToProps = (
   stopWatchURL: StopWatchURL;
   watchPrometheusQuery: WatchPrometheus;
   stopWatchPrometheusQuery: StopWatchPrometheus;
-  watchAlerts: WatchAlerts;
-  stopWatchAlerts: StopWatchAlerts;
 };
 
 type WatchURL = (url: string, fetch?: Fetch) => void;
@@ -213,13 +187,11 @@ type WithDashboardResourcesState = {
 type WithDashboardResourcesProps = {
   watchURL: WatchURLAction;
   watchPrometheusQuery: WatchPrometheusQueryAction;
-  watchAlerts: WatchAlertsAction;
   stopWatchURL: StopWatchURLAction;
   stopWatchPrometheusQuery: StopWatchPrometheusAction;
-  stopWatchAlerts: StopWatchAlertsAction;
   [RESULTS_TYPE.PROMETHEUS]: RequestMap<PrometheusResponse>;
   [RESULTS_TYPE.URL]: RequestMap<any>;
-  [RESULTS_TYPE.ALERTS]: RequestMap<PrometheusRulesResponse>;
+  notificationAlerts: any;
 };
 
 export type WatchK8sResource = (resource: FirehoseResource) => void;
@@ -235,6 +207,7 @@ export type DashboardItemProps = {
   urlResults: RequestMap<any>;
   prometheusResults: RequestMap<PrometheusResponse>;
   alertsResults: RequestMap<PrometheusRulesResponse>;
+  notificationAlerts: any;
   watchK8sResource: WatchK8sResource;
   stopWatchK8sResource: StopWatchK8sResource;
   resources?: {

@@ -1,17 +1,15 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import { Gallery, GalleryItem } from '@patternfly/react-core';
-import { ALERTS_KEY } from '@console/internal/actions/dashboards';
 import AlertsBody from '@console/shared/src/components/dashboard/status-card/AlertsBody';
 import AlertItem from '@console/shared/src/components/dashboard/status-card/AlertItem';
-import { alertURL, PrometheusRulesResponse } from '@console/internal/components/monitoring';
+import { alertURL } from '@console/internal/components/monitoring';
 import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
 import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
 import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
 import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
 import HealthBody from '@console/shared/src/components/dashboard/status-card/HealthBody';
 import HealthItem from '@console/shared/src/components/dashboard/status-card/HealthItem';
-import { getAlerts } from '@console/shared/src/components/dashboard/status-card/alert-utils';
 import { PrometheusResponse } from '@console/internal/components/graphs';
 import {
   withDashboardResources,
@@ -34,21 +32,14 @@ const noobaaResource: FirehoseResource = {
   prop: 'noobaa',
 };
 
-const NooBaaAlerts = withDashboardResources(({ watchAlerts, stopWatchAlerts, alertsResults }) => {
-  React.useEffect(() => {
-    watchAlerts();
-    return () => {
-      stopWatchAlerts();
-    };
-  }, [watchAlerts, stopWatchAlerts]);
-
-  const alertsResponse = alertsResults.getIn([ALERTS_KEY, 'data']) as PrometheusRulesResponse;
-  const alertsResponseError = alertsResults.getIn([ALERTS_KEY, 'loadError']);
-  const alerts = filterNooBaaAlerts(getAlerts(alertsResponse));
+const NooBaaAlerts = withDashboardResources(({ notificationAlerts }) => {
+  const { data: allAlerts, loaded: alertsLoaded, loadError: alertsResponseError } =
+    notificationAlerts || {};
+  const alerts = filterNooBaaAlerts(allAlerts);
 
   return (
     <AlertsBody
-      isLoading={!alertsResponse}
+      isLoading={!alertsLoaded}
       error={alertsResponseError}
       emptyMessage="No object service alerts"
     >
