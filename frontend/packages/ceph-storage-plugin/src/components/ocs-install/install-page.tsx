@@ -77,25 +77,29 @@ const InstallCluster: React.FC<InstallClusterProps> = ({ match }) => {
       <div className="co-m-pane__body co-m-pane__form">
         {isIndependent && (
           <div className="ceph-install__select-mode">
-            <Title headingLevel="h5" size="lg" className="ceph-install-select-node__title">
+            <Title headingLevel="h5" size="lg" className="ceph-install-select-mode__title">
               Select Mode
             </Title>
-            <Radio
-              value={MODES.CONVERGED}
-              isChecked={mode === MODES.CONVERGED}
-              onChange={handleModeChange}
-              id="radio-1"
-              label="Converged"
-              name="converged-mode"
-            />
-            <Radio
-              value={MODES.INDEPENDENT}
-              isChecked={mode === MODES.INDEPENDENT}
-              onChange={handleModeChange}
-              id="radio-2"
-              label="Independent - For external storage"
-              name="independent-mode"
-            />
+            <div className="ceph-install-select-mode">
+              <Radio
+                value={MODES.CONVERGED}
+                isChecked={mode === MODES.CONVERGED}
+                onChange={handleModeChange}
+                id="radio-1"
+                label="Converged"
+                name="converged-mode"
+              />
+            </div>
+            <div className="ceph-install-select-mode">
+              <Radio
+                value={MODES.INDEPENDENT}
+                isChecked={mode === MODES.INDEPENDENT}
+                onChange={handleModeChange}
+                id="radio-2"
+                label="Independent - For external storage"
+                name="independent-mode"
+              />
+            </div>
           </div>
         )}
         {(isIndependent === false || mode === MODES.CONVERGED) && (
