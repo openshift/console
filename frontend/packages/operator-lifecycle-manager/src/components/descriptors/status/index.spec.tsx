@@ -25,7 +25,9 @@ describe(StatusDescriptor.displayName, () => {
         model={testModel}
         namespace="foo"
       />,
-    );
+    )
+      .childAt(0)
+      .shallow();
   });
 
   it('renders status value as text if no matching capability component', () => {
