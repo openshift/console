@@ -11,12 +11,11 @@ import {
   EventSourceCamelModel,
   EventSourceKafkaModel,
 } from '@console/knative-plugin';
-import { getAppLabels } from '@console/dev-console/src/utils/resource-label-utils';
+import { getAppLabels, mergeData } from '@console/dev-console/src/utils/resource-label-utils';
 import {
   DeployImageFormData,
   GitImportFormData,
 } from '@console/dev-console/src/components/import/import-types';
-import * as _ from 'lodash';
 
 export const getKnativeServiceDepResource = (
   formData: GitImportFormData | DeployImageFormData,
@@ -122,7 +121,7 @@ export const getKnativeServiceDepResource = (
     },
   };
 
-  const knativeDeployResource = _.merge({}, originalKnativeService || {}, newKnativeDeployResource);
+  const knativeDeployResource = mergeData(originalKnativeService || {}, newKnativeDeployResource);
 
   return knativeDeployResource;
 };

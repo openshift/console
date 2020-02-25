@@ -1,3 +1,6 @@
+import { K8sResourceKind } from '@console/internal/module/k8s';
+import * as _ from 'lodash';
+
 export const getAppLabels = (
   name: string,
   application?: string,
@@ -39,4 +42,13 @@ export const getPodLabels = (name: string) => {
     app: name,
     deploymentconfig: name,
   };
+};
+
+export const mergeData = (originalResource: K8sResourceKind, newResource: K8sResourceKind) => {
+  const mergedData = _.merge({}, originalResource || {}, newResource);
+  mergedData.metadata.labels = newResource.metadata.labels;
+  if (mergedData.spec?.template?.metadata?.labels) {
+    mergedData.spec.template.metadata.labels = newResource.spec?.template?.metadata?.labels;
+  }
+  return mergedData;
 };

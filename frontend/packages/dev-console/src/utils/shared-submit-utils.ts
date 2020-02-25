@@ -1,7 +1,7 @@
 import * as _ from 'lodash';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { GitImportFormData, DeployImageFormData } from '../components/import/import-types';
-import { getAppLabels, getPodLabels, getAppAnnotations } from './resource-label-utils';
+import { getAppLabels, getPodLabels, getAppAnnotations, mergeData } from './resource-label-utils';
 import { makePortName } from './imagestream-utils';
 
 export const annotations = {
@@ -68,7 +68,7 @@ export const createService = (
     },
   };
 
-  const service = _.merge({}, originalService || {}, newService);
+  const service = mergeData(originalService, newService);
 
   return service;
 };
@@ -141,7 +141,7 @@ export const createRoute = (
     },
   };
 
-  const route = _.merge({}, originalRoute || {}, newRoute);
+  const route = mergeData(originalRoute, newRoute);
 
   return route;
 };
