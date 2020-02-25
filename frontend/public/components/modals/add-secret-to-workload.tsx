@@ -205,7 +205,7 @@ export class AddSecretToWorkloadModal extends React.Component<
           <fieldset>
             <legend className="co-legend co-required">Add secret as</legend>
             <RadioInput
-              title="Enviroment Variables"
+              title="Environment Variables"
               name="co-add-secret-to-workload__add-as"
               id="co-add-secret-to-workload__envvars"
               value="environment"
