@@ -7,7 +7,7 @@ import {
   getMigrationStatusPhase,
 } from '../../selectors/vmi-migration';
 import {
-  findVMPod,
+  findVMIPod,
   getVMImporterPods,
   getPodStatusPhase,
   getPodContainerStatuses,
@@ -251,7 +251,7 @@ export const getVMStatus = ({
   migrations?: K8sResourceKind[];
 }): VMStatus => {
   const vmLike = vm || vmi;
-  const launcherPod = findVMPod(vmi, pods);
+  const launcherPod = findVMIPod(vmi, pods);
   return (
     isPaused(vmi) ||
     isV2VConversion(vmLike, pods) || // these statuses must precede isRunning() because they do not rely on ready vms

@@ -49,7 +49,7 @@ export const isPodSchedulable = (pod: PodKind) => {
 const isPodReady = (pod: PodKind): boolean =>
   pod?.status?.phase === 'Running' && pod?.status?.containerStatuses?.every((s) => s.ready);
 
-export const findVMPod = (
+export const findVMIPod = (
   vmi?: VMIKind,
   pods?: PodKind[],
   podNamePrefix = VIRT_LAUNCHER_POD_PREFIX,
@@ -78,11 +78,9 @@ export const findVMPod = (
   });
 
   // Return the newet most ready Pod created
-  return prefixedPods
-    .sort((a: PodKind, b: PodKind) =>
-      a.metadata.creationTimestamp > b.metadata.creationTimestamp ? -1 : 1,
-    )
-    .sort((a: PodKind) => (isPodReady(a) ? -1 : 1))[0];
+  return prefixedPods.sort((a: PodKind, b: PodKind) =>
+    isPodReady(a) && a.metadata.creationTimestamp > b.metadata.creationTimestamp ? -1 : 1,
+  )[0];
 };
 
 export const getVMImporterPods = (

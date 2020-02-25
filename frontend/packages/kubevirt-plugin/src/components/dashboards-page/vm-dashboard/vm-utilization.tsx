@@ -19,7 +19,7 @@ import {
 } from '@console/shared/src/components/dashboard/duration-hook';
 import { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
 import { VMDashboardContext } from '../../vms/vm-dashboard-context';
-import { findVMPod } from '../../../selectors/pod/selectors';
+import { findVMIPod } from '../../../selectors/pod/selectors';
 import { isVMRunningWithVMI } from '../../../selectors/vm';
 import { getUtilizationQueries, getMultilineUtilizationQueries, VMQueries } from './queries';
 import { getPrometheusQueryEndTimestamp } from '@console/internal/components/graphs/helpers';
@@ -51,7 +51,7 @@ export const VMUtilizationCard: React.FC = () => {
   const vmiLike = vm || vmi;
   const vmName = getName(vmiLike);
   const namespace = getNamespace(vmiLike);
-  const launcherPodName = getName(findVMPod(vmi, pods));
+  const launcherPodName = getName(findVMIPod(vmi, pods));
   const vmIsRunning = isVMRunningWithVMI({ vm, vmi });
 
   const queries = React.useMemo(
