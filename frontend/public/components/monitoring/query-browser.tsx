@@ -27,6 +27,7 @@ import {
 } from '@patternfly/react-core';
 import { ChartLineIcon } from '@patternfly/react-icons';
 import { connect } from 'react-redux';
+import { withFallback } from '@console/shared/src/components/error/error-boundary';
 
 import * as UIActions from '../../actions/ui';
 import { RootState } from '../../redux';
@@ -48,7 +49,6 @@ import {
   twentyFourHourTime,
   twentyFourHourTimeWithSeconds,
 } from '../utils/datetime';
-import { withFallback } from '../utils/error-boundary';
 
 // Prometheus internal labels start with "__"
 const isInternalLabel = (key: string): boolean => _.startsWith(key, '__');

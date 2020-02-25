@@ -139,9 +139,10 @@ const OngoingActivity = connect(mapStateToProps)(
             };
           });
 
-        const resourcesLoaded = resourceActivities.every((a, index) =>
-          _.get(resources, [uniqueResource(a.properties.k8sResource, index).prop, 'loaded']),
-        );
+        const resourcesLoaded = resourceActivities.every((a, index) => {
+          const uniqueProp = uniqueResource(a.properties.k8sResource, index).prop;
+          return resources[uniqueProp]?.loaded || resources[uniqueProp]?.loadError;
+        });
         const queriesLoaded = prometheusActivities.every((a) =>
           a.properties.queries.every(
             (q) =>

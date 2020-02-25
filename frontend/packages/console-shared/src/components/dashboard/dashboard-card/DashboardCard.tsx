@@ -1,10 +1,11 @@
 import * as React from 'react';
 import classNames from 'classnames';
 import { Card, CardProps } from '@patternfly/react-core';
+import { withFallback } from '@console/shared/src/components/error/error-boundary';
 import './card.scss';
 
-const DashboardCard: React.FC<DashboardCardProps> = React.memo(
-  ({ className, children, gradient, ...props }) => (
+const DashboardCard = withFallback<DashboardCardProps>(
+  React.memo(({ className, children, gradient, ...props }) => (
     <Card
       {...props}
       className={classNames(
@@ -15,7 +16,7 @@ const DashboardCard: React.FC<DashboardCardProps> = React.memo(
     >
       {children}
     </Card>
-  ),
+  )),
 );
 
 export default DashboardCard;

@@ -3,12 +3,8 @@ import * as _ from 'lodash';
 import { Map as ImmutableMap } from 'immutable';
 import { Button, Switch, Tooltip, Checkbox } from '@patternfly/react-core';
 import { EyeIcon, EyeSlashIcon, PencilAltIcon } from '@patternfly/react-icons';
-import {
-  LoadingInline,
-  ResourceLink,
-  Selector,
-  withFallback,
-} from '@console/internal/components/utils';
+import { LoadingInline, ResourceLink, Selector } from '@console/internal/components/utils';
+import { withFallback } from '@console/shared/src/components/error/error-boundary';
 import { k8sPatch } from '@console/internal/module/k8s';
 import { YellowExclamationTriangleIcon } from '@console/shared';
 import { SecretValue } from '@console/internal/components/configmap-and-secret-data';

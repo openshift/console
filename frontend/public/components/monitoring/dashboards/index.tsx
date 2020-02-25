@@ -12,6 +12,7 @@ import DashboardCard from '@console/shared/src/components/dashboard/dashboard-ca
 import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
 import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
 import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
+import { withFallback } from '@console/shared/src/components/error/error-boundary';
 
 import * as UIActions from '../../../actions/ui';
 import { ErrorBoundaryFallback } from '../../error';
@@ -19,7 +20,6 @@ import { RootState } from '../../../redux';
 import { getPrometheusURL, PrometheusEndpoint } from '../../graphs/helpers';
 import { history, LoadingInline, useSafeFetch } from '../../utils';
 import { formatPrometheusDuration, parsePrometheusDuration } from '../../utils/datetime';
-import { withFallback } from '../../utils/error-boundary';
 import BarChart from './bar-chart';
 import Graph from './graph';
 import SingleStat from './single-stat';

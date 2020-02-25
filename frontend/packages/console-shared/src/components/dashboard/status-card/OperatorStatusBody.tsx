@@ -46,7 +46,7 @@ export const OperatorsSection: React.FC<OperatorsSectionProps> = ({
       )}
       <div className="co-status__operator-row">
         <Link to={linkTo}>View all</Link>
-        {!error && operatorsHealthy && (
+        {!error && operatorsHealthy && operatorStatuses.length && (
           <div className="co-status__operator">
             <div className="text-secondary">
               All {operatorStatuses[0].status.title.toLowerCase()}
