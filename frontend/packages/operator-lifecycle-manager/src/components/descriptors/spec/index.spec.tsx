@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { shallow, ShallowWrapper } from 'enzyme';
+import { shallow, mount, ReactWrapper, ShallowWrapper } from 'enzyme';
 import { ResourceLink, Selector } from '@console/internal/components/utils';
 import { DescriptorProps, SpecCapability, Descriptor } from '../types';
 import { testResourceInstance, testModel } from '../../../../mocks';
@@ -7,6 +7,7 @@ import { EndpointList, Endpoint } from './endpoint';
 import { ResourceRequirementsModalLink } from './resource-requirements';
 import * as configureSize from './configure-size';
 import { SpecDescriptor } from '.';
+import { Button } from '@patternfly/react-core';
 
 describe(SpecDescriptor.name, () => {
   let wrapper: ShallowWrapper<DescriptorProps>;
@@ -16,7 +17,7 @@ describe(SpecDescriptor.name, () => {
     descriptor = {
       path: '',
       displayName: 'Some Spec Control',
-      description: '',
+      description: 'This is a description',
       'x-descriptors': [],
     };
     wrapper = shallow(
@@ -27,17 +28,23 @@ describe(SpecDescriptor.name, () => {
         descriptor={descriptor}
         value={null}
       />,
-    );
+    )
+      .childAt(0)
+      .shallow();
   });
 
   it('renders status value as text if no matching capability component', () => {
-    expect(wrapper.find('dt').text()).toEqual(descriptor.displayName);
+    expect(
+      wrapper
+        .find('dt')
+        .render()
+        .text(),
+    ).toEqual(descriptor.displayName);
+    // expect(wrapper.find('.olm-descriptor__title').text()).toEqual(descriptor.displayName);
     expect(
       wrapper
         .find('dd')
-        .childAt(0)
-        .shallow()
-        .find('.text-muted')
+        .render()
         .text(),
     ).toEqual('None');
   });
@@ -52,9 +59,10 @@ describe(SpecDescriptor.name, () => {
         .find('dd')
         .childAt(0)
         .shallow()
-        .find('[data-test-id="configure-modal-btn"]')
+        .find(Button)
+        .render()
         .text(),
-    ).toEqual(`${value}`);
+    ).toEqual(`${value} pods`);
 
     spyOn(configureSize, 'configureSizeModal').and.callFake((props) => {
       expect(props).toEqual({
@@ -69,7 +77,7 @@ describe(SpecDescriptor.name, () => {
       .find('dd')
       .childAt(0)
       .shallow()
-      .find('[data-test-id="configure-modal-btn"]')
+      .find(Button)
       .props()
       .onClick(null);
   });
