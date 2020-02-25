@@ -16,7 +16,7 @@ import {
 } from '@console/internal/components/utils';
 import { VMDashboardContext } from '../../vms/vm-dashboard-context';
 import { VirtualMachineModel, VirtualMachineInstanceModel } from '../../../models';
-import { getVmiIpAddresses } from '../../../selectors/vmi/ip-address';
+import { getVmiIpAddresses, getVMINodeName } from '../../../selectors/vmi';
 import { VM_DETAIL_DETAILS_HREF } from '../../../constants';
 import { findVMPod } from '../../../selectors/pod/selectors';
 
@@ -25,13 +25,14 @@ export const VMDetailsCard: React.FC<VMDetailsCardProps> = () => {
   const { vm, vmi, pods } = vmDashboardContext;
   const vmiLike = vm || vmi;
 
-  const launcherPod = findVMPod(vmiLike, pods);
+  const launcherPod = findVMPod(vmi, pods);
 
   const ipAddrs = getVmiIpAddresses(vmi).join(', ');
 
   const isNodeLoading = !vmiLike || !pods;
   const name = getName(vmiLike);
   const namespace = getNamespace(vmiLike);
+  const nodeName = getVMINodeName(vmi) || getNodeName(launcherPod);
 
   const viewAllLink = `${resourcePath(
     vm ? VirtualMachineModel.kind : VirtualMachineInstanceModel.kind,
@@ -66,8 +67,8 @@ export const VMDetailsCard: React.FC<VMDetailsCardProps> = () => {
           <DetailItem title="Created" error={false} isLoading={!vmiLike}>
             <Timestamp timestamp={getCreationTimestamp(vmiLike)} />
           </DetailItem>
-          <DetailItem title="Node" error={!isNodeLoading && !launcherPod} isLoading={isNodeLoading}>
-            {launcherPod && <NodeLink name={getNodeName(launcherPod)} />}
+          <DetailItem title="Node" error={!isNodeLoading && !nodeName} isLoading={isNodeLoading}>
+            {nodeName && <NodeLink name={nodeName} />}
           </DetailItem>
           <DetailItem
             title="IP Address"
