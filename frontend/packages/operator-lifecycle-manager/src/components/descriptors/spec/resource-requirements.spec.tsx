@@ -12,6 +12,7 @@ import {
 } from './resource-requirements';
 
 import Spy = jasmine.Spy;
+import { Button } from '@patternfly/react-core';
 
 describe(ResourceRequirementsModal.name, () => {
   let wrapper: ReactWrapper<ResourceRequirementsModalProps>;
@@ -108,8 +109,8 @@ describe(ResourceRequirementsModalLink.displayName, () => {
 
     expect(
       wrapper
-        .find('button')
-        .childAt(0)
+        .find(Button)
+        .render()
         .text(),
     ).toEqual(`CPU: ${cpu}, Memory: ${memory}, Storage: ${storage}`);
   });
@@ -118,8 +119,8 @@ describe(ResourceRequirementsModalLink.displayName, () => {
     const { memory, cpu, 'ephemeral-storage': storage } = obj.spec.resources.requests;
     expect(
       wrapper
-        .find('button')
-        .childAt(0)
+        .find(Button)
+        .render()
         .text(),
     ).toEqual(`CPU: ${cpu}, Memory: ${memory}, Storage: ${storage}`);
   });
@@ -130,8 +131,8 @@ describe(ResourceRequirementsModalLink.displayName, () => {
 
     expect(
       wrapper
-        .find('button')
-        .childAt(0)
+        .find(Button)
+        .render()
         .text(),
     ).toEqual('CPU: none, Memory: none, Storage: none');
   });
@@ -148,6 +149,6 @@ describe(ResourceRequirementsModalLink.displayName, () => {
     });
     spyOn(modal, 'createModalLauncher').and.returnValue(modalSpy);
 
-    wrapper.find('button').simulate('click');
+    wrapper.find(Button).simulate('click');
   });
 });
