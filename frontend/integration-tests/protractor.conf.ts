@@ -77,6 +77,7 @@ const testSuites = {
   ]),
   overview: suite(['tests/overview/overview.scenario.ts']),
   crdExtensions: suite(['tests/crd-extensions.scenario.ts']),
+  oauth: suite(['tests/oauth.scenario.ts']),
   e2e: suite([
     'tests/crud.scenario.ts',
     'tests/filter.scenario.ts',
@@ -90,6 +91,7 @@ const testSuites = {
     'tests/monitoring.scenario.ts',
     'tests/alertmanager.scenario.ts',
     'tests/crd-extensions.scenario.ts',
+    'tests/oauth.scenario.ts',
     'tests/devconsole/pipeline.scenario.ts',
   ]),
   release: suite([
@@ -120,6 +122,7 @@ const testSuites = {
     'tests/devconsole/git-import-flow.scenario.ts',
     'tests/devconsole/pipeline.scenario.ts',
     'tests/crd-extensions.scenario.ts',
+    'tests/oauth.scenario.ts',
   ]),
   clusterSettings: suite(['tests/cluster-settings.scenario.ts']),
   alertmanager: suite(['tests/alertmanager.scenario.ts']),

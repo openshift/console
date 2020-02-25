@@ -120,7 +120,9 @@ export class AddBasicAuthPage extends PromiseComponent<{}, AddBasicAuthPageState
     // Clear any previous errors.
     this.setState({ errorMessage: '' });
     this.getOAuthResource().then((oauth: OAuthKind) => {
-      this.addBasicAuthIDP(oauth, mockNames.secret, mockNames.ca, true)
+      const mockSecret = this.state.certFileContent ? mockNames.secret : '';
+      const mockCA = this.state.caFileContent ? mockNames.ca : '';
+      this.addBasicAuthIDP(oauth, mockSecret, mockCA, true)
         .then(() => {
           const promises = [this.createTLSSecret(), this.createCAConfigMap()];
 
@@ -213,7 +215,7 @@ export class AddBasicAuthPage extends PromiseComponent<{}, AddBasicAuthPageState
           </div>
           <ButtonBar errorMessage={this.state.errorMessage} inProgress={this.state.inProgress}>
             <ActionGroup className="pf-c-form">
-              <Button type="submit" variant="primary">
+              <Button type="submit" variant="primary" data-test-id="add-idp">
                 Add
               </Button>
               <Button type="button" variant="secondary" onClick={history.goBack}>

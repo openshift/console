@@ -97,7 +97,8 @@ export class AddGitLabPage extends PromiseComponent<{}, AddGitLabPageState> {
     // Clear any previous errors.
     this.setState({ errorMessage: '' });
     this.getOAuthResource().then((oauth: OAuthKind) => {
-      this.addGitLabIDP(oauth, mockNames.secret, mockNames.ca, true)
+      const mockCA = this.state.caFileContent ? mockNames.ca : '';
+      this.addGitLabIDP(oauth, mockNames.secret, mockCA, true)
         .then(() => {
           const promises = [this.createClientSecret(), this.createCAConfigMap()];
 
@@ -194,7 +195,7 @@ export class AddGitLabPage extends PromiseComponent<{}, AddGitLabPageState> {
           <IDPCAFileInput value={caFileContent} onChange={this.caFileChanged} />
           <ButtonBar errorMessage={this.state.errorMessage} inProgress={this.state.inProgress}>
             <ActionGroup className="pf-c-form">
-              <Button type="submit" variant="primary">
+              <Button type="submit" variant="primary" data-test-id="add-idp">
                 Add
               </Button>
               <Button type="button" variant="secondary" onClick={history.goBack}>
