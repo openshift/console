@@ -6,7 +6,14 @@ import { Bar } from '../../graphs';
 const Label = ({ metric }) => <>{_.values(metric).join()}</>;
 
 const BarChart: React.FC<BarChartProps> = ({ pollInterval, query }) => (
-  <Bar barSpacing={5} barWidth={8} delay={pollInterval} query={query} LabelComponent={Label} />
+  <Bar
+    barSpacing={5}
+    barWidth={8}
+    delay={pollInterval}
+    isLink={false}
+    LabelComponent={Label}
+    query={query}
+  />
 );
 
 type BarChartProps = {
