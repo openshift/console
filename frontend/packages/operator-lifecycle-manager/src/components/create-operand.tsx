@@ -846,6 +846,13 @@ export const CreateOperandForm: React.FC<CreateOperandFormProps> = ({
     )
     .filter((f) => f.capabilities.includes(SpecCapability.advanced));
 
+  const fieldGroupArrayList = _.uniqWith([...arrayFieldGroups], (arrVal, othVal) => {
+    const groupName = getGroupName(arrVal, SpecCapability.arrayFieldGroup);
+    return (
+      _.dropRight(arrVal.split(groupName)).join() === _.dropRight(othVal.split(groupName)).join()
+    );
+  });
+
   useScrollToTopOnMount();
 
   return (
@@ -875,69 +882,83 @@ export const CreateOperandForm: React.FC<CreateOperandFormProps> = ({
                 tags={formValues['metadata.labels']}
               />
             </div>
-            {[...arrayFieldGroups].map((group) => {
+            {fieldGroupArrayList.map((group) => {
               const groupName = getGroupName(group, SpecCapability.arrayFieldGroup);
-              const fieldList = fields
-                .filter((f) => f.capabilities.includes(group))
+              const fieldsInFieldGroupArray = fields
+                .filter((f) => f.capabilities.toString().includes(groupName))
                 .filter((f) => !_.isNil(inputFor(f)));
+              const fieldGroupList = [...arrayFieldGroups].filter((g) =>
+                g.split(SpecCapability.arrayFieldGroup)[1]?.includes(groupName),
+              );
+              let fieldsInFieldGroup;
 
               return (
-                !_.isEmpty(fieldList) && (
+                !_.isEmpty(fieldGroupList) && (
                   <div id={group} key={group}>
-                    {[...arrayFieldGroups].filter((fieldGroup) =>
-                      fieldGroup
-                        .split(SpecCapability.arrayFieldGroup)[1]
-                        .split(':')[0]
-                        .includes(groupName),
-                    ).length > 1 ? (
-                      <div className="row co-array-field-group__remove">
-                        <Button
-                          type="button"
-                          className="co-array-field-group__remove-btn"
-                          onClick={() => removeGroupAndFields(fieldList, groupName)}
-                          variant="link"
-                        >
-                          <MinusCircleIcon className="co-icon-space-r" />
-                          Remove Field Group
-                        </Button>
-                      </div>
-                    ) : null}
                     <FieldGroup
                       defaultExpand={
                         !_.some(
-                          fieldList,
+                          fieldsInFieldGroupArray,
                           (f) => f.capabilities.includes(SpecCapability.advanced) && !f.required,
                         )
                       }
                       groupName={_.startCase(groupName)}
                     >
-                      {fieldList.map((field) => (
-                        <div key={field.path}>
-                          <div className="form-group co-create-operand__form-group">
-                            <label
-                              className={classNames('form-label', {
-                                'co-required': field.required,
-                              })}
-                              htmlFor={field.path}
-                            >
-                              {field.displayName}
-                            </label>
-                            {inputFor(field)}
-                            {field.description && (
-                              <span id={`${field.path}__description`} className="help-block">
-                                {field.description}
-                              </span>
-                            )}
-                            {formErrors[field.path] && (
-                              <span className="co-error">{formErrors[field.path]}</span>
-                            )}
+                      {fieldGroupList.map((g, index) => {
+                        fieldsInFieldGroup = fields
+                          .filter((f) => f.capabilities.includes(g))
+                          .filter((f) => !_.isNil(inputFor(f)));
+
+                        return (
+                          <div key={g}>
+                            {fieldGroupList.length > 1 ? (
+                              <div className="row co-array-field-group__remove">
+                                <Button
+                                  type="button"
+                                  className="co-array-field-group__remove-btn"
+                                  onClick={() =>
+                                    removeGroupAndFields(fieldsInFieldGroup, groupName)
+                                  }
+                                  variant="link"
+                                >
+                                  <MinusCircleIcon className="co-icon-space-r" />
+                                  Remove Field Group
+                                </Button>
+                              </div>
+                            ) : null}
+                            {fieldsInFieldGroup.map((field) => (
+                              <div key={field.path}>
+                                <div className="form-group co-create-operand__form-group">
+                                  <label
+                                    className={classNames('form-label', {
+                                      'co-required': field.required,
+                                    })}
+                                    htmlFor={field.path}
+                                  >
+                                    {field.displayName}
+                                  </label>
+                                  {inputFor(field)}
+                                  {field.description && (
+                                    <span id={`${field.path}__description`} className="help-block">
+                                      {field.description}
+                                    </span>
+                                  )}
+                                  {formErrors[field.path] && (
+                                    <span className="co-error">{formErrors[field.path]}</span>
+                                  )}
+                                </div>
+                              </div>
+                            ))}
+                            {fieldGroupList.length > 1 && index < fieldGroupList.length - 1 ? (
+                              <hr />
+                            ) : null}
                           </div>
-                        </div>
-                      ))}
+                        );
+                      })}
                       <div className="row">
                         <Button
                           type="button"
-                          onClick={() => addGroupAndFields(fieldList, groupName)}
+                          onClick={() => addGroupAndFields(fieldsInFieldGroup, groupName)}
                           variant="link"
                         >
                           <PlusCircleIcon className="co-icon-space-r" />
