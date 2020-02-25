@@ -1,4 +1,5 @@
 import * as React from 'react';
+import * as _ from 'lodash';
 import { k8sList } from '@console/internal/module/k8s';
 import { ClusterTaskModel, TaskModel } from '../../../models';
 import {
@@ -181,6 +182,8 @@ export const useResourceValidation = (
   resourceValues: PipelineResource[],
   onError: UpdateErrors,
 ) => {
+  const [previousErrorIds, setPreviousErrorIds] = React.useState([]);
+
   React.useEffect(() => {
     const resourceNames = resourceValues.map((r) => r.name);
 
@@ -191,12 +194,35 @@ export const useResourceValidation = (
         (r) => !resourceNames.includes(r.resource),
       );
 
+      if (missingResources.length === 0) {
+        return acc;
+      }
+
       return {
         ...acc,
-        [task.name]: missingResources.length !== 0 ? [TaskErrorType.MISSING_RESOURCES] : null,
+        [task.name]: [TaskErrorType.MISSING_RESOURCES],
       };
     }, {});
 
-    onError(errors);
-  }, [tasks, resourceValues, onError]);
+    if (!_.isEmpty(errors) || previousErrorIds.length > 0) {
+      const outputErrors = previousErrorIds.reduce((acc, id) => {
+        if (acc[id]) {
+          // Error exists, leave it alone
+          return acc;
+        }
+
+        // Error doesn't exist but we had it once, make sure it is cleared
+        return {
+          ...acc,
+          [id]: null,
+        };
+      }, errors);
+
+      const currentErrorIds = Object.keys(outputErrors).filter((id) => !!outputErrors[id]);
+      if (!_.isEqual(currentErrorIds, previousErrorIds)) {
+        setPreviousErrorIds(currentErrorIds);
+      }
+      onError(outputErrors);
+    }
+  }, [tasks, resourceValues, onError, previousErrorIds, setPreviousErrorIds]);
 };
