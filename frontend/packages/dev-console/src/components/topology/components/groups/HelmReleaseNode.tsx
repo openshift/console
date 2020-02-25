@@ -8,26 +8,33 @@ import {
   createSvgIdUrl,
   useDragNode,
   WithSelectionProps,
+  WithDndDropProps,
   observer,
   useCombineRefs,
 } from '@console/topology';
 import NodeShadows, { NODE_SHADOW_FILTER_ID_HOVER, NODE_SHADOW_FILTER_ID } from '../NodeShadows';
 import useSearchFilter from '../../filters/useSearchFilter';
 import GroupNode from '../nodes/GroupNode';
+import { nodeDragSourceSpec } from '../../componentUtils';
+import { TYPE_HELM_RELEASE } from '../../const';
 
 export type HelmReleaseNodeProps = {
   element: Node;
-} & WithSelectionProps;
+} & WithSelectionProps &
+  WithDndDropProps;
 
-const HelmReleaseNode: React.FC<HelmReleaseNodeProps> = ({ element, onSelect, selected }) => {
+const HelmReleaseNode: React.FC<HelmReleaseNodeProps> = ({
+  element,
+  onSelect,
+  selected,
+  dndDropRef,
+}) => {
   useAnchor((e: Node) => new RectAnchor(e, 4));
   const [hover, hoverRef] = useHover();
-  const [{ dragging }, dragNodeRef] = useDragNode({
-    collect: (monitor) => ({
-      dragging: monitor.isDragging(),
-    }),
+  const [{ dragging }, dragNodeRef] = useDragNode(nodeDragSourceSpec(TYPE_HELM_RELEASE, false), {
+    element,
   });
-  const refs = useCombineRefs<SVGRectElement>(dragNodeRef, hoverRef);
+  const refs = useCombineRefs<SVGRectElement>(dragNodeRef, dndDropRef, hoverRef);
   const [filtered] = useSearchFilter(element.getLabel());
   const { width, height } = element.getBounds();
 

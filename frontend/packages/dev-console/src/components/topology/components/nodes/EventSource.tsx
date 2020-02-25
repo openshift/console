@@ -5,6 +5,7 @@ import {
   observer,
   useHover,
   WithSelectionProps,
+  WithDndDropProps,
   WithContextMenuProps,
   useSvgAnchor,
   useCombineRefs,
@@ -24,6 +25,7 @@ export type EventSourceProps = {
   edgeDragging?: boolean;
 } & WithSelectionProps &
   WithDragNodeProps &
+  WithDndDropProps &
   WithContextMenuProps;
 
 const EventSource: React.FC<EventSourceProps> = ({
@@ -33,12 +35,13 @@ const EventSource: React.FC<EventSourceProps> = ({
   onContextMenu,
   contextMenuOpen,
   dragNodeRef,
+  dndDropRef,
   dragging,
   edgeDragging,
 }) => {
   const svgAnchorRef = useSvgAnchor();
   const [hover, hoverRef] = useHover();
-  const groupRefs = useCombineRefs(dragNodeRef, hoverRef);
+  const groupRefs = useCombineRefs(dragNodeRef, dndDropRef, hoverRef);
   const [filtered] = useSearchFilter(element.getLabel());
   const { width, height } = element.getBounds();
   const size = Math.min(width, height);

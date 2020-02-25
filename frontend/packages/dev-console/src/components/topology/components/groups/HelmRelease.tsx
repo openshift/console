@@ -1,8 +1,5 @@
 import * as React from 'react';
-import { connect } from 'react-redux';
-import { Node, observer, WithSelectionProps } from '@console/topology';
-import { RootState } from '@console/internal/redux';
-import { getTopologyFilters, TopologyFilters } from '../../filters/filter-utils';
+import { Node, observer, WithSelectionProps, WithDndDropProps } from '@console/topology';
 import HelmReleaseNode from './HelmReleaseNode';
 import HelmReleaseGroup from './HelmReleaseGroup';
 
@@ -10,8 +7,8 @@ import './HelmRelease.scss';
 
 export type HelmReleaseProps = {
   element: Node;
-  filters: TopologyFilters;
-} & WithSelectionProps;
+} & WithSelectionProps &
+  WithDndDropProps;
 
 const HelmRelease: React.FC<HelmReleaseProps> = (props) => {
   if (
@@ -25,8 +22,4 @@ const HelmRelease: React.FC<HelmReleaseProps> = (props) => {
   return <HelmReleaseGroup {...props} />;
 };
 
-const HelmReleaseState = (state: RootState) => ({
-  filters: getTopologyFilters(state),
-});
-
-export default connect(HelmReleaseState)(observer(HelmRelease));
+export default observer(HelmRelease);

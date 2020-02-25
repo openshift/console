@@ -1,3 +1,4 @@
+import * as React from 'react';
 import {
   Modifiers,
   Edge,
@@ -18,7 +19,7 @@ import { K8sResourceKind } from '@console/internal/module/k8s';
 import { createConnection } from './components/createConnection';
 import { removeConnection } from './components/removeConnection';
 import { moveNodeToGroup } from './components/moveNodeToGroup';
-import { TYPE_CONNECTS_TO, TYPE_WORKLOAD, TYPE_KNATIVE_SERVICE, TYPE_EVENT_SOURCE } from './const';
+import { TYPE_WORKLOAD, TYPE_KNATIVE_SERVICE, TYPE_EVENT_SOURCE } from './const';
 import './components/GraphComponent.scss';
 import { graphContextMenu, groupContextMenu } from './nodeContextMenu';
 import { errorModal } from '@console/internal/components/modals';
@@ -43,6 +44,8 @@ const MOVE_CONNECTOR_OPERATION = 'moveconnector';
 const REGROUP_OPERATION = 'regroup';
 
 const editOperations = [REGROUP_OPERATION, MOVE_CONNECTOR_OPERATION, CREATE_CONNECTOR_OPERATION];
+
+const regroupTypes = [TYPE_WORKLOAD, TYPE_KNATIVE_SERVICE, TYPE_EVENT_SOURCE];
 
 const highlightNodeOperations = [MOVE_CONNECTOR_OPERATION, CREATE_CONNECTOR_OPERATION];
 
@@ -162,17 +165,13 @@ const graphWorkloadDropTargetSpec: DropTargetSpec<
   { dragEditInProgress: boolean },
   GraphProps
 > = {
-  accept: [
-    TYPE_WORKLOAD,
-    TYPE_KNATIVE_SERVICE,
-    TYPE_EVENT_SOURCE,
-    TYPE_CONNECTS_TO,
-    CREATE_CONNECTOR_DROP_TYPE,
-  ],
+  accept: [...regroupTypes, CREATE_CONNECTOR_DROP_TYPE],
+  hitTest: () => true,
   canDrop: (item, monitor, props) => {
     return (
-      (monitor.getOperation() === REGROUP_OPERATION && item.getParent() !== props.element) ||
-      monitor.getItemType() === CREATE_CONNECTOR_DROP_TYPE
+      monitor.isOver({ shallow: monitor.getItemType() === CREATE_CONNECTOR_DROP_TYPE }) &&
+      ((monitor.getOperation() === REGROUP_OPERATION && item.getParent() !== props.element) ||
+        monitor.getItemType() === CREATE_CONNECTOR_DROP_TYPE)
     );
   },
   collect: (monitor) => ({
@@ -187,14 +186,18 @@ const groupWorkloadDropTargetSpec: DropTargetSpec<
   { droppable: boolean; dropTarget: boolean; canDrop: boolean },
   any
 > = {
-  accept: [TYPE_WORKLOAD, TYPE_EVENT_SOURCE, TYPE_KNATIVE_SERVICE, CREATE_CONNECTOR_DROP_TYPE],
+  accept: [...regroupTypes, CREATE_CONNECTOR_DROP_TYPE],
   canDrop: (item, monitor) =>
-    monitor.getOperation() === REGROUP_OPERATION ||
-    monitor.getItemType() === CREATE_CONNECTOR_DROP_TYPE,
+    monitor.isOver({ shallow: monitor.getItemType() === CREATE_CONNECTOR_DROP_TYPE }) &&
+    (monitor.getOperation() === REGROUP_OPERATION ||
+      monitor.getItemType() === CREATE_CONNECTOR_DROP_TYPE),
   collect: (monitor) => ({
     droppable: monitor.isDragging() && monitor.getOperation() === REGROUP_OPERATION,
-    dropTarget: monitor.isOver({ shallow: true }),
-    canDrop: monitor.canDrop(),
+    dropTarget: monitor.isOver({ shallow: monitor.getItemType() === CREATE_CONNECTOR_DROP_TYPE }),
+    canDrop:
+      monitor.isDragging() &&
+      (monitor.getOperation() === REGROUP_OPERATION ||
+        monitor.getItemType() === CREATE_CONNECTOR_DROP_TYPE),
   }),
   dropHint: 'create',
 };
@@ -205,12 +208,18 @@ const graphEventSourceDropTargetSpec: DropTargetSpec<
   { canDrop: boolean; dropTarget: boolean; edgeDragging: boolean },
   NodeProps
 > = {
-  accept: [MOVE_EV_SRC_CONNECTOR_DROP_TYPE],
+  accept: [CREATE_CONNECTOR_DROP_TYPE, MOVE_EV_SRC_CONNECTOR_DROP_TYPE],
   canDrop: (item, monitor, props) => {
-    return item.getSource() !== props.element;
+    return (
+      monitor.getOperation() === MOVE_EV_SRC_CONNECTOR_DROP_TYPE &&
+      item.getSource() !== props.element
+    );
   },
   collect: (monitor, props) => ({
-    canDrop: monitor.canDrop(),
+    canDrop:
+      monitor.isDragging() &&
+      monitor.getOperation() === MOVE_EV_SRC_CONNECTOR_DROP_TYPE &&
+      monitor.canDrop(),
     dropTarget: monitor.isOver({ shallow: true }),
     edgeDragging: nodesEdgeIsDragging(monitor, props),
   }),
@@ -254,6 +263,13 @@ const edgeDragSourceSpec = (
   }),
 });
 
+const noDropTargetSpec: DropTargetSpec<GraphElement, any, {}, { element: GraphElement }> = {
+  accept: [...regroupTypes, CREATE_CONNECTOR_DROP_TYPE],
+  canDrop: () => {
+    return false;
+  },
+};
+
 const createConnectorCallback = (serviceBinding: boolean) => (
   source: Node,
   target: Node | Graph,
@@ -288,6 +304,7 @@ export {
   groupWorkloadDropTargetSpec,
   graphEventSourceDropTargetSpec,
   edgeDragSourceSpec,
+  noDropTargetSpec,
   createConnectorCallback,
   removeConnectorCallback,
   MOVE_CONNECTOR_DROP_TYPE,

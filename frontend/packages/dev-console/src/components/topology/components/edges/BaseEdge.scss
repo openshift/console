@@ -12,6 +12,8 @@
   --edge--active--fill: var(--edge--active--stroke);
   --edge--drag-active--opacity: #{$de-emphasize-opacity};
   --edge__arrow--cursor: default;
+  --edge--interactive--stroke: #{$interactive-stroke-color};
+  --edge--interactive--fill: var(--edge--interactive--stroke);
 
   cursor: var(--edge--cursor);
   stroke: var(--edge--stroke);
@@ -23,14 +25,22 @@
     stroke-dasharray: var(--edge--stroke-dasharray);
   }
 
-  &.is-hover,
-  &.is-selected,
-  &.is-dragging {
+  &.is-selected {
     fill: var(--edge--active--fill);
     stroke: var(--edge--active--stroke);
     .odc-base-edge__link,
     .topology-connector-arrow {
       stroke: var(--edge--active--stroke);
+    }
+  }
+
+  &.is-hover,
+  &.is-dragging {
+    fill: var(--edge--interactive--fill);
+    stroke: var(--edge--interactive--stroke);
+    .odc-base-edge__link,
+    .topology-connector-arrow {
+      stroke: var(--edge--interactive--stroke);
     }
   }
   .topology-connector-arrow {
@@ -48,9 +58,13 @@
 
 .odc-m-drag-active {
   .odc-base-edge {
+    pointer-events: none;
     opacity: var(--edge--drag-active--opacity);
     &.is-dragging {
       opacity: var(--edge--opacity);
+    }
+    .topology-connector-arrow {
+      pointer-events: none;
     }
   }
 }
