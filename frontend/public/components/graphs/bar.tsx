@@ -23,13 +23,14 @@ const PADDING_RATIO = 1 / 3;
 export const BarChart: React.FC<BarChartProps> = ({
   barSpacing = 15,
   barWidth = DEFAULT_BAR_WIDTH,
-  title,
-  query,
   data = [],
-  theme = getCustomTheme(ChartThemeColor.blue, ChartThemeVariant.light, barTheme),
-  titleClassName,
-  loading = false,
+  isLink = true,
   LabelComponent,
+  loading = false,
+  query,
+  theme = getCustomTheme(ChartThemeColor.blue, ChartThemeVariant.light, barTheme),
+  title,
+  titleClassName,
 }) => {
   const [containerRef, width] = useRefWidth();
 
@@ -46,7 +47,7 @@ export const BarChart: React.FC<BarChartProps> = ({
   return (
     <PrometheusGraph ref={containerRef} title={title} className={titleClassName}>
       {data.length ? (
-        <PrometheusGraphLink query={query}>
+        <PrometheusGraphLink query={isLink ? query : undefined}>
           {data.map((datum, index) => (
             <React.Fragment key={index}>
               <div className="graph-bar__label">
@@ -80,16 +81,17 @@ export const BarChart: React.FC<BarChartProps> = ({
 };
 
 export const Bar: React.FC<BarProps> = ({
-  delay = undefined,
-  humanize = humanizeNumber,
-  metric,
-  namespace,
   barSpacing,
   barWidth,
-  theme,
-  query,
-  title,
+  delay = undefined,
+  humanize = humanizeNumber,
+  isLink = true,
   LabelComponent,
+  metric,
+  namespace,
+  query,
+  theme,
+  title,
 }) => {
   const [response, , loading] = usePrometheusPoll({
     delay,
@@ -101,14 +103,15 @@ export const Bar: React.FC<BarProps> = ({
 
   return (
     <BarChart
-      title={title}
-      query={query}
-      data={data}
       barSpacing={barSpacing}
       barWidth={barWidth}
-      theme={theme}
-      loading={loading}
+      data={data}
+      isLink={isLink}
       LabelComponent={LabelComponent}
+      loading={loading}
+      query={query}
+      theme={theme}
+      title={title}
     />
   );
 };
@@ -119,25 +122,27 @@ type LabelComponentProps = {
 };
 
 type BarChartProps = {
-  LabelComponent?: React.ComponentType<LabelComponentProps>;
   barSpacing?: number;
   barWidth?: number;
+  data?: DataPoint[];
+  isLink?: boolean;
+  LabelComponent?: React.ComponentType<LabelComponentProps>;
+  loading?: boolean;
   query?: string;
   theme?: any; // TODO figure out the best way to import VictoryThemeDefinition
   title?: string;
-  data?: DataPoint[];
   titleClassName?: string;
-  loading?: boolean;
 };
 
 type BarProps = {
-  LabelComponent?: React.ComponentType<LabelComponentProps>;
-  delay?: number;
-  humanize?: Humanize;
-  metric: string;
-  namespace?: string;
   barSpacing?: number;
   barWidth?: number;
+  delay?: number;
+  humanize?: Humanize;
+  isLink?: boolean;
+  LabelComponent?: React.ComponentType<LabelComponentProps>;
+  metric: string;
+  namespace?: string;
   query: string;
   theme?: any; // TODO figure out the best way to import VictoryThemeDefinition
   title?: string;
