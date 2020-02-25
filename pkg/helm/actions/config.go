@@ -14,8 +14,6 @@ import (
 var settings = initSettings()
 var plog = capnslog.NewPackageLogger("github.com/openshift/console", "helm/actions")
 
-
-
 type configFlagsWithTransport struct {
 	*genericclioptions.ConfigFlags
 	Transport *http.RoundTripper

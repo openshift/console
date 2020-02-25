@@ -20,7 +20,7 @@ export GOFLAGS="-mod=vendor"
 # Invoke ./cover for HTML output
 COVER=${COVER:-"-cover"}
 
-TESTABLE="pkg/auth pkg/proxy pkg/server"
+TESTABLE="pkg/auth pkg/proxy pkg/server pkg/helm/actions pkg/helm/handlers"
 FORMATTABLE="${TESTABLE} cmd/bridge pkg/version"
 
 # user has not provided PKG override
