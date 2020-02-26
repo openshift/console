@@ -417,7 +417,6 @@ export const Table = connect<
       ]);
       const columns = props.Header(componentProps);
       const { currentSortField, currentSortFunc, currentSortOrder } = props;
-
       this._columnShift = props.onSelect ? 1 : 0; //shift indexes by 1 if select provided
       this._applySort = this._applySort.bind(this);
       this._onSort = this._onSort.bind(this);
@@ -474,12 +473,15 @@ export const Table = connect<
     }
 
     _applySort(sortField, sortFunc, sortAsNumber, direction, columnTitle) {
+      console.log('as', sortField, sortFunc, sortAsNumber, direction, columnTitle);
       const { sortList, listId, currentSortFunc } = this.props;
       const applySort = _.partial(sortList, listId);
+      console.log('aaaaa', applySort);
       applySort(sortField, sortFunc || currentSortFunc, sortAsNumber, direction, columnTitle);
     }
 
     _onSort(event, index, direction) {
+      console.log('sorting', event, index, direction);
       event.preventDefault();
       const sortColumn = this.state.columns[index - this._columnShift];
       this._applySort(
@@ -520,6 +522,7 @@ export const Table = connect<
         'match',
         'kindObj',
       ]);
+      console.log('tcp', componentProps);
       const ariaRowCount = componentProps.data && componentProps.data.length;
       const scrollNode = typeof scrollElement === 'function' ? scrollElement() : scrollElement;
       const renderVirtualizedTable = (scrollContainer) => (

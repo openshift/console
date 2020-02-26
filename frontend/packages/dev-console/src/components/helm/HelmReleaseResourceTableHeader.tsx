@@ -17,7 +17,7 @@ const HelmReleaseResourceTableHeader = () => {
     },
     {
       title: 'Type',
-      sortField: 'kind',
+      sortField: 'metadata.kind',
       transforms: [sortable],
       props: { className: tableColumnClasses.type },
     },

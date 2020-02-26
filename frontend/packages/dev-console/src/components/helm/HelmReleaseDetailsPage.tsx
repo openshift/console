@@ -55,6 +55,7 @@ const HelmReleaseDetailsPage: React.FC<HelmReleaseDetailsPageProps> = ({ secret,
         prop: `${resource.metadata.name}-${resource.kind.toLowerCase()}`,
         isList: false,
         optional: true,
+        metadata: resource.metadata,
       }));
 
       setHelmManifestResources(resources);
