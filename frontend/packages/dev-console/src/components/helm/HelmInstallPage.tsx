@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as yup from 'yup';
+import { safeDump, safeLoad } from 'js-yaml';
 import { RouteComponentProps } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
 import { PageHeading, history } from '@console/internal/components/utils';
@@ -8,11 +9,13 @@ import { Formik } from 'formik';
 import NamespacedPage, { NamespacedPageVariants } from '../NamespacedPage';
 import { nameValidationSchema } from '../import/validation-schema';
 import HelmInstallForm from './HelmInstallForm';
+import { mockValues } from './helm-release-resources-utils';
 
 export type HelmInstallPageProps = RouteComponentProps<{ ns?: string }>;
 
 export type HelmInstallFormData = {
   releaseName: string;
+  valuesYAML: string;
 };
 
 export const HelmInstallPage: React.FunctionComponent<HelmInstallPageProps> = ({ location }) => {
@@ -22,6 +25,7 @@ export const HelmInstallPage: React.FunctionComponent<HelmInstallPageProps> = ({
 
   const initialValues: HelmInstallFormData = {
     releaseName: '',
+    valuesYAML: safeDump(mockValues),
   };
 
   const validationSchema = yup.object().shape({
@@ -29,13 +33,24 @@ export const HelmInstallPage: React.FunctionComponent<HelmInstallPageProps> = ({
   });
 
   const handleSubmit = (values, actions) => {
-    const { releaseName }: HelmInstallFormData = values;
+    const { releaseName, valuesYAML }: HelmInstallFormData = values;
+    let valuesObj;
+
+    try {
+      valuesObj = safeLoad(valuesYAML);
+    } catch (err) {
+      actions.setStatus({ submitError: `Invalid YAML - ${err}` });
+      return;
+    }
+
     const payload = {
       namespace: preselectedNamespace,
       name: releaseName,
       // eslint-disable-next-line @typescript-eslint/camelcase
       chart_url: chartURL,
+      ...(valuesObj ? { values: valuesObj } : {}),
     };
+
     coFetchJSON
       .post('/api/helm/release', payload, null)
       .then(() => {
@@ -60,8 +75,9 @@ export const HelmInstallPage: React.FunctionComponent<HelmInstallPageProps> = ({
           onSubmit={handleSubmit}
           onReset={history.goBack}
           validationSchema={validationSchema}
-          render={(props) => <HelmInstallForm {...props} />}
-        />
+        >
+          {(props) => <HelmInstallForm {...props} />}
+        </Formik>
       </div>
     </NamespacedPage>
   );
