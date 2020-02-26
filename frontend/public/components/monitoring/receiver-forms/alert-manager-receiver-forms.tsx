@@ -187,6 +187,13 @@ const ReceiverBaseForm: React.FC<ReceiverBaseFormProps> = ({
     config = getAlertmanagerConfig(secret, setErrorMsg);
   }
 
+  const doesReceiverNameAlreadyExist = (receiverName: string): boolean => {
+    const receiverNames = config?.receivers
+      .filter((receiver) => receiver.name !== editReceiverNamed)
+      .map((receiver) => receiver.name);
+    return receiverNames.includes(receiverName);
+  };
+
   const { route, global } = config || {};
 
   // default globals to config.global props first, then alertmanagerGlobals
@@ -231,8 +238,10 @@ const ReceiverBaseForm: React.FC<ReceiverBaseFormProps> = ({
   const [formValues, dispatchFormChange] = React.useReducer(formReducer, INITIAL_STATE);
   const SubForm = subformFactory(formValues.receiverType);
 
+  const receiverNameAlreadyExist = doesReceiverNameAlreadyExist(formValues.receiverName);
   const isFormInvalid: boolean =
     !formValues.receiverName ||
+    receiverNameAlreadyExist ||
     !formValues.receiverType ||
     SubForm.isFormInvalid(formValues) ||
     !_.isEmpty(formValues.routeLabelFieldErrors) ||
@@ -330,7 +339,11 @@ const ReceiverBaseForm: React.FC<ReceiverBaseFormProps> = ({
             </div>
           </Alert>
         )}
-        <div className="form-group">
+        <div
+          className={classNames('form-group', {
+            'has-error': receiverNameAlreadyExist,
+          })}
+        >
           <label className="control-label co-required">Receiver Name</label>
           <input
             className="pf-c-form-control"
@@ -347,6 +360,13 @@ const ReceiverBaseForm: React.FC<ReceiverBaseFormProps> = ({
             data-test-id="receiver-name"
             required
           />
+          {receiverNameAlreadyExist && (
+            <span className="help-block">
+              <span data-test-id="receiver-name-already-exists-error">
+                A receiver with that name already exists.
+              </span>
+            </span>
+          )}
         </div>
         <div className="form-group co-m-pane__dropdown">
           <label className="control-label co-required">Receiver Type</label>
