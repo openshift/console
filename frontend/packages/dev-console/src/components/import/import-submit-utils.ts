@@ -437,6 +437,10 @@ export const createOrUpdateResources = async (
 
   const defaultAnnotations = getAppAnnotations(repository, ref);
 
+  if (pipeline.enabled && pipeline.template && !dryRun) {
+    requests.push(createPipelineForImportFlow(formData));
+  }
+
   if (formData.resources === Resources.KnativeService) {
     // knative service doesn't have dry run capability so returning the promises.
     if (dryRun) {
@@ -497,10 +501,6 @@ export const createOrUpdateResources = async (
     } else if (canCreateRoute) {
       requests.push(k8sCreate(RouteModel, route, dryRun ? dryRunOpt : {}));
     }
-  }
-
-  if (pipeline.enabled && pipeline.template && !dryRun) {
-    requests.push(createPipelineForImportFlow(formData));
   }
 
   if (webhookTrigger && verb === 'create') {
