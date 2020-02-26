@@ -7,6 +7,7 @@ export type ColumnStyle = {
 };
 
 export type Panel = {
+  breakpoint?: string;
   decimals?: number;
   format?: string;
   gridPos?: {
