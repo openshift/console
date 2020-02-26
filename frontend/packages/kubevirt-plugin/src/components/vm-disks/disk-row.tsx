@@ -35,6 +35,7 @@ const menuActionEdit = (
       diskModalEnhanced({
         vmLikeEntity,
         isEditing: true,
+        blocking: true,
         disk: disk.diskWrapper.asResource(),
         volume: disk.volumeWrapper.asResource(),
         dataVolume: disk.dataVolumeWrapper && disk.dataVolumeWrapper.asResource(),

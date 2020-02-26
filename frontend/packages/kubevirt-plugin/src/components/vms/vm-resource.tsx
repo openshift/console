@@ -201,7 +201,7 @@ export const VMDetailsList: React.FC<VMResourceListProps> = ({
           <EditButton
             id={prefixedID(id, 'flavor-edit')}
             canEdit={canEdit}
-            onClick={() => vmFlavorModal({ vmLike: vm })}
+            onClick={() => vmFlavorModal({ vmLike: vm, blocking: true })}
           >
             {flavorText}
           </EditButton>

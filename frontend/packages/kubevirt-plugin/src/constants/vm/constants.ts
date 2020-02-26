@@ -24,6 +24,8 @@ export const TEMPLATE_VM_DOMAIN_LABEL = 'kubevirt.io/domain';
 
 export const LABEL_USED_TEMPLATE_NAME = 'vm.kubevirt.io/template';
 export const LABEL_USED_TEMPLATE_NAMESPACE = 'vm.kubevirt.io/template-namespace';
+export const LABEL_TEMPLATE_REVISION = 'vm.kubevirt.io/template.revision';
+export const LABEL_TEMPLATE_VERSION = 'vm.kubevirt.io/template.version';
 
 export const DEFAULT_RDP_PORT = 3389;
 
