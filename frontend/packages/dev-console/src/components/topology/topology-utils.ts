@@ -66,6 +66,7 @@ import {
   KNATIVE_GROUP_NODE_HEIGHT,
   KNATIVE_GROUP_NODE_PADDING,
 } from './const';
+import { HelmReleaseResourcesMap } from '../helm/helm-types';
 
 export const allowedResources = ['deployments', 'deploymentConfigs', 'daemonSets', 'statefulSets'];
 
@@ -76,8 +77,16 @@ export const getEditURL = (gitURL: string, cheURL: string) => {
   return gitURL && cheURL ? `${cheURL}/f?url=${gitURL}&policies.create=peruser` : gitURL;
 };
 
-export const isHelmReleaseNode = (obj: K8sResourceKind): boolean => {
-  return obj?.metadata?.labels?.['heritage'] === 'Helm' || !!obj?.metadata?.labels?.['charts'];
+export const getHelmReleaseKey = (resource) => `${resource.kind}---${resource.metadata.name}`;
+
+export const isHelmReleaseNode = (
+  obj: K8sResourceKind,
+  helmResourcesMap: HelmReleaseResourcesMap,
+): boolean => {
+  if (helmResourcesMap) {
+    return helmResourcesMap.hasOwnProperty(getHelmReleaseKey(obj));
+  }
+  return false;
 };
 
 export const getKialiLink = (consoleLinks: K8sResourceKind[], namespace: string): string => {
@@ -235,14 +244,7 @@ export const getTopologyNodeItem = (
   const uid = _.get(dc, ['metadata', 'uid']);
   const name = _.get(dc, ['metadata', 'name']);
   const label = _.get(dc, ['metadata', 'labels', 'app.openshift.io/instance']);
-  if (isHelmReleaseNode(dc)) {
-    return {
-      id: uid,
-      type: TYPE_HELM_WORKLOAD,
-      name: label || name,
-      ...(children && children.length && { children }),
-    };
-  }
+
   return {
     id: uid,
     type: type || TYPE_WORKLOAD,
@@ -325,20 +327,28 @@ export const getTopologyEdgeItems = (
   return edges;
 };
 
-export const getTopologyHelmReleaseGroupItem = (obj: K8sResourceKind, groups: Group[]): Group[] => {
-  const releaseLabel = _.get(obj, ['metadata', 'labels', 'release'], null);
+export const getTopologyHelmReleaseGroupItem = (
+  obj: K8sResourceKind,
+  groups: Group[],
+  helmResourcesMap: HelmReleaseResourcesMap,
+): Group[] => {
+  const resourceKindName = `${obj.kind}---${obj.metadata.name}`;
+  const releaseName = helmResourcesMap[resourceKindName]?.releaseName;
   const uid = _.get(obj, ['metadata', 'uid'], null);
-  if (!releaseLabel) return groups;
-  const releaseExists = _.some(groups, { name: releaseLabel });
+
+  if (!releaseName) return groups;
+
+  const releaseExists = _.some(groups, { name: releaseName });
+
   if (!releaseExists) {
     groups.push({
-      id: `${TYPE_HELM_RELEASE}:${releaseLabel}`,
+      id: `${TYPE_HELM_RELEASE}:${releaseName}`,
       type: TYPE_HELM_RELEASE,
-      name: releaseLabel,
+      name: releaseName,
       nodes: [uid],
     });
   } else {
-    const gIndex = _.findIndex(groups, { name: releaseLabel });
+    const gIndex = _.findIndex(groups, { name: releaseName });
     groups[gIndex].nodes.push(uid);
   }
   return groups;
@@ -349,9 +359,13 @@ export const getTopologyHelmReleaseGroupItem = (obj: K8sResourceKind, groups: Gr
  * @param dc
  * @param groups
  */
-export const getTopologyGroupItems = (dc: K8sResourceKind, groups: Group[]): Group[] => {
-  if (isHelmReleaseNode(dc)) {
-    return getTopologyHelmReleaseGroupItem(dc, groups);
+export const getTopologyGroupItems = (
+  dc: K8sResourceKind,
+  groups: Group[],
+  helmResourcesMap?: HelmReleaseResourcesMap,
+): Group[] => {
+  if (isHelmReleaseNode(dc, helmResourcesMap)) {
+    return getTopologyHelmReleaseGroupItem(dc, groups, helmResourcesMap);
   }
   const labels = _.get(dc, ['metadata', 'labels']);
   const uid = _.get(dc, ['metadata', 'uid']);
@@ -522,11 +536,11 @@ export const transformTopologyData = (
   utils?: Function[],
   filters?: TopologyFilters,
   trafficData?: TrafficData,
+  helmResourcesMap?: HelmReleaseResourcesMap,
 ): TopologyDataModel => {
   const installedOperators = _.get(resources, 'clusterServiceVersions.data');
   const operatorBackedServiceKindMap = getOperatorBackedServiceKindMap(installedOperators);
   const serviceBindingRequests = _.get(resources, 'serviceBindingRequests.data');
-
   let topologyGraphAndNodeData: TopologyDataModel = {
     graph: { nodes: [], edges: [], groups: [] },
     topology: {},
@@ -627,7 +641,13 @@ export const transformTopologyData = (
         );
         if (!_.some(topologyGraphAndNodeData.graph.nodes, { id: uid })) {
           const operatorBacked = dataToShowOnNodes[uid].operatorBackedService;
-          const nodeType = operatorBacked ? TYPE_OPERATOR_WORKLOAD : TYPE_WORKLOAD;
+
+          const nodeType = operatorBacked
+            ? TYPE_OPERATOR_WORKLOAD
+            : isHelmReleaseNode(deploymentConfig, helmResourcesMap)
+            ? TYPE_HELM_WORKLOAD
+            : TYPE_WORKLOAD;
+
           nodesData = [...nodesData, getTopologyNodeItem(deploymentConfig, nodeType)];
           edgesData = [
             ...edgesData,
@@ -640,7 +660,11 @@ export const transformTopologyData = (
           ];
           if (!operatorBacked) {
             groupsData = [
-              ...getTopologyGroupItems(deploymentConfig, topologyGraphAndNodeData.graph.groups),
+              ...getTopologyGroupItems(
+                deploymentConfig,
+                topologyGraphAndNodeData.graph.groups,
+                helmResourcesMap,
+              ),
             ];
           }
         }
