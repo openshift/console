@@ -66,13 +66,11 @@ export type CPU = {
   dedicatedCpuPlacement?: boolean;
 };
 
-export type CPURaw =
-  | {
-      sockets: string;
-      cores: string;
-      threads: string;
-    }
-  | string;
+export type CPURaw = {
+  sockets: string;
+  cores: string;
+  threads: string;
+};
 
 export type V1NetworkInterface = {
   name?: string;

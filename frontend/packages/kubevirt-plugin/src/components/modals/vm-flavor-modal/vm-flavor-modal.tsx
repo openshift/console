@@ -25,15 +25,9 @@ import {
   getVMLikeModel,
   vCPUCount,
 } from '../../../selectors/vm';
-import { getFlavors } from '../../../selectors/vm-template/selectors';
 import { getUpdateFlavorPatches } from '../../../k8s/patches/vm/vm-patches';
-import {
-  CUSTOM_FLAVOR,
-  NAMESPACE_OPENSHIFT,
-  TEMPLATE_TYPE_BASE,
-  TEMPLATE_TYPE_LABEL,
-} from '../../../constants';
-import { getLoadedData, getResource } from '../../../utils';
+import { CUSTOM_FLAVOR } from '../../../constants';
+import { getLoadedData } from '../../../utils';
 import { SizeUnitFormRow } from '../../form/size-unit-form-row';
 import { BinaryUnit } from '../../form/size-unit-utils';
 import { ModalFooter } from '../modal/modal-footer';
@@ -43,25 +37,25 @@ import { validateFlavor } from '../../../utils/validations/vm/flavor';
 import { isValidationError } from '../../../utils/validations/common';
 import { useShowErrorToggler } from '../../../hooks/use-show-error-toggler';
 import { getDialogUIError } from '../../../utils/strings';
+import { flavorSort } from '../../../utils/sort';
+import { getTemplateFlavors } from '../../../selectors/vm-template/advanced';
+import { getVMTemplateNamespacedName } from '../../../selectors/vm-template/selectors';
 
 const getId = (field: string) => `vm-flavor-modal-${field}`;
 
+const getFlavors = (template: TemplateKind) => {
+  const flavors = [...getTemplateFlavors([template]), CUSTOM_FLAVOR];
+
+  return _.uniq(flavorSort(flavors).filter((f) => f));
+};
+
 const VMFlavorModal = withHandlePromise((props: VMFlavornModalProps) => {
-  const {
-    vmLike,
-    templates,
-    errorMessage,
-    handlePromise,
-    close,
-    cancel,
-    loadError,
-    loaded,
-  } = props;
+  const { vmLike, template, errorMessage, handlePromise, close, cancel, loadError, loaded } = props;
   const inProgress = props.inProgress || !loaded;
   const vm = asVM(vmLike);
-  const flattenTemplates = getLoadedData(templates, []);
+  const underlyingTemplate = getLoadedData(template);
 
-  const flavors = getFlavors(vmLike, flattenTemplates);
+  const flavors = getFlavors(underlyingTemplate);
   const vmFlavor = getFlavor(vmLike) || flavors[flavors.length - 1];
 
   const [sourceMemSize, sourceMemUnit] = validate.split(getMemory(vm) || '');
@@ -94,7 +88,7 @@ const VMFlavorModal = withHandlePromise((props: VMFlavornModalProps) => {
     if (isValid) {
       const patches = getUpdateFlavorPatches(
         vmLike,
-        flattenTemplates,
+        underlyingTemplate,
         flavor,
         parseInt(cpus, 10),
         `${memSize}${memUnit}`,
@@ -195,14 +189,20 @@ const VMFlavorModal = withHandlePromise((props: VMFlavornModalProps) => {
 });
 
 const VMFlavorModalFirehose = (props) => {
-  const resources = [
-    getResource(TemplateModel, {
-      namespace: NAMESPACE_OPENSHIFT,
-      prop: 'templates',
-      matchLabels: { [TEMPLATE_TYPE_LABEL]: TEMPLATE_TYPE_BASE },
-    }),
-  ];
+  const { vmLike } = props;
+  const resources = [];
+  const underlyingTemplate = getVMTemplateNamespacedName(vmLike);
 
+  if (underlyingTemplate) {
+    resources.push({
+      kind: TemplateModel.kind,
+      model: TemplateModel,
+      name: underlyingTemplate.name,
+      namespace: underlyingTemplate.namespace,
+      isList: false,
+      prop: 'template',
+    });
+  }
   return (
     <Firehose resources={resources}>
       <VMFlavorModal {...props} />
@@ -213,7 +213,7 @@ const VMFlavorModalFirehose = (props) => {
 export type VMFlavornModalProps = HandlePromiseProps &
   ModalComponentProps & {
     vmLike: VMLikeEntityKind;
-    templates?: FirehoseResult<TemplateKind>;
+    template?: FirehoseResult<TemplateKind>;
     loadError?: any;
     loaded: boolean;
   };
