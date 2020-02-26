@@ -34,6 +34,7 @@ export const getAppAnnotations = (gitURL: string, gitRef: string) => {
   return {
     'app.openshift.io/vcs-uri': gitURL,
     'app.openshift.io/vcs-ref': ref,
+    'openshift.io/generated-by': 'OpenShiftWebConsole',
   };
 };
 
