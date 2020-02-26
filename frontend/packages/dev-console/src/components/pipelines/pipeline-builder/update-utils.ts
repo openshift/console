@@ -18,6 +18,7 @@ import {
   UpdateOperationAction,
   UpdateOperationAddData,
   UpdateOperationConvertToTaskData,
+  UpdateOperationDeleteListTaskData,
   UpdateOperationRemoveTaskData,
   UpdateOperationUpdateTaskData,
   UpdateTaskParamData,
@@ -220,6 +221,41 @@ const convertListToTask: UpdateOperationAction<UpdateOperationConvertToTaskData>
   };
 };
 
+const removeAndUpdateTasks = <
+  URT extends PipelineBuilderTaskBase,
+  UT extends PipelineBuilderTaskBase
+>(
+  removalTaskName: string,
+  updateAndRemoveTasks: URT[],
+  updateOnlyTasks: UT[],
+): { updateOnlyTasks: UT[]; updateAndRemoveTasks: URT[] } => {
+  const removalTask = updateAndRemoveTasks.find((task) => task.name === removalTaskName);
+  return {
+    updateOnlyTasks: updateOnlyTasks.map((task) => mapStitchReplaceInOthers<UT>(removalTask, task)),
+    updateAndRemoveTasks: updateAndRemoveTasks
+      .filter((task) => task.name !== removalTaskName)
+      .map((task) => mapStitchReplaceInOthers<URT>(removalTask, task)),
+  };
+};
+
+const deleteListTask: UpdateOperationAction<UpdateOperationDeleteListTaskData> = (
+  tasks,
+  listTasks,
+  data,
+) => {
+  const { listTaskName } = data;
+
+  const { updateOnlyTasks, updateAndRemoveTasks } = removeAndUpdateTasks<
+    PipelineBuilderListTask,
+    PipelineTask
+  >(listTaskName, listTasks, tasks);
+  return {
+    tasks: updateOnlyTasks,
+    listTasks: updateAndRemoveTasks,
+    errors: null,
+  };
+};
+
 export const removeTask: UpdateOperationAction<UpdateOperationRemoveTaskData> = (
   tasks,
   listTasks,
@@ -227,14 +263,13 @@ export const removeTask: UpdateOperationAction<UpdateOperationRemoveTaskData> = 
 ) => {
   const { taskName } = data;
 
-  const removalTask = tasks.find((pipelineTask) => pipelineTask.name === taskName);
+  const { updateOnlyTasks, updateAndRemoveTasks } = removeAndUpdateTasks<
+    PipelineTask,
+    PipelineBuilderListTask
+  >(taskName, tasks, listTasks);
   return {
-    tasks: tasks
-      .filter((pipelineTask) => pipelineTask.name !== taskName)
-      .map((pipelineTask) => mapStitchReplaceInOthers<PipelineTask>(removalTask, pipelineTask)),
-    listTasks: listTasks.map((pipelineTask) =>
-      mapStitchReplaceInOthers<PipelineBuilderListTask>(removalTask, pipelineTask),
-    ),
+    tasks: updateAndRemoveTasks,
+    listTasks: updateOnlyTasks,
     errors: null,
   };
 };
@@ -352,6 +387,8 @@ export const applyChange = (
       return addListNode(tasks, listTasks, data as UpdateOperationAddData);
     case UpdateOperationType.CONVERT_LIST_TO_TASK:
       return convertListToTask(tasks, listTasks, data as UpdateOperationConvertToTaskData);
+    case UpdateOperationType.DELETE_LIST_TASK:
+      return deleteListTask(tasks, listTasks, data as UpdateOperationDeleteListTaskData);
     case UpdateOperationType.REMOVE_TASK:
       return removeTask(tasks, listTasks, data as UpdateOperationRemoveTaskData);
     case UpdateOperationType.UPDATE_TASK:

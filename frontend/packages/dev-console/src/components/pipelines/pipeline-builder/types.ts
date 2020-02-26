@@ -63,6 +63,9 @@ export type UpdateOperationConvertToTaskData = UpdateOperationBaseData & {
   resource: PipelineResourceTask;
   runAfter?: string[];
 };
+export type UpdateOperationDeleteListTaskData = UpdateOperationBaseData & {
+  listTaskName: string;
+};
 export type UpdateOperationRemoveTaskData = UpdateOperationBaseData & {
   taskName: string;
 };
