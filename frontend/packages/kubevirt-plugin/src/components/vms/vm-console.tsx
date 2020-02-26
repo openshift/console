@@ -19,7 +19,7 @@ import {
 } from '../../selectors/vmi';
 import { getVMStatus } from '../../statuses/vm/vm';
 import { getLoadedData, getResource } from '../../utils';
-import { findVMPod } from '../../selectors/pod/selectors';
+import { findVMIPod } from '../../selectors/pod/selectors';
 import { isVMStarting, isWindows, asVM, isVM, isVMI } from '../../selectors/vm';
 import { VMIKind, VMKind } from '../../types/vm';
 import { menuActionStart } from './menu-actions';
@@ -108,7 +108,7 @@ const VmConsolesWrapper: React.FC<VmConsolesWrapperProps> = (props) => {
   let rdp;
   if (isWindows(vm)) {
     const rdpService = findRDPService(vmi, services);
-    const launcherPod = findVMPod(vm, pods);
+    const launcherPod = findVMIPod(vmi, pods);
     rdp = getRdpConnectionDetails(vmi, rdpService, launcherPod);
   }
 

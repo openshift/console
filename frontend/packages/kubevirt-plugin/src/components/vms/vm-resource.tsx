@@ -25,8 +25,8 @@ import {
 } from '../modals/dedicated-resources-modal/consts';
 import { getOperatingSystemName, getOperatingSystem } from '../../selectors/vm';
 import { getVmiIpAddresses } from '../../selectors/vmi/ip-address';
-import { findVMPod } from '../../selectors/pod/selectors';
-import { isVMIPaused } from '../../selectors/vmi';
+import { findVMIPod } from '../../selectors/pod/selectors';
+import { isVMIPaused, getVMINodeName } from '../../selectors/vmi';
 import { VirtualMachineInstanceModel, VirtualMachineModel } from '../../models';
 import { asVMILikeWrapper } from '../../k8s/wrapper/utils/convert';
 
@@ -120,11 +120,11 @@ export const VMDetailsList: React.FC<VMResourceListProps> = ({
 
   const [isStatusModalOpen, setStatusModalOpen] = React.useState<boolean>(false);
 
-  const launcherPod = findVMPod(vmiLike, pods);
+  const launcherPod = findVMIPod(vmi, pods);
   const id = getBasicID(vmiLike);
   const cds = vmiLikeWrapper?.getCDROMs() || [];
   const devices = vmiLikeWrapper?.getLabeledDevices() || [];
-  const nodeName = getNodeName(launcherPod);
+  const nodeName = getVMINodeName(vmi) || getNodeName(launcherPod);
   const ipAddrs = getVmiIpAddresses(vmi).join(', ');
   const workloadProfile = vmiLikeWrapper?.getWorkloadProfile();
   const flavorText = getFlavorText({
