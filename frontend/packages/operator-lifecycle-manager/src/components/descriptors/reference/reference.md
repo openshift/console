@@ -1,38 +1,47 @@
 # OLM Descriptor Reference
 
-specDescriptors:
+#### [specDescriptors](#specDescriptors-1):
   1. [podCount](#1-podcount)
   2. [resourceRequirements](#2-resourcerequirements)
-  3. [Kubernetes Object](#3-kubernetes-object)
+  3. [k8sResourcePrefix](#3-k8sResourcePrefix)
   4. [booleanSwitch](#4-booleanswitch)
-  5. [Checkbox](#5-checkbox)
-  6. [Text Input](#6-text-input)
-  7. [Number Input](#7-number-input)
-  8. [Password Input](#8-password-input)
-  9. [Update Strategy](#9-update-strategy)
-  10. [Image Pull Policy](#10-image-pull-policy)
-  11. [Node Affinity](#11-node-affinity)
-  12. [Pod Affinity](#12-pod-affinity)
-  13. [Pod Anti-affinity](#13-pod-anti-affinity)
-  14. [Selector](#14-selector)
-  15. [Field Group](#15-field-group)
-  16. [Array Field Group](#16-array-field-group)
-  17. [Select](#17-select)
-  18. [Advanced](#18-advanced)
-  19. [Endpoint List](#19-endpoint-list)
-  20. [Field Dependency](#20-field-dependency)
-  21. [DEPRECATED Descriptors](#21-deprecated-descriptors)
+  5. [checkbox](#5-checkbox)
+  6. [text](#6-text)
+  7. [number](#7-number)
+  8. [password](#8-password)
+  9. [updateStrategy](#9-updatestrategy)
+  10. [imagePullPolicy](#10-imagepullpolicy)
+  11. [nodeAffinity](#11-nodeaffinity)
+  12. [podAffinity](#12-podaffinity)
+  13. [podAntiAffinity](#13-podantiaffinity)
+  14. [selector](#14-selector)
+  15. [fieldGroup](#15-fieldgroup)
+  16. [arrayFieldGroup](#16-arrayFieldGroup)
+  17. [select](#17-select)
+  18. [advanced](#18-advanced)
+  19. [endpointList](#19-endpointList)
+  20. [fieldDependency](#20-fielddependency)
 
-statusDescriptors:
-  - [ToDo]
+#### [statusDescriptors](#statusDescriptors-1):
+  1. [podStatuses](#1-podStatuses)
+  2. [w3Link](#2-w3Link)
+  3. [conditions](#3-conditions)
+  4. [text](#4-text)
+  5. [k8sPhase](#5-k8sPhase)
+  6. [k8sPhaseReason](#6-k8sPhaseReason)
+  7. [k8sResourcePrefix](#7-k8sResourcePrefix)
+
+
+#### [DEPRECATED Descriptors](#deprecated-descriptors-1)
 
 ## specDescriptors
+A specDescriptor is for describing the property of a `spec` field in your Custom Resource. Each specDescriptor provides UI widget(s) for creating/mutating CR instance on different views (i.e. CREATION, DISPLAY, and MODIFY views) in the OpenShift Console.
 
 ### 1. podCount
 
 **x-descriptors**
 
-This descriptor allows you to specify the number of pods for your instance. See example from [[CSV] etcd Operator](https://github.com/operator-framework/community-operators/blob/master/upstream-community-operators/etcd/etcdoperator.v0.9.4.clusterserviceversion.yaml#L243-L247)[**:**](https://github.com/operator-framework/community-operators/blob/master/upstream-community-operators/etcd/etcdoperator.v0.9.4.clusterserviceversion.yaml#L243-L247)
+This descriptor allows you to specify the number of pods for your instance. See example from [[CSV] etcd Operator](https://github.com/operator-framework/community-operators/blob/master/community-operators/etcd/0.9.4/etcdoperator.v0.9.4.clusterserviceversion.yaml#L40-L44):
 
 ```yaml
 …
@@ -46,15 +55,15 @@ This descriptor allows you to specify the number of pods for your instance. See 
 
 **UI**
 <table style="width:100%">
-  <tr>
-    <td width="50%" style="vertical-align:top">CREATION VIEW
-      <img src="img/1-1_pod-new.png" /></td>
-    <td width="50%" style="vertical-align:top">DISPLAY VIEW
-      <img src="img/1-2_pod-dis.png" /></td>
+  <tr valign="top">
+    <td width="50%">CREATION VIEW
+      <img src="img/spec/1-1_pod-new.png" /></td>
+    <td width="50%">DISPLAY VIEW
+      <img src="img/spec/1-2_pod-dis.png" /></td>
   </tr>
-  <tr>
-    <td width="50%" style="vertical-align:top">MODIFY VIEW
-      <img src="img/1-3_pod-mod.png" /></td>
+  <tr valign="top">
+    <td width="50%">MODIFY VIEW
+      <img src="img/spec/1-3_pod-mod.png" /></td>
   </tr>
 </table>
 
@@ -63,7 +72,7 @@ This descriptor allows you to specify the number of pods for your instance. See 
 
 **x-descriptors**
 
-This descriptor allows you to specify the mini/max amount of compute resources required/allowed. See example from [[CSV] etcd Operator:](https://github.com/operator-framework/community-operators/blob/master/upstream-community-operators/etcd/etcdoperator.v0.9.4.clusterserviceversion.yaml#L248-L252)
+This descriptor allows you to specify the mini/max amount of compute resources required/allowed. See example from [[CSV] etcd Operator](https://github.com/operator-framework/community-operators/blob/master/community-operators/etcd/0.9.4/etcdoperator.v0.9.4.clusterserviceversion.yaml#L45-L50):
 
 ```yaml
 …
@@ -77,26 +86,27 @@ This descriptor allows you to specify the mini/max amount of compute resources r
 
 **UI**
 <table style="width:100%">
-  <tr>
-    <td width="50%" style="vertical-align:top">CREATION VIEW
-      <img src="img/2-1_resrc-req-new.png" /></td>
+  <tr valign="top">
+    <td width="50%">CREATION VIEW
+      <img src="img/spec/2-1_resrc-req-new.png" /></td>
     <td width="50%">DISPLAY VIEW
-      <img src="img/2-2_resrc-req-dis.png" /></td>
+      <img src="img/spec/2-2_resrc-req-dis.png" /></td>
   </tr>
-  <tr>
-    <td width="50%" style="vertical-align:top">MODIFY VIEW - Resource Limits
-      <img src="img/2-3_resrc-req-mod.png" /></td>
-    <td width="50%" style="vertical-align:top">MODIFY VIEW - Resource Requests
-      <img src="img/2-4_resrc-req-mod.png" /></td>
+  <tr valign="top">
+    <td width="50%">MODIFY VIEW - Resource Limits
+      <img src="img/spec/2-3_resrc-req-mod.png" /></td>
+    <td width="50%">MODIFY VIEW - Resource Requests
+      <img src="img/spec/2-4_resrc-req-mod.png" /></td>
   </tr>
 </table>
 
 
-### 3. Kubernetes Object
+### 3. k8sResourcePrefix
 
 **x-descriptors**
 
-This descriptor allows you to specify the prerequisite kubernetes object (e.g. _Secrets, ServiceAccount, Service, ConfigMap, Namespace, etc_) for your instance. See example from Couchbase Operator:
+This descriptor allows you to specify the prerequisite kubernetes object (e.g. _Secrets, ServiceAccount, Service, ConfigMap, Namespace, etc_) for your instance. See example from
+[[CSV] Couchbase Operator](https://github.com/operator-framework/community-operators/blob/master/upstream-community-operators/couchbase-enterprise/1.2.2/couchbase-v1.2.2.clusterserviceversion.yaml#L96-L101):
 
 ```yaml
 …
@@ -110,15 +120,15 @@ This descriptor allows you to specify the prerequisite kubernetes object (e.g. _
 
 **UI**
 <table style="width:100%">
-  <tr>
-    <td width="50%" style="vertical-align:top">CREATION VIEW
-      <img src="img/3-1_k8s-obj-new.png" /></td>
-    <td width="50%" style="vertical-align:top">DISPLAY VIEW
-      <img src="img/3-2_k8s-obj-dis.png" /></td>
+  <tr valign="top">
+    <td width="50%">CREATION VIEW
+      <img src="img/spec/3-1_k8s-obj-new.png" /></td>
+    <td width="50%">DISPLAY VIEW
+      <img src="img/spec/3-2_k8s-obj-dis.png" /></td>
   </tr>
-  <tr>
-    <td colspan="2" style="vertical-align:top">MODIFY VIEW
-      <p><small><b>* </b><i> Currently, this descriptor does not provide “Modify View”. Users would have to edit the content of the actual kubernetes object being specified.</i></small></p>
+  <tr valign="top">
+    <td colspan="2" >MODIFY VIEW
+      <h6><small><b>* </b><i> Currently, this descriptor does not provide “Modify View”. Users would have to edit the content of the actual kubernetes object being specified.</i></small></h6>
       </td>
   </tr>
 </table>
@@ -128,34 +138,34 @@ This descriptor allows you to specify the prerequisite kubernetes object (e.g. _
 
 **x-descriptors**
 
-This descriptor allows you to specify the _true_ or _false_ value for the configuration. See example from Couchbase Operator:
+This descriptor allows you to specify the _true_ or _false_ value for the configuration. See example from [[CSV] Eclipse Che Operator](https://github.com/operator-framework/community-operators/blob/master/community-operators/eclipse-che/7.8.0/eclipse-che.v7.8.0.clusterserviceversion.yaml#L70-L74):
 
 ```yaml
 …
-- displayName: Paused
-  description: Specifies if the Operator will manage this cluster.
-  path: paused
+- description: TLS routes
+  displayName: TLS Mode
+  path: server.tlsSupport
   x-descriptors:
-    - 'urn:alm:descriptor:com.tectonic.ui:booleanSwitch'
+    - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
 …
 ```
 
 **UI**
 <table style="width:100%">
-  <tr>
-    <td width="50%" style="vertical-align:top">CREATION VIEW
-      <img src="img/4-1_switch-new.png" /></td>
-    <td width="50%" style="vertical-align:top">DISPLAY VIEW
-      <img src="img/4-2_switch-dis.png" /></td>
+  <tr valign="top">
+    <td width="50%">CREATION VIEW
+      <img src="img/spec/4-1_switch-new.png" /></td>
+    <td width="50%">DISPLAY VIEW
+      <img src="img/spec/4-2_switch-dis.png" /></td>
   </tr>
-  <tr style="vertical-align:top">
+  <tr valign="top">
     <td width="50%">MODIFY VIEW
-      <img src="img/4-3_switch-mod.png" /></td>
+      <img src="img/spec/4-3_switch-mod.png" /></td>
   </tr>
 </table>
 
 
-### 5. Checkbox
+### 5. checkbox
 
 **x-descriptors**
 
@@ -173,25 +183,25 @@ This descriptor allows you to specify the _true_ or _false_ value for the config
 
 **UI**
 <table style="width:100%">
-  <tr style="vertical-align:top">
+  <tr valign="top">
     <td width="50%">CREATION VIEW
-      <img src="img/5-1_checkbox-new.png" /></td>
+      <img src="img/spec/5-1_checkbox-new.png" /></td>
     <td width="50%">DISPLAY VIEW
-      <img src="img/5-2_checkbox-dis.png" /></td>
+      <img src="img/spec/5-2_checkbox-dis.png" /></td>
   </tr>
-  <tr style="vertical-align:top">
+  <tr valign="top">
     <td colspan="2">MODIFY VIEW
-      <p><small><i> * Display View also serves as the Modify view.</i></small></p>
+      <h6><small><i><b>* </b>Display View also serves as the Modify view.</i></small></h6>
       </td>
   </tr>
 </table>
 
 
-### 6. Text Input
+### 6. text
 
 **x-descriptors**
 
-This descriptor allows you to specify a text input for a _string_ data type. See example for Portworx Operator:
+This descriptor allows you to specify a text input for a _string_ data type. See example from [[CSV] Portworx Operator](https://github.com/operator-framework/community-operators/blob/master/upstream-community-operators/portworx/1.1.0/portworxoperator.v1.1.0.clusterserviceversion.yaml#L243-L247):
 
 ```yaml
 …
@@ -205,31 +215,31 @@ This descriptor allows you to specify a text input for a _string_ data type. See
 
 **UI**
 <table style="width:100%">
-  <tr style="vertical-align:top">
+  <tr valign="top">
     <td width="50%">CREATION VIEW
-      <img src="img/6-1_text-new.png" /></td>
+      <img src="img/spec/6-1_text-new.png" /></td>
     <td width="50%">DISPLAY VIEW
-      <img src="img/6-2_text-dis.png" /></td>
+      <img src="img/spec/6-2_text-dis.png" /></td>
   </tr>
-  <tr style="vertical-align:top">
+  <tr valign="top">
     <td colspan="2">MODIFY VIEW
-      <p><small><b>* </b><i> Currently, this descriptor does not provide “Modify View”. Users would have to edit the content with YAML editor.</i></small></p>
+      <h6><small><b>* </b><i> Currently, this descriptor does not provide “Modify View”. Users would have to edit the content with YAML editor.</i></small></h6>
       </td>
   </tr>
 </table>
 
 
-### 7. Number Input
+### 7. number
 
 **x-descriptors**
 
-This descriptor allows you to specify a number input for a _number_ data type. See example for Portworx Operator:
+This descriptor allows you to specify a number input for a _number_ data type. See example from [[CSV] KEDA Operator](https://github.com/operator-framework/community-operators/blob/master/community-operators/keda/1.2.0/keda.v1.2.0.clusterserviceversion.yaml#L168-L172):
 
 ```yaml
 …
-- displayName: Start Port
-  description: The Start Port of Portworx
-  path: startPort
+- displayName: Cooldown Period
+  description: Cooldown Period
+  path: cooldownPeriod
   x-descriptors:
     - 'urn:alm:descriptor:com.tectonic.ui:number'
 …
@@ -237,25 +247,25 @@ This descriptor allows you to specify a number input for a _number_ data type. S
 
 **UI**
 <table style="width:100%">
-  <tr style="vertical-align:top">
+  <tr valign="top">
     <td width="50%">CREATION VIEW
-      <img src="img/7-1_num-new.png" /></td>
+      <img src="img/spec/7-1_num-new.png" /></td>
     <td width="50%">DISPLAY VIEW
-      <img src="img/7-2_num-dis.png" /></td>
+      <img src="img/spec/7-2_num-dis.png" /></td>
   </tr>
-  <tr style="vertical-align:top">
+  <tr valign="top">
     <td colspan="2">MODIFY VIEW
-      <p><small><b>* </b><i> Currently, this descriptor does not provide “Modify View”. Users would have to edit the content with YAML editor.</i></small></p>
+      <h6><small><b>* </b><i> Currently, this descriptor does not provide “Modify View”. Users would have to edit the content with YAML editor.</i></small></h6>
       </td>
   </tr>
 </table>
 
 
-### 8. Password Input
+### 8. password
 
 **x-descriptors**
 
-This descriptor allows you to specify a number input for a _password_ data type. See example for Grafana Operator:
+This descriptor allows you to specify a text input for a _password_ data type. See example for Grafana Operator:
 
 ```yaml
 …
@@ -269,22 +279,22 @@ This descriptor allows you to specify a number input for a _password_ data type.
 
 **UI**
 <table style="width:100%">
-  <tr style="vertical-align:top">
+  <tr valign="top">
     <td width="50%">CREATION VIEW
-      <img src="img/8-1_passwd-new.png" /></td>
+      <img src="img/spec/8-1_passwd-new.png" /></td>
     <td width="50%">DISPLAY VIEW
-      <img src="img/8-2_passwd-dis.png" />
-      <img src="img/8-3_passwd-dis.png" /></td>
+      <img src="img/spec/8-2_passwd-dis.png" />
+      <img src="img/spec/8-3_passwd-dis.png" /></td>
   </tr>
-  <tr style="vertical-align:top">
+  <tr valign="top">
     <td colspan="2">MODIFY VIEW
-      <p><small><b>* </b><i> Currently, this descriptor does not provide “Modify View”. Users would have to edit the content with YAML editor.</i></small></p>
+      <h6><small><b>* </b><i> Currently, this descriptor does not provide “Modify View”. Users would have to edit the content with YAML editor.</i></small></h6>
       </td>
   </tr>
 </table>
 
 
-### 9. Update Strategy
+### 9. updateStrategy
 
 **x-descriptors**
 
@@ -302,25 +312,25 @@ This descriptor allows you to specify the strategy of your pods being replaced w
 
 **UI**
 <table style="width:100%">
-  <tr style="vertical-align:top">
+  <tr valign="top">
     <td width="50%">CREATION VIEW
-      <img src="img/9-1_updatestrategy-new.png" /></td>
+      <img src="img/spec/9-1_updatestrategy-new.png" /></td>
     <td width="50%">DISPLAY VIEW
-      <img src="img/9-2_updatestrategy-dis.png" />
-      <p><small><b>[TODO]</b><i> Missing the display of "Max Unavailable" and "Max Surge"</small></i></p>
+      <img src="img/spec/9-2_updatestrategy-dis.png" />
+      <h6><small><b>[TODO]</b><i> Missing the display of "Max Unavailable" and "Max Surge"</small></i></p>
   </tr>
-  <tr style="vertical-align:top">
+  <tr valign="top">
     <td width="50%">MODIFY VIEW
-      <img src="img/9-3_updatestrategy-mod.png" /></td>
+      <img src="img/spec/9-3_updatestrategy-mod.png" /></td>
   </tr>
 </table>
 
 
-### 10. Image Pull Policy
+### 10. imagePullPolicy
 
 **x-descriptors**
 
-This descriptor allows you to specify the policy for pulling your container image. See example from Appsody Operator:
+This descriptor allows you to specify the policy for pulling your container image. See example from [[CSV] Appsody Operator](https://github.com/operator-framework/community-operators/blob/master/upstream-community-operators/appsody-operator/0.3.0/appsody-operator.v0.3.0.clusterserviceversion.yaml#L49-L53):
 
 ```yaml
 …
@@ -334,22 +344,22 @@ This descriptor allows you to specify the policy for pulling your container imag
 
 **UI**
 <table style="width:100%">
-  <tr style="vertical-align:top">
+  <tr valign="top">
     <td width="50%">CREATION VIEW
-      <img src="img/10-1_imgpullpolicy-new.png" /></td>
+      <img src="img/spec/10-1_imgpullpolicy-new.png" /></td>
     <td width="50%">DISPLAY VIEW
-      <img src="img/10-2_imgpullpolicy-dis.png" /></td>
+      <img src="img/spec/10-2_imgpullpolicy-dis.png" /></td>
   </tr>
-  <tr style="vertical-align:top">
+  <tr valign="top">
     <td colspan="2">MODIFY VIEW
-      <p><small><b>[TODO]</b><i> * Currently Missing - The DISPLAY VIEW should be a text link to be able to access MODIFY VIEW that renders widget on the modal.
-</i></small></p>
+      <h6><small><b>[TODO]</b><i> * Currently Missing - The DISPLAY VIEW should be a text link to be able to access MODIFY VIEW that renders widget on the modal.
+</i></small></h6>
       </td>
   </tr>
 </table>
 
 
-### 11. Node Affinity
+### 11. nodeAffinity
 
 **x-descriptors**
 
@@ -367,24 +377,24 @@ This descriptor allows you to specify which nodes your pod is eligible to be sch
 
 **UI**
 <table style="width:100%">
-  <tr style="vertical-align:top">
+  <tr valign="top">
     <td width="50%">CREATION VIEW
-      <img src="img/11-1_nodeaff-new.png" />
-      <p><small><b>[TODO]</b><i> the dropdown for "OPERATOR" field is not wide enough to display "NotIn", "Exists", "DoesNotExist" (only as "...") when collapsed.</small></i></p></td>
+      <img src="img/spec/11-1_nodeaff-new.png" />
+      <h6><small><b>[TODO]</b><i> the dropdown for "OPERATOR" field is not wide enough to display "NotIn", "Exists", "DoesNotExist" (only as "...") when collapsed.</small></i></p></td>
     <td width="50%">DISPLAY VIEW
-      <img src="img/11-2_nodeaff-dis.png" />
-      <p><small><b>[TODO]</b><i> cannot display the configuration</small></i></p></td>
+      <img src="img/spec/11-2_nodeaff-dis.png" />
+      <h6><small><b>[TODO]</b><i> cannot display the configuration</small></i></p></td>
   </tr>
-  <tr style="vertical-align:top">
+  <tr valign="top">
     <td colspan="2">MODIFY VIEW
-      <p><small><b>[TODO]</b><i> * Currently Missing - The DISPLAY VIEW should be a text link to be able to access MODIFY VIEW that renders widget on the modal.
-</i></small></p>
+      <h6><small><b>[TODO]</b><i> * Currently Missing - The DISPLAY VIEW should be a text link to be able to access MODIFY VIEW that renders widget on the modal.
+</i></small></h6>
       </td>
   </tr>
 </table>
 
 
-### 12. Pod Affinity
+### 12. podAffinity
 
 **x-descriptors**
 
@@ -394,7 +404,7 @@ This descriptor allows you to specify which nodes your pod is eligible to be sch
 …
 - displayName: Pod Affinity
   description: Pod affinity is a group of inter pod affinity scheduling rules.
-  path: affinity.podAntiAffinity
+  path: affinity.podAffinity
   x-descriptors:     
     - 'urn:alm:descriptor:com.tectonic.ui:podAffinity'
 …
@@ -402,24 +412,24 @@ This descriptor allows you to specify which nodes your pod is eligible to be sch
 
 **UI**
 <table style="width:100%">
-  <tr style="vertical-align:top">
+  <tr valign="top">
     <td width="50%">CREATION VIEW
-      <img src="img/12-1_podaff-new.png" />
-      <p><small><b>[TODO]</b><i> the dropdown for "OPERATOR" field is not wide enough to display "NotIn", "Exists", "DoesNotExist" (only as "...") when collapsed.</small></i></p></td>
+      <img src="img/spec/12-1_podaff-new.png" />
+      <h6><small><b>[TODO]</b><i> the dropdown for "OPERATOR" field is not wide enough to display "NotIn", "Exists", "DoesNotExist" (only as "...") when collapsed.</small></i></p></td>
     <td width="50%">DISPLAY VIEW
-      <img src="img/12-2_podaff-dis.png" />
-      <p><small><b>[TODO]</b><i> cannot display the configuration</small></i></p></td>
+      <img src="img/spec/12-2_podaff-dis.png" />
+      <h6><small><b>[TODO]</b><i> cannot display the configuration</small></i></p></td>
   </tr>
-  <tr style="vertical-align:top">
+  <tr valign="top">
     <td colspan="2">MODIFY VIEW
-      <p><small><b>[TODO]</b><i> * Currently Missing - The DISPLAY VIEW should be a text link to be able to access MODIFY VIEW that renders widget on the modal.
-</i></small></p>
+      <h6><small><b>[TODO]</b><i> * Currently Missing - The DISPLAY VIEW should be a text link to be able to access MODIFY VIEW that renders widget on the modal.
+</i></small></h6>
       </td>
   </tr>
 </table>
 
 
-### 13. Pod Anti-affinity
+### 13. podAntiAffinity
 
 **x-descriptors**
 
@@ -437,24 +447,24 @@ This descriptor allows you to specify which nodes your pod is eligible to be sch
 
 **UI**
 <table style="width:100%">
-  <tr style="vertical-align:top">
+  <tr valign="top">
     <td width="50%">CREATION VIEW
-      <img src="img/13-1_podantiaff-new.png" />
-      <p><small><b>[TODO]</b><i> the dropdown for "OPERATOR" field is not wide enough to display "NotIn", "Exists", "DoesNotExist" (only as "...") when collapsed.</small></i></p></td>
+      <img src="img/spec/13-1_podantiaff-new.png" />
+      <h6><small><b>[TODO]</b><i> the dropdown for "OPERATOR" field is not wide enough to display "NotIn", "Exists", "DoesNotExist" (only as "...") when collapsed.</small></i></p></td>
     <td width="50%">DISPLAY VIEW
-      <img src="img/13-2_podantiaff-dis.png" />
-      <p><small><b>[TODO]</b><i> cannot display the configuration</small></i></p></td>
+      <img src="img/spec/13-2_podantiaff-dis.png" />
+      <h6><small><b>[TODO]</b><i> cannot display the configuration</small></i></p></td>
   </tr>
-  <tr style="vertical-align:top">
+  <tr valign="top">
     <td colspan="2">MODIFY VIEW
-      <p><small><b>[TODO]</b><i> * Currently Missing - The DISPLAY VIEW should be a text link to be able to access MODIFY VIEW that renders widget on the modal.
-</i></small></p>
+      <h6><small><b>[TODO]</b><i> * Currently Missing - The DISPLAY VIEW should be a text link to be able to access MODIFY VIEW that renders widget on the modal.
+</i></small></h6>
       </td>
   </tr>
 </table>
 
 
-### 14. Selector
+### 14. selector
 
 **x-descriptors**
 
@@ -472,16 +482,16 @@ This descriptor allows you to specify labels for identifying a set of objects vi
 
 **UI**
 <table style="width:100%">
-  <tr style="vertical-align:top">
+  <tr valign="top">
     <td width="50%">CREATION VIEW
-        <p><small><b>[TODO]</b><i> * Currently Missing - The CREATION VIEW should allow users to define “a set of labels” for “matchLabels”, similar to Console’s “Search” view.
-        </i></small></p></td>
+        <h6><small><b>[TODO]</b><i> * Currently Missing - The CREATION VIEW should allow users to define “a set of labels” for “matchLabels”, similar to Console’s “Search” view.
+        </i></small></h6></td>
     <td width="50%">DISPLAY VIEW
-      <img src="img/14-2_selector-dis.png" /></td>
+      <img src="img/spec/14-2_selector-dis.png" /></td>
   </tr>
-  <tr style="vertical-align:top">
+  <tr valign="top">
     <td colspan="2">MODIFY VIEW
-      <p><small><b>[TODO]</b><i> Currently Missing</i></small></p>
+      <h6><small><b>[TODO]</b><i> Currently Missing</i></small></h6>
       </td>
   </tr>
 </table>
@@ -490,7 +500,7 @@ See Kubernetes doc for details in
 [resources-that-support-set-based-requirement](https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/#resources-that-support-set-based-requirements).
 
 
-### 15. Field Group
+### 15. fieldGroup
 
 **x-descriptors**
 
@@ -515,22 +525,22 @@ This descriptor allows you to specify a set of fields together as a _group_. Nes
 
 **UI**
 <table style="width:100%">
-  <tr style="vertical-align:top">
+  <tr valign="top">
     <td width="50%">CREATION VIEW
-      <img src="img/15-1_fieldgroup-new.png" />
+      <img src="img/spec/15-1_fieldgroup-new.png" />
     <td width="50%">DISPLAY VIEW
-      <img src="img/15-2_fieldgroup-dis.png" />
-      <p><small><b>[TODO]</b><i> Cannot display fields in a group</small></i></p></td>
+      <img src="img/spec/15-2_fieldgroup-dis.png" />
+      <h6><small><b>[TODO]</b><i> Cannot display fields in a group</small></i></p></td>
   </tr>
-  <tr style="vertical-align:top">
+  <tr valign="top">
     <td colspan="2">MODIFY VIEW
-      <p><small><b>[TODO]</b><i> * boolean toggles are not displayed as toggle so cannot edit the config</i></small></p>
+      <h6><small><b>[TODO]</b><i> * boolean toggles are not displayed as toggle so cannot edit the config</i></small></h6>
       </td>
   </tr>
 </table>
 
 
-### 16. Array Field Group
+### 16. arrayFieldGroup
 
 **x-descriptors**
 
@@ -555,23 +565,23 @@ This descriptor allows you to specify a set of fields together as an _array item
 
 **UI**
 <table style="width:100%">
-  <tr style="vertical-align:top">
+  <tr valign="top">
     <td width="50%">CREATION VIEW
-      <img src="img/16-1_arrayfieldgroup-new.png" />
-      <p><small><b>[TODO]</b><i> Currently the widget doesn't support add/remove item</i></p></td>
+      <img src="img/spec/16-1_arrayfieldgroup-new.png" />
+      <h6><small><b>[TODO]</b><i> Currently the widget doesn't support add/remove item</i></p></td>
     <td width="50%">DISPLAY VIEW
-      <img src="img/16-2_arrayfieldgroup-dis.png" />
-      <p><small><b>[TODO]</b><i> Cannot display fields in a group</small></i></p></td>
+      <img src="img/spec/16-2_arrayfieldgroup-dis.png" />
+      <h6><small><b>[TODO]</b><i> Cannot display fields in a group</small></i></p></td>
   </tr>
-  <tr style="vertical-align:top">
+  <tr valign="top">
     <td colspan="2">MODIFY VIEW
-      <p><small><b>* </b><i> Currently Missing.</i></small></p>
+      <h6><small><b>* </b><i> Currently Missing.</i></small></h6>
       </td>
   </tr>
 </table>
 
 
-### 17. Select
+### 17. select
 
 **x-descriptors**
 
@@ -591,21 +601,21 @@ This descriptor allows you to specify a set of predefined options (e.g. `enum:` 
 
 **UI**
 <table style="width:100%">
-  <tr style="vertical-align:top">
+  <tr valign="top">
     <td width="50%">CREATION VIEW
-      <img src="img/17-1_select-new.png" /></td>
+      <img src="img/spec/17-1_select-new.png" /></td>
     <td width="50%">DISPLAY VIEW
-      <img src="img/17-2_select-dis.png" /></td>
+      <img src="img/spec/17-2_select-dis.png" /></td>
   </tr>
-  <tr style="vertical-align:top">
+  <tr valign="top">
     <td colspan="2">MODIFY VIEW
-      <p><small><b>* </b><i> Currently, this descriptor does not provide “Modify View”. Users would have to edit the content of the actual kubernetes object being specified.</i></small></p>
+      <h6><small><b>* </b><i> Currently, this descriptor does not provide “Modify View”. Users would have to edit the content of the actual kubernetes object being specified.</i></small></h6>
       </td>
   </tr>
 </table>
 
 
-### 18. Advanced
+### 18. advanced
 
 **x-descriptors**
 
@@ -631,21 +641,21 @@ This descriptor allows you to specify fields as &quot;Advanced&quot; options and
 
 **UI**
 <table style="width:100%">
-  <tr style="vertical-align:top">
+  <tr valign="top">
     <td width="50%">CREATION VIEW
-      <img src="img/18-1_advanced-new.png" /></td>
+      <img src="img/spec/18-1_advanced-new.png" /></td>
     <td width="50%">DISPLAY VIEW
-      <img src="img/18-2_advanced-dis.png" />
-      <p><small><b>[TODO]</b><i> * Currently Missing.</i></small></p></td>
+      <img src="img/spec/18-2_advanced-dis.png" />
+      <h6><small><b>[TODO]</b><i> * Currently Missing.</i></small></h6></td>
   </tr>
-  <tr style="vertical-align:top">
+  <tr valign="top">
     <td colspan="2">MODIFY VIEW
-      <p><small><b>* </b><i> Currently, this descriptor does not provide “Modify View”.</i></small></p></td>
+      <h6><small><b>* </b><i> Currently, this descriptor does not provide “Modify View”.</i></small></h6></td>
   </tr>
 </table>
 
 
-### 19. Endpoint List
+### 19. endpointList
 
 **x-descriptors**
 
@@ -663,21 +673,21 @@ This descriptor is created specifically for Prometheus Operator to specify a lis
 
 **UI**
 <table style="width:100%">
-  <tr style="vertical-align:top">
+  <tr valign="top">
     <td width="50%">CREATION VIEW
-      <p><small><b>* </b><i> Currently, this descriptor does not provide “Creation View”.</small></i></p></td>
+      <h6><small><b>* </b><i> Currently, this descriptor does not provide “Creation View”.</small></i></p></td>
     <td width="50%">DISPLAY VIEW
-      <img src="img/19-2_endpoints-dis.png" /></td>
+      <img src="img/spec/19-2_endpoints-dis.png" /></td>
   </tr>
-  <tr style="vertical-align:top">
+  <tr valign="top">
     <td colspan="2">MODIFY VIEW
-      <p><small><b>* </b><i> Currently, this descriptor does not provide “Modify View”. Users would have to edit the content with YAML editor.</i></small></p>
+      <h6><small><b>* </b><i> Currently, this descriptor does not provide “Modify View”. Users would have to edit the content with YAML editor.</i></small></h6>
       </td>
   </tr>
 </table>
 
 
-### 20. Field Dependency
+### 20. fieldDependency
 
 **x-descriptors**
 
@@ -715,25 +725,393 @@ The Dependent Field(s) will be displayed only when the current value of the Cont
 
 **UI**
 <table style="width:100%">
-  <tr style="vertical-align:top">
+  <tr valign="top">
     <td width="50%">CREATION VIEW
-      <img src="img/20-1_fielddependency-new.png" />
+      <img src="img/spec/20-1_fielddependency-new.png" />
       <br>
-      <small><b>* </b><i> When "Enable Upgrades" (CONTROL FIELD) is TRUE:</i></small>
-      <img src="img/20-2_fielddependency-new.png" />
+      <h6><small><b>* </b> When "Enable Upgrades" (CONTROL FIELD) is set to "TRUE":</small></h6>
+      <img src="img/spec/20-2_fielddependency-new.png" />
       </td></td>
     <td width="50%">DISPLAY VIEW
-      <img src="img/20-2_fielddependency-dis.png" /></td>
+      <img src="img/spec/20-2_fielddependency-dis.png" /></td>
   </tr>
-  <tr style="vertical-align:top">
+  <tr valign="top">
     <td colspan="2">MODIFY VIEW
-      <p><small><b>* </b><i>Currently, this descriptor does not provide “Modify View”.</i></small></p>
+      <h6><small><b>* </b><i>Currently, this descriptor does not provide “Modify View”.</i></small></h6>
+      </td>
+  </tr>
+</table>
+
+## statusDescriptors
+A statusDescriptor is for describing the property of a `status` field in your Custom Resource. Each statusDescriptor provides a UI widget for exposing the CR instance on the DISPLAY view in the OpenShift Console.
+
+### 1. podStatuses
+
+**x-descriptors**
+
+This descriptor allows you to expose the status of pods for your instance. It expects the output format in the status block of your instance in:
+```yaml
+…
+status:
+  [PATH_TO_THE_FIELD]:
+    ready:
+      - [FIELD_MEMBER_NAME]
+      - [FIELD_MEMBER_NAME]
+      - [FIELD_MEMBER_NAME]
+    starting:
+      - [FIELD_MEMBER_NAME]
+      - [FIELD_MEMBER_NAME]
+    stopped:
+      - [FIELD_MEMBER_NAME]
+…
+```
+
+**Example**
+
+See example from [[CSV] 3Scale Operator](https://github.com/operator-framework/community-operators/blob/master/community-operators/3scale-community-operator/0.4.0/3scale-community-operator.v0.4.0.clusterserviceversion.yaml#L53-L57):
+
+```yaml
+…
+- displayName: Deployments
+  description: API Manager Deployment Configs
+  path: deployments
+  x-descriptors:
+    - 'urn:alm:descriptor:com.tectonic.ui:podStatuses'
+…
+```
+
+The status block of the field being specified:
+
+```yaml
+…
+status:
+  deployments:
+    ready:
+      - apicast-staging
+      - system-memcache
+      - system-redis
+      - zync-database
+    starting:
+      - apicast-production
+      - backend-cron
+      - backend-listener
+      - backend-redis
+      - backend-worker
+      - system-mysql
+      - system-sidekiq
+      - system-sphinx
+      - zync
+      - zync-que
+    stopped:
+      - system-app
+…
+```
+
+**On the DISPLAY VIEW:**
+<table style="width:100%">
+  <tr valign="top">
+    <td width="50%">
+      <img src="img/status/1-1_podStatuses.png" />
+      <h6><small>Hover over to see the number of members in "ready" state.</small></h6>
+      </td>
+    <td width="50%">
+      <img src="img/status/1-2_podStatuses.png" />
+      <h6><small>Hover over to see the number of members in "starting" state.</small></h6>
+      </td>
+  </tr>
+</table>
+
+### 2. w3Link
+
+**x-descriptors**
+
+This descriptor allows you to expose an external link of your instance. It expects the output format in the status block of your instance in:
+```yaml
+…
+status:
+  [PATH_TO_THE_FIELD]: [FIELD_VALUE]
+…
+```
+
+**Example**
+
+See example from [[CSV] Eclipse Che Operator](https://github.com/operator-framework/community-operators/blob/master/community-operators/eclipse-che/7.8.0/eclipse-che.v7.8.0.clusterserviceversion.yaml#L76-L80):
+
+```yaml
+…
+- displayName: Eclipse Che URL
+  description: Route to access Eclipse Che
+  path: cheURL
+  x-descriptors:
+    - urn:alm:descriptor:org.w3:link
+…
+```
+
+The status block of the field being specified:
+
+```yaml
+…
+status:
+  …
+  cheURL: 'http://che-tony.apps.rhamilto.devcluster.openshift.com'
+…
+```
+
+**On the DISPLAY VIEW:**
+<table style="width:100%">
+  <tr valign="top">
+    <td width="50%">
+      <img src="img/status/2-1_w3Link.png" />
+      <h6><small>Click on the link sends users to target URL.</small></h6>
+      </td>
+    <td width="50%">
+      <img src="img/status/2-2_w3Link.png" />
+      <h6><small>Hover over displayName shows descriptions on tooltip.</small></h6>
+      </td>
+  </tr>
+</table>
+
+### 3. conditions
+
+**x-descriptors**
+
+This descriptor allows you to expose an array of PodConditions of your instance. It expects the output format in the status block of your instance in:
+```yaml
+…
+status:
+  [PATH_TO]:
+    conditions:
+      - lastTransitionTime: [VALUE]
+        lastUpdateTime: [VALUE]
+        message: [VALUE]
+        reason: [VALUE]
+        status: [VALUE]
+        type: [VALUE]
+…
+```
+
+**Example**
+
+See example from [[CSV] Nexus Operator](https://github.com/operator-framework/community-operators/blob/master/community-operators/nexus-operator/0.1.0/nexus-operator.v0.1.0.clusterserviceversion.yaml#L102-L106):
+
+```yaml
+…
+- displayName: Deployment Conditions
+  description: Nexus server deployment conditions
+  path: deploymentStatus.conditions
+  x-descriptors:
+    - 'urn:alm:descriptor:io.kubernetes.conditions'
+…
+```
+
+The status block of the field being specified:
+
+```yaml
+…
+status:
+  deploymentStatus:
+    conditions:
+      - lastTransitionTime: '2020-02-22T01:00:10Z'
+        lastUpdateTime: '2020-02-22T01:00:10Z'
+        message: Deployment does not have minimum availability.
+        reason: MinimumReplicasUnavailable
+        status: 'False'
+        type: Available
+      - lastTransitionTime: '2020-02-22T01:00:10Z'
+        lastUpdateTime: '2020-02-22T01:00:10Z'
+        message: ReplicaSet "nexus3-5dc585f884" is progressing.
+        reason: ReplicaSetUpdated
+        status: 'True'
+        type: Progressing
+  …
+```
+
+**On the DISPLAY VIEW:**
+<table style="width:100%">
+  <tr valign="top">
+    <td width="50%">
+      <img src="img/status/3-1_conditions.png" />
+      <h6><small>Hover over displayName shows descriptions on tooltip.</small></h6>
+      </td>
+    <td width="50%">
+      </td>
+  </tr
+  <tr valign="top">
+    <td colspan="2">
+      <img src="img/status/3-2_conditions.png" />
+      <h6><small><i><b>* </b>Note that Openshift Console shows `status.conditions` in a full-width table at the bottom of the object details view by default even without this "conditions" statusDescriptor.</i></small></h6>
+      </td>
+  </tr>
+</table>
+
+### 4. text
+
+**x-descriptors**
+
+This descriptor allows you to expose the status field of your instance in plain text.
+
+**Example**
+
+See example from [[CSV] Spark Operator](https://github.com/operator-framework/community-operators/blob/master/community-operators/spark-gcp/2.4.0/sparkoperator.v2.4.0.clusterserviceversion.yaml#L61-L65):
+
+```yaml
+…
+- displayName: Application State
+  description: Current state of the application.
+  path: applicationState.state
+  x-descriptors:
+  - urn:alm:descriptor:text
+…
+```
+
+The status block of the field being specified:
+
+```yaml
+…
+status:
+  applicationState:
+    state: SUBMITTED
+  …
+```
+
+**On the DISPLAY VIEW:**
+<table style="width:100%">
+  <tr valign="top">
+    <td width="50%">
+      <img src="img/status/4-1_text.png" />
+      <h6><small>Hover over displayName shows descriptions on tooltip.</small></h6>
+      </td>
+    <td width="50%">
+      </td>
+  </tr>
+</table>
+
+### 5. k8sPhase
+
+**x-descriptors**
+
+This descriptor allows you to expose the status phase of your instance in plain text.
+
+**Example**
+
+See example from [[CSV] KEDA Operator](https://github.com/operator-framework/community-operators/blob/master/community-operators/keda/1.2.0/keda.v1.2.0.clusterserviceversion.yaml#L107-L111):
+
+```yaml
+…
+- displayName: Phase
+  description: Phase
+  path: phase
+  x-descriptors:
+    - 'urn:alm:descriptor:io.kubernetes.phase'
+…
+```
+
+The status block of the field being specified:
+
+```yaml
+…
+status:
+  phase: Installation Succeeded
+  …
+```
+
+**On the DISPLAY VIEW:**
+<table style="width:100%">
+  <tr valign="top">
+    <td width="50%">
+      <img src="img/status/5-1_k8sPhase.png" />
+      </td>
+    <td width="50%">
+      </td>
+  </tr>
+</table>
+
+### 6. k8sPhaseReason
+
+**x-descriptors**
+
+This descriptor allows you to expose the phase reason of your instance in plain text.
+
+**Example**
+
+See example from [[CSV] KEDA Operator](https://github.com/operator-framework/community-operators/blob/master/community-operators/keda/1.2.0/keda.v1.2.0.clusterserviceversion.yaml#L112-L116):
+
+```yaml
+…
+- displayName: Reason
+  description: Reason
+  path: reason
+  x-descriptors:
+    - 'urn:alm:descriptor:io.kubernetes.phase:reason'
+…
+```
+
+The status block of the field being specified:
+
+```yaml
+…
+status:
+  …
+  reason: KEDA v1.2.0 is installed in namespace 'keda'
+  …
+```
+
+**On the DISPLAY VIEW:**
+<table style="width:100%">
+  <tr valign="top">
+    <td width="50%">
+      <img src="img/status/6-1_k8sPhaseReason.png" />
+      </td>
+    <td width="50%">
+      </td>
+  </tr>
+</table>
+
+### 7. k8sResourcePrefix
+
+**x-descriptors**
+
+This descriptor allows you to expose a kubernetes object for your instance.
+
+**Example**
+
+See example from [[CSV] etcd Operator](https://github.com/operator-framework/community-operators/blob/master/community-operators/etcd/0.9.4/etcdoperator.v0.9.4.clusterserviceversion.yaml#L57-L61):
+
+```yaml
+…
+- description: The service at which the running etcd cluster can be accessed.
+  displayName: Service
+  path: serviceName
+  x-descriptors:
+    - urn:alm:descriptor:io.kubernetes:Service
+…
+```
+
+The status block of the field being specified:
+
+```yaml
+…
+status:
+  …
+  serviceName: example-client
+  …
+```
+
+**On the DISPLAY VIEW:**
+<table style="width:100%">
+  <tr valign="top">
+    <td width="50%">
+      <img src="img/status/7-1_k8sResourcePrefix.png" />
+      <h6><small>Hover over displayName shows descriptions on tooltip.</small></h6>
+      </td>
+    <td width="50%">
       </td>
   </tr>
 </table>
 
 
-### 21. DEPRECATED Descriptors
+
+### DEPRECATED Descriptors
 
 #### Label **[DEPRECATED]**
 
@@ -744,7 +1122,7 @@ x-descriptors:
     - 'urn:alm:descriptor:com.tectonic.ui:label'
 …
 ```
-* Use [Text Input](#text-input) instead for `string` data type input/output.
+* Use [text](#6-text) specDescriptor instead for `string` data type input/output.
 
 
 #### namespaceSelector **[DEPRECATED]**
@@ -756,4 +1134,4 @@ x-descriptors:
     'urn:alm:descriptor:com.tectonic.ui:namespaceSelector'
 …
 ```
-* Use [Kubernetes Object](#kubernetes-object) instead.
+* Use [k8sResourcePrefix](#3-k8sResourcePrefix) specDescriptor instead to specify Namespace object.
