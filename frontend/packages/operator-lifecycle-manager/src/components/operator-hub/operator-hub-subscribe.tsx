@@ -223,9 +223,13 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
         generateName: `${selectedTargetNamespace}-`,
         namespace: selectedTargetNamespace,
       },
-      spec: {
-        targetNamespaces: [selectedTargetNamespace],
-      },
+      ...(selectedInstallMode === InstallModeType.InstallModeTypeAllNamespaces
+        ? {}
+        : {
+            spec: {
+              targetNamespaces: [selectedTargetNamespace],
+            },
+          }),
     };
 
     const subscription: SubscriptionKind = {
