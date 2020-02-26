@@ -328,11 +328,15 @@ const updateTask: UpdateOperationAction<UpdateOperationUpdateTaskData> = (
 
   return {
     tasks: updatedTasks,
-    listTasks: listTasks.map(
-      (listTask) =>
-        canRename && mapReplaceRelatedInOthers(newName, thisPipelineTask.name, listTask),
-    ),
-    errors: getErrors(updatedResource, taskResource),
+    listTasks: canRename
+      ? listTasks.map((listTask) =>
+          mapReplaceRelatedInOthers(newName, thisPipelineTask.name, listTask),
+        )
+      : listTasks,
+    errors: {
+      [thisPipelineTask.name]: null,
+      ...getErrors(updatedResource, taskResource),
+    },
   };
 };
 
