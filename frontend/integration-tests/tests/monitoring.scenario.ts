@@ -295,9 +295,16 @@ describe('Alertmanager: Configuration', () => {
     await firstElementByTestID('label-name-0').sendKeys('abcd@#$R@T%'); // invalid chars
     expect(firstElementByTestID('invalid-label-name-error').isPresent()).toBe(true);
     await firstElementByTestID('label-name-0').clear();
+    expect(firstElementByTestID('duplicate-label-name-error').isPresent()).toBe(false);
     await firstElementByTestID('label-name-0').sendKeys('severity');
     expect(firstElementByTestID('invalid-label-name-error').isPresent()).toBe(false);
     await firstElementByTestID('label-value-0').sendKeys('warning');
+    await firstElementByTestID('add-routing-label').click();
+    await firstElementByTestID('label-name-1').sendKeys('severity');
+    await firstElementByTestID('label-value-1').sendKeys('warning');
+    expect(firstElementByTestID('duplicate-label-name-error').isPresent()).toBe(true);
+    await firstElementByTestID('remove-routing-label').click();
+    expect(firstElementByTestID('duplicate-label-name-error').isPresent()).toBe(false);
 
     await monitoringView.saveButton.click();
     await crudView.isLoaded();
