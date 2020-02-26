@@ -68,7 +68,7 @@ const PVCTableHeader = () => {
     },
     {
       title: 'Capacity',
-      sortField: 'status.capacity.storage',
+      sortFunc: 'pvcStorage',
       transforms: [sortable],
       props: { className: tableColumnClasses[4] },
     },
