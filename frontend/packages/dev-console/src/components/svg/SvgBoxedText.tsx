@@ -7,6 +7,7 @@ import {
   createSvgIdUrl,
 } from '@console/topology';
 import { truncateMiddle } from '@console/internal/components/utils';
+import { RESOURCE_NAME_TRUNCATE_LENGTH } from '../../const';
 import SvgResourceIcon from '../topology/components/nodes/ResourceIcon';
 import SvgCircledIcon from './SvgCircledIcon';
 import SvgDropShadowFilter from './SvgDropShadowFilter';
@@ -47,7 +48,7 @@ const SvgBoxedText: React.FC<SvgBoxedTextProps> = ({
   typeIconPadding = 4,
   onMouseEnter,
   onMouseLeave,
-  truncate = 20,
+  truncate = RESOURCE_NAME_TRUNCATE_LENGTH,
   dragRef,
   ...other
 }) => {

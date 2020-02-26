@@ -104,14 +104,17 @@ export default class Rect implements Translatable {
     return this;
   }
 
-  expand(h: number, v: number): Rect {
-    this.x -= h;
-    this.width += h * 2;
+  expand(v: number, h: number): Rect {
     this.y -= v;
     this.height += v * 2;
+    this.x -= h;
+    this.width += h * 2;
     return this;
   }
 
+  //
+  // Padding Format:  [all], [vertical, horizontal], [top, horizontal, bottom], [top, right, bottom, left]
+  //
   padding(padding?: Padding): Rect {
     if (padding) {
       if (typeof padding === 'number') {
@@ -121,14 +124,14 @@ export default class Rect implements Translatable {
       } else if (padding.length === 2) {
         this.expand(padding[0], padding[1]);
       } else if (padding.length === 3) {
-        this.x -= padding[0];
-        this.width += padding[0] + padding[2];
-        this.height += padding[1];
+        this.y -= padding[0];
+        this.height += padding[0] + padding[2];
+        this.width += padding[1];
       } else if (padding.length === 4) {
-        this.x -= padding[0];
-        this.width += padding[0] + padding[2];
-        this.y -= padding[3];
-        this.height += padding[1] + padding[3];
+        this.y -= padding[0];
+        this.height += padding[0] + padding[2];
+        this.x -= padding[1];
+        this.width += padding[1] + padding[3];
       }
     }
     return this;

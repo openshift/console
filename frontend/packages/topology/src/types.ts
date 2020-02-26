@@ -23,7 +23,7 @@ export enum AnchorEnd {
   both,
 }
 
-export type GroupStyle = {
+export type NodeStyle = {
   padding?: Padding;
 };
 

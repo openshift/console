@@ -9,3 +9,5 @@ export enum QUERY_PROPERTIES {
   /** For defining a contextual source of the redirect (ie, connect a new workload from this contextual source) */
   CONTEXT_SOURCE = 'contextSource',
 }
+
+export const RESOURCE_NAME_TRUNCATE_LENGTH = 13;

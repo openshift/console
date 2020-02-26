@@ -8,7 +8,7 @@ import {
   Layer,
   Node,
   PointTuple,
-  GroupStyle,
+  NodeStyle,
   NodeShape,
   WithDndDragProps,
   WithDndDropProps,
@@ -100,7 +100,7 @@ const GroupHull: React.FC<GroupHullProps> = ({
       return null;
     }
     // cast to number and coerce
-    const padding = maxPadding(element.getStyle<GroupStyle>().padding);
+    const padding = maxPadding(element.getStyle<NodeStyle>().padding);
     const hullPadding = (point: PointWithSize) => (point[2] || 0) + padding;
     // change the box only when not dragging
     pathRef.current = hullPath(hullPoints, hullPadding);

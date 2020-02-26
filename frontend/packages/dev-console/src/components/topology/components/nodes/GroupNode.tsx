@@ -6,19 +6,20 @@ import {
   TruncateOptions,
 } from '@console/internal/components/utils';
 import { Node, useSize, useHover } from '@console/topology';
-import SvgResourceIcon from './ResourceIcon';
+import { RESOURCE_NAME_TRUNCATE_LENGTH } from '../../../../const';
 import SvgCircledIcon from '../../../svg/SvgCircledIcon';
+import { TopologyDataObject } from '../../topology-types';
+import SvgResourceIcon from './ResourceIcon';
+import ResourceKindsInfo from './ResourceKindsInfo';
 
 import './GroupNode.scss';
-import { TopologyDataObject } from '../../topology-types';
-import ResourceKindsInfo from './ResourceKindsInfo';
 
 const TOP_MARGIN = 20;
 const LEFT_MARGIN = 20;
 const TEXT_MARGIN = 10;
 
 const truncateOptions: TruncateOptions = {
-  length: 35,
+  length: RESOURCE_NAME_TRUNCATE_LENGTH,
 };
 
 type GroupNodeProps = {
@@ -61,7 +62,7 @@ const GroupNode: React.FC<GroupNodeProps> = ({
           content={title}
           position={TooltipPosition.top}
           trigger="manual"
-          isVisible={textHover && shouldTruncate(title, truncateOptions)}
+          isVisible={textHover && shouldTruncate(title)}
         >
           <text
             ref={textHoverRef}

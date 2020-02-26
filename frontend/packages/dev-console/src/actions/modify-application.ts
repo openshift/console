@@ -1,6 +1,7 @@
 import { KebabOption } from '@console/internal/components/utils';
 import { truncateMiddle } from '@console/internal/components/utils/truncate-middle';
 import { K8sResourceKind, K8sKind } from '@console/internal/module/k8s';
+import { RESOURCE_NAME_TRUNCATE_LENGTH } from '../const';
 import { editApplicationModal } from '../components/modals';
 
 export const ModifyApplication = (kind: K8sKind, obj: K8sResourceKind): KebabOption => {
@@ -25,7 +26,7 @@ export const ModifyApplication = (kind: K8sKind, obj: K8sResourceKind): KebabOpt
 
 export const EditApplication = (model: K8sKind, obj: K8sResourceKind): KebabOption => {
   return {
-    label: `Edit ${truncateMiddle(obj.metadata.name)}`,
+    label: `Edit ${truncateMiddle(obj.metadata.name, { length: RESOURCE_NAME_TRUNCATE_LENGTH })}`,
     href: `/edit?name=${obj.metadata.name}&kind=${obj.kind || model.kind}`,
     accessReview: {
       group: model.apiGroup,
