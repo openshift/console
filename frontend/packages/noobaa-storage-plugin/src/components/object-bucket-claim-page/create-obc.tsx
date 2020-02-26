@@ -26,6 +26,7 @@ import { ActionGroup, Button } from '@patternfly/react-core';
 import { StorageClass } from '@console/internal/components/storage-class-form';
 import { filterScOnProvisioner, getName, ResourceDropdown } from '@console/shared';
 import { commonReducer, defaultState } from '../object-bucket-page/state';
+import { OCS_NS } from '../../constants';
 import './create-obc.scss';
 
 export const CreateOBCPage: React.FC<CreateOBCPageProps> = (props) => {
@@ -138,6 +139,7 @@ export const CreateOBCPage: React.FC<CreateOBCPageProps> = (props) => {
                   {
                     isList: true,
                     kind: referenceForModel(NooBaaBucketClassModel),
+                    namespace: OCS_NS,
                     prop: 'bucketClass',
                   },
                 ]}
