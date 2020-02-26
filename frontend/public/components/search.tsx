@@ -145,7 +145,12 @@ const SearchPage_: React.FC<SearchProps> = (props) => {
   };
 
   const getToggleText = (item: string) => {
-    const { labelPlural, apiVersion, apiGroup } = modelFor(item);
+    const model = modelFor(item);
+    // API discovery happens asynchronously. Avoid runtime errors if the model hasn't loaded.
+    if (!model) {
+      return '';
+    }
+    const { labelPlural, apiVersion, apiGroup } = model;
     return (
       <span className="co-search-group__accordion-label">
         {labelPlural}{' '}
