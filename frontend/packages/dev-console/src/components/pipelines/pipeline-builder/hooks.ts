@@ -167,6 +167,7 @@ export const useNodes = (
           onNewListNode,
           (task) => onTaskSelection(task, getTask(task.taskRef)),
           getErrorMessage(nodeTaskErrors, tasksInError),
+          taskGroup.highlightedIds,
         )
       : [];
   const taskListNodes: PipelineTaskListNodeModel[] =

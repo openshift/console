@@ -78,7 +78,14 @@ const PipelineBuilderForm: React.FC<PipelineBuilderFormProps> = (props) => {
     updateErrors(taskErrors);
   };
 
-  const taskGroup: PipelineBuilderTaskGroup = { tasks: values.tasks, listTasks: values.listTasks };
+  const selectedId = values.tasks[selectedTask?.taskIndex]?.name;
+  const selectedIds = selectedId ? [selectedId] : [];
+
+  const taskGroup: PipelineBuilderTaskGroup = {
+    tasks: values.tasks,
+    listTasks: values.listTasks,
+    highlightedIds: selectedIds,
+  };
 
   return (
     <Stack className="odc-pipeline-builder-form">
