@@ -338,6 +338,8 @@ export default (state: UIState, action: UIAction): UIState => {
 
     case ActionType.SetNamespaceMetrics:
       return state.setIn(['metrics', 'namespace'], action.payload.namespaceMetrics);
+    case ActionType.SetNodeMetrics:
+      return state.setIn(['metrics', 'node'], action.payload.nodeMetrics);
 
     default:
       break;

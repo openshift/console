@@ -376,6 +376,9 @@ export type NodeKind = {
     unschedulable?: boolean;
   };
   status?: {
+    capacity?: {
+      [key: string]: string;
+    };
     conditions?: NodeCondition[];
     images?: {
       names: string[];
