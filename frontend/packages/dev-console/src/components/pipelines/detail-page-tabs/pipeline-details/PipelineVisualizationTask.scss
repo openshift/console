@@ -1,3 +1,5 @@
+@import '../../../topology/topology-utils.scss';
+
 $border-color: var(--pf-global--BorderColor--light-100);
 .odc-pipeline-vis-task {
   position: relative;
@@ -17,6 +19,10 @@ $border-color: var(--pf-global--BorderColor--light-100);
     align-items: center;
     &:hover {
       box-shadow: 0 0 16px rgba(0, 0, 0, 0.12);
+    }
+
+    &.is-selected {
+      border: 2px solid $interactive-stroke-color;
     }
   }
   &:not(:first-child) {

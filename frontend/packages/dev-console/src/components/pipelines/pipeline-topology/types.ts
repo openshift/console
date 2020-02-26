@@ -11,6 +11,7 @@ export type NodeSelectionCallback = (nodeData: BuilderNodeModelData) => void;
 
 // Node Data Models
 export type PipelineRunAfterNodeModelData = {
+  selected?: boolean;
   task: {
     name: string;
     runAfter?: string[];
