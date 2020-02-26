@@ -66,12 +66,12 @@ export enum K8sResourceConditionStatus {
   Unknown = 'Unknown',
 }
 
-export type K8sResourceCondition<T> = {
-  type: T;
-  status: K8sResourceConditionStatus;
-  lastTransitionTime: string;
-  reason: string;
-  message: string;
+export type K8sResourceCondition = {
+  type: string;
+  status: keyof typeof K8sResourceConditionStatus;
+  lastTransitionTime?: string;
+  reason?: string;
+  message?: string;
 };
 
 export type MatchExpression =
@@ -304,13 +304,8 @@ export type ContainerStatus = {
 };
 
 export type PodCondition = {
-  type?: string;
-  status?: string;
-  reason?: string;
-  message?: string;
-  lastTransitionTime?: string;
   lastProbeTime?: string;
-};
+} & K8sResourceCondition;
 
 export type PodStatus = {
   phase: PodPhase;
@@ -333,6 +328,10 @@ export type PodKind = {
 } & K8sResourceCommon &
   PodTemplate;
 
+export type DeploymentCondition = {
+  lastUpdateTime?: string;
+} & K8sResourceCondition;
+
 export type DeploymentKind = {
   spec: {
     minReadySeconds?: number;
@@ -353,7 +352,7 @@ export type DeploymentKind = {
   status?: {
     availableReplicas?: number;
     collisionCount?: number;
-    conditions?: any[];
+    conditions?: DeploymentCondition[];
     observedGeneration?: number;
     readyReplicas?: number;
     replicas?: number;
@@ -367,13 +366,17 @@ export type StorageClassResourceKind = {
   reclaimPolicy: string;
 } & K8sResourceCommon;
 
+export type NodeCondition = {
+  lastHeartbeatTime?: string;
+} & K8sResourceCondition;
+
 export type NodeKind = {
   spec: {
     taints?: Taint[];
     unschedulable?: boolean;
   };
   status?: {
-    conditions?: any;
+    conditions?: NodeCondition[];
     images?: {
       names: string[];
       sizeBytes?: number;
@@ -407,7 +410,7 @@ export type JobKind = {
   status: {
     active?: number;
     completionTime?: string;
-    conditions?: any;
+    conditions?: K8sResourceCondition[];
     failed?: number;
     startTime?: string;
     succeeded?: number;
@@ -459,7 +462,7 @@ export type CustomResourceDefinitionKind = {
     };
   };
   status?: {
-    conditions?: any[];
+    conditions?: K8sResourceCondition[];
   };
 } & K8sResourceCommon;
 
@@ -479,7 +482,7 @@ export type RouteTLS = {
 };
 
 export type RouteIngress = {
-  conditions: any[];
+  conditions: K8sResourceCondition[];
   host?: string;
   routerCanonicalHostname?: string;
   routerName?: string;
@@ -538,7 +541,7 @@ export type TemplateInstanceKind = {
     };
   };
   status?: {
-    conditions: any[];
+    conditions: K8sResourceCondition[];
     objects: TemplateInstanceObject[];
   };
 } & K8sResourceCommon;
@@ -573,7 +576,7 @@ export type MachineKind = {
     };
     providerStatus: {
       kind: string;
-      conditions?: any[];
+      conditions?: K8sResourceCondition[];
       [key: string]: any;
     };
   };
@@ -644,7 +647,9 @@ export enum MachineConfigPoolConditionType {
   Degraded = 'Degraded',
 }
 
-export type MachineConfigPoolCondition = K8sResourceCondition<MachineConfigPoolConditionType>;
+export type MachineConfigPoolCondition = {
+  type: keyof typeof MachineConfigPoolConditionType;
+} & K8sResourceCondition;
 
 export type MachineConfigPoolStatus = {
   observedGeneration?: number;
@@ -692,7 +697,9 @@ export enum ClusterVersionConditionType {
   Invalid = 'Invalid',
 }
 
-export type ClusterVersionCondition = K8sResourceCondition<ClusterVersionConditionType>;
+export type ClusterVersionCondition = {
+  type: keyof typeof ClusterVersionConditionType;
+} & K8sResourceCondition;
 
 type ClusterVersionStatus = {
   availableUpdates: ClusterUpdate[];
@@ -728,7 +735,7 @@ type ClusterOperatorObjectReference = {
 export type ClusterOperator = {
   spec: {};
   status: {
-    conditions?: any[];
+    conditions?: K8sResourceCondition[];
     versions?: OperandVersion[];
     relatedObjects?: ClusterOperatorObjectReference[];
   };

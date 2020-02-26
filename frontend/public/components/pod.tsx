@@ -52,6 +52,7 @@ import {
 } from './graphs';
 import { VolumesTable } from './volumes-table';
 import { PodModel } from '../models';
+import { Conditions } from './conditions';
 
 // Only request metrics if the device's screen width is larger than the
 // breakpoint where metrics are visible.
@@ -430,6 +431,10 @@ const Details: React.FC<PodDetailsProps> = ({ obj: pod }) => {
       </div>
       <div className="co-m-pane__body">
         <VolumesTable resource={pod} heading="Volumes" />
+      </div>
+      <div className="co-m-pane__body">
+        <SectionHeading text="Conditions" />
+        <Conditions conditions={pod.status.conditions} />
       </div>
     </>
   );
