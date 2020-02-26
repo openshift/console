@@ -66,6 +66,7 @@ import { withEditReviewAccess } from './withEditReviewAccess';
 import HelmRelease from './components/groups/HelmRelease';
 import AggregateEdge from './components/edges/AggregateEdge';
 import TrafficConnector from './components/edges/TrafficConnector';
+import CreateConnector from './components/edges/CreateConnector';
 
 type NodeProps = {
   element: Node;
@@ -94,9 +95,8 @@ class ComponentFactory {
     this.hasServiceBinding = value;
   }
 
-  withAddResourceConnector = () => {
-    return withCreateConnector(createConnectorCallback(this.hasServiceBinding), 'Add Resource');
-  };
+  withAddResourceConnector = () =>
+    withCreateConnector(createConnectorCallback(this.hasServiceBinding), CreateConnector);
 
   getFactory = (): TopologyComponentFactory => {
     return (kind, type): React.ComponentType<{ element: GraphElement }> | undefined => {
