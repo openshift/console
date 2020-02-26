@@ -1,7 +1,11 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
 import * as link from '@console/internal/components/utils';
-import MonitoringDashboard from '../MonitoringDashboard';
+import {
+  TimespanDropdown,
+  PollIntervalDropdown,
+} from '@console/internal/components/monitoring/dashboards';
+import { MonitoringDashboard } from '../MonitoringDashboard';
 import ConnectedMonitoringDashboardGraph from '../MonitoringDashboardGraph';
 import { monitoringDashboardQueries, topWorkloadMetricsQueries } from '../../queries';
 
@@ -17,6 +21,8 @@ describe('Monitoring Dashboard Tab', () => {
       path: '',
       url: '',
     },
+    timespan: 1800000,
+    pollInterval: 90000,
   };
 
   it('should render Monitoring Dashboard tab', () => {
@@ -54,5 +60,11 @@ describe('Monitoring Dashboard Tab', () => {
         .first()
         .props().query,
     ).toEqual(dashboardQuery);
+  });
+
+  it('should render Time Range & Refresh Interval dropdowns', () => {
+    const wrapper = shallow(<MonitoringDashboard {...monitoringDashboardProps} />);
+    expect(wrapper.find(TimespanDropdown).exists()).toBe(true);
+    expect(wrapper.find(PollIntervalDropdown).exists()).toBe(true);
   });
 });
