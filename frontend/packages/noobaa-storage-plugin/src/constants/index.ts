@@ -6,6 +6,7 @@ export const BY_PHYSICAL_VS_LOGICAL_USAGE = 'Physical Vs Logical Usage';
 export const BY_EGRESS = 'Egress';
 export const PROJECTS = 'Projects';
 export const BUCKET_CLASS = 'Bucket Class';
+export const OCS_NS = 'openshift-storage';
 
 export const CHART_LABELS = {
   [BY_LOGICAL_USAGE]: 'Logical used capacity per account',
