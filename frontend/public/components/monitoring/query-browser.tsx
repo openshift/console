@@ -492,13 +492,16 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
     }
   }, [timespan]);
 
+  // Define this once for all queries so that they have exactly the same time range and X values
+  const now = Date.now();
+
   const safeFetchQuery = (query: string) => {
     if (_.isEmpty(query)) {
       return Promise.resolve();
     }
     const url = getPrometheusURL({
       endpoint: PrometheusEndpoint.QUERY_RANGE,
-      endTime,
+      endTime: endTime || now,
       namespace,
       query,
       samples,
