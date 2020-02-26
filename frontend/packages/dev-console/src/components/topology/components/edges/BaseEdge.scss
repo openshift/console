@@ -1,7 +1,6 @@
 @import '../../topology-utils';
 
 .odc-base-edge {
-  --edge--drag-active--cursor: grab;
   --edge--stroke-width: 2px;
   --edge--stroke-dasharray: 0;
   --edge--stroke: #{$default-edge-stroke-color};

@@ -1,9 +1,9 @@
 @import '../topology-utils';
 
 .odc-m-drag-active {
-  cursor: no-drop !important;
+  cursor: no-drop;
   &.odc-m-valid-drop-target {
-    cursor: grab !important;
+    cursor: grab;
     .odc-m-drag-create {
       cursor: none;
     }

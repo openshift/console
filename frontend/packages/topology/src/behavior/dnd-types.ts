@@ -53,7 +53,7 @@ export type Unregister = () => void;
 export interface DndManager {
   registerSource(source: DragSource): [string, Unregister];
   registerTarget(target: DropTarget): [string, Unregister];
-  getDropHints(): string[] | undefined;
+  getDropHints(): string[];
   canDragSource(sourceId: string | undefined): boolean;
   canDropOnTarget(targetId: string | undefined): boolean;
   hasDropTarget(): boolean;
@@ -156,7 +156,7 @@ export interface HandlerManager {
 }
 
 export interface DragSourceMonitor extends HandlerManager {
-  getDropHints(): string[] | undefined;
+  getDropHints(): string[];
   canDrag(): boolean;
   isCancelled(): boolean;
   isDragging(): boolean;
@@ -174,7 +174,7 @@ export interface DropTargetMonitor extends HandlerManager {
   isDragging(): boolean;
   isOver(options?: { shallow?: boolean }): boolean;
   hasDropTarget(): boolean;
-  getDropHints(): string[] | undefined;
+  getDropHints(): string[];
   getItemType(): Identifier | undefined;
   getItem(): any;
   getDropResult(): any;
