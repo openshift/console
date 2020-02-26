@@ -84,7 +84,7 @@ export const RoutingLabelEditor = ({ formValues, dispatchFormChange, isDefaultRe
 
   return (
     <div data-test-id="receiver-routing-labels-editor" className="form-group">
-      <SectionHeading text="Routing Labels" />
+      <SectionHeading text="Routing Labels" required={!isDefaultReceiver} />
       <p className="co-help-text">
         Firing alerts with labels that match all of these selectors will be sent to this receiver.
         Label values can be matched exactly or with a &nbsp;
