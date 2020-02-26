@@ -24,9 +24,9 @@ export const BarChart: React.FC<BarChartProps> = ({
   barSpacing = 15,
   barWidth = DEFAULT_BAR_WIDTH,
   data = [],
-  isLink = true,
   LabelComponent,
   loading = false,
+  noLink = false,
   query,
   theme = getCustomTheme(ChartThemeColor.blue, ChartThemeVariant.light, barTheme),
   title,
@@ -47,7 +47,7 @@ export const BarChart: React.FC<BarChartProps> = ({
   return (
     <PrometheusGraph ref={containerRef} title={title} className={titleClassName}>
       {data.length ? (
-        <PrometheusGraphLink query={isLink ? query : undefined}>
+        <PrometheusGraphLink query={noLink ? undefined : query}>
           {data.map((datum, index) => (
             <React.Fragment key={index}>
               <div className="graph-bar__label">
@@ -85,10 +85,10 @@ export const Bar: React.FC<BarProps> = ({
   barWidth,
   delay = undefined,
   humanize = humanizeNumber,
-  isLink = true,
   LabelComponent,
   metric,
   namespace,
+  noLink = false,
   query,
   theme,
   title,
@@ -106,9 +106,9 @@ export const Bar: React.FC<BarProps> = ({
       barSpacing={barSpacing}
       barWidth={barWidth}
       data={data}
-      isLink={isLink}
       LabelComponent={LabelComponent}
       loading={loading}
+      noLink={noLink}
       query={query}
       theme={theme}
       title={title}
@@ -125,9 +125,9 @@ type BarChartProps = {
   barSpacing?: number;
   barWidth?: number;
   data?: DataPoint[];
-  isLink?: boolean;
   LabelComponent?: React.ComponentType<LabelComponentProps>;
   loading?: boolean;
+  noLink?: boolean;
   query?: string;
   theme?: any; // TODO figure out the best way to import VictoryThemeDefinition
   title?: string;
@@ -139,10 +139,10 @@ type BarProps = {
   barWidth?: number;
   delay?: number;
   humanize?: Humanize;
-  isLink?: boolean;
   LabelComponent?: React.ComponentType<LabelComponentProps>;
   metric: string;
   namespace?: string;
+  noLink?: boolean;
   query: string;
   theme?: any; // TODO figure out the best way to import VictoryThemeDefinition
   title?: string;
