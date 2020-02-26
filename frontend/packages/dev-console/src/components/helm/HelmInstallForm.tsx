@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as _ from 'lodash';
 import { Form, TextInputTypes } from '@patternfly/react-core';
 import { FormikProps, FormikValues } from 'formik';
-import { InputField, FormFooter } from '@console/shared';
+import { InputField, FormFooter, YAMLEditorField } from '@console/shared';
 import FormSection from '../import/section/FormSection';
 
 const HelmInstallForm: React.FC<FormikProps<FormikValues>> = ({
@@ -22,6 +22,7 @@ const HelmInstallForm: React.FC<FormikProps<FormikValues>> = ({
         helpText="A unique name for the Helm Chart release."
         required
       />
+      <YAMLEditorField name="valuesYAML" />
     </FormSection>
     <FormFooter
       handleReset={handleReset}

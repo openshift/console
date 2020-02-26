@@ -69,6 +69,10 @@ export interface MultiColumnFieldProps extends FieldProps {
   children: React.ReactNode;
 }
 
+export interface YAMLEditorFieldProps extends FieldProps {
+  onChange?: (value: string) => void;
+}
+
 export interface NameValuePair {
   name: string;
   value: string;

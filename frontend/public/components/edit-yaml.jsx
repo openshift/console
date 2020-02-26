@@ -693,7 +693,9 @@ const EditYAML_ = connect(stateToProps)(
         canDrop,
         create,
         yamlSamplesList,
+        customClass,
         onChange = () => null,
+        hideActions = false,
       } = this.props;
       const klass = classNames('co-file-dropzone-container', {
         'co-file-dropzone--drop-over': isOver,
@@ -742,7 +744,10 @@ const EditYAML_ = connect(stateToProps)(
             <div className="pf-c-form">
               <div className="co-p-has-sidebar">
                 <div className="co-p-has-sidebar__body">
-                  <div className="yaml-editor" ref={(r) => (this.editor = r)}>
+                  <div
+                    className={classNames('yaml-editor', customClass)}
+                    ref={(r) => (this.editor = r)}
+                  >
                     <div className="yaml-editor__links">
                       {!genericYAML && (
                         <div className="yaml-editor__link">
@@ -802,75 +807,84 @@ const EditYAML_ = connect(stateToProps)(
                       }
                     />
                     <div className="yaml-editor__buttons" ref={(r) => (this.buttons = r)}>
-                      {customAlerts}
-                      {error && (
-                        <Alert
-                          isInline
-                          className="co-alert co-alert--scrollable"
-                          variant="danger"
-                          title="An error occurred"
-                        >
-                          <div className="co-pre-line">{error}</div>
-                        </Alert>
+                      {!hideActions && (
+                        <>
+                          {customAlerts}
+                          {error && (
+                            <Alert
+                              isInline
+                              className="co-alert co-alert--scrollable"
+                              variant="danger"
+                              title="An error occurred"
+                            >
+                              <div className="co-pre-line">{error}</div>
+                            </Alert>
+                          )}
+                          {success && (
+                            <Alert
+                              isInline
+                              className="co-alert"
+                              variant="success"
+                              title={success}
+                            />
+                          )}
+                          {stale && (
+                            <Alert
+                              isInline
+                              className="co-alert"
+                              variant="info"
+                              title="This object has been updated."
+                            >
+                              Click reload to see the new version.
+                            </Alert>
+                          )}
+                          <ActionGroup className="pf-c-form__group--no-top-margin">
+                            {create && (
+                              <Button
+                                type="submit"
+                                variant="primary"
+                                id="save-changes"
+                                onClick={() => this.save()}
+                              >
+                                Create
+                              </Button>
+                            )}
+                            {!create && !readOnly && (
+                              <Button
+                                type="submit"
+                                variant="primary"
+                                id="save-changes"
+                                onClick={() => this.save()}
+                              >
+                                Save
+                              </Button>
+                            )}
+                            {!create && !genericYAML && (
+                              <Button
+                                type="submit"
+                                variant="secondary"
+                                id="reload-object"
+                                onClick={() => this.reload()}
+                              >
+                                Reload
+                              </Button>
+                            )}
+                            <Button variant="secondary" id="cancel" onClick={() => this.onCancel()}>
+                              Cancel
+                            </Button>
+                            {download && (
+                              <Button
+                                type="submit"
+                                variant="secondary"
+                                className="pf-c-button--align-right hidden-sm hidden-xs"
+                                onClick={() => this.download()}
+                              >
+                                <DownloadIcon /> Download
+                              </Button>
+                            )}
+                          </ActionGroup>
+                        </>
                       )}
-                      {success && (
-                        <Alert isInline className="co-alert" variant="success" title={success} />
-                      )}
-                      {stale && (
-                        <Alert
-                          isInline
-                          className="co-alert"
-                          variant="info"
-                          title="This object has been updated."
-                        >
-                          Click reload to see the new version.
-                        </Alert>
-                      )}
-                      <ActionGroup className="pf-c-form__group--no-top-margin">
-                        {create && (
-                          <Button
-                            type="submit"
-                            variant="primary"
-                            id="save-changes"
-                            onClick={() => this.save()}
-                          >
-                            Create
-                          </Button>
-                        )}
-                        {!create && !readOnly && (
-                          <Button
-                            type="submit"
-                            variant="primary"
-                            id="save-changes"
-                            onClick={() => this.save()}
-                          >
-                            Save
-                          </Button>
-                        )}
-                        {!create && !genericYAML && (
-                          <Button
-                            type="submit"
-                            variant="secondary"
-                            id="reload-object"
-                            onClick={() => this.reload()}
-                          >
-                            Reload
-                          </Button>
-                        )}
-                        <Button variant="secondary" id="cancel" onClick={() => this.onCancel()}>
-                          Cancel
-                        </Button>
-                        {download && (
-                          <Button
-                            type="submit"
-                            variant="secondary"
-                            className="pf-c-button--align-right hidden-sm hidden-xs"
-                            onClick={() => this.download()}
-                          >
-                            <DownloadIcon /> Download
-                          </Button>
-                        )}
-                      </ActionGroup>
                     </div>
                   </div>
                 </div>
