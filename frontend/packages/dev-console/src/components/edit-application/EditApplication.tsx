@@ -64,6 +64,7 @@ const EditApplication: React.FC<EditApplicationProps & StateProps> = ({
     return (
       <EditApplicationForm
         {...props}
+        appResources={appResources}
         enableReinitialize="true"
         createFlowType={pageHeading}
         builderImages={builderImages}
