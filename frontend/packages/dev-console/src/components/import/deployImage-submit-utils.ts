@@ -417,7 +417,7 @@ export const createOrUpdateDeployImageResources = async (
       internalImageName || name,
       imageStreamTag,
       internalImageNamespace,
-      undefined,
+      annotations,
       _.get(appResources, 'editAppResource.data'),
     );
     requests.push(
