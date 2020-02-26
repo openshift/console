@@ -5,8 +5,6 @@ import FormSection from '../section/FormSection';
 import { imageRegistryType } from '../../../utils/imagestream-utils';
 import ImageStream from './ImageStream';
 import ImageSearch from './ImageSearch';
-import SearchStatus from './SearchStatus';
-import SearchResults from './SearchResults';
 
 const ImageSearchSection: React.FC = () => {
   const { values, setFieldValue, initialValues } = useFormikContext<FormikValues>();
@@ -49,8 +47,6 @@ const ImageSearchSection: React.FC = () => {
           },
         ]}
       />
-      <SearchStatus />
-      <SearchResults />
     </FormSection>
   );
 };

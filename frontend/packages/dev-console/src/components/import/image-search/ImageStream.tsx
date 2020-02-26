@@ -1,6 +1,7 @@
 import * as React from 'react';
 import * as _ from 'lodash';
-import { Alert } from '@patternfly/react-core';
+import { Alert, FormGroup, ValidatedOptions } from '@patternfly/react-core';
+import { ExclamationCircleIcon } from '@patternfly/react-icons';
 import { useFormikContext, FormikValues } from 'formik';
 import { CheckboxField } from '@console/shared';
 import { K8sResourceKind } from '@console/internal/module/k8s';
@@ -45,9 +46,10 @@ export const ImageStreamReducer = (state: ImageStreamState, action: ImageStreamA
 
 const ImageStream: React.FC = () => {
   const {
-    values: { imageStream, project, registry },
+    values: { imageStream, project, registry, isi },
     setFieldValue,
   } = useFormikContext<FormikValues>();
+  const [validated, setValidated] = React.useState<ValidatedOptions>(ValidatedOptions.default);
   const [state, dispatch] = React.useReducer(ImageStreamReducer, initialState);
   const [hasImageStreams, setHasImageStreams] = React.useState(false);
   const {
@@ -75,23 +77,37 @@ const ImageStream: React.FC = () => {
     registry === RegistryType.Internal &&
     imageStream.namespace !== BuilderImagesNamespace.Openshift &&
     project.name !== imageStream.namespace;
+  const helperTextInvalid = validated === ValidatedOptions.error && (
+    <>
+      <ExclamationCircleIcon />
+      &nbsp;{isi.status}
+    </>
+  );
 
   return (
     <>
-      <ImageStreamContext.Provider value={{ state, dispatch, hasImageStreams, setHasImageStreams }}>
-        <div className="row">
-          <div className="col-lg-4 col-md-4 col-sm-4 col-xs-12">
-            <ImageStreamNsDropdown />
+      <ImageStreamContext.Provider
+        value={{ state, dispatch, hasImageStreams, setHasImageStreams, setValidated }}
+      >
+        <FormGroup
+          fieldId="image-stream-dropdowns"
+          validated={validated}
+          helperTextInvalid={helperTextInvalid}
+        >
+          <div className="row">
+            <div className="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+              <ImageStreamNsDropdown />
+            </div>
+            <div className="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+              <ImageStreamDropdown />
+              <div className="odc-imagestream-separator">/</div>
+            </div>
+            <div className="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+              <ImageStreamTagDropdown />
+              <div className="odc-imagestream-separator">:</div>
+            </div>
           </div>
-          <div className="col-lg-4 col-md-4 col-sm-4 col-xs-12">
-            <ImageStreamDropdown />
-            <div className="odc-imagestream-separator">/</div>
-          </div>
-          <div className="col-lg-4 col-md-4 col-sm-4 col-xs-12">
-            <ImageStreamTagDropdown />
-            <div className="odc-imagestream-separator">:</div>
-          </div>
-        </div>
+        </FormGroup>
         {isNamespaceSelected && isImageStreamSelected && !isTagsAvailable && hasCreateAccess && (
           <div className="odc-imagestream-alert">
             <Alert variant="warning" title="No Image streams tags found" isInline>
