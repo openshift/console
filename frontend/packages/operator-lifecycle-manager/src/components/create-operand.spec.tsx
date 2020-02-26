@@ -22,6 +22,8 @@ import { referenceForProvidedAPI } from '.';
 
 import Spy = jasmine.Spy;
 
+const activePerspective = 'admin';
+
 describe(CreateOperand.displayName, () => {
   let wrapper: ShallowWrapper<CreateOperandProps>;
 
@@ -34,6 +36,7 @@ describe(CreateOperand.displayName, () => {
     };
     wrapper = shallow(
       <CreateOperand
+        activePerspective={activePerspective}
         operandModel={testModel}
         clusterServiceVersion={{ data: testClusterServiceVersion, loaded: true, loadError: null }}
         customResourceDefinition={{ data: testCRD, loaded: true, loadError: null }}
@@ -132,6 +135,7 @@ describe(CreateOperandForm.displayName, () => {
   beforeEach(() => {
     wrapper = shallow(
       <CreateOperandForm
+        activePerspective={activePerspective}
         namespace="default"
         operandModel={testModel}
         providedAPI={testClusterServiceVersion.spec.customresourcedefinitions.owned[0]}
@@ -207,6 +211,7 @@ describe(CreateOperandYAML.displayName, () => {
   beforeEach(() => {
     wrapper = shallow(
       <CreateOperandYAML
+        activePerspective={activePerspective}
         operandModel={testModel}
         providedAPI={testClusterServiceVersion.spec.customresourcedefinitions.owned[0]}
         clusterServiceVersion={testClusterServiceVersion}
