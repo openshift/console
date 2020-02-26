@@ -1,10 +1,22 @@
 import * as React from 'react';
 import * as classNames from 'classnames';
-import { CreateConnectorRenderer, DefaultCreateConnector } from '@console/topology';
+import { DefaultCreateConnector, Point } from '@console/topology';
 
 import './CreateConnector.scss';
 
-const CreateConnector: CreateConnectorRenderer = ({ startPoint, endPoint, dragging, hints }) => {
+type CreateConnectorProps = {
+  startPoint: Point;
+  endPoint: Point;
+  hints: string[];
+  dragging?: boolean;
+};
+
+const CreateConnector: React.FC<CreateConnectorProps> = ({
+  startPoint,
+  endPoint,
+  dragging,
+  hints,
+}) => {
   const [hover, setHover] = React.useState(false);
   const unsetHandle = React.useRef<number>();
 

@@ -2,14 +2,23 @@ import * as React from 'react';
 import * as classNames from 'classnames';
 import { AddCircleOIcon } from '@patternfly/react-icons';
 import { Tooltip } from '@patternfly/react-core';
+import Point from '../geom/Point';
 import ConnectorArrow from './ConnectorArrow';
-import { CreateConnectorRenderer } from './CreateConnectorWidget';
 
 import './DefaultCreateConnector.scss';
 
 const cursorSize = 20;
 
-const DefaultCreateConnector: CreateConnectorRenderer = ({
+type DefaultCreateConnectorProps = {
+  startPoint: Point;
+  endPoint: Point;
+  hints: string[];
+  dragging: boolean;
+  className?: string;
+  tipContents?: React.ReactNode;
+};
+
+const DefaultCreateConnector: React.FC<DefaultCreateConnectorProps> = ({
   startPoint,
   endPoint,
   hints,
