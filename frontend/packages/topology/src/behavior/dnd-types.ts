@@ -56,6 +56,7 @@ export interface DndManager {
   getDropHints(): string[] | undefined;
   canDragSource(sourceId: string | undefined): boolean;
   canDropOnTarget(targetId: string | undefined): boolean;
+  hasDropTarget(): boolean;
   isDragging(): boolean;
   isDraggingSource(sourceId: string | undefined): boolean;
   isOverTarget(
@@ -172,6 +173,8 @@ export interface DropTargetMonitor extends HandlerManager {
   isCancelled(): boolean;
   isDragging(): boolean;
   isOver(options?: { shallow?: boolean }): boolean;
+  hasDropTarget(): boolean;
+  getDropHints(): string[] | undefined;
   getItemType(): Identifier | undefined;
   getItem(): any;
   getDropResult(): any;

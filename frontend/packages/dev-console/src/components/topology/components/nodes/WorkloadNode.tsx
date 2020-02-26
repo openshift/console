@@ -61,7 +61,12 @@ const WorkloadNode: React.FC<WorkloadNodeProps> = ({
 
   return (
     <g>
-      <Tooltip content={tipContent} trigger="manual" isVisible={dropTarget && canDrop}>
+      <Tooltip
+        content={tipContent}
+        trigger="manual"
+        isVisible={dropTarget && canDrop}
+        tippyProps={{ duration: 0, delay: 0 }}
+      >
         <BaseNode
           outerRadius={radius}
           innerRadius={donutStatus && donutStatus.isRollingOut ? radius * 0.45 : radius * 0.55}

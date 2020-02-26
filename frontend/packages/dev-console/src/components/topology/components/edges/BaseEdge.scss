@@ -47,13 +47,6 @@
     cursor: var(--edge__arrow--cursor);
     stroke: var(--edge--stroke);
   }
-
-  &.is-dragging {
-    cursor: var(--edge--drag-active--cursor);
-    .topology-connector-arrow {
-      cursor: var(--edge--drag-active--cursor);
-    }
-  }
 }
 
 .odc-m-drag-active {

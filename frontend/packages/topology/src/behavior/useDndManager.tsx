@@ -153,6 +153,10 @@ export class DndManagerImpl implements DndManager {
     return this.state.targetIds || [];
   }
 
+  hasDropTarget(): boolean {
+    return !!this.getTargetIds().find((id) => this.canDropOnTarget(id));
+  }
+
   getDropResult(): any {
     return this.state.dropResult;
   }

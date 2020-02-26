@@ -33,6 +33,7 @@ type CreateConnectorWidgetProps = {
   ) => ConnectorChoice[] | void | undefined | null | React.ReactElement[];
   renderConnector: ConnectorRenderer;
   contextMenuClass?: string;
+  hoverTipContents: React.ReactNode;
 } & CreateConnectorOptions;
 
 type CollectProps = {
@@ -62,9 +63,11 @@ const CreateConnectorWidget: React.FC<CreateConnectorWidgetProps> = observer((pr
     handleAngle = DEFAULT_HANDLE_ANGLE,
     handleLength = DEFAULT_HANDLE_LENGTH,
     contextMenuClass,
+    hoverTipContents,
   } = props;
   const [prompt, setPrompt] = React.useState<PromptData | null>(null);
   const [active, setActive] = React.useState(false);
+  const [hover, setHover] = React.useState(false);
   const hintsRef = React.useRef<string[] | undefined>();
 
   const spec = React.useMemo(() => {
@@ -104,14 +107,11 @@ const CreateConnectorWidget: React.FC<CreateConnectorWidgetProps> = observer((pr
   }, [setActive]);
   const [{ dragging, event, hints }, dragRef] = useDndDrag(spec, props);
 
-  if (!active && dragging && !event) {
-    // another connector is dragging right now
-    return null;
-  }
-
   if (dragging) {
     // store the latest hints
     hintsRef.current = hints;
+  } else if (!prompt) {
+    hintsRef.current = [];
   }
 
   const dragEvent = prompt ? prompt.event : event;
@@ -135,6 +135,22 @@ const CreateConnectorWidget: React.FC<CreateConnectorWidgetProps> = observer((pr
     );
   }
 
+  const unsetHandle = React.useRef<number>();
+
+  React.useEffect(() => {
+    setHover(false);
+    clearTimeout(unsetHandle.current);
+    unsetHandle.current = window.setTimeout(() => setHover(true), 2000);
+    return () => {
+      clearTimeout(unsetHandle.current);
+    };
+  }, [endPoint.x, endPoint.y]);
+
+  if (!active && dragging && !event) {
+    // another connector is dragging right now
+    return null;
+  }
+
   // bring into the coordinate space of the element
   element.translateFromParent(startPoint);
   element.translateFromParent(endPoint);
@@ -148,7 +164,14 @@ const CreateConnectorWidget: React.FC<CreateConnectorWidgetProps> = observer((pr
           onMouseEnter={!active ? () => onKeepAlive(true) : undefined}
           onMouseLeave={!active ? () => onKeepAlive(false) : undefined}
         >
-          {renderConnector(startPoint, endPoint, hintsRef.current)}
+          {renderConnector(
+            startPoint,
+            endPoint,
+            dragging,
+            dragging && hover,
+            hoverTipContents,
+            hintsRef.current,
+          )}
           {!active && (
             <path
               d={hullPath(
@@ -203,17 +226,33 @@ export type WithCreateConnectorProps = {
 type ConnectorRenderer = <T extends any>(
   startPoint: Point,
   endPoint: Point,
+  dragging: boolean,
+  hover: boolean,
+  hoverTipContents: React.ReactNode,
   hints: string[] | undefined,
 ) => React.ReactElement;
 
 const defaultRenderConnector: ConnectorRenderer = (
   startPoint: Point,
   endPoint: Point,
+  dragging: boolean,
+  hover: boolean,
+  hoverTipContents?: React.ReactNode,
   hints?: string[] | undefined,
-) => <DefaultCreateConnector startPoint={startPoint} endPoint={endPoint} hints={hints} />;
+) => (
+  <DefaultCreateConnector
+    startPoint={startPoint}
+    endPoint={endPoint}
+    dragging={dragging}
+    hover={hover}
+    hoverTipContents={hoverTipContents}
+    hints={hints}
+  />
+);
 
 export const withCreateConnector = <P extends WithCreateConnectorProps & ElementProps>(
   onCreate: React.ComponentProps<typeof CreateConnectorWidget>['onCreate'],
+  hoverTipContents?: React.ReactNode,
   contextMenuClass?: string,
   renderConnector: ConnectorRenderer = defaultRenderConnector,
   options?: CreateConnectorOptions,
@@ -241,6 +280,7 @@ export const withCreateConnector = <P extends WithCreateConnectorProps & Element
             onKeepAlive={onKeepAlive}
             renderConnector={renderConnector}
             contextMenuClass={contextMenuClass}
+            hoverTipContents={hoverTipContents}
           />
         )}
       </>
