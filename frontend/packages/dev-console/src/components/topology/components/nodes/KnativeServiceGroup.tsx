@@ -92,7 +92,12 @@ const KnativeServiceGroup: React.FC<KnativeServiceGroupProps> = ({
   }, [editAccess, innerHover, onShowCreateConnector, onHideCreateConnector]);
 
   return (
-    <Tooltip content="Move sink to service" trigger="manual" isVisible={dropTarget && canDrop}>
+    <Tooltip
+      content="Move sink to service"
+      trigger="manual"
+      isVisible={dropTarget && canDrop}
+      tippyProps={{ duration: 0, delay: 0 }}
+    >
       <g
         ref={hoverRef}
         onClick={onSelect}

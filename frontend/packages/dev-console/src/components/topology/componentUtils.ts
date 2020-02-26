@@ -174,9 +174,20 @@ const graphWorkloadDropTargetSpec: DropTargetSpec<
         monitor.getItemType() === CREATE_CONNECTOR_DROP_TYPE)
     );
   },
-  collect: (monitor) => ({
-    dragEditInProgress: monitor.isDragging() && editOperations.includes(monitor.getOperation()),
-  }),
+  collect: (monitor) => {
+    const dragEditInProgress =
+      monitor.isDragging() && editOperations.includes(monitor.getOperation());
+    const dropHints = monitor.getDropHints() || [];
+    const dragCreate =
+      dragEditInProgress &&
+      monitor.getItemType() === CREATE_CONNECTOR_DROP_TYPE &&
+      dropHints[dropHints.length - 1] === 'create';
+    return {
+      dragEditInProgress,
+      dragCreate,
+      hasDropTarget: dragEditInProgress && monitor.hasDropTarget(),
+    };
+  },
   dropHint: 'create',
 };
 
