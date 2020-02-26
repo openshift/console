@@ -50,5 +50,11 @@ export const mergeData = (originalResource: K8sResourceKind, newResource: K8sRes
   if (mergedData.spec?.template?.metadata?.labels) {
     mergedData.spec.template.metadata.labels = newResource.spec?.template?.metadata?.labels;
   }
+  if (mergedData.spec?.template?.spec?.containers) {
+    mergedData.spec.template.spec.containers = newResource.spec.template.spec.containers;
+  }
+  if (mergedData?.spec?.strategy) {
+    mergedData.spec.strategy = newResource.spec.strategy;
+  }
   return mergedData;
 };
