@@ -14,7 +14,7 @@ export const parametersValidationSchema = yup.object().shape({
     yup.object().shape({
       name: yup.string().required('Required'),
       description: yup.string(),
-      default: yup.string().required('Required'),
+      default: yup.string(),
     }),
   ),
 });
