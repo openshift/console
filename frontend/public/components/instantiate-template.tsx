@@ -29,6 +29,8 @@ import {
   TemplateInstanceKind,
   TemplateParameter,
 } from '../module/k8s';
+import { getActivePerspective } from '../reducers/ui';
+import { RootState } from '../redux';
 
 const TemplateResourceDetails: React.FC<TemplateResourceDetailsProps> = ({ template }) => {
   const resources = _.uniq(_.compact(_.map(template.objects, 'kind'))).sort();
@@ -112,8 +114,9 @@ const TemplateInfo: React.FC<TemplateInfoProps> = ({ template }) => {
 };
 TemplateInfo.displayName = 'TemplateInfo';
 
-const stateToProps = ({ k8s }) => ({
-  models: k8s.getIn(['RESOURCES', 'models']),
+const stateToProps = (state: RootState) => ({
+  models: state.k8s.getIn(['RESOURCES', 'models']),
+  activePerspective: getActivePerspective(state),
 });
 
 class TemplateForm_ extends React.Component<TemplateFormProps, TemplateFormState> {
@@ -209,11 +212,13 @@ class TemplateForm_ extends React.Component<TemplateFormProps, TemplateFormState
         return this.createTemplateInstance(secret).then((instance: TemplateInstanceKind) => {
           this.setState({ inProgress: false });
           history.push(
-            resourcePathFromModel(
-              TemplateInstanceModel,
-              instance.metadata.name,
-              instance.metadata.namespace,
-            ),
+            this.props.activePerspective === 'dev'
+              ? `/topology`
+              : resourcePathFromModel(
+                  TemplateInstanceModel,
+                  instance.metadata.name,
+                  instance.metadata.namespace,
+                ),
           );
         });
       })
@@ -362,6 +367,7 @@ type TemplateFormProps = {
   obj: any;
   preselectedNamespace: string;
   models: any;
+  activePerspective: string;
 };
 
 type TemplateFormState = {
