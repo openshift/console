@@ -5,7 +5,7 @@
   outline: none;
   cursor: pointer;
   .odc-m-drag-active & {
-    cursor: grab;
+    pointer-events: none;
   }
 
   &__bg {

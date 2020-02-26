@@ -4,12 +4,12 @@
   outline: none;
   cursor: pointer;
 
-  &:focus {
-    outline: none;
+  .odc-m-drag-active & {
+    pointer-events: none;
   }
 
-  &.is-dragging {
-    cursor: grab;
+  &:focus {
+    outline: none;
   }
 
   &__bg {

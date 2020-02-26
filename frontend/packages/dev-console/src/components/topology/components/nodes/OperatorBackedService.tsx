@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Node, observer, WithSelectionProps } from '@console/topology';
+import { Node, observer, WithSelectionProps, WithDndDropProps } from '@console/topology';
 import OperatorBackedServiceGroup from './OperatorBackedServiceGroup';
 import OperatorBackedServiceNode from './OperatorBackedServiceNode';
 
@@ -7,7 +7,8 @@ import './OperatorBackedService.scss';
 
 export type OperatorBackedServiceProps = {
   element: Node;
-} & WithSelectionProps;
+} & WithSelectionProps &
+  WithDndDropProps;
 
 const OperatorBackedService: React.FC<OperatorBackedServiceProps> = (
   props: OperatorBackedServiceProps,

@@ -4,6 +4,7 @@ import {
   Node,
   observer,
   WithSelectionProps,
+  WithDndDropProps,
   useDragNode,
   Layer,
   useHover,
@@ -18,22 +19,24 @@ import NodeShadows, { NODE_SHADOW_FILTER_ID, NODE_SHADOW_FILTER_ID_HOVER } from 
 
 export type OperatorBackedServiceGroupProps = {
   element: Node;
-} & WithSelectionProps;
+} & WithSelectionProps &
+  WithDndDropProps;
 
 const OperatorBackedServiceGroup: React.FC<OperatorBackedServiceGroupProps> = ({
   element,
   selected,
   onSelect,
+  dndDropRef,
 }) => {
   const [hover, hoverRef] = useHover();
   const [innerHover, innerHoverRef] = useHover();
-  const [{ dragging, regrouping }, dragNodeRef] = useDragNode(
+  const [{ dragging }, dragNodeRef] = useDragNode(
     nodeDragSourceSpec(TYPE_OPERATOR_BACKED_SERVICE, false),
     {
       element,
     },
   );
-  const [{ dragging: labelDragging, regrouping: labelRegrouping }, dragLabelRef] = useDragNode(
+  const [{ dragging: labelDragging }, dragLabelRef] = useDragNode(
     nodeDragSourceSpec(TYPE_OPERATOR_BACKED_SERVICE, false),
     {
       element,
@@ -55,9 +58,7 @@ const OperatorBackedServiceGroup: React.FC<OperatorBackedServiceGroupProps> = ({
       })}
     >
       <NodeShadows />
-      <Layer
-        id={(dragging || labelDragging) && (regrouping || labelRegrouping) ? undefined : 'groups2'}
-      >
+      <Layer id={dragging || labelDragging ? undefined : 'groups2'}>
         <g
           ref={nodeRefs}
           className={classNames('odc-operator-backed-service', {
@@ -67,6 +68,7 @@ const OperatorBackedServiceGroup: React.FC<OperatorBackedServiceGroupProps> = ({
           })}
         >
           <rect
+            ref={dndDropRef}
             className="odc-operator-backed-service__bg"
             x={x}
             y={y}
