@@ -236,7 +236,10 @@ const ReceiverBaseForm: React.FC<ReceiverBaseFormProps> = ({
     !formValues.receiverType ||
     SubForm.isFormInvalid(formValues) ||
     !_.isEmpty(formValues.routeLabelFieldErrors) ||
-    formValues.routeLabelDuplicateNamesError;
+    formValues.routeLabelDuplicateNamesError ||
+    (!isDefaultReceiver &&
+      formValues.routeLabels.length === 1 &&
+      (formValues.routeLabels[0].name === '' || formValues.routeLabels[0].value === ''));
 
   const save = (e) => {
     e.preventDefault();
