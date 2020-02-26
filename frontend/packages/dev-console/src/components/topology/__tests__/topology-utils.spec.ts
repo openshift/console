@@ -37,6 +37,7 @@ import {
   sampleHelmChartDeploymentConfig,
   sampleDeploymentConfigs,
   MockKialiGraphData,
+  sampleHelmResourcesMap,
 } from './topology-test-data';
 import { MockKnativeResources } from './topology-knative-test-data';
 import {
@@ -58,6 +59,8 @@ export function getTranformedTopologyData(
     mockCheURL,
     [getKnativeServingRevisions, getKnativeServingConfigurations, getKnativeServingRoutes],
     filters,
+    undefined,
+    sampleHelmResourcesMap,
   );
   const topologyTransformedData = result.topology;
   const graphData = result.graph;
@@ -335,14 +338,22 @@ describe('TopologyUtils ', () => {
     );
   });
   it('should return true for nodes created by helm charts', () => {
-    expect(isHelmReleaseNode(sampleDeploymentConfigs.data[0])).toBe(false);
-    expect(isHelmReleaseNode(sampleHelmChartDeploymentConfig)).toBe(true);
+    expect(isHelmReleaseNode(sampleDeploymentConfigs.data[0], sampleHelmResourcesMap)).toBe(false);
+    expect(isHelmReleaseNode(sampleHelmChartDeploymentConfig, sampleHelmResourcesMap)).toBe(true);
   });
 
   it('should add to groups with helm grouping type for a helm chart node', () => {
-    let groups = getTopologyHelmReleaseGroupItem(sampleDeploymentConfigs.data[0], []);
+    let groups = getTopologyHelmReleaseGroupItem(
+      sampleDeploymentConfigs.data[0],
+      [],
+      sampleHelmResourcesMap,
+    );
     expect(groups).toHaveLength(0);
-    groups = getTopologyHelmReleaseGroupItem(sampleHelmChartDeploymentConfig, []);
+    groups = getTopologyHelmReleaseGroupItem(
+      sampleHelmChartDeploymentConfig,
+      [],
+      sampleHelmResourcesMap,
+    );
     expect(groups).toHaveLength(1);
     expect(groups[0].type).toEqual(TYPE_HELM_RELEASE);
   });
