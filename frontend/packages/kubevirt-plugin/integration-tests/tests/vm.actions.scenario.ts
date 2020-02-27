@@ -14,7 +14,7 @@ import {
   waitForCount,
 } from '@console/shared/src/test-utils/utils';
 import { getVMManifest } from './utils/mocks';
-import { fillInput } from './utils/utils';
+import { fillInput, pauseVM } from './utils/utils';
 import {
   VM_BOOTUP_TIMEOUT_SECS,
   VM_ACTIONS_TIMEOUT_SECS,
@@ -71,6 +71,15 @@ describe('Test VM actions', () => {
       VM_ACTIONS_TIMEOUT_SECS,
     );
 
+    it(
+      'Unpauses VM',
+      async () => {
+        pauseVM(vmName, testName);
+        await vm.listViewAction(VM_ACTION.Unpause);
+      },
+      VM_ACTIONS_TIMEOUT_SECS,
+    );
+
     it('Stops VM', async () => {
       await vm.listViewAction(VM_ACTION.Stop);
     });
@@ -108,6 +117,15 @@ describe('Test VM actions', () => {
       'Restarts VM',
       async () => {
         await vm.action(VM_ACTION.Restart);
+      },
+      VM_ACTIONS_TIMEOUT_SECS,
+    );
+
+    it(
+      'Unpauses VM',
+      async () => {
+        pauseVM(vmName, testName);
+        await vm.action(VM_ACTION.Unpause);
       },
       VM_ACTIONS_TIMEOUT_SECS,
     );

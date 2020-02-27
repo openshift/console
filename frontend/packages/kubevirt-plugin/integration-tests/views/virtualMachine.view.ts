@@ -53,6 +53,8 @@ export const vmDetailDedicatedResources = (namespace, vmName) =>
   $(vmDetailItemId(namespace, vmName, 'dedicated-resources'));
 export const vmDetailDedicatedResourcesEditButton = (namespace, vmName) =>
   $(vmDetailItemId(namespace, vmName, 'dedicated-resources-edit'));
+export const vmDetailStatusEditButton = (namespace, vmName) =>
+  $(vmDetailItemId(namespace, vmName, 'status-edit'));
 export const vmDetailLabelValue = async (labelKey) => {
   const filteredLabel = $$('.co-m-label').filter((elem) =>
     elem

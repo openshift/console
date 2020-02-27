@@ -4,7 +4,7 @@ import { resourceTitle } from '@console/internal-integration-tests/views/crud.vi
 import { asyncForEach, createResource, deleteResource } from '@console/shared/src/test-utils/utils';
 import * as vmView from '../views/virtualMachine.view';
 import { getVMManifest, basicVMConfig } from './utils/mocks';
-import { exposeServices } from './utils/utils';
+import { exposeServices, pauseVM } from './utils/utils';
 import { VirtualMachine } from './models/virtualMachine';
 import {
   TAB,
@@ -121,5 +121,13 @@ describe('Test VM overview', () => {
         `/k8s/ns/${testName}/services/${srv.exposeName}`,
       );
     });
+  });
+
+  it('Check unpause VM when VM is running', async () => {
+    await vm.action(VM_ACTION.Start);
+    pauseVM(vmName, testName);
+    expect(await vm.getStatus()).toEqual(VM_STATUS.Paused);
+    await vm.modalEditStatus();
+    expect(await vm.getStatus()).toEqual(VM_STATUS.Running);
   });
 });

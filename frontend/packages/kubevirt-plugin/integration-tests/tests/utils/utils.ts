@@ -164,3 +164,7 @@ export const waitFor = async (element, text, count = 1) => {
     await browser.sleep(5 * SEC);
   }
 };
+
+export function pauseVM(name: string, namespace: string): void {
+  execSync(`virtctl pause vmi ${name} -n ${namespace}`);
+}
