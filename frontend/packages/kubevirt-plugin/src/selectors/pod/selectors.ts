@@ -82,9 +82,7 @@ export const findVMIPod = (
     .sort((a: PodKind, b: PodKind) =>
       a.metadata.creationTimestamp > b.metadata.creationTimestamp ? -1 : 1,
     )
-    .sort((a: PodKind) =>
-      isPodReady(a) ? -1 : 1,
-    )[0];
+    .sort((a: PodKind) => (isPodReady(a) ? -1 : 1))[0];
 };
 
 export const getVMImporterPods = (
