@@ -1,5 +1,35 @@
+.graph-empty-state {
+  min-height: 310px;
+}
+
+.monitoring-dashboards__card {
+  height: calc(100% - 20px);
+  margin: 0 0 20px 0;
+
+  .co-dashboard-card__body--dashboard-graph {
+    padding: 10px;
+  }
+
+  &.co-dashboard-card--gradient {
+    .pf-c-card__body {
+      max-height: 350px;
+      overflow: scroll;
+    }
+    &:after {
+      width: calc(100% - 10px);
+    }
+  }
+
+  .query-browser__wrapper {
+    border: 0;
+    margin: 0;
+    overflow: hidden;
+    padding: 0;
+  }
+}
+
 .monitoring-dashboards__card-header {
-  flex: 20 0 auto;
+  flex: 0 0 auto;
 }
 
 .monitoring-dashboards__dropdown-button {
@@ -42,34 +72,53 @@
 }
 
 .monitoring-dashboards__panel {
-  height: calc(100% - 20px);
-  margin: 0 -5px 20px -5px;
+  padding: 0 10px;
+}
 
-  .co-dashboard-card__body--dashboard-graph {
-    padding: 10px;
+.monitoring-dashboards__panel--max-1 {
+  width: 100%;
+}
+
+$screen-phone-landscape-min-width: 567px;
+
+@media (max-width: $screen-phone-landscape-min-width) {
+  .monitoring-dashboards__panel--max-2,
+  .monitoring-dashboards__panel--max-3,
+  .monitoring-dashboards__panel--max-4 {
+    min-width: 100%;
   }
+}
 
-  &.co-dashboard-card--gradient {
-    .pf-c-card__body {
-      max-height: 350px;
-      overflow: scroll;
-    }
-    &:after {
-      width: calc(100% - 10px);
-    }
+@media (min-width: $screen-phone-landscape-min-width) and (max-width: $screen-md-max) {
+  .monitoring-dashboards__panel--max-2 {
+    width: 100%;
   }
+  .monitoring-dashboards__panel--max-3,
+  .monitoring-dashboards__panel--max-4 {
+    flex: 1 0 50%;
+    min-width: 50%;
+  }
+}
 
-  .query-browser__wrapper {
-    border: 0;
-    margin: 0;
-    overflow: hidden;
-    padding: 0;
+@media (min-width: $screen-lg-min) {
+  .monitoring-dashboards__panel--max-2 {
+    flex: 1 0 50%;
+    min-width: 50%;
+  }
+  .monitoring-dashboards__panel--max-3 {
+    flex: 1 0 33%;
+		min-width: 33%;
+  }
+  .monitoring-dashboards__panel--max-4 {
+    flex: 0 0 25%;
+		min-width: 25%;
   }
 }
 
 .monitoring-dashboards__row {
   display: flex;
   flex-wrap: wrap;
+  margin: 0 -10px;
 }
 
 .monitoring-dashboards__single-stat {
@@ -307,7 +356,6 @@ $tooltip-background-color: #151515;
 .query-browser__wrapper {
   border: 1px solid $color-grey-background-border;
   margin: 0 0 20px 0;
-  min-height: 310px;
   overflow: visible;
   padding: 10px;
   width: 100%;
