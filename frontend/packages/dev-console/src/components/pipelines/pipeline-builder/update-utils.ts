@@ -270,7 +270,7 @@ export const removeTask: UpdateOperationAction<UpdateOperationRemoveTaskData> = 
   return {
     tasks: updateAndRemoveTasks,
     listTasks: updateOnlyTasks,
-    errors: null,
+    errors: { [taskName]: null },
   };
 };
 
