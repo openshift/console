@@ -15,7 +15,6 @@ import {
   isDedicatedCPUPlacement,
 } from '../../selectors/vm/selectors';
 import { getTemplateOperatingSystems } from '../../selectors/vm-template/advanced';
-import { getVMTemplateNamespacedName } from '../../selectors/vm-template/selectors';
 import { vmFlavorModal } from '../modals';
 import { getFlavorText } from '../flavor-text';
 import { EditButton } from '../edit-button';
@@ -34,6 +33,7 @@ import { TemplateSource } from './vm-template-source';
 
 import './_vm-template-resource.scss';
 import { VMWrapper } from '../../k8s/wrapper/vm/vm-wrapper';
+import { getVMTemplateNamespacedName } from '../../selectors/vm-template/selectors';
 
 export const VMTemplateResourceSummary: React.FC<VMTemplateResourceSummaryProps> = ({
   template,

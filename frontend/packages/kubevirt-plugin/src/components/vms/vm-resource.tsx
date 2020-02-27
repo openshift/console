@@ -12,7 +12,6 @@ import { DedicatedResourcesModal } from '../modals/dedicated-resources-modal/ded
 import { BootOrderModal } from '../modals/boot-order-modal/boot-order-modal';
 import VMStatusModal from '../modals/vm-status-modal/vm-status-modal';
 import { getDescription } from '../../selectors/selectors';
-import { getVMTemplate } from '../../selectors/vm-template/selectors';
 import { getFlavorText } from '../flavor-text';
 import { EditButton } from '../edit-button';
 import { VMStatuses } from '../vm-status';
@@ -31,6 +30,7 @@ import { VirtualMachineInstanceModel, VirtualMachineModel } from '../../models';
 import { asVMILikeWrapper } from '../../k8s/wrapper/utils/convert';
 
 import './vm-resource.scss';
+import { getVMTemplate } from '../../selectors/vm-template/selectors';
 
 export const VMDetailsItem: React.FC<VMDetailsItemProps> = ({
   title,
