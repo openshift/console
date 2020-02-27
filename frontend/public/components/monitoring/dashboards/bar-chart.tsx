@@ -10,8 +10,8 @@ const BarChart: React.FC<BarChartProps> = ({ pollInterval, query }) => (
     barSpacing={5}
     barWidth={8}
     delay={pollInterval}
-    isLink={false}
     LabelComponent={Label}
+    noLink={true}
     query={query}
   />
 );
