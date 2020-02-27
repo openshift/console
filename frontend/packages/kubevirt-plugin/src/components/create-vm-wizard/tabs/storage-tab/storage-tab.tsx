@@ -28,7 +28,6 @@ import { diskTableColumnClasses } from '../../../vm-disks/utils';
 import { ProvisionSource } from '../../../../constants/vm/provision-source';
 import { CombinedDisk } from '../../../../k8s/wrapper/vm/combined-disk';
 import { isLoaded } from '../../../../utils';
-import { ADD_DISK } from '../../strings/storage';
 import { DeviceType } from '../../../../constants/vm';
 import { PersistentVolumeClaimWrapper } from '../../../../k8s/wrapper/vm/persistent-volume-claim-wrapper';
 import { VHW_TYPES } from '../virtual-hardware-tab/types';
@@ -38,6 +37,7 @@ import { vmWizardStorageModalEnhanced } from './vm-wizard-storage-modal-enhanced
 import { StorageBootSource } from './storage-boot-source';
 
 import './storage-tab.scss';
+import { ADD_DISK } from '../../../../utils/strings';
 
 const getStoragesData = (
   storages: VMWizardStorageWithWrappers[],

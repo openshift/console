@@ -31,7 +31,7 @@ import {
 import { getNetworkChoices } from '../../../selectors/nad';
 import { NetworkInterfaceWrapper } from '../../../k8s/wrapper/vm/network-interface-wrapper';
 import { NetworkWrapper } from '../../../k8s/wrapper/vm/network-wrapper';
-import { CREATE, EDIT, getDialogUIError, getSequenceName, SAVE } from '../../../utils/strings';
+import { ADD, EDIT, getDialogUIError, getSequenceName, SAVE } from '../../../utils/strings';
 import { ModalFooter } from '../modal/modal-footer';
 import { useShowErrorToggler } from '../../../hooks/use-show-error-toggler';
 
@@ -124,7 +124,6 @@ export const NICModal = withHandlePromise((props: NICModalProps) => {
     handlePromise,
     close,
     cancel,
-    submitButtonText = CREATE,
   } = props;
   const asId = prefixedID.bind(null, 'nic');
   const nic = props.nic || NetworkInterfaceWrapper.EMPTY;
@@ -188,7 +187,7 @@ export const NICModal = withHandlePromise((props: NICModalProps) => {
 
   return (
     <div className="modal-content">
-      <ModalTitle>{isEditing ? EDIT : submitButtonText} Network Interface</ModalTitle>
+      <ModalTitle>{isEditing ? EDIT : ADD} Network Interface</ModalTitle>
       <ModalBody>
         <Form>
           <FormRow
@@ -274,7 +273,7 @@ export const NICModal = withHandlePromise((props: NICModalProps) => {
       </ModalBody>
       <ModalFooter
         id="nic"
-        submitButtonText={isEditing ? SAVE : submitButtonText}
+        submitButtonText={isEditing ? SAVE : ADD}
         errorMessage={errorMessage || (showUIError ? getDialogUIError(hasAllRequiredFilled) : null)}
         isDisabled={inProgress}
         isSimpleError={showUIError}
@@ -296,7 +295,6 @@ export type NICModalProps = {
   usedInterfacesNames: Set<string>;
   usedMultusNetworkNames: Set<string>;
   allowPodNetwork: boolean;
-  submitButtonText?: string;
 } & ModalComponentProps &
   HandlePromiseProps;
 
