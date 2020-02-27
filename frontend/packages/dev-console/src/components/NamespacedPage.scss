@@ -5,9 +5,9 @@
   flex-direction: column;
 
   &__content {
-    flex-grow: 1;
-    position: relative;
-    overflow: auto;
+    display: flex;
+    flex: 1 0 auto;
+    flex-direction: column;
     background-color: var(--pf-global--Color--light-200);
 
     &.is-light {
