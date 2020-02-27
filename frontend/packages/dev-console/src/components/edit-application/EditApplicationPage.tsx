@@ -9,6 +9,7 @@ import NamespacedPage, { NamespacedPageVariants } from '../NamespacedPage';
 import EditApplication from './EditApplication';
 import { EditApplicationProps } from './edit-application-types';
 
+const INSTANCE_LABEL = 'app.kubernetes.io/instance';
 const EditApplicationComponentLoader: React.FunctionComponent<EditApplicationProps> = (
   props: EditApplicationProps,
 ) => {
@@ -48,8 +49,11 @@ const EditApplicationPage: React.FunctionComponent<ImportPageProps> = ({ match, 
     {
       kind: 'ImageStream',
       prop: 'imageStream',
-      name: appName,
+      isList: true,
       namespace,
+      selector: {
+        matchLabels: { [INSTANCE_LABEL]: appName },
+      },
       optional: true,
     },
     {
