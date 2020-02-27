@@ -1223,7 +1223,7 @@ class SilenceForm_ extends React.Component<SilenceFormProps, SilenceFormState> {
           <div className="co-form-section__separator" />
 
           <div className="form-group">
-            <label className="co-required">Matchers</label> (label selectors)
+            <label className="co-required">Matchers (label selectors)</label>
             <p className="co-help-text">
               Alerts affected by this silence. Matching alerts must satisfy all of the specified
               label constraints, though they may have additional labels as well.
