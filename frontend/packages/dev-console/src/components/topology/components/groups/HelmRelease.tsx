@@ -11,11 +11,7 @@ export type HelmReleaseProps = {
   WithDndDropProps;
 
 const HelmRelease: React.FC<HelmReleaseProps> = (props) => {
-  if (
-    props.element.isCollapsed() ||
-    !props.element.getData().groupResources ||
-    !props.element.getData().groupResources.length
-  ) {
+  if (props.element.isCollapsed()) {
     return <HelmReleaseNode {...props} />;
   }
 

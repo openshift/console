@@ -67,6 +67,7 @@ const KnativeServiceGroup: React.FC<KnativeServiceGroupProps> = ({
   );
 
   const nodeRefs = useCombineRefs(innerHoverRef, dragNodeRef);
+  const hasChildren = element.getChildren()?.length > 0;
   const { data } = element.getData();
   const hasDataUrl = !!data.url;
   useAnchor(
@@ -139,6 +140,11 @@ const KnativeServiceGroup: React.FC<KnativeServiceGroupProps> = ({
                   : NODE_SHADOW_FILTER_ID,
               )}
             />
+            {!hasChildren && (
+              <text x={x + width / 2} y={y + height / 2} dy="0.35em" textAnchor="middle">
+                No Revisions
+              </text>
+            )}
           </g>
         </Layer>
         {hasDataUrl && (

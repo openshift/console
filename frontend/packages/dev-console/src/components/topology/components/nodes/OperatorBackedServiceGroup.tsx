@@ -44,6 +44,7 @@ const OperatorBackedServiceGroup: React.FC<OperatorBackedServiceGroupProps> = ({
   );
 
   const nodeRefs = useCombineRefs(innerHoverRef, dragNodeRef);
+  const hasChildren = element.getChildren()?.length > 0;
   const { data } = element.getData();
   const [filtered] = useSearchFilter(element.getLabel());
   const { x, y, width, height } = element.getBounds();
@@ -82,6 +83,11 @@ const OperatorBackedServiceGroup: React.FC<OperatorBackedServiceGroupProps> = ({
                 : NODE_SHADOW_FILTER_ID,
             )}
           />
+          {!hasChildren && (
+            <text x={x + width / 2} y={y + height / 2} dy="0.35em" textAnchor="middle">
+              No Resources
+            </text>
+          )}
         </g>
       </Layer>
       {(data.kind || element.getLabel()) && (
