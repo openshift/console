@@ -30,7 +30,11 @@ const blacklistResources = ImmutableSet([
 const DropdownItem: React.SFC<DropdownItemProps> = ({ model, showGroup, checked }) => (
   <>
     <span className={'co-resource-item'}>
-      <Checkbox id={`${model.apiGroup}:${model.apiVersion}:${model.kind}`} isChecked={checked} />
+      <Checkbox
+        tabIndex={-1}
+        id={`${model.apiGroup}:${model.apiVersion}:${model.kind}`}
+        isChecked={checked}
+      />
       <span className="co-resource-icon--fixed-width">
         <ResourceIcon kind={referenceForModel(model)} />
       </span>
