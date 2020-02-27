@@ -1,7 +1,7 @@
 import { click } from '@console/shared/src/test-utils/utils';
 import { fillInput, selectOptionByText, getSelectedOptionText } from '../utils/utils';
 import * as view from '../../views/dialogs/diskDialog.view';
-import { applyButton, saveButton } from '../../views/kubevirtDetailView.view';
+import { modalSubmitButton, saveButton } from '../../views/kubevirtDetailView.view';
 import { StorageResource, DiskSourceConfig } from '../utils/types';
 import { DISK_SOURCE } from '../utils/consts';
 import { waitForNoLoaders } from '../../views/wizard.view';
@@ -71,7 +71,7 @@ export class DiskDialog {
 
     await this.selectInterface(disk.interface);
     await this.selectStorageClass(disk.storageClass);
-    await click(applyButton);
+    await click(modalSubmitButton);
     await waitForNoLoaders();
   }
 
