@@ -2,6 +2,7 @@ import * as React from 'react';
 import cx from 'classnames';
 import { useField, useFormikContext, FormikValues } from 'formik';
 import { FormGroup } from '@patternfly/react-core';
+import { K8sResourceKind } from '@console/internal/module/k8s';
 import { Firehose, FirehoseResource } from '@console/internal/components/utils';
 import ResourceDropdown from '../dropdown/ResourceDropdown';
 import { DropdownFieldProps } from './field-types';
@@ -10,6 +11,8 @@ import { getFieldId } from './field-utils';
 export interface ResourceDropdownFieldProps extends DropdownFieldProps {
   dataSelector: string[] | number[] | symbol[];
   resources: FirehoseResource[];
+  onLoad?: (items: { [key: string]: string }) => void;
+  resourceFilter?: (resource: K8sResourceKind) => boolean;
 }
 const ResourceDropdownField: React.FC<ResourceDropdownFieldProps> = ({
   label,
@@ -18,6 +21,8 @@ const ResourceDropdownField: React.FC<ResourceDropdownFieldProps> = ({
   fullWidth,
   dataSelector,
   resources,
+  onLoad,
+  resourceFilter,
   ...props
 }) => {
   const [field, { touched, error }] = useField(props.name);
@@ -41,6 +46,8 @@ const ResourceDropdownField: React.FC<ResourceDropdownFieldProps> = ({
           dataSelector={dataSelector}
           selectedKey={field.value}
           dropDownClassName={cx({ 'dropdown--full-width': fullWidth })}
+          onLoad={onLoad}
+          resourceFilter={resourceFilter}
           onChange={(value: string) => {
             props.onChange && props.onChange(value);
             setFieldValue(props.name, value);

@@ -2,7 +2,6 @@ import * as React from 'react';
 import { RouteComponentProps } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
 import { PageHeading, Firehose } from '@console/internal/components/utils';
-import { ImageStreamModel } from '@console/internal/models';
 import NamespacedPage, { NamespacedPageVariants } from '../NamespacedPage';
 import DeployImage from './DeployImage';
 
@@ -17,16 +16,7 @@ const DeployImagePage: React.FunctionComponent<DeployImagePageProps> = ({ match 
       </Helmet>
       <PageHeading title="Deploy Image" />
       <div className="co-m-pane__body">
-        <Firehose
-          resources={[
-            { kind: 'Project', prop: 'projects', isList: true },
-            {
-              kind: ImageStreamModel.kind,
-              prop: 'imageStreams',
-              isList: true,
-            },
-          ]}
-        >
+        <Firehose resources={[{ kind: 'Project', prop: 'projects', isList: true }]}>
           <DeployImage namespace={namespace} />
         </Firehose>
       </div>
