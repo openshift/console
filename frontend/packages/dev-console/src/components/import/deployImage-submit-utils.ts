@@ -18,6 +18,7 @@ import {
   createService,
   annotations,
   dryRunOpt,
+  getRandomChars,
 } from '../../utils/shared-submit-utils';
 import { RegistryType } from '../../utils/imagestream-utils';
 import { AppResources } from '../edit-application/edit-application-types';
@@ -56,6 +57,7 @@ export const createOrUpdateImageStream = (
   dryRun: boolean,
   originalImageStream?: K8sResourceKind,
   verb: K8sVerb = 'create',
+  generatedImageStreamName: string = '',
 ): Promise<K8sResourceKind> => {
   const {
     project: { name: namespace },
@@ -69,7 +71,7 @@ export const createOrUpdateImageStream = (
     apiVersion: 'image.openshift.io/v1',
     kind: 'ImageStream',
     metadata: {
-      name,
+      name: `${generatedImageStreamName || name}`,
       namespace,
       labels: { ...defaultLabels, ...userLabels },
     },
@@ -90,12 +92,11 @@ export const createOrUpdateImageStream = (
       ],
     },
   };
-
   const imageStream = mergeData(originalImageStream, newImageStream);
 
   return verb === 'update'
     ? k8sUpdate(ImageStreamModel, imageStream)
-    : k8sCreate(ImageStreamModel, imageStream, dryRun ? dryRunOpt : {});
+    : k8sCreate(ImageStreamModel, newImageStream, dryRun ? dryRunOpt : {});
 };
 
 const getMetadata = (formData: DeployImageFormData) => {
@@ -357,14 +358,12 @@ export const createOrUpdateDeployImageResources = async (
     formData.imageStream.grantAccess &&
       requests.push(createSystemImagePullerRoleBinding(formData, dryRun));
   }
+  const imageStreamList = appResources?.imageStream?.data;
+  const imageStreamData = _.orderBy(imageStreamList, ['metadata.resourceVersion'], ['desc']);
+  const originalImageStream = (imageStreamData.length && imageStreamData[0]) || {};
   if (formData.resources !== Resources.KnativeService) {
     registry === RegistryType.External &&
-      (await createOrUpdateImageStream(
-        formData,
-        dryRun,
-        _.get(appResources, 'imageStream.data'),
-        verb,
-      ));
+      (await createOrUpdateImageStream(formData, dryRun, originalImageStream, verb));
     if (formData.resources === Resources.Kubernetes) {
       requests.push(
         createOrUpdateDeployment(
@@ -402,11 +401,22 @@ export const createOrUpdateDeployImageResources = async (
     // Do not run serverless call during the dry run.
     let imageStreamUrl: string = image?.dockerImageReference;
     if (registry === RegistryType.External) {
+      let generatedImageStreamName: string = '';
+      if (imageStreamList && imageStreamList.length && verb === 'update') {
+        const originalImageStreamTag = _.find(originalImageStream?.status?.tags, [
+          'tag',
+          imageStreamTag,
+        ]);
+        if (!_.isEmpty(originalImageStreamTag)) {
+          generatedImageStreamName = `${name}-${getRandomChars()}`;
+        }
+      }
       const imageStreamResponse = await createOrUpdateImageStream(
         formData,
         dryRun,
-        _.get(appResources, 'imageStream.data'),
-        verb,
+        originalImageStream,
+        generatedImageStreamName ? 'create' : verb,
+        generatedImageStreamName,
       );
       const imageStreamRepo = imageStreamResponse.status.dockerImageRepository;
       imageStreamUrl = imageStreamTag ? `${imageStreamRepo}:${imageStreamTag}` : imageStreamRepo;

@@ -319,41 +319,43 @@ export const appResources: AppResources = {
   imageStream: {
     loaded: true,
     loadError: '',
-    data: {
-      kind: 'ImageStream',
-      apiVersion: 'image.openshift.io/v1',
-      metadata: {
-        annotations: {
-          'app.openshift.io/vcs-ref': 'master',
-          'app.openshift.io/vcs-uri': 'https://github.com/divyanshiGupta/nationalparks-py',
+    data: [
+      {
+        kind: 'ImageStream',
+        apiVersion: 'image.openshift.io/v1',
+        metadata: {
+          annotations: {
+            'app.openshift.io/vcs-ref': 'master',
+            'app.openshift.io/vcs-uri': 'https://github.com/divyanshiGupta/nationalparks-py',
+          },
+          selfLink: '/apis/image.openshift.io/v1/namespaces/div/imagestreams/nationalparks-py',
+          resourceVersion: '676247',
+          name: 'nationalparks-py',
+          uid: '2bc985ac-f834-45e5-9a86-830edb6bc8bd',
+          creationTimestamp: '2020-01-15T15:51:47Z',
+          generation: 1,
+          namespace: 'div',
+          labels: {
+            app: 'nationalparks-py',
+            'app.kubernetes.io/component': 'nationalparks-py',
+            'app.kubernetes.io/instance': 'nationalparks-py',
+            'app.kubernetes.io/name': 'python',
+            'app.kubernetes.io/part-of': 'nodejs-rest-http-app',
+            'app.openshift.io/runtime': 'python',
+            'app.openshift.io/runtime-version': '3.6',
+          },
         },
-        selfLink: '/apis/image.openshift.io/v1/namespaces/div/imagestreams/nationalparks-py',
-        resourceVersion: '676247',
-        name: 'nationalparks-py',
-        uid: '2bc985ac-f834-45e5-9a86-830edb6bc8bd',
-        creationTimestamp: '2020-01-15T15:51:47Z',
-        generation: 1,
-        namespace: 'div',
-        labels: {
-          app: 'nationalparks-py',
-          'app.kubernetes.io/component': 'nationalparks-py',
-          'app.kubernetes.io/instance': 'nationalparks-py',
-          'app.kubernetes.io/name': 'python',
-          'app.kubernetes.io/part-of': 'nodejs-rest-http-app',
-          'app.openshift.io/runtime': 'python',
-          'app.openshift.io/runtime-version': '3.6',
+        spec: {
+          lookupPolicy: {
+            local: false,
+          },
+        },
+        status: {
+          dockerImageRepository:
+            'image-registry.openshift-image-registry.svc:5000/div/nationalparks-py',
         },
       },
-      spec: {
-        lookupPolicy: {
-          local: false,
-        },
-      },
-      status: {
-        dockerImageRepository:
-          'image-registry.openshift-image-registry.svc:5000/div/nationalparks-py',
-      },
-    },
+    ],
   },
 };
 

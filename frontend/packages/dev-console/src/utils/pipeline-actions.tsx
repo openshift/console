@@ -4,10 +4,10 @@ import { k8sCreate, K8sKind, k8sPatch, referenceForModel } from '@console/intern
 import { errorModal } from '@console/internal/components/modals';
 import { PipelineModel, PipelineRunModel } from '../models';
 import startPipelineModal from '../components/pipelines/pipeline-form/StartPipelineModal';
-import { getRandomChars } from '../components/pipelines/pipeline-resource/pipelineResource-utils';
 import { Pipeline, PipelineRun } from './pipeline-augment';
 import { pipelineRunFilterReducer } from './pipeline-filter-reducer';
 import { getPipelineRunParams } from './pipeline-utils';
+import { getRandomChars } from './shared-submit-utils';
 
 export const handlePipelineRunSubmit = (pipelineRun: PipelineRun) => {
   history.push(
