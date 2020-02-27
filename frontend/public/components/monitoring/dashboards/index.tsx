@@ -338,6 +338,24 @@ const getPanelSpan = (panel: Panel): number => {
   return 12;
 };
 
+const getPanelClassModifier = (panel: Panel): string => {
+  const span: number = getPanelSpan(panel);
+  switch (span) {
+    case 6:
+      return 'max-2';
+    case 2:
+    // fallthrough
+    case 4:
+    // fallthrough
+    case 5:
+      return 'max-3';
+    case 3:
+      return 'max-4';
+    default:
+      return 'max-1';
+  }
+};
+
 const Card: React.FC<CardProps> = ({ panel }) => {
   if (panel.type === 'row') {
     return (
@@ -349,16 +367,13 @@ const Card: React.FC<CardProps> = ({ panel }) => {
     );
   }
 
-  // Our grid has 12 columns, so don't allow colSpan over 12
-  const colSpan = Math.min(getPanelSpan(panel), 12);
-
-  // Don't allow very narrow panels at intermediate page widths
-  const colSpanMd = Math.max(colSpan, 3);
-
+  const panelClassModifier = getPanelClassModifier(panel);
   return (
-    <div className={`col-xs-12 col-md-${colSpanMd} col-lg-${colSpan}`}>
+    <div
+      className={`monitoring-dashboards__panel monitoring-dashboards__panel--${panelClassModifier}`}
+    >
       <DashboardCard
-        className="monitoring-dashboards__panel"
+        className="monitoring-dashboards__card"
         gradient={panel.type === 'grafana-piechart-panel'}
       >
         <DashboardCardHeader className="monitoring-dashboards__card-header">
@@ -375,7 +390,7 @@ const Card: React.FC<CardProps> = ({ panel }) => {
 const Board: React.FC<BoardProps> = ({ rows }) => (
   <>
     {_.map(rows, (row, i) => (
-      <div className="row monitoring-dashboards__row" key={i}>
+      <div className="monitoring-dashboards__row" key={i}>
         {_.map(row.panels, (panel) => (
           <Card key={panel.id} panel={panel} />
         ))}
