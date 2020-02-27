@@ -241,7 +241,15 @@ const Graph: React.FC<GraphProps> = React.memo(
 
     let yTickFormat = formatValue;
 
-    if (!isStack) {
+    if (isStack) {
+      // Specify Y axis range if all values are zero, but otherwise let Chart set it automatically
+      const isAllZero = _.every(allSeries, (series) =>
+        _.every(series, ([, values]) => _.every(values, { y: 0 })),
+      );
+      if (isAllZero) {
+        domain.y = [-1, 1];
+      }
+    } else {
       // Set a reasonable Y-axis range based on the min and max values in the data
       const findMin = (series: GraphDataPoint[]) => _.minBy(series, 'y');
       const findMax = (series: GraphDataPoint[]) => _.maxBy(series, 'y');
