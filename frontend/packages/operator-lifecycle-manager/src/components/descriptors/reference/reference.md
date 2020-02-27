@@ -754,14 +754,14 @@ This descriptor allows you to expose the status of pods for your instance. It ex
 …
 status:
   [PATH_TO_THE_FIELD]:
-    ready:
+    [STATE_1]:
       - [FIELD_MEMBER_NAME]
       - [FIELD_MEMBER_NAME]
       - [FIELD_MEMBER_NAME]
-    starting:
+    [STATE_2]:
       - [FIELD_MEMBER_NAME]
       - [FIELD_MEMBER_NAME]
-    stopped:
+    [STATE_3]:
       - [FIELD_MEMBER_NAME]
 …
 ```
