@@ -21,7 +21,12 @@ import {
   TEMPLATE_FLAVOR_LABEL,
   TEMPLATE_OS_LABEL,
   TEMPLATE_WORKLOAD_LABEL,
+  VolumeType,
 } from '../../../constants/vm';
+import { VolumeWrapper } from './volume-wrapper';
+import { V1Disk } from '../../../types/vm/disk/V1Disk';
+import { V1Volume } from '../../../types/vm/disk/V1Volume';
+import { V1alpha1DataVolume } from '../../../types/vm/disk/V1alpha1DataVolume';
 
 export class VMWrapper extends K8sResourceWrapper<VMKind> implements VMILikeMethods {
   static mergeWrappers = (...vmWrappers: VMWrapper[]): VMWrapper =>
@@ -146,12 +151,49 @@ export class MutableVMWrapper extends VMWrapper {
     );
     this.data.spec.template.spec.networks = _.compact(networks.map((network) => network.network));
 
-    if (_.isEmpty(this.getInterfaces())) {
-      delete this.data.spec.template.spec.domain.devices.interfaces;
+    this.ensureNetworksConsistency();
+    return this;
+  };
+
+  prependStorage = ({
+    disk,
+    volume,
+    dataVolume,
+  }: {
+    disk: V1Disk;
+    volume: V1Volume;
+    dataVolume?: V1alpha1DataVolume;
+  }) => {
+    this.ensurePath('spec.template.spec.domain.devices', {});
+    this.ensureStorages();
+    this.getDisks().unshift(disk);
+    this.getVolumes().unshift(volume);
+    if (dataVolume) {
+      this.getDataVolumeTemplates().unshift(dataVolume);
     }
-    if (_.isEmpty(this.getNetworks())) {
-      delete this.data.spec.template.spec.networks;
+    this.ensureStorageConsistency();
+    return this;
+  };
+
+  removeStorage = (diskName: string) => {
+    this.ensurePath('spec.template.spec.domain.devices', {});
+    this.data.spec.template.spec.domain.devices.disks = this.getDisks().filter(
+      (disk) => disk.name !== diskName,
+    );
+    const volumeWrapper = VolumeWrapper.initialize(
+      this.getVolumes().find((volume) => volume.name === diskName),
+    );
+    this.data.spec.template.spec.volumes = this.getVolumes().filter(
+      (volume) => volume.name !== diskName,
+    );
+
+    if (volumeWrapper.getType() === VolumeType.DATA_VOLUME) {
+      this.data.spec.dataVolumeTemplates = this.getDataVolumeTemplates().filter(
+        (dataVolume) => dataVolume.name !== volumeWrapper.getDataVolumeName(),
+      );
     }
+
+    this.ensureStorageConsistency();
     return this;
   };
 
@@ -163,15 +205,7 @@ export class MutableVMWrapper extends VMWrapper {
     this.data.spec.template.spec.volumes = _.compact(storages.map((storage) => storage.volume));
     this.data.spec.dataVolumeTemplates = _.compact(storages.map((storage) => storage.dataVolume));
 
-    if (_.isEmpty(this.getDisks())) {
-      delete this.data.spec.template.spec.domain.devices.disks;
-    }
-    if (_.isEmpty(this.getVolumes())) {
-      delete this.data.spec.template.spec.volumes;
-    }
-    if (_.isEmpty(this.getDataVolumeTemplates())) {
-      delete this.data.spec.dataVolumeTemplates;
-    }
+    this.ensureStorageConsistency();
     return this;
   };
 
@@ -192,4 +226,37 @@ export class MutableVMWrapper extends VMWrapper {
   asMutableResource = () => this.data;
 
   ensurePath = (path: string[] | string, value) => ensurePath(this.data, path, value);
+
+  private ensureStorages = () => {
+    if (_.isEmpty(this.getDisks())) {
+      this.data.spec.template.spec.domain.devices.disks = [];
+    }
+    if (_.isEmpty(this.getVolumes())) {
+      this.data.spec.template.spec.volumes = [];
+    }
+    if (_.isEmpty(this.getDataVolumeTemplates())) {
+      this.data.spec.dataVolumeTemplates = [];
+    }
+  };
+
+  private ensureNetworksConsistency = () => {
+    if (_.isEmpty(this.getInterfaces())) {
+      delete this.data.spec.template.spec.domain.devices.interfaces;
+    }
+    if (_.isEmpty(this.getNetworks())) {
+      delete this.data.spec.template.spec.networks;
+    }
+  };
+
+  private ensureStorageConsistency = () => {
+    if (_.isEmpty(this.getDisks())) {
+      delete this.data.spec.template.spec.domain.devices.disks;
+    }
+    if (_.isEmpty(this.getVolumes())) {
+      delete this.data.spec.template.spec.volumes;
+    }
+    if (_.isEmpty(this.getDataVolumeTemplates())) {
+      delete this.data.spec.dataVolumeTemplates;
+    }
+  };
 }
