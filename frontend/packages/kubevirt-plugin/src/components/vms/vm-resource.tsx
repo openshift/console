@@ -191,8 +191,12 @@ export const VMDetailsList: React.FC<VMResourceListProps> = ({
         {launcherPod && ipAddrs}
       </VMDetailsItem>
 
-      <VMDetailsItem title="Node" idValue={prefixedID(id, 'node')} isNotAvail={!nodeName}>
-        {nodeName && <NodeLink name={nodeName} />}
+      <VMDetailsItem
+        title="Node"
+        idValue={prefixedID(id, 'node')}
+        isNotAvail={!launcherPod || !nodeName}
+      >
+        {launcherPod && nodeName && <NodeLink name={nodeName} />}
       </VMDetailsItem>
 
       <VMDetailsItem title="Flavor" idValue={prefixedID(id, 'flavor')} isNotAvail={!flavorText}>
