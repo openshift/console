@@ -78,9 +78,13 @@ export const findVMIPod = (
   });
 
   // Return the newet most ready Pod created
-  return prefixedPods.sort((a: PodKind, b: PodKind) =>
-    isPodReady(a) && a.metadata.creationTimestamp > b.metadata.creationTimestamp ? -1 : 1,
-  )[0];
+  return prefixedPods
+    .sort((a: PodKind, b: PodKind) =>
+      a.metadata.creationTimestamp > b.metadata.creationTimestamp ? -1 : 1,
+    )
+    .sort((a: PodKind) =>
+      isPodReady(a) ? -1 : 1,
+    )[0];
 };
 
 export const getVMImporterPods = (
