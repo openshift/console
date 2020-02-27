@@ -1,7 +1,6 @@
 @import '../../topology-utils';
 
 .odc-base-edge {
-  --edge--drag-active--cursor: grab;
   --edge--stroke-width: 2px;
   --edge--stroke-dasharray: 0;
   --edge--stroke: #{$default-edge-stroke-color};
@@ -46,13 +45,6 @@
   .topology-connector-arrow {
     cursor: var(--edge__arrow--cursor);
     stroke: var(--edge--stroke);
-  }
-
-  &.is-dragging {
-    cursor: var(--edge--drag-active--cursor);
-    .topology-connector-arrow {
-      cursor: var(--edge--drag-active--cursor);
-    }
   }
 }
 
