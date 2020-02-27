@@ -45,9 +45,10 @@ export const podRingLabel = (
 ): PodRingLabelType => {
   const {
     spec: { replicas },
-    status: { availableReplicas },
+    status,
     kind,
   } = obj;
+  const { availableReplicas } = status || {};
 
   const isPending = (pods?.length === 1 && pods[0].status?.phase === 'Pending') || replicas;
   const pluralize = replicas > 1 || replicas === 0 ? 'pods' : 'pod';

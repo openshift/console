@@ -6,7 +6,8 @@ type DeploymentOverviewListProps = {
   current: PodControllerOverviewItem;
 };
 
-const DeploymentOverviewList: React.FC<DeploymentOverviewListProps> = ({ current: { obj } }) => {
+const DeploymentOverviewList: React.FC<DeploymentOverviewListProps> = ({ current }) => {
+  const { obj } = current || {};
   const namespace = obj?.metadata?.namespace;
   const deploymentData = obj?.metadata?.ownerReferences[0];
   return (
@@ -23,7 +24,7 @@ const DeploymentOverviewList: React.FC<DeploymentOverviewListProps> = ({ current
           </li>
         </ul>
       ) : (
-        <span className="text-muted">No Deploymennt found for this resource.</span>
+        <span className="text-muted">No Deployment found for this resource.</span>
       )}
     </>
   );
