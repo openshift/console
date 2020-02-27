@@ -13,7 +13,7 @@ const TaskSidebarParam: React.FC<TaskSidebarParamProps> = (props) => {
   const { hasParamError, onChange, resourceParam, taskParam } = props;
   const [dirty, setDirty] = React.useState(false);
 
-  const currentValue = taskParam.value?.toString() || '';
+  const currentValue = taskParam?.value?.toString() || '';
   const emptyIsInvalid = !resourceParam.default;
 
   const isValid = !(dirty && hasParamError && emptyIsInvalid && currentValue === '');
