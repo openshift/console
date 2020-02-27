@@ -9,8 +9,14 @@ import {
   Split,
   SplitItem,
   Badge,
+  EmptyState,
+  EmptyStateIcon,
+  EmptyStateBody,
+  Title,
 } from '@patternfly/react-core';
+import { InfoCircleIcon } from '@patternfly/react-icons';
 import { K8sResourceKind, EventKind } from '@console/internal/module/k8s';
+import { DeploymentConfigModel } from '@console/internal/models';
 import MonitoringOverviewEventsWarning from './MonitoringOverviewEventsWarning';
 import MonitoringOverviewEvents from './MonitoringOverviewEvents';
 import WorkloadGraphs from './MonitoringMetrics';
@@ -79,16 +85,31 @@ const MonitoringOverview: React.FC<MonitoringOverviewProps> = ({ resource, event
             Metrics
           </AccordionToggle>
           <AccordionContent id="metrics-content" isHidden={!expanded.includes('metrics')}>
-            <div className="odc-monitoring-overview__view-monitoring-dashboard">
-              <Link
-                to={`/dev-monitoring/ns/${resource?.metadata?.namespace}/?workloadName=${
-                  resource?.metadata?.name
-                }&workloadType=${resource?.kind?.toLowerCase()}`}
-              >
-                View monitoring dashboard
-              </Link>
-            </div>
-            <WorkloadGraphs resource={resource} />
+            {resource.kind === DeploymentConfigModel.kind ? (
+              <EmptyState>
+                <EmptyStateIcon
+                  className="odc-monitoring-overview__empty-state-icon"
+                  icon={InfoCircleIcon}
+                />
+                <Title size="md">No Metrics Found</Title>
+                <EmptyStateBody>
+                  Deployment Configuration metrics are not yet supported.
+                </EmptyStateBody>
+              </EmptyState>
+            ) : (
+              <>
+                <div className="odc-monitoring-overview__view-monitoring-dashboard">
+                  <Link
+                    to={`/dev-monitoring/ns/${resource?.metadata?.namespace}/?workloadName=${
+                      resource?.metadata?.name
+                    }&workloadType=${resource?.kind?.toLowerCase()}`}
+                  >
+                    View monitoring dashboard
+                  </Link>
+                </div>
+                <WorkloadGraphs resource={resource} />
+              </>
+            )}
           </AccordionContent>
         </AccordionItem>
 
