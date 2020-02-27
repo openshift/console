@@ -17,6 +17,7 @@ import { NicRow } from './nic-row';
 import { NetworkBundle } from './types';
 import { nicTableColumnClasses } from './utils';
 import { asVMILikeWrapper } from '../../k8s/wrapper/utils/convert';
+import { ADD_NETWORK_INTERFACE } from '../../utils/strings';
 
 const getNicsData = (vmLikeEntity: VMGenericLikeEntityKind): NetworkBundle[] => {
   const vmiLikeWrapper = asVMILikeWrapper(vmLikeEntity);
@@ -127,7 +128,7 @@ export const VMNics: React.FC<VMLikeEntityTabProps> = ({ obj: vmLikeEntity }) =>
               }
               isDisabled={isLocked}
             >
-              Create Network Interface
+              {ADD_NETWORK_INTERFACE}
             </Button>
           </div>
         </div>

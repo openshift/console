@@ -20,6 +20,7 @@ import { StorageBundle } from './types';
 import { DiskRow } from './disk-row';
 import { diskTableColumnClasses } from './utils';
 import { isVMI } from '../../selectors/vm';
+import { ADD_DISK } from '../../utils/strings';
 
 const getStoragesData = ({
   vmLikeEntity,
@@ -140,7 +141,7 @@ export const VMDisks: React.FC<VMDisksProps> = ({ vmLikeEntity, pvcs, datavolume
               }
               isDisabled={isLocked}
             >
-              Create Disk
+              {ADD_DISK}
             </Button>
           </div>
         </div>
