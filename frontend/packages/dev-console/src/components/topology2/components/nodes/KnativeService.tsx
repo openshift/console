@@ -15,6 +15,7 @@ import {
   useHover,
   createSvgIdUrl,
   useCombineRefs,
+  WithCreateConnectorProps,
 } from '@console/topology';
 import { useAccessReview } from '@console/internal/components/utils';
 import { modelFor, referenceFor } from '@console/internal/module/k8s';
@@ -32,7 +33,8 @@ export type EventSourceProps = {
   regrouping: boolean;
 } & WithSelectionProps &
   WithDragNodeProps &
-  WithContextMenuProps;
+  WithContextMenuProps &
+  WithCreateConnectorProps;
 
 const DECORATOR_RADIUS = 13;
 const KnativeService: React.FC<EventSourceProps> = ({
@@ -44,6 +46,8 @@ const KnativeService: React.FC<EventSourceProps> = ({
   dragNodeRef,
   dragging,
   regrouping,
+  onHideCreateConnector,
+  onShowCreateConnector,
 }) => {
   const [hover, hoverRef] = useHover();
   const [innerHover, innerHoverRef] = useHover();
@@ -69,6 +73,16 @@ const KnativeService: React.FC<EventSourceProps> = ({
   );
   useAnchor(RectAnchor);
   const { x, y, width, height } = element.getBounds();
+
+  React.useLayoutEffect(() => {
+    if (editAccess) {
+      if (innerHover) {
+        onShowCreateConnector && onShowCreateConnector();
+      } else {
+        onHideCreateConnector && onHideCreateConnector();
+      }
+    }
+  }, [editAccess, innerHover, onShowCreateConnector, onHideCreateConnector]);
 
   return (
     <g ref={hoverRef} onClick={onSelect} onContextMenu={editAccess ? onContextMenu : null}>

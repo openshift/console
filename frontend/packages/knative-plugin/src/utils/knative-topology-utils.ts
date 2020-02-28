@@ -367,10 +367,6 @@ export const tranformKnNodeData = (
             cheURL,
             type,
           );
-          edgesData = [
-            ...edgesData,
-            ...getTopologyEdgeItems(res, allResources, serviceBindingRequests, application),
-          ];
           groupsData = [...topologyGraphAndNodeData.graph.groups];
           break;
         }
@@ -382,7 +378,11 @@ export const tranformKnNodeData = (
             cheURL,
           );
           nodesData = [...nodesData, ...getKnativeTopologyNodeItems(res, type, resources)];
-          edgesData = [...edgesData, ...getTrafficTopologyEdgeItems(res, resources.revisions)];
+          edgesData = [
+            ...edgesData,
+            ...getTrafficTopologyEdgeItems(res, resources.revisions),
+            ...getTopologyEdgeItems(res, allResources, serviceBindingRequests, application),
+          ];
           groupsData = [...getTopologyGroupItems(res, topologyGraphAndNodeData.graph.groups)];
           break;
         }
