@@ -231,11 +231,12 @@ const ReceiverBaseForm: React.FC<ReceiverBaseFormProps> = ({
   const [formValues, dispatchFormChange] = React.useReducer(formReducer, INITIAL_STATE);
   const SubForm = subformFactory(formValues.receiverType);
 
-  const isFormInvalid =
+  const isFormInvalid: boolean =
     !formValues.receiverName ||
     !formValues.receiverType ||
     SubForm.isFormInvalid(formValues) ||
-    !_.isEmpty(formValues.routeLabelFieldErrors);
+    !_.isEmpty(formValues.routeLabelFieldErrors) ||
+    formValues.routeLabelDuplicateNamesError;
 
   const save = (e) => {
     e.preventDefault();
@@ -523,7 +524,7 @@ type ReceiverBaseFormProps = {
   alertmanagerGlobals?: { [key: string]: any };
 };
 
-type RouteEditorLabel = {
+export type RouteEditorLabel = {
   name: string;
   value: string;
   isRegex: boolean;
@@ -539,7 +540,7 @@ type FormAction = {
 type FormState = {
   receiverType: string;
   routeLabels: any[];
-  [key: string]: string | any[];
+  [key: string]: string | any[] | any;
 };
 
 export type FormProps = {

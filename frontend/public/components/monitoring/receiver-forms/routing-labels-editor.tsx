@@ -5,11 +5,12 @@ import { MinusCircleIcon, PlusCircleIcon, InfoCircleIcon } from '@patternfly/rea
 import { Button, Tooltip } from '@patternfly/react-core';
 
 import { ExternalLink, SectionHeading } from '../../utils';
+import { RouteEditorLabel } from './alert-manager-receiver-forms';
 
 const DEFAULT_RECEIVER_LABEL = 'All (default receiver)';
 const labelNamePattern = /^[a-zA-Z_][a-zA-Z0-9_]*$/;
 
-export const getRouteLabelFieldErrors = (labels) => {
+export const getRouteLabelFieldErrors = (labels: RouteEditorLabel[]) => {
   const routeLabelFieldErrors = {};
   labels.forEach((label, i) => {
     if (label.name && !label.name.match(labelNamePattern)) {
@@ -17,6 +18,11 @@ export const getRouteLabelFieldErrors = (labels) => {
     }
   });
   return routeLabelFieldErrors;
+};
+
+const hasDuplicateNames = (labels: RouteEditorLabel[]): boolean => {
+  const names = _.map(labels, (label) => label.name);
+  return names.length !== _.uniq(names).length;
 };
 
 export const RoutingLabelEditor = ({ formValues, dispatchFormChange, isDefaultReceiver }) => {
@@ -28,6 +34,7 @@ export const RoutingLabelEditor = ({ formValues, dispatchFormChange, isDefaultRe
       payload: {
         routeLabels: labels,
         routeLabelFieldErrors: getRouteLabelFieldErrors(labels),
+        routeLabelDuplicateNamesError: hasDuplicateNames(labels),
       },
     });
   };
@@ -55,6 +62,7 @@ export const RoutingLabelEditor = ({ formValues, dispatchFormChange, isDefaultRe
       type: 'setFormValues',
       payload: {
         routeLabels: labels,
+        routeLabelDuplicateNamesError: hasDuplicateNames(labels),
       },
     });
   };
@@ -178,6 +186,7 @@ export const RoutingLabelEditor = ({ formValues, dispatchFormChange, isDefaultRe
                 aria-label="Remove Route Label"
                 isDisabled={!isDefaultReceiver && formValues.routeLabels.length <= 1}
                 variant="plain"
+                data-test-id="remove-routing-label"
               >
                 <MinusCircleIcon />
               </Button>
@@ -185,12 +194,32 @@ export const RoutingLabelEditor = ({ formValues, dispatchFormChange, isDefaultRe
           </div>
         );
       })}
+      <div
+        className={classNames(
+          'form-group',
+          {
+            'has-error': formValues.routeLabelDuplicateNamesError,
+          },
+          'co-routing-label-editor__error-message',
+        )}
+      >
+        <span className="help-block">
+          {formValues.routeLabelDuplicateNamesError ? (
+            <span data-test-id="duplicate-label-name-error">
+              Routing label names must be unique.
+            </span>
+          ) : (
+            ''
+          )}
+        </span>
+      </div>
       {!isDefaultReceiver && (
         <Button
           className="pf-m-link--align-left"
           onClick={addRoutingLabel}
           type="button"
           variant="link"
+          data-test-id="add-routing-label"
         >
           <PlusCircleIcon className="co-icon-space-r" />
           Add Label
