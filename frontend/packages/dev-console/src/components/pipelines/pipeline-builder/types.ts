@@ -15,12 +15,16 @@ export type PipelineBuilderTaskBase = { name: string; runAfter?: string[] };
 
 export type PipelineBuilderListTask = PipelineBuilderTaskBase;
 
-export type PipelineBuilderTaskGroup = {
+export type PipelineBuilderTaskGrouping = {
   tasks: PipelineTask[];
   listTasks: PipelineBuilderListTask[];
 };
 
-export type PipelineBuilderFormValues = PipelineBuilderTaskGroup & {
+export type PipelineBuilderTaskGroup = PipelineBuilderTaskGrouping & {
+  highlightedIds: string[];
+};
+
+export type PipelineBuilderFormValues = PipelineBuilderTaskGrouping & {
   name: string;
   params: PipelineParam[];
   resources: PipelineResource[];
@@ -62,6 +66,9 @@ export type UpdateOperationConvertToTaskData = UpdateOperationBaseData & {
   name: string;
   resource: PipelineResourceTask;
   runAfter?: string[];
+};
+export type UpdateOperationDeleteListTaskData = UpdateOperationBaseData & {
+  listTaskName: string;
 };
 export type UpdateOperationRemoveTaskData = UpdateOperationBaseData & {
   taskName: string;

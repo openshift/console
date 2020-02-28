@@ -10,7 +10,7 @@ const TaskNode: React.FC<{ element: Node; disableTooltip?: boolean }> = ({
   disableTooltip,
 }) => {
   const { height, width } = element.getBounds();
-  const { pipeline, pipelineRun, task } = element.getData() as TaskNodeModelData;
+  const { pipeline, pipelineRun, task, selected } = element.getData() as TaskNodeModelData;
 
   return (
     <foreignObject width={width} height={height + DROP_SHADOW_SPACING}>
@@ -20,6 +20,7 @@ const TaskNode: React.FC<{ element: Node; disableTooltip?: boolean }> = ({
         pipelineRunStatus={pipelineRun && pipelineRunFilterReducer(pipelineRun)}
         namespace={pipeline?.metadata?.namespace}
         disableTooltip={disableTooltip}
+        selected={selected}
       />
     </foreignObject>
   );
