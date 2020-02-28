@@ -734,7 +734,7 @@ export const topologyModelFromDataModel = (
           ((d.type === TYPE_KNATIVE_SERVICE && !filters.display.knativeServices) ||
             (d.type === TYPE_OPERATOR_BACKED_SERVICE && !filters.display.operatorGrouping)),
         children: d.children,
-        group: d.children?.length > 0,
+        group: true,
         shape: NodeShape.rect,
         style: {
           padding: d.type === TYPE_KNATIVE_SERVICE ? KNATIVE_GROUP_NODE_PADDING : GROUP_PADDING,
