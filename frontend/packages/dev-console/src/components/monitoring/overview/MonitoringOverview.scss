@@ -4,7 +4,7 @@
   }
   &__event-warning-toggle {
     .pf-c-accordion__toggle-text {
-        width: 100%
+      width: 100%;
     }
   }
   &__event-warning-body {
@@ -21,5 +21,11 @@
   }
   .pf-c-accordion__toggle.pf-m-expanded {
     --pf-c-accordion__toggle--BorderLeftColor: transparent;
+  }
+  &__empty-state {
+    &-icon {
+      color: var(--pf-global--icon--Color--light);
+      font-size: var(--pf-global--FontSize--4xl);
+    }
   }
 }
