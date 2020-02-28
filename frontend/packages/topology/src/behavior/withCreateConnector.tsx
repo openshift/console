@@ -9,18 +9,26 @@ import { Node, isNode, AnchorEnd, GraphElement, isGraph, Graph } from '../types'
 import { DragSourceSpec, DragSourceMonitor, DragEvent } from './dnd-types';
 import { useDndDrag } from './useDndDrag';
 
-import './CreateConnector.scss';
-
-export const CREATE_CONNECTOR_OPERATION = 'createconnector';
+export const CREATE_CONNECTOR_OPERATION = '#createconnector#';
+export const CREATE_CONNECTOR_DROP_TYPE = '#createConnector#';
 
 export type ConnectorChoice = {
   label: string;
 };
 
-type CreateConnectorOptions = {
+export type CreateConnectorOptions = {
   handleAngle?: number;
   handleLength?: number;
 };
+
+type ConnectorComponentProps = {
+  startPoint: Point;
+  endPoint: Point;
+  hints: string[];
+  dragging: boolean;
+};
+
+type CreateConnectorRenderer = React.ComponentType<ConnectorComponentProps>;
 
 type CreateConnectorWidgetProps = {
   element: Node;
@@ -31,7 +39,7 @@ type CreateConnectorWidgetProps = {
     event: DragEvent,
     choice?: ConnectorChoice,
   ) => ConnectorChoice[] | void | undefined | null | React.ReactElement[];
-  renderConnector: ConnectorRenderer;
+  ConnectorComponent: CreateConnectorRenderer;
   contextMenuClass?: string;
 } & CreateConnectorOptions;
 
@@ -48,8 +56,6 @@ type PromptData = {
   choices: (ConnectorChoice | React.ReactElement)[];
 };
 
-export const CREATE_CONNECTOR_DROP_TYPE = '#createConnector#';
-
 const DEFAULT_HANDLE_ANGLE = 12 * (Math.PI / 180);
 const DEFAULT_HANDLE_LENGTH = 32;
 
@@ -58,7 +64,7 @@ const CreateConnectorWidget: React.FC<CreateConnectorWidgetProps> = observer((pr
     element,
     onKeepAlive,
     onCreate,
-    renderConnector,
+    ConnectorComponent,
     handleAngle = DEFAULT_HANDLE_ANGLE,
     handleLength = DEFAULT_HANDLE_LENGTH,
     contextMenuClass,
@@ -148,7 +154,12 @@ const CreateConnectorWidget: React.FC<CreateConnectorWidgetProps> = observer((pr
           onMouseEnter={!active ? () => onKeepAlive(true) : undefined}
           onMouseLeave={!active ? () => onKeepAlive(false) : undefined}
         >
-          {renderConnector(startPoint, endPoint, hintsRef.current)}
+          <ConnectorComponent
+            startPoint={startPoint}
+            endPoint={endPoint}
+            dragging={dragging}
+            hints={hintsRef.current || []}
+          />
           {!active && (
             <path
               d={hullPath(
@@ -195,27 +206,20 @@ type ElementProps = {
   element: Node;
 };
 
+type CreateConnectorOptions = {
+  handleAngle?: number;
+  handleLength?: number;
+};
+
 export type WithCreateConnectorProps = {
   onShowCreateConnector: () => void;
   onHideCreateConnector: () => void;
 };
 
-type ConnectorRenderer = <T extends any>(
-  startPoint: Point,
-  endPoint: Point,
-  hints: string[] | undefined,
-) => React.ReactElement;
-
-const defaultRenderConnector: ConnectorRenderer = (
-  startPoint: Point,
-  endPoint: Point,
-  hints?: string[] | undefined,
-) => <DefaultCreateConnector startPoint={startPoint} endPoint={endPoint} hints={hints} />;
-
 export const withCreateConnector = <P extends WithCreateConnectorProps & ElementProps>(
   onCreate: React.ComponentProps<typeof CreateConnectorWidget>['onCreate'],
+  ConnectorComponent: CreateConnectorRenderer = DefaultCreateConnector,
   contextMenuClass?: string,
-  renderConnector: ConnectorRenderer = defaultRenderConnector,
   options?: CreateConnectorOptions,
 ) => (WrappedComponent: React.ComponentType<P>) => {
   const Component: React.FC<Omit<P, keyof WithCreateConnectorProps>> = (props) => {
@@ -239,7 +243,7 @@ export const withCreateConnector = <P extends WithCreateConnectorProps & Element
             element={props.element}
             onCreate={onCreate}
             onKeepAlive={onKeepAlive}
-            renderConnector={renderConnector}
+            ConnectorComponent={ConnectorComponent}
             contextMenuClass={contextMenuClass}
           />
         )}

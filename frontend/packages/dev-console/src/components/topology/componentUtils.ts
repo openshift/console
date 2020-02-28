@@ -145,7 +145,7 @@ const nodeDropTargetSpec: DropTargetSpec<
   accept: [MOVE_CONNECTOR_DROP_TYPE, CREATE_CONNECTOR_DROP_TYPE],
   canDrop: (item, monitor, props) => {
     if (isEdge(item)) {
-      return item.getSource() !== props.element && item.getTarget() !== props.element;
+      return canDropEdgeOnNode(monitor.getOperation(), item, props.element);
     }
     if (item === props.element) {
       return false;
@@ -174,9 +174,19 @@ const graphWorkloadDropTargetSpec: DropTargetSpec<
         monitor.getItemType() === CREATE_CONNECTOR_DROP_TYPE)
     );
   },
-  collect: (monitor) => ({
-    dragEditInProgress: monitor.isDragging() && editOperations.includes(monitor.getOperation()),
-  }),
+  collect: (monitor) => {
+    const dragEditInProgress =
+      monitor.isDragging() && editOperations.includes(monitor.getOperation());
+    const dragCreate =
+      dragEditInProgress &&
+      (monitor.getItemType() === CREATE_CONNECTOR_DROP_TYPE ||
+        monitor.getItemType() === MOVE_CONNECTOR_DROP_TYPE);
+    return {
+      dragEditInProgress,
+      dragCreate,
+      hasDropTarget: dragEditInProgress && monitor.hasDropTarget(),
+    };
+  },
   dropHint: 'create',
 };
 
@@ -247,7 +257,7 @@ const edgeDragSourceSpec = (
   },
   end: (dropResult, monitor, props) => {
     props.element.setEndPoint();
-    if (monitor.didDrop() && dropResult) {
+    if (monitor.didDrop() && dropResult && canDropEdgeOnNode('', props.element, dropResult)) {
       callback(
         props.element.getSource(),
         dropResult,
