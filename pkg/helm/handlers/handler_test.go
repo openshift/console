@@ -8,6 +8,7 @@ import (
 	"testing"
 
 	"helm.sh/helm/v3/pkg/action"
+	"helm.sh/helm/v3/pkg/chart"
 	"helm.sh/helm/v3/pkg/release"
 
 	"github.com/openshift/console/pkg/auth"
@@ -52,6 +53,12 @@ func fakeGetManifest(mockedManifest string, err error) func(name string, url str
 func fakeGetRelease(mockedRelease *release.Release, err error) func(releaseName string, conf *action.Configuration) (*release.Release, error) {
 	return func(releaseName string, conf *action.Configuration) (r *release.Release, er error) {
 		return mockedRelease, err
+	}
+}
+
+func mockedHelmGetChart(c *chart.Chart, e error) func(url string, conf *action.Configuration) (*chart.Chart, error) {
+	return func(url string, conf *action.Configuration) (*chart.Chart, error) {
+		return c, e
 	}
 }
 
@@ -227,6 +234,58 @@ func TestHelmHandlers_HandleGetRelease(t *testing.T) {
 
 			if response.Code != tt.httpStatusCode {
 				t.Errorf("response code should be %v but got %v", tt.httpStatusCode, response.Code)
+			}
+			if response.Body.String() != tt.expectedResponse {
+				t.Errorf("response body not matching expected is %s and received is %s", tt.expectedResponse, response.Body.String())
+			}
+
+		})
+	}
+}
+
+func TestHelmHandlers_HandleGetChart(t *testing.T) {
+	tests := []struct {
+		name                string
+		expectedResponse    string
+		expectedChart       chart.Chart
+		expectedContentType string
+		error
+		httpStatusCode int
+	}{
+		{
+			name:                "Error occurred",
+			error:               errors.New("Chart path is invalid"),
+			expectedResponse:    `{"error":"Failed to retrieve chart: Chart path is invalid"}`,
+			httpStatusCode:      http.StatusBadRequest,
+			expectedContentType: "application/json",
+		},
+		{
+			name:             "Return chart info in json format",
+			expectedResponse: `{"metadata":{"name":"foo"},"lock":null,"templates":null,"values":null,"schema":null,"files":null}`,
+			expectedChart: chart.Chart{
+				Metadata: &chart.Metadata{
+					Name: "foo",
+				},
+			},
+			httpStatusCode:      http.StatusOK,
+			expectedContentType: "application/json",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			handlers := fakeHelmHandler()
+			handlers.getChart = mockedHelmGetChart(&tt.expectedChart, tt.error)
+
+			request := httptest.NewRequest("", "/foo", strings.NewReader("{}"))
+			response := httptest.NewRecorder()
+
+			handlers.HandleChartGet(&auth.User{}, response, request)
+
+			if response.Code != tt.httpStatusCode {
+				t.Errorf("response code should be %v but got %v", tt.httpStatusCode, response.Code)
+			}
+			if response.Header().Get("Content-Type") != tt.expectedContentType {
+				t.Errorf("content type should be %s but got %s", tt.expectedContentType, response.Header().Get("Content-Type"))
 			}
 			if response.Body.String() != tt.expectedResponse {
 				t.Errorf("response body not matching expected is %s and received is %s", tt.expectedResponse, response.Body.String())

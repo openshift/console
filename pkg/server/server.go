@@ -304,6 +304,8 @@ func (s *Server) HTTPHandler() http.Handler {
 	helmHandlers := helmhandlerspkg.New(s.KubeAPIServerURL, s.K8sClient.Transport)
 	handle("/api/helm/template", authHandlerWithUser(helmHandlers.HandleHelmRenderManifests))
 	handle("/api/helm/releases", authHandlerWithUser(helmHandlers.HandleHelmList))
+	handle("/api/helm/chart", authHandlerWithUser(helmHandlers.HandleChartGet))
+
 	handle("/api/helm/release", authHandlerWithUser(func(user *auth.User, w http.ResponseWriter, r *http.Request) {
 		switch r.Method {
 		case http.MethodGet:
