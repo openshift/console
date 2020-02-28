@@ -7,10 +7,11 @@ import * as fuzzy from 'fuzzysearch';
 
 import { Dropdown, ResourceIcon } from './utils';
 import {
+  apiVersionForReference,
   K8sKind,
   K8sResourceKindReference,
+  modelFor,
   referenceForModel,
-  apiVersionForReference,
 } from '../module/k8s';
 import { Badge, Checkbox } from '@patternfly/react-core';
 
@@ -126,6 +127,10 @@ const ResourceListDropdown_: React.SFC<ResourceListDropdownProps> = (props) => {
     return fuzzy(_.toLower(text), _.toLower(model.kind));
   };
 
+  const handleSelected = (value: string) => {
+    onChange(referenceForModel(modelFor(value)));
+  };
+
   return (
     <Dropdown
       menuClassName="dropdown-menu--text-wrap"
@@ -139,7 +144,7 @@ const ResourceListDropdown_: React.SFC<ResourceListDropdownProps> = (props) => {
           </Badge>
         </div>
       }
-      onChange={onChange}
+      onChange={handleSelected}
       autocompleteFilter={autocompleteFilter}
       autocompletePlaceholder="Select Resource"
     />
