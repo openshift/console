@@ -11,10 +11,9 @@ const HelmInstallForm: React.FC<FormikProps<FormikValues>> = ({
   handleReset,
   status,
   isSubmitting,
-  dirty,
 }) => (
   <Form onSubmit={handleSubmit}>
-    <FormSection title="General">
+    <FormSection>
       <InputField
         type={TextInputTypes.text}
         name="releaseName"
@@ -29,7 +28,7 @@ const HelmInstallForm: React.FC<FormikProps<FormikValues>> = ({
       errorMessage={status && status.submitError}
       isSubmitting={isSubmitting}
       submitLabel="Install"
-      disableSubmit={!dirty || !_.isEmpty(errors)}
+      disableSubmit={!_.isEmpty(errors)}
       resetLabel="Cancel"
     />
   </Form>

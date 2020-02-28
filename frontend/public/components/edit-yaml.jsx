@@ -84,7 +84,7 @@ const desktopGutter = 30;
  * Consider using `AsyncComponent` to dynamically load this component when needed.
  */
 /** @augments {React.Component<{obj?: any, create: boolean, kind: string, redirectURL?: string, resourceObjPath?: (obj: K8sResourceKind, objRef: string) => string}, onChange?: (yaml: string) => void>} */
-const EditYAML_ = connect(stateToProps)(
+export const EditYAML_ = connect(stateToProps)(
   class EditYAML extends React.Component {
     constructor(props) {
       super(props);
@@ -806,9 +806,9 @@ const EditYAML_ = connect(stateToProps)(
                         this.setState({ yaml: newValue }, () => onChange(newValue))
                       }
                     />
-                    <div className="yaml-editor__buttons" ref={(r) => (this.buttons = r)}>
+                    <div ref={(r) => (this.buttons = r)}>
                       {!hideActions && (
-                        <>
+                        <div className="yaml-editor__buttons">
                           {customAlerts}
                           {error && (
                             <Alert
@@ -883,7 +883,7 @@ const EditYAML_ = connect(stateToProps)(
                               </Button>
                             )}
                           </ActionGroup>
-                        </>
+                        </div>
                       )}
                     </div>
                   </div>

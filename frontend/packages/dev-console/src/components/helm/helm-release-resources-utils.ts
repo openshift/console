@@ -8,32 +8,3 @@ export const flattenResources = (resources: { [kind: string]: { data: K8sResourc
     }
     return acc;
   }, []);
-
-export const mockValues = {
-  affinity: {},
-  fullnameOverride: '',
-  image: {
-    pullPolicy: 'IfNotPresent',
-    repository: 'nginx',
-  },
-  ingress: {
-    annotations: {},
-    enabled: false,
-    hosts: [
-      {
-        host: 'chart-example.local',
-        paths: [],
-      },
-    ],
-    tls: [],
-  },
-  nameOverride: '',
-  nodeSelector: {},
-  replicaCount: 1,
-  resources: {},
-  service: {
-    port: 80,
-    type: 'ClusterIP',
-  },
-  tolerations: [],
-};
