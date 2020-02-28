@@ -8,68 +8,75 @@ apiVersion: ${TemplateModel.apiGroup}/${TemplateModel.apiVersion}
 kind: ${TemplateModel.kind}
 metadata:
   name: vm-template-example
+  namespace: default
   labels:
-    kubevirt.io/os: fedora27
-    miq.github.io/kubevirt-is-vm-template: 'true'
     template.kubevirt.io/type: vm
+    os.template.kubevirt.io/fedora31: 'true'
+    flavor.template.kubevirt.io/tiny: 'true'
+    workload.template.kubevirt.io/server: 'true'
+    vm.kubevirt.io/template: fedora-server-tiny-v0.7.0
+    vm.kubevirt.io/template-namespace: openshift
   annotations:
+    name.os.template.kubevirt.io/fedora31: Fedora 31
     description: VM template example
-    iconClass: icon-fedora
-    tags: 'kubevirt,ocp,template,linux,virtualmachine'
 objects:
   - apiVersion: kubevirt.io/v1alpha3
     kind: VirtualMachine
     metadata:
-      creationTimestamp: null
       labels:
-        kubevirt-vm: 'vm-\${NAME}'
-        kubevirt.io/os: fedora27
+        app: '\${NAME}'
+        vm.kubevirt.io/template: fedora-server-tiny
+        vm.kubevirt.io/template.revision: '1'
+        vm.kubevirt.io/template.version: v0.8.1
       name: '\${NAME}'
     spec:
       running: false
       template:
         metadata:
-          creationTimestamp: null
           labels:
-            kubevirt-vm: 'vm-\${NAME}'
-            kubevirt.io/os: fedora27
+            kubevirt.io/domain: '\${NAME}'
+            kubevirt.io/size: tiny
         spec:
           domain:
             cpu:
-              cores: '\${CPU_CORES}'
+              cores: 1
+              sockets: 1
+              threads: 1
             devices:
               disks:
-                - disk:
+                - name: containerdisk
+                  bootOrder: 1
+                  disk:
                     bus: virtio
-                  name: containerdisk
                 - disk:
                     bus: virtio
                   name: cloudinitdisk
-            machine:
-              type: ''
+              interfaces:
+                - masquerade: {}
+                  name: default
+              networkInterfaceMultiqueue: true
+              rng: {}
             resources:
               requests:
-                memory: '\${MEMORY}'
+                memory: 1G
+          networks:
+            - name: default
+              pod: {}
           terminationGracePeriodSeconds: 0
           volumes:
-            - containerDisk:
-                image: 'registry:5000/kubevirt/fedora-cloud-container-disk-demo:devel'
-              name: containerdisk
+            - name: containerdisk
+              containerDisk:
+                image: 'kubevirt/fedora-cloud-container-disk-demo:latest'
             - cloudInitNoCloud:
                 userData: |-
                   #cloud-config
                   password: fedora
                   chpasswd: { expire: False }
               name: cloudinitdisk
-    status: {}
+          hostname: '\${NAME}'
 parameters:
   - name: NAME
     description: Name for the new VM
-  - name: MEMORY
-    description: Amount of memory
-    value: 4096Mi
-  - name: CPU_CORES
-    description: Amount of cores
-    value: '4'
+    required: true
 `,
 );

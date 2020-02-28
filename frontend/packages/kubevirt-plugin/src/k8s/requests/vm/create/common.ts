@@ -46,13 +46,11 @@ export const getOS = ({
 };
 
 export const initializeCommonMetadata = (
-  createVMParams: CreateVMEnhancedParams,
+  settings: { [key in VMSettingsField]?: any },
+  { osID, osName }: { osID: string; osName: string },
   entity: MutableVMWrapper | MutableVMTemplateWrapper,
   template?: TemplateKind,
 ) => {
-  const settings = asSimpleSettings(createVMParams.vmSettings);
-  const { osID, osName } = getOS(createVMParams);
-
   entity.addAnotation(`${TEMPLATE_OS_NAME_ANNOTATION}/${osID}`, osName);
 
   if (settings[VMSettingsField.DESCRIPTION]) {
