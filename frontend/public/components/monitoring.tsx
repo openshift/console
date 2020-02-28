@@ -17,6 +17,7 @@ import {
   PlusCircleIcon,
 } from '@patternfly/react-icons';
 
+import { withFallback } from '@console/shared/src/components/error/error-boundary';
 import * as k8sActions from '../actions/k8s';
 import * as UIActions from '../actions/ui';
 import { coFetchJSON } from '../co-fetch';
@@ -36,7 +37,6 @@ import { graphStateToProps, QueryBrowserPage, ToggleGraph } from './monitoring/m
 import { Labels, QueryBrowser, QueryObj } from './monitoring/query-browser';
 import { CheckBoxes } from './row-filter';
 import { formatPrometheusDuration } from './utils/datetime';
-import { withFallback } from './utils/error-boundary';
 import { AlertmanagerYAMLEditorWrapper } from './monitoring/alert-manager-yaml-editor';
 import { AlertmanagerConfigWrapper } from './monitoring/alert-manager-config';
 import {

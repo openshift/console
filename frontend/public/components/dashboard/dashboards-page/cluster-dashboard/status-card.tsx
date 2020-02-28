@@ -68,7 +68,7 @@ const cvResource: FirehoseResource = {
   prop: 'cv',
 };
 
-const ClusterAlerts = connectToFlags(FLAGS.OPENSHIFT)(
+const ClusterAlerts = connectToFlags(FLAGS.CLUSTER_VERSION)(
   withDashboardResources<WithFlagsProps & DashboardItemProps>(
     ({
       watchAlerts,
@@ -79,19 +79,19 @@ const ClusterAlerts = connectToFlags(FLAGS.OPENSHIFT)(
       resources,
       flags,
     }) => {
-      const isOpenshift = flags[FLAGS.OPENSHIFT];
+      const hasCVResource = flags[FLAGS.CLUSTER_VERSION];
       React.useEffect(() => {
         watchAlerts();
-        if (isOpenshift) {
+        if (hasCVResource) {
           watchK8sResource(cvResource);
         }
         return () => {
           stopWatchAlerts();
-          if (isOpenshift) {
+          if (hasCVResource) {
             stopWatchK8sResource(cvResource);
           }
         };
-      }, [watchAlerts, stopWatchAlerts, watchK8sResource, stopWatchK8sResource, isOpenshift]);
+      }, [watchAlerts, stopWatchAlerts, watchK8sResource, stopWatchK8sResource, hasCVResource]);
 
       const alertsResponse = alertsResults.getIn([ALERTS_KEY, 'data']) as PrometheusRulesResponse;
       const alertsResponseError = alertsResults.getIn([ALERTS_KEY, 'loadError']);
@@ -99,6 +99,7 @@ const ClusterAlerts = connectToFlags(FLAGS.OPENSHIFT)(
 
       const cv = _.get(resources.cv, 'data') as ClusterVersionKind;
       const cvLoaded = _.get(resources.cv, 'loaded');
+      const cvError = resources.cv?.loadError;
       const LinkComponent = React.useCallback(
         () => (
           <Button variant="link" onClick={() => clusterUpdateModal({ cv })} isInline>
@@ -113,8 +114,8 @@ const ClusterAlerts = connectToFlags(FLAGS.OPENSHIFT)(
       );
 
       let items: React.ReactNode;
-      if (!flagPending(isOpenshift)) {
-        if (isOpenshift && (hasAvailableUpdates(cv) || alerts.length)) {
+      if (!flagPending(hasCVResource)) {
+        if (hasCVResource && (hasAvailableUpdates(cv) || alerts.length)) {
           items = (
             <>
               {hasAvailableUpdates(cv) && (
@@ -139,8 +140,9 @@ const ClusterAlerts = connectToFlags(FLAGS.OPENSHIFT)(
       return (
         <AlertsBody
           isLoading={
-            flagPending(isOpenshift) ||
-            (isOpenshift ? !(alertsResponse && cvLoaded) : !alertsResponse)
+            flagPending(hasCVResource) ||
+            !alertsResponse ||
+            (hasCVResource && !cvLoaded && !cvError)
           }
           error={alertsResponseError}
           emptyMessage="No cluster alerts or messages"

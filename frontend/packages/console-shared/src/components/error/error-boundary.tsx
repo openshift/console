@@ -1,12 +1,6 @@
-/* eslint-disable react/display-name */
-
 import * as React from 'react';
 
-class DefaultFallback extends React.Component {
-  render() {
-    return <div />;
-  }
-}
+const DefaultFallback: React.FC = () => <div />;
 
 export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundaryState> {
   constructor(props) {

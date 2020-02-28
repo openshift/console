@@ -16,7 +16,7 @@ import {
   TableData,
   MultiListPage,
 } from '@console/internal/components/factory';
-import { withFallback } from '@console/internal/components/utils/error-boundary';
+import { withFallback } from '@console/shared/src/components/error/error-boundary';
 import {
   modelFor,
   referenceForModel,

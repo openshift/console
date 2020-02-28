@@ -20,6 +20,7 @@ import {
   RoutePage,
   ResourceDetailsPage,
   ActionFeatureFlag,
+  DashboardsOverviewResourceActivity,
 } from '@console/plugin-sdk';
 import {
   OCS_INDEPENDENT_FLAG,
@@ -33,6 +34,7 @@ import { OverviewQuery } from '@console/internal/components/dashboard/dashboards
 import { referenceForModel, referenceFor } from '@console/internal/module/k8s';
 import { PersistentVolumeClaimModel } from '@console/internal/models';
 import { getCephHealthState } from './components/dashboard-page/storage-dashboard/status-card/utils';
+import { isClusterExpandActivity } from './components/dashboard-page/storage-dashboard/activity-card/cluster-expand-activity';
 
 type ConsumedExtensions =
   | ModelFeatureFlag
@@ -49,7 +51,8 @@ type ConsumedExtensions =
   | ResourceTabPage
   | ClusterServiceVersionAction
   | KebabActions
-  | FeatureFlag;
+  | FeatureFlag
+  | DashboardsOverviewResourceActivity;
 
 const CEPH_FLAG = 'CEPH';
 
@@ -340,6 +343,23 @@ const plugin: Plugin<ConsumedExtensions> = [
     },
     flags: {
       required: [OCS_VERSION_4_4_FLAG, CEPH_FLAG],
+    },
+  },
+  {
+    type: 'Dashboards/Overview/Activity/Resource',
+    properties: {
+      k8sResource: {
+        isList: true,
+        kind: referenceForModel(models.OCSServiceModel),
+        namespaced: false,
+        prop: 'storage-cluster',
+      },
+      isActivity: isClusterExpandActivity,
+      loader: () =>
+        import(
+          './components/dashboard-page/storage-dashboard/activity-card/cluster-expand-activity' /* webpackChunkName: "ceph-storage-plugin" */
+        ).then((m) => m.ClusterExpandActivity),
+      required: CEPH_FLAG,
     },
   },
 ];

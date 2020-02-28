@@ -28,7 +28,6 @@ export * from './link';
 export * from './alerts';
 export * from './async';
 export * from './download-button';
-export * from './error-boundary';
 export * from './entitlements';
 export * from './build-strategy';
 export * from './copy-to-clipboard';
