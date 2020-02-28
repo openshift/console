@@ -147,7 +147,9 @@ export const NavBar = withRouter<NavBarProps>(({ pages, basePath }) => {
         });
         return (
           <li className={klass} key={name}>
-            <Link to={`${basePath}/${href}`}>{name}</Link>
+            <Link to={`${basePath}/${href}`} data-test-id={`horizontal-link-${name}`}>
+              {name}
+            </Link>
           </li>
         );
       })}

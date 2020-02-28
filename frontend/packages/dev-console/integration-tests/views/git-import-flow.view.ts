@@ -89,6 +89,7 @@ export const addApplication = async function(name: string, nodeName: string) {
 };
 
 export const addApplicationWithExistingApps = async function(name: string, nodeName: string) {
+  await browser.wait(until.visibilityOf(applicationSelector));
   await browser.wait(until.elementToBeClickable(applicationSelector));
   await applicationSelector.click();
   await browser.wait(until.presenceOf(applicationDropdown));

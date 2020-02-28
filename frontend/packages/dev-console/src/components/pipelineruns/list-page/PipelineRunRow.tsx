@@ -37,6 +37,7 @@ const PipelineRunRow: React.FC<PipelineRunRowProps> = ({ obj, index, key, style 
           name={obj.metadata.name}
           namespace={obj.metadata.namespace}
           title={obj.metadata.name}
+          data-test-id={obj.metadata.name}
         />
       </TableData>
       <TableData className={tableColumnClasses[1]}>

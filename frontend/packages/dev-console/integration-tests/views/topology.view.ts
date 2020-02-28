@@ -46,7 +46,10 @@ export const findNode = function(nodeName: string) {
 export const findWorkloadNode = function(nodeName: string) {
   const tempString = '[data-id="group:';
   const searchString = tempString.concat(nodeName, '"]');
-  const returnNode = element(by.css(searchString)).element(by.css('[data-type="workload"]'));
+  const returnNode = element
+    .all(by.css(searchString))
+    .last()
+    .element(by.css('[data-type="workload"]'));
   return returnNode;
 };
 

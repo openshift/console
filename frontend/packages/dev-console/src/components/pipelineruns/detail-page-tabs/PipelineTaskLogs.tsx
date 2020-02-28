@@ -166,6 +166,7 @@ class PipelineTaskLogs extends React.Component<PipelineTaskLogsProps, PipelineTa
           }
           style={{ height: targetHeight }}
           ref={this.scrollPane}
+          data-test-id="logs-task-container"
         >
           <div className="odc-pipeline-task-logs__taskName">
             {taskName}
