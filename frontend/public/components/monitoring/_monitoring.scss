@@ -20,6 +20,10 @@
     }
   }
 
+  .graph-wrapper--query-browser {
+    min-height: 305px; // Allow for chart legend
+  }
+
   .query-browser__wrapper {
     border: 0;
     margin: 0;
