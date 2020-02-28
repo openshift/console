@@ -14,7 +14,8 @@ const YAMLEditorField: React.FC<YAMLEditorFieldProps> = ({ name }) => {
   return (
     <FormGroup fieldId={fieldId}>
       <AsyncComponent
-        loader={() => import('@console/internal/components/edit-yaml').then((c) => c.EditYAML)}
+        // eslint-disable-next-line no-underscore-dangle
+        loader={() => import('@console/internal/components/edit-yaml').then((c) => c.EditYAML_)}
         obj={field.value}
         onChange={(yaml: string) => setFieldValue(name, yaml)}
         download={false}

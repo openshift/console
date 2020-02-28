@@ -3,13 +3,13 @@ import * as yup from 'yup';
 import { safeDump, safeLoad } from 'js-yaml';
 import { RouteComponentProps } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
-import { PageHeading, history } from '@console/internal/components/utils';
+import { PageHeading, history, LoadingBox } from '@console/internal/components/utils';
 import { coFetchJSON } from '@console/internal/co-fetch';
 import { Formik } from 'formik';
 import NamespacedPage, { NamespacedPageVariants } from '../NamespacedPage';
 import { nameValidationSchema } from '../import/validation-schema';
 import HelmInstallForm from './HelmInstallForm';
-import { mockValues } from './helm-release-resources-utils';
+import { HelmChart } from './helm-types';
 
 export type HelmInstallPageProps = RouteComponentProps<{ ns?: string }>;
 
@@ -22,10 +22,35 @@ export const HelmInstallPage: React.FunctionComponent<HelmInstallPageProps> = ({
   const searchParams = new URLSearchParams(location.search);
   const chartURL = decodeURIComponent(searchParams.get('chartURL'));
   const preselectedNamespace = searchParams.get('preselected-ns');
+  const [chartData, setChartData] = React.useState<HelmChart>();
+  const [chartDataLoaded, setChartDataLoaded] = React.useState(false);
+
+  React.useEffect(() => {
+    let ignore = false;
+
+    const fetchHelmReleases = async () => {
+      let res: HelmChart;
+      try {
+        res = await coFetchJSON(`/api/helm/chart?url=${chartURL}`);
+      } catch {
+        if (ignore) return;
+      }
+      if (ignore) return;
+
+      setChartData(res);
+      setChartDataLoaded(true);
+    };
+
+    fetchHelmReleases();
+
+    return () => {
+      ignore = true;
+    };
+  }, [chartURL]);
 
   const initialValues: HelmInstallFormData = {
-    releaseName: '',
-    valuesYAML: safeDump(mockValues),
+    releaseName: chartData ? `${chartData.metadata.name}-defaulted` : '',
+    valuesYAML: chartData ? safeDump(chartData.values) : undefined,
   };
 
   const validationSchema = yup.object().shape({
@@ -63,12 +88,18 @@ export const HelmInstallPage: React.FunctionComponent<HelmInstallPageProps> = ({
       });
   };
 
+  if (!chartDataLoaded) {
+    return <LoadingBox />;
+  }
+
   return (
     <NamespacedPage disabled variant={NamespacedPageVariants.light}>
       <Helmet>
         <title>Install Helm Chart</title>
       </Helmet>
-      <PageHeading title="Install Helm Chart" />
+      <PageHeading title="Install Helm Chart">
+        The helm chart will be installed using the YAML shown in the editor below.
+      </PageHeading>
       <div className="co-m-pane__body">
         <Formik
           initialValues={initialValues}
