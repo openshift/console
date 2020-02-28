@@ -6,7 +6,7 @@ import { getNodeRoles } from '@console/shared';
 import * as UIActions from '../../actions/ui';
 import { ingressValidHosts } from '../ingress';
 import { alertStateOrder, silenceStateOrder } from '../../reducers/monitoring';
-import { EmptyBox, StatusBox, WithScrollContainer } from '../utils';
+import { convertToBaseValue, EmptyBox, StatusBox, WithScrollContainer } from '../utils';
 import {
   getJobTypeAndCompletions,
   NodeKind,
@@ -99,6 +99,8 @@ const sorts = {
     return _.get(readiness, 'status');
   },
   numReplicas: (resource) => _.toInteger(_.get(resource, 'status.replicas')),
+  pvStorage: (pv) => _.toInteger(convertToBaseValue(_.get(pv, 'spec.capacity.storage'))),
+  pvcStorage: (pvc) => _.toInteger(convertToBaseValue(_.get(pvc, 'status.capacity.storage'))),
   planExternalName,
   podPhase,
   podReadiness,
