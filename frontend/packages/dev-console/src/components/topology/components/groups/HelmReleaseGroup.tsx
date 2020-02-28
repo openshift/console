@@ -42,6 +42,7 @@ const HelmReleaseGroup: React.FC<HelmReleaseGroupProps> = ({
   );
   const refs = useCombineRefs(dragNodeRef, dndDropRef, hoverRef);
   const [filtered] = useSearchFilter(element.getLabel());
+  const hasChildren = element.getChildren()?.length > 0;
   return (
     <>
       <NodeShadows />
@@ -69,6 +70,11 @@ const HelmReleaseGroup: React.FC<HelmReleaseGroupProps> = ({
                 : NODE_SHADOW_FILTER_ID,
             )}
           />
+          {!hasChildren && (
+            <text x={x + width / 2} y={y + height / 2} dy="0.35em" textAnchor="middle">
+              No Resources
+            </text>
+          )}
         </g>
       </Layer>
       {element.getLabel() && (

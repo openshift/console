@@ -13,11 +13,7 @@ export type OperatorBackedServiceProps = {
 const OperatorBackedService: React.FC<OperatorBackedServiceProps> = (
   props: OperatorBackedServiceProps,
 ) => {
-  if (
-    props.element.isCollapsed() ||
-    !props.element.getData().groupResources ||
-    !props.element.getData().groupResources.length
-  ) {
+  if (props.element.isCollapsed()) {
     return <OperatorBackedServiceNode {...props} />;
   }
 
