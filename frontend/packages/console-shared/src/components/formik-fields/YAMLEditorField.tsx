@@ -19,7 +19,7 @@ const YAMLEditorField: React.FC<YAMLEditorFieldProps> = ({ name }) => {
         obj={field.value}
         onChange={(yaml: string) => setFieldValue(name, yaml)}
         download={false}
-        customClass="yaml-editor-formik-field"
+        customClass="ocs-yaml-editor-field"
         create
         hideHeader
         genericYAML
