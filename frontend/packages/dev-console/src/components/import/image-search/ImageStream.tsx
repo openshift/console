@@ -77,10 +77,10 @@ const ImageStream: React.FC = () => {
     registry === RegistryType.Internal &&
     imageStream.namespace !== BuilderImagesNamespace.Openshift &&
     project.name !== imageStream.namespace;
-  const helperTextInvalid = validated === ValidatedOptions.error && (
+  const helperTextInvalid = validated === ValidatedOptions.error && isi.status?.message && (
     <>
       <ExclamationCircleIcon />
-      &nbsp;{isi.status}
+      &nbsp;{isi.status?.message}
     </>
   );
 
