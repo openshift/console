@@ -27,7 +27,8 @@ export const ModifyApplication = (kind: K8sKind, obj: K8sResourceKind): KebabOpt
 export const EditApplication = (model: K8sKind, obj: K8sResourceKind): KebabOption => {
   return {
     label: `Edit ${truncateMiddle(obj.metadata.name, { length: RESOURCE_NAME_TRUNCATE_LENGTH })}`,
-    href: `/edit?name=${obj.metadata.name}&kind=${obj.kind || model.kind}`,
+    href: `/edit/ns/${obj.metadata.namespace}?name=${obj.metadata.name}&kind=${obj.kind ||
+      model.kind}`,
     accessReview: {
       group: model.apiGroup,
       resource: model.plural,

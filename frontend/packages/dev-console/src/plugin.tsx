@@ -401,7 +401,6 @@ const plugin: Plugin<ConsumedExtensions> = [
         '/deploy-image',
         '/project-access',
         '/dev-monitoring',
-        '/edit',
         '/helm-releases',
       ],
       component: NamespaceRedirect,
