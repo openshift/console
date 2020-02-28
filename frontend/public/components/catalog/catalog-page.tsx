@@ -206,14 +206,15 @@ export class CatalogListPage extends React.Component<CatalogListPageProps, Catal
       (normalizedCharts, charts) => {
         charts.forEach((chart: HelmChart) => {
           const tags = chart.keywords;
-          const name = _.startCase(chart.name);
+          const chartName = chart.name;
+          const tileName = `${_.startCase(chartName)} v${chart.version}`;
           const tileImgUrl = chart.icon || getImageForIconClass('icon-helm');
           const chartURL = encodeURIComponent(_.get(chart, 'urls.0'));
 
           normalizedCharts.push({
             obj: { ...chart, ...{ metadata: { uid: chart.digest } } },
             kind: 'HelmChart',
-            tileName: `${name} v${chart.version}`,
+            tileName,
             tileIconClass: null,
             tileImgUrl,
             tileDescription: chart.description,
@@ -222,7 +223,7 @@ export class CatalogListPage extends React.Component<CatalogListPageProps, Catal
             tileProvider: _.get(chart, 'maintainers.0.name'),
             documentationUrl: chart.home,
             supportUrl: chart.home,
-            href: `/catalog/helm-install?chartURL=${chartURL}&preselected-ns=${currentNamespace}`,
+            href: `/catalog/helm-install?chartName=${chartName}&chartURL=${chartURL}&preselected-ns=${currentNamespace}`,
           });
         });
         return normalizedCharts;

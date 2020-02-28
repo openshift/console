@@ -5,7 +5,12 @@ import { FormikProps, FormikValues } from 'formik';
 import { InputField, FormFooter, YAMLEditorField } from '@console/shared';
 import FormSection from '../import/section/FormSection';
 
-const HelmInstallForm: React.FC<FormikProps<FormikValues>> = ({
+interface HelmInstallFormProps {
+  chartHasValues: boolean;
+}
+
+const HelmInstallForm: React.FC<FormikProps<FormikValues> & HelmInstallFormProps> = ({
+  chartHasValues,
   errors,
   handleSubmit,
   handleReset,
@@ -21,7 +26,7 @@ const HelmInstallForm: React.FC<FormikProps<FormikValues>> = ({
         helpText="A unique name for the Helm Chart release."
         required
       />
-      <YAMLEditorField name="valuesYAML" />
+      {chartHasValues && <YAMLEditorField name="chartValuesYAML" />}
     </FormSection>
     <FormFooter
       handleReset={handleReset}

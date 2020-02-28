@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as yup from 'yup';
+import * as _ from 'lodash';
 import { safeDump, safeLoad } from 'js-yaml';
 import { RouteComponentProps } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
@@ -15,15 +16,17 @@ export type HelmInstallPageProps = RouteComponentProps<{ ns?: string }>;
 
 export type HelmInstallFormData = {
   releaseName: string;
-  valuesYAML: string;
+  chartValuesYAML: string;
 };
 
 export const HelmInstallPage: React.FunctionComponent<HelmInstallPageProps> = ({ location }) => {
   const searchParams = new URLSearchParams(location.search);
   const chartURL = decodeURIComponent(searchParams.get('chartURL'));
+  const chartName = searchParams.get('chartName');
   const preselectedNamespace = searchParams.get('preselected-ns');
   const [chartData, setChartData] = React.useState<HelmChart>();
   const [chartDataLoaded, setChartDataLoaded] = React.useState(false);
+  const [chartHasValues, setChartHasValues] = React.useState(false);
 
   React.useEffect(() => {
     let ignore = false;
@@ -39,6 +42,7 @@ export const HelmInstallPage: React.FunctionComponent<HelmInstallPageProps> = ({
 
       setChartData(res);
       setChartDataLoaded(true);
+      !_.isEmpty(res.values) && setChartHasValues(true);
     };
 
     fetchHelmReleases();
@@ -49,8 +53,8 @@ export const HelmInstallPage: React.FunctionComponent<HelmInstallPageProps> = ({
   }, [chartURL]);
 
   const initialValues: HelmInstallFormData = {
-    releaseName: chartData ? `${chartData.metadata.name}-defaulted` : '',
-    valuesYAML: chartData ? safeDump(chartData.values) : undefined,
+    releaseName: chartName || '',
+    chartValuesYAML: chartData ? safeDump(chartData.values) : undefined,
   };
 
   const validationSchema = yup.object().shape({
@@ -58,14 +62,16 @@ export const HelmInstallPage: React.FunctionComponent<HelmInstallPageProps> = ({
   });
 
   const handleSubmit = (values, actions) => {
-    const { releaseName, valuesYAML }: HelmInstallFormData = values;
+    const { releaseName, chartValuesYAML }: HelmInstallFormData = values;
     let valuesObj;
 
-    try {
-      valuesObj = safeLoad(valuesYAML);
-    } catch (err) {
-      actions.setStatus({ submitError: `Invalid YAML - ${err}` });
-      return;
+    if (chartValuesYAML) {
+      try {
+        valuesObj = safeLoad(chartValuesYAML);
+      } catch (err) {
+        actions.setStatus({ submitError: `Invalid YAML - ${err}` });
+        return;
+      }
     }
 
     const payload = {
@@ -98,7 +104,8 @@ export const HelmInstallPage: React.FunctionComponent<HelmInstallPageProps> = ({
         <title>Install Helm Chart</title>
       </Helmet>
       <PageHeading title="Install Helm Chart">
-        The helm chart will be installed using the YAML shown in the editor below.
+        {chartHasValues &&
+          'The helm chart will be installed using the YAML shown in the editor below.'}
       </PageHeading>
       <div className="co-m-pane__body">
         <Formik
@@ -107,7 +114,7 @@ export const HelmInstallPage: React.FunctionComponent<HelmInstallPageProps> = ({
           onReset={history.goBack}
           validationSchema={validationSchema}
         >
-          {(props) => <HelmInstallForm {...props} />}
+          {(props) => <HelmInstallForm {...props} chartHasValues={chartHasValues} />}
         </Formik>
       </div>
     </NamespacedPage>
