@@ -349,14 +349,14 @@ const Card: React.FC<CardProps> = ({ panel }) => {
     );
   }
 
-  const panelSpan: number = getPanelSpan(panel);
-  // If panel.span is greater than 12, default colSpan to 12
-  const colSpan: number = panelSpan > 12 ? 12 : panelSpan;
-  // If colSpan is less than 7, double it for small
-  const colSpanSm: number = colSpan < 7 ? colSpan * 2 : colSpan;
+  // Our grid has 12 columns, so don't allow colSpan over 12
+  const colSpan = Math.min(getPanelSpan(panel), 12);
+
+  // Don't allow very narrow panels at intermediate page widths
+  const colSpanMd = Math.max(colSpan, 3);
 
   return (
-    <div className={`col-xs-12 col-sm-${colSpanSm} col-lg-${colSpan}`}>
+    <div className={`col-xs-12 col-md-${colSpanMd} col-lg-${colSpan}`}>
       <DashboardCard
         className="monitoring-dashboards__panel"
         gradient={panel.type === 'grafana-piechart-panel'}
