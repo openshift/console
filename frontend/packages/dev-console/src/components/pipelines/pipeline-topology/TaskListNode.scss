@@ -12,5 +12,9 @@
     max-height: 350px;
     overflow: auto;
   }
+  &__divider {
+    border-color: var(--pf-global--BorderColor--100);
+    margin: 0;
+  }
 }
 

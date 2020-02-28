@@ -25,22 +25,17 @@ export const removeTaskModal = (taskName: string, onRemove: ModalCallback) => {
   });
 };
 
-export const warnAction = (
-  modalHeader: string,
-  title: string,
-  message: string,
-  onAccept: ModalCallback,
-) => {
+export const warnYAML = (onAccept: ModalCallback) => {
   confirmModal({
-    title: modalHeader,
     message: (
       <ModalContent
         icon={<ExclamationTriangleIcon size="lg" color={warningColor.value} />}
-        title={title}
-        message={message}
+        title="Switch to YAML Editor?"
+        message="Your changes will be lost if you continue. Are you sure you want to leave this form?"
       />
     ),
-    buttonText: 'Confirm',
+    submitDanger: true,
+    btnText: 'Continue',
     executeFn: () => {
       onAccept();
       return Promise.resolve();

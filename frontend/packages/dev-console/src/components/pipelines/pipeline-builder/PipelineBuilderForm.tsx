@@ -39,6 +39,8 @@ type PipelineBuilderFormProps = FormikProps<FormikValues> & {
 
 const PipelineBuilderForm: React.FC<PipelineBuilderFormProps> = (props) => {
   const [selectedTask, setSelectedTask] = React.useState<SelectedBuilderTask>(null);
+  const selectedTaskRef = React.useRef<SelectedBuilderTask>(null);
+  selectedTaskRef.current = selectedTask;
 
   const {
     existingPipeline,
@@ -78,7 +80,14 @@ const PipelineBuilderForm: React.FC<PipelineBuilderFormProps> = (props) => {
     updateErrors(taskErrors);
   };
 
-  const taskGroup: PipelineBuilderTaskGroup = { tasks: values.tasks, listTasks: values.listTasks };
+  const selectedId = values.tasks[selectedTask?.taskIndex]?.name;
+  const selectedIds = selectedId ? [selectedId] : [];
+
+  const taskGroup: PipelineBuilderTaskGroup = {
+    tasks: values.tasks,
+    listTasks: values.listTasks,
+    highlightedIds: selectedIds,
+  };
 
   return (
     <Stack className="odc-pipeline-builder-form">
@@ -149,9 +158,18 @@ const PipelineBuilderForm: React.FC<PipelineBuilderFormProps> = (props) => {
               </Button>
             </ActionGroup>
           </ButtonBar>
-          <Sidebar open={!!selectedTask} onRequestClose={() => setSelectedTask(null)}>
+          <Sidebar
+            open={!!selectedTask}
+            onRequestClose={() => {
+              if (selectedTask?.taskIndex === selectedTaskRef.current?.taskIndex) {
+                setSelectedTask(null);
+              }
+            }}
+          >
             {() => (
               <TaskSidebar
+                // Intentional remount when selection changes
+                key={selectedTask.taskIndex}
                 resourceList={values.resources || []}
                 errorMap={status?.tasks || {}}
                 onUpdateTask={(data: UpdateOperationUpdateTaskData) => {
