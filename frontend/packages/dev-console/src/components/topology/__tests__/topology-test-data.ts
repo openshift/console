@@ -2162,6 +2162,14 @@ export const sampleHelmChartDeploymentConfig = {
   },
 };
 
+export const sampleHelmResourcesMap = {
+  'DeploymentConfig---nodejs-helm': {
+    releaseName: 'nodejs-helm',
+    chartIcon: '',
+    manifestResources: [sampleHelmChartDeploymentConfig],
+  },
+};
+
 export const sampleEventsResource: FirehoseResult<EventKind[]> = {
   loaded: true,
   loadError: '',

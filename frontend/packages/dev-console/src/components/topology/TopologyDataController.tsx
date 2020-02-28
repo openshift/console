@@ -1,16 +1,19 @@
 import * as React from 'react';
-import { Firehose } from '@console/internal/components/utils';
 import { connect } from 'react-redux';
+import { Firehose } from '@console/internal/components/utils';
+import { coFetchJSON } from '@console/internal/co-fetch';
 import * as plugins from '@console/internal/plugins';
 import { getResourceList } from '@console/shared';
-import { referenceForModel } from '@console/internal/module/k8s';
+import { referenceForModel, K8sResourceKind } from '@console/internal/module/k8s';
 import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager/src/models';
 import { RootState } from '@console/internal/redux';
+import { safeLoadAll } from 'js-yaml';
 import { ServiceBindingRequestModel } from '../../models';
 import { TopologyFilters, getTopologyFilters } from './filters/filter-utils';
-import { allowedResources, transformTopologyData } from './topology-utils';
+import { allowedResources, transformTopologyData, getHelmReleaseKey } from './topology-utils';
 import { TopologyDataModel, TopologyDataResources, TrafficData } from './topology-types';
 import trafficConnectorMock from './__mocks__/traffic-connector.mock';
+import { HelmRelease, HelmReleaseResourcesMap } from '../helm/helm-types';
 
 export interface RenderProps {
   data?: TopologyDataModel;
@@ -35,6 +38,7 @@ export interface ControllerProps {
   serviceBinding: boolean;
   topologyFilters: TopologyFilters;
   trafficData?: TrafficData;
+  helmResourcesMap?: HelmReleaseResourcesMap;
 }
 
 export interface TopologyDataControllerProps extends StateProps {
@@ -57,6 +61,7 @@ const Controller: React.FC<ControllerProps> = ({
   serviceBinding,
   topologyFilters,
   trafficData,
+  helmResourcesMap,
 }) =>
   render({
     loaded,
@@ -71,6 +76,7 @@ const Controller: React.FC<ControllerProps> = ({
           utils,
           topologyFilters,
           trafficData,
+          helmResourcesMap,
         )
       : null,
   });
@@ -84,6 +90,7 @@ export const TopologyDataController: React.FC<TopologyDataControllerProps> = ({
   serviceBinding,
   filters,
 }) => {
+  const [helmResourcesMap, setHelmResourcesMap] = React.useState();
   const { resources, utils } = getResourceList(namespace, resourceList);
   resources.push({
     isList: true,
@@ -101,6 +108,46 @@ export const TopologyDataController: React.FC<TopologyDataControllerProps> = ({
       optional: true,
     });
   }
+
+  React.useEffect(() => {
+    let ignore = false;
+
+    const fetchHelmReleases = async () => {
+      let releases: HelmRelease[];
+      try {
+        releases = await coFetchJSON(`/api/helm/releases?ns=${namespace}`);
+      } catch {
+        return;
+      }
+      if (ignore) return;
+
+      const releaseResourcesMap = releases.reduce((acc, release) => {
+        const manifestResources: K8sResourceKind[] = safeLoadAll(release.manifest);
+
+        manifestResources.forEach((resource) => {
+          const resourceKindName = getHelmReleaseKey(resource);
+          if (!acc.hasOwnProperty(resourceKindName)) {
+            acc[resourceKindName] = {
+              releaseName: release.name,
+              chartIcon: release.chart.metadata.icon,
+              manifestResources,
+            };
+          }
+        });
+
+        return acc;
+      }, {});
+
+      setHelmResourcesMap(releaseResourcesMap);
+    };
+
+    fetchHelmReleases();
+
+    return () => {
+      ignore = true;
+    };
+  }, [namespace]);
+
   return (
     <Firehose resources={resources}>
       <Controller
@@ -111,6 +158,7 @@ export const TopologyDataController: React.FC<TopologyDataControllerProps> = ({
         serviceBinding={serviceBinding}
         topologyFilters={filters}
         trafficData={trafficConnectorMock.elements}
+        helmResourcesMap={helmResourcesMap}
       />
     </Firehose>
   );
