@@ -7,10 +7,12 @@ export const FAILED_TO_CREATE = 'failed to create';
 export const FAILED_TO_PATCH = 'failed to patch';
 export const DYNAMIC = 'Dynamic';
 
-export const CREATE = 'Create';
 export const EDIT = 'Edit';
 export const SAVE = 'Save';
 export const ADD = 'Add';
+
+export const ADD_DISK = 'Add Disk';
+export const ADD_NETWORK_INTERFACE = 'Add Network Interface';
 
 export const getDialogUIError = (hasAllRequiredFilled) =>
   hasAllRequiredFilled

@@ -24,7 +24,6 @@ import { DataVolumeWrapper } from '../../../../k8s/wrapper/vm/data-volume-wrappe
 import { DiskModal } from '../../../modals/disk-modal';
 import { VM_TEMPLATE_NAME_PARAMETER } from '../../../../constants/vm-templates';
 import { PersistentVolumeClaimWrapper } from '../../../../k8s/wrapper/vm/persistent-volume-claim-wrapper';
-import { ADD } from '../../../../utils/strings';
 import { TemplateValidations } from '../../../../utils/validations/template/template-validations';
 import { getTemplateValidation } from '../../selectors/template';
 
@@ -105,7 +104,6 @@ const VMWizardStorageModal: React.FC<VMWizardStorageModalProps> = (props) => {
         ].includes(type)}
         isCreateTemplate={isCreateTemplate}
         isEditing={isEditing}
-        submitButtonText={ADD}
         onSubmit={(
           resultDiskWrapper,
           resultVolumeWrapper,
