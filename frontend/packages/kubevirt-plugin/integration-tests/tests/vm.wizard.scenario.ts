@@ -116,7 +116,7 @@ describe('Kubevirt create VM using wizard', () => {
           [`flavor.template.kubevirt.io/${testVMConfig.flavorConfig.flavor}`]: 'true',
           [`os.template.kubevirt.io/${osID}`]: 'true',
           'vm.kubevirt.io/template': `win2k12r2-${testVMConfig.workloadProfile}-${testVMConfig.flavorConfig.flavor}-${COMMON_TEMPLATES_VERSION}`,
-          'vm.kubevirt.io/template-namespace': COMMON_TEMPLATES_NAMESPACE,
+          'vm.kubevirt.io/template.namespace': COMMON_TEMPLATES_NAMESPACE,
           'vm.kubevirt.io/template.revision': COMMON_TEMPLATES_REVISION,
           'vm.kubevirt.io/template.version': INNER_TEMPLATE_VERSION,
         };

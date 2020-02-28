@@ -20,7 +20,7 @@ metadata:
     flavor.template.kubevirt.io/medium: 'true'
     os.template.kubevirt.io/win10: 'true'
     vm.kubevirt.io/template: win2k12r2-server-medium-${COMMON_TEMPLATES_VERSION}
-    vm.kubevirt.io/template-namespace: ${COMMON_TEMPLATES_NAMESPACE}
+    vm.kubevirt.io/template.namespace: ${COMMON_TEMPLATES_NAMESPACE}
     vm.kubevirt.io/template.revision: '${COMMON_TEMPLATES_REVISION}'
     vm.kubevirt.io/template.version: ${COMMON_TEMPLATES_VERSION}
     workload.template.kubevirt.io/server: 'true'
