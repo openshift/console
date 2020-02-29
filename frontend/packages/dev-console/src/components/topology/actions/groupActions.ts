@@ -3,7 +3,7 @@ import { KebabOption } from '@console/internal/components/utils/kebab';
 import { modelFor, referenceFor } from '@console/internal/module/k8s';
 import { Node } from '@console/topology';
 import { asAccessReview } from '@console/internal/components/utils';
-import { addResourceMenu } from '../../../actions/add-resources';
+import { addResourceMenuWithoutCatalog } from '../../../actions/add-resources';
 import { TopologyDataMap, TopologyApplicationObject, GraphData } from '../topology-types';
 import { getTopologyResourceObject } from '../topology-utils';
 import { deleteApplicationModal } from '../../modals';
@@ -60,7 +60,7 @@ const addResourcesMenu = (
   const primaryResource = application.resources[0]?.resources?.obj;
   const connectorSourceObj = connectorSource?.getData()?.resources?.obj || {};
   return _.reduce(
-    addResourceMenu,
+    addResourceMenuWithoutCatalog,
     (menuItems, menuItem) => {
       const item = menuItem(
         primaryResource,
