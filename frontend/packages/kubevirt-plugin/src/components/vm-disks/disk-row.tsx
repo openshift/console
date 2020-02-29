@@ -23,11 +23,12 @@ import {
   VMStorageRowActionOpts,
   VMStorageRowCustomData,
 } from './types';
+import { validateDisk } from '../../utils/validations/vm/disk';
 
 const menuActionEdit = (
   disk: CombinedDisk,
   vmLikeEntity: VMLikeEntityKind,
-  { withProgress }: VMNicRowActionOpts,
+  { withProgress, templateValidations }: VMStorageRowActionOpts,
 ): KebabOption => ({
   label: 'Edit',
   callback: () =>
@@ -39,6 +40,7 @@ const menuActionEdit = (
         disk: disk.diskWrapper.asResource(),
         volume: disk.volumeWrapper.asResource(),
         dataVolume: disk.dataVolumeWrapper && disk.dataVolumeWrapper.asResource(),
+        templateValidations,
       }).result,
     ),
   accessReview: asAccessReview(
@@ -148,13 +150,31 @@ export type VMDiskRowProps = {
 
 export const DiskRow: React.FC<VMDiskRowProps> = ({
   obj: { disk, ...restData },
-  customData: { isDisabled, withProgress, vmLikeEntity, columnClasses },
+  customData: { isDisabled, withProgress, vmLikeEntity, columnClasses, templateValidations },
   index,
   style,
 }) => {
+  const diskValidations = validateDisk(
+    disk.diskWrapper,
+    disk.volumeWrapper,
+    disk.dataVolumeWrapper,
+    disk.persistentVolumeClaimWrapper,
+    { templateValidations },
+  );
   return (
     <DiskSimpleRow
       data={restData}
+      validation={
+        diskValidations && {
+          name: diskValidations.validations.name,
+          size: diskValidations.validations.size,
+          diskInterface: diskValidations.validations.diskInterface,
+          source:
+            diskValidations.validations.url ||
+            diskValidations.validations.container ||
+            diskValidations.validations.pvc,
+        }
+      }
       columnClasses={columnClasses}
       index={index}
       style={style}
@@ -162,6 +182,7 @@ export const DiskRow: React.FC<VMDiskRowProps> = ({
         <Kebab
           options={getActions(disk, vmLikeEntity, {
             withProgress,
+            templateValidations,
           })}
           isDisabled={
             isDisabled ||
