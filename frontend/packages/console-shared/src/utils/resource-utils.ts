@@ -8,6 +8,7 @@ import {
   RouteKind,
   apiVersionForModel,
   referenceForModel,
+  K8sKind,
 } from '@console/internal/module/k8s';
 import {
   DeploymentConfigModel,
@@ -528,11 +529,11 @@ export class TransformResourceData {
     };
   };
 
-  toReplicaSetItem = (rs: K8sResourceKind): PodControllerOverviewItem => {
+  toResourceItem = (rs: K8sResourceKind, model: K8sKind): PodControllerOverviewItem => {
     const obj = {
       ...rs,
-      apiVersion: apiVersionForModel(ReplicaSetModel),
-      kind: ReplicaSetModel.kind,
+      apiVersion: apiVersionForModel(model),
+      kind: `${model.kind}`,
     };
     const isKnative = isKnativeServing(rs, 'metadata.labels');
     const podData = this.getPodsForResource(rs);
@@ -556,10 +557,23 @@ export class TransformResourceData {
     );
   };
 
+  getActiveStatefulSets = (ss: K8sResourceKind): K8sResourceKind[] => {
+    const { statefulSets } = this.resources;
+    const ownedRS = _.filter(statefulSets?.data, (f) => f.metadata.name === ss.metadata.name);
+    return _.filter(ownedRS, (rs) => _.get(rs, 'status.replicas'));
+  };
+
   public getReplicaSetsForResource = (deployment: K8sResourceKind): PodControllerOverviewItem[] => {
     const replicaSets = this.getActiveReplicaSets(deployment);
     return sortReplicaSetsByRevision(replicaSets).map((rs) =>
-      getIdledStatus(this.toReplicaSetItem(rs), deployment),
+      getIdledStatus(this.toResourceItem(rs, ReplicaSetModel), deployment),
+    );
+  };
+
+  public getStatefulSetsResource = (ss: K8sResourceKind): PodControllerOverviewItem[] => {
+    const activeStatefulSets = this.getActiveStatefulSets(ss);
+    return activeStatefulSets.map((pss) =>
+      getIdledStatus(this.toResourceItem(pss, StatefulSetModel), ss),
     );
   };
 
@@ -896,6 +910,27 @@ export class TransformResourceData {
       };
       const replicaSets = this.getReplicaSetsForResource(obj);
       const [current, previous] = replicaSets;
+      const isRollingOut = !!current && !!previous;
+
+      return {
+        obj,
+        current,
+        previous,
+        isRollingOut,
+        pods: [..._.get(current, 'pods', []), ..._.get(previous, 'pods', [])],
+      };
+    });
+  };
+
+  public getPodsForStatefulSets = (ss: K8sResourceKind[]): PodRCData[] => {
+    return _.map(ss, (s) => {
+      const obj: K8sResourceKind = {
+        ...s,
+        apiVersion: apiVersionForModel(StatefulSetModel),
+        kind: StatefulSetModel.kind,
+      };
+      const statefulSets = this.getStatefulSetsResource(obj);
+      const [current, previous] = statefulSets;
       const isRollingOut = !!current && !!previous;
 
       return {
