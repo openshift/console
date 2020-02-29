@@ -6,10 +6,12 @@ import { AddNodeDirection, NodeType } from './const';
 // Builder Callbacks
 export type NewTaskListNodeCallback = (direction: AddNodeDirection) => void;
 export type NewTaskNodeCallback = (resource: PipelineResourceTask) => void;
+export type RemoveListTaskCallback = () => void;
 export type NodeSelectionCallback = (nodeData: BuilderNodeModelData) => void;
 
 // Node Data Models
 export type PipelineRunAfterNodeModelData = {
+  selected?: boolean;
   task: {
     name: string;
     runAfter?: string[];
@@ -19,6 +21,7 @@ export type TaskListNodeModelData = PipelineRunAfterNodeModelData & {
   clusterTaskList: PipelineResourceTask[];
   namespaceTaskList: PipelineResourceTask[];
   onNewTask: NewTaskNodeCallback;
+  onRemoveTask: RemoveListTaskCallback | null;
 };
 export type BuilderNodeModelData = PipelineRunAfterNodeModelData & {
   error?: string;

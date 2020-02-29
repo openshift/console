@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Button, Flex, FlexItem, FlexItemModifiers } from '@patternfly/react-core';
 import { PipelineModel } from '../../../models';
-import { warnAction } from './modals';
+import { warnYAML } from './modals';
 import { getBadgeFromType } from '@console/shared/src';
 import { Pipeline } from '../../../utils/pipeline-augment';
 import { goToYAML } from './utils';
@@ -28,12 +28,7 @@ const PipelineBuilderHeader: React.FC<PipelineBuilderHeaderProps> = (props) => {
             variant="link"
             onClick={() => {
               if (formIsDirty) {
-                warnAction(
-                  'Edit YAML',
-                  'You are about to leave',
-                  'The Pipeline Builder content will be lost if you navigate. Are you sure?',
-                  () => goToYAML(existingPipeline, namespace),
-                );
+                warnYAML(() => goToYAML(existingPipeline, namespace));
               } else {
                 goToYAML(existingPipeline, namespace);
               }
