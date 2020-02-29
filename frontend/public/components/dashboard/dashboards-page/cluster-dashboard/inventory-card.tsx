@@ -148,7 +148,7 @@ export const InventoryCard = connect(mapStateToProps)(
   )(({ flags, k8sModels }) => {
     const items = getItems(flags, k8sModels);
     return (
-      <DashboardCard>
+      <DashboardCard data-test-id="inventory-card">
         <DashboardCardHeader>
           <DashboardCardTitle>Cluster Inventory</DashboardCardTitle>
         </DashboardCardHeader>

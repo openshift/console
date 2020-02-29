@@ -1,6 +1,6 @@
 import { browser } from 'protractor';
 import { appHost } from '@console/internal-integration-tests/protractor.conf';
-import { dashboardIsLoaded } from '@console/shared/src/test-views/dashboard-shared.view';
+import { isLoaded } from '@console/shared/src/test-views/dashboard-shared.view';
 import { click } from '@console/shared/src/test-utils/utils';
 import {
   noobaaAddStorageResource,
@@ -14,7 +14,7 @@ import { SECOND } from '../../utils/consts';
 describe('Check noobaa link in obejct service dashboard and perform SSO.', () => {
   beforeAll(async () => {
     await browser.get(`${appHost}/dashboards`);
-    await dashboardIsLoaded();
+    await isLoaded();
   });
 
   it('Check that noobaa dashboard is opening and links available.', async () => {

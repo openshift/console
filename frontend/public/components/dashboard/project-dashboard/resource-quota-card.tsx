@@ -34,7 +34,7 @@ export const ResourceQuotaCard = withDashboardResources(
     const error = _.get(resources.resourceQuotas, 'loadError');
 
     return (
-      <DashboardCard>
+      <DashboardCard data-test-id="resource-quotas-card">
         <DashboardCardHeader>
           <DashboardCardTitle>Resource Quotas</DashboardCardTitle>
         </DashboardCardHeader>

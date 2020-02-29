@@ -133,7 +133,7 @@ export const DetailsCard_ = connect(mapStateToProps)(
     const k8sGitVersion = getK8sGitVersion(k8sVersion);
 
     return (
-      <DashboardCard>
+      <DashboardCard data-test-id="details-card">
         <DashboardCardHeader>
           <DashboardCardTitle>Details</DashboardCardTitle>
           <DashboardCardLink to="/settings/cluster/">View settings</DashboardCardLink>
