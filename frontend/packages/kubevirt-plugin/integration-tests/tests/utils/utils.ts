@@ -149,3 +149,7 @@ export function resolveStorageDataAttribute(configMap: any, attribute: string): 
   }
   return _.get(configMap, ['data', attribute]);
 }
+
+export function pauseVM(name: string, namespace: string): void {
+  execSync(`virtctl pause vmi ${name} -n ${namespace}`);
+}

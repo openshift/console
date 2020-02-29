@@ -10,9 +10,11 @@ import {
   vmDetailFlavorEditButton,
   vmDetailCdEditButton,
   vmDetailBootOrderEditButton,
+  vmDetailStatusEditButton,
 } from '../../views/virtualMachine.view';
 import * as editCD from '../../views/editCDView';
 import * as editBootOrder from '../../views/editBootOrderView';
+import * as editStatusView from '../../views/editStatusView';
 import { NetworkInterfaceDialog } from '../dialogs/networkInterfaceDialog';
 import { DiskDialog } from '../dialogs/diskDialog';
 import { DetailView } from './detailView';
@@ -95,5 +97,10 @@ export class KubevirtDetailView extends DetailView {
   async modalEditBootOrder() {
     await click(vmDetailBootOrderEditButton(this.namespace, this.name));
     await browser.wait(until.presenceOf(editBootOrder.bootOrderDialog));
+  }
+
+  async modalEditStatus() {
+    await click(vmDetailStatusEditButton(this.namespace, this.name));
+    await browser.wait(until.presenceOf(editStatusView.unpauseVMDialog));
   }
 }

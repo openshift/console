@@ -85,6 +85,7 @@ export enum VM_ACTION {
   Restart = 'Restart Virtual Machine',
   Start = 'Start Virtual Machine',
   Stop = 'Stop Virtual Machine',
+  Unpause = 'Unpause Virtual Machine',
 }
 
 export enum VM_STATUS {
@@ -95,6 +96,7 @@ export enum VM_STATUS {
   Pending = 'Pending',
   Importing = 'Importing',
   Migrating = 'Migrating',
+  Paused = 'Paused',
 }
 
 export enum DISK_SOURCE {
