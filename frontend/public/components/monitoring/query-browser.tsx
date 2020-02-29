@@ -376,6 +376,9 @@ const maxDataPointsHard = 10000;
 const minSamples = 10;
 const maxSamples = 300;
 
+// Fall back to a line chart for performance if there are too many series
+const maxStacks = 20;
+
 // We don't want to refresh all the graph data for just a small adjustment in the number of samples,
 // so don't update unless the number of samples would change by at least this proportion
 const samplesLeeway = 0.2;
@@ -504,6 +507,8 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
   const endTime = _.get(xDomain, '[1]');
 
   const safeFetch = useSafeFetch();
+
+  const stack = isStack && _.sumBy(graphData, 'length') <= maxStacks;
 
   // If provided, `timespan` overrides any existing span setting
   React.useEffect(() => {
@@ -676,7 +681,7 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
                 allSeries={graphData}
                 disabledSeries={disabledSeries}
                 formatLegendLabel={formatLegendLabel}
-                isStack={isStack}
+                isStack={stack}
                 span={span}
                 xDomain={xDomain}
               />
@@ -685,7 +690,7 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
                 allSeries={graphData}
                 disabledSeries={disabledSeries}
                 formatLegendLabel={formatLegendLabel}
-                isStack={isStack}
+                isStack={stack}
                 onZoom={onZoom}
                 span={span}
                 xDomain={xDomain}
