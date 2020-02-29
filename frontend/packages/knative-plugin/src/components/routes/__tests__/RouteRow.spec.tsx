@@ -34,7 +34,7 @@ describe('RouteRow', () => {
   });
 
   it('should not show ExternalLink for associated route if not found in status', () => {
-    routeData = _.omit(routeData, 'obj.status');
+    routeData = _.omit(routeData, 'obj.status') as RouteRowProps;
     const wrapper = shallow(<RouteRow {...routeData} />);
     const serviceDataTable = wrapper.find(TableData).at(2);
     expect(serviceDataTable.find(ExternalLink)).toHaveLength(0);
@@ -47,7 +47,7 @@ describe('RouteRow', () => {
   });
 
   it('should show "-" in case of no status', () => {
-    routeData = _.omit(routeData, 'obj.status');
+    routeData = _.omit(routeData, 'obj.status') as RouteRowProps;
     const wrapper = shallow(<RouteRow {...routeData} />);
     const conditionColData = wrapper.find(TableData).at(4);
     expect(conditionColData.props().children).toEqual('-');
@@ -63,7 +63,7 @@ describe('RouteRow', () => {
   });
 
   it('should show "-" in case of no traffic', () => {
-    routeData = _.omit(routeData, 'obj.status.traffic');
+    routeData = _.omit(routeData, 'obj.status.traffic') as RouteRowProps;
     const wrapper = shallow(<RouteRow {...routeData} />);
     const trafficColData = wrapper.find(TableData).at(5);
     expect(trafficColData.props().children).toEqual('-');

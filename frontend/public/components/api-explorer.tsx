@@ -9,7 +9,7 @@ import * as fuzzy from 'fuzzysearch';
 import { Tooltip } from '@patternfly/react-core';
 import { sortable } from '@patternfly/react-table';
 
-import { ALL_NAMESPACES_KEY, FLAGS } from '@console/shared';
+import { ALL_NAMESPACES_KEY, FLAGS, APIError } from '@console/shared';
 import { connectToModel } from '../kinds';
 import { LocalResourceAccessReviewsModel, ResourceAccessReviewsModel } from '../models';
 import {
@@ -21,6 +21,7 @@ import {
   getResourceDescription,
   referenceForModel,
   ResourceAccessReviewRequest,
+  ResourceAccessReviewResponse,
 } from '../module/k8s';
 import { connectToFlags, FlagsObject } from '../reducers/features';
 import { RootState } from '../redux';
@@ -472,8 +473,8 @@ const APIResourceAccessReview: React.FC<APIResourceTabProps> = ({
   const [showUsers, setShowUsers] = React.useState(true);
   const [showGroups, setShowGroups] = React.useState(true);
   const [showServiceAccounts, setShowServiceAccounts] = React.useState(false);
-  const [accessResponse, setAccessResponse] = React.useState();
-  const [error, setError] = React.useState(null);
+  const [accessResponse, setAccessResponse] = React.useState<ResourceAccessReviewResponse>();
+  const [error, setError] = React.useState<APIError>();
 
   // perform the access review
   React.useEffect(() => {

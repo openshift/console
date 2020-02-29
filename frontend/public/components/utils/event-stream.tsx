@@ -75,13 +75,11 @@ export const EventStreamList: React.FC<EventStreamListProps> = ({
   className,
   EventComponent,
 }) => {
-  const [list, setList] = React.useState();
+  const [list, setList] = React.useState(null);
   const onResize = React.useCallback(() => measurementCache.clearAll(), []);
   React.useEffect(() => {
     onResize();
-    if (list) {
-      list.recomputeRowHeights();
-    }
+    list?.recomputeRowHeights();
   }, [list, events, onResize]);
   const rowRenderer = React.useCallback(
     ({ index, style, key, parent }) => (

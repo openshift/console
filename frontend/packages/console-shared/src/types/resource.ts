@@ -3,6 +3,17 @@ import { DEPLOYMENT_STRATEGY } from '../constants';
 import { OverviewItemAlerts, PodControllerOverviewItem } from './pod';
 import { ClusterServiceVersionKind } from '@console/operator-lifecycle-manager';
 
+export type APIError = {
+  status?: string;
+  message?: string;
+  reason?: string;
+  details?: {
+    name?: string;
+    kind?: string;
+  };
+  code?: number;
+};
+
 export type BuildConfigOverviewItem = K8sResourceKind & {
   builds: K8sResourceKind[];
 };

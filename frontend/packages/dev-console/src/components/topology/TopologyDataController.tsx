@@ -89,7 +89,7 @@ export const TopologyDataController: React.FC<TopologyDataControllerProps> = ({
   serviceBinding,
   filters,
 }) => {
-  const [helmResourcesMap, setHelmResourcesMap] = React.useState();
+  const [helmResourcesMap, setHelmResourcesMap] = React.useState<HelmReleaseResourcesMap>();
   const { resources, utils } = getResourceList(namespace, resourceList);
   if (serviceBinding) {
     resources.push({
