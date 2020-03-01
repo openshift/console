@@ -28,6 +28,7 @@ type OwnProps = {
 type MonitoringDashboardGraphProps = OwnProps & DispatchProps;
 
 const defaultTimespan = 30 * 60 * 1000;
+const defaultSamples = 30;
 
 export const MonitoringDashboardGraph: React.FC<MonitoringDashboardGraphProps> = ({
   query,
@@ -44,6 +45,7 @@ export const MonitoringDashboardGraph: React.FC<MonitoringDashboardGraphProps> =
           <QueryBrowser
             hideControls
             defaultTimespan={defaultTimespan}
+            defaultSamples={defaultSamples}
             namespace={namespace}
             queries={[query]}
             isStack={graphType === GraphTypes.area}

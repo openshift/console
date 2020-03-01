@@ -17,11 +17,11 @@ export interface MonitoringQuery {
 }
 
 export const metricsQuery = {
-  PODS_BY_CPU: 'PODS_BY_CPU',
-  PODS_BY_MEMORY: 'PODS_BY_MEMORY',
-  PODS_BY_FILESYSTEM: 'PODS_BY_FILESYSTEM',
-  PODS_BY_NETWORK: 'PODS_BY_NETWORK',
-  PODS_BY_STORAGE: 'PODS_BY_STORAGE',
+  PODS_BY_CPU: 'CPU Usage',
+  PODS_BY_MEMORY: 'Memory Usage',
+  PODS_BY_FILESYSTEM: 'Filesystem Usage',
+  PODS_BY_NETWORK_IN: 'Receive Bandwidth',
+  PODS_BY_NETWORK_OUT: 'Transmit Bandwidth',
 };
 
 const topMetricsQueries = {
@@ -34,11 +34,11 @@ const topMetricsQueries = {
   [metricsQuery.PODS_BY_FILESYSTEM]: _.template(
     `topk(25, sort_desc(sum(pod:container_fs_usage_bytes:sum{container="",pod!="",namespace='<%= namespace %>'}) BY (pod, namespace)))`,
   ),
-  [metricsQuery.PODS_BY_NETWORK]: _.template(
-    `topk(25, sort_desc(sum(rate(container_network_receive_bytes_total{ container="POD", pod!= "", namespace = '<%= namespace %>'}[5m]) + rate(container_network_transmit_bytes_total{ container="POD", pod!= "", namespace = '<%= namespace %>'}[5m])) BY (namespace, pod)))`,
+  [metricsQuery.PODS_BY_NETWORK_IN]: _.template(
+    `topk(25, sort_desc(sum(rate(container_network_receive_bytes_total{ container="POD", pod!= "", namespace='<%= namespace %>'}[5m])) BY (namespace, pod)))`,
   ),
-  [metricsQuery.PODS_BY_STORAGE]: _.template(
-    `topk(25, sort_desc(sum(avg_over_time(pod:container_fs_usage_bytes:sum{container="", pod!="", namespace='<%= namespace %>'}[5m])) BY (pod, namespace)))`,
+  [metricsQuery.PODS_BY_NETWORK_OUT]: _.template(
+    `topk(25, sort_desc(sum(rate(container_network_transmit_bytes_total{ container="POD", pod!= "", namespace='<%= namespace %>'}[5m])) BY (namespace, pod)))`,
   ),
 };
 
@@ -48,14 +48,18 @@ export const getTopMetricsQueries = (namespace: string) => ({
   [metricsQuery.PODS_BY_FILESYSTEM]: topMetricsQueries[metricsQuery.PODS_BY_FILESYSTEM]({
     namespace,
   }),
-  [metricsQuery.PODS_BY_NETWORK]: topMetricsQueries[metricsQuery.PODS_BY_NETWORK]({ namespace }),
-  [metricsQuery.PODS_BY_STORAGE]: topMetricsQueries[metricsQuery.PODS_BY_STORAGE]({ namespace }),
+  [metricsQuery.PODS_BY_NETWORK_IN]: topMetricsQueries[metricsQuery.PODS_BY_NETWORK_IN]({
+    namespace,
+  }),
+  [metricsQuery.PODS_BY_NETWORK_OUT]: topMetricsQueries[metricsQuery.PODS_BY_NETWORK_OUT]({
+    namespace,
+  }),
 });
 
 export const monitoringDashboardQueries: MonitoringQuery[] = [
   {
     query: _.template(
-      `topk(25, sort_desc(sum(avg_over_time(pod:container_cpu_usage:sum{container="",pod!="",namespace='<%= namespace %>'}[5m])) BY (pod, namespace)))`,
+      `sum(node_namespace_pod_container:container_cpu_usage_seconds_total:sum_rate{cluster="",namespace='<%= namespace %>'}) by (pod)`,
     ),
     chartType: GraphTypes.area,
     title: 'CPU Usage',
@@ -64,7 +68,7 @@ export const monitoringDashboardQueries: MonitoringQuery[] = [
   },
   {
     query: _.template(
-      `topk(25, sort_desc(sum(avg_over_time(container_memory_working_set_bytes{container="",pod!="",namespace='<%= namespace %>'}[5m])) BY (pod, namespace)))`,
+      `sum(container_memory_working_set_bytes{cluster="", container!="", namespace='<%= namespace %>'}) by (pod)`,
     ),
     chartType: GraphTypes.area,
     title: 'Memory Usage',
@@ -73,19 +77,55 @@ export const monitoringDashboardQueries: MonitoringQuery[] = [
   },
   {
     query: _.template(
-      `topk(25, sort_desc(sum(pod:container_fs_usage_bytes:sum{container="",pod!="",namespace='<%= namespace %>'}) BY (pod, namespace)))`,
+      `sum(irate(container_network_receive_bytes_total{cluster="", namespace='<%= namespace %>'}[2h])) by (pod)`,
     ),
-    chartType: GraphTypes.line,
-    title: 'Filesystem Usage',
-    humanize: humanizeBinaryBytes,
+    chartType: GraphTypes.area,
+    title: 'Receive Bandwidth',
+    humanize: humanizeDecimalBytesPerSec,
     byteDataType: ByteDataTypes.BinaryBytes,
   },
   {
     query: _.template(
-      `topk(25, sort_desc(sum(rate(container_network_receive_bytes_total{ container="POD", pod!= "", namespace = '<%= namespace %>'}[5m]) + rate(container_network_transmit_bytes_total{ container="POD", pod!= "", namespace = '<%= namespace %>'}[5m])) BY (namespace, pod)))`,
+      `sum(irate(container_network_transmit_bytes_total{cluster="", namespace='<%= namespace %>'}[2h])) by (pod)`,
     ),
-    chartType: GraphTypes.line,
-    title: 'Network Received ',
+    chartType: GraphTypes.area,
+    title: 'Transmit Bandwidth',
+    humanize: humanizeDecimalBytesPerSec,
+    byteDataType: ByteDataTypes.BinaryBytes,
+  },
+  {
+    query: _.template(
+      `sum(irate(container_network_receive_packets_total{cluster="", namespace='<%= namespace %>'}[2h])) by (pod)`,
+    ),
+    chartType: GraphTypes.area,
+    title: 'Rate of Received Packets',
+    humanize: humanizeDecimalBytesPerSec,
+    byteDataType: ByteDataTypes.BinaryBytes,
+  },
+  {
+    query: _.template(
+      `sum(irate(container_network_transmit_packets_total{cluster="", namespace='<%= namespace %>'}[2h])) by (pod)`,
+    ),
+    chartType: GraphTypes.area,
+    title: 'Rate of Transmitted Packets',
+    humanize: humanizeDecimalBytesPerSec,
+    byteDataType: ByteDataTypes.BinaryBytes,
+  },
+  {
+    query: _.template(
+      `sum(irate(container_network_receive_packets_dropped_total{cluster="", namespace='<%= namespace %>'}[2h])) by (pod)`,
+    ),
+    chartType: GraphTypes.area,
+    title: 'Rate of Received Packets Dropped',
+    humanize: humanizeDecimalBytesPerSec,
+    byteDataType: ByteDataTypes.BinaryBytes,
+  },
+  {
+    query: _.template(
+      `sum(irate(container_network_transmit_packets_dropped_total{cluster="", namespace='<%= namespace %>'}[2h])) by (pod)`,
+    ),
+    chartType: GraphTypes.area,
+    title: 'Rate of Transmitted Packets Dropped',
     humanize: humanizeDecimalBytesPerSec,
     byteDataType: ByteDataTypes.BinaryBytes,
   },
@@ -94,7 +134,7 @@ export const monitoringDashboardQueries: MonitoringQuery[] = [
 export const topWorkloadMetricsQueries: MonitoringQuery[] = [
   {
     title: 'CPU Usage',
-    chartType: GraphTypes.line,
+    chartType: GraphTypes.area,
     humanize: humanizeCpuCores,
     byteDataType: ByteDataTypes.BinaryBytes,
     query: _.template(
@@ -105,7 +145,7 @@ export const topWorkloadMetricsQueries: MonitoringQuery[] = [
   },
   {
     title: 'Memory Usage',
-    chartType: GraphTypes.line,
+    chartType: GraphTypes.area,
     humanize: humanizeBinaryBytes,
     byteDataType: ByteDataTypes.BinaryBytes,
     query: _.template(
@@ -116,7 +156,7 @@ export const topWorkloadMetricsQueries: MonitoringQuery[] = [
   },
   {
     title: 'Receive Bandwidth',
-    chartType: GraphTypes.line,
+    chartType: GraphTypes.area,
     humanize: humanizeDecimalBytesPerSec,
     byteDataType: ByteDataTypes.DecimalBytes,
     query: _.template(
@@ -130,31 +170,13 @@ export const topWorkloadMetricsQueries: MonitoringQuery[] = [
 export const workloadMetricsQueries: MonitoringQuery[] = [
   {
     title: 'Transmit Bandwidth',
-    chartType: GraphTypes.line,
+    chartType: GraphTypes.area,
     humanize: humanizeDecimalBytesPerSec,
     byteDataType: ByteDataTypes.DecimalBytes,
     query: _.template(
       `sum(irate(container_network_receive_bytes_total{cluster="", namespace=~'<%= namespace %>'}[4h])
          * on (namespace,pod) group_left(workload,workload_type) mixin_pod_workload{cluster="",
          namespace=~'<%= namespace %>', workload=~'<%= workloadName %>', workload_type='<%= workloadType %>'}) by (pod)`,
-    ),
-  },
-  {
-    title: 'Average Container Bandwidth by Pod: Received',
-    chartType: GraphTypes.area,
-    humanize: humanizeDecimalBytesPerSec,
-    byteDataType: ByteDataTypes.DecimalBytes,
-    query: _.template(
-      `avg(irate(container_network_receive_bytes_total{cluster="", namespace=~'<%= namespace %>'}[4h])* on (namespace,pod)group_left(workload,workload_type) mixin_pod_workload{cluster="", namespace=~'<%= namespace %>', workload=~'<%= workloadName %>', workload_type='<%= workloadType %>'}) by (pod)`,
-    ),
-  },
-  {
-    title: 'Average Container Bandwidth by Pod: Transmitted',
-    chartType: GraphTypes.area,
-    humanize: humanizeDecimalBytesPerSec,
-    byteDataType: ByteDataTypes.DecimalBytes,
-    query: _.template(
-      `avg(irate(container_network_transmit_bytes_total{cluster="", namespace=~'<%= namespace %>'}[4h])* on (namespace,pod)group_left(workload,workload_type) mixin_pod_workload{cluster="", namespace=~'<%= namespace %>', workload=~'<%= workloadName %>', workload_type='<%= workloadType %>'}) by (pod)`,
     ),
   },
   {
@@ -193,6 +215,24 @@ export const workloadMetricsQueries: MonitoringQuery[] = [
       `sum(irate(container_network_transmit_packets_dropped_total{cluster="", namespace=~'<%= namespace %>'}[4h])* on (namespace,pod)
       group_left(workload,workload_type) mixin_pod_workload{cluster="", namespace=~'<%= namespace %>', workload=~'<%= workloadName %>', workload_type='<%= workloadType %>'}) by (pod)
       `,
+    ),
+  },
+  {
+    title: 'Average Container Bandwidth by Pod: Received',
+    chartType: GraphTypes.area,
+    humanize: humanizeDecimalBytesPerSec,
+    byteDataType: ByteDataTypes.DecimalBytes,
+    query: _.template(
+      `avg(irate(container_network_receive_bytes_total{cluster="", namespace=~'<%= namespace %>'}[4h])* on (namespace,pod)group_left(workload,workload_type) mixin_pod_workload{cluster="", namespace=~'<%= namespace %>', workload=~'<%= workloadName %>', workload_type='<%= workloadType %>'}) by (pod)`,
+    ),
+  },
+  {
+    title: 'Average Container Bandwidth by Pod: Transmitted',
+    chartType: GraphTypes.area,
+    humanize: humanizeDecimalBytesPerSec,
+    byteDataType: ByteDataTypes.DecimalBytes,
+    query: _.template(
+      `avg(irate(container_network_transmit_bytes_total{cluster="", namespace=~'<%= namespace %>'}[4h])* on (namespace,pod)group_left(workload,workload_type) mixin_pod_workload{cluster="", namespace=~'<%= namespace %>', workload=~'<%= workloadName %>', workload_type='<%= workloadType %>'}) by (pod)`,
     ),
   },
 ];
