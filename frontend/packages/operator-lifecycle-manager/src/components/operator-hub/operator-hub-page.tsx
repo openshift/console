@@ -10,8 +10,8 @@ import {
   MsgBox,
   ExternalLink,
   skeletonCatalog,
-  withFallback,
 } from '@console/internal/components/utils';
+import { withFallback } from '@console/shared/src/components/error/error-boundary';
 import { ErrorBoundaryFallback } from '@console/internal/components/error';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { fromRequirements } from '@console/internal/module/k8s/selector';

@@ -6,12 +6,12 @@ import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { Button } from '@patternfly/react-core';
 
+import { withFallback } from '@console/shared/src/components/error/error-boundary';
 import { KEYBOARD_SHORTCUTS } from '@console/shared';
 import { filterList } from '../../actions/k8s';
 import { CheckBoxes, storagePrefix } from '../row-filter';
 import { ErrorPage404, ErrorBoundaryFallback } from '../error';
 import { referenceForModel } from '../../module/k8s';
-import { withFallback } from '../utils/error-boundary';
 import {
   Dropdown,
   Firehose,

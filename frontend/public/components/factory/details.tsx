@@ -3,6 +3,7 @@ import { match } from 'react-router-dom';
 import * as _ from 'lodash-es';
 import { getBadgeFromType } from '@console/shared';
 import { useExtensions, ResourceTabPage, isResourceTabPage } from '@console/plugin-sdk';
+import { withFallback } from '@console/shared/src/components/error/error-boundary';
 import {
   Firehose,
   HorizontalNav,
@@ -19,7 +20,6 @@ import {
   referenceForModel,
   referenceFor,
 } from '../../module/k8s';
-import { withFallback } from '../utils/error-boundary';
 import { ErrorBoundaryFallback } from '../error';
 import { breadcrumbsForDetailsPage } from '../utils/breadcrumbs';
 

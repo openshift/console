@@ -36,6 +36,7 @@ import * as React from 'react';
 import { Helmet } from 'react-helmet';
 import { connect } from 'react-redux';
 
+import { withFallback } from '@console/shared/src/components/error/error-boundary';
 import {
   RedExclamationCircleIcon,
   TechPreviewBadge,
@@ -58,7 +59,6 @@ import {
   usePoll,
   useSafeFetch,
 } from '../utils';
-import { withFallback } from '../utils/error-boundary';
 import { setAllQueryArguments } from '../utils/router';
 import { colors, Error, Labels, QueryObj, QueryBrowser } from './query-browser';
 
