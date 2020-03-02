@@ -6,7 +6,7 @@ import { getFieldId } from './field-utils';
 import { AsyncComponent } from '@console/internal/components/utils';
 import './YAMLEditorField.scss';
 
-const YAMLEditorField: React.FC<YAMLEditorFieldProps> = ({ name }) => {
+const YAMLEditorField: React.FC<YAMLEditorFieldProps> = ({ name, actionButtonsRef }) => {
   const [field] = useField(name);
   const { setFieldValue } = useFormikContext<FormikValues>();
   const fieldId = getFieldId(name, 'yaml-editor');
@@ -20,6 +20,7 @@ const YAMLEditorField: React.FC<YAMLEditorFieldProps> = ({ name }) => {
         onChange={(yaml: string) => setFieldValue(name, yaml)}
         download={false}
         customClass="ocs-yaml-editor-field"
+        buttonsRef={actionButtonsRef.current}
         create
         hideHeader
         genericYAML

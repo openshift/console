@@ -71,6 +71,7 @@ export interface MultiColumnFieldProps extends FieldProps {
 
 export interface YAMLEditorFieldProps extends FieldProps {
   onChange?: (value: string) => void;
+  actionButtonsRef?: React.MutableRefObject<HTMLDivElement>;
 }
 
 export interface NameValuePair {

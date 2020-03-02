@@ -16,27 +16,32 @@ const HelmInstallForm: React.FC<FormikProps<FormikValues> & HelmInstallFormProps
   handleReset,
   status,
   isSubmitting,
-}) => (
-  <Form onSubmit={handleSubmit}>
-    <FormSection>
-      <InputField
-        type={TextInputTypes.text}
-        name="releaseName"
-        label="Release Name"
-        helpText="A unique name for the Helm Chart release."
-        required
-      />
-      {chartHasValues && <YAMLEditorField name="chartValuesYAML" />}
-    </FormSection>
-    <FormFooter
-      handleReset={handleReset}
-      errorMessage={status && status.submitError}
-      isSubmitting={isSubmitting}
-      submitLabel="Install"
-      disableSubmit={!_.isEmpty(errors)}
-      resetLabel="Cancel"
-    />
-  </Form>
-);
+}) => {
+  const footerRef = React.useRef<HTMLDivElement>(null);
+  return (
+    <Form onSubmit={handleSubmit}>
+      <FormSection>
+        <InputField
+          type={TextInputTypes.text}
+          name="releaseName"
+          label="Release Name"
+          helpText="A unique name for the Helm Chart release."
+          required
+        />
+        {chartHasValues && <YAMLEditorField name="chartValuesYAML" actionButtonsRef={footerRef} />}
+      </FormSection>
+      <div ref={footerRef}>
+        <FormFooter
+          handleReset={handleReset}
+          errorMessage={status && status.submitError}
+          isSubmitting={isSubmitting}
+          submitLabel="Install"
+          disableSubmit={!_.isEmpty(errors)}
+          resetLabel="Cancel"
+        />
+      </div>
+    </Form>
+  );
+};
 
 export default HelmInstallForm;
