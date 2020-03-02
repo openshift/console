@@ -217,7 +217,8 @@ const TimespanDropdown_: React.FC<TimespanDropdownProps> = ({ timespan, setTimes
     />
   );
 };
-const TimespanDropdown = connect(
+
+export const TimespanDropdown = connect(
   ({ UI }: RootState) => ({
     timespan: UI.getIn(['monitoringDashboards', 'timespan']),
   }),
@@ -258,7 +259,8 @@ const PollIntervalDropdown_: React.FC<PollIntervalDropdownProps> = ({
     />
   );
 };
-const PollIntervalDropdown = connect(
+
+export const PollIntervalDropdown = connect(
   ({ UI }: RootState) => ({
     pollInterval: UI.getIn(['monitoringDashboards', 'pollInterval']),
   }),

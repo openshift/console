@@ -5,7 +5,7 @@ import { HorizontalNav, PageHeading, history } from '@console/internal/component
 import { TechPreviewBadge, ALL_NAMESPACES_KEY } from '@console/shared';
 import NamespacedPage, { NamespacedPageVariants } from '../NamespacedPage';
 import ProjectListPage from '../projects/ProjectListPage';
-import MonitoringDashboard from './dashboard/MonitoringDashboard';
+import ConnectedMonitoringDashboard from './dashboard/MonitoringDashboard';
 import ConnectedMonitoringMetrics from './metrics/MonitoringMetrics';
 import MonitoringEvents from './events/MonitoringEvents';
 
@@ -44,7 +44,7 @@ export const MonitoringPage: React.FC<MonitoringPageProps> = ({ match }) => {
                 {
                   href: '',
                   name: 'Dashboard',
-                  component: MonitoringDashboard,
+                  component: ConnectedMonitoringDashboard,
                 },
                 {
                   href: 'metrics',
