@@ -1,5 +1,4 @@
 export type DataValidator = (
-  fName: string,
   fData: string,
 ) => {
   isValid: boolean;
@@ -8,10 +7,10 @@ export type DataValidator = (
 };
 
 export enum Field {
-  NAMESPACE = 'ns',
+  CLUSTER_NAME = 'clusterName',
   FSID = 'fsid',
   ADMIN = 'admin',
-  MONDATA = 'mondata',
+  MONDATA = 'monData',
 }
 
 export type ErrorType = {
