@@ -25,7 +25,7 @@ const ExportCredentials: React.FC<ModalComponentProps> = (props) => {
             admin: adminSecret,
             monData: monIP,
             // Todo(bipuladh): Change this when OCS supports multiple NS's
-            ns: CEPH_STORAGE_NAMESPACE,
+            clusterName: CEPH_STORAGE_NAMESPACE,
             fsid,
           }),
         );
@@ -57,7 +57,7 @@ const ExportCredentials: React.FC<ModalComponentProps> = (props) => {
 type Credentials = {
   admin: string;
   monData: string;
-  ns: string;
+  clusterName: string;
   fsid: string;
 };
 
