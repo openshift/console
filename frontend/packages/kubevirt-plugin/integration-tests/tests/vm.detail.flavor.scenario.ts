@@ -1,16 +1,12 @@
 import { browser, ExpectedConditions as until } from 'protractor';
 import { testName } from '@console/internal-integration-tests/protractor.conf';
-import {
-  withResource,
-  selectDropdownOptionById,
-  click,
-} from '@console/shared/src/test-utils/utils';
+import { withResource, click } from '@console/shared/src/test-utils/utils';
 import * as virtualMachineView from '../views/virtualMachine.view';
 import { VM_CREATE_AND_EDIT_TIMEOUT_SECS } from './utils/consts';
 import { VirtualMachine } from './models/virtualMachine';
 import { vmConfig, getProvisionConfigs } from './vm.wizard.configs';
 import * as editFlavorView from './models/editFlavorView';
-import { fillInput } from './utils/utils';
+import { fillInput, selectOptionByText, getSelectedOptionText } from './utils/utils';
 import { ProvisionConfigName } from './utils/constants/wizard';
 
 describe('KubeVirt VM detail - edit flavor', () => {
@@ -41,13 +37,8 @@ describe('KubeVirt VM detail - edit flavor', () => {
           ),
         );
         await vm.modalEditFlavor();
-        await browser.wait(
-          until.textToBePresentInElement(editFlavorView.flavorDropdownText(), 'Tiny'),
-        );
-        await selectDropdownOptionById(editFlavorView.flavorDropdownId, 'large-link');
-        await browser.wait(
-          until.textToBePresentInElement(editFlavorView.flavorDropdownText(), 'Large'),
-        );
+        expect(await getSelectedOptionText(editFlavorView.flavorDropdown)).toEqual('Tiny');
+        await selectOptionByText(editFlavorView.flavorDropdown, 'Large');
         await click(editFlavorView.saveButton());
 
         await browser.wait(
@@ -86,14 +77,8 @@ describe('KubeVirt VM detail - edit flavor', () => {
           ),
         );
         await vm.modalEditFlavor();
-
-        await browser.wait(
-          until.textToBePresentInElement(editFlavorView.flavorDropdownText(), 'Tiny'),
-        );
-        await selectDropdownOptionById(editFlavorView.flavorDropdownId, 'Custom-link');
-        await browser.wait(
-          until.textToBePresentInElement(editFlavorView.flavorDropdownText(), 'Custom'),
-        );
+        expect(await getSelectedOptionText(editFlavorView.flavorDropdown)).toEqual('Tiny');
+        await selectOptionByText(editFlavorView.flavorDropdown, 'Custom');
         await fillInput(editFlavorView.cpusInput(), '2');
         await fillInput(editFlavorView.memoryInput(), '3');
         await click(editFlavorView.saveButton());

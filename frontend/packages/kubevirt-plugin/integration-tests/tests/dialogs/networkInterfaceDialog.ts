@@ -2,7 +2,7 @@ import { click } from '@console/shared/src/test-utils/utils';
 import * as view from '../../views/dialogs/networkInterface.view';
 import { fillInput, selectOptionByText, getSelectOptions } from '../utils/utils';
 import { NetworkResource } from '../utils/types';
-import { applyButton, saveButton } from '../../views/kubevirtDetailView.view';
+import { modalSubmitButton, saveButton } from '../../views/kubevirtDetailView.view';
 import { waitForNoLoaders } from '../../views/wizard.view';
 
 export class NetworkInterfaceDialog {
@@ -37,7 +37,7 @@ export class NetworkInterfaceDialog {
     await this.selectNetwork(NIC.network);
     await this.selectType(NIC.type);
     await this.fillMAC(NIC.mac);
-    await click(applyButton);
+    await click(modalSubmitButton);
     await waitForNoLoaders();
   }
 

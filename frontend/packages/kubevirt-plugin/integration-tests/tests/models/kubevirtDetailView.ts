@@ -21,6 +21,7 @@ import { NetworkInterfaceDialog } from '../dialogs/networkInterfaceDialog';
 import { DiskDialog } from '../dialogs/diskDialog';
 import { DetailView } from './detailView';
 import * as editFlavor from './editFlavorView';
+import { waitForNoLoaders } from '../../views/wizard.view';
 
 export class KubevirtDetailView extends DetailView {
   async getAttachedDisks(): Promise<StorageResource[]> {
@@ -89,6 +90,7 @@ export class KubevirtDetailView extends DetailView {
   async modalEditFlavor() {
     await click(vmDetailFlavorEditButton(this.namespace, this.name));
     await browser.wait(until.presenceOf(editFlavor.modalTitle()));
+    await waitForNoLoaders();
   }
 
   async modalEditCDRoms() {
