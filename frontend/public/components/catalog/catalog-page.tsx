@@ -334,13 +334,11 @@ export const Catalog = connectToFlags<CatalogProps>(
   }, [loadTemplates, namespace]);
 
   React.useEffect(() => {
-    coFetch('https://redhat-developer.github.io/redhat-helm-charts/index.yaml').then(
-      async (res) => {
-        const yaml = await res.text();
-        const json = safeLoad(yaml);
-        setHelmCharts(json.entries);
-      },
-    );
+    coFetch('/api/helm/charts/index.yaml').then(async (res) => {
+      const yaml = await res.text();
+      const json = safeLoad(yaml);
+      setHelmCharts(json.entries);
+    });
   }, []);
 
   const error = templateError || projectTemplateError;

@@ -320,7 +320,8 @@ func (s *Server) HTTPHandler() http.Handler {
 
 	helmChartRepoProxy := proxy.NewProxy(s.HelmChartRepoProxyConfig)
 
-	handle(helmChartRepoProxyEndpoint, http.StripPrefix(
+	// Only proxy requests to chart repo index file
+	handle(helmChartRepoProxyEndpoint+"index.yaml", http.StripPrefix(
 		proxy.SingleJoiningSlash(s.BaseURL.Path, helmChartRepoProxyEndpoint),
 		http.HandlerFunc(helmChartRepoProxy.ServeHTTP)))
 

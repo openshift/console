@@ -27,7 +27,7 @@ func RegisterFlags(fs *flag.FlagSet) *config {
 
 	cfg := new(config)
 
-	fs.StringVar(&cfg.repoUrl, "helm-chart-repo-url", "https://redhat-developer.github.com/redhat-helm-charts", "Helm chart repository URL")
+	fs.StringVar(&cfg.repoUrl, "helm-chart-repo-url", "https://redhat-developer.github.io/redhat-helm-charts", "Helm chart repository URL")
 	fs.StringVar(&cfg.repoCaFile, "helm-chart-repo-ca-file", "", "CA bundle for Helm chart repository.")
 
 	return cfg
