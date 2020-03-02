@@ -39,6 +39,7 @@ import { CheckBoxes } from './row-filter';
 import { formatPrometheusDuration } from './utils/datetime';
 import { AlertmanagerYAMLEditorWrapper } from './monitoring/alert-manager-yaml-editor';
 import { AlertmanagerConfigWrapper } from './monitoring/alert-manager-config';
+import { refreshNotificationPollers } from './notification-drawer';
 import {
   ActionsMenu,
   ButtonBar,
@@ -100,12 +101,6 @@ const silencesToProps = ({ UI }) => UI.getIn(['monitoring', 'silences']) || {};
 const pollers = {};
 const pollerTimeouts = {};
 
-// Force a poller to execute now instead of waiting for the next poll interval
-const refreshPoller = (key) => {
-  clearTimeout(pollerTimeouts[key]);
-  _.invoke(pollers, key);
-};
-
 const silenceAlert = (alert) => ({
   label: 'Silence Alert',
   href: `${SilenceResource.plural}/~new?${labelsToParams(alert.labels)}`,
@@ -131,7 +126,7 @@ const cancelSilence = (silence) => ({
       executeFn: () =>
         coFetchJSON
           .delete(`${window.SERVER_FLAGS.alertManagerBaseURL}/api/v1/silence/${silence.id}`)
-          .then(() => refreshPoller('silences')),
+          .then(() => refreshNotificationPollers()),
     }),
 });
 
@@ -575,7 +570,7 @@ const silenceParamToProps = (state, { match }) => {
   const { data: silences, loaded, loadError }: Silences = silencesToProps(state);
   const { loaded: alertsLoaded }: Alerts = alertsToProps(state);
   const silence = _.find(silences, { id: _.get(match, 'params.id') });
-  return { alertsLoaded, loaded, loadError, silence };
+  return { alertsLoaded, loaded, loadError, silence, silences };
 };
 
 const SilencesDetailsPage = withFallback(
@@ -1185,7 +1180,7 @@ class SilenceForm_ extends React.Component<SilenceFormProps, SilenceFormState> {
       .post(`${alertManagerBaseURL}/api/v1/silences`, body)
       .then(({ data }) => {
         this.setState({ error: undefined });
-        refreshPoller('silences');
+        refreshNotificationPollers();
         history.push(`${SilenceResource.plural}/${encodeURIComponent(_.get(data, 'silenceId'))}`);
       })
       .catch((err) =>
@@ -1495,7 +1490,7 @@ export const getAlerts = (data: PrometheusRulesResponse['data']): Alert[] => {
 
 const PollerPages = () => {
   React.useEffect(() => {
-    const poll: Poll = (url, key: 'alerts' | 'silences', dataHandler) => {
+    const poll: Poll = (url, key: 'alerts', dataHandler) => {
       store.dispatch(UIActions.monitoringLoading(key));
       const poller = (): void => {
         coFetchJSON(url)
@@ -1508,34 +1503,13 @@ const PollerPages = () => {
       poller();
     };
 
-    const { alertManagerBaseURL, prometheusBaseURL } = window.SERVER_FLAGS;
+    const { prometheusBaseURL } = window.SERVER_FLAGS;
 
     if (prometheusBaseURL) {
       poll(`${prometheusBaseURL}/api/v1/rules`, 'alerts', getAlerts);
     } else {
       store.dispatch(UIActions.monitoringErrored('alerts', new Error('prometheusBaseURL not set')));
     }
-
-    if (alertManagerBaseURL) {
-      poll(`${alertManagerBaseURL}/api/v1/silences`, 'silences', (data) => {
-        // Set a name field on the Silence to make things easier
-        _.each(data, (s) => {
-          s.name = _.get(_.find(s.matchers, { name: 'alertname' }), 'value');
-          if (!s.name) {
-            // No alertname, so fall back to displaying the other matchers
-            s.name = s.matchers
-              .map((m) => `${m.name}${m.isRegex ? '=~' : '='}${m.value}`)
-              .join(', ');
-          }
-        });
-        return data;
-      });
-    } else {
-      store.dispatch(
-        UIActions.monitoringErrored('silences', new Error('alertManagerBaseURL not set')),
-      );
-    }
-
     return () => _.each(pollerTimeouts, clearTimeout);
   }, []);
 
