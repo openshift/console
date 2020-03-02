@@ -8,6 +8,17 @@ import { BaseLayout, LayoutGroup, LayoutLink, LayoutNode, LayoutOptions } from '
 class ColaNode extends LayoutNode implements webcola.Node {
   // fixed is used by Cola during node additions: 1 for fixed
   public fixed: number = 0;
+
+  constructor(node: Node, distance: number, index: number = -1) {
+    super(node, distance, index);
+
+    // TODO: Investigate why the issue with rectangular nodes causing the layout to become vertical
+    //       this setting will be a problem if nodes can change size dynamically
+    // Cola layout has issues with non-square nodes
+    const maxDimension = Math.max(this.nodeWidth, this.nodeHeight);
+    this.nodeWidth = maxDimension;
+    this.nodeHeight = maxDimension;
+  }
 }
 
 class ColaGroup extends LayoutGroup implements webcola.Group {}
@@ -18,12 +29,20 @@ class ColaLink extends LayoutLink implements webcola.Link<ColaNode | number> {
   }
 }
 
-type ColaLayoutOptions = LayoutOptions & {
+type ColaLayoutOptions = {
   maxTicks: number;
   initialUnconstrainedIterations: number;
   initialUserConstraintIterations: number;
   initialAllConstraintsIterations: number;
   gridSnapIterations: number;
+};
+
+const COLA_LAYOUT_DEFAULTS: ColaLayoutOptions = {
+  maxTicks: 300,
+  initialUnconstrainedIterations: 200,
+  initialUserConstraintIterations: 50,
+  initialAllConstraintsIterations: 150,
+  gridSnapIterations: 50,
 };
 
 class ColaLayout extends BaseLayout implements Layout {
@@ -35,17 +54,10 @@ class ColaLayout extends BaseLayout implements Layout {
 
   private destroyed = false;
 
-  constructor(graph: Graph, options?: Partial<ColaLayoutOptions>) {
+  constructor(graph: Graph, options?: Partial<ColaLayoutOptions & LayoutOptions>) {
     super(graph, options);
     this.colaOptions = {
-      ...this.options,
-      ...{
-        maxTicks: 200,
-        initialUnconstrainedIterations: 200,
-        initialUserConstraintIterations: 50,
-        initialAllConstraintsIterations: 150,
-        gridSnapIterations: 50,
-      },
+      ...COLA_LAYOUT_DEFAULTS,
       ...options,
     };
     this.initializeLayout();
