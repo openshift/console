@@ -35,6 +35,7 @@ export type Result = {
 };
 
 export type ResultsWrapper = {
+  isFatal: boolean;
   isValid: boolean;
   requestResults: Result[];
   errors: Result[];

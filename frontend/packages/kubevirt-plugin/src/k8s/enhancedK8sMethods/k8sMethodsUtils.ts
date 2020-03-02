@@ -34,17 +34,19 @@ const asResult = ({
 });
 
 export const cleanupAndGetResults = async (
-  enhancedK8sMethods,
+  enhancedK8sMethods: EnhancedK8sMethods,
   { message, failedObject, failedPatches },
 ): Promise<ResultsWrapper> => {
   const actualState = enhancedK8sMethods.getActualState(); // actual state will differ after cleanup
 
+  let isFatal = false;
   let cleanupErrors;
   try {
     await enhancedK8sMethods.rollback();
   } catch (e) {
     // eslint-disable-next-line prefer-destructuring
     cleanupErrors = e.errors;
+    isFatal = true;
   }
 
   const failedObjectsMap = {};
@@ -83,6 +85,7 @@ export const cleanupAndGetResults = async (
   }
 
   return {
+    isFatal,
     isValid: false,
     mainError: message,
     errors: [],
@@ -91,6 +94,7 @@ export const cleanupAndGetResults = async (
 };
 
 export const getResults = (enhancedK8sMethods: EnhancedK8sMethods): ResultsWrapper => ({
+  isFatal: false,
   isValid: true,
   mainError: null,
   errors: [],
