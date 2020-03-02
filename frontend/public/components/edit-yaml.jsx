@@ -111,6 +111,7 @@ export const EditYAML_ = connect(stateToProps)(
       this.onCancel = 'onCancel' in props ? props.onCancel : history.goBack;
       this.downloadSampleYaml_ = this.downloadSampleYaml_.bind(this);
       this.editorDidMount = this.editorDidMount.bind(this);
+      this.buttons = this.props.buttonsRef;
 
       if (this.props.error) {
         this.handleError(this.props.error);
@@ -187,7 +188,7 @@ export const EditYAML_ = connect(stateToProps)(
     }
 
     get editorHeight() {
-      const buttonsHeight = this.buttons.getBoundingClientRect().height;
+      const buttonsHeight = this.buttons ? this.buttons.getBoundingClientRect().height : 0;
       // if viewport width is > 767, also subtract top padding on .yaml-editor
       return isDesktop()
         ? Math.floor(this.height - buttonsHeight - desktopGutter)
@@ -806,86 +807,79 @@ export const EditYAML_ = connect(stateToProps)(
                         this.setState({ yaml: newValue }, () => onChange(newValue))
                       }
                     />
-                    <div ref={(r) => (this.buttons = r)}>
-                      {!hideActions && (
-                        <div className="yaml-editor__buttons">
-                          {customAlerts}
-                          {error && (
-                            <Alert
-                              isInline
-                              className="co-alert co-alert--scrollable"
-                              variant="danger"
-                              title="An error occurred"
+                    {!hideActions && (
+                      <div className="yaml-editor__buttons" ref={(r) => (this.buttons = r)}>
+                        {customAlerts}
+                        {error && (
+                          <Alert
+                            isInline
+                            className="co-alert co-alert--scrollable"
+                            variant="danger"
+                            title="An error occurred"
+                          >
+                            <div className="co-pre-line">{error}</div>
+                          </Alert>
+                        )}
+                        {success && (
+                          <Alert isInline className="co-alert" variant="success" title={success} />
+                        )}
+                        {stale && (
+                          <Alert
+                            isInline
+                            className="co-alert"
+                            variant="info"
+                            title="This object has been updated."
+                          >
+                            Click reload to see the new version.
+                          </Alert>
+                        )}
+                        <ActionGroup className="pf-c-form__group--no-top-margin">
+                          {create && (
+                            <Button
+                              type="submit"
+                              variant="primary"
+                              id="save-changes"
+                              onClick={() => this.save()}
                             >
-                              <div className="co-pre-line">{error}</div>
-                            </Alert>
-                          )}
-                          {success && (
-                            <Alert
-                              isInline
-                              className="co-alert"
-                              variant="success"
-                              title={success}
-                            />
-                          )}
-                          {stale && (
-                            <Alert
-                              isInline
-                              className="co-alert"
-                              variant="info"
-                              title="This object has been updated."
-                            >
-                              Click reload to see the new version.
-                            </Alert>
-                          )}
-                          <ActionGroup className="pf-c-form__group--no-top-margin">
-                            {create && (
-                              <Button
-                                type="submit"
-                                variant="primary"
-                                id="save-changes"
-                                onClick={() => this.save()}
-                              >
-                                Create
-                              </Button>
-                            )}
-                            {!create && !readOnly && (
-                              <Button
-                                type="submit"
-                                variant="primary"
-                                id="save-changes"
-                                onClick={() => this.save()}
-                              >
-                                Save
-                              </Button>
-                            )}
-                            {!create && !genericYAML && (
-                              <Button
-                                type="submit"
-                                variant="secondary"
-                                id="reload-object"
-                                onClick={() => this.reload()}
-                              >
-                                Reload
-                              </Button>
-                            )}
-                            <Button variant="secondary" id="cancel" onClick={() => this.onCancel()}>
-                              Cancel
+                              Create
                             </Button>
-                            {download && (
-                              <Button
-                                type="submit"
-                                variant="secondary"
-                                className="pf-c-button--align-right hidden-sm hidden-xs"
-                                onClick={() => this.download()}
-                              >
-                                <DownloadIcon /> Download
-                              </Button>
-                            )}
-                          </ActionGroup>
-                        </div>
-                      )}
-                    </div>
+                          )}
+                          {!create && !readOnly && (
+                            <Button
+                              type="submit"
+                              variant="primary"
+                              id="save-changes"
+                              onClick={() => this.save()}
+                            >
+                              Save
+                            </Button>
+                          )}
+                          {!create && !genericYAML && (
+                            <Button
+                              type="submit"
+                              variant="secondary"
+                              id="reload-object"
+                              onClick={() => this.reload()}
+                            >
+                              Reload
+                            </Button>
+                          )}
+                          <Button variant="secondary" id="cancel" onClick={() => this.onCancel()}>
+                            Cancel
+                          </Button>
+                          {download && (
+                            <Button
+                              type="submit"
+                              variant="secondary"
+                              className="pf-c-button--align-right hidden-sm hidden-xs"
+                              onClick={() => this.download()}
+                            >
+                              <DownloadIcon /> Download
+                            </Button>
+                          )}
+                        </ActionGroup>
+                      </div>
+                    )}
                   </div>
                 </div>
                 {hasSidebarContent && (
