@@ -1,11 +1,12 @@
 import * as _ from 'lodash';
 import { Node } from '@console/topology';
-import { addResourceMenu } from '../../../actions/add-resources';
+import { addResourceMenu, addResourceMenuWithoutCatalog } from '../../../actions/add-resources';
 import { GraphData } from '../topology-types';
 
 export const graphActions = (graphData: GraphData, connectorSource?: Node) => {
+  const resourceMenu = connectorSource ? addResourceMenuWithoutCatalog : addResourceMenu;
   return _.reduce(
-    addResourceMenu,
+    resourceMenu,
     (menuItems, menuItem) => {
       const item = menuItem(
         null,

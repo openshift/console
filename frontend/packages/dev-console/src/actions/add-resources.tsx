@@ -52,3 +52,9 @@ export const addResourceMenu: KebabAction[] = [
   fromDockerfile,
   fromDatabaseCatalog,
 ];
+
+export const addResourceMenuWithoutCatalog: KebabAction[] = [
+  fromGit,
+  containerImage,
+  fromDockerfile,
+];
