@@ -1,8 +1,14 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import { match as RMatch } from 'react-router-dom';
+import { connect } from 'react-redux';
 import { Helmet } from 'react-helmet';
+import { RootState } from '@console/internal/redux';
 import { getURLSearchParams } from '@console/internal/components/utils';
+import {
+  TimespanDropdown,
+  PollIntervalDropdown,
+} from '@console/internal/components/monitoring/dashboards';
 import ConnectedMonitoringDashboardGraph from './MonitoringDashboardGraph';
 import {
   monitoringDashboardQueries,
@@ -10,14 +16,22 @@ import {
   MonitoringQuery,
   topWorkloadMetricsQueries,
 } from '../queries';
+import './MonitoringDashboard.scss';
 
-interface MonitoringDashboardProps {
+type MonitoringDashboardProps = {
   match: RMatch<{
     ns?: string;
   }>;
-}
+};
 
-const MonitoringDashboard: React.FC<MonitoringDashboardProps> = ({ match }) => {
+type StateProps = {
+  timespan: number;
+  pollInterval: number;
+};
+
+type Props = MonitoringDashboardProps & StateProps;
+
+export const MonitoringDashboard: React.FC<Props> = ({ match, timespan, pollInterval }) => {
   const namespace = match.params.ns;
   const params = getURLSearchParams();
   const { workloadName, workloadType } = params;
@@ -31,6 +45,10 @@ const MonitoringDashboard: React.FC<MonitoringDashboardProps> = ({ match }) => {
       <Helmet>
         <title>Dashboard</title>
       </Helmet>
+      <div className="odc-monitoring-dashboard__dropdown-options">
+        <TimespanDropdown />
+        <PollIntervalDropdown />
+      </div>
       <div className="co-m-pane__body">
         {_.map(queries, (q) => (
           <ConnectedMonitoringDashboardGraph
@@ -41,6 +59,8 @@ const MonitoringDashboard: React.FC<MonitoringDashboardProps> = ({ match }) => {
             humanize={q.humanize}
             byteDataType={q.byteDataType}
             key={q.title}
+            timespan={timespan}
+            pollInterval={pollInterval}
           />
         ))}
       </div>
@@ -48,4 +68,9 @@ const MonitoringDashboard: React.FC<MonitoringDashboardProps> = ({ match }) => {
   );
 };
 
-export default MonitoringDashboard;
+const mapStateToProps = (state: RootState): StateProps => ({
+  timespan: state.UI.getIn(['monitoringDashboards', 'timespan']),
+  pollInterval: state.UI.getIn(['monitoringDashboards', 'pollInterval']),
+});
+
+export default connect<StateProps, MonitoringDashboardProps>(mapStateToProps)(MonitoringDashboard);
