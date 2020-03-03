@@ -1,16 +1,16 @@
 import * as React from 'react';
 import { Button, ButtonVariant } from '@patternfly/react-core';
 import { Table } from '@console/internal/components/factory';
-import { PersistentVolumeClaimModel } from '@console/internal/models';
+import { PersistentVolumeClaimModel, TemplateModel } from '@console/internal/models';
 import { Firehose, FirehoseResult, EmptyBox } from '@console/internal/components/utils';
 import { useSafetyFirst } from '@console/internal/components/safety-first';
-import { K8sResourceKind } from '@console/internal/module/k8s';
+import { K8sResourceKind, TemplateKind } from '@console/internal/module/k8s';
 import { dimensifyHeader, getNamespace } from '@console/shared';
 import { sortable } from '@patternfly/react-table';
 import { DataVolumeModel } from '../../models';
 import { VMGenericLikeEntityKind } from '../../types/vmLike';
 import { VMLikeEntityTabProps } from '../vms/types';
-import { getResource } from '../../utils';
+import { getResource, getLoadedData } from '../../utils';
 import { wrapWithProgress } from '../../utils/utils';
 import { diskModalEnhanced } from '../modals/disk-modal/disk-modal-enhanced';
 import { CombinedDiskFactory } from '../../k8s/wrapper/vm/combined-disk';
@@ -21,6 +21,10 @@ import { DiskRow } from './disk-row';
 import { diskTableColumnClasses } from './utils';
 import { isVMI } from '../../selectors/vm';
 import { ADD_DISK } from '../../utils/strings';
+import {
+  getVMTemplateNamespacedName,
+  getTemplateValidationsFromTemplate,
+} from '../../selectors/vm-template/selectors';
 
 const getStoragesData = ({
   vmLikeEntity,
@@ -118,11 +122,19 @@ type VMDisksProps = {
   vmLikeEntity?: VMGenericLikeEntityKind;
   pvcs?: FirehoseResult<K8sResourceKind[]>;
   datavolumes?: FirehoseResult<V1alpha1DataVolume[]>;
+  vmTemplate?: FirehoseResult<TemplateKind>;
 };
 
-export const VMDisks: React.FC<VMDisksProps> = ({ vmLikeEntity, pvcs, datavolumes }) => {
+export const VMDisks: React.FC<VMDisksProps> = ({
+  vmLikeEntity,
+  pvcs,
+  datavolumes,
+  vmTemplate,
+}) => {
   const [isLocked, setIsLocked] = useSafetyFirst(false);
   const withProgress = wrapWithProgress(setIsLocked);
+  const templateValidations = getTemplateValidationsFromTemplate(getLoadedData(vmTemplate));
+
   return (
     <div className="co-m-list">
       {!isVMI(vmLikeEntity) && (
@@ -136,6 +148,7 @@ export const VMDisks: React.FC<VMDisksProps> = ({ vmLikeEntity, pvcs, datavolume
                   diskModalEnhanced({
                     blocking: true,
                     vmLikeEntity,
+                    templateValidations,
                   }).result,
                 )
               }
@@ -153,6 +166,7 @@ export const VMDisks: React.FC<VMDisksProps> = ({ vmLikeEntity, pvcs, datavolume
             vmLikeEntity,
             withProgress,
             isDisabled: isLocked,
+            templateValidations,
           }}
           row={DiskRow}
           columnClasses={diskTableColumnClasses}
@@ -164,6 +178,7 @@ export const VMDisks: React.FC<VMDisksProps> = ({ vmLikeEntity, pvcs, datavolume
 
 export const VMDisksFirehose: React.FC<VMLikeEntityTabProps> = ({ obj: vmLikeEntity }) => {
   const namespace = getNamespace(vmLikeEntity);
+  const vmTemplate = getVMTemplateNamespacedName(vmLikeEntity);
 
   const resources = [
     getResource(PersistentVolumeClaimModel, {
@@ -173,6 +188,12 @@ export const VMDisksFirehose: React.FC<VMLikeEntityTabProps> = ({ obj: vmLikeEnt
     getResource(DataVolumeModel, {
       namespace,
       prop: 'datavolumes',
+    }),
+    getResource(TemplateModel, {
+      name: vmTemplate?.name,
+      namespace: vmTemplate?.namespace,
+      isList: false,
+      prop: 'vmTemplate',
     }),
   ];
 
