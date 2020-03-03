@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useField } from 'formik';
 import { connectToFlags, FlagsObject } from '@console/internal/reducers/features';
 import { K8sKind } from '@console/internal/module/k8s';
 import { DeploymentModel, DeploymentConfigModel } from '@console/internal/models';
@@ -30,16 +31,22 @@ const createHelpText = (k8sModel: K8sKind, helpText: string) => {
 };
 
 const ResourceSection: React.FC<ResourceSectionProps> = ({ flags }) => {
-  const radioOptions: RadioOption[] = [
-    {
+  const [field] = useField<Resources[]>('resourceTypesNotValid');
+  const invalidTypes = field.value || [];
+
+  const radioOptions: RadioOption[] = [];
+  if (!invalidTypes.includes(Resources.Kubernetes)) {
+    radioOptions.push({
       label: DeploymentModel.label,
       value: Resources.Kubernetes,
       children: createHelpText(
         DeploymentModel,
         `A ${DeploymentModel.label} enables declarative updates for Pods and ReplicaSets.`,
       ),
-    },
-    {
+    });
+  }
+  if (!invalidTypes.includes(Resources.OpenShift)) {
+    radioOptions.push({
       label: DeploymentConfigModel.label,
       value: Resources.OpenShift,
       children: createHelpText(
@@ -47,8 +54,8 @@ const ResourceSection: React.FC<ResourceSectionProps> = ({ flags }) => {
         `A ${DeploymentConfigModel.label} defines the template for a pod \
         and manages deploying new images or configuration changes`,
       ),
-    },
-  ];
+    });
+  }
 
   const knativeServiceAccess = useAccessReview({
     group: ServiceModel.apiGroup,
@@ -56,8 +63,11 @@ const ResourceSection: React.FC<ResourceSectionProps> = ({ flags }) => {
     namespace: getActiveNamespace(),
     verb: 'create',
   });
-
-  if (flags[FLAG_KNATIVE_SERVING_SERVICE] && knativeServiceAccess) {
+  const canIncludeKnative =
+    !invalidTypes.includes(Resources.KnativeService) &&
+    flags[FLAG_KNATIVE_SERVING_SERVICE] &&
+    knativeServiceAccess;
+  if (canIncludeKnative) {
     radioOptions.push({
       label: (
         <div>
