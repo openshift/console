@@ -15,7 +15,7 @@ metadata:
     flavor.template.kubevirt.io/tiny: 'true'
     workload.template.kubevirt.io/server: 'true'
     vm.kubevirt.io/template: fedora-server-tiny-v0.7.0
-    vm.kubevirt.io/template-namespace: openshift
+    vm.kubevirt.io/template.namespace: openshift
   annotations:
     name.os.template.kubevirt.io/fedora31: Fedora 31
     description: VM template example
