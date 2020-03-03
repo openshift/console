@@ -21,10 +21,10 @@ export const getRemoveNICPatches = (vmLikeEntity: VMLikeEntityKind, nic: any): P
 
     const patches = [
       new PatchBuilder('/spec/template/spec/domain/devices/interfaces')
-        .setListRemove(nic, nics, getSimpleName)
+        .setListRemove(nics, (item) => getSimpleName(item) === nicName)
         .build(),
       new PatchBuilder('/spec/template/spec/networks')
-        .setListRemove(network, networks, getSimpleName)
+        .setListRemove(networks, (item) => getSimpleName(item) === getSimpleName(network))
         .build(),
     ];
 
@@ -76,10 +76,10 @@ export const getUpdateNICPatches = (
 
     return [
       new PatchBuilder('/spec/template/spec/domain/devices/interfaces')
-        .setListUpdate(nic, nics, getSimpleName, oldNICName)
+        .setListUpdate(nic, nics, (other) => getSimpleName(other) === oldNICName)
         .build(),
       new PatchBuilder('/spec/template/spec/networks')
-        .setListUpdate(network, networks, getSimpleName, oldNetworkName)
+        .setListUpdate(network, networks, (other) => getSimpleName(other) === oldNetworkName)
         .build(),
     ].filter((patch) => patch);
   });

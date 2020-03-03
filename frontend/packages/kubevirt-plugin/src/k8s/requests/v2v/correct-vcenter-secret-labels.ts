@@ -44,7 +44,7 @@ export const correctVCenterSecretLabels = async ({
               .reverse() // do not cut branches under your own feet
               .map((ownerReference) =>
                 new PatchBuilder(`/metadata/ownerReferences`)
-                  .setListRemove(ownerReference, ownerReferences)
+                  .setListRemove(ownerReferences, (item) => item === ownerReference)
                   .build(),
               ),
           );

@@ -55,20 +55,11 @@ export class PatchBuilder {
 
   remove = () => this.setOperation(PatchOperation.REMOVE);
 
-  setListRemove = <T>(value: T, items: T[], compareGetter?: (t: T) => any) =>
-    this.setListRemoveSimpleValue(
-      compareGetter ? compareGetter(value) : value,
-      items,
-      compareGetter,
-    );
-
-  setListRemoveSimpleValue = <T, U>(value: T | U, items: T[], compareGetter?: (t: T) => U) => {
+  setListRemove = <T>(items: T[], removedItemEquals: (item: T) => boolean) => {
     this.value = undefined;
     this.operation = PatchOperation.REMOVE;
     if (items) {
-      const foundIndex = items.findIndex((t) =>
-        compareGetter ? compareGetter(t) === (value as U) : t === (value as T),
-      );
+      const foundIndex = items.findIndex(removedItemEquals);
       if (foundIndex < 0) {
         this.valid = false; // do not do anything
       } else {
@@ -80,19 +71,15 @@ export class PatchBuilder {
     return this;
   };
 
-  setListUpdate = <T, U>(
-    value: T,
+  setListUpdate = <T>(
+    item: T,
     items?: T[],
-    compareGetter?: (t: T) => U,
-    oldSimpleValue?: T | U,
+    updatedItemEquals: (other: T, updatedItem: T) => boolean = (other, updatedValue) =>
+      other === updatedValue,
   ) => {
     if (items) {
-      this.value = value;
-      const foundIndex = items.findIndex((t) =>
-        compareGetter
-          ? compareGetter(t) === ((oldSimpleValue as U) || compareGetter(value))
-          : t === (oldSimpleValue || value),
-      );
+      this.value = item;
+      const foundIndex = items.findIndex((other) => updatedItemEquals(other, item));
       if (foundIndex < 0) {
         this.valueIndex = items.length;
         this.operation = PatchOperation.ADD;
@@ -102,7 +89,7 @@ export class PatchBuilder {
       }
     } else {
       // list is missing - add the whole list
-      this.value = [value];
+      this.value = [item];
       this.valueIndex = -1;
       this.operation = PatchOperation.ADD;
     }
