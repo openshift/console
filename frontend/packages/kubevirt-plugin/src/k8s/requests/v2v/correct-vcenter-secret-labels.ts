@@ -3,7 +3,7 @@ import { k8sPatch, K8sResourceKind } from '@console/internal/module/k8s';
 import { compareOwnerReference } from '@console/shared/src/utils/owner-references';
 import { getOwnerReferences } from '@console/shared/src';
 import { SecretModel } from '@console/internal/models';
-import { PatchBuilder, PatchOperation } from '@console/shared/src/k8s';
+import { PatchBuilder } from '@console/shared/src/k8s';
 import { V2VVMwareModel } from '../../../models';
 import { VCENTER_TEMPORARY_LABEL } from '../../../constants/v2v';
 import { getLabels } from '../../../selectors/selectors';
@@ -21,7 +21,7 @@ export const correctVCenterSecretLabels = async ({
 
     if (saveCredentialsRequested) {
       patches.push(
-        new PatchBuilder(`/metadata/labels`)
+        new PatchBuilder('/metadata/labels')
           .setObjectRemove(VCENTER_TEMPORARY_LABEL, getLabels(secret))
           .build(),
       );
@@ -33,17 +33,13 @@ export const correctVCenterSecretLabels = async ({
         );
 
         if (filteredOwnerReferences.length === ownerReferences.length) {
-          patches.push(
-            new PatchBuilder(`/metadata/ownerReferences`)
-              .setOperation(PatchOperation.REMOVE)
-              .build(),
-          );
+          patches.push(new PatchBuilder('/metadata/ownerReferences').remove().build());
         } else {
           patches.push(
             ...filteredOwnerReferences
               .reverse() // do not cut branches under your own feet
               .map((ownerReference) =>
-                new PatchBuilder(`/metadata/ownerReferences`)
+                new PatchBuilder('/metadata/ownerReferences')
                   .setListRemove(ownerReferences, (item) => item === ownerReference)
                   .build(),
               ),
@@ -52,7 +48,7 @@ export const correctVCenterSecretLabels = async ({
       }
     } else {
       patches.push(
-        new PatchBuilder(`/metadata/labels`)
+        new PatchBuilder('/metadata/labels')
           .setObjectUpdate(VCENTER_TEMPORARY_LABEL, 'true', getLabels(secret))
           .build(),
       );

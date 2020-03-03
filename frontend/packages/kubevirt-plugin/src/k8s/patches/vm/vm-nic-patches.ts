@@ -1,6 +1,6 @@
 import * as _ from 'lodash';
 import { Patch } from '@console/internal/module/k8s';
-import { PatchBuilder, PatchOperation } from '@console/shared/src/k8s';
+import { PatchBuilder } from '@console/shared/src/k8s';
 import { getDisks, getInterfaces, getNetworks } from '../../../selectors/vm';
 import { getVMLikePatches } from '../vm-template';
 import { VMLikeEntityKind } from '../../../types/vmLike';
@@ -32,8 +32,7 @@ export const getRemoveNICPatches = (vmLikeEntity: VMLikeEntityKind, nic: any): P
     if (networkChoice.isPodNetwork()) {
       patches.push(
         new PatchBuilder('/spec/template/spec/domain/devices/autoattachPodInterface')
-          .setOperation(PatchOperation.ADD)
-          .setValue(false)
+          .add(false)
           .build(),
       );
     }

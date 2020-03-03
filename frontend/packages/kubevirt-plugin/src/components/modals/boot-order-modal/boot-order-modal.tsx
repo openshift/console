@@ -5,7 +5,7 @@ import { createBasicLookup } from '@console/shared/src';
 import { withHandlePromise, HandlePromiseProps } from '@console/internal/components/utils';
 import { ModalComponentProps } from '@console/internal/components/factory';
 import { k8sPatch } from '@console/internal/module/k8s';
-import { PatchBuilder, PatchOperation } from '@console/shared/src/k8s';
+import { PatchBuilder } from '@console/shared/src/k8s';
 import { BootableDeviceType } from '../../../types';
 import { VMLikeEntityKind } from '../../../types/vmLike';
 import { getVMLikeModel, getDevices } from '../../../selectors/vm';
@@ -103,14 +103,8 @@ const BootOrderModalComponent = ({
 
     // Patch k8s.
     const patches = [
-      new PatchBuilder('/spec/template/spec/domain/devices/disks')
-        .setOperation(PatchOperation.REPLACE)
-        .setValue(disks)
-        .build(),
-      new PatchBuilder('/spec/template/spec/domain/devices/interfaces')
-        .setOperation(PatchOperation.REPLACE)
-        .setValue(interfaces)
-        .build(),
+      new PatchBuilder('/spec/template/spec/domain/devices/disks').replace(disks).build(),
+      new PatchBuilder('/spec/template/spec/domain/devices/interfaces').replace(interfaces).build(),
     ];
     const promise = k8sPatch(
       getVMLikeModel(vmLikeEntity),

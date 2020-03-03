@@ -1,4 +1,4 @@
-import { PatchBuilder, PatchOperation } from '@console/shared/src/k8s';
+import { PatchBuilder } from '@console/shared/src/k8s';
 import { Patch } from '@console/internal/module/k8s';
 import { VMLikeEntityKind } from '../../../types/vmLike';
 import { getVMLikePatches } from '../vm-template';
@@ -20,16 +20,14 @@ export const getDedicatedCpuPatch = (
   if (isCPUAvailable) {
     patches.push(
       new PatchBuilder('/spec/template/spec/domain/cpu/dedicatedCpuPlacement')
-        .setOperation(PatchOperation.REPLACE)
-        .setValue(dedicatedCpuPlacement)
+        .replace(dedicatedCpuPlacement)
         .build(),
     );
   } else {
     const resourcesCPU = getResourcesRequestsCPUCount(vm) || getResourcesLimitsCPUCount(vm);
     patches.push(
       new PatchBuilder('/spec/template/spec/domain/cpu')
-        .setOperation(PatchOperation.REPLACE)
-        .setValue(resourcesCPU ? { dedicatedCpuPlacement } : { cores: 1, dedicatedCpuPlacement })
+        .replace(resourcesCPU ? { dedicatedCpuPlacement } : { cores: 1, dedicatedCpuPlacement })
         .build(),
     );
   }
