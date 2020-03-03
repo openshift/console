@@ -73,6 +73,7 @@ export const getKnativeServiceDepResource = (
         ...labels,
         ...(!create && { 'serving.knative.dev/visibility': `cluster-local` }),
       },
+      annotations,
     },
     spec: {
       template: {

@@ -43,6 +43,7 @@ Object {
     "defaultAnnotations": Object {
       "app.openshift.io/vcs-ref": "master",
       "app.openshift.io/vcs-uri": "https://github.com/test/repo",
+      "openshift.io/generated-by": "OpenShiftWebConsole",
     },
     "labels": Object {
       "app": "test-app",
@@ -109,6 +110,7 @@ Object {
     "annotations": Object {
       "app.openshift.io/vcs-ref": "master",
       "app.openshift.io/vcs-uri": "https://github.com/test/repo",
+      "openshift.io/generated-by": "OpenShiftWebConsole",
     },
     "labels": Object {
       "app": "test-app",

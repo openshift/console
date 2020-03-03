@@ -25,8 +25,10 @@ export const ModifyApplication = (kind: K8sKind, obj: K8sResourceKind): KebabOpt
 };
 
 export const EditApplication = (model: K8sKind, obj: K8sResourceKind): KebabOption => {
+  const annotation = obj?.metadata?.annotations?.['openshift.io/generated-by'];
   return {
     label: `Edit ${truncateMiddle(obj.metadata.name, { length: RESOURCE_NAME_TRUNCATE_LENGTH })}`,
+    hidden: annotation !== 'OpenShiftWebConsole',
     href: `/edit/ns/${obj.metadata.namespace}?name=${obj.metadata.name}&kind=${obj.kind ||
       model.kind}`,
     accessReview: {
