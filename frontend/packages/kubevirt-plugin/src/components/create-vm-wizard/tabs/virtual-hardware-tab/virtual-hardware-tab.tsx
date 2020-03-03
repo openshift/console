@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { Button, ButtonVariant, Title, Tooltip } from '@patternfly/react-core';
-import { PlusCircleIcon, OutlinedQuestionCircleIcon } from '@patternfly/react-icons';
+import { Title } from '@patternfly/react-core';
 import { Firehose, FirehoseResult } from '@console/internal/components/utils';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { createLookup, getName } from '@console/shared/src';
@@ -22,7 +21,7 @@ import { cdTableColumnClasses } from '../../../vm-disks/utils';
 import { CombinedDisk } from '../../../../k8s/wrapper/vm/combined-disk';
 import { isLoaded } from '../../../../utils';
 import { ATTACH_CD } from '../../strings/storage';
-import { DiskType, DiskBus } from '../../../../constants/vm';
+import { DiskType } from '../../../../constants/vm';
 import { getAvailableCDName } from '../../../modals/cdrom-vm-modal/helpers';
 import { PersistentVolumeClaimWrapper } from '../../../../k8s/wrapper/vm/persistent-volume-claim-wrapper';
 import { VMWizardStorageBundle } from '../storage-tab/types';
@@ -32,6 +31,9 @@ import { DiskWrapper } from '../../../../k8s/wrapper/vm/disk-wrapper';
 import { VHW_TYPES } from './types';
 import { VmWizardVirtualHardwareRow } from './vm-wizard-virtualhardware-row';
 import './virtual-hardware-tab.scss';
+import { getTemplateValidation } from '../../selectors/template';
+import { TemplateValidations } from 'packages/kubevirt-plugin/src/utils/validations/template/template-validations';
+import { AddCDButton } from '../../../modals/cdrom-vm-modal/cdrom-modal';
 
 const getVirtualStoragesData = (
   storages: VMWizardStorageWithWrappers[],
@@ -65,6 +67,7 @@ const getVirtualStoragesData = (
         wizardStorageData,
         source: combinedDisk.getCDROMSourceValue(),
         content: combinedDisk.getContent(),
+        diskInterface: combinedDisk.getDiskInterface(),
         storageClass: combinedDisk.getStorageClassName(),
       };
     });
@@ -76,6 +79,7 @@ const VirtualHardwareTabFirehose: React.FC<VirtualHardwareTabFirehoseProps> = ({
   setTabLocked,
   removeStorage,
   storages,
+  templateValidations,
   persistentVolumeClaims,
 }) => {
   const virtualStorages = getVirtualStoragesData(storages, persistentVolumeClaims);
@@ -86,16 +90,14 @@ const VirtualHardwareTabFirehose: React.FC<VirtualHardwareTabFirehoseProps> = ({
   const diskWrapper = DiskWrapper.initializeFromSimpleData({
     name: availableCDName,
     type: DiskType.CDROM,
-    bus: DiskBus.VIRTIO,
+    bus: templateValidations.getDefaultBus(),
   });
 
   const addButton = (
-    <Button
-      variant={ButtonVariant.link}
+    <AddCDButton
+      className="virtual-hardware-tab-add-btn"
+      text={ATTACH_CD}
       isDisabled={disableAddCD}
-      icon={<PlusCircleIcon />}
-      id="attach-cdrom"
-      className="pf-m-link--align-left virtual-hardware-tab-add-btn"
       onClick={() =>
         withProgress(
           vmWizardStorageModalEnhanced({
@@ -108,9 +110,7 @@ const VirtualHardwareTabFirehose: React.FC<VirtualHardwareTabFirehoseProps> = ({
           }).result,
         )
       }
-    >
-      {ATTACH_CD}
-    </Button>
+    />
   );
 
   return (
@@ -131,14 +131,6 @@ const VirtualHardwareTabFirehose: React.FC<VirtualHardwareTabFirehoseProps> = ({
               row={VmWizardVirtualHardwareRow}
             />
             {addButton}
-            {disableAddCD && (
-              <Tooltip
-                position="bottom"
-                content="You have reached the maximum amount of CD-ROM drives"
-              >
-                <OutlinedQuestionCircleIcon />
-              </Tooltip>
-            )}
           </div>
         </>
       )}
@@ -157,6 +149,7 @@ type VirtualHardwareTabFirehoseProps = {
   isBootDiskRequired: boolean;
   wizardReduxID: string;
   storages: VMWizardStorageWithWrappers[];
+  templateValidations: TemplateValidations;
   removeStorage: (id: string) => void;
   setTabLocked: (isLocked: boolean) => void;
   persistentVolumeClaims: FirehoseResult<K8sResourceKind[]>;
@@ -190,6 +183,7 @@ const stateToProps = (state, { wizardReduxID }) => {
     namespace: iGetCommonData(state, wizardReduxID, VMWizardProps.activeNamespace),
     isLocked: isStepLocked(stepData, VMWizardTab.ADVANCED_VIRTUAL_HARDWARE),
     storages: getStoragesWithWrappers(state, wizardReduxID),
+    templateValidations: getTemplateValidation(state, wizardReduxID),
   };
 };
 

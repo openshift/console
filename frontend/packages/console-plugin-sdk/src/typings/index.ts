@@ -14,3 +14,4 @@ export * from './global-configs';
 export * from './clusterserviceversions';
 export * from './dev-catalog';
 export * from './reducers';
+export * from './horizontal-nav';

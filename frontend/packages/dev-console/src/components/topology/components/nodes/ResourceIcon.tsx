@@ -9,6 +9,7 @@ export interface ResourceIconProps {
   x: number;
   y: number;
   kind: string;
+  leftJustified?: boolean;
 }
 
 export function getKindStringAndAbbrivation(kind: string) {
@@ -19,30 +20,38 @@ export function getKindStringAndAbbrivation(kind: string) {
   return { kindStr, kindAbbr, kindColor };
 }
 
-export const ResourceIcon: React.FC<ResourceIconProps> = ({ kind, x, y }, iconRef) => {
+export const ResourceIcon: React.FC<ResourceIconProps> = (
+  { kind, x, y, leftJustified },
+  iconRef,
+) => {
   const { kindAbbr, kindStr, kindColor } = getKindStringAndAbbrivation(kind);
   const [textSize, textRef] = useSize([]);
 
   let rect = null;
-  if (textSize) {
-    let { height } = textSize;
-    const paddingX = height / 2;
-    const paddingY = height / 14;
-    height += paddingY * 2;
+  let paddingX = 0;
+  let paddingY = 0;
+  let width = 0;
+  let height = 0;
 
+  if (textSize) {
+    ({ height, width } = textSize);
+    paddingX = height / 2;
+    paddingY = height / 14;
+    height += paddingY * 2;
     rect = (
       <rect
         fill={kindColor}
         ref={iconRef}
-        x={x - paddingX - textSize.width / 2}
+        x={x - (leftJustified ? 0 : paddingX + width / 2)}
         width={textSize.width + paddingX * 2}
-        y={y - paddingY - textSize.height / 2}
+        y={y - (leftJustified ? 0 : paddingY + textSize.height / 2)}
         height={height}
         rx={height / 2}
         ry={height / 2}
       />
     );
   }
+
   return (
     <g
       className={cx('odc-resource-icon', {
@@ -51,7 +60,13 @@ export const ResourceIcon: React.FC<ResourceIconProps> = ({ kind, x, y }, iconRe
     >
       {rect}
       <title>{kindStr}</title>
-      <text ref={textRef} x={x} y={y} textAnchor="middle" dy="0.35em">
+      <text
+        ref={textRef}
+        x={x + (leftJustified ? paddingX + width / 2 : 0)}
+        y={y + (leftJustified ? (paddingY + height) / 2 : 0)}
+        textAnchor="middle"
+        dy="0.35em"
+      >
         {kindAbbr}
       </text>
     </g>

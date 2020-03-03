@@ -1,9 +1,17 @@
+@import '../topology-utils';
+
 .odc-m-drag-active {
-  cursor: grab !important;
+  cursor: no-drop;
+  &.odc-m-valid-drop-target {
+    cursor: grab;
+    .odc-m-drag-create {
+      cursor: none;
+    }
+  }
 }
 
 .topology-connector__remove-bg {
-  fill: var(--pf-global--active-color--400);
+  fill: #{$interactive-stroke-color};
   cursor: pointer;
   .odc-m-drag-active & {
     display: none;

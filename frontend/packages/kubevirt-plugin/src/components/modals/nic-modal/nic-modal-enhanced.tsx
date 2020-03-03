@@ -9,7 +9,7 @@ import { getLoadedData } from '../../../utils';
 import { NetworkType } from '../../../constants/vm';
 import { getInterfaces, getUsedNetworks, asVM, getVMLikeModel } from '../../../selectors/vm';
 import { NetworkInterfaceWrapper } from '../../../k8s/wrapper/vm/network-interface-wrapper';
-import { VMLikeEntityKind } from '../../../types';
+import { VMLikeEntityKind } from '../../../types/vmLike';
 import { getUpdateNICPatches } from '../../../k8s/patches/vm/vm-nic-patches';
 import { getSimpleName } from '../../../selectors/utils';
 import { NetworkWrapper } from '../../../k8s/wrapper/vm/network-wrapper';

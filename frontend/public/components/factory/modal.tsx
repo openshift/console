@@ -67,7 +67,9 @@ export const ModalTitle: React.SFC<ModalTitleProps> = ({
   className = 'modal-header',
 }) => (
   <div className={className}>
-    <h4 className="modal-title">{children}</h4>
+    <h1 className="pf-c-title pf-m-2xl" data-test-id="modal-title">
+      {children}
+    </h1>
   </div>
 );
 
@@ -169,7 +171,7 @@ export type ModalSubmitFooterProps = {
   message?: string;
   errorMessage?: string;
   inProgress: boolean;
-  cancel: (e: Event) => void;
+  cancel: (e: React.SyntheticEvent<any, Event>) => void;
   cancelText?: React.ReactNode;
   submitText: React.ReactNode;
   submitDisabled?: boolean;

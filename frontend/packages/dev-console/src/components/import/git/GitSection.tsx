@@ -1,10 +1,8 @@
 import * as React from 'react';
 import { useFormikContext, FormikValues, useField } from 'formik';
-import { Alert, TextInputTypes } from '@patternfly/react-core';
+import { Alert, TextInputTypes, ValidatedOptions } from '@patternfly/react-core';
 import { getGitService, GitProvider } from '@console/git-service';
-import { LoadingInline } from '@console/internal/components/utils';
-import { CheckCircleIcon } from '@patternfly/react-icons';
-import { InputField, DropdownField } from '@console/shared';
+import { InputField, DropdownField, useFormikValidationFix } from '@console/shared';
 import { GitReadableTypes, GitTypes } from '../import-types';
 import { detectGitType, detectGitRepoName } from '../import-validation-utils';
 import { getSampleRepo, getSampleRef, getSampleContextDir } from '../../../utils/imagestream-utils';
@@ -17,9 +15,7 @@ export interface GitSectionProps {
 }
 
 const GitSection: React.FC<GitSectionProps> = ({ showSample }) => {
-  const { values, setFieldValue, setFieldTouched, setFieldError, validateForm } = useFormikContext<
-    FormikValues
-  >();
+  const { values, setFieldValue, setFieldTouched } = useFormikContext<FormikValues>();
   const [, { touched: gitTypeTouched }] = useField('git.type');
   const tag = values.image.tagObj;
   const sampleRepo = showSample && getSampleRepo(tag);
@@ -46,7 +42,7 @@ const GitSection: React.FC<GitSectionProps> = ({ showSample }) => {
     const isReachable = gitService && (await gitService.isRepoReachable());
     setFieldValue('git.isUrlValidating', false);
     if (isReachable) {
-      setFieldValue('git.isUrlValidated', true);
+      setFieldValue('git.urlValidation', ValidatedOptions.success);
       setFieldValue('image.isRecommending', true);
       const buildTools = await gitService.detectBuildTypes();
       setFieldValue('image.isRecommending', false);
@@ -61,23 +57,12 @@ const GitSection: React.FC<GitSectionProps> = ({ showSample }) => {
     } else {
       setFieldValue('image.recommended', '');
       setFieldValue('image.couldNotRecommend', false);
-      setFieldValue('git.isUrlValidated', false);
-      setFieldError('git.url', 'Git repository is not reachable.');
+      setFieldValue('git.urlValidation', ValidatedOptions.error);
     }
-
-    validateForm();
-  }, [
-    setFieldError,
-    setFieldTouched,
-    setFieldValue,
-    validateForm,
-    values.application.name,
-    values.git,
-    values.name,
-  ]);
+  }, [setFieldTouched, setFieldValue, values.application.name, values.git, values.name]);
 
   const handleGitUrlChange: React.ReactEventHandler = React.useCallback(() => {
-    setFieldValue('git.isUrlValidated', false);
+    setFieldValue('git.urlValidation', ValidatedOptions.default);
     values.image.recommended && setFieldValue('image.recommended', '');
     values.image.couldNotRecommend && setFieldValue('image.couldNotRecommend', false);
   }, [setFieldValue, values.image.couldNotRecommend, values.image.recommended]);
@@ -95,13 +80,11 @@ const GitSection: React.FC<GitSectionProps> = ({ showSample }) => {
     setFieldValue('git.ref', ref);
     setFieldValue('git.type', gitType);
     setFieldTouched('git.url', true);
-    validateForm();
   }, [
     sampleRepo,
     setFieldTouched,
     setFieldValue,
     tag,
-    validateForm,
     values.application.name,
     values.image.selected,
     values.name,
@@ -109,21 +92,15 @@ const GitSection: React.FC<GitSectionProps> = ({ showSample }) => {
 
   const getHelpText = () => {
     if (values.git.isUrlValidating) {
-      return (
-        <span style={{ fontWeight: 'bold' }}>
-          <LoadingInline /> Validating...
-        </span>
-      );
+      return 'Validating...';
     }
-    if (values.git.isUrlValidated) {
-      return (
-        <span style={{ fontWeight: 'bold', color: 'var(--pf-global--success-color--200)' }}>
-          <CheckCircleIcon /> Validated
-        </span>
-      );
+    if (values.git.urlValidation === ValidatedOptions.success) {
+      return 'Validated';
     }
     return '';
   };
+
+  useFormikValidationFix(values.git.url);
 
   return (
     <FormSection title="Git">
@@ -132,8 +109,11 @@ const GitSection: React.FC<GitSectionProps> = ({ showSample }) => {
         name="git.url"
         label="Git Repo URL"
         helpText={getHelpText()}
+        helpTextInvalid="Git repository is not reachable."
+        validated={values.git.urlValidation}
         onChange={handleGitUrlChange}
         onBlur={handleGitUrlBlur}
+        data-test-id="git-form-input-url"
         required
       />
       {values.git.showGitType && (

@@ -20,7 +20,7 @@ export interface KnativeResourceOverviewPageProps extends StateProps {
 
 const tabs = [
   {
-    name: 'Overview',
+    name: 'Details',
     component: KnativeOverview,
   },
   {

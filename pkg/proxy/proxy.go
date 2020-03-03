@@ -107,6 +107,12 @@ func (p *Proxy) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		r.Header.Del(h)
 	}
 
+	// Include `system:authenticated` when impersonating groups so that basic requests that all
+	// users can run like self-subject access reviews work.
+	if len(r.Header["Impersonate-Group"]) > 0 {
+		r.Header.Add("Impersonate-Group", "system:authenticated")
+	}
+
 	r.Host = p.config.Endpoint.Host
 	r.URL.Host = p.config.Endpoint.Host
 	r.URL.Scheme = p.config.Endpoint.Scheme

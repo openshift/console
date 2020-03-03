@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
-import { NamespaceBar } from '@console/internal/components/namespace';
 import ProjectAccessPage from '../ProjectAccessPage';
 import RenderProjectAccess from '../RenderProjectAccessPage';
+import NamespacedPage from '../../NamespacedPage';
 
 describe('Project Access Page', () => {
   const projectAccessPageProps: React.ComponentProps<typeof ProjectAccessPage> = {
@@ -16,8 +16,8 @@ describe('Project Access Page', () => {
     },
   };
   const wrapper = shallow(<ProjectAccessPage {...projectAccessPageProps} />);
-  it('should have the NamespaceBar Component', () => {
-    expect(wrapper.find(NamespaceBar).exists()).toBeTruthy();
+  it('should have the NamespacedPage Component', () => {
+    expect(wrapper.find(NamespacedPage).exists()).toBeTruthy();
   });
   it('should render the RenderProjectAccessPage Component', () => {
     expect(wrapper.find(RenderProjectAccess).exists()).toBeTruthy();

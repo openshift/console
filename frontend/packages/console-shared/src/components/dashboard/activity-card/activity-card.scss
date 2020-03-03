@@ -1,5 +1,6 @@
 @import '~@patternfly/patternfly/sass-utilities/colors';
 @import '../../../styles/skeleton-screen';
+@import '../../../../../../public/style/vars';
 
 .co-activity-card__body {
   max-height: 30rem;
@@ -55,6 +56,10 @@
   }
 }
 
+.co-activity-card__recent-actions svg {
+  vertical-align: -0.125rem !important;
+}
+
 .co-activity-card__recent-list {
   padding-bottom: 0 !important;
 }
@@ -102,6 +107,7 @@
   white-space: nowrap;
 
   .co-resource-item__resource-name {
+    font-size: $font-size-base;
     text-overflow: ellipsis;
     overflow: hidden;
   }

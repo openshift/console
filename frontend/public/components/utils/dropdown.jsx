@@ -676,7 +676,8 @@ const ActionsMenu_ = ({ actions, impersonate, title = undefined }) => {
       return acc;
     }, []);
 
-    if (_.isEmpty(promises)) {
+    // Only need to resolve if all actions require access review
+    if (promises.length !== actions.length) {
       setVisible(true);
       return;
     }

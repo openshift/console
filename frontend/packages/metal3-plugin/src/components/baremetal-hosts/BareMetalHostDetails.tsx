@@ -82,7 +82,7 @@ const BareMetalHostDetails: React.FC<BareMetalHostDetailsProps> = ({
 
   return (
     <div className="co-m-pane__body">
-      <SectionHeading text="Bare Metal Host Overview" />
+      <SectionHeading text="Bare Metal Host Details" />
       <div className="row">
         <div className="col-xs-12 col-sm-6" id="name-description-column">
           <dl>

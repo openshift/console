@@ -111,6 +111,20 @@ const plugin: Plugin<ConsumedExtensions> = [
     },
   },
   {
+    type: 'NavItem/Href',
+    properties: {
+      perspective: 'dev',
+      componentProps: {
+        name: 'Monitoring',
+        href: '/dev-monitoring',
+        testID: 'monitoring-header',
+      },
+    },
+    flags: {
+      required: [FLAGS.OPENSHIFT],
+    },
+  },
+  {
     type: 'NavItem/ResourceNS',
     properties: {
       perspective: 'dev',
@@ -141,11 +155,24 @@ const plugin: Plugin<ConsumedExtensions> = [
   {
     type: 'NavItem/Href',
     properties: {
+      section: 'More',
       perspective: 'dev',
       componentProps: {
-        name: 'Monitoring',
-        href: '/dev-monitoring',
-        testID: 'monitoring-header',
+        name: 'Search',
+        href: '/search',
+        testID: 'more-search-header',
+      },
+    },
+  },
+  {
+    type: 'NavItem/Href',
+    properties: {
+      section: 'More',
+      perspective: 'dev',
+      componentProps: {
+        name: 'Helm',
+        href: '/helm-releases',
+        testID: 'helm-releases-header',
       },
     },
     flags: {
@@ -155,12 +182,12 @@ const plugin: Plugin<ConsumedExtensions> = [
   {
     type: 'NavItem/ResourceCluster',
     properties: {
-      section: 'Advanced',
+      section: 'More',
       perspective: 'dev',
       componentProps: {
         name: 'Project Details',
         resource: 'projects',
-        testID: 'advanced-project-header',
+        testID: 'more-project-header',
       },
     },
     flags: {
@@ -170,51 +197,12 @@ const plugin: Plugin<ConsumedExtensions> = [
   {
     type: 'NavItem/Href',
     properties: {
-      section: 'Advanced',
+      section: 'More',
       perspective: 'dev',
       componentProps: {
         name: 'Project Access',
         href: '/project-access',
-        testID: 'advanced-project-access-header',
-      },
-    },
-  },
-  {
-    type: 'NavItem/Href',
-    properties: {
-      section: 'Advanced',
-      perspective: 'dev',
-      componentProps: {
-        name: 'Metrics',
-        href: '/metrics',
-        testID: 'metrics-header',
-      },
-    },
-    flags: {
-      required: [FLAGS.OPENSHIFT],
-    },
-  },
-  {
-    type: 'NavItem/Href',
-    properties: {
-      section: 'Advanced',
-      perspective: 'dev',
-      componentProps: {
-        name: 'Search',
-        href: '/search',
-        testID: 'advanced-search-header',
-      },
-    },
-  },
-  {
-    type: 'NavItem/ResourceNS',
-    properties: {
-      section: 'Advanced',
-      perspective: 'dev',
-      componentProps: {
-        name: 'Events',
-        resource: 'events',
-        testID: 'advanced-events-header',
+        testID: 'more-project-access-header',
       },
     },
   },
@@ -411,10 +399,9 @@ const plugin: Plugin<ConsumedExtensions> = [
         '/import',
         '/topology',
         '/deploy-image',
-        '/metrics',
         '/project-access',
         '/dev-monitoring',
-        '/edit',
+        '/helm-releases',
       ],
       component: NamespaceRedirect,
     },
@@ -435,6 +422,8 @@ const plugin: Plugin<ConsumedExtensions> = [
       path: [
         '/topology/all-namespaces',
         '/topology/ns/:name',
+        '/topology/all-namespaces/graph',
+        '/topology/ns/:name/graph',
         '/topology/all-namespaces/list',
         '/topology/ns/:name/list',
       ],
@@ -501,6 +490,19 @@ const plugin: Plugin<ConsumedExtensions> = [
   {
     type: 'Page/Route',
     properties: {
+      path: ['/helm-releases/ns/:ns/release/:name'],
+      exact: false,
+      loader: async () =>
+        (
+          await import(
+            './components/helm/HelmReleaseDetails' /* webpackChunkName: "dev-console-helmReleaseDetails" */
+          )
+        ).default,
+    },
+  },
+  {
+    type: 'Page/Route',
+    properties: {
       perspective: 'dev',
       exact: true,
       path: ['/k8s/all-namespaces/buildconfigs', '/k8s/ns/:ns/buildconfigs'],
@@ -527,6 +529,32 @@ const plugin: Plugin<ConsumedExtensions> = [
             './components/pipelines/PipelinesPage' /* webpackChunkName: "pipeline-page" */
           )
         ).PipelinesPage,
+    },
+  },
+  {
+    type: 'Page/Route',
+    properties: {
+      exact: true,
+      path: [`/k8s/ns/:ns/${referenceForModel(PipelineModel)}/~new/builder`],
+      loader: async () =>
+        (
+          await import(
+            './components/pipelines/pipeline-builder/PipelineBuilderPage' /* webpackChunkName: "pipeline-builder-page" */
+          )
+        ).default,
+    },
+  },
+  {
+    type: 'Page/Route',
+    properties: {
+      exact: true,
+      path: [`/k8s/ns/:ns/${referenceForModel(PipelineModel)}/:pipelineName/builder`],
+      loader: async () =>
+        (
+          await import(
+            './components/pipelines/pipeline-builder/PipelineBuilderEditPage' /* webpackChunkName: "pipeline-builder-edit-page" */
+          )
+        ).default,
     },
   },
   {
@@ -590,10 +618,13 @@ const plugin: Plugin<ConsumedExtensions> = [
     type: 'Page/Route',
     properties: {
       exact: true,
-      path: ['/metrics/all-namespaces', '/metrics/ns/:ns'],
+      path: ['/helm-releases/all-namespaces', '/helm-releases/ns/:ns'],
       loader: async () =>
-        (await import('./components/MetricsPage' /* webpackChunkName: "dev-console-metrics" */))
-          .default,
+        (
+          await import(
+            './components/helm/HelmReleasePage' /* webpackChunkName: "dev-console-helm-releases" */
+          )
+        ).default,
     },
   },
   {
@@ -612,7 +643,6 @@ const plugin: Plugin<ConsumedExtensions> = [
   {
     type: 'Page/Route',
     properties: {
-      perspective: 'dev',
       exact: false,
       path: ['/dev-monitoring/all-namespaces', '/dev-monitoring/ns/:ns'],
       loader: async () =>

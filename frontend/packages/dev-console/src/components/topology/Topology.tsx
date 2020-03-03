@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as classNames from 'classnames';
-import * as _ from 'lodash';
 import { action } from 'mobx';
+import { connect } from 'react-redux';
 import { Button, ToolbarItem, Tooltip } from '@patternfly/react-core';
 import {
   TopologyView,
@@ -12,24 +12,35 @@ import {
 import {
   Visualization,
   VisualizationSurface,
-  GraphElement,
   isNode,
+  isEdge,
+  BaseEdge,
   Model,
   SELECTION_EVENT,
   SelectionEventListener,
 } from '@console/topology';
+import { RootState } from '@console/internal/redux';
 import { TopologyIcon } from '@patternfly/react-icons';
 import TopologySideBar from './TopologySideBar';
-import { TopologyDataModel, TopologyDataObject } from './topology-types';
+import { GraphData, TopologyDataModel, TopologyDataObject } from './topology-types';
 import TopologyResourcePanel from './TopologyResourcePanel';
 import TopologyApplicationPanel from './application-panel/TopologyApplicationPanel';
+import ConnectedTopologyEdgePanel from './TopologyEdgePanel';
 import { topologyModelFromDataModel } from './topology-utils';
 import { layoutFactory, COLA_LAYOUT, COLA_FORCE_LAYOUT } from './layouts/layoutFactory';
 import ComponentFactory from './componentFactory';
-import { TYPE_APPLICATION_GROUP } from './const';
+import { TYPE_APPLICATION_GROUP, TYPE_HELM_RELEASE, TYPE_OPERATOR_BACKED_SERVICE } from './const';
 import TopologyFilterBar from './filters/TopologyFilterBar';
+import { getTopologyFilters, TopologyFilters } from './filters/filter-utils';
+import TopologyHelmReleasePanel from './TopologyHelmReleasePanel';
+import { useAddToProjectAccess } from '../../utils/useAddToProjectAccess';
 
-export interface TopologyProps {
+interface StateProps {
+  filters: TopologyFilters;
+  activeNamespace: string;
+}
+
+export interface TopologyProps extends StateProps {
   data: TopologyDataModel;
   serviceBinding: boolean;
 }
@@ -42,12 +53,14 @@ const graphModel: Model = {
   },
 };
 
-const Topology: React.FC<TopologyProps> = ({ data, serviceBinding }) => {
+const Topology: React.FC<TopologyProps> = ({ data, serviceBinding, filters, activeNamespace }) => {
   const visRef = React.useRef<Visualization | null>(null);
   const componentFactoryRef = React.useRef<ComponentFactory | null>(null);
   const [layout, setLayout] = React.useState<string>(graphModel.graph.layout);
   const [model, setModel] = React.useState<Model>();
+  const [graphData, setGraphData] = React.useState<GraphData>();
   const [selectedIds, setSelectedIds] = React.useState<string[]>([]);
+  const createResourceAccess: string[] = useAddToProjectAccess(activeNamespace);
 
   if (!componentFactoryRef.current) {
     componentFactoryRef.current = new ComponentFactory(serviceBinding);
@@ -69,11 +82,20 @@ const Topology: React.FC<TopologyProps> = ({ data, serviceBinding }) => {
   }
 
   React.useEffect(() => {
+    const newGraphData: GraphData = {
+      createResourceAccess,
+      namespace: activeNamespace,
+    };
+    visRef.current.getGraph().setData(newGraphData);
+    setGraphData(newGraphData);
+  }, [activeNamespace, createResourceAccess]);
+
+  React.useEffect(() => {
     componentFactoryRef.current.serviceBinding = serviceBinding;
   }, [serviceBinding]);
 
   React.useEffect(() => {
-    const newModel = topologyModelFromDataModel(data);
+    const newModel = topologyModelFromDataModel(data, filters);
     visRef.current.fromModel(newModel);
     setModel(newModel);
     if (selectedIds.length && !visRef.current.getElementById(selectedIds[0])) {
@@ -86,12 +108,15 @@ const Topology: React.FC<TopologyProps> = ({ data, serviceBinding }) => {
     let resizeTimeout = null;
     if (selectedIds.length > 0) {
       const selectedEntity = visRef.current.getElementById(selectedIds[0]);
-      if (selectedEntity && isNode(selectedEntity)) {
+      if (selectedEntity) {
+        const visibleEntity = isNode(selectedEntity)
+          ? selectedEntity
+          : (selectedEntity as BaseEdge).getSource();
         resizeTimeout = setTimeout(
           action(() => {
             visRef.current
               .getGraph()
-              .panIntoView(selectedEntity, { offset: 20, minimumVisible: 40 });
+              .panIntoView(visibleEntity, { offset: 20, minimumVisible: 40 });
             resizeTimeout = null;
           }),
           500,
@@ -178,28 +203,41 @@ const Topology: React.FC<TopologyProps> = ({ data, serviceBinding }) => {
       if (selectedEntity.getType() === TYPE_APPLICATION_GROUP) {
         return (
           <TopologyApplicationPanel
+            graphData={graphData}
             application={{
               id: selectedEntity.getId(),
               name: selectedEntity.getLabel(),
-              resources: _.map(selectedEntity.getChildren(), (node: GraphElement) =>
-                node.getData(),
-              ),
+              resources: selectedEntity.getData().groupResources,
             }}
           />
         );
       }
+      if (selectedEntity.getType() === TYPE_HELM_RELEASE) {
+        return <TopologyHelmReleasePanel helmRelease={selectedEntity} />;
+      }
+      if (selectedEntity.getType() === TYPE_OPERATOR_BACKED_SERVICE) {
+        return null;
+      }
       return <TopologyResourcePanel item={selectedEntity.getData() as TopologyDataObject} />;
     }
 
+    if (isEdge(selectedEntity)) {
+      return <ConnectedTopologyEdgePanel edge={selectedEntity as BaseEdge} data={data} />;
+    }
     return null;
   };
 
   const renderSideBar = () => {
     const selectedEntity =
       selectedIds.length === 0 ? null : visRef.current.getElementById(selectedIds[0]);
+    const details = selectedItemDetails();
+    if (!selectedEntity || !details) {
+      return null;
+    }
+
     return (
-      <TopologySideBar show={!!selectedEntity} onClose={onSidebarClose}>
-        {selectedEntity && selectedItemDetails()}
+      <TopologySideBar show={!!selectedEntity && !!details} onClose={onSidebarClose}>
+        {selectedEntity && details}
       </TopologySideBar>
     );
   };
@@ -208,16 +246,25 @@ const Topology: React.FC<TopologyProps> = ({ data, serviceBinding }) => {
     return null;
   }
 
+  const sideBar = renderSideBar();
+
   return (
     <TopologyView
-      viewToolbar={<TopologyFilterBar />}
+      viewToolbar={<TopologyFilterBar visualization={visRef.current} />}
       controlBar={renderControlBar()}
-      sideBar={renderSideBar()}
-      sideBarOpen={selectedIds.length > 0}
+      sideBar={sideBar}
+      sideBarOpen={!!sideBar}
     >
       <VisualizationSurface visualization={visRef.current} state={{ selectedIds }} />
     </TopologyView>
   );
 };
 
-export default Topology;
+const TopologyStateToProps = (state: RootState): StateProps => {
+  return {
+    filters: getTopologyFilters(state),
+    activeNamespace: state.UI.get('activeNamespace'),
+  };
+};
+
+export default connect(TopologyStateToProps)(Topology);

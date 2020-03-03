@@ -15,30 +15,30 @@ import {
   resourcePath,
 } from '@console/internal/components/utils';
 import { VMDashboardContext } from '../../vms/vm-dashboard-context';
-import { isVMRunning } from '../../../selectors/vm';
-import { getVMStatus } from '../../../statuses/vm/vm';
-import { VirtualMachineModel } from '../../../models';
-import { getVmiIpAddressesString } from '../../ip-addresses';
-import { VM_DETAIL_OVERVIEW_HREF } from '../../../constants';
+import { VirtualMachineModel, VirtualMachineInstanceModel } from '../../../models';
+import { getVmiIpAddresses, getVMINodeName } from '../../../selectors/vmi';
+import { VM_DETAIL_DETAILS_HREF } from '../../../constants';
+import { findVMIPod } from '../../../selectors/pod/selectors';
 
 export const VMDetailsCard: React.FC<VMDetailsCardProps> = () => {
   const vmDashboardContext = React.useContext(VMDashboardContext);
-  const { vm, vmi, pods, migrations } = vmDashboardContext;
+  const { vm, vmi, pods } = vmDashboardContext;
+  const vmiLike = vm || vmi;
 
-  const vmStatus = getVMStatus({ vm, vmi, pods, migrations });
-  const { launcherPod } = vmStatus;
+  const launcherPod = findVMIPod(vmi, pods);
 
-  const ipAddrs = getVmiIpAddressesString(vmi, vmStatus);
+  const ipAddrs = getVmiIpAddresses(vmi).join(', ');
 
-  const isNodeLoading = !vm || !pods || !vmStatus;
-  const name = getName(vm);
-  const namespace = getNamespace(vm);
+  const isNodeLoading = !vmiLike || !pods;
+  const name = getName(vmiLike);
+  const namespace = getNamespace(vmiLike);
+  const nodeName = getVMINodeName(vmi) || getNodeName(launcherPod);
 
   const viewAllLink = `${resourcePath(
-    VirtualMachineModel.kind,
+    vm ? VirtualMachineModel.kind : VirtualMachineInstanceModel.kind,
     name,
     namespace,
-  )}/${VM_DETAIL_OVERVIEW_HREF}`;
+  )}/${VM_DETAIL_DETAILS_HREF}`;
 
   return (
     <DashboardCard>
@@ -48,29 +48,35 @@ export const VMDetailsCard: React.FC<VMDetailsCardProps> = () => {
       </DashboardCardHeader>
       <DashboardCardBody isLoading={false}>
         <DetailsBody>
-          <DetailItem title="Name" error={false} isLoading={!vm} valueClassName="co-select-to-copy">
+          <DetailItem
+            title="Name"
+            error={false}
+            isLoading={!vmiLike}
+            valueClassName="co-select-to-copy"
+          >
             {name}
           </DetailItem>
-          <DetailItem title="Namespace" error={false} isLoading={!vm}>
-            <ResourceLink kind="Namespace" name={namespace} title={getUID(vm)} namespace={null} />
+          <DetailItem title="Namespace" error={false} isLoading={!vmiLike}>
+            <ResourceLink
+              kind="Namespace"
+              name={namespace}
+              title={getUID(vmiLike)}
+              namespace={null}
+            />
           </DetailItem>
-          <DetailItem title="Created" error={false} isLoading={!vm}>
-            <Timestamp timestamp={getCreationTimestamp(vm)} />
+          <DetailItem title="Created" error={false} isLoading={!vmiLike}>
+            <Timestamp timestamp={getCreationTimestamp(vmiLike)} />
           </DetailItem>
-          <DetailItem
-            title="Node"
-            error={!isNodeLoading && (!launcherPod || !isVMRunning(vm))}
-            isLoading={isNodeLoading}
-          >
-            {launcherPod && <NodeLink name={getNodeName(launcherPod)} />}
+          <DetailItem title="Node" error={!isNodeLoading} isLoading={!launcherPod || isNodeLoading}>
+            {launcherPod && nodeName && <NodeLink name={nodeName} />}
           </DetailItem>
           <DetailItem
             title="IP Address"
-            error={!ipAddrs}
-            isLoading={!vm}
+            error={!launcherPod || !ipAddrs}
+            isLoading={!vmiLike}
             valueClassName="co-select-to-copy"
           >
-            {ipAddrs}
+            {launcherPod && ipAddrs}
           </DetailItem>
         </DetailsBody>
       </DashboardCardBody>

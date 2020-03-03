@@ -6,7 +6,7 @@ import { CreateYAML } from '@console/internal/components/create-yaml';
 import { ListPageProps } from '@console/internal/components/monitoring';
 import { sortable } from '@patternfly/react-table';
 import { Button } from '@patternfly/react-core';
-import { withFallback } from '@console/internal/components/utils/error-boundary';
+import { withFallback } from '@console/shared/src/components/error/error-boundary';
 import {
   K8sResourceKind,
   referenceForModel,

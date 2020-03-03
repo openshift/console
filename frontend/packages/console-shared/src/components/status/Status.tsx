@@ -27,16 +27,21 @@ export const Status: React.FC<StatusProps> = ({ status, title, children, iconOnl
       return <StatusIconAndText {...statusProps} icon={<ClipboardListIcon />} />;
 
     case 'ContainerCreating':
+    case 'UpgradePending':
       return <ProgressStatus {...statusProps} />;
 
     case 'In Progress':
     case 'Installing':
+    case 'InstallReady':
+    case 'Replacing':
     case 'Running':
     case 'Updating':
     case 'Upgrading':
+    case 'Provisioned as node':
       return <StatusIconAndText {...statusProps} icon={<SyncAltIcon />} />;
 
     case 'Cancelled':
+    case 'Deleting':
     case 'Expired':
     case 'Not Ready':
     case 'Terminating':
@@ -58,6 +63,7 @@ export const Status: React.FC<StatusProps> = ({ status, title, children, iconOnl
     case 'InstallCheckFailed':
     case 'Lost':
     case 'Rejected':
+    case 'UpgradeFailed':
       return <ErrorStatus {...statusProps}>{children}</ErrorStatus>;
 
     case 'Accepted':

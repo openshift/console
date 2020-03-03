@@ -11,7 +11,7 @@ import { ProjectDashboardContext } from './project-dashboard-context';
 export const StatusCard: React.FC = () => {
   const { obj } = React.useContext(ProjectDashboardContext);
   return (
-    <DashboardCard gradient>
+    <DashboardCard gradient data-test-id="status-card">
       <DashboardCardHeader>
         <DashboardCardTitle>Status</DashboardCardTitle>
       </DashboardCardHeader>

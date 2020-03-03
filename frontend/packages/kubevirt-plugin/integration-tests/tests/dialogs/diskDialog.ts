@@ -1,17 +1,23 @@
 import { click } from '@console/shared/src/test-utils/utils';
-import { fillInput, selectOptionByText, getSelectedOptionText } from '../utils/utils';
+import {
+  fillInput,
+  selectOptionByText,
+  getSelectedOptionText,
+  getSelectOptions,
+} from '../utils/utils';
 import * as view from '../../views/dialogs/diskDialog.view';
-import { applyButton, saveButton } from '../../views/kubevirtDetailView.view';
+import { modalSubmitButton, saveButton } from '../../views/kubevirtDetailView.view';
 import { StorageResource, DiskSourceConfig } from '../utils/types';
 import { DISK_SOURCE } from '../utils/consts';
-import { waitForNoLoaders } from '../../views/wizard.view';
+import { waitForNoLoaders, modalCancelButton } from '../../views/wizard.view';
+import { browser, ExpectedConditions as until, $ } from 'protractor';
 
 export class DiskDialog {
   sourceMethods = {
     [DISK_SOURCE.AttachClonedDisk]: DiskDialog.selectSourceAttachClonedDisk,
     [DISK_SOURCE.AttachDisk]: DiskDialog.selectSourceAttachDisk,
-    [DISK_SOURCE.Container]: DiskDialog.selectSourceContainer,
-    [DISK_SOURCE.Url]: DiskDialog.selectSourceURL,
+    [DISK_SOURCE.Container]: DiskDialog.fillContainer,
+    [DISK_SOURCE.Url]: DiskDialog.fillURL,
   };
 
   static async selectSourceAttachDisk(sourceConfig: DiskSourceConfig) {
@@ -23,12 +29,12 @@ export class DiskDialog {
     await selectOptionByText(view.diskPVC, sourceConfig.PVCName);
   }
 
-  static async selectSourceContainer(sourceConfig: DiskSourceConfig) {
-    await selectOptionByText(view.diskContainer, sourceConfig.container);
+  static async fillContainer(sourceConfig: DiskSourceConfig) {
+    await fillInput(view.diskContainer, sourceConfig.container);
   }
 
-  static async selectSourceURL(sourceConfig) {
-    await selectOptionByText(view.diskURL, sourceConfig.URL);
+  static async fillURL(sourceConfig: DiskSourceConfig) {
+    await fillInput(view.diskURL, sourceConfig.URL);
   }
 
   async fillName(name: string) {
@@ -55,17 +61,27 @@ export class DiskDialog {
     return getSelectedOptionText(view.diskSource);
   }
 
+  async getInterfaceOptions() {
+    return getSelectOptions(view.diskInterface);
+  }
+
   async create(disk: StorageResource) {
     await waitForNoLoaders();
     await selectOptionByText(view.diskSource, disk.source || DISK_SOURCE.Blank);
     if (this.sourceMethods[disk.source] !== undefined) {
       await this.sourceMethods[disk.source](disk.sourceConfig);
     }
-    await this.fillName(disk.name);
-    await this.fillSize(disk.size);
+    if (disk.name) {
+      await this.fillName(disk.name);
+    }
+
+    if (disk.size) {
+      await this.fillSize(disk.size);
+    }
+
     await this.selectInterface(disk.interface);
     await this.selectStorageClass(disk.storageClass);
-    await click(applyButton);
+    await click(modalSubmitButton);
     await waitForNoLoaders();
   }
 
@@ -78,5 +94,10 @@ export class DiskDialog {
     }
     await click(saveButton);
     await waitForNoLoaders();
+  }
+
+  async close() {
+    await click(modalCancelButton);
+    await browser.wait(until.not(until.presenceOf($('.co-overlay'))));
   }
 }

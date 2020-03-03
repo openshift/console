@@ -101,6 +101,7 @@ export const PageHeading = connectToModel((props: PageHeadingProps) => {
   const showActions =
     (hasButtonActions || hasMenuActions) && hasData && !_.get(data, 'metadata.deletionTimestamp');
   const resourceStatus = hasData && getResourceStatus ? getResourceStatus(data) : null;
+  const showHeading = props.icon || kind || resourceTitle || resourceStatus || badge || showActions;
   return (
     <div
       className={classNames(
@@ -119,42 +120,46 @@ export const PageHeading = connectToModel((props: PageHeadingProps) => {
           {badge && <SplitItem>{badge}</SplitItem>}
         </Split>
       )}
-      <h1 className={classNames('co-m-pane__heading', { 'co-m-pane__heading--logo': props.icon })}>
-        {props.icon ? (
-          <props.icon obj={data} />
-        ) : (
-          <div className="co-m-pane__name co-resource-item">
-            {kind && <ResourceIcon kind={kind} className="co-m-resource-icon--lg" />}{' '}
-            <span data-test-id="resource-title" className="co-resource-item__resource-name">
-              {resourceTitle}
-            </span>
-            {resourceStatus && (
-              <span className="co-resource-item__resource-status hidden-xs">
-                <Badge className="co-resource-item__resource-status-badge" isRead>
-                  <Status status={resourceStatus} />
-                </Badge>
+      {showHeading && (
+        <h1
+          className={classNames('co-m-pane__heading', { 'co-m-pane__heading--logo': props.icon })}
+        >
+          {props.icon ? (
+            <props.icon obj={data} />
+          ) : (
+            <div className="co-m-pane__name co-resource-item">
+              {kind && <ResourceIcon kind={kind} className="co-m-resource-icon--lg" />}{' '}
+              <span data-test-id="resource-title" className="co-resource-item__resource-name">
+                {resourceTitle}
               </span>
-            )}
-          </div>
-        )}
-        {!breadcrumbsFor && badge}
-        {showActions && (
-          <div className="co-actions" data-test-id="details-actions">
-            {hasButtonActions && (
-              <ActionButtons actionButtons={buttonActions.map((a) => a(kindObj, data))} />
-            )}
-            {hasMenuActions && (
-              <ActionsMenu
-                actions={
-                  _.isFunction(menuActions)
-                    ? menuActions(kindObj, data, extraResources, customData)
-                    : menuActions.map((a) => a(kindObj, data, extraResources, customData))
-                }
-              />
-            )}
-          </div>
-        )}
-      </h1>
+              {resourceStatus && (
+                <span className="co-resource-item__resource-status hidden-xs">
+                  <Badge className="co-resource-item__resource-status-badge" isRead>
+                    <Status status={resourceStatus} />
+                  </Badge>
+                </span>
+              )}
+            </div>
+          )}
+          {!breadcrumbsFor && badge}
+          {showActions && (
+            <div className="co-actions" data-test-id="details-actions">
+              {hasButtonActions && (
+                <ActionButtons actionButtons={buttonActions.map((a) => a(kindObj, data))} />
+              )}
+              {hasMenuActions && (
+                <ActionsMenu
+                  actions={
+                    _.isFunction(menuActions)
+                      ? menuActions(kindObj, data, extraResources, customData)
+                      : menuActions.map((a) => a(kindObj, data, extraResources, customData))
+                  }
+                />
+              )}
+            </div>
+          )}
+        </h1>
+      )}
       {props.children}
     </div>
   );

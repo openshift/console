@@ -4,6 +4,7 @@ import { Map as ImmutableMap } from 'immutable';
 import { Tooltip } from '@patternfly/react-core';
 import { Status, SuccessStatus, YellowExclamationTriangleIcon } from '@console/shared';
 import { ResourceLink } from '@console/internal/components/utils';
+import { withFallback } from '@console/shared/src/components/error/error-boundary';
 import { Conditions } from '@console/internal/components/conditions';
 import { StatusCapability, CapabilityProps, DescriptorProps } from '../types';
 import { Phase } from './phase';
@@ -104,7 +105,7 @@ const capabilityFor = (statusCapability: StatusCapability) => {
  * Main entrypoint component for rendering custom UI for a given status descriptor. This should be used instead of importing
  * individual components from this module.
  */
-export const StatusDescriptor: React.SFC<DescriptorProps> = (props) => {
+export const StatusDescriptor = withFallback((props: DescriptorProps) => {
   const { descriptor, value, namespace } = props;
   // Only using first capability instead of dealing with combimations/permutations
   const capability = _.get(descriptor, ['x-descriptors', 0], null) as StatusCapability;
@@ -112,13 +113,11 @@ export const StatusDescriptor: React.SFC<DescriptorProps> = (props) => {
 
   return (
     <dl className="olm-descriptor">
-      <div style={{ width: 'max-content' }}>
-        <Tooltip content={descriptor.description}>
-          <dt className="olm-descriptor__title" data-test-descriptor-label={descriptor.displayName}>
-            {descriptor.displayName}
-          </dt>
-        </Tooltip>
-      </div>
+      <Tooltip content={descriptor.description}>
+        <dt className="olm-descriptor__title" data-test-descriptor-label={descriptor.displayName}>
+          {descriptor.displayName}
+        </dt>
+      </Tooltip>
       <dd className="olm-descriptor__value">
         {descriptor.displayName === 'Status' ? (
           value === 'Running' ? (
@@ -137,7 +136,7 @@ export const StatusDescriptor: React.SFC<DescriptorProps> = (props) => {
       </dd>
     </dl>
   );
-};
+});
 
 type StatusCapabilityProps = CapabilityProps<StatusCapability>;
 

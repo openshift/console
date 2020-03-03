@@ -8,7 +8,7 @@ import {
 } from '@console/internal/components/factory';
 import { k8sPatch } from '@console/internal/module/k8s';
 import { getName } from '@console/shared';
-import { VMLikeEntityKind } from '../../../types';
+import { VMLikeEntityKind } from '../../../types/vmLike';
 import { getVMLikeModel } from '../../../selectors/vm';
 import { getRemoveDiskPatches } from '../../../k8s/patches/vm/vm-disk-patches';
 import { getRemoveNICPatches } from '../../../k8s/patches/vm/vm-nic-patches';

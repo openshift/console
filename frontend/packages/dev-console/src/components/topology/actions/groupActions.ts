@@ -1,9 +1,10 @@
 import * as _ from 'lodash';
 import { KebabOption } from '@console/internal/components/utils/kebab';
 import { modelFor, referenceFor } from '@console/internal/module/k8s';
+import { Node } from '@console/topology';
 import { asAccessReview } from '@console/internal/components/utils';
-import { addResourceMenu } from '../../../actions/add-resources';
-import { TopologyDataMap, TopologyApplicationObject } from '../topology-types';
+import { addResourceMenuWithoutCatalog } from '../../../actions/add-resources';
+import { TopologyDataMap, TopologyApplicationObject, GraphData } from '../topology-types';
 import { getTopologyResourceObject } from '../topology-utils';
 import { deleteApplicationModal } from '../../modals';
 import { cleanUpWorkload } from '../../../utils/application-utils';
@@ -51,10 +52,37 @@ const deleteGroup = (application: TopologyApplicationObject) => {
   };
 };
 
-const addResourcesMenu = (application: TopologyApplicationObject) => {
-  const primaryResource = _.get(application.resources[0], ['resources', 'obj']);
-  return addResourceMenu.map((menuItem) => menuItem(primaryResource, true));
+const addResourcesMenu = (
+  graphData: GraphData,
+  application: TopologyApplicationObject,
+  connectorSource?: Node,
+) => {
+  const primaryResource = application.resources[0]?.resources?.obj;
+  const connectorSourceObj = connectorSource?.getData()?.resources?.obj || {};
+  return _.reduce(
+    addResourceMenuWithoutCatalog,
+    (menuItems, menuItem) => {
+      const item = menuItem(
+        primaryResource,
+        application.resources[0]?.resources?.obj.metadata.namespace,
+        true,
+        connectorSourceObj,
+        graphData.createResourceAccess,
+      );
+      if (item) {
+        menuItems.push(item);
+      }
+      return menuItems;
+    },
+    [],
+  );
 };
-export const groupActions = (application: TopologyApplicationObject): KebabOption[] => {
-  return [deleteGroup(application), ...addResourcesMenu(application)];
+
+export const groupActions = (
+  graphData: GraphData,
+  application: TopologyApplicationObject,
+  connectorSource?: Node,
+): KebabOption[] => {
+  const addItems = addResourcesMenu(graphData, application, connectorSource);
+  return !connectorSource ? [deleteGroup(application), ...addItems] : addItems;
 };

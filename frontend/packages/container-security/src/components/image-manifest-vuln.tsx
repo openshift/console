@@ -99,7 +99,7 @@ export const ImageManifestVulnDetails: React.FC<ImageManifestVulnDetailsProps> =
   return (
     <>
       <div className="co-m-pane__body">
-        <SectionHeading text="Image Manifest Vuln Overview" />
+        <SectionHeading text="Image Manifest Vuln Details" />
         <div style={{ display: 'flex' }}>
           <div className="imagemanifestvuln-details__donut">
             <ChartDonut

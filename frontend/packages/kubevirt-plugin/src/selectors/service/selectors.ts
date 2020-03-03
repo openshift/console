@@ -2,7 +2,7 @@ import * as _ from 'lodash';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { ServiceKind } from '@console/knative-plugin/src/types';
 import { VMIKind } from '../../types';
-import { getVmiTemplateLabels } from '../vmi/basic';
+import { getLabels } from '@console/shared';
 
 export const getServicePort = (service: K8sResourceKind, targetPort: number) =>
   _.get(service, ['spec', 'ports'], []).find(
@@ -13,7 +13,7 @@ const getServiceSelectors = (service: ServiceKind) =>
   service && service.spec && service.spec.selector ? service.spec.selector : {};
 
 export const getServicesForVmi = (services: ServiceKind[], vmi: VMIKind): ServiceKind[] => {
-  const vmLabels = getVmiTemplateLabels(vmi);
+  const vmLabels = getLabels(vmi, {});
   return services.filter((service) => {
     const selectors = getServiceSelectors(service);
     const selectorKeys = Object.keys(selectors);

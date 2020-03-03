@@ -15,6 +15,8 @@ import { K8sResourceKind, PodKind } from '../module/k8s';
 import { allModels } from '../module/k8s/k8s-models';
 import { detectFeatures, clearSSARFlags } from './features';
 import { OverviewSpecialGroup } from '../components/overview/constants';
+import { setClusterID, setCreateProjectMessage, setUser, setConsoleLinks } from './common';
+
 export enum ActionType {
   DismissOverviewDetails = 'dismissOverviewDetails',
   SelectOverviewDetailsTab = 'selectOverviewDetailsTab',
@@ -26,8 +28,14 @@ export enum ActionType {
   SetCurrentLocation = 'setCurrentLocation',
   MonitoringDashboardsClearVariables = 'monitoringDashboardsClearVariables',
   MonitoringDashboardsPatchVariable = 'monitoringDashboardsPatchVariable',
+  MonitoringDashboardsPatchAllVariables = 'monitoringDashboardsPatchAllVariables',
+  MonitoringDashboardsSetPollInterval = 'monitoringDashboardsSetPollInterval',
+  MonitoringDashboardsSetTimespan = 'monitoringDashboardsSetTimespan',
+  MonitoringDashboardsVariableOptionsLoaded = 'monitoringDashboardsVariableOptionsLoaded',
   SetMonitoringData = 'setMonitoringData',
   ToggleMonitoringGraphs = 'monitoringToggleGraphs',
+  NotificationDrawerToggleExpanded = 'notificationDrawerExpanded',
+  NotificationDrawerToggleRead = 'notificationDrawerRead',
   QueryBrowserAddQuery = 'queryBrowserAddQuery',
   QueryBrowserDeleteAllQueries = 'queryBrowserDeleteAllQueries',
   QueryBrowserDeleteQuery = 'queryBrowserDeleteQuery',
@@ -242,10 +250,6 @@ export const sortList = (
 
   return action(ActionType.SortList, { listId, field, func, sortAsNumber, orderBy });
 };
-export const setCreateProjectMessage = (message: string) =>
-  action(ActionType.SetCreateProjectMessage, { message });
-export const setClusterID = (clusterID: string) => action(ActionType.SetClusterID, { clusterID });
-export const setUser = (user: any) => action(ActionType.SetUser, { user });
 export const selectOverviewItem = (uid: string) => action(ActionType.SelectOverviewItem, { uid });
 export const selectOverviewDetailsTab = (tab: string) =>
   action(ActionType.SelectOverviewDetailsTab, { tab });
@@ -266,16 +270,29 @@ export const monitoringDashboardsClearVariables = () =>
   action(ActionType.MonitoringDashboardsClearVariables);
 export const monitoringDashboardsPatchVariable = (key: string, patch: any) =>
   action(ActionType.MonitoringDashboardsPatchVariable, { key, patch });
-export const monitoringLoading = (key: 'alerts' | 'silences') =>
+export const monitoringDashboardsPatchAllVariables = (variables: any) =>
+  action(ActionType.MonitoringDashboardsPatchAllVariables, { variables });
+export const monitoringDashboardsSetPollInterval = (pollInterval: number) =>
+  action(ActionType.MonitoringDashboardsSetPollInterval, { pollInterval });
+export const monitoringDashboardsSetTimespan = (timespan: number) =>
+  action(ActionType.MonitoringDashboardsSetTimespan, { timespan });
+export const monitoringDashboardsVariableOptionsLoaded = (key: string, newOptions: string[]) =>
+  action(ActionType.MonitoringDashboardsVariableOptionsLoaded, { key, newOptions });
+export const monitoringLoading = (key: 'alerts' | 'silences' | 'notificationAlerts') =>
   action(ActionType.SetMonitoringData, {
     key,
     data: { loaded: false, loadError: null, data: null },
   });
-export const monitoringLoaded = (key: 'alerts' | 'silences', data: any) =>
+export const monitoringLoaded = (key: 'alerts' | 'silences' | 'notificationAlerts', data: any) =>
   action(ActionType.SetMonitoringData, { key, data: { loaded: true, loadError: null, data } });
-export const monitoringErrored = (key: 'alerts' | 'silences', loadError: any) =>
-  action(ActionType.SetMonitoringData, { key, data: { loaded: true, loadError, data: null } });
+export const monitoringErrored = (
+  key: 'alerts' | 'silences' | 'notificationAlerts',
+  loadError: any,
+) => action(ActionType.SetMonitoringData, { key, data: { loaded: true, loadError, data: null } });
 export const monitoringToggleGraphs = () => action(ActionType.ToggleMonitoringGraphs);
+export const notificationDrawerToggleExpanded = () =>
+  action(ActionType.NotificationDrawerToggleExpanded);
+export const notificationDrawerToggleRead = () => action(ActionType.NotificationDrawerToggleRead);
 export const queryBrowserAddQuery = () => action(ActionType.QueryBrowserAddQuery);
 export const queryBrowserDeleteAllQueries = () => action(ActionType.QueryBrowserDeleteAllQueries);
 export const queryBrowserDismissNamespaceAlert = () =>
@@ -304,8 +321,6 @@ export const queryBrowserToggleIsEnabled = (index: number) =>
 export const queryBrowserToggleSeries = (index: number, labels: { [key: string]: unknown }) => {
   return action(ActionType.QueryBrowserToggleSeries, { index, labels });
 };
-export const setConsoleLinks = (consoleLinks: string[]) =>
-  action(ActionType.SetConsoleLinks, { consoleLinks });
 export const setPodMetrics = (podMetrics: PodMetrics) =>
   action(ActionType.SetPodMetrics, { podMetrics });
 export const setNamespaceMetrics = (namespaceMetrics: NamespaceMetrics) =>
@@ -334,6 +349,10 @@ const uiActions = {
   updateOverviewFilterValue,
   monitoringDashboardsClearVariables,
   monitoringDashboardsPatchVariable,
+  monitoringDashboardsPatchAllVariables,
+  monitoringDashboardsSetPollInterval,
+  monitoringDashboardsSetTimespan,
+  monitoringDashboardsVariableOptionsLoaded,
   monitoringLoading,
   monitoringLoaded,
   monitoringErrored,
@@ -352,6 +371,8 @@ const uiActions = {
   setConsoleLinks,
   setPodMetrics,
   setNamespaceMetrics,
+  notificationDrawerToggleExpanded,
+  notificationDrawerToggleRead,
 };
 
 export type UIAction = Action<typeof uiActions>;

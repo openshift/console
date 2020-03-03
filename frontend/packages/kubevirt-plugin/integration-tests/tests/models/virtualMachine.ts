@@ -19,17 +19,21 @@ import {
   VM_ACTIONS_TIMEOUT_SECS,
   VM_STOP_TIMEOUT_SECS,
   VM_STATUS,
+  VMI_ACTION,
 } from '../utils/consts';
 import { detailViewAction, listViewAction } from '../../views/vm.actions.view';
 import { nameInput as cloneDialogNameInput } from '../../views/dialogs/cloneVirtualMachineDialog.view';
 import { ProvisionConfigName } from '../utils/constants/wizard';
 import { Wizard } from './wizard';
+import { appHost, testName } from '@console/internal-integration-tests/protractor.conf';
 import { KubevirtDetailView } from './kubevirtDetailView';
 import { ImportWizard } from './importWizard';
 
+const noConfirmDialogActions: (VM_ACTION | VMI_ACTION)[] = [VM_ACTION.Start, VM_ACTION.Clone];
+
 export class VirtualMachine extends KubevirtDetailView {
-  constructor(config) {
-    super({ ...config, kind: 'virtualmachines' });
+  constructor(config, kind?: 'virtualmachines' | 'virtualmachineinstances') {
+    super({ ...config, kind: kind || 'virtualmachines' });
   }
 
   async getStatus(): Promise<string> {
@@ -44,13 +48,10 @@ export class VirtualMachine extends KubevirtDetailView {
     return vmView.vmDetailBootOrder(this.namespace, this.name).getText();
   }
 
-  async action(action: VM_ACTION, waitForAction?: boolean, timeout?: number) {
-    await this.navigateToTab(TAB.Overview);
+  async action(action: VM_ACTION | VMI_ACTION, waitForAction?: boolean, timeout?: number) {
+    await this.navigateToTab(TAB.Details);
 
-    let confirmDialog = true;
-    if ([VM_ACTION.Clone].includes(action)) {
-      confirmDialog = false;
-    }
+    const confirmDialog = !noConfirmDialogActions.includes(action);
 
     await detailViewAction(action, confirmDialog);
     if (waitForAction !== false) {
@@ -58,13 +59,20 @@ export class VirtualMachine extends KubevirtDetailView {
     }
   }
 
-  async listViewAction(action: string, waitForAction?: boolean, timeout?: number) {
+  async navigateToListView() {
+    const vmsListUrl = (namespace) =>
+      `${appHost}/k8s/${namespace === 'all-namespaces' ? '' : 'ns/'}${namespace}/virtualmachines`;
+    const currentUrl = await browser.getCurrentUrl();
+    if (![vmsListUrl(testName), vmsListUrl('all-namespaces')].includes(currentUrl)) {
+      await browser.get(vmsListUrl(this.namespace));
+      await isLoaded();
+    }
+  }
+
+  async listViewAction(action: VM_ACTION | VMI_ACTION, waitForAction?: boolean, timeout?: number) {
     await this.navigateToListView();
 
-    let confirmDialog = true;
-    if ([VM_ACTION.Clone as string].includes(action)) {
-      confirmDialog = false;
-    }
+    const confirmDialog = !noConfirmDialogActions.includes(action);
     await listViewAction(this.name)(action, confirmDialog);
     if (waitForAction !== false) {
       await this.waitForActionFinished(action, timeout);
@@ -72,7 +80,7 @@ export class VirtualMachine extends KubevirtDetailView {
   }
 
   async waitForStatus(status: string, timeout?: number) {
-    await this.navigateToTab(TAB.Overview);
+    await this.navigateToTab(TAB.Details);
     await browser.wait(
       until.textToBePresentInElement(vmView.vmDetailStatus(this.namespace, this.name), status),
       resolveTimeout(timeout, VM_BOOTUP_TIMEOUT_SECS),
@@ -80,7 +88,7 @@ export class VirtualMachine extends KubevirtDetailView {
   }
 
   async waitForActionFinished(action: string, timeout?: number) {
-    await this.navigateToTab(TAB.Overview);
+    await this.navigateToTab(TAB.Details);
     switch (action) {
       case VM_ACTION.Start:
         await this.waitForStatus(
@@ -139,6 +147,12 @@ export class VirtualMachine extends KubevirtDetailView {
           resolveTimeout(timeout, PAGE_LOAD_TIMEOUT_SECS),
         );
         break;
+      case VM_ACTION.Unpause:
+        await this.waitForStatus(
+          VM_STATUS.Running,
+          resolveTimeout(timeout, VM_ACTIONS_TIMEOUT_SECS),
+        );
+        break;
       default:
         throw Error(UNEXPECTED_ACTION_ERROR);
     }
@@ -173,11 +187,12 @@ export class VirtualMachine extends KubevirtDetailView {
     template,
     provisionSource,
     operatingSystem,
-    flavor,
+    flavorConfig,
     workloadProfile,
     startOnCreation,
     cloudInit,
     storageResources,
+    CDRoms,
     networkResources,
     bootableDevice,
   }: VMConfig) {
@@ -191,7 +206,7 @@ export class VirtualMachine extends KubevirtDetailView {
       await wizard.selectOperatingSystem(operatingSystem);
       await wizard.selectWorkloadProfile(workloadProfile);
     }
-    await wizard.selectFlavor(flavor);
+    await wizard.selectFlavor(flavorConfig);
     await wizard.fillName(name);
     await wizard.fillDescription(description);
     if (startOnCreation) {
@@ -205,7 +220,7 @@ export class VirtualMachine extends KubevirtDetailView {
     }
     if (provisionSource.method === ProvisionConfigName.PXE && template === undefined) {
       // Select the last NIC as the source for booting
-      await wizard.selectBootableNIC(networkResources[networkResources.length - 1].network);
+      await wizard.selectBootableNIC(networkResources[networkResources.length - 1].name);
     }
     await wizard.next();
 
@@ -238,13 +253,20 @@ export class VirtualMachine extends KubevirtDetailView {
       await wizard.configureCloudInit(cloudInit);
     }
     await wizard.next();
+
     // Advanced - Virtual Hardware
+    if (CDRoms) {
+      for (const resource of CDRoms) {
+        await wizard.addCD(resource);
+      }
+    }
     await wizard.next();
+
     // Review page
     await wizard.confirmAndCreate();
     await wizard.waitForCreation();
 
-    await this.navigateToTab(TAB.Overview);
+    await this.navigateToTab(TAB.Details);
     if (startOnCreation === true) {
       // If startOnCreation is true, wait for VM to boot up
       await this.waitForStatus(VM_STATUS.Running, VM_BOOTUP_TIMEOUT_SECS);
@@ -286,7 +308,7 @@ export class VirtualMachine extends KubevirtDetailView {
       await importWizard.selectOperatingSystem(operatingSystem as string);
     }
     if (flavorConfig) {
-      await importWizard.configureFlavor(flavorConfig);
+      await importWizard.selectFlavor(flavorConfig);
     }
     if (workloadProfile) {
       await importWizard.selectWorkloadProfile(workloadProfile);

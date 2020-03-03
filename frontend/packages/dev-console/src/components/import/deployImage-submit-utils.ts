@@ -12,7 +12,7 @@ import {
   getKnativeServiceDepResource,
   ServiceModel as KnServiceModel,
 } from '@console/knative-plugin';
-import { getAppLabels, getPodLabels } from '../../utils/resource-label-utils';
+import { getAppLabels, getPodLabels, mergeData } from '../../utils/resource-label-utils';
 import {
   createRoute,
   createService,
@@ -91,7 +91,7 @@ export const createOrUpdateImageStream = (
     },
   };
 
-  const imageStream = _.merge({}, originalImageStream || {}, newImageStream);
+  const imageStream = mergeData(originalImageStream, newImageStream);
 
   return verb === 'update'
     ? k8sUpdate(ImageStreamModel, imageStream)
@@ -140,11 +140,11 @@ export const createOrUpdateDeployment = (
     registry,
     project: { name: namespace },
     name,
-    isi: { image, ports },
+    isi: { image, ports, tag: imageStreamTag },
     deployment: { env, replicas },
     labels: userLabels,
     limits: { cpu, memory },
-    imageStream: { image: imgName, namespace: imgNamespace, tag },
+    imageStream: { image: imgName, namespace: imgNamespace },
   } = formData;
 
   const defaultAnnotations = {
@@ -154,7 +154,7 @@ export const createOrUpdateDeployment = (
       {
         from: {
           kind: 'ImageStreamTag',
-          name: `${imgName || name}:${tag}`,
+          name: `${imgName || name}:${imageStreamTag}`,
           namespace: imgNamespace || namespace,
         },
         fieldPath: `spec.template.spec.containers[?(@.name=="${name}")].image`,
@@ -166,7 +166,7 @@ export const createOrUpdateDeployment = (
 
   const imageRef =
     registry === RegistryType.External
-      ? `${imgName || name}:${tag}`
+      ? `${name}:${imageStreamTag}`
       : _.get(image, 'dockerImageReference');
 
   const newDeployment = {
@@ -220,7 +220,7 @@ export const createOrUpdateDeployment = (
     },
   };
 
-  const deployment = _.merge({}, originalDeployment || {}, newDeployment);
+  const deployment = mergeData(originalDeployment, newDeployment);
 
   return verb === 'update'
     ? k8sUpdate(DeploymentModel, deployment)
@@ -244,7 +244,6 @@ export const createOrUpdateDeploymentConfig = (
   } = formData;
 
   const { labels, podLabels, volumes, volumeMounts } = getMetadata(formData);
-
   const newDeploymentConfig = {
     kind: 'DeploymentConfig',
     apiVersion: 'apps.openshift.io/v1',
@@ -307,7 +306,7 @@ export const createOrUpdateDeploymentConfig = (
     },
   };
 
-  const deploymentConfig = _.merge({}, originalDeploymentConfig || {}, newDeploymentConfig);
+  const deploymentConfig = mergeData(originalDeploymentConfig, newDeploymentConfig);
 
   return verb === 'update'
     ? k8sUpdate(DeploymentConfigModel, deploymentConfig)
@@ -360,9 +359,12 @@ export const createOrUpdateDeployImageResources = async (
   }
   if (formData.resources !== Resources.KnativeService) {
     registry === RegistryType.External &&
-      requests.push(
-        createOrUpdateImageStream(formData, dryRun, _.get(appResources, 'imageStream.data'), verb),
-      );
+      (await createOrUpdateImageStream(
+        formData,
+        dryRun,
+        _.get(appResources, 'imageStream.data'),
+        verb,
+      ));
     if (formData.resources === Resources.Kubernetes) {
       requests.push(
         createOrUpdateDeployment(
@@ -398,7 +400,7 @@ export const createOrUpdateDeployImageResources = async (
     }
   } else if (!dryRun) {
     // Do not run serverless call during the dry run.
-    let imageStreamRepo: string = _.split(_.get(image, 'dockerImageReference', ''), '@')[0];
+    let imageStreamUrl: string = image?.dockerImageReference;
     if (registry === RegistryType.External) {
       const imageStreamResponse = await createOrUpdateImageStream(
         formData,
@@ -406,18 +408,16 @@ export const createOrUpdateDeployImageResources = async (
         _.get(appResources, 'imageStream.data'),
         verb,
       );
-      imageStreamRepo = imageStreamResponse.status.dockerImageRepository;
+      const imageStreamRepo = imageStreamResponse.status.dockerImageRepository;
+      imageStreamUrl = imageStreamTag ? `${imageStreamRepo}:${imageStreamTag}` : imageStreamRepo;
     }
-    const imageStreamUrl = imageStreamTag
-      ? `${imageStreamRepo}:${imageStreamTag}`
-      : imageStreamRepo;
     const knDeploymentResource = getKnativeServiceDepResource(
       formData,
       imageStreamUrl,
       internalImageName || name,
       imageStreamTag,
       internalImageNamespace,
-      undefined,
+      annotations,
       _.get(appResources, 'editAppResource.data'),
     );
     requests.push(

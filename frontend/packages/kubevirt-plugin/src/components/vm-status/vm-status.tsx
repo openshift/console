@@ -21,7 +21,6 @@ import { Link } from 'react-router-dom';
 import { resourcePath } from '@console/internal/components/utils';
 import { PodModel } from '@console/internal/models';
 import { unpauseVMI } from '../../k8s/requests/vmi/actions';
-import { VirtualMachineModel } from '../../models';
 import {
   VM_DETAIL_EVENTS_HREF,
   CDI_KUBEVIRT_IO,
@@ -48,6 +47,7 @@ import {
   VM_STATUS_PAUSED,
 } from '../../statuses/vm/constants';
 import { VMKind, VMIKind } from '../../types';
+import { getVMLikeModel } from '../../selectors/vm';
 
 import './vm-status.scss';
 
@@ -102,11 +102,13 @@ export const VMStatus: React.FC<VMStatusProps> = ({
   migrations,
   verbose = false,
 }) => {
+  const vmLike = vm || vmi;
+
   const statusDetail = getVMStatus({ vm, vmi, pods, migrations });
   const linkToVMEvents = `${resourcePath(
-    VirtualMachineModel.kind,
-    getName(vm),
-    getNamespace(vm),
+    getVMLikeModel(vmLike).kind,
+    getName(vmLike),
+    getNamespace(vmLike),
   )}/${VM_DETAIL_EVENTS_HREF}`;
   const linkToPodOverview = `${resourcePath(
     PodModel.kind,

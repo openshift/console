@@ -17,7 +17,7 @@ export type HelmInstallFormData = {
 
 export const HelmInstallPage: React.FunctionComponent<HelmInstallPageProps> = ({ location }) => {
   const searchParams = new URLSearchParams(location.search);
-  const chartURL = encodeURIComponent(searchParams.get('chartURL'));
+  const chartURL = decodeURIComponent(searchParams.get('chartURL'));
   const preselectedNamespace = searchParams.get('preselected-ns');
 
   const initialValues: HelmInstallFormData = {
@@ -33,7 +33,8 @@ export const HelmInstallPage: React.FunctionComponent<HelmInstallPageProps> = ({
     const payload = {
       namespace: preselectedNamespace,
       name: releaseName,
-      url: chartURL,
+      // eslint-disable-next-line @typescript-eslint/camelcase
+      chart_url: chartURL,
     };
     coFetchJSON
       .post('/api/helm/release', payload, null)

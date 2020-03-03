@@ -1,5 +1,6 @@
 import * as classNames from 'classnames';
 import * as _ from 'lodash-es';
+import { List as ImmutableList } from 'immutable';
 import {
   ActionGroup,
   Alert,
@@ -35,6 +36,7 @@ import * as React from 'react';
 import { Helmet } from 'react-helmet';
 import { connect } from 'react-redux';
 
+import { withFallback } from '@console/shared/src/components/error/error-boundary';
 import {
   RedExclamationCircleIcon,
   TechPreviewBadge,
@@ -57,7 +59,6 @@ import {
   usePoll,
   useSafeFetch,
 } from '../utils';
-import { withFallback } from '../utils/error-boundary';
 import { setAllQueryArguments } from '../utils/router';
 import { colors, Error, Labels, QueryObj, QueryBrowser } from './query-browser';
 
@@ -605,7 +606,7 @@ const QueryTable_: React.FC<QueryTableProps> = ({
   const [error, setError] = React.useState();
   const [page, setPage] = React.useState(1);
   const [perPage, setPerPage] = React.useState(50);
-  const [sortBy, setSortBy] = React.useState<ISortBy>({ index: 1, direction: 'asc' });
+  const [sortBy, setSortBy] = React.useState<ISortBy>();
 
   const safeFetch = React.useCallback(useSafeFetch(), []);
 
@@ -631,6 +632,7 @@ const QueryTable_: React.FC<QueryTableProps> = ({
     setData(undefined);
     setError(undefined);
     setPage(1);
+    setSortBy(undefined);
   }, [namespace, query]);
 
   if (!isEnabled || !isExpanded || !query) {
@@ -721,17 +723,19 @@ const QueryTable_: React.FC<QueryTableProps> = ({
       ];
     }
 
-    // Sort Values column numerically and sort all the other columns alphabetically
-    const valuesColIndex = allLabelKeys.length + 1;
-    const sort =
-      sortBy.index === valuesColIndex
-        ? (cells) => {
-            const v = Number(cells[valuesColIndex]);
-            return Number.isNaN(v) ? 0 : v;
-          }
-        : sortBy.index;
-    const unsortedRows = _.map(result, rowMapper);
-    rows = _.orderBy(unsortedRows, [sort], [sortBy.direction]) as string[][];
+    rows = _.map(result, rowMapper);
+    if (sortBy) {
+      // Sort Values column numerically and sort all the other columns alphabetically
+      const valuesColIndex = allLabelKeys.length + 1;
+      const sort =
+        sortBy.index === valuesColIndex
+          ? (cells) => {
+              const v = Number(cells[valuesColIndex]);
+              return Number.isNaN(v) ? 0 : v;
+            }
+          : `${sortBy.index}`;
+      rows = _.orderBy(rows, [sort], [sortBy.direction]);
+    }
   }
 
   // Set the result table's break point based on the number of columns
@@ -848,8 +852,10 @@ const Query = connect(
 const QueryBrowserWrapper_: React.FC<QueryBrowserWrapperProps> = ({
   namespace,
   patchQuery,
-  queries,
+  queriesList,
 }) => {
+  const queries = queriesList.toJS();
+
   const isInitRef = React.useRef(true);
 
   // Initialize queries from URL parameters
@@ -883,7 +889,8 @@ const QueryBrowserWrapper_: React.FC<QueryBrowserWrapperProps> = ({
   }, [queryStrings]);
 
   const insertExampleQuery = () => {
-    const index = _.get(focusedQuery, 'index', 0);
+    const focusedIndex = focusedQuery?.index ?? 0;
+    const index = queries[focusedIndex] ? focusedIndex : 0;
 
     // Pick a suitable example query based on whether we are limiting results to a single namespace
     const text = namespace
@@ -916,7 +923,7 @@ const QueryBrowserWrapper_: React.FC<QueryBrowserWrapperProps> = ({
   );
 };
 const QueryBrowserWrapper = connect(
-  ({ UI }: RootState) => ({ queries: UI.getIn(['queryBrowser', 'queries']).toJS() }),
+  ({ UI }: RootState) => ({ queriesList: UI.getIn(['queryBrowser', 'queries']) }),
   { patchQuery: UIActions.queryBrowserPatchQuery },
 )(QueryBrowserWrapper_);
 
@@ -1031,7 +1038,7 @@ type QueryBrowserPageProps = {
 type QueryBrowserWrapperProps = {
   namespace?: string;
   patchQuery: (index: number, patch: QueryObj) => any;
-  queries: QueryObj[];
+  queriesList: ImmutableList<QueryObj>;
 };
 
 type QueryInputProps = {

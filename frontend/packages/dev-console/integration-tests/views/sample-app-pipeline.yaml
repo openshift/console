@@ -1,0 +1,97 @@
+apiVersion: tekton.dev/v1alpha1
+kind: Pipeline
+metadata:
+  name: sample-app-pipeline
+spec:
+  tasks:
+    - name: install-deps
+      taskRef:
+        name: install-dependencies
+    - name: code-sanity
+      taskRef:
+        name: lint-and-test
+      runAfter:
+        - install-deps
+    - name: compile
+      taskRef:
+        name: build-dist
+      runAfter:
+        - install-deps
+    - name: e2e-tests
+      taskRef:
+        name: run-e2e-tests
+      runAfter:
+        - code-sanity
+        - compile
+
+---
+
+apiVersion: tekton.dev/v1alpha1
+kind: Task
+metadata:
+  name: install-dependencies
+spec:
+  steps:
+    - name: install
+      image: ubuntu
+      command:
+        - echo
+      args:
+        - "Installing dependencies...\n\nDependencies installed successfully."
+---
+apiVersion: tekton.dev/v1alpha1
+kind: Task
+metadata:
+  name: lint-and-test
+spec:
+  steps:
+    - name: startup
+      image: ubuntu
+      command:
+        - echo
+      args:
+        - "Running Linter and Tests"
+    - name: lint-errors
+      image: ubuntu
+      command:
+        - echo
+      args:
+        - "0 Lint Errors"
+    - name: test-status
+      image: ubuntu
+      command:
+        - echo
+      args:
+        - "0 Test Failures"
+    - name: coverage-report
+      image: ubuntu
+      command:
+        - echo
+      args:
+        - "Exporting Test Coverage Report...\n\nCoverage report can be found in __coverage__"
+---
+apiVersion: tekton.dev/v1alpha1
+kind: Task
+metadata:
+  name: build-dist
+spec:
+  steps:
+    - name: build
+      image: ubuntu
+      command:
+        - echo
+      args:
+        - "Compiling code and producing dist folder...\n\nFolder public/dist created"
+---
+apiVersion: tekton.dev/v1alpha1
+kind: Task
+metadata:
+  name: run-e2e-tests
+spec:
+  steps:
+    - name: status
+      image: ubuntu
+      command:
+        - echo
+      args:
+        - "Running end-to-end tests...\n\nAll tests pass"

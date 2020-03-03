@@ -19,7 +19,7 @@ import {
   ModalTitle,
 } from '../factory/modal';
 
-const getSortedUpdates = (cv: ClusterVersionKind): ClusterUpdate[] => {
+export const getSortedUpdates = (cv: ClusterVersionKind): ClusterUpdate[] => {
   const available = getAvailableClusterUpdates(cv) || [];
   try {
     return available.sort(({ version: left }, { version: right }) => semver.rcompare(left, right));

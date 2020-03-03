@@ -7,8 +7,8 @@ import { MultiColumnField, InputField, DropdownField, FormFooter } from '@consol
 enum accessRoles {
   '' = 'Select a role',
   admin = 'Admin',
-  view = 'View',
   edit = 'Edit',
+  view = 'View',
 }
 
 const ProjectAccessForm: React.FC<FormikProps<FormikValues>> = ({

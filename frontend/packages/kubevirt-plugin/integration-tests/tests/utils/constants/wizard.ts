@@ -9,6 +9,7 @@ export enum ProvisionConfigName {
 export enum OperatingSystem {
   RHEL7_6 = 'Red Hat Enterprise Linux 7.6',
   WINDOWS_10 = 'Microsoft Windows 10',
+  VALIDATION_TEST = 'Validation Test',
 }
 
 export const OSIDLookup = {

@@ -15,8 +15,15 @@ import {
 } from './index';
 import { K8sResourceKind, modelFor, referenceFor, Toleration } from '../../module/k8s';
 
-export const pluralize = (i: number, singular: string, plural: string = `${singular}s`) =>
-  `${i || 0} ${i === 1 ? singular : plural}`;
+export const pluralize = (
+  i: number,
+  singular: string,
+  plural: string = `${singular}s`,
+  includeCount: boolean = true,
+) => {
+  const pluralized = `${i === 1 ? singular : plural}`;
+  return includeCount ? `${i || 0} ${pluralized}` : pluralized;
+};
 
 export const detailsPage = <T extends {}>(Component: React.ComponentType<T>) =>
   function DetailsPage(props: T) {
@@ -36,6 +43,7 @@ const getNodeSelectorPath = (obj: K8sResourceKind): string => {
 export const ResourceSummary: React.SFC<ResourceSummaryProps> = ({
   children,
   resource,
+  customPathName,
   showPodSelector = false,
   showNodeSelector = false,
   showAnnotations = true,
@@ -59,7 +67,7 @@ export const ResourceSummary: React.SFC<ResourceSummaryProps> = ({
 
   return (
     <dl data-test-id="resource-summary" className="co-m-pane__details">
-      <DetailsItem label="Name" obj={resource} path="metadata.name" />
+      <DetailsItem label="Name" obj={resource} path={customPathName || 'metadata.name'} />
       {metadata.namespace && (
         <DetailsItem label="Namespace" obj={resource} path="metadata.namespace">
           <ResourceLink
@@ -149,6 +157,7 @@ export type ResourceSummaryProps = {
   showTolerations?: boolean;
   podSelector?: string;
   children?: React.ReactNode;
+  customPathName?: string;
 };
 
 export type ResourcePodCountProps = {

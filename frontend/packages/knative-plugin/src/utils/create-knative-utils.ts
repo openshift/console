@@ -11,12 +11,11 @@ import {
   EventSourceCamelModel,
   EventSourceKafkaModel,
 } from '@console/knative-plugin';
-import { getAppLabels } from '@console/dev-console/src/utils/resource-label-utils';
+import { getAppLabels, mergeData } from '@console/dev-console/src/utils/resource-label-utils';
 import {
   DeployImageFormData,
   GitImportFormData,
 } from '@console/dev-console/src/components/import/import-types';
-import * as _ from 'lodash';
 
 export const getKnativeServiceDepResource = (
   formData: GitImportFormData | DeployImageFormData,
@@ -33,11 +32,13 @@ export const getKnativeServiceDepResource = (
     project: { name: namespace },
     serverless: { scaling },
     limits,
-    route: { unknownTargetPort, create },
+    route: { unknownTargetPort, create, targetPort },
     labels,
     image: { tag: imageTag },
   } = formData;
-  const contTargetPort: number = parseInt(unknownTargetPort, 10);
+  const contTargetPort = targetPort
+    ? parseInt(targetPort.split('-')[0], 10)
+    : parseInt(unknownTargetPort, 10);
   const { concurrencylimit, concurrencytarget, minpods, maxpods } = scaling;
   const {
     cpu: {
@@ -72,6 +73,7 @@ export const getKnativeServiceDepResource = (
         ...labels,
         ...(!create && { 'serving.knative.dev/visibility': `cluster-local` }),
       },
+      annotations,
     },
     spec: {
       template: {
@@ -122,7 +124,7 @@ export const getKnativeServiceDepResource = (
     },
   };
 
-  const knativeDeployResource = _.merge({}, originalKnativeService || {}, newKnativeDeployResource);
+  const knativeDeployResource = mergeData(originalKnativeService || {}, newKnativeDeployResource);
 
   return knativeDeployResource;
 };

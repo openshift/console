@@ -144,3 +144,6 @@ export const utilizationPopoverQueryMap = [
     }))))`,
   },
 ];
+
+export const getPVCUsedCapacityQuery = (pvcName: string): string =>
+  `kubelet_volume_stats_used_bytes{persistentvolumeclaim='${pvcName}'}`;

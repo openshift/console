@@ -1,4 +1,4 @@
-import { CD } from './constants';
+import { CD } from './types';
 
 export const getAvailableCDName = (cds: CD[]) => {
   const cdSet = new Set(cds.map((cd) => cd.name));

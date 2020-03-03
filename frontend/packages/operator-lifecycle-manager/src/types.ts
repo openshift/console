@@ -221,6 +221,7 @@ export type PackageManifestKind = {
       name: string;
       currentCSV: string;
       currentCSVDesc: {
+        annotations?: any;
         description?: string;
         displayName: string;
         icon: { mediatype: string; base64data: string }[];

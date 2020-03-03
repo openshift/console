@@ -1,6 +1,6 @@
 /* eslint-disable no-await-in-loop, no-console, no-underscore-dangle */
 import { execSync } from 'child_process';
-import { $, by, browser, ExpectedConditions as until, element } from 'protractor';
+import { $, $$, by, browser, ExpectedConditions as until, element } from 'protractor';
 import { By } from 'selenium-webdriver';
 import { config } from '@console/internal-integration-tests/protractor.conf';
 
@@ -157,3 +157,25 @@ export function searchYAML(needle: string, name: string, namespace: string, kind
   const result = execSync(`kubectl get -o yaml -n ${namespace} ${kind} ${name}`).toString();
   return result.search(needle) >= 0;
 }
+
+type CardInfo = {
+  text: string;
+  index: number;
+};
+
+const getOperatorHubCards = async (): Promise<CardInfo[]> => {
+  const selector = $$('article .co-resource-item__resource-name');
+  const cards: CardInfo[] = await selector.map(async (elem, index) => {
+    return {
+      text: await elem.getText(),
+      index,
+    };
+  });
+  return cards;
+};
+
+export const getOperatorHubCardIndex = async (name: string): Promise<CardInfo['index']> => {
+  const cards = await getOperatorHubCards();
+  const reqdCard = cards.find((elem) => elem.text === name);
+  return reqdCard.index;
+};

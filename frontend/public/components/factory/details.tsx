@@ -2,21 +2,53 @@ import * as React from 'react';
 import { match } from 'react-router-dom';
 import * as _ from 'lodash-es';
 import { getBadgeFromType } from '@console/shared';
+import { useExtensions, ResourceTabPage, isResourceTabPage } from '@console/plugin-sdk';
+import { withFallback } from '@console/shared/src/components/error/error-boundary';
 import {
   Firehose,
   HorizontalNav,
   PageHeading,
   FirehoseResource,
   KebabOptionsCreator,
+  Page,
+  AsyncComponent,
 } from '../utils';
-import { K8sResourceKindReference, K8sResourceKind, K8sKind } from '../../module/k8s';
-import { withFallback } from '../utils/error-boundary';
+import {
+  K8sResourceKindReference,
+  K8sResourceKind,
+  K8sKind,
+  referenceForModel,
+  referenceFor,
+} from '../../module/k8s';
 import { ErrorBoundaryFallback } from '../error';
 import { breadcrumbsForDetailsPage } from '../utils/breadcrumbs';
 
-export const DetailsPage = withFallback<DetailsPageProps>((props) => {
+export const DetailsPage = withFallback<DetailsPageProps>(({ pages = [], ...props }) => {
   const resourceKeys = _.map(props.resources, 'prop');
-
+  const resourcePageExtensions = useExtensions<ResourceTabPage>(isResourceTabPage);
+  let allPages = [
+    ...pages,
+    ...resourcePageExtensions
+      .filter(
+        (p) =>
+          referenceForModel(p.properties.model) ===
+          (props.kindObj ? referenceFor(props.kindObj) : props.kind),
+      )
+      .map((p) => ({
+        href: p.properties.href,
+        name: p.properties.name,
+        component: () => (
+          <AsyncComponent
+            loader={p.properties.loader}
+            namespace={props.namespace}
+            name={props.name}
+            kind={props.kind}
+            match={props.match}
+          />
+        ),
+      })),
+  ];
+  allPages = allPages.length ? allPages : null;
   return (
     <Firehose
       resources={[
@@ -32,11 +64,11 @@ export const DetailsPage = withFallback<DetailsPageProps>((props) => {
     >
       <PageHeading
         detail={true}
-        title={props.name}
+        title={props.title || props.name}
         titleFunc={props.titleFunc}
         menuActions={props.menuActions}
         buttonActions={props.buttonActions}
-        kind={props.kind}
+        kind={props.customKind || props.kind}
         breadcrumbsFor={
           props.breadcrumbsFor
             ? props.breadcrumbsFor
@@ -51,7 +83,7 @@ export const DetailsPage = withFallback<DetailsPageProps>((props) => {
         {props.children}
       </PageHeading>
       <HorizontalNav
-        pages={props.pages}
+        pages={allPages}
         pagesFor={props.pagesFor}
         className={`co-m-${_.get(props.kind, 'kind', props.kind)}`}
         match={props.match}
@@ -62,12 +94,6 @@ export const DetailsPage = withFallback<DetailsPageProps>((props) => {
     </Firehose>
   );
 }, ErrorBoundaryFallback);
-
-export type Page = {
-  href: string;
-  name: string;
-  component?: React.ComponentType<any>;
-};
 
 export type DetailsPageProps = {
   match: match<any>;
@@ -89,6 +115,7 @@ export type DetailsPageProps = {
   icon?: React.ComponentType<{ obj: K8sResourceKind }>;
   getResourceStatus?: (resource: K8sResourceKind) => string;
   children?: React.ReactNode;
+  customKind?: string;
 };
 
 DetailsPage.displayName = 'DetailsPage';

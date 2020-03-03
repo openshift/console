@@ -2,8 +2,8 @@ import * as _ from 'lodash-es';
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
 
+import { ErrorBoundaryFallbackProps } from '@console/shared/src/components/error/error-boundary';
 import { CopyToClipboard, getQueryArgument, PageHeading, ExpandCollapse } from './utils';
-import { ErrorBoundaryFallbackProps } from './utils/error-boundary';
 
 // User messages for error_types returned in auth.go
 const messages = {

@@ -7,6 +7,7 @@ import {
   k8sPatch as _k8sPatch,
   K8sResourceKind,
   Patch,
+  referenceFor,
   referenceForModel,
 } from '@console/internal/module/k8s';
 import { getFullResourceId } from '../../utils/utils';
@@ -143,7 +144,7 @@ export class EnhancedK8sMethods {
       try {
         obj = state[i];
         // eslint-disable-next-line no-await-in-loop
-        const result = await this.k8sKill(this.modelMap[referenceForModel(obj)], obj);
+        const result = await this.k8sKill(this.modelMap[referenceFor(obj)], obj);
         deleteStatuses.push(result);
       } catch (error) {
         if (get(error, 'json.code') === 404 || get(error, 'json.reason') === 'NotFound') {

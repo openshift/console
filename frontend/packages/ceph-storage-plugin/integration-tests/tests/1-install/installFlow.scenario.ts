@@ -84,34 +84,34 @@ describe('Test creation of Storage Cluster', () => {
 describe('Tests for pods and storage classes', () => {
   let pods = null;
 
-  beforeAll(async () => {
-    const podList = await JSON.parse(
+  beforeAll(() => {
+    const podList = JSON.parse(
       execSync('kubectl get po -n openshift-storage -o json').toString('utf-8'),
     );
     pods = podList.items;
   });
 
-  it('tests if ocs-operator is running', async () => {
+  it('tests if ocs-operator is running', () => {
     const pod = getPodData(pods, POD_NAME_PATTERNS.OCS);
     testPodIsRunning(getPodPhase(pod));
   });
 
-  it('tests if rook-ceph-operator is running', async () => {
+  it('tests if rook-ceph-operator is running', () => {
     const pod = getPodData(pods, POD_NAME_PATTERNS.ROOK);
     testPodIsRunning(getPodPhase(pod));
   });
 
-  it('tests if noobaa-operator is running', async () => {
+  it('tests if noobaa-operator is running', () => {
     const pod = getPodData(pods, POD_NAME_PATTERNS.NOOBA_OPERATOR);
     testPodIsRunning(getPodPhase(pod));
   });
 
-  it('tests if noobaa-core is running', async () => {
+  it('tests if noobaa-core is running', () => {
     const pod = getPodData(pods, POD_NAME_PATTERNS.NOOBAA_CORE);
     testPodIsRunning(getPodPhase(pod));
   });
 
-  it("tests if 3 rook-ceph-mon's are running", async () => {
+  it("tests if 3 rook-ceph-mon's are running", () => {
     const podList = getPodData(pods, POD_NAME_PATTERNS.ROOK_CEPH_MON);
     expect(podList.length).toBe(3);
     podList.forEach((pod) => {
@@ -119,13 +119,13 @@ describe('Tests for pods and storage classes', () => {
     });
   });
 
-  it('tests if rook-ceph-mgr is running', async () => {
+  it('tests if rook-ceph-mgr is running', () => {
     const pod = getPodData(pods, POD_NAME_PATTERNS.ROOK_CEPH_MGR);
     testPodIsRunning(getPodPhase(pod));
   });
 
   // 3 cephfsplugin-* 2 csi-cephfsplugin-provisioner-*
-  it('tests if 5 csi-cephfsplugin are running', async () => {
+  it('tests if 5 csi-cephfsplugin are running', () => {
     const podList = getPodData(pods, POD_NAME_PATTERNS.CSI_CEPHFS);
     expect(podList.length).toBe(5);
     podList.forEach((pod) => {
@@ -134,7 +134,7 @@ describe('Tests for pods and storage classes', () => {
   });
 
   // 2 csi-rbdplugin-provisioner-* 3 csi-rbd-plugin-*
-  it('tests if 5 csi-rbdplugin are running', async () => {
+  it('tests if 5 csi-rbdplugin are running', () => {
     const podList = getPodData(pods, POD_NAME_PATTERNS.CSI_RBD);
     expect(podList.length).toBe(5);
     podList.forEach((pod) => {
@@ -142,7 +142,7 @@ describe('Tests for pods and storage classes', () => {
     });
   });
 
-  it('tests if 2 rook-ceph-mds-ocs-storagecluster-cephfilesystem pods are running', async () => {
+  it('tests if 2 rook-ceph-mds-ocs-storagecluster-cephfilesystem pods are running', () => {
     const podList = getPodData(pods, POD_NAME_PATTERNS.ROOK_CEPH_MDS);
     expect(podList.length).toBe(2);
     podList.forEach((pod) => {

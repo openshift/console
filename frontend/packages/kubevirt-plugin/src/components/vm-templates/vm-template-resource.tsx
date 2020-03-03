@@ -5,17 +5,16 @@ import { K8sEntityMap } from '@console/shared/src';
 import { getBasicID, prefixedID } from '../../utils';
 import { vmDescriptionModal } from '../modals/vm-description-modal';
 import { BootOrderModal } from '../modals/boot-order-modal';
-import { VMCDRomModal } from '../modals/cdrom-vm-modal';
+import { VMCDRomModal } from '../modals/cdrom-vm-modal/vm-cdrom-modal';
 import { DedicatedResourcesModal } from '../modals/dedicated-resources-modal/dedicated-resources-modal';
 import { getDescription } from '../../selectors/selectors';
 import {
   getCDRoms,
-  getOperatingSystemName,
-  getOperatingSystem,
+  getFlavor,
   getWorkloadProfile,
   isDedicatedCPUPlacement,
 } from '../../selectors/vm/selectors';
-import { getVMTemplateNamespacedName } from '../../selectors/vm-template/selectors';
+import { getTemplateOperatingSystems } from '../../selectors/vm-template/advanced';
 import { vmFlavorModal } from '../modals';
 import { getFlavorText } from '../flavor-text';
 import { EditButton } from '../edit-button';
@@ -33,6 +32,8 @@ import { VMTemplateLink } from './vm-template-link';
 import { TemplateSource } from './vm-template-source';
 
 import './_vm-template-resource.scss';
+import { VMWrapper } from '../../k8s/wrapper/vm/vm-wrapper';
+import { getVMTemplateNamespacedName } from '../../selectors/vm-template/selectors';
 
 export const VMTemplateResourceSummary: React.FC<VMTemplateResourceSummaryProps> = ({
   template,
@@ -42,7 +43,7 @@ export const VMTemplateResourceSummary: React.FC<VMTemplateResourceSummaryProps>
   const templateNamespacedName = getVMTemplateNamespacedName(template);
 
   const description = getDescription(template);
-  const os = getOperatingSystemName(asVM(template)) || getOperatingSystem(asVM(template));
+  const os = getTemplateOperatingSystems([template])[0];
   const workloadProfile = getWorkloadProfile(template);
 
   return (
@@ -51,8 +52,8 @@ export const VMTemplateResourceSummary: React.FC<VMTemplateResourceSummaryProps>
         title="Description"
         idValue={prefixedID(id, 'description')}
         valueClassName="kubevirt-vm-resource-summary__description"
-        isNotAvail={!description}
       >
+        {!description && <span className="text-secondary">Not available</span>}
         <EditButton
           canEdit={canUpdateTemplate}
           onClick={() => vmDescriptionModal({ vmLikeEntity: template })}
@@ -62,7 +63,7 @@ export const VMTemplateResourceSummary: React.FC<VMTemplateResourceSummaryProps>
       </VMDetailsItem>
 
       <VMDetailsItem title="Operating System" idValue={prefixedID(id, 'os')} isNotAvail={!os}>
-        {os}
+        {os ? os.name || os.id : null}
       </VMDetailsItem>
 
       <VMDetailsItem
@@ -97,8 +98,14 @@ export const VMTemplateDetailsList: React.FC<VMTemplateResourceListProps> = ({
   const id = getBasicID(template);
   const devices = getDevices(template);
   const cds = getCDRoms(asVM(template));
-  const flavorText = getFlavorText(template);
-  const isCPUPinned = isDedicatedCPUPlacement(asVM(template));
+  const vm = asVM(template);
+  const vmWrapper = VMWrapper.initialize(vm);
+  const flavorText = getFlavorText({
+    flavor: getFlavor(vm),
+    cpu: vmWrapper.getCPU(),
+    memory: vmWrapper.getMemory(),
+  });
+  const isCPUPinned = isDedicatedCPUPlacement(vm);
 
   return (
     <dl className="co-m-pane__details">
@@ -132,7 +139,7 @@ export const VMTemplateDetailsList: React.FC<VMTemplateResourceListProps> = ({
         <EditButton
           id={prefixedID(id, 'flavor-edit')}
           canEdit={canUpdateTemplate}
-          onClick={() => vmFlavorModal({ vmLike: template })}
+          onClick={() => vmFlavorModal({ vmLike: template, blocking: true })}
         >
           {flavorText}
         </EditButton>

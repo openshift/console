@@ -3,7 +3,9 @@ import { RouteComponentProps } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
 import { PageHeading, Firehose, FirehoseResource } from '@console/internal/components/utils';
 import { ImageStreamModel } from '@console/internal/models';
+import { QUERY_PROPERTIES } from '../../const';
 import NamespacedPage, { NamespacedPageVariants } from '../NamespacedPage';
+import QueryFocusApplication from '../QueryFocusApplication';
 import ImportForm from './ImportForm';
 import { ImportTypes, ImportData } from './import-types';
 
@@ -88,17 +90,26 @@ const ImportPage: React.FunctionComponent<ImportPageProps> = ({ match, location 
   }
 
   return (
-    <NamespacedPage disabled variant={NamespacedPageVariants.light}>
-      <Helmet>
-        <title>{importData.title}</title>
-      </Helmet>
-      <PageHeading title={importData.title} />
-      <div className="co-m-pane__body">
-        <Firehose resources={resources}>
-          <ImportForm namespace={namespace || preselectedNamespace} importData={importData} />
-        </Firehose>
-      </div>
-    </NamespacedPage>
+    <QueryFocusApplication>
+      {(application) => (
+        <NamespacedPage disabled variant={NamespacedPageVariants.light}>
+          <Helmet>
+            <title>{importData.title}</title>
+          </Helmet>
+          <PageHeading title={importData.title} />
+          <div className="co-m-pane__body">
+            <Firehose resources={resources}>
+              <ImportForm
+                forApplication={application}
+                contextualSource={searchParams.get(QUERY_PROPERTIES.CONTEXT_SOURCE)}
+                namespace={namespace || preselectedNamespace}
+                importData={importData}
+              />
+            </Firehose>
+          </div>
+        </NamespacedPage>
+      )}
+    </QueryFocusApplication>
   );
 };
 

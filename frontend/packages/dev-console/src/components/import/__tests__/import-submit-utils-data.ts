@@ -1,4 +1,55 @@
+import { ValidatedOptions } from '@patternfly/react-core';
 import { GitImportFormData, Resources } from '../import-types';
+
+export const mockPipelineTemplate = {
+  apiVersion: 'tekton.dev/v1alpha1',
+  kind: 'Pipeline',
+  metadata: {
+    name: 'new-pipeline',
+    namespace: 'new-proj',
+  },
+  spec: {
+    params: [
+      {
+        name: 'paramName',
+        type: 'string',
+      },
+    ],
+    resources: [
+      {
+        name: 'app-git',
+        type: 'git',
+      },
+      {
+        name: 'app-image',
+        type: 'image',
+      },
+    ],
+    tasks: [
+      {
+        name: 'build-app',
+        taskRef: {
+          name: 's2i-java-11',
+          kind: 'ClusterTask',
+        },
+        resources: {
+          inputs: [
+            {
+              name: 'source',
+              resource: 'app-git',
+            },
+          ],
+          outputs: [
+            {
+              name: 'image',
+              resource: 'app-image',
+            },
+          ],
+        },
+      },
+    ],
+  },
+};
 
 export const defaultData: GitImportFormData = {
   project: {
@@ -114,7 +165,7 @@ export const defaultData: GitImportFormData = {
     dir: '/',
     showGitType: false,
     secret: '',
-    isUrlValidated: true,
+    urlValidation: ValidatedOptions.default,
     isUrlValidating: false,
   },
   docker: {
@@ -123,6 +174,7 @@ export const defaultData: GitImportFormData = {
   },
   pipeline: {
     enabled: false,
+    template: mockPipelineTemplate,
   },
 };
 

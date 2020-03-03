@@ -5,8 +5,8 @@ import { selectorToString } from './selector';
 import { WSFactory } from '../ws-factory';
 
 /** @type {(model: K8sKind) => string} */
-const getK8sAPIPath = (model) => {
-  const isLegacy = _.get(model, 'apiGroup', 'core') === 'core' && model.apiVersion === 'v1';
+const getK8sAPIPath = ({ apiGroup = 'core', apiVersion }) => {
+  const isLegacy = apiGroup === 'core' && apiVersion === 'v1';
   let p = k8sBasePath;
 
   if (isLegacy) {
@@ -15,11 +15,11 @@ const getK8sAPIPath = (model) => {
     p += '/apis/';
   }
 
-  if (!isLegacy && model.apiGroup) {
-    p += `${model.apiGroup}/`;
+  if (!isLegacy && apiGroup) {
+    p += `${apiGroup}/`;
   }
 
-  p += model.apiVersion;
+  p += apiVersion;
   return p;
 };
 
@@ -89,6 +89,12 @@ export const k8sPatch = (kind, resource, data, opts = {}) =>
       kind,
       Object.assign({ ns: resource.metadata.namespace, name: resource.metadata.name }, opts),
     ),
+    _.compact(data),
+  );
+
+export const k8sPatchByName = (kind, name, namespace, data, opts = {}) =>
+  coFetchJSON.patch(
+    resourceURL(kind, Object.assign({ ns: namespace, name }, opts)),
     _.compact(data),
   );
 

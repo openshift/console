@@ -4,7 +4,8 @@ import * as _ from 'lodash';
 import { safeLoad } from 'js-yaml';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { DetailsPage } from '@console/internal/components/factory';
-import { Firehose, LoadingBox, ErrorBoundary } from '@console/internal/components/utils';
+import { ErrorBoundary } from '@console/shared/src/components/error/error-boundary';
+import { Firehose, LoadingBox } from '@console/internal/components/utils';
 import { CreateYAML, CreateYAMLProps } from '@console/internal/components/create-yaml';
 import {
   SubscriptionModel,
@@ -88,7 +89,7 @@ describe(CatalogSourceDetailsPage.displayName, () => {
         .find(DetailsPage)
         .props()
         .pages.map((p) => p.name),
-    ).toEqual(['Overview', 'YAML']);
+    ).toEqual(['Details', 'YAML']);
     expect(wrapper.find(DetailsPage).props().pages[0].component).toEqual(CatalogSourceDetails);
     expect(wrapper.find(DetailsPage).props().resources).toEqual([
       {

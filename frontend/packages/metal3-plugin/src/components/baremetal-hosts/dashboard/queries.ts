@@ -91,7 +91,7 @@ export const getMultilineUtilizationQueries = (nodeName: string) => ({
     },
     {
       query: getQuery(nodeName, nodeQueriesByNodeName[HostQuery.NETWORK_OUT_UTILIZATION]),
-      desc: 'In',
+      desc: 'Out',
     },
   ],
 });

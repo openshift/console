@@ -1,11 +1,6 @@
-import * as React from 'react';
-import { connect } from 'react-redux';
-import { match } from 'react-router';
-import { Helmet } from 'react-helmet';
-import { safeDump } from 'js-yaml';
-import * as _ from 'lodash';
-import * as classNames from 'classnames';
+import { safeDump, safeLoad } from 'js-yaml';
 import { Alert, ActionGroup, Button, Switch, Accordion, Checkbox } from '@patternfly/react-core';
+import { MinusCircleIcon, PlusCircleIcon } from '@patternfly/react-icons';
 import { JSONSchema6TypeName } from 'json-schema';
 import {
   apiVersionForModel,
@@ -44,6 +39,12 @@ import { CreateYAML } from '@console/internal/components/create-yaml';
 import { RadioGroup } from '@console/internal/components/radio';
 import { ConfigureUpdateStrategy } from '@console/internal/components/modals/configure-update-strategy-modal';
 import { ExpandCollapse } from '@console/internal/components/utils/expand-collapse';
+import * as classNames from 'classnames';
+import * as _ from 'lodash';
+import { Helmet } from 'react-helmet';
+import { match as RouterMatch } from 'react-router';
+import { connect } from 'react-redux';
+import * as React from 'react';
 import { ClusterServiceVersionModel } from '../models';
 import { ClusterServiceVersionKind, CRDDescription, APIServiceDefinition } from '../types';
 import { SpecCapability, StatusCapability, Descriptor } from './descriptors/types';
@@ -88,6 +89,46 @@ type OperandField = {
 
 type FieldErrors = {
   [path: string]: string;
+};
+
+const defaultValueFor = (field: OperandField) => {
+  if (
+    _.intersection(field.capabilities, [
+      SpecCapability.podCount,
+      SpecCapability.password,
+      SpecCapability.imagePullPolicy,
+      SpecCapability.text,
+      SpecCapability.number,
+      SpecCapability.select,
+    ]).length > 0
+  ) {
+    return '';
+  }
+  if (field.capabilities.includes(SpecCapability.resourceRequirements)) {
+    return null;
+  }
+  if (field.capabilities.some((c) => c.startsWith(SpecCapability.k8sResourcePrefix))) {
+    return null;
+  }
+  if (field.capabilities.includes(SpecCapability.checkbox)) {
+    return null;
+  }
+  if (field.capabilities.includes(SpecCapability.booleanSwitch)) {
+    return null;
+  }
+  if (field.capabilities.includes(SpecCapability.updateStrategy)) {
+    return null;
+  }
+  if (field.capabilities.includes(SpecCapability.nodeAffinity)) {
+    return _.cloneDeep(defaultNodeAffinity);
+  }
+  if (
+    field.capabilities.includes(SpecCapability.podAffinity) ||
+    field.capabilities.includes(SpecCapability.podAntiAffinity)
+  ) {
+    return _.cloneDeep(defaultPodAffinity);
+  }
+  return null;
 };
 
 const fieldsFor = (providedAPI: CRDDescription) =>
@@ -189,160 +230,126 @@ const fieldsForOpenAPI = (openAPI: SwaggerDefinition): OperandField[] => {
   return _.compact(fields);
 };
 
-export const CreateOperandForm: React.FC<CreateOperandFormProps> = (props) => {
-  const fields: OperandField[] = (!_.isEmpty(
-    props.clusterServiceVersion && props.providedAPI.specDescriptors,
-  )
-    ? fieldsFor(props.providedAPI)
-    : fieldsForOpenAPI(props.openAPI)
-  )
-    .map((field) => {
-      const capabilities = field.capabilities || [];
-      const openAPIProperties = _.get(props, 'openAPI.properties.spec.properties');
-      if (_.isEmpty(openAPIProperties)) {
-        return { ...field, capabilities };
-      }
-      const schemaPath = field.path.split('.').join('.properties.');
-      const required = (_.get(
-        props.openAPI,
-        _.dropRight(['properties', 'spec', ...field.path.split('.')])
-          .join('.properties.')
-          .concat('.required'),
-        [],
-      ) as string[]).includes(_.last(field.path.split('.')));
-      const type = _.get(openAPIProperties, schemaPath.concat('.type')) as JSONSchema6TypeName;
-      const validation = _.pick(openAPIProperties[schemaPath], [
-        ...Object.keys(Validations),
-      ]) as OperandField['validation'];
-
-      return { ...field, capabilities, type, required, validation };
-    })
-    .concat(
-      fieldsForOpenAPI(props.openAPI).filter(
-        (crdField) =>
-          props.providedAPI.specDescriptors &&
-          !props.providedAPI.specDescriptors.some((d) => d.path === crdField.path),
-      ),
-    )
-    // Associate `specDescriptors` with `fieldGroups` from OpenAPI
-    .map((field, i, allFields) =>
-      allFields.some((f) =>
-        f.capabilities.includes(
-          SpecCapability.fieldGroup.concat(field.path.split('.')[0]) as SpecCapability.fieldGroup,
-        ),
+export const CreateOperandForm: React.FC<CreateOperandFormProps> = ({
+  clusterServiceVersion,
+  openAPI,
+  operandModel,
+  providedAPI,
+  namespace,
+  onChange,
+  sample,
+}) => {
+  const fieldsFromProps: OperandField[] = React.useMemo(
+    () =>
+      (!_.isEmpty(clusterServiceVersion && providedAPI.specDescriptors)
+        ? fieldsFor(providedAPI)
+        : fieldsForOpenAPI(openAPI)
       )
-        ? {
-            ...field,
-            capabilities: [
-              ...new Set(field.capabilities).add(
-                SpecCapability.fieldGroup.concat(
-                  field.path.split('.')[0],
-                ) as SpecCapability.fieldGroup,
-              ),
-            ],
+        .map((field) => {
+          const capabilities = field.capabilities || [];
+          const openAPIProperties = _.get(openAPI, 'properties.spec.properties');
+          if (_.isEmpty(openAPIProperties)) {
+            return { ...field, capabilities };
           }
-        : field,
-    );
+          const schemaPath = field.path.split('.').join('.properties.');
+          const required = (_.get(
+            openAPI?.properties,
+            _.dropRight(['spec', ...field.path.split('.')])
+              .join('.properties.')
+              .concat('.required'),
+            [],
+          ) as string[]).includes(_.last(field.path.split('.')));
+          const type = _.get(openAPIProperties, schemaPath.concat('.type')) as JSONSchema6TypeName;
+          const validation = _.pick(openAPIProperties[schemaPath], [
+            ...Object.keys(Validations),
+          ]) as OperandField['validation'];
 
-  const defaultValueFor = (field: OperandField) => {
-    if (
-      _.intersection(field.capabilities, [
-        SpecCapability.podCount,
-        SpecCapability.password,
-        SpecCapability.imagePullPolicy,
-        SpecCapability.text,
-        SpecCapability.number,
-        SpecCapability.select,
-      ]).length > 0
-    ) {
-      return '';
-    }
-    if (field.capabilities.includes(SpecCapability.resourceRequirements)) {
-      return { limits: { cpu: '', memory: '' }, requests: { cpu: '', memory: '' } };
-    }
-    if (field.capabilities.some((c) => c.startsWith(SpecCapability.k8sResourcePrefix))) {
-      return null;
-    }
-    if (field.capabilities.includes(SpecCapability.checkbox)) {
-      return null;
-    }
-    if (field.capabilities.includes(SpecCapability.booleanSwitch)) {
-      return null;
-    }
-    if (field.capabilities.includes(SpecCapability.updateStrategy)) {
-      return null;
-    }
-    if (field.capabilities.includes(SpecCapability.nodeAffinity)) {
-      return _.cloneDeep(defaultNodeAffinity);
-    }
-    if (
-      field.capabilities.includes(SpecCapability.podAffinity) ||
-      field.capabilities.includes(SpecCapability.podAntiAffinity)
-    ) {
-      return _.cloneDeep(defaultPodAffinity);
-    }
-    return null;
-  };
+          return { ...field, capabilities, type, required, validation };
+        })
+        .concat(
+          fieldsForOpenAPI(openAPI).filter(
+            (crdField) =>
+              providedAPI.specDescriptors &&
+              !providedAPI.specDescriptors.some((d) => d.path === crdField.path),
+          ),
+        )
+        // Associate `specDescriptors` with `fieldGroups` from OpenAPI
+        .map((field, i, allFields) =>
+          allFields.some((f) =>
+            f.capabilities.includes(
+              SpecCapability.fieldGroup.concat(
+                field.path.split('.')[0],
+              ) as SpecCapability.fieldGroup,
+            ),
+          )
+            ? {
+                ...field,
+                capabilities: [
+                  ...new Set(field.capabilities).add(
+                    SpecCapability.fieldGroup.concat(
+                      field.path.split('.')[0],
+                    ) as SpecCapability.fieldGroup,
+                  ),
+                ],
+              }
+            : field,
+        ),
+    [openAPI, providedAPI, clusterServiceVersion],
+  );
+
+  const [fields, setFields] = React.useState<OperandField[]>(fieldsFromProps);
 
   type FormValues = { [path: string]: any };
 
-  const defaultFormValues = fields.reduce<FormValues>(
-    (allFields, field) => ({ ...allFields, [field.path]: defaultValueFor(field) }),
-    {},
+  const defaultFormValues = React.useMemo(
+    () =>
+      fields.reduce<FormValues>(
+        (allFields, field) => ({ ...allFields, [field.path]: defaultValueFor(field) }),
+        {},
+      ),
+    [fields],
   );
-  const sampleFormValues = fields.reduce<FormValues>((allFields, field) => {
-    const sampleValue = _.get(props.sample, `spec.${field.path}`);
-    return sampleValue ? { ...allFields, [field.path]: sampleValue } : allFields;
-  }, {});
+
+  const sampleFormValues = React.useMemo(
+    () =>
+      fields.reduce<FormValues>((allFields, field) => {
+        const sampleValue = _.get(sample, `spec.${field.path}`);
+        return sampleValue ? { ...allFields, [field.path]: sampleValue } : allFields;
+      }, {}),
+    [fields, sample],
+  );
+
+  const getArrayFieldGroups = () => {
+    const arrayFieldGroupList = fields.reduce(
+      (groups, field) =>
+        field.capabilities.find((c) => c.startsWith(SpecCapability.arrayFieldGroup))
+          ? groups.add(
+              field.capabilities.find((c) =>
+                c.startsWith(SpecCapability.arrayFieldGroup),
+              ) as SpecCapability.arrayFieldGroup,
+            )
+          : groups,
+      new Set<SpecCapability.arrayFieldGroup>(),
+    );
+    return new Set([...arrayFieldGroupList].sort());
+  };
 
   const [formValues, setFormValues] = React.useState<FormValues>({
-    'metadata.name': 'example',
-    'metadata.labels': [],
+    'metadata.name': _.get(sample, 'metadata.name', 'example'),
+    'metadata.labels': SelectorInput.arrayify(_.get(sample, 'metadata.labels')) || [],
     ...defaultFormValues,
     ...sampleFormValues,
   });
+
   const [error, setError] = React.useState<string>();
   const [formErrors, setFormErrors] = React.useState<FieldErrors>({});
+  const [arrayFieldGroups, setArrayFieldGroupList] = React.useState<
+    Set<SpecCapability.arrayFieldGroup>
+  >(getArrayFieldGroups());
 
-  const updateFormValues = (values: FormValues) => (path: _.PropertyPath, value: any) =>
-    _.set(_.cloneDeep(values), path, value);
-
-  const submit = (event) => {
-    event.preventDefault();
-
-    const errors = fields
-      .filter((f) => !_.isNil(f.validation) || !_.isEmpty(f.validation))
-      .filter((f) => f.required || !_.isEqual(formValues[f.path], defaultValueFor(f)))
-      .reduce<FieldErrors>((allErrors, field) => {
-        // NOTE: Use server-side validation in Kubernetes 1.16 (https://github.com/kubernetes/kubernetes/issues/80718#issuecomment-521081640)
-        const fieldErrors = _.map(field.validation, (val, rule: Validations) => {
-          switch (rule) {
-            case Validations.minimum:
-              return formValues[field.path] >= val ? null : `Must be greater than ${val}.`;
-            case Validations.maximum:
-              return formValues[field.path] <= val ? null : `Must be less than ${val}.`;
-            case Validations.minLength:
-              return formValues[field.path].length >= val
-                ? null
-                : `Must be at least ${val} characters.`;
-            case Validations.maxLength:
-              return formValues[field.path].length <= val
-                ? null
-                : `Must be greater than ${val} characters.`;
-            case Validations.pattern:
-              return new RegExp(val as string).test(formValues[field.path])
-                ? null
-                : `Does not match required pattern ${val}`;
-            default:
-              return null;
-          }
-        });
-        // Just use first error
-        return { ...allErrors, [field.path]: fieldErrors.find((e) => !_.isNil(e)) };
-      }, {});
-    setFormErrors(errors);
-
-    if (_.isEmpty(_.compact(_.values(errors)))) {
+  const [k8sObj, setK8sObj] = React.useState<K8sResourceKind>(sample);
+  React.useEffect(() => {
+    setK8sObj((current) => {
       const specValues = fields.reduce((usedFormValues, field) => {
         const formValue = _.get(usedFormValues, field.path);
         if (_.isEqual(formValue, defaultValueFor(field)) || _.isNil(formValue)) {
@@ -350,40 +357,91 @@ export const CreateOperandForm: React.FC<CreateOperandFormProps> = (props) => {
         }
         return usedFormValues;
       }, _.omit(formValues, ['metadata.name', 'metadata.labels']));
-
-      const obj: K8sResourceKind = {
-        apiVersion: apiVersionForModel(props.operandModel),
-        kind: props.operandModel.kind,
+      const next = {
+        apiVersion: apiVersionForModel(operandModel),
+        kind: operandModel.kind,
         metadata: {
-          namespace: props.namespace,
+          namespace,
           name: formValues['metadata.name'],
           labels: SelectorInput.objectify(
             formValues['metadata.labels'],
           ) as ObjectMetadata['labels'],
-          annotations: _.get(props.sample, 'metadata.annotations', {}),
+          annotations: _.get(sample, 'metadata.annotations', {}),
         },
         spec: _.reduce(
           specValues,
           (spec, value, path) => _.set(spec, path, value),
-          _.get(props.sample, 'spec', {}),
+          _.get(sample, 'spec', {}),
         ),
       };
+      if (_.isEqual(current, next)) {
+        return current;
+      }
+      onChange(next);
+      return next;
+    });
+  }, [fields, formValues, namespace, onChange, operandModel, sample]);
 
-      k8sCreate(props.operandModel, obj)
-        .then(() =>
-          history.push(
-            `${resourcePathFromModel(
-              ClusterServiceVersionModel,
-              props.clusterServiceVersion.metadata.name,
-              props.namespace,
-            )}/${referenceForModel(props.operandModel)}`,
-          ),
-        )
-        .catch((err: { json: Status }) => {
-          setError(err.json.message);
-        });
-    }
+  const updateFormValues = (path: _.PropertyPath, value: any) => {
+    setFormValues((current) => {
+      const next = _.set(_.cloneDeep(current), path, value);
+      return _.isEqual(current, next) ? current : next;
+    });
   };
+
+  const submit = React.useCallback(
+    (event) => {
+      event.preventDefault();
+      const errors = fields
+        .filter((f) => !_.isNil(f.validation) || !_.isEmpty(f.validation))
+        .filter((f) => f.required || !_.isEqual(formValues[f.path], defaultValueFor(f)))
+        .reduce<FieldErrors>((allErrors, field) => {
+          // NOTE: Use server-side validation in Kubernetes 1.16 (https://github.com/kubernetes/kubernetes/issues/80718#issuecomment-521081640)
+          const fieldErrors = _.map(field.validation, (val, rule: Validations) => {
+            switch (rule) {
+              case Validations.minimum:
+                return formValues[field.path] >= val ? null : `Must be greater than ${val}.`;
+              case Validations.maximum:
+                return formValues[field.path] <= val ? null : `Must be less than ${val}.`;
+              case Validations.minLength:
+                return formValues[field.path].length >= val
+                  ? null
+                  : `Must be at least ${val} characters.`;
+              case Validations.maxLength:
+                return formValues[field.path].length <= val
+                  ? null
+                  : `Must be greater than ${val} characters.`;
+              case Validations.pattern:
+                return new RegExp(val as string).test(formValues[field.path])
+                  ? null
+                  : `Does not match required pattern ${val}`;
+              default:
+                return null;
+            }
+          });
+          // Just use first error
+          return { ...allErrors, [field.path]: fieldErrors.find((e) => !_.isNil(e)) };
+        }, {});
+      setFormErrors(errors);
+
+      if (_.isEmpty(_.compact(_.values(errors)))) {
+        k8sCreate(operandModel, k8sObj)
+          .then(() =>
+            history.push(
+              `${resourcePathFromModel(
+                ClusterServiceVersionModel,
+                clusterServiceVersion.metadata.name,
+                namespace,
+              )}/${referenceForModel(operandModel)}`,
+            ),
+          )
+          .catch((err: { json: Status }) => {
+            setError(err.json.message);
+          });
+      }
+    },
+    [clusterServiceVersion.metadata.name, fields, formValues, k8sObj, namespace, operandModel],
+  );
 
   // TODO(alecmerdler): Move this into a single `<SpecDescriptorInput>` entry component in the `descriptors/` directory
   const inputFor = (field: OperandField) => {
@@ -418,16 +476,10 @@ export const CreateOperandForm: React.FC<CreateOperandFormProps> = (props) => {
           className="pf-c-form-control"
           value={_.get(formValues, field.path)}
           onChange={({ currentTarget }) =>
-            setFormValues((values) => ({
-              ...values,
-              [field.path]: _.toInteger(currentTarget.value),
-            }))
+            updateFormValues(field.path, _.toInteger(currentTarget.value))
           }
           changeValueBy={(operation) =>
-            setFormValues((values) => ({
-              ...values,
-              [field.path]: _.toInteger(formValues[field.path]) + operation,
-            }))
+            updateFormValues(field.path, _.toInteger(formValues[field.path]) + operation)
           }
           autoFocus
           required
@@ -442,15 +494,13 @@ export const CreateOperandForm: React.FC<CreateOperandFormProps> = (props) => {
             <ResourceRequirements
               cpu={_.get(formValues, [field.path, 'limits', 'cpu'])}
               memory={_.get(formValues, [field.path, 'limits', 'memory'])}
-              onChangeCPU={(cpu) =>
-                setFormValues((values) =>
-                  updateFormValues(values)([field.path, 'limits', 'cpu'], cpu),
-                )
-              }
+              storage={_.get(formValues, [field.path, 'limits', 'ephemeral-storage'])}
+              onChangeCPU={(cpu) => updateFormValues([field.path, 'limits', 'cpu'], cpu)}
               onChangeMemory={(memory) =>
-                setFormValues((values) =>
-                  updateFormValues(values)([field.path, 'limits', 'memory'], memory),
-                )
+                updateFormValues([field.path, 'limits', 'memory'], memory)
+              }
+              onChangeStorage={(storage) =>
+                updateFormValues([field.path, 'limits', 'ephemeral-storage'], storage)
               }
               path={`${field.path}.limits`}
             />
@@ -460,15 +510,13 @@ export const CreateOperandForm: React.FC<CreateOperandFormProps> = (props) => {
             <ResourceRequirements
               cpu={_.get(formValues, [field.path, 'requests', 'cpu'])}
               memory={_.get(formValues, [field.path, 'requests', 'memory'])}
-              onChangeCPU={(cpu) =>
-                setFormValues((values) =>
-                  updateFormValues(values)([field.path, 'requests', 'cpu'], cpu),
-                )
-              }
+              storage={_.get(formValues, [field.path, 'requests', 'ephemeral-storage'])}
+              onChangeCPU={(cpu) => updateFormValues([field.path, 'requests', 'cpu'], cpu)}
               onChangeMemory={(memory) =>
-                setFormValues((values) =>
-                  updateFormValues(values)([field.path, 'requests', 'memory'], memory),
-                )
+                updateFormValues([field.path, 'requests', 'memory'], memory)
+              }
+              onChangeStorage={(storage) =>
+                updateFormValues([field.path, 'requests', 'ephemeral-storage'], storage)
               }
               path={`${field.path}.requests`}
             />
@@ -484,9 +532,7 @@ export const CreateOperandForm: React.FC<CreateOperandFormProps> = (props) => {
             id={field.path}
             type="password"
             {...field.validation}
-            onChange={({ currentTarget }) =>
-              setFormValues((values) => ({ ...values, [field.path]: currentTarget.value }))
-            }
+            onChange={({ currentTarget }) => updateFormValues(field.path, currentTarget.value)}
             value={formValues[field.path]}
           />
         </div>
@@ -498,17 +544,19 @@ export const CreateOperandForm: React.FC<CreateOperandFormProps> = (props) => {
         .split(SpecCapability.k8sResourcePrefix)[1]
         .replace('core~v1~', '');
       const model = modelFor(groupVersionKind);
+      const selectedKey = `${formValues[field.path]}-${model.kind}`;
 
       return (
         <div>
           {!_.isUndefined(model) ? (
             <ListDropdown
               resources={[
-                { kind: groupVersionKind, namespace: model.namespaced ? props.namespace : null },
+                { kind: groupVersionKind, namespace: model.namespaced ? namespace : null },
               ]}
               desc={field.displayName}
               placeholder={`Select ${kindForReference(groupVersionKind)}`}
-              onChange={(name) => setFormValues((values) => ({ ...values, [field.path]: name }))}
+              onChange={(name) => updateFormValues(field.path, name)}
+              selectedKey={selectedKey}
             />
           ) : (
             <span>Cluster does not have resource {groupVersionKind}</span>
@@ -524,7 +572,7 @@ export const CreateOperandForm: React.FC<CreateOperandFormProps> = (props) => {
           isChecked={!_.isNil(formValues[field.path]) ? (formValues[field.path] as boolean) : false}
           label={field.displayName}
           required={field.required}
-          onChange={(val) => setFormValues((values) => ({ ...values, [field.path]: val }))}
+          onChange={(val) => updateFormValues(field.path, val)}
         />
       );
     }
@@ -533,7 +581,7 @@ export const CreateOperandForm: React.FC<CreateOperandFormProps> = (props) => {
         <Switch
           id={field.path}
           isChecked={formValues[field.path]}
-          onChange={(val) => setFormValues((values) => ({ ...values, [field.path]: val }))}
+          onChange={(val) => updateFormValues(field.path, val)}
           label="True"
           labelOff="False"
         />
@@ -544,9 +592,7 @@ export const CreateOperandForm: React.FC<CreateOperandFormProps> = (props) => {
         <RadioGroup
           currentValue={formValues[field.path]}
           items={_.values(ImagePullPolicy).map((policy) => ({ value: policy, title: policy }))}
-          onChange={({ currentTarget }) =>
-            setFormValues((values) => ({ ...values, [field.path]: currentTarget.value }))
-          }
+          onChange={({ currentTarget }) => updateFormValues(field.path, currentTarget.value)}
         />
       );
     }
@@ -556,21 +602,12 @@ export const CreateOperandForm: React.FC<CreateOperandFormProps> = (props) => {
           strategyType={_.get(formValues, `${field.path}.type`)}
           maxUnavailable={_.get(formValues, `${field.path}.rollingUpdate.maxUnavailable`)}
           maxSurge={_.get(formValues, `${field.path}.rollingUpdate.maxSurge`)}
-          onChangeStrategyType={(type) =>
-            setFormValues((values) => updateFormValues(values)([field.path, 'type'], type))
-          }
+          onChangeStrategyType={(type) => updateFormValues([field.path, 'type'], type)}
           onChangeMaxUnavailable={(maxUnavailable) =>
-            setFormValues((values) =>
-              updateFormValues(values)(
-                [field.path, 'rollingUpdate', 'maxUnavailable'],
-                maxUnavailable,
-              ),
-            )
+            updateFormValues([field.path, 'rollingUpdate', 'maxUnavailable'], maxUnavailable)
           }
           onChangeMaxSurge={(maxSurge) =>
-            setFormValues((values) =>
-              updateFormValues(values)([field.path, 'rollingUpdate', 'maxSurge'], maxSurge),
-            )
+            updateFormValues([field.path, 'rollingUpdate', 'maxSurge'], maxSurge)
           }
           replicas={1}
         />
@@ -583,9 +620,7 @@ export const CreateOperandForm: React.FC<CreateOperandFormProps> = (props) => {
             className="pf-c-form-control"
             id={field.path}
             type="text"
-            onChange={({ currentTarget }) =>
-              setFormValues((values) => ({ ...values, [field.path]: currentTarget.value }))
-            }
+            onChange={({ currentTarget }) => updateFormValues(field.path, currentTarget.value)}
             value={formValues[field.path]}
           />
         </div>
@@ -599,10 +634,10 @@ export const CreateOperandForm: React.FC<CreateOperandFormProps> = (props) => {
             id={field.path}
             type="number"
             onChange={({ currentTarget }) =>
-              setFormValues((values) => ({
-                ...values,
-                [field.path]: currentTarget.value !== '' ? _.toNumber(currentTarget.value) : '',
-              }))
+              updateFormValues(
+                field.path,
+                currentTarget.value !== '' ? _.toNumber(currentTarget.value) : '',
+              )
             }
             value={formValues[field.path]}
           />
@@ -614,9 +649,7 @@ export const CreateOperandForm: React.FC<CreateOperandFormProps> = (props) => {
         <div style={{ marginLeft: '15px' }}>
           <NodeAffinity
             affinity={formValues[field.path]}
-            onChangeAffinity={(affinity) =>
-              setFormValues((values) => ({ ...values, [field.path]: affinity }))
-            }
+            onChangeAffinity={(affinity) => updateFormValues(field.path, affinity)}
           />
         </div>
       );
@@ -629,9 +662,7 @@ export const CreateOperandForm: React.FC<CreateOperandFormProps> = (props) => {
         <div style={{ marginLeft: '15px' }}>
           <PodAffinity
             affinity={formValues[field.path]}
-            onChangeAffinity={(affinity) =>
-              setFormValues((values) => ({ ...values, [field.path]: affinity }))
-            }
+            onChangeAffinity={(affinity) => updateFormValues(field.path, affinity)}
           />
         </div>
       );
@@ -646,9 +677,7 @@ export const CreateOperandForm: React.FC<CreateOperandFormProps> = (props) => {
               .filter((c) => c.startsWith(SpecCapability.select))
               .map((c) => c.split(SpecCapability.select)[1])
               .reduce((all, option) => ({ [option]: option, ...all }), {})}
-            onChange={(selected) =>
-              setFormValues((values) => ({ ...values, [field.path]: selected }))
-            }
+            onChange={(selected) => updateFormValues(field.path, selected)}
           />
         </div>
       );
@@ -660,7 +689,139 @@ export const CreateOperandForm: React.FC<CreateOperandFormProps> = (props) => {
     if (!_.isString(group) || !_.isString(groupType)) {
       return null;
     }
-    return _.startCase(group.split(groupType)[1]);
+    let groupName = group.split(groupType)[1];
+    if (groupType.startsWith(SpecCapability.arrayFieldGroup)) {
+      [groupName] = groupName.split(':');
+    }
+    return groupName;
+  };
+
+  const addFieldsToGroup = (fieldList, group) => {
+    const newFormValues = _.cloneDeep(formValues);
+    const groupName = getGroupName(group, SpecCapability.arrayFieldGroup);
+    const newFields = _.cloneDeep(fields);
+
+    if (_.isArray(fieldList) && !_.isEmpty(fieldList) && !_.isNil(group)) {
+      _.forEach(fieldList, (field) => {
+        const newField = _.cloneDeep(field);
+        const pathInfoList = newField.path.split('.');
+        const groupInfo = pathInfoList.find((ele) => ele.startsWith(groupName));
+        const groupNumIndex = pathInfoList.indexOf(groupInfo);
+        const groupIndex = group.split(groupName.concat(':'))[1];
+        const newGroupName = groupName
+          .concat('[')
+          .concat(groupIndex)
+          .concat(']');
+
+        // Generate new capabilities
+        const arrayFieldGroupCapability = newField.capabilities.find((c) =>
+          c.startsWith(SpecCapability.arrayFieldGroup),
+        );
+        const newArrayFieldGroupCapability = !_.isUndefined(
+          arrayFieldGroupCapability.split(groupName.concat(':'))[1],
+        )
+          ? _.dropRight(
+              newField.capabilities
+                .find((c) => c.startsWith(SpecCapability.arrayFieldGroup))
+                .split(':'),
+            )
+              .join(':')
+              .concat(':')
+              .concat(groupIndex)
+          : arrayFieldGroupCapability.concat(':').concat(groupIndex);
+
+        newField.capabilities.splice(
+          _.findIndex(newField.capabilities, (c: string) =>
+            c.startsWith(SpecCapability.arrayFieldGroup),
+          ),
+          1,
+          newArrayFieldGroupCapability,
+        );
+        // Generate new group name part in path
+        pathInfoList.splice(groupNumIndex, 1, newGroupName);
+        newField.path = pathInfoList.join('.');
+
+        // Add new fieldValue
+        newFormValues[newField.path] = defaultValueFor(newField);
+
+        // Add new field
+        newFields.push(newField);
+      });
+      setFormValues(newFormValues);
+      setFields(newFields);
+    }
+  };
+
+  const removeFieldsFromGroup = (fieldList, groupName) => {
+    let newFormValues = _.cloneDeep(formValues);
+    let newFieldList = _.cloneDeep(fields);
+    let fieldsInGroup = [];
+
+    if (_.isArray(fieldList) && !_.isEmpty(fieldList) && !_.isNil(groupName)) {
+      fieldsInGroup = newFieldList.filter((f) =>
+        f.capabilities.some((c) => {
+          if (c.startsWith(SpecCapability.arrayFieldGroup)) {
+            return c.split(SpecCapability.arrayFieldGroup)[1].includes(groupName);
+          }
+          return false;
+        }),
+      );
+
+      _.forEach(fieldList, () => {
+        // Remove related formValue
+        const key = _.findLastKey(newFormValues, (v, k) =>
+          k.split('.').some((p) => p.includes(groupName)),
+        );
+        newFormValues = _.omit(newFormValues, [key]);
+
+        // Remove related fields
+        newFieldList = _.without(newFieldList, fieldsInGroup.pop());
+      });
+
+      setFormValues(newFormValues);
+      setFields(newFieldList);
+    }
+  };
+
+  const addGroup = (group) => {
+    const groupList = _.cloneDeep(arrayFieldGroups);
+
+    if (!_.isNil(group) && arrayFieldGroups.size > 0) {
+      groupList.add(group);
+      setArrayFieldGroupList(new Set([...groupList].sort()));
+    }
+  };
+
+  const removeGroup = (groupName) => {
+    const groupList = [...arrayFieldGroups];
+    const newGroupList = groupList.filter((g) => g.includes(groupName));
+
+    if (!_.isNil(groupName) && !_.isEmpty(groupList) && !_.isEmpty(newGroupList)) {
+      const newList = _.without(groupList, _.last(newGroupList));
+      setArrayFieldGroupList(new Set(newList.sort()));
+    }
+  };
+
+  const addGroupAndFields = (fieldList, groupName) => {
+    const groupIndex = _.filter([...arrayFieldGroups], (g) =>
+      g.split(':').includes(groupName),
+    ).length.toString();
+    const newGroup = SpecCapability.arrayFieldGroup
+      .concat(groupName)
+      .concat(':')
+      .concat(groupIndex);
+
+    if (!_.isNil(groupName) && !_.isEmpty(fieldList)) {
+      addGroup(newGroup);
+      addFieldsToGroup(fieldList, newGroup);
+    }
+  };
+
+  const removeGroupAndFields = (fieldList, groupName) => {
+    if (!_.isNil(groupName) && !_.isEmpty(fieldList)) {
+      removeFieldsFromGroup(fieldList, groupName);
+      removeGroup(groupName);
+    }
   };
 
   const fieldGroups = fields.reduce(
@@ -673,18 +834,6 @@ export const CreateOperandForm: React.FC<CreateOperandFormProps> = (props) => {
           )
         : groups,
     new Set<SpecCapability.fieldGroup>(),
-  );
-
-  const arrayFieldGroups = fields.reduce(
-    (groups, field) =>
-      field.capabilities.find((c) => c.startsWith(SpecCapability.arrayFieldGroup))
-        ? groups.add(
-            field.capabilities.find((c) =>
-              c.startsWith(SpecCapability.arrayFieldGroup),
-            ) as SpecCapability.arrayFieldGroup,
-          )
-        : groups,
-    new Set<SpecCapability.arrayFieldGroup>(),
   );
 
   const advancedFields = fields
@@ -711,9 +860,7 @@ export const CreateOperandForm: React.FC<CreateOperandFormProps> = (props) => {
               <input
                 className="pf-c-form-control"
                 type="text"
-                onChange={({ target }) =>
-                  setFormValues((values) => ({ ...values, 'metadata.name': target.value }))
-                }
+                onChange={({ target }) => updateFormValues('metadata.name', target.value)}
                 value={formValues['metadata.name']}
                 id="metadata.name"
                 required
@@ -724,9 +871,7 @@ export const CreateOperandForm: React.FC<CreateOperandFormProps> = (props) => {
                 Labels
               </label>
               <SelectorInput
-                onChange={(labels) =>
-                  setFormValues((values) => ({ ...values, 'metadata.labels': labels }))
-                }
+                onChange={(labels) => updateFormValues('metadata.labels', labels)}
                 tags={formValues['metadata.labels']}
               />
             </div>
@@ -739,6 +884,24 @@ export const CreateOperandForm: React.FC<CreateOperandFormProps> = (props) => {
               return (
                 !_.isEmpty(fieldList) && (
                   <div id={group} key={group}>
+                    {[...arrayFieldGroups].filter((fieldGroup) =>
+                      fieldGroup
+                        .split(SpecCapability.arrayFieldGroup)[1]
+                        .split(':')[0]
+                        .includes(groupName),
+                    ).length > 1 ? (
+                      <div className="row co-array-field-group__remove">
+                        <Button
+                          type="button"
+                          className="co-array-field-group__remove-btn"
+                          onClick={() => removeGroupAndFields(fieldList, groupName)}
+                          variant="link"
+                        >
+                          <MinusCircleIcon className="co-icon-space-r" />
+                          Remove Field Group
+                        </Button>
+                      </div>
+                    ) : null}
                     <FieldGroup
                       defaultExpand={
                         !_.some(
@@ -746,7 +909,7 @@ export const CreateOperandForm: React.FC<CreateOperandFormProps> = (props) => {
                           (f) => f.capabilities.includes(SpecCapability.advanced) && !f.required,
                         )
                       }
-                      groupName={groupName}
+                      groupName={_.startCase(groupName)}
                     >
                       {fieldList.map((field) => (
                         <div key={field.path}>
@@ -771,6 +934,16 @@ export const CreateOperandForm: React.FC<CreateOperandFormProps> = (props) => {
                           </div>
                         </div>
                       ))}
+                      <div className="row">
+                        <Button
+                          type="button"
+                          onClick={() => addGroupAndFields(fieldList, groupName)}
+                          variant="link"
+                        >
+                          <PlusCircleIcon className="co-icon-space-r" />
+                          Add Field Group
+                        </Button>
+                      </div>
                     </FieldGroup>
                   </div>
                 )
@@ -792,7 +965,7 @@ export const CreateOperandForm: React.FC<CreateOperandFormProps> = (props) => {
                           (f) => f.capabilities.includes(SpecCapability.advanced) && !f.required,
                         )
                       }
-                      groupName={groupName}
+                      groupName={_.startCase(groupName)}
                     >
                       {fieldList.map((field) => (
                         <div key={field.path}>
@@ -909,14 +1082,14 @@ export const CreateOperandForm: React.FC<CreateOperandFormProps> = (props) => {
           </div>
         </form>
         <div className="col-md-4 col-lg-5">
-          {props.clusterServiceVersion && props.providedAPI && (
+          {clusterServiceVersion && providedAPI && (
             <div style={{ marginBottom: '30px' }}>
               <ClusterServiceVersionLogo
-                displayName={props.providedAPI.displayName}
-                icon={_.get(props.clusterServiceVersion, 'spec.icon[0]')}
-                provider={_.get(props.clusterServiceVersion, 'spec.provider')}
+                displayName={providedAPI.displayName}
+                icon={_.get(clusterServiceVersion, 'spec.icon[0]')}
+                provider={_.get(clusterServiceVersion, 'spec.provider')}
               />
-              {props.providedAPI.description}
+              {providedAPI.description}
             </div>
           )}
           <Alert
@@ -949,67 +1122,115 @@ export const CreateOperandYAML: React.FC<CreateOperandYAMLProps> = (props) => {
       props.match.params.ns,
     )}/${props.match.params.plural}`;
 
+  const onChange = React.useCallback(
+    (yaml) => {
+      try {
+        const parsed = safeLoad(yaml);
+        props.onChange(parsed);
+      } catch {
+        // eslint-disable-next-line no-console
+        console.error('Error parsing YAML in editor.');
+        // Do nothing if it's not valid yaml
+      }
+    },
+    [props],
+  );
+
   return (
     <CreateYAML
       template={!_.isError(template) ? template : null}
       match={props.match}
       resourceObjPath={resourceObjPath}
       hideHeader
+      onChange={onChange}
     />
   );
 };
 
-export const CreateOperand: React.FC<CreateOperandProps> = (props) => {
-  const providedAPI = () =>
-    providedAPIsFor(props.clusterServiceVersion.data).find(
-      (crd) => referenceForProvidedAPI(crd) === referenceForModel(props.operandModel),
-    );
-  const sample = () =>
-    JSON.parse(
-      _.get(props.clusterServiceVersion.data.metadata.annotations, annotationKey, '[]'),
-    ).find((s: K8sResourceKind) => referenceFor(s) === referenceForModel(props.operandModel));
+export const CreateOperand: React.FC<CreateOperandProps> = ({
+  clusterServiceVersion,
+  customResourceDefinition,
+  loaded,
+  loadError,
+  match,
+  operandModel,
+}) => {
+  const { data: csv } = clusterServiceVersion;
+  const csvAnnotations = _.get(csv, 'metadata.annotations', {});
+  const operandModelReference = referenceForModel(operandModel);
   const [method, setMethod] = React.useState<'yaml' | 'form'>('yaml');
+  const providedAPI = React.useMemo<CRDDescription | APIServiceDefinition>(
+    () =>
+      providedAPIsFor(csv).find((crd) => referenceForProvidedAPI(crd) === operandModelReference),
+    [csv, operandModelReference],
+  );
 
-  const openAPI =
-    (_.get(props.customResourceDefinition, [
-      'data',
-      'spec',
-      'validation',
-      'openAPIV3Schema',
-    ]) as SwaggerDefinition) || definitionFor(props.operandModel);
+  const defaultSample = React.useMemo<K8sResourceKind>(
+    () =>
+      JSON.parse(_.get(csvAnnotations, annotationKey, '[]')).find(
+        (s: K8sResourceKind) => referenceFor(s) === operandModelReference,
+      ),
+    [operandModelReference, csvAnnotations],
+  );
+
+  const [buffer, setBuffer] = React.useState<K8sResourceKind>();
+  const onChange = React.useCallback((obj) => setBuffer(obj), []);
+
+  const [sample, setSample] = React.useState<K8sResourceKind>();
+  React.useEffect(() => {
+    setSample((current) => {
+      const next = buffer || defaultSample;
+      return !loaded || _.isEqual(current, next) ? current : next;
+    });
+  }, [buffer, defaultSample, loaded]);
+
+  const onToggleMethod = React.useCallback(() => {
+    setMethod((current) => (current === 'yaml' ? 'form' : 'yaml'));
+  }, []);
+
+  const openAPI = React.useMemo(
+    () =>
+      (_.get(customResourceDefinition, [
+        'data',
+        'spec',
+        'validation',
+        'openAPIV3Schema',
+      ]) as SwaggerDefinition) || definitionFor(operandModel),
+    [customResourceDefinition, operandModel],
+  );
 
   return (
     <>
-      {props.loaded && (
+      {loaded && (
         <div className="co-create-operand__header">
           <div className="co-create-operand__header-buttons">
             <BreadCrumbs
               breadcrumbs={[
                 {
-                  name: props.clusterServiceVersion.data.spec.displayName,
+                  name: clusterServiceVersion.data.spec.displayName,
                   path: resourcePathFromModel(
                     ClusterServiceVersionModel,
-                    props.clusterServiceVersion.data.metadata.name,
-                    props.clusterServiceVersion.data.metadata.namespace,
+                    clusterServiceVersion.data.metadata.name,
+                    clusterServiceVersion.data.metadata.namespace,
                   ),
                 },
-                { name: `Create ${props.operandModel.label}`, path: window.location.pathname },
+                { name: `Create ${operandModel.label}`, path: window.location.pathname },
               ]}
             />
             <div style={{ marginLeft: 'auto' }}>
               {(method === 'form' && (
-                <Button variant="link" onClick={() => setMethod('yaml')}>
+                <Button variant="link" onClick={onToggleMethod}>
                   Edit YAML
                 </Button>
               )) ||
                 (method === 'yaml' && (
-                  <Button variant="link" onClick={() => setMethod('form')}>
+                  <Button variant="link" onClick={onToggleMethod}>
                     Edit Form
                   </Button>
                 ))}
             </div>
           </div>
-          <h1 className="co-create-operand__header-text">{`Create ${props.operandModel.label}`}</h1>
+          <h1 className="co-create-operand__header-text">{`Create ${operandModel.label}`}</h1>
           <p className="help-block">
             {(method === 'yaml' &&
               'Create by manually entering YAML or JSON definitions, or by dragging and dropping a file into the editor.') ||
@@ -1018,28 +1239,26 @@ export const CreateOperand: React.FC<CreateOperandProps> = (props) => {
           </p>
         </div>
       )}
-      <StatusBox
-        loaded={props.loaded}
-        loadError={props.loadError}
-        data={props.clusterServiceVersion}
-      >
+      <StatusBox loaded={loaded} loadError={loadError} data={clusterServiceVersion}>
         {(method === 'form' && (
           <CreateOperandForm
-            namespace={props.match.params.ns}
-            operandModel={props.operandModel}
-            providedAPI={providedAPI()}
-            sample={props.loaded ? sample() : null}
-            clusterServiceVersion={props.clusterServiceVersion.data}
+            namespace={match.params.ns}
+            operandModel={operandModel}
+            providedAPI={providedAPI}
+            sample={sample}
+            clusterServiceVersion={clusterServiceVersion.data}
             openAPI={openAPI}
+            onChange={onChange}
           />
         )) ||
           (method === 'yaml' && (
             <CreateOperandYAML
-              match={props.match}
-              sample={props.loaded ? sample() : null}
-              operandModel={props.operandModel}
-              providedAPI={providedAPI()}
-              clusterServiceVersion={props.clusterServiceVersion.data}
+              match={match}
+              sample={sample}
+              operandModel={operandModel}
+              providedAPI={providedAPI}
+              clusterServiceVersion={clusterServiceVersion.data}
+              onChange={onChange}
             />
           ))}
       </StatusBox>
@@ -1083,7 +1302,7 @@ export const CreateOperandPage = connect(stateToProps)((props: CreateOperandPage
 ));
 
 export type CreateOperandProps = {
-  match: match<{ appName: string; ns: string; plural: K8sResourceKindReference }>;
+  match: RouterMatch<{ appName: string; ns: string; plural: K8sResourceKindReference }>;
   operandModel: K8sKind;
   loaded: boolean;
   loadError?: any;
@@ -1092,6 +1311,7 @@ export type CreateOperandProps = {
 };
 
 export type CreateOperandFormProps = {
+  onChange?: (obj: K8sResourceKind) => void;
   operandModel: K8sKind;
   providedAPI: CRDDescription | APIServiceDefinition;
   openAPI?: SwaggerDefinition;
@@ -1101,15 +1321,16 @@ export type CreateOperandFormProps = {
 };
 
 export type CreateOperandYAMLProps = {
+  onChange?: (obj: K8sResourceKind) => void;
   operandModel: K8sKind;
   providedAPI: CRDDescription | APIServiceDefinition;
   clusterServiceVersion: ClusterServiceVersionKind;
   sample?: K8sResourceKind;
-  match: match<{ appName: string; ns: string; plural: K8sResourceKindReference }>;
+  match: RouterMatch<{ appName: string; ns: string; plural: K8sResourceKindReference }>;
 };
 
 export type CreateOperandPageProps = {
-  match: match<{ appName: string; ns: string; plural: K8sResourceKindReference }>;
+  match: RouterMatch<{ appName: string; ns: string; plural: K8sResourceKindReference }>;
   operandModel: K8sKind;
 };
 

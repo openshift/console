@@ -1,4 +1,6 @@
-export const developerCatalogItems = [
+import { Item } from '../../public/components/catalog/catalog-items';
+
+export const developerCatalogItems: Item[] = [
   {
     createLabel: 'Create Application',
     href:
@@ -106,7 +108,7 @@ export const developerCatalogItems = [
   },
 ];
 
-export const groupedByType = {
+export const groupedByOperator = {
   'Elastic Search Operator': [
     {
       createLabel: 'Create',

@@ -1,7 +1,6 @@
 package server
 
 import (
-	"encoding/json"
 	"fmt"
 	"html/template"
 	"io"
@@ -15,7 +14,9 @@ import (
 	"github.com/coreos/pkg/health"
 
 	"github.com/openshift/console/pkg/auth"
+	helmhandlerspkg "github.com/openshift/console/pkg/helm/handlers"
 	"github.com/openshift/console/pkg/proxy"
+	"github.com/openshift/console/pkg/serverutils"
 	"github.com/openshift/console/pkg/version"
 )
 
@@ -299,9 +300,28 @@ func (s *Server) HTTPHandler() http.Handler {
 	handle("/api/console/monitoring-dashboard-config", authHandler(s.handleMonitoringDashboardConfigmaps))
 	handle("/api/console/version", authHandler(s.versionHandler))
 
+	// Helm Endpoints
+	helmHandlers := helmhandlerspkg.New(s.KubeAPIServerURL, s.K8sClient.Transport)
+	handle("/api/helm/template", authHandlerWithUser(helmHandlers.HandleHelmRenderManifests))
+	handle("/api/helm/releases", authHandlerWithUser(helmHandlers.HandleHelmList))
+	handle("/api/helm/chart", authHandlerWithUser(helmHandlers.HandleChartGet))
+
+	handle("/api/helm/release", authHandlerWithUser(func(user *auth.User, w http.ResponseWriter, r *http.Request) {
+		switch r.Method {
+		case http.MethodGet:
+			helmHandlers.HandleGetRelease(user, w, r)
+		case http.MethodPost:
+			helmHandlers.HandleHelmInstall(user, w, r)
+		default:
+			w.Header().Set("Allow", "GET, POST")
+			serverutils.SendResponse(w, http.StatusMethodNotAllowed, serverutils.ApiError{Err: "Unsupported method, supported methods are GET, POST"})
+		}
+	}))
+
 	helmChartRepoProxy := proxy.NewProxy(s.HelmChartRepoProxyConfig)
 
-	handle(helmChartRepoProxyEndpoint, http.StripPrefix(
+	// Only proxy requests to chart repo index file
+	handle(helmChartRepoProxyEndpoint+"index.yaml", http.StripPrefix(
 		proxy.SingleJoiningSlash(s.BaseURL.Path, helmChartRepoProxyEndpoint),
 		http.HandlerFunc(helmChartRepoProxy.ServeHTTP)))
 
@@ -312,27 +332,6 @@ func (s *Server) HTTPHandler() http.Handler {
 
 func (s *Server) handleMonitoringDashboardConfigmaps(w http.ResponseWriter, r *http.Request) {
 	s.MonitoringDashboardConfigMapLister.handleResources(w, r)
-}
-
-func sendResponse(rw http.ResponseWriter, code int, resp interface{}) {
-	enc, err := json.Marshal(resp)
-	if err != nil {
-		plog.Printf("Failed JSON-encoding HTTP response: %v", err)
-		rw.WriteHeader(http.StatusInternalServerError)
-		return
-	}
-
-	rw.Header().Set("Content-Type", "application/json")
-	rw.WriteHeader(code)
-
-	_, err = rw.Write(enc)
-	if err != nil {
-		plog.Errorf("Failed sending HTTP response body: %v", err)
-	}
-}
-
-type apiError struct {
-	Err string `json:"error"`
 }
 
 func (s *Server) indexHandler(w http.ResponseWriter, r *http.Request) {
@@ -395,7 +394,7 @@ func (s *Server) indexHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) versionHandler(w http.ResponseWriter, r *http.Request) {
-	sendResponse(w, http.StatusOK, struct {
+	serverutils.SendResponse(w, http.StatusOK, struct {
 		Version string `json:"version"`
 	}{
 		Version: version.Version,
@@ -409,7 +408,7 @@ func notFoundHandler(w http.ResponseWriter, r *http.Request) {
 
 func (s *Server) handleOpenShiftTokenDeletion(user *auth.User, w http.ResponseWriter, r *http.Request) {
 	if r.Method != "POST" {
-		sendResponse(w, http.StatusMethodNotAllowed, apiError{"Invalid method: only POST is allowed"})
+		serverutils.SendResponse(w, http.StatusMethodNotAllowed, serverutils.ApiError{Err: "Invalid method: only POST is allowed"})
 		return
 	}
 
@@ -418,14 +417,14 @@ func (s *Server) handleOpenShiftTokenDeletion(user *auth.User, w http.ResponseWr
 	url := proxy.SingleJoiningSlash(s.K8sProxyConfig.Endpoint.String(), path)
 	req, err := http.NewRequest("DELETE", url, nil)
 	if err != nil {
-		sendResponse(w, http.StatusInternalServerError, apiError{fmt.Sprintf("Failed to create token DELETE request: %v", err)})
+		serverutils.SendResponse(w, http.StatusInternalServerError, serverutils.ApiError{Err: fmt.Sprintf("Failed to create token DELETE request: %v", err)})
 		return
 	}
 
 	r.Header.Set("Authorization", fmt.Sprintf("Bearer %s", user.Token))
 	resp, err := s.K8sClient.Do(req)
 	if err != nil {
-		sendResponse(w, http.StatusBadGateway, apiError{fmt.Sprintf("Failed to delete token: %v", err)})
+		serverutils.SendResponse(w, http.StatusBadGateway, serverutils.ApiError{Err: fmt.Sprintf("Failed to delete token: %v", err)})
 		return
 	}
 

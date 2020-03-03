@@ -1,6 +1,7 @@
 import * as _ from 'lodash';
 import {
   K8sKind,
+  k8sGet,
   k8sList,
   k8sPatch,
   k8sKill,
@@ -9,6 +10,7 @@ import {
   k8sCreate,
   LabelSelector,
   referenceFor,
+  referenceForModel,
 } from '@console/internal/module/k8s';
 import {
   ImageStreamModel,
@@ -21,6 +23,7 @@ import {
   DaemonSetModel,
   StatefulSetModel,
 } from '@console/internal/models';
+import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager';
 import {
   ServiceModel as KnativeServiceModel,
   RouteModel as KnativeRouteModel,
@@ -35,6 +38,7 @@ import { TopologyDataObject } from '../components/topology/topology-types';
 import { detectGitType } from '../components/import/import-validation-utils';
 import { GitTypes } from '../components/import/import-types';
 import { ServiceBindingRequestModel } from '../models';
+import { getOperatorBackedServiceKindMap } from '@console/shared';
 
 export const edgesFromAnnotations = (annotations): string[] => {
   let edges: string[] = [];
@@ -184,10 +188,10 @@ const updateItemAppConnectTo = (
   connectValue: string,
   oldValue: string = undefined,
 ) => {
-  const model = modelFor(referenceFor(item));
+  const model = modelFor(referenceFor(item) || item.kind);
 
   if (!model) {
-    return Promise.reject();
+    return Promise.reject(new Error(`Unable to retrieve model for: ${item.kind}`));
   }
 
   const tags = _.toPairs(item.metadata.annotations);
@@ -438,4 +442,59 @@ export const cleanUpWorkload = (
     deleteRequest(SecretModel, obj);
   });
   return Promise.all(reqs);
+};
+
+export const doContextualBinding = async (
+  resources: K8sResourceKind[],
+  contextualSource: string,
+  serviceBindingAvailable: boolean = false,
+): Promise<K8sResourceKind[]> => {
+  if (!contextualSource) {
+    return Promise.reject(new Error('Cannot do a contextual binding without a source'));
+  }
+
+  const linkingModelRefs = [
+    referenceForModel(DeploymentConfigModel),
+    referenceForModel(DeploymentModel),
+  ];
+  const newResource: K8sResourceKind = resources.find((resource) =>
+    linkingModelRefs.includes(referenceFor(resource)),
+  );
+
+  if (!newResource) {
+    // Not a resource we want to connect to
+    return resources;
+  }
+
+  const {
+    metadata: { namespace },
+  } = newResource;
+  const [groupVersionKind, resourceName] = contextualSource.split('/');
+  const contextualResource: K8sResourceKind = await k8sGet(
+    modelFor(groupVersionKind),
+    resourceName,
+    namespace,
+  );
+
+  if (!contextualResource) {
+    return Promise.reject(
+      new Error(`Cannot find resource (${contextualSource}) to do a contextual binding to`),
+    );
+  }
+
+  if (serviceBindingAvailable) {
+    const operatorBackedServiceKindMap = getOperatorBackedServiceKindMap(
+      await k8sList(ClusterServiceVersionModel, { ns: namespace }),
+    );
+    const ownerResourceKind = newResource?.metadata?.ownerReferences?.[0]?.kind;
+    const isOperatorBacked = ownerResourceKind in operatorBackedServiceKindMap;
+
+    if (isOperatorBacked) {
+      await createServiceBinding(contextualResource, newResource);
+    }
+  }
+
+  await createResourceConnection(contextualResource, newResource);
+
+  return resources;
 };

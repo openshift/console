@@ -23,14 +23,12 @@ const RouteHeader = () => {
     },
     {
       title: 'Age',
-      sortField: 'age',
+      sortField: 'metadata.creationTimestamp',
       transforms: [sortable],
       props: { className: tableColumnClasses[3] },
     },
     {
       title: 'Conditions',
-      sortField: 'conditions',
-      transforms: [sortable],
       props: { className: tableColumnClasses[4] },
     },
     {

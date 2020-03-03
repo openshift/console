@@ -2,16 +2,13 @@ import * as _ from 'lodash';
 import { ClusterServiceVersionKind } from '@console/operator-lifecycle-manager';
 import { DataValidator, DataState, ErrorType, Field } from './types';
 
-export const getValidJSON: DataValidator = (fName, fData) => {
-  if (!fName.includes('json')) {
-    return { isValid: false, errorMessage: 'File is not a valid JSON file' };
-  }
+export const getValidJSON: DataValidator = (fData) => {
   try {
     // Just see if it fails
     const parsedData = JSON.parse(fData);
     return { isValid: true, parsedData };
   } catch (e) {
-    return { isValid: false, errorMessage: 'File content is not parsable.' };
+    return { isValid: false, errorMessage: 'File is not a valid JSON file.' };
   }
 };
 

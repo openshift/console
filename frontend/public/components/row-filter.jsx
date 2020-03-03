@@ -40,7 +40,7 @@ export const CheckBoxControls = ({
             onClick={onSelectAll}
             variant="link"
           >
-            Select All Filters
+            Select all filters
           </Button>
           <span className="co-m-row-filter__items">
             {itemCount === selectedCount ? (
@@ -102,6 +102,7 @@ class CheckBoxes_ extends React.Component {
     const all = _.map(this.props.items, 'id');
     const recognized = _.intersection(this.state.selected, all);
     if (!_.isEmpty(recognized)) {
+      this.props.onFilterChange?.(recognized);
       this.props.reduxIDs.forEach((id) =>
         this.props.filterList(id, this.props.type, { selected: new Set(recognized), all }),
       );
@@ -163,5 +164,5 @@ class CheckBoxes_ extends React.Component {
   }
 }
 
-/** @type {React.SFC<{items: Array, itemCount: number, numbers: any, reduxIDs: Array, selected?: Array, type: string}>} */
+/** @type {React.SFC<{items: Array, itemCount: number, numbers: any, reduxIDs: Array, selected?: Array, type: string, onFilterChange?: (filter: string[]) => void}>} */
 export const CheckBoxes = connect(null, { filterList })(CheckBoxes_);

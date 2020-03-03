@@ -39,6 +39,8 @@ export const ExploreType: React.FC<ExploreTypeProps> = (props) => {
     ? currentSelection.path
     : [getDefinitionKey(kindObj, allDefinitions)];
   const currentDefinition: SwaggerDefinition = _.get(allDefinitions, currentPath) || {};
+  const currentProperties =
+    _.get(currentDefinition, 'properties') || _.get(currentDefinition, 'items.properties');
 
   // Prefer the description saved in `currentSelection`. It won't always be defined in the definition itself.
   const description = currentSelection
@@ -109,15 +111,15 @@ export const ExploreType: React.FC<ExploreTypeProps> = (props) => {
         </Breadcrumb>
       )}
       {description && (
-        <p className="co-break-word co-pre-line">
+        <p className="co-break-word co-pre-wrap">
           <LinkifyExternal>{description}</LinkifyExternal>
         </p>
       )}
-      {_.isEmpty(currentDefinition.properties) ? (
+      {_.isEmpty(currentProperties) ? (
         <EmptyBox label="Properties" />
       ) : (
         <ul className="co-resource-sidebar-list">
-          {_.map(currentDefinition.properties, (definition: SwaggerDefinition, name: string) => {
+          {_.map(currentProperties, (definition: SwaggerDefinition, name: string) => {
             const path = getDrilldownPath(name);
             const definitionType = definition.type || getTypeForRef(getRef(definition));
             return (
@@ -131,7 +133,7 @@ export const ExploreType: React.FC<ExploreTypeProps> = (props) => {
                   </small>
                 </h5>
                 {definition.description && (
-                  <p className="co-break-word co-pre-line">
+                  <p className="co-break-word co-pre-wrap">
                     <LinkifyExternal>{definition.description}</LinkifyExternal>
                   </p>
                 )}

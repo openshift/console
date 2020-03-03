@@ -2,7 +2,14 @@ import * as React from 'react';
 import * as classNames from 'classnames';
 import { referenceFor, modelFor } from '@console/internal/module/k8s';
 import { useAccessReview } from '@console/internal/components/utils';
-import { Layer, Edge, WithRemoveConnectorProps, observer, useHover } from '@console/topology';
+import {
+  Layer,
+  Edge,
+  WithRemoveConnectorProps,
+  observer,
+  useHover,
+  useSelection,
+} from '@console/topology';
 import { getTopologyResourceObject } from '../../topology-utils';
 import './BaseEdge.scss';
 
@@ -21,17 +28,18 @@ const BaseEdge: React.FC<BaseEdgeProps> = ({
   className,
 }) => {
   const [hover, hoverRef] = useHover();
+  const [selected, onSelect] = useSelection(false, true);
   const startPoint = element.getStartPoint();
   const endPoint = element.getEndPoint();
   const resourceObj = getTopologyResourceObject(element.getSource().getData());
-  const resourceModel = modelFor(referenceFor(resourceObj));
+  const resourceModel = resourceObj && modelFor(referenceFor(resourceObj));
 
   const editAccess = useAccessReview({
-    group: resourceModel && resourceModel.apiGroup,
+    group: resourceModel?.apiGroup,
     verb: 'patch',
-    resource: resourceModel && resourceModel.plural,
-    name: resourceObj.metadata.name,
-    namespace: resourceObj.metadata.namespace,
+    resource: resourceModel?.plural,
+    name: resourceObj?.metadata.name,
+    namespace: resourceObj?.metadata.namespace,
   });
 
   React.useLayoutEffect(() => {
@@ -50,9 +58,11 @@ const BaseEdge: React.FC<BaseEdgeProps> = ({
         ref={hoverRef}
         data-test-id="edge-handler"
         className={classNames(className, 'odc-base-edge', {
-          'is-highlight': dragging,
+          'is-dragging': dragging,
           'is-hover': hover,
+          'is-selected': selected,
         })}
+        onClick={onSelect}
       >
         <line
           x1={startPoint.x}

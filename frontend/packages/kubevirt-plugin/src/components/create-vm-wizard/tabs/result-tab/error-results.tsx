@@ -23,7 +23,7 @@ const ErrorResultsComponent: React.FC<ErrorResultsProps> = ({
   return (
     <EmptyState variant={EmptyStateVariant.full} className={className}>
       <EmptyStateIcon icon={ExclamationCircleIcon} color="#a30000" />
-      <Title headingLevel="h5" size="lg">
+      <Title headingLevel="h5" size="lg" data-test-id="kubevirt-wizard-error-result">
         {`Error creating ${modelName}.`}
       </Title>
       <EmptyStateBody>{mainError}</EmptyStateBody>

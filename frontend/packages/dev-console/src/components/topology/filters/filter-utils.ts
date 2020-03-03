@@ -6,8 +6,9 @@ export enum ShowFiltersKeyValue {
 }
 
 export enum ExpandFiltersKeyValue {
-  knativeServices = 'Knative Services',
   appGrouping = 'Application Groupings',
+  helmGrouping = 'Helm Releases',
+  knativeServices = 'Knative Services',
   operatorGrouping = 'Operator Groupings',
 }
 
@@ -30,4 +31,5 @@ export type DisplayFilters = {
   knativeServices: boolean;
   appGrouping: boolean;
   operatorGrouping: boolean;
+  helmGrouping: boolean;
 };

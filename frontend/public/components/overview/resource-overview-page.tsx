@@ -2,7 +2,12 @@ import * as React from 'react';
 
 import { connectToModel } from '../../kinds';
 import { referenceForModel } from '../../module/k8s';
-import { AsyncComponent, Kebab, ResourceOverviewHeading, ResourceSummary } from '../utils';
+import OperatorBackedOwnerReferences, {
+  AsyncComponent,
+  Kebab,
+  ResourceOverviewHeading,
+  ResourceSummary,
+} from '../utils';
 
 import { BuildOverview } from './build-overview';
 import { NetworkingOverview } from './networking-overview';
@@ -34,6 +39,7 @@ export const OverviewDetailsResourcesTab: React.SFC<OverviewDetailsResourcesTabP
   const pluginComponents = getPluginTabSectionResource(item);
   return (
     <div className="overview__sidebar-pane-body">
+      <OperatorBackedOwnerReferences item={item} />
       <PodsOverview pods={pods} obj={obj} />
       <BuildOverview buildConfigs={buildConfigs} />
       {pluginComponents.map(({ Component, key }) => (

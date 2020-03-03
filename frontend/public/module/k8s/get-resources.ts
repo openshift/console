@@ -81,7 +81,7 @@ export type DiscoveryResources = {
   safeResources: string[];
 };
 
-const getResources_ = () =>
+export const getResources = () =>
   coFetchJSON('api/kubernetes/apis').then((res) => {
     const preferredVersions = res.groups.map((group) => group.preferredVersion);
     const all: Promise<APIResourceList>[] = _.flatten(
@@ -106,15 +106,13 @@ const getResources_ = () =>
       const safeResources = [];
       const adminResources = [];
 
-      const defineModels = (list: APIResourceList): K8sKind[] =>
-        list.resources
+      const defineModels = (list: APIResourceList): K8sKind[] => {
+        const groupVersionParts = list.groupVersion.split('/');
+        const apiGroup = groupVersionParts.length > 1 ? groupVersionParts[0] : null;
+        const apiVersion = groupVersionParts.length > 1 ? groupVersionParts[1] : list.groupVersion;
+        return list.resources
           .filter(({ name }) => !name.includes('/'))
           .map(({ name, singularName, namespaced, kind, verbs, shortNames }) => {
-            const groupVersion =
-              list.groupVersion.split('/').length === 2
-                ? list.groupVersion
-                : `core/${list.groupVersion}`;
-
             return {
               kind,
               namespaced,
@@ -122,15 +120,16 @@ const getResources_ = () =>
               shortNames,
               label: kind,
               plural: name,
-              apiVersion: groupVersion.split('/')[1],
+              apiVersion,
               abbr: kindToAbbr(kind),
-              apiGroup: groupVersion.split('/')[0],
+              ...(apiGroup ? { apiGroup } : {}),
               labelPlural: `${kind}${kind.endsWith('s') ? 'es' : 's'}`,
               path: name,
               id: singularName,
               crd: true,
             };
           });
+      };
 
       const models = _.flatten(data.filter((d) => d.resources).map(defineModels));
       allResources.forEach((r) =>
@@ -152,11 +151,6 @@ const getResources_ = () =>
       } as DiscoveryResources;
     });
   });
-
-// Never attemp to re-run API discovery more than once every 30s. This will
-// prevent the console from thrashing when one of the API services is
-// misbehaving, which can cause frequent WebSocket updates.
-export const getResources = _.throttle(getResources_, 30 * 1000);
 
 export type APIResourceList = {
   kind: 'APIResourceList';

@@ -38,7 +38,7 @@ export class RequestSizeInput extends React.Component<RequestSizeInputProps> {
             min={this.props.minValue}
           />
           <Dropdown
-            title={this.props.defaultRequestSizeUnit}
+            title={this.props.dropdownUnits[this.props.defaultRequestSizeUnit]}
             selectedKey={this.props.defaultRequestSizeUnit}
             name={dropdownName}
             className="btn-group"

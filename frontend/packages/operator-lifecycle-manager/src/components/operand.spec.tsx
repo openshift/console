@@ -158,7 +158,7 @@ describe(OperandDetails.displayName, () => {
 
   it('renders description title', () => {
     const title = wrapper.find('.co-section-heading');
-    expect(title.text()).toEqual('Test Resource Overview');
+    expect(title.text()).toEqual('Test Resource Details');
   });
 
   it('renders info section', () => {
@@ -271,7 +271,7 @@ describe(OperandDetailsPage.displayName, () => {
   it('renders a `DetailsPage` with the correct subpages', () => {
     const detailsPage = wrapper.find(DetailsPage);
 
-    expect(detailsPage.props().pages[0].name).toEqual('Overview');
+    expect(detailsPage.props().pages[0].name).toEqual('Details');
     expect(detailsPage.props().pages[0].href).toEqual('');
     expect(detailsPage.props().pages[1].name).toEqual('YAML');
     expect(detailsPage.props().pages[1].href).toEqual('yaml');

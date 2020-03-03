@@ -6,7 +6,8 @@ import { withHandlePromise, HandlePromiseProps } from '@console/internal/compone
 import { ModalComponentProps } from '@console/internal/components/factory';
 import { k8sPatch } from '@console/internal/module/k8s';
 import { PatchBuilder, PatchOperation } from '@console/shared/src/k8s';
-import { VMLikeEntityKind, BootableDeviceType } from '../../../types';
+import { BootableDeviceType } from '../../../types';
+import { VMLikeEntityKind } from '../../../types/vmLike';
 import { getVMLikeModel, getDevices } from '../../../selectors/vm';
 import { getVMLikePatches } from '../../../k8s/patches/vm-template';
 import { BootOrder, deviceKey } from '../../boot-order';

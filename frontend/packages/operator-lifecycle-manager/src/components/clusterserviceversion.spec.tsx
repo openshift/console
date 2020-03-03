@@ -3,6 +3,7 @@ import { shallow, ShallowWrapper, mount, ReactWrapper } from 'enzyme';
 import { Link } from 'react-router-dom';
 import * as _ from 'lodash';
 import { CardHeader, CardBody, CardFooter } from '@patternfly/react-core';
+import { ErrorBoundary } from '@console/shared/src/components/error/error-boundary';
 import {
   DetailsPage,
   TableInnerProps,
@@ -14,7 +15,6 @@ import {
   Timestamp,
   ResourceLink,
   ResourceKebab,
-  ErrorBoundary,
   ScrollToTopOnMount,
   SectionHeading,
   resourceObjPath,
@@ -408,7 +408,7 @@ describe(ClusterServiceVersionDetails.displayName, () => {
         .at(1)
         .find(SectionHeading)
         .props().text,
-    ).toEqual('ClusterServiceVersion Overview');
+    ).toEqual('ClusterServiceVersion Details');
   });
 
   it('renders conditions section for ClusterServiceVersion', () => {
@@ -517,7 +517,7 @@ describe(ClusterServiceVersionsDetailsPage.displayName, () => {
   it('renders a `DetailsPage` with the correct subpages', () => {
     const detailsPage = wrapper.find(DetailsPage);
 
-    expect(detailsPage.props().pagesFor(testClusterServiceVersion)[0].name).toEqual('Overview');
+    expect(detailsPage.props().pagesFor(testClusterServiceVersion)[0].name).toEqual('Details');
     expect(detailsPage.props().pagesFor(testClusterServiceVersion)[0].href).toEqual('');
     expect(detailsPage.props().pagesFor(testClusterServiceVersion)[0].component).toEqual(
       ClusterServiceVersionDetails,

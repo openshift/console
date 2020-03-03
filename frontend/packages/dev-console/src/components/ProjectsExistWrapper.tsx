@@ -6,7 +6,7 @@ import ODCEmptyState from './EmptyState';
 export interface ProjectsExistWrapperProps {
   title: string;
   projects?: FirehoseResult;
-  children: () => React.ReactElement;
+  children: React.ReactElement;
 }
 
 const ProjectsExistWrapper: React.FC<ProjectsExistWrapperProps> = ({
@@ -34,7 +34,7 @@ const ProjectsExistWrapper: React.FC<ProjectsExistWrapperProps> = ({
     );
   }
 
-  return children();
+  return children;
 };
 
 export default ProjectsExistWrapper;

@@ -63,6 +63,12 @@ $co-external-link-padding-right: 15px;
   min-width: 0;
 }
 
+.co-m-pane__filter-bar-group--badge {
+  // Don't fill the available height.
+  align-self: start;
+}
+
+.co-m-pane__filter-bar-group--badge,
 .co-m-pane__filter-bar-group--filter {
   @media(min-width: $screen-xs-min) {
     flex: 1 0 auto;
@@ -229,11 +235,8 @@ $co-external-link-padding-right: 15px;
 
 .co-action-divider {
   color: $color-pf-black-600;
-
-  &--spaced {
-    display: inline-block;
-    margin: 0 10px 0 10px;
-  }
+  display: inline-block;
+  margin: 0 10px 0 10px;
 }
 
 .co-break-word {
@@ -274,10 +277,6 @@ $co-external-link-padding-right: 15px;
 // Enable break word within co-m-table-grid
 .co-external-link--block {
   display: block;
-}
-// Add additional padding-right so icon doesn't abut .co-action-divider
-.co-external-link--within-toolbar {
-  padding-right:  ($co-external-link-padding-right + $padding-base-horizontal);
 }
 
 .co-icon-flex-child {

@@ -11,7 +11,7 @@ import { ProjectDashboardContext } from './project-dashboard-context';
 export const LauncherCard: React.FC = () => {
   const { namespaceLinks } = React.useContext(ProjectDashboardContext);
   return (
-    <DashboardCard>
+    <DashboardCard data-test-id="launcher-card">
       <DashboardCardHeader>
         <DashboardCardTitle>Launcher</DashboardCardTitle>
       </DashboardCardHeader>

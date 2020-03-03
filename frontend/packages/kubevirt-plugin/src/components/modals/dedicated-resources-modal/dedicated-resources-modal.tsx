@@ -13,7 +13,7 @@ import {
 import { ModalFooter } from '../modal/modal-footer';
 import { getVMLikeModel, isDedicatedCPUPlacement, asVM } from '../../../selectors/vm';
 import { getDedicatedCpuPatch } from '../../../k8s/patches/vm/vm-cpu-patches';
-import { VMLikeEntityKind } from '../../../types';
+import { VMLikeEntityKind } from '../../../types/vmLike';
 import { getLoadedData, isLoaded, getLoadError } from '../../../utils';
 import { RESOURCE_NO_NODES_AVAILABLE, DEDICATED_RESOURCES } from './consts';
 import './dedicated-resources-modal.scss';
@@ -46,6 +46,7 @@ const ResourceModal = withHandlePromise<ResourceModalProps>(
     };
     const footer = (
       <ModalFooter
+        id="dedicated-resources"
         className="kubevirt-dedicated-resources__footer"
         warningMessage={!loadError && !isNodeAvailable && RESOURCE_NO_NODES_AVAILABLE}
         errorMessage={showPatchError && errorMessage}
@@ -71,7 +72,7 @@ const ResourceModal = withHandlePromise<ResourceModalProps>(
           label="Schedule this workload with dedicated resources (guaranteed policy)"
           isChecked={isPinned}
           isDisabled={isLoading}
-          onChange={setIsPinned}
+          onChange={(flag) => setIsPinned(flag)}
           id="dedicated-resources-checkbox"
         />
         <Text className="kubevirt-dedicated-resources__helper-text" component={TextVariants.small}>

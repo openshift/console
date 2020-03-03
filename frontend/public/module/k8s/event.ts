@@ -1,6 +1,7 @@
 export type EventInvolvedObject = {
-  kind: string;
-  name: string;
-  uid: string;
+  apiVersion?: string;
+  kind?: string;
+  name?: string;
+  uid?: string;
   namespace?: string;
 };

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { EmptyState, EmptyStateVariant, Grid, GridItem, Title } from '@patternfly/react-core';
+import { Grid, GridItem } from '@patternfly/react-core';
 import { Humanize } from '@console/internal/components/utils';
 import { K8sKind } from '@console/internal/module/k8s';
 import { addAvailable, getCapacityValue, StackDataPoint } from './utils';
@@ -22,22 +22,10 @@ export const BreakdownCardBody: React.FC<BreakdownBodyProps> = ({
     return <BreakdownChartLoading />;
   }
   if (!capacityUsed || !top5MetricsStats.length || hasLoadError) {
-    return (
-      <EmptyState variant={EmptyStateVariant.full}>
-        <Title className="graph-empty-state__title text-secondary" size="sm">
-          Not available.
-        </Title>
-      </EmptyState>
-    );
+    return <div className="text-secondary">Not available</div>;
   }
   if (capacityUsed === '0') {
-    return (
-      <EmptyState variant={EmptyStateVariant.full}>
-        <Title className="graph-empty-state__title text-secondary" size="sm">
-          Not enough usage data
-        </Title>
-      </EmptyState>
-    );
+    return <div className="text-secondary">Not enough usage data</div>;
   }
 
   const available = getCapacityValue(capacityUsed, capacityTotal, humanize);

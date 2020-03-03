@@ -7,7 +7,7 @@ import { DEFAULT_RDP_PORT, TEMPLATE_VM_NAME_LABEL, NetworkType } from '../../con
 import { VMKind, VMIKind } from '../../types';
 import { getNetworks } from '../../selectors/vm';
 import {
-  getVMIInterfaces,
+  getVMIAvailableStatusInterfaces,
   RDPConnectionDetailsManualType,
   VNCConnectionDetailsManualType,
 } from '../../selectors/vmi';
@@ -22,7 +22,7 @@ const NO_IP_ADDRESS_TITLE = 'Networks misconfigured';
 
 const getVmRdpNetworks = (vm: VMKind, vmi: VMIKind): Network[] => {
   const networks = getNetworks(vm).filter((n) => n.multus || n.pod);
-  return getVMIInterfaces(vmi)
+  return getVMIAvailableStatusInterfaces(vmi)
     .filter((i) => networks.some((n) => n.name === i.name))
     .map((i) => {
       let ip = i.ipAddress;

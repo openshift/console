@@ -89,12 +89,12 @@ const Popper: React.FC<PopperProps> = ({
   returnFocus,
 }) => {
   const controlled = typeof open === 'boolean';
-  const openProp = controlled ? open : true;
+  const openProp = controlled ? open || false : true;
   const nodeRef = React.useRef<Element>();
   const popperRef = React.useRef<PopperJS>(null);
   const popperRefs = useCombineRefs<PopperJS>(popperRef, popperRefIn);
   const [isOpen, setOpenState] = React.useState(openProp);
-  const focusRef = React.useRef<Element>();
+  const focusRef = React.useRef<Element | null>();
   const onRequestCloseRef = React.useRef(onRequestClose);
   onRequestCloseRef.current = onRequestClose;
 
@@ -102,7 +102,9 @@ const Popper: React.FC<PopperProps> = ({
     (newOpen: boolean) => {
       if (returnFocus && newOpen !== isOpen) {
         if (newOpen) {
-          focusRef.current = document.activeElement;
+          if (document.activeElement) {
+            focusRef.current = document.activeElement;
+          }
         } else if (focusRef.current instanceof HTMLElement && focusRef.current.ownerDocument) {
           focusRef.current.focus();
         }

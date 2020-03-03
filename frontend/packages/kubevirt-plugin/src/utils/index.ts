@@ -14,7 +14,6 @@ import {
   getKind,
   getUID,
 } from '@console/shared/src/selectors';
-import { CPU } from '../types';
 import { VM_TEMPLATE_NAME_PARAMETER } from '../constants/vm-templates';
 
 export const getBasicID = <A extends K8sResourceKind = K8sResourceKind>(entity: A) =>
@@ -90,9 +89,6 @@ export const buildOwnerReferenceForModel = (
   name,
   uid,
 });
-
-export const isCPUEqual = (a: CPU, b: CPU) =>
-  a.sockets === b.sockets && a.cores === b.cores && a.threads === b.threads;
 
 // FIXME: Avoid this helper! The implementation is not correct. We should remove this.
 export const getResource = (

@@ -1,16 +1,12 @@
 import { browser, ExpectedConditions as until } from 'protractor';
 import { testName } from '@console/internal-integration-tests/protractor.conf';
-import {
-  withResource,
-  selectDropdownOptionById,
-  click,
-} from '@console/shared/src/test-utils/utils';
+import { withResource, click } from '@console/shared/src/test-utils/utils';
 import * as virtualMachineView from '../views/virtualMachine.view';
 import { VM_CREATE_AND_EDIT_TIMEOUT_SECS } from './utils/consts';
 import { VirtualMachine } from './models/virtualMachine';
 import { vmConfig, getProvisionConfigs } from './vm.wizard.configs';
 import * as editFlavorView from './models/editFlavorView';
-import { fillInput } from './utils/utils';
+import { fillInput, selectOptionByText, getSelectedOptionText } from './utils/utils';
 import { ProvisionConfigName } from './utils/constants/wizard';
 
 describe('KubeVirt VM detail - edit flavor', () => {
@@ -37,23 +33,18 @@ describe('KubeVirt VM detail - edit flavor', () => {
         await browser.wait(
           until.textToBePresentInElement(
             virtualMachineView.vmDetailFlavor(vm.namespace, vm.name),
-            'Tiny: 1 vCPU, 1 GB Memory',
+            'Tiny: 1 vCPU, 1 GiB Memory',
           ),
         );
         await vm.modalEditFlavor();
-        await browser.wait(
-          until.textToBePresentInElement(editFlavorView.flavorDropdownText(), 'Tiny'),
-        );
-        await selectDropdownOptionById(editFlavorView.flavorDropdownId, 'large-link');
-        await browser.wait(
-          until.textToBePresentInElement(editFlavorView.flavorDropdownText(), 'Large'),
-        );
+        expect(await getSelectedOptionText(editFlavorView.flavorDropdown)).toEqual('Tiny');
+        await selectOptionByText(editFlavorView.flavorDropdown, 'Large');
         await click(editFlavorView.saveButton());
 
         await browser.wait(
           until.textToBePresentInElement(
             virtualMachineView.vmDetailFlavor(vm.namespace, vm.name),
-            'Large: 2 vCPUs, 6 GB Memory',
+            'Large: 2 vCPUs, 8 GiB Memory',
           ),
         );
         expect(
@@ -82,26 +73,20 @@ describe('KubeVirt VM detail - edit flavor', () => {
         await browser.wait(
           until.textToBePresentInElement(
             virtualMachineView.vmDetailFlavor(vm.namespace, vm.name),
-            'Tiny: 1 vCPU, 1 GB Memory',
+            'Tiny: 1 vCPU, 1 GiB Memory',
           ),
         );
         await vm.modalEditFlavor();
-
-        await browser.wait(
-          until.textToBePresentInElement(editFlavorView.flavorDropdownText(), 'Tiny'),
-        );
-        await selectDropdownOptionById(editFlavorView.flavorDropdownId, 'Custom-link');
-        await browser.wait(
-          until.textToBePresentInElement(editFlavorView.flavorDropdownText(), 'Custom'),
-        );
+        expect(await getSelectedOptionText(editFlavorView.flavorDropdown)).toEqual('Tiny');
+        await selectOptionByText(editFlavorView.flavorDropdown, 'Custom');
         await fillInput(editFlavorView.cpusInput(), '2');
-        await fillInput(editFlavorView.memoryInput(), '356');
+        await fillInput(editFlavorView.memoryInput(), '3');
         await click(editFlavorView.saveButton());
 
         await browser.wait(
           until.textToBePresentInElement(
             virtualMachineView.vmDetailFlavor(vm.namespace, vm.name),
-            'Custom: 2 vCPUs, 356 MB Memory',
+            'Custom: 2 vCPUs, 3 GiB Memory',
           ),
         );
 

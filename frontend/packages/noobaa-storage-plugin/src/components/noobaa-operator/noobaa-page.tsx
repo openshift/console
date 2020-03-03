@@ -31,7 +31,7 @@ const getFireHoseResources = (namespace: string): FirehoseResource[] => {
 const pages = [
   {
     href: '',
-    name: 'Overview Page',
+    name: 'Details Page',
     component: InfoPage,
   },
   {

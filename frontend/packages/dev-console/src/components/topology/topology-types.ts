@@ -1,8 +1,7 @@
 import { ComponentType } from 'react';
 import { FirehoseResult, KebabOption } from '@console/internal/components/utils';
 import { ExtPodKind, OverviewItem, PodControllerOverviewItem } from '@console/shared';
-import { DeploymentKind, K8sResourceKind, PodKind } from '@console/internal/module/k8s';
-import { ClusterServiceVersionKind } from '@console/operator-lifecycle-manager';
+import { DeploymentKind, K8sResourceKind, PodKind, EventKind } from '@console/internal/module/k8s';
 import { Pipeline, PipelineRun } from '../../utils/pipeline-augment';
 
 export type Point = [number, number];
@@ -32,7 +31,7 @@ export interface TopologyDataResources {
   eventSourceKafka?: FirehoseResult;
   clusterServiceVersions?: FirehoseResult;
   serviceBindingRequests?: FirehoseResult;
-  events?: FirehoseResult;
+  events?: FirehoseResult<EventKind[]>;
 }
 
 export interface Node {
@@ -48,7 +47,7 @@ export interface Edge {
   type?: string;
   source: string;
   target: string;
-  data?: { sbr?: K8sResourceKind };
+  data?: {};
 }
 
 export interface Group {
@@ -86,6 +85,7 @@ export interface TopologyDataObject<D = {}> {
   pods?: ExtPodKind[];
   data: D;
   operatorBackedService: boolean;
+  groupResources?: TopologyDataObject[];
 }
 
 export interface TopologyApplicationObject {
@@ -119,10 +119,6 @@ export interface DonutStatusData {
   dc: K8sResourceKind;
   isRollingOut: boolean;
 }
-
-export type OperatorBackedServiceKindMap = {
-  [name: string]: ClusterServiceVersionKind;
-};
 
 export interface GraphApi {
   zoomIn(): void;
@@ -206,6 +202,33 @@ export type GroupProps = ViewGroup &
     groupRef(element: GroupElementInterface): void;
   };
 
+export type TrafficData = {
+  nodes: KialiNode[];
+  edges: KialiEdge[];
+};
+
+export type KialiNode = {
+  data: {
+    id: string;
+    nodeType: string;
+    namespace: string;
+    workload: string;
+    app: string;
+    version?: string;
+    destServices?: { [key: string]: any }[];
+    traffic?: { [key: string]: any }[];
+  };
+};
+
+export type KialiEdge = {
+  data: {
+    id: string;
+    source: string;
+    target: string;
+    traffic: { [key: string]: any };
+  };
+};
+
 export type NodeProvider = (type: string) => ComponentType<NodeProps>;
 
 export type EdgeProvider = (type: string) => ComponentType<EdgeProps>;
@@ -216,4 +239,9 @@ export type ActionProvider = (type: GraphElementType, id: string) => KebabOption
 
 export type ContextMenuProvider = {
   open: (type: GraphElementType, id: string, eventX: number, eventY: number) => boolean;
+};
+
+export type GraphData = {
+  namespace: string;
+  createResourceAccess: string[];
 };

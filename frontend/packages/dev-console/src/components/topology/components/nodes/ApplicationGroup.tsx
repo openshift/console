@@ -1,14 +1,12 @@
 import * as React from 'react';
 import { polygonHull } from 'd3-polygon';
 import * as _ from 'lodash';
-import { connect } from 'react-redux';
-import { RootState } from '@console/internal/redux';
 import {
   Layer,
   Node,
   PointTuple,
   NodeShape,
-  GroupStyle,
+  NodeStyle,
   maxPadding,
   observer,
   useCombineRefs,
@@ -21,12 +19,9 @@ import {
   hullPath,
 } from '@console/topology';
 import * as classNames from 'classnames';
-import { getTopologyFilters, TopologyFilters } from '../../filters/filter-utils';
-import useFilter from '../../filters/useFilter';
+import useSearchFilter from '../../filters/useSearchFilter';
 import SvgBoxedText from '../../../svg/SvgBoxedText';
 import NodeShadows, { NODE_SHADOW_FILTER_ID, NODE_SHADOW_FILTER_ID_HOVER } from '../NodeShadows';
-
-import './ApplicationGroup.scss';
 
 type ApplicationGroupProps = {
   element: Node;
@@ -34,7 +29,6 @@ type ApplicationGroupProps = {
   canDrop?: boolean;
   dropTarget?: boolean;
   dragging?: boolean;
-  filters?: TopologyFilters;
 } & WithSelectionProps &
   WithDndDropProps &
   WithContextMenuProps;
@@ -46,15 +40,16 @@ type PointWithSize = [number, number, number];
 // export for testing only
 export function computeLabelLocation(points: PointWithSize[]): PointWithSize {
   let lowPoints: PointWithSize[];
+  const threshold = 5;
 
   _.forEach(points, (p) => {
-    if (!lowPoints || p[1] > lowPoints[0][1]) {
+    const delta = !lowPoints ? Infinity : Math.round(p[1]) - Math.round(lowPoints[0][1]);
+    if (delta > threshold) {
       lowPoints = [p];
-    } else if (p[1] === lowPoints[0][1]) {
+    } else if (Math.abs(delta) <= threshold) {
       lowPoints.push(p);
     }
   });
-
   return [
     (_.minBy(lowPoints, (p) => p[0])[0] + _.maxBy(lowPoints, (p) => p[0])[0]) / 2,
     lowPoints[0][1],
@@ -74,20 +69,18 @@ const ApplicationGroup: React.FC<ApplicationGroupProps> = ({
   onContextMenu,
   contextMenuOpen,
   dragging,
-  filters,
 }) => {
-  const [groupHover, groupHoverRef] = useHover();
-  const [groupLabelHover, groupLabelHoverRef] = useHover();
+  const [hover, hoverRef] = useHover();
+  const [labelHover, labelHoverRef] = useHover();
   const labelLocation = React.useRef<PointWithSize>();
   const pathRef = React.useRef<string>();
   const dragNodeRef = useDragNode()[1];
   const dragLabelRef = useDragNode()[1];
-  const refs = useCombineRefs<SVGPathElement>(dragNodeRef, dndDropRef);
-  const filtered = useFilter(filters, { metadata: { name: element.getLabel() } });
-  const hover = groupHover || groupLabelHover;
+  const refs = useCombineRefs<SVGPathElement>(hoverRef, dragNodeRef);
+  const [filtered] = useSearchFilter(element.getLabel());
 
   // cast to number and coerce
-  const padding = maxPadding(element.getStyle<GroupStyle>().padding);
+  const padding = maxPadding(element.getStyle<NodeStyle>().padding);
   const hullPadding = (point: PointWithSize | PointTuple) => (point[2] || 0) + padding;
 
   if (!droppable || !pathRef.current || !labelLocation.current) {
@@ -124,51 +117,56 @@ const ApplicationGroup: React.FC<ApplicationGroupProps> = ({
     labelLocation.current = computeLabelLocation(hullPoints as PointWithSize[]);
   }
 
-  const pathClasses = classNames('odc-application-group', {
-    'is-highlight': canDrop,
-    'is-selected': selected,
-    'is-hover': hover || (canDrop && dropTarget) || contextMenuOpen,
-    'is-filtered': filtered,
-  });
-
   return (
-    <>
+    <g
+      ref={labelHoverRef}
+      onContextMenu={onContextMenu}
+      onClick={onSelect}
+      className={classNames('odc-application-group', {
+        'is-dragging': dragging,
+        'is-highlight': canDrop,
+        'is-filtered': filtered,
+      })}
+    >
       <NodeShadows />
       <Layer id="groups">
-        <g ref={groupHoverRef} onContextMenu={onContextMenu} onClick={onSelect}>
+        <g
+          ref={refs}
+          onContextMenu={onContextMenu}
+          onClick={onSelect}
+          className={classNames('odc-application-group', {
+            'is-dragging': dragging,
+            'is-highlight': canDrop,
+            'is-selected': selected,
+            'is-dropTarget': canDrop && dropTarget,
+            'is-filtered': filtered,
+          })}
+        >
           <path
-            ref={refs}
+            ref={dndDropRef}
+            className="odc-application-group__bg"
             filter={createSvgIdUrl(
-              hover || dragging || contextMenuOpen
+              hover || labelHover || dragging || contextMenuOpen || dropTarget
                 ? NODE_SHADOW_FILTER_ID_HOVER
                 : NODE_SHADOW_FILTER_ID,
             )}
-            className={pathClasses}
             d={pathRef.current}
           />
         </g>
       </Layer>
-      <g ref={groupLabelHoverRef} onContextMenu={onContextMenu} onClick={onSelect}>
-        <SvgBoxedText
-          className={classNames('odc-application-group__label', {
-            'is-filtered': filtered,
-          })}
-          x={labelLocation.current[0]}
-          y={labelLocation.current[1] + hullPadding(labelLocation.current) + 30}
-          paddingX={20}
-          paddingY={5}
-          truncate={16}
-          dragRef={dragLabelRef}
-        >
-          {element.getLabel()}
-        </SvgBoxedText>
-      </g>
-    </>
+      <SvgBoxedText
+        className="odc-application-group__label"
+        kind="application"
+        x={labelLocation.current[0]}
+        y={labelLocation.current[1] + hullPadding(labelLocation.current) + 24}
+        paddingX={8}
+        paddingY={5}
+        dragRef={dragLabelRef}
+      >
+        {element.getLabel()}
+      </SvgBoxedText>
+    </g>
   );
 };
-const ApplicationGroupState = (state: RootState) => {
-  const filters = getTopologyFilters(state);
-  return { filters };
-};
 
-export default connect(ApplicationGroupState)(observer(ApplicationGroup));
+export default observer(ApplicationGroup);

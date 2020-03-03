@@ -136,7 +136,7 @@ const UtilizationCard: React.FC = () => {
       </DashboardCardHeader>
       <UtilizationBody timestamps={timestamps}>
         <PrometheusUtilizationItem
-          title="CPU usage"
+          title="CPU"
           utilizationQuery={queries[HostQuery.CPU_UTILIZATION].utilization}
           humanizeValue={humanizeCpuCores}
           TopConsumerPopover={cpuPopover}
@@ -144,24 +144,12 @@ const UtilizationCard: React.FC = () => {
           setTimestamps={setTimestamps}
         />
         <PrometheusUtilizationItem
-          title="Memory usage"
+          title="Memory"
           utilizationQuery={queries[HostQuery.MEMORY_UTILIZATION].utilization}
           totalQuery={queries[HostQuery.MEMORY_UTILIZATION].total}
           humanizeValue={humanizeBinaryBytes}
           byteDataType={ByteDataTypes.BinaryBytes}
           TopConsumerPopover={memPopover}
-          duration={duration}
-        />
-        <PrometheusUtilizationItem
-          title="Number of pods"
-          utilizationQuery={queries[HostQuery.NUMBER_OF_PODS].utilization}
-          humanizeValue={humanizePods}
-          duration={duration}
-        />
-        <PrometheusMultilineUtilizationItem
-          title="Network Transfer"
-          queries={multilineQueries[HostQuery.NETWORK_UTILIZATION]}
-          humanizeValue={humanizeDecimalBytesPerSec}
           duration={duration}
         />
         <PrometheusUtilizationItem
@@ -171,6 +159,18 @@ const UtilizationCard: React.FC = () => {
           humanizeValue={humanizeBinaryBytes}
           byteDataType={ByteDataTypes.BinaryBytes}
           TopConsumerPopover={storagePopover}
+          duration={duration}
+        />
+        <PrometheusMultilineUtilizationItem
+          title="Network Transfer"
+          queries={multilineQueries[HostQuery.NETWORK_UTILIZATION]}
+          humanizeValue={humanizeDecimalBytesPerSec}
+          duration={duration}
+        />
+        <PrometheusUtilizationItem
+          title="Pod count"
+          utilizationQuery={queries[HostQuery.NUMBER_OF_PODS].utilization}
+          humanizeValue={humanizePods}
           duration={duration}
         />
       </UtilizationBody>

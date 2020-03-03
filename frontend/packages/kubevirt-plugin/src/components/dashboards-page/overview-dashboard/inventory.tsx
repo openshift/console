@@ -19,6 +19,8 @@ import {
   VM_STATUS_POD_ERROR,
   VM_STATUS_ERROR,
   VM_STATUS_IMPORT_ERROR,
+  VM_STATUS_IMPORT_PENDING,
+  VM_STATUS_STOPPING,
 } from '../../../statuses/vm/constants';
 
 import './inventory.scss';
@@ -33,6 +35,8 @@ const VM_STATUS_GROUP_MAPPER = {
     VM_STATUS_STARTING,
     VM_STATUS_VMI_WAITING,
     VM_STATUS_V2V_CONVERSION_PENDING,
+    VM_STATUS_IMPORT_PENDING,
+    VM_STATUS_STOPPING,
   ],
   [InventoryStatusGroup.ERROR]: [
     VM_STATUS_V2V_CONVERSION_ERROR,
@@ -52,36 +56,52 @@ export const getVMStatusGroups: StatusGroupMapper = (
 ) => {
   const groups = {
     [InventoryStatusGroup.NOT_MAPPED]: {
-      statusIDs: [],
+      statusIDs: ['Running'],
       count: 0,
+      filterType: 'vm-status',
     },
     [InventoryStatusGroup.PROGRESS]: {
-      statusIDs: [],
+      statusIDs: ['Importing', 'Starting', 'Migrating', 'Stopping', 'Pending'],
       count: 0,
+      filterType: 'vm-status',
     },
     [InventoryStatusGroup.ERROR]: {
-      statusIDs: [],
+      statusIDs: ['Error'],
       count: 0,
+      filterType: 'vm-status',
     },
     [InventoryStatusGroup.UNKNOWN]: {
-      statusIDs: [],
+      statusIDs: ['Other'],
       count: 0,
+      filterType: 'vm-status',
     },
     'vm-off': {
-      statusIDs: [VM_STATUS_OFF],
+      statusIDs: ['Off'],
       count: 0,
       filterType: 'vm-status',
     },
   };
-  vms.forEach((vm: VMKind) => {
+
+  const vmStatuses = vms.map((vm: VMKind) => {
     const vmi = (vmis || []).find((instance) => getName(vm) === getName(instance));
-    const { status } = getVMStatus({ vm, vmi, pods, migrations });
+    return getVMStatus({ vm, vmi, pods, migrations }).status;
+  });
+
+  const vmisWithoutVM = (vmis || []).filter(
+    (instance) => !vms.find((vm) => getName(vm) === getName(instance)),
+  );
+  const vmiStatuses = vmisWithoutVM.map(
+    (vmi) => getVMStatus({ vm: undefined, vmi, pods, migrations }).status,
+  );
+
+  [...vmStatuses, ...vmiStatuses].forEach((status) => {
     const group =
       Object.keys(VM_STATUS_GROUP_MAPPER).find((key) =>
         VM_STATUS_GROUP_MAPPER[key].includes(status),
       ) || InventoryStatusGroup.UNKNOWN;
     groups[group].count++;
   });
+
   return groups;
 };
 

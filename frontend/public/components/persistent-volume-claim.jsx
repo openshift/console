@@ -21,19 +21,22 @@ import { PersistentVolumeClaimModel } from '../models';
 
 const { common, ExpandPVC } = Kebab.factory;
 const menuActions = [
-  ExpandPVC,
   ...Kebab.getExtensionsActionsForKind(PersistentVolumeClaimModel),
+  ExpandPVC,
   ...common,
 ];
 
-const PVCStatus = ({ pvc }) => <Status status={pvc.status.phase} />;
+const PVCStatus = ({ pvc }) => (
+  <Status status={pvc.metadata.deletionTimestamp ? 'Terminating' : pvc.status.phase} />
+);
 
 const tableColumnClasses = [
   classNames('col-lg-2', 'col-md-2', 'col-sm-4', 'col-xs-6'),
   classNames('col-lg-2', 'col-md-2', 'col-sm-4', 'col-xs-6'),
   classNames('col-lg-2', 'col-md-2', 'col-sm-4', 'hidden-xs'),
-  classNames('col-lg-3', 'col-md-3', 'hidden-sm', 'hidden-xs'),
-  classNames('col-lg-3', 'col-md-3', 'hidden-sm', 'hidden-xs'),
+  classNames('col-lg-2', 'col-md-2', 'hidden-sm', 'hidden-xs'),
+  classNames('col-lg-2', 'col-md-2', 'hidden-sm', 'hidden-xs'),
+  classNames('col-lg-2', 'col-md-2', 'hidden-sm', 'hidden-xs'),
   Kebab.columnClass,
 ];
 
@@ -65,13 +68,19 @@ const PVCTableHeader = () => {
     },
     {
       title: 'Capacity',
-      sortField: 'status.capacity.storage',
+      sortFunc: 'pvcStorage',
       transforms: [sortable],
       props: { className: tableColumnClasses[4] },
     },
     {
-      title: '',
+      title: 'Storage Class',
+      sortField: 'spec.storageClassName',
+      transforms: [sortable],
       props: { className: tableColumnClasses[5] },
+    },
+    {
+      title: '',
+      props: { className: tableColumnClasses[6] },
     },
   ];
 };
@@ -114,7 +123,18 @@ const PVCTableRow = ({ obj, index, key, style }) => {
       <TableData className={tableColumnClasses[4]}>
         {_.get(obj, 'status.capacity.storage', '-')}
       </TableData>
-      <TableData className={tableColumnClasses[5]}>
+      <TableData className={classNames(tableColumnClasses[5])}>
+        {obj?.spec?.storageClassName ? (
+          <ResourceLink
+            kind="StorageClass"
+            name={obj?.spec?.storageClassName}
+            title={obj?.spec?.storageClassName}
+          />
+        ) : (
+          <div className="text-muted">-</div>
+        )}
+      </TableData>
+      <TableData className={tableColumnClasses[6]}>
         <ResourceKebab actions={menuActions} kind={kind} resource={obj} />
       </TableData>
     </TableRow>
@@ -139,7 +159,7 @@ const Details_ = ({ flags, obj: pvc }) => {
           <div className="col-sm-6">
             <ResourceSummary resource={pvc}>
               <dt>Label Selector</dt>
-              <dd>
+              <dd data-test-id="pvc-name">
                 <Selector selector={labelSelector} kind="PersistentVolume" />
               </dd>
             </ResourceSummary>
@@ -147,25 +167,25 @@ const Details_ = ({ flags, obj: pvc }) => {
           <div className="col-sm-6">
             <dl>
               <dt>Status</dt>
-              <dd>
+              <dd data-test-id="pvc-status">
                 <PVCStatus pvc={pvc} />
               </dd>
               {storage && (
                 <>
                   <dt>Capacity</dt>
-                  <dd>{storage}</dd>
+                  <dd data-test-id="pvc-capacity">{storage}</dd>
                 </>
               )}
               {!_.isEmpty(accessModes) && (
                 <>
                   <dt>Access Modes</dt>
-                  <dd>{accessModes.join(', ')}</dd>
+                  <dd data-test-id="pvc-access-mode">{accessModes.join(', ')}</dd>
                 </>
               )}
               <dt>Volume Mode</dt>
-              <dd>{volumeMode || 'Filesystem'}</dd>
+              <dd data-test-id="pvc-volume-mode">{volumeMode || 'Filesystem'}</dd>
               <dt>Storage Class</dt>
-              <dd>
+              <dd data-test-id="pvc-storageclass">
                 {storageClassName ? (
                   <ResourceLink kind="StorageClass" name={storageClassName} />
                 ) : (
@@ -175,7 +195,7 @@ const Details_ = ({ flags, obj: pvc }) => {
               {volumeName && canListPV && (
                 <>
                   <dt>Persistent Volume</dt>
-                  <dd>
+                  <dd data-test-id="persistent-volume">
                     <ResourceLink kind="PersistentVolume" name={volumeName} />
                   </dd>
                 </>

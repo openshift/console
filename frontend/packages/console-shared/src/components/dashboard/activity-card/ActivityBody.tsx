@@ -1,6 +1,7 @@
 import * as React from 'react';
 import classNames from 'classnames';
 import { K8sActivityProps, PrometheusActivityProps, LazyLoader } from '@console/plugin-sdk';
+import { PlayIcon, PauseIcon } from '@patternfly/react-icons';
 import { Accordion } from '@patternfly/react-core';
 import { ErrorLoadingEvents, sortEvents } from '@console/internal/components/events';
 import { Timestamp } from '@console/internal/components/utils/timestamp';
@@ -98,11 +99,21 @@ export const RecentEventsBodyContent: React.FC<RecentEventsBodyContentProps> = (
         className="co-activity-card__recent-list"
         events={sortedEvents}
         EventComponent={eventItem}
-        scrollableElementId="activity-body"
       />
     </Accordion>
   );
 };
+
+export const PauseButton: React.FC<PauseButtonProps> = ({ paused, togglePause }) => (
+  <DashboardCardButtonLink
+    onClick={togglePause}
+    className="co-activity-card__recent-actions"
+    icon={paused ? <PlayIcon /> : <PauseIcon />}
+    data-test-id="events-pause-button"
+  >
+    {paused ? 'Resume' : 'Pause'}
+  </DashboardCardButtonLink>
+);
 
 export const RecentEventsBody: React.FC<RecentEventsBodyProps> = (props) => {
   const [paused, setPaused] = React.useState(false);
@@ -111,9 +122,7 @@ export const RecentEventsBody: React.FC<RecentEventsBodyProps> = (props) => {
     <>
       <div className="co-activity-card__recent-title">
         Recent Events
-        <DashboardCardButtonLink onClick={togglePause}>
-          {paused ? 'Unpause' : 'Pause'}
-        </DashboardCardButtonLink>
+        <PauseButton paused={paused} togglePause={togglePause} />
       </div>
       <RecentEventsBodyContent {...props} paused={paused} setPaused={setPaused} />
     </>
@@ -208,4 +217,9 @@ type RecentEventsBodyContentProps = RecentEventsBodyProps & {
 type ActivityProps = {
   timestamp?: Date;
   children: React.ReactNode;
+};
+
+type PauseButtonProps = {
+  paused: boolean;
+  togglePause: () => void;
 };

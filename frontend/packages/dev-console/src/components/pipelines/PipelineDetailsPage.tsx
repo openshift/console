@@ -7,16 +7,21 @@ import {
   rerunPipelineAndRedirect,
   startPipeline,
   handlePipelineRunSubmit,
+  editPipeline,
 } from '../../utils/pipeline-actions';
 import { getLatestRun } from '../../utils/pipeline-augment';
 import { PipelineRunModel, PipelineModel } from '../../models';
 import {
   PipelineDetails,
-  PipelineParameters,
-  PipelineResources,
+  PipelineParametersForm,
+  PipelineResourcesForm,
   PipelineRuns,
 } from './detail-page-tabs';
 import PipelineForm from './pipeline-form/PipelineForm';
+import {
+  parametersValidationSchema,
+  resourcesValidationSchema,
+} from './pipeline-form/pipelineForm-validation-utils';
 
 interface PipelineDetailsPageStates {
   menuActions: Function[];
@@ -34,6 +39,7 @@ class PipelineDetailsPage extends React.Component<DetailsPageProps, PipelineDeta
       .then((res) => {
         // eslint-disable-next-line promise/no-nesting
         k8sList(PipelineRunModel, {
+          ns: this.props.namespace,
           labelSelector: { 'tekton.dev/pipeline': res.metadata.name },
         })
           .then((listres) => {
@@ -44,6 +50,7 @@ class PipelineDetailsPage extends React.Component<DetailsPageProps, PipelineDeta
                 ...(latestRun && latestRun.metadata
                   ? [() => rerunPipelineAndRedirect(PipelineRunModel, latestRun)]
                   : []),
+                editPipeline,
                 Kebab.factory.Delete,
               ],
             });
@@ -76,8 +83,10 @@ class PipelineDetailsPage extends React.Component<DetailsPageProps, PipelineDeta
             name: 'Parameters',
             component: (props) => (
               <PipelineForm
-                PipelineFormComponent={PipelineParameters}
+                PipelineFormComponent={PipelineParametersForm}
                 formName="parameters"
+                validationSchema={parametersValidationSchema}
+                obj={props.obj}
                 {...props}
               />
             ),
@@ -87,8 +96,10 @@ class PipelineDetailsPage extends React.Component<DetailsPageProps, PipelineDeta
             name: 'Resources',
             component: (props) => (
               <PipelineForm
-                PipelineFormComponent={PipelineResources}
+                PipelineFormComponent={PipelineResourcesForm}
                 formName="resources"
+                validationSchema={resourcesValidationSchema}
+                obj={props.obj}
                 {...props}
               />
             ),

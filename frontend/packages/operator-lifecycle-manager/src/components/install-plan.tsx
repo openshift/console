@@ -259,7 +259,7 @@ export const InstallPlanDetails: React.SFC<InstallPlanDetailsProps> = ({ obj }) 
         </div>
       )}
       <div className="co-m-pane__body">
-        <SectionHeading text="Install Plan Overview" />
+        <SectionHeading text="Install Plan Details" />
         <div className="co-m-pane__body-group">
           <div className="row">
             <div className="col-sm-6">

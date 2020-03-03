@@ -1,3 +1,4 @@
+import { ValidatedOptions } from '@patternfly/react-core';
 import { K8sResourceKind, ContainerPort } from '@console/internal/module/k8s';
 import { LazyLoader } from '@console/plugin-sdk';
 import { NameValuePair, NameValueFromPair } from '@console/shared';
@@ -29,6 +30,7 @@ export interface ImageStreamContextProps {
   dispatch: React.Dispatch<ImageStreamAction>;
   hasImageStreams: boolean;
   setHasImageStreams: (value: boolean) => void;
+  setValidated: (validated: ValidatedOptions) => void;
 }
 export interface SourceToImageFormProps {
   builderImages?: NormalizedBuilderImages;
@@ -114,7 +116,7 @@ export interface ImageData {
 
 export interface ImageStreamImageData {
   name: string;
-  image: object;
+  image: { [key: string]: any };
   tag: string;
   status: { metadata: {}; status: string };
   ports: ContainerPort[];
@@ -133,7 +135,7 @@ export interface GitData {
   dir: string;
   showGitType: boolean;
   secret: string;
-  isUrlValidated: boolean;
+  urlValidation: ValidatedOptions;
   isUrlValidating: boolean;
 }
 
@@ -221,8 +223,8 @@ export enum ImportTypes {
 
 export enum Resources {
   OpenShift = 'openshift',
-  Kubernetes = 'k8s',
-  KnativeService = 'knativeservice',
+  Kubernetes = 'kubernetes',
+  KnativeService = 'knative',
 }
 
 export interface ImportData {

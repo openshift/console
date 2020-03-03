@@ -49,7 +49,7 @@ describe(UninstallOperatorModal.name, () => {
   it('renders a modal form', () => {
     expect(wrapper.find('form').props().name).toEqual('form');
     expect(wrapper.find(ModalTitle).exists()).toBe(true);
-    expect(wrapper.find(ModalSubmitFooter).props().submitText).toEqual('Remove');
+    expect(wrapper.find(ModalSubmitFooter).props().submitText).toEqual('Uninstall');
   });
 
   it('calls `props.k8sKill` to delete the subscription when form is submitted', (done) => {

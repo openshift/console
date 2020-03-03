@@ -1,10 +1,6 @@
 import { browser, ExpectedConditions as until } from 'protractor';
 import { testName } from '@console/internal-integration-tests/protractor.conf';
-import {
-  addLeakableResource,
-  createResources,
-  removeLeakedResources,
-} from '@console/shared/src/test-utils/utils';
+import { createResources, deleteResources } from '@console/shared/src/test-utils/utils';
 import { VirtualMachineModel } from '../../src/models';
 import {
   vmDetailsName,
@@ -29,18 +25,12 @@ import {
 } from './utils/consts';
 
 describe('Test VM dashboard', () => {
-  const leakedResources = new Set<string>();
   const testVM = getVMManifest('URL', testName, null, 'foo');
 
   let vm: VirtualMachine;
 
-  afterAll(async () => {
-    removeLeakedResources(leakedResources);
-  });
-
   beforeAll(async () => {
     createResources([multusNAD, testVM]);
-    addLeakableResource(leakedResources, testVM);
     vm = new VirtualMachine(testVM.metadata);
     await vm.navigateToDashboard();
     try {
@@ -58,6 +48,10 @@ describe('Test VM dashboard', () => {
     );
   }, VM_IMPORT_TIMEOUT_SECS);
 
+  afterAll(() => {
+    deleteResources([vm.asResource(), multusNAD]);
+  });
+
   it('Inventory card', async () => {
     expect(vmInventoryNICs.getText()).toEqual('1 NIC');
     expect(vmInventoryNICs.$('a').getAttribute('href')).toMatch(
@@ -70,29 +64,33 @@ describe('Test VM dashboard', () => {
 
     await vm.addDisk(hddDisk);
     await vm.addNIC(multusNetworkInterface);
-    await vm.navigateToTab(TAB.Dashboard);
+    await vm.navigateToTab(TAB.Overview);
 
     expect(vmInventoryNICs.getText()).toEqual('2 NICs');
     expect(vmInventoryDisks.getText()).toEqual('3 Disks');
+
+    await vm.removeDisk(hddDisk.name);
+    await vm.removeNIC(multusNetworkInterface.name);
   });
 
   it('Status card', async () => {
+    await vm.waitForStatus(VM_STATUS.Off);
+    await vm.navigateToDashboard();
     expect(vmStatus.getText()).toEqual(VM_STATUS.Off);
 
     await vm.action(VM_ACTION.Start, true, VM_BOOTUP_TIMEOUT_SECS);
-    await vm.navigateToTab(TAB.Dashboard);
-
+    await vm.navigateToTab(TAB.Overview);
     expect(vmStatus.getText()).toEqual(VM_STATUS.Running);
   });
 
-  it('Details card', async () => {
+  it('BZ(1807865) Details card', async () => {
     expect(vmDetailsName.getText()).toEqual(vm.name);
     expect(vmDetailsNamespace.getText()).toEqual(vm.namespace);
     expect(vmDetailsNode.getText()).not.toEqual(NOT_AVAILABLE);
     expect(vmDetailsIPAddress.getText()).not.toEqual(NOT_AVAILABLE);
 
     await vm.action(VM_ACTION.Stop, true, VM_STOP_TIMEOUT_SECS);
-    await vm.navigateToTab(TAB.Dashboard);
+    await vm.navigateToTab(TAB.Overview);
 
     expect(vmDetailsNode.getText()).toEqual(NOT_AVAILABLE);
     expect(vmDetailsIPAddress.getText()).toEqual(NOT_AVAILABLE);

@@ -13,10 +13,10 @@ import {
   DashboardsOverviewResourceActivity,
   DashboardsOverviewInventoryItemReplacement,
   DashboardsInventoryItemGroup,
+  ActionFeatureFlag,
 } from '@console/plugin-sdk';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { MachineModel, NodeModel } from '@console/internal/models';
-import { FLAGS } from '@console/shared/src/constants';
 // TODO(jtomasek): chage this to '@console/shared/src/utils' once @console/shared/src/utils modules
 // no longer import from @console/internal (cyclic deps issues)
 import { formatNamespacedRouteForResource } from '@console/shared/src/utils/namespace';
@@ -26,6 +26,7 @@ import { getBMNStatusGroups } from './components/baremetal-nodes/dashboard/utils
 import { getHostPowerStatus } from './selectors';
 import { HOST_POWER_STATUS_POWERING_OFF, HOST_POWER_STATUS_POWERING_ON } from './constants';
 import { BareMetalHostKind } from './types';
+import { detectBaremetalPlatform, BAREMETAL_FLAG } from './features';
 
 type ConsumedExtensions =
   | DashboardsOverviewInventoryItem
@@ -37,6 +38,7 @@ type ConsumedExtensions =
   | RoutePage
   | ModelFeatureFlag
   | ModelDefinition
+  | ActionFeatureFlag
   | DashboardsOverviewResourceActivity;
 
 const METAL3_FLAG = 'METAL3';
@@ -56,6 +58,13 @@ const plugin: Plugin<ConsumedExtensions> = [
     },
   },
   {
+    type: 'FeatureFlag/Action',
+    properties: {
+      flag: BAREMETAL_FLAG,
+      detect: detectBaremetalPlatform,
+    },
+  },
+  {
     type: 'NavItem/Href',
     properties: {
       section: 'Compute',
@@ -69,7 +78,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       mergeBefore: 'ComputeSeparator',
     },
     flags: {
-      required: [FLAGS.BAREMETAL, METAL3_FLAG],
+      required: [BAREMETAL_FLAG, METAL3_FLAG],
     },
   },
   {
@@ -101,7 +110,7 @@ const plugin: Plugin<ConsumedExtensions> = [
         import(
           './components/baremetal-hosts/add-baremetal-host/AddBareMetalHostPage' /* webpackChunkName: "metal3-baremetalhost" */
         ).then((m) => m.default),
-      required: [FLAGS.BAREMETAL, METAL3_FLAG],
+      required: [BAREMETAL_FLAG, METAL3_FLAG],
     },
   },
   {
@@ -113,7 +122,7 @@ const plugin: Plugin<ConsumedExtensions> = [
         import(
           './components/baremetal-hosts/add-baremetal-host/AddBareMetalHostPage' /* webpackChunkName: "metal3-baremetalhost" */
         ).then((m) => m.default),
-      required: [FLAGS.BAREMETAL, METAL3_FLAG],
+      required: [BAREMETAL_FLAG, METAL3_FLAG],
     },
   },
   {
@@ -129,7 +138,7 @@ const plugin: Plugin<ConsumedExtensions> = [
         },
       ],
       mapper: getBMNStatusGroups,
-      required: [FLAGS.BAREMETAL, METAL3_FLAG],
+      required: [BAREMETAL_FLAG, METAL3_FLAG],
     },
   },
   {
@@ -155,7 +164,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       ],
       model: BareMetalHostModel,
       mapper: getBMHStatusGroups,
-      required: [FLAGS.BAREMETAL, METAL3_FLAG],
+      required: [BAREMETAL_FLAG, METAL3_FLAG],
     },
   },
   {
@@ -167,7 +176,7 @@ const plugin: Plugin<ConsumedExtensions> = [
         import(
           './components/baremetal-nodes/BareMetalNodesPage' /* webpackChunkName: "node" */
         ).then((m) => m.default),
-      required: [FLAGS.BAREMETAL, METAL3_FLAG],
+      required: [BAREMETAL_FLAG, METAL3_FLAG],
     },
   },
   {
@@ -179,7 +188,7 @@ const plugin: Plugin<ConsumedExtensions> = [
         import(
           './components/baremetal-nodes/BareMetalNodeDetailsPage' /* webpackChunkName: "node" */
         ).then((m) => m.default),
-      required: [FLAGS.BAREMETAL, METAL3_FLAG],
+      required: [BAREMETAL_FLAG, METAL3_FLAG],
     },
   },
   {
@@ -196,7 +205,7 @@ const plugin: Plugin<ConsumedExtensions> = [
         import(
           './components/maintenance/MaintenanceDashboardActivity' /* webpackChunkName: "node-maintenance" */
         ).then((m) => m.default),
-      required: [FLAGS.BAREMETAL, METAL3_FLAG],
+      required: [BAREMETAL_FLAG, METAL3_FLAG],
     },
   },
   {
@@ -222,7 +231,7 @@ const plugin: Plugin<ConsumedExtensions> = [
         import(
           './components/baremetal-hosts/dashboard/BareMetalStatusActivity' /* webpackChunkName: "metal3-powering" */
         ).then((m) => m.default),
-      required: [FLAGS.BAREMETAL, METAL3_FLAG],
+      required: [BAREMETAL_FLAG, METAL3_FLAG],
     },
   },
 ];

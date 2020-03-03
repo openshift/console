@@ -4,6 +4,7 @@ import { clickHorizontalTab } from '@console/internal-integration-tests/views/ho
 import { isLoaded, resourceTitle } from '@console/internal-integration-tests/views/crud.view';
 import { activeTab } from '../../views/detailView.view';
 import * as VmsListView from '../../views/vms.list.view';
+import { TAB } from '../utils/consts';
 
 export class DetailView {
   readonly name: string;
@@ -38,7 +39,7 @@ export class DetailView {
     await this.navigateToListView();
     await VmsListView.vmListByName(this.name).click();
     await isLoaded();
-    await clickHorizontalTab('Overview');
+    await clickHorizontalTab(TAB.Details);
     await isLoaded();
   }
 
@@ -46,7 +47,7 @@ export class DetailView {
     await this.navigateToListView();
     await VmsListView.vmListByName(this.name).click();
     await isLoaded();
-    await clickHorizontalTab('Dashboard');
+    await clickHorizontalTab(TAB.Overview);
     await isLoaded();
   }
 
@@ -54,7 +55,7 @@ export class DetailView {
     await this.navigateToListView();
     await VmsListView.vmListByName(this.name).click();
     await isLoaded();
-    await clickHorizontalTab('Consoles');
+    await clickHorizontalTab(TAB.Consoles);
     await isLoaded();
   }
 

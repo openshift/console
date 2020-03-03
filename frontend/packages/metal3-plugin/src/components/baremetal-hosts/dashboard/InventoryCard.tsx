@@ -11,7 +11,7 @@ import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboa
 import InventoryItem, {
   ResourceInventoryItem,
 } from '@console/shared/src/components/dashboard/inventory-card/InventoryItem';
-import { K8sResourceKind } from '@console/internal/module/k8s';
+import { K8sResourceKind, MachineKind } from '@console/internal/module/k8s';
 import { PodModel, NodeModel } from '@console/internal/models';
 import { getNamespace, getMachineNodeName, getName } from '@console/shared';
 import { getPodStatusGroups } from '@console/shared/src/components/dashboard/inventory-card/utils';
@@ -22,8 +22,9 @@ import { BareMetalHostModel } from '../../../models';
 import { BareMetalHostDashboardContext } from './BareMetalHostDashboardContext';
 
 const PodInventoryItem = React.memo(
-  withDashboardResources(
-    ({ nodeName, resources, watchK8sResource, stopWatchK8sResource }: PodInventoryItemProps) => {
+  withDashboardResources<PodInventoryItemProps>(
+    ({ machine, resources, watchK8sResource, stopWatchK8sResource }) => {
+      const nodeName = getMachineNodeName(machine);
       React.useEffect(() => {
         if (!nodeName) {
           return () => {};
@@ -37,6 +38,17 @@ const PodInventoryItem = React.memo(
         watchK8sResource(podResource);
         return () => stopWatchK8sResource(podResource);
       }, [nodeName, watchK8sResource, stopWatchK8sResource]);
+
+      if (!nodeName || !machine) {
+        return (
+          <InventoryItem
+            title={PodModel.label}
+            count={0}
+            isLoading={!machine}
+            error={machine && !nodeName}
+          />
+        );
+      }
 
       const podsData = _.get(resources.pods, 'data', []) as K8sResourceKind[];
       const podsLoaded = _.get(resources.pods, 'loaded');
@@ -63,7 +75,6 @@ const InventoryCard: React.FC = () => {
 
   const namespace = getNamespace(obj);
   const hostName = getName(obj);
-  const nodeName = getMachineNodeName(machine);
 
   const NICTitleComponent = React.useCallback(
     ({ children }) => (
@@ -89,7 +100,7 @@ const InventoryCard: React.FC = () => {
         <DashboardCardTitle>Inventory</DashboardCardTitle>
       </DashboardCardHeader>
       <DashboardCardBody>
-        <PodInventoryItem nodeName={nodeName} />
+        <PodInventoryItem machine={machine} />
         <InventoryItem
           title="Disk"
           isLoading={!obj}
@@ -111,5 +122,5 @@ const InventoryCard: React.FC = () => {
 export default withDashboardResources(InventoryCard);
 
 type PodInventoryItemProps = DashboardItemProps & {
-  nodeName: string;
+  machine: MachineKind;
 };

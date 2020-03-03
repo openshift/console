@@ -1,9 +1,11 @@
-import { TextInputTypes } from '@patternfly/react-core';
+import { TextInputTypes, ValidatedOptions } from '@patternfly/react-core';
+import { K8sResourceKind } from '@console/internal/module/k8s';
 
 export interface FieldProps {
   name: string;
   label?: string;
   helpText?: React.ReactNode;
+  helpTextInvalid?: React.ReactNode;
   required?: boolean;
   style?: React.CSSProperties;
   isReadOnly?: boolean;
@@ -11,6 +13,7 @@ export interface FieldProps {
   disableAddRow?: boolean;
   className?: string;
   isDisabled?: boolean;
+  validated?: ValidatedOptions;
 }
 
 export interface InputFieldProps extends FieldProps {
@@ -28,6 +31,7 @@ export interface TextAreaProps extends FieldProps {
 
 export interface CheckboxFieldProps extends FieldProps {
   formLabel?: string;
+  value?: string;
 }
 
 export interface SearchInputFieldProps extends InputFieldProps {
@@ -44,8 +48,9 @@ export interface DropdownFieldProps extends FieldProps {
 }
 
 export interface EnvironmentFieldProps extends FieldProps {
-  obj?: object;
+  obj?: K8sResourceKind;
   envPath: string[];
+  envs?: (NameValuePair | NameValueFromPair)[];
 }
 
 export interface ResourceLimitFieldProps extends FieldProps {
@@ -59,6 +64,7 @@ export interface MultiColumnFieldProps extends FieldProps {
   addLabel?: string;
   toolTip?: string;
   emptyValues: { [name: string]: string };
+  emptyMessage?: string;
   headers: string[];
   children: React.ReactNode;
 }

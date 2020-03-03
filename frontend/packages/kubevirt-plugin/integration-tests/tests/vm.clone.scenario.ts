@@ -204,7 +204,7 @@ describe('Test clone VM.', () => {
         await cloneDialog.clone();
         addLeakableResource(leakedResources, clonedVM.asResource());
 
-        await clonedVM.navigateToTab(TAB.Overview);
+        await clonedVM.navigateToTab(TAB.Details);
         await clonedVM.waitForStatus(VM_STATUS.Running, CLONE_VM_TIMEOUT_SECS);
       },
       VM_BOOTUP_TIMEOUT_SECS + CLONE_VM_TIMEOUT_SECS,
@@ -290,7 +290,7 @@ describe('Test clone VM.', () => {
           provisionSource: cloudInitVmProvisionConfig,
           storageResources: [rootDisk],
           networkResources: [],
-          flavor: basicVMConfig.flavor,
+          flavorConfig: basicVMConfig.flavorConfig,
           operatingSystem: basicVMConfig.operatingSystem,
           workloadProfile: basicVMConfig.workloadProfile,
           startOnCreation: false,

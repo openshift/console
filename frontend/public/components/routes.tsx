@@ -20,9 +20,15 @@ import {
   navFactory,
 } from './utils';
 import { MaskedData } from './configmap-and-secret-data';
-import { K8sResourceKindReference, RouteKind, RouteIngress, RouteTarget } from '../module/k8s';
+import {
+  K8sResourceKindReference,
+  RouteKind,
+  RouteIngress,
+  RouteTarget,
+  K8sResourceCondition,
+} from '../module/k8s';
 import { RouteModel } from '../models';
-import { Conditions, conditionProps } from './conditions';
+import { Conditions } from './conditions';
 import { RouteCharts } from './routes/route-charts';
 
 const RoutesReference: K8sResourceKindReference = 'Route';
@@ -31,7 +37,7 @@ const menuActions = [...Kebab.getExtensionsActionsForKind(RouteModel), ...Kebab.
 export type IngressStatusProps = {
   host: string;
   routerName: string;
-  conditions: conditionProps[];
+  conditions: K8sResourceCondition[];
   wildcardPolicy: string;
   routerCanonicalHostname: string;
 };

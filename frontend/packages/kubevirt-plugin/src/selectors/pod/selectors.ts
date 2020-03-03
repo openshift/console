@@ -1,9 +1,9 @@
 import { get } from 'lodash';
-import { getName, getNamespace, getOwnerReferences } from '@console/shared/src/selectors';
+import { getName, getNamespace, getOwnerReferences, getUID } from '@console/shared/src/selectors';
 import { compareOwnerReference } from '@console/shared/src/utils/owner-references';
 import { PodKind } from '@console/internal/module/k8s';
 import { getLabelValue } from '../selectors';
-import { VMKind } from '../../types';
+import { VMKind, VMIKind } from '../../types';
 import { getDataVolumeTemplates } from '../vm';
 import {
   CDI_KUBEVIRT_IO,
@@ -46,26 +46,29 @@ export const isPodSchedulable = (pod: PodKind) => {
   );
 };
 
-export const findVMPod = (
-  vm: VMKind,
+const isPodReady = (pod: PodKind): boolean =>
+  pod?.status?.phase === 'Running' && pod?.status?.containerStatuses?.every((s) => s.ready);
+
+export const findVMIPod = (
+  vmi?: VMIKind,
   pods?: PodKind[],
   podNamePrefix = VIRT_LAUNCHER_POD_PREFIX,
 ) => {
-  if (!pods) {
+  if (!pods || !vmi) {
     return null;
   }
 
   // the UID is not set as we mimic VMI here
   const vmOwnerReference = buildOwnerReferenceForModel(
     VirtualMachineInstanceModel,
-    getName(vm),
-    null,
+    getName(vmi),
+    getUID(vmi),
   );
-  const prefix = `${podNamePrefix}${getName(vm)}-`;
+  const prefix = `${podNamePrefix}${getName(vmi)}-`;
   const prefixedPods = pods.filter((p) => {
     const podOwnerReferences = getOwnerReferences(p);
     return (
-      getNamespace(p) === getNamespace(vm) &&
+      getNamespace(p) === getNamespace(vmi) &&
       getName(p).startsWith(prefix) &&
       podOwnerReferences &&
       podOwnerReferences.some((podOwnerReference) =>
@@ -74,10 +77,12 @@ export const findVMPod = (
     );
   });
 
-  // Return the newet Pod created
-  return prefixedPods.sort((a: PodKind, b: PodKind) =>
-    a.metadata.creationTimestamp > b.metadata.creationTimestamp ? -1 : 1,
-  )[0];
+  // Return the newet most ready Pod created
+  return prefixedPods
+    .sort((a: PodKind, b: PodKind) =>
+      a.metadata.creationTimestamp > b.metadata.creationTimestamp ? -1 : 1,
+    )
+    .sort((a: PodKind) => (isPodReady(a) ? -1 : 1))[0];
 };
 
 export const getVMImporterPods = (

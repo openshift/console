@@ -69,6 +69,7 @@ describe('Project Access Form', () => {
       unregisterField: jest.fn(),
       validateField: jest.fn(),
       validateForm: jest.fn(),
+      getFieldMeta: jest.fn(),
       validateOnBlur: true,
       validateOnChange: true,
     };

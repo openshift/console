@@ -23,11 +23,13 @@ export const TEMPLATE_OS_NAME_ANNOTATION = 'name.os.template.kubevirt.io';
 export const TEMPLATE_VM_DOMAIN_LABEL = 'kubevirt.io/domain';
 
 export const LABEL_USED_TEMPLATE_NAME = 'vm.kubevirt.io/template';
-export const LABEL_USED_TEMPLATE_NAMESPACE = 'vm.kubevirt.io/template-namespace';
+export const LABEL_USED_TEMPLATE_NAMESPACE = 'vm.kubevirt.io/template.namespace';
+export const LABEL_TEMPLATE_REVISION = 'vm.kubevirt.io/template.revision';
+export const LABEL_TEMPLATE_VERSION = 'vm.kubevirt.io/template.version';
 
 export const DEFAULT_RDP_PORT = 3389;
 
-export const VM_DETAIL_OVERVIEW_HREF = 'overview';
+export const VM_DETAIL_DETAILS_HREF = 'details';
 export const VM_DETAIL_DISKS_HREF = 'disks';
 export const VM_DETAIL_NETWORKS_HREF = 'nics';
 export const VM_DETAIL_CONSOLES_HREF = 'consoles';

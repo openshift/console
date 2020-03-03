@@ -1,14 +1,17 @@
 import * as React from 'react';
 import { navFactory } from '@console/internal/components/utils';
 import { DetailsPage } from '@console/internal/components/factory';
-import { K8sResourceKindReference } from '@console/internal/module/k8s';
-import { PodModel } from '@console/internal/models';
+import { PodModel, TemplateModel } from '@console/internal/models';
 import { VMDisksFirehose } from '../vm-disks';
 import { VMNics } from '../vm-nics';
-import { VirtualMachineInstanceMigrationModel, VirtualMachineInstanceModel } from '../../models';
+import {
+  VirtualMachineInstanceMigrationModel,
+  VirtualMachineInstanceModel,
+  VirtualMachineModel,
+} from '../../models';
 import { getResource } from '../../utils';
 import {
-  VM_DETAIL_OVERVIEW_HREF,
+  VM_DETAIL_DETAILS_HREF,
   VM_DETAIL_DISKS_HREF,
   VM_DETAIL_NETWORKS_HREF,
   VM_DETAIL_CONSOLES_HREF,
@@ -16,22 +19,19 @@ import {
 import { VMEvents } from './vm-events';
 import { VMConsoleFirehose } from './vm-console';
 import { VMDetailsFirehose } from './vm-details';
-import { menuActionsCreator } from './menu-actions';
+import { vmMenuActionsCreator } from './menu-actions';
 import { VMDashboard } from './vm-dashboard';
+import { TEMPLATE_TYPE_LABEL, TEMPLATE_TYPE_VM } from '../../constants/vm';
 
 export const VirtualMachinesDetailsPage: React.FC<VirtualMachinesDetailsPageProps> = (props) => {
-  const { name, namespace } = props;
+  const { name, ns: namespace } = props.match.params;
 
-  const resources = [
-    getResource(VirtualMachineInstanceModel, {
-      name,
-      namespace,
-      isList: false,
-      prop: 'vmi',
-      optional: true,
-    }),
-    getResource(PodModel, { namespace, prop: 'pods' }),
-    getResource(VirtualMachineInstanceMigrationModel, { namespace, prop: 'migrations' }),
+  const breadcrumbsForVMPage = (match: any) => () => [
+    {
+      name: VirtualMachineModel.labelPlural,
+      path: `/k8s/ns/${match.params.ns || 'default'}/virtualmachines`,
+    },
+    { name: `${match.params.name} Details`, path: `${match.url}` },
   ];
 
   const dashboardPage = {
@@ -41,7 +41,7 @@ export const VirtualMachinesDetailsPage: React.FC<VirtualMachinesDetailsPageProp
   };
 
   const overviewPage = {
-    href: VM_DETAIL_OVERVIEW_HREF,
+    href: VM_DETAIL_DETAILS_HREF,
     name: 'Details',
     component: VMDetailsFirehose,
   };
@@ -74,14 +74,40 @@ export const VirtualMachinesDetailsPage: React.FC<VirtualMachinesDetailsPageProp
     disksPage,
   ];
 
+  const resources = [
+    getResource(VirtualMachineInstanceModel, {
+      name,
+      namespace,
+      isList: false,
+      prop: 'vmi',
+      optional: true,
+    }),
+    getResource(PodModel, { namespace, prop: 'pods' }),
+    getResource(VirtualMachineInstanceMigrationModel, { namespace, prop: 'migrations' }),
+    getResource(TemplateModel, {
+      isList: true,
+      namespace,
+      prop: 'templates',
+      matchLabels: { [TEMPLATE_TYPE_LABEL]: TEMPLATE_TYPE_VM },
+    }),
+  ];
+
   return (
-    <DetailsPage {...props} menuActions={menuActionsCreator} pages={pages} resources={resources} />
+    <DetailsPage
+      {...props}
+      name={name}
+      namespace={namespace}
+      kind={VirtualMachineModel.kind}
+      kindObj={VirtualMachineModel}
+      menuActions={vmMenuActionsCreator}
+      pages={pages}
+      resources={resources}
+      breadcrumbsFor={breadcrumbsForVMPage(props.match)}
+      customData={{ kindObj: VirtualMachineModel }}
+    />
   );
 };
 
-type VirtualMachinesDetailsPageProps = {
-  name: string;
-  namespace: string;
-  kind: K8sResourceKindReference;
+export type VirtualMachinesDetailsPageProps = {
   match: any;
 };

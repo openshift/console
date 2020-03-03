@@ -16,7 +16,8 @@ import { FirehoseResult } from '@console/internal/components/utils';
 import { K8sResourceSelectRow } from '../../form/k8s-resource-select-row';
 import { VMKind } from '../../../types';
 import { FormSelectPlaceholderOption } from '../../form/form-select-placeholder-option';
-import { StorageType, CD, CD_SIZE, CD_STORAGE_CLASS } from './constants';
+import { StorageType, CD_SIZE, CD_STORAGE_CLASS } from './constants';
+import { CD } from './types';
 
 export const CDRomRow: React.FC<CDRomRowProps> = ({
   cd,

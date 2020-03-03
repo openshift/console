@@ -10,6 +10,7 @@ import {
   KUBEVIRT_PROJECT_NAME,
   COMMON_TEMPLATES_NAMESPACE,
   COMMON_TEMPLATES_REVISION,
+  DISK_SOURCE,
 } from './consts';
 import { getRandomMacAddress, getResourceObject, resolveStorageDataAttribute } from './utils';
 import { Flavor, OperatingSystem, WorkloadProfile } from './constants/wizard';
@@ -58,9 +59,10 @@ export const dataVolumeManifest = ({ name, namespace, sourceURL, accessMode, vol
 
 export const basicVMConfig: BaseVMConfig = {
   operatingSystem: OperatingSystem.RHEL7_6,
-  flavor: Flavor.TINY,
+  flavorConfig: { flavor: Flavor.TINY },
   workloadProfile: WorkloadProfile.DESKTOP,
-  sourceURL: 'https://download.cirros-cloud.net/0.4.0/cirros-0.4.0-x86_64-disk.img',
+  sourceURL:
+    'http://cnv-qe-server.rhevdev.lab.eng.rdu2.redhat.com/files/files-https/cirros/cirros-qcow2.img',
   sourceContainer: 'kubevirt/cirros-registry-disk-demo',
   cloudInitScript: `#cloud-config\nuser: cloud-user\npassword: atomic\nchpasswd: {expire: False}\nhostname: vm-${testName}`,
 };
@@ -84,9 +86,10 @@ export const defaultYAMLPodNetworkingInterface = {
 // Fake windows machine, still cirros in the heart
 export const widowsVMConfig: BaseVMConfig = {
   operatingSystem: OperatingSystem.WINDOWS_10,
-  flavor: Flavor.MEDIUM,
+  flavorConfig: { flavor: Flavor.MEDIUM },
   workloadProfile: WorkloadProfile.DESKTOP,
-  sourceURL: 'https://download.cirros-cloud.net/0.4.0/cirros-0.4.0-x86_64-disk.img',
+  sourceURL:
+    'http://cnv-qe-server.rhevdev.lab.eng.rdu2.redhat.com/files/files-https/cirros/cirros-qcow2.img',
   sourceContainer: 'kubevirt/cirros-registry-disk-demo',
   cloudInitScript: `#cloud-config\nuser: cloud-user\npassword: atomic\nchpasswd: {expire: False}\nhostname: vm-${testName}`, // reusing cirros
 };
@@ -106,6 +109,15 @@ export const rootDisk: StorageResource = {
   storageClass: `${STORAGE_CLASS}`,
 };
 
+export const cdGuestTools: StorageResource = {
+  source: DISK_SOURCE.Container,
+  interface: DISK_INTERFACE.VirtIO,
+  storageClass: `${STORAGE_CLASS}`,
+  sourceConfig: {
+    container: 'kubevirt/virtio-container-disk',
+  },
+};
+
 export const hddDisk: StorageResource = {
   name: `disk-${testName.slice(-5)}`,
   size: '1',
@@ -119,11 +131,12 @@ export const cloudInitCustomScriptConfig: CloudInitConfig = {
   customScript: basicVMConfig.cloudInitScript,
 };
 
-export function getVMManifest(
-  provisionSource: string,
+function getMetadata(
+  provisionSource: 'URL' | 'PXE' | 'Container',
   namespace: string,
   name?: string,
   cloudinit?: string,
+  finalizers?: [string],
 ) {
   const vmName = name || `${provisionSource.toLowerCase()}-${namespace.slice(-5)}`;
   const metadata = {
@@ -132,14 +145,14 @@ export function getVMManifest(
       'name.os.template.kubevirt.io/rhel7.6': 'Red Hat Enterprise Linux 7.6',
       description: namespace,
     },
-    finalizers: ['k8s.v1.cni.cncf.io/kubeMacPool'],
+    finalizers,
     namespace,
     labels: {
       app: vmName,
       'flavor.template.kubevirt.io/tiny': 'true',
       'os.template.kubevirt.io/rhel7.6': 'true',
-      'vm.kubevirt.io/template': `rhel7-desktop-${basicVMConfig.flavor}-${COMMON_TEMPLATES_VERSION}`,
-      'vm.kubevirt.io/template-namespace': COMMON_TEMPLATES_NAMESPACE,
+      'vm.kubevirt.io/template': `rhel7-desktop-${basicVMConfig.flavorConfig.flavor}-${COMMON_TEMPLATES_VERSION}`,
+      'vm.kubevirt.io/template.namespace': COMMON_TEMPLATES_NAMESPACE,
       'vm.kubevirt.io/template.revision': COMMON_TEMPLATES_REVISION,
       'vm.kubevirt.io/template.version': COMMON_TEMPLATES_VERSION,
       'workload.template.kubevirt.io/desktop': 'true',
@@ -236,6 +249,88 @@ export function getVMManifest(
       throw Error('Provision source not Implemented');
   }
 
+  const vmiSpec = {
+    domain: {
+      cpu: {
+        cores: 1,
+        sockets: 1,
+        threads: 1,
+      },
+      devices: {
+        disks,
+        inputs: [
+          {
+            bus: 'virtio',
+            name: 'tablet',
+            type: 'tablet',
+          },
+        ],
+        interfaces: [
+          {
+            bootOrder: 2,
+            masquerade: {},
+            name: 'nic0',
+            model: 'virtio',
+          },
+        ],
+        rng: {},
+      },
+      resources: {
+        requests: {
+          memory: '1073741824',
+        },
+      },
+    },
+    evictionStrategy: 'LiveMigrate',
+    terminationGracePeriodSeconds: 0,
+    networks: [
+      {
+        name: 'nic0',
+        pod: {},
+      },
+    ],
+    volumes,
+  };
+
+  return {
+    metadata,
+    dataVolumeTemplates,
+    vmiSpec,
+  };
+}
+
+export function getVMIManifest(
+  provisionSource: 'URL' | 'PXE' | 'Container',
+  namespace: string,
+  name?: string,
+  cloudinit?: string,
+) {
+  const { metadata, vmiSpec } = getMetadata(provisionSource, namespace, name, cloudinit);
+
+  const vmiResource = {
+    apiVersion: 'kubevirt.io/v1alpha3',
+    kind: 'VirtualMachineInstance',
+    metadata,
+    spec: vmiSpec,
+  };
+
+  return vmiResource;
+}
+
+export function getVMManifest(
+  provisionSource: 'URL' | 'PXE' | 'Container',
+  namespace: string,
+  name?: string,
+  cloudinit?: string,
+) {
+  const { metadata, dataVolumeTemplates, vmiSpec } = getMetadata(
+    provisionSource,
+    namespace,
+    name,
+    cloudinit,
+    ['k8s.v1.cni.cncf.io/kubeMacPool'],
+  );
+
   const vmResource = {
     apiVersion: 'kubevirt.io/v1alpha3',
     kind: 'VirtualMachine',
@@ -247,55 +342,15 @@ export function getVMManifest(
         metadata: {
           labels: {
             'kubevirt.io/domain': metadata.name,
-            'kubevirt.io/size': basicVMConfig.flavor,
+            'kubevirt.io/size': basicVMConfig.flavorConfig.flavor,
             'vm.kubevirt.io/name': metadata.name,
           },
         },
-        spec: {
-          domain: {
-            cpu: {
-              cores: 1,
-              sockets: 1,
-              threads: 1,
-            },
-            devices: {
-              disks,
-              inputs: [
-                {
-                  bus: 'virtio',
-                  name: 'tablet',
-                  type: 'tablet',
-                },
-              ],
-              interfaces: [
-                {
-                  bootOrder: 2,
-                  masquerade: {},
-                  name: 'nic0',
-                  model: 'virtio',
-                },
-              ],
-              rng: {},
-            },
-            resources: {
-              requests: {
-                memory: '1073741824',
-              },
-            },
-          },
-          evictionStrategy: 'LiveMigrate',
-          terminationGracePeriodSeconds: 0,
-          networks: [
-            {
-              name: 'nic0',
-              pod: {},
-            },
-          ],
-          volumes,
-        },
+        spec: vmiSpec,
       },
     },
   };
+
   return vmResource;
 }
 

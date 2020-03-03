@@ -60,7 +60,7 @@ export const PrometheusGraphLink = connect(mapStateToProps)(PrometheusGraphLink_
 
 export const PrometheusGraph: React.FC<PrometheusGraphProps> = React.forwardRef(
   ({ children, className, title }, ref: React.RefObject<HTMLDivElement>) => (
-    <div ref={ref} className={classNames('graph-wrapper', className)}>
+    <div ref={ref} className={classNames('graph-wrapper graph-wrapper__horizontal-bar', className)}>
       {title && <h5 className="graph-title">{title}</h5>}
       {children}
     </div>

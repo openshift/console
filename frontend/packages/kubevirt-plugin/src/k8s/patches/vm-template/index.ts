@@ -1,8 +1,9 @@
 import * as _ from 'lodash';
 import { TemplateKind, Patch } from '@console/internal/module/k8s';
-import { VMLikeEntityKind, VMKind } from '../../../types';
+import { VMLikeEntityKind } from '../../../types/vmLike';
+import { VMKind } from '../../../types/vm';
 import { isVM } from '../../../selectors/vm';
-import { selectVM } from '../../../selectors/vm-template/selectors';
+import { selectVM } from '../../../selectors/vm-template/basic';
 
 export const addPrefixToPatch = (prefix: string, patch: Patch): Patch => ({
   ...patch,

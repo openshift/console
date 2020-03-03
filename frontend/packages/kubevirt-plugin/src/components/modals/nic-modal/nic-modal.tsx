@@ -31,7 +31,7 @@ import {
 import { getNetworkChoices } from '../../../selectors/nad';
 import { NetworkInterfaceWrapper } from '../../../k8s/wrapper/vm/network-interface-wrapper';
 import { NetworkWrapper } from '../../../k8s/wrapper/vm/network-wrapper';
-import { getDialogUIError, getSequenceName } from '../../../utils/strings';
+import { ADD, EDIT, getDialogUIError, getSequenceName, SAVE } from '../../../utils/strings';
 import { ModalFooter } from '../modal/modal-footer';
 import { useShowErrorToggler } from '../../../hooks/use-show-error-toggler';
 
@@ -187,7 +187,7 @@ export const NICModal = withHandlePromise((props: NICModalProps) => {
 
   return (
     <div className="modal-content">
-      <ModalTitle>{isEditing ? 'Edit' : 'Add'} Network Interface</ModalTitle>
+      <ModalTitle>{isEditing ? EDIT : ADD} Network Interface</ModalTitle>
       <ModalBody>
         <Form>
           <FormRow
@@ -273,7 +273,7 @@ export const NICModal = withHandlePromise((props: NICModalProps) => {
       </ModalBody>
       <ModalFooter
         id="nic"
-        submitButtonText={isEditing ? 'Save' : 'Add'}
+        submitButtonText={isEditing ? SAVE : ADD}
         errorMessage={errorMessage || (showUIError ? getDialogUIError(hasAllRequiredFilled) : null)}
         isDisabled={inProgress}
         isSimpleError={showUIError}

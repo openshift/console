@@ -18,7 +18,7 @@ export class VirtualMachineTemplate extends KubevirtDetailView {
     description,
     provisionSource,
     operatingSystem,
-    flavor,
+    flavorConfig,
     workloadProfile,
     cloudInit,
     storageResources,
@@ -32,7 +32,7 @@ export class VirtualMachineTemplate extends KubevirtDetailView {
 
     await wizard.selectProvisionSource(provisionSource);
     await wizard.selectOperatingSystem(operatingSystem);
-    await wizard.selectFlavor(flavor);
+    await wizard.selectFlavor(flavorConfig);
     await wizard.selectWorkloadProfile(workloadProfile);
     await wizard.fillName(name);
     await wizard.fillDescription(description);
@@ -45,7 +45,7 @@ export class VirtualMachineTemplate extends KubevirtDetailView {
     }
     if (provisionSource.method === ProvisionConfigName.PXE) {
       // Select the last NIC as the source for booting
-      await wizard.selectBootableNIC(networkResources[networkResources.length - 1].network);
+      await wizard.selectBootableNIC(networkResources[networkResources.length - 1].name);
     }
     await wizard.next();
 
@@ -73,6 +73,8 @@ export class VirtualMachineTemplate extends KubevirtDetailView {
     if (cloudInit.useCloudInit) {
       await wizard.configureCloudInit(cloudInit);
     }
+    await wizard.next();
+    // Advanced - Virtual Hardware
     await wizard.next();
 
     // Create VM template

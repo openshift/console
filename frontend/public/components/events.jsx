@@ -4,11 +4,20 @@ import * as classNames from 'classnames';
 import * as PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
+import { Button, Chip, ChipGroup, ChipGroupToolbarItem } from '@patternfly/react-core';
+import { CloseIcon } from '@patternfly/react-icons';
 
 import { namespaceProptype } from '../propTypes';
 import { ResourceListDropdown } from './resource-dropdown';
 import { TextFilter } from './factory';
-import { referenceFor, watchURL } from '../module/k8s';
+import {
+  apiGroupForReference,
+  groupVersionFor,
+  isGroupVersionKind,
+  kindForReference,
+  referenceFor,
+  watchURL,
+} from '../module/k8s';
 import { withStartGuide } from './start-guide';
 import { WSFactory } from '../module/ws-factory';
 import { EventModel, NodeModel } from '../models';
@@ -20,6 +29,7 @@ import {
   Loading,
   PageHeading,
   pluralize,
+  ResourceIcon,
   ResourceLink,
   resourcePathFromModel,
   Timestamp,
@@ -50,8 +60,23 @@ export const typeFilter = (eventType, event) => {
   return type.toLowerCase() === eventType;
 };
 
-const kindFilter = (kind, { involvedObject }) => {
-  return kind === 'all' || involvedObject.kind === kind;
+const kindFilter = (reference, { involvedObject }) => {
+  if (reference === 'all') {
+    return true;
+  }
+  const kinds = reference.split(',');
+  return kinds.some((ref) => {
+    if (isGroupVersionKind(ref)) {
+      const group = apiGroupForReference(ref);
+      const kind = kindForReference(ref);
+      if (typeof involvedObject.apiVersion === 'undefined') {
+        return false;
+      }
+      const { group: eventGroup } = groupVersionFor(involvedObject.apiVersion);
+      return involvedObject.kind === kind && eventGroup === group;
+    }
+    return involvedObject.kind === ref;
+  });
 };
 
 const Inner = connectToFlags(FLAGS.CAN_LIST_NODE)(
@@ -136,43 +161,81 @@ export class EventsList extends React.Component {
     super(props);
     this.state = {
       type: 'all',
-      kind: 'all',
       textFilter: '',
+      selected: new Set(['All']),
     };
   }
 
+  toggleSelected = (selection) => {
+    if (this.state.selected.has('All') || selection === 'All') {
+      this.setState({ selected: new Set([selection]) });
+    } else {
+      const updateItems = new Set(this.state.selected);
+      updateItems.has(selection) ? updateItems.delete(selection) : updateItems.add(selection);
+      this.setState({ selected: updateItems });
+    }
+  };
+
+  clearSelection = () => {
+    this.setState({ selected: new Set(['All']) });
+  };
+
   render() {
-    const { type, kind, textFilter } = this.state;
-    const { autoFocus = true, mock } = this.props;
+    const { type, selected, textFilter } = this.state;
+    const { autoFocus = true } = this.props;
 
     return (
       <>
-        <div className="co-m-pane__filter-bar">
-          <div className="co-m-pane__filter-bar-group">
+        <PageHeading detail={true} title={this.props.title}>
+          <div className="co-search-group">
             <ResourceListDropdown
-              className="btn-group"
-              onChange={(v) => this.setState({ kind: v })}
-              selected={kind}
+              onChange={this.toggleSelected}
+              selected={Array.from(selected)}
               showAll
-              title="All Resources"
+              clearSelection={this.clearSelection}
+              className="co-search-group__resource"
             />
             <Dropdown
-              className="btn-group"
+              className="btn-group co-search-group__resource"
               items={eventTypes}
               onChange={(v) => this.setState({ type: v })}
-              selectedKey={this.state.type}
+              selectedKey={type}
               title="All Types"
             />
-          </div>
-          <div className="co-m-pane__filter-bar-group co-m-pane__filter-bar-group--filter">
             <TextFilter
               autoFocus={autoFocus}
               label="Events by name or message"
               onChange={(e) => this.setState({ textFilter: e.target.value || '' })}
             />
           </div>
-        </div>
-        <EventStream {...this.props} type={type} kind={kind} mock={mock} textFilter={textFilter} />
+          <div className="form-group">
+            <ChipGroup withToolbar defaultIsOpen={false}>
+              <ChipGroupToolbarItem key="resources-category" categoryName="Resource">
+                {[...selected].map((chip) => (
+                  <Chip key={chip} onClick={() => this.toggleSelected(chip)}>
+                    <ResourceIcon kind={chip} />
+                    {kindForReference(chip)}
+                  </Chip>
+                ))}
+                {selected.size > 0 && (
+                  <>
+                    <Button variant="plain" aria-label="Close" onClick={this.clearSelection}>
+                      <CloseIcon />
+                    </Button>
+                  </>
+                )}
+              </ChipGroupToolbarItem>
+            </ChipGroup>
+          </div>
+        </PageHeading>
+        <EventStream
+          {...this.props}
+          key={[...selected].join(',')}
+          type={type}
+          kind={selected.has('All') || selected.size === 0 ? 'all' : [...selected].join(',')}
+          mock={this.props.mock}
+          textFilter={textFilter}
+        />
       </>
     );
   }
@@ -208,8 +271,12 @@ export const EventStreamPage = withStartGuide(({ noProjectsAvailable, ...rest })
     <Helmet>
       <title>Events</title>
     </Helmet>
-    <PageHeading title="Events" />
-    <EventsList {...rest} autoFocus={!noProjectsAvailable} mock={noProjectsAvailable} />
+    <EventsList
+      {...rest}
+      autoFocus={!noProjectsAvailable}
+      mock={noProjectsAvailable}
+      title="Events"
+    />
   </>
 ));
 

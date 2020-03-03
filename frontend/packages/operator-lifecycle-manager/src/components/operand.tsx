@@ -36,8 +36,9 @@ import {
   K8sResourceKind,
   OwnerReference,
   apiVersionForReference,
-  groupVersionFor,
+  apiGroupForReference,
   kindForReference,
+  K8sResourceKindReference,
   modelFor,
   referenceFor,
   referenceForModel,
@@ -63,13 +64,13 @@ const csvName = () =>
         allParts[i - 1] === ClusterServiceVersionModel.plural,
     );
 
-const getActions = (selectedObj: any) => {
+const getActions = (ref: K8sResourceKindReference) => {
   const actions = plugins.registry
     .getClusterServiceVersionActions()
     .filter(
       (action) =>
-        action.properties.kind === selectedObj.kind &&
-        groupVersionFor(selectedObj.apiVersion).group === action.properties.apiGroup,
+        action.properties.kind === kindForReference(ref) &&
+        apiGroupForReference(ref) === action.properties.apiGroup,
     );
   const pluginActions = actions.map((action) => (kind, ocsObj) => ({
     label: action.properties.label,
@@ -269,7 +270,11 @@ export const OperandTableRow: React.FC<OperandTableRowProps> = ({ obj, index, ke
         <Timestamp timestamp={obj.metadata.creationTimestamp} />
       </TableData>
       <TableData className={tableColumnClasses[6]}>
-        <ResourceKebab actions={getActions(obj)} kind={referenceFor(obj)} resource={obj} />
+        <ResourceKebab
+          actions={getActions(referenceFor(obj))}
+          kind={referenceFor(obj)}
+          resource={obj}
+        />
       </TableData>
     </TableRow>
   );

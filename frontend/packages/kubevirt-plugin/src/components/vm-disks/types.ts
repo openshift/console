@@ -1,5 +1,5 @@
 import { ValidationObject } from '@console/shared';
-import { VMLikeEntityKind } from '../../types';
+import { VMLikeEntityKind } from '../../types/vmLike';
 import { CombinedDisk } from '../../k8s/wrapper/vm/combined-disk';
 
 export type StorageSimpleData = {

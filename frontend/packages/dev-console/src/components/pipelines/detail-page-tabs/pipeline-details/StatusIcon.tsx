@@ -28,6 +28,7 @@ export const StatusIcon: React.FC<StatusIconProps> = ({ status, ...props }) => {
     case runStatus.Failed:
       return <ExclamationCircleIcon {...props} />;
 
+    case runStatus.Idle:
     case runStatus.Pending:
       return <PendingIcon {...props} />;
 

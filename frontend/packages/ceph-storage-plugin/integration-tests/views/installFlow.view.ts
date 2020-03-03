@@ -1,7 +1,7 @@
 import { $, ExpectedConditions as until, browser, $$ } from 'protractor';
 import * as crudView from '@console/internal-integration-tests/views/crud.view';
 import * as sideNavView from '@console/internal-integration-tests/views/sidenav.view';
-import { click } from '@console/shared/src/test-utils/utils';
+import { click, getOperatorHubCardIndex } from '@console/shared/src/test-utils/utils';
 import { appHost } from '@console/internal-integration-tests/protractor.conf';
 import { MINUTE, NS, OCS_OP, SECOND, OCS_OPERATOR_NAME } from '../utils/consts';
 import { waitFor, refreshIfNotVisible } from '../utils/helpers';
@@ -10,7 +10,6 @@ import { waitFor, refreshIfNotVisible } from '../utils/helpers';
 const ocsOperator = $('.co-clusterserviceversion-logo__name__clusterserviceversion');
 export const ocsOperatorStatus = $('.co-clusterserviceversion-row__status');
 const installOperator = $('.pf-m-primary');
-const storageClusterLink = $('article:nth-child(10) a');
 const searchInputOperatorHub = $('input[placeholder="Filter by keyword..."]');
 const searchInputOperators = $('input[placeholder="Filter by name..."]');
 
@@ -25,8 +24,10 @@ const status = statuses.get(0);
 // Create storage cluster page
 const btnCreate = $('.pf-m-primary');
 const selectAllBtn = $('[aria-label="Select all rows"]');
+const live = process.env.OCS_LIVE;
+let CATALOG_SRC = 'ocs-catalogsource';
+if (live === '1') CATALOG_SRC = 'redhat-operators';
 const OCS_NAME = 'ocs-operator';
-const CATALOG_SRC = 'ocs-catalogsource';
 const ocsLink = (elem, catalogSource) =>
   $(`a[data-test="${elem}-${catalogSource}-openshift-marketplace"]`);
 
@@ -76,6 +77,7 @@ export const selectWorkerRows = async () => {
   expect(await browser.wait($$('tbody tr').count())).toBeGreaterThanOrEqual(3);
   const isAllSeleted = await selectAllBtn.isSelected();
   if (isAllSeleted === true) await selectAllBtn.click();
+  await browser.wait(until.not(until.elementToBeSelected(selectAllBtn)));
   const workerAz = [];
   const table = $('.pf-c-table.pf-m-compact tbody');
   const rows = table.$$('tr');
@@ -91,9 +93,11 @@ export const selectWorkerRows = async () => {
           .get(index)
           .isSelected())
       ) {
+        await browser.sleep(1 * SECOND);
         await $$('tbody input')
           .get(index)
           .click();
+        await browser.wait(until.elementToBeSelected($$('tbody input').get(index)));
         selectedNodes.push(
           await table
             .$$('tbody a')
@@ -123,6 +127,7 @@ export class InstallCluster {
     await goToOperatorHub();
     const ocsOp = await searchInOperatorHub(OCS_OP);
     await click(ocsOp);
+    await browser.sleep(2 * SECOND);
     await click(installOperator);
     await browser.refresh();
     await this.installOperator();
@@ -152,9 +157,11 @@ export class InstallCluster {
     await browser.wait(until.visibilityOf(searchInputOperators));
     await searchInputOperators.sendKeys(OCS_OPERATOR_NAME);
     await click(ocsOperator);
+    const storageClusterIndex = await getOperatorHubCardIndex('Storage Cluster');
+    const link = $(`article:nth-child(${storageClusterIndex}) a`);
     // Operators page does not directly show tiles so refresh until it shows
-    await refreshIfNotVisible(storageClusterLink, 5);
-    await click(storageClusterLink);
+    await refreshIfNotVisible(link, 5);
+    await click(link);
     await browser.wait(until.and(crudView.untilNoLoadersPresent));
     // Node list fluctautes
     await browser.sleep(20 * SECOND);

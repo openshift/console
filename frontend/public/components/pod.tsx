@@ -52,6 +52,7 @@ import {
 } from './graphs';
 import { VolumesTable } from './volumes-table';
 import { PodModel } from '../models';
+import { Conditions } from './conditions';
 
 // Only request metrics if the device's screen width is larger than the
 // breakpoint where metrics are visible.
@@ -431,6 +432,10 @@ const Details: React.FC<PodDetailsProps> = ({ obj: pod }) => {
       <div className="co-m-pane__body">
         <VolumesTable resource={pod} heading="Volumes" />
       </div>
+      <div className="co-m-pane__body">
+        <SectionHeading text="Conditions" />
+        <Conditions conditions={pod.status.conditions} />
+      </div>
     </>
   );
 };
@@ -517,7 +522,17 @@ export const PodsPage = connect<{}, PodPagePropsFromDispatch, PodPageProps>(
   /* eslint-disable react-hooks/exhaustive-deps */
   React.useEffect(() => {
     if (showMetrics) {
-      const updateMetrics = () => fetchPodMetrics(namespace).then(setPodMetrics);
+      const updateMetrics = () =>
+        fetchPodMetrics(namespace)
+          .then(setPodMetrics)
+          .catch((e) => {
+            // Just log the error here. Showing a warning alert could be more annoying
+            // than helpful. It should be obvious there are no metrics in the list, and
+            // if monitoring is broken, it'll be really apparent since none of the
+            // graphs and dashboards will load in the UI.
+            // eslint-disable-next-line no-console
+            console.error('Unable to fetch pod metrics', e);
+          });
       updateMetrics();
       const id = setInterval(updateMetrics, 30 * 1000);
       return () => clearInterval(id);

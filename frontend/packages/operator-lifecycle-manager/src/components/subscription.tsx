@@ -335,7 +335,7 @@ export const SubscriptionDetails: React.FC<SubscriptionDetailsProps> = ({
           title={`${installStatusPhase}: ${installStatusMessage}`}
         />
       )}
-      <SectionHeading text="Subscription Overview" />
+      <SectionHeading text="Subscription Details" />
       <div className="co-m-pane__body-group">
         <SubscriptionUpdates
           catalogSource={catalogSource}
@@ -514,10 +514,9 @@ export class SubscriptionUpdates extends React.Component<
                   _.get(obj.status, 'installplan') &&
                   this.props.installPlan ? (
                     <Link
-                      to={`/k8s/ns/${obj.metadata.namespace}/${InstallPlanModel.plural}/${_.get(
-                        obj.status,
-                        'installplan.name',
-                      )}`}
+                      to={`/k8s/ns/${obj.metadata.namespace}/${referenceForModel(
+                        InstallPlanModel,
+                      )}/${_.get(obj.status, 'installplan.name')}`}
                     >
                       <span>{installPlanPhase(this.props.installPlan)}</span>
                     </Link>

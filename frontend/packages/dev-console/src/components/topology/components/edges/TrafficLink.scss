@@ -1,12 +1,6 @@
-.odc-base-edge.odc-traffic-link {
-  --edge--stroke-width: 0;
-  --edge--stroke: #bbbbbb;
-  --edge--fill: #bbbbbb;
-  --edge__link--stroke: #bbbbbb;
-}
-
 .odc-traffic-link {
   &__text {
+    stroke-width: 0;
     fill: var(--pf-global--Color--300);
     font-size: var(--pf-global--FontSize--md);
   }

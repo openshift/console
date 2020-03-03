@@ -16,10 +16,17 @@ import {
   createTopologyResourceConnection,
   isHelmReleaseNode,
   getTopologyHelmReleaseGroupItem,
+  getTrafficConnectors,
+  getTopologyEdgeItems,
 } from '../topology-utils';
 import { DEFAULT_TOPOLOGY_FILTERS } from '../redux/const';
 import { TopologyFilters } from '../filters/filter-utils';
-import { TYPE_HELM_RELEASE } from '../const';
+import {
+  TYPE_HELM_RELEASE,
+  TYPE_OPERATOR_BACKED_SERVICE,
+  TYPE_TRAFFIC_CONNECTOR,
+  TYPE_SERVICE_BINDING,
+} from '../const';
 import {
   resources,
   topologyData,
@@ -29,9 +36,15 @@ import {
   sampleDeployments,
   sampleHelmChartDeploymentConfig,
   sampleDeploymentConfigs,
+  MockKialiGraphData,
+  sampleHelmResourcesMap,
 } from './topology-test-data';
 import { MockKnativeResources } from './topology-knative-test-data';
-import { serviceBindingRequest } from './service-binding-test-data';
+import {
+  serviceBindingRequest,
+  sbrBackingServiceSelector,
+  sbrBackingServiceSelectors,
+} from './service-binding-test-data';
 
 export function getTranformedTopologyData(
   mockData: TopologyDataResources,
@@ -46,6 +59,8 @@ export function getTranformedTopologyData(
     mockCheURL,
     [getKnativeServingRevisions, getKnativeServingConfigurations, getKnativeServingRoutes],
     filters,
+    undefined,
+    sampleHelmResourcesMap,
   );
   const topologyTransformedData = result.topology;
   const graphData = result.graph;
@@ -75,8 +90,26 @@ describe('TopologyUtils ', () => {
 
   it('should return graph and topology data only for the deployment kind', () => {
     const { graphData, keys } = getTranformedTopologyData(MockResources, ['deployments']);
-    expect(graphData.nodes).toHaveLength(MockResources.deployments.data.length); // should contain only two deployment
-    expect(keys).toHaveLength(MockResources.deployments.data.length); // should contain only two deployment
+    const totalNodes =
+      MockResources.deployments.data.length + MockResources.clusterServiceVersions.data.length;
+    expect(graphData.nodes).toHaveLength(totalNodes); // should contain only two deployment
+    expect(keys).toHaveLength(totalNodes); // should contain only two deployment
+  });
+
+  it('should return graph nodes for operator backed services', () => {
+    const { topologyTransformedData, graphData, keys } = getTranformedTopologyData(MockResources, [
+      'deployments',
+    ]);
+    const totalNodes =
+      MockResources.deployments.data.length + MockResources.clusterServiceVersions.data.length;
+    const operatorBackedServices = _.filter(graphData.nodes, {
+      type: TYPE_OPERATOR_BACKED_SERVICE,
+    });
+    expect(operatorBackedServices).toHaveLength(1);
+    expect(topologyTransformedData[operatorBackedServices[0].id].type).toBe(
+      TYPE_OPERATOR_BACKED_SERVICE,
+    );
+    expect(keys).toHaveLength(totalNodes);
   });
 
   it('should contain edges information for the deployment kind', () => {
@@ -305,14 +338,22 @@ describe('TopologyUtils ', () => {
     );
   });
   it('should return true for nodes created by helm charts', () => {
-    expect(isHelmReleaseNode(sampleDeploymentConfigs.data[0])).toBe(false);
-    expect(isHelmReleaseNode(sampleHelmChartDeploymentConfig)).toBe(true);
+    expect(isHelmReleaseNode(sampleDeploymentConfigs.data[0], sampleHelmResourcesMap)).toBe(false);
+    expect(isHelmReleaseNode(sampleHelmChartDeploymentConfig, sampleHelmResourcesMap)).toBe(true);
   });
 
   it('should add to groups with helm grouping type for a helm chart node', () => {
-    let groups = getTopologyHelmReleaseGroupItem(sampleDeploymentConfigs.data[0], []);
+    let groups = getTopologyHelmReleaseGroupItem(
+      sampleDeploymentConfigs.data[0],
+      [],
+      sampleHelmResourcesMap,
+    );
     expect(groups).toHaveLength(0);
-    groups = getTopologyHelmReleaseGroupItem(sampleHelmChartDeploymentConfig, []);
+    groups = getTopologyHelmReleaseGroupItem(
+      sampleHelmChartDeploymentConfig,
+      [],
+      sampleHelmResourcesMap,
+    );
     expect(groups).toHaveLength(1);
     expect(groups[0].type).toEqual(TYPE_HELM_RELEASE);
   });
@@ -331,6 +372,93 @@ describe('TopologyUtils ', () => {
     const { graphData } = getTranformedTopologyData(data, ['deploymentConfigs']);
     expect(graphData.groups).toHaveLength(2);
     expect(graphData.groups[1].type).toEqual(TYPE_HELM_RELEASE);
+  });
+
+  it('should create a connector using kiali graph data', () => {
+    const expectedEdgeId = `5ca9ae28-680d-11e9-8c69-5254003f9382_60a9b423-680d-11e9-8c69-5254003f9382`;
+    const edges = getTrafficConnectors(MockKialiGraphData, [...sampleDeployments.data]);
+    expect(edges).toHaveLength(1);
+    expect(edges[0].id).toEqual(expectedEdgeId);
+  });
+
+  it('should not create a connector if kiali graph node data doesnt match any on the resource name', () => {
+    const nodeData = MockKialiGraphData.nodes;
+    const kialiData = {
+      nodes: [
+        {
+          data: {
+            ...nodeData[0].data,
+            workload: 'a',
+          },
+        },
+        {
+          data: {
+            ...nodeData[1].data,
+            workload: 'b',
+          },
+        },
+      ],
+      edges: MockKialiGraphData.edges,
+    };
+    const edges = getTrafficConnectors(kialiData, [...sampleDeployments.data]);
+    expect(edges).toHaveLength(0);
+  });
+
+  it('should not have connector of TYPE_TRAFFIC_CONNECTOR if there is not traffic data', () => {
+    const { graphData } = getTranformedTopologyData(MockResources, ['deployments']);
+    expect(graphData.edges).toHaveLength(1);
+    expect(graphData.edges[0].type).not.toEqual(TYPE_TRAFFIC_CONNECTOR);
+  });
+
+  it('should add a traffic connector when kiali data is passed through trafficData', () => {
+    const transformedData = transformTopologyData(
+      MockResources,
+      ['deployments'],
+      null,
+      null,
+      null,
+      null,
+      MockKialiGraphData,
+    );
+    expect(transformedData.graph.edges).toHaveLength(2);
+    expect(transformedData.graph.edges[0].type).toEqual(TYPE_TRAFFIC_CONNECTOR);
+  });
+
+  it('should support single  binding service selectors', () => {
+    const testResources = sbrBackingServiceSelector.deployments.data;
+    const deployments = sbrBackingServiceSelector.deployments.data;
+    const sbrs = sbrBackingServiceSelector.serviceBindingRequests.data;
+    expect(getTopologyEdgeItems(deployments[0], testResources, sbrs)).toEqual([
+      {
+        id: `uid-app_uid-db-1`,
+        type: TYPE_SERVICE_BINDING,
+        source: 'uid-app',
+        target: 'uid-db-1',
+        data: { sbr: sbrs[0] },
+      },
+    ]);
+  });
+
+  it('should support multiple binding service selectors', () => {
+    const testResources = sbrBackingServiceSelectors.deployments.data;
+    const deployments = sbrBackingServiceSelectors.deployments.data;
+    const sbrs = sbrBackingServiceSelectors.serviceBindingRequests.data;
+    expect(getTopologyEdgeItems(deployments[0], testResources, sbrs)).toEqual([
+      {
+        id: `uid-app_uid-db-1`,
+        type: TYPE_SERVICE_BINDING,
+        source: 'uid-app',
+        target: 'uid-db-1',
+        data: { sbr: sbrs[0] },
+      },
+      {
+        id: `uid-app_uid-db-2`,
+        type: TYPE_SERVICE_BINDING,
+        source: 'uid-app',
+        target: 'uid-db-2',
+        data: { sbr: sbrs[0] },
+      },
+    ]);
   });
 });
 

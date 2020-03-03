@@ -4,7 +4,6 @@ import { Graph } from '../types';
 import { WithPanZoomProps } from '../behavior/usePanZoom';
 import { WithDndDropProps } from '../behavior/useDndDrop';
 import { WithSelectionProps } from '../behavior/useSelection';
-import useCombineRefs from '../utils/useCombineRefs';
 import { WithContextMenuProps } from '../behavior/withContextMenu';
 import LayersProvider from './layers/LayersProvider';
 import { DEFAULT_LAYER } from './layers/LayersContext';
@@ -50,7 +49,6 @@ const GraphComponent: React.FC<GraphComponentProps> = ({
   onContextMenu,
 }) => {
   const layout = element.getLayout();
-  const refs = useCombineRefs<SVGPathElement>(panZoomRef, dndDropRef);
   React.useEffect(() => {
     element.layout();
     // Only re-run if the layout changes
@@ -61,6 +59,7 @@ const GraphComponent: React.FC<GraphComponentProps> = ({
   return (
     <>
       <rect
+        ref={dndDropRef}
         x={0}
         y={0}
         width={bounds.width}
@@ -71,7 +70,7 @@ const GraphComponent: React.FC<GraphComponentProps> = ({
       />
       <g
         data-surface="true"
-        ref={refs}
+        ref={panZoomRef}
         transform={`translate(${bounds.x}, ${bounds.y}) scale(${element.getScale()})`}
       >
         <Inner element={element} />

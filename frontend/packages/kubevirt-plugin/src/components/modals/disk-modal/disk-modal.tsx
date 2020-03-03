@@ -34,7 +34,14 @@ import {
   asFormSelectValue,
   FormSelectPlaceholderOption,
 } from '../../form/form-select-placeholder-option';
-import { DYNAMIC, getDialogUIError, getSequenceName } from '../../../utils/strings';
+import {
+  ADD,
+  DYNAMIC,
+  EDIT,
+  getDialogUIError,
+  getSequenceName,
+  SAVE,
+} from '../../../utils/strings';
 import { ModalFooter } from '../modal/modal-footer';
 import { useShowErrorToggler } from '../../../hooks/use-show-error-toggler';
 import { DiskWrapper } from '../../../k8s/wrapper/vm/disk-wrapper';
@@ -48,6 +55,7 @@ import { CombinedDisk } from '../../../k8s/wrapper/vm/combined-disk';
 import { PersistentVolumeClaimWrapper } from '../../../k8s/wrapper/vm/persistent-volume-claim-wrapper';
 import { BinaryUnit } from '../../form/size-unit-utils';
 import { StorageUISource } from './storage-ui-source';
+import { TemplateValidations } from '../../../utils/validations/template/template-validations';
 
 export const DiskModal = withHandlePromise((props: DiskModalProps) => {
   const {
@@ -69,11 +77,15 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
     handlePromise,
     close,
     cancel,
+    templateValidations,
   } = props;
   const asId = prefixedID.bind(null, 'disk');
   const disk = props.disk || DiskWrapper.EMPTY;
   const volume = props.volume || VolumeWrapper.EMPTY;
   const dataVolume = props.dataVolume || DataVolumeWrapper.EMPTY;
+  const tValidations = templateValidations || new TemplateValidations();
+  const validAllowedBuses = tValidations.getAllowedBuses();
+  const recommendedBuses = tValidations.getRecommendedBuses();
 
   const combinedDisk = new CombinedDisk({
     diskWrapper: disk,
@@ -102,7 +114,12 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
     disk.getName() || getSequenceName('disk', usedDiskNames),
   );
   const [bus, setBus] = React.useState<DiskBus>(
-    disk.getDiskBus() || (isEditing ? null : DiskBus.VIRTIO),
+    disk.getDiskBus() ||
+      (isEditing
+        ? null
+        : validAllowedBuses.has(DiskBus.VIRTIO)
+        ? DiskBus.VIRTIO
+        : [...validAllowedBuses][0]),
   );
   const [storageClassName, setStorageClassName] = React.useState<string>(
     combinedDisk.getStorageClassName(),
@@ -144,7 +161,7 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
     resultDataVolume = DataVolumeWrapper.initializeFromSimpleData(
       {
         name: resultDataVolumeName,
-        storageClassName: storageClassName || undefined,
+        storageClassName,
         type: source.getDataVolumeSourceType(),
         size,
         unit,
@@ -158,7 +175,7 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
   if (source.requiresNewPVC()) {
     resultPersistentVolumeClaim = PersistentVolumeClaimWrapper.initializeFromSimpleData({
       name,
-      storageClassName: storageClassName || undefined,
+      storageClassName,
       size,
       unit,
     });
@@ -170,6 +187,7 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
       size: sizeValidation,
       container: containerValidation,
       pvc: pvcValidation,
+      diskInterface: busValidation,
       url: urlValidation,
     },
     isValid,
@@ -177,6 +195,7 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
   } = validateDisk(resultDisk, resultVolume, resultDataVolume, resultPersistentVolumeClaim, {
     usedDiskNames,
     usedPVCNames,
+    templateValidations,
   });
 
   const [showUIError, setShowUIError] = useShowErrorToggler(false, isValid, isValid);
@@ -233,7 +252,7 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
   return (
     <div className="modal-content">
       <ModalTitle>
-        {isEditing ? 'Edit' : 'Add'} {type.toString()}
+        {isEditing ? EDIT : ADD} {type.toString()}
       </ModalTitle>
       <ModalBody>
         <Form>
@@ -370,18 +389,38 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
               />
             </FormRow>
           )}
-          <FormRow title="Interface" fieldId={asId('interface')} isRequired>
+          <FormRow
+            title="Interface"
+            fieldId={asId('interface')}
+            isRequired
+            validation={busValidation}
+          >
             <FormSelect
               onChange={React.useCallback((diskBus) => setBus(DiskBus.fromString(diskBus)), [
                 setBus,
               ])}
+              isValid={!isValidationError(busValidation)}
               value={asFormSelectValue(bus)}
               id={asId('interface')}
               isDisabled={inProgress}
             >
               <FormSelectPlaceholderOption isDisabled placeholder="--- Select Interface ---" />
-              {DiskBus.getAll().map((b) => (
-                <FormSelectOption key={b.getValue()} value={b.getValue()} label={b.toString()} />
+              {!validAllowedBuses.has(bus) && (
+                <FormSelectOption
+                  isDisabled
+                  key={bus.getValue()}
+                  value={bus.getValue()}
+                  label={bus.toString()}
+                />
+              )}
+              {[...validAllowedBuses].map((b) => (
+                <FormSelectOption
+                  key={b.getValue()}
+                  value={b.getValue()}
+                  label={`${b.toString()}${
+                    recommendedBuses.has(b) && b !== bus ? ' --- Recommended ---' : ''
+                  }`}
+                />
               ))}
             </FormSelect>
           </FormRow>
@@ -394,7 +433,7 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
               data={storageClasses}
               model={StorageClassModel}
               hasPlaceholder
-              onChange={(sc) => setStorageClassName(sc)}
+              onChange={(sc) => setStorageClassName(sc || '')}
             />
           )}
           {source.isPlainDataVolume(isCreateTemplate) && (
@@ -408,7 +447,7 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
       </ModalBody>
       <ModalFooter
         id="disk"
-        submitButtonText={isEditing ? 'Save' : 'Add'}
+        submitButtonText={isEditing ? SAVE : ADD}
         errorMessage={errorMessage || (showUIError ? getDialogUIError(hasAllRequiredFilled) : null)}
         isDisabled={inProgress}
         inProgress={inProgress}
@@ -444,6 +483,7 @@ export type DiskModalProps = {
   vmNamespace: string;
   namespace: string;
   onNamespaceChanged: (namespace: string) => void;
+  templateValidations?: TemplateValidations;
   usedDiskNames: Set<string>;
   usedPVCNames: Set<string>;
 } & ModalComponentProps &

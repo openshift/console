@@ -24,6 +24,8 @@ import { DataVolumeWrapper } from '../../../../k8s/wrapper/vm/data-volume-wrappe
 import { DiskModal } from '../../../modals/disk-modal';
 import { VM_TEMPLATE_NAME_PARAMETER } from '../../../../constants/vm-templates';
 import { PersistentVolumeClaimWrapper } from '../../../../k8s/wrapper/vm/persistent-volume-claim-wrapper';
+import { TemplateValidations } from '../../../../utils/validations/template/template-validations';
+import { getTemplateValidation } from '../../selectors/template';
 
 const VMWizardStorageModal: React.FC<VMWizardStorageModalProps> = (props) => {
   const {
@@ -34,6 +36,7 @@ const VMWizardStorageModal: React.FC<VMWizardStorageModalProps> = (props) => {
     useProjects,
     addUpdateStorage,
     storages,
+    templateValidations,
     ...restProps
   } = props;
   const {
@@ -90,6 +93,7 @@ const VMWizardStorageModal: React.FC<VMWizardStorageModalProps> = (props) => {
         onNamespaceChanged={(n) => setNamespace(n)}
         usedDiskNames={usedDiskNames}
         usedPVCNames={usedPVCNames}
+        templateValidations={templateValidations}
         disk={diskWrapper}
         volume={volumeWrapper}
         dataVolume={dataVolumeWrapper}
@@ -139,6 +143,7 @@ type VMWizardStorageModalProps = ModalComponentProps & {
   isCreateTemplate: boolean;
   storages: VMWizardStorageWithWrappers[];
   addUpdateStorage: (storage: VMWizardStorage) => void;
+  templateValidations: TemplateValidations;
 };
 
 const stateToProps = (state, { wizardReduxID }) => {
@@ -148,6 +153,7 @@ const stateToProps = (state, { wizardReduxID }) => {
     namespace: iGetCommonData(state, wizardReduxID, VMWizardProps.activeNamespace),
     isCreateTemplate: iGetCommonData(state, wizardReduxID, VMWizardProps.isCreateTemplate),
     storages: getStoragesWithWrappers(state, wizardReduxID),
+    templateValidations: getTemplateValidation(state, wizardReduxID),
   };
 };
 

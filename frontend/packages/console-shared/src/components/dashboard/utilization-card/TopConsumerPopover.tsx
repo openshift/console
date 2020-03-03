@@ -1,7 +1,7 @@
 import * as _ from 'lodash';
 import * as React from 'react';
 import { Link } from 'react-router-dom';
-import { connect, Dispatch } from 'react-redux';
+import { connect } from 'react-redux';
 import { DataPoint } from '@console/internal/components/graphs';
 import { Humanize, resourcePathFromModel } from '@console/internal/components/utils';
 import { Dropdown } from '@console/internal/components/utils/dropdown';
@@ -13,7 +13,6 @@ import {
 import { getInstantVectorStats } from '@console/internal/components/graphs/utils';
 import { featureReducerName } from '@console/internal/reducers/features';
 import { RootState } from '@console/internal/redux';
-import * as UIActions from '@console/internal/actions/ui';
 import { getActivePerspective } from '@console/internal/reducers/ui';
 import { getPrometheusQueryResponse } from '@console/internal/actions/dashboards';
 import { PopoverPosition } from '@patternfly/react-core';
@@ -69,7 +68,6 @@ const PopoverBodyInternal: React.FC<DashboardItemProps &
     resources,
     isOpen,
     canAccessMonitoring,
-    setActivePerspective,
     activePerspective,
   } = props;
   const [currentConsumer, setCurrentConsumer] = React.useState(consumers[0]);
@@ -145,13 +143,7 @@ const PopoverBodyInternal: React.FC<DashboardItemProps &
   const monitoringURL =
     canAccessMonitoring && activePerspective === 'admin'
       ? `/monitoring/query-browser?${monitoringParams.toString()}`
-      : `/metrics/ns/${namespace}?${monitoringParams.toString()}`;
-
-  const viewMoreAction = React.useCallback(() => {
-    if (!canAccessMonitoring && activePerspective !== 'dev') {
-      setActivePerspective('dev');
-    }
-  }, [canAccessMonitoring, setActivePerspective, activePerspective]);
+      : `/dev-monitoring/ns/${namespace}/metrics?${monitoringParams.toString()}`;
 
   let body: React.ReactNode;
   if (error || consumersLoadError) {
@@ -175,9 +167,7 @@ const PopoverBodyInternal: React.FC<DashboardItemProps &
         >
           <ConsumerItems items={top5Data} model={model} />
         </ul>
-        <Link to={monitoringURL} onClick={viewMoreAction}>
-          View more
-        </Link>
+        <Link to={monitoringURL}>View more</Link>
       </>
     );
   }
@@ -211,14 +201,7 @@ const mapStateToProps = (state: RootState) => ({
     !!state[featureReducerName].get(FLAGS.CAN_GET_NS) && !!window.SERVER_FLAGS.prometheusBaseURL,
 });
 
-const mapDispatchToProps = (dispatch: Dispatch) => ({
-  setActivePerspective: (id: string) => dispatch(UIActions.setActivePerspective(id)),
-});
-
-const PopoverBody = connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(withDashboardResources(PopoverBodyInternal));
+const PopoverBody = connect(mapStateToProps)(withDashboardResources(PopoverBodyInternal));
 
 const ConsumerItems: React.FC<ConsumerItemsProps> = React.memo(({ items, model }) => {
   return items ? (
@@ -251,7 +234,6 @@ type ConsumerItemsProps = {
 type PopoverReduxProps = {
   activePerspective: string;
   canAccessMonitoring: boolean;
-  setActivePerspective: (id: string) => void;
 };
 
 type PopoverBodyProps = {

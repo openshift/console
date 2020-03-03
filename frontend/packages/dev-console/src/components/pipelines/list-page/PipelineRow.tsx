@@ -10,6 +10,7 @@ import {
   rerunPipelineAndRedirect,
   startPipeline,
   handlePipelineRunSubmit,
+  editPipeline,
 } from '../../../utils/pipeline-actions';
 import LinkedPipelineRunTaskStatus from '../../pipelineruns/status/LinkedPipelineRunTaskStatus';
 import { tableColumnClasses } from './pipeline-table';
@@ -30,10 +31,17 @@ const PipelineRow: React.FC<PipelineRowProps> = ({ obj, index, key, style }) => 
     ...(obj.latestRun && obj.latestRun.metadata
       ? [() => rerunPipelineAndRedirect(PipelineRunModel, obj.latestRun)]
       : []),
+    editPipeline,
     Kebab.factory.Delete,
   ];
   return (
-    <TableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
+    <TableRow
+      id={obj.metadata.uid}
+      data-test-id={`${obj.metadata.namespace}-${obj.metadata.name}`}
+      index={index}
+      trKey={key}
+      style={style}
+    >
       <TableData className={tableColumnClasses[0]}>
         <ResourceLink
           kind={pipelineReference}

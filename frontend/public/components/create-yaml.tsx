@@ -16,7 +16,14 @@ import {
 import { ErrorPage404 } from './error';
 
 export const CreateYAML = connectToPlural((props: CreateYAMLProps) => {
-  const { match, kindsInFlight, kindObj, hideHeader = false, resourceObjPath } = props;
+  const {
+    match,
+    kindsInFlight,
+    kindObj,
+    hideHeader = false,
+    onChange = () => null,
+    resourceObjPath,
+  } = props;
   const { params } = match;
 
   if (!kindObj) {
@@ -55,6 +62,7 @@ export const CreateYAML = connectToPlural((props: CreateYAMLProps) => {
       header={header}
       hideHeader={hideHeader}
       resourceObjPath={resourceObjPath}
+      onChange={onChange}
     />
   );
 });
@@ -94,6 +102,7 @@ export type CreateYAMLProps = {
   header?: string;
   hideHeader?: boolean;
   resourceObjPath?: (obj: K8sResourceKind, kind: K8sResourceKindReference) => string;
+  onChange?: (yaml: string) => void;
 };
 
 export type EditYAMLPageProps = {

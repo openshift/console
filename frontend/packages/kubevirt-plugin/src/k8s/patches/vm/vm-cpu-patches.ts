@@ -1,6 +1,6 @@
 import { PatchBuilder, PatchOperation } from '@console/shared/src/k8s';
 import { Patch } from '@console/internal/module/k8s';
-import { VMLikeEntityKind } from '../../../types';
+import { VMLikeEntityKind } from '../../../types/vmLike';
 import { getVMLikePatches } from '../vm-template';
 import {
   getCPU,

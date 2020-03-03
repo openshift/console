@@ -44,7 +44,7 @@ export class MemoryIntervalValidationResult extends IntervalValidationResult {
         }`;
       }
       if (Number.isFinite(this.max)) {
-        return `Memory ${verb} be ${this.isMaxInclusive ? 'at most' : 'bellow'} ${
+        return `Memory ${verb} be ${this.isMaxInclusive ? 'at most' : 'below'} ${
           humanizeBinaryBytes(this.max).string
         }`;
       }

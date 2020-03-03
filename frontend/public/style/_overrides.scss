@@ -10,9 +10,15 @@ form.pf-c-form {
   margin-left: 3px;
 }
 
+// Removes PF white gradiant effect since it doesn't work in Firefox. Truncated text still has trailing ...
+// Upstream issue https://github.com/patternfly/patternfly-next/issues/2633
+.catalog-tile-pf-description .truncated::after {
+  background: none;
+}
+
 kbd {
   border-radius: 3px;
-  box-shadow: inset 0 0 0 1px rgba(0,0,0,0.25);
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.25);
 }
 
 .modal.right-side-modal-pf {
@@ -40,10 +46,6 @@ kbd {
 
 .modal-footer .alert {
   text-align: left;
-}
-
-.modal-title {
-  font-size: $font-size-base;
 }
 
 // fix bug where monaco-aria-container is visible in Firefox but shouldn't be
@@ -127,7 +129,7 @@ h6 {
   float: right;
   font-size: 21px !important;
   line-height: 1;
-  opacity: .35;
+  opacity: 0.35;
   padding: 0;
   &:hover,
   &:focus {
@@ -165,7 +167,7 @@ h6 {
   float: right;
   font-size: 21px !important;
   line-height: 1;
-  opacity: .35;
+  opacity: 0.35;
   padding: 0;
   &:hover,
   &:focus {
@@ -186,6 +188,9 @@ h6 {
   color: var(--pf-c-button--m-plain--Color);
 }
 
+.pf-c-chip-group.pf-m-toolbar {
+  margin-bottom: var(--pf-global--spacer--xs);
+}
 // PF components that calculate their correct height based on --pf-global--FontSize--md: 1rem
 .pf-c-modal-box,
 .pf-c-switch {
@@ -208,10 +213,11 @@ h6 {
   }
 
   &__header-tools {
-    @media(max-width: $grid-float-breakpoint-max) {
+    @media (max-width: $grid-float-breakpoint-max) {
       margin-right: 8px !important;
     }
-    .pf-c-dropdown__toggle, .pf-c-app-launcher__toggle {
+    .pf-c-dropdown__toggle,
+    .pf-c-app-launcher__toggle {
       font-size: $pf-header-icon-fontsize !important;
     }
   }
@@ -246,6 +252,17 @@ h6 {
   }
 }
 
+@-webkit-keyframes autofill-success {
+  to {
+    background: var(--pf-c-form-control--success--Background);
+  }
+}
+@-webkit-keyframes autofill-invalid {
+  to {
+    background: var(--pf-c-form-control--invalid--Background);
+  }
+}
+
 // specificity targeting form elements to override --pf-global--FontSize--md
 .pf-c-page,
 .modal-dialog {
@@ -260,6 +277,20 @@ h6 {
   }
   .pf-l-stack {
     font-size: $font-size-base;
+  }
+  .pf-c-form-control.pf-m-success, .pf-c-form-control[aria-invalid="true"] {
+    --pf-global--FontSize--md: #{$font-size-base};
+  }
+  .pf-c-form-control {
+    &:-webkit-autofill {
+      -webkit-animation-fill-mode: both;
+      &.pf-m-success {
+        -webkit-animation-name: autofill-success;
+      }
+      &[aria-invalid="true"] {
+        -webkit-animation-name: autofill-invalid;
+      }
+    }
   }
 }
 
@@ -277,7 +308,9 @@ h6 {
   }
 
   &.pf-m-expanded {
-    width: var(--pf-c-page__sidebar--md--Width) !important; // maintain desktop width so size doesn't animate before hiding when resizing to mobile
+    width: var(
+      --pf-c-page__sidebar--md--Width
+    ) !important; // maintain desktop width so size doesn't animate before hiding when resizing to mobile
   }
 
   // Perspective switcher
@@ -424,14 +457,13 @@ h6 {
   }
 }
 
-
 .xterm .xterm-screen canvas {
   // workaround bug where 1px white stripe appears atop terminal in Firefox for MacOS
   // see https://github.com/xtermjs/xterm.js/issues/1974
   border-right: 1px solid transparent;
 }
 
-button.pf-c-dropdown__menu-item.pf-m-disabled  {
+button.pf-c-dropdown__menu-item.pf-m-disabled {
   // enables tooltips for disabled menu items
   pointer-events: auto;
 }

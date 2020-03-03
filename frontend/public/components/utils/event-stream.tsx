@@ -11,6 +11,7 @@ import { CSSTransition } from 'react-transition-group';
 import classNames from 'classnames';
 
 import { EventKind } from '../../module/k8s';
+import { WithScrollContainer } from './dom-utils';
 
 // Keep track of seen events so we only animate new ones.
 const seen = new Set();
@@ -73,7 +74,6 @@ export const EventStreamList: React.FC<EventStreamListProps> = ({
   events,
   className,
   EventComponent,
-  scrollableElementId = 'content-scrollable',
 }) => {
   const [list, setList] = React.useState();
   const onResize = React.useCallback(() => measurementCache.clearAll(), []);
@@ -109,39 +109,38 @@ export const EventStreamList: React.FC<EventStreamListProps> = ({
     [events, className, EventComponent],
   );
 
-  return (
-    events.length > 0 && (
-      <WindowScroller scrollElement={document.getElementById(scrollableElementId)}>
-        {({ height, isScrolling, registerChild, onChildScroll, scrollTop }) => (
-          <AutoSizer disableHeight onResize={onResize}>
-            {({ width }) => (
-              <div ref={registerChild}>
-                <VirtualList
-                  autoHeight
-                  data={events}
-                  deferredMeasurementCache={measurementCache}
-                  height={height || 0}
-                  isScrolling={isScrolling}
-                  onScroll={onChildScroll}
-                  ref={setList}
-                  rowCount={events.length}
-                  rowHeight={measurementCache.rowHeight}
-                  rowRenderer={rowRenderer}
-                  scrollTop={scrollTop}
-                  tabIndex={null}
-                  width={width}
-                />
-              </div>
-            )}
-          </AutoSizer>
-        )}
-      </WindowScroller>
-    )
+  const renderVirtualizedTable = (scrollContainer) => (
+    <WindowScroller scrollElement={scrollContainer}>
+      {({ height, isScrolling, registerChild, onChildScroll, scrollTop }) => (
+        <AutoSizer disableHeight onResize={onResize}>
+          {({ width }) => (
+            <div ref={registerChild}>
+              <VirtualList
+                autoHeight
+                data={events}
+                deferredMeasurementCache={measurementCache}
+                height={height || 0}
+                isScrolling={isScrolling}
+                onScroll={onChildScroll}
+                ref={setList}
+                rowCount={events.length}
+                rowHeight={measurementCache.rowHeight}
+                rowRenderer={rowRenderer}
+                scrollTop={scrollTop}
+                tabIndex={null}
+                width={width}
+              />
+            </div>
+          )}
+        </AutoSizer>
+      )}
+    </WindowScroller>
   );
+
+  return events.length > 0 && <WithScrollContainer>{renderVirtualizedTable}</WithScrollContainer>;
 };
 
 type EventStreamListProps = {
-  scrollableElementId?: string;
   events: EventKind[];
   EventComponent: React.ComponentType<EventComponentProps>;
   className?: string;

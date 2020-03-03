@@ -5,7 +5,7 @@ import {
 import { K8sKind } from '@console/internal/module/k8s';
 import { BadgeType } from '@console/shared/src/components/badges/badge-factory';
 
-const apiVersion = `v1beta1`;
+const apiVersion = 'v1';
 
 export const ConfigurationModel: K8sKind = {
   apiGroup: 'serving.knative.dev',
@@ -23,7 +23,7 @@ export const ConfigurationModel: K8sKind = {
 };
 
 export const KnativeServingModel: K8sKind = {
-  apiGroup: 'serving.knative.dev',
+  apiGroup: 'operator.knative.dev',
   apiVersion: 'v1alpha1',
   kind: 'KnativeServing',
   label: 'Knative Serving',

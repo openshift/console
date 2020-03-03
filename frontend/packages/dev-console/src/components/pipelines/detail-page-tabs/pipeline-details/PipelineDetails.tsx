@@ -2,7 +2,7 @@ import * as React from 'react';
 import { SectionHeading, ResourceSummary, ResourceLink } from '@console/internal/components/utils';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { Pipeline, getResourceModelFromTask } from '../../../../utils/pipeline-augment';
-import { PipelineVisualization } from './PipelineVisualization';
+import PipelineVisualization from './PipelineVisualization';
 
 interface PipelineDetailsProps {
   obj: Pipeline;
@@ -10,7 +10,7 @@ interface PipelineDetailsProps {
 
 const PipelineDetails: React.FC<PipelineDetailsProps> = ({ obj: pipeline }) => (
   <div className="co-m-pane__body">
-    <SectionHeading text="Pipeline Overview" />
+    <SectionHeading text="Pipeline Details" />
     <PipelineVisualization pipeline={pipeline} />
     <div className="row">
       <div className="col-sm-6">

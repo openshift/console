@@ -4,6 +4,7 @@ import { Map as ImmutableMap } from 'immutable';
 import { Button, Switch, Tooltip, Checkbox } from '@patternfly/react-core';
 import { EyeIcon, EyeSlashIcon, PencilAltIcon } from '@patternfly/react-icons';
 import { LoadingInline, ResourceLink, Selector } from '@console/internal/components/utils';
+import { withFallback } from '@console/shared/src/components/error/error-boundary';
 import { k8sPatch } from '@console/internal/module/k8s';
 import { YellowExclamationTriangleIcon } from '@console/shared';
 import { SecretValue } from '@console/internal/components/configmap-and-secret-data';
@@ -66,16 +67,23 @@ const ResourceRequirements: React.SFC<SpecCapabilityProps> = ({ obj, descriptor 
   </dl>
 );
 
-const K8sResourceLink: React.SFC<SpecCapabilityProps> = (props) =>
-  _.isEmpty(props.value) ? (
-    <span className="text-muted">None</span>
-  ) : (
-    <ResourceLink
-      kind={props.capability.split(SpecCapability.k8sResourcePrefix)[1]}
-      name={props.value}
-      namespace={props.namespace}
-    />
-  );
+const K8sResourceLink: React.SFC<SpecCapabilityProps> = (props) => {
+  if (!props.value) {
+    return <span className="text-muted">None</span>;
+  }
+
+  const kind = props.capability.split(SpecCapability.k8sResourcePrefix)[1];
+  if (!_.isString(props.value)) {
+    return (
+      <>
+        <YellowExclamationTriangleIcon /> Invalid spec descriptor: value at path &apos;
+        {props.descriptor.path}&apos; must be a {kind} resource name.
+      </>
+    );
+  }
+
+  return <ResourceLink kind={kind} name={props.value} namespace={props.namespace} />;
+};
 
 const BasicSelector: React.SFC<SpecCapabilityProps> = ({ value, capability }) => (
   <Selector selector={value} kind={capability.split(SpecCapability.selector)[1]} />
@@ -236,7 +244,7 @@ const capabilityFor = (specCapability: SpecCapability) => {
  * Main entrypoint component for rendering custom UI for a given spec descriptor. This should be used instead of importing
  * individual components from this module.
  */
-export const SpecDescriptor: React.SFC<DescriptorProps> = (props) => {
+export const SpecDescriptor = withFallback((props: DescriptorProps) => {
   const { model, obj, descriptor, value, namespace } = props;
   const capability = _.get(descriptor, ['x-descriptors'], []).find(
     (c) =>
@@ -249,13 +257,11 @@ export const SpecDescriptor: React.SFC<DescriptorProps> = (props) => {
 
   return (
     <dl className="olm-descriptor">
-      <div style={{ width: 'max-content' }}>
-        <Tooltip content={descriptor.description}>
-          <dt className="olm-descriptor__title" data-test-descriptor-label={descriptor.displayName}>
-            {descriptor.displayName}
-          </dt>
-        </Tooltip>
-      </div>
+      <Tooltip content={descriptor.description}>
+        <dt className="olm-descriptor__title" data-test-descriptor-label={descriptor.displayName}>
+          {descriptor.displayName}
+        </dt>
+      </Tooltip>
       <dd className="olm-descriptor__value">
         <Capability
           descriptor={descriptor}
@@ -268,6 +274,6 @@ export const SpecDescriptor: React.SFC<DescriptorProps> = (props) => {
       </dd>
     </dl>
   );
-};
+});
 
 type SpecCapabilityProps = CapabilityProps<SpecCapability>;

@@ -38,9 +38,9 @@ import { NetworkWrapper } from '../../k8s/wrapper/vm/network-wrapper';
 import { NetworkInterfaceWrapper } from '../../k8s/wrapper/vm/network-interface-wrapper';
 import { VolumeWrapper } from '../../k8s/wrapper/vm/volume-wrapper';
 import { DiskWrapper } from '../../k8s/wrapper/vm/disk-wrapper';
-import { DataVolumeWrapper } from '../../k8s/wrapper/vm/data-volume-wrapper';
+import { MutableDataVolumeWrapper } from '../../k8s/wrapper/vm/data-volume-wrapper';
 import {
-  getDefaultSCAccessMode,
+  getDefaultSCAccessModes,
   getDefaultSCVolumeMode,
 } from '../../selectors/config-map/sc-defaults';
 import { getStorageClassConfigMap } from '../../k8s/requests/config-map/storage-class';
@@ -68,8 +68,14 @@ import {
 import { CREATE_VM, CREATE_VM_TEMPLATE, TabTitleResolver, IMPORT_VM } from './strings/strings';
 import { vmWizardActions } from './redux/actions';
 import { ActionType } from './redux/types';
+import { getResultInitialState } from './redux/initial-state/result-tab-initial-state';
 import { iGetCommonData, iGetCreateVMWizardTabs } from './selectors/immutable/selectors';
-import { isStepLocked, isStepPending, isStepValid } from './selectors/immutable/wizard-selectors';
+import {
+  isLastStepErrorFatal,
+  isStepLocked,
+  isStepPending,
+  isStepValid,
+} from './selectors/immutable/wizard-selectors';
 import { ResourceLoadErrors } from './resource-load-errors';
 import { CreateVMWizardFooter } from './create-vm-wizard-footer';
 import { VMSettingsTab } from './tabs/vm-settings-tab/vm-settings-tab';
@@ -146,7 +152,7 @@ const kubevirtInterOP = async ({
     ({ type, disk, volume, dataVolume, persistentVolumeClaim, importData }) => {
       const diskWrapper = DiskWrapper.initialize(disk);
       const volumeWrapper = VolumeWrapper.initialize(volume);
-      const dataVolumeWrapper = dataVolume && DataVolumeWrapper.initialize(dataVolume);
+      const dataVolumeWrapper = dataVolume && new MutableDataVolumeWrapper(dataVolume, true);
       const persistentVolumeClaimWrapper =
         persistentVolumeClaim && PersistentVolumeClaimWrapper.initialize(persistentVolumeClaim);
 
@@ -178,27 +184,15 @@ const kubevirtInterOP = async ({
         };
       }
 
-      const finalDataVolumeWrapper = dataVolumeWrapper
-        ? DataVolumeWrapper.mergeWrappers(
-            dataVolumeWrapper,
-            DataVolumeWrapper.initializeFromSimpleData({
-              accessModes: dataVolumeWrapper.getAccessModes() || [
-                getDefaultSCAccessMode(
-                  storageClassConfigMap,
-                  dataVolumeWrapper.getStorageClassName(),
-                ),
-              ],
-              volumeMode:
-                dataVolumeWrapper.getVolumeMode() ||
-                getDefaultSCVolumeMode(
-                  storageClassConfigMap,
-                  dataVolumeWrapper.getStorageClassName(),
-                ),
-            }),
+      let finalDataVolume;
+      if (dataVolumeWrapper) {
+        finalDataVolume = dataVolumeWrapper
+          .assertDefaultModes(
+            getDefaultSCVolumeMode(storageClassConfigMap, dataVolumeWrapper.getStorageClassName()),
+            getDefaultSCAccessModes(storageClassConfigMap, dataVolumeWrapper.getStorageClassName()),
           )
-        : undefined;
-
-      const finalDataVolume = finalDataVolumeWrapper && finalDataVolumeWrapper.asResource();
+          .asResource();
+      }
 
       return {
         name: diskWrapper.getName(),
@@ -332,11 +326,14 @@ export class CreateVMWizardComponent extends React.Component<CreateVMWizardCompo
     promise
       .then(() => getResults(enhancedK8sMethods))
       .catch((error) => cleanupAndGetResults(enhancedK8sMethods, error))
-      .then(({ requestResults, errors, mainError, isValid }: ResultsWrapper) =>
-        this.props.onResultsChanged({ mainError, requestResults, errors }, isValid, true, false),
+      .then(({ isValid, ...rest }: ResultsWrapper) =>
+        this.props.onResultsChanged(rest, isValid, false, false),
       )
       .catch((e) => console.error(e)); // eslint-disable-line no-console
   };
+
+  goBackToEditingSteps = () =>
+    this.props.onResultsChanged(getResultInitialState({}).value, null, false, false);
 
   render() {
     const { reduxID, stepData } = this.props;
@@ -434,9 +431,17 @@ export class CreateVMWizardComponent extends React.Component<CreateVMWizardCompo
         const calculatedStep = {
           ...step,
           name: TabTitleResolver[step.id] || step.name,
-          canJumpTo: isStepLocked(stepData, VMWizardTab.RESULT) // request finished
-            ? step.id === VMWizardTab.RESULT
-            : !isLocked && isPrevStepValid && canJumpToPrevStep && step.id !== VMWizardTab.RESULT,
+          canJumpTo:
+            isStepLocked(stepData, VMWizardTab.RESULT) || isLastStepErrorFatal(stepData) // request in progress or failed
+              ? step.id === VMWizardTab.RESULT
+              : !isLocked &&
+                isPrevStepValid &&
+                canJumpToPrevStep &&
+                // disable uninitialized RESULT step
+                !(
+                  step.id === VMWizardTab.RESULT &&
+                  iGetIn(stepData, [VMWizardTab.RESULT, 'isValid']) == null
+                ),
           component: step.component,
         };
 
@@ -459,9 +464,22 @@ export class CreateVMWizardComponent extends React.Component<CreateVMWizardCompo
           isInPage
           className="kubevirt-create-vm-modal__wizard-content"
           onClose={this.onClose}
-          onNext={({ id }) => {
-            if (id === VMWizardTab.RESULT) {
+          onNext={({ id }, { prevId }) => {
+            if (id === VMWizardTab.RESULT && prevId !== VMWizardTab.RESULT) {
               this.finish();
+            }
+            if (prevId === VMWizardTab.RESULT && id !== VMWizardTab.RESULT) {
+              this.goBackToEditingSteps();
+            }
+          }}
+          onBack={({ id }, { prevId }) => {
+            if (prevId === VMWizardTab.RESULT && id !== VMWizardTab.RESULT) {
+              this.goBackToEditingSteps();
+            }
+          }}
+          onGoToStep={({ id }, { prevId }) => {
+            if (prevId === VMWizardTab.RESULT && id !== VMWizardTab.RESULT) {
+              this.goBackToEditingSteps();
             }
           }}
           steps={calculateSteps(steps)}

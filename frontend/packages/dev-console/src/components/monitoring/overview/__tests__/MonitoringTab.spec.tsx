@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
 import MonitoringTab from '../MonitoringTab';
-import MonitoringMetricsSection from '../MonitoringMetricsSection';
+import MonitoringOverview from '../MonitoringOverview';
 
 describe('Monitoring Tab', () => {
   const monTabProps: React.ComponentProps<typeof MonitoringTab> = {
@@ -31,6 +31,6 @@ describe('Monitoring Tab', () => {
 
   it('should render Monitoring tab with Metrics section for selected workload', () => {
     const component = shallow(<MonitoringTab {...monTabProps} />);
-    expect(component.find(MonitoringMetricsSection).exists()).toBe(true);
+    expect(component.find(MonitoringOverview).exists()).toBe(true);
   });
 });

@@ -17,13 +17,12 @@ export const DetailsCard: React.FC = () => {
   const keys = _.keys(obj.metadata.labels).sort();
   const labelsSubset = _.take(keys, 3);
   const firstThreelabels = _.pick(obj.metadata.labels, labelsSubset);
+  const detailsLink = `${resourcePathFromModel(ProjectModel, obj.metadata.name)}/details`;
   return (
-    <DashboardCard>
+    <DashboardCard data-test-id="details-card">
       <DashboardCardHeader>
         <DashboardCardTitle>Details</DashboardCardTitle>
-        <DashboardCardLink to={`${resourcePathFromModel(ProjectModel, getName(obj))}/overview`}>
-          View all
-        </DashboardCardLink>
+        <DashboardCardLink to={detailsLink}>View all</DashboardCardLink>
       </DashboardCardHeader>
       <DashboardCardBody>
         <DetailsBody>
@@ -36,13 +35,7 @@ export const DetailsCard: React.FC = () => {
           <DetailItem isLoading={!obj} title="Labels">
             <div className="co-project-dashboard__details-labels">
               <LabelList kind={ProjectModel.kind} labels={firstThreelabels} />
-              {keys.length > 3 && (
-                <DashboardCardLink
-                  to={`${resourcePathFromModel(ProjectModel, getName(obj))}/overview`}
-                >
-                  View all
-                </DashboardCardLink>
-              )}
+              {keys.length > 3 && <DashboardCardLink to={detailsLink}>View all</DashboardCardLink>}
             </div>
           </DetailItem>
         </DetailsBody>

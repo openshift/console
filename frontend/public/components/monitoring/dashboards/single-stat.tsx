@@ -4,23 +4,29 @@ import { Bullseye } from '@patternfly/react-core';
 
 import ErrorAlert from '@console/shared/src/components/alerts/error';
 
+import { formatNumber } from './format';
+import { Panel } from './types';
 import { PrometheusResponse } from '../../graphs';
 import { getPrometheusURL, PrometheusEndpoint } from '../../graphs/helpers';
 import { LoadingInline, usePoll, useSafeFetch } from '../../utils';
 
 const Body: React.FC<{ children: React.ReactNode }> = ({ children }) => (
-  <Bullseye className="monitoring-dashboards__single-stat">{children}</Bullseye>
+  <Bullseye className="monitoring-dashboards__single-stat query-browser__wrapper">
+    {children}
+  </Bullseye>
 );
 
-const SingleStat: React.FC<Props> = ({
-  decimals = 2,
-  format = 'none',
-  pollInterval,
-  postfix = '',
-  prefix = '',
-  query,
-  units = '',
-}) => {
+const SingleStat: React.FC<Props> = ({ panel, pollInterval, query }) => {
+  const {
+    decimals,
+    format,
+    postfix,
+    postfixFontSize,
+    prefix,
+    prefixFontSize,
+    valueFontSize,
+  } = panel;
+
   const [error, setError] = React.useState<string>();
   const [isLoading, setIsLoading] = React.useState(true);
   const [value, setValue] = React.useState<string>();
@@ -36,7 +42,7 @@ const SingleStat: React.FC<Props> = ({
       })
       .catch((err) => {
         if (err.name !== 'AbortError') {
-          setError(err);
+          setError(_.get(err, 'json.error', err.message));
           setIsLoading(false);
           setValue(undefined);
         }
@@ -50,37 +56,20 @@ const SingleStat: React.FC<Props> = ({
   if (error) {
     return <ErrorAlert message={error} />;
   }
-  if (value === undefined) {
-    return (
-      <Body>
-        <span className="text-muted">-</span>
-      </Body>
-    );
-  }
-
-  const numberValue = Number(value);
-  if (isNaN(numberValue)) {
-    return <ErrorAlert message={`Could not parse value "${value}" as a number`} />;
-  }
 
   return (
     <Body>
-      {prefix}
-      {(format === 'percentunit' ? 100 * numberValue : numberValue).toFixed(decimals)}
-      {format === 'percentunit' ? '%' : units}
-      {postfix}
+      {prefix && <span style={{ fontSize: prefixFontSize }}>{prefix}</span>}
+      <span style={{ fontSize: valueFontSize }}>{formatNumber(value, decimals, format)}</span>
+      {postfix && <span style={{ fontSize: postfixFontSize }}>{postfix}</span>}
     </Body>
   );
 };
 
 type Props = {
-  decimals?: number;
-  format?: string;
+  panel: Panel;
   pollInterval: number;
-  postfix?: string;
-  prefix?: string;
   query: string;
-  units?: string;
 };
 
 export default SingleStat;

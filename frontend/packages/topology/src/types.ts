@@ -23,7 +23,7 @@ export enum AnchorEnd {
   both,
 }
 
-export type GroupStyle = {
+export type NodeStyle = {
   padding?: Padding;
 };
 
@@ -55,6 +55,7 @@ export interface NodeModel extends ElementModel {
   height?: number;
   group?: boolean;
   shape?: NodeShape;
+  collapsed?: boolean;
 }
 
 export interface EdgeModel extends ElementModel {
@@ -116,6 +117,8 @@ export interface Node<E extends NodeModel = NodeModel, D = any> extends GraphEle
   getBounds(): Rect;
   setBounds(bounds: Rect): void;
   isGroup(): boolean;
+  isCollapsed(): boolean;
+  setCollapsed(collapsed: boolean): void;
   getNodeShape(): NodeShape;
   setNodeShape(shape: NodeShape): void;
   getSourceEdges(): Edge[];
@@ -127,6 +130,8 @@ export interface Edge<E extends EdgeModel = EdgeModel, D = any> extends GraphEle
   setSource(source: Node): void;
   getTarget(): Node;
   setTarget(target: Node): void;
+  getSourceAnchorNode(): Node;
+  getTargetAnchorNode(): Node;
   getStartPoint(): Point;
   setStartPoint(x?: number, y?: number): void;
   getEndPoint(): Point;
@@ -208,5 +213,11 @@ export interface Controller extends WithState {
 type ElementEvent = { target: GraphElement };
 export type ElementChildEventListener = EventListener<[ElementEvent & { child: GraphElement }]>;
 
+export type NodeCollapseChangeEventListener = EventListener<[{ node: Node }]>;
+
+export type GraphLayoutEndEventListener = EventListener<[{ graph: Graph }]>;
+
 export const ADD_CHILD_EVENT = 'element-add-child';
 export const REMOVE_CHILD_EVENT = 'element-remove-child';
+export const NODE_COLLAPSE_CHANGE_EVENT = 'node-collapse-change';
+export const GRAPH_LAYOUT_END_EVENT = 'graph-layout-end';

@@ -2,6 +2,19 @@ import { ObjectWithTypePropertyWrapper } from '../common/object-with-type-proper
 import { V1Disk } from '../../../types/vm/disk/V1Disk';
 import { DiskType, DiskBus } from '../../../constants/vm/storage';
 
+type CombinedTypeData = {
+  bus?: DiskBus;
+};
+
+const sanitizeTypeData = (type: DiskType, typeData: CombinedTypeData) => {
+  if (!type || !typeData || type === DiskType.FLOPPY) {
+    return null;
+  }
+  const { bus } = typeData;
+
+  return { bus: bus?.getValue() };
+};
+
 export class DiskWrapper extends ObjectWithTypePropertyWrapper<V1Disk, DiskType> {
   static readonly EMPTY = new DiskWrapper();
 
@@ -53,4 +66,17 @@ export class DiskWrapper extends ObjectWithTypePropertyWrapper<V1Disk, DiskType>
   isFirstBootableDevice = () => this.getBootOrder() === 1;
 
   hasBootOrder = () => this.getBootOrder() != null;
+}
+
+export class MutableDiskWrapper extends DiskWrapper {
+  public constructor(disk?: V1Disk, copy = false) {
+    super(disk, { copy });
+  }
+
+  appendTypeData = (typeData: CombinedTypeData, sanitize = true) => {
+    this.addTypeData(sanitize ? sanitizeTypeData(this.getType(), typeData) : typeData);
+    return this;
+  };
+
+  asMutableResource = () => this.data;
 }

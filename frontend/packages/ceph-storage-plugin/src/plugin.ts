@@ -1,26 +1,40 @@
 import * as _ from 'lodash';
-import {
-  DashboardsCard,
-  DashboardsTab,
-  DashboardsOverviewHealthPrometheusSubsystem,
-  ModelFeatureFlag,
-  ModelDefinition,
-  Plugin,
-  RoutePage,
-  ClusterServiceVersionAction,
-  DashboardsOverviewUtilizationItem,
-} from '@console/plugin-sdk';
-import { GridPosition } from '@console/shared/src/components/dashboard/DashboardGrid';
-import { OverviewQuery } from '@console/internal/components/dashboard/dashboards-page/cluster-dashboard/queries';
-import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager/src/models';
-import { referenceForModel } from '@console/internal/module/k8s';
 import * as models from './models';
 import {
   CAPACITY_USAGE_QUERIES,
-  StorageDashboardQuery,
   STORAGE_HEALTH_QUERIES,
+  StorageDashboardQuery,
 } from './constants/queries';
+import {
+  ClusterServiceVersionAction,
+  DashboardsCard,
+  DashboardsOverviewHealthPrometheusSubsystem,
+  DashboardsOverviewUtilizationItem,
+  DashboardsTab,
+  FeatureFlag,
+  KebabActions,
+  ModelDefinition,
+  ModelFeatureFlag,
+  Plugin,
+  ResourceTabPage,
+  RoutePage,
+  ResourceDetailsPage,
+  ActionFeatureFlag,
+  DashboardsOverviewResourceActivity,
+} from '@console/plugin-sdk';
+import {
+  OCS_INDEPENDENT_FLAG,
+  detectIndependentMode,
+  detectOCSVersion44,
+  OCS_VERSION_4_4_FLAG,
+} from './features';
+import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager/src/models';
+import { GridPosition } from '@console/shared/src/components/dashboard/DashboardGrid';
+import { OverviewQuery } from '@console/internal/components/dashboard/dashboards-page/cluster-dashboard/queries';
+import { referenceForModel, referenceFor } from '@console/internal/module/k8s';
+import { PersistentVolumeClaimModel } from '@console/internal/models';
 import { getCephHealthState } from './components/dashboard-page/storage-dashboard/status-card/utils';
+import { isClusterExpandActivity } from './components/dashboard-page/storage-dashboard/activity-card/cluster-expand-activity';
 
 type ConsumedExtensions =
   | ModelFeatureFlag
@@ -30,9 +44,18 @@ type ConsumedExtensions =
   | DashboardsOverviewHealthPrometheusSubsystem
   | DashboardsOverviewUtilizationItem
   | RoutePage
-  | ClusterServiceVersionAction;
+  | ActionFeatureFlag
+  | ClusterServiceVersionAction
+  | KebabActions
+  | ResourceDetailsPage
+  | ResourceTabPage
+  | ClusterServiceVersionAction
+  | KebabActions
+  | FeatureFlag
+  | DashboardsOverviewResourceActivity;
 
 const CEPH_FLAG = 'CEPH';
+
 const apiObjectRef = referenceForModel(models.OCSServiceModel);
 
 const plugin: Plugin<ConsumedExtensions> = [
@@ -50,11 +73,34 @@ const plugin: Plugin<ConsumedExtensions> = [
     },
   },
   {
+    type: 'FeatureFlag/Action',
+    properties: {
+      flag: OCS_VERSION_4_4_FLAG,
+      detect: detectOCSVersion44,
+    },
+  },
+  {
+    type: 'Page/Resource/Tab',
+    properties: {
+      href: 'volumesnapshots',
+      model: PersistentVolumeClaimModel,
+      name: 'Volume Snapshots',
+      loader: () =>
+        import('./components/volume-snapshot/volume-snapshot').then(
+          (m) => m.VolumeSnapshotPage,
+        ) /* webpackChunkName: "ceph-storage-volume-snapshot" */,
+    },
+    flags: {
+      required: [OCS_VERSION_4_4_FLAG, CEPH_FLAG],
+    },
+  },
+  {
     type: 'Dashboards/Tab',
     properties: {
       id: 'persistent-storage',
       title: 'Persistent Storage',
       required: CEPH_FLAG,
+      disallowed: OCS_INDEPENDENT_FLAG,
     },
   },
   {
@@ -178,6 +224,142 @@ const plugin: Plugin<ConsumedExtensions> = [
             throw e;
           });
       },
+    },
+  },
+  // Download External Cluster Metadata
+  {
+    type: 'ClusterServiceVersion/Action',
+    properties: {
+      kind: 'StorageCluster',
+      label: 'Download Cluster Metadata',
+      apiGroup: models.OCSServiceModel.apiGroup,
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      callback: (_kind, _obj) => () =>
+        import(
+          './components/converged-credentials/credentials' /* webpackChunkName: "ceph-storage-export-credentials" */
+        ).then((m) => m.default({})),
+    },
+  },
+  // Independent mode dashboard
+  {
+    type: 'FeatureFlag/Action',
+    properties: {
+      flag: OCS_INDEPENDENT_FLAG,
+      detect: detectIndependentMode,
+    },
+  },
+  {
+    type: 'Dashboards/Tab',
+    properties: {
+      id: 'independent-dashboard',
+      title: 'Persistent Storage',
+      required: OCS_INDEPENDENT_FLAG,
+    },
+  },
+  // Left Cards
+  {
+    type: 'Dashboards/Card',
+    properties: {
+      tab: 'independent-dashboard',
+      position: GridPosition.LEFT,
+      loader: () =>
+        import(
+          './components/independent-dashboard-page/details-card/card' /* webpackChunkName: "indepedent-details-card" */
+        ).then((m) => m.default),
+      required: OCS_INDEPENDENT_FLAG,
+    },
+  },
+  {
+    type: 'Dashboards/Card',
+    properties: {
+      tab: 'independent-dashboard',
+      position: GridPosition.LEFT,
+      loader: () =>
+        import(
+          './components/dashboard-page/storage-dashboard/inventory-card' /* webpackChunkName: "ceph-storage-inventory-card" */
+        ).then((m) => m.default),
+      required: OCS_INDEPENDENT_FLAG,
+    },
+  },
+  // Center
+  {
+    type: 'Dashboards/Card',
+    properties: {
+      tab: 'independent-dashboard',
+      position: GridPosition.MAIN,
+      loader: () =>
+        import(
+          './components/independent-dashboard-page/status-card/card' /* webpackChunkName: "indepedent-status-card" */
+        ).then((m) => m.default),
+      required: OCS_INDEPENDENT_FLAG,
+    },
+  },
+  {
+    type: 'Dashboards/Card',
+    properties: {
+      tab: 'independent-dashboard',
+      position: GridPosition.MAIN,
+      loader: () =>
+        import(
+          './components/dashboard-page/storage-dashboard/capacity-breakdown/capacity-breakdown-card' /* webpackChunkName: "ceph-storage-usage-breakdown-card" */
+        ).then((m) => m.default),
+      required: OCS_INDEPENDENT_FLAG,
+    },
+  },
+  {
+    type: 'Dashboards/Card',
+    properties: {
+      tab: 'independent-dashboard',
+      position: GridPosition.MAIN,
+      loader: () =>
+        import(
+          './components/independent-dashboard-page/utilization-card/card' /* webpackChunkName: "utilization-card" */
+        ).then((m) => m.default),
+      required: OCS_INDEPENDENT_FLAG,
+    },
+  },
+  // Right
+  {
+    type: 'Dashboards/Card',
+    properties: {
+      tab: 'independent-dashboard',
+      position: GridPosition.RIGHT,
+      loader: () =>
+        import(
+          './components/dashboard-page/storage-dashboard/activity-card/activity-card' /* webpackChunkName: "ceph-storage-activity-card" */
+        ).then((m) => m.ActivityCard),
+      required: OCS_INDEPENDENT_FLAG,
+    },
+  },
+  {
+    type: 'Page/Resource/Details',
+    properties: {
+      model: models.VolumeSnapshotModel,
+      loader: async () =>
+        import(
+          './components/volume-snapshot/volume-snapshot' /* webpackChunkName: "ceph-storage-volume-snapshot-details" */
+        ).then((m) => m.VolumeSnapshotDetails),
+      modelParser: referenceFor,
+    },
+    flags: {
+      required: [OCS_VERSION_4_4_FLAG, CEPH_FLAG],
+    },
+  },
+  {
+    type: 'Dashboards/Overview/Activity/Resource',
+    properties: {
+      k8sResource: {
+        isList: true,
+        kind: referenceForModel(models.OCSServiceModel),
+        namespaced: false,
+        prop: 'storage-cluster',
+      },
+      isActivity: isClusterExpandActivity,
+      loader: () =>
+        import(
+          './components/dashboard-page/storage-dashboard/activity-card/cluster-expand-activity' /* webpackChunkName: "ceph-storage-plugin" */
+        ).then((m) => m.ClusterExpandActivity),
+      required: CEPH_FLAG,
     },
   },
 ];

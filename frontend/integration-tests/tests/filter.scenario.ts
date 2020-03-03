@@ -1,4 +1,4 @@
-import { browser, ExpectedConditions as until, Key } from 'protractor';
+import { browser, ExpectedConditions as until } from 'protractor';
 import { safeLoad, safeDump } from 'js-yaml';
 import * as _ from 'lodash';
 
@@ -91,10 +91,9 @@ describe('Filtering', () => {
   });
 
   xit('CONSOLE-1503 - searches for object by label', async () => {
-    await browser.get(`${appHost}/search/ns/${testName}`);
+    await browser.get(`${appHost}/search/ns/${testName}&q=${WORKLOAD_LABEL}`);
     await browser.wait(until.elementToBeClickable(searchView.dropdown), BROWSER_TIMEOUT);
     await searchView.selectSearchType('Deployment');
-    await searchView.labelFilter.sendKeys(WORKLOAD_LABEL, Key.ENTER);
     await browser.wait(
       until.elementToBeClickable(crudView.resourceRowNamesAndNs.first()),
       BROWSER_TIMEOUT,
@@ -103,10 +102,10 @@ describe('Filtering', () => {
   });
 
   it('searches for pod by label and filtering by name', async () => {
-    await browser.get(`${appHost}/search/all-namespaces?kind=Pod`);
+    await browser.get(
+      `${appHost}/search/all-namespaces?kind=Pod&name=${WORKLOAD_NAME}&q=app%3Dhello-openshift`,
+    );
     await crudView.isLoaded();
-    await crudView.nameFilter.sendKeys(WORKLOAD_NAME);
-    await searchView.labelFilter.sendKeys('app=hello-openshift', Key.ENTER);
     await browser.wait(
       until.elementToBeClickable(crudView.resourceRowNamesAndNs.first()),
       BROWSER_TIMEOUT,
@@ -115,10 +114,10 @@ describe('Filtering', () => {
   });
 
   it('searches for object by label using by other kind of workload', async () => {
-    await browser.get(`${appHost}/search/all-namespaces?kind=ReplicationController`);
+    await browser.get(
+      `${appHost}/search/all-namespaces?kind=ReplicationController&name=${WORKLOAD_NAME}&q=${WORKLOAD_LABEL}`,
+    );
     await crudView.isLoaded();
-    await searchView.labelFilter.sendKeys(WORKLOAD_LABEL, Key.ENTER);
-    await crudView.nameFilter.sendKeys(WORKLOAD_NAME);
     await browser.wait(until.elementToBeClickable(crudView.messageLbl), BROWSER_TIMEOUT);
     expect(crudView.messageLbl.isPresent()).toBe(true);
   });

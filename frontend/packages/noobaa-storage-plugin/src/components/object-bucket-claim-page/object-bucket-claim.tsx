@@ -134,7 +134,7 @@ const Details: React.FC<DetailsProps> = ({ obj }) => {
   return (
     <>
       <div className="co-m-pane__body">
-        <SectionHeading text="Object Bucket Claim Overview" />
+        <SectionHeading text="Object Bucket Claim Details" />
         <div className="row">
           <div className="col-sm-6">
             <ResourceSummary resource={obj} />

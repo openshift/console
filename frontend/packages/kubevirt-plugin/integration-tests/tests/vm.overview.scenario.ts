@@ -1,11 +1,10 @@
 import * as _ from 'lodash';
 import { testName } from '@console/internal-integration-tests/protractor.conf';
-import { isLoaded, resourceTitle } from '@console/internal-integration-tests/views/crud.view';
-import { DASH } from '@console/shared';
+import { resourceTitle } from '@console/internal-integration-tests/views/crud.view';
 import { asyncForEach, createResource, deleteResource } from '@console/shared/src/test-utils/utils';
 import * as vmView from '../views/virtualMachine.view';
 import { getVMManifest, basicVMConfig } from './utils/mocks';
-import { exposeServices } from './utils/utils';
+import { exposeServices, pauseVM } from './utils/utils';
 import { VirtualMachine } from './models/virtualMachine';
 import {
   TAB,
@@ -13,6 +12,7 @@ import {
   VM_ACTION,
   VM_STATUS,
   COMMON_TEMPLATES_VERSION,
+  NOT_AVAILABLE,
 } from './utils/consts';
 import { NodePortService } from './utils/types';
 
@@ -52,8 +52,7 @@ describe('Test VM overview', () => {
   });
 
   beforeEach(async () => {
-    await vm.navigateToTab(TAB.Overview);
-    await isLoaded();
+    await vm.navigateToTab(TAB.Details);
   });
 
   it('Check VM details in overview when VM is off', async () => {
@@ -64,11 +63,11 @@ describe('Test VM overview', () => {
       os: basicVMConfig.operatingSystem,
       profile: basicVMConfig.workloadProfile,
       template: `rhel7-desktop-tiny-${COMMON_TEMPLATES_VERSION}`,
-      bootOrder: ['rootdisk', 'nic0', 'cloudinitdisk'],
-      flavor: basicVMConfig.flavor,
-      ip: DASH,
-      pod: DASH,
-      node: DASH,
+      bootOrder: ['rootdisk (Disk)', 'nic0 (NIC)', 'cloudinitdisk (Disk)'],
+      flavor: 'Tiny: 1 vCPU, 1 GiB Memory',
+      ip: NOT_AVAILABLE,
+      pod: NOT_AVAILABLE,
+      node: NOT_AVAILABLE,
     };
 
     const found = {
@@ -79,7 +78,7 @@ describe('Test VM overview', () => {
       profile: await vmView.vmDetailWorkloadProfile(testName, vmName).getText(),
       template: await vmView.vmDetailTemplate(testName, vmName).getText(),
       bootOrder: await vmView.vmDetailBootOrder(testName, vmName).getText(),
-      flavor: await vmView.vmDetailFlavor(testName, vmName).getText(),
+      flavorConfig: await vmView.vmDetailFlavor(testName, vmName).getText(),
       ip: await vmView.vmDetailIP(testName, vmName).getText(),
       pod: await vmView.vmDetailPod(testName, vmName).getText(),
       node: await vmView.vmDetailNode(testName, vmName).getText(),
@@ -98,7 +97,7 @@ describe('Test VM overview', () => {
     async () => {
       await vm.action(VM_ACTION.Start);
       // Empty fields turn into non-empty
-      expect(await vmView.vmDetailIP(testName, vmName).getText()).not.toEqual(DASH);
+      expect(await vmView.vmDetailIP(testName, vmName).getText()).not.toEqual(NOT_AVAILABLE);
       expect(
         await vmView
           .vmDetailPod(testName, vmName)
@@ -110,18 +109,25 @@ describe('Test VM overview', () => {
           .vmDetailNode(testName, vmName)
           .$('a')
           .getText(),
-      ).not.toEqual(DASH);
+      ).not.toEqual(NOT_AVAILABLE);
     },
     VM_BOOTUP_TIMEOUT_SECS,
   );
 
   it('Check vm services', async () => {
-    await vm.navigateToTab(TAB.Overview);
     await asyncForEach(nodePortServices, async (srv) => {
       expect(await vmView.vmDetailService(srv.exposeName).getText()).toEqual(srv.exposeName);
       expect(await vmView.vmDetailService(srv.exposeName).getAttribute('href')).toContain(
         `/k8s/ns/${testName}/services/${srv.exposeName}`,
       );
     });
+  });
+
+  it('Check unpause VM when VM is running', async () => {
+    await vm.action(VM_ACTION.Start);
+    pauseVM(vmName, testName);
+    expect(await vm.getStatus()).toEqual(VM_STATUS.Paused);
+    await vm.modalEditStatus();
+    expect(await vm.getStatus()).toEqual(VM_STATUS.Running);
   });
 });

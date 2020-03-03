@@ -160,8 +160,8 @@ const VirtualMachineTemplates: React.FC<React.ComponentProps<typeof Table> &
 };
 const getCreateProps = ({ namespace }: { namespace: string }) => {
   const items: any = {
-    wizard: 'Create with Wizard',
-    yaml: 'Create from YAML',
+    wizard: 'New with Wizard',
+    yaml: 'New from YAML',
   };
 
   return {
@@ -204,7 +204,7 @@ const VirtualMachineTemplatesPage: React.FC<VirtualMachineTemplatesPageProps &
     <MultiListPage
       {...props}
       createAccessReview={createAccessReview}
-      createButtonText="Create Template"
+      createButtonText="Create Virtual Machine Template"
       canCreate
       title={VM_TEMPLATE_LABEL_PLURAL}
       ListComponent={VirtualMachineTemplates}

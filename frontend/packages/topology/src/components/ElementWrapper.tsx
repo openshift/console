@@ -2,27 +2,19 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import ElementContext from '../utils/ElementContext';
 import { GraphElement, isGraph, isEdge, isNode } from '../types';
+import { ATTR_DATA_ID, ATTR_DATA_KIND, ATTR_DATA_TYPE } from '../const';
 
 type ElementWrapperProps = {
   element: GraphElement;
 };
 
-// in a separate component so that changes to interaction handlers do not re-render children
+// in a separate component so that changes to behaviors do not re-render children
 const ElementComponent: React.FC<ElementWrapperProps> = observer(({ element }) => {
   const Component = React.useMemo(
     () => element.getController().getComponent(element.getKind(), element.getType()),
     [element],
   );
-  if (!element.isVisible()) {
-    return null;
-  }
-  if (isEdge(element)) {
-    const source = element.getSource();
-    const target = element.getTarget();
-    if ((source && !source.isVisible()) || (target && !target.isVisible())) {
-      return null;
-    }
-  }
+
   return (
     <ElementContext.Provider value={element}>
       <Component {...element.getState()} element={element} />
@@ -50,29 +42,40 @@ const ElementChildren: React.FC<ElementWrapperProps> = observer(({ element }) =>
 });
 
 const ElementWrapper: React.FC<ElementWrapperProps> = observer(({ element }) => {
-  const commonProps = {
-    [`data-id`]: element.getId(),
-    [`data-kind`]: element.getKind(),
-    [`data-type`]: element.getType(),
+  if (!element.isVisible()) {
+    return null;
+  }
+
+  if (isEdge(element)) {
+    const source = element.getSourceAnchorNode();
+    const target = element.getTargetAnchorNode();
+    if ((source && !source.isVisible()) || (target && !target.isVisible())) {
+      return null;
+    }
+  }
+  const commonAttrs = {
+    [ATTR_DATA_ID]: element.getId(),
+    [ATTR_DATA_KIND]: element.getKind(),
+    [ATTR_DATA_TYPE]: element.getType(),
   };
   if (isGraph(element)) {
     return (
-      <g {...commonProps}>
+      <g {...commonAttrs}>
         <ElementComponent element={element} />
       </g>
     );
   }
-  if (isNode(element) && !element.isGroup()) {
+  if (isNode(element) && (!element.isGroup() || element.isCollapsed())) {
     const { x, y } = element.getBounds();
     return (
-      <g {...commonProps} transform={`translate(${x}, ${y})`}>
+      <g {...commonAttrs} transform={`translate(${x}, ${y})`}>
         <ElementComponent element={element} />
         <ElementChildren element={element} />
       </g>
     );
   }
   return (
-    <g {...commonProps}>
+    <g {...commonAttrs}>
       <ElementComponent element={element} />
       <ElementChildren element={element} />
     </g>

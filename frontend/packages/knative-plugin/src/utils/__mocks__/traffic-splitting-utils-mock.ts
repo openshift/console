@@ -1,84 +1,35 @@
+import * as _ from 'lodash';
+import {
+  knativeServiceObj,
+  revisionObj,
+} from '@console/dev-console/src/components/topology/__tests__/topology-knative-test-data';
+import { RevisionKind, ServiceKind as knativeServiceKind } from '../../types';
+
+export const mockServiceData: knativeServiceKind = _.cloneDeep(knativeServiceObj);
+
 export const mockTrafficData = [
-  { percent: 50, tag: 'tag-1', revisionName: 'rev-1' },
-  { percent: 50, tag: 'tag-2', revisionName: 'rev-2' },
+  { percent: 25, tag: 'tag-1', revisionName: 'overlayimage-fdqsf' },
+  { percent: 25, tag: 'tag-2', revisionName: 'overlayimage-tkvz5' },
+  { percent: 25, tag: 'tag-3', revisionName: 'overlayimage-bwpxq' },
+  { percent: 25, tag: 'tag-4', revisionName: 'overlayimage-n2b7n' },
 ];
-export const mockServiceData = {
-  apiVersion: 'serving.knative.dev/v1beta1',
-  kind: 'Service',
-  spec: {
-    traffic: [
-      {
-        percent: 50,
-        revisionName: 'rev-1',
-        tag: 'tag-1',
-      },
-      {
-        percent: 50,
-        revisionName: 'rev-2',
-        tag: 'tag-2',
-      },
-    ],
-  },
-  status: {
-    traffic: [
-      {
-        latestRevision: false,
-        percent: 100,
-        revisionName: 'rev-1',
-        tag: 'tag-1',
-      },
-    ],
-  },
-};
 
-export const mockUpdateRequestObj = {
-  apiVersion: 'serving.knative.dev/v1beta1',
-  kind: 'Service',
-  spec: {
-    traffic: [
-      {
-        percent: 50,
-        revisionName: 'rev-1',
-        tag: 'tag-1',
-      },
-      {
-        percent: 50,
-        revisionName: 'rev-2',
-        tag: 'tag-2',
-      },
-    ],
-  },
-};
+export const mockUpdateRequestObj: knativeServiceKind = _.set(
+  _.omit(_.cloneDeep(knativeServiceObj), 'status'),
+  'spec.traffic',
+  mockTrafficData,
+);
 
-export const mockRevisions = [
-  {
-    apiVersion: 'serving.knative.dev/v1beta1',
-    kind: 'Revision',
-    metadata: {
-      name: 'rev-1',
-      namespace: 'namespace',
-    },
-  },
-  {
-    apiVersion: 'serving.knative.dev/v1beta1',
-    kind: 'Revision',
-    metadata: {
-      name: 'rev-2',
-      namespace: 'namespace',
-    },
-  },
-  {
-    apiVersion: 'serving.knative.dev/v1beta1',
-    kind: 'Revision',
-    metadata: {
-      name: 'rev-3',
-      namespace: 'namespace',
-    },
-  },
+export const mockRevisions: RevisionKind[] = [
+  revisionObj,
+  _.set(_.cloneDeep(revisionObj), 'metadata.name', 'overlayimage-tkvz5'),
+  _.set(_.cloneDeep(revisionObj), 'metadata.name', 'overlayimage-bwpxq'),
+  _.set(_.cloneDeep(revisionObj), 'metadata.name', 'overlayimage-n2b7n'),
 ];
 
 export const mockRevisionItems = {
-  'rev-1': 'rev-1',
-  'rev-2': 'rev-2',
-  'rev-3': 'rev-3',
+  'overlayimage-fdqsf': 'overlayimage-fdqsf',
+  'overlayimage-tkvz5': 'overlayimage-tkvz5',
+  'overlayimage-bwpxq': 'overlayimage-bwpxq',
+  'overlayimage-n2b7n': 'overlayimage-n2b7n',
 };

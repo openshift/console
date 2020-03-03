@@ -2,10 +2,12 @@ export type ColumnStyle = {
   alias?: string;
   decimals?: number;
   unit?: string;
+  pattern: string;
   type: string;
 };
 
 export type Panel = {
+  breakpoint?: string;
   decimals?: number;
   format?: string;
   gridPos?: {
@@ -20,7 +22,9 @@ export type Panel = {
   };
   panels: Panel[];
   postfix?: string;
+  postfixFontSize?: string;
   prefix?: string;
+  prefixFontSize?: string;
   span: number;
   stack: boolean;
   styles?: ColumnStyle[];
@@ -32,4 +36,5 @@ export type Panel = {
   transform?: string;
   type: string;
   units?: string;
+  valueFontSize?: string;
 };

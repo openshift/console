@@ -103,23 +103,10 @@ class PodStatus extends React.Component<PodStatusProps, PodStatusState> {
       titleComponent,
       subTitleComponent,
     } = this.props;
-    const { vData, updateOnEnd, tipIndex } = this.state;
-
-    const tooltipEvent: any = showTooltip
-      ? [
-          {
-            eventHandlers: {
-              onMouseOver: (e, hoverSlice) => {
-                this.setState({ tipIndex: hoverSlice.index });
-              },
-            },
-          },
-        ]
-      : undefined;
+    const { vData, updateOnEnd } = this.state;
 
     const chartDonut = (
       <ChartDonut
-        events={tooltipEvent}
         animate={{
           duration: ANIMATION_DURATION,
           onEnd: updateOnEnd ? this.doUpdate : undefined,
@@ -153,20 +140,22 @@ class PodStatus extends React.Component<PodStatusProps, PodStatusState> {
     if (showTooltip) {
       const tipContent = (
         <div className="odc-pod-status-tooltip">
-          {vData[tipIndex] && (
-            <>
-              <span
-                className="odc-pod-status-tooltip__status-box"
-                style={{ background: podColor[vData[tipIndex].x] }}
-              />
-              {vData[tipIndex].x}
-              {podStatusIsNumeric(vData[tipIndex].x) && (
-                <span key={3} className="odc-pod-status-tooltip__status-count">
-                  {Math.round(vData[tipIndex].y)}
-                </span>
-              )}
-            </>
-          )}
+          {vData.map((data) => {
+            return data.y > 0 ? (
+              <div key={data.x} className="odc-pod-status-tooltip__content">
+                <span
+                  className="odc-pod-status-tooltip__status-box"
+                  style={{ background: podColor[data.x] }}
+                />
+                {podStatusIsNumeric(data.x) && (
+                  <span key={3} className="odc-pod-status-tooltip__status-count">
+                    {`${Math.round(data.y)}`}
+                  </span>
+                )}
+                {data.x}
+              </div>
+            ) : null;
+          })}
         </div>
       );
       return <Tooltip content={tipContent}>{chartDonut}</Tooltip>;

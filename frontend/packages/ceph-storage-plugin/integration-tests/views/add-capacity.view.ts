@@ -1,14 +1,16 @@
 import { browser, ExpectedConditions as until, $ } from 'protractor';
 import * as crudView from '@console/internal-integration-tests/views/crud.view';
 import * as sideNavView from '@console/internal-integration-tests/views/sidenav.view';
-import { click } from '@console/shared/src/test-utils/utils';
-import { CAPACITY_UNIT, CAPACITY_VALUE, OCS_OP, STORAGE_CLUSTER_TAB_CNT } from '../utils/consts';
+import { click, getOperatorHubCardIndex } from '@console/shared/src/test-utils/utils';
+import { CAPACITY_UNIT, CAPACITY_VALUE, OCS_OP } from '../utils/consts';
 import { namespaceDropdown, openshiftStorageItem } from './installFlow.view';
 
 export const ocsOp = $(`a[data-test-operator-row='${OCS_OP}']`);
-export const storageClusterView = $(
-  `ul.co-m-horizontal-nav__menu li:nth-child(${STORAGE_CLUSTER_TAB_CNT}) a`,
-);
+export const getStorageClusterLink = async () => {
+  const index = await getOperatorHubCardIndex('Storage Cluster');
+  const link = $(`article:nth-child(${index}) a`);
+  return link;
+};
 export const actionForLabel = (label: string) => $(`button[data-test-action='${label}']`);
 export const confirmButton = $('#confirm-action');
 export const storageClusterRow = (uid) => $(`tr[data-id='${uid}']`);

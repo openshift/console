@@ -33,7 +33,7 @@ export class NADDetail {
     await this.navigateToListView();
     await NADListView.nadListByName(this.name).click();
     await isLoaded();
-    await clickHorizontalTab('Overview');
+    await clickHorizontalTab('Details');
     await isLoaded();
   }
 

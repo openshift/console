@@ -43,6 +43,25 @@ const newQueryBrowserQuery = (): ImmutableMap<string, any> =>
     isExpanded: true,
   });
 
+const silenceFiringAlerts = (firingAlerts, silences) => {
+  // For each firing alert, store a list of the Silences that are silencing it and set its state to show it is silenced
+  _.each(firingAlerts, (a) => {
+    a.silencedBy = _.filter(
+      _.get(silences, 'data'),
+      (s) => _.get(s, 'status.state') === SilenceStates.Active && isSilenced(a, s),
+    );
+    if (a.silencedBy.length) {
+      a.state = AlertStates.Silenced;
+      // Also set the state of Alerts in `rule.alerts`
+      _.each(a.rule.alerts, (ruleAlert) => {
+        if (_.some(a.silencedBy, (s) => isSilenced(ruleAlert, s))) {
+          ruleAlert.state = AlertStates.Silenced;
+        }
+      });
+    }
+  });
+};
+
 export default (state: UIState, action: UIAction): UIState => {
   if (!state) {
     const { pathname } = window.location;
@@ -79,6 +98,8 @@ export default (state: UIState, action: UIAction): UIState => {
       user: {},
       consoleLinks: [],
       monitoringDashboards: ImmutableMap({
+        pollInterval: 30 * 1000,
+        timespan: 30 * 60 * 1000,
         variables: ImmutableMap(),
       }),
       queryBrowser: ImmutableMap({
@@ -145,39 +166,58 @@ export default (state: UIState, action: UIAction): UIState => {
     case ActionType.MonitoringDashboardsPatchVariable:
       return state.mergeIn(
         ['monitoringDashboards', 'variables', action.payload.key],
-        action.payload.patch,
+        ImmutableMap(action.payload.patch),
       );
 
+    case ActionType.MonitoringDashboardsPatchAllVariables:
+      return state.setIn(
+        ['monitoringDashboards', 'variables'],
+        ImmutableMap(action.payload.variables),
+      );
+
+    case ActionType.MonitoringDashboardsSetPollInterval:
+      return state.setIn(['monitoringDashboards', 'pollInterval'], action.payload.pollInterval);
+
+    case ActionType.MonitoringDashboardsSetTimespan:
+      return state.setIn(['monitoringDashboards', 'timespan'], action.payload.timespan);
+
+    case ActionType.MonitoringDashboardsVariableOptionsLoaded: {
+      const { key, newOptions } = action.payload;
+      const { options, value } = state.getIn(['monitoringDashboards', 'variables', key]).toJS();
+      const patch = _.isEqual(options, newOptions)
+        ? { isLoading: false }
+        : {
+            isLoading: false,
+            options: newOptions,
+            value: newOptions.includes(value) ? value : newOptions[0],
+          };
+      return state.mergeIn(['monitoringDashboards', 'variables', key], ImmutableMap(patch));
+    }
     case ActionType.SetMonitoringData: {
+      // alerts used by monitoring -> alerting pages
       const alerts =
         action.payload.key === 'alerts'
           ? action.payload.data
           : state.getIn(['monitoring', 'alerts']);
-      const firingAlerts = _.filter(_.get(alerts, 'data'), (a) =>
-        [AlertStates.Firing, AlertStates.Silenced].includes(a.state),
-      );
+      // notificationAlerts used by notification drawer and certain dashboards
+      const notificationAlerts =
+        action.payload.key === 'notificationAlerts'
+          ? action.payload.data
+          : state.getIn(['monitoring', 'notificationAlerts']);
       const silences =
         action.payload.key === 'silences'
           ? action.payload.data
           : state.getIn(['monitoring', 'silences']);
 
-      // For each Alert, store a list of the Silences that are silencing it and set its state to show it is silenced
-      _.each(firingAlerts, (a) => {
-        a.silencedBy = _.filter(
-          _.get(silences, 'data'),
-          (s) => _.get(s, 'status.state') === SilenceStates.Active && isSilenced(a, s),
-        );
-        if (a.silencedBy.length) {
-          a.state = AlertStates.Silenced;
-          // Also set the state of Alerts in `rule.alerts`
-          _.each(a.rule.alerts, (ruleAlert) => {
-            if (_.some(a.silencedBy, (s) => isSilenced(ruleAlert, s))) {
-              ruleAlert.state = AlertStates.Silenced;
-            }
-          });
-        }
-      });
+      const isAlertFiring = (alert) =>
+        alert?.state === AlertStates.Firing || alert?.state === AlertStates.Silenced;
+      const firingAlerts = _.filter(alerts?.data, isAlertFiring);
+      silenceFiringAlerts(firingAlerts, silences);
+      silenceFiringAlerts(_.filter(notificationAlerts?.data, isAlertFiring), silences);
+      // filter out silenced alerts from notificationAlerts
+      notificationAlerts.data = _.reject(notificationAlerts.data, { state: AlertStates.Silenced });
       state = state.setIn(['monitoring', 'alerts'], alerts);
+      state = state.setIn(['monitoring', 'notificationAlerts'], notificationAlerts);
 
       // For each Silence, store a list of the Alerts it is silencing
       _.each(_.get(silences, 'data'), (s) => {
@@ -187,6 +227,15 @@ export default (state: UIState, action: UIAction): UIState => {
     }
     case ActionType.ToggleMonitoringGraphs:
       return state.setIn(['monitoring', 'hideGraphs'], !state.getIn(['monitoring', 'hideGraphs']));
+
+    case ActionType.NotificationDrawerToggleExpanded:
+      return state.setIn(
+        ['notifications', 'isExpanded'],
+        !state.getIn(['notifications', 'isExpanded']),
+      );
+
+    case ActionType.NotificationDrawerToggleRead:
+      return state.setIn(['notifications', 'isRead'], !state.getIn(['notifications', 'isRead']));
 
     case ActionType.QueryBrowserAddQuery:
       return state.setIn(

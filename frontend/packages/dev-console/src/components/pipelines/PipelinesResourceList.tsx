@@ -30,9 +30,9 @@ const PipelinesResourceList: React.FC<PipelinesResourceListProps> = (props) => {
       canCreate
       createButtonText={`Create ${PipelineModel.label}`}
       createProps={{
-        to: `/k8s/${namespace ? `ns/${namespace}` : 'cluster'}/${referenceForModel(
-          PipelineModel,
-        )}/~new`,
+        to: namespace
+          ? `/k8s/ns/${namespace}/${referenceForModel(PipelineModel)}/~new/builder`
+          : `/k8s/cluster/${referenceForModel(PipelineModel)}/~new`,
       }}
       filterLabel="by name"
       textFilter="name"

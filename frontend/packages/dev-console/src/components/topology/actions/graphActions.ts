@@ -1,25 +1,25 @@
 import * as _ from 'lodash';
-import { KebabOption } from '@console/internal/components/utils/kebab';
-import { GraphElement, Node } from '@console/topology';
-import { TYPE_WORKLOAD } from '../const';
-import { addResourceMenu } from '../../../actions/add-resources';
-import { TopologyDataObject } from '../topology-types';
+import { Node } from '@console/topology';
+import { addResourceMenu, addResourceMenuWithoutCatalog } from '../../../actions/add-resources';
+import { GraphData } from '../topology-types';
 
-const addResourcesMenu = (workload: TopologyDataObject) => {
-  let menuItems = [];
-  if (_.isEmpty(workload)) {
-    return menuItems;
-  }
-  const primaryResource = _.get(workload, ['resources', 'obj'], null);
-  if (primaryResource) {
-    menuItems = addResourceMenu.map((menuItem) => menuItem(primaryResource, false));
-  }
-  return menuItems;
-};
-
-export const graphActions = (elements: GraphElement[]): KebabOption[] => {
-  const primaryResource: Node = _.find(elements, {
-    type: TYPE_WORKLOAD,
-  }) as Node;
-  return [...addResourcesMenu(primaryResource.getData())];
+export const graphActions = (graphData: GraphData, connectorSource?: Node) => {
+  const resourceMenu = connectorSource ? addResourceMenuWithoutCatalog : addResourceMenu;
+  return _.reduce(
+    resourceMenu,
+    (menuItems, menuItem) => {
+      const item = menuItem(
+        null,
+        graphData.namespace,
+        false,
+        connectorSource?.getData()?.resources?.obj,
+        graphData.createResourceAccess,
+      );
+      if (item) {
+        menuItems.push(item);
+      }
+      return menuItems;
+    },
+    [],
+  );
 };

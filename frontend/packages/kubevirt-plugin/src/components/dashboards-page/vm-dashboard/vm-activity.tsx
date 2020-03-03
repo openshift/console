@@ -1,13 +1,13 @@
 import * as React from 'react';
+import { CardActions } from '@patternfly/react-core';
 import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
 import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
 import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
-import DashboardCardLink, {
-  DashboardCardButtonLink,
-} from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardLink';
+import DashboardCardLink from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardLink';
 import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
 import ActivityBody, {
   RecentEventsBodyContent,
+  PauseButton,
 } from '@console/shared/src/components/dashboard/activity-card/ActivityBody';
 import { getName, getNamespace } from '@console/shared';
 import { resourcePath, FirehoseResource, FirehoseResult } from '@console/internal/components/utils';
@@ -17,12 +17,14 @@ import {
   withDashboardResources,
   DashboardItemProps,
 } from '@console/internal/components/dashboard/with-dashboard-resources';
-import { VMKind } from '../../../types';
-import { VirtualMachineModel } from '../../../models';
+import { VirtualMachineModel, VirtualMachineInstanceModel } from '../../../models';
 import { getVmEventsFilters } from '../../../selectors/event';
 import { VMDashboardContext } from '../../vms/vm-dashboard-context';
+import { VMILikeEntityKind } from '../../../types/vmLike';
 
-const combinedVmFilter = (vm: VMKind): EventFilterFuncion => (event) =>
+import './vm-activity.scss';
+
+const combinedVmFilter = (vm: VMILikeEntityKind): EventFilterFuncion => (event) =>
   getVmEventsFilters(vm).some((filter) => filter(event.involvedObject));
 
 const getEventsResource = (namespace: string): FirehoseResource => ({
@@ -56,27 +58,32 @@ const RecentEvent = withDashboardResources<RecentEventProps>(
 );
 
 export const VMActivityCard: React.FC = () => {
-  const { vm } = React.useContext(VMDashboardContext);
+  const { vm, vmi } = React.useContext(VMDashboardContext);
+  const vmiLike = vm || vmi;
 
   const [paused, setPaused] = React.useState(false);
   const togglePause = React.useCallback(() => setPaused(!paused), [paused]);
 
-  const name = getName(vm);
-  const namespace = getNamespace(vm);
-  const viewEventsLink = `${resourcePath(VirtualMachineModel.kind, name, namespace)}/events`;
+  const name = getName(vmiLike);
+  const namespace = getNamespace(vmiLike);
+  const viewEventsLink = `${resourcePath(
+    vm ? VirtualMachineModel.kind : VirtualMachineInstanceModel.kind,
+    name,
+    namespace,
+  )}/events`;
 
   return (
     <DashboardCard gradient>
       <DashboardCardHeader>
         <DashboardCardTitle>Events</DashboardCardTitle>
-        <DashboardCardLink to={viewEventsLink}>View all</DashboardCardLink>
-        <DashboardCardButtonLink onClick={togglePause}>
-          {paused ? 'Unpause' : 'Pause'}
-        </DashboardCardButtonLink>
+        <CardActions className="kubevirt-activity-card__actions">
+          <DashboardCardLink to={viewEventsLink}>View all</DashboardCardLink>
+          <PauseButton paused={paused} togglePause={togglePause} />
+        </CardActions>
       </DashboardCardHeader>
       <DashboardCardBody>
         <ActivityBody>
-          <RecentEvent vm={vm} paused={paused} setPaused={setPaused} />
+          <RecentEvent vm={vmiLike} paused={paused} setPaused={setPaused} />
         </ActivityBody>
       </DashboardCardBody>
     </DashboardCard>
@@ -86,7 +93,7 @@ export const VMActivityCard: React.FC = () => {
 type EventFilterFuncion = (event: EventKind) => boolean;
 
 type RecentEventProps = DashboardItemProps & {
-  vm: VMKind;
+  vm: VMILikeEntityKind;
   paused: boolean;
   setPaused: (paused: boolean) => void;
 };

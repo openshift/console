@@ -35,22 +35,19 @@ const DeleteApplicationForm: React.FC<FormikProps<FormikValues> & DeleteApplicat
   const isValid = _.get(values, 'application.userInput') === initialApplication;
   return (
     <form onSubmit={handleSubmit} className="modal-content modal-content--no-inner-scroll">
-      <ModalTitle>Delete Application</ModalTitle>
+      <ModalTitle>
+        <YellowExclamationTriangleIcon className="co-icon-space-r" /> Delete Application?
+      </ModalTitle>
       <ModalBody>
-        <div className="co-delete-modal">
-          <YellowExclamationTriangleIcon className="co-delete-modal__icon" />
-          <div>
-            <p>
-              This action cannot be undone. All associated Deployments, Routes, Builds, Pipelines,
-              Storage/PVC&#39;s, secrets, and configmaps will be deleted.
-            </p>
-            <p>
-              Confirm deletion by typing{' '}
-              <strong className="co-break-word">{initialApplication}</strong> below:
-            </p>
-            <InputField type={TextInputTypes.text} name="application.userInput" />
-          </div>
-        </div>
+        <p>
+          This action cannot be undone. All associated Deployments, Routes, Builds, Pipelines,
+          Storage/PVC&#39;s, secrets, and configmaps will be deleted.
+        </p>
+        <p>
+          Confirm deletion by typing <strong className="co-break-word">{initialApplication}</strong>{' '}
+          below:
+        </p>
+        <InputField type={TextInputTypes.text} name="application.userInput" />
       </ModalBody>
       <ModalSubmitFooter
         submitText="Delete"

@@ -14,6 +14,7 @@ import {
   runStatus,
   PipelineParam,
   PipelineRunParam,
+  PipelineTaskRef,
 } from './pipeline-augment';
 import { pipelineFilterReducer, pipelineRunStatus } from './pipeline-filter-reducer';
 
@@ -43,9 +44,7 @@ export interface PipelineVisualizationTaskItem {
   resources?: Resources;
   params?: object;
   runAfter?: string[];
-  taskRef: {
-    name: string;
-  };
+  taskRef: PipelineTaskRef;
 }
 
 export const TaskStatusClassNameMap = {

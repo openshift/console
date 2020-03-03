@@ -14,11 +14,12 @@ if [ -d "$ARTIFACT_DIR" ]; then
   cp public/dist/report.html "${ARTIFACT_DIR}"
 fi
 
+MAX_BYTES=2621440 # ~2.5 MiB
 VENDORS_MAIN_BYTES=$(jq -r '.assets[] | select(.name | match("^vendors~main-chunk.*js$")) | .size' public/dist/stats.json)
 DISPLAY_VALUE=$(awk "BEGIN {printf \"%.2f\n\", $VENDORS_MAIN_BYTES/1024/1024}")
 echo "Main vendor bundle size: $DISPLAY_VALUE MiB"
-if (( $VENDORS_MAIN_BYTES > (2 * 1024 * 1024) )); then
-  echo "FAILURE: Main vendor bundle is larger than the 2 MiB limit."
+if (( VENDORS_MAIN_BYTES > MAX_BYTES )); then
+  echo "FAILURE: Main vendor bundle is larger than the 2.5 MiB limit."
   echo "If you haven't added a new dependency, an import might have accidentally pulled an existing dependency into the main vendor bundle."
   echo "If adding a large dependency, consider lazy loading the component with AsyncComponent."
   exit 1

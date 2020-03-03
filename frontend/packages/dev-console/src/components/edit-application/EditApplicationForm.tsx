@@ -12,10 +12,12 @@ import AppSection from '../import/app/AppSection';
 import { NormalizedBuilderImages } from '../../utils/imagestream-utils';
 import ImageSearchSection from '../import/image-search/ImageSearchSection';
 import { CreateApplicationFlow } from './edit-application-utils';
+import { AppResources } from './edit-application-types';
 
 export interface EditApplicationFormProps {
   createFlowType: string;
   builderImages?: NormalizedBuilderImages;
+  appResources: AppResources;
 }
 
 const EditApplicationForm: React.FC<FormikProps<FormikValues> & EditApplicationFormProps> = ({
@@ -28,6 +30,7 @@ const EditApplicationForm: React.FC<FormikProps<FormikValues> & EditApplicationF
   errors,
   status,
   isSubmitting,
+  appResources,
 }) => (
   <>
     <PageHeading title={createFlowType} style={{ padding: '0px' }} />
@@ -41,7 +44,7 @@ const EditApplicationForm: React.FC<FormikProps<FormikValues> & EditApplicationF
       )}
       {createFlowType === CreateApplicationFlow.Container && <ImageSearchSection />}
       <AppSection project={values.project} />
-      <AdvancedSection values={values} />
+      <AdvancedSection values={values} appResources={appResources} />
       <FormFooter
         handleReset={handleReset}
         errorMessage={status && status.submitError}

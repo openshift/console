@@ -15,7 +15,7 @@ import {
 } from '../../constants/vm';
 import { getCloudInitVolume } from '../vm/selectors';
 import { VolumeWrapper } from '../../k8s/wrapper/vm/volume-wrapper';
-import { selectVM } from './selectors';
+import { selectVM } from './basic';
 
 export const getTemplatesWithLabels = (templates: TemplateKind[], labels: string[]) => {
   const requiredLabels = labels.filter((label) => label);
