@@ -43,7 +43,7 @@ import { getVMTemplateNamespacedName } from '../../../selectors/vm-template/sele
 
 const getId = (field: string) => `vm-flavor-modal-${field}`;
 
-const getFlavors = (template: TemplateKind) => {
+const getAvailableFlavors = (template: TemplateKind) => {
   const flavors = [...getTemplateFlavors([template]), CUSTOM_FLAVOR];
 
   return _.uniq(flavorSort(flavors).filter((f) => f));
@@ -55,7 +55,7 @@ const VMFlavorModal = withHandlePromise((props: VMFlavornModalProps) => {
   const vm = asVM(vmLike);
   const underlyingTemplate = getLoadedData(template);
 
-  const flavors = getFlavors(underlyingTemplate);
+  const flavors = getAvailableFlavors(underlyingTemplate);
   const vmFlavor = getFlavor(vmLike) || flavors[flavors.length - 1];
 
   const [sourceMemSize, sourceMemUnit] = validate.split(getMemory(vm) || '');

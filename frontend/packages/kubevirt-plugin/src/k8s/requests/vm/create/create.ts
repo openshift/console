@@ -53,7 +53,6 @@ export const getInitializedVMTemplate = (params: CreateVMEnhancedParams) => {
 export const createVMTemplate = async (params: CreateVMParams) => {
   const { enhancedK8sMethods, namespace, vmSettings } = params;
   const { k8sGet, k8sCreate, getActualState } = enhancedK8sMethods;
-  const settings = asSimpleSettings(vmSettings);
 
   const storageClassConfigMap = await getStorageClassConfigMap({ k8sGet });
 
@@ -63,10 +62,15 @@ export const createVMTemplate = async (params: CreateVMParams) => {
     isTemplate: true,
   };
 
+  const combinedSimpleSettings = {
+    ...asSimpleSettings(vmSettings),
+    ...getOS(enhancedParams),
+  };
+
   const { template, storages } = getInitializedVMTemplate(enhancedParams);
 
   const finalTemplate = VMTemplateWrapper.initializeFromSimpleData({
-    name: settings[VMSettingsField.NAME],
+    name: combinedSimpleSettings[VMSettingsField.NAME],
     namespace,
     labels: {
       [TEMPLATE_TYPE_LABEL]: TEMPLATE_TYPE_VM,
@@ -83,8 +87,7 @@ export const createVMTemplate = async (params: CreateVMParams) => {
   const mutableFinalTemplate = new MutableVMTemplateWrapper(finalTemplate.asResource());
 
   initializeCommonMetadata(
-    settings,
-    getOS(enhancedParams),
+    combinedSimpleSettings,
     mutableFinalTemplate,
     template.asMutableResource(),
   );
@@ -110,7 +113,6 @@ export const createVMTemplate = async (params: CreateVMParams) => {
 export const createVM = async (params: CreateVMParams) => {
   const { enhancedK8sMethods, namespace, vmSettings, openshiftFlag } = params;
   const { k8sGet, k8sCreate, getActualState } = enhancedK8sMethods;
-  const simpleSettings = asSimpleSettings(vmSettings);
 
   const storageClassConfigMap = await getStorageClassConfigMap({ k8sGet });
   const enhancedParams = {
@@ -118,7 +120,10 @@ export const createVM = async (params: CreateVMParams) => {
     storageClassConfigMap,
     isTemplate: false,
   };
-  const operatingSystem = getOS(enhancedParams);
+  const combinedSimpleSettings = {
+    ...asSimpleSettings(vmSettings),
+    ...getOS(enhancedParams),
+  };
 
   // TODO add VMWARE import
   let vm;
@@ -132,7 +137,10 @@ export const createVM = async (params: CreateVMParams) => {
     // ProcessedTemplates endpoint will reject the request if user cannot post to the namespace
     // common-templates are stored in openshift namespace, default user can read but cannot post
     templateToProcess.setNamespace(namespace);
-    templateToProcess.setParameter(TEMPLATE_PARAM_VM_NAME, simpleSettings[VMSettingsField.NAME]);
+    templateToProcess.setParameter(
+      TEMPLATE_PARAM_VM_NAME,
+      combinedSimpleSettings[VMSettingsField.NAME],
+    );
     templateToProcess.unrequireParameters(
       new Set(
         templateToProcess
@@ -151,16 +159,16 @@ export const createVM = async (params: CreateVMParams) => {
 
     vm = new MutableVMWrapper(selectVM(processedTemplate));
     vm.setNamespace(namespace);
-    initializeCommonMetadata(simpleSettings, operatingSystem, vm, template.asMutableResource());
+    initializeCommonMetadata(combinedSimpleSettings, vm, template.asMutableResource());
   } else {
     vm = new MutableVMWrapper();
     vm.setModel(VirtualMachineModel)
       .setNamespace(namespace)
-      .setName(simpleSettings[VMSettingsField.NAME]);
-    initializeCommonMetadata(simpleSettings, operatingSystem, vm);
+      .setName(combinedSimpleSettings[VMSettingsField.NAME]);
+    initializeCommonMetadata(combinedSimpleSettings, vm);
     initializeVM(enhancedParams, vm);
   }
-  initializeCommonVMMetadata(enhancedParams, vm);
+  initializeCommonVMMetadata(combinedSimpleSettings, vm);
   await k8sCreate(VirtualMachineModel, vm.asMutableResource());
 
   return getActualState();
