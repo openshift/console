@@ -109,9 +109,6 @@ export const VMDetailsList: React.FC<VMResourceListProps> = ({
   kindObj,
 }) => {
   const [isBootOrderModalOpen, setBootOrderModalOpen] = React.useState<boolean>(false);
-  const [isDedicatedResourcesModalOpen, setDedicatedResourcesModalOpen] = React.useState<boolean>(
-    false,
-  );
   const isVM = kindObj === VirtualMachineModel;
   const vmiLike = isVM ? vm : vmi;
   const vmiLikeWrapper = asVMILikeWrapper(vmiLike);
@@ -127,12 +124,6 @@ export const VMDetailsList: React.FC<VMResourceListProps> = ({
   const nodeName = getVMINodeName(vmi) || getNodeName(launcherPod);
   const ipAddrs = getVmiIpAddresses(vmi).join(', ');
   const workloadProfile = vmiLikeWrapper?.getWorkloadProfile();
-  const flavorText = getFlavorText({
-    memory: vmiLikeWrapper?.getMemory(),
-    cpu: vmiLikeWrapper?.getCPU(),
-    flavor: vmiLikeWrapper?.getFlavor(),
-  });
-  const isCPUPinned = vmiLikeWrapper?.isDedicatedCPUPlacement();
 
   return (
     <dl className="co-m-pane__details">
@@ -199,6 +190,41 @@ export const VMDetailsList: React.FC<VMResourceListProps> = ({
         {launcherPod && nodeName && <NodeLink name={nodeName} />}
       </VMDetailsItem>
 
+      <VMDetailsItem
+        title="Workload Profile"
+        idValue={prefixedID(id, 'workload-profile')}
+        isNotAvail={!workloadProfile}
+      >
+        {workloadProfile}
+      </VMDetailsItem>
+    </dl>
+  );
+};
+
+export const VMSchedulingList: React.FC<VMSchedulingListProps> = ({
+  vm,
+  vmi,
+  canUpdateVM,
+  kindObj,
+}) => {
+  const isVM = kindObj === VirtualMachineModel;
+  const vmiLike = isVM ? vm : vmi;
+  const vmiLikeWrapper = asVMILikeWrapper(vmiLike);
+  const canEdit = vmiLike && canUpdateVM && kindObj !== VirtualMachineInstanceModel;
+
+  const [isDedicatedResourcesModalOpen, setDedicatedResourcesModalOpen] = React.useState<boolean>(
+    false,
+  );
+  const id = getBasicID(vmiLike);
+  const flavorText = getFlavorText({
+    memory: vmiLikeWrapper?.getMemory(),
+    cpu: vmiLikeWrapper?.getCPU(),
+    flavor: vmiLikeWrapper?.getFlavor(),
+  });
+  const isCPUPinned = vmiLikeWrapper?.isDedicatedCPUPlacement();
+
+  return (
+    <dl className="co-m-pane__details">
       <VMDetailsItem title="Flavor" idValue={prefixedID(id, 'flavor')} isNotAvail={!flavorText}>
         {canEdit ? (
           <EditButton
@@ -226,14 +252,6 @@ export const VMDetailsList: React.FC<VMResourceListProps> = ({
           setOpen={setDedicatedResourcesModalOpen}
         />
         {isCPUPinned ? RESOURCE_PINNED : RESOURCE_NOT_PINNED}
-      </VMDetailsItem>
-
-      <VMDetailsItem
-        title="Workload Profile"
-        idValue={prefixedID(id, 'workload-profile')}
-        isNotAvail={!workloadProfile}
-      >
-        {workloadProfile}
       </VMDetailsItem>
     </dl>
   );
@@ -263,6 +281,13 @@ type VMResourceListProps = {
   vm?: VMKind;
   pods?: PodKind[];
   migrations?: any[];
+  vmi?: VMIKind;
+  canUpdateVM: boolean;
+};
+
+type VMSchedulingListProps = {
+  kindObj: K8sKind;
+  vm?: VMKind;
   vmi?: VMIKind;
   canUpdateVM: boolean;
 };

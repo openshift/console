@@ -14,7 +14,11 @@ import { TemplateKind } from '@console/internal/module/k8s';
 import { TemplateModel } from '@console/internal/models';
 import { DataVolumeModel } from '../../models';
 import { V1alpha1DataVolume } from '../../types/vm/disk/V1alpha1DataVolume';
-import { VMTemplateResourceSummary, VMTemplateDetailsList } from './vm-template-resource';
+import {
+  VMTemplateResourceSummary,
+  VMTemplateDetailsList,
+  VMTemplateSchedulingList,
+} from './vm-template-resource';
 
 const VMTemplateDetailsFirehose: React.FC<VMTemplateDetailsFirehoseProps> = (props) => {
   const { obj: template, hasDataVolumes } = props;
@@ -74,6 +78,14 @@ const VMTemplateDetails: React.FC<VMTemplateDetailsProps> = (props) => {
               dataVolumeLookup={createLookup(dataVolumes, getName)}
               canUpdateTemplate={canUpdate}
             />
+          </div>
+        </div>
+      </div>
+      <div className="co-m-pane__body">
+        <SectionHeading text="Scheduling and resources requirements" />
+        <div className="row">
+          <div className="col-sm-6">
+            <VMTemplateSchedulingList template={template} canUpdateTemplate={canUpdate} />
           </div>
         </div>
       </div>
