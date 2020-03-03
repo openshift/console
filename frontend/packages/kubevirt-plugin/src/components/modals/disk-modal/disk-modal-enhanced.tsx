@@ -19,6 +19,7 @@ import { DataVolumeWrapper } from '../../../k8s/wrapper/vm/data-volume-wrapper';
 import { getUpdateDiskPatches } from '../../../k8s/patches/vm/vm-disk-patches';
 import { CombinedDiskFactory } from '../../../k8s/wrapper/vm/combined-disk';
 import { DiskModal } from './disk-modal';
+import { TemplateValidations } from '../../../utils/validations/template/template-validations';
 
 const DiskModalFirehoseComponent: React.FC<DiskModalFirehoseComponentProps> = (props) => {
   const { disk, volume, dataVolume, vmLikeEntity, vmLikeEntityLoading, ...restProps } = props;
@@ -76,6 +77,7 @@ type DiskModalFirehoseComponentProps = ModalComponentProps & {
   persistentVolumeClaims?: FirehoseResult<VMLikeEntityKind[]>;
   vmLikeEntityLoading?: FirehoseResult<VMLikeEntityKind>;
   vmLikeEntity: VMLikeEntityKind;
+  templateValidations?: TemplateValidations;
 };
 
 const DiskModalFirehose: React.FC<DiskModalFirehoseProps> = (props) => {
@@ -130,6 +132,7 @@ type DiskModalFirehoseProps = ModalComponentProps & {
   dataVolume?: any;
   isEditing?: boolean;
   useProjects: boolean;
+  templateValidations?: TemplateValidations;
 };
 
 const diskModalStateToProps = ({ k8s }) => {
