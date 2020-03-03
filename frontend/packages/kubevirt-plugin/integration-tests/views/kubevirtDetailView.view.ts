@@ -5,6 +5,7 @@ import { click } from '@console/shared/src/test-utils/utils';
 export const createNICButton = $('#create-nic-btn');
 export const createDiskButton = $('#create-disk-btn');
 
+export const modalSubmitButton = $('.modal-content .pf-m-primary');
 export const cancelButton = element(by.buttonText('Cancel'));
 export const applyButton = element(by.buttonText('Add'));
 export const saveButton = element(by.buttonText('Save'));
