@@ -8,7 +8,7 @@ import { RootState } from '@console/internal/redux';
 import { connect } from 'react-redux';
 import { ALL_APPLICATIONS_KEY } from '@console/shared';
 import { NormalizedBuilderImages, normalizeBuilderImages } from '../../utils/imagestream-utils';
-import { doContextualBinding } from '../../utils/application-utils';
+import { doContextualBinding, sanitizeApplicationValue } from '../../utils/application-utils';
 import { ALLOW_SERVICE_BINDING } from '../../const';
 import { GitImportFormData, FirehoseList, ImportData, Resources } from './import-types';
 import { createOrUpdateResources, handleRedirect } from './import-submit-utils';
@@ -49,8 +49,8 @@ const ImportForm: React.FC<ImportFormProps & StateProps> = ({
       description: '',
     },
     application: {
-      initial: activeApplication,
-      name: activeApplication,
+      initial: sanitizeApplicationValue(activeApplication),
+      name: sanitizeApplicationValue(activeApplication),
       selectedKey: activeApplication,
     },
     git: {

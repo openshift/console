@@ -14,6 +14,7 @@ import { SecretTypeAbstraction } from '@console/internal/components/secrets/crea
 import { InputField } from '@console/shared';
 import { getSuggestedName, getPorts, makePortName } from '../../../utils/imagestream-utils';
 import { secretModalLauncher } from '../CreateSecretModal';
+import { UNASSIGNED_KEY } from '../../../const';
 
 const ImageSearch: React.FC = () => {
   const {
@@ -73,6 +74,7 @@ const ImageSearch: React.FC = () => {
           setFieldValue('image.tag', tag);
           !values.name && setFieldValue('name', getSuggestedName(name));
           !values.application.name &&
+            values.application.selectedKey !== UNASSIGNED_KEY &&
             setFieldValue('application.name', `${getSuggestedName(name)}-app`);
           // set default port value
           const targetPort =
@@ -96,6 +98,7 @@ const ImageSearch: React.FC = () => {
   }, [
     setFieldValue,
     values.application.name,
+    values.application.selectedKey,
     values.name,
     values.project.name,
     values.searchTerm,
