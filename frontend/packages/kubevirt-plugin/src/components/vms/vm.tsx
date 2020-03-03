@@ -123,7 +123,7 @@ const VMRow: React.FC<VMRowProps> = ({
       <TableData className={dimensify()}>
         {node && <ResourceLink kind={NodeModel.kind} name={node} namespace={namespace} />}
       </TableData>
-      <TableData className={dimensify()}>{vmi && getVmiIpAddresses(vmi)}</TableData>
+      <TableData className={dimensify()}>{vmi && getVmiIpAddresses(vmi).join(', ')}</TableData>
       <TableData className={dimensify(true)}>
         <Kebab options={options} key={`kebab-for-${uid}`} id={`kebab-for-${uid}`} />
       </TableData>
