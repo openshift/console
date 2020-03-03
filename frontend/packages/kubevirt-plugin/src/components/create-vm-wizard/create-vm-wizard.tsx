@@ -70,7 +70,12 @@ import { vmWizardActions } from './redux/actions';
 import { ActionType } from './redux/types';
 import { getResultInitialState } from './redux/initial-state/result-tab-initial-state';
 import { iGetCommonData, iGetCreateVMWizardTabs } from './selectors/immutable/selectors';
-import { isStepLocked, isStepPending, isStepValid } from './selectors/immutable/wizard-selectors';
+import {
+  isLastStepErrorFatal,
+  isStepLocked,
+  isStepPending,
+  isStepValid,
+} from './selectors/immutable/wizard-selectors';
 import { ResourceLoadErrors } from './resource-load-errors';
 import { CreateVMWizardFooter } from './create-vm-wizard-footer';
 import { VMSettingsTab } from './tabs/vm-settings-tab/vm-settings-tab';
@@ -321,8 +326,8 @@ export class CreateVMWizardComponent extends React.Component<CreateVMWizardCompo
     promise
       .then(() => getResults(enhancedK8sMethods))
       .catch((error) => cleanupAndGetResults(enhancedK8sMethods, error))
-      .then(({ requestResults, errors, mainError, isValid }: ResultsWrapper) =>
-        this.props.onResultsChanged({ mainError, requestResults, errors }, isValid, false, false),
+      .then(({ isValid, ...rest }: ResultsWrapper) =>
+        this.props.onResultsChanged(rest, isValid, false, false),
       )
       .catch((e) => console.error(e)); // eslint-disable-line no-console
   };
@@ -426,9 +431,17 @@ export class CreateVMWizardComponent extends React.Component<CreateVMWizardCompo
         const calculatedStep = {
           ...step,
           name: TabTitleResolver[step.id] || step.name,
-          canJumpTo: isStepLocked(stepData, VMWizardTab.RESULT) // request finished
-            ? step.id === VMWizardTab.RESULT
-            : !isLocked && isPrevStepValid && canJumpToPrevStep && step.id !== VMWizardTab.RESULT,
+          canJumpTo:
+            isStepLocked(stepData, VMWizardTab.RESULT) || isLastStepErrorFatal(stepData) // request in progress or failed
+              ? step.id === VMWizardTab.RESULT
+              : !isLocked &&
+                isPrevStepValid &&
+                canJumpToPrevStep &&
+                // disable uninitialized RESULT step
+                !(
+                  step.id === VMWizardTab.RESULT &&
+                  iGetIn(stepData, [VMWizardTab.RESULT, 'isValid']) == null
+                ),
           component: step.component,
         };
 
@@ -452,20 +465,20 @@ export class CreateVMWizardComponent extends React.Component<CreateVMWizardCompo
           className="kubevirt-create-vm-modal__wizard-content"
           onClose={this.onClose}
           onNext={({ id }, { prevId }) => {
-            if (id === VMWizardTab.RESULT) {
+            if (id === VMWizardTab.RESULT && prevId !== VMWizardTab.RESULT) {
               this.finish();
             }
-            if (prevId === VMWizardTab.RESULT) {
+            if (prevId === VMWizardTab.RESULT && id !== VMWizardTab.RESULT) {
               this.goBackToEditingSteps();
             }
           }}
-          onBack={(nextStep, { prevId }) => {
-            if (prevId === VMWizardTab.RESULT) {
+          onBack={({ id }, { prevId }) => {
+            if (prevId === VMWizardTab.RESULT && id !== VMWizardTab.RESULT) {
               this.goBackToEditingSteps();
             }
           }}
-          onGoToStep={(nextStep, { prevId }) => {
-            if (prevId === VMWizardTab.RESULT) {
+          onGoToStep={({ id }, { prevId }) => {
+            if (prevId === VMWizardTab.RESULT && id !== VMWizardTab.RESULT) {
               this.goBackToEditingSteps();
             }
           }}
