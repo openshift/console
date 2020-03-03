@@ -3,6 +3,7 @@ import * as _ from 'lodash';
 import { match as RMatch } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { Helmet } from 'react-helmet';
+import Dashboard from '@console/shared/src/components/dashboard/Dashboard';
 import { RootState } from '@console/internal/redux';
 import { getURLSearchParams } from '@console/internal/components/utils';
 import {
@@ -49,7 +50,7 @@ export const MonitoringDashboard: React.FC<Props> = ({ match, timespan, pollInte
         <TimespanDropdown />
         <PollIntervalDropdown />
       </div>
-      <div className="co-m-pane__body">
+      <Dashboard>
         {_.map(queries, (q) => (
           <ConnectedMonitoringDashboardGraph
             title={q.title}
@@ -63,7 +64,7 @@ export const MonitoringDashboard: React.FC<Props> = ({ match, timespan, pollInte
             pollInterval={pollInterval}
           />
         ))}
-      </div>
+      </Dashboard>
     </>
   );
 };
