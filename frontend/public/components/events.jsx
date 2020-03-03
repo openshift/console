@@ -12,7 +12,6 @@ import { ResourceListDropdown } from './resource-dropdown';
 import { TextFilter } from './factory';
 import {
   apiGroupForReference,
-  groupVersionFor,
   isGroupVersionKind,
   kindForReference,
   referenceFor,
@@ -66,16 +65,21 @@ const kindFilter = (reference, { involvedObject }) => {
   }
   const kinds = reference.split(',');
   return kinds.some((ref) => {
-    if (isGroupVersionKind(ref)) {
-      const group = apiGroupForReference(ref);
-      const kind = kindForReference(ref);
-      if (typeof involvedObject.apiVersion === 'undefined') {
-        return false;
-      }
-      const { group: eventGroup } = groupVersionFor(involvedObject.apiVersion);
-      return involvedObject.kind === kind && eventGroup === group;
+    if (!isGroupVersionKind(ref)) {
+      return involvedObject.kind === ref;
     }
-    return involvedObject.kind === ref;
+    // Use `referenceFor` to resolve `apiVersion` when missing from `involvedObject`.
+    // We need `apiVersion` to get the group.
+    const involvedObjectRef = referenceFor(involvedObject);
+    if (!involvedObjectRef) {
+      return false;
+    }
+    // Only check the group and kind, not the API version, so that we catch
+    // events for the same resource under a different API version.
+    return (
+      involvedObject.kind === kindForReference(ref) &&
+      apiGroupForReference(involvedObjectRef) === apiGroupForReference(ref)
+    );
   });
 };
 
