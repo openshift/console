@@ -46,25 +46,27 @@ export const MonitoringDashboard: React.FC<Props> = ({ match, timespan, pollInte
       <Helmet>
         <title>Dashboard</title>
       </Helmet>
-      <div className="odc-monitoring-dashboard__dropdown-options">
-        <TimespanDropdown />
-        <PollIntervalDropdown />
+      <div className="odc-monitoring-dashboard">
+        <div className="odc-monitoring-dashboard__dropdown-options">
+          <TimespanDropdown />
+          <PollIntervalDropdown />
+        </div>
+        <Dashboard>
+          {_.map(queries, (q) => (
+            <ConnectedMonitoringDashboardGraph
+              title={q.title}
+              namespace={namespace}
+              graphType={q.chartType}
+              query={q.query({ namespace, workloadName, workloadType })}
+              humanize={q.humanize}
+              byteDataType={q.byteDataType}
+              key={q.title}
+              timespan={timespan}
+              pollInterval={pollInterval}
+            />
+          ))}
+        </Dashboard>
       </div>
-      <Dashboard>
-        {_.map(queries, (q) => (
-          <ConnectedMonitoringDashboardGraph
-            title={q.title}
-            namespace={namespace}
-            graphType={q.chartType}
-            query={q.query({ namespace, workloadName, workloadType })}
-            humanize={q.humanize}
-            byteDataType={q.byteDataType}
-            key={q.title}
-            timespan={timespan}
-            pollInterval={pollInterval}
-          />
-        ))}
-      </Dashboard>
     </>
   );
 };
