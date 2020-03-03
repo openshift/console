@@ -5,7 +5,7 @@ import {
   PipelineTaskParam,
   PipelineTaskResource,
 } from '../../../utils/pipeline-augment';
-import { getRandomChars } from '../pipeline-resource/pipelineResource-utils';
+import { getRandomChars } from '../../../utils/shared-submit-utils';
 import { AddNodeDirection } from '../pipeline-topology/const';
 import { TaskErrorType, UpdateOperationType } from './const';
 import {

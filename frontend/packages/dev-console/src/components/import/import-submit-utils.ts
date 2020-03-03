@@ -23,7 +23,12 @@ import {
   getAppAnnotations,
   mergeData,
 } from '../../utils/resource-label-utils';
-import { createService, createRoute, dryRunOpt } from '../../utils/shared-submit-utils';
+import {
+  createService,
+  createRoute,
+  dryRunOpt,
+  getRandomChars,
+} from '../../utils/shared-submit-utils';
 import { AppResources } from '../edit-application/edit-application-types';
 import {
   GitImportFormData,
@@ -59,9 +64,13 @@ export const createOrUpdateImageStream = (
   formData: GitImportFormData,
   imageStreamData: K8sResourceKind,
   dryRun: boolean,
-  originalImageStream?: K8sResourceKind,
+  appResources: AppResources,
   verb: K8sVerb = 'create',
+  generatedImageStreamName: string = '',
 ): Promise<K8sResourceKind> => {
+  const imageStreamList = appResources?.imageStream?.data;
+  const imageStreamFilterData = _.orderBy(imageStreamList, ['metadata.resourceVersion'], ['desc']);
+  const originalImageStream = (imageStreamFilterData.length && imageStreamFilterData[0]) || {};
   const {
     name,
     project: { name: namespace },
@@ -77,17 +86,16 @@ export const createOrUpdateImageStream = (
     apiVersion: 'image.openshift.io/v1',
     kind: 'ImageStream',
     metadata: {
-      name,
+      name: `${generatedImageStreamName || name}`,
       namespace,
       labels: { ...defaultLabels, ...userLabels },
       annotations: defaultAnnotations,
     },
   };
   const imageStream = mergeData(originalImageStream, newImageStream);
-
   return verb === 'update'
     ? k8sUpdate(ImageStreamModel, imageStream)
-    : k8sCreate(ImageStreamModel, imageStream, dryRun ? dryRunOpt : {});
+    : k8sCreate(ImageStreamModel, newImageStream, dryRun ? dryRunOpt : {});
 };
 
 export const createWebhookSecret = (
@@ -121,6 +129,7 @@ export const createOrUpdateBuildConfig = (
   dryRun: boolean,
   originalBuildConfig?: K8sResourceKind,
   verb: K8sVerb = 'create',
+  generatedImageStreamName: string = '',
 ): Promise<K8sResourceKind> => {
   const {
     name,
@@ -180,7 +189,7 @@ export const createOrUpdateBuildConfig = (
       output: {
         to: {
           kind: 'ImageStreamTag',
-          name: `${name}:latest`,
+          name: `${generatedImageStreamName || name}:latest`,
         },
       },
       source: {
@@ -409,20 +418,31 @@ export const createOrUpdateResources = async (
     },
     git: { url: repository, type: gitType, ref },
     pipeline,
+    resources,
   } = formData;
   const imageStreamName = _.get(imageStream, 'metadata.name');
 
   createNewProject && (await createProject(formData.project));
 
   const requests: Promise<K8sResourceKind>[] = [];
-
+  let generatedImageStreamName: string = '';
+  const imageStreamList = appResources?.imageStream?.data;
+  if (
+    resources === Resources.KnativeService &&
+    imageStreamList &&
+    imageStreamList.length &&
+    verb === 'update'
+  ) {
+    generatedImageStreamName = `${name}-${getRandomChars()}`;
+  }
   requests.push(
     createOrUpdateImageStream(
       formData,
       imageStream,
       dryRun,
-      _.get(appResources, 'imageStream.data'),
-      verb,
+      appResources,
+      generatedImageStreamName ? 'create' : verb,
+      generatedImageStreamName,
     ),
     createOrUpdateBuildConfig(
       formData,
@@ -430,6 +450,7 @@ export const createOrUpdateResources = async (
       dryRun,
       _.get(appResources, 'buildConfig.data'),
       verb,
+      generatedImageStreamName,
     ),
   );
 
