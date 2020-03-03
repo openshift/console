@@ -43,7 +43,21 @@ import {
 } from '../components/topology/topology-types';
 import { detectGitType } from '../components/import/import-validation-utils';
 import { GitTypes } from '../components/import/import-types';
+import { CREATE_APPLICATION_KEY, UNASSIGNED_KEY } from '../const';
 import { ServiceBindingRequestModel } from '../models';
+
+export const sanitizeApplicationValue = (
+  application: string,
+  applicationType: string = application,
+): string => {
+  switch (applicationType) {
+    case UNASSIGNED_KEY:
+    case CREATE_APPLICATION_KEY:
+      return '';
+    default:
+      return application;
+  }
+};
 
 export const edgesFromAnnotations = (annotations): string[] => {
   let edges: string[] = [];

@@ -9,6 +9,7 @@ import { getSampleRepo, getSampleRef, getSampleContextDir } from '../../../utils
 import FormSection from '../section/FormSection';
 import SampleRepo from './SampleRepo';
 import AdvancedGitOptions from './AdvancedGitOptions';
+import { UNASSIGNED_KEY } from '../../../const';
 
 export interface GitSectionProps {
   showSample?: boolean;
@@ -34,6 +35,7 @@ const GitSection: React.FC<GitSectionProps> = ({ showSample }) => {
     gitRepoName && !values.name && setFieldValue('name', gitRepoName);
     gitRepoName &&
       !values.application.name &&
+      values.application.selectedKey !== UNASSIGNED_KEY &&
       setFieldValue('application.name', `${gitRepoName}-app`);
     setFieldTouched('git.url', true);
     showGitType && setFieldTouched('git.type', false);
@@ -59,7 +61,14 @@ const GitSection: React.FC<GitSectionProps> = ({ showSample }) => {
       setFieldValue('image.couldNotRecommend', false);
       setFieldValue('git.urlValidation', ValidatedOptions.error);
     }
-  }, [setFieldTouched, setFieldValue, values.application.name, values.git, values.name]);
+  }, [
+    setFieldTouched,
+    setFieldValue,
+    values.application.name,
+    values.application.selectedKey,
+    values.git,
+    values.name,
+  ]);
 
   const handleGitUrlChange: React.ReactEventHandler = React.useCallback(() => {
     setFieldValue('git.urlValidation', ValidatedOptions.default);
@@ -74,7 +83,9 @@ const GitSection: React.FC<GitSectionProps> = ({ showSample }) => {
     const gitType = detectGitType(url);
     const name = values.name || values.image.selected;
     values.name !== name && setFieldValue('name', name);
-    !values.application.name && setFieldValue('application.name', `${name}-app`);
+    !values.application.name &&
+      values.application.selectedKey !== UNASSIGNED_KEY &&
+      setFieldValue('application.name', `${name}-app`);
     setFieldValue('git.url', url);
     setFieldValue('git.dir', dir);
     setFieldValue('git.ref', ref);
@@ -86,6 +97,7 @@ const GitSection: React.FC<GitSectionProps> = ({ showSample }) => {
     setFieldValue,
     tag,
     values.application.name,
+    values.application.selectedKey,
     values.image.selected,
     values.name,
   ]);

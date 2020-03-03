@@ -4,8 +4,8 @@ import { K8sResourceKind, referenceFor, referenceForModel } from '@console/inter
 import { BuildStrategyType } from '@console/internal/components/build';
 import { DeploymentConfigModel, DeploymentModel } from '@console/internal/models';
 import { ServiceModel } from '@console/knative-plugin';
+import { UNASSIGNED_KEY } from '../../const';
 import { Resources } from '../import/import-types';
-import { UNASSIGNED_KEY } from '../import/app/ApplicationSelector';
 import { AppResources } from './edit-application-types';
 
 export enum CreateApplicationFlow {

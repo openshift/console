@@ -1,9 +1,9 @@
 import { ValidatedOptions } from '@patternfly/react-core';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { ServiceModel } from '@console/knative-plugin';
-import { AppResources } from '../edit-application-types';
+import { UNASSIGNED_KEY } from '../../../const';
 import { DeployImageFormData, GitImportFormData, Resources } from '../../import/import-types';
-import { UNASSIGNED_KEY } from '../../import/app/ApplicationSelector';
+import { AppResources } from '../edit-application-types';
 
 export const knativeService: K8sResourceKind = {
   apiVersion: `${ServiceModel.apiGroup}/${ServiceModel.apiVersion}`,

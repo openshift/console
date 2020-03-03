@@ -3,10 +3,9 @@ import * as _ from 'lodash';
 import { useFormikContext, FormikValues, useField } from 'formik';
 import { FormGroup, TextInputTypes } from '@patternfly/react-core';
 import { InputField, getFieldId } from '@console/shared';
+import { CREATE_APPLICATION_KEY, UNASSIGNED_KEY } from '../../../const';
+import { sanitizeApplicationValue } from '../../../utils/application-utils';
 import ApplicationDropdown from '../../dropdown/ApplicationDropdown';
-
-export const CREATE_APPLICATION_KEY = '#CREATE_APPLICATION_KEY#';
-export const UNASSIGNED_KEY = '#UNASSIGNED_KEY#';
 
 export interface ApplicationSelectorProps {
   namespace?: string;
@@ -28,16 +27,8 @@ const ApplicationSelector: React.FC<ApplicationSelectorProps> = ({
 
   const onDropdownChange = (key: string, application: string) => {
     setFieldTouched('application.selectedKey', true);
-    if (key === CREATE_APPLICATION_KEY) {
-      setFieldValue('application.name', '');
-      setFieldValue('application.selectedKey', key);
-    } else if (key === UNASSIGNED_KEY) {
-      setFieldValue('application.name', '');
-      setFieldValue('application.selectedKey', key);
-    } else {
-      setFieldValue('application.name', application);
-      setFieldValue('application.selectedKey', key);
-    }
+    setFieldValue('application.name', sanitizeApplicationValue(application, key));
+    setFieldValue('application.selectedKey', key);
     validateForm();
   };
 

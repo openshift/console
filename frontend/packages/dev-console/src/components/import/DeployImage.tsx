@@ -6,7 +6,7 @@ import { history } from '@console/internal/components/utils';
 import { getActiveApplication } from '@console/internal/reducers/ui';
 import { RootState } from '@console/internal/redux';
 import { K8sResourceKind } from '@console/internal/module/k8s';
-import { doContextualBinding } from '../../utils/application-utils';
+import { doContextualBinding, sanitizeApplicationValue } from '../../utils/application-utils';
 import { ALLOW_SERVICE_BINDING } from '../../const';
 import { DeployImageFormData, FirehoseList, Resources } from './import-types';
 import { createOrUpdateDeployImageResources } from './deployImage-submit-utils';
@@ -40,8 +40,8 @@ const DeployImage: React.FC<Props> = ({
       description: '',
     },
     application: {
-      initial: activeApplication,
-      name: activeApplication,
+      initial: sanitizeApplicationValue(activeApplication),
+      name: sanitizeApplicationValue(activeApplication),
       selectedKey: activeApplication,
     },
     name: '',
