@@ -99,7 +99,7 @@ export const HelmInstallPage: React.FunctionComponent<HelmInstallPageProps> = ({
   }
 
   return (
-    <NamespacedPage disabled variant={NamespacedPageVariants.light}>
+    <NamespacedPage variant={NamespacedPageVariants.light} disabled hideApplications>
       <Helmet>
         <title>Install Helm Chart</title>
       </Helmet>
@@ -107,7 +107,7 @@ export const HelmInstallPage: React.FunctionComponent<HelmInstallPageProps> = ({
         {chartHasValues &&
           'The helm chart will be installed using the YAML shown in the editor below.'}
       </PageHeading>
-      <div className="co-m-pane__body">
+      <div className="co-m-pane__body" style={{ paddingBottom: 0 }}>
         <Formik
           initialValues={initialValues}
           onSubmit={handleSubmit}
