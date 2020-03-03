@@ -26,3 +26,7 @@
   padding-left: var(--pf-global--spacer--lg);
   padding-right: var(--pf-global--spacer--lg);
 }
+
+.kubevirt-boot-order__data-list-item {
+  background: var(--pf-global--BackgroundColor--100);
+}
