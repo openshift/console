@@ -4,7 +4,7 @@ import { click, asyncForEach } from '@console/shared/src/test-utils/utils';
 import { NetworkInterfaceDialog } from '../dialogs/networkInterfaceDialog';
 import { DiskDialog } from '../dialogs/diskDialog';
 import { tableRows, saveButton } from '../../views/kubevirtDetailView.view';
-import { fillInput, selectOptionByText, setCheckboxState } from '../utils/utils';
+import { fillInput, selectOptionByText, setCheckboxState, getSelectOptions } from '../utils/utils';
 import {
   POD_CREATION_TIMEOUT_SECS,
   V2V_INSTANCE_CONNECTION_TIMEOUT,
@@ -50,15 +50,14 @@ export class ImportWizard extends Wizard {
   }
 
   async configureInstance(instanceConfig: InstanceConfig) {
-    await selectOptionByText(view.vcenterInstanceSelect, instanceConfig.instance);
-    if (instanceConfig.instance === IMPORT_WIZARD_CONN_TO_NEW_INSTANCE) {
+    await selectOptionByText(view.vcenterInstanceSelect, 
+      (await getSelectOptions(view.vcenterInstanceSelect)).find((option) => option.startsWith('admin')));
+  if (instanceConfig.instance === IMPORT_WIZARD_CONN_TO_NEW_INSTANCE) {
       await this.fillHostname(instanceConfig.hostname);
       await this.fillUsername(instanceConfig.username);
       await this.fillPassword(instanceConfig.password);
       await this.saveInstance(instanceConfig.saveInstance);
-    } else {
-      throw Error('Saved provider instances are not implemented');
-    }
+    } 
   }
 
   async connectToInstance() {

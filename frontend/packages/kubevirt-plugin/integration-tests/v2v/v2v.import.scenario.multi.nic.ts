@@ -4,11 +4,11 @@ import { V2V_VM_IMPORT_TIMEOUT, VM_STATUS } from '../tests/utils/consts';
 import { VirtualMachine } from '../tests/models/virtualMachine';
 import { vmwareVMMultiNicConfig } from './v2v.configs';
 import {
-  // removeLeakedResources,
   withResource,
   createResources,
   deleteResources,
 } from '@console/shared/src/test-utils/utils';
+// import { getResourceObject } from '../tests/utils/utils';
 import { multusNAD } from '../tests/utils/mocks';
 
 describe('Kubevirt create VM using wizard', () => {
@@ -26,10 +26,21 @@ describe('Kubevirt create VM using wizard', () => {
     'Imports VM from VMware Instance',
     async () => {
       const vm = new VirtualMachine({ name: vmwareVMMultiNicConfig.name, namespace: testName });
-      await withResource(leakedResources, vm.asResource(), async () => {
-        await vm.import(vmwareVMConfig);
+      await withResource(leakedResources, 
+                          vm.asResource(), 
+                          async () => {
+        await vm.import(vmwareVMMultiNicConfig);
         await vm.waitForStatus(VM_STATUS.Off, V2V_VM_IMPORT_TIMEOUT);
-      });
+        // const vmJson = getResourceObject(
+        //   vm.name, 
+        //   vm.namespace, 
+        //   vm.kind
+        // );
+        // let vmRam = vmJson['spec']['domain']['resources']['requests']['memory'];
+        // let vmCores = vmJson['spec']['domain']['cpu']['cores']
+        }, 
+        true
+      );
     },
     V2V_VM_IMPORT_TIMEOUT,
   );
