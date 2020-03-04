@@ -16,7 +16,7 @@ import { VMKind, VMIKind } from '../../types';
 import { getLoadedData, getResource } from '../../utils';
 import { VirtualMachineInstanceModel, VirtualMachineModel } from '../../models';
 import { getServicesForVmi } from '../../selectors/service';
-import { VMResourceSummary, VMDetailsList } from './vm-resource';
+import { VMResourceSummary, VMDetailsList, VMSchedulingList } from './vm-resource';
 import { VMTabProps } from './types';
 import { isVM, isVMI } from '../../selectors/vm/vmlike';
 
@@ -84,6 +84,14 @@ const VMDetails: React.FC<VMDetailsProps> = (props) => {
           </div>
           <div className="col-sm-6">
             <VMDetailsList canUpdateVM={canUpdate} {...mainResources} />
+          </div>
+        </div>
+      </div>
+      <div className="co-m-pane__body">
+        <SectionHeading text="Scheduling and resources requirements" />
+        <div className="row">
+          <div className="col-sm-6">
+            <VMSchedulingList canUpdateVM={canUpdate} {...mainResources} />
           </div>
         </div>
       </div>
