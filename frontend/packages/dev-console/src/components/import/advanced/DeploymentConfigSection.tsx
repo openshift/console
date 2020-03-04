@@ -1,19 +1,25 @@
 import * as React from 'react';
+import * as _ from 'lodash';
 import { CheckboxField, EnvironmentField } from '@console/shared';
+import { K8sResourceKind } from '@console/internal/module/k8s';
 import FormSection from '../section/FormSection';
 
 export interface DeploymentConfigSectionProps {
   namespace: string;
+  resource?: K8sResourceKind;
 }
 
-const DeploymentConfigSection: React.FC<DeploymentConfigSectionProps> = ({ namespace }) => {
-  const deploymentConfigObj = {
+const DeploymentConfigSection: React.FC<DeploymentConfigSectionProps> = ({
+  namespace,
+  resource,
+}) => {
+  const deploymentConfigObj = resource || {
     kind: 'DeploymentConfig',
     metadata: {
       namespace,
     },
   };
-
+  const envs = _.get(deploymentConfigObj, 'spec.template.spec.containers[0].env', []);
   return (
     <FormSection title="Deployment" fullWidth>
       <CheckboxField
@@ -27,6 +33,7 @@ const DeploymentConfigSection: React.FC<DeploymentConfigSectionProps> = ({ names
       <EnvironmentField
         name="deployment.env"
         label="Environment Variables (Runtime only)"
+        envs={envs}
         obj={deploymentConfigObj}
         envPath={['spec', 'template', 'spec', 'containers']}
       />

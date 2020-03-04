@@ -1,4 +1,5 @@
 import { TextInputTypes, ValidatedOptions } from '@patternfly/react-core';
+import { K8sResourceKind } from '@console/internal/module/k8s';
 
 export interface FieldProps {
   name: string;
@@ -47,8 +48,9 @@ export interface DropdownFieldProps extends FieldProps {
 }
 
 export interface EnvironmentFieldProps extends FieldProps {
-  obj?: object;
+  obj?: K8sResourceKind;
   envPath: string[];
+  envs?: (NameValuePair | NameValueFromPair)[];
 }
 
 export interface ResourceLimitFieldProps extends FieldProps {
