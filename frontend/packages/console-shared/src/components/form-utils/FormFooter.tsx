@@ -2,6 +2,7 @@ import * as React from 'react';
 import { ActionGroup, Alert, Button, ButtonVariant } from '@patternfly/react-core';
 import { ButtonBar } from '@console/internal/components/utils';
 import { FormFooterProps } from './form-utils-types';
+import './FormFooter.scss';
 
 const FormFooter: React.FC<FormFooterProps> = ({
   handleSubmit,
@@ -18,13 +19,18 @@ const FormFooter: React.FC<FormFooterProps> = ({
   disableSubmit,
   showAlert,
 }) => (
-  <ButtonBar inProgress={isSubmitting} errorMessage={errorMessage} successMessage={successMessage}>
+  <ButtonBar
+    className="ocs-form-footer"
+    inProgress={isSubmitting}
+    errorMessage={errorMessage}
+    successMessage={successMessage}
+  >
     {showAlert && (
       <Alert isInline className="co-alert" variant="info" title={infoTitle}>
         {infoMessage}
       </Alert>
     )}
-    <ActionGroup className="pf-c-form">
+    <ActionGroup className="pf-c-form pf-c-form__group--no-top-margin">
       <Button
         type={handleSubmit ? 'button' : 'submit'}
         {...(handleSubmit && { onClick: handleSubmit })}
