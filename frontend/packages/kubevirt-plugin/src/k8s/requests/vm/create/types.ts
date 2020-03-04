@@ -21,7 +21,7 @@ export type CreateVMEnhancedParams = CreateVMParams & {
   isTemplate: boolean;
 };
 
-export type DefaultTemplateParams = {
+export type DefaultVMLikeEntityParams = {
   commonTemplate: TemplateKind;
   namespace: string;
   name: string;

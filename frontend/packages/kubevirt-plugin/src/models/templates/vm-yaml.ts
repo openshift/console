@@ -7,21 +7,26 @@ export const VirtualMachineYAMLTemplates = ImmutableMap().setIn(
 apiVersion: ${VirtualMachineModel.apiGroup}/${VirtualMachineModel.apiVersion}
 kind: ${VirtualMachineModel.kind}
 metadata:
+  name: vm-example
   labels:
-    app: example
-    flavor.template.kubevirt.io/tiny: 'true'
+    app: vm-example
     os.template.kubevirt.io/fedora31: 'true'
-    vm.kubevirt.io/template.revision: '1'
-    vm.kubevirt.io/template.version: v0.8.1
+    flavor.template.kubevirt.io/Custom: 'true'
     workload.template.kubevirt.io/server: 'true'
-  name: example
+  annotations:
+    name.os.template.kubevirt.io/fedora31: Fedora 31
+    description: VM example
 spec:
   running: false
   template:
     metadata:
       labels:
-        kubevirt.io/domain: example
-        kubevirt.io/size: tiny
+        kubevirt.io/domain: vm-example
+        kubevirt.io/size: Custom
+        vm.kubevirt.io/name: vm-example
+        os.template.kubevirt.io/fedora31: 'true'
+        flavor.template.kubevirt.io/Custom: 'true'
+        workload.template.kubevirt.io/server: 'true'
     spec:
       domain:
         cpu:
@@ -30,35 +35,35 @@ spec:
           threads: 1
         devices:
           disks:
-            - name: containerdisk
-              bootOrder: 1
+            - bootOrder: 1
               disk:
                 bus: virtio
-            - name: cloudinitdisk
-              disk:
+              name: containerdisk
+            - disk:
                 bus: virtio
+              name: cloudinitdisk
           interfaces:
-            - bootOrder: 2
-              masquerade: {}
-              model: virtio
-              name: nic0
+            - masquerade: {}
+              name: default
+          networkInterfaceMultiqueue: true
           rng: {}
         resources:
           requests:
             memory: 1G
-      hostname: example
+      hostname: vm-example
       networks:
-        - name: nic0
+        - name: default
           pod: {}
+      terminationGracePeriodSeconds: 0
       volumes:
-      - containerDisk:
-          image: docker.io/kubevirt/fedora-cloud-container-disk-demo:latest
-        name: containerdisk
-      - cloudInitNoCloud:
-          userData: |-
-            #cloud-config
-            password: fedora
-            chpasswd: { expire: False }
-        name: cloudinitdisk
+        - containerDisk:
+            image: 'kubevirt/fedora-cloud-container-disk-demo:latest'
+          name: containerdisk
+        - cloudInitNoCloud:
+            userData: |-
+              #cloud-config
+              password: fedora
+              chpasswd: { expire: False }
+          name: cloudinitdisk
 `,
 );

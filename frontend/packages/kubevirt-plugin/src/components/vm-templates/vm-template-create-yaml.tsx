@@ -14,34 +14,15 @@ import { ErrorPage404 } from '@console/internal/components/error';
 import { getNamespace, getName } from '@console/shared';
 import { VMTemplateYAMLTemplates } from '../../models/templates';
 import { VM_TEMPLATE_CREATE_HEADER } from '../../constants/vm-templates';
-import { getDefaultVMTemplate } from '../../k8s/requests/vm/create/default-template';
+import { resolveDefaultVMTemplate } from '../../k8s/requests/vm/create/default-template';
 import {
   TEMPLATE_FLAVOR_LABEL,
   TEMPLATE_TYPE_BASE,
   TEMPLATE_TYPE_LABEL,
   TEMPLATE_WORKLOAD_LABEL,
 } from '../../constants/vm';
-import { ValueEnum } from '../../constants';
 import { MutableVMTemplateWrapper } from '../../k8s/wrapper/vm/vm-template-wrapper';
-
-class OSSelection extends ValueEnum<string> {
-  static readonly FEDORA = new OSSelection(
-    'fedora',
-    'kubevirt/fedora-cloud-container-disk-demo:latest',
-  );
-  static readonly CENTOS = new OSSelection('centos', 'centos:latest');
-
-  private readonly image: string;
-
-  protected constructor(value: string, image?: string) {
-    super(value);
-    this.image = image;
-  }
-
-  public getContainerImage = () => this.image;
-
-  static getAll = () => [OSSelection.FEDORA, OSSelection.CENTOS];
-}
+import { OSSelection } from '../../constants/vm/default-os-selection';
 
 const CreateVMTemplateYAMLConnected = connectToPlural(
   ({ match, kindsInFlight, kindObj }: CreateYAMLProps) => {
@@ -57,25 +38,16 @@ const CreateVMTemplateYAMLConnected = connectToPlural(
         },
       })
         .then((templates) => {
-          templates.sort((a, b) => getName(b).localeCompare(getName(a)));
-          let commonTemplate: TemplateKind = null;
-
-          const osSelection = OSSelection.getAll().find((selection) => {
-            // eslint-disable-next-line max-nested-callbacks
-            const baseTemplate = templates.find((t) => getName(t).includes(selection.getValue()));
-
-            if (baseTemplate) {
-              commonTemplate = baseTemplate;
-            }
-            return baseTemplate;
-          });
+          const { osSelection, template: commonTemplate } = OSSelection.findSuitableOSAndTemplate(
+            templates,
+          );
 
           if (!commonTemplate) {
             throw new Error('no matching template');
           }
 
           setDefaultTemplate(
-            getDefaultVMTemplate({
+            resolveDefaultVMTemplate({
               commonTemplate,
               name: 'vm-template-example',
               namespace: match.params.ns || 'default',
@@ -89,8 +61,10 @@ const CreateVMTemplateYAMLConnected = connectToPlural(
             safeLoad(VMTemplateYAMLTemplates.getIn(['vm-template'])),
           );
           setDefaultTemplate(
-            templateWrapper.setModel(TemplateModel).setNamespace(match.params.ns || 'default')
-              .asMutableResource,
+            templateWrapper
+              .setModel(TemplateModel)
+              .setNamespace(match.params.ns || 'default')
+              .asMutableResource(),
           );
         });
     }, [match.params.ns]);

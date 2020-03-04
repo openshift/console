@@ -1,4 +1,4 @@
-import { DefaultTemplateParams } from './types';
+import { DefaultVMLikeEntityParams } from './types';
 import { TemplateKind } from '@console/internal/module/k8s';
 import {
   MutableVMTemplateWrapper,
@@ -24,7 +24,7 @@ import { getFlavor, getWorkloadProfile } from '../../../../selectors/vm';
 import { DiskWrapper } from '../../../wrapper/vm/disk-wrapper';
 import { VolumeWrapper } from '../../../wrapper/vm/volume-wrapper';
 
-export const getDefaultVMTemplate = (params: DefaultTemplateParams): TemplateKind => {
+export const resolveDefaultVMTemplate = (params: DefaultVMLikeEntityParams): TemplateKind => {
   const { commonTemplate, name, namespace, containerImage, baseOSName } = params;
   const template = new MutableVMTemplateWrapper(commonTemplate, { copy: true });
 
@@ -77,12 +77,12 @@ export const getDefaultVMTemplate = (params: DefaultTemplateParams): TemplateKin
 
   initializeCommonMetadata(
     {
-      [VMSettingsField.NAME]: name,
       [VMSettingsField.DESCRIPTION]: 'VM template example',
       [VMSettingsField.FLAVOR]: getFlavor(commonTemplate),
       [VMSettingsField.WORKLOAD_PROFILE]: getWorkloadProfile(commonTemplate),
+      osID,
+      osName,
     },
-    { osID, osName },
     mutableFinalTemplate,
     commonTemplate,
   );
