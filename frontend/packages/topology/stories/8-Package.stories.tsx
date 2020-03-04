@@ -51,7 +51,7 @@ const getModel = (layout: string): Model => {
   // create nodes from data
   const nodes: NodeModel[] = data.nodes.map((d) => {
     // randomize size somewhat
-    const width = 50 + d.id.length;
+    const width = 50 + d.id.length + 40;
     const height = 50 + d.id.length;
     return {
       id: d.id,
