@@ -282,6 +282,7 @@ export const ConnectedNotificationDrawer_: React.FC<ConnectedNotificationDrawerP
 
   return (
     <NotificationDrawer
+      className="co-notification-drawer"
       isInline={isDesktop}
       isExpanded={isDrawerExpanded}
       notificationEntries={[criticalAlertCategory, nonCriticalAlertCategory, messageCategory]}
