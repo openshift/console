@@ -165,9 +165,20 @@ export const PageHeading = connectToModel((props: PageHeadingProps) => {
   );
 });
 
-export const SectionHeading: React.SFC<SectionHeadingProps> = ({ text, children, style }) => (
+export const SectionHeading: React.SFC<SectionHeadingProps> = ({
+  text,
+  children,
+  style,
+  required,
+}) => (
   <h2 className="co-section-heading" style={style} data-test-section-heading={text}>
-    {text}
+    <span
+      className={classNames({
+        'co-required': required,
+      })}
+    >
+      {text}
+    </span>
     {children}
   </h2>
 );
@@ -264,6 +275,7 @@ export type SectionHeadingProps = {
   children?: any;
   style?: any;
   text: string;
+  required?: boolean;
 };
 
 export type SidebarSectionHeadingProps = {
