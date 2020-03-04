@@ -7,7 +7,7 @@ import {
   k8sKill,
 } from '@console/internal/module/k8s';
 import { MachineModel, MachineSetModel, SecretModel } from '@console/internal/models';
-import { PatchBuilder, PatchOperation } from '@console/shared/src/k8s';
+import { PatchBuilder } from '@console/shared/src/k8s';
 import { getAnnotations } from '@console/shared/src';
 import { BareMetalHostModel } from '../../models';
 import { BareMetalHostKind } from '../../types';
@@ -38,10 +38,7 @@ export const deprovision = async (machine: MachineKind, machineSet?: MachineSetK
     if (replicas > 0) {
       try {
         await k8sPatch(MachineSetModel, machineSet, [
-          new PatchBuilder('/spec/replicas')
-            .setOperation(PatchOperation.REPLACE)
-            .setValue(replicas - 1)
-            .build(),
+          new PatchBuilder('/spec/replicas').replace(replicas - 1).build(),
         ]);
       } catch (ignored) {
         await k8sPatch(MachineModel, machine, [

@@ -21,7 +21,11 @@ export const getShiftBootOrderPatches = (
       patchedDevice.bootOrder = getDeviceBootOrder(patchedDevice) - 1;
 
       return new PatchBuilder(path)
-        .setListUpdate(patchedDevice, devicesWithoutRemovedDevice, getSimpleName)
+        .setListUpdate(
+          patchedDevice,
+          devicesWithoutRemovedDevice,
+          (other, updatedItem) => getSimpleName(other) === getSimpleName(updatedItem),
+        )
         .build();
     });
 };
