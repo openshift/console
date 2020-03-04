@@ -28,6 +28,7 @@ import {
   K8sEntityMap,
 } from '@console/shared';
 import { match } from 'react-router';
+import { withStartGuide } from '@console/internal/components/start-guide';
 import { VM_TEMPLATE_LABEL_PLURAL } from '../../constants/vm-templates';
 import {
   getTemplateOperatingSystems,
@@ -173,9 +174,9 @@ const getCreateProps = ({ namespace }: { namespace: string }) => {
   };
 };
 
-const VirtualMachineTemplatesPage: React.FC<VirtualMachineTemplatesPageProps &
+const WrappedVirtualMachineTemplatesPage: React.FC<VirtualMachineTemplatesPageProps &
   React.ComponentProps<typeof ListPage>> = (props) => {
-  const { skipAccessReview } = props;
+  const { skipAccessReview, noProjectsAvailable } = props;
   const namespace = props.match.params.ns;
 
   const resources = [
@@ -199,10 +200,11 @@ const VirtualMachineTemplatesPage: React.FC<VirtualMachineTemplatesPageProps &
 
   const flatten = ({ vmTemplates }) => getLoadedData(vmTemplates, []);
   const createAccessReview = skipAccessReview ? null : { model: TemplateModel, namespace };
+  const modifiedProps = Object.assign({}, { mock: noProjectsAvailable }, props);
 
   return (
     <MultiListPage
-      {...props}
+      {...modifiedProps}
       createAccessReview={createAccessReview}
       createButtonText="Create Virtual Machine Template"
       canCreate
@@ -218,6 +220,8 @@ const VirtualMachineTemplatesPage: React.FC<VirtualMachineTemplatesPageProps &
   );
 };
 
+const VirtualMachineTemplatesPage = withStartGuide(WrappedVirtualMachineTemplatesPage);
+
 type VMTemplateTableRowProps = {
   obj: TemplateKind;
   index: number;
@@ -231,6 +235,7 @@ type VMTemplateTableRowProps = {
 type VirtualMachineTemplatesPageProps = {
   match: match<{ ns?: string }>;
   skipAccessReview?: boolean;
+  noProjectsAvailable?: boolean;
 };
 
 export { VirtualMachineTemplatesPage };
