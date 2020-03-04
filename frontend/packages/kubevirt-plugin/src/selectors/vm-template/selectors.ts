@@ -2,6 +2,7 @@ import { VMGenericLikeEntityKind } from '../../types/vmLike';
 import { getLabel, getName, getNamespace } from '@console/shared/src';
 import { LABEL_USED_TEMPLATE_NAME, LABEL_USED_TEMPLATE_NAMESPACE } from '../../constants/vm';
 import { TemplateKind } from '@console/internal/module/k8s';
+import { TemplateValidations } from '../../utils/validations/template/template-validations';
 
 export const getVMTemplateNamespacedName = (
   vm: VMGenericLikeEntityKind,
@@ -23,4 +24,20 @@ export const getVMTemplate = (
           getNamespace(template) === namespacedName.namespace,
       )
     : undefined;
+};
+
+export const getTemplateValidationsFromTemplate = (
+  vmTemplate: TemplateKind,
+): TemplateValidations => {
+  const result = vmTemplate?.metadata?.annotations?.validations;
+
+  if (!result) {
+    return new TemplateValidations();
+  }
+
+  try {
+    return new TemplateValidations(JSON.parse(result));
+  } catch (e) {
+    return new TemplateValidations();
+  }
 };
