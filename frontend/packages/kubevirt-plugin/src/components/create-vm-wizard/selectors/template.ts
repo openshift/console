@@ -51,9 +51,6 @@ export const getTemplateValidations = (state, id: string): TemplateValidations[]
 export const getTemplateValidation = (state, id: string): TemplateValidations => {
   const templateValidations = getTemplateValidations(state, id);
   if (templateValidations && templateValidations.length > 0) {
-    templateValidations.length > 1 &&
-      // eslint-disable-next-line no-console
-      console.warn('WARNING: getTemplateValidation: multiple template validations detected!');
     return templateValidations[0];
   }
 
