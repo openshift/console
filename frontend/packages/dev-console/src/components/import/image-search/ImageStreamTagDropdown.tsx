@@ -5,13 +5,13 @@ import { ValidatedOptions } from '@patternfly/react-core';
 import { DropdownField } from '@console/shared';
 import { k8sGet, K8sResourceKind, ContainerPort } from '@console/internal/module/k8s';
 import { ImageStreamTagModel } from '@console/internal/models';
+import { UNASSIGNED_KEY } from '../../../const';
 import {
   getImageStreamTags,
   getPorts,
   getSuggestedName,
   makePortName,
 } from '../../../utils/imagestream-utils';
-import { UNASSIGNED_KEY } from '../app/ApplicationSelector';
 import { ImageStreamContext } from './ImageStreamContext';
 
 const ImageStreamTagDropdown: React.FC = () => {

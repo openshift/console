@@ -34,11 +34,25 @@ import {
   EventSourceKafkaModel,
 } from '@console/knative-plugin';
 import { checkAccess } from '@console/internal/components/utils';
+import { getOperatorBackedServiceKindMap } from '@console/shared';
+import { CREATE_APPLICATION_KEY, UNASSIGNED_KEY } from '../const';
 import { TopologyDataObject } from '../components/topology/topology-types';
 import { detectGitType } from '../components/import/import-validation-utils';
 import { GitTypes } from '../components/import/import-types';
 import { ServiceBindingRequestModel } from '../models';
-import { getOperatorBackedServiceKindMap } from '@console/shared';
+
+export const sanitizeApplicationValue = (
+  application: string,
+  applicationType: string = application,
+): string => {
+  switch (applicationType) {
+    case UNASSIGNED_KEY:
+    case CREATE_APPLICATION_KEY:
+      return '';
+    default:
+      return application;
+  }
+};
 
 export const edgesFromAnnotations = (annotations): string[] => {
   let edges: string[] = [];
