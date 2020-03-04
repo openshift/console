@@ -16,9 +16,10 @@ import { withFallback } from '@console/shared/src/components/error/error-boundar
 
 import * as UIActions from '../../../actions/ui';
 import { ErrorBoundaryFallback } from '../../error';
+import { connectToURLs, MonitoringRoutes } from '../../../reducers/monitoring';
 import { RootState } from '../../../redux';
 import { getPrometheusURL, PrometheusEndpoint } from '../../graphs/helpers';
-import { history, LoadingInline, useSafeFetch } from '../../utils';
+import { ExternalLink, history, LoadingInline, useSafeFetch } from '../../utils';
 import { formatPrometheusDuration, parsePrometheusDuration } from '../../utils/datetime';
 import BarChart from './bar-chart';
 import Graph from './graph';
@@ -401,6 +402,14 @@ const Board: React.FC<BoardProps> = ({ rows }) => (
   </>
 );
 
+const GrafanaLink_ = ({ urls }) =>
+  _.isEmpty(urls[MonitoringRoutes.Grafana]) ? null : (
+    <span className="monitoring-header-link">
+      <ExternalLink href={urls[MonitoringRoutes.Grafana]} text="Grafana UI" />
+    </span>
+  );
+const GrafanaLink = connectToURLs(MonitoringRoutes.Grafana)(GrafanaLink_);
+
 const MonitoringDashboardsPage_: React.FC<MonitoringDashboardsPageProps> = ({
   deleteAll,
   match,
@@ -490,7 +499,11 @@ const MonitoringDashboardsPage_: React.FC<MonitoringDashboardsPageProps> = ({
       </Helmet>
       <div className="co-m-nav-title co-m-nav-title--detail">
         <div className="monitoring-dashboards__header">
-          <h1 className="co-m-pane__heading">Dashboards</h1>
+          <h1 className="co-m-pane__heading">
+            <span>
+              Dashboards <GrafanaLink />
+            </span>
+          </h1>
           <div className="monitoring-dashboards__options">
             <TimespanDropdown />
             <PollIntervalDropdown />
