@@ -6,6 +6,7 @@ import {
   DeploymentKind,
   referenceFor,
 } from '@console/internal/module/k8s';
+import { SecretModel } from '@console/internal/models';
 import { getRouteWebURL } from '@console/internal/components/routes';
 import {
   TransformResourceData,
@@ -38,6 +39,7 @@ import {
   TopologyDataModel,
   TopologyDataResources,
   TopologyDataObject,
+  TopologyDataMap,
   Node,
   Edge,
   Group,
@@ -135,6 +137,17 @@ export const getRoutesUrl = (resource: OverviewItem): string => {
     return getRouteWebURL(routes[0]);
   }
   return getRouteData(ksroutes, resource);
+};
+
+const dataObjectFromModel = (node: Node | Group): TopologyDataObject => {
+  return {
+    id: node.id,
+    name: node.name,
+    type: node.type,
+    resources: null,
+    operatorBackedService: false,
+    data: null,
+  };
 };
 
 /**
@@ -337,46 +350,12 @@ export const getTopologyEdgeItems = (
   return edges;
 };
 
-export const getTopologyHelmReleaseGroupItem = (
-  obj: K8sResourceKind,
-  groups: Group[],
-  helmResourcesMap: HelmReleaseResourcesMap,
-): Group[] => {
-  const resourceKindName = `${obj.kind}---${obj.metadata.name}`;
-  const releaseName = helmResourcesMap[resourceKindName]?.releaseName;
-  const uid = _.get(obj, ['metadata', 'uid'], null);
-
-  if (!releaseName) return groups;
-
-  const releaseExists = _.some(groups, { name: releaseName });
-
-  if (!releaseExists) {
-    groups.push({
-      id: `${TYPE_HELM_RELEASE}:${releaseName}`,
-      type: TYPE_HELM_RELEASE,
-      name: releaseName,
-      nodes: [uid],
-    });
-  } else {
-    const gIndex = _.findIndex(groups, { name: releaseName });
-    groups[gIndex].nodes.push(uid);
-  }
-  return groups;
-};
-
 /**
  * create groups data for graph
  * @param dc
  * @param groups
  */
-export const getTopologyGroupItems = (
-  dc: K8sResourceKind,
-  groups: Group[],
-  helmResourcesMap?: HelmReleaseResourcesMap,
-): Group[] => {
-  if (isHelmReleaseNode(dc, helmResourcesMap)) {
-    return getTopologyHelmReleaseGroupItem(dc, groups, helmResourcesMap);
-  }
+export const getTopologyGroupItems = (dc: K8sResourceKind, groups: Group[]): void => {
   const labels = _.get(dc, ['metadata', 'labels']);
   const uid = _.get(dc, ['metadata', 'uid']);
   _.forEach(labels, (label, key) => {
@@ -401,8 +380,57 @@ export const getTopologyGroupItems = (
       }
     }
   });
-  return groups;
 };
+
+export const getTopologyHelmReleaseGroupItem = (
+  obj: K8sResourceKind,
+  groups: Group[],
+  helmResourcesMap: HelmReleaseResourcesMap,
+  secrets: K8sResourceKind[],
+  dataToShowOnNodes: TopologyDataMap,
+): void => {
+  const resourceKindName = getHelmReleaseKey(obj);
+  const releaseName = helmResourcesMap[resourceKindName]?.releaseName;
+  const uid = _.get(obj, ['metadata', 'uid'], null);
+
+  if (!releaseName) return;
+
+  const releaseExists = _.some(groups, { name: releaseName });
+
+  if (!releaseExists) {
+    const secret = secrets.find((nextSecret) => {
+      const { labels } = nextSecret.metadata;
+      return labels && labels.name && labels.name.includes(releaseName);
+    });
+    const helmGroup = {
+      id: `${TYPE_HELM_RELEASE}:${releaseName}`,
+      type: TYPE_HELM_RELEASE,
+      name: releaseName,
+      nodes: [uid],
+    };
+
+    if (secret) {
+      helmGroup.id = secret.metadata.uid;
+      getTopologyGroupItems(secret, groups);
+    }
+
+    const dataModel = dataObjectFromModel(helmGroup);
+    const { kind, apiVersion } = SecretModel;
+    dataModel.resources = {
+      obj: secret ? { ...secret, kind, apiVersion } : null,
+      buildConfigs: null,
+      services: null,
+      routes: null,
+    };
+    dataToShowOnNodes[helmGroup.id] = dataModel;
+    groups.push(helmGroup);
+    return;
+  }
+
+  const gIndex = _.findIndex(groups, { name: releaseName });
+  groups[gIndex].nodes.push(uid);
+};
+
 /**
  * Creates the operator backed services topology data
  * @param resources
@@ -629,14 +657,15 @@ export const transformTopologyData = (
     }),
   );
 
+  const secrets = _.get(resources, 'secrets.data', []);
   _.forEach(transformBy, (key) => {
     if (!_.isEmpty(resources[key].data)) {
       // filter data based on the active application
       const resourceData = filterBasedOnActiveApplication(resources[key].data, application);
       let nodesData = [];
       let edgesData = [];
-      let groupsData = topologyGraphAndNodeData.graph.groups;
-      const dataToShowOnNodes = {};
+      const groupsData = topologyGraphAndNodeData.graph.groups;
+      const dataToShowOnNodes: TopologyDataMap = {};
 
       transformResourceData[key](resourceData).forEach((item) => {
         const { obj: deploymentConfig } = item;
@@ -651,7 +680,6 @@ export const transformTopologyData = (
         );
         if (!_.some(topologyGraphAndNodeData.graph.nodes, { id: uid })) {
           const operatorBacked = dataToShowOnNodes[uid].operatorBackedService;
-
           const nodeType = operatorBacked
             ? TYPE_OPERATOR_WORKLOAD
             : isHelmReleaseNode(deploymentConfig, helmResourcesMap)
@@ -669,13 +697,17 @@ export const transformTopologyData = (
             ),
           ];
           if (!operatorBacked) {
-            groupsData = [
-              ...getTopologyGroupItems(
+            if (!isHelmReleaseNode(deploymentConfig, helmResourcesMap)) {
+              getTopologyGroupItems(deploymentConfig, groupsData);
+            } else {
+              getTopologyHelmReleaseGroupItem(
                 deploymentConfig,
-                topologyGraphAndNodeData.graph.groups,
+                groupsData,
                 helmResourcesMap,
-              ),
-            ];
+                secrets,
+                dataToShowOnNodes,
+              );
+            }
           }
         }
       });
@@ -701,17 +733,6 @@ export const transformTopologyData = (
     topologyGraphAndNodeData,
   );
   return topologyGraphAndNodeData;
-};
-
-const dataObjectFromModel = (node: Node | Group): TopologyDataObject => {
-  return {
-    id: node.id,
-    name: node.name,
-    type: node.type,
-    resources: null,
-    operatorBackedService: false,
-    data: null,
-  };
 };
 
 export const topologyModelFromDataModel = (

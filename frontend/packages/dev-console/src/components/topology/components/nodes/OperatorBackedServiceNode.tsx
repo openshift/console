@@ -5,6 +5,7 @@ import {
   Node,
   WithSelectionProps,
   WithDndDropProps,
+  WithContextMenuProps,
   useAnchor,
   RectAnchor,
   useCombineRefs,
@@ -20,19 +21,24 @@ import GroupNode from './GroupNode';
 
 export type OperatorBackedServiceNodeProps = {
   element: Node;
+  editAccess: boolean;
 } & WithSelectionProps &
+  WithContextMenuProps &
   WithDndDropProps;
 
 const OperatorBackedServiceNode: React.FC<OperatorBackedServiceNodeProps> = ({
   element,
+  editAccess,
   selected,
   onSelect,
+  onContextMenu,
+  contextMenuOpen,
   dndDropRef,
 }) => {
   useAnchor((e: Node) => new RectAnchor(e, 4));
   const [hover, hoverRef] = useHover();
   const [{ dragging }, dragNodeRef] = useDragNode(
-    nodeDragSourceSpec(TYPE_OPERATOR_BACKED_SERVICE, false),
+    nodeDragSourceSpec(TYPE_OPERATOR_BACKED_SERVICE, true, editAccess),
     {
       element,
     },
@@ -46,6 +52,7 @@ const OperatorBackedServiceNode: React.FC<OperatorBackedServiceNodeProps> = ({
     <g
       ref={refs}
       onClick={onSelect}
+      onContextMenu={editAccess ? onContextMenu : null}
       className={classNames('odc-operator-backed-service', {
         'is-dragging': dragging,
         'is-selected': selected,
@@ -56,7 +63,9 @@ const OperatorBackedServiceNode: React.FC<OperatorBackedServiceNodeProps> = ({
       <rect
         className="odc-operator-backed-service__bg"
         filter={createSvgIdUrl(
-          hover || dragging ? NODE_SHADOW_FILTER_ID_HOVER : NODE_SHADOW_FILTER_ID,
+          hover || contextMenuOpen || dragging
+            ? NODE_SHADOW_FILTER_ID_HOVER
+            : NODE_SHADOW_FILTER_ID,
         )}
         x={0}
         y={0}

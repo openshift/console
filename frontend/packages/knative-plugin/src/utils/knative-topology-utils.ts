@@ -348,7 +348,7 @@ export const tranformKnNodeData = (
 ) => {
   let nodesData = [];
   let edgesData = [];
-  let groupsData = [];
+  const groupsData = topologyGraphAndNodeData.graph.groups;
   const dataToShowOnNodes = {};
   const serviceBindingRequests = _.get(resources, 'serviceBindingRequests.data');
   const allResources = _.flatten(
@@ -378,7 +378,7 @@ export const tranformKnNodeData = (
             ...edgesData,
             ...getEventTopologyEdgeItems(res, resources.ksservices, application),
           ];
-          groupsData = [...getTopologyGroupItems(res, topologyGraphAndNodeData.graph.groups)];
+          getTopologyGroupItems(res, groupsData);
           break;
         }
         case NodeType.Revision: {
@@ -389,7 +389,6 @@ export const tranformKnNodeData = (
             type,
             filters,
           );
-          groupsData = [...topologyGraphAndNodeData.graph.groups];
           break;
         }
         case NodeType.KnService: {
@@ -405,7 +404,7 @@ export const tranformKnNodeData = (
             ...getTrafficTopologyEdgeItems(res, resources.revisions),
             ...getTopologyEdgeItems(res, allResources, serviceBindingRequests, application),
           ];
-          groupsData = [...getTopologyGroupItems(res, topologyGraphAndNodeData.graph.groups)];
+          getTopologyGroupItems(res, groupsData);
           break;
         }
         default:
