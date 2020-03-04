@@ -55,7 +55,7 @@ describe('Deploy Image', () => {
       );
     });
 
-    it('should deploy the image and display it in the topology', async () => {
+    xit('should deploy the image and display it in the topology', async () => {
       // Deploy the image
       // Wait until the button is active
       await browser.wait(
