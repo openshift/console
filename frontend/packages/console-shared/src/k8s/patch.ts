@@ -78,12 +78,15 @@ export class PatchBuilder {
       other === updatedValue,
   ) => {
     if (items) {
-      this.value = item;
       const foundIndex = items.findIndex((other) => updatedItemEquals(other, item));
       if (foundIndex < 0) {
+        this.value = item;
         this.valueIndex = items.length;
         this.operation = PatchOperation.ADD;
+      } else if (_.isEqual(items[foundIndex], item)) {
+        this.valid = false; // no change
       } else {
+        this.value = item;
         this.valueIndex = foundIndex;
         this.operation = PatchOperation.REPLACE;
       }
