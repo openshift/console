@@ -3,7 +3,7 @@ import { InternalActionType, UpdateOptions } from '../types';
 import { vmWizardInternalActions } from '../internal-actions';
 import { validateNIC } from '../../../../utils/validations/vm';
 import { iGetIn } from '../../../../utils/immutable';
-import { iGetNetworks } from '../../selectors/immutable/networks';
+import { hasNetworksChanged, iGetNetworks } from '../../selectors/immutable/networks';
 import { checkTabValidityChanged } from '../../selectors/immutable/selectors';
 import { iGetProvisionSource } from '../../selectors/immutable/vm-settings';
 import { getNetworksWithWrappers } from '../../selectors/selectors';
@@ -13,17 +13,7 @@ export const validateNetworks = (options: UpdateOptions) => {
   const { id, prevState, dispatch, getState } = options;
   const state = getState();
 
-  const prevINetworks = iGetNetworks(prevState, id);
-  const iNetworks = iGetNetworks(state, id);
-
-  if (
-    prevINetworks &&
-    iNetworks &&
-    prevINetworks.size === iNetworks.size &&
-    !prevINetworks.find(
-      (prevINetwork, prevINetworkIndex) => prevINetwork !== iNetworks.get(prevINetworkIndex),
-    )
-  ) {
+  if (!hasNetworksChanged(prevState, state, id)) {
     return;
   }
 

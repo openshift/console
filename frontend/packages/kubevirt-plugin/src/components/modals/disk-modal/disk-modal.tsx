@@ -418,7 +418,9 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
                   key={b.getValue()}
                   value={b.getValue()}
                   label={`${b.toString()}${
-                    recommendedBuses.has(b) && b !== bus ? ' --- Recommended ---' : ''
+                    recommendedBuses.size !== validAllowedBuses.size && recommendedBuses.has(b)
+                      ? ' --- Recommended ---'
+                      : ''
                   }`}
                 />
               ))}
