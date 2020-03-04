@@ -1,6 +1,6 @@
 import * as _ from 'lodash';
 import { ensurePath } from '../utils/utils';
-import { omitEmpty } from '../../../utils/basic';
+import { omitEmpty } from '../../../utils/common';
 
 export class Wrapper<RESOURCE extends {}, SELF extends Wrapper<RESOURCE, SELF>> {
   protected data: RESOURCE;
@@ -12,9 +12,9 @@ export class Wrapper<RESOURCE extends {}, SELF extends Wrapper<RESOURCE, SELF>> 
     this.data = (d && copy ? _.cloneDeep(d) : d || {}) as any;
   }
 
-  public asResource = (copy = false): RESOURCE => (copy ? _.cloneDeep(this.data) : this.data);
+  asResource = (copy = false): RESOURCE => (copy ? _.cloneDeep(this.data) : this.data);
 
-  public mergeWith(...wrappers: SELF[]): SELF {
+  mergeWith(...wrappers: SELF[]): SELF {
     if (wrappers) {
       const update = _.merge({}, ...wrappers.filter((w) => w?.data).map((w) => w.data));
 
@@ -23,7 +23,7 @@ export class Wrapper<RESOURCE extends {}, SELF extends Wrapper<RESOURCE, SELF>> 
     return (this as any) as SELF;
   }
 
-  public clearEmptyValues = () => {
+  clearEmptyValues = () => {
     omitEmpty(this.data, true);
   };
 

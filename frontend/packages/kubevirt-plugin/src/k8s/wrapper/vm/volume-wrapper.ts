@@ -49,21 +49,17 @@ export class VolumeWrapper extends ObjectWithTypePropertyWrapper<
     type: VolumeType,
     { name, claimName, image, userData, userDataBase64 }: CombinedTypeData,
   ): CombinedTypeData {
-    if (type === VolumeType.DATA_VOLUME) {
-      return { name };
+    switch (type) {
+      case VolumeType.DATA_VOLUME:
+        return { name };
+      case VolumeType.PERSISTENT_VOLUME_CLAIM:
+        return { claimName };
+      case VolumeType.CONTAINER_DISK:
+        return { image };
+      case VolumeType.CLOUD_INIT_NO_CLOUD:
+        return userDataBase64 ? { userDataBase64 } : { userData };
+      default:
+        return null;
     }
-    if (type === VolumeType.PERSISTENT_VOLUME_CLAIM) {
-      return { claimName };
-    }
-
-    if (type === VolumeType.CONTAINER_DISK) {
-      return { image };
-    }
-
-    if (type === VolumeType.CLOUD_INIT_NO_CLOUD) {
-      return userDataBase64 ? { userDataBase64 } : { userData };
-    }
-
-    return null;
   }
 }

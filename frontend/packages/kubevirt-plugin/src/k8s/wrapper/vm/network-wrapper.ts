@@ -44,9 +44,11 @@ export class NetworkWrapper extends ObjectWithTypePropertyWrapper<
   };
 
   protected sanitize(type: NetworkType, { networkName }: CombinedTypeData) {
-    if (type === NetworkType.MULTUS) {
-      return { networkName };
+    switch (type) {
+      case NetworkType.MULTUS:
+        return { networkName };
+      default:
+        return {};
     }
-    return {};
   }
 }

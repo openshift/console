@@ -161,16 +161,14 @@ export class DataVolumeWrapper extends K8sResourceObjectWithTypePropertyWrapper<
   }
 
   protected sanitize(type: DataVolumeSourceType, { name, namespace, url }: CombinedTypeData) {
-    if (type === DataVolumeSourceType.BLANK) {
-      return {};
+    switch (type) {
+      case DataVolumeSourceType.HTTP:
+        return { url };
+      case DataVolumeSourceType.PVC:
+        return { name, namespace };
+      case DataVolumeSourceType.BLANK:
+      default:
+        return {};
     }
-    if (type === DataVolumeSourceType.HTTP) {
-      return { url };
-    }
-    if (type === DataVolumeSourceType.PVC) {
-      return { name, namespace };
-    }
-
-    return {};
   }
 }

@@ -48,9 +48,11 @@ export class DiskWrapper extends ObjectWithTypePropertyWrapper<
   hasBootOrder = () => this.getBootOrder() != null;
 
   protected sanitize(type: DiskType, { bus }: CombinedTypeData) {
-    if (type === DiskType.FLOPPY) {
-      return {};
+    switch (type) {
+      case DiskType.FLOPPY:
+        return {};
+      default:
+        return { bus };
     }
-    return { bus };
   }
 }

@@ -1,6 +1,6 @@
 import * as _ from 'lodash';
 import { ObjectEnum } from '../../../constants';
-import { omitEmpty } from '../../../utils/basic';
+import { omitEmpty } from '../../../utils/common';
 import { Wrapper } from './wrapper';
 
 export abstract class ObjectWithTypePropertyWrapper<
@@ -24,20 +24,20 @@ export abstract class ObjectWithTypePropertyWrapper<
     this.typeDataPath = typeDataPath;
   }
 
-  public getType = (): TYPE =>
+  getType = (): TYPE =>
     this.TypeClass.getAll().find((type) => this.getIn([...this.typeDataPath, type.getValue()]));
 
-  public getTypeValue = (): string => {
+  getTypeValue = (): string => {
     const type = this.getType();
     return type && type.getValue();
   };
 
-  public hasType = (): boolean => !!this.getType();
+  hasType = (): boolean => !!this.getType();
 
-  public getTypeData = (type?: TYPE): COMBINED_TYPE_DATA =>
+  getTypeData = (type?: TYPE): COMBINED_TYPE_DATA =>
     this.getIn([...this.typeDataPath, (type || this.getType()).getValue()]);
 
-  public mergeWith(...wrappers: SELF[]): SELF {
+  mergeWith(...wrappers: SELF[]): SELF {
     super.mergeWith(...wrappers);
     const lastWithType = _.last(wrappers.filter((wrapper) => wrapper?.getType()));
 
@@ -47,7 +47,7 @@ export abstract class ObjectWithTypePropertyWrapper<
     return (this as any) as SELF;
   }
 
-  public setType = (type?: TYPE, typeData?: COMBINED_TYPE_DATA, sanitize = true) => {
+  setType = (type?: TYPE, typeData?: COMBINED_TYPE_DATA, sanitize = true) => {
     const typeDataParent =
       this.typeDataPath.length === 0 ? this.data : this.getIn(this.typeDataPath);
     if (typeDataParent) {
@@ -69,13 +69,13 @@ export abstract class ObjectWithTypePropertyWrapper<
     return (this as any) as SELF;
   };
 
-  public appendType = (type?: TYPE, newTypeData?: COMBINED_TYPE_DATA, sanitize = true) =>
+  appendType = (type?: TYPE, newTypeData?: COMBINED_TYPE_DATA, sanitize = true) =>
     this.setType(type, { ...this.getTypeData(type), ...newTypeData }, sanitize);
 
-  public setTypeData = (newTypeData?: COMBINED_TYPE_DATA, sanitize = true) =>
+  setTypeData = (newTypeData?: COMBINED_TYPE_DATA, sanitize = true) =>
     this.setType(this.getType(), newTypeData, sanitize);
 
-  public appendTypeData(newTypeData?: COMBINED_TYPE_DATA, sanitize = true) {
+  appendTypeData(newTypeData?: COMBINED_TYPE_DATA, sanitize = true) {
     return this.appendType(this.getType(), newTypeData, sanitize);
   }
 
