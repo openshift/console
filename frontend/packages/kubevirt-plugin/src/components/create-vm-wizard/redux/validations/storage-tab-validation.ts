@@ -5,31 +5,28 @@ import { validateDisk } from '../../../../utils/validations/vm';
 import { iGetIn } from '../../../../utils/immutable';
 import { checkTabValidityChanged } from '../../selectors/immutable/selectors';
 import { getStoragesWithWrappers } from '../../selectors/selectors';
-import { iGetStorages } from '../../selectors/immutable/storage';
+import { hasStoragesChanged, iGetStorages } from '../../selectors/immutable/storage';
 import { iGetProvisionSource } from '../../selectors/immutable/vm-settings';
 import { ProvisionSource } from '../../../../constants/vm/provision-source';
 import { getTemplateValidation } from '../../selectors/template';
+import { TemplateValidations } from '../../../../utils/validations/template/template-validations';
 
 export const validateStorages = (options: UpdateOptions) => {
   const { id, prevState, dispatch, getState } = options;
   const state = getState();
 
-  const prevIStorages = iGetStorages(prevState, id);
-  const iStorages = iGetStorages(state, id);
+  // we care only about the first TemplateValidation because storage shows up after the first step
+  const oldValidations = getTemplateValidation(prevState, id);
+  const newValidations = getTemplateValidation(state, id);
 
   if (
-    prevIStorages &&
-    iStorages &&
-    prevIStorages.size === iStorages.size &&
-    !prevIStorages.find(
-      (prevINetwork, prevINetworkIndex) => prevINetwork !== iStorages.get(prevINetworkIndex),
-    )
+    TemplateValidations.areBusesEqual(oldValidations, newValidations) &&
+    !hasStoragesChanged(prevState, state, id)
   ) {
     return;
   }
 
   const storages = getStoragesWithWrappers(state, id);
-  const templateValidations = getTemplateValidation(state, id);
 
   const validatedStorages = storages.map(
     ({
@@ -58,7 +55,7 @@ export const validateStorages = (options: UpdateOptions) => {
           {
             usedDiskNames,
             usedPVCNames,
-            templateValidations,
+            templateValidations: newValidations,
           },
         ),
       };
