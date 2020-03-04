@@ -9,10 +9,10 @@ export const useRefWidth = () => {
   useEffect(() => {
     const handleResize = () => setWidth(ref && ref.current && ref.current.clientWidth);
     window.addEventListener('resize', handleResize);
-    window.addEventListener('nav_toggle', handleResize);
+    window.addEventListener('sidebar_toggle', handleResize);
     return () => {
       window.removeEventListener('resize', handleResize);
-      window.removeEventListener('nav_toggle', handleResize);
+      window.removeEventListener('sidebar_toggle', handleResize);
     };
   }, []);
 
