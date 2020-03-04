@@ -266,11 +266,13 @@ export const getGitAndDockerfileInitialValues = (
   return initialValues;
 };
 
-export const getExternalImageInitialValues = (imageStream: K8sResourceKind) => {
-  if (_.isEmpty(imageStream)) {
+export const getExternalImageInitialValues = (appResources: AppResources) => {
+  const imageStreamList = appResources?.imageStream?.data;
+  if (_.isEmpty(imageStreamList)) {
     return {};
   }
-  const name = _.get(imageStream, 'spec.tags[0].from.name');
+  const imageStream = _.orderBy(imageStreamList, ['metadata.resourceVersion'], ['desc']);
+  const name = imageStream.length && imageStream[0]?.spec?.tags?.[0]?.from?.name;
   const deployImageInitialValues = {
     searchTerm: name,
     registry: 'external',
@@ -367,7 +369,7 @@ export const getInitialValues = (
   let internalImageValues = {};
 
   if (_.isEmpty(gitDockerValues)) {
-    externalImageValues = getExternalImageInitialValues(_.get(appResources, 'imageStream.data'));
+    externalImageValues = getExternalImageInitialValues(appResources);
     internalImageValues = _.isEmpty(externalImageValues)
       ? getInternalImageInitialValues(_.get(appResources, 'editAppResource.data'))
       : {};
