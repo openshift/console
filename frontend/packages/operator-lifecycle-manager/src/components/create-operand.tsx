@@ -57,6 +57,7 @@ import {
 } from './descriptors/spec/affinity';
 import { FieldGroup } from './descriptors/spec/field-group';
 import { referenceForProvidedAPI, ClusterServiceVersionLogo, providedAPIsFor } from './index';
+import { getActivePerspective } from '@console/internal/reducers/ui';
 
 const annotationKey = 'alm-examples';
 
@@ -232,6 +233,7 @@ const fieldsForOpenAPI = (openAPI: SwaggerDefinition): OperandField[] => {
 
 export const CreateOperandForm: React.FC<CreateOperandFormProps> = ({
   clusterServiceVersion,
+  activePerspective,
   openAPI,
   operandModel,
   providedAPI,
@@ -428,11 +430,13 @@ export const CreateOperandForm: React.FC<CreateOperandFormProps> = ({
         k8sCreate(operandModel, k8sObj)
           .then(() =>
             history.push(
-              `${resourcePathFromModel(
-                ClusterServiceVersionModel,
-                clusterServiceVersion.metadata.name,
-                namespace,
-              )}/${referenceForModel(operandModel)}`,
+              activePerspective === 'dev'
+                ? '/topology'
+                : `${resourcePathFromModel(
+                    ClusterServiceVersionModel,
+                    clusterServiceVersion.metadata.name,
+                    namespace,
+                  )}/${referenceForModel(operandModel)}`,
             ),
           )
           .catch((err: { json: Status }) => {
@@ -440,7 +444,15 @@ export const CreateOperandForm: React.FC<CreateOperandFormProps> = ({
           });
       }
     },
-    [clusterServiceVersion.metadata.name, fields, formValues, k8sObj, namespace, operandModel],
+    [
+      clusterServiceVersion.metadata.name,
+      fields,
+      formValues,
+      k8sObj,
+      namespace,
+      operandModel,
+      activePerspective,
+    ],
   );
 
   // TODO(alecmerdler): Move this into a single `<SpecDescriptorInput>` entry component in the `descriptors/` directory
@@ -1116,11 +1128,13 @@ export const CreateOperandYAML: React.FC<CreateOperandYAMLProps> = (props) => {
     console.error('Error parsing example JSON from annotation. Falling back to default.');
   }
   const resourceObjPath = () =>
-    `${resourcePathFromModel(
-      ClusterServiceVersionModel,
-      props.match.params.appName,
-      props.match.params.ns,
-    )}/${props.match.params.plural}`;
+    props.activePerspective === 'dev'
+      ? '/topology'
+      : `${resourcePathFromModel(
+          ClusterServiceVersionModel,
+          props.match.params.appName,
+          props.match.params.ns,
+        )}/${props.match.params.plural}`;
 
   const onChange = React.useCallback(
     (yaml) => {
@@ -1154,6 +1168,7 @@ export const CreateOperand: React.FC<CreateOperandProps> = ({
   loadError,
   match,
   operandModel,
+  activePerspective,
 }) => {
   const { data: csv } = clusterServiceVersion;
   const csvAnnotations = _.get(csv, 'metadata.annotations', {});
@@ -1242,6 +1257,7 @@ export const CreateOperand: React.FC<CreateOperandProps> = ({
       <StatusBox loaded={loaded} loadError={loadError} data={clusterServiceVersion}>
         {(method === 'form' && (
           <CreateOperandForm
+            activePerspective={activePerspective}
             namespace={match.params.ns}
             operandModel={operandModel}
             providedAPI={providedAPI}
@@ -1253,6 +1269,7 @@ export const CreateOperand: React.FC<CreateOperandProps> = ({
         )) ||
           (method === 'yaml' && (
             <CreateOperandYAML
+              activePerspective={activePerspective}
               match={match}
               sample={sample}
               operandModel={operandModel}
@@ -1266,8 +1283,9 @@ export const CreateOperand: React.FC<CreateOperandProps> = ({
   );
 };
 
-const stateToProps = ({ k8s }: RootState, props: Omit<CreateOperandPageProps, 'operandModel'>) => ({
-  operandModel: k8s.getIn(['RESOURCES', 'models', props.match.params.plural]) as K8sKind,
+const stateToProps = (state: RootState, props: Omit<CreateOperandPageProps, 'operandModel'>) => ({
+  operandModel: state.k8s.getIn(['RESOURCES', 'models', props.match.params.plural]) as K8sKind,
+  activePerspective: getActivePerspective(state),
 });
 
 export const CreateOperandPage = connect(stateToProps)((props: CreateOperandPageProps) => (
@@ -1308,6 +1326,7 @@ export type CreateOperandProps = {
   loadError?: any;
   clusterServiceVersion: FirehoseResult<ClusterServiceVersionKind>;
   customResourceDefinition?: FirehoseResult<CustomResourceDefinitionKind>;
+  activePerspective: string;
 };
 
 export type CreateOperandFormProps = {
@@ -1318,6 +1337,7 @@ export type CreateOperandFormProps = {
   clusterServiceVersion: ClusterServiceVersionKind;
   sample?: K8sResourceKind;
   namespace: string;
+  activePerspective: string;
 };
 
 export type CreateOperandYAMLProps = {
@@ -1326,12 +1346,14 @@ export type CreateOperandYAMLProps = {
   providedAPI: CRDDescription | APIServiceDefinition;
   clusterServiceVersion: ClusterServiceVersionKind;
   sample?: K8sResourceKind;
+  activePerspective: string;
   match: RouterMatch<{ appName: string; ns: string; plural: K8sResourceKindReference }>;
 };
 
 export type CreateOperandPageProps = {
   match: RouterMatch<{ appName: string; ns: string; plural: K8sResourceKindReference }>;
   operandModel: K8sKind;
+  activePerspective: string;
 };
 
 export type SpecDescriptorInputProps = {

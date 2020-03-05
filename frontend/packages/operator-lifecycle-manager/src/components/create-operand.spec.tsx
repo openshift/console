@@ -22,6 +22,8 @@ import { referenceForProvidedAPI } from '.';
 
 import Spy = jasmine.Spy;
 
+const activePerspective = 'admin';
+
 describe(CreateOperand.displayName, () => {
   let wrapper: ShallowWrapper<CreateOperandProps>;
 
@@ -34,6 +36,7 @@ describe(CreateOperand.displayName, () => {
     };
     wrapper = shallow(
       <CreateOperand
+        activePerspective={activePerspective}
         operandModel={testModel}
         clusterServiceVersion={{ data: testClusterServiceVersion, loaded: true, loadError: null }}
         customResourceDefinition={{ data: testCRD, loaded: true, loadError: null }}
@@ -96,7 +99,11 @@ describe(CreateOperandPage.displayName, () => {
 
   it('renders a <Firehose> for the correct resources', () => {
     const wrapper = shallow(
-      <CreateOperandPage.WrappedComponent match={match} operandModel={testModel} />,
+      <CreateOperandPage.WrappedComponent
+        activePerspective={activePerspective}
+        match={match}
+        operandModel={testModel}
+      />,
     );
 
     expect(wrapper.find(Firehose).props().resources).toEqual([
@@ -134,6 +141,7 @@ describe(CreateOperandForm.displayName, () => {
       <CreateOperandForm
         namespace="default"
         operandModel={testModel}
+        activePerspective={activePerspective}
         providedAPI={testClusterServiceVersion.spec.customresourcedefinitions.owned[0]}
         clusterServiceVersion={testClusterServiceVersion}
         openAPI={testCRD.spec.validation.openAPIV3Schema as k8s.SwaggerDefinition}
@@ -207,6 +215,7 @@ describe(CreateOperandYAML.displayName, () => {
   beforeEach(() => {
     wrapper = shallow(
       <CreateOperandYAML
+        activePerspective={activePerspective}
         operandModel={testModel}
         providedAPI={testClusterServiceVersion.spec.customresourcedefinitions.owned[0]}
         clusterServiceVersion={testClusterServiceVersion}
