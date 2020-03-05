@@ -126,7 +126,7 @@ export const initializeVM = (params: CreateVMEnhancedParams, vm: MutableVMWrappe
   const isRunning = settings[VMSettingsField.START_VM];
 
   if (settings[VMSettingsField.FLAVOR] === CUSTOM_FLAVOR) {
-    vm.setCPU(settings[VMSettingsField.CPU]);
+    vm.setCPU({ sockets: 1, cores: parseInt(settings[VMSettingsField.CPU], 10), threads: 1 });
     vm.setMemory(settings[VMSettingsField.MEMORY]);
   }
 
