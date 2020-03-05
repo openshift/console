@@ -28,7 +28,7 @@ import {
 import { OperatorHubItemDetails, OperatorHubItemDetailsProps } from './operator-hub-item-details';
 import { OperatorHubList, OperatorHubListProps } from './operator-hub-page';
 
-describe('OperatorHubList', () => {
+xdescribe('[https://issues.redhat.com/browse/CONSOLE-2136] OperatorHubList', () => {
   let wrapper: ReactWrapper<OperatorHubListProps>;
 
   beforeEach(() => {
@@ -124,7 +124,7 @@ describe('OperatorHubList', () => {
   });
 });
 
-describe(OperatorHubTileView.displayName, () => {
+xdescribe(`[https://issues.redhat.com/browse/CONSOLE-2136] ${OperatorHubTileView.displayName}`, () => {
   let wrapper: ReactWrapper<OperatorHubTileViewProps>;
 
   beforeEach(() => {
