@@ -16,7 +16,7 @@ import {
   ResourceSummary,
 } from './utils';
 
-const menuActions = Kebab.factory.common;
+const menuActions = [...Kebab.factory.common];
 
 export const ingressValidHosts = (ingress) =>
   _.map(_.get(ingress, 'spec.rules', []), 'host').filter(_.isString);

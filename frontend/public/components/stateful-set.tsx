@@ -9,7 +9,6 @@ import { WorkloadTableRow, WorkloadTableHeader } from './workload-table';
 import {
   AsyncComponent,
   Kebab,
-  KebabAction,
   ContainerTable,
   ResourceSummary,
   SectionHeading,
@@ -21,12 +20,8 @@ import { StatefulSetModel } from '../models';
 import PodRingSet from '@console/shared/src/components/pod/PodRingSet';
 import { PodRingController } from '@console/shared';
 
-const { AddStorage, common } = Kebab.factory;
-export const menuActions: KebabAction[] = [
-  AddStorage,
-  ...Kebab.getExtensionsActionsForKind(StatefulSetModel),
-  ...common,
-];
+const { AddStorage } = Kebab.factory;
+export const menuActions = [AddStorage, ...Kebab.factory.common];
 
 const kind = 'StatefulSet';
 

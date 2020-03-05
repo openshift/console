@@ -19,10 +19,7 @@ import { ClusterServiceBrokerModel } from '../models';
 import { Conditions } from './conditions';
 import { ClusterServiceClassPage } from './cluster-service-class';
 
-const menuActions = [
-  ...Kebab.getExtensionsActionsForKind(ClusterServiceBrokerModel),
-  ...Kebab.factory.common,
-];
+const menuActions = [...Kebab.factory.common];
 
 const tableColumnClasses = [
   classNames('col-sm-3', 'col-xs-6'),

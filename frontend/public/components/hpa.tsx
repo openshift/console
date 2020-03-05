@@ -3,7 +3,6 @@ import * as _ from 'lodash-es';
 import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
 import { K8sResourceKind, K8sResourceKindReference } from '../module/k8s';
-import { HorizontalPodAutoscalerModel } from '../models';
 import { Conditions } from './conditions';
 import { DetailsPage, ListPage, Table, TableRow, TableData, RowFunction } from './factory';
 import {
@@ -21,8 +20,7 @@ import { ResourceEventStream } from './events';
 
 const HorizontalPodAutoscalersReference: K8sResourceKindReference = 'HorizontalPodAutoscaler';
 
-const { common } = Kebab.factory;
-const menuActions = [...Kebab.getExtensionsActionsForKind(HorizontalPodAutoscalerModel), ...common];
+const menuActions = [...Kebab.factory.common];
 
 const MetricsRow: React.FC<MetricsRowProps> = ({ type, current, target }) => (
   <div className="row">

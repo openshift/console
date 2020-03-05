@@ -17,7 +17,7 @@ import {
   SectionHeading,
 } from './utils';
 
-const menuActions = Kebab.factory.common;
+const menuActions = [...Kebab.factory.common];
 
 const tableColumnClasses = [
   classNames('col-sm-5', 'col-xs-6'),

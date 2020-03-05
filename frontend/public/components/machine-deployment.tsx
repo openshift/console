@@ -27,12 +27,7 @@ import {
 } from './utils';
 import { formatDuration } from './utils/datetime';
 
-const { common } = Kebab.factory;
-const menuActions = [
-  editCountAction,
-  ...Kebab.getExtensionsActionsForKind(MachineDeploymentModel),
-  ...common,
-];
+const menuActions = [editCountAction, ...Kebab.factory.common];
 const machineReference = referenceForModel(MachineModel);
 const machineDeploymentReference = referenceForModel(MachineDeploymentModel);
 

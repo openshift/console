@@ -27,12 +27,11 @@ import {
   RouteTarget,
   K8sResourceCondition,
 } from '../module/k8s';
-import { RouteModel } from '../models';
 import { Conditions } from './conditions';
 import { RouteCharts } from './routes/route-charts';
 
 const RoutesReference: K8sResourceKindReference = 'Route';
-const menuActions = [...Kebab.getExtensionsActionsForKind(RouteModel), ...Kebab.factory.common];
+const menuActions = [...Kebab.factory.common];
 
 export type IngressStatusProps = {
   host: string;

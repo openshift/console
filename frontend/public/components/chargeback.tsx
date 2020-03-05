@@ -34,8 +34,7 @@ const reportPages = [
   { name: 'Report Queries', href: ReportGenerationQueryReference },
 ];
 
-const { common } = Kebab.factory;
-const menuActions = [...Kebab.getExtensionsActionsForKind(ChargebackReportModel), ...common];
+const menuActions = [...Kebab.factory.common];
 
 const dataURL = (obj, format = 'json') => {
   return `${window.SERVER_FLAGS.meteringBaseURL}/api/v2/reports/${obj.metadata.namespace}/${obj.metadata.name}/table?format=${format}`;

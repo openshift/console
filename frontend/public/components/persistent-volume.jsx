@@ -15,10 +15,8 @@ import {
   ResourceSummary,
   Timestamp,
 } from './utils';
-import { PersistentVolumeModel } from '../models';
 
-const { common } = Kebab.factory;
-const menuActions = [...Kebab.getExtensionsActionsForKind(PersistentVolumeModel), ...common];
+const menuActions = [...Kebab.factory.common];
 
 const PVStatus = ({ pv }) => (
   <Status status={pv.metadata.deletionTimestamp ? 'Terminating' : pv.status.phase} />

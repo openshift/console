@@ -27,7 +27,6 @@ import { WorkloadTableRow, WorkloadTableHeader } from './workload-table';
 import PodRingSet from '@console/shared/src/components/pod/PodRingSet';
 
 const deploymentsReference: K8sResourceKindReference = 'Deployment';
-const { ModifyCount, AddStorage, common } = Kebab.factory;
 
 const UpdateStrategy: KebabAction = (kind: K8sKind, deployment: DeploymentKind) => ({
   label: 'Edit Update Strategy',
@@ -53,13 +52,14 @@ const PauseAction: KebabAction = (kind: K8sKind, obj: DeploymentKind) => ({
   },
 });
 
+const { ModifyCount, AddStorage } = Kebab.factory;
+
 export const menuActions = [
   ModifyCount,
   PauseAction,
   AddStorage,
   UpdateStrategy,
-  ...Kebab.getExtensionsActionsForKind(DeploymentModel),
-  ...common,
+  ...Kebab.factory.common,
 ];
 
 export const DeploymentDetailsList: React.FC<DeploymentDetailsListProps> = ({ deployment }) => {

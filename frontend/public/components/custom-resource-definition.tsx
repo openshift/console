@@ -9,7 +9,6 @@ import {
   AsyncComponent,
   DetailsItem,
   Kebab,
-  KebabAction,
   navFactory,
   ResourceKebab,
   ResourceLink,
@@ -17,13 +16,10 @@ import {
   SectionHeading,
 } from './utils';
 import { CustomResourceDefinitionKind, K8sKind, referenceForCRD } from '../module/k8s';
-import { CustomResourceDefinitionModel } from '../models';
 import { Conditions } from './conditions';
 import { resourceListPages } from './resource-pages';
 import { DefaultPage } from './default-resource';
 import { GreenCheckCircleIcon } from '@console/shared';
-
-const { common } = Kebab.factory;
 
 const crdInstancesPath = (crd: CustomResourceDefinitionKind) =>
   _.get(crd, 'spec.scope') === 'Namespaced'
@@ -35,11 +31,7 @@ const instances = (kind: K8sKind, obj: CustomResourceDefinitionKind) => ({
   href: crdInstancesPath(obj),
 });
 
-const menuActions: KebabAction[] = [
-  instances,
-  ...Kebab.getExtensionsActionsForKind(CustomResourceDefinitionModel),
-  ...common,
-];
+const menuActions = [instances, ...Kebab.factory.common];
 
 const tableColumnClasses = [
   classNames('col-lg-3', 'col-md-4', 'col-sm-4', 'col-xs-6'),

@@ -1,7 +1,8 @@
 import { K8sKind, PodKind } from '@console/internal/module/k8s';
 import { referenceForModel } from '@console/internal/module/k8s/k8s';
-import { KebabAction, KebabOption } from '@console/internal/components/utils/kebab';
+import { KebabOption } from '@console/internal/components/utils/kebab';
 import { PodModel } from '@console/internal/models';
+import { GetKebabActions } from '@console/plugin-sdk';
 import { ImageManifestVulnModel } from './models';
 
 const listPathFor = (namespace: string, imageID: string) =>
@@ -28,7 +29,7 @@ const ViewImageVulnerabilities = (model: K8sKind, obj: PodKind): KebabOption => 
   };
 };
 
-export const getKebabActionsForKind = (model: K8sKind): KebabAction[] => {
+export const getKebabActions: GetKebabActions = (model) => {
   return model && (referenceForModel(model) === referenceForModel(PodModel) || model.kind === 'Pod')
     ? [ViewImageVulnerabilities]
     : [];

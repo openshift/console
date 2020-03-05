@@ -52,7 +52,7 @@ export const KnativeResourceOverviewPage: React.ComponentType<KnativeResourceOve
     <ResourceOverviewDetails
       item={item}
       kindObj={resourceModel}
-      menuActions={[...Kebab.getExtensionsActionsForKind(resourceModel), ...Kebab.factory.common]}
+      menuActions={[...Kebab.factory.common]}
       tabs={tabs}
     />
   );

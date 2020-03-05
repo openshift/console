@@ -151,7 +151,7 @@ export const CatalogSourceDetailsPage: React.SFC<CatalogSourceDetailsPageProps> 
     kind={referenceForModel(CatalogSourceModel)}
     name={props.match.params.name}
     pages={[navFactory.details(CatalogSourceDetails), navFactory.editYaml()]}
-    menuActions={Kebab.factory.common}
+    menuActions={[...Kebab.factory.common]}
     resources={[
       {
         kind: referenceForModel(PackageManifestModel),

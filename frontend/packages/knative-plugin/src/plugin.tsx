@@ -10,7 +10,7 @@ import {
   ResourceDetailsPage,
   RoutePage,
   GlobalConfig,
-  KebabActions,
+  KebabActionFactory,
   YAMLTemplate,
 } from '@console/plugin-sdk';
 import { NamespaceRedirect } from '@console/internal/components/utils/namespace-redirect';
@@ -54,7 +54,7 @@ import {
   eventSourceResourcesKafka,
   eventSourceResourcesSinkBinding,
 } from './utils/get-knative-resources';
-import { getKebabActionsForKind } from './utils/kebab-actions';
+import { getKebabActions } from './utils/kebab-actions';
 import { fetchEventSourcesCrd } from './utils/fetch-dynamic-eventsources-utils';
 
 type ConsumedExtensions =
@@ -66,7 +66,7 @@ type ConsumedExtensions =
   | OverviewCRD
   | ResourceListPage
   | RoutePage
-  | KebabActions
+  | KebabActionFactory
   | YAMLTemplate
   | ResourceDetailsPage
   | AddAction;
@@ -396,9 +396,9 @@ const plugin: Plugin<ConsumedExtensions> = [
     },
   },
   {
-    type: 'KebabActions',
+    type: 'KebabActionFactory',
     properties: {
-      getKebabActionsForKind,
+      getKebabActions,
     },
   },
   {

@@ -20,8 +20,7 @@ import {
 import { ResourceEventStream } from './events';
 import { CronJobModel } from '../models';
 
-const { common } = Kebab.factory;
-const menuActions = [...Kebab.getExtensionsActionsForKind(CronJobModel), ...common];
+const menuActions = [...Kebab.factory.common];
 
 const kind = 'CronJob';
 

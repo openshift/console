@@ -15,7 +15,7 @@ import {
 } from './utils';
 import { fromNow } from './utils/datetime';
 import { k8sList } from '../module/k8s';
-import { SecretModel, ServiceAccountModel } from '../models';
+import { SecretModel } from '../models';
 import { SecretsPage } from './secret';
 import { saveAs } from 'file-saver';
 import { errorModal } from './modals';
@@ -96,12 +96,8 @@ const KubeConfigify = (kind, sa) => ({
     verb: 'list',
   },
 });
-const { common } = Kebab.factory;
-const menuActions = [
-  KubeConfigify,
-  ...Kebab.getExtensionsActionsForKind(ServiceAccountModel),
-  ...common,
-];
+
+const menuActions = [KubeConfigify, ...Kebab.factory.common];
 
 const kind = 'ServiceAccount';
 

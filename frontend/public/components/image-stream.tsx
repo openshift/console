@@ -7,7 +7,6 @@ import { AlertVariant, Button, Popover } from '@patternfly/react-core';
 import { QuestionCircleIcon } from '@patternfly/react-icons';
 
 import { K8sResourceKind, K8sResourceKindReference } from '../module/k8s';
-import { ImageStreamModel } from '../models';
 import { DetailsPage, ListPage, Table, TableRow, TableData, RowFunction } from './factory';
 import { CopyToClipboard } from './utils/copy-to-clipboard';
 import { ExpandableAlert } from './utils/alerts';
@@ -76,8 +75,7 @@ export const getMostRecentBuilderTag = (imageStream: K8sResourceKind) => {
 // - It has a corresponding status tag
 export const isBuilder = (imageStream: K8sResourceKind) => !_.isEmpty(getBuilderTags(imageStream));
 
-const { common } = Kebab.factory;
-const menuActions = [...Kebab.getExtensionsActionsForKind(ImageStreamModel), ...common];
+const menuActions = [...Kebab.factory.common];
 
 const ImageStreamTagsRow: React.SFC<ImageStreamTagsRowProps> = ({
   imageStream,

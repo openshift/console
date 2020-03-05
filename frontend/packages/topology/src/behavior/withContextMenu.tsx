@@ -1,10 +1,17 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
+import { useExtensions, KebabActionFactory, isKebabActionFactory } from '@console/plugin-sdk';
+import {} from '@console/topology/';
 import { GraphElement as TopologyElement } from '../types';
 import ElementContext from '../utils/ElementContext';
 import ContextMenu from '../components/contextmenu/ContextMenu';
 
 type Reference = React.ComponentProps<typeof ContextMenu>['reference'];
+
+type ActionsCreator<E extends TopologyElement> = (
+  element: E,
+  options?: { actionExtensions?: KebabActionFactory[] },
+) => React.ReactElement[];
 
 export type WithContextMenuProps = {
   onContextMenu: (e: React.MouseEvent) => void;
@@ -12,7 +19,7 @@ export type WithContextMenuProps = {
 };
 
 export const withContextMenu = <E extends TopologyElement>(
-  actions: (element: E) => React.ReactElement[],
+  actions: ActionsCreator<E>,
   container?: Element | null | undefined | (() => Element),
   className?: string,
   atPoint: boolean = true,
@@ -32,6 +39,8 @@ export const withContextMenu = <E extends TopologyElement>(
           : e.currentTarget,
       );
     }, []);
+    const actionExtensions = useExtensions<KebabActionFactory>(isKebabActionFactory);
+    const menuItems = actions(element as E, { actionExtensions });
 
     return (
       <>
@@ -48,11 +57,12 @@ export const withContextMenu = <E extends TopologyElement>(
             open
             onRequestClose={() => setReference(null)}
           >
-            {actions(element as E)}
+            {menuItems}
           </ContextMenu>
         ) : null}
       </>
     );
   };
+
   return observer(Component);
 };

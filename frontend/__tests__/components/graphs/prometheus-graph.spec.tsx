@@ -3,7 +3,7 @@ import { Provider } from 'react-redux';
 import { Link, Router } from 'react-router-dom';
 import { mount, shallow } from 'enzyme';
 
-import { FLAGS } from '@console/shared';
+import { FLAGS } from '@console/shared/src/constants/common';
 import { setFlag } from '@console/internal/actions/features';
 import * as UIActions from '@console/internal/actions/ui';
 import { history } from '@console/internal/components/utils/router';

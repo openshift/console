@@ -8,7 +8,6 @@ import {
   isDevCatalogModel,
   isFeatureFlag,
   isGlobalConfig,
-  isKebabActions,
   isModelDefinition,
   isOverviewCRD,
   isOverviewResourceTab,
@@ -102,10 +101,6 @@ export class ExtensionRegistry {
 
   public getClusterServiceVersionActions() {
     return this.extensions.filter(isClusterServiceVersionAction);
-  }
-
-  public getKebabActions() {
-    return this.extensions.filter(isKebabActions);
   }
 
   public getDevCatalogModels() {

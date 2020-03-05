@@ -15,8 +15,7 @@ import {
   Timestamp,
 } from './utils';
 
-const { common } = Kebab.factory;
-const menuActions = [...Kebab.getExtensionsActionsForKind(LimitRangeModel), ...common];
+const menuActions = [...Kebab.factory.common];
 
 const LimitRangeReference: K8sResourceKindReference = LimitRangeModel.kind;
 

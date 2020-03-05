@@ -1,8 +1,9 @@
 import * as React from 'react';
 import * as classNames from 'classnames';
-import { Kebab, ResourceLink } from '@console/internal/components/utils';
+import { Kebab, ResourceLink, mergePluginKebabOptions } from '@console/internal/components/utils';
 import { sortable } from '@patternfly/react-table';
 import { DASH, getName, getUID, getNamespace, SecondaryStatus } from '@console/shared';
+import { useExtensions, KebabActionFactory, isKebabActionFactory } from '@console/plugin-sdk';
 import {
   TableRow,
   TableData,
@@ -81,6 +82,12 @@ const BareMetalNodesTableRow: React.FC<RowFunctionArgs<BareMetalNodeBundle>> = (
   const address = getHostBMCAddress(host);
   const uid = getUID(node);
 
+  const actionExtensions = useExtensions<KebabActionFactory>(isKebabActionFactory);
+  let options = menuActions.map((action) =>
+    action(NodeModel, node, null, { nodeMaintenance, hasNodeMaintenanceCapability }),
+  );
+  options = mergePluginKebabOptions(options, actionExtensions, NodeModel, node);
+
   return (
     <TableRow id={uid} index={index} trKey={key} style={style}>
       <TableData className={tableColumnClasses.name}>
@@ -114,13 +121,7 @@ const BareMetalNodesTableRow: React.FC<RowFunctionArgs<BareMetalNodeBundle>> = (
       </TableData>
       <TableData className={tableColumnClasses.address}>{address}</TableData>
       <TableData className={tableColumnClasses.kebab}>
-        <Kebab
-          options={menuActions.map((action) =>
-            action(NodeModel, node, null, { nodeMaintenance, hasNodeMaintenanceCapability }),
-          )}
-          key={`kebab-for-${uid}`}
-          id={`kebab-for-${uid}`}
-        />
+        <Kebab options={options} key={`kebab-for-${uid}`} id={`kebab-for-${uid}`} />
       </TableData>
     </TableRow>
   );

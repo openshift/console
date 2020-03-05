@@ -30,7 +30,7 @@ const pages = [
 ];
 
 export const OperatorHubDetailsPage: React.FC<DetailsPageProps> = (props) => {
-  return <DetailsPage {...props} menuActions={Kebab.factory.common} pages={pages} />;
+  return <DetailsPage {...props} menuActions={[...Kebab.factory.common]} pages={pages} />;
 };
 
 type OperatorHubDetailsProps = {

@@ -1,12 +1,12 @@
 import * as _ from 'lodash';
-import { K8sKind, referenceForModel } from '@console/internal/module/k8s';
-import { KebabAction } from '@console/internal/components/utils';
+import { referenceForModel } from '@console/internal/module/k8s';
 import {
   DaemonSetModel,
   DeploymentConfigModel,
   DeploymentModel,
   StatefulSetModel,
 } from '@console/internal/models';
+import { GetKebabActions } from '@console/plugin-sdk';
 import { ModifyApplication, EditApplication } from '../actions/modify-application';
 
 const modifyWebConsoleApplicationRefs = [
@@ -21,7 +21,7 @@ const editApplicationRefs = [
   referenceForModel(DeploymentModel),
 ];
 
-export const getKebabActionsForKind = (resourceKind: K8sKind): KebabAction[] => {
+export const getKebabActions: GetKebabActions = (resourceKind) => {
   if (!resourceKind) {
     // no common actions
     return [];

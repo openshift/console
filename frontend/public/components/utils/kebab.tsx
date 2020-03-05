@@ -6,6 +6,8 @@ import { connect } from 'react-redux';
 import { KEY_CODES, Tooltip } from '@patternfly/react-core';
 import { EllipsisVIcon, AngleRightIcon } from '@patternfly/react-icons';
 import Popper from '@console/shared/src/components/popper/Popper';
+import { arrayInsert } from '@console/shared/src/utils/array-utils';
+import { useExtensions, KebabActionFactory, isKebabActionFactory } from '@console/plugin-sdk';
 import {
   annotationsModal,
   configureReplicaCountModal,
@@ -26,7 +28,6 @@ import {
 } from '../../module/k8s';
 import { impersonateStateToProps } from '../../reducers/ui';
 import { connectToModel } from '../../kinds';
-import * as plugins from '../../plugins';
 
 export const kebabOptionsToMenu = (options: KebabOption[]): KebabMenuOption[] => {
   const subs: { [key: string]: KebabSubMenu } = {};
@@ -339,28 +340,37 @@ kebabFactory.common = [
   kebabFactory.Delete,
 ];
 
-export const getExtensionsKebabActionsForKind = (kind: K8sKind) => {
-  const extensionActions = [];
-  _.forEach(plugins.registry.getKebabActions(), (getActions: any) => {
-    if (getActions) {
-      _.forEach(getActions.properties.getKebabActionsForKind(kind), (kebabAction) => {
-        extensionActions.push(kebabAction);
-      });
-    }
-  });
-  return extensionActions;
-};
+export const mergePluginKebabOptions = (
+  options: KebabOption[],
+  extensions: KebabActionFactory[],
+  kind: K8sKind,
+  obj: K8sResourceKind,
+): KebabOption[] =>
+  extensions.reduce((mergedOptions, e) => {
+    const newActions = e.properties.getKebabActions(kind, obj);
+    const newOptions = newActions.map((a) => a(kind, obj));
+    const mergeBefore = e.properties.mergeBefore || 'Edit Labels';
+    const index = mergedOptions.findIndex((o) => o.label === mergeBefore);
+
+    return index > -1
+      ? arrayInsert(index, mergedOptions, ...newOptions)
+      : [...mergedOptions, ...newOptions];
+  }, options);
 
 export const ResourceKebab = connectToModel((props: ResourceKebabProps) => {
   const { actions, kindObj, resource, isDisabled } = props;
+  const actionExtensions = useExtensions<KebabActionFactory>(isKebabActionFactory);
 
   if (!kindObj) {
     return null;
   }
-  const options = _.reject(
+
+  let options = _.reject(
     actions.map((a) => a(kindObj, resource)),
     'hidden',
   );
+  options = mergePluginKebabOptions(options, actionExtensions, kindObj, resource);
+
   return (
     <Kebab
       options={options}
@@ -374,7 +384,6 @@ export const ResourceKebab = connectToModel((props: ResourceKebabProps) => {
 
 export class Kebab extends React.Component<any, { active: boolean }> {
   static factory: KebabFactory = kebabFactory;
-  static getExtensionsActionsForKind = getExtensionsKebabActionsForKind;
 
   // public static columnClass: string = 'pf-c-table__action';
   public static columnClass: string = 'dropdown-kebab-pf pf-c-table__action';

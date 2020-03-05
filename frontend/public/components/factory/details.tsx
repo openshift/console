@@ -70,6 +70,7 @@ export const DetailsPage = withFallback<DetailsPageProps>(({ pages = [], ...prop
         title={props.title || props.name}
         titleFunc={props.titleFunc}
         menuActions={props.menuActions}
+        extendMenuActions={true}
         buttonActions={props.buttonActions}
         kind={props.customKind || props.kind}
         breadcrumbsFor={

@@ -1,7 +1,9 @@
 import * as React from 'react';
 import { Link } from 'react-router-dom';
-import { shallow, ShallowWrapper } from 'enzyme';
+import { Provider } from 'react-redux';
+import { shallow, mount, ShallowWrapper, ReactWrapper } from 'enzyme';
 
+import store from '@console/internal/redux';
 import {
   PageHeading,
   PageHeadingProps,
@@ -48,10 +50,13 @@ describe(BreadCrumbs.displayName, () => {
 });
 
 describe(PageHeading.displayName, () => {
-  let wrapper: ShallowWrapper<PageHeadingProps>;
+  let wrapper: ReactWrapper<PageHeadingProps>;
 
   beforeEach(() => {
-    wrapper = shallow(<PageHeading.WrappedComponent obj={null} />);
+    // Need full mount with redux store since this is a redux-connected component
+    wrapper = mount(<PageHeading.WrappedComponent obj={null} />, {
+      wrappingComponent: ({ children }) => <Provider store={store}>{children}</Provider>,
+    });
   });
 
   it('renders resource icon if given `kind`', () => {

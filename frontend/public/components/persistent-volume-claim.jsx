@@ -17,14 +17,9 @@ import {
   Selector,
 } from './utils';
 import { ResourceEventStream } from './events';
-import { PersistentVolumeClaimModel } from '../models';
 
-const { common, ExpandPVC } = Kebab.factory;
-const menuActions = [
-  ...Kebab.getExtensionsActionsForKind(PersistentVolumeClaimModel),
-  ExpandPVC,
-  ...common,
-];
+const { ExpandPVC } = Kebab.factory;
+const menuActions = [ExpandPVC, ...Kebab.factory.common];
 
 const PVCStatus = ({ pvc }) => (
   <Status status={pvc.metadata.deletionTimestamp ? 'Terminating' : pvc.status.phase} />

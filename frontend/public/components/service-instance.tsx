@@ -52,13 +52,7 @@ const createBinding = (kindObj, serviceInstance) => {
   };
 };
 
-const { common } = Kebab.factory;
-
-const menuActions = [
-  createBinding,
-  ...Kebab.getExtensionsActionsForKind(ServiceInstanceModel),
-  ...common,
-];
+const menuActions = [createBinding, ...Kebab.factory.common];
 
 export const ServiceBindingDescription: React.SFC<ServiceBindingDescriptionProps> = ({
   instanceName,

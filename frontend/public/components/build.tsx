@@ -42,7 +42,6 @@ import { fromNow } from './utils/datetime';
 import { BuildLogs } from './build-logs';
 import { ResourceEventStream } from './events';
 import { Area, requirePrometheus } from './graphs';
-import { BuildModel } from '../models';
 
 const BuildsReference: K8sResourceKindReference = 'Build';
 
@@ -91,12 +90,7 @@ const CancelAction: KebabAction = (kind: K8sKind, build: K8sResourceKind) => ({
   },
 });
 
-const menuActions = [
-  CloneBuildAction,
-  CancelAction,
-  ...Kebab.getExtensionsActionsForKind(BuildModel),
-  ...Kebab.factory.common,
-];
+const menuActions = [CloneBuildAction, CancelAction, ...Kebab.factory.common];
 
 export enum BuildStrategyType {
   Docker = 'Docker',

@@ -7,9 +7,8 @@ import {
   ResourceKebab,
   Timestamp,
   ExternalLink,
-  kindObj,
 } from '@console/internal/components/utils';
-import { referenceForModel, referenceFor, K8sKind } from '@console/internal/module/k8s';
+import { referenceForModel } from '@console/internal/module/k8s';
 import { ServiceModel } from '../../models';
 import { getConditionString, getCondition } from '../../utils/condition-utils';
 import { ServiceKind, ConditionTypes } from '../../types';
@@ -21,8 +20,7 @@ const ServiceRow: RowFunction<ServiceKind> = ({ obj, index, key, style }) => {
   const readyCondition = obj.status
     ? getCondition(obj.status.conditions, ConditionTypes.Ready)
     : null;
-  const kind = kindObj(referenceFor(obj)) as K8sKind;
-  const menuActions = [...Kebab.getExtensionsActionsForKind(kind), ...Kebab.factory.common];
+  const menuActions = [...Kebab.factory.common];
 
   return (
     <TableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>

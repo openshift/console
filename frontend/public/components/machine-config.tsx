@@ -17,10 +17,7 @@ import {
 import { ResourceEventStream } from './events';
 
 export const machineConfigReference = referenceForModel(MachineConfigModel);
-const machineConfigMenuActions = [
-  ...Kebab.getExtensionsActionsForKind(MachineConfigModel),
-  ...Kebab.factory.common,
-];
+const machineConfigMenuActions = [...Kebab.factory.common];
 
 const MachineConfigSummary: React.SFC<MachineConfigSummaryProps> = ({ obj }) => (
   <ResourceSummary resource={obj}>

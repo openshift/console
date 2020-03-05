@@ -28,15 +28,8 @@ import { LoadingBox } from './utils/status-box';
 import { referenceForModel } from '../module/k8s';
 import { ResourceQuotaModel, ClusterResourceQuotaModel } from '../models';
 
-const { common } = Kebab.factory;
-const resourceQuotaMenuActions = [
-  ...Kebab.getExtensionsActionsForKind(ResourceQuotaModel),
-  ...common,
-];
-const clusterResourceQuotaMenuActions = [
-  ...Kebab.getExtensionsActionsForKind(ClusterResourceQuotaModel),
-  ...common,
-];
+const resourceQuotaMenuActions = [...Kebab.factory.common];
+const clusterResourceQuotaMenuActions = [...Kebab.factory.common];
 
 const isClusterQuota = (quota) => !quota.metadata.namespace;
 

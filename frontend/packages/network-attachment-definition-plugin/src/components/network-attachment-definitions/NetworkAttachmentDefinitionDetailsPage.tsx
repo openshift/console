@@ -5,11 +5,7 @@ import { Kebab, navFactory } from '@console/internal/components/utils';
 import { NetworkAttachmentDefinitionModel } from '../..';
 import { NetworkAttachmentDefinitionDetails } from './NetworkAttachmentDefinitionDetails';
 
-const { common } = Kebab.factory;
-const menuActions = [
-  ...Kebab.getExtensionsActionsForKind(NetworkAttachmentDefinitionModel),
-  ...common,
-];
+const menuActions = [...Kebab.factory.common];
 
 export const NetworkAttachmentDefinitionsDetailsPage: React.FC<NetworkAttachmentDefinitionsDetailPageProps> = (
   props,

@@ -11,6 +11,7 @@ import {
   Split,
 } from '@patternfly/react-core';
 import { Status } from '@console/shared';
+import { useExtensions, KebabActionFactory, isKebabActionFactory } from '@console/plugin-sdk';
 import {
   ActionsMenu,
   ResourceIcon,
@@ -18,6 +19,7 @@ import {
   resourcePath,
   FirehoseResult,
   KebabOption,
+  mergePluginKebabOptions,
 } from './index';
 import { connectToModel } from '../../kinds';
 import {
@@ -78,6 +80,7 @@ export const PageHeading = connectToModel((props: PageHeadingProps) => {
     detail,
     title,
     menuActions,
+    extendMenuActions,
     buttonActions,
     obj,
     breadcrumbsFor,
@@ -102,6 +105,18 @@ export const PageHeading = connectToModel((props: PageHeadingProps) => {
     (hasButtonActions || hasMenuActions) && hasData && !_.get(data, 'metadata.deletionTimestamp');
   const resourceStatus = hasData && getResourceStatus ? getResourceStatus(data) : null;
   const showHeading = props.icon || kind || resourceTitle || resourceStatus || badge || showActions;
+  const actionExtensions = useExtensions<KebabActionFactory>(isKebabActionFactory);
+
+  let menuOptions = _.isFunction(menuActions)
+    ? menuActions(kindObj, data, extraResources, customData)
+    : ((menuActions as KebabAction[]) || []).map((a) =>
+        a(kindObj, data, extraResources, customData),
+      );
+
+  if (extendMenuActions) {
+    menuOptions = mergePluginKebabOptions(menuOptions, actionExtensions, kindObj, data);
+  }
+
   return (
     <div
       className={classNames(
@@ -147,15 +162,7 @@ export const PageHeading = connectToModel((props: PageHeadingProps) => {
               {hasButtonActions && (
                 <ActionButtons actionButtons={buttonActions.map((a) => a(kindObj, data))} />
               )}
-              {hasMenuActions && (
-                <ActionsMenu
-                  actions={
-                    _.isFunction(menuActions)
-                      ? menuActions(kindObj, data, extraResources, customData)
-                      : menuActions.map((a) => a(kindObj, data, extraResources, customData))
-                  }
-                />
-              )}
+              {hasMenuActions && <ActionsMenu actions={menuOptions} />}
             </div>
           )}
         </h1>
@@ -201,6 +208,11 @@ export const ResourceOverviewHeading: React.SFC<ResourceOverviewHeadingProps> = 
   resource,
 }) => {
   const isDeleting = !!resource.metadata.deletionTimestamp;
+  const actionExtensions = useExtensions<KebabActionFactory>(isKebabActionFactory);
+
+  let options = actions.map((a) => a(kindObj, resource));
+  options = mergePluginKebabOptions(options, actionExtensions, kindObj, resource);
+
   return (
     <div className="overview__sidebar-pane-head resource-overview__heading">
       <h1 className="co-m-pane__heading">
@@ -223,7 +235,7 @@ export const ResourceOverviewHeading: React.SFC<ResourceOverviewHeadingProps> = 
         </div>
         {!isDeleting && (
           <div className="co-actions">
-            <ActionsMenu actions={actions.map((a) => a(kindObj, resource))} />
+            <ActionsMenu actions={options} />
           </div>
         )}
       </h1>
@@ -254,6 +266,7 @@ export type PageHeadingProps = {
   kind?: K8sResourceKindReference;
   kindObj?: K8sKind;
   menuActions?: Function[] | KebabOptionsCreator; // FIXME should be "KebabAction[] |" refactor pipeline-actions.tsx, etc.
+  extendMenuActions?: boolean;
   obj?: FirehoseResult<K8sResourceKind>;
   resourceKeys?: string[];
   style?: object;

@@ -16,8 +16,6 @@ import { resourceOverviewPages } from './resource-overview-pages';
 import { OverviewItem } from '@console/shared';
 import * as plugins from '../../plugins';
 
-const { common } = Kebab.factory;
-
 const getResourceTabSectionComp = (t) => (props) => (
   <AsyncComponent {...props} loader={t.properties.loader} />
 );
@@ -53,7 +51,7 @@ export const OverviewDetailsResourcesTab: React.SFC<OverviewDetailsResourcesTabP
 export const DefaultOverviewPage = connectToModel(({ kindObj: kindObject, item }) => (
   <div className="overview__sidebar-pane resource-overview">
     <ResourceOverviewHeading
-      actions={[...Kebab.getExtensionsActionsForKind(kindObject), ...common]}
+      actions={[...Kebab.factory.common]}
       kindObj={kindObject}
       resource={item.obj}
     />

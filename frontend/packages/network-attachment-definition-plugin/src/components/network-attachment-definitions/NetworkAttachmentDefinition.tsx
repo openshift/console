@@ -17,8 +17,7 @@ import { getConfigAsJSON, getType } from '../../selectors';
 import { NetworkAttachmentDefinitionKind } from '../../types';
 import { NetAttachDefBundle, NetworkAttachmentDefinitionsPageProps } from './types';
 
-const { common } = Kebab.factory;
-const menuActions = [...common];
+const menuActions = [...Kebab.factory.common];
 
 const tableColumnClasses = [
   classNames('col-lg-4', 'col-md-4', 'col-sm-6', 'col-xs-6'),

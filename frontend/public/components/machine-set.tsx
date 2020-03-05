@@ -64,13 +64,7 @@ const configureMachineAutoscaler: KebabAction = (kind: K8sKind, machineSet: Mach
   },
 });
 
-const { common } = Kebab.factory;
-const menuActions = [
-  editCountAction,
-  configureMachineAutoscaler,
-  ...Kebab.getExtensionsActionsForKind(MachineSetModel),
-  ...common,
-];
+const menuActions = [editCountAction, configureMachineAutoscaler, ...Kebab.factory.common];
 const machineReference = referenceForModel(MachineModel);
 const machineSetReference = referenceForModel(MachineSetModel);
 

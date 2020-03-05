@@ -26,11 +26,11 @@ import { getName, getNamespace } from '@console/shared';
 
 import { PersistentVolumeClaimModel } from '@console/internal/models';
 import { VolumeSnapshotModel } from '../../models';
-import { getKebabActionsForKind } from '../../utils/kebab-actions';
+import { getKebabActions } from '../../utils/kebab-actions';
 import { sortable } from '@patternfly/react-table';
 import { volumeSnapshotModal } from '../modals/volume-snapshot-modal/volume-snapshot-modal';
 
-const snapshotMenuActions = [...getKebabActionsForKind(VolumeSnapshotModel)];
+const snapshotMenuActions = [...getKebabActions(VolumeSnapshotModel)];
 
 const snapshotTableColumnClasses = [
   '',

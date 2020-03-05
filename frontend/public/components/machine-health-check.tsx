@@ -20,8 +20,7 @@ import {
 } from './utils';
 import { fromNow } from './utils/datetime';
 
-const { common } = Kebab.factory;
-const menuActions = [...Kebab.getExtensionsActionsForKind(MachineHealthCheckModel), ...common];
+const menuActions = [...Kebab.factory.common];
 const machineHealthCheckReference = referenceForModel(MachineHealthCheckModel);
 
 const tableColumnClasses = [

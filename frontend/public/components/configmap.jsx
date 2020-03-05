@@ -13,9 +13,8 @@ import {
   ResourceSummary,
 } from './utils';
 import { fromNow } from './utils/datetime';
-import { ConfigMapModel } from '../models';
 
-const menuActions = [...Kebab.getExtensionsActionsForKind(ConfigMapModel), ...Kebab.factory.common];
+const menuActions = [...Kebab.factory.common];
 
 const kind = 'ConfigMap';
 

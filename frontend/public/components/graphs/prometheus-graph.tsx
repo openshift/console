@@ -4,7 +4,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 
-import { FLAGS } from '@console/shared';
+import { FLAGS } from '@console/shared/src/constants/common';
 import { featureReducerName } from '../../reducers/features';
 import { getActivePerspective, getActiveNamespace } from '../../reducers/ui';
 import { RootState } from '../../redux';

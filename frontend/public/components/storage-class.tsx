@@ -14,12 +14,10 @@ import {
   navFactory,
 } from './utils';
 import { StorageClassResourceKind, K8sResourceKind, K8sResourceKindReference } from '../module/k8s';
-import { StorageClassModel } from '../models';
 
 export const StorageClassReference: K8sResourceKindReference = 'StorageClass';
 
-const { common } = Kebab.factory;
-const menuActions = [...Kebab.getExtensionsActionsForKind(StorageClassModel), ...common];
+const menuActions = [...Kebab.factory.common];
 
 const defaultClassAnnotation = 'storageclass.kubernetes.io/is-default-class';
 const betaDefaultStorageClassAnnotation = 'storageclass.beta.kubernetes.io/is-default-class';

@@ -120,7 +120,7 @@ const ResourceTableRow: RowFunction<K8sResourceKind> = ({ obj, index, key, style
       <TableData className={tableColumnClasses[4]}>{obj.metadata.creationTimestamp}</TableData>
       <TableData className={tableColumnClasses[5]}>
         <ResourceKebab
-          actions={Kebab.factory.common}
+          actions={[...Kebab.factory.common]}
           kind={referenceForModel(getModelFromKind(obj.kind))}
           resource={obj}
         />

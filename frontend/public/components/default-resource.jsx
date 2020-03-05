@@ -16,8 +16,6 @@ import {
   SectionHeading,
 } from './utils';
 
-const { common } = Kebab.factory;
-
 const tableColumnClasses = [
   classNames('col-xs-6', 'col-sm-4'),
   classNames('col-xs-6', 'col-sm-4'),
@@ -55,7 +53,7 @@ TableHeader.displayName = 'TableHeader';
 
 const TableRowForKind = ({ obj, index, key, style, customData }) => {
   const kind = referenceFor(obj) || customData.kind;
-  const menuActions = [...Kebab.getExtensionsActionsForKind(kindObj(kind)), ...common];
+  const menuActions = [...Kebab.factory.common];
 
   return (
     <TableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
@@ -135,7 +133,7 @@ DefaultPage.displayName = 'DefaultPage';
 
 export const DefaultDetailsPage = (props) => {
   const pages = [navFactory.details(DetailsForKind(props.kind)), navFactory.editYaml()];
-  const menuActions = [...Kebab.getExtensionsActionsForKind(kindObj(props.kind)), ...common];
+  const menuActions = [...Kebab.factory.common];
 
   return <DetailsPage {...props} menuActions={menuActions} pages={pages} />;
 };

@@ -327,10 +327,10 @@ const createConnectorCallback = (serviceBinding: boolean) => (
   }
 
   if (isGraph(target)) {
-    return graphContextMenu(target, source);
+    return graphContextMenu(target, { connectorSource: source });
   }
   if (target.isGroup()) {
-    return groupContextMenu(target, source);
+    return groupContextMenu(target, { connectorSource: source });
   }
   createConnection(source, target, null, serviceBinding).catch((error) => {
     errorModal({ title: 'Error creating connection', error: error.message });

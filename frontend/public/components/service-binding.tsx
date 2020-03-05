@@ -25,8 +25,7 @@ import { ServiceBindingModel, ServiceInstanceModel } from '../models';
 
 const actionButtons = [addSecretToWorkload];
 
-const { common } = Kebab.factory;
-const menuActions = [...Kebab.getExtensionsActionsForKind(ServiceBindingModel), ...common];
+const menuActions = [...Kebab.factory.common];
 
 const secretLink = (obj) =>
   serviceCatalogStatus(obj) === 'Ready' ? (

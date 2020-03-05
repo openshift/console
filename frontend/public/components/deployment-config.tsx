@@ -19,7 +19,6 @@ import {
   ResourceSummary,
   SectionHeading,
   WorkloadPausedAlert,
-  getExtensionsKebabActionsForKind,
   navFactory,
   pluralize,
   togglePaused,
@@ -76,15 +75,14 @@ const PauseAction: KebabAction = (kind: K8sKind, obj: K8sResourceKind) => ({
   },
 });
 
-const { ModifyCount, AddStorage, common } = Kebab.factory;
+const { ModifyCount, AddStorage } = Kebab.factory;
 
-export const menuActions: KebabAction[] = [
+export const menuActions = [
   RolloutAction,
   PauseAction,
   ModifyCount,
   AddStorage,
-  ...getExtensionsKebabActionsForKind(DeploymentConfigModel),
-  ...common,
+  ...Kebab.factory.common,
 ];
 
 export const DeploymentConfigDetailsList = ({ dc }) => {

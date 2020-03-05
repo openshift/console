@@ -16,11 +16,9 @@ import {
   Selector,
   ExternalLink,
 } from './utils';
-import { NetworkPolicyModel } from '../models';
 import { getNetworkPolicyDocLink } from './utils/documentation';
 
-const { common } = Kebab.factory;
-const menuActions = [...Kebab.getExtensionsActionsForKind(NetworkPolicyModel), ...common];
+const menuActions = [...Kebab.factory.common];
 
 const tableColumnClasses = [
   classNames('col-sm-4', 'col-xs-6'),

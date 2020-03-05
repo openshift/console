@@ -23,17 +23,11 @@ import {
 } from './utils';
 import { ResourceEventStream } from './events';
 import { VolumesTable } from './volumes-table';
-import { ReplicaSetModel } from '../models';
 import { fromNow } from './utils/datetime';
 
-const { ModifyCount, AddStorage, common } = Kebab.factory;
+const { ModifyCount, AddStorage } = Kebab.factory;
 
-export const replicaSetMenuActions = [
-  ModifyCount,
-  AddStorage,
-  ...Kebab.getExtensionsActionsForKind(ReplicaSetModel),
-  ...common,
-];
+export const replicaSetMenuActions = [ModifyCount, AddStorage, ...Kebab.factory.common];
 
 const Details = ({ obj: replicaSet }) => {
   const revision = _.get(replicaSet, [
