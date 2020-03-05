@@ -132,9 +132,17 @@ export class MutableVMWrapper extends VMWrapper {
     return this;
   };
 
-  setCPU = (cpus: string) => {
-    this.ensurePath('spec.template.spec.domain.cpu', {});
-    this.data.spec.template.spec.domain.cpu.cores = parseInt(cpus, 10);
+  setCPU = (cpu: { sockets: number; cores: number; threads: number }) => {
+    if (cpu) {
+      this.ensurePath('spec.template.spec.domain.cpu', {});
+      const { sockets, cores, threads } = cpu;
+      const vmCPU = this.data.spec.template.spec.domain.cpu;
+      vmCPU.sockets = sockets === undefined ? vmCPU.sockets : sockets;
+      vmCPU.cores = cores === undefined ? vmCPU.cores : cores;
+      vmCPU.threads = threads === undefined ? vmCPU.threads : threads;
+    } else if (this.data?.spec?.template?.spec?.domain) {
+      delete this.data.spec.template.spec.domain.cpu;
+    }
     return this;
   };
 
