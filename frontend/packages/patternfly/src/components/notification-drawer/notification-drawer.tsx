@@ -12,11 +12,12 @@ const NotificationDrawer: React.FC<NotificationDrawerProps> = ({
   isInline,
   children,
   notificationEntries,
+  className,
 }) => {
   return (
     <Drawer isExpanded={isExpanded} isInline={isInline}>
       <DrawerContent>{children}</DrawerContent>
-      <DrawerPanelContent noPadding>
+      <DrawerPanelContent className={className} noPadding>
         <NotificationDrawerHeading>{notificationEntries}</NotificationDrawerHeading>
       </DrawerPanelContent>
     </Drawer>
@@ -31,6 +32,7 @@ export type NotificationDrawerProps = {
   notificationEntries?: JSX.Element[];
   count?: number;
   children: React.ReactNode;
+  className: string;
 };
 
 export default NotificationDrawer;
