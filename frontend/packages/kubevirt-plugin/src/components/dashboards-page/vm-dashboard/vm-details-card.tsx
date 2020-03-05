@@ -67,7 +67,7 @@ export const VMDetailsCard: React.FC<VMDetailsCardProps> = () => {
           <DetailItem title="Created" error={false} isLoading={!vmiLike}>
             <Timestamp timestamp={getCreationTimestamp(vmiLike)} />
           </DetailItem>
-          <DetailItem title="Node" error={!isNodeLoading} isLoading={!launcherPod || isNodeLoading}>
+          <DetailItem title="Node" error={!isNodeLoading && !nodeName} isLoading={!launcherPod || isNodeLoading}>
             {launcherPod && nodeName && <NodeLink name={nodeName} />}
           </DetailItem>
           <DetailItem
