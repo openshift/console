@@ -312,11 +312,41 @@ const determineAvailableFilters = (initialFilters, items, filterGroups) => {
   return filters;
 };
 
-const getActiveFilters = (keywordFilter, groupFilters, activeFilters) => {
+const getActiveFilters = (
+  keywordFilter,
+  groupFilters,
+  activeFilters,
+  storeFilterKey = null,
+  filterRetentionPreference = null,
+) => {
   activeFilters.keyword.value = keywordFilter || '';
   activeFilters.keyword.active = !!keywordFilter;
 
+  const userFilters = storeFilterKey ? localStorage.getItem(storeFilterKey) : null;
+  if (userFilters) {
+    try {
+      const lastFilters = JSON.parse(userFilters);
+      if (lastFilters) {
+        if (filterRetentionPreference) {
+          _.each(filterRetentionPreference, (filterGroup) => {
+            if (!groupFilters || !groupFilters[filterGroup]) {
+              if (lastFilters[filterGroup]) {
+                activeFilters[filterGroup] = lastFilters[filterGroup];
+              }
+            }
+          });
+        }
+      }
+    } catch (e) {
+      // eslint-disable-next-line no-console
+      console.error('Failed parsing user filter settings.');
+    }
+  }
   _.forOwn(groupFilters, (filterValues, filterType) => {
+    // removing default and localstore filters if Filters are present over URL
+    _.each(_.keys(activeFilters[filterType]), (key) =>
+      _.set(activeFilters, [filterType, key, 'active'], false),
+    );
     _.each(filterValues, (filterValue) => {
       _.set(activeFilters, [filterType, filterValue, 'active'], true);
     });
@@ -422,7 +452,13 @@ const clearFilterURLParams = (selectedCategoryId) => {
   setURLParams(params);
 };
 
-const getActiveValuesFromURL = (availableFilters, filterGroups, groupByTypes) => {
+const getActiveValuesFromURL = (
+  availableFilters,
+  filterGroups,
+  groupByTypes,
+  storeFilterKey,
+  filterRetentionPreference,
+) => {
   const searchParams = new URLSearchParams(window.location.search);
   const categoryParam = searchParams.get(FilterTypes.category);
   const keywordFilter = searchParams.get(FilterTypes.keyword);
@@ -447,7 +483,13 @@ const getActiveValuesFromURL = (availableFilters, filterGroups, groupByTypes) =>
     }
   });
 
-  const activeFilters = getActiveFilters(keywordFilter, groupFilters, availableFilters);
+  const activeFilters = getActiveFilters(
+    keywordFilter,
+    groupFilters,
+    availableFilters,
+    storeFilterKey,
+    filterRetentionPreference,
+  );
 
   return { selectedCategoryId, activeFilters, groupBy };
 };
@@ -475,7 +517,6 @@ export class TileViewPage extends React.Component {
   constructor(props) {
     super(props);
     const { items, itemsSorter, getAvailableCategories, groupByTypes } = this.props;
-
     const categories = getAvailableCategories(items);
 
     this.state = {
@@ -495,11 +536,23 @@ export class TileViewPage extends React.Component {
   }
 
   componentDidMount() {
-    const { items, filterGroups, getAvailableFilters, groupByTypes } = this.props;
+    const {
+      items,
+      filterGroups,
+      getAvailableFilters,
+      groupByTypes,
+      storeFilterKey,
+      filterRetentionPreference,
+    } = this.props;
     const { categories } = this.state;
     const availableFilters = getAvailableFilters(defaultFilters, items, filterGroups);
-
-    const activeValues = getActiveValuesFromURL(availableFilters, filterGroups, groupByTypes);
+    const activeValues = getActiveValuesFromURL(
+      availableFilters,
+      filterGroups,
+      groupByTypes,
+      storeFilterKey,
+      filterRetentionPreference,
+    );
 
     this.setState({
       ...this.getUpdatedState(
@@ -607,6 +660,9 @@ export class TileViewPage extends React.Component {
     this.updateMountedState(this.getUpdatedState(categories, selectedCategoryId, clearedFilters));
 
     this.filterByKeywordInput.focus({ preventScroll: true });
+    if (this.props.storeFilterKey) {
+      localStorage.removeItem(this.props.storeFilterKey);
+    }
   }
 
   selectCategory(categoryId) {
@@ -635,6 +691,16 @@ export class TileViewPage extends React.Component {
     const updatedFilters = updateActiveFilters(activeFilters, filterType, id, value);
 
     this.updateMountedState(this.getUpdatedState(categories, selectedCategoryId, updatedFilters));
+
+    if (this.props.storeFilterKey && this.props.filterRetentionPreference) {
+      const storeFilters = {};
+      _.each(this.props.filterRetentionPreference, (filterGroup) => {
+        if (updatedFilters[filterGroup]) {
+          storeFilters[filterGroup] = updatedFilters[filterGroup];
+        }
+      });
+      localStorage.setItem(this.props.storeFilterKey, JSON.stringify(storeFilters));
+    }
   }
 
   onKeywordChange(value) {
@@ -867,8 +933,10 @@ TileViewPage.displayName = 'TileViewPage';
 TileViewPage.propTypes = {
   items: PropTypes.array,
   itemsSorter: PropTypes.func.isRequired,
+  storeFilterKey: PropTypes.string,
   getAvailableCategories: PropTypes.func.isRequired,
   getAvailableFilters: PropTypes.func,
+  filterRetentionPreference: PropTypes.array,
   filterGroups: PropTypes.array.isRequired,
   filterGroupNameMap: PropTypes.object,
   renderFilterGroup: PropTypes.func,
