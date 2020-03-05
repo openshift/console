@@ -4,6 +4,7 @@ import { setActiveApplication } from '@console/internal/actions/ui';
 import { RootState } from '@console/internal/redux';
 import { getActiveApplication } from '@console/internal/reducers/ui';
 import { QUERY_PROPERTIES } from '../const';
+import { sanitizeApplicationValue } from '../utils/application-utils';
 
 type StateProps = {
   application: string;
@@ -29,8 +30,9 @@ const QueryFocusApplication: React.FC<QueryFocusApplicationProps> = ({
 
   React.useEffect(() => {
     const originalApplication = originalApp.current;
-    if (desiredApplication && desiredApplication !== originalApplication) {
-      onSetApp(desiredApplication);
+    const sanitizedApp = sanitizeApplicationValue(desiredApplication);
+    if (sanitizedApp && sanitizedApp !== originalApplication) {
+      onSetApp(sanitizedApp);
     }
 
     return () => {

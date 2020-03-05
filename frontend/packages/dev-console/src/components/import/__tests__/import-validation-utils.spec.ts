@@ -1,8 +1,8 @@
 import { cloneDeep } from 'lodash';
+import { CREATE_APPLICATION_KEY, UNASSIGNED_KEY } from '../../../const';
 import { validationSchema, detectGitType, detectGitRepoName } from '../import-validation-utils';
 import { mockFormData } from '../__mocks__/import-validation-mock';
 import { GitTypes } from '../import-types';
-import { CREATE_APPLICATION_KEY, UNASSIGNED_KEY } from '../app/ApplicationSelector';
 import { serverlessCommonTests } from './serverless-common-tests';
 
 describe('ValidationUtils', () => {

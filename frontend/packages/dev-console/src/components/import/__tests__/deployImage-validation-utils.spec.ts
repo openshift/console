@@ -1,7 +1,7 @@
 import { cloneDeep } from 'lodash';
 import { deployValidationSchema } from '../deployImage-validation-utils';
 import { mockDeployImageFormData } from '../__mocks__/deployImage-validation-mock';
-import { CREATE_APPLICATION_KEY, UNASSIGNED_KEY } from '../app/ApplicationSelector';
+import { CREATE_APPLICATION_KEY, UNASSIGNED_KEY } from '../../../const';
 import { serverlessCommonTests } from './serverless-common-tests';
 
 describe('Deploy Image ValidationUtils', () => {
