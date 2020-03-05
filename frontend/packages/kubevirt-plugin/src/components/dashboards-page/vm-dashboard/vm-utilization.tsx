@@ -58,20 +58,18 @@ export const VMUtilizationCard: React.FC = () => {
     () =>
       getUtilizationQueries({
         vmName,
-        namespace,
         launcherPodName,
       }),
-    [vmName, namespace, launcherPodName],
+    [vmName, launcherPodName],
   );
 
   const multilineQueries = React.useMemo(
     () =>
       getMultilineUtilizationQueries({
         vmName,
-        namespace,
         launcherPodName,
       }),
-    [vmName, namespace, launcherPodName],
+    [vmName, launcherPodName],
   );
 
   const createdAt = getCreationTimestamp(vmi);
