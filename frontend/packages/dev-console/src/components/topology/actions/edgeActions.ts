@@ -25,6 +25,7 @@ const moveConnection = (edge: Edge, availableTargets: Node[]) => {
     callback: () => {
       moveConnectionModal({ edge, availableTargets });
     },
+    isDisabled: availableTargets.length <= 1,
     accessReview: asAccessReview(resourceModel, resourceObj, 'delete'),
   };
 };
@@ -43,10 +44,17 @@ const deleteConnection = (edge: Edge) => {
 
 export const edgeActions = (edge: Edge, nodes: Node[]): KebabOption[] => {
   const actions: KebabOption[] = [];
+  const currentTargets = edge
+    .getSource()
+    .getSourceEdges()
+    .map((e) => e.getTarget().getId());
 
   const availableTargets = nodes
     .filter((n) => {
       if (n.getId() === edge.getSource().getId()) {
+        return false;
+      }
+      if (n.getId() !== edge.getTarget().getId() && currentTargets.includes(n.getId())) {
         return false;
       }
       if (n.getType() === TYPE_EVENT_SOURCE) {
@@ -69,9 +77,7 @@ export const edgeActions = (edge: Edge, nodes: Node[]): KebabOption[] => {
     })
     .sort((n1, n2) => n1.getLabel().localeCompare(n2.getLabel()));
 
-  if (availableTargets.length > 1) {
-    actions.push(moveConnection(edge, availableTargets));
-  }
+  actions.push(moveConnection(edge, availableTargets));
 
   switch (edge.getType()) {
     case TYPE_CONNECTS_TO:
