@@ -54,21 +54,13 @@ const AttachDeploymentToOBCModal = withHandlePromise((props: AttachDeploymentToO
 
   const getPatches = () => {
     const configMapRef = {
-      name: 'CONFIGMAP_BUCKET',
-      valueFrom: {
-        configMapKeyRef: {
-          name: obcName,
-          key: obcName,
-        },
+      configMapRef: {
+        name: obcName,
       },
     };
     const secretMapRef = {
-      name: 'SECRET_BUCKET',
-      valueFrom: {
-        secretKeyRef: {
-          name: obcName,
-          key: obcName,
-        },
+      secretRef: {
+        name: obcName,
       },
     };
 
@@ -81,23 +73,23 @@ const AttachDeploymentToOBCModal = withHandlePromise((props: AttachDeploymentToO
       if (_.isEmpty(container.env)) {
         patch.push({
           op: 'add',
-          path: `/spec/template/spec/containers/${i}/env`,
+          path: `/spec/template/spec/containers/${i}/envFrom`,
           value: [configMapRef],
         });
         patch.push({
           op: 'add',
-          path: `/spec/template/spec/containers/${i}/env/-`,
+          path: `/spec/template/spec/containers/${i}/envFrom/-`,
           value: secretMapRef,
         });
       } else {
         patch.push({
           op: 'add',
-          path: `/spec/template/spec/containers/${i}/env/-`,
+          path: `/spec/template/spec/containers/${i}/envFrom/-`,
           value: configMapRef,
         });
         patch.push({
           op: 'add',
-          path: `/spec/template/spec/containers/${i}/env/-`,
+          path: `/spec/template/spec/containers/${i}/envFrom/-`,
           value: secretMapRef,
         });
       }
