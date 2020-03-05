@@ -3,6 +3,7 @@ import * as _ from 'lodash';
 import { match as RMatch } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { Helmet } from 'react-helmet';
+import Dashboard from '@console/shared/src/components/dashboard/Dashboard';
 import { RootState } from '@console/internal/redux';
 import { getURLSearchParams } from '@console/internal/components/utils';
 import {
@@ -45,24 +46,26 @@ export const MonitoringDashboard: React.FC<Props> = ({ match, timespan, pollInte
       <Helmet>
         <title>Dashboard</title>
       </Helmet>
-      <div className="odc-monitoring-dashboard__dropdown-options">
-        <TimespanDropdown />
-        <PollIntervalDropdown />
-      </div>
-      <div className="co-m-pane__body">
-        {_.map(queries, (q) => (
-          <ConnectedMonitoringDashboardGraph
-            title={q.title}
-            namespace={namespace}
-            graphType={q.chartType}
-            query={q.query({ namespace, workloadName, workloadType })}
-            humanize={q.humanize}
-            byteDataType={q.byteDataType}
-            key={q.title}
-            timespan={timespan}
-            pollInterval={pollInterval}
-          />
-        ))}
+      <div className="odc-monitoring-dashboard">
+        <div className="odc-monitoring-dashboard__dropdown-options">
+          <TimespanDropdown />
+          <PollIntervalDropdown />
+        </div>
+        <Dashboard>
+          {_.map(queries, (q) => (
+            <ConnectedMonitoringDashboardGraph
+              title={q.title}
+              namespace={namespace}
+              graphType={q.chartType}
+              query={q.query({ namespace, workloadName, workloadType })}
+              humanize={q.humanize}
+              byteDataType={q.byteDataType}
+              key={q.title}
+              timespan={timespan}
+              pollInterval={pollInterval}
+            />
+          ))}
+        </Dashboard>
       </div>
     </>
   );
