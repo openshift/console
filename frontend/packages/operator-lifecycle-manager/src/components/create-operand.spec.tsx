@@ -24,7 +24,7 @@ import Spy = jasmine.Spy;
 
 const activePerspective = 'admin';
 
-describe(CreateOperand.displayName, () => {
+xdescribe('[https://issues.redhat.com/browse/CONSOLE-2137] CreateOperand', () => {
   let wrapper: ShallowWrapper<CreateOperandProps>;
 
   beforeEach(() => {
@@ -89,7 +89,7 @@ describe(CreateOperand.displayName, () => {
   });
 });
 
-describe(CreateOperandPage.displayName, () => {
+describe('CreateOperandPage', () => {
   const match = {
     params: { appName: 'app', ns: 'default', plural: k8s.referenceFor(testResourceInstance) },
     isExact: true,
@@ -121,7 +121,7 @@ describe(CreateOperandPage.displayName, () => {
   });
 });
 
-describe(CreateOperandForm.displayName, () => {
+xdescribe('[https://issues.redhat.com/browse/CONSOLE-2136] CreateOperandForm', () => {
   let wrapper: ShallowWrapper<CreateOperandFormProps>;
 
   const spyAndExpect = (spy: Spy) => (returnValue: any) =>
