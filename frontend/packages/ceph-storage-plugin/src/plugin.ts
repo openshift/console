@@ -25,8 +25,8 @@ import {
 import {
   OCS_INDEPENDENT_FLAG,
   detectIndependentMode,
-  detectOCSVersion44,
-  OCS_VERSION_4_4_FLAG,
+  detectOCSVersion45AndAbove,
+  OCS_VERSION_4_5_FLAG,
 } from './features';
 import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager/src/models';
 import { GridPosition } from '@console/shared/src/components/dashboard/DashboardGrid';
@@ -75,8 +75,8 @@ const plugin: Plugin<ConsumedExtensions> = [
   {
     type: 'FeatureFlag/Action',
     properties: {
-      flag: OCS_VERSION_4_4_FLAG,
-      detect: detectOCSVersion44,
+      flag: OCS_VERSION_4_5_FLAG,
+      detect: detectOCSVersion45AndAbove,
     },
   },
   {
@@ -91,7 +91,7 @@ const plugin: Plugin<ConsumedExtensions> = [
         ) /* webpackChunkName: "ceph-storage-volume-snapshot" */,
     },
     flags: {
-      required: [OCS_VERSION_4_4_FLAG, CEPH_FLAG],
+      required: [OCS_VERSION_4_5_FLAG, CEPH_FLAG],
     },
   },
   {
@@ -342,7 +342,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       modelParser: referenceFor,
     },
     flags: {
-      required: [OCS_VERSION_4_4_FLAG, CEPH_FLAG],
+      required: [OCS_VERSION_4_5_FLAG, CEPH_FLAG],
     },
   },
   {
