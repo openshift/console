@@ -24,6 +24,8 @@ import {
   groupContextMenu,
   nodeContextMenu,
   graphContextMenu,
+  regroupContextMenu,
+  regroupGroupContextMenu,
 } from './nodeContextMenu';
 import {
   graphWorkloadDropTargetSpec,
@@ -102,7 +104,10 @@ class ComponentFactory {
     return (kind, type): React.ComponentType<{ element: GraphElement }> | undefined => {
       switch (type) {
         case TYPE_HELM_RELEASE:
-          return withSelection(false, true)(withNoDrop()(HelmRelease));
+          return withSelection(
+            false,
+            true,
+          )(withContextMenu(regroupContextMenu)(withNoDrop()(HelmRelease)));
         case TYPE_HELM_WORKLOAD:
           return this.withAddResourceConnector()(
             withDndDrop<
@@ -123,7 +128,10 @@ class ComponentFactory {
             withSelection(false, true)(withContextMenu(groupContextMenu)(Application)),
           );
         case TYPE_OPERATOR_BACKED_SERVICE:
-          return withSelection(false, true)(withNoDrop()(OperatorBackedService));
+          return withSelection(
+            false,
+            true,
+          )(withContextMenu(regroupGroupContextMenu)(withNoDrop()(OperatorBackedService)));
         case TYPE_OPERATOR_WORKLOAD:
           return this.withAddResourceConnector()(
             withEditReviewAccess('patch')(

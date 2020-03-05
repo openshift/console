@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { action } from 'mobx';
 import { observer } from 'mobx-react';
 import ElementContext from '../utils/ElementContext';
 import { EventListener, isNode, Node } from '../types';
@@ -108,6 +109,8 @@ export const useDragNode = <
         },
         canDrag: spec ? spec.canDrag : undefined,
         end: async (dropResult, monitor, p) => {
+          // FIXME: Get the controller up front due it issues with model updates during dnd operations
+          const controller = elementRef.current.getController();
           if (spec && spec.end) {
             try {
               await spec.end(dropResult, monitor, p);
@@ -116,14 +119,14 @@ export const useDragNode = <
             }
           }
 
-          elementRef.current
-            .getController()
-            .fireEvent(
+          action(() => {
+            controller.fireEvent(
               DRAG_NODE_END_EVENT,
               elementRef.current,
               monitor.getDragEvent(),
               monitor.getOperation(),
             );
+          })();
         },
         collect: spec ? spec.collect : undefined,
         canCancel: spec ? spec.canCancel : true,

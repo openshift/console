@@ -19,6 +19,7 @@ export default abstract class BaseElement<E extends ElementModel = ElementModel,
   implements GraphElement<E, D> {
   private id: string = '';
 
+  @observable
   private type: string = '';
 
   @observable.ref

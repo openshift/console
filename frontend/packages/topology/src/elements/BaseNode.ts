@@ -217,6 +217,9 @@ export default class BaseNode<E extends NodeModel = NodeModel, D = any> extends 
     if (r) {
       this.setBounds(r);
     }
+    if ('type' in model) {
+      this.setType(model.type);
+    }
     if ('group' in model) {
       this.group = !!model.group;
     }

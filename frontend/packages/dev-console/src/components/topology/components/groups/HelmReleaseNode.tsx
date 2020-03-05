@@ -9,6 +9,7 @@ import {
   useDragNode,
   WithSelectionProps,
   WithDndDropProps,
+  WithContextMenuProps,
   observer,
   useCombineRefs,
 } from '@console/topology';
@@ -20,20 +21,28 @@ import { TYPE_HELM_RELEASE } from '../../const';
 
 export type HelmReleaseNodeProps = {
   element: Node;
+  editAccess: boolean;
 } & WithSelectionProps &
+  WithContextMenuProps &
   WithDndDropProps;
 
 const HelmReleaseNode: React.FC<HelmReleaseNodeProps> = ({
   element,
-  onSelect,
+  editAccess,
   selected,
+  onSelect,
+  onContextMenu,
+  contextMenuOpen,
   dndDropRef,
 }) => {
   useAnchor((e: Node) => new RectAnchor(e, 4));
   const [hover, hoverRef] = useHover();
-  const [{ dragging }, dragNodeRef] = useDragNode(nodeDragSourceSpec(TYPE_HELM_RELEASE, false), {
-    element,
-  });
+  const [{ dragging }, dragNodeRef] = useDragNode(
+    nodeDragSourceSpec(TYPE_HELM_RELEASE, true, editAccess),
+    {
+      element,
+    },
+  );
   const refs = useCombineRefs<SVGRectElement>(dragNodeRef, dndDropRef, hoverRef);
   const [filtered] = useSearchFilter(element.getLabel());
   const { width, height } = element.getBounds();
@@ -42,6 +51,7 @@ const HelmReleaseNode: React.FC<HelmReleaseNodeProps> = ({
     <g
       ref={refs}
       onClick={onSelect}
+      onContextMenu={editAccess ? onContextMenu : null}
       className={classNames('odc-helm-release', {
         'is-dragging': dragging,
         'is-selected': selected,
@@ -51,7 +61,9 @@ const HelmReleaseNode: React.FC<HelmReleaseNodeProps> = ({
       <NodeShadows />
       <rect
         filter={createSvgIdUrl(
-          hover || dragging ? NODE_SHADOW_FILTER_ID_HOVER : NODE_SHADOW_FILTER_ID,
+          hover || contextMenuOpen || dragging
+            ? NODE_SHADOW_FILTER_ID_HOVER
+            : NODE_SHADOW_FILTER_ID,
         )}
         className="odc-helm-release__bg"
         x={0}
