@@ -83,20 +83,30 @@ export const k8sUpdate = (kind, data, ns, name) =>
     data,
   );
 
-export const k8sPatch = (kind, resource, data, opts = {}) =>
-  coFetchJSON.patch(
+export const k8sPatch = (kind, resource, data, opts = {}) => {
+  const patches = _.compact(data);
+
+  if (_.isEmpty(patches)) {
+    return Promise.resolve(resource);
+  }
+
+  return coFetchJSON.patch(
     resourceURL(
       kind,
-      Object.assign({ ns: resource.metadata.namespace, name: resource.metadata.name }, opts),
+      Object.assign(
+        {
+          ns: resource.metadata.namespace,
+          name: resource.metadata.name,
+        },
+        opts,
+      ),
     ),
-    _.compact(data),
+    patches,
   );
+};
 
 export const k8sPatchByName = (kind, name, namespace, data, opts = {}) =>
-  coFetchJSON.patch(
-    resourceURL(kind, Object.assign({ ns: namespace, name }, opts)),
-    _.compact(data),
-  );
+  k8sPatch(kind, { metadata: { name, namespace } }, data, opts);
 
 export const k8sKill = (kind, resource, opts = {}, json = null) =>
   coFetchJSON.delete(
