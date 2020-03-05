@@ -519,6 +519,7 @@ export const CreateOperandForm: React.FC<CreateOperandFormProps> = ({
   operandModel,
   providedAPI,
   namespace,
+  activePerspective,
   onToggleEditMethod = _.noop,
 }) => {
   // Map providedAPI spec descriptors and openAPI spec properties to OperandField[] array
@@ -700,11 +701,13 @@ export const CreateOperandForm: React.FC<CreateOperandFormProps> = ({
       k8sCreate(operandModel, formData.setIn(['metadata', 'namespace'], namespace).toJS())
         .then(() =>
           history.push(
-            `${resourcePathFromModel(
-              ClusterServiceVersionModel,
-              clusterServiceVersion.metadata.name,
-              namespace,
-            )}/${referenceForModel(operandModel)}`,
+            activePerspective === 'dev'
+              ? '/topology'
+              : `${resourcePathFromModel(
+                  ClusterServiceVersionModel,
+                  clusterServiceVersion.metadata.name,
+                  namespace,
+                )}/${referenceForModel(operandModel)}`,
           ),
         )
         .catch((err: { json: Status }) => {
@@ -1306,6 +1309,7 @@ export type CreateOperandFormProps = {
   clusterServiceVersion: ClusterServiceVersionKind;
   buffer?: K8sResourceKind;
   namespace: string;
+  activePerspective: string;
 };
 
 export type CreateOperandYAMLProps = {

@@ -30,6 +30,7 @@ import { ClusterServiceVersionModel } from '../models';
 import { ClusterServiceVersionKind, CRDDescription, APIServiceDefinition } from '../types';
 import { CreateOperandForm, OperandField } from './create-operand-form';
 import { providedAPIsFor, referenceForProvidedAPI } from '.';
+import { getActivePerspective } from '@console/internal/reducers/ui';
 
 /**
  * Component which wraps the YAML editor to ensure the templates are added from the `ClusterServiceVersion` annotations.
@@ -39,6 +40,7 @@ export const CreateOperandYAML: React.FC<CreateOperandYAMLProps> = ({
   clusterServiceVersion,
   match,
   operandModel,
+  activePerspective,
   onToggleEditMethod = _.noop,
 }) => {
   const template = React.useMemo(() => _.attempt(() => safeDump(buffer)), [buffer]);
@@ -57,9 +59,13 @@ export const CreateOperandYAML: React.FC<CreateOperandYAMLProps> = ({
   };
 
   const resourceObjPath = () =>
-    `${resourcePathFromModel(ClusterServiceVersionModel, match.params.appName, match.params.ns)}/${
-      match.params.plural
-    }`;
+    activePerspective === 'dev'
+      ? '/topology'
+      : `${resourcePathFromModel(
+          ClusterServiceVersionModel,
+          match.params.appName,
+          match.params.ns,
+        )}/${match.params.plural}`;
 
   const onSwitchToForm = React.useCallback(() => {
     onToggleEditMethod(parsedYAML);
@@ -112,6 +118,7 @@ export const CreateOperand: React.FC<CreateOperandProps> = ({
   loadError,
   match,
   operandModel,
+  activePerspective,
 }) => {
   const { data: csv } = clusterServiceVersion;
   const csvAnnotations = _.get(csv, 'metadata.annotations', {});
@@ -155,6 +162,7 @@ export const CreateOperand: React.FC<CreateOperandProps> = ({
     }
     return method === 'yaml' ? (
       <CreateOperandYAML
+        activePerspective={activePerspective}
         match={match}
         buffer={buffer || defaultSample}
         operandModel={operandModel}
@@ -164,6 +172,7 @@ export const CreateOperand: React.FC<CreateOperandProps> = ({
       />
     ) : (
       <CreateOperandForm
+        activePerspective={activePerspective}
         namespace={match.params.ns}
         operandModel={operandModel}
         providedAPI={providedAPI}
@@ -184,6 +193,7 @@ export const CreateOperand: React.FC<CreateOperandProps> = ({
     openAPI,
     operandModel,
     providedAPI,
+    activePerspective,
   ]);
 
   return (
@@ -193,8 +203,9 @@ export const CreateOperand: React.FC<CreateOperandProps> = ({
   );
 };
 
-const stateToProps = ({ k8s }: RootState, props: Omit<CreateOperandPageProps, 'operandModel'>) => ({
-  operandModel: k8s.getIn(['RESOURCES', 'models', props.match.params.plural]) as K8sKind,
+const stateToProps = (state: RootState, props: Omit<CreateOperandPageProps, 'operandModel'>) => ({
+  operandModel: state.k8s.getIn(['RESOURCES', 'models', props.match.params.plural]) as K8sKind,
+  activePerspective: getActivePerspective(state),
 });
 
 export const CreateOperandPage = connect(stateToProps)((props: CreateOperandPageProps) => (
@@ -237,6 +248,7 @@ export type CreateOperandProps = {
   loadError?: any;
   clusterServiceVersion: FirehoseResult<ClusterServiceVersionKind>;
   customResourceDefinition?: FirehoseResult<CustomResourceDefinitionKind>;
+  activePerspective: string;
 };
 
 export type CreateOperandFormProps = {
@@ -247,6 +259,7 @@ export type CreateOperandFormProps = {
   clusterServiceVersion: ClusterServiceVersionKind;
   buffer?: K8sResourceKind;
   namespace: string;
+  activePerspective: string;
 };
 
 export type CreateOperandYAMLProps = {
@@ -256,6 +269,7 @@ export type CreateOperandYAMLProps = {
   clusterServiceVersion: ClusterServiceVersionKind;
   buffer?: K8sResourceKind;
   match: RouterMatch<{ appName: string; ns: string; plural: K8sResourceKindReference }>;
+  activePerspective: string;
 };
 
 export type CreateOperandPageProps = {
