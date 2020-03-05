@@ -494,9 +494,13 @@ export const CreateOperandForm: React.FC<CreateOperandFormProps> = ({
             <ResourceRequirements
               cpu={_.get(formValues, [field.path, 'limits', 'cpu'])}
               memory={_.get(formValues, [field.path, 'limits', 'memory'])}
+              storage={_.get(formValues, [field.path, 'limits', 'ephemeral-storage'])}
               onChangeCPU={(cpu) => updateFormValues([field.path, 'limits', 'cpu'], cpu)}
               onChangeMemory={(memory) =>
                 updateFormValues([field.path, 'limits', 'memory'], memory)
+              }
+              onChangeStorage={(storage) =>
+                updateFormValues([field.path, 'limits', 'ephemeral-storage'], storage)
               }
               path={`${field.path}.limits`}
             />
@@ -506,9 +510,13 @@ export const CreateOperandForm: React.FC<CreateOperandFormProps> = ({
             <ResourceRequirements
               cpu={_.get(formValues, [field.path, 'requests', 'cpu'])}
               memory={_.get(formValues, [field.path, 'requests', 'memory'])}
+              storage={_.get(formValues, [field.path, 'requests', 'ephemeral-storage'])}
               onChangeCPU={(cpu) => updateFormValues([field.path, 'requests', 'cpu'], cpu)}
               onChangeMemory={(memory) =>
                 updateFormValues([field.path, 'requests', 'memory'], memory)
+              }
+              onChangeStorage={(storage) =>
+                updateFormValues([field.path, 'requests', 'ephemeral-storage'], storage)
               }
               path={`${field.path}.requests`}
             />
