@@ -95,6 +95,7 @@ const InstallExternalCluster = withHandlePromise((props: InstallExternalClusterP
         'cluster-name': clusterName,
         fsid: externalFSID,
         'admin-secret': externalAdminSecret,
+        'mon-secret': 'mon-secret',
       },
       type: 'Opaque',
     };
@@ -120,7 +121,7 @@ const InstallExternalCluster = withHandlePromise((props: InstallExternalClusterP
       },
       spec: {
         externalStorage: {
-          enabled: true,
+          enable: true,
         },
       },
     };
