@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { shallow, mount, ReactWrapper, ShallowWrapper } from 'enzyme';
+import { shallow, ShallowWrapper } from 'enzyme';
 import { ResourceLink, Selector } from '@console/internal/components/utils';
 import { DescriptorProps, SpecCapability, Descriptor } from '../types';
 import { testResourceInstance, testModel } from '../../../../mocks';

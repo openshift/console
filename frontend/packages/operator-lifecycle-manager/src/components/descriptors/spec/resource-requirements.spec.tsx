@@ -10,9 +10,9 @@ import {
   ResourceRequirementsModalLink,
   ResourceRequirementsModalLinkProps,
 } from './resource-requirements';
+import { Button } from '@patternfly/react-core';
 
 import Spy = jasmine.Spy;
-import { Button } from '@patternfly/react-core';
 
 describe(ResourceRequirementsModal.name, () => {
   let wrapper: ReactWrapper<ResourceRequirementsModalProps>;
