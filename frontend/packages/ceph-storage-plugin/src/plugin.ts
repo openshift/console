@@ -301,7 +301,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       position: GridPosition.MAIN,
       loader: () =>
         import(
-          './components/dashboard-page/storage-dashboard/capacity-breakdown/capacity-breakdown-card' /* webpackChunkName: "ceph-storage-usage-breakdown-card" */
+          './components/independent-dashboard-page/breakdown-card/card' /* webpackChunkName: "independent-breakdown-card" */
         ).then((m) => m.default),
       required: OCS_INDEPENDENT_FLAG,
     },
