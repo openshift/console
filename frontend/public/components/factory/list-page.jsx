@@ -24,7 +24,7 @@ import {
   RequireCreatePermission,
 } from '../utils';
 
-/** @type {React.SFC<{disabled?: boolean, label?: string, onChange: React.ChangeEventHandler<any>, defaultValue?: string, value?: string, placeholder?: string,}}>} */
+/** @type {React.SFC<{disabled?: boolean, label?: string, onChange: React.ChangeEventHandler<any>, defaultValue?: string, value?: string, placeholder?: string, autoFocus?: boolean,}}>} */
 export const TextFilter = ({
   label,
   onChange,
@@ -33,6 +33,7 @@ export const TextFilter = ({
   className,
   value,
   placeholder = `Filter ${label}...`,
+  autoFocus = false,
 }) => {
   const input = React.useRef();
   const onKeyDown = (e) => {
@@ -73,6 +74,7 @@ export const TextFilter = ({
         style={style}
         tabIndex={0}
         type="text"
+        autoFocus={autoFocus}
       />
       <span className="form-control-feedback form-control-feedback--keyboard-hint">
         <kbd>/</kbd>
