@@ -440,6 +440,7 @@ const getOperatoarBackedServiceData = (
   installedOperators: K8sResourceKind[],
   operatorBackedServiceKindMap: OperatorBackedServiceKindMap,
   topologyGraphAndNodeData: TopologyDataModel,
+  application: string,
 ): TopologyDataModel => {
   const obsGroups = {};
   const operatorMap = {};
@@ -451,7 +452,8 @@ const getOperatoarBackedServiceData = (
   } = topologyGraphAndNodeData;
   _.forEach(transformBy, (key) => {
     if (!_.isEmpty(resources[key].data)) {
-      _.map(resources[key].data, (deployment) => {
+      const resourceData = filterBasedOnActiveApplication(resources[key].data, application);
+      _.map(resourceData, (deployment) => {
         const nodeResourceKind = _.get(deployment, 'metadata.ownerReferences[0].kind');
         const ownerUid = _.get(deployment, 'metadata.ownerReferences[0].uid');
         const appGroup = _.get(deployment, ['metadata', 'labels', 'app.kubernetes.io/part-of']);
@@ -726,6 +728,7 @@ export const transformTopologyData = (
     installedOperators,
     operatorBackedServiceKindMap,
     topologyGraphAndNodeData,
+    application,
   );
   return topologyGraphAndNodeData;
 };
