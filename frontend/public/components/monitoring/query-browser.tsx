@@ -226,6 +226,18 @@ const graphContainer = (
   />
 );
 
+const LegendContainer = ({ children }: { children?: React.ReactNode }) => {
+  // The first child should be a <rect> with a `width` prop giving the legend's content width
+  const width = children?.[0]?.[0]?.props?.width ?? '100%';
+  return (
+    <foreignObject height={75} width="100%" y={230}>
+      <div className="monitoring-dashboards__legend-wrap">
+        <svg width={width}>{children}</svg>
+      </div>
+    </foreignObject>
+  );
+};
+
 const Graph: React.FC<GraphProps> = React.memo(
   ({ allSeries, disabledSeries, formatLegendLabel, isStack, span, xDomain }) => {
     const [containerRef, width] = useRefWidth();
@@ -321,14 +333,13 @@ const Graph: React.FC<GraphProps> = React.memo(
             {legendData && (
               <ChartLegend
                 data={legendData}
+                groupComponent={<LegendContainer />}
                 itemsPerRow={4}
                 orientation="vertical"
                 style={{
                   labels: { fontSize: 11 },
                 }}
                 symbolSpacer={4}
-                x={0}
-                y={230}
               />
             )}
           </Chart>
