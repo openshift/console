@@ -72,6 +72,28 @@ export const deployment: K8sResourceKind = {
   },
 };
 
+export const daemonSet: K8sResourceKind = {
+  kind: 'DaemonSet',
+  metadata: {
+    name: 'node',
+    namespace: 'testproject1',
+    uid: '02f680df-680f-b69e-5254003f9382',
+    labels: {
+      app: 'nodejs',
+      'serving.knative.dev/configuration': 'mocks',
+    },
+    annotations: {
+      'app.openshift.io/vcs-uri': 'https://github.com/redhat-developer/topology-example',
+      'app.openshift.io/vcs-ref': 'master',
+      'idling.alpha.openshift.io/idled-at': 'mock-data',
+    },
+  },
+  status: {
+    currentNumberScheduled: 2,
+    desiredNumberScheduled: 2,
+  },
+};
+
 export const mockPod: K8sResourceKind = {
   kind: 'Pod',
   metadata: {

@@ -70,7 +70,7 @@ const PodRing: React.FC<PodRingProps> = ({
   const resourceObj = rc || obj;
   const { title, subTitle, titleComponent, subTitleComponent } = podRingLabel(
     resourceObj,
-    isScalingAllowed,
+    obj.kind,
     pods,
   );
 
