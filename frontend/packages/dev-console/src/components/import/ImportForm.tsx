@@ -93,6 +93,7 @@ const ImportForm: React.FC<ImportFormProps & StateProps> = ({
       },
     },
     resources: Resources.Kubernetes,
+    resourceTypesNotValid: contextualSource ? [Resources.KnativeService] : [],
     serverless: {
       scaling: {
         minpods: 0,

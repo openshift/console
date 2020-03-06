@@ -95,6 +95,7 @@ const DeployImage: React.FC<Props> = ({
       },
     },
     resources: Resources.Kubernetes,
+    resourceTypesNotValid: contextualSource ? [Resources.KnativeService] : [],
     build: {
       env: [],
       triggers: {

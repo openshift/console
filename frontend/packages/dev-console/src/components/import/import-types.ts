@@ -70,6 +70,7 @@ export interface DeployImageFormData {
   image: ImageStreamImageData;
   isSearchingForImage: boolean;
   resources: Resources;
+  resourceTypesNotValid?: Resources[];
   serverless?: ServerlessData;
   pipeline?: PipelineData;
   labels: { [name: string]: string };
@@ -92,6 +93,7 @@ export interface GitImportFormData {
   image: ImageData;
   route: RouteData;
   resources: Resources;
+  resourceTypesNotValid?: Resources[];
   build: BuildData;
   deployment: DeploymentData;
   labels: { [name: string]: string };
