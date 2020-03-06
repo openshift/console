@@ -43,6 +43,25 @@ const newQueryBrowserQuery = (): ImmutableMap<string, any> =>
     isExpanded: true,
   });
 
+const silenceFiringAlerts = (firingAlerts, silences) => {
+  // For each firing alert, store a list of the Silences that are silencing it and set its state to show it is silenced
+  _.each(firingAlerts, (a) => {
+    a.silencedBy = _.filter(
+      _.get(silences, 'data'),
+      (s) => _.get(s, 'status.state') === SilenceStates.Active && isSilenced(a, s),
+    );
+    if (a.silencedBy.length) {
+      a.state = AlertStates.Silenced;
+      // Also set the state of Alerts in `rule.alerts`
+      _.each(a.rule.alerts, (ruleAlert) => {
+        if (_.some(a.silencedBy, (s) => isSilenced(ruleAlert, s))) {
+          ruleAlert.state = AlertStates.Silenced;
+        }
+      });
+    }
+  });
+};
+
 export default (state: UIState, action: UIAction): UIState => {
   if (!state) {
     const { pathname } = window.location;
@@ -175,38 +194,28 @@ export default (state: UIState, action: UIAction): UIState => {
       return state.mergeIn(['monitoringDashboards', 'variables', key], ImmutableMap(patch));
     }
     case ActionType.SetMonitoringData: {
+      // alerts used by monitoring -> alerting pages
       const alerts =
         action.payload.key === 'alerts'
           ? action.payload.data
           : state.getIn(['monitoring', 'alerts']);
+      // notificationAlerts used by notification drawer and certain dashboards
       const notificationAlerts =
         action.payload.key === 'notificationAlerts'
           ? action.payload.data
           : state.getIn(['monitoring', 'notificationAlerts']);
-      const firingAlerts = _.filter(_.get(alerts, 'data'), (a) =>
-        [AlertStates.Firing, AlertStates.Silenced].includes(a.state),
-      );
       const silences =
         action.payload.key === 'silences'
           ? action.payload.data
           : state.getIn(['monitoring', 'silences']);
 
-      // For each Alert, store a list of the Silences that are silencing it and set its state to show it is silenced
-      _.each(firingAlerts, (a) => {
-        a.silencedBy = _.filter(
-          _.get(silences, 'data'),
-          (s) => _.get(s, 'status.state') === SilenceStates.Active && isSilenced(a, s),
-        );
-        if (a.silencedBy.length) {
-          a.state = AlertStates.Silenced;
-          // Also set the state of Alerts in `rule.alerts`
-          _.each(a.rule.alerts, (ruleAlert) => {
-            if (_.some(a.silencedBy, (s) => isSilenced(ruleAlert, s))) {
-              ruleAlert.state = AlertStates.Silenced;
-            }
-          });
-        }
-      });
+      const isAlertFiring = (alert) =>
+        alert?.state === AlertStates.Firing || alert?.state === AlertStates.Silenced;
+      const firingAlerts = _.filter(alerts?.data, isAlertFiring);
+      silenceFiringAlerts(firingAlerts, silences);
+      silenceFiringAlerts(_.filter(notificationAlerts?.data, isAlertFiring), silences);
+      // filter out silenced alerts from notificationAlerts
+      notificationAlerts.data = _.reject(notificationAlerts.data, { state: AlertStates.Silenced });
       state = state.setIn(['monitoring', 'alerts'], alerts);
       state = state.setIn(['monitoring', 'notificationAlerts'], notificationAlerts);
 
