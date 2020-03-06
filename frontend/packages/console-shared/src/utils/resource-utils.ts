@@ -113,6 +113,7 @@ export const getResourceList = (namespace: string, resList?: any) => {
       kind: 'Secret',
       namespace,
       prop: 'secrets',
+      optional: true,
     },
     {
       isList: true,
