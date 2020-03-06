@@ -11,7 +11,7 @@ import {
   Duration,
 } from '@console/shared/src/components/dashboard/duration-hook';
 import { PrometheusUtilizationItem } from '@console/internal/components/dashboard/dashboards-page/cluster-dashboard/utilization-card';
-import { StorageDashboardQuery, UTILIZATION_QUERY } from '../../../constants/queries';
+import { StorageDashboardQuery, INDEPENDENT_UTILIZATION_QUERIES } from '../../../constants/queries';
 
 const UtilizationCard: React.FC = () => {
   const [duration, setDuration] = useMetricDuration();
@@ -27,7 +27,7 @@ const UtilizationCard: React.FC = () => {
         <UtilizationBody timestamps={timestamps}>
           <PrometheusUtilizationItem
             title="Used Capacity"
-            utilizationQuery={UTILIZATION_QUERY[StorageDashboardQuery.CEPH_CAPACITY_USED]}
+            utilizationQuery={INDEPENDENT_UTILIZATION_QUERIES[StorageDashboardQuery.USED_CAPACITY]}
             duration={duration}
             humanizeValue={humanizeBinaryBytes}
             byteDataType={ByteDataTypes.BinaryBytes}
@@ -35,7 +35,9 @@ const UtilizationCard: React.FC = () => {
           />
           <PrometheusUtilizationItem
             title="Requested capacity"
-            utilizationQuery={UTILIZATION_QUERY[StorageDashboardQuery.CEPH_CAPACITY_TOTAL]}
+            utilizationQuery={
+              INDEPENDENT_UTILIZATION_QUERIES[StorageDashboardQuery.REQUESTED_CAPACITY]
+            }
             duration={duration}
             humanizeValue={humanizeBinaryBytes}
             byteDataType={ByteDataTypes.BinaryBytes}

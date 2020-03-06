@@ -1,35 +1,43 @@
 import * as React from 'react';
 import { GalleryItem, Gallery } from '@patternfly/react-core';
 import { withDashboardResources } from '@console/internal/components/dashboard/with-dashboard-resources';
-import { PrometheusResponse } from '@console/internal/components/graphs';
 import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
 import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
 import HealthBody from '@console/shared/src/components/dashboard/status-card/HealthBody';
 import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
 import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
 import HealthItem from '@console/shared/src/components/dashboard/status-card/HealthItem';
-import { StorageDashboardQuery, STORAGE_HEALTH_QUERIES } from '../../../constants/queries';
-import { getCephHealthState } from '../../dashboard-page/storage-dashboard/status-card/utils';
-import { CephAlerts } from '../../dashboard-page/storage-dashboard/status-card/status-card';
+import { referenceForModel, K8sResourceKind } from '@console/internal/module/k8s';
+import { FirehoseResource, FirehoseResult } from '@console/internal/components/utils/types';
+import { OCSServiceModel } from '../../../models';
+import { getClusterHealth } from '../../independent-mode/utils';
+import { OCS_INDEPENDENT_CR_NAME, CEPH_STORAGE_NAMESPACE } from '../../../constants';
 
-const cephStatusQuery = STORAGE_HEALTH_QUERIES[StorageDashboardQuery.CEPH_STATUS_QUERY];
+const clusterResource: FirehoseResource = {
+  kind: referenceForModel(OCSServiceModel),
+  name: OCS_INDEPENDENT_CR_NAME,
+  namespaced: true,
+  namespace: CEPH_STORAGE_NAMESPACE,
+  isList: false,
+  prop: 'ocs',
+};
 
 const StatusCard = withDashboardResources((props) => {
-  const { watchPrometheus, stopWatchPrometheusQuery, prometheusResults } = props;
+  const { watchK8sResource, stopWatchK8sResource, resources } = props;
 
   React.useEffect(() => {
-    watchPrometheus(cephStatusQuery);
+    watchK8sResource(clusterResource);
     return () => {
-      stopWatchPrometheusQuery(cephStatusQuery);
+      stopWatchK8sResource(clusterResource);
     };
-  }, [watchPrometheus, stopWatchPrometheusQuery]);
+  }, [watchK8sResource, stopWatchK8sResource]);
 
-  const cephHealthData = prometheusResults.getIn([cephStatusQuery, 'data']) as PrometheusResponse;
-  const cephHealthLoadError = prometheusResults.getIn([
-    cephStatusQuery,
-    'loadError',
-  ]) as PrometheusResponse;
-  const cephHealthState = getCephHealthState([cephHealthData], [cephHealthLoadError]);
+  const cluster = resources?.ocs as FirehoseResult<K8sResourceKind>;
+  const data = cluster?.data;
+  const loaded = cluster?.loaded;
+  const error = cluster?.loadError;
+
+  const status = getClusterHealth(data, loaded, error);
 
   return (
     <DashboardCard gradient>
@@ -40,11 +48,10 @@ const StatusCard = withDashboardResources((props) => {
         <HealthBody>
           <Gallery className="co-overview-status__health" gutter="md">
             <GalleryItem>
-              <HealthItem title="OCS Cluster" state={cephHealthState.state} />
+              <HealthItem title="OCS Cluster" state={status} />
             </GalleryItem>
           </Gallery>
         </HealthBody>
-        <CephAlerts />
       </DashboardCardBody>
     </DashboardCard>
   );

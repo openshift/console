@@ -9,3 +9,4 @@ export const PODS = 'Pods';
 export const BY_USED = 'By Used Capacity';
 export const BY_REQUESTED = 'By Requested Capacity';
 export const OCS_OPERATOR = 'ocs-operator';
+export const OCS_INDEPENDENT_CR_NAME = 'ocs-independent-storagecluster';

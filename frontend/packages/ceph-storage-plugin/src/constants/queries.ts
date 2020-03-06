@@ -21,7 +21,16 @@ export enum StorageDashboardQuery {
   STORAGE_CEPH_CAPACITY_USED_QUERY = 'STORAGE_CEPH_CAPACITY_USED_QUERY',
   RESILIENCY_PROGRESS = 'RESILIENCY_PROGRESS',
   NODES_BY_USED = 'NODES_BY_USED',
+  USED_CAPACITY = 'USED_CAPACITY',
+  REQUESTED_CAPACITY = 'REQUESTED_CAPACITY',
 }
+
+export const INDEPENDENT_UTILIZATION_QUERIES = {
+  [StorageDashboardQuery.REQUESTED_CAPACITY]:
+    'sum((kube_persistentvolumeclaim_resource_requests_storage_bytes * on (namespace,persistentvolumeclaim) group_right() kube_pod_spec_volumes_persistentvolumeclaims_info) * on (namespace,persistentvolumeclaim) group_left(storageclass, provisioner) (kube_persistentvolumeclaim_info * on (storageclass)  group_left(provisioner) kube_storageclass_info {provisioner=~"(.*rbd.csi.ceph.com)|(.*cephfs.csi.ceph.com)|(ceph.rook.io/block)"}))',
+  [StorageDashboardQuery.USED_CAPACITY]:
+    'sum((kubelet_volume_stats_used_bytes * on (namespace,persistentvolumeclaim) group_right() kube_pod_spec_volumes_persistentvolumeclaims_info) * on (namespace,persistentvolumeclaim) group_left(storageclass, provisioner) (kube_persistentvolumeclaim_info * on (storageclass)  group_left(provisioner) kube_storageclass_info {provisioner=~"(.*rbd.csi.ceph.com)|(.*cephfs.csi.ceph.com)|(ceph.rook.io/block)"}))',
+};
 
 export const STORAGE_HEALTH_QUERIES = {
   [StorageDashboardQuery.CEPH_STATUS_QUERY]: 'ceph_health_status',
@@ -117,6 +126,42 @@ export const breakdownQueryMap = {
         CAPACITY_BREAKDOWN_QUERIES[StorageDashboardQuery.CEPH_CAPACITY_TOTAL],
       [StorageDashboardQuery.CEPH_CAPACITY_USED]:
         CAPACITY_BREAKDOWN_QUERIES[StorageDashboardQuery.CEPH_CAPACITY_USED],
+    },
+  },
+};
+
+export const breakdownIndependentQueryMap = {
+  [PROJECTS]: {
+    model: ProjectModel,
+    metric: 'namespace',
+    queries: {
+      [StorageDashboardQuery.PROJECTS_BY_USED]: `(topk(6,(${
+        CAPACITY_BREAKDOWN_QUERIES[StorageDashboardQuery.PROJECTS_BY_USED]
+      })))`,
+      [StorageDashboardQuery.PROJECTS_TOTAL_USED]:
+        CAPACITY_BREAKDOWN_QUERIES[StorageDashboardQuery.PROJECTS_TOTAL_USED],
+    },
+  },
+  [STORAGE_CLASSES]: {
+    model: StorageClassModel,
+    metric: 'storageclass',
+    queries: {
+      [StorageDashboardQuery.STORAGE_CLASSES_BY_USED]: `(topk(6,(${
+        CAPACITY_BREAKDOWN_QUERIES[StorageDashboardQuery.STORAGE_CLASSES_BY_USED]
+      })))`,
+      [StorageDashboardQuery.STORAGE_CLASSES_TOTAL_USED]:
+        CAPACITY_BREAKDOWN_QUERIES[StorageDashboardQuery.STORAGE_CLASSES_TOTAL_USED],
+    },
+  },
+  [PODS]: {
+    model: PodModel,
+    metric: 'pod',
+    queries: {
+      [StorageDashboardQuery.PODS_BY_USED]: `(topk(6,(${
+        CAPACITY_BREAKDOWN_QUERIES[StorageDashboardQuery.PODS_BY_USED]
+      })))`,
+      [StorageDashboardQuery.PODS_TOTAL_USED]:
+        CAPACITY_BREAKDOWN_QUERIES[StorageDashboardQuery.PODS_TOTAL_USED],
     },
   },
 };
