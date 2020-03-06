@@ -134,15 +134,15 @@ const Table: React.FC<Props> = ({ panel, pollInterval, queries }) => {
   const visibleData = sortedData.slice((page - 1) * perPage, page * perPage);
 
   // Format the table rows.
-  const rows: React.ReactNode[][] = visibleData.map((values: { [key: string]: string }) => {
-    return columns.reduce((acc: React.ReactNode[], { type, decimals = 2, pattern, unit = '' }) => {
+  const rows: string[][] = visibleData.map((values: { [key: string]: string }) => {
+    return columns.reduce((acc: string[], { type, decimals = 2, pattern, unit = '' }) => {
       const value = values[pattern];
       switch (type) {
         case 'number':
           acc.push(formatNumber(value, decimals, unit));
           break;
         default:
-          acc.push(value || <span className="text-muted">-</span>);
+          acc.push(value || '-');
       }
       return acc;
     }, []);
