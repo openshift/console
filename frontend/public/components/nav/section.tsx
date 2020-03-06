@@ -3,7 +3,13 @@ import { connect } from 'react-redux';
 import * as _ from 'lodash-es';
 import { NavExpandable } from '@patternfly/react-core';
 
-import { withExtensions, WithExtensionsProps, isNavItem, isPerspective } from '@console/plugin-sdk';
+import {
+  withExtensions,
+  NavItem,
+  Perspective,
+  isNavItem,
+  isPerspective,
+} from '@console/plugin-sdk';
 import { RootState } from '../../redux';
 import { featureReducerName, flagPending, FeatureState } from '../../reducers/features';
 import { stripBasePath } from '../utils';
@@ -40,10 +46,10 @@ const mergePluginChild = (
 };
 
 export const NavSection = connect(navSectionStateToProps)(
-  withExtensions(
-    isNavItem,
-    isPerspective,
-  )(
+  withExtensions<NavSectionExtensionProps>({
+    navItemExtensions: isNavItem,
+    perspectiveExtensions: isPerspective,
+  })(
     class NavSection extends React.Component<Props, NavSectionState> {
       public state: NavSectionState;
 
@@ -116,14 +122,13 @@ export const NavSection = connect(navSectionStateToProps)(
       };
 
       getNavItemExtensions = (perspective: string, section: string) => {
-        const navItems = this.props.extensions.filter(isNavItem);
-        const perspectives = this.props.extensions.filter(isPerspective);
+        const { navItemExtensions, perspectiveExtensions } = this.props;
 
-        const defaultPerspective = _.find(perspectives, (p) => p.properties.default);
+        const defaultPerspective = _.find(perspectiveExtensions, (p) => p.properties.default);
         const isDefaultPerspective =
           defaultPerspective && perspective === defaultPerspective.properties.id;
 
-        return navItems.filter(
+        return navItemExtensions.filter(
           (item) =>
             // check if the item is contributed to the current perspective,
             // or if no perspective specified, are we in the default perspective
@@ -222,12 +227,17 @@ type NavSectionStateProps = {
   perspective: string;
 };
 
-export type NavSectionProps = {
+type NavSectionExtensionProps = {
+  navItemExtensions: NavItem[];
+  perspectiveExtensions: Perspective[];
+};
+
+type NavSectionProps = {
   title: NavSectionTitle | string;
   required?: string;
 };
 
-type Props = NavSectionProps & NavSectionStateProps & WithExtensionsProps;
+type Props = NavSectionProps & NavSectionStateProps & NavSectionExtensionProps;
 
 type NavSectionState = {
   isOpen: boolean;

@@ -94,15 +94,15 @@ export const featureReducer = (state: FeatureState, action: FeatureAction): Feat
   }
 };
 
-export const stateToFlagsObject = (state: RootState): FlagsObject =>
-  state[featureReducerName].toObject();
+export const stateToFlagsObject = (state: FeatureState, desiredFlags: string[]): FlagsObject =>
+  desiredFlags.reduce((allFlags, f) => ({ ...allFlags, [f]: state.get(f) }), {} as FlagsObject);
 
-export const stateToProps = (desiredFlags: string[], state: RootState): WithFlagsProps => ({
-  flags: desiredFlags.reduce(
-    (allFlags, f) => ({ ...allFlags, [f]: state[featureReducerName].get(f) }),
-    {},
-  ),
+const stateToProps = (state: FeatureState, desiredFlags: string[]): WithFlagsProps => ({
+  flags: stateToFlagsObject(state, desiredFlags),
 });
+
+export const getFlagsObject = ({ [featureReducerName]: featureState }: RootState): FlagsObject =>
+  featureState.toObject();
 
 export type FlagsObject = { [key: string]: boolean };
 
@@ -119,7 +119,7 @@ export type ConnectToFlags = <P extends WithFlagsProps>(
 };
 
 export const connectToFlags: ConnectToFlags = (...flags) =>
-  connect((state: RootState) => stateToProps(flags, state), null, null, {
+  connect((state: RootState) => stateToProps(state[featureReducerName], flags), null, null, {
     areStatePropsEqual: _.isEqual,
   });
 

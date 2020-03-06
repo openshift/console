@@ -5,7 +5,7 @@ import { CaretDownIcon } from '@patternfly/react-icons';
 import { Perspective } from '@console/plugin-sdk';
 import * as plugins from '../../plugins';
 import { RootState } from '../../redux';
-import { stateToFlagsObject, FlagsObject, featureReducerName } from '../../reducers/features';
+import { featureReducerName, getFlagsObject, FlagsObject } from '../../reducers/features';
 import { getActivePerspective } from '../../reducers/ui';
 import * as UIActions from '../../actions/ui';
 import { history } from '../utils';
@@ -104,7 +104,7 @@ const NavHeader_: React.FC<NavHeaderProps & StateProps> = ({
 
 const mapStateToProps = (state: RootState): StateProps => ({
   activePerspective: getActivePerspective(state),
-  flags: stateToFlagsObject(state),
+  flags: getFlagsObject(state),
 });
 
 export default connect<StateProps, {}, NavHeaderProps, RootState>(
