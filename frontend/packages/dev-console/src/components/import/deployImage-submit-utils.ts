@@ -325,7 +325,7 @@ export const createResources = async (
   const {
     registry,
     route: { create: canCreateRoute },
-    isi: { ports, tag: imageStreamTag },
+    isi: { ports, tag: imageStreamTag, image },
   } = formData;
 
   const requests: Promise<K8sResourceKind>[] = [];
@@ -350,10 +350,12 @@ export const createResources = async (
     }
   } else if (!dryRun) {
     // Do not run serverless call during the dry run.
-    const imageStreamResponse = await createImageStream(formData, dryRun);
-    const imageStreamUrl = imageStreamTag
-      ? `${imageStreamResponse.status.dockerImageRepository}:${imageStreamTag}`
-      : imageStreamResponse.status.dockerImageRepository;
+    let imageStreamUrl: string = image && image.dockerImageReference;
+    if (registry === RegistryType.External) {
+      const imageStreamResponse = await createImageStream(formData, dryRun);
+      const imageStreamRepo = imageStreamResponse.status.dockerImageRepository;
+      imageStreamUrl = imageStreamTag ? `${imageStreamRepo}:${imageStreamTag}` : imageStreamRepo;
+    }
     const knDeploymentResource = getKnativeServiceDepResource(formData, imageStreamUrl);
     requests.push(k8sCreate(KnServiceModel, knDeploymentResource));
   }
