@@ -1,4 +1,5 @@
 import * as React from 'react';
+import * as _ from 'lodash';
 import { LoadingInline } from '@console/internal/components/utils';
 import { k8sList } from '@console/internal/module/k8s';
 import { useFormikContext, FormikValues } from 'formik';
@@ -6,17 +7,23 @@ import { Alert, Expandable } from '@patternfly/react-core';
 import { PipelineModel } from '../../../models';
 import { CheckboxField } from '../../formik-fields';
 import { PipelineVisualization } from '../../pipelines/detail-page-tabs/pipeline-details/PipelineVisualization';
+import { Pipeline } from '../../../utils/pipeline-augment';
 
 const MISSING_DOCKERFILE_LABEL_TEXT =
   'The pipeline template for Dockerfiles is not available at this time.';
 const MISSING_RUNTIME_LABEL_TEXT = 'There are no pipeline templates available for this runtime.';
 
+const labelType = 'pipeline.openshift.io/type';
+const labelRuntime = 'pipeline.openshift.io/runtime';
+const labelDocker = 'pipeline.openshift.io/strategy';
+
 const PipelineTemplate: React.FC = () => {
   const [noTemplateForRuntime, setNoTemplateForRuntime] = React.useState(false);
   const [isExpanded, setIsExpanded] = React.useState(false);
+  const pipelineStorageRef = React.useRef<{ [image: string]: Pipeline[] }>({});
 
   const {
-    values: { pipeline, image, build },
+    values: { pipeline, image, build, resources },
     setFieldValue,
   } = useFormikContext<FormikValues>();
 
@@ -25,19 +32,33 @@ const PipelineTemplate: React.FC = () => {
   React.useEffect(() => {
     let ignore = false;
 
-    const builderPipelineLabel = { 'pipeline.openshift.io/runtime': image.selected };
-    const dockerPipelineLabel = { 'pipeline.openshift.io/strategy': 'docker' };
+    const builderPipelineLabel = { [labelRuntime]: image.selected };
+    const dockerPipelineLabel = { [labelDocker]: 'docker' };
 
     const labelSelector = isDockerStrategy ? dockerPipelineLabel : builderPipelineLabel;
 
     const fetchPipelineTemplate = async () => {
-      const templates = await k8sList(PipelineModel, {
-        ns: 'openshift',
-        labelSelector,
-      });
-      const pipelineTemplate = templates && templates[0];
+      let fetchedPipelines: Pipeline[] = null;
+      if (!pipelineStorageRef.current[image.selected]) {
+        fetchedPipelines = (await k8sList(PipelineModel, {
+          ns: 'openshift',
+          labelSelector,
+        })) as Pipeline[];
+      }
 
       if (ignore) return;
+
+      if (fetchedPipelines) {
+        pipelineStorageRef.current[image.selected] = fetchedPipelines;
+      }
+
+      const imagePipelines: Pipeline[] = pipelineStorageRef.current[image.selected] || [];
+      const resourceSpecificPipeline = imagePipelines.find(
+        (pl) => _.get(pl, ['metadata', 'labels', labelType]) === resources,
+      );
+      const pipelineTemplate =
+        resourceSpecificPipeline ||
+        imagePipelines.find((pl) => !_.get(pl, ['metadata', 'labels', labelType]));
 
       if (pipelineTemplate) {
         setFieldValue('pipeline.template', pipelineTemplate);
@@ -54,7 +75,7 @@ const PipelineTemplate: React.FC = () => {
     return () => {
       ignore = true;
     };
-  }, [image.selected, isDockerStrategy, setFieldValue]);
+  }, [resources, image.selected, isDockerStrategy, setFieldValue]);
 
   if (noTemplateForRuntime) {
     return (

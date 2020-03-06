@@ -218,8 +218,8 @@ export enum ImportTypes {
 
 export enum Resources {
   OpenShift = 'openshift',
-  Kubernetes = 'k8s',
-  KnativeService = 'knativeservice',
+  Kubernetes = 'kubernetes',
+  KnativeService = 'knative',
 }
 
 export interface ImportData {
