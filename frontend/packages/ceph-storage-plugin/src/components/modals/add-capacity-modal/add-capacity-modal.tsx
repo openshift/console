@@ -38,6 +38,14 @@ export const AddCapacityModal = withHandlePromise((props: AddCapacityModalProps)
   const [inProgress, setProgress] = React.useState(false);
   const [errorMessage, setError] = React.useState('');
 
+  React.useEffect(() => {
+    const usedSC = _.get(
+      ocsConfig,
+      'spec.storageDeviceSets[0].dataPVCTemplate.spec.storageClassName',
+    );
+    setStorageClass(usedSC);
+  }, [ocsConfig]);
+
   const osdSizeWithUnit = _.get(
     ocsConfig,
     'spec.storageDeviceSets[0].dataPVCTemplate.spec.resources.requests.storage',
@@ -68,13 +76,20 @@ export const AddCapacityModal = withHandlePromise((props: AddCapacityModalProps)
   const submit = (event: React.FormEvent<EventTarget>) => {
     event.preventDefault();
     setProgress(true);
-    const patch = {
-      op: 'replace',
-      path: `/spec/storageDeviceSets/0/count`,
-      value: presentCount + 1,
-    };
+    const patch = [
+      {
+        op: 'replace',
+        path: `/spec/storageDeviceSets/0/count`,
+        value: presentCount + 1,
+      },
+      {
+        op: 'replace',
+        path: `/spec/storageDeviceSets/0/dataPVCTemplate/spec/storageClassName`,
+        value: storageClass,
+      },
+    ];
     props
-      .handlePromise(k8sPatch(OCSServiceModel, ocsConfig, [patch]))
+      .handlePromise(k8sPatch(OCSServiceModel, ocsConfig, patch))
       .then(() => {
         setProgress(false);
         close();
@@ -92,7 +107,7 @@ export const AddCapacityModal = withHandlePromise((props: AddCapacityModalProps)
         Adding capacity for <strong>{getName(ocsConfig)}</strong>, may increase your cloud expenses.
         <div className="ceph-add-capacity__modal">
           <div className="ceph-add-capacity_sc-dropdown">
-            <OCSStorageClassDropdown onChange={setStorageClass} defaultClass={storageClass} />
+            <OCSStorageClassDropdown onChange={setStorageClass} selectedKey={storageClass} />
           </div>
           <label className="control-label" htmlFor="requestSize">
             Raw Capacity

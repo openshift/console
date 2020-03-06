@@ -44,8 +44,8 @@ import {
 } from '../../constants/ocs-install';
 import './ocs-install.scss';
 import { OSDSizeDropdown } from '../../utils/osd-size-dropdown';
-import { hasLabel } from '../../../../console-shared/src/selectors/common';
 import { OCSStorageClassDropdown } from '../modals/storage-class-dropdown';
+import { hasLabel } from '../../../../console-shared/src/selectors/common';
 
 const ocsLabel = 'cluster.ocs.openshift.io/openshift-storage';
 
@@ -365,7 +365,7 @@ const CustomNodeTable: React.FC<CustomNodeTableProps> = ({
         />
       )}
       <div className="ceph-ocs-install__ocs-service-capacity--dropdown">
-        <OCSStorageClassDropdown onChange={setStorageClass} />
+        <OCSStorageClassDropdown onChange={setStorageClass} selectedKey={storageClass} />
       </div>
       <div className="ceph-ocs-install__ocs-service-capacity">
         <label className="control-label" htmlFor="ocs-service-stoargeclass">
