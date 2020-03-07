@@ -1,7 +1,6 @@
 /* eslint-disable lines-between-class-members */
 import * as _ from 'lodash';
 import { getLabels } from '@console/shared/src';
-import { apiVersionForModel, K8sKind } from '@console/internal/module/k8s';
 import { K8sResourceWrapper } from '../common/k8s-resource-wrapper';
 import { CPURaw, VMKind } from '../../../types/vm';
 import {
@@ -12,7 +11,6 @@ import {
   getVolumes,
   isDedicatedCPUPlacement,
 } from '../../../selectors/vm/selectors';
-import { ensurePath } from '../utils/utils';
 import { VMWizardNetwork, VMWizardStorage } from '../../../components/create-vm-wizard/types';
 import { VMILikeMethods } from './types';
 import { transformDevices } from '../../../selectors/vm';
@@ -28,21 +26,7 @@ import { V1Disk } from '../../../types/vm/disk/V1Disk';
 import { V1Volume } from '../../../types/vm/disk/V1Volume';
 import { V1alpha1DataVolume } from '../../../types/vm/disk/V1alpha1DataVolume';
 
-export class VMWrapper extends K8sResourceWrapper<VMKind> implements VMILikeMethods {
-  static mergeWrappers = (...vmWrappers: VMWrapper[]): VMWrapper =>
-    K8sResourceWrapper.defaultMergeWrappers(VMWrapper, vmWrappers);
-
-  static initialize = (vm?: VMKind, copy?: boolean) => new VMWrapper(vm, copy && { copy });
-
-  protected constructor(
-    vm?: VMKind,
-    opts?: {
-      copy?: boolean;
-    },
-  ) {
-    super(vm, opts);
-  }
-
+export class VMWrapper extends K8sResourceWrapper<VMKind, VMWrapper> implements VMILikeMethods {
   hasTemplateLabel = (label: string) => _.has(this.getTemplateLabels(null), label);
 
   getOperatingSystem = () => findKeySuffixValue(this.getLabels(), TEMPLATE_OS_LABEL);
@@ -69,50 +53,10 @@ export class VMWrapper extends K8sResourceWrapper<VMKind> implements VMILikeMeth
   getLabeledDevices = () => transformDevices(this.getDisks(), this.getInterfaces());
 
   isDedicatedCPUPlacement = () => isDedicatedCPUPlacement(this.data);
-}
-
-export class MutableVMWrapper extends VMWrapper {
-  public constructor(vm?: VMKind, opts?: { copy?: boolean }) {
-    super(vm, opts);
-  }
-
-  setName = (name: string) => {
-    this.ensurePath('metadata', {});
-    this.data.metadata.name = name;
-    return this;
-  };
-
-  setNamespace = (namespace: string) => {
-    this.ensurePath('metadata', {});
-    this.data.metadata.namespace = namespace;
-    return this;
-  };
-
-  setModel = (model: K8sKind) => {
-    this.data.kind = model.kind;
-    this.data.apiVersion = apiVersionForModel(model);
-    return this;
-  };
-
-  addAnotation = (key: string, value: string) => {
-    if (key) {
-      this.ensurePath('metadata.annotations', {});
-      this.data.metadata.annotations[key] = value;
-    }
-    return this;
-  };
-
-  addLabel = (key: string, value: string) => {
-    if (key) {
-      this.ensurePath('metadata.labels', {});
-      this.data.metadata.labels[key] = value;
-    }
-    return this;
-  };
 
   addTemplateLabel = (key: string, value: string) => {
     if (key) {
-      this.ensurePath('spec.template.metadata.labels', {});
+      this.ensurePath('spec.template.metadata.labels');
       this.data.spec.template.metadata.labels[key] = value;
     }
     return this;
@@ -120,14 +64,14 @@ export class MutableVMWrapper extends VMWrapper {
 
   addTemplateAnnotation = (key: string, value: string) => {
     if (key) {
-      this.ensurePath('spec.template.metadata.annotations', {});
+      this.ensurePath('spec.template.metadata.annotations');
       this.data.spec.template.metadata.annotations[key] = value;
     }
     return this;
   };
 
   setMemory = (value: string, unit = 'Gi') => {
-    this.ensurePath('spec.template.spec.domain.resources.requests', {});
+    this.ensurePath('spec.template.spec.domain.resources.requests');
     this.data.spec.template.spec.domain.resources.requests.memory = `${value}${unit}`;
     return this;
   };
@@ -147,13 +91,13 @@ export class MutableVMWrapper extends VMWrapper {
   };
 
   setRunning = (isRunning?: boolean) => {
-    this.ensurePath('spec', {});
+    this.ensurePath('spec');
     this.data.spec.running = !!isRunning;
     return this;
   };
 
   setNetworks = (networks: VMWizardNetwork[]) => {
-    this.ensurePath('spec.template.spec.domain.devices', {});
+    this.ensurePath('spec.template.spec.domain.devices');
     this.data.spec.template.spec.domain.devices.interfaces = _.compact(
       networks.map((network) => network.networkInterface),
     );
@@ -188,7 +132,7 @@ export class MutableVMWrapper extends VMWrapper {
     this.data.spec.template.spec.domain.devices.disks = this.getDisks().filter(
       (disk) => disk.name !== diskName,
     );
-    const volumeWrapper = VolumeWrapper.initialize(
+    const volumeWrapper = new VolumeWrapper(
       this.getVolumes().find((volume) => volume.name === diskName),
     );
     this.data.spec.template.spec.volumes = this.getVolumes().filter(
@@ -206,7 +150,7 @@ export class MutableVMWrapper extends VMWrapper {
   };
 
   setStorages = (storages: VMWizardStorage[]) => {
-    this.ensurePath('spec.template.spec.domain.devices', {});
+    this.ensurePath('spec.template.spec.domain.devices');
     this.data.spec.template.spec.domain.devices.disks = _.compact(
       storages.map((storage) => storage.disk),
     );
@@ -218,22 +162,18 @@ export class MutableVMWrapper extends VMWrapper {
   };
 
   setAutoAttachPodInterface = (autoAttach: boolean) => {
-    this.ensurePath('spec.template.spec.domain.devices', {});
+    this.ensurePath('spec.template.spec.domain.devices');
     this.data.spec.template.spec.domain.devices.autoattachPodInterface = autoAttach;
     return this;
   };
 
   setHostname = (hostname: string) => {
-    this.ensurePath('spec.template.spec', {});
+    this.ensurePath('spec.template.spec');
     this.data.spec.template.spec.hostname = hostname;
     return this;
   };
 
   ensureDataVolumeTemplates = () => this.ensurePath('spec.dataVolumeTemplates', []);
-
-  asMutableResource = () => this.data;
-
-  ensurePath = (path: string[] | string, value) => ensurePath(this.data, path, value);
 
   private ensureStorages = () => {
     if (_.isEmpty(this.getDisks())) {

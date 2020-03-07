@@ -2,10 +2,7 @@ import { TemplateModel } from '@console/internal/models';
 import { VMSettingsField } from '../../../../components/create-vm-wizard/types';
 import { getStorageClassConfigMap } from '../../config-map/storage-class';
 import { asSimpleSettings } from '../../../../components/create-vm-wizard/selectors/vm-settings';
-import {
-  MutableVMTemplateWrapper,
-  VMTemplateWrapper,
-} from '../../../wrapper/vm/vm-template-wrapper';
+import { VMTemplateWrapper } from '../../../wrapper/vm/vm-template-wrapper';
 import {
   TEMPLATE_PARAM_VM_NAME,
   TEMPLATE_PARAM_VM_NAME_DESC,
@@ -13,9 +10,9 @@ import {
   TEMPLATE_TYPE_VM,
 } from '../../../../constants/vm';
 import { DataVolumeModel, VirtualMachineModel } from '../../../../models';
-import { MutableDataVolumeWrapper } from '../../../wrapper/vm/data-volume-wrapper';
+import { DataVolumeWrapper } from '../../../wrapper/vm/data-volume-wrapper';
 import { buildOwnerReference } from '../../../../utils';
-import { MutableVMWrapper } from '../../../wrapper/vm/vm-wrapper';
+import { VMWrapper } from '../../../wrapper/vm/vm-wrapper';
 import { ProcessedTemplatesModel } from '../../../../models/models';
 import { toShallowJS } from '../../../../utils/immutable';
 import { iGetRelevantTemplate } from '../../../../selectors/immutable/template/combined';
@@ -41,11 +38,11 @@ export const getInitializedVMTemplate = (params: CreateVMEnhancedParams) => {
     return {};
   }
 
-  const template = new MutableVMTemplateWrapper(temp, { copy: true });
+  const template = new VMTemplateWrapper(temp, true);
 
   template.setModel(TemplateModel); // make sure api version is correct
 
-  const { storages } = initializeVM(params, template.getMutableVM());
+  const { storages } = initializeVM(params, template.getVM());
 
   return { template, storages };
 };
@@ -75,7 +72,7 @@ export const createVMTemplate = async (params: CreateVMParams) => {
     labels: {
       [TEMPLATE_TYPE_LABEL]: TEMPLATE_TYPE_VM,
     },
-    objects: [template.getMutableVM().asMutableResource()],
+    objects: [template.getVM().asResource()],
     parameters: [
       {
         name: TEMPLATE_PARAM_VM_NAME,
@@ -84,26 +81,21 @@ export const createVMTemplate = async (params: CreateVMParams) => {
       },
     ],
   });
-  const mutableFinalTemplate = new MutableVMTemplateWrapper(finalTemplate.asResource());
 
-  initializeCommonMetadata(
-    combinedSimpleSettings,
-    mutableFinalTemplate,
-    template.asMutableResource(),
-  );
+  initializeCommonMetadata(combinedSimpleSettings, finalTemplate, template.asResource());
 
-  const templateResult = await k8sCreate(TemplateModel, mutableFinalTemplate.asMutableResource());
+  const templateResult = await k8sCreate(TemplateModel, finalTemplate.asResource());
 
   if (templateResult && storages) {
     for (const storage of storages.filter((s) => s.dataVolumeToCreate)) {
       // eslint-disable-next-line no-await-in-loop
       await enhancedK8sMethods.k8sCreate(
         DataVolumeModel,
-        new MutableDataVolumeWrapper(storage.dataVolumeToCreate, true)
+        new DataVolumeWrapper(storage.dataVolumeToCreate, true)
           .addOwnerReferences(
             buildOwnerReference(templateResult, { blockOwnerDeletion: true, controller: true }),
           )
-          .asMutableResource(),
+          .asResource(),
       );
     }
   }
@@ -126,50 +118,45 @@ export const createVM = async (params: CreateVMParams) => {
   };
 
   // TODO add VMWARE import
-  let vm;
+  let vm: VMWrapper;
 
   if (openshiftFlag) {
     const { template } = getInitializedVMTemplate(enhancedParams);
 
-    const templateToProcess = new MutableVMTemplateWrapper(template.asMutableResource(), {
-      copy: true,
-    });
     // ProcessedTemplates endpoint will reject the request if user cannot post to the namespace
     // common-templates are stored in openshift namespace, default user can read but cannot post
-    templateToProcess.setNamespace(namespace);
-    templateToProcess.setParameter(
-      TEMPLATE_PARAM_VM_NAME,
-      combinedSimpleSettings[VMSettingsField.NAME],
-    );
-    templateToProcess.unrequireParameters(
-      new Set(
-        templateToProcess
-          .getParameters()
-          .map((p) => p.name)
-          .filter((n) => n !== TEMPLATE_PARAM_VM_NAME),
-      ),
-    );
+    template
+      .setNamespace(namespace)
+      .setParameter(TEMPLATE_PARAM_VM_NAME, combinedSimpleSettings[VMSettingsField.NAME])
+      .unrequireParameters(
+        new Set(
+          template
+            .getParameters()
+            .map((p) => p.name)
+            .filter((n) => n !== TEMPLATE_PARAM_VM_NAME),
+        ),
+      );
 
     const processedTemplate = await k8sCreate(
       ProcessedTemplatesModel,
-      templateToProcess.asMutableResource(),
+      template.asResource(),
       null,
       { disableHistory: true },
     ); // temporary
 
-    vm = new MutableVMWrapper(selectVM(processedTemplate));
+    vm = new VMWrapper(selectVM(processedTemplate));
     vm.setNamespace(namespace);
-    initializeCommonMetadata(combinedSimpleSettings, vm, template.asMutableResource());
+    initializeCommonMetadata(combinedSimpleSettings, vm, template.asResource());
   } else {
-    vm = new MutableVMWrapper();
-    vm.setModel(VirtualMachineModel)
+    vm = new VMWrapper()
+      .setModel(VirtualMachineModel)
       .setNamespace(namespace)
       .setName(combinedSimpleSettings[VMSettingsField.NAME]);
     initializeCommonMetadata(combinedSimpleSettings, vm);
     initializeVM(enhancedParams, vm);
   }
   initializeCommonVMMetadata(combinedSimpleSettings, vm);
-  await k8sCreate(VirtualMachineModel, vm.asMutableResource());
+  await k8sCreate(VirtualMachineModel, vm.asResource());
 
   return getActualState();
 };

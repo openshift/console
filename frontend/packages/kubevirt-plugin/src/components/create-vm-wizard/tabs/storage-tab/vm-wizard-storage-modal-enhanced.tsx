@@ -41,15 +41,15 @@ const VMWizardStorageModal: React.FC<VMWizardStorageModalProps> = (props) => {
   } = props;
   const {
     type,
-    diskWrapper = DiskWrapper.EMPTY,
-    volumeWrapper = VolumeWrapper.EMPTY,
+    diskWrapper,
+    volumeWrapper,
     dataVolumeWrapper,
     persistentVolumeClaimWrapper,
     ...storageRest
   } = storage || {};
 
   const filteredStorages = storages.filter(
-    (s) => s && s.diskWrapper.getName() && s.diskWrapper.getName() !== diskWrapper.getName(),
+    (s) => s && s.diskWrapper.getName() && s.diskWrapper.getName() !== diskWrapper?.getName(),
   );
 
   const usedDiskNames: Set<string> = new Set(
@@ -94,10 +94,13 @@ const VMWizardStorageModal: React.FC<VMWizardStorageModalProps> = (props) => {
         usedDiskNames={usedDiskNames}
         usedPVCNames={usedPVCNames}
         templateValidations={templateValidations}
-        disk={diskWrapper}
-        volume={volumeWrapper}
-        dataVolume={dataVolumeWrapper}
-        persistentVolumeClaim={persistentVolumeClaimWrapper}
+        disk={new DiskWrapper(diskWrapper, true)}
+        volume={new VolumeWrapper(volumeWrapper, true)}
+        dataVolume={dataVolumeWrapper && new DataVolumeWrapper(dataVolumeWrapper, true)}
+        persistentVolumeClaim={
+          persistentVolumeClaimWrapper &&
+          new PersistentVolumeClaimWrapper(persistentVolumeClaimWrapper, true)
+        }
         disableSourceChange={[
           VMWizardStorageType.PROVISION_SOURCE_DISK,
           VMWizardStorageType.PROVISION_SOURCE_TEMPLATE_DISK,
@@ -113,20 +116,20 @@ const VMWizardStorageModal: React.FC<VMWizardStorageModalProps> = (props) => {
           addUpdateStorage({
             ...storageRest,
             type: type || VMWizardStorageType.UI_INPUT,
-            disk: DiskWrapper.mergeWrappers(diskWrapper, resultDiskWrapper).asResource(),
-            volume: VolumeWrapper.mergeWrappers(volumeWrapper, resultVolumeWrapper).asResource(),
+            disk: new DiskWrapper(diskWrapper, true).mergeWith(resultDiskWrapper).asResource(),
+            volume: new VolumeWrapper(volumeWrapper, true)
+              .mergeWith(resultVolumeWrapper)
+              .asResource(),
             dataVolume:
               resultDataVolumeWrapper &&
-              DataVolumeWrapper.mergeWrappers(
-                dataVolumeWrapper,
-                resultDataVolumeWrapper,
-              ).asResource(),
+              new DataVolumeWrapper(dataVolumeWrapper, true)
+                .mergeWith(resultDataVolumeWrapper)
+                .asResource(),
             persistentVolumeClaim:
               resultPersistentVolumeClaim &&
-              PersistentVolumeClaimWrapper.mergeWrappers(
-                persistentVolumeClaimWrapper,
-                resultPersistentVolumeClaim,
-              ).asResource(),
+              new PersistentVolumeClaimWrapper(persistentVolumeClaimWrapper, true)
+                .mergeWith(resultPersistentVolumeClaim)
+                .asResource(),
           });
           return Promise.resolve();
         }}

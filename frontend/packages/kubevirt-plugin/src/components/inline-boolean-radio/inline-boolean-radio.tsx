@@ -21,8 +21,8 @@ export const InlineBooleanRadio: React.FC<InlineBooleanRadioProps> = ({
   firstOptionChecked,
   onChange,
 }) => {
-  const onFirstOptionChanged = React.useCallback((isChecked) => onChange(isChecked), [onChange]);
-  const onSecondOptionChanged = React.useCallback((isChecked) => onChange(!isChecked), [onChange]);
+  const onFirstOptionChanged = React.useCallback(() => onChange(true), [onChange]);
+  const onSecondOptionChanged = React.useCallback(() => onChange(false), [onChange]);
 
   const firstOptionID = prefixedID(id, 'first-option');
   const secondOptionID = prefixedID(id, 'second-option');

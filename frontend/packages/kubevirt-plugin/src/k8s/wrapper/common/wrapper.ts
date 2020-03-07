@@ -1,26 +1,36 @@
 import * as _ from 'lodash';
+import { ensurePath } from '../utils/utils';
+import { omitEmpty } from '../../../utils/common';
 
-export class Wrapper<RESOURCE extends {}> {
+export class Wrapper<RESOURCE extends {}, SELF extends Wrapper<RESOURCE, SELF>> {
   protected data: RESOURCE;
 
-  protected static defaultMergeWrappers = <A, B extends Wrapper<A>>(Clazz, wrappers: B[]): B => {
-    const nonEmptyWrappers = wrappers.filter((i) => i);
-    if (nonEmptyWrappers.length === 0) {
-      return new Clazz();
-    }
-
-    const mergedWrappers: A = _.merge({}, ...nonEmptyWrappers.map((i) => i.data));
-
-    return new Clazz(mergedWrappers);
-  };
-
-  constructor(data: RESOURCE, opts: { copy?: boolean }) {
-    this.data = (data && opts && opts.copy ? _.cloneDeep(data) : data || {}) as any;
+  constructor(data?: RESOURCE | SELF, copy = false) {
+    const d = _.isFunction((data as any)?.asResource)
+      ? (data as SELF).asResource()
+      : (data as RESOURCE);
+    this.data = (d && copy ? _.cloneDeep(d) : d || {}) as any;
   }
 
-  asResource = (): RESOURCE => _.cloneDeep(this.data);
+  asResource = (copy = false): RESOURCE => (copy ? _.cloneDeep(this.data) : this.data);
+
+  mergeWith(...wrappers: SELF[]): SELF {
+    if (wrappers) {
+      const update = _.merge({}, ...wrappers.filter((w) => w?.data).map((w) => w.data));
+
+      _.merge(this.data, _.cloneDeep(update)); // clone to dispose of all old references
+    }
+    return (this as any) as SELF;
+  }
+
+  clearEmptyValues = () => {
+    omitEmpty(this.data, true);
+  };
 
   protected get = (key: string) => (this.data && key ? this.data[key] : null);
 
   protected getIn = (path: string[]) => (this.data && path ? _.get(this.data, path) : null);
+
+  protected ensurePath = (path: string[] | string, value: any[] | {} = {}) =>
+    ensurePath(this.data, path, value);
 }

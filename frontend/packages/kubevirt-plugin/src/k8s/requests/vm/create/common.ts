@@ -14,9 +14,9 @@ import {
   TEMPLATE_VM_NAME_LABEL,
   APP,
 } from '../../../../constants/vm';
-import { MutableVMWrapper } from '../../../wrapper/vm/vm-wrapper';
+import { VMWrapper } from '../../../wrapper/vm/vm-wrapper';
 import { getTemplateOperatingSystems } from '../../../../selectors/vm-template/advanced';
-import { MutableVMTemplateWrapper } from '../../../wrapper/vm/vm-template-wrapper';
+import { VMTemplateWrapper } from '../../../wrapper/vm/vm-template-wrapper';
 import { operatingSystemsNative } from '../../../../components/create-vm-wizard/native/consts';
 import { concatImmutableLists, immutableListToShallowJS } from '../../../../utils/immutable';
 import { CreateVMEnhancedParams } from './types';
@@ -50,7 +50,7 @@ export const initializeCommonMetadata = (
     osID: string;
     osName: string;
   },
-  entity: MutableVMWrapper | MutableVMTemplateWrapper,
+  entity: VMWrapper | VMTemplateWrapper,
   template?: TemplateKind,
 ) => {
   entity.addAnotation(`${TEMPLATE_OS_NAME_ANNOTATION}/${settings.osID}`, settings.osName);
@@ -84,7 +84,7 @@ export const initializeCommonVMMetadata = (
     [VMSettingsField.WORKLOAD_PROFILE]: string;
     osID: string;
   },
-  entity: MutableVMWrapper,
+  entity: VMWrapper,
 ) => {
   const name = settings[VMSettingsField.NAME];
 

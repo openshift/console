@@ -4,14 +4,17 @@ import { VMIWrapper } from '../vm/vmi-wrapper';
 import { asVM, isVMI } from '../../../selectors/vm/vmlike';
 import { VMILikeWrapper } from '../types/vmlike';
 
-export const asVMILikeWrapper = (vmLikeEntity: VMGenericLikeEntityKind): VMILikeWrapper => {
+export const asVMILikeWrapper = (
+  vmLikeEntity: VMGenericLikeEntityKind,
+  copy = false,
+): VMILikeWrapper => {
   if (!vmLikeEntity) {
     return null;
   }
 
   if (isVMI(vmLikeEntity)) {
-    return VMIWrapper.initialize(vmLikeEntity);
+    return new VMIWrapper(vmLikeEntity, copy);
   }
 
-  return VMWrapper.initialize(asVM(vmLikeEntity));
+  return new VMWrapper(asVM(vmLikeEntity), copy);
 };

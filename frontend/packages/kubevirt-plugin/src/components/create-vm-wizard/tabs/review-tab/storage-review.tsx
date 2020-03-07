@@ -29,7 +29,7 @@ const StorageReviewFirehose: React.FC<StorageReviewFirehoseProps> = ({
             volumeWrapper,
             dataVolumeWrapper,
             persistentVolumeClaimWrapper:
-              persistentVolumeClaimWrapper || (pvc && PersistentVolumeClaimWrapper.initialize(pvc)),
+              persistentVolumeClaimWrapper || (pvc && new PersistentVolumeClaimWrapper(pvc)),
             isNewPVC: !!persistentVolumeClaimWrapper,
           });
 

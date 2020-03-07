@@ -1,8 +1,8 @@
 import { TemplateKind } from '@console/internal/module/k8s';
 import { getName } from '@console/shared/src';
-import { ValueEnum } from '../value-enum';
+import { ObjectEnum } from '../object-enum';
 
-export class OSSelection extends ValueEnum<string> {
+export class OSSelection extends ObjectEnum<string> {
   static readonly FEDORA = new OSSelection(
     'fedora',
     'kubevirt/fedora-cloud-container-disk-demo:latest',

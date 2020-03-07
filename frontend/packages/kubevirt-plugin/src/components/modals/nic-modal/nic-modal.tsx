@@ -42,7 +42,7 @@ export type NetworkProps = {
   usedMultusNetworkNames: Set<string>;
   allowPodNetwork: boolean;
   network?: NetworkWrapper;
-  onChange: (networkChoice: NetworkWrapper) => void;
+  onChange: (networkChoice: NetworkType, network: string) => void;
 };
 
 export const Network: React.FC<NetworkProps> = ({
@@ -74,13 +74,10 @@ export const Network: React.FC<NetworkProps> = ({
       <FormSelect
         onChange={(net, event) => {
           const target = event.target as HTMLSelectElement;
-          const newNetworkType = target[target.selectedIndex].getAttribute('data-network-type');
-          onChange(
-            NetworkWrapper.initializeFromSimpleData({
-              type: NetworkType.fromString(newNetworkType),
-              multusNetworkName: net,
-            }),
+          const newNetworkType = NetworkType.fromString(
+            target[target.selectedIndex].getAttribute('data-network-type'),
           );
+          onChange(newNetworkType, newNetworkType === NetworkType.MULTUS ? net : undefined);
         }}
         value={asFormSelectValue(network && network.getReadableName())}
         id={id}
@@ -126,9 +123,9 @@ export const NICModal = withHandlePromise((props: NICModalProps) => {
     cancel,
   } = props;
   const asId = prefixedID.bind(null, 'nic');
-  const nic = props.nic || NetworkInterfaceWrapper.EMPTY;
-  const network = props.network || NetworkWrapper.EMPTY;
-  const isEditing = nic !== NetworkInterfaceWrapper.EMPTY;
+  const nic = props.nic || new NetworkInterfaceWrapper();
+  const network = props.network || new NetworkWrapper();
+  const isEditing = !!props.nic;
 
   const [name, setName] = React.useState<string>(
     nic.getName() || getSequenceName('nic', usedInterfacesNames),
@@ -136,7 +133,10 @@ export const NICModal = withHandlePromise((props: NICModalProps) => {
   const [model, setModel] = React.useState<NetworkInterfaceModel>(
     nic.getModel() || (isEditing ? null : NetworkInterfaceModel.VIRTIO),
   );
-  const [resultNetwork, setResultNetwork] = React.useState<NetworkWrapper>(network);
+  const [networkType, setNetworkType] = React.useState<NetworkType>(network.getType());
+  const [multusNetworkName, setMultusNetworkName] = React.useState<string>(
+    network.getMultusNetworkName(),
+  );
   const [interfaceType, setInterfaceType] = React.useState<NetworkInterfaceType>(nic.getType());
   const [macAddress, setMacAddress] = React.useState<string>(nic.getMACAddress() || '');
 
@@ -147,6 +147,12 @@ export const NICModal = withHandlePromise((props: NICModalProps) => {
     macAddress,
   });
 
+  const resultNetwork = NetworkWrapper.initializeFromSimpleData({
+    name,
+    type: networkType,
+    multusNetworkName,
+  });
+
   const {
     validations: { name: nameValidation, macAddress: macAddressValidation },
     isValid,
@@ -155,15 +161,17 @@ export const NICModal = withHandlePromise((props: NICModalProps) => {
 
   const [showUIError, setShowUIError] = useShowErrorToggler(false, isValid, isValid);
 
-  const onNetworkChoiceChange = (newNetworkChoice: NetworkWrapper) => {
-    if (newNetworkChoice.isPodNetwork()) {
+  const onNetworkChoiceChange = (newType: NetworkType, newMultusNetworkName) => {
+    if (newType === NetworkType.POD) {
       setMacAddress('');
     }
 
-    if (!interfaceType || !newNetworkChoice.getType().allowsInterfaceType(interfaceType)) {
-      setInterfaceType(newNetworkChoice.getType().getDefaultInterfaceType());
+    if (!interfaceType || !newType.allowsInterfaceType(interfaceType)) {
+      setInterfaceType(newType.getDefaultInterfaceType());
     }
-    setResultNetwork(newNetworkChoice);
+
+    setNetworkType(newType);
+    setMultusNetworkName(newMultusNetworkName);
   };
 
   const submit = (e) => {
@@ -171,15 +179,7 @@ export const NICModal = withHandlePromise((props: NICModalProps) => {
 
     if (isValid) {
       // eslint-disable-next-line promise/catch-or-return
-      handlePromise(
-        onSubmit(
-          resultNIC,
-          NetworkWrapper.mergeWrappers(
-            resultNetwork,
-            NetworkWrapper.initializeFromSimpleData({ name: resultNIC.getName() }),
-          ),
-        ),
-      ).then(close);
+      handlePromise(onSubmit(resultNIC, resultNetwork)).then(close);
     } else {
       setShowUIError(true);
     }

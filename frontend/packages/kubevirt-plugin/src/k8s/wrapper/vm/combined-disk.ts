@@ -270,9 +270,9 @@ export class CombinedDiskFactory {
     const pvcLookup = createBasicLookup(this.pvcs, getName);
 
     return this.disks.map((disk) => {
-      const diskWrapper = DiskWrapper.initialize(disk);
+      const diskWrapper = new DiskWrapper(disk);
       const volume = volumeLookup[diskWrapper.getName()];
-      const volumeWrapper = VolumeWrapper.initialize(volume);
+      const volumeWrapper = new VolumeWrapper(volume);
       const dataVolume =
         volumeWrapper.getType() === VolumeType.DATA_VOLUME
           ? datavolumeLookup[volumeWrapper.getDataVolumeName()]
@@ -285,8 +285,8 @@ export class CombinedDiskFactory {
       return new CombinedDisk({
         diskWrapper,
         volumeWrapper,
-        dataVolumeWrapper: dataVolume && DataVolumeWrapper.initialize(dataVolume),
-        persistentVolumeClaimWrapper: pvc && PersistentVolumeClaimWrapper.initialize(pvc),
+        dataVolumeWrapper: dataVolume && new DataVolumeWrapper(dataVolume),
+        persistentVolumeClaimWrapper: pvc && new PersistentVolumeClaimWrapper(pvc),
         dataVolumesLoading: this.dataVolumesLoading,
         pvcsLoading: this.pvcsLoading,
       });

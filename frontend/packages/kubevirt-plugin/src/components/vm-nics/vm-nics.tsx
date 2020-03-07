@@ -29,8 +29,8 @@ const getNicsData = (vmLikeEntity: VMGenericLikeEntityKind): NetworkBundle[] => 
 
   return interfaces.map((nic) => {
     const network = networkLookup[nic.name];
-    const interfaceWrapper = NetworkInterfaceWrapper.initialize(nic);
-    const networkWrapper = NetworkWrapper.initialize(network);
+    const interfaceWrapper = new NetworkInterfaceWrapper(nic);
+    const networkWrapper = new NetworkWrapper(network);
     return {
       nic,
       network,

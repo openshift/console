@@ -27,15 +27,15 @@ const VMWizardNICModal: React.FC<VMWizardNICModalProps> = (props) => {
     hasNADs,
     addUpdateNIC,
     networks,
-    networkInterfaceWrapper = NetworkInterfaceWrapper.EMPTY,
-    networkWrapper = NetworkWrapper.EMPTY,
+    networkInterfaceWrapper,
+    networkWrapper,
     ...restProps
   } = props;
 
   const usedInterfacesNames: Set<string> = new Set(
     networks
       .map(({ networkInterfaceWrapper: nicWrapper }) => nicWrapper.getName())
-      .filter((n) => n && n !== networkInterfaceWrapper.getName()),
+      .filter((n) => n && n !== networkInterfaceWrapper?.getName()),
   );
 
   const usedMultusNetworkNames: Set<string> = new Set(
@@ -43,13 +43,13 @@ const VMWizardNICModal: React.FC<VMWizardNICModalProps> = (props) => {
       .filter(
         ({ networkWrapper: usedNetworkWrapper }) =>
           usedNetworkWrapper.getType() === NetworkType.MULTUS &&
-          usedNetworkWrapper.getMultusNetworkName() !== networkWrapper.getMultusNetworkName(),
+          usedNetworkWrapper.getMultusNetworkName() !== networkWrapper?.getMultusNetworkName(),
       )
       .map(({ networkWrapper: usedNetworkWrapper }) => usedNetworkWrapper.getMultusNetworkName()),
   );
 
   const allowPodNetwork =
-    networkWrapper.isPodNetwork() ||
+    networkWrapper?.isPodNetwork() ||
     !networks.find(({ networkWrapper: usedNetworkWrapper }) => usedNetworkWrapper.isPodNetwork());
 
   const modal = (
@@ -58,17 +58,18 @@ const VMWizardNICModal: React.FC<VMWizardNICModalProps> = (props) => {
       usedInterfacesNames={usedInterfacesNames}
       usedMultusNetworkNames={usedMultusNetworkNames}
       allowPodNetwork={allowPodNetwork}
-      nic={networkInterfaceWrapper}
-      network={networkWrapper}
+      nic={new NetworkInterfaceWrapper(networkInterfaceWrapper, true)}
+      network={new NetworkWrapper(networkWrapper, true)}
       onSubmit={(resultNetworkInterfaceWrapper, resultNetworkWrapper) => {
         addUpdateNIC({
           id,
           type: type || VMWizardNetworkType.UI_INPUT,
-          networkInterface: NetworkInterfaceWrapper.mergeWrappers(
-            networkInterfaceWrapper,
-            resultNetworkInterfaceWrapper,
-          ).asResource(),
-          network: NetworkWrapper.mergeWrappers(networkWrapper, resultNetworkWrapper).asResource(),
+          networkInterface: new NetworkInterfaceWrapper(networkInterfaceWrapper, true)
+            .mergeWith(resultNetworkInterfaceWrapper)
+            .asResource(),
+          network: new NetworkWrapper(networkWrapper, true)
+            .mergeWith(resultNetworkWrapper)
+            .asResource(),
         });
         return Promise.resolve();
       }}

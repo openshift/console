@@ -16,8 +16,8 @@ export const getRemoveNICPatches = (vmLikeEntity: VMLikeEntityKind, nic: any): P
     const nics = getInterfaces(vm);
     const networks = getNetworks(vm);
     const network = networks.find((n) => getSimpleName(n) === nicName);
-    const networkInterfaceWrapper = NetworkInterfaceWrapper.initialize(nic);
-    const networkChoice = NetworkWrapper.initialize(network);
+    const networkInterfaceWrapper = new NetworkInterfaceWrapper(nic);
+    const networkChoice = new NetworkWrapper(network);
 
     const patches = [
       new PatchBuilder('/spec/template/spec/domain/devices/interfaces')

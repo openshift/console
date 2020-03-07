@@ -86,7 +86,7 @@ export const getUsedNetworks = (vm: VMKind): NetworkWrapper[] => {
   const networkLookup = createBasicLookup<any>(getNetworks(vm), getSimpleName);
 
   return interfaces
-    .map((i) => NetworkWrapper.initialize(networkLookup[i.name]))
+    .map((i) => new NetworkWrapper(networkLookup[i.name]))
     .filter((i) => i.getType());
 };
 

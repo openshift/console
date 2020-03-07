@@ -17,7 +17,7 @@ import { VMKind } from '../../types/vm';
 import { VirtualMachineModel } from '../../models';
 import { resolveDefaultVM } from '../../k8s/requests/vm/create/default-vm';
 import { VirtualMachineYAMLTemplates } from '../../models/templates';
-import { MutableVMWrapper } from '../../k8s/wrapper/vm/vm-wrapper';
+import { VMWrapper } from '../../k8s/wrapper/vm/vm-wrapper';
 
 const VMCreateYAMLLConnected = connectToPlural(
   ({ match, kindsInFlight, kindObj, resourceObjPath }: CreateYAMLProps) => {
@@ -52,14 +52,11 @@ const VMCreateYAMLLConnected = connectToPlural(
           );
         })
         .catch(() => {
-          const vmWrapper = new MutableVMWrapper(
-            safeLoad(VirtualMachineYAMLTemplates.getIn(['default'])),
-          );
           setDefaultVM(
-            vmWrapper
+            new VMWrapper(safeLoad(VirtualMachineYAMLTemplates.getIn(['default'])))
               .setModel(VirtualMachineModel)
               .setNamespace(match.params.ns || 'default')
-              .asMutableResource(),
+              .asResource(),
           );
         });
     }, [match.params.ns]);

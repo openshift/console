@@ -1,7 +1,7 @@
 /* eslint-disable lines-between-class-members */
-import { ValueEnum } from '../../value-enum';
+import { ObjectEnum } from '../../object-enum';
 
-export class DataVolumeSourceType extends ValueEnum<string> {
+export class DataVolumeSourceType extends ObjectEnum<string> {
   static readonly BLANK = new DataVolumeSourceType('blank');
   static readonly HTTP = new DataVolumeSourceType('http');
   static readonly PVC = new DataVolumeSourceType('pvc');
@@ -10,7 +10,7 @@ export class DataVolumeSourceType extends ValueEnum<string> {
   static readonly UPLOAD = new DataVolumeSourceType('upload');
 
   private static readonly ALL = Object.freeze(
-    ValueEnum.getAllClassEnumProperties<DataVolumeSourceType>(DataVolumeSourceType),
+    ObjectEnum.getAllClassEnumProperties<DataVolumeSourceType>(DataVolumeSourceType),
   );
 
   private static readonly stringMapper = DataVolumeSourceType.ALL.reduce(

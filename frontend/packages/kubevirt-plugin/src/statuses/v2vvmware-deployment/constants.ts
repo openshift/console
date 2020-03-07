@@ -1,7 +1,7 @@
-import { ValueEnum } from '../../constants';
+import { ObjectEnum } from '../../constants';
 import { DeploymentStatus } from '../deployment';
 
-export class V2VVMWareDeploymentStatus extends ValueEnum<string> {
+export class V2VVMWareDeploymentStatus extends ObjectEnum<string> {
   static readonly PROGRESSING = new V2VVMWareDeploymentStatus(
     'PROGRESSING',
     DeploymentStatus.PROGRESSING,
@@ -19,7 +19,7 @@ export class V2VVMWareDeploymentStatus extends ValueEnum<string> {
   static readonly UNKNOWN = new V2VVMWareDeploymentStatus('UNKNOWN');
 
   private static readonly ALL = Object.freeze(
-    ValueEnum.getAllClassEnumProperties<V2VVMWareDeploymentStatus>(V2VVMWareDeploymentStatus),
+    ObjectEnum.getAllClassEnumProperties<V2VVMWareDeploymentStatus>(V2VVMWareDeploymentStatus),
   );
 
   private static readonly stringMapper = V2VVMWareDeploymentStatus.ALL.reduce(

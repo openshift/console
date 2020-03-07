@@ -2,44 +2,33 @@ import { NetworkType, POD_NETWORK } from '../../../constants';
 import { V1Network } from '../../../types/vm';
 import { ObjectWithTypePropertyWrapper } from '../common/object-with-type-property-wrapper';
 
-export class NetworkWrapper extends ObjectWithTypePropertyWrapper<V1Network, NetworkType> {
-  static readonly EMPTY = new NetworkWrapper();
+type CombinedTypeData = {
+  networkName?: string;
+};
 
-  static mergeWrappers = (...networks: NetworkWrapper[]): NetworkWrapper =>
-    ObjectWithTypePropertyWrapper.defaultMergeWrappersWithType(NetworkWrapper, networks);
-
-  static initializeFromSimpleData = (params?: {
+export class NetworkWrapper extends ObjectWithTypePropertyWrapper<
+  V1Network,
+  NetworkType,
+  CombinedTypeData,
+  NetworkWrapper
+> {
+  static initializeFromSimpleData = ({
+    name,
+    type,
+    multusNetworkName,
+  }: {
     name?: string;
     type?: NetworkType;
     multusNetworkName?: string;
-  }) => {
-    if (!params) {
-      return NetworkWrapper.EMPTY;
-    }
-    const { name, type, multusNetworkName } = params;
-    return new NetworkWrapper(
-      { name },
-      {
-        initializeWithType: type,
-        initializeWithTypeData:
-          type === NetworkType.MULTUS ? { networkName: multusNetworkName } : undefined,
-      },
-    );
-  };
+  }) => new NetworkWrapper({ name }).setType(type, { networkName: multusNetworkName });
 
-  static initialize = (network?: V1Network, copy?: boolean) =>
-    new NetworkWrapper(network, copy && { copy });
-
-  protected constructor(
-    network?: V1Network,
-    opts?: { initializeWithType?: NetworkType; initializeWithTypeData?: any; copy?: boolean },
-  ) {
-    super(network, opts, NetworkType);
+  public constructor(network?: V1Network | NetworkWrapper, copy = false) {
+    super(network, copy, NetworkType);
   }
 
-  getName = () => this.get('name');
+  getName = () => this.data?.name;
 
-  getMultusNetworkName = () => this.getIn(['multus', 'networkName']);
+  getMultusNetworkName = () => this.data?.multus?.networkName;
 
   isPodNetwork = () => this.getType() === NetworkType.POD;
 
@@ -53,4 +42,13 @@ export class NetworkWrapper extends ObjectWithTypePropertyWrapper<V1Network, Net
         return null;
     }
   };
+
+  protected sanitize(type: NetworkType, { networkName }: CombinedTypeData) {
+    switch (type) {
+      case NetworkType.MULTUS:
+        return { networkName };
+      default:
+        return {};
+    }
+  }
 }

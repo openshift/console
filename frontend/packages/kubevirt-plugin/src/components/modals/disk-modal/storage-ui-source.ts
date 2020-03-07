@@ -1,11 +1,11 @@
 /* eslint-disable lines-between-class-members */
 
-import { ValueEnum, VolumeType } from '../../../constants';
+import { ObjectEnum, VolumeType } from '../../../constants';
 import { DataVolumeSourceType, DiskType } from '../../../constants/vm/storage';
 import { getStringEnumValues } from '../../../utils/types';
 import { BinaryUnit } from '../../form/size-unit-utils';
 
-export class StorageUISource extends ValueEnum<string> {
+export class StorageUISource extends ObjectEnum<string> {
   static readonly BLANK = new StorageUISource(
     'Blank',
     VolumeType.DATA_VOLUME,
@@ -41,7 +41,7 @@ export class StorageUISource extends ValueEnum<string> {
   private readonly hasNewPVC: boolean;
 
   private static readonly ALL = Object.freeze(
-    ValueEnum.getAllClassEnumProperties<StorageUISource>(StorageUISource),
+    ObjectEnum.getAllClassEnumProperties<StorageUISource>(StorageUISource),
   );
 
   private static readonly stringMapper = StorageUISource.ALL.reduce(

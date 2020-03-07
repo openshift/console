@@ -142,7 +142,7 @@ export const VMTemplateSchedulingList: React.FC<VMTemplateResourceSummaryProps> 
 
   const id = getBasicID(template);
   const vm = asVM(template);
-  const vmWrapper = VMWrapper.initialize(vm);
+  const vmWrapper = new VMWrapper(vm);
   const flavorText = getFlavorText({
     flavor: getFlavor(vm),
     cpu: vmWrapper.getCPU(),

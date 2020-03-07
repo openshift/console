@@ -16,21 +16,7 @@ import {
   TEMPLATE_WORKLOAD_LABEL,
 } from '../../../constants/vm';
 
-export class VMIWrapper extends K8sResourceWrapper<VMIKind> implements VMILikeMethods {
-  static mergeWrappers = (...vmiWrappers: VMIWrapper[]): VMIWrapper =>
-    K8sResourceWrapper.defaultMergeWrappers(VMIWrapper, vmiWrappers);
-
-  static initialize = (vm?: VMIKind, copy?: boolean) => new VMIWrapper(vm, copy && { copy });
-
-  protected constructor(
-    vm?: VMIKind,
-    opts?: {
-      copy?: boolean;
-    },
-  ) {
-    super(vm, opts);
-  }
-
+export class VMIWrapper extends K8sResourceWrapper<VMIKind, VMIWrapper> implements VMILikeMethods {
   getOperatingSystem = () => findKeySuffixValue(this.getLabels(), TEMPLATE_OS_LABEL);
   getWorkloadProfile = () => findKeySuffixValue(this.getLabels(), TEMPLATE_WORKLOAD_LABEL);
   getFlavor = () => findKeySuffixValue(this.getLabels(), TEMPLATE_FLAVOR_LABEL);

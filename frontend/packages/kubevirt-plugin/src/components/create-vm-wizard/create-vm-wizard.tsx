@@ -38,7 +38,7 @@ import { NetworkWrapper } from '../../k8s/wrapper/vm/network-wrapper';
 import { NetworkInterfaceWrapper } from '../../k8s/wrapper/vm/network-interface-wrapper';
 import { VolumeWrapper } from '../../k8s/wrapper/vm/volume-wrapper';
 import { DiskWrapper } from '../../k8s/wrapper/vm/disk-wrapper';
-import { MutableDataVolumeWrapper } from '../../k8s/wrapper/vm/data-volume-wrapper';
+import { DataVolumeWrapper } from '../../k8s/wrapper/vm/data-volume-wrapper';
 import {
   getDefaultSCAccessModes,
   getDefaultSCVolumeMode,
@@ -110,7 +110,7 @@ const kubevirtInterOP = async ({
   const clonedStorages = _.cloneDeep(storages);
 
   const cloudInitVolume = clonedStorages.map((stor) => stor.volume).find(getVolumeCloudInitNoCloud);
-  const data = VolumeWrapper.initialize(cloudInitVolume).getCloudInitNoCloud();
+  const data = new VolumeWrapper(cloudInitVolume).getCloudInitNoCloud();
   const hostname = new CloudInitDataHelper(data).get(CloudInitDataFormKeys.HOSTNAME);
   if (hostname) {
     clonedVMsettings.hostname = { value: hostname };
@@ -129,8 +129,8 @@ const kubevirtInterOP = async ({
   }
 
   const interOPNetworks = clonedNetworks.map(({ networkInterface, network }) => {
-    const networkInterfaceWrapper = NetworkInterfaceWrapper.initialize(networkInterface);
-    const networkWrapper = NetworkWrapper.initialize(network);
+    const networkInterfaceWrapper = new NetworkInterfaceWrapper(networkInterface);
+    const networkWrapper = new NetworkWrapper(network);
 
     return {
       name: networkInterfaceWrapper.getName(),
@@ -150,11 +150,11 @@ const kubevirtInterOP = async ({
 
   const interOPStorages = clonedStorages.map(
     ({ type, disk, volume, dataVolume, persistentVolumeClaim, importData }) => {
-      const diskWrapper = DiskWrapper.initialize(disk);
-      const volumeWrapper = VolumeWrapper.initialize(volume);
-      const dataVolumeWrapper = dataVolume && new MutableDataVolumeWrapper(dataVolume, true);
+      const diskWrapper = new DiskWrapper(disk);
+      const volumeWrapper = new VolumeWrapper(volume);
+      const dataVolumeWrapper = dataVolume && new DataVolumeWrapper(dataVolume, true);
       const persistentVolumeClaimWrapper =
-        persistentVolumeClaim && PersistentVolumeClaimWrapper.initialize(persistentVolumeClaim);
+        persistentVolumeClaim && new PersistentVolumeClaimWrapper(persistentVolumeClaim);
 
       const isImport =
         persistentVolumeClaimWrapper &&

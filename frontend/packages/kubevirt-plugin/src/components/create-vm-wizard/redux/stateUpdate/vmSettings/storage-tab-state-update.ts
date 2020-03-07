@@ -18,7 +18,7 @@ import { getStorages } from '../../../selectors/selectors';
 import { vmWizardInternalActions } from '../../internal-actions';
 import { getTemplateValidation } from '../../../selectors/template';
 import { TemplateValidations } from '../../../../../utils/validations/template/template-validations';
-import { DiskWrapper, MutableDiskWrapper } from '../../../../../k8s/wrapper/vm/disk-wrapper';
+import { DiskWrapper } from '../../../../../k8s/wrapper/vm/disk-wrapper';
 
 export const prefillInitialDiskUpdater = ({ id, prevState, dispatch, getState }: UpdateOptions) => {
   const state = getState();
@@ -33,15 +33,15 @@ export const prefillInitialDiskUpdater = ({ id, prevState, dispatch, getState }:
   const oldType =
     oldSourceStorage &&
     StorageUISource.fromTypes(
-      VolumeWrapper.initialize(oldSourceStorage.volume).getType(),
-      DataVolumeWrapper.initialize(oldSourceStorage.dataVolume).getType(),
+      new VolumeWrapper(oldSourceStorage.volume).getType(),
+      new DataVolumeWrapper(oldSourceStorage.dataVolume).getType(),
     );
 
   const newType =
     newSourceStorage &&
     StorageUISource.fromTypes(
-      VolumeWrapper.initialize(newSourceStorage.volume).getType(),
-      DataVolumeWrapper.initialize(newSourceStorage.dataVolume).getType(),
+      new VolumeWrapper(newSourceStorage.volume).getType(),
+      new DataVolumeWrapper(newSourceStorage.dataVolume).getType(),
     );
 
   if (newType !== oldType) {
@@ -94,14 +94,12 @@ export const internalStorageDiskBusUpdater = ({
         VMWizardStorageType.WINDOWS_GUEST_TOOLS,
       ].includes(type)
     ) {
-      const resultValidation = newValidations.validateBus(
-        DiskWrapper.initialize(disk).getDiskBus(),
-      );
+      const resultValidation = newValidations.validateBus(new DiskWrapper(disk).getDiskBus());
       if (!resultValidation.isValid && resultValidation.type === ValidationErrorType.Error) {
         someBusChanged = true;
-        finalDisk = new MutableDiskWrapper(disk, true)
-          .appendTypeData({ bus: newValidations.getDefaultBus() })
-          .asMutableResource();
+        finalDisk = new DiskWrapper(disk, true)
+          .appendTypeData({ bus: newValidations.getDefaultBus().getValue() })
+          .asResource();
       }
     }
 

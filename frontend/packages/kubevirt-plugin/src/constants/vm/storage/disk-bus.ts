@@ -1,14 +1,14 @@
 /* eslint-disable lines-between-class-members */
-import { ValueEnum } from '../../value-enum';
+import { ObjectEnum } from '../../object-enum';
 import { READABLE_VIRTIO } from '../constants';
 
-export class DiskBus extends ValueEnum<string> {
+export class DiskBus extends ObjectEnum<string> {
   static readonly VIRTIO = new DiskBus('virtio');
   static readonly SATA = new DiskBus('sata');
   static readonly SCSI = new DiskBus('scsi');
 
   private static readonly ALL = Object.freeze(
-    ValueEnum.getAllClassEnumProperties<DiskBus>(DiskBus),
+    ObjectEnum.getAllClassEnumProperties<DiskBus>(DiskBus),
   );
 
   private static readonly stringMapper = DiskBus.ALL.reduce(

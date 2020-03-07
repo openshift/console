@@ -1,8 +1,8 @@
 /* eslint-disable lines-between-class-members */
-import { ValueEnum } from '../../value-enum';
+import { ObjectEnum } from '../../object-enum';
 import { NetworkInterfaceType } from './network-interface-type';
 
-export class NetworkType extends ValueEnum<string> {
+export class NetworkType extends ObjectEnum<string> {
   static readonly MULTUS = new NetworkType('multus', NetworkInterfaceType.BRIDGE, [
     NetworkInterfaceType.BRIDGE,
     NetworkInterfaceType.SRIOV,
@@ -16,7 +16,9 @@ export class NetworkType extends ValueEnum<string> {
     NetworkInterfaceType.BRIDGE,
   ]);
 
-  private static ALL = Object.freeze(ValueEnum.getAllClassEnumProperties<NetworkType>(NetworkType));
+  private static ALL = Object.freeze(
+    ObjectEnum.getAllClassEnumProperties<NetworkType>(NetworkType),
+  );
 
   private static stringMapper = NetworkType.ALL.reduce(
     (accumulator, networkType: NetworkType) => ({
