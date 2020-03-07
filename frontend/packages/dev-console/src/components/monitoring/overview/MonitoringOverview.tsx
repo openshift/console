@@ -17,6 +17,7 @@ import {
 import { InfoCircleIcon } from '@patternfly/react-icons';
 import { K8sResourceKind, EventKind } from '@console/internal/module/k8s';
 import { DeploymentConfigModel } from '@console/internal/models';
+import { FirehoseResult, LoadingBox } from '@console/internal/components/utils';
 import MonitoringOverviewEventsWarning from './MonitoringOverviewEventsWarning';
 import MonitoringOverviewEvents from './MonitoringOverviewEvents';
 import WorkloadGraphs from './MonitoringMetrics';
@@ -24,12 +25,17 @@ import './MonitoringOverview.scss';
 
 type MonitoringOverviewProps = {
   resource: K8sResourceKind;
-  events: EventKind[];
+  events?: FirehoseResult<EventKind[]>;
 };
 
 const MonitoringOverview: React.FC<MonitoringOverviewProps> = ({ resource, events }) => {
   const [expanded, setExpanded] = React.useState(['metrics']);
-  const eventWarning = _.filter(events, ['type', 'Warning']);
+
+  if (!events.loaded) {
+    return <LoadingBox />;
+  }
+
+  const eventWarning = _.filter(events.data, ['type', 'Warning']);
 
   const onToggle = (id: string) => {
     const index = expanded.indexOf(id);
@@ -124,7 +130,7 @@ const MonitoringOverview: React.FC<MonitoringOverviewProps> = ({ resource, event
             All Events
           </AccordionToggle>
           <AccordionContent id="all-events-content" isHidden={!expanded.includes('all-events')}>
-            <MonitoringOverviewEvents events={events} />
+            <MonitoringOverviewEvents events={events.data} />
           </AccordionContent>
         </AccordionItem>
       </Accordion>

@@ -14,7 +14,11 @@ describe('Monitoring Metric Section', () => {
       status: {},
       kind: 'Deployment',
     },
-    events: [],
+    events: {
+      loaded: true,
+      loadError: '',
+      data: [],
+    },
   };
 
   it('metrics accordion should be expanded by default', () => {
