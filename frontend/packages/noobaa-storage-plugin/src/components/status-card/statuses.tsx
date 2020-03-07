@@ -40,8 +40,11 @@ export const getNooBaaState: GetObjectServiceStatus = (
   const unhealthyBucketsRatio = unhealthyBuckets / buckets;
   const noData = !(buckets && unhealthyBuckets && pools && unhealthyPools && noobaaPhase);
 
-  if (hasLoadError || noData) {
+  if (hasLoadError) {
     return { state: HealthState.UNKNOWN };
+  }
+  if (noData) {
+    return { state: HealthState.NOT_AVAILABLE };
   }
   if (isLoading) {
     return { state: HealthState.LOADING };

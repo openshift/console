@@ -3,6 +3,7 @@ import { setFlag, handleError } from '@console/internal/actions/features';
 import { ActionFeatureFlagDetector } from '@console/plugin-sdk';
 import { SubscriptionModel } from '@console/operator-lifecycle-manager';
 import { OCSServiceModel } from './models';
+import { OCS_INDEPENDENT_CR_NAME, CEPH_STORAGE_NAMESPACE } from './constants';
 
 export const OCS_INDEPENDENT_FLAG = 'OCS_INDEPENDENT';
 
@@ -10,7 +11,7 @@ const isIndependent = (data: K8sResourceKind): boolean =>
   data.spec?.externalStorage?.enable ?? false;
 
 export const detectIndependentMode: ActionFeatureFlagDetector = (dispatch) =>
-  k8sGet(OCSServiceModel, 'ocs-independent-storagecluster', 'openshift-storage').then(
+  k8sGet(OCSServiceModel, OCS_INDEPENDENT_CR_NAME, CEPH_STORAGE_NAMESPACE).then(
     (obj: K8sResourceKind) => dispatch(setFlag(OCS_INDEPENDENT_FLAG, isIndependent(obj))),
     (err) => {
       err?.response?.status === 404
@@ -27,7 +28,7 @@ export const isOCS44Version = (subscription: K8sResourceKind): boolean => {
 };
 
 export const detectOCSVersion44: ActionFeatureFlagDetector = (dispatch) =>
-  k8sGet(SubscriptionModel, 'ocs-subscription', 'openshift-storage').then(
+  k8sGet(SubscriptionModel, 'ocs-subscription', CEPH_STORAGE_NAMESPACE).then(
     (obj: K8sResourceKind) => dispatch(setFlag(OCS_VERSION_4_4_FLAG, isOCS44Version(obj))),
     (err) => {
       err?.response?.status === 404
