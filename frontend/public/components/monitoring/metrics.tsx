@@ -43,7 +43,6 @@ import {
   YellowExclamationTriangleIcon,
 } from '@console/shared';
 import * as UIActions from '../../actions/ui';
-import { connectToURLs, MonitoringRoutes } from '../../reducers/monitoring';
 import { RootState } from '../../redux';
 import { fuzzyCaseInsensitive } from '../factory/table-filters';
 import { PROMETHEUS_BASE_PATH } from '../graphs';
@@ -171,13 +170,16 @@ const MetricsActionsMenu = connect(
   },
 )(MetricsActionsMenu_);
 
-const headerPrometheusLinkStateToProps = ({ UI }: RootState, { urls }) => {
+const headerPrometheusLinkStateToProps = ({ UI }: RootState) => {
   const liveQueries = UI.getIn(['queryBrowser', 'queries']).filter(
     (q) => q.get('isEnabled') && q.get('query'),
   );
   const queryStrings = _.map(liveQueries.toJS(), 'query');
+  const url = window.SERVER_FLAGS.prometheusPublicURL;
   return {
-    url: getPrometheusExpressionBrowserURL(urls, queryStrings) || urls[MonitoringRoutes.Prometheus],
+    url:
+      getPrometheusExpressionBrowserURL(url, queryStrings) ||
+      window.SERVER_FLAGS.prometheusPublicURL,
   };
 };
 
@@ -188,9 +190,7 @@ const HeaderPrometheusLink_ = ({ url }) => {
     </span>
   ) : null;
 };
-const HeaderPrometheusLink = connectToURLs(MonitoringRoutes.Prometheus)(
-  connect(headerPrometheusLinkStateToProps)(HeaderPrometheusLink_),
-);
+const HeaderPrometheusLink = connect(headerPrometheusLinkStateToProps)(HeaderPrometheusLink_);
 
 export const graphStateToProps = ({ UI }: RootState) => ({
   hideGraphs: !!UI.getIn(['monitoring', 'hideGraphs']),

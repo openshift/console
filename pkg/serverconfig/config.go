@@ -35,6 +35,7 @@ func SetFlagsFromConfig(fs *flag.FlagSet, filename string) (err error) {
 	addAuth(fs, &config.Auth)
 	addCustomization(fs, &config.Customization)
 	addProviders(fs, &config.Providers)
+	addMonitoringInfo(fs, &config.MonitoringInfo)
 	addHelmConfig(fs, &config.Helm)
 
 	return nil
@@ -134,6 +135,21 @@ func addAuth(fs *flag.FlagSet, auth *Auth) {
 func addProviders(fs *flag.FlagSet, providers *Providers) {
 	if providers.StatuspageID != "" {
 		fs.Set("statuspage-id", providers.StatuspageID)
+	}
+}
+
+func addMonitoringInfo(fs *flag.FlagSet, monitoring *MonitoringInfo) {
+	if monitoring.AlertmanagerPublicURL != "" {
+		fs.Set("alermanager-url", monitoring.AlertmanagerPublicURL)
+	}
+	if monitoring.GrafanaPublicURL != "" {
+		fs.Set("grafana-url", monitoring.GrafanaPublicURL)
+	}
+	if monitoring.PrometheusPublicURL != "" {
+		fs.Set("prometheus-url", monitoring.PrometheusPublicURL)
+	}
+	if monitoring.ThanosPublicURL != "" {
+		fs.Set("thanos-url", monitoring.ThanosPublicURL)
 	}
 }
 

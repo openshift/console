@@ -18,9 +18,6 @@ export const enum SilenceStates {
 }
 
 export enum MonitoringRoutes {
-  Prometheus = 'prometheus-k8s',
-  Alertmanager = 'alertmanager-main',
-  Grafana = 'grafana',
   Kibana = 'kibana',
 }
 
