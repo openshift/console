@@ -78,7 +78,7 @@ const AttachDeploymentToOBCModal = withHandlePromise((props: AttachDeploymentToO
       [],
     );
     const patches = containers.reduce((patch, container, i) => {
-      if (_.isEmpty(container.env)) {
+      if (_.isEmpty(container.envFrom)) {
         patch.push({
           op: 'add',
           path: `/spec/template/spec/containers/${i}/env`,
