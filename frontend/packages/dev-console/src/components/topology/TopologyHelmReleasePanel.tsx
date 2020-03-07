@@ -15,16 +15,17 @@ export type TopologyHelmReleasePanelProps = {
 
 const TopologyHelmReleasePanel: React.FC<TopologyHelmReleasePanelProps> = ({ helmRelease }) => {
   const secret = helmRelease.getData().resources.obj;
-  const { namespace, labels } = secret?.metadata || {};
+  const name = helmRelease.getLabel();
+  const { namespace } = helmRelease.getData().groupResources[0].resources.obj.metadata;
 
-  if (!secret || !labels) {
-    return (
-      <StatusBox
-        loaded
-        loadError={{ message: `Unable to find resource for ${helmRelease.getLabel()}` }}
-      />
-    );
-  }
+  const detailsComponent = !secret
+    ? () => (
+        <StatusBox
+          loaded
+          loadError={{ message: `Unable to find resource for ${helmRelease.getLabel()}` }}
+        />
+      )
+    : navFactory.details(HelmReleaseOverview).component;
 
   return (
     <div className="overview__sidebar-pane resource-overview">
@@ -33,17 +34,17 @@ const TopologyHelmReleasePanel: React.FC<TopologyHelmReleasePanelProps> = ({ hel
           <div className="co-m-pane__name co-resource-item">
             <ResourceIcon className="co-m-resource-icon--lg" kind="HelmRelease" />
             <Link
-              to={`/helm-releases/ns/${namespace}/release/${labels.name}`}
+              to={`/helm-releases/ns/${namespace}/release/${name}`}
               className="co-resource-item__resource-name"
             >
-              {labels.name}
+              {name}
             </Link>
           </div>
         </h1>
       </div>
       <SimpleTabNav
         selectedTab={'Details'}
-        tabs={[{ name: 'Details', component: navFactory.details(HelmReleaseOverview).component }]}
+        tabs={[{ name: 'Details', component: detailsComponent }]}
         tabProps={{ obj: secret }}
         additionalClassNames="co-m-horizontal-nav__menu--within-sidebar co-m-horizontal-nav__menu--within-overview-sidebar"
       />
