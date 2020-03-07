@@ -21,14 +21,14 @@ export type HelmReleaseProps = {
   WithDndDropProps;
 
 const HelmRelease: React.FC<HelmReleaseProps> = (props) => {
-  const resourceObj = getTopologyResourceObject(props.element.getData().groupResources[0]);
-  const resourceModel = modelFor(referenceFor(resourceObj));
+  const secretObj = getTopologyResourceObject(props.element.getData().resources.obj);
+  const resourceModel = secretObj ? modelFor(referenceFor(secretObj)) : null;
   const editAccess = useAccessReview({
-    group: resourceModel.apiGroup,
+    group: resourceModel?.apiGroup,
     verb: 'patch',
-    resource: resourceModel.plural,
-    name: resourceObj.metadata.name,
-    namespace: resourceObj.metadata.namespace,
+    resource: resourceModel?.plural,
+    name: secretObj?.metadata.name,
+    namespace: secretObj?.metadata.namespace,
   });
   if (props.element.isCollapsed()) {
     return <HelmReleaseNode editAccess={editAccess} {...props} />;
