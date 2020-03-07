@@ -214,6 +214,8 @@ export const ConnectedNotificationDrawer_: React.FC<ConnectedNotificationDrawerP
     true,
   );
   const [isClusterUpdateExpanded, toggleClusterUpdateExpanded] = React.useState<boolean>(false);
+  const [isDrawerHidden, toggleDrawerHidden] = React.useState<boolean>(false);
+  const [isDrawerAnimating, toggleDrawerAnimating] = React.useState<boolean>(false);
   const prevDrawerToggleState = usePrevious(isDrawerExpanded);
 
   const hasCriticalAlerts = criticalAlertList.length > 0;
@@ -234,6 +236,28 @@ export const ConnectedNotificationDrawer_: React.FC<ConnectedNotificationDrawerP
   ]);
   React.useEffect(() => {
     onDrawerChange();
+  }, [isDrawerExpanded, onDrawerChange]);
+
+  React.useEffect(() => {
+    const resize = () => {
+      //End animation
+      toggleDrawerAnimating(false);
+      toggleDrawerHidden(!isDrawerExpanded);
+    };
+    //Start animation
+    toggleDrawerAnimating(true);
+
+    if (isDrawerExpanded) {
+      toggleDrawerHidden(false);
+    }
+    // set resize listener
+    window.addEventListener('sidebar_toggle', resize);
+
+    // clean up function
+    return () => {
+      // remove resize listener
+      window.removeEventListener('sidebar_toggle', resize);
+    };
   }, [isDrawerExpanded, onDrawerChange]);
 
   const emptyState = !_.isEmpty(loadError) ? (
@@ -288,7 +312,8 @@ export const ConnectedNotificationDrawer_: React.FC<ConnectedNotificationDrawerP
     <NotificationDrawer
       className="co-notification-drawer"
       isInline={isDesktop}
-      isExpanded={isDrawerExpanded}
+      isExpanded={isDrawerExpanded && !isDrawerAnimating}
+      isDrawerHidden={isDrawerHidden}
       notificationEntries={[criticalAlertCategory, nonCriticalAlertCategory, messageCategory]}
     >
       {children}

@@ -104,12 +104,10 @@ class App extends React.PureComponent {
   }
 
   _onNotificationDrawerToggle() {
-    if (this._isLargeLayout()) {
-      // Fire event after the drawer animation speed delay.
-      setTimeout(() => {
-        window.dispatchEvent(new Event('sidebar_toggle'));
-      }, 250);
-    }
+    // Fire event after the drawer animation speed delay.
+    setTimeout(() => {
+      window.dispatchEvent(new Event('sidebar_toggle'));
+    }, 250);
   }
 
   _onNavSelect() {
