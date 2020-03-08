@@ -39,6 +39,9 @@ export const getDisks = (vm: VMKind, defaultValue: V1Disk[] = []): V1Disk[] =>
   _.get(vm, 'spec.template.spec.domain.devices.disks') == null
     ? defaultValue
     : vm.spec.template.spec.domain.devices.disks;
+
+export const getBootableDisks = (vm: VMKind, defaultValue: V1Disk[] = []): V1Disk[] =>
+  getDisks(vm, defaultValue).filter((disk) => !Object.keys(disk).includes('serial'));
 export const getInterfaces = (
   vm: VMKind,
   defaultValue: V1NetworkInterface[] = [],

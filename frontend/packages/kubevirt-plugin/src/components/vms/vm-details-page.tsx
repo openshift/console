@@ -21,7 +21,8 @@ import { VMConsoleFirehose } from './vm-console';
 import { VMDetailsFirehose } from './vm-details';
 import { vmMenuActionsCreator } from './menu-actions';
 import { VMDashboard } from './vm-dashboard';
-import { TEMPLATE_TYPE_LABEL, TEMPLATE_TYPE_VM } from '../../constants/vm';
+import { TEMPLATE_TYPE_LABEL, TEMPLATE_TYPE_VM, VM_DETAIL_ENVIRONMENT } from '../../constants/vm';
+import { VMEnvironmentFirehose } from './vm-environment/vm-environment-page';
 
 export const breadcrumbsForVMPage = (match: any) => () => [
   {
@@ -64,6 +65,12 @@ export const VirtualMachinesDetailsPage: React.FC<VirtualMachinesDetailsPageProp
     component: VMDisksFirehose,
   };
 
+  const environmentPage = {
+    href: VM_DETAIL_ENVIRONMENT,
+    name: 'Environment',
+    component: VMEnvironmentFirehose,
+  };
+
   const pages = [
     dashboardPage,
     overviewPage,
@@ -72,6 +79,7 @@ export const VirtualMachinesDetailsPage: React.FC<VirtualMachinesDetailsPageProp
     navFactory.events(VMEvents),
     nicsPage,
     disksPage,
+    environmentPage,
   ];
 
   const resources = [

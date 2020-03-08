@@ -2,7 +2,7 @@ import * as _ from 'lodash';
 import { BootableDeviceType, V1NetworkInterface } from '../../types';
 import { DiskWrapper } from '../../k8s/wrapper/vm/disk-wrapper';
 import { DeviceType } from '../../constants';
-import { getDisks, getInterfaces } from './selectors';
+import { getBootableDisks, getInterfaces } from './selectors';
 import { asVM } from './vmlike';
 import { VMLikeEntityKind } from '../../types/vmLike';
 import { V1Disk } from '../../types/vm/disk/V1Disk';
@@ -33,7 +33,7 @@ export const transformDevices = (
 
 export const getDevices = (vmLikeEntity: VMLikeEntityKind): BootableDeviceType[] => {
   const vm = asVM(vmLikeEntity);
-  return transformDevices(getDisks(vm), getInterfaces(vm));
+  return transformDevices(getBootableDisks(vm), getInterfaces(vm));
 };
 
 export const getBootableDevices = (vm: VMLikeEntityKind): BootableDeviceType[] => {
