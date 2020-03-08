@@ -38,7 +38,7 @@ const PVTableHeader = () => {
       props: { className: tableColumnClasses[2] },
     },
     {
-      title: 'Capacity', sortField: 'spec.capacity.storage', transforms: [sortable],
+      title: 'Capacity', sortFunc: 'pvStorage', transforms: [sortable],
       props: { className: tableColumnClasses[3] },
     },
     {

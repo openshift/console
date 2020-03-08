@@ -54,7 +54,7 @@ const PVCTableHeader = () => {
       props: { className: tableColumnClasses[3] },
     },
     {
-      title: 'Requested', sortField: 'spec.resources.requests.storage', transforms: [sortable],
+      title: 'Requested', sortFunc: 'pvcStorage', transforms: [sortable],
       props: { className: tableColumnClasses[4] },
     },
     {
