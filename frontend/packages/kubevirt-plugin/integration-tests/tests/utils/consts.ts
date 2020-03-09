@@ -9,7 +9,7 @@ const rhelTinyCommonTemplateName = execSync(
 export const NOT_AVAILABLE = 'Not available';
 
 // TIMEOUTS
-const SEC = 1000;
+export const SEC = 1000;
 export const CLONE_VM_TIMEOUT_SECS = 720 * SEC;
 export const CLONED_VM_BOOTUP_TIMEOUT_SECS = 300 * SEC;
 export const PAGE_LOAD_TIMEOUT_SECS = 15 * SEC;
@@ -89,6 +89,7 @@ export enum VM_ACTION {
   Restart = 'Restart Virtual Machine',
   Start = 'Start Virtual Machine',
   Stop = 'Stop Virtual Machine',
+  Unpause = 'Unpause Virtual Machine',
 }
 
 export enum VM_STATUS {
@@ -99,6 +100,7 @@ export enum VM_STATUS {
   Pending = 'Pending',
   Importing = 'Importing',
   Migrating = 'Migrating',
+  Paused = 'Paused',
 }
 
 export enum DISK_SOURCE {

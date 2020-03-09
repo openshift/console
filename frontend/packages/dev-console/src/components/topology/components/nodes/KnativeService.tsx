@@ -35,11 +35,7 @@ const KnativeService: React.FC<KnativeServiceProps> = (props) => {
     name: resourceObj.metadata.name,
     namespace: resourceObj.metadata.namespace,
   });
-  if (
-    props.element.isCollapsed() ||
-    !props.element.getData().groupResources ||
-    !props.element.getData().groupResources.length
-  ) {
+  if (props.element.isCollapsed()) {
     return <KnativeServiceNode {...props} editAccess={editAccess} />;
   }
 

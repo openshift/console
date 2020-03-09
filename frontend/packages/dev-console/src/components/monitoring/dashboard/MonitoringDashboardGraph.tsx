@@ -1,5 +1,9 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
+import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
+import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
+import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
+import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
 import { QueryBrowser, QueryObj } from '@console/internal/components/monitoring/query-browser';
 import { Humanize } from '@console/internal/components/utils';
 import { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
@@ -23,11 +27,14 @@ type OwnProps = {
   graphType?: GraphTypes;
   humanize: Humanize;
   byteDataType: ByteDataTypes;
+  timespan?: number;
+  pollInterval?: number;
 };
 
 type MonitoringDashboardGraphProps = OwnProps & DispatchProps;
 
-const defaultTimespan = 30 * 60 * 1000;
+const DEFAULT_TIME_SPAN = 30 * 60 * 1000;
+const DEFAULT_SAMPLES = 30;
 
 export const MonitoringDashboardGraph: React.FC<MonitoringDashboardGraphProps> = ({
   query,
@@ -35,22 +42,31 @@ export const MonitoringDashboardGraph: React.FC<MonitoringDashboardGraphProps> =
   title,
   patchQuery,
   graphType = GraphTypes.area,
+  timespan,
+  pollInterval,
 }) => {
   return (
-    <div className="odc-monitoring-dashboard-graph">
-      <h5>{title}</h5>
-      <PrometheusGraphLink query={query}>
-        <div onMouseEnter={() => patchQuery({ query })}>
-          <QueryBrowser
-            hideControls
-            defaultTimespan={defaultTimespan}
-            namespace={namespace}
-            queries={[query]}
-            isStack={graphType === GraphTypes.area}
-          />
-        </div>
-      </PrometheusGraphLink>
-    </div>
+    <DashboardCard className="odc-monitoring-dashboard-graph">
+      <DashboardCardHeader>
+        <DashboardCardTitle>{title}</DashboardCardTitle>
+      </DashboardCardHeader>
+      <DashboardCardBody>
+        <PrometheusGraphLink query={query}>
+          <div onMouseEnter={() => patchQuery({ query })}>
+            <QueryBrowser
+              hideControls
+              defaultTimespan={DEFAULT_TIME_SPAN}
+              defaultSamples={DEFAULT_SAMPLES}
+              namespace={namespace}
+              queries={[query]}
+              isStack={graphType === GraphTypes.area}
+              timespan={timespan}
+              pollInterval={pollInterval}
+            />
+          </div>
+        </PrometheusGraphLink>
+      </DashboardCardBody>
+    </DashboardCard>
   );
 };
 

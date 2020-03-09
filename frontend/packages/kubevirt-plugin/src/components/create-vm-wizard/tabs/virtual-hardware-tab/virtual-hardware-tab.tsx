@@ -58,7 +58,7 @@ const getVirtualStoragesData = (
         volumeWrapper,
         dataVolumeWrapper,
         persistentVolumeClaimWrapper:
-          persistentVolumeClaimWrapper || (pvc && PersistentVolumeClaimWrapper.initialize(pvc)),
+          persistentVolumeClaimWrapper || (pvc && new PersistentVolumeClaimWrapper(pvc)),
         isNewPVC: !!persistentVolumeClaimWrapper,
         pvcsLoading: !isLoaded(pvcs),
       });

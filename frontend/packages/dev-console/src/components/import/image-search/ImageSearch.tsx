@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash';
-import { k8sCreate } from '@console/internal/module/k8s';
+import { k8sCreate, ContainerPort } from '@console/internal/module/k8s';
 import { ImageStreamImportsModel } from '@console/internal/models';
 import { useFormikContext, FormikValues } from 'formik';
 import {
@@ -14,9 +14,17 @@ import { SecretTypeAbstraction } from '@console/internal/components/secrets/crea
 import { InputField } from '@console/shared';
 import { getSuggestedName, getPorts, makePortName } from '../../../utils/imagestream-utils';
 import { secretModalLauncher } from '../CreateSecretModal';
+import { UNASSIGNED_KEY } from '../../../const';
 
 const ImageSearch: React.FC = () => {
-  const { values, setFieldValue, dirty } = useFormikContext<FormikValues>();
+  const {
+    values,
+    setFieldValue,
+    dirty,
+    initialValues,
+    touched,
+    setFieldTouched,
+  } = useFormikContext<FormikValues>();
   const [newImageSecret, setNewImageSecret] = React.useState('');
   const [alertVisible, shouldHideAlert] = React.useState(true);
   const [validated, setValidated] = React.useState<ValidatedOptions>(ValidatedOptions.default);
@@ -66,26 +74,37 @@ const ImageSearch: React.FC = () => {
           setFieldValue('image.tag', tag);
           !values.name && setFieldValue('name', getSuggestedName(name));
           !values.application.name &&
+            values.application.selectedKey !== UNASSIGNED_KEY &&
             setFieldValue('application.name', `${getSuggestedName(name)}-app`);
           // set default port value
-          const targetPort = _.head(ports);
+          const targetPort =
+            (!initialValues.route.targetPort || touched.searchTerm) && _.head(ports);
           targetPort && setFieldValue('route.targetPort', makePortName(targetPort));
           setValidated(ValidatedOptions.success);
         } else {
           setFieldValue('isSearchingForImage', false);
           setFieldValue('isi', {});
-          setFieldValue('isi.status', status.message);
+          setFieldValue('isi.status', status);
           setFieldValue('route.targetPort', null);
           setValidated(ValidatedOptions.error);
         }
       })
       .catch((error) => {
         setFieldValue('isi', {});
-        setFieldValue('isi.status', error.message);
+        setFieldValue('isi.status', { metadata: {}, status: '', message: error.message });
         setFieldValue('isSearchingForImage', false);
         setValidated(ValidatedOptions.error);
       });
-  }, [setFieldValue, values.application.name, values.name, values.project.name, values.searchTerm]);
+  }, [
+    setFieldValue,
+    values.application.name,
+    values.application.selectedKey,
+    values.name,
+    values.project.name,
+    values.searchTerm,
+    touched,
+    initialValues.route.targetPort,
+  ]);
 
   const handleSave = (name: string) => {
     setNewImageSecret(name);
@@ -103,12 +122,25 @@ const ImageSearch: React.FC = () => {
   };
 
   const helpTextInvalid = validated === ValidatedOptions.error && (
-    <span>{values.searchTerm === '' ? 'Required' : values.isi.status}</span>
+    <span>{values.searchTerm === '' ? 'Required' : values.isi.status?.message}</span>
   );
 
   React.useEffect(() => {
     !dirty && values.searchTerm && handleSearch();
   }, [dirty, handleSearch, values.searchTerm]);
+
+  React.useEffect(() => {
+    if (touched.searchTerm && initialValues.searchTerm !== values.searchTerm) {
+      const targetPort: ContainerPort = _.head(values.isi.ports);
+      targetPort && setFieldValue('route.targetPort', makePortName(targetPort));
+    }
+  }, [
+    touched.searchTerm,
+    setFieldValue,
+    values.isi.ports,
+    initialValues.searchTerm,
+    values.searchTerm,
+  ]);
 
   return (
     <>
@@ -119,7 +151,10 @@ const ImageSearch: React.FC = () => {
         helpText={getHelpText()}
         helpTextInvalid={helpTextInvalid}
         validated={validated}
-        onBlur={handleSearch}
+        onBlur={() => {
+          handleSearch();
+          setFieldTouched('searchTerm', true);
+        }}
         data-test-id="deploy-image-search-term"
         required
       />

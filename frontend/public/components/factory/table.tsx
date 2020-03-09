@@ -6,7 +6,7 @@ import { getNodeRoles, getMachinePhase } from '@console/shared';
 import * as UIActions from '../../actions/ui';
 import { ingressValidHosts } from '../ingress';
 import { alertStateOrder, silenceStateOrder } from '../../reducers/monitoring';
-import { EmptyBox, StatusBox, WithScrollContainer } from '../utils';
+import { convertToBaseValue, EmptyBox, StatusBox, WithScrollContainer } from '../utils';
 import {
   getClusterOperatorStatus,
   getClusterOperatorVersion,
@@ -111,6 +111,8 @@ const sorts = {
   podPhase,
   podReadiness: (pod: PodKind): number => podReadiness(pod).readyCount,
   podRestarts,
+  pvStorage: (pv) => _.toInteger(convertToBaseValue(pv?.spec?.capacity?.storage)),
+  pvcStorage: (pvc) => _.toInteger(convertToBaseValue(pvc?.status?.capacity?.storage)),
   serviceClassDisplayName,
   silenceStateOrder,
   string: (val) => JSON.stringify(val),

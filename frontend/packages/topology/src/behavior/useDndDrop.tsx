@@ -54,6 +54,12 @@ export const useDndDrop = <
       isDragging: (): boolean => {
         return dndManager.isDragging();
       },
+      hasDropTarget: (): boolean => {
+        return dndManager.hasDropTarget();
+      },
+      getDropHints: (): string[] => {
+        return dndManager.getDropHints();
+      },
       isOver(options?: { shallow?: boolean }): boolean {
         return dndManager.isOverTarget(idRef.current, options);
       },

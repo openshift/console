@@ -5,6 +5,7 @@ import {
   observer,
   WithSelectionProps,
   WithDndDropProps,
+  WithContextMenuProps,
   useDragNode,
   Layer,
   useHover,
@@ -19,31 +20,37 @@ import NodeShadows, { NODE_SHADOW_FILTER_ID, NODE_SHADOW_FILTER_ID_HOVER } from 
 
 export type OperatorBackedServiceGroupProps = {
   element: Node;
+  editAccess: boolean;
 } & WithSelectionProps &
+  WithContextMenuProps &
   WithDndDropProps;
 
 const OperatorBackedServiceGroup: React.FC<OperatorBackedServiceGroupProps> = ({
   element,
+  editAccess,
   selected,
   onSelect,
+  onContextMenu,
+  contextMenuOpen,
   dndDropRef,
 }) => {
   const [hover, hoverRef] = useHover();
   const [innerHover, innerHoverRef] = useHover();
-  const [{ dragging }, dragNodeRef] = useDragNode(
-    nodeDragSourceSpec(TYPE_OPERATOR_BACKED_SERVICE, false),
+  const [{ dragging, regrouping }, dragNodeRef] = useDragNode(
+    nodeDragSourceSpec(TYPE_OPERATOR_BACKED_SERVICE, true, editAccess),
     {
       element,
     },
   );
-  const [{ dragging: labelDragging }, dragLabelRef] = useDragNode(
-    nodeDragSourceSpec(TYPE_OPERATOR_BACKED_SERVICE, false),
+  const [{ dragging: labelDragging, regrouping: labelRegrouping }, dragLabelRef] = useDragNode(
+    nodeDragSourceSpec(TYPE_OPERATOR_BACKED_SERVICE, true, editAccess),
     {
       element,
     },
   );
 
   const nodeRefs = useCombineRefs(innerHoverRef, dragNodeRef);
+  const hasChildren = element.getChildren()?.length > 0;
   const { data } = element.getData();
   const [filtered] = useSearchFilter(element.getLabel());
   const { x, y, width, height } = element.getBounds();
@@ -52,13 +59,16 @@ const OperatorBackedServiceGroup: React.FC<OperatorBackedServiceGroupProps> = ({
     <g
       ref={hoverRef}
       onClick={onSelect}
+      onContextMenu={editAccess ? onContextMenu : null}
       className={classNames('odc-operator-backed-service', {
         'is-dragging': dragging || labelDragging,
         'is-filtered': filtered,
       })}
     >
       <NodeShadows />
-      <Layer id={dragging || labelDragging ? undefined : 'groups2'}>
+      <Layer
+        id={(dragging || labelDragging) && (regrouping || labelRegrouping) ? undefined : 'groups2'}
+      >
         <g
           ref={nodeRefs}
           className={classNames('odc-operator-backed-service', {
@@ -77,11 +87,16 @@ const OperatorBackedServiceGroup: React.FC<OperatorBackedServiceGroupProps> = ({
             rx="5"
             ry="5"
             filter={createSvgIdUrl(
-              hover || innerHover || dragging || labelDragging
+              hover || innerHover || contextMenuOpen || dragging || labelDragging
                 ? NODE_SHADOW_FILTER_ID_HOVER
                 : NODE_SHADOW_FILTER_ID,
             )}
           />
+          {!hasChildren && (
+            <text x={x + width / 2} y={y + height / 2} dy="0.35em" textAnchor="middle">
+              No Resources
+            </text>
+          )}
         </g>
       </Layer>
       {(data.kind || element.getLabel()) && (

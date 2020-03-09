@@ -31,9 +31,15 @@ declare interface Window {
     prometheusBaseURL: string;
     prometheusTenancyBaseURL: string;
     requestTokenURL: string;
+    alertManagerPublicURL: string;
+    grafanaPublicURL: string;
+    prometheusPublicURL: string;
+    thanosPublicURL: string;
     statuspageID: string;
+    GOARCH: string;
+    GOOS: string;
   };
-  windowError?: boolean;
+  windowError?: boolean | string;
   __REDUX_DEVTOOLS_EXTENSION_COMPOSE__?: Function;
   store?: {}; // Redux store
   pluginStore?: {}; // Console plugin store

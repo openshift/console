@@ -4,7 +4,8 @@ import * as _ from 'lodash';
 import { safeLoad } from 'js-yaml';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { DetailsPage } from '@console/internal/components/factory';
-import { Firehose, LoadingBox, ErrorBoundary } from '@console/internal/components/utils';
+import { ErrorBoundary } from '@console/shared/src/components/error/error-boundary';
+import { Firehose, LoadingBox } from '@console/internal/components/utils';
 import { CreateYAML, CreateYAMLProps } from '@console/internal/components/create-yaml';
 import {
   SubscriptionModel,
@@ -118,9 +119,6 @@ describe(CreateSubscriptionYAML.displayName, () => {
   let wrapper: ShallowWrapper<CreateSubscriptionYAMLProps>;
 
   beforeEach(() => {
-    const locationMock = new Location();
-    locationMock.search = `?pkg=${testPackageManifest.metadata.name}&catalog=ocs&catalogNamespace=default`;
-
     wrapper = shallow(
       <CreateSubscriptionYAML
         match={{
@@ -129,7 +127,10 @@ describe(CreateSubscriptionYAML.displayName, () => {
           path: '',
           params: { ns: 'default', pkgName: testPackageManifest.metadata.name },
         }}
-        location={locationMock}
+        location={{
+          ...window.location,
+          search: `?pkg=${testPackageManifest.metadata.name}&catalog=ocs&catalogNamespace=default`,
+        }}
       />,
     );
   });
@@ -138,9 +139,9 @@ describe(CreateSubscriptionYAML.displayName, () => {
     expect(wrapper.find<any>(Firehose).props().resources).toEqual([
       {
         kind: referenceForModel(PackageManifestModel),
+        isList: false,
         name: testPackageManifest.metadata.name,
         namespace: 'default',
-        isList: false,
         prop: 'packageManifest',
       },
       {
@@ -187,6 +188,8 @@ describe(CreateSubscriptionYAML.displayName, () => {
       .childAt(0)
       .dive<CreateYAMLProps, {}>();
     const subTemplate = safeLoad(createYAML.props().template);
+
+    window.location.search = `?pkg=${testPackageManifest.metadata.name}&catalog=ocs&catalogNamespace=default`;
 
     expect(subTemplate.kind).toContain(SubscriptionModel.kind);
     expect(subTemplate.spec.name).toEqual(testPackageManifest.metadata.name);

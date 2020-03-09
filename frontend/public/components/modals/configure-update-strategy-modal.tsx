@@ -29,7 +29,10 @@ export const ConfigureUpdateStrategy: React.FC<ConfigureUpdateStrategyProps> = (
       <div className="row co-m-form-row">
         <div className="col-sm-12">
           <RadioInput
-            onChange={(e) => props.onChangeStrategyType(e.target.value)}
+            name={`${props.uid || 'update-strategy'}-type`}
+            onChange={(e) => {
+              props.onChangeStrategyType(e.target.value);
+            }}
             value="RollingUpdate"
             checked={props.strategyType === 'RollingUpdate'}
             title="RollingUpdate"
@@ -114,7 +117,10 @@ export const ConfigureUpdateStrategy: React.FC<ConfigureUpdateStrategyProps> = (
 
         <div className="col-sm-12">
           <RadioInput
-            onChange={(e) => props.onChangeStrategyType(e.target.value)}
+            name={`${props.uid || 'update-strategy'}-type`}
+            onChange={(e) => {
+              props.onChangeStrategyType(e.target.value);
+            }}
             value="Recreate"
             checked={props.strategyType === 'Recreate'}
             title="Recreate"
@@ -195,6 +201,7 @@ export type ConfigureUpdateStrategyProps = {
   onChangeMaxUnavailable: (maxUnavailable: number | string) => void;
   onChangeMaxSurge: (maxSurge: number | string) => void;
   replicas?: number;
+  uid?: string;
 };
 
 export type ConfigureUpdateStrategyModalProps = {

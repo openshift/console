@@ -9,11 +9,16 @@ import {
 } from '@console/internal/models';
 import { ModifyApplication, EditApplication } from '../actions/modify-application';
 
-const modifyApplicationRefs = [
+const modifyWebConsoleApplicationRefs = [
   referenceForModel(DeploymentConfigModel),
   referenceForModel(DeploymentModel),
   referenceForModel(DaemonSetModel),
   referenceForModel(StatefulSetModel),
+];
+
+const editApplicationRefs = [
+  referenceForModel(DeploymentConfigModel),
+  referenceForModel(DeploymentModel),
 ];
 
 export const getKebabActionsForKind = (resourceKind: K8sKind): KebabAction[] => {
@@ -22,7 +27,12 @@ export const getKebabActionsForKind = (resourceKind: K8sKind): KebabAction[] => 
     return [];
   }
 
-  return _.includes(modifyApplicationRefs, referenceForModel(resourceKind))
-    ? [ModifyApplication, EditApplication]
+  return _.includes(modifyWebConsoleApplicationRefs, referenceForModel(resourceKind))
+    ? [
+        ModifyApplication,
+        ...(_.includes(editApplicationRefs, referenceForModel(resourceKind))
+          ? [EditApplication]
+          : []),
+      ]
     : [];
 };

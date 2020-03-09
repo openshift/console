@@ -7,36 +7,63 @@ export const VirtualMachineYAMLTemplates = ImmutableMap().setIn(
 apiVersion: ${VirtualMachineModel.apiGroup}/${VirtualMachineModel.apiVersion}
 kind: ${VirtualMachineModel.kind}
 metadata:
-  name: example
+  name: vm-example
+  labels:
+    app: vm-example
+    os.template.kubevirt.io/fedora31: 'true'
+    flavor.template.kubevirt.io/Custom: 'true'
+    workload.template.kubevirt.io/server: 'true'
+  annotations:
+    name.os.template.kubevirt.io/fedora31: Fedora 31
+    description: VM example
 spec:
   running: false
   template:
+    metadata:
+      labels:
+        kubevirt.io/domain: vm-example
+        kubevirt.io/size: Custom
+        vm.kubevirt.io/name: vm-example
+        os.template.kubevirt.io/fedora31: 'true'
+        flavor.template.kubevirt.io/Custom: 'true'
+        workload.template.kubevirt.io/server: 'true'
     spec:
       domain:
+        cpu:
+          cores: 1
+          sockets: 1
+          threads: 1
         devices:
           disks:
-            - name: containerdisk
+            - bootOrder: 1
               disk:
                 bus: virtio
-            - name: cloudinitdisk
-              disk:
+              name: containerdisk
+            - disk:
                 bus: virtio
+              name: cloudinitdisk
           interfaces:
-          - name: default
-            model: virtio
-            masquerade: {}
+            - masquerade: {}
+              name: default
+          networkInterfaceMultiqueue: true
+          rng: {}
         resources:
           requests:
-            memory: 64M
+            memory: 1G
+      hostname: vm-example
       networks:
-      - name: default
-        pod: {}
+        - name: default
+          pod: {}
+      terminationGracePeriodSeconds: 0
       volumes:
-        - name: containerdisk
-          containerDisk:
-            image: kubevirt/cirros-registry-disk-demo
-        - name: cloudinitdisk
-          cloudInitNoCloud:
-            userDataBase64: SGkuXG4=
+        - containerDisk:
+            image: 'kubevirt/fedora-cloud-container-disk-demo:latest'
+          name: containerdisk
+        - cloudInitNoCloud:
+            userData: |-
+              #cloud-config
+              password: fedora
+              chpasswd: { expire: False }
+          name: cloudinitdisk
 `,
 );

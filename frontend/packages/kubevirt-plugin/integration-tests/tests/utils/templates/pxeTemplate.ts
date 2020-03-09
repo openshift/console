@@ -7,7 +7,7 @@ export const pxeTemplate = {
       'os.template.kubevirt.io/fedora29': 'true',
       'template.kubevirt.io/type': 'vm',
       'vm.kubevirt.io/template': 'fedora-generic',
-      'vm.kubevirt.io/template-namespace': 'default',
+      'vm.kubevirt.io/template.namespace': 'default',
       'workload.template.kubevirt.io/generic': 'true',
     },
     annotations: {

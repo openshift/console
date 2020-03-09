@@ -15,3 +15,16 @@ export const iGetProvisionSourceStorage = (state, id: string) =>
 
 export const iGetCloudInitNoCloudStorage = (state, id: string) =>
   iGetStorages(state, id).find((storage) => iGetIn(storage, ['volume', 'cloudInitNoCloud']));
+
+export const hasStoragesChanged = (prevState, state, id: string) => {
+  const prevIStorages = iGetStorages(prevState, id);
+  const iStorages = iGetStorages(state, id);
+
+  return (
+    (!prevIStorages && !iStorages) ||
+    prevIStorages?.size !== iStorages?.size ||
+    !!prevIStorages.find(
+      (prevIStorage, prevIStorageIndex) => prevIStorage !== iStorages.get(prevIStorageIndex),
+    )
+  );
+};

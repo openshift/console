@@ -146,7 +146,7 @@ export const UtilizationCard: React.FC = () => {
   ]);
 
   return (
-    <DashboardCard>
+    <DashboardCard data-test-id="utilization-card">
       <DashboardCardHeader>
         <DashboardCardTitle>Utilization</DashboardCardTitle>
         <Dropdown items={Duration} onChange={setDuration} selectedKey={duration} title={duration} />

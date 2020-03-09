@@ -17,7 +17,9 @@ type TaskSidebarResourceProps = {
 const TaskSidebarResource: React.FC<TaskSidebarResourceProps> = (props) => {
   const { availableResources, onChange, resource, taskResource } = props;
 
-  const dropdownResources = availableResources.filter(({ type }) => resource.type === type);
+  const dropdownResources = availableResources.filter(
+    ({ name, type }) => resource.type === type && !!name,
+  );
 
   return (
     <FormGroup
@@ -25,15 +27,13 @@ const TaskSidebarResource: React.FC<TaskSidebarResourceProps> = (props) => {
       label={resource.name}
       helperText={`Only showing resources for this type (${resource.type}).`}
       helperTextInvalid={
-        dropdownResources.length === 0
-          ? `No resources of type ${resource.type} available. Add pipeline resources.`
-          : ''
+        dropdownResources.length === 0 ? `No resources available. Add pipeline resources.` : ''
       }
       isValid={dropdownResources.length > 0}
       isRequired
     >
       <Dropdown
-        title="Select resource..."
+        title={`Select ${resource.type} resource...`}
         items={dropdownResources.reduce((acc, { name }) => ({ ...acc, [name]: name }), {})}
         disabled={dropdownResources.length === 0}
         selectedKey={taskResource?.resource || ''}

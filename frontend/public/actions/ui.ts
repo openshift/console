@@ -28,6 +28,7 @@ export enum ActionType {
   SetCurrentLocation = 'setCurrentLocation',
   MonitoringDashboardsClearVariables = 'monitoringDashboardsClearVariables',
   MonitoringDashboardsPatchVariable = 'monitoringDashboardsPatchVariable',
+  MonitoringDashboardsPatchAllVariables = 'monitoringDashboardsPatchAllVariables',
   MonitoringDashboardsSetPollInterval = 'monitoringDashboardsSetPollInterval',
   MonitoringDashboardsSetTimespan = 'monitoringDashboardsSetTimespan',
   MonitoringDashboardsVariableOptionsLoaded = 'monitoringDashboardsVariableOptionsLoaded',
@@ -269,6 +270,8 @@ export const monitoringDashboardsClearVariables = () =>
   action(ActionType.MonitoringDashboardsClearVariables);
 export const monitoringDashboardsPatchVariable = (key: string, patch: any) =>
   action(ActionType.MonitoringDashboardsPatchVariable, { key, patch });
+export const monitoringDashboardsPatchAllVariables = (variables: any) =>
+  action(ActionType.MonitoringDashboardsPatchAllVariables, { variables });
 export const monitoringDashboardsSetPollInterval = (pollInterval: number) =>
   action(ActionType.MonitoringDashboardsSetPollInterval, { pollInterval });
 export const monitoringDashboardsSetTimespan = (timespan: number) =>
@@ -346,6 +349,7 @@ const uiActions = {
   updateOverviewFilterValue,
   monitoringDashboardsClearVariables,
   monitoringDashboardsPatchVariable,
+  monitoringDashboardsPatchAllVariables,
   monitoringDashboardsSetPollInterval,
   monitoringDashboardsSetTimespan,
   monitoringDashboardsVariableOptionsLoaded,

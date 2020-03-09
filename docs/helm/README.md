@@ -24,7 +24,38 @@
 
   * **Code:** 403 BAD REQUEST <br />
     **Content:** `{ error : "error message" }`
-    
+
+
+**Get Helm Release**
+----
+  _Returns installed helm release in JSON_
+
+* **URL**
+
+     `/api/helm/release`
+
+* **Method:**
+  
+  `GET` 
+  
+*  **URL Params**
+
+   **Optional:**
+ 
+   `ns=[string]` - Namespace
+   
+   `release_name=[string]` - Helm Release Name
+
+* **Success Response:**
+  
+  * **Code:** 200 <br />
+  * JSON encoded [Release structure](https://github.com/helm/helm/blob/master/pkg/release/release.go#L22)
+ 
+* **Error Response:**
+
+  * **Code:** 400 BAD REQUEST <br />
+    **Content:** `{ error : "error message" }`
+
 
 **Install Helm Release**
 ----
@@ -109,4 +140,33 @@
 * **Error Response:**
 
   * **Code:** 403 BAD REQUEST <br />
+    **Content:** `{ error : "error message" }`
+
+**Retrieve a Chart**
+----
+
+_Returns all chart details for the given chart URL_
+
+* **URL**
+
+    `/api/helm/chart`
+
+* **Method:**
+  
+  `GET` 
+
+*  **URL Params**
+
+   **Optional:**
+ 
+   `url=[string]` - Chart URL
+
+* **Success Response:**
+  
+  * **Code:** 200 <br />
+  * JSON represenation of [Chart structure](https://github.com/helm/helm/blob/master/pkg/chart/chart.go#L31)
+ 
+* **Error Response:**
+
+  * **Code:** 400 BAD REQUEST <br />
     **Content:** `{ error : "error message" }`

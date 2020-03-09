@@ -3,6 +3,7 @@ import * as _ from 'lodash';
 import { Title } from '@patternfly/react-core';
 import { K8sKind, K8sResourceKind } from '@console/internal/module/k8s';
 import { PromiseComponent } from '@console/internal/components/utils';
+import { Node } from '@console/topology';
 import {
   createModalLauncher,
   ModalTitle,
@@ -13,13 +14,12 @@ import { Formik, FormikProps, FormikValues } from 'formik';
 import FormSection from '../import/section/FormSection';
 import ApplicationSelector from '../import/app/ApplicationSelector';
 import { updateResourceApplication } from '../../utils/application-utils';
+import { updateTopologyResourceApplication } from '../topology/topology-utils';
 
-type EditApplicationModalProps = {
-  resourceKind: K8sKind;
+type EditApplicationFormProps = {
   resource: K8sResourceKind;
   initialApplication: string;
   cancel?: () => void;
-  close?: () => void;
 };
 
 type EditApplicationModalState = {
@@ -27,7 +27,12 @@ type EditApplicationModalState = {
   errorMessage: string;
 };
 
-const EditApplicationForm: React.FC<FormikProps<FormikValues> & EditApplicationModalProps> = ({
+type EditApplicationModalProps = EditApplicationFormProps & {
+  resourceKind: K8sKind;
+  close?: () => void;
+};
+
+const EditApplicationForm: React.FC<FormikProps<FormikValues> & EditApplicationFormProps> = ({
   resource,
   handleSubmit,
   isSubmitting,
@@ -102,6 +107,62 @@ class EditApplicationModal extends PromiseComponent<
   }
 }
 
+type GroupEditApplicationModalProps = {
+  group: Node;
+  cancel?: () => void;
+  close?: () => void;
+};
+
+class GroupEditApplicationModal extends PromiseComponent<
+  GroupEditApplicationModalProps,
+  EditApplicationModalState
+> {
+  private handleSubmit = (values, actions) => {
+    const application = _.get(values, 'application.name');
+
+    this.handlePromise(updateTopologyResourceApplication(this.props.group.getData(), application))
+      .then(() => {
+        actions.setSubmitting(false);
+        this.props.close();
+      })
+      .catch((errorMessage) => {
+        actions.setSubmitting(false);
+        actions.setStatus({ submitError: errorMessage });
+      });
+  };
+
+  render() {
+    const { group } = this.props;
+    const resource = group.getData().resources.obj;
+    const application = _.get(resource, ['metadata', 'labels', 'app.kubernetes.io/part-of']);
+
+    const initialValues = {
+      application: {
+        name: application,
+        selectedKey: application,
+      },
+    };
+    return (
+      <Formik
+        initialValues={initialValues}
+        onSubmit={this.handleSubmit}
+        render={(formProps) => (
+          <EditApplicationForm
+            {...formProps}
+            {...this.props}
+            resource={resource}
+            initialApplication={application}
+          />
+        )}
+      />
+    );
+  }
+}
+
 export const editApplicationModal = createModalLauncher((props: EditApplicationModalProps) => (
   <EditApplicationModal {...props} />
 ));
+
+export const groupEditApplicationModal = createModalLauncher(
+  (props: GroupEditApplicationModalProps) => <GroupEditApplicationModal {...props} />,
+);

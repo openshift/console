@@ -12,14 +12,14 @@ import DashboardCard from '@console/shared/src/components/dashboard/dashboard-ca
 import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
 import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
 import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
+import { withFallback } from '@console/shared/src/components/error/error-boundary';
 
 import * as UIActions from '../../../actions/ui';
 import { ErrorBoundaryFallback } from '../../error';
 import { RootState } from '../../../redux';
 import { getPrometheusURL, PrometheusEndpoint } from '../../graphs/helpers';
-import { history, LoadingInline, useSafeFetch } from '../../utils';
+import { ExternalLink, history, LoadingInline, useSafeFetch } from '../../utils';
 import { formatPrometheusDuration, parsePrometheusDuration } from '../../utils/datetime';
-import { withFallback } from '../../utils/error-boundary';
 import BarChart from './bar-chart';
 import Graph from './graph';
 import SingleStat from './single-stat';
@@ -180,7 +180,7 @@ const SingleVariableDropdown = connect(
 
 const AllVariableDropdowns_: React.FC<AllVariableDropdownsProps> = ({ variables }) => (
   <>
-    {_.map(_.keys(variables.toJS()), (name) => (
+    {variables.keySeq().map((name) => (
       <SingleVariableDropdown key={name} name={name} />
     ))}
   </>
@@ -217,7 +217,8 @@ const TimespanDropdown_: React.FC<TimespanDropdownProps> = ({ timespan, setTimes
     />
   );
 };
-const TimespanDropdown = connect(
+
+export const TimespanDropdown = connect(
   ({ UI }: RootState) => ({
     timespan: UI.getIn(['monitoringDashboards', 'timespan']),
   }),
@@ -254,11 +255,12 @@ const PollIntervalDropdown_: React.FC<PollIntervalDropdownProps> = ({
       items={pollIntervalOptions}
       label="Refresh Interval"
       onChange={onChange}
-      selectedKey={formatPrometheusDuration(pollInterval)}
+      selectedKey={pollInterval === null ? pollOffText : formatPrometheusDuration(pollInterval)}
     />
   );
 };
-const PollIntervalDropdown = connect(
+
+export const PollIntervalDropdown = connect(
   ({ UI }: RootState) => ({
     pollInterval: UI.getIn(['monitoringDashboards', 'pollInterval']),
   }),
@@ -338,6 +340,24 @@ const getPanelSpan = (panel: Panel): number => {
   return 12;
 };
 
+const getPanelClassModifier = (panel: Panel): string => {
+  const span: number = getPanelSpan(panel);
+  switch (span) {
+    case 6:
+      return 'max-2';
+    case 2:
+    // fallthrough
+    case 4:
+    // fallthrough
+    case 5:
+      return 'max-3';
+    case 3:
+      return 'max-4';
+    default:
+      return 'max-1';
+  }
+};
+
 const Card: React.FC<CardProps> = ({ panel }) => {
   if (panel.type === 'row') {
     return (
@@ -349,16 +369,13 @@ const Card: React.FC<CardProps> = ({ panel }) => {
     );
   }
 
-  const panelSpan: number = getPanelSpan(panel);
-  // If panel.span is greater than 12, default colSpan to 12
-  const colSpan: number = panelSpan > 12 ? 12 : panelSpan;
-  // If colSpan is less than 7, double it for small
-  const colSpanSm: number = colSpan < 7 ? colSpan * 2 : colSpan;
-
+  const panelClassModifier = getPanelClassModifier(panel);
   return (
-    <div className={`col-xs-12 col-sm-${colSpanSm} col-lg-${colSpan}`}>
+    <div
+      className={`monitoring-dashboards__panel monitoring-dashboards__panel--${panelClassModifier}`}
+    >
       <DashboardCard
-        className="monitoring-dashboards__panel"
+        className="monitoring-dashboards__card"
         gradient={panel.type === 'grafana-piechart-panel'}
       >
         <DashboardCardHeader className="monitoring-dashboards__card-header">
@@ -375,7 +392,7 @@ const Card: React.FC<CardProps> = ({ panel }) => {
 const Board: React.FC<BoardProps> = ({ rows }) => (
   <>
     {_.map(rows, (row, i) => (
-      <div className="row monitoring-dashboards__row" key={i}>
+      <div className="monitoring-dashboards__row" key={i}>
         {_.map(row.panels, (panel) => (
           <Card key={panel.id} panel={panel} />
         ))}
@@ -384,14 +401,20 @@ const Board: React.FC<BoardProps> = ({ rows }) => (
   </>
 );
 
+const GrafanaLink = () =>
+  _.isEmpty(window.SERVER_FLAGS.grafanaPublicURL) ? null : (
+    <span className="monitoring-header-link">
+      <ExternalLink href={window.SERVER_FLAGS.grafanaPublicURL} text="Grafana UI" />
+    </span>
+  );
+
 const MonitoringDashboardsPage_: React.FC<MonitoringDashboardsPageProps> = ({
-  clearVariables,
   deleteAll,
   match,
-  patchVariable,
+  patchAllVariables,
 }) => {
   const [board, setBoard] = React.useState();
-  const [boards, setBoards] = React.useState([]);
+  const [boards, setBoards] = React.useState<Board[]>([]);
   const [error, setError] = React.useState();
   const [isLoading, , , setLoaded] = useBoolean(true);
 
@@ -406,7 +429,7 @@ const MonitoringDashboardsPage_: React.FC<MonitoringDashboardsPageProps> = ({
         setLoaded();
         setError(undefined);
 
-        const getBoardData = (item) => ({
+        const getBoardData = (item): Board => ({
           data: JSON.parse(_.values(item?.data)[0]),
           name: item.metadata.name,
         });
@@ -427,31 +450,38 @@ const MonitoringDashboardsPage_: React.FC<MonitoringDashboardsPageProps> = ({
     boards,
   ]);
 
-  const changeBoard = (newBoard: string) => {
-    if (newBoard !== board) {
-      clearVariables();
+  const changeBoard = React.useCallback(
+    (newBoard: string) => {
+      if (newBoard !== board) {
+        const data = _.find(boards, { name: newBoard })?.data;
 
-      const data = _.find(boards, { name: newBoard })?.data;
+        const allVariables = {};
+        _.each(data?.templating?.list, (v) => {
+          if (v.type === 'query' || v.type === 'interval') {
+            allVariables[v.name] = ImmutableMap({
+              isHidden: v.hide !== 0,
+              isLoading: v.type === 'query',
+              options: _.map(v.options, 'value'),
+              query: v.type === 'query' ? v.query : undefined,
+              value: _.find(v.options, { selected: true })?.value || v.options?.[0]?.value,
+            });
+          }
+        });
+        patchAllVariables(allVariables);
 
-      _.each(data?.templating?.list as TemplateVariable[], (v) => {
-        if (v.type === 'query' || v.type === 'interval') {
-          patchVariable(v.name, {
-            isHidden: v.hide !== 0,
-            options: _.map(v.options, 'value'),
-            query: v.type === 'query' ? v.query : undefined,
-            value: _.find(v.options, { selected: true })?.value || v.options?.[0]?.value,
-          });
-        }
-      });
+        setBoard(newBoard);
+        history.replace(`/monitoring/dashboards/${newBoard}`);
+      }
+    },
+    [board, boards, patchAllVariables],
+  );
 
-      setBoard(newBoard);
-      history.replace(`/monitoring/dashboards/${newBoard}`);
+  // Default to displaying the first board
+  React.useEffect(() => {
+    if (!board && !_.isEmpty(boards)) {
+      changeBoard(match.params.board || boards?.[0]?.name);
     }
-  };
-
-  if (!board && !_.isEmpty(boards)) {
-    changeBoard(match.params.board || boards?.[0]?.name);
-  }
+  }, [board, boards, changeBoard, match.params.board]);
 
   if (error) {
     return <ErrorAlert message={error} />;
@@ -467,7 +497,11 @@ const MonitoringDashboardsPage_: React.FC<MonitoringDashboardsPageProps> = ({
       </Helmet>
       <div className="co-m-nav-title co-m-nav-title--detail">
         <div className="monitoring-dashboards__header">
-          <h1 className="co-m-pane__heading">Dashboards</h1>
+          <h1 className="co-m-pane__heading">
+            <span>
+              Dashboards <GrafanaLink />
+            </span>
+          </h1>
           <div className="monitoring-dashboards__options">
             <TimespanDropdown />
             <PollIntervalDropdown />
@@ -490,9 +524,8 @@ const MonitoringDashboardsPage_: React.FC<MonitoringDashboardsPageProps> = ({
   );
 };
 const MonitoringDashboardsPage = connect(null, {
-  clearVariables: UIActions.monitoringDashboardsClearVariables,
   deleteAll: UIActions.queryBrowserDeleteAllQueries,
-  patchVariable: UIActions.monitoringDashboardsPatchVariable,
+  patchAllVariables: UIActions.monitoringDashboardsPatchAllVariables,
 })(MonitoringDashboardsPage_);
 
 type TemplateVariable = {
@@ -501,6 +534,22 @@ type TemplateVariable = {
   options: { selected: boolean; value: string }[];
   query: string;
   type: string;
+};
+
+type Row = {
+  panels: Panel[];
+};
+
+type Board = {
+  data: {
+    panels: Panel[];
+    rows: Row[];
+    templating: {
+      list: TemplateVariable[];
+    };
+    title: string;
+  };
+  name: string;
 };
 
 type Variable = {
@@ -533,11 +582,11 @@ type SingleVariableDropdownProps = {
 };
 
 type BoardProps = {
-  rows: Panel[];
+  rows: Row[];
 };
 
 type AllVariableDropdownsProps = {
-  variables: ImmutableMap<string, Variable>;
+  variables: ImmutableMap<string, ImmutableMap<string, any>>;
 };
 
 type TimespanDropdownProps = {
@@ -553,7 +602,7 @@ type PollIntervalDropdownProps = {
 type CardBodyProps = {
   panel: Panel;
   pollInterval: null | number;
-  variables: ImmutableMap<string, Variable>;
+  variables: ImmutableMap<string, ImmutableMap<string, any>>;
 };
 
 type CardProps = {
@@ -561,12 +610,11 @@ type CardProps = {
 };
 
 type MonitoringDashboardsPageProps = {
-  clearVariables: () => undefined;
   deleteAll: () => undefined;
   match: {
     params: { board: string };
   };
-  patchVariable: (key: string, patch: Variable) => undefined;
+  patchAllVariables: (variables: VariablesMap) => undefined;
 };
 
 export default withFallback(MonitoringDashboardsPage, ErrorBoundaryFallback);

@@ -5,6 +5,7 @@ export const HOST_STATUS_AVAILABLE = 'available';
 export const HOST_STATUS_DISCOVERED = 'discovered';
 export const HOST_STATUS_OK = 'OK';
 export const HOST_STATUS_ERROR = 'error';
+export const HOST_STATUS_UNKNOWN = 'Unknown';
 export const HOST_STATUS_EXTERNALLY_PROVISIONED = 'externally provisioned';
 export const HOST_STATUS_PROVISIONED = 'provisioned';
 export const HOST_STATUS_DEPROVISIONED = 'deprovisioned';
@@ -41,6 +42,7 @@ export const HOST_STATUS_TITLES = {
   [HOST_STATUS_PROVISIONING_ERROR]: 'Provisioning error',
   [HOST_STATUS_POWER_MANAGEMENT_ERROR]: 'Power Management Error',
   [HOST_STATUS_MATCH_PROFILE]: 'Matching profile',
+  [HOST_STATUS_UNKNOWN]: 'Unknown',
 };
 
 export const HOST_STATUS_DESCRIPTIONS = {

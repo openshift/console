@@ -4,8 +4,8 @@ import { K8sResourceKind, referenceFor, referenceForModel } from '@console/inter
 import { BuildStrategyType } from '@console/internal/components/build';
 import { DeploymentConfigModel, DeploymentModel } from '@console/internal/models';
 import { ServiceModel } from '@console/knative-plugin';
+import { UNASSIGNED_KEY } from '../../const';
 import { Resources } from '../import/import-types';
-import { UNASSIGNED_KEY } from '../import/app/ApplicationSelector';
 import { AppResources } from './edit-application-types';
 
 export enum CreateApplicationFlow {
@@ -266,11 +266,13 @@ export const getGitAndDockerfileInitialValues = (
   return initialValues;
 };
 
-export const getExternalImageInitialValues = (imageStream: K8sResourceKind) => {
-  if (_.isEmpty(imageStream)) {
+export const getExternalImageInitialValues = (appResources: AppResources) => {
+  const imageStreamList = appResources?.imageStream?.data;
+  if (_.isEmpty(imageStreamList)) {
     return {};
   }
-  const name = _.get(imageStream, 'spec.tags[0].from.name');
+  const imageStream = _.orderBy(imageStreamList, ['metadata.resourceVersion'], ['desc']);
+  const name = imageStream.length && imageStream[0]?.spec?.tags?.[0]?.from?.name;
   const deployImageInitialValues = {
     searchTerm: name,
     registry: 'external',
@@ -367,7 +369,7 @@ export const getInitialValues = (
   let internalImageValues = {};
 
   if (_.isEmpty(gitDockerValues)) {
-    externalImageValues = getExternalImageInitialValues(_.get(appResources, 'imageStream.data'));
+    externalImageValues = getExternalImageInitialValues(appResources);
     internalImageValues = _.isEmpty(externalImageValues)
       ? getInternalImageInitialValues(_.get(appResources, 'editAppResource.data'))
       : {};

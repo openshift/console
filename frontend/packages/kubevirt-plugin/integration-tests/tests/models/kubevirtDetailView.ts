@@ -11,14 +11,17 @@ import {
   vmDetailCdEditButton,
   vmDetailBootOrderEditButton,
   vmDetailDedicatedResourcesEditButton,
+  vmDetailStatusEditButton,
 } from '../../views/virtualMachine.view';
 import * as editCD from '../../views/editCDView';
 import * as editBootOrder from '../../views/editBootOrderView';
 import * as editDedicatedResourcesView from '../../views/editDedicatedResourcesView';
+import * as editStatusView from '../../views/editStatusView';
 import { NetworkInterfaceDialog } from '../dialogs/networkInterfaceDialog';
 import { DiskDialog } from '../dialogs/diskDialog';
 import { DetailView } from './detailView';
 import * as editFlavor from './editFlavorView';
+import { waitForNoLoaders } from '../../views/wizard.view';
 
 export class KubevirtDetailView extends DetailView {
   async getAttachedDisks(): Promise<StorageResource[]> {
@@ -87,6 +90,7 @@ export class KubevirtDetailView extends DetailView {
   async modalEditFlavor() {
     await click(vmDetailFlavorEditButton(this.namespace, this.name));
     await browser.wait(until.presenceOf(editFlavor.modalTitle()));
+    await waitForNoLoaders();
   }
 
   async modalEditCDRoms() {
@@ -102,5 +106,10 @@ export class KubevirtDetailView extends DetailView {
   async modalEditDedicatedResources() {
     await click(vmDetailDedicatedResourcesEditButton(this.namespace, this.name));
     await browser.wait(until.presenceOf(editDedicatedResourcesView.guaranteedPolicyCheckbox));
+  }
+
+  async modalEditStatus() {
+    await click(vmDetailStatusEditButton(this.namespace, this.name));
+    await browser.wait(until.presenceOf(editStatusView.unpauseVMDialog));
   }
 }

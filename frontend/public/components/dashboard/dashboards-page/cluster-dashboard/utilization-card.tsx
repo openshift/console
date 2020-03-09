@@ -412,7 +412,7 @@ export const UtilizationCard = connectToFlags(
   );
 
   return (
-    <DashboardCard>
+    <DashboardCard data-test-id="utilization-card">
       <DashboardCardHeader>
         <DashboardCardTitle>Cluster Utilization</DashboardCardTitle>
         <Dropdown items={Duration} onChange={setDuration} selectedKey={duration} title={duration} />

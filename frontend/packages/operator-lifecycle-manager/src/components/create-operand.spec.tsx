@@ -9,8 +9,8 @@ import { CreateYAML } from '@console/internal/components/create-yaml';
 import { BreadCrumbs } from '@console/internal/components/utils';
 import { testClusterServiceVersion, testResourceInstance, testModel, testCRD } from '../../mocks';
 import { ClusterServiceVersionModel } from '../models';
+import { CreateOperandForm } from './create-operand-form';
 import {
-  CreateOperandForm,
   CreateOperandFormProps,
   CreateOperandPage,
   CreateOperandYAML,
@@ -22,7 +22,9 @@ import { referenceForProvidedAPI } from '.';
 
 import Spy = jasmine.Spy;
 
-describe(CreateOperand.displayName, () => {
+const activePerspective = 'admin';
+
+xdescribe('[https://issues.redhat.com/browse/CONSOLE-2137] CreateOperand', () => {
   let wrapper: ShallowWrapper<CreateOperandProps>;
 
   beforeEach(() => {
@@ -34,6 +36,7 @@ describe(CreateOperand.displayName, () => {
     };
     wrapper = shallow(
       <CreateOperand
+        activePerspective={activePerspective}
         operandModel={testModel}
         clusterServiceVersion={{ data: testClusterServiceVersion, loaded: true, loadError: null }}
         customResourceDefinition={{ data: testCRD, loaded: true, loadError: null }}
@@ -64,12 +67,12 @@ describe(CreateOperand.displayName, () => {
     expect(wrapper.find(CreateOperandForm).exists()).toBe(false);
   });
 
-  it('passes sample object to YAML editor', () => {
+  it('passes buffer object to YAML editor', () => {
     const data = _.cloneDeep(testClusterServiceVersion);
     data.metadata.annotations = { 'alm-examples': JSON.stringify([testResourceInstance]) };
     wrapper = wrapper.setProps({ clusterServiceVersion: { data, loaded: true, loadError: null } });
 
-    expect(wrapper.find(CreateOperandYAML).props().sample).toEqual(testResourceInstance);
+    expect(wrapper.find(CreateOperandYAML).props().buffer).toEqual(testResourceInstance);
   });
 
   it('switches to form component when button is clicked', () => {
@@ -86,7 +89,7 @@ describe(CreateOperand.displayName, () => {
   });
 });
 
-describe(CreateOperandPage.displayName, () => {
+describe('CreateOperandPage', () => {
   const match = {
     params: { appName: 'app', ns: 'default', plural: k8s.referenceFor(testResourceInstance) },
     isExact: true,
@@ -118,7 +121,7 @@ describe(CreateOperandPage.displayName, () => {
   });
 });
 
-describe(CreateOperandForm.displayName, () => {
+xdescribe('[https://issues.redhat.com/browse/CONSOLE-2136] CreateOperandForm', () => {
   let wrapper: ShallowWrapper<CreateOperandFormProps>;
 
   const spyAndExpect = (spy: Spy) => (returnValue: any) =>
@@ -132,6 +135,7 @@ describe(CreateOperandForm.displayName, () => {
   beforeEach(() => {
     wrapper = shallow(
       <CreateOperandForm
+        activePerspective={activePerspective}
         namespace="default"
         operandModel={testModel}
         providedAPI={testClusterServiceVersion.spec.customresourcedefinitions.owned[0]}
@@ -207,6 +211,7 @@ describe(CreateOperandYAML.displayName, () => {
   beforeEach(() => {
     wrapper = shallow(
       <CreateOperandYAML
+        activePerspective={activePerspective}
         operandModel={testModel}
         providedAPI={testClusterServiceVersion.spec.customresourcedefinitions.owned[0]}
         clusterServiceVersion={testClusterServiceVersion}

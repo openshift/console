@@ -13,6 +13,7 @@ import { groupActions } from './actions/groupActions';
 import { nodeActions } from './actions/nodeActions';
 import { graphActions } from './actions/graphActions';
 import { TopologyApplicationObject } from './topology-types';
+import { regroupActions } from './actions/regroupActions';
 
 const onKebabOptionClick = (option: KebabOption) => {
   if (option.callback) {
@@ -57,3 +58,9 @@ export const nodeContextMenu = (element: Node) =>
 
 export const graphContextMenu = (graph: Graph, connectorSource?: Node) =>
   createMenuItems(kebabOptionsToMenu(graphActions(graph.getData(), connectorSource)));
+
+export const regroupContextMenu = (element: Node) =>
+  createMenuItems(kebabOptionsToMenu(regroupActions(element)));
+
+export const regroupGroupContextMenu = (element: Node) =>
+  createMenuItems(kebabOptionsToMenu(regroupActions(element, true)));

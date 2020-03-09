@@ -89,12 +89,13 @@ const InstallExternalCluster = withHandlePromise((props: InstallExternalClusterP
       kind: SecretModel.kind,
       metadata: {
         name: 'rook-ceph-mon',
-        ns,
+        namespace: ns,
       },
       stringData: {
         'cluster-name': clusterName,
         fsid: externalFSID,
         'admin-secret': externalAdminSecret,
+        'mon-secret': 'mon-secret',
       },
       type: 'Opaque',
     };
@@ -103,7 +104,7 @@ const InstallExternalCluster = withHandlePromise((props: InstallExternalClusterP
       kind: ConfigMapModel.kind,
       metadata: {
         name: 'rook-ceph-mon-endpoints',
-        ns,
+        namespace: ns,
       },
       data: {
         data: `${externalMonData}`,
@@ -116,11 +117,11 @@ const InstallExternalCluster = withHandlePromise((props: InstallExternalClusterP
       kind: OCSServiceModel.kind,
       metadata: {
         name: 'ocs-independent-storagecluster',
-        ns,
+        namespace: ns,
       },
       spec: {
         externalStorage: {
-          enabled: true,
+          enable: true,
         },
       },
     };

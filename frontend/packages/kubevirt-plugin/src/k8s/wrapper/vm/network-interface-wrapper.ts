@@ -2,56 +2,54 @@ import { V1NetworkInterface } from '../../../types/vm';
 import { NetworkInterfaceModel, NetworkInterfaceType } from '../../../constants/vm';
 import { ObjectWithTypePropertyWrapper } from '../common/object-with-type-property-wrapper';
 
+type CombinedTypeData = {};
+
 export class NetworkInterfaceWrapper extends ObjectWithTypePropertyWrapper<
   V1NetworkInterface,
-  NetworkInterfaceType
+  NetworkInterfaceType,
+  CombinedTypeData,
+  NetworkInterfaceWrapper
 > {
-  static readonly EMPTY = new NetworkInterfaceWrapper();
-
-  static mergeWrappers = (...interfaces: NetworkInterfaceWrapper[]): NetworkInterfaceWrapper =>
-    ObjectWithTypePropertyWrapper.defaultMergeWrappersWithType(NetworkInterfaceWrapper, interfaces);
-
-  static initializeFromSimpleData = (params?: {
+  static initializeFromSimpleData = ({
+    name,
+    model,
+    macAddress,
+    interfaceType,
+    bootOrder,
+  }: {
     name?: string;
     model?: NetworkInterfaceModel;
     interfaceType?: NetworkInterfaceType;
     macAddress?: string;
     bootOrder?: number;
-  }) => {
-    if (!params) {
-      return NetworkInterfaceWrapper.EMPTY;
-    }
-    const { name, model, macAddress, interfaceType, bootOrder } = params;
-    return new NetworkInterfaceWrapper(
-      { name, model: model && model.getValue(), macAddress, bootOrder },
-      { initializeWithType: interfaceType },
+  }) =>
+    new NetworkInterfaceWrapper({ name, model: model?.getValue(), macAddress, bootOrder }).setType(
+      interfaceType,
     );
-  };
 
-  static initialize = (nic?: V1NetworkInterface, copy?: boolean) =>
-    new NetworkInterfaceWrapper(nic, copy && { copy });
-
-  protected constructor(
-    nic?: V1NetworkInterface,
-    opts?: { initializeWithType?: NetworkInterfaceType; copy?: boolean },
-  ) {
-    super(nic, opts, NetworkInterfaceType);
+  public constructor(nic?: V1NetworkInterface | NetworkInterfaceWrapper, copy = false) {
+    super(nic, copy, NetworkInterfaceType);
   }
 
-  getName = (): string => this.get('name');
+  getName = () => this.data?.name;
 
-  getModel = (): NetworkInterfaceModel => NetworkInterfaceModel.fromString(this.get('model'));
+  getModel = (): NetworkInterfaceModel => NetworkInterfaceModel.fromString(this.data?.model);
 
   getReadableModel = () => {
     const model = this.getModel();
     return model && model.toString();
   };
 
-  getMACAddress = () => this.get('macAddress');
+  getMACAddress = () => this.data?.macAddress;
 
-  getBootOrder = () => this.get('bootOrder');
+  getBootOrder = () => this.data?.bootOrder;
 
   isFirstBootableDevice = () => this.getBootOrder() === 1;
 
   hasBootOrder = () => this.getBootOrder() != null;
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars,no-unused-vars
+  protected sanitize(type: NetworkInterfaceType, typeData: CombinedTypeData): any {
+    return {};
+  }
 }

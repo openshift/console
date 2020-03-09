@@ -1,6 +1,7 @@
 import * as React from 'react';
-import { ShallowWrapper, shallow } from 'enzyme';
 import * as _ from 'lodash';
+import { ShallowWrapper, shallow } from 'enzyme';
+import * as k8sModels from '@console/internal/module/k8s';
 import {
   ModalTitle,
   ModalSubmitFooter,
@@ -26,9 +27,9 @@ describe(InstallPlanApprovalModal.name, () => {
   let subscription: SubscriptionKind;
 
   beforeEach(() => {
-    k8sUpdate = jasmine.createSpy('k8sUpdate').and.returnValue(Promise.resolve());
-    close = jasmine.createSpy('close');
-    cancel = jasmine.createSpy('cancel');
+    k8sUpdate = jasmine.createSpy().and.returnValue(Promise.resolve());
+    close = jasmine.createSpy();
+    cancel = jasmine.createSpy();
     subscription = _.cloneDeep(testSubscription);
 
     wrapper = shallow(
@@ -73,32 +74,31 @@ describe(InstallPlanApprovalModal.name, () => {
     ).toBe(true);
   });
 
-  it('calls `props.k8sUpdate` to update the subscription when form is submitted', (done) => {
+  it('calls `props.k8sUpdate` to update the subscription when form is submitted', () => {
     wrapper = wrapper.setState({ selectedApprovalStrategy: InstallPlanApproval.Manual });
-
-    close.and.callFake(() => {
-      expect(k8sUpdate.calls.argsFor(0)[0]).toEqual(SubscriptionModel);
-      expect(k8sUpdate.calls.argsFor(0)[1]).toEqual({
+    spyOn(k8sModels, 'modelFor').and.returnValue(SubscriptionModel);
+    k8sUpdate.and.callFake((modelArg, subscriptionArg) => {
+      expect(modelArg).toEqual(SubscriptionModel);
+      expect(subscriptionArg).toEqual({
         ...subscription,
         spec: { ...subscription.spec, installPlanApproval: InstallPlanApproval.Manual },
       });
-      done();
+      return Promise.resolve();
     });
-
     wrapper.find('form').simulate('submit', new Event('submit'));
   });
 
-  it('calls `props.k8sUpdate` to update the install plan when form is submitted', (done) => {
+  it('calls `props.k8sUpdate` to update the install plan when form is submitted', () => {
     wrapper = wrapper.setProps({ obj: _.cloneDeep(testInstallPlan) });
     wrapper = wrapper.setState({ selectedApprovalStrategy: InstallPlanApproval.Manual });
-
-    close.and.callFake(() => {
-      expect(k8sUpdate.calls.argsFor(0)[0]).toEqual(InstallPlanModel);
-      expect(k8sUpdate.calls.argsFor(0)[1]).toEqual({
+    spyOn(k8sModels, 'modelFor').and.returnValue(InstallPlanModel);
+    k8sUpdate.and.callFake((modelArg, installPlanArg) => {
+      expect(modelArg).toEqual(InstallPlanModel);
+      expect(installPlanArg).toEqual({
         ...testInstallPlan,
         spec: { ...testInstallPlan.spec, approval: InstallPlanApproval.Manual },
       });
-      done();
+      return Promise.resolve();
     });
 
     wrapper.find('form').simulate('submit', new Event('submit'));

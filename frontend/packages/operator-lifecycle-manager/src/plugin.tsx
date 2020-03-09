@@ -294,6 +294,7 @@ const plugin: Plugin<ConsumedExtensions> = [
             './components/dashboard/csv-status' /* webpackChunkName: "csv-dashboard-status" */
           )
         ).default,
+      required: FLAGS.CAN_LIST_OPERATOR_GROUP,
     },
   },
 ];

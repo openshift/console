@@ -17,6 +17,7 @@ import { ALL_VM_WIZARD_TABS, VMWizardProps, VMWizardTab } from './types';
 import {
   getStepError,
   hasStepAllRequiredFilled,
+  isLastStepErrorFatal,
   isStepLocked,
   isStepValid,
   isWizardEmpty,
@@ -56,6 +57,8 @@ const CreateVMWizardFooterComponent: React.FC<CreateVMWizardFooterComponentProps
         const isLocked = _.some(ALL_VM_WIZARD_TABS, (id) => isStepLocked(stepData, id));
         const isValid = isStepValid(stepData, activeStepID);
         const hasStepAllRequired = hasStepAllRequiredFilled(stepData, activeStepID);
+        const isLastErrorFatal = isLastStepErrorFatal(stepData);
+        const isLastStepValid = isStepValid(stepData, VMWizardTab.RESULT);
         const stepError = getStepError(stepData, activeStepID);
         checkValidity(isValid);
 
@@ -65,7 +68,9 @@ const CreateVMWizardFooterComponent: React.FC<CreateVMWizardFooterComponentProps
 
         const isNextButtonDisabled = isLocked;
         const isReviewButtonDisabled = isLocked;
-        const isBackButtonDisabled = isFirstStep || isLocked;
+
+        const hideBackButton = activeStep.hideBackButton || (isLastStep && isLastStepValid);
+        const isBackButtonDisabled = isFirstStep || isLocked || isLastErrorFatal;
 
         return (
           <footer className={css(styles.wizardFooter)}>
@@ -133,7 +138,7 @@ const CreateVMWizardFooterComponent: React.FC<CreateVMWizardFooterComponentProps
                 {REVIEW_AND_CREATE}
               </Button>
             )}
-            {!activeStep.hideBackButton && !isLastStep && (
+            {!hideBackButton && (
               <Button
                 variant={ButtonVariant.secondary}
                 onClick={onBack}

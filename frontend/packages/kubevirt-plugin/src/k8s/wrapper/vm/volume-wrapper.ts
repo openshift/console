@@ -1,4 +1,3 @@
-import * as _ from 'lodash';
 import { ObjectWithTypePropertyWrapper } from '../common/object-with-type-property-wrapper';
 import { V1Volume } from '../../../types/vm/disk/V1Volume';
 import { VolumeType } from '../../../constants/vm/storage';
@@ -16,66 +15,24 @@ type CombinedTypeData = {
   userDataBase64?: string;
 };
 
-const sanitizeTypeData = (type: VolumeType, typeData: CombinedTypeData) => {
-  if (!type || !typeData) {
-    return null;
-  }
-  const { name, claimName, image, userData, userDataBase64 } = typeData;
+export class VolumeWrapper extends ObjectWithTypePropertyWrapper<
+  V1Volume,
+  VolumeType,
+  CombinedTypeData,
+  VolumeWrapper
+> {
+  static initializeFromSimpleData = ({
+    name,
+    type,
+    typeData,
+  }: {
+    name?: string;
+    type?: VolumeType;
+    typeData?: CombinedTypeData;
+  }) => new VolumeWrapper({ name }).setType(type, typeData);
 
-  if (type === VolumeType.DATA_VOLUME) {
-    return { name };
-  }
-  if (type === VolumeType.PERSISTENT_VOLUME_CLAIM) {
-    return { claimName };
-  }
-
-  if (type === VolumeType.CONTAINER_DISK) {
-    return { image };
-  }
-
-  if (type === VolumeType.CLOUD_INIT_NO_CLOUD) {
-    return userDataBase64 ? { userDataBase64 } : { userData };
-  }
-
-  return null;
-};
-
-export class VolumeWrapper extends ObjectWithTypePropertyWrapper<V1Volume, VolumeType> {
-  static readonly EMPTY = new VolumeWrapper();
-
-  static mergeWrappers = (...volumes: VolumeWrapper[]): VolumeWrapper =>
-    ObjectWithTypePropertyWrapper.defaultMergeWrappersWithType(VolumeWrapper, volumes);
-
-  static initializeFromSimpleData = (
-    params?: {
-      name?: string;
-      type?: VolumeType;
-      typeData?: CombinedTypeData;
-    },
-    opts?: { sanitizeTypeData: boolean },
-  ) => {
-    if (!params) {
-      return VolumeWrapper.EMPTY;
-    }
-    const { name, type, typeData } = params;
-    return new VolumeWrapper(
-      { name },
-      {
-        initializeWithType: type,
-        initializeWithTypeData:
-          opts && opts.sanitizeTypeData ? sanitizeTypeData(type, typeData) : _.cloneDeep(typeData),
-      },
-    );
-  };
-
-  static initialize = (volume?: V1Volume, copy?: boolean) =>
-    new VolumeWrapper(volume, copy && { copy });
-
-  protected constructor(
-    volume?: V1Volume,
-    opts?: { initializeWithType?: VolumeType; initializeWithTypeData?: any; copy?: boolean },
-  ) {
-    super(volume, opts, VolumeType);
+  constructor(volume?: V1Volume | VolumeWrapper, copy = false) {
+    super(volume, copy, VolumeType);
   }
 
   getName = () => this.get('name');
@@ -87,25 +44,22 @@ export class VolumeWrapper extends ObjectWithTypePropertyWrapper<V1Volume, Volum
   getDataVolumeName = () => getVolumeDataVolumeName(this.data);
 
   getContainerImage = () => getVolumeContainerImage(this.data);
-}
 
-export class MutableVolumeWrapper extends VolumeWrapper {
-  public constructor(volume?: V1Volume, copy = false) {
-    super(volume, { copy });
+  protected sanitize(
+    type: VolumeType,
+    { name, claimName, image, userData, userDataBase64 }: CombinedTypeData,
+  ): CombinedTypeData {
+    switch (type) {
+      case VolumeType.DATA_VOLUME:
+        return { name };
+      case VolumeType.PERSISTENT_VOLUME_CLAIM:
+        return { claimName };
+      case VolumeType.CONTAINER_DISK:
+        return { image };
+      case VolumeType.CLOUD_INIT_NO_CLOUD:
+        return userDataBase64 ? { userDataBase64 } : { userData };
+      default:
+        return null;
+    }
   }
-
-  replaceType = (type: VolumeType, typeData: CombinedTypeData, sanitize = true) => {
-    this.setType(type, sanitize ? sanitizeTypeData(type, typeData) : typeData);
-    return this;
-  };
-
-  setTypeData = (typeData: CombinedTypeData, sanitize = true) =>
-    this.replaceType(this.getType(), typeData, sanitize);
-
-  appendTypeData = (typeData: CombinedTypeData, sanitize = true) => {
-    this.addTypeData(sanitize ? sanitizeTypeData(this.getType(), typeData) : typeData);
-    return this;
-  };
-
-  asMutableResource = () => this.data;
 }

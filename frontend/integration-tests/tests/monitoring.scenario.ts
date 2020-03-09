@@ -282,7 +282,6 @@ describe('Alertmanager: Configuration', () => {
     // pagerduty subform should still be invalid at this point, thus save button should be disabled
     expect(monitoringView.saveButton.isEnabled()).toBe(false);
     await firstElementByTestID('integration-key').sendKeys('<integration_key>');
-    expect(monitoringView.saveButton.isEnabled()).toBe(true); // subform valid, save should be enabled at this point
 
     // labels
     expect(firstElementByTestID('invalid-label-name-error').isPresent()).toBe(false);
@@ -295,10 +294,18 @@ describe('Alertmanager: Configuration', () => {
     await firstElementByTestID('label-name-0').sendKeys('abcd@#$R@T%'); // invalid chars
     expect(firstElementByTestID('invalid-label-name-error').isPresent()).toBe(true);
     await firstElementByTestID('label-name-0').clear();
+    expect(firstElementByTestID('duplicate-label-name-error').isPresent()).toBe(false);
     await firstElementByTestID('label-name-0').sendKeys('severity');
     expect(firstElementByTestID('invalid-label-name-error').isPresent()).toBe(false);
     await firstElementByTestID('label-value-0').sendKeys('warning');
+    await firstElementByTestID('add-routing-label').click();
+    await firstElementByTestID('label-name-1').sendKeys('severity');
+    await firstElementByTestID('label-value-1').sendKeys('warning');
+    expect(firstElementByTestID('duplicate-label-name-error').isPresent()).toBe(true);
+    await firstElementByTestID('remove-routing-label').click();
+    expect(firstElementByTestID('duplicate-label-name-error').isPresent()).toBe(false);
 
+    expect(monitoringView.saveButton.isEnabled()).toBe(true); // subform valid & labels provided, save should be enabled at this point
     await monitoringView.saveButton.click();
     await crudView.isLoaded();
     monitoringView.getFirstRowAsText().then((text) => {

@@ -1,7 +1,7 @@
 import { K8sResourceKind, referenceFor } from '@console/internal/module/k8s';
 import { KebabOption } from '@console/internal/components/utils';
 import { ImportOptions } from '../components/import/import-types';
-import { QUERY_PROPERTIES } from '../const';
+import { QUERY_PROPERTIES, UNASSIGNED_KEY } from '../const';
 
 const PART_OF = 'app.kubernetes.io/part-of';
 
@@ -40,6 +40,8 @@ export const getAddPageUrl = (
   }
   if (hasApplication && appGroup) {
     params.append(QUERY_PROPERTIES.APPLICATION, appGroup);
+  } else {
+    params.append(QUERY_PROPERTIES.APPLICATION, UNASSIGNED_KEY);
   }
   if (contextSource) {
     params.append(QUERY_PROPERTIES.CONTEXT_SOURCE, contextSource);

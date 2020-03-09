@@ -45,7 +45,7 @@ const GeneralPage: React.FC<GeneralPageProps> = ({ dispatch, state }) => {
           isRequired
           fieldId="namespace-dropdown"
         >
-          <NsDropdown onChange={onChange} selectedKey={state.namespace} />
+          <NsDropdown onChange={onChange} selectedKey={state.namespace} id="ns-dropdown" />
         </FormGroup>
         <FormGroup
           isRequired

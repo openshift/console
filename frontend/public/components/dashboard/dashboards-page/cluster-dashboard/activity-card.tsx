@@ -139,9 +139,10 @@ const OngoingActivity = connect(mapStateToProps)(
             };
           });
 
-        const resourcesLoaded = resourceActivities.every((a, index) =>
-          _.get(resources, [uniqueResource(a.properties.k8sResource, index).prop, 'loaded']),
-        );
+        const resourcesLoaded = resourceActivities.every((a, index) => {
+          const uniqueProp = uniqueResource(a.properties.k8sResource, index).prop;
+          return resources[uniqueProp]?.loaded || resources[uniqueProp]?.loadError;
+        });
         const queriesLoaded = prometheusActivities.every((a) =>
           a.properties.queries.every(
             (q) =>
@@ -161,7 +162,7 @@ const OngoingActivity = connect(mapStateToProps)(
 );
 
 export const ActivityCard: React.FC<{}> = React.memo(() => (
-  <DashboardCard gradient>
+  <DashboardCard gradient data-test-id="activity-card">
     <DashboardCardHeader>
       <DashboardCardTitle>Activity</DashboardCardTitle>
       <DashboardCardLink to="/k8s/all-namespaces/events">View events</DashboardCardLink>

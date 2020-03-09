@@ -3,7 +3,7 @@ import * as FocusTrap from 'focus-trap-react';
 import { Button } from '@patternfly/react-core';
 import { CaretDownIcon } from '@patternfly/react-icons';
 import Popper from '@console/shared/src/components/popper/Popper';
-import { KebabMenuItems, KebabOption } from '@console/internal/components/utils';
+import { KebabItem, KebabOption } from '@console/internal/components/utils';
 import { observer, Node } from '@console/topology';
 import { PipelineResourceTask } from '../../../utils/pipeline-augment';
 import { NewTaskNodeCallback, TaskListNodeModelData } from './types';
@@ -31,6 +31,7 @@ const TaskListNode: React.FC<{ element: Node }> = ({ element }) => {
     clusterTaskList,
     namespaceTaskList,
     onNewTask,
+    onRemoveTask,
   } = element.getData() as TaskListNodeModelData;
 
   const options = [
@@ -74,13 +75,31 @@ const TaskListNode: React.FC<{ element: Node }> = ({ element }) => {
           focusTrapOptions={{ clickOutsideDeactivates: true, returnFocusOnDeactivate: false }}
         >
           <div className="pf-c-dropdown pf-m-expanded">
-            <KebabMenuItems
-              options={options}
-              onClick={(e, option) => {
-                option.callback && option.callback();
-              }}
-              className="oc-kebab__popper-items odc-task-list-node__list-items"
-            />
+            <ul className="pf-c-dropdown__menu pf-m-align-right oc-kebab__popper-items odc-task-list-node__list-items">
+              {options.map((option) => (
+                <li key={option.label}>
+                  <KebabItem
+                    option={option}
+                    onClick={() => {
+                      option.callback && option.callback();
+                    }}
+                  />
+                </li>
+              ))}
+              {onRemoveTask && (
+                <>
+                  <li>
+                    <hr className="odc-task-list-node__divider" />
+                  </li>
+                  <li>
+                    <KebabItem
+                      option={{ label: 'Delete Task', callback: onRemoveTask }}
+                      onClick={onRemoveTask}
+                    />
+                  </li>
+                </>
+              )}
+            </ul>
           </div>
         </FocusTrap>
       </Popper>

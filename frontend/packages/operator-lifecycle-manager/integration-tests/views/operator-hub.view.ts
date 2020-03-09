@@ -1,11 +1,13 @@
 import { browser, $, ExpectedConditions as until, by, element } from 'protractor';
 
 export const operatorModal = $('.pf-c-modal-box');
+export const operatorModalBody = $('[data-test-id="operator-modal-box"]');
+export const operatorModalHeader = $('[data-test-id="operator-modal-header"]');
 export const operatorModalIsLoaded = () =>
-  browser.wait(until.presenceOf(operatorModal), 1000).then(() => browser.sleep(500));
-export const operatorModalTitle = operatorModal.$('.catalog-item-header-pf-title');
-export const operatorModalInstallBtn = operatorModal.element(by.linkText('Install'));
-export const operatorModalUninstallBtn = operatorModal.element(by.buttonText('Uninstall'));
+  browser.wait(until.presenceOf(operatorModalBody), 1000).then(() => browser.sleep(500));
+export const operatorModalTitle = operatorModalHeader.$('.catalog-item-header-pf-title');
+export const operatorModalInstallBtn = $('[data-test-id="operator-install-btn"]');
+export const operatorModalUninstallBtn = $('[data-test-id="operator-uninstall-btn"]');
 export const closeOperatorModal = () => operatorModal.$('.close').click();
 export const operatorModalIsClosed = () =>
   browser.wait(until.not(until.presenceOf(operatorModal)), 1000).then(() => browser.sleep(500));

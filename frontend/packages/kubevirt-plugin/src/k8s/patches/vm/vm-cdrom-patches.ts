@@ -1,9 +1,9 @@
 import { last, includes } from 'lodash';
 import { getName } from '@console/shared';
 import { Volume, k8sGet } from '@console/internal/module/k8s';
-import { PatchBuilder, PatchOperation } from '@console/shared/src/k8s';
+import { PatchBuilder } from '@console/shared/src/k8s';
 import { StorageType } from '../../../components/modals/cdrom-vm-modal/constants';
-import { MutableDataVolumeWrapper } from '../../wrapper/vm/data-volume-wrapper';
+import { DataVolumeWrapper } from '../../wrapper/vm/data-volume-wrapper';
 import {
   getDefaultSCAccessModes,
   getDefaultSCVolumeMode,
@@ -93,7 +93,7 @@ export const getCDsPatch = async (vm: VMLikeEntityKind, cds: CD[]) => {
           },
         };
 
-        const dataVolumeWrapper = new MutableDataVolumeWrapper(newDataVolume);
+        const dataVolumeWrapper = new DataVolumeWrapper(newDataVolume);
         const storageClassName = dataVolumeWrapper.getStorageClassName();
 
         finalDataVolume = dataVolumeWrapper
@@ -101,7 +101,7 @@ export const getCDsPatch = async (vm: VMLikeEntityKind, cds: CD[]) => {
             getDefaultSCVolumeMode(storageClassConfigMap, storageClassName),
             getDefaultSCAccessModes(storageClassConfigMap, storageClassName),
           )
-          .asMutableResource();
+          .asResource();
 
         volume = {
           name,
@@ -154,18 +154,9 @@ export const getCDsPatch = async (vm: VMLikeEntityKind, cds: CD[]) => {
   );
 
   const patches = [
-    new PatchBuilder('/spec/template/spec/domain/devices/disks')
-      .setOperation(PatchOperation.REPLACE)
-      .setValue(DISKS)
-      .build(),
-    new PatchBuilder('/spec/template/spec/volumes')
-      .setOperation(PatchOperation.REPLACE)
-      .setValue(VOLS)
-      .build(),
-    new PatchBuilder('/spec/dataVolumeTemplates')
-      .setOperation(PatchOperation.REPLACE)
-      .setValue(DATATEMPLATES)
-      .build(),
+    new PatchBuilder('/spec/template/spec/domain/devices/disks').replace(DISKS).build(),
+    new PatchBuilder('/spec/template/spec/volumes').replace(VOLS).build(),
+    new PatchBuilder('/spec/dataVolumeTemplates').replace(DATATEMPLATES).build(),
   ].filter((patch) => patch);
 
   return getVMLikePatches(vm, () => patches);

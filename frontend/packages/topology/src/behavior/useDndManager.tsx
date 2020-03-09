@@ -46,15 +46,15 @@ export class DndManagerImpl implements DndManager {
   private targets: { [key: string]: DropTarget } = {};
 
   @computed
-  get dropHints(): string[] | undefined {
+  get dropHints(): string[] {
     return this.state.targetIds
       ? (this.state.targetIds
           .map((id) => {
             const target = this.getTarget(id);
-            return target ? target.dropHint(this) : undefined;
+            return target ? target.dropHint(this) : [];
           })
           .filter((x) => x) as string[])
-      : undefined;
+      : [];
   }
 
   registerSource(source: DragSource): [string, Unregister] {
@@ -79,7 +79,7 @@ export class DndManagerImpl implements DndManager {
     ];
   }
 
-  getDropHints(): string[] | undefined {
+  getDropHints(): string[] {
     return this.dropHints;
   }
 
@@ -151,6 +151,10 @@ export class DndManagerImpl implements DndManager {
 
   getTargetIds(): string[] {
     return this.state.targetIds || [];
+  }
+
+  hasDropTarget(): boolean {
+    return !!this.getTargetIds().find((id) => this.canDropOnTarget(id));
   }
 
   getDropResult(): any {

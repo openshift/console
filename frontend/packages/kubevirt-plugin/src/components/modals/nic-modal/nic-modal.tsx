@@ -31,7 +31,7 @@ import {
 import { getNetworkChoices } from '../../../selectors/nad';
 import { NetworkInterfaceWrapper } from '../../../k8s/wrapper/vm/network-interface-wrapper';
 import { NetworkWrapper } from '../../../k8s/wrapper/vm/network-wrapper';
-import { CREATE, EDIT, getDialogUIError, getSequenceName, SAVE } from '../../../utils/strings';
+import { ADD, EDIT, getDialogUIError, getSequenceName, SAVE } from '../../../utils/strings';
 import { ModalFooter } from '../modal/modal-footer';
 import { useShowErrorToggler } from '../../../hooks/use-show-error-toggler';
 
@@ -42,7 +42,7 @@ export type NetworkProps = {
   usedMultusNetworkNames: Set<string>;
   allowPodNetwork: boolean;
   network?: NetworkWrapper;
-  onChange: (networkChoice: NetworkWrapper) => void;
+  onChange: (networkChoice: NetworkType, network: string) => void;
 };
 
 export const Network: React.FC<NetworkProps> = ({
@@ -74,13 +74,10 @@ export const Network: React.FC<NetworkProps> = ({
       <FormSelect
         onChange={(net, event) => {
           const target = event.target as HTMLSelectElement;
-          const newNetworkType = target[target.selectedIndex].getAttribute('data-network-type');
-          onChange(
-            NetworkWrapper.initializeFromSimpleData({
-              type: NetworkType.fromString(newNetworkType),
-              multusNetworkName: net,
-            }),
+          const newNetworkType = NetworkType.fromString(
+            target[target.selectedIndex].getAttribute('data-network-type'),
           );
+          onChange(newNetworkType, newNetworkType === NetworkType.MULTUS ? net : undefined);
         }}
         value={asFormSelectValue(network && network.getReadableName())}
         id={id}
@@ -124,12 +121,11 @@ export const NICModal = withHandlePromise((props: NICModalProps) => {
     handlePromise,
     close,
     cancel,
-    submitButtonText = CREATE,
   } = props;
   const asId = prefixedID.bind(null, 'nic');
-  const nic = props.nic || NetworkInterfaceWrapper.EMPTY;
-  const network = props.network || NetworkWrapper.EMPTY;
-  const isEditing = nic !== NetworkInterfaceWrapper.EMPTY;
+  const nic = props.nic || new NetworkInterfaceWrapper();
+  const network = props.network || new NetworkWrapper();
+  const isEditing = !!props.nic;
 
   const [name, setName] = React.useState<string>(
     nic.getName() || getSequenceName('nic', usedInterfacesNames),
@@ -137,7 +133,10 @@ export const NICModal = withHandlePromise((props: NICModalProps) => {
   const [model, setModel] = React.useState<NetworkInterfaceModel>(
     nic.getModel() || (isEditing ? null : NetworkInterfaceModel.VIRTIO),
   );
-  const [resultNetwork, setResultNetwork] = React.useState<NetworkWrapper>(network);
+  const [networkType, setNetworkType] = React.useState<NetworkType>(network.getType());
+  const [multusNetworkName, setMultusNetworkName] = React.useState<string>(
+    network.getMultusNetworkName(),
+  );
   const [interfaceType, setInterfaceType] = React.useState<NetworkInterfaceType>(nic.getType());
   const [macAddress, setMacAddress] = React.useState<string>(nic.getMACAddress() || '');
 
@@ -148,6 +147,12 @@ export const NICModal = withHandlePromise((props: NICModalProps) => {
     macAddress,
   });
 
+  const resultNetwork = NetworkWrapper.initializeFromSimpleData({
+    name,
+    type: networkType,
+    multusNetworkName,
+  });
+
   const {
     validations: { name: nameValidation, macAddress: macAddressValidation },
     isValid,
@@ -156,15 +161,17 @@ export const NICModal = withHandlePromise((props: NICModalProps) => {
 
   const [showUIError, setShowUIError] = useShowErrorToggler(false, isValid, isValid);
 
-  const onNetworkChoiceChange = (newNetworkChoice: NetworkWrapper) => {
-    if (newNetworkChoice.isPodNetwork()) {
+  const onNetworkChoiceChange = (newType: NetworkType, newMultusNetworkName) => {
+    if (newType === NetworkType.POD) {
       setMacAddress('');
     }
 
-    if (!interfaceType || !newNetworkChoice.getType().allowsInterfaceType(interfaceType)) {
-      setInterfaceType(newNetworkChoice.getType().getDefaultInterfaceType());
+    if (!interfaceType || !newType.allowsInterfaceType(interfaceType)) {
+      setInterfaceType(newType.getDefaultInterfaceType());
     }
-    setResultNetwork(newNetworkChoice);
+
+    setNetworkType(newType);
+    setMultusNetworkName(newMultusNetworkName);
   };
 
   const submit = (e) => {
@@ -172,15 +179,7 @@ export const NICModal = withHandlePromise((props: NICModalProps) => {
 
     if (isValid) {
       // eslint-disable-next-line promise/catch-or-return
-      handlePromise(
-        onSubmit(
-          resultNIC,
-          NetworkWrapper.mergeWrappers(
-            resultNetwork,
-            NetworkWrapper.initializeFromSimpleData({ name: resultNIC.getName() }),
-          ),
-        ),
-      ).then(close);
+      handlePromise(onSubmit(resultNIC, resultNetwork)).then(close);
     } else {
       setShowUIError(true);
     }
@@ -188,7 +187,7 @@ export const NICModal = withHandlePromise((props: NICModalProps) => {
 
   return (
     <div className="modal-content">
-      <ModalTitle>{isEditing ? EDIT : submitButtonText} Network Interface</ModalTitle>
+      <ModalTitle>{isEditing ? EDIT : ADD} Network Interface</ModalTitle>
       <ModalBody>
         <Form>
           <FormRow
@@ -274,7 +273,7 @@ export const NICModal = withHandlePromise((props: NICModalProps) => {
       </ModalBody>
       <ModalFooter
         id="nic"
-        submitButtonText={isEditing ? SAVE : submitButtonText}
+        submitButtonText={isEditing ? SAVE : ADD}
         errorMessage={errorMessage || (showUIError ? getDialogUIError(hasAllRequiredFilled) : null)}
         isDisabled={inProgress}
         isSimpleError={showUIError}
@@ -296,7 +295,6 @@ export type NICModalProps = {
   usedInterfacesNames: Set<string>;
   usedMultusNetworkNames: Set<string>;
   allowPodNetwork: boolean;
-  submitButtonText?: string;
 } & ModalComponentProps &
   HandlePromiseProps;
 

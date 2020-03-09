@@ -6,12 +6,12 @@ import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { Button } from '@patternfly/react-core';
 
+import { withFallback } from '@console/shared/src/components/error/error-boundary';
 import { KEYBOARD_SHORTCUTS } from '@console/shared';
 import { filterList } from '../../actions/k8s';
 import { CheckBoxes, storagePrefix } from '../row-filter';
 import { ErrorPage404, ErrorBoundaryFallback } from '../error';
 import { referenceForModel } from '../../module/k8s';
-import { withFallback } from '../utils/error-boundary';
 import {
   Dropdown,
   Firehose,
@@ -24,7 +24,7 @@ import {
   RequireCreatePermission,
 } from '../utils';
 
-/** @type {React.SFC<{disabled?: boolean, label?: string, onChange: React.ChangeEventHandler<any>, defaultValue?: string, value?: string, placeholder?: string,}}>} */
+/** @type {React.SFC<{disabled?: boolean, label?: string, onChange: React.ChangeEventHandler<any>, defaultValue?: string, value?: string, placeholder?: string, autoFocus?: boolean,}}>} */
 export const TextFilter = ({
   label,
   onChange,
@@ -33,6 +33,7 @@ export const TextFilter = ({
   className,
   value,
   placeholder = `Filter ${label}...`,
+  autoFocus = false,
 }) => {
   const input = React.useRef();
   const onKeyDown = (e) => {
@@ -64,6 +65,7 @@ export const TextFilter = ({
         ref={input}
         autoCapitalize="none"
         className={classNames('pf-c-form-control co-text-filter', className)}
+        data-test-id="item-filter"
         value={value}
         defaultValue={defaultValue}
         onChange={onChange}
@@ -72,6 +74,7 @@ export const TextFilter = ({
         style={style}
         tabIndex={0}
         type="text"
+        autoFocus={autoFocus}
       />
       <span className="form-control-feedback form-control-feedback--keyboard-hint">
         <kbd>/</kbd>

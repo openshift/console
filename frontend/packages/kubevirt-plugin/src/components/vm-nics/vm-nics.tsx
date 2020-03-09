@@ -17,6 +17,7 @@ import { NicRow } from './nic-row';
 import { NetworkBundle } from './types';
 import { nicTableColumnClasses } from './utils';
 import { asVMILikeWrapper } from '../../k8s/wrapper/utils/convert';
+import { ADD_NETWORK_INTERFACE } from '../../utils/strings';
 
 const getNicsData = (vmLikeEntity: VMGenericLikeEntityKind): NetworkBundle[] => {
   const vmiLikeWrapper = asVMILikeWrapper(vmLikeEntity);
@@ -28,8 +29,8 @@ const getNicsData = (vmLikeEntity: VMGenericLikeEntityKind): NetworkBundle[] => 
 
   return interfaces.map((nic) => {
     const network = networkLookup[nic.name];
-    const interfaceWrapper = NetworkInterfaceWrapper.initialize(nic);
-    const networkWrapper = NetworkWrapper.initialize(network);
+    const interfaceWrapper = new NetworkInterfaceWrapper(nic);
+    const networkWrapper = new NetworkWrapper(network);
     return {
       nic,
       network,
@@ -127,7 +128,7 @@ export const VMNics: React.FC<VMLikeEntityTabProps> = ({ obj: vmLikeEntity }) =>
               }
               isDisabled={isLocked}
             >
-              Create Network Interface
+              {ADD_NETWORK_INTERFACE}
             </Button>
           </div>
         </div>

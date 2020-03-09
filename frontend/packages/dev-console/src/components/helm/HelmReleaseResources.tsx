@@ -20,29 +20,53 @@
 
 // export default HelmReleaseResources;
 import * as React from 'react';
-import * as _ from 'lodash';
-import { Table, TextFilter } from '@console/internal/components/factory';
-import { SortByDirection } from '@patternfly/react-table';
-import { HelmFilterType } from './helm-types';
-import { getFilteredItems } from './helm-utils';
-import { MsgBox } from '@console/internal/components/utils';
-import HelmReleaseResourceTableHeader from './HelmReleaseResourceTableHeader';
-import HelmReleaseResourceTableRow from './HelmReleaseResourceTableRow';
+import { safeLoadAll } from 'js-yaml';
+import { MultiListPage } from '@console/internal/components/factory';
+import { FirehoseResource } from '@console/internal/components/utils';
+import { coFetchJSON } from '@console/internal/co-fetch';
+import { K8sResourceKind } from '@console/internal/module/k8s';
+import { flattenResources } from './helm-release-resources-utils';
+import HelmResourcesListComponent from './HelmResourcesListComponent';
+import { HelmRelease } from './helm-types';
+import { match as RMatch } from 'react-router';
 
-// interface HelmReleaseListProps {
-//   namespace: string;
-//   secrets?: FirehoseResult;
-// }
+export interface HelmReleaseResourcesProps {
+  match: RMatch<{
+    ns?: string;
+    name?: string;
+  }>;
+}
 
-const HelmReleaseList: React.FC<any> = ({ helmManifestResources }) => {
-  const [filteredReleases, setFilteredReleases] = React.useState([]);
+const HelmReleaseResources: React.FC<HelmReleaseResourcesProps> = ({ match }) => {
+  const namespace = match.params.ns;
+  const helmReleaseName = match.params.name;
+  const [helmManifestResources, setHelmManifestResources] = React.useState<FirehoseResource[]>([]);
 
   React.useEffect(() => {
     let ignore = false;
+
     const fetchHelmReleases = async () => {
+      let res: HelmRelease[];
+      try {
+        res = await coFetchJSON(`/api/helm/releases?ns=${namespace}`);
+      } catch {
+        return;
+      }
       if (ignore) return;
 
-      setFilteredReleases(helmManifestResources || []);
+      const releaseData = res?.filter((rel) => rel.name === helmReleaseName);
+      const helmManifest = safeLoadAll(releaseData[0].manifest);
+
+      const resources: FirehoseResource[] = helmManifest.map((resource: K8sResourceKind) => ({
+        kind: resource.kind,
+        name: resource.metadata.name,
+        namespace,
+        prop: `${resource.metadata.name}-${resource.kind.toLowerCase()}`,
+        isList: false,
+        optional: true,
+      }));
+
+      setHelmManifestResources(resources);
     };
 
     fetchHelmReleases();
@@ -50,41 +74,17 @@ const HelmReleaseList: React.FC<any> = ({ helmManifestResources }) => {
     return () => {
       ignore = true;
     };
-  }, [helmManifestResources]);
-
-  const applyTextFilter = React.useCallback(
-    (filter) => {
-      const filteredItems = getFilteredItems(helmManifestResources, HelmFilterType.Text, filter);
-      setFilteredReleases(filteredItems);
-    },
-    [filteredReleases],
-  );
-
-  const EmptyMsg = () => <MsgBox title="No Resources Found" />;
+  }, [helmReleaseName, namespace]);
 
   return (
-    <>
-      <div className="co-m-pane__filter-bar">
-        <div className="co-m-pane__filter-bar-group co-m-pane__filter-bar-group--filter">
-          <TextFilter label="by name" onChange={(e) => applyTextFilter(e.target.value)} />
-        </div>
-      </div>
-
-      <div className="co-m-pane__body">
-        <Table
-          data={filteredReleases}
-          defaultSortField="name"
-          defaultSortOrder={SortByDirection.asc}
-          aria-label="Helm Releases"
-          Header={HelmReleaseResourceTableHeader}
-          Row={HelmReleaseResourceTableRow}
-          loaded={true}
-          EmptyMsg={EmptyMsg}
-          virtualize
-        />
-      </div>
-    </>
+    <MultiListPage
+      filterLabel="Resources by name"
+      resources={helmManifestResources}
+      flatten={flattenResources}
+      label="Resources"
+      ListComponent={HelmResourcesListComponent}
+    />
   );
 };
 
-export default React.memo(HelmReleaseList);
+export default HelmReleaseResources;

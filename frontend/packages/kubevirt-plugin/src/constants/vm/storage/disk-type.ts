@@ -1,8 +1,8 @@
 /* eslint-disable lines-between-class-members */
 import * as _ from 'lodash';
-import { ValueEnum } from '../../value-enum';
+import { ObjectEnum } from '../../object-enum';
 
-export class DiskType extends ValueEnum<string> {
+export class DiskType extends ObjectEnum<string> {
   static readonly DISK = new DiskType('disk');
   static readonly CDROM = new DiskType('cdrom', 'CD-ROM');
   static readonly FLOPPY = new DiskType('floppy');
@@ -16,7 +16,7 @@ export class DiskType extends ValueEnum<string> {
   }
 
   private static readonly ALL = Object.freeze(
-    ValueEnum.getAllClassEnumProperties<DiskType>(DiskType),
+    ObjectEnum.getAllClassEnumProperties<DiskType>(DiskType),
   );
 
   private static readonly stringMapper = DiskType.ALL.reduce(
@@ -34,6 +34,6 @@ export class DiskType extends ValueEnum<string> {
 
   static fromString = (model: string): DiskType => DiskType.stringMapper[model];
 
-  // Overide ValueEnum's default toString method.
+  // Overide ObjectEnum's default toString method.
   toString = () => this.label;
 }

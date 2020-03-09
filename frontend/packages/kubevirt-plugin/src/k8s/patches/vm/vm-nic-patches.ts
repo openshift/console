@@ -1,6 +1,6 @@
 import * as _ from 'lodash';
 import { Patch } from '@console/internal/module/k8s';
-import { PatchBuilder, PatchOperation } from '@console/shared/src/k8s';
+import { PatchBuilder } from '@console/shared/src/k8s';
 import { getDisks, getInterfaces, getNetworks } from '../../../selectors/vm';
 import { getVMLikePatches } from '../vm-template';
 import { VMLikeEntityKind } from '../../../types/vmLike';
@@ -16,15 +16,15 @@ export const getRemoveNICPatches = (vmLikeEntity: VMLikeEntityKind, nic: any): P
     const nics = getInterfaces(vm);
     const networks = getNetworks(vm);
     const network = networks.find((n) => getSimpleName(n) === nicName);
-    const networkInterfaceWrapper = NetworkInterfaceWrapper.initialize(nic);
-    const networkChoice = NetworkWrapper.initialize(network);
+    const networkInterfaceWrapper = new NetworkInterfaceWrapper(nic);
+    const networkChoice = new NetworkWrapper(network);
 
     const patches = [
       new PatchBuilder('/spec/template/spec/domain/devices/interfaces')
-        .setListRemove(nic, nics, getSimpleName)
+        .setListRemove(nics, (item) => getSimpleName(item) === nicName)
         .build(),
       new PatchBuilder('/spec/template/spec/networks')
-        .setListRemove(network, networks, getSimpleName)
+        .setListRemove(networks, (item) => getSimpleName(item) === getSimpleName(network))
         .build(),
     ];
 
@@ -32,8 +32,7 @@ export const getRemoveNICPatches = (vmLikeEntity: VMLikeEntityKind, nic: any): P
     if (networkChoice.isPodNetwork()) {
       patches.push(
         new PatchBuilder('/spec/template/spec/domain/devices/autoattachPodInterface')
-          .setOperation(PatchOperation.ADD)
-          .setValue(false)
+          .add(false)
           .build(),
       );
     }
@@ -76,10 +75,10 @@ export const getUpdateNICPatches = (
 
     return [
       new PatchBuilder('/spec/template/spec/domain/devices/interfaces')
-        .setListUpdate(nic, nics, getSimpleName, oldNICName)
+        .setListUpdate(nic, nics, (other) => getSimpleName(other) === oldNICName)
         .build(),
       new PatchBuilder('/spec/template/spec/networks')
-        .setListUpdate(network, networks, getSimpleName, oldNetworkName)
+        .setListUpdate(network, networks, (other) => getSimpleName(other) === oldNetworkName)
         .build(),
     ].filter((patch) => patch);
   });

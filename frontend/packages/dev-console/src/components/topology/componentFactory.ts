@@ -1,4 +1,4 @@
-import { ComponentType } from 'react';
+import * as React from 'react';
 import {
   GraphElement,
   ModelKind,
@@ -11,7 +11,7 @@ import {
   withDndDrop,
   withCreateConnector,
   withRemoveConnector,
-  withContextMenu,
+  withContextMenu as withTopologyContextMenu,
 } from '@console/topology';
 import Application from './components/nodes/Application';
 import ConnectsTo from './components/edges/ConnectsTo';
@@ -24,6 +24,8 @@ import {
   groupContextMenu,
   nodeContextMenu,
   graphContextMenu,
+  regroupContextMenu,
+  regroupGroupContextMenu,
 } from './nodeContextMenu';
 import {
   graphWorkloadDropTargetSpec,
@@ -66,6 +68,7 @@ import { withEditReviewAccess } from './withEditReviewAccess';
 import HelmRelease from './components/groups/HelmRelease';
 import AggregateEdge from './components/edges/AggregateEdge';
 import TrafficConnector from './components/edges/TrafficConnector';
+import CreateConnector from './components/edges/CreateConnector';
 
 type NodeProps = {
   element: Node;
@@ -73,6 +76,14 @@ type NodeProps = {
 
 const withNoDrop = () => {
   return withDndDrop<any, any, {}, NodeProps>(noDropTargetSpec);
+};
+
+const withContextMenu = <E extends GraphElement>(actions: (element: E) => React.ReactElement[]) => {
+  return withTopologyContextMenu(
+    actions,
+    document.getElementById('modal-container'),
+    'odc-topology-context-menu',
+  );
 };
 
 class ComponentFactory {
@@ -86,13 +97,19 @@ class ComponentFactory {
     this.hasServiceBinding = value;
   }
 
+  withAddResourceConnector = () =>
+    withCreateConnector(createConnectorCallback(this.hasServiceBinding), CreateConnector);
+
   getFactory = (): TopologyComponentFactory => {
-    return (kind, type): ComponentType<{ element: GraphElement }> | undefined => {
+    return (kind, type): React.ComponentType<{ element: GraphElement }> | undefined => {
       switch (type) {
         case TYPE_HELM_RELEASE:
-          return withSelection(false, true)(withNoDrop()(HelmRelease));
+          return withSelection(
+            false,
+            true,
+          )(withContextMenu(regroupContextMenu)(withNoDrop()(HelmRelease)));
         case TYPE_HELM_WORKLOAD:
-          return withCreateConnector(createConnectorCallback(this.hasServiceBinding))(
+          return this.withAddResourceConnector()(
             withDndDrop<
               any,
               any,
@@ -101,37 +118,22 @@ class ComponentFactory {
             >(nodeDropTargetSpec)(
               withEditReviewAccess('patch')(
                 withDragNode(nodeDragSourceSpec(type, false))(
-                  withSelection(
-                    false,
-                    true,
-                  )(
-                    withContextMenu(
-                      workloadContextMenu,
-                      document.getElementById('modal-container'),
-                      'odc-topology-context-menu',
-                    )(WorkloadNode),
-                  ),
+                  withSelection(false, true)(withContextMenu(workloadContextMenu)(WorkloadNode)),
                 ),
               ),
             ),
           );
         case TYPE_APPLICATION_GROUP:
           return withDndDrop(groupWorkloadDropTargetSpec)(
-            withSelection(
-              false,
-              true,
-            )(
-              withContextMenu(
-                groupContextMenu,
-                document.getElementById('modal-container'),
-                'odc-topology-context-menu',
-              )(Application),
-            ),
+            withSelection(false, true)(withContextMenu(groupContextMenu)(Application)),
           );
         case TYPE_OPERATOR_BACKED_SERVICE:
-          return withSelection(false, true)(withNoDrop()(OperatorBackedService));
+          return withSelection(
+            false,
+            true,
+          )(withContextMenu(regroupGroupContextMenu)(withNoDrop()(OperatorBackedService)));
         case TYPE_OPERATOR_WORKLOAD:
-          return withCreateConnector(createConnectorCallback(this.hasServiceBinding))(
+          return this.withAddResourceConnector()(
             withEditReviewAccess('patch')(
               withDndDrop<
                 any,
@@ -140,22 +142,13 @@ class ComponentFactory {
                 NodeProps
               >(nodeDropTargetSpec)(
                 withDragNode(nodeDragSourceSpec(type, false))(
-                  withSelection(
-                    false,
-                    true,
-                  )(
-                    withContextMenu(
-                      workloadContextMenu,
-                      document.getElementById('modal-container'),
-                      'odc-topology-context-menu',
-                    )(WorkloadNode),
-                  ),
+                  withSelection(false, true)(withContextMenu(workloadContextMenu)(WorkloadNode)),
                 ),
               ),
             ),
           );
         case TYPE_KNATIVE_SERVICE:
-          return withCreateConnector(createConnectorCallback(this.hasServiceBinding))(
+          return this.withAddResourceConnector()(
             withDndDrop<
               any,
               any,
@@ -163,16 +156,7 @@ class ComponentFactory {
               NodeProps
             >(graphEventSourceDropTargetSpec)(
               withEditReviewAccess('update')(
-                withSelection(
-                  false,
-                  true,
-                )(
-                  withContextMenu(
-                    nodeContextMenu,
-                    document.getElementById('modal-container'),
-                    'odc-topology-context-menu',
-                  )(KnativeService),
-                ),
+                withSelection(false, true)(withContextMenu(nodeContextMenu)(KnativeService)),
               ),
             ),
           );
@@ -182,13 +166,7 @@ class ComponentFactory {
               withSelection(
                 false,
                 true,
-              )(
-                withContextMenu(
-                  nodeContextMenu,
-                  document.getElementById('modal-container'),
-                  'odc-topology-context-menu',
-                )(withNoDrop()(EventSource)),
-              ),
+              )(withContextMenu(nodeContextMenu)(withNoDrop()(EventSource))),
             ),
           );
         case TYPE_KNATIVE_REVISION:
@@ -196,21 +174,12 @@ class ComponentFactory {
             withSelection(
               false,
               true,
-            )(
-              withContextMenu(
-                nodeContextMenu,
-                document.getElementById('modal-container'),
-                'odc-topology-context-menu',
-              )(withNoDrop()(RevisionNode)),
-            ),
+            )(withContextMenu(nodeContextMenu)(withNoDrop()(RevisionNode))),
           );
         case TYPE_REVISION_TRAFFIC:
           return TrafficLink;
         case TYPE_WORKLOAD:
-          return withCreateConnector(
-            createConnectorCallback(this.hasServiceBinding),
-            'odc-topology-context-menu',
-          )(
+          return this.withAddResourceConnector()(
             withDndDrop<
               any,
               any,
@@ -219,16 +188,7 @@ class ComponentFactory {
             >(nodeDropTargetSpec)(
               withEditReviewAccess('patch')(
                 withDragNode(nodeDragSourceSpec(type))(
-                  withSelection(
-                    false,
-                    true,
-                  )(
-                    withContextMenu(
-                      workloadContextMenu,
-                      document.getElementById('modal-container'),
-                      'odc-topology-context-menu',
-                    )(WorkloadNode),
-                  ),
+                  withSelection(false, true)(withContextMenu(workloadContextMenu)(WorkloadNode)),
                 ),
               ),
             ),
@@ -256,16 +216,7 @@ class ComponentFactory {
             case ModelKind.graph:
               return withDndDrop(graphWorkloadDropTargetSpec)(
                 withPanZoom()(
-                  withSelection(
-                    false,
-                    true,
-                  )(
-                    withContextMenu(
-                      graphContextMenu,
-                      document.getElementById('modal-container'),
-                      'odc-topology-context-menu',
-                    )(GraphComponent),
-                  ),
+                  withSelection(false, true)(withContextMenu(graphContextMenu)(GraphComponent)),
                 ),
               );
             default:

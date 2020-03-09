@@ -132,6 +132,7 @@ export const getResourceDescription = _.memoize((kindObj: K8sKind): string => {
 export type SwaggerDefinition = {
   description?: string;
   type?: string;
+  enum?: string[];
   $ref?: string;
   items?: SwaggerDefinition;
   required?: string[];

@@ -223,9 +223,13 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
         generateName: `${selectedTargetNamespace}-`,
         namespace: selectedTargetNamespace,
       },
-      spec: {
-        targetNamespaces: [selectedTargetNamespace],
-      },
+      ...(selectedInstallMode === InstallModeType.InstallModeTypeAllNamespaces
+        ? {}
+        : {
+            spec: {
+              targetNamespaces: [selectedTargetNamespace],
+            },
+          }),
     };
 
     const subscription: SubscriptionKind = {
@@ -449,6 +453,21 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
       <div className="col-xs-6">
         <>
           <div className="form-group">
+            <Tooltip content="The channel to track and receive the updates from.">
+              <h5 className="co-required">Update Channel</h5>
+            </Tooltip>
+            <RadioGroup
+              currentValue={selectedUpdateChannel}
+              items={channels.map((ch) => ({ value: ch.name, title: ch.name }))}
+              onChange={(e) => {
+                setUpdateChannel(e.currentTarget.value);
+                setInstallMode(null);
+                setTargetNamespace(null);
+                setCannotResolve(false);
+              }}
+            />
+          </div>
+          <div className="form-group">
             <h5 className="co-required">Installation Mode</h5>
             <div>
               <RadioInput
@@ -498,21 +517,6 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
               globalNamespaceInstallMode}
             {selectedInstallMode === InstallModeType.InstallModeTypeOwnNamespace &&
               singleNamespaceInstallMode}
-          </div>
-          <div className="form-group">
-            <Tooltip content="The channel to track and receive the updates from.">
-              <h5 className="co-required">Update Channel</h5>
-            </Tooltip>
-            <RadioGroup
-              currentValue={selectedUpdateChannel}
-              items={channels.map((ch) => ({ value: ch.name, title: ch.name }))}
-              onChange={(e) => {
-                setUpdateChannel(e.currentTarget.value);
-                setInstallMode(null);
-                setTargetNamespace(null);
-                setCannotResolve(false);
-              }}
-            />
           </div>
           <div className="form-group">
             <Tooltip content="The strategy to determine either manual or automatic updates.">

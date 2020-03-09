@@ -15,7 +15,6 @@ import {
   isDedicatedCPUPlacement,
 } from '../../selectors/vm/selectors';
 import { getTemplateOperatingSystems } from '../../selectors/vm-template/advanced';
-import { getVMTemplateNamespacedName } from '../../selectors/vm-template/selectors';
 import { vmFlavorModal } from '../modals';
 import { getFlavorText } from '../flavor-text';
 import { EditButton } from '../edit-button';
@@ -34,6 +33,7 @@ import { TemplateSource } from './vm-template-source';
 
 import './_vm-template-resource.scss';
 import { VMWrapper } from '../../k8s/wrapper/vm/vm-wrapper';
+import { getVMTemplateNamespacedName } from '../../selectors/vm-template/selectors';
 
 export const VMTemplateResourceSummary: React.FC<VMTemplateResourceSummaryProps> = ({
   template,
@@ -91,21 +91,11 @@ export const VMTemplateDetailsList: React.FC<VMTemplateResourceListProps> = ({
   canUpdateTemplate,
 }) => {
   const [isBootOrderModalOpen, setBootOrderModalOpen] = React.useState<boolean>(false);
-  const [isDedicatedResourcesModalOpen, setDedicatedResourcesModalOpen] = React.useState<boolean>(
-    false,
-  );
 
+  const vm = asVM(template);
   const id = getBasicID(template);
   const devices = getDevices(template);
-  const cds = getCDRoms(asVM(template));
-  const vm = asVM(template);
-  const vmWrapper = VMWrapper.initialize(vm);
-  const flavorText = getFlavorText({
-    flavor: getFlavor(vm),
-    cpu: vmWrapper.getCPU(),
-    memory: vmWrapper.getMemory(),
-  });
-  const isCPUPinned = isDedicatedCPUPlacement(vm);
+  const cds = getCDRoms(vm);
 
   return (
     <dl className="co-m-pane__details">
@@ -135,6 +125,33 @@ export const VMTemplateDetailsList: React.FC<VMTemplateResourceListProps> = ({
         <DiskSummary disks={cds} vm={asVM(template)} />
       </VMDetailsItem>
 
+      <VMDetailsItem title="Provision Source" idValue={prefixedID(id, 'provisioning-source')}>
+        <TemplateSource template={template} dataVolumeLookup={dataVolumeLookup} detailed />
+      </VMDetailsItem>
+    </dl>
+  );
+};
+
+export const VMTemplateSchedulingList: React.FC<VMTemplateResourceSummaryProps> = ({
+  template,
+  canUpdateTemplate,
+}) => {
+  const [isDedicatedResourcesModalOpen, setDedicatedResourcesModalOpen] = React.useState<boolean>(
+    false,
+  );
+
+  const id = getBasicID(template);
+  const vm = asVM(template);
+  const vmWrapper = new VMWrapper(vm);
+  const flavorText = getFlavorText({
+    flavor: getFlavor(vm),
+    cpu: vmWrapper.getCPU(),
+    memory: vmWrapper.getMemory(),
+  });
+  const isCPUPinned = isDedicatedCPUPlacement(vm);
+
+  return (
+    <dl className="co-m-pane__details">
       <VMDetailsItem title="Flavor" idValue={prefixedID(id, 'flavor')} isNotAvail={!flavorText}>
         <EditButton
           id={prefixedID(id, 'flavor-edit')}
@@ -158,10 +175,6 @@ export const VMTemplateDetailsList: React.FC<VMTemplateResourceListProps> = ({
           setOpen={setDedicatedResourcesModalOpen}
         />
         {isCPUPinned ? RESOURCE_PINNED : RESOURCE_NOT_PINNED}
-      </VMDetailsItem>
-
-      <VMDetailsItem title="Provision Source" idValue={prefixedID(id, 'provisioning-source')}>
-        <TemplateSource template={template} dataVolumeLookup={dataVolumeLookup} detailed />
       </VMDetailsItem>
     </dl>
   );

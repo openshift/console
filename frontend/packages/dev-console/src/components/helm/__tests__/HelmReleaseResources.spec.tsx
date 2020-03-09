@@ -4,18 +4,17 @@ import { MultiListPage } from '@console/internal/components/factory';
 import HelmReleaseResources from '../HelmReleaseResources';
 
 describe('HelmReleaseResources', () => {
-  const helmReleaseResourcesProps: React.ComponentProps<typeof HelmReleaseResources> = {
-    helmManifestResources: [
-      {
-        kind: 'Service',
-        prop: 'service',
-        namespace: 'test-helm',
-        name: 'nodejs-example',
-        isList: false,
-        optional: true,
-      },
-    ],
+  const match = {
+    params: { ns: 'default', name: 'nodejs-example' },
+    isExact: true,
+    path: '',
+    url: '',
   };
+
+  const helmReleaseResourcesProps: React.ComponentProps<typeof HelmReleaseResources> = {
+    match,
+  };
+
   const helmReleaseResources = shallow(<HelmReleaseResources {...helmReleaseResourcesProps} />);
   it('should render the MultiListPage component', () => {
     expect(helmReleaseResources.find(MultiListPage).exists()).toBe(true);

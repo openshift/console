@@ -29,7 +29,6 @@ export const VMDetailsCard: React.FC<VMDetailsCardProps> = () => {
 
   const ipAddrs = getVmiIpAddresses(vmi).join(', ');
 
-  const isNodeLoading = !vmiLike || !pods;
   const name = getName(vmiLike);
   const namespace = getNamespace(vmiLike);
   const nodeName = getVMINodeName(vmi) || getNodeName(launcherPod);
@@ -67,8 +66,8 @@ export const VMDetailsCard: React.FC<VMDetailsCardProps> = () => {
           <DetailItem title="Created" error={false} isLoading={!vmiLike}>
             <Timestamp timestamp={getCreationTimestamp(vmiLike)} />
           </DetailItem>
-          <DetailItem title="Node" error={!isNodeLoading && !nodeName} isLoading={isNodeLoading}>
-            {nodeName && <NodeLink name={nodeName} />}
+          <DetailItem title="Node" error={!launcherPod || !nodeName} isLoading={!vmiLike}>
+            {launcherPod && nodeName && <NodeLink name={nodeName} />}
           </DetailItem>
           <DetailItem
             title="IP Address"

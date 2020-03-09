@@ -25,6 +25,7 @@ interface TaskProps {
   namespace: string;
   isPipelineRun: boolean;
   disableTooltip?: boolean;
+  selected?: boolean;
 }
 
 interface PipelineVisualizationTaskProp {
@@ -41,6 +42,7 @@ interface PipelineVisualizationTaskProp {
   taskRun?: string;
   pipelineRunStatus?: string;
   disableTooltip?: boolean;
+  selected?: boolean;
 }
 
 export const PipelineVisualizationTask: React.FC<PipelineVisualizationTaskProp> = ({
@@ -49,6 +51,7 @@ export const PipelineVisualizationTask: React.FC<PipelineVisualizationTaskProp> 
   namespace,
   pipelineRunStatus,
   disableTooltip,
+  selected,
 }) => {
   const taskStatus = task.status || {
     duration: '',
@@ -72,6 +75,7 @@ export const PipelineVisualizationTask: React.FC<PipelineVisualizationTaskProp> 
       status={taskStatus}
       isPipelineRun={!!pipelineRunStatus}
       disableTooltip={disableTooltip}
+      selected={selected}
     />
   );
 
@@ -108,6 +112,7 @@ const TaskComponent: React.FC<TaskProps> = ({
   name,
   isPipelineRun,
   disableTooltip,
+  selected,
 }) => {
   const stepList = _.get(task, ['data', 'spec', 'steps'], []);
   const stepStatusList: StepStatus[] = stepList.map((step) => createStepStatus(step, status));
@@ -118,7 +123,7 @@ const TaskComponent: React.FC<TaskProps> = ({
     : undefined;
 
   let taskPill = (
-    <div className="odc-pipeline-vis-task__content">
+    <div className={cx('odc-pipeline-vis-task__content', { 'is-selected': selected })}>
       <div
         className={cx('odc-pipeline-vis-task__title-wrapper', {
           'is-text-center': !isPipelineRun,

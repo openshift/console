@@ -20,12 +20,13 @@ import {
   RoutePage,
   ResourceDetailsPage,
   ActionFeatureFlag,
+  DashboardsOverviewResourceActivity,
 } from '@console/plugin-sdk';
 import {
   OCS_INDEPENDENT_FLAG,
   detectIndependentMode,
-  detectOCSVersion44,
-  OCS_VERSION_4_4_FLAG,
+  detectOCSVersion45AndAbove,
+  OCS_VERSION_4_5_FLAG,
 } from './features';
 import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager/src/models';
 import { GridPosition } from '@console/shared/src/components/dashboard/DashboardGrid';
@@ -33,6 +34,7 @@ import { OverviewQuery } from '@console/internal/components/dashboard/dashboards
 import { referenceForModel, referenceFor } from '@console/internal/module/k8s';
 import { PersistentVolumeClaimModel } from '@console/internal/models';
 import { getCephHealthState } from './components/dashboard-page/storage-dashboard/status-card/utils';
+import { isClusterExpandActivity } from './components/dashboard-page/storage-dashboard/activity-card/cluster-expand-activity';
 
 type ConsumedExtensions =
   | ModelFeatureFlag
@@ -49,7 +51,8 @@ type ConsumedExtensions =
   | ResourceTabPage
   | ClusterServiceVersionAction
   | KebabActions
-  | FeatureFlag;
+  | FeatureFlag
+  | DashboardsOverviewResourceActivity;
 
 const CEPH_FLAG = 'CEPH';
 
@@ -72,8 +75,8 @@ const plugin: Plugin<ConsumedExtensions> = [
   {
     type: 'FeatureFlag/Action',
     properties: {
-      flag: OCS_VERSION_4_4_FLAG,
-      detect: detectOCSVersion44,
+      flag: OCS_VERSION_4_5_FLAG,
+      detect: detectOCSVersion45AndAbove,
     },
   },
   {
@@ -88,7 +91,7 @@ const plugin: Plugin<ConsumedExtensions> = [
         ) /* webpackChunkName: "ceph-storage-volume-snapshot" */,
     },
     flags: {
-      required: [OCS_VERSION_4_4_FLAG, CEPH_FLAG],
+      required: [OCS_VERSION_4_5_FLAG, CEPH_FLAG],
     },
   },
   {
@@ -298,7 +301,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       position: GridPosition.MAIN,
       loader: () =>
         import(
-          './components/dashboard-page/storage-dashboard/capacity-breakdown/capacity-breakdown-card' /* webpackChunkName: "ceph-storage-usage-breakdown-card" */
+          './components/independent-dashboard-page/breakdown-card/card' /* webpackChunkName: "independent-breakdown-card" */
         ).then((m) => m.default),
       required: OCS_INDEPENDENT_FLAG,
     },
@@ -339,7 +342,24 @@ const plugin: Plugin<ConsumedExtensions> = [
       modelParser: referenceFor,
     },
     flags: {
-      required: [OCS_VERSION_4_4_FLAG, CEPH_FLAG],
+      required: [OCS_VERSION_4_5_FLAG, CEPH_FLAG],
+    },
+  },
+  {
+    type: 'Dashboards/Overview/Activity/Resource',
+    properties: {
+      k8sResource: {
+        isList: true,
+        kind: referenceForModel(models.OCSServiceModel),
+        namespaced: false,
+        prop: 'storage-cluster',
+      },
+      isActivity: isClusterExpandActivity,
+      loader: () =>
+        import(
+          './components/dashboard-page/storage-dashboard/activity-card/cluster-expand-activity' /* webpackChunkName: "ceph-storage-plugin" */
+        ).then((m) => m.ClusterExpandActivity),
+      required: CEPH_FLAG,
     },
   },
 ];

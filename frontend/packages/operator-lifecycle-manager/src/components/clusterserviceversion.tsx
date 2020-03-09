@@ -16,7 +16,7 @@ import {
   TableData,
   MultiListPage,
 } from '@console/internal/components/factory';
-import { withFallback } from '@console/internal/components/utils/error-boundary';
+import { withFallback } from '@console/shared/src/components/error/error-boundary';
 import {
   modelFor,
   referenceForModel,
@@ -99,6 +99,8 @@ export const ClusterServiceVersionTableHeader = () => {
     },
     {
       title: 'Namespace',
+      sortField: 'metadata.namespace',
+      transforms: [sortable],
       props: { className: tableColumnClasses[1] },
     },
     {
@@ -107,6 +109,8 @@ export const ClusterServiceVersionTableHeader = () => {
     },
     {
       title: 'Deployment',
+      sortField: 'spec.install.spec.deployments[0].name',
+      transforms: [sortable],
       props: { className: tableColumnClasses[3] },
     },
     {
@@ -192,18 +196,14 @@ const ClusterServiceVersionStatus: React.FC<ClusterServiceVersionStatusProps> = 
     );
   }
 
-  return (
+  return status ? (
     <>
-      {status ? (
-        <>
-          <span className="co-icon-and-text">
-            <Status status={status} />
-          </span>
-          {subscription && <span className="text-muted">{subscriptionStatus.title}</span>}
-        </>
-      ) : null}
+      <span className="co-icon-and-text">
+        <Status status={status} />
+      </span>
+      {subscription && <span className="text-muted">{subscriptionStatus.title}</span>}
     </>
-  );
+  ) : null;
 };
 
 export const ClusterServiceVersionTableRow = withFallback<ClusterServiceVersionTableRowProps>(
@@ -760,11 +760,10 @@ export const CSVSubscription: React.FC<CSVSubscriptionProps> = ({
     <MsgBox title="No Operator Subscription" detail="This Operator will not receive updates." />
   );
 
-  const [subscription, setSubscription] = React.useState();
-
-  React.useEffect(() => {
-    setSubscription(subscriptionForCSV(subscriptions, obj));
-  }, [obj, subscriptions]);
+  const subscription = React.useMemo(() => subscriptionForCSV(subscriptions, obj), [
+    obj,
+    subscriptions,
+  ]);
 
   return (
     <StatusBox EmptyMsg={EmptyMsg} loaded data={subscription}>

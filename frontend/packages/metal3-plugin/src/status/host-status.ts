@@ -7,6 +7,7 @@ import {
   HOST_STATUS_DISCOVERED,
   HOST_PROGRESS_STATES,
   HOST_STATUS_DEPROVISIONING,
+  HOST_STATUS_UNKNOWN,
 } from '../constants';
 import { StatusProps } from '../components/types';
 import { BareMetalHostKind } from '../types';
@@ -27,8 +28,10 @@ export const getBareMetalHostStatus = (host: BareMetalHostKind) => {
     }
   } else if (operationalStatus === HOST_STATUS_DISCOVERED) {
     hostStatus = HOST_STATUS_DISCOVERED;
-  } else {
+  } else if (provisioningState) {
     hostStatus = provisioningState;
+  } else {
+    hostStatus = HOST_STATUS_UNKNOWN;
   }
 
   return {

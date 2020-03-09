@@ -27,9 +27,9 @@ import {
   HOST_POWER_STATUS_POWERING_ON,
   HOST_STATUS_AVAILABLE,
   HOST_STATUS_DISCOVERED,
-  HOST_STATUS_ERROR,
   HOST_STATUS_READY,
-  HOST_STATUS_REGISTRATION_ERROR,
+  HOST_ERROR_STATES,
+  HOST_STATUS_UNKNOWN,
 } from '../../constants';
 import { startNodeMaintenanceModal } from '../modals/StartNodeMaintenanceModal';
 import { powerOffHostModal } from '../modals/PowerOffHostModal';
@@ -137,11 +137,11 @@ export const Delete = (
   const title = 'Delete Bare Metal Host';
   return {
     hidden: ![
+      HOST_STATUS_UNKNOWN,
       HOST_STATUS_READY,
       HOST_STATUS_AVAILABLE,
-      HOST_STATUS_REGISTRATION_ERROR,
-      HOST_STATUS_ERROR,
       HOST_STATUS_DISCOVERED,
+      ...HOST_ERROR_STATES,
     ].includes(status),
     label: title,
     callback: () =>

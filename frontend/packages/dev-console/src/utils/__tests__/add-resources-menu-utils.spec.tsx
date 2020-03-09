@@ -12,6 +12,7 @@ import {
   transformTopologyData,
   getTopologyResourceObject,
 } from '../../components/topology/topology-utils';
+import { UNASSIGNED_KEY } from '../../const';
 import { ImportOptions } from '../../components/import/import-types';
 import { MockResources } from '../../components/topology/__tests__/topology-test-data';
 import { TopologyDataResources } from '../../components/topology/topology-types';
@@ -50,13 +51,13 @@ describe('addResourceMenuUtils: ', () => {
     expect(Array.from(url.searchParams.entries())).toHaveLength(3);
   });
 
-  it('should return the page url without application params in the url', () => {
+  it('should return the page url with no-application value param in the url', () => {
     const { resource } = getTopologyData(MockResources, ['deployments']);
     const url = new URL(
       getAddPageUrl(resource, '', ImportOptions.GIT, false),
       'https://mock.test.com',
     );
-    expect(url.searchParams.has('application')).toBe(false);
+    expect(url.searchParams.get('application')).toBe(UNASSIGNED_KEY);
   });
 
   it('should return the page url without contextSource params in the url', () => {

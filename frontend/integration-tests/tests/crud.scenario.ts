@@ -405,6 +405,8 @@ describe('Kubernetes resource CRUD operations', () => {
             '/k8s/ns/openshift-monitoring/monitoring.coreos.com~v1~Alertmanager/main',
             '/settings/cluster',
             '/monitoring/query-browser',
+            // Test loading search page for a kind with no static model.
+            '/search/all-namespaces?kind=config.openshift.io~v1~Console',
           ]
         : []),
     ];

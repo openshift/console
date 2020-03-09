@@ -93,6 +93,7 @@ export const BootOrder = ({ devices, setDevices }: BootOrderProps) => {
                 onMove={onMove}
                 aria-labelledby={`device-${deviceKey(source)}`}
                 key={`device-${deviceKey(source)}`}
+                className="kubevirt-boot-order__data-list-item"
               >
                 <Text id={`device-${deviceKey(source)}`} component={TextVariants.p}>
                   {deviceLabel(source)}

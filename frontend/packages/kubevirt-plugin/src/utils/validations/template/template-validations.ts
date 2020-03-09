@@ -1,7 +1,7 @@
 /* eslint-disable lines-between-class-members */
 import * as _ from 'lodash';
 import { ValidationErrorType } from '@console/shared/src';
-import { ValueEnum, DiskBus } from '../../../constants';
+import { ObjectEnum, DiskBus } from '../../../constants';
 import { CommonTemplatesValidation } from '../../../types/template';
 import {
   IntervalValidationResult,
@@ -10,7 +10,7 @@ import {
 import { DiskBusValidationResult } from './disk-bus-validation-result';
 
 // TODO: Add all the fields in the form
-export class ValidationJSONPath extends ValueEnum<string> {
+export class ValidationJSONPath extends ObjectEnum<string> {
   static readonly CPU = new ValidationJSONPath('jsonpath::.spec.domain.cpu.cores');
   static readonly MEMORY = new ValidationJSONPath(
     'jsonpath::.spec.domain.resources.requests.memory',
@@ -19,6 +19,10 @@ export class ValidationJSONPath extends ValueEnum<string> {
 }
 
 export class TemplateValidations {
+  public static areBusesEqual = (a: TemplateValidations, b: TemplateValidations) =>
+    // eslint-disable-next-line eqeqeq
+    a == b || !!a?.areBusesEqual(b); // check if both null first
+
   private validations: CommonTemplatesValidation[];
 
   constructor(validations: CommonTemplatesValidation[] = []) {
@@ -52,6 +56,25 @@ export class TemplateValidations {
     return recommendedBuses.length === 0 ? allowedBuses : new Set(recommendedBuses);
   };
 
+  areBusesEqual = (otherTempValidations: TemplateValidations): boolean => {
+    if (this === otherTempValidations) {
+      return true;
+    }
+
+    // Check if two sets of bus validations are the same - if the allowed and recommended buses are the same
+    const allowedBuses = this.getAllowedBuses();
+    const recommendedBuses = this.getRecommendedBuses();
+    const otherAllowedBuses = otherTempValidations.getAllowedBuses();
+    const otherRecommendedBuses = otherTempValidations.getRecommendedBuses();
+
+    return (
+      allowedBuses.size === otherAllowedBuses.size &&
+      recommendedBuses.size === otherRecommendedBuses.size &&
+      [...allowedBuses].every((bus) => otherAllowedBuses.has(bus)) &&
+      [...recommendedBuses].every((bus) => otherRecommendedBuses.has(bus))
+    );
+  };
+
   validateBus = (
     bus: DiskBus,
     validationErrorType: ValidationErrorType = ValidationErrorType.Error,
@@ -75,9 +98,21 @@ export class TemplateValidations {
 
   getDefaultBus = (defaultBus = DiskBus.VIRTIO): DiskBus => {
     const allowedBuses = this.getAllowedBuses();
+
     if (allowedBuses.size === 0) {
       return defaultBus;
     }
+
+    const recommendedBuses = this.getRecommendedBuses();
+
+    if (recommendedBuses.has(defaultBus)) {
+      return defaultBus;
+    }
+
+    if (recommendedBuses.size > 0) {
+      return [...recommendedBuses][0];
+    }
+
     return allowedBuses.has(defaultBus) ? defaultBus : [...allowedBuses][0];
   };
 

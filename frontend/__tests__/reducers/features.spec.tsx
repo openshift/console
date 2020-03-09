@@ -1,10 +1,20 @@
 import * as React from 'react';
 import * as Immutable from 'immutable';
+import * as _ from 'lodash-es';
 
 import { setFlag } from '../../public/actions/features';
 import { receivedResources } from '../../public/actions/k8s';
 import { FLAGS } from '@console/shared';
-import { featureReducer, defaults, connectToFlags } from '../../public/reducers/features';
+import {
+  featureReducer,
+  featureReducerName,
+  defaults,
+  connectToFlags,
+  stateToFlagsObject,
+  getFlagsObject,
+  FeatureState,
+} from '../../public/reducers/features';
+import { RootState } from '../../public/redux';
 
 describe('featureReducer', () => {
   it('returns default values if state is uninitialized', () => {
@@ -74,5 +84,52 @@ describe('connectToFlags', () => {
     const jsx = <MyComponentWithFlags propA={42} propB={false} />;
 
     expect(jsx).toBeDefined();
+  });
+});
+
+describe('stateToFlagsObject', () => {
+  it('maps the desired flags to a new object', () => {
+    const featureState: FeatureState = Immutable.Map({
+      FOO: true,
+      BAR: false,
+      QUX: undefined,
+    });
+
+    expect(
+      _.isEqual(stateToFlagsObject(featureState, ['BAR', 'QUX']), {
+        BAR: false,
+        QUX: undefined,
+      }),
+    ).toBe(true);
+
+    expect(
+      _.isEqual(stateToFlagsObject(featureState, ['BAR', 'BAZ', 'QUX']), {
+        BAR: false,
+        BAZ: undefined,
+        QUX: undefined,
+      }),
+    ).toBe(true);
+  });
+});
+
+describe('getFlagsObject', () => {
+  it('maps the root state to feature sub-state as a new object', () => {
+    const featureState: FeatureState = Immutable.Map({
+      FOO: true,
+      BAR: false,
+      QUX: undefined,
+    });
+
+    const rootState = {
+      [featureReducerName]: featureState,
+    };
+
+    expect(
+      _.isEqual(getFlagsObject(rootState as RootState), {
+        FOO: true,
+        BAR: false,
+        QUX: undefined,
+      }),
+    ).toBe(true);
   });
 });

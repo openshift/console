@@ -4,6 +4,7 @@ import { $, $$, browser, by, ExpectedConditions as until, element } from 'protra
 
 import * as yamlView from './yaml.view';
 import { appHost, testName, waitForNone } from '../protractor.conf';
+import { waitForCount } from '@console/shared/src/test-utils/utils';
 
 export const createYAMLButton = $('#yaml-create');
 export const createItemButton = $('#item-create');
@@ -81,6 +82,7 @@ export const clickKebabAction = (resourceName: string, actionLabel: string) => {
     .$('[data-test-id="kebab-button"]')
     .click()
     .then(() => browser.wait(until.elementToBeClickable(actionForLabel(actionLabel))))
+    .then(() => browser.wait(waitForCount($$('.pf-m-disabled'), 0)))
     .then(() => actionForLabel(actionLabel).click());
 };
 

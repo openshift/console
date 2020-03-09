@@ -49,7 +49,7 @@
     "transformIgnorePatterns": [
       "<rootDir>/node_modules/(?!(lodash-es|@console|@novnc|@spice-project)/.*)"
     ],
-    "testRegex": "/__tests__/.*\\.spec\\.(ts|tsx|js|jsx)$",
+    "testRegex": ".*\\.spec\\.(ts|tsx|js|jsx)$",
     "testURL": "http://localhost",
     "setupFiles": [
       "./__mocks__/localStorage.ts",
@@ -74,14 +74,14 @@
   },
   "dependencies": {
     "@fortawesome/fontawesome-free": "^5.9.0",
-    "@patternfly/patternfly": "2.47.2",
+    "@patternfly/patternfly": "2.65.3",
     "@patternfly/react-charts": "5.2.2",
-    "@patternfly/react-core": "3.124.1",
+    "@patternfly/react-core": "3.140.11",
     "@patternfly/react-table": "2.24.41",
     "@patternfly/react-tokens": "2.7.10",
     "@patternfly/react-topology": "2.11.27",
     "@patternfly/react-virtualized-extension": "1.3.40",
-    "@patternfly/react-catalog-view-extension": "1.1.42",
+    "@patternfly/react-catalog-view-extension": "1.4.11",
     "abort-controller": "3.0.0",
     "classnames": "2.x",
     "core-js": "2.x",
@@ -123,6 +123,7 @@
     "react-transition-group": "2.3.x",
     "react-virtualized": "9.x",
     "redux": "4.0.1",
+    "reselect": "4.x",
     "sanitize-html": "1.x",
     "screenfull": "4.x",
     "semver": "^6.0.0",

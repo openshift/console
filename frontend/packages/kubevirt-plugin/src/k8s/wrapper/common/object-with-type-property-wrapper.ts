@@ -1,51 +1,27 @@
 import * as _ from 'lodash';
-import { ValueEnum } from '../../../constants';
+import { ObjectEnum } from '../../../constants';
+import { omitEmpty } from '../../../utils/common';
 import { Wrapper } from './wrapper';
 
 export abstract class ObjectWithTypePropertyWrapper<
   RESOURCE,
-  TYPE extends ValueEnum<string>
-> extends Wrapper<RESOURCE> {
+  TYPE extends ObjectEnum<string>,
+  COMBINED_TYPE_DATA,
+  SELF extends ObjectWithTypePropertyWrapper<RESOURCE, TYPE, COMBINED_TYPE_DATA, SELF>
+> extends Wrapper<RESOURCE, SELF> {
   private readonly TypeClass: { getAll: () => TYPE[] | Readonly<TYPE[]> };
 
   private readonly typeDataPath: string[];
 
-  protected static defaultMergeWrappersWithType = <
-    A,
-    B extends ObjectWithTypePropertyWrapper<A, any>
-  >(
-    Clazz,
-    wrappers: B[],
-  ): B => {
-    const result = Wrapper.defaultMergeWrappers(Clazz, wrappers);
-    const lastWithType = _.last(wrappers.filter((wrapper) => wrapper && wrapper.getType()));
-
-    if (lastWithType) {
-      result.setType(lastWithType.getType(), result.getTypeData(lastWithType.getType()));
-    }
-    return result;
-  };
-
-  constructor(
-    data: RESOURCE,
-    opts: { initializeWithType?: TYPE; initializeWithTypeData?: any; copy?: boolean },
+  protected constructor(
+    data: RESOURCE | SELF,
+    copy = false,
     typeClass: { getAll: () => TYPE[] | Readonly<TYPE[]> },
     typeDataPath: string[] = [],
   ) {
-    super(data, opts);
+    super(data, copy);
     this.TypeClass = typeClass;
     this.typeDataPath = typeDataPath;
-
-    if (opts && opts.initializeWithType) {
-      const { initializeWithTypeData, initializeWithType, copy } = opts;
-
-      const resultTypeData = initializeWithTypeData
-        ? copy
-          ? _.cloneDeep(initializeWithTypeData)
-          : initializeWithTypeData
-        : this.getTypeData(initializeWithType);
-      this.setType(initializeWithType, resultTypeData);
-    }
   }
 
   getType = (): TYPE =>
@@ -58,25 +34,53 @@ export abstract class ObjectWithTypePropertyWrapper<
 
   hasType = (): boolean => !!this.getType();
 
-  protected getTypeData = (type?: TYPE) =>
+  getTypeData = (type?: TYPE): COMBINED_TYPE_DATA =>
     this.getIn([...this.typeDataPath, (type || this.getType()).getValue()]);
 
-  protected setType = (type?: TYPE, typeData?: any) => {
+  mergeWith(...wrappers: SELF[]): SELF {
+    super.mergeWith(...wrappers);
+    const lastWithType = _.last(wrappers.filter((wrapper) => wrapper?.getType()));
+
+    if (lastWithType) {
+      this.appendType(lastWithType.getType(), undefined, false); // removes typeData of other types
+    }
+    return (this as any) as SELF;
+  }
+
+  setType = (type?: TYPE, typeData?: COMBINED_TYPE_DATA, sanitize = true) => {
     const typeDataParent =
       this.typeDataPath.length === 0 ? this.data : this.getIn(this.typeDataPath);
-    if (!typeDataParent) {
-      return;
+    if (typeDataParent) {
+      this.TypeClass.getAll().forEach(
+        (superfluousProperty) => delete typeDataParent[superfluousProperty.getValue()],
+      );
+      if (type) {
+        const finalTypeData = typeData
+          ? sanitize
+            ? this.sanitize(type, typeData) || {}
+            : _.cloneDeep(typeData)
+          : {};
+        if (sanitize) {
+          omitEmpty(finalTypeData, true);
+        }
+        typeDataParent[type.getValue()] = finalTypeData;
+      }
     }
-    this.TypeClass.getAll().forEach(
-      (superflousProperty) => delete typeDataParent[superflousProperty.getValue()],
-    );
-    if (type) {
-      typeDataParent[type.getValue()] = typeData ? _.cloneDeep(typeData) : {};
-    }
+    return (this as any) as SELF;
   };
 
-  protected addTypeData = (newTypeData?: any) => {
-    const type = this.getType();
-    this.setType(type, { ...this.getTypeData(type), ...newTypeData });
-  };
+  appendType = (type?: TYPE, newTypeData?: COMBINED_TYPE_DATA, sanitize = true) =>
+    this.setType(type, { ...this.getTypeData(type), ...newTypeData }, sanitize);
+
+  setTypeData = (newTypeData?: COMBINED_TYPE_DATA, sanitize = true) =>
+    this.setType(this.getType(), newTypeData, sanitize);
+
+  appendTypeData(newTypeData?: COMBINED_TYPE_DATA, sanitize = true) {
+    return this.appendType(this.getType(), newTypeData, sanitize);
+  }
+
+  // should be implemented by derived wrappers
+  protected sanitize(type: TYPE, typeData: COMBINED_TYPE_DATA): any {
+    return _.cloneDeep(typeData);
+  }
 }

@@ -1,6 +1,6 @@
 import { browser, ExpectedConditions as until } from 'protractor';
 import { testName } from '@console/internal-integration-tests/protractor.conf';
-import { createResources, deleteResource } from '@console/shared/src/test-utils/utils';
+import { createResources, deleteResources } from '@console/shared/src/test-utils/utils';
 import { VirtualMachineModel } from '../../src/models';
 import {
   vmDetailsName,
@@ -29,10 +29,6 @@ describe('Test VM dashboard', () => {
 
   let vm: VirtualMachine;
 
-  afterAll(async () => {
-    deleteResource(vm.asResource());
-  });
-
   beforeAll(async () => {
     createResources([multusNAD, testVM]);
     vm = new VirtualMachine(testVM.metadata);
@@ -52,6 +48,10 @@ describe('Test VM dashboard', () => {
     );
   }, VM_IMPORT_TIMEOUT_SECS);
 
+  afterAll(() => {
+    deleteResources([vm.asResource(), multusNAD]);
+  });
+
   it('Inventory card', async () => {
     expect(vmInventoryNICs.getText()).toEqual('1 NIC');
     expect(vmInventoryNICs.$('a').getAttribute('href')).toMatch(
@@ -68,6 +68,9 @@ describe('Test VM dashboard', () => {
 
     expect(vmInventoryNICs.getText()).toEqual('2 NICs');
     expect(vmInventoryDisks.getText()).toEqual('3 Disks');
+
+    await vm.removeDisk(hddDisk.name);
+    await vm.removeNIC(multusNetworkInterface.name);
   });
 
   it('Status card', async () => {
@@ -80,7 +83,7 @@ describe('Test VM dashboard', () => {
     expect(vmStatus.getText()).toEqual(VM_STATUS.Running);
   });
 
-  xit('BZ(1803857) Details card', async () => {
+  it('BZ(1807865) Details card', async () => {
     expect(vmDetailsName.getText()).toEqual(vm.name);
     expect(vmDetailsNamespace.getText()).toEqual(vm.namespace);
     expect(vmDetailsNode.getText()).not.toEqual(NOT_AVAILABLE);

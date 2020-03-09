@@ -39,18 +39,18 @@ const shortenHash = (hash: string) => hash.slice(7, 18);
 export const ImageVulnerabilityRow: React.FC<ImageVulnerabilityRowProps> = (props) => {
   return (
     <div className="row">
-      <div className="col-lg-2 col-md-3 col-sm-4 col-xs-5">
+      <div className="col-lg-3 col-md-3 col-sm-4 col-xs-6">
         <ExternalLink text={props.vulnerability.name} href={props.vulnerability.link} />
       </div>
-      <div className="col-lg-2 col-md-3 col-sm-5 col-xs-7">
+      <div className="col-lg-2 col-md-2 col-sm-5 col-xs-6">
         <SecurityIcon
           color={vulnPriority.find((p) => p.title === props.vulnerability.severity).color.value}
         />
         &nbsp;{props.vulnerability.severity}
       </div>
       <div className="col-lg-2 col-md-2 col-sm-3 hidden-xs">{props.packageName}</div>
-      <div className="col-lg-1 col-md-2 hidden-sm hidden-xs">{props.currentVersion}</div>
-      <div className="col-lg-2 col-md-2 hidden-sm hidden-xs">
+      <div className="col-lg-2 col-md-2 hidden-sm hidden-xs">{props.currentVersion}</div>
+      <div className="col-lg-3 col-md-3 hidden-sm hidden-xs">
         {props.vulnerability.fixedby || '-'}
       </div>
     </div>
@@ -72,11 +72,11 @@ export const ImageVulnerabilitiesTable: React.FC<ImageVulnerabilitiesTableProps>
       <SectionHeading text="Vulnerabilities" />
       <div className="co-m-table-grid co-m-table-grid--bordered">
         <div className="row co-m-table-grid__head">
-          <div className="col-lg-2 col-md-3 col-sm-4 col-xs-5">Vulnerability</div>
-          <div className="col-lg-2 col-md-3 col-sm-5 col-xs-7">Severity</div>
+          <div className="col-lg-3 col-md-3 col-sm-4 col-xs-6">Vulnerability</div>
+          <div className="col-lg-2 col-md-2 col-sm-5 col-xs-6">Severity</div>
           <div className="col-lg-2 col-md-2 col-sm-3 hidden-xs">Package</div>
-          <div className="col-lg-1 col-md-2 hidden-sm hidden-xs">Current Version</div>
-          <div className="col-lg-2 col-md-2 hidden-sm hidden-xs">Fixed in Version</div>
+          <div className="col-lg-2 col-md-2 hidden-sm hidden-xs">Current Version</div>
+          <div className="col-lg-3 col-md-3 hidden-sm hidden-xs">Fixed in Version</div>
         </div>
         <div className="co-m-table-grid__body">
           {vulnerabilites.map(({ feature, vulnerability }) => (

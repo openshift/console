@@ -16,6 +16,9 @@
   "consolePlugin": {
     "entry": "src/plugin.tsx",
     "integrationTestSuites": {
+      "kubevirt-installation": [
+        "integration-tests/installation/*.scenario.ts"
+      ],
       "kubevirt": [
         "integration-tests/tests/*.scenario.ts"
       ],

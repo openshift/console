@@ -38,7 +38,7 @@ import { NetworkWrapper } from '../../k8s/wrapper/vm/network-wrapper';
 import { NetworkInterfaceWrapper } from '../../k8s/wrapper/vm/network-interface-wrapper';
 import { VolumeWrapper } from '../../k8s/wrapper/vm/volume-wrapper';
 import { DiskWrapper } from '../../k8s/wrapper/vm/disk-wrapper';
-import { MutableDataVolumeWrapper } from '../../k8s/wrapper/vm/data-volume-wrapper';
+import { DataVolumeWrapper } from '../../k8s/wrapper/vm/data-volume-wrapper';
 import {
   getDefaultSCAccessModes,
   getDefaultSCVolumeMode,
@@ -68,8 +68,14 @@ import {
 import { CREATE_VM, CREATE_VM_TEMPLATE, TabTitleResolver, IMPORT_VM } from './strings/strings';
 import { vmWizardActions } from './redux/actions';
 import { ActionType } from './redux/types';
+import { getResultInitialState } from './redux/initial-state/result-tab-initial-state';
 import { iGetCommonData, iGetCreateVMWizardTabs } from './selectors/immutable/selectors';
-import { isStepLocked, isStepPending, isStepValid } from './selectors/immutable/wizard-selectors';
+import {
+  isLastStepErrorFatal,
+  isStepLocked,
+  isStepPending,
+  isStepValid,
+} from './selectors/immutable/wizard-selectors';
 import { ResourceLoadErrors } from './resource-load-errors';
 import { CreateVMWizardFooter } from './create-vm-wizard-footer';
 import { VMSettingsTab } from './tabs/vm-settings-tab/vm-settings-tab';
@@ -104,7 +110,7 @@ const kubevirtInterOP = async ({
   const clonedStorages = _.cloneDeep(storages);
 
   const cloudInitVolume = clonedStorages.map((stor) => stor.volume).find(getVolumeCloudInitNoCloud);
-  const data = VolumeWrapper.initialize(cloudInitVolume).getCloudInitNoCloud();
+  const data = new VolumeWrapper(cloudInitVolume).getCloudInitNoCloud();
   const hostname = new CloudInitDataHelper(data).get(CloudInitDataFormKeys.HOSTNAME);
   if (hostname) {
     clonedVMsettings.hostname = { value: hostname };
@@ -123,8 +129,8 @@ const kubevirtInterOP = async ({
   }
 
   const interOPNetworks = clonedNetworks.map(({ networkInterface, network }) => {
-    const networkInterfaceWrapper = NetworkInterfaceWrapper.initialize(networkInterface);
-    const networkWrapper = NetworkWrapper.initialize(network);
+    const networkInterfaceWrapper = new NetworkInterfaceWrapper(networkInterface);
+    const networkWrapper = new NetworkWrapper(network);
 
     return {
       name: networkInterfaceWrapper.getName(),
@@ -144,11 +150,11 @@ const kubevirtInterOP = async ({
 
   const interOPStorages = clonedStorages.map(
     ({ type, disk, volume, dataVolume, persistentVolumeClaim, importData }) => {
-      const diskWrapper = DiskWrapper.initialize(disk);
-      const volumeWrapper = VolumeWrapper.initialize(volume);
-      const dataVolumeWrapper = dataVolume && new MutableDataVolumeWrapper(dataVolume, true);
+      const diskWrapper = new DiskWrapper(disk);
+      const volumeWrapper = new VolumeWrapper(volume);
+      const dataVolumeWrapper = dataVolume && new DataVolumeWrapper(dataVolume, true);
       const persistentVolumeClaimWrapper =
-        persistentVolumeClaim && PersistentVolumeClaimWrapper.initialize(persistentVolumeClaim);
+        persistentVolumeClaim && new PersistentVolumeClaimWrapper(persistentVolumeClaim);
 
       const isImport =
         persistentVolumeClaimWrapper &&
@@ -320,11 +326,14 @@ export class CreateVMWizardComponent extends React.Component<CreateVMWizardCompo
     promise
       .then(() => getResults(enhancedK8sMethods))
       .catch((error) => cleanupAndGetResults(enhancedK8sMethods, error))
-      .then(({ requestResults, errors, mainError, isValid }: ResultsWrapper) =>
-        this.props.onResultsChanged({ mainError, requestResults, errors }, isValid, true, false),
+      .then(({ isValid, ...rest }: ResultsWrapper) =>
+        this.props.onResultsChanged(rest, isValid, false, false),
       )
       .catch((e) => console.error(e)); // eslint-disable-line no-console
   };
+
+  goBackToEditingSteps = () =>
+    this.props.onResultsChanged(getResultInitialState({}).value, null, false, false);
 
   render() {
     const { reduxID, stepData } = this.props;
@@ -422,9 +431,17 @@ export class CreateVMWizardComponent extends React.Component<CreateVMWizardCompo
         const calculatedStep = {
           ...step,
           name: TabTitleResolver[step.id] || step.name,
-          canJumpTo: isStepLocked(stepData, VMWizardTab.RESULT) // request finished
-            ? step.id === VMWizardTab.RESULT
-            : !isLocked && isPrevStepValid && canJumpToPrevStep && step.id !== VMWizardTab.RESULT,
+          canJumpTo:
+            isStepLocked(stepData, VMWizardTab.RESULT) || isLastStepErrorFatal(stepData) // request in progress or failed
+              ? step.id === VMWizardTab.RESULT
+              : !isLocked &&
+                isPrevStepValid &&
+                canJumpToPrevStep &&
+                // disable uninitialized RESULT step
+                !(
+                  step.id === VMWizardTab.RESULT &&
+                  iGetIn(stepData, [VMWizardTab.RESULT, 'isValid']) == null
+                ),
           component: step.component,
         };
 
@@ -447,9 +464,22 @@ export class CreateVMWizardComponent extends React.Component<CreateVMWizardCompo
           isInPage
           className="kubevirt-create-vm-modal__wizard-content"
           onClose={this.onClose}
-          onNext={({ id }) => {
-            if (id === VMWizardTab.RESULT) {
+          onNext={({ id }, { prevId }) => {
+            if (id === VMWizardTab.RESULT && prevId !== VMWizardTab.RESULT) {
               this.finish();
+            }
+            if (prevId === VMWizardTab.RESULT && id !== VMWizardTab.RESULT) {
+              this.goBackToEditingSteps();
+            }
+          }}
+          onBack={({ id }, { prevId }) => {
+            if (prevId === VMWizardTab.RESULT && id !== VMWizardTab.RESULT) {
+              this.goBackToEditingSteps();
+            }
+          }}
+          onGoToStep={({ id }, { prevId }) => {
+            if (prevId === VMWizardTab.RESULT && id !== VMWizardTab.RESULT) {
+              this.goBackToEditingSteps();
             }
           }}
           steps={calculateSteps(steps)}

@@ -121,7 +121,7 @@ export const ActivityCard: React.FC = () => {
   const { obj } = React.useContext(ProjectDashboardContext);
   const projectName = getName(obj);
   return (
-    <DashboardCard gradient>
+    <DashboardCard gradient data-test-id="activity-card">
       <DashboardCardHeader>
         <DashboardCardTitle>Activity</DashboardCardTitle>
         <DashboardCardLink to={`/k8s/ns/${projectName}/events`}>View events</DashboardCardLink>

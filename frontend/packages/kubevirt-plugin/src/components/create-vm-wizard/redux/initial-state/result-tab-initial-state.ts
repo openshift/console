@@ -2,6 +2,7 @@ import { InitialStepStateGetter } from './types';
 
 export const getResultInitialState: InitialStepStateGetter = () => ({
   value: {
+    isFatal: null,
     mainError: null,
     errors: [],
     requestResults: [],

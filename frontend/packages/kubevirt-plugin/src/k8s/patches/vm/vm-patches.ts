@@ -2,26 +2,23 @@ import * as _ from 'lodash';
 import { Patch, TemplateKind } from '@console/internal/module/k8s';
 import { VMGenericLikeEntityKind, VMLikeEntityKind } from '../../../types/vmLike';
 import { getAnnotations, getDescription } from '../../../selectors/selectors';
-import { getFlavor, getCPU, getMemory, isVM, parseCPU, DEFAULT_CPU } from '../../../selectors/vm';
+import {
+  getFlavor,
+  getCPU,
+  getMemory,
+  parseCPU,
+  DEFAULT_CPU,
+  isVM,
+  isTemplate,
+} from '../../../selectors/vm';
 import { CUSTOM_FLAVOR, TEMPLATE_FLAVOR_LABEL } from '../../../constants';
-import { getTemplateForFlavor } from '../../../selectors/vm-template/selectors';
 import { getVMLikePatches } from '../vm-template';
-import { isCPUEqual } from '../../../utils';
 import { selectVM } from '../../../selectors/vm-template/basic';
-import { CPU, VMKind } from '../../../types/vm';
+import { CPU, VMITemplate, VMKind } from '../../../types/vm';
+import { PatchBuilder } from '@console/shared/src/k8s';
+import { getLabels } from '@console/shared/src';
 
-const getLabelsPatch = (vmLike: VMLikeEntityKind): Patch => {
-  if (!_.has(vmLike.metadata, 'labels')) {
-    return {
-      op: 'add',
-      path: '/metadata/labels',
-      value: {},
-    };
-  }
-  return null;
-};
-
-const getDomainPatch = (vm: VMKind): Patch => {
+const getDomainPatches = (vm: VMKind): Patch[] => {
   let patch: Patch = null;
   if (!_.has(vm, 'spec')) {
     patch = {
@@ -60,49 +57,33 @@ const getDomainPatch = (vm: VMKind): Patch => {
       value: {},
     };
   }
-  return patch;
+  return patch ? [patch] : [];
 };
 
-const getUpdateFlavorPatch = (vmLike: VMLikeEntityKind, flavor: string): Patch[] => {
-  const patch = [];
-  if (flavor !== getFlavor(vmLike)) {
-    const labelKey = `${TEMPLATE_FLAVOR_LABEL}/${flavor}`.replace('~', '~0').replace('/', '~1');
-    const labelPatch = getLabelsPatch(vmLike);
-    if (labelPatch) {
-      patch.push(labelPatch);
-    }
-    const flavorLabel = Object.keys(vmLike.metadata.labels || {}).find((key) =>
+const getUpdateFlavorPatchesImpl = (
+  vmLike: VMLikeEntityKind | VMITemplate,
+  oldFlavor,
+  newFlavor: string,
+): Patch[] => {
+  const path =
+    isVM(vmLike) || isTemplate(vmLike) ? '/metadata/labels' : '/spec/template/metadata/labels'; // or VMITemplate
+
+  const patches = [];
+  if (oldFlavor !== newFlavor) {
+    const labels = getLabels(vmLike);
+    const flavorLabel = Object.keys(labels || {}).find((key) =>
       key.startsWith(TEMPLATE_FLAVOR_LABEL),
     );
     if (flavorLabel) {
-      const flavorParts = flavorLabel.split('/');
-      if (flavorParts[flavorParts.length - 1] !== flavor) {
-        const escapedLabel = flavorLabel.replace('~', '~0').replace('/', '~1');
-        patch.push({
-          op: 'remove',
-          path: `/metadata/labels/${escapedLabel}`,
-        });
-      }
+      patches.push(new PatchBuilder(path).setObjectRemove(flavorLabel, labels).build());
     }
-    patch.push({
-      op: 'add',
-      path: `/metadata/labels/${labelKey}`,
-      value: 'true',
-    });
+    patches.push(
+      new PatchBuilder(path)
+        .setObjectUpdate(`${TEMPLATE_FLAVOR_LABEL}/${newFlavor}`, 'true', labels)
+        .build(),
+    );
   }
-  return patch;
-};
-
-const getCpuPatch = (vm: VMKind, cpu: CPU): Patch => {
-  return {
-    op: _.has(vm.spec, 'template.spec.domain.cpu') ? 'replace' : 'add',
-    path: '/spec/template/spec/domain/cpu',
-    value: {
-      sockets: cpu.sockets,
-      cores: cpu.cores,
-      threads: cpu.threads,
-    },
-  };
+  return patches;
 };
 
 const getMemoryPatch = (vm: VMKind, memory: string): Patch => {
@@ -134,26 +115,31 @@ const getMemoryPatch = (vm: VMKind, memory: string): Patch => {
 };
 
 const getUpdateCpuMemoryPatch = (vm: VMKind, cpu: CPU, memory: string): Patch[] => {
-  const patch = [];
-  const vmCpu = parseCPU(getCPU(vm));
+  const patches = [];
+  const oldCPU = getCPU(vm);
   const vmMemory = getMemory(vm);
 
-  if (memory !== vmMemory || !isCPUEqual(cpu, vmCpu)) {
-    const domainPatch = getDomainPatch(vm);
-    if (domainPatch) {
-      patch.push(domainPatch);
-    }
-  }
-
-  if (!isCPUEqual(cpu, vmCpu)) {
-    patch.push(getCpuPatch(vm, cpu));
-  }
+  patches.push(
+    new PatchBuilder('/spec/template/spec/domain/cpu')
+      .setObjectUpdate('sockets', cpu?.sockets, oldCPU)
+      .build(),
+  );
+  patches.push(
+    new PatchBuilder('/spec/template/spec/domain/cpu')
+      .setObjectUpdate('threads', cpu?.threads, oldCPU || {}) // created by the patch before
+      .build(),
+  );
+  patches.push(
+    new PatchBuilder('/spec/template/spec/domain/cpu')
+      .setObjectUpdate('cores', cpu?.cores, oldCPU || {})
+      .build(),
+  );
 
   if (memory !== vmMemory) {
-    patch.push(getMemoryPatch(vm, memory));
+    patches.push(getMemoryPatch(vm, memory));
   }
 
-  return patch;
+  return patches.length > 0 ? [...getDomainPatches(vm), ...patches] : patches;
 };
 
 export const getUpdateDescriptionPatches = (
@@ -191,28 +177,12 @@ export const getUpdateDescriptionPatches = (
 
 export const getUpdateFlavorPatches = (
   vmLike: VMLikeEntityKind,
-  templates: TemplateKind[],
+  template: TemplateKind,
   flavor: string,
   cpu?: number,
   mem?: string,
 ): Patch[] => {
-  const patches = [];
-
-  // TODO: vm.kubevirt.io/template label should be changed as well (vm.kubevirt.io/template: win2k12r2-server-large)
-  // TODO: by changing flavor and so the base template, VM devices can be changed as well and so "full delta" should be applied here.
-  // Considering recent kubevirt state, updating cpu and sockets is good enough for now, but should be enhanced in the future.
-
-  let template;
-  if (isVM(vmLike)) {
-    template = getTemplateForFlavor(templates, vmLike as VMKind, flavor);
-  } else {
-    const vm = selectVM(vmLike as TemplateKind);
-    template = getTemplateForFlavor(templates, vm, flavor);
-  }
-
-  // flavor is set on object.metadata.label level for both VM and VMTemplate
-  patches.push(...getUpdateFlavorPatch(vmLike, flavor));
-
+  const oldFlavor = getFlavor(vmLike);
   let customCpu = {
     sockets: 1,
     cores: cpu,
@@ -225,15 +195,21 @@ export const getUpdateFlavorPatches = (
     customMem = getMemory(templateVm);
   }
 
-  let cpuMemPatches;
-  if (isVM(vmLike)) {
-    cpuMemPatches = getUpdateCpuMemoryPatch(vmLike as VMKind, customCpu, customMem);
-  } else {
-    cpuMemPatches = getVMLikePatches(vmLike, (vm: VMKind) =>
-      getUpdateCpuMemoryPatch(vm, customCpu, customMem),
-    );
-  }
-  patches.push(...cpuMemPatches);
+  return [
+    ...getUpdateFlavorPatchesImpl(vmLike, oldFlavor, flavor),
+    ...getVMLikePatches(vmLike, (vm: VMKind) => {
+      const vmi = vm.spec?.template;
+      const additionalPatches = [
+        new PatchBuilder('/spec/template/metadata/labels')
+          .setObjectUpdate(`kubevirt.io/size`, flavor, getLabels(vmi))
+          .build(),
+        ...getUpdateCpuMemoryPatch(vm, customCpu, customMem),
+      ];
 
-  return patches;
+      if (isVM(vmLike)) {
+        additionalPatches.push(...getUpdateFlavorPatchesImpl(vmi, oldFlavor, flavor));
+      }
+      return additionalPatches;
+    }),
+  ];
 };

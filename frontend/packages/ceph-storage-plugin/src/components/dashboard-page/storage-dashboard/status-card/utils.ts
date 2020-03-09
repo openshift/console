@@ -33,7 +33,7 @@ export const getCephHealthState: PrometheusHealthHandler = (responses = [], erro
 export const getDataResiliencyState: PrometheusHealthHandler = (responses = [], errors = []) => {
   const progress: number = getResiliencyProgress(responses[0]);
   if (errors[0]) {
-    return { state: HealthState.UNKNOWN };
+    return { state: HealthState.NOT_AVAILABLE };
   }
   if (!responses[0]) {
     return { state: HealthState.LOADING };

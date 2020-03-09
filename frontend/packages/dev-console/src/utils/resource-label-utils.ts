@@ -34,6 +34,7 @@ export const getAppAnnotations = (gitURL: string, gitRef: string) => {
   return {
     'app.openshift.io/vcs-uri': gitURL,
     'app.openshift.io/vcs-ref': ref,
+    'openshift.io/generated-by': 'OpenShiftWebConsole',
   };
 };
 
@@ -49,6 +50,12 @@ export const mergeData = (originalResource: K8sResourceKind, newResource: K8sRes
   mergedData.metadata.labels = newResource.metadata.labels;
   if (mergedData.spec?.template?.metadata?.labels) {
     mergedData.spec.template.metadata.labels = newResource.spec?.template?.metadata?.labels;
+  }
+  if (mergedData.spec?.template?.spec?.containers) {
+    mergedData.spec.template.spec.containers = newResource.spec.template.spec.containers;
+  }
+  if (mergedData?.spec?.strategy) {
+    mergedData.spec.strategy = newResource.spec.strategy;
   }
   return mergedData;
 };

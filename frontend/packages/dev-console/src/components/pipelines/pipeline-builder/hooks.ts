@@ -1,4 +1,5 @@
 import * as React from 'react';
+import * as _ from 'lodash';
 import { k8sList } from '@console/internal/module/k8s';
 import { ClusterTaskModel, TaskModel } from '../../../models';
 import {
@@ -133,18 +134,31 @@ export const useNodes = (
   // TODO: Fix id collisions then remove this utility; we shouldn't need to trim the tasks
   const noDuplicates = (resource: PipelineResourceTask) =>
     !taskGroupRef.current.tasks.find((pt) => pt.name === resource.metadata.name);
-  const newListNode = (name: string, runAfter?: string[]): PipelineTaskListNodeModel =>
+  const newListNode = (
+    name: string,
+    runAfter?: string[],
+    firstTask?: boolean,
+  ): PipelineTaskListNodeModel =>
     createTaskListNode(name, {
       namespaceTaskList: namespacedTasks?.filter(noDuplicates),
       clusterTaskList: clusterTasks?.filter(noDuplicates),
       onNewTask: (resource: PipelineResourceTask) => {
         onNewTask(resource, name, runAfter);
       },
+      onRemoveTask: firstTask
+        ? null
+        : () => {
+            onUpdateTasks(taskGroupRef.current, {
+              type: UpdateOperationType.DELETE_LIST_TASK,
+              data: { listTaskName: name },
+            });
+          },
       task: {
         name,
         runAfter: runAfter || [],
       },
     });
+  const soloTask = (name = 'initial-node') => newListNode(name, undefined, true);
 
   const taskNodes: PipelineBuilderTaskNodeModel[] =
     taskGroup.tasks.length > 0
@@ -153,11 +167,12 @@ export const useNodes = (
           onNewListNode,
           (task) => onTaskSelection(task, getTask(task.taskRef)),
           getErrorMessage(nodeTaskErrors, tasksInError),
+          taskGroup.highlightedIds,
         )
       : [];
   const taskListNodes: PipelineTaskListNodeModel[] =
-    taskGroup.tasks.length === 0 && taskGroup.listTasks.length === 0
-      ? [newListNode('initial-node')]
+    taskGroup.tasks.length === 0 && taskGroup.listTasks.length <= 1
+      ? [soloTask(taskGroup.listTasks[0]?.name)]
       : taskGroup.listTasks.map((listTask) => newListNode(listTask.name, listTask.runAfter));
 
   const nodes: PipelineMixedNodeModel[] = handleParallelToParallelNodes([
@@ -181,6 +196,8 @@ export const useResourceValidation = (
   resourceValues: PipelineResource[],
   onError: UpdateErrors,
 ) => {
+  const [previousErrorIds, setPreviousErrorIds] = React.useState([]);
+
   React.useEffect(() => {
     const resourceNames = resourceValues.map((r) => r.name);
 
@@ -191,12 +208,35 @@ export const useResourceValidation = (
         (r) => !resourceNames.includes(r.resource),
       );
 
+      if (missingResources.length === 0) {
+        return acc;
+      }
+
       return {
         ...acc,
-        [task.name]: missingResources.length !== 0 ? [TaskErrorType.MISSING_RESOURCES] : null,
+        [task.name]: [TaskErrorType.MISSING_RESOURCES],
       };
     }, {});
 
-    onError(errors);
-  }, [tasks, resourceValues, onError]);
+    if (!_.isEmpty(errors) || previousErrorIds.length > 0) {
+      const outputErrors = previousErrorIds.reduce((acc, id) => {
+        if (acc[id]) {
+          // Error exists, leave it alone
+          return acc;
+        }
+
+        // Error doesn't exist but we had it once, make sure it is cleared
+        return {
+          ...acc,
+          [id]: null,
+        };
+      }, errors);
+
+      const currentErrorIds = Object.keys(outputErrors).filter((id) => !!outputErrors[id]);
+      if (!_.isEqual(currentErrorIds, previousErrorIds)) {
+        setPreviousErrorIds(currentErrorIds);
+      }
+      onError(outputErrors);
+    }
+  }, [tasks, resourceValues, onError, previousErrorIds, setPreviousErrorIds]);
 };
