@@ -571,26 +571,20 @@ const crdCardRowStateToProps = ({ k8s }, { crdDescs }) => {
 
 export const CRDCardRow = connect(crdCardRowStateToProps)((props: CRDCardRowProps) => {
   const internalObjects = getInternalObjects(props.csv);
+  const crds = props.crdDescs?.filter(({ name }) => !isInternalObject(internalObjects, name));
   return (
     <div className="co-crd-card-row">
-      {_.isEmpty(props.crdDescs) ? (
+      {_.isEmpty(crds) ? (
         <span className="text-muted">No Kubernetes APIs are being provided by this Operator.</span>
       ) : (
-        props.crdDescs.reduce(
-          (acc, desc) =>
-            !isInternalObject(internalObjects, desc.name)
-              ? [
-                  ...acc,
-                  <CRDCard
-                    key={referenceForProvidedAPI(desc)}
-                    crd={desc}
-                    csv={props.csv}
-                    canCreate={props.createable.includes(referenceForProvidedAPI(desc))}
-                  />,
-                ]
-              : acc,
-          [],
-        )
+        crds.map((crd) => (
+          <CRDCard
+            key={referenceForProvidedAPI(crd)}
+            crd={crd}
+            csv={props.csv}
+            canCreate={props.createable.includes(referenceForProvidedAPI(crd))}
+          />
+        ))
       )}
     </div>
   );
