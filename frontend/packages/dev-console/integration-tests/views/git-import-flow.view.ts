@@ -1,5 +1,9 @@
 /* eslint-disable no-console, promise/catch-or-return */
 import { browser, ExpectedConditions as until, by, element, Key } from 'protractor';
+import { config } from '@console/internal-integration-tests/protractor.conf';
+const waitForElement = config.jasmineNodeOpts.defaultTimeoutInterval;
+import { enterText, selectByIndex, verifyCheckBox, selectByVisibleText } from '../utilities/elementInteractions';
+import { click } from '@console/shared/src/test-utils/utils';
 
 export const addNavigate = element(by.css('[data-test-id="+Add-header"]'));
 export const gitImportButton = element(by.css('[data-test-id="import-from-git"]'));
@@ -22,6 +26,121 @@ export const builderImage = element(
 export const buildImageVersion = element(by.id('form-dropdown-image-tag-field'));
 export const createButton = element(by.css('[data-test-id="import-git-create-button"]'));
 export const builderImageVersionName = element(by.id('8-link'));
+
+export function routingObj() {
+  return {
+    hostname:  element(by.id('form-input-route-hostname-field')),
+    path: element(by.id('form-input-route-path-field')),
+    targetPort: element(by.css('button#form-dropdown-route-targetPort-field')),
+    secureRoute: element(by.css('input#form-checkbox-route-secure-field')),
+    tlsTermination: element(by.css('button#form-dropdown-route-tls-termination-field')),
+    insecureTraffic: element(by.css('button#form-dropdown-route-tls-insecureEdgeTerminationPolicy-field'))
+  };
+}
+
+export function buildConfigObj() {
+  return {
+    webHookBuildTrigger: element(by.css('input#form-checkbox-build-triggers-webhook-field')),
+    buildTriggerImage: element(by.css('input#form-checkbox-build-triggers-image-field')),
+    buildTriggerConfigField: element(by.css('input#form-checkbox-build-triggers-config-field')),
+
+    // Add Environment Value
+    addValue: element(by.buttonText('Add Value')), //[data-test-id="pairs-list__add-icon"]
+    envName: element(by.css('input[placeholder="name"]')),
+    envValue: element(by.css('input[placeholder="value"]')),
+    
+    // Count for Rows in Environment Variables section
+    envRows: element.all(by.css('div.row.pairs-list__row')),
+    deleteRowButton: element(by.css('button[data-test-id="pairs-list__delete-btn"]')),
+
+    // Add from Config Map or Secret
+    addFromConfigMap: element(by.buttonText('Add from Config Map or Secret')),
+    // selectResource: element(by.css(''))
+
+  }
+}
+
+export function deploymentObj() {
+  return {
+    deploymentTriggerImage: element(by.css('input#form-checkbox-deployment-triggers-image-field')),
+    deploymentImageConfig: element(by.css('input#form-checkbox-deployment-triggers-config-field')),
+    // Add Environment Value
+    addValue: element(by.buttonText('Add Value')), //[data-test-id="pairs-list__add-icon"]
+    envName: element(by.css('input[placeholder="name"]')),
+    envValue: element(by.css('input[placeholder="value"]')),
+    
+    // Count for Rows in Environment Variables section
+    envRows: element.all(by.css('div.row.pairs-list__row')),
+    deleteRowButton: element(by.css('button[data-test-id="pairs-list__delete-btn"]')),
+
+    // Add from Config Map or Secret
+    addFromConfigMap: element(by.buttonText('Add from Config Map or Secret')),
+  }
+}
+
+export function scalingObj() {
+  return {
+    decrement: element(by.css('button[aria-label="Decrement"]')),
+    increment: element(by.css('button[aria-label="Increment"]')),
+    replicaCount: element(by.css('input#form-number-spinner-deployment-replicas-field')),
+  }
+}
+
+export function resourceLimitsObj() {
+  return {
+    cpuRequest: element(by.css('input[name="limits.cpu.requestValue"]')),
+    cpuLimit: element(by.css('input[name="limits.cpu.limitValue"]')),
+    memoryRequest: element(by.css('input[name="limits.memory.requestValue"]')),
+    memoryLimit: element(by.css('input[name="limits.memory.limitValue"]'))
+  }
+}
+
+export function labelsObj() {
+  return {
+    labelName: element(by.css('input#tags-input'))
+  }
+}
+
+export enum AdvancedOptions {
+  Routing = 'Developer Perspective',
+  BuildConfig = ' Administrator Perspective',
+  Deployment = 'Deployment',
+  Scaling = 'Scaling',
+  ResourceLimits = 'Resource Limits',
+  Labels = 'Labels'
+}
+
+export const selectAdvancedOptions = async function(opt: AdvancedOptions) {
+  switch (opt) {
+    case AdvancedOptions.Routing: {
+      await click(element(by.cssContainingText('button.pf-c-button.pf-m-link.pf-m-inline', 'Routing')));
+      break;
+    }
+    case AdvancedOptions.BuildConfig: {
+      await click(element(by.cssContainingText('button.pf-c-button.pf-m-link.pf-m-inline', 'Build Configuration')));
+      break;
+    }
+    case AdvancedOptions.Deployment: {
+      await click(element(by.cssContainingText('button.pf-c-button.pf-m-link.pf-m-inline', 'Deployment')));
+      break;
+    }
+    case AdvancedOptions.Scaling: {
+      await click(element(by.cssContainingText('button.pf-c-button.pf-m-link.pf-m-inline', 'Scaling')));
+      break;
+    }
+    case AdvancedOptions.ResourceLimits: {
+      await click(element(by.cssContainingText('button.pf-c-button.pf-m-link.pf-m-inline', 'Resource Limits')));
+      break;
+    }
+    case AdvancedOptions.Labels: {
+      await click(element(by.cssContainingText('button.pf-c-button.pf-m-link.pf-m-inline', 'Labels')));
+      break;
+    }
+    default: {
+      throw new Error('Option is not available');
+    }
+  }
+};
 
 export const navigateImportFromGit = async function() {
   await browser.wait(until.elementToBeClickable(addNavigate), 5000);
@@ -102,3 +221,56 @@ export const addApplicationWithExistingApps = async function(name: string, nodeN
 export const setBuilderImage = async function() {
   await builderImage.click();
 };
+
+// Automating Advanced options present in git import flow
+export const setRouting = async function(hostname:string, path: string, tlsTerminationValue: string = 'Passthrough', insecureTrafficValue: string = 'None') {
+  await enterText(routingObj().hostname, hostname);
+  await enterText(routingObj().path, path);
+  await selectByIndex(routingObj().targetPort);
+  await click(routingObj().secureRoute).then(async() => {
+    await browser.wait(until.elementToBeClickable(routingObj().tlsTermination), waitForElement, `Unable to view the TLS termination dropdown field, even after ${waitForElement} ms `)
+    await selectByVisibleText(routingObj().tlsTermination, tlsTerminationValue);
+    await selectByVisibleText(routingObj().insecureTraffic, insecureTrafficValue)
+    // await selectByIndex(routingObj().insecureTraffic);
+  });
+};
+
+export const setEnvVariables = async function(envName: string, envValue: string) {
+  await buildConfigObj().envRows.count().then(async(count: number) => {
+    if(count === 1) {
+      await enterText(buildConfigObj().envName, envName);
+      await enterText(buildConfigObj().envValue, envValue);
+    }
+  })
+}
+export const setBuildConfig = async function(envName: string, envValue: string) {
+  const webHookTriggered =  await verifyCheckBox(buildConfigObj().webHookBuildTrigger);
+  const buildTriggeredImage = await verifyCheckBox(buildConfigObj().buildTriggerImage);
+  const buildTriggeredConfigField = await verifyCheckBox(buildConfigObj().buildTriggerConfigField);
+  if(webHookTriggered === true && buildTriggeredImage === true && buildTriggeredConfigField === true) {
+    await setEnvVariables(envName, envValue);
+  }
+}
+
+export const setDeployment = async function(envName: string, envValue: string) {
+  const deploymentTriggeredImage = await verifyCheckBox(deploymentObj().deploymentTriggerImage);
+  const deploymentConfigured = await verifyCheckBox(deploymentObj().deploymentImageConfig);
+  if(deploymentTriggeredImage=== true && deploymentConfigured === true) {
+    await setEnvVariables(envName, envValue);
+  }
+}
+
+export const setScaling = async function(replicaCount) {
+  await enterText(scalingObj().replicaCount, replicaCount);
+}
+
+export const setResources = async function(cpuRequest, cpuLimit, memoryRequest, memoryLimit) {
+  await enterText(resourceLimitsObj().cpuRequest, cpuRequest);
+  await enterText(resourceLimitsObj().cpuLimit, cpuLimit);
+  await enterText(resourceLimitsObj().memoryRequest, memoryRequest);
+  await enterText(resourceLimitsObj().memoryLimit, memoryLimit);
+}
+
+export const setLabel = async function(labelName) {
+  await enterText(labelsObj().labelName, labelName);
+}
