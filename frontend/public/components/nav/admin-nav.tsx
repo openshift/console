@@ -95,7 +95,7 @@ const AdminNav = () => (
         href="/dashboards"
         activePath="/dashboards/"
         name="Overview"
-        required={[FLAGS.CAN_LIST_NS, FLAGS.OPENSHIFT]}
+        required={[FLAGS.CAN_GET_NS, FLAGS.OPENSHIFT]}
       />
       <ResourceClusterLink resource="projects" name="Projects" required={FLAGS.OPENSHIFT} />
       <HrefLink href="/search" name="Search" startsWith={searchStartsWith} />
