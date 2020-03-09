@@ -9,7 +9,6 @@ import {
 } from './interval-validation-result';
 import { DiskBusValidationResult } from './disk-bus-validation-result';
 
-// TODO: Add all the fields in the form
 export class ValidationJSONPath extends ObjectEnum<string> {
   static readonly CPU = new ValidationJSONPath('jsonpath::.spec.domain.cpu.cores');
   static readonly MEMORY = new ValidationJSONPath(

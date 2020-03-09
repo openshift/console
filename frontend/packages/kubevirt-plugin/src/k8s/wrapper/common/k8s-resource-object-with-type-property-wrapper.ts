@@ -5,7 +5,7 @@ import { K8sResourceKindMethods } from '../types/types';
 import { ObjectWithTypePropertyWrapper } from './object-with-type-property-wrapper';
 import { ObjectEnum } from '../../../constants';
 
-export class K8sResourceObjectWithTypePropertyWrapper<
+export abstract class K8sResourceObjectWithTypePropertyWrapper<
   RESOURCE extends K8sResourceKind,
   TYPE extends ObjectEnum<string>,
   COMBINED_TYPE_DATA,

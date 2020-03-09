@@ -150,7 +150,7 @@ export class DataVolumeWrapper extends K8sResourceObjectWithTypePropertyWrapper<
     return this;
   };
 
-  public mergeWith(...dataVolumeWrappers: DataVolumeWrapper[]) {
+  mergeWith(...dataVolumeWrappers: DataVolumeWrapper[]) {
     super.mergeWith(...dataVolumeWrappers);
 
     if (!this.data?.spec?.pvc?.storageClassName && this.data?.spec?.pvc) {

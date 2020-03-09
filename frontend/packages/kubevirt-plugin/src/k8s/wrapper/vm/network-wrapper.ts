@@ -22,7 +22,7 @@ export class NetworkWrapper extends ObjectWithTypePropertyWrapper<
     multusNetworkName?: string;
   }) => new NetworkWrapper({ name }).setType(type, { networkName: multusNetworkName });
 
-  public constructor(network?: V1Network | NetworkWrapper, copy = false) {
+  constructor(network?: V1Network | NetworkWrapper, copy = false) {
     super(network, copy, NetworkType);
   }
 

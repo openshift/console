@@ -102,7 +102,9 @@ export class EnhancedK8sMethods {
 
   getHistory = () => [...this.history];
 
-  // replay history and resolve actual state
+  /**
+   * replay history and resolve actual state (living objects on the cluster)
+   */
   getActualState = () => {
     const currentIndexes = {};
     const currentUnfilteredState: K8sResourceKind[] = [];

@@ -27,7 +27,7 @@ export class NetworkInterfaceWrapper extends ObjectWithTypePropertyWrapper<
       interfaceType,
     );
 
-  public constructor(nic?: V1NetworkInterface | NetworkInterfaceWrapper, copy = false) {
+  constructor(nic?: V1NetworkInterface | NetworkInterfaceWrapper, copy = false) {
     super(nic, copy, NetworkInterfaceType);
   }
 
