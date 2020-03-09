@@ -586,3 +586,81 @@ export const internalImageValues: DeployImageFormData = {
   build: { env: [], triggers: {}, strategy: '' },
   isSearchingForImage: false,
 };
+
+export const knAppResources: AppResources = {
+  editAppResource: {
+    loaded: true,
+    loadError: '',
+    data: knativeService,
+  },
+  route: {
+    loaded: false,
+    loadError: 'routes.route.openshift.io "greeter" not found',
+    data: {},
+  },
+  buildConfig: {
+    loaded: false,
+    loadError: 'Error: buildconfigs.build.openshift.io "greeter" not found',
+    data: {},
+  },
+  imageStream: {
+    loaded: true,
+    loadError: '',
+    data: [],
+  },
+};
+
+export const knExternalImageValues: DeployImageFormData = {
+  application: { name: '', selectedKey: '#UNASSIGNED_KEY#' },
+  build: { env: [], strategy: '', triggers: {} },
+  deployment: { env: [], replicas: 1, triggers: { image: false } },
+  formType: 'edit',
+  image: { image: {}, name: '', ports: [], status: { metadata: {}, status: '' }, tag: '' },
+  imageStream: { grantAccess: true, image: '', namespace: '', tag: '' },
+  isSearchingForImage: false,
+  isi: { image: {}, name: '', ports: [], status: { metadata: {}, status: '' }, tag: '' },
+  labels: {},
+  limits: {
+    cpu: {
+      defaultLimitUnit: '',
+      defaultRequestUnit: '',
+      limit: '',
+      limitUnit: '',
+      request: '',
+      requestUnit: '',
+    },
+    memory: {
+      defaultLimitUnit: 'Mi',
+      defaultRequestUnit: 'Mi',
+      limit: '',
+      limitUnit: 'Mi',
+      request: '',
+      requestUnit: 'Mi',
+    },
+  },
+  name: 'nationalparks-py',
+  pipeline: { enabled: false },
+  project: { name: 'div' },
+  registry: 'external',
+  resources: Resources.KnativeService,
+  route: {
+    create: true,
+    defaultUnknownPort: 8080,
+    disable: true,
+    hostname: '',
+    path: '',
+    secure: false,
+    targetPort: '',
+    tls: {
+      caCertificate: '',
+      certificate: '',
+      destinationCACertificate: '',
+      insecureEdgeTerminationPolicy: '',
+      privateKey: '',
+      termination: '',
+    },
+    unknownTargetPort: '',
+  },
+  searchTerm: 'openshift/hello-openshift',
+  serverless: { scaling: { concurrencylimit: '', concurrencytarget: '', maxpods: '', minpods: 0 } },
+};

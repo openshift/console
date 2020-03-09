@@ -92,6 +92,7 @@ export const getRouteData = (route: K8sResourceKind, resource: K8sResourceKind) 
         _.get(resource, 'metadata.labels["serving.knative.dev/visibility"]', '') !==
         'cluster-local',
       unknownTargetPort: _.toString(port),
+      targetPort: _.toString(port),
     };
   }
   return routeData;
@@ -314,11 +315,13 @@ const deployImageInitialValues = {
   isSearchingForImage: false,
 };
 
-export const getExternalImageInitialValues = (imageStream: K8sResourceKind) => {
-  if (_.isEmpty(imageStream)) {
+export const getExternalImageInitialValues = (appResources: AppResources) => {
+  const imageStreamList = appResources?.imageStream?.data;
+  if (_.isEmpty(imageStreamList)) {
     return {};
   }
-  const name = _.get(imageStream, 'spec.tags[0].from.name');
+  const imageStream = _.orderBy(imageStreamList, ['metadata.resourceVersion'], ['desc']);
+  const name = imageStream.length && imageStream[0]?.spec?.tags?.[0]?.from?.name;
   return {
     ...deployImageInitialValues,
     searchTerm: name,
