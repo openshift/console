@@ -14,7 +14,6 @@ import {
 } from '@console/internal/components/utils';
 import { CustomResourceDefinitionModel } from '@console/internal/models';
 import * as k8s from '@console/internal/module/k8s';
-import * as modals from '@console/internal/components/modals';
 import { testInstallPlan } from '../../mocks';
 import { InstallPlanModel, ClusterServiceVersionModel, OperatorGroupModel } from '../models';
 import { InstallPlanKind, InstallPlanApproval } from '../types';
@@ -34,9 +33,20 @@ import {
   InstallPlanDetails,
   InstallPlanDetailsProps,
 } from './install-plan';
+
+import * as modal from './modals/installplan-preview-modal';
+
 import { referenceForStepResource } from '.';
 
 import Spy = jasmine.Spy;
+
+// Prevent failures if column order is changed
+const COLUMNS = InstallPlanTableHeader();
+const NAME_INDEX = _.findIndex(COLUMNS, (c) => c.title === 'Name');
+const NAMESPACE_INDEX = _.findIndex(COLUMNS, (c) => c.title === 'Namespace');
+const STATUS_INDEX = _.findIndex(COLUMNS, (c) => c.title === 'Status');
+const COMPONENTS_INDEX = _.findIndex(COLUMNS, (c) => c.title === 'Components');
+const SUBSCRIPTIONS_INDEX = _.findIndex(COLUMNS, (c) => c.title === 'Subscriptions');
 
 describe(InstallPlanTableHeader.displayName, () => {
   it('returns column header definition for install plans', () => {
@@ -66,28 +76,28 @@ describe(InstallPlanTableRow.displayName, () => {
     expect(
       wrapper
         .find(TableRow)
-        .childAt(0)
+        .childAt(NAME_INDEX)
         .find(ResourceLink)
         .props().kind,
     ).toEqual(k8s.referenceForModel(InstallPlanModel));
     expect(
       wrapper
         .find(TableRow)
-        .childAt(0)
+        .childAt(NAME_INDEX)
         .find(ResourceLink)
         .props().namespace,
     ).toEqual(testInstallPlan.metadata.namespace);
     expect(
       wrapper
         .find(TableRow)
-        .childAt(0)
+        .childAt(NAME_INDEX)
         .find(ResourceLink)
         .props().name,
     ).toEqual(testInstallPlan.metadata.name);
     expect(
       wrapper
         .find(TableRow)
-        .childAt(0)
+        .childAt(NAME_INDEX)
         .find(ResourceLink)
         .props().title,
     ).toEqual(testInstallPlan.metadata.uid);
@@ -97,65 +107,32 @@ describe(InstallPlanTableRow.displayName, () => {
     expect(
       wrapper
         .find(TableRow)
-        .childAt(1)
+        .childAt(NAMESPACE_INDEX)
         .find(ResourceLink)
         .props().kind,
     ).toEqual('Namespace');
     expect(
       wrapper
         .find(TableRow)
-        .childAt(1)
+        .childAt(NAMESPACE_INDEX)
         .find(ResourceLink)
         .props().title,
     ).toEqual(testInstallPlan.metadata.namespace);
     expect(
       wrapper
         .find(TableRow)
-        .childAt(1)
+        .childAt(NAMESPACE_INDEX)
         .find(ResourceLink)
         .props().displayName,
     ).toEqual(testInstallPlan.metadata.namespace);
-  });
-
-  it('render column for install plan components list', () => {
-    expect(
-      wrapper
-        .find(TableRow)
-        .childAt(2)
-        .find(ResourceLink)
-        .props().kind,
-    ).toEqual(k8s.referenceForModel(ClusterServiceVersionModel));
-    expect(
-      wrapper
-        .find(TableRow)
-        .childAt(2)
-        .find(ResourceLink)
-        .props().name,
-    ).toEqual(testInstallPlan.spec.clusterServiceVersionNames.toString());
-    expect(
-      wrapper
-        .find(TableRow)
-        .childAt(2)
-        .find(ResourceLink)
-        .props().namespace,
-    ).toEqual(testInstallPlan.metadata.namespace);
-  });
-
-  it('renders column for parent subscription(s) determined by `metadata.ownerReferences`', () => {
-    expect(
-      wrapper
-        .find(TableRow)
-        .childAt(3)
-        .find(ResourceLink).length,
-    ).toEqual(1);
   });
 
   it('renders column for install plan status', () => {
     expect(
       wrapper
         .find(TableRow)
-        .childAt(4)
-        .shallow()
+        .childAt(STATUS_INDEX)
+        .render()
         .text(),
     ).toEqual(testInstallPlan.status.phase);
   });
@@ -167,24 +144,57 @@ describe(InstallPlanTableRow.displayName, () => {
     expect(
       wrapper
         .find(TableRow)
-        .childAt(4)
-        .shallow()
+        .childAt(STATUS_INDEX)
+        .render()
         .text(),
     ).toEqual('Unknown');
     expect(
       wrapper
         .find(TableRow)
-        .childAt(2)
+        .childAt(COMPONENTS_INDEX)
         .find(ResourceIcon).length,
     ).toEqual(1);
     expect(
       wrapper
         .find(TableRow)
-        .childAt(2)
+        .childAt(COMPONENTS_INDEX)
         .find(ResourceIcon)
         .at(0)
         .props().kind,
     ).toEqual(k8s.referenceForModel(ClusterServiceVersionModel));
+  });
+
+  it('render column for install plan components list', () => {
+    expect(
+      wrapper
+        .find(TableRow)
+        .childAt(COMPONENTS_INDEX)
+        .find(ResourceLink)
+        .props().kind,
+    ).toEqual(k8s.referenceForModel(ClusterServiceVersionModel));
+    expect(
+      wrapper
+        .find(TableRow)
+        .childAt(COMPONENTS_INDEX)
+        .find(ResourceLink)
+        .props().name,
+    ).toEqual(testInstallPlan.spec.clusterServiceVersionNames.toString());
+    expect(
+      wrapper
+        .find(TableRow)
+        .childAt(COMPONENTS_INDEX)
+        .find(ResourceLink)
+        .props().namespace,
+    ).toEqual(testInstallPlan.metadata.namespace);
+  });
+
+  it('renders column for parent subscription(s) determined by `metadata.ownerReferences`', () => {
+    expect(
+      wrapper
+        .find(TableRow)
+        .childAt(SUBSCRIPTIONS_INDEX)
+        .find(ResourceLink).length,
+    ).toEqual(1);
   });
 });
 
@@ -368,7 +378,7 @@ describe(InstallPlanPreview.name, () => {
       .find('tbody')
       .find('tr')
       .at(1);
-    const modalSpy = spyOn(modals, 'installPlanPreviewModal').and.returnValue(null);
+    const modalSpy = spyOn(modal, 'installPlanPreviewModal').and.returnValue(null);
 
     expect(
       row
@@ -381,7 +391,7 @@ describe(InstallPlanPreview.name, () => {
     row
       .find('td')
       .at(0)
-      .find('.pf-m-link')
+      .find(Button)
       .simulate('click');
 
     expect(modalSpy.calls.argsFor(0)[0].stepResource).toEqual(installPlan.status.plan[1].resource);

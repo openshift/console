@@ -49,7 +49,7 @@
     "transformIgnorePatterns": [
       "<rootDir>/node_modules/(?!(lodash-es|@console|@novnc|@spice-project)/.*)"
     ],
-    "testRegex": "/__tests__/.*\\.spec\\.(ts|tsx|js|jsx)$",
+    "testRegex": ".*\\.spec\\.(ts|tsx|js|jsx)$",
     "testURL": "http://localhost",
     "setupFiles": [
       "./__mocks__/localStorage.ts",

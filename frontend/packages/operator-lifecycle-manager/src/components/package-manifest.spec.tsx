@@ -13,6 +13,7 @@ import {
   PackageManifestListProps,
 } from './package-manifest';
 import { ClusterServiceVersionLogo } from '.';
+import { Button } from '@patternfly/react-core';
 
 describe(PackageManifestTableHeader.displayName, () => {
   it('renders column header for package name', () => {
@@ -111,7 +112,10 @@ describe(PackageManifestTableRow.displayName, () => {
         .find(TableRow)
         .childAt(2)
         .dive()
-        .find('button')
+        .find(Link)
+        .at(1)
+        .find(Button)
+        .render()
         .text(),
     ).toEqual('Create Subscription');
   });
@@ -124,7 +128,8 @@ describe(PackageManifestTableRow.displayName, () => {
         .find(TableRow)
         .childAt(2)
         .dive()
-        .find('button')
+        .find(Link)
+        .at(1)
         .exists(),
     ).toBe(false);
   });
