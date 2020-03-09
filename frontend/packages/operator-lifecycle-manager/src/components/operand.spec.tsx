@@ -14,6 +14,7 @@ import {
 } from '../../mocks';
 import { ClusterServiceVersionModel } from '../models';
 import {
+  OperandList_,
   OperandList,
   OperandListProps,
   ProvidedAPIsPage,
@@ -55,7 +56,9 @@ describe(OperandTableRow.displayName, () => {
   let wrapper: ShallowWrapper<OperandTableRowProps>;
 
   beforeEach(() => {
-    wrapper = shallow(<OperandTableRow obj={testResourceInstance} index={0} style={{}} />);
+    wrapper = shallow(
+      <OperandTableRow obj={testResourceInstance} index={0} style={{}} flags={{}} />,
+    );
   });
 
   it('renders column for resource name', () => {
@@ -123,13 +126,14 @@ describe(OperandTableRow.displayName, () => {
   });
 });
 
-describe(OperandList.displayName, () => {
+describe(OperandList_.displayName, () => {
   let wrapper: ShallowWrapper<OperandListProps>;
   let resources: k8sModels.K8sResourceKind[];
 
   beforeEach(() => {
     resources = [testResourceInstance];
-    wrapper = shallow(<OperandList loaded data={resources} filters={{}} />);
+    // eslint-disable-next-line react/jsx-pascal-case
+    wrapper = shallow(<OperandList_ loaded data={resources} filters={{}} flags={{}} />);
   });
 
   it('renders a `Table` of the custom resource instances of the given kind', () => {
@@ -141,7 +145,7 @@ describe(OperandList.displayName, () => {
       ),
     ).toBe(true);
     expect(table.props().Header).toEqual(OperandTableHeader);
-    expect(table.props().Row).toEqual(OperandTableRow);
+    expect(_.isFunction(table.props().Row)).toBe(true);
   });
 });
 
@@ -272,6 +276,7 @@ describe(OperandDetailsPage.displayName, () => {
       <OperandDetailsPage.WrappedComponent
         modelRef={k8sModels.referenceFor(testResourceInstance)}
         match={match}
+        flags={{}}
       />,
     );
   });

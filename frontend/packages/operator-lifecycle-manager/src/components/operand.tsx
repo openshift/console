@@ -2,6 +2,7 @@ import * as React from 'react';
 import { match } from 'react-router-dom';
 import * as _ from 'lodash';
 import { connect } from 'react-redux';
+import { compose } from 'redux';
 import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
 import { Status, SuccessStatus } from '@console/shared';
@@ -54,6 +55,7 @@ import { SpecDescriptor } from './descriptors/spec';
 import { StatusCapability, Descriptor } from './descriptors/types';
 import { Resources } from './k8s-resource';
 import { referenceForProvidedAPI, OperandLink } from './index';
+import { FlagsObject, connectToFlags, WithFlagsProps } from '@console/internal/reducers/features';
 
 const csvName = () =>
   window.location.pathname
@@ -64,11 +66,12 @@ const csvName = () =>
         allParts[i - 1] === ClusterServiceVersionModel.plural,
     );
 
-const getActions = (ref: K8sResourceKindReference) => {
+const getActions = (ref: K8sResourceKindReference, flags: FlagsObject) => {
   const actions = plugins.registry
     .getClusterServiceVersionActions()
     .filter(
       (action) =>
+        plugins.registry.isExtensionInUse(action, flags) &&
         action.properties.kind === kindForReference(ref) &&
         apiGroupForReference(ref) === action.properties.apiGroup,
     );
@@ -245,9 +248,16 @@ export const OperandStatusIconAndText: React.FunctionComponent<OperandStatusIcon
   return iconAndText;
 };
 
-export const OperandTableRow: React.FC<OperandTableRowProps> = ({ obj, index, key, style }) => {
+export const OperandTableRow: React.FC<OperandTableRowProps> = ({
+  obj,
+  index,
+  rowKey,
+  style,
+  flags,
+}) => {
+  const actions = getActions(referenceFor(obj), flags);
   return (
-    <TableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
+    <TableRow id={obj.metadata.uid} index={index} trKey={rowKey} style={style}>
       <TableData className={tableColumnClasses[0]}>
         <OperandLink obj={obj} />
       </TableData>
@@ -270,17 +280,20 @@ export const OperandTableRow: React.FC<OperandTableRowProps> = ({ obj, index, ke
         <Timestamp timestamp={obj.metadata.creationTimestamp} />
       </TableData>
       <TableData className={tableColumnClasses[6]}>
-        <ResourceKebab
-          actions={getActions(referenceFor(obj))}
-          kind={referenceFor(obj)}
-          resource={obj}
-        />
+        <ResourceKebab actions={actions} kind={referenceFor(obj)} resource={obj} />
       </TableData>
     </TableRow>
   );
 };
-
-export const OperandList: React.SFC<OperandListProps> = (props) => {
+// eslint-disable-next-line no-underscore-dangle
+export const OperandList_: React.FC<OperandListProps & WithFlagsProps> = (props) => {
+  const { flags } = props;
+  const Row = React.useCallback(
+    (rowProps: OperandTableRowProps) => (
+      <OperandTableRow {...rowProps} rowKey={rowProps.key} flags={flags ?? null} />
+    ),
+    [flags],
+  );
   const ensureKind = (data: K8sResourceKind[]) =>
     data.map((obj) => {
       if (obj.apiVersion && obj.kind) {
@@ -307,11 +320,15 @@ export const OperandList: React.SFC<OperandListProps> = (props) => {
       EmptyMsg={EmptyMsg}
       aria-label="Operands"
       Header={OperandTableHeader}
-      Row={OperandTableRow}
+      Row={Row}
       virtualize
     />
   );
 };
+
+export const OperandList = connectToFlags(
+  ...plugins.registry.getGatingFlagNames([plugins.isClusterServiceVersionAction]),
+)(OperandList_);
 
 const inFlightStateToProps = ({ k8s }: RootState) => ({
   inFlight: k8s.getIn(['RESOURCES', 'inFlight']),
@@ -578,7 +595,12 @@ const ResourcesTab = (resourceProps) => (
   <Resources {...resourceProps} clusterServiceVersion={resourceProps.csv} />
 );
 
-export const OperandDetailsPage = connectToPlural((props: OperandDetailsPageProps) => (
+export const OperandDetailsPage = compose(
+  connectToFlags<OperandDetailsPageProps & WithFlagsProps>(
+    ...plugins.registry.getGatingFlagNames([plugins.isClusterServiceVersionAction]),
+  ),
+  connectToPlural,
+)((props: OperandDetailsPageProps & WithFlagsProps) => (
   <DetailsPage
     match={props.match}
     name={props.match.params.name}
@@ -593,7 +615,7 @@ export const OperandDetailsPage = connectToPlural((props: OperandDetailsPageProp
         prop: 'csv',
       },
     ]}
-    menuActions={getActions(props.modelRef)}
+    menuActions={getActions(props.modelRef, props.flags)}
     breadcrumbsFor={() => [
       {
         name: 'Installed Operators',
@@ -632,6 +654,7 @@ export type OperandListProps = {
   reduxIDs?: string[];
   rowSplitter?: any;
   staticFilters?: any;
+  flags?: FlagsObject;
 };
 
 export type OperandStatusIconAndTextProps = {
@@ -686,12 +709,15 @@ export type OperandesourceDetailsProps = {
 export type OperandTableRowProps = {
   obj: K8sResourceKind;
   index: number;
+  rowKey?: string;
   key?: string;
   style: object;
+  flags?: FlagsObject;
 };
 
 // TODO(alecmerdler): Find Webpack loader/plugin to add `displayName` to React components automagically
 OperandList.displayName = 'OperandList';
+OperandList_.displayName = 'OperandList';
 OperandDetails.displayName = 'OperandDetails';
 OperandList.displayName = 'OperandList';
 ProvidedAPIsPage.displayName = 'ProvidedAPIsPage';
