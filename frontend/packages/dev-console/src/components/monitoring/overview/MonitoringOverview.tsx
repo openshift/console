@@ -15,8 +15,9 @@ import {
   Title,
 } from '@patternfly/react-core';
 import { InfoCircleIcon } from '@patternfly/react-icons';
-import { K8sResourceKind, EventKind } from '@console/internal/module/k8s';
+import { K8sResourceKind, EventKind, PodKind } from '@console/internal/module/k8s';
 import { DeploymentConfigModel } from '@console/internal/models';
+import { sortEvents } from '@console/internal/components/events';
 import { FirehoseResult, LoadingBox } from '@console/internal/components/utils';
 import MonitoringOverviewEventsWarning from './MonitoringOverviewEventsWarning';
 import MonitoringOverviewEvents from './MonitoringOverviewEvents';
@@ -25,17 +26,34 @@ import './MonitoringOverview.scss';
 
 type MonitoringOverviewProps = {
   resource: K8sResourceKind;
-  events?: FirehoseResult<EventKind[]>;
+  pods?: PodKind[];
+  resourceEvents?: FirehoseResult<EventKind[]>;
 };
 
-const MonitoringOverview: React.FC<MonitoringOverviewProps> = ({ resource, events }) => {
+const MonitoringOverview: React.FC<MonitoringOverviewProps> = (props) => {
+  const { resource, pods, resourceEvents } = props;
   const [expanded, setExpanded] = React.useState(['metrics']);
 
-  if (!events.loaded) {
+  if (
+    !resourceEvents ||
+    !resourceEvents.loaded ||
+    (pods && pods.find((pod) => !props[pod.metadata.uid] || !props[pod.metadata.uid].loaded))
+  ) {
     return <LoadingBox />;
   }
 
-  const eventWarning = _.filter(events.data, ['type', 'Warning']);
+  let events = [...resourceEvents.data];
+  if (pods) {
+    pods.forEach((pod) => {
+      const podData = props[pod.metadata.uid];
+      if (podData) {
+        events.push(...podData.data);
+      }
+    });
+  }
+
+  events = sortEvents(events);
+  const eventWarning = _.filter(events, ['type', 'Warning']);
 
   const onToggle = (id: string) => {
     const index = expanded.indexOf(id);
@@ -130,7 +148,7 @@ const MonitoringOverview: React.FC<MonitoringOverviewProps> = ({ resource, event
             All Events
           </AccordionToggle>
           <AccordionContent id="all-events-content" isHidden={!expanded.includes('all-events')}>
-            <MonitoringOverviewEvents events={events.data} />
+            <MonitoringOverviewEvents events={events} />
           </AccordionContent>
         </AccordionItem>
       </Accordion>
