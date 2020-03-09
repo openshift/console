@@ -173,6 +173,9 @@ export const EditYAML_ = connect(stateToProps)(
 
       loadYaml(reload = false, obj = this.props.obj) {
         if (this.state.initialized && !reload) {
+          if (window.Cypress) {
+            window.yamlEditorReady = true;
+          }
           return;
         }
 
@@ -525,6 +528,7 @@ export const EditYAML_ = connect(stateToProps)(
                             type="submit"
                             variant="primary"
                             id="save-changes"
+                            data-test="save-changes"
                             onClick={() => this.save()}
                           >
                             Create
@@ -535,6 +539,7 @@ export const EditYAML_ = connect(stateToProps)(
                             type="submit"
                             variant="primary"
                             id="save-changes"
+                            data-test="save-changes"
                             onClick={() => this.save()}
                           >
                             Save
@@ -545,12 +550,18 @@ export const EditYAML_ = connect(stateToProps)(
                             type="submit"
                             variant="secondary"
                             id="reload-object"
+                            data-test="reload-object"
                             onClick={() => this.reload()}
                           >
                             Reload
                           </Button>
                         )}
-                        <Button variant="secondary" id="cancel" onClick={() => this.onCancel()}>
+                        <Button
+                          variant="secondary"
+                          id="cancel"
+                          data-test="cancel"
+                          onClick={() => this.onCancel()}
+                        >
                           Cancel
                         </Button>
                         {download && (

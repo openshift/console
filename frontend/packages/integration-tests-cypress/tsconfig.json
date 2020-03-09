@@ -1,0 +1,12 @@
+{
+  "extends": "../../tsconfig",
+  "compilerOptions": {
+    "baseUrl": "../../node_modules",
+    "types": ["cypress"]
+  },
+  "include": [
+    "../../node_modules/cypress/types",
+    "../../public/declarations.d.ts",
+    "**/*.ts"
+  ]
+}

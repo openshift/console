@@ -1,0 +1,6 @@
+{
+  "name": "@console/cypress-integration-tests",
+  "version": "0.0.0-fixed",
+  "description": "Console integration tests to be moved into appropriate packages",
+  "private": true
+}

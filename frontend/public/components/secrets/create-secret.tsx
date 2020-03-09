@@ -253,6 +253,7 @@ export const withSecretForm = (SubForm, modal?: boolean) =>
               <ActionGroup className="pf-c-form">
                 <Button
                   type="submit"
+                  data-test="save-changes"
                   isDisabled={this.state.disableForm}
                   variant="primary"
                   id="save-changes"
