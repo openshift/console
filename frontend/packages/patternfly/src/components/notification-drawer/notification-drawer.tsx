@@ -3,6 +3,7 @@ import {
   Drawer,
   DrawerContent,
   DrawerPanelContent,
+  DrawerPanelBody,
 } from '@patternfly/react-core/dist/js/experimental/components/Drawer';
 
 import NotificationDrawerHeading from './notification-drawer-heading';
@@ -14,12 +15,15 @@ const NotificationDrawer: React.FC<NotificationDrawerProps> = ({
   notificationEntries,
   className,
 }) => {
+  const panelContent = (
+    <DrawerPanelContent className={className}>
+      <NotificationDrawerHeading>{notificationEntries}</NotificationDrawerHeading>
+      <DrawerPanelBody noPadding />
+    </DrawerPanelContent>
+  );
   return (
     <Drawer isExpanded={isExpanded} isInline={isInline}>
-      <DrawerContent>{children}</DrawerContent>
-      <DrawerPanelContent className={className} noPadding>
-        <NotificationDrawerHeading>{notificationEntries}</NotificationDrawerHeading>
-      </DrawerPanelContent>
+      <DrawerContent panelContent={panelContent}>{children}</DrawerContent>
     </Drawer>
   );
 };
