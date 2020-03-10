@@ -88,7 +88,7 @@ export const validateBus = (value: DiskBus, allowedBuses: Set<DiskBus>): Validat
   if (allowedBuses && !allowedBuses.has(value)) {
     return asValidationObject(
       `Invalid interface type. Valid types are: ${joinGrammaticallyListOfItems(
-        [...allowedBuses].map((b) => b.toString()),
+        Array.from(allowedBuses).map((b) => b.toString()),
       )}`,
       ValidationErrorType.Error,
     );

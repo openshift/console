@@ -90,7 +90,7 @@ export const validateDNS1123SubdomainValue = (
 
   if (forbiddenCharacters.size > 0) {
     const forbiddenChars = joinGrammaticallyListOfItems(
-      [...forbiddenCharacters].sort((a, b) => b.length - a.length),
+      Array.from(forbiddenCharacters).sort((a, b) => b.length - a.length),
     );
     const forbiddenCharsSentence = makeSentence(`${forbiddenChars} characters are not allowed`);
     result = result ? `${result} ${forbiddenCharsSentence}` : forbiddenCharsSentence;

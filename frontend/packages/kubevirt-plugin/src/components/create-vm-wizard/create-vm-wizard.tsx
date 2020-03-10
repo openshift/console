@@ -231,7 +231,7 @@ export class CreateVMWizardComponent extends React.Component<CreateVMWizardCompo
     if (this.isClosed) {
       return;
     }
-    const changedProps = [...DetectCommonDataChanges].reduce((changedPropsAcc, propName) => {
+    const changedProps = Array.from(DetectCommonDataChanges).reduce((changedPropsAcc, propName) => {
       if (prevProps[propName] !== this.props[propName]) {
         changedPropsAcc.add(propName);
       }
@@ -493,7 +493,7 @@ export class CreateVMWizardComponent extends React.Component<CreateVMWizardCompo
 const wizardStateToProps = (state, { reduxID }) => ({
   stepData: iGetCreateVMWizardTabs(state, reduxID),
   // fetch data from store to detect and fire changes
-  ...[...DetectCommonDataChanges].reduce((acc, propName) => {
+  ...Array.from(DetectCommonDataChanges).reduce((acc, propName) => {
     acc[propName] = iGetCommonData(state, reduxID, propName);
     return acc;
   }, {}),

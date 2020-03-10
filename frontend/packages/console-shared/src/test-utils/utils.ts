@@ -9,7 +9,7 @@ export function resolveTimeout(timeout: number, defaultTimeout: number) {
 }
 
 export function removeLeakedResources(leakedResources: Set<string>) {
-  const leakedArray: string[] = [...leakedResources];
+  const leakedArray: string[] = Array.from(leakedResources);
   if (leakedArray.length > 0) {
     console.error(`Leaked ${leakedArray.join()}`);
     leakedArray
@@ -118,7 +118,7 @@ export async function getDropdownOptions(dropdownId: string): Promise<string[]> 
 }
 
 export async function asyncForEach(iterable, callback) {
-  const array = [...iterable];
+  const array = Array.from(iterable);
   for (let index = 0; index < array.length; index++) {
     await callback(array[index], index, array);
   }

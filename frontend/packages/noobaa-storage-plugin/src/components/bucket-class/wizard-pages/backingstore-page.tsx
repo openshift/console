@@ -146,7 +146,7 @@ const BackingStorePage: React.FC<BackingStorePageProps> = React.memo(
       selectedItem.selected = !selectedItem.selected;
       isSelected ? (selectedItem.selectedBy = tableId) : (selectedItem.selectedBy = '');
       store.add(selectedItem);
-      dispatcher({ type: 'setBackingStores', value: [...store] });
+      dispatcher({ type: 'setBackingStores', value: Array.from(store) });
       // 0 tier-1 table, 1 tier-2 table
       const itemsTable1 = filterSelectedItems(storeMain, 0);
       dispatcher({ type: 'setBackingStoreTier1', value: itemsTable1 });

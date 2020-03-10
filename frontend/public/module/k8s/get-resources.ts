@@ -101,7 +101,7 @@ export const getResources = () =>
             namespaced && namespacedSet.add(name);
           }),
       );
-      const allResources = [...resourceSet].sort();
+      const allResources = Array.from(resourceSet).sort();
 
       const safeResources = [];
       const adminResources = [];

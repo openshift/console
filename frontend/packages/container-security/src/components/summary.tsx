@@ -99,7 +99,7 @@ export const SecurityBreakdownPopup: React.FC<SecurityBreakdownPopupProps> = (pr
               <div className="co-overview-status__row">
                 <div className="co-overview-status__text--bold">Fixable Vulnerabilities</div>
               </div>
-              {_.take([...fixableVulns.values()], 5).map((v) => (
+              {_.take(Array.from(fixableVulns.values()), 5).map((v) => (
                 <div className="co-overview-status__row" key={v.metadata.name}>
                   <span>
                     <SecurityIcon

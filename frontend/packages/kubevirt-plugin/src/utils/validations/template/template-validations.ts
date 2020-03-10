@@ -50,9 +50,9 @@ export class TemplateValidations {
 
   getRecommendedBuses = (): Set<DiskBus> => {
     const allowedBuses = this.getAllowedBuses();
-    const recommendedBuses = [...this.getAllowedBuses(ValidationErrorType.Warn)].filter((b) =>
-      allowedBuses.has(b),
-    );
+    const recommendedBuses = Array.from(
+      this.getAllowedBuses(ValidationErrorType.Warn),
+    ).filter((b) => allowedBuses.has(b));
     return recommendedBuses.length === 0 ? allowedBuses : new Set(recommendedBuses);
   };
 
@@ -70,8 +70,8 @@ export class TemplateValidations {
     return (
       allowedBuses.size === otherAllowedBuses.size &&
       recommendedBuses.size === otherRecommendedBuses.size &&
-      [...allowedBuses].every((bus) => otherAllowedBuses.has(bus)) &&
-      [...recommendedBuses].every((bus) => otherRecommendedBuses.has(bus))
+      Array.from(allowedBuses).every((bus) => otherAllowedBuses.has(bus)) &&
+      Array.from(recommendedBuses).every((bus) => otherRecommendedBuses.has(bus))
     );
   };
 
@@ -110,10 +110,10 @@ export class TemplateValidations {
     }
 
     if (recommendedBuses.size > 0) {
-      return [...recommendedBuses][0];
+      return Array.from(recommendedBuses)[0];
     }
 
-    return allowedBuses.has(defaultBus) ? defaultBus : [...allowedBuses][0];
+    return allowedBuses.has(defaultBus) ? defaultBus : Array.from(allowedBuses)[0];
   };
 
   private validateMemoryByType = (

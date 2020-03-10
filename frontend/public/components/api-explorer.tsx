@@ -193,7 +193,7 @@ const APIResourcesList = compose(
   const groups: Set<string> = models.reduce((result: Set<string>, { apiGroup }) => {
     return apiGroup ? result.add(apiGroup) : result;
   }, new Set<string>());
-  const sortedGroups: string[] = [...groups].sort();
+  const sortedGroups: string[] = Array.from(groups).sort();
   const groupOptions = sortedGroups.reduce(
     (result, group: string) => {
       result[group] = <Group value={group} />;
@@ -215,7 +215,7 @@ const APIResourcesList = compose(
   const versions: Set<string> = models.reduce((result: Set<string>, { apiVersion }) => {
     return result.add(apiVersion);
   }, new Set<string>());
-  const sortedVersions: string[] = [...versions].sort();
+  const sortedVersions: string[] = Array.from(versions).sort();
   const versionOptions = sortedVersions.reduce(
     (result, version: string) => {
       result[version] = version;

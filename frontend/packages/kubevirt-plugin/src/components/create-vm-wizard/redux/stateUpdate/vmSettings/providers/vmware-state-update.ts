@@ -270,7 +270,8 @@ const providerUpdater = (options: UpdateOptions) => {
           [VMWareProviderField.STATUS]: {
             isHidden: asHidden(
               !isVmWareProvider ||
-                [...V2V_WMWARE_STATUS_ALL_OK, V2VVMwareStatus.UNKNOWN].includes(status),
+                V2V_WMWARE_STATUS_ALL_OK.has(status) ||
+                status === V2VVMwareStatus.UNKNOWN,
               VMImportProvider.VMWARE,
             ),
           },

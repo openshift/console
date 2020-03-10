@@ -109,7 +109,7 @@ const CloudInitFormRows: React.FC<CloudInitFormRowsProps> = ({
                   value={authKey || ''}
                   id={inputID}
                   onChange={(val) => {
-                    const result = [...authKeys];
+                    const result = Array.from(authKeys);
                     result[idx] = val;
                     onEntryChange(
                       CloudInitDataFormKeys.SSH_AUTHORIZED_KEYS,
@@ -242,7 +242,7 @@ const CloudInitTabComponent: React.FC<ResultTabComponentProps> = ({
       if (cloudInitData.includesOnlyFormValues()) {
         executeFn();
       } else {
-        const persistedKeys = [...formAllowedKeys].filter((key) => cloudInitData.has(key));
+        const persistedKeys = Array.from(formAllowedKeys).filter((key) => cloudInitData.has(key));
         confirmModal({
           title: 'Data loss confirmation',
           message: (

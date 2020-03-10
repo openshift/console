@@ -86,7 +86,7 @@ const SearchPage_: React.FC<SearchProps> = (props) => {
     const updateItems = selectedItems;
     updateItems.has(selection) ? updateItems.delete(selection) : updateItems.add(selection);
     setSelectedItems(updateItems);
-    setQueryArgument('kind', [...updateItems].join(','));
+    setQueryArgument('kind', Array.from(updateItems).join(','));
   };
 
   const clearSelectedItems = () => {
@@ -169,7 +169,7 @@ const SearchPage_: React.FC<SearchProps> = (props) => {
       <PageHeading detail={true} title="Search">
         <div className="co-search-group">
           <ResourceListDropdown
-            selected={[...selectedItems]}
+            selected={Array.from(selectedItems)}
             onChange={updateSelectedItems}
             className="co-search-group__resource"
           />
@@ -182,7 +182,7 @@ const SearchPage_: React.FC<SearchProps> = (props) => {
         <div className="form-group">
           <ChipGroup withToolbar defaultIsOpen={false}>
             <ChipGroupToolbarItem key="resources-category" categoryName="Resource">
-              {[...selectedItems].map((chip) => (
+              {Array.from(selectedItems).map((chip) => (
                 <Chip key={chip} onClick={() => updateSelectedItems(chip)}>
                   <ResourceIcon kind={chip} />
                   {kindForReference(chip)}
@@ -234,7 +234,7 @@ const SearchPage_: React.FC<SearchProps> = (props) => {
       </PageHeading>
       <div className="co-search">
         <Accordion className="co-search__accordion" asDefinitionList={false} noBoxShadow>
-          {[...selectedItems].map((item) => {
+          {Array.from(selectedItems).map((item) => {
             const isCollapsed = collapsedKinds.has(item);
             return (
               <AccordionItem key={item}>

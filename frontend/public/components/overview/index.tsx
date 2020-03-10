@@ -304,7 +304,7 @@ class OverviewMainContent_ extends React.Component<
       const itemLabels = _.get(i, 'obj.metadata.labels') as K8sResourceKind['metadata']['labels'];
       _.each(itemLabels, (v: string, k: string) => labelSet.add(k));
     });
-    return [...labelSet].sort();
+    return Array.from(labelSet).sort();
   }
 
   createOverviewData(): OverviewMainContentState {

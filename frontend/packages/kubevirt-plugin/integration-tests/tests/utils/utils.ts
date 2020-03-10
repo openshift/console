@@ -134,7 +134,7 @@ export function getResourceObject(name: string, namespace: string, kind: string)
 }
 
 export function exposeServices(services: Set<any>) {
-  const servicesArray: NodePortService[] = [...services];
+  const servicesArray: NodePortService[] = Array.from(services);
   servicesArray.forEach(({ name, kind, port, targetPort, exposeName, type, namespace }) => {
     execSync(
       `virtctl expose ${kind} ${name} --port=${port} --target-port=${targetPort} --name=${exposeName} --type=${type} -n ${namespace}`,

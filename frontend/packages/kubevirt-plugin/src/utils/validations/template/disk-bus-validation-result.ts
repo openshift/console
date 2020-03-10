@@ -26,10 +26,10 @@ export class DiskBusValidationResult {
       return `There are no ${adj.toLowerCase()} bus types`;
     }
     if (this.allowedBuses.size === 1) {
-      return `${adj2} bus type. ${adj} type is ${[...this.allowedBuses][0]}`;
+      return `${adj2} bus type. ${adj} type is ${Array.from(this.allowedBuses)[0]}`;
     }
     return `${adj2} bus type. ${adj} types are: ${joinGrammaticallyListOfItems(
-      [...this.allowedBuses].map((b) => b.toString()),
+      Array.from(this.allowedBuses).map((b) => b.toString()),
     )}`;
   };
 

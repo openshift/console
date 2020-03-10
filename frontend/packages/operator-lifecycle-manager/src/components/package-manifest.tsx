@@ -135,7 +135,7 @@ export const PackageManifestList = requireOperatorGroup((props: PackageManifestL
         />
       )}
     >
-      {_.sortBy([...catalogs.values()], 'displayName').map((catalog) => (
+      {_.sortBy(Array.from(catalogs.values()), 'displayName').map((catalog) => (
         <div key={catalog.name} className="co-catalogsource-list__section">
           <div className="co-catalogsource-list__section__packages">
             <div>

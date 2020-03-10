@@ -119,7 +119,7 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
         ? null
         : validAllowedBuses.has(DiskBus.VIRTIO)
         ? DiskBus.VIRTIO
-        : [...validAllowedBuses][0]),
+        : Array.from(validAllowedBuses)[0]),
   );
   const [storageClassName, setStorageClassName] = React.useState<string>(
     combinedDisk.getStorageClassName(),
@@ -407,7 +407,7 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
                   label={bus.toString()}
                 />
               )}
-              {[...validAllowedBuses].map((b) => (
+              {Array.from(validAllowedBuses).map((b) => (
                 <FormSelectOption
                   key={b.getValue()}
                   value={b.getValue()}

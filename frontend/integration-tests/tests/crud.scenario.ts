@@ -62,7 +62,7 @@ describe('Kubernetes resource CRUD operations', () => {
   });
 
   afterAll(() => {
-    const leakedArray: Array<string> = [...leakedResources];
+    const leakedArray: string[] = Array.from(leakedResources);
     console.error(
       `Leaked ${leakedArray.length} resources out of ${testObjs.size}:\n${leakedArray.join('\n')}`,
     );

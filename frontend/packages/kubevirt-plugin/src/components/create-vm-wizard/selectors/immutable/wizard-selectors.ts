@@ -36,7 +36,7 @@ export const isWizardEmpty = (stepData, isProviderImport) => {
   // providers data do not need to be checked because the change is detected through selection of provider
   fields.delete(VMSettingsField.PROVIDERS_DATA);
 
-  return ![...fields].some((fieldKey) => {
+  return !Array.from(fields).some((fieldKey) => {
     const value = iGetIn(stepData, [VMWizardTab.VM_SETTINGS, 'value', fieldKey, 'value']);
     return fieldKey === VMSettingsField.FLAVOR && value === CUSTOM_FLAVOR ? null : value;
   });
