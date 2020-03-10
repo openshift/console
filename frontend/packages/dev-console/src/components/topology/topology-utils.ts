@@ -25,6 +25,7 @@ import {
   createKnativeEventSourceSink,
   NodeType,
 } from '@console/knative-plugin/src/utils/knative-topology-utils';
+import { ClusterServiceVersionKind } from '@console/operator-lifecycle-manager';
 import {
   edgesFromAnnotations,
   createResourceConnection,
@@ -68,7 +69,6 @@ import {
   KNATIVE_GROUP_NODE_HEIGHT,
   KNATIVE_GROUP_NODE_PADDING,
 } from './const';
-import { ClusterServiceVersionKind } from '@console/operator-lifecycle-manager';
 import { HelmReleaseResourcesMap } from '../helm/helm-types';
 
 export const allowedResources = ['deployments', 'deploymentConfigs', 'daemonSets', 'statefulSets'];
@@ -390,7 +390,8 @@ export const getTopologyHelmReleaseGroupItem = (
   dataToShowOnNodes: TopologyDataMap,
 ): void => {
   const resourceKindName = getHelmReleaseKey(obj);
-  const releaseName = helmResourcesMap[resourceKindName]?.releaseName;
+  const helmResources = helmResourcesMap[resourceKindName];
+  const releaseName = helmResources?.releaseName;
   const uid = _.get(obj, ['metadata', 'uid'], null);
 
   if (!releaseName) return;
@@ -421,6 +422,9 @@ export const getTopologyHelmReleaseGroupItem = (
       buildConfigs: null,
       services: null,
       routes: null,
+    };
+    dataModel.data = {
+      manifestResources: helmResources?.manifestResources || [],
     };
     dataToShowOnNodes[helmGroup.id] = dataModel;
     groups.push(helmGroup);

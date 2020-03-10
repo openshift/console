@@ -32,7 +32,7 @@ import ComponentFactory from './componentFactory';
 import { TYPE_APPLICATION_GROUP, TYPE_HELM_RELEASE, TYPE_OPERATOR_BACKED_SERVICE } from './const';
 import TopologyFilterBar from './filters/TopologyFilterBar';
 import { getTopologyFilters, TopologyFilters } from './filters/filter-utils';
-import TopologyHelmReleasePanel from './TopologyHelmReleasePanel';
+import TopologyHelmReleasePanel from './helm-details/TopologyHelmReleasePanel';
 import { useAddToProjectAccess } from '../../utils/useAddToProjectAccess';
 
 interface StateProps {

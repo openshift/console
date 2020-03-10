@@ -114,18 +114,22 @@ export const TopologyDataController: React.FC<TopologyDataControllerProps> = ({
       if (ignore) return;
 
       const releaseResourcesMap = releases.reduce((acc, release) => {
-        const manifestResources: K8sResourceKind[] = safeLoadAll(release.manifest);
+        try {
+          const manifestResources: K8sResourceKind[] = safeLoadAll(release.manifest);
 
-        manifestResources.forEach((resource) => {
-          const resourceKindName = getHelmReleaseKey(resource);
-          if (!acc.hasOwnProperty(resourceKindName)) {
-            acc[resourceKindName] = {
-              releaseName: release.name,
-              chartIcon: release.chart.metadata.icon,
-              manifestResources,
-            };
-          }
-        });
+          manifestResources.forEach((resource) => {
+            const resourceKindName = getHelmReleaseKey(resource);
+            if (!acc.hasOwnProperty(resourceKindName)) {
+              acc[resourceKindName] = {
+                releaseName: release.name,
+                chartIcon: release.chart.metadata.icon,
+                manifestResources,
+              };
+            }
+          });
+        } catch (e) {
+          console.error(e);
+        }
 
         return acc;
       }, {});
