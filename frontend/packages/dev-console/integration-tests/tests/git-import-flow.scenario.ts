@@ -19,11 +19,13 @@ import {
   setLabel,
   selectAdvancedOptions,
   AdvancedOptions,
+  TLSTerminationValues,
   buildConfigObj
 } from '../views/git-import-flow.view';
 import { verifyCheckBox} from '../utilities/elementInteractions';
-import { newApplicationName, newAppName, addApplicationWithExistingApps } from '../views/new-app-name.view';
+import { newApplicationName, newAppName } from '../views/new-app-name.view';
 import { switchPerspective, Perspective, sideHeader } from '../views/dev-perspective.view';
+import { addApplicationWithExistingApps} from '../views/git-import-flow.view';
 
 describe('git import flow', () => {
   let newApplication;
@@ -68,7 +70,36 @@ describe('git import flow', () => {
     expect(browser.getCurrentUrl()).toContain(`${appHost}/topology/ns/${testName}`);
   });
   
-  it('public git flow with advanced options', async () => {
+  it('public git flow with advanced options - routing', async () => {
+    newApplication = newApplicationName();
+    newApp = newAppName();
+
+    await switchPerspective(Perspective.Developer);
+    expect(sideHeader.getText()).toContain('Developer');
+    await navigateImportFromGit();
+    await browser.wait(until.textToBePresentInElement(importFromGitHeader, 'Import from git'));
+    expect(importFromGitHeader.getText()).toContain('Import from git');
+    await enterGitRepoUrl('https://github.com/sclorg/nodejs-ex.git');
+
+    await appName.click();
+    expect(appName.getAttribute('value')).toContain('nodejs-ex-git');
+    await addApplicationWithExistingApps(newApplication, newApp);
+    expect(applicationName.getAttribute('value')).toContain(newApplication);
+    expect(appName.getAttribute('value')).toContain(newApp);
+
+    // Add Advanced option - Routing
+    await selectAdvancedOptions(AdvancedOptions.Routing);
+    await setRouting('hostname', '/path', TLSTerminationValues);
+
+
+    await browser.wait(until.elementToBeClickable(createButton), 5000);
+    expect(createButton.isEnabled());
+    await createButton.click();
+    await browser.wait(until.urlContains(`${appHost}/topology/ns/${testName}`));
+    expect(browser.getCurrentUrl()).toContain(`${appHost}/topology/ns/${testName}`);
+  });
+
+  it('public git flow with advanced options - BuildConfig', async () => {
     newApplication = newApplicationName();
     newApp = newAppName();
 

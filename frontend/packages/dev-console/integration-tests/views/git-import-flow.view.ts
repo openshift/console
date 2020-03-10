@@ -34,7 +34,10 @@ export function routingObj() {
     targetPort: element(by.css('button#form-dropdown-route-targetPort-field')),
     secureRoute: element(by.css('input#form-checkbox-route-secure-field')),
     tlsTermination: element(by.css('button#form-dropdown-route-tls-termination-field')),
-    insecureTraffic: element(by.css('button#form-dropdown-route-tls-insecureEdgeTerminationPolicy-field'))
+    insecureTraffic: element(by.css('button#form-dropdown-route-tls-insecureEdgeTerminationPolicy-field')),
+    certificate: element.all(by.css('textarea[data-test-id="file-input-textarea"]')).get(0),
+    privateKey: element.all(by.css('textarea[data-test-id="file-input-textarea"]')).get(1),
+    caCertificate: element.all(by.css('textarea[data-test-id="file-input-textarea"]')).get(2)
   };
 }
 
@@ -108,6 +111,12 @@ export enum AdvancedOptions {
   Scaling = 'Scaling',
   ResourceLimits = 'Resource Limits',
   Labels = 'Labels'
+}
+
+export enum TLSTerminationValues {
+  Edge = 'Edge',
+  Passthrough = 'Passthrough',
+  ReEncrypt = 'Re-encrypt'
 }
 
 export const selectAdvancedOptions = async function(opt: AdvancedOptions) {
@@ -223,15 +232,23 @@ export const setBuilderImage = async function() {
 };
 
 // Automating Advanced options present in git import flow
-export const setRouting = async function(hostname:string, path: string, tlsTerminationValue: string = 'Passthrough', insecureTrafficValue: string = 'None') {
+export const setRouting = async function(hostname:string, path: string, tlsTerminationValue: TLSTerminationValues, insecureTrafficValue: string = 'None') {
   await enterText(routingObj().hostname, hostname);
   await enterText(routingObj().path, path);
   await selectByIndex(routingObj().targetPort);
   await click(routingObj().secureRoute).then(async() => {
     await browser.wait(until.elementToBeClickable(routingObj().tlsTermination), waitForElement, `Unable to view the TLS termination dropdown field, even after ${waitForElement} ms `)
-    await selectByVisibleText(routingObj().tlsTermination, tlsTerminationValue);
-    await selectByVisibleText(routingObj().insecureTraffic, insecureTrafficValue)
-    // await selectByIndex(routingObj().insecureTraffic);
+    if(tlsTerminationValue ===TLSTerminationValues.Edge || tlsTerminationValue ===TLSTerminationValues.ReEncrypt) {
+      await selectByVisibleText(routingObj().tlsTermination, tlsTerminationValue);
+      await routingObj().certificate.sendKeys();
+      await routingObj().privateKey.sendKeys();
+      await routingObj().caCertificate.sendKeys();
+      await selectByVisibleText(routingObj().insecureTraffic, insecureTrafficValue);
+    } else if(tlsTerminationValue ===TLSTerminationValues.Passthrough) {
+      await selectByVisibleText(routingObj().insecureTraffic, insecureTrafficValue);
+    } else {
+      throw new Error('Some thing went wrong');
+    }
   });
 };
 
