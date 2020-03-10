@@ -58,7 +58,7 @@ describe('RevisionRow', () => {
   });
 
   it('should show "-" in case of no status', () => {
-    revData = _.omit(revData, 'obj.status');
+    revData = _.omit(revData, 'obj.status') as RevisionRowProps;
     const wrapper = shallow(<RevisionRow {...revData} />);
     const conditionColData = wrapper.find(TableData).at(4);
     expect(conditionColData.props().children).toEqual('-');

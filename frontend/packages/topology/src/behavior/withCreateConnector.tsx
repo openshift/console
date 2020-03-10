@@ -206,11 +206,6 @@ type ElementProps = {
   element: Node;
 };
 
-type CreateConnectorOptions = {
-  handleAngle?: number;
-  handleLength?: number;
-};
-
 export type WithCreateConnectorProps = {
   onShowCreateConnector: () => void;
   onHideCreateConnector: () => void;

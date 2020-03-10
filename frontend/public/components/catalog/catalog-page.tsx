@@ -3,12 +3,13 @@ import * as _ from 'lodash-es';
 import { Helmet } from 'react-helmet';
 import { safeLoad } from 'js-yaml';
 
-import { ANNOTATIONS, FLAGS } from '@console/shared';
+import { ANNOTATIONS, FLAGS, APIError } from '@console/shared';
 import { CatalogTileViewPage } from './catalog-items';
 import {
   k8sListPartialMetadata,
   referenceForModel,
   serviceClassDisplayName,
+  K8sResourceCommon,
   K8sResourceKind,
   PartialObjectMetadata,
 } from '../../module/k8s';
@@ -292,11 +293,13 @@ export const Catalog = connectToFlags<CatalogProps>(
   const { flags, mock, namespace } = props;
   const openshiftFlag = flags[FLAGS.OPENSHIFT];
   const serviceCatalogFlag = flags[FLAGS.SERVICE_CATALOG];
-  const [templateMetadata, setTemplateMetadata] = React.useState();
-  const [templateError, setTemplateError] = React.useState();
-  const [projectTemplateMetadata, setProjectTemplateMetadata] = React.useState();
-  const [projectTemplateError, setProjectTemplateError] = React.useState();
-  const [helmCharts, setHelmCharts] = React.useState();
+  const [templateMetadata, setTemplateMetadata] = React.useState<K8sResourceCommon>();
+  const [templateError, setTemplateError] = React.useState<APIError>();
+  const [projectTemplateMetadata, setProjectTemplateMetadata] = React.useState<K8sResourceCommon[]>(
+    null,
+  );
+  const [projectTemplateError, setProjectTemplateError] = React.useState<APIError>();
+  const [helmCharts, setHelmCharts] = React.useState<HelmChartEntries>();
 
   const loadTemplates = openshiftFlag && !mock;
 

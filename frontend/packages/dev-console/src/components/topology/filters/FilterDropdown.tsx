@@ -8,7 +8,7 @@ type FilterDropdownProps = {
 };
 
 const FilterDropdown: React.FC<FilterDropdownProps> = ({ filters, onChange }) => {
-  const [isOpen, setIsOpen] = React.useState();
+  const [isOpen, setIsOpen] = React.useState(false);
   const selected = Object.keys(filters).filter((key) => filters[key]);
 
   const onToggle = (open: boolean): void => setIsOpen(open);
