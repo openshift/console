@@ -17,6 +17,10 @@ import {
   PipelineRuns,
 } from './detail-page-tabs';
 import PipelineForm from './pipeline-form/PipelineForm';
+import {
+  parametersValidationSchema,
+  resourcesValidationSchema,
+} from './pipeline-form/pipelineForm-validation-utils';
 
 interface PipelineDetailsPageStates {
   menuActions: Function[];
@@ -78,6 +82,8 @@ class PipelineDetailsPage extends React.Component<DetailsPageProps, PipelineDeta
               <PipelineForm
                 PipelineFormComponent={PipelineParameters}
                 formName="parameters"
+                validationSchema={parametersValidationSchema}
+                obj={props.obj}
                 {...props}
               />
             ),
@@ -89,6 +95,8 @@ class PipelineDetailsPage extends React.Component<DetailsPageProps, PipelineDeta
               <PipelineForm
                 PipelineFormComponent={PipelineResources}
                 formName="resources"
+                validationSchema={resourcesValidationSchema}
+                obj={props.obj}
                 {...props}
               />
             ),
