@@ -61,6 +61,9 @@ describe('Alertmanager: PagerDuty Receiver Form', () => {
 
     await monitoringView.saveButton.click();
     await crudView.isLoaded();
+    await monitoringView.wait(until.elementToBeClickable(crudView.nameFilter));
+    await crudView.nameFilter.clear();
+    await crudView.nameFilter.sendKeys('MyReceiver');
     monitoringView.getFirstRowAsText().then((text) => {
       expect(text).toEqual('MyReceiver pagerduty severity = warning');
     });
