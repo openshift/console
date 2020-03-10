@@ -403,7 +403,6 @@ export const OperatorHubTileView: React.FC<OperatorHubTileViewProps> = (props) =
         vendor={vendor}
         description={description}
         onClick={() => openOverlay(item)}
-        maxDescriptionLength={-1}
         footer={
           installed ? (
             <span>
