@@ -10,9 +10,16 @@ import { K8sKillError } from '../errors';
 const disableHistoryOpts = { disableHistory: true };
 
 const spyEnhancedK8sMethods = () => {
-  const methods = new EnhancedK8sMethods();
-  // mocks the approximate behaviour of CRUD methods
+  const methods: EnhancedK8sMethods & {
+    mockK8sGet?: (kind: K8sKind, data: K8sResourceCommon, opts?, enhancedOpts?) => void;
+  } = new EnhancedK8sMethods();
   const methodsUnchecked = methods as any;
+  // mocks the approximate behaviour of CRUD methods
+  // different behaviour than the original - we need to store the testVM
+  methods.mockK8sGet = async (kind: K8sKind, data: K8sResourceCommon, opts, enhancedOpts) => {
+    methodsUnchecked.registerKind(kind);
+    methodsUnchecked.appendHistory(new HistoryItem(HistoryType.GET, data), enhancedOpts);
+  };
   methodsUnchecked.k8sCreate = async (
     kind: K8sKind,
     data: K8sResourceCommon,
@@ -21,11 +28,6 @@ const spyEnhancedK8sMethods = () => {
   ) => {
     methodsUnchecked.registerKind(kind);
     methodsUnchecked.appendHistory(new HistoryItem(HistoryType.CREATE, data), enhancedOpts);
-  };
-  // different behaviour than the original - we need to store the testVM
-  methodsUnchecked.k8sGet = async (kind: K8sKind, data: K8sResourceCommon, opts, enhancedOpts) => {
-    methodsUnchecked.registerKind(kind);
-    methodsUnchecked.appendHistory(new HistoryItem(HistoryType.GET, data), enhancedOpts);
   };
   methodsUnchecked.k8sPatch = async (
     kind: K8sKind,
@@ -49,27 +51,19 @@ const spyEnhancedK8sMethods = () => {
     methodsUnchecked.registerKind(kind);
     methodsUnchecked.appendHistory(new HistoryItem(HistoryType.DELETE, data), enhancedOpts);
   };
-  return { methods, methodsUnchecked };
+  return methods;
 };
 
-const expectHistory = (history, expectedHistory) => {
-  expect(history).toHaveLength(expectedHistory.length);
-
-  expectedHistory.forEach((expectHistoryItem, idx) => {
-    expect(history[idx]).toEqual(expectHistoryItem);
-  });
-};
-
-describe('enhancedK8sMethods.js', () => {
+describe('enhancedK8sMethods', () => {
   const testVM = new VMWrapper()
-    .setModel(VirtualMachineModel)
+    .init()
     .setName('testVM')
     .setNamespace('default')
     .setMemory('5', 'Gi')
     .asResource();
 
   const otherTestVM = new VMWrapper()
-    .setModel(VirtualMachineModel)
+    .init()
     .setName('otherVM')
     .setNamespace('kube')
     .setMemory('1', 'Mi')
@@ -81,39 +75,39 @@ describe('enhancedK8sMethods.js', () => {
     })
     .build();
 
-  it('records history and shows actualState', async () => {
-    const { methods, methodsUnchecked } = spyEnhancedK8sMethods();
+  it('records history', async () => {
+    const methods = spyEnhancedK8sMethods();
 
     expect(methods.getHistory()).toHaveLength(0);
-    expect(methods.getActualState()).toHaveLength(0);
 
     await methods.k8sCreate(VirtualMachineModel, testVM);
     await methods.k8sPatch(VirtualMachineModel, testVM, [testPatch]);
     await methods.k8sKill(VirtualMachineModel, testVM);
     const history = methods.getHistory();
 
-    expectHistory(history, [
+    expect(history).toHaveLength(3);
+    expect(history).toEqual([
       new HistoryItem(HistoryType.CREATE, testVM),
       new HistoryItem(HistoryType.PATCH, { ...testVM, ...testPatch }),
       new HistoryItem(HistoryType.DELETE, testVM),
     ]);
-
-    expect(methodsUnchecked.history).toHaveLength(3);
   });
 
   it('shows actualState', async () => {
-    const { methods, methodsUnchecked } = spyEnhancedK8sMethods();
+    const methods = spyEnhancedK8sMethods();
+
+    expect(methods.getActualState()).toHaveLength(0);
 
     await methods.k8sCreate(VirtualMachineModel, testVM);
     await methods.k8sPatch(VirtualMachineModel, testVM, []);
     await methods.k8sPatch(VirtualMachineModel, testVM, []);
-    await methodsUnchecked.k8sGet(VirtualMachineModel, testVM);
+    await methods.mockK8sGet(VirtualMachineModel, testVM);
     await methods.k8sKill(VirtualMachineModel, testVM);
     await methods.k8sCreate(VirtualMachineModel, otherTestVM);
     await methods.k8sPatch(VirtualMachineModel, otherTestVM, []);
-    await methodsUnchecked.k8sGet(VirtualMachineModel, otherTestVM);
+    await methods.mockK8sGet(VirtualMachineModel, otherTestVM);
     await methods.k8sCreate(VirtualMachineModel, testVM);
-    await methodsUnchecked.k8sGet(VirtualMachineModel, testVM);
+    await methods.mockK8sGet(VirtualMachineModel, testVM);
     await methods.k8sPatch(VirtualMachineModel, testVM, [testPatch]);
     const actualState = methods.getActualState();
 
@@ -123,21 +117,20 @@ describe('enhancedK8sMethods.js', () => {
   });
 
   it('disables recording history', async () => {
-    const { methods, methodsUnchecked } = spyEnhancedK8sMethods();
+    const methods = spyEnhancedK8sMethods();
 
     await methods.k8sCreate(VirtualMachineModel, testVM, null, disableHistoryOpts);
     await methods.k8sPatch(VirtualMachineModel, testVM, [testPatch], disableHistoryOpts);
     await methods.k8sKill(VirtualMachineModel, testVM, null, null, disableHistoryOpts);
 
     expect(methods.getHistory()).toHaveLength(0);
-    expect(methodsUnchecked.history).toHaveLength(0);
 
     await methods.k8sCreate(VirtualMachineModel, testVM);
     expect(methods.getHistory()).toHaveLength(1);
   });
 
   it('rollback', async () => {
-    const { methods } = spyEnhancedK8sMethods();
+    const methods = spyEnhancedK8sMethods();
 
     await methods.k8sCreate(VirtualMachineModel, testVM);
     await methods.k8sPatch(VirtualMachineModel, testVM, []);
@@ -148,7 +141,7 @@ describe('enhancedK8sMethods.js', () => {
     expect(results).toHaveLength(2);
     expect(methods.getActualState()).toHaveLength(0);
 
-    expectHistory(methods.getHistory(), [
+    expect(methods.getHistory()).toEqual([
       new HistoryItem(HistoryType.CREATE, testVM),
       new HistoryItem(HistoryType.PATCH, testVM),
       new HistoryItem(HistoryType.CREATE, otherTestVM),
@@ -159,8 +152,8 @@ describe('enhancedK8sMethods.js', () => {
   });
 
   it('rollback fails', async () => {
-    const { methods, methodsUnchecked } = spyEnhancedK8sMethods();
-    methodsUnchecked.k8sKill = async () => Promise.reject(new Error('delete failed'));
+    const methods = spyEnhancedK8sMethods();
+    (methods as any).k8sKill = async () => Promise.reject(new Error('delete failed'));
 
     await methods.k8sCreate(VirtualMachineModel, testVM);
     await methods.k8sPatch(VirtualMachineModel, testVM, []);
@@ -174,7 +167,10 @@ describe('enhancedK8sMethods.js', () => {
       rollbackError = e;
     }
     expect(rollbackError?.message).toEqual('rollback');
-    expect(rollbackError?.errors).toHaveLength(2);
+    expect(rollbackError?.errors).toEqual([
+      new K8sKillError('delete failed', undefined, testVM),
+      new K8sKillError('delete failed', undefined, otherTestVM),
+    ]);
 
     // does not change EnhancedK8sMethods and results
     expect(methods.getActualState()).toHaveLength(2);
@@ -182,8 +178,8 @@ describe('enhancedK8sMethods.js', () => {
   });
 
   it('rollback does not fail on 404', async () => {
-    const { methods, methodsUnchecked } = spyEnhancedK8sMethods();
-    methodsUnchecked.k8sKill = async (kind: K8sKind, data: K8sResourceCommon) =>
+    const methods = spyEnhancedK8sMethods();
+    (methods as any).k8sKill = async (kind: K8sKind, data: K8sResourceCommon) =>
       Promise.reject(new K8sKillError('delete failed', { code: 404 }, data));
 
     await methods.k8sCreate(VirtualMachineModel, testVM);
@@ -194,7 +190,7 @@ describe('enhancedK8sMethods.js', () => {
     expect(results).toHaveLength(2);
     expect(methods.getActualState()).toHaveLength(0);
 
-    expectHistory(methods.getHistory(), [
+    expect(methods.getHistory()).toEqual([
       new HistoryItem(HistoryType.CREATE, testVM),
       new HistoryItem(HistoryType.PATCH, testVM),
       new HistoryItem(HistoryType.CREATE, otherTestVM),

@@ -25,8 +25,13 @@ import { VolumeWrapper } from './volume-wrapper';
 import { V1Disk } from '../../../types/vm/disk/V1Disk';
 import { V1Volume } from '../../../types/vm/disk/V1Volume';
 import { V1alpha1DataVolume } from '../../../types/vm/disk/V1alpha1DataVolume';
+import { VirtualMachineModel } from '../../../models';
 
 export class VMWrapper extends K8sResourceWrapper<VMKind, VMWrapper> implements VMILikeMethods {
+  constructor(vm?: VMKind | VMWrapper | any, copy = false) {
+    super(VirtualMachineModel, vm, copy);
+  }
+
   hasTemplateLabel = (label: string) => _.has(this.getTemplateLabels(null), label);
 
   getOperatingSystem = () => findKeySuffixValue(this.getLabels(), TEMPLATE_OS_LABEL);

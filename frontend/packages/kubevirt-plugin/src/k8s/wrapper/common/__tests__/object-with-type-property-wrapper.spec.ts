@@ -221,7 +221,7 @@ describe('ObjectWithTypePropertyWrapper methods', () => {
     });
   });
 
-  it('merges types correctly', () => {
+  it('merges types smoothly', () => {
     expect(
       new SmoothieWrapper().mergeWith(...getAllSmoothies(), getOrangeSmoothie()).asResource(),
     ).toEqual(getOrangeSmoothie().asResource());

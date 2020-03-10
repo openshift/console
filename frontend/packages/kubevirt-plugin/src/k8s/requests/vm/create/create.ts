@@ -1,4 +1,3 @@
-import { TemplateModel } from '@console/internal/models';
 import { VMSettingsField } from '../../../../components/create-vm-wizard/types';
 import { getStorageClassConfigMap } from '../../config-map/storage-class';
 import { asSimpleSettings } from '../../../../components/create-vm-wizard/selectors/vm-settings';
@@ -9,17 +8,16 @@ import {
   TEMPLATE_TYPE_LABEL,
   TEMPLATE_TYPE_VM,
 } from '../../../../constants/vm';
-import { DataVolumeModel, VirtualMachineModel } from '../../../../models';
 import { DataVolumeWrapper } from '../../../wrapper/vm/data-volume-wrapper';
 import { buildOwnerReference } from '../../../../utils';
 import { VMWrapper } from '../../../wrapper/vm/vm-wrapper';
-import { ProcessedTemplatesModel } from '../../../../models/models';
 import { toShallowJS } from '../../../../utils/immutable';
 import { iGetRelevantTemplate } from '../../../../selectors/immutable/template/combined';
 import { CreateVMEnhancedParams, CreateVMParams } from './types';
 import { initializeVM } from './initialize-vm';
 import { getOS, initializeCommonMetadata, initializeCommonVMMetadata } from './common';
 import { selectVM } from '../../../../selectors/vm-template/basic';
+import { ProcessedTemplatesModel } from '../../../../models/models';
 
 export const getInitializedVMTemplate = (params: CreateVMEnhancedParams) => {
   const { vmSettings, iCommonTemplates, iUserTemplates } = params;
@@ -38,9 +36,9 @@ export const getInitializedVMTemplate = (params: CreateVMEnhancedParams) => {
     return {};
   }
 
-  const template = new VMTemplateWrapper(temp, true);
-
-  template.setModel(TemplateModel); // make sure api version is correct
+  const template = new VMTemplateWrapper(temp, true)
+    .init() // make sure api version is correct
+    .clearRuntimeMetadata();
 
   const { storages } = initializeVM(params, template.getVM());
 
@@ -49,7 +47,7 @@ export const getInitializedVMTemplate = (params: CreateVMEnhancedParams) => {
 
 export const createVMTemplate = async (params: CreateVMParams) => {
   const { enhancedK8sMethods, namespace, vmSettings } = params;
-  const { k8sGet, k8sCreate, getActualState } = enhancedK8sMethods;
+  const { k8sGet, k8sWrapperCreate, getActualState } = enhancedK8sMethods;
 
   const storageClassConfigMap = await getStorageClassConfigMap({ k8sGet });
 
@@ -84,18 +82,15 @@ export const createVMTemplate = async (params: CreateVMParams) => {
 
   initializeCommonMetadata(combinedSimpleSettings, finalTemplate, template.asResource());
 
-  const templateResult = await k8sCreate(TemplateModel, finalTemplate.asResource());
+  const templateResult = await k8sWrapperCreate(finalTemplate);
 
   if (templateResult && storages) {
     for (const storage of storages.filter((s) => s.dataVolumeToCreate)) {
       // eslint-disable-next-line no-await-in-loop
-      await enhancedK8sMethods.k8sCreate(
-        DataVolumeModel,
-        new DataVolumeWrapper(storage.dataVolumeToCreate, true)
-          .addOwnerReferences(
-            buildOwnerReference(templateResult, { blockOwnerDeletion: true, controller: true }),
-          )
-          .asResource(),
+      await k8sWrapperCreate(
+        new DataVolumeWrapper(storage.dataVolumeToCreate, true).addOwnerReferences(
+          buildOwnerReference(templateResult, { blockOwnerDeletion: true, controller: true }),
+        ),
       );
     }
   }
@@ -104,7 +99,7 @@ export const createVMTemplate = async (params: CreateVMParams) => {
 
 export const createVM = async (params: CreateVMParams) => {
   const { enhancedK8sMethods, namespace, vmSettings, openshiftFlag } = params;
-  const { k8sGet, k8sCreate, getActualState } = enhancedK8sMethods;
+  const { k8sGet, k8sCreate, k8sWrapperCreate, getActualState } = enhancedK8sMethods;
 
   const storageClassConfigMap = await getStorageClassConfigMap({ k8sGet });
   const enhancedParams = {
@@ -118,7 +113,7 @@ export const createVM = async (params: CreateVMParams) => {
   };
 
   // TODO add VMWARE import
-  let vm: VMWrapper;
+  let vmWrapper: VMWrapper;
 
   if (openshiftFlag) {
     const { template } = getInitializedVMTemplate(enhancedParams);
@@ -145,22 +140,20 @@ export const createVM = async (params: CreateVMParams) => {
       { disableHistory: true },
     ); // temporary
 
-    // Re-set template namespace
-    template.setNamespace(templateNamespace);
+    template.setNamespace(templateNamespace); // Re-set template namespace
 
-    vm = new VMWrapper(selectVM(processedTemplate));
-    vm.setNamespace(namespace);
-    initializeCommonMetadata(combinedSimpleSettings, vm, template.asResource());
+    vmWrapper = new VMWrapper(selectVM(processedTemplate)).setNamespace(namespace);
+    initializeCommonMetadata(combinedSimpleSettings, vmWrapper, template.asResource());
   } else {
-    vm = new VMWrapper()
-      .setModel(VirtualMachineModel)
-      .setNamespace(namespace)
+    vmWrapper = new VMWrapper()
+      .init({ namespace })
       .setName(combinedSimpleSettings[VMSettingsField.NAME]);
-    initializeCommonMetadata(combinedSimpleSettings, vm);
-    initializeVM(enhancedParams, vm);
+    initializeCommonMetadata(combinedSimpleSettings, vmWrapper);
+    initializeVM(enhancedParams, vmWrapper);
   }
-  initializeCommonVMMetadata(combinedSimpleSettings, vm);
-  await k8sCreate(VirtualMachineModel, vm.asResource());
+  initializeCommonVMMetadata(combinedSimpleSettings, vmWrapper);
+
+  await k8sWrapperCreate(vmWrapper);
 
   return getActualState();
 };

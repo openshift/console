@@ -23,6 +23,11 @@ export abstract class Wrapper<RESOURCE extends {}, SELF extends Wrapper<RESOURCE
     return (this as any) as SELF;
   }
 
+  omitEmpty = (path?: string[] | string, justUndefined = true) => {
+    omitEmpty(path ? this.getIn(path) : this.data, justUndefined);
+    return (this as any) as SELF;
+  };
+
   protected get = (key: string) => (this.data && key ? this.data[key] : null);
 
   protected getIn = (path: string[] | string) =>
@@ -40,11 +45,6 @@ export abstract class Wrapper<RESOURCE extends {}, SELF extends Wrapper<RESOURCE
         delete parent[childKey];
       }
     }
-    return (this as any) as SELF;
-  };
-
-  protected omitEmpty = (path?: string[] | string, justUndefined = true) => {
-    omitEmpty(path ? this.getIn(path) : this.data, justUndefined);
     return (this as any) as SELF;
   };
 }

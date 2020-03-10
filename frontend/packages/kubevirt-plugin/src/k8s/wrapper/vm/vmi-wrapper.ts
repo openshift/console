@@ -15,8 +15,13 @@ import {
   TEMPLATE_OS_LABEL,
   TEMPLATE_WORKLOAD_LABEL,
 } from '../../../constants/vm';
+import { VirtualMachineInstanceModel } from '../../../models';
 
 export class VMIWrapper extends K8sResourceWrapper<VMIKind, VMIWrapper> implements VMILikeMethods {
+  constructor(vmi?: VMIKind | VMIWrapper | any, copy = false) {
+    super(VirtualMachineInstanceModel, vmi, copy);
+  }
+
   getOperatingSystem = () => findKeySuffixValue(this.getLabels(), TEMPLATE_OS_LABEL);
   getWorkloadProfile = () => findKeySuffixValue(this.getLabels(), TEMPLATE_WORKLOAD_LABEL);
   getFlavor = () => findKeySuffixValue(this.getLabels(), TEMPLATE_FLAVOR_LABEL);

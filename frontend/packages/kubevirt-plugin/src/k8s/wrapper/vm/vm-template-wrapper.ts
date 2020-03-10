@@ -34,6 +34,10 @@ export class VMTemplateWrapper extends K8sResourceWrapper<TemplateKind, VMTempla
     });
   };
 
+  constructor(template?: TemplateKind | VMTemplateWrapper | any, copy = false) {
+    super(TemplateModel, template, copy);
+  }
+
   getOperatingSystem = () => findKeySuffixValue(this.getLabels(), TEMPLATE_OS_LABEL);
   getWorkloadProfile = () => findKeySuffixValue(this.getLabels(), TEMPLATE_WORKLOAD_LABEL);
   getFlavor = () => findKeySuffixValue(this.getLabels(), TEMPLATE_FLAVOR_LABEL);

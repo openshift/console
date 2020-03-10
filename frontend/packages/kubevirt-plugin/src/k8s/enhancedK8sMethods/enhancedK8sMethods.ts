@@ -19,6 +19,8 @@ import {
   K8sPatchError,
 } from './errors';
 import { HistoryItem, HistoryType } from './types';
+import { Wrapper } from '../wrapper/common/wrapper';
+import { K8sResourceKindMethods } from '../wrapper/types/types';
 
 export type EnhancedOpts = {
   disableHistory: boolean;
@@ -55,6 +57,15 @@ export class EnhancedK8sMethods {
       throw new K8sGetError(error.message, { name, namespace });
     }
   };
+
+  k8sWrapperCreate = async <
+    U extends K8sResourceKind,
+    T extends Wrapper<U, T> & K8sResourceKindMethods
+  >(
+    wrapper: T,
+    opts?,
+    enhancedOpts?: EnhancedOpts,
+  ) => this.k8sCreate(wrapper.getModel(), wrapper.asResource(), opts, enhancedOpts);
 
   k8sCreate = async (kind: K8sKind, data: K8sResourceKind, opts?, enhancedOpts?: EnhancedOpts) => {
     try {

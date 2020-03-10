@@ -41,7 +41,7 @@ describe('utils ensurePath', () => {
     expect(testData).toEqual(before);
   });
 
-  it('ensures path  with array', () => {
+  it('ensures path with array', () => {
     ensurePath(testData, 'interval.childInterval', []);
     expect(testData).toEqual({
       color: 'blue',
