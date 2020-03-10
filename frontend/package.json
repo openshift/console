@@ -109,6 +109,7 @@
     "react-dnd": "^9.4.0",
     "react-dnd-html5-backend": "^9.4.0",
     "react-dom": "^16.9.0",
+    "react-draggable": "4.x",
     "react-helmet": "^5.2.1",
     "react-jsonschema-form": "^1.0.4",
     "react-lazyload": "^2.6.2",
