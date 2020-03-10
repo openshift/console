@@ -94,7 +94,6 @@ describe('Kubevirt create VM Template using wizard', () => {
       provisionConfig,
     );
     const vmTemplate = new VirtualMachineTemplate(templateCfg);
-
     await withResource(leakedResources, vmTemplate.asResource(), async () => {
       await vmTemplate.create(templateCfg);
       await vmTemplate.navigateToTab(TAB.Details);

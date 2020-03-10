@@ -13,6 +13,7 @@ import {
 } from '../views/dashboard.view';
 import { getVMManifest, hddDisk, multusNetworkInterface, multusNAD } from './utils/mocks';
 import { VirtualMachine } from './models/virtualMachine';
+import { waitForStringInElement } from '../../../console-shared/src/test-utils/utils';
 import {
   VM_STATUS,
   VM_BOOTUP_TIMEOUT_SECS,
@@ -83,7 +84,7 @@ describe('Test VM dashboard', () => {
     expect(vmStatus.getText()).toEqual(VM_STATUS.Running);
   });
 
-  it('BZ(1807865) Details card', async () => {
+  it('Details card', async () => {
     expect(vmDetailsName.getText()).toEqual(vm.name);
     expect(vmDetailsNamespace.getText()).toEqual(vm.namespace);
     expect(vmDetailsNode.getText()).not.toEqual(NOT_AVAILABLE);
@@ -92,7 +93,7 @@ describe('Test VM dashboard', () => {
     await vm.action(VM_ACTION.Stop, true, VM_STOP_TIMEOUT_SECS);
     await vm.navigateToTab(TAB.Overview);
 
-    expect(vmDetailsNode.getText()).toEqual(NOT_AVAILABLE);
-    expect(vmDetailsIPAddress.getText()).toEqual(NOT_AVAILABLE);
+    await browser.wait(waitForStringInElement(vmDetailsNode, NOT_AVAILABLE));
+    await browser.wait(waitForStringInElement(vmDetailsIPAddress, NOT_AVAILABLE));
   });
 });

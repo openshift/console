@@ -15,12 +15,9 @@ import { DiskDialog } from '../dialogs/diskDialog';
 import { Flavor } from '../utils/constants/wizard';
 
 export class Wizard {
-  async openWizard() {
-    if (
-      !(await resourceTitle.isPresent()) ||
-      (await resourceTitle.getText()) !== 'Virtual Machines'
-    ) {
-      await clickNavLink(['Workloads', 'Virtual Machines']);
+  async openWizard(kind: string) {
+    if (!(await resourceTitle.isPresent()) || (await resourceTitle.getText()) !== kind) {
+      await clickNavLink(['Workloads', kind]);
       await isLoaded();
     }
     await click(createItemButton);

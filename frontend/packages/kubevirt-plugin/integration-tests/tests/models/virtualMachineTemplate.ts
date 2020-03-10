@@ -28,7 +28,7 @@ export class VirtualMachineTemplate extends KubevirtDetailView {
 
     // Basic Settings for VM template
     const wizard = new Wizard();
-    await wizard.openWizard();
+    await wizard.openWizard('Virtual Machine Templates');
 
     await wizard.selectProvisionSource(provisionSource);
     await wizard.selectOperatingSystem(operatingSystem);

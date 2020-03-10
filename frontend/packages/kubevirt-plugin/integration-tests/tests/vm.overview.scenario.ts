@@ -4,16 +4,9 @@ import { resourceTitle } from '@console/internal-integration-tests/views/crud.vi
 import { asyncForEach, createResource, deleteResource } from '@console/shared/src/test-utils/utils';
 import * as vmView from '../views/virtualMachine.view';
 import { getVMManifest, basicVMConfig } from './utils/mocks';
-import { exposeServices, pauseVM } from './utils/utils';
+import { exposeServices } from './utils/utils';
 import { VirtualMachine } from './models/virtualMachine';
-import {
-  TAB,
-  VM_BOOTUP_TIMEOUT_SECS,
-  VM_ACTION,
-  VM_STATUS,
-  COMMON_TEMPLATES_VERSION,
-  NOT_AVAILABLE,
-} from './utils/consts';
+import { TAB, VM_BOOTUP_TIMEOUT_SECS, VM_ACTION, VM_STATUS, NOT_AVAILABLE } from './utils/consts';
 import { NodePortService } from './utils/types';
 
 describe('Test VM overview', () => {
@@ -62,9 +55,9 @@ describe('Test VM overview', () => {
       description: testName,
       os: basicVMConfig.operatingSystem,
       profile: basicVMConfig.workloadProfile,
-      template: `rhel7-desktop-tiny-${COMMON_TEMPLATES_VERSION}`,
+      template: NOT_AVAILABLE,
       bootOrder: ['rootdisk (Disk)', 'nic0 (NIC)', 'cloudinitdisk (Disk)'],
-      flavor: 'Tiny: 1 vCPU, 1 GiB Memory',
+      flavorConfig: 'Tiny: 1 vCPU, 1 GiB Memory',
       ip: NOT_AVAILABLE,
       pod: NOT_AVAILABLE,
       node: NOT_AVAILABLE,
@@ -121,13 +114,5 @@ describe('Test VM overview', () => {
         `/k8s/ns/${testName}/services/${srv.exposeName}`,
       );
     });
-  });
-
-  it('Check unpause VM when VM is running', async () => {
-    await vm.action(VM_ACTION.Start);
-    pauseVM(vmName, testName);
-    expect(await vm.getStatus()).toEqual(VM_STATUS.Paused);
-    await vm.modalEditStatus();
-    expect(await vm.getStatus()).toEqual(VM_STATUS.Running);
   });
 });
