@@ -16,4 +16,4 @@ const NodeShadows: React.FC = () => (
   </>
 );
 
-export default NodeShadows;
+export { NodeShadows };

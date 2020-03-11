@@ -649,8 +649,11 @@ export class TransformResourceData {
     });
   };
 
-  public createDeploymentConfigItems = (deploymentConfigs: K8sResourceKind[]): OverviewItem[] => {
-    return _.map(deploymentConfigs, (dc) => {
+  public createDeploymentConfigItems = (
+    deploymentConfigs: K8sResourceKind[],
+    operatorsFilter?: boolean,
+  ): OverviewItem[] => {
+    const items = _.map(deploymentConfigs, (dc) => {
       const obj: K8sResourceKind = {
         ...dc,
         apiVersion: apiVersionForModel(DeploymentConfigModel),
@@ -696,12 +699,17 @@ export class TransformResourceData {
       }
       return overviewItems;
     });
+    if (operatorsFilter !== undefined) {
+      return items.filter((item) => item.isOperatorBackedService === operatorsFilter);
+    }
+    return items;
   };
 
   public createDeploymentItems = (
     deployments: DeploymentKind[],
+    operatorsFilter?: boolean,
   ): OverviewItem<DeploymentKind>[] => {
-    return _.map(deployments, (d) => {
+    const items = _.map(deployments, (d) => {
       const obj: DeploymentKind = {
         ...d,
         apiVersion: apiVersionForModel(DeploymentModel),
@@ -742,10 +750,17 @@ export class TransformResourceData {
       }
       return overviewItems;
     });
+    if (operatorsFilter !== undefined) {
+      return items.filter((item) => item.isOperatorBackedService === operatorsFilter);
+    }
+    return items;
   };
 
-  public createDaemonSetItems = (daemonSets: K8sResourceKind[]): OverviewItem[] => {
-    return _.map(daemonSets, (ds) => {
+  public createDaemonSetItems = (
+    daemonSets: K8sResourceKind[],
+    operatorsFilter?: boolean,
+  ): OverviewItem[] => {
+    const items = _.map(daemonSets, (ds) => {
       const obj: K8sResourceKind = {
         ...ds,
         apiVersion: apiVersionForModel(DaemonSetModel),
@@ -773,10 +788,17 @@ export class TransformResourceData {
         isOperatorBackedService,
       };
     });
+    if (operatorsFilter !== undefined) {
+      return items.filter((item) => item.isOperatorBackedService === operatorsFilter);
+    }
+    return items;
   };
 
-  public createStatefulSetItems = (statefulSets: K8sResourceKind[]): OverviewItem[] => {
-    return _.map(statefulSets, (ss) => {
+  public createStatefulSetItems = (
+    statefulSets: K8sResourceKind[],
+    operatorsFilter?: boolean,
+  ): OverviewItem[] => {
+    const items = _.map(statefulSets, (ss) => {
       const obj: K8sResourceKind = {
         ...ss,
         apiVersion: apiVersionForModel(StatefulSetModel),
@@ -804,6 +826,10 @@ export class TransformResourceData {
         isOperatorBackedService,
       };
     });
+    if (operatorsFilter !== undefined) {
+      return items.filter((item) => item.isOperatorBackedService === operatorsFilter);
+    }
+    return items;
   };
 
   public createPodItems = (): OverviewItem[] => {

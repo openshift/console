@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Edge, EdgeConnectorArrow } from '@console/topology';
-import BaseEdge from './BaseEdge';
+import { BaseEdge } from './BaseEdge';
 import './TrafficConnector.scss';
 
 type TrafficConnectorProps = {
@@ -13,4 +13,4 @@ const TrafficConnector: React.FC<TrafficConnectorProps> = ({ element }) => (
   </BaseEdge>
 );
 
-export default TrafficConnector;
+export { TrafficConnector };

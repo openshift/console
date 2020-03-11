@@ -63,4 +63,4 @@ const Decorator: React.FunctionComponent<DecoratorTypes> = ({
   return decorator;
 };
 
-export default Decorator;
+export { Decorator };

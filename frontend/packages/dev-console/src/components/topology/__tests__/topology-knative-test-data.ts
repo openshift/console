@@ -521,7 +521,7 @@ export const sampleEventSourceContainers: FirehoseResult = {
       metadata: {
         name: 'overlayimage',
         namespace: 'testproject3',
-        uid: '1317f615-9636-11e9-b134-06a61d886b689',
+        uid: '1317f615-9636-11e9-b134-06a61d886b689_1',
         creationTimestamp: '2019-06-12T07:07:57Z',
       },
       spec: {
@@ -548,7 +548,7 @@ export const sampleEventSourceCamel: FirehoseResult = {
       metadata: {
         name: 'overlayimage',
         namespace: 'testproject3',
-        uid: '1317f615-9636-11e9-b134-06a61d886b689',
+        uid: '1317f615-9636-11e9-b134-06a61d886b689_2',
         creationTimestamp: '2019-06-12T07:07:57Z',
       },
       spec: {},
@@ -566,7 +566,7 @@ export const sampleEventSourceKafka: FirehoseResult = {
       metadata: {
         name: 'overlayimage',
         namespace: 'testproject3',
-        uid: '1317f615-9636-11e9-b134-06a61d886b689',
+        uid: '1317f615-9636-11e9-b134-06a61d886b689_3',
         creationTimestamp: '2019-06-12T07:07:57Z',
       },
       spec: {
@@ -590,7 +590,7 @@ export const sampleEventSourceSinkbinding: FirehoseResult = {
       metadata: {
         name: 'bind-wss',
         namespace: 'testproject3',
-        uid: '1317f615-9636-11e9-b134-06a61d886b689',
+        uid: '1317f615-9636-11e9-b134-06a61d886b689_4',
         creationTimestamp: '2019-06-12T07:07:57Z',
       },
       spec: {

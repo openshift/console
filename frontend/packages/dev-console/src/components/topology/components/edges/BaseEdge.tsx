@@ -19,7 +19,7 @@ type BaseEdgeProps = {
   className?: string;
 } & WithRemoveConnectorProps;
 
-const BaseEdge: React.FC<BaseEdgeProps> = ({
+const ObservedBaseEdge: React.FC<BaseEdgeProps> = ({
   element,
   dragging,
   onShowRemoveConnector,
@@ -85,4 +85,5 @@ const BaseEdge: React.FC<BaseEdgeProps> = ({
   );
 };
 
-export default observer(BaseEdge);
+const BaseEdge = observer(ObservedBaseEdge);
+export { BaseEdge };

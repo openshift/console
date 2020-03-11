@@ -4,17 +4,15 @@ import { asAccessReview } from '@console/internal/components/utils';
 import { Edge, Node } from '@console/topology';
 import { getTopologyResourceObject } from '../topology-utils';
 import { removeConnection } from '../components/removeConnection';
+import { TYPE_CONNECTS_TO, TYPE_SERVICE_BINDING, TYPE_TRAFFIC_CONNECTOR } from '../components/const';
+import { moveConnectionModal } from '../components/MoveConnectionModal';
 import {
-  TYPE_CONNECTS_TO,
   TYPE_EVENT_SOURCE,
   TYPE_EVENT_SOURCE_LINK,
   TYPE_KNATIVE_REVISION,
   TYPE_KNATIVE_SERVICE,
   TYPE_REVISION_TRAFFIC,
-  TYPE_SERVICE_BINDING,
-  TYPE_TRAFFIC_CONNECTOR,
-} from '../const';
-import { moveConnectionModal } from '../components/MoveConnectionModal';
+} from '@console/knative-plugin/src/topology/const';
 
 const moveConnection = (edge: Edge, availableTargets: Node[]) => {
   const resourceObj = getTopologyResourceObject(edge.getSource().getData());

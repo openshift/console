@@ -1,10 +1,8 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
-import { transformTopologyData } from '../topology-utils';
+import { transformTopologyData } from '../data-transforms/data-transformer';
 import Topology from '../Topology';
 import { MockGraphResources } from './graph-test-data';
-
-const mockCheURL = 'https://mock-che.test-cluster.com';
 
 describe('Graph', () => {
   let topologyData;
@@ -12,14 +10,14 @@ describe('Graph', () => {
   let mockSelectFn;
 
   beforeEach(() => {
-    topologyData = transformTopologyData(
-      MockGraphResources,
-      ['deployments', 'deploymentConfigs', 'daemonSets', 'statefulSets'],
-      undefined,
-      mockCheURL,
-    );
+    topologyData = transformTopologyData(MockGraphResources, [
+      'deployments',
+      'deploymentConfigs',
+      'daemonSets',
+      'statefulSets',
+    ]);
     mockSelectFn = jest.fn();
-    graphWrapper = shallow(<Topology data={topologyData} serviceBinding={false} />);
+    graphWrapper = shallow(<Topology data={topologyData} namespace="test" />);
   });
 
   xit('should display the workload nodes', () => {

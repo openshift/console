@@ -104,15 +104,14 @@ export interface ConnectedWorkloadPipeline {
 
 export interface WorkloadData {
   url?: string;
-  editUrl?: string;
-  cheEnabled?: boolean;
+  editURL?: string;
+  vcsURI?: string;
   builderImage?: string;
   kind?: string;
   isKnativeResource?: boolean;
   build: K8sResourceKind;
   donutStatus: DonutStatusData;
   connectedPipeline: ConnectedWorkloadPipeline;
-  showPodCount?: boolean;
 }
 
 export interface DonutStatusData {

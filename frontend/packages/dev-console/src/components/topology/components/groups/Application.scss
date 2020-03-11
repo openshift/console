@@ -1,0 +1,63 @@
+@import '../../../../../../../node_modules/@patternfly/patternfly/sass-utilities/colors';
+@import '../../topology-utils';
+
+.odc-application-group {
+  outline: none;
+  cursor: pointer;
+  .odc-m-drag-active & {
+    pointer-events: none;
+  }
+
+  &__bg {
+    fill: var(--pf-global--Color--light-100);
+    fill-opacity: 0.6;
+    stroke: var(--pf-global--Color--light-100);
+    stroke-width: 5px;
+  }
+
+  &.is-filtered &__bg {
+    stroke: $filtered-stroke-color;
+  }
+  &.is-selected &__bg {
+    fill: $selected-fill-color;
+    stroke: $selected-stroke-color;
+    fill-opacity: 0.5;
+  }
+  &.is-highlight &__bg {
+    fill: $pf-color-black-150;
+    stroke: $interactive-stroke-color;
+  }
+  &.is-dropTarget &__bg {
+    fill: $interactive-fill-color;
+    stroke: $interactive-stroke-color;
+  }
+
+  &__label {
+    fill: var(--pf-global--Color--300);
+    & text {
+      fill: var(--pf-global--Color--light-100);
+      pointer-events: none;
+      font-size: var(--pf-global--FontSize--sm);
+    }
+  }
+}
+
+.odc-m-drag-active,
+.odc-m-filter-active {
+  .odc-application-group {
+    opacity: $de-emphasize-opacity;
+
+    &.is-highlight,
+    &.is-dragging {
+      opacity: 1;
+    }
+  }
+}
+
+.odc-m-filter-active:not(.odc-m-drag-active) {
+  .odc-application-group {
+    &.is-filtered {
+      opacity: 1;
+    }
+  }
+}

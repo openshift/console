@@ -1,5 +1,5 @@
-import { MockKnativeResources } from '@console/dev-console/src/components/topology/__tests__/topology-knative-test-data';
 import { MockResources } from '@console/dev-console/src/components/topology/__tests__/topology-test-data';
+import { MockKnativeResources } from '../../topology/__tests__/topology-knative-test-data';
 import {
   getKnativeServingRevisions,
   getKnativeServingConfigurations,
@@ -15,6 +15,10 @@ import {
   deploymentData,
   deploymentKnativeData,
   deploymentKnativeEventData,
+  deploymentKnativeEventSourceCamelEventData,
+  deploymentKnativeEventSourceContainerEventData,
+  deploymentKnativeEventSourceKafkaEventData,
+  deploymentKnativeEventSourceSinkBindingEventData,
 } from './knative-serving-data';
 
 describe('Get knative resources', () => {
@@ -81,7 +85,7 @@ describe('Get knative resources', () => {
     });
     it('expect getEventSourceContainer to return event source data', () => {
       const knEventResource = getEventSourceContainer(
-        deploymentKnativeEventData,
+        deploymentKnativeEventSourceContainerEventData,
         MockKnativeResources,
       );
       expect(knEventResource.eventSourceContainers).toBeDefined();
@@ -92,7 +96,10 @@ describe('Get knative resources', () => {
       expect(knEventResource).toBeUndefined();
     });
     it('expect getEventSourceCamel to return event source data', () => {
-      const knEventResource = getEventSourceCamel(deploymentKnativeEventData, MockKnativeResources);
+      const knEventResource = getEventSourceCamel(
+        deploymentKnativeEventSourceCamelEventData,
+        MockKnativeResources,
+      );
       expect(knEventResource.eventSourceCamel).toBeDefined();
       expect(knEventResource.eventSourceCamel).toHaveLength(1);
     });
@@ -101,7 +108,10 @@ describe('Get knative resources', () => {
       expect(knEventResource).toBeUndefined();
     });
     it('expect getEventSourceKafka to return event source data', () => {
-      const knEventResource = getEventSourceKafka(deploymentKnativeEventData, MockKnativeResources);
+      const knEventResource = getEventSourceKafka(
+        deploymentKnativeEventSourceKafkaEventData,
+        MockKnativeResources,
+      );
       expect(knEventResource.eventSourceKafka).toBeDefined();
       expect(knEventResource.eventSourceKafka).toHaveLength(1);
     });
@@ -111,7 +121,7 @@ describe('Get knative resources', () => {
     });
     it('expect getEventSourceSinkBinding to return event source data', () => {
       const knEventResource = getEventSourceSinkBinding(
-        deploymentKnativeEventData,
+        deploymentKnativeEventSourceSinkBindingEventData,
         MockKnativeResources,
       );
       expect(knEventResource.eventSourceServicebinding).toBeDefined();

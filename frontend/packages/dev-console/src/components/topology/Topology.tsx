@@ -21,6 +21,10 @@ import {
   SelectionEventListener,
 } from '@console/topology';
 import { RootState } from '@console/internal/redux';
+import { useAddToProjectAccess } from '../../utils/useAddToProjectAccess';
+import { ALLOW_SERVICE_BINDING } from '../../const';
+import { getActiveApplication } from '@console/internal/reducers/ui';
+import KnativeComponentFactory from '@console/knative-plugin/src/topology/knativeComponentFactory';
 import TopologySideBar from './TopologySideBar';
 import {
   GraphData,
@@ -32,23 +36,26 @@ import {
 import TopologyResourcePanel from './TopologyResourcePanel';
 import TopologyApplicationPanel from './application-panel/TopologyApplicationPanel';
 import ConnectedTopologyEdgePanel from './TopologyEdgePanel';
-import { topologyModelFromDataModel } from './topology-utils';
+import { topologyModelFromDataModel } from './data-transforms/topology-model';
 import { layoutFactory, COLA_LAYOUT, COLA_FORCE_LAYOUT } from './layouts/layoutFactory';
-import ComponentFactory from './componentFactory';
-import { TYPE_APPLICATION_GROUP, TYPE_HELM_RELEASE, TYPE_OPERATOR_BACKED_SERVICE } from './const';
+import { TYPE_APPLICATION_GROUP, ComponentFactory } from './components';
 import TopologyFilterBar from './filters/TopologyFilterBar';
 import { getTopologyFilters, TopologyFilters } from './filters/filter-utils';
-import TopologyHelmReleasePanel from './helm-details/TopologyHelmReleasePanel';
-import { useAddToProjectAccess } from '../../utils/useAddToProjectAccess';
+import TopologyHelmReleasePanel from './helm/TopologyHelmReleasePanel';
+import { TYPE_HELM_RELEASE } from './helm/components/const';
+import { HelmComponentFactory } from './helm/components/helmComponentFactory';
+import { TYPE_OPERATOR_BACKED_SERVICE } from './operators/components/const';
+import { OperatorsComponentFactory } from './operators/components/operatorsComponentFactory';
 
 interface StateProps {
   filters: TopologyFilters;
-  activeNamespace: string;
+  application: string;
+  serviceBinding: boolean;
 }
 
 export interface TopologyProps extends StateProps {
   data: TopologyDataModel;
-  serviceBinding: boolean;
+  namespace: string;
 }
 
 const graphModel: Model = {
@@ -59,24 +66,45 @@ const graphModel: Model = {
   },
 };
 
-const Topology: React.FC<TopologyProps> = ({ data, serviceBinding, filters, activeNamespace }) => {
+const Topology: React.FC<TopologyProps> = ({
+  data,
+  filters,
+  application,
+  namespace,
+  serviceBinding,
+}) => {
   const visRef = React.useRef<Visualization | null>(null);
+  const applicationRef = React.useRef<string>(null);
   const componentFactoryRef = React.useRef<ComponentFactory | null>(null);
+  const knativeComponentFactoryRef = React.useRef<KnativeComponentFactory | null>(null);
+  const helmComponentFactoryRef = React.useRef<HelmComponentFactory | null>(null);
+  const operatorsComponentFactoryRef = React.useRef<OperatorsComponentFactory | null>(null);
   const [layout, setLayout] = React.useState<string>(graphModel.graph.layout);
   const [model, setModel] = React.useState<Model>();
   const [graphData, setGraphData] = React.useState<GraphData>();
   const [selectedIds, setSelectedIds] = React.useState<string[]>([]);
-  const createResourceAccess: string[] = useAddToProjectAccess(activeNamespace);
+  const createResourceAccess: string[] = useAddToProjectAccess(namespace);
   const [dragHint, setDragHint] = React.useState<string>('');
 
   if (!componentFactoryRef.current) {
     componentFactoryRef.current = new ComponentFactory(serviceBinding);
   }
-
+  if (!knativeComponentFactoryRef.current) {
+    knativeComponentFactoryRef.current = new KnativeComponentFactory(serviceBinding);
+  }
+  if (!helmComponentFactoryRef.current) {
+    helmComponentFactoryRef.current = new HelmComponentFactory(serviceBinding);
+  }
+  if (!operatorsComponentFactoryRef.current) {
+    operatorsComponentFactoryRef.current = new OperatorsComponentFactory(serviceBinding);
+  }
   if (!visRef.current) {
     visRef.current = new Visualization();
     visRef.current.registerLayoutFactory(layoutFactory);
     visRef.current.registerComponentFactory(componentFactoryRef.current.getFactory());
+    visRef.current.registerComponentFactory(knativeComponentFactoryRef.current.getFactory());
+    visRef.current.registerComponentFactory(helmComponentFactoryRef.current.getFactory());
+    visRef.current.registerComponentFactory(operatorsComponentFactoryRef.current.getFactory());
     visRef.current.addEventListener<SelectionEventListener>(SELECTION_EVENT, (ids: string[]) => {
       // set empty selection when selecting the graph
       if (ids.length > 0 && ids[0] === graphModel.graph.id) {
@@ -97,18 +125,14 @@ const Topology: React.FC<TopologyProps> = ({ data, serviceBinding, filters, acti
   React.useEffect(() => {
     const newGraphData: GraphData = {
       createResourceAccess,
-      namespace: activeNamespace,
+      namespace,
     };
     visRef.current.getGraph().setData(newGraphData);
     setGraphData(newGraphData);
-  }, [activeNamespace, createResourceAccess]);
+  }, [namespace, createResourceAccess]);
 
   React.useEffect(() => {
-    componentFactoryRef.current.serviceBinding = serviceBinding;
-  }, [serviceBinding]);
-
-  React.useEffect(() => {
-    const newModel = topologyModelFromDataModel(data, filters);
+    const newModel = topologyModelFromDataModel(data, application, filters);
     visRef.current.fromModel(newModel);
     setModel(newModel);
     if (selectedIds.length && !visRef.current.getElementById(selectedIds[0])) {
@@ -116,6 +140,18 @@ const Topology: React.FC<TopologyProps> = ({ data, serviceBinding, filters, acti
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data]);
+
+  React.useEffect(() => {
+    if (!applicationRef.current) {
+      applicationRef.current = application;
+      return;
+    }
+    if (application !== applicationRef.current) {
+      applicationRef.current = application;
+      visRef.current.getGraph().reset();
+      visRef.current.getGraph().layout();
+    }
+  }, [application]);
 
   React.useEffect(() => {
     let resizeTimeout = null;
@@ -274,10 +310,13 @@ const Topology: React.FC<TopologyProps> = ({ data, serviceBinding, filters, acti
   );
 };
 
+const getServiceBindingStatus = ({ FLAGS }: RootState): boolean => FLAGS.get(ALLOW_SERVICE_BINDING);
+
 const TopologyStateToProps = (state: RootState): StateProps => {
   return {
     filters: getTopologyFilters(state),
-    activeNamespace: state.UI.get('activeNamespace'),
+    application: getActiveApplication(state),
+    serviceBinding: getServiceBindingStatus(state),
   };
 };
 

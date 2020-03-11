@@ -8,14 +8,15 @@ import { referenceForModel, K8sResourceKind } from '@console/internal/module/k8s
 import { RootState } from '@console/internal/redux';
 import { safeLoadAll } from 'js-yaml';
 import { ServiceBindingRequestModel } from '../../models';
-import { TopologyFilters, getTopologyFilters } from './filters/filter-utils';
-import { allowedResources, transformTopologyData, getHelmReleaseKey } from './topology-utils';
+import { transformTopologyData } from './data-transforms/data-transformer';
+import { allowedResources, getHelmReleaseKey } from './topology-utils';
 import { TopologyDataModel, TopologyDataResources, TrafficData } from './topology-types';
-import trafficConnectorMock from './__mocks__/traffic-connector.mock';
 import { HelmReleaseResourcesMap } from '../helm/helm-types';
+import { ALLOW_SERVICE_BINDING } from '../../const';
 
 export interface RenderProps {
   data?: TopologyDataModel;
+  namespace: string;
   loaded: boolean;
   loadError: string;
   serviceBinding: boolean;
@@ -23,7 +24,7 @@ export interface RenderProps {
 
 interface StateProps {
   resourceList: plugins.OverviewCRD[];
-  filters: TopologyFilters;
+  serviceBinding: boolean;
 }
 
 export interface ControllerProps {
@@ -33,33 +34,23 @@ export interface ControllerProps {
   namespace: string;
   resources?: TopologyDataResources;
   render(RenderProps): React.ReactElement;
-  application: string;
-  cheURL: string;
   serviceBinding: boolean;
-  topologyFilters: TopologyFilters;
   trafficData?: TrafficData;
 }
 
 export interface TopologyDataControllerProps extends StateProps {
   namespace: string;
   render(RenderProps): React.ReactElement;
-  application: string;
-  knative: boolean;
-  cheURL: string;
-  serviceBinding: boolean;
 }
 
 const Controller: React.FC<ControllerProps> = ({
   render,
-  application,
-  cheURL,
-  namespace,
   resources,
   loaded,
   loadError,
   utils,
+  namespace,
   serviceBinding,
-  topologyFilters,
   trafficData,
 }) => {
   const secretCount = React.useRef<number>(0);
@@ -107,19 +98,11 @@ const Controller: React.FC<ControllerProps> = ({
   return render({
     loaded: loaded && helmResourcesMap,
     loadError,
+    namespace,
     serviceBinding,
     data:
       loaded && helmResourcesMap
-        ? transformTopologyData(
-            resources,
-            allowedResources,
-            application,
-            cheURL,
-            utils,
-            topologyFilters,
-            trafficData,
-            helmResourcesMap,
-          )
+        ? transformTopologyData(resources, allowedResources, utils, trafficData, helmResourcesMap)
         : null,
   });
 };
@@ -127,11 +110,8 @@ const Controller: React.FC<ControllerProps> = ({
 export const TopologyDataController: React.FC<TopologyDataControllerProps> = ({
   namespace,
   render,
-  application,
-  cheURL,
   resourceList,
   serviceBinding,
-  filters,
 }) => {
   const { resources, utils } = getResourceList(namespace, resourceList);
   if (serviceBinding) {
@@ -147,25 +127,25 @@ export const TopologyDataController: React.FC<TopologyDataControllerProps> = ({
   return (
     <Firehose resources={resources}>
       <Controller
-        application={application}
-        namespace={namespace}
-        cheURL={cheURL}
         render={render}
         utils={utils}
         serviceBinding={serviceBinding}
-        topologyFilters={filters}
-        trafficData={trafficConnectorMock.elements}
+        namespace={namespace}
       />
     </Firehose>
   );
 };
 
+const getServiceBindingStatus = ({ FLAGS }: RootState): boolean => FLAGS.get(ALLOW_SERVICE_BINDING);
+
 const DataControllerStateToProps = (state: RootState) => {
   const resourceList = plugins.registry
     .getOverviewCRDs()
     .filter((resource) => state.FLAGS.get(resource.properties.required));
-  const filters = getTopologyFilters(state);
-  return { resourceList, filters };
+  return {
+    resourceList,
+    serviceBinding: getServiceBindingStatus(state),
+  };
 };
 
 export default connect(DataControllerStateToProps)(TopologyDataController);
