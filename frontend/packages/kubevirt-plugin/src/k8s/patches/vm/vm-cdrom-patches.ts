@@ -98,8 +98,10 @@ export const getCDsPatch = async (vm: VMLikeEntityKind, cds: CD[]) => {
 
         finalDataVolume = dataVolumeWrapper
           .assertDefaultModes(
-            getDefaultSCVolumeMode(storageClassConfigMap, storageClassName),
-            getDefaultSCAccessModes(storageClassConfigMap, storageClassName),
+            getDefaultSCVolumeMode(storageClassConfigMap, storageClassName).toString(),
+            getDefaultSCAccessModes(storageClassConfigMap, storageClassName).map((a) =>
+              a.toString(),
+            ),
           )
           .asResource();
 
