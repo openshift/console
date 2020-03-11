@@ -1,3 +1,4 @@
+import * as _ from 'lodash';
 import { K8sResourceKind, referenceForModel, ImagePullPolicy } from '@console/internal/module/k8s';
 import { FirehoseResource } from '@console/internal/components/utils';
 import {
@@ -131,7 +132,14 @@ export const getKnativeServiceDepResource = (
     },
   };
 
-  const knativeDeployResource = mergeData(originalKnativeService || {}, newKnativeDeployResource);
+  let knativeServiceUpdated = {};
+  if (!_.isEmpty(originalKnativeService)) {
+    knativeServiceUpdated = _.omit(originalKnativeService, [
+      'status',
+      'spec.template.metadata.name',
+    ]);
+  }
+  const knativeDeployResource = mergeData(knativeServiceUpdated || {}, newKnativeDeployResource);
 
   return knativeDeployResource;
 };

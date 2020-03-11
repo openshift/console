@@ -5,7 +5,6 @@ import { useFormikContext, FormikValues } from 'formik';
 import { InputField, DropdownField } from '@console/shared';
 import FormSection from '../section/FormSection';
 import { RouteData } from '../import-types';
-import { makePortName } from '../../../utils/imagestream-utils';
 
 export interface ServerlessRouteSectionProps {
   route: RouteData;
@@ -15,12 +14,15 @@ const ServerlessRouteSection: React.FC<ServerlessRouteSectionProps> = ({ route }
   const {
     values: {
       image: { ports },
-      route: { defaultUnknownPort, targetPort },
+      route: { defaultUnknownPort, targetPort: routeTargetPort },
     },
   } = useFormikContext<FormikValues>();
+  const targetPort = routeTargetPort.split('-')[0];
   const portOptions = ports.reduce((acc, port) => {
-    const name = makePortName(port);
-    acc[name] = <>{port.containerPort}</>;
+    const name = port?.containerPort;
+    if (name) {
+      acc[name] = <>{port.containerPort}</>;
+    }
     return acc;
   }, {});
   return (

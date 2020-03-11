@@ -402,12 +402,16 @@ export const createOrUpdateDeployImageResources = async (
     let imageStreamUrl: string = image?.dockerImageReference;
     if (registry === RegistryType.External) {
       let generatedImageStreamName: string = '';
-      if (imageStreamList && imageStreamList.length && verb === 'update') {
-        const originalImageStreamTag = _.find(originalImageStream?.status?.tags, [
-          'tag',
-          imageStreamTag,
-        ]);
-        if (!_.isEmpty(originalImageStreamTag)) {
+      if (verb === 'update') {
+        if (imageStreamList && imageStreamList.length) {
+          const originalImageStreamTag = _.find(originalImageStream?.status?.tags, [
+            'tag',
+            imageStreamTag,
+          ]);
+          if (!_.isEmpty(originalImageStreamTag)) {
+            generatedImageStreamName = `${name}-${getRandomChars()}`;
+          }
+        } else {
           generatedImageStreamName = `${name}-${getRandomChars()}`;
         }
       }
