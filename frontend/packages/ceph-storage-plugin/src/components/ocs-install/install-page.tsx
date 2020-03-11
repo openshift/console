@@ -102,14 +102,16 @@ const InstallCluster: React.FC<InstallClusterProps> = ({ match }) => {
             </div>
           </div>
         )}
-        {(isIndependent === false || mode === MODES.CONVERGED) && (
-          <CreateOCSServiceForm
-            namespace={ns}
-            operandModel={OCSServiceModel}
-            sample={sample}
-            clusterServiceVersion={clusterServiceVersion !== null && clusterServiceVersion}
-          />
-        )}
+        {(isIndependent === false || mode === MODES.CONVERGED) &&
+          clusterServiceVersion &&
+          sample && (
+            <CreateOCSServiceForm
+              namespace={ns}
+              operandModel={OCSServiceModel}
+              sample={sample}
+              clusterServiceVersion={clusterServiceVersion !== null && clusterServiceVersion}
+            />
+          )}
         {mode === MODES.INDEPENDENT && <InstallExternalCluster match={match} />}
       </div>
     </>
