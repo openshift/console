@@ -3,7 +3,7 @@ import * as _ from 'lodash';
 import { Firehose, FieldLevelHelp } from '@console/internal/components/utils';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { StorageClassDropdownInner } from '@console/internal/components/utils/storage-class-dropdown';
-import { cephStorageProvisioners } from '@console/shared';
+import { cephStorageProvisioners, getName } from '@console/shared';
 import { storageClassTooltip } from '../../constants/ocs-install';
 import './storage-class-dropdown.scss';
 
@@ -30,7 +30,8 @@ export const OCSStorageClassDropdown: React.FC<OCSStorageClassDropdownProps> = (
   const { onChange, defaultClass } = props;
 
   const handleStorageClass = (sc: K8sResourceKind) => {
-    onChange(sc.metadata.name);
+    const name = getName(sc);
+    onChange(name);
   };
   return (
     <>
