@@ -152,14 +152,15 @@ export const VMTemplateSchedulingList: React.FC<VMTemplateResourceSummaryProps> 
 
   return (
     <dl className="co-m-pane__details">
-      <VMDetailsItem title="Flavor" idValue={prefixedID(id, 'flavor')} isNotAvail={!flavorText}>
-        <EditButton
-          id={prefixedID(id, 'flavor-edit')}
-          canEdit={canUpdateTemplate}
-          onClick={() => vmFlavorModal({ vmLike: template, blocking: true })}
-        >
-          {flavorText}
-        </EditButton>
+      <VMDetailsItem
+        title="Flavor"
+        idValue={prefixedID(id, 'flavor')}
+        canEdit={canUpdateTemplate}
+        onEditClick={() => vmFlavorModal({ vmLike: template, blocking: true })}
+        editButtonId={prefixedID(id, 'flavor-edit')}
+        isNotAvail={!flavorText}
+      >
+        {flavorText}
       </VMDetailsItem>
 
       <VMDetailsItem
