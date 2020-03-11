@@ -27,11 +27,12 @@ import {
 } from '@patternfly/react-core';
 import { ChartLineIcon } from '@patternfly/react-icons';
 import { connect } from 'react-redux';
+import { APIError } from '@console/shared';
 import { withFallback } from '@console/shared/src/components/error/error-boundary';
 
 import * as UIActions from '../../actions/ui';
 import { RootState } from '../../redux';
-import { PrometheusResponse } from '../graphs';
+import { PrometheusLabels, PrometheusResponse, PrometheusResult, PrometheusValue } from '../graphs';
 import { GraphEmpty } from '../graphs/graph-empty';
 import { getPrometheusURL, PrometheusEndpoint } from '../graphs/helpers';
 import { queryBrowserTheme } from '../graphs/themes';
@@ -497,10 +498,10 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
   const maxSamplesForSpan =
     defaultSamples || _.clamp(Math.round(span / minStep), minSamples, maxSamples);
 
-  const [xDomain, setXDomain] = React.useState();
-  const [error, setError] = React.useState();
+  const [xDomain, setXDomain] = React.useState<AxisDomain>();
+  const [error, setError] = React.useState<QueryBrowserError>();
   const [isDatasetTooBig, setIsDatasetTooBig] = React.useState(false);
-  const [graphData, setGraphData] = React.useState();
+  const [graphData, setGraphData] = React.useState(null);
   const [samples, setSamples] = React.useState(maxSamplesForSpan);
   const [updating, setUpdating] = React.useState(true);
 
@@ -566,7 +567,7 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
             ) {
               setSamples(newSamples);
             } else {
-              const newGraphData = _.map(newResults, (result) => {
+              const newGraphData = _.map(newResults, (result: PrometheusResult[]) => {
                 return _.map(result, ({ metric, values }) => {
                   // If filterLabels is specified, ignore all series that don't match
                   return filterLabels &&
@@ -715,27 +716,29 @@ type GraphDataPoint = {
   y: number;
 };
 
-export type Labels = { [key: string]: string };
-
-type Series = [Labels, GraphDataPoint[][]];
+type Series = [PrometheusLabels, GraphDataPoint[][]];
 
 export type QueryObj = {
-  disabledSeries?: Labels[];
+  disabledSeries?: PrometheusLabels[];
   isEnabled?: boolean;
   isExpanded?: boolean;
   query?: string;
-  series?: Labels[];
+  series?: PrometheusLabels[];
   text?: string;
 };
 
-type PrometheusValue = [number, string];
-
-export type FormatLegendLabel = (labels: Labels, i: number) => string;
+export type FormatLegendLabel = (labels: PrometheusLabels, i: number) => string;
 
 export type PatchQuery = (index: number, patch: QueryObj) => any;
 
+type QueryBrowserError = {
+  json?: {
+    error?: string;
+  };
+} & APIError;
+
 type ErrorProps = {
-  error: any;
+  error: QueryBrowserError;
   title?: string;
 };
 
@@ -746,7 +749,7 @@ type GraphEmptyStateProps = {
 
 type GraphProps = {
   allSeries: Series[][];
-  disabledSeries?: Labels[][];
+  disabledSeries?: PrometheusLabels[][];
   formatLegendLabel?: FormatLegendLabel;
   isStack?: boolean;
   span: number;
@@ -755,7 +758,7 @@ type GraphProps = {
 
 type ZoomableGraphProps = {
   allSeries: Series[][];
-  disabledSeries?: Labels[][];
+  disabledSeries?: PrometheusLabels[][];
   formatLegendLabel?: FormatLegendLabel;
   isStack?: boolean;
   onZoom: (from: number, to: number) => void;
@@ -766,8 +769,8 @@ type ZoomableGraphProps = {
 export type QueryBrowserProps = {
   defaultSamples?: number;
   defaultTimespan?: number;
-  disabledSeries?: Labels[][];
-  filterLabels?: Labels;
+  disabledSeries?: PrometheusLabels[][];
+  filterLabels?: PrometheusLabels;
   formatLegendLabel?: FormatLegendLabel;
   GraphLink?: React.ComponentType<{}>;
   hideControls?: boolean;
@@ -790,7 +793,7 @@ type TooltipDatum = { _stack: number; x: Date; y: number };
 
 type TooltipInnerProps = {
   datum: TooltipDatum;
-  labels?: Labels;
+  labels?: PrometheusLabels;
   query?: string;
   seriesIndex: number;
   x: number;

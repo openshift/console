@@ -28,17 +28,24 @@ export type DataPoint<X = Date | number | string> = {
   description?: string;
 };
 
+export type PrometheusLabels = { [key: string]: string };
+export type PrometheusValue = [number, string];
+
 // Only covers range and instant vector responses for now.
+export type PrometheusResult = {
+  metric: PrometheusLabels;
+  values?: PrometheusValue[];
+  value?: PrometheusValue;
+};
+
+export type PrometheusData = {
+  resultType: 'matrix' | 'vector' | 'scalar' | 'string';
+  result: PrometheusResult[];
+};
+
 export type PrometheusResponse = {
   status: string;
-  data: {
-    resultType: 'matrix' | 'vector' | 'scalar' | 'string';
-    result: {
-      metric: { [key: string]: any };
-      values?: [number, string | number][];
-      value?: [number, string | number];
-    }[];
-  };
+  data: PrometheusData;
   errorType?: string;
   error?: string;
   warnings?: string[];

@@ -308,6 +308,9 @@ describe('Alertmanager: Configuration', () => {
     expect(monitoringView.saveButton.isEnabled()).toBe(true); // subform valid & labels provided, save should be enabled at this point
     await monitoringView.saveButton.click();
     await crudView.isLoaded();
+    await monitoringView.wait(until.elementToBeClickable(crudView.nameFilter));
+    await crudView.nameFilter.clear();
+    await crudView.nameFilter.sendKeys('MyReceiver');
     monitoringView.getFirstRowAsText().then((text) => {
       expect(text).toEqual('MyReceiver pagerduty severity = warning');
     });
@@ -315,7 +318,10 @@ describe('Alertmanager: Configuration', () => {
 
   it('edits a receiver correctly', async () => {
     await crudView.isLoaded();
-    expect(crudView.resourceRows.count()).toBe(2);
+    await monitoringView.wait(until.elementToBeClickable(crudView.nameFilter));
+    await crudView.nameFilter.clear();
+    await crudView.nameFilter.sendKeys('MyReceiver');
+    expect(crudView.resourceRows.count()).toBe(1);
     await monitoringView.clickFirstRowKebabAction('Edit Receiver');
     await browser.wait(until.presenceOf(firstElementByTestID('cancel')));
     expect(firstElementByTestID('receiver-name').getAttribute('value')).toEqual('MyReceiver');
@@ -338,7 +344,9 @@ describe('Alertmanager: Configuration', () => {
 
     await monitoringView.saveButton.click();
     await crudView.isLoaded();
-
+    await monitoringView.wait(until.elementToBeClickable(crudView.nameFilter));
+    await crudView.nameFilter.clear();
+    await crudView.nameFilter.sendKeys('MyEditedReceiver');
     monitoringView.getFirstRowAsText().then((text) => {
       expect(text).toEqual('MyEditedReceiver pagerduty cluster = MyCluster');
     });
@@ -347,18 +355,27 @@ describe('Alertmanager: Configuration', () => {
   it('deletes a receiver correctly', async () => {
     await horizontalnavView.clickHorizontalTab('Details');
     await crudView.isLoaded();
-    expect(crudView.resourceRows.count()).toBe(2);
+    await monitoringView.wait(until.elementToBeClickable(crudView.nameFilter));
+    await crudView.nameFilter.clear();
+    await crudView.nameFilter.sendKeys('MyEditedReceiver');
+    expect(crudView.resourceRows.count()).toBe(1);
 
     await monitoringView.clickFirstRowKebabAction('Delete Receiver');
     await browser.wait(until.presenceOf(monitoringView.saveButton));
     await monitoringView.saveButton.click();
 
     await crudView.isLoaded();
-    expect(crudView.resourceRows.count()).toBe(1);
+    await monitoringView.wait(until.elementToBeClickable(crudView.nameFilter));
+    await crudView.nameFilter.clear();
+    await crudView.nameFilter.sendKeys('MyEditedReceiver');
+    expect(crudView.resourceRows.count()).toBe(0);
   });
 
   it('prevents deletion of default receiver', async () => {
     await crudView.isLoaded();
+    await monitoringView.wait(until.elementToBeClickable(crudView.nameFilter));
+    await crudView.nameFilter.clear();
+    await crudView.nameFilter.sendKeys('Default');
     await monitoringView.openFirstRowKebabMenu();
     expect(monitoringView.disabledDeleteReceiverMenuItem.isPresent()).toBe(true);
   });

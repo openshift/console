@@ -35,7 +35,7 @@ describe('ServiceRow', () => {
   });
 
   it('should show "-" in case of no url', () => {
-    svcData = _.omit(svcData, 'obj.status.url');
+    svcData = _.omit(svcData, 'obj.status.url') as ServiceRowProps;
     wrapper = shallow(<ServiceRow {...svcData} />);
     const urlColData = wrapper.find(TableData).at(2);
     expect(urlColData.props().children).toEqual('-');
@@ -47,7 +47,7 @@ describe('ServiceRow', () => {
   });
 
   it('should show "-" in generations for no  associated generation', () => {
-    svcData = _.omit(svcData, 'obj.metadata.generation');
+    svcData = _.omit(svcData, 'obj.metadata.generation') as ServiceRowProps;
     wrapper = shallow(<ServiceRow {...svcData} />);
     const generationColData = wrapper.find(TableData).at(3);
     expect(generationColData.props().children).toEqual('-');
@@ -59,7 +59,7 @@ describe('ServiceRow', () => {
   });
 
   it('should show "-" in conditions for no  associated generation', () => {
-    svcData = _.omit(svcData, 'obj.status');
+    svcData = _.omit(svcData, 'obj.status') as ServiceRowProps;
     wrapper = shallow(<ServiceRow {...svcData} />);
     const conditionsColData = wrapper.find(TableData).at(5);
     expect(conditionsColData.props().children).toEqual('-');

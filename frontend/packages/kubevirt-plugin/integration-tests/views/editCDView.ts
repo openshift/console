@@ -17,3 +17,6 @@ export const cdValue = $('#cdrom-value');
 export const cdAddBtn = $('#vm-cd-add-btn');
 export const cdDeleteBtn = $('.kubevirt-cdrom-modal__delete button');
 export const diskSummary = $('.kubevirt-disk-summary');
+export const windowsGuestToolsCDElement = $(
+  '#kubevirt-disk-summary-disk-title-windows-guest-tools',
+);

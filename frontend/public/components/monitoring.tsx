@@ -27,7 +27,8 @@ import { Table, TableData, TableRow, TextFilter } from './factory';
 import { confirmModal } from './modals';
 import MonitoringDashboardsPage from './monitoring/dashboards';
 import { graphStateToProps, QueryBrowserPage, ToggleGraph } from './monitoring/metrics';
-import { Labels, QueryBrowser, QueryObj } from './monitoring/query-browser';
+import { PrometheusLabels } from './graphs';
+import { QueryBrowser, QueryObj } from './monitoring/query-browser';
 import { CheckBoxes } from './row-filter';
 import { formatPrometheusDuration } from './utils/datetime';
 import { AlertmanagerYAMLEditorWrapper } from './monitoring/alert-manager-yaml-editor';
@@ -1550,8 +1551,8 @@ type Silences = {
 
 type PrometheusAlert = {
   activeAt?: string;
-  annotations: Labels;
-  labels: Labels & {
+  annotations: PrometheusLabels;
+  labels: PrometheusLabels & {
     alertname: string;
   };
   state: AlertStates;
@@ -1565,9 +1566,9 @@ export type Alert = PrometheusAlert & {
 
 type PrometheusRule = {
   alerts: PrometheusAlert[];
-  annotations: Labels;
+  annotations: PrometheusLabels;
   duration: number;
-  labels: Labels;
+  labels: PrometheusLabels;
   name: string;
   query: string;
 };
@@ -1650,7 +1651,7 @@ type AlertingPageProps = {
 };
 
 type GraphProps = {
-  filterLabels?: Labels;
+  filterLabels?: PrometheusLabels;
   hideGraphs: boolean;
   patchQuery: (index: number, patch: QueryObj) => any;
   rule: Rule;

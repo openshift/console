@@ -5,8 +5,8 @@ import { Helmet } from 'react-helmet';
 import { ActionGroup, Alert, Button, Tooltip } from '@patternfly/react-core';
 import { safeLoad } from 'js-yaml';
 import * as classNames from 'classnames';
-import { BlueInfoCircleIcon } from '@console/shared/src';
 
+import { BlueInfoCircleIcon, APIError } from '@console/shared';
 import { ButtonBar, Dropdown, Firehose, history, StatusBox } from '../../utils';
 import {
   getAlertmanagerConfig,
@@ -469,7 +469,7 @@ const ReceiverWrapper: React.FC<ReceiverFormsWrapperProps> = React.memo(({ obj, 
   const { alertManagerBaseURL } = window.SERVER_FLAGS;
   const [alertmanagerGlobals, setAlertmanagerGlobals] = React.useState();
   const [loaded, setLoaded] = React.useState(false);
-  const [loadError, setLoadError] = React.useState();
+  const [loadError, setLoadError] = React.useState<APIError>();
 
   React.useEffect(() => {
     if (!alertManagerBaseURL) {
