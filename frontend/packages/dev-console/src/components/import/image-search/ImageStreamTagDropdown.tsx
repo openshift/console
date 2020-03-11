@@ -111,6 +111,7 @@ const ImageStreamTagDropdown: React.FC = () => {
       label="Tag"
       items={imageStreamTagList}
       key={imageStream.image}
+      autoComplete
       title={
         imageStream.tag ||
         (isNamespaceSelected && isImageStreamSelected && !isTagsAvailable ? 'No Tag' : 'Select Tag')

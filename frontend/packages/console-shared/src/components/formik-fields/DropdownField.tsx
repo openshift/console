@@ -1,5 +1,6 @@
 import * as React from 'react';
 import cx from 'classnames';
+import * as fuzzy from 'fuzzysearch';
 import { useField, useFormikContext, FormikValues } from 'formik';
 import { Dropdown } from '@console/internal/components/utils';
 import { FormGroup } from '@patternfly/react-core';
@@ -28,6 +29,7 @@ const DropdownField: React.FC<DropdownFieldProps> = ({ label, helpText, required
       <Dropdown
         {...props}
         id={fieldId}
+        autocompleteFilter={props.autoComplete ? fuzzy : undefined}
         selectedKey={field.value}
         dropDownClassName={cx({ 'dropdown--full-width': props.fullWidth })}
         aria-describedby={`${fieldId}-helper`}
