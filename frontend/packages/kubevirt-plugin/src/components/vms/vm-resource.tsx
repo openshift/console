@@ -225,18 +225,15 @@ export const VMSchedulingList: React.FC<VMSchedulingListProps> = ({
 
   return (
     <dl className="co-m-pane__details">
-      <VMDetailsItem title="Flavor" idValue={prefixedID(id, 'flavor')} isNotAvail={!flavorText}>
-        {canEdit ? (
-          <EditButton
-            id={prefixedID(id, 'flavor-edit')}
-            canEdit={canEdit}
-            onClick={() => vmFlavorModal({ vmLike: vm, blocking: true })}
-          >
-            {flavorText}
-          </EditButton>
-        ) : (
-          <>{flavorText}</>
-        )}
+      <VMDetailsItem
+        title="Flavor"
+        idValue={prefixedID(id, 'flavor')}
+        canEdit={canEdit}
+        onEditClick={() => vmFlavorModal({ vmLike: vm, blocking: true })}
+        editButtonId={prefixedID(id, 'flavor-edit')}
+        isNotAvail={!flavorText}
+      >
+        {flavorText}
       </VMDetailsItem>
 
       <VMDetailsItem
