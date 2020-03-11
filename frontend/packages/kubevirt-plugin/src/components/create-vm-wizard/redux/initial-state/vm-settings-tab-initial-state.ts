@@ -48,7 +48,7 @@ export const getInitialVmSettings = (data: CommonData): VMSettings => {
     [VMSettingsField.PROVIDER]: {
       isRequired: asRequired(isProviderImport),
       isHidden: asHidden(!isProviderImport),
-      providers: getProviders().map((provider) => provider.name),
+      providers: getProviders().map((provider) => ({ name: provider.name, id: provider.id })),
     },
     [VMSettingsField.PROVISION_SOURCE_TYPE]: {
       value: isProviderImport ? ProvisionSource.IMPORT.getValue() : undefined,
@@ -81,7 +81,7 @@ export const getInitialVmSettings = (data: CommonData): VMSettings => {
     },
     [VMSettingsField.PROVIDERS_DATA]: {
       ...getProviders().reduce((allProviders, provider) => {
-        allProviders[provider.name] = provider.getInitialState();
+        allProviders[provider.id] = provider.getInitialState();
         return allProviders;
       }, {}),
     },

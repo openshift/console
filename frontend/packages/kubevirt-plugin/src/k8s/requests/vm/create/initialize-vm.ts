@@ -74,14 +74,8 @@ const initializeStorage = (params: CreateVMEnhancedParams, vm: VMWrapper) => {
         )
         .setNamespace(isPlainDataVolume ? namespace : undefined)
         .assertDefaultModes(
-          getDefaultSCVolumeMode(
-            storageClassConfigMap,
-            dataVolumeWrapper.getStorageClassName(),
-          ).toString(),
-          getDefaultSCAccessModes(
-            storageClassConfigMap,
-            dataVolumeWrapper.getStorageClassName(),
-          ).map((a) => a.toString()),
+          getDefaultSCVolumeMode(storageClassConfigMap, dataVolumeWrapper.getStorageClassName()),
+          getDefaultSCAccessModes(storageClassConfigMap, dataVolumeWrapper.getStorageClassName()),
         );
 
       if (volumeWrapper.getType() === VolumeType.DATA_VOLUME) {

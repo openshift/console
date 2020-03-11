@@ -5,7 +5,8 @@ import { UpdateOptions } from './redux/types';
 import { cleanupVmWareProvider } from './redux/stateUpdate/vmSettings/providers/vmware-cleanup';
 
 type Provider = {
-  name: VMImportProvider;
+  id: VMImportProvider;
+  name: string;
   getInitialState?: () => any;
   getStateUpdater?: (options: UpdateOptions) => any;
   cleanup?: (options: UpdateOptions) => any;
@@ -14,7 +15,8 @@ type Provider = {
 // TODO: make imports async
 export const getProviders = (): Provider[] => [
   {
-    name: VMImportProvider.VMWARE,
+    name: 'VMware',
+    id: VMImportProvider.VMWARE,
     getInitialState: getVmWareInitialState,
     getStateUpdater: getVMWareProviderStateUpdater,
     cleanup: cleanupVmWareProvider,

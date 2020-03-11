@@ -209,14 +209,15 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
 
   let resultPersistentVolumeClaim;
   if (source.requiresNewPVC()) {
-    resultPersistentVolumeClaim = PersistentVolumeClaimWrapper.initializeFromSimpleData({
-      name,
-      storageClassName,
-      size,
-      unit,
-      accessModes: accessMode ? [accessMode.toString()] : null,
-      volumeMode: volumeMode ? volumeMode.toString() : null,
-    });
+    resultPersistentVolumeClaim = new PersistentVolumeClaimWrapper()
+      .init({
+        name,
+        storageClassName,
+        size,
+        unit,
+      })
+      .addAccessMode(accessMode?.toString())
+      .setVolumeMode(volumeMode?.toString());
   }
 
   const {

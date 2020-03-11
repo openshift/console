@@ -98,7 +98,7 @@ export const getDisks = (parsedVm): VMWizardStorage[] => {
     );
 
     const name = _.get(device, ['DeviceInfo', 'Label']);
-    const bootOrder = idx === 0 ? 0 : undefined;
+    const bootOrder = idx === 0 ? 1 : undefined;
 
     return {
       id: idx + 1,
@@ -114,11 +114,13 @@ export const getDisks = (parsedVm): VMWizardStorage[] => {
         type: VolumeType.PERSISTENT_VOLUME_CLAIM,
         typeData: { claimName: name },
       }).asResource(),
-      persistentVolumeClaim: PersistentVolumeClaimWrapper.initializeFromSimpleData({
-        name,
-        size: size.value,
-        unit: size.unit,
-      }).asResource(),
+      persistentVolumeClaim: new PersistentVolumeClaimWrapper()
+        .init({
+          name,
+          size: size.value,
+          unit: size.unit,
+        })
+        .asResource(),
       importData: {
         fileName: _.get(device, ['Backing', 'FileName']),
         mountPath: `/data/vm/disk${idx + 1}`, // hardcoded
@@ -142,11 +144,13 @@ export const getDisks = (parsedVm): VMWizardStorage[] => {
       type: VolumeType.PERSISTENT_VOLUME_CLAIM,
       typeData: { claimName: name },
     }).asResource(),
-    persistentVolumeClaim: PersistentVolumeClaimWrapper.initializeFromSimpleData({
-      name,
-      size: 2,
-      unit: BinaryUnit.Gi,
-    }).asResource(),
+    persistentVolumeClaim: new PersistentVolumeClaimWrapper()
+      .init({
+        name,
+        size: 2,
+        unit: BinaryUnit.Gi,
+      })
+      .asResource(),
     importData: {
       mountPath: CONVERSION_POD_TEMP_MOUNT_PATH, // hardcoded; always Filesystem mode
     },

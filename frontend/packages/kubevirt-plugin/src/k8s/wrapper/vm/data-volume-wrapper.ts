@@ -4,7 +4,7 @@ import { validate } from '@console/internal/components/utils';
 import { compareOwnerReference } from '@console/shared/src/utils/owner-references';
 import { apiVersionForModel } from '@console/internal/module/k8s';
 import { V1alpha1DataVolume } from '../../../types/vm/disk/V1alpha1DataVolume';
-import { DataVolumeSourceType } from '../../../constants/vm/storage';
+import { AccessMode, DataVolumeSourceType, VolumeMode } from '../../../constants/vm/storage';
 import {
   getDataVolumeAccessModes,
   getDataVolumeStorageClassName,
@@ -110,6 +110,13 @@ export class DataVolumeWrapper extends K8sResourceObjectWithTypePropertyWrapper<
 
   getVolumeMode = () => getDataVolumeVolumeMode(this.data);
 
+  getVolumeModeEnum = () => VolumeMode.fromString(this.getVolumeMode());
+
+  getAccessModesEnum = () => {
+    const accessModes = this.getAccessModes();
+    return accessModes ? accessModes.map((mode) => AccessMode.fromString(mode)) : accessModes;
+  };
+
   setAccessModes = (accessModes: string[]) => {
     this.ensurePath('spec.pvc');
     this.data.spec.pvc.accessModes = accessModes;
@@ -118,18 +125,26 @@ export class DataVolumeWrapper extends K8sResourceObjectWithTypePropertyWrapper<
 
   setVolumeMode = (volumeMode: string) => {
     this.ensurePath('spec.pvc');
-    this.data.spec.pvc.volumeMode = volumeMode;
+    this.data.spec.pvc.volumeMode = volumeMode || undefined;
     return this;
   };
 
-  assertDefaultModes = (volumeMode: string, accessModes: string[]) => {
+  addAccessMode = (accessMode: string) => {
+    if (accessMode) {
+      this.ensurePath('spec.pvc.accessModes', []);
+      (this.data.spec.pvc.accessModes as string[]).push(accessMode);
+    }
+    return this;
+  };
+
+  assertDefaultModes = (volumeMode: VolumeMode, accessModes: AccessMode[]) => {
     const oldAccessModes = this.getAccessModes();
     if ((!oldAccessModes || oldAccessModes.length === 0) && accessModes) {
-      this.setAccessModes(accessModes);
+      this.setAccessModes(accessModes.map((a) => a.toString()));
     }
 
     if (!this.getVolumeMode() && volumeMode) {
-      this.setVolumeMode(volumeMode);
+      this.setVolumeMode(volumeMode.toString());
     }
 
     return this;
@@ -155,11 +170,7 @@ export class DataVolumeWrapper extends K8sResourceObjectWithTypePropertyWrapper<
 
   mergeWith(...dataVolumeWrappers: DataVolumeWrapper[]) {
     super.mergeWith(...dataVolumeWrappers);
-
-    if (!this.data?.spec?.pvc?.storageClassName && this.data?.spec?.pvc) {
-      delete this.data.spec.pvc.storageClassName;
-    }
-
+    this.clearIfEmpty('spec.pvc.storageClassName');
     return this;
   }
 

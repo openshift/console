@@ -80,7 +80,7 @@ const VMStatusPopoverContent: React.FC<VMStatusPopoverContentProps> = ({
   <>
     {message}
     {children && <div className="kubevirt-vm-status__detail-section">{children}</div>}
-    {progress && (
+    {progress != null && (
       <div className="kubevirt-vm-status__detail-section">
         <Progress value={progress} variant={ProgressVariant.info} size={ProgressSize.sm} />
       </div>
