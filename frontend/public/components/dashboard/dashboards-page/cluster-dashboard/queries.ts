@@ -67,7 +67,8 @@ const top25Queries = {
 
 const overviewQueries = {
   [OverviewQuery.MEMORY_TOTAL]: 'sum(node_memory_MemTotal_bytes)',
-  [OverviewQuery.MEMORY_UTILIZATION]: 'sum(node_memory_Active_bytes)',
+  [OverviewQuery.MEMORY_UTILIZATION]:
+    'sum(node_memory_MemTotal_bytes - node_memory_MemAvailable_bytes)',
   [OverviewQuery.NETWORK_UTILIZATION]:
     'sum(instance:node_network_transmit_bytes_excluding_lo:rate1m+instance:node_network_receive_bytes_excluding_lo:rate1m)',
   [OverviewQuery.CPU_UTILIZATION]: 'cluster:cpu_usage_cores:sum',
