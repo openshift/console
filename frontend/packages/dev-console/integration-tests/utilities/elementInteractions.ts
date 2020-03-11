@@ -1,4 +1,4 @@
-import { browser, ExpectedConditions as EC, element, by } from 'protractor';
+import { browser, ExpectedConditions as EC, element, by, protractor } from 'protractor';
 // import { config } from '@console/internal-integration-tests/protractor.conf';
 const waitForElement = 5000;
 // config.jasmineNodeOpts.defaultTimeoutInterval;
@@ -7,8 +7,28 @@ const waitForElement = 5000;
   export async function enterText(ele: any, text: string, timeoutInMilliseconds = waitForElement) {
     browser.executeScript('arguments[0].scrollIntoView();', ele);
     await browser.wait(EC.visibilityOf(ele), timeoutInMilliseconds, `${ele} is not visible in DOM, even after ${timeoutInMilliseconds} milliseconds`);
-    await ele.clear();
+    await clearText(ele);
     await ele.sendKeys(text);
+  }
+
+  export async function clearText(ele:any,timeoutInMilliseconds = waitForElement) {
+    browser.executeScript('arguments[0].scrollIntoView();', ele);
+    await browser.wait(EC.visibilityOf(ele), timeoutInMilliseconds, `${ele} is not visible in DOM, even after ${timeoutInMilliseconds} milliseconds`);
+    await ele.click();
+    await ele.sendKeys(protractor.Key.chord(protractor.Key.CONTROL, "a"));
+    await ele.sendKeys(protractor.Key.BACK_SPACE);
+  }
+  // It is useful in Resources section
+  export async function enterTextSelectDropDown(text_ele: any, text: string, drp_ele:any, drpdownListvalue: string, timeoutInMilliseconds = waitForElement) {
+    browser.executeScript('arguments[0].scrollIntoView();', text_ele);
+    await browser.wait(EC.visibilityOf(text_ele), timeoutInMilliseconds, `${text_ele} is not visible in DOM, even after ${timeoutInMilliseconds} milliseconds`);
+    await text_ele.clear();
+    await text_ele.sendKeys(text);
+    await browser.executeScript('arguments[0].scrollIntoView();', drp_ele);
+    await browser.wait(EC.visibilityOf(drp_ele), timeoutInMilliseconds, `${drp_ele} is not able to click in DOM, even after ${timeoutInMilliseconds} milliseconds`);
+    await drp_ele.click();
+    await browser.wait(EC.elementToBeClickable(element(by.css('ul.pf-c-dropdown__menu'))), timeoutInMilliseconds);
+    await element(by.cssContainingText('li button.pf-c-dropdown__menu-item', drpdownListvalue)).click();
   }
 
   export async function mouseHoverClick(ele: any, timeoutInMilliseconds = waitForElement) {
@@ -36,8 +56,8 @@ const waitForElement = 5000;
   export async function selectCheckBox(ele: any, timeoutInMilliseconds = waitForElement) {
     await browser.executeScript('arguments[0].scrollIntoView();', ele);
     await browser.wait(EC.elementToBeClickable(ele), timeoutInMilliseconds, `${ele} is not able to click in DOM, even after ${timeoutInMilliseconds} milliseconds`);
-    const result = await verifyCheckBox(ele)
-    if(result === false) {
+    let result = await verifyCheckBox(ele)
+    if(result == false) {
       await ele.click(); 
     } else {
       console.log('Check Box is already selected');
@@ -45,15 +65,14 @@ const waitForElement = 5000;
   }
 
   export async function verifyCheckBox(ele: any, timeoutInMilliseconds = waitForElement) {
-    let result: boolean;
     await browser.executeScript('arguments[0].scrollIntoView();', ele);
     await browser.wait(EC.elementToBeClickable(ele), timeoutInMilliseconds, `${ele} is not able to click in DOM, even after ${timeoutInMilliseconds} milliseconds`);
-    if(ele.getAttribute('value') === 'true') {
-      result = true;
+    
+    if(await ele.getAttribute('value') == true) {
       console.log('Check Box is already selected');
+      return true;
     } else {
-      result = false;
+      return false;
     }
-    return result;
   }
 

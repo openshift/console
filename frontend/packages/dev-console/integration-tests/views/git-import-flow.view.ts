@@ -2,7 +2,9 @@
 import { browser, ExpectedConditions as until, by, element, Key } from 'protractor';
 import { config } from '@console/internal-integration-tests/protractor.conf';
 const waitForElement = config.jasmineNodeOpts.defaultTimeoutInterval;
-import { enterText, selectByIndex, verifyCheckBox, selectByVisibleText } from '../utilities/elementInteractions';
+import { enterText, selectByIndex, verifyCheckBox, selectByVisibleText,
+  //  selectCheckBox 
+  } from '../utilities/elementInteractions';
 import { click } from '@console/shared/src/test-utils/utils';
 
 export const addNavigate = element(by.css('[data-test-id="+Add-header"]'));
@@ -19,7 +21,6 @@ export const applicationDropdown = element(
 export const createApplication = element(by.id('#CREATE_APPLICATION_KEY#-link'));
 export const applicationName = element(by.css('[data-test-id="application-form-app-input"]'));
 export const appName = element(by.css('[data-test-id="application-form-app-name"]'));
-
 export const builderImage = element(
   by.cssContainingText('.pf-c-card.odc-builder-image-card', 'Node.js'),
 );
@@ -94,7 +95,11 @@ export function resourceLimitsObj() {
     cpuRequest: element(by.css('input[name="limits.cpu.requestValue"]')),
     cpuLimit: element(by.css('input[name="limits.cpu.limitValue"]')),
     memoryRequest: element(by.css('input[name="limits.memory.requestValue"]')),
-    memoryLimit: element(by.css('input[name="limits.memory.limitValue"]'))
+    memoryLimit: element(by.css('input[name="limits.memory.limitValue"]')),
+    cpuRequestHelperText: element(by.css('div#form-resource-limit-limits-cpu-request-field-helper')),
+    cpuLimiHelperText: element(by.css('div#form-resource-limit-limits-cpu-limit-field-helper')),
+    memoryRequestHelperText:element(by.css('div#form-resource-limit-limits-memory-request-field-helper')),
+    memoryLimitHelperText: element(by.css('div#form-resource-limit-limits-memory-limit-field-helper'))
   }
 }
 
@@ -232,25 +237,32 @@ export const setBuilderImage = async function() {
 };
 
 // Automating Advanced options present in git import flow
-export const setRouting = async function(hostname:string, path: string, tlsTerminationValue: TLSTerminationValues, insecureTrafficValue: string = 'None') {
+export const setRouting = async function(hostname:string, path: string) {
   await enterText(routingObj().hostname, hostname);
   await enterText(routingObj().path, path);
   await selectByIndex(routingObj().targetPort);
-  await click(routingObj().secureRoute).then(async() => {
-    await browser.wait(until.elementToBeClickable(routingObj().tlsTermination), waitForElement, `Unable to view the TLS termination dropdown field, even after ${waitForElement} ms `)
-    if(tlsTerminationValue ===TLSTerminationValues.Edge || tlsTerminationValue ===TLSTerminationValues.ReEncrypt) {
-      await selectByVisibleText(routingObj().tlsTermination, tlsTerminationValue);
-      await routingObj().certificate.sendKeys();
-      await routingObj().privateKey.sendKeys();
-      await routingObj().caCertificate.sendKeys();
-      await selectByVisibleText(routingObj().insecureTraffic, insecureTrafficValue);
-    } else if(tlsTerminationValue ===TLSTerminationValues.Passthrough) {
-      await selectByVisibleText(routingObj().insecureTraffic, insecureTrafficValue);
-    } else {
-      throw new Error('Some thing went wrong');
-    }
-  });
 };
+
+export const setSecureRoute = async function(tlsTerminationValue: TLSTerminationValues, insecureTrafficValue: string = 'None') {
+  // if(tlsTerminationValue ==TLSTerminationValues.Edge || tlsTerminationValue ==TLSTerminationValues.ReEncrypt) {
+    await click(routingObj().secureRoute).then(async() => {
+    await browser.wait(until.elementToBeClickable(routingObj().tlsTermination), waitForElement, `Unable to view the TLS termination dropdown field, even after ${waitForElement} ms `)
+    await selectByVisibleText(routingObj().tlsTermination, tlsTerminationValue);
+    // await routingObj().certificate.sendKeys('a');
+    // await routingObj().privateKey.sendKeys();
+    // await routingObj().caCertificate.sendKeys();
+    await selectByVisibleText(routingObj().insecureTraffic, insecureTrafficValue);
+    });
+  // } else if(tlsTerminationValue ==TLSTerminationValues.Passthrough) {
+  //   await click(routingObj().secureRoute).then(async() => {
+  //     await browser.wait(until.elementToBeClickable(routingObj().tlsTermination), waitForElement, `Unable to view the TLS termination dropdown field, even after ${waitForElement} ms `)
+  //     await selectByVisibleText(routingObj().tlsTermination, tlsTerminationValue);
+  //     await selectByVisibleText(routingObj().insecureTraffic, insecureTrafficValue);
+  //   });
+  // } else {
+  //   throw new Error('Some thing went wrong');
+  // }
+}
 
 export const setEnvVariables = async function(envName: string, envValue: string) {
   await buildConfigObj().envRows.count().then(async(count: number) => {
@@ -264,7 +276,7 @@ export const setBuildConfig = async function(envName: string, envValue: string) 
   const webHookTriggered =  await verifyCheckBox(buildConfigObj().webHookBuildTrigger);
   const buildTriggeredImage = await verifyCheckBox(buildConfigObj().buildTriggerImage);
   const buildTriggeredConfigField = await verifyCheckBox(buildConfigObj().buildTriggerConfigField);
-  if(webHookTriggered === true && buildTriggeredImage === true && buildTriggeredConfigField === true) {
+  if(webHookTriggered == true && buildTriggeredImage == true && buildTriggeredConfigField == true) {
     await setEnvVariables(envName, envValue);
   }
 }
