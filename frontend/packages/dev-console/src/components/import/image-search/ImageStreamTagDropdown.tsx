@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash';
+import * as fuzzy from 'fuzzysearch';
 import { useFormikContext, FormikValues, getIn } from 'formik';
 import { ValidatedOptions } from '@patternfly/react-core';
 import { DropdownField } from '@console/shared';
@@ -111,6 +112,7 @@ const ImageStreamTagDropdown: React.FC = () => {
       label="Tag"
       items={imageStreamTagList}
       key={imageStream.image}
+      autocompleteFilter={fuzzy}
       title={
         imageStream.tag ||
         (isNamespaceSelected && isImageStreamSelected && !isTagsAvailable ? 'No Tag' : 'Select Tag')
