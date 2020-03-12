@@ -4,7 +4,7 @@ import { Firehose, FieldLevelHelp } from '@console/internal/components/utils';
 import { InfrastructureModel } from '@console/internal/models';
 import { K8sResourceKind, StorageClassResourceKind, k8sGet } from '@console/internal/module/k8s';
 import { StorageClassDropdownInner } from '@console/internal/components/utils/storage-class-dropdown';
-import { getInfrastructurePlatform } from '@console/shared';
+import { getInfrastructurePlatform, getName } from '@console/shared';
 import { infraProvisionerMap, storageClassTooltip } from '../../constants/ocs-install';
 import './storage-class-dropdown.scss';
 
@@ -43,7 +43,8 @@ export const OCSStorageClassDropdown: React.FC<OCSStorageClassDropdownProps> = (
   const { onChange, defaultClass } = props;
 
   const handleStorageClass = (sc: K8sResourceKind) => {
-    onChange(sc.metadata.name);
+    const name = getName(sc);
+    onChange(name);
   };
 
   return (
