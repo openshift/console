@@ -192,7 +192,7 @@ describe('Alertmanager: YAML', () => {
     checkErrors();
   });
 
-  it('displays the Alermanager YAML page', async () => {
+  it('displays the Alertmanager YAML page', async () => {
     await sidenavView.clickNavLink(['Administration', 'Cluster Settings']);
     await crudView.isLoaded();
     await horizontalnavView.clickHorizontalTab('Global Configuration');
@@ -226,7 +226,7 @@ describe('Alertmanager: Configuration', () => {
     checkErrors();
   });
 
-  it('displays the Alermanager Configuration Details page', async () => {
+  it('displays the Alertmanager Configuration Details page', async () => {
     await browser.get(`${appHost}/monitoring/alertmanagerconfig`);
     await crudView.isLoaded();
     expect(monitoringView.alertRoutingHeader.getText()).toContain('Alert Routing');
