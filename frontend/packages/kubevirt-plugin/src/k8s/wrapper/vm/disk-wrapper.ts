@@ -12,7 +12,9 @@ export class DiskWrapper extends ObjectWithTypePropertyWrapper<
   CombinedTypeData,
   DiskWrapper
 > {
-  // TODO deprecate all initializeFromSimpleData in favor of init
+  /**
+   * @deprecated FIXME deprecate initializeFromSimpleData in favor of init
+   */
   static initializeFromSimpleData = ({
     name,
     type,

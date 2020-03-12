@@ -12,6 +12,9 @@ export class NetworkWrapper extends ObjectWithTypePropertyWrapper<
   CombinedTypeData,
   NetworkWrapper
 > {
+  /**
+   * @deprecated FIXME deprecate initializeFromSimpleData in favor of init
+   */
   static initializeFromSimpleData = ({
     name,
     type,

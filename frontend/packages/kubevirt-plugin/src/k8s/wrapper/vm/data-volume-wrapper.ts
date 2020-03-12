@@ -27,6 +27,9 @@ export class DataVolumeWrapper extends K8sResourceObjectWithTypePropertyWrapper<
   CombinedTypeData,
   DataVolumeWrapper
 > {
+  /**
+   * @deprecated FIXME deprecate initializeFromSimpleData in favor of init
+   */
   static initializeFromSimpleData = ({
     name,
     namespace,

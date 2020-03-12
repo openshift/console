@@ -12,6 +12,9 @@ import {
 } from '../../../constants/vm';
 
 export class VMTemplateWrapper extends K8sResourceWrapper<TemplateKind, VMTemplateWrapper> {
+  /**
+   * @deprecated FIXME deprecate initializeFromSimpleData in favor of init
+   */
   static initializeFromSimpleData = (params?: {
     name?: string;
     namespace?: string;

@@ -15,6 +15,9 @@ export class PersistentVolumeClaimWrapper extends Wrapper<
   V1PersistentVolumeClaim,
   PersistentVolumeClaimWrapper
 > {
+  /**
+   * @deprecated FIXME deprecate initializeFromSimpleData in favor of init
+   */
   static initializeFromSimpleData = (params?: {
     name?: string;
     accessModes?: object[] | string[];
