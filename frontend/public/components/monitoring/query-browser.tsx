@@ -172,7 +172,13 @@ const TooltipInner_: React.FC<TooltipInnerProps> = ({
   const height = 500;
 
   return (
-    <foreignObject height={height} width={width} x={x - width / 2} y={y}>
+    <foreignObject
+      className="query-browser__tooltip-svg-wrap"
+      height={height}
+      width={width}
+      x={x - width / 2}
+      y={y}
+    >
       <div className="query-browser__tooltip-wrap">
         <div className="query-browser__tooltip-arrow" />
         <div className="query-browser__tooltip">
