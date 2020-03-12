@@ -4,6 +4,9 @@ import { apiVersionForModel, K8sResourceKind } from '@console/internal/module/k8
 import { VMIKind } from '../../../types/vm';
 import { VirtualMachineInstanceMigrationModel } from '../../../models';
 
+/**
+ * @deprecated FIXME deprecate in favor of VMIMigrationWrapper
+ */
 export class VMIMigration {
   private data: K8sResourceKind;
 

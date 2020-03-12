@@ -1,4 +1,3 @@
-import { requestVmDetail, startV2VVMWareController } from 'kubevirt-web-ui-components';
 import { getName } from '@console/shared/src';
 import { VMImportProvider, VMWareProviderField, VMWizardProps } from '../../../../types';
 import { InternalActionType, UpdateOptions } from '../../../types';
@@ -21,6 +20,8 @@ import {
   createV2VvmwareObject,
   createV2VvmwareObjectWithSecret,
 } from '../../../../../../k8s/requests/v2v/create-v2vvmware-object';
+import { requestVmDetail } from '../../../../../../k8s/requests/v2v/request-vm-detail';
+import { startV2VVMWareController } from '../../../../../../k8s/requests/v2v/start-v2vvmware-controller';
 
 const { info: consoleInfo, warn: consoleWarn, error: consoleError } = console;
 
