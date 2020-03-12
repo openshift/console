@@ -1,3 +1,5 @@
+$tooltip-background-color: #151515;
+
 .graph-empty-state {
   min-height: 310px;
 }
@@ -24,10 +26,21 @@
     min-height: 305px; // Allow for chart legend
   }
 
+  // Move tooltip above cursor to work around bug where the legend is visible through the tooltip
+  .query-browser__tooltip-arrow {
+    border-bottom: none;
+    border-top: 12px solid $tooltip-background-color;
+  }
+  .query-browser__tooltip-svg-wrap {
+    transform: translate(0, -500px);
+  }
+  .query-browser__tooltip-wrap {
+    flex-direction: column-reverse;
+  }
+
   .query-browser__wrapper {
     border: 0;
     margin: 0;
-    overflow: hidden;
     padding: 0;
   }
 }
@@ -317,8 +330,6 @@ $screen-phone-landscape-min-width: 567px;
 .query-browser__tech-preview {
   margin: 0 10px;
 }
-
-$tooltip-background-color: #151515;
 
 .query-browser__tooltip-wrap {
   align-items: center;
