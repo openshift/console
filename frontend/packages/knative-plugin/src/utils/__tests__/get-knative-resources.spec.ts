@@ -9,6 +9,7 @@ import {
   getEventSourceContainer,
   getEventSourceCamel,
   getEventSourceKafka,
+  getEventSourceSinkBinding,
 } from '../get-knative-resources';
 import {
   deploymentData,
@@ -106,6 +107,18 @@ describe('Get knative resources', () => {
     });
     it('expect getEventSourceKafka to return event source as undefined', () => {
       const knEventResource = getEventSourceKafka(deploymentData, MockResources);
+      expect(knEventResource).toBeUndefined();
+    });
+    it('expect getEventSourceSinkBinding to return event source data', () => {
+      const knEventResource = getEventSourceSinkBinding(
+        deploymentKnativeEventData,
+        MockKnativeResources,
+      );
+      expect(knEventResource.eventSourceServicebinding).toBeDefined();
+      expect(knEventResource.eventSourceServicebinding).toHaveLength(1);
+    });
+    it('expect getEventSourceSinkBinding to return event source as undefined', () => {
+      const knEventResource = getEventSourceSinkBinding(deploymentData, MockResources);
       expect(knEventResource).toBeUndefined();
     });
   });
