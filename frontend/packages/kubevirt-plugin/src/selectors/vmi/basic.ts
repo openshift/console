@@ -15,3 +15,5 @@ export const getVMIConditionsByType = (
   const conditions = vmi && vmi.status && vmi.status.conditions;
   return (conditions || []).filter((cond) => cond.type === condType);
 };
+
+export const getVMINodeName = (vmi: VMIKind) => vmi && vmi.status && vmi.status.nodeName;
