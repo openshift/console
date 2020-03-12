@@ -62,14 +62,14 @@ const createConversionPodSecret = async ({
   );
 
   const username = encodeURIComponent(
-    getVmwareValue(vmSettings, VMWareProviderField.USER_NAME) || secret.getValue('username', true),
+    getVmwareValue(vmSettings, VMWareProviderField.USER_NAME) || secret.getValue('username'),
   );
   const password =
     getVmwareValue(vmSettings, VMWareProviderField.USER_PASSWORD_AND_CHECK_CONNECTION) ||
-    secret.getValue('password', true);
+    secret.getValue('password');
 
   const hostname =
-    getVmwareValue(vmSettings, VMWareProviderField.HOSTNAME) || secret.getValue('url', true);
+    getVmwareValue(vmSettings, VMWareProviderField.HOSTNAME) || secret.getValue('url');
 
   const sourceDisks = (storages || [])
     .filter((storage) => storage.type === VMWizardStorageType.V2V_VMWARE_IMPORT)
@@ -77,22 +77,18 @@ const createConversionPodSecret = async ({
 
   const secretWrapper = new SecretWrappper()
     .init({ namespace, generateName: CONVERSION_GENERATE_NAME })
-    .setJSONValue(
-      'conversion.json',
-      {
-        daemonize: false,
+    .setJSONValue('conversion.json', {
+      daemonize: false,
 
-        vm_name: vm.name,
-        transport_method: 'vddk',
+      vm_name: vm.name,
+      transport_method: 'vddk',
 
-        vmware_fingerprint: thumbprint,
-        vmware_uri: `vpx://${username}@${hostname}${vm?.detail?.hostPath}?no_verify=1`,
-        vmware_password: password,
+      vmware_fingerprint: thumbprint,
+      vmware_uri: `vpx://${username}@${hostname}${vm?.detail?.hostPath}?no_verify=1`,
+      vmware_password: password,
 
-        source_disks: sourceDisks,
-      },
-      true,
-    );
+      source_disks: sourceDisks,
+    });
 
   const conversionPodSecret = await k8sWrapperCreate(secretWrapper);
 

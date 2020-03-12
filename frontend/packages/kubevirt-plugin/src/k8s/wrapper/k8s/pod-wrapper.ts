@@ -1,10 +1,10 @@
-import { ContainerSpec, K8sResourceCommon, PodKind, Volume } from '@console/internal/module/k8s';
+import { ContainerSpec, PodKind, Volume } from '@console/internal/module/k8s';
 import { PodModel } from '@console/internal/models';
 import { K8sResourceWrapper } from '../common/k8s-resource-wrapper';
 import { K8sInitAddon } from '../common/util/k8s-mixin';
 
 export class PodWrappper extends K8sResourceWrapper<PodKind, PodWrappper> {
-  constructor(pod?: K8sResourceCommon | PodWrappper | any, copy = false) {
+  constructor(pod?: PodKind | PodWrappper | any, copy = false) {
     super(PodModel, pod, copy);
   }
 

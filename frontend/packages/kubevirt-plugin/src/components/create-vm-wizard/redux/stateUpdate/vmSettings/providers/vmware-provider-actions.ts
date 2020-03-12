@@ -1,9 +1,4 @@
-import {
-  createV2VvmwareObject,
-  createV2VvmwareObjectWithSecret,
-  requestVmDetail,
-  startV2VVMWareController,
-} from 'kubevirt-web-ui-components';
+import { requestVmDetail, startV2VVMWareController } from 'kubevirt-web-ui-components';
 import { getName } from '@console/shared/src';
 import { VMImportProvider, VMWareProviderField, VMWizardProps } from '../../../../types';
 import { InternalActionType, UpdateOptions } from '../../../types';
@@ -22,6 +17,10 @@ import { asDisabled, asHidden } from '../../../../utils/utils';
 import { deleteV2VvmwareObject } from '../../../../../../k8s/requests/v2v/delete-v2vvmware-object';
 import { getSimpleV2vVMwareStatus } from '../../../../../../statuses/v2vvmware';
 import { getVMWareConnectionName } from '../../../../../../selectors/v2v';
+import {
+  createV2VvmwareObject,
+  createV2VvmwareObjectWithSecret,
+} from '../../../../../../k8s/requests/v2v/create-v2vvmware-object';
 
 const { info: consoleInfo, warn: consoleWarn, error: consoleError } = console;
 

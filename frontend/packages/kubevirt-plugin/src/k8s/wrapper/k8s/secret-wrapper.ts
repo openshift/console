@@ -22,12 +22,12 @@ export class SecretWrappper extends K8sResourceWrapper<K8sResourceCommon, Secret
     return this;
   };
 
-  getValue = (key: string, isBase64Encoded = false) => {
+  getValue = (key: string, isBase64Encoded = true) => {
     const value = this.uncheckedData().data ? this.uncheckedData().data[key] : undefined;
     return isBase64Encoded ? atob(value) : value;
   };
 
-  getFromJSONValue = (key: string, isBase64Encoded = false) =>
+  getFromJSONValue = (key: string, isBase64Encoded = true) =>
     JSON.parse(this.getValue(key, isBase64Encoded));
 
   setData = (data: object) => {
@@ -35,12 +35,12 @@ export class SecretWrappper extends K8sResourceWrapper<K8sResourceCommon, Secret
     return this;
   };
 
-  setValue = (key: string, value: string, isBase64Encoded = false) => {
+  setValue = (key: string, value: string, isBase64Encoded = true) => {
     this.ensurePath('data');
     this.uncheckedData().data[key] = isBase64Encoded ? btoa(value) : value;
     return this;
   };
 
-  setJSONValue = (key: string, value: object, isBase64Encoded = false) =>
+  setJSONValue = (key: string, value: object, isBase64Encoded = true) =>
     this.setValue(key, JSON.stringify(value), isBase64Encoded);
 }
