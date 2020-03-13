@@ -19,7 +19,7 @@ export enum ActionType {
 
 const REFRESH_TIMEOUT = 5000;
 
-export const ALERTS_KEY = 'alerts';
+export const ALERTS_KEY = 'alerts'; // TODO: remove once noobaa-storage-plugin, ceph-storage-plugin, and metal3-plugin status cards have been updated to switch over to alertNotifications, see https://github.com/openshift/console/pull/4539
 
 export const stopWatch = (type: RESULTS_TYPE, key: string) =>
   action(ActionType.StopWatch, { type, key });
@@ -121,27 +121,8 @@ export const watchURL: WatchURLAction = (url, fetch = coFetchJSON) => (dispatch,
   }
 };
 
-export const watchAlerts: WatchAlertsAction = () => (dispatch, getState) => {
-  const isActive = isWatchActive(getState().dashboards, RESULTS_TYPE.ALERTS, ALERTS_KEY);
+export const watchAlerts: WatchAlertsAction = () => (dispatch) => {
   dispatch(activateWatch(RESULTS_TYPE.ALERTS, ALERTS_KEY));
-  if (!isActive) {
-    const { prometheusBaseURL } = window.SERVER_FLAGS;
-    if (!prometheusBaseURL) {
-      dispatch(
-        setError(RESULTS_TYPE.ALERTS, ALERTS_KEY, new Error('Prometheus URL is not available')),
-      );
-    } else {
-      const prometheusURL = () => `${prometheusBaseURL}/api/v1/rules`;
-      fetchPeriodically(
-        dispatch,
-        RESULTS_TYPE.ALERTS,
-        ALERTS_KEY,
-        prometheusURL,
-        getState,
-        coFetchJSON,
-      );
-    }
-  }
 };
 
 export const stopWatchPrometheusQuery: StopWatchPrometheusAction = (query, timespan) =>

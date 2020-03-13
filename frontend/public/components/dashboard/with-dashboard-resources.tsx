@@ -3,8 +3,8 @@ import { connect } from 'react-redux';
 import * as _ from 'lodash-es';
 
 import { RESULTS_TYPE, RequestMap } from '../../reducers/dashboards';
+import { NotificationAlerts } from '../../reducers/ui';
 import {
-  ALERTS_KEY,
   Fetch,
   stopWatchAlerts,
   StopWatchAlertsAction,
@@ -42,9 +42,7 @@ const mapStateToProps = (state: RootState) => ({
   [RESULTS_TYPE.PROMETHEUS]: state.dashboards.get(RESULTS_TYPE.PROMETHEUS) as RequestMap<
     PrometheusResponse
   >,
-  [RESULTS_TYPE.ALERTS]: state.dashboards.get(RESULTS_TYPE.ALERTS) as RequestMap<
-    PrometheusRulesResponse
-  >,
+  notificationAlerts: state.UI.getIn(['monitoring', 'notificationAlerts']),
 });
 
 type StateProps = ReturnType<typeof mapStateToProps>;
@@ -91,10 +89,8 @@ export const withDashboardResources = <P extends DashboardItemProps>(
               nextProps[RESULTS_TYPE.PROMETHEUS].getIn([query, 'loadError']),
         );
         const alertsResultChanged =
-          this.props[RESULTS_TYPE.ALERTS].getIn([ALERTS_KEY, 'data']) !==
-            nextProps[RESULTS_TYPE.ALERTS].getIn([ALERTS_KEY, 'data']) ||
-          this.props[RESULTS_TYPE.ALERTS].getIn([ALERTS_KEY, 'loadError']) !==
-            nextProps[RESULTS_TYPE.ALERTS].getIn([ALERTS_KEY, 'loadError']);
+          this.props?.notificationAlerts?.data !== nextProps?.notificationAlerts?.data ||
+          this.props?.notificationAlerts?.loadError !== nextProps?.notificationAlerts?.loadError;
         const k8sResourcesChanged = this.state.k8sResources !== nextState.k8sResources;
 
         const nextExternalProps = this.getExternalProps(nextProps);
@@ -161,7 +157,7 @@ export const withDashboardResources = <P extends DashboardItemProps>(
           'stopWatchAlerts',
           RESULTS_TYPE.URL,
           RESULTS_TYPE.PROMETHEUS,
-          RESULTS_TYPE.ALERTS,
+          'notificationAlerts',
         );
       };
 
@@ -177,7 +173,7 @@ export const withDashboardResources = <P extends DashboardItemProps>(
               stopWatchAlerts={this.stopWatchAlerts}
               urlResults={this.props[RESULTS_TYPE.URL]}
               prometheusResults={this.props[RESULTS_TYPE.PROMETHEUS]}
-              alertsResults={this.props[RESULTS_TYPE.ALERTS]}
+              notificationAlerts={this.props.notificationAlerts}
               watchK8sResource={this.watchK8sResource}
               stopWatchK8sResource={this.stopWatchK8sResource}
               {...this.getExternalProps(this.props)}
@@ -219,7 +215,7 @@ type WithDashboardResourcesProps = {
   stopWatchAlerts: StopWatchAlertsAction;
   [RESULTS_TYPE.PROMETHEUS]: RequestMap<PrometheusResponse>;
   [RESULTS_TYPE.URL]: RequestMap<any>;
-  [RESULTS_TYPE.ALERTS]: RequestMap<PrometheusRulesResponse>;
+  notificationAlerts: any;
 };
 
 export type WatchK8sResource = (resource: FirehoseResource) => void;
@@ -234,7 +230,8 @@ export type DashboardItemProps = {
   stopWatchAlerts: StopWatchAlerts;
   urlResults: RequestMap<any>;
   prometheusResults: RequestMap<PrometheusResponse>;
-  alertsResults: RequestMap<PrometheusRulesResponse>;
+  alertsResults: RequestMap<PrometheusRulesResponse>; // TODO: remove once noobaa-storage-plugin, ceph-storage-plugin, and metal3-plugin status cards have been updated to switch over to alertNotifications, see https://github.com/openshift/console/pull/4539
+  notificationAlerts: NotificationAlerts;
   watchK8sResource: WatchK8sResource;
   stopWatchK8sResource: StopWatchK8sResource;
   resources?: {
