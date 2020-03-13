@@ -248,7 +248,7 @@ export const OperandStatusIconAndText: React.FunctionComponent<OperandStatusIcon
   return iconAndText;
 };
 
-export const getSortableOperandStatus = (statusObject: K8sResourceKind['status']) => {
+const getSortableOperandStatus = (statusObject: K8sResourceKind['status']) => {
   let statusText = 'Unknown';
   if (_.isEmpty(statusObject)) {
     return statusText;
@@ -335,6 +335,10 @@ export const OperandList_: React.FC<OperandListProps & WithFlagsProps> = (props)
   return (
     <Table
       {...props}
+      customSorts={{
+        operandStatus: (operand: K8sResourceKind): string =>
+          getSortableOperandStatus(operand.status),
+      }}
       data={ensureKind(props.data)}
       EmptyMsg={EmptyMsg}
       aria-label="Operands"
