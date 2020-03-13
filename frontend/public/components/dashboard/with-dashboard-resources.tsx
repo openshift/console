@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import * as _ from 'lodash-es';
 
 import { RESULTS_TYPE, RequestMap } from '../../reducers/dashboards';
+import { NotificationAlerts } from '../../reducers/ui';
 import {
   Fetch,
   stopWatchAlerts,
@@ -230,7 +231,7 @@ export type DashboardItemProps = {
   urlResults: RequestMap<any>;
   prometheusResults: RequestMap<PrometheusResponse>;
   alertsResults: RequestMap<PrometheusRulesResponse>; // TODO: remove once noobaa-storage-plugin, ceph-storage-plugin, and metal3-plugin status cards have been updated to switch over to alertNotifications, see https://github.com/openshift/console/pull/4539
-  notificationAlerts: any;
+  notificationAlerts: NotificationAlerts;
   watchK8sResource: WatchK8sResource;
   stopWatchK8sResource: StopWatchK8sResource;
   resources?: {

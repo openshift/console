@@ -139,7 +139,7 @@ const ClusterAlerts = connectToFlags(FLAGS.CLUSTER_VERSION)(
           isLoading={
             flagPending(hasCVResource) || !alertsLoaded || (hasCVResource && !cvLoaded && !cvError)
           }
-          error={alertsResponseError}
+          error={!_.isEmpty(alertsResponseError)}
           emptyMessage="No cluster alerts or messages"
         >
           {items}
