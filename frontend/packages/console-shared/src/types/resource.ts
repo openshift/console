@@ -1,4 +1,4 @@
-import { K8sResourceKind, PodKind, RouteKind, EventKind } from '@console/internal/module/k8s';
+import { K8sResourceKind, PodKind, RouteKind } from '@console/internal/module/k8s';
 import { DEPLOYMENT_STRATEGY } from '../constants';
 import { OverviewItemAlerts, PodControllerOverviewItem } from './pod';
 import { ClusterServiceVersionKind } from '@console/operator-lifecycle-manager';
@@ -33,8 +33,8 @@ export type OverviewItem<T = K8sResourceKind> = {
   configurations?: K8sResourceKind[];
   ksservices?: K8sResourceKind[];
   revisions?: K8sResourceKind[];
-  events?: EventKind[];
   isOperatorBackedService?: boolean;
+  isMonitorable?: boolean;
 };
 
 export type OperatorBackedServiceKindMap = {
