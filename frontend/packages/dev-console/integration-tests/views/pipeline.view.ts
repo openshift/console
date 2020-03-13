@@ -4,7 +4,7 @@ export const pageSidebar = element(by.id('page-sidebar'));
 export const pipelineTab = element(by.css('[data-test-id="pipeline-header"]'));
 export const pipelinePage = element(by.css('[data-test-id="resource-title"]'));
 export const selectTask = element(by.className('odc-task-list-node__trigger'));
-export const selectBuildah = element(by.css('[data-test-action="buildah"]'));
+export const selectBuildah = element(by.css('[data-test-action="openshift-client"]'));
 export const createPipeline = element(by.css('[data-test-id="import-git-create-button"]'));
 export const createPipelineYaml = element(by.id('yaml-create'));
 export const createPipelineYamlError = $('.pf-c-alert.pf-m-danger');
