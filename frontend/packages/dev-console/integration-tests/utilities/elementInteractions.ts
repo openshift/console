@@ -1,5 +1,5 @@
-import { browser, ExpectedConditions as EC, element, by, protractor } from 'protractor';
-// import { config } from '@console/internal-integration-tests/protractor.conf';
+import { browser, $, ExpectedConditions as EC, element, by, protractor } from 'protractor';
+import { config } from '@console/internal-integration-tests/protractor.conf';
 const waitForElement = 5000;
 // config.jasmineNodeOpts.defaultTimeoutInterval;
 
@@ -9,6 +9,16 @@ const waitForElement = 5000;
     await browser.wait(EC.visibilityOf(ele), timeoutInMilliseconds, `${ele} is not visible in DOM, even after ${timeoutInMilliseconds} milliseconds`);
     await clearText(ele);
     await ele.sendKeys(text);
+  }
+
+  export function resolveTimeout(timeout: number, defaultTimeout: number) {
+    return timeout !== undefined ? timeout : defaultTimeout;
+  }
+
+  export async function click(elem: any, timeout?: number) {
+    const _timeout = resolveTimeout(timeout, config.jasmineNodeOpts.defaultTimeoutInterval);
+    await browser.wait(EC.elementToBeClickable(elem), _timeout);
+    await elem.click();
   }
 
   export async function clearText(ele:any,timeoutInMilliseconds = waitForElement) {
@@ -76,3 +86,5 @@ const waitForElement = 5000;
     }
   }
 
+
+  export const elementByDataTestID = (id: string) => $(`[data-test-id="${id}"]`);

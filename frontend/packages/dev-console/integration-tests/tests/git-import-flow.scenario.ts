@@ -1,4 +1,4 @@
-import { browser, $, ExpectedConditions as until } from 'protractor';
+import { browser, ExpectedConditions as until } from 'protractor';
 import {
   appHost,
   checkLogs,
@@ -27,26 +27,28 @@ import {
   resourceLimitsObj,
   setScaling,
   scalingObj,
-  setSecureRoute
+  setSecureRoute,
+  pipelineObj,
+  setPipelineForGitFlow,
+  importFromGitHeader,
+  addApplicationInGeneral,
 } from '../views/git-import-flow.view';
 import { 
   // verifyCheckBox, 
   enterText} from '../utilities/elementInteractions';
 import { newApplicationName, newAppName } from '../views/new-app-name.view';
 import { switchPerspective, Perspective, sideHeader } from '../views/dev-perspective.view';
-import { addApplicationWithExistingApps} from '../views/git-import-flow.view';
+import {pipelinecheckStatus, pipelineTableBody} from '../views/pipeline.view';
+import {elementByDataTestID} from '../utilities/elementInteractions';
 const waitForElement = 5000;
 
 describe('git import flow', () => {
   let newApplication;
   let newApp;
-  const importFromGitHeader = $('[data-test-id="resource-title"]');
+  
 
   beforeAll(async () => {
     await browser.get(`${appHost}/k8s/cluster/projects/${testName}`);
-  });
-
-  beforeEach(async () => {
     newApplication = newApplicationName();
     newApp = newAppName();
   });
@@ -57,9 +59,6 @@ describe('git import flow', () => {
   });
 
   it('public git normal flow', async () => {
-    newApplication = newApplicationName();
-    newApp = newAppName();
-
     await switchPerspective(Perspective.Developer);
     expect(sideHeader.getText()).toContain('Developer');
     await navigateImportFromGit();
@@ -69,7 +68,7 @@ describe('git import flow', () => {
 
     await appName.click();
     expect(appName.getAttribute('value')).toContain('nodejs-ex-git');
-    await addApplication(newApplication, newApp);
+    await addApplicationInGeneral(newApplication, newApp);
     expect(applicationName.getAttribute('value')).toContain(newApplication);
     expect(appName.getAttribute('value')).toContain(newApp);
 
@@ -84,7 +83,6 @@ describe('git import flow', () => {
 describe('git import flow with advanced options', () => {
   let newApplication;
   let newApp;
-  const importFromGitHeader = $('[data-test-id="resource-title"]');
 
   beforeAll(async () => {
     await browser.get(`${appHost}/k8s/cluster/projects/${testName}`);
@@ -98,9 +96,6 @@ describe('git import flow with advanced options', () => {
   });
 
   it('add git repo details', async() => {
-    newApplication = newApplicationName();
-    newApp = newAppName();
-
     await addNavigate.click();
     await switchPerspective(Perspective.Developer);
     expect(sideHeader.getText()).toContain('Developer');
@@ -111,7 +106,7 @@ describe('git import flow with advanced options', () => {
 
     await appName.click();
     expect(appName.getAttribute('value')).toContain('nodejs-ex-git');
-    await addApplicationWithExistingApps(newApplication, newApp);
+    await addApplicationInGeneral(newApplication, newApp);
     expect(applicationName.getAttribute('value')).toContain(newApplication);
     expect(appName.getAttribute('value')).toContain(newApp);
   });
@@ -182,5 +177,58 @@ describe('git import flow with advanced options', () => {
     await createButton.click();
     await browser.wait(until.urlContains(`${appHost}/topology/ns/${testName}`));
     expect(browser.getCurrentUrl()).toContain(`${appHost}/topology/ns/${testName}`);
+  });
+});
+
+xdescribe('git import flow with pipeline creation', () => {
+  let newApplication;
+  let newApp;
+
+  beforeAll(async () => {
+    await browser.get(`${appHost}/k8s/cluster/projects/${testName}`);
+    newApplication = newApplicationName();
+    newApp = newAppName();
+  });
+
+  afterEach(() => {
+    checkLogs();
+    checkErrors();
+  });
+
+  it('add git repo details', async() => {
+    // await addNavigate.click();
+    await switchPerspective(Perspective.Developer);
+    expect(sideHeader.getText()).toContain('Developer');
+    await navigateImportFromGit();
+    await browser.wait(until.textToBePresentInElement(importFromGitHeader, 'Import from git'));
+    expect(importFromGitHeader.getText()).toContain('Import from git');
+    await enterGitRepoUrl('https://github.com/sclorg/nodejs-ex.git');
+
+    await appName.click();
+    expect(appName.getAttribute('value')).toContain('nodejs-ex-git');
+    await addApplication(newApplication, newApp);
+    expect(applicationName.getAttribute('value')).toContain(newApplication);
+    expect(appName.getAttribute('value')).toContain(newApp);
+  });
+
+  it('select the add pipeline option', async () => {
+    expect(pipelineObj().addPipeline.getAttribute('value')).toBe('false');
+    await setPipelineForGitFlow();
+    expect(pipelineObj().addPipeline.getAttribute('value')).toBe('true');
+  });
+
+  it('select create button', async() => {
+    await browser.wait(until.elementToBeClickable(createButton), waitForElement);
+    expect(createButton.isEnabled());
+    await createButton.click();
+    await browser.wait(until.urlContains(`${appHost}/topology/ns/${testName}`));
+    expect(browser.getCurrentUrl()).toContain(`${appHost}/topology/ns/${testName}`);
+  });
+
+  it('verify the pipeline for the git flow', async () => {
+       // verify the pipeline created for the current git flow
+       await pipelinecheckStatus();
+       await browser.wait(until.visibilityOf(pipelineTableBody), waitForElement);
+       expect(await elementByDataTestID(newApp).isDisplayed()).toBe(true);
   });
 });

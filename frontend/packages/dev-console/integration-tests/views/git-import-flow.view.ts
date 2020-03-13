@@ -1,5 +1,5 @@
 /* eslint-disable no-console, promise/catch-or-return */
-import { browser, ExpectedConditions as until, by, element, Key } from 'protractor';
+import { browser, $, ExpectedConditions as until, by, element, Key } from 'protractor';
 import { config } from '@console/internal-integration-tests/protractor.conf';
 const waitForElement = config.jasmineNodeOpts.defaultTimeoutInterval;
 import { enterText, selectByIndex, verifyCheckBox, selectByVisibleText,
@@ -10,7 +10,7 @@ import { click } from '@console/shared/src/test-utils/utils';
 export const addNavigate = element(by.css('[data-test-id="+Add-header"]'));
 export const gitImportButton = element(by.css('[data-test-id="import-from-git"]'));
 export const gitRepoUrl = element(by.id('form-input-git-url-field'));
-
+export const importFromGitHeader = $('[data-test-id="resource-title"]');
 export const applicationNameField = element(by.id('form-input-application-name-field'));
 
 export const applicationSelector = element(by.id('form-dropdown-application-name-field'));
@@ -90,6 +90,12 @@ export function scalingObj() {
   }
 }
 
+export function pipelineObj() {
+  return {
+    addPipeline: element(by.css('input#form-checkbox-pipeline-enabled-field')),
+  }
+}
+
 export function resourceLimitsObj() {
   return {
     cpuRequest: element(by.css('input[name="limits.cpu.requestValue"]')),
@@ -122,6 +128,9 @@ export enum TLSTerminationValues {
   Edge = 'Edge',
   Passthrough = 'Passthrough',
   ReEncrypt = 'Re-encrypt'
+}
+export const setPipelineForGitFlow = async function() {
+  await pipelineObj().addPipeline.click();
 }
 
 export const selectAdvancedOptions = async function(opt: AdvancedOptions) {
@@ -157,7 +166,7 @@ export const selectAdvancedOptions = async function(opt: AdvancedOptions) {
 };
 
 export const navigateImportFromGit = async function() {
-  await browser.wait(until.elementToBeClickable(addNavigate), 5000);
+  await browser.wait(until.elementToBeClickable(addNavigate), waitForElement);
   await addNavigate.click();
   await browser.wait(until.elementToBeClickable(gitImportButton));
   await gitImportButton.click();
@@ -231,6 +240,18 @@ export const addApplicationWithExistingApps = async function(name: string, nodeN
   await safeSendKeys(applicationName, 'applicationName', name);
   await safeSendKeys(appName, 'appName', nodeName);
 };
+
+export const addApplicationInGeneral = async function(name: string, nodeName: string) {
+  browser.wait(until.visibilityOf(await element(by.css('[id$=application-name-field]'))), waitForElement);
+    await element(by.css('[id$=application-name-field]')).getTagName()
+    .then(async(tagName) => {
+      if(tagName.includes('button')) {
+        await addApplicationWithExistingApps(name, nodeName);
+      }  else {
+        await addApplication(name, nodeName);
+      }          
+    })   
+}
 
 export const setBuilderImage = async function() {
   await builderImage.click();
