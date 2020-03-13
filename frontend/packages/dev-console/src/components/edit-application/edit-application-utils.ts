@@ -1,12 +1,18 @@
 import * as _ from 'lodash';
 import { ValidatedOptions } from '@patternfly/react-core';
-import { K8sResourceKind, referenceFor, referenceForModel } from '@console/internal/module/k8s';
+import {
+  K8sResourceKind,
+  referenceFor,
+  referenceForModel,
+  ImagePullPolicy,
+} from '@console/internal/module/k8s';
 import { BuildStrategyType } from '@console/internal/components/build';
 import { DeploymentConfigModel, DeploymentModel } from '@console/internal/models';
 import { ServiceModel } from '@console/knative-plugin';
 import { UNASSIGNED_KEY } from '../../const';
-import { Resources } from '../import/import-types';
+import { Resources, DeploymentData } from '../import/import-types';
 import { AppResources } from './edit-application-types';
+import { RegistryType } from '../../utils/imagestream-utils';
 
 export enum CreateApplicationFlow {
   Git = 'Import from Git',
@@ -86,6 +92,7 @@ export const getRouteData = (route: K8sResourceKind, resource: K8sResourceKind) 
         _.get(resource, 'metadata.labels["serving.knative.dev/visibility"]', '') !==
         'cluster-local',
       unknownTargetPort: _.toString(port),
+      targetPort: _.toString(port),
     };
   }
   return routeData;
@@ -141,9 +148,21 @@ export const getServerlessData = (resource: K8sResourceKind) => {
 };
 
 export const getDeploymentData = (resource: K8sResourceKind) => {
-  let deploymentData = { env: [], replicas: 1, triggers: { image: true, config: true } };
-  if (getResourcesType(resource) !== Resources.KnativeService) {
-    const containers = _.get(resource, 'spec.template.spec.containers', []);
+  let deploymentData: DeploymentData = {
+    env: [],
+    replicas: 1,
+    triggers: { image: true, config: true },
+  };
+  const containers = _.get(resource, 'spec.template.spec.containers', []);
+  if (getResourcesType(resource) === Resources.KnativeService) {
+    deploymentData = {
+      ...deploymentData,
+      env: containers[0]?.env || [],
+      triggers: {
+        image: containers[0]?.imagePullPolicy === ImagePullPolicy.Always,
+      },
+    };
+  } else {
     const triggers = _.get(resource, 'spec.triggers');
     deploymentData = {
       env: _.get(containers[0], 'env', []),
@@ -266,6 +285,36 @@ export const getGitAndDockerfileInitialValues = (
   return initialValues;
 };
 
+const deployImageInitialValues = {
+  searchTerm: '',
+  registry: 'external',
+  imageStream: {
+    image: '',
+    tag: '',
+    namespace: '',
+  },
+  isi: {
+    name: '',
+    image: {},
+    tag: '',
+    status: { metadata: {}, status: '' },
+    ports: [],
+  },
+  image: {
+    name: '',
+    image: {},
+    tag: '',
+    status: { metadata: {}, status: '' },
+    ports: [],
+  },
+  build: {
+    env: [],
+    triggers: {},
+    strategy: '',
+  },
+  isSearchingForImage: false,
+};
+
 export const getExternalImageInitialValues = (appResources: AppResources) => {
   const imageStreamList = appResources?.imageStream?.data;
   if (_.isEmpty(imageStreamList)) {
@@ -273,37 +322,15 @@ export const getExternalImageInitialValues = (appResources: AppResources) => {
   }
   const imageStream = _.orderBy(imageStreamList, ['metadata.resourceVersion'], ['desc']);
   const name = imageStream.length && imageStream[0]?.spec?.tags?.[0]?.from?.name;
-  const deployImageInitialValues = {
+  return {
+    ...deployImageInitialValues,
     searchTerm: name,
     registry: 'external',
     imageStream: {
-      image: '',
-      tag: '',
-      namespace: '',
+      ...deployImageInitialValues.imageStream,
       grantAccess: true,
     },
-    isi: {
-      name: '',
-      image: {},
-      tag: '',
-      status: { metadata: {}, status: '' },
-      ports: [],
-    },
-    image: {
-      name: '',
-      image: {},
-      tag: '',
-      status: { metadata: {}, status: '' },
-      ports: [],
-    },
-    build: {
-      env: [],
-      triggers: {},
-      strategy: '',
-    },
-    isSearchingForImage: false,
   };
-  return deployImageInitialValues;
 };
 
 export const getInternalImageInitialValues = (editAppResource: K8sResourceKind) => {
@@ -318,36 +345,31 @@ export const getInternalImageInitialValues = (editAppResource: K8sResourceKind) 
     'metadata.labels["app.openshift.io/runtime-version"]',
     '',
   );
-  const deployImageInitialValues = {
-    searchTerm: '',
-    registry: 'internal',
+  return {
+    ...deployImageInitialValues,
+    registry: RegistryType.Internal,
     imageStream: {
       image: imageStreamName,
       tag: imageStreamTag,
       namespace: imageStreamNamespace,
     },
-    isi: {
-      name: '',
-      image: {},
-      tag: '',
-      status: { metadata: {}, status: '' },
-      ports: [],
-    },
-    image: {
-      name: '',
-      image: {},
-      tag: '',
-      status: { metadata: {}, status: '' },
-      ports: [],
-    },
-    build: {
-      env: [],
-      triggers: {},
-      strategy: '',
-    },
-    isSearchingForImage: false,
   };
-  return deployImageInitialValues;
+};
+
+export const getExternalImagelValues = (appResource: K8sResourceKind) => {
+  const name = _.get(appResource, 'spec.template.spec.containers[0].image', null);
+  if (_.isEmpty(appResource) || !name) {
+    return {};
+  }
+  return {
+    ...deployImageInitialValues,
+    searchTerm: name,
+    registry: RegistryType.External,
+    imageStream: {
+      ...deployImageInitialValues.imageStream,
+      grantAccess: true,
+    },
+  };
 };
 
 export const getInitialValues = (
@@ -373,6 +395,17 @@ export const getInitialValues = (
     internalImageValues = _.isEmpty(externalImageValues)
       ? getInternalImageInitialValues(_.get(appResources, 'editAppResource.data'))
       : {};
+    if (
+      _.isEmpty(externalImageValues) &&
+      !_.get(internalImageValues, 'imageStream.tag') &&
+      !_.get(internalImageValues, 'imageStream.image')
+    ) {
+      const editAppResourceData = _.get(appResources, 'editAppResource.data');
+      if (editAppResourceData?.kind === ServiceModel.kind) {
+        internalImageValues = {};
+        externalImageValues = getExternalImagelValues(_.get(appResources, 'editAppResource.data'));
+      }
+    }
   }
 
   return {

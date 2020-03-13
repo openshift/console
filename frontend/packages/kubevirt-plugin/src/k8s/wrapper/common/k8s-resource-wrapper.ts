@@ -1,5 +1,5 @@
 /* eslint-disable lines-between-class-members */
-import { getName, hasLabel, getLabels } from '@console/shared/src';
+import { getName, getNamespace, hasLabel, getLabels } from '@console/shared/src';
 import { apiVersionForModel, K8sKind, K8sResourceKind } from '@console/internal/module/k8s';
 import { Wrapper } from './wrapper';
 import { K8sResourceKindMethods } from '../types/types';
@@ -9,6 +9,7 @@ export class K8sResourceWrapper<
   SELF extends K8sResourceWrapper<RESOURCE, SELF>
 > extends Wrapper<RESOURCE, SELF> implements K8sResourceKindMethods {
   getName = () => getName(this.data);
+  getNamespace = () => getNamespace(this.data);
   getLabels = (defaultValue = {}) => getLabels(this.data, defaultValue);
   hasLabel = (label: string) => hasLabel(this.data, label);
 

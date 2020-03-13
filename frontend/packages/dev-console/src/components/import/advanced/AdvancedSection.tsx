@@ -50,15 +50,13 @@ const AdvancedSection: React.FC<AdvancedSectionProps> = ({ values, appResources 
             />
           </ProgressiveListItem>
         )}
-        {/* Hide Deployment for Serverless */}
-        {values.resources !== Resources.KnativeService && (
-          <ProgressiveListItem name="Deployment">
-            <DeploymentConfigSection
-              namespace={values.project.name}
-              resource={appResources?.editAppResource?.data}
-            />
-          </ProgressiveListItem>
-        )}
+        <ProgressiveListItem name="Deployment">
+          <DeploymentConfigSection
+            namespace={values.project.name}
+            resource={appResources?.editAppResource?.data}
+            isServerless={values.resources === Resources.KnativeService}
+          />
+        </ProgressiveListItem>
         <ProgressiveListItem name="Scaling">
           {values.resources === Resources.KnativeService ? (
             <ServerlessScalingSection />

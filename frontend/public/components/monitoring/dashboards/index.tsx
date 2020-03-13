@@ -413,9 +413,9 @@ const MonitoringDashboardsPage_: React.FC<MonitoringDashboardsPageProps> = ({
   match,
   patchAllVariables,
 }) => {
-  const [board, setBoard] = React.useState();
+  const [board, setBoard] = React.useState<string>();
   const [boards, setBoards] = React.useState<Board[]>([]);
-  const [error, setError] = React.useState();
+  const [error, setError] = React.useState<string>();
   const [isLoading, , , setLoaded] = useBoolean(true);
 
   const safeFetch = React.useCallback(useSafeFetch(), []);

@@ -69,16 +69,36 @@ export const saveAsDefault = firstElementByTestID('save-as-default');
 
 export const defaultAlertmanagerYaml = Base64.encode(`"global":
   "resolve_timeout": "5m"
+"inhibit_rules":
+- "equal":
+  - "namespace"
+  - "alertname"
+  "source_match":
+    "severity": "critical"
+  "target_match_re":
+    "severity": "warning|info"
+- "equal":
+  - "namespace"
+  - "alertname"
+  "source_match":
+    "severity": "warning"
+  "target_match_re":
+    "severity": "info"
 "receivers":
-- "name": "null"
+- "name": "Default"
+- "name": "Watchdog"
+- "name": "Critical"
 "route":
   "group_by":
-  - "job"
+  - "namespace"
   "group_interval": "5m"
   "group_wait": "30s"
-  "receiver": "null"
+  "receiver": "Default"
   "repeat_interval": "12h"
   "routes":
   - "match":
       "alertname": "Watchdog"
-    "receiver": "null"`);
+    "receiver": "Watchdog"
+  - "match":
+      "severity": "critical"
+    "receiver": "Critical"`);

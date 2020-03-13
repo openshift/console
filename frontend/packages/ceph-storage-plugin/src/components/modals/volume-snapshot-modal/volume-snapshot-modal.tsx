@@ -42,8 +42,8 @@ export const VolumeSnapshotModal = withHandlePromise((props: VolumeSnapshotModal
   const [snapshotWeek, setSnapshotWeek] = React.useState(0); // For Weekly schedule
   const [snapshotTime, setSnapshotTime] = React.useState('00:01'); // For weekly and monthly
   const [snapshotMonth, setSnapshotMonth] = React.useState(1); // For monthly schedule
-  const [snapshotName, setSnapshotName] = React.useState();
-  const [scheduleLabel, setScheduleLabel] = React.useState();
+  const [snapshotName, setSnapshotName] = React.useState<string>();
+  const [scheduleLabel, setScheduleLabel] = React.useState<string>();
   const [scheduleType, setScheduleType] = React.useState(snapshotTypes.Single);
 
   const makeLabel = (): string => {

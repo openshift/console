@@ -19,12 +19,17 @@ const onResize = (rows, cols) => {
   );
 };
 
+interface WebSocket {
+  destroy(): void;
+  send(data: any): void;
+}
+
 // KubeVirt serial console is accessed via WebSocket proxy in k8s API.
 // Protocol used is "plain.kubevirt.io", means binary and single channel - forwarding of unix socket only (vmhandler sources).
 export const SerialConsoleConnector: React.FC<SerialConsoleConnectorProps> = (props) => {
   const [status, setStatus] = React.useState(LOADING);
   const [passKeys, setPassKeys] = React.useState(false);
-  const [ws, setWS] = React.useState();
+  const [ws, setWS] = React.useState<WebSocket>();
   const childSerialconsole = React.useRef(null);
 
   const onBackendDisconnected = React.useCallback(

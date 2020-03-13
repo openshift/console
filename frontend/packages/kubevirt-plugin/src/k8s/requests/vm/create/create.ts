@@ -125,6 +125,7 @@ export const createVM = async (params: CreateVMParams) => {
 
     // ProcessedTemplates endpoint will reject the request if user cannot post to the namespace
     // common-templates are stored in openshift namespace, default user can read but cannot post
+    const templateNamespace = template.getNamespace();
     template
       .setNamespace(namespace)
       .setParameter(TEMPLATE_PARAM_VM_NAME, combinedSimpleSettings[VMSettingsField.NAME])
@@ -143,6 +144,9 @@ export const createVM = async (params: CreateVMParams) => {
       null,
       { disableHistory: true },
     ); // temporary
+
+    // Re-set template namespace
+    template.setNamespace(templateNamespace);
 
     vm = new VMWrapper(selectVM(processedTemplate));
     vm.setNamespace(namespace);

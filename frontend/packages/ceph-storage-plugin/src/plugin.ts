@@ -224,6 +224,7 @@ const plugin: Plugin<ConsumedExtensions> = [
             throw e;
           });
       },
+      disallowed: [OCS_INDEPENDENT_FLAG],
     },
   },
   // Download External Cluster Metadata
@@ -238,6 +239,7 @@ const plugin: Plugin<ConsumedExtensions> = [
         import(
           './components/converged-credentials/credentials' /* webpackChunkName: "ceph-storage-export-credentials" */
         ).then((m) => m.default({})),
+      disallowed: [OCS_INDEPENDENT_FLAG],
     },
   },
   // Independent mode dashboard

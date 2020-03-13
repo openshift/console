@@ -1,13 +1,17 @@
+import * as _ from 'lodash';
 import { BuildStrategyType } from '@console/internal/components/build';
 import {
   getResourcesType,
   getPageHeading,
   CreateApplicationFlow,
   getInitialValues,
+  getExternalImagelValues,
 } from '../edit-application-utils';
 import { Resources } from '../../import/import-types';
 import {
   knativeService,
+  knAppResources,
+  knExternalImageValues,
   appResources,
   gitImportInitialValues,
   externalImageValues,
@@ -34,5 +38,17 @@ describe('Edit Application Utils', () => {
     expect(getInitialValues({ editAppResource, route }, 'nationalparks-py', 'div')).toEqual(
       internalImageValues,
     );
+  });
+
+  it('getExternalImagelValues should return image name in search term', () => {
+    const externalImageData = getExternalImagelValues(knativeService);
+    expect(_.get(externalImageData, 'searchTerm')).toEqual('openshift/hello-openshift');
+  });
+
+  it('getInitialValues should return values externalImageValues on the resources', () => {
+    const { route, editAppResource, imageStream } = knAppResources;
+    expect(
+      getInitialValues({ editAppResource, route, imageStream }, 'nationalparks-py', 'div'),
+    ).toEqual(knExternalImageValues);
   });
 });

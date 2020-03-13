@@ -45,7 +45,7 @@ import {
 import * as UIActions from '../../actions/ui';
 import { RootState } from '../../redux';
 import { fuzzyCaseInsensitive } from '../factory/table-filters';
-import { PROMETHEUS_BASE_PATH } from '../graphs';
+import { PrometheusData, PrometheusLabels, PROMETHEUS_BASE_PATH } from '../graphs';
 import { getPrometheusURL, PrometheusEndpoint } from '../graphs/helpers';
 import { getPrometheusExpressionBrowserURL } from '../graphs/prometheus-graph';
 import {
@@ -59,7 +59,7 @@ import {
   useSafeFetch,
 } from '../utils';
 import { setAllQueryArguments } from '../utils/router';
-import { colors, Error, Labels, QueryObj, QueryBrowser } from './query-browser';
+import { colors, Error, QueryObj, QueryBrowser } from './query-browser';
 
 const aggregationOperators = [
   'avg()',
@@ -219,7 +219,7 @@ const MetricsDropdown_: React.FC<MetricsDropdownProps> = ({
   namespace,
   setMetrics,
 }) => {
-  const [items, setItems] = React.useState();
+  const [items, setItems] = React.useState<MetricsDropdownItems>();
   const [isError, setIsError] = React.useState(false);
 
   const safeFetch = React.useCallback(useSafeFetch(), []);
@@ -602,7 +602,7 @@ const QueryTable_: React.FC<QueryTableProps> = ({
   query,
   series,
 }) => {
-  const [data, setData] = React.useState();
+  const [data, setData] = React.useState<PrometheusData>();
   const [error, setError] = React.useState();
   const [page, setPage] = React.useState(1);
   const [perPage, setPerPage] = React.useState(50);
@@ -1024,6 +1024,10 @@ type MetricsActionsMenuProps = {
   setAllExpanded: (isExpanded: boolean) => never;
 };
 
+type MetricsDropdownItems = {
+  [key: string]: string;
+};
+
 type MetricsDropdownProps = {
   insertText: (index: number, newText: string, replaceFrom: number, replaceTo: number) => never;
   namespace?: string;
@@ -1054,7 +1058,7 @@ type QueryKebabProps = {
   isDisabledSeriesEmpty: boolean;
   isEnabled: boolean;
   patchQuery: (patch: QueryObj) => void;
-  series: Labels[];
+  series: PrometheusLabels[];
   toggleIsEnabled: () => never;
 };
 
@@ -1074,7 +1078,7 @@ type QueryTableProps = {
   isExpanded: boolean;
   namespace?: string;
   query: string;
-  series: Labels[];
+  series: PrometheusLabels[];
 };
 
 type SeriesButtonProps = {
