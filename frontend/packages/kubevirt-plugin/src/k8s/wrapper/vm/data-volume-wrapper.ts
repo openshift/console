@@ -27,6 +27,9 @@ export class DataVolumeWrapper extends K8sResourceObjectWithTypePropertyWrapper<
   CombinedTypeData,
   DataVolumeWrapper
 > {
+  /**
+   * @deprecated FIXME deprecate initializeFromSimpleData in favor of init
+   */
   static initializeFromSimpleData = ({
     name,
     namespace,
@@ -77,7 +80,7 @@ export class DataVolumeWrapper extends K8sResourceObjectWithTypePropertyWrapper<
   };
 
   constructor(dataVolumeTemplate?: V1alpha1DataVolume | DataVolumeWrapper, copy = false) {
-    super(dataVolumeTemplate, copy, DataVolumeSourceType, ['spec', 'source']);
+    super(DataVolumeModel, dataVolumeTemplate, copy, DataVolumeSourceType, ['spec', 'source']);
   }
 
   getStorageClassName = () => getDataVolumeStorageClassName(this.data as any);
@@ -150,7 +153,7 @@ export class DataVolumeWrapper extends K8sResourceObjectWithTypePropertyWrapper<
     return this;
   };
 
-  public mergeWith(...dataVolumeWrappers: DataVolumeWrapper[]) {
+  mergeWith(...dataVolumeWrappers: DataVolumeWrapper[]) {
     super.mergeWith(...dataVolumeWrappers);
 
     if (!this.data?.spec?.pvc?.storageClassName && this.data?.spec?.pvc) {

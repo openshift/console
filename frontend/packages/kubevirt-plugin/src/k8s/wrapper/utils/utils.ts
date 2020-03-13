@@ -1,6 +1,6 @@
 import * as _ from 'lodash';
 
-export const ensurePath = (data, path: string[] | string, value: any = {}) => {
+export const ensurePath = (data: {}, path: string[] | string, value: any = {}) => {
   let currentFragment: any = data;
   if (data && path) {
     const arrPath = _.isString(path) ? path.split('.') : path;

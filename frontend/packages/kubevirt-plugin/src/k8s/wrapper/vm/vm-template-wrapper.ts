@@ -12,6 +12,9 @@ import {
 } from '../../../constants/vm';
 
 export class VMTemplateWrapper extends K8sResourceWrapper<TemplateKind, VMTemplateWrapper> {
+  /**
+   * @deprecated FIXME deprecate initializeFromSimpleData in favor of init
+   */
   static initializeFromSimpleData = (params?: {
     name?: string;
     namespace?: string;
@@ -33,6 +36,10 @@ export class VMTemplateWrapper extends K8sResourceWrapper<TemplateKind, VMTempla
       parameters,
     });
   };
+
+  constructor(template?: TemplateKind | VMTemplateWrapper | any, copy = false) {
+    super(TemplateModel, template, copy);
+  }
 
   getOperatingSystem = () => findKeySuffixValue(this.getLabels(), TEMPLATE_OS_LABEL);
   getWorkloadProfile = () => findKeySuffixValue(this.getLabels(), TEMPLATE_WORKLOAD_LABEL);

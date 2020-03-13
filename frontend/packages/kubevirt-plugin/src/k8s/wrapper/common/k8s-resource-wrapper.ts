@@ -1,23 +1,39 @@
 /* eslint-disable lines-between-class-members */
 import { getName, getNamespace, hasLabel, getLabels } from '@console/shared/src';
-import { apiVersionForModel, K8sKind, K8sResourceKind } from '@console/internal/module/k8s';
+import { K8sKind, K8sResourceKind } from '@console/internal/module/k8s';
 import { Wrapper } from './wrapper';
 import { K8sResourceKindMethods } from '../types/types';
+import { clearRuntimeMetadata, initK8sObject, K8sInitAddon } from './util/k8s-mixin';
 
-export class K8sResourceWrapper<
+export abstract class K8sResourceWrapper<
   RESOURCE extends K8sResourceKind,
   SELF extends K8sResourceWrapper<RESOURCE, SELF>
 > extends Wrapper<RESOURCE, SELF> implements K8sResourceKindMethods {
+  private readonly model: K8sKind;
+
+  protected constructor(model: K8sKind, data?: RESOURCE | SELF, copy = false) {
+    super(data, copy);
+    this.model = model;
+    if (!this.model) {
+      throw new Error('model must be defined');
+    }
+  }
+
+  init(data: K8sInitAddon = {}) {
+    initK8sObject(this.data, this.model, data);
+    return (this as any) as SELF;
+  }
+
+  clearRuntimeMetadata() {
+    clearRuntimeMetadata(this.data);
+    return (this as any) as SELF;
+  }
+
+  getModel = () => this.model;
   getName = () => getName(this.data);
   getNamespace = () => getNamespace(this.data);
   getLabels = (defaultValue = {}) => getLabels(this.data, defaultValue);
   hasLabel = (label: string) => hasLabel(this.data, label);
-
-  setModel = (model: K8sKind) => {
-    this.data.kind = model.kind;
-    this.data.apiVersion = apiVersionForModel(model);
-    return (this as any) as SELF;
-  };
 
   setName = (name: string) => {
     this.ensurePath('metadata');

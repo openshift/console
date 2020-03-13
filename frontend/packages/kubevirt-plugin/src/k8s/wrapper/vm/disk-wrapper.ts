@@ -12,6 +12,9 @@ export class DiskWrapper extends ObjectWithTypePropertyWrapper<
   CombinedTypeData,
   DiskWrapper
 > {
+  /**
+   * @deprecated FIXME deprecate initializeFromSimpleData in favor of init
+   */
   static initializeFromSimpleData = ({
     name,
     type,

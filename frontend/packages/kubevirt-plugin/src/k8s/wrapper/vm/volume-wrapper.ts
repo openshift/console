@@ -21,6 +21,9 @@ export class VolumeWrapper extends ObjectWithTypePropertyWrapper<
   CombinedTypeData,
   VolumeWrapper
 > {
+  /**
+   * @deprecated FIXME deprecate initializeFromSimpleData in favor of init
+   */
   static initializeFromSimpleData = ({
     name,
     type,

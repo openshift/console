@@ -25,8 +25,13 @@ import { VolumeWrapper } from './volume-wrapper';
 import { V1Disk } from '../../../types/vm/disk/V1Disk';
 import { V1Volume } from '../../../types/vm/disk/V1Volume';
 import { V1alpha1DataVolume } from '../../../types/vm/disk/V1alpha1DataVolume';
+import { VirtualMachineModel } from '../../../models';
 
 export class VMWrapper extends K8sResourceWrapper<VMKind, VMWrapper> implements VMILikeMethods {
+  constructor(vm?: VMKind | VMWrapper | any, copy = false) {
+    super(VirtualMachineModel, vm, copy);
+  }
+
   hasTemplateLabel = (label: string) => _.has(this.getTemplateLabels(null), label);
 
   getOperatingSystem = () => findKeySuffixValue(this.getLabels(), TEMPLATE_OS_LABEL);
@@ -116,7 +121,6 @@ export class VMWrapper extends K8sResourceWrapper<VMKind, VMWrapper> implements 
     volume: V1Volume;
     dataVolume?: V1alpha1DataVolume;
   }) => {
-    this.ensurePath('spec.template.spec.domain.devices', {});
     this.ensureStorages();
     this.getDisks().unshift(disk);
     this.getVolumes().unshift(volume);
@@ -176,35 +180,19 @@ export class VMWrapper extends K8sResourceWrapper<VMKind, VMWrapper> implements 
   ensureDataVolumeTemplates = () => this.ensurePath('spec.dataVolumeTemplates', []);
 
   private ensureStorages = () => {
-    if (_.isEmpty(this.getDisks())) {
-      this.data.spec.template.spec.domain.devices.disks = [];
-    }
-    if (_.isEmpty(this.getVolumes())) {
-      this.data.spec.template.spec.volumes = [];
-    }
-    if (_.isEmpty(this.getDataVolumeTemplates())) {
-      this.data.spec.dataVolumeTemplates = [];
-    }
+    this.ensurePath('spec.template.spec.domain.devices.disks', []);
+    this.ensurePath('spec.template.spec.volumes', []);
+    this.ensurePath('spec.dataVolumeTemplates', []);
   };
 
   private ensureNetworksConsistency = () => {
-    if (_.isEmpty(this.getInterfaces())) {
-      delete this.data.spec.template.spec.domain.devices.interfaces;
-    }
-    if (_.isEmpty(this.getNetworks())) {
-      delete this.data.spec.template.spec.networks;
-    }
+    this.clearIfEmpty('spec.template.spec.domain.devices.interfaces');
+    this.clearIfEmpty('spec.template.spec.networks');
   };
 
   private ensureStorageConsistency = () => {
-    if (_.isEmpty(this.getDisks())) {
-      delete this.data.spec.template.spec.domain.devices.disks;
-    }
-    if (_.isEmpty(this.getVolumes())) {
-      delete this.data.spec.template.spec.volumes;
-    }
-    if (_.isEmpty(this.getDataVolumeTemplates())) {
-      delete this.data.spec.dataVolumeTemplates;
-    }
+    this.clearIfEmpty('spec.template.spec.domain.devices.disks');
+    this.clearIfEmpty('spec.template.spec.volumes');
+    this.clearIfEmpty('spec.dataVolumeTemplates');
   };
 }

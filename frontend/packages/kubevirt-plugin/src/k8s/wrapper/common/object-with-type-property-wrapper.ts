@@ -22,6 +22,9 @@ export abstract class ObjectWithTypePropertyWrapper<
     super(data, copy);
     this.TypeClass = typeClass;
     this.typeDataPath = typeDataPath;
+    if (!_.isFunction(typeClass.getAll) || typeClass.getAll === ObjectEnum.getAll) {
+      throw new Error('typeClass must implement ObjectEnum.getAll method');
+    }
   }
 
   getType = (): TYPE =>
@@ -34,8 +37,10 @@ export abstract class ObjectWithTypePropertyWrapper<
 
   hasType = (): boolean => !!this.getType();
 
-  getTypeData = (type?: TYPE): COMBINED_TYPE_DATA =>
-    this.getIn([...this.typeDataPath, (type || this.getType()).getValue()]);
+  getTypeData = (type?: TYPE): COMBINED_TYPE_DATA => {
+    const requestType = type || this.getType();
+    return requestType ? this.getIn([...this.typeDataPath, requestType.getValue()]) : undefined;
+  };
 
   mergeWith(...wrappers: SELF[]): SELF {
     super.mergeWith(...wrappers);
@@ -48,8 +53,13 @@ export abstract class ObjectWithTypePropertyWrapper<
   }
 
   setType = (type?: TYPE, typeData?: COMBINED_TYPE_DATA, sanitize = true) => {
-    const typeDataParent =
-      this.typeDataPath.length === 0 ? this.data : this.getIn(this.typeDataPath);
+    let typeDataParent = this.typeDataPath.length === 0 ? this.data : this.getIn(this.typeDataPath);
+
+    if (type && !typeDataParent) {
+      this.ensurePath(this.typeDataPath);
+      typeDataParent = this.getIn(this.typeDataPath);
+    }
+
     if (typeDataParent) {
       this.TypeClass.getAll().forEach(
         (superfluousProperty) => delete typeDataParent[superfluousProperty.getValue()],
@@ -80,7 +90,7 @@ export abstract class ObjectWithTypePropertyWrapper<
   }
 
   // should be implemented by derived wrappers
-  protected sanitize(type: TYPE, typeData: COMBINED_TYPE_DATA): any {
+  protected sanitize(type: TYPE, typeData: COMBINED_TYPE_DATA): COMBINED_TYPE_DATA {
     return _.cloneDeep(typeData);
   }
 }
