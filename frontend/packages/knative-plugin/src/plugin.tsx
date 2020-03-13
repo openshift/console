@@ -26,6 +26,7 @@ import {
   FLAG_EVENT_SOURCE_APISERVER,
   FLAG_EVENT_SOURCE_CAMEL,
   FLAG_EVENT_SOURCE_KAFKA,
+  FLAG_EVENT_SOURCE_SERVICEBINDING,
 } from './const';
 import {
   knativeServingResourcesRevision,
@@ -37,6 +38,7 @@ import {
   eventSourceResourcesApiServer,
   eventSourceResourcesCamel,
   eventSourceResourcesKafka,
+  eventSourceResourcesServiceBinding,
 } from './utils/create-knative-utils';
 import {
   getKnativeServingConfigurations,
@@ -48,6 +50,7 @@ import {
   getEventSourceApiserver,
   getEventSourceCamel,
   getEventSourceKafka,
+  getEventSourceSinkBinding,
 } from './utils/get-knative-resources';
 import { getKebabActionsForKind } from './utils/kebab-actions';
 
@@ -138,6 +141,13 @@ const plugin: Plugin<ConsumedExtensions> = [
     properties: {
       model: models.EventSourceKafkaModel,
       flag: FLAG_EVENT_SOURCE_KAFKA,
+    },
+  },
+  {
+    type: 'FeatureFlag/Model',
+    properties: {
+      model: models.EventSourceServiceBindingModel,
+      flag: FLAG_EVENT_SOURCE_SERVICEBINDING,
     },
   },
   {
@@ -271,6 +281,14 @@ const plugin: Plugin<ConsumedExtensions> = [
       resources: eventSourceResourcesKafka,
       required: FLAG_EVENT_SOURCE_KAFKA,
       utils: getEventSourceKafka,
+    },
+  },
+  {
+    type: 'Overview/CRD',
+    properties: {
+      resources: eventSourceResourcesServiceBinding,
+      required: FLAG_EVENT_SOURCE_SERVICEBINDING,
+      utils: getEventSourceSinkBinding,
     },
   },
   {

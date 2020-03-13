@@ -12,6 +12,7 @@ import {
   EventSourceContainerModel,
   EventSourceCronJobModel,
   EventSourceKafkaModel,
+  EventSourceServiceBindingModel,
   ServiceModel,
 } from '../models';
 
@@ -21,6 +22,7 @@ const modifyApplicationRefs = [
   referenceForModel(EventSourceCronJobModel),
   referenceForModel(EventSourceCamelModel),
   referenceForModel(EventSourceKafkaModel),
+  referenceForModel(EventSourceServiceBindingModel),
   referenceForModel(ServiceModel),
 ];
 

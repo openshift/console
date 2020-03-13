@@ -12,6 +12,7 @@ export type KnativeItem = {
   eventSourceApiserver?: K8sResourceKind[];
   eventSourceCamel?: K8sResourceKind[];
   eventSourceKafka?: K8sResourceKind[];
+  eventSourceServicebinding?: K8sResourceKind[];
   pods?: PodKind[];
 };
 
@@ -105,4 +106,14 @@ export const getEventSourceKafka = (dc: K8sResourceKind, props): KnativeItem | u
   const eventSourceKafka =
     props && props.eventSourceKafka && getEventSourceResource(dc, props.eventSourceKafka);
   return eventSourceKafka && eventSourceKafka.length > 0 ? { eventSourceKafka } : undefined;
+};
+
+export const getEventSourceSinkBinding = (dc: K8sResourceKind, props): KnativeItem | undefined => {
+  const eventSourceServicebinding =
+    props &&
+    props.eventSourceSinkbinding &&
+    getEventSourceResource(dc, props.eventSourceSinkbinding);
+  return eventSourceServicebinding && eventSourceServicebinding.length > 0
+    ? { eventSourceServicebinding }
+    : undefined;
 };
