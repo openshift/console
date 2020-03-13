@@ -107,7 +107,10 @@ export const HelmInstallPage: React.FunctionComponent<HelmInstallPageProps> = ({
         {chartHasValues &&
           'The helm chart will be installed using the YAML shown in the editor below.'}
       </PageHeading>
-      <div className="co-m-pane__body" style={{ paddingBottom: 0 }}>
+      <div
+        className="co-m-pane__body"
+        style={{ paddingBottom: 0, display: 'flex', flex: 1, flexDirection: 'column' }}
+      >
         <Formik
           initialValues={initialValues}
           onSubmit={handleSubmit}

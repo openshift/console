@@ -1,0 +1,17 @@
+.ocs-yaml-editor {
+  &__root {
+    min-height: 400px;
+    flex: 1;
+    overflow: hidden;
+    position: relative;
+  }
+
+  &__wrapper {
+    position: absolute;
+    overflow: hidden;
+    top: 0;
+    right: 0;
+    left: 0;
+    bottom: 0;
+  }
+}

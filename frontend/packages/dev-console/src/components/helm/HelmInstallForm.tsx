@@ -19,8 +19,8 @@ const HelmInstallForm: React.FC<FormikProps<FormikValues> & HelmInstallFormProps
 }) => {
   const footerRef = React.useRef<HTMLDivElement>(null);
   return (
-    <Form onSubmit={handleSubmit}>
-      <FormSection>
+    <Form onSubmit={handleSubmit} style={{ display: 'flex', flex: 1, flexDirection: 'column' }}>
+      <FormSection fullWidth>
         <InputField
           type={TextInputTypes.text}
           name="releaseName"
@@ -28,8 +28,8 @@ const HelmInstallForm: React.FC<FormikProps<FormikValues> & HelmInstallFormProps
           helpText="A unique name for the Helm Chart release."
           required
         />
-        {chartHasValues && <YAMLEditorField name="chartValuesYAML" actionButtonsRef={footerRef} />}
       </FormSection>
+      {chartHasValues && <YAMLEditorField name="chartValuesYAML" actionButtonsRef={footerRef} />}
       <div ref={footerRef}>
         <FormFooter
           handleReset={handleReset}
