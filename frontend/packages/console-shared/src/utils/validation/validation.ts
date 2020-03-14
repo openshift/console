@@ -1,3 +1,4 @@
+import * as _ from 'lodash';
 import { addMissingSubject, joinGrammaticallyListOfItems, makeSentence } from '../grammar';
 import { ValidationErrorType, ValidationObject } from './types';
 import {
@@ -9,6 +10,9 @@ import {
 } from './strings';
 
 const alphanumericRegex = '[a-zA-Z0-9]';
+const alphanumericRegexWithDash = '[-a-zA-Z0-9]';
+
+const DNS1123_MAX_LENGTH = 253;
 
 const DNS_1123_OFFENDING_CHARACTERS = {
   ',': 'comma',
@@ -50,7 +54,7 @@ export const validateDNS1123SubdomainValue = (
   const forbiddenCharacters = new Set<string>();
   const validationSentences = [];
 
-  if (value.length > 253) {
+  if (value.length > DNS1123_MAX_LENGTH) {
     validationSentences.push(DNS1123_TOO_LONG_ERROR);
   }
 
@@ -70,7 +74,7 @@ export const validateDNS1123SubdomainValue = (
       forbiddenCharacters.add('uppercase');
     }
 
-    if (!c.match('[-a-zA-Z0-9]')) {
+    if (!c.match(alphanumericRegexWithDash)) {
       let offender;
       if (c.match('\\s')) {
         offender = 'whitespace';
@@ -99,4 +103,32 @@ export const validateDNS1123SubdomainValue = (
   return (
     result && asValidationObject(addMissingSubject(result, subject), ValidationErrorType.Error)
   );
+};
+
+export const alignWithDNS1123 = (str) => {
+  if (!str) {
+    return '';
+  }
+
+  const chars = str
+    .toLowerCase()
+    .replace(/\./g, '-')
+    .split('');
+
+  const firstValidCharIndex = chars.findIndex((c) => c.match(alphanumericRegex));
+  const lastValidCharIndex = _.findLastIndex(chars, (c: string) => c.match(alphanumericRegex));
+
+  if (firstValidCharIndex < 0) {
+    return '';
+  }
+
+  let result = chars
+    .slice(firstValidCharIndex, lastValidCharIndex + 1)
+    .filter((c) => c.match(alphanumericRegexWithDash));
+
+  if (result.length > DNS1123_MAX_LENGTH) {
+    result = result.slice(0, DNS1123_MAX_LENGTH);
+  }
+
+  return result.join('');
 };
