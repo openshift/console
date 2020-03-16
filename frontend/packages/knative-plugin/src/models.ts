@@ -3,6 +3,7 @@ import {
   chart_color_red_300 as knativeEventingColor,
 } from '@patternfly/react-tokens';
 import { K8sKind } from '@console/internal/module/k8s';
+import { KNATIVE_EVENT_SOURCE_APIGROUP, KNATIVE_EVENT_SOURCE_APIGROUP_DEP } from './const';
 
 const apiVersion = 'v1';
 
@@ -77,7 +78,7 @@ export const ServiceModel: K8sKind = {
 };
 
 export const EventSourceCronJobModel: K8sKind = {
-  apiGroup: 'sources.eventing.knative.dev',
+  apiGroup: KNATIVE_EVENT_SOURCE_APIGROUP_DEP,
   apiVersion: 'v1alpha1',
   kind: 'CronJobSource',
   label: 'CronJob Source',
@@ -91,7 +92,7 @@ export const EventSourceCronJobModel: K8sKind = {
 };
 
 export const EventSourceContainerModel: K8sKind = {
-  apiGroup: 'sources.eventing.knative.dev',
+  apiGroup: KNATIVE_EVENT_SOURCE_APIGROUP_DEP,
   apiVersion: 'v1alpha1',
   kind: 'ContainerSource',
   label: 'Container Source',
@@ -105,7 +106,7 @@ export const EventSourceContainerModel: K8sKind = {
 };
 
 export const EventSourceApiServerModel: K8sKind = {
-  apiGroup: 'sources.eventing.knative.dev',
+  apiGroup: KNATIVE_EVENT_SOURCE_APIGROUP,
   apiVersion: 'v1alpha1',
   kind: 'ApiServerSource',
   label: 'ApiServerSource',
@@ -119,7 +120,7 @@ export const EventSourceApiServerModel: K8sKind = {
 };
 
 export const EventSourceCamelModel: K8sKind = {
-  apiGroup: 'sources.eventing.knative.dev',
+  apiGroup: KNATIVE_EVENT_SOURCE_APIGROUP,
   apiVersion: 'v1alpha1',
   kind: 'CamelSource',
   label: 'CamelSource',
@@ -133,7 +134,7 @@ export const EventSourceCamelModel: K8sKind = {
 };
 
 export const EventSourceKafkaModel: K8sKind = {
-  apiGroup: 'sources.eventing.knative.dev',
+  apiGroup: KNATIVE_EVENT_SOURCE_APIGROUP,
   apiVersion: 'v1alpha1',
   kind: 'KafkaSource',
   label: 'KafkaSource',
