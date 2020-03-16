@@ -209,6 +209,14 @@ $co-affinity-row-margin: 15px;
   margin: 0;
 }
 
+.co-create-operand__editor-toggle {
+  padding: 8px 30px;
+  border-bottom: 1px solid #ddd;
+  & label {
+    margin: 0;
+  }
+}
+
 .co-affinity-term {
   border: 1px solid #eee;
   display: flex;

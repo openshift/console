@@ -93,6 +93,8 @@ export type APIServiceDefinition = {
   }[];
 };
 
+export type ProvidedAPI = CRDDescription | APIServiceDefinition;
+
 export type RequirementStatus = {
   group: string;
   version: string;

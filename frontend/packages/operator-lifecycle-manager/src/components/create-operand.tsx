@@ -1,5 +1,4 @@
 import { safeDump, safeLoad } from 'js-yaml';
-import { Button } from '@patternfly/react-core';
 import {
   K8sKind,
   K8sResourceKind,
@@ -27,10 +26,11 @@ import { match as RouterMatch } from 'react-router';
 import { connect } from 'react-redux';
 import * as React from 'react';
 import { ClusterServiceVersionModel } from '../models';
-import { ClusterServiceVersionKind, CRDDescription, APIServiceDefinition } from '../types';
-import { CreateOperandForm, OperandField } from './create-operand-form';
+import { ClusterServiceVersionKind, ProvidedAPI } from '../types';
+import { CreateOperandForm } from './create-operand-form';
 import { providedAPIsFor, referenceForProvidedAPI } from '.';
 import { getActivePerspective } from '@console/internal/reducers/ui';
+import { EditorToggle, EditorType } from '@console/shared/src/components/editor/editor-toggle';
 
 /**
  * Component which wraps the YAML editor to ensure the templates are added from the `ClusterServiceVersion` annotations.
@@ -41,7 +41,7 @@ export const CreateOperandYAML: React.FC<CreateOperandYAMLProps> = ({
   match,
   operandModel,
   activePerspective,
-  onToggleEditMethod = _.noop,
+  onChangeEditor = _.noop,
 }) => {
   const template = React.useMemo(() => _.attempt(() => safeDump(buffer)), [buffer]);
   if (_.isError(template)) {
@@ -68,8 +68,8 @@ export const CreateOperandYAML: React.FC<CreateOperandYAMLProps> = ({
         )}/${match.params.plural}`;
 
   const onSwitchToForm = React.useCallback(() => {
-    onToggleEditMethod(parsedYAML);
-  }, [onToggleEditMethod, parsedYAML]);
+    onChangeEditor(parsedYAML);
+  }, [onChangeEditor, parsedYAML]);
 
   return (
     <>
@@ -88,11 +88,6 @@ export const CreateOperandYAML: React.FC<CreateOperandYAMLProps> = ({
               { name: `Create ${operandModel.label}`, path: window.location.pathname },
             ]}
           />
-          <div style={{ marginLeft: 'auto' }}>
-            <Button variant="link" onClick={onSwitchToForm}>
-              Edit Form
-            </Button>
-          </div>
         </div>
         <h1 className="co-create-operand__header-text">{`Create ${operandModel.label}`}</h1>
         <p className="help-block">
@@ -100,6 +95,7 @@ export const CreateOperandYAML: React.FC<CreateOperandYAMLProps> = ({
           into the editor.
         </p>
       </div>
+      <EditorToggle value={EditorType.YAML} onChange={onSwitchToForm} />
       <CreateYAML
         template={_.isError(template) ? null : template}
         match={match}
@@ -123,7 +119,7 @@ export const CreateOperand: React.FC<CreateOperandProps> = ({
   const { data: csv } = clusterServiceVersion;
   const csvAnnotations = _.get(csv, 'metadata.annotations', {});
   const operandModelReference = referenceForModel(operandModel);
-  const [method, setMethod] = React.useState<'yaml' | 'form'>('yaml');
+  const [method, setMethod] = React.useState<EditorType>(EditorType.Form);
   const providedAPI = React.useMemo<ProvidedAPI>(
     () =>
       providedAPIsFor(csv).find((crd) => referenceForProvidedAPI(crd) === operandModelReference),
@@ -153,14 +149,16 @@ export const CreateOperand: React.FC<CreateOperandProps> = ({
 
   const onToggleEditMethod = React.useCallback((newBuffer) => {
     setBuffer(newBuffer);
-    setMethod((currentMethod) => (currentMethod === 'yaml' ? 'form' : 'yaml'));
+    setMethod((currentMethod) =>
+      currentMethod === EditorType.YAML ? EditorType.Form : EditorType.YAML,
+    );
   }, []);
 
   const editor = React.useMemo(() => {
     if (!loaded) {
       return null;
     }
-    return method === 'yaml' ? (
+    return method === EditorType.YAML ? (
       <CreateOperandYAML
         activePerspective={activePerspective}
         match={match}
@@ -168,7 +166,7 @@ export const CreateOperand: React.FC<CreateOperandProps> = ({
         operandModel={operandModel}
         providedAPI={providedAPI}
         clusterServiceVersion={clusterServiceVersion.data}
-        onToggleEditMethod={onToggleEditMethod}
+        onChangeEditor={onToggleEditMethod}
       />
     ) : (
       <CreateOperandForm
@@ -179,7 +177,7 @@ export const CreateOperand: React.FC<CreateOperandProps> = ({
         buffer={buffer || defaultSample}
         clusterServiceVersion={clusterServiceVersion.data}
         openAPI={openAPI}
-        onToggleEditMethod={onToggleEditMethod}
+        onChangeEditor={onToggleEditMethod}
       />
     );
   }, [
@@ -239,8 +237,6 @@ export const CreateOperandPage = connect(stateToProps)((props: CreateOperandPage
   </>
 ));
 
-type ProvidedAPI = CRDDescription | APIServiceDefinition;
-
 export type CreateOperandProps = {
   match: RouterMatch<{ appName: string; ns: string; plural: K8sResourceKindReference }>;
   operandModel: K8sKind;
@@ -251,19 +247,8 @@ export type CreateOperandProps = {
   activePerspective: string;
 };
 
-export type CreateOperandFormProps = {
-  onToggleEditMethod?: (newBuffer?: K8sResourceKind) => void;
-  operandModel: K8sKind;
-  providedAPI: ProvidedAPI;
-  openAPI?: SwaggerDefinition;
-  clusterServiceVersion: ClusterServiceVersionKind;
-  buffer?: K8sResourceKind;
-  namespace: string;
-  activePerspective: string;
-};
-
 export type CreateOperandYAMLProps = {
-  onToggleEditMethod?: (newBuffer?: K8sResourceKind) => void;
+  onChangeEditor?: (newBuffer?: K8sResourceKind) => void;
   operandModel: K8sKind;
   providedAPI: ProvidedAPI;
   clusterServiceVersion: ClusterServiceVersionKind;
@@ -275,9 +260,4 @@ export type CreateOperandYAMLProps = {
 export type CreateOperandPageProps = {
   match: RouterMatch<{ appName: string; ns: string; plural: K8sResourceKindReference }>;
   operandModel: K8sKind;
-};
-
-export type SpecDescriptorInputProps = {
-  field: OperandField;
-  sample?: K8sResourceKind;
 };

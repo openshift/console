@@ -12,7 +12,6 @@ import * as crudView from '@console/internal-integration-tests/views/crud.view';
 import * as catalogView from '@console/internal-integration-tests/views/catalog.view';
 import * as catalogPageView from '@console/internal-integration-tests/views/catalog-page.view';
 import * as sidenavView from '@console/internal-integration-tests/views/sidenav.view';
-import * as yamlView from '@console/internal-integration-tests/views/yaml.view';
 import * as operatorView from '../views/operator.view';
 import * as operatorHubView from '../views/operator-hub.view';
 
@@ -162,7 +161,7 @@ describe('Interacting with a `OwnNamespace` install mode Operator (Prometheus)',
     );
   });
 
-  it('displays YAML editor for creating a new `Prometheus` instance', async () => {
+  it('displays form editor for creating a new `Prometheus` instance', async () => {
     await browser.wait(until.visibilityOf(element(by.buttonText('Create New'))));
     await element(by.buttonText('Create New')).click();
     await browser.wait(until.visibilityOf($$('.pf-c-dropdown__menu').first()), 1000);
@@ -170,13 +169,13 @@ describe('Interacting with a `OwnNamespace` install mode Operator (Prometheus)',
       .first()
       .element(by.buttonText('Prometheus'))
       .click();
-    await yamlView.isLoaded();
+    await browser.wait(until.presenceOf($('#metadata\\.name')));
 
     expect($('.co-create-operand__header').getText()).toContain('Create Prometheus');
   });
 
-  it('displays new `Prometheus` that was created from YAML editor', async () => {
-    await $('#save-changes').click();
+  it('displays new `Prometheus` that was created from form editor', async () => {
+    await $('button[type="submit"]').click();
     await crudView.isLoaded();
     await browser.wait(until.visibilityOf(operatorView.operandLink('example')));
 

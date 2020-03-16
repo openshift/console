@@ -9,9 +9,8 @@ import { CreateYAML } from '@console/internal/components/create-yaml';
 import { BreadCrumbs } from '@console/internal/components/utils';
 import { testClusterServiceVersion, testResourceInstance, testModel, testCRD } from '../../mocks';
 import { ClusterServiceVersionModel } from '../models';
-import { CreateOperandForm } from './create-operand-form';
+import { CreateOperandForm, CreateOperandFormProps } from './create-operand-form';
 import {
-  CreateOperandFormProps,
   CreateOperandPage,
   CreateOperandYAML,
   CreateOperandYAMLProps,

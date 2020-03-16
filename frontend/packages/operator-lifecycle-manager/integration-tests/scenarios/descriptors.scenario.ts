@@ -11,7 +11,6 @@ import {
   testName,
 } from '@console/internal-integration-tests/protractor.conf';
 import * as crudView from '@console/internal-integration-tests/views/crud.view';
-import * as yamlView from '@console/internal-integration-tests/views/yaml.view';
 import * as operatorView from '../views/operator.view';
 import { testCR, testCRD, testCSV } from '../mocks';
 import { inputValueFor } from '../views/descriptors.view';
@@ -98,10 +97,7 @@ describe('Using OLM descriptor components', () => {
     await $$('[data-test-id=breadcrumb-link-1]').click();
     await browser.wait(until.visibilityOf(element(by.buttonText('Create App'))));
     await retry(() => element(by.buttonText('Create App')).click());
-    await yamlView.isLoaded();
-    await element(by.buttonText('Edit Form')).click();
     await browser.wait(until.presenceOf($('#metadata\\.name')));
-
     expect($$('.co-create-operand__form-group').count()).not.toEqual(0);
   });
 
@@ -177,8 +173,6 @@ describe('Using OLM descriptor components', () => {
 
   it('successfully creates operand using form', async () => {
     await browser.refresh();
-    await yamlView.isLoaded();
-    await element(by.buttonText('Edit Form')).click();
     await browser.wait(until.presenceOf($('#metadata\\.name')));
     await element(by.buttonText('Create')).click();
     await crudView.isLoaded();
