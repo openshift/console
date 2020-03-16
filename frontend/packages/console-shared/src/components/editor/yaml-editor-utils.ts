@@ -6,6 +6,36 @@ import {
 import { getLanguageService, TextDocument } from 'yaml-language-server';
 import { openAPItoJSONSchema } from '@console/internal/module/k8s/openapi-to-json-schema';
 import { getStoredSwagger } from '@console/internal/module/k8s/swagger';
+import {
+  global_BackgroundColor_100 as lineNumberActiveForeground,
+  global_BackgroundColor_300 as lineNumberForeground,
+  global_BackgroundColor_dark_100 as editorBackground,
+} from '@patternfly/react-tokens';
+
+window.monaco.editor.defineTheme('console', {
+  base: 'vs-dark',
+  inherit: true,
+  rules: [
+    // avoid pf tokens for `rules` since tokens are opaque strings that might not be hex values
+    { token: 'number', foreground: 'ace12e' },
+    { token: 'type', foreground: '73bcf7' },
+    { token: 'string', foreground: 'f0ab00' },
+    { token: 'keyword', foreground: 'cbc0ff' },
+  ],
+  colors: {
+    'editor.background': editorBackground.value,
+    'editorGutter.background': '#292e34', // no pf token defined
+    'editorLineNumber.activeForeground': lineNumberActiveForeground.value,
+    'editorLineNumber.foreground': lineNumberForeground.value,
+  },
+});
+
+export const defaultEditorOptions = { readOnly: false, scrollBeyondLastLine: false };
+
+// Unfortunately, `editor.focus()` doesn't work when hiding the shortcuts
+// popover. We need to find the actual DOM element.
+export const hackyFocusEditor = () =>
+  setTimeout(() => document.querySelector<any>('.monaco-editor textarea')?.focus());
 
 export const registerYAMLLanguage = (monaco) => {
   // register the YAML language with Monaco

@@ -1,3 +1,5 @@
+@import '~patternfly/dist/sass/patternfly/variables';
+
 .ocs-yaml-editor {
   &__root {
     min-height: 400px;
@@ -13,5 +15,19 @@
     right: 0;
     left: 0;
     bottom: 0;
+  }
+
+  &__links {
+    display: flex;
+    justify-content: flex-end;
+    margin: 2px;
+    z-index: 1;
+    @media(max-width: 767px) {
+      display: none;
+    }
+  }
+
+  &__link {
+    display: inline-block;
   }
 }

@@ -4,25 +4,14 @@ import * as classNames from 'classnames';
 import { safeLoad, safeDump } from 'js-yaml';
 import { saveAs } from 'file-saver';
 import { connect } from 'react-redux';
-import MonacoEditor from 'react-monaco-editor';
-import { ActionGroup, Alert, Button, Split, SplitItem, Popover } from '@patternfly/react-core';
-import { DownloadIcon, InfoCircleIcon, QuestionCircleIcon } from '@patternfly/react-icons';
-import {
-  global_BackgroundColor_100 as lineNumberActiveForeground,
-  global_BackgroundColor_300 as lineNumberForeground,
-  global_BackgroundColor_dark_100 as editorBackground,
-} from '@patternfly/react-tokens';
-import {
-  FLAGS,
-  ALL_NAMESPACES_KEY,
-  getBadgeFromType,
-  Shortcut,
-  ShortcutTable,
-} from '@console/shared';
+import { ActionGroup, Alert, Button, Split, SplitItem } from '@patternfly/react-core';
+import { DownloadIcon } from '@patternfly/react-icons';
+
+import { FLAGS, ALL_NAMESPACES_KEY, getBadgeFromType } from '@console/shared';
 
 import { connectToFlags } from '../reducers/features';
 import { errorModal } from './modals';
-import { Firehose, checkAccess, history, Loading, resourceObjPath } from './utils';
+import { Firehose, checkAccess, history, Loading, resourceObjPath, AsyncComponent } from './utils';
 import {
   referenceForModel,
   k8sCreate,
@@ -35,32 +24,7 @@ import { getResourceSidebarSamples } from './sidebars/resource-sidebar-samples';
 import { ResourceSidebar } from './sidebars/resource-sidebar';
 import { yamlTemplates } from '../models/yaml-templates';
 
-import { definitionFor, getStoredSwagger } from '../module/k8s/swagger';
-import {
-  MonacoToProtocolConverter,
-  ProtocolToMonacoConverter,
-} from 'monaco-languageclient/lib/monaco-converter';
-import { getLanguageService, TextDocument } from 'yaml-language-server';
-import { openAPItoJSONSchema } from '../module/k8s/openapi-to-json-schema';
-import * as URL from 'url';
-
-window.monaco.editor.defineTheme('console', {
-  base: 'vs-dark',
-  inherit: true,
-  rules: [
-    // avoid pf tokens for `rules` since tokens are opaque strings that might not be hex values
-    { token: 'number', foreground: 'ace12e' },
-    { token: 'type', foreground: '73bcf7' },
-    { token: 'string', foreground: 'f0ab00' },
-    { token: 'keyword', foreground: 'cbc0ff' },
-  ],
-  colors: {
-    'editor.background': editorBackground.value,
-    'editorGutter.background': '#292e34', // no pf token defined
-    'editorLineNumber.activeForeground': lineNumberActiveForeground.value,
-    'editorLineNumber.foreground': lineNumberForeground.value,
-  },
-});
+import { definitionFor } from '../module/k8s/swagger';
 
 const generateObjToLoad = (kind, id, yaml, namespace = 'default') => {
   const sampleObj = safeLoad(yaml ? yaml : yamlTemplates.getIn([kind, id]));
@@ -99,18 +63,18 @@ export const EditYAML_ = connect(stateToProps)(
         showSidebar: props.create,
       };
       this.monacoRef = React.createRef();
-      this.resize = () => {
-        this.setState({ height: this.height });
-        if (this.monacoRef.current) {
-          this.monacoRef.current.editor.layout({ height: this.editorHeight, width: this.width });
-        }
-      };
+      // this.resize = () => {
+      //   this.setState({ height: this.height });
+      //   if (this.monacoRef.current) {
+      //     this.monacoRef.current.editor.layout({ height: this.editorHeight, width: this.width });
+      //   }
+      // };
       // k8s uses strings for resource versions
       this.displayedVersion = '0';
       // Default cancel action is browser back navigation
       this.onCancel = 'onCancel' in props ? props.onCancel : history.goBack;
       this.downloadSampleYaml_ = this.downloadSampleYaml_.bind(this);
-      this.editorDidMount = this.editorDidMount.bind(this);
+      // this.editorDidMount = this.editorDidMount.bind(this);
       this.buttons = this.props.buttonsRef;
 
       if (this.props.error) {
@@ -128,7 +92,7 @@ export const EditYAML_ = connect(stateToProps)(
 
     handleError(error) {
       this.setState({ error, success: null }, () => {
-        this.resize();
+        // this.resize();
       });
     }
 
@@ -137,19 +101,19 @@ export const EditYAML_ = connect(stateToProps)(
         !_.isEqual(prevState, this.state) ||
         prevProps.yamlSamplesList !== this.props.yamlSamplesList
       ) {
-        this.resize();
+        // this.resize();
       }
     }
 
     componentDidMount() {
       this.loadYaml();
-      window.addEventListener('resize', this.resize);
-      window.addEventListener('sidebar_toggle', this.resize);
+      // window.addEventListener('resize', this.resize);
+      // window.addEventListener('sidebar_toggle', this.resize);
     }
 
     componentWillUnmount() {
-      window.removeEventListener('resize', this.resize);
-      window.removeEventListener('sidebar_toggle', this.resize);
+      // window.removeEventListener('resize', this.resize);
+      // window.removeEventListener('sidebar_toggle', this.resize);
     }
 
     UNSAFE_componentWillReceiveProps(nextProps) {
@@ -175,14 +139,6 @@ export const EditYAML_ = connect(stateToProps)(
       } else {
         this.loadYaml();
       }
-    }
-
-    editorDidMount(editor, monaco) {
-      editor.layout();
-      editor.focus();
-      this.registerYAMLinMonaco(monaco);
-      monaco.editor.getModels()[0].updateOptions({ tabSize: 2 });
-      editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_S, () => this.save());
     }
 
     get editorHeight() {
@@ -216,11 +172,6 @@ export const EditYAML_ = connect(stateToProps)(
         ? hasSidebarBodyWidth - hasSidebarSidebar.getBoundingClientRect().width
         : hasSidebarBodyWidth;
     }
-
-    // Unfortunately, `editor.focus()` doesn't work when hiding the shortcuts
-    // popover. We need to find the actual DOM element.
-    focusEditor = () =>
-      setTimeout(() => document.querySelector('.monaco-editor textarea')?.focus());
 
     reload() {
       this.loadYaml(true);
@@ -287,7 +238,7 @@ export const EditYAML_ = connect(stateToProps)(
 
       this.displayedVersion = _.get(obj, 'metadata.resourceVersion');
       this.setState({ yaml, initialized: true, stale: false });
-      this.resize();
+      // this.resize();
     }
 
     addToYAML(id, obj) {
@@ -329,7 +280,7 @@ export const EditYAML_ = connect(stateToProps)(
 
       this.displayedVersion = _.get(obj, 'metadata.resourceVersion');
       this.setState({ yaml: this.monacoRef.current.editor.getValue() });
-      this.resize();
+      // this.resize();
     }
 
     getEditor() {
@@ -490,191 +441,6 @@ export const EditYAML_ = connect(stateToProps)(
       }
     }
 
-    registerYAMLinMonaco(monaco) {
-      const LANGUAGE_ID = 'yaml';
-      const MODEL_URI = 'inmemory://model.yaml';
-      const MONACO_URI = monaco.Uri.parse(MODEL_URI);
-
-      const m2p = new MonacoToProtocolConverter();
-      const p2m = new ProtocolToMonacoConverter();
-
-      function createDocument(model) {
-        return TextDocument.create(
-          MODEL_URI,
-          model.getModeId(),
-          model.getVersionId(),
-          model.getValue(),
-        );
-      }
-
-      const yamlService = this.createYAMLService();
-
-      // validation is not a 'registered' feature like the others, it relies on calling the yamlService
-      // directly for validation results when content in the editor has changed
-      this.YAMLValidation(monaco, p2m, MONACO_URI, createDocument, yamlService);
-
-      /**
-       * This exists because react-monaco-editor passes the same monaco
-       * object each time. Without it you would be registering all the features again and
-       * getting duplicate results.
-       *
-       * Monaco does not provide any apis for unregistering or checking if the features have already
-       * been registered for a language.
-       *
-       * We check that > 1 YAML language exists because one is the default and one is the initial register
-       * that setups our features.
-       */
-      if (monaco.languages.getLanguages().filter((x) => x.id === LANGUAGE_ID).length > 1) {
-        return;
-      }
-
-      this.registerYAMLLanguage(monaco); // register the YAML language with monaco
-      this.registerYAMLCompletion(LANGUAGE_ID, monaco, m2p, p2m, createDocument, yamlService);
-      this.registerYAMLDocumentSymbols(LANGUAGE_ID, monaco, p2m, createDocument, yamlService);
-      this.registerYAMLHover(LANGUAGE_ID, monaco, m2p, p2m, createDocument, yamlService);
-    }
-
-    registerYAMLLanguage(monaco) {
-      // register the YAML language with Monaco
-      monaco.languages.register({
-        id: 'yaml',
-        extensions: ['.yml', '.yaml'],
-        aliases: ['YAML', 'yaml'],
-        mimetypes: ['application/yaml'],
-      });
-    }
-
-    createYAMLService() {
-      const resolveSchema = function(url) {
-        const promise = new Promise((resolve, reject) => {
-          const xhr = new XMLHttpRequest();
-          xhr.onload = () => resolve(xhr.responseText);
-          xhr.onerror = () => reject(xhr.statusText);
-          xhr.open('GET', url, true);
-          xhr.send();
-        });
-        return promise;
-      };
-
-      const workspaceContext = {
-        resolveRelativePath: (relativePath, resource) => URL.resolve(resource, relativePath),
-      };
-
-      const yamlService = getLanguageService(resolveSchema, workspaceContext, []);
-
-      // Prepare the schema
-      const yamlOpenAPI = getStoredSwagger();
-
-      // Convert the openAPI schema to something the language server understands
-      const kubernetesJSONSchema = openAPItoJSONSchema(yamlOpenAPI);
-
-      const schemas = [
-        {
-          uri: 'inmemory:yaml',
-          fileMatch: ['*'],
-          schema: kubernetesJSONSchema,
-        },
-      ];
-      yamlService.configure({
-        validate: true,
-        schemas,
-        hover: true,
-        completion: true,
-      });
-      return yamlService;
-    }
-
-    registerYAMLCompletion(languageID, monaco, m2p, p2m, createDocument, yamlService) {
-      monaco.languages.registerCompletionItemProvider(languageID, {
-        provideCompletionItems(model, position) {
-          const document = createDocument(model);
-          return yamlService
-            .doComplete(document, m2p.asPosition(position.lineNumber, position.column), true)
-            .then((list) => {
-              return p2m.asCompletionResult(list);
-            });
-        },
-
-        resolveCompletionItem(item) {
-          return yamlService
-            .doResolve(m2p.asCompletionItem(item))
-            .then((result) => p2m.asCompletionItem(result));
-        },
-      });
-    }
-
-    registerYAMLDocumentSymbols(languageID, monaco, p2m, createDocument, yamlService) {
-      monaco.languages.registerDocumentSymbolProvider(languageID, {
-        provideDocumentSymbols(model) {
-          const document = createDocument(model);
-          return p2m.asSymbolInformations(yamlService.findDocumentSymbols(document));
-        },
-      });
-    }
-
-    registerYAMLHover(languageID, monaco, m2p, p2m, createDocument, yamlService) {
-      monaco.languages.registerHoverProvider(languageID, {
-        provideHover(model, position) {
-          const doc = createDocument(model);
-          return yamlService
-            .doHover(doc, m2p.asPosition(position.lineNumber, position.column))
-            .then((hover) => {
-              return p2m.asHover(hover);
-            })
-            .then((e) => {
-              for (const el of document.getElementsByClassName('monaco-editor-hover')) {
-                el.onclick = (event) => event.preventDefault();
-                el.onauxclick = (event) => {
-                  window.open(event.target.getAttribute('data-href'), '_blank').opener = null;
-                  event.preventDefault();
-                };
-              }
-              return e;
-            });
-        },
-      });
-    }
-
-    YAMLValidation(monaco, p2m, monacoURI, createDocument, yamlService) {
-      const pendingValidationRequests = new Map();
-
-      const getModel = () => monaco.editor.getModels()[0];
-
-      const cleanPendingValidation = (document) => {
-        const request = pendingValidationRequests.get(document.uri);
-        if (request !== undefined) {
-          clearTimeout(request);
-          pendingValidationRequests.delete(document.uri);
-        }
-      };
-
-      const cleanDiagnostics = () =>
-        monaco.editor.setModelMarkers(monaco.editor.getModel(monacoURI), 'default', []);
-
-      const doValidate = (document) => {
-        if (document.getText().length === 0) {
-          cleanDiagnostics();
-          return;
-        }
-        yamlService.doValidation(document, true).then((diagnostics) => {
-          const markers = p2m.asDiagnostics(diagnostics);
-          monaco.editor.setModelMarkers(getModel(), 'default', markers);
-        });
-      };
-
-      getModel().onDidChangeContent(() => {
-        const document = createDocument(getModel());
-        cleanPendingValidation(document);
-        pendingValidationRequests.set(
-          document.uri,
-          setTimeout(() => {
-            pendingValidationRequests.delete(document.uri);
-            doValidate(document);
-          }),
-        );
-      });
-    }
-
     toggleSidebar = () => {
       this.setState((state) => {
         return { showSidebar: !state.showSidebar };
@@ -719,14 +485,17 @@ export const EditYAML_ = connect(stateToProps)(
       const showSchema = definition && !_.isEmpty(definition.properties);
       const hasSidebarContent = showSchema || !_.isEmpty(samples) || !_.isEmpty(snippets);
       const editYamlComponent = (
-        <div className="co-file-dropzone">
+        <div
+          className="co-file-dropzone"
+          style={{ display: 'flex', flex: 1, flexDirection: 'column' }}
+        >
           {canDrop && (
             <div className={klass}>
               <p className="co-file-dropzone__drop-text">Drop file here</p>
             </div>
           )}
 
-          <div>
+          <>
             {create && !this.props.hideHeader && (
               <div className="yaml-editor__header">
                 <Split>
@@ -741,70 +510,33 @@ export const EditYAML_ = connect(stateToProps)(
                 </p>
               </div>
             )}
-            <div className="pf-c-form">
+            <div
+              className="pf-c-form"
+              style={{ display: 'flex', flex: 1, flexDirection: 'column' }}
+            >
               <div className="co-p-has-sidebar">
                 <div className="co-p-has-sidebar__body">
                   <div
                     className={classNames('yaml-editor', customClass)}
                     ref={(r) => (this.editor = r)}
+                    style={{ display: 'flex', flex: 1, flexDirection: 'column', height: '100%' }}
                   >
-                    <div className="yaml-editor__links">
-                      {!genericYAML && (
-                        <div className="yaml-editor__link">
-                          <Popover
-                            aria-label="Shortcuts"
-                            bodyContent={
-                              <ShortcutTable>
-                                <Shortcut ctrl keyName="space">
-                                  Activate auto complete
-                                </Shortcut>
-                                <Shortcut ctrlCmd shift keyName="o">
-                                  View document outline
-                                </Shortcut>
-                                <Shortcut hover>View property descriptions</Shortcut>
-                                <Shortcut ctrlCmd keyName="s">
-                                  Save
-                                </Shortcut>
-                              </ShortcutTable>
-                            }
-                            maxWidth="25rem"
-                            distance={18}
-                            onHide={this.focusEditor}
-                          >
-                            <Button type="button" variant="link" isInline>
-                              <QuestionCircleIcon className="co-icon-space-r co-p-has-sidebar__sidebar-link-icon" />
-                              View shortcuts
-                            </Button>
-                          </Popover>
-                        </div>
-                      )}
-                      {!showSidebar && hasSidebarContent && (
-                        <>
-                          <div className="co-action-divider">|</div>
-                          <div className="yaml-editor__link">
-                            <Button
-                              type="button"
-                              variant="link"
-                              isInline
-                              onClick={this.toggleSidebar}
-                            >
-                              <InfoCircleIcon className="co-icon-space-r co-p-has-sidebar__sidebar-link-icon" />
-                              View sidebar
-                            </Button>
-                          </div>
-                        </>
-                      )}
-                    </div>
-                    <MonacoEditor
+                    <AsyncComponent
+                      loader={() =>
+                        import('@console/shared/src/components/editor/YAMLEditor').then(
+                          (c) => c.default,
+                        )
+                      }
                       ref={this.monacoRef}
-                      language="yaml"
-                      theme="console"
                       value={yaml}
                       options={options}
-                      editorDidMount={this.editorDidMount}
+                      showShortcuts={!genericYAML}
+                      showSidebar={!showSidebar && hasSidebarContent}
+                      onToggleSidebar={this.toggleSidebar}
                       onChange={(newValue) =>
                         this.setState({ yaml: newValue }, () => onChange(newValue))
                       }
+                      onSave={() => this.save()}
                     />
                     {!hideActions && (
                       <div className="yaml-editor__buttons" ref={(r) => (this.buttons = r)}>
@@ -898,7 +630,7 @@ export const EditYAML_ = connect(stateToProps)(
                 )}
               </div>
             </div>
-          </div>
+          </>
         </div>
       );
 

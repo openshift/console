@@ -13,6 +13,7 @@ const YAMLEditorField: React.FC<YAMLEditorFieldProps> = ({ name }) => {
       loader={() => import('../editor/YAMLEditor').then((c) => c.default)}
       value={field.value}
       onChange={(yaml: string) => setFieldValue(name, yaml)}
+      showShortcuts
     />
   );
 };
