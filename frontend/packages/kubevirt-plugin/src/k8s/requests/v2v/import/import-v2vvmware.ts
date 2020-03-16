@@ -3,8 +3,8 @@ import { CreateVMEnhancedParams } from '../../vm/create/types';
 import { ImporterResult } from '../../vm/types';
 import { buildOwnerReference } from '../../../../utils';
 import { PatchBuilder } from '@console/shared/src/k8s';
-import { PodModel, ServiceAccountModel } from '@console/internal/models';
-import { createBasicLookup, getName, getNamespace, getOwnerReferences } from '@console/shared/src';
+import { ServiceAccountModel } from '@console/internal/models';
+import { createBasicLookup, getName, getNamespace } from '@console/shared/src';
 import { compareOwnerReference } from '@console/shared/src/utils/owner-references';
 import { SecretWrappper } from '../../../wrapper/k8s/secret-wrapper';
 import {
@@ -275,7 +275,7 @@ const startConversionPod = async (
   if (conversionPod) {
     const newOwnerReference = buildOwnerReference(conversionPod);
     const pvcwrappers = storages
-      .filter((storage) => storage.type === VMWizardStorageType.V2V_VMWARE_IMPORT_TEMP)
+      .filter(({ type }) => type === VMWizardStorageType.V2V_VMWARE_IMPORT_TEMP)
       .map(({ persistentVolumeClaim }) => new PersistentVolumeClaimWrapper(persistentVolumeClaim));
 
     const patchPromises = [
@@ -329,15 +329,21 @@ export const importV2VVMwareVm = async (
     storages: finalizeStorages(resolvedStorages),
     networks,
     onCreate: async (vm) => {
-      await enhancedK8sMethods.k8sPatch(PodModel, conversionPod, [
-        new PatchBuilder('/metadata/ownerReferences')
-          .setListUpdate(
-            buildOwnerReference(vm),
-            getOwnerReferences(conversionPod),
-            compareOwnerReference,
-          )
-          .build(),
-      ]);
+      const vmOwnerReference = buildOwnerReference(vm);
+      const importPVCWrappers = resolvedStorages
+        .filter(({ type }) => type === VMWizardStorageType.V2V_VMWARE_IMPORT)
+        .map(
+          ({ persistentVolumeClaim }) => new PersistentVolumeClaimWrapper(persistentVolumeClaim),
+        );
+
+      const patchPromises = [new PodWrappper(conversionPod), ...importPVCWrappers].map((wrapper) =>
+        enhancedK8sMethods.k8sWrapperPatch(wrapper, [
+          new PatchBuilder('/metadata/ownerReferences')
+            .setListUpdate(vmOwnerReference, wrapper.getOwnerReferences(), compareOwnerReference)
+            .build(),
+        ]),
+      );
+      await Promise.all(patchPromises);
     },
   };
 };
