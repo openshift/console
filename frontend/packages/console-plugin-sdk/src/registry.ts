@@ -27,7 +27,6 @@ import {
   isReduxReducer,
   isResourceDetailsPage,
   isResourceListPage,
-  isResourceTabPage,
   isRoutePage,
   isYAMLTemplate,
 } from './typings';
@@ -85,10 +84,6 @@ export class ExtensionRegistry {
 
   public getRoutePages() {
     return this.extensions.filter(isRoutePage);
-  }
-
-  public getResourceTabPages() {
-    return this.extensions.filter(isResourceTabPage);
   }
 
   public getPerspectives() {
