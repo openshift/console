@@ -44,6 +44,10 @@ export const CreateOCSServiceForm: React.FC<CreateOCSServiceFormProps> = ({
           <p className="co-legend co-required ceph-ocs-desc__legend">
             Select at least 3 nodes in different failure domains you wish to use.
           </p>
+          <p>
+            3 selected nodes are used for initial deployment. The remaining selected nodes will be
+            used by OpenShift as scheduling targets for OCS scaling.
+          </p>
           <ListPage kind={NodeModel.kind} showTitle={false} ListComponent={ListComponent} />
         </div>
       </form>
