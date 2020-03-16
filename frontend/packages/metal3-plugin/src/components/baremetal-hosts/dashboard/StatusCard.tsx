@@ -12,11 +12,9 @@ import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboa
 import HealthBody from '@console/shared/src/components/dashboard/status-card/HealthBody';
 import HealthItem from '@console/shared/src/components/dashboard/status-card/HealthItem';
 import { HealthState } from '@console/shared/src/components/dashboard/status-card/states';
-import { ALERTS_KEY } from '@console/internal/actions/dashboards';
 import AlertsBody from '@console/shared/src/components/dashboard/status-card/AlertsBody';
 import AlertItem from '@console/shared/src/components/dashboard/status-card/AlertItem';
-import { getAlerts } from '@console/shared/src/components/dashboard/status-card/alert-utils';
-import { Alert, PrometheusRulesResponse, alertURL } from '@console/internal/components/monitoring';
+import { Alert, alertURL } from '@console/internal/components/monitoring';
 import { getBareMetalHostStatus } from '../../../status/host-status';
 import {
   HOST_SUCCESS_STATES,
@@ -66,7 +64,11 @@ const getHostHardwareHealthState = (obj): HostHealthState => {
 const filterAlerts = (alerts: Alert[]): Alert[] =>
   alerts.filter((alert) => _.get(alert, 'labels.hwalert'));
 
-const HealthCard: React.FC<HealthCardProps> = ({ watchAlerts, stopWatchAlerts, alertsResults }) => {
+const HealthCard: React.FC<HealthCardProps> = ({
+  watchAlerts,
+  stopWatchAlerts,
+  notificationAlerts,
+}) => {
   const { obj } = React.useContext(BareMetalHostDashboardContext);
 
   React.useEffect(() => {
@@ -77,9 +79,8 @@ const HealthCard: React.FC<HealthCardProps> = ({ watchAlerts, stopWatchAlerts, a
   const health = getHostHealthState(obj);
   const hwHealth = getHostHardwareHealthState(obj);
 
-  const alertsResponse = alertsResults.getIn([ALERTS_KEY, 'data']) as PrometheusRulesResponse;
-  const alertsResponseError = alertsResults.getIn([ALERTS_KEY, 'loadError']);
-  const alerts = filterAlerts(getAlerts(alertsResponse));
+  const { data, loaded, loadError } = notificationAlerts || {};
+  const alerts = React.useMemo(() => filterAlerts(data), [data]);
 
   return (
     <DashboardCard gradient>
@@ -98,8 +99,8 @@ const HealthCard: React.FC<HealthCardProps> = ({ watchAlerts, stopWatchAlerts, a
           </Gallery>
         </HealthBody>
         <AlertsBody
-          isLoading={!alertsResponse}
-          error={alertsResponseError}
+          isLoading={!loaded}
+          error={!_.isEmpty(loadError)}
           emptyMessage="No alerts or messages"
         >
           {alerts.length !== 0
