@@ -6,6 +6,7 @@ import {
   PipelineResourceTaskResource,
   PipelineTaskResource,
 } from '../../../../utils/pipeline-augment';
+import { SidebarInputWrapper } from './temp-utils';
 
 type TaskSidebarResourceProps = {
   availableResources: PipelineResource[];
@@ -32,19 +33,21 @@ const TaskSidebarResource: React.FC<TaskSidebarResourceProps> = (props) => {
       isValid={dropdownResources.length > 0}
       isRequired
     >
-      <Dropdown
-        title={`Select ${resource.type} resource...`}
-        items={dropdownResources.reduce((acc, { name }) => ({ ...acc, [name]: name }), {})}
-        disabled={dropdownResources.length === 0}
-        selectedKey={taskResource?.resource || ''}
-        dropDownClassName="dropdown--full-width"
-        onChange={(value: string) => {
-          onChange(
-            resource.name,
-            dropdownResources.find(({ name }) => name === value),
-          );
-        }}
-      />
+      <SidebarInputWrapper>
+        <Dropdown
+          title={`Select ${resource.type} resource...`}
+          items={dropdownResources.reduce((acc, { name }) => ({ ...acc, [name]: name }), {})}
+          disabled={dropdownResources.length === 0}
+          selectedKey={taskResource?.resource || ''}
+          dropDownClassName="dropdown--full-width"
+          onChange={(value: string) => {
+            onChange(
+              resource.name,
+              dropdownResources.find(({ name }) => name === value),
+            );
+          }}
+        />
+      </SidebarInputWrapper>
     </FormGroup>
   );
 };
