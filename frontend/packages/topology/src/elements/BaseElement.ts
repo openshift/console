@@ -167,7 +167,10 @@ export default abstract class BaseElement<E extends ElementModel = ElementModel,
         child.remove();
         child.setParent(this);
         this.children.splice(index, 0, child);
-        this.getController().fireEvent(ADD_CHILD_EVENT, { target: this, child });
+
+        if (this.controller) {
+          this.controller.fireEvent(ADD_CHILD_EVENT, { target: this, child });
+        }
       }
     }
   }
@@ -183,7 +186,10 @@ export default abstract class BaseElement<E extends ElementModel = ElementModel,
         child.remove();
         child.setParent(this);
         this.children.push(child);
-        this.getController().fireEvent(ADD_CHILD_EVENT, { target: this, child });
+
+        if (this.controller) {
+          this.controller.fireEvent(ADD_CHILD_EVENT, { target: this, child });
+        }
       }
     }
   }
@@ -194,7 +200,10 @@ export default abstract class BaseElement<E extends ElementModel = ElementModel,
       if (idx !== -1) {
         this.children.splice(idx, 1);
         child.setParent(undefined);
-        this.getController().fireEvent(REMOVE_CHILD_EVENT, { target: this, child });
+
+        if (this.controller) {
+          this.controller.fireEvent(REMOVE_CHILD_EVENT, { target: this, child });
+        }
       }
     }
   }
