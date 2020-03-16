@@ -173,7 +173,13 @@ const TooltipInner_: React.FC<TooltipInnerProps> = ({
   const height = 500;
 
   return (
-    <foreignObject height={height} width={width} x={x - width / 2} y={y}>
+    <foreignObject
+      className="query-browser__tooltip-svg-wrap"
+      height={height}
+      width={width}
+      x={x - width / 2}
+      y={y}
+    >
       <div className="query-browser__tooltip-wrap">
         <div className="query-browser__tooltip-arrow" />
         <div className="query-browser__tooltip">
@@ -226,6 +232,18 @@ const graphContainer = (
     labels={() => ''}
   />
 );
+
+const LegendContainer = ({ children }: { children?: React.ReactNode }) => {
+  // The first child should be a <rect> with a `width` prop giving the legend's content width
+  const width = children?.[0]?.[0]?.props?.width ?? '100%';
+  return (
+    <foreignObject height={75} width="100%" y={230}>
+      <div className="monitoring-dashboards__legend-wrap">
+        <svg width={width}>{children}</svg>
+      </div>
+    </foreignObject>
+  );
+};
 
 const Graph: React.FC<GraphProps> = React.memo(
   ({ allSeries, disabledSeries, formatLegendLabel, isStack, span, xDomain }) => {
@@ -322,14 +340,13 @@ const Graph: React.FC<GraphProps> = React.memo(
             {legendData && (
               <ChartLegend
                 data={legendData}
+                groupComponent={<LegendContainer />}
                 itemsPerRow={4}
                 orientation="vertical"
                 style={{
                   labels: { fontSize: 11 },
                 }}
                 symbolSpacer={4}
-                x={0}
-                y={230}
               />
             )}
           </Chart>
