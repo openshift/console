@@ -15,6 +15,7 @@ import {
 } from '../views/git-import-flow.view';
 import { newApplicationName, newAppName } from '../views/new-app-name.view';
 import { switchPerspective, Perspective, sideHeader } from '../views/dev-perspective.view';
+import { scrollIntoView } from '../utils/page';
 
 describe('git import flow', () => {
   let newApplication;
@@ -43,6 +44,7 @@ describe('git import flow', () => {
     expect(importFromGitHeader.getText()).toContain('Import from git');
     await enterGitRepoUrl('https://github.com/sclorg/nodejs-ex.git');
 
+    scrollIntoView(appName);
     await appName.click();
     expect(appName.getAttribute('value')).toContain('nodejs-ex-git');
     await addApplication(newApplication, newApp);

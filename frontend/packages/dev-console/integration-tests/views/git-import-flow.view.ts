@@ -20,7 +20,9 @@ export const builderImage = element(
   by.cssContainingText('.pf-c-card.odc-builder-image-card', 'Node.js'),
 );
 export const buildImageVersion = element(by.id('form-dropdown-image-tag-field'));
-export const createButton = element(by.css('[data-test-id="import-git-create-button"]'));
+export const createButton = element(by.css('[data-test-id="import-git-form"]')).element(
+  by.css('[data-test-id="submit-button"]'),
+);
 export const builderImageVersionName = element(by.id('8-link'));
 
 export const navigateImportFromGit = async function() {

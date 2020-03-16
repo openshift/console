@@ -1,3 +1,8 @@
 .ocs-form-footer {
   padding: var(--pf-global--spacer--md) 0;
+  &__sticky {
+    position: sticky;
+    background: var(--pf-chart-global--Fill--Color--white);
+    bottom: 0;
+  }
 }
