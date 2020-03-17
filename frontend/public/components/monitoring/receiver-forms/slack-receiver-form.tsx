@@ -15,7 +15,7 @@ export const Form: React.FC<FormProps> = ({ globals, formValues, dispatchFormCha
           className="control-label co-required"
           htmlFor="slack-api-url"
         >
-          Slack API Url
+          Slack API URL
         </label>
         <div className="row">
           <div className="col-sm-7">
@@ -38,11 +38,11 @@ export const Form: React.FC<FormProps> = ({ globals, formValues, dispatchFormCha
             <SaveAsDefaultCheckbox
               formField="slackSaveAsDefault"
               disabled={formValues.slack_api_url === globals?.slack_api_url}
-              label="Save as default Slack API Url"
+              label="Save as default Slack API URL"
               formValues={formValues}
               dispatchFormChange={dispatchFormChange}
-              tooltip="Checking this box will write the api url to the global section of the
-                configuration file where it will become default api url for future Slack receivers."
+              tooltip="Checking this box will write the API URL to the global section of the
+                configuration file where it will become the default API URL for future Slack receivers."
             />
           </div>
         </div>
