@@ -118,6 +118,7 @@ $catalog-tile-width: $co-m-catalog-tile-width;
 
   &__content {
     flex: 1 1 auto;
+    overflow: hidden;
   }
 
   &__description {
