@@ -116,7 +116,7 @@ describe('Topology', () => {
     // Verify that there are zero connectors displayed in the Topology view
     await expect(topologyConnectors.count()).toBe(0);
 
-    // Find the source app to be connected
+    // Find the source app to be connected  
     await expect(findNodes(newApplication1).count()).toBe(2);
     await findNode(newApplication1);
     await findWorkloadNode(newApplication1);

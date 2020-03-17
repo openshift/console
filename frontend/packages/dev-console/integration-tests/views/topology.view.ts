@@ -1,4 +1,6 @@
 import { by, element, browser, ExpectedConditions as until } from 'protractor';
+import { click, selectByVisibleText } from '../utilities/elementInteractions';
+const waitForElement = 15000;
 
 // Toppology tab in sidebar
 export const topologyNavigate = element(by.css('[data-test-id="topology-header"]'));
@@ -72,6 +74,9 @@ export const valueField = element.all(by.css('[placeholder="value"]')).last();
 // Connection lines displayed in Topology view
 export const topologyConnectors = element.all(by.css('[data-test-id="edge-handler"]'));
 
+// empty topology form
+export const emptyTopologyView = element(by.css('div.loading-box.loading-box__loaded'));
+
 // Elements in the topology controlbar - TBD
 
 // Navigate to topology tab
@@ -79,3 +84,100 @@ export const navigateTopology = async function() {
   await browser.wait(until.elementToBeClickable(topologyNavigate));
   await topologyNavigate.click();
 };
+
+export const sideBarObj =  {
+  sideBar: element(by.css('div.pf-topology-side-bar__body')),
+  Title: element(by.css('h1.co-m-pane__heading')),
+  ActionsMenu: element(by.css('[data-test-id="actions-menu-button"]')),
+}
+
+export const deleteDeployPopupObj = {
+  form: element(by.css('form.modal-content')),
+  checkbox: element(by.css('input[type="checkbox"]')),
+  cancel: element(by.css('[data-test-id="modal-cancel-action"]')),
+  delete: element(by.css('#confirm-action'))
+}
+
+export enum Actions {
+  EditCount = "Edit Count",
+  PauseRollouts = "Pause Rollouts",
+  AddStorage = "Add Storage",
+  EditUpdateStrategy = "Edit Update Strategy",
+  EditApplicationGrouping = "Edit Application Grouping",
+  EditNode = "Edit Node",
+  EditLabels = "Edit Labels",
+  EditAnnotations = "Edit Annotations",
+  EditDeployment = "Edit Deployment",
+  DeleteDeployment = "Delete Deployment"
+}
+
+export const selectActionInSideBar = async function(action: Actions) {
+  switch(action) {
+    case Actions.DeleteDeployment: {
+      await selectByVisibleText(sideBarObj.ActionsMenu, Actions.DeleteDeployment);
+      await browser.wait(until.visibilityOf(deleteDeployPopupObj.form), waitForElement,`Unable to view the delete deployment popup even after ${waitForElement} milliseconds`);
+      await click(deleteDeployPopupObj.delete);
+      await browser.wait(until.visibilityOf(listViewObj.deleteText), waitForElement, ` status "deleting" is not displaying even after  ${waitForElement} milliseconds `);
+      await browser.wait(until.stalenessOf(listViewObj.deleteText), waitForElement, `App is taking more than ${waitForElement} milliseconds to delete `);
+      break;
+    }
+    case Actions.EditCount: {
+      await selectByVisibleText(sideBarObj.ActionsMenu, Actions.DeleteDeployment);
+      break;
+    }
+    case Actions.PauseRollouts: {
+      await selectByVisibleText(sideBarObj.ActionsMenu, Actions.PauseRollouts);
+      break;
+    }
+    case Actions.AddStorage: {
+      await selectByVisibleText(sideBarObj.ActionsMenu, Actions.AddStorage);
+      break;
+    }
+    case Actions.EditUpdateStrategy: {
+      await selectByVisibleText(sideBarObj.ActionsMenu, Actions.EditUpdateStrategy);
+      break;
+    }
+    case Actions.EditApplicationGrouping: {
+      await selectByVisibleText(sideBarObj.ActionsMenu, Actions.EditApplicationGrouping);
+      break;
+    }
+    case Actions.EditLabels: {
+      await selectByVisibleText(sideBarObj.ActionsMenu, Actions.EditLabels);
+      break;
+    }
+    case Actions.EditAnnotations: {
+      await selectByVisibleText(sideBarObj.ActionsMenu, Actions.EditAnnotations);
+      break;
+    }
+    case Actions.EditDeployment: {
+      await selectByVisibleText(sideBarObj.ActionsMenu, Actions.EditDeployment);
+      break;
+    }
+  }
+}
+
+export const listViewObj =  {
+  workloadSection: element(by.css('div.co-m-pane')),
+  firstAppName: element.all(by.css('div.list-group-item')).get(0),
+  appNames: element.all(by.css('span.co-m-resource-icon.co-m-resource-deployment')),
+  switchToToplogyView: element(by.css('a.pf-c-button.pf-m-plain')),
+  deleteText: element(by.css('h3.project-overview__item-heading span.co-resource-item__deleting'))
+}
+
+export const topologyViewObj = {
+  appCount: element.all(by.css('g.odc-base-node')),
+  switchToListView: element(by.css('a.pf-c-button.pf-m-plain'))
+}
+
+export const deleteAppName = async function(nodeName:string) {
+  await click(findNode(nodeName));
+  await selectActionInSideBar(Actions.DeleteDeployment);
+  await browser.wait(until.alertIsPresent(), waitForElement);
+}
+
+export const verifyCreatedAppsInTopology = async function() {
+  await browser.wait(until.visibilityOf(listViewObj.workloadSection), waitForElement, `List view is not displayed even after ${waitForElement} milliseconds`);
+  await browser.wait(until.visibilityOf(listViewObj.firstAppName),waitForElement, `App names are not displayed even after ${waitForElement} milliseconds`);
+  const count = await listViewObj.appNames.count();
+  return count;
+}

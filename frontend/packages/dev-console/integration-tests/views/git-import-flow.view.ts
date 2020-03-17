@@ -2,8 +2,7 @@
 import { browser, $, ExpectedConditions as until, by, element, Key } from 'protractor';
 import { config } from '@console/internal-integration-tests/protractor.conf';
 const waitForElement = config.jasmineNodeOpts.defaultTimeoutInterval;
-import { enterText, selectByIndex, verifyCheckBox, selectByVisibleText,
-  //  selectCheckBox 
+import { enterText, selectByIndex, selectByVisibleText,
   } from '../utilities/elementInteractions';
 import { click } from '@console/shared/src/test-utils/utils';
 
@@ -27,9 +26,10 @@ export const builderImage = element(
 export const buildImageVersion = element(by.id('form-dropdown-image-tag-field'));
 export const createButton = element(by.css('[data-test-id="import-git-create-button"]'));
 export const builderImageVersionName = element(by.id('8-link'));
+export const gitUrlHelper = element(by.css('div#form-input-git-url-field-helper'));
+export const builderImageSelected = element(by.css('div#builder-image-selector-field button.is-selected'));
 
-export function routingObj() {
-  return {
+export const routingObj = {
     hostname:  element(by.id('form-input-route-hostname-field')),
     path: element(by.id('form-input-route-path-field')),
     targetPort: element(by.css('button#form-dropdown-route-targetPort-field')),
@@ -39,33 +39,27 @@ export function routingObj() {
     certificate: element.all(by.css('textarea[data-test-id="file-input-textarea"]')).get(0),
     privateKey: element.all(by.css('textarea[data-test-id="file-input-textarea"]')).get(1),
     caCertificate: element.all(by.css('textarea[data-test-id="file-input-textarea"]')).get(2)
-  };
 }
 
-export function buildConfigObj() {
-  return {
-    webHookBuildTrigger: element(by.css('input#form-checkbox-build-triggers-webhook-field')),
-    buildTriggerImage: element(by.css('input#form-checkbox-build-triggers-image-field')),
-    buildTriggerConfigField: element(by.css('input#form-checkbox-build-triggers-config-field')),
+export const buildConfigObj = {
+  webHookBuildTrigger: element(by.css('input#form-checkbox-build-triggers-webhook-field')),
+  buildTriggerImage: element(by.css('input#form-checkbox-build-triggers-image-field')),
+  buildTriggerConfigField: element(by.css('input#form-checkbox-build-triggers-config-field')),
 
-    // Add Environment Value
-    addValue: element(by.buttonText('Add Value')), //[data-test-id="pairs-list__add-icon"]
-    envName: element(by.css('input[placeholder="name"]')),
-    envValue: element(by.css('input[placeholder="value"]')),
-    
-    // Count for Rows in Environment Variables section
-    envRows: element.all(by.css('div.row.pairs-list__row')),
-    deleteRowButton: element(by.css('button[data-test-id="pairs-list__delete-btn"]')),
+  // Add Environment Value
+  addValue: element(by.buttonText('Add Value')), //[data-test-id="pairs-list__add-icon"]
+  envName: element(by.css('input[placeholder="name"]')),
+  envValue: element(by.css('input[placeholder="value"]')),
+  
+  // Count for Rows in Environment Variables section
+  envRows: element.all(by.css('div.row.pairs-list__row')),
+  deleteRowButton: element(by.css('button[data-test-id="pairs-list__delete-btn"]')),
 
-    // Add from Config Map or Secret
-    addFromConfigMap: element(by.buttonText('Add from Config Map or Secret')),
-    // selectResource: element(by.css(''))
-
-  }
+  // Add from Config Map or Secret
+  addFromConfigMap: element(by.buttonText('Add from Config Map or Secret')),
 }
 
-export function deploymentObj() {
-  return {
+export const deploymentObj =  {
     deploymentTriggerImage: element(by.css('input#form-checkbox-deployment-triggers-image-field')),
     deploymentImageConfig: element(by.css('input#form-checkbox-deployment-triggers-config-field')),
     // Add Environment Value
@@ -79,25 +73,19 @@ export function deploymentObj() {
 
     // Add from Config Map or Secret
     addFromConfigMap: element(by.buttonText('Add from Config Map or Secret')),
-  }
 }
 
-export function scalingObj() {
-  return {
+export const scalingObj = {
     decrement: element(by.css('button[aria-label="Decrement"]')),
     increment: element(by.css('button[aria-label="Increment"]')),
     replicaCount: element(by.css('input#form-number-spinner-deployment-replicas-field')),
-  }
 }
 
-export function pipelineObj() {
-  return {
+export const pipelineObj = {
     addPipeline: element(by.css('input#form-checkbox-pipeline-enabled-field')),
-  }
 }
 
-export function resourceLimitsObj() {
-  return {
+export const resourceLimitsObj = {
     cpuRequest: element(by.css('input[name="limits.cpu.requestValue"]')),
     cpuLimit: element(by.css('input[name="limits.cpu.limitValue"]')),
     memoryRequest: element(by.css('input[name="limits.memory.requestValue"]')),
@@ -106,13 +94,10 @@ export function resourceLimitsObj() {
     cpuLimiHelperText: element(by.css('div#form-resource-limit-limits-cpu-limit-field-helper')),
     memoryRequestHelperText:element(by.css('div#form-resource-limit-limits-memory-request-field-helper')),
     memoryLimitHelperText: element(by.css('div#form-resource-limit-limits-memory-limit-field-helper'))
-  }
 }
 
-export function labelsObj() {
-  return {
+export const labelsObj = {
     labelName: element(by.css('input#tags-input'))
-  }
 }
 
 export enum AdvancedOptions {
@@ -130,7 +115,7 @@ export enum TLSTerminationValues {
   ReEncrypt = 'Re-encrypt'
 }
 export const setPipelineForGitFlow = async function() {
-  await pipelineObj().addPipeline.click();
+  await pipelineObj.addPipeline.click();
 }
 
 export const selectAdvancedOptions = async function(opt: AdvancedOptions) {
@@ -173,8 +158,10 @@ export const navigateImportFromGit = async function() {
 };
 
 export const enterGitRepoUrl = async function(gitUrl: string) {
-  await browser.wait(until.presenceOf(gitRepoUrl));
+  await browser.wait(until.presenceOf(gitRepoUrl),waitForElement);
   await gitRepoUrl.sendKeys(gitUrl);
+  await element(by.css('label[for="form-input-git-url-field"]')).click();
+  await browser.wait(until.visibilityOf(gitUrlHelper), waitForElement);
 };
 
 export const safeSendKeys = async function(
@@ -259,20 +246,20 @@ export const setBuilderImage = async function() {
 
 // Automating Advanced options present in git import flow
 export const setRouting = async function(hostname:string, path: string) {
-  await enterText(routingObj().hostname, hostname);
-  await enterText(routingObj().path, path);
-  await selectByIndex(routingObj().targetPort);
+  await enterText(routingObj.hostname, hostname);
+  await enterText(routingObj.path, path);
+  await selectByIndex(routingObj.targetPort);
 };
 
 export const setSecureRoute = async function(tlsTerminationValue: TLSTerminationValues, insecureTrafficValue: string = 'None') {
   // if(tlsTerminationValue ==TLSTerminationValues.Edge || tlsTerminationValue ==TLSTerminationValues.ReEncrypt) {
-    await click(routingObj().secureRoute).then(async() => {
-    await browser.wait(until.elementToBeClickable(routingObj().tlsTermination), waitForElement, `Unable to view the TLS termination dropdown field, even after ${waitForElement} ms `)
-    await selectByVisibleText(routingObj().tlsTermination, tlsTerminationValue);
+    await click(routingObj.secureRoute).then(async() => {
+    await browser.wait(until.elementToBeClickable(routingObj.tlsTermination), waitForElement, `Unable to view the TLS termination dropdown field, even after ${waitForElement} ms `)
+    await selectByVisibleText(routingObj.tlsTermination, tlsTerminationValue);
     // await routingObj().certificate.sendKeys('a');
     // await routingObj().privateKey.sendKeys();
     // await routingObj().caCertificate.sendKeys();
-    await selectByVisibleText(routingObj().insecureTraffic, insecureTrafficValue);
+    await selectByVisibleText(routingObj.insecureTraffic, insecureTrafficValue);
     });
   // } else if(tlsTerminationValue ==TLSTerminationValues.Passthrough) {
   //   await click(routingObj().secureRoute).then(async() => {
@@ -286,41 +273,37 @@ export const setSecureRoute = async function(tlsTerminationValue: TLSTermination
 }
 
 export const setEnvVariables = async function(envName: string, envValue: string) {
-  await buildConfigObj().envRows.count().then(async(count: number) => {
+  await buildConfigObj.envRows.count().then(async(count: number) => {
     if(count === 1) {
-      await enterText(buildConfigObj().envName, envName);
-      await enterText(buildConfigObj().envValue, envValue);
+      await enterText(buildConfigObj.envName, envName);
+      await enterText(buildConfigObj.envValue, envValue);
     }
   })
 }
 export const setBuildConfig = async function(envName: string, envValue: string) {
-  const webHookTriggered =  await verifyCheckBox(buildConfigObj().webHookBuildTrigger);
-  const buildTriggeredImage = await verifyCheckBox(buildConfigObj().buildTriggerImage);
-  const buildTriggeredConfigField = await verifyCheckBox(buildConfigObj().buildTriggerConfigField);
-  if(webHookTriggered == true && buildTriggeredImage == true && buildTriggeredConfigField == true) {
     await setEnvVariables(envName, envValue);
-  }
 }
 
 export const setDeployment = async function(envName: string, envValue: string) {
-  const deploymentTriggeredImage = await verifyCheckBox(deploymentObj().deploymentTriggerImage);
-  const deploymentConfigured = await verifyCheckBox(deploymentObj().deploymentImageConfig);
-  if(deploymentTriggeredImage=== true && deploymentConfigured === true) {
     await setEnvVariables(envName, envValue);
-  }
 }
 
 export const setScaling = async function(replicaCount) {
-  await enterText(scalingObj().replicaCount, replicaCount);
+  await enterText(scalingObj.replicaCount, replicaCount);
 }
 
 export const setResources = async function(cpuRequest, cpuLimit, memoryRequest, memoryLimit) {
-  await enterText(resourceLimitsObj().cpuRequest, cpuRequest);
-  await enterText(resourceLimitsObj().cpuLimit, cpuLimit);
-  await enterText(resourceLimitsObj().memoryRequest, memoryRequest);
-  await enterText(resourceLimitsObj().memoryLimit, memoryLimit);
+  await enterText(resourceLimitsObj.cpuRequest, cpuRequest);
+  await enterText(resourceLimitsObj.cpuLimit, cpuLimit);
+  await enterText(resourceLimitsObj.memoryRequest, memoryRequest);
+  await enterText(resourceLimitsObj.memoryLimit, memoryLimit);
 }
 
 export const setLabel = async function(labelName) {
-  await enterText(labelsObj().labelName, labelName);
+  await enterText(labelsObj.labelName, labelName);
+}
+
+export const clicKOnCreateButton = async function() {
+  await browser.wait(until.elementToBeClickable(createButton), waitForElement);
+  await createButton.click();
 }
