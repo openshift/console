@@ -59,7 +59,7 @@ const CreateVMTemplateYAMLConnected = connectToPlural(
         .catch(() => {
           setDefaultTemplate(
             new VMTemplateWrapper(safeLoad(VMTemplateYAMLTemplates.getIn(['vm-template'])))
-              .setModel(TemplateModel)
+              .init()
               .setNamespace(match.params.ns || 'default')
               .asResource(),
           );

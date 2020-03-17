@@ -635,6 +635,7 @@ export const transformTopologyData = (
       _.get(resources, 'eventSourceApiserver.data', []),
       _.get(resources, 'eventSourceCamel.data', []),
       _.get(resources, 'eventSourceKafka.data', []),
+      _.get(resources, 'eventSourceSinkbinding.data', []),
     );
     return allEventSourcesResources;
   };

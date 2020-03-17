@@ -15,6 +15,9 @@ export class PersistentVolumeClaimWrapper extends Wrapper<
   V1PersistentVolumeClaim,
   PersistentVolumeClaimWrapper
 > {
+  /**
+   * @deprecated FIXME deprecate initializeFromSimpleData in favor of init
+   */
   static initializeFromSimpleData = (params?: {
     name?: string;
     accessModes?: object[] | string[];
@@ -72,7 +75,7 @@ export class PersistentVolumeClaimWrapper extends Wrapper<
 
   getVolumeMode = () => getPvcVolumeMode(this.data);
 
-  public mergeWith(...pvcWrappers: PersistentVolumeClaimWrapper[]) {
+  mergeWith(...pvcWrappers: PersistentVolumeClaimWrapper[]) {
     super.mergeWith(...pvcWrappers);
 
     if (!this.data?.spec?.storageClassName && this.data?.spec) {

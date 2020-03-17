@@ -27,9 +27,10 @@ export interface TopologyDataResources {
   pipelineRuns?: FirehoseResult;
   eventSourceCronjob?: FirehoseResult;
   eventSourceContainers?: FirehoseResult;
-  eventSourceApiServer?: FirehoseResult;
+  eventSourceApiserver?: FirehoseResult;
   eventSourceCamel?: FirehoseResult;
   eventSourceKafka?: FirehoseResult;
+  eventSourceSinkbinding?: FirehoseResult;
   clusterServiceVersions?: FirehoseResult;
   serviceBindingRequests?: FirehoseResult;
   events?: FirehoseResult<EventKind[]>;

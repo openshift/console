@@ -35,7 +35,7 @@ const OperatorBackedServiceNode: React.FC<OperatorBackedServiceNodeProps> = ({
   contextMenuOpen,
   dndDropRef,
 }) => {
-  useAnchor((e: Node) => new RectAnchor(e, 4));
+  useAnchor((e: Node) => new RectAnchor(e, 1.5));
   const [hover, hoverRef] = useHover();
   const [{ dragging }, dragNodeRef] = useDragNode(
     nodeDragSourceSpec(TYPE_OPERATOR_BACKED_SERVICE, true, editAccess),

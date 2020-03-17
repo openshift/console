@@ -390,7 +390,7 @@ Object {
           ],
           "revision": undefined,
         },
-        "events": Array [],
+        "isMonitorable": true,
         "isOperatorBackedService": false,
         "isRollingOut": undefined,
         "obj": Object {
@@ -1252,26 +1252,7 @@ Object {
           ],
           "revision": 1,
         },
-        "events": Array [
-          Object {
-            "apiVersion": "v1",
-            "firstTimestamp": "2020-01-23T08:21:06Z",
-            "involvedObject": Object {
-              "kind": "Pod",
-              "name": "analytics-deployment-59dd7c47d4-2jp7t",
-              "namespace": "testproject3",
-              "uid": "f5ee90e4-959f-47df-b305-56a78cb047ea",
-            },
-            "kind": "Event",
-            "lastTimestamp": "2020-01-23T10:00:47Z",
-            "reason": "Started",
-            "source": Object {
-              "component": "kubelet",
-              "host": "ip-10-0-130-190.us-east-2.compute.internal",
-            },
-            "type": "Normal",
-          },
-        ],
+        "isMonitorable": true,
         "isOperatorBackedService": false,
         "isRollingOut": false,
         "obj": Object {
@@ -2244,7 +2225,7 @@ Object {
           ],
           "revision": 1,
         },
-        "events": Array [],
+        "isMonitorable": true,
         "isOperatorBackedService": false,
         "isRollingOut": false,
         "obj": Object {
@@ -2674,7 +2655,7 @@ Object {
         "alerts": Object {},
         "buildConfigs": Array [],
         "current": undefined,
-        "events": Array [],
+        "isMonitorable": true,
         "isOperatorBackedService": true,
         "isRollingOut": false,
         "obj": Object {

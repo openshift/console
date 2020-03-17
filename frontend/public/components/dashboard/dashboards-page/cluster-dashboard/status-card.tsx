@@ -19,11 +19,9 @@ import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboa
 import AlertsBody from '@console/shared/src/components/dashboard/status-card/AlertsBody';
 import HealthBody from '@console/shared/src/components/dashboard/status-card/HealthBody';
 import { withDashboardResources, DashboardItemProps } from '../../with-dashboard-resources';
-import { getAlerts } from '@console/shared/src/components/dashboard/status-card/alert-utils';
 import AlertItem, {
   StatusItem,
 } from '@console/shared/src/components/dashboard/status-card/AlertItem';
-import { ALERTS_KEY } from '../../../../actions/dashboards';
 import {
   connectToFlags,
   FlagsObject,
@@ -32,7 +30,7 @@ import {
 } from '../../../../reducers/features';
 import * as plugins from '../../../../plugins';
 import { FirehoseResource } from '../../../utils';
-import { PrometheusRulesResponse, alertURL } from '../../../monitoring';
+import { alertURL } from '../../../monitoring';
 import {
   ClusterVersionKind,
   referenceForModel,
@@ -73,7 +71,7 @@ const ClusterAlerts = connectToFlags(FLAGS.CLUSTER_VERSION)(
     ({
       watchAlerts,
       stopWatchAlerts,
-      alertsResults,
+      notificationAlerts,
       watchK8sResource,
       stopWatchK8sResource,
       resources,
@@ -93,9 +91,8 @@ const ClusterAlerts = connectToFlags(FLAGS.CLUSTER_VERSION)(
         };
       }, [watchAlerts, stopWatchAlerts, watchK8sResource, stopWatchK8sResource, hasCVResource]);
 
-      const alertsResponse = alertsResults.getIn([ALERTS_KEY, 'data']) as PrometheusRulesResponse;
-      const alertsResponseError = alertsResults.getIn([ALERTS_KEY, 'loadError']);
-      const alerts = getAlerts(alertsResponse);
+      const { data: alerts, loaded: alertsLoaded, loadError: alertsResponseError } =
+        notificationAlerts || {};
 
       const cv = _.get(resources.cv, 'data') as ClusterVersionKind;
       const cvLoaded = _.get(resources.cv, 'loaded');
@@ -115,7 +112,7 @@ const ClusterAlerts = connectToFlags(FLAGS.CLUSTER_VERSION)(
 
       let items: React.ReactNode;
       if (!flagPending(hasCVResource)) {
-        if (hasCVResource && (hasAvailableUpdates(cv) || alerts.length)) {
+        if (hasCVResource && (hasAvailableUpdates(cv) || !_.isEmpty(alerts))) {
           items = (
             <>
               {hasAvailableUpdates(cv) && (
@@ -130,7 +127,7 @@ const ClusterAlerts = connectToFlags(FLAGS.CLUSTER_VERSION)(
               ))}
             </>
           );
-        } else if (alerts.length) {
+        } else if (!_.isEmpty(alerts)) {
           items = alerts.map((alert) => (
             <AlertItem key={alertURL(alert, alert.rule.id)} alert={alert} />
           ));
@@ -140,11 +137,9 @@ const ClusterAlerts = connectToFlags(FLAGS.CLUSTER_VERSION)(
       return (
         <AlertsBody
           isLoading={
-            flagPending(hasCVResource) ||
-            !alertsResponse ||
-            (hasCVResource && !cvLoaded && !cvError)
+            flagPending(hasCVResource) || !alertsLoaded || (hasCVResource && !cvLoaded && !cvError)
           }
-          error={alertsResponseError}
+          error={!_.isEmpty(alertsResponseError)}
           emptyMessage="No cluster alerts or messages"
         >
           {items}

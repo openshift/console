@@ -48,6 +48,15 @@ describe('OverviewDetailsKnativeResourcesTab', () => {
     expect(wrapper.find(EventSinkServicesOverviewList)).toHaveLength(1);
   });
 
+  it('should render EventSinkServicesOverviewList on sidebar for sinkBinding', () => {
+    knItem.item = {
+      ...knItem.item,
+      ...{ obj: MockKnativeResources.eventSourceSinkbinding.data[0] },
+    };
+    const wrapper = shallow(<OverviewDetailsKnativeResourcesTab {...knItem} />);
+    expect(wrapper.find(EventSinkServicesOverviewList)).toHaveLength(1);
+  });
+
   it('should render OperatorBackedOwnerReferences with proper props', () => {
     const wrapper = shallow(<OverviewDetailsKnativeResourcesTab item={knItem.item} />);
     expect(wrapper.find(OperatorBackedOwnerReferences)).toHaveLength(1);

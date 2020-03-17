@@ -11,6 +11,7 @@ import {
 import * as UIActions from '@console/internal/actions/ui';
 import store, { RootState } from '@console/internal/redux';
 import { Alert, alertURL } from '@console/internal/components/monitoring';
+import { NotificationAlerts } from '@console/internal/reducers/ui';
 import { RedExclamationCircleIcon } from '@console/shared';
 import {
   getAlertDescription,
@@ -322,13 +323,7 @@ export type ConnectedNotificationDrawerProps = {
   isDrawerExpanded: boolean;
   notificationsRead: boolean;
   onDrawerChange: () => void;
-  alerts: {
-    data: Alert[];
-    loaded: boolean;
-    loadError?: {
-      message?: string;
-    };
-  };
+  alerts: NotificationAlerts;
   resources?: {
     cv: FirehoseResult<ClusterVersionKind>;
   };

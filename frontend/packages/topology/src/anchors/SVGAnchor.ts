@@ -18,17 +18,18 @@ export default class SVGAnchor extends AbstractAnchor {
 
   getCircleLocation(circle: SVGCircleElement, reference: Point): Point {
     const center: Point = new Point(circle.cx.baseVal.value, circle.cy.baseVal.value);
-    this.getOwner().translateToParent(center);
-    const diameter = circle.r.baseVal.value * 2 + this.offset;
+    this.owner.translateToParent(center);
+    const diameter = circle.r.baseVal.value * 2 + this.offset * 2;
 
     return getEllipseAnchorPoint(center, diameter, diameter, reference);
   }
 
   getEllipseLocation(ellipse: SVGEllipseElement, reference: Point): Point {
     const center: Point = new Point(ellipse.cx.baseVal.value, ellipse.cy.baseVal.value);
-    this.getOwner().translateToParent(center);
-    const width = ellipse.rx.baseVal.value * 2 + this.offset;
-    const height = ellipse.ry.baseVal.value * 2 + this.offset;
+    this.owner.translateToParent(center);
+    const offset2x = this.offset * 2;
+    const width = ellipse.rx.baseVal.value * 2 + offset2x;
+    const height = ellipse.ry.baseVal.value * 2 + offset2x;
 
     return getEllipseAnchorPoint(center, width, height, reference);
   }
@@ -41,24 +42,25 @@ export default class SVGAnchor extends AbstractAnchor {
       rect.x.baseVal.value + width / 2,
       rect.y.baseVal.value + height / 2,
     );
-    this.getOwner().translateToParent(center);
+    this.owner.translateToParent(center);
 
-    return getRectAnchorPoint(center, width + this.offset, height + this.offset, reference);
+    const offset2x = this.offset * 2;
+    return getRectAnchorPoint(center, width + offset2x, height + offset2x, reference);
   }
 
   getPathLocation(path: SVGPathElement, reference: Point): Point {
     const translatedRef = reference.clone();
-    this.getOwner().translateFromParent(translatedRef);
+    this.owner.translateFromParent(translatedRef);
     const anchorPoint = getPathAnchorPoint(path, translatedRef);
-    this.getOwner().translateToParent(anchorPoint);
+    this.owner.translateToParent(anchorPoint);
     return anchorPoint;
   }
 
   getPolygonLocation(polygon: SVGPolygonElement, reference: Point): Point {
     const translatedRef = reference.clone();
-    this.getOwner().translateFromParent(translatedRef);
+    this.owner.translateFromParent(translatedRef);
     const anchorPoint = getPolygonAnchorPoint(polygon, translatedRef);
-    this.getOwner().translateToParent(anchorPoint);
+    this.owner.translateToParent(anchorPoint);
     return anchorPoint;
   }
 
@@ -83,9 +85,7 @@ export default class SVGAnchor extends AbstractAnchor {
       return this.getPolygonLocation(this.svgElement, reference);
     }
 
-    return this.getOwner()
-      .getBounds()
-      .getCenter();
+    return this.owner.getBounds().getCenter();
   }
 
   getReferencePoint(): Point {
@@ -100,10 +100,10 @@ export default class SVGAnchor extends AbstractAnchor {
       const ref = new Point(bbox.x + bbox.width / 2, bbox.y + bbox.height / 2);
 
       // this touches the bounds for non-groups
-      this.getOwner().translateToParent(ref);
+      this.owner.translateToParent(ref);
 
       // touch the bounds to force a re-render in case this anchor is for a group
-      this.getOwner().getBounds();
+      this.owner.getBounds();
 
       return ref;
     }

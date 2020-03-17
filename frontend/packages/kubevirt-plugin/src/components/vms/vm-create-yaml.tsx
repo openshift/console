@@ -54,7 +54,7 @@ const VMCreateYAMLLConnected = connectToPlural(
         .catch(() => {
           setDefaultVM(
             new VMWrapper(safeLoad(VirtualMachineYAMLTemplates.getIn(['default'])))
-              .setModel(VirtualMachineModel)
+              .init()
               .setNamespace(match.params.ns || 'default')
               .asResource(),
           );

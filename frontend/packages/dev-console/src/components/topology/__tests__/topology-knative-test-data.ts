@@ -9,6 +9,7 @@ import {
   EventSourceContainerModel,
   EventSourceCamelModel,
   EventSourceKafkaModel,
+  EventSourceServiceBindingModel,
   ConditionTypes,
   RevisionKind,
   RouteKind,
@@ -485,6 +486,42 @@ export const sampleEventSourceKafka: FirehoseResult = {
   ],
 };
 
+export const sampleEventSourceSinkbinding: FirehoseResult = {
+  loaded: true,
+  loadError: '',
+  data: [
+    {
+      apiVersion: `${EventSourceServiceBindingModel.apiGroup}/${EventSourceServiceBindingModel.apiVersion}`,
+      kind: EventSourceServiceBindingModel.kind,
+      metadata: {
+        name: 'bind-wss',
+        namespace: 'testproject3',
+        uid: '1317f615-9636-11e9-b134-06a61d886b689',
+        creationTimestamp: '2019-06-12T07:07:57Z',
+      },
+      spec: {
+        sink: {
+          ref: {
+            apiVersion: `${ServiceModel.apiGroup}/${ServiceModel.apiVersion}`,
+            kind: ServiceModel.kind,
+            name: 'wss-event-display',
+          },
+        },
+        subject: {
+          apiVersion: 'apps/v1',
+          kind: 'Deployment',
+          namespace: 'testproject3',
+          selector: {
+            matchLabels: {
+              app: 'wss',
+            },
+          },
+        },
+      },
+    },
+  ],
+};
+
 export const sampleServices: FirehoseResult = {
   loaded: true,
   loadError: '',
@@ -604,5 +641,6 @@ export const MockKnativeResources: TopologyDataResources = {
   eventSourceContainers: sampleEventSourceContainers,
   eventSourceCamel: sampleEventSourceCamel,
   eventSourceKafka: sampleEventSourceKafka,
+  eventSourceSinkbinding: sampleEventSourceSinkbinding,
   clusterServiceVersions: sampleClusterServiceVersions,
 };

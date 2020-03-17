@@ -312,7 +312,7 @@ const plugin: Plugin<ConsumedExtensions> = [
     type: 'Overview/Resource',
     properties: {
       name: 'Monitoring',
-      key: 'events',
+      key: 'isMonitorable',
       loader: () =>
         import(
           './components/monitoring/overview/MonitoringTab' /* webpackChunkName: "monitoring-overview" */

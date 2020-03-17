@@ -4,12 +4,13 @@ import AbstractAnchor from './AbstractAnchor';
 
 export default class RectAnchor extends AbstractAnchor {
   getLocation(reference: Point): Point {
-    const r = this.getOwner().getBounds();
+    const r = this.owner.getBounds();
     const center = r.getCenter();
     if (r.isEmpty()) {
       return center;
     }
 
-    return getRectAnchorPoint(center, r.width + this.offset, r.height + this.offset, reference);
+    const offset2x = this.offset * 2;
+    return getRectAnchorPoint(center, r.width + offset2x, r.height + offset2x, reference);
   }
 }

@@ -19,6 +19,8 @@ import {
   K8sPatchError,
 } from './errors';
 import { HistoryItem, HistoryType } from './types';
+import { Wrapper } from '../wrapper/common/wrapper';
+import { K8sResourceKindMethods } from '../wrapper/types/types';
 
 export type EnhancedOpts = {
   disableHistory: boolean;
@@ -55,6 +57,15 @@ export class EnhancedK8sMethods {
       throw new K8sGetError(error.message, { name, namespace });
     }
   };
+
+  k8sWrapperCreate = async <
+    U extends K8sResourceKind,
+    T extends Wrapper<U, T> & K8sResourceKindMethods
+  >(
+    wrapper: T,
+    opts?,
+    enhancedOpts?: EnhancedOpts,
+  ) => this.k8sCreate(wrapper.getModel(), wrapper.asResource(), opts, enhancedOpts);
 
   k8sCreate = async (kind: K8sKind, data: K8sResourceKind, opts?, enhancedOpts?: EnhancedOpts) => {
     try {
@@ -102,7 +113,9 @@ export class EnhancedK8sMethods {
 
   getHistory = () => [...this.history];
 
-  // replay history and resolve actual state
+  /**
+   * replay history and resolve actual state (living objects on the cluster)
+   */
   getActualState = () => {
     const currentIndexes = {};
     const currentUnfilteredState: K8sResourceKind[] = [];

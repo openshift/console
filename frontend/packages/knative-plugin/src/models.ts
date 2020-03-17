@@ -4,11 +4,16 @@ import {
 } from '@patternfly/react-tokens';
 import { K8sKind } from '@console/internal/module/k8s';
 import { BadgeType } from '@console/shared/src/components/badges/badge-factory';
+import {
+  KNATIVE_EVENT_SOURCE_APIGROUP,
+  KNATIVE_EVENT_SOURCE_APIGROUP_DEP,
+  KNATIVE_SERVING_APIGROUP,
+} from './const';
 
 const apiVersion = 'v1';
 
 export const ConfigurationModel: K8sKind = {
-  apiGroup: 'serving.knative.dev',
+  apiGroup: KNATIVE_SERVING_APIGROUP,
   apiVersion,
   kind: 'Configuration',
   plural: 'configurations',
@@ -38,7 +43,7 @@ export const KnativeServingModel: K8sKind = {
 };
 
 export const RevisionModel: K8sKind = {
-  apiGroup: 'serving.knative.dev',
+  apiGroup: KNATIVE_SERVING_APIGROUP,
   apiVersion,
   kind: 'Revision',
   label: 'Revision',
@@ -53,7 +58,7 @@ export const RevisionModel: K8sKind = {
 };
 
 export const RouteModel: K8sKind = {
-  apiGroup: 'serving.knative.dev',
+  apiGroup: KNATIVE_SERVING_APIGROUP,
   apiVersion,
   kind: 'Route',
   label: 'Route',
@@ -68,7 +73,7 @@ export const RouteModel: K8sKind = {
 };
 
 export const ServiceModel: K8sKind = {
-  apiGroup: 'serving.knative.dev',
+  apiGroup: KNATIVE_SERVING_APIGROUP,
   apiVersion,
   kind: 'Service',
   label: 'Service',
@@ -83,7 +88,7 @@ export const ServiceModel: K8sKind = {
 };
 
 export const EventSourceCronJobModel: K8sKind = {
-  apiGroup: 'sources.eventing.knative.dev',
+  apiGroup: KNATIVE_EVENT_SOURCE_APIGROUP_DEP,
   apiVersion: 'v1alpha1',
   kind: 'CronJobSource',
   label: 'CronJob Source',
@@ -97,7 +102,7 @@ export const EventSourceCronJobModel: K8sKind = {
 };
 
 export const EventSourceContainerModel: K8sKind = {
-  apiGroup: 'sources.eventing.knative.dev',
+  apiGroup: KNATIVE_EVENT_SOURCE_APIGROUP_DEP,
   apiVersion: 'v1alpha1',
   kind: 'ContainerSource',
   label: 'Container Source',
@@ -111,7 +116,7 @@ export const EventSourceContainerModel: K8sKind = {
 };
 
 export const EventSourceApiServerModel: K8sKind = {
-  apiGroup: 'sources.eventing.knative.dev',
+  apiGroup: KNATIVE_EVENT_SOURCE_APIGROUP,
   apiVersion: 'v1alpha1',
   kind: 'ApiServerSource',
   label: 'ApiServerSource',
@@ -125,7 +130,7 @@ export const EventSourceApiServerModel: K8sKind = {
 };
 
 export const EventSourceCamelModel: K8sKind = {
-  apiGroup: 'sources.eventing.knative.dev',
+  apiGroup: KNATIVE_EVENT_SOURCE_APIGROUP_DEP,
   apiVersion: 'v1alpha1',
   kind: 'CamelSource',
   label: 'CamelSource',
@@ -139,7 +144,7 @@ export const EventSourceCamelModel: K8sKind = {
 };
 
 export const EventSourceKafkaModel: K8sKind = {
-  apiGroup: 'sources.eventing.knative.dev',
+  apiGroup: KNATIVE_EVENT_SOURCE_APIGROUP_DEP,
   apiVersion: 'v1alpha1',
   kind: 'KafkaSource',
   label: 'KafkaSource',
@@ -147,6 +152,20 @@ export const EventSourceKafkaModel: K8sKind = {
   plural: 'kafkasources',
   id: 'kafkasource',
   abbr: 'KS',
+  namespaced: true,
+  crd: true,
+  color: knativeEventingColor.value,
+};
+
+export const EventSourceServiceBindingModel: K8sKind = {
+  apiGroup: KNATIVE_EVENT_SOURCE_APIGROUP,
+  apiVersion: 'v1alpha1',
+  kind: 'SinkBinding',
+  label: 'SinkBinding',
+  labelPlural: 'SinkBindings',
+  plural: 'sinkbindings',
+  id: 'sinkbindingsource',
+  abbr: 'SBS',
   namespaced: true,
   crd: true,
   color: knativeEventingColor.value,

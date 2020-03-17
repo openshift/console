@@ -156,7 +156,8 @@ const tooltipStateToProps = ({ UI }: RootState, { seriesIndex }) => {
 };
 
 const TooltipInner_: React.FC<TooltipInnerProps> = ({
-  datum,
+  datumX,
+  datumY,
   labels,
   query,
   seriesIndex,
@@ -173,7 +174,13 @@ const TooltipInner_: React.FC<TooltipInnerProps> = ({
   const height = 500;
 
   return (
-    <foreignObject height={height} width={width} x={x - width / 2} y={y}>
+    <foreignObject
+      className="query-browser__tooltip-svg-wrap"
+      height={height}
+      width={width}
+      x={x - width / 2}
+      y={y}
+    >
       <div className="query-browser__tooltip-wrap">
         <div className="query-browser__tooltip-arrow" />
         <div className="query-browser__tooltip">
@@ -182,15 +189,15 @@ const TooltipInner_: React.FC<TooltipInnerProps> = ({
               className="query-browser__series-btn"
               style={{ backgroundColor: colors[seriesIndex % colors.length] }}
             />
-            {datum.x && (
+            {datumX && (
               <div className="query-browser__tooltip-time">
-                {twentyFourHourTimeWithSeconds(datum.x)}
+                {twentyFourHourTimeWithSeconds(datumX)}
               </div>
             )}
           </div>
           <div className="query-browser__tooltip-group">
             <div className="co-nowrap co-truncate">{query}</div>
-            <div className="query-browser__tooltip-value">{formatValue(datum.y)}</div>
+            <div className="query-browser__tooltip-value">{formatValue(datumY)}</div>
           </div>
           {_.map(labels, (v, k) => (
             <div className="co-nowrap co-truncate" key={k}>
@@ -209,7 +216,7 @@ const TooltipInner = connect(tooltipStateToProps)(TooltipInner_);
 
 const Tooltip_: React.FC<TooltipProps> = ({ datum, x, y }) =>
   datum && _.isFinite(datum.y) && _.isFinite(x) && _.isFinite(y) ? (
-    <TooltipInner datum={datum} seriesIndex={datum._stack - 1} x={x} y={y} />
+    <TooltipInner datumX={datum.x} datumY={datum.y} seriesIndex={datum._stack - 1} x={x} y={y} />
   ) : null;
 const Tooltip = withFallback(Tooltip_);
 
@@ -226,6 +233,18 @@ const graphContainer = (
     labels={() => ''}
   />
 );
+
+const LegendContainer = ({ children }: { children?: React.ReactNode }) => {
+  // The first child should be a <rect> with a `width` prop giving the legend's content width
+  const width = children?.[0]?.[0]?.props?.width ?? '100%';
+  return (
+    <foreignObject height={75} width="100%" y={230}>
+      <div className="monitoring-dashboards__legend-wrap">
+        <svg width={width}>{children}</svg>
+      </div>
+    </foreignObject>
+  );
+};
 
 const Graph: React.FC<GraphProps> = React.memo(
   ({ allSeries, disabledSeries, formatLegendLabel, isStack, span, xDomain }) => {
@@ -322,14 +341,13 @@ const Graph: React.FC<GraphProps> = React.memo(
             {legendData && (
               <ChartLegend
                 data={legendData}
+                groupComponent={<LegendContainer />}
                 itemsPerRow={4}
                 orientation="vertical"
                 style={{
                   labels: { fontSize: 11 },
                 }}
                 symbolSpacer={4}
-                x={0}
-                y={230}
               />
             )}
           </Chart>
@@ -792,7 +810,8 @@ type SpanControlsProps = {
 type TooltipDatum = { _stack: number; x: Date; y: number };
 
 type TooltipInnerProps = {
-  datum: TooltipDatum;
+  datumX: Date;
+  datumY: number;
   labels?: PrometheusLabels;
   query?: string;
   seriesIndex: number;

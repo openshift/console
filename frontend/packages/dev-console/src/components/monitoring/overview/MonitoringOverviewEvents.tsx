@@ -5,6 +5,7 @@ import { twentyFourHourTime } from '@console/internal/components/utils/datetime'
 import { YellowExclamationTriangleIcon } from '@console/shared';
 import { referenceFor, EventKind } from '@console/internal/module/k8s';
 import { ResourceLink } from '@console/internal/components/utils';
+import { getLastTime } from '@console/internal/components/events';
 import MonitoringOverviewEventsWarning from './MonitoringOverviewEventsWarning';
 import './MonitoringOverviewEvents.scss';
 
@@ -18,7 +19,7 @@ const MonitoringOverviewEvents: React.FC<MonitoringOverviewEventsProps> = ({ eve
           <div className="odc-monitoring-events__event-item" key={e.metadata.uid}>
             <Flex breakpointMods={[{ modifier: FlexModifiers['align-self-baseline'] }]}>
               <FlexItem title={e.lastTimestamp} className="text-secondary">
-                {twentyFourHourTime(new Date(e.lastTimestamp))}
+                {twentyFourHourTime(new Date(getLastTime(e)))}
               </FlexItem>
               {e.type === 'Warning' && (
                 <FlexItem>

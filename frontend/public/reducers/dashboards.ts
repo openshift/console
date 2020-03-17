@@ -10,7 +10,6 @@ export enum RESULTS_TYPE {
 export const defaults = {
   [RESULTS_TYPE.PROMETHEUS]: fromJS({}),
   [RESULTS_TYPE.URL]: fromJS({}),
-  [RESULTS_TYPE.ALERTS]: fromJS({}),
 };
 
 type Request<R> = {

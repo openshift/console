@@ -9,7 +9,7 @@ export default class RevisionTrafficSourceAnchor extends AbstractAnchor {
   }
 
   getLocation(reference: Point): Point {
-    const bounds = this.getOwner().getBounds();
+    const bounds = this.owner.getBounds();
     // center point is top right corner
     const center = new Point(bounds.right(), bounds.y);
     if (this.radius) {
@@ -23,7 +23,7 @@ export default class RevisionTrafficSourceAnchor extends AbstractAnchor {
   }
 
   getReferencePoint(): Point {
-    const bounds = this.getOwner().getBounds();
+    const bounds = this.owner.getBounds();
     // reference point is top right corner of node
     return new Point(bounds.right(), bounds.y);
   }

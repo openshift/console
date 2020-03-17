@@ -14,6 +14,7 @@ import { legalNamePattern, getNamespace } from '../components/utils/link';
 import { OverviewSpecialGroup } from '../components/overview/constants';
 import { RootState } from '../redux';
 import * as plugins from '../plugins';
+import { Alert } from '../components/monitoring';
 
 export type UIState = ImmutableMap<string, any>;
 
@@ -200,7 +201,7 @@ export default (state: UIState, action: UIAction): UIState => {
           ? action.payload.data
           : state.getIn(['monitoring', 'alerts']);
       // notificationAlerts used by notification drawer and certain dashboards
-      const notificationAlerts =
+      const notificationAlerts: NotificationAlerts =
         action.payload.key === 'notificationAlerts'
           ? action.payload.data
           : state.getIn(['monitoring', 'notificationAlerts']);
@@ -371,3 +372,11 @@ export const getActiveNamespace = ({ UI }: RootState): string => UI.get('activeN
 export const getActivePerspective = ({ UI }: RootState): string => UI.get('activePerspective');
 
 export const getActiveApplication = ({ UI }: RootState): string => UI.get('activeApplication');
+
+export type NotificationAlerts = {
+  data: Alert[];
+  loaded: boolean;
+  loadError?: {
+    message?: string;
+  };
+};

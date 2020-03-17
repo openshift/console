@@ -4,16 +4,12 @@ import AbstractAnchor from './AbstractAnchor';
 
 export default class EllipseAnchor extends AbstractAnchor {
   getLocation(reference: Point): Point {
-    const r = this.getOwner().getBounds();
+    const r = this.owner.getBounds();
     if (r.isEmpty()) {
       return r.getCenter();
     }
 
-    return getEllipseAnchorPoint(
-      r.getCenter(),
-      r.width + this.offset,
-      r.height + this.offset,
-      reference,
-    );
+    const offset2x = this.offset * 2;
+    return getEllipseAnchorPoint(r.getCenter(), r.width + offset2x, r.height + offset2x, reference);
   }
 }

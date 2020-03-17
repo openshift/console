@@ -5,7 +5,11 @@ import { ResourceOverviewDetails } from '@console/internal/components/overview/r
 import { groupVersionFor, K8sKind } from '@console/internal/module/k8s';
 import { RootState } from '@console/internal/redux';
 import { OverviewItem } from '@console/shared';
-import { KNATIVE_SERVING_APIGROUP, KNATIVE_EVENT_SOURCE_APIGROUP } from '../../const';
+import {
+  KNATIVE_SERVING_APIGROUP,
+  KNATIVE_EVENT_SOURCE_APIGROUP,
+  KNATIVE_EVENT_SOURCE_APIGROUP_DEP,
+} from '../../const';
 import OverviewDetailsKnativeResourcesTab from './OverviewDetailsKnativeResourcesTab';
 import KnativeOverview from './KnativeOverview';
 
@@ -62,7 +66,8 @@ const mapStateToProps = (state: RootState): StateProps => {
       .filter(
         (model: K8sKind) =>
           model.apiGroup === KNATIVE_SERVING_APIGROUP ||
-          model.apiGroup === KNATIVE_EVENT_SOURCE_APIGROUP,
+          model.apiGroup === KNATIVE_EVENT_SOURCE_APIGROUP ||
+          model.apiGroup === KNATIVE_EVENT_SOURCE_APIGROUP_DEP,
       ),
   };
 };

@@ -26,7 +26,7 @@ const MonitoringOverviewEventsWarning: React.FC<MonitoringOverviewEventsWarningP
       })
     ) : (
       <div className="text-secondary odc-monitoring-events-warning__no-alerts">
-        There are no events warning.
+        There are no warning events.
       </div>
     )}
   </div>

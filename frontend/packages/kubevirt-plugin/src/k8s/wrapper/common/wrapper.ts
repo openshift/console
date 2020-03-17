@@ -2,7 +2,7 @@ import * as _ from 'lodash';
 import { ensurePath } from '../utils/utils';
 import { omitEmpty } from '../../../utils/common';
 
-export class Wrapper<RESOURCE extends {}, SELF extends Wrapper<RESOURCE, SELF>> {
+export abstract class Wrapper<RESOURCE extends {}, SELF extends Wrapper<RESOURCE, SELF>> {
   protected data: RESOURCE;
 
   constructor(data?: RESOURCE | SELF, copy = false) {
@@ -23,14 +23,28 @@ export class Wrapper<RESOURCE extends {}, SELF extends Wrapper<RESOURCE, SELF>> 
     return (this as any) as SELF;
   }
 
-  clearEmptyValues = () => {
-    omitEmpty(this.data, true);
+  omitEmpty = (path?: string[] | string, justUndefined = true) => {
+    omitEmpty(path ? this.getIn(path) : this.data, justUndefined);
+    return (this as any) as SELF;
   };
 
   protected get = (key: string) => (this.data && key ? this.data[key] : null);
 
-  protected getIn = (path: string[]) => (this.data && path ? _.get(this.data, path) : null);
+  protected getIn = (path: string[] | string) =>
+    this.data && path ? _.get(this.data, path) : null;
 
   protected ensurePath = (path: string[] | string, value: any[] | {} = {}) =>
     ensurePath(this.data, path, value);
+
+  protected clearIfEmpty = (path: string[] | string) => {
+    if (path && path.length > 0) {
+      const arrPath = _.isString(path) ? path.split('.') : [...path];
+      const childKey = arrPath.pop();
+      const parent = arrPath.length > 0 ? this.getIn(arrPath) : this.data;
+      if (parent && parent.hasOwnProperty(childKey) && _.isEmpty(parent[childKey])) {
+        delete parent[childKey];
+      }
+    }
+    return (this as any) as SELF;
+  };
 }
