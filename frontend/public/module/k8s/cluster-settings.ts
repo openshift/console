@@ -162,11 +162,11 @@ Browser: ${window.navigator.userAgent}
 `);
   return _.isEmpty(prerelease)
     ? {
-        label: 'Open Support Case',
+        label: 'Open Support Case with Red Hat',
         href: `https://access.redhat.com/support/cases/#/case/new?product=OpenShift%20Container%20Platform&version=${major}.${minor}&clusterId=${cv.spec.clusterID}`,
       }
     : {
-        label: 'Report Bug',
+        label: 'Report Bug to Red Hat',
         href: `https://bugzilla.redhat.com/enter_bug.cgi?product=OpenShift%20Container%20Platform&version=${bugzillaVersion}&cf_environment=${environment}`,
       };
 };
