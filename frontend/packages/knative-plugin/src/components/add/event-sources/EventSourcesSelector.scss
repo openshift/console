@@ -1,0 +1,14 @@
+.odc-event-source-selector {
+    display: flex;
+    flex-direction: column;
+    flex-flow: wrap;
+    background: var(--pf-global--Color--light-200);
+    padding: 4px;
+    width: fit-content;
+  
+    &__success-icon {
+      color: var(--pf-global--success-color--200);
+      font-size: var(--pf-global--FontSize--md);
+      margin-left: var(--pf-global--spacer--lg);
+    }
+  }

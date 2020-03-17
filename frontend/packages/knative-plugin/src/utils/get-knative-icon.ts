@@ -11,7 +11,7 @@ import {
   EventSourceApiServerModel,
   EventSourceCamelModel,
   EventSourceKafkaModel,
-  EventSourceServiceBindingModel,
+  EventSourceSinkBindingModel,
 } from '../models';
 
 export const getKnativeEventSourceIcon = (kind: string): string => {
@@ -26,7 +26,7 @@ export const getKnativeEventSourceIcon = (kind: string): string => {
       return cronJobSourceImg;
     case referenceForModel(EventSourceKafkaModel):
       return kafkaSourceImg;
-    case referenceForModel(EventSourceServiceBindingModel):
+    case referenceForModel(EventSourceSinkBindingModel):
       return containerSourceImg;
     default:
       return openshiftImg;

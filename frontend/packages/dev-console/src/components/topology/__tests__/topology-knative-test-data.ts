@@ -9,7 +9,7 @@ import {
   EventSourceContainerModel,
   EventSourceCamelModel,
   EventSourceKafkaModel,
-  EventSourceServiceBindingModel,
+  EventSourceSinkBindingModel,
   ConditionTypes,
   RevisionKind,
   RouteKind,
@@ -513,8 +513,8 @@ export const sampleEventSourceSinkbinding: FirehoseResult = {
   loadError: '',
   data: [
     {
-      apiVersion: `${EventSourceServiceBindingModel.apiGroup}/${EventSourceServiceBindingModel.apiVersion}`,
-      kind: EventSourceServiceBindingModel.kind,
+      apiVersion: `${EventSourceSinkBindingModel.apiGroup}/${EventSourceSinkBindingModel.apiVersion}`,
+      kind: EventSourceSinkBindingModel.kind,
       metadata: {
         name: 'bind-wss',
         namespace: 'testproject3',

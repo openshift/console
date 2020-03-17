@@ -4,6 +4,7 @@ import {
 } from '@console/dev-console/src/components/import/import-types';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { RevisionModel, EventSourceCronJobModel } from '@console/knative-plugin';
+import { EventSourceFormData, EventSources } from '../../components/add/import-types';
 
 export const defaultData: DeployImageFormData = {
   project: {
@@ -314,5 +315,35 @@ export const deploymentKnativeEventData: K8sResourceKind = {
     },
     revisionHistoryLimit: 10,
     progressDeadlineSeconds: 600,
+  },
+};
+
+const eventSourceData = {
+  cronjobsource: {
+    data: 'hello',
+    schedule: '* * * * *',
+  },
+};
+
+const typeEventSource = EventSources.CronJobSource;
+
+export const defaultEventingData: EventSourceFormData = {
+  project: {
+    name: 'mock-project',
+    displayName: '',
+    description: '',
+  },
+  application: {
+    initial: 'mock-app',
+    name: 'mock-app',
+    selectedKey: 'mock-app',
+  },
+  name: 'esmyapp',
+  sink: {
+    knativeService: 'event-display',
+  },
+  type: typeEventSource,
+  data: {
+    [typeEventSource.toLowerCase()]: eventSourceData[typeEventSource.toLowerCase()],
   },
 };

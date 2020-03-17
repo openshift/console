@@ -4,6 +4,7 @@ import { CatalogTile } from '@patternfly/react-catalog-view-extension';
 import { connect } from 'react-redux';
 import { history, PageHeading } from '@console/internal/components/utils';
 import { formatNamespacedRouteForResource } from '@console/shared/src/utils/namespace';
+import { FLAG_KNATIVE_EVENTING } from '@console/knative-plugin';
 import * as importGitIcon from '../images/from-git.svg';
 import * as yamlIcon from '../images/yaml.svg';
 import * as dockerfileIcon from '../images/dockerfile.svg';
@@ -13,6 +14,7 @@ import './EmptyState.scss';
 
 interface StateProps {
   activeNamespace: string;
+  isEventSourceEnabled?: boolean;
 }
 
 export interface EmptySProps {
@@ -31,6 +33,7 @@ const ODCEmptyState: React.FC<Props> = ({
   title,
   activeNamespace,
   hintBlock = 'Select a way to create an application, component or service from one of the options.',
+  isEventSourceEnabled = false,
 }) => {
   const createResourceAccess: string[] = useAddToProjectAccess(activeNamespace);
 
@@ -117,6 +120,20 @@ const ODCEmptyState: React.FC<Props> = ({
               description="Browse the catalog to discover database services to add to your application"
             />
           </GalleryItem>
+          {isEventSourceEnabled && (
+            <GalleryItem key="gallery-eventsource">
+              <CatalogTile
+                className="odc-empty-state__tile"
+                onClick={(e: React.SyntheticEvent) =>
+                  navigateTo(e, `/event-source?preselected-ns=${activeNamespace}`)
+                }
+                href={`/event-source?preselected-ns=${activeNamespace}`}
+                title="Event Source"
+                iconClass="pficon-help"
+                description="Create an event source and sink it to Knative service"
+              />
+            </GalleryItem>
+          )}
         </Gallery>
       </div>
     </>
@@ -126,6 +143,7 @@ const ODCEmptyState: React.FC<Props> = ({
 const mapStateToProps = (state): StateProps => {
   return {
     activeNamespace: state.UI.get('activeNamespace'),
+    isEventSourceEnabled: state.FLAGS.get(FLAG_KNATIVE_EVENTING),
   };
 };
 

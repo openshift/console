@@ -8,10 +8,12 @@ import {
   OverviewCRD,
   ResourceListPage,
   ResourceDetailsPage,
+  RoutePage,
   GlobalConfig,
   KebabActions,
   YAMLTemplate,
 } from '@console/plugin-sdk';
+import { NamespaceRedirect } from '@console/internal/components/utils/namespace-redirect';
 import { referenceForModel } from '@console/internal/module/k8s';
 import * as models from './models';
 import { yamlTemplates } from './yaml-templates';
@@ -26,7 +28,8 @@ import {
   FLAG_EVENT_SOURCE_APISERVER,
   FLAG_EVENT_SOURCE_CAMEL,
   FLAG_EVENT_SOURCE_KAFKA,
-  FLAG_EVENT_SOURCE_SERVICEBINDING,
+  FLAG_EVENT_SOURCE_SINKBINDING,
+  FLAG_KNATIVE_EVENTING,
 } from './const';
 import {
   knativeServingResourcesRevision,
@@ -38,7 +41,7 @@ import {
   eventSourceResourcesApiServer,
   eventSourceResourcesCamel,
   eventSourceResourcesKafka,
-  eventSourceResourcesServiceBinding,
+  eventSourceResourcesSinkBinding,
 } from './utils/create-knative-utils';
 import {
   getKnativeServingConfigurations,
@@ -62,6 +65,7 @@ type ConsumedExtensions =
   | OverviewResourceTab
   | OverviewCRD
   | ResourceListPage
+  | RoutePage
   | KebabActions
   | YAMLTemplate
   | ResourceDetailsPage;
@@ -85,6 +89,13 @@ const plugin: Plugin<ConsumedExtensions> = [
     properties: {
       model: models.KnativeServingModel,
       flag: FLAG_KNATIVE_SERVING,
+    },
+  },
+  {
+    type: 'FeatureFlag/Model',
+    properties: {
+      model: models.KnativeEventingModel,
+      flag: FLAG_KNATIVE_EVENTING,
     },
   },
   {
@@ -146,8 +157,8 @@ const plugin: Plugin<ConsumedExtensions> = [
   {
     type: 'FeatureFlag/Model',
     properties: {
-      model: models.EventSourceServiceBindingModel,
-      flag: FLAG_EVENT_SOURCE_SERVICEBINDING,
+      model: models.EventSourceSinkBindingModel,
+      flag: FLAG_EVENT_SOURCE_SINKBINDING,
     },
   },
   {
@@ -286,8 +297,8 @@ const plugin: Plugin<ConsumedExtensions> = [
   {
     type: 'Overview/CRD',
     properties: {
-      resources: eventSourceResourcesServiceBinding,
-      required: FLAG_EVENT_SOURCE_SERVICEBINDING,
+      resources: eventSourceResourcesSinkBinding,
+      required: FLAG_EVENT_SOURCE_SINKBINDING,
       utils: getEventSourceSinkBinding,
     },
   },
@@ -349,6 +360,29 @@ const plugin: Plugin<ConsumedExtensions> = [
             './components/routes/RouteDetailsPage' /* webpackChunkName: "knative-route-details-page" */
           )
         ).default,
+    },
+  },
+  {
+    type: 'Page/Route',
+    properties: {
+      exact: true,
+      path: ['/event-source'],
+      component: NamespaceRedirect,
+      required: FLAG_KNATIVE_EVENTING,
+    },
+  },
+  {
+    type: 'Page/Route',
+    properties: {
+      exact: true,
+      path: ['/event-source/all-namespaces', '/event-source/ns/:ns'],
+      loader: async () =>
+        (
+          await import(
+            './components/add/EventSourcePage' /* webpackChunkName: "knative-event-source-page" */
+          )
+        ).default,
+      required: FLAG_KNATIVE_EVENTING,
     },
   },
   {

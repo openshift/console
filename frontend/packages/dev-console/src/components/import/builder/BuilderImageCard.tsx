@@ -9,14 +9,14 @@ import './BuilderImageCard.scss';
 export interface BuilderImageCardProps {
   image: BuilderImage;
   selected: boolean;
-  recommended: boolean;
+  recommended?: boolean;
   onChange: (name: string) => void;
 }
 
 const BuilderImageCard: React.FC<BuilderImageCardProps> = ({
   image,
   selected,
-  recommended,
+  recommended = false,
   onChange,
 }) => {
   const classes = classNames('odc-builder-image-card', { 'is-selected': selected });
