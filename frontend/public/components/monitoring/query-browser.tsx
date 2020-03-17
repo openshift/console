@@ -156,7 +156,8 @@ const tooltipStateToProps = ({ UI }: RootState, { seriesIndex }) => {
 };
 
 const TooltipInner_: React.FC<TooltipInnerProps> = ({
-  datum,
+  datumX,
+  datumY,
   labels,
   query,
   seriesIndex,
@@ -188,15 +189,15 @@ const TooltipInner_: React.FC<TooltipInnerProps> = ({
               className="query-browser__series-btn"
               style={{ backgroundColor: colors[seriesIndex % colors.length] }}
             />
-            {datum.x && (
+            {datumX && (
               <div className="query-browser__tooltip-time">
-                {twentyFourHourTimeWithSeconds(datum.x)}
+                {twentyFourHourTimeWithSeconds(datumX)}
               </div>
             )}
           </div>
           <div className="query-browser__tooltip-group">
             <div className="co-nowrap co-truncate">{query}</div>
-            <div className="query-browser__tooltip-value">{formatValue(datum.y)}</div>
+            <div className="query-browser__tooltip-value">{formatValue(datumY)}</div>
           </div>
           {_.map(labels, (v, k) => (
             <div className="co-nowrap co-truncate" key={k}>
@@ -215,7 +216,7 @@ const TooltipInner = connect(tooltipStateToProps)(TooltipInner_);
 
 const Tooltip_: React.FC<TooltipProps> = ({ datum, x, y }) =>
   datum && _.isFinite(datum.y) && _.isFinite(x) && _.isFinite(y) ? (
-    <TooltipInner datum={datum} seriesIndex={datum._stack - 1} x={x} y={y} />
+    <TooltipInner datumX={datum.x} datumY={datum.y} seriesIndex={datum._stack - 1} x={x} y={y} />
   ) : null;
 const Tooltip = withFallback(Tooltip_);
 
@@ -809,7 +810,8 @@ type SpanControlsProps = {
 type TooltipDatum = { _stack: number; x: Date; y: number };
 
 type TooltipInnerProps = {
-  datum: TooltipDatum;
+  datumX: Date;
+  datumY: number;
   labels?: PrometheusLabels;
   query?: string;
   seriesIndex: number;
