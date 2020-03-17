@@ -11,6 +11,7 @@ import NamespacedPage, { NamespacedPageVariants } from '../NamespacedPage';
 import { nameValidationSchema } from '../import/validation-schema';
 import HelmInstallForm from './HelmInstallForm';
 import { HelmChart } from './helm-types';
+import { PageBody } from '@console/shared';
 
 export type HelmInstallPageProps = RouteComponentProps<{ ns?: string }>;
 
@@ -107,10 +108,7 @@ export const HelmInstallPage: React.FunctionComponent<HelmInstallPageProps> = ({
         {chartHasValues &&
           'The helm chart will be installed using the YAML shown in the editor below.'}
       </PageHeading>
-      <div
-        className="co-m-pane__body"
-        style={{ paddingBottom: 0, display: 'flex', flex: 1, flexDirection: 'column' }}
-      >
+      <PageBody flexLayout>
         <Formik
           initialValues={initialValues}
           onSubmit={handleSubmit}
@@ -119,7 +117,7 @@ export const HelmInstallPage: React.FunctionComponent<HelmInstallPageProps> = ({
         >
           {(props) => <HelmInstallForm {...props} chartHasValues={chartHasValues} />}
         </Formik>
-      </div>
+      </PageBody>
     </NamespacedPage>
   );
 };

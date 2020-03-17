@@ -11,7 +11,7 @@ import { FLAGS, ALL_NAMESPACES_KEY, getBadgeFromType } from '@console/shared';
 
 import { connectToFlags } from '../reducers/features';
 import { errorModal } from './modals';
-import { Firehose, checkAccess, history, Loading, resourceObjPath, AsyncComponent } from './utils';
+import { Firehose, checkAccess, history, Loading, resourceObjPath } from './utils';
 import {
   referenceForModel,
   k8sCreate,
@@ -25,6 +25,7 @@ import { ResourceSidebar } from './sidebars/resource-sidebar';
 import { yamlTemplates } from '../models/yaml-templates';
 
 import { definitionFor } from '../module/k8s/swagger';
+import YAMLEditor from '@console/shared/src/components/editor/YAMLEditor';
 
 const generateObjToLoad = (kind, id, yaml, namespace = 'default') => {
   const sampleObj = safeLoad(yaml ? yaml : yamlTemplates.getIn([kind, id]));
@@ -39,9 +40,6 @@ const stateToProps = ({ k8s, UI }) => ({
   impersonate: UI.get('impersonate'),
   models: k8s.getIn(['RESOURCES', 'models']),
 });
-
-const isDesktop = () => window.innerWidth > 767;
-const desktopGutter = 30;
 
 /**
  * This component loads the entire Monaco editor library with it.
@@ -63,12 +61,6 @@ export const EditYAML_ = connect(stateToProps)(
         showSidebar: props.create,
       };
       this.monacoRef = React.createRef();
-      // this.resize = () => {
-      //   this.setState({ height: this.height });
-      //   if (this.monacoRef.current) {
-      //     this.monacoRef.current.editor.layout({ height: this.editorHeight, width: this.width });
-      //   }
-      // };
       // k8s uses strings for resource versions
       this.displayedVersion = '0';
       // Default cancel action is browser back navigation
@@ -91,29 +83,11 @@ export const EditYAML_ = connect(stateToProps)(
     }
 
     handleError(error) {
-      this.setState({ error, success: null }, () => {
-        // this.resize();
-      });
-    }
-
-    componentDidUpdate(prevProps, prevState) {
-      if (
-        !_.isEqual(prevState, this.state) ||
-        prevProps.yamlSamplesList !== this.props.yamlSamplesList
-      ) {
-        // this.resize();
-      }
+      this.setState({ error, success: null });
     }
 
     componentDidMount() {
       this.loadYaml();
-      // window.addEventListener('resize', this.resize);
-      // window.addEventListener('sidebar_toggle', this.resize);
-    }
-
-    componentWillUnmount() {
-      // window.removeEventListener('resize', this.resize);
-      // window.removeEventListener('sidebar_toggle', this.resize);
     }
 
     UNSAFE_componentWillReceiveProps(nextProps) {
@@ -141,36 +115,16 @@ export const EditYAML_ = connect(stateToProps)(
       }
     }
 
-    get editorHeight() {
-      const buttonsHeight = this.buttons ? this.buttons.getBoundingClientRect().height : 0;
-      // if viewport width is > 767, also subtract top padding on .yaml-editor
-      return isDesktop()
-        ? Math.floor(this.height - buttonsHeight - desktopGutter)
-        : Math.floor(this.height - buttonsHeight);
-    }
-
     get height() {
+      if (!this.editor) {
+        return 0;
+      }
+
       return Math.floor(
         // notifications can appear above and below .pf-c-page, so calculate height using the bottom of .pf-c-page
         document.getElementsByClassName('pf-c-page')[0].getBoundingClientRect().bottom -
           this.editor.getBoundingClientRect().top,
       );
-    }
-
-    get width() {
-      const hasSidebarSidebar = _.first(
-        document.getElementsByClassName('co-p-has-sidebar__sidebar'),
-      );
-      const contentScrollableWidth = document
-        .getElementById('content-scrollable')
-        .getBoundingClientRect().width;
-      // if viewport width is > 767, also subtract left and right margins on .yaml-editor
-      const hasSidebarBodyWidth = isDesktop()
-        ? contentScrollableWidth - desktopGutter * 2
-        : contentScrollableWidth;
-      return hasSidebarSidebar
-        ? hasSidebarBodyWidth - hasSidebarSidebar.getBoundingClientRect().width
-        : hasSidebarBodyWidth;
     }
 
     reload() {
@@ -238,7 +192,6 @@ export const EditYAML_ = connect(stateToProps)(
 
       this.displayedVersion = _.get(obj, 'metadata.resourceVersion');
       this.setState({ yaml, initialized: true, stale: false });
-      // this.resize();
     }
 
     addToYAML(id, obj) {
@@ -280,7 +233,6 @@ export const EditYAML_ = connect(stateToProps)(
 
       this.displayedVersion = _.get(obj, 'metadata.resourceVersion');
       this.setState({ yaml: this.monacoRef.current.editor.getValue() });
-      // this.resize();
     }
 
     getEditor() {
@@ -485,10 +437,7 @@ export const EditYAML_ = connect(stateToProps)(
       const showSchema = definition && !_.isEmpty(definition.properties);
       const hasSidebarContent = showSchema || !_.isEmpty(samples) || !_.isEmpty(snippets);
       const editYamlComponent = (
-        <div
-          className="co-file-dropzone"
-          style={{ display: 'flex', flex: 1, flexDirection: 'column' }}
-        >
+        <div className="co-file-dropzone co-file-dropzone__flex">
           {canDrop && (
             <div className={klass}>
               <p className="co-file-dropzone__drop-text">Drop file here</p>
@@ -510,29 +459,21 @@ export const EditYAML_ = connect(stateToProps)(
                 </p>
               </div>
             )}
-            <div
-              className="pf-c-form"
-              style={{ display: 'flex', flex: 1, flexDirection: 'column' }}
-            >
+            <div className="pf-c-form co-p-form__flex">
               <div className="co-p-has-sidebar">
                 <div className="co-p-has-sidebar__body">
                   <div
                     className={classNames('yaml-editor', customClass)}
                     ref={(r) => (this.editor = r)}
-                    style={{ display: 'flex', flex: 1, flexDirection: 'column', height: '100%' }}
                   >
-                    <AsyncComponent
-                      loader={() =>
-                        import('@console/shared/src/components/editor/YAMLEditor').then(
-                          (c) => c.default,
-                        )
-                      }
+                    <YAMLEditor
                       ref={this.monacoRef}
                       value={yaml}
                       options={options}
                       showShortcuts={!genericYAML}
                       showSidebar={!showSidebar && hasSidebarContent}
                       onToggleSidebar={this.toggleSidebar}
+                      onResize={() => this.setState({ height: this.height })}
                       onChange={(newValue) =>
                         this.setState({ yaml: newValue }, () => onChange(newValue))
                       }

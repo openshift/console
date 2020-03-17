@@ -15,6 +15,7 @@ interface YAMLEditorProps {
   minHeight?: string;
   onChange?: (newValue, event) => {};
   onSave?: () => {};
+  onResize?: () => {};
   onToggleSidebar?: () => {};
 }
 
@@ -26,6 +27,7 @@ const YAMLEditor = React.forwardRef<MonacoEditor, YAMLEditorProps>((props, ref) 
     showSidebar,
     onChange,
     onSave,
+    onResize,
     onToggleSidebar,
     minHeight,
   } = props;
@@ -35,7 +37,7 @@ const YAMLEditor = React.forwardRef<MonacoEditor, YAMLEditorProps>((props, ref) 
     editor.focus();
     registerYAMLinMonaco(monaco);
     monaco.editor.getModels()[0].updateOptions({ tabSize: 2 });
-    editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_S, onSave); // eslint-disable-line no-bitwise
+    onSave && editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_S, onSave); // eslint-disable-line no-bitwise
   };
 
   return (
@@ -44,7 +46,7 @@ const YAMLEditor = React.forwardRef<MonacoEditor, YAMLEditorProps>((props, ref) 
         {showShortcuts && <ShortcutsLink onHideShortcuts={hackyFocusEditor} />}
         {showSidebar && <SidebarLink onToggleSidebar={onToggleSidebar} />}
       </div>
-      <Measure bounds>
+      <Measure bounds onResize={onResize}>
         {({ measureRef, contentRect }) => (
           <div ref={measureRef} className="ocs-yaml-editor__root" style={{ minHeight }}>
             <div className="ocs-yaml-editor__wrapper">

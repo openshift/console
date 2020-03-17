@@ -1,8 +1,8 @@
 import * as React from 'react';
 import * as _ from 'lodash';
-import { Form, TextInputTypes } from '@patternfly/react-core';
+import { TextInputTypes } from '@patternfly/react-core';
 import { FormikProps, FormikValues } from 'formik';
-import { InputField, FormFooter, YAMLEditorField } from '@console/shared';
+import { InputField, FormFooter, FlexForm, YAMLEditorField } from '@console/shared';
 import FormSection from '../import/section/FormSection';
 
 interface HelmInstallFormProps {
@@ -17,9 +17,8 @@ const HelmInstallForm: React.FC<FormikProps<FormikValues> & HelmInstallFormProps
   status,
   isSubmitting,
 }) => {
-  const footerRef = React.useRef<HTMLDivElement>(null);
   return (
-    <Form onSubmit={handleSubmit} style={{ display: 'flex', flex: 1, flexDirection: 'column' }}>
+    <FlexForm onSubmit={handleSubmit}>
       <FormSection fullWidth>
         <InputField
           type={TextInputTypes.text}
@@ -29,18 +28,16 @@ const HelmInstallForm: React.FC<FormikProps<FormikValues> & HelmInstallFormProps
           required
         />
       </FormSection>
-      {chartHasValues && <YAMLEditorField name="chartValuesYAML" actionButtonsRef={footerRef} />}
-      <div ref={footerRef}>
-        <FormFooter
-          handleReset={handleReset}
-          errorMessage={status && status.submitError}
-          isSubmitting={isSubmitting}
-          submitLabel="Install"
-          disableSubmit={!_.isEmpty(errors)}
-          resetLabel="Cancel"
-        />
-      </div>
-    </Form>
+      {chartHasValues && <YAMLEditorField name="chartValuesYAML" onSave={handleSubmit} />}
+      <FormFooter
+        handleReset={handleReset}
+        errorMessage={status && status.submitError}
+        isSubmitting={isSubmitting}
+        submitLabel="Install"
+        disableSubmit={!_.isEmpty(errors)}
+        resetLabel="Cancel"
+      />
+    </FlexForm>
   );
 };
 
