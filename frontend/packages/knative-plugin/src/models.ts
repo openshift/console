@@ -116,7 +116,7 @@ export const EventSourceContainerModel: K8sKind = {
 };
 
 export const EventSourceApiServerModel: K8sKind = {
-  apiGroup: KNATIVE_EVENT_SOURCE_APIGROUP_DEP,
+  apiGroup: KNATIVE_EVENT_SOURCE_APIGROUP,
   apiVersion: 'v1alpha1',
   kind: 'ApiServerSource',
   label: 'ApiServerSource',
