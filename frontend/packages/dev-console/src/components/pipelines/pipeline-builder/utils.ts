@@ -6,23 +6,52 @@ import {
   PipelineResourceTask,
   PipelineResourceTaskParam,
   PipelineTask,
+  PipelineTaskParam,
+  PipelineTaskRef,
 } from '../../../utils/pipeline-augment';
 import { getTaskParameters } from '../resource-utils';
-import { TASK_ERROR_STRINGS, TaskErrorType } from './const';
-import { PipelineBuilderFormikValues, PipelineBuilderFormValues, TaskErrorMap } from './types';
+import { TASK_ERROR_STRINGS, TASK_INCOMPLETE_ERROR_MESSAGE, TaskErrorType } from './const';
+import {
+  PipelineBuilderFormExistingPipelineValues,
+  PipelineBuilderFormikValues,
+  ResourceTaskStatus,
+  TaskErrorList,
+} from './types';
 
-export const getErrorMessage = (errorTypes: TaskErrorType[], errorMap: TaskErrorMap) => (
-  taskName: string,
-): string => {
-  if (!taskName) {
-    return TASK_ERROR_STRINGS[TaskErrorType.MISSING_NAME];
+export const getErrorMessage = (errorMap: TaskErrorList) => (taskIdx: number): string => {
+  const taskErrors = errorMap[taskIdx];
+  if (!taskErrors) {
+    return null;
   }
 
-  const errorList: TaskErrorType[] | undefined = errorMap?.[taskName];
-  if (!errorList) return null;
+  if (taskErrors?.resources) {
+    return TASK_ERROR_STRINGS[TaskErrorType.MISSING_RESOURCES];
+  }
+  if (taskErrors?.params) {
+    return TASK_ERROR_STRINGS[TaskErrorType.MISSING_REQUIRED_PARAMS];
+  }
 
-  const hasRequestedError = errorList.filter((error) => errorTypes.includes(error));
-  return hasRequestedError.length > 0 ? TASK_ERROR_STRINGS[hasRequestedError[0]] : null;
+  return TASK_INCOMPLETE_ERROR_MESSAGE;
+};
+
+export const findTask = (resourceTasks: ResourceTaskStatus, taskRef: PipelineTaskRef) => {
+  if (!resourceTasks?.clusterTasks || !resourceTasks?.namespacedTasks) {
+    return null;
+  }
+
+  if (taskRef.kind === ClusterTaskModel.kind) {
+    return resourceTasks.clusterTasks.find((task) => task.metadata.name === taskRef.name);
+  }
+  return resourceTasks.namespacedTasks.find((task) => task.metadata.name === taskRef.name);
+};
+
+export const convertResourceParamsToTaskParams = (
+  resource: PipelineResourceTask,
+): PipelineTaskParam[] => {
+  return getTaskParameters(resource).map((param) => ({
+    name: param.name,
+    value: param.default,
+  }));
 };
 
 export const taskParamIsRequired = (param: PipelineResourceTaskParam): boolean => {
@@ -40,10 +69,7 @@ export const convertResourceToTask = (
       kind: resource.kind === ClusterTaskModel.kind ? ClusterTaskModel.kind : undefined,
       name: resource.metadata.name,
     },
-    params: getTaskParameters(resource).map((param) => ({
-      name: param.name,
-      value: param.default,
-    })),
+    params: convertResourceParamsToTaskParams(resource),
   };
 };
 
@@ -105,7 +131,9 @@ export const convertBuilderFormToPipeline = (
   };
 };
 
-export const convertPipelineToBuilderForm = (pipeline: Pipeline): PipelineBuilderFormValues => {
+export const convertPipelineToBuilderForm = (
+  pipeline: Pipeline,
+): PipelineBuilderFormExistingPipelineValues => {
   if (!pipeline) return null;
 
   const {

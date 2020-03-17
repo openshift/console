@@ -130,9 +130,6 @@ const ImageStreamTagDropdown: React.FC = () => {
       disabled={!isImageStreamSelected || !isTagsAvailable}
       fullWidth
       required
-      onChange={(tag) => {
-        tag !== '' && searchImageTag(tag);
-      }}
     />
   );
 };

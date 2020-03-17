@@ -1,13 +1,15 @@
 import * as React from 'react';
+import { useField } from 'formik';
 import { FormGroup, TextInput, TextInputTypes } from '@patternfly/react-core';
-import { SidebarInputWrapper } from './temp-utils';
+import { SidebarInputWrapper } from './field-utils';
 
 type TaskSidebarNameProps = {
-  initialName: string;
+  name: string;
+  placeholder: string;
   onChange: (newName: string) => void;
-  taskName: string;
 };
 
+// TODO: Fix the visualization dependency on name for the id and we can fully use Formik
 const VALID_NAME = /^([a-z]([-a-z0-9]*[a-z0-9])?)*$/;
 const INVALID_ERROR_MESSAGE =
   'Name must consist of lower-case letters, numbers and hyphens. It must start with a letter and end with a letter or number.';
@@ -23,8 +25,9 @@ const getError = (value: string): string | null => {
 };
 
 const TaskSidebarName: React.FC<TaskSidebarNameProps> = (props) => {
-  const { initialName, onChange, taskName } = props;
-  const [interimName, setInterimName] = React.useState(initialName);
+  const { name, placeholder, onChange } = props;
+  const [field] = useField(name);
+  const [interimName, setInterimName] = React.useState<string>(field.value);
   const [error, setError] = React.useState(null);
   const isValid = !error;
 
@@ -50,7 +53,7 @@ const TaskSidebarName: React.FC<TaskSidebarNameProps> = (props) => {
               onChange(interimName);
             }
           }}
-          placeholder={taskName}
+          placeholder={placeholder}
           type={TextInputTypes.text}
           value={interimName}
         />

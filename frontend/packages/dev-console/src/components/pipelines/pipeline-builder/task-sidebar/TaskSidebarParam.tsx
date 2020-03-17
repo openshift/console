@@ -1,51 +1,41 @@
 import * as React from 'react';
-import { FormGroup } from '@patternfly/react-core';
-import { PipelineResourceTaskParam, PipelineTaskParam } from '../../../../utils/pipeline-augment';
-import { taskParamIsRequired } from '../utils';
-import { ArrayParam, ParameterProps, SidebarInputWrapper, StringParam } from './temp-utils';
+import { useField } from 'formik';
+import { TextInputTypes } from '@patternfly/react-core';
+import { InputField } from '@console/shared';
+import { PipelineResourceTaskParam } from '../../../../utils/pipeline-augment';
+import { SidebarInputWrapper } from './field-utils';
+import TaskSidebarParamArray from './TaskSidebarParamArray';
 
 type TaskSidebarParamProps = {
-  hasParamError?: boolean;
+  name: string;
   resourceParam: PipelineResourceTaskParam;
-  taskParam?: PipelineTaskParam;
-  onChange: (newValue: string) => void;
 };
 
 const TaskSidebarParam: React.FC<TaskSidebarParamProps> = (props) => {
-  const { hasParamError, onChange, resourceParam, taskParam } = props;
-  const [dirty, setDirty] = React.useState(false);
+  const { name: paramName, resourceParam } = props;
+  const name = `${paramName}.value`;
+  const [{ value }, { error, touched }] = useField<string | string[]>(name);
+  const isRequired = !resourceParam.default;
 
-  const currentValue = taskParam?.value;
-  const emptyIsInvalid = taskParamIsRequired(resourceParam);
-
-  const isValid = !(dirty && hasParamError && emptyIsInvalid && currentValue != null);
-
-  const paramRenderProps: ParameterProps = {
-    currentValue,
-    defaultValue: resourceParam.default,
-    isValid,
-    name: resourceParam.name,
-    onChange,
-    setDirty,
-  };
-
-  return (
-    <FormGroup
-      fieldId={resourceParam.name}
-      label={resourceParam.name}
-      helperText={resourceParam.type === 'string' ? resourceParam.description : null}
-      helperTextInvalid="Required"
-      validated={isValid ? 'default' : 'error'}
-      isRequired={emptyIsInvalid}
-    >
-      {resourceParam.type === 'array' ? (
-        <ArrayParam {...paramRenderProps} description={resourceParam.description} />
-      ) : (
-        <SidebarInputWrapper>
-          <StringParam {...paramRenderProps} />
-        </SidebarInputWrapper>
-      )}
-    </FormGroup>
+  return resourceParam.type === 'array' ? (
+    <TaskSidebarParamArray
+      isRequired={isRequired}
+      isValid={touched && !error}
+      name={name}
+      resourceParam={resourceParam}
+      values={value as string[]}
+    />
+  ) : (
+    <SidebarInputWrapper>
+      <InputField
+        label={resourceParam.name}
+        helpText={resourceParam.description}
+        type={TextInputTypes.text}
+        name={name}
+        placeholder={resourceParam.default as string}
+        required={isRequired}
+      />
+    </SidebarInputWrapper>
   );
 };
 

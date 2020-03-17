@@ -1,12 +1,12 @@
 import * as React from 'react';
 import * as _ from 'lodash';
-import { FormikProps, FormikValues } from 'formik';
+import { FormikProps } from 'formik';
 import { Form, Stack, StackItem, TextInputTypes } from '@patternfly/react-core';
-import { InputField, FormFooter } from '@console/shared';
+import { FormFooter, InputField, useFormikValidationFix } from '@console/shared';
 import { Pipeline } from '../../../utils/pipeline-augment';
 import { PipelineParameters, PipelineResources } from '../detail-page-tabs';
 import { UpdateOperationType } from './const';
-import { useResourceValidation } from './hooks';
+import { useSmartLoadTasks } from './hooks';
 import { removeTaskModal } from './modals';
 import PipelineBuilderHeader from './PipelineBuilderHeader';
 import PipelineBuilderVisualization from './PipelineBuilderVisualization';
@@ -14,61 +14,60 @@ import Sidebar from './task-sidebar/Sidebar';
 import TaskSidebar from './task-sidebar/TaskSidebar';
 import {
   CleanupResults,
+  PipelineBuilderFormikValues,
   PipelineBuilderTaskGroup,
+  ResourceTaskStatus,
   SelectedBuilderTask,
-  UpdateErrors,
-  UpdateOperationUpdateTaskData,
+  TaskErrorList,
 } from './types';
 import { applyChange } from './update-utils';
 
 import './PipelineBuilderForm.scss';
 
-type PipelineBuilderFormProps = FormikProps<FormikValues> & {
+type PipelineBuilderFormProps = FormikProps<PipelineBuilderFormikValues> & {
   existingPipeline: Pipeline;
   namespace: string;
 };
 
 const PipelineBuilderForm: React.FC<PipelineBuilderFormProps> = (props) => {
+  const {
+    dirty,
+    errors,
+    existingPipeline,
+    isSubmitting,
+    handleReset,
+    handleSubmit,
+    namespace,
+    setFieldValue,
+    setStatus,
+    status,
+    values,
+  } = props;
+  useFormikValidationFix(values);
+
   const [selectedTask, setSelectedTask] = React.useState<SelectedBuilderTask>(null);
   const selectedTaskRef = React.useRef<SelectedBuilderTask>(null);
   selectedTaskRef.current = selectedTask;
 
-  const {
-    existingPipeline,
-    status,
-    isSubmitting,
-    dirty,
-    handleReset,
-    handleSubmit,
-    errors,
+  const resourceTasks: ResourceTaskStatus = {
+    namespacedTasks: values.namespacedTasks,
+    clusterTasks: values.clusterTasks,
+    errorMsg: status?.taskLoadError,
+  };
+  useSmartLoadTasks(
+    resourceTasks,
     namespace,
     setFieldValue,
     setStatus,
-    values,
-  } = props;
-  const statusRef = React.useRef(status);
-  statusRef.current = status;
-
-  const updateErrors: UpdateErrors = React.useCallback(
-    (taskErrors) => {
-      if (taskErrors) {
-        setStatus({
-          ...statusRef.current,
-          tasks: _.omitBy(_.merge({}, statusRef.current?.tasks, taskErrors), (v) => !v),
-        });
-      }
-    },
-    [setStatus],
+    !!existingPipeline,
+    values.tasks,
   );
 
-  useResourceValidation(values.tasks, values.resources, updateErrors);
-
   const updateTasks = (changes: CleanupResults): void => {
-    const { tasks, listTasks, errors: taskErrors } = changes;
+    const { tasks, listTasks } = changes;
 
     setFieldValue('tasks', tasks);
     setFieldValue('listTasks', listTasks);
-    updateErrors(taskErrors);
   };
 
   const selectedId = values.tasks[selectedTask?.taskIndex]?.name;
@@ -108,7 +107,7 @@ const PipelineBuilderForm: React.FC<PipelineBuilderFormProps> = (props) => {
               <h2>Tasks</h2>
               <PipelineBuilderVisualization
                 namespace={namespace}
-                tasksInError={status?.tasks || {}}
+                tasksInError={(errors?.tasks as TaskErrorList) || []}
                 onTaskSelection={(task, resource) => {
                   setSelectedTask({
                     taskIndex: values.tasks.findIndex(({ name }) => name === task.name),
@@ -118,6 +117,7 @@ const PipelineBuilderForm: React.FC<PipelineBuilderFormProps> = (props) => {
                 onUpdateTasks={(updatedTaskGroup, op) =>
                   updateTasks(applyChange(updatedTaskGroup, op))
                 }
+                resourceTasks={resourceTasks}
                 taskGroup={taskGroup}
               />
             </div>
@@ -162,8 +162,7 @@ const PipelineBuilderForm: React.FC<PipelineBuilderFormProps> = (props) => {
               // Intentional remount when selection changes
               key={selectedTask.taskIndex}
               resourceList={values.resources || []}
-              errorMap={status?.tasks || {}}
-              onUpdateTask={(data: UpdateOperationUpdateTaskData) => {
+              onNameUpdate={(data) => {
                 updateTasks(
                   applyChange(taskGroup, { type: UpdateOperationType.UPDATE_TASK, data }),
                 );

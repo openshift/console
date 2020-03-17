@@ -32,8 +32,11 @@ const DropdownField: React.FC<DropdownFieldProps> = ({ label, helpText, required
         dropDownClassName={cx({ 'dropdown--full-width': props.fullWidth })}
         aria-describedby={`${fieldId}-helper`}
         onChange={(value: string) => {
-          props.onChange && props.onChange(value);
-          setFieldValue(props.name, value);
+          if (props.onChange) {
+            props.onChange(value);
+          } else {
+            setFieldValue(props.name, value);
+          }
           setFieldTouched(props.name, true);
         }}
       />

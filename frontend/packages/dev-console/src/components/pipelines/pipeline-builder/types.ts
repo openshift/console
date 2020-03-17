@@ -1,33 +1,46 @@
-import { FormikValues } from 'formik';
+import { FormikErrors, FormikValues } from 'formik';
 import {
   PipelineParam,
   PipelineResource,
   PipelineResourceTask,
   PipelineTask,
+  PipelineTaskResources,
 } from '../../../utils/pipeline-augment';
 import { PipelineVisualizationTaskItem } from '../../../utils/pipeline-utils';
 import { AddNodeDirection } from '../pipeline-topology/const';
-import { TaskErrorType, UpdateOperationType } from './const';
+import { UpdateOperationType } from './const';
 
-export type UpdateErrors = (errors?: TaskErrorMap) => void;
+export type ResourceTaskStatus = {
+  namespacedTasks: PipelineResourceTask[] | null;
+  clusterTasks: PipelineResourceTask[] | null;
+  errorMsg?: string;
+};
 
 export type PipelineBuilderTaskBase = { name: string; runAfter?: string[] };
 
 export type PipelineBuilderListTask = PipelineBuilderTaskBase;
 
+/** Generic Builder visualization data */
 export type PipelineBuilderTaskGrouping = {
   tasks: PipelineTask[];
   listTasks: PipelineBuilderListTask[];
 };
 
-export type PipelineBuilderTaskGroup = PipelineBuilderTaskGrouping & {
-  highlightedIds: string[];
-};
-
-export type PipelineBuilderFormValues = PipelineBuilderTaskGrouping & {
+/** Values derived from an existing Pipeline */
+export type PipelineBuilderFormExistingPipelineValues = PipelineBuilderTaskGrouping & {
   name: string;
   params: PipelineParam[];
   resources: PipelineResource[];
+};
+
+/** Values for the Form as a state */
+export type PipelineBuilderFormValues = PipelineBuilderFormExistingPipelineValues & {
+  namespacedTasks: PipelineResourceTask[];
+  clusterTasks: PipelineResourceTask[];
+};
+
+export type PipelineBuilderTaskGroup = PipelineBuilderTaskGrouping & {
+  highlightedIds: string[];
 };
 
 export type PipelineBuilderFormikValues = FormikValues & PipelineBuilderFormValues;
@@ -37,9 +50,11 @@ export type SelectedBuilderTask = {
   taskIndex: number;
 };
 
-export type TaskErrorMap = {
-  [pipelineInErrorName: string]: TaskErrorType[];
+type ErrorPipelineTask = FormikErrors<PipelineTask> & {
+  // Resources can be in error in their entirety (there are no default values when tasks are created)
+  resources?: string | FormikErrors<PipelineTaskResources>;
 };
+export type TaskErrorList = ErrorPipelineTask[];
 
 export type SelectTaskCallback = (
   task: PipelineVisualizationTaskItem,
@@ -80,30 +95,15 @@ export type UpdateOperationRemoveTaskData = UpdateOperationBaseData & {
 };
 
 export type ResourceTarget = 'inputs' | 'outputs';
-export type UpdateTaskResourceData = {
-  resourceTarget: ResourceTarget;
-  selectedPipelineResource: PipelineResource;
-  taskResourceName: string;
-};
-export type UpdateTaskParamData = {
-  newValue: string;
-  taskParamName: string;
-};
-export type UpdateOperationUpdateTaskData = UpdateOperationBaseData & {
-  // Task information
-  thisPipelineTask: PipelineTask;
-  taskResource: PipelineResourceTask;
 
-  // Change information
-  newName?: string;
-  params?: UpdateTaskParamData;
-  resources?: UpdateTaskResourceData;
+export type UpdateOperationUpdateTaskData = UpdateOperationBaseData & {
+  oldName: string;
+  newName: string;
 };
 
 export type CleanupResults = {
   tasks: PipelineTask[];
   listTasks: PipelineBuilderListTask[];
-  errors?: TaskErrorMap;
 };
 
 export type UpdateOperationAction<D extends UpdateOperationBaseData> = (

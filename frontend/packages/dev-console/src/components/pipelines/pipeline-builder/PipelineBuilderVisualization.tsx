@@ -7,8 +7,9 @@ import { getEdgesFromNodes } from '../pipeline-topology/utils';
 import { useNodes } from './hooks';
 import {
   PipelineBuilderTaskGroup,
+  ResourceTaskStatus,
   SelectTaskCallback,
-  TaskErrorMap,
+  TaskErrorList,
   UpdateTasksCallback,
 } from './types';
 
@@ -17,7 +18,8 @@ type PipelineBuilderVisualizationProps = {
   onTaskSelection: SelectTaskCallback;
   onUpdateTasks: UpdateTasksCallback;
   taskGroup: PipelineBuilderTaskGroup;
-  tasksInError: TaskErrorMap;
+  tasksInError: TaskErrorList;
+  resourceTasks: ResourceTaskStatus;
 };
 
 const PipelineBuilderVisualization: React.FC<PipelineBuilderVisualizationProps> = ({
@@ -26,19 +28,27 @@ const PipelineBuilderVisualization: React.FC<PipelineBuilderVisualizationProps> 
   onUpdateTasks,
   taskGroup,
   tasksInError,
+  resourceTasks,
 }) => {
-  const { tasksLoaded, tasksCount, nodes, loadingTasksError } = useNodes(
+  const nodes = useNodes(
     namespace,
     onTaskSelection,
     onUpdateTasks,
     taskGroup,
     tasksInError,
+    resourceTasks,
   );
 
-  if (loadingTasksError) {
+  const { clusterTasks, namespacedTasks, errorMsg } = resourceTasks;
+  const localTaskCount = namespacedTasks?.length || 0;
+  const clusterTaskCount = clusterTasks?.length || 0;
+  const tasksCount = localTaskCount + clusterTaskCount;
+  const tasksLoaded = !!namespacedTasks && !!clusterTasks;
+
+  if (errorMsg) {
     return (
       <Alert variant="danger" isInline title="Error loading the tasks.">
-        {loadingTasksError}
+        {errorMsg}
       </Alert>
     );
   }

@@ -1,9 +1,8 @@
 import * as React from 'react';
-import * as _ from 'lodash';
 import { k8sList } from '@console/internal/module/k8s';
 import { ClusterTaskModel, TaskModel } from '../../../models';
 import {
-  PipelineResource,
+  PipelineParam,
   PipelineResourceTask,
   PipelineTask,
   PipelineTaskRef,
@@ -24,106 +23,153 @@ import {
 import {
   PipelineBuilderTaskGroup,
   SelectTaskCallback,
-  TaskErrorMap,
-  UpdateErrors,
+  ResourceTaskStatus,
   UpdateOperationAddData,
   UpdateOperationConvertToTaskData,
   UpdateOperationFixInvalidTaskListData,
   UpdateTasksCallback,
+  TaskErrorList,
 } from './types';
-import { nodeTaskErrors, TaskErrorType, UpdateOperationType } from './const';
-import { getErrorMessage } from './utils';
+import { UpdateOperationType } from './const';
+import { convertResourceParamsToTaskParams, findTask, getErrorMessage } from './utils';
+import { getTaskParameters } from '../resource-utils';
 
-type UseTasks = {
-  namespacedTasks: PipelineResourceTask[] | null;
-  clusterTasks: PipelineResourceTask[] | null;
-  errorMsg?: string;
-};
-export const useTasks = (namespace?: string): UseTasks => {
-  const [namespacedTasks, setNamespacedTasks] = React.useState<PipelineResourceTask[]>(null);
-  const [clusterTasks, setClusterTasks] = React.useState<PipelineResourceTask[]>(null);
-  const [loadErrorMsg, setLoadErrorMsg] = React.useState<string>(undefined);
-
+type OnLoadCallback = (err: string, data?: { type: string; tasks: PipelineResourceTask[] }) => void;
+export const useTasks = (
+  resourceTasks: ResourceTaskStatus,
+  namespace: string,
+  onLoad: OnLoadCallback,
+) => {
   React.useEffect(() => {
     let ignore = false;
-    if (loadErrorMsg) {
-      return null;
-    }
-
-    if (!namespacedTasks) {
-      if (!namespace) {
-        setNamespacedTasks([]);
-      } else {
+    if (!resourceTasks.errorMsg) {
+      if (!resourceTasks.namespacedTasks) {
         k8sList(TaskModel, { ns: namespace })
-          .then((res: PipelineResourceTask[]) => {
+          .then((tasks: PipelineResourceTask[]) => {
             if (ignore) {
               return;
             }
-            setNamespacedTasks(res);
+            onLoad(null, { type: 'namespacedTasks', tasks });
           })
           .catch(() => {
-            setLoadErrorMsg(`Failed to load namespace Tasks. ${loadErrorMsg || ''}`);
+            if (ignore) {
+              return;
+            }
+            onLoad('Failed to load namespace Tasks.');
+          });
+      }
+
+      if (!resourceTasks.clusterTasks) {
+        k8sList(ClusterTaskModel)
+          .then((tasks: PipelineResourceTask[]) => {
+            if (ignore) {
+              return;
+            }
+            onLoad(null, { type: 'clusterTasks', tasks });
+          })
+          .catch(() => {
+            if (ignore) {
+              return;
+            }
+            onLoad('Failed to load ClusterTasks.');
           });
       }
     }
 
-    if (!clusterTasks) {
-      k8sList(ClusterTaskModel)
-        .then((res: PipelineResourceTask[]) => {
-          if (ignore) {
-            return;
-          }
-          setClusterTasks(res);
-        })
-        .catch(() => {
-          setLoadErrorMsg(`Failed to load ClusterTasks. ${loadErrorMsg || ''}`);
-        });
-    }
     return () => {
       ignore = true;
     };
-  }, [
-    namespace,
-    namespacedTasks,
-    setNamespacedTasks,
-    clusterTasks,
-    setClusterTasks,
-    setLoadErrorMsg,
-    loadErrorMsg,
-  ]);
-
-  return {
-    namespacedTasks,
-    clusterTasks,
-    errorMsg: loadErrorMsg,
-  };
+  }, [namespace, resourceTasks, onLoad]);
 };
 
-type UseNodes = {
-  nodes: PipelineMixedNodeModel[];
-  tasksCount: number;
-  tasksLoaded: boolean;
-  loadingTasksError?: string;
+export const useSmartLoadTasks = (
+  resourceTasks: ResourceTaskStatus,
+  namespace: string,
+  setFieldValue,
+  setStatus,
+  isExistingPipeline: boolean,
+  currentTasks: PipelineTask[],
+) => {
+  const balanceTasks = React.useCallback(
+    (tasks: PipelineResourceTask[]) => {
+      if (!isExistingPipeline) {
+        // No need to balance tasks when it's a fresh build
+        return;
+      }
+
+      // Find the related tasks that need balancing
+      const tasksToBalance = currentTasks.reduce((acc, pipelineTask, formikIndex) => {
+        const resourceTask = tasks.find((task) => {
+          const matchName = task.metadata?.name === pipelineTask.taskRef.name;
+          const matchKind = task.kind === pipelineTask.taskRef.kind;
+          return matchName && matchKind;
+        });
+        const hasMissingParams =
+          !!resourceTask && pipelineTask?.params?.length !== getTaskParameters(resourceTask).length;
+
+        if (!hasMissingParams) {
+          return acc;
+        }
+
+        return [
+          ...acc,
+          {
+            formikIndex,
+            resourceTask,
+            pipelineTask,
+          },
+        ];
+      }, []);
+      if (tasksToBalance.length === 0) {
+        return;
+      }
+
+      // Balance the tasks missing params
+      tasksToBalance.forEach(({ formikIndex, resourceTask, pipelineTask }) => {
+        const resourceParams = convertResourceParamsToTaskParams(resourceTask);
+        const params: PipelineParam[] = resourceParams.map((resourceParam) => {
+          const pipelineParam = pipelineTask.params.find(({ name }) => name === resourceParam.name);
+          return pipelineParam || resourceParam;
+        });
+
+        const updatedTask = {
+          ...pipelineTask,
+          params,
+        };
+        setFieldValue(`tasks.${formikIndex}`, updatedTask);
+      });
+    },
+    [setFieldValue, isExistingPipeline, currentTasks],
+  );
+  const onLoad = React.useCallback<OnLoadCallback>(
+    (err, { type, tasks }) => {
+      if (err) {
+        setStatus({ taskLoadError: err });
+        return;
+      }
+      setFieldValue(type, tasks);
+      balanceTasks(tasks);
+    },
+    [setStatus, setFieldValue, balanceTasks],
+  );
+
+  useTasks(resourceTasks, namespace, onLoad);
 };
+
 export const useNodes = (
   namespace: string,
   onTaskSelection: SelectTaskCallback,
   onUpdateTasks: UpdateTasksCallback,
   taskGroup: PipelineBuilderTaskGroup,
-  tasksInError: TaskErrorMap,
-): UseNodes => {
-  const { clusterTasks, namespacedTasks, errorMsg } = useTasks(namespace);
-
-  const getTask = (taskRef: PipelineTaskRef) => {
-    if (taskRef.kind === ClusterTaskModel.kind) {
-      return clusterTasks?.find((task) => task.metadata.name === taskRef.name);
-    }
-    return namespacedTasks?.find((task) => task.metadata.name === taskRef.name);
-  };
-
+  tasksInError: TaskErrorList,
+  resourceTasks: ResourceTaskStatus,
+): PipelineMixedNodeModel[] => {
+  const resourceTasksRef = React.useRef(resourceTasks);
+  resourceTasksRef.current = resourceTasks;
   const taskGroupRef = React.useRef(taskGroup);
   taskGroupRef.current = taskGroup;
 
+  const getTask = (taskRef: PipelineTaskRef) => findTask(resourceTasksRef.current, taskRef);
   const onNewListNode = (task: PipelineVisualizationTaskItem, direction: AddNodeDirection) => {
     const data: UpdateOperationAddData = { direction, relatedTask: task };
     onUpdateTasks(taskGroupRef.current, { type: UpdateOperationType.ADD_LIST_TASK, data });
@@ -142,8 +188,8 @@ export const useNodes = (
     firstTask?: boolean,
   ): PipelineTaskListNodeModel =>
     createTaskListNode(name, {
-      namespaceTaskList: namespacedTasks?.filter(noDuplicates),
-      clusterTaskList: clusterTasks?.filter(noDuplicates),
+      namespaceTaskList: resourceTasksRef.current.namespacedTasks?.filter(noDuplicates),
+      clusterTaskList: resourceTasksRef.current.clusterTasks?.filter(noDuplicates),
       onNewTask: (resource: PipelineResourceTask) => {
         onNewTask(resource, name, runAfter);
       },
@@ -163,8 +209,8 @@ export const useNodes = (
   const soloTask = (name = 'initial-node') => newListNode(name, undefined, true);
   const newInvalidListNode = (name: string, runAfter?: string[]): PipelineTaskListNodeModel =>
     createInvalidTaskListNode(name, {
-      namespaceTaskList: namespacedTasks?.filter(noDuplicates),
-      clusterTaskList: clusterTasks?.filter(noDuplicates),
+      namespaceTaskList: resourceTasksRef.current.namespacedTasks?.filter(noDuplicates),
+      clusterTaskList: resourceTasksRef.current.clusterTasks?.filter(noDuplicates),
       onNewTask: (resource: PipelineResourceTask) => {
         const data: UpdateOperationFixInvalidTaskListData = {
           existingName: name,
@@ -201,7 +247,7 @@ export const useNodes = (
           validTaskList,
           onNewListNode,
           (task) => onTaskSelection(task, getTask(task.taskRef)),
-          getErrorMessage(nodeTaskErrors, tasksInError),
+          getErrorMessage(tasksInError),
           taskGroup.highlightedIds,
         )
       : [];
@@ -210,69 +256,5 @@ export const useNodes = (
       ? [soloTask(taskGroup.listTasks[0]?.name)]
       : taskGroup.listTasks.map((listTask) => newListNode(listTask.name, listTask.runAfter));
 
-  const nodes: PipelineMixedNodeModel[] = handleParallelToParallelNodes([
-    ...taskNodes,
-    ...taskListNodes,
-    ...invalidTaskListNodes,
-  ]);
-
-  const localTaskCount = namespacedTasks?.length || 0;
-  const clusterTaskCount = clusterTasks?.length || 0;
-
-  return {
-    tasksCount: localTaskCount + clusterTaskCount,
-    tasksLoaded: !!namespacedTasks && !!clusterTasks,
-    loadingTasksError: errorMsg,
-    nodes,
-  };
-};
-
-export const useResourceValidation = (
-  tasks: PipelineTask[],
-  resourceValues: PipelineResource[],
-  onError: UpdateErrors,
-) => {
-  const [previousErrorIds, setPreviousErrorIds] = React.useState([]);
-
-  React.useEffect(() => {
-    const resourceNames = resourceValues.map((r) => r.name);
-
-    const errors = tasks.reduce((acc, task) => {
-      const output = task.resources?.outputs || [];
-      const input = task.resources?.inputs || [];
-      const missingResources = [...output, ...input].filter(
-        (r) => !resourceNames.includes(r.resource),
-      );
-
-      if (missingResources.length === 0) {
-        return acc;
-      }
-
-      return {
-        ...acc,
-        [task.name]: [TaskErrorType.MISSING_RESOURCES],
-      };
-    }, {});
-
-    if (!_.isEmpty(errors) || previousErrorIds.length > 0) {
-      const outputErrors = previousErrorIds.reduce((acc, id) => {
-        if (acc[id]) {
-          // Error exists, leave it alone
-          return acc;
-        }
-
-        // Error doesn't exist but we had it once, make sure it is cleared
-        return {
-          ...acc,
-          [id]: null,
-        };
-      }, errors);
-
-      const currentErrorIds = Object.keys(outputErrors).filter((id) => !!outputErrors[id]);
-      if (!_.isEqual(currentErrorIds, previousErrorIds)) {
-        setPreviousErrorIds(currentErrorIds);
-      }
-      onError(outputErrors);
-    }
-  }, [tasks, resourceValues, onError, previousErrorIds, setPreviousErrorIds]);
+  return handleParallelToParallelNodes([...taskNodes, ...taskListNodes, ...invalidTaskListNodes]);
 };

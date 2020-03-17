@@ -36,6 +36,8 @@ const PipelineBuilderPage: React.FC<PipelineBuilderPageProps> = (props) => {
     tasks: [],
     listTasks: [],
     ...(convertPipelineToBuilderForm(existingPipeline) || {}),
+    namespacedTasks: null,
+    clusterTasks: null,
   };
 
   const handleSubmit = (

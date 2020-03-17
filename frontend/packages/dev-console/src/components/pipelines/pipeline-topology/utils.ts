@@ -185,12 +185,12 @@ export const tasksToBuilderNodes = (
   taskList: PipelineVisualizationTaskItem[],
   onAddNode: (task: PipelineVisualizationTaskItem, direction: AddNodeDirection) => void,
   onNodeSelection: (task: PipelineVisualizationTaskItem) => void,
-  getError: (taskName: string) => string,
+  getError: (taskIdx: number) => string,
   selectedIds: string[],
 ): PipelineMixedNodeModel[] => {
-  return taskList.map((task) => {
+  return taskList.map((task, idx: number) => {
     return createBuilderNode(task.name, {
-      error: getError(task.name),
+      error: getError(idx),
       task,
       selected: selectedIds.includes(task.name),
       onNodeSelection: () => {

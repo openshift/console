@@ -20,8 +20,3 @@ export const TASK_ERROR_STRINGS = {
   [TaskErrorType.MISSING_REQUIRED_PARAMS]: 'Missing Parameters',
   [TaskErrorType.MISSING_NAME]: 'Task Name is Required',
 };
-
-export const nodeTaskErrors = [
-  TaskErrorType.MISSING_REQUIRED_PARAMS,
-  TaskErrorType.MISSING_RESOURCES,
-];
