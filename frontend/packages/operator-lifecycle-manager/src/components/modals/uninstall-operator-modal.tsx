@@ -14,7 +14,7 @@ import {
 import { K8sKind, K8sResourceKind } from '@console/internal/module/k8s';
 import { getActiveNamespace } from '@console/internal/actions/ui';
 import { YellowExclamationTriangleIcon } from '@console/shared';
-import { SubscriptionKind } from '../../types';
+import { ClusterServiceVersionKind, SubscriptionKind } from '../../types';
 import { ClusterServiceVersionModel, SubscriptionModel } from '../../models';
 
 export const UninstallOperatorModal = withHandlePromise((props: UninstallOperatorModalProps) => {
@@ -58,7 +58,7 @@ export const UninstallOperatorModal = withHandlePromise((props: UninstallOperato
       .catch(_.noop);
   };
 
-  const name = props.displayName || props.subscription.spec.name;
+  const name = _.get(props.csv, 'spec.displayName') || props.subscription.spec.name;
   const context =
     props.subscription.metadata.namespace === 'openshift-operators' ? (
       <strong>all namespaces</strong>
@@ -67,6 +67,9 @@ export const UninstallOperatorModal = withHandlePromise((props: UninstallOperato
         namespace <strong>{props.subscription.metadata.namespace}</strong>
       </>
     );
+  const uninstallMessage =
+    props.csv?.metadata?.annotations['operator.openshift.io/uninstall-message'];
+
   return (
     <form onSubmit={submit} name="form" className="modal-content co-catalog-install-modal">
       <ModalTitle className="modal-header">
@@ -75,6 +78,12 @@ export const UninstallOperatorModal = withHandlePromise((props: UninstallOperato
       <ModalBody>
         This will remove operator <strong>{name}</strong> from {context}. Your application will keep
         running, but it will no longer receive updates or configuration changes.
+        {uninstallMessage && (
+          <>
+            <h2>Operator Developer Message</h2>
+            <p>{uninstallMessage}</p>
+          </>
+        )}
       </ModalBody>
       <ModalSubmitFooter
         inProgress={props.inProgress}
@@ -103,7 +112,7 @@ export type UninstallOperatorModalProps = {
     data: { op: string; path: string; value: any }[],
   ) => Promise<any>;
   subscription: SubscriptionKind;
-  displayName?: string;
+  csv?: ClusterServiceVersionKind;
 };
 
 UninstallOperatorModal.displayName = 'UninstallOperatorModal';
