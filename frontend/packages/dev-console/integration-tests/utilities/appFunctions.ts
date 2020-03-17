@@ -68,3 +68,4 @@ export const naviagteTo = async function(opt: NavigationMenu) {
       }
     }
   };
+  
