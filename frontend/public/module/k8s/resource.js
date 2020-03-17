@@ -118,6 +118,9 @@ export const k8sKill = (kind, resource, opts = {}, json = null) =>
     json,
   );
 
+export const k8sKillByName = (kind, name, namespace, opts = {}) =>
+  k8sKill(kind, { metadata: { name, namespace } }, opts);
+
 export const k8sList = (kind, params = {}, raw = false, options = {}) => {
   const query = _.map(_.omit(params, 'ns'), (v, k) => {
     if (k === 'labelSelector') {

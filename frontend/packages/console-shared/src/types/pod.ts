@@ -50,7 +50,7 @@ export type ExtPodStatus = {
 };
 
 export type ExtPodKind = {
-  status: ExtPodStatus;
+  status?: ExtPodStatus;
 } & K8sResourceKind;
 
 export type OverviewItemAlerts = {

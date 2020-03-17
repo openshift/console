@@ -168,6 +168,7 @@ export const PodExec = connectToFlags(FLAGS.OPENSHIFT)(
 
     render() {
       const { containers, activeContainer, open, error } = this.state;
+      const { message } = this.props;
 
       let contents = <LoadingBox />;
       if (error) {
@@ -205,6 +206,7 @@ export const PodExec = connectToFlags(FLAGS.OPENSHIFT)(
               </div>
             )}
           </div>
+          {message}
           {contents}
         </div>
       );
