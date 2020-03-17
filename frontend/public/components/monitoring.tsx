@@ -47,7 +47,11 @@ import {
   StatusBox,
   Timestamp,
 } from './utils';
-import { GreenCheckCircleIcon } from '@console/shared';
+import {
+  GreenCheckCircleIcon,
+  RedExclamationCircleIcon,
+  YellowExclamationTriangleIcon,
+} from '@console/shared';
 
 const AlertResource = {
   kind: 'Alert',
@@ -199,6 +203,24 @@ const AlertStateDescription = ({ alert }) => {
   return null;
 };
 
+const Severity: React.FC<{ severity?: string }> = ({ severity }) => {
+  if (severity === 'critical') {
+    return (
+      <>
+        <RedExclamationCircleIcon /> Critical
+      </>
+    );
+  }
+  if (severity === 'warning') {
+    return (
+      <>
+        <YellowExclamationTriangleIcon /> Warning
+      </>
+    );
+  }
+  return <>{_.startCase(severity) || '-'}</>;
+};
+
 const Annotation = ({ children, title }) =>
   _.isNil(children) ? null : (
     <>
@@ -334,7 +356,9 @@ const AlertsDetailsPage = withFallback(
                     {severity && (
                       <>
                         <dt>Severity</dt>
-                        <dd>{_.startCase(severity)}</dd>
+                        <dd>
+                          <Severity severity={severity} />
+                        </dd>
                       </>
                     )}
                     <dt>State</dt>
@@ -479,7 +503,9 @@ const AlertRulesDetailsPage = withFallback(
                     {severity && (
                       <>
                         <dt>Severity</dt>
-                        <dd>{_.startCase(severity)}</dd>
+                        <dd>
+                          <Severity severity={severity} />
+                        </dd>
                       </>
                     )}
                     <Annotation title="Description">{annotations.description}</Annotation>
@@ -550,7 +576,9 @@ const SilencedAlertsList = ({ alerts }) =>
               </Link>
               <div className="monitoring-description">{alertDescription(a)}</div>
             </div>
-            <div className="col-xs-3">{a.labels.severity || '-'}</div>
+            <div className="col-xs-3">
+              <Severity severity={a.labels.severity} />
+            </div>
             <div className="dropdown-kebab-pf">
               <Kebab options={[viewAlertRule(a)]} />
             </div>
@@ -673,8 +701,8 @@ const SilencesDetailsPage = withFallback(
 
 const tableAlertClasses = [
   classNames('col-sm-7', 'col-xs-8'),
-  classNames('col-sm-3', 'col-xs-4'),
   classNames('col-sm-2', 'hidden-xs'),
+  classNames('col-sm-3', 'col-xs-4'),
   Kebab.columnClass,
 ];
 
@@ -698,12 +726,12 @@ const AlertTableRow: React.FC<AlertTableRowProps> = ({ obj, index, key, style })
           {annotations.description || annotations.message}
         </div>
       </TableData>
-      <TableData className={tableAlertClasses[1]}>
+      <TableData className={classNames(tableAlertClasses[1], 'co-truncate')}>
+        <Severity severity={labels?.severity} />
+      </TableData>
+      <TableData className={tableAlertClasses[2]}>
         <AlertState state={state} />
         <AlertStateDescription alert={obj} />
-      </TableData>
-      <TableData className={classNames(tableAlertClasses[2], 'co-truncate')}>
-        {_.startCase(_.get(labels, 'severity')) || '-'}
       </TableData>
       <TableData className={tableAlertClasses[3]}>
         <Kebab
@@ -733,14 +761,14 @@ const AlertTableHeader = () => [
     props: { className: tableAlertClasses[0] },
   },
   {
-    title: 'State',
-    sortFunc: 'alertStateOrder',
+    title: 'Severity',
+    sortField: 'labels.severity',
     transforms: [sortable],
     props: { className: tableAlertClasses[1] },
   },
   {
-    title: 'Severity',
-    sortField: 'labels.severity',
+    title: 'State',
+    sortFunc: 'alertStateOrder',
     transforms: [sortable],
     props: { className: tableAlertClasses[2] },
   },
