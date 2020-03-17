@@ -12,6 +12,7 @@ import {
   TableRow,
   TableData,
 } from '@console/internal/components/factory';
+import { Conditions } from '@console/internal/components/conditions';
 import {
   SectionHeading,
   MsgBox,
@@ -315,6 +316,10 @@ export const InstallPlanDetails: React.SFC<InstallPlanDetailsProps> = ({ obj }) 
             </div>
           </div>
         </div>
+      </div>
+      <div className="co-m-pane__body">
+        <SectionHeading text="Conditions" />
+        <Conditions conditions={obj.status?.conditions} />
       </div>
     </>
   );
