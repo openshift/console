@@ -19,7 +19,8 @@ import {
   referenceForGroupVersionKind,
 } from '@console/internal/module/k8s';
 import { CRDDescription, ClusterServiceVersionKind } from '../types';
-import { referenceForProvidedAPI, providedAPIsFor, OperandLink } from './index';
+import { referenceForProvidedAPI, providedAPIsFor } from './index';
+import { OperandLink } from './operand-link';
 
 const tableColumnClasses = [
   classNames('col-lg-4', 'col-md-4', 'col-sm-4', 'col-xs-6'),

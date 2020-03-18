@@ -54,7 +54,8 @@ import { StatusDescriptor } from './descriptors/status';
 import { SpecDescriptor } from './descriptors/spec';
 import { StatusCapability, Descriptor } from './descriptors/types';
 import { Resources } from './k8s-resource';
-import { referenceForProvidedAPI, OperandLink } from './index';
+import { referenceForProvidedAPI } from './index';
+import { OperandLink } from './operand-link';
 import { FlagsObject, connectToFlags, WithFlagsProps } from '@console/internal/reducers/features';
 
 const csvName = () =>

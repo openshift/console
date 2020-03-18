@@ -5,6 +5,8 @@
   flex-shrink: 0;
   transition: opacity 175ms ease-out, transform 225ms ease-out;
   border-top: 1px solid var(--pf-global--palette--black-400);
+  display: flex;
+  flex-direction: column;
 
   &__drag-handle {
     width: 100%;
@@ -18,9 +20,15 @@
   }
 
   &__header {
-    padding: 4px;
     height: var(--pf-global--target-size--MinHeight);
     background-color: var(--pf-global--palette--black-200);
+    display: flex;
+    align-items: center;
+  }
+
+  &__body {
+    position: relative;
+    flex-grow: 1;
   }
 
   &-appear {
