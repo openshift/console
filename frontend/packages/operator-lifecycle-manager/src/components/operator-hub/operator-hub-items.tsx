@@ -24,7 +24,13 @@ import * as operatorLogo from '@console/internal/imgs/operator.svg';
 import { SubscriptionModel } from '../../models';
 import { OperatorHubItemDetails } from './operator-hub-item-details';
 import { communityOperatorWarningModal } from './operator-hub-community-provider-modal';
-import { OperatorHubItem, InstalledState, ProviderType, CapabilityLevel } from './index';
+import {
+  OperatorHubItem,
+  InstalledState,
+  ProviderType,
+  CapabilityLevel,
+  InfraFeatures,
+} from './index';
 
 const osBaseLabel = 'operatorframework.io/os.';
 const targetGOOSLabel = window.SERVER_FLAGS.GOOS ? `${osBaseLabel}${window.SERVER_FLAGS.GOOS}` : '';
@@ -83,13 +89,20 @@ const badge = (text: string) => (
 /**
  * Filter property white list
  */
-const operatorHubFilterGroups = ['providerType', 'provider', 'installState', 'capabilityLevel'];
+const operatorHubFilterGroups = [
+  'providerType',
+  'provider',
+  'installState',
+  'capabilityLevel',
+  'infraFeatures',
+];
 
 const operatorHubFilterMap = {
   providerType: 'Provider Type',
   provider: 'Provider',
   installState: 'Install State',
   capabilityLevel: 'Capability Level',
+  infraFeatures: 'Infrastructure Features',
 };
 
 const COMMUNITY_PROVIDER_TYPE = 'Community';
@@ -190,6 +203,19 @@ const capabilityLevelSort = (provider) => {
   }
 };
 
+const infraFeaturesSort = (infrastructure) => {
+  switch (infrastructure.value) {
+    case InfraFeatures.Disconnected:
+      return 0;
+    case InfraFeatures.Proxy:
+      return 1;
+    case InfraFeatures.FipsMode:
+      return 2;
+    default:
+      return 3;
+  }
+};
+
 const sortFilterValues = (values, field) => {
   let sorter: any = ['value'];
 
@@ -207,6 +233,10 @@ const sortFilterValues = (values, field) => {
 
   if (field === 'capabilityLevel') {
     sorter = capabilityLevelSort;
+  }
+
+  if (field === 'infraFeatures') {
+    sorter = infraFeaturesSort;
   }
 
   return _.sortBy(values, sorter);
@@ -238,7 +268,7 @@ const determineAvailableFilters = (initialFilters, items, filterGroups) => {
         value = getProviderValue(value);
         synonyms = _.map(ignoredProviderTails, (tail) => `${value}${tail}`);
       }
-      if (value !== undefined) {
+      if (value !== undefined && !Array.isArray(value)) {
         if (!_.some(values, { value })) {
           values.push({
             label: value,
@@ -247,6 +277,19 @@ const determineAvailableFilters = (initialFilters, items, filterGroups) => {
             active: false,
           });
         }
+      }
+
+      if (Array.isArray(value)) {
+        _.each(value, (v) => {
+          if (!_.some(values, { v })) {
+            values.push({
+              label: v,
+              synonyms,
+              value: v,
+              active: false,
+            });
+          }
+        });
       }
     });
 

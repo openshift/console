@@ -737,6 +737,8 @@ export const operatorHubTileViewPageProps = {
       categories: ['messaging', 'streaming'],
       catalogSource: 'testing',
       catalogSourceNamespace: 'openshift-marketplace',
+      validSubscription: undefined,
+      infraFeatures: undefined,
     },
     {
       obj: etcdPackageManifest,
@@ -762,6 +764,8 @@ export const operatorHubTileViewPageProps = {
       categories: ['database'],
       catalogSource: 'testing',
       catalogSourceNamespace: 'openshift-marketplace',
+      validSubscription: undefined,
+      infraFeatures: undefined,
     },
     {
       obj: federationv2PackageManifest,
@@ -787,6 +791,8 @@ export const operatorHubTileViewPageProps = {
       categories: [],
       catalogSource: 'testing',
       catalogSourceNamespace: 'openshift-marketplace',
+      validSubscription: undefined,
+      infraFeatures: undefined,
     },
     {
       obj: prometheusPackageManifest,
@@ -811,6 +817,8 @@ export const operatorHubTileViewPageProps = {
       categories: ['monitoring', 'alerting'],
       catalogSource: 'testing',
       catalogSourceNamespace: 'openshift-marketplace',
+      validSubscription: undefined,
+      infraFeatures: undefined,
     },
     {
       obj: svcatPackageManifest,
@@ -836,6 +844,8 @@ export const operatorHubTileViewPageProps = {
       categories: ['catalog'],
       catalogSource: 'testing',
       catalogSourceNamespace: 'openshift-marketplace',
+      validSubscription: undefined,
+      infraFeatures: undefined,
     },
   ] as OperatorHubItem[],
   openOverlay: null,
@@ -869,6 +879,8 @@ export const operatorHubTileViewPagePropsWithDummy = {
       categories: ['dummy'],
       catalogSource: 'testing',
       catalogSourceNamespace: 'openshift-marketplace',
+      validSubscription: undefined,
+      infraFeatures: undefined,
     },
   ],
   openOverlay: null,
@@ -984,4 +996,6 @@ export const itemWithLongDescription = {
   categories: ['messaging', 'streaming'],
   catalogSource: 'testing',
   catalogSourceNamespace: 'openshift-marketplace',
+  validSubscription: undefined,
+  infraFeatures: undefined,
 };

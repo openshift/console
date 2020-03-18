@@ -21,6 +21,12 @@ export enum CapabilityLevel {
   DeepInsights = 'Deep Insights',
 }
 
+export enum InfraFeatures {
+  Disconnected = 'Disconnected',
+  Proxy = 'Proxy',
+  FipsMode = 'FIPS Mode',
+}
+
 export type OperatorHubItem = {
   obj: PackageManifestKind;
   name: string;
@@ -38,6 +44,8 @@ export type OperatorHubItem = {
   catalogSource: string;
   catalogSourceNamespace: string;
   [key: string]: any;
+  validSubscription: string[];
+  infraFeatures: InfraFeatures[];
 };
 
 export type OperatorHubCSVAnnotations = {
@@ -53,6 +61,9 @@ export type OperatorHubCSVAnnotations = {
   'marketplace.openshift.io/action-text'?: string;
   'marketplace.openshift.io/remote-workflow'?: string;
   'marketplace.openshift.io/support-workflow'?: string;
+  tags?: string[];
+  'operators.openshift.io/infrastructure-features'?: string;
+  'operators.openshift.io/valid-subscription'?: string;
 };
 
 type OperatorHubSpec = {
