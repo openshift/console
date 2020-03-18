@@ -260,6 +260,18 @@ $catalog-tile-width: $co-m-catalog-tile-width;
     // TODO: find fix for urls that don't wrap
     // fix below causes undesirable wrapping on non-urls
     // word-break: break-all;
+    h1, h2, h3 {
+      color: #333; // same color as styles hardcoded in markdown text component
+    }
+
+    h2 {
+      font-size: 20px;
+    }
+
+    p, li, ol {
+      color: #333; // same color as styles hardcoded in markdown text component
+      font-size: $font-size-base !important;
+    }
 
     @media(min-width: $screen-sm-min) {
         flex: 1 1 auto;
