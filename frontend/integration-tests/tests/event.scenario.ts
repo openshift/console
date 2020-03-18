@@ -3,7 +3,7 @@ import { appHost, checkLogs, checkErrors, testName } from '../protractor.conf';
 import { execSync } from 'child_process';
 
 describe('Events', () => {
-  const name = `${testName}-pod`;
+  const name = `${testName}-event-test-pod`;
   const testpod = {
     apiVersion: 'v1',
     kind: 'Pod',
