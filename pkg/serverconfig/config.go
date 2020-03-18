@@ -140,16 +140,16 @@ func addProviders(fs *flag.FlagSet, providers *Providers) {
 
 func addMonitoringInfo(fs *flag.FlagSet, monitoring *MonitoringInfo) {
 	if monitoring.AlertmanagerPublicURL != "" {
-		fs.Set("alermanager-url", monitoring.AlertmanagerPublicURL)
+		fs.Set("alermanager-public-url", monitoring.AlertmanagerPublicURL)
 	}
 	if monitoring.GrafanaPublicURL != "" {
-		fs.Set("grafana-url", monitoring.GrafanaPublicURL)
+		fs.Set("grafana-public-url", monitoring.GrafanaPublicURL)
 	}
 	if monitoring.PrometheusPublicURL != "" {
-		fs.Set("prometheus-url", monitoring.PrometheusPublicURL)
+		fs.Set("prometheus-public-url", monitoring.PrometheusPublicURL)
 	}
 	if monitoring.ThanosPublicURL != "" {
-		fs.Set("thanos-url", monitoring.ThanosPublicURL)
+		fs.Set("thanos-public-url", monitoring.ThanosPublicURL)
 	}
 }
 
