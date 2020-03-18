@@ -33,7 +33,6 @@ export const modalConfirmButton = $('#confirm-action');
 
 // YAML form
 export const successAlert = $('.pf-m-success');
-export const helpText = $('.co-help-text');
 
 // Configuration Overview
 export const alertRoutingHeader = $('[data-test-section-heading="Alert Routing"]');

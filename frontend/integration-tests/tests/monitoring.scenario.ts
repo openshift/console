@@ -116,9 +116,7 @@ describe('Monitoring: Silences', () => {
     await sidenavView.clickNavLink(['Monitoring', 'Alerting']);
     await crudView.isLoaded();
     await horizontalnavView.clickHorizontalTab('Silences');
-    expect(monitoringView.helpText.getText()).toContain(
-      'Silences temporarily mute alerts based on a set of conditions',
-    );
+    await monitoringView.wait(until.presenceOf(monitoringView.createButton));
   });
 
   it('does not have a namespace dropdown', async () => {
