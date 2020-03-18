@@ -80,8 +80,9 @@ const EventSource: React.FC<Props> = ({ namespace, projects, activeApplication, 
       onSubmit={handleSubmit}
       onReset={history.goBack}
       validationSchema={eventSourceValidationSchema}
-      render={(props) => <EventSourceForm {...props} projects={projects} services={ksservices} />}
-    />
+    >
+      {(props) => <EventSourceForm {...props} projects={projects} services={ksservices} />}
+    </Formik>
   );
 };
 

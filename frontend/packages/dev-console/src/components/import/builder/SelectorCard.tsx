@@ -4,22 +4,22 @@ import { Card, CardHeader, CardBody } from '@patternfly/react-core';
 import { StarIcon } from '@patternfly/react-icons';
 import { BuilderImage } from '../../../utils/imagestream-utils';
 
-import './BuilderImageCard.scss';
+import './SelectorCard.scss';
 
-export interface BuilderImageCardProps {
+export interface SelectorCardProps {
   image: BuilderImage;
   selected: boolean;
   recommended?: boolean;
   onChange: (name: string) => void;
 }
 
-const BuilderImageCard: React.FC<BuilderImageCardProps> = ({
+const SelectorCard: React.FC<SelectorCardProps> = ({
   image,
   selected,
   recommended = false,
   onChange,
 }) => {
-  const classes = classNames('odc-builder-image-card', { 'is-selected': selected });
+  const classes = classNames('odc-selector-card', { 'is-selected': selected });
   return (
     <Card
       component="button"
@@ -29,13 +29,13 @@ const BuilderImageCard: React.FC<BuilderImageCardProps> = ({
       onClick={() => onChange(image.name)}
     >
       <CardHeader>
-        <img className="odc-builder-image-card__icon" src={image.iconUrl} alt={image.displayName} />
+        <img className="odc-selector-card__icon" src={image.iconUrl} alt={image.displayName} />
       </CardHeader>
       <CardBody>
-        <span className="odc-builder-image-card__title">{image.title}</span>
+        <span className="odc-selector-card__title">{image.title}</span>
       </CardBody>
       {recommended && (
-        <span className="odc-builder-image-card__recommended">
+        <span className="odc-selector-card__recommended">
           <StarIcon />
         </span>
       )}
@@ -43,4 +43,4 @@ const BuilderImageCard: React.FC<BuilderImageCardProps> = ({
   );
 };
 
-export default BuilderImageCard;
+export default SelectorCard;

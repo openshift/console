@@ -6,7 +6,7 @@ import { FormGroup, Alert } from '@patternfly/react-core';
 import { StarIcon } from '@patternfly/react-icons';
 import { getFieldId } from '@console/shared';
 import { NormalizedBuilderImages } from '../../../utils/imagestream-utils';
-import BuilderImageCard from './BuilderImageCard';
+import SelectorCard from './SelectorCard';
 import './BuilderImageSelector.scss';
 
 export interface BuilderImageSelectorProps {
@@ -86,7 +86,7 @@ const BuilderImageSelector: React.FC<BuilderImageSelectorProps> = ({
       ) : (
         <div id="builder-image-selector-field" className="odc-builder-image-selector">
           {_.values(builderImages).map((image) => (
-            <BuilderImageCard
+            <SelectorCard
               key={image.name}
               image={image}
               selected={selected.value === image.name}
