@@ -211,14 +211,14 @@ const Severity: React.FC<{ severity?: string }> = ({ severity }) => {
       </>
     );
   }
-  if (severity === 'warning') {
-    return (
-      <>
-        <YellowExclamationTriangleIcon /> Warning
-      </>
-    );
+  if (severity === 'none') {
+    return <>None</>;
   }
-  return <>{_.startCase(severity) || '-'}</>;
+  return (
+    <>
+      <YellowExclamationTriangleIcon /> {_.startCase(severity) || '-'}
+    </>
+  );
 };
 
 const Annotation = ({ children, title }) =>
