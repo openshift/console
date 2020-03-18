@@ -149,7 +149,7 @@ export const OperandTableHeader = () => {
     },
     {
       title: 'Status',
-      sortField: 'status.phase',
+      sortFunc: 'operandStatus',
       transforms: [sortable],
       props: { className: tableColumnClasses[2] },
     },
@@ -248,6 +248,25 @@ export const OperandStatusIconAndText: React.FunctionComponent<OperandStatusIcon
   return iconAndText;
 };
 
+const getSortableOperandStatus = (statusObject: K8sResourceKind['status']) => {
+  let statusText = 'Unknown';
+  if (_.isEmpty(statusObject)) {
+    return statusText;
+  }
+  _.find(Object.keys(OperatorStatusType), (key) => {
+    if (_.has(statusObject, key)) {
+      const status = statusObject[key];
+      const statusSubText = key === OperatorStatusType.conditions ? status[0]?.type : status;
+      if (statusSubText) {
+        return (statusText = `${OperatorStatusTypeText[key]}${statusSubText}`);
+      }
+    }
+    return false;
+  });
+
+  return statusText;
+};
+
 export const OperandTableRow: React.FC<OperandTableRowProps> = ({
   obj,
   index,
@@ -316,6 +335,10 @@ export const OperandList_: React.FC<OperandListProps & WithFlagsProps> = (props)
   return (
     <Table
       {...props}
+      customSorts={{
+        operandStatus: (operand: K8sResourceKind): string =>
+          getSortableOperandStatus(operand.status),
+      }}
       data={ensureKind(props.data)}
       EmptyMsg={EmptyMsg}
       aria-label="Operands"
