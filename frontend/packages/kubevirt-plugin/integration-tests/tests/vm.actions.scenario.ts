@@ -12,9 +12,10 @@ import {
   removeLeakedResources,
   removeLeakableResource,
   waitForCount,
+  fillInput,
 } from '@console/shared/src/test-utils/utils';
 import { getVMManifest } from './utils/mocks';
-import { fillInput, pauseVM } from './utils/utils';
+import { pauseVM } from './utils/utils';
 import {
   VM_BOOTUP_TIMEOUT_SECS,
   VM_ACTIONS_TIMEOUT_SECS,

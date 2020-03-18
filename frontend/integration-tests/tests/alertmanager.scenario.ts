@@ -3,6 +3,7 @@ import * as _ from 'lodash';
 import { safeLoad } from 'js-yaml';
 
 import { checkLogs, checkErrors, firstElementByTestID, appHost } from '../protractor.conf';
+import { fillInput } from '@console/shared/src/test-utils/utils';
 import { dropdownMenuForTestID } from '../views/form.view';
 import {
   AlertmanagerConfig,
@@ -13,12 +14,6 @@ import * as yamlView from '../views/yaml.view';
 import * as monitoringView from '../views/monitoring.view';
 import * as horizontalnavView from '../views/horizontal-nav.view';
 import { execSync } from 'child_process';
-
-const replaceInput = async (fieldName: string, value: string) => {
-  await browser.wait(until.elementToBeClickable(firstElementByTestID(fieldName)));
-  await firstElementByTestID(fieldName).clear();
-  await firstElementByTestID(fieldName).sendKeys(value);
-};
 
 const getGlobalsAndReceiverConfig = (configName: string, yamlStr: string) => {
   const config: AlertmanagerConfig = safeLoad(yamlStr);
@@ -77,7 +72,10 @@ describe('Alertmanager: PagerDuty Receiver Form', () => {
     expect(monitoringView.saveAsDefault.isEnabled()).toBeFalsy();
 
     // changing url, enables monitoringView.saveAsDefault unchecked, should save pagerduty_url with Receiver
-    await replaceInput('pagerduty-url', 'http://pagerduty-url-specific-to-receiver');
+    await fillInput(
+      firstElementByTestID('pagerduty-url'),
+      'http://pagerduty-url-specific-to-receiver',
+    );
     expect(monitoringView.saveAsDefault.isEnabled()).toBeTruthy();
     expect(monitoringView.saveAsDefault.getAttribute('checked')).toBeFalsy();
     await monitoringView.saveButton.click();
@@ -94,7 +92,7 @@ describe('Alertmanager: PagerDuty Receiver Form', () => {
     // save pagerduty_url as default/global
     await browser.get(`${appHost}/monitoring/alertmanagerconfig/receivers/MyReceiver/edit`);
     await browser.wait(until.presenceOf(firstElementByTestID('cancel')));
-    await replaceInput('pagerduty-url', 'http://global-pagerduty-url');
+    await fillInput(firstElementByTestID('pagerduty-url'), 'http://global-pagerduty-url');
     await crudView.isLoaded();
     expect(monitoringView.saveAsDefault.isEnabled()).toBeTruthy();
     monitoringView.saveAsDefault.click();
@@ -113,7 +111,10 @@ describe('Alertmanager: PagerDuty Receiver Form', () => {
     // save pagerduty url to receiver with an existing global
     await browser.get(`${appHost}/monitoring/alertmanagerconfig/receivers/MyReceiver/edit`);
     await browser.wait(until.presenceOf(firstElementByTestID('cancel')));
-    await replaceInput('pagerduty-url', 'http://pagerduty-url-specific-to-receiver');
+    await fillInput(
+      firstElementByTestID('pagerduty-url'),
+      'http://pagerduty-url-specific-to-receiver',
+    );
     expect(monitoringView.saveAsDefault.isEnabled()).toBeTruthy();
     expect(monitoringView.saveAsDefault.getAttribute('checked')).toBeFalsy();
     await monitoringView.saveButton.click();
@@ -146,7 +147,7 @@ describe('Alertmanager: Email Receiver Form', () => {
     await crudView.isLoaded();
     await firstElementByTestID('create-receiver').click();
     await crudView.isLoaded();
-    await replaceInput('receiver-name', 'MyReceiver');
+    await fillInput(firstElementByTestID('receiver-name'), 'MyReceiver');
     await firstElementByTestID('dropdown-button').click();
     await crudView.isLoaded();
     await dropdownMenuForTestID('email_configs').click();
@@ -158,12 +159,12 @@ describe('Alertmanager: Email Receiver Form', () => {
     expect(firstElementByTestID('email-require-tls').getAttribute('checked')).toBeTruthy();
 
     // change required fields
-    await replaceInput('email-to', 'you@there.com');
-    await replaceInput('email-from', 'me@here.com');
+    await fillInput(firstElementByTestID('email-to'), 'you@there.com');
+    await fillInput(firstElementByTestID('email-from'), 'me@here.com');
     expect(monitoringView.saveAsDefault.isEnabled()).toBeTruthy(); // monitoringView.saveAsDefault enabled
-    await replaceInput('email-smarthost', 'smarthost:8080');
-    await replaceInput('label-name-0', 'severity');
-    await replaceInput('label-value-0', 'warning');
+    await fillInput(firstElementByTestID('email-smarthost'), 'smarthost:8080');
+    await fillInput(firstElementByTestID('label-name-0'), 'severity');
+    await fillInput(firstElementByTestID('label-value-0'), 'warning');
     await monitoringView.saveButton.click();
     await crudView.isLoaded();
 
@@ -194,10 +195,10 @@ describe('Alertmanager: Email Receiver Form', () => {
     expect(firstElementByTestID('email-hello').getAttribute('value')).toEqual('localhost');
 
     // Change All Remaining Fields
-    await replaceInput('email-auth-username', 'username');
-    await replaceInput('email-auth-password', 'password');
-    await replaceInput('email-auth-identity', 'identity');
-    await replaceInput('email-auth-secret', 'secret');
+    await fillInput(firstElementByTestID('email-auth-username'), 'username');
+    await fillInput(firstElementByTestID('email-auth-password'), 'password');
+    await fillInput(firstElementByTestID('email-auth-identity'), 'identity');
+    await fillInput(firstElementByTestID('email-auth-secret'), 'secret');
     await firstElementByTestID('email-require-tls').click();
 
     await monitoringView.saveButton.click(); // monitoringView.saveAsDefault not checked, so all should be saved with Reciever
@@ -256,7 +257,7 @@ describe('Alertmanager: Slack Receiver Form', () => {
     await crudView.isLoaded();
     await firstElementByTestID('create-receiver').click();
     await crudView.isLoaded();
-    await replaceInput('receiver-name', 'MyReceiver');
+    await fillInput(firstElementByTestID('receiver-name'), 'MyReceiver');
     await firstElementByTestID('dropdown-button').click();
     await crudView.isLoaded();
     await dropdownMenuForTestID('slack_configs').click();
@@ -266,11 +267,11 @@ describe('Alertmanager: Slack Receiver Form', () => {
     expect(monitoringView.saveAsDefault.isEnabled()).toBeFalsy();
 
     // change required fields
-    await replaceInput('slack-api-url', 'http://myslackapi');
+    await fillInput(firstElementByTestID('slack-api-url'), 'http://myslackapi');
     expect(monitoringView.saveAsDefault.isEnabled()).toBeTruthy(); // monitoringView.saveAsDefault enabled
-    await replaceInput('slack-channel', 'myslackchannel');
-    await replaceInput('label-name-0', 'severity');
-    await replaceInput('label-value-0', 'warning');
+    await fillInput(firstElementByTestID('slack-channel'), 'myslackchannel');
+    await fillInput(firstElementByTestID('label-name-0'), 'severity');
+    await fillInput(firstElementByTestID('label-value-0'), 'warning');
     await monitoringView.saveButton.click();
     await crudView.isLoaded();
 
@@ -325,16 +326,16 @@ describe('Alertmanager: Webhook Receiver Form', () => {
     await crudView.isLoaded();
     await firstElementByTestID('create-receiver').click();
     await crudView.isLoaded();
-    await replaceInput('receiver-name', 'MyReceiver');
+    await fillInput(firstElementByTestID('receiver-name'), 'MyReceiver');
     await firstElementByTestID('dropdown-button').click();
     await crudView.isLoaded();
     await dropdownMenuForTestID('webhook_configs').click();
     await crudView.isLoaded();
 
     // change required fields
-    await replaceInput('webhook-url', 'http://mywebhookurl');
-    await replaceInput('label-name-0', 'severity');
-    await replaceInput('label-value-0', 'warning');
+    await fillInput(firstElementByTestID('webhook-url'), 'http://mywebhookurl');
+    await fillInput(firstElementByTestID('label-name-0'), 'severity');
+    await fillInput(firstElementByTestID('label-value-0'), 'warning');
     await monitoringView.saveButton.click();
     await crudView.isLoaded();
 
@@ -354,7 +355,7 @@ describe('Alertmanager: Webhook Receiver Form', () => {
     expect(firstElementByTestID('webhook-url').getAttribute('value')).toEqual(
       'http://mywebhookurl',
     );
-    await replaceInput('webhook-url', 'http://myupdatedwebhookurl');
+    await fillInput(firstElementByTestID('webhook-url'), 'http://myupdatedwebhookurl');
     await monitoringView.saveButton.click();
     await crudView.isLoaded();
     await horizontalnavView.clickHorizontalTab('YAML');

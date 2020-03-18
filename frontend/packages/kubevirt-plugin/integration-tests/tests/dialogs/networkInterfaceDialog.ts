@@ -1,6 +1,6 @@
-import { click } from '@console/shared/src/test-utils/utils';
+import { click, fillInput } from '@console/shared/src/test-utils/utils';
 import * as view from '../../views/dialogs/networkInterface.view';
-import { fillInput, selectOptionByText, getSelectOptions } from '../utils/utils';
+import { selectOptionByText, getSelectOptions } from '../utils/utils';
 import { NetworkResource } from '../utils/types';
 import { modalSubmitButton, saveButton } from '../../views/kubevirtDetailView.view';
 import { waitForNoLoaders } from '../../views/wizard.view';

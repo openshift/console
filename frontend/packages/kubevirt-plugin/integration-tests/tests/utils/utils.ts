@@ -19,22 +19,6 @@ import {
 import { STORAGE_CLASS, PAGE_LOAD_TIMEOUT_SECS, SEC } from './consts';
 import { NodePortService } from './types';
 
-export async function fillInput(elem: any, value: string) {
-  // Sometimes there seems to be an issue with clear() method not clearing the input
-  let attempts = 3;
-  do {
-    --attempts;
-    if (attempts < 0) {
-      throw Error(`Failed to fill input with value: '${value}'.`);
-    }
-    await browser.wait(until.and(until.presenceOf(elem), until.elementToBeClickable(elem)));
-    // TODO: line below can be removed when pf4 tables in use.
-    await elem.click();
-    await elem.clear();
-    await elem.sendKeys(value);
-  } while ((await elem.getAttribute('value')) !== value && attempts > 0);
-}
-
 export async function setCheckboxState(elem: any, targetState: boolean) {
   const checkboxState = await elem.isSelected();
   if (checkboxState !== targetState) {

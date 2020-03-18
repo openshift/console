@@ -5,6 +5,7 @@ import {
   createResource,
   removeLeakedResources,
   removeLeakableResource,
+  fillInput,
 } from '@console/shared/src/test-utils/utils';
 import {
   resourceRowsPresent,
@@ -15,7 +16,6 @@ import { getVMManifest, getVMIManifest } from './utils/mocks';
 import { VM_STATUS } from './utils/consts';
 import { filterBoxCount } from '../views/vms.list.view';
 import { VirtualMachine } from './models/virtualMachine';
-import { fillInput } from './utils/utils';
 
 const waitForVM = async (
   manifest: any,

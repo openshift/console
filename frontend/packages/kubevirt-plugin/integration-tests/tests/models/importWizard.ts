@@ -1,10 +1,10 @@
 import { browser, ExpectedConditions as until } from 'protractor';
 import { createItemButton, isLoaded } from '@console/internal-integration-tests/views/crud.view';
-import { click, asyncForEach } from '@console/shared/src/test-utils/utils';
+import { click, fillInput, asyncForEach } from '@console/shared/src/test-utils/utils';
 import { NetworkInterfaceDialog } from '../dialogs/networkInterfaceDialog';
 import { DiskDialog } from '../dialogs/diskDialog';
 import { tableRows, saveButton } from '../../views/kubevirtDetailView.view';
-import { fillInput, selectOptionByText, setCheckboxState } from '../utils/utils';
+import { selectOptionByText, setCheckboxState } from '../utils/utils';
 import {
   POD_CREATION_TIMEOUT_SECS,
   V2V_INSTANCE_CONNECTION_TIMEOUT,
