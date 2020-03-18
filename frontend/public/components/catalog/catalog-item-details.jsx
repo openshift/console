@@ -35,6 +35,7 @@ export class CatalogTileDetails extends React.Component {
       obj,
       kind,
       tileProvider,
+      markdownDescription,
       tileDescription,
       supportUrl,
       longDescription,
@@ -77,7 +78,8 @@ export class CatalogTileDetails extends React.Component {
               </PropertiesSidePanel>
               <div className="co-catalog-page__overlay-description">
                 <SectionHeading text="Description" />
-                {tileDescription && <SyncMarkdownView content={tileDescription} />}
+                {tileDescription && <p>{tileDescription}</p>}
+                {markdownDescription && <SyncMarkdownView content={markdownDescription} />}
                 {longDescription && <p>{longDescription}</p>}
                 {sampleRepo && <p>Sample repository: {sampleRepoLink}</p>}
                 {documentationUrl && (
