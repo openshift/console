@@ -22,9 +22,10 @@ import {
 } from './volume';
 import { vCPUCount } from './cpu';
 import { getVMIDisks } from '../vmi/basic';
-import { VirtualMachineModel } from '../../models';
+import { VirtualMachineModel, VirtualMachineInstanceModel } from '../../models';
 import { V1Volume } from '../../types/vm/disk/V1Volume';
 import { VMGenericLikeEntityKind, VMILikeEntityKind } from '../../types/vmLike';
+import { asVM } from './vmlike';
 
 export const getMemory = (vm: VMKind) =>
   _.get(vm, 'spec.template.spec.domain.resources.requests.memory');
@@ -149,3 +150,8 @@ export const getStorageClassNameByDisk = (vm: VMKind, diskName: string) =>
   getDataVolumeStorageClassName(
     getDataVolumeTemplates(vm).find((vol) => getName(vol).includes(diskName)),
   );
+
+export const getNodeSelector = (vm: VMGenericLikeEntityKind) =>
+  vm.kind === VirtualMachineInstanceModel.kind
+    ? (vm as VMIKind)?.spec?.nodeSelector
+    : asVM(vm)?.spec?.template?.spec?.nodeSelector;

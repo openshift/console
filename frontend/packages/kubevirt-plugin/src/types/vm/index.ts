@@ -11,7 +11,7 @@ export type VMISpec = {
   hostname: string;
   livenessProbe: any;
   networks?: any[];
-  nodeSelector: any;
+  nodeSelector: NodeSelector;
   readinessProbe: any;
   subdomain: string;
   terminationGracePeriodSeconds: number;
@@ -91,4 +91,8 @@ export type V1Network = {
   };
   pod?: {};
   genie?: {};
+};
+
+export type NodeSelector = {
+  [key: string]: string;
 };

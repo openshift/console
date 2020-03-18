@@ -1,5 +1,10 @@
 import * as React from 'react';
-import { ResourceSummary, NodeLink, ResourceLink } from '@console/internal/components/utils';
+import {
+  ResourceSummary,
+  NodeLink,
+  ResourceLink,
+  LabelList,
+} from '@console/internal/components/utils';
 import { K8sKind, PodKind, TemplateKind } from '@console/internal/module/k8s';
 import { getName, getNamespace, getNodeName } from '@console/shared';
 import { PodModel } from '@console/internal/models';
@@ -10,6 +15,7 @@ import { vmDescriptionModal, vmFlavorModal } from '../modals';
 import { VMCDRomModal } from '../modals/cdrom-vm-modal/vm-cdrom-modal';
 import { DedicatedResourcesModal } from '../modals/dedicated-resources-modal/dedicated-resources-modal';
 import { BootOrderModal } from '../modals/boot-order-modal/boot-order-modal';
+import nodeSelectorModal from '../modals/scheduling-modals/node-selector-modal';
 import VMStatusModal from '../modals/vm-status-modal/vm-status-modal';
 import { getDescription } from '../../selectors/selectors';
 import { getFlavorText } from '../flavor-text';
@@ -28,9 +34,9 @@ import { findVMIPod } from '../../selectors/pod/selectors';
 import { isVMIPaused, getVMINodeName } from '../../selectors/vmi';
 import { VirtualMachineInstanceModel, VirtualMachineModel } from '../../models';
 import { asVMILikeWrapper } from '../../k8s/wrapper/utils/convert';
-
-import './vm-resource.scss';
 import { getVMTemplate } from '../../selectors/vm-template/selectors';
+import { NODE_SELECTOR_MODAL_TITLE } from '../modals/scheduling-modals/shared/consts';
+import './vm-resource.scss';
 
 export const VMDetailsItem: React.FC<VMDetailsItemProps> = ({
   title,
@@ -215,6 +221,7 @@ export const VMSchedulingList: React.FC<VMSchedulingListProps> = ({
   const [isDedicatedResourcesModalOpen, setDedicatedResourcesModalOpen] = React.useState<boolean>(
     false,
   );
+
   const id = getBasicID(vmiLike);
   const flavorText = getFlavorText({
     memory: vmiLikeWrapper?.getMemory(),
@@ -222,9 +229,20 @@ export const VMSchedulingList: React.FC<VMSchedulingListProps> = ({
     flavor: vmiLikeWrapper?.getFlavor(),
   });
   const isCPUPinned = vmiLikeWrapper?.isDedicatedCPUPlacement();
+  const nodeSelector = vmiLikeWrapper?.getNodeSelector();
 
   return (
     <dl className="co-m-pane__details">
+      <VMDetailsItem
+        canEdit={canEdit}
+        title={NODE_SELECTOR_MODAL_TITLE}
+        idValue={prefixedID(id, 'node-selector')}
+        editButtonId={prefixedID(id, 'node-selectors-edit')}
+        onEditClick={() => nodeSelectorModal({ vmLikeEntity: vm, blocking: true })}
+      >
+        <LabelList kind="Node" labels={nodeSelector} />
+      </VMDetailsItem>
+
       <VMDetailsItem
         title="Flavor"
         idValue={prefixedID(id, 'flavor')}
