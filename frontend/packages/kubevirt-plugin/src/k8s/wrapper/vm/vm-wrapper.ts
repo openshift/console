@@ -93,9 +93,11 @@ export class VMWrapper extends K8sResourceWrapper<VMKind, VMWrapper> implements 
     return this;
   };
 
-  setMemory = (value: string, unit = 'Gi') => {
+  setMemory = (value: string, suffix?: string) => {
     this.ensurePath('spec.template.spec.domain.resources.requests');
-    this.data.spec.template.spec.domain.resources.requests.memory = `${value}${unit}`;
+    this.data.spec.template.spec.domain.resources.requests.memory = suffix
+      ? `${value}${suffix}`
+      : value;
     return this;
   };
 

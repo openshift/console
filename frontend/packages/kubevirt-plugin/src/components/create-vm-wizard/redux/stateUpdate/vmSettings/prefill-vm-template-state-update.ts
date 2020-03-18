@@ -37,14 +37,14 @@ import {
   getNetworks,
   getVolumes,
   hasAutoAttachPodInterface,
-  parseCPU,
   isWinToolsImage,
+  parseCPU,
 } from '../../../../../selectors/vm';
 import {
   getTemplateFlavors,
+  getTemplateHostname,
   getTemplateOperatingSystems,
   getTemplateWorkloadProfiles,
-  getTemplateHostname,
 } from '../../../../../selectors/vm-template/advanced';
 import { V1Network } from '../../../../../types/vm';
 import { getFlavors } from '../../../../../selectors/vm-template/combined-dependent';
@@ -62,6 +62,7 @@ import { V1alpha1DataVolume } from '../../../../../types/vm/disk/V1alpha1DataVol
 import { joinIDs } from '../../../../../utils';
 import { VM_TEMPLATE_NAME_PARAMETER } from '../../../../../constants/vm-templates';
 import { selectVM } from '../../../../../selectors/vm-template/basic';
+import { convertToHighestUnitFromUnknown } from '../../../../form/size-unit-utils';
 
 export const prefillVmTemplateUpdater = ({ id, dispatch, getState }: UpdateOptions) => {
   const state = getState();
@@ -124,8 +125,10 @@ export const prefillVmTemplateUpdater = ({ id, dispatch, getState }: UpdateOptio
     vmSettingsUpdate[VMSettingsField.FLAVOR] = { value: flavor };
     if (flavor === CUSTOM_FLAVOR) {
       vmSettingsUpdate[VMSettingsField.CPU] = { value: parseCPU(getCPU(vm), DEFAULT_CPU).cores }; // TODO also add sockets + threads
-      const memory = getMemory(vm);
-      vmSettingsUpdate[VMSettingsField.MEMORY] = { value: memory ? parseInt(memory, 10) : null };
+      const memory = convertToHighestUnitFromUnknown(getMemory(vm));
+      vmSettingsUpdate[VMSettingsField.MEMORY] = {
+        value: memory ? memory.str : null,
+      };
     }
 
     // update os

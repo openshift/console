@@ -4,15 +4,9 @@ import {
   ValidationErrorType,
   ValidationObject,
 } from '@console/shared/src/utils/validation';
-import { assureEndsWith, joinGrammaticallyListOfItems, makeSentence } from '@console/shared/src';
 import { VMSettingsField, VMWizardProps, VMWizardTab } from '../../types';
-import {
-  hasVmSettingsChanged,
-  iGetFieldKey,
-  iGetFieldValue,
-  iGetVmSettings,
-  isFieldRequired,
-} from '../../selectors/immutable/vm-settings';
+import { hasVmSettingsChanged, iGetVmSettings } from '../../selectors/immutable/vm-settings';
+import { iGetFieldKey, iGetFieldValue } from '../../selectors/immutable/field';
 import {
   InternalActionType,
   UpdateOptions,
@@ -28,7 +22,7 @@ import {
   VIRTUAL_MACHINE_EXISTS,
   VIRTUAL_MACHINE_TEMPLATE_EXISTS,
 } from '../../../../utils/validations/strings';
-import { getFieldReadableTitle, getFieldTitle } from '../../utils/vm-settings-tab-utils';
+import { getFieldTitle } from '../../utils/renderable-field-utils';
 import { concatImmutableLists, iGet } from '../../../../utils/immutable';
 import {
   checkTabValidityChanged,
@@ -38,12 +32,11 @@ import {
   immutableListToShallowMetadataJS,
 } from '../../selectors/immutable/selectors';
 import { validatePositiveInteger } from '../../../../utils/validations/common';
-import { pluralize } from '../../../../utils/strings';
-import { vmSettingsOrder } from '../initial-state/vm-settings-tab-initial-state';
 import { TemplateValidations } from '../../../../utils/validations/template/template-validations';
 import { combineIntegerValidationResults } from '../../../../utils/validations/template/utils';
-import { getValidationUpdate } from './utils';
+import { getFieldsValidity, getValidationUpdate } from './utils';
 import { getTemplateValidations } from '../../selectors/template';
+import { BinaryUnit, convertToBytes } from '../../../form/size-unit-utils';
 
 const validateVm: VmSettingsValidator = (field, options) => {
   const { getState, id } = options;
@@ -110,13 +103,14 @@ export const validateOperatingSystem: VmSettingsValidator = (field) => {
 };
 
 const memoryValidation: VmSettingsValidator = (field, options): ValidationObject => {
-  const memValueGB = iGetFieldValue(field);
-  if (memValueGB == null || memValueGB === '') {
+  const memValue = iGetFieldValue(field);
+  if (memValue == null || memValue === '' || BinaryUnit[memValue]) {
     return null;
   }
   const { id, getState } = options;
   const state = getState();
-  const memValueBytes = memValueGB * 1024 ** 3;
+  const memValueBytes = convertToBytes(memValue);
+
   const validations = getTemplateValidations(state, id);
   if (validations.length === 0) {
     validations.push(new TemplateValidations()); // add empty validation for positive integer if it is missing one
@@ -132,6 +126,10 @@ const memoryValidation: VmSettingsValidator = (field, options): ValidationObject
       defaultMin: 0,
       isDefaultMinInclusive: false,
     });
+  }
+
+  if (memValue.match(/^[0-9.]+B$/)) {
+    return asValidationObject('Memory must be specified at least in KiB units');
   }
 
   return null;
@@ -199,59 +197,11 @@ export const validateVmSettings = (options: UpdateOptions) => {
   }
 };
 
-const describeFields = (describe: string, fields: string[]) => {
-  if (fields && fields.length > 0) {
-    const describedFields = _.compact(
-      fields
-        .sort((a, b) => {
-          const aValue = vmSettingsOrder[iGetFieldKey(a)];
-          const bValue = vmSettingsOrder[iGetFieldKey(b)];
-
-          if (bValue == null) {
-            return -1;
-          }
-
-          if (aValue == null) {
-            return 1;
-          }
-
-          return aValue - bValue;
-        })
-        .map((field) => getFieldReadableTitle(iGetFieldKey(field))),
-    );
-    return makeSentence(
-      `${assureEndsWith(describe, ' ')}the following ${pluralize(
-        fields.length,
-        'field',
-      )}: ${joinGrammaticallyListOfItems(describedFields)}.`,
-      false,
-    );
-  }
-  return null;
-};
-
 export const setVmSettingsTabValidity = (options: UpdateOptions) => {
   const { id, dispatch, getState } = options;
   const state = getState();
   const vmSettings = iGetVmSettings(state, id);
-
-  // check if all required fields are defined
-  const emptyRequiredFields = vmSettings
-    .filter(
-      (field) => isFieldRequired(field) && !field.get('skipValidation') && !field.get('value'),
-    )
-    .toArray();
-  let error = describeFields('Please fill in', emptyRequiredFields);
-  const hasAllRequiredFilled = emptyRequiredFields.length === 0;
-
-  // check if fields are valid
-  const invalidFields = vmSettings
-    .filter((field) => field.getIn(['validation', 'type']) === ValidationErrorType.Error)
-    .toArray();
-  if (invalidFields.length > 0) {
-    error = describeFields('Please correct', invalidFields);
-  }
-  const isValid = hasAllRequiredFilled && invalidFields.length === 0;
+  const { hasAllRequiredFilled, isValid, error } = getFieldsValidity(vmSettings);
 
   if (
     checkTabValidityChanged(

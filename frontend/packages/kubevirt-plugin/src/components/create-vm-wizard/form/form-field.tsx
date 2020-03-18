@@ -2,14 +2,14 @@ import * as React from 'react';
 import * as _ from 'lodash';
 import { inject } from '@console/internal/components/utils';
 import { ValidationErrorType } from '@console/shared';
-import { getPlaceholder, getFieldId, getFieldTitle } from '../utils/vm-settings-tab-utils';
+import { getPlaceholder, getFieldId, getFieldTitle } from '../utils/renderable-field-utils';
 import { iGetIn } from '../../../utils/immutable';
 import {
   iGetFieldKey,
   iGetFieldValue,
   isFieldDisabled,
   isFieldRequired,
-} from '../selectors/immutable/vm-settings';
+} from '../selectors/immutable/field';
 import { FormFieldContext } from './form-field-context';
 
 export enum FormFieldType {
@@ -18,6 +18,7 @@ export enum FormFieldType {
   SELECT = 'SELECT',
   CHECKBOX = 'CHECKBOX',
   INLINE_CHECKBOX = 'INLINE_CHECKBOX',
+  CUSTOM = 'CUSTOM',
 }
 
 const hasValue = new Set([FormFieldType.TEXT, FormFieldType.TEXT_AREA, FormFieldType.SELECT]);
@@ -26,10 +27,16 @@ const hasIsDisabled = new Set([
   FormFieldType.SELECT,
   FormFieldType.CHECKBOX,
   FormFieldType.INLINE_CHECKBOX,
+  FormFieldType.CUSTOM,
 ]);
 const hasDisabled = new Set([FormFieldType.TEXT_AREA]);
 const hasIsChecked = new Set([FormFieldType.CHECKBOX, FormFieldType.INLINE_CHECKBOX]);
-const hasIsRequired = new Set([FormFieldType.TEXT, FormFieldType.TEXT_AREA, FormFieldType.SELECT]);
+const hasIsRequired = new Set([
+  FormFieldType.TEXT,
+  FormFieldType.TEXT_AREA,
+  FormFieldType.SELECT,
+  FormFieldType.CUSTOM,
+]);
 const hasLabel = new Set([FormFieldType.INLINE_CHECKBOX]);
 
 const setSupported = (fieldType: FormFieldType, supportedTypes: Set<FormFieldType>, value) =>

@@ -28,7 +28,7 @@ export class PersistentVolumeClaimWrapper extends K8sResourceWrapper<
   ) {
     super.init(data);
     const { size, unit, storageClassName } = data;
-    if (size && unit) {
+    if (size != null && unit) {
       this.setSize(size, unit);
     }
     if (storageClassName !== undefined) {

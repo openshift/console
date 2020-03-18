@@ -1,4 +1,8 @@
-import { VMImportProvider, VMSettingsField } from '../../../../components/create-vm-wizard/types';
+import {
+  ImportProvidersField,
+  VMImportProvider,
+  VMSettingsField,
+} from '../../../../components/create-vm-wizard/types';
 import { asSimpleSettings } from '../../../../components/create-vm-wizard/selectors/vm-settings';
 import { VMTemplateWrapper } from '../../../wrapper/vm/vm-template-wrapper';
 import {
@@ -17,9 +21,9 @@ import { initializeVM } from './initialize-vm';
 import { getOS, initializeCommonMetadata, initializeCommonVMMetadata } from './common';
 import { selectVM } from '../../../../selectors/vm-template/basic';
 import { ProcessedTemplatesModel } from '../../../../models/models';
-import { ProvisionSource } from '../../../../constants/vm/provision-source';
 import { ImporterResult, OnVMCreate } from '../types';
 import { importV2VVMwareVm } from '../../v2v/import/import-v2vvmware';
+import { getImportProvidersFieldValue } from '../../../../components/create-vm-wizard/selectors/import-providers';
 
 export const getInitializedVMTemplate = (params: CreateVMParams) => {
   const { vmSettings, iCommonTemplates, iUserTemplates } = params;
@@ -92,16 +96,16 @@ export const createVMTemplate = async (params: CreateVMParams) => {
 };
 
 const importVM = async (params: CreateVMParams): Promise<ImporterResult> => {
-  const simpleSettings = asSimpleSettings(params.vmSettings);
-  if (simpleSettings[VMSettingsField.PROVIDER] === VMImportProvider.VMWARE) {
-    return importV2VVMwareVm(params);
+  switch (getImportProvidersFieldValue(params.importProviders, ImportProvidersField.PROVIDER)) {
+    case VMImportProvider.VMWARE:
+      return importV2VVMwareVm(params);
+    default:
+      return null;
   }
-
-  return null;
 };
 
 export const createVM = async (params: CreateVMParams) => {
-  const { enhancedK8sMethods, namespace, vmSettings, openshiftFlag } = params;
+  const { enhancedK8sMethods, namespace, vmSettings, openshiftFlag, isProviderImport } = params;
   const { k8sCreate, k8sWrapperCreate, getActualState } = enhancedK8sMethods;
 
   const combinedSimpleSettings = {
@@ -109,11 +113,7 @@ export const createVM = async (params: CreateVMParams) => {
     ...getOS(params),
   };
   let onVMCreate: OnVMCreate = null;
-
-  if (
-    ProvisionSource.fromString(combinedSimpleSettings[VMSettingsField.PROVISION_SOURCE_TYPE]) ===
-    ProvisionSource.IMPORT
-  ) {
+  if (isProviderImport) {
     const result = await importVM(params);
     params.storages = result?.storages || params.storages;
     params.networks = result?.networks || params.networks;

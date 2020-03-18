@@ -1,6 +1,5 @@
 import { FirehoseResult } from '@console/internal/components/utils';
 import { ConfigMapKind, TemplateKind } from '@console/internal/module/k8s';
-import { getStringEnumValues } from '../../utils/types';
 import { V1Network, V1NetworkInterface, VMKind } from '../../types/vm';
 import { NetworkInterfaceWrapper } from '../../k8s/wrapper/vm/network-interface-wrapper';
 import { NetworkWrapper } from '../../k8s/wrapper/vm/network-wrapper';
@@ -16,17 +15,19 @@ import { V1PersistentVolumeClaim } from '../../types/vm/disk/V1PersistentVolumeC
 import { PersistentVolumeClaimWrapper } from '../../k8s/wrapper/vm/persistent-volume-claim-wrapper';
 import { UIDiskValidation } from '../../utils/validations/vm/types';
 
-export enum VMWizardTab { // order important
+export enum VMWizardTab {
+  IMPORT_PROVIDERS = 'IMPORT_PROVIDERS',
   VM_SETTINGS = 'VM_SETTINGS',
   NETWORKING = 'NETWORKING',
+  STORAGE = 'STORAGE',
   ADVANCED_CLOUD_INIT = 'ADVANCED_CLOUD_INIT',
   ADVANCED_VIRTUAL_HARDWARE = 'ADVANCED_VIRTUAL_HARDWARE',
-  STORAGE = 'STORAGE',
   REVIEW = 'REVIEW',
   RESULT = 'RESULT',
 }
 
 export enum VMWizardProps {
+  isSimpleView = 'isSimpleView',
   isCreateTemplate = 'isCreateTemplate',
   isProviderImport = 'isProviderImport',
   userTemplateName = 'userTemplateName',
@@ -40,7 +41,27 @@ export enum VMWizardProps {
   storageClassConfigMap = 'storageClassConfigMap',
 }
 
-export const ALL_VM_WIZARD_TABS = getStringEnumValues<VMWizardTab>(VMWizardTab);
+// order important
+export const ALL_VM_WIZARD_TABS = [
+  VMWizardTab.IMPORT_PROVIDERS,
+  VMWizardTab.VM_SETTINGS,
+  VMWizardTab.NETWORKING,
+  VMWizardTab.STORAGE,
+  VMWizardTab.ADVANCED_CLOUD_INIT,
+  VMWizardTab.ADVANCED_VIRTUAL_HARDWARE,
+  VMWizardTab.REVIEW,
+  VMWizardTab.RESULT,
+];
+
+export const VM_WIZARD_SIMPLE_TABS = [
+  VMWizardTab.IMPORT_PROVIDERS,
+  VMWizardTab.REVIEW,
+  VMWizardTab.RESULT,
+];
+
+export const VM_WIZARD_DIFFICULT_TABS = ALL_VM_WIZARD_TABS.filter(
+  (tab) => !VM_WIZARD_SIMPLE_TABS.includes(tab),
+);
 
 export enum VMSettingsField {
   NAME = 'NAME',
@@ -49,8 +70,6 @@ export enum VMSettingsField {
   PROVISION_SOURCE_TYPE = 'PROVISION_SOURCE_TYPE',
   CONTAINER_IMAGE = 'CONTAINER_IMAGE',
   IMAGE_URL = 'IMAGE_URL',
-  PROVIDER = 'PROVIDER',
-  PROVIDERS_DATA = 'PROVIDERS_DATA',
   USER_TEMPLATE = 'USER_TEMPLATE',
   OPERATING_SYSTEM = 'OPERATING_SYSTEM',
   FLAVOR = 'FLAVOR',
@@ -58,6 +77,11 @@ export enum VMSettingsField {
   CPU = 'CPU',
   WORKLOAD_PROFILE = 'WORKLOAD_PROFILE',
   START_VM = 'START_VM',
+}
+
+export enum ImportProvidersField {
+  PROVIDER = 'PROVIDER',
+  PROVIDERS_DATA = 'PROVIDERS_DATA',
 }
 
 export enum VMImportProvider {
@@ -94,7 +118,12 @@ export enum CloudInitField {
   IS_FORM = 'IS_FORM',
 }
 
-export type VMSettingsRenderableField = Exclude<VMSettingsField, VMSettingsField.PROVIDERS_DATA>;
+export type VMSettingsRenderableField = VMSettingsField;
+export type ImportProviderRenderableField = Exclude<
+  ImportProvidersField,
+  ImportProvidersField.PROVIDERS_DATA
+>;
+
 export type VMWareProviderRenderableField =
   | VMWareProviderField.VCENTER
   | VMWareProviderField.HOSTNAME
@@ -103,8 +132,14 @@ export type VMWareProviderRenderableField =
   | VMWareProviderField.REMEMBER_PASSWORD
   | VMWareProviderField.STATUS
   | VMWareProviderField.VM;
-export type VMSettingsRenderableFieldResolver = {
-  [key in VMSettingsRenderableField | VMWareProviderRenderableField]: string;
+
+export type RenderableField =
+  | VMSettingsField
+  | ImportProviderRenderableField
+  | VMWareProviderRenderableField;
+
+export type RenderableFieldResolver = {
+  [key in RenderableField]: string;
 };
 
 export type VMSettingsFieldType = {
@@ -132,6 +167,7 @@ export type ChangedCommonDataProp =
   | VMWareProviderProps.vCenterSecrets;
 
 export type CommonDataProp =
+  | VMWizardProps.isSimpleView
   | VMWizardProps.isCreateTemplate
   | VMWizardProps.isProviderImport
   | VMWizardProps.userTemplateName
@@ -157,6 +193,7 @@ export const DetectCommonDataChanges = new Set<ChangedCommonDataProp>([
 
 export type CommonData = {
   data?: {
+    isSimpleView?: boolean;
     isCreateTemplate?: boolean;
     isProviderImport?: boolean;
     userTemplateName?: string;
@@ -170,6 +207,7 @@ export type CommonData = {
 };
 
 export type CreateVMWizardComponentProps = {
+  isSimpleView: boolean;
   isProviderImport: boolean;
   isCreateTemplate: boolean;
   dataIDReferences: IDReferences;

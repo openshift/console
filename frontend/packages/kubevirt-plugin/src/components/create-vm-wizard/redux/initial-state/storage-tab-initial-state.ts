@@ -1,5 +1,5 @@
 import { ConfigMapKind } from '@console/internal/module/k8s';
-import { VMWizardStorage, VMWizardStorageType } from '../../types';
+import { CommonData, VMWizardStorage, VMWizardStorageType } from '../../types';
 import { DiskWrapper } from '../../../../k8s/wrapper/vm/disk-wrapper';
 import {
   DataVolumeSourceType,
@@ -93,10 +93,11 @@ export const getProvisionSourceStorage = (
   return null;
 };
 
-export const getStorageInitialState: InitialStepStateGetter = () => ({
+export const getStorageInitialState: InitialStepStateGetter = (data: CommonData) => ({
   value: [],
   error: null,
   hasAllRequiredFilled: true,
   isValid: true, // empty Storages are valid
   isLocked: false,
+  isHidden: data.data.isProviderImport && data.data.isSimpleView,
 });

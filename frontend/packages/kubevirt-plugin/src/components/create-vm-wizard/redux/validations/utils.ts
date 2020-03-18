@@ -1,8 +1,11 @@
 import { Map as ImmutableMap } from 'immutable';
 import * as _ from 'lodash';
-import { ValidationObject } from '@console/shared';
+import { ValidationObject, ValidationErrorType } from '@console/shared';
 import { UpdateOptions, VMSettingsValidationConfig } from '../types';
 import { VMSettingsFieldType } from '../../types';
+import { isFieldRequired } from '../../selectors/immutable/field';
+import { describeFields } from '../../utils/renderable-field-utils';
+import { BinaryUnit } from '../../../form/size-unit-utils';
 
 export const getValidationUpdate = (
   config: VMSettingsValidationConfig,
@@ -43,4 +46,29 @@ export const getValidationUpdate = (
     }
     return updateAcc;
   }, {}) as { [key: string]: { validation: ValidationObject } };
+};
+
+export const getFieldsValidity = (fields) => {
+  // check if all required fields are defined
+  const emptyRequiredFields = fields
+    .filter((field) => {
+      if (isFieldRequired(field) && !field.get('skipValidation')) {
+        const value = field.get('value');
+        return value ? field.get('binaryUnitValidation') && BinaryUnit[value] : true; // just unit is not good enough
+      }
+      return false;
+    })
+    .toArray();
+  let error = describeFields('Please fill in', emptyRequiredFields);
+  const hasAllRequiredFilled = emptyRequiredFields.length === 0;
+
+  // check if fields are valid
+  const invalidFields = fields
+    .filter((field) => field.getIn(['validation', 'type']) === ValidationErrorType.Error)
+    .toArray();
+  if (invalidFields.length > 0) {
+    error = describeFields('Please correct', invalidFields);
+  }
+  const isValid = hasAllRequiredFilled && invalidFields.length === 0;
+  return { error, hasAllRequiredFilled, isValid };
 };

@@ -4,16 +4,16 @@ import * as classNames from 'classnames';
 import { match } from 'react-router';
 import { sortable } from '@patternfly/react-table';
 import {
-  getName,
-  getNamespace,
-  getUID,
-  getCreationTimestamp,
   createLookup,
-  K8sEntityMap,
   dimensifyHeader,
   dimensifyRow,
+  getCreationTimestamp,
   getDeletetionTimestamp,
+  getName,
+  getNamespace,
   getOwnerReferences,
+  getUID,
+  K8sEntityMap,
 } from '@console/shared';
 import { withStartGuide } from '@console/internal/components/start-guide';
 import { compareOwnerReference } from '@console/shared/src/utils/owner-references';
@@ -40,12 +40,12 @@ import { buildOwnerReferenceForModel, getBasicID, getLoadedData } from '../../ut
 import { getVMStatus, VMStatus as VMStatusType } from '../../statuses/vm/vm';
 import { getVMStatusSortString } from '../../statuses/vm/constants';
 import { getVmiIpAddresses, getVMINodeName } from '../../selectors/vmi';
-import { isVM, getVMLikeModel } from '../../selectors/vm';
+import { getVMLikeModel, isVM } from '../../selectors/vm';
 import { vmStatusFilter } from './table-filters';
-import { vmMenuActions, vmiMenuActions } from './menu-actions';
+import { vmiMenuActions, vmMenuActions } from './menu-actions';
 import { VMILikeEntityKind } from '../../types/vmLike';
 import { getVMWizardCreateLink } from '../../utils/url';
-import { VMWizardMode, VMWizardName, VMWizardActionLabels } from '../../constants/vm';
+import { VMWizardActionLabels, VMWizardMode, VMWizardName } from '../../constants/vm';
 
 import './vm.scss';
 
@@ -166,13 +166,18 @@ VMList.displayName = 'VMList';
 const getCreateProps = ({ namespace }: { namespace: string }) => {
   const items: any = {
     [VMWizardName.WIZARD]: VMWizardActionLabels.WIZARD,
-    [VMWizardName.IMPORT]: VMWizardActionLabels.IMPORT,
     [VMWizardName.YAML]: VMWizardActionLabels.YAML,
+    wizardImport: VMWizardActionLabels.IMPORT,
   };
 
   return {
     items,
-    createLink: (itemName) => getVMWizardCreateLink(namespace, itemName, VMWizardMode.VM),
+    createLink: (wizardName) =>
+      getVMWizardCreateLink({
+        namespace,
+        wizardName: wizardName === 'wizardImport' ? VMWizardName.WIZARD : wizardName,
+        mode: wizardName === 'wizardImport' ? VMWizardMode.IMPORT : VMWizardMode.VM,
+      }),
   };
 };
 

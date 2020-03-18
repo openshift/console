@@ -424,10 +424,14 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
               unit={unit as BinaryUnit}
               units={source.getAllowedUnits()}
               validation={sizeValidation}
-              isDisabled={inProgress || !source.isSizeEditingSupported()}
+              isDisabled={inProgress || !source.isSizeEditingSupported(combinedDiskSize?.value)}
               isRequired
-              onSizeChanged={source.isSizeEditingSupported() ? setSize : undefined}
-              onUnitChanged={source.isSizeEditingSupported() ? setUnit : undefined}
+              onSizeChanged={
+                source.isSizeEditingSupported(combinedDiskSize?.value) ? setSize : undefined
+              }
+              onUnitChanged={
+                source.isSizeEditingSupported(combinedDiskSize?.value) ? setUnit : undefined
+              }
             />
           )}
           {!source.requiresSize() && source.hasDynamicSize() && (

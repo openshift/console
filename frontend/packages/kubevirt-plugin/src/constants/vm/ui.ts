@@ -7,11 +7,15 @@ export enum VMWizardActionLabels {
 export enum VMWizardName {
   YAML = 'yaml',
   WIZARD = 'wizard',
-  IMPORT = 'wizardImport',
 }
 
 export enum VMWizardMode {
   IMPORT = 'import',
   TEMPLATE = 'template',
   VM = 'vm',
+}
+
+export enum VMWizardView {
+  ADVANCED = 'advanced',
+  SIMPLE = 'simple',
 }

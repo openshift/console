@@ -16,7 +16,7 @@ import { FormFieldRow } from '../../../../form/form-field-row';
 import { FormField, FormFieldType } from '../../../../form/form-field';
 import { iGet, iGetLoadedData, toJS } from '../../../../../../utils/immutable';
 import { FormSelectPlaceholderOption } from '../../../../../form/form-select-placeholder-option';
-import { getPlaceholder } from '../../../../utils/vm-settings-tab-utils';
+import { getPlaceholder } from '../../../../utils/renderable-field-utils';
 import { FormFieldReviewContext } from '../../../../form/form-field-review-context';
 
 const CONNECT_TO_NEW_INSTANCE = 'Connect to New Instance';
@@ -99,7 +99,7 @@ const stateToProps = (state, { wizardReduxID }) => {
 const dispatchToProps = (dispatch, { wizardReduxID }) => ({
   onSecretChange: (secret) =>
     dispatch(
-      vmWizardActions[ActionType.UpdateVmSettingsProviderField](
+      vmWizardActions[ActionType.UpdateImportProviderField](
         wizardReduxID,
         VMImportProvider.VMWARE,
         VMWareProviderField.VCENTER,

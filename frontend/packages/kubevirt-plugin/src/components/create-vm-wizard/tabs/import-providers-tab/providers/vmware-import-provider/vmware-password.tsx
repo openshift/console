@@ -10,7 +10,7 @@ import { vmWizardActions } from '../../../../redux/actions';
 import { ActionType } from '../../../../redux/types';
 import { FormFieldRow } from '../../../../form/form-field-row';
 import { FormField, FormFieldType } from '../../../../form/form-field';
-import { isFieldDisabled } from '../../../../selectors/immutable/vm-settings';
+import { isFieldDisabled } from '../../../../selectors/immutable/field';
 import { iGet } from '../../../../../../utils/immutable';
 import {
   PROVIDER_VMWARE_CHECK_CONNECTION_BTN_DONT_SAVE,
@@ -82,7 +82,7 @@ const dispatchToProps = (dispatch, { wizardReduxID }) => ({
   onCheckConnection: () => dispatch(getCheckConnectionAction(wizardReduxID)),
   onPasswordChange: (password) =>
     dispatch(
-      vmWizardActions[ActionType.UpdateVmSettingsProviderField](
+      vmWizardActions[ActionType.UpdateImportProviderField](
         wizardReduxID,
         VMImportProvider.VMWARE,
         VMWareProviderField.USER_PASSWORD_AND_CHECK_CONNECTION,

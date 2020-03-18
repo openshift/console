@@ -7,13 +7,12 @@ import {
   TextInput,
 } from '@patternfly/react-core';
 import { connect } from 'react-redux';
-import { iGet, iGetIn, immutableListToShallowJS } from '../../../../utils/immutable';
+import { iGet, iGetIn } from '../../../../utils/immutable';
 import { FormFieldMemoRow } from '../../form/form-field-row';
 import { FormField, FormFieldType } from '../../form/form-field';
 import { FormSelectPlaceholderOption } from '../../../form/form-select-placeholder-option';
 import { vmWizardActions } from '../../redux/actions';
 import {
-  VMImportProvider,
   VMSettingsField,
   VMSettingsRenderableField,
   VMWizardProps,
@@ -21,18 +20,16 @@ import {
 } from '../../types';
 import { iGetVmSettings } from '../../selectors/immutable/vm-settings';
 import { ActionType } from '../../redux/types';
-import { getFieldId, getPlaceholder } from '../../utils/vm-settings-tab-utils';
+import { getFieldId, getPlaceholder } from '../../utils/renderable-field-utils';
 import { iGetCommonData } from '../../selectors/immutable/selectors';
 import { FormFieldForm } from '../../form/form-field-form';
 import { iGetProvisionSourceStorage } from '../../selectors/immutable/storage';
-import { ProvisionSource } from '../../../../constants/vm/provision-source';
 import { WorkloadProfile } from './workload-profile';
 import { OSFlavor } from './os-flavor';
 import { UserTemplates } from './user-templates';
 import { MemoryCPU } from './memory-cpu';
 import { ContainerSource } from './container-source';
 import { URLSource } from './url-source';
-import { VMWareImportProvider } from './providers/vmware-import-provider/vmware-import-provider';
 
 import './vm-settings-tab.scss';
 
@@ -54,7 +51,6 @@ export class VMSettingsTabComponent extends React.Component<VMSettingsTabCompone
       provisionSourceStorage,
       updateStorage,
       isReview,
-      wizardReduxID,
       openshiftFlag,
     } = this.props;
 
@@ -79,32 +75,6 @@ export class VMSettingsTabComponent extends React.Component<VMSettingsTabCompone
             />
           </FormField>
         </FormFieldMemoRow>
-
-        <FormFieldMemoRow
-          key={VMSettingsField.PROVIDER}
-          field={this.getField(VMSettingsField.PROVIDER)}
-          fieldType={FormFieldType.SELECT}
-        >
-          <FormField>
-            <FormSelect onChange={this.onChange(VMSettingsField.PROVIDER)}>
-              <FormSelectPlaceholderOption
-                placeholder={getPlaceholder(VMSettingsField.PROVIDER)}
-                isDisabled={!!this.getFieldValue(VMSettingsField.PROVIDER)}
-              />
-              {immutableListToShallowJS(
-                this.getFieldAttribute(VMSettingsField.PROVIDER, 'providers'),
-              ).map(({ id, name }) => (
-                <FormSelectOption key={id} value={id} label={name} />
-              ))}
-            </FormSelect>
-          </FormField>
-        </FormFieldMemoRow>
-        {ProvisionSource.fromString(this.getFieldValue(VMSettingsField.PROVISION_SOURCE_TYPE)) ===
-          ProvisionSource.IMPORT && (
-          <>
-            <VMWareImportProvider key={VMImportProvider.VMWARE} wizardReduxID={wizardReduxID} />
-          </>
-        )}
         {!isReview && (
           <UserTemplates
             key={VMSettingsField.USER_TEMPLATE}

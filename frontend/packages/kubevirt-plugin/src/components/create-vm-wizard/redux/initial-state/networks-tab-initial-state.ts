@@ -1,4 +1,4 @@
-import { VMWizardNetwork, VMWizardNetworkType } from '../../types';
+import { CommonData, VMWizardNetwork, VMWizardNetworkType } from '../../types';
 import { NetworkInterfaceWrapper } from '../../../../k8s/wrapper/vm/network-interface-wrapper';
 import { NetworkInterfaceModel, NetworkType } from '../../../../constants/vm/network';
 import { NetworkWrapper } from '../../../../k8s/wrapper/vm/network-wrapper';
@@ -19,10 +19,11 @@ export const podNetwork: VMWizardNetwork = {
   }).asResource(),
 };
 
-export const getNetworksInitialState: InitialStepStateGetter = () => ({
+export const getNetworksInitialState: InitialStepStateGetter = (data: CommonData) => ({
   value: [podNetwork],
   error: null,
   hasAllRequiredFilled: true,
   isValid: true,
   isLocked: false,
+  isHidden: data.data.isProviderImport && data.data.isSimpleView,
 });

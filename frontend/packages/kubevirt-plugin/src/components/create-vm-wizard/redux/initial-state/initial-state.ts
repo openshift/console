@@ -7,8 +7,10 @@ import { getReviewInitialState } from './review-tab-initial-state';
 import { getCloudInitInitialState } from './cloud-init-tab-initial-state';
 import { InitialStepStateGetter, StepState } from './types';
 import { getVirtualHardwareInitialState } from './virtual-hardware-tab-initial-state';
+import { getImportProvidersInitialState } from './import-provider-tab-initial-state';
 
 const initialStateGetterResolver: { [key in VMWizardTab]: InitialStepStateGetter } = {
+  [VMWizardTab.IMPORT_PROVIDERS]: getImportProvidersInitialState,
   [VMWizardTab.VM_SETTINGS]: getVmSettingsInitialState,
   [VMWizardTab.NETWORKING]: getNetworksInitialState,
   [VMWizardTab.STORAGE]: getStorageInitialState,
@@ -33,6 +35,7 @@ export const getTabInitialState = (tabKey: VMWizardTab, data: CommonData): StepS
       isValid: false,
       isLocked: false,
       hasAllRequiredFilled: false,
+      isHidden: false,
     }
   );
 };

@@ -11,10 +11,11 @@ import {
   CloudInitField,
   VMWareProviderField,
   VMImportProvider,
+  ImportProvidersField,
 } from '../types';
 import { DeviceType } from '../../../constants/vm';
 import { cleanup, updateAndValidateState } from './utils';
-import { getTabInitialState } from './initial-state';
+import { getTabInitialState } from './initial-state/initial-state';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { ActionType, InternalActionType, WizardActionDispatcher } from './types';
 import { vmWizardInternalActions } from './internal-actions';
@@ -50,6 +51,7 @@ export const vmWizardActions: VMWizardActions = {
               initial[tabKey] = getTabInitialState(tabKey, commonData);
               return initial;
             }, {}),
+            extraWSQueries: {},
             commonData,
           }),
         ),
@@ -71,7 +73,13 @@ export const vmWizardActions: VMWizardActions = {
     withUpdateAndValidateState(id, (dispatch) =>
       dispatch(vmWizardInternalActions[InternalActionType.SetVmSettingsFieldValue](id, key, value)),
     ),
-  [ActionType.UpdateVmSettingsProviderField]: (
+  [ActionType.SetImportProvidersFieldValue]: (id, key: ImportProvidersField, value: any) =>
+    withUpdateAndValidateState(id, (dispatch) =>
+      dispatch(
+        vmWizardInternalActions[InternalActionType.SetImportProvidersFieldValue](id, key, value),
+      ),
+    ),
+  [ActionType.UpdateImportProviderField]: (
     id,
     provider: VMImportProvider,
     key: VMWareProviderField | any,
@@ -79,7 +87,7 @@ export const vmWizardActions: VMWizardActions = {
   ) =>
     withUpdateAndValidateState(id, (dispatch) =>
       dispatch(
-        vmWizardInternalActions[InternalActionType.UpdateVMSettingsProviderField](
+        vmWizardInternalActions[InternalActionType.UpdateImportProviderField](
           id,
           provider,
           key,
@@ -103,6 +111,9 @@ export const vmWizardActions: VMWizardActions = {
     ),
   [ActionType.SetTabLocked]: (id, tab: VMWizardTab, isLocked: boolean) => (dispatch) => {
     dispatch(vmWizardInternalActions[InternalActionType.SetTabLocked](id, tab, isLocked));
+  },
+  [ActionType.SetTabHidden]: (id, tab: VMWizardTab, isHidden: boolean) => (dispatch) => {
+    dispatch(vmWizardInternalActions[InternalActionType.SetTabHidden](id, tab, isHidden));
   },
   [ActionType.UpdateNIC]: (id, network: VMWizardNetwork) =>
     withUpdateAndValidateState(id, (dispatch) =>

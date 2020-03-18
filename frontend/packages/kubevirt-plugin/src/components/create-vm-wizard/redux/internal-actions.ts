@@ -1,5 +1,6 @@
 import {
   CloudInitField,
+  ImportProvidersField,
   VMImportProvider,
   VMSettingsField,
   VMWareProviderField,
@@ -10,6 +11,7 @@ import {
 import { DeviceType } from '../../../constants/vm';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { ActionBatch, InternalActionType, WizardInternalActionDispatcher } from './types';
+import { FirehoseResource } from '@console/internal/components/utils';
 
 type VMWizardInternalActions = { [key in InternalActionType]: WizardInternalActionDispatcher };
 
@@ -42,6 +44,18 @@ export const vmWizardInternalActions: VMWizardInternalActions = {
     },
     type: InternalActionType.UpdateCommonData,
   }),
+  [InternalActionType.SetExtraWSQueries]: (
+    id,
+    queryKey: string,
+    wsQueries: FirehoseResource[],
+  ) => ({
+    payload: {
+      id,
+      queryKey,
+      wsQueries,
+    },
+    type: InternalActionType.SetExtraWSQueries,
+  }),
   [InternalActionType.SetTabValidity]: (
     id,
     tab: VMWizardTab,
@@ -66,6 +80,14 @@ export const vmWizardInternalActions: VMWizardInternalActions = {
     },
     type: InternalActionType.SetTabLocked,
   }),
+  [InternalActionType.SetTabHidden]: (id, tab: VMWizardTab, isHidden: boolean) => ({
+    payload: {
+      id,
+      tab,
+      isHidden,
+    },
+    type: InternalActionType.SetTabHidden,
+  }),
   [InternalActionType.SetVmSettingsFieldValue]: (id, key: VMSettingsField, value: any) => ({
     payload: {
       id,
@@ -74,7 +96,19 @@ export const vmWizardInternalActions: VMWizardInternalActions = {
     },
     type: InternalActionType.SetVmSettingsFieldValue,
   }),
-  [InternalActionType.UpdateVMSettingsProviderField]: (
+  [InternalActionType.SetImportProvidersFieldValue]: (
+    id,
+    key: ImportProvidersField,
+    value: any,
+  ) => ({
+    payload: {
+      id,
+      key,
+      value,
+    },
+    type: InternalActionType.SetImportProvidersFieldValue,
+  }),
+  [InternalActionType.UpdateImportProviderField]: (
     id,
     provider: VMImportProvider,
     key: VMWareProviderField,
@@ -86,16 +120,16 @@ export const vmWizardInternalActions: VMWizardInternalActions = {
       key,
       value,
     },
-    type: InternalActionType.UpdateVMSettingsProviderField,
+    type: InternalActionType.UpdateImportProviderField,
   }),
 
-  [InternalActionType.UpdateVMSettingsProvider]: (id, provider: VMImportProvider, value: any) => ({
+  [InternalActionType.UpdateImportProvider]: (id, provider: VMImportProvider, value: any) => ({
     payload: {
       id,
       provider,
       value,
     },
-    type: InternalActionType.UpdateVMSettingsProvider,
+    type: InternalActionType.UpdateImportProvider,
   }),
   [InternalActionType.SetCloudInitFieldValue]: (id, key: CloudInitField, value: any) => ({
     payload: {

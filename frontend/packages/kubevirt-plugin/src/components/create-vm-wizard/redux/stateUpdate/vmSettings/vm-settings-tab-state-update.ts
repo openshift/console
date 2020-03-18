@@ -4,6 +4,7 @@ import {
   hasVmSettingsChanged,
   hasVMSettingsValueChanged,
   iGetProvisionSource,
+  iGetRelevantTemplateSelectors,
   iGetVmSettingValue,
   iGetVmSettingAttribute,
 } from '../../../selectors/immutable/vm-settings';
@@ -16,22 +17,21 @@ import {
   iGetLoadedCommonData,
   iGetName,
 } from '../../../selectors/immutable/selectors';
+import { iGetRelevantTemplate } from '../../../../../selectors/immutable/template/combined';
 import { CUSTOM_FLAVOR } from '../../../../../constants/vm';
 import { ProvisionSource } from '../../../../../constants/vm/provision-source';
-import { getProviders } from '../../../provider-definitions';
 import { windowsToolsStorage } from '../../initial-state/storage-tab-initial-state';
 import { getStorages } from '../../../selectors/selectors';
 import { prefillVmTemplateUpdater } from './prefill-vm-template-state-update';
 
-export const selectUserTemplateOnLoadedUpdater = (options: UpdateOptions) => {
+const selectUserTemplateOnLoadedUpdater = (options: UpdateOptions) => {
   const { id, dispatch, getState } = options;
   const state = getState();
 
-  if (iGetVmSettingAttribute(state, id, VMSettingsField.USER_TEMPLATE, 'initialized')) {
-    return;
-  }
-
-  if (!options.changedCommonData.has(VMWizardProps.userTemplates)) {
+  if (
+    iGetVmSettingAttribute(state, id, VMSettingsField.USER_TEMPLATE, 'initialized') ||
+    !options.changedCommonData.has(VMWizardProps.userTemplates)
+  ) {
     return;
   }
 
@@ -59,7 +59,7 @@ export const selectUserTemplateOnLoadedUpdater = (options: UpdateOptions) => {
   );
 };
 
-export const selectedUserTemplateUpdater = (options: UpdateOptions) => {
+const selectedUserTemplateUpdater = (options: UpdateOptions) => {
   const { id, prevState, dispatch, getState } = options;
   const state = getState();
   if (!hasVmSettingsChanged(prevState, state, id, VMSettingsField.USER_TEMPLATE)) {
@@ -90,7 +90,7 @@ export const selectedUserTemplateUpdater = (options: UpdateOptions) => {
   prefillVmTemplateUpdater(options);
 };
 
-export const provisioningSourceUpdater = ({ id, prevState, dispatch, getState }: UpdateOptions) => {
+const provisioningSourceUpdater = ({ id, prevState, dispatch, getState }: UpdateOptions) => {
   const state = getState();
   if (
     !hasVmSettingsChanged(
@@ -121,7 +121,7 @@ export const provisioningSourceUpdater = ({ id, prevState, dispatch, getState }:
   );
 };
 
-export const flavorUpdater = ({ id, prevState, dispatch, getState }: UpdateOptions) => {
+const flavorUpdater = ({ id, prevState, dispatch, getState }: UpdateOptions) => {
   const state = getState();
   if (!hasVmSettingsChanged(prevState, state, id, VMSettingsField.FLAVOR)) {
     return;
@@ -145,7 +145,7 @@ export const flavorUpdater = ({ id, prevState, dispatch, getState }: UpdateOptio
   );
 };
 
-export const osUpdater = ({ id, prevState, dispatch, getState }: UpdateOptions) => {
+const osUpdater = ({ id, prevState, dispatch, getState }: UpdateOptions) => {
   const state = getState();
   if (!hasVMSettingsValueChanged(prevState, state, id, VMSettingsField.OPERATING_SYSTEM)) {
     return;
@@ -164,7 +164,28 @@ export const osUpdater = ({ id, prevState, dispatch, getState }: UpdateOptions) 
   }
 };
 
-export const nativeK8sUpdater = ({ id, dispatch, getState, changedCommonData }: UpdateOptions) => {
+const workloadConsistencyUpdater = ({ id, prevState, dispatch, getState }: UpdateOptions) => {
+  const state = getState();
+  if (!hasVMSettingsValueChanged(prevState, state, id, VMSettingsField.WORKLOAD_PROFILE)) {
+    return;
+  }
+  const selectors = iGetRelevantTemplateSelectors(state, id);
+  const iUserTemplates = iGetLoadedCommonData(state, id, VMWizardProps.userTemplates);
+  const iCommonTemplates = iGetLoadedCommonData(state, id, VMWizardProps.commonTemplates);
+
+  if (!iGetRelevantTemplate(iUserTemplates, iCommonTemplates, selectors)) {
+    // reset workload profile if no relevant template found - could be triggered by provider prefil
+    dispatch(
+      vmWizardInternalActions[InternalActionType.UpdateVmSettingsField](
+        id,
+        VMSettingsField.WORKLOAD_PROFILE,
+        { value: null },
+      ),
+    );
+  }
+};
+
+const nativeK8sUpdater = ({ id, dispatch, getState, changedCommonData }: UpdateOptions) => {
   const state = getState();
   if (!changedCommonData.has(VMWizardProps.openshiftFlag)) {
     return;
@@ -183,14 +204,12 @@ export const nativeK8sUpdater = ({ id, dispatch, getState, changedCommonData }: 
 
 export const updateVmSettingsState = (options: UpdateOptions) =>
   [
-    ...(iGetCommonData(options.getState(), options.id, VMWizardProps.isProviderImport)
-      ? getProviders().map((provider) => provider.getStateUpdater)
-      : []),
     selectUserTemplateOnLoadedUpdater,
     selectedUserTemplateUpdater,
     provisioningSourceUpdater,
     flavorUpdater,
     osUpdater,
+    workloadConsistencyUpdater,
     nativeK8sUpdater,
   ].forEach((updater) => {
     updater && updater(options);

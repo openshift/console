@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { getFieldTitle } from '../utils/vm-settings-tab-utils';
-import { iGetFieldValue } from '../selectors/immutable/vm-settings';
+import { getFieldTitle } from '../utils/renderable-field-utils';
+import { iGetFieldValue } from '../selectors/immutable/field';
 import { iGet } from '../../../utils/immutable';
 import { getCheckboxReadableValue } from '../../../utils/strings';
 import { FormFieldType } from './form-field';
