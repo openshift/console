@@ -1,6 +1,5 @@
 import { browser, $ } from 'protractor';
 import { execSync } from 'child_process';
-import { promise as webdriverpromise } from 'selenium-webdriver';
 import * as HtmlScreenshotReporter from 'protractor-jasmine2-screenshot-reporter';
 import * as _ from 'lodash';
 import { TapReporter, JUnitXmlReporter } from 'jasmine-reporters';
@@ -278,11 +277,7 @@ export const create = (obj) => {
 };
 
 // Retry an action to avoid StaleElementReferenceErrors.
-export const retry = async <T>(
-  fn: () => webdriverpromise.Promise<T>,
-  retries = 3,
-  interval = 1000,
-): webdriverpromise.Promise<T> => {
+export const retry = async <T>(fn: () => Promise<T>, retries = 3, interval = 1000): Promise<T> => {
   try {
     return await fn();
   } catch (e) {
