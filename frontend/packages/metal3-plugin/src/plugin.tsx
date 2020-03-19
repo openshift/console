@@ -129,14 +129,13 @@ const plugin: Plugin<ConsumedExtensions> = [
     type: 'Dashboards/Overview/Inventory/Item/Replacement',
     properties: {
       model: NodeModel,
-      additionalResources: [
-        {
+      additionalResources: {
+        maintenances: {
           isList: true,
           kind: referenceForModel(NodeMaintenanceModel),
-          prop: 'maintenaces',
           optional: true,
         },
-      ],
+      },
       mapper: getBMNStatusGroups,
       required: [BAREMETAL_FLAG, METAL3_FLAG],
     },
@@ -144,24 +143,21 @@ const plugin: Plugin<ConsumedExtensions> = [
   {
     type: 'Dashboards/Overview/Inventory/Item',
     properties: {
-      additionalResources: [
-        {
+      additionalResources: {
+        machines: {
           isList: true,
           kind: referenceForModel(MachineModel),
-          prop: 'machines',
         },
-        {
+        nodes: {
           isList: true,
           kind: NodeModel.kind,
-          prop: 'nodes',
         },
-        {
+        maintenances: {
           isList: true,
           kind: referenceForModel(NodeMaintenanceModel),
-          prop: 'maintenances',
           optional: true,
         },
-      ],
+      },
       model: BareMetalHostModel,
       mapper: getBMHStatusGroups,
       required: [BAREMETAL_FLAG, METAL3_FLAG],

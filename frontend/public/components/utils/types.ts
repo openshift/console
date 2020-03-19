@@ -52,6 +52,7 @@ export type FirehoseResource = {
   namespaced?: boolean;
   optional?: boolean;
   limit?: number;
+  fieldSelector?: string;
 };
 
 export type HumanizeResult = {

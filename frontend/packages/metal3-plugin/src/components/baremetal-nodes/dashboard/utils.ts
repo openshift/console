@@ -13,7 +13,7 @@ const BMN_STATUS_GROUP_MAPPER = {
   'node-maintenance': Object.keys(NODE_STATUS_TITLES),
 };
 
-export const getBMNStatusGroups: StatusGroupMapper = (nodes: NodeKind[], { maintenaces }) => {
+export const getBMNStatusGroups: StatusGroupMapper = (nodes: NodeKind[], { maintenances }) => {
   const groups = {
     [InventoryStatusGroup.NOT_MAPPED]: {
       statusIDs: ['ready'],
@@ -31,7 +31,7 @@ export const getBMNStatusGroups: StatusGroupMapper = (nodes: NodeKind[], { maint
       filterType: 'bare-metal-node-status',
     },
   };
-  const maintenancesByNodeName = createBasicLookup(maintenaces, getNodeMaintenanceNodeName);
+  const maintenancesByNodeName = createBasicLookup(maintenances, getNodeMaintenanceNodeName);
   nodes.forEach((node) => {
     const nodeName = getName(node);
     const nodeMaintenance = maintenancesByNodeName[nodeName];

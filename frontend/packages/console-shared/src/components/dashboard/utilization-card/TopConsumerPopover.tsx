@@ -1,11 +1,10 @@
-import * as _ from 'lodash';
 import * as React from 'react';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { DataPoint } from '@console/internal/components/graphs';
 import { Humanize, resourcePathFromModel } from '@console/internal/components/utils';
 import { Dropdown } from '@console/internal/components/utils/dropdown';
-import { K8sKind, referenceForModel, K8sResourceKind } from '@console/internal/module/k8s';
+import { K8sKind, referenceForModel, K8sResourceCommon } from '@console/internal/module/k8s';
 import {
   withDashboardResources,
   DashboardItemProps,
@@ -16,7 +15,8 @@ import { RootState } from '@console/internal/redux';
 import { getActivePerspective } from '@console/internal/reducers/ui';
 import { getPrometheusQueryResponse } from '@console/internal/actions/dashboards';
 import { PopoverPosition } from '@patternfly/react-core';
-import { FLAGS } from '../../../constants';
+import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
+import { FLAGS } from '@console/shared/src/constants';
 import { getName, getNamespace } from '../../..';
 import { DashboardCardPopupLink } from '../dashboard-card/DashboardCardLink';
 
@@ -50,7 +50,6 @@ const getResourceToWatch = (model: K8sKind, namespace: string) => ({
   isList: true,
   kind: model.crd ? referenceForModel(model) : model.kind,
   namespace,
-  prop: 'k8sResources',
 });
 
 const PopoverBodyInternal: React.FC<DashboardItemProps &
@@ -63,41 +62,31 @@ const PopoverBodyInternal: React.FC<DashboardItemProps &
     watchPrometheus,
     stopWatchPrometheusQuery,
     prometheusResults,
-    watchK8sResource,
-    stopWatchK8sResource,
-    resources,
     isOpen,
     canAccessMonitoring,
     activePerspective,
   } = props;
   const [currentConsumer, setCurrentConsumer] = React.useState(consumers[0]);
   const { query, model, metric } = currentConsumer;
+  const k8sResource = React.useMemo(() => (isOpen ? getResourceToWatch(model, namespace) : null), [
+    isOpen,
+    model,
+    namespace,
+  ]);
+  const [consumerData, consumerLoaded, consumersLoadError] = useK8sWatchResource<
+    K8sResourceCommon[]
+  >(k8sResource);
   React.useEffect(() => {
     if (!isOpen) {
       return () => {};
     }
-    const k8sResource = getResourceToWatch(model, namespace);
     watchPrometheus(query, namespace);
-    watchK8sResource(k8sResource);
     return () => {
       stopWatchPrometheusQuery(query);
-      stopWatchK8sResource(k8sResource);
     };
-  }, [
-    query,
-    model,
-    stopWatchK8sResource,
-    stopWatchPrometheusQuery,
-    watchK8sResource,
-    watchPrometheus,
-    namespace,
-    isOpen,
-  ]);
+  }, [query, stopWatchPrometheusQuery, watchPrometheus, namespace, isOpen]);
 
   let top5Data = [];
-  const consumerData = _.get(resources, ['k8sResources', 'data']) as K8sResourceKind[];
-  const consumerLoaded = _.get(resources, ['k8sResources', 'loaded']);
-  const consumersLoadError = _.get(resources, ['k8sResources', 'loadError']);
 
   const [data, error] = getPrometheusQueryResponse(prometheusResults, query);
   const bodyData = getInstantVectorStats(data, metric);
