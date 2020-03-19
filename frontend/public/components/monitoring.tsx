@@ -161,9 +161,9 @@ const AlertState: React.SFC<AlertStateProps> = ({ state }) => {
     return <span className="text-muted">Not Firing</span>;
   }
   const icon = {
-    [AlertStates.Firing]: <BellIcon className="alert-firing" />,
+    [AlertStates.Firing]: <BellIcon />,
     [AlertStates.Silenced]: <BellSlashIcon className="text-muted" />,
-    [AlertStates.Pending]: <OutlinedBellIcon className="alert-pending" />,
+    [AlertStates.Pending]: <OutlinedBellIcon />,
   }[state];
   return icon ? (
     <>
