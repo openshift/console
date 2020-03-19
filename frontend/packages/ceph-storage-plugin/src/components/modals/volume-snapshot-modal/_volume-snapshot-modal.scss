@@ -4,7 +4,7 @@
     margin-right: var(--pf-global--spacer--md) !important;
   }
 
-.ceph-volume-snapshot-modal__input--count {
+.ceph-volume-snapshot-modal__dropdown {
     width: fit-content;
 }
 
@@ -12,12 +12,8 @@
     display: inline-flex;
 }
 
-.ceph-volume-snapshot-modal__input--group {
+.ceph-volume-snapshot-modal__input--grid {
     display: grid;
-}
-
-.ceph-volume-snapshot-modal__input--keep {
-    display: inline-flex;
 }
 
 .ceph-volume-snapshot-modal__input--link {
@@ -28,7 +24,12 @@
     width: fit-content !important;
 }
 
-.ceph-volume-snapshot-modal__span--keep {
+.ceph-volume-snapshot-modal__span {
     font-size: var(--pf-global--FontSize--md);
     padding: var(--pf-global--spacer--xs);
+}
+
+.ceph-volume-snapshot-modal__dropdown--overflow {
+    overflow-y: scroll;
+    height: calc(100vh / 3) !important;
 }
