@@ -51,7 +51,7 @@ const getSidebarResources = ({
     case EventSourceCamelModel.kind:
     case EventSourceKafkaModel.kind:
     case EventSourceServiceBindingModel.kind:
-      return <EventSinkServicesOverviewList obj={obj} />;
+      return <EventSinkServicesOverviewList obj={obj} pods={pods} current={current} />;
     default:
       return (
         <>
