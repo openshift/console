@@ -52,12 +52,14 @@ export const CreateOCSService: React.FC<CreateOCSServiceProps> = React.memo((pro
           )}
         </div>
       </div>
-      <CreateOCSServiceForm
-        namespace={props.match.params.ns}
-        operandModel={OCSServiceModel}
-        sample={sample}
-        clusterServiceVersion={clusterServiceVersion !== null && clusterServiceVersion}
-      />
+      {clusterServiceVersion && sample && (
+        <CreateOCSServiceForm
+          namespace={props.match.params.ns}
+          operandModel={OCSServiceModel}
+          sample={sample}
+          clusterServiceVersion={clusterServiceVersion !== null && clusterServiceVersion}
+        />
+      )}
     </>
   );
 });
