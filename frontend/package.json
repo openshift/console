@@ -182,6 +182,7 @@
     "jest": "21.x",
     "jest-cli": "21.x",
     "mini-css-extract-plugin": "0.4.x",
+    "moment-timezone": "^0.5.28",
     "monaco-editor-core": "0.14.0",
     "monaco-editor-webpack-plugin": "^1.7.0",
     "node-sass": "4.13.x",

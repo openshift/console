@@ -1,4 +1,5 @@
 import * as React from 'react';
+import * as momentTZ from 'moment-timezone';
 
 import {
   Dropdown,
@@ -24,11 +25,19 @@ import {
   createModalLauncher,
 } from '@console/internal/components/factory';
 import { SnapshotScheduleModel, VolumeSnapshotModel } from '../../../models';
-import { cronLink, numberOfSnapshot, snapshotTypes } from './volume-snapshot';
+import {
+  cronLink,
+  numberOfSnapshot,
+  snapshotTypes,
+  snapshotDays,
+  weekDays,
+} from './volume-snapshot';
 import { getName, getNamespace } from '@console/shared';
 
 import { PersistentVolumeClaimModel } from '@console/internal/models';
+import * as fuzzy from 'fuzzysearch';
 import './_volume-snapshot-modal.scss';
+import * as _ from 'lodash';
 
 export type VolumeSnapshotModalProps = {
   pvcData?: FirehoseResourcesResult;
@@ -37,25 +46,86 @@ export type VolumeSnapshotModalProps = {
 
 export const VolumeSnapshotModal = withHandlePromise((props: VolumeSnapshotModalProps) => {
   const { close, cancel, pvcData, errorMessage, inProgress, handlePromise } = props;
+  const current = new Date();
   const resource = pvcData.data as K8sResourceKind;
   const [snapshotCount, setSnapshotCount] = React.useState(3); // For all schedules
-  const [snapshotWeek, setSnapshotWeek] = React.useState(0); // For Weekly schedule
-  const [snapshotTime, setSnapshotTime] = React.useState('00:01'); // For weekly and monthly
-  const [snapshotMonth, setSnapshotMonth] = React.useState(1); // For monthly schedule
-  const [snapshotName, setSnapshotName] = React.useState<string>();
+
+  const [snapshotName, setSnapshotName] = React.useState<string>(
+    `${getName(resource) || 'pvc'}-snapshot`,
+  );
   const [scheduleLabel, setScheduleLabel] = React.useState<string>();
   const [scheduleType, setScheduleType] = React.useState(snapshotTypes.Single);
+  const [scheduleTimezone, setScheduleTimezone] = React.useState<string>(
+    `${momentTZ.tz.names().indexOf(momentTZ.tz.guess())}`,
+  );
+  const [snapshotDayOfMonth, setSnapshotDayOfMonth] = React.useState(
+    momentTZ.tz(current, momentTZ.tz.names()[scheduleTimezone]).date() - 1,
+  ); // For monthly schedule
+  const [snapshotTime, setSnapshotTime] = React.useState(
+    `${
+      momentTZ.tz(current, momentTZ.tz.names()[scheduleTimezone]).hour() < 10
+        ? `0${momentTZ.tz(current, momentTZ.tz.names()[scheduleTimezone]).hour()}`
+        : momentTZ.tz(current, momentTZ.tz.names()[scheduleTimezone]).hour()
+    }:${
+      momentTZ.tz(current, momentTZ.tz.names()[scheduleTimezone]).minute() < 10
+        ? `0${momentTZ.tz(current, momentTZ.tz.names()[scheduleTimezone]).minute()}`
+        : momentTZ.tz(current, momentTZ.tz.names()[scheduleTimezone]).minute()
+    }`,
+  ); // For weekly and monthly
+  const [snapshotWeek, setSnapshotWeek] = React.useState(
+    momentTZ.tz(current, momentTZ.tz.names()[scheduleTimezone]).day(),
+  ); // For Weekly schedule
+
+  const newDefaultDate = (value) => {
+    const timeZoneDate = momentTZ.tz(current, momentTZ.tz.names()[value]).date() - 1;
+    setSnapshotDayOfMonth(timeZoneDate);
+    return timeZoneDate;
+  };
+
+  const newDefaultTime = (value) => {
+    const currentTZ = momentTZ.tz(current, momentTZ.tz.names()[value]);
+    const timeZoneTime = `${currentTZ.hour() < 10 ? `0${currentTZ.hour()}` : currentTZ.hour()}:${
+      currentTZ.minute() < 10 ? `0${currentTZ.minute()}` : currentTZ.minute()
+    }`;
+    setSnapshotTime(timeZoneTime);
+    return timeZoneTime;
+  };
+
+  const newDefaultDay = (value) => {
+    const timeZoneDay = momentTZ.tz(current, momentTZ.tz.names()[value]).day();
+    setSnapshotWeek(timeZoneDay);
+    return timeZoneDay;
+  };
+
+  const handleOnChangeTimezone = (value) => {
+    setScheduleTimezone(value);
+    newDefaultDate(value);
+    newDefaultTime(value);
+    newDefaultDay(value);
+  };
 
   const makeLabel = (): string => {
     const arr = snapshotTime.split(':');
-    const newLabel = `${arr?.[1]} ${arr?.[0]}`;
+    let newLabel = '';
+    const newDate = new Date();
+    const finalDate = new Date(
+      newDate.getFullYear(),
+      newDate.getMonth(),
+      Number(snapshotDayOfMonth) + 1,
+      Number(arr?.[0]),
+      Number(arr?.[1]),
+    ); // day number is index +1
     if (scheduleType === snapshotTypes.Monthly) {
-      return `${newLabel} ${snapshotMonth} * *`;
+      newLabel = `${finalDate.getUTCMinutes()} ${finalDate.getUTCHours()} ${finalDate.getUTCDate()} * *`;
     }
     if (scheduleType === snapshotTypes.Weekly) {
-      return `${newLabel} * * ${snapshotWeek}`;
+      newLabel = `${finalDate.getUTCMinutes()} ${finalDate.getUTCHours()} * * ${finalDate.getUTCDay()}`;
     }
     return newLabel;
+  };
+
+  const autocompleteFilter = (text, item) => {
+    return fuzzy(_.toLower(text), _.toLower(item));
   };
 
   const WeeklyElements: React.FC = () => (
@@ -64,12 +134,11 @@ export const VolumeSnapshotModal = withHandlePromise((props: VolumeSnapshotModal
       fieldId="snapshot-day"
       label="Day of week"
     >
-      <TextInput
-        type="number"
-        value={snapshotWeek}
-        onChange={(value) => setSnapshotWeek(Number(value))}
-        className="ceph-volume-snapshot-modal--label"
-        aria-labelledby="snapshot-day"
+      <Dropdown
+        items={weekDays}
+        selectedKey={snapshotWeek}
+        onChange={setSnapshotWeek}
+        className="ceph-volume-snapshot-modal__dropdown"
       />
     </FormGroup>
   );
@@ -80,13 +149,11 @@ export const VolumeSnapshotModal = withHandlePromise((props: VolumeSnapshotModal
       fieldId="snapshot-month"
       label="Day of month"
     >
-      <TextInput
-        type="number"
-        name="snapshot-modal__month"
-        value={snapshotMonth}
-        onChange={(value) => setSnapshotMonth(Number(value))}
-        className="ceph-volume-snapshot-modal__label"
-        aria-labelledby="snapshot-month"
+      <Dropdown
+        items={snapshotDays}
+        selectedKey={snapshotDayOfMonth}
+        onChange={setSnapshotDayOfMonth}
+        menuClassName="ceph-volume-snapshot-modal__dropdown--overflow"
       />
     </FormGroup>
   );
@@ -95,7 +162,7 @@ export const VolumeSnapshotModal = withHandlePromise((props: VolumeSnapshotModal
     <FormGroup
       className="ceph-volume-snapshot-modal__input"
       fieldId="snapshot-schedule"
-      helperText="* Scheduled for cluster local time"
+      helperText="* Scheduled for UTC"
       isRequired
     >
       <label className="pf-c-form__label" htmlFor="snapshot-modal__schedule">
@@ -119,18 +186,38 @@ export const VolumeSnapshotModal = withHandlePromise((props: VolumeSnapshotModal
   );
 
   const OtherElements: React.FC = () => (
-    <div className="ceph-volume-snapshot-modal__input--inline">
-      {scheduleType === snapshotTypes.Monthly ? <MonthlyElements /> : <WeeklyElements />}
-      <FormGroup className="ceph-volume-snapshot-modal__input" fieldId="snapshot-time" label="Time">
-        <TextInput
-          type="time"
-          name="snapshot-modal__time-week"
-          value={snapshotTime}
-          onChange={setSnapshotTime}
-          className="ceph-volume-snapshot-modal__label"
-          aria-labelledby="snapshot-time"
+    <div>
+      <FormGroup
+        className="ceph-volume-snapshot-modal__input"
+        fieldId="snapshot-timezone"
+        label="Time zone"
+      >
+        <Dropdown
+          dropDownClassName="dropdown--full-width"
+          items={momentTZ.tz.names()}
+          selectedKey={scheduleTimezone}
+          onChange={(value) => handleOnChangeTimezone(value)}
+          menuClassName="ceph-volume-snapshot-modal__dropdown--overflow"
+          autocompleteFilter={autocompleteFilter}
         />
       </FormGroup>
+      <div className="ceph-volume-snapshot-modal__input--inline">
+        {scheduleType === snapshotTypes.Monthly ? <MonthlyElements /> : <WeeklyElements />}
+        <FormGroup
+          className="ceph-volume-snapshot-modal__input"
+          fieldId="snapshot-time"
+          label="Time"
+        >
+          <TextInput
+            type="time"
+            name="snapshot-modal__time-week"
+            value={snapshotTime}
+            onChange={setSnapshotTime}
+            className="ceph-volume-snapshot-modal__label"
+            aria-labelledby="snapshot-time"
+          />
+        </FormGroup>
+      </div>
     </div>
   );
 
@@ -138,20 +225,19 @@ export const VolumeSnapshotModal = withHandlePromise((props: VolumeSnapshotModal
     <Form>
       {scheduleType === snapshotTypes.CronJob ? <CronElements /> : <OtherElements />}
       <FormGroup
-        className="ceph-volume-snapshot-modal__input--group"
+        className="ceph-volume-snapshot-modal__input--grid"
         label="Keep"
         fieldId="snapshot-count"
         helperText="*Older snapshots will be deleted automatically"
         isRequired
       >
-        <div className="ceph-volume-snapshot-modal__input--keep">
+        <div className="ceph-volume-snapshot-modal__input--inline">
           <Dropdown
             items={numberOfSnapshot}
             selectedKey={snapshotCount}
             onChange={(value) => setSnapshotCount(Number(value))}
-            className="ceph-volume-snapshot-modal__input--count"
           />
-          <span className="ceph-volume-snapshot-modal__span--keep">last snapshots</span>
+          <span className="ceph-volume-snapshot-modal__span">last snapshots</span>
         </div>
       </FormGroup>
     </Form>
@@ -230,7 +316,7 @@ export const VolumeSnapshotModal = withHandlePromise((props: VolumeSnapshotModal
   };
 
   return (
-    <Form onSubmit={submit}>
+    <Form onSubmit={submit} className="modal-content modal-content--no-inner-scroll">
       <div className="modal-content modal-content--no-inner-scroll">
         <ModalTitle>Create Snapshot</ModalTitle>
         <ModalBody>
@@ -246,7 +332,6 @@ export const VolumeSnapshotModal = withHandlePromise((props: VolumeSnapshotModal
               name="snapshot-name"
               value={snapshotName}
               onChange={setSnapshotName}
-              placeholder={`${getName(resource) || 'pvc'}-snapshot`}
               aria-labelledby="snapshot-name"
             />
           </FormGroup>

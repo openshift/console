@@ -12,3 +12,7 @@ export const snapshotTypes = {
 };
 
 export const cronLink = 'https://en.wikipedia.org/wiki/Cron#Overview';
+
+export const snapshotDays = Array.from(Array(31), (e, i) => i + 1);
+
+export const weekDays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
