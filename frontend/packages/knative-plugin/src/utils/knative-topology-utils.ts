@@ -419,21 +419,17 @@ export const tranformKnNodeData = (
 /**
  * Filter out deployments not created via revisions/eventsources
  */
-export const filterNonKnativeDeployments = (resources: DeploymentKind[]): DeploymentKind[] => {
+export const filterNonKnativeDeployments = (
+  resources: DeploymentKind[],
+  eventSources?: K8sResourceKind[],
+): DeploymentKind[] => {
   const KNATIVE_CONFIGURATION = 'serving.knative.dev/configuration';
-  const KNATIVE_EVENTS_CRONJOB = 'sources.eventing.knative.dev/cronJobSource';
-  const KNATIVE_EVENTS_CONTAINER = 'sources.eventing.knative.dev/containerSource';
-  const KNATIVE_EVENTS_APISERVER = 'sources.knative.dev/apiServerSource';
-  const KNATIVE_EVENTS_CAMEL = 'sources.eventing.knative.dev/camelSource';
-  const KNATIVE_EVENTS_KAFKA = 'sources.eventing.knative.dev/kafkaSource';
+  const isEventSourceKind = (uid: string): boolean =>
+    uid && !!eventSources?.find((eventSource) => eventSource.metadata?.uid === uid);
   return _.filter(resources, (d) => {
     return (
-      !_.get(d, ['metadata', 'labels', KNATIVE_CONFIGURATION]) &&
-      !_.get(d, ['metadata', 'labels', KNATIVE_EVENTS_CRONJOB]) &&
-      !_.get(d, ['metadata', 'labels', KNATIVE_EVENTS_CONTAINER]) &&
-      !_.get(d, ['metadata', 'labels', KNATIVE_EVENTS_APISERVER]) &&
-      !_.get(d, ['metadata', 'labels', KNATIVE_EVENTS_CAMEL]) &&
-      !_.get(d, ['metadata', 'labels', KNATIVE_EVENTS_KAFKA])
+      !_.get(d, ['metadata', 'labels', KNATIVE_CONFIGURATION], false) &&
+      !isEventSourceKind(d.metadata?.ownerReferences?.[0].uid)
     );
   });
 };

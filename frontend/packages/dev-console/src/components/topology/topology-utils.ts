@@ -652,7 +652,7 @@ export const transformTopologyData = (
   const knRevResources: K8sResourceKind[] = _.get(resources, ['revisions', 'data'], []);
   knRevResources.length && getKnativeTopologyData(knRevResources, NodeType.Revision);
   const deploymentResources: DeploymentKind[] = _.get(resources, ['deployments', 'data'], []);
-  resources.deployments.data = filterNonKnativeDeployments(deploymentResources);
+  resources.deployments.data = filterNonKnativeDeployments(deploymentResources, knEventSources);
   // END: kn call to form topology data
 
   const transformResourceData = createInstanceForResource(resources, utils, installedOperators);

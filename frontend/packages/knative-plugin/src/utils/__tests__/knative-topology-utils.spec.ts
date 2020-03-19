@@ -1,6 +1,12 @@
 import * as _ from 'lodash';
 import * as k8s from '@console/internal/module/k8s';
-import { MockKnativeResources } from '@console/dev-console/src/components/topology/__tests__/topology-knative-test-data';
+import {
+  MockKnativeResources,
+  sampleEventSourceDeployments,
+  sampleKnativeDeployments,
+  sampleEventSourceApiServer,
+} from '@console/dev-console/src/components/topology/__tests__/topology-knative-test-data';
+import { sampleDeployments } from '@console/dev-console/src/components/topology/__tests__/topology-test-data';
 import {
   getKnativeServiceData,
   getKnativeTopologyNodeItems,
@@ -11,6 +17,7 @@ import {
   getParentResource,
   filterRevisionsByActiveApplication,
   createKnativeEventSourceSink,
+  filterNonKnativeDeployments,
 } from '../knative-topology-utils';
 import { mockServiceData, mockRevisions } from '../__mocks__/traffic-splitting-utils-mock';
 
@@ -116,6 +123,19 @@ describe('knative topology utils', () => {
   it('should return undefined if traffic status is not defined', () => {
     const mockService = { metadata: { name: 'ser', namepspace: '' }, status: {}, spec: {} };
     expect(filterRevisionsBaseOnTrafficStatus(mockService, mockRevisions)).toBeUndefined();
+  });
+
+  it('should filter out deployments created for knative resources and event sources', () => {
+    const MockResources: k8s.DeploymentKind[] = [
+      sampleEventSourceDeployments.data[0],
+      sampleKnativeDeployments.data[0],
+      sampleDeployments.data[0],
+    ];
+    const filteredResources: k8s.DeploymentKind[] = filterNonKnativeDeployments(MockResources, [
+      sampleEventSourceApiServer.data[0],
+    ]);
+    expect(filteredResources).toHaveLength(1);
+    expect(filteredResources[0].metadata.name).toEqual('analytics-deployment');
   });
 });
 
