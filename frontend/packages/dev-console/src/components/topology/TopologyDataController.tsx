@@ -128,6 +128,7 @@ export const TopologyDataController: React.FC<TopologyDataControllerProps> = ({
             }
           });
         } catch (e) {
+          // eslint-disable-next-line no-console
           console.error(e);
         }
 

@@ -14,7 +14,7 @@
     "build": "yarn clean && NODE_ENV=production NODE_OPTIONS=--max-old-space-size=4096 ts-node -O '{\"module\":\"commonjs\"}' ./node_modules/.bin/webpack --mode=production",
     "coverage": "jest --coverage .",
     "eslint": "eslint --ext .js,.jsx,.ts,.tsx,.json --color",
-    "lint": "yarn eslint .",
+    "lint": "NODE_OPTIONS=--max-old-space-size=4096 yarn eslint .",
     "test": "jest",
     "debug-test": "node --inspect-brk node_modules/.bin/jest --runInBand",
     "webdriver-update": "webdriver-manager update --gecko=false",
