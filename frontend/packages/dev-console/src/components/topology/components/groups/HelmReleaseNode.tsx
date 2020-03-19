@@ -35,7 +35,7 @@ const HelmReleaseNode: React.FC<HelmReleaseNodeProps> = ({
   contextMenuOpen,
   dndDropRef,
 }) => {
-  useAnchor((e: Node) => new RectAnchor(e, 1.5));
+  useAnchor(React.useCallback((node: Node) => new RectAnchor(node, 1.5), []));
   const [hover, hoverRef] = useHover();
   const [{ dragging }, dragNodeRef] = useDragNode(
     nodeDragSourceSpec(TYPE_HELM_RELEASE, true, editAccess),

@@ -40,7 +40,7 @@ const ApplicationNode: React.FC<ApplicationGroupProps> = ({
   contextMenuOpen,
   dragging,
 }) => {
-  useAnchor((e: Node) => new RectAnchor(e, 1.5));
+  useAnchor(React.useCallback((node: Node) => new RectAnchor(node, 1.5), []));
   const [hover, hoverRef] = useHover();
   const dragNodeRef = useDragNode()[1];
   const refs = useCombineRefs<SVGRectElement>(dragNodeRef, hoverRef);

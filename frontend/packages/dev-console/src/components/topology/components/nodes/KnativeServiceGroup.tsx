@@ -78,7 +78,8 @@ const KnativeServiceGroup: React.FC<KnativeServiceGroupProps> = ({
     AnchorEnd.source,
     'revision-traffic',
   );
-  useAnchor((e: Node) => new RectAnchor(e, 1.5));
+  useAnchor(React.useCallback((node: Node) => new RectAnchor(node, 1.5), []));
+
   const [filtered] = useSearchFilter(element.getLabel());
   const { x, y, width, height } = element.getBounds();
 
