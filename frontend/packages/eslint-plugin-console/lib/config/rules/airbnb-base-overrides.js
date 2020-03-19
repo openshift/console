@@ -31,6 +31,9 @@ module.exports = {
   // Disallow Unused Expressions
   'no-unused-expressions': ['error', { allowShortCircuit: true, allowTernary: true }],
 
+  // Disallow console statements
+  'no-console': 'error',
+
   // TODO This rule was not working as expected prior to eslint-config-airbnb-base v14.0.0
   // Disabling for now since it is causing failures after the update.
   // Sort imports into groups
