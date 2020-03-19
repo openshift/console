@@ -1,0 +1,42 @@
+.ocs-drawer {
+  position: relative;
+  overflow: hidden;
+  flex-grow: 0;
+  flex-shrink: 0;
+  transition: opacity 175ms ease-out, transform 225ms ease-out;
+  border-top: 1px solid var(--pf-global--palette--black-400);
+
+  &__drag-handle {
+    width: 100%;
+    height: 6px;
+    cursor: ns-resize;
+    position: absolute;
+    background-color: transparent;
+    &:hover {
+      background-color: var(--pf-global--palette--black-300);
+    }
+  }
+
+  &__header {
+    padding: 4px;
+    height: var(--pf-global--target-size--MinHeight);
+    background-color: var(--pf-global--palette--black-200);
+  }
+
+  &-appear {
+    opacity: 0;
+    transform: translatey(10%);
+  }
+  &-appear-active {
+    opacity: 1;
+    transform: translatey(0);
+  }
+  &-exit {
+    opacity: 1;
+    transform: translatey(0);
+  }
+  &-exit-active {
+    opacity: 0;
+    transform: translatey(10%);
+  }
+}
