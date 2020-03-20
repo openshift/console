@@ -443,7 +443,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       loader: async () =>
         (
           await import(
-            './components/helm/HelmInstallPage' /* webpackChunkName: "dev-console-helm-install" */
+            './components/helm/HelmInstallUpgradePage' /* webpackChunkName: "dev-console-helm-install-upgrade" */
           )
         ).default,
     },
@@ -623,6 +623,19 @@ const plugin: Plugin<ConsumedExtensions> = [
         (
           await import(
             './components/helm/HelmReleasePage' /* webpackChunkName: "dev-console-helm-releases" */
+          )
+        ).default,
+    },
+  },
+  {
+    type: 'Page/Route',
+    properties: {
+      exact: true,
+      path: [`/helm-releases/ns/:ns/:releaseName/upgrade`],
+      loader: async () =>
+        (
+          await import(
+            './components/helm/HelmInstallUpgradePage' /* webpackChunkName: "dev-console-helm-install-upgrade" */
           )
         ).default,
     },

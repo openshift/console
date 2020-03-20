@@ -15,7 +15,7 @@ import { fetchHelmReleases } from './helm-utils';
 import HelmReleaseResources from './HelmReleaseResources';
 import HelmReleaseOverview from './HelmReleaseOverview';
 import HelmReleaseHistory from './HelmReleaseHistory';
-import { deleteHelmRelease } from '../../actions/modify-helm-release';
+import { deleteHelmRelease, upgradeHelmRelease } from '../../actions/modify-helm-release';
 import HelmReleaseNotes from './HelmReleaseNotes';
 import { HelmRelease } from './helm-types';
 
@@ -55,6 +55,7 @@ export const LoadedHelmReleaseDetailsPage: React.FC<LoadedHelmReleaseDetailsPage
   const releaseName = secretResource[0]?.metadata.labels?.name;
 
   const menuActions = [
+    () => upgradeHelmRelease(releaseName, namespace),
     () => deleteHelmRelease(releaseName, namespace, `/helm-releases/ns/${namespace}`),
   ];
 

@@ -3,9 +3,11 @@ import {
   getFilteredItemsByRow,
   otherStatuses,
   getFilteredItemsByText,
+  getChartURL,
+  getChartVersions,
 } from '../helm-utils';
 import { HelmReleaseStatus } from '../helm-types';
-import { mockHelmReleases } from './helm-release-mock-data';
+import { mockHelmReleases, mockHelmChartData } from './helm-release-mock-data';
 
 describe('Helm Releases Utils', () => {
   it('should return deployed or failed status for a helm release', () => {
@@ -36,5 +38,18 @@ describe('Helm Releases Utils', () => {
     const filteredReleases = getFilteredItemsByText(mockHelmReleases, 'ghost');
     expect(filteredReleases.length).toEqual(1);
     expect(filteredReleases[0].name).toBe('ghost-test');
+  });
+
+  it('should return the helm chart url', () => {
+    const chartVersion = '1.0.2';
+    const chartURL = getChartURL(mockHelmChartData, chartVersion);
+    expect(chartURL).toBe(
+      'https://raw.githubusercontent.com/IBM/charts/master/repo/community/hazelcast-enterprise-1.0.2.tgz',
+    );
+  });
+
+  it('should return the chart versions available for the helm chart', () => {
+    const chartVersions = getChartVersions(mockHelmChartData);
+    expect(chartVersions).toEqual({ '1.0.3': '1.0.3', '1.0.2': '1.0.2', '1.0.1': '1.0.1' });
   });
 });

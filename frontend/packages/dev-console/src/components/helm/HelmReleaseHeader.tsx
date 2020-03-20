@@ -2,12 +2,13 @@ import { sortable } from '@patternfly/react-table';
 import { Kebab } from '@console/internal/components/utils';
 
 export const tableColumnClasses = {
-  name: 'col-lg-2 col-md-3 col-sm-4 col-xs-4',
+  name: 'col-lg-2 col-md-4 col-sm-4 col-xs-4',
   revision: 'col-lg-2 col-md-3 col-sm-3 col-xs-3',
-  updated: 'col-lg-2 col-md-4 col-sm-5 col-xs-5',
-  status: 'col-lg-2 col-md-2 hidden-sm hidden-xs',
+  updated: 'col-lg-2 col-md-3 col-sm-5 col-xs-5',
+  status: 'col-lg-1 col-md-2 hidden-sm hidden-xs',
   chartName: 'col-lg-2 hidden-md hidden-sm hidden-xs',
-  appVersion: 'col-lg-2 hidden-md hidden-sm hidden-xs',
+  chartVersion: 'col-lg-2 hidden-md hidden-sm hidden-xs',
+  appVersion: 'col-lg-1 hidden-md hidden-sm hidden-xs',
   kebab: Kebab.columnClass,
 };
 
@@ -42,6 +43,12 @@ const HelmReleaseHeader = () => {
       sortField: 'chart.metadata.name',
       transforms: [sortable],
       props: { className: tableColumnClasses.chartName },
+    },
+    {
+      title: 'Chart Version',
+      sortField: 'chart.metadata.version',
+      transforms: [sortable],
+      props: { className: tableColumnClasses.chartVersion },
     },
     {
       title: 'App Version',
