@@ -17,7 +17,7 @@ import {
 } from '@console/plugin-sdk';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { MachineModel, NodeModel } from '@console/internal/models';
-// TODO(jtomasek): chage this to '@console/shared/src/utils' once @console/shared/src/utils modules
+// TODO(jtomasek): change this to '@console/shared/src/utils' once @console/shared/src/utils modules
 // no longer import from @console/internal (cyclic deps issues)
 import { formatNamespacedRouteForResource } from '@console/shared/src/utils/namespace';
 import { BareMetalHostModel, NodeMaintenanceModel } from './models';
@@ -137,6 +137,8 @@ const plugin: Plugin<ConsumedExtensions> = [
         },
       },
       mapper: getBMNStatusGroups,
+    },
+    flags: {
       required: [BAREMETAL_FLAG, METAL3_FLAG],
     },
   },
@@ -160,6 +162,8 @@ const plugin: Plugin<ConsumedExtensions> = [
       },
       model: BareMetalHostModel,
       mapper: getBMHStatusGroups,
+    },
+    flags: {
       required: [BAREMETAL_FLAG, METAL3_FLAG],
     },
   },
@@ -201,6 +205,8 @@ const plugin: Plugin<ConsumedExtensions> = [
         import(
           './components/maintenance/MaintenanceDashboardActivity' /* webpackChunkName: "node-maintenance" */
         ).then((m) => m.default),
+    },
+    flags: {
       required: [BAREMETAL_FLAG, METAL3_FLAG],
     },
   },
@@ -227,6 +233,8 @@ const plugin: Plugin<ConsumedExtensions> = [
         import(
           './components/baremetal-hosts/dashboard/BareMetalStatusActivity' /* webpackChunkName: "metal3-powering" */
         ).then((m) => m.default),
+    },
+    flags: {
       required: [BAREMETAL_FLAG, METAL3_FLAG],
     },
   },

@@ -78,7 +78,9 @@ const plugin: Plugin<ConsumedExtensions> = [
         import(
           './components/dashboards-page/ClusterUpdateActivity' /* webpackChunkName: "console-app" */
         ).then((m) => m.default),
-      required: FLAGS.CLUSTER_VERSION,
+    },
+    flags: {
+      required: [FLAGS.CLUSTER_VERSION],
     },
   },
   {
@@ -157,7 +159,9 @@ const plugin: Plugin<ConsumedExtensions> = [
           './components/dashboards-page/OperatorStatus' /* webpackChunkName: "console-app" */
         ).then((c) => c.default),
       viewAllLink: '/settings/cluster/clusteroperators',
-      required: FLAGS.CLUSTER_VERSION,
+    },
+    flags: {
+      required: [FLAGS.CLUSTER_VERSION],
     },
   },
 ];

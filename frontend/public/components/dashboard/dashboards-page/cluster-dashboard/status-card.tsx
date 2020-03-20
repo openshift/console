@@ -3,6 +3,8 @@ import * as _ from 'lodash-es';
 import { connect } from 'react-redux';
 import { Map as ImmutableMap } from 'immutable';
 import {
+  useExtensions,
+  DashboardsOverviewHealthSubsystem,
   isDashboardsOverviewHealthSubsystem,
   isDashboardsOverviewHealthURLSubsystem,
   isDashboardsOverviewHealthPrometheusSubsystem,
@@ -22,13 +24,7 @@ import { withDashboardResources, DashboardItemProps } from '../../with-dashboard
 import AlertItem, {
   StatusItem,
 } from '@console/shared/src/components/dashboard/status-card/AlertItem';
-import {
-  connectToFlags,
-  FlagsObject,
-  WithFlagsProps,
-  flagPending,
-} from '../../../../reducers/features';
-import * as plugins from '../../../../plugins';
+import { connectToFlags, WithFlagsProps, flagPending } from '../../../../reducers/features';
 import { FirehoseResource } from '../../../utils';
 import { alertURL } from '../../../monitoring';
 import {
@@ -42,17 +38,18 @@ import { clusterUpdateModal } from '../../../modals/cluster-update-modal';
 import { RootState } from '../../../../redux';
 import { OperatorHealthItem, PrometheusHealthItem, URLHealthItem } from './health-item';
 
-const getSubsystems = (flags: FlagsObject, k8sModels: ImmutableMap<string, K8sKind>) =>
-  plugins.registry.getDashboardsOverviewHealthSubsystems().filter((e) => {
-    if (!plugins.registry.isExtensionInUse(e, flags)) {
-      return false;
-    }
+const filterSubsystems = (
+  subsystems: DashboardsOverviewHealthSubsystem[],
+  k8sModels: ImmutableMap<string, K8sKind>,
+) =>
+  subsystems.filter((subsystem) => {
     if (
-      isDashboardsOverviewHealthPrometheusSubsystem(e) ||
-      isDashboardsOverviewHealthURLSubsystem(e)
+      isDashboardsOverviewHealthURLSubsystem(subsystem) ||
+      isDashboardsOverviewHealthPrometheusSubsystem(subsystem)
     ) {
-      return e.properties.additionalResource && !e.properties.additionalResource.optional
-        ? !!k8sModels.get(e.properties.additionalResource.kind)
+      return subsystem.properties.additionalResource &&
+        !subsystem.properties.additionalResource.optional
+        ? !!k8sModels.get(subsystem.properties.additionalResource.kind)
         : true;
     }
     return true;
@@ -153,55 +150,63 @@ const mapStateToProps = (state: RootState) => ({
   k8sModels: state.k8s.getIn(['RESOURCES', 'models']),
 });
 
-export const StatusCard = connect(mapStateToProps)(
-  connectToFlags<StatusCardProps>(
-    ...plugins.registry.getGatingFlagNames([isDashboardsOverviewHealthSubsystem]),
-  )(({ flags, k8sModels }) => {
-    const subsystems = getSubsystems(flags, k8sModels);
-    const operatorSubsystemIndex = subsystems.findIndex(isDashboardsOverviewHealthOperator);
+export const StatusCard = connect<StatusCardProps>(mapStateToProps)(({ k8sModels }) => {
+  const subsystemExtensions = useExtensions<DashboardsOverviewHealthSubsystem>(
+    isDashboardsOverviewHealthSubsystem,
+  );
 
-    const healthItems: { title: string; Component: React.ReactNode }[] = [];
-    subsystems.forEach((subsystem) => {
-      if (isDashboardsOverviewHealthURLSubsystem(subsystem)) {
-        healthItems.push({
-          title: subsystem.properties.title,
-          Component: <URLHealthItem subsystem={subsystem.properties} models={k8sModels} />,
-        });
-      } else if (isDashboardsOverviewHealthPrometheusSubsystem(subsystem)) {
-        healthItems.push({
-          title: subsystem.properties.title,
-          Component: <PrometheusHealthItem subsystem={subsystem.properties} models={k8sModels} />,
-        });
-      }
-    });
-    if (operatorSubsystemIndex !== -1) {
-      const operatorSubsystems = subsystems.filter(isDashboardsOverviewHealthOperator);
-      healthItems.splice(operatorSubsystemIndex, 0, {
-        title: 'Operators',
-        Component: <OperatorHealthItem operatorExtensions={operatorSubsystems} />,
+  const subsystems = React.useMemo(() => filterSubsystems(subsystemExtensions, k8sModels), [
+    subsystemExtensions,
+    k8sModels,
+  ]);
+
+  const operatorSubsystemIndex = React.useMemo(
+    () => subsystems.findIndex(isDashboardsOverviewHealthOperator),
+    [subsystems],
+  );
+
+  const healthItems: { title: string; Component: React.ReactNode }[] = [];
+  subsystems.forEach((subsystem) => {
+    if (isDashboardsOverviewHealthURLSubsystem(subsystem)) {
+      healthItems.push({
+        title: subsystem.properties.title,
+        Component: <URLHealthItem subsystem={subsystem.properties} models={k8sModels} />,
+      });
+    } else if (isDashboardsOverviewHealthPrometheusSubsystem(subsystem)) {
+      healthItems.push({
+        title: subsystem.properties.title,
+        Component: <PrometheusHealthItem subsystem={subsystem.properties} models={k8sModels} />,
       });
     }
-    return (
-      <DashboardCard gradient data-test-id="status-card">
-        <DashboardCardHeader>
-          <DashboardCardTitle>Status</DashboardCardTitle>
-          <DashboardCardLink to="/monitoring/alerts">View alerts</DashboardCardLink>
-        </DashboardCardHeader>
-        <DashboardCardBody>
-          <HealthBody>
-            <Gallery className="co-overview-status__health" gutter="md">
-              {healthItems.map((item) => {
-                return <GalleryItem key={item.title}>{item.Component}</GalleryItem>;
-              })}
-            </Gallery>
-          </HealthBody>
-          <ClusterAlerts />
-        </DashboardCardBody>
-      </DashboardCard>
-    );
-  }),
-);
+  });
+  if (operatorSubsystemIndex !== -1) {
+    const operatorSubsystems = subsystems.filter(isDashboardsOverviewHealthOperator);
+    healthItems.splice(operatorSubsystemIndex, 0, {
+      title: 'Operators',
+      Component: <OperatorHealthItem operatorExtensions={operatorSubsystems} />,
+    });
+  }
 
-type StatusCardProps = WithFlagsProps & {
+  return (
+    <DashboardCard gradient data-test-id="status-card">
+      <DashboardCardHeader>
+        <DashboardCardTitle>Status</DashboardCardTitle>
+        <DashboardCardLink to="/monitoring/alerts">View alerts</DashboardCardLink>
+      </DashboardCardHeader>
+      <DashboardCardBody>
+        <HealthBody>
+          <Gallery className="co-overview-status__health" gutter="md">
+            {healthItems.map((item) => {
+              return <GalleryItem key={item.title}>{item.Component}</GalleryItem>;
+            })}
+          </Gallery>
+        </HealthBody>
+        <ClusterAlerts />
+      </DashboardCardBody>
+    </DashboardCard>
+  );
+});
+
+type StatusCardProps = {
   k8sModels: ImmutableMap<string, K8sKind>;
 };

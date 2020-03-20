@@ -26,9 +26,11 @@ import { FirehoseResult, FirehoseResource, useAccessReview } from '../../utils';
 import { K8sKind, referenceForModel } from '../../../module/k8s';
 import { getName } from '@console/shared';
 import { ProjectDashboardContext } from './project-dashboard-context';
-import { connectToFlags, FlagsObject } from '../../../reducers/features';
-import * as plugins from '../../../plugins';
-import { isProjectDashboardInventoryItem } from '@console/plugin-sdk';
+import {
+  useExtensions,
+  ProjectDashboardInventoryItem,
+  isProjectDashboardInventoryItem,
+} from '@console/plugin-sdk';
 
 const createFirehoseResource = (model: K8sKind, projectName: string): FirehoseResource => ({
   kind: model.crd ? referenceForModel(model) : model.kind,
@@ -100,15 +102,10 @@ const ProjectInventoryItem = withDashboardResources(
   },
 );
 
-const getPluginItems = (flags: FlagsObject) =>
-  plugins.registry
-    .getProjectDashboardInventoryItems()
-    .filter((e) => plugins.registry.isExtensionInUse(e, flags));
-
-export const InventoryCard = connectToFlags(
-  ...plugins.registry.getGatingFlagNames([isProjectDashboardInventoryItem]),
-)(({ flags }) => {
-  const pluginItems = getPluginItems(flags);
+export const InventoryCard = () => {
+  const itemExtensions = useExtensions<ProjectDashboardInventoryItem>(
+    isProjectDashboardInventoryItem,
+  );
   const { obj } = React.useContext(ProjectDashboardContext);
   const projectName = getName(obj);
   const canListSecrets = useAccessReview({
@@ -117,6 +114,7 @@ export const InventoryCard = connectToFlags(
     namespace: projectName,
     verb: 'list',
   });
+
   return (
     <DashboardCard data-test-id="inventory-card">
       <DashboardCardHeader>
@@ -139,7 +137,7 @@ export const InventoryCard = connectToFlags(
         <ProjectInventoryItem projectName={projectName} model={RouteModel} />
         <ProjectInventoryItem projectName={projectName} model={ConfigMapModel} />
         {canListSecrets && <ProjectInventoryItem projectName={projectName} model={SecretModel} />}
-        {pluginItems.map((item) => (
+        {itemExtensions.map((item) => (
           <ProjectInventoryItem
             key={item.properties.model.kind}
             projectName={projectName}
@@ -152,7 +150,7 @@ export const InventoryCard = connectToFlags(
       </DashboardCardBody>
     </DashboardCard>
   );
-});
+};
 
 type ProjectInventoryItemProps = DashboardItemProps & {
   projectName: string;

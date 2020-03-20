@@ -106,7 +106,9 @@ const plugin: Plugin<ConsumedExtensions> = [
           (m) => m.SecurityBreakdownPopup,
         ),
       popupTitle: 'Quay Image Security breakdown',
-      required: SecurityLabellerFlag,
+    },
+    flags: {
+      required: [SecurityLabellerFlag],
     },
   },
   {
