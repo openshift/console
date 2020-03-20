@@ -1,0 +1,14 @@
+.odc-regroup-hint {
+  align-items: center;
+  display: flex;
+
+  &__icon {
+    color: var(--pf-global--info-color--100);
+  }
+  &__text {
+    margin-left: var(--pf-global--spacer--sm);
+    .ocs-shortcut__cell {
+      padding-bottom: 0;
+    }
+  }
+}
