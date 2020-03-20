@@ -5,8 +5,8 @@ import {
   isLoaded,
 } from '@console/internal-integration-tests/views/crud.view';
 import { clickNavLink } from '@console/internal-integration-tests/views/sidenav.view';
-import { click, asyncForEach } from '@console/shared/src/test-utils/utils';
-import { fillInput, selectOptionByText } from '../utils/utils';
+import { click, fillInput, asyncForEach } from '@console/shared/src/test-utils/utils';
+import { selectOptionByText } from '../utils/utils';
 import { CloudInitConfig, StorageResource, NetworkResource, FlavorConfig } from '../utils/types';
 import { WIZARD_CREATE_VM_SUCCESS, PAGE_LOAD_TIMEOUT_SECS, KEBAP_ACTION } from '../utils/consts';
 import * as wizardView from '../../views/wizard.view';

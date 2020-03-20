@@ -1,10 +1,5 @@
-import { click } from '@console/shared/src/test-utils/utils';
-import {
-  fillInput,
-  selectOptionByText,
-  getSelectedOptionText,
-  getSelectOptions,
-} from '../utils/utils';
+import { click, fillInput } from '@console/shared/src/test-utils/utils';
+import { selectOptionByText, getSelectedOptionText, getSelectOptions } from '../utils/utils';
 import * as view from '../../views/dialogs/diskDialog.view';
 import { modalSubmitButton, saveButton } from '../../views/kubevirtDetailView.view';
 import { StorageResource, DiskSourceConfig } from '../utils/types';

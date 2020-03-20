@@ -11,9 +11,9 @@ import {
   removeLeakedResources,
   removeLeakableResource,
   waitForCount,
+  fillInput,
 } from '@console/shared/src/test-utils/utils';
 import { getVMIManifest } from './utils/mocks';
-import { fillInput } from './utils/utils';
 import {
   VM_DELETE_TIMEOUT_SECS,
   VMI_ACTION,
