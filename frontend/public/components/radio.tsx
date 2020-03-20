@@ -26,22 +26,44 @@ export const RadioInput: React.SFC<RadioInputProps> = (props) => {
   return props.inline ? inputElement : <div className="radio">{inputElement}</div>;
 };
 
-export const RadioGroup: React.SFC<RadioGroupProps> = ({ currentValue, onChange, items }) => (
-  <div>
-    {items.map(({ desc, title, subTitle, value, disabled }) => (
-      <RadioInput
-        key={value}
-        checked={value === currentValue}
-        desc={desc}
-        onChange={onChange}
-        title={title}
-        subTitle={subTitle}
-        value={value}
-        disabled={disabled}
-      />
-    ))}
-  </div>
-);
+export const RadioGroup: React.SFC<RadioGroupProps> = ({
+  currentValue,
+  inline = false,
+  items,
+  label,
+  onChange,
+  id = JSON.stringify(items),
+}) => {
+  const radios = items.map(({ desc, title, subTitle, value, disabled }) => (
+    <RadioInput
+      key={value}
+      checked={value === currentValue}
+      desc={desc}
+      onChange={onChange}
+      title={title}
+      subTitle={subTitle}
+      value={value}
+      disabled={disabled}
+      inline={inline}
+    />
+  ));
+  return (
+    <div className={classNames('co-radio-group', { 'co-radio-group--inline': inline })}>
+      {label ? (
+        <>
+          <label className="form-label co-radio-group__label" htmlFor={id}>
+            {label}
+          </label>
+          <div className="co-radio-group__controls" id={id}>
+            {radios}
+          </div>
+        </>
+      ) : (
+        radios
+      )}
+    </div>
+  );
+};
 
 export type RadioInputProps = {
   checked: boolean;
@@ -55,7 +77,8 @@ export type RadioInputProps = {
 
 export type RadioGroupProps = {
   currentValue: any;
-  onChange: React.InputHTMLAttributes<any>['onChange'];
+  id?: string;
+  inline?: boolean;
   items: ({
     desc?: string | JSX.Element;
     title: string | JSX.Element;
@@ -63,6 +86,8 @@ export type RadioGroupProps = {
     value: any;
     disabled?: boolean;
   } & React.InputHTMLAttributes<any>)[];
+  label?: string;
+  onChange: React.InputHTMLAttributes<any>['onChange'];
 };
 
 RadioInput.displayName = 'RadioInput';
