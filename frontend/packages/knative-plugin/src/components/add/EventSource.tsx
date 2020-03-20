@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { Formik } from 'formik';
+import { connect } from 'react-redux';
 import { history } from '@console/internal/components/utils';
 import { getActiveApplication } from '@console/internal/reducers/ui';
 import { RootState } from '@console/internal/redux';
-import { connect } from 'react-redux';
 import { ALL_APPLICATIONS_KEY } from '@console/shared';
 import { K8sResourceKind, modelFor, referenceFor, k8sCreate } from '@console/internal/module/k8s';
 import { FirehoseList } from '@console/dev-console/src/components/import/import-types';

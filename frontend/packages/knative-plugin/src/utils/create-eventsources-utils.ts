@@ -1,4 +1,3 @@
-import * as _ from 'lodash';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { useAccessReview } from '@console/internal/components/utils';
 import { getActiveNamespace } from '@console/internal/actions/ui';
@@ -74,37 +73,47 @@ export const useKnativeEventingAccess = (model): boolean => {
 };
 
 export const useEventSourceList = () => {
-  const eventSourceList = _.filter([
-    useKnativeEventingAccess(EventSourceCronJobModel) && {
-      name: EventSourceCronJobModel.kind,
-      iconUrl: cronJobSourceImg,
-      displayName: EventSourceCronJobModel.label,
-      title: EventSourceCronJobModel.kind,
-    },
-    useKnativeEventingAccess(EventSourceSinkBindingModel) && {
-      name: EventSourceSinkBindingModel.kind,
-      iconUrl: containerSourceImg,
-      displayName: EventSourceSinkBindingModel.label,
-      title: EventSourceSinkBindingModel.kind,
-    },
-    useKnativeEventingAccess(EventSourceApiServerModel) && {
-      name: EventSourceApiServerModel.kind,
-      iconUrl: apiServerSourceImg,
-      displayName: EventSourceApiServerModel.label,
-      title: EventSourceApiServerModel.kind,
-    },
-    useKnativeEventingAccess(EventSourceKafkaModel) && {
-      name: EventSourceKafkaModel.kind,
-      iconUrl: kafkaSourceImg,
-      displayName: EventSourceKafkaModel.label,
-      title: EventSourceKafkaModel.kind,
-    },
-    useKnativeEventingAccess(EventSourceCamelModel) && {
-      name: EventSourceCamelModel.kind,
-      iconUrl: camelSourceImg,
-      displayName: EventSourceCamelModel.label,
-      title: EventSourceCamelModel.kind,
-    },
-  ]);
+  const eventSourceList = {
+    ...(useKnativeEventingAccess(EventSourceCronJobModel) && {
+      [EventSourceCronJobModel.kind]: {
+        name: EventSourceCronJobModel.kind,
+        iconUrl: cronJobSourceImg,
+        displayName: EventSourceCronJobModel.label,
+        title: EventSourceCronJobModel.kind,
+      },
+    }),
+    ...(useKnativeEventingAccess(EventSourceSinkBindingModel) && {
+      [EventSourceSinkBindingModel.kind]: {
+        name: EventSourceSinkBindingModel.kind,
+        iconUrl: containerSourceImg,
+        displayName: EventSourceSinkBindingModel.label,
+        title: EventSourceSinkBindingModel.kind,
+      },
+    }),
+    ...(useKnativeEventingAccess(EventSourceApiServerModel) && {
+      [EventSourceApiServerModel.kind]: {
+        name: EventSourceApiServerModel.kind,
+        iconUrl: apiServerSourceImg,
+        displayName: EventSourceApiServerModel.label,
+        title: EventSourceApiServerModel.kind,
+      },
+    }),
+    ...(useKnativeEventingAccess(EventSourceKafkaModel) && {
+      [EventSourceKafkaModel.kind]: {
+        name: EventSourceKafkaModel.kind,
+        iconUrl: kafkaSourceImg,
+        displayName: EventSourceKafkaModel.label,
+        title: EventSourceKafkaModel.kind,
+      },
+    }),
+    ...(useKnativeEventingAccess(EventSourceCamelModel) && {
+      [EventSourceCamelModel.kind]: {
+        name: EventSourceCamelModel.kind,
+        iconUrl: camelSourceImg,
+        displayName: EventSourceCamelModel.label,
+        title: EventSourceCamelModel.kind,
+      },
+    }),
+  };
   return eventSourceList;
 };

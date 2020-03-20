@@ -1,39 +1,16 @@
 import * as React from 'react';
-import * as _ from 'lodash';
-import { useFormikContext, FormikValues } from 'formik';
-import SelectorCard from '@console/dev-console/src/components/import/builder/SelectorCard';
+import { ItemSelectorField } from '@console/shared';
 import FormSection from '@console/dev-console/src/components/import/section/FormSection';
-import './EventSourcesSelector.scss';
+import { NormalizedEventSources } from '../import-types';
 
 interface EventSourcesSelectorProps {
-  eventSourceList: any;
+  eventSourceList: NormalizedEventSources;
 }
 
-const EventSourcesSelector: React.FC<EventSourcesSelectorProps> = ({ eventSourceList }) => {
-  const { values, setFieldValue, setFieldTouched, validateForm } = useFormikContext<FormikValues>();
-
-  const handleTypeChange = React.useCallback(
-    (value: string) => {
-      setFieldValue('type', value);
-      setFieldTouched('type', true);
-      validateForm();
-    },
-    [setFieldValue, setFieldTouched, validateForm],
-  );
-  return (
-    <FormSection title="Type" fullWidth>
-      <div id="event-source-selector-field" className="odc-event-source-selector">
-        {_.values(eventSourceList).map((type) => (
-          <SelectorCard
-            key={type.name}
-            image={type}
-            selected={values.type === type.name}
-            onChange={handleTypeChange}
-          />
-        ))}
-      </div>
-    </FormSection>
-  );
-};
+const EventSourcesSelector: React.FC<EventSourcesSelectorProps> = ({ eventSourceList }) => (
+  <FormSection title="Type" fullWidth>
+    <ItemSelectorField itemList={eventSourceList} name="type" />
+  </FormSection>
+);
 
 export default EventSourcesSelector;

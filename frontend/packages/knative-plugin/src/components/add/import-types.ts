@@ -35,3 +35,15 @@ export interface EventSourceFormData {
   sink: KnativeServiceName;
   data?: EventSourceData;
 }
+
+export interface EventSourceList {
+  title: string;
+  iconUrl: string;
+  name: string;
+  displayName: string;
+  [x: string]: any;
+}
+
+export interface NormalizedEventSources {
+  [eventSourceName: string]: EventSourceList;
+}
