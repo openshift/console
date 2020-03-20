@@ -54,8 +54,3 @@ export enum HelmReleaseStatus {
   Failed = 'failed',
   Other = 'other',
 }
-
-export enum HelmFilterType {
-  Row = 'row',
-  Text = 'text',
-}

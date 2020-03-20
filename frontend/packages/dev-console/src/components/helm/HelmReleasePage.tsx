@@ -5,7 +5,10 @@ import { PageHeading, Firehose } from '@console/internal/components/utils';
 import { SecretModel } from '@console/internal/models';
 import ProjectListPage from '../projects/ProjectListPage';
 import NamespacedPage, { NamespacedPageVariants } from '../NamespacedPage';
-import HelmReleaseList from './HelmReleaseList';
+import CustomResourceList from '../custom-resource-list/CustomResourceList';
+import { getHelmReleases, helmRowFilters, getFilteredItems } from './helm-utils';
+import HelmReleaseRow from './HelmReleaseRow';
+import HelmReleaseHeader from './HelmReleaseHeader';
 
 type HelmReleasePageProps = RouteComponentProps<{ ns: string }>;
 
@@ -33,7 +36,14 @@ export const HelmReleasePage: React.FC<HelmReleasePageProps> = (props) => {
       </Helmet>
       <PageHeading title="Helm Releases" />
       <Firehose resources={resources}>
-        <HelmReleaseList namespace={namespace} />
+        <CustomResourceList
+          items={getHelmReleases(namespace)}
+          queryArg="rowFilter-helm-release-status"
+          rowFilters={helmRowFilters}
+          getFilteredItems={getFilteredItems}
+          resourceRow={HelmReleaseRow}
+          resourceHeader={HelmReleaseHeader}
+        />
       </Firehose>
     </NamespacedPage>
   ) : (
