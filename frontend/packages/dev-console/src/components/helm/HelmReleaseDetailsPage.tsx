@@ -13,6 +13,7 @@ import { DetailsPage } from '@console/internal/components/factory';
 import { K8sResourceKindReference } from '@console/internal/module/k8s';
 import HelmReleaseResources from './HelmReleaseResources';
 import HelmReleaseOverview from './HelmReleaseOverview';
+import HelmReleaseHistory from './HelmReleaseHistory';
 
 const SecretReference: K8sResourceKindReference = 'Secret';
 const HelmReleaseReference = 'HelmRelease';
@@ -36,6 +37,7 @@ const HelmReleaseDetailsPage: React.FC<HelmReleaseDetailsPageProps> = ({ secret,
   }
 
   const secretResource = secret.data;
+  const helmReleaseName = secretResource[0]?.metadata.labels?.name;
 
   if (!_.isEmpty(secretResource)) {
     return (
@@ -51,7 +53,7 @@ const HelmReleaseDetailsPage: React.FC<HelmReleaseDetailsPageProps> = ({ secret,
           },
           { name: `Helm Release Details`, path: `${match.url}` },
         ]}
-        title={secretResource[0]?.metadata.labels?.name}
+        title={helmReleaseName}
         kind={SecretReference}
         pages={[
           navFactory.details(HelmReleaseOverview),
@@ -59,6 +61,13 @@ const HelmReleaseDetailsPage: React.FC<HelmReleaseDetailsPageProps> = ({ secret,
             href: 'resources',
             name: 'Resources',
             component: HelmReleaseResources,
+          },
+          {
+            href: 'history',
+            name: 'History',
+            component: () => (
+              <HelmReleaseHistory helmReleaseName={helmReleaseName} namespace={namespace} />
+            ),
           },
         ]}
         customKind={HelmReleaseReference}
