@@ -772,16 +772,6 @@ const AlertTableHeader = () => [
 ];
 AlertTableHeader.displayName = 'AlertTableHeader';
 
-const AlertsPageDescription = () => (
-  <p className="co-help-text">
-    Alerts help notify you when certain conditions in your environment are met.{' '}
-    <ExternalLink
-      href="https://prometheus.io/docs/prometheus/latest/configuration/alerting_rules/"
-      text="Learn more about how alerts are configured."
-    />
-  </p>
-);
-
 const HeaderAlertmanagerLink = ({ path }) =>
   _.isEmpty(window.SERVER_FLAGS.alertManagerPublicURL) ? null : (
     <span className="monitoring-header-link">
@@ -858,7 +848,6 @@ const MonitoringListPage = connect(filtersToProps)(
         kindPlural,
         loaded,
         loadError,
-        PageDescription,
         reduxID,
         Row,
         rowFilter,
@@ -869,9 +858,6 @@ const MonitoringListPage = connect(filtersToProps)(
           <Helmet>
             <title>Alerting</title>
           </Helmet>
-          <div className="co-m-nav-title">
-            <PageDescription />
-          </div>
           <div className="co-m-pane__filter-bar">
             {CreateButton && (
               <div className="co-m-pane__filter-bar-group">
@@ -923,7 +909,6 @@ const AlertsPage_ = (props) => (
     Header={AlertTableHeader}
     kindPlural="Alerts"
     nameFilterID="alert-name"
-    PageDescription={AlertsPageDescription}
     reduxID="monitoringRules"
     Row={AlertTableRow}
     rowFilter={alertsRowFilter}
@@ -1048,13 +1033,6 @@ export type SilenceTableRowProps = {
   style: object;
 };
 
-const SilencesPageDescription = () => (
-  <p className="co-help-text">
-    Silences temporarily mute alerts based on a set of conditions that you define. Notifications are
-    not sent for alerts that meet the given conditions.
-  </p>
-);
-
 const silencesRowFilter = {
   type: 'silence-state',
   selected: [SilenceStates.Active, SilenceStates.Pending],
@@ -1079,7 +1057,6 @@ const SilencesPage_ = (props) => (
     Header={SilenceTableHeader}
     kindPlural="Silences"
     nameFilterID="silence-name"
-    PageDescription={SilencesPageDescription}
     reduxID="monitoringSilences"
     Row={SilenceTableRow}
     rowFilter={silencesRowFilter}
@@ -1655,7 +1632,6 @@ export type ListPageProps = {
   loadError?: string;
   match: { path: string };
   nameFilterID: string;
-  PageDescription: React.ComponentType<{}>;
   reduxID: string;
   Row: React.ComponentType<any>;
   rowFilter: {
