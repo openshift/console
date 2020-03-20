@@ -195,7 +195,7 @@ export const VolumeSnapshotModal = withHandlePromise((props: VolumeSnapshotModal
         spec: {
           claimSelector: {
             matchLabels: {
-              thislabel: `schedule-${pvcLabel}`,
+              [snapshotName]: `schedule-${pvcLabel}`,
             },
           },
           disabled: false,
@@ -207,9 +207,9 @@ export const VolumeSnapshotModal = withHandlePromise((props: VolumeSnapshotModal
       };
       const patch = [
         {
-          op: 'add',
-          path: '/metadata/labels/thislabel',
-          value: `schedule-${pvcLabel}`,
+          op: resource.metadata.labels ? 'replace' : 'add',
+          path: '/metadata/labels',
+          value: { ...resource.metadata.labels, [snapshotName]: `schedule-${pvcLabel}` },
         },
       ];
 
