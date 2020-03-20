@@ -204,6 +204,12 @@ const AlertStateDescription = ({ alert }) => {
 };
 
 const Severity: React.FC<{ severity?: string }> = ({ severity }) => {
+  if (_.isNil(severity)) {
+    return <>-</>;
+  }
+  if (severity === 'none') {
+    return <>None</>;
+  }
   if (severity === 'critical') {
     return (
       <>
@@ -211,12 +217,9 @@ const Severity: React.FC<{ severity?: string }> = ({ severity }) => {
       </>
     );
   }
-  if (severity === 'none') {
-    return <>None</>;
-  }
   return (
     <>
-      <YellowExclamationTriangleIcon /> {_.startCase(severity) || '-'}
+      <YellowExclamationTriangleIcon /> {_.startCase(severity)}
     </>
   );
 };
@@ -353,14 +356,10 @@ const AlertsDetailsPage = withFallback(
                         </div>
                       )}
                     </dd>
-                    {severity && (
-                      <>
-                        <dt>Severity</dt>
-                        <dd>
-                          <Severity severity={severity} />
-                        </dd>
-                      </>
-                    )}
+                    <dt>Severity</dt>
+                    <dd>
+                      <Severity severity={severity} />
+                    </dd>
                     <dt>State</dt>
                     <dd>
                       <AlertState state={state} />
@@ -464,9 +463,7 @@ const ruleStateToProps = (state, { match }): AlertRulesDetailsPageProps => {
 const AlertRulesDetailsPage = withFallback(
   connect(ruleStateToProps)((props: AlertRulesDetailsPageProps) => {
     const { loaded, loadError, rule } = props;
-    const { alerts = [], annotations = {}, duration = null, labels = {}, name = '', query = '' } =
-      rule || {};
-    const { severity } = labels as any;
+    const { alerts = [], annotations = {}, duration = null, name = '', query = '' } = rule || {};
 
     return (
       <>
@@ -500,14 +497,10 @@ const AlertRulesDetailsPage = withFallback(
                   <dl className="co-m-pane__details">
                     <dt>Name</dt>
                     <dd>{name}</dd>
-                    {severity && (
-                      <>
-                        <dt>Severity</dt>
-                        <dd>
-                          <Severity severity={severity} />
-                        </dd>
-                      </>
-                    )}
+                    <dt>Severity</dt>
+                    <dd>
+                      <Severity severity={rule?.labels?.severity} />
+                    </dd>
                     <Annotation title="Description">{annotations.description}</Annotation>
                     <Annotation title="Summary">{annotations.summary}</Annotation>
                     <Annotation title="Message">{annotations.message}</Annotation>
