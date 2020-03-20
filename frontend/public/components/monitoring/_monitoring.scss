@@ -1,3 +1,5 @@
+$tooltip-background-color: #151515;
+
 .graph-empty-state {
   min-height: 310px;
 }
@@ -24,10 +26,21 @@
     min-height: 305px; // Allow for chart legend
   }
 
+  // Move tooltip above cursor to work around bug where the legend is visible through the tooltip
+  .query-browser__tooltip-arrow {
+    border-bottom: none;
+    border-top: 12px solid $tooltip-background-color;
+  }
+  .query-browser__tooltip-svg-wrap {
+    transform: translate(0, -500px);
+  }
+  .query-browser__tooltip-wrap {
+    flex-direction: column-reverse;
+  }
+
   .query-browser__wrapper {
     border: 0;
     margin: 0;
-    overflow: hidden;
     padding: 0;
   }
 }
@@ -59,6 +72,15 @@
   min-width: 175px;
   @media (min-width: $screen-lg-min) {
     min-width: 225px;
+  }
+}
+
+.monitoring-dashboards__legend-wrap {
+  height: 75px;
+  overflow-x: auto;
+  padding-top: 1px;
+  svg {
+    max-height: 50px; // Required for Chrome. legend-wrap - scrollbar height
   }
 }
 
@@ -111,11 +133,11 @@ $screen-phone-landscape-min-width: 567px;
   }
   .monitoring-dashboards__panel--max-3 {
     flex: 1 0 33%;
-		min-width: 33%;
+    min-width: 33%;
   }
   .monitoring-dashboards__panel--max-4 {
     flex: 0 0 25%;
-		min-width: 25%;
+    min-width: 25%;
   }
 }
 
@@ -308,8 +330,6 @@ $screen-phone-landscape-min-width: 567px;
 .query-browser__tech-preview {
   margin: 0 10px;
 }
-
-$tooltip-background-color: #151515;
 
 .query-browser__tooltip-wrap {
   align-items: center;
