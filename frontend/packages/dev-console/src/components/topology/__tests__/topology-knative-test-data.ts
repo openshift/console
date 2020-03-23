@@ -14,6 +14,7 @@ import {
   RevisionKind,
   RouteKind,
   ServiceKind as knativeServiceKind,
+  EventSourceApiServerModel,
 } from '@console/knative-plugin';
 import { TopologyDataResources } from '../topology-types';
 
@@ -411,6 +412,33 @@ export const sampleEventSourceCronjob: FirehoseResult = {
   ],
 };
 
+export const sampleEventSourceApiServer: FirehoseResult = {
+  loaded: true,
+  loadError: '',
+  data: [
+    {
+      apiVersion: `${EventSourceApiServerModel.apiGroup}/${EventSourceApiServerModel.apiVersion}`,
+      kind: EventSourceApiServerModel.kind,
+      metadata: {
+        name: 'testevents',
+        namespace: 'testproject1',
+        uid: '1317f615-9636-11e9-b134-06a61d886b689',
+        creationTimestamp: '2019-06-12T07:07:57Z',
+      },
+      spec: {
+        sink: {
+          apiVersion: 'serving.knative.dev/v1',
+          kind: 'Service',
+          name: 'overlayimage',
+        },
+      },
+      status: {
+        sinkUri: 'http://testevents.testproject1.svc.cluster.local',
+      },
+    },
+  ],
+};
+
 export const sampleEventSourceContainers: FirehoseResult = {
   loaded: true,
   loadError: '',
@@ -451,13 +479,7 @@ export const sampleEventSourceCamel: FirehoseResult = {
         uid: '1317f615-9636-11e9-b134-06a61d886b689',
         creationTimestamp: '2019-06-12T07:07:57Z',
       },
-      spec: {
-        sink: {
-          apiVersion: `${ServiceModel.apiGroup}/${ServiceModel.apiVersion}`,
-          kind: ServiceModel.kind,
-          name: 'overlayimage',
-        },
-      },
+      spec: {},
     },
   ],
 };
@@ -641,6 +663,7 @@ export const MockKnativeResources: TopologyDataResources = {
   eventSourceContainers: sampleEventSourceContainers,
   eventSourceCamel: sampleEventSourceCamel,
   eventSourceKafka: sampleEventSourceKafka,
+  eventSourceApiserver: sampleEventSourceApiServer,
   eventSourceSinkbinding: sampleEventSourceSinkbinding,
   clusterServiceVersions: sampleClusterServiceVersions,
 };
