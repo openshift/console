@@ -24,8 +24,8 @@ import {
   groupContextMenu,
   nodeContextMenu,
   graphContextMenu,
-  regroupContextMenu,
   regroupGroupContextMenu,
+  helmReleaseContextMenu,
 } from './nodeContextMenu';
 import {
   graphWorkloadDropTargetSpec,
@@ -107,7 +107,7 @@ class ComponentFactory {
           return withSelection(
             false,
             true,
-          )(withContextMenu(regroupContextMenu)(withNoDrop()(HelmRelease)));
+          )(withContextMenu(helmReleaseContextMenu)(withNoDrop()(HelmRelease)));
         case TYPE_HELM_WORKLOAD:
           return this.withAddResourceConnector()(
             withDndDrop<

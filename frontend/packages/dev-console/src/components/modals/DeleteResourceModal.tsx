@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { TextInputTypes } from '@patternfly/react-core';
-import { PromiseComponent } from '@console/internal/components/utils';
+import { PromiseComponent, history } from '@console/internal/components/utils';
 import {
   createModalLauncher,
   ModalTitle,
@@ -14,6 +14,7 @@ import { K8sResourceKind } from '@console/internal/module/k8s';
 type DeleteResourceModalProps = {
   resourceName: string;
   resourceType: string;
+  redirect?: string;
   onSubmit: (values: FormikValues) => Promise<K8sResourceKind[]>;
   cancel?: () => void;
   close?: () => void;
@@ -68,17 +69,17 @@ class DeleteResourceModal extends PromiseComponent<
 > {
   private handleSubmit = (values, actions) => {
     actions.setSubmitting(true);
-    const { onSubmit, close } = this.props;
+    const { onSubmit, close, redirect } = this.props;
     onSubmit &&
       this.handlePromise(onSubmit(values))
         .then(() => {
           actions.setSubmitting(false);
           close();
+          redirect && history.push(redirect);
         })
         .catch((errorMessage) => {
           actions.setSubmitting(false);
           actions.setStatus({ submitError: errorMessage });
-          close();
         });
   };
 

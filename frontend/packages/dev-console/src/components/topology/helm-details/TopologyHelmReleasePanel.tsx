@@ -6,11 +6,13 @@ import {
   ResourceIcon,
   SimpleTabNav,
   StatusBox,
+  ActionsMenu,
 } from '@console/internal/components/utils';
 import * as UIActions from '@console/internal/actions/ui';
 import { Node } from '@console/topology';
 import HelmReleaseOverview from '../../helm/HelmReleaseOverview';
 import TopologyHelmReleaseResourcesPanel from './TopologyHelmReleaseResourcesPanel';
+import { helmReleaseActions } from '../actions/helmReleaseActions';
 
 type PropsFromState = {
   selectedDetailsTab?: any;
@@ -73,6 +75,9 @@ const TopologyHelmReleasePanel = connect<
             >
               {name}
             </Link>
+          </div>
+          <div className="co-actions">
+            <ActionsMenu actions={helmReleaseActions(helmRelease)} />
           </div>
         </h1>
       </div>

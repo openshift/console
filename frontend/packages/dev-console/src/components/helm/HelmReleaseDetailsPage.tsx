@@ -13,6 +13,7 @@ import { DetailsPage } from '@console/internal/components/factory';
 import { K8sResourceKindReference } from '@console/internal/module/k8s';
 import HelmReleaseResources from './HelmReleaseResources';
 import HelmReleaseOverview from './HelmReleaseOverview';
+import { deleteHelmRelease } from '../../actions/modify-helm-release';
 
 const SecretReference: K8sResourceKindReference = 'Secret';
 const HelmReleaseReference = 'HelmRelease';
@@ -37,36 +38,42 @@ const HelmReleaseDetailsPage: React.FC<HelmReleaseDetailsPageProps> = ({ secret,
 
   const secretResource = secret.data;
 
-  if (!_.isEmpty(secretResource)) {
-    return (
-      <DetailsPage
-        match={match}
-        kindObj={SecretModel}
-        name={secretResource[0]?.metadata.name}
-        namespace={namespace}
-        breadcrumbsFor={() => [
-          {
-            name: `Helm Releases`,
-            path: `/helm-releases/ns/${namespace}`,
-          },
-          { name: `Helm Release Details`, path: `${match.url}` },
-        ]}
-        title={secretResource[0]?.metadata.labels?.name}
-        kind={SecretReference}
-        pages={[
-          navFactory.details(HelmReleaseOverview),
-          {
-            href: 'resources',
-            name: 'Resources',
-            component: HelmReleaseResources,
-          },
-        ]}
-        customKind={HelmReleaseReference}
-      />
-    );
-  }
+  if (_.isEmpty(secretResource)) return <ErrorPage404 />;
 
-  return <ErrorPage404 />;
+  const secretName = secretResource[0]?.metadata.name;
+  const releaseName = secretResource[0]?.metadata.labels?.name;
+
+  const menuActions = [
+    () => deleteHelmRelease(releaseName, namespace, `/helm-releases/ns/${namespace}`),
+  ];
+
+  return (
+    <DetailsPage
+      kindObj={SecretModel}
+      match={match}
+      menuActions={menuActions}
+      name={secretName}
+      namespace={namespace}
+      breadcrumbsFor={() => [
+        {
+          name: `Helm Releases`,
+          path: `/helm-releases/ns/${namespace}`,
+        },
+        { name: `Helm Release Details`, path: `${match.url}` },
+      ]}
+      title={releaseName}
+      kind={SecretReference}
+      pages={[
+        navFactory.details(HelmReleaseOverview),
+        {
+          href: 'resources',
+          name: 'Resources',
+          component: HelmReleaseResources,
+        },
+      ]}
+      customKind={HelmReleaseReference}
+    />
+  );
 };
 
 export default HelmReleaseDetailsPage;
