@@ -56,6 +56,13 @@ export const vmWizardInternalActions: VMWizardInternalActions = {
     },
     type: InternalActionType.SetExtraWSQueries,
   }),
+  [InternalActionType.SetGoToStep]: (id, tab: VMWizardTab) => ({
+    payload: {
+      id,
+      tab,
+    },
+    type: InternalActionType.SetGoToStep,
+  }),
   [InternalActionType.SetTabValidity]: (
     id,
     tab: VMWizardTab,

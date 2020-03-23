@@ -36,6 +36,7 @@ import { vmWizardActions } from './redux/actions';
 import { ActionType } from './redux/types';
 
 import './create-vm-wizard-footer.scss';
+import { getGoToStep } from './selectors/selectors';
 
 type WizardContext = {
   onNext: () => void;
@@ -45,13 +46,14 @@ type WizardContext = {
   goToStepById: (id: number | string) => void;
 };
 type CreateVMWizardFooterComponentProps = {
+  goToStep: VMWizardTab; // go to this step when not null
   isLastTabErrorFatal: boolean;
   isWizardEmpty: boolean;
   steps: VMWizardTabsMetadata;
   isCreateTemplate: boolean;
   isProviderImport: boolean;
   isSimpleView: boolean;
-  onEdit: () => void;
+  onEdit: (activeStepID: VMWizardTab) => void;
 };
 
 const CreateVMWizardFooterComponent: React.FC<CreateVMWizardFooterComponentProps> = ({
@@ -61,9 +63,11 @@ const CreateVMWizardFooterComponent: React.FC<CreateVMWizardFooterComponentProps
   isCreateTemplate,
   isProviderImport,
   isSimpleView,
+  goToStep,
   onEdit,
 }) => {
   const [showError, setShowError, checkValidity] = useShowErrorToggler();
+
   return (
     <WizardContextConsumer>
       {({ onNext, onBack, onClose, activeStep, goToStepById }: WizardContext) => {
@@ -83,6 +87,12 @@ const CreateVMWizardFooterComponent: React.FC<CreateVMWizardFooterComponentProps
             : canNavigateEverywhere || steps[activeStepID].isValid;
 
         checkValidity(isValid);
+
+        // Hack to make changing steps work from redux
+        // goToStep should be reset to null by redux to allow the navigation in subsequent state update
+        if (goToStep && goToStep !== activeStepID) {
+          goToStepById(goToStep);
+        }
 
         const isFirstStep = isProviderImport
           ? activeStepID === VMWizardTab.IMPORT_PROVIDERS
@@ -143,6 +153,17 @@ const CreateVMWizardFooterComponent: React.FC<CreateVMWizardFooterComponentProps
                   : 'Next'}
               </Button>
             )}
+            {!hideBackButton && (
+              <Button
+                key="back"
+                variant={ButtonVariant.secondary}
+                onClick={onBack}
+                className={css(isBackButtonDisabled && 'pf-m-disabled')}
+                isDisabled={isBackButtonDisabled}
+              >
+                Back
+              </Button>
+            )}
             {!isFinishingStep && !(isSimpleView && areMainTabsHidden) && (
               <Button
                 key="reviewandcreate"
@@ -168,19 +189,12 @@ const CreateVMWizardFooterComponent: React.FC<CreateVMWizardFooterComponentProps
               </Button>
             )}
             {areMainTabsHidden && canNavigateEverywhere && (
-              <Button key="edit" variant={ButtonVariant.secondary} onClick={onEdit}>
-                Edit
-              </Button>
-            )}
-            {!hideBackButton && (
               <Button
-                key="back"
+                key="edit"
                 variant={ButtonVariant.secondary}
-                onClick={onBack}
-                className={css(isBackButtonDisabled && 'pf-m-disabled')}
-                isDisabled={isBackButtonDisabled}
+                onClick={() => onEdit(activeStepID)}
               >
-                Back
+                Edit
               </Button>
             )}
             {!activeStep.hideCancelButton && (
@@ -208,6 +222,7 @@ const CreateVMWizardFooterComponent: React.FC<CreateVMWizardFooterComponentProps
 };
 
 const stateToProps = (state, { wizardReduxID }) => ({
+  goToStep: getGoToStep(state, wizardReduxID),
   steps: getStepsMetadata(state, wizardReduxID),
   isLastTabErrorFatal: isLastStepErrorFatal(state, wizardReduxID),
   isWizardEmpty: _isWizardEmpty(state, wizardReduxID),
@@ -218,10 +233,12 @@ const stateToProps = (state, { wizardReduxID }) => ({
 
 const dispatchToProps = (dispatch, { wizardReduxID }) => ({
   //  no callback like this can be passed through the Wizard component
-  onEdit: () =>
+  onEdit: (activeStepID: VMWizardTab) => {
     VM_WIZARD_DIFFICULT_TABS.forEach((tab) => {
       dispatch(vmWizardActions[ActionType.SetTabHidden](wizardReduxID, tab, false));
-    }),
+    });
+    dispatch(vmWizardActions[ActionType.SetGoToStep](wizardReduxID, activeStepID)); // keep on the same tab
+  },
 });
 
 export const CreateVMWizardFooter = connect(stateToProps, dispatchToProps, null, {

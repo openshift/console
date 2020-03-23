@@ -180,6 +180,8 @@ export default (state, action: WizardInternalAction) => {
       );
     case InternalActionType.SetExtraWSQueries:
       return state.setIn([dialogID, 'extraWSQueries', payload.queryKey], fromJS(payload.wsQueries));
+    case InternalActionType.SetGoToStep:
+      return state.setIn([dialogID, 'transient', 'goToStep'], payload.tab);
     case InternalActionType.SetTabValidity:
       return state
         .setIn([dialogID, 'tabs', payload.tab, 'isValid'], payload.isValid)

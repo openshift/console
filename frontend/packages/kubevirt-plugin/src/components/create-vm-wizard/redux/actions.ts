@@ -21,6 +21,7 @@ import { vmWizardInternalActions } from './internal-actions';
 import { withUpdateAndValidateState } from './main-actions/utils';
 import { createVMAction } from './main-actions/create-vm';
 import { disposeWizard } from './main-actions/dispose-wizard';
+import { isStepHidden } from '../selectors/immutable/wizard-selectors';
 
 type VMWizardActions = { [key in ActionType]: WizardActionDispatcher };
 
@@ -36,6 +37,9 @@ export const vmWizardActions: VMWizardActions = {
               return initial;
             }, {}),
             extraWSQueries: {},
+            transient: {
+              goToStep: undefined,
+            },
             commonData,
           }),
         ),
@@ -43,6 +47,16 @@ export const vmWizardActions: VMWizardActions = {
     ),
   [ActionType.Dispose]: disposeWizard,
   [ActionType.CreateVM]: createVMAction,
+  [ActionType.SetGoToStep]: (id, tab: VMWizardTab) => (dispatch, getState) => {
+    if (!isStepHidden(getState(), id, tab)) {
+      dispatch(vmWizardInternalActions[InternalActionType.SetGoToStep](id, tab));
+      // Hack to make changing steps work through CreateVMWizardFooter
+      setTimeout(
+        () => dispatch(vmWizardInternalActions[InternalActionType.SetGoToStep](id, null)),
+        250,
+      );
+    }
+  },
   [ActionType.SetVmSettingsFieldValue]: (id, key: VMSettingsField, value: any) =>
     withUpdateAndValidateState(id, (dispatch) =>
       dispatch(vmWizardInternalActions[InternalActionType.SetVmSettingsFieldValue](id, key, value)),

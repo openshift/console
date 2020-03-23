@@ -33,6 +33,11 @@ export const getExtraWSQueries = (state, reduxID: string): FirehoseResource[] =>
   }, []);
 };
 
+export const getGoToStep = (state, reduxID: string): VMWizardTab => {
+  const wizards = getCreateVMWizards(state);
+  return iGetIn(wizards, [reduxID, 'transient', 'goToStep']);
+};
+
 export const getNetworks = (state, id: string): VMWizardNetwork[] =>
   immutableListToShallowJS(
     iGetIn(getCreateVMWizards(state), [id, 'tabs', VMWizardTab.NETWORKING, 'value']),
