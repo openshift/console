@@ -1,10 +1,11 @@
+import * as _ from 'lodash';
 import { connect } from 'react-redux';
 import { AlertVariant } from '@patternfly/react-core';
-import { iGet } from '../../utils/immutable';
-import { Errors, Error } from '../errors/errors';
-import { COULD_NOT_LOAD_DATA } from '../../utils/strings';
-import { CommonDataProp, VMWizardProps } from './types';
-import { iGetCommonData } from './selectors/immutable/selectors';
+import { iGet } from '../../../utils/immutable';
+import { Errors, Error } from '../../errors/errors';
+import { COULD_NOT_LOAD_DATA } from '../../../utils/strings';
+import { CommonDataProp, VMWizardProps } from '../types';
+import { iGetCommonData } from '../selectors/immutable/selectors';
 
 const asError = (state, id: string, key: CommonDataProp, variant?: AlertVariant): Error => {
   const loadError = iGet(iGetCommonData(state, id, key), 'loadError');
@@ -28,4 +29,6 @@ const stateToProps = (state, { wizardReduxID }) => ({
   ].filter((err) => err && err.message),
 });
 
-export const ResourceLoadErrors = connect(stateToProps)(Errors);
+export const ResourceLoadErrors = connect(stateToProps, null, null, {
+  areStatePropsEqual: _.isEqual,
+})(Errors);

@@ -39,7 +39,7 @@ import { ActionType } from './redux/types';
 import { getResultInitialState } from './redux/initial-state/result-tab-initial-state';
 import { iGetCommonData, iGetExtraWSQueries } from './selectors/immutable/selectors';
 import { getStepsMetadata, isLastStepErrorFatal } from './selectors/immutable/wizard-selectors';
-import { ResourceLoadErrors } from './resource-load-errors';
+import { ResourceLoadErrors } from './error-components/resource-load-errors';
 import { CreateVMWizardFooter } from './create-vm-wizard-footer';
 import { ImportProvidersTab } from './tabs/import-providers-tab/import-providers-tab';
 import { VMSettingsTab } from './tabs/vm-settings-tab/vm-settings-tab';
