@@ -8,8 +8,8 @@ interface SelectorCardProps {
   title: string;
   iconUrl: string;
   name: string;
-  displayName: string;
-  selected: boolean;
+  displayName?: string;
+  selected?: boolean;
   recommended?: boolean;
   onChange: (name: string) => void;
 }
@@ -33,7 +33,7 @@ const SelectorCard: React.FC<SelectorCardProps> = ({
       onClick={() => onChange(name)}
     >
       <CardHeader>
-        <img className="odc-selector-card__icon" src={iconUrl} alt={displayName} />
+        <img className="odc-selector-card__icon" src={iconUrl} alt={displayName ?? title} />
       </CardHeader>
       <CardBody>
         <span className="odc-selector-card__title">{title}</span>

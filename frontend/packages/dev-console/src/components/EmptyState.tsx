@@ -124,10 +124,8 @@ const ODCEmptyState: React.FC<Props> = ({
             <GalleryItem key="gallery-eventsource">
               <CatalogTile
                 className="odc-empty-state__tile"
-                onClick={(e: React.SyntheticEvent) =>
-                  navigateTo(e, `/event-source?preselected-ns=${activeNamespace}`)
-                }
-                href={`/event-source?preselected-ns=${activeNamespace}`}
+                onClick={(e: React.SyntheticEvent) => navigateTo(e, `/event-source`)}
+                href={`/event-source`}
                 title="Event Source"
                 iconClass="pficon-help"
                 description="Create an event source and sink it to Knative service"

@@ -5,18 +5,11 @@ import FormSection from '@console/dev-console/src/components/import/section/Form
 
 const CronJobSection: React.FC = () => (
   <FormSection title="CronJobSource">
-    <InputField
-      type={TextInputTypes.text}
-      name="data.cronjobsource.data"
-      label="Data"
-      helpText="Need to provide some field level help."
-      required
-    />
+    <InputField type={TextInputTypes.text} name="data.cronjobsource.data" label="Data" required />
     <InputField
       type={TextInputTypes.text}
       name="data.cronjobsource.schedule"
       label="Schedule"
-      helpText="Need to provide some field level help."
       required
     />
   </FormSection>

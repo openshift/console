@@ -12,8 +12,11 @@ import { useFormikValidationFix } from '../../hooks';
 export interface ResourceDropdownFieldProps extends DropdownFieldProps {
   dataSelector: string[] | number[] | symbol[];
   resources: FirehoseResource[];
+  showBadge?: boolean;
   onLoad?: (items: { [key: string]: string }) => void;
   resourceFilter?: (resource: K8sResourceKind) => boolean;
+  autoSelect?: boolean;
+  placeholder?: string;
 }
 const ResourceDropdownField: React.FC<ResourceDropdownFieldProps> = ({
   label,

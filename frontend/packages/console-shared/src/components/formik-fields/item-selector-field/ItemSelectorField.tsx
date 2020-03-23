@@ -2,8 +2,7 @@ import * as React from 'react';
 import * as _ from 'lodash';
 import { useField, useFormikContext, FormikValues } from 'formik';
 import { LoadingInline } from '@console/internal/components/utils';
-import { FormGroup, Alert } from '@patternfly/react-core';
-import { StarIcon } from '@patternfly/react-icons';
+import { FormGroup } from '@patternfly/react-core';
 import { getFieldId } from '@console/shared';
 import SelectorCard from './SelectorCard';
 import './ItemSelectorField.scss';
@@ -11,9 +10,8 @@ import './ItemSelectorField.scss';
 interface Item {
   name: string;
   title: string;
-  displayName: string;
+  displayName?: string;
   iconUrl?: string;
-  [x: string]: any;
 }
 
 interface NormalizedItem {
@@ -23,35 +21,32 @@ interface NormalizedItem {
 interface ItemSelectorFieldProps {
   itemList: NormalizedItem;
   name: string;
-  label?: string;
   loadingItems?: boolean;
-  isRecommending?: boolean;
   recommended?: string;
-  couldNotRecommend?: boolean;
+  label?: string;
   onSelect?: (name: string) => void;
 }
 
 const ItemSelectorField: React.FC<ItemSelectorFieldProps> = ({
   itemList,
   name,
-  label,
   loadingItems,
-  isRecommending,
   recommended,
-  couldNotRecommend,
   onSelect,
+  label,
 }) => {
   const [selected, { error: selectedError, touched: selectedTouched }] = useField(name);
   const { setFieldValue, setFieldTouched, validateForm } = useFormikContext<FormikValues>();
   const itemCount = _.keys(itemList).length;
 
   const handleItemChange = React.useCallback(
-    (image: string) => {
-      setFieldValue(name, image);
+    (item: string) => {
+      setFieldValue(name, item);
       setFieldTouched(name, true);
       validateForm();
+      onSelect && onSelect(item);
     },
-    [name, setFieldValue, setFieldTouched, validateForm],
+    [name, setFieldValue, setFieldTouched, validateForm, onSelect],
   );
 
   React.useEffect(() => {
@@ -68,40 +63,18 @@ const ItemSelectorField: React.FC<ItemSelectorFieldProps> = ({
     return null;
   }
 
-  const fieldId = getFieldId(name, 'selector');
+  const fieldId = getFieldId(name, 'itemselector');
   const isValid = !(selectedTouched && selectedError);
   const errorMessage = !isValid ? selectedError : '';
 
   return (
     <FormGroup
       fieldId={fieldId}
-      label={label}
       helperTextInvalid={errorMessage}
       isValid={isValid}
+      label={label}
       isRequired
     >
-      {isRecommending && (
-        <>
-          <LoadingInline /> Detecting recommended {label}...
-        </>
-      )}
-      {recommended && (
-        <>
-          <Alert variant="success" title="Builder image(s) detected." isInline>
-            Recommended {label} are represented by{' '}
-            <StarIcon style={{ color: 'var(--pf-global--primary-color--100)' }} /> icon.
-          </Alert>
-          <br />
-        </>
-      )}
-      {couldNotRecommend && (
-        <>
-          <Alert variant="warning" title="Unable to detect the builder image." isInline>
-            Select the most appropriate one from the list to continue.
-          </Alert>
-          <br />
-        </>
-      )}
       {loadingItems ? (
         <LoadingInline />
       ) : (
@@ -115,7 +88,7 @@ const ItemSelectorField: React.FC<ItemSelectorFieldProps> = ({
               displayName={item.displayName}
               selected={selected.value === item.name}
               recommended={recommended === item.name}
-              onChange={onSelect || handleItemChange}
+              onChange={handleItemChange}
             />
           ))}
         </div>

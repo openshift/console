@@ -16,6 +16,7 @@ describe('EventSource Form', () => {
       values: {
         type: 'CronJobSource',
       },
+      namespace: 'myapp',
       errors: {},
       touched: {},
       isSubmitting: true,
@@ -33,7 +34,6 @@ describe('EventSource Form', () => {
       initialTouched: {},
       isValid: true,
       projects: { loaded: true, loadError: '', data: [] },
-      services: { loaded: true, loadError: '', data: [] },
       initialValues: defaultEventingData,
       registerField: jest.fn(),
       resetForm: jest.fn(),

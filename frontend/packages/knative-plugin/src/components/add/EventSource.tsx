@@ -15,7 +15,6 @@ import { getEventSourcesDepResource } from '../../utils/create-eventsources-util
 interface EventSourceProps {
   namespace: string;
   projects?: FirehoseList;
-  ksservices?: FirehoseList[];
 }
 
 interface StateProps {
@@ -24,7 +23,7 @@ interface StateProps {
 
 type Props = EventSourceProps & StateProps;
 
-const EventSource: React.FC<Props> = ({ namespace, projects, activeApplication, ksservices }) => {
+const EventSource: React.FC<Props> = ({ namespace, projects, activeApplication }) => {
   const eventSourceData = {
     cronjobsource: {
       data: '',
@@ -81,7 +80,7 @@ const EventSource: React.FC<Props> = ({ namespace, projects, activeApplication, 
       onReset={history.goBack}
       validationSchema={eventSourceValidationSchema}
     >
-      {(props) => <EventSourceForm {...props} projects={projects} services={ksservices} />}
+      {(props) => <EventSourceForm {...props} namespace={namespace} projects={projects} />}
     </Formik>
   );
 };

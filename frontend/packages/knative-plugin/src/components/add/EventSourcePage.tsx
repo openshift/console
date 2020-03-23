@@ -6,7 +6,6 @@ import NamespacedPage, {
   NamespacedPageVariants,
 } from '@console/dev-console/src/components/NamespacedPage';
 import EventSource from './EventSource';
-import { knativeServingResourcesServices } from '../../utils/create-knative-utils';
 
 interface EventSourcePageProps {
   match: RMatch<{
@@ -16,10 +15,7 @@ interface EventSourcePageProps {
 
 const EventSourcePage: React.FC<EventSourcePageProps> = ({ match }) => {
   const namespace = match.params.ns;
-  const resources = [
-    { kind: 'Project', prop: 'projects', isList: true },
-    ...knativeServingResourcesServices(namespace),
-  ];
+  const resources = [{ kind: 'Project', prop: 'projects', isList: true }];
   return (
     <NamespacedPage disabled variant={NamespacedPageVariants.light}>
       <Helmet>

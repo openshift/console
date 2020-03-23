@@ -12,7 +12,7 @@ import EventSourcesSelector from './event-sources/EventSourcesSelector';
 import { useEventSourceList } from '../../utils/create-eventsources-utils';
 
 interface OwnProps {
-  services: FirehoseList;
+  namespace: string;
   projects: FirehoseList;
 }
 
@@ -24,13 +24,13 @@ const EventSourceForm: React.FC<FormikProps<FormikValues> & OwnProps> = ({
   status,
   isSubmitting,
   dirty,
+  namespace,
   projects,
-  services,
 }) => (
   <Form className="co-deploy-image" onSubmit={handleSubmit}>
     <EventSourcesSelector eventSourceList={useEventSourceList()} />
     {values.type === EventSources.CronJobSource && <CronJobSection />}
-    <SinkSection services={services?.data} />
+    <SinkSection namespace={namespace} />
     <AppSection
       project={values.project}
       noProjectsAvailable={projects?.loaded && _.isEmpty(projects.data)}
