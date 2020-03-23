@@ -22,6 +22,7 @@ import { VMDetailsFirehose } from './vm-details';
 import { vmiMenuActionsCreator } from './menu-actions';
 import { VMDashboard } from './vm-dashboard';
 import { TEMPLATE_TYPE_LABEL, TEMPLATE_TYPE_VM } from '../../constants/vm';
+import { breadcrumbsForVMPage } from './vm-details-page';
 
 import './vmi-details-page.scss';
 
@@ -29,14 +30,6 @@ export const VirtualMachinesInstanceDetailsPage: React.FC<VirtualMachinesInstanc
   props,
 ) => {
   const { name, ns: namespace } = props.match.params;
-
-  const breadcrumbsForVMPage = (match: any) => () => [
-    {
-      name: VirtualMachineModel.labelPlural,
-      path: `/k8s/ns/${match.params.ns || 'default'}/virtualmachines`,
-    },
-    { name: `${match.params.name} Details`, path: `${match.url}` },
-  ];
 
   const overviewPage = {
     href: '', // default landing page

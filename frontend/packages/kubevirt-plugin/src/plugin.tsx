@@ -17,7 +17,6 @@ import {
   DashboardsOverviewResourceActivity,
 } from '@console/plugin-sdk';
 import { DashboardsStorageCapacityDropdownItem } from '@console/ceph-storage-plugin';
-import { FLAGS } from '@console/shared/src/constants';
 import { TemplateModel, PodModel } from '@console/internal/models';
 import { getName } from '@console/shared/src/selectors/common';
 import * as models from './models';
@@ -68,40 +67,13 @@ const plugin: Plugin<ConsumedExtensions> = [
     properties: {
       section: 'Workloads',
       componentProps: {
-        name: 'Virtual Machines',
-        resource: models.VirtualMachineModel.plural,
+        name: 'Virtualization',
+        resource: 'virtualization',
       },
       mergeBefore: 'Deployments',
     },
     flags: {
       required: [FLAG_KUBEVIRT],
-    },
-  },
-  {
-    // NOTE(yaacov): vmtemplates is a template resource with a selector.
-    // 'NavItem/ResourceNS' is used, and not 'NavItem/Href', because it injects
-    // the namespace needed to get the correct link to a resource ( template with selector ) in our case.
-    type: 'NavItem/ResourceNS',
-    properties: {
-      section: 'Workloads',
-      componentProps: {
-        name: 'Virtual Machine Templates',
-        resource: 'vmtemplates',
-      },
-      mergeBefore: 'Deployments',
-    },
-    flags: {
-      required: [FLAG_KUBEVIRT, FLAGS.OPENSHIFT],
-    },
-  },
-  {
-    type: 'Page/Resource/List',
-    properties: {
-      model: models.VirtualMachineModel,
-      loader: () =>
-        import('./components/vms/vm' /* webpackChunkName: "kubevirt" */).then(
-          (m) => m.VirtualMachinesPage,
-        ),
     },
   },
   {
@@ -161,6 +133,17 @@ const plugin: Plugin<ConsumedExtensions> = [
         import('./components/vms/vmi-details-page' /* webpackChunkName: "kubevirt" */).then(
           (m) => m.VirtualMachinesInstanceDetailsPage,
         ),
+    },
+  },
+  {
+    type: 'Page/Route',
+    properties: {
+      path: ['/k8s/ns/:ns/virtualization', '/k8s/all-namespaces/virtualization'],
+      loader: () =>
+        import('./components/vms/virtualization' /* webpackChunkName: "kubevirt" */).then(
+          (m) => m.VirtualizationPage,
+        ),
+      required: FLAG_KUBEVIRT,
     },
   },
   {
