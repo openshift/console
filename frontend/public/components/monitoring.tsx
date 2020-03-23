@@ -21,7 +21,13 @@ import { withFallback } from '@console/shared/src/components/error/error-boundar
 import * as k8sActions from '../actions/k8s';
 import * as UIActions from '../actions/ui';
 import { coFetchJSON } from '../co-fetch';
-import { alertState, AlertStates, silenceState, SilenceStates } from '../reducers/monitoring';
+import {
+  alertState,
+  AlertSeverities,
+  AlertStates,
+  silenceState,
+  SilenceStates,
+} from '../reducers/monitoring';
 import store from '../redux';
 import { Table, TableData, TableRow, TextFilter } from './factory';
 import { confirmModal } from './modals';
@@ -48,6 +54,7 @@ import {
   Timestamp,
 } from './utils';
 import {
+  BlueInfoCircleIcon,
   GreenCheckCircleIcon,
   RedExclamationCircleIcon,
   YellowExclamationTriangleIcon,
@@ -203,23 +210,56 @@ const AlertStateDescription = ({ alert }) => {
   return null;
 };
 
+const severityIcons = {
+  [AlertSeverities.Critical]: RedExclamationCircleIcon,
+  [AlertSeverities.Info]: BlueInfoCircleIcon,
+  [AlertSeverities.Warning]: YellowExclamationTriangleIcon,
+};
+
+const getSeverityIcon = (severity: string) =>
+  severityIcons[severity] || YellowExclamationTriangleIcon;
+
+const SeverityIcon: React.FC<SeverityIconProps> = ({ label, severity }) => {
+  const Icon = getSeverityIcon(severity);
+  return (
+    <>
+      <Icon /> {label}
+    </>
+  );
+};
+
 const Severity: React.FC<{ severity?: string }> = ({ severity }) => {
   if (_.isNil(severity)) {
     return <>-</>;
   }
-  if (severity === 'none') {
+  if (severity === AlertSeverities.None) {
     return <>None</>;
   }
-  if (severity === 'critical') {
-    return (
-      <>
-        <RedExclamationCircleIcon /> Critical
-      </>
-    );
-  }
+  return <SeverityIcon label={_.startCase(severity)} severity={severity} />;
+};
+
+const SeverityCounts: React.FC<{ alerts: Alert[] }> = ({ alerts }) => {
+  const counts = _.countBy(alerts, (a) => {
+    const { severity } = a.labels;
+    return severity === AlertSeverities.Critical || severity === AlertSeverities.Warning
+      ? severity
+      : AlertSeverities.Info;
+  });
+
+  const severities = [
+    AlertSeverities.Critical,
+    AlertSeverities.Warning,
+    AlertSeverities.Info,
+  ].filter((s) => counts[s] > 0);
+
   return (
     <>
-      <YellowExclamationTriangleIcon /> {_.startCase(severity)}
+      {severities.map((s) => (
+        <span key={s}>
+          <SeverityIcon label={counts[s]} severity={s} />
+          &nbsp;{' '}
+        </span>
+      ))}
     </>
   );
 };
@@ -399,8 +439,8 @@ const AlertsDetailsPage = withFallback(
                     <div className="co-m-table-grid co-m-table-grid--bordered">
                       <div className="row co-m-table-grid__head">
                         <div className="col-sm-7 col-xs-8">Name</div>
-                        <div className="col-sm-3 col-xs-4">State</div>
                         <div className="col-sm-2 hidden-xs">Firing Alerts</div>
+                        <div className="col-sm-3 col-xs-4">State</div>
                       </div>
                       <div className="co-m-table-grid__body">
                         {_.map(silencedBy, (s) => (
@@ -931,14 +971,14 @@ const SilenceTableHeader = () => [
     props: { className: tableSilenceClasses[0] },
   },
   {
-    title: 'State',
-    sortFunc: 'silenceStateOrder',
+    title: 'Firing Alerts',
+    sortField: 'firingAlerts.length',
     transforms: [sortable],
     props: { className: tableSilenceClasses[1] },
   },
   {
-    title: 'Firing Alerts',
-    sortField: 'firingAlerts.length',
+    title: 'State',
+    sortFunc: 'silenceStateOrder',
     transforms: [sortable],
     props: { className: tableSilenceClasses[2] },
   },
@@ -970,6 +1010,9 @@ const SilenceRow = ({ obj }) => {
           <SilenceMatchersList silence={obj} />
         </div>
       </div>
+      <div className="col-sm-2 hidden-xs">
+        <SeverityCounts alerts={obj.firingAlerts} />
+      </div>
       <div className="col-sm-3 col-xs-4">
         <SilenceState silence={obj} />
         {state === SilenceStates.Pending && (
@@ -980,7 +1023,6 @@ const SilenceRow = ({ obj }) => {
           <StateTimestamp text="Expired" timestamp={obj.endsAt} />
         )}
       </div>
-      <div className="col-sm-2 hidden-xs">{obj.firingAlerts.length}</div>
       <div className="dropdown-kebab-pf">
         <SilenceKebab silence={obj} />
       </div>
@@ -990,6 +1032,7 @@ const SilenceRow = ({ obj }) => {
 
 const SilenceTableRow: React.FC<SilenceTableRowProps> = ({ obj, index, key, style }) => {
   const state = silenceState(obj);
+
   return (
     <TableRow id={obj.id} index={index} trKey={key} style={style}>
       <TableData className={tableSilenceClasses[0]}>
@@ -1008,7 +1051,10 @@ const SilenceTableRow: React.FC<SilenceTableRowProps> = ({ obj, index, key, styl
           <SilenceMatchersList silence={obj} />
         </div>
       </TableData>
-      <TableData className={classNames(tableSilenceClasses[1], 'co-break-word')}>
+      <TableData className={tableSilenceClasses[1]}>
+        <SeverityCounts alerts={obj.firingAlerts} />
+      </TableData>
+      <TableData className={classNames(tableSilenceClasses[2], 'co-break-word')}>
         <SilenceState silence={obj} />
         {state === SilenceStates.Pending && (
           <StateTimestamp text="Starts" timestamp={obj.startsAt} />
@@ -1018,7 +1064,6 @@ const SilenceTableRow: React.FC<SilenceTableRowProps> = ({ obj, index, key, styl
           <StateTimestamp text="Expired" timestamp={obj.endsAt} />
         )}
       </TableData>
-      <TableData className={tableSilenceClasses[2]}>{obj.firingAlerts.length}</TableData>
       <TableData className={tableSilenceClasses[3]}>
         <SilenceKebab silence={obj} />
       </TableData>
@@ -1645,6 +1690,11 @@ export type ListPageProps = {
 
 type AlertingPageProps = {
   match: any;
+};
+
+type SeverityIconProps = {
+  label: number | string;
+  severity: string;
 };
 
 type GraphProps = {

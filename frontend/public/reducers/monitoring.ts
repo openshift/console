@@ -4,6 +4,13 @@ import * as _ from 'lodash-es';
 
 import { MonitoringAction, ActionType } from '../actions/monitoring';
 
+export const enum AlertSeverities {
+  Critical = 'critical',
+  Info = 'info',
+  None = 'none',
+  Warning = 'warning',
+}
+
 export const enum AlertStates {
   Firing = 'firing',
   Silenced = 'silenced',
