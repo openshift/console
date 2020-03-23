@@ -29,6 +29,12 @@ import { PencilAltIcon } from '@patternfly/react-icons';
 let secret: K8sResourceKind = null; // alertmanager-main Secret which holds alertmanager configuration yaml
 let config: AlertmanagerConfig = null; // alertmanager configuration yaml as object
 
+export enum InitialReceivers {
+  Critical = 'Critical',
+  Default = 'Default',
+  Watchdog = 'Watchdog',
+}
+
 const AlertRouting = () => {
   const groupBy = _.get(config, ['route', 'group_by'], []);
   return (
@@ -175,11 +181,20 @@ const hasSimpleReceiver = (
   return false;
 };
 
-const hasIncompleteDefaultReceiver = () => {
+const numberOfIncompleteReceivers = (): number => {
   const { route, receivers } = config;
   const { receiver: defaultReceiverName } = route;
-  const defaultReceiver = _.filter(receivers, { name: defaultReceiverName });
-  return defaultReceiver.length === 1 && _.isEmpty(getIntegrationTypes(defaultReceiver[0]));
+
+  const defaultReceiver = receivers.filter((receiver) => receiver.name === defaultReceiverName);
+  const criticalReceiver = receivers.filter(
+    (receiver) => receiver.name === InitialReceivers.Critical,
+  );
+
+  const numIncompleteReceivers: number = _.isEmpty(getIntegrationTypes(defaultReceiver[0])) ? 1 : 0;
+
+  return _.isEmpty(getIntegrationTypes(criticalReceiver[0]))
+    ? numIncompleteReceivers + 1
+    : numIncompleteReceivers;
 };
 
 // Puts sets of key=value pairs into single comma delimited label
@@ -279,7 +294,9 @@ const ReceiverTableRow: React.FC<ReceiverTableRowProps> = ({
     <TableRow id={index} index={index} trKey={key} style={style}>
       <TableData className={tableColumnClasses[0]}>{receiver.name}</TableData>
       <TableData className={tableColumnClasses[1]}>
-        {!integrationTypesLabel ? (
+        {(receiver.name === InitialReceivers.Critical ||
+          receiver.name === InitialReceivers.Default) &&
+        !integrationTypesLabel ? (
           <Link to={`/monitoring/alertmanagerconfig/receivers/${receiver.name}/edit`}>
             <PencilAltIcon className="co-icon-space-r pf-c-button-icon--plain" />
             Configure
@@ -345,6 +362,7 @@ const Receivers = () => {
     receivers = receivers.filter((receiver) => fuzzy(filterStr, _.toLower(receiver.name)));
   }
 
+  const numOfIncompleteReceivers = numberOfIncompleteReceivers();
   return (
     <div className="co-m-pane__body">
       <SectionHeading text="Receivers" />
@@ -364,16 +382,16 @@ const Receivers = () => {
           />
         </div>
       </div>
-      {hasIncompleteDefaultReceiver() && (
+      {numOfIncompleteReceivers > 0 && (
         <Alert
           isInline
           className="co-alert co-alert--scrollable"
           variant="info"
-          title="Incomplete Default Receiver"
+          title={`Incomplete Alert Receiver${numOfIncompleteReceivers > 1 ? 's' : ''}`}
         >
           <div className="co-pre-line">
-            Configure this receiver to ensure that you learn about important issues with your
-            cluster.
+            Configure {numOfIncompleteReceivers === 1 ? 'this receiver' : 'these receivers'} to
+            ensure that you learn about important issues with your cluster.
           </div>
         </Alert>
       )}
