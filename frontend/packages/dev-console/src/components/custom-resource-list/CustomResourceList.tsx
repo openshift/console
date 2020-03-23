@@ -1,29 +1,25 @@
 import * as React from 'react';
 import * as _ from 'lodash';
+import * as fuzzy from 'fuzzysearch';
 import { Table, TextFilter } from '@console/internal/components/factory';
-import { SortByDirection } from '@patternfly/react-table';
 import { CheckBoxes } from '@console/internal/components/row-filter';
 import { getQueryArgument } from '@console/internal/components/utils';
-import { useDeepCompareMemoize } from '@console/shared';
-import {
-  CustomResourceListFilterType,
-  CustomResourceListProps,
-} from './custom-resource-list-types';
+import { CustomResourceListProps } from './custom-resource-list-types';
 
 const CustomResourceList: React.FC<CustomResourceListProps> = ({
   dependentResource,
-  items,
+  fetchCustomResources,
   queryArg,
   rowFilters,
-  getFilteredItems,
+  rowFilterReducer,
   resourceHeader,
   resourceRow,
+  sortBy,
+  sortOrder,
 }) => {
   const [listItems, setListItems] = React.useState([]);
   const [filteredListItems, setFilteredListItems] = React.useState([]);
   const [fetched, setFetched] = React.useState(false);
-
-  const memoizedDependentResource = useDeepCompareMemoize(dependentResource?.data);
 
   React.useEffect(() => {
     let ignore = false;
@@ -34,7 +30,7 @@ const CustomResourceList: React.FC<CustomResourceListProps> = ({
     const fetchListItems = async () => {
       let newListItems: any;
       try {
-        newListItems = await items;
+        newListItems = await fetchCustomResources();
       } catch {
         if (ignore) return;
 
@@ -49,7 +45,7 @@ const CustomResourceList: React.FC<CustomResourceListProps> = ({
 
       if (activeFilters) {
         const filteredItems = () => {
-          return getFilteredItems(newListItems, CustomResourceListFilterType.Row, activeFilters);
+          return rowFilterReducer(newListItems, activeFilters);
         };
         setFilteredListItems(filteredItems);
       } else {
@@ -62,22 +58,22 @@ const CustomResourceList: React.FC<CustomResourceListProps> = ({
     return () => {
       ignore = true;
     };
-  }, [memoizedDependentResource, items, queryArg, rowFilters, getFilteredItems]);
+  }, [dependentResource, fetchCustomResources, queryArg, rowFilters, rowFilterReducer]);
 
   const applyRowFilter = React.useCallback(
     (filter) => {
-      const filteredItems = getFilteredItems(listItems, CustomResourceListFilterType.Row, filter);
+      const filteredItems = rowFilterReducer(listItems, filter);
       setFilteredListItems(filteredItems);
     },
-    [listItems, getFilteredItems],
+    [listItems, rowFilterReducer],
   );
 
   const applyTextFilter = React.useCallback(
     (filter) => {
-      const filteredItems = getFilteredItems(listItems, CustomResourceListFilterType.Text, filter);
+      const filteredItems = fuzzy(listItems, filter);
       setFilteredListItems(filteredItems);
     },
-    [listItems, getFilteredItems],
+    [listItems],
   );
 
   const rowsOfRowFilters = _.map(
@@ -110,9 +106,9 @@ const CustomResourceList: React.FC<CustomResourceListProps> = ({
         {!_.isEmpty(listItems) && rowsOfRowFilters}
         <Table
           data={filteredListItems}
-          defaultSortField="name"
-          defaultSortOrder={SortByDirection.asc}
-          aria-label="Resources"
+          defaultSortField={sortBy}
+          defaultSortOrder={sortOrder}
+          aria-label="CustomResources"
           Header={resourceHeader}
           Row={resourceRow}
           loaded={fetched}

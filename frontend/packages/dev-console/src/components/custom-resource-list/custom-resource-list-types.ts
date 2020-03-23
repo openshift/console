@@ -1,9 +1,4 @@
-import { FirehoseResult } from '@console/internal/components/utils';
-
-export enum CustomResourceListFilterType {
-  Row = 'row',
-  Text = 'text',
-}
+import { SortByDirection } from '@patternfly/react-table';
 
 export interface CustomResourceListRowFilter {
   type: string;
@@ -20,15 +15,16 @@ export interface CustomResourceListRowProps {
 }
 
 export interface CustomResourceListProps {
-  items: Promise<{ [key: string]: any }[]>;
   queryArg: string;
   rowFilters: CustomResourceListRowFilter[];
+  sortBy: string;
+  sortOrder: SortByDirection;
   resourceRow: React.ComponentType<CustomResourceListRowProps>;
-  dependentResource?: FirehoseResult;
+  dependentResource?: any;
   resourceHeader: () => { [key: string]: any }[];
-  getFilteredItems: (
+  fetchCustomResources: () => Promise<{ [key: string]: any }[]>;
+  rowFilterReducer: (
     items: { [key: string]: any }[],
-    filterType: CustomResourceListFilterType,
     filters: string | string[],
   ) => { [key: string]: any }[];
 }

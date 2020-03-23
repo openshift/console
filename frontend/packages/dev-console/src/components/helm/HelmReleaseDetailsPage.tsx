@@ -65,9 +65,7 @@ const HelmReleaseDetailsPage: React.FC<HelmReleaseDetailsPageProps> = ({ secret,
           {
             href: 'history',
             name: 'History',
-            component: () => (
-              <HelmReleaseHistory helmReleaseName={helmReleaseName} namespace={namespace} />
-            ),
+            component: HelmReleaseHistory,
           },
         ]}
         customKind={HelmReleaseReference}
