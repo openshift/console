@@ -8,7 +8,7 @@ import { namespaceDropdown, openshiftStorageItem } from './installFlow.view';
 export const ocsOp = $(`a[data-test-operator-row='${OCS_OP}']`);
 export const getStorageClusterLink = async () => {
   const index = await getOperatorHubCardIndex('Storage Cluster');
-  const link = $(`article:nth-child(${index}) a`);
+  const link = $(`article:nth-child(${index + 1}) a`);
   return link;
 };
 export const actionForLabel = (label: string) => $(`button[data-test-action='${label}']`);

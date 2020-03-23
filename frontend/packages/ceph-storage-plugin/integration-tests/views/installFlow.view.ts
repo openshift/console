@@ -6,15 +6,17 @@ import { appHost } from '@console/internal-integration-tests/protractor.conf';
 import { MINUTE, NS, OCS_OP, SECOND, OCS_OPERATOR_NAME } from '../utils/consts';
 import { waitFor, refreshIfNotVisible } from '../utils/helpers';
 
+// Primary Create Button
+export const primaryButton = $('.pf-m-primary');
+
 // Operator Hub & Installed Operators
-const ocsOperator = $('.co-clusterserviceversion-logo__name__clusterserviceversion');
+export const ocsOperator = $('a[data-test-operator-row="OpenShift Container Storage"]');
 export const ocsOperatorStatus = $('.co-clusterserviceversion-row__status');
-const installOperator = $('.pf-m-primary');
+export const createLink = $('.pf-c-card__footer a');
+export const searchInputOperators = $('input[placeholder="Filter by name..."]');
 const searchInputOperatorHub = $('input[placeholder="Filter by keyword..."]');
-const searchInputOperators = $('input[placeholder="Filter by name..."]');
 
 // Subscription Page
-const subscribeButton = $('.pf-m-primary');
 const dropdownForNamespace = $('#dropdown-selectbox');
 const customNamespaceRadio = $('input[value="OwnNamespace"]');
 const selectNamespace = (namespace: string) => $(`#${namespace}-Project-link`);
@@ -22,7 +24,6 @@ const statuses = $$('.co-icon-and-text');
 const status = statuses.get(0);
 
 // Create storage cluster page
-const btnCreate = $('.pf-m-primary');
 const selectAllBtn = $('[aria-label="Select all rows"]');
 const live = process.env.OCS_LIVE;
 let CATALOG_SRC = 'ocs-catalogsource';
@@ -34,6 +35,10 @@ const ocsLink = (elem, catalogSource) =>
 // General Items
 export const namespaceDropdown = $('.co-namespace-selector button');
 export const openshiftStorageItem = $('#openshift-storage-link');
+
+// Size Dropdown
+export const sizeDropdown = $('button[id="ocs-service-capacity-dropdown"]');
+export const optionSmallSize = $('button[id="512Gi-link"]');
 
 // Namespace
 const labelValue = 'true';
@@ -50,10 +55,10 @@ export const goToOperatorHub = async () => {
   await browser.wait(until.and(crudView.untilNoLoadersPresent));
 };
 
-export const searchInOperatorHub = async (searchParam) => {
+export const searchInOperatorHub = async (searchParam, catalogSource) => {
   await browser.wait(until.visibilityOf(searchInputOperatorHub));
   await searchInputOperatorHub.sendKeys(searchParam);
-  const ocs = await ocsLink(OCS_NAME, CATALOG_SRC);
+  const ocs = await ocsLink(OCS_NAME, catalogSource);
   await browser.wait(until.visibilityOf(ocs));
   return ocs;
 };
@@ -74,6 +79,7 @@ export const selectWorkerRows = async () => {
   // Wait for 3 inputs to show up
   const selectedNodes = [];
   await browser.wait(until.presenceOf($('[data-label="Role"]')), 10000);
+  await browser.sleep(5 * SECOND);
   expect(await browser.wait($$('tbody tr').count())).toBeGreaterThanOrEqual(3);
   const isAllSeleted = await selectAllBtn.isSelected();
   if (isAllSeleted === true) await selectAllBtn.click();
@@ -106,6 +112,7 @@ export const selectWorkerRows = async () => {
         );
       }
     }
+    await browser.sleep(SECOND);
   });
   return selectedNodes;
 };
@@ -123,12 +130,12 @@ export class InstallCluster {
     this.namespace = namespace;
   }
 
-  async subscribeToOperator() {
+  async subscribeToOperator(catalogSource = CATALOG_SRC) {
     await goToOperatorHub();
-    const ocsOp = await searchInOperatorHub(OCS_OP);
+    const ocsOp = await searchInOperatorHub(OCS_OP, catalogSource);
     await click(ocsOp);
     await browser.sleep(2 * SECOND);
-    await click(installOperator);
+    await click(primaryButton);
     await browser.refresh();
     await this.installOperator();
     await browser.wait(until.visibilityOf(ocsOperator));
@@ -146,7 +153,7 @@ export class InstallCluster {
     await dropdownForNamespace.click();
     const nsTag = selectNamespace(this.namespace);
     await nsTag.click();
-    await subscribeButton.click();
+    await primaryButton.click();
     await browser.wait(until.and(crudView.untilNoLoadersPresent));
     await browser.wait(until.visibilityOf(searchInputOperators));
     await searchInputOperators.sendKeys(OCS_OPERATOR_NAME);
@@ -168,8 +175,7 @@ export class InstallCluster {
     const nodes = await selectWorkerRows();
     // Fluctating
     await browser.sleep(5 * SECOND);
-    await browser.wait(until.elementToBeClickable(btnCreate));
-    await click(btnCreate);
+    await click(primaryButton);
     // Let it move to the other page
     await browser.sleep(1000);
     await browser.wait(until.visibilityOf(status));

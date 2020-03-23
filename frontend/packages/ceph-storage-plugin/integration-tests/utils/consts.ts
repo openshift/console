@@ -4,8 +4,6 @@ export const NS = 'openshift-storage';
 export const SECOND = 1000;
 export const MINUTE = 60 * SECOND;
 
-export const STORAGE_CLUSTER_NAME = 'ocs-storagecluster';
-
 export enum POD_NAME_PATTERNS {
   OCS = 'ocs-operator-',
   ROOK = 'rook-ceph-operator-',
@@ -33,15 +31,25 @@ export enum CLUSTER_STATUS {
 }
 
 export const OCS_NODE_LABEL = 'cluster.ocs.openshift.io/openshift-storage';
+export const CATALOG_SRC = 'redhat-operators';
 
 export const KIND = 'storagecluster';
 export const EXPAND_WAIT = 15 * MINUTE;
 export const CAPACITY_UNIT = 'TiB';
 export const CAPACITY_VALUE = '2';
-export const OCS_OPERATOR_NAME = 'ocs-operator';
+export const OCS_OPERATOR_NAME = 'ocs-operatorv4';
+export const STORAGE_CLUSTER_NAME = 'ocs-storagecluster';
 export const HOST = 'host';
 export const ZONE = 'zone';
 export const OSD = 'osd';
+
+export const SUCCESS = 'Succeeded';
+
+export const ocsTaint = Object.freeze({
+  key: 'node.ocs.openshift.io/storage',
+  value: 'true',
+  effect: 'NoSchedule',
+});
 
 export enum VOLUME_ACCESS_MODES {
   RWO = 'ReadWriteOnce',
