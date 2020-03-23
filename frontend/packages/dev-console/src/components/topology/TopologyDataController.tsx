@@ -12,7 +12,7 @@ import { TopologyFilters, getTopologyFilters } from './filters/filter-utils';
 import { allowedResources, transformTopologyData, getHelmReleaseKey } from './topology-utils';
 import { TopologyDataModel, TopologyDataResources, TrafficData } from './topology-types';
 import trafficConnectorMock from './__mocks__/traffic-connector.mock';
-import { HelmRelease, HelmReleaseResourcesMap } from '../helm/helm-types';
+import { HelmReleaseResourcesMap } from '../helm/helm-types';
 
 export interface RenderProps {
   data?: TopologyDataModel;
@@ -30,6 +30,7 @@ export interface ControllerProps {
   utils: Function[];
   loaded?: boolean;
   loadError?: any;
+  namespace: string;
   resources?: TopologyDataResources;
   render(RenderProps): React.ReactElement;
   application: string;
@@ -37,7 +38,6 @@ export interface ControllerProps {
   serviceBinding: boolean;
   topologyFilters: TopologyFilters;
   trafficData?: TrafficData;
-  helmResourcesMap?: HelmReleaseResourcesMap;
 }
 
 export interface TopologyDataControllerProps extends StateProps {
@@ -53,6 +53,7 @@ const Controller: React.FC<ControllerProps> = ({
   render,
   application,
   cheURL,
+  namespace,
   resources,
   loaded,
   loadError,
@@ -60,25 +61,68 @@ const Controller: React.FC<ControllerProps> = ({
   serviceBinding,
   topologyFilters,
   trafficData,
-  helmResourcesMap,
-}) =>
-  render({
-    loaded,
+}) => {
+  const secretCount = React.useRef<number>(0);
+  const [helmResourcesMap, setHelmResourcesMap] = React.useState<HelmReleaseResourcesMap>(null);
+
+  React.useEffect(() => {
+    const count = resources?.secrets?.data?.length ?? 0;
+    if (count !== secretCount.current) {
+      secretCount.current = count;
+      if (count === 0) {
+        setHelmResourcesMap({});
+        return;
+      }
+
+      coFetchJSON(`/api/helm/releases?ns=${namespace}`)
+        .then((releases) => {
+          setHelmResourcesMap(
+            releases.reduce((acc, release) => {
+              try {
+                const manifestResources: K8sResourceKind[] = safeLoadAll(release.manifest);
+                manifestResources.forEach((resource) => {
+                  const resourceKindName = getHelmReleaseKey(resource);
+                  if (!acc.hasOwnProperty(resourceKindName)) {
+                    acc[resourceKindName] = {
+                      releaseName: release.name,
+                      chartIcon: release.chart.metadata.icon,
+                      manifestResources,
+                    };
+                  }
+                });
+              } catch (e) {
+                // eslint-disable-next-line no-console
+                console.error(e);
+              }
+              return acc;
+            }, {}),
+          );
+        })
+        .catch(() => {
+          setHelmResourcesMap({});
+        });
+    }
+  }, [namespace, resources, resources.secrets, secretCount, setHelmResourcesMap]);
+
+  return render({
+    loaded: loaded && helmResourcesMap,
     loadError,
     serviceBinding,
-    data: loaded
-      ? transformTopologyData(
-          resources,
-          allowedResources,
-          application,
-          cheURL,
-          utils,
-          topologyFilters,
-          trafficData,
-          helmResourcesMap,
-        )
-      : null,
+    data:
+      loaded && helmResourcesMap
+        ? transformTopologyData(
+            resources,
+            allowedResources,
+            application,
+            cheURL,
+            utils,
+            topologyFilters,
+            trafficData,
+            helmResourcesMap,
+          )
+        : null,
   });
+};
 
 export const TopologyDataController: React.FC<TopologyDataControllerProps> = ({
   namespace,
@@ -89,7 +133,6 @@ export const TopologyDataController: React.FC<TopologyDataControllerProps> = ({
   serviceBinding,
   filters,
 }) => {
-  const [helmResourcesMap, setHelmResourcesMap] = React.useState<HelmReleaseResourcesMap>();
   const { resources, utils } = getResourceList(namespace, resourceList);
   if (serviceBinding) {
     resources.push({
@@ -101,61 +144,17 @@ export const TopologyDataController: React.FC<TopologyDataControllerProps> = ({
     });
   }
 
-  React.useEffect(() => {
-    let ignore = false;
-
-    const fetchHelmReleases = async () => {
-      let releases: HelmRelease[];
-      try {
-        releases = await coFetchJSON(`/api/helm/releases?ns=${namespace}`);
-      } catch {
-        return;
-      }
-      if (ignore) return;
-
-      const releaseResourcesMap = releases.reduce((acc, release) => {
-        try {
-          const manifestResources: K8sResourceKind[] = safeLoadAll(release.manifest);
-
-          manifestResources.forEach((resource) => {
-            const resourceKindName = getHelmReleaseKey(resource);
-            if (!acc.hasOwnProperty(resourceKindName)) {
-              acc[resourceKindName] = {
-                releaseName: release.name,
-                chartIcon: release.chart.metadata.icon,
-                manifestResources,
-              };
-            }
-          });
-        } catch (e) {
-          // eslint-disable-next-line no-console
-          console.error(e);
-        }
-
-        return acc;
-      }, {});
-
-      setHelmResourcesMap(releaseResourcesMap);
-    };
-
-    fetchHelmReleases();
-
-    return () => {
-      ignore = true;
-    };
-  }, [namespace]);
-
   return (
     <Firehose resources={resources}>
       <Controller
         application={application}
+        namespace={namespace}
         cheURL={cheURL}
         render={render}
         utils={utils}
         serviceBinding={serviceBinding}
         topologyFilters={filters}
         trafficData={trafficConnectorMock.elements}
-        helmResourcesMap={helmResourcesMap}
       />
     </Firehose>
   );
