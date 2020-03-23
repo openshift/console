@@ -10,11 +10,12 @@
   ],
   "scripts": {
     "clean": "rm -rf ./public/dist",
-    "dev": "yarn clean && NODE_OPTIONS=--max-old-space-size=4096 ts-node -O '{\"module\":\"commonjs\"}' ./node_modules/.bin/webpack-dev-server",
-    "build": "yarn clean && NODE_ENV=production NODE_OPTIONS=--max-old-space-size=4096 ts-node -O '{\"module\":\"commonjs\"}' ./node_modules/.bin/webpack --mode=production",
+    "dev": "yarn clean && $npm_package_config_ts_node ./node_modules/.bin/webpack-dev-server",
+    "dev-once": "yarn clean && $npm_package_config_ts_node ./node_modules/.bin/webpack --mode=development",
+    "build": "yarn clean && NODE_ENV=production $npm_package_config_ts_node ./node_modules/.bin/webpack --mode=production",
     "coverage": "jest --coverage .",
     "eslint": "eslint --ext .js,.jsx,.ts,.tsx,.json --color",
-    "lint": "NODE_OPTIONS=--max-old-space-size=4096 yarn eslint .",
+    "lint": "$npm_package_config_node_opts yarn eslint .",
     "test": "jest",
     "debug-test": "node --inspect-brk node_modules/.bin/jest --runInBand",
     "webdriver-update": "webdriver-manager update --gecko=false",
@@ -22,11 +23,15 @@
     "test-gui-tap": "TAP=true yarn run test-gui",
     "test-gui-openshift": "yarn run test-suite --suite crud --params.openshift true",
     "test-gui": "yarn run test-suite --suite all",
-    "test-suite": "ts-node -O '{\"module\":\"commonjs\"}' ./node_modules/.bin/protractor integration-tests/protractor.conf.ts",
+    "test-suite": "$npm_package_config_ts_node ./node_modules/.bin/protractor integration-tests/protractor.conf.ts",
     "debug-test-suite": "TS_NODE_COMPILER_OPTIONS='{\"module\":\"commonjs\"}' node -r ts-node/register --inspect-brk ./node_modules/.bin/protractor integration-tests/protractor.conf.ts",
-    "analyze": "NODE_ENV=production NODE_OPTIONS=--max-old-space-size=4096 ts-node -O '{\"module\":\"commonjs\"}' ./node_modules/.bin/webpack --mode=production --profile --json | awk '{if(NR>2)print}' > public/dist/stats.json && ts-node -O '{\"module\":\"commonjs\"}' ./node_modules/.bin/webpack-bundle-analyzer --mode static -r public/dist/report.html public/dist/stats.json",
+    "analyze": "NODE_ENV=production $npm_package_config_ts_node ./node_modules/.bin/webpack --mode=production --profile --json | awk '{if(NR>2)print}' > public/dist/stats.json && $npm_package_config_ts_node ./node_modules/.bin/webpack-bundle-analyzer --mode static -r public/dist/report.html public/dist/stats.json",
     "plugin-stats": "node ./plugin-stats.js",
     "prettier-all": "prettier --write '**/*.{js,jsx,ts,tsx,json}'"
+  },
+  "config": {
+    "node_opts": "NODE_OPTIONS=--max-old-space-size=4096",
+    "ts_node": "$npm_package_config_node_opts ts-node -O '{\"module\":\"commonjs\"}'"
   },
   "jest": {
     "moduleFileExtensions": [
