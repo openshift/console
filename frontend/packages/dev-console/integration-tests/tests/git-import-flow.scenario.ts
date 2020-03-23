@@ -66,10 +66,10 @@ describe('git import flow', () => {
     await switchPerspective(Perspective.Developer);
     expect(sideHeader.getText()).toContain('Developer');
     await navigateImportFromGit();
-    await browser.wait(until.textToBePresentInElement(importFromGitHeader, 'Import from git'));
+    await browser.wait(until.textToBePresentInElement(importFromGitHeader, 'Import from git'), waitForElement);
     expect(importFromGitHeader.getText()).toContain('Import from git');
     await enterGitRepoUrl(testData.gitRepoUrl);
-
+    debugger;
     await appName.click();
     expect(appName.getAttribute('value')).toContain('nodejs-ex-git');
     await addApplicationInGeneral(newApplication, newApp);
@@ -201,7 +201,12 @@ describe('git import flow with advanced options', () => {
     await selectActionInSideBar(Actions.DeleteDeployment);
     let actualCount = await listViewObj.appNames.count();
     expect(actualCount).toBeLessThan(count);
-  })
+  });
+
+  // it('verify the app icon status and Resource displays', async() => {
+  //   await click(listViewObj.switchToToplogyView);
+
+  // });
 });
 
 // This describe block is disabled beacause "Add Pipeline" functionality is consistent
