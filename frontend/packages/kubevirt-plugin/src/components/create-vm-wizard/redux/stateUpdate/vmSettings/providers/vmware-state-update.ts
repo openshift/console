@@ -12,7 +12,6 @@ import {
 import { InternalActionType, UpdateOptions } from '../../../types';
 import {
   iGetCommonData,
-  iGetCreateVMWizardTabs,
   iGetLoadedCommonData,
   iGetName,
 } from '../../../../selectors/immutable/selectors';
@@ -52,6 +51,7 @@ import {
 import { prefillUpdateCreator } from './vmware-prefill-vm';
 import { hasImportProvidersChanged } from '../../../../selectors/immutable/import-providers';
 import { updateExtraWSQueries } from './update-ws-queries';
+import { iGetCreateVMWizardTabs } from '../../../../selectors/immutable/common';
 
 const startControllerAndCleanup = (options: UpdateOptions) => {
   const { id, prevState, getState, changedCommonData } = options;

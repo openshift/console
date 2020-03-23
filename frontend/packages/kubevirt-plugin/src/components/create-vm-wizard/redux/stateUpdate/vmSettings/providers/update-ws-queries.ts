@@ -25,9 +25,10 @@ import {
 } from '../../../../../../constants/v2v';
 import { V2VVMwareModel } from '../../../../../../models';
 import { vmWizardInternalActions } from '../../../internal-actions';
-import { iGetCommonData, iGetCreateVMWizard } from '../../../../selectors/immutable/selectors';
+import { iGetCommonData } from '../../../../selectors/immutable/selectors';
 import { FirehoseResource } from '@console/internal/components/utils';
 import { iGetIn } from '../../../../../../utils/immutable';
+import { iGetCreateVMWizard } from '../../../../selectors/immutable/common';
 
 type GetQueriesParams = {
   namespace: string;

@@ -1,6 +1,5 @@
 import * as _ from 'lodash';
 import * as React from 'react';
-import { validate } from '@console/internal/components/utils';
 import { Grid, GridItem } from '@patternfly/react-core';
 import { iGetFieldValue, isFieldHidden } from '../../selectors/immutable/field';
 import { FormFieldMemoRow } from '../../form/form-field-row';
@@ -8,7 +7,11 @@ import { FormField, FormFieldType } from '../../form/form-field';
 import { Integer } from '../../../form/integer/integer';
 import { VMSettingsField } from '../../types';
 import { SizeUnitFormRow } from '../../../form/size-unit-form-row';
-import { BinaryUnit, getReasonableUnits } from '../../../form/size-unit-utils';
+import {
+  BinaryUnit,
+  getReasonableUnits,
+  stringValueUnitSplit,
+} from '../../../form/size-unit-utils';
 
 import './vm-settings-tab.scss';
 
@@ -18,7 +21,7 @@ export const MemoryCPU: React.FC<MemoryCPUProps> = React.memo(
       return null;
     }
     const mem = iGetFieldValue(memoryField);
-    const [size, unit] = validate.split(_.isString(mem) ? mem : '');
+    const [size, unit] = stringValueUnitSplit(_.isString(mem) ? mem : '');
     const hasSize = size != null && !_.isNaN(size);
     const memory = (
       <FormFieldMemoRow field={memoryField} fieldType={FormFieldType.TEXT}>

@@ -1,6 +1,6 @@
 import { iGetIn } from '../../../../utils/immutable';
 import { ImportProvidersField, VMWizardTab } from '../../types';
-import { iGetCreateVMWizardTabs } from './selectors';
+import { iGetCreateVMWizardTabs } from './common';
 
 export const iGetImportProviders = (state, id: string) =>
   iGetIn(iGetCreateVMWizardTabs(state, id), [VMWizardTab.IMPORT_PROVIDERS, 'value']);

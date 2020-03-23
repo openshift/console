@@ -5,7 +5,7 @@ import { Firehose, FirehoseResult } from '@console/internal/components/utils';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { createLookup, getName } from '@console/shared/src';
 import { PersistentVolumeClaimModel } from '@console/internal/models';
-import { iGetCommonData, iGetCreateVMWizardTabs } from '../../selectors/immutable/selectors';
+import { iGetCommonData } from '../../selectors/immutable/selectors';
 import { isStepLocked } from '../../selectors/immutable/wizard-selectors';
 import {
   VMWizardProps,
@@ -177,15 +177,12 @@ type VirtualHardwareConnectedProps = VirtualHardwareTabFirehoseProps & {
   namespace: string;
 };
 
-const stateToProps = (state, { wizardReduxID }) => {
-  const stepData = iGetCreateVMWizardTabs(state, wizardReduxID);
-  return {
-    namespace: iGetCommonData(state, wizardReduxID, VMWizardProps.activeNamespace),
-    isLocked: isStepLocked(stepData, VMWizardTab.ADVANCED_VIRTUAL_HARDWARE),
-    storages: getStoragesWithWrappers(state, wizardReduxID),
-    templateValidations: getTemplateValidation(state, wizardReduxID),
-  };
-};
+const stateToProps = (state, { wizardReduxID }) => ({
+  namespace: iGetCommonData(state, wizardReduxID, VMWizardProps.activeNamespace),
+  isLocked: isStepLocked(state, wizardReduxID, VMWizardTab.ADVANCED_VIRTUAL_HARDWARE),
+  storages: getStoragesWithWrappers(state, wizardReduxID),
+  templateValidations: getTemplateValidation(state, wizardReduxID),
+});
 
 const dispatchToProps = (dispatch, { wizardReduxID }) => ({
   setTabLocked: (isLocked) => {

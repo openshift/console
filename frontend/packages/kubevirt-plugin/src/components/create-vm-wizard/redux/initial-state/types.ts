@@ -4,18 +4,10 @@ import {
   VMImportProvider,
   VMSettingsField,
   VMWareProviderField,
+  VMWizardTabState,
 } from '../../types';
 
-export type StepState = {
-  value: any;
-  error: string;
-  isValid: boolean;
-  isLocked: boolean;
-  isHidden: boolean;
-  hasAllRequiredFilled: boolean;
-};
-
-export type InitialStepStateGetter = (data: CommonData) => StepState;
+export type InitialStepStateGetter = (data: CommonData) => VMWizardTabState;
 
 export type FieldMultiFlag = { [k: string]: boolean };
 

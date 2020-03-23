@@ -18,6 +18,7 @@ import { FirehoseResource } from '@console/internal/components/utils';
 export enum ActionType {
   Create = 'KubevirtVMWizardExternalCreate',
   Dispose = 'KubevirtVMWiExternalDispose',
+  CreateVM = 'KubevirtVMWiExternalCreateVM',
   UpdateCommonData = 'KubevirtVMWizardExternalUpdateCommonData',
   SetVmSettingsFieldValue = 'KubevirtVMWizardExternalSetVmSettingsFieldValue',
   SetImportProvidersFieldValue = 'KubevirtVMWizardExternalSetImportProvidersFieldValue',

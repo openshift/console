@@ -15,7 +15,7 @@ import { Firehose, FirehoseResult } from '@console/internal/components/utils';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { createLookup, getName } from '@console/shared/src';
 import { PersistentVolumeClaimModel } from '@console/internal/models';
-import { iGetCommonData, iGetCreateVMWizardTabs } from '../../selectors/immutable/selectors';
+import { iGetCommonData } from '../../selectors/immutable/selectors';
 import { isStepLocked } from '../../selectors/immutable/wizard-selectors';
 import { VMWizardProps, VMWizardStorageWithWrappers, VMWizardTab } from '../../types';
 import { VMDisksTable } from '../../../vm-disks/vm-disks';
@@ -35,9 +35,9 @@ import { VmWizardStorageRow } from './vm-wizard-storage-row';
 import { VMWizardStorageBundle } from './types';
 import { vmWizardStorageModalEnhanced } from './vm-wizard-storage-modal-enhanced';
 import { StorageBootSource } from './storage-boot-source';
+import { ADD_DISK } from '../../../../utils/strings';
 
 import './storage-tab.scss';
-import { ADD_DISK } from '../../../../utils/strings';
 
 const getStoragesData = (
   storages: VMWizardStorageWithWrappers[],
@@ -184,15 +184,12 @@ type StorageTabConnectedProps = StorageTabFirehoseProps & {
   namespace: string;
 };
 
-const stateToProps = (state, { wizardReduxID }) => {
-  const stepData = iGetCreateVMWizardTabs(state, wizardReduxID);
-  return {
-    namespace: iGetCommonData(state, wizardReduxID, VMWizardProps.activeNamespace),
-    isLocked: isStepLocked(stepData, VMWizardTab.STORAGE),
-    storages: getStoragesWithWrappers(state, wizardReduxID),
-    isBootDiskRequired: iGetProvisionSource(state, wizardReduxID) === ProvisionSource.DISK,
-  };
-};
+const stateToProps = (state, { wizardReduxID }) => ({
+  namespace: iGetCommonData(state, wizardReduxID, VMWizardProps.activeNamespace),
+  isLocked: isStepLocked(state, wizardReduxID, VMWizardTab.STORAGE),
+  storages: getStoragesWithWrappers(state, wizardReduxID),
+  isBootDiskRequired: iGetProvisionSource(state, wizardReduxID) === ProvisionSource.DISK,
+});
 
 const dispatchToProps = (dispatch, { wizardReduxID }) => ({
   setTabLocked: (isLocked) => {

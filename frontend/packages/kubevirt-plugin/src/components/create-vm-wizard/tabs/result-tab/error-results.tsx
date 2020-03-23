@@ -8,10 +8,11 @@ import {
   EmptyStateVariant,
   Title,
 } from '@patternfly/react-core';
-import { iGetCommonData, iGetCreateVMWizardTabs } from '../../selectors/immutable/selectors';
+import { iGetCommonData } from '../../selectors/immutable/selectors';
 import { VMWizardProps, VMWizardTab } from '../../types';
 import { getVMLikeModelName } from '../../../../utils/utils';
 import { iGetIn } from '../../../../utils/immutable';
+import { iGetCreateVMWizardTabs } from '../../selectors/immutable/common';
 
 const ErrorResultsComponent: React.FC<ErrorResultsProps> = ({
   isCreateTemplate,

@@ -1,6 +1,6 @@
 import { assureEndsWith } from '@console/shared/src';
 import { getStringEnumValues } from '../../utils/types';
-import { convertToBaseValue, validate } from '@console/internal/components/utils';
+import { convertToBaseValue } from '@console/internal/components/utils';
 
 export enum BinaryUnit {
   B = 'B',
@@ -26,6 +26,19 @@ type Result = {
   str: string;
 };
 
+export const stringValueUnitSplit = (combinedVal) => {
+  const index = combinedVal.search(/([a-zA-Z]+)/g);
+  let value;
+  let unit;
+  if (index === -1) {
+    value = combinedVal;
+  } else {
+    value = combinedVal.slice(0, index);
+    unit = combinedVal.slice(index);
+  }
+  return [value, unit];
+};
+
 export const convertToHighestUnit = (value: number, unit: BinaryUnit): Result => {
   const units = getStringEnumValues<BinaryUnit>(BinaryUnit);
   const sliceIndex = units.indexOf(unit);
@@ -48,7 +61,7 @@ export const convertToBytes = (value: string): number => {
   const result = convertToBaseValue(value);
 
   if (!result && value.match(/^[0-9.]+B$/)) {
-    const [v] = validate.split(value);
+    const [v] = stringValueUnitSplit(value);
     return v;
   }
 

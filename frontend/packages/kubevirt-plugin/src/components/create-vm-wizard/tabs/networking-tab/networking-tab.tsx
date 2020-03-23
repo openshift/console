@@ -11,7 +11,6 @@ import {
   Title,
 } from '@patternfly/react-core';
 import { PlusCircleIcon } from '@patternfly/react-icons';
-import { iGetCreateVMWizardTabs } from '../../selectors/immutable/selectors';
 import { isStepLocked } from '../../selectors/immutable/wizard-selectors';
 import { VMWizardNetworkWithWrappers, VMWizardTab } from '../../types';
 import { VMNicsTable } from '../../../vm-nics/vm-nics';
@@ -27,9 +26,9 @@ import { vmWizardNicModalEnhanced } from './vm-wizard-nic-modal-enhanced';
 import { VMWizardNicRow } from './vm-wizard-nic-row';
 import { VMWizardNetworkBundle } from './types';
 import { NetworkBootSource } from './network-boot-source';
+import { ADD_NETWORK_INTERFACE } from '../../../../utils/strings';
 
 import './networking-tab.scss';
-import { ADD_NETWORK_INTERFACE } from '../../../../utils/strings';
 
 const getNicsData = (networks: VMWizardNetworkWithWrappers[]): VMWizardNetworkBundle[] =>
   networks.map((wizardNetworkData) => {
@@ -130,14 +129,11 @@ type NetworkingTabComponentProps = {
   onBootOrderChanged: (deviceID: string, bootOrder: number) => void;
 };
 
-const stateToProps = (state, { wizardReduxID }) => {
-  const stepData = iGetCreateVMWizardTabs(state, wizardReduxID);
-  return {
-    isLocked: isStepLocked(stepData, VMWizardTab.NETWORKING),
-    networks: getNetworksWithWrappers(state, wizardReduxID),
-    isBootNICRequired: iGetProvisionSource(state, wizardReduxID) === ProvisionSource.PXE,
-  };
-};
+const stateToProps = (state, { wizardReduxID }) => ({
+  isLocked: isStepLocked(state, wizardReduxID, VMWizardTab.NETWORKING),
+  networks: getNetworksWithWrappers(state, wizardReduxID),
+  isBootNICRequired: iGetProvisionSource(state, wizardReduxID) === ProvisionSource.PXE,
+});
 
 const dispatchToProps = (dispatch, { wizardReduxID }) => ({
   setTabLocked: (isLocked) => {

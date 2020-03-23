@@ -3,27 +3,59 @@ import {
   ImportProvidersField,
   VMSettingsField,
   VMWizardNetworkType,
+  VMWizardProps,
   VMWizardTab,
+  VMWizardTabsMetadata,
 } from '../../types';
 import { getStringEnumValues } from '../../../../utils/types';
-import { CUSTOM_FLAVOR } from '../../../../constants/vm';
+import { CUSTOM_FLAVOR } from '../../../../constants/vm/constants';
+import { iGetCreateVMWizardTabs } from './common';
+import { iGetCommonData } from './selectors';
 
-export const isStepValid = (stepData, stepId: VMWizardTab) =>
-  !!iGetIn(stepData, [stepId, 'isValid']);
-export const isStepLocked = (stepData, stepId: VMWizardTab) =>
-  !!iGetIn(stepData, [stepId, 'isLocked']);
-export const isStepPending = (stepData, stepId: VMWizardTab) =>
-  !!iGetIn(stepData, [stepId, 'isPending']);
-export const isStepHidden = (stepData, stepId: VMWizardTab) =>
-  !!iGetIn(stepData, [stepId, 'isHidden']);
-export const hasStepAllRequiredFilled = (stepData, stepId: VMWizardTab) =>
-  !!iGetIn(stepData, [stepId, 'hasAllRequiredFilled']);
-export const getStepError = (stepData, stepId: VMWizardTab) => iGetIn(stepData, [stepId, 'error']);
+const getTabBoolean = (state, wizardID: string, stepId: VMWizardTab, key) =>
+  !!iGetIn(iGetCreateVMWizardTabs(state, wizardID), [stepId, key]);
 
-export const isLastStepErrorFatal = (stepData) =>
-  iGetIn(stepData, [VMWizardTab.RESULT, 'value', 'isFatal']);
+export const isStepValid = (state, wizardID: string, stepId: VMWizardTab) =>
+  getTabBoolean(state, wizardID, stepId, 'isValid');
 
-export const isWizardEmpty = (stepData, isProviderImport) => {
+export const isStepLocked = (state, wizardID: string, stepId: VMWizardTab) =>
+  getTabBoolean(state, wizardID, stepId, 'isLocked');
+
+export const isStepPending = (state, wizardID: string, stepId: VMWizardTab) =>
+  getTabBoolean(state, wizardID, stepId, 'isPending');
+
+export const isStepHidden = (state, wizardID: string, stepId: VMWizardTab) =>
+  getTabBoolean(state, wizardID, stepId, 'isHidden');
+
+export const hasStepAllRequiredFilled = (state, wizardID: string, stepId: VMWizardTab) =>
+  getTabBoolean(state, wizardID, stepId, 'hasAllRequiredFilled');
+
+export const getStepError = (state, wizardID: string, stepId: VMWizardTab) =>
+  iGetIn(iGetCreateVMWizardTabs(state, wizardID), [stepId, 'error']);
+
+export const getStepsMetadata = (state, wizardID: string): VMWizardTabsMetadata => {
+  const stepData = iGetCreateVMWizardTabs(state, wizardID);
+  if (!stepData) {
+    return {} as VMWizardTabsMetadata;
+  }
+
+  const result = stepData.toObject();
+
+  Object.keys(result).forEach((tab) => {
+    result[tab] = result[tab].toObject();
+    delete result[tab].value;
+  });
+
+  return result;
+};
+
+export const isLastStepErrorFatal = (state, wizardID: string) =>
+  iGetIn(iGetCreateVMWizardTabs(state, wizardID), [VMWizardTab.RESULT, 'value', 'isFatal']);
+
+export const isWizardEmpty = (state, wizardID: string) => {
+  const stepData = iGetCreateVMWizardTabs(state, wizardID);
+  const isProviderImport = iGetCommonData(state, wizardID, VMWizardProps.isProviderImport);
+
   if (isProviderImport) {
     return !iGetIn(stepData, [
       VMWizardTab.IMPORT_PROVIDERS,

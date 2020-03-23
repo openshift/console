@@ -27,7 +27,7 @@ export const getInitialImportProviders = (data: CommonData): ImportProvidersSett
 export const getImportProvidersInitialState: InitialStepStateGetter = (data) => {
   const { isProviderImport } = data.data;
   return {
-    value: getInitialImportProviders(data),
+    value: isProviderImport ? getInitialImportProviders(data) : {},
     error: null,
     hasAllRequiredFilled: !isProviderImport,
     isValid: !isProviderImport,

@@ -142,12 +142,29 @@ export type RenderableFieldResolver = {
   [key in RenderableField]: string;
 };
 
+export type VMWizardTabMetadata = {
+  isValid?: boolean;
+  isLocked?: boolean;
+  isHidden?: boolean;
+  isPending?: boolean;
+  hasAllRequiredFilled?: boolean;
+  error?: string;
+};
+
+export type VMWizardTabsMetadata = {
+  [k in VMWizardTab]: VMWizardTabMetadata;
+};
+
+export type VMWizardTabState = VMWizardTabMetadata & {
+  value: any;
+};
+
 export type VMSettingsFieldType = {
   value: any;
   key: VMSettingsField;
-  isRequired?: boolean;
-  isHidden?: boolean;
-  isDisabled?: boolean;
+  isRequired?: any;
+  isHidden?: any;
+  isDisabled?: any;
   [k: string]: any;
 };
 
@@ -210,17 +227,19 @@ export type CreateVMWizardComponentProps = {
   isSimpleView: boolean;
   isProviderImport: boolean;
   isCreateTemplate: boolean;
+  isLastTabErrorFatal: boolean;
   dataIDReferences: IDReferences;
   activeNamespace: string;
   openshiftFlag: boolean;
   reduxID: string;
-  stepData: any;
+  tabsMetadata: VMWizardTabsMetadata;
   userTemplates: FirehoseResult<TemplateKind[]>;
   commonTemplates: FirehoseResult<TemplateKind[]>;
   virtualMachines: FirehoseResult<VMKind[]>;
   storageClassConfigMap: FirehoseResult<ConfigMapKind>;
   onInitialize: () => void;
   onClose: (disposeOnly: boolean) => void;
+  createVM: () => void;
   onCommonDataChanged: (commonData: CommonData, commonDataChanged: ChangedCommonData) => void;
   onResultsChanged: (results, isValid: boolean, isLocked: boolean, isPending: boolean) => void;
   lockTab: (tabID: VMWizardTab) => void;

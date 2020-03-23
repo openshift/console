@@ -1,12 +1,12 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { iGetCreateVMWizardTabs } from '../../selectors/immutable/selectors';
 import { VMWizardTab } from '../../types';
 import { errorsFirstSort } from '../../../../k8s/enhancedK8sMethods/k8sMethodsUtils';
 import { iGetIn, immutableListToShallowJS } from '../../../../utils/immutable';
 import { Result } from '../../../../k8s/enhancedK8sMethods/types';
 import { resultContentToString } from '../../utils/utils';
 import { ResultTabRow } from './result-tab-row';
+import { iGetCreateVMWizardTabs } from '../../selectors/immutable/common';
 
 const RequestResultsPartComponent: React.FC<RequestResultsPartComponentProps> = ({
   requestResults,

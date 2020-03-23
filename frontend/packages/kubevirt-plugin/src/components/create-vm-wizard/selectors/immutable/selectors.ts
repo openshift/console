@@ -1,13 +1,7 @@
 import { K8sResourceKind } from '@console/internal/module/k8s';
-import { iGet, iGetIn, iGetLoadedData, toShallowJS } from '../../../../utils/immutable';
-import { getCreateVMWizards } from '../selectors';
+import { iGetIn, iGetLoadedData, toShallowJS } from '../../../../utils/immutable';
 import { CommonDataProp, VMWizardTab } from '../../types';
-import { getStepError, hasStepAllRequiredFilled, isStepValid } from './wizard-selectors';
-
-export const iGetCreateVMWizard = (state, reduxID: string) =>
-  iGet(getCreateVMWizards(state), reduxID);
-export const iGetCreateVMWizardTabs = (state, reduxID: string) =>
-  iGet(iGetCreateVMWizard(state, reduxID), 'tabs');
+import { iGetCreateVMWizard, iGetCreateVMWizardTabs } from './common';
 
 export const checkTabValidityChanged = (
   state,
@@ -19,9 +13,9 @@ export const checkTabValidityChanged = (
 ) => {
   const tabs = iGetCreateVMWizardTabs(state, reduxID);
   return (
-    isStepValid(tabs, tab) !== nextIsValid ||
-    hasStepAllRequiredFilled(tabs, tab) !== nextHasAllRequiredFilled ||
-    getStepError(tabs, tab) !== nextError
+    !!iGetIn(tabs, [tab, 'isValid']) !== nextIsValid ||
+    !!iGetIn(tabs, [tab, 'hasAllRequiredFilled']) !== nextHasAllRequiredFilled ||
+    iGetIn(tabs, [tab, 'error']) !== nextError
   );
 };
 
@@ -43,7 +37,11 @@ export const iGetExtraWSQueries = (state, reduxID: string) => {
   }, []);
 };
 
-export const iGetCommonData = (state, reduxID: string, key: CommonDataProp) => {
+export const iGetCommonData = <RESULT = any>(
+  state,
+  reduxID: string,
+  key: CommonDataProp,
+): RESULT => {
   const wizard = iGetCreateVMWizard(state, reduxID);
   const data = iGetIn(wizard, ['commonData', 'data', key]);
   if (data !== undefined) {

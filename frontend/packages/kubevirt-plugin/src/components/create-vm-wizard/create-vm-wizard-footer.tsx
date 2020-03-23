@@ -14,17 +14,19 @@ import {
 import { Prompt } from 'react-router';
 import { useShowErrorToggler } from '../../hooks/use-show-error-toggler';
 import { getDialogUIError, getSimpleDialogUIError } from '../../utils/strings';
-import { ALL_VM_WIZARD_TABS, VM_WIZARD_DIFFICULT_TABS, VMWizardProps, VMWizardTab } from './types';
 import {
-  getStepError,
-  hasStepAllRequiredFilled,
-  isLastStepErrorFatal as _isLastStepErrorFatal,
-  isStepHidden,
-  isStepLocked,
-  isStepValid,
+  ALL_VM_WIZARD_TABS,
+  VM_WIZARD_DIFFICULT_TABS,
+  VMWizardProps,
+  VMWizardTab,
+  VMWizardTabsMetadata,
+} from './types';
+import {
+  getStepsMetadata,
+  isLastStepErrorFatal,
   isWizardEmpty as _isWizardEmpty,
 } from './selectors/immutable/wizard-selectors';
-import { iGetCommonData, iGetCreateVMWizardTabs } from './selectors/immutable/selectors';
+import { iGetCommonData } from './selectors/immutable/selectors';
 import {
   getCreateVMLikeEntityLabel,
   getReviewAndCreateVMLikeEntityLabel,
@@ -43,17 +45,9 @@ type WizardContext = {
   goToStepById: (id: number | string) => void;
 };
 type CreateVMWizardFooterComponentProps = {
-  isLastStepErrorFatal: boolean;
+  isLastTabErrorFatal: boolean;
   isWizardEmpty: boolean;
-  steps: {
-    [k in VMWizardTab]: {
-      isValid: boolean;
-      isLocked: boolean;
-      isHidden: boolean;
-      hasAllRequiredFilled: boolean;
-      error: string;
-    };
-  };
+  steps: VMWizardTabsMetadata;
   isCreateTemplate: boolean;
   isProviderImport: boolean;
   isSimpleView: boolean;
@@ -62,7 +56,7 @@ type CreateVMWizardFooterComponentProps = {
 
 const CreateVMWizardFooterComponent: React.FC<CreateVMWizardFooterComponentProps> = ({
   steps,
-  isLastStepErrorFatal,
+  isLastTabErrorFatal,
   isWizardEmpty,
   isCreateTemplate,
   isProviderImport,
@@ -100,7 +94,7 @@ const CreateVMWizardFooterComponent: React.FC<CreateVMWizardFooterComponentProps
         const isReviewButtonDisabled = isAnyStepLocked;
 
         const hideBackButton = activeStep.hideBackButton || (isLastStep && isLastStepValid);
-        const isBackButtonDisabled = isFirstStep || isAnyStepLocked || isLastStepErrorFatal;
+        const isBackButtonDisabled = isFirstStep || isAnyStepLocked || isLastTabErrorFatal;
 
         return (
           <footer className={css(styles.wizardFooter)}>
@@ -213,30 +207,17 @@ const CreateVMWizardFooterComponent: React.FC<CreateVMWizardFooterComponentProps
   );
 };
 
-const stateToProps = (state, { wizardReduxID }) => {
-  const stepData = iGetCreateVMWizardTabs(state, wizardReduxID);
-  const isProviderImport = iGetCommonData(state, wizardReduxID, VMWizardProps.isProviderImport);
-  return {
-    steps: ALL_VM_WIZARD_TABS.reduce((acc, tab) => {
-      acc[tab] = {
-        isValid: isStepValid(stepData, tab),
-        isLocked: isStepLocked(stepData, tab),
-        isHidden: isStepHidden(stepData, tab),
-        hasAllRequiredFilled: hasStepAllRequiredFilled(stepData, tab),
-        error: getStepError(stepData, tab),
-      };
-      return acc;
-    }, {}),
-    isLastStepErrorFatal: _isLastStepErrorFatal(stepData),
-    isWizardEmpty: _isWizardEmpty(stepData, isProviderImport),
-    isCreateTemplate: iGetCommonData(state, wizardReduxID, VMWizardProps.isCreateTemplate),
-    isProviderImport,
-    isSimpleView: iGetCommonData(state, wizardReduxID, VMWizardProps.isSimpleView),
-  };
-};
+const stateToProps = (state, { wizardReduxID }) => ({
+  steps: getStepsMetadata(state, wizardReduxID),
+  isLastTabErrorFatal: isLastStepErrorFatal(state, wizardReduxID),
+  isWizardEmpty: _isWizardEmpty(state, wizardReduxID),
+  isCreateTemplate: iGetCommonData(state, wizardReduxID, VMWizardProps.isCreateTemplate),
+  isProviderImport: iGetCommonData(state, wizardReduxID, VMWizardProps.isProviderImport),
+  isSimpleView: iGetCommonData(state, wizardReduxID, VMWizardProps.isSimpleView),
+});
 
 const dispatchToProps = (dispatch, { wizardReduxID }) => ({
-  // there is no callback like this through the wizard
+  //  no callback like this can be passed through the Wizard component
   onEdit: () =>
     VM_WIZARD_DIFFICULT_TABS.forEach((tab) => {
       dispatch(vmWizardActions[ActionType.SetTabHidden](wizardReduxID, tab, false));
@@ -244,5 +225,5 @@ const dispatchToProps = (dispatch, { wizardReduxID }) => ({
 });
 
 export const CreateVMWizardFooter = connect(stateToProps, dispatchToProps, null, {
-  areStatePropsEqual: _.isEqual,
+  areStatePropsEqual: _.isEqual, // should have only simple values max one level deep
 })(CreateVMWizardFooterComponent);

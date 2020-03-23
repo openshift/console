@@ -11,7 +11,6 @@ import {
 import {
   FirehoseResult,
   HandlePromiseProps,
-  validate,
   withHandlePromise,
 } from '@console/internal/components/utils';
 import {
@@ -57,7 +56,7 @@ import { K8sResourceSelectRow } from '../../form/k8s-resource-select-row';
 import { SizeUnitFormRow } from '../../form/size-unit-form-row';
 import { CombinedDisk } from '../../../k8s/wrapper/vm/combined-disk';
 import { PersistentVolumeClaimWrapper } from '../../../k8s/wrapper/vm/persistent-volume-claim-wrapper';
-import { BinaryUnit } from '../../form/size-unit-utils';
+import { BinaryUnit, stringValueUnitSplit } from '../../form/size-unit-utils';
 import { StorageUISource } from './storage-ui-source';
 import { TemplateValidations } from '../../../utils/validations/template/template-validations';
 import { ConfigMapKind } from '@console/internal/module/k8s';
@@ -290,7 +289,7 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
       const newSizeBundle = getPvcStorageSize(
         getLoadedData(persistentVolumeClaims).find((p) => getName(p) === newPVCName),
       );
-      const [newSize, newUnit] = validate.split(newSizeBundle);
+      const [newSize, newUnit] = stringValueUnitSplit(newSizeBundle);
       setSize(newSize);
       setUnit(newUnit);
     }

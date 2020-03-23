@@ -1,5 +1,3 @@
-import { get } from 'lodash';
-import { Map } from 'immutable';
 import { iGetIn, immutableListToShallowJS } from '../../../utils/immutable';
 import {
   VMWizardNetwork,
@@ -14,9 +12,7 @@ import { DiskWrapper } from '../../../k8s/wrapper/vm/disk-wrapper';
 import { VolumeWrapper } from '../../../k8s/wrapper/vm/volume-wrapper';
 import { DataVolumeWrapper } from '../../../k8s/wrapper/vm/data-volume-wrapper';
 import { PersistentVolumeClaimWrapper } from '../../../k8s/wrapper/vm/persistent-volume-claim-wrapper';
-
-export const getCreateVMWizards = (state): Map<string, any> =>
-  get(state, ['plugins', 'kubevirt', 'createVmWizards']);
+import { getCreateVMWizards } from './common';
 
 export const getNetworks = (state, id: string): VMWizardNetwork[] =>
   immutableListToShallowJS(

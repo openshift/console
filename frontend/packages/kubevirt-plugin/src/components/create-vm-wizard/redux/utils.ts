@@ -1,5 +1,4 @@
 import { VMWizardTab } from '../types';
-import { getProviders } from '../provider-definitions';
 import { UpdateOptions } from './types';
 import { updateImportProvidersState } from './stateUpdate/vmSettings/import-provider-tab-state-update';
 import { updateVmSettingsState } from './stateUpdate/vmSettings/vm-settings-tab-state-update';
@@ -63,8 +62,4 @@ export const updateAndValidateState = (options: UpdateOptions) => {
       }
     });
   }
-};
-
-export const cleanup = (options: UpdateOptions) => {
-  getProviders().forEach((provider) => provider.cleanup(options));
 };
