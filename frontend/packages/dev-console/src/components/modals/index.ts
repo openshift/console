@@ -8,7 +8,7 @@ export const groupEditApplicationModal = (props) =>
     m.groupEditApplicationModal(props),
   );
 
-export const deleteApplicationModal = (props) =>
-  import('./DeleteApplicationModal' /* webpackChunkName: "dev-console-modals" */).then((m) =>
-    m.deleteApplicationModal(props),
+export const deleteResourceModal = (props) =>
+  import('./DeleteResourceModal' /* webpackChunkName: "dev-console-modals" */).then((m) =>
+    m.deleteResourceModal(props),
   );

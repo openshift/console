@@ -6,7 +6,7 @@ import { asAccessReview } from '@console/internal/components/utils';
 import { addResourceMenuWithoutCatalog } from '../../../actions/add-resources';
 import { TopologyDataMap, TopologyApplicationObject, GraphData } from '../topology-types';
 import { getTopologyResourceObject } from '../topology-utils';
-import { deleteApplicationModal } from '../../modals';
+import { deleteResourceModal } from '../../modals';
 import { cleanUpWorkload } from '../../../utils/application-utils';
 
 export const getGroupComponents = (
@@ -36,9 +36,10 @@ const deleteGroup = (application: TopologyApplicationObject) => {
     label: 'Delete Application',
     callback: () => {
       const reqs = [];
-      deleteApplicationModal({
+      deleteResourceModal({
         blocking: true,
-        initialApplication: application.name,
+        resourceName: application.name,
+        resourceType: 'Application',
         onSubmit: () => {
           application.resources.forEach((workload) => {
             const resource = _.get(workload, ['resources', 'obj']);
