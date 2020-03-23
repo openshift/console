@@ -168,6 +168,7 @@ export const VolumeSnapshotModal = withHandlePromise((props: VolumeSnapshotModal
         metadata: {
           name: snapshotName,
           namespace: ns,
+          labels: { pvcName },
         },
         spec: {
           source: {
@@ -175,6 +176,7 @@ export const VolumeSnapshotModal = withHandlePromise((props: VolumeSnapshotModal
           },
         },
       };
+
       handlePromise(k8sCreate(VolumeSnapshotModel, snapshotTemplate))
         .then(close)
         .catch((error) => {
@@ -203,6 +205,11 @@ export const VolumeSnapshotModal = withHandlePromise((props: VolumeSnapshotModal
             maxCount: Number(snapshotCount),
           },
           schedule: scheduleType === snapshotTypes.CronJob ? scheduleLabel : makeLabel(),
+          snapshotTemplate: {
+            labels: {
+              pvcName,
+            },
+          },
         },
       };
       const patch = [

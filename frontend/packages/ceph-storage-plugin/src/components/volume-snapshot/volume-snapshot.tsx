@@ -185,13 +185,17 @@ export const VolumeSnapshotList: React.FC<TableProps> = (props) => (
   />
 );
 
-export const VolumeSnapshotPage = (props) => (
-  <ListPage
-    canCreate
-    kind={volumeSnapshotKind}
-    ListComponent={VolumeSnapshotList}
-    showTitle={false}
-    namespace={props.namespace}
-    createHandler={() => volumeSnapshotModal({ ...props })}
-  />
-);
+export const VolumeSnapshotPage = (props) => {
+  const selector = { pvcName: props.name };
+  return (
+    <ListPage
+      canCreate
+      kind={volumeSnapshotKind}
+      ListComponent={VolumeSnapshotList}
+      showTitle={false}
+      namespace={props.namespace}
+      createHandler={() => volumeSnapshotModal({ ...props })}
+      selector={selector}
+    />
+  );
+};
