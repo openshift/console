@@ -16,6 +16,7 @@ export const FormRow: React.FC<FormRowProps> = ({
   validationType,
   validation,
   children,
+  className,
 }) => {
   if (isHidden) {
     return null;
@@ -33,6 +34,7 @@ export const FormRow: React.FC<FormRowProps> = ({
       helperText={
         type === ValidationErrorType.Info || type === ValidationErrorType.Warn ? message : undefined
       }
+      className={className}
     >
       {help && (
         <span className="kubevirt-form-row__icon-status-container">
@@ -72,4 +74,5 @@ type FormRowProps = {
     type?: ValidationErrorType;
   };
   children?: React.ReactNode;
+  className?: string;
 };

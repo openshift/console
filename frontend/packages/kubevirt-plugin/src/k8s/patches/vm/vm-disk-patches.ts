@@ -98,8 +98,8 @@ export const getUpdateDiskPatches = async (
 
     finalDataVolume = dataVolumeWrapper
       .assertDefaultModes(
-        getDefaultSCVolumeMode(storageClassConfigMap, storageClassName),
-        getDefaultSCAccessModes(storageClassConfigMap, storageClassName),
+        getDefaultSCVolumeMode(storageClassConfigMap, storageClassName).toString(),
+        getDefaultSCAccessModes(storageClassConfigMap, storageClassName).map((a) => a.toString()),
       )
       .asResource();
   }

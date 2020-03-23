@@ -188,8 +188,14 @@ const kubevirtInterOP = async ({
       if (dataVolumeWrapper) {
         finalDataVolume = dataVolumeWrapper
           .assertDefaultModes(
-            getDefaultSCVolumeMode(storageClassConfigMap, dataVolumeWrapper.getStorageClassName()),
-            getDefaultSCAccessModes(storageClassConfigMap, dataVolumeWrapper.getStorageClassName()),
+            getDefaultSCVolumeMode(
+              storageClassConfigMap,
+              dataVolumeWrapper.getStorageClassName(),
+            ).toString(),
+            getDefaultSCAccessModes(
+              storageClassConfigMap,
+              dataVolumeWrapper.getStorageClassName(),
+            ).map((a) => a.toString()),
           )
           .asResource();
       }

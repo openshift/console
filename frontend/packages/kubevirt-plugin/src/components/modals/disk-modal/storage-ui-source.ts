@@ -112,6 +112,16 @@ export class StorageUISource extends ObjectEnum<string> {
 
   requiresNamespace = () => this === StorageUISource.ATTACH_CLONED_DISK;
 
+  requiresAccessModes = () =>
+    this !== StorageUISource.ATTACH_DISK &&
+    this !== StorageUISource.CONTAINER &&
+    this !== StorageUISource.OTHER;
+
+  requiresVolumeMode = () =>
+    this !== StorageUISource.ATTACH_DISK &&
+    this !== StorageUISource.CONTAINER &&
+    this !== StorageUISource.OTHER;
+
   isEditingSupported = () => !this.dataVolumeSourceType; // vm disks - do not support because pvc was already created from DV
 
   isNameEditingSupported = (diskType: DiskType) => diskType !== DiskType.CDROM;
