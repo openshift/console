@@ -1,0 +1,14 @@
+{
+  "name": "@console/local-storage-operator-plugin",
+  "version": "0.0.0-fixed",
+  "description": "LSO - Operator for local storage",
+  "private": true,
+  "dependencies": {
+    "@console/plugin-sdk": "0.0.0-fixed",
+    "@console/shared": "0.0.0-fixed",
+    "@console/internal": "0.0.0-fixed"
+  },
+  "consolePlugin": {
+    "entry": "src/plugin.ts"
+  }
+}
