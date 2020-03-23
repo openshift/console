@@ -23,14 +23,15 @@ import {
   VMWizardView,
 } from '../../constants/vm';
 import { getResource } from '../../utils';
-import { makeIDReferences } from '../../utils/redux/id-reference';
+import { IDReferences, makeIDReferences } from '../../utils/redux/id-reference';
 import {
   ChangedCommonData,
   CommonData,
-  CreateVMWizardComponentProps,
+  ChangedCommonDataProp,
   DetectCommonDataChanges,
   VMWizardProps,
   VMWizardTab,
+  VMWizardTabsMetadata,
 } from './types';
 import { CREATE_VM, CREATE_VM_TEMPLATE, IMPORT_VM, TabTitleResolver } from './strings/strings';
 import { vmWizardActions } from './redux/actions';
@@ -52,7 +53,22 @@ import { useStorageClassConfigMapWrapped } from '../../hooks/storage-class-confi
 
 import './create-vm-wizard.scss';
 
-export class CreateVMWizardComponent extends React.Component<CreateVMWizardComponentProps> {
+type CreateVMWizardComponentProps = {
+  isSimpleView: boolean;
+  isProviderImport: boolean;
+  isCreateTemplate: boolean;
+  isLastTabErrorFatal: boolean;
+  dataIDReferences: IDReferences;
+  reduxID: string;
+  tabsMetadata: VMWizardTabsMetadata;
+  onInitialize: () => void;
+  onClose: (disposeOnly: boolean) => void;
+  createVM: () => void;
+  onCommonDataChanged: (commonData: CommonData, commonDataChanged: ChangedCommonData) => void;
+  onResultsChanged: (results, isValid: boolean, isLocked: boolean, isPending: boolean) => void;
+} & { [k in ChangedCommonDataProp]: any };
+
+class CreateVMWizardComponent extends React.Component<CreateVMWizardComponentProps> {
   private isClosed = false;
 
   constructor(props) {
@@ -358,7 +374,7 @@ const wizardDispatchToProps = (dispatch, props) => ({
   },
 });
 
-export const CreateVMWizard = connect(wizardStateToProps, wizardDispatchToProps, null, {
+const CreateVMWizard = connect(wizardStateToProps, wizardDispatchToProps, null, {
   areStatePropsEqual: (nextStateProps, prevStateProps) =>
     Object.keys(nextStateProps).every((key) => {
       const prev = prevStateProps[key];

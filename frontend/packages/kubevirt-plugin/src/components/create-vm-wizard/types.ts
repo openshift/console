@@ -1,6 +1,7 @@
 import { FirehoseResult } from '@console/internal/components/utils';
 import { ConfigMapKind, TemplateKind } from '@console/internal/module/k8s';
 import { V1Network, V1NetworkInterface, VMKind } from '../../types/vm';
+import { IDReferences } from '../../utils/redux/id-reference';
 import { NetworkInterfaceWrapper } from '../../k8s/wrapper/vm/network-interface-wrapper';
 import { NetworkWrapper } from '../../k8s/wrapper/vm/network-wrapper';
 import { UINetworkInterfaceValidation } from '../../utils/validations/vm/nic';
@@ -10,7 +11,6 @@ import { V1alpha1DataVolume } from '../../types/vm/disk/V1alpha1DataVolume';
 import { DiskWrapper } from '../../k8s/wrapper/vm/disk-wrapper';
 import { VolumeWrapper } from '../../k8s/wrapper/vm/volume-wrapper';
 import { DataVolumeWrapper } from '../../k8s/wrapper/vm/data-volume-wrapper';
-import { IDReferences } from '../../utils/redux/id-reference';
 import { V1PersistentVolumeClaim } from '../../types/vm/disk/V1PersistentVolumeClaim';
 import { PersistentVolumeClaimWrapper } from '../../k8s/wrapper/vm/persistent-volume-claim-wrapper';
 import { UIDiskValidation } from '../../utils/validations/vm/types';
@@ -170,12 +170,12 @@ export type VMSettingsFieldType = {
 
 export type ChangedCommonDataProp =
   | VMWizardProps.activeNamespace
+  | VMWizardProps.openshiftFlag
   | VMWizardProps.virtualMachines
   | VMWizardProps.userTemplates
   | VMWizardProps.commonTemplates
   | VMWizardProps.dataVolumes
   | VMWizardProps.storageClassConfigMap
-  | VMWizardProps.openshiftFlag
   | VMWareProviderProps.deployment
   | VMWareProviderProps.deploymentPods
   | VMWareProviderProps.v2vvmware
@@ -221,28 +221,6 @@ export type CommonData = {
     };
   };
   dataIDReferences?: IDReferences;
-};
-
-export type CreateVMWizardComponentProps = {
-  isSimpleView: boolean;
-  isProviderImport: boolean;
-  isCreateTemplate: boolean;
-  isLastTabErrorFatal: boolean;
-  dataIDReferences: IDReferences;
-  activeNamespace: string;
-  openshiftFlag: boolean;
-  reduxID: string;
-  tabsMetadata: VMWizardTabsMetadata;
-  userTemplates: FirehoseResult<TemplateKind[]>;
-  commonTemplates: FirehoseResult<TemplateKind[]>;
-  virtualMachines: FirehoseResult<VMKind[]>;
-  storageClassConfigMap: FirehoseResult<ConfigMapKind>;
-  onInitialize: () => void;
-  onClose: (disposeOnly: boolean) => void;
-  createVM: () => void;
-  onCommonDataChanged: (commonData: CommonData, commonDataChanged: ChangedCommonData) => void;
-  onResultsChanged: (results, isValid: boolean, isLocked: boolean, isPending: boolean) => void;
-  lockTab: (tabID: VMWizardTab) => void;
 };
 
 export enum VMWizardNetworkType {
