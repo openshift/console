@@ -1,5 +1,5 @@
 import { K8sResourceKind } from '@console/internal/module/k8s';
-import { iGetIn, iGetLoadedData, toShallowJS } from '../../../../utils/immutable';
+import { iGetIn, iGetLoadedData } from '../../../../utils/immutable';
 import { CommonDataProp, VMWizardTab } from '../../types';
 import { iGetCreateVMWizard, iGetCreateVMWizardTabs } from './common';
 
@@ -17,24 +17,6 @@ export const checkTabValidityChanged = (
     !!iGetIn(tabs, [tab, 'hasAllRequiredFilled']) !== nextHasAllRequiredFilled ||
     iGetIn(tabs, [tab, 'error']) !== nextError
   );
-};
-
-export const iGetExtraWSQueries = (state, reduxID: string) => {
-  const wizard = iGetCreateVMWizard(state, reduxID);
-  const iWSQueries = iGetIn(wizard, ['extraWSQueries']);
-  if (iWSQueries == null) {
-    return [];
-  }
-
-  const wsQueries = toShallowJS(iWSQueries, {});
-
-  return Object.keys(wsQueries).reduce((acc, key) => {
-    const addon = wsQueries[key];
-    if (addon) {
-      acc.push(...addon);
-    }
-    return acc;
-  }, []);
 };
 
 export const iGetCommonData = <RESULT = any>(

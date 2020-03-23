@@ -1,4 +1,4 @@
-import { iGetIn, immutableListToShallowJS } from '../../../utils/immutable';
+import { iGetIn, immutableListToShallowJS, toShallowJS } from '../../../utils/immutable';
 import {
   VMWizardNetwork,
   VMWizardNetworkWithWrappers,
@@ -13,6 +13,25 @@ import { VolumeWrapper } from '../../../k8s/wrapper/vm/volume-wrapper';
 import { DataVolumeWrapper } from '../../../k8s/wrapper/vm/data-volume-wrapper';
 import { PersistentVolumeClaimWrapper } from '../../../k8s/wrapper/vm/persistent-volume-claim-wrapper';
 import { getCreateVMWizards } from './common';
+import { FirehoseResource } from '@console/internal/components/utils';
+
+export const getExtraWSQueries = (state, reduxID: string): FirehoseResource[] => {
+  const wizards = getCreateVMWizards(state);
+  const iWSQueries = iGetIn(wizards, [reduxID, 'extraWSQueries']);
+  if (iWSQueries == null) {
+    return [];
+  }
+
+  const wsQueries = toShallowJS(iWSQueries, {});
+
+  return Object.keys(wsQueries).reduce((acc, key) => {
+    const addon = wsQueries[key];
+    if (addon) {
+      acc.push(...addon);
+    }
+    return acc;
+  }, []);
+};
 
 export const getNetworks = (state, id: string): VMWizardNetwork[] =>
   immutableListToShallowJS(

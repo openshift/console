@@ -37,7 +37,8 @@ import { CREATE_VM, CREATE_VM_TEMPLATE, IMPORT_VM, TabTitleResolver } from './st
 import { vmWizardActions } from './redux/actions';
 import { ActionType } from './redux/types';
 import { getResultInitialState } from './redux/initial-state/result-tab-initial-state';
-import { iGetCommonData, iGetExtraWSQueries } from './selectors/immutable/selectors';
+import { iGetCommonData } from './selectors/immutable/selectors';
+import { getExtraWSQueries } from './selectors/selectors';
 import { getStepsMetadata, isLastStepErrorFatal } from './selectors/immutable/wizard-selectors';
 import { ResourceLoadErrors } from './error-components/resource-load-errors';
 import { CreateVMWizardFooter } from './create-vm-wizard-footer';
@@ -465,7 +466,7 @@ export const CreateVMWizardPage = compose(
   connectToFlags(FLAGS.OPENSHIFT),
   withReduxID,
   connect(
-    (state, props: any) => ({ wsResources: iGetExtraWSQueries(state, props.reduxID) }),
+    (state, props: any) => ({ wsResources: getExtraWSQueries(state, props.reduxID) }),
     undefined,
     undefined,
     {
