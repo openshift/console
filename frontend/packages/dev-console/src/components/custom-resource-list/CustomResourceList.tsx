@@ -1,6 +1,5 @@
 import * as React from 'react';
 import * as _ from 'lodash';
-import * as fuzzy from 'fuzzysearch';
 import { Table, TextFilter } from '@console/internal/components/factory';
 import { CheckBoxes } from '@console/internal/components/row-filter';
 import { getQueryArgument } from '@console/internal/components/utils';
@@ -12,6 +11,7 @@ const CustomResourceList: React.FC<CustomResourceListProps> = ({
   queryArg,
   rowFilters,
   rowFilterReducer,
+  textFilterReducer,
   resourceHeader,
   resourceRow,
   sortBy,
@@ -44,9 +44,7 @@ const CustomResourceList: React.FC<CustomResourceListProps> = ({
       setFetched(true);
 
       if (activeFilters) {
-        const filteredItems = () => {
-          return rowFilterReducer(newListItems, activeFilters);
-        };
+        const filteredItems = rowFilterReducer(newListItems, activeFilters);
         setFilteredListItems(filteredItems);
       } else {
         setFilteredListItems(newListItems);
@@ -70,10 +68,10 @@ const CustomResourceList: React.FC<CustomResourceListProps> = ({
 
   const applyTextFilter = React.useCallback(
     (filter) => {
-      const filteredItems = fuzzy(listItems, filter);
+      const filteredItems = textFilterReducer(listItems, filter);
       setFilteredListItems(filteredItems);
     },
-    [listItems],
+    [listItems, textFilterReducer],
   );
 
   const rowsOfRowFilters = _.map(

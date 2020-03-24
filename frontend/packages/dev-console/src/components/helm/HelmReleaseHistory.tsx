@@ -3,7 +3,7 @@ import { match as RMatch } from 'react-router';
 import { coFetchJSON } from '@console/internal/co-fetch';
 import { SortByDirection } from '@patternfly/react-table';
 import CustomResourceList from '../custom-resource-list/CustomResourceList';
-import { helmRowFilters, getFilteredItems } from './helm-utils';
+import { helmRowFilters, getFilteredItemsByRow, getFilteredItemsByText } from './helm-utils';
 import HelmReleaseHistoryRow from './HelmReleaseHistoryRow';
 import HelmReleaseHistoryHeader from './HelmReleaseHistoryHeader';
 import { HelmRelease } from './helm-types';
@@ -30,7 +30,8 @@ const HelmReleaseHistory: React.FC<HelmReleaseHistoryProps> = ({ match }) => {
       rowFilters={helmRowFilters}
       sortBy="version"
       sortOrder={SortByDirection.desc}
-      rowFilterReducer={getFilteredItems}
+      rowFilterReducer={getFilteredItemsByRow}
+      textFilterReducer={getFilteredItemsByText}
       resourceRow={HelmReleaseHistoryRow}
       resourceHeader={HelmReleaseHistoryHeader}
     />

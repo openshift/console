@@ -4,7 +4,7 @@ import { useDeepCompareMemoize } from '@console/shared';
 import { coFetchJSON } from '@console/internal/co-fetch';
 import { SortByDirection } from '@patternfly/react-table';
 import CustomResourceList from '../custom-resource-list/CustomResourceList';
-import { helmRowFilters, getFilteredItems } from './helm-utils';
+import { helmRowFilters, getFilteredItemsByRow, getFilteredItemsByText } from './helm-utils';
 import HelmReleaseRow from './HelmReleaseRow';
 import HelmReleaseHeader from './HelmReleaseHeader';
 import { HelmRelease } from './helm-types';
@@ -29,7 +29,8 @@ const HelmReleaseList: React.FC<HelmReleaseListProps> = ({ namespace, secrets })
       rowFilters={helmRowFilters}
       sortBy="name"
       sortOrder={SortByDirection.asc}
-      rowFilterReducer={getFilteredItems}
+      rowFilterReducer={getFilteredItemsByRow}
+      textFilterReducer={getFilteredItemsByText}
       resourceRow={HelmReleaseRow}
       resourceHeader={HelmReleaseHeader}
     />

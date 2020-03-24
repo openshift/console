@@ -13,7 +13,7 @@ const HelmReleaseHistoryRow: React.FC<CustomResourceListRowProps> = ({
   style,
 }) => {
   return (
-    <TableRow id={obj.name} index={index} trKey={key} style={style}>
+    <TableRow id={obj.revision} index={index} trKey={key} style={style}>
       <TableData className={tableColumnClasses.revision}>{obj.version}</TableData>
       <TableData className={tableColumnClasses.updated}>
         <Timestamp timestamp={obj.info.last_deployed} />

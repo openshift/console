@@ -1,3 +1,4 @@
+import * as fuzzy from 'fuzzysearch';
 import { HelmRelease, HelmReleaseStatus } from './helm-types';
 import { CustomResourceListRowFilter } from '../custom-resource-list/custom-resource-list-types';
 
@@ -42,10 +43,14 @@ export const helmRowFilters: CustomResourceListRowFilter[] = [
   },
 ];
 
-export const getFilteredItems = (items: HelmRelease[], filter: string | string[]) => {
+export const getFilteredItemsByRow = (items: HelmRelease[], filter: string | string[]) => {
   return items.filter((release: HelmRelease) => {
     return otherStatuses.includes(release.info.status)
       ? filter.includes(HelmReleaseStatus.Other)
       : filter.includes(release.info.status);
   });
+};
+
+export const getFilteredItemsByText = (items: HelmRelease[], filter: string) => {
+  return items.filter((release: HelmRelease) => fuzzy(filter, release.name));
 };

@@ -27,4 +27,5 @@ export interface CustomResourceListProps {
     items: { [key: string]: any }[],
     filters: string | string[],
   ) => { [key: string]: any }[];
+  textFilterReducer: (items: { [key: string]: any }[], filters: string) => { [key: string]: any }[];
 }
