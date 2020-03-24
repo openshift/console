@@ -1,0 +1,35 @@
+.odc-multi-stream-logs {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  height: 100%;
+
+  &--fullscreen {
+    .co-toolbar {
+      background-color: var(--pf-global--BackgroundColor--100);
+      padding: var(--pf-global--spacer--sm);
+    }
+  }
+  &__container {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    background-color: var(--pf-global--palette--black-1000);
+    color: var(--pf-global--BackgroundColor--100);
+    font-family: Menlo, Monaco, 'Courier New', monospace;
+    overflow-y: scroll;
+    position: relative;
+    &__logs {
+      position: absolute;
+      width: 100%;
+    }
+  }
+  &__taskName {
+    background-color: var(--pf-global--BackgroundColor--dark-300);
+    padding: var(--pf-global--spacer--sm) var(--pf-global--spacer--md);
+    color: var(--pf-global--BackgroundColor--100);
+  }
+  &__taskName__loading-indicator {
+    margin-left: var(--pf-global--spacer--sm);
+  }
+}

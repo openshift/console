@@ -1,6 +1,6 @@
 import * as _ from 'lodash';
 import { formatDuration } from '@console/internal/components/utils/datetime';
-import { K8sResourceKind } from '@console/internal/module/k8s';
+import { K8sResourceKind, ContainerStatus } from '@console/internal/module/k8s';
 import {
   LOG_SOURCE_RESTARTING,
   LOG_SOURCE_WAITING,
@@ -27,16 +27,6 @@ interface Resource {
   name: string;
   resource?: string;
   from?: string[];
-}
-
-export interface ContainerStatus {
-  name: string;
-  lastState?: string;
-  state?: {
-    waiting?: Record<string, any>;
-    terminated?: Record<string, any>;
-    running?: Record<string, any>;
-  };
 }
 
 export interface PipelineVisualizationTaskItem {

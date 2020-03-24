@@ -1,6 +1,8 @@
 .odc-pipeline-run-logs {
   display: flex;
+  flex: 1;
   width: 100%;
+  padding: var(--pf-global--spacer--xl) 0;
   &__nav {
     list-style-type: none;
   }
