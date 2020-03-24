@@ -136,7 +136,7 @@ const editSubscription = (sub: SubscriptionKind): KebabOption =>
       }
     : null;
 
-const uninstall = (sub: SubscriptionKind, displayName?: string): KebabOption =>
+const uninstall = (sub: SubscriptionKind, csv?: ClusterServiceVersionKind): KebabOption =>
   !_.isNil(sub)
     ? {
         label: 'Uninstall Operator',
@@ -146,7 +146,7 @@ const uninstall = (sub: SubscriptionKind, displayName?: string): KebabOption =>
             k8sGet,
             k8sPatch,
             subscription: sub,
-            displayName,
+            csv,
           }),
         accessReview: {
           group: SubscriptionModel.apiGroup,
@@ -167,7 +167,7 @@ const menuActionsForCSV = (
     : [
         Kebab.factory.Edit,
         () => editSubscription(subscription),
-        () => uninstall(subscription, _.get(csv, 'spec.displayName')),
+        () => uninstall(subscription, csv),
       ];
 };
 
@@ -303,7 +303,7 @@ const SubscriptionTableRow: React.FC<SubscriptionTableRowProps> = ({
   style,
 }) => {
   const csvName = _.get(obj, 'spec.name');
-  const menuActions = [Kebab.factory.Edit, () => uninstall(obj, obj.spec.displayName)];
+  const menuActions = [Kebab.factory.Edit, () => uninstall(obj)];
   const namespace = getNamespace(obj);
   const route = resourceObjPath(obj, referenceForModel(SubscriptionModel));
   const subscriptionState = _.get(obj, 'status.state', 'Unknown');
@@ -815,7 +815,7 @@ export const ClusterServiceVersionsDetailsPage: React.FC<ClusterServiceVersionsD
       Kebab.factory.Edit(model, obj),
       ...(_.isEmpty(subscription)
         ? [Kebab.factory.Delete(model, obj)]
-        : [editSubscription(subscription), uninstall(subscription)]),
+        : [editSubscription(subscription), uninstall(subscription, obj)]),
     ];
   };
 
