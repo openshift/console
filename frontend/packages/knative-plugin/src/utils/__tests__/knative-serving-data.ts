@@ -4,7 +4,7 @@ import {
 } from '@console/dev-console/src/components/import/import-types';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { RevisionModel, EventSourceCronJobModel } from '@console/knative-plugin';
-import { EventSourceFormData, EventSources } from '../../components/add/import-types';
+import { EventSourceFormData } from '../../components/add/import-types';
 import {
   EventSourceCamelModel,
   EventSourceContainerModel,
@@ -329,29 +329,40 @@ const eventSourceData = {
     data: 'hello',
     schedule: '* * * * *',
   },
+  apiserversource: {
+    mode: '',
+    serviceAccountName: '',
+    resources: [
+      {
+        apiVersion: 'v1',
+        kind: 'Event',
+      },
+    ],
+  },
 };
 
-const typeEventSource = EventSources.CronJobSource;
-
-export const defaultEventingData: EventSourceFormData = {
-  project: {
-    name: 'mock-project',
-    displayName: '',
-    description: '',
-  },
-  application: {
-    initial: 'mock-app',
-    name: 'mock-app',
-    selectedKey: 'mock-app',
-  },
-  name: 'esmyapp',
-  sink: {
-    knativeService: 'event-display',
-  },
-  type: typeEventSource,
-  data: {
-    [typeEventSource.toLowerCase()]: eventSourceData[typeEventSource.toLowerCase()],
-  },
+export const getDefaultEventingData = (typeEventSource: string): EventSourceFormData => {
+  const defaultEventingData: EventSourceFormData = {
+    project: {
+      name: 'mock-project',
+      displayName: '',
+      description: '',
+    },
+    application: {
+      initial: 'mock-app',
+      name: 'mock-app',
+      selectedKey: 'mock-app',
+    },
+    name: 'esmyapp',
+    sink: {
+      knativeService: 'event-display',
+    },
+    type: typeEventSource,
+    data: {
+      [typeEventSource.toLowerCase()]: eventSourceData[typeEventSource.toLowerCase()],
+    },
+  };
+  return defaultEventingData;
 };
 
 export const deploymentKnativeEventSourceContainerEventData: K8sResourceKind = {

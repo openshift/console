@@ -60,7 +60,7 @@ const EventSinkServicesOverviewList: React.FC<EventSinkServicesOverviewListProps
       ) : (
         <span className="text-muted">No services found for this resource.</span>
       )}
-      {pods?.length && <PodsOverview pods={pods} obj={obj} allPodsLink={linkUrl} />}
+      {pods?.length > 0 && <PodsOverview pods={pods} obj={obj} allPodsLink={linkUrl} />}
       {deploymentData?.name && (
         <>
           <SidebarSectionHeading text="Deployment" />

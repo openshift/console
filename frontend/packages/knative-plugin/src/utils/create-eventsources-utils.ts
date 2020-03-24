@@ -1,6 +1,5 @@
-import { K8sResourceKind } from '@console/internal/module/k8s';
+import { K8sResourceKind, K8sKind } from '@console/internal/module/k8s';
 import { useAccessReview } from '@console/internal/components/utils';
-import { getActiveNamespace } from '@console/internal/actions/ui';
 import { getAppLabels } from '@console/dev-console/src/utils/resource-label-utils';
 import { annotations } from '@console/dev-console/src/utils/shared-submit-utils';
 import { EventSources } from '../components/add/import-types';
@@ -77,22 +76,33 @@ export const getEventSourceData = (source: string) => {
         },
       },
     },
+    apiserversource: {
+      mode: 'Ref',
+      serviceAccountName: '',
+      resources: [
+        {
+          apiVersion: '',
+          kind: '',
+        },
+      ],
+    },
   };
   return eventSourceData[source];
 };
-export const useKnativeEventingAccess = (model): boolean => {
+
+export const useKnativeEventingAccess = (model: K8sKind, namespace: string): boolean => {
   const canCreateEventSource = useAccessReview({
     group: model.apiGroup,
     resource: model.plural,
-    namespace: getActiveNamespace(),
+    namespace,
     verb: 'create',
   });
   return canCreateEventSource;
 };
 
-export const useEventSourceList = () => {
+export const useEventSourceList = (namespace: string) => {
   const eventSourceList = {
-    ...(useKnativeEventingAccess(EventSourceCronJobModel) && {
+    ...(useKnativeEventingAccess(EventSourceCronJobModel, namespace) && {
       [EventSourceCronJobModel.kind]: {
         name: EventSourceCronJobModel.kind,
         iconUrl: cronJobSourceImg,
@@ -100,7 +110,7 @@ export const useEventSourceList = () => {
         title: EventSourceCronJobModel.kind,
       },
     }),
-    ...(useKnativeEventingAccess(EventSourceSinkBindingModel) && {
+    ...(useKnativeEventingAccess(EventSourceSinkBindingModel, namespace) && {
       [EventSourceSinkBindingModel.kind]: {
         name: EventSourceSinkBindingModel.kind,
         iconUrl: containerSourceImg,
@@ -108,7 +118,7 @@ export const useEventSourceList = () => {
         title: EventSourceSinkBindingModel.kind,
       },
     }),
-    ...(useKnativeEventingAccess(EventSourceApiServerModel) && {
+    ...(useKnativeEventingAccess(EventSourceApiServerModel, namespace) && {
       [EventSourceApiServerModel.kind]: {
         name: EventSourceApiServerModel.kind,
         iconUrl: apiServerSourceImg,
@@ -116,7 +126,7 @@ export const useEventSourceList = () => {
         title: EventSourceApiServerModel.kind,
       },
     }),
-    ...(useKnativeEventingAccess(EventSourceKafkaModel) && {
+    ...(useKnativeEventingAccess(EventSourceKafkaModel, namespace) && {
       [EventSourceKafkaModel.kind]: {
         name: EventSourceKafkaModel.kind,
         iconUrl: kafkaSourceImg,
@@ -124,7 +134,7 @@ export const useEventSourceList = () => {
         title: EventSourceKafkaModel.kind,
       },
     }),
-    ...(useKnativeEventingAccess(EventSourceCamelModel) && {
+    ...(useKnativeEventingAccess(EventSourceCamelModel, namespace) && {
       [EventSourceCamelModel.kind]: {
         name: EventSourceCamelModel.kind,
         iconUrl: camelSourceImg,

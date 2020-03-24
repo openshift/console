@@ -159,12 +159,11 @@ class ResourceDropdown extends React.Component<ResourceDropdownProps, State> {
           }
           if (dataValue) {
             if (showBadge) {
-              acc[dataValue] = (
-                <DropdownItem
-                  key={resource.metadata.uid}
-                  model={modelFor(referenceFor(resource))}
-                  name={dataValue}
-                />
+              const model = modelFor(referenceFor(resource));
+              acc[dataValue] = model ? (
+                <DropdownItem key={resource.metadata.uid} model={model} name={dataValue} />
+              ) : (
+                dataValue
               );
             } else {
               acc[dataValue] = transformLabel ? transformLabel(resource) : dataValue;
