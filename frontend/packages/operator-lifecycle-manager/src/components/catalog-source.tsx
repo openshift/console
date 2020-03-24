@@ -33,6 +33,7 @@ import {
   TableProps,
   TableRowProps,
   MultiListPage,
+  RowFunction,
 } from '@console/internal/components/factory';
 import { ConfigMapModel } from '@console/internal/models';
 import { PopoverStatus } from '@console/shared';
@@ -314,7 +315,7 @@ const getOperatorCount = (
     },
   } as any).length; // Type inferred to prevent Lodash TypeScript error.
 
-const CatalogSourceTableRow: React.FC<CatalogSourceTableRowProps> = ({
+const CatalogSourceTableRow: RowFunction<CatalogSourceTableRowObj> = ({
   obj: {
     availability = '-',
     disabled = false,
@@ -499,11 +500,6 @@ type CatalogSourceTableRowObj = {
   operatorHub: OperatorHubKind;
   source?: CatalogSourceKind;
 };
-
-type CatalogSourceTableRowProps = {
-  obj: CatalogSourceTableRowObj;
-  key: string;
-} & TableRowProps;
 
 type DefaultSourceKebabProps = {
   kind: K8sKind;

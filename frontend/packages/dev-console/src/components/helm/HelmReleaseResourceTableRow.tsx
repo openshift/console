@@ -4,17 +4,10 @@ import { Link } from 'react-router-dom';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { Status } from '@console/shared';
 import { ResourceLink, Timestamp, resourcePath } from '@console/internal/components/utils';
-import { TableData, TableRow } from '@console/internal/components/factory';
+import { TableData, TableRow, RowFunction } from '@console/internal/components/factory';
 import { tableColumnClasses } from './HelmReleaseResourceTableHeader';
 
-export interface HelmResourceTableRowProps {
-  obj: K8sResourceKind;
-  index: number;
-  key?: string;
-  style: object;
-}
-
-const HelmReleaseResourceTableRow: React.FC<HelmResourceTableRowProps> = ({
+const HelmReleaseResourceTableRow: RowFunction<K8sResourceKind> = ({
   obj: resource,
   index,
   key,

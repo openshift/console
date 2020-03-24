@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { OutlinedCheckSquareIcon, OutlinedSquareIcon } from '@patternfly/react-icons';
 import { sortable } from '@patternfly/react-table';
-import { Table, TableRow, TableData } from '@console/internal/components/factory';
+import { Table, TableRow, TableData, RowFunction } from '@console/internal/components/factory';
 import { getHostNICs } from '../../selectors';
 import { BareMetalHostNIC, BareMetalHostKind } from '../../types';
 
@@ -15,14 +15,7 @@ const NICsTableHeader = () => [
   { title: 'VLAN ID', sortField: 'vlanId', transforms: [sortable] },
 ];
 
-type NICsTableRowProps = {
-  obj: BareMetalHostNIC;
-  index: number;
-  key?: string;
-  style: React.StyleHTMLAttributes<any>;
-};
-
-const NICsTableRow: React.FC<NICsTableRowProps> = ({ obj: nic, index, key, style }) => {
+const NICsTableRow: RowFunction<BareMetalHostNIC> = ({ obj: nic, index, key, style }) => {
   const { ip, mac, model, name, pxe, speedGbps, vlanId } = nic;
   return (
     <TableRow id={ip} index={index} trKey={key} style={style}>

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as cx from 'classnames';
-import { TableRow, TableData } from '@console/internal/components/factory';
+import { TableRow, TableData, RowFunction } from '@console/internal/components/factory';
 import {
   Kebab,
   ResourceLink,
@@ -17,14 +17,7 @@ import { tableColumnClasses } from './service-table';
 
 const serviceReference = referenceForModel(ServiceModel);
 
-export interface ServiceRowProps {
-  obj: ServiceKind;
-  index: number;
-  key?: string;
-  style: object;
-}
-
-const ServiceRow: React.FC<ServiceRowProps> = ({ obj, index, key, style }) => {
+const ServiceRow: RowFunction<ServiceKind> = ({ obj, index, key, style }) => {
   const readyCondition = obj.status
     ? getCondition(obj.status.conditions, ConditionTypes.Ready)
     : null;

@@ -11,6 +11,7 @@ import {
   Table,
   TableRow,
   TableData,
+  RowFunction,
 } from '@console/internal/components/factory';
 import {
   MsgBox,
@@ -201,12 +202,7 @@ const menuActions = [
   },
 ];
 
-export const SubscriptionTableRow: React.FC<SubscriptionTableRowProps> = ({
-  obj,
-  index,
-  key,
-  style,
-}) => {
+export const SubscriptionTableRow: RowFunction<K8sResourceKind> = ({ obj, index, key, style }) => {
   return (
     <TableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
       <TableData className={tableColumnClasses[0]}>
@@ -243,13 +239,6 @@ export const SubscriptionTableRow: React.FC<SubscriptionTableRowProps> = ({
       </TableData>
     </TableRow>
   );
-};
-SubscriptionTableRow.displayName = 'SubscriptionTableRow';
-export type SubscriptionTableRowProps = {
-  obj: K8sResourceKind;
-  index: number;
-  key?: string;
-  style: object;
 };
 
 export const SubscriptionsList = requireOperatorGroup((props: SubscriptionsListProps) => (

@@ -1,7 +1,13 @@
 import * as React from 'react';
 import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
-import { ListPage, Table, TableData, TableRow } from '@console/internal/components/factory';
+import {
+  ListPage,
+  Table,
+  TableData,
+  TableRow,
+  RowFunction,
+} from '@console/internal/components/factory';
 import { Kebab, ResourceKebab, ResourceLink } from '@console/internal/components/utils';
 import { NamespaceModel } from '@console/internal/models';
 import { referenceForModel } from '@console/internal/module/k8s';
@@ -50,7 +56,7 @@ const NetworkAttachmentDefinitionsHeader = () =>
     tableColumnClasses,
   );
 
-const NetworkAttachmentDefinitionsRow: React.FC<NetworkAttachmentDefinitionsRowProps> = ({
+const NetworkAttachmentDefinitionsRow: RowFunction<NetAttachDefBundle> = ({
   obj: { name, namespace, type, metadata, netAttachDef },
   index,
   key,
@@ -83,7 +89,6 @@ const NetworkAttachmentDefinitionsRow: React.FC<NetworkAttachmentDefinitionsRowP
     </TableRow>
   );
 };
-NetworkAttachmentDefinitionsRow.displayName = 'NetworkAttachmentDefinitionsRow';
 
 const getNetAttachDefsData = (nadList: NetworkAttachmentDefinitionKind[]): NetAttachDefBundle[] => {
   return nadList
