@@ -32,6 +32,7 @@ body,
 .co-p-has-sidebar {
   position: relative;
   display: flex;
+  flex: 1;
   height: 100%;
 
 
@@ -40,6 +41,7 @@ body,
   }
 
   &__sidebar {
+    position: relative;
     @media(min-width: $screen-md-min) {
       flex: 1 0 300px;
       overflow-y: auto;

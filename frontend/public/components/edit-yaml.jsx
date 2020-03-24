@@ -5,7 +5,7 @@ import { safeLoad, safeDump } from 'js-yaml';
 import { saveAs } from 'file-saver';
 import { connect } from 'react-redux';
 import { ActionGroup, Alert, Button, Split, SplitItem } from '@patternfly/react-core';
-import { DownloadIcon } from '@patternfly/react-icons';
+import { DownloadIcon, InfoCircleIcon } from '@patternfly/react-icons';
 
 import { FLAGS, ALL_NAMESPACES_KEY, getBadgeFromType } from '@console/shared';
 
@@ -66,8 +66,6 @@ export const EditYAML_ = connect(stateToProps)(
       // Default cancel action is browser back navigation
       this.onCancel = 'onCancel' in props ? props.onCancel : history.goBack;
       this.downloadSampleYaml_ = this.downloadSampleYaml_.bind(this);
-      // this.editorDidMount = this.editorDidMount.bind(this);
-      this.buttons = this.props.buttonsRef;
 
       if (this.props.error) {
         this.handleError(this.props.error);
@@ -113,18 +111,6 @@ export const EditYAML_ = connect(stateToProps)(
       } else {
         this.loadYaml();
       }
-    }
-
-    get height() {
-      if (!this.editor) {
-        return 0;
-      }
-
-      return Math.floor(
-        // notifications can appear above and below .pf-c-page, so calculate height using the bottom of .pf-c-page
-        document.getElementsByClassName('pf-c-page')[0].getBoundingClientRect().bottom -
-          this.editor.getBoundingClientRect().top,
-      );
     }
 
     reload() {
@@ -413,13 +399,12 @@ export const EditYAML_ = connect(stateToProps)(
         yamlSamplesList,
         customClass,
         onChange = () => null,
-        hideActions = false,
       } = this.props;
       const klass = classNames('co-file-dropzone-container', {
         'co-file-dropzone--drop-over': isOver,
       });
 
-      const { error, success, stale, yaml, height, showSidebar } = this.state;
+      const { error, success, stale, yaml, showSidebar } = this.state;
       const {
         obj,
         download = true,
@@ -436,6 +421,14 @@ export const EditYAML_ = connect(stateToProps)(
       const definition = model ? definitionFor(model) : { properties: [] };
       const showSchema = definition && !_.isEmpty(definition.properties);
       const hasSidebarContent = showSchema || !_.isEmpty(samples) || !_.isEmpty(snippets);
+      const sidebarLink =
+        !showSidebar && hasSidebarContent ? (
+          <Button type="button" variant="link" isInline onClick={this.toggleSidebar}>
+            <InfoCircleIcon className="co-icon-space-r co-p-has-sidebar__sidebar-link-icon" />
+            View sidebar
+          </Button>
+        ) : null;
+
       const editYamlComponent = (
         <div className="co-file-dropzone co-file-dropzone__flex">
           {canDrop && (
@@ -444,134 +437,129 @@ export const EditYAML_ = connect(stateToProps)(
             </div>
           )}
 
-          <>
-            {create && !this.props.hideHeader && (
-              <div className="yaml-editor__header">
-                <Split>
-                  <SplitItem isFilled>
-                    <h1 className="yaml-editor__header-text">{header}</h1>
-                  </SplitItem>
-                  <SplitItem>{getBadgeFromType(model && model.badge)}</SplitItem>
-                </Split>
-                <p className="help-block">
-                  Create by manually entering YAML or JSON definitions, or by dragging and dropping
-                  a file into the editor.
-                </p>
-              </div>
-            )}
-            <div className="pf-c-form co-p-form__flex">
-              <div className="co-p-has-sidebar">
-                <div className="co-p-has-sidebar__body">
-                  <div
-                    className={classNames('yaml-editor', customClass)}
-                    ref={(r) => (this.editor = r)}
-                  >
-                    <YAMLEditor
-                      ref={this.monacoRef}
-                      value={yaml}
-                      options={options}
-                      showShortcuts={!genericYAML}
-                      showSidebar={!showSidebar && hasSidebarContent}
-                      onToggleSidebar={this.toggleSidebar}
-                      onResize={() => this.setState({ height: this.height })}
-                      onChange={(newValue) =>
-                        this.setState({ yaml: newValue }, () => onChange(newValue))
-                      }
-                      onSave={() => this.save()}
-                    />
-                    {!hideActions && (
-                      <div className="yaml-editor__buttons" ref={(r) => (this.buttons = r)}>
-                        {customAlerts}
-                        {error && (
-                          <Alert
-                            isInline
-                            className="co-alert co-alert--scrollable"
-                            variant="danger"
-                            title="An error occurred"
-                          >
-                            <div className="co-pre-line">{error}</div>
-                          </Alert>
-                        )}
-                        {success && (
-                          <Alert isInline className="co-alert" variant="success" title={success} />
-                        )}
-                        {stale && (
-                          <Alert
-                            isInline
-                            className="co-alert"
-                            variant="info"
-                            title="This object has been updated."
-                          >
-                            Click reload to see the new version.
-                          </Alert>
-                        )}
-                        <ActionGroup className="pf-c-form__group--no-top-margin">
-                          {create && (
-                            <Button
-                              type="submit"
-                              variant="primary"
-                              id="save-changes"
-                              onClick={() => this.save()}
-                            >
-                              Create
-                            </Button>
-                          )}
-                          {!create && !readOnly && (
-                            <Button
-                              type="submit"
-                              variant="primary"
-                              id="save-changes"
-                              onClick={() => this.save()}
-                            >
-                              Save
-                            </Button>
-                          )}
-                          {!create && !genericYAML && (
-                            <Button
-                              type="submit"
-                              variant="secondary"
-                              id="reload-object"
-                              onClick={() => this.reload()}
-                            >
-                              Reload
-                            </Button>
-                          )}
-                          <Button variant="secondary" id="cancel" onClick={() => this.onCancel()}>
-                            Cancel
-                          </Button>
-                          {download && (
-                            <Button
-                              type="submit"
-                              variant="secondary"
-                              className="pf-c-button--align-right hidden-sm hidden-xs"
-                              onClick={() => this.download()}
-                            >
-                              <DownloadIcon /> Download
-                            </Button>
-                          )}
-                        </ActionGroup>
-                      </div>
+          {create && !this.props.hideHeader && (
+            <div className="yaml-editor__header">
+              <Split>
+                <SplitItem isFilled>
+                  <h1 className="yaml-editor__header-text">{header}</h1>
+                </SplitItem>
+                <SplitItem>{getBadgeFromType(model && model.badge)}</SplitItem>
+              </Split>
+              <p className="help-block">
+                Create by manually entering YAML or JSON definitions, or by dragging and dropping a
+                file into the editor.
+              </p>
+            </div>
+          )}
+
+          <div className="pf-c-form co-m-page__body" style={{ display: 'flex', flexGrow: 1 }}>
+            <div className="co-p-has-sidebar">
+              <div className="co-p-has-sidebar__body">
+                <div
+                  className={classNames('yaml-editor', customClass)}
+                  ref={(r) => (this.editor = r)}
+                >
+                  <YAMLEditor
+                    ref={this.monacoRef}
+                    value={yaml}
+                    options={options}
+                    showShortcuts={!genericYAML}
+                    minHeight="100px"
+                    toolbarLinks={[sidebarLink]}
+                    onChange={(newValue) =>
+                      this.setState({ yaml: newValue }, () => onChange(newValue))
+                    }
+                    onSave={() => this.save()}
+                  />
+                  <div className="yaml-editor__buttons" ref={(r) => (this.buttons = r)}>
+                    {customAlerts}
+                    {error && (
+                      <Alert
+                        isInline
+                        className="co-alert co-alert--scrollable"
+                        variant="danger"
+                        title="An error occurred"
+                      >
+                        <div className="co-pre-line">{error}</div>
+                      </Alert>
                     )}
+                    {success && (
+                      <Alert isInline className="co-alert" variant="success" title={success} />
+                    )}
+                    {stale && (
+                      <Alert
+                        isInline
+                        className="co-alert"
+                        variant="info"
+                        title="This object has been updated."
+                      >
+                        Click reload to see the new version.
+                      </Alert>
+                    )}
+                    <ActionGroup className="pf-c-form__group--no-top-margin">
+                      {create && (
+                        <Button
+                          type="submit"
+                          variant="primary"
+                          id="save-changes"
+                          onClick={() => this.save()}
+                        >
+                          Create
+                        </Button>
+                      )}
+                      {!create && !readOnly && (
+                        <Button
+                          type="submit"
+                          variant="primary"
+                          id="save-changes"
+                          onClick={() => this.save()}
+                        >
+                          Save
+                        </Button>
+                      )}
+                      {!create && !genericYAML && (
+                        <Button
+                          type="submit"
+                          variant="secondary"
+                          id="reload-object"
+                          onClick={() => this.reload()}
+                        >
+                          Reload
+                        </Button>
+                      )}
+                      <Button variant="secondary" id="cancel" onClick={() => this.onCancel()}>
+                        Cancel
+                      </Button>
+                      {download && (
+                        <Button
+                          type="submit"
+                          variant="secondary"
+                          className="pf-c-button--align-right hidden-sm hidden-xs"
+                          onClick={() => this.download()}
+                        >
+                          <DownloadIcon /> Download
+                        </Button>
+                      )}
+                    </ActionGroup>
                   </div>
                 </div>
-                {hasSidebarContent && (
-                  <ResourceSidebar
-                    isCreateMode={create}
-                    kindObj={model}
-                    height={height}
-                    loadSampleYaml={this.replaceYamlContent_}
-                    insertSnippetYaml={this.insertYamlContent_}
-                    downloadSampleYaml={this.downloadSampleYaml_}
-                    showSidebar={showSidebar}
-                    toggleSidebar={this.toggleSidebar}
-                    samples={samples}
-                    snippets={snippets}
-                    showSchema={showSchema}
-                  />
-                )}
               </div>
+              {hasSidebarContent && (
+                <ResourceSidebar
+                  isCreateMode={create}
+                  kindObj={model}
+                  loadSampleYaml={this.replaceYamlContent_}
+                  insertSnippetYaml={this.insertYamlContent_}
+                  downloadSampleYaml={this.downloadSampleYaml_}
+                  showSidebar={showSidebar}
+                  toggleSidebar={this.toggleSidebar}
+                  samples={samples}
+                  snippets={snippets}
+                  showSchema={showSchema}
+                />
+              )}
             </div>
-          </>
+          </div>
         </div>
       );
 

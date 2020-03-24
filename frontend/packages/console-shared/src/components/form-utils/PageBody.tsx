@@ -7,7 +7,12 @@ interface PageBodyProps {
 }
 
 const PageBody: React.FC<PageBodyProps> = ({ children, flexLayout }) => (
-  <div className={classnames('co-m-pane__body', { 'co-m-page__body': flexLayout })}>{children}</div>
+  <div
+    className={classnames('co-m-pane__body', { 'co-m-page__body': flexLayout })}
+    style={{ paddingBottom: 0 }}
+  >
+    {children}
+  </div>
 );
 
 export default PageBody;

@@ -151,7 +151,7 @@ export const registerYAMLHover = (languageID, monaco, m2p, p2m, createDocument, 
   });
 };
 
-export const YAMLValidation = (monaco, p2m, monacoURI, createDocument, yamlService) => {
+export const enableYAMLValidation = (monaco, p2m, monacoURI, createDocument, yamlService) => {
   const pendingValidationRequests = new Map();
 
   const getModel = () => monaco.editor.getModels()[0];
@@ -215,7 +215,7 @@ export const registerYAMLinMonaco = (monaco) => {
 
   // validation is not a 'registered' feature like the others, it relies on calling the yamlService
   // directly for validation results when content in the editor has changed
-  YAMLValidation(monaco, p2m, MONACO_URI, createDocument, yamlService);
+  enableYAMLValidation(monaco, p2m, MONACO_URI, createDocument, yamlService);
 
   /**
    * This exists because react-monaco-editor passes the same monaco

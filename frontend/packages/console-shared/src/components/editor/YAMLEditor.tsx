@@ -2,21 +2,19 @@ import * as React from 'react';
 import Measure from 'react-measure';
 import MonacoEditor from 'react-monaco-editor';
 
-import { registerYAMLinMonaco, defaultEditorOptions, hackyFocusEditor } from './yaml-editor-utils';
-import ShortcutsLink from './ShortcutsLink';
-import SidebarLink from './SidebarLink';
+import { registerYAMLinMonaco, defaultEditorOptions } from './yaml-editor-utils';
+import YAMLEditorToolbar from './YAMLEditorToolbar';
+
 import './YAMLEditor.scss';
 
 interface YAMLEditorProps {
   value?: string;
   options?: object;
-  showSidebar?: boolean;
+  minHeight?: string | number;
   showShortcuts?: boolean;
-  minHeight?: string;
+  toolbarLinks?: React.ReactNodeArray;
   onChange?: (newValue, event) => {};
   onSave?: () => {};
-  onResize?: () => {};
-  onToggleSidebar?: () => {};
 }
 
 const YAMLEditor = React.forwardRef<MonacoEditor, YAMLEditorProps>((props, ref) => {
@@ -24,12 +22,10 @@ const YAMLEditor = React.forwardRef<MonacoEditor, YAMLEditorProps>((props, ref) 
     value,
     options = defaultEditorOptions,
     showShortcuts,
-    showSidebar,
+    toolbarLinks,
+    minHeight,
     onChange,
     onSave,
-    onResize,
-    onToggleSidebar,
-    minHeight,
   } = props;
 
   const editorDidMount = (editor, monaco) => {
@@ -42,11 +38,8 @@ const YAMLEditor = React.forwardRef<MonacoEditor, YAMLEditorProps>((props, ref) 
 
   return (
     <>
-      <div className="ocs-yaml-editor__links">
-        {showShortcuts && <ShortcutsLink onHideShortcuts={hackyFocusEditor} />}
-        {showSidebar && <SidebarLink onToggleSidebar={onToggleSidebar} />}
-      </div>
-      <Measure bounds onResize={onResize}>
+      <YAMLEditorToolbar showShortcuts={showShortcuts} toolbarLinks={toolbarLinks} />
+      <Measure bounds>
         {({ measureRef, contentRect }) => (
           <div ref={measureRef} className="ocs-yaml-editor__root" style={{ minHeight }}>
             <div className="ocs-yaml-editor__wrapper">

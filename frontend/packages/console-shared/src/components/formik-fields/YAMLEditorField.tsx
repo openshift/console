@@ -11,6 +11,7 @@ const YAMLEditorField: React.FC<YAMLEditorFieldProps> = ({ name, onSave }) => {
     <AsyncComponent
       loader={() => import('../editor/YAMLEditor').then((c) => c.default)}
       value={field.value}
+      minHeight="200px"
       onChange={(yaml: string) => setFieldValue(name, yaml)}
       onSave={onSave}
       showShortcuts
