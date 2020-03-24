@@ -355,7 +355,7 @@ export const PodDetailsList: React.FC<PodDetailsListProps> = ({ pod }) => {
         {getRestartPolicyLabel(pod)}
       </DetailsItem>
       <DetailsItem label="Active Deadline Seconds" obj={pod} path="spec.activeDeadlineSeconds">
-        {pod.spec.progressDeadlineSeconds
+        {pod.spec.activeDeadlineSeconds
           ? pluralize(pod.spec.activeDeadlineSeconds, 'second')
           : 'Not Configured'}
       </DetailsItem>
