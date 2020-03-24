@@ -12,13 +12,13 @@ import {
   getKnativeServiceDepResource,
   ServiceModel as KnServiceModel,
 } from '@console/knative-plugin';
+import { getRandomChars } from '@console/shared/src/utils';
 import { getAppLabels, getPodLabels, mergeData } from '../../utils/resource-label-utils';
 import {
   createRoute,
   createService,
   annotations,
   dryRunOpt,
-  getRandomChars,
 } from '../../utils/shared-submit-utils';
 import { RegistryType } from '../../utils/imagestream-utils';
 import { AppResources } from '../edit-application/edit-application-types';

@@ -2,12 +2,12 @@ import * as _ from 'lodash';
 import { history, resourcePathFromModel, KebabAction } from '@console/internal/components/utils';
 import { k8sCreate, K8sKind, k8sPatch, referenceForModel } from '@console/internal/module/k8s';
 import { errorModal } from '@console/internal/components/modals';
+import { getRandomChars } from '@console/shared/src/utils';
 import { PipelineModel, PipelineRunModel } from '../models';
 import startPipelineModal from '../components/pipelines/pipeline-form/StartPipelineModal';
 import { Pipeline, PipelineRun } from './pipeline-augment';
 import { pipelineRunFilterReducer } from './pipeline-filter-reducer';
 import { getPipelineRunParams } from './pipeline-utils';
-import { getRandomChars } from './shared-submit-utils';
 
 export const handlePipelineRunSubmit = (pipelineRun: PipelineRun) => {
   history.push(

@@ -26,3 +26,10 @@ export const createLookup = <A extends K8sResourceKind>(
   }
   return {};
 };
+
+export const getRandomChars = (len = 6): string => {
+  return Math.random()
+    .toString(36)
+    .replace(/[^a-z0-9]+/g, '')
+    .substr(1, len);
+};
