@@ -8,7 +8,7 @@ import { QuestionCircleIcon } from '@patternfly/react-icons';
 
 import { K8sResourceKind, K8sResourceKindReference } from '../module/k8s';
 import { ImageStreamModel } from '../models';
-import { DetailsPage, ListPage, Table, TableRow, TableData } from './factory';
+import { DetailsPage, ListPage, Table, TableRow, TableData, RowFunction } from './factory';
 import {
   CopyToClipboard,
   ExpandableAlert,
@@ -331,7 +331,7 @@ const ImageStreamsTableHeader = () => {
 };
 ImageStreamsTableHeader.displayName = 'ImageStreamsTableHeader';
 
-const ImageStreamsTableRow: React.FC<ImageStreamsTableRowProps> = ({ obj, index, key, style }) => {
+const ImageStreamsTableRow: RowFunction<K8sResourceKind> = ({ obj, index, key, style }) => {
   return (
     <TableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
       <TableData className={tableColumnClasses[0]}>
@@ -356,13 +356,6 @@ const ImageStreamsTableRow: React.FC<ImageStreamsTableRowProps> = ({ obj, index,
       </TableData>
     </TableRow>
   );
-};
-ImageStreamsTableRow.displayName = 'ImageStreamsTableRow';
-type ImageStreamsTableRowProps = {
-  obj: K8sResourceKind;
-  index: number;
-  key?: string;
-  style: object;
 };
 
 export const ImageStreamsList: React.SFC = (props) => (

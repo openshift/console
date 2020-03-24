@@ -205,7 +205,6 @@ const ReplicationControllerTableRow = ({ obj, index, key, style }) => {
     </TableRow>
   );
 };
-ReplicationControllerTableRow.displayName = 'ReplicationControllerTableRow';
 
 const ReplicationControllerTableHeader = () => {
   return [

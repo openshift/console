@@ -127,7 +127,6 @@ const IngressTableRow = ({ obj: ingress, index, key, style }) => {
     </TableRow>
   );
 };
-IngressTableRow.displayName = 'IngressTableRow';
 
 const RulesHeader = () => (
   <div className="row co-m-table-grid__head">

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
-import { DetailsPage, ListPage, Table, TableRow, TableData } from './factory';
+import { DetailsPage, ListPage, Table, TableRow, TableData, RowFunction } from './factory';
 import { SectionHeading, detailsPage, navFactory, ResourceLink, ResourceSummary } from './utils';
 import { K8sResourceKind, referenceForModel, servicePlanDisplayName } from '../module/k8s';
 import {
@@ -41,7 +41,7 @@ const ClusterServicePlanTableHeader = () => {
 };
 ClusterServicePlanTableHeader.displayName = 'ClusterServicePlanTableHeader';
 
-const ClusterServicePlanTableRow: React.FC<ClusterServicePlanTableRowProps> = ({
+const ClusterServicePlanTableRow: RowFunction<K8sResourceKind> = ({
   obj: servicePlan,
   index,
   key,
@@ -66,13 +66,6 @@ const ClusterServicePlanTableRow: React.FC<ClusterServicePlanTableRowProps> = ({
       </TableData>
     </TableRow>
   );
-};
-ClusterServicePlanTableRow.displayName = 'ClusterServicePlanTableRow';
-type ClusterServicePlanTableRowProps = {
-  obj: K8sResourceKind;
-  index: number;
-  key?: string;
-  style: object;
 };
 
 const ClusterServicePlanDetails: React.SFC<ClusterServicePlanDetailsProps> = ({

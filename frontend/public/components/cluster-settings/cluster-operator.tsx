@@ -6,7 +6,7 @@ import { Alert } from '@patternfly/react-core';
 import { SyncAltIcon, UnknownIcon } from '@patternfly/react-icons';
 
 import { ClusterOperatorModel } from '../../models';
-import { DetailsPage, ListPage, Table, TableRow, TableData } from '../factory';
+import { DetailsPage, ListPage, Table, TableRow, TableData, RowFunction } from '../factory';
 import { Conditions } from '../conditions';
 import {
   getClusterOperatorStatus,
@@ -90,12 +90,7 @@ const ClusterOperatorTableHeader = () => {
 };
 ClusterOperatorTableHeader.displayName = 'ClusterOperatorTableHeader';
 
-const ClusterOperatorTableRow: React.FC<ClusterOperatorTableRowProps> = ({
-  obj,
-  index,
-  key,
-  style,
-}) => {
+const ClusterOperatorTableRow: RowFunction<ClusterOperator> = ({ obj, index, key, style }) => {
   const { status, message } = getStatusAndMessage(obj);
   const operatorVersion = getClusterOperatorVersion(obj);
   return (
@@ -117,13 +112,6 @@ const ClusterOperatorTableRow: React.FC<ClusterOperatorTableRowProps> = ({
       </TableData>
     </TableRow>
   );
-};
-ClusterOperatorTableRow.displayName = 'ClusterOperatorTableRow';
-type ClusterOperatorTableRowProps = {
-  obj: ClusterOperator;
-  index: number;
-  key?: string;
-  style: object;
 };
 
 export const ClusterOperatorList: React.SFC = (props) => (

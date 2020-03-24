@@ -5,7 +5,7 @@ import { Button } from '@patternfly/react-core';
 import { PencilAltIcon } from '@patternfly/react-icons';
 
 import { referenceForModel, K8sResourceKind } from '../module/k8s';
-import { ListPage, DetailsPage, Table, TableRow, TableData } from './factory';
+import { ListPage, DetailsPage, Table, TableRow, TableData, RowFunction } from './factory';
 import { SectionHeading, LabelList, navFactory, ResourceLink, Selector, pluralize } from './utils';
 import { configureReplicaCountModal } from './modals';
 import { AlertmanagerModel } from '../models';
@@ -74,7 +74,7 @@ const tableColumnClasses = [
   classNames('col-md-3', 'col-sm-3', 'hidden-xs'),
 ];
 
-const AlertManagerTableRow: React.FC<AlertManagerTableRowProps> = ({
+const AlertManagerTableRow: RowFunction<K8sResourceKind> = ({
   obj: alertManager,
   index,
   key,
@@ -103,13 +103,6 @@ const AlertManagerTableRow: React.FC<AlertManagerTableRowProps> = ({
       </TableData>
     </TableRow>
   );
-};
-AlertManagerTableRow.displayName = 'AlertManagerTableRow';
-type AlertManagerTableRowProps = {
-  obj: K8sResourceKind;
-  index: number;
-  key?: string;
-  style: object;
 };
 
 const AlertManagerTableHeader = () => {

@@ -92,7 +92,6 @@ const NetworkPolicyTableRow = ({ obj: np, index, key, style }) => {
     </TableRow>
   );
 };
-NetworkPolicyTableRow.displayName = 'NetworkPolicyTableRow';
 
 const NetworkPoliciesList = (props) => (
   <Table

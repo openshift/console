@@ -117,7 +117,6 @@ const ServiceTableRow = ({ obj: s, index, key, style }) => {
     </TableRow>
   );
 };
-ServiceTableRow.displayName = 'ServiceTableRow';
 
 const ServiceAddress = ({ s }) => {
   const ServiceIPsRow = (name, desc, ips, note = null) => (

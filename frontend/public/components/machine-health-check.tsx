@@ -5,7 +5,7 @@ import * as classNames from 'classnames';
 
 import { MachineHealthCheckModel, MachineModel } from '../models';
 import { K8sResourceKind, referenceForModel } from '../module/k8s';
-import { DetailsPage, ListPage, Table, TableRow, TableData } from './factory';
+import { DetailsPage, ListPage, Table, TableRow, TableData, RowFunction } from './factory';
 import {
   DetailsItem,
   EmptyBox,
@@ -58,12 +58,7 @@ const MachineHealthCheckTableHeader = () => {
 };
 MachineHealthCheckTableHeader.displayName = 'MachineHealthCheckTableHeader';
 
-const MachineHealthCheckTableRow: React.FC<MachineHealthCheckTableRowProps> = ({
-  obj,
-  index,
-  key,
-  style,
-}) => {
+const MachineHealthCheckTableRow: RowFunction<K8sResourceKind> = ({ obj, index, key, style }) => {
   return (
     <TableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
       <TableData className={tableColumnClasses[0]}>
@@ -84,13 +79,6 @@ const MachineHealthCheckTableRow: React.FC<MachineHealthCheckTableRowProps> = ({
       </TableData>
     </TableRow>
   );
-};
-MachineHealthCheckTableRow.displayName = 'MachineHealthCheckTableRow';
-type MachineHealthCheckTableRowProps = {
-  obj: K8sResourceKind;
-  index: number;
-  key?: string;
-  style: object;
 };
 
 const MachineHealthCheckList: React.FC = (props) => (

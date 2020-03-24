@@ -4,7 +4,7 @@ import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
 import { K8sResourceKind, K8sResourceKindReference, referenceFor } from '../module/k8s';
 import { startBuild } from '../module/k8s/builds';
-import { DetailsPage, ListPage, Table, TableRow, TableData } from './factory';
+import { DetailsPage, ListPage, Table, TableRow, TableData, RowFunction } from './factory';
 import { errorModal } from './modals';
 import {
   BuildHooks,
@@ -146,7 +146,7 @@ const BuildConfigsTableHeader = () => {
 };
 BuildConfigsTableHeader.displayName = 'BuildConfigsTableHeader';
 
-const BuildConfigsTableRow: React.FC<BuildConfigsTableRowProps> = ({ obj, index, key, style }) => {
+const BuildConfigsTableRow: RowFunction<K8sResourceKind> = ({ obj, index, key, style }) => {
   return (
     <TableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
       <TableData className={tableColumnClasses[0]}>
@@ -171,13 +171,6 @@ const BuildConfigsTableRow: React.FC<BuildConfigsTableRowProps> = ({ obj, index,
       </TableData>
     </TableRow>
   );
-};
-BuildConfigsTableRow.displayName = 'BuildConfigsTableRow';
-type BuildConfigsTableRowProps = {
-  obj: K8sResourceKind;
-  index: number;
-  key?: string;
-  style: object;
 };
 
 const buildStrategy = (buildConfig: K8sResourceKind): BuildStrategyType =>

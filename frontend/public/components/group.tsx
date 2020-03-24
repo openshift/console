@@ -6,7 +6,7 @@ import { sortable } from '@patternfly/react-table';
 
 import { GroupModel, UserModel } from '../models';
 import { referenceForModel, GroupKind, K8sKind } from '../module/k8s';
-import { DetailsPage, ListPage, Table, TableRow, TableData } from './factory';
+import { DetailsPage, ListPage, Table, TableRow, TableData, RowFunction } from './factory';
 import { addUsersModal, removeUserModal } from './modals';
 import { RoleBindingsPage } from './RBAC';
 import { fromNow } from './utils/datetime';
@@ -81,7 +81,7 @@ const GroupTableHeader = () => {
 };
 GroupTableHeader.displayName = 'GroupTableHeader';
 
-const GroupTableRow: React.FC<GroupTableRowProps> = ({ obj, index, key, style }) => {
+const GroupTableRow: RowFunction<GroupKind> = ({ obj, index, key, style }) => {
   return (
     <TableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
       <TableData className={tableColumnClasses[0]}>
@@ -179,13 +179,6 @@ export const GroupDetailsPage: React.FC<GroupDetailsPageProps> = (props) => (
     ]}
   />
 );
-
-type GroupTableRowProps = {
-  obj: GroupKind;
-  key: string;
-  index: number;
-  style: any;
-};
 
 type UserKebabProps = {
   group: GroupKind;

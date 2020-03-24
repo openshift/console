@@ -157,7 +157,6 @@ const ReplicaSetTableRow = ({ obj, index, key, style }) => {
     </TableRow>
   );
 };
-ReplicaSetTableRow.displayName = 'ReplicaSetTableRow';
 
 const ReplicaSetTableHeader = () => {
   return [

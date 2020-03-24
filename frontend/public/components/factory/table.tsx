@@ -328,16 +328,17 @@ const VirtualBody: React.SFC<VirtualBodyProps> = (props) => {
   );
 };
 
-export type RowFunctionArgs = {
-  obj: object;
+export type RowFunctionArgs<T = any, C = any> = {
+  obj: T;
   index: number;
   columns: [];
   isScrolling: boolean;
   key: string;
   style: object;
-  customData?: any;
+  customData?: C;
 };
-export type RowFunction = (args: RowFunctionArgs) => JSX.Element;
+
+export type RowFunction<T = any, C = any> = (args: RowFunctionArgs<T, C>) => JSX.Element;
 
 export type VirtualBodyProps = {
   customData?: any;

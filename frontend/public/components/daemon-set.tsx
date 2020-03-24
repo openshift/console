@@ -4,7 +4,7 @@ import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
 
 import { K8sResourceKind } from '../module/k8s';
-import { DetailsPage, ListPage, Table, TableRow, TableData } from './factory';
+import { DetailsPage, ListPage, Table, TableRow, TableData, RowFunction } from './factory';
 import {
   AsyncComponent,
   DetailsItem,
@@ -81,17 +81,7 @@ const DaemonSetTableHeader = () => {
 };
 DaemonSetTableHeader.displayName = 'DaemonSetTableHeader';
 
-const DaemonSetTableRow = ({
-  obj: daemonset,
-  index,
-  key,
-  style,
-}: {
-  obj: K8sResourceKind;
-  index: number;
-  key: string;
-  style: any;
-}) => {
+const DaemonSetTableRow: RowFunction<K8sResourceKind> = ({ obj: daemonset, index, key, style }) => {
   return (
     <TableRow id={daemonset.metadata.uid} index={index} trKey={key} style={style}>
       <TableData className={tableColumnClasses[0]}>
@@ -130,7 +120,6 @@ const DaemonSetTableRow = ({
     </TableRow>
   );
 };
-DaemonSetTableRow.displayName = 'DaemonSetTableRow';
 
 export const DaemonSetDetailsList: React.FC<DaemonSetDetailsListProps> = ({ ds }) => (
   <dl className="co-m-pane__details">

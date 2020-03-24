@@ -73,7 +73,6 @@ const ServiceMonitorTableRow = ({ obj: sm, index, key, style }) => {
     </TableRow>
   );
 };
-ServiceMonitorTableRow.displayName = 'ServiceMonitorTableRow';
 
 const ServiceMonitorTableHeader = () => {
   return [

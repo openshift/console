@@ -5,7 +5,7 @@ import { sortable } from '@patternfly/react-table';
 import { K8sResourceKind, K8sResourceKindReference } from '../module/k8s';
 import { HorizontalPodAutoscalerModel } from '../models';
 import { Conditions } from './conditions';
-import { DetailsPage, ListPage, Table, TableRow, TableData } from './factory';
+import { DetailsPage, ListPage, Table, TableRow, TableData, RowFunction } from './factory';
 import {
   DetailsItem,
   Kebab,
@@ -264,7 +264,7 @@ const HorizontalPodAutoscalersTableHeader = () => {
 };
 HorizontalPodAutoscalersTableHeader.displayName = 'HorizontalPodAutoscalersTableHeader';
 
-const HorizontalPodAutoscalersTableRow: React.FC<HorizontalPodAutoscalersTableRowProps> = ({
+const HorizontalPodAutoscalersTableRow: RowFunction<K8sResourceKind> = ({
   obj,
   index,
   key,
@@ -309,13 +309,6 @@ const HorizontalPodAutoscalersTableRow: React.FC<HorizontalPodAutoscalersTableRo
       </TableData>
     </TableRow>
   );
-};
-HorizontalPodAutoscalersTableRow.displayName = 'HorizontalPodAutoscalersTableRow';
-type HorizontalPodAutoscalersTableRowProps = {
-  obj: K8sResourceKind;
-  index: number;
-  key?: string;
-  style: object;
 };
 
 const HorizontalPodAutoscalersList: React.SFC = (props) => (

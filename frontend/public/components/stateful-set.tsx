@@ -2,7 +2,7 @@ import * as React from 'react';
 
 import { K8sResourceKind } from '../module/k8s';
 import { ResourceEventStream } from './events';
-import { DetailsPage, ListPage, Table } from './factory';
+import { DetailsPage, ListPage, Table, RowFunction } from './factory';
 
 import { WorkloadTableRow, WorkloadTableHeader } from './workload-table';
 
@@ -27,17 +27,7 @@ export const menuActions: KebabAction[] = [
 
 const kind = 'StatefulSet';
 
-const StatefulSetTableRow = ({
-  obj,
-  index,
-  key,
-  style,
-}: {
-  obj: K8sResourceKind;
-  index: number;
-  key: string;
-  style: any;
-}) => {
+const StatefulSetTableRow: RowFunction<K8sResourceKind> = ({ obj, index, key, style }) => {
   return (
     <WorkloadTableRow
       obj={obj}
@@ -49,7 +39,6 @@ const StatefulSetTableRow = ({
     />
   );
 };
-StatefulSetTableRow.displayName = 'StatefulSetTableRow';
 
 const StatefulSetTableHeader = () => {
   return WorkloadTableHeader();

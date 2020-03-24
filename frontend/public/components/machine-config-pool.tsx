@@ -15,7 +15,7 @@ import {
   MachineConfigPoolKind,
   referenceForModel,
 } from '../module/k8s';
-import { DetailsPage, ListPage, Table, TableRow, TableData } from './factory';
+import { DetailsPage, ListPage, Table, TableRow, TableData, RowFunction } from './factory';
 import {
   Kebab,
   KebabAction,
@@ -262,7 +262,7 @@ const MachineConfigPoolTableHeader = () => {
 };
 MachineConfigPoolTableHeader.displayName = 'MachineConfigPoolTableHeader';
 
-const MachineConfigPoolTableRow: React.FC<MachineConfigPoolTableRowProps> = ({
+const MachineConfigPoolTableRow: RowFunction<MachineConfigPoolKind> = ({
   obj,
   index,
   key,
@@ -306,13 +306,6 @@ const MachineConfigPoolTableRow: React.FC<MachineConfigPoolTableRowProps> = ({
       </TableData>
     </TableRow>
   );
-};
-MachineConfigPoolTableRow.displayName = 'MachineConfigPoolTableRow';
-type MachineConfigPoolTableRowProps = {
-  obj: MachineConfigPoolKind;
-  index: number;
-  key?: string;
-  style: object;
 };
 
 const MachineConfigPoolList: React.SFC<any> = (props) => (
