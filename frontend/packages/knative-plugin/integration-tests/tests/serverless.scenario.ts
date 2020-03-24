@@ -19,7 +19,8 @@ import {
   knativeServingNS,
   pageSidebar,
 } from '../views/serverless.view';
-import { switchPerspective, Perspective, sideHeader } from '../views/dev-perspective.view';
+
+import { switchPerspective, Perspective, sideHeader } from '../../../dev-console/integration-tests/views/dev-perspective.view';
 import * as sidenavView from '../../../../integration-tests/views/sidenav.view';
 import * as crudView from '../../../../integration-tests/views/crud.view';
 import * as catalogView from '../../../../integration-tests/views/catalog.view';
