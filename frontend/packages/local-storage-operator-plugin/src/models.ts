@@ -1,15 +1,15 @@
 import { K8sKind } from '@console/internal/module/k8s';
 
-export const LocalVolumeGroupModel: K8sKind = {
-  label: 'Local Volume Group',
-  labelPlural: 'Local Volume Groups',
+export const LocalVolumeSetModel: K8sKind = {
+  label: 'Local Volume Set',
+  labelPlural: 'Local Volume Sets',
   apiVersion: 'v1alpha1',
   apiGroup: 'local.storage.openshift.io',
-  plural: 'localvolumegroups',
-  abbr: 'LVG',
+  plural: 'localvolumesets',
+  abbr: 'LVS',
   namespaced: true,
-  kind: 'LocalVolumeGroup',
-  id: 'localvolumegroup',
+  kind: 'LocalVolumeSet',
+  id: 'localvolumeset',
   crd: true,
 };
 
