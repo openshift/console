@@ -1,13 +1,13 @@
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
-import { withStartGuide } from '@console/internal/components/start-guide';
+import { compose } from 'redux';
+import { connectToFlags, FlagsObject } from '@console/internal/reducers/features';
+import { FLAGS } from '@console/shared';
 import { HorizontalNav } from '@console/internal/components/utils';
+import { withStartGuide } from '@console/internal/components/start-guide';
 import { VirtualMachinesPage } from './vm';
 import { VirtualMachineTemplatesPage } from '../vm-templates/vm-template';
 import { VirtualMachineModel } from '../../models';
-import { FLAGS } from '@console/shared';
-import { connectToFlags, FlagsObject } from '@console/internal/reducers/features';
-import { compose } from 'redux';
 
 export const WrappedVirtualizationPage: React.FC<VirtualizationPageProps> = (props) => {
   const title = 'Virtualization';
@@ -40,11 +40,11 @@ export const WrappedVirtualizationPage: React.FC<VirtualizationPageProps> = (pro
         </h1>
       </div>
       <HorizontalNav
+        {...props}
         pages={pages}
         match={props.match}
         obj={obj}
         customData={{ showTitle: false }}
-        {...props}
       />
     </>
   );
