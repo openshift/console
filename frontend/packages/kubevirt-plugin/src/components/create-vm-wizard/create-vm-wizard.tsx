@@ -322,6 +322,7 @@ const wizardDispatchToProps = (dispatch, props) => ({
         data: {
           isCreateTemplate: props.isCreateTemplate,
           isProviderImport: props.isProviderImport,
+          userTemplateName: props.userTemplateName,
         },
         dataIDReferences: props.dataIDReferences,
       }),
@@ -386,6 +387,9 @@ export const CreateVMWizardPageComponent: React.FC<CreateVMWizardPageComponentPr
     );
   }
 
+  const userMode = new URLSearchParams(search).get('mode');
+  const userTemplateName = new URLSearchParams(search).get('template');
+
   const dataIDReferences = makeIDReferences(resources);
 
   dataIDReferences[VMWizardProps.activeNamespace] = ['UI', 'activeNamespace'];
@@ -395,7 +399,8 @@ export const CreateVMWizardPageComponent: React.FC<CreateVMWizardPageComponentPr
     <Firehose resources={resources} doNotConnectToState>
       <CreateVMWizard
         isCreateTemplate={!path.includes('/virtualmachines/')}
-        isProviderImport={new URLSearchParams(search).get('mode') === 'import'}
+        isProviderImport={userMode === 'import'}
+        userTemplateName={userTemplateName}
         dataIDReferences={dataIDReferences}
         reduxID={reduxID}
         onClose={() => history.goBack()}

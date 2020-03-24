@@ -5,6 +5,7 @@ import {
   hasVMSettingsValueChanged,
   iGetProvisionSource,
   iGetVmSettingValue,
+  iGetVmSettingAttribute,
 } from '../../../selectors/immutable/vm-settings';
 import { VMSettingsField, VMWizardProps } from '../../../types';
 import { InternalActionType, UpdateOptions } from '../../types';
@@ -21,6 +22,38 @@ import { getProviders } from '../../../provider-definitions';
 import { windowsToolsStorage } from '../../initial-state/storage-tab-initial-state';
 import { getStorages } from '../../../selectors/selectors';
 import { prefillVmTemplateUpdater } from './prefill-vm-template-state-update';
+
+export const selectUserTemplateOnLoadedUpdater = (options: UpdateOptions) => {
+  const { id, dispatch, getState } = options;
+  const state = getState();
+
+  if (
+    iGetCommonData(state, id, VMWizardProps.isCreateTemplate) ||
+    iGetVmSettingAttribute(state, id, VMSettingsField.USER_TEMPLATE, 'initialized')
+  ) {
+    return;
+  }
+
+  const userTemplates = iGetLoadedCommonData(state, id, VMWizardProps.userTemplates);
+  const userTemplateName = iGetCommonData(state, id, VMWizardProps.userTemplateName);
+
+  const isUserTemplateValid =
+    userTemplateName &&
+    userTemplates &&
+    userTemplates.find((template) => iGetName(template) === userTemplateName);
+  if (!isUserTemplateValid) {
+    return;
+  }
+
+  dispatch(
+    vmWizardInternalActions[InternalActionType.UpdateVmSettings](id, {
+      [VMSettingsField.USER_TEMPLATE]: {
+        initialized: true,
+        value: userTemplateName,
+      },
+    }),
+  );
+};
 
 export const selectedUserTemplateUpdater = (options: UpdateOptions) => {
   const { id, prevState, dispatch, getState } = options;
@@ -149,6 +182,7 @@ export const updateVmSettingsState = (options: UpdateOptions) =>
     ...(iGetCommonData(options.getState(), options.id, VMWizardProps.isProviderImport)
       ? getProviders().map((provider) => provider.getStateUpdater)
       : []),
+    selectUserTemplateOnLoadedUpdater,
     selectedUserTemplateUpdater,
     provisioningSourceUpdater,
     flavorUpdater,

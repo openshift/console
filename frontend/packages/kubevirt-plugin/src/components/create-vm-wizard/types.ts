@@ -29,6 +29,7 @@ export enum VMWizardTab { // order important
 export enum VMWizardProps {
   isCreateTemplate = 'isCreateTemplate',
   isProviderImport = 'isProviderImport',
+  userTemplateName = 'userTemplateName',
   activeNamespace = 'activeNamespace',
   openshiftFlag = 'openshiftFlag',
   reduxID = 'reduxID',
@@ -131,6 +132,7 @@ export type ChangedCommonDataProp =
 export type CommonDataProp =
   | VMWizardProps.isCreateTemplate
   | VMWizardProps.isProviderImport
+  | VMWizardProps.userTemplateName
   | ChangedCommonDataProp;
 
 export type ChangedCommonData = Set<ChangedCommonDataProp>;

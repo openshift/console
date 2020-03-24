@@ -168,9 +168,9 @@ const getCreateProps = ({ namespace }: { namespace: string }) => {
   return {
     items,
     createLink: (itemName) =>
-      `/k8s/ns/${namespace || 'default'}/vmtemplates/${
+      `/k8s/ns/${namespace || 'default'}/virtualmachines/${
         itemName === 'yaml' ? '~new' : '~new-wizard'
-      }`, // covers 'yaml', new-wizard and default
+      }?mode=template`, // covers 'yaml', new-wizard and default
   };
 };
 
