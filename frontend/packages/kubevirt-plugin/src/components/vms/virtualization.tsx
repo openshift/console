@@ -1,10 +1,10 @@
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
 import { compose } from 'redux';
+import { withStartGuide } from '@console/internal/components/start-guide';
+import { HorizontalNav } from '@console/internal/components/utils';
 import { connectToFlags, FlagsObject } from '@console/internal/reducers/features';
 import { FLAGS } from '@console/shared';
-import { HorizontalNav } from '@console/internal/components/utils';
-import { withStartGuide } from '@console/internal/components/start-guide';
 import { VirtualMachinesPage } from './vm';
 import { VirtualMachineTemplatesPage } from '../vm-templates/vm-template';
 import { VirtualMachineModel } from '../../models';
