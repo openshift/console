@@ -23,7 +23,7 @@ import { DashboardCardPopupLink } from '../dashboard-card/DashboardCardLink';
 import './top-consumer-popover.scss';
 
 const ConsumerPopover: React.FC<ConsumerPopoverProps> = React.memo(
-  ({ current, title, humanize, consumers, namespace, position }) => {
+  ({ current, title, humanize, consumers, namespace, position, description }) => {
     const [isOpen, setOpen] = React.useState(false);
     return (
       <DashboardCardPopupLink
@@ -38,6 +38,7 @@ const ConsumerPopover: React.FC<ConsumerPopoverProps> = React.memo(
           consumers={consumers}
           namespace={namespace}
           isOpen={isOpen}
+          description={description}
         />
       </DashboardCardPopupLink>
     );
@@ -65,6 +66,7 @@ const PopoverBodyInternal: React.FC<DashboardItemProps &
     isOpen,
     canAccessMonitoring,
     activePerspective,
+    description,
   } = props;
   const [currentConsumer, setCurrentConsumer] = React.useState(consumers[0]);
   const { query, model, metric } = currentConsumer;
@@ -163,6 +165,7 @@ const PopoverBodyInternal: React.FC<DashboardItemProps &
 
   return (
     <div className="co-utilization-card-popover__body">
+      <div className="co-utilization-card-popover__description">{description}</div>
       <h4 className="co-utilization-card-popover__title">
         {consumers.length === 1
           ? `Top ${currentConsumer.model.label.toLowerCase()} consumers`
@@ -232,6 +235,7 @@ type PopoverBodyProps = {
   consumers: { model: K8sKind; query: string; metric: string }[];
   namespace?: string;
   isOpen: boolean;
+  description?: React.ReactText;
 };
 
 export type ConsumerPopoverProps = {
@@ -241,4 +245,5 @@ export type ConsumerPopoverProps = {
   consumers: { model: K8sKind; query: string; metric: string }[];
   namespace?: string;
   position?: PopoverPosition;
+  description?: React.ReactText;
 };

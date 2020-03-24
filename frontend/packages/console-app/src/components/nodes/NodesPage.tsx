@@ -126,7 +126,7 @@ const NodesTableRow = connect<NodesRowMapFromStateProps, null, NodesTableRowProp
           <ResourceLink kind={referenceForModel(NodeModel)} name={nodeName} title={nodeUID} />
         </TableData>
         <TableData className={tableColumnClasses[1]}>
-          <NodeStatus node={node} />
+          <NodeStatus node={node} showPopovers />
         </TableData>
         <TableData className={tableColumnClasses[2]}>
           <NodeRoles node={node} />

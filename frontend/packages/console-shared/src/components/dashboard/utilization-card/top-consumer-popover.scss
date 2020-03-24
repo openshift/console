@@ -1,44 +1,52 @@
 @import '../../../styles/skeleton-screen';
 
 .co-utilization-card-popover__body {
-    min-height: var(--pf-global--spacer--lg);
+  min-height: var(--pf-global--spacer--lg);
 }
 
 .co-utilization-card-popover__consumer-item {
-    margin-bottom: var(--pf-global--spacer--sm) !important;
+  margin-bottom: var(--pf-global--spacer--sm) !important;
 }
 
 .co-utilization-card-popover__consumer-list {
-    list-style-type: none;
-    margin-bottom: var(--pf-global--spacer--md);
-    margin-top: var(--pf-global--spacer--lg);
-    padding-left:0;
+  list-style-type: none;
+  margin-bottom: var(--pf-global--spacer--md);
+  margin-top: var(--pf-global--spacer--lg);
+  padding-left: 0;
 }
 
 .co-utilization-card-popover__consumer-name {
-    flex: 0 0 calc(70% - var(--pf-global--spacer--md));
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+  flex: 0 0 calc(70% - var(--pf-global--spacer--md));
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .co-utilization-card-popover__consumer-value {
-    color: var(--pf-global--Color--200);
-    flex: 0 0 30%;
-    text-align: right;
+  color: var(--pf-global--Color--200);
+  flex: 0 0 30%;
+  text-align: right;
 }
 
-.co-utilization-card-popover__dropdown, .co-utilization-card-popover__dropdown > div, .co-utilization-card-popover__dropdown .pf-c-dropdown__toggle {
-    width: 100%;
+.co-utilization-card-popover__description {
+  padding: var(--pf-global--spacer--sm) 0;
+}
+
+.co-utilization-card-popover__dropdown,
+.co-utilization-card-popover__dropdown > div,
+.co-utilization-card-popover__dropdown .pf-c-dropdown__toggle {
+  width: 100%;
 }
 
 .co-utilization-card-popover__title {
-    font-weight: var(--pf-global--FontWeight--bold);
-    margin-bottom: var(--pf-global--spacer--sm);
+  font-weight: var(--pf-global--FontWeight--bold);
+  margin-bottom: var(--pf-global--spacer--sm);
 }
 
-.co-utilization-card-popover__title, .co-utilization-card-popover__consumer-name, .co-utilization-card-popover__consumer-value {
-    font-size: var(--pf-global--FontSize--sm);
+.co-utilization-card-popover__title,
+.co-utilization-card-popover__consumer-name,
+.co-utilization-card-popover__consumer-value {
+  font-size: var(--pf-global--FontSize--sm);
 }
 
 .skeleton-consumer {
@@ -50,7 +58,7 @@
   margin-bottom: var(--pf-global--spacer--sm);
   &::after {
     background-repeat: no-repeat;
-    content: "";
+    content: '';
     display: block;
     height: 100%;
     width: 100%;
