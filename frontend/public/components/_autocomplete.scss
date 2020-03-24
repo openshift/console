@@ -1,0 +1,47 @@
+.co-suggestion-box {
+  background-color: #fff;
+  z-index: 5;
+}
+
+.co-suggestion-box__input {
+  width: 100%;
+  min-width: 22vw;
+  line-height: 27px;
+}
+
+.co-suggestion-box__suggestions {
+  background-color: #fff;
+  /* To make the suggestion box hover on top of the table */
+  margin-bottom: -19em;
+}
+
+.co-suggestion-line {
+  /* default label css overrides this */
+  display: flex !important;
+  margin: var(--pf-global--spacer--xs);
+}
+
+.co-suggestion-line__text {
+  margin: var(--pf-global--spacer--xs) 0;
+}
+
+.co-suggestion-line__text:hover {
+  background-color: var(--pf-global--BackgroundColor--300);
+}
+
+.skeleton-suggestion {
+  animation: $skeleton-animation;
+  background: $skeleton-color;
+  height: var(--pf-global--spacer--md);
+  width: 100%;
+  opacity: 0;
+  margin-top: 0.1em;
+  margin-bottom: 0.1em;
+  &::after {
+    background-repeat: no-repeat;
+    content: '';
+    display: block;
+    height: 100%;
+    width: 100%;
+  }
+}

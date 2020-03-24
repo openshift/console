@@ -18,6 +18,9 @@ export const getNodeRoles = (node: NodeKind): string[] => {
   );
 };
 
+export const getNodeRole = (node: NodeKind): string =>
+  getNodeRoles(node).includes('master') ? 'master' : 'worker';
+
 export const getNodeAddresses = (node: NodeKind): NodeAddress[] =>
   _.get(node, 'status.addresses', []);
 

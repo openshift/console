@@ -1,0 +1,43 @@
+.co-list-filter-block {
+  display: flex;
+  margin: 0 0 var(--pf-global--spacer--md) 0;
+}
+
+.co-list-filter-block__row-dropdown {
+  margin-right: var(--pf-global--spacer--lg);
+}
+
+.co-list-fliter-block__user-input-filter {
+  display: inline-flex;
+}
+
+.co-filter-dropdown__item {
+  display: inline-flex;
+}
+
+.co-filter-dropdown__item {
+  pointer-events: none;
+}
+
+.co-filter-dropdown__list-item {
+  list-style: none;
+}
+
+.co-filter-dropdown__list-item:hover {
+  background-color: var(--pf-global--BackgroundColor--300);
+}
+
+/* No way to reach this ul */
+.co-filter-dropdown-group > ul {
+  margin-left: 0;
+  padding-left: 0;
+}
+
+.co-filter-dropdown-item {
+  display: inline-flex;
+  margin: var(--pf-global--spacer--xs) 0;
+}
+
+.co-filter-dropdown-item__name {
+  padding: 0 var(--pf-global--spacer--xs);
+}
