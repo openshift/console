@@ -9,3 +9,5 @@ approvers:
   - bipuladh
   - cloudbehl
   - gnehapk
+labels:
+  - component/lso
