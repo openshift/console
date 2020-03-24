@@ -60,6 +60,26 @@ export class VMSettingsTabComponent extends React.Component<VMSettingsTabCompone
     return (
       <FormFieldForm isReview={isReview}>
         <FormFieldMemoRow
+          field={this.getField(VMSettingsField.NAME)}
+          fieldType={FormFieldType.TEXT}
+        >
+          <FormField>
+            <TextInput onChange={this.onChange(VMSettingsField.NAME)} />
+          </FormField>
+        </FormFieldMemoRow>
+        <FormFieldMemoRow
+          field={this.getField(VMSettingsField.DESCRIPTION)}
+          fieldType={FormFieldType.TEXT_AREA}
+        >
+          <FormField>
+            <TextArea
+              onChange={this.onChange(VMSettingsField.DESCRIPTION)}
+              className="kubevirt-create-vm-modal__description"
+            />
+          </FormField>
+        </FormFieldMemoRow>
+
+        <FormFieldMemoRow
           key={VMSettingsField.PROVIDER}
           field={this.getField(VMSettingsField.PROVIDER)}
           fieldType={FormFieldType.SELECT}
@@ -149,25 +169,6 @@ export class VMSettingsTabComponent extends React.Component<VMSettingsTabCompone
           onChange={this.props.onFieldChange}
         />
 
-        <FormFieldMemoRow
-          field={this.getField(VMSettingsField.NAME)}
-          fieldType={FormFieldType.TEXT}
-        >
-          <FormField>
-            <TextInput onChange={this.onChange(VMSettingsField.NAME)} />
-          </FormField>
-        </FormFieldMemoRow>
-        <FormFieldMemoRow
-          field={this.getField(VMSettingsField.DESCRIPTION)}
-          fieldType={FormFieldType.TEXT_AREA}
-        >
-          <FormField>
-            <TextArea
-              onChange={this.onChange(VMSettingsField.DESCRIPTION)}
-              className="kubevirt-create-vm-modal__description"
-            />
-          </FormField>
-        </FormFieldMemoRow>
         <FormFieldMemoRow
           field={this.getField(VMSettingsField.START_VM)}
           fieldType={FormFieldType.INLINE_CHECKBOX}

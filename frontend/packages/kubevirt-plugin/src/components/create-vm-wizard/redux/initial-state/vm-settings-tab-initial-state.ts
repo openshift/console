@@ -6,18 +6,18 @@ import { getProviders } from '../../provider-definitions';
 import { InitialStepStateGetter, VMSettings } from './types';
 
 export const vmSettingsOrder = {
-  [VMSettingsField.PROVIDER]: 0,
-  [VMSettingsField.USER_TEMPLATE]: 1,
-  [VMSettingsField.PROVISION_SOURCE_TYPE]: 2,
-  [VMSettingsField.CONTAINER_IMAGE]: 3,
-  [VMSettingsField.IMAGE_URL]: 4,
-  [VMSettingsField.OPERATING_SYSTEM]: 5,
-  [VMSettingsField.FLAVOR]: 6,
-  [VMSettingsField.MEMORY]: 7,
-  [VMSettingsField.CPU]: 8,
-  [VMSettingsField.WORKLOAD_PROFILE]: 9,
-  [VMSettingsField.NAME]: 10,
-  [VMSettingsField.DESCRIPTION]: 11,
+  [VMSettingsField.NAME]: 0,
+  [VMSettingsField.DESCRIPTION]: 1,
+  [VMSettingsField.USER_TEMPLATE]: 2,
+  [VMSettingsField.PROVIDER]: 3,
+  [VMSettingsField.PROVISION_SOURCE_TYPE]: 4,
+  [VMSettingsField.CONTAINER_IMAGE]: 5,
+  [VMSettingsField.IMAGE_URL]: 6,
+  [VMSettingsField.OPERATING_SYSTEM]: 7,
+  [VMSettingsField.FLAVOR]: 8,
+  [VMSettingsField.MEMORY]: 9,
+  [VMSettingsField.CPU]: 10,
+  [VMSettingsField.WORKLOAD_PROFILE]: 11,
   [VMSettingsField.START_VM]: 12,
 };
 
