@@ -25,7 +25,7 @@ RUN container-entrypoint npm install ./yarn-1.9.4.tgz
 # prevent download of chromedriver, sass binary, and node headers as part of module installs
 ENV CHROMEDRIVER_SKIP_DOWNLOAD=true \
     SKIP_SASS_BINARY_DOWNLOAD_FOR_CI=true \
-    NPM_CONFIG_TARBALL=$HOME/node-v8.9.4-headers.tar.gz
+    NPM_CONFIG_TARBALL=$HOME/node-v12.16.1-headers.tar.gz
 
 # run the build
 RUN container-entrypoint ./build-frontend.sh
