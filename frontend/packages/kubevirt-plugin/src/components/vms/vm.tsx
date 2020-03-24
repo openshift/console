@@ -1,6 +1,7 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import * as classNames from 'classnames';
+import { match } from 'react-router';
 import { sortable } from '@patternfly/react-table';
 import {
   getName,
@@ -14,6 +15,7 @@ import {
   getDeletetionTimestamp,
   getOwnerReferences,
 } from '@console/shared';
+import { withStartGuide } from '@console/internal/components/start-guide';
 import { compareOwnerReference } from '@console/shared/src/utils/owner-references';
 import { NamespaceModel, PodModel, NodeModel } from '@console/internal/models';
 import { Table, MultiListPage, TableRow, TableData } from '@console/internal/components/factory';
@@ -28,7 +30,7 @@ import {
 } from '../../models';
 import { VMIKind, VMKind } from '../../types';
 import { getMigrationVMIName, isMigrating } from '../../selectors/vmi-migration';
-import { buildOwnerReferenceForModel, getBasicID, getLoadedData, getResource } from '../../utils';
+import { buildOwnerReferenceForModel, getBasicID, getLoadedData } from '../../utils';
 import { getVMStatus, VMStatus as VMStatusType } from '../../statuses/vm/vm';
 import { getVMStatusSortString } from '../../statuses/vm/constants';
 import { getVmiIpAddresses, getVMINodeName } from '../../selectors/vmi';
@@ -177,18 +179,31 @@ const getCreateProps = ({ namespace }: { namespace: string }) => {
   };
 };
 
-export const VirtualMachinesPage: React.FC<VirtualMachinesPageProps> = (props) => {
-  const { namespace, skipAccessReview } = props;
+export const WrappedVirtualMachinesPage: React.FC<VirtualMachinesPageProps> = (props) => {
+  const { skipAccessReview, noProjectsAvailable, showTitle } = props.customData;
+  const namespace = props.match.params.ns;
 
   const resources = [
-    getResource(VirtualMachineModel, { namespace, prop: 'vms' }),
-    getResource(PodModel, { namespace, prop: 'pods' }),
-    getResource(VirtualMachineInstanceMigrationModel, { namespace, prop: 'migrations' }),
-    getResource(VirtualMachineInstanceModel, {
+    {
+      kind: VirtualMachineModel.kind,
+      namespace,
+      prop: 'vms',
+    },
+    {
+      kind: VirtualMachineInstanceModel.kind,
       namespace,
       prop: 'vmis',
-      optional: true,
-    }),
+    },
+    {
+      kind: PodModel.kind,
+      namespace,
+      prop: 'pods',
+    },
+    {
+      kind: VirtualMachineInstanceMigrationModel.kind,
+      namespace,
+      prop: 'migrations',
+    },
   ];
 
   const flatten = ({ vms, vmis, pods, migrations }) => {
@@ -246,14 +261,16 @@ export const VirtualMachinesPage: React.FC<VirtualMachinesPageProps> = (props) =
   };
 
   const createAccessReview = skipAccessReview ? null : { model: VirtualMachineModel, namespace };
+  const modifiedProps = Object.assign({}, { mock: noProjectsAvailable }, props);
 
   return (
     <MultiListPage
-      {...props}
+      {...modifiedProps}
       createAccessReview={createAccessReview}
       createButtonText="Create Virtual Machine"
       canCreate
       title={VirtualMachineModel.labelPlural}
+      showTitle={showTitle}
       rowFilters={[vmStatusFilter]}
       ListComponent={VMList}
       createProps={getCreateProps({ namespace })}
@@ -263,6 +280,8 @@ export const VirtualMachinesPage: React.FC<VirtualMachinesPageProps> = (props) =
     />
   );
 };
+
+const VirtualMachinesPage = withStartGuide(WrappedVirtualMachinesPage);
 
 type VMRowObjType = {
   metadata: {
@@ -302,8 +321,12 @@ type VMListProps = {
 };
 
 type VirtualMachinesPageProps = {
-  namespace: string;
-  obj: VMKind;
-  hasCreateVMWizardsSupport: boolean;
-  skipAccessReview?: boolean;
+  match: match<{ ns?: string }>;
+  customData: {
+    showTitle?: boolean;
+    skipAccessReview?: boolean;
+    noProjectsAvailable?: boolean;
+  };
 };
+
+export { VirtualMachinesPage };

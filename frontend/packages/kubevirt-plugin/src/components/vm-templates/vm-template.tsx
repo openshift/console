@@ -176,7 +176,7 @@ const getCreateProps = ({ namespace }: { namespace: string }) => {
 
 const WrappedVirtualMachineTemplatesPage: React.FC<VirtualMachineTemplatesPageProps &
   React.ComponentProps<typeof ListPage>> = (props) => {
-  const { skipAccessReview, noProjectsAvailable } = props;
+  const { skipAccessReview, noProjectsAvailable, showTitle } = props.customData;
   const namespace = props.match.params.ns;
 
   const resources = [
@@ -209,6 +209,7 @@ const WrappedVirtualMachineTemplatesPage: React.FC<VirtualMachineTemplatesPagePr
       createButtonText="Create Virtual Machine Template"
       canCreate
       title={VM_TEMPLATE_LABEL_PLURAL}
+      showTitle={showTitle}
       ListComponent={VirtualMachineTemplates}
       createProps={getCreateProps({
         namespace,
@@ -234,8 +235,11 @@ type VMTemplateTableRowProps = {
 
 type VirtualMachineTemplatesPageProps = {
   match: match<{ ns?: string }>;
-  skipAccessReview?: boolean;
-  noProjectsAvailable?: boolean;
+  customData: {
+    showTitle?: boolean;
+    skipAccessReview?: boolean;
+    noProjectsAvailable?: boolean;
+  };
 };
 
 export { VirtualMachineTemplatesPage };

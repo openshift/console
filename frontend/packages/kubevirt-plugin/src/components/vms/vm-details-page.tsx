@@ -23,16 +23,16 @@ import { vmMenuActionsCreator } from './menu-actions';
 import { VMDashboard } from './vm-dashboard';
 import { TEMPLATE_TYPE_LABEL, TEMPLATE_TYPE_VM } from '../../constants/vm';
 
+export const breadcrumbsForVMPage = (match: any) => () => [
+  {
+    name: 'Virtualization',
+    path: `/k8s/ns/${match.params.ns || 'default'}/virtualization`,
+  },
+  { name: `${match.params.name} Details`, path: `${match.url}` },
+];
+
 export const VirtualMachinesDetailsPage: React.FC<VirtualMachinesDetailsPageProps> = (props) => {
   const { name, ns: namespace } = props.match.params;
-
-  const breadcrumbsForVMPage = (match: any) => () => [
-    {
-      name: VirtualMachineModel.labelPlural,
-      path: `/k8s/ns/${match.params.ns || 'default'}/virtualmachines`,
-    },
-    { name: `${match.params.name} Details`, path: `${match.url}` },
-  ];
 
   const dashboardPage = {
     href: '', // default landing page
