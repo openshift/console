@@ -1,32 +1,21 @@
 import * as React from 'react';
 import { FormikValues, useField, useFormikContext } from 'formik';
-import { FormGroup } from '@patternfly/react-core';
-import { YAMLEditorFieldProps } from './field-types';
-import { getFieldId } from './field-utils';
 import { AsyncComponent } from '@console/internal/components/utils';
-import './YAMLEditorField.scss';
+import { YAMLEditorFieldProps } from './field-types';
 
-const YAMLEditorField: React.FC<YAMLEditorFieldProps> = ({ name, actionButtonsRef }) => {
+const YAMLEditorField: React.FC<YAMLEditorFieldProps> = ({ name, onSave }) => {
   const [field] = useField(name);
   const { setFieldValue } = useFormikContext<FormikValues>();
-  const fieldId = getFieldId(name, 'yaml-editor');
 
   return (
-    <FormGroup fieldId={fieldId}>
-      <AsyncComponent
-        // eslint-disable-next-line no-underscore-dangle
-        loader={() => import('@console/internal/components/edit-yaml').then((c) => c.EditYAML_)}
-        obj={field.value}
-        onChange={(yaml: string) => setFieldValue(name, yaml)}
-        download={false}
-        customClass="ocs-yaml-editor-field"
-        buttonsRef={actionButtonsRef.current}
-        create
-        hideHeader
-        genericYAML
-        hideActions
-      />
-    </FormGroup>
+    <AsyncComponent
+      loader={() => import('../editor/YAMLEditor').then((c) => c.default)}
+      value={field.value}
+      minHeight="200px"
+      onChange={(yaml: string) => setFieldValue(name, yaml)}
+      onSave={onSave}
+      showShortcuts
+    />
   );
 };
 
