@@ -1,51 +1,21 @@
 import * as React from 'react';
-import {
-  Grid,
-  GridItem,
-  Text,
-  TextVariants,
-  Button,
-  Split,
-  SplitItem,
-} from '@patternfly/react-core';
+import { Grid, Button, Split, SplitItem } from '@patternfly/react-core';
 import { PlusCircleIcon } from '@patternfly/react-icons';
 import { ExternalLink, resourcePath } from '@console/internal/components/utils';
 import { K8sResourceKindReference } from '@console/internal/module/k8s';
-import { LabelRow } from './LabelRow/label-row';
-import { ADD_LABEL, LABEL_KEY, LABEL_VALUE } from './consts';
-import { IDLabel } from './types';
+import { ADD_LABEL, EMPTY_ADD_LABEL } from './consts';
 import './labels-list.scss';
 
-export const LabelsList = <T extends IDLabel = IDLabel>({
-  labels,
+export const LabelsList = ({
   kind = '',
+  isEmpty,
   onLabelAdd,
-  onLabelChange,
-  onLabelDelete,
+  children,
   addRowText = ADD_LABEL,
-  emptyStateAddRowText = ADD_LABEL,
-}: LabelsListProps<T>) => (
+  emptyStateAddRowText = EMPTY_ADD_LABEL,
+}: LabelsListProps) => (
   <>
-    <Grid className="kv-labels-list__grid">
-      {labels.length > 0 && [
-        <React.Fragment key="label-title-row">
-          <GridItem span={6}>
-            <Text component={TextVariants.h4}>{LABEL_KEY}</Text>
-          </GridItem>
-          <GridItem span={6}>
-            <Text component={TextVariants.h4}>{LABEL_VALUE}</Text>
-          </GridItem>
-        </React.Fragment>,
-        labels.map((label) => (
-          <LabelRow<T>
-            key={label.id}
-            label={label}
-            onChange={onLabelChange}
-            onDelete={onLabelDelete}
-          />
-        )),
-      ]}
-    </Grid>
+    <Grid className="kv-labels-list__grid">{children}</Grid>
     <Split className="kv-labels-list__buttons">
       <SplitItem>
         <Button
@@ -55,7 +25,7 @@ export const LabelsList = <T extends IDLabel = IDLabel>({
           onClick={() => onLabelAdd()}
           icon={<PlusCircleIcon />}
         >
-          {labels.length > 0 ? addRowText : emptyStateAddRowText}
+          {isEmpty ? emptyStateAddRowText : addRowText}
         </Button>
       </SplitItem>
       <SplitItem isFilled />
@@ -72,13 +42,11 @@ export const LabelsList = <T extends IDLabel = IDLabel>({
   </>
 );
 
-type LabelsListProps<T> = {
-  labels: T[];
+type LabelsListProps = {
+  children: React.ReactNode;
+  isEmpty: boolean;
   kind?: K8sResourceKindReference;
-  newLabel?: T;
   addRowText?: string;
   emptyStateAddRowText?: string;
   onLabelAdd: () => void;
-  onLabelChange: (label: T) => void;
-  onLabelDelete: (id: number) => void;
 };

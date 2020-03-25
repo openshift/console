@@ -7,7 +7,8 @@ import { vmDescriptionModal } from '../modals/vm-description-modal';
 import { BootOrderModal } from '../modals/boot-order-modal';
 import { VMCDRomModal } from '../modals/cdrom-vm-modal/vm-cdrom-modal';
 import dedicatedResourcesModal from '../modals/scheduling-modals/dedicated-resources-modal/connected-dedicated-resources-modal';
-import nodeSelectorModal from '../modals/scheduling-modals/node-selector-modal';
+import tolerationsModal from '../modals/scheduling-modals/tolerations-modal/connected-tolerations-modal';
+import nodeSelectorModal from '../modals/scheduling-modals/node-selector-modal/connected-node-selector-modal';
 import { getDescription } from '../../selectors/selectors';
 import {
   getCDRoms,
@@ -33,6 +34,7 @@ import {
   DEDICATED_RESOURCES_PINNED,
   DEDICATED_RESOURCES_NOT_PINNED,
   DEDICATED_RESOURCES_MODAL_TITLE,
+  TOLERATIONS_MODAL_TITLE,
 } from '../modals/scheduling-modals/shared/consts';
 import './_vm-template-resource.scss';
 
@@ -147,6 +149,11 @@ export const VMTemplateSchedulingList: React.FC<VMTemplateResourceSummaryProps> 
   });
   const isCPUPinned = isDedicatedCPUPlacement(vm);
   const nodeSelector = vmWrapper?.getNodeSelector();
+  const tolerations = vmWrapper?.getTolerations() || [];
+  const tolerationsLabels = tolerations.reduce((acc, { key, value }) => {
+    acc[key] = value;
+    return acc;
+  }, {});
 
   return (
     <dl className="co-m-pane__details">
@@ -158,6 +165,22 @@ export const VMTemplateSchedulingList: React.FC<VMTemplateResourceSummaryProps> 
         onEditClick={() => nodeSelectorModal({ vmLikeEntity: template, blocking: true })}
       >
         <LabelList kind="Node" labels={nodeSelector} />
+      </VMDetailsItem>
+
+      <VMDetailsItem
+        canEdit={canUpdateTemplate}
+        title={TOLERATIONS_MODAL_TITLE}
+        idValue={prefixedID(id, 'tolerations')}
+        editButtonId={prefixedID(id, 'tolerations-edit')}
+        onEditClick={() =>
+          tolerationsModal({
+            vmLikeEntity: template,
+            blocking: true,
+            modalClassName: 'modal-lg',
+          })
+        }
+      >
+        <LabelList kind="Node" labels={tolerationsLabels} />
       </VMDetailsItem>
 
       <VMDetailsItem

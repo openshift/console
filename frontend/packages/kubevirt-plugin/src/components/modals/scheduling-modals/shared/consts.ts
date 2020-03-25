@@ -19,3 +19,7 @@ export const DEDICATED_RESOURCES_MODAL_TITLE = 'Dedicated Resources';
 export const DEDICATED_RESOURCES_NOT_PINNED = 'No Dedicated resources applied';
 export const DEDICATED_RESOURCES_PINNED =
   'Workload scheduled with dedicated resources (guaranteed policy)';
+
+// Tolerations Modal
+export const TOLERATIONS_MODAL_TITLE = 'Tolerations';
+export const TOLERATIONS_EFFECTS = ['NoSchedule', 'PreferNoSchedule', 'NoExecute'];
