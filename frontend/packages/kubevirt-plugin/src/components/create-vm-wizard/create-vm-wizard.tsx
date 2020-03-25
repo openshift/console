@@ -389,7 +389,7 @@ export const CreateVMWizardPageComponent: React.FC<CreateVMWizardPageComponentPr
 
   const searchParams = new URLSearchParams(search);
   const userMode = searchParams.get('mode');
-  const userTemplateName = userMode === VMWizardMode.VM ? searchParams.get('template') : '';
+  const userTemplateName = userMode === VMWizardMode.VM ? searchParams.get('template') || '' : '';
 
   const dataIDReferences = makeIDReferences(resources);
 

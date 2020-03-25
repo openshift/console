@@ -16,7 +16,14 @@ import { iGetName } from '../../selectors/immutable/selectors';
 import { iGetFieldValue } from '../../selectors/immutable/vm-settings';
 
 export const UserTemplates: React.FC<UserTemplatesProps> = React.memo(
-  ({ userTemplateField, userTemplates, commonTemplates, onChange, openshiftFlag }) => {
+  ({
+    userTemplateField,
+    userTemplateName,
+    userTemplates,
+    commonTemplates,
+    onChange,
+    openshiftFlag,
+  }) => {
     const data = iGetLoadedData(userTemplates);
     const names: string[] =
       data &&
@@ -27,6 +34,40 @@ export const UserTemplates: React.FC<UserTemplatesProps> = React.memo(
     const sortedNames = ignoreCaseSort(names);
     const hasUserTemplates = sortedNames.length > 0;
     const hasFieldValue = typeof iGetFieldValue(userTemplateField) === 'undefined';
+
+    const optionUserTemplate = (
+      <>
+        <FormSelectOption
+          key={userTemplateName}
+          value={userTemplateName}
+          label={userTemplateName}
+        />
+      </>
+    );
+
+    const optionNoTemplate = (
+      <>
+        <FormSelectOption
+          key={SELECT_TEMPLATE}
+          value=""
+          label={SELECT_TEMPLATE}
+          isDisabled={!hasFieldValue}
+        />
+        <FormSelectOption key={NO_TEMPLATE} value="" label={NO_TEMPLATE} />
+      </>
+    );
+
+    const optionNoTemplatesAvailable = (
+      <FormSelectOption
+        key={NO_TEMPLATE_AVAILABLE}
+        value=""
+        label={openshiftFlag ? NO_TEMPLATE_AVAILABLE : NO_OPENSHIFT_TEMPLATES}
+      />
+    );
+
+    const optionsList = sortedNames.map((name) => (
+      <FormSelectOption key={name} value={name} label={name} />
+    ));
 
     return (
       <FormFieldRow
@@ -41,29 +82,12 @@ export const UserTemplates: React.FC<UserTemplatesProps> = React.memo(
             : {}
         }
       >
-        <FormField isDisabled={!hasUserTemplates}>
+        <FormField isDisabled={!hasUserTemplates || userTemplateName !== ''}>
           <FormSelect onChange={nullOnEmptyChange(onChange, VMSettingsField.USER_TEMPLATE)}>
-            {hasUserTemplates && (
-              <>
-                <FormSelectOption
-                  key={SELECT_TEMPLATE}
-                  value=""
-                  label={SELECT_TEMPLATE}
-                  isDisabled={!hasFieldValue}
-                />
-                <FormSelectOption key={NO_TEMPLATE} value="" label={NO_TEMPLATE} />
-              </>
-            )}
-            {!hasUserTemplates && (
-              <FormSelectOption
-                key={NO_TEMPLATE_AVAILABLE}
-                value=""
-                label={openshiftFlag ? NO_TEMPLATE_AVAILABLE : NO_OPENSHIFT_TEMPLATES}
-              />
-            )}
-            {sortedNames.map((name) => (
-              <FormSelectOption key={name} value={name} label={name} />
-            ))}
+            {userTemplateName && optionUserTemplate}
+            {!userTemplateName && hasUserTemplates && optionNoTemplate}
+            {!userTemplateName && !hasUserTemplates && optionNoTemplatesAvailable}
+            {!userTemplateName && optionsList}
           </FormSelect>
         </FormField>
       </FormFieldRow>
@@ -77,6 +101,7 @@ export const UserTemplates: React.FC<UserTemplatesProps> = React.memo(
 );
 
 type UserTemplatesProps = {
+  userTemplateName: string;
   userTemplateField: any;
   userTemplates: any;
   commonTemplates: any;
