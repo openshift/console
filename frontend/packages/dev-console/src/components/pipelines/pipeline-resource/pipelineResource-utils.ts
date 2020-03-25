@@ -1,8 +1,8 @@
 import * as _ from 'lodash';
 import { k8sCreate, K8sResourceKind } from '@console/internal/module/k8s';
 import { SecretModel } from '@console/internal/models';
+import { getRandomChars } from '@console/shared/src/utils/utils';
 import { PipelineResourceModel } from '../../../models';
-import { getRandomChars } from '../../../utils/shared-submit-utils';
 
 export interface ParamData {
   [key: string]: any;
