@@ -18,7 +18,7 @@ import { iGetFieldValue } from '../../selectors/immutable/vm-settings';
 export const UserTemplates: React.FC<UserTemplatesProps> = React.memo(
   ({
     userTemplateField,
-    userTemplateName,
+    forceSingleUserTemplateName,
     userTemplates,
     commonTemplates,
     onChange,
@@ -35,17 +35,17 @@ export const UserTemplates: React.FC<UserTemplatesProps> = React.memo(
     const hasUserTemplates = sortedNames.length > 0;
     const hasFieldValue = typeof iGetFieldValue(userTemplateField) === 'undefined';
 
-    const optionUserTemplate = userTemplateName && (
+    const optionUserTemplate = forceSingleUserTemplateName && (
       <>
         <FormSelectOption
-          key={userTemplateName}
-          value={userTemplateName}
-          label={userTemplateName}
+          key={forceSingleUserTemplateName}
+          value={forceSingleUserTemplateName}
+          label={forceSingleUserTemplateName}
         />
       </>
     );
 
-    const optionNoTemplatesAvailable = !userTemplateName && !hasUserTemplates && (
+    const optionNoTemplatesAvailable = !forceSingleUserTemplateName && !hasUserTemplates && (
       <FormSelectOption
         key={NO_TEMPLATE_AVAILABLE}
         value=""
@@ -65,7 +65,7 @@ export const UserTemplates: React.FC<UserTemplatesProps> = React.memo(
       </>
     );
 
-    const optionsList = !userTemplateName && hasUserTemplates && (
+    const optionsList = !forceSingleUserTemplateName && hasUserTemplates && (
       <>
         {optionNoTemplate}
         {sortedNames.map((name) => (
@@ -87,7 +87,7 @@ export const UserTemplates: React.FC<UserTemplatesProps> = React.memo(
             : {}
         }
       >
-        <FormField isDisabled={!hasUserTemplates || userTemplateName !== ''}>
+        <FormField isDisabled={!hasUserTemplates || forceSingleUserTemplateName !== ''}>
           <FormSelect onChange={nullOnEmptyChange(onChange, VMSettingsField.USER_TEMPLATE)}>
             {optionUserTemplate}
             {optionNoTemplatesAvailable}
@@ -105,7 +105,7 @@ export const UserTemplates: React.FC<UserTemplatesProps> = React.memo(
 );
 
 type UserTemplatesProps = {
-  userTemplateName: string;
+  forceSingleUserTemplateName: string;
   userTemplateField: any;
   userTemplates: any;
   commonTemplates: any;
