@@ -48,15 +48,16 @@ import { TemplateSource } from './vm-template-source';
 import './vm-template.scss';
 
 const tableColumnClass = classNames('col-lg-2', 'col-md-2', 'col-sm-4', 'col-xs-4');
-const tableColumnClassHiddenOnSmall = classNames('col-lg-2', 'col-md-2', 'hidden-sm', 'hidden-xs');
+const tableColumnClassWide = classNames('col-lg-3', 'col-md-3', 'col-sm-4', 'col-xs-4');
+const tableColumnClassNarrow = classNames('col-lg-1', 'col-md-1', 'hidden-sm', 'hidden-xs');
 
 const tableColumnClasses = [
   tableColumnClass,
   tableColumnClass,
-  tableColumnClass,
-  tableColumnClassHiddenOnSmall,
-  tableColumnClassHiddenOnSmall,
-  tableColumnClassHiddenOnSmall,
+  tableColumnClassWide,
+  tableColumnClassNarrow,
+  tableColumnClassNarrow,
+  tableColumnClassNarrow,
   tableColumnClass,
   Kebab.columnClass,
 ];
