@@ -174,4 +174,124 @@ describe('TransformResourceData', () => {
       expect(element).not.toHaveProperties([...podKeys, 'current', 'previous']);
     });
   });
+
+  it('should return only operator backed deployment config items as specified', () => {
+    spyOn(transformResourceData, 'isOperatorBackedService').and.returnValue(true);
+
+    let transformedData = transformResourceData.createDeploymentConfigItems(
+      sampleDeploymentConfigs.data,
+    );
+    expect(transformedData).toHaveLength(sampleDeploymentConfigs.data.length);
+
+    transformedData = transformResourceData.createDeploymentConfigItems(
+      sampleDeploymentConfigs.data,
+      true,
+    );
+    expect(transformedData).toHaveLength(sampleDeploymentConfigs.data.length);
+
+    transformedData = transformResourceData.createDeploymentConfigItems(
+      sampleDeploymentConfigs.data,
+      false,
+    );
+    expect(transformedData).toHaveLength(0);
+  });
+
+  it('should return only non operator backed deployment config items as specified', () => {
+    spyOn(transformResourceData, 'isOperatorBackedService').and.returnValue(false);
+
+    let transformedData = transformResourceData.createDeploymentConfigItems(
+      sampleDeploymentConfigs.data,
+    );
+    expect(transformedData).toHaveLength(sampleDeploymentConfigs.data.length);
+
+    transformedData = transformResourceData.createDeploymentConfigItems(
+      sampleDeploymentConfigs.data,
+      true,
+    );
+    expect(transformedData).toHaveLength(0);
+
+    transformedData = transformResourceData.createDeploymentConfigItems(
+      sampleDeploymentConfigs.data,
+      false,
+    );
+    expect(transformedData).toHaveLength(sampleDeploymentConfigs.data.length);
+  });
+
+  it('should return only operator backed deployment items as specified', () => {
+    spyOn(transformResourceData, 'isOperatorBackedService').and.returnValue(true);
+
+    let transformedData = transformResourceData.createDeploymentItems(sampleDeployments.data);
+    expect(transformedData).toHaveLength(sampleDeployments.data.length);
+
+    transformedData = transformResourceData.createDeploymentItems(sampleDeployments.data, true);
+    expect(transformedData).toHaveLength(sampleDeployments.data.length);
+
+    transformedData = transformResourceData.createDeploymentItems(sampleDeployments.data, false);
+    expect(transformedData).toHaveLength(0);
+  });
+
+  it('should return only non operator backed deployment items as specified', () => {
+    spyOn(transformResourceData, 'isOperatorBackedService').and.returnValue(false);
+
+    let transformedData = transformResourceData.createDeploymentItems(sampleDeployments.data);
+    expect(transformedData).toHaveLength(sampleDeployments.data.length);
+
+    transformedData = transformResourceData.createDeploymentItems(sampleDeployments.data, true);
+    expect(transformedData).toHaveLength(0);
+
+    transformedData = transformResourceData.createDeploymentItems(sampleDeployments.data, false);
+    expect(transformedData).toHaveLength(sampleDeployments.data.length);
+  });
+
+  it('should return only operator backed daemon set items as specified', () => {
+    spyOn(transformResourceData, 'isOperatorBackedService').and.returnValue(true);
+
+    let transformedData = transformResourceData.createDaemonSetItems(sampleDaemonSets.data);
+    expect(transformedData).toHaveLength(sampleDaemonSets.data.length);
+
+    transformedData = transformResourceData.createDaemonSetItems(sampleDaemonSets.data, true);
+    expect(transformedData).toHaveLength(sampleDaemonSets.data.length);
+
+    transformedData = transformResourceData.createDaemonSetItems(sampleDaemonSets.data, false);
+    expect(transformedData).toHaveLength(0);
+  });
+
+  it('should return only non operator backed daemon set items as specified', () => {
+    spyOn(transformResourceData, 'isOperatorBackedService').and.returnValue(false);
+
+    let transformedData = transformResourceData.createDaemonSetItems(sampleDaemonSets.data);
+    expect(transformedData).toHaveLength(sampleDaemonSets.data.length);
+
+    transformedData = transformResourceData.createDaemonSetItems(sampleDaemonSets.data, true);
+    expect(transformedData).toHaveLength(0);
+
+    transformedData = transformResourceData.createDaemonSetItems(sampleDaemonSets.data, false);
+    expect(transformedData).toHaveLength(sampleDaemonSets.data.length);
+  });
+
+  it('should return only operator backed stateful set items as specified', () => {
+    spyOn(transformResourceData, 'isOperatorBackedService').and.returnValue(true);
+
+    let transformedData = transformResourceData.createStatefulSetItems(sampleStatefulSets.data);
+    expect(transformedData).toHaveLength(sampleStatefulSets.data.length);
+
+    transformedData = transformResourceData.createStatefulSetItems(sampleStatefulSets.data, true);
+    expect(transformedData).toHaveLength(sampleStatefulSets.data.length);
+
+    transformedData = transformResourceData.createStatefulSetItems(sampleStatefulSets.data, false);
+    expect(transformedData).toHaveLength(0);
+  });
+
+  it('should return only non operator backed stateful set items as specified', () => {
+    spyOn(transformResourceData, 'isOperatorBackedService').and.returnValue(false);
+
+    let transformedData = transformResourceData.createStatefulSetItems(sampleStatefulSets.data);
+    expect(transformedData).toHaveLength(sampleStatefulSets.data.length);
+
+    transformedData = transformResourceData.createStatefulSetItems(sampleStatefulSets.data, true);
+    expect(transformedData).toHaveLength(0);
+
+    transformedData = transformResourceData.createStatefulSetItems(sampleStatefulSets.data, false);
+    expect(transformedData).toHaveLength(sampleStatefulSets.data.length);
+  });
 });

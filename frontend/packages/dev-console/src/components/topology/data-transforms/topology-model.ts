@@ -1,6 +1,6 @@
 import { EdgeModel, Model, NodeModel, createAggregateEdges } from '@console/topology';
 import { TopologyFilters } from '../filters/filter-utils';
-import { TopologyDataModel, TopologyDataObject, Node, Group } from '../topology-types';
+import { TopologyDataModel, TopologyDataObject, Node } from '../topology-types';
 import {
   TYPE_APPLICATION_GROUP,
   TYPE_AGGREGATE_EDGE,
@@ -23,17 +23,7 @@ import {
   getOperatorGroupModel,
   getOperatorNodeModel,
 } from '../operators/operators-topology-model';
-
-export const dataObjectFromModel = (node: Node | Group): TopologyDataObject => {
-  return {
-    id: node.id,
-    name: node.name,
-    type: node.type,
-    resources: null,
-    operatorBackedService: false,
-    data: null,
-  };
-};
+import { dataObjectFromModel } from './transform-utils';
 
 const getApplicationGroupForNode = (node: Node, groups: NodeModel[]): NodeModel => {
   const group = groups.find((g) => g.children.includes(node.id));

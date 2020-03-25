@@ -12,7 +12,6 @@ import {
   WithDragNodeProps,
   createSvgIdUrl,
 } from '@console/topology';
-import { getKnativeEventSourceIcon } from '@console/knative-plugin';
 import SvgBoxedText from '@console/dev-console/src/components/svg/SvgBoxedText';
 import {
   NodeShadows,
@@ -20,6 +19,7 @@ import {
   NODE_SHADOW_FILTER_ID,
   useSearchFilter,
 } from '@console/dev-console/src/components/topology';
+import { getKnativeEventSourceIcon } from '../../../utils/get-knative-icon';
 
 import './EventSource.scss';
 

@@ -1,7 +1,7 @@
 import * as _ from 'lodash';
-import { getOperatorBackedServiceKindMap, OperatorBackedServiceKindMap } from '@console/shared/src';
+import { getOperatorBackedServiceKindMap, OperatorBackedServiceKindMap } from '@console/shared';
 import { DeploymentKind, K8sResourceKind } from '@console/internal/module/k8s';
-import { ClusterServiceVersionKind } from '@console/operator-lifecycle-manager/src';
+import { ClusterServiceVersionKind } from '@console/operator-lifecycle-manager';
 import {
   TopologyDataModel,
   TopologyDataResources,

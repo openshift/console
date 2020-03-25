@@ -25,6 +25,17 @@ import {
 } from '../components/const';
 import { getRoutesURL } from '../topology-utils';
 
+export const dataObjectFromModel = (node: Node | Group): TopologyDataObject => {
+  return {
+    id: node.id,
+    name: node.name,
+    type: node.type,
+    resources: null,
+    operatorBackedService: false,
+    data: null,
+  };
+};
+
 /**
  * create instance of TransformResourceData, return object containing all methods
  */

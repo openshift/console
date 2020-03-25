@@ -13,7 +13,7 @@ import {
   HELM_GROUP_HEIGHT,
   HELM_GROUP_PADDING,
 } from './components/const';
-import { dataObjectFromModel } from '../data-transforms';
+import { dataObjectFromModel } from '../data-transforms/transform-utils';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export const getHelmGroupModel = (d: Group, model: DataModel, filters: Filters): NodeModel => {

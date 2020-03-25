@@ -18,10 +18,7 @@ import {
   withEditReviewAccess,
   AbstractSBRComponentFactory,
 } from '../../components';
-import {
-  TYPE_OPERATOR_BACKED_SERVICE,
-  TYPE_OPERATOR_WORKLOAD,
-} from './const';
+import { TYPE_OPERATOR_BACKED_SERVICE, TYPE_OPERATOR_WORKLOAD } from './const';
 import OperatorBackedService from './OperatorBackedService';
 
 class OperatorsComponentFactory extends AbstractSBRComponentFactory {

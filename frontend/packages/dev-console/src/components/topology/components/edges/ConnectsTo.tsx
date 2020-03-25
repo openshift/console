@@ -21,7 +21,12 @@ type ConnectsToProps = {
   WithTargetDragProps &
   WithRemoveConnectorProps;
 
-const ObservedConnectsTo: React.FC<ConnectsToProps> = ({ element, targetDragRef, children, ...others }) => {
+const ObservedConnectsTo: React.FC<ConnectsToProps> = ({
+  element,
+  targetDragRef,
+  children,
+  ...others
+}) => {
   const childEdges = element.getChildren();
   const sourceData =
     childEdges?.length > 0

@@ -11,8 +11,8 @@ import {
 import { TYPE_HELM_RELEASE, TYPE_HELM_WORKLOAD } from './components/const';
 import { HelmReleaseResourcesMap } from '../../helm/helm-types';
 import { getHelmReleaseKey } from '../topology-utils';
-import { dataObjectFromModel } from '../data-transforms/topology-model';
 import {
+  dataObjectFromModel,
   addToTopologyDataModel,
   createInstanceForResource,
   createTopologyNodeData,

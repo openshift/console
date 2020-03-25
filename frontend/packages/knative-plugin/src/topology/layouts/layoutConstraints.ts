@@ -11,7 +11,7 @@ const getNodeTimeStamp = (node: ColaNode): Date => {
 const nodeSorter = (node1: ColaNode, node2: ColaNode) =>
   getNodeTimeStamp(node1) > getNodeTimeStamp(node2) ? -1 : 1;
 
-export const getColaLayoutConstraints = (
+export const layoutConstraints = (
   nodes: ColaNode[],
   groups: ColaGroup[],
   edges: ColaLink[],

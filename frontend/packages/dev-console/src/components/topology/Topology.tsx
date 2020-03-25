@@ -22,7 +22,6 @@ import {
 } from '@console/topology';
 import { RootState } from '@console/internal/redux';
 import { useAddToProjectAccess } from '../../utils/useAddToProjectAccess';
-import { ALLOW_SERVICE_BINDING } from '../../const';
 import { getActiveApplication } from '@console/internal/reducers/ui';
 import KnativeComponentFactory from '@console/knative-plugin/src/topology/knativeComponentFactory';
 import TopologySideBar from './TopologySideBar';
@@ -46,6 +45,7 @@ import { TYPE_HELM_RELEASE } from './helm/components/const';
 import { HelmComponentFactory } from './helm/components/helmComponentFactory';
 import { TYPE_OPERATOR_BACKED_SERVICE } from './operators/components/const';
 import { OperatorsComponentFactory } from './operators/components/operatorsComponentFactory';
+import { getServiceBindingStatus } from './topology-utils';
 
 interface StateProps {
   filters: TopologyFilters;
@@ -309,8 +309,6 @@ const Topology: React.FC<TopologyProps> = ({
     </TopologyView>
   );
 };
-
-const getServiceBindingStatus = ({ FLAGS }: RootState): boolean => FLAGS.get(ALLOW_SERVICE_BINDING);
 
 const TopologyStateToProps = (state: RootState): StateProps => {
   return {

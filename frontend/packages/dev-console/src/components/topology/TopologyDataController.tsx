@@ -9,10 +9,9 @@ import { RootState } from '@console/internal/redux';
 import { safeLoadAll } from 'js-yaml';
 import { ServiceBindingRequestModel } from '../../models';
 import { transformTopologyData } from './data-transforms/data-transformer';
-import { allowedResources, getHelmReleaseKey } from './topology-utils';
+import { allowedResources, getHelmReleaseKey, getServiceBindingStatus } from './topology-utils';
 import { TopologyDataModel, TopologyDataResources, TrafficData } from './topology-types';
 import { HelmReleaseResourcesMap } from '../helm/helm-types';
-import { ALLOW_SERVICE_BINDING } from '../../const';
 
 export interface RenderProps {
   data?: TopologyDataModel;
@@ -31,9 +30,9 @@ export interface ControllerProps {
   utils: Function[];
   loaded?: boolean;
   loadError?: any;
-  namespace: string;
   resources?: TopologyDataResources;
-  render(RenderProps): React.ReactElement;
+  render(props: RenderProps): React.ReactElement;
+  namespace: string;
   serviceBinding: boolean;
   trafficData?: TrafficData;
 }
@@ -96,7 +95,7 @@ const Controller: React.FC<ControllerProps> = ({
   }, [namespace, resources, resources.secrets, secretCount, setHelmResourcesMap]);
 
   return render({
-    loaded: loaded && helmResourcesMap,
+    loaded: loaded && !!helmResourcesMap,
     loadError,
     namespace,
     serviceBinding,
@@ -135,8 +134,6 @@ export const TopologyDataController: React.FC<TopologyDataControllerProps> = ({
     </Firehose>
   );
 };
-
-const getServiceBindingStatus = ({ FLAGS }: RootState): boolean => FLAGS.get(ALLOW_SERVICE_BINDING);
 
 const DataControllerStateToProps = (state: RootState) => {
   const resourceList = plugins.registry

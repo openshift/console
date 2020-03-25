@@ -13,13 +13,12 @@ import {
 import { RootState } from '@console/internal/redux';
 import { Tooltip, TooltipPosition } from '@patternfly/react-core';
 import { ExternalLinkAltIcon } from '@patternfly/react-icons';
-import { ALLOW_SERVICE_BINDING } from '../../../../const';
 import { routeDecoratorIcon } from '../../../import/render-utils';
 import { Decorator } from './Decorator';
 import PodSet from './PodSet';
 import BuildDecorator from './build-decorators/BuildDecorator';
 import { BaseNode } from './BaseNode';
-import { getCheURL, getEditURL } from '../../topology-utils';
+import { getCheURL, getEditURL, getServiceBindingStatus } from '../../topology-utils';
 import { useDisplayFilters } from '../../filters/useDisplayFilters';
 
 interface StateProps {
@@ -136,8 +135,6 @@ const ObservedWorkloadNode: React.FC<WorkloadNodeProps> = ({
     </g>
   );
 };
-
-const getServiceBindingStatus = ({ FLAGS }: RootState): boolean => FLAGS.get(ALLOW_SERVICE_BINDING);
 
 const mapStateToProps = (state: RootState): StateProps => {
   const consoleLinks = state.UI.get('consoleLinks');

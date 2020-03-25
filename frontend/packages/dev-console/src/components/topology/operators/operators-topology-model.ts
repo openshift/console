@@ -13,7 +13,7 @@ import {
   OPERATOR_GROUP_HEIGHT,
   OPERATOR_GROUP_PADDING,
 } from './components/const';
-import { dataObjectFromModel } from '../data-transforms';
+import { dataObjectFromModel } from '../data-transforms/transform-utils';
 import { NodeShape } from '@console/topology/src/types';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
