@@ -35,7 +35,7 @@ export const UserTemplates: React.FC<UserTemplatesProps> = React.memo(
     const hasUserTemplates = sortedNames.length > 0;
     const hasFieldValue = typeof iGetFieldValue(userTemplateField) === 'undefined';
 
-    const optionUserTemplate = (
+    const optionUserTemplate = userTemplateName && (
       <>
         <FormSelectOption
           key={userTemplateName}
@@ -43,6 +43,14 @@ export const UserTemplates: React.FC<UserTemplatesProps> = React.memo(
           label={userTemplateName}
         />
       </>
+    );
+
+    const optionNoTemplatesAvailable = !userTemplateName && !hasUserTemplates && (
+      <FormSelectOption
+        key={NO_TEMPLATE_AVAILABLE}
+        value=""
+        label={openshiftFlag ? NO_TEMPLATE_AVAILABLE : NO_OPENSHIFT_TEMPLATES}
+      />
     );
 
     const optionNoTemplate = (
@@ -57,17 +65,14 @@ export const UserTemplates: React.FC<UserTemplatesProps> = React.memo(
       </>
     );
 
-    const optionNoTemplatesAvailable = (
-      <FormSelectOption
-        key={NO_TEMPLATE_AVAILABLE}
-        value=""
-        label={openshiftFlag ? NO_TEMPLATE_AVAILABLE : NO_OPENSHIFT_TEMPLATES}
-      />
+    const optionsList = !userTemplateName && hasUserTemplates && (
+      <>
+        {optionNoTemplate}
+        {sortedNames.map((name) => (
+          <FormSelectOption key={name} value={name} label={name} />
+        ))}
+      </>
     );
-
-    const optionsList = sortedNames.map((name) => (
-      <FormSelectOption key={name} value={name} label={name} />
-    ));
 
     return (
       <FormFieldRow
@@ -84,10 +89,9 @@ export const UserTemplates: React.FC<UserTemplatesProps> = React.memo(
       >
         <FormField isDisabled={!hasUserTemplates || userTemplateName !== ''}>
           <FormSelect onChange={nullOnEmptyChange(onChange, VMSettingsField.USER_TEMPLATE)}>
-            {userTemplateName && optionUserTemplate}
-            {!userTemplateName && hasUserTemplates && optionNoTemplate}
-            {!userTemplateName && !hasUserTemplates && optionNoTemplatesAvailable}
-            {!userTemplateName && optionsList}
+            {optionUserTemplate}
+            {optionNoTemplatesAvailable}
+            {optionsList}
           </FormSelect>
         </FormField>
       </FormFieldRow>

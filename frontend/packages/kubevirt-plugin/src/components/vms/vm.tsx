@@ -41,7 +41,7 @@ import { VMILikeEntityKind } from '../../types/vmLike';
 import { getVMWizardCreateLink } from '../../utils/utils';
 
 import './vm.scss';
-import { VMWizardMode } from '../create-vm-wizard/types';
+import { VMWizardMode } from '../../constants/vm';
 
 const tableColumnClasses = [
   classNames('col-lg-2', 'col-md-2', 'col-sm-6', 'col-xs-6'),

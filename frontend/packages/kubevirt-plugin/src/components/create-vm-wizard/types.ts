@@ -41,18 +41,6 @@ export enum VMWizardProps {
 
 export const ALL_VM_WIZARD_TABS = getStringEnumValues<VMWizardTab>(VMWizardTab);
 
-export enum VMWizardName {
-  YAML = 'yaml',
-  WIZARD = 'wizard',
-  IMPORT = 'wizardImport',
-}
-
-export enum VMWizardMode {
-  IMPORT = 'import',
-  TEMPLATE = 'template',
-  VM = 'vm',
-}
-
 export enum VMSettingsField {
   NAME = 'NAME',
   HOSTNAME = 'HOSTNAME',

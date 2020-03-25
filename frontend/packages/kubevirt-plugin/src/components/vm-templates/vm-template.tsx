@@ -36,9 +36,14 @@ import {
   getTemplateFlavors,
 } from '../../selectors/vm-template/advanced';
 import { getLoadedData } from '../../utils';
-import { TEMPLATE_TYPE_LABEL, TEMPLATE_TYPE_VM } from '../../constants/vm';
+import {
+  TEMPLATE_TYPE_LABEL,
+  TEMPLATE_TYPE_VM,
+  VMWizardName,
+  VMWizardMode,
+} from '../../constants/vm';
 import { DataVolumeModel } from '../../models';
-import { VMWizardName, VMWizardMode } from '../create-vm-wizard/types';
+
 import { V1alpha1DataVolume } from '../../types/vm/disk/V1alpha1DataVolume';
 import { getVMWizardCreateLink } from '../../utils/utils';
 import { VMTemplateLink } from './vm-template-link';

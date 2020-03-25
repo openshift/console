@@ -15,7 +15,12 @@ import { Location } from 'history';
 import { match as RouterMatch } from 'react-router';
 import { withReduxID } from '../../utils/redux/common';
 import { DataVolumeModel, VirtualMachineModel } from '../../models';
-import { TEMPLATE_TYPE_BASE, TEMPLATE_TYPE_LABEL, TEMPLATE_TYPE_VM } from '../../constants/vm';
+import {
+  TEMPLATE_TYPE_BASE,
+  TEMPLATE_TYPE_LABEL,
+  TEMPLATE_TYPE_VM,
+  VMWizardMode,
+} from '../../constants/vm';
 import { getResource } from '../../utils';
 import { EnhancedK8sMethods } from '../../k8s/enhancedK8sMethods/enhancedK8sMethods';
 import { cleanupAndGetResults, getResults } from '../../k8s/enhancedK8sMethods/k8sMethodsUtils';
@@ -32,7 +37,6 @@ import {
   VMWizardProps,
   VMWizardStorage,
   VMWizardTab,
-  VMWizardMode,
 } from './types';
 import { CREATE_VM, CREATE_VM_TEMPLATE, TabTitleResolver, IMPORT_VM } from './strings/strings';
 import { vmWizardActions } from './redux/actions';
@@ -389,7 +393,7 @@ export const CreateVMWizardPageComponent: React.FC<CreateVMWizardPageComponentPr
 
   const searchParams = new URLSearchParams(search);
   const userMode = searchParams.get('mode');
-  const userTemplateName = userMode === VMWizardMode.VM ? searchParams.get('template') || '' : '';
+  const userTemplateName = (userMode === VMWizardMode.VM && searchParams.get('template')) || '';
 
   const dataIDReferences = makeIDReferences(resources);
 

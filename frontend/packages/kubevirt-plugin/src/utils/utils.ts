@@ -1,7 +1,7 @@
 import { referenceForModel } from '@console/internal/module/k8s';
 import { getName, getNamespace } from '@console/shared/src';
 import * as _ from 'lodash';
-import { VMWizardName, VMWizardMode } from '../components/create-vm-wizard/types';
+import { VMWizardName, VMWizardMode } from '../constants/vm';
 import { VirtualMachineModel } from '../models';
 
 export const getSequence = (from, to) => Array.from({ length: to - from + 1 }, (v, i) => i + from);

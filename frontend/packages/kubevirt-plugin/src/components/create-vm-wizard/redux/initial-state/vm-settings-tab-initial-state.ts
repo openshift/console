@@ -44,7 +44,7 @@ export const getInitialVmSettings = (data: CommonData): VMSettings => {
     [VMSettingsField.DESCRIPTION]: {},
     [VMSettingsField.USER_TEMPLATE]: {
       isHidden: hiddenByProviderOrTemplate,
-      initialized: isProviderImport || isCreateTemplate || !userTemplateName,
+      initialized: !(isCreateTemplate && userTemplateName),
       value: userTemplateName || undefined,
     },
     [VMSettingsField.PROVIDER]: {

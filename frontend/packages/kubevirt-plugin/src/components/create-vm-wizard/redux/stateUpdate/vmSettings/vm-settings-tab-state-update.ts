@@ -31,13 +31,17 @@ export const selectUserTemplateOnLoadedUpdater = (options: UpdateOptions) => {
     return;
   }
 
-  const userTemplates = iGetLoadedCommonData(state, id, VMWizardProps.userTemplates);
   const userTemplateName = iGetCommonData(state, id, VMWizardProps.userTemplateName);
+  if (!userTemplateName) {
+    return;
+  }
 
-  const isUserTemplateValid =
-    userTemplateName &&
-    userTemplates &&
-    userTemplates.find((template) => iGetName(template) === userTemplateName);
+  const userTemplates = iGetLoadedCommonData(state, id, VMWizardProps.userTemplates);
+
+  const isUserTemplateValid = userTemplates?.find(
+    (template) => iGetName(template) === userTemplateName,
+  );
+
   if (!isUserTemplateValid) {
     return;
   }
