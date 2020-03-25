@@ -13,8 +13,8 @@ import { VMTemplateLink } from '../vm-templates/vm-template-link';
 import { getBasicID, prefixedID } from '../../utils';
 import { vmDescriptionModal, vmFlavorModal } from '../modals';
 import { VMCDRomModal } from '../modals/cdrom-vm-modal/vm-cdrom-modal';
-import { DedicatedResourcesModal } from '../modals/dedicated-resources-modal/dedicated-resources-modal';
 import { BootOrderModal } from '../modals/boot-order-modal/boot-order-modal';
+import dedicatedResourcesModal from '../modals/scheduling-modals/dedicated-resources-modal/connected-dedicated-resources-modal';
 import nodeSelectorModal from '../modals/scheduling-modals/node-selector-modal';
 import VMStatusModal from '../modals/vm-status-modal/vm-status-modal';
 import { getDescription } from '../../selectors/selectors';
@@ -23,11 +23,6 @@ import { EditButton } from '../edit-button';
 import { VMStatuses } from '../vm-status';
 import { DiskSummary } from '../vm-disks/disk-summary';
 import { BootOrderSummary } from '../boot-order';
-import {
-  RESOURCE_PINNED,
-  RESOURCE_NOT_PINNED,
-  DEDICATED_RESOURCES,
-} from '../modals/dedicated-resources-modal/consts';
 import { getOperatingSystemName, getOperatingSystem } from '../../selectors/vm';
 import { getVmiIpAddresses } from '../../selectors/vmi/ip-address';
 import { findVMIPod } from '../../selectors/pod/selectors';
@@ -35,7 +30,12 @@ import { isVMIPaused, getVMINodeName } from '../../selectors/vmi';
 import { VirtualMachineInstanceModel, VirtualMachineModel } from '../../models';
 import { asVMILikeWrapper } from '../../k8s/wrapper/utils/convert';
 import { getVMTemplate } from '../../selectors/vm-template/selectors';
-import { NODE_SELECTOR_MODAL_TITLE } from '../modals/scheduling-modals/shared/consts';
+import {
+  NODE_SELECTOR_MODAL_TITLE,
+  DEDICATED_RESOURCES_PINNED,
+  DEDICATED_RESOURCES_NOT_PINNED,
+  DEDICATED_RESOURCES_MODAL_TITLE,
+} from '../modals/scheduling-modals/shared/consts';
 import './vm-resource.scss';
 
 export const VMDetailsItem: React.FC<VMDetailsItemProps> = ({
@@ -218,10 +218,6 @@ export const VMSchedulingList: React.FC<VMSchedulingListProps> = ({
   const vmiLikeWrapper = asVMILikeWrapper(vmiLike);
   const canEdit = vmiLike && canUpdateVM && kindObj !== VirtualMachineInstanceModel;
 
-  const [isDedicatedResourcesModalOpen, setDedicatedResourcesModalOpen] = React.useState<boolean>(
-    false,
-  );
-
   const id = getBasicID(vmiLike);
   const flavorText = getFlavorText({
     memory: vmiLikeWrapper?.getMemory(),
@@ -255,18 +251,13 @@ export const VMSchedulingList: React.FC<VMSchedulingListProps> = ({
       </VMDetailsItem>
 
       <VMDetailsItem
-        title={DEDICATED_RESOURCES}
+        title={DEDICATED_RESOURCES_MODAL_TITLE}
         idValue={prefixedID(id, 'dedicated-resources')}
         canEdit={canEdit}
-        onEditClick={() => setDedicatedResourcesModalOpen(true)}
+        onEditClick={() => dedicatedResourcesModal({ vmLikeEntity: vm, blocking: true })}
         editButtonId={prefixedID(id, 'dedicated-resources-edit')}
       >
-        <DedicatedResourcesModal
-          vmLikeEntity={vm}
-          isOpen={isDedicatedResourcesModalOpen}
-          setOpen={setDedicatedResourcesModalOpen}
-        />
-        {isCPUPinned ? RESOURCE_PINNED : RESOURCE_NOT_PINNED}
+        {isCPUPinned ? DEDICATED_RESOURCES_PINNED : DEDICATED_RESOURCES_NOT_PINNED}
       </VMDetailsItem>
     </dl>
   );

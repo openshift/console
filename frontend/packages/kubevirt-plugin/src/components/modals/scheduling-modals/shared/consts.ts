@@ -12,3 +12,10 @@ export const SCHEDULING_NO_NODES_MATCH_TEXT = 'No matching nodes found for the l
 
 // Node Selector
 export const NODE_SELECTOR_MODAL_TITLE = 'Node Selector';
+
+// Dedicated Resources
+export const DEDICATED_RESOURCES_LABELS = [{ id: null, key: 'cpumanager', value: 'true' }];
+export const DEDICATED_RESOURCES_MODAL_TITLE = 'Dedicated Resources';
+export const DEDICATED_RESOURCES_NOT_PINNED = 'No Dedicated resources applied';
+export const DEDICATED_RESOURCES_PINNED =
+  'Workload scheduled with dedicated resources (guaranteed policy)';
