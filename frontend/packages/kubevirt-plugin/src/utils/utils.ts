@@ -1,6 +1,7 @@
 import { referenceForModel } from '@console/internal/module/k8s';
 import { getName, getNamespace } from '@console/shared/src';
 import * as _ from 'lodash';
+import { VMWizardName, VMWizardMode } from '../components/create-vm-wizard/types';
 import { VirtualMachineModel } from '../models';
 
 export const getSequence = (from, to) => Array.from({ length: to - from + 1 }, (v, i) => i + from);
@@ -53,3 +54,20 @@ export const getVMLikeModelDetailPath = (
   namespace: string,
   name: string,
 ) => `${getVMLikeModelListPath(isCreateTemplate, namespace)}/${name}`;
+
+export const getVMWizardCreateLink = (
+  namespace: string,
+  itemName: VMWizardName = VMWizardName.WIZARD,
+  mode: VMWizardMode = VMWizardMode.TEMPLATE,
+  template?: string,
+) => {
+  // Overide mode if name is import.
+  const wizardMode = itemName === VMWizardName.IMPORT ? VMWizardMode.IMPORT : mode;
+
+  const type = itemName === VMWizardName.YAML ? '~new' : '~new-wizard';
+  const args = `${wizardMode ? `mode=${wizardMode}` : ''}${
+    template ? `&template=${template}` : ''
+  }`;
+
+  return `/k8s/ns/${namespace || 'default'}/virtualization/${type}${args ? `?${args}` : ''}`; // covers 'yaml', new-wizard and default
+};

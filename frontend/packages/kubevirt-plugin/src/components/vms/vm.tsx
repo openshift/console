@@ -38,8 +38,10 @@ import { isVM, getVMLikeModel } from '../../selectors/vm';
 import { vmStatusFilter } from './table-filters';
 import { vmMenuActions, vmiMenuActions } from './menu-actions';
 import { VMILikeEntityKind } from '../../types/vmLike';
+import { getVMWizardCreateLink } from '../../utils/utils';
 
 import './vm.scss';
+import { VMWizardMode } from '../create-vm-wizard/types';
 
 const tableColumnClasses = [
   classNames('col-lg-2', 'col-md-2', 'col-sm-6', 'col-xs-6'),
@@ -163,19 +165,7 @@ const getCreateProps = ({ namespace }: { namespace: string }) => {
 
   return {
     items,
-    createLink: (itemName) => {
-      const base = `/k8s/ns/${namespace || 'default'}/virtualization`;
-
-      switch (itemName) {
-        case 'wizard':
-          return `${base}/~new-wizard`;
-        case 'wizardImport':
-          return `${base}/~new-wizard?mode=import`;
-        case 'yaml':
-        default:
-          return `${base}/~new`;
-      }
-    },
+    createLink: (itemName) => getVMWizardCreateLink(namespace, itemName, VMWizardMode.VM),
   };
 };
 

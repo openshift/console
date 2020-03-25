@@ -38,7 +38,9 @@ import {
 import { getLoadedData } from '../../utils';
 import { TEMPLATE_TYPE_LABEL, TEMPLATE_TYPE_VM } from '../../constants/vm';
 import { DataVolumeModel } from '../../models';
+import { VMWizardName, VMWizardMode } from '../create-vm-wizard/types';
 import { V1alpha1DataVolume } from '../../types/vm/disk/V1alpha1DataVolume';
+import { getVMWizardCreateLink } from '../../utils/utils';
 import { VMTemplateLink } from './vm-template-link';
 import { menuActions } from './menu-actions';
 import { TemplateSource } from './vm-template-source';
@@ -98,16 +100,6 @@ const VMTemplateTableHeader = () =>
 
 VMTemplateTableHeader.displayName = 'VMTemplateTableHeader';
 
-const getCreateLink = (
-  namespace: string,
-  itemName: 'yaml' | 'wizard' = 'wizard',
-  mode: 'template' | 'vm' = 'template',
-  template?: string,
-) =>
-  `/k8s/ns/${namespace || 'default'}/virtualization/${
-    itemName === 'yaml' ? '~new' : '~new-wizard'
-  }?mode=${mode}${template ? `&template=${template}` : ''}`; // covers 'yaml', new-wizard and default
-
 const VMTemplateTableRow: React.FC<VMTemplateTableRowProps> = ({
   obj: template,
   customData: { dataVolumeLookup },
@@ -144,7 +136,12 @@ const VMTemplateTableRow: React.FC<VMTemplateTableRowProps> = ({
       <TableData className={dimensify()}>{getTemplateFlavors([template])[0]}</TableData>
       <TableData className={dimensify()}>
         <Link
-          to={getCreateLink(getNamespace(template), 'wizard', 'vm', getName(template))}
+          to={getVMWizardCreateLink(
+            getNamespace(template),
+            VMWizardName.WIZARD,
+            VMWizardMode.VM,
+            getName(template),
+          )}
           title="Create Virtual Machine"
           className="co-resource-item__resource-name"
         >
@@ -192,7 +189,7 @@ const getCreateProps = ({ namespace }: { namespace: string }) => {
 
   return {
     items,
-    createLink: (itemName) => getCreateLink(namespace, itemName),
+    createLink: (itemName) => getVMWizardCreateLink(namespace, itemName, VMWizardMode.TEMPLATE),
   };
 };
 

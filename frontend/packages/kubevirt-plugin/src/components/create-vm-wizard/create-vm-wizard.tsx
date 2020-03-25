@@ -32,6 +32,7 @@ import {
   VMWizardProps,
   VMWizardStorage,
   VMWizardTab,
+  VMWizardMode,
 } from './types';
 import { CREATE_VM, CREATE_VM_TEMPLATE, TabTitleResolver, IMPORT_VM } from './strings/strings';
 import { vmWizardActions } from './redux/actions';
@@ -397,8 +398,8 @@ export const CreateVMWizardPageComponent: React.FC<CreateVMWizardPageComponentPr
   return (
     <Firehose resources={resources} doNotConnectToState>
       <CreateVMWizard
-        isCreateTemplate={userMode === 'template'}
-        isProviderImport={userMode === 'import'}
+        isCreateTemplate={userMode === VMWizardMode.TEMPLATE}
+        isProviderImport={userMode === VMWizardMode.IMPORT}
         userTemplateName={userTemplateName}
         dataIDReferences={dataIDReferences}
         reduxID={reduxID}
