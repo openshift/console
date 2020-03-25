@@ -324,7 +324,7 @@ export type PodTemplate = {
 };
 
 export type PodKind = {
-  status: PodStatus;
+  status?: PodStatus;
 } & K8sResourceCommon &
   PodTemplate;
 

@@ -452,12 +452,16 @@ const PodEnvironmentComponent = (props) => (
   <EnvironmentPage obj={props.obj} rawEnvData={props.obj.spec} envPath={envPath} readOnly={true} />
 );
 
-const PodExecLoader: React.FC<PodExecLoaderProps> = ({ obj }) => (
+export const PodExecLoader: React.FC<PodExecLoaderProps> = ({ obj, message }) => (
   <div className="co-m-pane__body">
     <div className="row">
       <div className="col-xs-12">
         <div className="panel-body">
-          <AsyncComponent loader={() => import('./pod-exec').then((c) => c.PodExec)} obj={obj} />
+          <AsyncComponent
+            loader={() => import('./pod-exec').then((c) => c.PodExec)}
+            obj={obj}
+            message={message}
+          />
         </div>
       </div>
     </div>
@@ -581,6 +585,7 @@ type PodDetailsListProps = {
 
 type PodExecLoaderProps = {
   obj: PodKind;
+  message?: React.ReactElement;
 };
 
 type PodDetailsProps = {
