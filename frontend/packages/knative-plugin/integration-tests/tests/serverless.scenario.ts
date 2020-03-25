@@ -20,7 +20,11 @@ import {
   pageSidebar,
 } from '../views/serverless.view';
 
-import { switchPerspective, Perspective, sideHeader } from '../../../dev-console/integration-tests/views/dev-perspective.view';
+import {
+  switchPerspective,
+  Perspective,
+  sideHeader,
+} from '../../../dev-console/integration-tests/views/dev-perspective.view';
 import * as sidenavView from '../../../../integration-tests/views/sidenav.view';
 import * as crudView from '../../../../integration-tests/views/crud.view';
 import * as catalogView from '../../../../integration-tests/views/catalog.view';
@@ -96,7 +100,7 @@ describe('Serverless', async () => {
   it(`create knative-serving namespace and apply serving.yaml`, async () => {
     await execSync(`oc new-project knative-serving`);
     await execSync(
-      `oc apply -f ./packages/dev-console/integration-tests/views/serverless-service.yaml`,
+      `oc apply -f ./packages/knative-plugin/integration-tests/views/serverless-service.yaml`,
     );
     await browser.get(`${appHost}/k8s/cluster/projects/`);
     await crudView.isLoaded();
