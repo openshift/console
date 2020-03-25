@@ -1,7 +1,9 @@
 import * as React from 'react';
 import { IDEntity } from '../types';
 
-export const useIDEntities = <T extends IDEntity>(initialEntities: T[]): useIDEntitiesValues<T> => {
+export const useIDEntities = <T extends IDEntity = IDEntity>(
+  initialEntities: T[] = [],
+): useIDEntitiesValues<T> => {
   const [entities, setEntities] = React.useState<T[]>(initialEntities);
 
   const onEntityAdd = React.useCallback(

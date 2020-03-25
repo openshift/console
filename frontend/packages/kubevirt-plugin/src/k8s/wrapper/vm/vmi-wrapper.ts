@@ -6,11 +6,12 @@ import {
   getVMINetworks,
   getVMIVolumes,
   getVMIInterfaces,
+  getVMINodeSelector,
+  getVMITolerations,
 } from '../../../selectors/vmi';
 import { VMILikeMethods } from './types';
 import { transformDevices } from '../../../selectors/vm';
 import { findKeySuffixValue } from '../../../selectors/utils';
-import { getNodeSelector } from '../../../selectors/vm/selectors';
 import {
   TEMPLATE_FLAVOR_LABEL,
   TEMPLATE_OS_LABEL,
@@ -43,5 +44,7 @@ export class VMIWrapper extends K8sResourceWrapper<VMIKind, VMIWrapper> implemen
 
   isDedicatedCPUPlacement = () => this.data.spec?.domain?.cpu?.dedicatedCpuPlacement || false;
 
-  getNodeSelector = () => getNodeSelector(this.data);
+  getNodeSelector = () => getVMINodeSelector(this.data);
+
+  getTolerations = () => getVMITolerations(this.data);
 }

@@ -7,26 +7,25 @@ import {
   withHandlePromise,
   HandlePromiseProps,
 } from '@console/internal/components/utils';
-import { k8sPatch } from '@console/internal/module/k8s';
+import { k8sPatch, K8sResourceKind } from '@console/internal/module/k8s';
 import { NodeModel } from '@console/internal/models';
 import { isLoaded, getLoadedData, getLoadError } from '../../../../utils';
 import { ModalFooter } from '../../modal/modal-footer';
 import { VMLikeEntityKind } from '../../../../types/vmLike';
+import { getVMLikeTolerations } from '../../../../selectors/vm-like/selectors';
 import { getVMLikeModel } from '../../../../selectors/vm';
-import { getVMLikeNodeSelector } from '../../../../selectors/vm-like/selectors';
-import { getNodeSelectorPatches } from '../../../../k8s/patches/vm/vm-scheduling-patches';
+import { getTolerationsPatch } from '../../../../k8s/patches/vm/vm-scheduling-patches';
 import { NodeChecker } from '../shared/NodeChecker/node-checker';
 import { useNodeQualifier } from '../shared/hooks';
 import { LabelsList } from '../../../LabelsList/labels-list';
-import { LabelRow } from '../../../LabelsList/LabelRow/label-row';
-import { NODE_SELECTOR_MODAL_TITLE } from '../shared/consts';
-import { nodeSelectorToIDLabels } from './helpers';
+import { TOLERATIONS_MODAL_TITLE, TOLERATIONS_EFFECTS } from '../shared/consts';
 import { useIDEntities } from '../../../../hooks/use-id-entities';
-import { IDLabel } from '../../../LabelsList/types';
 import { useCollisionChecker } from '../../../../hooks/use-collision-checker';
-import { NodeSelectorHeader } from './node-selector-header';
+import { TolerationRow } from './toleration-row';
+import { TolerationHeader } from './toleration-header';
+import { TolerationLabel } from './types';
 
-export const NSModal = withHandlePromise(
+export const TModal = withHandlePromise(
   ({
     nodes,
     close,
@@ -35,45 +34,56 @@ export const NSModal = withHandlePromise(
     errorMessage,
     vmLikeEntity,
     vmLikeEntityLoading,
-  }: NSModalProps) => {
+  }: TModalProps) => {
     const vmLikeFinal = getLoadedData(vmLikeEntityLoading, vmLikeEntity);
     const loadError = getLoadError(nodes, NodeModel);
 
     const [
-      selectorLabels,
-      setSelectorLabels,
+      tolerationsLabels,
+      setTolerationsLabels,
       onLabelAdd,
       onLabelChange,
       onLabelDelete,
-    ] = useIDEntities<IDLabel>(nodeSelectorToIDLabels(getVMLikeNodeSelector(vmLikeEntity)));
+    ] = useIDEntities<TolerationLabel>(
+      getVMLikeTolerations(vmLikeEntity)?.map((toleration, id) => ({ ...toleration, id })),
+    );
 
-    const qualifiedNodes = useNodeQualifier(selectorLabels, nodes);
+    const qualifiedNodes = useNodeQualifier(tolerationsLabels, nodes);
+
     const [showCollisionAlert, reload] = useCollisionChecker<VMLikeEntityKind>(
       vmLikeFinal,
       (oldVM: VMLikeEntityKind, newVM: VMLikeEntityKind) =>
-        _.isEqual(getVMLikeNodeSelector(oldVM), getVMLikeNodeSelector(newVM)),
+        _.isEqual(getVMLikeTolerations(oldVM), getVMLikeTolerations(newVM)),
     );
 
-    const onSelectorLabelAdd = () => onLabelAdd({ id: null, key: '', value: '' } as IDLabel);
+    const onTolerationAdd = () =>
+      onLabelAdd({
+        id: null,
+        key: '',
+        value: '',
+        effect: TOLERATIONS_EFFECTS[0],
+      } as TolerationLabel);
 
     const onReload = () => {
       reload();
-      setSelectorLabels(nodeSelectorToIDLabels(getVMLikeNodeSelector(vmLikeFinal)));
+      setTolerationsLabels(
+        getVMLikeTolerations(vmLikeFinal)?.map((toleration, id) => ({
+          ...toleration,
+          id,
+        })) || [],
+      );
     };
 
     const onSubmit = async () => {
-      const k8sSelector = selectorLabels.reduce((acc, { key, value }) => {
-        acc[key] = value;
-        return acc;
-      }, {});
+      const k8sTolerations = tolerationsLabels.filter(({ key }) => !!key);
 
-      if (!_.isEqual(getVMLikeNodeSelector(vmLikeFinal), k8sSelector)) {
+      if (!_.isEqual(getVMLikeTolerations(vmLikeFinal), k8sTolerations)) {
         // eslint-disable-next-line promise/catch-or-return
         handlePromise(
           k8sPatch(
             getVMLikeModel(vmLikeFinal),
             vmLikeFinal,
-            await getNodeSelectorPatches(vmLikeFinal, k8sSelector),
+            await getTolerationsPatch(vmLikeFinal, k8sTolerations),
           ),
         ).then(close);
       } else {
@@ -83,18 +93,20 @@ export const NSModal = withHandlePromise(
 
     return (
       <div className="modal-content">
-        <ModalTitle>{NODE_SELECTOR_MODAL_TITLE}</ModalTitle>
+        <ModalTitle>{TOLERATIONS_MODAL_TITLE}</ModalTitle>
         <ModalBody>
           <LabelsList
-            isEmpty={selectorLabels.length === 0}
+            isEmpty={tolerationsLabels.length === 0}
             kind="Node"
-            onLabelAdd={onSelectorLabelAdd}
+            onLabelAdd={onTolerationAdd}
+            addRowText="Add Toleration"
+            emptyStateAddRowText="Add Toleration to specify qualifying nodes"
           >
-            {selectorLabels.length > 0 && (
+            {tolerationsLabels.length > 0 && (
               <>
-                <NodeSelectorHeader key="label-title-row" />
-                {selectorLabels.map((label) => (
-                  <LabelRow
+                <TolerationHeader key="label-title-row" />
+                {tolerationsLabels.map((label) => (
+                  <TolerationRow
                     key={label.id}
                     label={label}
                     onChange={onLabelChange}
@@ -107,20 +119,20 @@ export const NSModal = withHandlePromise(
           <NodeChecker qualifiedNodes={qualifiedNodes} />
         </ModalBody>
         <ModalFooter
-          id="node-selector"
+          id="tolerations"
           errorMessage={errorMessage}
           inProgress={!isLoaded(nodes) || inProgress}
           isSimpleError={!!loadError}
           onSubmit={onSubmit}
           onCancel={close}
           submitButtonText="Apply"
-          infoTitle={showCollisionAlert && 'Node Selector has been updated outside this flow.'}
+          infoTitle={showCollisionAlert && 'Tolerations has been updated outside this flow.'}
           infoMessage={
             <>
-              Saving these changes will override any Node Selector previously saved.
+              Saving these changes will override any Tolerations previously saved.
               <br />
               <Button variant={ButtonVariant.link} isInline onClick={onReload}>
-                Reload Node Selector
+                Reload Tolerations
               </Button>
               .
             </>
@@ -131,10 +143,10 @@ export const NSModal = withHandlePromise(
   },
 );
 
-type NSModalProps = HandlePromiseProps &
+type TModalProps = HandlePromiseProps &
   ModalComponentProps & {
     vmLikeEntity: VMLikeEntityKind;
-    nodes?: FirehoseResult<VMLikeEntityKind[]>;
+    nodes?: FirehoseResult<K8sResourceKind[]>;
     inProgress: boolean;
     vmLikeEntityLoading?: FirehoseResult<VMLikeEntityKind>;
     errorMessage: string;
