@@ -57,7 +57,7 @@ export const getVMWizardCreateLink = (
   const wizardMode = itemName === VMWizardName.IMPORT ? VMWizardMode.IMPORT : mode;
   const type = itemName === VMWizardName.YAML ? '~new' : '~new-wizard';
 
-  let params = new URLSearchParams();
+  const params = new URLSearchParams();
   params.append('mode', wizardMode);
   params.append('template', template);
 
