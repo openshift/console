@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Link } from 'react-router-dom';
 import * as _ from 'lodash';
 import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
@@ -54,6 +55,7 @@ const tableColumnClasses = [
   tableColumnClassHiddenOnSmall,
   tableColumnClassHiddenOnSmall,
   tableColumnClassHiddenOnSmall,
+  tableColumnClass,
   Kebab.columnClass,
 ];
 
@@ -87,11 +89,24 @@ const VMTemplateTableHeader = () =>
       {
         title: '',
       },
+      {
+        title: '',
+      },
     ],
     tableColumnClasses,
   );
 
 VMTemplateTableHeader.displayName = 'VMTemplateTableHeader';
+
+const getCreateLink = (
+  namespace: string,
+  itemName: 'yaml' | 'wizard' = 'wizard',
+  mode: 'template' | 'vm' = 'template',
+  template?: string,
+) =>
+  `/k8s/ns/${namespace || 'default'}/virtualization/${
+    itemName === 'yaml' ? '~new' : '~new-wizard'
+  }?mode=${mode}${template ? `&template=${template}` : ''}`; // covers 'yaml', new-wizard and default
 
 const VMTemplateTableRow: React.FC<VMTemplateTableRowProps> = ({
   obj: template,
@@ -127,6 +142,15 @@ const VMTemplateTableRow: React.FC<VMTemplateTableRowProps> = ({
       </TableData>
       <TableData className={dimensify()}>{os ? os.name || os.id : DASH}</TableData>
       <TableData className={dimensify()}>{getTemplateFlavors([template])[0]}</TableData>
+      <TableData className={dimensify()}>
+        <Link
+          to={getCreateLink(getNamespace(template), 'wizard', 'vm', getName(template))}
+          title="Create Virtual Machine"
+          className="co-resource-item__resource-name"
+        >
+          Create Virtual Machine
+        </Link>
+      </TableData>
       <TableData className={dimensify(true)}>
         <ResourceKebab actions={menuActions} kind={TemplateModel.kind} resource={template} />
       </TableData>
@@ -159,6 +183,7 @@ const VirtualMachineTemplates: React.FC<React.ComponentProps<typeof Table> &
     </div>
   );
 };
+
 const getCreateProps = ({ namespace }: { namespace: string }) => {
   const items: any = {
     wizard: 'New with Wizard',
@@ -167,10 +192,7 @@ const getCreateProps = ({ namespace }: { namespace: string }) => {
 
   return {
     items,
-    createLink: (itemName) =>
-      `/k8s/ns/${namespace || 'default'}/virtualization/${
-        itemName === 'yaml' ? '~new' : '~new-wizard'
-      }?mode=template`, // covers 'yaml', new-wizard and default
+    createLink: (itemName) => getCreateLink(namespace, itemName),
   };
 };
 
