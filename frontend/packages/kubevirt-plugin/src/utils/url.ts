@@ -59,7 +59,9 @@ export const getVMWizardCreateLink = (
 
   const params = new URLSearchParams();
   params.append('mode', wizardMode);
-  params.append('template', template);
+  if (template) {
+    params.append('template', template);
+  }
 
   return `/k8s/ns/${namespace || 'default'}/virtualization/${type}${params ? `?${params}` : ''}`; // covers 'yaml', new-wizard and default
 };
