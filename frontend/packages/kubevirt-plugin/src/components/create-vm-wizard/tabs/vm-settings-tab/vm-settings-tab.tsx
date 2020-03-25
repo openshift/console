@@ -109,7 +109,7 @@ export class VMSettingsTabComponent extends React.Component<VMSettingsTabCompone
           <UserTemplates
             key={VMSettingsField.USER_TEMPLATE}
             userTemplateField={this.getField(VMSettingsField.USER_TEMPLATE)}
-            userTemplateName={userTemplateName}
+            forceSingleUserTemplateName={userTemplateName}
             userTemplates={userTemplates}
             commonTemplates={commonTemplates}
             openshiftFlag={openshiftFlag}
