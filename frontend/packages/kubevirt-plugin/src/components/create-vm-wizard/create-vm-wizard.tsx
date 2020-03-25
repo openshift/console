@@ -358,7 +358,6 @@ export const CreateVMWizardPageComponent: React.FC<CreateVMWizardPageComponentPr
   flags,
 }) => {
   const activeNamespace = match && match.params && match.params.ns;
-  const path = (match && match.path) || '';
   const search = location && location.search;
 
   const resources = [
@@ -398,7 +397,7 @@ export const CreateVMWizardPageComponent: React.FC<CreateVMWizardPageComponentPr
   return (
     <Firehose resources={resources} doNotConnectToState>
       <CreateVMWizard
-        isCreateTemplate={!path.includes('/virtualmachines/')}
+        isCreateTemplate={userMode === 'template'}
         isProviderImport={userMode === 'import'}
         userTemplateName={userTemplateName}
         dataIDReferences={dataIDReferences}

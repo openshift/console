@@ -18,6 +18,7 @@ import { VirtualMachineModel } from '../../models';
 import { resolveDefaultVM } from '../../k8s/requests/vm/create/default-vm';
 import { VirtualMachineYAMLTemplates } from '../../models/templates';
 import { VMWrapper } from '../../k8s/wrapper/vm/vm-wrapper';
+import { CreateVMTemplateYAML } from '../vm-templates/vm-template-create-yaml';
 
 const VMCreateYAMLLConnected = connectToPlural(
   ({ match, kindsInFlight, kindObj, resourceObjPath }: CreateYAMLProps) => {
@@ -84,10 +85,17 @@ const VMCreateYAMLLConnected = connectToPlural(
   },
 );
 
-export const VMCreateYAML = (props: any) => (
-  <VMCreateYAMLLConnected
-    {...(props as any)}
-    kindObj={VirtualMachineModel.kind}
-    plural={VirtualMachineModel.plural}
-  />
-);
+export const VMCreateYAML = (props: any) => {
+  const search = props.location?.search;
+  const userMode = new URLSearchParams(search).get('mode');
+
+  return userMode === 'template' ? (
+    <CreateVMTemplateYAML {...props} />
+  ) : (
+    <VMCreateYAMLLConnected
+      {...(props as any)}
+      kindObj={VirtualMachineModel.kind}
+      plural={VirtualMachineModel.plural}
+    />
+  );
+};

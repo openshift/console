@@ -164,7 +164,7 @@ const getCreateProps = ({ namespace }: { namespace: string }) => {
   return {
     items,
     createLink: (itemName) => {
-      const base = `/k8s/ns/${namespace || 'default'}/virtualmachines`;
+      const base = `/k8s/ns/${namespace || 'default'}/virtualization`;
 
       switch (itemName) {
         case 'wizard':
