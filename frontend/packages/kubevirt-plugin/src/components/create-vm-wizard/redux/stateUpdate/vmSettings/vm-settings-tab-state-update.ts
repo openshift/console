@@ -37,6 +37,9 @@ export const selectUserTemplateOnLoadedUpdater = (options: UpdateOptions) => {
   }
 
   const userTemplates = iGetLoadedCommonData(state, id, VMWizardProps.userTemplates);
+  if (!userTemplates) {
+    return;
+  }
 
   const isUserTemplateValid = userTemplates?.find(
     (template) => iGetName(template) === userTemplateName,
