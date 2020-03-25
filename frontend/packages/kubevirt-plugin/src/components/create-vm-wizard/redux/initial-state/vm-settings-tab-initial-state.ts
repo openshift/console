@@ -23,7 +23,7 @@ export const vmSettingsOrder = {
 
 export const getInitialVmSettings = (data: CommonData): VMSettings => {
   const {
-    data: { isCreateTemplate, isProviderImport },
+    data: { isCreateTemplate, isProviderImport, userTemplateName },
   } = data;
 
   const hiddenByProvider = asHidden(isProviderImport, VMWizardProps.isProviderImport);
@@ -44,6 +44,8 @@ export const getInitialVmSettings = (data: CommonData): VMSettings => {
     [VMSettingsField.DESCRIPTION]: {},
     [VMSettingsField.USER_TEMPLATE]: {
       isHidden: hiddenByProviderOrTemplate,
+      initialized: isProviderImport || isCreateTemplate || !userTemplateName,
+      value: userTemplateName || undefined,
     },
     [VMSettingsField.PROVIDER]: {
       isRequired: asRequired(isProviderImport),

@@ -168,6 +168,7 @@ export type CommonData = {
   data?: {
     isCreateTemplate?: boolean;
     isProviderImport?: boolean;
+    userTemplateName?: string;
   };
   dataIDReferences?: IDReferences;
 };

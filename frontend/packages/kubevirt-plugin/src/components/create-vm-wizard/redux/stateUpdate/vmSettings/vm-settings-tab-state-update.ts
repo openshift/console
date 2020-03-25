@@ -27,10 +27,7 @@ export const selectUserTemplateOnLoadedUpdater = (options: UpdateOptions) => {
   const { id, dispatch, getState } = options;
   const state = getState();
 
-  if (
-    iGetCommonData(state, id, VMWizardProps.isCreateTemplate) ||
-    iGetVmSettingAttribute(state, id, VMSettingsField.USER_TEMPLATE, 'initialized')
-  ) {
+  if (iGetVmSettingAttribute(state, id, VMSettingsField.USER_TEMPLATE, 'initialized')) {
     return;
   }
 
