@@ -30,6 +30,10 @@ export const testClusterServiceVersion: ClusterServiceVersionKind = {
   apiVersion: 'operators.coreos.com/v1alpha1',
   kind: 'ClusterServiceVersion',
   metadata: {
+    annotations: {
+      'olm.operatorNamespace': 'openshift-operators',
+      'olm.targetNamespaces': 'openshift-operators',
+    },
     name: 'testapp',
     uid: 'c02c0a8f-88e0-11e7-851b-080027b424ef',
     creationTimestamp: '2017-09-20T18:19:49Z',
