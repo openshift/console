@@ -38,7 +38,7 @@ import { isVM, getVMLikeModel } from '../../selectors/vm';
 import { vmStatusFilter } from './table-filters';
 import { vmMenuActions, vmiMenuActions } from './menu-actions';
 import { VMILikeEntityKind } from '../../types/vmLike';
-import { getVMWizardCreateLink } from '../../utils/utils';
+import { getVMWizardCreateLink } from '../../utils/url';
 
 import './vm.scss';
 import { VMWizardMode } from '../../constants/vm';

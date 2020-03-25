@@ -45,7 +45,7 @@ import {
 import { DataVolumeModel } from '../../models';
 
 import { V1alpha1DataVolume } from '../../types/vm/disk/V1alpha1DataVolume';
-import { getVMWizardCreateLink } from '../../utils/utils';
+import { getVMWizardCreateLink } from '../../utils/url';
 import { VMTemplateLink } from './vm-template-link';
 import { menuActions } from './menu-actions';
 import { TemplateSource } from './vm-template-source';
