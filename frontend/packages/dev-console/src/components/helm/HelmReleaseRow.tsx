@@ -2,10 +2,11 @@ import * as React from 'react';
 import * as _ from 'lodash';
 import { Status } from '@console/shared';
 import { TableRow, TableData } from '@console/internal/components/factory';
-import { Timestamp } from '@console/internal/components/utils';
+import { Timestamp, Kebab } from '@console/internal/components/utils';
 import { Link } from 'react-router-dom';
 import { HelmRelease } from './helm-types';
 import { tableColumnClasses } from './HelmReleaseHeader';
+import { deleteHelmRelease } from '../../actions/modify-helm-release';
 
 interface HelmReleaseRowProps {
   obj: HelmRelease;
@@ -15,6 +16,7 @@ interface HelmReleaseRowProps {
 }
 
 const HelmReleaseRow: React.FC<HelmReleaseRowProps> = ({ obj, index, key, style }) => {
+  const menuActions = [deleteHelmRelease(obj.name, obj.namespace)];
   return (
     <TableRow id={obj.name} index={index} trKey={key} style={style}>
       <TableData className={tableColumnClasses.name}>
@@ -36,6 +38,9 @@ const HelmReleaseRow: React.FC<HelmReleaseRowProps> = ({ obj, index, key, style 
       <TableData className={tableColumnClasses.chartName}>{obj.chart.metadata.name}</TableData>
       <TableData className={tableColumnClasses.appVersion}>
         {obj.chart.metadata.appVersion}
+      </TableData>
+      <TableData className={tableColumnClasses.kebab}>
+        <Kebab options={menuActions} />
       </TableData>
     </TableRow>
   );

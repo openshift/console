@@ -1,7 +1,6 @@
 import * as React from 'react';
-import * as _ from 'lodash';
 import { TextInputTypes } from '@patternfly/react-core';
-import { PromiseComponent } from '@console/internal/components/utils';
+import { PromiseComponent, history } from '@console/internal/components/utils';
 import {
   createModalLauncher,
   ModalTitle,
@@ -12,31 +11,34 @@ import { Formik, FormikProps, FormikValues } from 'formik';
 import { YellowExclamationTriangleIcon, InputField } from '@console/shared';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 
-type DeleteApplicationModalProps = {
-  initialApplication: string;
+type DeleteResourceModalProps = {
+  resourceName: string;
+  resourceType: string;
+  redirect?: string;
   onSubmit: (values: FormikValues) => Promise<K8sResourceKind[]>;
   cancel?: () => void;
   close?: () => void;
 };
 
-type DeleteApplicationModalState = {
+type DeleteResourceModalState = {
   inProgress: boolean;
   errorMessage: string;
 };
 
-const DeleteApplicationForm: React.FC<FormikProps<FormikValues> & DeleteApplicationModalProps> = ({
+const DeleteResourceForm: React.FC<FormikProps<FormikValues> & DeleteResourceModalProps> = ({
   handleSubmit,
+  resourceName,
+  resourceType,
   isSubmitting,
   cancel,
   values,
-  initialApplication,
   status,
 }) => {
-  const isValid = _.get(values, 'application.userInput') === initialApplication;
+  const isValid = values.resourceName === resourceName;
   return (
     <form onSubmit={handleSubmit} className="modal-content modal-content--no-inner-scroll">
       <ModalTitle>
-        <YellowExclamationTriangleIcon className="co-icon-space-r" /> Delete Application?
+        <YellowExclamationTriangleIcon className="co-icon-space-r" /> Delete {resourceType}?
       </ModalTitle>
       <ModalBody>
         <p>
@@ -44,10 +46,10 @@ const DeleteApplicationForm: React.FC<FormikProps<FormikValues> & DeleteApplicat
           Storage/PVC&#39;s, secrets, and configmaps will be deleted.
         </p>
         <p>
-          Confirm deletion by typing <strong className="co-break-word">{initialApplication}</strong>{' '}
+          Confirm deletion by typing <strong className="co-break-word">{resourceName}</strong>{' '}
           below:
         </p>
-        <InputField type={TextInputTypes.text} name="application.userInput" />
+        <InputField type={TextInputTypes.text} name="resourceName" />
       </ModalBody>
       <ModalSubmitFooter
         submitText="Delete"
@@ -61,44 +63,38 @@ const DeleteApplicationForm: React.FC<FormikProps<FormikValues> & DeleteApplicat
   );
 };
 
-class DeleteApplicationModal extends PromiseComponent<
-  DeleteApplicationModalProps,
-  DeleteApplicationModalState
+class DeleteResourceModal extends PromiseComponent<
+  DeleteResourceModalProps,
+  DeleteResourceModalState
 > {
   private handleSubmit = (values, actions) => {
     actions.setSubmitting(true);
-    const { onSubmit, close } = this.props;
+    const { onSubmit, close, redirect } = this.props;
     onSubmit &&
       this.handlePromise(onSubmit(values))
         .then(() => {
           actions.setSubmitting(false);
           close();
+          redirect && history.push(redirect);
         })
         .catch((errorMessage) => {
           actions.setSubmitting(false);
           actions.setStatus({ submitError: errorMessage });
-          close();
         });
   };
 
   render() {
-    const { initialApplication } = this.props;
     const initialValues = {
-      application: {
-        name: initialApplication,
-        userInput: '',
-      },
+      resourceName: '',
     };
     return (
-      <Formik
-        initialValues={initialValues}
-        onSubmit={this.handleSubmit}
-        render={(formProps) => <DeleteApplicationForm {...formProps} {...this.props} />}
-      />
+      <Formik initialValues={initialValues} onSubmit={this.handleSubmit}>
+        {(formProps) => <DeleteResourceForm {...formProps} {...this.props} />}
+      </Formik>
     );
   }
 }
 
-export const deleteApplicationModal = createModalLauncher((props: DeleteApplicationModalProps) => (
-  <DeleteApplicationModal {...props} />
+export const deleteResourceModal = createModalLauncher((props: DeleteResourceModalProps) => (
+  <DeleteResourceModal {...props} />
 ));
