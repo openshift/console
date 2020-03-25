@@ -7,7 +7,7 @@ import {
   TextInput,
 } from '@patternfly/react-core';
 import { connect } from 'react-redux';
-import { iGet, iGetIn } from '../../../../utils/immutable';
+import { iGet, iGetIn, immutableListToShallowJS } from '../../../../utils/immutable';
 import { FormFieldMemoRow } from '../../form/form-field-row';
 import { FormField, FormFieldType } from '../../form/form-field';
 import { FormSelectPlaceholderOption } from '../../../form/form-select-placeholder-option';
@@ -70,11 +70,11 @@ export class VMSettingsTabComponent extends React.Component<VMSettingsTabCompone
                 placeholder={getPlaceholder(VMSettingsField.PROVIDER)}
                 isDisabled={!!this.getFieldValue(VMSettingsField.PROVIDER)}
               />
-              {(this.getFieldAttribute(VMSettingsField.PROVIDER, 'providers') || []).map(
-                (provider) => (
-                  <FormSelectOption key={provider} value={provider} label={provider} />
-                ),
-              )}
+              {immutableListToShallowJS(
+                this.getFieldAttribute(VMSettingsField.PROVIDER, 'providers'),
+              ).map(({ id, name }) => (
+                <FormSelectOption key={id} value={id} label={name} />
+              ))}
             </FormSelect>
           </FormField>
         </FormFieldMemoRow>

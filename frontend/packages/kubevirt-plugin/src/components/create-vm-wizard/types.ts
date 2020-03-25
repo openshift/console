@@ -40,26 +40,26 @@ export enum VMWizardProps {
 
 export const ALL_VM_WIZARD_TABS = getStringEnumValues<VMWizardTab>(VMWizardTab);
 
-export enum VMSettingsField { // TODO refactor to NAME = 'NAME' format for easier debugging once kubevirt-web-ui-components is deprecated
-  NAME = 'name',
-  HOSTNAME = 'hostname',
-  DESCRIPTION = 'description',
-  PROVISION_SOURCE_TYPE = 'provisionSourceType',
-  CONTAINER_IMAGE = 'containerImage',
-  IMAGE_URL = 'imageURL',
-  PROVIDER = 'provider',
-  PROVIDERS_DATA = 'providersData',
-  USER_TEMPLATE = 'userTemplate',
-  OPERATING_SYSTEM = 'operatingSystem',
-  FLAVOR = 'flavor',
-  MEMORY = 'memory',
-  CPU = 'cpu',
-  WORKLOAD_PROFILE = 'workloadProfile',
-  START_VM = 'startVM',
+export enum VMSettingsField {
+  NAME = 'NAME',
+  HOSTNAME = 'HOSTNAME',
+  DESCRIPTION = 'DESCRIPTION',
+  PROVISION_SOURCE_TYPE = 'PROVISION_SOURCE_TYPE',
+  CONTAINER_IMAGE = 'CONTAINER_IMAGE',
+  IMAGE_URL = 'IMAGE_URL',
+  PROVIDER = 'PROVIDER',
+  PROVIDERS_DATA = 'PROVIDERS_DATA',
+  USER_TEMPLATE = 'USER_TEMPLATE',
+  OPERATING_SYSTEM = 'OPERATING_SYSTEM',
+  FLAVOR = 'FLAVOR',
+  MEMORY = 'MEMORY',
+  CPU = 'CPU',
+  WORKLOAD_PROFILE = 'WORKLOAD_PROFILE',
+  START_VM = 'START_VM',
 }
 
-export enum VMImportProvider { // TODO refactor to VMWARE = 'VMWARE' once kubevirt-web-ui-components is deprecated
-  VMWARE = 'VMware',
+export enum VMImportProvider {
+  VMWARE = 'VMWARE',
 }
 
 export enum VMWareProviderProps {
@@ -71,21 +71,21 @@ export enum VMWareProviderProps {
   activeVcenterSecret = 'activeVcenterSecret',
 }
 
-export enum VMWareProviderField { // TODO refactor to VCENTER_KEY = 'VCENTER_KEY' once kubevirt-web-ui-components is deprecated
-  VCENTER = 'vCenterInstance',
-  HOSTNAME = 'vmwareHostname',
-  USER_NAME = 'vmwareUserName',
-  USER_PASSWORD_AND_CHECK_CONNECTION = 'vmwarePassword',
-  REMEMBER_PASSWORD = 'rememberVMwareCredentials',
+export enum VMWareProviderField {
+  VCENTER = 'VCENTER',
+  HOSTNAME = 'HOSTNAME',
+  USER_NAME = 'USER_NAME',
+  USER_PASSWORD_AND_CHECK_CONNECTION = 'USER_PASSWORD_AND_CHECK_CONNECTION',
+  REMEMBER_PASSWORD = 'REMEMBER_PASSWORD',
 
-  CHECK_CONNECTION = 'checkConnectionButton',
-  STATUS = 'vmwareStatus',
+  CHECK_CONNECTION = 'CHECK_CONNECTION',
+  STATUS = 'STATUS',
 
-  VM = 'vmwareVm',
+  VM = 'VM',
 
-  V2V_NAME = 'v2vVmwareName',
-  V2V_LAST_ERROR = 'PROVIDER_VMWARE_V2V_LAST_ERROR',
-  NEW_VCENTER_NAME = 'newVCenterName',
+  V2V_NAME = 'V2V_NAME',
+  V2V_LAST_ERROR = 'V2V_LAST_ERROR',
+  NEW_VCENTER_NAME = 'NEW_VCENTER_NAME',
 }
 
 export enum CloudInitField {
@@ -217,6 +217,7 @@ export type VMWizardStorage = {
   persistentVolumeClaim?: V1PersistentVolumeClaim;
   importData?: {
     mountPath?: string;
+    devicePath?: string;
     fileName?: string;
   };
 };

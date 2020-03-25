@@ -21,6 +21,9 @@ export const iFirehoseResultToJS = (immutableValue, isList = true) => {
 export const immutableListToShallowJS = <A = any>(list, defaultValue: A[] = []): A[] =>
   list ? list.toArray().map((p) => p.toJSON()) : defaultValue;
 
+export const immutableListToJS = <A = any>(list, defaultValue: A[] = []): A[] =>
+  list ? list.toArray().map((p) => p.toJS()) : defaultValue;
+
 export const hasTruthyValue = (obj) => !!(obj && !!obj.find((value) => value));
 
 export const iGet = (obj, key: string, defaultValue = undefined) =>

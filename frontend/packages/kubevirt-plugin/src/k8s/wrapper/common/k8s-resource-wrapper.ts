@@ -1,12 +1,18 @@
 /* eslint-disable lines-between-class-members */
-import { getName, getNamespace, hasLabel, getLabels } from '@console/shared/src';
-import { K8sKind, K8sResourceKind } from '@console/internal/module/k8s';
+import {
+  getName,
+  getNamespace,
+  hasLabel,
+  getLabels,
+  getOwnerReferences,
+} from '@console/shared/src';
+import { K8sKind, K8sResourceCommon } from '@console/internal/module/k8s';
 import { Wrapper } from './wrapper';
 import { K8sResourceKindMethods } from '../types/types';
 import { clearRuntimeMetadata, initK8sObject, K8sInitAddon } from './util/k8s-mixin';
 
 export abstract class K8sResourceWrapper<
-  RESOURCE extends K8sResourceKind,
+  RESOURCE extends K8sResourceCommon,
   SELF extends K8sResourceWrapper<RESOURCE, SELF>
 > extends Wrapper<RESOURCE, SELF> implements K8sResourceKindMethods {
   private readonly model: K8sKind;
@@ -34,10 +40,19 @@ export abstract class K8sResourceWrapper<
   getNamespace = () => getNamespace(this.data);
   getLabels = (defaultValue = {}) => getLabels(this.data, defaultValue);
   hasLabel = (label: string) => hasLabel(this.data, label);
+  getOwnerReferences = () => getOwnerReferences(this.data);
 
   setName = (name: string) => {
     this.ensurePath('metadata');
     this.data.metadata.name = name;
+    delete this.data.metadata.generateName;
+    return (this as any) as SELF;
+  };
+
+  setGenerateName = (generateName: string) => {
+    this.ensurePath('metadata');
+    this.data.metadata.generateName = generateName;
+    delete this.data.metadata.name;
     return (this as any) as SELF;
   };
 

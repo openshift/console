@@ -1,4 +1,4 @@
-import { VMSettingsField } from '../../../../components/create-vm-wizard/types';
+import { VMImportProvider, VMSettingsField } from '../../../../components/create-vm-wizard/types';
 import { getStorageClassConfigMap } from '../../config-map/storage-class';
 import { asSimpleSettings } from '../../../../components/create-vm-wizard/selectors/vm-settings';
 import { VMTemplateWrapper } from '../../../wrapper/vm/vm-template-wrapper';
@@ -18,6 +18,9 @@ import { initializeVM } from './initialize-vm';
 import { getOS, initializeCommonMetadata, initializeCommonVMMetadata } from './common';
 import { selectVM } from '../../../../selectors/vm-template/basic';
 import { ProcessedTemplatesModel } from '../../../../models/models';
+import { ProvisionSource } from '../../../../constants/vm/provision-source';
+import { ImporterResult, OnVMCreate } from '../types';
+import { importV2VVMwareVm } from '../../v2v/import/import-v2vvmware';
 
 export const getInitializedVMTemplate = (params: CreateVMEnhancedParams) => {
   const { vmSettings, iCommonTemplates, iUserTemplates } = params;
@@ -97,6 +100,15 @@ export const createVMTemplate = async (params: CreateVMParams) => {
   return getActualState();
 };
 
+const importVM = async (params: CreateVMEnhancedParams): Promise<ImporterResult> => {
+  const simpleSettings = asSimpleSettings(params.vmSettings);
+  if (simpleSettings[VMSettingsField.PROVIDER] === VMImportProvider.VMWARE) {
+    return importV2VVMwareVm(params);
+  }
+
+  return null;
+};
+
 export const createVM = async (params: CreateVMParams) => {
   const { enhancedK8sMethods, namespace, vmSettings, openshiftFlag } = params;
   const { k8sGet, k8sCreate, k8sWrapperCreate, getActualState } = enhancedK8sMethods;
@@ -111,8 +123,18 @@ export const createVM = async (params: CreateVMParams) => {
     ...asSimpleSettings(vmSettings),
     ...getOS(enhancedParams),
   };
+  let onVMCreate: OnVMCreate = null;
 
-  // TODO add VMWARE import
+  if (
+    ProvisionSource.fromString(combinedSimpleSettings[VMSettingsField.PROVISION_SOURCE_TYPE]) ===
+    ProvisionSource.IMPORT
+  ) {
+    const result = await importVM(enhancedParams);
+    enhancedParams.storages = result?.storages || enhancedParams.storages;
+    enhancedParams.networks = result?.networks || enhancedParams.networks;
+    onVMCreate = result?.onCreate;
+  }
+
   let vmWrapper: VMWrapper;
 
   if (openshiftFlag) {
@@ -153,7 +175,11 @@ export const createVM = async (params: CreateVMParams) => {
   }
   initializeCommonVMMetadata(combinedSimpleSettings, vmWrapper);
 
-  await k8sWrapperCreate(vmWrapper);
+  const virtualMachine = await k8sWrapperCreate(vmWrapper);
+
+  if (onVMCreate) {
+    await onVMCreate(virtualMachine);
+  }
 
   return getActualState();
 };

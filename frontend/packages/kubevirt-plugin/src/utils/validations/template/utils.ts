@@ -50,7 +50,7 @@ export const combineIntegerValidationResults = (
     if (!hasWarning && maxBoundsResult) {
       message = maxBoundsResult.getErrorMessage();
     } else {
-      const verb = this.type === ValidationErrorType.Warn ? 'should' : 'must';
+      const verb = finalType === ValidationErrorType.Warn ? 'should' : 'must';
       // include all types to show all intervals
       message = `Memory ${verb} be in one of these intervals: ${joinGrammaticallyListOfItems(
         _.uniqWith(results, intervalEquals)
