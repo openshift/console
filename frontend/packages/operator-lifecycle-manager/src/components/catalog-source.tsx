@@ -31,7 +31,6 @@ import {
   TableRow,
   TableData,
   TableProps,
-  TableRowProps,
   MultiListPage,
   RowFunction,
 } from '@console/internal/components/factory';

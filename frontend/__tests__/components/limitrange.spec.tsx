@@ -2,7 +2,6 @@ import * as React from 'react';
 import { shallow, ShallowWrapper } from 'enzyme';
 import {
   LimitRangeTableHeader,
-  LimitRangeTableRow,
   LimitRangeDetailsRowProps,
   LimitRangeDetailsRow,
 } from '../../public/components/limit-range';
@@ -13,7 +12,7 @@ describe(LimitRangeTableHeader.displayName, () => {
   });
 });
 
-describe(LimitRangeTableRow.displayName, () => {
+describe(LimitRangeDetailsRow.displayName, () => {
   let wrapper: ShallowWrapper<LimitRangeDetailsRowProps>;
   const limitContent = {
     max: '',

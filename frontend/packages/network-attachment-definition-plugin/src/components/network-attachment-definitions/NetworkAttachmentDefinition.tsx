@@ -15,11 +15,7 @@ import { dimensifyHeader, dimensifyRow, getName, getNamespace, getUID } from '@c
 import { NetworkAttachmentDefinitionModel } from '../../models';
 import { getConfigAsJSON, getType } from '../../selectors';
 import { NetworkAttachmentDefinitionKind } from '../../types';
-import {
-  NetAttachDefBundle,
-  NetworkAttachmentDefinitionsPageProps,
-  NetworkAttachmentDefinitionsRowProps,
-} from './types';
+import { NetAttachDefBundle, NetworkAttachmentDefinitionsPageProps } from './types';
 
 const { common } = Kebab.factory;
 const menuActions = [...common];

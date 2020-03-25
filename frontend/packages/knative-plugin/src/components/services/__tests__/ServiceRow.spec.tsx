@@ -1,19 +1,20 @@
-import * as React from 'react';
 import { shallow, ShallowWrapper } from 'enzyme';
 import * as _ from 'lodash';
-import { TableData } from '@console/internal/components/factory';
+import { TableData, RowFunctionArgs } from '@console/internal/components/factory';
 import { ExternalLink } from '@console/internal/components/utils';
 import { knativeServiceObj } from '@console/dev-console/src/components/topology/__tests__/topology-knative-test-data';
 import ServiceRow from '../ServiceRow';
+import { ServiceKind } from '../../../types';
 
-type ServiceRowProps = React.ComponentProps<typeof ServiceRow>;
-let svcData: ServiceRowProps;
-let wrapper: ShallowWrapper<ServiceRowProps>;
+let svcData: RowFunctionArgs<ServiceKind>;
+let wrapper: ShallowWrapper;
+
 describe('ServiceRow', () => {
   beforeEach(() => {
     svcData = {
       obj: knativeServiceObj,
       index: 0,
+      key: '0',
       style: {
         height: 'auto',
         left: 0,
@@ -21,8 +22,8 @@ describe('ServiceRow', () => {
         top: 0,
         width: '100%',
       },
-    };
-    wrapper = shallow(<ServiceRow {...svcData} />);
+    } as any;
+    wrapper = shallow(ServiceRow(svcData));
   });
 
   it('should show ExternalLink for associated service', () => {
@@ -35,8 +36,8 @@ describe('ServiceRow', () => {
   });
 
   it('should show "-" in case of no url', () => {
-    svcData = _.omit(svcData, 'obj.status.url') as ServiceRowProps;
-    wrapper = shallow(<ServiceRow {...svcData} />);
+    svcData = _.omit(svcData, 'obj.status.url');
+    wrapper = shallow(ServiceRow(svcData));
     const urlColData = wrapper.find(TableData).at(2);
     expect(urlColData.props().children).toEqual('-');
   });
@@ -47,8 +48,8 @@ describe('ServiceRow', () => {
   });
 
   it('should show "-" in generations for no  associated generation', () => {
-    svcData = _.omit(svcData, 'obj.metadata.generation') as ServiceRowProps;
-    wrapper = shallow(<ServiceRow {...svcData} />);
+    svcData = _.omit(svcData, 'obj.metadata.generation');
+    wrapper = shallow(ServiceRow(svcData));
     const generationColData = wrapper.find(TableData).at(3);
     expect(generationColData.props().children).toEqual('-');
   });
@@ -59,8 +60,8 @@ describe('ServiceRow', () => {
   });
 
   it('should show "-" in conditions for no  associated generation', () => {
-    svcData = _.omit(svcData, 'obj.status') as ServiceRowProps;
-    wrapper = shallow(<ServiceRow {...svcData} />);
+    svcData = _.omit(svcData, 'obj.status');
+    wrapper = shallow(ServiceRow(svcData));
     const conditionsColData = wrapper.find(TableData).at(5);
     expect(conditionsColData.props().children).toEqual('-');
   });
@@ -80,7 +81,7 @@ describe('ServiceRow', () => {
         ],
       },
     };
-    wrapper = shallow(<ServiceRow {...svcData} />);
+    wrapper = shallow(ServiceRow(svcData));
     const readyColData = wrapper.find(TableData).at(6);
     const reasonColData = wrapper.find(TableData).at(7);
     expect(readyColData.props().children).toEqual('False');
