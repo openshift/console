@@ -43,6 +43,12 @@ export enum DeviceType {
   DISK = 'DISK',
 }
 
+export enum VMWizardActionLabels {
+  YAML = 'New from YAML',
+  WIZARD = 'New with Wizard',
+  IMPORT = 'Import with Wizard',
+}
+
 export enum VMWizardName {
   YAML = 'yaml',
   WIZARD = 'wizard',

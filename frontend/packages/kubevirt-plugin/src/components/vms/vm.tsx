@@ -39,9 +39,9 @@ import { vmStatusFilter } from './table-filters';
 import { vmMenuActions, vmiMenuActions } from './menu-actions';
 import { VMILikeEntityKind } from '../../types/vmLike';
 import { getVMWizardCreateLink } from '../../utils/url';
+import { VMWizardMode, VMWizardActionLabels } from '../../constants/vm';
 
 import './vm.scss';
-import { VMWizardMode } from '../../constants/vm';
 
 const tableColumnClasses = [
   classNames('col-lg-2', 'col-md-2', 'col-sm-6', 'col-xs-6'),
@@ -158,9 +158,9 @@ VMList.displayName = 'VMList';
 
 const getCreateProps = ({ namespace }: { namespace: string }) => {
   const items: any = {
-    wizard: 'New with Wizard',
-    wizardImport: 'Import with Wizard',
-    yaml: 'New from YAML',
+    wizard: VMWizardActionLabels.WIZARD,
+    wizardImport: VMWizardActionLabels.IMPORT,
+    yaml: VMWizardActionLabels.YAML,
   };
 
   return {

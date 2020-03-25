@@ -41,9 +41,9 @@ import {
   TEMPLATE_TYPE_VM,
   VMWizardName,
   VMWizardMode,
+  VMWizardActionLabels,
 } from '../../constants/vm';
 import { DataVolumeModel } from '../../models';
-
 import { V1alpha1DataVolume } from '../../types/vm/disk/V1alpha1DataVolume';
 import { getVMWizardCreateLink } from '../../utils/url';
 import { VMTemplateLink } from './vm-template-link';
@@ -189,8 +189,8 @@ const VirtualMachineTemplates: React.FC<React.ComponentProps<typeof Table> &
 
 const getCreateProps = ({ namespace }: { namespace: string }) => {
   const items: any = {
-    wizard: 'New with Wizard',
-    yaml: 'New from YAML',
+    wizard: VMWizardActionLabels.WIZARD,
+    yaml: VMWizardActionLabels.YAML,
   };
 
   return {
