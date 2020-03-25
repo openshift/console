@@ -5,10 +5,20 @@ export const operatorProviderTypeMap = {
   marketplace: 'Marketplace',
   certified: 'Certified',
   community: 'Community',
-  custom: 'Custom',
+};
+
+const getCustomOperatorProviderType = (packageManifest) => {
+  return (
+    packageManifest.metadata?.annotations?.['marketplace.openshift.io/display-name'] ||
+    packageManifest.metadata.name
+  );
 };
 
 export const getOperatorProviderType = (packageManifest) => {
   const srcProvider = _.get(packageManifest, 'metadata.labels.opsrc-provider');
-  return _.get(operatorProviderTypeMap, srcProvider, 'Custom');
+  return _.get(
+    operatorProviderTypeMap,
+    srcProvider,
+    getCustomOperatorProviderType(packageManifest),
+  );
 };
