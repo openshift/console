@@ -12,13 +12,13 @@ import {
 } from '@patternfly/react-core';
 import { PlusCircleIcon } from '@patternfly/react-icons';
 import { isStepLocked } from '../../selectors/immutable/wizard-selectors';
-import { VMWizardNetworkWithWrappers, VMWizardTab } from '../../types';
+import { VMWizardNetwork, VMWizardTab } from '../../types';
 import { VMNicsTable } from '../../../vm-nics/vm-nics';
 import { nicTableColumnClasses } from '../../../vm-nics/utils';
 import { vmWizardActions } from '../../redux/actions';
 import { ActionType } from '../../redux/types';
 import { iGetProvisionSource } from '../../selectors/immutable/vm-settings';
-import { getNetworksWithWrappers } from '../../selectors/selectors';
+import { getNetworks } from '../../selectors/selectors';
 import { wrapWithProgress } from '../../../../utils/utils';
 import { ProvisionSource } from '../../../../constants/vm/provision-source';
 import { DeviceType } from '../../../../constants/vm';
@@ -27,18 +27,21 @@ import { VMWizardNicRow } from './vm-wizard-nic-row';
 import { VMWizardNetworkBundle } from './types';
 import { NetworkBootSource } from './network-boot-source';
 import { ADD_NETWORK_INTERFACE } from '../../../../utils/strings';
+import { NetworkWrapper } from '../../../../k8s/wrapper/vm/network-wrapper';
+import { NetworkInterfaceWrapper } from '../../../../k8s/wrapper/vm/network-interface-wrapper';
 
 import './networking-tab.scss';
 
-const getNicsData = (networks: VMWizardNetworkWithWrappers[]): VMWizardNetworkBundle[] =>
+const getNicsData = (networks: VMWizardNetwork[]): VMWizardNetworkBundle[] =>
   networks.map((wizardNetworkData) => {
-    const { networkInterfaceWrapper, networkWrapper } = wizardNetworkData;
+    const { networkInterface, network } = wizardNetworkData;
+    const networkInterfaceWrapper = new NetworkInterfaceWrapper(networkInterface);
     return {
       wizardNetworkData,
       // for sorting
       name: networkInterfaceWrapper.getName(),
       model: networkInterfaceWrapper.getReadableModel(),
-      networkName: networkWrapper.getReadableName(),
+      networkName: new NetworkWrapper(network).getReadableName(),
       interfaceType: networkInterfaceWrapper.getTypeValue(),
       macAddress: networkInterfaceWrapper.getMACAddress(),
     };
@@ -123,7 +126,7 @@ type NetworkingTabComponentProps = {
   isLocked: boolean;
   isBootNICRequired: boolean;
   wizardReduxID: string;
-  networks: VMWizardNetworkWithWrappers[];
+  networks: VMWizardNetwork[];
   removeNIC: (id: string) => void;
   setTabLocked: (isLocked: boolean) => void;
   onBootOrderChanged: (deviceID: string, bootOrder: number) => void;
@@ -131,7 +134,7 @@ type NetworkingTabComponentProps = {
 
 const stateToProps = (state, { wizardReduxID }) => ({
   isLocked: isStepLocked(state, wizardReduxID, VMWizardTab.NETWORKING),
-  networks: getNetworksWithWrappers(state, wizardReduxID),
+  networks: getNetworks(state, wizardReduxID),
   isBootNICRequired: iGetProvisionSource(state, wizardReduxID) === ProvisionSource.PXE,
 });
 

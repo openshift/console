@@ -13,3 +13,18 @@ export const NETWORK_MULTUS_NAME_EXISTS = 'Multus network with this name already
 export const NETWORK_REQUIRED = 'Network required';
 
 export const POSITIVE_SIZE_ERROR = 'must be positive';
+
+const validationKeyToNameResolver = {
+  name: 'Name',
+  macAddress: 'MAC Address',
+  network: 'Network',
+  size: 'Size',
+  url: 'Url',
+  container: 'Container',
+  diskInterface: 'Model',
+  pvc: 'PVC',
+};
+
+export const getValidationNameByKey = (key: string) => {
+  return validationKeyToNameResolver[key];
+};

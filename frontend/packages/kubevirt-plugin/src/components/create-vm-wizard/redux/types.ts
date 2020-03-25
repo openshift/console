@@ -21,6 +21,7 @@ export enum ActionType {
   CreateVM = 'KubevirtVMWiExternalCreateVM',
   UpdateCommonData = 'KubevirtVMWizardExternalUpdateCommonData',
   SetGoToStep = 'KubevirtVMWizardExternalSetGoToStep',
+  OpenDifficultTabs = 'KubevirtVMWizardExternalOpenDifficultTabs',
   SetVmSettingsFieldValue = 'KubevirtVMWizardExternalSetVmSettingsFieldValue',
   SetImportProvidersFieldValue = 'KubevirtVMWizardExternalSetImportProvidersFieldValue',
   UpdateImportProviderField = 'KubevirtVMWizardExternalUpdateImportProviderField',

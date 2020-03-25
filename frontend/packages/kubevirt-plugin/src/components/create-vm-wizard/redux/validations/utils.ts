@@ -48,9 +48,8 @@ export const getValidationUpdate = (
   }, {}) as { [key: string]: { validation: ValidationObject } };
 };
 
-export const getFieldsValidity = (fields) => {
-  // check if all required fields are defined
-  const emptyRequiredFields = fields
+export const getEmptyRequiredFields = (fields) =>
+  fields
     .filter((field) => {
       if (isFieldRequired(field) && !field.get('skipValidation')) {
         const value = field.get('value');
@@ -59,13 +58,20 @@ export const getFieldsValidity = (fields) => {
       return false;
     })
     .toArray();
+
+export const getInvalidFields = (fields) =>
+  fields
+    .filter((field) => field.getIn(['validation', 'type']) === ValidationErrorType.Error)
+    .toArray();
+
+export const getFieldsValidity = (fields) => {
+  // check if all required fields are defined
+  const emptyRequiredFields = getEmptyRequiredFields(fields);
   let error = describeFields('Please fill in', emptyRequiredFields);
   const hasAllRequiredFilled = emptyRequiredFields.length === 0;
 
   // check if fields are valid
-  const invalidFields = fields
-    .filter((field) => field.getIn(['validation', 'type']) === ValidationErrorType.Error)
-    .toArray();
+  const invalidFields = getInvalidFields(fields);
   if (invalidFields.length > 0) {
     error = describeFields('Please correct', invalidFields);
   }

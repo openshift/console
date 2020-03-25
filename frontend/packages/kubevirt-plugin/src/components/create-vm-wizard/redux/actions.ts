@@ -12,6 +12,7 @@ import {
   VMWareProviderField,
   VMImportProvider,
   ImportProvidersField,
+  VM_WIZARD_DIFFICULT_TABS,
 } from '../types';
 import { DeviceType } from '../../../constants/vm';
 import { getTabInitialState } from './initial-state/initial-state';
@@ -56,6 +57,13 @@ export const vmWizardActions: VMWizardActions = {
         250,
       );
     }
+  },
+  [ActionType.OpenDifficultTabs]: (id) => (dispatch, getState) => {
+    VM_WIZARD_DIFFICULT_TABS.forEach((difficultTab) => {
+      if (isStepHidden(getState(), id, difficultTab)) {
+        dispatch(vmWizardActions[ActionType.SetTabHidden](id, difficultTab, false));
+      }
+    });
   },
   [ActionType.SetVmSettingsFieldValue]: (id, key: VMSettingsField, value: any) =>
     withUpdateAndValidateState(id, (dispatch) =>

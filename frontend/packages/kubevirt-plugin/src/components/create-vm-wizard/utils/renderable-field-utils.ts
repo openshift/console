@@ -67,25 +67,26 @@ export const getFieldHelp = (key: RenderableField, value: string) => {
   return resolveFunction ? resolveFunction(value) : null;
 };
 
+export const sortFields = (fields: any[]) =>
+  fields.sort((a, b) => {
+    const aValue = renderableFieldOrder[iGetFieldKey(a)];
+    const bValue = renderableFieldOrder[iGetFieldKey(b)];
+
+    if (bValue == null) {
+      return -1;
+    }
+
+    if (aValue == null) {
+      return 1;
+    }
+
+    return aValue - bValue;
+  });
+
 export const describeFields = (describe: string, fields: object[]) => {
   if (fields && fields.length > 0) {
     const describedFields = _.compact(
-      fields
-        .sort((a, b) => {
-          const aValue = renderableFieldOrder[iGetFieldKey(a)];
-          const bValue = renderableFieldOrder[iGetFieldKey(b)];
-
-          if (bValue == null) {
-            return -1;
-          }
-
-          if (aValue == null) {
-            return 1;
-          }
-
-          return aValue - bValue;
-        })
-        .map((field) => getFieldReadableTitle(iGetFieldKey(field))),
+      sortFields(fields).map((field) => getFieldReadableTitle(iGetFieldKey(field))),
     );
     return makeSentence(
       `${assureEndsWith(describe, ' ')}the following ${pluralize(

@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as _ from 'lodash';
 import { Kebab, KebabOption } from '@console/internal/components/utils';
 import { RowFunction } from '@console/internal/components/factory';
-import { VMWizardStorageType, VMWizardStorageWithWrappers } from '../../types';
+import { VMWizardStorage, VMWizardStorageType } from '../../types';
 import { DiskSimpleRow } from '../../../vm-disks/disk-row';
 import {
   VMWizardStorageBundle,
@@ -12,7 +12,7 @@ import {
 import { vmWizardStorageModalEnhanced } from './vm-wizard-storage-modal-enhanced';
 
 const menuActionEdit = (
-  storageWithWrappers: VMWizardStorageWithWrappers,
+  wizardStorageData: VMWizardStorage,
   { wizardReduxID, withProgress }: VMWizardStorageRowActionOpts,
 ): KebabOption => {
   return {
@@ -23,14 +23,14 @@ const menuActionEdit = (
           blocking: true,
           isEditing: true,
           wizardReduxID,
-          storage: storageWithWrappers,
+          storage: wizardStorageData,
         }).result,
       ),
   };
 };
 
 const menuActionRemove = (
-  { id, type }: VMWizardStorageWithWrappers,
+  { id, type }: VMWizardStorage,
   { withProgress, removeStorage }: VMWizardStorageRowActionOpts,
 ): KebabOption => ({
   label: 'Delete',
@@ -49,9 +49,9 @@ const menuActionRemove = (
 });
 
 export const getActions = (
-  wizardNetworkData: VMWizardStorageWithWrappers,
+  wizardStorageData: VMWizardStorage,
   opts: VMWizardStorageRowActionOpts,
-) => [menuActionEdit, menuActionRemove].map((a) => a(wizardNetworkData, opts));
+) => [menuActionEdit, menuActionRemove].map((a) => a(wizardStorageData, opts));
 
 export const VmWizardStorageRow: RowFunction<
   VMWizardStorageBundle,

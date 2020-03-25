@@ -1,15 +1,14 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { Firehose, FirehoseResult } from '@console/internal/components/utils';
-import { K8sResourceKind } from '@console/internal/module/k8s';
 import { createLookup, getName } from '@console/shared/src';
 import { PersistentVolumeClaimModel } from '@console/internal/models';
-import { VMWizardProps, VMWizardStorageWithWrappers } from '../../types';
-import { getStoragesWithWrappers } from '../../selectors/selectors';
+import { VMWizardProps, VMWizardStorage } from '../../types';
+import { getStorages } from '../../selectors/selectors';
 import { iGetCommonData } from '../../selectors/immutable/selectors';
 import { CombinedDisk } from '../../../../k8s/wrapper/vm/combined-disk';
-import { PersistentVolumeClaimWrapper } from '../../../../k8s/wrapper/vm/persistent-volume-claim-wrapper';
 import { ReviewList } from './review-list';
+import { VolumeWrapper } from '../../../../k8s/wrapper/vm/volume-wrapper';
 
 const StorageReviewFirehose: React.FC<StorageReviewFirehoseProps> = ({
   storages,
@@ -21,31 +20,28 @@ const StorageReviewFirehose: React.FC<StorageReviewFirehoseProps> = ({
     <ReviewList
       title="Storage"
       className={className}
-      items={storages.map(
-        ({ id, diskWrapper, volumeWrapper, dataVolumeWrapper, persistentVolumeClaimWrapper }) => {
-          const pvc = pvcLookup[volumeWrapper.getPersistentVolumeClaimName()];
-          const combinedDisk = new CombinedDisk({
-            diskWrapper,
-            volumeWrapper,
-            dataVolumeWrapper,
-            persistentVolumeClaimWrapper:
-              persistentVolumeClaimWrapper || (pvc && new PersistentVolumeClaimWrapper(pvc)),
-            isNewPVC: !!persistentVolumeClaimWrapper,
-          });
+      items={storages.map(({ id, disk, volume, dataVolume, persistentVolumeClaim }) => {
+        const pvc = pvcLookup[new VolumeWrapper(volume).getPersistentVolumeClaimName()];
+        const combinedDisk = new CombinedDisk({
+          disk,
+          volume,
+          dataVolume,
+          persistentVolumeClaim: persistentVolumeClaim || pvc,
+          isNewPVC: !!persistentVolumeClaim,
+        });
 
-          return {
-            id,
-            value: combinedDisk.toString(),
-          };
-        },
-      )}
+        return {
+          id,
+          value: combinedDisk.toString(),
+        };
+      })}
     />
   );
 };
 
 type StorageReviewFirehoseProps = {
-  storages: VMWizardStorageWithWrappers[];
-  persistentVolumeClaims?: FirehoseResult<K8sResourceKind[]>;
+  storages: VMWizardStorage[];
+  persistentVolumeClaims?: FirehoseResult;
   className: string;
 };
 
@@ -68,7 +64,7 @@ type StorageReviewConnectedProps = StorageReviewFirehoseProps & {
   namespace: string;
 };
 const stateToProps = (state, { wizardReduxID }) => ({
-  storages: getStoragesWithWrappers(state, wizardReduxID),
+  storages: getStorages(state, wizardReduxID),
   namespace: iGetCommonData(state, wizardReduxID, VMWizardProps.activeNamespace),
 });
 

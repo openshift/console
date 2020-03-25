@@ -41,6 +41,7 @@ import { iGetCommonData } from './selectors/immutable/selectors';
 import { getExtraWSQueries } from './selectors/selectors';
 import { getStepsMetadata, isLastStepErrorFatal } from './selectors/immutable/wizard-selectors';
 import { ResourceLoadErrors } from './error-components/resource-load-errors';
+import { WizardErrors } from './error-components/wizard-errors';
 import { CreateVMWizardFooter } from './create-vm-wizard-footer';
 import { ImportProvidersTab } from './tabs/import-providers-tab/import-providers-tab';
 import { VMSettingsTab } from './tabs/vm-settings-tab/vm-settings-tab';
@@ -156,8 +157,8 @@ class CreateVMWizardComponent extends React.Component<CreateVMWizardComponentPro
         id: VMWizardTab.IMPORT_PROVIDERS,
         component: (
           <>
-            <ResourceLoadErrors wizardReduxID={reduxID} />
-            <ImportProvidersTab wizardReduxID={reduxID} />
+            <ResourceLoadErrors wizardReduxID={reduxID} key="errors" />
+            <ImportProvidersTab wizardReduxID={reduxID} key={VMWizardTab.IMPORT_PROVIDERS} />
           </>
         ),
       },
@@ -165,8 +166,9 @@ class CreateVMWizardComponent extends React.Component<CreateVMWizardComponentPro
         id: VMWizardTab.VM_SETTINGS,
         component: (
           <>
-            <ResourceLoadErrors wizardReduxID={reduxID} />
-            <VMSettingsTab wizardReduxID={reduxID} />
+            <ResourceLoadErrors wizardReduxID={reduxID} key="errors" />
+            <WizardErrors wizardReduxID={reduxID} key="wizard-errors" />
+            <VMSettingsTab wizardReduxID={reduxID} key={VMWizardTab.VM_SETTINGS} />
           </>
         ),
       },
@@ -174,8 +176,9 @@ class CreateVMWizardComponent extends React.Component<CreateVMWizardComponentPro
         id: VMWizardTab.NETWORKING,
         component: (
           <>
-            <ResourceLoadErrors wizardReduxID={reduxID} />
-            <NetworkingTab wizardReduxID={reduxID} />
+            <ResourceLoadErrors wizardReduxID={reduxID} key="errors" />
+            <WizardErrors wizardReduxID={reduxID} key="wizard-errors" />
+            <NetworkingTab wizardReduxID={reduxID} key={VMWizardTab.NETWORKING} />
           </>
         ),
       },
@@ -183,8 +186,9 @@ class CreateVMWizardComponent extends React.Component<CreateVMWizardComponentPro
         id: VMWizardTab.STORAGE,
         component: (
           <>
-            <ResourceLoadErrors wizardReduxID={reduxID} />
-            <StorageTab wizardReduxID={reduxID} />
+            <ResourceLoadErrors wizardReduxID={reduxID} key="errors" />
+            <WizardErrors wizardReduxID={reduxID} key="wizard-errors" />
+            <StorageTab wizardReduxID={reduxID} key={VMWizardTab.STORAGE} />
           </>
         ),
       },
@@ -195,8 +199,9 @@ class CreateVMWizardComponent extends React.Component<CreateVMWizardComponentPro
             id: VMWizardTab.ADVANCED_CLOUD_INIT,
             component: (
               <>
-                <ResourceLoadErrors wizardReduxID={reduxID} />
-                <CloudInitTab wizardReduxID={reduxID} />
+                <ResourceLoadErrors wizardReduxID={reduxID} key="errors" />
+                <WizardErrors wizardReduxID={reduxID} key="wizard-errors" />
+                <CloudInitTab wizardReduxID={reduxID} key={VMWizardTab.ADVANCED_CLOUD_INIT} />
               </>
             ),
           },
@@ -204,8 +209,12 @@ class CreateVMWizardComponent extends React.Component<CreateVMWizardComponentPro
             id: VMWizardTab.ADVANCED_VIRTUAL_HARDWARE,
             component: (
               <>
-                <ResourceLoadErrors wizardReduxID={reduxID} />
-                <VirtualHardwareTab wizardReduxID={reduxID} />
+                <ResourceLoadErrors wizardReduxID={reduxID} key="errors" />
+                <WizardErrors wizardReduxID={reduxID} key="wizard-errors" />
+                <VirtualHardwareTab
+                  wizardReduxID={reduxID}
+                  key={VMWizardTab.ADVANCED_VIRTUAL_HARDWARE}
+                />
               </>
             ),
           },
@@ -213,11 +222,16 @@ class CreateVMWizardComponent extends React.Component<CreateVMWizardComponentPro
       },
       {
         id: VMWizardTab.REVIEW,
-        component: <ReviewTab wizardReduxID={reduxID} />,
+        component: (
+          <>
+            <WizardErrors wizardReduxID={reduxID} key="wizard-errors" />
+            <ReviewTab wizardReduxID={reduxID} key={VMWizardTab.REVIEW} />
+          </>
+        ),
       },
       {
         id: VMWizardTab.RESULT,
-        component: <ResultTab wizardReduxID={reduxID} />,
+        component: <ResultTab wizardReduxID={reduxID} key={VMWizardTab.RESULT} />,
         isFinishedStep:
           tabsMetadata[VMWizardTab.RESULT].isPending || tabsMetadata[VMWizardTab.RESULT].isValid,
       },

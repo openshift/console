@@ -29,6 +29,7 @@ import {
   NetworkInterfaceModel,
   NetworkInterfaceType,
   VolumeMode,
+  NetworkType,
   VolumeType,
 } from '../../../../../../constants/vm';
 import { toShallowJS } from '../../../../../../utils/immutable';
@@ -56,10 +57,16 @@ export const getNics = (parsedVm): VMWizardNetwork[] => {
   return networkDevices.map((device, idx) => {
     const name = alignWithDNS1123(_.get(device, ['DeviceInfo', 'Label']));
     const macAddress = device.MacAddress;
+    const networkWrapper = NetworkWrapper.initializeFromSimpleData({ name });
+
+    if (networkDevices.length === 1) {
+      networkWrapper.setType(NetworkType.POD); // default to POD
+    }
+
     return {
       id: idx + 1,
       type: VMWizardNetworkType.V2V_VMWARE_IMPORT,
-      network: NetworkWrapper.initializeFromSimpleData({ name }).asResource(),
+      network: networkWrapper.asResource(),
       networkInterface: NetworkInterfaceWrapper.initializeFromSimpleData({
         name,
         model: NetworkInterfaceModel.VIRTIO,

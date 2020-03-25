@@ -17,6 +17,7 @@ import { DataVolumeWrapper } from './data-volume-wrapper';
 import { VolumeWrapper } from './volume-wrapper';
 import { PersistentVolumeClaimWrapper } from './persistent-volume-claim-wrapper';
 import { asVMILikeWrapper } from '../utils/convert';
+import { V1PersistentVolumeClaim } from '../../../types/vm/disk/V1PersistentVolumeClaim';
 
 export class CombinedDisk {
   private readonly dataVolumesLoading: boolean;
@@ -34,6 +35,10 @@ export class CombinedDisk {
   readonly persistentVolumeClaimWrapper?: PersistentVolumeClaimWrapper;
 
   constructor({
+    disk,
+    volume,
+    dataVolume,
+    persistentVolumeClaim,
     diskWrapper,
     volumeWrapper,
     dataVolumeWrapper,
@@ -42,24 +47,31 @@ export class CombinedDisk {
     dataVolumesLoading,
     pvcsLoading,
   }: {
-    diskWrapper: DiskWrapper;
-    volumeWrapper: VolumeWrapper;
+    disk?: V1Disk;
+    volume?: V1Volume;
+    dataVolume?: V1alpha1DataVolume;
+    persistentVolumeClaim?: V1PersistentVolumeClaim;
+    diskWrapper?: DiskWrapper;
+    volumeWrapper?: VolumeWrapper;
     dataVolumeWrapper?: DataVolumeWrapper;
     persistentVolumeClaimWrapper?: PersistentVolumeClaimWrapper;
     dataVolumesLoading?: boolean;
     pvcsLoading?: boolean;
     isNewPVC?: boolean;
   }) {
-    this.diskWrapper = diskWrapper;
-    this.volumeWrapper = volumeWrapper;
-    this.dataVolumeWrapper = dataVolumeWrapper;
-    this.persistentVolumeClaimWrapper = persistentVolumeClaimWrapper;
+    this.diskWrapper = disk ? new DiskWrapper(disk) : diskWrapper;
+    this.volumeWrapper = volume ? new VolumeWrapper(volume) : volumeWrapper;
+    this.dataVolumeWrapper = dataVolume ? new DataVolumeWrapper(dataVolume) : dataVolumeWrapper;
+    this.persistentVolumeClaimWrapper = persistentVolumeClaim
+      ? new PersistentVolumeClaimWrapper(persistentVolumeClaim)
+      : persistentVolumeClaimWrapper;
     this.dataVolumesLoading = dataVolumesLoading;
     this.pvcsLoading = pvcsLoading;
+
     this.source = StorageUISource.fromTypes(
-      volumeWrapper.getType(),
-      dataVolumeWrapper && dataVolumeWrapper.getType(),
-      !!persistentVolumeClaimWrapper && isNewPVC,
+      this.volumeWrapper?.getType(),
+      this.dataVolumeWrapper?.getType(),
+      !!this.persistentVolumeClaimWrapper && isNewPVC,
     );
   }
 
@@ -69,7 +81,7 @@ export class CombinedDisk {
     if (isEditing) {
       return this.source;
     }
-    return this.diskWrapper.getType() === DiskType.CDROM
+    return this.diskWrapper?.getType() === DiskType.CDROM
       ? StorageUISource.URL
       : StorageUISource.BLANK;
   };
@@ -89,13 +101,13 @@ export class CombinedDisk {
     }
   };
 
-  getName = () => this.diskWrapper.getName();
+  getName = () => this.diskWrapper?.getName();
 
-  getType = () => this.diskWrapper.getType();
+  getType = () => this.diskWrapper?.getType();
 
-  getTypeValue = () => this.diskWrapper.getTypeValue();
+  getTypeValue = () => this.diskWrapper?.getTypeValue();
 
-  getDiskInterface = () => this.diskWrapper.getReadableDiskBus();
+  getDiskInterface = () => this.diskWrapper?.getReadableDiskBus();
 
   getReadableSize = (): string => {
     let result = this.volumeTypeOperation(
@@ -137,13 +149,13 @@ export class CombinedDisk {
   getPVCName = (source?: StorageUISource) => {
     const resolvedSource = source || this.source;
     if (resolvedSource === StorageUISource.IMPORT_DISK) {
-      return this.persistentVolumeClaimWrapper && this.persistentVolumeClaimWrapper.getName();
+      return this.persistentVolumeClaimWrapper?.getName();
     }
     if (resolvedSource === StorageUISource.ATTACH_DISK) {
-      return this.volumeWrapper && this.volumeWrapper.getPersistentVolumeClaimName();
+      return this.volumeWrapper?.getPersistentVolumeClaimName();
     }
     if (resolvedSource === StorageUISource.ATTACH_CLONED_DISK) {
-      return this.dataVolumeWrapper && this.dataVolumeWrapper.getPesistentVolumeClaimName();
+      return this.dataVolumeWrapper?.getPesistentVolumeClaimName();
     }
 
     return null;
@@ -152,7 +164,7 @@ export class CombinedDisk {
   getContent = () => {
     switch (this.source) {
       case StorageUISource.CONTAINER: {
-        return this.volumeWrapper.getContainerImage();
+        return this.volumeWrapper?.getContainerImage();
       }
       case StorageUISource.URL: {
         return this.dataVolumeWrapper.getURL();
@@ -172,7 +184,7 @@ export class CombinedDisk {
   };
 
   getCDROMSourceValue = () =>
-    isWinToolsImage(this.volumeWrapper.getContainerImage())
+    isWinToolsImage(this.volumeWrapper?.getContainerImage())
       ? 'Windows Tools'
       : this.getSourceValue();
 
@@ -193,17 +205,17 @@ export class CombinedDisk {
     ) => any,
     onDataVolumeWrapper: (dataVolumeWrapper: DataVolumeWrapper) => any,
   ) => {
-    const volumeType = this.volumeWrapper.getType();
+    const volumeType = this.volumeWrapper?.getType();
     if (volumeType === VolumeType.PERSISTENT_VOLUME_CLAIM) {
       if (this.persistentVolumeClaimWrapper) {
-        return onPersistentVolumeClaimWrapper(this.persistentVolumeClaimWrapper);
+        return onPersistentVolumeClaimWrapper(this.persistentVolumeClaimWrapper) || null;
       }
       if (this.pvcsLoading) {
         return undefined;
       }
     } else if (volumeType === VolumeType.DATA_VOLUME) {
       if (this.dataVolumeWrapper) {
-        return onDataVolumeWrapper(this.dataVolumeWrapper);
+        return onDataVolumeWrapper(this.dataVolumeWrapper) || null;
       }
       if (this.dataVolumesLoading) {
         return undefined;

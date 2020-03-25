@@ -1,6 +1,7 @@
 import * as _ from 'lodash';
 import {
   asValidationObject,
+  validateEmptyValue,
   ValidationErrorType,
   ValidationObject,
 } from '@console/shared/src/utils/validation';
@@ -70,7 +71,9 @@ const validateUserTemplate: VmSettingsValidator = (field, options) => {
 
   const userTemplateName = iGetFieldValue(field);
   if (!userTemplateName) {
-    return null;
+    return validateEmptyValue(userTemplateName, {
+      subject: getFieldTitle(iGetFieldKey(field)),
+    });
   }
 
   const userTemplatesList = iGetLoadedCommonData(state, id, VMWizardProps.userTemplates);
@@ -96,7 +99,9 @@ export const validateOperatingSystem: VmSettingsValidator = (field) => {
   const guestFullName = iGet(field, 'guestFullName');
 
   if (os || !guestFullName) {
-    return null;
+    return validateEmptyValue(os, {
+      subject: getFieldTitle(iGetFieldKey(field)),
+    });
   }
 
   return asValidationObject(`Select matching for: ${guestFullName}`, ValidationErrorType.Info);
@@ -105,7 +110,9 @@ export const validateOperatingSystem: VmSettingsValidator = (field) => {
 const memoryValidation: VmSettingsValidator = (field, options): ValidationObject => {
   const memValue = iGetFieldValue(field);
   if (memValue == null || memValue === '' || BinaryUnit[memValue]) {
-    return null;
+    return validateEmptyValue(memValue, {
+      subject: getFieldTitle(iGetFieldKey(field)),
+    });
   }
   const { id, getState } = options;
   const state = getState();

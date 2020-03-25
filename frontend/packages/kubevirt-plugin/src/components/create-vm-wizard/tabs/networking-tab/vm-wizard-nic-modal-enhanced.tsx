@@ -7,50 +7,47 @@ import { NetworkAttachmentDefinitionModel } from '@console/network-attachment-de
 import { NetworkWrapper } from '../../../../k8s/wrapper/vm/network-wrapper';
 import { NetworkInterfaceWrapper } from '../../../../k8s/wrapper/vm/network-interface-wrapper';
 import { iGetCommonData } from '../../selectors/immutable/selectors';
-import {
-  VMWizardNetwork,
-  VMWizardNetworkType,
-  VMWizardNetworkWithWrappers,
-  VMWizardProps,
-} from '../../types';
+import { VMWizardNetwork, VMWizardNetworkType, VMWizardProps } from '../../types';
 import { NICModal } from '../../../modals/nic-modal';
 import { NetworkType } from '../../../../constants/vm';
 import { vmWizardActions } from '../../redux/actions';
 import { ActionType } from '../../redux/types';
-import { getNetworksWithWrappers } from '../../selectors/selectors';
+import { getNetworks } from '../../selectors/selectors';
 
 const VMWizardNICModal: React.FC<VMWizardNICModalProps> = (props) => {
   const {
-    id,
-    type,
     namespace,
     hasNADs,
     addUpdateNIC,
     networks,
-    networkInterfaceWrapper,
-    networkWrapper,
+    network: wizardNetwork,
     ...restProps
   } = props;
+  const { id, type, network, networkInterface } = wizardNetwork || {};
+  const networkInterfaceWrapper = new NetworkInterfaceWrapper(networkInterface);
+  const networkWrapper = new NetworkWrapper(network);
 
   const usedInterfacesNames: Set<string> = new Set(
     networks
-      .map(({ networkInterfaceWrapper: nicWrapper }) => nicWrapper.getName())
-      .filter((n) => n && n !== networkInterfaceWrapper?.getName()),
+      .map(({ networkInterface: nic }) => nic?.name)
+      .filter((n) => n && n !== networkInterfaceWrapper.getName()),
   );
 
   const usedMultusNetworkNames: Set<string> = new Set(
     networks
-      .filter(
-        ({ networkWrapper: usedNetworkWrapper }) =>
+      .filter(({ network: usedNetwork }) => {
+        const usedNetworkWrapper = new NetworkWrapper(usedNetwork);
+        return (
           usedNetworkWrapper.getType() === NetworkType.MULTUS &&
-          usedNetworkWrapper.getMultusNetworkName() !== networkWrapper?.getMultusNetworkName(),
-      )
-      .map(({ networkWrapper: usedNetworkWrapper }) => usedNetworkWrapper.getMultusNetworkName()),
+          usedNetworkWrapper.getMultusNetworkName() !== networkWrapper.getMultusNetworkName()
+        );
+      })
+      .map(({ network: net }) => new NetworkWrapper(net).getMultusNetworkName()),
   );
 
   const allowPodNetwork =
-    networkWrapper?.isPodNetwork() ||
-    !networks.find(({ networkWrapper: usedNetworkWrapper }) => usedNetworkWrapper.isPodNetwork());
+    networkWrapper.isPodNetwork() ||
+    !networks.find(({ network: net }) => new NetworkWrapper(net).isPodNetwork());
 
   const modal = (
     <NICModal
@@ -58,18 +55,16 @@ const VMWizardNICModal: React.FC<VMWizardNICModalProps> = (props) => {
       usedInterfacesNames={usedInterfacesNames}
       usedMultusNetworkNames={usedMultusNetworkNames}
       allowPodNetwork={allowPodNetwork}
-      nic={new NetworkInterfaceWrapper(networkInterfaceWrapper, true)}
-      network={new NetworkWrapper(networkWrapper, true)}
+      nic={new NetworkInterfaceWrapper(networkInterface, true)}
+      network={new NetworkWrapper(network, true)}
       onSubmit={(resultNetworkInterfaceWrapper, resultNetworkWrapper) => {
         addUpdateNIC({
           id,
           type: type || VMWizardNetworkType.UI_INPUT,
-          networkInterface: new NetworkInterfaceWrapper(networkInterfaceWrapper, true)
+          networkInterface: new NetworkInterfaceWrapper(networkInterface, true)
             .mergeWith(resultNetworkInterfaceWrapper)
             .asResource(),
-          network: new NetworkWrapper(networkWrapper, true)
-            .mergeWith(resultNetworkWrapper)
-            .asResource(),
+          network: new NetworkWrapper(network, true).mergeWith(resultNetworkWrapper).asResource(),
         });
         return Promise.resolve();
       }}
@@ -96,12 +91,9 @@ const VMWizardNICModal: React.FC<VMWizardNICModalProps> = (props) => {
 };
 
 type VMWizardNICModalProps = ModalComponentProps & {
-  id?: string;
   namespace: string;
-  type?: VMWizardNetworkType;
-  networkInterfaceWrapper?: NetworkInterfaceWrapper;
-  networkWrapper?: NetworkWrapper;
-  networks?: VMWizardNetworkWithWrappers[];
+  network?: VMWizardNetwork;
+  networks?: VMWizardNetwork[];
   hasNADs: boolean;
   nads?: FirehoseResult<K8sResourceKind[]>;
   addUpdateNIC: (network: VMWizardNetwork) => void;
@@ -116,7 +108,7 @@ const stateToProps = (state, { wizardReduxID }) => {
   ]);
   return {
     hasNADs,
-    networks: getNetworksWithWrappers(state, wizardReduxID),
+    networks: getNetworks(state, wizardReduxID),
     namespace: iGetCommonData(state, wizardReduxID, VMWizardProps.activeNamespace),
   };
 };

@@ -90,7 +90,7 @@ const CreateVMWizardFooterComponent: React.FC<CreateVMWizardFooterComponentProps
 
         // Hack to make changing steps work from redux
         // goToStep should be reset to null by redux to allow the navigation in subsequent state update
-        if (goToStep && goToStep !== activeStepID) {
+        if (canNavigateEverywhere && goToStep && goToStep !== activeStepID) {
           goToStepById(goToStep);
         }
 
@@ -234,9 +234,7 @@ const stateToProps = (state, { wizardReduxID }) => ({
 const dispatchToProps = (dispatch, { wizardReduxID }) => ({
   //  no callback like this can be passed through the Wizard component
   onEdit: (activeStepID: VMWizardTab) => {
-    VM_WIZARD_DIFFICULT_TABS.forEach((tab) => {
-      dispatch(vmWizardActions[ActionType.SetTabHidden](wizardReduxID, tab, false));
-    });
+    dispatch(vmWizardActions[ActionType.OpenDifficultTabs](wizardReduxID));
     dispatch(vmWizardActions[ActionType.SetGoToStep](wizardReduxID, activeStepID)); // keep on the same tab
   },
 });
