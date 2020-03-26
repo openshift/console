@@ -6,14 +6,10 @@ import { RESULTS_TYPE, RequestMap } from '../../reducers/dashboards';
 import { NotificationAlerts } from '../../reducers/ui';
 import {
   Fetch,
-  stopWatchAlerts,
-  StopWatchAlertsAction,
   StopWatchPrometheusAction,
   stopWatchPrometheusQuery,
   stopWatchURL,
   StopWatchURLAction,
-  watchAlerts,
-  WatchAlertsAction,
   watchPrometheusQuery,
   WatchPrometheusQueryAction,
   watchURL,
@@ -24,7 +20,6 @@ import { RootState } from '../../redux';
 import { Firehose, FirehoseResource, FirehoseResult } from '../utils';
 import { K8sResourceKind } from '../../module/k8s';
 import { PrometheusResponse } from '../graphs';
-import { PrometheusRulesResponse } from '../monitoring';
 
 const mapDispatchToProps: DispatchToProps = (dispatch) => ({
   watchURL: (url, fetch) => dispatch(watchURL(url, fetch)),
@@ -33,8 +28,6 @@ const mapDispatchToProps: DispatchToProps = (dispatch) => ({
     dispatch(watchPrometheusQuery(query, namespace, timespan)),
   stopWatchPrometheusQuery: (query, timespan) =>
     dispatch(stopWatchPrometheusQuery(query, timespan)),
-  watchAlerts: () => dispatch(watchAlerts()),
-  stopWatchAlerts: () => dispatch(stopWatchAlerts()),
 });
 
 const mapStateToProps = (state: RootState) => ({
@@ -126,12 +119,10 @@ export const withDashboardResources = <P extends DashboardItemProps>(
 
       watchAlerts: WatchAlerts = () => {
         this.watchingAlerts = true;
-        this.props.watchAlerts();
       };
 
       stopWatchAlerts: StopWatchAlerts = () => {
         this.watchingAlerts = false;
-        this.props.stopWatchAlerts();
       };
 
       watchK8sResource: WatchK8sResource = (resource) => {
@@ -191,8 +182,6 @@ type DispatchToProps = (
   stopWatchURL: StopWatchURL;
   watchPrometheusQuery: WatchPrometheus;
   stopWatchPrometheusQuery: StopWatchPrometheus;
-  watchAlerts: WatchAlerts;
-  stopWatchAlerts: StopWatchAlerts;
 };
 
 type WatchURL = (url: string, fetch?: Fetch) => void;
@@ -209,10 +198,8 @@ type WithDashboardResourcesState = {
 type WithDashboardResourcesProps = {
   watchURL: WatchURLAction;
   watchPrometheusQuery: WatchPrometheusQueryAction;
-  watchAlerts: WatchAlertsAction;
   stopWatchURL: StopWatchURLAction;
   stopWatchPrometheusQuery: StopWatchPrometheusAction;
-  stopWatchAlerts: StopWatchAlertsAction;
   [RESULTS_TYPE.PROMETHEUS]: RequestMap<PrometheusResponse>;
   [RESULTS_TYPE.URL]: RequestMap<any>;
   notificationAlerts: any;
@@ -230,7 +217,6 @@ export type DashboardItemProps = {
   stopWatchAlerts: StopWatchAlerts;
   urlResults: RequestMap<any>;
   prometheusResults: RequestMap<PrometheusResponse>;
-  alertsResults: RequestMap<PrometheusRulesResponse>; // TODO: remove once noobaa-storage-plugin, ceph-storage-plugin, and metal3-plugin status cards have been updated to switch over to alertNotifications, see https://github.com/openshift/console/pull/4539
   notificationAlerts: NotificationAlerts;
   watchK8sResource: WatchK8sResource;
   stopWatchK8sResource: StopWatchK8sResource;
