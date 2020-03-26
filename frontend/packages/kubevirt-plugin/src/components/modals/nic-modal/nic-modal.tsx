@@ -112,6 +112,7 @@ export const Network: React.FC<NetworkProps> = ({
 export const NICModal = withHandlePromise((props: NICModalProps) => {
   const {
     nads,
+    showInitialValidation,
     usedInterfacesNames,
     usedMultusNetworkNames,
     allowPodNetwork,
@@ -159,7 +160,11 @@ export const NICModal = withHandlePromise((props: NICModalProps) => {
     hasAllRequiredFilled,
   } = validateNIC(resultNIC, resultNetwork, { usedInterfacesNames });
 
-  const [showUIError, setShowUIError] = useShowErrorToggler(false, isValid, isValid);
+  const [showUIError, setShowUIError] = useShowErrorToggler(
+    !!showInitialValidation,
+    isValid,
+    isValid,
+  );
 
   const onNetworkChoiceChange = (newType: NetworkType, newMultusNetworkName) => {
     if (newType === NetworkType.POD) {
@@ -288,6 +293,7 @@ export const NICModal = withHandlePromise((props: NICModalProps) => {
 });
 
 export type NICModalProps = {
+  showInitialValidation?: boolean;
   nic?: NetworkInterfaceWrapper;
   network?: NetworkWrapper;
   onSubmit: (networkInterface: NetworkInterfaceWrapper, network: NetworkWrapper) => Promise<any>;

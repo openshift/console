@@ -93,6 +93,7 @@ const VMWizardNICModal: React.FC<VMWizardNICModalProps> = (props) => {
 type VMWizardNICModalProps = ModalComponentProps & {
   namespace: string;
   network?: VMWizardNetwork;
+  showInitialValidation?: boolean;
   networks?: VMWizardNetwork[];
   hasNADs: boolean;
   nads?: FirehoseResult<K8sResourceKind[]>;

@@ -61,7 +61,7 @@ export const vmWizardActions: VMWizardActions = {
   [ActionType.OpenDifficultTabs]: (id) => (dispatch, getState) => {
     VM_WIZARD_DIFFICULT_TABS.forEach((difficultTab) => {
       if (isStepHidden(getState(), id, difficultTab)) {
-        dispatch(vmWizardActions[ActionType.SetTabHidden](id, difficultTab, false));
+        dispatch(vmWizardInternalActions[InternalActionType.SetTabHidden](id, difficultTab, false));
       }
     });
   },

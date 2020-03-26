@@ -11,6 +11,7 @@ import { setNetworksTabValidity, validateNetworks } from './validations/networks
 import { setStoragesTabValidity, validateStorages } from './validations/storage-tab-validation';
 import { setVirtualHardwareTabValidity } from './validations/virtual-hardware-tab-validation';
 import { setImportProvidersTabValidity } from './validations/import-providers-tab-validation';
+import { finalizeImportProviderStateUpdate } from './finalize-state-update/import-provider-finalize-state-update';
 
 const UPDATE_TABS = [
   VMWizardTab.IMPORT_PROVIDERS,
@@ -40,6 +41,10 @@ const isTabValidResolver = {
   [VMWizardTab.ADVANCED_VIRTUAL_HARDWARE]: setVirtualHardwareTabValidity,
 };
 
+const finalizeTabResolver = {
+  [VMWizardTab.IMPORT_PROVIDERS]: finalizeImportProviderStateUpdate,
+};
+
 export const updateAndValidateState = (options: UpdateOptions) => {
   const { prevState, changedCommonData, getState } = options;
 
@@ -62,4 +67,9 @@ export const updateAndValidateState = (options: UpdateOptions) => {
       }
     });
   }
+
+  UPDATE_TABS.forEach((tabKey) => {
+    const finalizer = finalizeTabResolver[tabKey];
+    finalizer && finalizer(options);
+  });
 };

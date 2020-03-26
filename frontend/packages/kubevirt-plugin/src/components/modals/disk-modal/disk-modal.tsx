@@ -65,6 +65,7 @@ import './disk-modal.scss';
 
 export const DiskModal = withHandlePromise((props: DiskModalProps) => {
   const {
+    showInitialValidation,
     storageClasses,
     usedPVCNames,
     persistentVolumeClaims,
@@ -226,7 +227,11 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
     templateValidations,
   });
 
-  const [showUIError, setShowUIError] = useShowErrorToggler(false, isValid, isValid);
+  const [showUIError, setShowUIError] = useShowErrorToggler(
+    !!showInitialValidation,
+    isValid,
+    isValid,
+  );
 
   const submit = (e) => {
     e.preventDefault();
@@ -576,6 +581,7 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
 
 export type DiskModalProps = {
   disk?: DiskWrapper;
+  showInitialValidation?: boolean;
   disableSourceChange?: boolean;
   isCreateTemplate?: boolean;
   isEditing?: boolean;

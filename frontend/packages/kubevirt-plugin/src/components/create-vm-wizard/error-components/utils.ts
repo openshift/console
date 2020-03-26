@@ -86,9 +86,12 @@ export const computeNetworkErrors = (state, wizardReduxID) => {
             ),
           action: {
             goToStep: VMWizardTab.NETWORKING,
-            openNICModal: {
-              iNIC: nic,
+            openModal: {
               wizardReduxID,
+              showInitialValidation: true,
+              nicModal: {
+                iNIC: nic,
+              },
             },
           },
         },
@@ -144,9 +147,12 @@ export const computeStorageErrors = (state, wizardReduxID) => {
             ),
           action: {
             goToStep: tab,
-            openDiskModal: {
-              iStorage,
+            openModal: {
               wizardReduxID,
+              showInitialValidation: true,
+              diskModal: {
+                iStorage,
+              },
             },
           },
         },

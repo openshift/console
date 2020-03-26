@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Button, Split, SplitItem, TextInput } from '@patternfly/react-core';
+import { Button, Split, SplitItem, TextInput, ButtonVariant } from '@patternfly/react-core';
 import { connect } from 'react-redux';
 import { VMImportProvider, VMWareProviderField } from '../../../../types';
 import {
@@ -38,6 +38,7 @@ const VMWarePasswordConnected: React.FC<VMWareSecretsConnectedProps> = React.mem
             id="vcenter-connect"
             isDisabled={!hasAllPrerequisiteValuesFiled || isFieldDisabled(passwordField)}
             onClick={onCheckConnection}
+            variant={ButtonVariant.secondary}
           >
             {rememberPassword
               ? PROVIDER_VMWARE_CHECK_CONNECTION_BTN_SAVE

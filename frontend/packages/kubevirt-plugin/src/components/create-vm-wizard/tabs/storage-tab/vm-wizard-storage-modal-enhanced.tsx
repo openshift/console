@@ -136,6 +136,7 @@ const VMWizardStorageModal: React.FC<VMWizardStorageModalProps> = (props) => {
 type VMWizardStorageModalProps = ModalComponentProps & {
   isEditing?: boolean;
   storage?: VMWizardStorage;
+  showInitialValidation?: boolean;
   namespace: string;
   useProjects?: boolean;
   isCreateTemplate: boolean;

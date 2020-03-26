@@ -2,15 +2,18 @@ import { VMWizardTab } from '../types';
 
 export type Action = {
   goToStep?: VMWizardTab;
-  openDiskModal?: {
+  openModal?: {
     wizardReduxID: string;
-    iStorage: any;
-  };
-  openNICModal?: {
-    wizardReduxID: string;
-    iNIC: any;
+    showInitialValidation?: boolean;
+    diskModal?: {
+      iStorage: any;
+    };
+    nicModal?: {
+      iNIC: any;
+    };
   };
 };
+
 type Path = {
   id: string;
   name: string;

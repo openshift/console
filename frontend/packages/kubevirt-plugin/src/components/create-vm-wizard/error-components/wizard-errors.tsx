@@ -44,29 +44,34 @@ const Errors: React.FC<ErrorsProps> = ({
         if (action.goToStep) {
           goToStep(action.goToStep);
         }
-        if (action.openNICModal) {
-          const { iNIC, wizardReduxID } = action.openNICModal;
+        if (action.openModal) {
+          const { nicModal, diskModal, showInitialValidation, wizardReduxID } = action.openModal;
+          if (nicModal) {
+            const { iNIC } = nicModal;
 
-          wrapWithProgress(setTabLocked)(
-            vmWizardNicModalEnhanced({
-              blocking: true,
-              wizardReduxID,
-              network: toJS(iNIC) as VMWizardNetwork,
-            }).result,
-          );
-        } else if (action.openDiskModal) {
-          const { iStorage, wizardReduxID } = action.openDiskModal;
-          const storage = toJS(iStorage) as VMWizardStorage;
+            wrapWithProgress(setTabLocked)(
+              vmWizardNicModalEnhanced({
+                blocking: true,
+                wizardReduxID,
+                network: toJS(iNIC) as VMWizardNetwork,
+                showInitialValidation,
+              }).result,
+            );
+          } else if (diskModal) {
+            const { iStorage } = diskModal;
+            const storage = toJS(iStorage) as VMWizardStorage;
 
-          const withProgress = wrapWithProgress(setTabLocked);
-          withProgress(
-            vmWizardStorageModalEnhanced({
-              blocking: true,
-              isEditing: true,
-              wizardReduxID,
-              storage,
-            }).result,
-          );
+            const withProgress = wrapWithProgress(setTabLocked);
+            withProgress(
+              vmWizardStorageModalEnhanced({
+                blocking: true,
+                isEditing: true,
+                wizardReduxID,
+                storage,
+                showInitialValidation,
+              }).result,
+            );
+          }
         }
       }
     },
