@@ -39,7 +39,7 @@ import { vmStatusFilter } from './table-filters';
 import { vmMenuActions, vmiMenuActions } from './menu-actions';
 import { VMILikeEntityKind } from '../../types/vmLike';
 import { getVMWizardCreateLink } from '../../utils/url';
-import { VMWizardMode, VMWizardActionLabels } from '../../constants/vm';
+import { VMWizardMode, VMWizardName,  VMWizardActionLabels } from '../../constants/vm';
 
 import './vm.scss';
 
@@ -158,9 +158,9 @@ VMList.displayName = 'VMList';
 
 const getCreateProps = ({ namespace }: { namespace: string }) => {
   const items: any = {
-    wizard: VMWizardActionLabels.WIZARD,
-    wizardImport: VMWizardActionLabels.IMPORT,
-    yaml: VMWizardActionLabels.YAML,
+    [VMWizardName.WIZARD]: VMWizardActionLabels.WIZARD,
+    [VMWizardName.IMPORT]: VMWizardActionLabels.IMPORT,
+    [VMWizardName.YAML]: VMWizardActionLabels.YAML,
   };
 
   return {
