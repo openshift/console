@@ -26,20 +26,21 @@ import { prefillVmTemplateUpdater } from './prefill-vm-template-state-update';
 export const selectUserTemplateOnLoadedUpdater = (options: UpdateOptions) => {
   const { id, dispatch, getState } = options;
   const state = getState();
-  if (!options.changedCommonData.has(VMWizardProps.userTemplates)) {
-    return;
-  }
 
   if (iGetVmSettingAttribute(state, id, VMSettingsField.USER_TEMPLATE, 'initialized')) {
     return;
   }
 
+  if (!options.changedCommonData.has(VMWizardProps.userTemplates)) {
+    return;
+  }
+  
   const userTemplateName = iGetCommonData(state, id, VMWizardProps.userTemplateName);
-  const userTemplates = iGetLoadedCommonData(state, id, VMWizardProps.userTemplates);
-  if (!userTemplates) {
+  if (!userTemplateName) {
     return;
   }
 
+  const userTemplates = iGetLoadedCommonData(state, id, VMWizardProps.userTemplates);
   const isUserTemplateValid = userTemplates?.find(
     (template) => iGetName(template) === userTemplateName,
   );
