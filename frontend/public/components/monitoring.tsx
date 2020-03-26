@@ -344,6 +344,38 @@ const AlertsDetailsPage = withFallback(
                   <dl className="co-m-pane__details">
                     <dt>Name</dt>
                     <dd>{alertname}</dd>
+                  </dl>
+                </div>
+                <div className="col-sm-6">
+                  <dl className="co-m-pane__details">
+                    <Annotation title="Description">{annotations.description}</Annotation>
+                    <Annotation title="Summary">{annotations.summary}</Annotation>
+                    <Annotation title="Message">{annotations.message}</Annotation>
+                  </dl>
+                </div>
+              </div>
+              <div className="row">
+                <div className="col-sm-6">
+                  <dl className="co-m-pane__details">
+                    <dt>Severity</dt>
+                    <dd>
+                      <Severity severity={severity} />
+                    </dd>
+                  </dl>
+                </div>
+                <div className="col-sm-6">
+                  <dl className="co-m-pane__details">
+                    <dt>State</dt>
+                    <dd>
+                      <AlertState state={state} />
+                      <AlertStateDescription alert={alert} />
+                    </dd>
+                  </dl>
+                </div>
+              </div>
+              <div className="row">
+                <div className="col-xs-12">
+                  <dl className="co-m-pane__details">
                     <dt>Labels</dt>
                     <dd>
                       {_.isEmpty(labels) ? (
@@ -356,15 +388,12 @@ const AlertsDetailsPage = withFallback(
                         </div>
                       )}
                     </dd>
-                    <dt>Severity</dt>
-                    <dd>
-                      <Severity severity={severity} />
-                    </dd>
-                    <dt>State</dt>
-                    <dd>
-                      <AlertState state={state} />
-                      <AlertStateDescription alert={alert} />
-                    </dd>
+                  </dl>
+                </div>
+              </div>
+              <div className="row">
+                <div className="col-xs-12">
+                  <dl className="co-m-pane__details">
                     <dt>Alerting Rule</dt>
                     <dd>
                       <div className="co-resource-item">
@@ -378,13 +407,6 @@ const AlertsDetailsPage = withFallback(
                         </Link>
                       </div>
                     </dd>
-                  </dl>
-                </div>
-                <div className="col-sm-6">
-                  <dl className="co-m-pane__details">
-                    <Annotation title="Description">{annotations.description}</Annotation>
-                    <Annotation title="Summary">{annotations.summary}</Annotation>
-                    <Annotation title="Message">{annotations.message}</Annotation>
                   </dl>
                 </div>
               </div>
