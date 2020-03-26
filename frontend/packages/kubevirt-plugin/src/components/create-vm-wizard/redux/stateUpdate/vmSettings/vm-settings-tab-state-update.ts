@@ -34,7 +34,7 @@ export const selectUserTemplateOnLoadedUpdater = (options: UpdateOptions) => {
   if (!options.changedCommonData.has(VMWizardProps.userTemplates)) {
     return;
   }
-  
+
   const userTemplateName = iGetCommonData(state, id, VMWizardProps.userTemplateName);
   if (!userTemplateName) {
     return;
