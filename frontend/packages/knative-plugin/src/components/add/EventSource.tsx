@@ -10,7 +10,10 @@ import { FirehoseList } from '@console/dev-console/src/components/import/import-
 import { eventSourceValidationSchema } from './eventSource-validation-utils';
 import EventSourceForm from './EventSourceForm';
 import { EventSources, EventSourceFormData } from './import-types';
-import { getEventSourcesDepResource } from '../../utils/create-eventsources-utils';
+import {
+  getEventSourcesDepResource,
+  getEventSourceData,
+} from '../../utils/create-eventsources-utils';
 
 interface EventSourceProps {
   namespace: string;
@@ -24,12 +27,6 @@ interface StateProps {
 type Props = EventSourceProps & StateProps;
 
 const EventSource: React.FC<Props> = ({ namespace, projects, activeApplication }) => {
-  const eventSourceData = {
-    cronjobsource: {
-      data: '',
-      schedule: '',
-    },
-  };
   const typeEventSource = EventSources.CronJobSource;
   const initialValues: EventSourceFormData = {
     project: {
@@ -44,11 +41,11 @@ const EventSource: React.FC<Props> = ({ namespace, projects, activeApplication }
     },
     name: '',
     sink: {
-      knativeService: 'event-greeter',
+      knativeService: '',
     },
     type: typeEventSource,
     data: {
-      [typeEventSource.toLowerCase()]: eventSourceData[typeEventSource.toLowerCase()],
+      [typeEventSource.toLowerCase()]: getEventSourceData(typeEventSource.toLowerCase()),
     },
   };
 

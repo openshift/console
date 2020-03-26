@@ -62,6 +62,24 @@ export const getEventSourcesDepResource = (formData: any): K8sResourceKind => {
   return eventSourceResource;
 };
 
+export const getEventSourceData = (source: string) => {
+  const eventSourceData = {
+    cronjobsource: {
+      data: '',
+      schedule: '',
+    },
+    sinkbinding: {
+      subject: {
+        apiVersion: '',
+        kind: '',
+        selector: {
+          matchLabels: {},
+        },
+      },
+    },
+  };
+  return eventSourceData[source];
+};
 export const useKnativeEventingAccess = (model): boolean => {
   const canCreateEventSource = useAccessReview({
     group: model.apiGroup,
