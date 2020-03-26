@@ -14,6 +14,7 @@ import { K8sResourceKind } from '@console/internal/module/k8s';
 type DeleteResourceModalProps = {
   resourceName: string;
   resourceType: string;
+  actionLabel?: string;
   redirect?: string;
   onSubmit: (values: FormikValues) => Promise<K8sResourceKind[]>;
   cancel?: () => void;
@@ -29,6 +30,7 @@ const DeleteResourceForm: React.FC<FormikProps<FormikValues> & DeleteResourceMod
   handleSubmit,
   resourceName,
   resourceType,
+  actionLabel = 'Delete',
   isSubmitting,
   cancel,
   values,
@@ -38,7 +40,7 @@ const DeleteResourceForm: React.FC<FormikProps<FormikValues> & DeleteResourceMod
   return (
     <form onSubmit={handleSubmit} className="modal-content modal-content--no-inner-scroll">
       <ModalTitle>
-        <YellowExclamationTriangleIcon className="co-icon-space-r" /> Delete {resourceType}?
+        <YellowExclamationTriangleIcon className="co-icon-space-r" /> {actionLabel} {resourceType}?
       </ModalTitle>
       <ModalBody>
         <p>
@@ -52,7 +54,7 @@ const DeleteResourceForm: React.FC<FormikProps<FormikValues> & DeleteResourceMod
         <InputField type={TextInputTypes.text} name="resourceName" />
       </ModalBody>
       <ModalSubmitFooter
-        submitText="Delete"
+        submitText={actionLabel}
         submitDisabled={(status && !!status.submitError) || !isValid}
         cancel={cancel}
         inProgress={isSubmitting}
