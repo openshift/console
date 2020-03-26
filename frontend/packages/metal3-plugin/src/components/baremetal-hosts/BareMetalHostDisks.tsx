@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { sortable } from '@patternfly/react-table';
-import { Table, TableRow, TableData } from '@console/internal/components/factory';
+import { Table, TableRow, TableData, RowFunction } from '@console/internal/components/factory';
 import { humanizeDecimalBytes } from '@console/internal/components/utils';
 import { getHostStorage } from '../../selectors';
 import { BareMetalHostDisk, BareMetalHostKind } from '../../types';
@@ -15,14 +15,7 @@ const DisksTableHeader = () => [
   { title: 'HCTL', sortField: 'hctl', transforms: [sortable] },
 ];
 
-type DisksTableRowProps = {
-  obj: BareMetalHostDisk;
-  index: number;
-  key?: string;
-  style: React.StyleHTMLAttributes<any>;
-};
-
-const DisksTableRow: React.FC<DisksTableRowProps> = ({ obj, index, key, style }) => {
+const DisksTableRow: RowFunction<BareMetalHostDisk> = ({ obj, index, key, style }) => {
   const { hctl, model, name, rotational, serialNumber, sizeBytes, vendor } = obj;
   const { string: size } = humanizeDecimalBytes(sizeBytes);
   return (

@@ -10,6 +10,7 @@ import {
   TableData,
   DetailsPage,
   ListPage,
+  RowFunction,
 } from '@console/internal/components/factory';
 import { referenceForModel, PodKind } from '@console/internal/module/k8s';
 import { match } from 'react-router';
@@ -202,9 +203,13 @@ export const ImageManifestVulnDetailsPage: React.FC<ImageManifestVulnDetailsPage
 // TODO(alecmerdler): Fix classes here to ensure responsiveness
 const tableColumnClasses = ['', '', '', '', '', ''];
 
-export const ImageManifestVulnTableRow: React.FC<ImageManifestVulnTableRowProps> = (props) => {
-  const { obj, index, key, style } = props;
-  const { name, namespace } = props.obj.metadata;
+export const ImageManifestVulnTableRow: RowFunction<ImageManifestVuln> = ({
+  obj,
+  index,
+  key,
+  style,
+}) => {
+  const { name, namespace } = obj.metadata;
 
   return (
     <TableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
@@ -323,13 +328,6 @@ export type ImageManifestVulnDetailsProps = {
   obj: ImageManifestVuln;
 };
 
-export type ImageManifestVulnTableRowProps = {
-  obj: ImageManifestVuln;
-  index: number;
-  key: string;
-  style: object;
-};
-
 export type ImageManifestVulnListTableHeaderProps = {};
 
 export type AffectedPodsProps = {
@@ -350,5 +348,4 @@ ImageManifestVulnPage.displayName = 'ImageManifestVulnPage';
 ImageManifestVulnList.displayName = 'ImageManifestVulnList';
 AffectedPods.displayName = 'AffectedPods';
 ImageVulnerabilitiesTable.displayName = 'ImageVulnerabilitiesTable';
-ImageManifestVulnTableRow.displayName = 'ImageManifestVulnTableRow';
 ImageVulnerabilityRow.displayName = 'ImageVulnerabilityRow';

@@ -9,7 +9,7 @@ import {
   referenceForGroupVersionKind,
   referenceForModel,
 } from '../module/k8s';
-import { DetailsPage, ListPage, Table, TableRow, TableData } from './factory';
+import { DetailsPage, ListPage, Table, TableRow, TableData, RowFunction } from './factory';
 import {
   Kebab,
   navFactory,
@@ -87,12 +87,7 @@ const MachineAutoscalerTableHeader = () => {
 };
 MachineAutoscalerTableHeader.displayName = 'MachineAutoscalerTableHeader';
 
-const MachineAutoscalerTableRow: React.FC<MachineAutoscalerTableRowProps> = ({
-  obj,
-  index,
-  key,
-  style,
-}) => {
+const MachineAutoscalerTableRow: RowFunction<K8sResourceKind> = ({ obj, index, key, style }) => {
   return (
     <TableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
       <TableData className={tableColumnClasses[0]}>
@@ -119,13 +114,6 @@ const MachineAutoscalerTableRow: React.FC<MachineAutoscalerTableRowProps> = ({
       </TableData>
     </TableRow>
   );
-};
-MachineAutoscalerTableRow.displayName = 'MachineAutoscalerTableRow';
-type MachineAutoscalerTableRowProps = {
-  obj: K8sResourceKind;
-  index: number;
-  key?: string;
-  style: object;
 };
 
 const MachineAutoscalerList: React.FC = (props) => (

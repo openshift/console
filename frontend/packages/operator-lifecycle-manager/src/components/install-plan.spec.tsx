@@ -3,7 +3,12 @@ import * as _ from 'lodash';
 import { shallow, ShallowWrapper } from 'enzyme';
 import { Link } from 'react-router-dom';
 import { Button } from '@patternfly/react-core';
-import { Table, TableRow, MultiListPage, DetailsPage } from '@console/internal/components/factory';
+import {
+  Table,
+  MultiListPage,
+  DetailsPage,
+  RowFunctionArgs,
+} from '@console/internal/components/factory';
 import {
   ResourceKebab,
   ResourceLink,
@@ -20,7 +25,6 @@ import { InstallPlanKind, InstallPlanApproval } from '../types';
 import {
   InstallPlanTableHeader,
   InstallPlanTableRow,
-  InstallPlanTableRowProps,
   InstallPlansList,
   InstallPlansListProps,
   InstallPlansPage,
@@ -54,19 +58,31 @@ describe(InstallPlanTableHeader.displayName, () => {
   });
 });
 
-describe(InstallPlanTableRow.displayName, () => {
-  let wrapper: ShallowWrapper<InstallPlanTableRowProps>;
+describe('InstallPlanTableRow', () => {
+  let obj: InstallPlanKind;
+  let wrapper: ShallowWrapper;
+
+  const updateWrapper = () => {
+    const rowArgs: RowFunctionArgs<k8s.K8sResourceKind> = {
+      obj,
+      index: 0,
+      key: '0',
+      style: {},
+    } as any;
+
+    wrapper = shallow(InstallPlanTableRow(rowArgs));
+    return wrapper;
+  };
 
   beforeEach(() => {
-    wrapper = shallow(
-      <InstallPlanTableRow obj={_.cloneDeep(testInstallPlan)} index={0} style={{}} />,
-    );
+    obj = _.cloneDeep(testInstallPlan);
+    wrapper = updateWrapper();
   });
 
   it('renders resource kebab for performing common actions', () => {
     expect(
       wrapper
-        .find(TableRow)
+        .find('tr')
         .find(ResourceKebab)
         .props().actions,
     ).toEqual(Kebab.factory.common);
@@ -75,28 +91,28 @@ describe(InstallPlanTableRow.displayName, () => {
   it('renders column for install plan name', () => {
     expect(
       wrapper
-        .find(TableRow)
+        .find('tr')
         .childAt(NAME_INDEX)
         .find(ResourceLink)
         .props().kind,
     ).toEqual(k8s.referenceForModel(InstallPlanModel));
     expect(
       wrapper
-        .find(TableRow)
+        .find('tr')
         .childAt(NAME_INDEX)
         .find(ResourceLink)
         .props().namespace,
     ).toEqual(testInstallPlan.metadata.namespace);
     expect(
       wrapper
-        .find(TableRow)
+        .find('tr')
         .childAt(NAME_INDEX)
         .find(ResourceLink)
         .props().name,
     ).toEqual(testInstallPlan.metadata.name);
     expect(
       wrapper
-        .find(TableRow)
+        .find('tr')
         .childAt(NAME_INDEX)
         .find(ResourceLink)
         .props().title,
@@ -106,21 +122,21 @@ describe(InstallPlanTableRow.displayName, () => {
   it('renders column for install plan namespace', () => {
     expect(
       wrapper
-        .find(TableRow)
+        .find('tr')
         .childAt(NAMESPACE_INDEX)
         .find(ResourceLink)
         .props().kind,
     ).toEqual('Namespace');
     expect(
       wrapper
-        .find(TableRow)
+        .find('tr')
         .childAt(NAMESPACE_INDEX)
         .find(ResourceLink)
         .props().title,
     ).toEqual(testInstallPlan.metadata.namespace);
     expect(
       wrapper
-        .find(TableRow)
+        .find('tr')
         .childAt(NAMESPACE_INDEX)
         .find(ResourceLink)
         .props().displayName,
@@ -130,7 +146,7 @@ describe(InstallPlanTableRow.displayName, () => {
   it('renders column for install plan status', () => {
     expect(
       wrapper
-        .find(TableRow)
+        .find('tr')
         .childAt(STATUS_INDEX)
         .render()
         .text(),
@@ -138,25 +154,25 @@ describe(InstallPlanTableRow.displayName, () => {
   });
 
   it('renders column with fallback status if `status.phase` is undefined', () => {
-    const obj = { ..._.cloneDeep(testInstallPlan), status: null };
-    wrapper = wrapper.setProps({ obj });
+    obj = { ..._.cloneDeep(testInstallPlan), status: null };
+    wrapper = updateWrapper();
 
     expect(
       wrapper
-        .find(TableRow)
+        .find('tr')
         .childAt(STATUS_INDEX)
         .render()
         .text(),
     ).toEqual('Unknown');
     expect(
       wrapper
-        .find(TableRow)
+        .find('tr')
         .childAt(COMPONENTS_INDEX)
         .find(ResourceIcon).length,
     ).toEqual(1);
     expect(
       wrapper
-        .find(TableRow)
+        .find('tr')
         .childAt(COMPONENTS_INDEX)
         .find(ResourceIcon)
         .at(0)
@@ -167,21 +183,21 @@ describe(InstallPlanTableRow.displayName, () => {
   it('render column for install plan components list', () => {
     expect(
       wrapper
-        .find(TableRow)
+        .find('tr')
         .childAt(COMPONENTS_INDEX)
         .find(ResourceLink)
         .props().kind,
     ).toEqual(k8s.referenceForModel(ClusterServiceVersionModel));
     expect(
       wrapper
-        .find(TableRow)
+        .find('tr')
         .childAt(COMPONENTS_INDEX)
         .find(ResourceLink)
         .props().name,
     ).toEqual(testInstallPlan.spec.clusterServiceVersionNames.toString());
     expect(
       wrapper
-        .find(TableRow)
+        .find('tr')
         .childAt(COMPONENTS_INDEX)
         .find(ResourceLink)
         .props().namespace,
@@ -191,7 +207,7 @@ describe(InstallPlanTableRow.displayName, () => {
   it('renders column for parent subscription(s) determined by `metadata.ownerReferences`', () => {
     expect(
       wrapper
-        .find(TableRow)
+        .find('tr')
         .childAt(SUBSCRIPTIONS_INDEX)
         .find(ResourceLink).length,
     ).toEqual(1);

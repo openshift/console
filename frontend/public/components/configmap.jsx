@@ -91,7 +91,6 @@ const ConfigMapTableRow = ({ obj: configMap, index, key, style }) => {
     </TableRow>
   );
 };
-ConfigMapTableRow.displayName = 'ConfigMapTableRow';
 
 const ConfigMapDetails = ({ obj: configMap }) => {
   return (

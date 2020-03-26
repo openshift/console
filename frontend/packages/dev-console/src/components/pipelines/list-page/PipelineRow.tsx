@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Status } from '@console/shared';
-import { TableRow, TableData } from '@console/internal/components/factory';
+import { TableRow, TableData, RowFunction } from '@console/internal/components/factory';
 import { Kebab, ResourceLink, Timestamp, ResourceKebab } from '@console/internal/components/utils';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { pipelineFilterReducer } from '../../../utils/pipeline-filter-reducer';
@@ -18,14 +18,7 @@ import { tableColumnClasses } from './pipeline-table';
 const pipelineReference = referenceForModel(PipelineModel);
 const pipelinerunReference = referenceForModel(PipelineRunModel);
 
-interface PipelineRowProps {
-  obj: Pipeline;
-  index: number;
-  key?: string;
-  style: object;
-}
-
-const PipelineRow: React.FC<PipelineRowProps> = ({ obj, index, key, style }) => {
+const PipelineRow: RowFunction<Pipeline> = ({ obj, index, key, style }) => {
   const menuActions = [
     () => startPipeline(PipelineModel, obj, handlePipelineRunSubmit),
     ...(obj.latestRun && obj.latestRun.metadata

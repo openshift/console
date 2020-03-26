@@ -3,7 +3,7 @@ import * as classNames from 'classnames';
 import { Kebab, ResourceLink } from '@console/internal/components/utils';
 import { sortable } from '@patternfly/react-table';
 import { DASH, getName, getUID, getNamespace, SecondaryStatus } from '@console/shared';
-import { TableRow, TableData, Table } from '@console/internal/components/factory';
+import { TableRow, TableData, Table, RowFunction } from '@console/internal/components/factory';
 import { referenceForModel } from '@console/internal/module/k8s';
 import NodeRoles from '@console/app/src/components/nodes/NodeRoles';
 import { MachineModel, NodeModel } from '@console/internal/models';
@@ -60,17 +60,12 @@ const BareMetalNodesTableHeader = () => [
   },
 ];
 
-type BareMetalNodesTableRowProps = {
-  obj: BareMetalNodeBundle;
-  customData: {
+const BareMetalNodesTableRow: RowFunction<
+  BareMetalNodeBundle,
+  {
     hasNodeMaintenanceCapability: boolean;
-  };
-  index: number;
-  key?: string;
-  style: React.StyleHTMLAttributes<any>;
-};
-
-const BareMetalNodesTableRow: React.FC<BareMetalNodesTableRowProps> = ({
+  }
+> = ({
   obj: { host, node, nodeMaintenance, machine, status },
   customData: { hasNodeMaintenanceCapability },
   index,

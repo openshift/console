@@ -123,7 +123,6 @@ const PVTableRow = ({ obj, index, key, style }) => {
     </TableRow>
   );
 };
-PVTableRow.displayName = 'PVTableRow';
 
 const Details = ({ obj: pv }) => {
   const storageClassName = _.get(pv, 'spec.storageClassName');

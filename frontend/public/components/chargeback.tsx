@@ -6,7 +6,7 @@ import { sortable } from '@patternfly/react-table';
 import { connectToFlags } from '../reducers/features';
 import { FLAGS } from '@console/shared';
 import { Conditions } from './conditions';
-import { DetailsPage, ListPage, Table, TableRow, TableData } from './factory';
+import { DetailsPage, ListPage, Table, TableRow, TableData, RowFunction } from './factory';
 import { coFetchJSON } from '../co-fetch';
 import { ChargebackReportModel, ReportQueryModel } from '../models';
 import { LoadError, LoadingInline, MsgBox } from './utils/status-box';
@@ -101,7 +101,7 @@ const ReportsTableHeader = () => {
 };
 ReportsTableHeader.displayName = 'ReportsTableHeader';
 
-const ReportsTableRow: React.FC<ReportsTableRowProps> = ({ obj, index, key, style }) => {
+const ReportsTableRow: RowFunction<K8sResourceKind> = ({ obj, index, key, style }) => {
   return (
     <TableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
       <TableData className={tableColumnClasses[0]}>
@@ -139,13 +139,6 @@ const ReportsTableRow: React.FC<ReportsTableRowProps> = ({ obj, index, key, styl
       </TableData>
     </TableRow>
   );
-};
-ReportsTableRow.displayName = 'ReportsTableRow';
-type ReportsTableRowProps = {
-  obj: K8sResourceKind;
-  index: number;
-  key?: string;
-  style: object;
 };
 
 class ReportsDetails extends React.Component<ReportsDetailsProps> {
@@ -498,7 +491,7 @@ const ReportGenerationQueriesTableHeader = () => {
 };
 ReportGenerationQueriesTableHeader.displayName = 'ReportGenerationQueriesTableHeader';
 
-const ReportGenerationQueriesTableRow: React.FC<ReportGenerationQueriesTableRowProps> = ({
+const ReportGenerationQueriesTableRow: RowFunction<K8sResourceKind> = ({
   obj,
   index,
   key,
@@ -536,13 +529,6 @@ const ReportGenerationQueriesTableRow: React.FC<ReportGenerationQueriesTableRowP
       </TableData>
     </TableRow>
   );
-};
-ReportGenerationQueriesTableRow.displayName = 'ReportGenerationQueriesTableRow';
-type ReportGenerationQueriesTableRowProps = {
-  obj: K8sResourceKind;
-  index: number;
-  key?: string;
-  style: object;
 };
 
 const ReportGenerationQueriesDetails: React.SFC<ReportGenerationQueriesDetailsProps> = ({

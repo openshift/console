@@ -1,20 +1,20 @@
-import * as React from 'react';
 import { shallow } from 'enzyme';
 import * as _ from 'lodash';
-import { TableData } from '@console/internal/components/factory';
+import { TableData, RowFunctionArgs } from '@console/internal/components/factory';
 import { ResourceLink } from '@console/internal/components/utils';
 import { K8sResourceConditionStatus } from '@console/internal/module/k8s';
 import { revisionObj } from '@console/dev-console/src/components/topology/__tests__/topology-knative-test-data';
 import RevisionRow from '../RevisionRow';
-import { ConditionTypes } from '../../../types';
+import { ConditionTypes, RevisionKind } from '../../../types';
 
-type RevisionRowProps = React.ComponentProps<typeof RevisionRow>;
-let revData: RevisionRowProps;
+let revData: RowFunctionArgs<RevisionKind>;
+
 describe('RevisionRow', () => {
   beforeEach(() => {
     revData = {
       obj: revisionObj,
       index: 0,
+      key: '0',
       style: {
         height: 'auto',
         left: 0,
@@ -22,11 +22,11 @@ describe('RevisionRow', () => {
         top: 0,
         width: '100%',
       },
-    };
+    } as any;
   });
 
   it('should show ResourceLink for associated service', () => {
-    const wrapper = shallow(<RevisionRow {...revData} />);
+    const wrapper = shallow(RevisionRow(revData));
     const serviceDataTable = wrapper.find(TableData).at(2);
     expect(wrapper.find(TableData)).toHaveLength(8);
     expect(serviceDataTable.find(ResourceLink)).toHaveLength(1);
@@ -45,27 +45,27 @@ describe('RevisionRow', () => {
         },
       },
     };
-    const wrapper = shallow(<RevisionRow {...revData} />);
+    const wrapper = shallow(RevisionRow(revData));
     const serviceDataTable = wrapper.find(TableData).at(2);
     expect(wrapper.find(TableData)).toHaveLength(8);
     expect(serviceDataTable.find(ResourceLink)).toHaveLength(0);
   });
 
   it('should show appropriate conditions', () => {
-    const wrapper = shallow(<RevisionRow {...revData} />);
+    const wrapper = shallow(RevisionRow(revData));
     const conditionColData = wrapper.find(TableData).at(4);
     expect(conditionColData.props().children).toEqual('3 OK / 4');
   });
 
   it('should show "-" in case of no status', () => {
-    revData = _.omit(revData, 'obj.status') as RevisionRowProps;
-    const wrapper = shallow(<RevisionRow {...revData} />);
+    revData = _.omit(revData, 'obj.status');
+    const wrapper = shallow(RevisionRow(revData));
     const conditionColData = wrapper.find(TableData).at(4);
     expect(conditionColData.props().children).toEqual('-');
   });
 
   it('should show appropriate ready status and reason for ready state', () => {
-    const wrapper = shallow(<RevisionRow {...revData} />);
+    const wrapper = shallow(RevisionRow(revData));
     const readyColData = wrapper.find(TableData).at(5);
     const reasonColData = wrapper.find(TableData).at(6);
     expect(readyColData.props().children).toEqual('True');
@@ -87,7 +87,7 @@ describe('RevisionRow', () => {
         ],
       },
     };
-    const wrapper = shallow(<RevisionRow {...revData} />);
+    const wrapper = shallow(RevisionRow(revData));
     const readyColData = wrapper.find(TableData).at(5);
     const reasonColData = wrapper.find(TableData).at(6);
     expect(readyColData.props().children).toEqual('False');

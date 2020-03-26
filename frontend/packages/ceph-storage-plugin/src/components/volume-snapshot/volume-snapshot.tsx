@@ -10,6 +10,7 @@ import {
   TableData,
   TableProps,
   TableRow,
+  RowFunction,
 } from '@console/internal/components/factory';
 import { K8sResourceKind, referenceFor } from '@console/internal/module/k8s';
 import {
@@ -135,19 +136,7 @@ export const VolumeSnapshotDetails = (props) => (
   />
 );
 
-type VolumeSnapshotTableRowProps = {
-  obj: K8sResourceKind;
-  index: number;
-  key?: string;
-  style: object;
-};
-
-const VolumeSnapshotTableRow: React.FC<VolumeSnapshotTableRowProps> = ({
-  obj,
-  index,
-  key,
-  style,
-}) => (
+const VolumeSnapshotTableRow: RowFunction<K8sResourceKind> = ({ obj, index, key, style }) => (
   <TableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
     <TableData className={snapshotTableColumnClasses[0]}>
       <ResourceLink
@@ -172,8 +161,6 @@ const VolumeSnapshotTableRow: React.FC<VolumeSnapshotTableRowProps> = ({
     </TableData>
   </TableRow>
 );
-
-VolumeSnapshotTableRow.displayName = 'SnapshotTableRow';
 
 export const VolumeSnapshotList: React.FC<TableProps> = (props) => (
   <Table

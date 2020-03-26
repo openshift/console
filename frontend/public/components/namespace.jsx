@@ -181,7 +181,6 @@ const NamespacesTableRow = ({ obj: ns, index, key, style }) => {
     </TableRow>
   );
 };
-NamespacesTableRow.displayName = 'NamespacesTableRow';
 
 export const NamespacesList = (props) => (
   <Table

@@ -87,7 +87,6 @@ const TableRowForKind = ({ obj, index, key, style, customData }) => {
     </TableRow>
   );
 };
-TableRowForKind.displayName = 'TableRowForKind';
 
 const DetailsForKind = (kind) =>
   function DetailsForKind_({ obj }) {

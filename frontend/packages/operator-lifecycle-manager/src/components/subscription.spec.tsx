@@ -1,8 +1,13 @@
 import * as React from 'react';
 import { shallow, ShallowWrapper } from 'enzyme';
 import * as _ from 'lodash';
-import { referenceForModel } from '@console/internal/module/k8s';
-import { Table, TableRow, MultiListPage, DetailsPage } from '@console/internal/components/factory';
+import { referenceForModel, K8sResourceKind } from '@console/internal/module/k8s';
+import {
+  Table,
+  MultiListPage,
+  DetailsPage,
+  RowFunctionArgs,
+} from '@console/internal/components/factory';
 import { ResourceKebab, ResourceLink, Kebab } from '@console/internal/components/utils';
 import {
   SubscriptionModel,
@@ -22,7 +27,6 @@ import { SubscriptionKind, SubscriptionState } from '../types';
 import {
   SubscriptionTableHeader,
   SubscriptionTableRow,
-  SubscriptionTableRowProps,
   SubscriptionsList,
   SubscriptionsListProps,
   SubscriptionsPage,
@@ -42,19 +46,31 @@ describe(SubscriptionTableHeader.displayName, () => {
   });
 });
 
-describe(SubscriptionTableRow.displayName, () => {
-  let wrapper: ShallowWrapper<SubscriptionTableRowProps>;
+describe('SubscriptionTableRow', () => {
+  let wrapper: ShallowWrapper;
   let subscription: SubscriptionKind;
+
+  const updateWrapper = () => {
+    const rowArgs: RowFunctionArgs<K8sResourceKind> = {
+      obj: subscription,
+      index: 0,
+      key: '0',
+      style: {},
+    } as any;
+
+    wrapper = shallow(SubscriptionTableRow(rowArgs));
+    return wrapper;
+  };
 
   beforeEach(() => {
     subscription = { ..._.cloneDeep(testSubscription), status: { installedCSV: 'testapp.v1.0.0' } };
-    wrapper = shallow(<SubscriptionTableRow obj={subscription} index={0} style={{}} />);
+    wrapper = updateWrapper();
   });
 
   it('renders column for subscription name', () => {
     expect(
       wrapper
-        .find(TableRow)
+        .find('tr')
         .childAt(0)
         .shallow()
         .find(ResourceLink)
@@ -62,7 +78,7 @@ describe(SubscriptionTableRow.displayName, () => {
     ).toEqual(subscription.metadata.name);
     expect(
       wrapper
-        .find(TableRow)
+        .find('tr')
         .childAt(0)
         .shallow()
         .find(ResourceLink)
@@ -70,7 +86,7 @@ describe(SubscriptionTableRow.displayName, () => {
     ).toEqual(subscription.metadata.name);
     expect(
       wrapper
-        .find(TableRow)
+        .find('tr')
         .childAt(0)
         .shallow()
         .find(ResourceLink)
@@ -78,7 +94,7 @@ describe(SubscriptionTableRow.displayName, () => {
     ).toEqual(subscription.metadata.namespace);
     expect(
       wrapper
-        .find(TableRow)
+        .find('tr')
         .childAt(0)
         .shallow()
         .find(ResourceLink)
@@ -90,46 +106,46 @@ describe(SubscriptionTableRow.displayName, () => {
     const menuArgs = [ClusterServiceVersionModel, subscription];
     expect(
       wrapper
-        .find(TableRow)
+        .find('tr')
         .find(ResourceKebab)
         .props().kind,
     ).toEqual(referenceForModel(SubscriptionModel));
     expect(
       wrapper
-        .find(TableRow)
+        .find('tr')
         .find(ResourceKebab)
         .props().resource,
     ).toEqual(subscription);
     expect(
       wrapper
-        .find(TableRow)
+        .find('tr')
         .find(ResourceKebab)
         .props().actions[0],
     ).toEqual(Kebab.factory.Edit);
     expect(
       wrapper
-        .find(TableRow)
+        .find('tr')
         .find(ResourceKebab)
         .props()
         .actions[1](...menuArgs).label,
     ).toEqual('Remove Subscription');
     expect(
       wrapper
-        .find(TableRow)
+        .find('tr')
         .find(ResourceKebab)
         .props()
         .actions[1](...menuArgs).callback,
     ).toBeDefined();
     expect(
       wrapper
-        .find(TableRow)
+        .find('tr')
         .find(ResourceKebab)
         .props()
         .actions[2](...menuArgs).label,
     ).toEqual(`View ${ClusterServiceVersionModel.kind}...`);
     expect(
       wrapper
-        .find(TableRow)
+        .find('tr')
         .find(ResourceKebab)
         .props()
         .actions[2](...menuArgs).href,
@@ -139,7 +155,7 @@ describe(SubscriptionTableRow.displayName, () => {
   it('renders column for namespace name', () => {
     expect(
       wrapper
-        .find(TableRow)
+        .find('tr')
         .childAt(1)
         .shallow()
         .find(ResourceLink)
@@ -147,7 +163,7 @@ describe(SubscriptionTableRow.displayName, () => {
     ).toEqual(subscription.metadata.namespace);
     expect(
       wrapper
-        .find(TableRow)
+        .find('tr')
         .childAt(1)
         .shallow()
         .find(ResourceLink)
@@ -155,7 +171,7 @@ describe(SubscriptionTableRow.displayName, () => {
     ).toEqual(subscription.metadata.namespace);
     expect(
       wrapper
-        .find(TableRow)
+        .find('tr')
         .childAt(1)
         .shallow()
         .find(ResourceLink)
@@ -163,7 +179,7 @@ describe(SubscriptionTableRow.displayName, () => {
     ).toEqual(subscription.metadata.namespace);
     expect(
       wrapper
-        .find(TableRow)
+        .find('tr')
         .childAt(1)
         .shallow()
         .find(ResourceLink)
@@ -173,11 +189,11 @@ describe(SubscriptionTableRow.displayName, () => {
 
   it('renders column for subscription state when update available', () => {
     subscription.status.state = SubscriptionState.SubscriptionStateUpgradeAvailable;
-    wrapper = wrapper.setProps({ obj: subscription });
+    wrapper = updateWrapper();
 
     expect(
       wrapper
-        .find(TableRow)
+        .find('tr')
         .childAt(2)
         .shallow()
         .text(),
@@ -187,7 +203,7 @@ describe(SubscriptionTableRow.displayName, () => {
   it('renders column for subscription state when unknown state', () => {
     expect(
       wrapper
-        .find(TableRow)
+        .find('tr')
         .childAt(2)
         .shallow()
         .text(),
@@ -196,11 +212,11 @@ describe(SubscriptionTableRow.displayName, () => {
 
   it('renders column for subscription state when update in progress', () => {
     subscription.status.state = SubscriptionState.SubscriptionStateUpgradePending;
-    wrapper = wrapper.setProps({ obj: subscription });
+    wrapper = updateWrapper();
 
     expect(
       wrapper
-        .find(TableRow)
+        .find('tr')
         .childAt(2)
         .shallow()
         .text(),
@@ -209,11 +225,11 @@ describe(SubscriptionTableRow.displayName, () => {
 
   it('renders column for subscription state when no updates available', () => {
     subscription.status.state = SubscriptionState.SubscriptionStateAtLatest;
-    wrapper = wrapper.setProps({ obj: subscription });
+    wrapper = updateWrapper();
 
     expect(
       wrapper
-        .find(TableRow)
+        .find('tr')
         .childAt(2)
         .shallow()
         .text(),
@@ -223,7 +239,7 @@ describe(SubscriptionTableRow.displayName, () => {
   it('renders column for current subscription channel', () => {
     expect(
       wrapper
-        .find(TableRow)
+        .find('tr')
         .childAt(3)
         .shallow()
         .text(),
@@ -233,7 +249,7 @@ describe(SubscriptionTableRow.displayName, () => {
   it('renders column for approval strategy', () => {
     expect(
       wrapper
-        .find(TableRow)
+        .find('tr')
         .childAt(4)
         .shallow()
         .text(),

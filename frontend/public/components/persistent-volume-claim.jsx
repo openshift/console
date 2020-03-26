@@ -140,7 +140,6 @@ const PVCTableRow = ({ obj, index, key, style }) => {
     </TableRow>
   );
 };
-PVCTableRow.displayName = 'PVCTableRow';
 
 const Details_ = ({ flags, obj: pvc }) => {
   const canListPV = flags[FLAGS.CAN_LIST_PV];

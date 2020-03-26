@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as _ from 'lodash-es';
 import { sortable } from '@patternfly/react-table';
 import * as classNames from 'classnames';
-import { DetailsPage, ListPage, Table, TableRow, TableData } from './factory';
+import { DetailsPage, ListPage, Table, TableRow, TableData, RowFunction } from './factory';
 import {
   DetailsItem,
   Kebab,
@@ -70,7 +70,12 @@ const StorageClassTableHeader = () => {
 };
 StorageClassTableHeader.displayName = 'StorageClassTableHeader';
 
-const StorageClassTableRow: React.SFC<StorageClassTableRowProps> = ({ obj, index, key, style }) => {
+const StorageClassTableRow: RowFunction<StorageClassResourceKind> = ({
+  obj,
+  index,
+  key,
+  style,
+}) => {
   return (
     <TableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
       <TableData className={classNames(tableColumnClasses[0], 'co-break-word')}>
@@ -89,13 +94,6 @@ const StorageClassTableRow: React.SFC<StorageClassTableRowProps> = ({ obj, index
       </TableData>
     </TableRow>
   );
-};
-StorageClassTableRow.displayName = 'StorageClassTableRow';
-type StorageClassTableRowProps = {
-  obj: StorageClassResourceKind;
-  index: number;
-  key?: string;
-  style: object;
 };
 
 const StorageClassDetails: React.SFC<StorageClassDetailsProps> = ({ obj }) => (

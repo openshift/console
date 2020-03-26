@@ -17,7 +17,7 @@ import {
 import { K8sResourceKind } from '../../module/k8s';
 import { history, Kebab, MsgBox, SectionHeading, StatusBox } from '../utils';
 import { confirmModal, createAlertRoutingModal } from '../modals';
-import { Table, TableData, TableRow, TextFilter } from '../factory';
+import { Table, TableData, TableRow, TextFilter, RowFunction } from '../factory';
 import {
   getAlertmanagerConfig,
   patchAlertmanagerConfig,
@@ -249,13 +249,13 @@ const receiverMenuItems = (receiverName: string, canDelete: boolean, canUseEditF
   },
 ];
 
-const ReceiverTableRow: React.FC<ReceiverTableRowProps> = ({
-  obj: receiver,
-  index,
-  key,
-  style,
-  customData,
-}) => {
+const ReceiverTableRow: RowFunction<
+  AlertmanagerReceiver,
+  {
+    routingLabelsByReceivers: RoutingLabelsByReceivers[];
+    defaultReceiverName: string;
+  }
+> = ({ obj: receiver, index, key, style, customData }) => {
   const { routingLabelsByReceivers, defaultReceiverName } = customData;
   // filter to routing labels belonging to current Receiver
   const receiverRoutingLabels = _.filter(routingLabelsByReceivers, { receiver: receiver.name });
@@ -300,7 +300,6 @@ const ReceiverTableRow: React.FC<ReceiverTableRowProps> = ({
     </TableRow>
   );
 };
-ReceiverTableRow.displayName = 'ReceiverTableRow';
 
 const ReceiversTable: React.FC<ReceiverTableProps> = (props) => {
   const { filterValue } = props;
@@ -484,17 +483,6 @@ export type AlertmanagerConfig = {
 type ReceiverTableProps = {
   data: AlertmanagerReceiver[];
   filterValue?: string;
-};
-
-type ReceiverTableRowProps = {
-  obj: AlertmanagerReceiver;
-  index: number;
-  key?: string;
-  style: object;
-  customData: {
-    routingLabelsByReceivers: RoutingLabelsByReceivers[];
-    defaultReceiverName: string;
-  };
 };
 
 type RoutingLabelProps = {

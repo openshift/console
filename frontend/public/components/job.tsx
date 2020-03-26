@@ -7,7 +7,7 @@ import { sortable } from '@patternfly/react-table';
 import { Status } from '@console/shared';
 import { getJobTypeAndCompletions, K8sKind, JobKind } from '../module/k8s';
 import { Conditions } from './conditions';
-import { DetailsPage, ListPage, Table, TableRow, TableData } from './factory';
+import { DetailsPage, ListPage, Table, TableRow, TableData, RowFunction } from './factory';
 import { configureJobParallelismModal } from './modals';
 import {
   ContainerTable,
@@ -98,17 +98,7 @@ const JobTableHeader = () => {
 };
 JobTableHeader.displayName = 'JobTableHeader';
 
-const JobTableRow = ({
-  obj: job,
-  index,
-  key,
-  style,
-}: {
-  obj: JobKind;
-  index: number;
-  key: string;
-  style: any;
-}) => {
+const JobTableRow: RowFunction<JobKind> = ({ obj: job, index, key, style }) => {
   const { type, completions } = getJobTypeAndCompletions(job);
   return (
     <TableRow id={job.metadata.uid} index={index} trKey={key} style={style}>
@@ -142,7 +132,6 @@ const JobTableRow = ({
     </TableRow>
   );
 };
-JobTableRow.displayName = 'JobTableRow';
 
 const jobStatus = (job: JobKind): string => {
   return job && job.status ? _.get(job, 'status.conditions[0].type', 'In Progress') : null;

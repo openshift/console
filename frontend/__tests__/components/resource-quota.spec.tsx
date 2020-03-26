@@ -1,12 +1,8 @@
 import * as React from 'react';
 import { shallow, ShallowWrapper } from 'enzyme';
-import {
-  ResourceQuotaTableRow,
-  UsageIcon,
-  ResourceUsageRow,
-} from '../../public/components/resource-quota';
+import { UsageIcon, ResourceUsageRow } from '../../public/components/resource-quota';
 
-describe(ResourceQuotaTableRow.displayName, () => {
+describe('UsageIcon', () => {
   let wrapper: ShallowWrapper;
 
   it('renders usageIconClass with empty UsageIcon', () => {

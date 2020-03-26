@@ -5,7 +5,7 @@ import * as classNames from 'classnames';
 import { MachineConfigKind, referenceForModel } from '../module/k8s';
 import { MachineConfigModel } from '../models';
 import { fromNow } from './utils/datetime';
-import { DetailsPage, ListPage, Table, TableRow, TableData } from './factory';
+import { DetailsPage, ListPage, Table, TableRow, TableData, RowFunction } from './factory';
 import {
   Kebab,
   navFactory,
@@ -107,12 +107,7 @@ const MachineConfigTableHeader = () => {
 };
 MachineConfigTableHeader.displayName = 'MachineConfigTableHeader';
 
-const MachineConfigTableRow: React.FC<MachineConfigTableRowProps> = ({
-  obj,
-  index,
-  key,
-  style,
-}) => {
+const MachineConfigTableRow: RowFunction<MachineConfigKind> = ({ obj, index, key, style }) => {
   return (
     <TableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
       <TableData className={tableColumnClasses[0]}>
@@ -151,13 +146,6 @@ const MachineConfigTableRow: React.FC<MachineConfigTableRowProps> = ({
       </TableData>
     </TableRow>
   );
-};
-MachineConfigTableRow.displayName = 'MachineConfigTableRow';
-type MachineConfigTableRowProps = {
-  obj: MachineConfigKind;
-  index: number;
-  key?: string;
-  style: object;
 };
 
 const MachineConfigList: React.SFC<any> = (props) => (
