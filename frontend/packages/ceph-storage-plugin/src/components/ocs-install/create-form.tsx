@@ -42,7 +42,12 @@ export const CreateOCSServiceForm: React.FC<CreateOCSServiceFormProps> = ({
           3 selected nodes are used for initial deployment. The remaining selected nodes will be
           used by OpenShift as scheduling targets for OCS scaling.
         </p>
-        <ListPage kind={NodeModel.kind} showTitle={false} ListComponent={ListComponent} />
+        <ListPage
+          kind={NodeModel.kind}
+          showTitle={false}
+          ListComponent={ListComponent}
+          showLabelFilter
+        />
       </div>
     </form>
   );
