@@ -6,10 +6,7 @@
 @import "~patternfly/dist/sass/patternfly/variables";
 @import "~patternfly/dist/sass/patternfly/bootstrap-mixin-overrides";
 @import "~patternfly/dist/sass/patternfly/mixins";
-@import '~patternfly/dist/sass/patternfly/icons'; // TODO remove together with kubevirt-web-ui-components dependency
 @import "~patternfly-react/dist/sass/patternfly-react";
-
-@import '~patternfly/dist/sass/patternfly/wizard';
 
 // Console StyleSheets
 @import "~xterm/dist/xterm.css";
@@ -21,4 +18,3 @@
 @import "~@patternfly/react-console/dist/sass/vnc-console";
 @import "~@patternfly/react-console/dist/sass/desktop-viewer";
 
-@import '~kubevirt-web-ui-components/dist/sass/components';
