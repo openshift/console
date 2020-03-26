@@ -189,8 +189,8 @@ const VirtualMachineTemplates: React.FC<React.ComponentProps<typeof Table> &
 
 const getCreateProps = ({ namespace }: { namespace: string }) => {
   const items: any = {
-    wizard: VMWizardActionLabels.WIZARD,
-    yaml: VMWizardActionLabels.YAML,
+    [VMWizardName.WIZARD]: VMWizardActionLabels.WIZARD,
+    [VMWizardName.YAML]: VMWizardActionLabels.YAML,
   };
 
   return {
