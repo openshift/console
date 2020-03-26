@@ -289,7 +289,7 @@ const VirtualBody: React.SFC<VirtualBodyProps> = (props) => {
       style,
       customData,
     };
-    const row = (Row as RowFunction)(rowArgs as RowFunctionArgs);
+    const row = Row(rowArgs);
 
     // do not render non visible elements (this excludes overscan)
     if (!isVisible) {
@@ -331,18 +331,18 @@ const VirtualBody: React.SFC<VirtualBodyProps> = (props) => {
 export type RowFunctionArgs<T = any, C = any> = {
   obj: T;
   index: number;
-  columns: [];
+  columns: any[];
   isScrolling: boolean;
   key: string;
   style: object;
   customData?: C;
 };
 
-export type RowFunction<T = any, C = any> = (args: RowFunctionArgs<T, C>) => JSX.Element;
+export type RowFunction<T = any, C = any> = (args: RowFunctionArgs<T, C>) => React.ReactElement;
 
 export type VirtualBodyProps = {
   customData?: any;
-  Row: RowFunction | React.ComponentClass<any, any> | React.ComponentType<any>;
+  Row: RowFunction;
   height: number;
   isScrolling: boolean;
   onChildScroll: (...args) => any;
@@ -363,7 +363,7 @@ export type TableProps = {
   filters?: { [key: string]: any };
   Header: (...args) => any[];
   loadError?: string | Object;
-  Row?: RowFunction | React.ComponentClass<any, any> | React.ComponentType<any>;
+  Row?: RowFunction;
   Rows?: (...args) => any[];
   'aria-label': string;
   virtualize?: boolean;
@@ -630,7 +630,7 @@ export type TableInnerProps = {
   namespace?: string;
   reduxID?: string;
   reduxIDs?: string[];
-  Row?: RowFunction | React.ComponentClass<any, any> | React.ComponentType<any>;
+  Row?: RowFunction;
   Rows?: (...args) => any[];
   selector?: Object;
   sortList?: (

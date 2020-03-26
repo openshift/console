@@ -1,6 +1,7 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import { Kebab, KebabOption } from '@console/internal/components/utils';
+import { RowFunction } from '@console/internal/components/factory';
 import { VMWizardStorageType, VMWizardStorageWithWrappers } from '../../types';
 import { DiskSimpleRow } from '../../../vm-disks/disk-row';
 import {
@@ -52,14 +53,10 @@ export const getActions = (
   opts: VMWizardStorageRowActionOpts,
 ) => [menuActionEdit, menuActionRemove].map((a) => a(wizardNetworkData, opts));
 
-export type VMWizardNicRowProps = {
-  obj: VMWizardStorageBundle;
-  customData: VMWizardStorageRowCustomData;
-  index: number;
-  style: object;
-};
-
-export const VmWizardStorageRow: React.FC<VMWizardNicRowProps> = ({
+export const VmWizardStorageRow: RowFunction<
+  VMWizardStorageBundle,
+  VMWizardStorageRowCustomData
+> = ({
   obj: { name, wizardStorageData, ...restData },
   customData: { isDisabled, columnClasses, removeStorage, withProgress, wizardReduxID },
   index,

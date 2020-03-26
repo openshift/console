@@ -2,12 +2,17 @@ import * as React from 'react';
 import { shallow } from 'enzyme';
 import * as fuzzy from 'fuzzysearch';
 import { SortByDirection, sortable } from '@patternfly/react-table';
-import { TableRow, TableData, Table, TextFilter } from '@console/internal/components/factory';
+import {
+  TableRow,
+  TableData,
+  Table,
+  TextFilter,
+  RowFunction,
+} from '@console/internal/components/factory';
 import CustomResourceList from '../CustomResourceList';
 import {
   CustomResourceListProps,
   CustomResourceListRowFilter,
-  CustomResourceListRowProps,
 } from '../custom-resource-list-types';
 
 let customResourceListProps: CustomResourceListProps;
@@ -41,7 +46,7 @@ const MockTableHeader = () => {
   ];
 };
 
-const MockTableRow: React.FC<CustomResourceListRowProps> = ({ obj, index, key, style }) => (
+const MockTableRow: RowFunction = ({ obj, index, key, style }) => (
   <TableRow id={obj.name} index={index} trKey={key} style={style}>
     <TableData className={mockColumnClasses.name}>{obj.name}</TableData>
     <TableData className={mockColumnClasses.version}>{obj.version}</TableData>

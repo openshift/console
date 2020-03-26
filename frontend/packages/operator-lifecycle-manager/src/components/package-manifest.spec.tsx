@@ -36,6 +36,7 @@ describe(PackageManifestTableRow.displayName, () => {
     wrapper = shallow(
       <PackageManifestTableRow
         index={0}
+        rowKey={'0'}
         style={null}
         obj={testPackageManifest}
         catalogSourceNamespace={testCatalogSource.metadata.namespace}

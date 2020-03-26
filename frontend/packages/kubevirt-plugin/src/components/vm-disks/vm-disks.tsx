@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Button, ButtonVariant } from '@patternfly/react-core';
-import { Table } from '@console/internal/components/factory';
+import { Table, RowFunction } from '@console/internal/components/factory';
 import { PersistentVolumeClaimModel, TemplateModel } from '@console/internal/models';
 import { Firehose, FirehoseResult, EmptyBox } from '@console/internal/components/utils';
 import { useSafetyFirst } from '@console/internal/components/safety-first';
@@ -58,7 +58,7 @@ const getStoragesData = ({
 export type VMDisksTableProps = {
   data?: any[];
   customData?: object;
-  row: React.ComponentClass<any, any> | React.ComponentType<any>;
+  row: RowFunction;
   columnClasses: string[];
 };
 

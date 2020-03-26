@@ -15,6 +15,7 @@ import {
   TableRow,
   TableData,
   MultiListPage,
+  RowFunctionArgs,
 } from '@console/internal/components/factory';
 import { withFallback } from '@console/shared/src/components/error/error-boundary';
 import {
@@ -207,7 +208,7 @@ const ClusterServiceVersionStatus: React.FC<ClusterServiceVersionStatusProps> = 
 };
 
 export const ClusterServiceVersionTableRow = withFallback<ClusterServiceVersionTableRowProps>(
-  ({ obj, key, subscription, catalogSourceMissing, index, style }) => {
+  ({ obj, rowKey, subscription, catalogSourceMissing, index, style }) => {
     const { displayName, provider, version } = _.get(obj, 'spec');
     const [icon] = _.get(obj, 'spec.icon', []);
     const deploymentName = _.get(obj, 'spec.install.spec.deployments[0].name');
@@ -216,7 +217,7 @@ export const ClusterServiceVersionTableRow = withFallback<ClusterServiceVersionT
     const uid = getUID(obj);
     const internalObjects = getInternalObjects(obj);
     return (
-      <TableRow id={uid} trKey={key} index={index} style={style}>
+      <TableRow id={uid} trKey={rowKey} index={index} style={style}>
         {/* Name */}
         <TableData className={tableColumnClasses[0]}>
           <Link
@@ -297,7 +298,7 @@ export const ClusterServiceVersionTableRow = withFallback<ClusterServiceVersionT
 
 const SubscriptionTableRow: React.FC<SubscriptionTableRowProps> = ({
   catalogSourceMissing,
-  key,
+  rowKey,
   obj,
   index,
   style,
@@ -325,7 +326,7 @@ const SubscriptionTableRow: React.FC<SubscriptionTableRowProps> = ({
   };
 
   return (
-    <TableRow id={uid} trKey={key} index={index} style={style}>
+    <TableRow id={uid} trKey={rowKey} index={index} style={style}>
       {/* Name */}
       <TableData className={tableColumnClasses[0]}>
         <Link to={route}>
@@ -365,8 +366,8 @@ const SubscriptionTableRow: React.FC<SubscriptionTableRowProps> = ({
 };
 
 const InstalledOperatorTableRow: React.FC<InstalledOperatorTableRowProps> = ({
-  catalogSources = [],
   obj,
+  catalogSources = [],
   subscriptions = [],
   ...rest
 }) => {
@@ -426,9 +427,12 @@ export const ClusterServiceVersionList: React.SFC<ClusterServiceVersionListProps
       {...rest}
       aria-label="Installed Operators"
       Header={ClusterServiceVersionTableHeader}
-      Row={(rowProps) => (
+      Row={(rowArgs: RowFunctionArgs<ClusterServiceVersionKind | SubscriptionKind>) => (
         <InstalledOperatorTableRow
-          {...rowProps}
+          obj={rowArgs.obj}
+          index={rowArgs.index}
+          rowKey={rowArgs.key}
+          style={rowArgs.style}
           catalogSources={catalogSources.data}
           subscriptions={subscriptions.data}
         />
@@ -917,29 +921,29 @@ export type ClusterServiceVersionDetailsProps = {
 };
 
 type InstalledOperatorTableRowProps = {
-  catalogSources: CatalogSourceKind[];
-  index: number;
-  key?: string;
   obj: ClusterServiceVersionKind | SubscriptionKind;
+  index: number;
+  rowKey: string;
   style: object;
+  catalogSources: CatalogSourceKind[];
   subscriptions: SubscriptionKind[];
 };
 
 export type ClusterServiceVersionTableRowProps = {
-  catalogSourceMissing: boolean;
-  index: number;
-  key?: string;
   obj: ClusterServiceVersionKind;
+  index: number;
+  rowKey: string;
   style: object;
+  catalogSourceMissing: boolean;
   subscription: SubscriptionKind;
 };
 
 type SubscriptionTableRowProps = {
-  catalogSourceMissing: boolean;
-  index: number;
-  key?: string;
   obj: SubscriptionKind;
+  index: number;
+  rowKey: string;
   style: object;
+  catalogSourceMissing: boolean;
 };
 
 export type CSVSubscriptionProps = {

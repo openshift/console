@@ -1,18 +1,15 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import { Kebab } from '@console/internal/components/utils';
+import { RowFunction } from '@console/internal/components/factory';
 import { CDSimpleRow } from '../../../vm-disks/cd-row';
 import { VMWizardStorageBundle, VMWizardStorageRowCustomData } from '../storage-tab/types';
 import { getActions } from '../storage-tab/vm-wizard-storage-row';
 
-export type VmWizardVirtualHardwareRowProps = {
-  obj: VMWizardStorageBundle;
-  customData: VMWizardStorageRowCustomData;
-  index: number;
-  style: object;
-};
-
-export const VmWizardVirtualHardwareRow: React.FC<VmWizardVirtualHardwareRowProps> = ({
+export const VmWizardVirtualHardwareRow: RowFunction<
+  VMWizardStorageBundle,
+  VMWizardStorageRowCustomData
+> = ({
   obj: { name, wizardStorageData, ...restData },
   customData: { isDisabled, columnClasses, removeStorage, withProgress, wizardReduxID },
   index,

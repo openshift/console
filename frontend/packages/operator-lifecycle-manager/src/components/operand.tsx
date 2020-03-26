@@ -15,6 +15,7 @@ import {
   Table,
   TableRow,
   TableData,
+  RowFunctionArgs,
 } from '@console/internal/components/factory';
 import {
   Kebab,
@@ -304,12 +305,19 @@ export const OperandTableRow: React.FC<OperandTableRowProps> = ({
     </TableRow>
   );
 };
+
 // eslint-disable-next-line no-underscore-dangle
 export const OperandList_: React.FC<OperandListProps & WithFlagsProps> = (props) => {
   const { flags } = props;
   const Row = React.useCallback(
-    (rowProps: OperandTableRowProps) => (
-      <OperandTableRow {...rowProps} rowKey={rowProps.key} flags={flags ?? null} />
+    (rowArgs: RowFunctionArgs<K8sResourceKind>) => (
+      <OperandTableRow
+        obj={rowArgs.obj}
+        index={rowArgs.index}
+        rowKey={rowArgs.key}
+        style={rowArgs.style}
+        flags={flags ?? null}
+      />
     ),
     [flags],
   );
@@ -732,8 +740,7 @@ export type OperandesourceDetailsProps = {
 export type OperandTableRowProps = {
   obj: K8sResourceKind;
   index: number;
-  rowKey?: string;
-  key?: string;
+  rowKey: string;
   style: object;
   flags?: FlagsObject;
 };
