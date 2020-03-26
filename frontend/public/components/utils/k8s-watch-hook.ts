@@ -223,11 +223,11 @@ type GetIDAndDispatch = (
   k8sModel: K8sKind,
 ) => { id: string; dispatch: (dispatch: Dispatch, getState: () => RootState) => void };
 
-type ResourcesObject = { [key: string]: K8sResourceCommon | K8sResourceCommon[] };
+export type ResourcesObject = { [key: string]: K8sResourceCommon | K8sResourceCommon[] };
 
 type WatchK8sResult<R extends K8sResourceCommon | K8sResourceCommon[]> = [R, boolean, any];
 
-type WatchK8sResults<R extends ResourcesObject> = {
+export type WatchK8sResults<R extends ResourcesObject> = {
   [k in keyof R]: { data: R[k]; loaded: boolean; loadError: any };
 };
 

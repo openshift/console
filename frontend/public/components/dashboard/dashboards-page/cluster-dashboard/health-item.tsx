@@ -4,6 +4,7 @@ import {
   DashboardsOverviewHealthOperator,
   DashboardsOverviewHealthURLSubsystem,
   DashboardsOverviewHealthPrometheusSubsystem,
+  DashboardsOverviewHealthResourceSubsystem,
 } from '@console/plugin-sdk';
 import HealthItem from '@console/shared/src/components/dashboard/status-card/HealthItem';
 import OperatorStatusBody, {
@@ -14,11 +15,12 @@ import {
   getMostImportantStatuses,
 } from '@console/shared/src/components/dashboard/status-card/state-utils';
 import { HealthState } from '@console/shared/src/components/dashboard/status-card/states';
-import { FirehoseResourcesResult, AsyncComponent, resourcePath } from '../../../utils';
-import { uniqueResource } from './utils';
-import { withDashboardResources, DashboardItemProps } from '../../with-dashboard-resources';
-import { PrometheusResponse } from '../../../graphs';
 import { K8sKind } from '../../../../module/k8s';
+import { FirehoseResourcesResult, AsyncComponent, resourcePath } from '../../../utils';
+import { useK8sWatchResources } from '../../../utils/k8s-watch-hook';
+import { PrometheusResponse } from '../../../graphs';
+import { withDashboardResources, DashboardItemProps } from '../../with-dashboard-resources';
+import { uniqueResource } from './utils';
 
 export const OperatorsPopup: React.FC<OperatorsPopupProps> = ({
   resources,
@@ -226,6 +228,28 @@ export const PrometheusHealthItem = withDashboardResources<PrometheusHealthItemP
   },
 );
 
+export const ResourceHealthItem: React.FC<ResourceHealthItemProps> = ({ subsystem }) => {
+  const { title, resources, healthHandler, popupComponent, popupTitle } = subsystem;
+  const resourcesResult = useK8sWatchResources(resources);
+
+  const healthState = healthHandler(resourcesResult);
+
+  const PopupComponentCallback = React.useCallback(
+    () => <AsyncComponent loader={popupComponent} resourcesResult={resourcesResult} />,
+    [popupComponent, resourcesResult],
+  );
+
+  return (
+    <HealthItem
+      title={title}
+      state={healthState.state}
+      details={healthState.message}
+      popupTitle={popupTitle}
+      PopupComponent={popupComponent ? PopupComponentCallback : null}
+    />
+  );
+};
+
 type OperatorHealthItemProps = DashboardItemProps & {
   operatorExtensions: DashboardsOverviewHealthOperator[];
 };
@@ -238,6 +262,10 @@ type URLHealthItemProps = DashboardItemProps & {
 type PrometheusHealthItemProps = DashboardItemProps & {
   subsystem: DashboardsOverviewHealthPrometheusSubsystem['properties'];
   models: ImmutableMap<string, K8sKind>;
+};
+
+type ResourceHealthItemProps = {
+  subsystem: DashboardsOverviewHealthResourceSubsystem['properties'];
 };
 
 type OperatorsPopupProps = {
