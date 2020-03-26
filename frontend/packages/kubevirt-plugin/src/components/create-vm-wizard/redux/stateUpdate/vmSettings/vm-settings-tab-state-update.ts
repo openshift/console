@@ -26,6 +26,9 @@ import { prefillVmTemplateUpdater } from './prefill-vm-template-state-update';
 export const selectUserTemplateOnLoadedUpdater = (options: UpdateOptions) => {
   const { id, dispatch, getState } = options;
   const state = getState();
+  if (options.changedCommonData.has(VMWizardProps.userTemplates)) {
+    return;
+  }
 
   if (iGetVmSettingAttribute(state, id, VMSettingsField.USER_TEMPLATE, 'initialized')) {
     return;
