@@ -10,7 +10,6 @@
     "@console/internal": "0.0.0-fixed",
     "@console/plugin-sdk": "0.0.0-fixed",
     "@console/shared": "0.0.0-fixed",
-    "kubevirt-web-ui-components": "0.1.50",
     "@patternfly/react-console": "1.x"
   },
   "consolePlugin": {
