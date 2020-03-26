@@ -87,7 +87,7 @@ export const UserTemplates: React.FC<UserTemplatesProps> = React.memo(
             : {}
         }
       >
-        <FormField isDisabled={!hasUserTemplates || forceSingleUserTemplateName !== ''}>
+        <FormField isDisabled={!hasUserTemplates}>
           <FormSelect onChange={nullOnEmptyChange(onChange, VMSettingsField.USER_TEMPLATE)}>
             {optionUserTemplate}
             {optionNoTemplatesAvailable}
