@@ -177,24 +177,24 @@ export const getVolumeMountsByPermissions = (pod: PodKind) => {
   return _.values(m);
 };
 
-const podContainerStatuses = (pod: PodKind): ContainerStatus[] => {
+export const podRestarts = (pod: PodKind): number => {
   if (!pod || !pod.status) {
-    return [];
+    return 0;
   }
   const { initContainerStatuses = [], containerStatuses = [] } = pod.status;
-  return [...initContainerStatuses, ...containerStatuses];
-};
-
-export const podRestarts = (pod: PodKind): number => {
-  const containerStatuses = podContainerStatuses(pod);
-  return containerStatuses.reduce(
+  const isInitializing = initContainerStatuses.some(({ state }) => {
+    return !state.terminated || state.terminated.exitCode !== 0;
+  });
+  const toCheck = isInitializing ? initContainerStatuses : containerStatuses;
+  return toCheck.reduce(
     (restartCount, status: ContainerStatus) => restartCount + status.restartCount,
     0,
   );
 };
 
 export const podReadiness = (pod: PodKind): { readyCount: number; totalContainers: number } => {
-  const containerStatuses = podContainerStatuses(pod);
+  // Don't include init containers in readiness count. This is consistent with the CLI.
+  const containerStatuses = pod?.status?.containerStatuses || [];
   return containerStatuses.reduce(
     (acc, { ready }: ContainerStatus) => {
       if (ready) {
