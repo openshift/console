@@ -35,7 +35,7 @@ import {
   getAvailableClusterUpdates,
   getReportBugLink,
 } from '../module/k8s/cluster-settings';
-import * as openshiftLogoImg from '../imgs/logos/openshift.svg';
+import * as redhatLogoImg from '../imgs/logos/redhat.svg';
 
 const SystemStatusButton = ({ statuspageData, className }) =>
   !_.isEmpty(_.get(statuspageData, 'incidents')) ? (
@@ -255,7 +255,7 @@ class MastheadToolbarContents_ extends React.Component {
             label: 'OpenShift Cluster Manager',
             externalLink: true,
             href: getOCMLink(clusterID),
-            image: <img src={openshiftLogoImg} alt="" />,
+            image: <img src={redhatLogoImg} alt="" />,
           },
         ],
       });
