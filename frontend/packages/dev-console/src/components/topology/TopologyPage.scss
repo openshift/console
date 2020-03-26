@@ -7,6 +7,18 @@
   top: 0;
   bottom: 0;
 
+  &__hint-container {
+    align-items: center;
+    background: var(--pf-global--Color--light-100);
+    border: 1px solid var(--pf-global--BorderColor--light-100);
+    border-radius: 8px;
+    display: flex;
+    padding: var(--pf-global--spacer--xs) var(--pf-global--spacer--sm);
+    pointer-events: none;
+    position: absolute;
+    top: var(--pf-global--spacer--sm);
+  }
+
   &__layout-group {
     display: flex;
     flex-wrap: wrap;

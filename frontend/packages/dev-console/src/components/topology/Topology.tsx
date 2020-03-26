@@ -3,6 +3,7 @@ import * as classNames from 'classnames';
 import { action } from 'mobx';
 import { connect } from 'react-redux';
 import { Button, ToolbarItem, Tooltip } from '@patternfly/react-core';
+import { TopologyIcon } from '@patternfly/react-icons';
 import {
   TopologyView,
   TopologyControlBar,
@@ -20,9 +21,14 @@ import {
   SelectionEventListener,
 } from '@console/topology';
 import { RootState } from '@console/internal/redux';
-import { TopologyIcon } from '@patternfly/react-icons';
 import TopologySideBar from './TopologySideBar';
-import { GraphData, TopologyDataModel, TopologyDataObject } from './topology-types';
+import {
+  GraphData,
+  TopologyDataModel,
+  TopologyDataObject,
+  SHOW_GROUPING_HINT_EVENT,
+  ShowGroupingHintEventListener,
+} from './topology-types';
 import TopologyResourcePanel from './TopologyResourcePanel';
 import TopologyApplicationPanel from './application-panel/TopologyApplicationPanel';
 import ConnectedTopologyEdgePanel from './TopologyEdgePanel';
@@ -61,6 +67,7 @@ const Topology: React.FC<TopologyProps> = ({ data, serviceBinding, filters, acti
   const [graphData, setGraphData] = React.useState<GraphData>();
   const [selectedIds, setSelectedIds] = React.useState<string[]>([]);
   const createResourceAccess: string[] = useAddToProjectAccess(activeNamespace);
+  const [dragHint, setDragHint] = React.useState<string>('');
 
   if (!componentFactoryRef.current) {
     componentFactoryRef.current = new ComponentFactory(serviceBinding);
@@ -78,6 +85,12 @@ const Topology: React.FC<TopologyProps> = ({ data, serviceBinding, filters, acti
         setSelectedIds(ids);
       }
     });
+    visRef.current.addEventListener<ShowGroupingHintEventListener>(
+      SHOW_GROUPING_HINT_EVENT,
+      (element, hint) => {
+        setDragHint(hint);
+      },
+    );
     visRef.current.fromModel(graphModel);
   }
 
@@ -256,6 +269,7 @@ const Topology: React.FC<TopologyProps> = ({ data, serviceBinding, filters, acti
       sideBarOpen={!!sideBar}
     >
       <VisualizationSurface visualization={visRef.current} state={{ selectedIds }} />
+      {dragHint && <div className="odc-topology__hint-container">{dragHint}</div>}
     </TopologyView>
   );
 };
