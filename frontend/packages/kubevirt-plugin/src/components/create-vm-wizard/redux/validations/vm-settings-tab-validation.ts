@@ -13,7 +13,6 @@ import {
   iGetFieldValue,
   iGetVmSettings,
   isFieldRequired,
-  iGetVmSettingAttribute,
 } from '../../selectors/immutable/vm-settings';
 import {
   InternalActionType,
@@ -78,28 +77,21 @@ const validateUserTemplate: VmSettingsValidator = (field, options) => {
   const { getState, id } = options;
   const state = getState();
 
-  const forcedSingleUserTemplateName = iGetCommonData(state, id, VMWizardProps.userTemplateName);
-  const userTemplateInitialized = iGetVmSettingAttribute(
-    state,
-    id,
-    VMSettingsField.USER_TEMPLATE,
-    'initialized',
+  const userTemplateName = iGetFieldValue(field);
+  if (!userTemplateName) {
+    return null;
+  }
+
+  const userTemplate = iGetLoadedCommonData(state, id, VMWizardProps.userTemplates, List()).find(
+    (template) => iGetName(template) === userTemplateName,
   );
 
-  if (forcedSingleUserTemplateName && !userTemplateInitialized) {
+  if (!userTemplate) {
     return asValidationObject(
       'Template is missing, check template name',
       ValidationErrorType.Error,
     );
   }
-
-  const userTemplateName = iGetFieldValue(field);
-  if (!userTemplateName) {
-    return null;
-  }
-  const userTemplate = iGetLoadedCommonData(state, id, VMWizardProps.userTemplates, List()).find(
-    (template) => iGetName(template) === userTemplateName,
-  );
 
   return validateUserTemplateProvisionSource(userTemplate && userTemplate.toJSON());
 };
