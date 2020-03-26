@@ -6,5 +6,7 @@ import { deleteHelmRelease } from '../../../actions/modify-helm-release';
 export const helmReleaseActions = (helmRelease: Node): KebabOption[] => {
   const name = helmRelease.getLabel();
   const { namespace } = helmRelease.getData().groupResources[0].resources.obj.metadata;
-  return [deleteHelmRelease(name, namespace), ...regroupActions(helmRelease)];
+  return name && namespace
+    ? [deleteHelmRelease(name, namespace), ...regroupActions(helmRelease)]
+    : [];
 };

@@ -2168,6 +2168,7 @@ export const sampleHelmResourcesMap = {
     releaseName: 'nodejs-helm',
     chartIcon: '',
     manifestResources: [sampleHelmChartDeploymentConfig],
+    releaseNotes: 'test release notes',
   },
 };
 

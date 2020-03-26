@@ -41,6 +41,7 @@ export const getTopologyHelmReleaseGroupItem = (
   const resourceKindName = getHelmReleaseKey(obj);
   const helmResources = helmResourcesMap[resourceKindName];
   const releaseName = helmResources?.releaseName;
+  const releaseNotes = helmResources?.releaseNotes;
   const uid = _.get(obj, ['metadata', 'uid'], null);
   const returnData = { groups: [], dataModel: {} };
 
@@ -77,6 +78,7 @@ export const getTopologyHelmReleaseGroupItem = (
   };
   dataModel.data = {
     manifestResources: helmResources?.manifestResources || [],
+    releaseNotes,
   };
   returnData.dataModel[helmGroup.id] = dataModel;
   returnData.groups.push(helmGroup);

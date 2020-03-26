@@ -13,6 +13,7 @@ import { Node } from '@console/topology';
 import HelmReleaseOverview from '../../helm/HelmReleaseOverview';
 import TopologyHelmReleaseResourcesPanel from './TopologyHelmReleaseResourcesPanel';
 import { helmReleaseActions } from '../actions/helmReleaseActions';
+import TopologyHelmReleaseNotesPanel from './TopologyHelmReleaseNotesPanel';
 
 type PropsFromState = {
   selectedDetailsTab?: any;
@@ -36,16 +37,13 @@ type OwnProps = {
 
 type TopologyHelmReleasePanelProps = PropsFromState & PropsFromDispatch & OwnProps;
 
-const TopologyHelmReleasePanel = connect<
-  PropsFromState,
-  PropsFromDispatch,
-  TopologyHelmReleasePanelProps
->(
-  stateToProps,
-  dispatchToProps,
-)(({ helmRelease, selectedDetailsTab, onClickTab }: TopologyHelmReleasePanelProps) => {
+export const ConnectedTopologyHelmReleasePanel: React.FC<TopologyHelmReleasePanelProps> = ({
+  helmRelease,
+  selectedDetailsTab,
+  onClickTab,
+}: TopologyHelmReleasePanelProps) => {
   const secret = helmRelease.getData().resources.obj;
-  const { manifestResources } = helmRelease.getData().data;
+  const { manifestResources, releaseNotes } = helmRelease.getData().data;
   const name = helmRelease.getLabel();
   const { namespace } = helmRelease.getData().groupResources[0].resources.obj.metadata;
 
@@ -63,22 +61,30 @@ const TopologyHelmReleasePanel = connect<
       <TopologyHelmReleaseResourcesPanel manifestResources={manifestResources} />
     ) : null;
 
+  const releaseNotesComponent = () =>
+    releaseNotes ? <TopologyHelmReleaseNotesPanel releaseNotes={releaseNotes} /> : null;
+
+  const actions = helmReleaseActions(helmRelease);
   return (
     <div className="overview__sidebar-pane resource-overview">
       <div className="overview__sidebar-pane-head resource-overview__heading">
         <h1 className="co-m-pane__heading">
           <div className="co-m-pane__name co-resource-item">
             <ResourceIcon className="co-m-resource-icon--lg" kind="HelmRelease" />
-            <Link
-              to={`/helm-releases/ns/${namespace}/release/${name}`}
-              className="co-resource-item__resource-name"
-            >
-              {name}
-            </Link>
+            {name && (
+              <Link
+                to={`/helm-releases/ns/${namespace}/release/${name}`}
+                className="co-resource-item__resource-name"
+              >
+                {name}
+              </Link>
+            )}
           </div>
-          <div className="co-actions">
-            <ActionsMenu actions={helmReleaseActions(helmRelease)} />
-          </div>
+          {actions?.length && (
+            <div className="co-actions">
+              <ActionsMenu actions={helmReleaseActions(helmRelease)} />
+            </div>
+          )}
         </h1>
       </div>
       <SimpleTabNav
@@ -87,12 +93,22 @@ const TopologyHelmReleasePanel = connect<
         tabs={[
           { name: 'Details', component: detailsComponent },
           { name: 'Resources', component: resourcesComponent },
+          { name: 'Release Notes', component: releaseNotesComponent },
         ]}
         tabProps={{ obj: secret }}
         additionalClassNames="co-m-horizontal-nav__menu--within-sidebar co-m-horizontal-nav__menu--within-overview-sidebar"
       />
     </div>
   );
-});
+};
+
+const TopologyHelmReleasePanel = connect<
+  PropsFromState,
+  PropsFromDispatch,
+  TopologyHelmReleasePanelProps
+>(
+  stateToProps,
+  dispatchToProps,
+)(ConnectedTopologyHelmReleasePanel);
 
 export default TopologyHelmReleasePanel;

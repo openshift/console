@@ -1,4 +1,5 @@
 import * as fuzzy from 'fuzzysearch';
+import { coFetchJSON } from '@console/internal/co-fetch';
 import { HelmRelease, HelmReleaseStatus } from './helm-types';
 import { CustomResourceListRowFilter } from '../custom-resource-list/custom-resource-list-types';
 
@@ -53,4 +54,14 @@ export const getFilteredItemsByRow = (items: HelmRelease[], filter: string | str
 
 export const getFilteredItemsByText = (items: HelmRelease[], filter: string) => {
   return items.filter((release: HelmRelease) => fuzzy(filter, release.name));
+};
+
+export const fetchHelmReleases = (
+  namespace: string,
+  helmReleaseName?: string,
+): Promise<HelmRelease[]> => {
+  const fetchString = `/api/helm/releases?ns=${namespace}${
+    helmReleaseName ? `&name=${helmReleaseName}` : ''
+  }`;
+  return coFetchJSON(fetchString);
 };

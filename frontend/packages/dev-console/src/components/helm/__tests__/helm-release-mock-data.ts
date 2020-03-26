@@ -10,7 +10,7 @@ export const mockHelmReleases: HelmRelease[] = [
       deleted: '',
       description: 'Install complete',
       status: 'deployed',
-      notes: '',
+      notes: 'ghost-test release notes',
     },
     chart: {
       metadata: {
@@ -70,7 +70,7 @@ export const mockHelmReleases: HelmRelease[] = [
       deleted: '',
       description: 'Install complete',
       status: 'failed',
-      notes: '',
+      notes: 'node-test-chart release notes',
     },
     chart: {
       metadata: {
@@ -99,7 +99,7 @@ export const mockHelmReleases: HelmRelease[] = [
       deleted: '',
       description: 'Install complete',
       status: 'pending-install',
-      notes: '',
+      notes: 'node-test-chart release notes',
     },
     chart: {
       metadata: {
