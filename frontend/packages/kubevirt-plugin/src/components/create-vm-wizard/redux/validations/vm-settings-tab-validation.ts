@@ -44,6 +44,7 @@ import { vmSettingsOrder } from '../initial-state/vm-settings-tab-initial-state'
 import { TemplateValidations } from '../../../../utils/validations/template/template-validations';
 import { combineIntegerValidationResults } from '../../../../utils/validations/template/utils';
 import { getValidationUpdate } from './utils';
+
 import { getTemplateValidations } from '../../selectors/template';
 
 const validateVm: VmSettingsValidator = (field, options) => {
@@ -80,9 +81,17 @@ const validateUserTemplate: VmSettingsValidator = (field, options) => {
   if (!userTemplateName) {
     return null;
   }
+
   const userTemplate = iGetLoadedCommonData(state, id, VMWizardProps.userTemplates, List()).find(
     (template) => iGetName(template) === userTemplateName,
   );
+
+  if (!userTemplate) {
+    return asValidationObject(
+      "Can't verify template, template is missing",
+      ValidationErrorType.Error,
+    );
+  }
 
   return validateUserTemplateProvisionSource(userTemplate && userTemplate.toJSON());
 };

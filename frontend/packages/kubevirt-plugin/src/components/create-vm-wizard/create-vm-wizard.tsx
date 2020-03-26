@@ -15,7 +15,12 @@ import { Location } from 'history';
 import { match as RouterMatch } from 'react-router';
 import { withReduxID } from '../../utils/redux/common';
 import { DataVolumeModel, VirtualMachineModel } from '../../models';
-import { TEMPLATE_TYPE_BASE, TEMPLATE_TYPE_LABEL, TEMPLATE_TYPE_VM } from '../../constants/vm';
+import {
+  TEMPLATE_TYPE_BASE,
+  TEMPLATE_TYPE_LABEL,
+  TEMPLATE_TYPE_VM,
+  VMWizardMode,
+} from '../../constants/vm';
 import { getResource } from '../../utils';
 import { EnhancedK8sMethods } from '../../k8s/enhancedK8sMethods/enhancedK8sMethods';
 import { cleanupAndGetResults, getResults } from '../../k8s/enhancedK8sMethods/k8sMethodsUtils';
@@ -322,6 +327,7 @@ const wizardDispatchToProps = (dispatch, props) => ({
         data: {
           isCreateTemplate: props.isCreateTemplate,
           isProviderImport: props.isProviderImport,
+          userTemplateName: props.userTemplateName,
         },
         dataIDReferences: props.dataIDReferences,
       }),
@@ -357,7 +363,6 @@ export const CreateVMWizardPageComponent: React.FC<CreateVMWizardPageComponentPr
   flags,
 }) => {
   const activeNamespace = match && match.params && match.params.ns;
-  const path = (match && match.path) || '';
   const search = location && location.search;
 
   const resources = [
@@ -386,6 +391,10 @@ export const CreateVMWizardPageComponent: React.FC<CreateVMWizardPageComponentPr
     );
   }
 
+  const searchParams = new URLSearchParams(search);
+  const userMode = searchParams.get('mode') || VMWizardMode.VM;
+  const userTemplateName = (userMode === VMWizardMode.VM && searchParams.get('template')) || '';
+
   const dataIDReferences = makeIDReferences(resources);
 
   dataIDReferences[VMWizardProps.activeNamespace] = ['UI', 'activeNamespace'];
@@ -394,8 +403,9 @@ export const CreateVMWizardPageComponent: React.FC<CreateVMWizardPageComponentPr
   return (
     <Firehose resources={resources} doNotConnectToState>
       <CreateVMWizard
-        isCreateTemplate={!path.includes('/virtualmachines/')}
-        isProviderImport={new URLSearchParams(search).get('mode') === 'import'}
+        isCreateTemplate={userMode === VMWizardMode.TEMPLATE}
+        isProviderImport={userMode === VMWizardMode.IMPORT}
+        userTemplateName={userTemplateName}
         dataIDReferences={dataIDReferences}
         reduxID={reduxID}
         onClose={() => history.goBack()}

@@ -95,7 +95,7 @@ const plugin: Plugin<ConsumedExtensions> = [
     type: 'Page/Route',
     properties: {
       exact: true,
-      path: ['/k8s/ns/:ns/virtualmachines/~new'],
+      path: ['/k8s/ns/:ns/virtualization/~new'],
       loader: () =>
         import('./components/vms/vm-create-yaml' /* webpackChunkName: "kubevirt" */).then(
           (m) => m.VMCreateYAML,
@@ -107,7 +107,7 @@ const plugin: Plugin<ConsumedExtensions> = [
     type: 'Page/Route',
     properties: {
       exact: true,
-      path: ['/k8s/ns/:ns/virtualmachines/~new-wizard'],
+      path: ['/k8s/ns/:ns/virtualization/~new-wizard'],
       loader: () =>
         import(
           './components/create-vm-wizard' /* webpackChunkName: "kubevirt-create-vm-wizard" */
@@ -143,30 +143,6 @@ const plugin: Plugin<ConsumedExtensions> = [
         import('./components/vms/virtualization' /* webpackChunkName: "kubevirt" */).then(
           (m) => m.VirtualizationPage,
         ),
-      required: FLAG_KUBEVIRT,
-    },
-  },
-  {
-    type: 'Page/Route',
-    properties: {
-      exact: true,
-      path: ['/k8s/ns/:ns/vmtemplates/~new'],
-      loader: () =>
-        import(
-          './components/vm-templates/vm-template-create-yaml' /* webpackChunkName: "kubevirt" */
-        ).then((m) => m.CreateVMTemplateYAML),
-      required: FLAG_KUBEVIRT,
-    },
-  },
-  {
-    type: 'Page/Route',
-    properties: {
-      exact: true,
-      path: ['/k8s/ns/:ns/vmtemplates/~new-wizard'],
-      loader: () =>
-        import(
-          './components/create-vm-wizard' /* webpackChunkName: "kubevirt-create-vm-wizard" */
-        ).then((m) => m.CreateVMWizardPage),
       required: FLAG_KUBEVIRT,
     },
   },

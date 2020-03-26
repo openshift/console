@@ -48,6 +48,7 @@ export class VMSettingsTabComponent extends React.Component<VMSettingsTabCompone
 
   render() {
     const {
+      userTemplateName,
       userTemplates,
       commonTemplates,
       provisionSourceStorage,
@@ -59,6 +60,26 @@ export class VMSettingsTabComponent extends React.Component<VMSettingsTabCompone
 
     return (
       <FormFieldForm isReview={isReview}>
+        <FormFieldMemoRow
+          field={this.getField(VMSettingsField.NAME)}
+          fieldType={FormFieldType.TEXT}
+        >
+          <FormField>
+            <TextInput onChange={this.onChange(VMSettingsField.NAME)} />
+          </FormField>
+        </FormFieldMemoRow>
+        <FormFieldMemoRow
+          field={this.getField(VMSettingsField.DESCRIPTION)}
+          fieldType={FormFieldType.TEXT_AREA}
+        >
+          <FormField>
+            <TextArea
+              onChange={this.onChange(VMSettingsField.DESCRIPTION)}
+              className="kubevirt-create-vm-modal__description"
+            />
+          </FormField>
+        </FormFieldMemoRow>
+
         <FormFieldMemoRow
           key={VMSettingsField.PROVIDER}
           field={this.getField(VMSettingsField.PROVIDER)}
@@ -88,6 +109,7 @@ export class VMSettingsTabComponent extends React.Component<VMSettingsTabCompone
           <UserTemplates
             key={VMSettingsField.USER_TEMPLATE}
             userTemplateField={this.getField(VMSettingsField.USER_TEMPLATE)}
+            forceSingleUserTemplateName={userTemplateName}
             userTemplates={userTemplates}
             commonTemplates={commonTemplates}
             openshiftFlag={openshiftFlag}
@@ -150,25 +172,6 @@ export class VMSettingsTabComponent extends React.Component<VMSettingsTabCompone
         />
 
         <FormFieldMemoRow
-          field={this.getField(VMSettingsField.NAME)}
-          fieldType={FormFieldType.TEXT}
-        >
-          <FormField>
-            <TextInput onChange={this.onChange(VMSettingsField.NAME)} />
-          </FormField>
-        </FormFieldMemoRow>
-        <FormFieldMemoRow
-          field={this.getField(VMSettingsField.DESCRIPTION)}
-          fieldType={FormFieldType.TEXT_AREA}
-        >
-          <FormField>
-            <TextArea
-              onChange={this.onChange(VMSettingsField.DESCRIPTION)}
-              className="kubevirt-create-vm-modal__description"
-            />
-          </FormField>
-        </FormFieldMemoRow>
-        <FormFieldMemoRow
           field={this.getField(VMSettingsField.START_VM)}
           fieldType={FormFieldType.INLINE_CHECKBOX}
         >
@@ -188,6 +191,7 @@ export class VMSettingsTabComponent extends React.Component<VMSettingsTabCompone
 const stateToProps = (state, { wizardReduxID }) => ({
   vmSettings: iGetVmSettings(state, wizardReduxID),
   commonTemplates: iGetCommonData(state, wizardReduxID, VMWizardProps.commonTemplates),
+  userTemplateName: iGetCommonData(state, wizardReduxID, VMWizardProps.userTemplateName),
   userTemplates: iGetCommonData(state, wizardReduxID, VMWizardProps.userTemplates),
   openshiftFlag: iGetCommonData(state, wizardReduxID, VMWizardProps.openshiftFlag),
   provisionSourceStorage: iGetProvisionSourceStorage(state, wizardReduxID),
@@ -199,6 +203,7 @@ type VMSettingsTabComponentProps = {
   vmSettings: any;
   provisionSourceStorage: VMWizardStorage;
   commonTemplates: any;
+  userTemplateName: string;
   userTemplates: any;
   isReview: boolean;
   openshiftFlag: boolean;

@@ -38,6 +38,8 @@ import { isVM, getVMLikeModel } from '../../selectors/vm';
 import { vmStatusFilter } from './table-filters';
 import { vmMenuActions, vmiMenuActions } from './menu-actions';
 import { VMILikeEntityKind } from '../../types/vmLike';
+import { getVMWizardCreateLink } from '../../utils/url';
+import { VMWizardMode, VMWizardName, VMWizardActionLabels } from '../../constants/vm';
 
 import './vm.scss';
 
@@ -156,26 +158,14 @@ VMList.displayName = 'VMList';
 
 const getCreateProps = ({ namespace }: { namespace: string }) => {
   const items: any = {
-    wizard: 'New with Wizard',
-    wizardImport: 'Import with Wizard',
-    yaml: 'New from YAML',
+    [VMWizardName.WIZARD]: VMWizardActionLabels.WIZARD,
+    [VMWizardName.IMPORT]: VMWizardActionLabels.IMPORT,
+    [VMWizardName.YAML]: VMWizardActionLabels.YAML,
   };
 
   return {
     items,
-    createLink: (itemName) => {
-      const base = `/k8s/ns/${namespace || 'default'}/virtualmachines`;
-
-      switch (itemName) {
-        case 'wizard':
-          return `${base}/~new-wizard`;
-        case 'wizardImport':
-          return `${base}/~new-wizard?mode=import`;
-        case 'yaml':
-        default:
-          return `${base}/~new`;
-      }
-    },
+    createLink: (itemName) => getVMWizardCreateLink(namespace, itemName, VMWizardMode.VM),
   };
 };
 
