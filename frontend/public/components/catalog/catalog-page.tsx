@@ -33,7 +33,7 @@ import {
 } from './catalog-item-icon';
 import { ClusterServiceClassModel, TemplateModel } from '../../models';
 import * as plugins from '../../plugins';
-import { coFetch } from '../../co-fetch';
+import { coFetch, coFetchJSON } from '../../co-fetch';
 
 export class CatalogListPage extends React.Component<CatalogListPageProps, CatalogListPageState> {
   constructor(props: CatalogListPageProps) {
@@ -210,7 +210,18 @@ export class CatalogListPage extends React.Component<CatalogListPageProps, Catal
           const chartName = chart.name;
           const tileName = `${_.startCase(chartName)} v${chart.version}`;
           const tileImgUrl = chart.icon || getImageForIconClass('icon-helm');
-          const chartURL = encodeURIComponent(_.get(chart, 'urls.0'));
+          const chartURL = _.get(chart, 'urls.0');
+          const encodedChartURL = encodeURIComponent(chartURL);
+          const markdownDescription = async () => {
+            let chartData;
+            try {
+              chartData = await coFetchJSON(`/api/helm/chart?url=${chartURL}`);
+            } catch (err) {
+              return '';
+            }
+            const readmeFile = chartData?.files?.find((file) => file.name === 'README.md');
+            return readmeFile?.data && atob(readmeFile?.data);
+          };
 
           normalizedCharts.push({
             obj: { ...chart, ...{ metadata: { uid: chart.digest } } },
@@ -224,7 +235,8 @@ export class CatalogListPage extends React.Component<CatalogListPageProps, Catal
             tileProvider: _.get(chart, 'maintainers.0.name'),
             documentationUrl: chart.home,
             supportUrl: chart.home,
-            href: `/catalog/helm-install?chartName=${chartName}&chartURL=${chartURL}&preselected-ns=${currentNamespace}`,
+            markdownDescription,
+            href: `/catalog/helm-install?chartName=${chartName}&chartURL=${encodedChartURL}&preselected-ns=${currentNamespace}`,
           });
         });
         return normalizedCharts;

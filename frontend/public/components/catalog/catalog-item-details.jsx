@@ -11,12 +11,19 @@ import { SyncMarkdownView } from '../markdown-view';
 export class CatalogTileDetails extends React.Component {
   state = {
     plans: [],
+    markdown: '',
   };
 
   componentDidMount() {
-    const { obj, kind } = this.props.item;
+    const { obj, kind, markdownDescription } = this.props.item;
     if (kind === 'ClusterServiceClass') {
       this.getPlans(obj);
+    }
+
+    if (_.isFunction(markdownDescription)) {
+      markdownDescription().then((md) => this.setState({ markdown: md }));
+    } else {
+      this.setState({ markdown: markdownDescription });
     }
   }
 
@@ -35,14 +42,13 @@ export class CatalogTileDetails extends React.Component {
       obj,
       kind,
       tileProvider,
-      markdownDescription,
       tileDescription,
       supportUrl,
       longDescription,
       documentationUrl,
       sampleRepo,
     } = this.props.item;
-    const { plans } = this.state;
+    const { plans, markdown } = this.state;
 
     const creationTimestamp = _.get(obj, 'metadata.creationTimestamp');
 
@@ -79,7 +85,7 @@ export class CatalogTileDetails extends React.Component {
               <div className="co-catalog-page__overlay-description">
                 <SectionHeading text="Description" />
                 {tileDescription && <p>{tileDescription}</p>}
-                {markdownDescription && <SyncMarkdownView content={markdownDescription} />}
+                {markdown && <SyncMarkdownView content={markdown} />}
                 {longDescription && <p>{longDescription}</p>}
                 {sampleRepo && <p>Sample repository: {sampleRepoLink}</p>}
                 {documentationUrl && (
