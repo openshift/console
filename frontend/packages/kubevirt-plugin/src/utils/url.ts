@@ -53,7 +53,6 @@ export const getVMWizardCreateLink = (
   mode: VMWizardMode = VMWizardMode.TEMPLATE,
   template?: string,
 ) => {
-  // Overide mode if name is import.
   const wizardMode = itemName === VMWizardName.IMPORT ? VMWizardMode.IMPORT : mode;
   const type = itemName === VMWizardName.YAML ? '~new' : '~new-wizard';
 
@@ -64,6 +63,7 @@ export const getVMWizardCreateLink = (
   if (template) {
     params.append('template', template);
   }
+  const paramsString = params.toString() ? `?${params}` : '';
 
-  return `/k8s/ns/${namespace || 'default'}/virtualization/${type}${params ? `?${params}` : ''}`; // covers 'yaml', new-wizard and default
+  return `/k8s/ns/${namespace || 'default'}/virtualization/${type}${paramsString}`;
 };

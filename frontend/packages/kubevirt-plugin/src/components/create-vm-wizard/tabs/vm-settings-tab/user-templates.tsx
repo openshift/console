@@ -53,7 +53,7 @@ export const UserTemplates: React.FC<UserTemplatesProps> = React.memo(
       />
     );
 
-    const optionNoTemplate = (
+    const optionsList = !forceSingleUserTemplateName && hasUserTemplates && (
       <>
         <FormSelectOption
           key={SELECT_TEMPLATE}
@@ -62,12 +62,6 @@ export const UserTemplates: React.FC<UserTemplatesProps> = React.memo(
           isDisabled={!hasFieldValue}
         />
         <FormSelectOption key={NO_TEMPLATE} value="" label={NO_TEMPLATE} />
-      </>
-    );
-
-    const optionsList = !forceSingleUserTemplateName && hasUserTemplates && (
-      <>
-        {optionNoTemplate}
         {sortedNames.map((name) => (
           <FormSelectOption key={name} value={name} label={name} />
         ))}

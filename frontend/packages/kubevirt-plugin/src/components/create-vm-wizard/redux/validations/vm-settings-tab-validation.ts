@@ -88,7 +88,7 @@ const validateUserTemplate: VmSettingsValidator = (field, options) => {
 
   if (!userTemplate) {
     return asValidationObject(
-      'Template is missing, check template name',
+      "Can't verify tempalte, template is missing",
       ValidationErrorType.Error,
     );
   }
