@@ -1,6 +1,6 @@
 import { OrderedSet } from 'immutable';
 import { CommonData, VMSettingsField, VMWizardProps } from '../../types';
-import { asHidden, asRequired } from '../../utils/utils';
+import { asDisabled, asHidden, asRequired } from '../../utils/utils';
 import { ProvisionSource } from '../../../../constants/vm/provision-source';
 import { getProviders } from '../../provider-definitions';
 import { InitialStepStateGetter, VMSettings } from './types';
@@ -36,6 +36,8 @@ export const getInitialVmSettings = (data: CommonData): VMSettings => {
     : [ProvisionSource.PXE, ProvisionSource.URL, ProvisionSource.CONTAINER, ProvisionSource.DISK]
   ).map((source) => source.getValue());
 
+  const isVM = !isCreateTemplate && !isProviderImport;
+
   const fields = {
     [VMSettingsField.NAME]: {
       isRequired: asRequired(true),
@@ -44,8 +46,8 @@ export const getInitialVmSettings = (data: CommonData): VMSettings => {
     [VMSettingsField.DESCRIPTION]: {},
     [VMSettingsField.USER_TEMPLATE]: {
       isHidden: hiddenByProviderOrTemplate,
-      isDisabled: !!userTemplateName,
-      initialized: isCreateTemplate || !userTemplateName,
+      isDisabled: asDisabled(!!userTemplateName, VMWizardProps.userTemplateName),
+      initialized: !(isVM && userTemplateName),
       value: userTemplateName || undefined,
     },
     [VMSettingsField.PROVIDER]: {
