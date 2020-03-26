@@ -195,7 +195,7 @@ const sortFilterValues = (values, field) => {
   }
 
   if (field === 'providerType') {
-    sorter = providerTypeSort;
+    return _.sortBy(values, [providerTypeSort, 'value']);
   }
 
   if (field === 'installState') {
