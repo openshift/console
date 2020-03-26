@@ -11,6 +11,7 @@
   "scripts": {
     "clean": "rm -rf ./public/dist",
     "dev": "yarn clean && NODE_OPTIONS=--max-old-space-size=4096 ts-node -O '{\"module\":\"commonjs\"}' ./node_modules/.bin/webpack-dev-server",
+    "dev-once": "yarn clean && NODE_OPTIONS=--max-old-space-size=4096 ts-node -O '{\"module\":\"commonjs\"}' ./node_modules/.bin/webpack --mode=development",
     "build": "yarn clean && NODE_ENV=production NODE_OPTIONS=--max-old-space-size=4096 ts-node -O '{\"module\":\"commonjs\"}' ./node_modules/.bin/webpack --mode=production",
     "coverage": "jest --coverage .",
     "eslint": "eslint --ext .js,.jsx,.ts,.tsx,.json --color",
