@@ -48,8 +48,8 @@ export const buildConfigObj = {
 
   // Add Environment Value
   addValue: element(by.buttonText('Add Value')), //[data-test-id="pairs-list__add-icon"]
-  envName: element(by.css('input[placeholder="name"]')),
-  envValue: element(by.css('input[placeholder="value"]')),
+  envName: element.all(by.css('input[placeholder="name"]')),
+  envValue: element.all(by.css('input[placeholder="value"]')),
   
   // Count for Rows in Environment Variables section
   envRows: element.all(by.css('div.row.pairs-list__row')),
@@ -64,8 +64,8 @@ export const deploymentObj =  {
     deploymentImageConfig: element(by.css('input#form-checkbox-deployment-triggers-config-field')),
     // Add Environment Value
     addValue: element(by.buttonText('Add Value')), //[data-test-id="pairs-list__add-icon"]
-    envName: element(by.css('input[placeholder="name"]')),
-    envValue: element(by.css('input[placeholder="value"]')),
+    envName: element.all(by.css('input[placeholder="name"]')),
+    envValue: element.all(by.css('input[placeholder="value"]')),
     
     // Count for Rows in Environment Variables section
     envRows: element.all(by.css('div.row.pairs-list__row')),
@@ -272,20 +272,20 @@ export const setSecureRoute = async function(tlsTerminationValue: TLSTermination
   // }
 }
 
-export const setEnvVariables = async function(envName: string, envValue: string) {
+export const setEnvVariables = async function(envName: string, envValue: string, index = 0) {
   await buildConfigObj.envRows.count().then(async(count: number) => {
     if(count === 1) {
-      await enterText(buildConfigObj.envName, envName);
-      await enterText(buildConfigObj.envValue, envValue);
+      await enterText(buildConfigObj.envName.get(index), envName);
+      await enterText(buildConfigObj.envValue.get(index), envValue);
     }
   })
 }
 export const setBuildConfig = async function(envName: string, envValue: string) {
-    await setEnvVariables(envName, envValue);
+    await setEnvVariables(envName, envValue, 0);
 }
 
 export const setDeployment = async function(envName: string, envValue: string) {
-    await setEnvVariables(envName, envValue);
+    await setEnvVariables(envName, envValue, 1);
 }
 
 export const setScaling = async function(replicaCount) {
