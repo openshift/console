@@ -5,8 +5,11 @@ import { ResourceLink } from '@console/internal/components/utils';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { PipelineModel, PipelineResourceModel } from '../../../../models';
 import { PipelineRunDetails } from '../PipelineRunDetails';
-import { mockPipelineRun } from '../../../../test/pipeline-data';
+import { pipelineTestData, PipelineExampleNames, DataState } from '../../../../test/pipeline-data';
 import PipelineRunVisualization from '../PipelineRunVisualization';
+
+const mockPipelineRun =
+  pipelineTestData[PipelineExampleNames.SIMPLE_PIPELINE].pipelineRuns[DataState.SUCCESS];
 
 type PipelineRunDetailsProps = React.ComponentProps<typeof PipelineRunDetails>;
 describe('PipelineRun details page', () => {
@@ -24,7 +27,7 @@ describe('PipelineRun details page', () => {
   it('should render page with pipeline links', () => {
     const resources = wrapper.find(ResourceLink).filter({ kind: referenceForModel(PipelineModel) });
     expect(resources).toHaveLength(1);
-    expect(resources.get(0).props.name).toBe('new-pipeline');
+    expect(resources.get(0).props.name).toBe('simple-pipeline');
   });
 
   it('should render page with pipeline run links', () => {
@@ -32,8 +35,8 @@ describe('PipelineRun details page', () => {
       .find(ResourceLink)
       .filter({ kind: referenceForModel(PipelineResourceModel) });
     expect(resources).toHaveLength(2);
-    expect(resources.get(0).props.name).toBe('git-hhckr7');
-    expect(resources.get(1).props.name).toBe('image-2yx98v');
+    expect(resources.get(0).props.name).toBe('mapit-git');
+    expect(resources.get(1).props.name).toBe('mapit-image');
   });
 
   it('should not render page with pipeline run links if resources are empty', () => {
