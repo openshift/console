@@ -8,7 +8,7 @@ import {
 } from '@console/topology';
 import { truncateMiddle } from '@console/internal/components/utils';
 import { RESOURCE_NAME_TRUNCATE_LENGTH } from '../../const';
-import SvgResourceIcon from '../topology/components/nodes/ResourceIcon';
+import { SvgResourceIcon } from './SvgResourceIcon';
 import SvgCircledIcon from './SvgCircledIcon';
 import SvgDropShadowFilter from './SvgDropShadowFilter';
 

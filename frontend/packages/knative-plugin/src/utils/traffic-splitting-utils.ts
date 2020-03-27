@@ -1,7 +1,7 @@
 import * as _ from 'lodash';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { FirehoseResource } from '@console/internal/components/utils';
-import { getKnativeServiceData } from './knative-topology-utils';
+import { getKnativeServiceData } from '../topology/knative-topology-utils';
 import {
   knativeServingResourcesRevision,
   knativeServingResourcesConfigurations,

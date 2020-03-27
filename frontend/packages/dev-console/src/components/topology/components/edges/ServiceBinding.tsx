@@ -7,7 +7,7 @@ import {
   observer,
   EdgeConnectorArrow,
 } from '@console/topology';
-import BaseEdge from './BaseEdge';
+import { BaseEdge } from './BaseEdge';
 import './ServiceBinding.scss';
 
 type ServiceBindingProps = {
@@ -17,7 +17,7 @@ type ServiceBindingProps = {
   WithTargetDragProps &
   WithRemoveConnectorProps;
 
-const ServiceBinding: React.FC<ServiceBindingProps> = ({
+const ObservedServiceBinding: React.FC<ServiceBindingProps> = ({
   element,
   targetDragRef,
   children,
@@ -29,4 +29,5 @@ const ServiceBinding: React.FC<ServiceBindingProps> = ({
   </BaseEdge>
 );
 
-export default observer(ServiceBinding);
+const ServiceBinding = observer(ObservedServiceBinding);
+export { ServiceBinding };

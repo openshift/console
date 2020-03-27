@@ -8,20 +8,23 @@ import {
   createKebabAction,
   KebabAction,
 } from '../add-resources-menu-utils';
-import {
-  transformTopologyData,
-  getTopologyResourceObject,
-} from '../../components/topology/topology-utils';
+import { getTopologyResourceObject } from '../../components/topology/topology-utils';
 import { UNASSIGNED_KEY } from '../../const';
 import { ImportOptions } from '../../components/import/import-types';
 import { MockResources } from '../../components/topology/__tests__/topology-test-data';
 import { TopologyDataResources } from '../../components/topology/topology-types';
 import { referenceFor } from '@console/internal/module/k8s';
+import { transformTopologyData } from '../../components/topology/data-transforms/data-transformer';
 
-const getTopologyData = (mockData: TopologyDataResources, transformByProp: string[]) => {
+const getTopologyData = (
+  mockData: TopologyDataResources,
+  transformByProp: string[],
+  name: string,
+) => {
   const result = transformTopologyData(mockData, transformByProp);
   const keys = Object.keys(result.topology);
-  const resource = getTopologyResourceObject(result.topology[keys[0]]);
+  const itemKey = keys.find((key) => result.topology[key].resources.obj.metadata.name === name);
+  const resource = getTopologyResourceObject(result.topology[itemKey]);
   return { resource };
 };
 
@@ -32,8 +35,10 @@ describe('addResourceMenuUtils: ', () => {
   });
 
   it('should return the page url with proper queryparams for git import flow', () => {
-    const primaryResource = getTopologyData(MockResources, ['deployments']).resource;
-    const connectorSourceObj = getTopologyData(MockResources, ['deploymentConfigs']).resource;
+    const primaryResource = getTopologyData(MockResources, ['deployments'], 'analytics-deployment')
+      .resource;
+    const connectorSourceObj = getTopologyData(MockResources, ['deploymentConfigs'], 'nodejs')
+      .resource;
     const contextSource: string = `${referenceFor(connectorSourceObj)}/${
       connectorSourceObj?.metadata?.name
     }`;
@@ -52,7 +57,7 @@ describe('addResourceMenuUtils: ', () => {
   });
 
   it('should return the page url with no-application value param in the url', () => {
-    const { resource } = getTopologyData(MockResources, ['deployments']);
+    const { resource } = getTopologyData(MockResources, ['deployments'], 'analytics-deployment');
     const url = new URL(
       getAddPageUrl(resource, '', ImportOptions.GIT, false),
       'https://mock.test.com',
@@ -61,7 +66,7 @@ describe('addResourceMenuUtils: ', () => {
   });
 
   it('should return the page url without contextSource params in the url', () => {
-    const { resource } = getTopologyData(MockResources, ['deployments']);
+    const { resource } = getTopologyData(MockResources, ['deployments'], 'analytics-deployment');
     const url = new URL(
       getAddPageUrl(resource, '', ImportOptions.GIT, false),
       'https://mock.test.com',
@@ -70,7 +75,7 @@ describe('addResourceMenuUtils: ', () => {
   });
 
   it('should return the page url with proper queryparams for container image flow', () => {
-    const { resource } = getTopologyData(MockResources, ['deployments']);
+    const { resource } = getTopologyData(MockResources, ['deployments'], 'analytics-deployment');
     const url = new URL(
       getAddPageUrl(resource, '', ImportOptions.CONTAINER, true),
       'https://mock.test.com',
@@ -81,7 +86,7 @@ describe('addResourceMenuUtils: ', () => {
   });
 
   it('should return the page url with proper queryparams for catalog flow', () => {
-    const { resource } = getTopologyData(MockResources, ['deployments']);
+    const { resource } = getTopologyData(MockResources, ['deployments'], 'analytics-deployment');
     const url = new URL(
       getAddPageUrl(resource, '', ImportOptions.CATALOG, true),
       'https://mock.test.com',
@@ -92,7 +97,7 @@ describe('addResourceMenuUtils: ', () => {
   });
 
   it('should return the page url with proper queryparams for dockerfile flow', () => {
-    const { resource } = getTopologyData(MockResources, ['deployments']);
+    const { resource } = getTopologyData(MockResources, ['deployments'], 'analytics-deployment');
     const url = new URL(
       getAddPageUrl(resource, '', ImportOptions.DOCKERFILE, true),
       'https://mock.test.com',
@@ -104,7 +109,7 @@ describe('addResourceMenuUtils: ', () => {
   });
 
   it('should return the page url with proper queryparams for database flow', () => {
-    const { resource } = getTopologyData(MockResources, ['deployments']);
+    const { resource } = getTopologyData(MockResources, ['deployments'], 'analytics-deployment');
     const url = new URL(
       getAddPageUrl(resource, '', ImportOptions.DATABASE, true),
       'https://mock.test.com',
@@ -116,8 +121,10 @@ describe('addResourceMenuUtils: ', () => {
   });
 
   it('it should return a valid kebabAction on invoking createKebabAction with connectorSourceObj', () => {
-    const primaryObj = getTopologyData(MockResources, ['deployments']).resource;
-    const connectorSourceObj = getTopologyData(MockResources, ['deploymentConfigs']).resource;
+    const primaryObj = getTopologyData(MockResources, ['deployments'], 'analytics-deployment')
+      .resource;
+    const connectorSourceObj = getTopologyData(MockResources, ['deploymentConfigs'], 'nodejs')
+      .resource;
     const icon = <GitAltIcon />;
     const hasApplication = true;
     const label = 'From Git';
@@ -142,7 +149,8 @@ describe('addResourceMenuUtils: ', () => {
   });
 
   it('it should return a valid kebabAction on invoking createKebabAction without connectorSourceObj', () => {
-    const primaryObj = getTopologyData(MockResources, ['deployments']).resource;
+    const primaryObj = getTopologyData(MockResources, ['deployments'], 'analytics-deployment')
+      .resource;
     const icon = <GitAltIcon />;
     const hasApplication = true;
     const label = 'From Git';
@@ -159,7 +167,8 @@ describe('addResourceMenuUtils: ', () => {
   });
 
   it('it should not return an access review object, if checkAccess is disabled', () => {
-    const primaryObj = getTopologyData(MockResources, ['deployments']).resource;
+    const primaryObj = getTopologyData(MockResources, ['deployments'], 'analytics-deployment')
+      .resource;
     const icon = <GitAltIcon />;
     const hasApplication = true;
     const label = 'From Git';

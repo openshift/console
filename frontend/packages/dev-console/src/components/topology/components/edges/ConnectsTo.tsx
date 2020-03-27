@@ -11,7 +11,7 @@ import {
 import { modelFor, referenceFor } from '@console/internal/module/k8s';
 import { useAccessReview } from '@console/internal/components/utils';
 import { getTopologyResourceObject } from '../../topology-utils';
-import BaseEdge from './BaseEdge';
+import { BaseEdge } from './BaseEdge';
 import './ConnectsTo.scss';
 
 type ConnectsToProps = {
@@ -21,7 +21,12 @@ type ConnectsToProps = {
   WithTargetDragProps &
   WithRemoveConnectorProps;
 
-const ConnectsTo: React.FC<ConnectsToProps> = ({ element, targetDragRef, children, ...others }) => {
+const ObservedConnectsTo: React.FC<ConnectsToProps> = ({
+  element,
+  targetDragRef,
+  children,
+  ...others
+}) => {
   const childEdges = element.getChildren();
   const sourceData =
     childEdges?.length > 0
@@ -46,4 +51,5 @@ const ConnectsTo: React.FC<ConnectsToProps> = ({ element, targetDragRef, childre
   );
 };
 
-export default observer(ConnectsTo);
+const ConnectsTo = observer(ObservedConnectsTo);
+export { ConnectsTo };

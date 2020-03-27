@@ -19,4 +19,4 @@ const useSearchFilter = (text: string): [boolean, string] => {
   return [filtered && !!searchQuery, searchQuery];
 };
 
-export default useSearchFilter;
+export { useSearchFilter };

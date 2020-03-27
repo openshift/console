@@ -19,10 +19,6 @@ let renderTopologyProps: RenderTopologyProps;
 describe('Topology page tests', () => {
   beforeEach(() => {
     topologyProps = {
-      activeApplication: 'topology-test',
-      knative: false,
-      cheURL: 'che.openshift.io',
-      serviceBinding: false,
       match: {
         params: {
           name: 'topology-test',
@@ -37,6 +33,7 @@ describe('Topology page tests', () => {
       data: topologyData,
       loaded: true,
       loadError: '',
+      namespace: 'topology-test',
       serviceBinding: false,
     };
   });

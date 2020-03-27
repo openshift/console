@@ -13,10 +13,12 @@ import {
 } from '@console/internal/components/factory/modal';
 import { Edge, Node } from '@console/topology';
 import FormSection from '../../import/section/FormSection';
+import { TYPE_EVENT_SOURCE_LINK } from '@console/knative-plugin/src/topology/const';
+import { createSinkConnection } from '@console/knative-plugin/src/topology/knative-topology-utils';
 import { RootState } from '@console/internal/redux';
-import { ALLOW_SERVICE_BINDING } from '../../../const';
-import { TYPE_CONNECTS_TO, TYPE_EVENT_SOURCE_LINK, TYPE_SERVICE_BINDING } from '../const';
-import { createConnection, createSinkConnection } from './createConnection';
+import { getServiceBindingStatus } from '../topology-utils';
+import { TYPE_CONNECTS_TO, TYPE_SERVICE_BINDING } from './const';
+import { createConnection } from './createConnection';
 
 interface StateProps {
   serviceBinding: boolean;
@@ -155,8 +157,6 @@ class MoveConnectionModal extends PromiseComponent<
     );
   }
 }
-
-const getServiceBindingStatus = ({ FLAGS }: RootState): boolean => FLAGS.get(ALLOW_SERVICE_BINDING);
 
 const mapStateToProps = (state: RootState): StateProps => {
   return {

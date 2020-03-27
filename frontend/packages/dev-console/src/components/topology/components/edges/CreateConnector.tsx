@@ -44,4 +44,4 @@ const CreateConnector: React.FC<CreateConnectorProps> = ({
   );
 };
 
-export default CreateConnector;
+export { CreateConnector };
