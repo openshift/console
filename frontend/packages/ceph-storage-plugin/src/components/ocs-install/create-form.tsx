@@ -34,9 +34,8 @@ export const CreateOCSServiceForm: React.FC<CreateOCSServiceFormProps> = ({
           title="A bucket will be created to provide the OCS Service."
           isInline
         />
-        <p className="co-legend">
-          Select at least 3 nodes in different failure domains with minimum requirements of 16 CPUs
-          and 64 GiB of RAM per node.
+        <p className="co-legend co-required ceph-ocs-desc__legend">
+          Select at least 3 nodes in different failure domains you wish to use.
         </p>
         <p>
           3 selected nodes are used for initial deployment. The remaining selected nodes will be
