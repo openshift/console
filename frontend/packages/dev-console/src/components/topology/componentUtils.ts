@@ -245,14 +245,14 @@ const graphEventSourceDropTargetSpec: DropTargetSpec<
   accept: [CREATE_CONNECTOR_DROP_TYPE, MOVE_EV_SRC_CONNECTOR_DROP_TYPE],
   canDrop: (item, monitor, props) => {
     return (
-      monitor.getOperation() === MOVE_EV_SRC_CONNECTOR_DROP_TYPE &&
+      monitor.getItemType() === MOVE_EV_SRC_CONNECTOR_DROP_TYPE &&
       item.getSource() !== props.element
     );
   },
   collect: (monitor, props) => ({
     canDrop:
       monitor.isDragging() &&
-      monitor.getOperation() === MOVE_EV_SRC_CONNECTOR_DROP_TYPE &&
+      monitor.getItemType() === MOVE_EV_SRC_CONNECTOR_DROP_TYPE &&
       monitor.canDrop(),
     dropTarget: monitor.isOver({ shallow: true }),
     edgeDragging: nodesEdgeIsDragging(monitor, props),
