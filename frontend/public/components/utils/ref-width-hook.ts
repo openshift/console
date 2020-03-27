@@ -4,10 +4,10 @@ export const useRefWidth = () => {
   const ref = useRef<HTMLDivElement>(null);
   const [width, setWidth] = useState(0);
 
-  const clientWidth = ref && ref.current && ref.current.clientWidth;
+  const clientWidth = ref?.current?.clientWidth ?? 0;
 
   useEffect(() => {
-    const handleResize = () => setWidth(ref && ref.current && ref.current.clientWidth);
+    const handleResize = () => setWidth(ref?.current?.clientWidth ?? 0);
     window.addEventListener('resize', handleResize);
     window.addEventListener('sidebar_toggle', handleResize);
     return () => {
