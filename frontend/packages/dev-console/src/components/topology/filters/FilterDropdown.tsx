@@ -43,7 +43,7 @@ const FilterDropdown: React.FC<FilterDropdownProps> = ({ filters, onChange }) =>
       selections={selected}
       isExpanded={isOpen}
       onSelect={onSelect}
-      placeholderText="Display"
+      placeholderText="Display Options"
       isGrouped
     >
       {showOptions}
