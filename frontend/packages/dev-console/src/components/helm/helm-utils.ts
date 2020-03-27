@@ -1,5 +1,6 @@
 import * as fuzzy from 'fuzzysearch';
-import { HelmRelease, HelmReleaseStatus, HelmFilterType } from './helm-types';
+import { HelmRelease, HelmReleaseStatus } from './helm-types';
+import { CustomResourceListRowFilter } from '../custom-resource-list/custom-resource-list-types';
 
 export const HelmReleaseStatusLabels = {
   [HelmReleaseStatus.Deployed]: 'Deployed',
@@ -30,7 +31,7 @@ export const selectedStatuses = [
   HelmReleaseStatus.Other,
 ];
 
-export const helmRowFilters = [
+export const helmRowFilters: CustomResourceListRowFilter[] = [
   {
     type: 'helm-release-status',
     selected: selectedStatuses,
@@ -42,21 +43,14 @@ export const helmRowFilters = [
   },
 ];
 
-export const getFilteredItems = (
-  items: HelmRelease[],
-  filterType: HelmFilterType,
-  filter: string | string[],
-) => {
-  switch (filterType) {
-    case HelmFilterType.Row:
-      return items.filter((release: HelmRelease) => {
-        return otherStatuses.includes(release.info.status)
-          ? filter.includes(HelmReleaseStatus.Other)
-          : filter.includes(release.info.status);
-      });
-    case HelmFilterType.Text:
-      return items.filter((release: HelmRelease) => fuzzy(filter, release.name));
-    default:
-      return items;
-  }
+export const getFilteredItemsByRow = (items: HelmRelease[], filter: string | string[]) => {
+  return items.filter((release: HelmRelease) => {
+    return otherStatuses.includes(release.info.status)
+      ? filter.includes(HelmReleaseStatus.Other)
+      : filter.includes(release.info.status);
+  });
+};
+
+export const getFilteredItemsByText = (items: HelmRelease[], filter: string) => {
+  return items.filter((release: HelmRelease) => fuzzy(filter, release.name));
 };

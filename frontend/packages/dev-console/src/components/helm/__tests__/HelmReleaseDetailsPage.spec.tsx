@@ -60,7 +60,7 @@ describe('HelmReleaseDetailsPage', () => {
     expect(helmReleaseDetailsPage.find(DetailsPage).exists()).toBe(true);
   });
   it('should show the ErrorPage404 for an incorrect release name in the url', () => {
-    helmReleaseDetailsPageProps.secret.data = undefined;
+    helmReleaseDetailsPageProps.secret.data = [];
     const helmReleaseDetailsPage = shallow(
       <HelmReleaseDetailsPage {...helmReleaseDetailsPageProps} />,
     );

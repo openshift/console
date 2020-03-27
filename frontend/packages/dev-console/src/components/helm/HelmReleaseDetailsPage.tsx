@@ -13,6 +13,7 @@ import { DetailsPage } from '@console/internal/components/factory';
 import { K8sResourceKindReference } from '@console/internal/module/k8s';
 import HelmReleaseResources from './HelmReleaseResources';
 import HelmReleaseOverview from './HelmReleaseOverview';
+import HelmReleaseHistory from './HelmReleaseHistory';
 import { deleteHelmRelease } from '../../actions/modify-helm-release';
 
 const SecretReference: K8sResourceKindReference = 'Secret';
@@ -69,6 +70,11 @@ const HelmReleaseDetailsPage: React.FC<HelmReleaseDetailsPageProps> = ({ secret,
           href: 'resources',
           name: 'Resources',
           component: HelmReleaseResources,
+        },
+        {
+          href: 'history',
+          name: 'History',
+          component: HelmReleaseHistory,
         },
       ]}
       customKind={HelmReleaseReference}
