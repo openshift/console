@@ -1,5 +1,4 @@
 import { Pipeline, PipelineRun } from '../utils/pipeline-augment';
-import { PipelineRunModel } from '../models';
 
 export enum DataState {
   IN_PROGRESS = 'In Progress',
