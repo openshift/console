@@ -24,7 +24,7 @@ const CustomResourceList: React.FC<CustomResourceListProps> = ({
   React.useEffect(() => {
     let ignore = false;
 
-    const queryArgument = getQueryArgument(queryArg);
+    const queryArgument = queryArg ? getQueryArgument(queryArg) : undefined;
     const activeFilters = queryArgument?.split(',');
 
     const fetchListItems = async () => {
@@ -94,11 +94,13 @@ const CustomResourceList: React.FC<CustomResourceListProps> = ({
 
   return (
     <>
-      <div className="co-m-pane__filter-bar">
-        <div className="co-m-pane__filter-bar-group co-m-pane__filter-bar-group--filter">
-          <TextFilter label="by name" onChange={(e) => applyTextFilter(e.target.value)} />
+      {textFilterReducer && (
+        <div className="co-m-pane__filter-bar">
+          <div className="co-m-pane__filter-bar-group co-m-pane__filter-bar-group--filter">
+            <TextFilter label="by name" onChange={(e) => applyTextFilter(e.target.value)} />
+          </div>
         </div>
-      </div>
+      )}
 
       <div className="co-m-pane__body">
         {!_.isEmpty(listItems) && rowsOfRowFilters}

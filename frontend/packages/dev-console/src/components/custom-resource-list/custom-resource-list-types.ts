@@ -15,17 +15,20 @@ export interface CustomResourceListRowProps {
 }
 
 export interface CustomResourceListProps {
-  queryArg: string;
-  rowFilters: CustomResourceListRowFilter[];
+  queryArg?: string;
+  rowFilters?: CustomResourceListRowFilter[];
   sortBy: string;
   sortOrder: SortByDirection;
   resourceRow: React.ComponentType<CustomResourceListRowProps>;
   dependentResource?: any;
   resourceHeader: () => { [key: string]: any }[];
   fetchCustomResources: () => Promise<{ [key: string]: any }[]>;
-  rowFilterReducer: (
+  rowFilterReducer?: (
     items: { [key: string]: any }[],
     filters: string | string[],
   ) => { [key: string]: any }[];
-  textFilterReducer: (items: { [key: string]: any }[], filters: string) => { [key: string]: any }[];
+  textFilterReducer?: (
+    items: { [key: string]: any }[],
+    filters: string,
+  ) => { [key: string]: any }[];
 }

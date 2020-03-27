@@ -115,7 +115,10 @@ describe('CustomeResourceList', () => {
     expect(customResourceList.find(Table).exists()).toBe(true);
   });
 
-  it('should render TextFilter component', () => {
+  it('should render TextFilter component only when textFilterReducer is present', () => {
     expect(customResourceList.find(TextFilter).exists()).toBe(true);
+    customResourceListProps.textFilterReducer = undefined;
+    const customResourceListNew = shallow(<CustomResourceList {...customResourceListProps} />);
+    expect(customResourceListNew.find(TextFilter).exists()).toBe(false);
   });
 });
