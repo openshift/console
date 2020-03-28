@@ -1,6 +1,5 @@
 import { browser, $, ExpectedConditions as EC, element, by, protractor } from 'protractor';
 const waitForElement = 10000;
-// config.jasmineNodeOpts.defaultTimeoutInterval;
 
   // Enter the data in textbox by passing parameters like element finder property and text
   export async function enterText(ele: any, text: string, timeoutInMilliseconds = waitForElement) {

@@ -1,10 +1,10 @@
 /* eslint-disable no-console, promise/catch-or-return */
 import { browser, $, ExpectedConditions as until, by, element, Key } from 'protractor';
 import { config } from '@console/internal-integration-tests/protractor.conf';
-const waitForElement = config.jasmineNodeOpts.defaultTimeoutInterval;
 import { enterText, selectByIndex, selectByVisibleText,
   } from '../utilities/elementInteractions';
 import { click } from '@console/shared/src/test-utils/utils';
+const waitForElement = config.jasmineNodeOpts.defaultTimeoutInterval;
 
 export const addNavigate = element(by.css('[data-test-id="+Add-header"]'));
 export const gitImportButton = element(by.css('[data-test-id="import-from-git"]'));
@@ -252,33 +252,18 @@ export const setRouting = async function(hostname:string, path: string) {
 };
 
 export const setSecureRoute = async function(tlsTerminationValue: TLSTerminationValues, insecureTrafficValue: string = 'None') {
-  // if(tlsTerminationValue ==TLSTerminationValues.Edge || tlsTerminationValue ==TLSTerminationValues.ReEncrypt) {
-    await click(routingObj.secureRoute).then(async() => {
-    await browser.wait(until.elementToBeClickable(routingObj.tlsTermination), waitForElement, `Unable to view the TLS termination dropdown field, even after ${waitForElement} ms `)
+    await click(routingObj.secureRoute);
+    await browser.wait(until.elementToBeClickable(routingObj.tlsTermination), waitForElement, `Unable to view the TLS termination dropdown field, even after ${waitForElement} ms `);
     await selectByVisibleText(routingObj.tlsTermination, tlsTerminationValue);
-    // await routingObj().certificate.sendKeys('a');
-    // await routingObj().privateKey.sendKeys();
-    // await routingObj().caCertificate.sendKeys();
     await selectByVisibleText(routingObj.insecureTraffic, insecureTrafficValue);
-    });
-  // } else if(tlsTerminationValue ==TLSTerminationValues.Passthrough) {
-  //   await click(routingObj().secureRoute).then(async() => {
-  //     await browser.wait(until.elementToBeClickable(routingObj().tlsTermination), waitForElement, `Unable to view the TLS termination dropdown field, even after ${waitForElement} ms `)
-  //     await selectByVisibleText(routingObj().tlsTermination, tlsTerminationValue);
-  //     await selectByVisibleText(routingObj().insecureTraffic, insecureTrafficValue);
-  //   });
-  // } else {
-  //   throw new Error('Some thing went wrong');
-  // }
 }
 
 export const setEnvVariables = async function(envName: string, envValue: string, index = 0) {
-  await buildConfigObj.envRows.count().then(async(count: number) => {
-    if(count === 1) {
-      await enterText(buildConfigObj.envName.get(index), envName);
-      await enterText(buildConfigObj.envValue.get(index), envValue);
-    }
-  })
+  const count: number = await buildConfigObj.envRows.count()
+  if(count === 1) {
+    await enterText(buildConfigObj.envName.get(index), envName);
+    await enterText(buildConfigObj.envValue.get(index), envValue);
+  }
 }
 export const setBuildConfig = async function(envName: string, envValue: string) {
     await setEnvVariables(envName, envValue, 0);

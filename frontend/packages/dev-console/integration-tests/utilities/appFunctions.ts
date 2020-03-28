@@ -36,31 +36,27 @@ export const naviagteTo = async function(opt: NavigationMenu) {
         break;
       }
       case NavigationMenu.Search: {
-          await click($('a.pf-c-nav__link[data-component="pf-nav-expandable"]')).then(async () => {
-            await click($('[data-test-id="more-search-header"]'));
-            await browser.wait(EC.titleContains('Search · OKD'), waitForElement);
-          })
+        await click($('a.pf-c-nav__link[data-component="pf-nav-expandable"]'))
+        await click($('[data-test-id="more-search-header"]'));
+        await browser.wait(EC.titleContains('Search · OKD'), waitForElement);
         break;
       }
       case NavigationMenu.Helm: {
-        await click($('a.pf-c-nav__link[data-component="pf-nav-expandable"]')).then(async () => {
-            await click($('[data-test-id="helm-releases-header"]'));
-            await browser.wait(EC.titleContains('Helm Releases · OKD'), waitForElement);
-          })
+        await click($('a.pf-c-nav__link[data-component="pf-nav-expandable"]'))
+        await click($('[data-test-id="helm-releases-header"]'));
+        await browser.wait(EC.titleContains('Helm Releases · OKD'), waitForElement);
         break;
       }
       case NavigationMenu.ProjectDetails: {
-        await click($('a.pf-c-nav__link[data-component="pf-nav-expandable"]')).then(async () => {
-            await click($('[data-test-id="more-project-header"]'));
-            await browser.wait(EC.titleContains('Helm Releases · OKD'), waitForElement);
-          })
+        await click($('a.pf-c-nav__link[data-component="pf-nav-expandable"]'))
+        await click($('[data-test-id="more-project-header"]'));
+        await browser.wait(EC.urlContains('projects'), waitForElement);
         break;
       }
       case NavigationMenu.ProjectAccess: {
-        await click($('a.pf-c-nav__link[data-component="pf-nav-expandable"]')).then(async () => {
-            await click($('[data-test-id="more-project-access-header"]'));
-            await browser.wait(EC.titleContains('Helm Releases · OKD'), waitForElement);
-          })
+        await click($('a.pf-c-nav__link[data-component="pf-nav-expandable"]'))
+        await click($('[data-test-id="more-project-access-header"]'));
+        await browser.wait(EC.urlContains('project-access'), waitForElement);
         break;
       }
       default: {
@@ -68,4 +64,3 @@ export const naviagteTo = async function(opt: NavigationMenu) {
       }
     }
   };
-  

@@ -8,7 +8,6 @@ import {
 import {
   navigateImportFromGit,
   enterGitRepoUrl,
-  addApplication,
   applicationName,
   appName,
   createButton,
@@ -35,17 +34,14 @@ import {
   gitUrlHelper,
   builderImageSelected,
 } from '../views/git-import-flow.view';
-import { 
-  // verifyCheckBox, 
-  enterText} from '../utilities/elementInteractions';
 import { newApplicationName, newAppName } from '../views/new-app-name.view';
 import { switchPerspective, Perspective, sideHeader } from '../views/dev-perspective.view';
 import {pipelinecheckStatus, pipelineTableBody} from '../views/pipeline.view';
-import {elementByDataTestID, click} from '../utilities/elementInteractions';
-const waitForElement = 5000;
+import {elementByDataTestID, click, enterText} from '../utilities/elementInteractions';
 import { testData } from '../testData/git-import-flow.data';
 import { naviagteTo, NavigationMenu } from '../utilities/appFunctions';
 import { verifyCreatedAppsInTopology, selectActionInSideBar, Actions, topologyViewObj, listViewObj } from '../views/topology.view';
+const waitForElement = 5000;
 
 describe('git import flow', () => {
   let newApplication;
@@ -69,7 +65,6 @@ describe('git import flow', () => {
     await browser.wait(until.textToBePresentInElement(importFromGitHeader, 'Import from git'), waitForElement);
     expect(importFromGitHeader.getText()).toContain('Import from git');
     await enterGitRepoUrl(testData.gitRepoUrl);
-    debugger;
     await appName.click();
     expect(appName.getAttribute('value')).toContain('nodejs-ex-git');
     await addApplicationInGeneral(newApplication, newApp);
@@ -128,7 +123,6 @@ describe('git import flow with advanced options', () => {
     expect(routingObj.certificate.isDisplayed()).toBe(true);
     expect(routingObj.caCertificate.isDisplayed()).toBe(true);
     expect(routingObj.privateKey.isDisplayed()).toBe(true);
-    // await setSecureRoute(TLSTerminationValues.ReEncrypt);
   });
 
   it('add Adanced option "BuildConfig" details', async () => {
@@ -202,14 +196,8 @@ describe('git import flow with advanced options', () => {
     let actualCount = await listViewObj.appNames.count();
     expect(actualCount).toBeLessThan(count);
   });
-
-  // it('verify the app icon status and Resource displays', async() => {
-  //   await click(listViewObj.switchToToplogyView);
-
-  // });
 });
 
-// This describe block is disabled beacause "Add Pipeline" functionality is consistent
 xdescribe('git import flow with pipeline creation', () => {
   let newApplication;
   let newApp;
@@ -233,9 +221,9 @@ xdescribe('git import flow with pipeline creation', () => {
     expect(importFromGitHeader.getText()).toContain('Import from git');
     await enterGitRepoUrl('https://github.com/sclorg/nodejs-ex.git');
 
-    await appName.click();
+    await click(appName);
     expect(appName.getAttribute('value')).toContain('nodejs-ex-git');
-    await addApplication(newApplication, newApp);
+    await addApplicationInGeneral(newApplication, newApp);
     expect(applicationName.getAttribute('value')).toContain(newApplication);
     expect(appName.getAttribute('value')).toContain(newApp);
   });
@@ -255,7 +243,6 @@ xdescribe('git import flow with pipeline creation', () => {
   });
 
   it('verify the pipeline for the git flow', async () => {
-       // verify the pipeline created for the current git flow
        await pipelinecheckStatus();
        await browser.wait(until.visibilityOf(pipelineTableBody), waitForElement);
        expect(await elementByDataTestID(newApp).isDisplayed()).toBe(true);
