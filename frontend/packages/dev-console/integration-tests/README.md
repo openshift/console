@@ -6,13 +6,15 @@
 
 ## View files:
 1. Page objects should be id, css selectors, buttontext etc.. [No XPath]- Already following
-    a. Each section should have one object as shown below (It helps to reduce the import list in scenarios)
-            export const deleteDeployPopupObj = {
-            form: element(by.css('form.modal-content')),
-            checkbox: element(by.css('input[type="checkbox"]')),
-            cancel: element(by.css('[data-test-id="modal-cancel-action"]')),
-            delete: element(by.css('#confirm-action'))
-            }
+    * Each section should have one object as shown below (It helps to reduce the import list in scenarios)
+      ```
+      export const deleteDeployPopupObj = {
+          form: element(by.css('form.modal-content')),
+          checkbox: element(by.css('input[type="checkbox"]')),
+          cancel: element(by.css('[data-test-id="modal-cancel-action"]')),
+          delete: element(by.css('#confirm-action'))
+      }
+      ```
 2. Use arrow functions which helps to reduce the lines of code and it has other benefits as well
 3. Logics should be implemented within these files
 4. Don't use hard coded values [like waitTime]
