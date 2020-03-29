@@ -3,10 +3,7 @@ import { $, browser, ExpectedConditions as until, element, by } from 'protractor
 const selectFromDropdown = async (dropdownButton, text) => {
   await dropdownButton.click();
   await browser.wait(until.presenceOf($('[data-test-id=dropdown-text-filter]')));
-  await browser
-    .actions()
-    .sendKeys(text)
-    .perform();
+  await $('[data-test-id=dropdown-text-filter]').sendKeys(text);
   await element(by.cssContainingText('li[role=option] a', text)).click();
   await browser.wait(until.not(until.visibilityOf($('.pf-c-dropdown__menu'))));
 };
