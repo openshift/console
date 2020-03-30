@@ -13,7 +13,7 @@ import { FormFieldForm } from '../../form/form-field-form';
 import { VMWareImportProvider } from './providers/vmware-import-provider/vmware-import-provider';
 import { iGetImportProviders } from '../../selectors/immutable/import-providers';
 
-class ImportProvidersTabComponent extends React.Component<VMSettingsTabComponentProps> {
+class ImportProvidersTabComponent extends React.Component<ImportProvidersTabComponentProps> {
   getField = (key: ImportProvidersField) => iGet(this.props.importProviders, key);
 
   getFieldAttribute = (key: ImportProvidersField, attribute: string) =>
@@ -58,7 +58,7 @@ const stateToProps = (state, { wizardReduxID }) => ({
   importProviders: iGetImportProviders(state, wizardReduxID),
 });
 
-type VMSettingsTabComponentProps = {
+type ImportProvidersTabComponentProps = {
   onFieldChange: (key: ImportProviderRenderableField, value: string) => void;
   importProviders: any;
   isReview: boolean;

@@ -153,17 +153,6 @@ const CreateVMWizardFooterComponent: React.FC<CreateVMWizardFooterComponentProps
                   : 'Next'}
               </Button>
             )}
-            {!hideBackButton && (
-              <Button
-                key="back"
-                variant={ButtonVariant.secondary}
-                onClick={onBack}
-                className={css(isBackButtonDisabled && 'pf-m-disabled')}
-                isDisabled={isBackButtonDisabled}
-              >
-                Back
-              </Button>
-            )}
             {!isFinishingStep && !(isSimpleView && areMainTabsHidden) && (
               <Button
                 key="reviewandcreate"
@@ -195,6 +184,17 @@ const CreateVMWizardFooterComponent: React.FC<CreateVMWizardFooterComponentProps
                 onClick={() => onEdit(activeStepID)}
               >
                 Edit
+              </Button>
+            )}
+            {!hideBackButton && (
+              <Button
+                key="back"
+                variant={ButtonVariant.secondary}
+                onClick={onBack}
+                className={css(isBackButtonDisabled && 'pf-m-disabled')}
+                isDisabled={isBackButtonDisabled}
+              >
+                Back
               </Button>
             )}
             {!activeStep.hideCancelButton && (

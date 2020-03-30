@@ -163,11 +163,12 @@ const VMList: React.FC<React.ComponentProps<typeof Table> & VMListProps> = (prop
 
 VMList.displayName = 'VMList';
 
+const wizardImportName = 'wizardImport';
 const getCreateProps = ({ namespace }: { namespace: string }) => {
   const items: any = {
     [VMWizardName.WIZARD]: VMWizardActionLabels.WIZARD,
     [VMWizardName.YAML]: VMWizardActionLabels.YAML,
-    wizardImport: VMWizardActionLabels.IMPORT,
+    [wizardImportName]: VMWizardActionLabels.IMPORT,
   };
 
   return {
@@ -175,8 +176,8 @@ const getCreateProps = ({ namespace }: { namespace: string }) => {
     createLink: (wizardName) =>
       getVMWizardCreateLink({
         namespace,
-        wizardName: wizardName === 'wizardImport' ? VMWizardName.WIZARD : wizardName,
-        mode: wizardName === 'wizardImport' ? VMWizardMode.IMPORT : VMWizardMode.VM,
+        wizardName: wizardName === wizardImportName ? VMWizardName.WIZARD : wizardName,
+        mode: wizardName === wizardImportName ? VMWizardMode.IMPORT : VMWizardMode.VM,
       }),
   };
 };
@@ -208,7 +209,17 @@ export const WrappedVirtualMachinesPage: React.FC<VirtualMachinesPageProps> = (p
     },
   ];
 
-  const flatten = ({ vms, vmis, pods, migrations }) => {
+  const flatten = ({
+    vms,
+    vmis,
+    pods,
+    migrations,
+  }: {
+    vms: FirehoseResult<VMKind[]>;
+    vmis: FirehoseResult<VMIKind[]>;
+    pods: FirehoseResult<PodKind[]>;
+    migrations: FirehoseResult;
+  }) => {
     const loadedVMs = getLoadedData(vms);
     const loadedVMIs = getLoadedData(vmis);
     const loadedPods = getLoadedData(pods);
@@ -305,7 +316,7 @@ type VMListProps = {
   data: VMRowObjType[];
   resources: {
     pods: FirehoseResult<PodKind[]>;
-    migrations: FirehoseResult<K8sResourceKind[]>;
+    migrations: FirehoseResult;
     vmis: FirehoseResult<VMIKind[]>;
   };
 };

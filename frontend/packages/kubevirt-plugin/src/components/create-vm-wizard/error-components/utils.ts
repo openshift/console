@@ -71,9 +71,6 @@ export const computeNetworkErrors = (state, wizardReduxID) => {
         {
           id: 'nic',
           name: nic.getIn(['networkInterface', 'name']),
-          action: {
-            goToStep: VMWizardTab.NETWORKING,
-          },
         },
         {
           id: 'nic-fields',
@@ -132,9 +129,6 @@ export const computeStorageErrors = (state, wizardReduxID) => {
         {
           id: 'disk',
           name: iStorage.getIn(['disk', 'name']),
-          action: {
-            goToStep: tab,
-          },
         },
         {
           id: 'storage-fields',

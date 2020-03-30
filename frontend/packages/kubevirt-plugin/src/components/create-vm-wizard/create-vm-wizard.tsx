@@ -52,6 +52,7 @@ import { StorageTab } from './tabs/storage-tab/storage-tab';
 import { CloudInitTab } from './tabs/cloud-init-tab/cloud-init-tab';
 import { VirtualHardwareTab } from './tabs/virtual-hardware-tab/virtual-hardware-tab';
 import { useStorageClassConfigMapWrapped } from '../../hooks/storage-class-config-map';
+import { ValidTabGuard } from './tabs/valid-tab-guard';
 
 import './create-vm-wizard.scss';
 
@@ -158,6 +159,13 @@ class CreateVMWizardComponent extends React.Component<CreateVMWizardComponentPro
         component: (
           <>
             <ResourceLoadErrors wizardReduxID={reduxID} key="errors" />
+            <ValidTabGuard
+              wizardReduxID={reduxID}
+              tabID={VMWizardTab.IMPORT_PROVIDERS}
+              key="wizard-errors"
+            >
+              <WizardErrors wizardReduxID={reduxID} />
+            </ValidTabGuard>
             <ImportProvidersTab wizardReduxID={reduxID} key={VMWizardTab.IMPORT_PROVIDERS} />
           </>
         ),

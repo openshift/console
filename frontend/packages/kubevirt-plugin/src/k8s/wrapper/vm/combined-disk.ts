@@ -26,6 +26,8 @@ export class CombinedDisk {
 
   private readonly source: StorageUISource;
 
+  readonly id: string;
+
   readonly diskWrapper: DiskWrapper;
 
   readonly volumeWrapper: VolumeWrapper;
@@ -35,6 +37,7 @@ export class CombinedDisk {
   readonly persistentVolumeClaimWrapper?: PersistentVolumeClaimWrapper;
 
   constructor({
+    id,
     disk,
     volume,
     dataVolume,
@@ -47,6 +50,7 @@ export class CombinedDisk {
     dataVolumesLoading,
     pvcsLoading,
   }: {
+    id?: string;
     disk?: V1Disk;
     volume?: V1Volume;
     dataVolume?: V1alpha1DataVolume;
@@ -59,6 +63,7 @@ export class CombinedDisk {
     pvcsLoading?: boolean;
     isNewPVC?: boolean;
   }) {
+    this.id = id;
     this.diskWrapper = disk ? new DiskWrapper(disk) : diskWrapper;
     this.volumeWrapper = volume ? new VolumeWrapper(volume) : volumeWrapper;
     this.dataVolumeWrapper = dataVolume ? new DataVolumeWrapper(dataVolume) : dataVolumeWrapper;

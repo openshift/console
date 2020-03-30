@@ -28,10 +28,10 @@ export const joinIDs = (...ids: string[]) => ids.join('-');
 export const isLoaded = (result: FirehoseResult<K8sResourceKind | K8sResourceKind[]>) =>
   result && result.loaded;
 
-export const getLoadedData = (
-  result: FirehoseResult<K8sResourceKind | K8sResourceKind[]>,
+export const getLoadedData = <T extends K8sResourceKind | K8sResourceKind[] = K8sResourceKind[]>(
+  result: FirehoseResult<T>,
   defaultValue = null,
-) => (result && result.loaded && !result.loadError ? result.data : defaultValue);
+): T => (result && result.loaded && !result.loadError ? result.data : defaultValue);
 
 export const getModelString = (model: K8sKind | any, isList: boolean) =>
   pluralize(isList ? 2 : 1, model && model.kind ? model.kind : model);

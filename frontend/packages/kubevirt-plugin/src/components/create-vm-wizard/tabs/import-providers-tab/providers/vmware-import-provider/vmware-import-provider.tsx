@@ -5,12 +5,7 @@ import {
   iGetVMwareData,
   isVMWareProvider,
 } from '../../../../selectors/immutable/provider/vmware/selectors';
-import {
-  ChangedCommonData,
-  CommonData,
-  VMImportProvider,
-  VMWareProviderField,
-} from '../../../../types';
+import { VMImportProvider, VMWareProviderField } from '../../../../types';
 import { vmWizardActions } from '../../../../redux/actions';
 import { ActionType } from '../../../../redux/types';
 import { FormField, FormFieldType } from '../../../../form/form-field';
@@ -105,7 +100,6 @@ type VMWareImportProviderProps = {
   vmWareData: any;
   wizardReduxID: string;
   onFieldChange: (key: VMWareProviderField, value: any) => void;
-  onCommonDataChanged: (commonData: CommonData, commonDataChanged?: ChangedCommonData) => void;
 };
 
 const stateToProps = (state, { wizardReduxID }) => ({
@@ -114,11 +108,6 @@ const stateToProps = (state, { wizardReduxID }) => ({
 });
 
 const dispatchToProps = (dispatch, { wizardReduxID }) => ({
-  onCommonDataChanged: (commonData: CommonData, changedCommonData?: ChangedCommonData) => {
-    dispatch(
-      vmWizardActions[ActionType.UpdateCommonData](wizardReduxID, commonData, changedCommonData),
-    );
-  },
   onFieldChange: (key: VMWareProviderField, value: any) =>
     dispatch(
       vmWizardActions[ActionType.UpdateImportProviderField](
