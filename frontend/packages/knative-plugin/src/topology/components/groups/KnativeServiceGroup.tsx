@@ -26,6 +26,7 @@ import {
   nodeDragSourceSpec,
   Decorator,
   useSearchFilter,
+  useDisplayFilters,
 } from '@console/dev-console/src/components/topology';
 import { TYPE_KNATIVE_SERVICE } from '../../const';
 import RevisionTrafficSourceAnchor from '../anchors/RevisionTrafficSourceAnchor';
@@ -85,6 +86,8 @@ const KnativeServiceGroup: React.FC<KnativeServiceGroupProps> = ({
   useAnchor(React.useCallback((node: Node) => new RectAnchor(node, 1.5), []));
 
   const [filtered] = useSearchFilter(element.getLabel());
+  const displayFilters = useDisplayFilters();
+  const showLabels = displayFilters.showLabels || hover || innerHover;
   const { x, y, width, height } = element.getBounds();
 
   React.useLayoutEffect(() => {
@@ -161,7 +164,7 @@ const KnativeServiceGroup: React.FC<KnativeServiceGroupProps> = ({
             </Decorator>
           </Tooltip>
         )}
-        {(data.kind || element.getLabel()) && (
+        {showLabels && (data.kind || element.getLabel()) && (
           <SvgBoxedText
             className="odc-knative-service__label odc-base-node__label"
             x={x + width / 2}

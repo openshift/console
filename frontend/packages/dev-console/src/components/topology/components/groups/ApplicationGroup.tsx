@@ -19,7 +19,7 @@ import {
   hullPath,
 } from '@console/topology';
 import * as classNames from 'classnames';
-import { useSearchFilter } from '../../filters/useSearchFilter';
+import { useDisplayFilters, useSearchFilter } from '../../filters';
 import SvgBoxedText from '../../../svg/SvgBoxedText';
 import { NodeShadows, NODE_SHADOW_FILTER_ID, NODE_SHADOW_FILTER_ID_HOVER } from '../NodeShadows';
 
@@ -78,6 +78,8 @@ const ApplicationGroup: React.FC<ApplicationGroupProps> = ({
   const dragLabelRef = useDragNode()[1];
   const refs = useCombineRefs<SVGPathElement>(hoverRef, dragNodeRef);
   const [filtered] = useSearchFilter(element.getLabel());
+  const displayFilters = useDisplayFilters();
+  const showLabels = displayFilters.showLabels || hover;
 
   // cast to number and coerce
   const padding = maxPadding(element.getStyle<NodeStyle>().padding);
@@ -154,17 +156,19 @@ const ApplicationGroup: React.FC<ApplicationGroupProps> = ({
           />
         </g>
       </Layer>
-      <SvgBoxedText
-        className="odc-application-group__label"
-        kind="application"
-        x={labelLocation.current[0]}
-        y={labelLocation.current[1] + hullPadding(labelLocation.current) + 24}
-        paddingX={8}
-        paddingY={5}
-        dragRef={dragLabelRef}
-      >
-        {element.getLabel()}
-      </SvgBoxedText>
+      {showLabels && (
+        <SvgBoxedText
+          className="odc-application-group__label"
+          kind="application"
+          x={labelLocation.current[0]}
+          y={labelLocation.current[1] + hullPadding(labelLocation.current) + 24}
+          paddingX={8}
+          paddingY={5}
+          dragRef={dragLabelRef}
+        >
+          {element.getLabel()}
+        </SvgBoxedText>
+      )}
     </g>
   );
 };

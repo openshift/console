@@ -18,7 +18,7 @@ import {
   NODE_SHADOW_FILTER_ID,
 } from '../../components/NodeShadows';
 import SvgBoxedText from '../../../svg/SvgBoxedText';
-import { useSearchFilter } from '../../filters/useSearchFilter';
+import { useDisplayFilters, useSearchFilter } from '../../filters';
 import { nodeDragSourceSpec } from '../../components/componentUtils';
 import { TYPE_HELM_RELEASE } from './const';
 
@@ -55,6 +55,8 @@ const HelmReleaseGroup: React.FC<HelmReleaseGroupProps> = ({
 
   const nodeRefs = useCombineRefs(innerHoverRef, dragNodeRef);
   const [filtered] = useSearchFilter(element.getLabel());
+  const displayFilters = useDisplayFilters();
+  const showLabels = displayFilters.showLabels || hover || innerHover;
   const hasChildren = element.getChildren()?.length > 0;
   const { x, y, width, height } = element.getBounds();
 
@@ -102,7 +104,7 @@ const HelmReleaseGroup: React.FC<HelmReleaseGroupProps> = ({
           )}
         </g>
       </Layer>
-      {element.getLabel() && (
+      {showLabels && element.getLabel() && (
         <SvgBoxedText
           className="odc-base-node__label"
           x={x + width / 2}
