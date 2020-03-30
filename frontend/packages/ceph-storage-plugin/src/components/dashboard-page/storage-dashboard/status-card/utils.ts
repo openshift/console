@@ -1,33 +1,34 @@
-import * as _ from 'lodash';
+import { PrometheusHealthHandler, ResourceHealthHandler } from '@console/plugin-sdk';
 import { HealthState } from '@console/shared/src/components/dashboard/status-card/states';
-import { PrometheusHealthHandler } from '@console/plugin-sdk';
 import { getResiliencyProgress } from '../../../../utils';
+import { WatchCephResource } from '../../../../types';
 
-const CephHealthStatus = [
-  {
+const CephHealthStatus = {
+  HEALTH_OK: {
     state: HealthState.OK,
   },
-  {
+  HEALTH_WARN: {
     state: HealthState.WARNING,
   },
-  {
+  HEALTH_ERR: {
     state: HealthState.ERROR,
   },
-  {
-    state: HealthState.NOT_AVAILABLE,
-  },
-];
+};
 
-export const getCephHealthState: PrometheusHealthHandler = (responses = [], errors = []) => {
-  if (errors[0]) {
-    return CephHealthStatus[3];
+export const getCephHealthState: ResourceHealthHandler<WatchCephResource> = ({ ceph }) => {
+  const { data, loaded, loadError } = ceph;
+  const status = data?.[0]?.status?.ceph?.health;
+
+  if (loadError) {
+    return { state: HealthState.NOT_AVAILABLE };
   }
-  if (!responses[0]) {
+  if (!loaded) {
     return { state: HealthState.LOADING };
   }
-
-  const value = _.get(responses[0], 'data.result[0].value[1]');
-  return CephHealthStatus[value] || CephHealthStatus[3];
+  if (data.length === 0) {
+    return { state: HealthState.NOT_AVAILABLE };
+  }
+  return CephHealthStatus[status] || { state: HealthState.UNKNOWN };
 };
 
 export const getDataResiliencyState: PrometheusHealthHandler = (responses = [], errors = []) => {

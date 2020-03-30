@@ -28,29 +28,33 @@ const highVuln: ImageManifestVuln = {
 
 describe('securityHealthHandler', () => {
   it('returns `UNKNOWN` status if there is an error retrieving `ImageManifestVulns`', () => {
-    const vulnerabilities = { loaded: true, loadError: 'failed to fetch', data: [] };
-    const health = securityHealthHandler(null, null, vulnerabilities);
+    const vulnerabilities = {
+      imageManifestVuln: { loaded: true, loadError: 'failed to fetch', data: [] },
+    };
+    const health = securityHealthHandler(vulnerabilities);
 
     expect(health.state).toEqual(HealthState.UNKNOWN);
   });
 
   it('returns `LOADING` status if still retrieving `ImageManifestVulns`', () => {
-    const vulnerabilities = { loaded: false, loadError: null, data: [] };
-    const health = securityHealthHandler(null, null, vulnerabilities);
+    const vulnerabilities = { imageManifestVuln: { loaded: false, loadError: null, data: [] } };
+    const health = securityHealthHandler(vulnerabilities);
 
     expect(health.state).toEqual(HealthState.LOADING);
   });
 
   it('returns `Error` status if any `ImageManifestVulns` exist', () => {
-    const vulnerabilities = { loaded: true, loadError: null, data: [highVuln] };
-    const health = securityHealthHandler(null, null, vulnerabilities);
+    const vulnerabilities = {
+      imageManifestVuln: { loaded: true, loadError: null, data: [highVuln] },
+    };
+    const health = securityHealthHandler(vulnerabilities);
 
     expect(health.state).toEqual(HealthState.ERROR);
   });
 
   it('returns `OK` status if no vulnerabilities', () => {
-    const vulnerabilities = { loaded: true, loadError: null, data: [] };
-    const health = securityHealthHandler(null, null, vulnerabilities);
+    const vulnerabilities = { imageManifestVuln: { loaded: true, loadError: null, data: [] } };
+    const health = securityHealthHandler(vulnerabilities);
 
     expect(health.state).toEqual(HealthState.OK);
   });

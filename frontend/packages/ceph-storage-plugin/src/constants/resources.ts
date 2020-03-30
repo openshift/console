@@ -8,10 +8,3 @@ export const cephClusterResource: FirehoseResource = {
   isList: true,
   prop: 'ceph',
 };
-export enum StorageDashboardResource {
-  CEPH_CLUSTER_RESOURCE = 'CEPH_CLUSTER_RESOURCE',
-}
-
-export const STORAGE_HEALTH_RESOURCES = {
-  [StorageDashboardResource.CEPH_CLUSTER_RESOURCE]: cephClusterResource,
-};

@@ -5,9 +5,12 @@ import { Map as ImmutableMap } from 'immutable';
 import {
   useExtensions,
   DashboardsOverviewHealthSubsystem,
+  DashboardsOverviewHealthPrometheusSubsystem,
   isDashboardsOverviewHealthSubsystem,
   isDashboardsOverviewHealthURLSubsystem,
+  DashboardsOverviewHealthURLSubsystem,
   isDashboardsOverviewHealthPrometheusSubsystem,
+  isDashboardsOverviewHealthResourceSubsystem,
   isDashboardsOverviewHealthOperator,
 } from '@console/plugin-sdk';
 import { ArrowCircleUpIcon } from '@patternfly/react-icons';
@@ -36,17 +39,25 @@ import {
 import { ClusterVersionModel } from '../../../../models';
 import { clusterUpdateModal } from '../../../modals/cluster-update-modal';
 import { RootState } from '../../../../redux';
-import { OperatorHealthItem, PrometheusHealthItem, URLHealthItem } from './health-item';
+import {
+  OperatorHealthItem,
+  PrometheusHealthItem,
+  URLHealthItem,
+  ResourceHealthItem,
+} from './health-item';
 
 const filterSubsystems = (
   subsystems: DashboardsOverviewHealthSubsystem[],
   k8sModels: ImmutableMap<string, K8sKind>,
 ) =>
-  subsystems.filter((subsystem) => {
+  subsystems.filter((s) => {
     if (
-      isDashboardsOverviewHealthURLSubsystem(subsystem) ||
-      isDashboardsOverviewHealthPrometheusSubsystem(subsystem)
+      isDashboardsOverviewHealthURLSubsystem(s) ||
+      isDashboardsOverviewHealthPrometheusSubsystem(s)
     ) {
+      const subsystem = s as
+        | DashboardsOverviewHealthPrometheusSubsystem
+        | DashboardsOverviewHealthURLSubsystem;
       return subsystem.properties.additionalResource &&
         !subsystem.properties.additionalResource.optional
         ? !!k8sModels.get(subsystem.properties.additionalResource.kind)
@@ -176,6 +187,11 @@ export const StatusCard = connect<StatusCardProps>(mapStateToProps)(({ k8sModels
       healthItems.push({
         title: subsystem.properties.title,
         Component: <PrometheusHealthItem subsystem={subsystem.properties} models={k8sModels} />,
+      });
+    } else if (isDashboardsOverviewHealthResourceSubsystem(subsystem)) {
+      healthItems.push({
+        title: subsystem.properties.title,
+        Component: <ResourceHealthItem subsystem={subsystem.properties} />,
       });
     }
   });
