@@ -9,15 +9,13 @@ import { PipelineRunModel, PipelineModel } from '../../models';
 import { useMenuActionsWithUserLabel } from '../pipelineruns/triggered-by';
 import {
   PipelineDetails,
+  PipelineForm,
   PipelineParametersForm,
   PipelineResourcesForm,
   PipelineRuns,
-} from './detail-page-tabs';
-import PipelineForm from './pipeline-form/PipelineForm';
-import {
   parametersValidationSchema,
   resourcesValidationSchema,
-} from './pipeline-form/pipelineForm-validation-utils';
+} from './detail-page-tabs';
 
 const PipelineDetailsPage: React.FC<DetailsPageProps> = (props) => {
   const [errorCode, setErrorCode] = React.useState(null);

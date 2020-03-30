@@ -3,8 +3,8 @@ import cx from 'classnames';
 import { useField, useFormikContext, FormikValues } from 'formik';
 import { FormGroup } from '@patternfly/react-core';
 import { DropdownFieldProps, getFieldId, useFormikValidationFix } from '@console/shared';
-import PipelineResourceDropdown from '../../dropdown/PipelineResourceDropdown';
-import PipelineResourceForm from '../pipeline-resource/PipelineResourceForm';
+import PipelineResourceDropdown from '../../../dropdown/PipelineResourceDropdown';
+import PipelineResourceForm from '../../pipeline-resource/PipelineResourceForm';
 
 export const CREATE_PIPELINE_RESOURCE = '#CREATE_PIPELINE_RESOURCE#';
 

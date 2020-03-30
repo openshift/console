@@ -1,27 +1,25 @@
 import * as React from 'react';
+import { Formik } from 'formik';
 import { shallow, ShallowWrapper } from 'enzyme';
 import * as Renderer from 'react-test-renderer';
-import PipelineResourceSection, {
-  ResourceSectionProps,
-} from '../pipeline-form/PipelineResourceSection';
-import { Formik } from 'formik';
+import { PipelineResource } from '../../../../../utils/pipeline-augment';
+import PipelineResourceSection, { ResourceSectionProps } from '../PipelineResourceSection';
 
 jest.mock('react-dom', () => ({
   findDOMNode: () => ({}),
   createPortal: (node) => node,
 }));
 
-jest.mock('../pipeline-form/PipelineResourceDropdownField');
+jest.mock('../PipelineResourceDropdownField');
 
 describe('PipelineResourceSection component', () => {
-  const resources = {
-    types: ['git', 'image'],
-    git: [{ name: 'mapit-git', type: 'git', resourceRef: { name: 'pipelineTest' }, index: 0 }],
-    image: [{ index: 1, name: 'mapit-image', resourceRef: { name: '' }, type: 'image' }],
-  };
+  const resources: PipelineResource[] = [
+    { name: 'mapit-git', type: 'git' },
+    { name: 'mapit-image', type: 'image' },
+  ];
   let wrapper: ShallowWrapper<ResourceSectionProps>;
   beforeEach(() => {
-    wrapper = shallow(<PipelineResourceSection resources={resources} />);
+    wrapper = shallow(<PipelineResourceSection resourceList={resources} />);
   });
 
   it('It should render git and image sections', () => {
@@ -37,7 +35,7 @@ describe('PipelineResourceSection component', () => {
   it('It should match the previous pipeline snapshot', () => {
     const tree = Renderer.create(
       <Formik onSubmit={() => {}} initialValues={{}}>
-        {() => <PipelineResourceSection resources={resources} />}
+        {() => <PipelineResourceSection resourceList={resources} />}
       </Formik>,
     ).toJSON();
     expect(tree).toMatchSnapshot();

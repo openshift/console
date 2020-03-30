@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { FieldArray } from 'formik';
 import * as _ from 'lodash';
-import FormSection from '../../import/section/FormSection';
-import { PipelineResource } from '../../../utils/pipeline-augment';
+import { PipelineResource } from '../../../../utils/pipeline-augment';
+import FormSection from '../../../import/section/FormSection';
 import PipelineResourceDropdownField from './PipelineResourceDropdownField';
 
 export interface ResourceProps {
@@ -13,10 +13,23 @@ export interface ResourceProps {
   storage?: PipelineResource[];
 }
 export interface ResourceSectionProps {
-  resources: ResourceProps;
+  resourceList: PipelineResource[];
 }
 
-const PipelineResourceSection: React.FC<ResourceSectionProps> = ({ resources }) => {
+const PipelineResourceSection: React.FC<ResourceSectionProps> = ({ resourceList }) => {
+  const resources: ResourceProps = resourceList.reduce(
+    (acc, value, index) => {
+      const resource = { ...value, index };
+      if (!acc.types.includes(resource.type)) {
+        acc.types.push(resource.type);
+        acc[resource.type] = [];
+      }
+      acc[resource.type].push(resource);
+      return acc;
+    },
+    { types: [] },
+  );
+
   return (
     resources.types.length > 0 && (
       <>

@@ -10,7 +10,7 @@ import { errorModal } from '@console/internal/components/modals';
 import { getRandomChars } from '@console/shared/src/utils';
 import { removeTriggerModal } from '../components/pipelines/modals';
 import { PipelineModel, PipelineRunModel } from '../models';
-import startPipelineModal from '../components/pipelines/pipeline-form/StartPipelineModal';
+import { startPipelineModal } from '../components/pipelines/modals';
 import { Pipeline, PipelineRun } from './pipeline-augment';
 import { pipelineRunFilterReducer } from './pipeline-filter-reducer';
 import { getPipelineRunParams } from './pipeline-utils';

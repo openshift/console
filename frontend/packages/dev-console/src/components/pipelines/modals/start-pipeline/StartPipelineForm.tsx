@@ -7,11 +7,11 @@ import {
   ModalBody,
   ModalSubmitFooter,
 } from '@console/internal/components/factory/modal';
-import FormSection from '../../import/section/FormSection';
-import PipelineResourceSection, { ResourceProps } from './PipelineResourceSection';
-import PipelineParameterSection from './PipelineParameterSection';
-import PipelineWorkspacesSection from './PiplelineWorkspacesSection';
-import PipelineSecretSection from './PipelineSecretSection';
+import FormSection from '../../../import/section/FormSection';
+import PipelineParameterSection from '../common/PipelineParameterSection';
+import PipelineResourceSection from '../common/PipelineResourceSection';
+import PipelineWorkspacesSection from '../common/PiplelineWorkspacesSection';
+import PipelineSecretSection from '../common/PipelineSecretSection';
 
 const StartPipelineForm: React.FC<FormikValues> = ({
   values,
@@ -21,26 +21,13 @@ const StartPipelineForm: React.FC<FormikValues> = ({
   isSubmitting,
   close,
 }) => {
-  const resources: ResourceProps = values.resources.reduce(
-    (acc, value, index) => {
-      const resource = { ...value, index };
-      if (!acc.types.includes(resource.type)) {
-        acc.types.push(resource.type);
-        acc[resource.type] = [];
-      }
-      acc[resource.type].push(resource);
-      return acc;
-    },
-    { types: [] },
-  );
-
   return (
     <Form onSubmit={handleSubmit}>
       <div className="modal-content">
         <ModalTitle>Start Pipeline</ModalTitle>
         <ModalBody>
           <PipelineParameterSection parameters={values.parameters} />
-          <PipelineResourceSection resources={resources} />
+          <PipelineResourceSection resourceList={values.resources} />
           <PipelineWorkspacesSection />
           <FormSection title="Advanced Options" fullWidth>
             <PipelineSecretSection namespace={values.namespace} />

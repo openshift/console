@@ -7,7 +7,7 @@ import {
 } from '@console/internal/components/factory/modal';
 import { k8sCreate } from '@console/internal/module/k8s';
 import { errorModal } from '@console/internal/components/modals';
-import { PipelineRunModel } from '../../../models';
+import { PipelineRunModel } from '../../../../models';
 import {
   Pipeline,
   PipelineResource,
@@ -15,11 +15,11 @@ import {
   PipelineRun,
   PipelineWorkspace,
   PipelineRunResource,
-} from '../../../utils/pipeline-augment';
-import { getPipelineRunParams, getPipelineRunWorkspaces } from '../../../utils/pipeline-utils';
-import { useUserLabelForManualStart } from '../../pipelineruns/triggered-by';
+} from '../../../../utils/pipeline-augment';
+import { getPipelineRunParams, getPipelineRunWorkspaces } from '../../../../utils/pipeline-utils';
+import { useUserLabelForManualStart } from '../../../pipelineruns/triggered-by';
+import { startPipelineSchema } from '../../detail-page-tabs';
 import StartPipelineForm from './StartPipelineForm';
-import { startPipelineSchema } from './pipelineForm-validation-utils';
 
 export type newPipelineRunData = (Pipeline: Pipeline, latestRun?: PipelineRun) => {};
 
