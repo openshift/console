@@ -12,6 +12,7 @@ export type FirehoseResult<
   loadError: string;
   optional?: boolean;
   data: R;
+  kind?: string;
 };
 
 export type FirehoseResourcesResult = {

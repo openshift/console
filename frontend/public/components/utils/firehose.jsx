@@ -240,13 +240,16 @@ export const Firehose = connect(
           return children;
         }
 
-        const reduxes = this.state.firehoses.map(({ id, prop, isList, filters, optional }) => ({
-          reduxID: id,
-          prop,
-          isList,
-          filters,
-          optional,
-        }));
+        const reduxes = this.state.firehoses.map(
+          ({ id, prop, isList, filters, optional, kind }) => ({
+            reduxID: id,
+            prop,
+            isList,
+            filters,
+            optional,
+            kind,
+          }),
+        );
         return <ConnectToState reduxes={reduxes}>{children}</ConnectToState>;
       }
       return null;

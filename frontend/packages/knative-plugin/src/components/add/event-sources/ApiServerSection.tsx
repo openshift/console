@@ -1,7 +1,9 @@
 import * as React from 'react';
 import * as _ from 'lodash';
+import * as fuzzy from 'fuzzysearch';
 import { useFormikContext, FormikValues } from 'formik';
 import { FormGroup } from '@patternfly/react-core';
+import { ServiceAccountModel } from '@console/internal/models';
 import { NameValueEditor } from '@console/internal/components/utils/name-value-editor';
 import { ResourceDropdownField, DropdownField, getFieldId } from '@console/shared';
 import FormSection from '@console/dev-console/src/components/import/section/FormSection';
@@ -17,7 +19,7 @@ const ApiServerSection: React.FC<ApiServerSectionProps> = ({ namespace }) => {
     ? initVal.map((val) => _.values(val))
     : [['', '']];
   const [nameValue, setNameValue] = React.useState(initialValueResources);
-
+  const autocompleteFilter = (strText, item): boolean => fuzzy(strText, item?.props?.name);
   const handleNameValuePairs = React.useCallback(
     ({ nameValuePairs }) => {
       const updatedNameValuePairs = _.compact(
@@ -33,7 +35,6 @@ const ApiServerSection: React.FC<ApiServerSectionProps> = ({ namespace }) => {
     },
     [setFieldValue],
   );
-
   const onChange = React.useCallback(
     (selectedValue) => {
       if (selectedValue) {
@@ -47,9 +48,9 @@ const ApiServerSection: React.FC<ApiServerSectionProps> = ({ namespace }) => {
   const resources = [
     {
       isList: true,
-      kind: 'ServiceAccount',
+      kind: ServiceAccountModel.kind,
       namespace,
-      prop: 'serviceaccount',
+      prop: ServiceAccountModel.id,
       optional: true,
     },
   ];
@@ -86,7 +87,9 @@ const ApiServerSection: React.FC<ApiServerSectionProps> = ({ namespace }) => {
         fullWidth
         placeholder="Select Service Account Name"
         onChange={onChange}
+        autocompleteFilter={autocompleteFilter}
         autoSelect
+        showBadge
       />
     </FormSection>
   );

@@ -44,6 +44,7 @@ const EventSourceForm: React.FC<FormikProps<FormikValues> & OwnProps> = ({
       errorMessage={status && status.submitError}
       isSubmitting={isSubmitting}
       submitLabel="Create"
+      sticky
       disableSubmit={!dirty || !_.isEmpty(errors)}
       resetLabel="Cancel"
     />

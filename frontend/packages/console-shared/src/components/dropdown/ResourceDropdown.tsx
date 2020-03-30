@@ -147,7 +147,7 @@ class ResourceDropdown extends React.Component<ResourceDropdownProps, State> {
     updateSelection: boolean,
   ) => {
     const unsortedList = {};
-    _.each(resources, ({ data }) => {
+    _.each(resources, ({ data, kind }) => {
       _.reduce(
         data,
         (acc, resource) => {
@@ -159,7 +159,7 @@ class ResourceDropdown extends React.Component<ResourceDropdownProps, State> {
           }
           if (dataValue) {
             if (showBadge) {
-              const model = modelFor(referenceFor(resource));
+              const model = modelFor(referenceFor(resource)) || (kind && modelFor(kind));
               acc[dataValue] = model ? (
                 <DropdownItem key={resource.metadata.uid} model={model} name={dataValue} />
               ) : (
