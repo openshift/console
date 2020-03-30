@@ -1,5 +1,5 @@
 /* eslint-disable max-nested-callbacks */
-import { $, $$, element, browser, by, ExpectedConditions as until, Key } from 'protractor';
+import { $, $$, element, browser, by, ExpectedConditions as until } from 'protractor';
 import { execSync } from 'child_process';
 
 import { appHost, testName, checkLogs, checkErrors, waitForCount } from '../protractor.conf';
@@ -118,12 +118,8 @@ describe('Interacting with the create secret forms', () => {
         testName,
         sshSourceSecretName,
         async () => {
-          await secretsView.authTypeDropdown.click().then(() =>
-            browser
-              .actions()
-              .sendKeys(Key.ARROW_UP, Key.ENTER)
-              .perform(),
-          );
+          await secretsView.authTypeDropdown.click();
+          await secretsView.authSSHOption.click();
           await browser.wait(until.presenceOf(secretsView.uploadFileTextArea));
           await secretsView.uploadFileTextArea.sendKeys(sshSourceSecretSSHKey);
         },
@@ -280,12 +276,8 @@ describe('Interacting with the create secret forms', () => {
         testName,
         uploadConfigFileImageSecretName,
         async () => {
-          await secretsView.authTypeDropdown.click().then(() =>
-            browser
-              .actions()
-              .sendKeys(Key.ARROW_UP, Key.ENTER)
-              .perform(),
-          );
+          await secretsView.authTypeDropdown.click();
+          await secretsView.authConfigFileOption.click();
           await browser.wait(until.presenceOf(secretsView.uploadFileTextArea));
           await secretsView.uploadFileTextArea.sendKeys(JSON.stringify(configFile));
         },

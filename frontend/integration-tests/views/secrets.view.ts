@@ -11,6 +11,8 @@ export const dt = $$('dl.secret-data dt');
 
 export const saveButton = $('#save-changes');
 export const authTypeDropdown = $('#dropdown-selectbox');
+export const authSSHOption = element(by.partialButtonText('SSH Key'));
+export const authConfigFileOption = element(by.partialButtonText('Upload Configuration File'));
 
 export const secretWebhookInput = $('input[name=webhookSecretKey]');
 export const secretAddressInput = $('input[name=address]');

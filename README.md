@@ -204,6 +204,8 @@ yarn run test-gui-openshift
 This will include the normal k8s CRUD tests and CRUD tests for OpenShift
 resources.
 
+If you get Jasmine spec timeout errors during runs perhaps against a busy cluster or over slow network, you can try setting a bigger timeout in milliseconds to `JASMINE_TIMEOUT` environment variable in your shell before running the tests. Default 120000 (2 minutes).
+
 If you your local Chrome version doesn't match the Chromedriver version from the console dependencies, override the version with:
 ```
 yarn run webdriver-update --versions.chrome=77.0.3865.120
