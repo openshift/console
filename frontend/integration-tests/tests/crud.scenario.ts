@@ -332,9 +332,7 @@ describe('Kubernetes resource CRUD operations', () => {
     const labelValue = 'appblah';
 
     beforeAll(async () => {
-      await browser.get(`${appHost}/k8s/ns/${testName}/${plural}`);
-      await crudView.isLoaded();
-      await crudView.createYAMLButton.click();
+      await browser.get(`${appHost}/k8s/ns/${testName}/${plural}/~new`);
       await yamlView.isLoaded();
       const content = await yamlView.getEditorContent();
       const newContent = _.defaultsDeep(

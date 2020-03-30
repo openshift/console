@@ -85,7 +85,7 @@ export const clickCreateWithYAML = async () => {
 export const clickKebabAction = async (resourceName: string, actionLabel: string) => {
   const kbBtn = await rowForName(resourceName).$('[data-test-id="kebab-button"]');
   await browser.wait(until.elementToBeClickable(kbBtn));
-  return await kbBtn
+  await kbBtn
     .click()
     .then(() => browser.wait(until.elementToBeClickable(actionForLabel(actionLabel))))
     .then(() => browser.wait(waitForCount($$('.pf-m-disabled'), 0)))
@@ -177,9 +177,7 @@ export const deleteResource = async (resource: string, kind: string, name: strin
 // then navigates back to the original url.
 export const createNamespacedTestResource = async (kindModel, name) => {
   const next = await browser.getCurrentUrl();
-  await browser.get(`${appHost}/k8s/ns/${testName}/${kindModel.plural}`);
-  await isLoaded();
-  await clickCreateWithYAML();
+  await browser.get(`${appHost}/k8s/ns/${testName}/${kindModel.plural}/~new`);
   await yamlView.isLoaded();
   const content = await yamlView.getEditorContent();
   const newContent = _.defaultsDeep(
