@@ -1,13 +1,9 @@
 import * as React from 'react';
-import {
-  ResourceSummary,
-  NodeLink,
-  ResourceLink,
-  LabelList,
-} from '@console/internal/components/utils';
+import { ResourceSummary, NodeLink, ResourceLink } from '@console/internal/components/utils';
 import { K8sKind, PodKind, TemplateKind } from '@console/internal/module/k8s';
 import { getName, getNamespace, getNodeName } from '@console/shared';
 import { PodModel } from '@console/internal/models';
+import { Selector } from '@console/internal/components/utils/selector';
 import { VMKind, VMIKind } from '../../types';
 import { VMTemplateLink } from '../vm-templates/vm-template-link';
 import { getBasicID, prefixedID } from '../../utils';
@@ -243,7 +239,7 @@ export const VMSchedulingList: React.FC<VMSchedulingListProps> = ({
         editButtonId={prefixedID(id, 'node-selectors-edit')}
         onEditClick={() => nodeSelectorModal({ vmLikeEntity: vm, blocking: true })}
       >
-        <LabelList kind="Node" labels={nodeSelector} />
+        <Selector kind="Node" selector={nodeSelector} />
       </VMDetailsItem>
 
       <VMDetailsItem
@@ -259,7 +255,7 @@ export const VMSchedulingList: React.FC<VMSchedulingListProps> = ({
           })
         }
       >
-        <LabelList kind="Node" labels={tolerationsLabels} />
+        <Selector kind="Node" selector={tolerationsLabels} />
       </VMDetailsItem>
 
       <VMDetailsItem
