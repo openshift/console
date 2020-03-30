@@ -17,6 +17,7 @@ const ApiServerSection: React.FC<ApiServerSectionProps> = ({ namespace }) => {
     ? initVal.map((val) => _.values(val))
     : [['', '']];
   const [nameValue, setNameValue] = React.useState(initialValueResources);
+
   const handleNameValuePairs = React.useCallback(
     ({ nameValuePairs }) => {
       const updatedNameValuePairs = _.compact(
@@ -32,6 +33,7 @@ const ApiServerSection: React.FC<ApiServerSectionProps> = ({ namespace }) => {
     },
     [setFieldValue],
   );
+
   const onChange = React.useCallback(
     (selectedValue) => {
       if (selectedValue) {
