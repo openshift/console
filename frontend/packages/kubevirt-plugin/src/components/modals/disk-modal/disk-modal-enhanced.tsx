@@ -23,6 +23,7 @@ import { TemplateValidations } from '../../../utils/validations/template/templat
 import { V1Disk } from '../../../types/vm/disk/V1Disk';
 import { V1Volume } from '../../../types/vm/disk/V1Volume';
 import { V1alpha1DataVolume } from '../../../types/vm/disk/V1alpha1DataVolume';
+import { useStorageClassConfigMapWrapped } from '../../../hooks/storage-class-config-map';
 
 const DiskModalFirehoseComponent: React.FC<DiskModalFirehoseComponentProps> = (props) => {
   const { disk, volume, dataVolume, vmLikeEntity, vmLikeEntityLoading, ...restProps } = props;
@@ -40,7 +41,7 @@ const DiskModalFirehoseComponent: React.FC<DiskModalFirehoseComponentProps> = (p
     k8sPatch(
       getVMLikeModel(vmLikeEntity),
       vmLikeEntity,
-      await getUpdateDiskPatches(vmLikeEntity, {
+      getUpdateDiskPatches(vmLikeEntity, {
         disk: new DiskWrapper(diskWrapper, true).mergeWith(resultDisk).asResource(),
         volume: new VolumeWrapper(volumeWrapper, true).mergeWith(resultVolume).asResource(),
         dataVolume:
@@ -52,9 +53,12 @@ const DiskModalFirehoseComponent: React.FC<DiskModalFirehoseComponentProps> = (p
       }),
     );
 
+  const storageClassConfigMap = useStorageClassConfigMapWrapped();
+
   return (
     <DiskModal
       {...restProps}
+      storageClassConfigMap={storageClassConfigMap}
       usedDiskNames={combinedDiskFactory.getUsedDiskNames(diskWrapper.getName())}
       usedPVCNames={combinedDiskFactory.getUsedDataVolumeNames(dataVolumeWrapper.getName())}
       vmName={getName(vm)}

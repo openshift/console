@@ -117,36 +117,16 @@ export class DataVolumeWrapper extends K8sResourceObjectWithTypePropertyWrapper<
     return accessModes ? accessModes.map((mode) => AccessMode.fromString(mode)) : accessModes;
   };
 
-  setAccessModes = (accessModes: string[]) => {
+  setAccessModes = (accessModes: AccessMode[]) => {
     this.ensurePath('spec.pvc');
-    this.data.spec.pvc.accessModes = accessModes;
+    this.data.spec.pvc.accessModes =
+      accessModes && accessModes.map((a) => a?.getValue()).filter((a) => a); // allow null and undefined
     return this;
   };
 
-  setVolumeMode = (volumeMode: string) => {
+  setVolumeMode = (volumeMode: VolumeMode) => {
     this.ensurePath('spec.pvc');
-    this.data.spec.pvc.volumeMode = volumeMode || undefined;
-    return this;
-  };
-
-  addAccessMode = (accessMode: string) => {
-    if (accessMode) {
-      this.ensurePath('spec.pvc.accessModes', []);
-      (this.data.spec.pvc.accessModes as string[]).push(accessMode);
-    }
-    return this;
-  };
-
-  assertDefaultModes = (volumeMode: VolumeMode, accessModes: AccessMode[]) => {
-    const oldAccessModes = this.getAccessModes();
-    if ((!oldAccessModes || oldAccessModes.length === 0) && accessModes) {
-      this.setAccessModes(accessModes.map((a) => a.toString()));
-    }
-
-    if (!this.getVolumeMode() && volumeMode) {
-      this.setVolumeMode(volumeMode.toString());
-    }
-
+    this.data.spec.pvc.volumeMode = volumeMode && volumeMode.getValue(); // allow null and undefined
     return this;
   };
 
@@ -171,6 +151,13 @@ export class DataVolumeWrapper extends K8sResourceObjectWithTypePropertyWrapper<
   mergeWith(...dataVolumeWrappers: DataVolumeWrapper[]) {
     super.mergeWith(...dataVolumeWrappers);
     this.clearIfEmpty('spec.pvc.storageClassName');
+    this.clearIfEmpty('spec.pvc.accessModes');
+    this.clearIfEmpty('spec.pvc.volumeMode');
+    const accessModes = this.getAccessModesEnum();
+    if (accessModes?.length > 1) {
+      // API currently allows only one mode
+      this.setAccessModes([accessModes[0]]);
+    }
     return this;
   }
 

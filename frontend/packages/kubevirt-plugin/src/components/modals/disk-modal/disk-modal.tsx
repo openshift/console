@@ -20,14 +20,13 @@ import {
   ModalComponentProps,
   ModalTitle,
 } from '@console/internal/components/factory';
-import { k8sGet, K8sResourceKind } from '@console/internal/module/k8s';
 import {
   NamespaceModel,
   PersistentVolumeClaimModel,
   StorageClassModel,
 } from '@console/internal/models';
 import { getName } from '@console/shared/src';
-import { getLoadedData, prefixedID } from '../../../utils';
+import { getLoadedData, isLoaded, prefixedID } from '../../../utils';
 import { validateDisk } from '../../../utils/validations/vm';
 import { isValidationError } from '../../../utils/validations/common';
 import { FormRow } from '../../form/form-row';
@@ -49,7 +48,6 @@ import {
 } from '../../../utils/strings';
 import { ModalFooter } from '../modal/modal-footer';
 import { useShowErrorToggler } from '../../../hooks/use-show-error-toggler';
-import { getStorageClassConfigMap } from '../../../k8s/requests/config-map/storage-class';
 import { DiskWrapper } from '../../../k8s/wrapper/vm/disk-wrapper';
 import { DataVolumeWrapper } from '../../../k8s/wrapper/vm/data-volume-wrapper';
 import { VolumeWrapper } from '../../../k8s/wrapper/vm/volume-wrapper';
@@ -62,6 +60,7 @@ import { PersistentVolumeClaimWrapper } from '../../../k8s/wrapper/vm/persistent
 import { BinaryUnit } from '../../form/size-unit-utils';
 import { StorageUISource } from './storage-ui-source';
 import { TemplateValidations } from '../../../utils/validations/template/template-validations';
+import { ConfigMapKind } from '@console/internal/module/k8s';
 
 import './disk-modal.scss';
 
@@ -79,14 +78,18 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
     disableSourceChange,
     isCreateTemplate,
     onSubmit,
-    inProgress,
+    inProgress: _inProgress,
     isEditing,
     errorMessage,
     handlePromise,
     close,
     cancel,
     templateValidations,
+    storageClassConfigMap: _storageClassConfigMap,
   } = props;
+  const inProgress = _inProgress || !isLoaded(_storageClassConfigMap);
+  const storageClassConfigMap = getLoadedData(_storageClassConfigMap);
+
   const asId = prefixedID.bind(null, 'disk');
   const disk = props.disk || new DiskWrapper();
   const volume = props.volume || new VolumeWrapper();
@@ -94,8 +97,6 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
   const tValidations = templateValidations || new TemplateValidations();
   const validAllowedBuses = tValidations.getAllowedBuses();
   const recommendedBuses = tValidations.getRecommendedBuses();
-  const accessModes = new Set(AccessMode.getAll());
-  const volumeModes = new Set(VolumeMode.getAll());
 
   const combinedDisk = new CombinedDisk({
     diskWrapper: disk,
@@ -132,7 +133,7 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
         : [...validAllowedBuses][0]),
   );
   const [storageClassName, setStorageClassName] = React.useState<string>(
-    combinedDisk.getStorageClassName(),
+    combinedDisk.getStorageClassName() || '',
   );
 
   const [size, setSize] = React.useState<string>(
@@ -142,35 +143,27 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
     (combinedDiskSize && combinedDiskSize.unit) || BinaryUnit.Gi,
   );
 
+  const [advancedDrawerIsOpen, setAdvancedDrawerIsOpen] = React.useState(false);
+
   const [accessMode, setAccessMode] = React.useState<AccessMode>(
-    isEditing ? AccessMode.fromString(dataVolume.getAccessModes()) : accessModes[0],
+    (isEditing && (combinedDisk.getAccessModes() || [])[0]) || null,
   );
 
   const [volumeMode, setVolumeMode] = React.useState<VolumeMode>(
-    isEditing ? VolumeMode.fromString(dataVolume.getVolumeMode()) : volumeModes[0],
+    (isEditing && combinedDisk.getVolumeMode()) || null,
   );
 
-  const [advancedDrawerIsOpen, setAdvancedDrawerIsOpen] = React.useState(false);
-
   React.useEffect(() => {
-    if (
-      source.requiresAccessModes() &&
-      source.requiresVolumeMode() &&
-      !isEditing &&
-      storageClassName
-    ) {
-      const setAccessAndVolumeModes = async () => {
-        const configMap = await getStorageClassConfigMap({ k8sGet });
-        const defaultAccessModes = getDefaultSCAccessModes(configMap, storageClassName);
-        const defaultVolumeMode = getDefaultSCVolumeMode(configMap, storageClassName);
-
-        setAccessMode(defaultAccessModes[0]);
-        setVolumeMode(defaultVolumeMode);
-      };
-
-      setAccessAndVolumeModes();
+    if (!isEditing && isLoaded(_storageClassConfigMap)) {
+      if (source.requiresVolumeMode()) {
+        setVolumeMode(getDefaultSCVolumeMode(storageClassConfigMap));
+      }
+      if (source.requiresAccessModes()) {
+        setAccessMode(getDefaultSCAccessModes(storageClassConfigMap)[0]);
+      }
     }
-  }, [isEditing, source, storageClassName]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isLoaded(_storageClassConfigMap)]);
 
   const resultDisk = DiskWrapper.initializeFromSimpleData({
     name,
@@ -197,14 +190,14 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
   if (source.requiresDatavolume()) {
     resultDataVolume = DataVolumeWrapper.initializeFromSimpleData({
       name: resultDataVolumeName,
-      storageClassName,
+      storageClassName: storageClassName || null, // || null is to enable merging
       type: source.getDataVolumeSourceType(),
       size,
       unit,
       typeData: { name: pvcName, namespace, url },
-      accessModes: accessMode ? [accessMode.toString()] : null,
-      volumeMode: volumeMode ? volumeMode.toString() : null,
-    });
+    })
+      .setVolumeMode(volumeMode || null)
+      .setAccessModes(accessMode ? [accessMode] : null);
   }
 
   let resultPersistentVolumeClaim;
@@ -212,12 +205,12 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
     resultPersistentVolumeClaim = new PersistentVolumeClaimWrapper()
       .init({
         name,
-        storageClassName,
+        storageClassName: storageClassName || null, // || null is to enable merging
         size,
         unit,
       })
-      .addAccessMode(accessMode?.toString())
-      .setVolumeMode(volumeMode?.toString());
+      .setVolumeMode(volumeMode || null)
+      .setAccessModes(accessMode ? [accessMode] : null);
   }
 
   const {
@@ -262,6 +255,24 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
     [setName, setPVCName, source],
   );
 
+  const onStorageClassNameChanged = (newStorageClassName) => {
+    // eslint-disable-next-line eqeqeq
+    if (newStorageClassName != storageClassName) {
+      setStorageClassName(newStorageClassName);
+      const newAccessMode = getDefaultSCAccessModes(storageClassConfigMap, newStorageClassName)[0];
+      const newVolumeMode = getDefaultSCVolumeMode(storageClassConfigMap, newStorageClassName);
+      if (newAccessMode !== accessMode) {
+        setAccessMode(newAccessMode);
+      }
+      if (newVolumeMode !== volumeMode) {
+        setVolumeMode(newVolumeMode);
+      }
+      if (newAccessMode !== accessMode || newVolumeMode !== volumeMode) {
+        setAdvancedDrawerIsOpen(true); // notify the user that the hidden values were changed by force
+      }
+    }
+  };
+
   const onSourceChanged = (uiSource) => {
     if (disableSourceChange) {
       return;
@@ -271,9 +282,8 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
     setURL('');
     setPVCName('');
     setContainerImage('');
-    setStorageClassName('');
+    onStorageClassNameChanged('');
     onNamespaceChanged(vmNamespace);
-    setAdvancedDrawerIsOpen(false);
     setSource(StorageUISource.fromString(uiSource));
   };
 
@@ -370,9 +380,9 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
               data={namespaces}
               model={NamespaceModel}
               title={`PVC ${NamespaceModel.label}`}
-              onChange={(sc) => {
+              onChange={(ns) => {
                 setPVCName('');
-                onNamespaceChanged(sc);
+                onNamespaceChanged(ns);
               }}
             />
           )}
@@ -479,7 +489,7 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
               data={storageClasses}
               model={StorageClassModel}
               hasPlaceholder
-              onChange={(sc) => setStorageClassName(sc || '')}
+              onChange={(sc) => onStorageClassNameChanged(sc || '')}
             />
           )}
           {source.isPlainDataVolume(isCreateTemplate) && (
@@ -489,48 +499,60 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
               title="PVC will be created on template creation and used by VMs created from this template."
             />
           )}
-          {source.requiresAccessModes() && source.requiresVolumeMode() && (
+          {source.requiresVolumeModeOrAccessModes() && (
             <Expandable
               toggleText="Advanced"
               isExpanded={advancedDrawerIsOpen}
               onToggle={onToggleAdvancedDrawer}
             >
-              <FormRow title="Volume Mode" fieldId={asId('volume-mode')}>
-                <FormSelect
-                  onChange={(vMode) => setVolumeMode(VolumeMode.fromString(vMode))}
-                  value={asFormSelectValue(volumeMode)}
-                  id={asId('volume-mode')}
-                  isDisabled={inProgress || !storageClassName}
-                >
-                  {[...volumeModes].map((v) => (
-                    <FormSelectOption
-                      key={v.getValue()}
-                      value={v.getValue()}
-                      label={`${v.toString()}`}
+              {source.requiresVolumeMode() && (
+                <FormRow title="Volume Mode" fieldId={asId('volume-mode')}>
+                  <FormSelect
+                    onChange={(vMode) => setVolumeMode(VolumeMode.fromString(vMode))}
+                    value={asFormSelectValue(volumeMode?.getValue())}
+                    id={asId('volume-mode')}
+                    isDisabled={inProgress}
+                  >
+                    <FormSelectPlaceholderOption
+                      isDisabled={inProgress}
+                      placeholder="--- Select Volume Mode ---"
                     />
-                  ))}
-                </FormSelect>
-              </FormRow>
-              <FormRow
-                title="Access Mode"
-                fieldId={asId('access-mode')}
-                className="disk-access-mode"
-              >
-                <FormSelect
-                  onChange={(aMode) => setAccessMode(AccessMode.fromString(aMode))}
-                  value={asFormSelectValue(accessMode)}
-                  id={asId('access-mode')}
-                  isDisabled={inProgress || !storageClassName}
+                    {VolumeMode.getAll().map((v) => (
+                      <FormSelectOption
+                        key={v.getValue()}
+                        value={v.getValue()}
+                        label={`${v.toString()}`}
+                      />
+                    ))}
+                  </FormSelect>
+                </FormRow>
+              )}
+              {source.requiresAccessModes() && (
+                <FormRow
+                  title="Access Mode"
+                  fieldId={asId('access-mode')}
+                  className="disk-access-mode"
                 >
-                  {[...accessModes].map((a) => (
-                    <FormSelectOption
-                      key={a.getValue()}
-                      value={a.getValue()}
-                      label={`${a.toLabel()}`}
+                  <FormSelect
+                    onChange={(aMode) => setAccessMode(AccessMode.fromString(aMode))}
+                    value={asFormSelectValue(accessMode?.getValue())}
+                    id={asId('access-mode')}
+                    isDisabled={inProgress}
+                  >
+                    <FormSelectPlaceholderOption
+                      isDisabled={inProgress}
+                      placeholder="--- Select Access Mode ---"
                     />
-                  ))}
-                </FormSelect>
-              </FormRow>
+                    {AccessMode.getAll().map((a) => (
+                      <FormSelectOption
+                        key={a.getValue()}
+                        value={a.getValue()}
+                        label={a.toString()}
+                      />
+                    ))}
+                  </FormSelect>
+                </FormRow>
+              )}
             </Expandable>
           )}
         </Form>
@@ -560,15 +582,16 @@ export type DiskModalProps = {
   volume?: VolumeWrapper;
   dataVolume?: DataVolumeWrapper;
   persistentVolumeClaim?: PersistentVolumeClaimWrapper;
+  storageClassConfigMap?: FirehoseResult<ConfigMapKind>;
   onSubmit: (
     disk: DiskWrapper,
     volume: VolumeWrapper,
     dataVolume: DataVolumeWrapper,
     persistentVolumeClaim: PersistentVolumeClaimWrapper,
   ) => Promise<any>;
-  namespaces?: FirehoseResult<K8sResourceKind[]>;
-  storageClasses?: FirehoseResult<K8sResourceKind[]>;
-  persistentVolumeClaims?: FirehoseResult<K8sResourceKind[]>;
+  namespaces?: FirehoseResult;
+  storageClasses?: FirehoseResult;
+  persistentVolumeClaims?: FirehoseResult;
   vmName: string;
   vmNamespace: string;
   namespace: string;

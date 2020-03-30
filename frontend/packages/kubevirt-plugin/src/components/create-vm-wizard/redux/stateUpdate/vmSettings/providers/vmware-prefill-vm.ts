@@ -14,17 +14,20 @@ import {
   VMWareProviderProps,
   VMWizardNetwork,
   VMWizardNetworkType,
+  VMWizardProps,
   VMWizardStorage,
   VMWizardStorageType,
 } from '../../../../types';
 import { iGetLoadedCommonData } from '../../../../selectors/immutable/selectors';
 import { vmWizardInternalActions } from '../../../internal-actions';
 import {
+  AccessMode,
   CUSTOM_FLAVOR,
   DiskBus,
   DiskType,
   NetworkInterfaceModel,
   NetworkInterfaceType,
+  VolumeMode,
   VolumeType,
 } from '../../../../../../constants/vm';
 import { toShallowJS } from '../../../../../../utils/immutable';
@@ -36,6 +39,11 @@ import { CONVERSION_POD_TEMP_MOUNT_PATH } from '../../../../../../constants/v2v'
 import { PersistentVolumeClaimWrapper } from '../../../../../../k8s/wrapper/vm/persistent-volume-claim-wrapper';
 import { getStringEnumValues } from '../../../../../../utils/types';
 import { BinaryUnit } from '../../../../../form/size-unit-utils';
+import {
+  getDefaultSCAccessModes,
+  getDefaultSCVolumeMode,
+} from '../../../../../../selectors/config-map/sc-defaults';
+import { ConfigMapKind } from '@console/internal/module/k8s';
 
 const convert = (value: number, unit: BinaryUnit) => {
   const units = getStringEnumValues<BinaryUnit>(BinaryUnit);
@@ -76,7 +84,7 @@ export const getNics = (parsedVm): VMWizardNetwork[] => {
   });
 };
 
-export const getDisks = (parsedVm): VMWizardStorage[] => {
+export const getDisks = (parsedVm, storageClassConfigMap: ConfigMapKind): VMWizardStorage[] => {
   const devices = _.get(parsedVm, ['Config', 'Hardware', 'Device']);
 
   // if the device is a disk, it has "capacityInKB" present
@@ -120,6 +128,8 @@ export const getDisks = (parsedVm): VMWizardStorage[] => {
           size: size.value,
           unit: size.unit,
         })
+        .setVolumeMode(getDefaultSCVolumeMode(storageClassConfigMap))
+        .setAccessModes(getDefaultSCAccessModes(storageClassConfigMap))
         .asResource(),
       importData: {
         fileName: _.get(device, ['Backing', 'FileName']),
@@ -150,6 +160,8 @@ export const getDisks = (parsedVm): VMWizardStorage[] => {
         size: 2,
         unit: BinaryUnit.Gi,
       })
+      .setVolumeMode(VolumeMode.FILESYSTEM)
+      .setAccessModes([AccessMode.READ_WRITE_ONCE])
       .asResource(),
     importData: {
       mountPath: CONVERSION_POD_TEMP_MOUNT_PATH, // hardcoded; always Filesystem mode
@@ -166,6 +178,12 @@ export const prefillUpdateCreator = (options: UpdateOptions) => {
   const vm = iGetVMWareFieldAttribute(state, id, VMWareProviderField.VM, 'vm');
   const vmwareToKubevirtOsConfigMap = toShallowJS(
     iGetLoadedCommonData(state, id, VMWareProviderProps.vmwareToKubevirtOsConfigMap),
+    undefined,
+    true,
+  );
+  const storageClassConfigMap = toShallowJS(
+    iGetLoadedCommonData(state, id, VMWizardProps.storageClassConfigMap),
+    undefined,
     true,
   );
 
@@ -204,5 +222,10 @@ export const prefillUpdateCreator = (options: UpdateOptions) => {
     }),
   );
   dispatch(vmWizardInternalActions[InternalActionType.SetNetworks](id, getNics(parsedVm)));
-  dispatch(vmWizardInternalActions[InternalActionType.SetStorages](id, getDisks(parsedVm)));
+  dispatch(
+    vmWizardInternalActions[InternalActionType.SetStorages](
+      id,
+      getDisks(parsedVm, storageClassConfigMap),
+    ),
+  );
 };

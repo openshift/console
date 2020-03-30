@@ -2,9 +2,16 @@
 import { ObjectEnum } from '../../object-enum';
 
 export class AccessMode extends ObjectEnum<string> {
-  static readonly SINGLE_USER = new AccessMode('ReadWriteOnce');
-  static readonly SHARED_ACCESS = new AccessMode('ReadWriteMany');
-  static readonly READ_ONLY = new AccessMode('ReadOnlyMany');
+  static readonly READ_WRITE_ONCE = new AccessMode('ReadWriteOnce', 'Single User (RWO)');
+  static readonly READ_WRITE_MANY = new AccessMode('ReadWriteMany', 'Shared Access (RWX)');
+  static readonly READ_ONLY_MANY = new AccessMode('ReadOnlyMany', 'Read Only (ROX)');
+
+  private readonly label: string;
+
+  protected constructor(value: string, label: string) {
+    super(value);
+    this.label = label;
+  }
 
   private static readonly ALL = Object.freeze(
     ObjectEnum.getAllClassEnumProperties<AccessMode>(AccessMode),
@@ -25,16 +32,7 @@ export class AccessMode extends ObjectEnum<string> {
 
   static fromString = (model: string): AccessMode => AccessMode.stringMapper[model];
 
-  toLabel = () => {
-    switch (this) {
-      case AccessMode.SINGLE_USER:
-        return 'Single User (RWO)';
-      case AccessMode.SHARED_ACCESS:
-        return 'Shared Access (RWX)';
-      case AccessMode.READ_ONLY:
-        return 'Read Only (ROX)';
-      default:
-        return this.value;
-    }
+  toString = () => {
+    return this.label;
   };
 }

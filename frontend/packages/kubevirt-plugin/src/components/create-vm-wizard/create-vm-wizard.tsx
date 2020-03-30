@@ -5,8 +5,8 @@ import { connect } from 'react-redux';
 import { Wizard, WizardStep } from '@patternfly/react-core';
 import { FLAGS } from '@console/shared';
 import {
-  featureReducerName,
   connectToFlags,
+  featureReducerName,
   FlagsObject,
 } from '@console/internal/reducers/features';
 import { TemplateModel } from '@console/internal/models';
@@ -38,7 +38,7 @@ import {
   VMWizardStorage,
   VMWizardTab,
 } from './types';
-import { CREATE_VM, CREATE_VM_TEMPLATE, TabTitleResolver, IMPORT_VM } from './strings/strings';
+import { CREATE_VM, CREATE_VM_TEMPLATE, IMPORT_VM, TabTitleResolver } from './strings/strings';
 import { vmWizardActions } from './redux/actions';
 import { ActionType } from './redux/types';
 import { getResultInitialState } from './redux/initial-state/result-tab-initial-state';
@@ -58,6 +58,7 @@ import { ResultTab } from './tabs/result-tab/result-tab';
 import { StorageTab } from './tabs/storage-tab/storage-tab';
 import { CloudInitTab } from './tabs/cloud-init-tab/cloud-init-tab';
 import { VirtualHardwareTab } from './tabs/virtual-hardware-tab/virtual-hardware-tab';
+import { useStorageClassConfigMapWrapped } from '../../hooks/storage-class-config-map';
 
 import './create-vm-wizard.scss';
 
@@ -88,10 +89,18 @@ export class CreateVMWizardComponent extends React.Component<CreateVMWizardCompo
     const referencesChanged = !_.isEqual(prevProps.dataIDReferences, this.props.dataIDReferences);
 
     if (changedProps.size > 0 || referencesChanged) {
-      this.props.onCommonDataChanged(
-        referencesChanged ? { dataIDReferences: this.props.dataIDReferences } : undefined,
-        changedProps,
-      );
+      let commonDataUpdate: CommonData = referencesChanged
+        ? { dataIDReferences: this.props.dataIDReferences }
+        : undefined;
+      if (changedProps.has(VMWizardProps.storageClassConfigMap)) {
+        commonDataUpdate = {
+          ...commonDataUpdate,
+          data: {
+            [VMWizardProps.storageClassConfigMap]: this.props[VMWizardProps.storageClassConfigMap],
+          },
+        };
+      }
+      this.props.onCommonDataChanged(commonDataUpdate, changedProps);
     }
   }
 
@@ -144,6 +153,7 @@ export class CreateVMWizardComponent extends React.Component<CreateVMWizardCompo
       iCommonTemplates,
       namespace: activeNamespace,
       openshiftFlag,
+      isTemplate: isCreateTemplate,
     })
       .then(() => getResults(enhancedK8sMethods))
       .catch((error) => cleanupAndGetResults(enhancedK8sMethods, error))
@@ -314,10 +324,12 @@ export class CreateVMWizardComponent extends React.Component<CreateVMWizardCompo
 const wizardStateToProps = (state, { reduxID }) => ({
   stepData: iGetCreateVMWizardTabs(state, reduxID),
   // fetch data from store to detect and fire changes
-  ...[...DetectCommonDataChanges].reduce((acc, propName) => {
-    acc[propName] = iGetCommonData(state, reduxID, propName);
-    return acc;
-  }, {}),
+  ...[...DetectCommonDataChanges]
+    .filter((v) => v !== VMWizardProps.storageClassConfigMap) // passed directly
+    .reduce((acc, propName) => {
+      acc[propName] = iGetCommonData(state, reduxID, propName);
+      return acc;
+    }, {}),
 });
 
 const wizardDispatchToProps = (dispatch, props) => ({
@@ -328,9 +340,10 @@ const wizardDispatchToProps = (dispatch, props) => ({
           isCreateTemplate: props.isCreateTemplate,
           isProviderImport: props.isProviderImport,
           userTemplateName: props.userTemplateName,
+          storageClassConfigMap: undefined,
         },
         dataIDReferences: props.dataIDReferences,
-      }),
+      } as CommonData),
     );
   },
   onCommonDataChanged: (commonData: CommonData, changedCommonData: ChangedCommonData) => {
@@ -391,6 +404,8 @@ export const CreateVMWizardPageComponent: React.FC<CreateVMWizardPageComponentPr
     );
   }
 
+  const storageClassConfigMap = useStorageClassConfigMapWrapped();
+
   const searchParams = new URLSearchParams(search);
   const userMode = searchParams.get('mode') || VMWizardMode.VM;
   const userTemplateName = (userMode === VMWizardMode.VM && searchParams.get('template')) || '';
@@ -407,6 +422,7 @@ export const CreateVMWizardPageComponent: React.FC<CreateVMWizardPageComponentPr
         isProviderImport={userMode === VMWizardMode.IMPORT}
         userTemplateName={userTemplateName}
         dataIDReferences={dataIDReferences}
+        storageClassConfigMap={storageClassConfigMap}
         reduxID={reduxID}
         onClose={() => history.goBack()}
       />

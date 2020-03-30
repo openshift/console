@@ -1,5 +1,5 @@
 /* eslint-disable camelcase, @typescript-eslint/camelcase,no-await-in-loop */
-import { CreateVMEnhancedParams } from '../../vm/create/types';
+import { CreateVMParams } from '../../vm/create/types';
 import { ImporterResult } from '../../vm/types';
 import { buildOwnerReference } from '../../../../utils';
 import { PatchBuilder } from '@console/shared/src/k8s';
@@ -27,12 +27,8 @@ import { ServiceAccountWrappper } from '../../../wrapper/k8s/service-account-wra
 import { RoleWrappper } from '../../../wrapper/k8s/role-wrapper';
 import { RoleBindingWrappper } from '../../../wrapper/k8s/role-binding-wrapper';
 import { PersistentVolumeClaimWrapper } from '../../../wrapper/vm/persistent-volume-claim-wrapper';
-import {
-  getDefaultSCAccessModes,
-  getDefaultSCVolumeMode,
-} from '../../../../selectors/config-map/sc-defaults';
 import { VolumeWrapper } from '../../../wrapper/vm/volume-wrapper';
-import { AccessMode, VolumeMode, VolumeType } from '../../../../constants/vm/storage';
+import { VolumeMode, VolumeType } from '../../../../constants/vm/storage';
 import { buildConversionPod } from './objects/conversion-pod';
 import { getVmwareConfigMap } from '../v2vvmware-configmap';
 import {
@@ -55,7 +51,7 @@ const createConversionPodSecret = async ({
   vmSettings,
   storages,
   namespace,
-}: CreateVMEnhancedParams) => {
+}: CreateVMParams) => {
   const { vm, thumbprint } = getVmwareField(vmSettings, VMWareProviderField.VM);
   const secret = new SecretWrappper(
     getVmwareAttribute(vmSettings, VMWareProviderField.VCENTER, 'secret'),
@@ -100,7 +96,7 @@ const createConversionPodSecret = async ({
 const resolveRolesAndServiceAccount = async ({
   enhancedK8sMethods: { k8sWrapperCreate },
   namespace,
-}: CreateVMEnhancedParams) => {
+}: CreateVMParams) => {
   const serviceAccount = await k8sWrapperCreate(
     new ServiceAccountWrappper().init({ namespace, generateName: CONVERSION_GENERATE_NAME }),
   );
@@ -136,27 +132,14 @@ const resolveRolesAndServiceAccount = async ({
 const resolveStorages = async ({
   enhancedK8sMethods: { k8sWrapperCreate },
   storages,
-  storageClassConfigMap,
   namespace,
-}: CreateVMEnhancedParams) => {
+}: CreateVMParams) => {
   const extImportPvcsPromises = storages
     .filter(isImportStorage)
-    .map(({ persistentVolumeClaim, type }) => {
+    .map(({ persistentVolumeClaim }) => {
       const pvcWrapper = new PersistentVolumeClaimWrapper(persistentVolumeClaim, true);
-      const storageClassName = pvcWrapper.getStorageClassName();
 
-      pvcWrapper
-        .setGenerateName(`${pvcWrapper.getName()}-`)
-        .setNamespace(namespace)
-        // temp disk is always of Filesystem/RWO mode
-        .assertDefaultModes(
-          type === VMWizardStorageType.V2V_VMWARE_IMPORT_TEMP
-            ? VolumeMode.FILESYSTEM
-            : getDefaultSCVolumeMode(storageClassConfigMap, storageClassName),
-          type === VMWizardStorageType.V2V_VMWARE_IMPORT_TEMP
-            ? [AccessMode.SINGLE_USER]
-            : getDefaultSCAccessModes(storageClassConfigMap, storageClassName),
-        );
+      pvcWrapper.setGenerateName(`${pvcWrapper.getName()}-`).setNamespace(namespace);
 
       return k8sWrapperCreate(pvcWrapper);
     });
@@ -222,7 +205,7 @@ const startConversionPod = async (
     vmSettings,
     namespace,
     storages,
-  }: CreateVMEnhancedParams,
+  }: CreateVMParams,
   {
     serviceAccount,
     role,
@@ -311,9 +294,7 @@ const finalizeStorages = (storages: VMWizardStorage[]) =>
       return storage;
     });
 
-export const importV2VVMwareVm = async (
-  params: CreateVMEnhancedParams,
-): Promise<ImporterResult> => {
+export const importV2VVMwareVm = async (params: CreateVMParams): Promise<ImporterResult> => {
   const { networks, enhancedK8sMethods } = params;
 
   const { conversionPodSecret } = await createConversionPodSecret(params);

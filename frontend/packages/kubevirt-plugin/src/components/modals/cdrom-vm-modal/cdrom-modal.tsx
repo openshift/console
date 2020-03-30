@@ -29,6 +29,7 @@ import { initialDisk, WINTOOLS_CONTAINER_NAMES, StorageType } from './constants'
 import './cdrom-modal.scss';
 import { CD, CDMap } from './types';
 import { VMKind } from '../../../types/vm';
+import { useStorageClassConfigMap } from '../../../hooks/storage-class-config-map';
 
 export const AddCDButton = ({ className, text, onClick, isDisabled }: AddCDButtonProps) => (
   <div className={className}>
@@ -60,7 +61,7 @@ export const CDRomModal = withHandlePromise((props: CDRomModalProps) => {
   const {
     vmLikeEntity,
     handlePromise,
-    inProgress,
+    inProgress: _inProgress,
     errorMessage,
     persistentVolumeClaims,
     storageClasses,
@@ -69,6 +70,9 @@ export const CDRomModal = withHandlePromise((props: CDRomModalProps) => {
     close,
   } = props;
   const vm = asVM(vmLikeEntity);
+
+  const [storageClassConfigMap, isStorageClassConfigMapLoaded] = useStorageClassConfigMap();
+  const inProgress = _inProgress || !isStorageClassConfigMapLoaded;
 
   const mapCDsToSource = (cds) =>
     Object.assign(
@@ -151,8 +155,11 @@ export const CDRomModal = withHandlePromise((props: CDRomModalProps) => {
   const submit = async (e) => {
     e.preventDefault();
     if (shouldPatch) {
-      const patch = await getCDsPatch(vmLikeEntity, Object.values(cds));
-      const promise = k8sPatch(getVMLikeModel(vmLikeEntity), vmLikeEntity, patch);
+      const promise = k8sPatch(
+        getVMLikeModel(vmLikeEntity),
+        vmLikeEntity,
+        getCDsPatch(vmLikeEntity, Object.values(cds), storageClassConfigMap),
+      );
       handlePromise(promise).then(close); // eslint-disable-line promise/catch-or-return
     } else {
       close();

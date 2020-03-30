@@ -81,8 +81,7 @@ const getActions = (
     return actions;
   }
 
-  const isTemplate = vmLikeEntity && !isVM(vmLikeEntity);
-  if (disk.isEditingSupported(isTemplate)) {
+  if (disk.isEditingSupported()) {
     actions.push(menuActionEdit);
   }
 

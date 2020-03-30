@@ -5,6 +5,7 @@ import {
   hasLabel,
   getLabels,
   getOwnerReferences,
+  getCreationTimestamp,
 } from '@console/shared/src';
 import { K8sKind, K8sResourceCommon } from '@console/internal/module/k8s';
 import { Wrapper } from './wrapper';
@@ -38,6 +39,7 @@ export abstract class K8sResourceWrapper<
   getModel = () => this.model;
   getName = () => getName(this.data);
   getNamespace = () => getNamespace(this.data);
+  getCreationTimestamp = () => getCreationTimestamp(this.data);
   getLabels = (defaultValue = {}) => getLabels(this.data, defaultValue);
   hasLabel = (label: string) => hasLabel(this.data, label);
   getOwnerReferences = () => getOwnerReferences(this.data);
