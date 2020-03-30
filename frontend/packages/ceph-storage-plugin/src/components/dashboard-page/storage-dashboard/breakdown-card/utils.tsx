@@ -59,6 +59,15 @@ export const addAvailable = (
   return newChartData;
 };
 
+export const getLegends = (data: StackDataPoint[]) =>
+  data.map((d: StackDataPoint) => ({
+    name: d.name || d.label,
+    labels: { fill: d.color },
+    symbol: { fill: d.fill },
+    link: d.link,
+    ns: d.ns,
+  }));
+
 export const getBarRadius = (index: number, length: number) => {
   if (index === length - 1) {
     return {
@@ -68,9 +77,6 @@ export const getBarRadius = (index: number, length: number) => {
   }
   if (index === 0) {
     return { bottom: 3 };
-  }
-  if (index === length - 1) {
-    return { top: 3 };
   }
   return {};
 };
@@ -108,11 +114,8 @@ export const getStackChartStats: GetStackStats = (response, humanize) =>
 
 type GetStackStats = (response: DataPoint[], humanize: Humanize) => StackDataPoint[];
 
-export type StackDataPoint = {
-  x: string;
-  y: number;
+export type StackDataPoint = DataPoint<string> & {
   name: string;
-  label: string;
   link: string;
   color: string;
   fill: string;
