@@ -135,16 +135,15 @@ export function resolveStorageDataAttribute(configMap: any, attribute: string): 
 }
 
 export const waitFor = async (element, text, count = 1) => {
-  let rowNumber = 0;
-  while (rowNumber !== count) {
+  let sequenceNumber = 0;
+  while (sequenceNumber !== count) {
     await browser.wait(until.visibilityOf(element));
     const elemText = await element.getText();
     if (elemText.includes(text)) {
-      rowNumber += 1;
+      sequenceNumber += 1;
     } else {
-      rowNumber = 0;
+      sequenceNumber = 0;
     }
-    /* eslint-disable no-await-in-loop */
     await browser.sleep(5 * SEC);
   }
 };
