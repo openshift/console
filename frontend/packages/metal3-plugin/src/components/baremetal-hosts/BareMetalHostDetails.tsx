@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash';
+import { RebootingIcon } from '@patternfly/react-icons';
 import {
   referenceForModel,
   K8sResourceKind,
@@ -39,12 +40,14 @@ import {
   getHostBios,
   getHostProvisioningState,
   getHostBootMACAddress,
+  isHostScheduledForRestart,
 } from '../../selectors';
 import { BareMetalHostKind } from '../../types';
 import { HOST_REGISTERING_STATES } from '../../constants/bare-metal-host';
 import MachineLink from './MachineLink';
 import BareMetalHostPowerStatusIcon from './BareMetalHostPowerStatusIcon';
 import BareMetalHostStatus from './BareMetalHostStatus';
+import { HOST_SCHEDULED_FOR_RESTART } from './BareMetalHostSecondaryStatus';
 
 type BareMetalHostDetailsProps = {
   obj: BareMetalHostKind;
@@ -148,6 +151,12 @@ const BareMetalHostDetails: React.FC<BareMetalHostDetailsProps> = ({
                     title={powerStatus}
                     icon={<BareMetalHostPowerStatusIcon powerStatus={powerStatus} />}
                   />
+                  {isHostScheduledForRestart(host) && (
+                    <StatusIconAndText
+                      title={HOST_SCHEDULED_FOR_RESTART}
+                      icon={<RebootingIcon />}
+                    />
+                  )}
                 </dd>
               </>
             )}
