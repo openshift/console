@@ -62,7 +62,7 @@ interface ResourceDropdownProps {
   selectedKey: string;
   autoSelect?: boolean;
   resourceFilter?: (resource: K8sResourceKind) => boolean;
-  onChange?: (key: string, name?: string, isListEmpty?: boolean) => void;
+  onChange?: (key: string, name?: string | object, isListEmpty?: boolean) => void;
   onLoad?: (items: { [key: string]: string }) => void;
   showBadge?: boolean;
   autocompleteFilter?: (strText: string, item: object) => boolean;
