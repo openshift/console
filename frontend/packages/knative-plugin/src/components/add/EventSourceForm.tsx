@@ -6,6 +6,7 @@ import { Form } from '@patternfly/react-core';
 import AppSection from '@console/dev-console/src/components/import/app/AppSection';
 import { FirehoseList } from '@console/dev-console/src/components/import/import-types';
 import CronJobSection from './event-sources/CronJobSection';
+import SinkBindingSection from './event-sources/SinkBindingSection';
 import SinkSection from './event-sources/SinkSection';
 import { EventSources } from './import-types';
 import EventSourcesSelector from './event-sources/EventSourcesSelector';
@@ -30,6 +31,7 @@ const EventSourceForm: React.FC<FormikProps<FormikValues> & OwnProps> = ({
   <Form className="co-deploy-image" onSubmit={handleSubmit}>
     <EventSourcesSelector eventSourceList={useEventSourceList()} />
     {values.type === EventSources.CronJobSource && <CronJobSection />}
+    {values.type === EventSources.SinkBinding && <SinkBindingSection />}
     <SinkSection namespace={namespace} />
     <AppSection
       project={values.project}

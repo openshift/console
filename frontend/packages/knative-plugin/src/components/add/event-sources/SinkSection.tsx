@@ -34,7 +34,7 @@ const SinkSection: React.FC<SinkSectionProps> = ({ namespace }) => {
           dataSelector={['metadata', 'name']}
           fullWidth
           required
-          placeholder="Knative Service"
+          placeholder="Select Knative Service"
           showBadge
           onChange={onChange}
           autocompleteFilter={autocompleteFilter}
