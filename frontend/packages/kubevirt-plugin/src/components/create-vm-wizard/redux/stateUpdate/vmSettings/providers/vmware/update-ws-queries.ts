@@ -1,4 +1,4 @@
-import { InternalActionType, UpdateOptions } from '../../../types';
+import { InternalActionType, UpdateOptions } from '../../../../types';
 import {
   ImportProvidersField,
   VMImportProvider,
@@ -6,15 +6,15 @@ import {
   VMWareProviderField,
   VMWareProviderProps,
   VMWizardProps,
-} from '../../../../types';
+} from '../../../../../types';
 import {
   hasVMWareSettingsChanged,
   iGetVMWareField,
   isVMWareProvider,
-} from '../../../../selectors/immutable/provider/vmware/selectors';
-import { hasVmSettingsChanged } from '../../../../selectors/immutable/vm-settings';
-import { hasImportProvidersChanged } from '../../../../selectors/immutable/import-providers';
-import { getResource } from '../../../../../../utils';
+} from '../../../../../selectors/immutable/provider/vmware/selectors';
+import { hasVmSettingsChanged } from '../../../../../selectors/immutable/vm-settings';
+import { hasImportProvidersChanged } from '../../../../../selectors/immutable/import-providers';
+import { getResource } from '../../../../../../../utils';
 import { ConfigMapModel, DeploymentModel, PodModel, SecretModel } from '@console/internal/models';
 import {
   V2VVMWARE_DEPLOYMENT_NAME,
@@ -22,13 +22,13 @@ import {
   VCENTER_TYPE_LABEL,
   VMWARE_TO_KUBEVIRT_OS_CONFIG_MAP_NAME,
   VMWARE_TO_KUBEVIRT_OS_CONFIG_MAP_NAMESPACE,
-} from '../../../../../../constants/v2v';
-import { V2VVMwareModel } from '../../../../../../models';
-import { vmWizardInternalActions } from '../../../internal-actions';
-import { iGetCommonData } from '../../../../selectors/immutable/selectors';
+} from '../../../../../../../constants/v2v';
+import { V2VVMwareModel } from '../../../../../../../models';
+import { vmWizardInternalActions } from '../../../../internal-actions';
+import { iGetCommonData } from '../../../../../selectors/immutable/selectors';
 import { FirehoseResource } from '@console/internal/components/utils';
-import { iGetIn } from '../../../../../../utils/immutable';
-import { iGetCreateVMWizard } from '../../../../selectors/immutable/common';
+import { iGetIn } from '../../../../../../../utils/immutable';
+import { iGetCreateVMWizard } from '../../../../../selectors/immutable/common';
 
 type GetQueriesParams = {
   namespace: string;

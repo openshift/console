@@ -16,7 +16,7 @@ import {
   PROVIDER_VMWARE_CHECK_CONNECTION_BTN_DONT_SAVE,
   PROVIDER_VMWARE_CHECK_CONNECTION_BTN_SAVE,
 } from '../../../../strings/vmware';
-import { getCheckConnectionAction } from '../../../../redux/stateUpdate/vmSettings/providers/vmware-provider-actions';
+import { getCheckConnectionAction } from '../../../../redux/stateUpdate/vmSettings/providers/vmware/vmware-provider-actions';
 
 const VMWarePasswordConnected: React.FC<VMWareSecretsConnectedProps> = React.memo(
   ({

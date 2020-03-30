@@ -1,5 +1,5 @@
 import * as _ from 'lodash';
-import { hasVmSettingsChanged } from '../../../../selectors/immutable/vm-settings';
+import { hasVmSettingsChanged } from '../../../../../selectors/immutable/vm-settings';
 import {
   ImportProvidersField,
   VM_WIZARD_DIFFICULT_TABS,
@@ -8,13 +8,13 @@ import {
   VMWareProviderField,
   VMWareProviderProps,
   VMWizardProps,
-} from '../../../../types';
-import { InternalActionType, UpdateOptions } from '../../../types';
+} from '../../../../../types';
+import { InternalActionType, UpdateOptions } from '../../../../types';
 import {
   iGetCommonData,
   iGetLoadedCommonData,
   iGetName,
-} from '../../../../selectors/immutable/selectors';
+} from '../../../../../selectors/immutable/selectors';
 import {
   hasVMWareSettingsChanged,
   hasVMWareSettingsValueChanged,
@@ -22,36 +22,36 @@ import {
   iGetVMWareFieldAttribute,
   iGetVMWareFieldValue,
   isVMWareProvider,
-} from '../../../../selectors/immutable/provider/vmware/selectors';
-import { vmWizardInternalActions } from '../../../internal-actions';
-import { asDisabled, asHidden, asRequired } from '../../../../utils/utils';
-import { deleteV2VvmwareObject } from '../../../../../../k8s/requests/v2v/delete-v2vvmware-object';
+} from '../../../../../selectors/immutable/provider/vmware/selectors';
+import { vmWizardInternalActions } from '../../../../internal-actions';
+import { asDisabled, asHidden, asRequired } from '../../../../../utils/utils';
+import { deleteV2VvmwareObject } from '../../../../../../../k8s/requests/v2v/delete-v2vvmware-object';
 import {
   getSimpleV2vVMwareDeploymentStatus,
   V2VVMWareDeploymentStatus,
-} from '../../../../../../statuses/v2vvmware-deployment';
+} from '../../../../../../../statuses/v2vvmware-deployment';
 import {
   iGet,
   iGetIn,
   immutableListToShallowJS,
   toShallowJS,
-} from '../../../../../../utils/immutable';
+} from '../../../../../../../utils/immutable';
 import {
   V2V_WMWARE_STATUS_ALL_OK,
   V2VVMwareStatus,
   getSimpleV2vVMwareStatus,
-} from '../../../../../../statuses/v2vvmware';
-import { getLoadedVm, getThumbprint } from '../../../../selectors/provider/vmware/selectors';
-import { getSimpleName } from '../../../../../../selectors/utils';
-import { correctVCenterSecretLabels } from '../../../../../../k8s/requests/v2v/correct-vcenter-secret-labels';
+} from '../../../../../../../statuses/v2vvmware';
+import { getLoadedVm, getThumbprint } from '../../../../../selectors/provider/vmware/selectors';
+import { getSimpleName } from '../../../../../../../selectors/utils';
+import { correctVCenterSecretLabels } from '../../../../../../../k8s/requests/v2v/correct-vcenter-secret-labels';
 import {
   createConnectionObjects,
   startV2VVMWareControllerWithCleanup,
 } from './vmware-provider-actions';
 import { prefillUpdateCreator } from './vmware-prefill-vm';
-import { hasImportProvidersChanged } from '../../../../selectors/immutable/import-providers';
+import { hasImportProvidersChanged } from '../../../../../selectors/immutable/import-providers';
 import { updateExtraWSQueries } from './update-ws-queries';
-import { iGetCreateVMWizardTabs } from '../../../../selectors/immutable/common';
+import { iGetCreateVMWizardTabs } from '../../../../../selectors/immutable/common';
 
 const startControllerAndCleanup = (options: UpdateOptions) => {
   const { id, prevState, getState, changedCommonData } = options;

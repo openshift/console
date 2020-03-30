@@ -12,7 +12,7 @@ import { iGet, iGetIn } from '../../../../../../utils/immutable';
 import { FormSelectPlaceholderOption } from '../../../../../form/form-select-placeholder-option';
 import { getPlaceholder } from '../../../../utils/renderable-field-utils';
 import { ignoreCaseSort } from '../../../../../../utils/sort';
-import { requestVmDetails } from '../../../../redux/stateUpdate/vmSettings/providers/vmware-provider-actions';
+import { requestVmDetails } from '../../../../redux/stateUpdate/vmSettings/providers/vmware/vmware-provider-actions';
 
 const VMWareVMsConnected: React.FC<VMWareVMsConnectedProps> = React.memo(
   ({ vmField, v2vvmware, onVMChange }) => {

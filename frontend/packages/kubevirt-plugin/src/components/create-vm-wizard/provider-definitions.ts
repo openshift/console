@@ -1,8 +1,8 @@
 import { getVmWareInitialState } from './redux/initial-state/providers/vmware-initial-state';
 import { VMImportProvider } from './types';
-import { getVMWareProviderStateUpdater } from './redux/stateUpdate/vmSettings/providers/vmware-state-update';
+import { getVMWareProviderStateUpdater } from './redux/stateUpdate/vmSettings/providers/vmware/vmware-state-update';
 import { UpdateOptions } from './redux/types';
-import { cleanupVmWareProvider } from './redux/stateUpdate/vmSettings/providers/vmware-cleanup';
+import { cleanupVmWareProvider } from './redux/stateUpdate/vmSettings/providers/vmware/vmware-cleanup';
 import { getV2VVMwareImportProvidersTabValidity } from './redux/validations/providers/v2vvmware-tab-validation';
 
 type Provider = {

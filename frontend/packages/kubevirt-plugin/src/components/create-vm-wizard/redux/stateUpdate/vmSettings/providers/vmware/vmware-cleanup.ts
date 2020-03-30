@@ -1,10 +1,10 @@
 import * as _ from 'lodash';
 import { k8sKill } from '@console/internal/module/k8s';
-import { UpdateOptions } from '../../../types';
-import { iGetVMWareField } from '../../../../selectors/immutable/provider/vmware/selectors';
-import { VMWareProviderField, VMWizardProps } from '../../../../types';
-import { iGetCommonData } from '../../../../selectors/immutable/selectors';
-import { V2VVMwareModel } from '../../../../../../models';
+import { UpdateOptions } from '../../../../types';
+import { iGetVMWareField } from '../../../../../selectors/immutable/provider/vmware/selectors';
+import { VMWareProviderField, VMWizardProps } from '../../../../../types';
+import { iGetCommonData } from '../../../../../selectors/immutable/selectors';
+import { V2VVMwareModel } from '../../../../../../../models';
 
 export const cleanupVmWareProvider = async (options: UpdateOptions) => {
   const { id, getState } = options;
