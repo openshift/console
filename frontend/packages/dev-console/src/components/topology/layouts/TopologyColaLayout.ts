@@ -3,6 +3,6 @@ import { layoutConstraints } from '@console/knative-plugin/src/topology/layouts/
 
 export default class TopologyColaLayout extends ColaLayout {
   protected getConstraints(nodes: ColaNode[], groups: ColaGroup[], edges: ColaLink[]): any[] {
-    return layoutConstraints(nodes, groups, edges);
+    return layoutConstraints(nodes, groups, edges, this.options);
   }
 }

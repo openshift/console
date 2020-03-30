@@ -1,5 +1,5 @@
 import * as _ from 'lodash';
-import { ColaGroup, ColaLink, ColaNode, getGroupPadding } from '@console/topology';
+import { ColaGroup, ColaLink, ColaNode, getGroupPadding, LayoutOptions } from '@console/topology';
 import { TYPE_EVENT_SOURCE_LINK, TYPE_KNATIVE_SERVICE } from '../const';
 
 const getNodeTimeStamp = (node: ColaNode): Date => {
@@ -15,6 +15,7 @@ export const layoutConstraints = (
   nodes: ColaNode[],
   groups: ColaGroup[],
   edges: ColaLink[],
+  options: LayoutOptions,
 ): any[] => {
   const constraints: any[] = [];
 
@@ -81,7 +82,7 @@ export const layoutConstraints = (
             axis: 'x',
             left: serviceNode.index,
             right: link.source.index,
-            gap: serviceDistance + link.source.width / 2 + this.options.linkDistance,
+            gap: serviceDistance + link.source.width / 2 + options.linkDistance,
             equality: true,
           });
           nextOffset += link.source.height;
