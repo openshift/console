@@ -1,8 +1,8 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import { FormikProps, FormikValues } from 'formik';
-import { ButtonBar } from '@console/internal/components/utils';
-import { Form, ActionGroup, ButtonVariant, Button } from '@patternfly/react-core';
+import { FormFooter } from '@console/shared/src/components/form-utils';
+import { Form } from '@patternfly/react-core';
 import { DeployImageFormProps } from './import-types';
 import ImageSearchSection from './image-search/ImageSearchSection';
 import AppSection from './app/AppSection';
@@ -19,7 +19,7 @@ const DeployImageForm: React.FC<FormikProps<FormikValues> & DeployImageFormProps
   dirty,
   projects,
 }) => (
-  <Form className="co-deploy-image" onSubmit={handleSubmit}>
+  <Form className="co-deploy-image" data-test-id="deploy-image-form" onSubmit={handleSubmit}>
     <ImageSearchSection />
     <AppSection
       project={values.project}
@@ -27,21 +27,15 @@ const DeployImageForm: React.FC<FormikProps<FormikValues> & DeployImageFormProps
     />
     <ResourceSection />
     <AdvancedSection values={values} />
-    <ButtonBar errorMessage={status && status.submitError} inProgress={isSubmitting}>
-      <ActionGroup className="pf-c-form">
-        <Button
-          type="submit"
-          variant={ButtonVariant.primary}
-          isDisabled={!dirty || !_.isEmpty(errors)}
-          data-test-id="deploy-image-form-submit-btn"
-        >
-          Create
-        </Button>
-        <Button type="button" variant={ButtonVariant.secondary} onClick={handleReset}>
-          Cancel
-        </Button>
-      </ActionGroup>
-    </ButtonBar>
+    <FormFooter
+      handleReset={handleReset}
+      errorMessage={status && status.submitError}
+      isSubmitting={isSubmitting}
+      submitLabel="Create"
+      sticky
+      disableSubmit={!dirty || !_.isEmpty(errors)}
+      resetLabel="Cancel"
+    />
   </Form>
 );
 

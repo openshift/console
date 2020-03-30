@@ -19,7 +19,7 @@ const DeployImagePage: React.FunctionComponent<DeployImagePageProps> = ({ match,
         <title>Deploy Image</title>
       </Helmet>
       <PageHeading title="Deploy Image" />
-      <div className="co-m-pane__body">
+      <div className="co-m-pane__body" style={{ paddingBottom: 0 }}>
         <QueryFocusApplication>
           {(desiredApplication) => (
             <Firehose resources={[{ kind: 'Project', prop: 'projects', isList: true }]}>

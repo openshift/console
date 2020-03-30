@@ -1,4 +1,5 @@
 import * as React from 'react';
+import * as cx from 'classnames';
 import { ActionGroup, Alert, Button, ButtonVariant } from '@patternfly/react-core';
 import { ButtonBar } from '@console/internal/components/utils';
 import { FormFooterProps } from './form-utils-types';
@@ -18,9 +19,12 @@ const FormFooter: React.FC<FormFooterProps> = ({
   successMessage,
   disableSubmit,
   showAlert,
+  sticky,
 }) => (
   <ButtonBar
-    className="ocs-form-footer"
+    className={cx('ocs-form-footer', {
+      'ocs-form-footer__sticky': sticky,
+    })}
     inProgress={isSubmitting}
     errorMessage={errorMessage}
     successMessage={successMessage}
@@ -36,16 +40,27 @@ const FormFooter: React.FC<FormFooterProps> = ({
         {...(handleSubmit && { onClick: handleSubmit })}
         variant={ButtonVariant.primary}
         isDisabled={disableSubmit}
+        data-test-id="submit-button"
       >
         {submitLabel}
       </Button>
       {handleReset && (
-        <Button type="button" variant={ButtonVariant.secondary} onClick={handleReset}>
+        <Button
+          type="button"
+          data-test-id="reset-button"
+          variant={ButtonVariant.secondary}
+          onClick={handleReset}
+        >
           {resetLabel}
         </Button>
       )}
       {handleCancel && (
-        <Button type="button" variant={ButtonVariant.secondary} onClick={handleCancel}>
+        <Button
+          type="button"
+          data-test-id="cancel-button"
+          variant={ButtonVariant.secondary}
+          onClick={handleCancel}
+        >
           {cancelLabel}
         </Button>
       )}

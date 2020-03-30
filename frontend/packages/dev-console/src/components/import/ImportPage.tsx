@@ -97,7 +97,7 @@ const ImportPage: React.FunctionComponent<ImportPageProps> = ({ match, location 
             <title>{importData.title}</title>
           </Helmet>
           <PageHeading title={importData.title} />
-          <div className="co-m-pane__body">
+          <div className="co-m-pane__body" style={{ paddingBottom: 0 }}>
             <Firehose resources={resources}>
               <ImportForm
                 forApplication={application}
