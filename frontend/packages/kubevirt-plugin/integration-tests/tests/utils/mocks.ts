@@ -66,6 +66,8 @@ export const basicVMConfig: BaseVMConfig = {
   sourceContainer: 'kubevirt/cirros-registry-disk-demo',
   cloudInitScript: `#cloud-config\nuser: cloud-user\npassword: atomic\nchpasswd: {expire: False}\nhostname: vm-${testName}`,
 };
+Object.freeze(basicVMConfig.flavorConfig);
+Object.freeze(basicVMConfig);
 
 export const defaultWizardPodNetworkingInterface = {
   name: 'nic0',
@@ -84,7 +86,7 @@ export const defaultYAMLPodNetworkingInterface = {
 };
 
 // Fake windows machine, still cirros in the heart
-export const widowsVMConfig: BaseVMConfig = {
+export const windowsVMConfig: BaseVMConfig = {
   operatingSystem: OperatingSystem.WINDOWS_10,
   flavorConfig: { flavor: Flavor.MEDIUM },
   workloadProfile: WorkloadProfile.DESKTOP,

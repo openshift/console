@@ -59,7 +59,7 @@ spec:
           type: ''
         resources:
           requests:
-            memory: 1G
+            memory: 1Gi
       evictionStrategy: LiveMigrate
       hostname: fake-windows
       networks:

@@ -44,7 +44,7 @@ export const diskWarning = (resourceName) =>
   $(`[data-id="${resourceName}"]`).$('.kubevirt-validation-cell__cell--warning');
 
 // Virtual Hardware tab
-export const addCDButton = $('#attach-cdrom');
+export const addCDButton = $('#vm-cd-add-btn');
 
 // Advanced -- Cloud-init
 export const cloudInitFormCheckbox = $('#cloud-init-edit-mode-first-option');

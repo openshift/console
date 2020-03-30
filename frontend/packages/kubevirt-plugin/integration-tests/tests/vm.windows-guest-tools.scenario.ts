@@ -6,7 +6,7 @@ import { VirtualMachine } from './models/virtualMachine';
 import { VM_BOOTUP_TIMEOUT_SECS } from './utils/consts';
 import { getProvisionConfigs, vmConfig } from './vm.wizard.configs';
 import { ProvisionConfigName } from './utils/constants/wizard';
-import { widowsVMConfig } from './utils/mocks';
+import { windowsVMConfig } from './utils/mocks';
 import { getResourceObject } from './utils/utils';
 import { windowsGuestToolsCDElement } from '../views/editCDView';
 
@@ -27,7 +27,7 @@ describe('Kubevirt Windows Guest tools', () => {
         configName.toLowerCase(),
         testName,
         provisionConfig,
-        widowsVMConfig,
+        windowsVMConfig,
         false, // dont startOnCreation
       );
       const vm = new VirtualMachine(windowsConfig);

@@ -28,6 +28,7 @@ import { Wizard } from './wizard';
 import { appHost, testName } from '@console/internal-integration-tests/protractor.conf';
 import { KubevirtDetailView } from './kubevirtDetailView';
 import { ImportWizard } from './importWizard';
+import { VirtualMachineModel } from '../../../src/models/index';
 
 const noConfirmDialogActions: (VM_ACTION | VMI_ACTION)[] = [VM_ACTION.Start, VM_ACTION.Clone];
 
@@ -198,7 +199,7 @@ export class VirtualMachine extends KubevirtDetailView {
   }: VMConfig) {
     const wizard = new Wizard();
     await this.navigateToListView();
-    await wizard.openWizard();
+    await wizard.openWizard(VirtualMachineModel.labelPlural);
     if (template !== undefined) {
       await wizard.selectTemplate(template);
     } else {
@@ -265,7 +266,6 @@ export class VirtualMachine extends KubevirtDetailView {
     // Review page
     await wizard.confirmAndCreate();
     await wizard.waitForCreation();
-
     await this.navigateToTab(TAB.Details);
     if (startOnCreation === true) {
       // If startOnCreation is true, wait for VM to boot up

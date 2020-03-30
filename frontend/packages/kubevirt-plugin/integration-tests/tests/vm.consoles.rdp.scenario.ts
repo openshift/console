@@ -10,6 +10,7 @@ import {
   selectDropdownOption,
   selectDropdownOptionById,
   createResource,
+  removeLeakedResources,
 } from '@console/shared/src/test-utils/utils';
 import {
   consoleTypeSelector,
@@ -32,7 +33,7 @@ import {
 import { VirtualMachine } from './models/virtualMachine';
 import { vmConfig, getProvisionConfigs } from './vm.wizard.configs';
 import { ProvisionConfigName } from './utils/constants/wizard';
-import { widowsVMConfig, multusNAD } from './utils/mocks';
+import { windowsVMConfig, multusNAD } from './utils/mocks';
 import { getWindowsVM } from './utils/templates/windowsVMForRDPL2';
 
 const VM_IP = '123.123.123.123';
@@ -58,6 +59,10 @@ describe('KubeVirt VM console - RDP', () => {
   provisionConfig.networkResources = [];
   provisionConfig.storageResources = [];
 
+  afterEach(() => {
+    removeLeakedResources(leakedResources);
+  });
+
   it(
     'connects via exposed service',
     async () => {
@@ -65,7 +70,7 @@ describe('KubeVirt VM console - RDP', () => {
         configName.toLowerCase(),
         testName,
         provisionConfig,
-        widowsVMConfig,
+        windowsVMConfig,
         true, // startOnCreation
       );
       const vm = new VirtualMachine(windowsConfig);
