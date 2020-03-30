@@ -31,8 +31,8 @@ const GitImportForm: React.FC<FormikProps<FormikValues> & GitImportFormProps> = 
       project={values.project}
       noProjectsAvailable={projects.loaded && _.isEmpty(projects.data)}
     />
-    <PipelineSection />
     <ResourceSection />
+    <PipelineSection builderImages={builderImages} />
     <AdvancedSection values={values} />
     <FormFooter
       handleReset={handleReset}

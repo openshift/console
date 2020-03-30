@@ -29,8 +29,8 @@ const SourceToImageForm: React.FC<FormikProps<FormikValues> & SourceToImageFormP
       project={values.project}
       noProjectsAvailable={projects.loaded && _.isEmpty(projects.data)}
     />
-    <PipelineSection />
     <ResourceSection />
+    <PipelineSection builderImages={builderImages} />
     <AdvancedSection values={values} />
     <FormFooter
       handleReset={handleReset}

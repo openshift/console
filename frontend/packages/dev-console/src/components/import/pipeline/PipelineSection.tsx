@@ -7,11 +7,13 @@ import { useAccessReview } from '@console/internal/components/utils';
 import { useFormikContext, FormikValues } from 'formik';
 import { PipelineModel, PipelineResourceModel } from '../../../models';
 import { FLAG_OPENSHIFT_PIPELINE, CLUSTER_PIPELINE_NS } from '../../../const';
+import { NormalizedBuilderImages } from '../../../utils/imagestream-utils';
 import FormSection from '../section/FormSection';
 import PipelineTemplate from './PipelineTemplate';
 
 type PipelineSectionProps = {
   flags: FlagsObject;
+  builderImages: NormalizedBuilderImages;
 };
 
 const usePipelineAccessReview = (): boolean => {
@@ -39,7 +41,7 @@ const usePipelineAccessReview = (): boolean => {
   return canListPipelines && canCreatePipelines && canCreatePipelineResource;
 };
 
-const PipelineSection: React.FC<PipelineSectionProps> = ({ flags }) => {
+const PipelineSection: React.FC<PipelineSectionProps> = ({ flags, builderImages }) => {
   const { values } = useFormikContext<FormikValues>();
 
   const hasCreatePipelineAccess = usePipelineAccessReview();
@@ -54,12 +56,12 @@ const PipelineSection: React.FC<PipelineSectionProps> = ({ flags }) => {
     return (
       <FormSection title={title}>
         {values.image.selected || values.build.strategy === 'Docker' ? (
-          <PipelineTemplate />
+          <PipelineTemplate builderImages={builderImages} />
         ) : (
           <Alert
             isInline
             variant="info"
-            title="Select a builder image to see if there is a pipeline template available for this runtime."
+            title="Select a builder image and resource to see if there is a pipeline template available for this runtime."
           />
         )}
       </FormSection>
@@ -69,4 +71,4 @@ const PipelineSection: React.FC<PipelineSectionProps> = ({ flags }) => {
   return null;
 };
 
-export default connectToFlags(FLAG_OPENSHIFT_PIPELINE)(PipelineSection);
+export default connectToFlags<PipelineSectionProps>(FLAG_OPENSHIFT_PIPELINE)(PipelineSection);
