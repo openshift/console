@@ -7,13 +7,8 @@ export const operatorProviderTypeMap = {
   community: 'Community',
 };
 
-const getCustomOperatorProviderType = (packageManifest) => {
-  return (
-    packageManifest.metadata?.annotations?.['marketplace.openshift.io/display-name'] ||
-    packageManifest.metadata.name
-  );
-};
-
+const getCustomOperatorProviderType = (packageManifest) =>
+  packageManifest.status.catalogSourceDisplayName || packageManifest.status.catalogSource;
 export const getOperatorProviderType = (packageManifest) => {
   const srcProvider = _.get(packageManifest, 'metadata.labels.opsrc-provider');
   return _.get(
