@@ -33,17 +33,16 @@ const SinkSourceModal: React.FC<Props> = ({
   const autocompleteFilter = (strText, item): boolean => fuzzy(strText, item?.props?.name);
   const onSinkChange = React.useCallback(
     (selectedValue, target) => {
-      const {
-        props: { model },
-      } = target;
+      const modelResource = target?.props?.model;
       if (selectedValue) {
         setFieldTouched('sink.ref.name', true);
         setFieldValue('sink.ref.name', selectedValue);
-        if (model) {
-          const sinkApiversion = `${model?.apiGroup}/${model?.apiVersion}`;
+        if (modelResource) {
+          const { apiGroup, apiVersion, kind } = modelResource;
+          const sinkApiversion = `${apiGroup}/${apiVersion}`;
           setFieldValue('sink.ref.apiVersion', sinkApiversion);
           setFieldTouched('sink.ref.apiVersion', true);
-          setFieldValue('sink.ref.kind', model?.kind);
+          setFieldValue('sink.ref.kind', kind);
           setFieldTouched('sink.ref.kind', true);
         }
         validateForm();

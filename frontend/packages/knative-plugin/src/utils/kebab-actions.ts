@@ -37,7 +37,7 @@ export const getKebabActionsForKind = (resourceKind: K8sKind): KebabAction[] => 
       menuActions.push(setTrafficDistribution, EditApplication);
     }
     if (_.includes(eventSourceModelrefs, referenceForModel(resourceKind))) {
-      menuActions.push(setSinkSource, EditApplication);
+      menuActions.push(setSinkSource);
     }
   }
   return menuActions;
