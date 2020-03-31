@@ -213,6 +213,7 @@ const AlertStateDescription = ({ alert }) => {
 const severityIcons = {
   [AlertSeverities.Critical]: RedExclamationCircleIcon,
   [AlertSeverities.Info]: BlueInfoCircleIcon,
+  [AlertSeverities.None]: BlueInfoCircleIcon,
   [AlertSeverities.Warning]: YellowExclamationTriangleIcon,
 };
 
@@ -228,15 +229,8 @@ const SeverityIcon: React.FC<SeverityIconProps> = ({ label, severity }) => {
   );
 };
 
-const Severity: React.FC<{ severity?: string }> = ({ severity }) => {
-  if (_.isNil(severity)) {
-    return <>-</>;
-  }
-  if (severity === AlertSeverities.None) {
-    return <>None</>;
-  }
-  return <SeverityIcon label={_.startCase(severity)} severity={severity} />;
-};
+const Severity: React.FC<{ severity?: string }> = ({ severity }) =>
+  _.isNil(severity) ? <>-</> : <SeverityIcon label={_.startCase(severity)} severity={severity} />;
 
 const SeverityCounts: React.FC<{ alerts: Alert[] }> = ({ alerts }) => {
   const counts = _.countBy(alerts, (a) => {
