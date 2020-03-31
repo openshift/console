@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { Firehose } from '@console/internal/components/utils';
-import { coFetchJSON } from '@console/internal/co-fetch';
 import * as plugins from '@console/internal/plugins';
 import { getResourceList } from '@console/shared';
 import { referenceForModel, K8sResourceKind } from '@console/internal/module/k8s';
@@ -12,6 +11,7 @@ import { transformTopologyData } from './data-transforms/data-transformer';
 import { allowedResources, getHelmReleaseKey, getServiceBindingStatus } from './topology-utils';
 import { TopologyDataModel, TopologyDataResources, TrafficData } from './topology-types';
 import { HelmReleaseResourcesMap } from '../helm/helm-types';
+import { fetchHelmReleases } from '../helm/helm-utils';
 
 export interface RenderProps {
   data?: TopologyDataModel;
@@ -64,7 +64,7 @@ const Controller: React.FC<ControllerProps> = ({
         return;
       }
 
-      coFetchJSON(`/api/helm/releases?ns=${namespace}`)
+      fetchHelmReleases(namespace)
         .then((releases) => {
           setHelmResourcesMap(
             releases.reduce((acc, release) => {
@@ -77,6 +77,7 @@ const Controller: React.FC<ControllerProps> = ({
                       releaseName: release.name,
                       chartIcon: release.chart.metadata.icon,
                       manifestResources,
+                      releaseNotes: release.info.notes,
                     };
                   }
                 });

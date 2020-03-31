@@ -11,10 +11,13 @@ import { SecretModel } from '@console/internal/models';
 import { ErrorPage404 } from '@console/internal/components/error';
 import { DetailsPage } from '@console/internal/components/factory';
 import { K8sResourceKindReference } from '@console/internal/module/k8s';
+import { fetchHelmReleases } from './helm-utils';
 import HelmReleaseResources from './HelmReleaseResources';
 import HelmReleaseOverview from './HelmReleaseOverview';
 import HelmReleaseHistory from './HelmReleaseHistory';
 import { deleteHelmRelease } from '../../actions/modify-helm-release';
+import HelmReleaseNotes from './HelmReleaseNotes';
+import { HelmRelease } from './helm-types';
 
 const SecretReference: K8sResourceKindReference = 'Secret';
 const HelmReleaseReference = 'HelmRelease';
@@ -26,10 +29,17 @@ export interface HelmReleaseDetailsPageProps {
   secret?: FirehoseResult;
 }
 
-const HelmReleaseDetailsPage: React.FC<HelmReleaseDetailsPageProps> = ({ secret, match }) => {
-  const namespace = match.params.ns;
+export interface LoadedHelmReleaseDetailsPageProps extends HelmReleaseDetailsPageProps {
+  helmReleaseData: HelmRelease;
+}
 
-  if (!secret || (!secret.loaded && _.isEmpty(secret.loadError))) {
+export const LoadedHelmReleaseDetailsPage: React.FC<LoadedHelmReleaseDetailsPageProps> = ({
+  match,
+  secret,
+  helmReleaseData,
+}) => {
+  const namespace = match.params.ns;
+  if (!helmReleaseData || !secret || (!secret.loaded && _.isEmpty(secret.loadError))) {
     return <LoadingBox />;
   }
 
@@ -55,6 +65,7 @@ const HelmReleaseDetailsPage: React.FC<HelmReleaseDetailsPageProps> = ({ secret,
       menuActions={menuActions}
       name={secretName}
       namespace={namespace}
+      customData={helmReleaseData}
       breadcrumbsFor={() => [
         {
           name: `Helm Releases`,
@@ -76,9 +87,46 @@ const HelmReleaseDetailsPage: React.FC<HelmReleaseDetailsPageProps> = ({ secret,
           name: 'History',
           component: HelmReleaseHistory,
         },
+        {
+          href: 'releasenotes',
+          name: 'Release Notes',
+          component: HelmReleaseNotes,
+        },
       ]}
       customKind={HelmReleaseReference}
     />
+  );
+};
+
+const HelmReleaseDetailsPage: React.FC<HelmReleaseDetailsPageProps> = ({ secret, match }) => {
+  const namespace = match.params.ns;
+  const helmReleaseName = match.params.name;
+
+  const [helmReleaseData, setHelmReleaseData] = React.useState<any>();
+
+  React.useEffect(() => {
+    let ignore = false;
+
+    const getHelmReleases = async () => {
+      try {
+        const helmReleases = await fetchHelmReleases(namespace);
+        if (!ignore) {
+          const releaseData = helmReleases.find((release) => release.name === helmReleaseName);
+          setHelmReleaseData(releaseData);
+        }
+        // eslint-disable-next-line no-empty
+      } catch {}
+    };
+
+    getHelmReleases();
+
+    return () => {
+      ignore = true;
+    };
+  }, [helmReleaseName, namespace]);
+
+  return (
+    <LoadedHelmReleaseDetailsPage match={match} secret={secret} helmReleaseData={helmReleaseData} />
   );
 };
 

@@ -17,6 +17,9 @@ export const regroupActions = (obj: Node, regroupChildren: boolean = false): Keb
     ];
   }
   const resource = obj.getData()?.resources?.obj;
+  if (!resource) {
+    return [];
+  }
   const resourceKind = modelFor(referenceFor(resource));
   return [
     {
