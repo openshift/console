@@ -1,5 +1,7 @@
 import { ValidatedOptions } from '@patternfly/react-core';
 import { K8sResourceKind, ContainerPort } from '@console/internal/module/k8s';
+import { DeploymentModel, DeploymentConfigModel } from '@console/internal/models';
+import { ServiceModel } from '@console/knative-plugin';
 import { LazyLoader } from '@console/plugin-sdk';
 import { NameValuePair, NameValueFromPair } from '@console/shared';
 import { NormalizedBuilderImages } from '../../utils/imagestream-utils';
@@ -228,6 +230,12 @@ export enum Resources {
   Kubernetes = 'kubernetes',
   KnativeService = 'knative',
 }
+
+export const ReadableResourcesNames = {
+  [Resources.OpenShift]: DeploymentConfigModel.label,
+  [Resources.Kubernetes]: DeploymentModel.label,
+  [Resources.KnativeService]: `Knative ${ServiceModel.label}`,
+};
 
 export interface ImportData {
   type: ImportTypes;
