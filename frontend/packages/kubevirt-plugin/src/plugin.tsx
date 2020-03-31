@@ -306,7 +306,9 @@ const plugin: Plugin<ConsumedExtensions> = [
         kind: models.DataVolumeModel.kind,
         prop: 'dvs',
       },
-      isActivity: (resource) => _.get(resource, 'status.phase') === 'ImportInProgress',
+      isActivity: (resource) =>
+        resource?.status?.phase === 'ImportInProgress' &&
+        !!resource?.metadata?.ownerReferences?.[0],
       getTimestamp: (resource) => new Date(resource.metadata.creationTimestamp),
       loader: () =>
         import(
