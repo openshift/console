@@ -216,8 +216,8 @@ describe('git import flow with advanced options', () => {
 
   /**
    * Navigate to topology and verify the app presence
-   *Select that app and delete the app
-   *Note: App deletion is targetted in list view, In future, will plan it in graph view
+   * Select that app and delete the app
+   * Note: App deletion is targetted in list view, In future, will plan it in graph view
    */
   it('verify the app details and delete the component in topology', async () => {
     await naviagteTo(NavigationMenu.Topology);
@@ -231,6 +231,8 @@ describe('git import flow with advanced options', () => {
   });
 });
 
+// This describe block is disabled beacause "Add Pipeline" functionality displays only when pipeline operator is installed 
+// So will move this block to pipelinescenarios
 xdescribe('git import flow with pipeline creation', () => {
   let newApplication;
   let newApp;
