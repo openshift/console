@@ -29,6 +29,10 @@ func New(apiUrl string, transport http.RoundTripper) *helmHandlers {
 		listReleases:            actions.ListReleases,
 		getRelease:              actions.GetRelease,
 		getChart:                actions.GetChart,
+		upgradeRelease:          actions.UpgradeRelease,
+		uninstallRelease:        actions.UninstallRelease,
+		rollbackRelease:         actions.RollbackRelease,
+		getReleaseHistory:       actions.GetReleaseHistory,
 	}
 }
 
@@ -41,11 +45,15 @@ type helmHandlers struct {
 	getActionConfigurations func(string, string, string, *http.RoundTripper) *action.Configuration
 
 	// helm actions
-	renderManifests func(string, string, map[string]interface{}, *action.Configuration) (string, error)
-	installChart    func(string, string, string, map[string]interface{}, *action.Configuration) (*release.Release, error)
-	listReleases    func(*action.Configuration) ([]*release.Release, error)
-	getRelease      func(releaseName string, conf *action.Configuration) (*release.Release, error)
-	getChart        func(chartUrl string, conf *action.Configuration) (*chart.Chart, error)
+	renderManifests   func(string, string, map[string]interface{}, *action.Configuration) (string, error)
+	installChart      func(string, string, string, map[string]interface{}, *action.Configuration) (*release.Release, error)
+	listReleases      func(*action.Configuration) ([]*release.Release, error)
+	upgradeRelease    func(string, string, string, map[string]interface{}, *action.Configuration) (*release.Release, error)
+	uninstallRelease  func(string, *action.Configuration) (*release.UninstallReleaseResponse, error)
+	rollbackRelease   func(string, int, *action.Configuration) (*release.Release, error)
+	getRelease        func(releaseName string, conf *action.Configuration) (*release.Release, error)
+	getChart          func(chartUrl string, conf *action.Configuration) (*chart.Chart, error)
+	getReleaseHistory func(releaseName string, conf *action.Configuration) ([]*release.Release, error)
 }
 
 func (h *helmHandlers) HandleHelmRenderManifests(user *auth.User, w http.ResponseWriter, r *http.Request) {
@@ -141,5 +149,94 @@ func (h *helmHandlers) HandleChartGet(user *auth.User, w http.ResponseWriter, r 
 	w.Header().Set("Content-Type", "application/json")
 
 	res, _ := json.Marshal(resp)
+	w.Write(res)
+}
+
+func (h *helmHandlers) HandleUpgradeRelease(user *auth.User, w http.ResponseWriter, r *http.Request) {
+	var req HelmRequest
+
+	err := json.NewDecoder(r.Body).Decode(&req)
+	if err != nil {
+		serverutils.SendResponse(w, http.StatusBadRequest, serverutils.ApiError{Err: fmt.Sprintf("Failed to parse request: %v", err)})
+		return
+	}
+
+	conf := h.getActionConfigurations(h.ApiServerHost, req.Namespace, user.Token, &h.Transport)
+	resp, err := h.upgradeRelease(req.Namespace, req.Name, req.ChartUrl, req.Values, conf)
+	if err != nil {
+		if err == actions.ErrReleaseRevisionNotFound {
+			serverutils.SendResponse(w, http.StatusNotFound, serverutils.ApiError{Err: fmt.Sprintf("Failed to rollback helm releases: %v", err)})
+			return
+		}
+		serverutils.SendResponse(w, http.StatusBadGateway, serverutils.ApiError{Err: fmt.Sprintf("Failed to upgrade helm release: %v", err)})
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	res, _ := json.Marshal(resp)
+	w.Write(res)
+}
+
+func (h *helmHandlers) HandleUninstallRelease(user *auth.User, w http.ResponseWriter, r *http.Request) {
+	params := r.URL.Query()
+	ns := params.Get("ns")
+	rel := params.Get("name")
+
+	conf := h.getActionConfigurations(h.ApiServerHost, ns, user.Token, &h.Transport)
+	resp, err := h.uninstallRelease(rel, conf)
+	if err != nil {
+		if err == actions.ErrReleaseNotFound {
+			serverutils.SendResponse(w, http.StatusNotFound, serverutils.ApiError{Err: fmt.Sprintf("Failed to uninstall helm release: %v", err)})
+			return
+		}
+		serverutils.SendResponse(w, http.StatusBadGateway, serverutils.ApiError{Err: fmt.Sprintf("Failed to uninstall helm release: %v", err)})
+		return
+	}
+	w.Header().Set("Content-Type", "application/json")
+	res, _ := json.Marshal(resp)
+	w.Write(res)
+}
+
+func (h *helmHandlers) HandleRollbackRelease(user *auth.User, w http.ResponseWriter, r *http.Request) {
+	var req HelmRequest
+
+	err := json.NewDecoder(r.Body).Decode(&req)
+	if err != nil {
+		serverutils.SendResponse(w, http.StatusBadGateway, serverutils.ApiError{Err: fmt.Sprintf("Failed to parse request: %v", err)})
+		return
+	}
+
+	conf := h.getActionConfigurations(h.ApiServerHost, req.Namespace, user.Token, &h.Transport)
+	rel, err := h.rollbackRelease(req.Name, req.Version, conf)
+	if err != nil {
+		if err == actions.ErrReleaseRevisionNotFound {
+			serverutils.SendResponse(w, http.StatusNotFound, serverutils.ApiError{Err: fmt.Sprintf("Failed to rollback helm releases: %v", err)})
+			return
+		}
+		serverutils.SendResponse(w, http.StatusBadGateway, serverutils.ApiError{Err: fmt.Sprintf("Failed to rollback helm releases: %v", err)})
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	res, _ := json.Marshal(rel)
+	w.Write(res)
+}
+
+func (h *helmHandlers) HandleGetReleaseHistory(user *auth.User, w http.ResponseWriter, r *http.Request) {
+	params := r.URL.Query()
+	name := params.Get("name")
+	ns := params.Get("ns")
+	conf := h.getActionConfigurations(h.ApiServerHost, ns, user.Token, &h.Transport)
+	rels, err := h.getReleaseHistory(name, conf)
+	if err != nil {
+		if err == actions.ErrReleaseNotFound {
+			serverutils.SendResponse(w, http.StatusNotFound, serverutils.ApiError{Err: fmt.Sprintf("Failed to list helm release history: %v", err)})
+			return
+		}
+		serverutils.SendResponse(w, http.StatusBadGateway, serverutils.ApiError{Err: fmt.Sprintf("Failed to list helm release history: %v", err)})
+		return
+	}
+	res, _ := json.Marshal(rels)
+	w.Header().Set("Content-Type", "application/json")
 	w.Write(res)
 }
