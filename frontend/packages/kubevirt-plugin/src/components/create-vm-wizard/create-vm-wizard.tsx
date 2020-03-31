@@ -10,7 +10,7 @@ import {
   FlagsObject,
 } from '@console/internal/reducers/features';
 import { TemplateModel } from '@console/internal/models';
-import { Firehose, FirehoseResource, history } from '@console/internal/components/utils';
+import { Firehose, history } from '@console/internal/components/utils';
 import { Location } from 'history';
 import { match as RouterMatch } from 'react-router';
 import { withReduxID } from '../../utils/redux/common';
@@ -53,6 +53,7 @@ import { CloudInitTab } from './tabs/cloud-init-tab/cloud-init-tab';
 import { VirtualHardwareTab } from './tabs/virtual-hardware-tab/virtual-hardware-tab';
 import { useStorageClassConfigMapWrapped } from '../../hooks/storage-class-config-map';
 import { ValidTabGuard } from './tabs/valid-tab-guard';
+import { FirehoseResourceEnhanced } from '../../types/custom';
 
 import './create-vm-wizard.scss';
 
@@ -419,7 +420,7 @@ export const CreateVMWizardPageComponent: React.FC<CreateVMWizardPageComponentPr
   const activeNamespace = match && match.params && match.params.ns;
   const searchParams = new URLSearchParams(location && location.search);
 
-  const resources = [
+  const resources: FirehoseResourceEnhanced[] = [
     getResource(VirtualMachineModel, {
       namespace: activeNamespace,
       prop: VMWizardProps.virtualMachines,
@@ -479,7 +480,7 @@ export const CreateVMWizardPageComponent: React.FC<CreateVMWizardPageComponentPr
 type CreateVMWizardPageComponentProps = {
   reduxID?: string;
   location?: Location;
-  wsResources?: FirehoseResource[];
+  wsResources?: FirehoseResourceEnhanced[];
   match?: RouterMatch<{ ns: string; plural: string; appName?: string }>;
   flags: FlagsObject;
 };

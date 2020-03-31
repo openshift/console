@@ -100,6 +100,7 @@ export const buildOwnerReferenceForModel = (
 });
 
 // FIXME: Avoid this helper! The implementation is not correct. We should remove this.
+// Beware: VM Wizard depends on this custom implementation - mainly the model
 export const getResource = (
   model: K8sResourceKind,
   {
@@ -121,7 +122,6 @@ export const getResource = (
     matchExpressions?: MatchExpression[];
     prop?: string;
     fieldSelector?: string;
-    isImmutable?: boolean;
     optional?: boolean;
   } = {
     namespaced: true,

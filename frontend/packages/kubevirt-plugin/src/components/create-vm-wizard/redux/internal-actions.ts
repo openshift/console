@@ -11,7 +11,7 @@ import {
 import { DeviceType } from '../../../constants/vm';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { ActionBatch, InternalActionType, WizardInternalActionDispatcher } from './types';
-import { FirehoseResource } from '@console/internal/components/utils';
+import { FirehoseResourceEnhanced } from '../../../types/custom';
 
 type VMWizardInternalActions = { [key in InternalActionType]: WizardInternalActionDispatcher };
 
@@ -47,7 +47,7 @@ export const vmWizardInternalActions: VMWizardInternalActions = {
   [InternalActionType.SetExtraWSQueries]: (
     id,
     queryKey: string,
-    wsQueries: FirehoseResource[],
+    wsQueries: FirehoseResourceEnhanced[],
   ) => ({
     payload: {
       id,

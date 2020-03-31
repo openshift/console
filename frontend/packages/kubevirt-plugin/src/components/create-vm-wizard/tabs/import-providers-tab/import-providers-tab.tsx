@@ -12,6 +12,7 @@ import { getPlaceholder } from '../../utils/renderable-field-utils';
 import { FormFieldForm } from '../../form/form-field-form';
 import { VMWareImportProvider } from './providers/vmware-import-provider/vmware-import-provider';
 import { iGetImportProviders } from '../../selectors/immutable/import-providers';
+import { OvirtImportProvider } from './providers/ovirt-import-provider/ovirt-import-provider';
 
 class ImportProvidersTabComponent extends React.Component<ImportProvidersTabComponentProps> {
   getField = (key: ImportProvidersField) => iGet(this.props.importProviders, key);
@@ -48,6 +49,7 @@ class ImportProvidersTabComponent extends React.Component<ImportProvidersTabComp
             </FormSelect>
           </FormField>
         </FormFieldMemoRow>
+        <OvirtImportProvider key={VMImportProvider.OVIRT} wizardReduxID={wizardReduxID} />
         <VMWareImportProvider key={VMImportProvider.VMWARE} wizardReduxID={wizardReduxID} />
       </FormFieldForm>
     );

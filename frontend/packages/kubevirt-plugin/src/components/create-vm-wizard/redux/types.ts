@@ -4,6 +4,7 @@ import {
   ChangedCommonDataProp,
   CloudInitField,
   ImportProvidersField,
+  OvirtProviderField,
   VMImportProvider,
   VMSettingsField,
   VMSettingsFieldType,
@@ -13,7 +14,7 @@ import {
   VMWizardTab,
 } from '../types';
 import { DeviceType } from '../../../constants/vm';
-import { FirehoseResource } from '@console/internal/components/utils';
+import { FirehoseResourceEnhanced } from '../../../types/custom';
 
 export enum ActionType {
   Create = 'KubevirtVMWizardExternalCreate',
@@ -77,9 +78,14 @@ export type WizardInternalAction = {
     isHidden?: boolean;
     hasAllRequiredFilled?: boolean;
     path?: string[];
-    key?: VMSettingsField | CloudInitField | VMWareProviderField | ImportProvidersField;
+    key?:
+      | VMSettingsField
+      | CloudInitField
+      | VMWareProviderField
+      | OvirtProviderField
+      | ImportProvidersField;
     queryKey?: string;
-    wsQueries?: FirehoseResource[];
+    wsQueries?: FirehoseResourceEnhanced[];
     provider?: VMImportProvider;
     tab?: VMWizardTab;
     batch?: ActionBatch;

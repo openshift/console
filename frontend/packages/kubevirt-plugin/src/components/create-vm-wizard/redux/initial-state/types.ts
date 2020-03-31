@@ -1,6 +1,7 @@
 import {
   CommonData,
   ImportProvidersField,
+  OvirtProviderField,
   VMImportProvider,
   VMSettingsField,
   VMWareProviderField,
@@ -24,6 +25,8 @@ export type VMwareSettings = { [key in VMWareProviderField]: SettingsField } & {
   [VMWareProviderField.V2V_NAME]: string;
   [VMWareProviderField.NEW_VCENTER_NAME]: string;
 };
+
+export type OvirtSettings = { [key in OvirtProviderField]: SettingsField } & {};
 
 export type VMSettings = { [key in VMSettingsField]: SettingsField };
 

@@ -1,5 +1,4 @@
 import * as _ from 'lodash';
-import { hasVmSettingsChanged } from '../../../../../selectors/immutable/vm-settings';
 import {
   ImportProvidersField,
   VM_WIZARD_DIFFICULT_TABS,
@@ -26,10 +25,8 @@ import {
 import { vmWizardInternalActions } from '../../../../internal-actions';
 import { asDisabled, asHidden, asRequired } from '../../../../../utils/utils';
 import { deleteV2VvmwareObject } from '../../../../../../../k8s/requests/v2v/delete-v2vvmware-object';
-import {
-  getSimpleV2vVMwareDeploymentStatus,
-  V2VVMWareDeploymentStatus,
-} from '../../../../../../../statuses/v2vvmware-deployment';
+import { getSimplePodDeploymentStatus } from '../../../../../../../statuses/pod-deployment/pod-deployment-status';
+import { PodDeploymentStatus } from '../../../../../../../statuses/pod-deployment/constants';
 import {
   iGet,
   iGetIn,
@@ -58,7 +55,6 @@ const startControllerAndCleanup = (options: UpdateOptions) => {
   const state = getState();
   if (
     !(
-      hasVmSettingsChanged(prevState, state, id, VMSettingsField.PROVISION_SOURCE_TYPE) ||
       hasImportProvidersChanged(prevState, state, id, ImportProvidersField.PROVIDER) ||
       changedCommonData.has(VMWizardProps.activeNamespace)
     )
@@ -99,10 +95,10 @@ const deploymentChanged = (options: UpdateOptions) => {
     iGetLoadedCommonData(state, id, VMWareProviderProps.deploymentPods),
   );
 
-  const status = getSimpleV2vVMwareDeploymentStatus(deployment, deploymentPods);
+  const status = getSimplePodDeploymentStatus(deployment, deploymentPods);
 
   const isLastErrorHidden = !!deployment;
-  const isVCenterDisabled = status !== V2VVMWareDeploymentStatus.ROLLOUT_COMPLETE;
+  const isVCenterDisabled = status !== PodDeploymentStatus.ROLLOUT_COMPLETE;
 
   if (
     iGet(
@@ -212,7 +208,6 @@ const providerUpdater = (options: UpdateOptions) => {
   const state = getState();
   if (
     !(
-      hasVmSettingsChanged(prevState, state, id, VMSettingsField.PROVISION_SOURCE_TYPE) ||
       hasImportProvidersChanged(prevState, state, id, ImportProvidersField.PROVIDER) ||
       changedCommonData.has(VMWizardProps.activeNamespace) ||
       hasVMWareSettingsChanged(

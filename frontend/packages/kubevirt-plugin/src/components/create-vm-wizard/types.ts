@@ -79,15 +79,21 @@ export enum ImportProvidersField {
 
 export enum VMImportProvider {
   VMWARE = 'VMWARE',
+  OVIRT = 'OVIRT',
 }
 
 export enum VMWareProviderProps {
   vCenterSecrets = 'vCenterSecrets',
   vmwareToKubevirtOsConfigMap = 'vmwareToKubevirtOsConfigMap',
-  deploymentPods = 'deploymentPods',
-  deployment = 'deployment',
+  deploymentPods = 'vmwareDeploymentPods',
+  deployment = 'vmwareDeployment',
   v2vvmware = 'v2vvmware',
   activeVcenterSecret = 'activeVcenterSecret',
+}
+
+export enum OvirtProviderProps {
+  deploymentPods = 'ovirtDeploymentPods',
+  deployment = 'ovirtDeployment',
 }
 
 export enum VMWareProviderField {
@@ -101,10 +107,20 @@ export enum VMWareProviderField {
   STATUS = 'STATUS',
 
   VM = 'VM',
+  V2V_LAST_ERROR = 'V2V_LAST_ERROR',
 
   V2V_NAME = 'V2V_NAME',
-  V2V_LAST_ERROR = 'V2V_LAST_ERROR',
   NEW_VCENTER_NAME = 'NEW_VCENTER_NAME',
+}
+
+export enum OvirtProviderField {
+  API_URL = 'API_URL',
+  USERNAME = 'USERNAME',
+  PASSWORD = 'PASSWORD',
+  REMEMBER_PASSWORD = 'REMEMBER_PASSWORD',
+  CERTIFICATE = 'CERTIFICATE',
+
+  CONTROLLER_LAST_ERROR = 'CONTROLLER_LAST_ERROR',
 }
 
 export enum CloudInitField {
@@ -174,7 +190,9 @@ export type ChangedCommonDataProp =
   | VMWareProviderProps.v2vvmware
   | VMWareProviderProps.vmwareToKubevirtOsConfigMap
   | VMWareProviderProps.activeVcenterSecret
-  | VMWareProviderProps.vCenterSecrets;
+  | VMWareProviderProps.vCenterSecrets
+  | OvirtProviderProps.deployment
+  | OvirtProviderProps.deploymentPods;
 
 export type CommonDataProp =
   | VMWizardProps.isSimpleView
@@ -199,6 +217,8 @@ export const DetectCommonDataChanges = new Set<ChangedCommonDataProp>([
   VMWareProviderProps.vmwareToKubevirtOsConfigMap,
   VMWareProviderProps.activeVcenterSecret,
   VMWareProviderProps.vCenterSecrets,
+  OvirtProviderProps.deployment,
+  OvirtProviderProps.deploymentPods,
 ]);
 
 export type CommonData = {

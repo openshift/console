@@ -2,7 +2,6 @@ import { InternalActionType, UpdateOptions } from '../../../../types';
 import {
   ImportProvidersField,
   VMImportProvider,
-  VMSettingsField,
   VMWareProviderField,
   VMWareProviderProps,
   VMWizardProps,
@@ -12,7 +11,6 @@ import {
   iGetVMWareField,
   isVMWareProvider,
 } from '../../../../../selectors/immutable/provider/vmware/selectors';
-import { hasVmSettingsChanged } from '../../../../../selectors/immutable/vm-settings';
 import { hasImportProvidersChanged } from '../../../../../selectors/immutable/import-providers';
 import { getResource } from '../../../../../../../utils';
 import { ConfigMapModel, DeploymentModel, PodModel, SecretModel } from '@console/internal/models';
@@ -26,9 +24,9 @@ import {
 import { V2VVMwareModel } from '../../../../../../../models';
 import { vmWizardInternalActions } from '../../../../internal-actions';
 import { iGetCommonData } from '../../../../../selectors/immutable/selectors';
-import { FirehoseResource } from '@console/internal/components/utils';
 import { iGetIn } from '../../../../../../../utils/immutable';
 import { iGetCreateVMWizard } from '../../../../../selectors/immutable/common';
+import { FirehoseResourceEnhanced } from '../../../../../../../types/custom';
 
 type GetQueriesParams = {
   namespace: string;
@@ -40,8 +38,8 @@ const getQueries = ({
   namespace,
   v2vVmwareName,
   activeVcenterSecretName,
-}: GetQueriesParams): FirehoseResource[] => {
-  const resources = [
+}: GetQueriesParams): FirehoseResourceEnhanced[] => {
+  const resources: FirehoseResourceEnhanced[] = [
     getResource(SecretModel, {
       namespace,
       prop: VMWareProviderProps.vCenterSecrets,
@@ -63,17 +61,27 @@ const getQueries = ({
       prop: VMWareProviderProps.vmwareToKubevirtOsConfigMap,
       optional: true,
     }),
-    getResource(PodModel, {
+    {
+      kind: PodModel.kind,
+      model: PodModel,
+      isList: true,
       namespace,
-      matchLabels: { name: V2VVMWARE_DEPLOYMENT_NAME },
+      selector: {
+        matchLabels: { name: V2VVMWARE_DEPLOYMENT_NAME },
+      },
       prop: VMWareProviderProps.deploymentPods,
-    }),
-    getResource(DeploymentModel, {
+    },
+    {
+      kind: DeploymentModel.kind,
       namespace,
       name: V2VVMWARE_DEPLOYMENT_NAME,
       isList: false,
       prop: VMWareProviderProps.deployment,
-    }),
+      model: DeploymentModel,
+      errorBehaviour: {
+        ignore404: true,
+      },
+    },
   ];
 
   if (v2vVmwareName) {
@@ -119,7 +127,6 @@ export const updateExtraWSQueries = (options: UpdateOptions) => {
   if (
     !(
       changedCommonData.has(VMWizardProps.activeNamespace) ||
-      hasVmSettingsChanged(prevState, state, id, VMSettingsField.PROVISION_SOURCE_TYPE) ||
       hasImportProvidersChanged(prevState, state, id, ImportProvidersField.PROVIDER) ||
       hasVMWareSettingsChanged(
         prevState,

@@ -1,7 +1,7 @@
 import { K8sResourceKind, PodKind } from '@console/internal/module/k8s';
 import { DeploymentStatus, getDeploymentStatus } from '../deployment';
 import { getPodStatus, getSimplePodStatus, POD_STATUS_ALL_ERROR } from '../pod';
-import { V2VVMWareDeploymentStatus } from './constants';
+import { PodDeploymentStatus } from './constants';
 
 const getStatus = (deployment: K8sResourceKind, deploymentPods: PodKind[]) => {
   const deploymentStatus = getDeploymentStatus(deployment);
@@ -13,7 +13,7 @@ const getStatus = (deployment: K8sResourceKind, deploymentPods: PodKind[]) => {
 
     if (failingPod) {
       return {
-        status: V2VVMWareDeploymentStatus.POD_FAILED,
+        status: PodDeploymentStatus.POD_FAILED,
         pod: failingPod,
         message: getPodStatus(failingPod).message,
         deployment,
@@ -21,7 +21,7 @@ const getStatus = (deployment: K8sResourceKind, deploymentPods: PodKind[]) => {
     }
   }
 
-  const mappedStatus = V2VVMWareDeploymentStatus.fromDeploymentStatus(deploymentStatus.status);
+  const mappedStatus = PodDeploymentStatus.fromDeploymentStatus(deploymentStatus.status);
 
   if (mappedStatus) {
     return {
@@ -34,8 +34,8 @@ const getStatus = (deployment: K8sResourceKind, deploymentPods: PodKind[]) => {
   return null;
 };
 
-export const getV2vVMwareDeploymentStatus = (deployment, deploymentPods) =>
-  getStatus(deployment, deploymentPods) || { status: V2VVMWareDeploymentStatus.UNKNOWN };
+export const getPodDeploymentStatus = (deployment, deploymentPods) =>
+  getStatus(deployment, deploymentPods) || { status: PodDeploymentStatus.UNKNOWN };
 
-export const getSimpleV2vVMwareDeploymentStatus = (deployment, deploymentPods) =>
-  getV2vVMwareDeploymentStatus(deployment, deploymentPods).status;
+export const getSimplePodDeploymentStatus = (deployment, deploymentPods) =>
+  getPodDeploymentStatus(deployment, deploymentPods).status;

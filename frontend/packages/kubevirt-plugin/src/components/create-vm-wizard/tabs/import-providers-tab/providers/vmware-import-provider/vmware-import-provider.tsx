@@ -13,8 +13,8 @@ import { FormFieldMemoRow } from '../../../../form/form-field-row';
 import { iGet, iGetIn } from '../../../../../../utils/immutable';
 import { getFieldId } from '../../../../utils/renderable-field-utils';
 import { FormFieldReviewContext } from '../../../../form/form-field-review-context';
-import { VMWareControllerStatusRow } from './vmware-controller-status-row';
-import { VMWareControllerErrors } from './vmware-controller-errors';
+import { VMImportProviderControllerStatusRow } from '../vm-import-provider-controller-status-row';
+import { VMImportProviderControllerErrors } from '../vm-import-provider-controller-errors';
 import { VMWareSecrets } from './vmware-secrets';
 import { VMWarePassword } from './vmware-password';
 import { VMWareObjectStatus } from './vmware-object-status';
@@ -79,10 +79,15 @@ class VMWareImportProviderConnected extends React.Component<VMWareImportProvider
             <VMWareVMs key="vms" wizardReduxID={wizardReduxID} />
             {!isReview && (
               <>
-                <VMWareControllerErrors key="errors" wizardReduxID={wizardReduxID} />
-                <VMWareControllerStatusRow
+                <VMImportProviderControllerErrors
+                  key="errors"
+                  wizardReduxID={wizardReduxID}
+                  provider={VMImportProvider.VMWARE}
+                />
+                <VMImportProviderControllerStatusRow
                   key="controllerstatus-row"
                   wizardReduxID={wizardReduxID}
+                  provider={VMImportProvider.VMWARE}
                   id="v2v-vmware-status"
                 />
                 <VMWareObjectStatus key="object-status" wizardReduxID={wizardReduxID} />

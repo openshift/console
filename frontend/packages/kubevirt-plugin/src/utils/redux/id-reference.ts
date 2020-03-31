@@ -1,13 +1,11 @@
-import { FirehoseResource, makeQuery, makeReduxID } from '@console/internal/components/utils';
-import { K8sResourceKind } from '@console/internal/module/k8s';
-
-type EnhancedFirehoseResource = FirehoseResource & { model: K8sResourceKind; fieldSelector: any };
+import { makeQuery, makeReduxID } from '@console/internal/components/utils';
+import { FirehoseResourceEnhanced } from '../../types/custom';
 
 export type IDReference = string[];
 
 export type IDReferences = { [key: string]: IDReference };
 
-export const makeIDReferences = (resources: EnhancedFirehoseResource[]): IDReferences => {
+export const makeIDReferences = (resources: FirehoseResourceEnhanced[]): IDReferences => {
   return resources.reduce((acc, resource) => {
     const query = makeQuery(
       resource.namespace,
