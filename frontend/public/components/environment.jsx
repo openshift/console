@@ -497,6 +497,7 @@ export const EnvironmentPage = connect(stateToProps)(
       }
 
       const envVar = currentEnvVars.getEnvVarByTypeAndIndex(containerType, containerIndex);
+
       const containerDropdown = currentEnvVars.isContainerArray ? (
         <ContainerDropdown
           currentKey={rawEnvData[containerType][containerIndex].name}

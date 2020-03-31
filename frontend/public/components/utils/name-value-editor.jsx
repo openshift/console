@@ -253,7 +253,17 @@ export const EnvFromEditor = withDragDropContext(
     }
 
     render() {
-      const { nameValuePairs, readOnly, nameValueId, configMaps, secrets } = this.props;
+      const {
+        nameValuePairs,
+        readOnly,
+        nameValueId,
+        configMaps,
+        secrets,
+        serviceAccounts,
+        firstTitle,
+        secondTitle,
+        addButtonDisabled,
+      } = this.props;
       const pairElems = nameValuePairs.map((pair, i) => {
         const key = _.get(pair, [EnvFromPair.Index], i);
 
@@ -271,6 +281,7 @@ export const EnvFromEditor = withDragDropContext(
             rowSourceId={nameValueId}
             configMaps={configMaps}
             secrets={secrets}
+            serviceAccounts={serviceAccounts}
           />
         );
       });
@@ -279,8 +290,8 @@ export const EnvFromEditor = withDragDropContext(
         <>
           <div className="row pairs-list__heading">
             {!readOnly && <div className="col-xs-1 co-empty__header" />}
-            <div className="col-xs-5 text-secondary text-uppercase">Config Map/Secret</div>
-            <div className="col-xs-5 text-secondary text-uppercase">Prefix (Optional)</div>
+            <div className="col-xs-5 text-secondary text-uppercase">{firstTitle}</div>
+            <div className="col-xs-5 text-secondary text-uppercase">{secondTitle}</div>
             <div className="col-xs-1 co-empty__header" />
           </div>
           {pairElems}
@@ -292,6 +303,7 @@ export const EnvFromEditor = withDragDropContext(
                   onClick={this._append}
                   type="button"
                   variant="link"
+                  isDisabled={addButtonDisabled}
                 >
                   <PlusCircleIcon /> Add All From Config Map or Secret
                 </Button>
@@ -318,10 +330,17 @@ EnvFromEditor.propTypes = {
   updateParentData: PropTypes.func.isRequired,
   configMaps: PropTypes.object,
   secrets: PropTypes.object,
+  serviceAccounts: PropTypes.object,
+  firstTitle: PropTypes.string,
+  secondTitle: PropTypes.string,
+  addButtonDisabled: PropTypes.bool,
 };
 EnvFromEditor.defaultProps = {
   readOnly: false,
   nameValueId: 0,
+  firstTitle: 'Config map/secret',
+  secondTitle: 'Prefix (Optional)',
+  addButtonDisabled: false,
 };
 
 const pairSource = {
@@ -595,6 +614,7 @@ const EnvFromPairElement = DragSource(
           pair,
           configMaps,
           secrets,
+          serviceAccounts,
         } = this.props;
         const deleteButton = (
           <>
@@ -630,6 +650,7 @@ const EnvFromPairElement = DragSource(
                   pair={pair[EnvFromPair.Resource]}
                   configMaps={configMaps}
                   secrets={secrets}
+                  serviceAccounts={serviceAccounts}
                   onChange={this._onChangeResource}
                   disabled={readOnly}
                 />

@@ -63,6 +63,18 @@ export class VMWrapper extends K8sResourceWrapper<VMKind, VMWrapper> implements 
 
   getTolerations = () => getTolerations(this.data);
 
+  getConfigMaps = () => this.getVolumes().filter((vol) => Object.keys(vol).includes('configMap'));
+
+  getSecrets = () => this.getVolumes().filter((vol) => Object.keys(vol).includes('secret'));
+
+  getServiceAccounts = () =>
+    this.getVolumes().filter((vol) => Object.keys(vol).includes('serviceAccount'));
+
+  getDiskSerial = (diskName) => {
+    const disk = this.getDisks().find((d) => d.name === diskName);
+    return disk && Object.keys(disk).includes('serial') && disk.serial;
+  };
+
   isDedicatedCPUPlacement = () => isDedicatedCPUPlacement(this.data);
 
   addTemplateLabel = (key: string, value: string) => {
