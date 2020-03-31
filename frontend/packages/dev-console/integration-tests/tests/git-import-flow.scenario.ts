@@ -231,7 +231,7 @@ describe('git import flow with advanced options', () => {
   });
 });
 
-// This describe block is disabled beacause "Add Pipeline" functionality displays only when pipeline operator is installed 
+// This describe block is disabled beacause "Add Pipeline" functionality displays only when pipeline operator is installed
 // So will move this block to pipelinescenarios
 xdescribe('git import flow with pipeline creation', () => {
   let newApplication;

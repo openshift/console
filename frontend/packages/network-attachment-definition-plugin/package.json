@@ -15,7 +15,9 @@
   "consolePlugin": {
     "entry": "src/plugin.ts",
     "integrationTestSuites": {
-      "network-attachment-definition": ["integration-tests/**/*.scenario.ts"]
+      "network-attachment-definition": [
+        "integration-tests/**/*.scenario.ts"
+      ]
     }
   }
 }

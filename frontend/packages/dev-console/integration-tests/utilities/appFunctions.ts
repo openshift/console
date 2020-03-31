@@ -80,7 +80,9 @@ export const naviagteTo = async function(opt: NavigationMenu) {
 
 export const switchPerspective = async function(perspective: Perspective) {
   await click(elementByDataTestID('perspective-switcher-toggle'));
-  await browser.wait(EC.visibilityOf(elementByDataTestID('perspective-switcher-menu'), ELEMENT_WAIT));
+  await browser.wait(
+    EC.visibilityOf(elementByDataTestID('perspective-switcher-menu'), ELEMENT_WAIT),
+  );
   switch (perspective) {
     case Perspective.Developer: {
       await click(element(by.cssContainingText('.pf-c-dropdown__menu-item', 'Developer')));
