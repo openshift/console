@@ -5,3 +5,5 @@ export enum PipelineResourceType {
   cluster = 'Cluster',
   storage = 'Storage',
 }
+
+export const PIPELINE_SERVICE_ACCOUNT = 'pipeline';

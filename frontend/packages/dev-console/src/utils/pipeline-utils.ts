@@ -1,12 +1,20 @@
 import * as _ from 'lodash';
 import { formatDuration } from '@console/internal/components/utils/datetime';
-import { K8sResourceKind } from '@console/internal/module/k8s';
+import {
+  K8sResourceKind,
+  k8sUpdate,
+  k8sGet,
+  SecretKind,
+  K8sResourceCommon,
+} from '@console/internal/module/k8s';
 import {
   LOG_SOURCE_RESTARTING,
   LOG_SOURCE_WAITING,
   LOG_SOURCE_RUNNING,
   LOG_SOURCE_TERMINATED,
 } from '@console/internal/components/utils';
+import { ServiceAccountModel } from '@console/internal/models';
+import { errorModal } from '@console/internal/components/modals/error-modal';
 import {
   getLatestRun,
   Pipeline,
@@ -17,11 +25,16 @@ import {
   PipelineTaskRef,
 } from './pipeline-augment';
 import { pipelineFilterReducer, pipelineRunStatus } from './pipeline-filter-reducer';
+import { PIPELINE_SERVICE_ACCOUNT } from '../components/pipelines/const';
 
 interface Resources {
   inputs?: Resource[];
   outputs?: Resource[];
 }
+
+type ServiceAccountKind = {
+  secrets: { [name: string]: string }[];
+} & K8sResourceCommon;
 
 interface Resource {
   name: string;
@@ -310,4 +323,25 @@ export const pipelineRunDuration = (run: PipelineRun): string => {
     ? new Date(completionTime).getTime() - start
     : new Date().getTime() - start;
   return formatDuration(duration);
+};
+
+export const updateServiceAccount = (
+  secretName: string,
+  originalServiceAccount: ServiceAccountKind,
+): Promise<ServiceAccountKind> => {
+  const updatedServiceAccount = _.cloneDeep(originalServiceAccount);
+  updatedServiceAccount.secrets = [...updatedServiceAccount.secrets, { name: secretName }];
+  return k8sUpdate(ServiceAccountModel, updatedServiceAccount);
+};
+
+export const associateServiceAccountToSecret = (secret: SecretKind, namespace: string) => {
+  k8sGet(ServiceAccountModel, PIPELINE_SERVICE_ACCOUNT, namespace)
+    .then((serviceAccount) => {
+      if (_.find(serviceAccount.secrets, (s) => s.name === secret.metadata.name) === undefined) {
+        updateServiceAccount(secret.metadata.name, serviceAccount);
+      }
+    })
+    .catch((err) => {
+      errorModal({ error: err.message });
+    });
 };
