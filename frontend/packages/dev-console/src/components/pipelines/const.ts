@@ -12,3 +12,4 @@ export enum VolumeTypes {
   Secret = 'Secret',
   PVC = 'PVC',
 }
+export const PIPELINE_SERVICE_ACCOUNT = 'pipeline';

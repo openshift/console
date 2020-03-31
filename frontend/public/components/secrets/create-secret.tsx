@@ -521,7 +521,7 @@ type CreateConfigSubformState = {
   }[];
 };
 
-class CreateConfigSubform extends React.Component<
+export class CreateConfigSubform extends React.Component<
   CreateConfigSubformProps,
   CreateConfigSubformState
 > {
