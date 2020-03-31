@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"errors"
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"strings"
@@ -12,6 +13,7 @@ import (
 	"helm.sh/helm/v3/pkg/release"
 
 	"github.com/openshift/console/pkg/auth"
+	"github.com/openshift/console/pkg/helm/actions"
 )
 
 var fakeReleaseList = []*release.Release{
@@ -20,8 +22,24 @@ var fakeReleaseList = []*release.Release{
 	},
 }
 
+var fakeReleaseHistory = []*release.Release{
+	{
+		Name:    "test",
+		Version: 1,
+	},
+	{
+		Name:    "test",
+		Version: 2,
+	},
+}
+
 var fakeRelease = release.Release{
 	Name: "Test",
+}
+
+var fakeUninstallResponse = &release.UninstallReleaseResponse{
+	Release: &fakeRelease,
+	Info:    "",
 }
 
 var fakeReleaseManifest = "manifest-data"
@@ -59,6 +77,45 @@ func fakeGetRelease(mockedRelease *release.Release, err error) func(releaseName 
 func mockedHelmGetChart(c *chart.Chart, e error) func(url string, conf *action.Configuration) (*chart.Chart, error) {
 	return func(url string, conf *action.Configuration) (*chart.Chart, error) {
 		return c, e
+	}
+}
+
+func fakeGetReleaseHistory(name string, fakeHistory []*release.Release, t *testing.T, err error) func(name string, conf *action.Configuration) ([]*release.Release, error) {
+	return func(n string, conf *action.Configuration) ([]*release.Release, error) {
+		if name != n {
+			t.Errorf("release name mismatch expected is %s, received %s", n, name)
+		}
+		return fakeHistory, err
+	}
+}
+
+func fakeUninstallRelease(name string, t *testing.T, fakeResp *release.UninstallReleaseResponse, err error) func(name string, conf *action.Configuration) (*release.UninstallReleaseResponse, error) {
+	return func(n string, conf *action.Configuration) (*release.UninstallReleaseResponse, error) {
+		if n != name {
+			t.Errorf("release name mismatch expected is %s, received %s", n, name)
+		}
+		return fakeResp, err
+	}
+}
+
+func fakeUpgradeRelease(name, ns string, t *testing.T, fakeRelease *release.Release, err error) func(ns, name, url string, vals map[string]interface{}, conf *action.Configuration) (*release.Release, error) {
+	return func(namespace, n, url string, vals map[string]interface{}, conf *action.Configuration) (*release.Release, error) {
+		if namespace != ns {
+			t.Errorf("Namespace mismatch expected %s received %s", ns, namespace)
+		}
+		if name != n {
+			t.Errorf("Name mismatch expected %s received %s", name, n)
+		}
+		return fakeRelease, err
+	}
+}
+
+func fakeRollbackRelease(name string, t *testing.T, rel *release.Release, err error) func(name string, revision int, conf *action.Configuration) (*release.Release, error) {
+	return func(n string, revision int, conf *action.Configuration) (*release.Release, error) {
+		if name != n {
+			t.Errorf("Release name mismatch expected is %s and received %s", name, n)
+		}
+		return rel, err
 	}
 }
 
@@ -290,7 +347,282 @@ func TestHelmHandlers_HandleGetChart(t *testing.T) {
 			if response.Body.String() != tt.expectedResponse {
 				t.Errorf("response body not matching expected is %s and received is %s", tt.expectedResponse, response.Body.String())
 			}
+		})
+	}
+}
 
+func TestHelmHandlers_HandleGetReleaseHistory(t *testing.T) {
+	tests := []struct {
+		name                string
+		expectedResponse    string
+		history             []*release.Release
+		expectedContentType string
+		error
+		httpStatusCode int
+		releaseName    string
+	}{
+		{
+			name:                "chart release history should error out when there is error from helm",
+			error:               errors.New("Chart path is invalid"),
+			expectedResponse:    `{"error":"Failed to list helm release history: Chart path is invalid"}`,
+			httpStatusCode:      http.StatusBadGateway,
+			expectedContentType: "application/json",
+			releaseName:         "test",
+		},
+		{
+			name:                "Get successful release history",
+			expectedResponse:    `[{"name":"test","version":1},{"name":"test","version":2}]`,
+			history:             fakeReleaseHistory,
+			httpStatusCode:      http.StatusOK,
+			expectedContentType: "application/json",
+			releaseName:         "test",
+		},
+		{
+			name:                "NotFound error should be returned if release does not exist",
+			error:               actions.ErrReleaseNotFound,
+			expectedResponse:    `{"error":"Failed to list helm release history: release not found"}`,
+			httpStatusCode:      http.StatusNotFound,
+			expectedContentType: "application/json",
+			releaseName:         "test",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			handlers := fakeHelmHandler()
+			handlers.getReleaseHistory = fakeGetReleaseHistory(tt.releaseName, tt.history, t, tt.error)
+
+			request := httptest.NewRequest("", "/foo?name="+tt.releaseName, strings.NewReader(`{}`))
+			response := httptest.NewRecorder()
+
+			handlers.HandleGetReleaseHistory(&auth.User{}, response, request)
+
+			if response.Code != tt.httpStatusCode {
+				t.Errorf("response code should be %v but got %v", tt.httpStatusCode, response.Code)
+			}
+			if response.Header().Get("Content-Type") != tt.expectedContentType {
+				t.Errorf("content type should be %s but got %s", tt.expectedContentType, response.Header().Get("Content-Type"))
+			}
+			if response.Body.String() != tt.expectedResponse {
+				t.Errorf("response body not matching expected is %s and received is %s", tt.expectedResponse, response.Body.String())
+			}
+		})
+	}
+}
+
+func TestHelmHandlers_HandleHelmUninstallRelease(t *testing.T) {
+	tests := []struct {
+		name                string
+		expectedResponse    string
+		uninstallResponse   *release.UninstallReleaseResponse
+		expectedContentType string
+		releaseName         string
+		releaseNamespace    string
+		error
+		httpStatusCode int
+	}{
+		{
+			name:                "Invalid chart uninstall release test",
+			error:               errors.New("Chart path is invalid"),
+			expectedResponse:    `{"error":"Failed to uninstall helm release: Chart path is invalid"}`,
+			httpStatusCode:      http.StatusBadGateway,
+			expectedContentType: "application/json",
+			releaseName:         "test",
+			releaseNamespace:    "test-namespace",
+		},
+		{
+			name:                "Valid chart uninstall release test",
+			expectedResponse:    `{"release":{"name":"Test"}}`,
+			uninstallResponse:   fakeUninstallResponse,
+			httpStatusCode:      http.StatusOK,
+			expectedContentType: "application/json",
+			releaseName:         "test",
+			releaseNamespace:    "test-namespace",
+		},
+		{
+			name:                "uninstalling non exist release should return not found",
+			error:               actions.ErrReleaseNotFound,
+			expectedResponse:    `{"error":"Failed to uninstall helm release: release not found"}`,
+			httpStatusCode:      http.StatusNotFound,
+			expectedContentType: "application/json",
+			releaseName:         "test",
+			releaseNamespace:    "test-namespace",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			handlers := fakeHelmHandler()
+			handlers.uninstallRelease = fakeUninstallRelease(tt.releaseName, t, tt.uninstallResponse, tt.error)
+
+			request := httptest.NewRequest("", fmt.Sprintf("/foo?name=%s&ns=%s", tt.releaseName, tt.releaseNamespace), strings.NewReader("{}"))
+			response := httptest.NewRecorder()
+
+			handlers.HandleUninstallRelease(&auth.User{}, response, request)
+
+			if response.Code != tt.httpStatusCode {
+				t.Errorf("response code should be %v but got %v", tt.httpStatusCode, response.Code)
+			}
+			if response.Header().Get("Content-Type") != tt.expectedContentType {
+				t.Errorf("content type should be %s but got %s", tt.expectedContentType, response.Header().Get("Content-Type"))
+			}
+			if response.Body.String() != tt.expectedResponse {
+				t.Errorf("response body not matching expected is %s and received is %s", tt.expectedResponse, response.Body.String())
+			}
+		})
+	}
+}
+
+func TestHelmHandlers_HandleHelmRollbackRelease(t *testing.T) {
+	tests := []struct {
+		name                string
+		expectedResponse    string
+		release             *release.Release
+		expectedContentType string
+		body                string
+		releaseName         string
+		releaseNamespace    string
+		error
+		httpStatusCode int
+	}{
+		{
+			name:                "Invalid chart rollback release test",
+			error:               errors.New("Chart path is invalid"),
+			body:                `{"name": "test", "namespace":"test", "version":1}`,
+			expectedResponse:    `{"error":"Failed to rollback helm releases: Chart path is invalid"}`,
+			httpStatusCode:      http.StatusBadGateway,
+			expectedContentType: "application/json",
+			releaseName:         "test",
+			releaseNamespace:    "test",
+		},
+		{
+			name:             "Valid chart rollback release test",
+			expectedResponse: `{"name":"test-release","info":{"first_deployed":"","last_deployed":"","deleted":"","status":"deployed"},"version":1}`,
+			body:             `{"name": "test", "namespace":"test", "version":1}`,
+			release: &release.Release{
+				Name: "test-release",
+				Info: &release.Info{
+					Status: release.StatusDeployed,
+				},
+				Version: 1,
+			},
+			expectedContentType: "application/json",
+			error:               nil,
+			httpStatusCode:      http.StatusOK,
+			releaseName:         "test",
+			releaseNamespace:    "test",
+		},
+		{
+			name:                "Invalid body in the request should throw an json parsing error",
+			expectedResponse:    `{"error":"Failed to parse request: json: cannot unmarshal string into Go struct field HelmRequest.version of type int"}`,
+			body:                `{"name": "test", "namespace":"test", "version":"abc"}`,
+			expectedContentType: "application/json",
+			error:               errors.New(`{"error":"Failed to parse request: json: cannot unmarshal string into Go struct field HelmRequest.version of type int"}`),
+			httpStatusCode:      http.StatusBadGateway,
+			releaseName:         "test",
+			releaseNamespace:    "test",
+		},
+		{
+			name:                "Non exist release rollback should return revision not found error",
+			error:               actions.ErrReleaseRevisionNotFound,
+			body:                `{"name": "test", "namespace":"test", "version":1}`,
+			expectedResponse:    `{"error":"Failed to rollback helm releases: revision not found for provided release"}`,
+			httpStatusCode:      http.StatusNotFound,
+			expectedContentType: "application/json",
+			releaseName:         "test",
+			releaseNamespace:    "test",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			handlers := fakeHelmHandler()
+			var request *http.Request
+
+			handlers.rollbackRelease = fakeRollbackRelease(tt.releaseName, t, tt.release, tt.error)
+
+			request = httptest.NewRequest("", "/foo", strings.NewReader(tt.body))
+			response := httptest.NewRecorder()
+
+			handlers.HandleRollbackRelease(&auth.User{}, response, request)
+
+			if response.Code != tt.httpStatusCode {
+				t.Errorf("response code should be %v but got %v", tt.httpStatusCode, response.Code)
+			}
+			if response.Header().Get("Content-Type") != tt.expectedContentType {
+				t.Errorf("content type should be %s but got %s", tt.expectedContentType, response.Header().Get("Content-Type"))
+			}
+			if response.Body.String() != tt.expectedResponse {
+				t.Errorf("response body not matching expected is %s and received is %s", tt.expectedResponse, response.Body.String())
+			}
+		})
+	}
+}
+
+func TestHelmHandlers_HandleHelmUpgradeRelease(t *testing.T) {
+	tests := []struct {
+		name                string
+		expectedResponse    string
+		expectedContentType string
+		release             *release.Release
+		error
+		httpStatusCode  int
+		requestBody     string
+		releaseName     string
+		releaseNamepace string
+	}{
+		{
+			name:                "Invalid chart path upgrade release test",
+			error:               errors.New("Chart path is invalid"),
+			expectedResponse:    `{"error":"Failed to upgrade helm release: Chart path is invalid"}`,
+			httpStatusCode:      http.StatusBadGateway,
+			expectedContentType: "application/json",
+			requestBody:         `{"name":"test", "namespace": "test-namespace", "version": 1}`,
+			releaseName:         "test",
+			releaseNamepace:     "test-namespace",
+		},
+		{
+			name:                "Valid chart upgrade release",
+			expectedResponse:    `{"name":"Test"}`,
+			release:             &fakeRelease,
+			expectedContentType: "application/json",
+			error:               nil,
+			httpStatusCode:      http.StatusOK,
+			requestBody:         `{"name":"test", "namespace": "test-namespace"}`,
+			releaseName:         "test",
+			releaseNamepace:     "test-namespace",
+		},
+		{
+			name:                "Upgrade of non exist release should return no revision found error",
+			expectedResponse:    `{"error":"Failed to rollback helm releases: revision not found for provided release"}`,
+			release:             &fakeRelease,
+			expectedContentType: "application/json",
+			error:               actions.ErrReleaseRevisionNotFound,
+			httpStatusCode:      http.StatusNotFound,
+			requestBody:         `{"name":"test", "namespace": "test-namespace"}`,
+			releaseName:         "test",
+			releaseNamepace:     "test-namespace",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			handlers := fakeHelmHandler()
+			var request *http.Request
+
+			handlers.upgradeRelease = fakeUpgradeRelease(tt.releaseName, tt.releaseNamepace, t, tt.release, tt.error)
+
+			request = httptest.NewRequest("", "/foo", strings.NewReader(tt.requestBody))
+
+			response := httptest.NewRecorder()
+
+			handlers.HandleUpgradeRelease(&auth.User{}, response, request)
+
+			if response.Code != tt.httpStatusCode {
+				t.Errorf("response code should be %v but got %v", tt.httpStatusCode, response.Code)
+			}
+			if response.Header().Get("Content-Type") != tt.expectedContentType {
+				t.Errorf("content type should be %s but got %s", tt.expectedContentType, response.Header().Get("Content-Type"))
+			}
+			if response.Body.String() != tt.expectedResponse {
+				t.Errorf("response body not matching expected is %s and received is %s", tt.expectedResponse, response.Body.String())
+			}
 		})
 	}
 }
