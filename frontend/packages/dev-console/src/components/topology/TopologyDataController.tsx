@@ -52,12 +52,15 @@ const Controller: React.FC<ControllerProps> = ({
   serviceBinding,
   trafficData,
 }) => {
-  const secretCount = React.useRef<number>(0);
+  const secretCount = React.useRef<number>(-1);
   const [helmResourcesMap, setHelmResourcesMap] = React.useState<HelmReleaseResourcesMap>(null);
 
   React.useEffect(() => {
     const count = resources?.secrets?.data?.length ?? 0;
-    if (count !== secretCount.current) {
+    if (
+      (resources.secrets?.loaded && count !== secretCount.current) ||
+      resources.secrets?.loadError
+    ) {
       secretCount.current = count;
       if (count === 0) {
         setHelmResourcesMap({});
