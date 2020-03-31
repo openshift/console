@@ -80,7 +80,7 @@ export const UninstallOperatorModal = withHandlePromise((props: UninstallOperato
         running, but it will no longer receive updates or configuration changes.
         {uninstallMessage && (
           <>
-            <h2>Operator Developer Message</h2>
+            <h2>Message from operator developer</h2>
             <p>{uninstallMessage}</p>
           </>
         )}
