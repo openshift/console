@@ -82,29 +82,22 @@ func TestRollbackRelease(t *testing.T) {
 
 func TestRollbackNonExistRelease(t *testing.T) {
 	tests := []struct {
-		name       string
-		release    release.Release
-		err        error
-		rollbackTo []int
+		name        string
+		releaseName string
+		err         error
+		rollbackTo  int
 	}{
 		{
-			name: "rolling back non exist release should error out with no release found",
-			release: release.Release{
-				Name:    "invalid-release",
-				Version: 1,
-				Info: &release.Info{
-					Status: release.StatusDeployed,
-				},
-			},
-			err:        ErrReleaseRevisionNotFound,
-			rollbackTo: []int{1},
+			name:        "rolling back non exist release should error out with no release found",
+			releaseName: "invalid-release",
+			err:         ErrReleaseRevisionNotFound,
+			rollbackTo:  1,
 		},
 	}
 
 	for _, tt := range tests {
 		store := storage.Init(driver.NewMemory())
 		t.Run(tt.name, func(t *testing.T) {
-			// create fake release
 			actionConfig := &action.Configuration{
 				Releases:     store,
 				KubeClient:   &kubefake.PrintingKubeClient{Out: ioutil.Discard},
@@ -112,14 +105,9 @@ func TestRollbackNonExistRelease(t *testing.T) {
 				Log:          func(format string, v ...interface{}) {},
 			}
 
-			for _, version := range tt.rollbackTo {
-				_, err := RollbackRelease(tt.release.Name, version, actionConfig)
-				if err == nil && tt.err != nil {
-					t.Error(err)
-				}
-				if err != nil && err.Error() != tt.err.Error() {
-					t.Error(err)
-				}
+			_, err := RollbackRelease(tt.releaseName, tt.rollbackTo, actionConfig)
+			if err != nil && err.Error() != tt.err.Error() {
+				t.Error(err)
 			}
 		})
 	}

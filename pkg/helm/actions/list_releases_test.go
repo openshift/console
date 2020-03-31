@@ -56,7 +56,7 @@ func TestListReleases(t *testing.T) {
 				t.Error("Release list should contain 1 release")
 			}
 			if rels[0].Name != "test" {
-				t.Error("Release releaseName isn't matching")
+				t.Error("Release testName isn't matching")
 			}
 			if rels[0].Namespace != "test-namespace" {
 				t.Error("Namespace rels[0]easeName isn't matching")

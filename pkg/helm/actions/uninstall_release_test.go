@@ -17,10 +17,9 @@ func TestUninstallRelease(t *testing.T) {
 	tests := []struct {
 		name    string
 		release *release.Release
-		err     error
 	}{
 		{
-			name: "successful release uninstall should remove release and dependant resources",
+			name: "successful release uninstall should remove release installed",
 			release: &release.Release{
 				Name: "test-release",
 				Info: &release.Info{
@@ -45,9 +44,6 @@ func TestUninstallRelease(t *testing.T) {
 				t.Error(err)
 			}
 			resp, err := UninstallRelease(tt.release.Name, actionConfig)
-			if err != nil && err.Error() != tt.err.Error() {
-				t.Error(err)
-			}
 			if resp != nil && resp.Release.Info.Status != release.StatusUninstalled {
 				t.Error(errors.New("Release status is not uninstalled"))
 			}
@@ -80,9 +76,6 @@ func TestUninstallInvalidRelease(t *testing.T) {
 				Log:          func(format string, v ...interface{}) {},
 			}
 			resp, err := UninstallRelease(tt.release.Name, actionConfig)
-			if err == nil && tt.err != nil {
-				t.Error(err)
-			}
 			if err != nil && err.Error() != tt.err.Error() {
 				t.Error(err)
 			}

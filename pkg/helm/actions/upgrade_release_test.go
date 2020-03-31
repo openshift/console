@@ -18,28 +18,28 @@ import (
 
 func TestUpgradeRelease(t *testing.T) {
 	tests := []struct {
-		releaseName  string
+		testName     string
 		chartPath    string
 		chartName    string
 		chartVersion string
 		err          error
 	}{
 		{
-			releaseName:  "upgrade valid release should return successful response",
+			testName:     "upgrade valid release should return successful response",
 			chartPath:    "../testdata/influxdb-3.0.2.tgz",
 			chartName:    "influxdb",
 			chartVersion: "3.0.2",
 			err:          nil,
 		},
 		{
-			releaseName:  "upgrade invalid chart upgrade should fail",
+			testName:     "upgrade invalid chart upgrade should fail",
 			chartPath:    "../testdata/influxdb-3.0.1.tgz",
 			chartName:    "influxdb",
 			chartVersion: "3.0.2",
 			err:          errors.New(`path "../testdata/influxdb-3.0.1.tgz" not found`),
 		},
 		{
-			releaseName:  "upgrade release with no chart_url should upgrade successfully",
+			testName:     "upgrade release with no chart_url should upgrade successfully",
 			chartPath:    "",
 			chartName:    "influxdb",
 			chartVersion: "3.0.2",
@@ -47,7 +47,7 @@ func TestUpgradeRelease(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
-		t.Run(tt.releaseName, func(t *testing.T) {
+		t.Run(tt.testName, func(t *testing.T) {
 			store := storage.Init(driver.NewMemory())
 			actionConfig := &action.Configuration{
 				Releases:     store,
@@ -83,10 +83,10 @@ func TestUpgradeRelease(t *testing.T) {
 			}
 			if rel != nil {
 				if rel.Name != r.Name {
-					t.Error("Release releaseName isn't matching")
+					t.Error("Release testName isn't matching")
 				}
 				if rel.Namespace != r.Namespace {
-					t.Error("Namespace releaseName isn't matching")
+					t.Error("Namespace testName isn't matching")
 				}
 				if rel.Info.Status != release.StatusDeployed {
 					t.Error("Chart status should be deployed")
@@ -107,14 +107,14 @@ func TestUpgradeRelease(t *testing.T) {
 
 func TestUpgradeNonExistRelease(t *testing.T) {
 	tests := []struct {
-		releaseName  string
+		testName     string
 		chartPath    string
 		chartName    string
 		chartVersion string
 		err          error
 	}{
 		{
-			releaseName:  "upgrade non exist release should return no revision found",
+			testName:     "upgrade non exist release should return no revision found",
 			chartPath:    "",
 			chartName:    "influxdb",
 			chartVersion: "3.0.2",
@@ -122,7 +122,7 @@ func TestUpgradeNonExistRelease(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
-		t.Run(tt.releaseName, func(t *testing.T) {
+		t.Run(tt.testName, func(t *testing.T) {
 			store := storage.Init(driver.NewMemory())
 			actionConfig := &action.Configuration{
 				Releases:     store,
@@ -144,7 +144,7 @@ func TestUpgradeNonExistRelease(t *testing.T) {
 
 func TestUpgradeReleaseWithCustomValues(t *testing.T) {
 	tests := []struct {
-		releaseName  string
+		testName     string
 		chartPath    string
 		chartName    string
 		chartVersion string
@@ -152,7 +152,7 @@ func TestUpgradeReleaseWithCustomValues(t *testing.T) {
 		err          error
 	}{
 		{
-			releaseName:  "upgrade valid release with custom values should return successful response",
+			testName:     "upgrade valid release with custom values should return successful response",
 			chartPath:    "../testdata/influxdb-3.0.2.tgz",
 			chartName:    "influxdb",
 			chartVersion: "3.0.2",
@@ -163,7 +163,7 @@ func TestUpgradeReleaseWithCustomValues(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
-		t.Run(tt.releaseName, func(t *testing.T) {
+		t.Run(tt.testName, func(t *testing.T) {
 			store := storage.Init(driver.NewMemory())
 			actionConfig := &action.Configuration{
 				Releases:     store,
@@ -199,10 +199,10 @@ func TestUpgradeReleaseWithCustomValues(t *testing.T) {
 			}
 			if rel != nil {
 				if rel.Name != r.Name {
-					t.Error("Release releaseName isn't matching")
+					t.Error("Release testName isn't matching")
 				}
 				if rel.Namespace != r.Namespace {
-					t.Error("Namespace releaseName isn't matching")
+					t.Error("Namespace testName isn't matching")
 				}
 				if rel.Info.Status != release.StatusDeployed {
 					t.Error("Chart status should be deployed")

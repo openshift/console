@@ -47,10 +47,10 @@ func TestInstallChart(t *testing.T) {
 					t.Error("Error occurred while installing chartPath")
 				}
 				if rel.Name != "test" {
-					t.Error("Release releaseName isn't matching")
+					t.Error("Release testName isn't matching")
 				}
 				if rel.Namespace != "test-namespace" {
-					t.Error("Namespace releaseName isn't matching")
+					t.Error("Namespace testName isn't matching")
 				}
 				if rel.Info.Status != release.StatusDeployed {
 					t.Error("Chart status should be deployed")

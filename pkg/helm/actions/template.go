@@ -21,7 +21,7 @@ func RenderManifests(name string, url string, vals map[string]interface{}, conf 
 	client.DryRun = true
 	includeCrds := true
 	client.ReleaseName = "RELEASE-NAME"
-	client.Replace = true // Skip the releaseName check
+	client.Replace = true // Skip the testName check
 	client.ClientOnly = !validate
 	emptyResponse := ""
 
