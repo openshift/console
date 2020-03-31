@@ -3,6 +3,7 @@ import { RootState } from '@console/internal/redux';
 export enum ShowFiltersKeyValue {
   podCount = 'Pod Count',
   eventSources = 'Event Sources',
+  showLabels = 'Show Labels',
 }
 
 export enum ExpandFiltersKeyValue {
@@ -28,6 +29,7 @@ export type SearchQuery = string;
 export type DisplayFilters = {
   podCount: boolean;
   eventSources: boolean;
+  showLabels: boolean;
   knativeServices: boolean;
   appGrouping: boolean;
   operatorGrouping: boolean;

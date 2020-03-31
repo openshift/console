@@ -15,7 +15,7 @@ import {
 import SvgBoxedText from '../../../svg/SvgBoxedText';
 import { nodeDragSourceSpec } from '../../components/componentUtils';
 import { TYPE_OPERATOR_BACKED_SERVICE } from './const';
-import { useSearchFilter } from '../../filters/useSearchFilter';
+import { useDisplayFilters, useSearchFilter } from '../../filters';
 import {
   NodeShadows,
   NODE_SHADOW_FILTER_ID,
@@ -57,6 +57,8 @@ const OperatorBackedServiceGroup: React.FC<OperatorBackedServiceGroupProps> = ({
   const hasChildren = element.getChildren()?.length > 0;
   const { data } = element.getData();
   const [filtered] = useSearchFilter(element.getLabel());
+  const displayFilters = useDisplayFilters();
+  const showLabels = displayFilters.showLabels || hover || innerHover;
   const { x, y, width, height } = element.getBounds();
 
   return (
@@ -103,7 +105,7 @@ const OperatorBackedServiceGroup: React.FC<OperatorBackedServiceGroupProps> = ({
           )}
         </g>
       </Layer>
-      {(data.kind || element.getLabel()) && (
+      {showLabels && (data.kind || element.getLabel()) && (
         <SvgBoxedText
           className="odc-base-node__label"
           x={x + width / 2}

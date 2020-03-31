@@ -18,6 +18,7 @@ import {
   NODE_SHADOW_FILTER_ID_HOVER,
   NODE_SHADOW_FILTER_ID,
   useSearchFilter,
+  useDisplayFilters,
 } from '@console/dev-console/src/components/topology';
 import { getKnativeEventSourceIcon } from '../../../utils/get-knative-icon';
 
@@ -47,6 +48,8 @@ const EventSource: React.FC<EventSourceProps> = ({
   const [hover, hoverRef] = useHover();
   const groupRefs = useCombineRefs(dragNodeRef, dndDropRef, hoverRef);
   const [filtered] = useSearchFilter(element.getLabel());
+  const displayFilters = useDisplayFilters();
+  const showLabels = displayFilters.showLabels || hover;
   const { width, height } = element.getBounds();
   const size = Math.min(width, height);
   const { data } = element.getData();
@@ -81,7 +84,7 @@ const EventSource: React.FC<EventSourceProps> = ({
         height={size * 0.5}
         xlinkHref={getKnativeEventSourceIcon(data.kind)}
       />
-      {(data.kind || element.getLabel()) && (
+      {showLabels && (data.kind || element.getLabel()) && (
         <SvgBoxedText
           className="odc-base-node__label"
           x={width / 2}
