@@ -32,6 +32,7 @@ export enum ActionType {
   MonitoringDashboardsSetPollInterval = 'monitoringDashboardsSetPollInterval',
   MonitoringDashboardsSetTimespan = 'monitoringDashboardsSetTimespan',
   MonitoringDashboardsVariableOptionsLoaded = 'monitoringDashboardsVariableOptionsLoaded',
+  MonitoringSetRules = 'monitoringSetRules',
   SetMonitoringData = 'setMonitoringData',
   ToggleMonitoringGraphs = 'monitoringToggleGraphs',
   NotificationDrawerToggleExpanded = 'notificationDrawerExpanded',
@@ -304,6 +305,7 @@ export const monitoringErrored = (
   key: 'alerts' | 'silences' | 'notificationAlerts',
   loadError: any,
 ) => action(ActionType.SetMonitoringData, { key, data: { loaded: true, loadError, data: null } });
+export const monitoringSetRules = (rules: any) => action(ActionType.MonitoringSetRules, { rules });
 export const monitoringToggleGraphs = () => action(ActionType.ToggleMonitoringGraphs);
 export const notificationDrawerToggleExpanded = () =>
   action(ActionType.NotificationDrawerToggleExpanded);
@@ -373,6 +375,7 @@ const uiActions = {
   monitoringLoading,
   monitoringLoaded,
   monitoringErrored,
+  monitoringSetRules,
   monitoringToggleGraphs,
   queryBrowserAddQuery,
   queryBrowserDeleteAllQueries,

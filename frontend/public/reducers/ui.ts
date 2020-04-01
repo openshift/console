@@ -194,6 +194,9 @@ export default (state: UIState, action: UIAction): UIState => {
           };
       return state.mergeIn(['monitoringDashboards', 'variables', key], ImmutableMap(patch));
     }
+    case ActionType.MonitoringSetRules:
+      return state.setIn(['monitoring', 'rules'], action.payload.rules);
+
     case ActionType.SetMonitoringData: {
       // alerts used by monitoring -> alerting pages
       const alerts =
