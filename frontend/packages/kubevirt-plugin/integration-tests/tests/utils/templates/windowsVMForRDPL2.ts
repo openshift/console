@@ -1,7 +1,7 @@
 import {
   COMMON_TEMPLATES_NAMESPACE,
   COMMON_TEMPLATES_REVISION,
-  COMMON_TEMPLATES_VERSION,
+  commonTemplateVersion,
 } from '../consts';
 
 export const getWindowsVM = ({ name, networkName, vmIP }) => `
@@ -19,10 +19,10 @@ metadata:
     app: fake-windows
     flavor.template.kubevirt.io/medium: 'true'
     os.template.kubevirt.io/win10: 'true'
-    vm.kubevirt.io/template: win2k12r2-server-medium-${COMMON_TEMPLATES_VERSION}
+    vm.kubevirt.io/template: win2k12r2-server-medium-${commonTemplateVersion()}
     vm.kubevirt.io/template.namespace: ${COMMON_TEMPLATES_NAMESPACE}
     vm.kubevirt.io/template.revision: '${COMMON_TEMPLATES_REVISION}'
-    vm.kubevirt.io/template.version: ${COMMON_TEMPLATES_VERSION}
+    vm.kubevirt.io/template.version: ${commonTemplateVersion()}
     workload.template.kubevirt.io/server: 'true'
 spec:
   running: true

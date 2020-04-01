@@ -58,7 +58,7 @@ export const NODE_READY_STATUS = 'Ready';
 export const KUBEVIRT_STORAGE_CLASS_DEFAULTS = 'kubevirt-storage-class-defaults';
 export const KUBEVIRT_PROJECT_NAME = 'openshift-cnv';
 
-export const COMMON_TEMPLATES_VERSION = rhelTinyCommonTemplateName.match(/v\d+\.\d+\.\d+/)[0];
+export const commonTemplateVersion = () => rhelTinyCommonTemplateName.match(/v\d+\.\d+\.\d+/)[0];
 export const INNER_TEMPLATE_VERSION = 'v0.9.1';
 
 export const COMMON_TEMPLATES_NAMESPACE = 'openshift';
