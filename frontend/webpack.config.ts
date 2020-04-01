@@ -18,6 +18,7 @@ const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin');
 
 const NODE_ENV = process.env.NODE_ENV || 'development';
 const HOT_RELOAD = process.env.HOT_RELOAD || 'false';
+const CHECK_CYCLES = process.env.CHECK_CYCLES || 'false';
 
 /* Helpers */
 const extractCSS = new MiniCssExtractPlugin({ filename: 'app-bundle.[contenthash].css' });
@@ -164,8 +165,7 @@ const config: Configuration = {
   stats: 'minimal',
 };
 
-/* Development settings */
-if (NODE_ENV === 'development') {
+if (CHECK_CYCLES === 'true') {
   new CircularDependencyPreset({
     exclude: /node_modules|public\/dist/,
     reportFile: '.webpack-cycles',
