@@ -726,7 +726,9 @@ const SilencesDetailsPage = withFallback(
                     <dt>Comments</dt>
                     <dd>{comment || '-'}</dd>
                     <dt>Firing Alerts</dt>
-                    <dd>{alertsLoaded ? firingAlerts.length : <LoadingInline />}</dd>
+                    <dd>
+                      {alertsLoaded ? <SeverityCounts alerts={firingAlerts} /> : <LoadingInline />}
+                    </dd>
                   </dl>
                 </div>
               </div>
