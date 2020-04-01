@@ -2,6 +2,8 @@ import * as React from 'react';
 import { shallow } from 'enzyme';
 import { ResourceSummary, SectionHeading } from '@console/internal/components/utils';
 import HelmReleaseOverview from '../HelmReleaseOverview';
+import { mockHelmReleases } from './helm-release-mock-data';
+import HelmChartSummary from '../HelmChartSummary';
 
 const helmReleaseOverviewProps: React.ComponentProps<typeof HelmReleaseOverview> = {
   obj: {
@@ -10,12 +12,13 @@ const helmReleaseOverviewProps: React.ComponentProps<typeof HelmReleaseOverview>
       namespace: 'xyz',
       creationTimestamp: '2020-01-13T05:42:19Z',
       labels: {
-        name: 'helm-mysql',
+        name: 'ghost-test',
         owner: 'helm',
         status: 'deployed',
       },
     },
   },
+  customData: mockHelmReleases[0],
 };
 
 describe('HelmReleaseOverview', () => {
@@ -31,5 +34,10 @@ describe('HelmReleaseOverview', () => {
   it('should render the ResourceSummary component', () => {
     const helmReleaseOverview = shallow(<HelmReleaseOverview {...helmReleaseOverviewProps} />);
     expect(helmReleaseOverview.find(ResourceSummary).exists()).toBe(true);
+  });
+
+  it('should render the HelmChartSummary component', () => {
+    const helmReleaseOverview = shallow(<HelmReleaseOverview {...helmReleaseOverviewProps} />);
+    expect(helmReleaseOverview.find(HelmChartSummary).exists()).toBe(true);
   });
 });

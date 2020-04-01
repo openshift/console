@@ -11,6 +11,8 @@ import { SecretModel } from '@console/internal/models';
 import { ErrorPage404 } from '@console/internal/components/error';
 import { DetailsPage } from '@console/internal/components/factory';
 import { K8sResourceKindReference } from '@console/internal/module/k8s';
+import { Status } from '@console/shared';
+import { Badge } from '@patternfly/react-core';
 import { fetchHelmReleases } from './helm-utils';
 import HelmReleaseResources from './HelmReleaseResources';
 import HelmReleaseOverview from './HelmReleaseOverview';
@@ -52,7 +54,16 @@ export const LoadedHelmReleaseDetailsPage: React.FC<LoadedHelmReleaseDetailsPage
   if (_.isEmpty(secretResource)) return <ErrorPage404 />;
 
   const secretName = secretResource[0]?.metadata.name;
-  const releaseName = secretResource[0]?.metadata.labels?.name;
+  const releaseName = helmReleaseData?.name;
+
+  const title = (
+    <>
+      {releaseName}
+      <Badge isRead style={{ verticalAlign: 'middle', marginLeft: 'var(--pf-global--spacer--md)' }}>
+        <Status status={_.capitalize(helmReleaseData?.info?.status)} />
+      </Badge>
+    </>
+  );
 
   const menuActions = [
     () => upgradeHelmRelease(releaseName, namespace),
@@ -74,7 +85,7 @@ export const LoadedHelmReleaseDetailsPage: React.FC<LoadedHelmReleaseDetailsPage
         },
         { name: `Helm Release Details`, path: `${match.url}` },
       ]}
-      title={releaseName}
+      title={title}
       kind={SecretReference}
       pages={[
         navFactory.details(HelmReleaseOverview),
