@@ -6,7 +6,7 @@ import { V1Disk } from '../../../types/vm/disk/V1Disk';
 import { V1Volume } from '../../../types/vm/disk/V1Volume';
 import { V1alpha1DataVolume } from '../../../types/vm/disk/V1alpha1DataVolume';
 import { getSimpleName } from '../../../selectors/utils';
-import { VolumeType, DiskType } from '../../../constants/vm/storage';
+import { VolumeType, DiskType, AccessMode, VolumeMode } from '../../../constants/vm/storage';
 import { VMGenericLikeEntityKind } from '../../../types/vmLike';
 import { asVM, getDataVolumeTemplates, isWinToolsImage } from '../../../selectors/vm';
 import { getLoadedData, isLoaded } from '../../../utils';
@@ -76,13 +76,17 @@ export class CombinedDisk {
 
   getSourceValue = () => this.source.getValue();
 
-  isEditingSupported = (isTemplate: boolean) => {
-    if (isTemplate) {
-      // plain dataVolume creates dataVolumes on template creation
-      return this.source.isPlainDataVolume(isTemplate) ? this.source.isEditingSupported() : true;
+  isEditingSupported = () => {
+    switch (this.volumeWrapper.getType()) {
+      case VolumeType.DATA_VOLUME:
+        // do not edit already created entities
+        return !(
+          this.dataVolumeWrapper?.getCreationTimestamp() ||
+          this.persistentVolumeClaimWrapper?.getCreationTimestamp()
+        );
+      default:
+        return true;
     }
-
-    return this.source.isEditingSupported();
   };
 
   getName = () => this.diskWrapper.getName();
@@ -116,6 +120,18 @@ export class CombinedDisk {
     this.volumeTypeOperation(
       (persistentVolumeClaimWrapper) => persistentVolumeClaimWrapper.getStorageClassName(),
       (dataVolumeWrapper) => dataVolumeWrapper.getStorageClassName(),
+    );
+
+  getAccessModes = (): AccessMode[] =>
+    this.volumeTypeOperation(
+      (persistentVolumeClaimWrapper) => persistentVolumeClaimWrapper.getAccessModesEnum(),
+      (dataVolumeWrapper) => dataVolumeWrapper.getAccessModesEnum(),
+    );
+
+  getVolumeMode = (): VolumeMode =>
+    this.volumeTypeOperation(
+      (persistentVolumeClaimWrapper) => persistentVolumeClaimWrapper.getVolumeModeEnum(),
+      (dataVolumeWrapper) => dataVolumeWrapper.getVolumeModeEnum(),
     );
 
   getPVCName = (source?: StorageUISource) => {
@@ -166,6 +182,8 @@ export class CombinedDisk {
       this.getReadableSize(),
       this.getDiskInterface(),
       this.getStorageClassName(),
+      this.getVolumeMode(),
+      (this.getAccessModes() || []).length > 0 ? this.getAccessModes().join(', ') : null,
     ]).join(' - ');
   };
 
@@ -219,8 +237,8 @@ export class CombinedDiskFactory {
       disks: vmiLikeWrapper?.getDisks() || [],
       volumes: vmiLikeWrapper?.getVolumes() || [],
       dataVolumes: [
-        ...getLoadedData(datavolumes, []),
         ...getDataVolumeTemplates(asVM(vmLikeEntity)),
+        ...getLoadedData(datavolumes, []),
       ],
       pvcs: getLoadedData(pvcs),
       dataVolumesLoading: !isLoaded(datavolumes),

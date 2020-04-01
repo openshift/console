@@ -21,7 +21,7 @@ const getSCConfigMapAttribute = (
 
 export const getDefaultSCVolumeMode = (
   storageClassConfigMap: ConfigMapKind,
-  storageClassName: string,
+  storageClassName?: string,
 ) => {
   const configMapDefault = getSCConfigMapAttribute(
     storageClassConfigMap,
@@ -31,16 +31,12 @@ export const getDefaultSCVolumeMode = (
 
   const volumeMode = configMapDefault ? VolumeMode.fromString(configMapDefault) : null;
 
-  if (volumeMode) {
-    return volumeMode;
-  }
-
-  return storageClassName === 'local-sc' ? VolumeMode.FILESYSTEM : VolumeMode.BLOCK;
+  return volumeMode || VolumeMode.FILESYSTEM;
 };
 
 export const getDefaultSCAccessModes = (
   storageClassConfigMap: ConfigMapKind,
-  storageClassName: string,
+  storageClassName?: string,
 ) => {
   const configMapDefault = getSCConfigMapAttribute(
     storageClassConfigMap,
@@ -50,9 +46,5 @@ export const getDefaultSCAccessModes = (
 
   const accessMode = configMapDefault ? AccessMode.fromString(configMapDefault) : null;
 
-  if (accessMode) {
-    return [accessMode];
-  }
-
-  return storageClassName === 'local-sc' ? [AccessMode.SINGLE_USER] : [AccessMode.SHARED_ACCESS];
+  return accessMode ? [accessMode] : [AccessMode.READ_WRITE_ONCE];
 };

@@ -78,42 +78,29 @@ export class PersistentVolumeClaimWrapper extends K8sResourceWrapper<
     return this;
   };
 
-  setAccessModes = (accessModes: string[]) => {
+  setAccessModes = (accessModes: AccessMode[]) => {
     this.ensurePath('spec');
-    this.data.spec.accessModes = accessModes;
+    this.data.spec.accessModes =
+      accessModes && accessModes.map((a) => a?.getValue()).filter((a) => a); // allow null and undefined
     return this;
   };
 
-  addAccessMode = (accessMode: string) => {
-    if (accessMode) {
-      this.ensurePath('spec.accessModes', []);
-      (this.data.spec.accessModes as string[]).push(accessMode);
-    }
-    return this;
-  };
-
-  setVolumeMode = (volumeMode: string) => {
+  setVolumeMode = (volumeMode: VolumeMode) => {
     this.ensurePath('spec');
-    this.data.spec.volumeMode = volumeMode || undefined;
-    return this;
-  };
-
-  assertDefaultModes = (volumeMode: VolumeMode, accessModes: AccessMode[]) => {
-    const oldAccessModes = this.getAccessModes();
-    if ((!oldAccessModes || oldAccessModes.length === 0) && accessModes) {
-      this.setAccessModes(accessModes.map((a) => a.toString()));
-    }
-
-    if (!this.getVolumeMode() && volumeMode) {
-      this.setVolumeMode(volumeMode.toString());
-    }
-
+    this.data.spec.volumeMode = volumeMode && volumeMode.getValue(); // allow null and undefined
     return this;
   };
 
   mergeWith(...pvcWrappers: PersistentVolumeClaimWrapper[]) {
     super.mergeWith(...pvcWrappers);
     this.clearIfEmpty('spec.storageClassName');
+    this.clearIfEmpty('spec.accessModes');
+    this.clearIfEmpty('spec.volumeMode');
+    const accessModes = this.getAccessModesEnum();
+    if (accessModes?.length > 1) {
+      // API currently allows only one mode
+      this.setAccessModes([accessModes[0]]);
+    }
     return this;
   }
 }

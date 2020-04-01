@@ -122,7 +122,7 @@ export class StorageUISource extends ObjectEnum<string> {
     this !== StorageUISource.CONTAINER &&
     this !== StorageUISource.OTHER;
 
-  isEditingSupported = () => !this.dataVolumeSourceType; // vm disks - do not support because pvc was already created from DV
+  requiresVolumeModeOrAccessModes = () => this.requiresAccessModes() || this.requiresVolumeMode();
 
   isNameEditingSupported = (diskType: DiskType) => diskType !== DiskType.CDROM;
 

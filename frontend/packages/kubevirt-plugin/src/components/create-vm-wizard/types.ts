@@ -1,5 +1,5 @@
 import { FirehoseResult } from '@console/internal/components/utils';
-import { TemplateKind } from '@console/internal/module/k8s';
+import { ConfigMapKind, TemplateKind } from '@console/internal/module/k8s';
 import { getStringEnumValues } from '../../utils/types';
 import { V1Network, V1NetworkInterface, VMKind } from '../../types/vm';
 import { NetworkInterfaceWrapper } from '../../k8s/wrapper/vm/network-interface-wrapper';
@@ -37,6 +37,7 @@ export enum VMWizardProps {
   userTemplates = 'userTemplates',
   commonTemplates = 'commonTemplates',
   dataVolumes = 'dataVolumes',
+  storageClassConfigMap = 'storageClassConfigMap',
 }
 
 export const ALL_VM_WIZARD_TABS = getStringEnumValues<VMWizardTab>(VMWizardTab);
@@ -121,6 +122,7 @@ export type ChangedCommonDataProp =
   | VMWizardProps.userTemplates
   | VMWizardProps.commonTemplates
   | VMWizardProps.dataVolumes
+  | VMWizardProps.storageClassConfigMap
   | VMWizardProps.openshiftFlag
   | VMWareProviderProps.deployment
   | VMWareProviderProps.deploymentPods
@@ -143,6 +145,7 @@ export const DetectCommonDataChanges = new Set<ChangedCommonDataProp>([
   VMWizardProps.virtualMachines,
   VMWizardProps.userTemplates,
   VMWizardProps.commonTemplates,
+  VMWizardProps.storageClassConfigMap,
   VMWizardProps.dataVolumes,
   VMWareProviderProps.deployment,
   VMWareProviderProps.deploymentPods,
@@ -157,6 +160,11 @@ export type CommonData = {
     isCreateTemplate?: boolean;
     isProviderImport?: boolean;
     userTemplateName?: string;
+    storageClassConfigMap?: {
+      loaded: boolean;
+      loadError: string;
+      data: ConfigMapKind;
+    };
   };
   dataIDReferences?: IDReferences;
 };
@@ -172,6 +180,7 @@ export type CreateVMWizardComponentProps = {
   userTemplates: FirehoseResult<TemplateKind[]>;
   commonTemplates: FirehoseResult<TemplateKind[]>;
   virtualMachines: FirehoseResult<VMKind[]>;
+  storageClassConfigMap: FirehoseResult<ConfigMapKind>;
   onInitialize: () => void;
   onClose: (disposeOnly: boolean) => void;
   onCommonDataChanged: (commonData: CommonData, commonDataChanged: ChangedCommonData) => void;
