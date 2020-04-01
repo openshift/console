@@ -106,7 +106,7 @@ export class StorageUISource extends ObjectEnum<string> {
 
   requiresStorageClass = () => this.requiresDatavolume() || this.hasNewPVC;
 
-  requiresVolume = () => !!this.volumeType;
+  requiresVolumeType = () => !!this.volumeType;
 
   requiresDatavolume = () => !!this.dataVolumeSourceType;
 
