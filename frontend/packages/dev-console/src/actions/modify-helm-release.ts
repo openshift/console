@@ -1,4 +1,5 @@
 import { coFetchJSON } from '@console/internal/co-fetch';
+import { history } from '@console/internal/components/utils';
 import { deleteResourceModal } from '../components/modals';
 
 export const deleteHelmRelease = (releaseName: string, namespace: string, redirect?: string) => {
@@ -18,3 +19,10 @@ export const deleteHelmRelease = (releaseName: string, namespace: string, redire
     },
   };
 };
+
+export const upgradeHelmRelease = (releaseName: string, namespace: string) => ({
+  label: 'Upgrade Helm Release',
+  callback: () => {
+    history.push(`/helm-releases/ns/${namespace}/${releaseName}/upgrade`);
+  },
+});

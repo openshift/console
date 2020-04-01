@@ -1,6 +1,7 @@
 import * as fuzzy from 'fuzzysearch';
+import * as _ from 'lodash';
 import { coFetchJSON } from '@console/internal/co-fetch';
-import { HelmRelease, HelmReleaseStatus } from './helm-types';
+import { HelmRelease, HelmReleaseStatus, HelmChartMetaData } from './helm-types';
 import { CustomResourceListRowFilter } from '../custom-resource-list/custom-resource-list-types';
 
 export const HelmReleaseStatusLabels = {
@@ -64,4 +65,20 @@ export const fetchHelmReleases = (
     helmReleaseName ? `&name=${helmReleaseName}` : ''
   }`;
   return coFetchJSON(fetchString);
+};
+export const getChartURL = (helmChartData: HelmChartMetaData[], chartVersion: string): string => {
+  const chartData: HelmChartMetaData = _.find(helmChartData, (obj) => obj.version === chartVersion);
+  return chartData?.urls[0];
+};
+
+export const getChartVersions = (chartEntries: HelmChartMetaData[]) => {
+  const chartVersions = _.reduce(
+    chartEntries,
+    (obj, chart) => {
+      obj[chart.version] = chart.version;
+      return obj;
+    },
+    {},
+  );
+  return chartVersions;
 };

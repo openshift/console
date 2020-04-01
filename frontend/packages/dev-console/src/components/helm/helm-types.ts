@@ -19,24 +19,27 @@ export interface HelmRelease {
 
 export interface HelmChart {
   files: object[];
-  metadata: {
-    name: string;
-    version: string;
-    description: string;
-    apiVersion: string;
-    appVersion: string;
-    keywords?: string[];
-    home?: string;
-    icon?: string;
-    sources?: string[];
-    maintainers?: object[];
-    dependencies?: object[];
-    type?: string;
-  };
+  metadata: HelmChartMetaData;
   templates: object[];
   values: object;
   lock?: object;
   schema?: string;
+}
+
+export interface HelmChartMetaData {
+  name: string;
+  version: string;
+  description: string;
+  apiVersion: string;
+  appVersion: string;
+  keywords?: string[];
+  home?: string;
+  icon?: string;
+  sources?: string[];
+  maintainers?: object[];
+  dependencies?: object[];
+  type?: string;
+  urls: string[];
 }
 
 export interface HelmReleaseResourcesData {
@@ -54,4 +57,16 @@ export enum HelmReleaseStatus {
   Deployed = 'deployed',
   Failed = 'failed',
   Other = 'other',
+}
+
+export enum HelmActionType {
+  Install = 'Install',
+  Upgrade = 'Upgrade',
+}
+
+export interface HelmActionConfigType {
+  title: string;
+  helmReleaseApi: string;
+  fetch: (url: any, json: any, options?: {}) => Promise<any>;
+  redirectURL: string;
 }

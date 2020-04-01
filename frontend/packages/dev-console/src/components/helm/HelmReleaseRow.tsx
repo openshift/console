@@ -2,17 +2,21 @@ import * as React from 'react';
 import * as _ from 'lodash';
 import { Status } from '@console/shared';
 import { TableRow, TableData, RowFunction } from '@console/internal/components/factory';
-import { Timestamp, Kebab } from '@console/internal/components/utils';
+import { Timestamp, Kebab, ResourceIcon } from '@console/internal/components/utils';
 import { Link } from 'react-router-dom';
 import { HelmRelease } from './helm-types';
 import { tableColumnClasses } from './HelmReleaseHeader';
-import { deleteHelmRelease } from '../../actions/modify-helm-release';
+import { deleteHelmRelease, upgradeHelmRelease } from '../../actions/modify-helm-release';
 
 const HelmReleaseRow: RowFunction<HelmRelease> = ({ obj, index, key, style }) => {
-  const menuActions = [deleteHelmRelease(obj.name, obj.namespace)];
+  const menuActions = [
+    upgradeHelmRelease(obj.name, obj.namespace),
+    deleteHelmRelease(obj.name, obj.namespace),
+  ];
   return (
     <TableRow id={obj.name} index={index} trKey={key} style={style}>
       <TableData className={tableColumnClasses.name}>
+        <ResourceIcon kind={'Helm Release'} />
         <Link
           to={`/helm-releases/ns/${obj.namespace}/release/${obj.name}`}
           title={obj.name}
@@ -29,6 +33,9 @@ const HelmReleaseRow: RowFunction<HelmRelease> = ({ obj, index, key, style }) =>
         <Status status={_.capitalize(obj.info.status)} />
       </TableData>
       <TableData className={tableColumnClasses.chartName}>{obj.chart.metadata.name}</TableData>
+      <TableData className={tableColumnClasses.chartVersion}>
+        {obj.chart.metadata.version}
+      </TableData>
       <TableData className={tableColumnClasses.appVersion}>
         {obj.chart.metadata.appVersion}
       </TableData>
