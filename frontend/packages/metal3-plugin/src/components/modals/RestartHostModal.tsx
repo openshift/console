@@ -12,6 +12,7 @@ import { restartHost } from '../../k8s/requests/bare-metal-host';
 
 export type RestartHostModalProps = {
   host: BareMetalHostKind;
+  nodeName: string;
   handlePromise: <T>(promise: Promise<T>) => Promise<T>;
   inProgress: boolean;
   errorMessage: string;
@@ -21,6 +22,7 @@ export type RestartHostModalProps = {
 
 const RestartHostModal = ({
   host,
+  nodeName,
   inProgress,
   errorMessage,
   handlePromise,
@@ -37,13 +39,16 @@ const RestartHostModal = ({
     [host, close, handlePromise],
   );
 
+  const text = nodeName
+    ? `The bare metal host ${getName(
+        host,
+      )} will be restarted gracefully after all managed workloads are moved.`
+    : `The bare metal host ${getName(host)} will be restarted gracefully.`;
+
   return (
     <form onSubmit={onSubmit} name="form" className="modal-content">
-      <ModalTitle>Restart host {getName(host)}</ModalTitle>
-      <ModalBody>
-        The bare metal host will be scheduled for restart which will be executed once all managed
-        workloads are moved to nodes on other hosts.
-      </ModalBody>
+      <ModalTitle>Restart Bare Metal Host</ModalTitle>
+      <ModalBody>{text}</ModalBody>
       <ModalSubmitFooter
         cancel={cancel}
         errorMessage={errorMessage}

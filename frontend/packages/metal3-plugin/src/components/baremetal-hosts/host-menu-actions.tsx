@@ -135,13 +135,13 @@ export const PowerOff = (
   accessReview: host && asAccessReview(BareMetalHostModel, host, 'update'),
 });
 
-export const Restart = (kindObj: K8sKind, host: BareMetalHostKind) => ({
+export const Restart = (kindObj: K8sKind, host: BareMetalHostKind, { nodeName }: ActionArgs) => ({
   hidden:
     [HOST_POWER_STATUS_POWERED_OFF, HOST_POWER_STATUS_POWERING_OFF].includes(
       getHostPowerStatus(host),
     ) || isHostScheduledForRestart(host),
   label: 'Restart',
-  callback: () => restartHostModal({ host }),
+  callback: () => restartHostModal({ host, nodeName }),
   accessReview: host && asAccessReview(BareMetalHostModel, host, 'update'),
 });
 
