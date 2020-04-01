@@ -38,7 +38,7 @@ export const buildV2VVMwareRole = ({ name, namespace }: { name: string; namespac
         verbs: ['create', 'get'],
       },
       {
-        apiGroups: ['kubevirt.io'],
+        apiGroups: ['v2v.kubevirt.io'],
         attributeRestrictions: null,
         resources: ['*'],
         verbs: ['*'],
