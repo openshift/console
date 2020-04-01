@@ -11,7 +11,11 @@ import {
   ExpandedComponentProps,
 } from '@console/shared/src/components/dashboard/inventory-card/InventoryItem';
 import { PrometheusResponse } from '@console/internal/components/graphs';
-import { WatchK8sResources } from '@console/internal/components/utils/k8s-watch-hook';
+import {
+  WatchK8sResources,
+  ResourcesObject,
+  WatchK8sResults,
+} from '@console/internal/components/utils/k8s-watch-hook';
 import { Extension, LazyLoader } from './base';
 
 namespace ExtensionProperties {
@@ -63,6 +67,26 @@ namespace ExtensionProperties {
 
     /** Resolve the subsystem's health */
     healthHandler: PrometheusHealthHandler;
+
+    /**
+     * Loader for popup content. If defined health item will be represented as link
+     * which opens popup with given content.
+     */
+    popupComponent?: LazyLoader<any>;
+
+    /**
+     * Popup title
+     */
+    popupTitle?: string;
+  }
+
+  export interface DashboardsOverviewHealthResourceSubsystem<R extends ResourcesObject>
+    extends DashboardsOverviewHealthSubsystem {
+    /** Kubernetes resources which will be fetched and passed to healthHandler  */
+    resources: WatchK8sResources<R>;
+
+    /** Resolve the subsystem's health */
+    healthHandler: ResourceHealthHandler<R>;
 
     /**
      * Loader for popup content. If defined health item will be represented as link
@@ -217,6 +241,17 @@ export const isDashboardsOverviewHealthPrometheusSubsystem = (
 ): e is DashboardsOverviewHealthPrometheusSubsystem =>
   e.type === 'Dashboards/Overview/Health/Prometheus';
 
+export interface DashboardsOverviewHealthResourceSubsystem<
+  R extends ResourcesObject = ResourcesObject
+> extends Extension<ExtensionProperties.DashboardsOverviewHealthResourceSubsystem<R>> {
+  type: 'Dashboards/Overview/Health/Resource';
+}
+
+export const isDashboardsOverviewHealthResourceSubsystem = (
+  e: Extension,
+): e is DashboardsOverviewHealthResourceSubsystem =>
+  e.type === 'Dashboards/Overview/Health/Resource';
+
 export interface DashboardsOverviewHealthOperator<R extends K8sResourceCommon = K8sResourceCommon>
   extends Extension<ExtensionProperties.DashboardsOverviewHealthOperator<R>> {
   type: 'Dashboards/Overview/Health/Operator';
@@ -229,6 +264,7 @@ export const isDashboardsOverviewHealthOperator = (
 export type DashboardsOverviewHealthSubsystem =
   | DashboardsOverviewHealthURLSubsystem
   | DashboardsOverviewHealthPrometheusSubsystem
+  | DashboardsOverviewHealthResourceSubsystem
   | DashboardsOverviewHealthOperator;
 
 export const isDashboardsOverviewHealthSubsystem = (
@@ -236,6 +272,7 @@ export const isDashboardsOverviewHealthSubsystem = (
 ): e is DashboardsOverviewHealthSubsystem =>
   isDashboardsOverviewHealthURLSubsystem(e) ||
   isDashboardsOverviewHealthPrometheusSubsystem(e) ||
+  isDashboardsOverviewHealthResourceSubsystem(e) ||
   isDashboardsOverviewHealthOperator(e);
 
 export interface DashboardsTab extends Extension<ExtensionProperties.DashboardsTab> {
@@ -338,6 +375,10 @@ export type PrometheusHealthHandler = (
   responses: PrometheusResponse[],
   errors: any[],
   additionalResource?: FirehoseResult<K8sResourceKind | K8sResourceKind[]>,
+) => SubsystemHealth;
+
+export type ResourceHealthHandler<R extends ResourcesObject> = (
+  resourcesResult: WatchK8sResults<R>,
 ) => SubsystemHealth;
 
 export type OperatorHealthHandler = (resources: FirehoseResourcesResult) => OperatorHealth;
