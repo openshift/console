@@ -21,6 +21,7 @@ import {
   OperandVersion,
   OperatorStatus,
   referenceForModel,
+  hasNotUpgradeable,
 } from '../../module/k8s';
 import {
   navFactory,
@@ -29,6 +30,7 @@ import {
   ResourceLink,
   ResourceSummary,
   SectionHeading,
+  NotUpgradeableAlert,
 } from '../utils';
 import { GreenCheckCircleIcon, YellowExclamationTriangleIcon } from '@console/shared';
 
@@ -41,6 +43,7 @@ const getIcon = (status: OperatorStatus) => {
     [OperatorStatus.Available]: <GreenCheckCircleIcon />,
     [OperatorStatus.Updating]: <SyncAltIcon />,
     [OperatorStatus.Degraded]: <YellowExclamationTriangleIcon />,
+    [OperatorStatus.Upgradeable]: <YellowExclamationTriangleIcon />,
     [OperatorStatus.Unknown]: <UnknownIcon />,
   }[status];
 };
@@ -128,6 +131,7 @@ const allStatuses = [
   OperatorStatus.Available,
   OperatorStatus.Updating,
   OperatorStatus.Degraded,
+  OperatorStatus.Upgradeable,
   OperatorStatus.Unknown,
 ];
 
@@ -165,6 +169,11 @@ const UpdateInProgressAlert: React.SFC<UpdateInProgressAlertProps> = ({ cv }) =>
 export const ClusterOperatorPage: React.SFC<ClusterOperatorPageProps> = (props) => (
   <>
     <UpdateInProgressAlert cv={props.cv} />
+    <NotUpgradeableAlert
+      linkText="View Operators"
+      linkPath="/settings/cluster/clusteroperators"
+      linkSearch="?rowFilter-cluster-operator-status=Not+upgradeable"
+    />
     <ListPage
       {...props}
       title="Cluster Operators"
@@ -211,6 +220,13 @@ const ClusterOperatorDetails: React.SFC<ClusterOperatorDetailsProps> = ({ obj })
   return (
     <>
       <div className="co-m-pane__body">
+        {hasNotUpgradeable(obj) && (
+          <NotUpgradeableAlert
+            linkText="Upgrade to latest patch"
+            linkPath="/settings/cluster/clusteroperators"
+            linkSearch="?rowFilter-cluster-operator-status=Not+upgradeable"
+          />
+        )}
         <SectionHeading text="Cluster Operator Details" />
         <div className="row">
           <div className="col-sm-6">

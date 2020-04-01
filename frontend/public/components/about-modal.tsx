@@ -45,7 +45,7 @@ const AboutModalItems: React.FC<AboutModalItemsProps> = ({ closeAboutModal, cv }
           variant="info"
           title={
             <>
-              Update available.{' '}
+              Restore your cluster operators.{' '}
               <Link to="/settings/cluster" onClick={closeAboutModal}>
                 View cluster settings
               </Link>

@@ -228,7 +228,7 @@ const FilterToolbar_: React.FC<FilterToolbarProps & RouteComponentProps> = (prop
     !_.isEmpty(nameFilter) && applyFilter(nameFilter, FilterType.NAME);
     !_.isEmpty(selectedRowFilters) && applyRowFilter(selectedRowFilters);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [!_.isEmpty(selectedRowFilters)]);
 
   const switchFilter = (type: FilterType) => {
     setFilterType(FilterType[type]);

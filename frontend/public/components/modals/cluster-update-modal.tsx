@@ -3,7 +3,7 @@ import * as React from 'react';
 import * as semver from 'semver';
 
 import { ClusterVersionModel } from '../../models';
-import { Dropdown, PromiseComponent } from '../utils';
+import { Dropdown, PromiseComponent, NotUpgradeableAlert } from '../utils';
 import {
   ClusterUpdate,
   ClusterVersionKind,
@@ -92,6 +92,12 @@ class ClusterUpdateModal extends PromiseComponent<
         className="modal-content modal-content--no-inner-scroll"
       >
         <ModalTitle>Update Cluster</ModalTitle>
+        <NotUpgradeableAlert
+          closeModal={this._cancel}
+          linkText="View Operators"
+          linkPath="/settings/cluster/clusteroperators"
+          linkSearch="?rowFilter-cluster-operator-status=Not+upgradeable"
+        />
         <ModalBody>
           {/* <p>
           // TODO: Determine what content goes here.

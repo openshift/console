@@ -43,6 +43,7 @@ import {
   SectionHeading,
   Timestamp,
   truncateMiddle,
+  NotUpgradeableAlert,
 } from '../utils';
 import {
   GreenCheckCircleIcon,
@@ -88,7 +89,7 @@ const InvalidMessage: React.SFC<CVStatusMessageProps> = ({ cv }) => (
 const UpdatesAvailableMessage: React.SFC<CVStatusMessageProps> = ({ cv }) => (
   <>
     <div className="co-update-status">
-      <ArrowCircleUpIcon className="update-pending" /> Update available
+      <ArrowCircleUpIcon className="update-pending" /> Patch available {/** added Minor */}
     </div>
     <div>
       <Button onClick={() => clusterUpdateModal({ cv })} variant="primary">
@@ -240,6 +241,11 @@ export const ClusterVersionDetailsTable: React.SFC<ClusterVersionDetailsTablePro
 
   return (
     <>
+      <NotUpgradeableAlert
+        linkText="View Operators"
+        linkPath="/settings/cluster/clusteroperators"
+        linkSearch="?rowFilter-cluster-operator-status=Not+upgradeable"
+      />
       <div className="co-m-pane__body">
         <div className="co-m-pane__body-group">
           <div className="co-detail-table co-detail-table--lg">

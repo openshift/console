@@ -58,6 +58,18 @@ export const getClusterVersionCondition = (
   return _.find(conditions, { type });
 };
 
+export const getClusterStatusCondition = (
+  cv: ClusterVersionKind,
+  type,
+  status = undefined,
+): ClusterVersionCondition => {
+  const conditions: ClusterVersionCondition[] = _.get(cv, 'status.conditions');
+  if (status) {
+    return _.find(conditions, { type, status });
+  }
+  return _.find(conditions, { type });
+};
+
 export const isProgressing = (cv: ClusterVersionKind): boolean => {
   return !_.isEmpty(
     getClusterVersionCondition(
