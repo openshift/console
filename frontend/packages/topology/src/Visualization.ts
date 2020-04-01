@@ -46,6 +46,8 @@ export default class Visualization extends Stateful implements Controller {
 
   @action
   fromModel(model: Model): void {
+    const oldGraph = this.graph;
+
     // create elements
     if (model.graph) {
       this.graph = this.createElement<Graph>(ModelKind.graph, model.graph);
@@ -96,6 +98,10 @@ export default class Visualization extends Stateful implements Controller {
       }
     });
 
+    if (oldGraph && oldGraph !== this.graph) {
+      this.removeElement(oldGraph);
+    }
+
     if (this.graph) {
       this.parentOrphansToGraph(this.graph);
     }
@@ -140,6 +146,7 @@ export default class Visualization extends Stateful implements Controller {
         .getChildren()
         .slice()
         .forEach((child) => child.remove());
+      element.destroy();
       element.setController(undefined);
       delete this.elements[element.getId()];
     }

@@ -77,6 +77,7 @@ export interface Anchor {
 }
 
 export interface GraphElement<E extends ElementModel = ElementModel, D = any> extends WithState {
+  destroy(): void;
   getKind(): ModelKind;
   getLabel(): string;
   setLabel(label: string): void;

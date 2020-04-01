@@ -162,7 +162,7 @@ export default class BaseNode<E extends NodeModel = NodeModel, D = any> extends 
         .getCenter()
         .clone();
       this.collapsed = collapsed;
-      this.getBounds().setCenter(prevCenter.x, prevCenter.y);
+      this.setBounds(this.getBounds().setCenter(prevCenter.x, prevCenter.y));
       this.getController().fireEvent(NODE_COLLAPSE_CHANGE_EVENT, { node: this });
     }
   }
@@ -216,9 +216,6 @@ export default class BaseNode<E extends NodeModel = NodeModel, D = any> extends 
 
     if (r) {
       this.setBounds(r);
-    }
-    if ('type' in model) {
-      this.setType(model.type);
     }
     if ('group' in model) {
       this.group = !!model.group;
