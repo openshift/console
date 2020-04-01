@@ -66,6 +66,7 @@ export enum HelmActionType {
 
 export interface HelmActionConfigType {
   title: string;
+  subTitle: string;
   helmReleaseApi: string;
   fetch: (url: any, json: any, options?: {}) => Promise<any>;
   redirectURL: string;
