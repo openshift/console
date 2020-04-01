@@ -22,7 +22,7 @@ import {
   SectionHeading,
   VolumeType,
 } from './utils';
-import { Table, TableData, TableRow } from './factory';
+import { Table } from './factory';
 import { sortable } from '@patternfly/react-table';
 import { removeVolumeModal } from './modals';
 import { connectToModel } from '../kinds';
@@ -142,46 +142,70 @@ const VolumesTableHeader = () => {
 };
 VolumesTableHeader.displayName = 'VolumesTableHeader';
 
-const VolumesTableRow = ({ obj: volume, index, key, style }) => {
-  const { name, resource, readOnly, mountPath, subPath, volumeDetail } = volume;
-  const permission = readOnly ? 'Read-only' : 'Read/Write';
-  const pod: PodTemplate = getPodTemplate(resource);
-
-  return (
-    <TableRow id={`${name}-${mountPath}`} index={index} trKey={key} style={style}>
-      <TableData className={volumeRowColumnClasses[0]} data-test-id="name">
-        {name}
-      </TableData>
-      <TableData
-        className={classNames(volumeRowColumnClasses[1], 'co-break-word')}
-        data-test-id="path"
-      >
-        {mountPath}
-      </TableData>
-      <TableData className={volumeRowColumnClasses[2]}>{subPath}</TableData>
-      <TableData className={volumeRowColumnClasses[3]}>
-        <VolumeType volume={volumeDetail} namespace={resource.metadata.namespace} />
-      </TableData>
-      <TableData className={volumeRowColumnClasses[4]}>{permission}</TableData>
-      <TableData className={volumeRowColumnClasses[5]}>
-        {_.get(pod, 'kind') === 'Pod' ? (
-          <ContainerLink name={volume.container} pod={pod as PodKind} />
-        ) : (
-          <div>{volume.container}</div>
-        )}
-      </TableData>
-      <TableData className={volumeRowColumnClasses[6]}>
-        <VolumeKebab
-          actions={menuActions}
-          kind={resource.kind}
-          resource={resource}
-          rowVolumeData={volume}
-        />
-      </TableData>
-    </TableRow>
-  );
+const VolumesTableRows = ({ componentProps: { data } }) => {
+  return _.map(data, (volume: RowVolumeData) => {
+    const { container, mountPath, name, readOnly, resource, subPath, volumeDetail } = volume;
+    const pod = getPodTemplate(resource);
+    return [
+      {
+        title: name,
+        props: {
+          className: volumeRowColumnClasses[0],
+          'data-test-volume-name-for': name,
+        },
+      },
+      {
+        title: mountPath,
+        props: {
+          classname: volumeRowColumnClasses[1],
+          'data-test-mount-path-for': name,
+        },
+      },
+      {
+        title: subPath || <span className="text-muted">No subpath</span>,
+        props: {
+          classname: volumeRowColumnClasses[2],
+        },
+      },
+      {
+        title: <VolumeType volume={volumeDetail} namespace={resource.metadata.namespace} />,
+        props: {
+          classname: volumeRowColumnClasses[3],
+        },
+      },
+      {
+        title: readOnly ? 'Read-only' : 'Read/Write',
+        props: {
+          classname: volumeRowColumnClasses[4],
+        },
+      },
+      {
+        title:
+          _.get(pod, 'kind') === 'Pod' ? (
+            <ContainerLink name={container} pod={pod as PodKind} />
+          ) : (
+            container
+          ),
+        props: {
+          classname: volumeRowColumnClasses[5],
+        },
+      },
+      {
+        title: (
+          <VolumeKebab
+            actions={menuActions}
+            kind={resource.kind}
+            resource={resource}
+            rowVolumeData={volume}
+          />
+        ),
+        props: {
+          classname: volumeRowColumnClasses[6],
+        },
+      },
+    ];
+  });
 };
-VolumesTableRow.displayName = 'VolumesTableRow';
 
 export const VolumesTable = (props) => {
   const { resource, ...tableProps } = props;
@@ -200,8 +224,8 @@ export const VolumesTable = (props) => {
           label={props.heading}
           data={data}
           Header={VolumesTableHeader}
-          Row={VolumesTableRow}
-          virtualize
+          Rows={VolumesTableRows}
+          virtualize={false}
         />
       )}
     </>
