@@ -9,6 +9,7 @@ import {
   TableRow,
   TableData,
   MultiListPage,
+  RowFunction,
 } from '@console/internal/components/factory';
 import {
   Kebab,
@@ -106,13 +107,12 @@ const VMTemplateTableHeader = () =>
 
 VMTemplateTableHeader.displayName = 'VMTemplateTableHeader';
 
-const VMTemplateTableRow: React.FC<VMTemplateTableRowProps> = ({
-  obj: template,
-  customData: { dataVolumeLookup },
-  index,
-  key,
-  style,
-}) => {
+const VMTemplateTableRow: RowFunction<
+  TemplateKind,
+  {
+    dataVolumeLookup: K8sEntityMap<V1alpha1DataVolume>;
+  }
+> = ({ obj: template, customData: { dataVolumeLookup }, index, key, style }) => {
   const dimensify = dimensifyRow(tableColumnClasses);
   const os = getTemplateOperatingSystems([template])[0];
 
@@ -160,7 +160,6 @@ const VMTemplateTableRow: React.FC<VMTemplateTableRowProps> = ({
     </TableRow>
   );
 };
-VMTemplateTableRow.displayName = 'VmTemplateTableRow';
 
 type VirtualMachineTemplatesProps = {
   data: TemplateKind[];
@@ -247,16 +246,6 @@ const WrappedVirtualMachineTemplatesPage: React.FC<VirtualMachineTemplatesPagePr
 };
 
 const VirtualMachineTemplatesPage = withStartGuide(WrappedVirtualMachineTemplatesPage);
-
-type VMTemplateTableRowProps = {
-  obj: TemplateKind;
-  index: number;
-  key: string;
-  style: any;
-  customData: {
-    dataVolumeLookup: K8sEntityMap<V1alpha1DataVolume>;
-  };
-};
 
 type VirtualMachineTemplatesPageProps = {
   match: match<{ ns?: string }>;

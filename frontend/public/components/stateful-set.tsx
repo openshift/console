@@ -32,7 +32,7 @@ const StatefulSetTableRow: RowFunction<K8sResourceKind> = ({ obj, index, key, st
     <WorkloadTableRow
       obj={obj}
       index={index}
-      key={key}
+      rowKey={key}
       style={style}
       menuActions={menuActions}
       kind={kind}

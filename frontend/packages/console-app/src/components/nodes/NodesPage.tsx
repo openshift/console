@@ -6,7 +6,13 @@ import { sortable } from '@patternfly/react-table';
 import { getName, getUID } from '@console/shared';
 import { NodeModel } from '@console/internal/models';
 import { NodeKind, referenceForModel } from '@console/internal/module/k8s';
-import { Table, TableRow, TableData, ListPage } from '@console/internal/components/factory';
+import {
+  Table,
+  TableRow,
+  TableData,
+  ListPage,
+  RowFunctionArgs,
+} from '@console/internal/components/factory';
 import {
   Kebab,
   ResourceKebab,
@@ -103,7 +109,13 @@ type NodesRowMapFromStateProps = {
 };
 
 const NodesTableRow = connect<NodesRowMapFromStateProps, null, NodesTableRowProps>(mapStateToProps)(
-  ({ obj: node, index, key, style, metrics }: NodesTableRowProps & NodesRowMapFromStateProps) => {
+  ({
+    obj: node,
+    index,
+    rowKey,
+    style,
+    metrics,
+  }: NodesTableRowProps & NodesRowMapFromStateProps) => {
     const nodeName = getName(node);
     const nodeUID = getUID(node);
     const usedMem = metrics?.usedMemory?.[nodeName];
@@ -121,7 +133,7 @@ const NodesTableRow = connect<NodesRowMapFromStateProps, null, NodesTableRowProp
         : '-';
     const pods = metrics?.pods?.[nodeName] ?? '-';
     return (
-      <TableRow id={nodeUID} index={index} trKey={key} style={style}>
+      <TableRow id={nodeUID} index={index} trKey={rowKey} style={style}>
         <TableData className={tableColumnClasses[0]}>
           <ResourceLink kind={referenceForModel(NodeModel)} name={nodeName} title={nodeUID} />
         </TableData>
@@ -156,16 +168,23 @@ NodesTableRow.displayName = 'NodesTableRow';
 type NodesTableRowProps = {
   obj: NodeKind;
   index: number;
-  key?: string;
+  rowKey: string;
   style: object;
 };
 
 const NodesTable: React.FC<NodesTableProps> = React.memo((props) => {
-  const row = React.useCallback(
-    (rowProps: NodesTableRowProps) => <NodesTableRow {...rowProps} />,
+  const Row = React.useCallback(
+    (rowArgs: RowFunctionArgs<NodeKind>) => (
+      <NodesTableRow
+        obj={rowArgs.obj}
+        index={rowArgs.index}
+        rowKey={rowArgs.key}
+        style={rowArgs.style}
+      />
+    ),
     [],
   );
-  return <Table {...props} aria-label="Nodes" Header={NodeTableHeader} Row={row} virtualize />;
+  return <Table {...props} aria-label="Nodes" Header={NodeTableHeader} Row={Row} virtualize />;
 });
 
 type NodesTableProps = React.ComponentProps<typeof Table> & {

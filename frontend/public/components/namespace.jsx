@@ -291,13 +291,13 @@ const projectRowStateToProps = ({ UI }) => ({
 });
 
 const ProjectTableRow = connect(projectRowStateToProps)(
-  ({ obj: project, index, key, style, customData = {}, metrics }) => {
+  ({ obj: project, index, rowKey, style, customData = {}, metrics }) => {
     const requester = getRequester(project);
     const { ProjectLinkComponent, actionsEnabled = true, showMetrics } = customData;
     const bytes = _.get(metrics, ['memory', project.metadata.name]);
     const cores = _.get(metrics, ['cpu', project.metadata.name]);
     return (
-      <TableRow id={project.metadata.uid} index={index} trKey={key} style={style}>
+      <TableRow id={project.metadata.uid} index={index} trKey={rowKey} style={style}>
         <TableData className={projectColumnClasses[0]}>
           {customData && ProjectLinkComponent ? (
             <ProjectLinkComponent project={project} />
@@ -346,7 +346,16 @@ const ProjectTableRow = connect(projectRowStateToProps)(
 );
 ProjectTableRow.displayName = 'ProjectTableRow';
 
-const Row = (rowProps) => <ProjectTableRow {...rowProps} />;
+const Row = (rowArgs) => (
+  <ProjectTableRow
+    obj={rowArgs.obj}
+    index={rowArgs.index}
+    rowKey={rowArgs.key}
+    style={rowArgs.style}
+    customData={rowArgs.customData}
+  />
+);
+
 export const ProjectsTable = (props) => (
   <Table
     {...props}

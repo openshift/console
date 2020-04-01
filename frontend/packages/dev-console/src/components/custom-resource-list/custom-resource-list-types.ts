@@ -1,3 +1,4 @@
+import { RowFunction } from '@console/internal/components/factory';
 import { SortByDirection } from '@patternfly/react-table';
 
 export interface CustomResourceListRowFilter {
@@ -7,19 +8,12 @@ export interface CustomResourceListRowFilter {
   items: { [key: string]: any }[];
 }
 
-export interface CustomResourceListRowProps {
-  obj: { [key: string]: any };
-  index: number;
-  key?: string;
-  style: object;
-}
-
 export interface CustomResourceListProps {
   queryArg?: string;
   rowFilters?: CustomResourceListRowFilter[];
   sortBy: string;
   sortOrder: SortByDirection;
-  resourceRow: React.ComponentType<CustomResourceListRowProps>;
+  resourceRow: RowFunction;
   dependentResource?: any;
   resourceHeader: () => { [key: string]: any }[];
   fetchCustomResources: () => Promise<{ [key: string]: any }[]>;

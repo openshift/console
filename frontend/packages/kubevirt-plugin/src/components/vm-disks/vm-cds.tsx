@@ -1,12 +1,12 @@
 import * as React from 'react';
-import { Table } from '@console/internal/components/factory';
+import { Table, RowFunction } from '@console/internal/components/factory';
 import { dimensifyHeader } from '@console/shared';
 import { sortable } from '@patternfly/react-table';
 
 export type VMCDsTableProps = {
   data?: any[];
   customData?: object;
-  row: React.ComponentClass<any, any> | React.ComponentType<any>;
+  row: RowFunction;
   columnClasses: string[];
 };
 

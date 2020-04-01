@@ -275,7 +275,7 @@ const DeploymentConfigTableRow: RowFunction<K8sResourceKind> = ({ obj, index, ke
     <WorkloadTableRow
       obj={obj}
       index={index}
-      key={key}
+      rowKey={key}
       style={style}
       menuActions={menuActions}
       kind={kind}

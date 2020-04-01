@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Table } from '@console/internal/components/factory';
+import { Table, RowFunction } from '@console/internal/components/factory';
 import { sortable } from '@patternfly/react-table';
 import { useSafetyFirst } from '@console/internal/components/safety-first';
 import { createBasicLookup, dimensifyHeader } from '@console/shared';
@@ -47,7 +47,7 @@ const getNicsData = (vmLikeEntity: VMGenericLikeEntityKind): NetworkBundle[] => 
 export type VMNicsTableProps = {
   data?: any[];
   customData?: object;
-  row: React.ComponentClass<any, any> | React.ComponentType<any>;
+  row: RowFunction;
   columnClasses: string[];
 };
 

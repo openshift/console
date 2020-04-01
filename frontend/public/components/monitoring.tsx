@@ -30,7 +30,7 @@ import {
   SilenceStates,
 } from '../reducers/monitoring';
 import store, { RootState } from '../redux';
-import { RowFunction, Table, TableData, TableRow, TextFilter } from './factory';
+import { Table, TableData, TableRow, TextFilter, RowFunction } from './factory';
 import { confirmModal } from './modals';
 import MonitoringDashboardsPage from './monitoring/dashboards';
 import { graphStateToProps, QueryBrowserPage, ToggleGraph } from './monitoring/metrics';
@@ -761,7 +761,7 @@ const tableAlertClasses = [
   Kebab.columnClass,
 ];
 
-const AlertTableRow: React.FC<AlertTableRowProps> = ({ obj, index, key, style }) => {
+const AlertTableRow: RowFunction<Alert> = ({ obj, index, key, style }) => {
   const { annotations = {}, labels } = obj;
   const state = alertState(obj);
 
@@ -800,12 +800,6 @@ const AlertTableRow: React.FC<AlertTableRowProps> = ({ obj, index, key, style })
       </TableData>
     </TableRow>
   );
-};
-type AlertTableRowProps = {
-  obj: Alert;
-  index: number;
-  key?: string;
-  style: object;
 };
 
 const AlertTableHeader = () => [
@@ -1117,7 +1111,7 @@ const SilenceRow = ({ obj }) => {
   );
 };
 
-const SilenceTableRow: React.FC<SilenceTableRowProps> = ({ obj, index, key, style }) => {
+const SilenceTableRow: RowFunction<Silence> = ({ obj, index, key, style }) => {
   const state = silenceState(obj);
 
   return (
@@ -1156,12 +1150,6 @@ const SilenceTableRow: React.FC<SilenceTableRowProps> = ({ obj, index, key, styl
       </TableData>
     </TableRow>
   );
-};
-type SilenceTableRowProps = {
-  obj: Silence;
-  index: number;
-  key?: string;
-  style: object;
 };
 
 const silencesRowFilter = {
@@ -1776,7 +1764,7 @@ export type ListPageProps = {
   match: { path: string };
   nameFilterID: string;
   reduxID: string;
-  Row: React.ComponentType<any>;
+  Row: RowFunction;
   rowFilter: {
     type: string;
     selected: string[];

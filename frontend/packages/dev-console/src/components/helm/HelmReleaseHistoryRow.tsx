@@ -1,17 +1,11 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import { Status } from '@console/shared';
-import { TableRow, TableData } from '@console/internal/components/factory';
+import { TableRow, TableData, RowFunction } from '@console/internal/components/factory';
 import { Timestamp } from '@console/internal/components/utils';
 import { tableColumnClasses } from './HelmReleaseHistoryHeader';
-import { CustomResourceListRowProps } from '../custom-resource-list/custom-resource-list-types';
 
-const HelmReleaseHistoryRow: React.FC<CustomResourceListRowProps> = ({
-  obj,
-  index,
-  key,
-  style,
-}) => {
+const HelmReleaseHistoryRow: RowFunction = ({ obj, index, key, style }) => {
   return (
     <TableRow id={obj.revision} index={index} trKey={key} style={style}>
       <TableData className={tableColumnClasses.revision}>{obj.version}</TableData>

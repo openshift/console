@@ -18,7 +18,13 @@ import {
 import { withStartGuide } from '@console/internal/components/start-guide';
 import { compareOwnerReference } from '@console/shared/src/utils/owner-references';
 import { NamespaceModel, PodModel, NodeModel } from '@console/internal/models';
-import { Table, MultiListPage, TableRow, TableData } from '@console/internal/components/factory';
+import {
+  Table,
+  MultiListPage,
+  TableRow,
+  TableData,
+  RowFunction,
+} from '@console/internal/components/factory';
 import { FirehoseResult, Kebab, ResourceLink } from '@console/internal/components/utils';
 import { fromNow } from '@console/internal/components/utils/datetime';
 import { K8sResourceKind, PodKind } from '@console/internal/module/k8s';
@@ -91,13 +97,14 @@ const VMHeader = () =>
     tableColumnClasses,
   );
 
-const VMRow: React.FC<VMRowProps> = ({
-  obj,
-  customData: { pods, migrations },
-  index,
-  key,
-  style,
-}) => {
+const VMRow: RowFunction<
+  VMRowObjType,
+  {
+    pods: PodKind[];
+    migrations: K8sResourceKind[];
+    vmiLookup: K8sEntityMap<VMIKind>;
+  }
+> = ({ obj, customData: { pods, migrations }, index, key, style }) => {
   const { vm, vmi, migration } = obj;
   const { name, namespace, node, creationTimestamp, uid, vmStatus } = obj.metadata;
   const dimensify = dimensifyRow(tableColumnClasses);
@@ -287,18 +294,6 @@ type VMRowObjType = {
   vm: VMKind;
   vmi: VMIKind;
   migration: VMIKind;
-};
-
-type VMRowProps = {
-  obj: VMRowObjType;
-  index: number;
-  key: string;
-  style: object;
-  customData: {
-    pods: PodKind[];
-    migrations: K8sResourceKind[];
-    vmiLookup: K8sEntityMap<VMIKind>;
-  };
 };
 
 type VMListProps = {

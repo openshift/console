@@ -27,13 +27,13 @@ const tableColumnClasses = [
 export const WorkloadTableRow: React.FC<WorkloadTableRowProps> = ({
   obj,
   index,
-  key,
+  rowKey,
   style,
   kind,
   menuActions,
 }) => {
   return (
-    <TableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
+    <TableRow id={obj.metadata.uid} index={index} trKey={rowKey} style={style}>
       <TableData className={tableColumnClasses[0]}>
         <ResourceLink
           kind={kind}
@@ -73,7 +73,7 @@ WorkloadTableRow.displayName = 'WorkloadTableRow';
 type WorkloadTableRowProps = {
   obj: K8sResourceKind;
   index: number;
-  key?: string;
+  rowKey: string;
   style: object;
   kind: string;
   menuActions: KebabAction[];
