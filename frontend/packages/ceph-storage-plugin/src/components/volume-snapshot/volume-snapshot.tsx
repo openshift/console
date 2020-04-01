@@ -5,14 +5,14 @@ import * as classNames from 'classnames';
 
 import {
   DetailsPage,
-  ListPage,
   Table,
   TableData,
   TableProps,
   TableRow,
   RowFunction,
+  MultiListPage,
 } from '@console/internal/components/factory';
-import { K8sResourceKind, referenceFor } from '@console/internal/module/k8s';
+import { K8sResourceKind, referenceFor, referenceForModel } from '@console/internal/module/k8s';
 import {
   Kebab,
   ResourceKebab,
@@ -21,16 +21,20 @@ import {
   SectionHeading,
   navFactory,
   Timestamp,
+  ResourceIcon,
 } from '@console/internal/components/utils';
 import { getName, getNamespace } from '@console/shared';
 
 import { PersistentVolumeClaimModel } from '@console/internal/models';
-import { VolumeSnapshotModel } from '../../models';
+import { VolumeSnapshotModel, SnapshotScheduleModel } from '../../models';
 import { getKebabActionsForKind } from '../../utils/kebab-actions';
 import { sortable } from '@patternfly/react-table';
 import { volumeSnapshotModal } from '../modals/volume-snapshot-modal/volume-snapshot-modal';
+import * as _ from 'lodash';
 
 const snapshotMenuActions = [...getKebabActionsForKind(VolumeSnapshotModel)];
+
+const scheduleMenuActions = [...getKebabActionsForKind(SnapshotScheduleModel)];
 
 const snapshotTableColumnClasses = [
   classNames('col-lg-4', 'col-md-4', 'col-sm-6', 'col-xs-6'),
@@ -40,6 +44,33 @@ const snapshotTableColumnClasses = [
   classNames('col-lg-2', 'col-md-2', 'hidden-sm', 'hidden-xs'),
   Kebab.columnClass,
 ];
+
+const getDateString = (value) => {
+  const nextSnapshotDate = new Date(value);
+  return `${nextSnapshotDate.getUTCFullYear()}${
+    nextSnapshotDate.getUTCMonth() < 9
+      ? `0${nextSnapshotDate.getUTCMonth() + 1}`
+      : nextSnapshotDate.getUTCMonth() + 1
+  }${
+    nextSnapshotDate.getUTCDate() < 10
+      ? `0${nextSnapshotDate.getUTCDate()}`
+      : nextSnapshotDate.getUTCDate()
+  }${
+    nextSnapshotDate.getUTCHours() < 10
+      ? `0${nextSnapshotDate.getUTCHours()}`
+      : nextSnapshotDate.getUTCHours()
+  }${
+    nextSnapshotDate.getUTCMinutes() < 10
+      ? `0${nextSnapshotDate.getUTCMinutes()}`
+      : nextSnapshotDate.getUTCMinutes()
+  }`;
+};
+
+const getPVCName = () => {
+  const urlArrays = window.location.href.split('/');
+  const pvc = urlArrays.indexOf('persistentvolumeclaims');
+  return urlArrays[pvc + 1];
+};
 
 const VolumeSnapshotTableHeader = () => {
   return [
@@ -134,24 +165,47 @@ export const VolumeSnapshotDetails = (props) => (
 const VolumeSnapshotTableRow: RowFunction<K8sResourceKind> = ({ obj, index, key, style }) => (
   <TableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
     <TableData className={snapshotTableColumnClasses[0]}>
-      <ResourceLink
-        kind={referenceFor(VolumeSnapshotModel)}
-        name={getName(obj)}
-        namespace={getNamespace(obj)}
-        title={getName(obj)}
-      />
+      {obj.kind === VolumeSnapshotModel.kind ? (
+        <ResourceLink
+          kind={referenceFor(VolumeSnapshotModel)}
+          name={getName(obj)}
+          namespace={getNamespace(obj)}
+          title={getName(obj)}
+        />
+      ) : (
+        <>
+          <ResourceIcon kind={volumeSnapshotKind} />
+          {`${getPVCName()}-${getName(obj)}-${getDateString(obj?.status?.nextSnapshotTime)}`}
+        </>
+      )}
     </TableData>
     <TableData className={snapshotTableColumnClasses[1]}>
-      <Timestamp timestamp={obj?.metadata?.creationTimestamp} />
+      {obj.kind === VolumeSnapshotModel.kind ? (
+        <Timestamp timestamp={obj?.metadata?.creationTimestamp} />
+      ) : (
+        <Timestamp timestamp={obj?.status?.nextSnapshotTime} />
+      )}
     </TableData>
     <TableData className={snapshotTableColumnClasses[2]}>
-      {obj?.status?.readyToUse ? 'Ready' : 'Not Ready'}
+      {obj.kind === VolumeSnapshotModel.kind
+        ? obj?.status?.readyToUse
+          ? 'Ready'
+          : 'Not Ready'
+        : 'Scheduled'}
     </TableData>
     <TableData className={snapshotTableColumnClasses[3]}>
-      {obj?.status?.restoreSize || 'No Data'}
+      {obj.kind === VolumeSnapshotModel.kind ? obj?.status?.restoreSize || 'No Data' : '-'}
     </TableData>
     <TableData className={snapshotTableColumnClasses[5]}>
-      <ResourceKebab actions={snapshotMenuActions} kind={volumeSnapshotKind} resource={obj} />
+      <ResourceKebab
+        actions={obj.kind === VolumeSnapshotModel.kind ? snapshotMenuActions : scheduleMenuActions}
+        kind={
+          obj.kind === VolumeSnapshotModel.kind
+            ? volumeSnapshotKind
+            : referenceForModel(SnapshotScheduleModel)
+        }
+        resource={obj}
+      />
     </TableData>
   </TableRow>
 );
@@ -166,13 +220,36 @@ export const VolumeSnapshotList: React.FC<TableProps> = (props) => (
   />
 );
 
-export const VolumeSnapshotPage = (props) => (
-  <ListPage
-    canCreate
-    kind={volumeSnapshotKind}
-    ListComponent={VolumeSnapshotList}
-    showTitle={false}
-    namespace={props.namespace}
-    createHandler={() => volumeSnapshotModal({ ...props })}
-  />
-);
+export const VolumeSnapshotPage = (props) => {
+  const flattern = ({ schedule, snapshot }) => [
+    ..._.get(schedule, 'data', []),
+    ..._.get(snapshot, 'data', []),
+  ];
+  const createProps = { onClick: () => volumeSnapshotModal({ ...props }) };
+  return (
+    <MultiListPage
+      {...props}
+      namespace={props.namespace}
+      canCreate
+      showTitle={false}
+      resources={[
+        {
+          kind: referenceForModel(SnapshotScheduleModel),
+          namespace: props.ns,
+          namespaced: true,
+          prop: 'schedule',
+        },
+        {
+          kind: volumeSnapshotKind,
+          namespace: props.ns,
+          namespaced: true,
+          prop: 'snapshot',
+        },
+      ]}
+      flatten={flattern}
+      ListComponent={VolumeSnapshotList}
+      createButtonText="Create Snapshot"
+      createProps={createProps}
+    />
+  );
+};
