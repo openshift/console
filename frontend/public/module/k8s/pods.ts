@@ -206,8 +206,8 @@ export const podReadiness = (pod: PodKind): { readyCount: number; totalContainer
   );
 };
 
-// This logic is replicated from k8s (at this writing, Kubernetes 1.15)
-// (See https://github.com/kubernetes/kubernetes/blob/release-1.15/pkg/printers/internalversion/printers.go)
+// This logic is replicated from k8s (at this writing, Kubernetes 1.17)
+// (See https://github.com/kubernetes/kubernetes/blob/release-1.17/pkg/printers/internalversion/printers.go)
 export const podPhase = (pod: PodKind): PodPhase => {
   if (!pod || !pod.status) {
     return '';
@@ -215,6 +215,10 @@ export const podPhase = (pod: PodKind): PodPhase => {
 
   if (pod.metadata.deletionTimestamp) {
     return 'Terminating';
+  }
+
+  if (pod.status.reason === 'NodeLost') {
+    return 'Unknown';
   }
 
   if (pod.status.reason === 'Evicted') {
@@ -247,8 +251,12 @@ export const podPhase = (pod: PodKind): PodPhase => {
 
   if (!initializing) {
     let hasRunning = false;
-    _.each(pod.status.containerStatuses, (container: ContainerStatus) => {
-      const { running, terminated, waiting } = container.state;
+    const containerStatuses = pod.status.containerStatuses || [];
+    for (let i = containerStatuses.length - 1; i >= 0; i--) {
+      const {
+        state: { running, terminated, waiting },
+        ready,
+      } = containerStatuses[i];
       if (terminated && terminated.reason) {
         phase = terminated.reason;
       } else if (waiting && waiting.reason) {
@@ -257,10 +265,10 @@ export const podPhase = (pod: PodKind): PodPhase => {
         phase = terminated.signal
           ? `Signal:${terminated.signal}`
           : `ExitCode:${terminated.exitCode}`;
-      } else if (running && container.ready) {
+      } else if (running && ready) {
         hasRunning = true;
       }
-    });
+    }
 
     // Change pod status back to "Running" if there is at least one container
     // still reporting as "Running" status.
