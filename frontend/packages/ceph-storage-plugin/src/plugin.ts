@@ -1,14 +1,10 @@
 import * as _ from 'lodash';
 import * as models from './models';
-import {
-  CAPACITY_USAGE_QUERIES,
-  STORAGE_HEALTH_QUERIES,
-  StorageDashboardQuery,
-} from './constants/queries';
+import { CAPACITY_USAGE_QUERIES, StorageDashboardQuery } from './constants/queries';
 import {
   ClusterServiceVersionAction,
   DashboardsCard,
-  DashboardsOverviewHealthPrometheusSubsystem,
+  DashboardsOverviewHealthResourceSubsystem,
   DashboardsOverviewUtilizationItem,
   DashboardsTab,
   FeatureFlag,
@@ -35,13 +31,14 @@ import { referenceForModel, referenceFor } from '@console/internal/module/k8s';
 import { PersistentVolumeClaimModel } from '@console/internal/models';
 import { getCephHealthState } from './components/dashboard-page/storage-dashboard/status-card/utils';
 import { isClusterExpandActivity } from './components/dashboard-page/storage-dashboard/activity-card/cluster-expand-activity';
+import { WatchCephResource } from './types';
 
 type ConsumedExtensions =
   | ModelFeatureFlag
   | ModelDefinition
   | DashboardsTab
   | DashboardsCard
-  | DashboardsOverviewHealthPrometheusSubsystem
+  | DashboardsOverviewHealthResourceSubsystem<WatchCephResource>
   | DashboardsOverviewUtilizationItem
   | RoutePage
   | ActionFeatureFlag
@@ -205,10 +202,16 @@ const plugin: Plugin<ConsumedExtensions> = [
     },
   },
   {
-    type: 'Dashboards/Overview/Health/Prometheus',
+    type: 'Dashboards/Overview/Health/Resource',
     properties: {
       title: 'Storage',
-      queries: [STORAGE_HEALTH_QUERIES[StorageDashboardQuery.CEPH_STATUS_QUERY]],
+      resources: {
+        ceph: {
+          kind: referenceForModel(models.CephClusterModel),
+          namespaced: false,
+          isList: true,
+        },
+      },
       healthHandler: getCephHealthState,
     },
     flags: {
