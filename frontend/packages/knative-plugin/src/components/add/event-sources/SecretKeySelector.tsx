@@ -1,12 +1,12 @@
 import * as React from 'react';
+import { useFormikContext, FormikValues, useField } from 'formik';
+import { connect } from 'react-redux';
 import { k8sGet } from '@console/internal/module/k8s';
 import { SecretModel } from '@console/internal/models';
 import { errorModal } from '@console/internal/components/modals/error-modal';
 import { FormGroup } from '@patternfly/react-core';
 import { ValueFromPair } from '@console/internal/components/utils/value-from-pair';
 import { getFieldId } from '@console/shared';
-import { useFormikContext, FormikValues, useField } from 'formik';
-import { connect } from 'react-redux';
 import { getActiveNamespace } from '@console/internal/reducers/ui';
 import { RootState } from '@console/internal/redux';
 

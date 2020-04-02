@@ -1,3 +1,5 @@
+import { LimitsData } from '@console/dev-console/src/components/import/import-types';
+
 export enum EventSources {
   CronJobSource = 'CronJobSource',
   ContainerSource = 'ContainerSource',
@@ -33,6 +35,7 @@ export interface EventSourceFormData {
   name: string;
   type: string;
   sink: KnativeServiceName;
+  limits: LimitsData;
   data?: EventSourceData;
 }
 

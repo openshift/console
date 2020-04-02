@@ -1,3 +1,4 @@
+import * as _ from 'lodash';
 import { K8sResourceKind, K8sKind } from '@console/internal/module/k8s';
 import { useAccessReview } from '@console/internal/components/utils';
 import { getAppLabels } from '@console/dev-console/src/utils/resource-label-utils';
@@ -26,15 +27,37 @@ export const getEventSourcesDepResource = (formData: any): K8sResourceKind => {
     project: { name: namespace },
     data,
     sink: { knativeService },
+    limits: { cpu, memory },
   } = formData;
 
   const defaultLabel = getAppLabels(name, applicationName);
   const apiGroup =
-    type === EventSources.ApiServerSource || type === EventSources.SinkBinding
+    type === EventSources.ApiServerSource ||
+    type === EventSources.SinkBinding ||
+    EventSources.KafkaSource
       ? KNATIVE_EVENT_SOURCE_APIGROUP
       : KNATIVE_EVENT_SOURCE_APIGROUP_DEP;
   const apiVersion = 'v1alpha1';
   const eventSrcData = data[type.toLowerCase()];
+  const completeEventSrcData =
+    type === EventSources.KafkaSource && eventSrcData
+      ? _.merge({}, eventSrcData, {
+          resources: {
+            ...((cpu.limit || memory.limit) && {
+              limits: {
+                ...(cpu.limit && { cpu: `${cpu.limit}${cpu.limitUnit}` }),
+                ...(memory.limit && { memory: `${memory.limit}${memory.limitUnit}` }),
+              },
+            }),
+            ...((cpu.request || memory.request) && {
+              requests: {
+                ...(cpu.request && { cpu: `${cpu.request}${cpu.requestUnit}` }),
+                ...(memory.request && { memory: `${memory.request}${memory.requestUnit}` }),
+              },
+            }),
+          },
+        })
+      : eventSrcData;
   const eventSourceResource: K8sResourceKind = {
     kind: type,
     apiVersion: `${apiGroup}/${apiVersion}`,
@@ -54,7 +77,7 @@ export const getEventSourcesDepResource = (formData: any): K8sResourceKind => {
           name: knativeService,
         },
       },
-      ...(eventSrcData && eventSrcData),
+      ...(completeEventSrcData && completeEventSrcData),
     },
   };
 
@@ -87,25 +110,23 @@ export const getEventSourceData = (source: string) => {
       ],
     },
     kafkasource: {
-      spec: {
-        bootstrapServers: '',
-        topics: '',
-        consumerGroup: '',
-        net: {
-          sasl: {
-            enable: false,
-            user: { secretKeyRef: { name: '', key: '' } },
-            password: { secretKeyRef: { name: '', key: '' } },
-          },
-          tls: {
-            enable: false,
-            caCert: { secretKeyRef: { name: '', key: '' } },
-            cert: { secretKeyRef: { name: '', key: '' } },
-            key: { secretKeyRef: { name: '', key: '' } },
-          },
+      bootstrapServers: '',
+      topics: '',
+      consumerGroup: '',
+      net: {
+        sasl: {
+          enable: false,
+          user: { secretKeyRef: { name: '', key: '' } },
+          password: { secretKeyRef: { name: '', key: '' } },
         },
-        serviceAccountName: '',
+        tls: {
+          enable: false,
+          caCert: { secretKeyRef: { name: '', key: '' } },
+          cert: { secretKeyRef: { name: '', key: '' } },
+          key: { secretKeyRef: { name: '', key: '' } },
+        },
       },
+      serviceAccountName: '',
     },
   };
   return eventSourceData[source];

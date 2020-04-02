@@ -11,26 +11,26 @@ const KafkaSourceSection: React.FC = () => {
       <InputField
         data-test-id="kafkasource-bootstrapservers-field"
         type={TextInputTypes.text}
-        name="data.kafkasource.spec.bootstrapServers"
+        name="data.kafkasource.bootstrapServers"
         label="BootstrapServers"
         required
       />
       <InputField
         data-test-id="kafkasource-topics-field"
         type={TextInputTypes.text}
-        name="data.kafkasource.spec.topics"
+        name="data.kafkasource.topics"
         label="Topics"
         required
       />
       <InputField
         data-test-id="kafkasource-consumergoup-field"
         type={TextInputTypes.text}
-        name="data.kafkasource.spec.consumerGroup"
+        name="data.kafkasource.consumerGroup"
         label="ConsumerGroup"
         required
       />
       <KafkaSourceNetSection />
-      <ServiceAccountDropdown name="data.kafkasource.spec.serviceAccountName" />
+      <ServiceAccountDropdown name="data.kafkasource.serviceAccountName" />
     </FormSection>
   );
 };

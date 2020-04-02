@@ -52,6 +52,24 @@ const EventSource: React.FC<Props> = ({
     sink: {
       knativeService: serviceName,
     },
+    limits: {
+      cpu: {
+        request: '',
+        requestUnit: 'm',
+        defaultRequestUnit: 'm',
+        limit: '',
+        limitUnit: 'm',
+        defaultLimitUnit: 'm',
+      },
+      memory: {
+        request: '',
+        requestUnit: 'Mi',
+        defaultRequestUnit: 'Mi',
+        limit: '',
+        limitUnit: 'Mi',
+        defaultLimitUnit: 'Mi',
+      },
+    },
     type: typeEventSource,
     data: {
       [typeEventSource.toLowerCase()]: getEventSourceData(typeEventSource.toLowerCase()),

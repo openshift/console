@@ -13,6 +13,7 @@ import { EventSources } from './import-types';
 import EventSourcesSelector from './event-sources/EventSourcesSelector';
 import { useEventSourceList } from '../../utils/create-eventsources-utils';
 import KafkaSourceSection from './event-sources/KafkaSourceSection';
+import AdvancedSection from './AdvancedSection';
 
 interface OwnProps {
   namespace: string;
@@ -41,6 +42,7 @@ const EventSourceForm: React.FC<FormikProps<FormikValues> & OwnProps> = ({
       project={values.project}
       noProjectsAvailable={projects?.loaded && _.isEmpty(projects.data)}
     />
+    <AdvancedSection />
     <FormFooter
       handleReset={handleReset}
       errorMessage={status && status.submitError}
