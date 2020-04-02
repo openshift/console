@@ -56,7 +56,9 @@ describe('<LinkableLegend>', () => {
   });
 
   it('Returns tooltip', () => {
-    wrapper.setProps({ datum: { name: 'Other', link: '#', labels: { fill: '#000' } } });
+    wrapper.setProps({
+      datum: { name: 'Other', labelId: 'Other', link: '#', labels: { fill: '#000' } },
+    });
     expect(wrapper.find(Tooltip).exists()).toBe(true);
   });
 });
