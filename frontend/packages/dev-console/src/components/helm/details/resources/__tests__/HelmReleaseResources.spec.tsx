@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
 import { MultiListPage } from '@console/internal/components/factory';
+import { mockHelmReleases } from '../../../__tests__/helm-release-mock-data';
 import HelmReleaseResources from '../HelmReleaseResources';
-import { mockHelmReleases } from './helm-release-mock-data';
 
 describe('HelmReleaseResources', () => {
   const match = {

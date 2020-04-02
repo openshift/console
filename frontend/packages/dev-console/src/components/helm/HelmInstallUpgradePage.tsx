@@ -8,9 +8,9 @@ import { PageHeading, history, LoadingBox } from '@console/internal/components/u
 import { coFetchJSON } from '@console/internal/co-fetch';
 import { PageBody } from '@console/shared';
 import NamespacedPage, { NamespacedPageVariants } from '../NamespacedPage';
-import HelmInstallUpgradeForm from './HelmInstallUpgradeForm';
+import HelmInstallUpgradeForm from './form/HelmInstallUpgradeForm';
 import { HelmActionType, HelmChart, HelmActionConfigType } from './helm-types';
-import { getValidationSchema } from './helm-validation-utils';
+import { getHelmActionValidationSchema } from './helm-validation-utils';
 import { getHelmActionConfig } from './helm-utils';
 
 export type HelmInstallUpgradePageProps = RouteComponentProps<{
@@ -132,7 +132,7 @@ const HelmInstallUpgradePage: React.FunctionComponent<HelmInstallUpgradePageProp
           initialValues={initialValues}
           onSubmit={handleSubmit}
           onReset={history.goBack}
-          validationSchema={getValidationSchema(helmAction)}
+          validationSchema={getHelmActionValidationSchema(helmAction)}
         >
           {(props) => (
             <HelmInstallUpgradeForm

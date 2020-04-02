@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { SyncMarkdownView } from '@console/internal/components/markdown-view';
-import { HelmRelease } from './helm-types';
+import { HelmRelease } from '../helm-types';
 
 export interface HelmReleaseNotesProps {
   customData: HelmRelease;

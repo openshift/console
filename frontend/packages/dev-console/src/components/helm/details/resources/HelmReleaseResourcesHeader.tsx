@@ -7,7 +7,7 @@ export const tableColumnClasses = {
   created: 'col-lg-4 col-md-3 hidden-sm hidden-xs',
 };
 
-const HelmReleaseResourceTableHeader = () => {
+const HelmReleaseResourcesHeader = () => {
   return [
     {
       title: 'Name',
@@ -36,4 +36,4 @@ const HelmReleaseResourceTableHeader = () => {
   ];
 };
 
-export default HelmReleaseResourceTableHeader;
+export default HelmReleaseResourcesHeader;

@@ -2,10 +2,10 @@ import * as React from 'react';
 import { match as RMatch } from 'react-router';
 import { coFetchJSON } from '@console/internal/co-fetch';
 import { SortByDirection } from '@patternfly/react-table';
-import CustomResourceList from '../custom-resource-list/CustomResourceList';
+import CustomResourceList from '../../../custom-resource-list/CustomResourceList';
 import HelmReleaseHistoryRow from './HelmReleaseHistoryRow';
 import HelmReleaseHistoryHeader from './HelmReleaseHistoryHeader';
-import { HelmRelease } from './helm-types';
+import { HelmRelease } from '../../helm-types';
 
 interface HelmReleaseHistoryProps {
   match: RMatch<{

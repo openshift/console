@@ -5,11 +5,11 @@ import { PageHeading, Firehose } from '@console/internal/components/utils';
 import { SecretModel } from '@console/internal/models';
 import ProjectListPage from '../projects/ProjectListPage';
 import NamespacedPage, { NamespacedPageVariants } from '../NamespacedPage';
-import HelmReleaseList from './HelmReleaseList';
+import HelmReleaseList from './list/HelmReleaseList';
 
-type HelmReleasePageProps = RouteComponentProps<{ ns: string }>;
+type HelmReleaseListPageProps = RouteComponentProps<{ ns: string }>;
 
-export const HelmReleasePage: React.FC<HelmReleasePageProps> = (props) => {
+export const HelmReleaseListPage: React.FC<HelmReleaseListPageProps> = (props) => {
   const {
     match: {
       params: { ns: namespace },
@@ -43,4 +43,4 @@ export const HelmReleasePage: React.FC<HelmReleasePageProps> = (props) => {
   );
 };
 
-export default HelmReleasePage;
+export default HelmReleaseListPage;

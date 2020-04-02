@@ -439,19 +439,6 @@ const plugin: Plugin<ConsumedExtensions> = [
     type: 'Page/Route',
     properties: {
       exact: true,
-      path: ['/catalog/helm-install'],
-      loader: async () =>
-        (
-          await import(
-            './components/helm/HelmInstallUpgradePage' /* webpackChunkName: "dev-console-helm-install-upgrade" */
-          )
-        ).default,
-    },
-  },
-  {
-    type: 'Page/Route',
-    properties: {
-      exact: true,
       path: '/edit/ns/:ns',
       loader: async () =>
         (
@@ -483,19 +470,6 @@ const plugin: Plugin<ConsumedExtensions> = [
         (
           await import(
             './components/import/ImportPage' /* webpackChunkName: "dev-console-import" */
-          )
-        ).default,
-    },
-  },
-  {
-    type: 'Page/Route',
-    properties: {
-      path: ['/helm-releases/ns/:ns/release/:name'],
-      exact: false,
-      loader: async () =>
-        (
-          await import(
-            './components/helm/HelmReleaseDetails' /* webpackChunkName: "dev-console-helmReleaseDetails" */
           )
         ).default,
     },
@@ -618,11 +592,11 @@ const plugin: Plugin<ConsumedExtensions> = [
     type: 'Page/Route',
     properties: {
       exact: true,
-      path: ['/helm-releases/all-namespaces', '/helm-releases/ns/:ns'],
+      path: ['/catalog/helm-install'],
       loader: async () =>
         (
           await import(
-            './components/helm/HelmReleasePage' /* webpackChunkName: "dev-console-helm-releases" */
+            './components/helm/HelmInstallUpgradePage' /* webpackChunkName: "dev-console-helm-install-upgrade" */
           )
         ).default,
     },
@@ -636,6 +610,32 @@ const plugin: Plugin<ConsumedExtensions> = [
         (
           await import(
             './components/helm/HelmInstallUpgradePage' /* webpackChunkName: "dev-console-helm-install-upgrade" */
+          )
+        ).default,
+    },
+  },
+  {
+    type: 'Page/Route',
+    properties: {
+      exact: true,
+      path: ['/helm-releases/all-namespaces', '/helm-releases/ns/:ns'],
+      loader: async () =>
+        (
+          await import(
+            './components/helm/HelmReleaseListPage' /* webpackChunkName: "dev-console-helm-releases-list" */
+          )
+        ).default,
+    },
+  },
+  {
+    type: 'Page/Route',
+    properties: {
+      path: ['/helm-releases/ns/:ns/release/:name'],
+      exact: false,
+      loader: async () =>
+        (
+          await import(
+            './components/helm/HelmReleaseDetailsPage' /* webpackChunkName: "dev-console-helm-release-details" */
           )
         ).default,
     },
