@@ -1,6 +1,11 @@
 import * as React from 'react';
 import * as _ from 'lodash';
-import { DeploymentConfigModel, DeploymentModel, DaemonSetModel } from '@console/internal/models';
+import {
+  DeploymentConfigModel,
+  DeploymentModel,
+  DaemonSetModel,
+  StatefulSetModel,
+} from '@console/internal/models';
 import { ChartLabel } from '@patternfly/react-charts';
 import {
   K8sResourceKind,
@@ -167,23 +172,24 @@ export const usePodScalingAccessStatus = (
 };
 
 export const transformPodRingData = (resources: PodRingResources, kind: string): PodRingData => {
-  const deploymentKinds = {
+  const resourceKinds = {
     [DeploymentModel.kind]: 'deployments',
     [DeploymentConfigModel.kind]: 'deploymentConfigs',
+    [StatefulSetModel.kind]: 'statefulSets',
   };
 
-  const targetDeployment = deploymentKinds[kind];
+  const targetResource = resourceKinds[kind];
   const transformResourceData = new TransformResourceData(resources);
 
-  if (!targetDeployment) {
-    throw new Error(`Invalid target deployment resource: (${targetDeployment})`);
+  if (!targetResource) {
+    throw new Error(`Invalid target resource: (${targetResource})`);
   }
-  if (_.isEmpty(resources[targetDeployment].data)) {
+  if (_.isEmpty(resources[targetResource].data)) {
     return {};
   }
 
   const podsData: PodRingData = {};
-  const resourceData = resources[targetDeployment].data;
+  const resourceData = resources[targetResource].data;
 
   if (kind === DeploymentConfigModel.kind) {
     return transformResourceData
@@ -193,6 +199,10 @@ export const transformPodRingData = (resources: PodRingResources, kind: string):
 
   if (kind === DeploymentModel.kind) {
     return transformResourceData.getPodsForDeployments(resourceData).reduce(applyPods, podsData);
+  }
+
+  if (kind === StatefulSetModel.kind) {
+    return transformResourceData.getPodsForStatefulSets(resourceData).reduce(applyPods, podsData);
   }
   return podsData;
 };

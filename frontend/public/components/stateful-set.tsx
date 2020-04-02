@@ -14,9 +14,12 @@ import {
   ResourceSummary,
   SectionHeading,
   navFactory,
+  LoadingInline,
 } from './utils';
 import { VolumesTable } from './volumes-table';
 import { StatefulSetModel } from '../models';
+import PodRingSet from '@console/shared/src/components/pod/PodRingSet';
+import { PodRingController } from '@console/shared';
 
 const { AddStorage, common } = Kebab.factory;
 export const menuActions: KebabAction[] = [
@@ -49,6 +52,23 @@ const StatefulSetDetails: React.FC<StatefulSetDetailsProps> = ({ obj: ss }) => (
   <>
     <div className="co-m-pane__body">
       <SectionHeading text="StatefulSet Details" />
+      <PodRingController
+        namespace={ss.metadata.namespace}
+        kind={ss.kind}
+        render={(d) => {
+          return d.loaded ? (
+            <PodRingSet
+              key={ss.metadata.uid}
+              podData={d.data[ss.metadata.uid]}
+              obj={ss}
+              resourceKind={StatefulSetModel}
+              path="/spec/replicas"
+            />
+          ) : (
+            <LoadingInline />
+          );
+        }}
+      />
       <ResourceSummary resource={ss} showPodSelector showNodeSelector showTolerations />
     </div>
     <div className="co-m-pane__body">

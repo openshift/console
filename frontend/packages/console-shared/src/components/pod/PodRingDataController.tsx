@@ -69,6 +69,13 @@ const PodRingController: React.FC<PodRingDataControllerProps> = ({ namespace, ki
       namespace,
       prop: 'deploymentConfigs',
     });
+  } else if (kind === 'StatefulSet') {
+    resources.push({
+      isList: true,
+      kind: 'StatefulSet',
+      namespace,
+      prop: 'statefulSets',
+    });
   }
 
   return (
