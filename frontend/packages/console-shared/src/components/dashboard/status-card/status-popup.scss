@@ -1,0 +1,30 @@
+.co-status-popup__status {
+  align-items: center;
+  display: flex;
+  padding-left: var(--pf-global--spacer--xs);
+  white-space: nowrap;
+}
+
+.co-status-popup__icon {
+  padding-left: var(--pf-global--spacer--xs);
+}
+
+.co-status-popup__row {
+  display: flex;
+  justify-content: space-between;
+  padding-bottom: var(--pf-global--spacer--xs);
+}
+
+.co-status-popup__section {
+  margin-top: var(--pf-global--spacer--md);
+}
+
+.co-status-popup__text--bold {
+  font-weight: var(--pf-global--FontWeight--bold);
+}
+
+.co-status-popup__title .co-resource-item__resource-name {
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}

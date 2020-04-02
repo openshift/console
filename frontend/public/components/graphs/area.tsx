@@ -1,5 +1,4 @@
 import * as React from 'react';
-import * as _ from 'lodash';
 import {
   Chart,
   ChartArea,
@@ -36,7 +35,7 @@ export enum AreaChartStatus {
   WARNING = 'WARNING',
 }
 
-const chartStatusColors = {
+export const chartStatusColors = {
   [AreaChartStatus.ERROR]: dangerColor.value,
   [AreaChartStatus.WARNING]: warningColor.value,
 };
@@ -55,7 +54,7 @@ export const AreaChart: React.FC<AreaChartProps> = ({
   title,
   xAxis = true,
   yAxis = true,
-  chartStatus,
+  chartStyle,
   byteDataType = '',
 }) => {
   const [containerRef, width] = useRefWidth();
@@ -72,10 +71,6 @@ export const AreaChart: React.FC<AreaChartProps> = ({
     }
   }, [byteDataType, data]);
 
-  const firstDescription = React.useMemo(() => _.get(processedData, `[0][0].description`), [
-    processedData,
-  ]);
-
   const tickFormat = React.useCallback((tick) => `${humanize(tick, unit, unit).string}`, [
     humanize,
     unit,
@@ -89,10 +84,9 @@ export const AreaChart: React.FC<AreaChartProps> = ({
       if (!description) {
         return `${value} at ${date}`;
       }
-      const text = `${description.toUpperCase()}: ${value}`;
-      return description === firstDescription ? `${date}\n${text}` : `${text}`;
+      return description(date, value);
     },
-    [humanize, unit, formatDate, firstDescription],
+    [humanize, unit, formatDate],
   );
 
   const container = (
@@ -100,7 +94,9 @@ export const AreaChart: React.FC<AreaChartProps> = ({
       voronoiDimension="x"
       labels={getLabel}
       activateData={false}
-      labelComponent={<ChartTooltip centerOffset={data.length > 1 ? { x: 0, y: -30 } : null} />}
+      labelComponent={
+        <ChartTooltip centerOffset={data.filter((d) => !!d).length > 1 ? { x: 0, y: -40 } : null} />
+      }
     />
   );
 
@@ -121,15 +117,7 @@ export const AreaChart: React.FC<AreaChartProps> = ({
             {yAxis && <ChartAxis dependentAxis tickCount={tickCount} tickFormat={tickFormat} />}
             <ChartGroup>
               {processedData.map((datum, index) => (
-                <ChartArea
-                  key={index}
-                  data={datum}
-                  style={
-                    chartStatus && chartStatus[index]
-                      ? { data: { fill: chartStatusColors[chartStatus[index]] } }
-                      : null
-                  }
-                />
+                <ChartArea key={index} data={datum} style={chartStyle && chartStyle[index]} />
               ))}
             </ChartGroup>
           </Chart>
@@ -175,7 +163,7 @@ type AreaChartProps = {
   xAxis?: boolean;
   yAxis?: boolean;
   padding?: object;
-  chartStatus?: AreaChartStatus[];
+  chartStyle?: object[];
   byteDataType?: ByteDataTypes; //Use this to process the whole data frame at once
 };
 

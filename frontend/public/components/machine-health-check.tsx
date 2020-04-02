@@ -4,7 +4,8 @@ import { sortable } from '@patternfly/react-table';
 import * as classNames from 'classnames';
 
 import { MachineHealthCheckModel, MachineModel } from '../models';
-import { K8sResourceKind, referenceForModel } from '../module/k8s';
+import { K8sResourceKind, MachineHealthCheckKind } from '../module/k8s/types';
+import { referenceForModel } from '../module/k8s/k8s';
 import { DetailsPage, ListPage, Table, TableRow, TableData, RowFunction } from './factory';
 import {
   DetailsItem,
@@ -179,7 +180,7 @@ type MachineHealthCheckPageProps = {
 };
 
 export type MachineHealthCheckDetailsProps = {
-  obj: K8sResourceKind;
+  obj: MachineHealthCheckKind;
 };
 
 export type MachineHealthCheckDetailsPageProps = {

@@ -23,10 +23,10 @@ export const OperatorsSection: React.FC<OperatorsSectionProps> = ({
   const operatorsHealthy = sortedOperatorStatuses.every((o) => o.status.health === HealthState.OK);
   const RowLoading = React.useCallback(() => <div className="co-status__operator-skeleton" />, []);
   return (
-    <div className="co-status__operator-section">
-      <div className="co-status__operator-row">
+    <div className="co-status-popup__section">
+      <div className="co-status-popup__row">
         <div>
-          <span className="co-status__operator-text--bold">{title}</span>
+          <span className="co-status-popup__text--bold">{title}</span>
           <span className="text-secondary">{` (${operatorStatuses.length} installed)`}</span>
         </div>
         <div className="text-secondary">Status</div>
@@ -44,45 +44,19 @@ export const OperatorsSection: React.FC<OperatorsSectionProps> = ({
           />
         ))
       )}
-      <div className="co-status__operator-row">
+      <div className="co-status-popup__row">
         <Link to={linkTo}>View all</Link>
         {!error && operatorsHealthy && operatorStatuses.length && (
-          <div className="co-status__operator">
+          <div className="co-status-popup__status">
             <div className="text-secondary">
               All {operatorStatuses[0].status.title.toLowerCase()}
             </div>
-            <div className="co-status__operator-icon">{operatorStatuses[0].status.icon}</div>
+            <div className="co-status-popup__icon">{operatorStatuses[0].status.icon}</div>
           </div>
         )}
       </div>
     </div>
   );
-};
-
-export const OperatorStatusRow: React.FC<OperatorStatusRowProps> = ({ title, icon, children }) => (
-  <div className="co-status__operator-row">
-    {children}
-    <div className="co-status__operator">
-      <div className="text-secondary">{title}</div>
-      <div className="co-status__operator-icon">{icon}</div>
-    </div>
-  </div>
-);
-
-const OperatorStatusBody: React.FC = ({ children }) => (
-  <>
-    <div className="co-status__operator-section">
-      Operators create, configure, and manage applications by extending the Kubernetes API.
-    </div>
-    {children}
-  </>
-);
-
-export default OperatorStatusBody;
-
-type OperatorStatusRowProps = {
-  title: string;
-  icon: React.ReactNode;
 };
 
 type OperatorsSectionProps = {

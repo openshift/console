@@ -14,8 +14,15 @@ import StatusIconAndText from './StatusIconAndText';
 import { ErrorStatus, InfoStatus, ProgressStatus, SuccessStatus } from './statuses';
 import { StatusComponentProps } from './types';
 
-export const Status: React.FC<StatusProps> = ({ status, title, children, iconOnly, noTooltip }) => {
-  const statusProps = { title: title || status, iconOnly, noTooltip };
+export const Status: React.FC<StatusProps> = ({
+  status,
+  title,
+  children,
+  iconOnly,
+  noTooltip,
+  className,
+}) => {
+  const statusProps = { title: title || status, iconOnly, noTooltip, className };
   switch (status) {
     case 'New':
       return <StatusIconAndText {...statusProps} icon={<HourglassStartIcon />} />;
@@ -99,4 +106,5 @@ type StatusIconProps = {
 
 type StatusProps = StatusComponentProps & {
   status: string;
+  className?: string;
 };

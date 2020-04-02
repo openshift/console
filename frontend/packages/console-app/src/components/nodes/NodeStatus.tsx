@@ -28,11 +28,11 @@ const getDegradedStates = (node: NodeKind): Condition[] => {
     .map(({ type }) => type as Condition);
 };
 
-const NodeStatus: React.FC<NodeStatusProps> = ({ node, showPopovers = false }) => {
+const NodeStatus: React.FC<NodeStatusProps> = ({ node, showPopovers = false, className }) => {
   const status = showPopovers ? getDegradedStates(node) : [];
   return (
     <>
-      <Status status={nodeStatus(node)} />
+      <Status status={nodeStatus(node)} className={className} />
       <SecondaryStatus status={getNodeSecondaryStatus(node)} />
       {status.length > 0 &&
         status.map((item) => (
@@ -53,6 +53,7 @@ const NodeStatus: React.FC<NodeStatusProps> = ({ node, showPopovers = false }) =
 type NodeStatusProps = {
   node: NodeKind;
   showPopovers?: boolean;
+  className?: string;
 };
 
 export default NodeStatus;

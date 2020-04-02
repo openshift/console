@@ -7,7 +7,7 @@ import {
 import { referenceForModel } from '@console/internal/module/k8s';
 import { pluralize } from '@patternfly/react-core';
 import { OperatorRowProps } from '@console/plugin-sdk';
-import { OperatorStatusRow } from '@console/shared/src/components/dashboard/status-card/OperatorStatusBody';
+import Status from '@console/shared/src/components/dashboard/status-card/StatusPopup';
 import { ClusterServiceVersionModel } from '../../models';
 import { ClusterServiceVersionKind } from '../../types';
 
@@ -22,16 +22,16 @@ const ClusterServiceVersionRow: React.FC<OperatorRowProps<ClusterServiceVersionK
     operatorStatus.operators.length > 1
       ? `${resourcePathFromModel(ClusterServiceVersionModel)}?name=${name}`
       : resourcePath(referenceForModel(ClusterServiceVersionModel), name, namespace);
-  const title = `${pluralize(
+  const value = `${pluralize(
     operatorStatus.operators.length,
     'project',
   )} ${operatorStatus.status.title.toLowerCase()}`;
   return (
-    <OperatorStatusRow title={title} icon={operatorStatus.status.icon}>
+    <Status value={value} icon={operatorStatus.status.icon}>
       <Link className="csv-operator-status__title" to={to}>
         {displayName || name}
       </Link>
-    </OperatorStatusRow>
+    </Status>
   );
 };
 

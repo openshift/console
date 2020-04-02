@@ -1,26 +1,5 @@
 @import '../../../styles/skeleton-screen';
 
-.co-status__operator-section {
-  padding-bottom: var(--pf-global--spacer--sm);
-}
-
-.co-status__operator {
-  align-items: center;
-  display: flex;
-  padding-left: var(--pf-global--spacer--xs);
-  white-space: nowrap;
-}
-
-.co-status__operator-icon {
-  padding-left: var(--pf-global--spacer--xs);
-}
-
-.co-status__operator-row {
-  display: flex;
-  justify-content: space-between;
-  padding-bottom: var(--pf-global--spacer--xs);
-}
-
 .co-status__operator-skeleton {
   animation: $skeleton-animation;
   background: $skeleton-color;
@@ -34,8 +13,4 @@
     width: 100%;
   }
   margin-bottom: var(--pf-global--spacer--xs);
-}
-
-.co-status__operator-text--bold {
-  font-weight: var(--pf-global--FontWeight--bold);
 }

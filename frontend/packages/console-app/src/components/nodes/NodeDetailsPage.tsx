@@ -7,11 +7,21 @@ import { nodeStatus } from '../../status/node';
 import NodeDetails from './NodeDetails';
 import NodeTerminal from './NodeTerminal';
 import { menuActions } from './menu-actions';
+import NodeDashboard from './node-dashboard/NodeDashboard';
 
-const { details, editYaml, events, pods } = navFactory;
+const { editYaml, events, pods } = navFactory;
 
 const pages = [
-  details(NodeDetails),
+  {
+    href: '',
+    name: 'Overview',
+    component: NodeDashboard,
+  },
+  {
+    href: 'details',
+    name: 'Details',
+    component: NodeDetails,
+  },
   editYaml(),
   pods(({ obj }) => (
     <PodsPage showTitle={false} fieldSelector={`spec.nodeName=${obj.metadata.name}`} />

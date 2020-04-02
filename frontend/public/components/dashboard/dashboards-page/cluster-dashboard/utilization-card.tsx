@@ -145,6 +145,18 @@ const networkOutQueriesPopup = [
   },
 ];
 
+const mapStatsWithDesc = (
+  stats: PrometheusResponse,
+  description: DataPoint['description'],
+): DataPoint[] =>
+  getRangeVectorStats(stats).map((dp) => {
+    dp.x.setSeconds(0, 0);
+    return {
+      ...dp,
+      description,
+    };
+  });
+
 export const PrometheusUtilizationItem = withDashboardResources<PrometheusUtilizationItemProps>(
   ({
     watchPrometheus,
@@ -161,11 +173,17 @@ export const PrometheusUtilizationItem = withDashboardResources<PrometheusUtiliz
     setTimestamps,
     namespace,
     isDisabled = false,
+    limitQuery,
+    requestQuery,
   }) => {
-    let stats = [];
+    let stats: DataPoint[] = [];
+    let limitStats: DataPoint[];
+    let requestStats: DataPoint[];
     let utilization: PrometheusResponse, utilizationError: any;
     let total: PrometheusResponse, totalError: any;
     let max: DataPoint<number>[];
+    let limit: PrometheusResponse, limitError: any;
+    let request: PrometheusResponse, requestError: any;
     let isLoading = false;
 
     const effectiveDuration = React.useMemo(
@@ -179,9 +197,13 @@ export const PrometheusUtilizationItem = withDashboardResources<PrometheusUtiliz
       if (!isDisabled) {
         watchPrometheus(utilizationQuery, namespace, effectiveDuration);
         totalQuery && watchPrometheus(totalQuery, namespace);
+        limitQuery && watchPrometheus(limitQuery, namespace, effectiveDuration);
+        requestQuery && watchPrometheus(requestQuery, namespace, effectiveDuration);
         return () => {
           stopWatchPrometheusQuery(utilizationQuery, effectiveDuration);
           totalQuery && stopWatchPrometheusQuery(totalQuery);
+          limitQuery && stopWatchPrometheusQuery(limitQuery, effectiveDuration);
+          requestQuery && stopWatchPrometheusQuery(requestQuery, effectiveDuration);
         };
       }
     }, [
@@ -192,6 +214,8 @@ export const PrometheusUtilizationItem = withDashboardResources<PrometheusUtiliz
       totalQuery,
       namespace,
       isDisabled,
+      limitQuery,
+      requestQuery,
     ]);
 
     if (!isDisabled) {
@@ -201,19 +225,37 @@ export const PrometheusUtilizationItem = withDashboardResources<PrometheusUtiliz
         effectiveDuration,
       );
       [total, totalError] = getPrometheusQueryResponse(prometheusResults, totalQuery);
+      [limit, limitError] = getPrometheusQueryResponse(
+        prometheusResults,
+        limitQuery,
+        effectiveDuration,
+      );
+      [request, requestError] = getPrometheusQueryResponse(
+        prometheusResults,
+        requestQuery,
+        effectiveDuration,
+      );
 
-      stats = getRangeVectorStats(utilization);
+      stats = mapStatsWithDesc(utilization, (date, value) => `${value} at ${date}`);
       max = getInstantVectorStats(total);
+      if (limit) {
+        limitStats = mapStatsWithDesc(limit, (date, value) => `${value} total limit`);
+      }
+      if (request) {
+        requestStats = mapStatsWithDesc(request, (date, value) => `${value} total requested`);
+      }
 
       setTimestamps && setTimestamps(stats.map((stat) => stat.x as Date));
-      isLoading = !utilization || (totalQuery && !total);
+      isLoading = !utilization || (totalQuery && !total) || (limitQuery && !limit);
     }
 
     return (
       <UtilizationItem
         title={title}
         data={stats}
-        error={utilizationError || totalError}
+        limit={limitStats}
+        requested={requestStats}
+        error={utilizationError || totalError || limitError || requestError}
         isLoading={isLoading}
         humanizeValue={humanizeValue}
         byteDataType={byteDataType}
@@ -270,7 +312,7 @@ export const PrometheusMultilineUtilizationItem = withDashboardResources<
     let hasError = false;
     let isLoading = false;
     if (!isDisabled) {
-      _.forEach(queries, (query) => {
+      _.forEach(queries, (query, index) => {
         const [response, responseError] = getPrometheusQueryResponse(
           prometheusResults,
           query.query,
@@ -285,12 +327,9 @@ export const PrometheusMultilineUtilizationItem = withDashboardResources<
           return false;
         }
         stats.push(
-          getRangeVectorStats(response).map((dp) => {
-            dp.x.setSeconds(0, 0);
-            return {
-              ...dp,
-              description: query.desc,
-            } as DataPoint<Date>;
+          mapStatsWithDesc(response, (date, value) => {
+            const text = `${query.desc.toUpperCase()}: ${value}`;
+            return index ? text : `${date}\n${text}`;
           }),
         );
       });
@@ -479,6 +518,8 @@ type PrometheusUtilizationItemProps = DashboardItemProps &
   PrometheusCommonProps & {
     utilizationQuery: string;
     totalQuery?: string;
+    limitQuery?: string;
+    requestQuery?: string;
     TopConsumerPopover?: React.ComponentType<TopConsumerPopoverProp>;
     setTimestamps?: (timestamps: Date[]) => void;
   };

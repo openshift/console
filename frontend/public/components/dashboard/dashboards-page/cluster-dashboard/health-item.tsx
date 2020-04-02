@@ -7,9 +7,7 @@ import {
   DashboardsOverviewHealthResourceSubsystem,
 } from '@console/plugin-sdk';
 import HealthItem from '@console/shared/src/components/dashboard/status-card/HealthItem';
-import OperatorStatusBody, {
-  OperatorsSection,
-} from '@console/shared/src/components/dashboard/status-card/OperatorStatusBody';
+import { OperatorsSection } from '@console/shared/src/components/dashboard/status-card/OperatorStatusBody';
 import {
   getOperatorsHealthState,
   getMostImportantStatuses,
@@ -18,9 +16,9 @@ import { HealthState } from '@console/shared/src/components/dashboard/status-car
 import { K8sKind } from '../../../../module/k8s';
 import { FirehoseResourcesResult, AsyncComponent, resourcePath } from '../../../utils';
 import { useK8sWatchResources } from '../../../utils/k8s-watch-hook';
-import { PrometheusResponse } from '../../../graphs';
 import { withDashboardResources, DashboardItemProps } from '../../with-dashboard-resources';
 import { uniqueResource } from './utils';
+import { getPrometheusQueryResponse } from '../../../../actions/dashboards';
 
 export const OperatorsPopup: React.FC<OperatorsPopupProps> = ({
   resources,
@@ -44,7 +42,12 @@ export const OperatorsPopup: React.FC<OperatorsPopupProps> = ({
       );
     })
     .reverse();
-  return <OperatorStatusBody>{sections}</OperatorStatusBody>;
+  return (
+    <>
+      Operators create, configure, and manage applications by extending the Kubernetes API.
+      {sections}
+    </>
+  );
 };
 
 export const OperatorHealthItem = withDashboardResources<OperatorHealthItemProps>(
@@ -193,26 +196,32 @@ export const PrometheusHealthItem = withDashboardResources<PrometheusHealthItemP
       modelExists,
     ]);
 
-    const queryResults = subsystem.queries.map(
-      (q) => prometheusResults.getIn([q, 'data']) as PrometheusResponse,
+    const queryResults = React.useMemo(
+      () =>
+        subsystem.queries.map((q) => {
+          const [response, error] = getPrometheusQueryResponse(prometheusResults, q);
+          return {
+            response,
+            error,
+          };
+        }),
+      [prometheusResults, subsystem.queries],
     );
-    const queryErrors = subsystem.queries.map((q) => prometheusResults.getIn([q, 'loadError']));
-
     const k8sResult = subsystem.additionalResource
       ? resources[subsystem.additionalResource.prop]
       : null;
-    const healthState = subsystem.healthHandler(queryResults, queryErrors, k8sResult);
+    const healthState = subsystem.healthHandler(queryResults, k8sResult);
 
     const PopupComponentCallback = subsystem.popupComponent
       ? React.useCallback(
           () => (
             <AsyncComponent
               loader={subsystem.popupComponent}
-              results={queryResults}
-              errors={queryErrors}
+              responses={queryResults}
+              k8sResult={k8sResult}
             />
           ),
-          [queryResults, queryErrors, subsystem],
+          [k8sResult, queryResults, subsystem.popupComponent],
         )
       : null;
 

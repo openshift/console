@@ -72,10 +72,9 @@ export const StatusCard: React.FC<DashboardItemProps> = ({
   const resiliencyProgressError = prometheusResults.getIn([resiliencyProgressQuery, 'loadError']);
 
   const cephHealthState = getCephHealthState({ ceph: { data, loaded, loadError } });
-  const dataResiliencyState = getDataResiliencyState(
-    [resiliencyProgress],
-    [resiliencyProgressError],
-  );
+  const dataResiliencyState = getDataResiliencyState([
+    { response: resiliencyProgress, error: resiliencyProgressError },
+  ]);
 
   return (
     <DashboardCard gradient>

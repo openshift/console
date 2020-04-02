@@ -225,7 +225,7 @@ type GetIDAndDispatch = (
 
 export type ResourcesObject = { [key: string]: K8sResourceCommon | K8sResourceCommon[] };
 
-type WatchK8sResult<R extends K8sResourceCommon | K8sResourceCommon[]> = [R, boolean, any];
+export type WatchK8sResult<R extends K8sResourceCommon | K8sResourceCommon[]> = [R, boolean, any];
 
 export type WatchK8sResultsObject<R extends K8sResourceCommon | K8sResourceCommon[]> = {
   data: R;
