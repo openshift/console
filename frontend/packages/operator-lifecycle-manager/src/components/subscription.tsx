@@ -181,17 +181,27 @@ const subscriptionState = (state: SubscriptionState) => {
 
 const menuActions = [
   Kebab.factory.Edit,
-  (kind, obj) => ({
-    label: 'Remove Subscription',
-    callback: () => createUninstallOperatorModal({ k8sKill, k8sGet, k8sPatch, subscription: obj }),
-    accessReview: {
-      group: kind.apiGroup,
-      resource: kind.plural,
-      name: obj.metadata.name,
-      namespace: obj.metadata.namespace,
-      verb: 'delete',
-    },
-  }),
+  (kind, obj, { clusterServiceVersions }) => {
+    const installedCSV = installedCSVForSubscription(clusterServiceVersions, obj);
+    return {
+      label: 'Remove Subscription',
+      callback: () =>
+        createUninstallOperatorModal({
+          k8sKill,
+          k8sGet,
+          k8sPatch,
+          subscription: obj,
+          csv: installedCSV,
+        }),
+      accessReview: {
+        group: kind.apiGroup,
+        resource: kind.plural,
+        name: obj.metadata.name,
+        namespace: obj.metadata.namespace,
+        verb: 'delete',
+      },
+    };
+  },
   (kind, obj) => {
     const installedCSV = _.get(obj, 'status.installedCSV');
     return {
@@ -307,7 +317,13 @@ export const SubscriptionDetails: React.FC<SubscriptionDetailsProps> = ({
 
   const pkg = packageForSubscription(packageManifests, obj);
   if (new URLSearchParams(window.location.search).has('showDelete')) {
-    createUninstallOperatorModal({ k8sKill, k8sGet, k8sPatch, subscription: obj })
+    createUninstallOperatorModal({
+      k8sKill,
+      k8sGet,
+      k8sPatch,
+      subscription: obj,
+      csv: installedCSV,
+    })
       .result.then(() => removeQueryArgument('showDelete'))
       .catch(_.noop);
   }
