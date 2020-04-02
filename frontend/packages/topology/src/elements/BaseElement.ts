@@ -215,6 +215,9 @@ export default abstract class BaseElement<E extends ElementModel = ElementModel,
   }
 
   setModel(model: E): void {
+    if ('type' in model) {
+      this.setType(model.type);
+    }
     if ('visible' in model) {
       this.setVisible(!!model.visible);
     }
@@ -278,6 +281,10 @@ export default abstract class BaseElement<E extends ElementModel = ElementModel,
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   translateFromParent(t: Translatable): void {
+    // nothing to do
+  }
+
+  destroy(): void {
     // nothing to do
   }
 }
