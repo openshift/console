@@ -25,6 +25,18 @@ export const powerOffHost = (host: BareMetalHostKind) =>
 export const powerOnHost = (host: BareMetalHostKind) =>
   k8sPatch(BareMetalHostModel, host, [{ op: 'replace', path: '/spec/online', value: true }]);
 
+export const restartHost = (host: BareMetalHostKind) =>
+  k8sPatch(BareMetalHostModel, host, [
+    {
+      op: 'replace',
+      path: '/metadata/annotations',
+      value: {
+        ...host.metadata.annotations,
+        'reboot.metal3.io': 'UI', // value is irrelevant
+      },
+    },
+  ]);
+
 export const deprovision = async (machine: MachineKind, machineSet?: MachineSetKind) => {
   await k8sPatch(MachineModel, machine, [
     new PatchBuilder('/metadata/annotations')

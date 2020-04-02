@@ -1,5 +1,5 @@
 import * as _ from 'lodash';
-import { getName } from '@console/shared/src/selectors/common';
+import { getName, getAnnotations } from '@console/shared/src/selectors/common';
 import { MachineKind } from '@console/internal/module/k8s';
 import {
   BareMetalHostDisk,
@@ -15,6 +15,8 @@ import {
   HOST_POWER_STATUS_POWERING_ON,
   HOST_POWER_STATUS_POWERED_OFF,
 } from '../constants';
+
+const ANNOTATION_HOST_RESTART = 'reboot.metal3.io';
 
 export const getHostOperationalStatus = (host: BareMetalHostKind): string =>
   _.get(host, 'status.operationalStatus');
@@ -42,6 +44,12 @@ export const getHostDescription = (host: BareMetalHostKind): string =>
   _.get(host, 'spec.description', '');
 export const isHostPoweredOn = (host: BareMetalHostKind): boolean =>
   _.get(host, 'status.poweredOn', false);
+export const isHostScheduledForRestart = (host: BareMetalHostKind) =>
+  !!Object.getOwnPropertyNames(getAnnotations(host, {})).find(
+    (annotation) =>
+      annotation === ANNOTATION_HOST_RESTART ||
+      annotation.startsWith(`${ANNOTATION_HOST_RESTART}/`),
+  );
 export const getHostPowerStatus = (host: BareMetalHostKind): string => {
   const isOnline = isHostOnline(host);
   const isPoweredOn = isHostPoweredOn(host);

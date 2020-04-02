@@ -17,7 +17,12 @@ import {
 } from '@console/shared';
 import { confirmModal, deleteModal } from '@console/internal/components/modals';
 import { MachineModel, MachineSetModel } from '@console/internal/models';
-import { findNodeMaintenance, getHostMachine, getHostPowerStatus } from '../../selectors';
+import {
+  findNodeMaintenance,
+  getHostMachine,
+  getHostPowerStatus,
+  isHostScheduledForRestart,
+} from '../../selectors';
 import { BareMetalHostModel, NodeMaintenanceModel } from '../../models';
 import { getHostStatus } from '../../status/host-status';
 import {
@@ -39,6 +44,7 @@ import { DELETE_MACHINE_ANNOTATION } from '../../constants/machine';
 import { deprovision } from '../../k8s/requests/bare-metal-host';
 import { getMachineMachineSetOwner } from '../../selectors/machine';
 import { findMachineSet } from '../../selectors/machine-set';
+import { restartHostModal } from '../modals/RestartHostModal';
 
 type ActionArgs = {
   machine?: MachineKind;
@@ -129,6 +135,16 @@ export const PowerOff = (
   accessReview: host && asAccessReview(BareMetalHostModel, host, 'update'),
 });
 
+export const Restart = (kindObj: K8sKind, host: BareMetalHostKind, { nodeName }: ActionArgs) => ({
+  hidden:
+    [HOST_POWER_STATUS_POWERED_OFF, HOST_POWER_STATUS_POWERING_OFF].includes(
+      getHostPowerStatus(host),
+    ) || isHostScheduledForRestart(host),
+  label: 'Restart',
+  callback: () => restartHostModal({ host, nodeName }),
+  accessReview: host && asAccessReview(BareMetalHostModel, host, 'update'),
+});
+
 export const Delete = (
   kindObj: K8sKind,
   host: BareMetalHostKind,
@@ -159,6 +175,7 @@ export const menuActions = [
   PowerOn,
   Deprovision,
   PowerOff,
+  Restart,
   Kebab.factory.ModifyLabels,
   Kebab.factory.ModifyAnnotations,
   Edit,
