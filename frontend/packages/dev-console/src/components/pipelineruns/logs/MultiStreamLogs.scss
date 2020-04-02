@@ -5,11 +5,23 @@
   height: 100%;
 
   &--fullscreen {
-    .co-toolbar {
-      background-color: var(--pf-global--BackgroundColor--100);
-      padding: var(--pf-global--spacer--sm);
-    }
+    background-color: var(--pf-global--BackgroundColor--100);
+    padding: var(--pf-global--spacer--sm);
   }
+
+  &__icon {
+    margin-right: var(--pf-global--spacer--xs);
+  }
+
+  &__divider {
+    color: var(--pf-global--palette--black-600);
+    margin: 0 var(--pf-global--spacer--sm);
+  }
+
+  &__button {
+    margin-right: 0;
+  }
+
   &__container {
     display: flex;
     flex: 1;
