@@ -1,8 +1,9 @@
 import * as _ from 'lodash';
 import { KebabOption } from '@console/internal/components/utils/kebab';
-import { modelFor, referenceFor } from '@console/internal/module/k8s';
+import { modelFor, referenceFor, referenceForModel } from '@console/internal/module/k8s';
 import { Node } from '@console/topology';
 import { asAccessReview } from '@console/internal/components/utils';
+import { ServiceModel, addEventSource } from '@console/knative-plugin';
 import { addResourceMenuWithoutCatalog } from '../../../actions/add-resources';
 import { TopologyDataMap, TopologyApplicationObject, GraphData } from '../topology-types';
 import { getTopologyResourceObject } from '../topology-utils';
@@ -60,8 +61,14 @@ const addResourcesMenu = (
 ) => {
   const primaryResource = application.resources[0]?.resources?.obj;
   const connectorSourceObj = connectorSource?.getData()?.resources?.obj || {};
+  const isKnativeService =
+    connectorSource?.getData()?.data?.kind === referenceForModel(ServiceModel);
+  let resourceMenu = addResourceMenuWithoutCatalog;
+  if (isKnativeService && graphData.eventSourceEnabled) {
+    resourceMenu = [...addResourceMenuWithoutCatalog, addEventSource];
+  }
   return _.reduce(
-    addResourceMenuWithoutCatalog,
+    resourceMenu,
     (menuItems, menuItem) => {
       const item = menuItem(
         primaryResource,

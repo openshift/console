@@ -246,6 +246,7 @@ export type ContextMenuProvider = {
 export type GraphData = {
   namespace: string;
   createResourceAccess: string[];
+  eventSourceEnabled: boolean;
 };
 
 export const SHOW_GROUPING_HINT_EVENT = 'show-regroup-hint';

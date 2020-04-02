@@ -85,6 +85,17 @@ describe('addResourceMenuUtils: ', () => {
     expect(Array.from(url.searchParams.entries())).toHaveLength(1);
   });
 
+  it('should return the page url with proper queryparams for event source creation', () => {
+    const { resource } = getTopologyData(MockResources, ['deployments'], 'analytics-deployment');
+    const url = new URL(
+      getAddPageUrl(resource, '', ImportOptions.EVENTSOURCE, true),
+      'https://mock.test.com',
+    );
+    expect(url.pathname).toBe('/event-source/ns/testproject1');
+    expect(url.searchParams.get('application')).toBe('application-1');
+    expect(Array.from(url.searchParams.entries())).toHaveLength(1);
+  });
+
   it('should return the page url with proper queryparams for catalog flow', () => {
     const { resource } = getTopologyData(MockResources, ['deployments'], 'analytics-deployment');
     const url = new URL(
