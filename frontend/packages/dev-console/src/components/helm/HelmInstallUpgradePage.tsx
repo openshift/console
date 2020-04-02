@@ -11,6 +11,7 @@ import NamespacedPage, { NamespacedPageVariants } from '../NamespacedPage';
 import HelmInstallUpgradeForm from './HelmInstallUpgradeForm';
 import { HelmActionType, HelmChart, HelmActionConfigType } from './helm-types';
 import { getValidationSchema } from './helm-validation-utils';
+import { getHelmActionConfig } from './helm-utils';
 
 export type HelmInstallUpgradePageProps = RouteComponentProps<{
   ns?: string;
@@ -42,20 +43,10 @@ const HelmInstallUpgradePage: React.FunctionComponent<HelmInstallUpgradePageProp
   const helmAction: HelmActionType =
     chartURL !== 'null' ? HelmActionType.Install : HelmActionType.Upgrade;
 
-  const HelmActionConfig: { [helmAction: string]: HelmActionConfigType } = {
-    [HelmActionType.Install]: {
-      title: 'Install Helm Chart',
-      helmReleaseApi: `/api/helm/chart?url=${chartURL}`,
-      fetch: coFetchJSON.post,
-      redirectURL: `/topology/ns/${namespace}`,
-    },
-    [HelmActionType.Upgrade]: {
-      title: 'Upgrade Helm Release',
-      helmReleaseApi: `/api/helm/release?ns=${namespace}&release_name=${releaseName}`,
-      fetch: coFetchJSON.put,
-      redirectURL: `/helm-releases/ns/${namespace}`,
-    },
-  };
+  const config = React.useMemo<HelmActionConfigType>(
+    () => getHelmActionConfig(helmAction, releaseName, namespace, chartURL),
+    [chartURL, helmAction, namespace, releaseName],
+  );
 
   React.useEffect(() => {
     let ignore = false;
@@ -63,13 +54,13 @@ const HelmInstallUpgradePage: React.FunctionComponent<HelmInstallUpgradePageProp
     const fetchHelmRelease = async () => {
       let res;
       try {
-        res = await coFetchJSON(HelmActionConfig[helmAction].helmReleaseApi);
+        res = await coFetchJSON(config.helmReleaseApi);
       } catch {
         if (ignore) return;
       }
       if (ignore) return;
-      const data: HelmChart = !_.isEmpty(res.chart) ? res.chart : res;
-      setYAMLData(!_.isEmpty(res.config) ? _.merge(data.values, res.config) : data.values);
+      const data: HelmChart = !_.isEmpty(res?.chart) ? res?.chart : res;
+      setYAMLData(!_.isEmpty(res?.config) ? _.merge(data?.values, res?.config) : data?.values);
       if (helmAction === HelmActionType.Upgrade) {
         setChartName(data.metadata.name);
         setActiveChartVersion(data.metadata.version);
@@ -83,7 +74,7 @@ const HelmInstallUpgradePage: React.FunctionComponent<HelmInstallUpgradePageProp
     return () => {
       ignore = true;
     };
-  }, [helmAction, HelmActionConfig]);
+  }, [config.helmReleaseApi, helmAction]);
 
   const initialValues: HelmInstallUpgradeFormData = {
     helmReleaseName: releaseName || helmChartName || '',
@@ -114,11 +105,11 @@ const HelmInstallUpgradePage: React.FunctionComponent<HelmInstallUpgradePageProp
       ...(valuesObj ? { values: valuesObj } : {}),
     };
 
-    HelmActionConfig[helmAction]
+    config
       .fetch('/api/helm/release', payload)
       .then(() => {
         actions.setSubmitting(false);
-        history.push(HelmActionConfig[helmAction].redirectURL);
+        history.push(config.redirectURL);
       })
       .catch((err) => {
         actions.setSubmitting(false);
@@ -133,13 +124,9 @@ const HelmInstallUpgradePage: React.FunctionComponent<HelmInstallUpgradePageProp
   return (
     <NamespacedPage variant={NamespacedPageVariants.light} disabled hideApplications>
       <Helmet>
-        <title>{HelmActionConfig[helmAction].title}</title>
+        <title>{config.title}</title>
       </Helmet>
-      <PageHeading title={HelmActionConfig[helmAction].title}>
-        {helmAction === HelmActionType.Install &&
-          chartHasValues &&
-          'The helm chart will be installed using the YAML shown in the editor below.'}
-      </PageHeading>
+      <PageHeading title={config.title}>{chartHasValues && config.subTitle}</PageHeading>
       <PageBody flexLayout>
         <Formik
           initialValues={initialValues}

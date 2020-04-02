@@ -1,7 +1,13 @@
 import * as fuzzy from 'fuzzysearch';
 import * as _ from 'lodash';
 import { coFetchJSON } from '@console/internal/co-fetch';
-import { HelmRelease, HelmReleaseStatus, HelmChartMetaData } from './helm-types';
+import {
+  HelmRelease,
+  HelmReleaseStatus,
+  HelmChartMetaData,
+  HelmActionType,
+  HelmActionConfigType,
+} from './helm-types';
 import { CustomResourceListRowFilter } from '../custom-resource-list/custom-resource-list-types';
 
 export const HelmReleaseStatusLabels = {
@@ -81,4 +87,32 @@ export const getChartVersions = (chartEntries: HelmChartMetaData[]) => {
     {},
   );
   return chartVersions;
+};
+
+export const getHelmActionConfig = (
+  helmAction: HelmActionType,
+  releaseName: string,
+  namespace: string,
+  chartURL: string,
+): HelmActionConfigType | undefined => {
+  switch (helmAction) {
+    case HelmActionType.Install:
+      return {
+        title: 'Install Helm Chart',
+        subTitle: 'The helm chart will be installed using the YAML shown in the editor below.',
+        helmReleaseApi: `/api/helm/chart?url=${chartURL}`,
+        fetch: coFetchJSON.post,
+        redirectURL: `/topology/ns/${namespace}`,
+      };
+    case HelmActionType.Upgrade:
+      return {
+        title: 'Upgrade Helm Release',
+        subTitle: '',
+        helmReleaseApi: `/api/helm/release?ns=${namespace}&release_name=${releaseName}`,
+        fetch: coFetchJSON.put,
+        redirectURL: `/helm-releases/ns/${namespace}`,
+      };
+    default:
+      return undefined;
+  }
 };

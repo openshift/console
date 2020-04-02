@@ -46,12 +46,13 @@ const HelmChartVersionDropdown: React.FunctionComponent<HelmChartVersionDropdown
   }, [chartName]);
 
   const onChartVersionChange = (value: string) => {
+    const chartURL = getChartURL(helmChartEntries, value);
+
     setChartVersion(value);
     setFieldValue('chartVersion', value);
-    const chartURL = getChartURL(helmChartEntries, value);
     setFieldValue('helmChartURL', chartURL);
-    const url = getChartURL(helmChartEntries, value);
-    coFetchJSON(`/api/helm/chart?url=${url}`)
+
+    coFetchJSON(`/api/helm/chart?url=${chartURL}`)
       .then((res) => {
         setFieldValue('chartValuesYAML', !_.isEmpty(res.values) ? safeDump(res.values) : undefined);
       })
