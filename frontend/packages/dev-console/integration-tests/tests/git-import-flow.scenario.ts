@@ -37,7 +37,7 @@ import {
 import { newApplicationName, newAppName } from '../views/new-app-name.view';
 import { switchPerspective, Perspective, sideHeader } from '../views/dev-perspective.view';
 import { pipelinecheckStatus, pipelineTableBody } from '../views/pipeline.view';
-import { elementByDataTestID, click, enterText } from '../utilities/elementInteractions';
+import { elementByDataTestID, click, enterText, getText } from '../utilities/elementInteractions';
 import { testData } from '../testData/git-import-flow.data';
 import { naviagteTo, NavigationMenu, ELEMENT_WAIT } from '../utilities/appFunctions';
 import {
@@ -75,12 +75,11 @@ describe('git import flow', () => {
     );
     expect(importFromGitHeader.getText()).toContain('Import from git');
     await enterGitRepoUrl(testData.gitRepoUrl);
-    await appName.click();
     expect(appName.getAttribute('value')).toContain('nodejs-ex-git');
     await addApplicationInGeneral(newApplication, newApp);
     expect(applicationName.getAttribute('value')).toContain(newApplication);
     expect(appName.getAttribute('value')).toContain(newApp);
-    expect(await gitUrlHelper.getText()).toBe('Validated');
+    expect(getText(gitUrlHelper)).toBe('Validated');
     await browser.wait(
       until.visibilityOf(builderImageSelected),
       WAIT,
@@ -124,12 +123,12 @@ describe('git import flow with advanced options', () => {
     expect(importFromGitHeader.getText()).toContain('Import from git');
     await enterGitRepoUrl(testData.gitRepoUrl);
 
-    await appName.click();
+    await click(appName);
     expect(appName.getAttribute('value')).toContain('nodejs-ex-git');
     await addApplicationInGeneral(newApplication, newApp);
-    expect(applicationName.getAttribute('value')).toContain(newApplication);
-    expect(appName.getAttribute('value')).toContain(newApp);
-    expect(await gitUrlHelper.getText()).toBe('Validated');
+    expect(await applicationName.getAttribute('value')).toContain(newApplication);
+    expect(await appName.getAttribute('value')).toContain(newApp);
+    expect(await getText(gitUrlHelper)).toBe('Validated');
     expect(await builderImageSelected.isDisplayed()).toBe(true);
   });
 

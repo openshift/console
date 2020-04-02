@@ -45,6 +45,18 @@ export const click = async function(ele: any, timeoutInMilliseconds = ELEMENT_WA
   await ele.click();
 };
 
+// Perform click action on given element with in given time
+export const getText = async function(ele: any, timeoutInMilliseconds = ELEMENT_WAIT) {
+  await browser.wait(
+    EC.elementToBeClickable(ele),
+    timeoutInMilliseconds,
+    `${ele} is not able to fetch Text, even after ${timeoutInMilliseconds} milliseconds`,
+  );
+  await browser.executeScript('arguments[0].scrollIntoView();', ele);
+  const text: string = await ele.getText();
+  return text;
+};
+
 // It is useful in Resources section [but currently not using it]
 export const enterTextSelectDropDown = async function(
   textEle: any,
