@@ -31,7 +31,7 @@ import {
 } from '@patternfly/react-core';
 
 import { coFetchJSON } from '../co-fetch';
-import { FirehoseResult } from './utils';
+import { FirehoseResult } from './utils/types';
 import { ClusterUpdate, ClusterVersionKind } from '../module/k8s';
 import { getSortedUpdates } from './modals/cluster-update-modal';
 import { usePrevious } from '@console/metal3-plugin/src/hooks';

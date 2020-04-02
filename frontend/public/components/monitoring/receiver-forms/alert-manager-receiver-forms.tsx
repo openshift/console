@@ -7,7 +7,11 @@ import { safeLoad } from 'js-yaml';
 import * as classNames from 'classnames';
 
 import { BlueInfoCircleIcon, APIError } from '@console/shared';
-import { ButtonBar, Dropdown, Firehose, history, StatusBox } from '../../utils';
+import { ButtonBar } from '../../utils/button-bar';
+import { Dropdown } from '../../utils/dropdown';
+import { Firehose } from '../../utils/firehose';
+import { history } from '../../utils/router';
+import { StatusBox } from '../../utils/status-box';
 import {
   getAlertmanagerConfig,
   patchAlertmanagerConfig,

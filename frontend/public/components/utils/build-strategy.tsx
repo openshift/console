@@ -2,7 +2,8 @@ import * as React from 'react';
 import * as _ from 'lodash-es';
 
 import { K8sResourceKind, K8sResourceKindReference } from '../../module/k8s';
-import { DetailsItem, ResourceLink } from './';
+import { DetailsItem } from './details-item';
+import { ResourceLink } from './resource-link';
 import { getStrategyType } from '../build';
 
 const ImageStreamTagsReference: K8sResourceKindReference = 'ImageStreamTag';

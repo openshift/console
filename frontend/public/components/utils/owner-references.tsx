@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
 import { K8sResourceKind, OwnerReference, referenceForOwnerRef } from '../../module/k8s';
-import { ResourceLink } from './index';
+import { ResourceLink } from './resource-link';
 
 export const OwnerReferences: React.FC<OwnerReferencesProps> = ({ resource }) => {
   const owners = (_.get(resource.metadata, 'ownerReferences') || []).map((o: OwnerReference) => (

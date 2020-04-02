@@ -4,7 +4,8 @@ import * as PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { Map as ImmutableMap } from 'immutable';
 
-import { inject, makeReduxID, makeQuery } from './index';
+import { inject } from './inject';
+import { makeReduxID, makeQuery } from './k8s-watcher';
 import * as k8sActions from '../../actions/k8s';
 
 const shallowMapEquals = (a, b) => {

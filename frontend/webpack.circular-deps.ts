@@ -8,9 +8,17 @@ import * as moment from 'moment';
 import * as CircularDependencyPlugin from 'circular-dependency-plugin';
 import chalk from 'chalk';
 
+const HandleCyclesPluginName = 'HandleCyclesPlugin';
+
 type PresetOptions = {
   exclude: RegExp;
   reportFile: string;
+  thresholds: Partial<{
+    // max # of total cycles
+    totalCycles: number;
+    // max # of min-length cycles (A -> B -> A)
+    minLengthCycles: number;
+  }>;
 };
 
 type DetectedCycle = {
@@ -20,6 +28,9 @@ type DetectedCycle = {
   modulePaths: string[];
 };
 
+const minLengthCycleCount = (cycles: DetectedCycle[]) =>
+  cycles.filter((c) => c.modulePaths.length === 3).length;
+
 const getCycleStats = (cycles: DetectedCycle[]): string => {
   type ItemCount = { [key: string]: number };
   const lines: string[] = [];
@@ -27,7 +38,7 @@ const getCycleStats = (cycles: DetectedCycle[]): string => {
   const sortedEntries = (obj: ItemCount): [string, number][] =>
     Object.entries(obj).sort((a, b) => b[1] - a[1]); // descending order
 
-  const minLengthCycles = cycles.filter((c) => c.modulePaths.length === 3).length;
+  const minLengthCycles = minLengthCycleCount(cycles);
 
   const cycleCountByDir = cycles
     .map((c) => {
@@ -65,9 +76,31 @@ const getCycleEntries = (cycles: DetectedCycle[]): string => {
   return cycles.map((c) => `${c.causedBy}\n${c.modulePaths.join('\n-> ')}\n`).join('\n');
 };
 
-export class CircularDependencyPreset {
-  private readonly HandleCyclesPluginName = 'HandleCyclesPlugin';
+const applyThresholds = (
+  cycles: DetectedCycle[],
+  thresholds: PresetOptions['thresholds'],
+  compilation: webpack.compilation.Compilation,
+) => {
+  const totalCycles = cycles.length;
+  if (thresholds.totalCycles && totalCycles > thresholds.totalCycles) {
+    compilation.errors.push(
+      new Error(
+        `${HandleCyclesPluginName}: total cycles (${totalCycles}) exceeds threshold (${thresholds.totalCycles})`,
+      ),
+    );
+  }
 
+  const minLengthCycles = minLengthCycleCount(cycles);
+  if (thresholds.minLengthCycles && minLengthCycles > thresholds.minLengthCycles) {
+    compilation.errors.push(
+      new Error(
+        `${HandleCyclesPluginName}: min-length cycles (${minLengthCycles}) exceeds threshold (${thresholds.minLengthCycles})`,
+      ),
+    );
+  }
+};
+
+export class CircularDependencyPreset {
   constructor(private readonly options: PresetOptions) {}
 
   apply(plugins: webpack.Plugin[]): void {
@@ -83,7 +116,7 @@ export class CircularDependencyPreset {
       {
         // Ad-hoc plugin to handle detected module cycle information
         apply: (compiler) => {
-          compiler.hooks.emit.tap(this.HandleCyclesPluginName, (compilation) => {
+          compiler.hooks.emit.tap(HandleCyclesPluginName, (compilation) => {
             if (cycles.length === 0) {
               return;
             }
@@ -100,6 +133,8 @@ export class CircularDependencyPreset {
 
             console.log(chalk.bold.yellow(`Detected ${cycles.length} cycles`));
             console.log(`Module cycle report written to ${chalk.bold(reportPath)}`);
+
+            applyThresholds(cycles, this.options.thresholds, compilation);
           });
         },
       },

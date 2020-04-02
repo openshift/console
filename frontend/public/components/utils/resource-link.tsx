@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import * as classNames from 'classnames';
 
 import { FLAGS } from '@console/shared/src/constants';
-import { ResourceIcon } from './index';
+import { ResourceIcon } from './resource-icon';
 import {
   modelFor,
   referenceForModel,

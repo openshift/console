@@ -7,15 +7,12 @@ import { Alert } from '@patternfly/react-core';
 
 import { serviceCatalogStatus, referenceForModel, K8sResourceKind } from '../module/k8s';
 import { DetailsPage, ListPage, Table, TableRow, TableData, RowFunction } from './factory';
-import {
-  Kebab,
-  SectionHeading,
-  navFactory,
-  ResourceKebab,
-  ResourceLink,
-  ResourceSummary,
-  StatusWithIcon,
-} from './utils';
+import { Kebab, ResourceKebab } from './utils/kebab';
+import { SectionHeading } from './utils/headings';
+import { navFactory } from './utils/horizontal-nav';
+import { ResourceLink } from './utils/resource-link';
+import { ResourceSummary } from './utils/details-page';
+import { StatusWithIcon } from './utils/service-catalog-status';
 import { ResourceEventStream } from './events';
 import { Conditions } from './conditions';
 import {
