@@ -16,6 +16,7 @@ import {
 import { getCloudInitVolume } from '../vm/selectors';
 import { VolumeWrapper } from '../../k8s/wrapper/vm/volume-wrapper';
 import { selectVM } from './basic';
+import { removeOSDups } from '../../utils/sort';
 
 export const getTemplatesWithLabels = (templates: TemplateKind[], labels: string[]) => {
   const requiredLabels = labels.filter((label) => label);
@@ -71,17 +72,19 @@ export const getTemplateHostname = (template: TemplateKind) => {
 
 export const getTemplateOperatingSystems = (templates: TemplateKind[]) => {
   const osIds = getTemplatesLabelValues(templates, TEMPLATE_OS_LABEL);
-  return osIds.map((osId) => {
-    const nameAnnotation = `${TEMPLATE_OS_NAME_ANNOTATION}/${osId}`;
-    const template = templates.find(
-      (t) =>
-        !!Object.keys(getAnnotations(t, {})).find((annotation) => annotation === nameAnnotation),
-    );
-    return {
-      id: osId,
-      name: getAnnotation(template, nameAnnotation),
-    };
-  });
+  return removeOSDups(
+    osIds.map((osId) => {
+      const nameAnnotation = `${TEMPLATE_OS_NAME_ANNOTATION}/${osId}`;
+      const template = templates.find(
+        (t) =>
+          !!Object.keys(getAnnotations(t, {})).find((annotation) => annotation === nameAnnotation),
+      );
+      return {
+        id: osId,
+        name: getAnnotation(template, nameAnnotation),
+      };
+    }),
+  );
 };
 
 export const getTemplateWorkloadProfiles = (templates: TemplateKind[]) =>

@@ -1,4 +1,6 @@
-export const operatingSystemsNative = [
+import { OperatingSystemRecord } from '../../types/types';
+
+export const operatingSystemsNative: OperatingSystemRecord[] = [
   { id: 'centos8', name: 'CentOS 8.0' },
   { id: 'centos7', name: 'CentOS 7.0' },
   { id: 'centos6', name: 'CentOS 6.0' },
