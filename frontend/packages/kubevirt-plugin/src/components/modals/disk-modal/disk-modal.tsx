@@ -172,19 +172,16 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
   });
 
   const resultDataVolumeName = prefixedID(vmName, name);
-  let resultVolume;
-  if (source.requiresVolume()) {
-    // update just Disk for unknown sources
-    resultVolume = VolumeWrapper.initializeFromSimpleData({
-      name,
-      type: source.getVolumeType(),
-      typeData: {
-        name: resultDataVolumeName,
-        claimName: pvcName,
-        image: containerImage,
-      },
-    });
-  }
+
+  const resultVolume = VolumeWrapper.initializeFromSimpleData({
+    name,
+    type: source.getVolumeType(),
+    typeData: {
+      name: resultDataVolumeName,
+      claimName: pvcName,
+      image: containerImage,
+    },
+  });
 
   let resultDataVolume;
   if (source.requiresDatavolume()) {
