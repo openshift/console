@@ -86,6 +86,27 @@ export const getEventSourceData = (source: string) => {
         },
       ],
     },
+    kafkasource: {
+      spec: {
+        bootstrapServers: '',
+        topics: '',
+        consumerGroup: '',
+        net: {
+          sasl: {
+            enable: false,
+            user: { secretKeyRef: { name: '', key: '' } },
+            password: { secretKeyRef: { name: '', key: '' } },
+          },
+          tls: {
+            enable: false,
+            caCert: { secretKeyRef: { name: '', key: '' } },
+            cert: { secretKeyRef: { name: '', key: '' } },
+            key: { secretKeyRef: { name: '', key: '' } },
+          },
+        },
+        serviceAccountName: '',
+      },
+    },
   };
   return eventSourceData[source];
 };
