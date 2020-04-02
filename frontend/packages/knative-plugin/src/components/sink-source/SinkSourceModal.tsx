@@ -29,6 +29,7 @@ const SinkSourceModal: React.FC<Props> = ({
   setFieldTouched,
   validateForm,
   values,
+  initialValues,
 }) => {
   const autocompleteFilter = (strText, item): boolean => fuzzy(strText, item?.props?.name);
   const onSinkChange = React.useCallback(
@@ -50,14 +51,13 @@ const SinkSourceModal: React.FC<Props> = ({
     },
     [setFieldValue, setFieldTouched, validateForm],
   );
+  const dirty = values?.sink?.ref?.name !== initialValues.sink.ref.name;
   return (
     <form className="modal-content modal-content--no-inner-scroll" onSubmit={handleSubmit}>
       <ModalTitle>Move Sink</ModalTitle>
       <ModalBody>
         <p>
-          Select a sink to move the event source
-          <strong>{` ${resourceName} `}</strong>
-          to
+          Select a sink to move the event source <strong>{resourceName}</strong> to
         </p>
         <FormSection fullWidth>
           <ResourceDropdownField
@@ -71,13 +71,14 @@ const SinkSourceModal: React.FC<Props> = ({
             autocompleteFilter={autocompleteFilter}
             onChange={onSinkChange}
             autoSelect
-            selectedKey={values.sink.ref.name}
+            selectedKey={values?.sink?.ref?.name}
           />
         </FormSection>
       </ModalBody>
       <ModalSubmitFooter
         inProgress={isSubmitting}
         submitText="Save"
+        submitDisabled={!dirty}
         cancel={cancel}
         errorMessage={status.error}
       />

@@ -6,6 +6,7 @@ import {
   ModalSubmitFooter,
 } from '@console/internal/components/factory/modal';
 import { ResourceDropdownField } from '@console/shared';
+import { formikFormProps } from '@console/shared/src/test-utils/formik-props-utils';
 import SinkSourceModal from '../SinkSourceModal';
 import { ServiceModel } from '../../../models';
 
@@ -25,43 +26,10 @@ describe('SinkSourceModal Form', () => {
   };
   beforeEach(() => {
     formProps = {
+      ...formikFormProps,
       values: formValues,
       namespace: 'myapp',
       resourceName: 'myappes',
-      errors: {},
-      touched: {},
-      isSubmitting: true,
-      isValidating: true,
-      status: {},
-      submitCount: 0,
-      dirty: false,
-      handleReset: jest.fn(),
-      handleSubmit: jest.fn(),
-      getFieldProps: jest.fn(),
-      handleBlur: jest.fn(),
-      handleChange: jest.fn(),
-      initialErrors: {},
-      initialStatus: {},
-      initialTouched: {},
-      isValid: true,
-      registerField: jest.fn(),
-      resetForm: jest.fn(),
-      setErrors: jest.fn(),
-      setFieldError: jest.fn(),
-      setFieldTouched: jest.fn(),
-      setFieldValue: jest.fn(),
-      setFormikState: jest.fn(),
-      setStatus: jest.fn(),
-      setSubmitting: jest.fn(),
-      setTouched: jest.fn(),
-      setValues: jest.fn(),
-      submitForm: jest.fn(),
-      unregisterField: jest.fn(),
-      validateField: jest.fn(),
-      validateForm: jest.fn(),
-      getFieldMeta: jest.fn(),
-      validateOnBlur: true,
-      validateOnChange: true,
       initialValues: formValues,
     };
     sinkSourceModalWrapper = shallow(<SinkSourceModal {...formProps} />);
@@ -90,5 +58,32 @@ describe('SinkSourceModal Form', () => {
   it('should call handleSubmit on form submit', () => {
     sinkSourceModalWrapper.simulate('submit');
     expect(formProps.handleSubmit).toHaveBeenCalled();
+  });
+
+  it('Save should be disabled if value is not changed', () => {
+    const modalSubmitFooter = sinkSourceModalWrapper.find(ModalSubmitFooter);
+    expect(modalSubmitFooter.get(0).props.submitDisabled).toBe(true);
+  });
+
+  it('Save should be enabled if value is  changed', () => {
+    const sinkValues = {
+      sink: {
+        ref: {
+          apiVersion: `${ServiceModel.apiGroup}/${ServiceModel.apiVersion}`,
+          kind: ServiceModel.kind,
+          name: 'event-greeter-new',
+        },
+      },
+    };
+    formProps = {
+      ...formProps,
+      values: {
+        ...formProps.values,
+        ...sinkValues,
+      },
+    };
+    sinkSourceModalWrapper = shallow(<SinkSourceModal {...formProps} />);
+    const modalSubmitFooter = sinkSourceModalWrapper.find(ModalSubmitFooter);
+    expect(modalSubmitFooter.get(0).props.submitDisabled).toBe(false);
   });
 });

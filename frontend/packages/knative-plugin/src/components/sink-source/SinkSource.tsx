@@ -14,7 +14,7 @@ const SinkSource: React.FC<SinkSourceProps> = ({ source, cancel, close }) => {
     metadata: { namespace, name },
     spec: {
       sink: {
-        ref: { name: sinkName },
+        ref: { name: sinkName, apiVersion, kind },
       },
     },
   } = source;
@@ -22,8 +22,8 @@ const SinkSource: React.FC<SinkSourceProps> = ({ source, cancel, close }) => {
   const initialValues = {
     sink: {
       ref: {
-        apiVersion: '',
-        kind: '',
+        apiVersion: apiVersion || '',
+        kind: kind || '',
         name: sinkName || '',
       },
     },
@@ -31,7 +31,7 @@ const SinkSource: React.FC<SinkSourceProps> = ({ source, cancel, close }) => {
   const handleSubmit = (values: FormikValues, action: FormikHelpers<FormikValues>) => {
     const updatePayload = {
       ...source,
-      spec: { ...source.spec, ...values },
+      ...(sinkName !== values?.sink?.ref?.name && { spec: { ...source.spec, ...values } }),
     };
     k8sUpdate(modelFor(referenceFor(source)), updatePayload)
       .then(() => {

@@ -4,11 +4,11 @@ import { createModalLauncher, ModalComponentProps } from '@console/internal/comp
 import SinkSource from './SinkSource';
 
 type SinkSourceControllerProps = {
-  obj: K8sResourceKind;
+  source: K8sResourceKind;
 };
 
-const SinkSourceController: React.FC<SinkSourceControllerProps> = ({ obj, ...props }) => (
-  <SinkSource {...props} source={obj} />
+const SinkSourceController: React.FC<SinkSourceControllerProps> = ({ source, ...props }) => (
+  <SinkSource {...props} source={source} />
 );
 
 type Props = SinkSourceControllerProps & ModalComponentProps;
