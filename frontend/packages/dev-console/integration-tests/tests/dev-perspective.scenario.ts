@@ -10,13 +10,19 @@ import {
   pageSidebar,
   sideHeader,
 } from '../views/dev-perspective.view';
+import { PINNED_RESOURCES_LOCAL_STORAGE_KEY } from '@console/shared/src';
 
 describe('Application Launcher Menu', () => {
   beforeAll(async () => {
+    localStorage.setItem(
+      PINNED_RESOURCES_LOCAL_STORAGE_KEY,
+      JSON.stringify({ dev: ['apps~v1~StatefulSet'] }),
+    );
     await browser.get(`${appHost}/k8s/cluster/projects`);
   });
 
   afterEach(() => {
+    localStorage.removeItem(PINNED_RESOURCES_LOCAL_STORAGE_KEY);
     checkLogs();
     checkErrors();
   });
@@ -33,6 +39,7 @@ describe('Application Launcher Menu', () => {
     expect(pageSidebar.getText()).toContain('Project Details');
     expect(pageSidebar.getText()).toContain('Project Access');
     expect(pageSidebar.getText()).toContain('Search');
+    expect(pageSidebar.getText()).toContain('Stateful Sets');
   });
 
   it('Switch to dev to admin perspective', async () => {

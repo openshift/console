@@ -1,5 +1,9 @@
 import * as _ from 'lodash-es';
-import { ALL_NAMESPACES_KEY, LAST_PERSPECTIVE_LOCAL_STORAGE_KEY } from '@console/shared';
+import {
+  ALL_NAMESPACES_KEY,
+  LAST_PERSPECTIVE_LOCAL_STORAGE_KEY,
+  PINNED_RESOURCES_LOCAL_STORAGE_KEY,
+} from '@console/shared';
 import { formatNamespacedRouteForResource } from '@console/shared/src/utils/namespace';
 import '../../__mocks__/localStorage';
 import store from '../../public/redux';
@@ -10,6 +14,7 @@ import { getActiveNamespace } from '@console/internal/reducers/ui';
 const setActiveNamespace = (ns) => store.dispatch(UIActions.setActiveNamespace(ns));
 const setActivePerspective = (perspective) =>
   store.dispatch(UIActions.setActivePerspective(perspective));
+const setPinnedResources = (resources) => store.dispatch(UIActions.setPinnedResources(resources));
 const getNamespacedRoute = (path) =>
   UIActions.formatNamespaceRoute(getActiveNamespace(store.getState()), path);
 
@@ -133,6 +138,31 @@ describe('ui-actions', () => {
     it('sets active perspective in localStorage', () => {
       setActivePerspective('test');
       expect(localStorage.getItem(LAST_PERSPECTIVE_LOCAL_STORAGE_KEY)).toEqual('test');
+    });
+  });
+
+  describe('setPinnedResources', () => {
+    it('should create setPinnedResources action', () => {
+      setActivePerspective('test');
+      expect(UIActions.setPinnedResources(['resource1', 'resource2'])).toEqual({
+        type: UIActions.ActionType.SetPinnedResources,
+        payload: {
+          resources: ['resource1', 'resource2'],
+        },
+        error: undefined,
+        meta: undefined,
+      });
+    });
+
+    it('sets pinned resources in localStorage', () => {
+      setActivePerspective('testperspective');
+      setPinnedResources(['resource1', 'resource2']);
+      setActivePerspective('testperspective2');
+      setPinnedResources(['resource3', 'resource4']);
+      expect(JSON.parse(localStorage.getItem(PINNED_RESOURCES_LOCAL_STORAGE_KEY))).toEqual({
+        testperspective: ['resource1', 'resource2'],
+        testperspective2: ['resource3', 'resource4'],
+      });
     });
   });
 });

@@ -34,6 +34,7 @@ export const LAST_PERSPECTIVE_LOCAL_STORAGE_KEY = `${STORAGE_PREFIX}/last-perspe
 export const API_DISCOVERY_RESOURCES_LOCAL_STORAGE_KEY = `${STORAGE_PREFIX}/api-discovery-resources`;
 export const COMMUNITY_PROVIDERS_WARNING_LOCAL_STORAGE_KEY = `${STORAGE_PREFIX}/community-providers-warning`;
 export const DEV_CATALOG_FILTER_KEY = `${STORAGE_PREFIX}/dev-catalog-filters`;
+export const PINNED_RESOURCES_LOCAL_STORAGE_KEY = `${STORAGE_PREFIX}/pinned-resources`;
 
 // Bootstrap user for OpenShift 4.0 clusters
 export const KUBE_ADMIN_USERNAME = 'kube:admin';
