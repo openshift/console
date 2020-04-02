@@ -219,6 +219,9 @@ const filterByGroup = (items, filters) => {
         );
 
         filtered[key] = _.filter(items, (item) => {
+          if (Array.isArray(item[key])) {
+            return item[key].some((f) => values.includes(f));
+          }
           return values.includes(item[key]);
         });
       }
@@ -413,6 +416,10 @@ const getFilterGroupCounts = (
       ];
 
       const matchedItems = _.filter(activeItems, (item) => {
+        if (Array.isArray(item[filterGroup])) {
+          return item[filterGroup].some((f) => filterValues.includes(f));
+        }
+
         return filterValues.includes(item[filterGroup]);
       });
 

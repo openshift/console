@@ -69,6 +69,8 @@ export const OperatorHubItemDetails: React.SFC<OperatorHubItemDetailsProps> = ({
     support,
     capabilityLevel,
     marketplaceSupportWorkflow,
+    infraFeatures,
+    validSubscription,
   } = item;
   const notAvailable = <span className="properties-side-panel-pf-property-label">N/A</span>;
 
@@ -123,6 +125,12 @@ export const OperatorHubItemDetails: React.SFC<OperatorHubItemDetailsProps> = ({
     return null;
   };
 
+  const mappedData = (data) =>
+    Array.isArray(data) ? data.map((d) => <div key={d}>{d}</div>) : notAvailable;
+
+  const mappedInfraFeatures = mappedData(infraFeatures);
+  const mappedValidSubscription = mappedData(validSubscription);
+
   return (
     <div className="modal-body modal-body-border">
       <div className="modal-body-content">
@@ -142,6 +150,12 @@ export const OperatorHubItemDetails: React.SFC<OperatorHubItemDetailsProps> = ({
               />
               <PropertyItem label="Provider Type" value={providerType || notAvailable} />
               <PropertyItem label="Provider" value={provider || notAvailable} />
+              {infraFeatures && (
+                <PropertyItem label="Infrastructure Features" value={mappedInfraFeatures} />
+              )}
+              {validSubscription && (
+                <PropertyItem label="Valid Subscriptions" value={mappedValidSubscription} />
+              )}
               <PropertyItem label="Repository" value={repository || notAvailable} />
               <PropertyItem label="Container Image" value={containerImage || notAvailable} />
               <PropertyItem label="Created At" value={createdAt || notAvailable} />
