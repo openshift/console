@@ -249,7 +249,10 @@ export const prefillVmTemplateUpdater = ({ id, dispatch, getState }: UpdateOptio
       vmSettingsUpdate[VMSettingsField.FLAVOR] = { value: flavors[0] };
     }
 
-    const newSourceStorage = getProvisionSourceStorage(iGetProvisionSource(state, id));
+    const newSourceStorage = getProvisionSourceStorage(
+      iGetProvisionSource(state, id),
+      iGetLoadedCommonData(state, id, VMWizardProps.storageClassConfigMap),
+    );
     if (newSourceStorage) {
       storagesUpdate.unshift({ ...newSourceStorage, id: getNextStorageID() });
     }

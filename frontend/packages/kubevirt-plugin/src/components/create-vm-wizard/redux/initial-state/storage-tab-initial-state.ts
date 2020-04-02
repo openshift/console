@@ -1,3 +1,4 @@
+import { ConfigMapKind } from '@console/internal/module/k8s';
 import { VMWizardStorage, VMWizardStorageType } from '../../types';
 import { DiskWrapper } from '../../../../k8s/wrapper/vm/disk-wrapper';
 import {
@@ -14,6 +15,11 @@ import { VM_TEMPLATE_NAME_PARAMETER } from '../../../../constants/vm-templates';
 import { BinaryUnit } from '../../../form/size-unit-utils';
 import { WINTOOLS_CONTAINER_NAMES } from '../../../modals/cdrom-vm-modal/constants';
 import { InitialStepStateGetter } from './types';
+import {
+  getDefaultSCAccessModes,
+  getDefaultSCVolumeMode,
+} from '../../../../selectors/config-map/sc-defaults';
+import { toShallowJS } from '../../../../utils/immutable';
 
 const ROOT_DISK_NAME = 'rootdisk';
 const WINTOOLS_DISK_NAME = 'windows-guest-tools';
@@ -49,7 +55,7 @@ export const windowsToolsStorage: VMWizardStorage = {
   }).asResource(),
 };
 
-const urlStorage = {
+const getUrlStorage = (storageClassConfigMap: ConfigMapKind) => ({
   type: VMWizardStorageType.PROVISION_SOURCE_DISK,
   disk: DiskWrapper.initializeFromSimpleData({
     name: ROOT_DISK_NAME,
@@ -68,12 +74,18 @@ const urlStorage = {
     typeData: { url: '' },
     size: 10,
     unit: BinaryUnit.Gi,
-  }).asResource(),
-};
+  })
+    .setVolumeMode(getDefaultSCVolumeMode(storageClassConfigMap))
+    .setAccessModes(getDefaultSCAccessModes(storageClassConfigMap))
+    .asResource(),
+});
 
-export const getProvisionSourceStorage = (provisionSource: ProvisionSource): VMWizardStorage => {
+export const getProvisionSourceStorage = (
+  provisionSource: ProvisionSource,
+  iStorageClassConfigMap: any,
+): VMWizardStorage => {
   if (provisionSource === ProvisionSource.URL) {
-    return urlStorage;
+    return getUrlStorage(toShallowJS(iStorageClassConfigMap, undefined, true));
   }
   if (provisionSource === ProvisionSource.CONTAINER) {
     return containerStorage;
