@@ -2,6 +2,8 @@ import * as _ from 'lodash';
 import { Alert } from '@console/internal/components/monitoring';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { FirehoseResult } from '@console/internal/components/utils';
+import { getSubscriptionStatus } from '@console/operator-lifecycle-manager/src/status/csv-status';
+import { SubscriptionState, SubscriptionKind } from '@console/operator-lifecycle-manager';
 import { cephStorageProvisioners } from '@console/shared/src/utils';
 import { OCS_OPERATOR } from '../constants';
 
@@ -57,5 +59,11 @@ export const getOCSVersion = (items: FirehoseResult): string => {
     itemsData,
     (item) => _.get(item, 'spec.name') === OCS_OPERATOR,
   );
-  return _.get(operator, 'status.currentCSV');
+  if (
+    getSubscriptionStatus(operator as SubscriptionKind).status ===
+    SubscriptionState.SubscriptionStateAtLatest
+  ) {
+    return _.get(operator, 'status.currentCSV');
+  }
+  return '';
 };
