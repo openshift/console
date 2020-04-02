@@ -195,19 +195,21 @@ export const prefillVmTemplateUpdater = ({ id, dispatch, getState }: UpdateOptio
           isCloudInitForm = false;
         }
       } else if (volumeWrapper.getType() === VolumeType.DATA_VOLUME && !dataVolume) {
-        const standaloneDataVolumeWrapper = new DataVolumeWrapper(
-          standaloneDataVolumeLookup[volumeWrapper.getDataVolumeName()],
-        );
         const newDataVolumeName = joinIDs(VM_TEMPLATE_NAME_PARAMETER, diskWrapper.getName());
 
-        dataVolume = DataVolumeWrapper.initializeFromSimpleData({
-          name: newDataVolumeName,
-          storageClassName: standaloneDataVolumeWrapper.getStorageClassName() || undefined,
-          type: DataVolumeSourceType.PVC,
-          size: standaloneDataVolumeWrapper.getSize().value,
-          unit: standaloneDataVolumeWrapper.getSize().unit,
-          typeData: { name: volumeWrapper.getDataVolumeName(), namespace: activeNamespace },
-        }).asResource();
+        dataVolume = new DataVolumeWrapper(
+          standaloneDataVolumeLookup[volumeWrapper.getDataVolumeName()],
+          true,
+        )
+          .clearMetadata()
+          .clearRuntimeMetadata() // removes status
+          .setName(newDataVolumeName)
+          // clone pvc
+          .setType(DataVolumeSourceType.PVC, {
+            name: volumeWrapper.getDataVolumeName(),
+            namespace: activeNamespace,
+          })
+          .asResource();
 
         volumeWrapper.appendTypeData({ name: newDataVolumeName });
       }
