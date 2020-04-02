@@ -12,7 +12,7 @@ type BareMetalHostSecondaryStatusProps = {
   host: BareMetalHostKind;
 };
 
-export const HOST_SCHEDULED_FOR_RESTART = 'Scheduled for restart';
+export const HOST_SCHEDULED_FOR_RESTART = 'Restart pending';
 
 const BareMetalHostSecondaryStatus: React.FC<BareMetalHostSecondaryStatusProps> = ({ host }) => {
   const powerStatus = getHostPowerStatus(host);
