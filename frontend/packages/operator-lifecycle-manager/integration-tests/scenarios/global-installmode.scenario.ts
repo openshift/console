@@ -26,7 +26,6 @@ describe('Interacting with an `AllNamespaces` install mode Operator (Jaeger)', (
   ]);
   const jaegerOperatorName = 'jaeger-operator';
   const jaegerName = 'my-jaeger';
-  const customProviderDisplayName = 'Console E2E Operators';
   const customProviderUID = 'providerType-console-e-2-e-operators';
 
   const catalogNamespace = _.get(browser.params, 'globalCatalogNamespace', 'openshift-marketplace');
@@ -45,7 +44,7 @@ describe('Interacting with an `AllNamespaces` install mode Operator (Jaeger)', (
       sourceType: 'grpc',
       image:
         'quay.io/operator-framework/upstream-community-operators@sha256:5ae28f6de8affdb2a2119565ea950a2a777280b159f03b6ddddf104740571e25',
-      displayName: customProviderDisplayName,
+      displayName: 'Console E2E Operators',
       publisher: 'Red Hat, Inc',
     },
   };
