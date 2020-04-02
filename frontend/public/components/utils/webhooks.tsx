@@ -6,7 +6,10 @@ import { Button, AlertVariant } from '@patternfly/react-core';
 import * as classNames from 'classnames';
 
 import { K8sResourceKind, k8sGet } from '../../module/k8s';
-import { ExpandableAlert, SectionHeading, ResourceLink, useAccessReview } from '.';
+import { ExpandableAlert } from './alerts';
+import { SectionHeading } from './headings';
+import { ResourceLink } from './resource-link';
+import { useAccessReview } from './rbac';
 import { SecretModel } from '../../models';
 import { errorModal } from '../modals/error-modal';
 

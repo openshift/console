@@ -13,20 +13,17 @@ import {
   referenceForModel,
 } from '../module/k8s';
 import { DetailsPage, ListPage, Table, TableRow, TableData, RowFunction } from './factory';
-import {
-  ExternalLink,
-  Kebab,
-  ResourceIcon,
-  ResourceKebab,
-  ResourceLink,
-  ResourceSummary,
-  SectionHeading,
-  StatusWithIcon,
-  Timestamp,
-  history,
-  navFactory,
-  HintBlock,
-} from './utils';
+import { ExternalLink } from './utils/link';
+import { Kebab, ResourceKebab } from './utils/kebab';
+import { ResourceIcon } from './utils/resource-icon';
+import { ResourceLink } from './utils/resource-link';
+import { ResourceSummary } from './utils/details-page';
+import { SectionHeading } from './utils/headings';
+import { StatusWithIcon } from './utils/service-catalog-status';
+import { Timestamp } from './utils/timestamp';
+import { history } from './utils/router';
+import { navFactory } from './utils/horizontal-nav';
+import { HintBlock } from './utils/hint-block';
 import { ResourceEventStream } from './events';
 import { Conditions } from './conditions';
 import {

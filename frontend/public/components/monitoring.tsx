@@ -41,19 +41,15 @@ import { formatPrometheusDuration } from './utils/datetime';
 import { AlertmanagerYAMLEditorWrapper } from './monitoring/alert-manager-yaml-editor';
 import { AlertmanagerConfigWrapper } from './monitoring/alert-manager-config';
 import { refreshNotificationPollers } from './notification-drawer';
-import {
-  ActionsMenu,
-  ButtonBar,
-  ExternalLink,
-  Firehose,
-  getURLSearchParams,
-  history,
-  Kebab,
-  LoadingInline,
-  SectionHeading,
-  StatusBox,
-  Timestamp,
-} from './utils';
+import { ActionsMenu } from './utils/dropdown';
+import { ButtonBar } from './utils/button-bar';
+import { ExternalLink, getURLSearchParams } from './utils/link';
+import { Firehose } from './utils/firehose';
+import { history } from './utils/router';
+import { Kebab } from './utils/kebab';
+import { LoadingInline, StatusBox } from './utils/status-box';
+import { SectionHeading } from './utils/headings';
+import { Timestamp } from './utils/timestamp';
 import {
   BlueInfoCircleIcon,
   GreenCheckCircleIcon,

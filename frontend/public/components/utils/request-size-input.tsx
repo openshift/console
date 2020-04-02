@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Dropdown } from '.';
+import { Dropdown } from './dropdown';
 import * as classNames from 'classnames';
 
 export class RequestSizeInput extends React.Component<RequestSizeInputProps> {

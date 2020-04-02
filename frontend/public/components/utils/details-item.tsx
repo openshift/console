@@ -10,7 +10,7 @@ import {
   modelFor,
   referenceFor,
 } from '../../module/k8s';
-import { LinkifyExternal } from './';
+import { LinkifyExternal } from './link';
 
 const PropertyPath: React.FC<{ kind: string; path: string | string[] }> = ({ kind, path }) => {
   const pathArray: string[] = _.toPath(path);

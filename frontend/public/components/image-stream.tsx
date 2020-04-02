@@ -9,19 +9,16 @@ import { QuestionCircleIcon } from '@patternfly/react-icons';
 import { K8sResourceKind, K8sResourceKindReference } from '../module/k8s';
 import { ImageStreamModel } from '../models';
 import { DetailsPage, ListPage, Table, TableRow, TableData, RowFunction } from './factory';
-import {
-  CopyToClipboard,
-  ExpandableAlert,
-  ExternalLink,
-  Kebab,
-  SectionHeading,
-  LabelList,
-  navFactory,
-  ResourceKebab,
-  ResourceLink,
-  ResourceSummary,
-  Timestamp,
-} from './utils';
+import { CopyToClipboard } from './utils/copy-to-clipboard';
+import { ExpandableAlert } from './utils/alerts';
+import { ExternalLink } from './utils/link';
+import { Kebab, ResourceKebab } from './utils/kebab';
+import { SectionHeading } from './utils/headings';
+import { LabelList } from './utils/label-list';
+import { navFactory } from './utils/horizontal-nav';
+import { ResourceLink } from './utils/resource-link';
+import { ResourceSummary } from './utils/details-page';
+import { Timestamp } from './utils/timestamp';
 import { ImageStreamTimeline } from './image-stream-timeline';
 import { fromNow } from './utils/datetime';
 import { YellowExclamationTriangleIcon } from '@console/shared';

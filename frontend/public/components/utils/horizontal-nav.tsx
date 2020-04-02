@@ -4,7 +4,7 @@ import * as classNames from 'classnames';
 import { History, Location } from 'history';
 import { Route, Switch, Link, withRouter, match, matchPath } from 'react-router-dom';
 
-import { EmptyBox, StatusBox } from '.';
+import { EmptyBox, StatusBox } from './status-box';
 import { PodsPage } from '../pod';
 import { AsyncComponent } from './async';
 import { K8sResourceKind } from '../../module/k8s';

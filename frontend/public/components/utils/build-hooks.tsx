@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as _ from 'lodash-es';
 
 import { K8sResourceKind } from '../../module/k8s';
-import { SectionHeading } from '.';
+import { SectionHeading } from './headings';
 
 export const BuildHooks: React.SFC<BuildHooksProps> = ({ resource }) => {
   const postCommitArgs = _.get(resource, 'spec.postCommit.args');

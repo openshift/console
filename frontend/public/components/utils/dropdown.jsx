@@ -5,7 +5,10 @@ import * as PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { CaretDownIcon, MinusCircleIcon, PlusCircleIcon, StarIcon } from '@patternfly/react-icons';
 import { impersonateStateToProps } from '../../reducers/ui';
-import { checkAccess, history, KebabItems, ResourceName } from './index';
+import { checkAccess } from './rbac';
+import { history } from './router';
+import { KebabItems } from './kebab';
+import { ResourceName } from './resource-icon';
 import { useSafetyFirst } from '../safety-first';
 
 export class DropdownMixin extends React.PureComponent {

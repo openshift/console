@@ -3,7 +3,7 @@ import * as _ from 'lodash-es';
 
 import { Volume } from '../../module/k8s';
 import { getVolumeLocation, getVolumeType } from '../../module/k8s/pods';
-import { ResourceLink } from './';
+import { ResourceLink } from './resource-link';
 
 export const VolumeType: React.FC<VolumeTypeProps> = ({ volume, namespace }) => {
   if (volume) {

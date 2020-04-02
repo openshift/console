@@ -169,6 +169,9 @@ if (CHECK_CYCLES === 'true') {
   new CircularDependencyPreset({
     exclude: /node_modules|public\/dist/,
     reportFile: '.webpack-cycles',
+    thresholds: {
+      minLengthCycles: 17,
+    },
   }).apply(config.plugins);
 }
 
