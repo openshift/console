@@ -6,9 +6,7 @@ import {
   selectByVisibleText,
   click,
 } from '../utilities/elementInteractions';
-import { ELEMENT_WAIT } from '../utilities/appFunctions';
-
-const WAIT = ELEMENT_WAIT;
+import { ELEMENT_WAIT as WAIT } from '../utilities/appFunctions';
 
 export const addNavigate = element(by.css('[data-test-id="+Add-header"]'));
 export const gitImportButton = element(by.css('[data-test-id="import-from-git"]'));

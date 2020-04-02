@@ -39,7 +39,7 @@ import { switchPerspective, Perspective, sideHeader } from '../views/dev-perspec
 import { pipelinecheckStatus, pipelineTableBody } from '../views/pipeline.view';
 import { elementByDataTestID, click, enterText, getText } from '../utilities/elementInteractions';
 import { testData } from '../testData/git-import-flow.data';
-import { naviagteTo, NavigationMenu, ELEMENT_WAIT } from '../utilities/appFunctions';
+import { naviagteTo, NavigationMenu, ELEMENT_WAIT as WAIT } from '../utilities/appFunctions';
 import {
   verifyCreatedAppsInTopology,
   selectActionInSideBar,
@@ -47,8 +47,6 @@ import {
   topologyViewObj,
   listViewObj,
 } from '../views/topology.view';
-
-const WAIT = ELEMENT_WAIT;
 
 describe('git import flow', () => {
   let newApplication;
