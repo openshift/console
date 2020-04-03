@@ -123,7 +123,7 @@ const ssarChecks = [
     // TODO: Move into OLM plugin
     flag: FLAGS.CAN_LIST_PACKAGE_MANIFEST,
     resourceAttributes: {
-      group: 'operators.coreos.com',
+      group: 'packages.operators.coreos.com',
       resource: 'packagemanifests',
       verb: 'list',
     },
