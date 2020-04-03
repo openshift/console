@@ -46,6 +46,22 @@ export const sourceDataSpecSchema = yup
         }),
       }),
     }),
+  })
+  .when('type', {
+    is: EventSources.ApiServerSource,
+    then: yup.object().shape({
+      apiserversource: yup.object().shape({
+        resources: yup
+          .array()
+          .of(
+            yup.object({
+              apiVersion: yup.string().required('Required'),
+              kind: yup.string().required('Required'),
+            }),
+          )
+          .required('Required'),
+      }),
+    }),
   });
 
 export const eventSourceValidationSchema = yup.object().shape({

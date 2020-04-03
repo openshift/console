@@ -6,7 +6,7 @@ import { getFieldId, ResourceDropdownField } from '@console/shared';
 import FormSection from '@console/dev-console/src/components/import/section/FormSection';
 import { knativeServingResourcesServices } from '../../../utils/create-knative-utils';
 
-export interface SinkSectionProps {
+interface SinkSectionProps {
   namespace: string;
 }
 

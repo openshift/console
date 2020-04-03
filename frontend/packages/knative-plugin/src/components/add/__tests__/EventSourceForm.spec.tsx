@@ -5,12 +5,14 @@ import EventSourceForm from '../EventSourceForm';
 import EventSourcesSelector from '../event-sources/EventSourcesSelector';
 import CronJobSection from '../event-sources/CronJobSection';
 import SinkSection from '../event-sources/SinkSection';
-import { defaultEventingData } from '../../../utils/__tests__/knative-serving-data';
+import { getDefaultEventingData } from '../../../utils/__tests__/knative-serving-data';
+import { EventSources } from '../import-types';
 
 type EventSourceFormProps = React.ComponentProps<typeof EventSourceForm>;
 let formProps: EventSourceFormProps;
 
 describe('EventSource Form', () => {
+  const defaultEventingData = getDefaultEventingData(EventSources.CronJobSource);
   beforeEach(() => {
     formProps = {
       values: {
