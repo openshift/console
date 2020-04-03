@@ -571,7 +571,7 @@ const AlertRulesDetailsPage = withFallback(
                     {_.isInteger(duration) && (
                       <>
                         <dt>For</dt>
-                        <dd>{formatPrometheusDuration(duration * 1000)}</dd>
+                        <dd>{duration === 0 ? '-' : formatPrometheusDuration(duration * 1000)}</dd>
                       </>
                     )}
                     <dt>Expression</dt>
