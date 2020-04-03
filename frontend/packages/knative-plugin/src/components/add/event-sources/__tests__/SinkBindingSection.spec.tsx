@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { shallow, ShallowWrapper } from 'enzyme';
 import { InputField } from '@console/shared';
-import { NameValueEditor } from '@console/internal/components/utils/name-value-editor';
 import FormSection from '@console/dev-console/src/components/import/section/FormSection';
 import SinkBindingSection from '../SinkBindingSection';
+import NameValueEditorComponent from '../NameValueEditorComponent';
 
 type SinkBindingSectionProps = React.ComponentProps<typeof SinkBindingSection>;
 
@@ -30,7 +30,7 @@ describe('SinkBindingSection', () => {
   });
 
   it('should render NameValueEditor', () => {
-    const nameValueEditorField = wrapper.find(NameValueEditor);
+    const nameValueEditorField = wrapper.find(NameValueEditorComponent);
     expect(nameValueEditorField).toHaveLength(1);
     expect(nameValueEditorField.props().nameString).toBe('Name');
     expect(nameValueEditorField.props().valueString).toBe('Value');
