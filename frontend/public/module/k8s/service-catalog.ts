@@ -1,6 +1,6 @@
 import * as _ from 'lodash-es';
 
-import { K8sResourceKind } from '../../module/k8s';
+import { K8sResourceKind } from './types';
 
 export const serviceClassDisplayName = (serviceClass: K8sResourceKind): string =>
   _.get(serviceClass, 'spec.externalMetadata.displayName') ||

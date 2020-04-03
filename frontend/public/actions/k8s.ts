@@ -11,7 +11,8 @@ import { k8sList, k8sWatch, k8sGet } from '../module/k8s/resource';
 import { makeReduxID } from '../components/utils/k8s-watcher';
 import { APIServiceModel } from '../models';
 import { coFetchJSON } from '../co-fetch';
-import { referenceForModel, K8sResourceKind, K8sKind } from '../module/k8s';
+import { K8sResourceKind, K8sKind } from '../module/k8s/types';
+import { referenceForModel } from '../module/k8s/k8s';
 
 export enum ActionType {
   ReceivedResources = 'resources',

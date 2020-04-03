@@ -1,4 +1,4 @@
-import { podPhaseFilterReducer } from '@console/internal/module/k8s';
+import { podPhaseFilterReducer } from '@console/internal/module/k8s/pods';
 import { nodeStatus } from '@console/app/src/status/node';
 import { StatusGroupMapper } from './InventoryItem';
 import { InventoryStatusGroup } from './status-group';

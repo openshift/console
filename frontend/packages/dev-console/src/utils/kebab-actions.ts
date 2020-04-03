@@ -1,5 +1,6 @@
 import * as _ from 'lodash';
-import { K8sKind, referenceForModel } from '@console/internal/module/k8s';
+import { K8sKind } from '@console/internal/module/k8s/types';
+import { referenceForModel } from '@console/internal/module/k8s/k8s';
 import { KebabAction } from '@console/internal/components/utils';
 import {
   DaemonSetModel,

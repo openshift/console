@@ -14,7 +14,7 @@ import {
   YAMLTemplate,
 } from '@console/plugin-sdk';
 import { NamespaceRedirect } from '@console/internal/components/utils/namespace-redirect';
-import { referenceForModel } from '@console/internal/module/k8s';
+import { referenceForModel } from '@console/internal/module/k8s/k8s';
 import * as models from './models';
 import { yamlTemplates } from './yaml-templates';
 import {

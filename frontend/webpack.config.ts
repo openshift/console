@@ -170,7 +170,7 @@ if (CHECK_CYCLES === 'true') {
     exclude: /node_modules|public\/dist/,
     reportFile: '.webpack-cycles',
     thresholds: {
-      minLengthCycles: 17,
+      minLengthCycles: 15,
     },
   }).apply(config.plugins);
 }

@@ -11,14 +11,15 @@ import {
   operatorHealthPriority,
 } from '@console/shared/src/components/dashboard/status-card/states';
 import { coFetch } from '@console/internal/co-fetch';
+import { ClusterVersionKind, ClusterOperator } from '@console/internal/module/k8s/types';
 import {
-  ClusterVersionKind,
   ClusterUpdateStatus,
   getClusterUpdateStatus,
+} from '@console/internal/module/k8s/cluster-settings';
+import {
   getClusterOperatorStatus,
   OperatorStatus,
-  ClusterOperator,
-} from '@console/internal/module/k8s';
+} from '@console/internal/module/k8s/cluster-operator';
 import { PrometheusResponse } from '@console/internal/components/graphs';
 import { humanizePercentage } from '@console/internal/components/utils/units';
 import { getOperatorsStatus } from '@console/shared/src/components/dashboard/status-card/state-utils';

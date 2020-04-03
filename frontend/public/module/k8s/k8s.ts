@@ -8,8 +8,8 @@ import {
   K8sResourceKind,
   K8sResourceKindReference,
   OwnerReference,
-  modelFor,
-} from './index';
+} from './types';
+import { modelFor } from './k8s-models';
 
 export const getQN: (obj: K8sResourceKind) => string = ({ metadata: { name, namespace } }) =>
   (namespace ? `(${namespace})-` : '') + name;

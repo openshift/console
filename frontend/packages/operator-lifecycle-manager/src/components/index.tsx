@@ -1,14 +1,13 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import { Link } from 'react-router-dom';
+import { K8sResourceKind, GroupVersionKind } from '@console/internal/module/k8s/types';
 import {
-  K8sResourceKind,
-  GroupVersionKind,
   referenceForGroupVersionKind,
-  resourceURL,
   referenceFor,
   referenceForModel,
-} from '@console/internal/module/k8s';
+} from '@console/internal/module/k8s/k8s';
+import { resourceURL } from '@console/internal/module/k8s/resource';
 import { ResourceIcon } from '@console/internal/components/utils/resource-icon';
 import { PackageManifestModel, ClusterServiceVersionModel } from '../models';
 import {

@@ -1,4 +1,4 @@
-import { referenceForModel } from '@console/internal/module/k8s';
+import { referenceForModel } from '@console/internal/module/k8s/k8s';
 import {
   Plugin,
   ModelDefinition,

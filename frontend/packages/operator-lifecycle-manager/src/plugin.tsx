@@ -11,7 +11,7 @@ import {
   DevCatalogModel,
   DashboardsOverviewHealthOperator,
 } from '@console/plugin-sdk';
-import { referenceForModel } from '@console/internal/module/k8s';
+import { referenceForModel } from '@console/internal/module/k8s/k8s';
 import { FLAGS } from '@console/shared/src/constants';
 import { normalizeClusterServiceVersions } from './dev-catalog';
 import * as models from './models';

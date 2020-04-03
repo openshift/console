@@ -1,4 +1,5 @@
-import { k8sGet, K8sResourceKind } from '@console/internal/module/k8s';
+import { K8sResourceKind } from '@console/internal/module/k8s/types';
+import { k8sGet } from '@console/internal/module/k8s/resource';
 import { setFlag, handleError } from '@console/internal/actions/features';
 import { ActionFeatureFlagDetector } from '@console/plugin-sdk';
 import { SubscriptionModel } from '@console/operator-lifecycle-manager';

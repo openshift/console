@@ -16,7 +16,9 @@ import {
   deleteModal,
   expandPVCModal,
 } from '../modals';
-import { asAccessReview, checkAccess, history, resourceObjPath, useAccessReview } from './index';
+import { asAccessReview, checkAccess, useAccessReview } from './rbac';
+import { history } from './router';
+import { resourceObjPath } from './resource-link';
 import {
   AccessReviewResourceAttributes,
   K8sKind,

@@ -10,7 +10,7 @@ import {
   K8sResourceConditionStatus,
   ClusterVersionCondition,
   UpdateHistory,
-} from '.';
+} from './types';
 
 export enum ClusterUpdateStatus {
   UpToDate = 'Up to Date',

@@ -15,7 +15,7 @@ import {
   DashboardsInventoryItemGroup,
   ActionFeatureFlag,
 } from '@console/plugin-sdk';
-import { referenceForModel } from '@console/internal/module/k8s';
+import { referenceForModel } from '@console/internal/module/k8s/k8s';
 import { MachineModel, NodeModel } from '@console/internal/models';
 // TODO(jtomasek): change this to '@console/shared/src/utils' once @console/shared/src/utils modules
 // no longer import from @console/internal (cyclic deps issues)

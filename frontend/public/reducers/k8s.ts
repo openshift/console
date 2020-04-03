@@ -2,7 +2,9 @@ import * as _ from 'lodash-es';
 import { Map as ImmutableMap, fromJS } from 'immutable';
 
 import { ActionType, K8sAction } from '../actions/k8s';
-import { getQN, referenceForModel, allModels, K8sResourceKind, K8sKind } from '../module/k8s';
+import { K8sResourceKind, K8sKind } from '../module/k8s/types';
+import { getQN, referenceForModel } from '../module/k8s/k8s';
+import { allModels } from '../module/k8s/k8s-models';
 import { namespacedResources } from '../actions/ui';
 
 const moreRecent = (a, b) => {

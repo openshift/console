@@ -1,7 +1,7 @@
 import { Map as ImmutableMap } from 'immutable';
 import * as _ from 'lodash-es';
 
-import { K8sResourceKindReference, K8sKind } from './index';
+import { K8sResourceKindReference, K8sKind } from './types';
 import * as staticModels from '../../models';
 import { referenceForModel, kindForReference } from './k8s';
 import store from '../../redux';

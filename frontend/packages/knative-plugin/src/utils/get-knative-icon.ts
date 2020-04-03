@@ -1,4 +1,4 @@
-import { referenceForModel } from '@console/internal/module/k8s';
+import { referenceForModel } from '@console/internal/module/k8s/k8s';
 import * as openshiftImg from '@console/internal/imgs/logos/openshift.svg';
 import * as apiServerSourceImg from '../imgs/logos/apiserversource.png';
 import * as camelSourceImg from '../imgs/logos/camelsource.svg';

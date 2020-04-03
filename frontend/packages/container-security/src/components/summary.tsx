@@ -7,7 +7,7 @@ import { ResourceHealthHandler } from '@console/plugin-sdk';
 import { WatchK8sResults } from '@console/internal/components/utils/k8s-watch-hook';
 import { HealthState } from '@console/shared/src/components/dashboard/status-card/states';
 import { Link } from 'react-router-dom';
-import { referenceForModel } from '@console/internal/module/k8s';
+import { referenceForModel } from '@console/internal/module/k8s/k8s';
 import { ImageManifestVuln, WatchImageVuln } from '../types';
 import { vulnPriority } from '../const';
 import { ImageManifestVulnModel } from '../models';

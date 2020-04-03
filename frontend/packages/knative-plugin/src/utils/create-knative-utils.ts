@@ -1,5 +1,6 @@
 import * as _ from 'lodash';
-import { K8sResourceKind, referenceForModel, ImagePullPolicy } from '@console/internal/module/k8s';
+import { K8sResourceKind, ImagePullPolicy } from '@console/internal/module/k8s/types';
+import { referenceForModel } from '@console/internal/module/k8s/k8s';
 import { FirehoseResource } from '@console/internal/components/utils';
 import {
   ServiceModel,

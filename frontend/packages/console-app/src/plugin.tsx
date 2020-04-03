@@ -18,7 +18,8 @@ import {
   PersistentVolumeClaimModel,
   ClusterOperatorModel,
 } from '@console/internal/models';
-import { referenceForModel, ClusterOperator } from '@console/internal/module/k8s';
+import { ClusterOperator } from '@console/internal/module/k8s/types';
+import { referenceForModel } from '@console/internal/module/k8s/k8s';
 import {
   getNodeStatusGroups,
   getPodStatusGroups,
