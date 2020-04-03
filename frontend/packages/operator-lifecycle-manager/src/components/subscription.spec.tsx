@@ -270,7 +270,6 @@ describe(SubscriptionsPage.displayName, () => {
   it('renders a `MultiListPage` component with the correct props', () => {
     expect(wrapper.find(MultiListPage).props().ListComponent).toEqual(SubscriptionsList);
     expect(wrapper.find(MultiListPage).props().title).toEqual('Subscriptions');
-    expect(wrapper.find(MultiListPage).props().showTitle).toBe(false);
     expect(wrapper.find(MultiListPage).props().canCreate).toBe(true);
     expect(wrapper.find(MultiListPage).props().createProps).toEqual({ to: '/operatorhub' });
     expect(wrapper.find(MultiListPage).props().createButtonText).toEqual('Create Subscription');
