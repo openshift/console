@@ -34,7 +34,7 @@ export const LinkableLegend: React.FC<LinkableLegendProps> = React.memo(
         />
       </Tooltip>
     );
-    if (datum.name === OTHER || datum.name === CLUSTERWIDE) {
+    if (datum.labelId === OTHER || datum.labelId === CLUSTERWIDE) {
       return customLegend;
     }
     if (metricModel.kind === BUCKETCLASSKIND) {

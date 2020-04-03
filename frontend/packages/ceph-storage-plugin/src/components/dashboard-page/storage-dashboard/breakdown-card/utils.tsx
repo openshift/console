@@ -61,10 +61,11 @@ export const addAvailable = (
 
 export const getLegends = (data: StackDataPoint[]) =>
   data.map((d: StackDataPoint) => ({
-    name: d.name || d.label,
+    name: `${d.name}\n${d.label}`,
     labels: { fill: d.color },
     symbol: { fill: d.fill },
     link: d.link,
+    labelId: d.name,
     ns: d.ns,
   }));
 
