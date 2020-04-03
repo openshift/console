@@ -34,7 +34,7 @@ export const getEventSourcesDepResource = (formData: any): K8sResourceKind => {
   const apiGroup =
     type === EventSources.ApiServerSource ||
     type === EventSources.SinkBinding ||
-    EventSources.KafkaSource
+    type === EventSources.KafkaSource
       ? KNATIVE_EVENT_SOURCE_APIGROUP
       : KNATIVE_EVENT_SOURCE_APIGROUP_DEP;
   const apiVersion = 'v1alpha1';

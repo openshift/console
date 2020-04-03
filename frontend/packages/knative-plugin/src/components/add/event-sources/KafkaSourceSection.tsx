@@ -3,7 +3,7 @@ import FormSection from '@console/dev-console/src/components/import/section/Form
 import { InputField } from '@console/shared';
 import { TextInputTypes } from '@patternfly/react-core';
 import KafkaSourceNetSection from './KafkaSourceNetSection';
-import ServiceAccountDropdown from './ServiceAccountDropdown';
+import ServiceAccountDropdown from '../../dropdowns/ServiceAccountDropdown';
 
 const KafkaSourceSection: React.FC = () => {
   return (

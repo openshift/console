@@ -35,7 +35,7 @@ const EventSourceForm: React.FC<FormikProps<FormikValues> & OwnProps> = ({
     <EventSourcesSelector eventSourceList={useEventSourceList(namespace)} />
     {values.type === EventSources.CronJobSource && <CronJobSection />}
     {values.type === EventSources.SinkBinding && <SinkBindingSection />}
-    {values.type === EventSources.ApiServerSource && <ApiServerSection namespace={namespace} />}
+    {values.type === EventSources.ApiServerSource && <ApiServerSection />}
     {values.type === EventSources.KafkaSource && <KafkaSourceSection />}
     <SinkSection namespace={namespace} />
     <AppSection

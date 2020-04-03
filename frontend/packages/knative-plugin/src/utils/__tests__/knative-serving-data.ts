@@ -357,6 +357,24 @@ export const getDefaultEventingData = (typeEventSource: string): EventSourceForm
     sink: {
       knativeService: 'event-display',
     },
+    limits: {
+      cpu: {
+        request: '',
+        requestUnit: 'm',
+        defaultRequestUnit: 'm',
+        limit: '',
+        limitUnit: 'm',
+        defaultLimitUnit: 'm',
+      },
+      memory: {
+        request: '',
+        requestUnit: 'Mi',
+        defaultRequestUnit: 'Mi',
+        limit: '',
+        limitUnit: 'Mi',
+        defaultLimitUnit: 'Mi',
+      },
+    },
     type: typeEventSource,
     data: {
       [typeEventSource.toLowerCase()]: eventSourceData[typeEventSource.toLowerCase()],
