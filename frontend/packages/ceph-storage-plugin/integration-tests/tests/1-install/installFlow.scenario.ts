@@ -9,6 +9,7 @@ import {
   STORAGE_CLASS_PATTERNS,
   STORAGE_CLUSTER_NAME,
   SECOND,
+  SUCCESS,
 } from '../../utils/consts';
 import {
   InstallCluster,
@@ -40,7 +41,7 @@ describe('Testing OCS Subscription', () => {
     async () => {
       await Installer.subscribeToOperator();
       const text = await ocsOperatorStatus.getText();
-      expect(text.includes('Succeeded')).toBe(true);
+      expect(text.includes(SUCCESS)).toBe(true);
     },
     3 * MINUTE,
   );

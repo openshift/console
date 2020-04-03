@@ -1,8 +1,8 @@
 import { execSync } from 'child_process';
-import * as crudView from '@console/internal-integration-tests/views/crud.view';
-import { ExpectedConditions as until, browser, $ } from 'protractor';
 import * as _ from 'lodash';
-import { OSD, POD_NAME_PATTERNS, SECOND } from './consts';
+import { ExpectedConditions as until, browser, $ } from 'protractor';
+import * as crudView from '@console/internal-integration-tests/views/crud.view';
+import { OSD, POD_NAME_PATTERNS, SECOND, ocsTaint } from './consts';
 
 export const checkIfClusterIsReady = async () => {
   let stillLoading = true;
@@ -157,6 +157,15 @@ export const verifyNodeOSDMapping = (
   });
 
   return filteredOsds.length === 0;
+};
+
+export const hasTaints = (node) => {
+  return !_.isEmpty(node.spec?.taints);
+};
+
+export const hasOCSTaint = (node) => {
+  const taints = node?.spec?.taints || [];
+  return taints.some((taint) => _.isEqual(taint, ocsTaint));
 };
 
 export type NodeType = {
