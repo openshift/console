@@ -116,7 +116,7 @@ const HostsTableRow: RowFunction<
               hasNodeMaintenanceCapability,
               machine,
               machineSet,
-              status: status.status,
+              status,
             }),
           )}
           key={`kebab-for-${uid}`}

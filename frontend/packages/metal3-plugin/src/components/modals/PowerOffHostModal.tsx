@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { FormGroup, Checkbox, HelpBlock } from 'patternfly-react';
 import { Alert, Button } from '@patternfly/react-core';
-import { withHandlePromise } from '@console/internal/components/utils';
+import { withHandlePromise, Firehose, FirehoseResult, HandlePromiseProps } from '@console/internal/components/utils';
 import {
   createModalLauncher,
   ModalTitle,
@@ -14,9 +14,17 @@ import {
   NODE_STATUS_UNDER_MAINTENANCE,
   HOST_STATUS_READY,
   HOST_STATUS_AVAILABLE,
+  NODE_STATUS_STARTING_MAINTENANCE,
+  HOST_STATUS_UNKNOWN,
+  HOST_HEALTH_ERROR,
 } from '../../constants';
 import { BareMetalHostKind } from '../../types';
 import { startNodeMaintenanceModal } from './StartNodeMaintenanceModal';
+import { StatusProps } from '../types';
+import { PodKind } from '@console/internal/module/k8s';
+import { PodModel, DaemonSetModel } from '@console/internal/models';
+
+import './PowerOffHostModal.scss';
 
 type SafePowerOffDialogProps = { isUnderMaintenance: boolean };
 
@@ -81,16 +89,83 @@ const isPowerOffSafe = (status: string) => {
   return safeStates.includes(status);
 };
 
+type StatusValidationProps = {
+  status: string;
+  nodePods: FirehoseResult<PodKind[]>;
+  loadError?: any;
+};
+
+const StatusValidations: React.FC<StatusValidationProps> = ({ status, nodePods, loadError }) => {
+  const validations = [];
+
+  if (loadError) {
+    validations.push({
+      title: 'Failed to load data.',
+      description: 'Failed to load subresources.',
+      level: 'danger',
+    });
+  }
+
+  if ([HOST_STATUS_UNKNOWN, ...HOST_HEALTH_ERROR].includes(status)) {
+    validations.push({
+      title: 'The bare metal host is not healthy.',
+      description: 'The host cannot be powered off gracefully untils its health is restored.',
+      level: 'warning',
+    });
+  }
+
+  if (status === NODE_STATUS_STARTING_MAINTENANCE) {
+    validations.push({
+      title: 'The node is starting maintenance.',
+      description:
+        'The node cannot be powered off gracefully until it is either in maintenance or healthy.',
+      level: 'info',
+    });
+  }
+
+  if (status === NODE_STATUS_STARTING_MAINTENANCE) {
+    validations.push({
+      title: 'The node is stopping maintenance.',
+      description:
+        'The node cannot be powered off gracefully until it is either in maintenance or healthy.',
+      level: 'info',
+    });
+  }
+
+  if (
+    nodePods?.data?.find((pod) =>
+      pod.metadata?.ownerReferences.find((or) => or.kind === DaemonSetModel.kind),
+    )
+  ) {
+    validations.push({
+      title: 'This node contains DaemonSet pods.',
+      description:
+        'These DaemonSet pods will prevent some pods from being moved. This should not prevent the host from powering off gracefully.',
+      level: 'info',
+    });
+  }
+
+  return (
+    <>
+      {validations.map((validation) => (
+        <Alert variant={validation.level} isInline title={validation.title} key={validation.title}>
+          {validation.description}
+        </Alert>
+      ))}
+    </>
+  );
+};
+
 export type PowerOffHostModalProps = {
   host: BareMetalHostKind;
   hasNodeMaintenanceCapability: boolean;
   nodeName: string;
-  status: string;
-  handlePromise: <T>(promise: Promise<T>) => Promise<T>;
-  inProgress: boolean;
-  errorMessage: string;
+  status: StatusProps;
   cancel?: () => void;
   close?: () => void;
+  nodePods?: FirehoseResult<PodKind[]>;
+  loadError?: any;
+  loaded?: boolean;
 };
 
 const PowerOffHostModal = withHandlePromise(
@@ -104,13 +179,15 @@ const PowerOffHostModal = withHandlePromise(
     handlePromise,
     close = undefined,
     cancel = undefined,
-  }: PowerOffHostModalProps) => {
+    nodePods,
+    loadError,
+  }: PowerOffHostModalProps & HandlePromiseProps) => {
     const name = getName(host);
     const [canPowerOffSafely, setCanPowerOffSafely] = React.useState(false);
     const [forceOff, setForceOff] = React.useState(false);
 
     React.useEffect(() => {
-      isPowerOffSafe(status) && setCanPowerOffSafely(true);
+      isPowerOffSafe(status.status) && setCanPowerOffSafely(true);
     }, [status]);
 
     React.useEffect(() => {
@@ -123,11 +200,12 @@ const PowerOffHostModal = withHandlePromise(
       return handlePromise(promise).then(close);
     };
 
-    const isUnderMaintenance = status === NODE_STATUS_UNDER_MAINTENANCE;
+    const isUnderMaintenance = status.status === NODE_STATUS_UNDER_MAINTENANCE;
     return (
-      <form onSubmit={submit} name="form" className="modal-content">
+      <form onSubmit={submit} name="form" className="modal-content metal3-poweroff-modal">
         <ModalTitle>Power Off Host {name}</ModalTitle>
         <ModalBody>
+          <StatusValidations status={status.status} nodePods={nodePods} loadError={loadError} />
           {canPowerOffSafely ? (
             <SafePowerOffDialog isUnderMaintenance={isUnderMaintenance} />
           ) : (
@@ -151,4 +229,23 @@ const PowerOffHostModal = withHandlePromise(
   },
 );
 
-export const powerOffHostModal = createModalLauncher(PowerOffHostModal);
+const PowerOffHostModalFirehose = (props: PowerOffHostModalProps) => {
+  const { nodeName } = props;
+
+  const resources = [];
+  resources.push({
+    kind: PodModel.kind,
+    namespaced: false,
+    isList: true,
+    prop: 'nodePods',
+    fieldSelector: `spec.nodeName=${nodeName}`,
+  });
+
+  return (
+    <Firehose resources={resources}>
+      <PowerOffHostModal {...props} />
+    </Firehose>
+  );
+};
+
+export const powerOffHostModal = createModalLauncher(PowerOffHostModalFirehose);

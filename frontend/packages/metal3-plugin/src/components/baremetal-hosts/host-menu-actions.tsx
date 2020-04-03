@@ -45,6 +45,7 @@ import { deprovision } from '../../k8s/requests/bare-metal-host';
 import { getMachineMachineSetOwner } from '../../selectors/machine';
 import { findMachineSet } from '../../selectors/machine-set';
 import { restartHostModal } from '../modals/RestartHostModal';
+import { StatusProps } from '../types';
 
 type ActionArgs = {
   machine?: MachineKind;
@@ -52,7 +53,7 @@ type ActionArgs = {
   nodeName?: string;
   nodeMaintenance?: K8sResourceKind;
   hasNodeMaintenanceCapability?: boolean;
-  status: string;
+  status: StatusProps;
 };
 
 export const Edit = (kindObj: K8sKind, host: BareMetalHostKind): KebabOption => ({
@@ -158,7 +159,7 @@ export const Delete = (
       HOST_STATUS_AVAILABLE,
       HOST_STATUS_DISCOVERED,
       ...HOST_ERROR_STATES,
-    ].includes(status),
+    ].includes(status.status),
     label: title,
     callback: () =>
       deleteModal({
@@ -211,7 +212,7 @@ export const menuActionsCreator = (
       nodeName,
       machine,
       machineSet,
-      status: status.status,
+      status,
     });
   });
 };
