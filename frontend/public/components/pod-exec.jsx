@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
+import { Base64 } from 'js-base64';
 import { ExpandIcon } from '@patternfly/react-icons';
 import { Button } from '@patternfly/react-core';
 
@@ -99,7 +100,7 @@ export const PodExec = connectToFlags(FLAGS.OPENSHIFT)(
               return;
             }
           }
-          const data = atob(raw.slice(1));
+          const data = Base64.decode(raw.slice(1));
           current && current.onDataReceived(data);
           previous = data;
         })
@@ -156,7 +157,7 @@ export const PodExec = connectToFlags(FLAGS.OPENSHIFT)(
     }
 
     onResize_(rows, cols) {
-      const data = btoa(JSON.stringify({ Height: rows, Width: cols }));
+      const data = Base64.encode(JSON.stringify({ Height: rows, Width: cols }));
       this.ws && this.ws.send(`4${data}`);
     }
 
@@ -165,7 +166,7 @@ export const PodExec = connectToFlags(FLAGS.OPENSHIFT)(
     }
 
     onData_(data) {
-      this.ws && this.ws.send(`0${btoa(data)}`);
+      this.ws && this.ws.send(`0${Base64.encode(data)}`);
     }
 
     render() {
