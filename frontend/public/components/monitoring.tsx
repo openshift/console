@@ -1459,14 +1459,18 @@ const EditSilence = connect(silenceParamToProps)(({ loaded, loadError, silence }
   );
 });
 
-const CreateSilence = () => {
+const CreateSilence_ = ({ createdBy }) => {
   const matchers = _.map(getURLSearchParams(), (value, name) => ({ name, value, isRegex: false }));
   return _.isEmpty(matchers) ? (
-    <SilenceForm saveButtonText="Create" title="Create Silence" />
+    <SilenceForm defaults={{ createdBy }} saveButtonText="Create" title="Create Silence" />
   ) : (
-    <SilenceForm defaults={{ matchers }} saveButtonText="Create" title="Silence Alert" />
+    <SilenceForm defaults={{ createdBy, matchers }} saveButtonText="Create" title="Silence Alert" />
   );
 };
+const createSilenceStateToProps = ({ UI }: RootState) => ({
+  createdBy: UI.get('user')?.metadata?.name,
+});
+const CreateSilence = connect(createSilenceStateToProps)(CreateSilence_);
 
 const AlertmanagerYAML = () => {
   return (
