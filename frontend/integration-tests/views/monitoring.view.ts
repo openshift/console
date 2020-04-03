@@ -11,6 +11,7 @@ export const listPageHeading = $('.co-m-pane__heading');
 export const createButton = $('.co-m-pane__filter-bar-group button');
 
 // Details pages
+export const actionButton = $('.co-m-nav-title .pf-m-primary.co-action-buttons__btn');
 export const detailsHeading = $('.co-m-nav-title .co-resource-item');
 export const detailsHeadingAlertIcon = $('.co-m-nav-title .co-m-resource-alert');
 export const detailsHeadingRuleIcon = $('.co-m-nav-title .co-m-resource-alertrule');
