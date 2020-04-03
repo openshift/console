@@ -27,6 +27,7 @@ import { StorageClass } from '@console/internal/components/storage-class-form';
 import { filterScOnProvisioner, getName } from '@console/shared';
 import ResourceDropdown from '@console/dev-console/src/components/dropdown/ResourceDropdown';
 import { commonReducer, defaultState } from '../object-bucket-page/state';
+import { OCS_NS } from '../../constants';
 import './create-obc.scss';
 
 export const CreateOBCPage: React.FC<CreateOBCPageProps> = (props) => {
@@ -137,8 +138,8 @@ export const CreateOBCPage: React.FC<CreateOBCPageProps> = (props) => {
                 resources={[
                   {
                     isList: true,
-                    namespace,
                     kind: referenceForModel(NooBaaBucketClassModel),
+                    namespace: OCS_NS,
                     prop: 'bucketClass',
                   },
                 ]}
