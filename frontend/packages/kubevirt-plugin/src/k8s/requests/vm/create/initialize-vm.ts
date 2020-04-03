@@ -22,12 +22,8 @@ import {
 import { DataVolumeWrapper } from '../../../wrapper/vm/data-volume-wrapper';
 import { StorageUISource } from '../../../../components/modals/disk-modal/storage-ui-source';
 import { insertName, joinIDs } from '../../../../utils';
-import {
-  getDefaultSCAccessModes,
-  getDefaultSCVolumeMode,
-} from '../../../../selectors/config-map/sc-defaults';
 import { VM_TEMPLATE_NAME_PARAMETER } from '../../../../constants/vm-templates';
-import { CreateVMEnhancedParams } from './types';
+import { CreateVMParams } from './types';
 
 const resolveDataVolumeName = (
   dataVolumeWrapper: DataVolumeWrapper,
@@ -47,8 +43,8 @@ const resolveDataVolumeName = (
     : finalName;
 };
 
-const initializeStorage = (params: CreateVMEnhancedParams, vm: VMWrapper) => {
-  const { vmSettings, storages, isTemplate, storageClassConfigMap, namespace } = params;
+const initializeStorage = (params: CreateVMParams, vm: VMWrapper) => {
+  const { vmSettings, storages, isTemplate, namespace } = params;
   const settings = asSimpleSettings(vmSettings);
 
   const resolvedStorages = storages.map((storage) => {
@@ -72,11 +68,7 @@ const initializeStorage = (params: CreateVMEnhancedParams, vm: VMWrapper) => {
             isPlainDataVolume,
           }),
         )
-        .setNamespace(isPlainDataVolume ? namespace : undefined)
-        .assertDefaultModes(
-          getDefaultSCVolumeMode(storageClassConfigMap, dataVolumeWrapper.getStorageClassName()),
-          getDefaultSCAccessModes(storageClassConfigMap, dataVolumeWrapper.getStorageClassName()),
-        );
+        .setNamespace(isPlainDataVolume ? namespace : undefined);
 
       if (volumeWrapper.getType() === VolumeType.DATA_VOLUME) {
         volumeWrapper.appendTypeData({ name: dataVolumeWrapper.getName() });
@@ -96,7 +88,7 @@ const initializeStorage = (params: CreateVMEnhancedParams, vm: VMWrapper) => {
   return { storages: resolvedStorages };
 };
 
-const initializeNetworks = ({ networks, vmSettings }: CreateVMEnhancedParams, vm: VMWrapper) => {
+const initializeNetworks = ({ networks, vmSettings }: CreateVMParams, vm: VMWrapper) => {
   vm.setNetworks(networks);
   const hasPodNetwork = networks.some((network) =>
     new NetworkWrapper(network.network).isPodNetwork(),
@@ -114,7 +106,7 @@ const initializeNetworks = ({ networks, vmSettings }: CreateVMEnhancedParams, vm
   }
 };
 
-export const initializeVM = (params: CreateVMEnhancedParams, vm: VMWrapper) => {
+export const initializeVM = (params: CreateVMParams, vm: VMWrapper) => {
   const { vmSettings, storages, isTemplate } = params;
   const settings = asSimpleSettings(vmSettings);
   const isRunning = settings[VMSettingsField.START_VM];

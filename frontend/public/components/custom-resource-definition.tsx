@@ -4,7 +4,7 @@ import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
 import { BanIcon } from '@patternfly/react-icons';
 
-import { DetailsPage, ListPage, Table, TableRow, TableData } from './factory';
+import { DetailsPage, ListPage, Table, TableRow, TableData, RowFunction } from './factory';
 import {
   AsyncComponent,
   DetailsItem,
@@ -107,7 +107,12 @@ const Established: React.FC<{ crd: CustomResourceDefinitionKind }> = ({ crd }) =
   );
 };
 
-const CRDTableRow: React.FC<CRDTableRowProps> = ({ obj: crd, index, key, style }) => {
+const CRDTableRow: RowFunction<CustomResourceDefinitionKind> = ({
+  obj: crd,
+  index,
+  key,
+  style,
+}) => {
   return (
     <TableRow id={crd.metadata.uid} index={index} trKey={key} style={style}>
       <TableData className={tableColumnClasses[0]}>
@@ -133,13 +138,6 @@ const CRDTableRow: React.FC<CRDTableRowProps> = ({ obj: crd, index, key, style }
       </TableData>
     </TableRow>
   );
-};
-CRDTableRow.displayName = 'CRDTableRow';
-type CRDTableRowProps = {
-  obj: CustomResourceDefinitionKind;
-  index: number;
-  key?: string;
-  style: object;
 };
 
 const Details: React.FC<{ obj: CustomResourceDefinitionKind }> = ({ obj: crd }) => {

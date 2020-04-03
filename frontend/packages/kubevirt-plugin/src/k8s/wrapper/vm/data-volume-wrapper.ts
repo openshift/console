@@ -4,7 +4,7 @@ import { validate } from '@console/internal/components/utils';
 import { compareOwnerReference } from '@console/shared/src/utils/owner-references';
 import { apiVersionForModel } from '@console/internal/module/k8s';
 import { V1alpha1DataVolume } from '../../../types/vm/disk/V1alpha1DataVolume';
-import { DataVolumeSourceType } from '../../../constants/vm/storage';
+import { AccessMode, DataVolumeSourceType, VolumeMode } from '../../../constants/vm/storage';
 import {
   getDataVolumeAccessModes,
   getDataVolumeStorageClassName,
@@ -110,28 +110,23 @@ export class DataVolumeWrapper extends K8sResourceObjectWithTypePropertyWrapper<
 
   getVolumeMode = () => getDataVolumeVolumeMode(this.data);
 
-  setAccessModes = (accessModes: string[]) => {
+  getVolumeModeEnum = () => VolumeMode.fromString(this.getVolumeMode());
+
+  getAccessModesEnum = () => {
+    const accessModes = this.getAccessModes();
+    return accessModes ? accessModes.map((mode) => AccessMode.fromString(mode)) : accessModes;
+  };
+
+  setAccessModes = (accessModes: AccessMode[]) => {
     this.ensurePath('spec.pvc');
-    this.data.spec.pvc.accessModes = accessModes;
+    this.data.spec.pvc.accessModes =
+      accessModes && accessModes.map((a) => a?.getValue()).filter((a) => a); // allow null and undefined
     return this;
   };
 
-  setVolumeMode = (volumeMode: string) => {
+  setVolumeMode = (volumeMode: VolumeMode) => {
     this.ensurePath('spec.pvc');
-    this.data.spec.pvc.volumeMode = volumeMode;
-    return this;
-  };
-
-  assertDefaultModes = (volumeMode: string, accessModes: string[]) => {
-    const oldAccessModes = this.getAccessModes();
-    if ((!oldAccessModes || oldAccessModes.length === 0) && accessModes) {
-      this.setAccessModes(accessModes);
-    }
-
-    if (!this.getVolumeMode() && volumeMode) {
-      this.setVolumeMode(volumeMode);
-    }
-
+    this.data.spec.pvc.volumeMode = volumeMode && volumeMode.getValue(); // allow null and undefined
     return this;
   };
 
@@ -155,11 +150,14 @@ export class DataVolumeWrapper extends K8sResourceObjectWithTypePropertyWrapper<
 
   mergeWith(...dataVolumeWrappers: DataVolumeWrapper[]) {
     super.mergeWith(...dataVolumeWrappers);
-
-    if (!this.data?.spec?.pvc?.storageClassName && this.data?.spec?.pvc) {
-      delete this.data.spec.pvc.storageClassName;
+    this.clearIfEmpty('spec.pvc.storageClassName');
+    this.clearIfEmpty('spec.pvc.accessModes');
+    this.clearIfEmpty('spec.pvc.volumeMode');
+    const accessModes = this.getAccessModesEnum();
+    if (accessModes?.length > 1) {
+      // API currently allows only one mode
+      this.setAccessModes([accessModes[0]]);
     }
-
     return this;
   }
 

@@ -11,7 +11,7 @@ import {
   LAST_NAMESPACE_NAME_LOCAL_STORAGE_KEY,
   LAST_PERSPECTIVE_LOCAL_STORAGE_KEY,
 } from '@console/shared/src/constants';
-import { K8sResourceKind, PodKind } from '../module/k8s';
+import { K8sResourceKind, PodKind, NodeKind } from '../module/k8s';
 import { allModels } from '../module/k8s/k8s-models';
 import { detectFeatures, clearSSARFlags } from './features';
 import { OverviewSpecialGroup } from '../components/overview/constants';
@@ -32,6 +32,7 @@ export enum ActionType {
   MonitoringDashboardsSetPollInterval = 'monitoringDashboardsSetPollInterval',
   MonitoringDashboardsSetTimespan = 'monitoringDashboardsSetTimespan',
   MonitoringDashboardsVariableOptionsLoaded = 'monitoringDashboardsVariableOptionsLoaded',
+  MonitoringSetRules = 'monitoringSetRules',
   SetMonitoringData = 'setMonitoringData',
   ToggleMonitoringGraphs = 'monitoringToggleGraphs',
   NotificationDrawerToggleExpanded = 'notificationDrawerExpanded',
@@ -61,6 +62,7 @@ export enum ActionType {
   SetConsoleLinks = 'setConsoleLinks',
   SetPodMetrics = 'setPodMetrics',
   SetNamespaceMetrics = 'setNamespaceMetrics',
+  SetNodeMetrics = 'setNodeMetrics',
 }
 
 type MetricValuesByName = {
@@ -79,6 +81,15 @@ type MetricValuesByNamespace = {
 export type PodMetrics = {
   cpu: MetricValuesByNamespace;
   memory: MetricValuesByNamespace;
+};
+
+export type NodeMetrics = {
+  cpu: MetricValuesByName;
+  pods: MetricValuesByName;
+  usedMemory: MetricValuesByName;
+  totalMemory: MetricValuesByName;
+  usedStorage: MetricValuesByName;
+  totalStorage: MetricValuesByName;
 };
 
 // URL routes that can be namespaced
@@ -105,7 +116,12 @@ export const getNamespaceMetric = (ns: K8sResourceKind, metric: string): number 
 
 export const getPodMetric = (pod: PodKind, metric: string): number => {
   const metrics = store.getState().UI.getIn(['metrics', 'pod']);
-  return _.get(metrics, [metric, pod.metadata.namespace, pod.metadata.name], 0);
+  return metrics?.[metric]?.[pod.metadata.namespace]?.[pod.metadata.name] ?? 0;
+};
+
+export const getNodeMetric = (node: NodeKind, metric: string): number => {
+  const metrics = store.getState().UI.getIn(['metrics', 'node']);
+  return metrics?.[metric]?.[node.metadata.name] ?? 0;
 };
 
 export const formatNamespaceRoute = (activeNamespace, originalPath, location?) => {
@@ -289,6 +305,7 @@ export const monitoringErrored = (
   key: 'alerts' | 'silences' | 'notificationAlerts',
   loadError: any,
 ) => action(ActionType.SetMonitoringData, { key, data: { loaded: true, loadError, data: null } });
+export const monitoringSetRules = (rules: any) => action(ActionType.MonitoringSetRules, { rules });
 export const monitoringToggleGraphs = () => action(ActionType.ToggleMonitoringGraphs);
 export const notificationDrawerToggleExpanded = () =>
   action(ActionType.NotificationDrawerToggleExpanded);
@@ -325,6 +342,8 @@ export const setPodMetrics = (podMetrics: PodMetrics) =>
   action(ActionType.SetPodMetrics, { podMetrics });
 export const setNamespaceMetrics = (namespaceMetrics: NamespaceMetrics) =>
   action(ActionType.SetNamespaceMetrics, { namespaceMetrics });
+export const setNodeMetrics = (nodeMetrics: NodeMetrics) =>
+  action(ActionType.SetNodeMetrics, { nodeMetrics });
 
 // TODO(alecmerdler): Implement all actions using `typesafe-actions` and add them to this export
 const uiActions = {
@@ -356,6 +375,7 @@ const uiActions = {
   monitoringLoading,
   monitoringLoaded,
   monitoringErrored,
+  monitoringSetRules,
   monitoringToggleGraphs,
   queryBrowserAddQuery,
   queryBrowserDeleteAllQueries,
@@ -371,6 +391,7 @@ const uiActions = {
   setConsoleLinks,
   setPodMetrics,
   setNamespaceMetrics,
+  setNodeMetrics,
   notificationDrawerToggleExpanded,
   notificationDrawerToggleRead,
 };

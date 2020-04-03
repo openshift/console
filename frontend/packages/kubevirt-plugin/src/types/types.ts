@@ -17,3 +17,7 @@ export type BootableDeviceType = {
   typeLabel: string;
   value: V1Disk | V1NetworkInterface;
 };
+
+export type IDEntity = {
+  id: number;
+};

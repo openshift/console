@@ -177,24 +177,24 @@ export const getVolumeMountsByPermissions = (pod: PodKind) => {
   return _.values(m);
 };
 
-const podContainerStatuses = (pod: PodKind): ContainerStatus[] => {
+export const podRestarts = (pod: PodKind): number => {
   if (!pod || !pod.status) {
-    return [];
+    return 0;
   }
   const { initContainerStatuses = [], containerStatuses = [] } = pod.status;
-  return [...initContainerStatuses, ...containerStatuses];
-};
-
-export const podRestarts = (pod: PodKind): number => {
-  const containerStatuses = podContainerStatuses(pod);
-  return containerStatuses.reduce(
+  const isInitializing = initContainerStatuses.some(({ state }) => {
+    return !state.terminated || state.terminated.exitCode !== 0;
+  });
+  const toCheck = isInitializing ? initContainerStatuses : containerStatuses;
+  return toCheck.reduce(
     (restartCount, status: ContainerStatus) => restartCount + status.restartCount,
     0,
   );
 };
 
 export const podReadiness = (pod: PodKind): { readyCount: number; totalContainers: number } => {
-  const containerStatuses = podContainerStatuses(pod);
+  // Don't include init containers in readiness count. This is consistent with the CLI.
+  const containerStatuses = pod?.status?.containerStatuses || [];
   return containerStatuses.reduce(
     (acc, { ready }: ContainerStatus) => {
       if (ready) {
@@ -206,8 +206,8 @@ export const podReadiness = (pod: PodKind): { readyCount: number; totalContainer
   );
 };
 
-// This logic is replicated from k8s (at this writing, Kubernetes 1.15)
-// (See https://github.com/kubernetes/kubernetes/blob/release-1.15/pkg/printers/internalversion/printers.go)
+// This logic is replicated from k8s (at this writing, Kubernetes 1.17)
+// (See https://github.com/kubernetes/kubernetes/blob/release-1.17/pkg/printers/internalversion/printers.go)
 export const podPhase = (pod: PodKind): PodPhase => {
   if (!pod || !pod.status) {
     return '';
@@ -215,6 +215,10 @@ export const podPhase = (pod: PodKind): PodPhase => {
 
   if (pod.metadata.deletionTimestamp) {
     return 'Terminating';
+  }
+
+  if (pod.status.reason === 'NodeLost') {
+    return 'Unknown';
   }
 
   if (pod.status.reason === 'Evicted') {
@@ -247,8 +251,12 @@ export const podPhase = (pod: PodKind): PodPhase => {
 
   if (!initializing) {
     let hasRunning = false;
-    _.each(pod.status.containerStatuses, (container: ContainerStatus) => {
-      const { running, terminated, waiting } = container.state;
+    const containerStatuses = pod.status.containerStatuses || [];
+    for (let i = containerStatuses.length - 1; i >= 0; i--) {
+      const {
+        state: { running, terminated, waiting },
+        ready,
+      } = containerStatuses[i];
       if (terminated && terminated.reason) {
         phase = terminated.reason;
       } else if (waiting && waiting.reason) {
@@ -257,10 +265,10 @@ export const podPhase = (pod: PodKind): PodPhase => {
         phase = terminated.signal
           ? `Signal:${terminated.signal}`
           : `ExitCode:${terminated.exitCode}`;
-      } else if (running && container.ready) {
+      } else if (running && ready) {
         hasRunning = true;
       }
-    });
+    }
 
     // Change pod status back to "Running" if there is at least one container
     // still reporting as "Running" status.

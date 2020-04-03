@@ -15,7 +15,7 @@ import { MachineModel } from '../models';
 import { MachineKind, referenceForModel } from '../module/k8s';
 import { Conditions } from './conditions';
 import NodeIPList from '@console/app/src/components/nodes/NodeIPList';
-import { DetailsPage, ListPage, Table, TableRow, TableData } from './factory';
+import { DetailsPage, ListPage, Table, TableRow, TableData, RowFunction } from './factory';
 import {
   DetailsItem,
   Kebab,
@@ -98,7 +98,7 @@ MachineTableHeader.displayName = 'MachineTableHeader';
 const getMachineProviderState = (obj: MachineKind): string =>
   obj?.status?.providerStatus?.instanceState;
 
-const MachineTableRow: React.FC<MachineTableRowProps> = ({ obj, index, key, style }) => {
+const MachineTableRow: RowFunction<MachineKind> = ({ obj, index, key, style }) => {
   const nodeName = getMachineNodeName(obj);
   const region = getMachineRegion(obj);
   const zone = getMachineZone(obj);
@@ -130,13 +130,6 @@ const MachineTableRow: React.FC<MachineTableRowProps> = ({ obj, index, key, styl
       </TableData>
     </TableRow>
   );
-};
-MachineTableRow.displayName = 'MachineTableRow';
-type MachineTableRowProps = {
-  obj: MachineKind;
-  index: number;
-  key: string;
-  style: object;
 };
 
 const MachineDetails: React.SFC<MachineDetailsProps> = ({ obj }: { obj: MachineKind }) => {

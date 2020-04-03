@@ -7,11 +7,9 @@ import {
   k8sCreate,
   K8sKind,
   K8sResourceKind,
-  K8sResourceKindReference,
   kindForReference,
   referenceForModel,
   Status,
-  CustomResourceDefinitionKind,
   modelFor,
   NodeAffinity as NodeAffinityType,
 } from '@console/internal/module/k8s';
@@ -23,7 +21,6 @@ import {
   SelectorInput,
   ListDropdown,
   resourcePathFromModel,
-  FirehoseResult,
   useScrollToTopOnMount,
   Dropdown,
 } from '@console/internal/components/utils';
@@ -32,10 +29,9 @@ import { ConfigureUpdateStrategy } from '@console/internal/components/modals/con
 import { ExpandCollapse } from '@console/internal/components/utils/expand-collapse';
 import * as classNames from 'classnames';
 import * as _ from 'lodash';
-import { match as RouterMatch } from 'react-router';
 import * as React from 'react';
 import { ClusterServiceVersionModel } from '../models';
-import { ClusterServiceVersionKind, CRDDescription, APIServiceDefinition } from '../types';
+import { ClusterServiceVersionKind, ProvidedAPI } from '../types';
 import { Descriptor, SpecCapability, StatusCapability } from './descriptors/types';
 import { ResourceRequirements } from './descriptors/spec/resource-requirements';
 import {
@@ -48,6 +44,7 @@ import {
 import { FieldGroup } from './descriptors/spec/field-group';
 import { ClusterServiceVersionLogo } from './index';
 import * as Immutable from 'immutable';
+import { EditorToggle, EditorType } from '@console/shared/src/components/editor/editor-toggle';
 
 /*
  * Matches a path that contains an array index. Use Sting.match against an OperandField 'path'
@@ -316,7 +313,7 @@ const flattenNestedProperties = (
 
     // ProvidedAPI should only have a single descriptor for each array field. Regardless of the
     // index of this field, use the providedAPI.specDescriptor at index 0.
-    const providedAPIField = _.find(providedAPI?.specDescriptors, {
+    const providedAPIField = _.find<Descriptor>(providedAPI?.specDescriptors, {
       path: modifyArrayFieldPathIndex(path, () => 0),
     });
     return [
@@ -520,7 +517,7 @@ export const CreateOperandForm: React.FC<CreateOperandFormProps> = ({
   providedAPI,
   namespace,
   activePerspective,
-  onToggleEditMethod = _.noop,
+  onChangeEditor = _.noop,
 }) => {
   // Map providedAPI spec descriptors and openAPI spec properties to OperandField[] array
   const [fields, setFields] = React.useState<OperandField[]>(() => {
@@ -658,7 +655,7 @@ export const CreateOperandForm: React.FC<CreateOperandFormProps> = ({
   }, [groupFields]);
 
   const onSwitchToYAML = () => {
-    onToggleEditMethod(formData.toJS());
+    onChangeEditor(formData.toJS());
   };
 
   const getFormData = (path): any => formData.getIn(pathToArray(path));
@@ -1152,17 +1149,13 @@ export const CreateOperandForm: React.FC<CreateOperandFormProps> = ({
               { name: `Create ${operandModel.label}`, path: window.location.pathname },
             ]}
           />
-          <div style={{ marginLeft: 'auto' }}>
-            <Button variant="link" onClick={onSwitchToYAML}>
-              Edit YAML
-            </Button>
-          </div>
         </div>
         <h1 className="co-create-operand__header-text">{`Create ${operandModel.label}`}</h1>
         <p className="help-block">
           Create by completing the form. Default values may be provided by the Operator authors.
         </p>
       </div>
+      <EditorToggle value={EditorType.Form} onChange={onSwitchToYAML} />
       <div className="co-m-pane__body">
         <div className="row">
           <form className="col-md-8 col-lg-7" onSubmit={submit}>
@@ -1290,19 +1283,8 @@ type OperandFormInputGroupProps = {
   error: string;
 };
 
-type ProvidedAPI = CRDDescription | APIServiceDefinition;
-
-export type CreateOperandProps = {
-  match: RouterMatch<{ appName: string; ns: string; plural: K8sResourceKindReference }>;
-  operandModel: K8sKind;
-  loaded: boolean;
-  loadError?: any;
-  clusterServiceVersion: FirehoseResult<ClusterServiceVersionKind>;
-  customResourceDefinition?: FirehoseResult<CustomResourceDefinitionKind>;
-};
-
 export type CreateOperandFormProps = {
-  onToggleEditMethod?: (newBuffer?: K8sResourceKind) => void;
+  onChangeEditor?: (newBuffer?: K8sResourceKind) => void;
   operandModel: K8sKind;
   providedAPI: ProvidedAPI;
   openAPI?: SwaggerDefinition;
@@ -1310,23 +1292,4 @@ export type CreateOperandFormProps = {
   buffer?: K8sResourceKind;
   namespace: string;
   activePerspective: string;
-};
-
-export type CreateOperandYAMLProps = {
-  onToggleEditMethod?: (newBuffer?: K8sResourceKind) => void;
-  operandModel: K8sKind;
-  providedAPI: ProvidedAPI;
-  clusterServiceVersion: ClusterServiceVersionKind;
-  buffer?: K8sResourceKind;
-  match: RouterMatch<{ appName: string; ns: string; plural: K8sResourceKindReference }>;
-};
-
-export type CreateOperandPageProps = {
-  match: RouterMatch<{ appName: string; ns: string; plural: K8sResourceKindReference }>;
-  operandModel: K8sKind;
-};
-
-export type SpecDescriptorInputProps = {
-  field: OperandField;
-  sample?: K8sResourceKind;
 };

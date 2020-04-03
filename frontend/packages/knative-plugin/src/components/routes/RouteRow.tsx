@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as cx from 'classnames';
-import { TableRow, TableData } from '@console/internal/components/factory';
+import { TableRow, TableData, RowFunction } from '@console/internal/components/factory';
 import {
   Kebab,
   ResourceLink,
@@ -11,25 +11,13 @@ import {
 import { referenceForModel } from '@console/internal/module/k8s';
 import { RevisionModel, RouteModel } from '../../models';
 import { getConditionString } from '../../utils/condition-utils';
-import { RouteKind, ConfigurationKind } from '../../types';
+import { RouteKind } from '../../types';
 import { tableColumnClasses } from './route-table';
 
 const routeReference = referenceForModel(RouteModel);
 const revisionReference = referenceForModel(RevisionModel);
 
-export interface RouteRowProps {
-  obj: RouteKind;
-  index: number;
-  key?: string;
-  style: object;
-  customData?: {
-    configurationsByName: {
-      [key: string]: ConfigurationKind;
-    };
-  };
-}
-
-const RouteRow: React.FC<RouteRowProps> = ({ obj, index, key, style }) => (
+const RouteRow: RowFunction<RouteKind> = ({ obj, index, key, style }) => (
   <TableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
     <TableData className={tableColumnClasses[0]}>
       <ResourceLink

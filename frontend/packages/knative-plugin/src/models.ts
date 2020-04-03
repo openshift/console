@@ -42,6 +42,20 @@ export const KnativeServingModel: K8sKind = {
   color: knativeServingColor.value,
 };
 
+export const KnativeEventingModel: K8sKind = {
+  apiGroup: 'eventing.knative.dev',
+  apiVersion: 'v1alpha1',
+  kind: 'KnativeEventing',
+  label: 'Knative Eventing',
+  labelPlural: 'Knative Eventings',
+  plural: 'knativeeventings',
+  id: 'knativeeventing',
+  abbr: 'KE',
+  namespaced: true,
+  crd: true,
+  color: knativeEventingColor.value,
+};
+
 export const RevisionModel: K8sKind = {
   apiGroup: KNATIVE_SERVING_APIGROUP,
   apiVersion,
@@ -130,7 +144,7 @@ export const EventSourceApiServerModel: K8sKind = {
 };
 
 export const EventSourceCamelModel: K8sKind = {
-  apiGroup: KNATIVE_EVENT_SOURCE_APIGROUP_DEP,
+  apiGroup: KNATIVE_EVENT_SOURCE_APIGROUP,
   apiVersion: 'v1alpha1',
   kind: 'CamelSource',
   label: 'CamelSource',
@@ -157,7 +171,7 @@ export const EventSourceKafkaModel: K8sKind = {
   color: knativeEventingColor.value,
 };
 
-export const EventSourceServiceBindingModel: K8sKind = {
+export const EventSourceSinkBindingModel: K8sKind = {
   apiGroup: KNATIVE_EVENT_SOURCE_APIGROUP,
   apiVersion: 'v1alpha1',
   kind: 'SinkBinding',

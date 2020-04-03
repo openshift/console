@@ -19,7 +19,7 @@ import {
 } from '../module/k8s/pods';
 import { getContainerState, getContainerStatus } from '../module/k8s/container';
 import { ResourceEventStream } from './events';
-import { DetailsPage, ListPage, Table, TableRow, TableData } from './factory';
+import { DetailsPage, ListPage, Table, TableRow, TableData, RowFunctionArgs } from './factory';
 import {
   AsyncComponent,
   DetailsItem,
@@ -115,7 +115,7 @@ const podRowStateToProps = ({ UI }) => ({
 });
 
 const PodTableRow = connect<PodTableRowPropsFromState, null, PodTableRowProps>(podRowStateToProps)(
-  ({ obj: pod, index, key, style, metrics }: PodTableRowProps & PodTableRowPropsFromState) => {
+  ({ obj: pod, index, rowKey, style, metrics }: PodTableRowProps & PodTableRowPropsFromState) => {
     const { name, namespace, creationTimestamp } = pod.metadata;
     const { readyCount, totalContainers } = podReadiness(pod);
     const phase = podPhase(pod);
@@ -123,7 +123,7 @@ const PodTableRow = connect<PodTableRowPropsFromState, null, PodTableRowProps>(p
     const bytes: number = _.get(metrics, ['memory', namespace, name]);
     const cores: number = _.get(metrics, ['cpu', namespace, name]);
     return (
-      <TableRow id={pod.metadata.uid} index={index} trKey={key} style={style}>
+      <TableRow id={pod.metadata.uid} index={index} trKey={rowKey} style={style}>
         <TableData className={tableColumnClasses[0]}>
           <ResourceLink kind={kind} name={name} namespace={namespace} />
         </TableData>
@@ -355,7 +355,7 @@ export const PodDetailsList: React.FC<PodDetailsListProps> = ({ pod }) => {
         {getRestartPolicyLabel(pod)}
       </DetailsItem>
       <DetailsItem label="Active Deadline Seconds" obj={pod} path="spec.activeDeadlineSeconds">
-        {pod.spec.progressDeadlineSeconds
+        {pod.spec.activeDeadlineSeconds
           ? pluralize(pod.spec.activeDeadlineSeconds, 'second')
           : 'Not Configured'}
       </DetailsItem>
@@ -452,12 +452,16 @@ const PodEnvironmentComponent = (props) => (
   <EnvironmentPage obj={props.obj} rawEnvData={props.obj.spec} envPath={envPath} readOnly={true} />
 );
 
-const PodExecLoader: React.FC<PodExecLoaderProps> = ({ obj }) => (
+export const PodExecLoader: React.FC<PodExecLoaderProps> = ({ obj, message }) => (
   <div className="co-m-pane__body">
     <div className="row">
       <div className="col-xs-12">
         <div className="panel-body">
-          <AsyncComponent loader={() => import('./pod-exec').then((c) => c.PodExec)} obj={obj} />
+          <AsyncComponent
+            loader={() => import('./pod-exec').then((c) => c.PodExec)}
+            obj={obj}
+            message={message}
+          />
         </div>
       </div>
     </div>
@@ -485,7 +489,10 @@ export const PodsDetailsPage: React.FC<PodDetailsPageProps> = (props) => (
 );
 PodsDetailsPage.displayName = 'PodsDetailsPage';
 
-const Row = (rowProps: PodTableRowProps) => <PodTableRow {...rowProps} />;
+const Row = (rowArgs: RowFunctionArgs<PodKind>) => (
+  <PodTableRow obj={rowArgs.obj} index={rowArgs.index} rowKey={rowArgs.key} style={rowArgs.style} />
+);
+
 export const PodList: React.FC = (props) => (
   <Table {...props} aria-label="Pods" Header={PodTableHeader} Row={Row} virtualize />
 );
@@ -581,6 +588,7 @@ type PodDetailsListProps = {
 
 type PodExecLoaderProps = {
   obj: PodKind;
+  message?: React.ReactElement;
 };
 
 type PodDetailsProps = {
@@ -590,7 +598,7 @@ type PodDetailsProps = {
 type PodTableRowProps = {
   obj: PodKind;
   index: number;
-  key?: string;
+  rowKey: string;
   style: object;
 };
 

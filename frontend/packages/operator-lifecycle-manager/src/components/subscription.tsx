@@ -11,6 +11,7 @@ import {
   Table,
   TableRow,
   TableData,
+  RowFunction,
 } from '@console/internal/components/factory';
 import {
   MsgBox,
@@ -201,12 +202,7 @@ const menuActions = [
   },
 ];
 
-export const SubscriptionTableRow: React.FC<SubscriptionTableRowProps> = ({
-  obj,
-  index,
-  key,
-  style,
-}) => {
+export const SubscriptionTableRow: RowFunction<K8sResourceKind> = ({ obj, index, key, style }) => {
   return (
     <TableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
       <TableData className={tableColumnClasses[0]}>
@@ -243,13 +239,6 @@ export const SubscriptionTableRow: React.FC<SubscriptionTableRowProps> = ({
       </TableData>
     </TableRow>
   );
-};
-SubscriptionTableRow.displayName = 'SubscriptionTableRow';
-export type SubscriptionTableRowProps = {
-  obj: K8sResourceKind;
-  index: number;
-  key?: string;
-  style: object;
 };
 
 export const SubscriptionsList = requireOperatorGroup((props: SubscriptionsListProps) => (
@@ -309,8 +298,12 @@ export const SubscriptionDetails: React.FC<SubscriptionDetailsProps> = ({
   const catalogSource = catalogSourceForSubscription(catalogSources, obj);
   const installedCSV = installedCSVForSubscription(clusterServiceVersions, obj);
   const installPlan = installPlanForSubscription(installPlans, obj);
-  const installStatusPhase = _.get(installPlan, 'status.phase');
-  const installStatusMessage = _.get(installPlan, 'status.message') || 'Unknown';
+  const installStatusPhase = installPlan?.status?.phase;
+  const installFailedCondition = installPlan?.status?.conditions?.find(
+    ({ type, status }) => type === 'Installed' && status === 'False',
+  );
+  const installFailedMessage =
+    installFailedCondition?.message || installFailedCondition?.reason || 'Install plan failed';
 
   const pkg = packageForSubscription(packageManifests, obj);
   if (new URLSearchParams(window.location.search).has('showDelete')) {
@@ -330,10 +323,12 @@ export const SubscriptionDetails: React.FC<SubscriptionDetailsProps> = ({
       {installStatusPhase === InstallPlanPhase.InstallPlanPhaseFailed && (
         <Alert
           isInline
-          className="co-alert"
+          className="co-alert co-alert--scrollable"
           variant="danger"
-          title={`${installStatusPhase}: ${installStatusMessage}`}
-        />
+          title={installStatusPhase}
+        >
+          {installFailedMessage}
+        </Alert>
       )}
       <SectionHeading text="Subscription Details" />
       <div className="co-m-pane__body-group">

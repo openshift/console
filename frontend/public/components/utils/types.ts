@@ -12,6 +12,7 @@ export type FirehoseResult<
   loadError: string;
   optional?: boolean;
   data: R;
+  kind?: string;
 };
 
 export type FirehoseResourcesResult = {
@@ -52,6 +53,7 @@ export type FirehoseResource = {
   namespaced?: boolean;
   optional?: boolean;
   limit?: number;
+  fieldSelector?: string;
 };
 
 export type HumanizeResult = {

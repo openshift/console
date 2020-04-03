@@ -8,6 +8,7 @@ import {
   Table,
   TableRow,
   TableData,
+  RowFunction,
 } from '@console/internal/components/factory';
 import {
   Kebab,
@@ -83,7 +84,7 @@ const OBCTableHeader = () => {
 };
 OBCTableHeader.displayName = 'OBCTableHeader';
 
-const OBCTableRow: React.FC<OBCTableRowProps> = ({ obj, index, key, style }) => {
+const OBCTableRow: RowFunction<K8sResourceKind> = ({ obj, index, key, style }) => {
   const storageClassName = _.get(obj, 'spec.storageClassName');
   return (
     <TableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
@@ -126,8 +127,6 @@ const OBCTableRow: React.FC<OBCTableRowProps> = ({ obj, index, key, style }) => 
     </TableRow>
   );
 };
-
-OBCTableRow.displayName = 'OBCTableRow';
 
 const Details: React.FC<DetailsProps> = ({ obj }) => {
   const storageClassName = _.get(obj, 'spec.storageClassName');
@@ -228,13 +227,6 @@ export const ObjectBucketClaimsDetailsPage = (props) => (
 
 type OBCStatusProps = {
   obc: K8sResourceKind;
-};
-
-type OBCTableRowProps = {
-  obj: K8sResourceKind;
-  index: number;
-  key: string;
-  style: object;
 };
 
 type DetailsProps = {

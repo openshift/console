@@ -1,6 +1,7 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import { Kebab, KebabOption } from '@console/internal/components/utils';
+import { RowFunction } from '@console/internal/components/factory';
 import { NicSimpleRow } from '../../../vm-nics/nic-row';
 import { VMWizardNetworkWithWrappers } from '../../types';
 import { VMWizardNetworkBundle, VMWizardNicRowActionOpts, VMWizardNicRowCustomData } from './types';
@@ -46,14 +47,7 @@ const getActions = (
   return actions.map((a) => a(wizardNetworkData, opts));
 };
 
-export type VMWizardNicRowProps = {
-  obj: VMWizardNetworkBundle;
-  customData: VMWizardNicRowCustomData;
-  index: number;
-  style: object;
-};
-
-export const VMWizardNicRow: React.FC<VMWizardNicRowProps> = ({
+export const VMWizardNicRow: RowFunction<VMWizardNetworkBundle, VMWizardNicRowCustomData> = ({
   obj: { name, wizardNetworkData, ...restData },
   customData: { isDisabled, columnClasses, removeNIC, withProgress, wizardReduxID },
   index,

@@ -21,9 +21,16 @@ import { withFallback } from '@console/shared/src/components/error/error-boundar
 import * as k8sActions from '../actions/k8s';
 import * as UIActions from '../actions/ui';
 import { coFetchJSON } from '../co-fetch';
-import { alertState, AlertStates, silenceState, SilenceStates } from '../reducers/monitoring';
-import store from '../redux';
-import { Table, TableData, TableRow, TextFilter } from './factory';
+import {
+  alertingRuleIsActive,
+  AlertSeverity,
+  alertState,
+  AlertStates,
+  silenceState,
+  SilenceStates,
+} from '../reducers/monitoring';
+import store, { RootState } from '../redux';
+import { Table, TableData, TableRow, TextFilter, RowFunction } from './factory';
 import { confirmModal } from './modals';
 import MonitoringDashboardsPage from './monitoring/dashboards';
 import { graphStateToProps, QueryBrowserPage, ToggleGraph } from './monitoring/metrics';
@@ -47,7 +54,12 @@ import {
   StatusBox,
   Timestamp,
 } from './utils';
-import { GreenCheckCircleIcon } from '@console/shared';
+import {
+  BlueInfoCircleIcon,
+  GreenCheckCircleIcon,
+  RedExclamationCircleIcon,
+  YellowExclamationTriangleIcon,
+} from '@console/shared';
 
 const AlertResource = {
   kind: 'Alert',
@@ -56,7 +68,7 @@ const AlertResource = {
   abbr: 'AL',
 };
 
-const AlertRuleResource = {
+const RuleResource = {
   kind: 'AlertRule',
   label: 'Alerting Rule',
   plural: '/monitoring/alertrules',
@@ -73,16 +85,9 @@ const SilenceResource = {
 const labelsToParams = (labels) =>
   _.map(labels, (v, k) => `${encodeURIComponent(k)}=${encodeURIComponent(v)}`).join('&');
 
-const buildNotFiringAlert = (rule: Rule): Alert => ({
-  annotations: rule.annotations,
-  labels: { alertname: rule.name, ...rule.labels },
-  rule,
-  state: AlertStates.NotFiring,
-});
-
 export const alertURL = (alert, ruleID) =>
   `${AlertResource.plural}/${ruleID}?${labelsToParams(alert.labels)}`;
-const ruleURL = (rule) => `${AlertRuleResource.plural}/${_.get(rule, 'id')}`;
+const ruleURL = (rule) => `${RuleResource.plural}/${_.get(rule, 'id')}`;
 
 const alertDescription = (alert) => {
   const { annotations = {}, labels = {} } = alert;
@@ -90,6 +95,13 @@ const alertDescription = (alert) => {
 };
 
 const alertsToProps = ({ UI }) => UI.getIn(['monitoring', 'alerts']) || {};
+
+const rulesToProps = (state: RootState) => {
+  const data = state.UI.getIn(['monitoring', 'rules']);
+  const { loaded, loadError }: Alerts = alertsToProps(state);
+  return { data, loaded, loadError };
+};
+
 const silencesToProps = ({ UI }) => UI.getIn(['monitoring', 'silences']) || {};
 
 const pollers = {};
@@ -152,15 +164,14 @@ const MonitoringResourceIcon = (props) => {
   );
 };
 
+const stateIcons = {
+  [AlertStates.Firing]: <BellIcon />,
+  [AlertStates.Silenced]: <BellSlashIcon className="text-muted" />,
+  [AlertStates.Pending]: <OutlinedBellIcon />,
+};
+
 const AlertState: React.SFC<AlertStateProps> = ({ state }) => {
-  if (state === AlertStates.NotFiring) {
-    return <span className="text-muted">Not Firing</span>;
-  }
-  const icon = {
-    [AlertStates.Firing]: <BellIcon className="alert-firing" />,
-    [AlertStates.Silenced]: <BellSlashIcon className="text-muted" />,
-    [AlertStates.Pending]: <OutlinedBellIcon className="alert-pending" />,
-  }[state];
+  const icon = stateIcons[state];
   return icon ? (
     <>
       {icon} {_.startCase(state)}
@@ -197,6 +208,68 @@ const AlertStateDescription = ({ alert }) => {
     return <StateTimestamp text="Since" timestamp={alert.activeAt} />;
   }
   return null;
+};
+
+const severityIcons = {
+  [AlertSeverity.Critical]: RedExclamationCircleIcon,
+  [AlertSeverity.Info]: BlueInfoCircleIcon,
+  [AlertSeverity.None]: BlueInfoCircleIcon,
+  [AlertSeverity.Warning]: YellowExclamationTriangleIcon,
+};
+
+const getSeverityIcon = (severity: string) =>
+  severityIcons[severity] || YellowExclamationTriangleIcon;
+
+const SeverityIcon: React.FC<SeverityIconProps> = ({ label, severity }) => {
+  const Icon = getSeverityIcon(severity);
+  return (
+    <>
+      <Icon /> {label}
+    </>
+  );
+};
+
+const Severity: React.FC<{ severity?: string }> = ({ severity }) =>
+  _.isNil(severity) ? <>-</> : <SeverityIcon label={_.startCase(severity)} severity={severity} />;
+
+const SeverityCounts: React.FC<{ alerts: Alert[] }> = ({ alerts }) => {
+  const counts = _.countBy(alerts, (a) => {
+    const { severity } = a.labels;
+    return severity === AlertSeverity.Critical || severity === AlertSeverity.Warning
+      ? severity
+      : AlertSeverity.Info;
+  });
+
+  const severities = [AlertSeverity.Critical, AlertSeverity.Warning, AlertSeverity.Info].filter(
+    (s) => counts[s] > 0,
+  );
+
+  return (
+    <>
+      {severities.map((s) => (
+        <span className="monitoring-icon-wrap" key={s}>
+          <SeverityIcon label={counts[s]} severity={s} />
+        </span>
+      ))}
+    </>
+  );
+};
+
+const StateCounts: React.FC<{ alerts: PrometheusAlert[] }> = ({ alerts }) => {
+  const counts = _.countBy(alerts, 'state');
+  const states = [AlertStates.Firing, AlertStates.Pending, AlertStates.Silenced].filter(
+    (s) => counts[s] > 0,
+  );
+
+  return (
+    <>
+      {states.map((s) => (
+        <span className="monitoring-icon-wrap" key={s}>
+          {stateIcons[s]} {counts[s]} {_.startCase(s)}
+        </span>
+      ))}
+    </>
+  );
 };
 
 const Annotation = ({ children, title }) =>
@@ -260,19 +333,14 @@ const SilenceMatchersList = ({ silence }) => (
   </div>
 );
 
-const alertStateToProps = (state, { match }): AlertsDetailsPageProps => {
+const alertStateToProps = (state: RootState, { match }): AlertsDetailsPageProps => {
   const { data, loaded, loadError }: Alerts = alertsToProps(state);
   const { loaded: silencesLoaded }: Silences = silencesToProps(state);
   const ruleID = _.get(match, 'params.ruleID');
   const labels = getURLSearchParams();
   const alerts = _.filter(data, (a) => a.rule.id === ruleID);
   const rule = _.get(alerts, '[0].rule');
-  let alert = _.find(alerts, (a) => _.isEqual(a.labels, labels));
-  if (rule && !alert) {
-    // No Alert with the exact label set was found, so display a "fake" Alert based on the Rule
-    alert = buildNotFiringAlert(rule);
-    alert.labels = labels as any;
-  }
+  const alert = _.find(alerts, (a) => _.isEqual(a.labels, labels));
   return { alert, loaded, loadError, rule, silencesLoaded };
 };
 
@@ -306,12 +374,12 @@ const AlertsDetailsPage = withFallback(
             </h1>
           </div>
           <div className="co-m-pane__body">
-            {state !== AlertStates.NotFiring && <ToggleGraph />}
+            <ToggleGraph />
             <SectionHeading text="Alert Details" />
             <div className="co-m-pane__body-group">
               <div className="row">
                 <div className="col-sm-12">
-                  {state !== AlertStates.NotFiring && <Graph filterLabels={labels} rule={rule} />}
+                  <Graph filterLabels={labels} rule={rule} />
                 </div>
               </div>
               <div className="row">
@@ -319,6 +387,38 @@ const AlertsDetailsPage = withFallback(
                   <dl className="co-m-pane__details">
                     <dt>Name</dt>
                     <dd>{alertname}</dd>
+                  </dl>
+                </div>
+                <div className="col-sm-6">
+                  <dl className="co-m-pane__details">
+                    <Annotation title="Description">{annotations.description}</Annotation>
+                    <Annotation title="Summary">{annotations.summary}</Annotation>
+                    <Annotation title="Message">{annotations.message}</Annotation>
+                  </dl>
+                </div>
+              </div>
+              <div className="row">
+                <div className="col-sm-6">
+                  <dl className="co-m-pane__details">
+                    <dt>Severity</dt>
+                    <dd>
+                      <Severity severity={severity} />
+                    </dd>
+                  </dl>
+                </div>
+                <div className="col-sm-6">
+                  <dl className="co-m-pane__details">
+                    <dt>State</dt>
+                    <dd>
+                      <AlertState state={state} />
+                      <AlertStateDescription alert={alert} />
+                    </dd>
+                  </dl>
+                </div>
+              </div>
+              <div className="row">
+                <div className="col-xs-12">
+                  <dl className="co-m-pane__details">
                     <dt>Labels</dt>
                     <dd>
                       {_.isEmpty(labels) ? (
@@ -331,21 +431,16 @@ const AlertsDetailsPage = withFallback(
                         </div>
                       )}
                     </dd>
-                    {severity && (
-                      <>
-                        <dt>Severity</dt>
-                        <dd>{_.startCase(severity)}</dd>
-                      </>
-                    )}
-                    <dt>State</dt>
-                    <dd>
-                      <AlertState state={state} />
-                      <AlertStateDescription alert={alert} />
-                    </dd>
+                  </dl>
+                </div>
+              </div>
+              <div className="row">
+                <div className="col-xs-12">
+                  <dl className="co-m-pane__details">
                     <dt>Alerting Rule</dt>
                     <dd>
                       <div className="co-resource-item">
-                        <MonitoringResourceIcon resource={AlertRuleResource} />
+                        <MonitoringResourceIcon resource={RuleResource} />
                         <Link
                           to={ruleURL(rule)}
                           data-test-id="alert-detail-resource-link"
@@ -355,13 +450,6 @@ const AlertsDetailsPage = withFallback(
                         </Link>
                       </div>
                     </dd>
-                  </dl>
-                </div>
-                <div className="col-sm-6">
-                  <dl className="co-m-pane__details">
-                    <Annotation title="Description">{annotations.description}</Annotation>
-                    <Annotation title="Summary">{annotations.summary}</Annotation>
-                    <Annotation title="Message">{annotations.message}</Annotation>
                   </dl>
                 </div>
               </div>
@@ -376,8 +464,8 @@ const AlertsDetailsPage = withFallback(
                     <div className="co-m-table-grid co-m-table-grid--bordered">
                       <div className="row co-m-table-grid__head">
                         <div className="col-sm-7 col-xs-8">Name</div>
-                        <div className="col-sm-3 col-xs-4">State</div>
                         <div className="col-sm-2 hidden-xs">Firing Alerts</div>
+                        <div className="col-sm-3 col-xs-4">State</div>
                       </div>
                       <div className="co-m-table-grid__body">
                         {_.map(silencedBy, (s) => (
@@ -430,37 +518,30 @@ const ActiveAlerts = ({ alerts, ruleID }) => (
   </div>
 );
 
-const ruleStateToProps = (state, { match }): AlertRulesDetailsPageProps => {
-  const { data, loaded, loadError }: Alerts = alertsToProps(state);
+const ruleStateToProps = (state: RootState, { match }): AlertRulesDetailsPageProps => {
+  const { data, loaded, loadError }: Rules = rulesToProps(state);
   const id = _.get(match, 'params.id');
-  const alert = _.find(data, (a) => a.rule.id === id);
-  return { loaded, loadError, rule: _.get(alert, 'rule') };
+  const rule = _.find(data, { id });
+  return { loaded, loadError, rule };
 };
 
 const AlertRulesDetailsPage = withFallback(
   connect(ruleStateToProps)((props: AlertRulesDetailsPageProps) => {
     const { loaded, loadError, rule } = props;
-    const { alerts = [], annotations = {}, duration = null, labels = {}, name = '', query = '' } =
-      rule || {};
-    const { severity } = labels as any;
+    const { alerts = [], annotations = {}, duration = null, name = '', query = '' } = rule || {};
 
     return (
       <>
         <Helmet>
-          <title>{`${name || AlertRuleResource.label} · Details`}</title>
+          <title>{`${name || RuleResource.label} · Details`}</title>
         </Helmet>
-        <StatusBox
-          data={rule}
-          label={AlertRuleResource.label}
-          loaded={loaded}
-          loadError={loadError}
-        >
+        <StatusBox data={rule} label={RuleResource.label} loaded={loaded} loadError={loadError}>
           <div className="co-m-nav-title co-m-nav-title--detail">
             <h1 className="co-m-pane__heading">
               <div className="co-resource-item">
                 <MonitoringResourceIcon
                   className="co-m-resource-icon--lg"
-                  resource={AlertRuleResource}
+                  resource={RuleResource}
                 />
                 {name}
               </div>
@@ -476,12 +557,10 @@ const AlertRulesDetailsPage = withFallback(
                   <dl className="co-m-pane__details">
                     <dt>Name</dt>
                     <dd>{name}</dd>
-                    {severity && (
-                      <>
-                        <dt>Severity</dt>
-                        <dd>{_.startCase(severity)}</dd>
-                      </>
-                    )}
+                    <dt>Severity</dt>
+                    <dd>
+                      <Severity severity={rule?.labels?.severity} />
+                    </dd>
                     <Annotation title="Description">{annotations.description}</Annotation>
                     <Annotation title="Summary">{annotations.summary}</Annotation>
                     <Annotation title="Message">{annotations.message}</Annotation>
@@ -550,7 +629,9 @@ const SilencedAlertsList = ({ alerts }) =>
               </Link>
               <div className="monitoring-description">{alertDescription(a)}</div>
             </div>
-            <div className="col-xs-3">{a.labels.severity || '-'}</div>
+            <div className="col-xs-3">
+              <Severity severity={a.labels.severity} />
+            </div>
             <div className="dropdown-kebab-pf">
               <Kebab options={[viewAlertRule(a)]} />
             </div>
@@ -560,7 +641,7 @@ const SilencedAlertsList = ({ alerts }) =>
     </div>
   );
 
-const silenceParamToProps = (state, { match }) => {
+const silenceParamToProps = (state: RootState, { match }) => {
   const { data: silences, loaded, loadError }: Silences = silencesToProps(state);
   const { loaded: alertsLoaded }: Alerts = alertsToProps(state);
   const silence = _.find(silences, { id: _.get(match, 'params.id') });
@@ -649,7 +730,9 @@ const SilencesDetailsPage = withFallback(
                     <dt>Comments</dt>
                     <dd>{comment || '-'}</dd>
                     <dt>Firing Alerts</dt>
-                    <dd>{alertsLoaded ? firingAlerts.length : <LoadingInline />}</dd>
+                    <dd>
+                      {alertsLoaded ? <SeverityCounts alerts={firingAlerts} /> : <LoadingInline />}
+                    </dd>
                   </dl>
                 </div>
               </div>
@@ -673,14 +756,15 @@ const SilencesDetailsPage = withFallback(
 
 const tableAlertClasses = [
   classNames('col-sm-7', 'col-xs-8'),
-  classNames('col-sm-3', 'col-xs-4'),
   classNames('col-sm-2', 'hidden-xs'),
+  classNames('col-sm-3', 'col-xs-4'),
   Kebab.columnClass,
 ];
 
-const AlertTableRow: React.FC<AlertTableRowProps> = ({ obj, index, key, style }) => {
+const AlertTableRow: RowFunction<Alert> = ({ obj, index, key, style }) => {
   const { annotations = {}, labels } = obj;
   const state = alertState(obj);
+
   return (
     <TableRow id={obj.rule.id} index={index} trKey={key} style={style}>
       <TableData className={tableAlertClasses[0]}>
@@ -691,7 +775,7 @@ const AlertTableRow: React.FC<AlertTableRowProps> = ({ obj, index, key, style })
             data-test-id="alert-resource-link"
             className="co-resource-item__resource-name"
           >
-            {labels && labels.alertname}
+            {labels?.alertname}
           </Link>
         </div>
         <div className="monitoring-description">
@@ -699,11 +783,11 @@ const AlertTableRow: React.FC<AlertTableRowProps> = ({ obj, index, key, style })
         </div>
       </TableData>
       <TableData className={tableAlertClasses[1]}>
+        <Severity severity={labels?.severity} />
+      </TableData>
+      <TableData className={tableAlertClasses[2]}>
         <AlertState state={state} />
         <AlertStateDescription alert={obj} />
-      </TableData>
-      <TableData className={classNames(tableAlertClasses[2], 'co-truncate')}>
-        {_.startCase(_.get(labels, 'severity')) || '-'}
       </TableData>
       <TableData className={tableAlertClasses[3]}>
         <Kebab
@@ -717,13 +801,6 @@ const AlertTableRow: React.FC<AlertTableRowProps> = ({ obj, index, key, style })
     </TableRow>
   );
 };
-AlertTableRow.displayName = 'AlertTableRow';
-type AlertTableRowProps = {
-  obj: Alert;
-  index: number;
-  key?: string;
-  style: object;
-};
 
 const AlertTableHeader = () => [
   {
@@ -733,14 +810,14 @@ const AlertTableHeader = () => [
     props: { className: tableAlertClasses[0] },
   },
   {
-    title: 'State',
-    sortFunc: 'alertStateOrder',
+    title: 'Severity',
+    sortField: 'labels.severity',
     transforms: [sortable],
     props: { className: tableAlertClasses[1] },
   },
   {
-    title: 'Severity',
-    sortField: 'labels.severity',
+    title: 'State',
+    sortFunc: 'alertStateOrder',
     transforms: [sortable],
     props: { className: tableAlertClasses[2] },
   },
@@ -749,17 +826,6 @@ const AlertTableHeader = () => [
     props: { className: tableAlertClasses[3] },
   },
 ];
-AlertTableHeader.displayName = 'AlertTableHeader';
-
-const AlertsPageDescription = () => (
-  <p className="co-help-text">
-    Alerts help notify you when certain conditions in your environment are met.{' '}
-    <ExternalLink
-      href="https://prometheus.io/docs/prometheus/latest/configuration/alerting_rules/"
-      text="Learn more about how alerts are configured."
-    />
-  </p>
-);
 
 const HeaderAlertmanagerLink = ({ path }) =>
   _.isEmpty(window.SERVER_FLAGS.alertManagerPublicURL) ? null : (
@@ -779,7 +845,6 @@ const alertsRowFilter = {
     { id: AlertStates.Firing, title: 'Firing' },
     { id: AlertStates.Silenced, title: 'Silenced' },
     { id: AlertStates.Pending, title: 'Pending' },
-    { id: AlertStates.NotFiring, title: 'Not Firing' },
   ],
 };
 
@@ -837,7 +902,6 @@ const MonitoringListPage = connect(filtersToProps)(
         kindPlural,
         loaded,
         loadError,
-        PageDescription,
         reduxID,
         Row,
         rowFilter,
@@ -848,9 +912,6 @@ const MonitoringListPage = connect(filtersToProps)(
           <Helmet>
             <title>Alerting</title>
           </Helmet>
-          <div className="co-m-nav-title">
-            <PageDescription />
-          </div>
           <div className="co-m-pane__filter-bar">
             {CreateButton && (
               <div className="co-m-pane__filter-bar-group">
@@ -902,13 +963,80 @@ const AlertsPage_ = (props) => (
     Header={AlertTableHeader}
     kindPlural="Alerts"
     nameFilterID="alert-name"
-    PageDescription={AlertsPageDescription}
     reduxID="monitoringRules"
     Row={AlertTableRow}
     rowFilter={alertsRowFilter}
   />
 );
 const AlertsPage = withFallback(connect(alertsToProps)(AlertsPage_));
+
+const rulesRowFilter = {
+  type: 'alerting-rule-active',
+  selected: ['true', 'false'],
+  reducer: alertingRuleIsActive,
+  items: [
+    { id: 'true', title: 'Active' },
+    { id: 'false', title: 'Inactive' },
+  ],
+};
+
+const tableRuleClasses = [
+  classNames('col-sm-6', 'col-xs-7'),
+  classNames('col-sm-2', 'hidden-xs'),
+  classNames('col-sm-4', 'col-xs-5'),
+];
+
+const RuleTableHeader = () => [
+  {
+    title: 'Name',
+    sortField: 'name',
+    transforms: [sortable],
+    props: { className: tableRuleClasses[0] },
+  },
+  {
+    title: 'Severity',
+    sortField: 'labels.severity',
+    transforms: [sortable],
+    props: { className: tableRuleClasses[1] },
+  },
+  {
+    title: 'Alert State',
+    sortFunc: 'alertStateOrder',
+    transforms: [sortable],
+    props: { className: tableRuleClasses[2] },
+  },
+];
+
+const RuleTableRow: RowFunction<Rule> = ({ obj, index, key, style }) => (
+  <TableRow id={obj.id} index={index} trKey={key} style={style}>
+    <TableData className={tableRuleClasses[0]}>
+      <div className="co-resource-item">
+        <MonitoringResourceIcon resource={RuleResource} />
+        <Link to={ruleURL(obj)} className="co-resource-item__resource-name">
+          {obj.name}
+        </Link>
+      </div>
+    </TableData>
+    <TableData className={tableRuleClasses[1]}>
+      <Severity severity={obj.labels?.severity} />
+    </TableData>
+    <TableData className={tableRuleClasses[2]}>
+      {_.isEmpty(obj.alerts) ? 'Inactive' : <StateCounts alerts={obj.alerts} />}
+    </TableData>
+  </TableRow>
+);
+
+const RulesPage_ = (props) => (
+  <MonitoringListPage
+    {...props}
+    Header={RuleTableHeader}
+    kindPlural="Alerting Rules"
+    nameFilterID="alerting-rule-name"
+    Row={RuleTableRow}
+    rowFilter={rulesRowFilter}
+  />
+);
+const RulesPage = withFallback(connect(rulesToProps)(RulesPage_));
 
 const tableSilenceClasses = [
   classNames('col-sm-7', 'col-xs-8'),
@@ -925,14 +1053,14 @@ const SilenceTableHeader = () => [
     props: { className: tableSilenceClasses[0] },
   },
   {
-    title: 'State',
-    sortFunc: 'silenceStateOrder',
+    title: 'Firing Alerts',
+    sortField: 'firingAlerts.length',
     transforms: [sortable],
     props: { className: tableSilenceClasses[1] },
   },
   {
-    title: 'Firing Alerts',
-    sortField: 'firingAlerts.length',
+    title: 'State',
+    sortFunc: 'silenceStateOrder',
     transforms: [sortable],
     props: { className: tableSilenceClasses[2] },
   },
@@ -941,7 +1069,6 @@ const SilenceTableHeader = () => [
     props: { className: tableSilenceClasses[3] },
   },
 ];
-SilenceTableHeader.displayName = 'SilenceTableHeader';
 
 const SilenceRow = ({ obj }) => {
   const state = silenceState(obj);
@@ -964,6 +1091,9 @@ const SilenceRow = ({ obj }) => {
           <SilenceMatchersList silence={obj} />
         </div>
       </div>
+      <div className="col-sm-2 hidden-xs">
+        <SeverityCounts alerts={obj.firingAlerts} />
+      </div>
       <div className="col-sm-3 col-xs-4">
         <SilenceState silence={obj} />
         {state === SilenceStates.Pending && (
@@ -974,7 +1104,6 @@ const SilenceRow = ({ obj }) => {
           <StateTimestamp text="Expired" timestamp={obj.endsAt} />
         )}
       </div>
-      <div className="col-sm-2 hidden-xs">{obj.firingAlerts.length}</div>
       <div className="dropdown-kebab-pf">
         <SilenceKebab silence={obj} />
       </div>
@@ -982,8 +1111,9 @@ const SilenceRow = ({ obj }) => {
   );
 };
 
-const SilenceTableRow: React.FC<SilenceTableRowProps> = ({ obj, index, key, style }) => {
+const SilenceTableRow: RowFunction<Silence> = ({ obj, index, key, style }) => {
   const state = silenceState(obj);
+
   return (
     <TableRow id={obj.id} index={index} trKey={key} style={style}>
       <TableData className={tableSilenceClasses[0]}>
@@ -1002,7 +1132,10 @@ const SilenceTableRow: React.FC<SilenceTableRowProps> = ({ obj, index, key, styl
           <SilenceMatchersList silence={obj} />
         </div>
       </TableData>
-      <TableData className={classNames(tableSilenceClasses[1], 'co-break-word')}>
+      <TableData className={tableSilenceClasses[1]}>
+        <SeverityCounts alerts={obj.firingAlerts} />
+      </TableData>
+      <TableData className={classNames(tableSilenceClasses[2], 'co-break-word')}>
         <SilenceState silence={obj} />
         {state === SilenceStates.Pending && (
           <StateTimestamp text="Starts" timestamp={obj.startsAt} />
@@ -1012,27 +1145,12 @@ const SilenceTableRow: React.FC<SilenceTableRowProps> = ({ obj, index, key, styl
           <StateTimestamp text="Expired" timestamp={obj.endsAt} />
         )}
       </TableData>
-      <TableData className={tableSilenceClasses[2]}>{obj.firingAlerts.length}</TableData>
       <TableData className={tableSilenceClasses[3]}>
         <SilenceKebab silence={obj} />
       </TableData>
     </TableRow>
   );
 };
-SilenceTableRow.displayName = 'SilenceTableRow';
-export type SilenceTableRowProps = {
-  obj: Silence;
-  index: number;
-  key?: string;
-  style: object;
-};
-
-const SilencesPageDescription = () => (
-  <p className="co-help-text">
-    Silences temporarily mute alerts based on a set of conditions that you define. Notifications are
-    not sent for alerts that meet the given conditions.
-  </p>
-);
 
 const silencesRowFilter = {
   type: 'silence-state',
@@ -1058,7 +1176,6 @@ const SilencesPage_ = (props) => (
     Header={SilenceTableHeader}
     kindPlural="Silences"
     nameFilterID="silence-name"
-    PageDescription={SilencesPageDescription}
     reduxID="monitoringSilences"
     Row={SilenceTableRow}
     rowFilter={silencesRowFilter}
@@ -1342,14 +1459,18 @@ const EditSilence = connect(silenceParamToProps)(({ loaded, loadError, silence }
   );
 });
 
-const CreateSilence = () => {
+const CreateSilence_ = ({ createdBy }) => {
   const matchers = _.map(getURLSearchParams(), (value, name) => ({ name, value, isRegex: false }));
   return _.isEmpty(matchers) ? (
-    <SilenceForm saveButtonText="Create" title="Create Silence" />
+    <SilenceForm defaults={{ createdBy }} saveButtonText="Create" title="Create Silence" />
   ) : (
-    <SilenceForm defaults={{ matchers }} saveButtonText="Create" title="Silence Alert" />
+    <SilenceForm defaults={{ createdBy, matchers }} saveButtonText="Create" title="Silence Alert" />
   );
 };
+const createSilenceStateToProps = ({ UI }: RootState) => ({
+  createdBy: UI.get('user')?.metadata?.name,
+});
+const CreateSilence = connect(createSilenceStateToProps)(CreateSilence_);
 
 const AlertmanagerYAML = () => {
   return (
@@ -1387,12 +1508,26 @@ const AlertmanagerConfig = () => {
   );
 };
 
+const Tab: React.FC<{ active: boolean; children: React.ReactNode }> = ({ active, children }) => (
+  <li
+    className={classNames('co-m-horizontal-nav__menu-item', {
+      'co-m-horizontal-nav-item--active': active,
+    })}
+  >
+    {children}
+  </li>
+);
+
 const AlertingPage: React.SFC<AlertingPageProps> = ({ match }) => {
-  const alertPath = '/monitoring/alerts';
-  const silencePath = '/monitoring/silences';
+  const alertsPath = '/monitoring/alerts';
+  const rulesPath = '/monitoring/alertrules';
+  const silencesPath = '/monitoring/silences';
+  const configPath = '/monitoring/alertmanagerconfig';
   const YAMLPath = '/monitoring/alertmanageryaml';
-  const ConfigPath = '/monitoring/alertmanagerconfig';
-  const isAlertmanager = match.url === ConfigPath || match.url === YAMLPath;
+
+  const { url } = match;
+  const isAlertmanager = url === configPath || url === YAMLPath;
+
   return (
     <>
       <div className="co-m-nav-title co-m-nav-title--detail">
@@ -1406,54 +1541,44 @@ const AlertingPage: React.SFC<AlertingPageProps> = ({ match }) => {
         </h1>
       </div>
       <ul className="co-m-horizontal-nav__menu">
-        {(match.url === alertPath || match.url === silencePath) && (
+        {(url === alertsPath || url === rulesPath || url === silencesPath) && (
           <>
-            <li
-              className={classNames('co-m-horizontal-nav__menu-item', {
-                'co-m-horizontal-nav-item--active': match.url === alertPath,
-              })}
-            >
-              <Link to={alertPath}>Alerts</Link>
-            </li>
-            <li
-              className={classNames('co-m-horizontal-nav__menu-item', {
-                'co-m-horizontal-nav-item--active': match.url === silencePath,
-              })}
-            >
-              <Link to={silencePath}>Silences</Link>
-            </li>
+            <Tab active={url === alertsPath}>
+              <Link to={alertsPath}>Alerts</Link>
+            </Tab>
+            <Tab active={url === silencesPath}>
+              <Link to={silencesPath}>Silences</Link>
+            </Tab>
+            <Tab active={url === rulesPath}>
+              <Link to={rulesPath}>Alerting Rules</Link>
+            </Tab>
           </>
         )}
         {isAlertmanager && (
           <>
-            <li
-              className={classNames('co-m-horizontal-nav__menu-item', {
-                'co-m-horizontal-nav-item--active': match.url === ConfigPath,
-              })}
-            >
-              <Link to={ConfigPath}>Details</Link>
-            </li>
-            <li
-              className={classNames('co-m-horizontal-nav__menu-item', {
-                'co-m-horizontal-nav-item--active': match.url === YAMLPath,
-              })}
-            >
+            <Tab active={url === configPath}>
+              <Link to={configPath}>Details</Link>
+            </Tab>
+            <Tab active={url === YAMLPath}>
               <Link to={YAMLPath}>YAML</Link>
-            </li>
+            </Tab>
           </>
         )}
       </ul>
       <Switch>
-        <Route path="/monitoring/alerts" exact component={AlertsPage} />
-        <Route path="/monitoring/silences" exact component={SilencesPage} />
-        <Route path={ConfigPath} exact component={AlertmanagerConfig} />
-        <Route path="/monitoring/alertmanageryaml" exact component={AlertmanagerYAML} />
+        <Route path={alertsPath} exact component={AlertsPage} />
+        <Route path={rulesPath} exact component={RulesPage} />
+        <Route path={silencesPath} exact component={SilencesPage} />
+        <Route path={configPath} exact component={AlertmanagerConfig} />
+        <Route path={YAMLPath} exact component={AlertmanagerYAML} />
       </Switch>
     </>
   );
 };
 
-export const getAlerts = (data: PrometheusRulesResponse['data']): Alert[] => {
+const getAlertsAndRules = (
+  data: PrometheusRulesResponse['data'],
+): { alerts: Alert[]; rules: Rule[] } => {
   // Flatten the rules data to make it easier to work with, discard non-alerting rules since those are the only
   // ones we will be using and add a unique ID to each rule.
   const groups = _.get(data, 'groups') as PrometheusRulesResponse['data']['groups'];
@@ -1473,31 +1598,33 @@ export const getAlerts = (data: PrometheusRulesResponse['data']): Alert[] => {
     return _.filter(g.rules, { type: 'alerting' }).map(addID);
   });
 
-  // If a rule is has no active alerts, create a "fake" alert
-  return _.flatMap(rules, (rule) =>
-    _.isEmpty(rule.alerts) ? buildNotFiringAlert(rule) : rule.alerts.map((a) => ({ rule, ...a })),
-  );
+  // Add `rule` object to each alert
+  const alerts = _.flatMap(rules, (rule) => rule.alerts.map((a) => ({ rule, ...a })));
+
+  return { alerts, rules };
 };
+
+export const getAlerts = (data: PrometheusRulesResponse['data']) => getAlertsAndRules(data).alerts;
 
 const PollerPages = () => {
   React.useEffect(() => {
-    const poll: Poll = (url, key: 'alerts', dataHandler) => {
+    const { prometheusBaseURL } = window.SERVER_FLAGS;
+
+    if (prometheusBaseURL) {
+      const key = 'alerts';
       store.dispatch(UIActions.monitoringLoading(key));
       const poller = (): void => {
-        coFetchJSON(url)
-          .then(({ data }) => dataHandler(data))
-          .then((data) => store.dispatch(UIActions.monitoringLoaded(key, data)))
+        coFetchJSON(`${prometheusBaseURL}/api/v1/rules`)
+          .then(({ data }) => {
+            const { alerts, rules } = getAlertsAndRules(data);
+            store.dispatch(UIActions.monitoringLoaded(key, alerts));
+            store.dispatch(UIActions.monitoringSetRules(rules));
+          })
           .catch((e) => store.dispatch(UIActions.monitoringErrored(key, e)))
           .then(() => (pollerTimeouts[key] = setTimeout(poller, 15 * 1000)));
       };
       pollers[key] = poller;
       poller();
-    };
-
-    const { prometheusBaseURL } = window.SERVER_FLAGS;
-
-    if (prometheusBaseURL) {
-      poll(`${prometheusBaseURL}/api/v1/rules`, 'alerts', getAlerts);
     } else {
       store.dispatch(UIActions.monitoringErrored('alerts', new Error('prometheusBaseURL not set')));
     }
@@ -1507,7 +1634,7 @@ const PollerPages = () => {
   return (
     <Switch>
       <Route
-        path="/monitoring/(alertmanageryaml|alerts|silences|alertmanagerconfig)"
+        path="/monitoring/(alertmanageryaml|alerts|alertrules|silences|alertmanagerconfig)"
         exact
         component={AlertingPage}
       />
@@ -1577,6 +1704,12 @@ type Rule = PrometheusRule & {
   id: string;
 };
 
+type Rules = {
+  data: Rule[];
+  loaded: boolean;
+  loadError?: string;
+};
+
 type Alerts = {
   data: Alert[];
   loaded: boolean;
@@ -1634,9 +1767,8 @@ export type ListPageProps = {
   loadError?: string;
   match: { path: string };
   nameFilterID: string;
-  PageDescription: React.ComponentType<{}>;
   reduxID: string;
-  Row: React.ComponentType<any>;
+  Row: RowFunction;
   rowFilter: {
     type: string;
     selected: string[];
@@ -1648,6 +1780,11 @@ export type ListPageProps = {
 
 type AlertingPageProps = {
   match: any;
+};
+
+type SeverityIconProps = {
+  label: number | string;
+  severity: string;
 };
 
 type GraphProps = {
@@ -1670,5 +1807,3 @@ export type PrometheusRulesResponse = {
   };
   status: string;
 };
-
-type Poll = (url: string, key: 'alerts' | 'silences', dataHandler: (data) => any) => void;

@@ -3,9 +3,11 @@ import { shallow } from 'enzyme';
 import { ErrorPage404 } from '@console/internal/components/error';
 import { DetailsPage } from '@console/internal/components/factory';
 import { LoadingBox, StatusBox } from '@console/internal/components/utils';
-import HelmReleaseDetailsPage from '../HelmReleaseDetailsPage';
+import HelmReleaseDetailsPage, { LoadedHelmReleaseDetailsPage } from '../HelmReleaseDetailsPage';
+import { mockHelmReleases } from './helm-release-mock-data';
 
 let helmReleaseDetailsPageProps: React.ComponentProps<typeof HelmReleaseDetailsPage>;
+let loadedHelmReleaseDetailsPageProps: React.ComponentProps<typeof LoadedHelmReleaseDetailsPage>;
 
 describe('HelmReleaseDetailsPage', () => {
   beforeEach(() => {
@@ -37,32 +39,43 @@ describe('HelmReleaseDetailsPage', () => {
         path: '/helm-releases/ns/xyz/release/:name',
       },
     };
+    loadedHelmReleaseDetailsPageProps = {
+      ...helmReleaseDetailsPageProps,
+      helmReleaseData: mockHelmReleases[0],
+    };
+  });
+  it('should show the loading box if helm release data is not loaded', () => {
+    loadedHelmReleaseDetailsPageProps.helmReleaseData = null;
+    const helmReleaseDetailsPage = shallow(
+      <LoadedHelmReleaseDetailsPage {...loadedHelmReleaseDetailsPageProps} />,
+    );
+    expect(helmReleaseDetailsPage.find(LoadingBox).exists()).toBe(true);
   });
   it('should show the loading box if secret is not loaded', () => {
-    helmReleaseDetailsPageProps.secret.loaded = false;
-    helmReleaseDetailsPageProps.secret.loadError = undefined;
+    loadedHelmReleaseDetailsPageProps.secret.loaded = false;
+    loadedHelmReleaseDetailsPageProps.secret.loadError = undefined;
     const helmReleaseDetailsPage = shallow(
-      <HelmReleaseDetailsPage {...helmReleaseDetailsPageProps} />,
+      <LoadedHelmReleaseDetailsPage {...loadedHelmReleaseDetailsPageProps} />,
     );
     expect(helmReleaseDetailsPage.find(LoadingBox).exists()).toBe(true);
   });
   it('should show the status box if there is an error loading the secret', () => {
-    helmReleaseDetailsPageProps.secret.loadError = 'error 404';
+    loadedHelmReleaseDetailsPageProps.secret.loadError = 'error 404';
     const helmReleaseDetailsPage = shallow(
-      <HelmReleaseDetailsPage {...helmReleaseDetailsPageProps} />,
+      <LoadedHelmReleaseDetailsPage {...loadedHelmReleaseDetailsPageProps} />,
     );
     expect(helmReleaseDetailsPage.find(StatusBox).exists()).toBe(true);
   });
   it('should render the DetailsPage component when secret gets loaded', () => {
     const helmReleaseDetailsPage = shallow(
-      <HelmReleaseDetailsPage {...helmReleaseDetailsPageProps} />,
+      <LoadedHelmReleaseDetailsPage {...loadedHelmReleaseDetailsPageProps} />,
     );
     expect(helmReleaseDetailsPage.find(DetailsPage).exists()).toBe(true);
   });
   it('should show the ErrorPage404 for an incorrect release name in the url', () => {
-    helmReleaseDetailsPageProps.secret.data = undefined;
+    loadedHelmReleaseDetailsPageProps.secret.data = [];
     const helmReleaseDetailsPage = shallow(
-      <HelmReleaseDetailsPage {...helmReleaseDetailsPageProps} />,
+      <LoadedHelmReleaseDetailsPage {...loadedHelmReleaseDetailsPageProps} />,
     );
     expect(helmReleaseDetailsPage.find(ErrorPage404).exists()).toBe(true);
   });

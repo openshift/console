@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Link } from 'react-router-dom';
 import * as _ from 'lodash';
 import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
@@ -8,6 +9,7 @@ import {
   TableRow,
   TableData,
   MultiListPage,
+  RowFunction,
 } from '@console/internal/components/factory';
 import {
   Kebab,
@@ -35,9 +37,16 @@ import {
   getTemplateFlavors,
 } from '../../selectors/vm-template/advanced';
 import { getLoadedData } from '../../utils';
-import { TEMPLATE_TYPE_LABEL, TEMPLATE_TYPE_VM } from '../../constants/vm';
+import {
+  TEMPLATE_TYPE_LABEL,
+  TEMPLATE_TYPE_VM,
+  VMWizardName,
+  VMWizardMode,
+  VMWizardActionLabels,
+} from '../../constants/vm';
 import { DataVolumeModel } from '../../models';
 import { V1alpha1DataVolume } from '../../types/vm/disk/V1alpha1DataVolume';
+import { getVMWizardCreateLink } from '../../utils/url';
 import { VMTemplateLink } from './vm-template-link';
 import { menuActions } from './menu-actions';
 import { TemplateSource } from './vm-template-source';
@@ -45,15 +54,17 @@ import { TemplateSource } from './vm-template-source';
 import './vm-template.scss';
 
 const tableColumnClass = classNames('col-lg-2', 'col-md-2', 'col-sm-4', 'col-xs-4');
-const tableColumnClassHiddenOnSmall = classNames('col-lg-2', 'col-md-2', 'hidden-sm', 'hidden-xs');
+const tableColumnClassWide = classNames('col-lg-3', 'col-md-3', 'col-sm-4', 'col-xs-4');
+const tableColumnClassNarrow = classNames('col-lg-1', 'col-md-1', 'hidden-sm', 'hidden-xs');
 
 const tableColumnClasses = [
   tableColumnClass,
   tableColumnClass,
+  tableColumnClassWide,
+  tableColumnClassNarrow,
+  tableColumnClassNarrow,
+  tableColumnClassNarrow,
   tableColumnClass,
-  tableColumnClassHiddenOnSmall,
-  tableColumnClassHiddenOnSmall,
-  tableColumnClassHiddenOnSmall,
   Kebab.columnClass,
 ];
 
@@ -87,19 +98,21 @@ const VMTemplateTableHeader = () =>
       {
         title: '',
       },
+      {
+        title: '',
+      },
     ],
     tableColumnClasses,
   );
 
 VMTemplateTableHeader.displayName = 'VMTemplateTableHeader';
 
-const VMTemplateTableRow: React.FC<VMTemplateTableRowProps> = ({
-  obj: template,
-  customData: { dataVolumeLookup },
-  index,
-  key,
-  style,
-}) => {
+const VMTemplateTableRow: RowFunction<
+  TemplateKind,
+  {
+    dataVolumeLookup: K8sEntityMap<V1alpha1DataVolume>;
+  }
+> = ({ obj: template, customData: { dataVolumeLookup }, index, key, style }) => {
   const dimensify = dimensifyRow(tableColumnClasses);
   const os = getTemplateOperatingSystems([template])[0];
 
@@ -127,13 +140,26 @@ const VMTemplateTableRow: React.FC<VMTemplateTableRowProps> = ({
       </TableData>
       <TableData className={dimensify()}>{os ? os.name || os.id : DASH}</TableData>
       <TableData className={dimensify()}>{getTemplateFlavors([template])[0]}</TableData>
+      <TableData className={dimensify()}>
+        <Link
+          to={getVMWizardCreateLink(
+            getNamespace(template),
+            VMWizardName.WIZARD,
+            VMWizardMode.VM,
+            getName(template),
+          )}
+          title="Create Virtual Machine"
+          className="co-resource-item__resource-name"
+        >
+          Create Virtual Machine
+        </Link>
+      </TableData>
       <TableData className={dimensify(true)}>
         <ResourceKebab actions={menuActions} kind={TemplateModel.kind} resource={template} />
       </TableData>
     </TableRow>
   );
 };
-VMTemplateTableRow.displayName = 'VmTemplateTableRow';
 
 type VirtualMachineTemplatesProps = {
   data: TemplateKind[];
@@ -159,24 +185,22 @@ const VirtualMachineTemplates: React.FC<React.ComponentProps<typeof Table> &
     </div>
   );
 };
+
 const getCreateProps = ({ namespace }: { namespace: string }) => {
   const items: any = {
-    wizard: 'New with Wizard',
-    yaml: 'New from YAML',
+    [VMWizardName.WIZARD]: VMWizardActionLabels.WIZARD,
+    [VMWizardName.YAML]: VMWizardActionLabels.YAML,
   };
 
   return {
     items,
-    createLink: (itemName) =>
-      `/k8s/ns/${namespace || 'default'}/vmtemplates/${
-        itemName === 'yaml' ? '~new' : '~new-wizard'
-      }`, // covers 'yaml', new-wizard and default
+    createLink: (itemName) => getVMWizardCreateLink(namespace, itemName, VMWizardMode.TEMPLATE),
   };
 };
 
 const WrappedVirtualMachineTemplatesPage: React.FC<VirtualMachineTemplatesPageProps &
   React.ComponentProps<typeof ListPage>> = (props) => {
-  const { skipAccessReview, noProjectsAvailable } = props;
+  const { skipAccessReview, noProjectsAvailable, showTitle } = props.customData;
   const namespace = props.match.params.ns;
 
   const resources = [
@@ -209,6 +233,7 @@ const WrappedVirtualMachineTemplatesPage: React.FC<VirtualMachineTemplatesPagePr
       createButtonText="Create Virtual Machine Template"
       canCreate
       title={VM_TEMPLATE_LABEL_PLURAL}
+      showTitle={showTitle}
       ListComponent={VirtualMachineTemplates}
       createProps={getCreateProps({
         namespace,
@@ -222,20 +247,13 @@ const WrappedVirtualMachineTemplatesPage: React.FC<VirtualMachineTemplatesPagePr
 
 const VirtualMachineTemplatesPage = withStartGuide(WrappedVirtualMachineTemplatesPage);
 
-type VMTemplateTableRowProps = {
-  obj: TemplateKind;
-  index: number;
-  key: string;
-  style: any;
-  customData: {
-    dataVolumeLookup: K8sEntityMap<V1alpha1DataVolume>;
-  };
-};
-
 type VirtualMachineTemplatesPageProps = {
   match: match<{ ns?: string }>;
-  skipAccessReview?: boolean;
-  noProjectsAvailable?: boolean;
+  customData: {
+    showTitle?: boolean;
+    skipAccessReview?: boolean;
+    noProjectsAvailable?: boolean;
+  };
 };
 
 export { VirtualMachineTemplatesPage };

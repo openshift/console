@@ -48,6 +48,8 @@ const VisualizationSurface: React.FC<VisualizationSurfaceProps> = ({ visualizati
   // dispose of onMeasure
   React.useEffect(() => () => onMeasure.cancel(), [onMeasure]);
 
+  const graph = visualization.getGraph();
+
   return (
     <ControllerContext.Provider value={visualization}>
       <ReactMeasure client onResize={onMeasure}>
@@ -56,7 +58,7 @@ const VisualizationSurface: React.FC<VisualizationSurfaceProps> = ({ visualizati
           <div data-test-id="topology" className="topology-visualization-surface" ref={measureRef}>
             <svg className="topology-visualization-surface__svg" onContextMenu={stopEvent}>
               <SVGDefsProvider>
-                <ElementWrapper element={visualization.getGraph()} />
+                <ElementWrapper element={graph} />
               </SVGDefsProvider>
             </svg>
           </div>

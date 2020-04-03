@@ -2,7 +2,14 @@ import * as _ from 'lodash-es';
 import * as PropTypes from 'prop-types';
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { getNodeRoles, getMachinePhase } from '@console/shared';
+import {
+  getNodeRoles,
+  getMachinePhase,
+  nodeMemory,
+  nodeCPU,
+  nodeFS,
+  nodePods,
+} from '@console/shared';
 import * as UIActions from '../../actions/ui';
 import { ingressValidHosts } from '../ingress';
 import { alertStateOrder, silenceStateOrder } from '../../reducers/monitoring';
@@ -124,12 +131,17 @@ const sorts = {
     const roles = getNodeRoles(node);
     return roles.sort().join(', ');
   },
+  nodeMemory: (node: NodeKind): number => nodeMemory(node),
+  nodeCPU: (node: NodeKind): number => nodeCPU(node),
+  nodeFS: (node: NodeKind): number => nodeFS(node),
   machinePhase: (machine: MachineKind): string => getMachinePhase(machine),
+  nodePods: (node: NodeKind): number => nodePods(node),
 };
 
 const stateToProps = (
   { UI },
   {
+    customSorts = {},
     data = [],
     defaultSortField = 'metadata.name',
     defaultSortFunc = undefined,
@@ -164,6 +176,9 @@ const stateToProps = (
       } else {
         sortBy = (resource) => sorts.string(_.get(resource, currentSortField, ''));
       }
+    } else if (currentSortFunc && customSorts[currentSortFunc]) {
+      // Sort resources by a function in the 'customSorts' prop
+      sortBy = customSorts[currentSortFunc];
     } else if (currentSortFunc && sorts[currentSortFunc]) {
       // Sort resources by a function in the 'sorts' object
       sortBy = sorts[currentSortFunc];
@@ -274,7 +289,7 @@ const VirtualBody: React.SFC<VirtualBodyProps> = (props) => {
       style,
       customData,
     };
-    const row = (Row as RowFunction)(rowArgs as RowFunctionArgs);
+    const row = Row(rowArgs);
 
     // do not render non visible elements (this excludes overscan)
     if (!isVisible) {
@@ -313,20 +328,21 @@ const VirtualBody: React.SFC<VirtualBodyProps> = (props) => {
   );
 };
 
-export type RowFunctionArgs = {
-  obj: object;
+export type RowFunctionArgs<T = any, C = any> = {
+  obj: T;
   index: number;
-  columns: [];
+  columns: any[];
   isScrolling: boolean;
   key: string;
   style: object;
-  customData?: any;
+  customData?: C;
 };
-export type RowFunction = (args: RowFunctionArgs) => JSX.Element;
+
+export type RowFunction<T = any, C = any> = (args: RowFunctionArgs<T, C>) => React.ReactElement;
 
 export type VirtualBodyProps = {
   customData?: any;
-  Row: RowFunction | React.ComponentClass<any, any> | React.ComponentType<any>;
+  Row: RowFunction;
   height: number;
   isScrolling: boolean;
   onChildScroll: (...args) => any;
@@ -339,6 +355,7 @@ export type VirtualBodyProps = {
 
 export type TableProps = {
   customData?: any;
+  customSorts?: { [key: string]: any };
   data?: any[];
   defaultSortFunc?: string;
   defaultSortField?: string;
@@ -346,7 +363,7 @@ export type TableProps = {
   filters?: { [key: string]: any };
   Header: (...args) => any[];
   loadError?: string | Object;
-  Row?: RowFunction | React.ComponentClass<any, any> | React.ComponentType<any>;
+  Row?: RowFunction;
   Rows?: (...args) => any[];
   'aria-label': string;
   virtualize?: boolean;
@@ -613,7 +630,7 @@ export type TableInnerProps = {
   namespace?: string;
   reduxID?: string;
   reduxIDs?: string[];
-  Row?: RowFunction | React.ComponentClass<any, any> | React.ComponentType<any>;
+  Row?: RowFunction;
   Rows?: (...args) => any[];
   selector?: Object;
   sortList?: (

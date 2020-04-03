@@ -19,14 +19,14 @@ import { getTemplateOperatingSystems } from '../../../../selectors/vm-template/a
 import { VMTemplateWrapper } from '../../../wrapper/vm/vm-template-wrapper';
 import { operatingSystemsNative } from '../../../../components/create-vm-wizard/native/consts';
 import { concatImmutableLists, immutableListToShallowJS } from '../../../../utils/immutable';
-import { CreateVMEnhancedParams } from './types';
+import { CreateVMParams } from './types';
 
 export const getOS = ({
   vmSettings,
   iUserTemplates,
   openshiftFlag,
   iCommonTemplates,
-}: CreateVMEnhancedParams) => {
+}: CreateVMParams) => {
   const operatingSystems = openshiftFlag
     ? getTemplateOperatingSystems(
         immutableListToShallowJS<TemplateKind>(

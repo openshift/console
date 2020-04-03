@@ -37,3 +37,7 @@ export const getVMINodeName = (vmi: VMIKind) => vmi && vmi.status && vmi.status.
 
 export const isVMIPaused = (vmi: VMIKind): boolean =>
   getVMIConditionsByType(vmi, 'Paused').length > 0;
+
+export const getVMINodeSelector = (vmi: VMIKind) => vmi?.spec?.nodeSelector;
+
+export const getVMITolerations = (vmi: VMIKind) => vmi?.spec?.tolerations;

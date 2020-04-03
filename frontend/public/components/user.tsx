@@ -9,7 +9,7 @@ import { sortable } from '@patternfly/react-table';
 import * as UIActions from '../actions/ui';
 import { OAuthModel, UserModel } from '../models';
 import { K8sKind, referenceForModel, UserKind } from '../module/k8s';
-import { DetailsPage, ListPage, Table, TableRow, TableData } from './factory';
+import { DetailsPage, ListPage, Table, TableRow, TableData, RowFunction } from './factory';
 import { RoleBindingsPage } from './RBAC';
 import {
   Kebab,
@@ -79,7 +79,7 @@ const UserKebab = connect<{}, UserKebabDispatchProps, UserKebabProps>(null, {
   startImpersonate: UIActions.startImpersonate,
 })(UserKebab_);
 
-const UserTableRow: React.FC<UserTableRowProps> = ({ obj, index, key, style }) => {
+const UserTableRow: RowFunction<UserKind> = ({ obj, index, key, style }) => {
   return (
     <TableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
       <TableData className={tableColumnClasses[0]}>
@@ -168,13 +168,6 @@ type UserKebabDispatchProps = {
 
 type UserKebabProps = {
   user: UserKind;
-};
-
-type UserTableRowProps = {
-  obj: UserKind;
-  key: string;
-  index: number;
-  style: any;
 };
 
 const UserDetailsPage_: React.FC<UserDetailsPageProps & UserKebabDispatchProps> = ({

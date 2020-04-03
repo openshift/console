@@ -83,4 +83,4 @@ export const useExtensions: UseExtensions = (typeGuard) => {
   return extensionsInUse;
 };
 
-type UseExtensions = <E extends Extension>(typeGuard: ExtensionTypeGuard<E>) => readonly E[];
+type UseExtensions = <E extends Extension>(typeGuard: ExtensionTypeGuard<E>) => E[];

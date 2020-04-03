@@ -4,6 +4,13 @@ import {
 } from '@console/dev-console/src/components/import/import-types';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { RevisionModel, EventSourceCronJobModel } from '@console/knative-plugin';
+import { EventSourceFormData } from '../../components/add/import-types';
+import {
+  EventSourceCamelModel,
+  EventSourceContainerModel,
+  EventSourceKafkaModel,
+  EventSourceSinkBindingModel,
+} from '../../models';
 
 export const defaultData: DeployImageFormData = {
   project: {
@@ -279,6 +286,271 @@ export const deploymentKnativeEventData: K8sResourceKind = {
         kind: EventSourceCronJobModel.kind,
         name: 'overlayimage-fdqsffg',
         uid: '1317f615-9636-11e9-b134-06a61d886b689',
+        controller: true,
+        blockOwnerDeletion: true,
+      },
+    ],
+  },
+  spec: {
+    replicas: 6,
+    selector: { matchLabels: { app: 'hello-openshift' } },
+    template: {
+      metadata: { creationTimestamp: null, labels: { app: 'hello-openshift' } },
+      spec: {
+        containers: [
+          {
+            name: 'hello-openshift',
+            image: 'openshift/hello-openshift',
+            ports: [{ containerPort: 8080, protocol: 'TCP' }],
+            resources: {},
+            terminationMessagePath: '/dev/termination-log',
+            terminationMessagePolicy: 'File',
+            imagePullPolicy: 'Always',
+          },
+        ],
+        restartPolicy: 'Always',
+        terminationGracePeriodSeconds: 30,
+        dnsPolicy: 'ClusterFirst',
+        securityContext: {},
+        schedulerName: 'default-scheduler',
+      },
+    },
+    strategy: {
+      type: 'RollingUpdate',
+      rollingUpdate: { maxUnavailable: '25%', maxSurge: '25%' },
+    },
+    revisionHistoryLimit: 10,
+    progressDeadlineSeconds: 600,
+  },
+};
+
+const eventSourceData = {
+  cronjobsource: {
+    data: 'hello',
+    schedule: '* * * * *',
+  },
+  apiserversource: {
+    mode: '',
+    serviceAccountName: '',
+    resources: [
+      {
+        apiVersion: 'v1',
+        kind: 'Event',
+      },
+    ],
+  },
+};
+
+export const getDefaultEventingData = (typeEventSource: string): EventSourceFormData => {
+  const defaultEventingData: EventSourceFormData = {
+    project: {
+      name: 'mock-project',
+      displayName: '',
+      description: '',
+    },
+    application: {
+      initial: 'mock-app',
+      name: 'mock-app',
+      selectedKey: 'mock-app',
+    },
+    name: 'esmyapp',
+    sink: {
+      knativeService: 'event-display',
+    },
+    type: typeEventSource,
+    data: {
+      [typeEventSource.toLowerCase()]: eventSourceData[typeEventSource.toLowerCase()],
+    },
+  };
+  return defaultEventingData;
+};
+
+export const deploymentKnativeEventSourceContainerEventData: K8sResourceKind = {
+  kind: 'Deployment',
+  apiVersion: 'apps/v1',
+  metadata: {
+    annotations: { 'deployment.kubernetes.io/revision': '1' },
+    selfLink: '/apis/apps/v1/namespaces/testproject3/deployments/overlayimage',
+    resourceVersion: '471849',
+    name: 'overlayimage',
+    uid: '64b34874-debd-11e9-8cdf-0a0700ae5e38',
+    creationTimestamp: '2019-09-24T11:21:03Z',
+    generation: 4,
+    namespace: 'testproject3',
+    ownerReferences: [
+      {
+        apiVersion: `${EventSourceContainerModel.apiGroup}/${EventSourceContainerModel.apiVersion}`,
+        kind: EventSourceContainerModel.kind,
+        name: 'overlayimage-fdqsffg',
+        uid: '1317f615-9636-11e9-b134-06a61d886b689_1',
+        controller: true,
+        blockOwnerDeletion: true,
+      },
+    ],
+  },
+  spec: {
+    replicas: 6,
+    selector: { matchLabels: { app: 'hello-openshift' } },
+    template: {
+      metadata: { creationTimestamp: null, labels: { app: 'hello-openshift' } },
+      spec: {
+        containers: [
+          {
+            name: 'hello-openshift',
+            image: 'openshift/hello-openshift',
+            ports: [{ containerPort: 8080, protocol: 'TCP' }],
+            resources: {},
+            terminationMessagePath: '/dev/termination-log',
+            terminationMessagePolicy: 'File',
+            imagePullPolicy: 'Always',
+          },
+        ],
+        restartPolicy: 'Always',
+        terminationGracePeriodSeconds: 30,
+        dnsPolicy: 'ClusterFirst',
+        securityContext: {},
+        schedulerName: 'default-scheduler',
+      },
+    },
+    strategy: {
+      type: 'RollingUpdate',
+      rollingUpdate: { maxUnavailable: '25%', maxSurge: '25%' },
+    },
+    revisionHistoryLimit: 10,
+    progressDeadlineSeconds: 600,
+  },
+};
+
+export const deploymentKnativeEventSourceCamelEventData: K8sResourceKind = {
+  kind: 'Deployment',
+  apiVersion: 'apps/v1',
+  metadata: {
+    annotations: { 'deployment.kubernetes.io/revision': '1' },
+    selfLink: '/apis/apps/v1/namespaces/testproject3/deployments/overlayimage',
+    resourceVersion: '471849',
+    name: 'overlayimage',
+    uid: '64b34874-debd-11e9-8cdf-0a0700ae5e38',
+    creationTimestamp: '2019-09-24T11:21:03Z',
+    generation: 4,
+    namespace: 'testproject3',
+    ownerReferences: [
+      {
+        apiVersion: `${EventSourceCamelModel.apiGroup}/${EventSourceCamelModel.apiVersion}`,
+        kind: EventSourceCamelModel.kind,
+        name: 'overlayimage-fdqsffg',
+        uid: '1317f615-9636-11e9-b134-06a61d886b689_2',
+        controller: true,
+        blockOwnerDeletion: true,
+      },
+    ],
+  },
+  spec: {
+    replicas: 6,
+    selector: { matchLabels: { app: 'hello-openshift' } },
+    template: {
+      metadata: { creationTimestamp: null, labels: { app: 'hello-openshift' } },
+      spec: {
+        containers: [
+          {
+            name: 'hello-openshift',
+            image: 'openshift/hello-openshift',
+            ports: [{ containerPort: 8080, protocol: 'TCP' }],
+            resources: {},
+            terminationMessagePath: '/dev/termination-log',
+            terminationMessagePolicy: 'File',
+            imagePullPolicy: 'Always',
+          },
+        ],
+        restartPolicy: 'Always',
+        terminationGracePeriodSeconds: 30,
+        dnsPolicy: 'ClusterFirst',
+        securityContext: {},
+        schedulerName: 'default-scheduler',
+      },
+    },
+    strategy: {
+      type: 'RollingUpdate',
+      rollingUpdate: { maxUnavailable: '25%', maxSurge: '25%' },
+    },
+    revisionHistoryLimit: 10,
+    progressDeadlineSeconds: 600,
+  },
+};
+
+export const deploymentKnativeEventSourceKafkaEventData: K8sResourceKind = {
+  kind: 'Deployment',
+  apiVersion: 'apps/v1',
+  metadata: {
+    annotations: { 'deployment.kubernetes.io/revision': '1' },
+    selfLink: '/apis/apps/v1/namespaces/testproject3/deployments/overlayimage',
+    resourceVersion: '471849',
+    name: 'overlayimage',
+    uid: '64b34874-debd-11e9-8cdf-0a0700ae5e38',
+    creationTimestamp: '2019-09-24T11:21:03Z',
+    generation: 4,
+    namespace: 'testproject3',
+    ownerReferences: [
+      {
+        apiVersion: `${EventSourceKafkaModel.apiGroup}/${EventSourceKafkaModel.apiVersion}`,
+        kind: EventSourceKafkaModel.kind,
+        name: 'overlayimage-fdqsffg',
+        uid: '1317f615-9636-11e9-b134-06a61d886b689_3',
+        controller: true,
+        blockOwnerDeletion: true,
+      },
+    ],
+  },
+  spec: {
+    replicas: 6,
+    selector: { matchLabels: { app: 'hello-openshift' } },
+    template: {
+      metadata: { creationTimestamp: null, labels: { app: 'hello-openshift' } },
+      spec: {
+        containers: [
+          {
+            name: 'hello-openshift',
+            image: 'openshift/hello-openshift',
+            ports: [{ containerPort: 8080, protocol: 'TCP' }],
+            resources: {},
+            terminationMessagePath: '/dev/termination-log',
+            terminationMessagePolicy: 'File',
+            imagePullPolicy: 'Always',
+          },
+        ],
+        restartPolicy: 'Always',
+        terminationGracePeriodSeconds: 30,
+        dnsPolicy: 'ClusterFirst',
+        securityContext: {},
+        schedulerName: 'default-scheduler',
+      },
+    },
+    strategy: {
+      type: 'RollingUpdate',
+      rollingUpdate: { maxUnavailable: '25%', maxSurge: '25%' },
+    },
+    revisionHistoryLimit: 10,
+    progressDeadlineSeconds: 600,
+  },
+};
+
+export const deploymentKnativeEventSourceSinkBindingEventData: K8sResourceKind = {
+  kind: 'Deployment',
+  apiVersion: 'apps/v1',
+  metadata: {
+    annotations: { 'deployment.kubernetes.io/revision': '1' },
+    selfLink: '/apis/apps/v1/namespaces/testproject3/deployments/overlayimage',
+    resourceVersion: '471849',
+    name: 'overlayimage',
+    uid: '64b34874-debd-11e9-8cdf-0a0700ae5e38',
+    creationTimestamp: '2019-09-24T11:21:03Z',
+    generation: 4,
+    namespace: 'testproject3',
+    ownerReferences: [
+      {
+        apiVersion: `${EventSourceSinkBindingModel.apiGroup}/${EventSourceSinkBindingModel.apiVersion}`,
+        kind: EventSourceSinkBindingModel.kind,
+        name: 'overlayimage-fdqsffg',
+        uid: '1317f615-9636-11e9-b134-06a61d886b689_4',
         controller: true,
         blockOwnerDeletion: true,
       },

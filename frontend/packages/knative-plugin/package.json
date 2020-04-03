@@ -13,6 +13,11 @@
     "@console/plugin-sdk": "0.0.0-fixed"
   },
   "consolePlugin": {
-    "entry": "src/plugin.tsx"
+    "entry": "src/plugin.tsx",
+    "integrationTestSuites": {
+      "knativeplugin": [
+        "integration-tests/**/*.scenario.ts"
+      ]
+    }
   }
 }

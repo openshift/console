@@ -13,19 +13,15 @@ const sidebarScrollTop = () => {
 
 class ResourceSidebarWrapper extends React.Component {
   render() {
-    const { style, label, children, showSidebar, toggleSidebar } = this.props;
-    const { height } = style;
+    const { label, children, showSidebar, toggleSidebar } = this.props;
 
     if (!showSidebar) {
       return null;
     }
 
     return (
-      <div
-        className="co-p-has-sidebar__sidebar co-p-has-sidebar__sidebar--bordered hidden-sm hidden-xs"
-        style={{ height }}
-      >
-        <div className="co-m-pane__body">
+      <div className="co-p-has-sidebar__sidebar co-p-has-sidebar__sidebar--bordered hidden-sm hidden-xs">
+        <div className="co-m-pane__body" style={{ position: 'absolute' }}>
           <Button
             type="button"
             className="co-p-has-sidebar__sidebar-close"
@@ -67,7 +63,6 @@ const ResourceSnippets = ({ snippets, kindObj, insertSnippetYaml }) => (
 export const ResourceSidebar = (props) => {
   const {
     downloadSampleYaml,
-    height,
     kindObj,
     loadSampleYaml,
     insertSnippetYaml,
@@ -111,12 +106,7 @@ export const ResourceSidebar = (props) => {
   }
 
   return (
-    <ResourceSidebarWrapper
-      label={label}
-      style={{ height }}
-      showSidebar={showSidebar}
-      toggleSidebar={toggleSidebar}
-    >
+    <ResourceSidebarWrapper label={label} showSidebar={showSidebar} toggleSidebar={toggleSidebar}>
       {tabs.length > 0 ? (
         <SimpleTabNav
           tabs={tabs}

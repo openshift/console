@@ -39,6 +39,9 @@ export const getDisks = (vm: VMKind, defaultValue: V1Disk[] = []): V1Disk[] =>
   _.get(vm, 'spec.template.spec.domain.devices.disks') == null
     ? defaultValue
     : vm.spec.template.spec.domain.devices.disks;
+
+export const getBootableDisks = (vm: VMKind, defaultValue: V1Disk[] = []): V1Disk[] =>
+  getDisks(vm, defaultValue).filter((disk) => !Object.keys(disk).includes('serial'));
 export const getInterfaces = (
   vm: VMKind,
   defaultValue: V1NetworkInterface[] = [],
@@ -149,3 +152,7 @@ export const getStorageClassNameByDisk = (vm: VMKind, diskName: string) =>
   getDataVolumeStorageClassName(
     getDataVolumeTemplates(vm).find((vol) => getName(vol).includes(diskName)),
   );
+
+export const getNodeSelector = (vm: VMKind) => vm?.spec?.template?.spec?.nodeSelector;
+
+export const getTolerations = (vm: VMKind) => vm?.spec?.template?.spec?.tolerations;

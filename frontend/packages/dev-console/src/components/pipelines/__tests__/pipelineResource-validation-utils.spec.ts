@@ -1,7 +1,6 @@
 import { cloneDeep } from 'lodash';
 import { validationSchema } from '../pipeline-resource/pipelineResource-validation-utils';
 import { getDefinedObj } from '../pipeline-resource/pipelineResource-utils';
-import { getRandomChars } from '../../../utils/shared-submit-utils';
 import { mockPipelineResourceData } from '../__mocks__/pipeline-resource-mock';
 
 describe('Validation Pipeline Resource', () => {
@@ -10,14 +9,6 @@ describe('Validation Pipeline Resource', () => {
       const sampleInput = { a: 1, b: 'test', c: '' };
       const definedObject = getDefinedObj(sampleInput);
       expect(definedObject).toEqual({ a: 1, b: 'test' });
-    });
-    it('should return 2 digit random alphanumeric characters', () => {
-      const randomOutput = getRandomChars(2);
-      expect(randomOutput).toHaveLength(2);
-    });
-    it('should return 6 digit random alphanumeric characters for no input', () => {
-      const randomOutput = getRandomChars();
-      expect(randomOutput).toHaveLength(6);
     });
   });
 

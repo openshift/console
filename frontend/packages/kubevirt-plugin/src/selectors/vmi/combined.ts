@@ -8,9 +8,6 @@ import { getRdpAddressPort } from '../service/rdp';
 import { isConnectionEncrypted } from '../../utils/url';
 import { getVMIApiPath, getVMISubresourcePath } from './selectors';
 
-/*
- See web-ui-components, request.js:addMetadata() for automatic VM name label addition to match the selector
- */
 const findVMServiceWithPort = (vmi: VMIKind, allServices: K8sResourceKind[], targetPort: number) =>
   (allServices || []).find(
     (service) =>

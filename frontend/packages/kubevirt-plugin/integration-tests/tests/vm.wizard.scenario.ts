@@ -15,8 +15,7 @@ import {
   VM_ACTION,
   CLONED_VM_BOOTUP_TIMEOUT_SECS,
   VM_STATUS,
-  COMMON_TEMPLATES_VERSION,
-  COMMON_TEMPLATES_NAMESPACE,
+  commonTemplateVersion,
   COMMON_TEMPLATES_REVISION,
   INNER_TEMPLATE_VERSION,
 } from './utils/consts';
@@ -88,6 +87,7 @@ describe('Kubevirt create VM using wizard', () => {
         'windows10',
         testName,
         provisionConfigs.get(ProvisionConfigName.CONTAINER),
+        _.cloneDeep(basicVMConfig),
       );
       testVMConfig.networkResources = [];
       testVMConfig.operatingSystem = OperatingSystem.WINDOWS_10;
@@ -115,8 +115,9 @@ describe('Kubevirt create VM using wizard', () => {
           [`workload.template.kubevirt.io/${testVMConfig.workloadProfile}`]: 'true',
           [`flavor.template.kubevirt.io/${testVMConfig.flavorConfig.flavor}`]: 'true',
           [`os.template.kubevirt.io/${osID}`]: 'true',
-          'vm.kubevirt.io/template': `win2k12r2-${testVMConfig.workloadProfile}-${testVMConfig.flavorConfig.flavor}-${COMMON_TEMPLATES_VERSION}`,
-          'vm.kubevirt.io/template.namespace': COMMON_TEMPLATES_NAMESPACE,
+          'vm.kubevirt.io/template': `windows-${testVMConfig.workloadProfile}-${
+            testVMConfig.flavorConfig.flavor
+          }-${commonTemplateVersion()}`,
           'vm.kubevirt.io/template.revision': COMMON_TEMPLATES_REVISION,
           'vm.kubevirt.io/template.version': INNER_TEMPLATE_VERSION,
         };

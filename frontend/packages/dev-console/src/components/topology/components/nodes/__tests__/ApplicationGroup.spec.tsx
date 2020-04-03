@@ -1,4 +1,4 @@
-import { computeLabelLocation } from '../ApplicationGroup';
+import { computeLabelLocation } from '../../groups/ApplicationGroup';
 
 describe('ApplicationGroup', () => {
   it('should return the lowest point', () => {

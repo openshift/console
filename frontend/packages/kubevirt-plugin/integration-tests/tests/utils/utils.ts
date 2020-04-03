@@ -19,22 +19,6 @@ import {
 import { STORAGE_CLASS, PAGE_LOAD_TIMEOUT_SECS, SEC } from './consts';
 import { NodePortService } from './types';
 
-export async function fillInput(elem: any, value: string) {
-  // Sometimes there seems to be an issue with clear() method not clearing the input
-  let attempts = 3;
-  do {
-    --attempts;
-    if (attempts < 0) {
-      throw Error(`Failed to fill input with value: '${value}'.`);
-    }
-    await browser.wait(until.and(until.presenceOf(elem), until.elementToBeClickable(elem)));
-    // TODO: line below can be removed when pf4 tables in use.
-    await elem.click();
-    await elem.clear();
-    await elem.sendKeys(value);
-  } while ((await elem.getAttribute('value')) !== value && attempts > 0);
-}
-
 export async function setCheckboxState(elem: any, targetState: boolean) {
   const checkboxState = await elem.isSelected();
   if (checkboxState !== targetState) {
@@ -151,16 +135,15 @@ export function resolveStorageDataAttribute(configMap: any, attribute: string): 
 }
 
 export const waitFor = async (element, text, count = 1) => {
-  let rowNumber = 0;
-  while (rowNumber !== count) {
+  let sequenceNumber = 0;
+  while (sequenceNumber !== count) {
     await browser.wait(until.visibilityOf(element));
     const elemText = await element.getText();
     if (elemText.includes(text)) {
-      rowNumber += 1;
+      sequenceNumber += 1;
     } else {
-      rowNumber = 0;
+      sequenceNumber = 0;
     }
-    /* eslint-disable no-await-in-loop */
     await browser.sleep(5 * SEC);
   }
 };

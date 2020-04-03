@@ -11,7 +11,9 @@ import {
   Table,
   TableRow,
   TableData,
+  RowFunction,
 } from '@console/internal/components/factory';
+import { Conditions } from '@console/internal/components/conditions';
 import {
   SectionHeading,
   MsgBox,
@@ -96,12 +98,7 @@ export const InstallPlanTableHeader = () => {
 };
 InstallPlanTableHeader.displayName = 'InstallPlanTableHeader';
 
-export const InstallPlanTableRow: React.FC<InstallPlanTableRowProps> = ({
-  obj,
-  index,
-  key,
-  style,
-}) => {
+export const InstallPlanTableRow: RowFunction<K8sResourceKind> = ({ obj, index, key, style }) => {
   const phaseFor = (phase: InstallPlanKind['status']['phase']) => <Status status={phase} />;
   return (
     <TableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
@@ -181,13 +178,6 @@ export const InstallPlanTableRow: React.FC<InstallPlanTableRowProps> = ({
       </TableData>
     </TableRow>
   );
-};
-InstallPlanTableRow.displayName = 'InstallPlanTableRow';
-export type InstallPlanTableRowProps = {
-  obj: K8sResourceKind;
-  index: number;
-  key?: string;
-  style: object;
 };
 
 export const InstallPlansList = requireOperatorGroup((props: InstallPlansListProps) => {
@@ -315,6 +305,10 @@ export const InstallPlanDetails: React.SFC<InstallPlanDetailsProps> = ({ obj }) 
             </div>
           </div>
         </div>
+      </div>
+      <div className="co-m-pane__body">
+        <SectionHeading text="Conditions" />
+        <Conditions conditions={obj.status?.conditions} />
       </div>
     </>
   );

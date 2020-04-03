@@ -15,7 +15,7 @@ import {
   getTemplateInstanceStatus,
 } from '../../module/k8s';
 
-import { alertState, silenceState } from '../../reducers/monitoring';
+import { alertingRuleIsActive, alertState, silenceState } from '../../reducers/monitoring';
 
 export const fuzzyCaseInsensitive = (a: string, b: string): boolean =>
   fuzzy(_.toLower(a), _.toLower(b));
@@ -29,6 +29,10 @@ export const tableFilters: TableFilterMap = {
   'alert-name': (filter, alert) => fuzzyCaseInsensitive(filter, _.get(alert, 'labels.alertname')),
 
   'alert-state': (filter, alert) => filter.selected.has(alertState(alert)),
+
+  'alerting-rule-active': (filter, rule) => filter.selected.has(alertingRuleIsActive(rule)),
+
+  'alerting-rule-name': (filter, rule) => fuzzyCaseInsensitive(filter, rule.name),
 
   'silence-name': (filter, silence) => fuzzyCaseInsensitive(filter, silence.name),
 

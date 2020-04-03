@@ -3,6 +3,7 @@ import { FirehoseResult, KebabOption } from '@console/internal/components/utils'
 import { ExtPodKind, OverviewItem, PodControllerOverviewItem } from '@console/shared';
 import { DeploymentKind, K8sResourceKind, PodKind, EventKind } from '@console/internal/module/k8s';
 import { Pipeline, PipelineRun } from '../../utils/pipeline-augment';
+import { Node as TopologyNode, EventListener } from '@console/topology/src/types';
 
 export type Point = [number, number];
 
@@ -103,15 +104,14 @@ export interface ConnectedWorkloadPipeline {
 
 export interface WorkloadData {
   url?: string;
-  editUrl?: string;
-  cheEnabled?: boolean;
+  editURL?: string;
+  vcsURI?: string;
   builderImage?: string;
   kind?: string;
   isKnativeResource?: boolean;
   build: K8sResourceKind;
   donutStatus: DonutStatusData;
   connectedPipeline: ConnectedWorkloadPipeline;
-  showPodCount?: boolean;
 }
 
 export interface DonutStatusData {
@@ -247,3 +247,6 @@ export type GraphData = {
   namespace: string;
   createResourceAccess: string[];
 };
+
+export const SHOW_GROUPING_HINT_EVENT = 'show-regroup-hint';
+export type ShowGroupingHintEventListener = EventListener<[TopologyNode, string]>;

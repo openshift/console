@@ -22,7 +22,7 @@ import {
   SectionHeading,
   VolumeType,
 } from './utils';
-import { Table, TableData, TableRow } from './factory';
+import { Table, TableData, TableRow, RowFunction } from './factory';
 import { sortable } from '@patternfly/react-table';
 import { removeVolumeModal } from './modals';
 import { connectToModel } from '../kinds';
@@ -142,7 +142,7 @@ const VolumesTableHeader = () => {
 };
 VolumesTableHeader.displayName = 'VolumesTableHeader';
 
-const VolumesTableRow = ({ obj: volume, index, key, style }) => {
+const VolumesTableRow: RowFunction = ({ obj: volume, index, key, style }) => {
   const { name, resource, readOnly, mountPath, subPath, volumeDetail } = volume;
   const permission = readOnly ? 'Read-only' : 'Read/Write';
   const pod: PodTemplate = getPodTemplate(resource);
@@ -181,7 +181,6 @@ const VolumesTableRow = ({ obj: volume, index, key, style }) => {
     </TableRow>
   );
 };
-VolumesTableRow.displayName = 'VolumesTableRow';
 
 export const VolumesTable = (props) => {
   const { resource, ...tableProps } = props;

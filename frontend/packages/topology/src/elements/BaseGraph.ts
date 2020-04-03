@@ -231,4 +231,10 @@ export default class BaseGraph<E extends GraphModel = GraphModel, D = any> exten
   translateFromAbsolute(): void {
     // do nothing
   }
+
+  destroy(): void {
+    if (this.currentLayout) {
+      this.currentLayout.destroy();
+    }
+  }
 }

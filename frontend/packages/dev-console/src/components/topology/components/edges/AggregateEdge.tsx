@@ -8,7 +8,7 @@ type AggregateEdgeProps = {
   element: Edge;
 };
 
-const AggregateEdge: React.FC<AggregateEdgeProps> = ({ element }) => {
+const ObservedAggregateEdge: React.FC<AggregateEdgeProps> = ({ element }) => {
   const [hover, hoverRef] = useHover();
   const startPoint = element.getStartPoint();
   const endPoint = element.getEndPoint();
@@ -47,4 +47,5 @@ const AggregateEdge: React.FC<AggregateEdgeProps> = ({ element }) => {
   );
 };
 
-export default observer(AggregateEdge);
+const AggregateEdge = observer(ObservedAggregateEdge);
+export { AggregateEdge };

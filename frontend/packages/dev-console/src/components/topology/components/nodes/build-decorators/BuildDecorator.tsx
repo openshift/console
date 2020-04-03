@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Link } from 'react-router-dom';
 import { Tooltip, TooltipPosition } from '@patternfly/react-core';
 import { WorkloadData } from '../../../topology-types';
-import Decorator from '../Decorator';
+import { Decorator } from '../Decorator';
 import { getBuildDecoratorParts } from './build-decorator-utils';
 
 export interface BuildDecoratorProps {

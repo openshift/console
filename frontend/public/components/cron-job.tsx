@@ -3,7 +3,7 @@ import * as React from 'react';
 import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
 
-import { DetailsPage, ListPage, Table, TableRow, TableData } from './factory';
+import { DetailsPage, ListPage, Table, TableRow, TableData, RowFunction } from './factory';
 import { CronJobKind } from '../module/k8s';
 import {
   ContainerTable,
@@ -74,17 +74,7 @@ const CronJobTableHeader = () => {
 };
 CronJobTableHeader.displayName = 'CronJobTableHeader';
 
-const CronJobTableRow = ({
-  obj: cronjob,
-  index,
-  key,
-  style,
-}: {
-  obj: CronJobKind;
-  index: number;
-  key: string;
-  style: any;
-}) => {
+const CronJobTableRow: RowFunction<CronJobKind> = ({ obj: cronjob, index, key, style }) => {
   return (
     <TableRow id={cronjob.metadata.uid} index={index} trKey={key} style={style}>
       <TableData className={tableColumnClasses[0]}>
@@ -115,7 +105,6 @@ const CronJobTableRow = ({
     </TableRow>
   );
 };
-CronJobTableRow.displayName = 'CronJobTableRow';
 
 const CronJobDetails: React.FC<CronJobDetailsProps> = ({ obj: cronjob }) => {
   const job = cronjob.spec.jobTemplate;

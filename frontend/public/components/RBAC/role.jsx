@@ -84,7 +84,6 @@ const RolesTableRow = ({ obj: role, index, key, style }) => {
     </TableRow>
   );
 };
-RolesTableRow.displayName = 'RolesTableRow';
 
 class Details extends React.Component {
   constructor(props) {
@@ -206,7 +205,6 @@ const BindingsTableRow = ({ obj: binding, index, key, style }) => {
     </TableRow>
   );
 };
-BindingsTableRow.displayName = 'BindingsTableRow';
 
 const BindingsListComponent = (props) => (
   <BindingsList {...props} Header={BindingsTableHeader} Row={BindingsTableRow} virtualize />

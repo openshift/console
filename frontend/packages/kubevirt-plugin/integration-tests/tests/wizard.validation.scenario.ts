@@ -21,6 +21,7 @@ import { getRandStr } from './utils/utils';
 import { diskInterfaceHelper } from '../views/dialogs/diskDialog.view';
 import { DiskDialog } from './dialogs/diskDialog';
 import { saveButton } from '../views/kubevirtDetailView.view';
+import { VirtualMachineModel } from '../../src/models/index';
 
 describe('Wizard validation', () => {
   const wizard = new Wizard();
@@ -46,7 +47,7 @@ describe('Wizard validation', () => {
   });
 
   beforeEach(async () => {
-    await wizard.openWizard();
+    await wizard.openWizard(VirtualMachineModel.labelPlural);
   });
 
   afterEach(async () => {

@@ -6,6 +6,7 @@ import {
   KebabActions,
   ResourceListPage,
   DashboardsOverviewHealthURLSubsystem,
+  DashboardsOverviewHealthResourceSubsystem,
   RoutePage,
   ResourceDetailsPage,
   ResourceNSNavItem,
@@ -15,6 +16,7 @@ import { ImageManifestVulnModel } from './models';
 import { SecurityLabellerFlag } from './const';
 import { securityHealthHandler } from './components/summary';
 import { getKebabActionsForKind } from './kebab-actions';
+import { WatchImageVuln } from './types';
 
 type ConsumedExtensions =
   | ModelDefinition
@@ -22,6 +24,7 @@ type ConsumedExtensions =
   | ResourceListPage
   | ResourceDetailsPage
   | DashboardsOverviewHealthURLSubsystem
+  | DashboardsOverviewHealthResourceSubsystem<WatchImageVuln>
   | RoutePage
   | KebabActions
   | ResourceNSNavItem;
@@ -89,24 +92,25 @@ const plugin: Plugin<ConsumedExtensions> = [
     },
   },
   {
-    type: 'Dashboards/Overview/Health/URL',
+    type: 'Dashboards/Overview/Health/Resource',
     properties: {
       title: 'Quay Image Security',
-      url: '',
-      fetch: () => null,
-      healthHandler: securityHealthHandler,
-      additionalResource: {
-        kind: referenceForModel(ImageManifestVulnModel),
-        namespaced: true,
-        isList: true,
-        prop: 'imageManifestVuln',
+      resources: {
+        imageManifestVuln: {
+          kind: referenceForModel(ImageManifestVulnModel),
+          namespaced: true,
+          isList: true,
+        },
       },
+      healthHandler: securityHealthHandler,
+      popupTitle: 'Quay Image Security breakdown',
       popupComponent: () =>
         import('./components/summary' /* webpackChunkName: "container-security" */).then(
           (m) => m.SecurityBreakdownPopup,
         ),
-      popupTitle: 'Quay Image Security breakdown',
-      required: SecurityLabellerFlag,
+    },
+    flags: {
+      required: [SecurityLabellerFlag],
     },
   },
   {

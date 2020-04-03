@@ -12,12 +12,10 @@ import {
   ExternalLink,
 } from '@console/internal/components/utils';
 import {
-  TYPE_CONNECTS_TO,
   TYPE_EVENT_SOURCE_LINK,
   TYPE_REVISION_TRAFFIC,
-  TYPE_SERVICE_BINDING,
-  TYPE_TRAFFIC_CONNECTOR,
-} from './const';
+} from '@console/knative-plugin/src/topology/const';
+import { TYPE_CONNECTS_TO, TYPE_SERVICE_BINDING, TYPE_TRAFFIC_CONNECTOR } from './components/const';
 import { edgeActions } from './actions/edgeActions';
 import { TopologyDataModel, TopologyDataObject } from './topology-types';
 import { getKialiLink } from './topology-utils';

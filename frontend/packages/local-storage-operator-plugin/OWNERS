@@ -1,0 +1,13 @@
+reviewers:
+  - a2batic
+  - afreen23
+  - bipuladh
+  - cloudbehl
+  - gnehapk
+approvers:
+  - afreen23
+  - bipuladh
+  - cloudbehl
+  - gnehapk
+labels:
+  - component/lso

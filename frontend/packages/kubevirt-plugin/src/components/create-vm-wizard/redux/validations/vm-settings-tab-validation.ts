@@ -1,5 +1,4 @@
 import * as _ from 'lodash';
-import { List } from 'immutable';
 import {
   asValidationObject,
   ValidationErrorType,
@@ -80,9 +79,21 @@ const validateUserTemplate: VmSettingsValidator = (field, options) => {
   if (!userTemplateName) {
     return null;
   }
-  const userTemplate = iGetLoadedCommonData(state, id, VMWizardProps.userTemplates, List()).find(
+
+  const userTemplatesList = iGetLoadedCommonData(state, id, VMWizardProps.userTemplates);
+  if (!userTemplatesList) {
+    return null;
+  }
+
+  const userTemplate = userTemplatesList.find(
     (template) => iGetName(template) === userTemplateName,
   );
+  if (!userTemplate) {
+    return asValidationObject(
+      "Can't verify template, template is missing",
+      ValidationErrorType.Error,
+    );
+  }
 
   return validateUserTemplateProvisionSource(userTemplate && userTemplate.toJSON());
 };

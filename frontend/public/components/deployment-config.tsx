@@ -8,7 +8,7 @@ import { DeploymentConfigModel } from '../models';
 import { Conditions } from './conditions';
 import { ResourceEventStream } from './events';
 import { VolumesTable } from './volumes-table';
-import { DetailsPage, ListPage, Table } from './factory';
+import { DetailsPage, ListPage, Table, RowFunction } from './factory';
 import {
   AsyncComponent,
   ContainerTable,
@@ -270,29 +270,17 @@ DeploymentConfigsDetailsPage.displayName = 'DeploymentConfigsDetailsPage';
 
 const kind = 'DeploymentConfig';
 
-const DeploymentConfigTableRow: React.FC<DeploymentConfigTableRowProps> = ({
-  obj,
-  index,
-  key,
-  style,
-}) => {
+const DeploymentConfigTableRow: RowFunction<K8sResourceKind> = ({ obj, index, key, style }) => {
   return (
     <WorkloadTableRow
       obj={obj}
       index={index}
-      key={key}
+      rowKey={key}
       style={style}
       menuActions={menuActions}
       kind={kind}
     />
   );
-};
-DeploymentConfigTableRow.displayName = 'DeploymentTableRow';
-type DeploymentConfigTableRowProps = {
-  obj: K8sResourceKind;
-  index: number;
-  key?: string;
-  style: object;
 };
 
 const DeploymentConfigTableHeader = () => {

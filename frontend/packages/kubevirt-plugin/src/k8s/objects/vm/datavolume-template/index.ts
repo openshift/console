@@ -12,6 +12,9 @@ type DataVolumeTemplateArgs = {
   storageClassName?: string;
 };
 
+/**
+ * @deprecated FIXME deprecate in favor of DataVolumeWrapper
+ */
 export class DataVolumeTemplate {
   private data: K8sResourceKind;
 

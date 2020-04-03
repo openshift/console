@@ -11,17 +11,15 @@ import {
   ExpandedComponentProps,
 } from '@console/shared/src/components/dashboard/inventory-card/InventoryItem';
 import { PrometheusResponse } from '@console/internal/components/graphs';
+import {
+  WatchK8sResources,
+  ResourcesObject,
+  WatchK8sResults,
+} from '@console/internal/components/utils/k8s-watch-hook';
 import { Extension, LazyLoader } from './base';
 
-export interface DashboardsExtensionProperties {
-  /** Feature flags which are required for this extension to be effective. */
-  required?: string | string[];
-  /** Feature flags which are disallowed for this extension to be effective. */
-  disallowed?: string | string[];
-}
-
 namespace ExtensionProperties {
-  interface DashboardsOverviewHealthSubsystem extends DashboardsExtensionProperties {
+  interface DashboardsOverviewHealthSubsystem {
     /** The subsystem's display name */
     title: string;
   }
@@ -82,6 +80,26 @@ namespace ExtensionProperties {
     popupTitle?: string;
   }
 
+  export interface DashboardsOverviewHealthResourceSubsystem<R extends ResourcesObject>
+    extends DashboardsOverviewHealthSubsystem {
+    /** Kubernetes resources which will be fetched and passed to healthHandler  */
+    resources: WatchK8sResources<R>;
+
+    /** Resolve the subsystem's health */
+    healthHandler: ResourceHealthHandler<R>;
+
+    /**
+     * Loader for popup content. If defined health item will be represented as link
+     * which opens popup with given content.
+     */
+    popupComponent?: LazyLoader<any>;
+
+    /**
+     * Popup title
+     */
+    popupTitle?: string;
+  }
+
   export interface DashboardsOverviewHealthOperator<R extends K8sResourceCommon>
     extends DashboardsOverviewHealthSubsystem {
     /** Title of operators section in popup */
@@ -103,7 +121,7 @@ namespace ExtensionProperties {
     viewAllLink?: string;
   }
 
-  export interface DashboardsTab extends DashboardsExtensionProperties {
+  export interface DashboardsTab {
     /** The tab's ID which will be used as part of href within dashboards page */
     id: string;
 
@@ -111,7 +129,7 @@ namespace ExtensionProperties {
     title: string;
   }
 
-  export interface DashboardsCard extends DashboardsExtensionProperties {
+  export interface DashboardsCard {
     /** The tab's ID where this card should be rendered */
     tab: string;
 
@@ -125,7 +143,7 @@ namespace ExtensionProperties {
     span?: DashboardCardSpan;
   }
 
-  export interface DashboardsOverviewInventoryItem extends DashboardsExtensionProperties {
+  export interface DashboardsOverviewInventoryItem {
     /** The model for `resource` which will be fetched. The model is used for getting model's label or abbr. */
     model: K8sKind;
 
@@ -133,7 +151,7 @@ namespace ExtensionProperties {
     mapper?: StatusGroupMapper;
 
     /** Additional resources which will be fetched and passed to `mapper` function. */
-    additionalResources?: FirehoseResource[];
+    additionalResources?: WatchK8sResources<any>;
 
     /** Defines whether model's label or abbr should be used when rendering the item. Defaults to false (label). */
     useAbbr?: boolean;
@@ -142,7 +160,7 @@ namespace ExtensionProperties {
     expandedComponent?: LazyLoader<ExpandedComponentProps>;
   }
 
-  export interface DashboardsInventoryItemGroup extends DashboardsExtensionProperties {
+  export interface DashboardsInventoryItemGroup {
     /** The ID of status group. */
     id: string;
 
@@ -150,7 +168,7 @@ namespace ExtensionProperties {
     icon: React.ReactElement;
   }
 
-  export interface DashboardsOverviewUtilizationItem extends DashboardsExtensionProperties {
+  export interface DashboardsOverviewUtilizationItem {
     /** The utilization item to be replaced */
     id: string;
 
@@ -161,7 +179,7 @@ namespace ExtensionProperties {
     totalQuery: string;
   }
 
-  export interface DashboardsOverviewResourceActivity extends DashboardsExtensionProperties {
+  export interface DashboardsOverviewResourceActivity {
     /** Resource to watch */
     k8sResource: FirehoseResource & { isList: true };
 
@@ -178,7 +196,7 @@ namespace ExtensionProperties {
     loader: LazyLoader<K8sActivityProps>;
   }
 
-  export interface DashboardsOverviewPrometheusActivity extends DashboardsExtensionProperties {
+  export interface DashboardsOverviewPrometheusActivity {
     /** Queries to watch */
     queries: string[];
 
@@ -189,7 +207,7 @@ namespace ExtensionProperties {
     loader: LazyLoader<PrometheusActivityProps>;
   }
 
-  export interface ProjectDashboardInventoryItem extends DashboardsExtensionProperties {
+  export interface ProjectDashboardInventoryItem {
     /** The K8s model which will be scoped to project, fetched and passed to `mapper` function. */
     model: K8sKind;
 
@@ -223,6 +241,17 @@ export const isDashboardsOverviewHealthPrometheusSubsystem = (
 ): e is DashboardsOverviewHealthPrometheusSubsystem =>
   e.type === 'Dashboards/Overview/Health/Prometheus';
 
+export interface DashboardsOverviewHealthResourceSubsystem<
+  R extends ResourcesObject = ResourcesObject
+> extends Extension<ExtensionProperties.DashboardsOverviewHealthResourceSubsystem<R>> {
+  type: 'Dashboards/Overview/Health/Resource';
+}
+
+export const isDashboardsOverviewHealthResourceSubsystem = (
+  e: Extension,
+): e is DashboardsOverviewHealthResourceSubsystem =>
+  e.type === 'Dashboards/Overview/Health/Resource';
+
 export interface DashboardsOverviewHealthOperator<R extends K8sResourceCommon = K8sResourceCommon>
   extends Extension<ExtensionProperties.DashboardsOverviewHealthOperator<R>> {
   type: 'Dashboards/Overview/Health/Operator';
@@ -235,6 +264,7 @@ export const isDashboardsOverviewHealthOperator = (
 export type DashboardsOverviewHealthSubsystem =
   | DashboardsOverviewHealthURLSubsystem
   | DashboardsOverviewHealthPrometheusSubsystem
+  | DashboardsOverviewHealthResourceSubsystem
   | DashboardsOverviewHealthOperator;
 
 export const isDashboardsOverviewHealthSubsystem = (
@@ -242,6 +272,7 @@ export const isDashboardsOverviewHealthSubsystem = (
 ): e is DashboardsOverviewHealthSubsystem =>
   isDashboardsOverviewHealthURLSubsystem(e) ||
   isDashboardsOverviewHealthPrometheusSubsystem(e) ||
+  isDashboardsOverviewHealthResourceSubsystem(e) ||
   isDashboardsOverviewHealthOperator(e);
 
 export interface DashboardsTab extends Extension<ExtensionProperties.DashboardsTab> {
@@ -344,6 +375,10 @@ export type PrometheusHealthHandler = (
   responses: PrometheusResponse[],
   errors: any[],
   additionalResource?: FirehoseResult<K8sResourceKind | K8sResourceKind[]>,
+) => SubsystemHealth;
+
+export type ResourceHealthHandler<R extends ResourcesObject> = (
+  resourcesResult: WatchK8sResults<R>,
 ) => SubsystemHealth;
 
 export type OperatorHealthHandler = (resources: FirehoseResourcesResult) => OperatorHealth;

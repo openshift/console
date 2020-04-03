@@ -15,6 +15,7 @@ import {
   TableRow,
   TableData,
   MultiListPage,
+  RowFunctionArgs,
 } from '@console/internal/components/factory';
 import { withFallback } from '@console/shared/src/components/error/error-boundary';
 import {
@@ -136,7 +137,7 @@ const editSubscription = (sub: SubscriptionKind): KebabOption =>
       }
     : null;
 
-const uninstall = (sub: SubscriptionKind, displayName?: string): KebabOption =>
+const uninstall = (sub: SubscriptionKind, csv?: ClusterServiceVersionKind): KebabOption =>
   !_.isNil(sub)
     ? {
         label: 'Uninstall Operator',
@@ -146,7 +147,7 @@ const uninstall = (sub: SubscriptionKind, displayName?: string): KebabOption =>
             k8sGet,
             k8sPatch,
             subscription: sub,
-            displayName,
+            csv,
           }),
         accessReview: {
           group: SubscriptionModel.apiGroup,
@@ -167,7 +168,7 @@ const menuActionsForCSV = (
     : [
         Kebab.factory.Edit,
         () => editSubscription(subscription),
-        () => uninstall(subscription, _.get(csv, 'spec.displayName')),
+        () => uninstall(subscription, csv),
       ];
 };
 
@@ -207,7 +208,7 @@ const ClusterServiceVersionStatus: React.FC<ClusterServiceVersionStatusProps> = 
 };
 
 export const ClusterServiceVersionTableRow = withFallback<ClusterServiceVersionTableRowProps>(
-  ({ obj, key, subscription, catalogSourceMissing, index, style }) => {
+  ({ obj, rowKey, subscription, catalogSourceMissing, index, style }) => {
     const { displayName, provider, version } = _.get(obj, 'spec');
     const [icon] = _.get(obj, 'spec.icon', []);
     const deploymentName = _.get(obj, 'spec.install.spec.deployments[0].name');
@@ -216,7 +217,7 @@ export const ClusterServiceVersionTableRow = withFallback<ClusterServiceVersionT
     const uid = getUID(obj);
     const internalObjects = getInternalObjects(obj);
     return (
-      <TableRow id={uid} trKey={key} index={index} style={style}>
+      <TableRow id={uid} trKey={rowKey} index={index} style={style}>
         {/* Name */}
         <TableData className={tableColumnClasses[0]}>
           <Link
@@ -297,13 +298,13 @@ export const ClusterServiceVersionTableRow = withFallback<ClusterServiceVersionT
 
 const SubscriptionTableRow: React.FC<SubscriptionTableRowProps> = ({
   catalogSourceMissing,
-  key,
+  rowKey,
   obj,
   index,
   style,
 }) => {
   const csvName = _.get(obj, 'spec.name');
-  const menuActions = [Kebab.factory.Edit, () => uninstall(obj, obj.spec.displayName)];
+  const menuActions = [Kebab.factory.Edit, () => uninstall(obj)];
   const namespace = getNamespace(obj);
   const route = resourceObjPath(obj, referenceForModel(SubscriptionModel));
   const subscriptionState = _.get(obj, 'status.state', 'Unknown');
@@ -325,7 +326,7 @@ const SubscriptionTableRow: React.FC<SubscriptionTableRowProps> = ({
   };
 
   return (
-    <TableRow id={uid} trKey={key} index={index} style={style}>
+    <TableRow id={uid} trKey={rowKey} index={index} style={style}>
       {/* Name */}
       <TableData className={tableColumnClasses[0]}>
         <Link to={route}>
@@ -365,8 +366,8 @@ const SubscriptionTableRow: React.FC<SubscriptionTableRowProps> = ({
 };
 
 const InstalledOperatorTableRow: React.FC<InstalledOperatorTableRowProps> = ({
-  catalogSources = [],
   obj,
+  catalogSources = [],
   subscriptions = [],
   ...rest
 }) => {
@@ -426,9 +427,12 @@ export const ClusterServiceVersionList: React.SFC<ClusterServiceVersionListProps
       {...rest}
       aria-label="Installed Operators"
       Header={ClusterServiceVersionTableHeader}
-      Row={(rowProps) => (
+      Row={(rowArgs: RowFunctionArgs<ClusterServiceVersionKind | SubscriptionKind>) => (
         <InstalledOperatorTableRow
-          {...rowProps}
+          obj={rowArgs.obj}
+          index={rowArgs.index}
+          rowKey={rowArgs.key}
+          style={rowArgs.style}
           catalogSources={catalogSources.data}
           subscriptions={subscriptions.data}
         />
@@ -575,26 +579,20 @@ const crdCardRowStateToProps = ({ k8s }, { crdDescs }) => {
 
 export const CRDCardRow = connect(crdCardRowStateToProps)((props: CRDCardRowProps) => {
   const internalObjects = getInternalObjects(props.csv);
+  const crds = props.crdDescs?.filter(({ name }) => !isInternalObject(internalObjects, name));
   return (
     <div className="co-crd-card-row">
-      {_.isEmpty(props.crdDescs) ? (
+      {_.isEmpty(crds) ? (
         <span className="text-muted">No Kubernetes APIs are being provided by this Operator.</span>
       ) : (
-        props.crdDescs.reduce(
-          (acc, desc) =>
-            !isInternalObject(internalObjects, desc.name)
-              ? [
-                  ...acc,
-                  <CRDCard
-                    key={referenceForProvidedAPI(desc)}
-                    crd={desc}
-                    csv={props.csv}
-                    canCreate={props.createable.includes(referenceForProvidedAPI(desc))}
-                  />,
-                ]
-              : acc,
-          [],
-        )
+        crds.map((crd) => (
+          <CRDCard
+            key={referenceForProvidedAPI(crd)}
+            crd={crd}
+            csv={props.csv}
+            canCreate={props.createable.includes(referenceForProvidedAPI(crd))}
+          />
+        ))
       )}
     </div>
   );
@@ -821,7 +819,7 @@ export const ClusterServiceVersionsDetailsPage: React.FC<ClusterServiceVersionsD
       Kebab.factory.Edit(model, obj),
       ...(_.isEmpty(subscription)
         ? [Kebab.factory.Delete(model, obj)]
-        : [editSubscription(subscription), uninstall(subscription)]),
+        : [editSubscription(subscription), uninstall(subscription, obj)]),
     ];
   };
 
@@ -923,29 +921,29 @@ export type ClusterServiceVersionDetailsProps = {
 };
 
 type InstalledOperatorTableRowProps = {
-  catalogSources: CatalogSourceKind[];
-  index: number;
-  key?: string;
   obj: ClusterServiceVersionKind | SubscriptionKind;
+  index: number;
+  rowKey: string;
   style: object;
+  catalogSources: CatalogSourceKind[];
   subscriptions: SubscriptionKind[];
 };
 
 export type ClusterServiceVersionTableRowProps = {
-  catalogSourceMissing: boolean;
-  index: number;
-  key?: string;
   obj: ClusterServiceVersionKind;
+  index: number;
+  rowKey: string;
   style: object;
+  catalogSourceMissing: boolean;
   subscription: SubscriptionKind;
 };
 
 type SubscriptionTableRowProps = {
-  catalogSourceMissing: boolean;
-  index: number;
-  key?: string;
   obj: SubscriptionKind;
+  index: number;
+  rowKey: string;
   style: object;
+  catalogSourceMissing: boolean;
 };
 
 export type CSVSubscriptionProps = {

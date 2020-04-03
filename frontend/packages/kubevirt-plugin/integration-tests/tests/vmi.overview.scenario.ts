@@ -8,6 +8,7 @@ import { exposeServices } from './utils/utils';
 import { VirtualMachine } from './models/virtualMachine';
 import { TAB, VM_STATUS, NOT_AVAILABLE } from './utils/consts';
 import { NodePortService } from './utils/types';
+import { vmiDetailFlavor } from '../views/virtualMachineInstance.view';
 
 describe('Test VMI Details', () => {
   const vmiName = `vmi-${testName}`;
@@ -69,7 +70,7 @@ describe('Test VMI Details', () => {
       os: await vmView.vmDetailOS(testName, vmiName).getText(),
       profile: await vmView.vmDetailWorkloadProfile(testName, vmiName).getText(),
       bootOrderTexts: await vmView.vmDetailBootOrder(testName, vmiName).getText(),
-      flavorText: await vmView.vmDetailFlavor(testName, vmiName).getText(),
+      flavorText: await vmiDetailFlavor(testName, vmiName).getText(),
     };
 
     const equal = _.isEqual(found, expectation);

@@ -17,7 +17,6 @@ import {
   DashboardsOverviewResourceActivity,
 } from '@console/plugin-sdk';
 import { DashboardsStorageCapacityDropdownItem } from '@console/ceph-storage-plugin';
-import { FLAGS } from '@console/shared/src/constants';
 import { TemplateModel, PodModel } from '@console/internal/models';
 import { getName } from '@console/shared/src/selectors/common';
 import * as models from './models';
@@ -68,40 +67,13 @@ const plugin: Plugin<ConsumedExtensions> = [
     properties: {
       section: 'Workloads',
       componentProps: {
-        name: 'Virtual Machines',
-        resource: models.VirtualMachineModel.plural,
+        name: 'Virtualization',
+        resource: 'virtualization',
       },
       mergeBefore: 'Deployments',
     },
     flags: {
       required: [FLAG_KUBEVIRT],
-    },
-  },
-  {
-    // NOTE(yaacov): vmtemplates is a template resource with a selector.
-    // 'NavItem/ResourceNS' is used, and not 'NavItem/Href', because it injects
-    // the namespace needed to get the correct link to a resource ( template with selector ) in our case.
-    type: 'NavItem/ResourceNS',
-    properties: {
-      section: 'Workloads',
-      componentProps: {
-        name: 'Virtual Machine Templates',
-        resource: 'vmtemplates',
-      },
-      mergeBefore: 'Deployments',
-    },
-    flags: {
-      required: [FLAG_KUBEVIRT, FLAGS.OPENSHIFT],
-    },
-  },
-  {
-    type: 'Page/Resource/List',
-    properties: {
-      model: models.VirtualMachineModel,
-      loader: () =>
-        import('./components/vms/vm' /* webpackChunkName: "kubevirt" */).then(
-          (m) => m.VirtualMachinesPage,
-        ),
     },
   },
   {
@@ -123,7 +95,7 @@ const plugin: Plugin<ConsumedExtensions> = [
     type: 'Page/Route',
     properties: {
       exact: true,
-      path: ['/k8s/ns/:ns/virtualmachines/~new'],
+      path: ['/k8s/ns/:ns/virtualization/~new'],
       loader: () =>
         import('./components/vms/vm-create-yaml' /* webpackChunkName: "kubevirt" */).then(
           (m) => m.VMCreateYAML,
@@ -135,7 +107,7 @@ const plugin: Plugin<ConsumedExtensions> = [
     type: 'Page/Route',
     properties: {
       exact: true,
-      path: ['/k8s/ns/:ns/virtualmachines/~new-wizard'],
+      path: ['/k8s/ns/:ns/virtualization/~new-wizard'],
       loader: () =>
         import(
           './components/create-vm-wizard' /* webpackChunkName: "kubevirt-create-vm-wizard" */
@@ -166,24 +138,11 @@ const plugin: Plugin<ConsumedExtensions> = [
   {
     type: 'Page/Route',
     properties: {
-      exact: true,
-      path: ['/k8s/ns/:ns/vmtemplates/~new'],
+      path: ['/k8s/ns/:ns/virtualization', '/k8s/all-namespaces/virtualization'],
       loader: () =>
-        import(
-          './components/vm-templates/vm-template-create-yaml' /* webpackChunkName: "kubevirt" */
-        ).then((m) => m.CreateVMTemplateYAML),
-      required: FLAG_KUBEVIRT,
-    },
-  },
-  {
-    type: 'Page/Route',
-    properties: {
-      exact: true,
-      path: ['/k8s/ns/:ns/vmtemplates/~new-wizard'],
-      loader: () =>
-        import(
-          './components/create-vm-wizard' /* webpackChunkName: "kubevirt-create-vm-wizard" */
-        ).then((m) => m.CreateVMWizardPage),
+        import('./components/vms/virtualization' /* webpackChunkName: "kubevirt" */).then(
+          (m) => m.VirtualizationPage,
+        ),
       required: FLAG_KUBEVIRT,
     },
   },
@@ -216,33 +175,34 @@ const plugin: Plugin<ConsumedExtensions> = [
       title: 'Virtualization',
       url: `apis/subresources.${models.VirtualMachineModel.apiGroup}/${models.VirtualMachineModel.apiVersion}/healthz`,
       healthHandler: getKubevirtHealthState,
-      required: FLAG_KUBEVIRT,
+    },
+    flags: {
+      required: [FLAG_KUBEVIRT],
     },
   },
   {
     type: 'Dashboards/Overview/Inventory/Item',
     properties: {
-      additionalResources: [
-        {
+      additionalResources: {
+        vmis: {
           isList: true,
           kind: models.VirtualMachineInstanceModel.kind,
-          prop: 'vmis',
         },
-        {
+        pods: {
           isList: true,
           kind: PodModel.kind,
-          prop: 'pods',
         },
-        {
+        migrations: {
           isList: true,
           kind: models.VirtualMachineInstanceMigrationModel.kind,
-          prop: 'migrations',
         },
-      ],
+      },
       model: models.VirtualMachineModel,
       mapper: getVMStatusGroups,
       useAbbr: true,
-      required: FLAG_KUBEVIRT,
+    },
+    flags: {
+      required: [FLAG_KUBEVIRT],
     },
   },
   {
@@ -250,7 +210,9 @@ const plugin: Plugin<ConsumedExtensions> = [
     properties: {
       id: 'vm-off',
       icon: <VMOffGroupIcon />,
-      required: FLAG_KUBEVIRT,
+    },
+    flags: {
+      required: [FLAG_KUBEVIRT],
     },
   },
   {
@@ -295,7 +257,9 @@ const plugin: Plugin<ConsumedExtensions> = [
       model: models.VirtualMachineModel,
       mapper: getVMStatusGroups,
       useAbbr: true,
-      required: FLAG_KUBEVIRT,
+    },
+    flags: {
+      required: [FLAG_KUBEVIRT],
     },
   },
   {
@@ -306,13 +270,17 @@ const plugin: Plugin<ConsumedExtensions> = [
         kind: models.DataVolumeModel.kind,
         prop: 'dvs',
       },
-      isActivity: (resource) => _.get(resource, 'status.phase') === 'ImportInProgress',
+      isActivity: (resource) =>
+        resource?.status?.phase === 'ImportInProgress' &&
+        !!resource?.metadata?.ownerReferences?.[0],
       getTimestamp: (resource) => new Date(resource.metadata.creationTimestamp),
       loader: () =>
         import(
           './components/dashboards-page/overview-dashboard/activity' /* webpackChunkName: "kubevirt-activity" */
         ).then((m) => m.DiskImportActivity),
-      required: FLAG_KUBEVIRT,
+    },
+    flags: {
+      required: [FLAG_KUBEVIRT],
     },
   },
   {
@@ -329,7 +297,9 @@ const plugin: Plugin<ConsumedExtensions> = [
         import(
           './components/dashboards-page/overview-dashboard/activity' /* webpackChunkName: "kubevirt-activity" */
         ).then((m) => m.V2VImportActivity),
-      required: FLAG_KUBEVIRT,
+    },
+    flags: {
+      required: [FLAG_KUBEVIRT],
     },
   },
 ];

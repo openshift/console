@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as cx from 'classnames';
 import * as _ from 'lodash';
-import { TableRow, TableData } from '@console/internal/components/factory';
+import { TableRow, TableData, RowFunction } from '@console/internal/components/factory';
 import { Kebab, ResourceLink, ResourceKebab, Timestamp } from '@console/internal/components/utils';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { RevisionModel, ServiceModel } from '../../models';
@@ -12,14 +12,7 @@ import { tableColumnClasses } from './revision-table';
 const revisionReference = referenceForModel(RevisionModel);
 const serviceReference = referenceForModel(ServiceModel);
 
-export interface RevisionRowProps {
-  obj: RevisionKind;
-  index: number;
-  key?: string;
-  style: object;
-}
-
-const RevisionRow: React.FC<RevisionRowProps> = ({ obj, index, key, style }) => {
+const RevisionRow: RowFunction<RevisionKind> = ({ obj, index, key, style }) => {
   const readyCondition = obj.status
     ? getCondition(obj.status.conditions, ConditionTypes.Ready)
     : null;

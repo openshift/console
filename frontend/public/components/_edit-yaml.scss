@@ -1,7 +1,10 @@
 .yaml-editor {
   position: relative;
+  display: flex;
+  height: 100%;
+  flex: 1;
+  flex-direction: column;
   @media (min-width: $grid-float-breakpoint) {
-    // changing these values requires changes to the editorHeight() and width() calculations in edit-yaml.jsx
     margin-left: $grid-gutter-width;
     margin-right: $grid-gutter-width;
     padding-top: $grid-gutter-width;

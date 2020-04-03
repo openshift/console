@@ -43,3 +43,7 @@ export type ImageManifestVuln = {
   spec: ImageManifestVulnSpec;
   status: ImageManifestVulnStatus;
 } & K8sResourceCommon;
+
+export type WatchImageVuln = {
+  imageManifestVuln: ImageManifestVuln[];
+};

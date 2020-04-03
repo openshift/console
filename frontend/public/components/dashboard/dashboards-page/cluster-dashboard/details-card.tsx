@@ -1,5 +1,4 @@
 import * as React from 'react';
-import * as _ from 'lodash-es';
 import { connect } from 'react-redux';
 import { Button } from '@patternfly/react-core';
 import { ArrowCircleUpIcon, InProgressIcon } from '@patternfly/react-icons';
@@ -28,11 +27,12 @@ import {
   K8sResourceKind,
 } from '../../../../module/k8s';
 import { flagPending, featureReducerName } from '../../../../reducers/features';
-import { FirehoseResource, ExternalLink } from '../../../utils';
+import { ExternalLink } from '../../../utils';
 import { RootState } from '../../../../redux';
 import { clusterUpdateModal } from '../../../modals';
 import { Link } from 'react-router-dom';
 import { useK8sGet } from '../../../utils/k8s-get-hook';
+import { useK8sWatchResource, WatchK8sResource } from '../../../utils/k8s-watch-hook';
 
 const ClusterVersion: React.FC<ClusterVersionProps> = ({ cv }) => {
   const desiredVersion = getDesiredClusterVersion(cv);
@@ -78,12 +78,11 @@ const ClusterVersion: React.FC<ClusterVersionProps> = ({ cv }) => {
   }
 };
 
-const clusterVersionResource: FirehoseResource = {
+const clusterVersionResource: WatchK8sResource = {
   kind: referenceForModel(ClusterVersionModel),
   namespaced: false,
   name: 'version',
   isList: false,
-  prop: 'cv',
 };
 
 const mapStateToProps = (state: RootState) => ({
@@ -91,7 +90,7 @@ const mapStateToProps = (state: RootState) => ({
 });
 
 export const DetailsCard_ = connect(mapStateToProps)(
-  ({ watchK8sResource, stopWatchK8sResource, resources, openshiftFlag }: DetailsCardProps) => {
+  ({ watchK8sResource, stopWatchK8sResource, openshiftFlag }: DetailsCardProps) => {
     const [k8sVersion, setK8sVersion] = React.useState<Response>();
     const [k8sVersionError, setK8sVersionError] = React.useState();
 
@@ -99,15 +98,13 @@ export const DetailsCard_ = connect(mapStateToProps)(
       InfrastructureModel,
       'cluster',
     );
+
+    const [clusterVersionData, clusterVersionLoaded, clusterVersionError] = useK8sWatchResource<
+      ClusterVersionKind
+    >(clusterVersionResource);
     React.useEffect(() => {
       if (flagPending(openshiftFlag)) {
         return;
-      }
-      if (openshiftFlag) {
-        watchK8sResource(clusterVersionResource);
-        return () => {
-          stopWatchK8sResource(clusterVersionResource);
-        };
       }
       const fetchK8sVersion = async () => {
         try {
@@ -120,9 +117,6 @@ export const DetailsCard_ = connect(mapStateToProps)(
       fetchK8sVersion();
     }, [openshiftFlag, watchK8sResource, stopWatchK8sResource]);
 
-    const clusterVersionLoaded = _.get(resources.cv, 'loaded', false);
-    const clusterVersionError = _.get(resources.cv, 'loadError');
-    const clusterVersionData = _.get(resources.cv, 'data') as ClusterVersionKind;
     const clusterId = getClusterID(clusterVersionData);
     const openShiftVersion = getOpenShiftVersion(clusterVersionData);
     const cvChannel = getClusterVersionChannel(clusterVersionData);

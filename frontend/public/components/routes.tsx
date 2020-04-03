@@ -6,7 +6,7 @@ import { sortable } from '@patternfly/react-table';
 import { EyeIcon, EyeSlashIcon, QuestionCircleIcon } from '@patternfly/react-icons';
 
 import { Status } from '@console/shared';
-import { DetailsPage, ListPage, Table, TableRow, TableData } from './factory';
+import { DetailsPage, ListPage, Table, TableRow, TableData, RowFunction } from './factory';
 import {
   CopyToClipboard,
   DetailsItem,
@@ -188,7 +188,7 @@ const RouteTableHeader = () => {
 };
 RouteTableHeader.displayName = 'RouteTableHeader';
 
-const RouteTableRow: React.FC<RouteTableRowProps> = ({ obj: route, index, key, style }) => {
+const RouteTableRow: RowFunction<RouteKind> = ({ obj: route, index, key, style }) => {
   return (
     <TableRow id={route.metadata.uid} index={index} trKey={key} style={style}>
       <TableData className={tableColumnClasses[0]}>
@@ -225,13 +225,6 @@ const RouteTableRow: React.FC<RouteTableRowProps> = ({ obj: route, index, key, s
       </TableData>
     </TableRow>
   );
-};
-RouteTableRow.displayName = 'RouteTableRow';
-type RouteTableRowProps = {
-  obj: RouteKind;
-  index: number;
-  key?: string;
-  style: object;
 };
 
 const TLSSettings: React.FC<TLSSettingsProps> = ({ route }) => {

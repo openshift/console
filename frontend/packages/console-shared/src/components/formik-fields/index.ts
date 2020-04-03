@@ -12,5 +12,6 @@ export { default as ResourceLimitField } from './ResourceLimitField';
 export { default as SwitchField } from './SwitchField';
 export { default as TextAreaField } from './TextAreaField';
 export { default as YAMLEditorField } from './YAMLEditorField';
+export { default as ItemSelectorField } from './item-selector-field/ItemSelectorField';
 export * from './field-utils';
 export * from './field-types';

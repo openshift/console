@@ -6,6 +6,8 @@ import {
   getVMINetworks,
   getVMIVolumes,
   getVMIInterfaces,
+  getVMINodeSelector,
+  getVMITolerations,
 } from '../../../selectors/vmi';
 import { VMILikeMethods } from './types';
 import { transformDevices } from '../../../selectors/vm';
@@ -41,4 +43,8 @@ export class VMIWrapper extends K8sResourceWrapper<VMIKind, VMIWrapper> implemen
   getLabeledDevices = () => transformDevices(this.getDisks(), this.getInterfaces());
 
   isDedicatedCPUPlacement = () => this.data.spec?.domain?.cpu?.dedicatedCpuPlacement || false;
+
+  getNodeSelector = () => getVMINodeSelector(this.data);
+
+  getTolerations = () => getVMITolerations(this.data);
 }

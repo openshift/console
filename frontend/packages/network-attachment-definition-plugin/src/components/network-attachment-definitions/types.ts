@@ -9,13 +9,6 @@ export type NetAttachDefBundle = {
   netAttachDef: any;
 };
 
-export type NetworkAttachmentDefinitionsRowProps = {
-  obj: NetAttachDefBundle;
-  index: number;
-  key?: string;
-  style: object;
-};
-
 export type NetworkAttachmentDefinitionsPageProps = {
   filterLabel: string;
   namespace?: string;

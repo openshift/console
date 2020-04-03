@@ -231,7 +231,6 @@ const RoleBindingsTableRow = ({ obj: binding, index, key, style }) => {
     </TableRow>
   );
 };
-RoleBindingsTableRow.displayName = 'RoleBindingsTableRow';
 
 const EmptyMsg = () => (
   <MsgBox

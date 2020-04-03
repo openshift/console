@@ -13,8 +13,7 @@ const FilterDropdown: React.FC<FilterDropdownProps> = ({ filters, onChange }) =>
 
   const onToggle = (open: boolean): void => setIsOpen(open);
   const onSelect = (e: React.MouseEvent, key: string) => {
-    filters[key] = (e.target as HTMLInputElement).checked;
-    onChange(filters);
+    onChange({ ...filters, [key]: (e.target as HTMLInputElement).checked });
   };
   const showOptions = (
     <SelectGroup label="Show">
@@ -43,7 +42,7 @@ const FilterDropdown: React.FC<FilterDropdownProps> = ({ filters, onChange }) =>
       selections={selected}
       isExpanded={isOpen}
       onSelect={onSelect}
-      placeholderText="Display"
+      placeholderText="Display Options"
       isGrouped
     >
       {showOptions}

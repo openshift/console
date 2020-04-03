@@ -1,12 +1,11 @@
 import * as _ from 'lodash';
 import { ConfigMapKind } from '@console/internal/module/k8s';
-import { PVC_ACCESSMODE_DEFAULT, PVC_VOLUMEMODE_DEFAULT } from '../../constants/pvc';
+import { AccessMode, VolumeMode } from '../../constants/vm/storage';
 
 const getSCConfigMapAttribute = (
   storageClassConfigMap: ConfigMapKind,
   storageClassName: string,
   attributeName: string,
-  defaultValue: string,
 ): string => {
   const hasSubAttribute =
     storageClassName &&
@@ -16,31 +15,36 @@ const getSCConfigMapAttribute = (
     _.get(storageClassConfigMap, [
       'data',
       hasSubAttribute ? `${storageClassName}.${attributeName}` : attributeName,
-    ]) || defaultValue
+    ]) || null
   );
 };
 
 export const getDefaultSCVolumeMode = (
   storageClassConfigMap: ConfigMapKind,
-  storageClassName: string,
-) =>
-  getSCConfigMapAttribute(
+  storageClassName?: string,
+) => {
+  const configMapDefault = getSCConfigMapAttribute(
     storageClassConfigMap,
     storageClassName,
     'volumeMode',
-    PVC_VOLUMEMODE_DEFAULT,
   );
+
+  const volumeMode = configMapDefault ? VolumeMode.fromString(configMapDefault) : null;
+
+  return volumeMode || VolumeMode.FILESYSTEM;
+};
 
 export const getDefaultSCAccessModes = (
   storageClassConfigMap: ConfigMapKind,
-  storageClassName: string,
+  storageClassName?: string,
 ) => {
-  return [
-    getSCConfigMapAttribute(
-      storageClassConfigMap,
-      storageClassName,
-      'accessMode',
-      PVC_ACCESSMODE_DEFAULT,
-    ),
-  ];
+  const configMapDefault = getSCConfigMapAttribute(
+    storageClassConfigMap,
+    storageClassName,
+    'accessMode',
+  );
+
+  const accessMode = configMapDefault ? AccessMode.fromString(configMapDefault) : null;
+
+  return accessMode ? [accessMode] : [AccessMode.READ_WRITE_ONCE];
 };

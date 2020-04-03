@@ -10,6 +10,8 @@ export const rdpPort = manualConnectionValues.last();
 // VM detail view
 export const vmDetailItemId = (namespace, vmName, itemName) =>
   `#${namespace}-${vmName}-${itemName}`;
+export const vmDetailButtonItemId = (namespace, vmName, itemName) =>
+  `#${namespace}-${vmName}-${itemName}-edit`;
 
 export const vmDetailStatus = (namespace, vmName) =>
   $(vmDetailItemId(namespace, vmName, 'vm-statuses'));
@@ -22,7 +24,7 @@ export const vmDetailIP = (namespace, vmName) =>
 export const vmDetailWorkloadProfile = (namespace, vmName) =>
   $(vmDetailItemId(namespace, vmName, 'workload-profile'));
 export const vmDetailTemplate = (namespace, vmName) =>
-  $(`${vmDetailItemId(namespace, vmName, 'template')} > a`);
+  $(`${vmDetailItemId(namespace, vmName, 'template')}`);
 export const vmDetailNamespace = (namespace, vmName) =>
   $(vmDetailItemId(namespace, vmName, 'namespace'));
 export const vmDetailPod = (namespace, vmName) => $(vmDetailItemId(namespace, vmName, 'pod'));
@@ -30,7 +32,8 @@ export const vmDetailNode = (namespace, vmName) => $(vmDetailItemId(namespace, v
 export const vmDetailCd = (namespace, vmName) => $(vmDetailItemId(namespace, vmName, 'cdrom'));
 export const vmDetailCdEditButton = (namespace, vmName) =>
   $(vmDetailItemId(namespace, vmName, 'cdrom-edit'));
-export const vmDetailFlavor = (namespace, vmName) => $(vmDetailItemId(namespace, vmName, 'flavor'));
+export const vmDetailFlavor = (namespace, vmName) =>
+  $(vmDetailButtonItemId(namespace, vmName, 'flavor'));
 export const vmDetailFlavorEditButton = (namespace, vmName) =>
   $(vmDetailItemId(namespace, vmName, 'flavor-edit'));
 export const vmDetailFlavorDropdownId = (namespace, vmName) =>

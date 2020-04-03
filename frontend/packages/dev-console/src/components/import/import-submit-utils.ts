@@ -17,18 +17,14 @@ import {
 import { SecretType } from '@console/internal/components/secrets/create-secret';
 import * as plugins from '@console/internal/plugins';
 import { history } from '@console/internal/components/utils';
+import { getRandomChars } from '@console/shared/src/utils';
 import {
   getAppLabels,
   getPodLabels,
   getAppAnnotations,
   mergeData,
 } from '../../utils/resource-label-utils';
-import {
-  createService,
-  createRoute,
-  dryRunOpt,
-  getRandomChars,
-} from '../../utils/shared-submit-utils';
+import { createService, createRoute, dryRunOpt } from '../../utils/shared-submit-utils';
 import { AppResources } from '../edit-application/edit-application-types';
 import {
   GitImportFormData,

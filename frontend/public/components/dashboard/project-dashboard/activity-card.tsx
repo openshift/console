@@ -15,9 +15,11 @@ import { DashboardItemProps, withDashboardResources } from '../with-dashboard-re
 import { FirehoseResource, FirehoseResult } from '../../utils';
 import { EventModel } from '../../../models';
 import { EventKind, K8sKind } from '../../../module/k8s';
-import { FlagsObject, featureReducerName } from '../../../reducers/features';
-import * as plugins from '../../../plugins';
-import { isDashboardsOverviewResourceActivity } from '@console/plugin-sdk';
+import {
+  useExtensions,
+  DashboardsOverviewResourceActivity,
+  isDashboardsOverviewResourceActivity,
+} from '@console/plugin-sdk';
 import { uniqueResource } from '../dashboards-page/cluster-dashboard/utils';
 import { RootState } from '../../../redux';
 import { ProjectDashboardContext } from './project-dashboard-context';
@@ -45,17 +47,8 @@ const RecentEvent = withDashboardResources(
   },
 );
 
-const getResourceActivities = (flags: FlagsObject, k8sModels: ImmutableMap<string, K8sKind>) =>
-  plugins.registry.getDashboardsOverviewResourceActivities().filter((e) => {
-    const model = k8sModels.get(e.properties.k8sResource.kind);
-    return plugins.registry.isExtensionInUse(e, flags) && model && model.namespaced;
-  });
-
 const mapStateToProps = (state: RootState): OngoingActivityReduxProps => ({
   models: state.k8s.getIn(['RESOURCES', 'models']) as ImmutableMap<string, K8sKind>,
-  flags: plugins.registry
-    .getGatingFlagNames([isDashboardsOverviewResourceActivity])
-    .reduce((allFlags, f) => ({ ...allFlags, [f]: state[featureReducerName].get(f) }), {}),
 });
 
 const OngoingActivity = connect(mapStateToProps)(
@@ -64,13 +57,24 @@ const OngoingActivity = connect(mapStateToProps)(
       watchK8sResource,
       stopWatchK8sResource,
       resources,
-      flags,
       projectName,
       models,
     }: DashboardItemProps & OngoingActivityProps) => {
+      const resourceActivityExtensions = useExtensions<DashboardsOverviewResourceActivity>(
+        isDashboardsOverviewResourceActivity,
+      );
+
+      const resourceActivities = React.useMemo(
+        () =>
+          resourceActivityExtensions.filter((e) => {
+            const model = models.get(e.properties.k8sResource.kind);
+            return model && model.namespaced;
+          }),
+        [resourceActivityExtensions, models],
+      );
+
       React.useEffect(() => {
         if (projectName) {
-          const resourceActivities = getResourceActivities(flags, models);
           resourceActivities.forEach((a, index) => {
             watchK8sResource(
               uniqueResource({ ...a.properties.k8sResource, namespace: projectName }, index),
@@ -82,31 +86,37 @@ const OngoingActivity = connect(mapStateToProps)(
             });
           };
         }
-        // TODO: to be removed: use JSON.stringify(flags) to avoid deep comparison of flags object
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-      }, [watchK8sResource, stopWatchK8sResource, models, JSON.stringify(flags)]);
+      }, [watchK8sResource, stopWatchK8sResource, projectName, resourceActivities]);
 
-      const resourceActivities = getResourceActivities(flags, models);
-      const allResourceActivities = _.flatten(
-        resourceActivities.map((a, index) => {
-          const k8sResources = _.get(
-            resources,
-            [uniqueResource(a.properties.k8sResource, index).prop, 'data'],
-            [],
-          ) as FirehoseResult['data'];
-          return k8sResources
-            .filter((r) => (a.properties.isActivity ? a.properties.isActivity(r) : true))
-            .map((r) => ({
-              resource: r,
-              timestamp: a.properties.getTimestamp ? a.properties.getTimestamp(r) : null,
-              loader: a.properties.loader,
-            }));
-        }),
+      const allResourceActivities = React.useMemo(
+        () =>
+          _.flatten(
+            resourceActivities.map((a, index) => {
+              const k8sResources = _.get(
+                resources,
+                [uniqueResource(a.properties.k8sResource, index).prop, 'data'],
+                [],
+              ) as FirehoseResult['data'];
+              return k8sResources
+                .filter((r) => (a.properties.isActivity ? a.properties.isActivity(r) : true))
+                .map((r) => ({
+                  resource: r,
+                  timestamp: a.properties.getTimestamp ? a.properties.getTimestamp(r) : null,
+                  loader: a.properties.loader,
+                }));
+            }),
+          ),
+        [resourceActivities, resources],
       );
 
-      const resourcesLoaded = resourceActivities.every((a, index) =>
-        _.get(resources, [uniqueResource(a.properties.k8sResource, index).prop, 'loaded']),
+      const resourcesLoaded = React.useMemo(
+        () =>
+          resourceActivities.every((a, index) =>
+            _.get(resources, [uniqueResource(a.properties.k8sResource, index).prop, 'loaded']),
+          ),
+        [resourceActivities, resources],
       );
+
       return (
         <OngoingActivityBody
           loaded={projectName && resourcesLoaded && models.size !== 0}
@@ -141,7 +151,6 @@ type RecentEventProps = DashboardItemProps & {
 };
 
 type OngoingActivityReduxProps = {
-  flags: FlagsObject;
   models: ImmutableMap<string, K8sKind>;
 };
 

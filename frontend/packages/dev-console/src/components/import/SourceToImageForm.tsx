@@ -1,8 +1,8 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import { FormikProps, FormikValues } from 'formik';
-import { ButtonBar } from '@console/internal/components/utils';
-import { Form, ActionGroup, ButtonVariant, Button } from '@patternfly/react-core';
+import { FormFooter } from '@console/shared/src/components/form-utils';
+import { Form } from '@patternfly/react-core';
 import { SourceToImageFormProps } from './import-types';
 import GitSection from './git/GitSection';
 import BuilderSection from './builder/BuilderSection';
@@ -29,23 +29,18 @@ const SourceToImageForm: React.FC<FormikProps<FormikValues> & SourceToImageFormP
       project={values.project}
       noProjectsAvailable={projects.loaded && _.isEmpty(projects.data)}
     />
-    <PipelineSection />
     <ResourceSection />
+    <PipelineSection builderImages={builderImages} />
     <AdvancedSection values={values} />
-    <ButtonBar errorMessage={status && status.submitError} inProgress={isSubmitting}>
-      <ActionGroup className="pf-c-form">
-        <Button
-          type="submit"
-          variant={ButtonVariant.primary}
-          isDisabled={!dirty || !_.isEmpty(errors)}
-        >
-          Create
-        </Button>
-        <Button type="button" variant={ButtonVariant.secondary} onClick={handleReset}>
-          Cancel
-        </Button>
-      </ActionGroup>
-    </ButtonBar>
+    <FormFooter
+      handleReset={handleReset}
+      errorMessage={status && status.submitError}
+      isSubmitting={isSubmitting}
+      submitLabel="Create"
+      disableSubmit={!dirty || !_.isEmpty(errors)}
+      resetLabel="Cancel"
+      sticky
+    />
   </Form>
 );
 

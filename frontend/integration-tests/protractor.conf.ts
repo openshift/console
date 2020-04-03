@@ -1,6 +1,5 @@
 import { browser, $ } from 'protractor';
 import { execSync } from 'child_process';
-import { promise as webdriverpromise } from 'selenium-webdriver';
 import * as HtmlScreenshotReporter from 'protractor-jasmine2-screenshot-reporter';
 import * as _ from 'lodash';
 import { TapReporter, JUnitXmlReporter } from 'jasmine-reporters';
@@ -17,6 +16,9 @@ import {
 const tap = !!process.env.TAP;
 
 export const BROWSER_TIMEOUT = 15000;
+export const JASMSPEC_TIMEOUT = process.env.JASMINE_TIMEOUT
+  ? Number(process.env.JASMINE_TIMEOUT)
+  : 120000;
 export const appHost = `${process.env.BRIDGE_BASE_ADDRESS || 'http://localhost:9000'}${(
   process.env.BRIDGE_BASE_PATH || '/'
 ).replace(/\/$/, '')}`;
@@ -149,7 +151,7 @@ export const config = {
   skipSourceMapSupport: true,
   jasmineNodeOpts: {
     print: () => null,
-    defaultTimeoutInterval: 1000000,
+    defaultTimeoutInterval: JASMSPEC_TIMEOUT,
   },
   logLevel: tap ? 'ERROR' : 'INFO',
   plugins: process.env.NO_FAILFAST ? [] : [failFast.init()],
@@ -179,6 +181,18 @@ export const config = {
         // eslint-disable-next-line camelcase
         password_manager_enabled: false,
       },
+    },
+    'moz:firefoxOptions': {
+      binary: process.env.FIREFOX_BINARY_PATH,
+      args: [
+        ...(process.env.NO_HEADLESS ? [] : ['--headless']),
+        '--safe-mode',
+        '--width=1920',
+        '--height=1200',
+        '--MOZ_LOG=timestamp,nsHttp:0,sync',
+        `--MOZ_LOG_FILE=${screenshotsDir}/browser`,
+      ],
+      log: { level: 'trace' },
     },
   },
   beforeLaunch: () => new Promise((resolve) => htmlReporter.beforeLaunch(resolve)),
@@ -231,7 +245,10 @@ export const config = {
   },
 };
 
-export const checkLogs = async () =>
+export const checkLogs = async () => {
+  if (config.capabilities.browserName !== 'chrome') {
+    return;
+  }
   (
     await browser
       .manage()
@@ -241,6 +258,7 @@ export const checkLogs = async () =>
     browserLogs.push(log);
     return log;
   });
+};
 
 function hasError() {
   return window.windowError;
@@ -278,11 +296,7 @@ export const create = (obj) => {
 };
 
 // Retry an action to avoid StaleElementReferenceErrors.
-export const retry = async <T>(
-  fn: () => webdriverpromise.Promise<T>,
-  retries = 3,
-  interval = 1000,
-): webdriverpromise.Promise<T> => {
+export const retry = async <T>(fn: () => Promise<T>, retries = 3, interval = 1000): Promise<T> => {
   try {
     return await fn();
   } catch (e) {

@@ -4,17 +4,23 @@ import * as _ from 'lodash-es';
 
 import { MonitoringAction, ActionType } from '../actions/monitoring';
 
+export const enum AlertSeverity {
+  Critical = 'critical',
+  Info = 'info',
+  None = 'none',
+  Warning = 'warning',
+}
+
 export const enum AlertStates {
   Firing = 'firing',
-  Silenced = 'silenced',
   Pending = 'pending',
-  NotFiring = 'not-firing',
+  Silenced = 'silenced',
 }
 
 export const enum SilenceStates {
   Active = 'active',
-  Pending = 'pending',
   Expired = 'expired',
+  Pending = 'pending',
 }
 
 export enum MonitoringRoutes {
@@ -53,14 +59,14 @@ const stateToProps = (desiredURLs: string[], state) => {
 
 export const connectToURLs = (...urls) => connect((state) => stateToProps(urls, state));
 
-export const alertState = (a) => _.get(a, 'state', AlertStates.NotFiring);
-export const silenceState = (s) => _.get(s, 'status.state');
+export const alertState = (a) => a?.state;
+export const silenceState = (s) => s?.status?.state;
+
+export const alertingRuleIsActive = (rule) => (rule.state === 'inactive' ? 'false' : 'true');
 
 // Sort alerts and silences by their state (sort first by the state itself, then by the timestamp relevant to the state)
 export const alertStateOrder = (alert) => [
-  [AlertStates.Firing, AlertStates.Silenced, AlertStates.Pending, AlertStates.NotFiring].indexOf(
-    alertState(alert),
-  ),
+  [AlertStates.Firing, AlertStates.Silenced, AlertStates.Pending].indexOf(alertState(alert)),
   alertState(alert) === AlertStates.Silenced
     ? _.max(_.map(alert.silencedBy, 'endsAt'))
     : _.get(alert, 'activeAt'),

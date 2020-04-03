@@ -1,8 +1,33 @@
 import * as _ from 'lodash';
 import * as React from 'react';
 import * as fuzzy from 'fuzzysearch';
-import { Dropdown, FirehoseResult, LoadingInline } from '@console/internal/components/utils';
-import { K8sResourceKind } from '@console/internal/module/k8s';
+import {
+  Dropdown,
+  FirehoseResult,
+  LoadingInline,
+  ResourceIcon,
+} from '@console/internal/components/utils';
+import {
+  K8sResourceKind,
+  referenceForModel,
+  K8sKind,
+  modelFor,
+  referenceFor,
+} from '@console/internal/module/k8s';
+
+type DropdownItemProps = {
+  model: K8sKind;
+  name: string;
+};
+
+const DropdownItem: React.FC<DropdownItemProps> = ({ model, name }) => (
+  <span className="co-resource-item">
+    <span>
+      <ResourceIcon kind={referenceForModel(model)} />
+    </span>
+    <span className="co-truncate show co-nowrap small">{name}</span>
+  </span>
+);
 
 interface State {
   items: {};
@@ -37,8 +62,10 @@ interface ResourceDropdownProps {
   selectedKey: string;
   autoSelect?: boolean;
   resourceFilter?: (resource: K8sResourceKind) => boolean;
-  onChange?: (key: string, name?: string, isListEmpty?: boolean) => void;
+  onChange?: (key: string, name?: string | object, isListEmpty?: boolean) => void;
   onLoad?: (items: { [key: string]: string }) => void;
+  showBadge?: boolean;
+  autocompleteFilter?: (strText: string, item: object) => boolean;
 }
 
 class ResourceDropdown extends React.Component<ResourceDropdownProps, State> {
@@ -55,7 +82,16 @@ class ResourceDropdown extends React.Component<ResourceDropdownProps, State> {
   }
 
   UNSAFE_componentWillReceiveProps(nextProps: ResourceDropdownProps) {
-    const { loaded, loadError, autoSelect, selectedKey, placeholder, onLoad } = nextProps;
+    const {
+      loaded,
+      loadError,
+      autoSelect,
+      selectedKey,
+      placeholder,
+      onLoad,
+      title,
+      actionItems,
+    } = nextProps;
 
     if (!loaded) {
       this.setState({ title: <LoadingInline /> });
@@ -76,6 +112,12 @@ class ResourceDropdown extends React.Component<ResourceDropdownProps, State> {
     }
 
     const resourceList = this.getDropdownList({ ...this.props, ...nextProps }, true);
+    // set placeholder as title if resourceList is empty no actionItems are there
+    if (loaded && _.isEmpty(resourceList) && !actionItems && placeholder && !title) {
+      this.setState({
+        title: <span className="btn-dropdown__item--placeholder">{placeholder}</span>,
+      });
+    }
     this.setState({ items: resourceList });
     if (nextProps.loaded && onLoad) {
       onLoad(resourceList);
@@ -100,11 +142,12 @@ class ResourceDropdown extends React.Component<ResourceDropdownProps, State> {
       dataSelector,
       transformLabel,
       allSelectorItem,
+      showBadge = false,
     }: ResourceDropdownProps,
     updateSelection: boolean,
   ) => {
     const unsortedList = {};
-    _.each(resources, ({ data }) => {
+    _.each(resources, ({ data, kind }) => {
       _.reduce(
         data,
         (acc, resource) => {
@@ -115,7 +158,16 @@ class ResourceDropdown extends React.Component<ResourceDropdownProps, State> {
             dataValue = _.get(resource, dataSelector);
           }
           if (dataValue) {
-            acc[dataValue] = transformLabel ? transformLabel(resource) : dataValue;
+            if (showBadge) {
+              const model = modelFor(referenceFor(resource)) || (kind && modelFor(kind));
+              acc[dataValue] = model ? (
+                <DropdownItem key={resource.metadata.uid} model={model} name={dataValue} />
+              ) : (
+                dataValue
+              );
+            } else {
+              acc[dataValue] = transformLabel ? transformLabel(resource) : dataValue;
+            }
           }
           return acc;
         },
@@ -180,7 +232,7 @@ class ResourceDropdown extends React.Component<ResourceDropdownProps, State> {
         menuClassName={this.props.menuClassName}
         buttonClassName={this.props.buttonClassName}
         titlePrefix={this.props.titlePrefix}
-        autocompleteFilter={fuzzy}
+        autocompleteFilter={this.props.autocompleteFilter || fuzzy}
         actionItems={this.props.actionItems}
         items={this.state.items}
         onChange={this.onChange}

@@ -11,7 +11,7 @@ import {
 import { getBadgeFromType, RadioButtonField, RadioOption } from '@console/shared';
 import { useAccessReview } from '@console/internal/components/utils';
 import { getActiveNamespace } from '@console/internal/actions/ui';
-import { Resources } from '../import-types';
+import { Resources, ReadableResourcesNames } from '../import-types';
 import FormSection from './FormSection';
 import './ResourceSection.scss';
 
@@ -37,7 +37,7 @@ const ResourceSection: React.FC<ResourceSectionProps> = ({ flags }) => {
   const radioOptions: RadioOption[] = [];
   if (!invalidTypes.includes(Resources.Kubernetes)) {
     radioOptions.push({
-      label: DeploymentModel.label,
+      label: ReadableResourcesNames[Resources.Kubernetes],
       value: Resources.Kubernetes,
       children: createHelpText(
         DeploymentModel,
@@ -47,7 +47,7 @@ const ResourceSection: React.FC<ResourceSectionProps> = ({ flags }) => {
   }
   if (!invalidTypes.includes(Resources.OpenShift)) {
     radioOptions.push({
-      label: DeploymentConfigModel.label,
+      label: ReadableResourcesNames[Resources.OpenShift],
       value: Resources.OpenShift,
       children: createHelpText(
         DeploymentConfigModel,
@@ -71,7 +71,7 @@ const ResourceSection: React.FC<ResourceSectionProps> = ({ flags }) => {
     radioOptions.push({
       label: (
         <div>
-          Knative Service
+          {ReadableResourcesNames[Resources.KnativeService]}
           <span className="odc-resource-section__badge-wrapper">
             <span className="odc-resource-section__inline-badge">
               {getBadgeFromType(KnativeServingModel.badge)}

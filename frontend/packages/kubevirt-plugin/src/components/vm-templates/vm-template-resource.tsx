@@ -1,12 +1,14 @@
 import * as React from 'react';
-import { ResourceSummary } from '@console/internal/components/utils';
+import { ResourceSummary, LabelList } from '@console/internal/components/utils';
 import { TemplateKind } from '@console/internal/module/k8s';
 import { K8sEntityMap } from '@console/shared/src';
 import { getBasicID, prefixedID } from '../../utils';
 import { vmDescriptionModal } from '../modals/vm-description-modal';
 import { BootOrderModal } from '../modals/boot-order-modal';
 import { VMCDRomModal } from '../modals/cdrom-vm-modal/vm-cdrom-modal';
-import { DedicatedResourcesModal } from '../modals/dedicated-resources-modal/dedicated-resources-modal';
+import dedicatedResourcesModal from '../modals/scheduling-modals/dedicated-resources-modal/connected-dedicated-resources-modal';
+import tolerationsModal from '../modals/scheduling-modals/tolerations-modal/connected-tolerations-modal';
+import nodeSelectorModal from '../modals/scheduling-modals/node-selector-modal/connected-node-selector-modal';
 import { getDescription } from '../../selectors/selectors';
 import {
   getCDRoms,
@@ -23,17 +25,18 @@ import { DiskSummary } from '../vm-disks/disk-summary';
 import { asVM, getDevices } from '../../selectors/vm';
 import { BootOrderSummary } from '../boot-order';
 import { V1alpha1DataVolume } from '../../types/vm/disk/V1alpha1DataVolume';
-import {
-  RESOURCE_PINNED,
-  RESOURCE_NOT_PINNED,
-  DEDICATED_RESOURCES,
-} from '../modals/dedicated-resources-modal/consts';
 import { VMTemplateLink } from './vm-template-link';
 import { TemplateSource } from './vm-template-source';
-
-import './_vm-template-resource.scss';
 import { VMWrapper } from '../../k8s/wrapper/vm/vm-wrapper';
 import { getVMTemplateNamespacedName } from '../../selectors/vm-template/selectors';
+import {
+  NODE_SELECTOR_MODAL_TITLE,
+  DEDICATED_RESOURCES_PINNED,
+  DEDICATED_RESOURCES_NOT_PINNED,
+  DEDICATED_RESOURCES_MODAL_TITLE,
+  TOLERATIONS_MODAL_TITLE,
+} from '../modals/scheduling-modals/shared/consts';
+import './_vm-template-resource.scss';
 
 export const VMTemplateResourceSummary: React.FC<VMTemplateResourceSummaryProps> = ({
   template,
@@ -136,10 +139,6 @@ export const VMTemplateSchedulingList: React.FC<VMTemplateResourceSummaryProps> 
   template,
   canUpdateTemplate,
 }) => {
-  const [isDedicatedResourcesModalOpen, setDedicatedResourcesModalOpen] = React.useState<boolean>(
-    false,
-  );
-
   const id = getBasicID(template);
   const vm = asVM(template);
   const vmWrapper = new VMWrapper(vm);
@@ -149,9 +148,41 @@ export const VMTemplateSchedulingList: React.FC<VMTemplateResourceSummaryProps> 
     memory: vmWrapper.getMemory(),
   });
   const isCPUPinned = isDedicatedCPUPlacement(vm);
+  const nodeSelector = vmWrapper?.getNodeSelector();
+  const tolerations = vmWrapper?.getTolerations() || [];
+  const tolerationsLabels = tolerations.reduce((acc, { key, value }) => {
+    acc[key] = value;
+    return acc;
+  }, {});
 
   return (
     <dl className="co-m-pane__details">
+      <VMDetailsItem
+        canEdit={canUpdateTemplate}
+        title={NODE_SELECTOR_MODAL_TITLE}
+        idValue={prefixedID(id, 'node-selector')}
+        editButtonId={prefixedID(id, 'node-selectors-edit')}
+        onEditClick={() => nodeSelectorModal({ vmLikeEntity: template, blocking: true })}
+      >
+        <LabelList kind="Node" labels={nodeSelector} />
+      </VMDetailsItem>
+
+      <VMDetailsItem
+        canEdit={canUpdateTemplate}
+        title={TOLERATIONS_MODAL_TITLE}
+        idValue={prefixedID(id, 'tolerations')}
+        editButtonId={prefixedID(id, 'tolerations-edit')}
+        onEditClick={() =>
+          tolerationsModal({
+            vmLikeEntity: template,
+            blocking: true,
+            modalClassName: 'modal-lg',
+          })
+        }
+      >
+        <LabelList kind="Node" labels={tolerationsLabels} />
+      </VMDetailsItem>
+
       <VMDetailsItem
         title="Flavor"
         idValue={prefixedID(id, 'flavor')}
@@ -164,18 +195,18 @@ export const VMTemplateSchedulingList: React.FC<VMTemplateResourceSummaryProps> 
       </VMDetailsItem>
 
       <VMDetailsItem
-        title={DEDICATED_RESOURCES}
+        title={DEDICATED_RESOURCES_MODAL_TITLE}
         idValue={prefixedID(id, 'dedicated-resources')}
-        canEdit
-        onEditClick={() => setDedicatedResourcesModalOpen(true)}
+        canEdit={canUpdateTemplate}
+        onEditClick={() =>
+          dedicatedResourcesModal({
+            vmLikeEntity: template,
+            blocking: true,
+          })
+        }
         editButtonId={prefixedID(id, 'dedicated-resources-edit')}
       >
-        <DedicatedResourcesModal
-          vmLikeEntity={template}
-          isOpen={isDedicatedResourcesModalOpen}
-          setOpen={setDedicatedResourcesModalOpen}
-        />
-        {isCPUPinned ? RESOURCE_PINNED : RESOURCE_NOT_PINNED}
+        {isCPUPinned ? DEDICATED_RESOURCES_PINNED : DEDICATED_RESOURCES_NOT_PINNED}
       </VMDetailsItem>
     </dl>
   );

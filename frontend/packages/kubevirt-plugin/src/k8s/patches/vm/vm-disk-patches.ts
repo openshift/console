@@ -1,5 +1,5 @@
 import { getName } from '@console/shared/src';
-import { Patch, k8sGet } from '@console/internal/module/k8s';
+import { Patch } from '@console/internal/module/k8s';
 import { PatchBuilder } from '@console/shared/src/k8s';
 import {
   getDataVolumeTemplates,
@@ -15,12 +15,6 @@ import { DiskWrapper } from '../../wrapper/vm/disk-wrapper';
 import { V1Disk } from '../../../types/vm/disk/V1Disk';
 import { V1Volume } from '../../../types/vm/disk/V1Volume';
 import { V1alpha1DataVolume } from '../../../types/vm/disk/V1alpha1DataVolume';
-import { getStorageClassConfigMap } from '../../requests/config-map/storage-class';
-import { DataVolumeWrapper } from '../../wrapper/vm/data-volume-wrapper';
-import {
-  getDefaultSCAccessModes,
-  getDefaultSCVolumeMode,
-} from '../../../selectors/config-map/sc-defaults';
 import { getShiftBootOrderPatches } from './utils';
 
 export const getRemoveDiskPatches = (vmLikeEntity: VMLikeEntityKind, disk): Patch[] => {
@@ -72,7 +66,7 @@ export const getRemoveDiskPatches = (vmLikeEntity: VMLikeEntityKind, disk): Patc
   });
 };
 
-export const getUpdateDiskPatches = async (
+export const getUpdateDiskPatches = (
   vmLikeEntity: VMLikeEntityKind,
   {
     disk,
@@ -89,21 +83,8 @@ export const getUpdateDiskPatches = async (
     oldVolumeName: string;
     oldDataVolumeName: string;
   },
-): Promise<Patch[]> => {
-  let finalDataVolume;
-  if (dataVolume) {
-    const dataVolumeWrapper = new DataVolumeWrapper(dataVolume, true);
-    const storageClassConfigMap = await getStorageClassConfigMap({ k8sGet });
-    const storageClassName = dataVolumeWrapper.getStorageClassName();
-
-    finalDataVolume = dataVolumeWrapper
-      .assertDefaultModes(
-        getDefaultSCVolumeMode(storageClassConfigMap, storageClassName),
-        getDefaultSCAccessModes(storageClassConfigMap, storageClassName),
-      )
-      .asResource();
-  }
-  return getVMLikePatches(vmLikeEntity, (vm) => {
+): Patch[] =>
+  getVMLikePatches(vmLikeEntity, (vm) => {
     const disks = getDisks(vm, null);
     const volumes = getVolumes(vm, null);
     const dataVolumeTemplates = getDataVolumeTemplates(vm, null);
@@ -115,14 +96,13 @@ export const getUpdateDiskPatches = async (
       new PatchBuilder('/spec/template/spec/volumes')
         .setListUpdate(volume, volumes, (other) => getSimpleName(other) === oldVolumeName)
         .build(),
-      finalDataVolume &&
+      dataVolume &&
         new PatchBuilder('/spec/dataVolumeTemplates')
           .setListUpdate(
-            finalDataVolume,
+            dataVolume,
             dataVolumeTemplates,
             (other) => getName(other) === oldDataVolumeName,
           )
           .build(),
     ].filter((patch) => patch);
   });
-};

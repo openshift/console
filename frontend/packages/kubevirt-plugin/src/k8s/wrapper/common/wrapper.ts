@@ -47,4 +47,6 @@ export abstract class Wrapper<RESOURCE extends {}, SELF extends Wrapper<RESOURCE
     }
     return (this as any) as SELF;
   };
+
+  protected uncheckedData = () => this.data as any;
 }

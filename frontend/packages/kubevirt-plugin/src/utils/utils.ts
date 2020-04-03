@@ -5,6 +5,8 @@ import { VirtualMachineModel } from '../models';
 
 export const getSequence = (from, to) => Array.from({ length: to - from + 1 }, (v, i) => i + from);
 
+export const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
 export const setNativeValue = (element, value) => {
   const valueSetter = Object.getOwnPropertyDescriptor(element, 'value').set;
   const prototype = Object.getPrototypeOf(element);

@@ -1,5 +1,4 @@
-import { VMSettingsField } from '../../../../components/create-vm-wizard/types';
-import { getStorageClassConfigMap } from '../../config-map/storage-class';
+import { VMImportProvider, VMSettingsField } from '../../../../components/create-vm-wizard/types';
 import { asSimpleSettings } from '../../../../components/create-vm-wizard/selectors/vm-settings';
 import { VMTemplateWrapper } from '../../../wrapper/vm/vm-template-wrapper';
 import {
@@ -13,13 +12,16 @@ import { buildOwnerReference } from '../../../../utils';
 import { VMWrapper } from '../../../wrapper/vm/vm-wrapper';
 import { toShallowJS } from '../../../../utils/immutable';
 import { iGetRelevantTemplate } from '../../../../selectors/immutable/template/combined';
-import { CreateVMEnhancedParams, CreateVMParams } from './types';
+import { CreateVMParams } from './types';
 import { initializeVM } from './initialize-vm';
 import { getOS, initializeCommonMetadata, initializeCommonVMMetadata } from './common';
 import { selectVM } from '../../../../selectors/vm-template/basic';
 import { ProcessedTemplatesModel } from '../../../../models/models';
+import { ProvisionSource } from '../../../../constants/vm/provision-source';
+import { ImporterResult, OnVMCreate } from '../types';
+import { importV2VVMwareVm } from '../../v2v/import/import-v2vvmware';
 
-export const getInitializedVMTemplate = (params: CreateVMEnhancedParams) => {
+export const getInitializedVMTemplate = (params: CreateVMParams) => {
   const { vmSettings, iCommonTemplates, iUserTemplates } = params;
   const settings = asSimpleSettings(vmSettings);
 
@@ -47,22 +49,14 @@ export const getInitializedVMTemplate = (params: CreateVMEnhancedParams) => {
 
 export const createVMTemplate = async (params: CreateVMParams) => {
   const { enhancedK8sMethods, namespace, vmSettings } = params;
-  const { k8sGet, k8sWrapperCreate, getActualState } = enhancedK8sMethods;
-
-  const storageClassConfigMap = await getStorageClassConfigMap({ k8sGet });
-
-  const enhancedParams = {
-    ...params,
-    storageClassConfigMap,
-    isTemplate: true,
-  };
+  const { k8sWrapperCreate, getActualState } = enhancedK8sMethods;
 
   const combinedSimpleSettings = {
     ...asSimpleSettings(vmSettings),
-    ...getOS(enhancedParams),
+    ...getOS(params),
   };
 
-  const { template, storages } = getInitializedVMTemplate(enhancedParams);
+  const { template, storages } = getInitializedVMTemplate(params);
 
   const finalTemplate = VMTemplateWrapper.initializeFromSimpleData({
     name: combinedSimpleSettings[VMSettingsField.NAME],
@@ -97,26 +91,39 @@ export const createVMTemplate = async (params: CreateVMParams) => {
   return getActualState();
 };
 
+const importVM = async (params: CreateVMParams): Promise<ImporterResult> => {
+  const simpleSettings = asSimpleSettings(params.vmSettings);
+  if (simpleSettings[VMSettingsField.PROVIDER] === VMImportProvider.VMWARE) {
+    return importV2VVMwareVm(params);
+  }
+
+  return null;
+};
+
 export const createVM = async (params: CreateVMParams) => {
   const { enhancedK8sMethods, namespace, vmSettings, openshiftFlag } = params;
-  const { k8sGet, k8sCreate, k8sWrapperCreate, getActualState } = enhancedK8sMethods;
+  const { k8sCreate, k8sWrapperCreate, getActualState } = enhancedK8sMethods;
 
-  const storageClassConfigMap = await getStorageClassConfigMap({ k8sGet });
-  const enhancedParams = {
-    ...params,
-    storageClassConfigMap,
-    isTemplate: false,
-  };
   const combinedSimpleSettings = {
     ...asSimpleSettings(vmSettings),
-    ...getOS(enhancedParams),
+    ...getOS(params),
   };
+  let onVMCreate: OnVMCreate = null;
 
-  // TODO add VMWARE import
+  if (
+    ProvisionSource.fromString(combinedSimpleSettings[VMSettingsField.PROVISION_SOURCE_TYPE]) ===
+    ProvisionSource.IMPORT
+  ) {
+    const result = await importVM(params);
+    params.storages = result?.storages || params.storages;
+    params.networks = result?.networks || params.networks;
+    onVMCreate = result?.onCreate;
+  }
+
   let vmWrapper: VMWrapper;
 
   if (openshiftFlag) {
-    const { template } = getInitializedVMTemplate(enhancedParams);
+    const { template } = getInitializedVMTemplate(params);
 
     // ProcessedTemplates endpoint will reject the request if user cannot post to the namespace
     // common-templates are stored in openshift namespace, default user can read but cannot post
@@ -149,11 +156,15 @@ export const createVM = async (params: CreateVMParams) => {
       .init({ namespace })
       .setName(combinedSimpleSettings[VMSettingsField.NAME]);
     initializeCommonMetadata(combinedSimpleSettings, vmWrapper);
-    initializeVM(enhancedParams, vmWrapper);
+    initializeVM(params, vmWrapper);
   }
   initializeCommonVMMetadata(combinedSimpleSettings, vmWrapper);
 
-  await k8sWrapperCreate(vmWrapper);
+  const virtualMachine = await k8sWrapperCreate(vmWrapper);
+
+  if (onVMCreate) {
+    await onVMCreate(virtualMachine);
+  }
 
   return getActualState();
 };

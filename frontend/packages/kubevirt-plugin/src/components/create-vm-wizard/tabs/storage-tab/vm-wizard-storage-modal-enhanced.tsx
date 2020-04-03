@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { Firehose } from '@console/internal/components/utils';
+import { Firehose, FirehoseResult } from '@console/internal/components/utils';
 import { createModalLauncher, ModalComponentProps } from '@console/internal/components/factory';
 import {
   NamespaceModel,
@@ -26,6 +26,8 @@ import { VM_TEMPLATE_NAME_PARAMETER } from '../../../../constants/vm-templates';
 import { PersistentVolumeClaimWrapper } from '../../../../k8s/wrapper/vm/persistent-volume-claim-wrapper';
 import { TemplateValidations } from '../../../../utils/validations/template/template-validations';
 import { getTemplateValidation } from '../../selectors/template';
+import { ConfigMapKind } from '@console/internal/module/k8s';
+import { toShallowJS } from '../../../../utils/immutable';
 
 const VMWizardStorageModal: React.FC<VMWizardStorageModalProps> = (props) => {
   const {
@@ -37,6 +39,7 @@ const VMWizardStorageModal: React.FC<VMWizardStorageModalProps> = (props) => {
     addUpdateStorage,
     storages,
     templateValidations,
+    storageClassConfigMap,
     ...restProps
   } = props;
   const {
@@ -87,6 +90,7 @@ const VMWizardStorageModal: React.FC<VMWizardStorageModalProps> = (props) => {
     <Firehose resources={resources}>
       <DiskModal
         {...restProps}
+        storageClassConfigMap={storageClassConfigMap}
         vmName={VM_TEMPLATE_NAME_PARAMETER}
         vmNamespace={vmNamespace}
         namespace={namespace}
@@ -144,6 +148,7 @@ type VMWizardStorageModalProps = ModalComponentProps & {
   namespace: string;
   useProjects?: boolean;
   isCreateTemplate: boolean;
+  storageClassConfigMap: FirehoseResult<ConfigMapKind>;
   storages: VMWizardStorageWithWrappers[];
   addUpdateStorage: (storage: VMWizardStorage) => void;
   templateValidations: TemplateValidations;
@@ -155,6 +160,9 @@ const stateToProps = (state, { wizardReduxID }) => {
     useProjects,
     namespace: iGetCommonData(state, wizardReduxID, VMWizardProps.activeNamespace),
     isCreateTemplate: iGetCommonData(state, wizardReduxID, VMWizardProps.isCreateTemplate),
+    storageClassConfigMap: toShallowJS(
+      iGetCommonData(state, wizardReduxID, VMWizardProps.storageClassConfigMap),
+    ),
     storages: getStoragesWithWrappers(state, wizardReduxID),
     templateValidations: getTemplateValidation(state, wizardReduxID),
   };

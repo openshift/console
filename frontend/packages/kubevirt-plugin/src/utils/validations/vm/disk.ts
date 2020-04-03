@@ -69,7 +69,7 @@ export const validateDisk = (
     diskInterface: null,
     pvc: null,
   };
-  let hasAllRequiredFilled = disk && disk.getName();
+  let hasAllRequiredFilled = disk && disk.getName() && volume && volume.getName();
 
   const addRequired = (addon) => {
     if (hasAllRequiredFilled) {
@@ -86,7 +86,7 @@ export const validateDisk = (
   const tValidations = templateValidations || new TemplateValidations();
   const diskType = disk.getType();
 
-  if (source.requiresVolume()) {
+  if (source.requiresVolumeType()) {
     addRequired(volume && volume.hasType());
   }
 

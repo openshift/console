@@ -1,5 +1,11 @@
 /* eslint-disable lines-between-class-members */
-import { getName, hasLabel, getLabels } from '@console/shared/src';
+import {
+  getName,
+  hasLabel,
+  getLabels,
+  getOwnerReferences,
+  getCreationTimestamp,
+} from '@console/shared/src';
 import { K8sKind, K8sResourceKind } from '@console/internal/module/k8s';
 import { K8sResourceKindMethods } from '../types/types';
 import { ObjectWithTypePropertyWrapper } from './object-with-type-property-wrapper';
@@ -41,8 +47,10 @@ export abstract class K8sResourceObjectWithTypePropertyWrapper<
 
   getModel = () => this.model;
   getName = () => getName(this.data);
+  getCreationTimestamp = () => getCreationTimestamp(this.data);
   getLabels = (defaultValue = {}) => getLabels(this.data, defaultValue);
   hasLabel = (label: string) => hasLabel(this.data, label);
+  getOwnerReferences = () => getOwnerReferences(this.data);
 
   setName = (name: string) => {
     this.ensurePath('metadata');

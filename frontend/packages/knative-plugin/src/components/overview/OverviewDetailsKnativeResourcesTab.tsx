@@ -9,7 +9,7 @@ import {
   EventSourceApiServerModel,
   EventSourceCamelModel,
   EventSourceKafkaModel,
-  EventSourceServiceBindingModel,
+  EventSourceSinkBindingModel,
 } from '../../models';
 import KnativeServiceResources from './KnativeServiceResources';
 import KnativeRevisionResources from './KnativeRevisionResources';
@@ -50,8 +50,8 @@ const getSidebarResources = ({
     case EventSourceApiServerModel.kind:
     case EventSourceCamelModel.kind:
     case EventSourceKafkaModel.kind:
-    case EventSourceServiceBindingModel.kind:
-      return <EventSinkServicesOverviewList obj={obj} />;
+    case EventSourceSinkBindingModel.kind:
+      return <EventSinkServicesOverviewList obj={obj} pods={pods} current={current} />;
     default:
       return (
         <>

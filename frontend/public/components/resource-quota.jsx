@@ -150,7 +150,6 @@ export const ResourceQuotaTableRow = ({ obj: rq, index, key, style }) => {
     </TableRow>
   );
 };
-ResourceQuotaTableRow.displayName = 'ResourceQuotaTableRow';
 
 export const UsageIcon = ({ percent }) => {
   let usageIcon = <UnknownIcon />;

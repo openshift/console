@@ -75,6 +75,7 @@ export const TextFilter = ({
         tabIndex={0}
         type="text"
         autoFocus={autoFocus}
+        aria-label={placeholder}
       />
       <span className="form-control-feedback form-control-feedback--keyboard-hint">
         <kbd>/</kbd>

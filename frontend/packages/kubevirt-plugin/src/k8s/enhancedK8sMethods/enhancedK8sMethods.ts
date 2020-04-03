@@ -5,6 +5,7 @@ import {
   k8sKill as _k8sKill,
   K8sKind,
   k8sPatch as _k8sPatch,
+  K8sResourceCommon,
   K8sResourceKind,
   Patch,
   referenceFor,
@@ -59,7 +60,7 @@ export class EnhancedK8sMethods {
   };
 
   k8sWrapperCreate = async <
-    U extends K8sResourceKind,
+    U extends K8sResourceCommon,
     T extends Wrapper<U, T> & K8sResourceKindMethods
   >(
     wrapper: T,
@@ -77,6 +78,15 @@ export class EnhancedK8sMethods {
       throw new K8sCreateError(error.message, data);
     }
   };
+
+  k8sWrapperPatch = async <
+    U extends K8sResourceCommon,
+    T extends Wrapper<U, T> & K8sResourceKindMethods
+  >(
+    wrapper: T,
+    patches: Patch[],
+    enhancedOpts?: EnhancedOpts,
+  ) => this.k8sPatch(wrapper.getModel(), wrapper.asResource(), patches, enhancedOpts);
 
   k8sPatch = async (
     kind: K8sKind,

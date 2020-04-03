@@ -56,8 +56,8 @@ export const Status: React.FC<StatusProps> = ({ status, title, children, iconOnl
     case 'ContainerCannotRun':
     case 'CrashLoopBackOff':
     case 'Critical':
+    case 'ErrImagePull':
     case 'Error':
-    case 'ErrorImagePull':
     case 'Failed':
     case 'ImagePullBackOff':
     case 'InstallCheckFailed':

@@ -19,8 +19,6 @@ export enum ActionType {
 
 const REFRESH_TIMEOUT = 5000;
 
-export const ALERTS_KEY = 'alerts'; // TODO: remove once noobaa-storage-plugin, ceph-storage-plugin, and metal3-plugin status cards have been updated to switch over to alertNotifications, see https://github.com/openshift/console/pull/4539
-
 export const stopWatch = (type: RESULTS_TYPE, key: string) =>
   action(ActionType.StopWatch, { type, key });
 export const setData = (type: RESULTS_TYPE, key: string, data) =>
@@ -121,14 +119,9 @@ export const watchURL: WatchURLAction = (url, fetch = coFetchJSON) => (dispatch,
   }
 };
 
-export const watchAlerts: WatchAlertsAction = () => (dispatch) => {
-  dispatch(activateWatch(RESULTS_TYPE.ALERTS, ALERTS_KEY));
-};
-
 export const stopWatchPrometheusQuery: StopWatchPrometheusAction = (query, timespan) =>
   stopWatch(RESULTS_TYPE.PROMETHEUS, getQueryKey(query, timespan));
 export const stopWatchURL = (url: string) => stopWatch(RESULTS_TYPE.URL, url);
-export const stopWatchAlerts = () => stopWatch(RESULTS_TYPE.ALERTS, ALERTS_KEY);
 
 type ThunkAction = (dispatch: Dispatch, getState: () => RootState) => void;
 
@@ -138,10 +131,8 @@ export type WatchPrometheusQueryAction = (
   namespace?: string,
   timespan?: number,
 ) => ThunkAction;
-export type WatchAlertsAction = () => ThunkAction;
 export type StopWatchURLAction = (url: string) => void;
 export type StopWatchPrometheusAction = (query: string, timespan?: number) => void;
-export type StopWatchAlertsAction = () => void;
 
 export type Fetch = (url: string) => Promise<any>;
 

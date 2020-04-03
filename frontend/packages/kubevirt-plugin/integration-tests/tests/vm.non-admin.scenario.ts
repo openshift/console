@@ -4,6 +4,7 @@ import { appHost, testName } from '@console/internal-integration-tests/protracto
 import * as loginView from '@console/internal-integration-tests/views/login.view';
 import {
   withResource,
+  fillInput,
   removeLeakedResources,
   waitForCount,
   removeLeakableResource,
@@ -14,7 +15,7 @@ import {
   resourceRows,
 } from '@console/internal-integration-tests/views/crud.view';
 import { restrictedAccessBlock, hintBlockTitle } from '../views/vms.list.view';
-import { createProject, fillInput } from './utils/utils';
+import { createProject } from './utils/utils';
 import { vmConfig, getProvisionConfigs } from './vm.wizard.configs';
 import { ProvisionConfigName } from './utils/constants/wizard';
 import { VirtualMachine } from './models/virtualMachine';

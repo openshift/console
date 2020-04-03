@@ -15,7 +15,7 @@ import {
   K8sKind,
 } from '../module/k8s';
 import { cloneBuild, formatBuildDuration, getBuildNumber } from '../module/k8s/builds';
-import { DetailsPage, ListPage, Table, TableRow, TableData } from './factory';
+import { DetailsPage, ListPage, Table, TableRow, TableData, RowFunction } from './factory';
 import { errorModal, confirmModal } from './modals';
 import {
   AsyncComponent,
@@ -346,7 +346,7 @@ const BuildsTableHeader = () => {
 };
 BuildsTableHeader.displayName = 'BuildsTableHeader';
 
-const BuildsTableRow: React.FC<BuildsTableRowProps> = ({ obj, index, key, style }) => {
+const BuildsTableRow: RowFunction<K8sResourceKind> = ({ obj, index, key, style }) => {
   return (
     <TableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
       <TableData className={tableColumnClasses[0]}>
@@ -371,13 +371,6 @@ const BuildsTableRow: React.FC<BuildsTableRowProps> = ({ obj, index, key, style 
       </TableData>
     </TableRow>
   );
-};
-BuildsTableRow.displayName = 'BuildsTableRow';
-type BuildsTableRowProps = {
-  obj: K8sResourceKind;
-  index: number;
-  key?: string;
-  style: object;
 };
 
 export const BuildsList: React.SFC = (props) => (

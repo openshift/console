@@ -168,7 +168,6 @@ const ServiceAccountTableRow = ({ obj: serviceaccount, index, key, style }) => {
     </TableRow>
   );
 };
-ServiceAccountTableRow.displayName = 'ServiceAccountTableRow';
 
 const Details = ({ obj: serviceaccount }) => {
   const {

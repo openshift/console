@@ -10,7 +10,13 @@ import {
   MsgBox,
   FirehoseResource,
 } from '@console/internal/components/utils';
-import { MultiListPage, Table, TableRow, TableData } from '@console/internal/components/factory';
+import {
+  MultiListPage,
+  Table,
+  TableRow,
+  TableData,
+  RowFunction,
+} from '@console/internal/components/factory';
 import {
   K8sResourceKind,
   GroupVersionKind,
@@ -55,12 +61,12 @@ export const ResourceTableHeader = () => [
   },
 ];
 
-export const ResourceTableRow: React.FC<ResourceTableRowProps> = ({
-  obj,
-  index,
-  style,
-  customData: { linkFor },
-}) => (
+export const ResourceTableRow: RowFunction<
+  K8sResourceKind,
+  {
+    linkFor: (obj: K8sResourceKind) => JSX.Element;
+  }
+> = ({ obj, index, style, customData: { linkFor } }) => (
   <TableRow id={obj.metadata.uid} index={index} trKey={obj.metadata.uid} style={style}>
     <TableData className={tableColumnClasses[0]}>{linkFor(obj)}</TableData>
     <TableData className={tableColumnClasses[1]}>{obj.kind}</TableData>
@@ -172,16 +178,6 @@ export type ResourcesProps = {
   obj: K8sResourceKind;
   clusterServiceVersion: ClusterServiceVersionKind;
   match: match<{ plural: GroupVersionKind; ns: string; appName: string; name: string }>;
-};
-
-export type ResourceTableRowProps = {
-  obj: K8sResourceKind;
-  index: number;
-  key?: string;
-  style: object;
-  customData: {
-    linkFor: (obj: K8sResourceKind) => JSX.Element;
-  };
 };
 
 export type ResourceListProps = {};

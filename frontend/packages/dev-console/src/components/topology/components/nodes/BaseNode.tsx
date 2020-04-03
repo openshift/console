@@ -18,8 +18,8 @@ import { modelFor, referenceFor } from '@console/internal/module/k8s';
 import { useAccessReview } from '@console/internal/components/utils';
 import SvgBoxedText from '../../../svg/SvgBoxedText';
 import { getTopologyResourceObject } from '../../topology-utils';
-import useSearchFilter from '../../filters/useSearchFilter';
-import NodeShadows, { NODE_SHADOW_FILTER_ID_HOVER, NODE_SHADOW_FILTER_ID } from '../NodeShadows';
+import { useDisplayFilters, useSearchFilter } from '../../filters';
+import { NodeShadows, NODE_SHADOW_FILTER_ID_HOVER, NODE_SHADOW_FILTER_ID } from '../NodeShadows';
 
 import './BaseNode.scss';
 
@@ -41,7 +41,7 @@ export type BaseNodeProps = {
   WithContextMenuProps &
   WithCreateConnectorProps;
 
-const BaseNode: React.FC<BaseNodeProps> = ({
+const ObservedBaseNode: React.FC<BaseNodeProps> = ({
   outerRadius,
   innerRadius,
   icon,
@@ -77,6 +77,8 @@ const BaseNode: React.FC<BaseNodeProps> = ({
     namespace: resourceObj.metadata.namespace,
   });
   const [filtered] = useSearchFilter(element.getLabel());
+  const displayFilters = useDisplayFilters();
+  const showLabels = displayFilters.showLabels || hover;
   const refs = useCombineRefs<SVGEllipseElement>(hoverRef, dragNodeRef);
 
   React.useLayoutEffect(() => {
@@ -128,7 +130,7 @@ const BaseNode: React.FC<BaseNodeProps> = ({
             xlinkHref={icon}
           />
         )}
-        {(kind || element.getLabel()) && (
+        {showLabels && (kind || element.getLabel()) && (
           <SvgBoxedText
             className="odc-base-node__label"
             x={cx}
@@ -147,4 +149,5 @@ const BaseNode: React.FC<BaseNodeProps> = ({
   );
 };
 
-export default observer(BaseNode);
+const BaseNode = observer(ObservedBaseNode);
+export { BaseNode };

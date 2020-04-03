@@ -9,11 +9,12 @@ import {
   EventSourceContainerModel,
   EventSourceCamelModel,
   EventSourceKafkaModel,
-  EventSourceServiceBindingModel,
+  EventSourceSinkBindingModel,
   ConditionTypes,
   RevisionKind,
   RouteKind,
   ServiceKind as knativeServiceKind,
+  EventSourceApiServerModel,
 } from '@console/knative-plugin';
 import { TopologyDataResources } from '../topology-types';
 
@@ -75,6 +76,78 @@ export const sampleKnativeDeployments: FirehoseResult<DeploymentKind[]> = {
             annotations: {
               'sidecar.istio.io/inject': 'true',
               'traffic.sidecar.istio.io/includeOutboundIPRanges': '172.30.0.0/16',
+            },
+          },
+          spec: {
+            containers: [],
+          },
+        },
+        strategy: {
+          type: 'RollingUpdate',
+          rollingUpdate: {
+            maxUnavailable: '25%',
+            maxSurge: '25%',
+          },
+        },
+        revisionHistoryLimit: 10,
+        progressDeadlineSeconds: 600,
+      },
+      status: {},
+    },
+  ],
+};
+
+export const sampleEventSourceDeployments: FirehoseResult<DeploymentKind[]> = {
+  loaded: true,
+  loadError: '',
+  data: [
+    {
+      apiVersion: 'apps/v1',
+      kind: 'Deployment',
+      metadata: {
+        annotations: {
+          'deployment.kubernetes.io/revision': '1',
+        },
+        selfLink:
+          '/apis/apps/v1/namespaces/testproject1/deployments/apiserversource-testevents-88eb61d1-b52e-4836-829c-6821e346ecf6',
+        resourceVersion: '726179',
+        name: 'apiserversource-testevents-88eb61d1-b52e-4836-829c-6821e346ecf6',
+        uid: 'bccad3e4-8ce0-11e9-bb7b-0ebb55b110b8',
+        creationTimestamp: '2019-04-22T11:35:43Z',
+        generation: 2,
+        namespace: 'testproject1',
+        labels: {
+          'eventing.knative.dev/source': 'apiserver-source-controller',
+          'eventing.knative.dev/sourceName': 'testevents',
+        },
+        ownerReferences: [
+          {
+            apiVersion: `${EventSourceApiServerModel.apiGroup}/${EventSourceApiServerModel.apiVersion}`,
+            kind: EventSourceApiServerModel.kind,
+            name: 'testevents',
+            uid: '1317f615-9636-11e9-b134-06a61d886b689',
+            controller: true,
+            blockOwnerDeletion: true,
+          },
+        ],
+      },
+      spec: {
+        replicas: 0,
+        selector: {
+          matchLabels: {
+            'eventing.knative.dev/source': 'apiserver-source-controller',
+            'eventing.knative.dev/sourceName': 'testevents',
+          },
+        },
+        template: {
+          metadata: {
+            creationTimestamp: null,
+            labels: {
+              'eventing.knative.dev/source': 'apiserver-source-controller',
+              'eventing.knative.dev/sourceName': 'testevents',
+            },
+            annotations: {
+              'sidecar.istio.io/inject': 'false',
             },
           },
           spec: {
@@ -411,6 +484,33 @@ export const sampleEventSourceCronjob: FirehoseResult = {
   ],
 };
 
+export const sampleEventSourceApiServer: FirehoseResult = {
+  loaded: true,
+  loadError: '',
+  data: [
+    {
+      apiVersion: `${EventSourceApiServerModel.apiGroup}/${EventSourceApiServerModel.apiVersion}`,
+      kind: EventSourceApiServerModel.kind,
+      metadata: {
+        name: 'testevents',
+        namespace: 'testproject1',
+        uid: '1317f615-9636-11e9-b134-06a61d886b689',
+        creationTimestamp: '2019-06-12T07:07:57Z',
+      },
+      spec: {
+        sink: {
+          apiVersion: 'serving.knative.dev/v1',
+          kind: 'Service',
+          name: 'overlayimage',
+        },
+      },
+      status: {
+        sinkUri: 'http://testevents.testproject1.svc.cluster.local',
+      },
+    },
+  ],
+};
+
 export const sampleEventSourceContainers: FirehoseResult = {
   loaded: true,
   loadError: '',
@@ -421,7 +521,7 @@ export const sampleEventSourceContainers: FirehoseResult = {
       metadata: {
         name: 'overlayimage',
         namespace: 'testproject3',
-        uid: '1317f615-9636-11e9-b134-06a61d886b689',
+        uid: '1317f615-9636-11e9-b134-06a61d886b689_1',
         creationTimestamp: '2019-06-12T07:07:57Z',
       },
       spec: {
@@ -448,16 +548,10 @@ export const sampleEventSourceCamel: FirehoseResult = {
       metadata: {
         name: 'overlayimage',
         namespace: 'testproject3',
-        uid: '1317f615-9636-11e9-b134-06a61d886b689',
+        uid: '1317f615-9636-11e9-b134-06a61d886b689_2',
         creationTimestamp: '2019-06-12T07:07:57Z',
       },
-      spec: {
-        sink: {
-          apiVersion: `${ServiceModel.apiGroup}/${ServiceModel.apiVersion}`,
-          kind: ServiceModel.kind,
-          name: 'overlayimage',
-        },
-      },
+      spec: {},
     },
   ],
 };
@@ -472,7 +566,7 @@ export const sampleEventSourceKafka: FirehoseResult = {
       metadata: {
         name: 'overlayimage',
         namespace: 'testproject3',
-        uid: '1317f615-9636-11e9-b134-06a61d886b689',
+        uid: '1317f615-9636-11e9-b134-06a61d886b689_3',
         creationTimestamp: '2019-06-12T07:07:57Z',
       },
       spec: {
@@ -491,12 +585,12 @@ export const sampleEventSourceSinkbinding: FirehoseResult = {
   loadError: '',
   data: [
     {
-      apiVersion: `${EventSourceServiceBindingModel.apiGroup}/${EventSourceServiceBindingModel.apiVersion}`,
-      kind: EventSourceServiceBindingModel.kind,
+      apiVersion: `${EventSourceSinkBindingModel.apiGroup}/${EventSourceSinkBindingModel.apiVersion}`,
+      kind: EventSourceSinkBindingModel.kind,
       metadata: {
         name: 'bind-wss',
         namespace: 'testproject3',
-        uid: '1317f615-9636-11e9-b134-06a61d886b689',
+        uid: '1317f615-9636-11e9-b134-06a61d886b689_4',
         creationTimestamp: '2019-06-12T07:07:57Z',
       },
       spec: {
@@ -641,6 +735,7 @@ export const MockKnativeResources: TopologyDataResources = {
   eventSourceContainers: sampleEventSourceContainers,
   eventSourceCamel: sampleEventSourceCamel,
   eventSourceKafka: sampleEventSourceKafka,
+  eventSourceApiserver: sampleEventSourceApiServer,
   eventSourceSinkbinding: sampleEventSourceSinkbinding,
   clusterServiceVersions: sampleClusterServiceVersions,
 };

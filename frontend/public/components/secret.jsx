@@ -130,7 +130,6 @@ const SecretTableRow = ({ obj: secret, index, key, style }) => {
     </TableRow>
   );
 };
-SecretTableRow.displayName = 'SecretTableRow';
 
 const SecretDetails = ({ obj: secret }) => {
   return (

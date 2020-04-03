@@ -1,14 +1,10 @@
 import * as _ from 'lodash';
 import * as models from './models';
-import {
-  CAPACITY_USAGE_QUERIES,
-  STORAGE_HEALTH_QUERIES,
-  StorageDashboardQuery,
-} from './constants/queries';
+import { CAPACITY_USAGE_QUERIES, StorageDashboardQuery } from './constants/queries';
 import {
   ClusterServiceVersionAction,
   DashboardsCard,
-  DashboardsOverviewHealthPrometheusSubsystem,
+  DashboardsOverviewHealthResourceSubsystem,
   DashboardsOverviewUtilizationItem,
   DashboardsTab,
   FeatureFlag,
@@ -35,13 +31,14 @@ import { referenceForModel, referenceFor } from '@console/internal/module/k8s';
 import { PersistentVolumeClaimModel } from '@console/internal/models';
 import { getCephHealthState } from './components/dashboard-page/storage-dashboard/status-card/utils';
 import { isClusterExpandActivity } from './components/dashboard-page/storage-dashboard/activity-card/cluster-expand-activity';
+import { WatchCephResource } from './types';
 
 type ConsumedExtensions =
   | ModelFeatureFlag
   | ModelDefinition
   | DashboardsTab
   | DashboardsCard
-  | DashboardsOverviewHealthPrometheusSubsystem
+  | DashboardsOverviewHealthResourceSubsystem<WatchCephResource>
   | DashboardsOverviewUtilizationItem
   | RoutePage
   | ActionFeatureFlag
@@ -99,8 +96,10 @@ const plugin: Plugin<ConsumedExtensions> = [
     properties: {
       id: 'persistent-storage',
       title: 'Persistent Storage',
-      required: CEPH_FLAG,
-      disallowed: OCS_INDEPENDENT_FLAG,
+    },
+    flags: {
+      required: [CEPH_FLAG],
+      disallowed: [OCS_INDEPENDENT_FLAG],
     },
   },
   {
@@ -125,7 +124,9 @@ const plugin: Plugin<ConsumedExtensions> = [
         import(
           './components/dashboard-page/storage-dashboard/details-card' /* webpackChunkName: "ceph-storage-details-card" */
         ).then((m) => m.default),
-      required: CEPH_FLAG,
+    },
+    flags: {
+      required: [CEPH_FLAG],
     },
   },
   {
@@ -137,7 +138,9 @@ const plugin: Plugin<ConsumedExtensions> = [
         import(
           './components/dashboard-page/storage-dashboard/inventory-card' /* webpackChunkName: "ceph-storage-inventory-card" */
         ).then((m) => m.default),
-      required: CEPH_FLAG,
+    },
+    flags: {
+      required: [CEPH_FLAG],
     },
   },
   // Ceph Storage Dashboard Main Cards
@@ -150,7 +153,9 @@ const plugin: Plugin<ConsumedExtensions> = [
         import(
           './components/dashboard-page/storage-dashboard/status-card/status-card' /* webpackChunkName: "ceph-storage-status-card" */
         ).then((m) => m.default),
-      required: CEPH_FLAG,
+    },
+    flags: {
+      required: [CEPH_FLAG],
     },
   },
   {
@@ -162,7 +167,9 @@ const plugin: Plugin<ConsumedExtensions> = [
         import(
           './components/dashboard-page/storage-dashboard/capacity-breakdown/capacity-breakdown-card' /* webpackChunkName: "ceph-storage-usage-breakdown-card" */
         ).then((m) => m.default),
-      required: CEPH_FLAG,
+    },
+    flags: {
+      required: [CEPH_FLAG],
     },
   },
   {
@@ -174,7 +181,9 @@ const plugin: Plugin<ConsumedExtensions> = [
         import(
           './components/dashboard-page/storage-dashboard/utilization-card/utilization-card' /* webpackChunkName: "ceph-storage-utilization-card" */
         ).then((m) => m.default),
-      required: CEPH_FLAG,
+    },
+    flags: {
+      required: [CEPH_FLAG],
     },
   },
   // Ceph Storage Dashboard Right Cards
@@ -187,16 +196,26 @@ const plugin: Plugin<ConsumedExtensions> = [
         import(
           './components/dashboard-page/storage-dashboard/activity-card/activity-card' /* webpackChunkName: "ceph-storage-activity-card" */
         ).then((m) => m.ActivityCard),
-      required: CEPH_FLAG,
+    },
+    flags: {
+      required: [CEPH_FLAG],
     },
   },
   {
-    type: 'Dashboards/Overview/Health/Prometheus',
+    type: 'Dashboards/Overview/Health/Resource',
     properties: {
       title: 'Storage',
-      queries: [STORAGE_HEALTH_QUERIES[StorageDashboardQuery.CEPH_STATUS_QUERY]],
+      resources: {
+        ceph: {
+          kind: referenceForModel(models.CephClusterModel),
+          namespaced: false,
+          isList: true,
+        },
+      },
       healthHandler: getCephHealthState,
-      required: CEPH_FLAG,
+    },
+    flags: {
+      required: [CEPH_FLAG],
     },
   },
   {
@@ -205,7 +224,9 @@ const plugin: Plugin<ConsumedExtensions> = [
       id: OverviewQuery.STORAGE_UTILIZATION,
       query: CAPACITY_USAGE_QUERIES[StorageDashboardQuery.CEPH_CAPACITY_USED],
       totalQuery: CAPACITY_USAGE_QUERIES[StorageDashboardQuery.CEPH_CAPACITY_TOTAL],
-      required: CEPH_FLAG,
+    },
+    flags: {
+      required: [CEPH_FLAG],
     },
   },
   {
@@ -255,7 +276,9 @@ const plugin: Plugin<ConsumedExtensions> = [
     properties: {
       id: 'independent-dashboard',
       title: 'Persistent Storage',
-      required: OCS_INDEPENDENT_FLAG,
+    },
+    flags: {
+      required: [OCS_INDEPENDENT_FLAG],
     },
   },
   // Left Cards
@@ -268,7 +291,9 @@ const plugin: Plugin<ConsumedExtensions> = [
         import(
           './components/independent-dashboard-page/details-card/card' /* webpackChunkName: "indepedent-details-card" */
         ).then((m) => m.default),
-      required: OCS_INDEPENDENT_FLAG,
+    },
+    flags: {
+      required: [OCS_INDEPENDENT_FLAG],
     },
   },
   {
@@ -280,7 +305,9 @@ const plugin: Plugin<ConsumedExtensions> = [
         import(
           './components/dashboard-page/storage-dashboard/inventory-card' /* webpackChunkName: "ceph-storage-inventory-card" */
         ).then((m) => m.default),
-      required: OCS_INDEPENDENT_FLAG,
+    },
+    flags: {
+      required: [OCS_INDEPENDENT_FLAG],
     },
   },
   // Center
@@ -293,7 +320,9 @@ const plugin: Plugin<ConsumedExtensions> = [
         import(
           './components/independent-dashboard-page/status-card/card' /* webpackChunkName: "indepedent-status-card" */
         ).then((m) => m.default),
-      required: OCS_INDEPENDENT_FLAG,
+    },
+    flags: {
+      required: [OCS_INDEPENDENT_FLAG],
     },
   },
   {
@@ -305,7 +334,9 @@ const plugin: Plugin<ConsumedExtensions> = [
         import(
           './components/independent-dashboard-page/breakdown-card/card' /* webpackChunkName: "independent-breakdown-card" */
         ).then((m) => m.default),
-      required: OCS_INDEPENDENT_FLAG,
+    },
+    flags: {
+      required: [OCS_INDEPENDENT_FLAG],
     },
   },
   {
@@ -317,7 +348,9 @@ const plugin: Plugin<ConsumedExtensions> = [
         import(
           './components/independent-dashboard-page/utilization-card/card' /* webpackChunkName: "utilization-card" */
         ).then((m) => m.default),
-      required: OCS_INDEPENDENT_FLAG,
+    },
+    flags: {
+      required: [OCS_INDEPENDENT_FLAG],
     },
   },
   // Right
@@ -330,7 +363,9 @@ const plugin: Plugin<ConsumedExtensions> = [
         import(
           './components/dashboard-page/storage-dashboard/activity-card/activity-card' /* webpackChunkName: "ceph-storage-activity-card" */
         ).then((m) => m.ActivityCard),
-      required: OCS_INDEPENDENT_FLAG,
+    },
+    flags: {
+      required: [OCS_INDEPENDENT_FLAG],
     },
   },
   {
@@ -361,7 +396,9 @@ const plugin: Plugin<ConsumedExtensions> = [
         import(
           './components/dashboard-page/storage-dashboard/activity-card/cluster-expand-activity' /* webpackChunkName: "ceph-storage-plugin" */
         ).then((m) => m.ClusterExpandActivity),
-      required: CEPH_FLAG,
+    },
+    flags: {
+      required: [CEPH_FLAG],
     },
   },
 ];

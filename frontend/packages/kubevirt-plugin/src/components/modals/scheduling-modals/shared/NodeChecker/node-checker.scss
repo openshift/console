@@ -1,0 +1,10 @@
+.kv-node-checker {
+  margin-top: var(--pf-global--spacer--lg);
+}
+.kv-node-checker__popover {
+  .co-external-link {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+}

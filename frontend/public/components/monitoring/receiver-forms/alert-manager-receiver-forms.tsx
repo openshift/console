@@ -18,6 +18,7 @@ import {
   AlertmanagerConfig,
   AlertmanagerReceiver,
   AlertmanagerRoute,
+  InitialReceivers,
 } from '../alert-manager-config';
 import { RoutingLabelEditor } from './routing-labels-editor';
 import * as PagerDutyForm from './pagerduty-receiver-form';
@@ -171,6 +172,32 @@ const getRouteLabelsForEditor = (
   return !isDefaultReceiver && _.isEmpty(routeLabels)
     ? [{ name: '', value: '', isRegex: false }]
     : routeLabels;
+};
+
+const alertMsg = (type: string) => {
+  switch (type) {
+    case InitialReceivers.Default:
+      return 'Your default receiver will automatically receive all alerts from this cluster that are not caught by other receivers first.';
+    case InitialReceivers.Critical:
+      return 'The routing labels for this receiver are configured to capture critical alerts.  Finish setting up this receiver by selecting a "Receiver Type" to choose a destination for these alerts.  If this receiver is deleted, critical alerts will go to the default receiver instead.';
+    case InitialReceivers.Watchdog:
+      return 'The Watchdog alert fires constantly to confirm that your alerting stack is functioning correctly. This receiver is configured to prevent it from creating unnecessary notifications. You can edit this receiver if you plan to use the information that Watchdog provides, otherwise this receiver should remain in its current state with no set receiver type.';
+    default:
+      return 'unknown receiver type'; // should never get here
+  }
+};
+
+const ReceiverInfoTip: React.FC<ReceiverInfoTipProps> = ({ type }) => {
+  return (
+    <Alert
+      isInline
+      className="co-alert co-alert--scrollable"
+      variant="info"
+      title={`${type} Receiver`}
+    >
+      <div className="co-pre-line">{alertMsg(type)}</div>
+    </Alert>
+  );
 };
 
 const ReceiverBaseForm: React.FC<ReceiverBaseFormProps> = ({
@@ -328,19 +355,12 @@ const ReceiverBaseForm: React.FC<ReceiverBaseFormProps> = ({
           {titleVerb} {receiverTypes[formValues.receiverType]} {isDefaultReceiver && 'Default'}{' '}
           Receiver
         </h1>
-        {isDefaultReceiver && !formValues.receiverType && (
-          <Alert
-            isInline
-            className="co-alert co-alert--scrollable"
-            variant="info"
-            title="Default Receiver"
-          >
-            <div className="co-pre-line">
-              Because this is your first receiver, it will automatically receive all alerts from
-              this cluster. You can route specific alerts to subsequent receivers that you create.
-              You can also edit your default receiver at a later time.
-            </div>
-          </Alert>
+        {isDefaultReceiver && <ReceiverInfoTip type={InitialReceivers.Default} />}
+        {formValues.receiverName === 'Critical' && !formValues.receiverType && (
+          <ReceiverInfoTip type={InitialReceivers.Critical} />
+        )}
+        {formValues.receiverName === 'Watchdog' && !formValues.receiverType && (
+          <ReceiverInfoTip type={InitialReceivers.Watchdog} />
         )}
         <div
           className={classNames('form-group', {
@@ -579,4 +599,8 @@ type SaveAsDefaultCheckboxProps = {
   formValues: { [key: string]: any };
   dispatchFormChange: Function;
   tooltip: string;
+};
+
+type ReceiverInfoTipProps = {
+  type: InitialReceivers;
 };

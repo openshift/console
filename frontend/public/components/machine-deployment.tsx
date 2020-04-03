@@ -13,7 +13,7 @@ import {
   MachineCounts,
   MachineTabPage,
 } from './machine-set';
-import { DetailsPage, ListPage, Table, TableRow, TableData } from './factory';
+import { DetailsPage, ListPage, Table, TableRow, TableData, RowFunction } from './factory';
 import {
   Kebab,
   ResourceKebab,
@@ -71,7 +71,7 @@ const MachineDeploymentTableHeader = () => {
 };
 MachineDeploymentTableHeader.displayName = 'MachineDeploymentTableHeader';
 
-const MachineDeploymentTableRow: React.FC<MachineDeploymentTableRowProps> = ({
+const MachineDeploymentTableRow: RowFunction<MachineDeploymentKind> = ({
   obj,
   index,
   key,
@@ -106,13 +106,6 @@ const MachineDeploymentTableRow: React.FC<MachineDeploymentTableRowProps> = ({
       </TableData>
     </TableRow>
   );
-};
-MachineDeploymentTableRow.displayName = 'MachineDeploymentTableRow';
-type MachineDeploymentTableRowProps = {
-  obj: MachineDeploymentKind;
-  index: number;
-  key?: string;
-  style: object;
 };
 
 const MachineDeploymentDetails: React.SFC<MachineDeploymentDetailsProps> = ({ obj }) => {

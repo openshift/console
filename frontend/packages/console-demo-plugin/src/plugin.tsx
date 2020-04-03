@@ -56,6 +56,8 @@ type ConsumedExtensions =
   | DashboardsOverviewPrometheusActivity
   | HorizontalNavTab;
 
+const TEST_MODEL_FLAG = 'TEST_MODEL';
+
 const plugin: Plugin<ConsumedExtensions> = [
   {
     type: 'ModelDefinition',
@@ -67,7 +69,7 @@ const plugin: Plugin<ConsumedExtensions> = [
     type: 'FeatureFlag/Model',
     properties: {
       model: PodModel,
-      flag: 'TEST_MODEL_FLAG',
+      flag: TEST_MODEL_FLAG,
     },
   },
   {
@@ -80,7 +82,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       },
     },
     flags: {
-      required: ['TEST_MODEL_FLAG'],
+      required: [TEST_MODEL_FLAG],
     },
   },
   {
@@ -93,7 +95,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       },
     },
     flags: {
-      required: ['TEST_MODEL_FLAG'],
+      required: [TEST_MODEL_FLAG],
     },
   },
   {
@@ -106,7 +108,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       },
     },
     flags: {
-      required: [FLAGS.OPENSHIFT, 'TEST_MODEL_FLAG'],
+      required: [FLAGS.OPENSHIFT, TEST_MODEL_FLAG],
     },
   },
   {
@@ -153,7 +155,9 @@ const plugin: Plugin<ConsumedExtensions> = [
       title: 'Foo system',
       url: 'fooUrl',
       healthHandler: getFooHealthState,
-      required: 'TEST_MODEL_FLAG',
+    },
+    flags: {
+      required: [TEST_MODEL_FLAG],
     },
   },
   {
@@ -168,7 +172,9 @@ const plugin: Plugin<ConsumedExtensions> = [
         namespaced: false,
         prop: 'nodes',
       },
-      required: 'TEST_MODEL_FLAG',
+    },
+    flags: {
+      required: [TEST_MODEL_FLAG],
     },
   },
   {
@@ -205,7 +211,9 @@ const plugin: Plugin<ConsumedExtensions> = [
     properties: {
       id: 'foo-tab',
       title: 'Foo',
-      required: 'TEST_MODEL_FLAG',
+    },
+    flags: {
+      required: [TEST_MODEL_FLAG],
     },
   },
   {
@@ -217,7 +225,9 @@ const plugin: Plugin<ConsumedExtensions> = [
         import('./components/dashboards/foo-card' /* webpackChunkName: "demo" */).then(
           (m) => m.FooCard,
         ),
-      required: 'TEST_MODEL_FLAG',
+    },
+    flags: {
+      required: [TEST_MODEL_FLAG],
     },
   },
   {
@@ -229,7 +239,9 @@ const plugin: Plugin<ConsumedExtensions> = [
         import(
           './components/dashboards/inventory' /* webpackChunkName: "demo-inventory-item" */
         ).then((m) => m.ExpandedRoutes),
-      required: 'TEST_MODEL_FLAG',
+    },
+    flags: {
+      required: [TEST_MODEL_FLAG],
     },
   },
   {
@@ -237,7 +249,9 @@ const plugin: Plugin<ConsumedExtensions> = [
     properties: {
       id: 'demo-inventory-group',
       icon: <DemoGroupIcon />,
-      required: 'TEST_MODEL_FLAG',
+    },
+    flags: {
+      required: [TEST_MODEL_FLAG],
     },
   },
   {
@@ -246,7 +260,9 @@ const plugin: Plugin<ConsumedExtensions> = [
       id: OverviewQuery.STORAGE_UTILIZATION,
       query: 'barQuery',
       totalQuery: 'fooQuery',
-      required: 'TEST_MODEL_FLAG',
+    },
+    flags: {
+      required: [TEST_MODEL_FLAG],
     },
   },
   {
@@ -264,7 +280,9 @@ const plugin: Plugin<ConsumedExtensions> = [
         import('./components/dashboards/activity' /* webpackChunkName: "demo" */).then(
           (m) => m.DemoActivity,
         ),
-      required: 'TEST_MODEL_FLAG',
+    },
+    flags: {
+      required: [TEST_MODEL_FLAG],
     },
   },
   {
@@ -276,7 +294,9 @@ const plugin: Plugin<ConsumedExtensions> = [
         import('./components/dashboards/activity' /* webpackChunkName: "demo" */).then(
           (m) => m.DemoPrometheusActivity,
         ),
-      required: 'TEST_MODEL_FLAG',
+    },
+    flags: {
+      required: [TEST_MODEL_FLAG],
     },
   },
   {

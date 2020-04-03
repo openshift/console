@@ -2,7 +2,7 @@ import * as React from 'react';
 
 import { K8sResourceKind } from '../module/k8s';
 import { ResourceEventStream } from './events';
-import { DetailsPage, ListPage, Table } from './factory';
+import { DetailsPage, ListPage, Table, RowFunction } from './factory';
 
 import { WorkloadTableRow, WorkloadTableHeader } from './workload-table';
 
@@ -14,9 +14,12 @@ import {
   ResourceSummary,
   SectionHeading,
   navFactory,
+  LoadingInline,
 } from './utils';
 import { VolumesTable } from './volumes-table';
 import { StatefulSetModel } from '../models';
+import PodRingSet from '@console/shared/src/components/pod/PodRingSet';
+import { PodRingController } from '@console/shared';
 
 const { AddStorage, common } = Kebab.factory;
 export const menuActions: KebabAction[] = [
@@ -27,29 +30,18 @@ export const menuActions: KebabAction[] = [
 
 const kind = 'StatefulSet';
 
-const StatefulSetTableRow = ({
-  obj,
-  index,
-  key,
-  style,
-}: {
-  obj: K8sResourceKind;
-  index: number;
-  key: string;
-  style: any;
-}) => {
+const StatefulSetTableRow: RowFunction<K8sResourceKind> = ({ obj, index, key, style }) => {
   return (
     <WorkloadTableRow
       obj={obj}
       index={index}
-      key={key}
+      rowKey={key}
       style={style}
       menuActions={menuActions}
       kind={kind}
     />
   );
 };
-StatefulSetTableRow.displayName = 'StatefulSetTableRow';
 
 const StatefulSetTableHeader = () => {
   return WorkloadTableHeader();
@@ -60,6 +52,23 @@ const StatefulSetDetails: React.FC<StatefulSetDetailsProps> = ({ obj: ss }) => (
   <>
     <div className="co-m-pane__body">
       <SectionHeading text="StatefulSet Details" />
+      <PodRingController
+        namespace={ss.metadata.namespace}
+        kind={ss.kind}
+        render={(d) => {
+          return d.loaded ? (
+            <PodRingSet
+              key={ss.metadata.uid}
+              podData={d.data[ss.metadata.uid]}
+              obj={ss}
+              resourceKind={StatefulSetModel}
+              path="/spec/replicas"
+            />
+          ) : (
+            <LoadingInline />
+          );
+        }}
+      />
       <ResourceSummary resource={ss} showPodSelector showNodeSelector showTolerations />
     </div>
     <div className="co-m-pane__body">

@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import * as _ from 'lodash-es';
 import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
-import { DetailsPage, ListPage, Table, TableRow, TableData } from './factory';
+import { DetailsPage, ListPage, Table, TableRow, TableData, RowFunction } from './factory';
 import {
   history,
   SectionHeading,
@@ -66,7 +66,7 @@ const ClusterServiceClassTableHeader = () => {
 };
 ClusterServiceClassTableHeader.displayName = 'ClusterServiceClassTableHeader';
 
-const ClusterServiceClassTableRow: React.FC<ClusterServiceClassTableRowProps> = ({
+const ClusterServiceClassTableRow: RowFunction<K8sResourceKind> = ({
   obj: serviceClass,
   index,
   key,
@@ -90,13 +90,6 @@ const ClusterServiceClassTableRow: React.FC<ClusterServiceClassTableRowProps> = 
       </TableData>
     </TableRow>
   );
-};
-ClusterServiceClassTableRow.displayName = 'ClusterServiceClassTableRow';
-type ClusterServiceClassTableRowProps = {
-  obj: K8sResourceKind;
-  index: number;
-  key?: string;
-  style: object;
 };
 
 const ClusterServiceClassDetails: React.FC<ClusterServiceClassDetailsProps> = ({

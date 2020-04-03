@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { TableData, TableRow } from '@console/internal/components/factory';
+import { TableData, TableRow, RowFunction } from '@console/internal/components/factory';
 import {
   asAccessReview,
   Kebab,
@@ -81,8 +81,7 @@ const getActions = (
     return actions;
   }
 
-  const isTemplate = vmLikeEntity && !isVM(vmLikeEntity);
-  if (disk.isEditingSupported(isTemplate)) {
+  if (disk.isEditingSupported()) {
     actions.push(menuActionEdit);
   }
 
@@ -141,14 +140,7 @@ export const DiskSimpleRow: React.FC<VMDiskSimpleRowProps> = ({
   );
 };
 
-export type VMDiskRowProps = {
-  obj: StorageBundle;
-  customData: VMStorageRowCustomData;
-  index: number;
-  style: object;
-};
-
-export const DiskRow: React.FC<VMDiskRowProps> = ({
+export const DiskRow: RowFunction<StorageBundle, VMStorageRowCustomData> = ({
   obj: { disk, ...restData },
   customData: { isDisabled, withProgress, vmLikeEntity, columnClasses, templateValidations },
   index,

@@ -11,7 +11,7 @@ import {
   EventSourceApiServerModel,
   EventSourceCamelModel,
   EventSourceKafkaModel,
-  EventSourceServiceBindingModel,
+  EventSourceSinkBindingModel,
 } from '@console/knative-plugin';
 import { getAppLabels, mergeData } from '@console/dev-console/src/utils/resource-label-utils';
 import {
@@ -262,11 +262,11 @@ export const eventSourceResourcesKafka = (namespace: string): FirehoseResource[]
   return knativeResource;
 };
 
-export const eventSourceResourcesServiceBinding = (namespace: string): FirehoseResource[] => {
+export const eventSourceResourcesSinkBinding = (namespace: string): FirehoseResource[] => {
   const knativeResource = [
     {
       isList: true,
-      kind: referenceForModel(EventSourceServiceBindingModel),
+      kind: referenceForModel(EventSourceSinkBindingModel),
       namespace,
       prop: 'eventSourceSinkbinding',
       optional: true,

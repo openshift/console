@@ -1,4 +1,4 @@
-import { HelmRelease } from '../helm-types';
+import { HelmRelease, HelmChartMetaData } from '../helm-types';
 
 /* eslint-disable @typescript-eslint/camelcase */
 export const mockHelmReleases: HelmRelease[] = [
@@ -10,7 +10,7 @@ export const mockHelmReleases: HelmRelease[] = [
       deleted: '',
       description: 'Install complete',
       status: 'deployed',
-      notes: '',
+      notes: 'ghost-test release notes',
     },
     chart: {
       metadata: {
@@ -40,6 +40,7 @@ export const mockHelmReleases: HelmRelease[] = [
             enabled: true,
           },
         ],
+        urls: ['https://kubernetes-charts/repo/community/mariadb-1.0.1.tgz'],
       },
       lock: {
         generated: '2019-11-27T17:17:48.26496196Z',
@@ -70,7 +71,7 @@ export const mockHelmReleases: HelmRelease[] = [
       deleted: '',
       description: 'Install complete',
       status: 'failed',
-      notes: '',
+      notes: 'node-test-chart release notes',
     },
     chart: {
       metadata: {
@@ -80,6 +81,7 @@ export const mockHelmReleases: HelmRelease[] = [
         apiVersion: 'v2',
         appVersion: '1.16.0',
         type: 'application',
+        urls: ['https://kubernetes-charts/repo/community/nodejs-0.1.0.tgz'],
       },
       lock: null,
       templates: [],
@@ -99,7 +101,7 @@ export const mockHelmReleases: HelmRelease[] = [
       deleted: '',
       description: 'Install complete',
       status: 'pending-install',
-      notes: '',
+      notes: 'node-test-chart release notes',
     },
     chart: {
       metadata: {
@@ -109,6 +111,7 @@ export const mockHelmReleases: HelmRelease[] = [
         apiVersion: 'v2',
         appVersion: '1.16.0',
         type: 'application',
+        urls: ['https://kubernetes-charts/repo/community/nodejs-0.1.tgz'],
       },
       lock: null,
       templates: [],
@@ -119,5 +122,38 @@ export const mockHelmReleases: HelmRelease[] = [
     manifest: '',
     version: 1,
     namespace: 'test-helm',
+  },
+];
+
+export const mockHelmChartData: HelmChartMetaData[] = [
+  {
+    appVersion: '3.12',
+    apiVersion: 'v1',
+    description: 'xyz',
+    name: 'hazelcast-enterprise',
+    urls: [
+      'https://raw.githubusercontent.com/IBM/charts/master/repo/community/hazelcast-enterprise-1.0.3.tgz',
+    ],
+    version: '1.0.3',
+  },
+  {
+    appVersion: '3.12',
+    apiVersion: 'v1',
+    description: 'abc',
+    name: 'hazelcast-enterprise',
+    urls: [
+      'https://raw.githubusercontent.com/IBM/charts/master/repo/community/hazelcast-enterprise-1.0.2.tgz',
+    ],
+    version: '1.0.2',
+  },
+  {
+    appVersion: '3.10.5',
+    apiVersion: 'v1',
+    description: 'efg',
+    name: 'hazelcast-enterprise',
+    urls: [
+      'https://raw.githubusercontent.com/IBM/charts/master/repo/community/hazelcast-enterprise-1.0.1.tgz',
+    ],
+    version: '1.0.1',
   },
 ];

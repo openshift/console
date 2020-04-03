@@ -60,11 +60,7 @@ export class SyncMarkdownView extends React.Component<
   }
 
   updateDimensions() {
-    if (
-      !this.frame ||
-      !this.frame.contentWindow.document.body ||
-      !this.frame.contentWindow.document.body.firstChild
-    ) {
+    if (!this.frame?.contentWindow?.document.body.firstChild) {
       return;
     }
     this.frame.style.height = `${this.frame.contentWindow.document.body.firstChild.scrollHeight}px`;

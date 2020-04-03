@@ -10,6 +10,8 @@ import {
   getNetworks,
   getVolumes,
   isDedicatedCPUPlacement,
+  getNodeSelector,
+  getTolerations,
 } from '../../../selectors/vm/selectors';
 import { VMWizardNetwork, VMWizardStorage } from '../../../components/create-vm-wizard/types';
 import { VMILikeMethods } from './types';
@@ -56,6 +58,22 @@ export class VMWrapper extends K8sResourceWrapper<VMKind, VMWrapper> implements 
   getVolumes = (defaultValue = []) => getVolumes(this.data, defaultValue);
 
   getLabeledDevices = () => transformDevices(this.getDisks(), this.getInterfaces());
+
+  getNodeSelector = () => getNodeSelector(this.data);
+
+  getTolerations = () => getTolerations(this.data);
+
+  getConfigMaps = () => this.getVolumes().filter((vol) => Object.keys(vol).includes('configMap'));
+
+  getSecrets = () => this.getVolumes().filter((vol) => Object.keys(vol).includes('secret'));
+
+  getServiceAccounts = () =>
+    this.getVolumes().filter((vol) => Object.keys(vol).includes('serviceAccount'));
+
+  getDiskSerial = (diskName) => {
+    const disk = this.getDisks().find((d) => d.name === diskName);
+    return disk && Object.keys(disk).includes('serial') && disk.serial;
+  };
 
   isDedicatedCPUPlacement = () => isDedicatedCPUPlacement(this.data);
 

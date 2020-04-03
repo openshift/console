@@ -83,7 +83,7 @@ export const setStoragesTabValidity = (options: UpdateOptions) => {
       (storageBundle) =>
         iGetIn(storageBundle, ['disk', 'bootOrder']) === 1 &&
         iGetIn(storageBundle, ['disk', 'disk']) &&
-        (iGetIn(storageBundle, ['volume', 'dataVolume']) ||
+        (iGetIn(storageBundle, ['volume', 'dataVolume', 'spec', 'source', 'pvc']) ||
           iGetIn(storageBundle, ['volume', 'persistentVolumeClaim'])),
     );
     if (!hasBootSource) {

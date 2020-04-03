@@ -1,5 +1,5 @@
 import { FirehoseResult } from '@console/internal/components/utils';
-import { TemplateKind } from '@console/internal/module/k8s';
+import { ConfigMapKind, TemplateKind } from '@console/internal/module/k8s';
 import { getStringEnumValues } from '../../utils/types';
 import { V1Network, V1NetworkInterface, VMKind } from '../../types/vm';
 import { NetworkInterfaceWrapper } from '../../k8s/wrapper/vm/network-interface-wrapper';
@@ -29,6 +29,7 @@ export enum VMWizardTab { // order important
 export enum VMWizardProps {
   isCreateTemplate = 'isCreateTemplate',
   isProviderImport = 'isProviderImport',
+  userTemplateName = 'userTemplateName',
   activeNamespace = 'activeNamespace',
   openshiftFlag = 'openshiftFlag',
   reduxID = 'reduxID',
@@ -36,30 +37,31 @@ export enum VMWizardProps {
   userTemplates = 'userTemplates',
   commonTemplates = 'commonTemplates',
   dataVolumes = 'dataVolumes',
+  storageClassConfigMap = 'storageClassConfigMap',
 }
 
 export const ALL_VM_WIZARD_TABS = getStringEnumValues<VMWizardTab>(VMWizardTab);
 
-export enum VMSettingsField { // TODO refactor to NAME = 'NAME' format for easier debugging once kubevirt-web-ui-components is deprecated
-  NAME = 'name',
-  HOSTNAME = 'hostname',
-  DESCRIPTION = 'description',
-  PROVISION_SOURCE_TYPE = 'provisionSourceType',
-  CONTAINER_IMAGE = 'containerImage',
-  IMAGE_URL = 'imageURL',
-  PROVIDER = 'provider',
-  PROVIDERS_DATA = 'providersData',
-  USER_TEMPLATE = 'userTemplate',
-  OPERATING_SYSTEM = 'operatingSystem',
-  FLAVOR = 'flavor',
-  MEMORY = 'memory',
-  CPU = 'cpu',
-  WORKLOAD_PROFILE = 'workloadProfile',
-  START_VM = 'startVM',
+export enum VMSettingsField {
+  NAME = 'NAME',
+  HOSTNAME = 'HOSTNAME',
+  DESCRIPTION = 'DESCRIPTION',
+  PROVISION_SOURCE_TYPE = 'PROVISION_SOURCE_TYPE',
+  CONTAINER_IMAGE = 'CONTAINER_IMAGE',
+  IMAGE_URL = 'IMAGE_URL',
+  PROVIDER = 'PROVIDER',
+  PROVIDERS_DATA = 'PROVIDERS_DATA',
+  USER_TEMPLATE = 'USER_TEMPLATE',
+  OPERATING_SYSTEM = 'OPERATING_SYSTEM',
+  FLAVOR = 'FLAVOR',
+  MEMORY = 'MEMORY',
+  CPU = 'CPU',
+  WORKLOAD_PROFILE = 'WORKLOAD_PROFILE',
+  START_VM = 'START_VM',
 }
 
-export enum VMImportProvider { // TODO refactor to VMWARE = 'VMWARE' once kubevirt-web-ui-components is deprecated
-  VMWARE = 'VMware',
+export enum VMImportProvider {
+  VMWARE = 'VMWARE',
 }
 
 export enum VMWareProviderProps {
@@ -71,21 +73,21 @@ export enum VMWareProviderProps {
   activeVcenterSecret = 'activeVcenterSecret',
 }
 
-export enum VMWareProviderField { // TODO refactor to VCENTER_KEY = 'VCENTER_KEY' once kubevirt-web-ui-components is deprecated
-  VCENTER = 'vCenterInstance',
-  HOSTNAME = 'vmwareHostname',
-  USER_NAME = 'vmwareUserName',
-  USER_PASSWORD_AND_CHECK_CONNECTION = 'vmwarePassword',
-  REMEMBER_PASSWORD = 'rememberVMwareCredentials',
+export enum VMWareProviderField {
+  VCENTER = 'VCENTER',
+  HOSTNAME = 'HOSTNAME',
+  USER_NAME = 'USER_NAME',
+  USER_PASSWORD_AND_CHECK_CONNECTION = 'USER_PASSWORD_AND_CHECK_CONNECTION',
+  REMEMBER_PASSWORD = 'REMEMBER_PASSWORD',
 
-  CHECK_CONNECTION = 'checkConnectionButton',
-  STATUS = 'vmwareStatus',
+  CHECK_CONNECTION = 'CHECK_CONNECTION',
+  STATUS = 'STATUS',
 
-  VM = 'vmwareVm',
+  VM = 'VM',
 
-  V2V_NAME = 'v2vVmwareName',
-  V2V_LAST_ERROR = 'PROVIDER_VMWARE_V2V_LAST_ERROR',
-  NEW_VCENTER_NAME = 'newVCenterName',
+  V2V_NAME = 'V2V_NAME',
+  V2V_LAST_ERROR = 'V2V_LAST_ERROR',
+  NEW_VCENTER_NAME = 'NEW_VCENTER_NAME',
 }
 
 export enum CloudInitField {
@@ -120,6 +122,7 @@ export type ChangedCommonDataProp =
   | VMWizardProps.userTemplates
   | VMWizardProps.commonTemplates
   | VMWizardProps.dataVolumes
+  | VMWizardProps.storageClassConfigMap
   | VMWizardProps.openshiftFlag
   | VMWareProviderProps.deployment
   | VMWareProviderProps.deploymentPods
@@ -131,6 +134,7 @@ export type ChangedCommonDataProp =
 export type CommonDataProp =
   | VMWizardProps.isCreateTemplate
   | VMWizardProps.isProviderImport
+  | VMWizardProps.userTemplateName
   | ChangedCommonDataProp;
 
 export type ChangedCommonData = Set<ChangedCommonDataProp>;
@@ -141,6 +145,7 @@ export const DetectCommonDataChanges = new Set<ChangedCommonDataProp>([
   VMWizardProps.virtualMachines,
   VMWizardProps.userTemplates,
   VMWizardProps.commonTemplates,
+  VMWizardProps.storageClassConfigMap,
   VMWizardProps.dataVolumes,
   VMWareProviderProps.deployment,
   VMWareProviderProps.deploymentPods,
@@ -154,6 +159,12 @@ export type CommonData = {
   data?: {
     isCreateTemplate?: boolean;
     isProviderImport?: boolean;
+    userTemplateName?: string;
+    storageClassConfigMap?: {
+      loaded: boolean;
+      loadError: string;
+      data: ConfigMapKind;
+    };
   };
   dataIDReferences?: IDReferences;
 };
@@ -169,6 +180,7 @@ export type CreateVMWizardComponentProps = {
   userTemplates: FirehoseResult<TemplateKind[]>;
   commonTemplates: FirehoseResult<TemplateKind[]>;
   virtualMachines: FirehoseResult<VMKind[]>;
+  storageClassConfigMap: FirehoseResult<ConfigMapKind>;
   onInitialize: () => void;
   onClose: (disposeOnly: boolean) => void;
   onCommonDataChanged: (commonData: CommonData, commonDataChanged: ChangedCommonData) => void;
@@ -217,6 +229,7 @@ export type VMWizardStorage = {
   persistentVolumeClaim?: V1PersistentVolumeClaim;
   importData?: {
     mountPath?: string;
+    devicePath?: string;
     fileName?: string;
   };
 };

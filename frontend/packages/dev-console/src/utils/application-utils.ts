@@ -32,7 +32,7 @@ import {
   EventSourceApiServerModel,
   EventSourceCamelModel,
   EventSourceKafkaModel,
-  EventSourceServiceBindingModel,
+  EventSourceSinkBindingModel,
 } from '@console/knative-plugin';
 import { checkAccess } from '@console/internal/components/utils';
 import { getOperatorBackedServiceKindMap } from '@console/shared';
@@ -431,7 +431,7 @@ export const cleanUpWorkload = (
     case EventSourceContainerModel.kind:
     case EventSourceKafkaModel.kind:
     case EventSourceCamelModel.kind:
-    case EventSourceServiceBindingModel.kind:
+    case EventSourceSinkBindingModel.kind:
       deleteRequest(modelFor(referenceFor(resource)), resource);
       break;
     case KnativeServiceModel.kind:

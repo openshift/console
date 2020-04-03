@@ -31,16 +31,17 @@ body,
 
 .co-p-has-sidebar {
   position: relative;
-  @media(min-width: $screen-md-min) {
-    display: flex;
-    height: 100%;
-  }
+  display: flex;
+  flex: 1;
+  height: 100%;
+
 
   &__body {
     flex: 1 1 700px;
   }
 
   &__sidebar {
+    position: relative;
     @media(min-width: $screen-md-min) {
       flex: 1 0 300px;
       overflow-y: auto;

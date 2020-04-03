@@ -2,6 +2,7 @@ export interface FormFooterProps {
   handleSubmit?: () => void;
   handleReset?: () => void;
   handleCancel?: () => void;
+  sticky?: boolean;
   submitLabel?: string;
   resetLabel?: string;
   cancelLabel?: string;

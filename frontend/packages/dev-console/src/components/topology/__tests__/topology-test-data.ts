@@ -2,7 +2,7 @@ import { FirehoseResult } from '@console/internal/components/utils';
 import { DeploymentKind, PodKind, EventKind } from '@console/internal/module/k8s';
 import { Model } from '@console/topology';
 import { TopologyDataModel, TopologyDataResources } from '../topology-types';
-import { NODE_HEIGHT, NODE_PADDING, NODE_WIDTH } from '../const';
+import { NODE_HEIGHT, NODE_PADDING, NODE_WIDTH } from '../components/const';
 
 export const resources: TopologyDataResources = {
   replicationControllers: { loaded: true, loadError: '', data: [] },
@@ -2105,6 +2105,7 @@ export const dataModel: Model = {
       id: 'e187afa2-53b1-406d-a619-cf9ff1468031',
       label: 'hello-openshift',
       type: 'workload',
+      visible: true,
       width: NODE_WIDTH,
       height: NODE_HEIGHT,
       style: {
@@ -2167,6 +2168,7 @@ export const sampleHelmResourcesMap = {
     releaseName: 'nodejs-helm',
     chartIcon: '',
     manifestResources: [sampleHelmChartDeploymentConfig],
+    releaseNotes: 'test release notes',
   },
 };
 

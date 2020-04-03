@@ -12,7 +12,6 @@ import * as crudView from '@console/internal-integration-tests/views/crud.view';
 import * as catalogView from '@console/internal-integration-tests/views/catalog.view';
 import * as catalogPageView from '@console/internal-integration-tests/views/catalog-page.view';
 import * as sidenavView from '@console/internal-integration-tests/views/sidenav.view';
-import * as yamlView from '@console/internal-integration-tests/views/yaml.view';
 import * as operatorView from '../views/operator.view';
 import * as operatorHubView from '../views/operator-hub.view';
 
@@ -160,16 +159,16 @@ describe('Interacting with an `AllNamespaces` install mode Operator (Jaeger)', (
     );
   });
 
-  it('displays YAML editor for creating a new `Jaeger` instance', async () => {
+  it('displays form editor for creating a new `Jaeger` instance', async () => {
     await browser.wait(until.visibilityOf(element(by.buttonText('Create Jaeger'))));
     await retry(() => element(by.buttonText('Create Jaeger')).click());
-    await yamlView.isLoaded();
+    await browser.wait(until.presenceOf($('#metadata\\.name')));
 
     expect($('.co-create-operand__header').getText()).toContain('Create Jaeger');
   });
 
   it('displays new `Jaeger` that was created from YAML editor', async () => {
-    await $('#save-changes').click();
+    await $('button[type="submit"]').click();
     await crudView.isLoaded();
     await browser.wait(until.visibilityOf(operatorView.operandLink(jaegerName)));
 

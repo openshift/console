@@ -2,6 +2,7 @@ import * as React from 'react';
 import { shallow } from 'enzyme';
 import { MultiListPage } from '@console/internal/components/factory';
 import HelmReleaseResources from '../HelmReleaseResources';
+import { mockHelmReleases } from './helm-release-mock-data';
 
 describe('HelmReleaseResources', () => {
   const match = {
@@ -13,6 +14,7 @@ describe('HelmReleaseResources', () => {
 
   const helmReleaseResourcesProps: React.ComponentProps<typeof HelmReleaseResources> = {
     match,
+    customData: mockHelmReleases[0],
   };
 
   const helmReleaseResources = shallow(<HelmReleaseResources {...helmReleaseResourcesProps} />);

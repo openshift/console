@@ -13,15 +13,17 @@ import {
 import { RootState } from '@console/internal/redux';
 import { Tooltip, TooltipPosition } from '@patternfly/react-core';
 import { ExternalLinkAltIcon } from '@patternfly/react-icons';
-import { ALLOW_SERVICE_BINDING } from '../../../../const';
 import { routeDecoratorIcon } from '../../../import/render-utils';
-import Decorator from './Decorator';
+import { Decorator } from './Decorator';
 import PodSet from './PodSet';
 import BuildDecorator from './build-decorators/BuildDecorator';
-import BaseNode from './BaseNode';
+import { BaseNode } from './BaseNode';
+import { getCheURL, getEditURL, getServiceBindingStatus } from '../../topology-utils';
+import { useDisplayFilters } from '../../filters/useDisplayFilters';
 
 interface StateProps {
   serviceBinding: boolean;
+  cheURL: string;
 }
 
 export type WorkloadNodeProps = {
@@ -39,21 +41,25 @@ export type WorkloadNodeProps = {
   WithCreateConnectorProps &
   StateProps;
 
-const WorkloadNode: React.FC<WorkloadNodeProps> = ({
+const ObservedWorkloadNode: React.FC<WorkloadNodeProps> = ({
   element,
   urlAnchorRef,
   canDrop,
   dropTarget,
   serviceBinding,
+  cheURL,
   ...rest
 }) => {
   const { width, height } = element.getBounds();
   const workloadData = element.getData().data;
+  const filters = useDisplayFilters();
   const size = Math.min(width, height);
-  const { donutStatus, editUrl, cheEnabled } = workloadData;
+  const { donutStatus, editURL, vcsURI } = workloadData;
   const { radius, decoratorRadius } = calculateRadius(size);
+  const cheEnabled = !!cheURL;
   const cx = width / 2;
   const cy = height / 2;
+  const editUrl = editURL || getEditURL(vcsURI, cheURL);
   const repoIcon = routeDecoratorIcon(editUrl, decoratorRadius, cheEnabled);
   const tipContent = `Create a ${
     serviceBinding && element.getData().operatorBackedService ? 'binding' : 'visual'
@@ -70,7 +76,7 @@ const WorkloadNode: React.FC<WorkloadNodeProps> = ({
         <BaseNode
           outerRadius={radius}
           innerRadius={donutStatus && donutStatus.isRollingOut ? radius * 0.45 : radius * 0.55}
-          icon={!workloadData.showPodCount ? workloadData.builderImage : undefined}
+          icon={!filters.podCount ? workloadData.builderImage : undefined}
           kind={workloadData.kind}
           element={element}
           dropTarget={dropTarget}
@@ -122,7 +128,7 @@ const WorkloadNode: React.FC<WorkloadNodeProps> = ({
             x={cx}
             y={cy}
             data={workloadData.donutStatus}
-            showPodCount={workloadData.showPodCount}
+            showPodCount={filters.podCount}
           />
         </BaseNode>
       </Tooltip>
@@ -130,12 +136,13 @@ const WorkloadNode: React.FC<WorkloadNodeProps> = ({
   );
 };
 
-const getServiceBindingStatus = ({ FLAGS }: RootState): boolean => FLAGS.get(ALLOW_SERVICE_BINDING);
-
 const mapStateToProps = (state: RootState): StateProps => {
+  const consoleLinks = state.UI.get('consoleLinks');
   return {
+    cheURL: getCheURL(consoleLinks),
     serviceBinding: getServiceBindingStatus(state),
   };
 };
 
-export default connect(mapStateToProps)(observer(WorkloadNode));
+const WorkloadNode = connect(mapStateToProps)(observer(ObservedWorkloadNode));
+export { WorkloadNode };

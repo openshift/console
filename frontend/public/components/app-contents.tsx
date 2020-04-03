@@ -434,6 +434,15 @@ const AppContents_: React.FC<AppContentsProps> = ({ activePerspective, flags }) 
             }
           />
           <LazyRoute
+            path="/monitoring/alertrules"
+            exact
+            loader={() =>
+              import('./monitoring' /* webpackChunkName: "monitoring" */).then(
+                (m) => m.MonitoringUI,
+              )
+            }
+          />
+          <LazyRoute
             path="/monitoring/silences"
             exact
             loader={() =>

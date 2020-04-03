@@ -43,6 +43,7 @@ import {
 import { VirtualMachine } from './models/virtualMachine';
 import { Wizard } from './models/wizard';
 import { NetworkInterfaceDialog } from './dialogs/networkInterfaceDialog';
+import { VirtualMachineModel } from '../../src/models/index';
 
 describe('Add/remove disks and NICs on respective VM pages', () => {
   const testVm = getVMManifest('Container', testName, `vm-disk-nic-${testName}`);
@@ -143,7 +144,7 @@ describe('Test network type presets and options', () => {
   it('Test NIC type in VM Wizard', async () => {
     await browser.get(`${appHost}/k8s/ns/${testName}/virtualmachines`);
     await isLoaded();
-    await wizard.openWizard();
+    await wizard.openWizard(VirtualMachineModel.labelPlural);
 
     await wizard.fillName(getRandStr(5));
     await wizard.fillDescription(testName);

@@ -66,6 +66,8 @@ export const OperatorHubList: React.SFC<OperatorHubListProps> = (props) => {
           'marketplace.openshift.io/action-text': marketplaceActionText,
           'marketplace.openshift.io/remote-workflow': marketplaceRemoteWorkflow,
           'marketplace.openshift.io/support-workflow': marketplaceSupportWorkflow,
+          'operators.openshift.io/infrastructure-features': infrastructure,
+          'operators.openshift.io/valid-subscription': validSubscription,
         } = currentCSVAnnotations;
 
         return {
@@ -107,6 +109,8 @@ export const OperatorHubList: React.SFC<OperatorHubListProps> = (props) => {
           marketplaceActionText,
           marketplaceRemoteWorkflow,
           marketplaceSupportWorkflow,
+          validSubscription: validSubscription ? JSON.parse(validSubscription) : undefined,
+          infraFeatures: infrastructure ? JSON.parse(infrastructure) : undefined,
         };
       },
     );

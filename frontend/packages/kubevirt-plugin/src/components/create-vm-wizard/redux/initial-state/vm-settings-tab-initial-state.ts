@@ -1,29 +1,29 @@
 import { OrderedSet } from 'immutable';
 import { CommonData, VMSettingsField, VMWizardProps } from '../../types';
-import { asHidden, asRequired } from '../../utils/utils';
+import { asDisabled, asHidden, asRequired } from '../../utils/utils';
 import { ProvisionSource } from '../../../../constants/vm/provision-source';
 import { getProviders } from '../../provider-definitions';
 import { InitialStepStateGetter, VMSettings } from './types';
 
 export const vmSettingsOrder = {
-  [VMSettingsField.PROVIDER]: 0,
-  [VMSettingsField.USER_TEMPLATE]: 1,
-  [VMSettingsField.PROVISION_SOURCE_TYPE]: 2,
-  [VMSettingsField.CONTAINER_IMAGE]: 3,
-  [VMSettingsField.IMAGE_URL]: 4,
-  [VMSettingsField.OPERATING_SYSTEM]: 5,
-  [VMSettingsField.FLAVOR]: 6,
-  [VMSettingsField.MEMORY]: 7,
-  [VMSettingsField.CPU]: 8,
-  [VMSettingsField.WORKLOAD_PROFILE]: 9,
-  [VMSettingsField.NAME]: 10,
-  [VMSettingsField.DESCRIPTION]: 11,
+  [VMSettingsField.NAME]: 0,
+  [VMSettingsField.DESCRIPTION]: 1,
+  [VMSettingsField.USER_TEMPLATE]: 2,
+  [VMSettingsField.PROVIDER]: 3,
+  [VMSettingsField.PROVISION_SOURCE_TYPE]: 4,
+  [VMSettingsField.CONTAINER_IMAGE]: 5,
+  [VMSettingsField.IMAGE_URL]: 6,
+  [VMSettingsField.OPERATING_SYSTEM]: 7,
+  [VMSettingsField.FLAVOR]: 8,
+  [VMSettingsField.MEMORY]: 9,
+  [VMSettingsField.CPU]: 10,
+  [VMSettingsField.WORKLOAD_PROFILE]: 11,
   [VMSettingsField.START_VM]: 12,
 };
 
 export const getInitialVmSettings = (data: CommonData): VMSettings => {
   const {
-    data: { isCreateTemplate, isProviderImport },
+    data: { isCreateTemplate, isProviderImport, userTemplateName },
   } = data;
 
   const hiddenByProvider = asHidden(isProviderImport, VMWizardProps.isProviderImport);
@@ -36,6 +36,8 @@ export const getInitialVmSettings = (data: CommonData): VMSettings => {
     : [ProvisionSource.PXE, ProvisionSource.URL, ProvisionSource.CONTAINER, ProvisionSource.DISK]
   ).map((source) => source.getValue());
 
+  const isVM = !isCreateTemplate && !isProviderImport;
+
   const fields = {
     [VMSettingsField.NAME]: {
       isRequired: asRequired(true),
@@ -44,11 +46,14 @@ export const getInitialVmSettings = (data: CommonData): VMSettings => {
     [VMSettingsField.DESCRIPTION]: {},
     [VMSettingsField.USER_TEMPLATE]: {
       isHidden: hiddenByProviderOrTemplate,
+      isDisabled: asDisabled(!!userTemplateName, VMWizardProps.userTemplateName),
+      initialized: !(isVM && userTemplateName),
+      value: userTemplateName || undefined,
     },
     [VMSettingsField.PROVIDER]: {
       isRequired: asRequired(isProviderImport),
       isHidden: asHidden(!isProviderImport),
-      providers: getProviders().map((provider) => provider.name),
+      providers: getProviders().map((provider) => ({ name: provider.name, id: provider.id })),
     },
     [VMSettingsField.PROVISION_SOURCE_TYPE]: {
       value: isProviderImport ? ProvisionSource.IMPORT.getValue() : undefined,
@@ -81,7 +86,7 @@ export const getInitialVmSettings = (data: CommonData): VMSettings => {
     },
     [VMSettingsField.PROVIDERS_DATA]: {
       ...getProviders().reduce((allProviders, provider) => {
-        allProviders[provider.name] = provider.getInitialState();
+        allProviders[provider.id] = provider.getInitialState();
         return allProviders;
       }, {}),
     },

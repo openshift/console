@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Grid, GridItem } from '@patternfly/react-core';
 import { Humanize } from '@console/internal/components/utils';
 import { K8sKind } from '@console/internal/module/k8s';
-import { addAvailable, getCapacityValue, StackDataPoint } from './utils';
+import { addAvailable, getCapacityValue, StackDataPoint, getLegends } from './utils';
 import { BreakdownChart } from './breakdown-chart';
 import { BreakdownChartLoading } from './breakdown-loading';
 import { TotalCapacityBody } from './breakdown-capacity';
@@ -42,13 +42,7 @@ export const BreakdownCardBody: React.FC<BreakdownBodyProps> = ({
     humanize,
   );
 
-  const legends = chartData.map((d: StackDataPoint) => ({
-    name: [d.name, d.label],
-    labels: { fill: d.color },
-    symbol: { fill: d.fill },
-    link: d.link,
-    ns: d.ns,
-  }));
+  const legends = getLegends(chartData);
 
   // Removes Legend for available
   if (capacityTotal) {
@@ -81,7 +75,7 @@ export const BreakdownCardBody: React.FC<BreakdownBodyProps> = ({
   );
 };
 
-type BreakdownBodyProps = {
+export type BreakdownBodyProps = {
   isLoading: boolean;
   hasLoadError: boolean;
   metricTotal: string;

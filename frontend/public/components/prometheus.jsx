@@ -54,7 +54,6 @@ const PrometheusTableRow = ({ obj: instance, index, key, style }) => {
     </TableRow>
   );
 };
-PrometheusTableRow.displayName = 'PrometheusTableRow';
 
 const PrometheusTableHeader = () => {
   return [

@@ -2,7 +2,7 @@ import { testName } from '@console/internal-integration-tests/protractor.conf';
 import { CloudInitConfig, BaseVMConfig, StorageResource } from './types';
 import {
   STORAGE_CLASS,
-  COMMON_TEMPLATES_VERSION,
+  commonTemplateVersion,
   NIC_MODEL,
   NIC_TYPE,
   DISK_INTERFACE,
@@ -66,6 +66,8 @@ export const basicVMConfig: BaseVMConfig = {
   sourceContainer: 'kubevirt/cirros-registry-disk-demo',
   cloudInitScript: `#cloud-config\nuser: cloud-user\npassword: atomic\nchpasswd: {expire: False}\nhostname: vm-${testName}`,
 };
+Object.freeze(basicVMConfig.flavorConfig);
+Object.freeze(basicVMConfig);
 
 export const defaultWizardPodNetworkingInterface = {
   name: 'nic0',
@@ -84,7 +86,7 @@ export const defaultYAMLPodNetworkingInterface = {
 };
 
 // Fake windows machine, still cirros in the heart
-export const widowsVMConfig: BaseVMConfig = {
+export const windowsVMConfig: BaseVMConfig = {
   operatingSystem: OperatingSystem.WINDOWS_10,
   flavorConfig: { flavor: Flavor.MEDIUM },
   workloadProfile: WorkloadProfile.DESKTOP,
@@ -151,10 +153,12 @@ function getMetadata(
       app: vmName,
       'flavor.template.kubevirt.io/tiny': 'true',
       'os.template.kubevirt.io/rhel7.6': 'true',
-      'vm.kubevirt.io/template': `rhel7-desktop-${basicVMConfig.flavorConfig.flavor}-${COMMON_TEMPLATES_VERSION}`,
+      'vm.kubevirt.io/template': `rhel7-desktop-${
+        basicVMConfig.flavorConfig.flavor
+      }-${commonTemplateVersion()}`,
       'vm.kubevirt.io/template.namespace': COMMON_TEMPLATES_NAMESPACE,
       'vm.kubevirt.io/template.revision': COMMON_TEMPLATES_REVISION,
-      'vm.kubevirt.io/template.version': COMMON_TEMPLATES_VERSION,
+      'vm.kubevirt.io/template.version': commonTemplateVersion(),
       'workload.template.kubevirt.io/desktop': 'true',
     },
   };

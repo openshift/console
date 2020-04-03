@@ -4,7 +4,7 @@
 import { useSelector } from 'react-redux';
 import { RootState } from '@console/internal/redux';
 import { testHook } from '../../../../test/test-utils';
-import useSearchFilter from '../useSearchFilter';
+import { useSearchFilter } from '../useSearchFilter';
 
 jest.mock('react-redux', () => ({
   useSelector: jest.fn(),

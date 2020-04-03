@@ -71,6 +71,7 @@ describe(ClusterServiceVersionTableRow.displayName, () => {
         obj={testClusterServiceVersion}
         subscription={testSubscription}
         index={0}
+        rowKey={'0'}
         style={{}}
       />,
     )
@@ -85,6 +86,7 @@ describe(ClusterServiceVersionTableRow.displayName, () => {
         obj={testClusterServiceVersion}
         subscription={testSubscription}
         index={0}
+        rowKey={'0'}
         style={{}}
       />,
     );

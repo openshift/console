@@ -1,4 +1,10 @@
-import { K8sResourceKind, OwnerReference, Selector } from '@console/internal/module/k8s';
+import {
+  K8sResourceCommon,
+  K8sResourceCondition,
+  K8sResourceKind,
+  OwnerReference,
+  Selector,
+} from '@console/internal/module/k8s';
 import { Descriptor } from './components/descriptors/types';
 
 export enum AppCatalog {
@@ -93,6 +99,8 @@ export type APIServiceDefinition = {
   }[];
 };
 
+export type ProvidedAPI = CRDDescription | APIServiceDefinition;
+
 export type RequirementStatus = {
   group: string;
   version: string;
@@ -168,8 +176,9 @@ export type InstallPlanKind = {
     phase: InstallPlanPhase;
     catalogSources: string[];
     plan: Step[];
+    conditions?: K8sResourceCondition[];
   };
-} & K8sResourceKind;
+} & K8sResourceCommon;
 
 export type SubscriptionKind = {
   apiVersion: 'operators.coreos.com/v1alpha1';

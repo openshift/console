@@ -177,7 +177,7 @@ export type ResourceList = {
   [resourceName: string]: string;
 };
 
-type EnvVarSource = {
+export type EnvVarSource = {
   fieldRef?: {
     apiVersion?: string;
     fieldPath: string;
@@ -193,6 +193,22 @@ type EnvVarSource = {
   };
   secretKeyRef?: {
     key: string;
+    name: string;
+  };
+  configMapRef?: {
+    key?: string;
+    name: string;
+  };
+  secretRef?: {
+    key?: string;
+    name: string;
+  };
+  configMapSecretRef?: {
+    key?: string;
+    name: string;
+  };
+  serviceAccountRef?: {
+    key?: string;
     name: string;
   };
 };
@@ -324,7 +340,7 @@ export type PodTemplate = {
 };
 
 export type PodKind = {
-  status: PodStatus;
+  status?: PodStatus;
 } & K8sResourceCommon &
   PodTemplate;
 
@@ -376,6 +392,9 @@ export type NodeKind = {
     unschedulable?: boolean;
   };
   status?: {
+    capacity?: {
+      [key: string]: string;
+    };
     conditions?: NodeCondition[];
     images?: {
       names: string[];
@@ -905,6 +924,21 @@ export type GroupVersionKind = string;
  * Maintains backwards-compatibility with references using the `kind` string field.
  */
 export type K8sResourceKindReference = GroupVersionKind | string;
+
+export type SecretKind = {
+  data: { [key: string]: string };
+  stringData: { [key: string]: string };
+  type: string;
+} & K8sResourceCommon;
+
+export type ServiceAccountKind = {
+  automountServiceAccountToken?: boolean;
+  secrets: SecretKind[];
+} & K8sResourceCommon;
+
+export type ListKind<R extends K8sResourceCommon> = K8sResourceCommon & {
+  items: R[];
+};
 
 export type EventKind = {
   action?: string;

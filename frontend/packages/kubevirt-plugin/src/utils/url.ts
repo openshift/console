@@ -1,4 +1,5 @@
 import { k8sBasePath } from '@console/internal/module/k8s';
+import { VMWizardName, VMWizardMode } from '../constants/vm';
 
 const ELLIPSIS = '…';
 
@@ -45,3 +46,24 @@ export const resolveURL = ({ urlObj, maxHostnameParts, maxPathnameParts }) =>
   urlObj.origin === 'null'
     ? urlObj.href
     : `${resolveOrigin(urlObj, maxHostnameParts)}${resolvePathname(urlObj, maxPathnameParts)}`;
+
+export const getVMWizardCreateLink = (
+  namespace: string,
+  itemName: VMWizardName = VMWizardName.WIZARD,
+  mode: VMWizardMode = VMWizardMode.TEMPLATE,
+  template?: string,
+) => {
+  const wizardMode = itemName === VMWizardName.IMPORT ? VMWizardMode.IMPORT : mode;
+  const type = itemName === VMWizardName.YAML ? '~new' : '~new-wizard';
+
+  const params = new URLSearchParams();
+  if (wizardMode !== VMWizardMode.VM) {
+    params.append('mode', wizardMode);
+  }
+  if (template) {
+    params.append('template', template);
+  }
+  const paramsString = params.toString() ? `?${params}` : '';
+
+  return `/k8s/ns/${namespace || 'default'}/virtualization/${type}${paramsString}`;
+};

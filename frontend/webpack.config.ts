@@ -8,6 +8,7 @@ import * as VirtualModulesPlugin from 'webpack-virtual-modules';
 
 import { resolvePluginPackages, getActivePluginsModule } from '@console/plugin-sdk/src/codegen';
 import { Configuration as WebpackDevServerConfiguration } from 'webpack-dev-server';
+import { CircularDependencyPreset } from './webpack.circular-deps';
 
 interface Configuration extends webpack.Configuration {
   devServer?: WebpackDevServerConfiguration;
@@ -15,8 +16,9 @@ interface Configuration extends webpack.Configuration {
 
 const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin');
 
-const NODE_ENV = process.env.NODE_ENV;
-const HOT_RELOAD = process.env.HOT_RELOAD;
+const NODE_ENV = process.env.NODE_ENV || 'development';
+const HOT_RELOAD = process.env.HOT_RELOAD || 'false';
+const CHECK_CYCLES = process.env.CHECK_CYCLES || 'false';
 
 /* Helpers */
 const extractCSS = new MiniCssExtractPlugin({ filename: 'app-bundle.[contenthash].css' });
@@ -69,6 +71,8 @@ const config: Configuration = {
           {
             loader: 'ts-loader',
             options: {
+              // Always use the root tsconfig.json. Packages might have a separate tsconfig.json for storybook.
+              configFile: path.resolve(__dirname, 'tsconfig.json'),
               happyPackMode: true, // This implicitly enables transpileOnly! No type checking!
               transpileOnly: true, // fork-ts-checker-webpack-plugin takes care of type checking
             },
@@ -160,6 +164,13 @@ const config: Configuration = {
   devtool: 'cheap-module-source-map',
   stats: 'minimal',
 };
+
+if (CHECK_CYCLES === 'true') {
+  new CircularDependencyPreset({
+    exclude: /node_modules|public\/dist/,
+    reportFile: '.webpack-cycles',
+  }).apply(config.plugins);
+}
 
 /* Production settings */
 if (NODE_ENV === 'production') {

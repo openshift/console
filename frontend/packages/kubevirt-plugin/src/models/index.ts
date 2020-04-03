@@ -77,7 +77,7 @@ export const V2VVMwareModel: K8sKind = {
   label: 'V2V VMWare Provider',
   labelPlural: 'V2V VMWare Providers',
   apiVersion: 'v1alpha1',
-  apiGroup: 'kubevirt.io',
+  apiGroup: 'v2v.kubevirt.io',
   plural: 'v2vvmwares',
   abbr: 'VVW',
   namespaced: true,

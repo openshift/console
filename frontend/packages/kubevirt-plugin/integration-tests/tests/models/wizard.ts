@@ -5,8 +5,8 @@ import {
   isLoaded,
 } from '@console/internal-integration-tests/views/crud.view';
 import { clickNavLink } from '@console/internal-integration-tests/views/sidenav.view';
-import { click, asyncForEach } from '@console/shared/src/test-utils/utils';
-import { fillInput, selectOptionByText } from '../utils/utils';
+import { click, fillInput, asyncForEach } from '@console/shared/src/test-utils/utils';
+import { selectOptionByText } from '../utils/utils';
 import { CloudInitConfig, StorageResource, NetworkResource, FlavorConfig } from '../utils/types';
 import { WIZARD_CREATE_VM_SUCCESS, PAGE_LOAD_TIMEOUT_SECS, KEBAP_ACTION } from '../utils/consts';
 import * as wizardView from '../../views/wizard.view';
@@ -15,12 +15,9 @@ import { DiskDialog } from '../dialogs/diskDialog';
 import { Flavor } from '../utils/constants/wizard';
 
 export class Wizard {
-  async openWizard() {
-    if (
-      !(await resourceTitle.isPresent()) ||
-      (await resourceTitle.getText()) !== 'Virtual Machines'
-    ) {
-      await clickNavLink(['Workloads', 'Virtual Machines']);
+  async openWizard(kind: string) {
+    if (!(await resourceTitle.isPresent()) || (await resourceTitle.getText()) !== kind) {
+      await clickNavLink(['Workloads', kind]);
       await isLoaded();
     }
     await click(createItemButton);

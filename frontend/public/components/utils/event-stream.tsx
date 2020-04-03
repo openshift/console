@@ -50,7 +50,7 @@ class SysEvent extends React.Component<SysEventProps> {
     }
 
     return (
-      <div className={classNames('co-sysevent--transition', className)} style={style}>
+      <div className={classNames('co-sysevent--transition', className)} style={style} role="row">
         <CSSTransition
           mountOnEnter={true}
           appear={shouldAnimate}

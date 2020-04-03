@@ -1,40 +1,25 @@
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
-import { connect } from 'react-redux';
 import { matchPath, match as RMatch, Link, Redirect } from 'react-router-dom';
 import { Tooltip, Popover, Button } from '@patternfly/react-core';
 import { ListIcon, TopologyIcon, QuestionCircleIcon } from '@patternfly/react-icons';
-import { getActiveApplication } from '@console/internal/reducers/ui';
-import { ALL_APPLICATIONS_KEY } from '@console/shared';
 import { StatusBox, Firehose, HintBlock, AsyncComponent } from '@console/internal/components/utils';
-import { RootState } from '@console/internal/redux';
-import { FLAG_KNATIVE_SERVING_SERVICE } from '@console/knative-plugin';
 import EmptyState from '../EmptyState';
 import NamespacedPage, { NamespacedPageVariants } from '../NamespacedPage';
 import ProjectsExistWrapper from '../ProjectsExistWrapper';
 import ProjectListPage from '../projects/ProjectListPage';
-import { ALLOW_SERVICE_BINDING } from '../../const';
-import { getCheURL } from './topology-utils';
 import ConnectedTopologyDataController, { RenderProps } from './TopologyDataController';
 import Topology from './Topology';
 import TopologyShortcuts from './TopologyShortcuts';
-import { LAST_TOPOLOGY_VIEW_LOCAL_STORAGE_KEY } from './const';
-import './TopologyPage.scss';
+import { LAST_TOPOLOGY_VIEW_LOCAL_STORAGE_KEY } from './components/const';
 
-interface StateProps {
-  activeApplication: string;
-  knative: boolean;
-  cheURL: string;
-  serviceBinding: boolean;
-}
+import './TopologyPage.scss';
 
 export interface TopologyPageProps {
   match: RMatch<{
     name?: string;
   }>;
 }
-
-type Props = TopologyPageProps & StateProps;
 
 const setTopologyActiveView = (id: string) => {
   localStorage.setItem(LAST_TOPOLOGY_VIEW_LOCAL_STORAGE_KEY, id);
@@ -58,7 +43,7 @@ const EmptyMsg = () => (
   />
 );
 
-export function renderTopology({ loaded, loadError, serviceBinding, data }: RenderProps) {
+export function renderTopology({ loaded, loadError, data, namespace }: RenderProps) {
   return (
     <StatusBox
       data={data ? data.graph.nodes : null}
@@ -68,21 +53,14 @@ export function renderTopology({ loaded, loadError, serviceBinding, data }: Rend
       EmptyMsg={EmptyMsg}
     >
       <div className="odc-topology">
-        <Topology data={data} serviceBinding={serviceBinding} />
+        <Topology data={data} namespace={namespace} />
       </div>
     </StatusBox>
   );
 }
 
-export const TopologyPage: React.FC<Props> = ({
-  match,
-  activeApplication,
-  knative,
-  cheURL,
-  serviceBinding,
-}) => {
+export const TopologyPage: React.FC<TopologyPageProps> = ({ match }) => {
   const namespace = match.params.name;
-  const application = activeApplication === ALL_APPLICATIONS_KEY ? undefined : activeApplication;
   const showListView = !!matchPath(match.path, {
     path: '*/list',
     exact: true,
@@ -163,14 +141,7 @@ export const TopologyPage: React.FC<Props> = ({
                   }
                 />
               ) : (
-                <ConnectedTopologyDataController
-                  application={application}
-                  namespace={namespace}
-                  render={renderTopology}
-                  knative={knative}
-                  cheURL={cheURL}
-                  serviceBinding={serviceBinding}
-                />
+                <ConnectedTopologyDataController namespace={namespace} render={renderTopology} />
               )
             ) : (
               <ProjectListPage title="Topology">
@@ -184,18 +155,4 @@ export const TopologyPage: React.FC<Props> = ({
   );
 };
 
-const getKnativeStatus = ({ FLAGS }: RootState): boolean => FLAGS.get(FLAG_KNATIVE_SERVING_SERVICE);
-
-const getServiceBindingStatus = ({ FLAGS }: RootState): boolean => FLAGS.get(ALLOW_SERVICE_BINDING);
-
-const mapStateToProps = (state: RootState): StateProps => {
-  const consoleLinks = state.UI.get('consoleLinks');
-  return {
-    activeApplication: getActiveApplication(state),
-    knative: getKnativeStatus(state),
-    cheURL: getCheURL(consoleLinks),
-    serviceBinding: getServiceBindingStatus(state),
-  };
-};
-
-export default connect(mapStateToProps)(TopologyPage);
+export default TopologyPage;

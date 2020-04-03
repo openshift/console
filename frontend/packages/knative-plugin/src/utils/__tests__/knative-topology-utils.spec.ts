@@ -11,7 +11,7 @@ import {
   getParentResource,
   filterRevisionsByActiveApplication,
   createKnativeEventSourceSink,
-} from '../knative-topology-utils';
+} from '../../topology/knative-topology-utils';
 import { mockServiceData, mockRevisions } from '../__mocks__/traffic-splitting-utils-mock';
 
 describe('knative topology utils', () => {

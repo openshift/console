@@ -590,8 +590,8 @@ class BaseLayout implements Layout {
     const prevGroups = this.groups;
 
     // create datum
-    const leafNodes = leafNodeElements(this.graph.getNodes());
-    const groups = groupNodeElements(this.graph.getNodes());
+    const leafNodes = leafNodeElements(this.graph.getNodes()).filter((n) => n.isVisible());
+    const groups = groupNodeElements(this.graph.getNodes()).filter((g) => g.isVisible());
 
     this.nodes = this.getNodes(leafNodes, this.options.nodeDistance);
 

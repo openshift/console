@@ -17,7 +17,7 @@ import {
 } from '@console/plugin-sdk';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { MachineModel, NodeModel } from '@console/internal/models';
-// TODO(jtomasek): chage this to '@console/shared/src/utils' once @console/shared/src/utils modules
+// TODO(jtomasek): change this to '@console/shared/src/utils' once @console/shared/src/utils modules
 // no longer import from @console/internal (cyclic deps issues)
 import { formatNamespacedRouteForResource } from '@console/shared/src/utils/namespace';
 import { BareMetalHostModel, NodeMaintenanceModel } from './models';
@@ -129,41 +129,41 @@ const plugin: Plugin<ConsumedExtensions> = [
     type: 'Dashboards/Overview/Inventory/Item/Replacement',
     properties: {
       model: NodeModel,
-      additionalResources: [
-        {
+      additionalResources: {
+        maintenances: {
           isList: true,
           kind: referenceForModel(NodeMaintenanceModel),
-          prop: 'maintenaces',
           optional: true,
         },
-      ],
+      },
       mapper: getBMNStatusGroups,
+    },
+    flags: {
       required: [BAREMETAL_FLAG, METAL3_FLAG],
     },
   },
   {
     type: 'Dashboards/Overview/Inventory/Item',
     properties: {
-      additionalResources: [
-        {
+      additionalResources: {
+        machines: {
           isList: true,
           kind: referenceForModel(MachineModel),
-          prop: 'machines',
         },
-        {
+        nodes: {
           isList: true,
           kind: NodeModel.kind,
-          prop: 'nodes',
         },
-        {
+        maintenances: {
           isList: true,
           kind: referenceForModel(NodeMaintenanceModel),
-          prop: 'maintenances',
           optional: true,
         },
-      ],
+      },
       model: BareMetalHostModel,
       mapper: getBMHStatusGroups,
+    },
+    flags: {
       required: [BAREMETAL_FLAG, METAL3_FLAG],
     },
   },
@@ -205,6 +205,8 @@ const plugin: Plugin<ConsumedExtensions> = [
         import(
           './components/maintenance/MaintenanceDashboardActivity' /* webpackChunkName: "node-maintenance" */
         ).then((m) => m.default),
+    },
+    flags: {
       required: [BAREMETAL_FLAG, METAL3_FLAG],
     },
   },
@@ -231,6 +233,8 @@ const plugin: Plugin<ConsumedExtensions> = [
         import(
           './components/baremetal-hosts/dashboard/BareMetalStatusActivity' /* webpackChunkName: "metal3-powering" */
         ).then((m) => m.default),
+    },
+    flags: {
       required: [BAREMETAL_FLAG, METAL3_FLAG],
     },
   },

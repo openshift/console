@@ -8,16 +8,31 @@ import { CLUSTER_PIPELINE_NS } from '../../../const';
 import { PipelineModel } from '../../../models';
 import PipelineVisualization from '../../pipelines/detail-page-tabs/pipeline-details/PipelineVisualization';
 import { Pipeline } from '../../../utils/pipeline-augment';
+import { NormalizedBuilderImages } from '../../../utils/imagestream-utils';
+import { ReadableResourcesNames } from '../import-types';
 
 const MISSING_DOCKERFILE_LABEL_TEXT =
   'The pipeline template for Dockerfiles is not available at this time.';
-const MISSING_RUNTIME_LABEL_TEXT = 'There are no pipeline templates available for this runtime.';
 
 const labelType = 'pipeline.openshift.io/type';
 const labelRuntime = 'pipeline.openshift.io/runtime';
 const labelDocker = 'pipeline.openshift.io/strategy';
 
-const PipelineTemplate: React.FC = () => {
+const getAlertText = (
+  isDockerStrategy: boolean,
+  builderImage: string,
+  resourceType: string,
+): string => {
+  if (isDockerStrategy) return MISSING_DOCKERFILE_LABEL_TEXT;
+
+  return `There are no pipeline templates available for ${builderImage} and ${resourceType} combination.`;
+};
+
+type PipelineTemplateProps = {
+  builderImages: NormalizedBuilderImages;
+};
+
+const PipelineTemplate: React.FC<PipelineTemplateProps> = ({ builderImages }) => {
   const [noTemplateForRuntime, setNoTemplateForRuntime] = React.useState(false);
   const [isExpanded, setIsExpanded] = React.useState(false);
   const pipelineStorageRef = React.useRef<{ [image: string]: Pipeline[] }>({});
@@ -66,7 +81,6 @@ const PipelineTemplate: React.FC = () => {
         setFieldValue('pipeline.template', null);
         setNoTemplateForRuntime(true);
       }
-      setIsExpanded(false);
     };
 
     fetchPipelineTemplate();
@@ -77,11 +91,13 @@ const PipelineTemplate: React.FC = () => {
   }, [resources, image.selected, isDockerStrategy, setFieldValue]);
 
   if (noTemplateForRuntime) {
+    const builderImageTitle = builderImages[image.selected].title;
+    const resourceName = ReadableResourcesNames[resources];
     return (
       <Alert
         isInline
         variant="info"
-        title={isDockerStrategy ? MISSING_DOCKERFILE_LABEL_TEXT : MISSING_RUNTIME_LABEL_TEXT}
+        title={getAlertText(isDockerStrategy, builderImageTitle, resourceName)}
       />
     );
   }

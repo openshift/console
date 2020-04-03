@@ -44,6 +44,7 @@ export interface DropdownFieldProps extends FieldProps {
   title?: React.ReactNode;
   fullWidth?: boolean;
   disabled?: boolean;
+  autocompleteFilter?: (text: string, item: object, key?: string) => boolean;
   onChange?: (value: string) => void;
 }
 
@@ -71,7 +72,7 @@ export interface MultiColumnFieldProps extends FieldProps {
 
 export interface YAMLEditorFieldProps extends FieldProps {
   onChange?: (value: string) => void;
-  actionButtonsRef?: React.MutableRefObject<HTMLDivElement>;
+  onSave?: () => void;
 }
 
 export interface NameValuePair {

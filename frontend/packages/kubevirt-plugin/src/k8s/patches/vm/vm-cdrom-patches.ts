@@ -1,6 +1,6 @@
 import { last, includes } from 'lodash';
 import { getName } from '@console/shared';
-import { Volume, k8sGet } from '@console/internal/module/k8s';
+import { ConfigMapKind, Volume } from '@console/internal/module/k8s';
 import { PatchBuilder } from '@console/shared/src/k8s';
 import { StorageType } from '../../../components/modals/cdrom-vm-modal/constants';
 import { DataVolumeWrapper } from '../../wrapper/vm/data-volume-wrapper';
@@ -8,7 +8,6 @@ import {
   getDefaultSCAccessModes,
   getDefaultSCVolumeMode,
 } from '../../../selectors/config-map/sc-defaults';
-import { getStorageClassConfigMap } from '../../requests/config-map/storage-class';
 import { VMLikeEntityKind } from '../../../types/vmLike';
 import {
   getVolumes,
@@ -39,7 +38,11 @@ const assignBootOrderIndex = (vm: VMLikeEntityKind, currDevBootOrder = -1) => {
   return bootOrder;
 };
 
-export const getCDsPatch = async (vm: VMLikeEntityKind, cds: CD[]) => {
+export const getCDsPatch = (
+  vm: VMLikeEntityKind,
+  cds: CD[],
+  storageClassConfigMap: ConfigMapKind,
+) => {
   let newBootOrder = assignBootOrderIndex(asVM(vm));
 
   let DISKS = getDisks(asVM(vm)).filter(
@@ -49,7 +52,6 @@ export const getCDsPatch = async (vm: VMLikeEntityKind, cds: CD[]) => {
   let DATATEMPLATES = getDataVolumeTemplates(asVM(vm)).filter((dataVol) =>
     VOLS.find((vol) => getVolumeDataVolumeName(vol) === getName(dataVol)),
   );
-  const storageClassConfigMap = await getStorageClassConfigMap({ k8sGet });
 
   cds.forEach(
     ({ name, pvc, type, bootOrder, bus, container, windowsTools, url, storageClass, size }) => {
@@ -97,10 +99,8 @@ export const getCDsPatch = async (vm: VMLikeEntityKind, cds: CD[]) => {
         const storageClassName = dataVolumeWrapper.getStorageClassName();
 
         finalDataVolume = dataVolumeWrapper
-          .assertDefaultModes(
-            getDefaultSCVolumeMode(storageClassConfigMap, storageClassName),
-            getDefaultSCAccessModes(storageClassConfigMap, storageClassName),
-          )
+          .setVolumeMode(getDefaultSCVolumeMode(storageClassConfigMap, storageClassName))
+          .setAccessModes(getDefaultSCAccessModes(storageClassConfigMap, storageClassName))
           .asResource();
 
         volume = {

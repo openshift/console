@@ -17,7 +17,7 @@ export const useAnchor = (
   }
   React.useEffect(() => {
     action(() => {
-      const anchor = anchorCallback.constructor
+      const anchor = anchorCallback.prototype
         ? new (anchorCallback as any)(element)
         : (anchorCallback as any)(element);
       if (anchor) {

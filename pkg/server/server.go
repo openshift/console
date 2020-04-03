@@ -318,6 +318,7 @@ func (s *Server) HTTPHandler() http.Handler {
 	handle("/api/helm/template", authHandlerWithUser(helmHandlers.HandleHelmRenderManifests))
 	handle("/api/helm/releases", authHandlerWithUser(helmHandlers.HandleHelmList))
 	handle("/api/helm/chart", authHandlerWithUser(helmHandlers.HandleChartGet))
+	handle("/api/helm/release/history", authHandlerWithUser(helmHandlers.HandleGetReleaseHistory))
 
 	handle("/api/helm/release", authHandlerWithUser(func(user *auth.User, w http.ResponseWriter, r *http.Request) {
 		switch r.Method {
@@ -325,9 +326,15 @@ func (s *Server) HTTPHandler() http.Handler {
 			helmHandlers.HandleGetRelease(user, w, r)
 		case http.MethodPost:
 			helmHandlers.HandleHelmInstall(user, w, r)
+		case http.MethodDelete:
+			helmHandlers.HandleUninstallRelease(user, w, r)
+		case http.MethodPatch:
+			helmHandlers.HandleRollbackRelease(user, w, r)
+		case http.MethodPut:
+			helmHandlers.HandleUpgradeRelease(user, w, r)
 		default:
-			w.Header().Set("Allow", "GET, POST")
-			serverutils.SendResponse(w, http.StatusMethodNotAllowed, serverutils.ApiError{Err: "Unsupported method, supported methods are GET, POST"})
+			w.Header().Set("Allow", "GET, POST, PATCH, PUT, DELETE")
+			serverutils.SendResponse(w, http.StatusMethodNotAllowed, serverutils.ApiError{Err: "Unsupported method, supported methods are GET, POST, PATCH, PUT, DELETE"})
 		}
 	}))
 

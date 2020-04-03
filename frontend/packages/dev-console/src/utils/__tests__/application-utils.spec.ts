@@ -14,10 +14,8 @@ import {
 } from '@console/knative-plugin';
 import * as utils from '@console/internal/components/utils';
 import { TopologyDataResources } from '../../components/topology/topology-types';
-import {
-  transformTopologyData,
-  getTopologyResourceObject,
-} from '../../components/topology/topology-utils';
+import { getTopologyResourceObject } from '../../components/topology/topology-utils';
+import { transformTopologyData } from '../../components/topology/data-transforms/data-transformer';
 import { cleanUpWorkload } from '../application-utils';
 import { MockResources } from '../../components/topology/__tests__/topology-test-data';
 import { MockKnativeResources } from '../../components/topology/__tests__/topology-knative-test-data';
@@ -31,12 +29,17 @@ const spyAndReturn = (spy: Spy) => (returnValue: any) =>
       return returnValue;
     }),
   );
-const getTopologyData = (mockData: TopologyDataResources, transformByProp: string[]) => {
+const getTopologyData = (
+  mockData: TopologyDataResources,
+  transformByProp: string[],
+  name: string,
+) => {
   const result = transformTopologyData(mockData, transformByProp);
   const topologyTransformedData = result.topology;
   const keys = Object.keys(topologyTransformedData);
-  const resource = getTopologyResourceObject(topologyTransformedData[keys[0]]);
-  return { resource, topologyTransformedData, keys };
+  const itemKey = keys.find((key) => result.topology[key].resources.obj.metadata.name === name);
+  const resource = getTopologyResourceObject(result.topology[itemKey]);
+  return { resource, topologyTransformedData: result.topology[itemKey] };
 };
 describe('ApplicationUtils ', () => {
   let spy;
@@ -49,11 +52,13 @@ describe('ApplicationUtils ', () => {
   });
 
   it('Should delete all the specific models related to deployment config', (done) => {
-    const { resource, topologyTransformedData, keys } = getTopologyData(MockResources, [
-      'deploymentConfigs',
-    ]);
+    const { resource, topologyTransformedData } = getTopologyData(
+      MockResources,
+      ['deploymentConfigs'],
+      'nodejs',
+    );
 
-    cleanUpWorkload(resource, topologyTransformedData[keys[0]])
+    cleanUpWorkload(resource, topologyTransformedData)
       .then(() => {
         const allArgs = spy.calls.allArgs();
         const removedModels = allArgs.map((arg) => arg[0]);
@@ -71,10 +76,12 @@ describe('ApplicationUtils ', () => {
   });
 
   it('Should delete all the specific models related to knative deployments', (done) => {
-    const { resource, topologyTransformedData, keys } = getTopologyData(MockKnativeResources, [
-      'deployments',
-    ]);
-    cleanUpWorkload(resource, topologyTransformedData[keys[0]])
+    const { resource, topologyTransformedData } = getTopologyData(
+      MockKnativeResources,
+      ['deployments'],
+      'overlayimage',
+    );
+    cleanUpWorkload(resource, topologyTransformedData)
       .then(() => {
         const allArgs = spy.calls.allArgs();
         const removedModels = allArgs.map((arg) => arg[0]);
@@ -90,10 +97,12 @@ describe('ApplicationUtils ', () => {
   });
 
   it('Should delete all the specific models related to daemonsets', (done) => {
-    const { resource, topologyTransformedData, keys } = getTopologyData(MockResources, [
-      'daemonSets',
-    ]);
-    cleanUpWorkload(resource, topologyTransformedData[keys[0]])
+    const { resource, topologyTransformedData } = getTopologyData(
+      MockResources,
+      ['daemonSets'],
+      'daemonset-testing',
+    );
+    cleanUpWorkload(resource, topologyTransformedData)
       .then(() => {
         const allArgs = spy.calls.allArgs();
         const removedModels = allArgs.map((arg) => arg[0]);
@@ -106,10 +115,12 @@ describe('ApplicationUtils ', () => {
   });
 
   it('Should delete all the specific models related to statefulsets', (done) => {
-    const { resource, topologyTransformedData, keys } = getTopologyData(MockResources, [
-      'statefulSets',
-    ]);
-    cleanUpWorkload(resource, topologyTransformedData[keys[0]])
+    const { resource, topologyTransformedData } = getTopologyData(
+      MockResources,
+      ['statefulSets'],
+      'alertmanager-main',
+    );
+    cleanUpWorkload(resource, topologyTransformedData)
       .then(() => {
         const allArgs = spy.calls.allArgs();
         const removedModels = allArgs.map((arg) => arg[0]);
@@ -121,11 +132,13 @@ describe('ApplicationUtils ', () => {
       .catch((err) => fail(err));
   });
   it('Should not delete any of the models, if delete access is not available', (done) => {
-    const { resource, topologyTransformedData, keys } = getTopologyData(MockResources, [
-      'deploymentConfigs',
-    ]);
+    const { resource, topologyTransformedData } = getTopologyData(
+      MockResources,
+      ['deploymentConfigs'],
+      'nodejs',
+    );
     spyAndReturn(checkAccessSpy)(Promise.resolve({ status: { allowed: false } }));
-    cleanUpWorkload(resource, topologyTransformedData[keys[0]])
+    cleanUpWorkload(resource, topologyTransformedData)
       .then(() => {
         const allArgs = spy.calls.allArgs();
         const removedModels = allArgs.map((arg) => arg[0]);

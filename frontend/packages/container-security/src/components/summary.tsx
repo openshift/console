@@ -3,28 +3,28 @@ import * as _ from 'lodash';
 import { pluralize } from '@patternfly/react-core';
 import { ChartDonut } from '@patternfly/react-charts';
 import { SecurityIcon } from '@patternfly/react-icons';
-import { URLHealthHandler } from '@console/plugin-sdk';
+import { ResourceHealthHandler } from '@console/plugin-sdk';
+import { WatchK8sResults } from '@console/internal/components/utils/k8s-watch-hook';
 import { HealthState } from '@console/shared/src/components/dashboard/status-card/states';
-import { FirehoseResult } from '@console/internal/components/utils/types';
 import { Link } from 'react-router-dom';
 import { referenceForModel } from '@console/internal/module/k8s';
-import { ImageManifestVuln } from '../types';
+import { ImageManifestVuln, WatchImageVuln } from '../types';
 import { vulnPriority } from '../const';
 import { ImageManifestVulnModel } from '../models';
 
-export const securityHealthHandler: URLHealthHandler<string> = (
-  k8sHealth,
-  error,
-  resource: FirehoseResult<ImageManifestVuln[]>,
-) => {
-  if (error || _.get(resource, 'loadError')) {
+export const securityHealthHandler: ResourceHealthHandler<WatchImageVuln> = ({
+  imageManifestVuln,
+}) => {
+  const { data, loaded, loadError } = imageManifestVuln;
+
+  if (loadError) {
     return { state: HealthState.UNKNOWN, message: 'Not available' };
   }
-  if (!_.get(resource, 'loaded')) {
+  if (!loaded) {
     return { state: HealthState.LOADING, message: 'Scanning in progress' };
   }
-  if (!_.isEmpty(resource.data)) {
-    return { state: HealthState.ERROR, message: `${resource.data.length} vulnerabilities` };
+  if (!_.isEmpty(data)) {
+    return { state: HealthState.ERROR, message: `${data.length} vulnerabilities` };
   }
   return { state: HealthState.OK, message: '0 vulnerabilities' };
 };
@@ -37,10 +37,14 @@ export const quayURLFor = (vuln: ImageManifestVuln) => {
   return `//${base}/manifest/${vuln.spec.manifest}?tab=vulnerabilities`;
 };
 
-export const SecurityBreakdownPopup: React.FC<SecurityBreakdownPopupProps> = (props) => {
+export const SecurityBreakdownPopup: React.FC<WatchK8sResults<WatchImageVuln>> = ({
+  imageManifestVuln,
+}) => {
+  const resource = imageManifestVuln.data;
+
   const vulnsFor = (severity: string) =>
-    props.k8sResult.data.filter((v) => _.get(v.status, 'highestSeverity') === severity);
-  const fixableVulns = props.k8sResult.data
+    resource.filter((v) => _.get(v.status, 'highestSeverity') === severity);
+  const fixableVulns = resource
     .filter((v) => _.get(v.status, 'fixableCount', 0) > 0)
     .reduce((all, v) => all.set(v.metadata.name, v), new Map<string, ImageManifestVuln>());
 
@@ -50,7 +54,7 @@ export const SecurityBreakdownPopup: React.FC<SecurityBreakdownPopupProps> = (pr
         Container images from Quay are analyzed to identify vulnerabilities. Images from other
         registries are not scanned.
       </div>
-      {!_.isEmpty(props.k8sResult.data) ? (
+      {!_.isEmpty(resource) ? (
         <div>
           <div style={{ display: 'flex', justifyContent: 'space-between' }}>
             <div style={{ width: '66%', marginRight: '24px' }}>
@@ -67,7 +71,7 @@ export const SecurityBreakdownPopup: React.FC<SecurityBreakdownPopupProps> = (pr
                       </div>
                       <div className="text-secondary">
                         {
-                          props.k8sResult.data.filter(
+                          resource.filter(
                             (v) =>
                               _.get(v.status, 'highestSeverity') === priority.value &&
                               _.get(v.status, 'fixableCount', 0) > 0,
@@ -90,7 +94,7 @@ export const SecurityBreakdownPopup: React.FC<SecurityBreakdownPopupProps> = (pr
                     y: vulnsFor(priority.value).length,
                   }))
                   .toArray()}
-                title={`${props.k8sResult.data.length} total`}
+                title={`${resource.length} total`}
               />
             </div>
           </div>
@@ -117,9 +121,7 @@ export const SecurityBreakdownPopup: React.FC<SecurityBreakdownPopupProps> = (pr
                       }`}
                     >
                       {pluralize(
-                        props.k8sResult.data.filter(
-                          ({ metadata }) => metadata.name === v.metadata.name,
-                        ).length,
+                        resource.filter(({ metadata }) => metadata.name === v.metadata.name).length,
                         'namespace',
                       )}
                     </Link>
@@ -134,12 +136,6 @@ export const SecurityBreakdownPopup: React.FC<SecurityBreakdownPopupProps> = (pr
       )}
     </>
   );
-};
-
-export type SecurityBreakdownPopupProps = {
-  healthResult?: any;
-  healthResultError?: any;
-  k8sResult?: FirehoseResult<ImageManifestVuln[]>;
 };
 
 SecurityBreakdownPopup.displayName = 'SecurityBreakdownPopup';

@@ -5,7 +5,13 @@ import * as classNames from 'classnames';
 import { Button } from '@patternfly/react-core';
 import { referenceForModel, K8sResourceKind } from '@console/internal/module/k8s';
 import { StatusBox, MsgBox } from '@console/internal/components/utils';
-import { MultiListPage, Table, TableRow, TableData } from '@console/internal/components/factory';
+import {
+  MultiListPage,
+  Table,
+  TableRow,
+  TableData,
+  RowFunctionArgs,
+} from '@console/internal/components/factory';
 import { getActiveNamespace } from '@console/internal/actions/ui';
 import { ALL_NAMESPACES_KEY, OPERATOR_HUB_LABEL } from '@console/shared';
 import {
@@ -44,18 +50,17 @@ export const PackageManifestTableHeader = () => [
   },
 ];
 
-export const PackageManifestTableRow: React.SFC<PackageManifestTableRowProps> = (props) => {
-  const {
-    obj,
-    catalogSourceName,
-    catalogSourceNamespace,
-    subscription,
-    defaultNS,
-    canSubscribe,
-    index,
-    key,
-    style,
-  } = props;
+export const PackageManifestTableRow: React.SFC<PackageManifestTableRowProps> = ({
+  obj,
+  index,
+  rowKey,
+  style,
+  catalogSourceName,
+  catalogSourceNamespace,
+  subscription,
+  defaultNS,
+  canSubscribe,
+}) => {
   const ns = getActiveNamespace();
   const channel = !_.isEmpty(obj.status.defaultChannel)
     ? obj.status.channels.find((ch) => ch.name === obj.status.defaultChannel)
@@ -79,7 +84,7 @@ export const PackageManifestTableRow: React.SFC<PackageManifestTableRowProps> = 
     }&catalog=${catalogSourceName}&catalogNamespace=${catalogSourceNamespace}`;
 
   return (
-    <TableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
+    <TableRow id={obj.metadata.uid} index={index} trKey={rowKey} style={style}>
       <TableData className={tableColumnClasses[0]}>
         <ClusterServiceVersionLogo
           displayName={displayName}
@@ -158,12 +163,12 @@ export const PackageManifestList = requireOperatorGroup((props: PackageManifestL
             data={(props.data || []).filter((pkg) => pkg.status.catalogSource === catalog.name)}
             filters={props.filters}
             Header={PackageManifestTableHeader}
-            Row={(rowProps) => (
+            Row={(rowArgs: RowFunctionArgs<PackageManifestKind>) => (
               <PackageManifestTableRow
-                obj={rowProps.obj}
-                index={rowProps.index}
-                key={rowProps.key}
-                style={rowProps.style}
+                obj={rowArgs.obj}
+                index={rowArgs.index}
+                rowKey={rowArgs.key}
+                style={rowArgs.style}
                 catalogSourceName={catalog.name}
                 catalogSourceNamespace={catalog.namespace}
                 subscription={(props.subscription.data || [])
@@ -171,11 +176,11 @@ export const PackageManifestList = requireOperatorGroup((props: PackageManifestL
                     (sub) =>
                       _.isEmpty(props.namespace) || sub.metadata.namespace === props.namespace,
                   )
-                  .find((sub) => sub.spec.name === rowProps.obj.metadata.name)}
+                  .find((sub) => sub.spec.name === rowArgs.obj.metadata.name)}
                 canSubscribe={
                   props.canSubscribe &&
                   !installedFor(props.subscription.data)(props.operatorGroup.data)(
-                    rowProps.obj.status.packageName,
+                    rowArgs.obj.status.packageName,
                   )(getActiveNamespace()) &&
                   props.operatorGroup.data
                     .filter(
@@ -183,7 +188,7 @@ export const PackageManifestList = requireOperatorGroup((props: PackageManifestL
                         _.isEmpty(props.namespace) || og.metadata.namespace === props.namespace,
                     )
                     .some((og) =>
-                      supports(installModesFor(rowProps.obj)(defaultChannelFor(rowProps.obj)))(og),
+                      supports(installModesFor(rowArgs.obj)(defaultChannelFor(rowArgs.obj)))(og),
                     )
                 }
                 defaultNS={_.get(props.operatorGroup, 'data[0].metadata.namespace')}
@@ -282,7 +287,7 @@ export type PackageManifestListProps = {
 export type PackageManifestTableRowProps = {
   obj: PackageManifestKind;
   index: number;
-  key?: string;
+  rowKey: string;
   style: object;
   catalogSourceName: string;
   catalogSourceNamespace: string;

@@ -31,18 +31,19 @@ const getSpacer = (configMap, secret) => {
   return _.isEmpty(configMap) || _.isEmpty(secret) ? spacerBefore : spacerBefore.add(secret);
 };
 
-const getHeaders = (configMap, secret) => {
-  if (_.isEmpty(configMap) && _.isEmpty(secret)) {
-    return {};
-  } else if (_.isEmpty(configMap)) {
-    return { [secret]: 'Secrets' };
-  } else if (_.isEmpty(secret)) {
-    return { [configMap]: 'Config Maps' };
+const getHeaders = (configMap, secret, serviceAccount) => {
+  const headers = {};
+  if (configMap && !_.isEmpty(configMap)) {
+    headers[configMap] = 'Config Maps';
   }
-  return {
-    [configMap]: 'Config Maps',
-    [secret]: 'Secrets',
-  };
+  if (secret && !_.isEmpty(secret)) {
+    headers[secret] = 'Secrets';
+  }
+  if (serviceAccount && !_.isEmpty(serviceAccount)) {
+    headers[serviceAccount] = 'Service Accounts';
+  }
+
+  return headers;
 };
 
 const getKeys = (keyMap) => {
@@ -56,6 +57,7 @@ export const NameKeyDropdownPair = ({
   key,
   configMaps,
   secrets,
+  serviceAccounts,
   onChange,
   kind,
   nameTitle,
@@ -66,11 +68,13 @@ export const NameKeyDropdownPair = ({
   let refProperty;
   const cmItems = {};
   const secretItems = {};
+  const saItems = {};
   const nameAutocompleteFilter = (text, item) => fuzzy(text, item.props.name);
   const keyAutocompleteFilter = (text, item) => fuzzy(text, item);
   const keyTitle = _.isEmpty(key) ? 'Select a key' : key;
   const cmRefProperty = isKeyRef ? 'configMapKeyRef' : 'configMapRef';
   const secretRefProperty = isKeyRef ? 'secretKeyRef' : 'secretRef';
+  const serviceAccountRefProperty = isKeyRef ? 'serviceAccountKeyRef' : 'serviceAccountRef';
 
   _.each(configMaps.items, (v) => {
     cmItems[`${v.metadata.name}:${cmRefProperty}`] = (
@@ -90,12 +94,23 @@ export const NameKeyDropdownPair = ({
       itemKeys = getKeys(v.data);
     }
   });
+  serviceAccounts &&
+    _.each(serviceAccounts.items, (v) => {
+      saItems[`${v.metadata.name}:${serviceAccountRefProperty}`] = (
+        <ResourceName kind="ServiceAccount" name={v.metadata.name} />
+      );
+      if (kind === 'ServiceAccount' && _.isEqual(v.metadata.name, name)) {
+        refProperty = serviceAccountRefProperty;
+        itemKeys = getKeys(v.data);
+      }
+    });
 
   const firstConfigMap = _.isEmpty(cmItems) ? {} : Object.keys(cmItems)[0];
   const firstSecret = _.isEmpty(secretItems) ? {} : Object.keys(secretItems)[0];
-  const headerBefore = getHeaders(firstConfigMap, firstSecret);
+  const firstServiceAccount = saItems && !_.isEmpty(saItems) ? Object.keys(saItems)[0] : {};
+  const headerBefore = getHeaders(firstConfigMap, firstSecret, firstServiceAccount);
   const spacerBefore = getSpacer(firstConfigMap, firstSecret);
-  const items = _.assign({}, cmItems, secretItems);
+  const items = _.assign({}, cmItems, secretItems, saItems);
   return (
     <>
       <Dropdown
@@ -148,6 +163,7 @@ const ConfigMapSecretKeyRef = ({
   data: { name, key },
   configMaps,
   secrets,
+  serviceAccounts,
   onChange,
   disabled,
   kind,
@@ -176,6 +192,7 @@ const ConfigMapSecretKeyRef = ({
     key,
     configMaps,
     secrets,
+    serviceAccounts,
     onChange,
     kind,
     nameTitle,
@@ -187,6 +204,7 @@ const ConfigMapSecretRef = ({
   data: { name, key },
   configMaps,
   secrets,
+  serviceAccounts,
   onChange,
   disabled,
   kind,
@@ -218,6 +236,7 @@ const ConfigMapSecretRef = ({
     key,
     configMaps,
     secrets,
+    serviceAccounts,
     onChange,
     kind,
     nameTitle,
@@ -268,6 +287,10 @@ const keyStringToComponent = {
     component: ConfigMapSecretRef,
     kind: 'Secret',
   },
+  serviceAccountRef: {
+    component: ConfigMapSecretRef,
+    kind: 'ServiceAccount',
+  },
   configMapSecretRef: {
     component: ConfigMapSecretRef,
   },
@@ -287,7 +310,7 @@ export class ValueFromPair extends React.PureComponent {
   }
 
   render() {
-    const { pair, configMaps, secrets, disabled } = this.props;
+    const { pair, configMaps, secrets, serviceAccounts, disabled } = this.props;
     const valueFromKey = Object.keys(this.props.pair)[0];
     const componentInfo = keyStringToComponent[valueFromKey];
     const Component = componentInfo.component;
@@ -297,6 +320,7 @@ export class ValueFromPair extends React.PureComponent {
         data={pair[valueFromKey]}
         configMaps={configMaps}
         secrets={secrets}
+        serviceAccounts={serviceAccounts}
         kind={componentInfo.kind}
         onChange={this.onChangeVal}
         disabled={disabled}

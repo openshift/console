@@ -64,8 +64,10 @@ export const insertName = (value: string, name) => {
   return joinIDs(name, value);
 };
 
-export const parseNumber = (value, defaultValue = null) =>
-  _.isFinite(value) ? Number(value) : defaultValue;
+export const parseNumber = (value, defaultValue = null) => {
+  const result = Number(value);
+  return Number.isNaN(result) ? defaultValue : result;
+};
 
 export const buildOwnerReference = (
   owner: K8sResourceKind,

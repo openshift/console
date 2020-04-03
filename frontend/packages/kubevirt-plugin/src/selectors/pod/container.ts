@@ -1,12 +1,12 @@
 import { get, includes } from 'lodash';
-import { PodKind, ContainerStatus } from '@console/internal/module/k8s';
+import { PodKind, ContainerStatus, ContainerSpec } from '@console/internal/module/k8s';
 
 const failedWaitingContainerReasons = ['ImagePullBackOff', 'ErrImagePull', 'CrashLoopBackOff'];
 const failedTerminationContaineReasons = ['Error'];
 
 const getContainerWaitingReason = (container: ContainerStatus) =>
   get(container, 'state.waiting.reason') as ContainerStatus['state']['waiting']['reason'];
-export const getContainerImage = (container: ContainerStatus) =>
+export const getContainerImage = (container: ContainerStatus | ContainerSpec) =>
   get(container, 'image') as ContainerStatus['image'];
 const getContainerTerminatedReason = (container: ContainerStatus) =>
   get(container, 'state.terminated.reason') as ContainerStatus['state']['terminated']['reason'];

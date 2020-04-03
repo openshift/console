@@ -57,7 +57,7 @@ describe(OperandTableRow.displayName, () => {
 
   beforeEach(() => {
     wrapper = shallow(
-      <OperandTableRow obj={testResourceInstance} index={0} style={{}} flags={{}} />,
+      <OperandTableRow obj={testResourceInstance} index={0} rowKey={'0'} style={{}} flags={{}} />,
     );
   });
 

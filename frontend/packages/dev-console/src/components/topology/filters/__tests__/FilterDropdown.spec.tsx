@@ -7,6 +7,7 @@ import { DisplayFilters } from '../filter-utils';
 const VALID_FILTERS = {
   podCount: true,
   eventSources: true,
+  showLabels: true,
   knativeServices: true,
   appGrouping: true,
   operatorGrouping: true,
@@ -26,7 +27,7 @@ describe(FilterDropdown.displayName, () => {
     expect(wrapper.exists()).toBeTruthy();
   });
 
-  it('should have 6 filters in total', () => {
+  it('should have 7 filters in total', () => {
     const wrapper = shallow(<FilterDropdown filters={dropdownFilter} onChange={onChange} />);
     expect(wrapper.find(SelectOption)).toHaveLength(Object.keys(VALID_FILTERS).length);
   });
