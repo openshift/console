@@ -6,6 +6,7 @@ import * as path from 'path';
 import * as fs from 'fs';
 import * as moment from 'moment';
 import * as CircularDependencyPlugin from 'circular-dependency-plugin';
+import chalk from 'chalk';
 
 type PresetOptions = {
   exclude: RegExp;
@@ -19,40 +20,57 @@ type DetectedCycle = {
   modulePaths: string[];
 };
 
+const getCycleStats = (cycles: DetectedCycle[]): string => {
+  type ItemCount = { [key: string]: number };
+  const lines: string[] = [];
+
+  const sortedEntries = (obj: ItemCount): [string, number][] =>
+    Object.entries(obj).sort((a, b) => b[1] - a[1]); // descending order
+
+  const minLengthCycles = cycles.filter((c) => c.modulePaths.length === 3).length;
+
+  const cycleCountByDir = cycles
+    .map((c) => {
+      const startPath = c.modulePaths[0];
+      const elements = startPath.split('/');
+      return startPath.startsWith('packages') ? elements.slice(0, 2).join('/') : elements[0];
+    })
+    .reduce((acc, dir) => {
+      acc[dir] = (acc[dir] ?? 0) + 1;
+      return acc;
+    }, {} as ItemCount);
+
+  const topIndexFiles = cycles.reduce((acc, c) => {
+    c.modulePaths
+      .slice(1, -1) // exclude outer edges
+      .filter((p) => /\/index\.tsx?$/.test(p))
+      .forEach((p) => {
+        acc[p] = (acc[p] ?? 0) + 1;
+      });
+    return acc;
+  }, {} as ItemCount);
+
+  lines.push(`${cycles.length} total cycles, ${minLengthCycles} min-length cycles (A -> B -> A)\n`);
+
+  lines.push('\nCycle count per directory:\n');
+  lines.push(...sortedEntries(cycleCountByDir).map(([dir, count]) => `  ${dir} (${count})\n`));
+
+  lines.push('\nIndex files occurring within cycles:\n');
+  lines.push(...sortedEntries(topIndexFiles).map(([file, count]) => `  ${file} (${count})\n`));
+
+  return lines.join('');
+};
+
+const getCycleEntries = (cycles: DetectedCycle[]): string => {
+  return cycles.map((c) => `${c.causedBy}\n${c.modulePaths.join('\n-> ')}\n`).join('\n');
+};
+
 export class CircularDependencyPreset {
   private readonly HandleCyclesPluginName = 'HandleCyclesPlugin';
 
   constructor(private readonly options: PresetOptions) {}
 
-  private getCycleReport(cycles: DetectedCycle[], compilation: webpack.compilation.Compilation) {
-    const hash = compilation.getStats().hash;
-    const builtAt = moment(compilation.getStats().endTime).format('MM/DD/YYYY HH:mm:ss');
-
-    const countByDir = cycles
-      .map((c) => c.modulePaths[0].replace(/\/.*$/, ''))
-      .reduce((acc, dir) => {
-        acc[dir] = (acc[dir] ?? 0) + 1;
-        return acc;
-      }, {} as { [key: string]: number });
-
-    const header =
-      `# webpack compilation ${hash} built at ${builtAt}\n` +
-      '# this file is auto-generated on every webpack development build\n';
-
-    const stats =
-      `# ${cycles.length} total cycles: ${Object.keys(countByDir)
-        .map((d) => `${d} (${countByDir[d]})`)
-        .join(', ')}\n` +
-      `# ${
-        cycles.filter((c) => c.modulePaths.length === 3).length
-      } minimal-length cycles (A -> B -> A)\n`;
-
-    const entries = cycles.map((c) => `${c.causedBy}\n${c.modulePaths.join('\n-> ')}\n`).join('\n');
-
-    return [header, stats, entries].join('\n');
-  }
-
-  apply(plugins: webpack.Plugin[]) {
+  apply(plugins: webpack.Plugin[]): void {
     const cycles: DetectedCycle[] = [];
 
     plugins.push(
@@ -70,11 +88,18 @@ export class CircularDependencyPreset {
               return;
             }
 
-            const reportPath = path.resolve(__dirname, this.options.reportFile);
-            fs.writeFileSync(reportPath, this.getCycleReport(cycles, compilation));
+            const hash = compilation.getStats().hash;
+            const builtAt = moment(compilation.getStats().endTime).format('MM/DD/YYYY HH:mm:ss');
+            const header = `webpack compilation ${hash} built at ${builtAt}\n`;
 
-            console.log(`detected ${cycles.length} cycles`);
-            console.log(`module cycle report written to ${reportPath}`);
+            const reportPath = path.resolve(__dirname, this.options.reportFile);
+            fs.writeFileSync(
+              reportPath,
+              [header, getCycleStats(cycles), getCycleEntries(cycles)].join('\n'),
+            );
+
+            console.log(chalk.bold.yellow(`Detected ${cycles.length} cycles`));
+            console.log(`Module cycle report written to ${chalk.bold(reportPath)}`);
           });
         },
       },
