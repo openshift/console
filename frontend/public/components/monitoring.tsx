@@ -1,7 +1,7 @@
 import * as classNames from 'classnames';
 import * as _ from 'lodash-es';
 import { murmur3 } from 'murmurhash-js';
-import { Alert, ActionGroup, Button, Tooltip } from '@patternfly/react-core';
+import { Alert, ActionGroup, Badge, Button, Tooltip } from '@patternfly/react-core';
 import { sortable } from '@patternfly/react-table';
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
@@ -37,7 +37,6 @@ import { graphStateToProps, QueryBrowserPage, ToggleGraph } from './monitoring/m
 import { PrometheusLabels } from './graphs';
 import { QueryBrowser, QueryObj } from './monitoring/query-browser';
 import { CheckBoxes } from './row-filter';
-import { formatPrometheusDuration } from './utils/datetime';
 import { AlertmanagerYAMLEditorWrapper } from './monitoring/alert-manager-yaml-editor';
 import { AlertmanagerConfigWrapper } from './monitoring/alert-manager-config';
 import { refreshNotificationPollers } from './notification-drawer';
@@ -54,6 +53,7 @@ import {
   StatusBox,
   Timestamp,
 } from './utils';
+import { formatPrometheusDuration } from './utils/datetime';
 import {
   BlueInfoCircleIcon,
   GreenCheckCircleIcon,
@@ -217,20 +217,28 @@ const severityIcons = {
   [AlertSeverity.Warning]: YellowExclamationTriangleIcon,
 };
 
-const getSeverityIcon = (severity: string) =>
-  severityIcons[severity] || YellowExclamationTriangleIcon;
-
-const SeverityIcon: React.FC<SeverityIconProps> = ({ label, severity }) => {
-  const Icon = getSeverityIcon(severity);
-  return (
-    <>
-      <Icon /> {label}
-    </>
-  );
+const SeverityIcon: React.FC<{ severity: string }> = ({ severity }) => {
+  const Icon = severityIcons[severity] || YellowExclamationTriangleIcon;
+  return <Icon />;
 };
 
-const Severity: React.FC<{ severity?: string }> = ({ severity }) =>
-  _.isNil(severity) ? <>-</> : <SeverityIcon label={_.startCase(severity)} severity={severity} />;
+const Severity: React.FC<{ severity: string }> = ({ severity }) =>
+  _.isNil(severity) ? (
+    <>-</>
+  ) : (
+    <>
+      <SeverityIcon severity={severity} /> {_.startCase(severity)}
+    </>
+  );
+
+const SeverityBadge: React.FC<{ severity: string }> = ({ severity }) =>
+  _.isNil(severity) || severity === 'none' ? null : (
+    <span className="co-resource-item__resource-status">
+      <Badge className="co-resource-item__resource-status-badge" isRead>
+        <Severity severity={severity} />
+      </Badge>
+    </span>
+  );
 
 const SeverityCounts: React.FC<{ alerts: Alert[] }> = ({ alerts }) => {
   const counts = _.countBy(alerts, (a) => {
@@ -248,7 +256,7 @@ const SeverityCounts: React.FC<{ alerts: Alert[] }> = ({ alerts }) => {
     <>
       {severities.map((s) => (
         <span className="monitoring-icon-wrap" key={s}>
-          <SeverityIcon label={counts[s]} severity={s} />
+          <SeverityIcon severity={s} /> {counts[s]}
         </span>
       ))}
     </>
@@ -365,6 +373,7 @@ const AlertsDetailsPage = withFallback(
                   resource={AlertResource}
                 />
                 {alertname}
+                <SeverityBadge severity={severity} />
               </div>
               {(state === AlertStates.Firing || state === AlertStates.Pending) && (
                 <div className="co-actions" data-test-id="details-actions">
@@ -529,6 +538,7 @@ const AlertRulesDetailsPage = withFallback(
   connect(ruleStateToProps)((props: AlertRulesDetailsPageProps) => {
     const { loaded, loadError, rule } = props;
     const { alerts = [], annotations = {}, duration = null, name = '', query = '' } = rule || {};
+    const severity = rule?.labels?.severity;
 
     return (
       <>
@@ -544,6 +554,7 @@ const AlertRulesDetailsPage = withFallback(
                   resource={RuleResource}
                 />
                 {name}
+                <SeverityBadge severity={severity} />
               </div>
             </h1>
           </div>
@@ -559,7 +570,7 @@ const AlertRulesDetailsPage = withFallback(
                     <dd>{name}</dd>
                     <dt>Severity</dt>
                     <dd>
-                      <Severity severity={rule?.labels?.severity} />
+                      <Severity severity={severity} />
                     </dd>
                     <Annotation title="Description">{annotations.description}</Annotation>
                     <Annotation title="Summary">{annotations.summary}</Annotation>
@@ -1780,11 +1791,6 @@ export type ListPageProps = {
 
 type AlertingPageProps = {
   match: any;
-};
-
-type SeverityIconProps = {
-  label: number | string;
-  severity: string;
 };
 
 type GraphProps = {
