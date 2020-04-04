@@ -38,7 +38,7 @@ describe('Monitoring: Alerts', () => {
 
   it('filters Alerts by name', async () => {
     await monitoringView.wait(until.elementToBeClickable(crudView.nameFilter));
-    await crudView.nameFilter.sendKeys(testAlertName);
+    await crudView.nameFilter.sendKeys(`${testAlertName} PagerDuty`);
     expect(firstElementByTestID('alert-resource-link').getText()).toContain(testAlertName);
   });
 

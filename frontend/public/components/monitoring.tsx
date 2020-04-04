@@ -22,6 +22,7 @@ import * as k8sActions from '../actions/k8s';
 import * as UIActions from '../actions/ui';
 import { coFetchJSON } from '../co-fetch';
 import {
+  alertDescription,
   alertingRuleIsActive,
   AlertSeverity,
   alertState,
@@ -88,11 +89,6 @@ const labelsToParams = (labels) =>
 export const alertURL = (alert, ruleID) =>
   `${AlertResource.plural}/${ruleID}?${labelsToParams(alert.labels)}`;
 const ruleURL = (rule) => `${RuleResource.plural}/${_.get(rule, 'id')}`;
-
-const alertDescription = (alert) => {
-  const { annotations = {}, labels = {} } = alert;
-  return annotations.description || annotations.message || labels.alertname;
-};
 
 const alertsToProps = ({ UI }) => UI.getIn(['monitoring', 'alerts']) || {};
 
@@ -962,8 +958,8 @@ const AlertsPage_ = (props) => (
     {...props}
     Header={AlertTableHeader}
     kindPlural="Alerts"
-    nameFilterID="alert-name"
-    reduxID="monitoringRules"
+    nameFilterID="alert-list-text"
+    reduxID="monitoringAlerts"
     Row={AlertTableRow}
     rowFilter={alertsRowFilter}
   />
@@ -1032,6 +1028,7 @@ const RulesPage_ = (props) => (
     Header={RuleTableHeader}
     kindPlural="Alerting Rules"
     nameFilterID="alerting-rule-name"
+    reduxID="monitoringRules"
     Row={RuleTableRow}
     rowFilter={rulesRowFilter}
   />

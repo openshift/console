@@ -15,7 +15,12 @@ import {
   getTemplateInstanceStatus,
 } from '../../module/k8s';
 
-import { alertingRuleIsActive, alertState, silenceState } from '../../reducers/monitoring';
+import {
+  alertingRuleIsActive,
+  alertDescription,
+  alertState,
+  silenceState,
+} from '../../reducers/monitoring';
 
 export const fuzzyCaseInsensitive = (a: string, b: string): boolean =>
   fuzzy(_.toLower(a), _.toLower(b));
@@ -26,7 +31,9 @@ export const tableFilters: TableFilterMap = {
 
   'catalog-source-name': (filter, obj) => fuzzyCaseInsensitive(filter, obj.name),
 
-  'alert-name': (filter, alert) => fuzzyCaseInsensitive(filter, _.get(alert, 'labels.alertname')),
+  'alert-list-text': (filter, alert) =>
+    fuzzyCaseInsensitive(filter, alert.labels?.alertname) ||
+    fuzzyCaseInsensitive(filter, alertDescription(alert)),
 
   'alert-state': (filter, alert) => filter.selected.has(alertState(alert)),
 
