@@ -155,18 +155,14 @@ export const CreatePVCForm: React.FC<CreatePVCFormProps> = (props) => {
   };
 
   const handleStorageClass = (updatedStorageClass) => {
+    const provisioner: string = (updatedStorageClass && updatedStorageClass.provisioner) || '';
     //if the provisioner is unknown or no storage class selected, user should be able to set any access mode
-    const modes =
-      updatedStorageClass &&
-      updatedStorageClass.provisioner &&
-      provisionerAccessModeMapping[updatedStorageClass.provisioner]
-        ? provisionerAccessModeMapping[updatedStorageClass.provisioner]
-        : getAccessModeForProvisioner(updatedStorageClass.provisioner);
+    const modes = provisionerAccessModeMapping[provisioner]
+      ? provisionerAccessModeMapping[provisioner]
+      : getAccessModeForProvisioner(provisioner);
     //setting message to display for various modes when a storage class of a know provisioner is selected
     const displayMessage =
-      updatedStorageClass &&
-      (provisionerAccessModeMapping[updatedStorageClass.provisioner] ||
-        isCephProvisioner(updatedStorageClass.provisioner))
+      provisionerAccessModeMapping[provisioner] || isCephProvisioner(provisioner)
         ? 'Access mode is set by storage class and cannot be changed.'
         : 'Permissions to the mounted drive.';
     setAccessMode('ReadWriteOnce');
@@ -174,10 +170,7 @@ export const CreatePVCForm: React.FC<CreatePVCFormProps> = (props) => {
     //setting accessMode to default with the change to Storage Class selection
     setAllowedAccessModes(modes);
     setStorageClass(_.get(updatedStorageClass, 'metadata.name'));
-
-    if (updatedStorageClass) {
-      setStorageProvisioner(updatedStorageClass.provisioner);
-    }
+    setStorageProvisioner(provisioner);
   };
 
   const handleRequestSizeInputChange = (obj) => {
