@@ -1,81 +1,43 @@
 import * as React from 'react';
-import * as _ from 'lodash';
-import { Formik, FormikValues } from 'formik';
+import { Formik } from 'formik';
 import {
   createModalLauncher,
   ModalComponentProps,
 } from '@console/internal/components/factory/modal';
-import { k8sCreate } from '@console/internal/module/k8s';
 import { errorModal } from '@console/internal/components/modals';
-import { PipelineRunModel } from '../../../../models';
-import {
-  Pipeline,
-  PipelineResource,
-  PipelineParam,
-  PipelineRun,
-  PipelineWorkspace,
-  PipelineRunResource,
-} from '../../../../utils/pipeline-augment';
-import { getPipelineRunParams, getPipelineRunWorkspaces } from '../../../../utils/pipeline-utils';
+import { Pipeline, PipelineRun, PipelineWorkspace } from '../../../../utils/pipeline-augment';
 import { useUserLabelForManualStart } from '../../../pipelineruns/triggered-by';
-import { startPipelineSchema } from '../../detail-page-tabs';
+import ModalStructure from '../common/ModalStructure';
+import { convertPipelineToModalData } from '../common/utils';
+import { startPipelineSchema } from '../common/validation-utils';
 import StartPipelineForm from './StartPipelineForm';
-
-export type newPipelineRunData = (Pipeline: Pipeline, latestRun?: PipelineRun) => {};
+import { submitStartPipeline } from './submit-utils';
+import { StartPipelineFormValues } from './types';
 
 export interface StartPipelineModalProps {
   pipeline: Pipeline;
-  getPipelineRunData: newPipelineRunData;
   onSubmit?: (pipelineRun: PipelineRun) => void;
 }
-export interface StartPipelineFormValues extends FormikValues {
-  namespace: string;
-  parameters: PipelineParam[];
-  resources: PipelineResource[];
-  workspaces: PipelineWorkspace[];
-}
-
 const StartPipelineModal: React.FC<StartPipelineModalProps & ModalComponentProps> = ({
   pipeline,
-  getPipelineRunData,
   close,
   onSubmit,
 }) => {
   const userStartedLabel = useUserLabelForManualStart();
 
   const initialValues: StartPipelineFormValues = {
-    namespace: pipeline.metadata.namespace,
-    parameters: _.get(pipeline, 'spec.params', []),
-    resources: _.get(pipeline, 'spec.resources', []),
-    workspaces:
-      pipeline.spec.workspaces?.map((workspace: PipelineWorkspace) => ({
-        ...workspace,
-        type: 'EmptyDirectory',
-      })) ?? [],
+    ...convertPipelineToModalData(pipeline),
+    workspaces: (pipeline.spec.workspaces || []).map((workspace: PipelineWorkspace) => ({
+      ...workspace,
+      type: 'EmptyDirectory',
+    })),
     secretOpen: false,
   };
-  initialValues.resources.map((resource: PipelineResource) =>
-    _.merge(resource, { resourceRef: { name: '' } }),
-  );
 
   const handleSubmit = (values: StartPipelineFormValues, actions): void => {
     actions.setSubmitting(true);
 
-    const pipelineRunData: PipelineRun = {
-      spec: {
-        pipelineRef: {
-          name: pipeline.metadata.name,
-        },
-        params: getPipelineRunParams(values.parameters),
-        resources: values.resources as PipelineRunResource[],
-        workspaces: getPipelineRunWorkspaces(values.workspaces),
-      },
-    };
-    const pipelineRun = _.merge({}, getPipelineRunData(pipeline, pipelineRunData), {
-      metadata: { labels: userStartedLabel },
-    });
-
-    k8sCreate(PipelineRunModel, pipelineRun)
+    submitStartPipeline(values, pipeline, userStartedLabel)
       .then((res) => {
         actions.setSubmitting(false);
         onSubmit && onSubmit(res);
@@ -95,7 +57,11 @@ const StartPipelineModal: React.FC<StartPipelineModalProps & ModalComponentProps
       onSubmit={handleSubmit}
       validationSchema={startPipelineSchema}
     >
-      {(props) => <StartPipelineForm {...props} close={close} />}
+      {(props) => (
+        <ModalStructure submitBtnText="Start" title="Start Pipeline" close={close} {...props}>
+          <StartPipelineForm {...props} />
+        </ModalStructure>
+      )}
     </Formik>
   );
 };

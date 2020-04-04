@@ -83,12 +83,12 @@ export const convertBuilderFormToPipeline = (
     apiVersion: apiVersionForModel(PipelineModel),
     kind: PipelineModel.kind,
     metadata: {
-      ...existingPipeline.metadata,
+      ...existingPipeline?.metadata,
       name,
       namespace,
     },
     spec: {
-      ...existingPipeline.spec,
+      ...existingPipeline?.spec,
       params,
       resources,
       tasks: tasks.map((task) => removeEmptyDefaultParams(removeListRunAfters(task, listIds))),

@@ -42,6 +42,7 @@ export type EventListenerKindTrigger = {
 
 export type EventListenerKind = K8sResourceCommon & {
   spec: {
+    serviceAccountName: string;
     triggers: EventListenerKindTrigger[];
   };
   status?: {

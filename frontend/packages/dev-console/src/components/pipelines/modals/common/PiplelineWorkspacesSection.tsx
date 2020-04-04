@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useFormikContext, FormikValues, useField } from 'formik';
-import { DropdownField } from '@console/shared';
 import { SecretModel, ConfigMapModel } from '@console/internal/models';
+import { DropdownField } from '@console/shared';
 import { PipelineWorkspace } from '../../../../utils/pipeline-augment';
 import FormSection from '../../../import/section/FormSection';
 import { VolumeTypes } from '../../const';

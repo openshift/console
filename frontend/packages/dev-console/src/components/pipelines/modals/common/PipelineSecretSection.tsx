@@ -11,7 +11,7 @@ import {
   getSecretAnnotations,
 } from '../../../../utils/pipeline-utils';
 import { SecretAnnotationId } from '../../const';
-import { advancedSectionValidationSchema } from '../../detail-page-tabs';
+import { advancedSectionValidationSchema } from './validation-utils';
 import SecretForm from './SecretForm';
 import SecretsList from './SecretsList';
 

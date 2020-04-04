@@ -1,6 +1,6 @@
 import { cloneDeep } from 'lodash';
-import { validationSchema } from '../pipelineResource-validation-utils';
-import { getDefinedObj } from '../pipelineResource-utils';
+import { getDefinedObj } from '../../../pipeline-resource/pipelineResource-utils';
+import { validateResourceType as validationSchema } from '../validation-utils';
 import { mockPipelineResourceData } from '../__mocks__/pipeline-resource-mock';
 
 describe('Validation Pipeline Resource', () => {

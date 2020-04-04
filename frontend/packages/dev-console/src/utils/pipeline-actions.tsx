@@ -7,13 +7,16 @@ import {
 } from '@console/internal/components/utils';
 import { k8sCreate, K8sKind, k8sPatch, referenceForModel } from '@console/internal/module/k8s';
 import { errorModal } from '@console/internal/components/modals';
-import { getRandomChars } from '@console/shared/src/utils';
-import { removeTriggerModal } from '../components/pipelines/modals';
-import { PipelineModel, PipelineRunModel } from '../models';
-import { startPipelineModal } from '../components/pipelines/modals';
+import {
+  addTriggerModal,
+  startPipelineModal,
+  removeTriggerModal,
+} from '../components/pipelines/modals';
+import { getPipelineRunData } from '../components/pipelines/modals/common/utils';
+import { StartedByLabel } from '../components/pipelines/const';
+import { EventListenerModel, PipelineModel, PipelineRunModel } from '../models';
 import { Pipeline, PipelineRun } from './pipeline-augment';
 import { pipelineRunFilterReducer } from './pipeline-filter-reducer';
-import { getPipelineRunParams } from './pipeline-utils';
 
 export const handlePipelineRunSubmit = (pipelineRun: PipelineRun) => {
   history.push(
@@ -23,81 +26,6 @@ export const handlePipelineRunSubmit = (pipelineRun: PipelineRun) => {
       pipelineRun.metadata.namespace,
     ),
   );
-};
-
-/**
- * Migrates a PipelineRun from one version to another to support auto-upgrades with old (and invalid) PipelineRuns.
- *
- * Note: Each check within this method should be driven by the apiVersion number if the API is properly up-versioned
- * for these breaking changes. (should be done moving from 0.10.x forward)
- */
-export const migratePipelineRun = (pipelineRun: PipelineRun): PipelineRun => {
-  let newPipelineRun = pipelineRun;
-
-  const serviceAccountPath = 'spec.serviceAccount';
-  if (_.has(newPipelineRun, serviceAccountPath)) {
-    // .spec.serviceAccount was removed for .spec.serviceAccountName in 0.9.x
-    // Note: apiVersion was not updated for this change and thus we cannot gate this change behind a version number
-    const serviceAccountName = _.get(newPipelineRun, serviceAccountPath);
-    newPipelineRun = _.omit(newPipelineRun, [serviceAccountPath]);
-    newPipelineRun = _.merge(newPipelineRun, {
-      spec: {
-        serviceAccountName,
-      },
-    });
-  }
-
-  return newPipelineRun;
-};
-
-export const getPipelineRunData = (
-  pipeline: Pipeline = null,
-  latestRun?: PipelineRun,
-): PipelineRun => {
-  if (!pipeline && !latestRun) {
-    // eslint-disable-next-line no-console
-    console.error('Missing parameters, unable to create new PipelineRun');
-    return null;
-  }
-
-  // Only pass fields name and resourceRef for backend validation
-  // Not to use the pipeline spec resource as fallback as it would fail validation
-  const runResources = _.get(latestRun, ['spec', 'resources'], []);
-  const resources = runResources.map((resource) => ({
-    name: resource.name,
-    resourceRef: resource.resourceRef,
-  }));
-
-  const pipelineName = pipeline ? pipeline.metadata.name : latestRun.spec.pipelineRef.name;
-
-  const latestRunParams = _.get(latestRun, 'spec.params');
-  const pipelineParams = _.get(pipeline, 'spec.params');
-
-  const params = latestRunParams || getPipelineRunParams(pipelineParams);
-
-  const workspaces = _.get(latestRun, ['spec', 'workspaces']);
-
-  const newPipelineRun = {
-    apiVersion: pipeline ? pipeline.apiVersion : latestRun.apiVersion,
-    kind: PipelineRunModel.kind,
-    metadata: {
-      name: `${pipelineName}-${getRandomChars(6)}`,
-      namespace: pipeline ? pipeline.metadata.namespace : latestRun.metadata.namespace,
-      labels: _.merge({}, pipeline?.metadata?.labels, latestRun?.metadata?.labels, {
-        'tekton.dev/pipeline': pipelineName,
-      }),
-    },
-    spec: {
-      ..._.get(latestRun, 'spec', {}),
-      pipelineRef: {
-        name: pipelineName,
-      },
-      resources,
-      ...(params && { params }),
-      workspaces,
-    },
-  };
-  return migratePipelineRun(newPipelineRun);
 };
 
 export const triggerPipeline = (
@@ -160,7 +88,6 @@ export const startPipeline: KebabAction = (
     if (!_.isEmpty(params) || !_.isEmpty(resources) || !_.isEmpty(workspaces)) {
       startPipelineModal({
         pipeline,
-        getPipelineRunData,
         modalClassName: 'modal-lg',
         onSubmit,
       });
@@ -267,6 +194,27 @@ export const stopPipelineRun: KebabAction = (kind: K8sKind, pipelineRun: Pipelin
   };
 };
 
+const addTrigger: KebabAction = (kind: K8sKind, pipeline: Pipeline) => ({
+  label: 'Add Trigger',
+  callback: () => {
+    const cleanPipeline: Pipeline = {
+      ...pipeline,
+      metadata: {
+        ...pipeline.metadata,
+        labels: _.omit(pipeline.metadata.labels, [StartedByLabel.user]),
+      },
+    };
+    addTriggerModal({ pipeline: cleanPipeline, modalClassName: 'modal-lg' });
+  },
+  accessReview: {
+    group: kind.apiGroup,
+    resource: kind.plural,
+    name: pipeline.metadata.name,
+    namespace: pipeline.metadata.namespace,
+    verb: 'create',
+  },
+});
+
 const removeTrigger: KebabAction = (kind: K8sKind, pipeline: Pipeline) => ({
   label: 'Remove Trigger',
   callback: () => {
@@ -280,17 +228,17 @@ const removeTrigger: KebabAction = (kind: K8sKind, pipeline: Pipeline) => ({
     verb: 'delete',
   },
 });
+export const getPipelineKebabActions = (pipelineRun?: PipelineRun): KebabAction[] => [
+  (model, resource: Pipeline) => startPipeline(model, resource, handlePipelineRunSubmit),
+  ...(pipelineRun ? [() => rerunPipelineAndRedirect(PipelineRunModel, pipelineRun)] : []),
+  (model, pipeline) => addTrigger(EventListenerModel, pipeline),
+  (model, pipeline) => removeTrigger(EventListenerModel, pipeline),
+  editPipeline,
+  Kebab.factory.Delete,
+];
 
 export const getPipelineRunKebabActions = (redirectReRun?: boolean): KebabAction[] => [
   redirectReRun ? rerunPipelineRunAndRedirect : reRunPipelineRun,
   stopPipelineRun,
-  Kebab.factory.Delete,
-];
-
-export const getPipelineKebabActions = (pipelineRun?: PipelineRun): KebabAction[] => [
-  (model, resource: Pipeline) => startPipeline(model, resource, handlePipelineRunSubmit),
-  ...(pipelineRun ? [() => rerunPipelineAndRedirect(PipelineRunModel, pipelineRun)] : []),
-  removeTrigger,
-  editPipeline,
   Kebab.factory.Delete,
 ];

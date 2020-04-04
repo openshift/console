@@ -67,7 +67,7 @@ export interface Resource {
 
 export interface PipelineResource {
   name: string;
-  type?: string;
+  type: string;
 }
 
 type PipelineRunResourceCommonProperties = {
@@ -130,6 +130,13 @@ export interface PipelineRun extends K8sResourceKind {
     taskRuns?: TaskRuns;
   };
 }
+
+export type PipelineResourceKind = K8sResourceKind & {
+  spec: {
+    params: { name: string; value: string }[];
+    type: string;
+  };
+};
 
 export interface PipelineResourceTaskParam extends PipelineParam {
   type: string;

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { TextInputTypes } from '@patternfly/react-core';
 import { MultiColumnField, InputField, DropdownField } from '@console/shared';
-import { PipelineResourceType } from '../const';
+import { pipelineResourceTypeSelections } from '../const';
 
 type PipelineResourcesParam = {
   addLabel?: string;
@@ -27,7 +27,12 @@ const PipelineResources: React.FC<PipelineResourcesParam> = (props) => {
         placeholder="Name"
         isReadOnly={isReadOnly}
       />
-      <DropdownField name="type" items={PipelineResourceType} fullWidth disabled={isReadOnly} />
+      <DropdownField
+        name="type"
+        items={pipelineResourceTypeSelections}
+        fullWidth
+        disabled={isReadOnly}
+      />
     </MultiColumnField>
   );
 };

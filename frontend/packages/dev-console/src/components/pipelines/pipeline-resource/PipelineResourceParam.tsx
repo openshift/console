@@ -1,72 +1,35 @@
 import * as React from 'react';
-import * as _ from 'lodash';
-import { ActionGroup, ButtonVariant, Button } from '@patternfly/react-core';
-import { CheckIcon, CloseIcon } from '@patternfly/react-icons';
-import { useFormikContext, FormikValues } from 'formik';
-import { ButtonBar } from '@console/internal/components/utils';
 import PipelineGitOptions from './PipelineGitOptions';
 import PipelineImageOptions from './PipelineImageOptions';
 import PipelineClusterOptions from './PipelineClusterOptions';
 import PipelineStorageOptions from './PipelineStorageOptions';
+
 import './PipelineResourceParam.scss';
 
 export interface PipelineResourceParamProps {
+  name: string;
   type: string;
-  closeDisabled?: boolean;
 }
 
-const PipelineResourceParam: React.FC<PipelineResourceParamProps> = ({ type, closeDisabled }) => {
-  const { errors, handleReset, status, isSubmitting, dirty, submitForm } = useFormikContext<
-    FormikValues
-  >();
-  const handleCreateFormSubmit = (e: React.SyntheticEvent) => {
-    e.stopPropagation();
-    submitForm();
-  };
-  const resourceComponent = (): React.ReactElement => {
+const PipelineResourceParam: React.FC<PipelineResourceParamProps> = (props) => {
+  const { name, type } = props;
+
+  const renderTypeFields = () => {
     switch (type) {
       case 'git':
-        return <PipelineGitOptions />;
+        return <PipelineGitOptions prefixName={name} />;
       case 'image':
-        return <PipelineImageOptions />;
+        return <PipelineImageOptions prefixName={name} />;
       case 'cluster':
-        return <PipelineClusterOptions />;
+        return <PipelineClusterOptions prefixName={name} />;
       case 'storage':
-        return <PipelineStorageOptions />;
+        return <PipelineStorageOptions prefixName={name} />;
       default:
         return null;
     }
   };
 
-  return (
-    <div className="odc-pipeline-resource-param__content">
-      {resourceComponent()}
-      <ButtonBar errorMessage={status && status.submitError} inProgress={isSubmitting}>
-        <ActionGroup className="pf-c-form pf-c-form__actions--right pf-c-form__group--no-top-margin">
-          <Button
-            type="button"
-            variant={ButtonVariant.link}
-            onClick={handleCreateFormSubmit}
-            isDisabled={!dirty || !_.isEmpty(errors)}
-            className="odc-pipeline-resource-param__action-btn"
-            aria-label="create"
-          >
-            <CheckIcon />
-          </Button>
-          <Button
-            type="button"
-            className="odc-pipeline-resource-param__action-btn"
-            variant={ButtonVariant.plain}
-            onClick={handleReset}
-            isDisabled={closeDisabled}
-            aria-label="close"
-          >
-            <CloseIcon />
-          </Button>
-        </ActionGroup>
-      </ButtonBar>
-    </div>
-  );
+  return <div className="odc-pipeline-resource-param">{renderTypeFields()}</div>;
 };
 
 export default PipelineResourceParam;
