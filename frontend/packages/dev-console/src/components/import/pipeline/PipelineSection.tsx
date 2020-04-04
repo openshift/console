@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { connectToFlags, FlagsObject } from '@console/internal/reducers/features';
-import { getBadgeFromType } from '@console/shared';
-import { Split, SplitItem, Alert } from '@patternfly/react-core';
+import { Alert } from '@patternfly/react-core';
 import { getActiveNamespace } from '@console/internal/actions/ui';
 import { useAccessReview } from '@console/internal/components/utils';
 import { useFormikContext, FormikValues } from 'formik';
@@ -45,14 +44,8 @@ const PipelineSection: React.FC<PipelineSectionProps> = ({ flags }) => {
   const hasCreatePipelineAccess = usePipelineAccessReview();
 
   if (flags[FLAG_OPENSHIFT_PIPELINE] && hasCreatePipelineAccess) {
-    const title = (
-      <Split gutter="md">
-        <SplitItem className="odc-form-section__heading">Pipelines</SplitItem>
-        <SplitItem>{getBadgeFromType(PipelineModel.badge)}</SplitItem>
-      </Split>
-    );
     return (
-      <FormSection title={title}>
+      <FormSection title="Pipelines">
         {values.image.selected || values.build.strategy === 'Docker' ? (
           <PipelineTemplate />
         ) : (
