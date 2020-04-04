@@ -1,8 +1,7 @@
 import * as React from 'react';
 import { Button, Flex, FlexItem, FlexItemModifiers } from '@patternfly/react-core';
-import { PipelineModel } from '../../../models';
 import { warnYAML } from './modals';
-import { getBadgeFromType } from '@console/shared/src';
+import { DevPreviewBadge } from '@console/shared';
 import { Pipeline } from '../../../utils/pipeline-augment';
 import { goToYAML } from './utils';
 
@@ -37,7 +36,9 @@ const PipelineBuilderHeader: React.FC<PipelineBuilderHeaderProps> = (props) => {
             Edit YAML
           </Button>
         </FlexItem>
-        <FlexItem>{getBadgeFromType(PipelineModel.badge)}</FlexItem>
+        <FlexItem>
+          <DevPreviewBadge />
+        </FlexItem>
       </Flex>
       <hr />
     </div>

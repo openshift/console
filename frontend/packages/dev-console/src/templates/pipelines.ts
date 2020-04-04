@@ -1,5 +1,5 @@
 export const newPipelineTemplate = `
-apiVersion: tekton.dev/v1alpha1
+apiVersion: tekton.dev/v1beta1
 kind: Pipeline
 metadata:
   name: new-pipeline
@@ -41,7 +41,7 @@ spec:
 `;
 
 export const newTaskTemplate = `
-apiVersion: tekton.dev/v1alpha1
+apiVersion: tekton.dev/v1beta1
 kind: Task
 metadata:
   name: example-task
@@ -60,7 +60,7 @@ spec:
 `;
 
 export const newTaskRunTemplate = `
-apiVersion: tekton.dev/v1alpha1
+apiVersion: tekton.dev/v1beta1
 kind: TaskRun
 metadata:
   name: example-taskrun
@@ -77,7 +77,7 @@ spec:
 `;
 
 export const newClusterTaskTemplate = `
-apiVersion: tekton.dev/v1alpha1
+apiVersion: tekton.dev/v1beta1
 kind: ClusterTask
 metadata:
   name: example-cluster-task
