@@ -2,7 +2,7 @@ import * as React from 'react';
 import { LoadingInline } from '@console/internal/components/utils';
 import { k8sList } from '@console/internal/module/k8s';
 import { useFormikContext, FormikValues } from 'formik';
-import { Alert, Expandable } from '@patternfly/react-core';
+import { Alert, Badge, Expandable, Flex, FlexItem, FlexModifiers } from '@patternfly/react-core';
 import { CheckboxField } from '@console/shared';
 import { CLUSTER_PIPELINE_NS } from '../../../const';
 import { PipelineModel } from '../../../models';
@@ -88,7 +88,14 @@ const PipelineTemplate: React.FC = () => {
 
   return pipeline.template ? (
     <>
-      <CheckboxField label="Add pipeline" name="pipeline.enabled" />
+      <Flex>
+        <FlexItem breakpointMods={[{ modifier: FlexModifiers['align-self-center'] }]}>
+          <CheckboxField label="Add pipeline" name="pipeline.enabled" />
+        </FlexItem>
+        <FlexItem>
+          <Badge isRead>Dev Preview</Badge>
+        </FlexItem>
+      </Flex>
       <Expandable
         toggleText={`${isExpanded ? 'Hide' : 'Show'} pipeline visualization`}
         isExpanded={isExpanded}
