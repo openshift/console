@@ -69,7 +69,7 @@ describe('Pipeline', async () => {
     checkErrors();
   });
 
-  it('displays subscription creation form for selected Operator', async () => {
+  it('displays subscription creation form for pipeline Operator', async () => {
     await switchPerspective(Perspective.Administrator);
     await catalogView.categoryTabsPresent();
     await catalogView.categoryTabs.get(0).click();
@@ -115,6 +115,7 @@ describe('Pipeline', async () => {
     await browser.get(`${appHost}/k8s/cluster/projects/${testName}`);
     await switchPerspective(Perspective.Developer);
     expect(sideHeader.getText()).toContain('Developer');
+    await browser.driver.navigate().refresh();
     await browser.wait(until.visibilityOf(pageSidebar));
     await browser.wait(until.visibilityOf(pipelineTab));
     expect(pageSidebar.getText()).toContain('Pipelines');
