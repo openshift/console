@@ -30,7 +30,7 @@ export const convertResourceToTask = (
       kind: resource.kind === ClusterTaskModel.kind ? ClusterTaskModel.kind : undefined,
       name: resource.metadata.name,
     },
-    params: resource.spec.inputs?.params?.map((param) => ({
+    params: resource.spec.params?.map((param) => ({
       name: param.name,
       value: param.default,
     })),

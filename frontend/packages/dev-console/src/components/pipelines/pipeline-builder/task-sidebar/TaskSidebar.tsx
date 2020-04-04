@@ -46,9 +46,9 @@ const TaskSidebar: React.FC<TaskSidebarProps> = (props) => {
 
   const thisTaskError = errorMap[taskField.value.name];
 
-  const params = taskResource.spec?.inputs?.params;
-  const inputResources = taskResource.spec?.inputs?.resources;
-  const outputResources = taskResource.spec?.outputs?.resources;
+  const params = taskResource.spec?.params;
+  const inputResources = taskResource.spec?.resources?.inputs;
+  const outputResources = taskResource.spec?.resources?.outputs;
 
   const renderResource = (type: ResourceTarget) => (resource: PipelineResourceTaskResource) => {
     const taskResources: PipelineTaskResource[] = taskField.value?.resources?.[type] || [];
