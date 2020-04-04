@@ -32,9 +32,6 @@ export class NetworkType extends ObjectEnum<string> {
 
   static fromString = (model: string): NetworkType => NetworkType.stringMapper[model];
 
-  static fromSerialized = (networkType: { value: string }): NetworkType =>
-    NetworkType.fromString(networkType && networkType.value);
-
   private readonly defaultInterfaceType: NetworkInterfaceType;
   private readonly allowedInterfaceTypes: Readonly<NetworkInterfaceType[]>;
   private readonly allowedInterfaceTypesSet: Set<NetworkInterfaceType>;

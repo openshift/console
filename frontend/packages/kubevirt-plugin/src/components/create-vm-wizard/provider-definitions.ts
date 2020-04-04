@@ -7,6 +7,8 @@ import { getV2VVMwareImportProvidersTabValidity } from './redux/validations/prov
 import { getOvirtInitialState } from './redux/initial-state/providers/ovirt-initial-state';
 import { getOvirtProviderStateUpdater } from './redux/stateUpdate/vmSettings/providers/ovirt/ovirt-state-update';
 import { getProviderName } from './strings/import-providers';
+import { cleanupOvirtProvider } from './redux/stateUpdate/vmSettings/providers/ovirt/ovirt-cleanup';
+import { getOvirtProviderProvidersTabValidity } from './redux/validations/providers/ovirt-provider-tab-validation';
 
 type Provider = {
   id: VMImportProvider;
@@ -26,12 +28,8 @@ export const getProviders = (): Provider[] => [
     id: VMImportProvider.OVIRT,
     getInitialState: getOvirtInitialState,
     getStateUpdater: getOvirtProviderStateUpdater,
-    getImportProvidersTabValidity: () => ({
-      hasAllRequiredFilled: false,
-      isValid: false,
-      error: null,
-    }),
-    cleanup: null,
+    getImportProvidersTabValidity: getOvirtProviderProvidersTabValidity,
+    cleanup: cleanupOvirtProvider,
   },
   {
     name: getProviderName(VMImportProvider.VMWARE),

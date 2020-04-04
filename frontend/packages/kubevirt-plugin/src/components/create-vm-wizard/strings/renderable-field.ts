@@ -4,10 +4,20 @@ import {
   VMSettingsField,
   RenderableFieldResolver,
   VMWareProviderField,
+  OvirtProviderField,
 } from '../types';
 import { ProvisionSource } from '../../../constants/vm/provision-source';
 
 export const titleResolver: RenderableFieldResolver = {
+  [OvirtProviderField.OVIRT_ENGINE_SECRET_NAME]: 'Red Hat Virtualization Instance',
+  [OvirtProviderField.API_URL]: 'API URL',
+  [OvirtProviderField.USERNAME]: 'Username',
+  [OvirtProviderField.PASSWORD]: 'Password',
+  [OvirtProviderField.REMEMBER_PASSWORD]: 'Save as new Red Hat Virtualization Instance secret',
+  [OvirtProviderField.CERTIFICATE]: 'CA certificate',
+  [OvirtProviderField.CLUSTER]: 'Cluster',
+  [OvirtProviderField.VM]: 'VM to Import',
+  [OvirtProviderField.STATUS]: '',
   [ImportProvidersField.PROVIDER]: 'Provider',
   [VMWareProviderField.VCENTER]: 'vCenter instance',
   [VMWareProviderField.HOSTNAME]: 'vCenter hostname',
@@ -17,7 +27,6 @@ export const titleResolver: RenderableFieldResolver = {
   [VMWareProviderField.STATUS]: '',
   [VMWareProviderField.VM]: 'VM or Template to Import',
   [VMSettingsField.NAME]: 'Name',
-  [VMSettingsField.HOSTNAME]: 'Hostname',
   [VMSettingsField.DESCRIPTION]: 'Description',
   [VMSettingsField.USER_TEMPLATE]: 'Template',
   [VMSettingsField.PROVISION_SOURCE_TYPE]: 'Source',
@@ -33,6 +42,10 @@ export const titleResolver: RenderableFieldResolver = {
 
 export const placeholderResolver = {
   [ImportProvidersField.PROVIDER]: '--- Select Provider ---',
+  [OvirtProviderField.OVIRT_ENGINE_SECRET_NAME]:
+    '--- Select Red Hat Virtualization Instance Secret ---',
+  [OvirtProviderField.CLUSTER]: '--- Select Cluster ---',
+  [OvirtProviderField.VM]: '--- Select VM ---',
   [VMWareProviderField.VCENTER]: '--- Select vCenter Instance Secret ---',
   [VMWareProviderField.VM]: '--- Select VM or Template ---',
   [VMSettingsField.USER_TEMPLATE]: '--- Select Template ---',
@@ -56,6 +69,7 @@ const providerHelpResolver = {
 
 export const helpResolver = {
   [ImportProvidersField.PROVIDER]: (provider) => providerHelpResolver[provider],
+  [OvirtProviderField.USERNAME]: () => 'Should be in the following format: admin@internal',
   [VMWareProviderField.VCENTER]: () =>
     'Select secret containing connection details for a vCenter instance.',
   [VMWareProviderField.HOSTNAME]: () =>

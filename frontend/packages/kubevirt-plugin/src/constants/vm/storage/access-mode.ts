@@ -27,9 +27,6 @@ export class AccessMode extends ObjectEnum<string> {
 
   static getAll = () => AccessMode.ALL;
 
-  static fromSerialized = (accessMode: { value: string }): AccessMode =>
-    AccessMode.fromString(accessMode && accessMode.value);
-
   static fromString = (model: string): AccessMode => AccessMode.stringMapper[model];
 
   toString = () => {

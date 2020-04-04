@@ -16,21 +16,15 @@ import { getPodDeploymentStatus } from '../../../../../statuses/pod-deployment/p
 import { PodDeploymentStatus } from '../../../../../statuses/pod-deployment/constants';
 import { iGetCommonData, iGetLoadedCommonData } from '../../../selectors/immutable/selectors';
 import {
-  ImportProvidersField,
   OvirtProviderField,
   OvirtProviderProps,
   VMImportProvider,
   VMWareProviderField,
   VMWareProviderProps,
 } from '../../../types';
-import {
-  iGet,
-  iGetIn,
-  immutableListToShallowJS,
-  toShallowJS,
-} from '../../../../../utils/immutable';
-import { iGetImportProviders } from '../../../selectors/immutable/import-providers';
+import { iGet, immutableListToShallowJS, toShallowJS } from '../../../../../utils/immutable';
 import { getProviderName } from '../../../strings/import-providers';
+import { iGetProviderFieldAttribute } from '../../../selectors/immutable/provider/common';
 
 const DeploymentLink: React.FC<DeploymentLinkProps> = ({ deployment }) => {
   const name = getName(deployment);
@@ -175,14 +169,14 @@ const stateToProps = (state, { wizardReduxID, provider }) => {
     'data',
   );
   return {
-    hasErrors: !!iGetIn(iGetImportProviders(state, wizardReduxID), [
-      ImportProvidersField.PROVIDERS_DATA,
+    hasErrors: !!iGetProviderFieldAttribute(
+      state,
+      wizardReduxID,
       provider,
-      provider === VMImportProvider.OVIRT
-        ? OvirtProviderField.CONTROLLER_LAST_ERROR
-        : VMWareProviderField.V2V_LAST_ERROR,
       'errors',
-    ]),
+      OvirtProviderField.CONTROLLER_LAST_ERROR,
+      VMWareProviderField.V2V_LAST_ERROR,
+    ),
     deployment: _.isEmpty(deployment) ? undefined : deployment,
     deploymentPods: iGetLoadedCommonData(
       state,

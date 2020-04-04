@@ -1,8 +1,8 @@
 import { k8sKill } from '@console/internal/module/k8s';
-import { V2VVMwareModel } from '../../../models';
+import { OVirtProviderModel } from '../../../models';
 import * as _ from 'lodash';
 
-export const deleteV2VvmwareObject = async ({
+export const deleteOvirtProviderObject = async ({
   name,
   namespace,
 }: {
@@ -10,7 +10,7 @@ export const deleteV2VvmwareObject = async ({
   namespace: string;
 }) => {
   try {
-    return k8sKill(V2VVMwareModel, {
+    return k8sKill(OVirtProviderModel, {
       metadata: {
         name,
         namespace,
@@ -21,7 +21,7 @@ export const deleteV2VvmwareObject = async ({
     if (_.get(error, 'json.code') !== 404 && _.get(error, 'json.reason') !== 'NotFound') {
       // eslint-disable-next-line no-console
       console.log(
-        'Failed to remove temporary V2VVMWare object. It is not an issue, it will be garbage collected later if still present, resource: ',
+        `Failed to remove temporary OvirtProvider object. It is not an issue, it will be garbage collected later if still present, resource: `,
         {
           name,
           namespace,

@@ -51,6 +51,7 @@ export enum InternalActionType {
   SetVmSettingsFieldValue = 'KubevirtVMWizardSetVmSettingsFieldValue',
   SetImportProvidersFieldValue = 'KubevirtVMWizardSetImportProvidersFieldValue',
   UpdateImportProviderField = 'KubevirtVMWizardUpdateImportProviderField',
+  SetImportProvider = 'KubevirtVMWizardSetImportProvider',
   UpdateImportProvider = 'KubevirtVMWizardUpdateImportProvider',
   SetCloudInitFieldValue = 'KubevirtVMWizardSetCloudInitFieldValue',
   SetInVmSettings = 'KubevirtVMWizardSetInVmSettings',

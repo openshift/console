@@ -4,17 +4,20 @@ import { compareOwnerReference } from '@console/shared/src/utils/owner-reference
 import { getOwnerReferences } from '@console/shared/src';
 import { SecretModel } from '@console/internal/models';
 import { PatchBuilder } from '@console/shared/src/k8s';
-import { V2VVMwareModel } from '../../../models';
-import { VCENTER_TEMPORARY_LABEL } from '../../../constants/v2v';
+import { V2V_TEMPORARY_LABEL } from '../../../constants/v2v';
 import { getLabels } from '../../../selectors/selectors';
 import { buildOwnerReferenceForModel } from '../../../utils';
+import { VMImportProvider } from '../../../components/create-vm-wizard/types';
+import { OVirtProviderModel, V2VVMwareModel } from '../../../models';
 
-export const correctVCenterSecretLabels = async ({
+export const correctVMImportProviderSecretLabels = async ({
   secret,
   saveCredentialsRequested,
+  provider,
 }: {
   secret: K8sResourceKind;
   saveCredentialsRequested: boolean;
+  provider: VMImportProvider;
 }) => {
   if (secret) {
     const patches = [];
@@ -22,14 +25,16 @@ export const correctVCenterSecretLabels = async ({
     if (saveCredentialsRequested) {
       patches.push(
         new PatchBuilder('/metadata/labels')
-          .setObjectRemove(VCENTER_TEMPORARY_LABEL, getLabels(secret))
+          .setObjectRemove(V2V_TEMPORARY_LABEL, getLabels(secret))
           .build(),
       );
       const ownerReferences = getOwnerReferences(secret);
       if (ownerReferences) {
-        const vmwareReference = buildOwnerReferenceForModel(V2VVMwareModel);
+        const providerCRReference = buildOwnerReferenceForModel(
+          provider === VMImportProvider.OVIRT ? OVirtProviderModel : V2VVMwareModel,
+        );
         const filteredOwnerReferences = ownerReferences.filter((ownerReference) =>
-          compareOwnerReference(vmwareReference, ownerReference, true),
+          compareOwnerReference(providerCRReference, ownerReference, true),
         );
 
         if (filteredOwnerReferences.length === ownerReferences.length) {
@@ -49,7 +54,7 @@ export const correctVCenterSecretLabels = async ({
     } else {
       patches.push(
         new PatchBuilder('/metadata/labels')
-          .setObjectUpdate(VCENTER_TEMPORARY_LABEL, 'true', getLabels(secret))
+          .setObjectUpdate(V2V_TEMPORARY_LABEL, 'true', getLabels(secret))
           .build(),
       );
     }

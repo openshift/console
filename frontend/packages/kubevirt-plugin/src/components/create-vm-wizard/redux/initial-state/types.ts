@@ -26,7 +26,10 @@ export type VMwareSettings = { [key in VMWareProviderField]: SettingsField } & {
   [VMWareProviderField.NEW_VCENTER_NAME]: string;
 };
 
-export type OvirtSettings = { [key in OvirtProviderField]: SettingsField } & {};
+export type OvirtSettings = { [key in OvirtProviderField]: SettingsField } & {
+  [OvirtProviderField.ACTIVE_OVIRT_PROVIDER_CR_NAME]: string;
+  [OvirtProviderField.NEW_OVIRT_ENGINE_SECRET_NAME]: string;
+};
 
 export type VMSettings = { [key in VMSettingsField]: SettingsField };
 

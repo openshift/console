@@ -24,7 +24,6 @@ import {
 } from '../../../../../selectors/immutable/provider/vmware/selectors';
 import { vmWizardInternalActions } from '../../../../internal-actions';
 import { asDisabled, asHidden, asRequired } from '../../../../../utils/utils';
-import { deleteV2VvmwareObject } from '../../../../../../../k8s/requests/v2v/delete-v2vvmware-object';
 import { getSimplePodDeploymentStatus } from '../../../../../../../statuses/pod-deployment/pod-deployment-status';
 import { PodDeploymentStatus } from '../../../../../../../statuses/pod-deployment/constants';
 import {
@@ -34,13 +33,13 @@ import {
   toShallowJS,
 } from '../../../../../../../utils/immutable';
 import {
-  V2V_WMWARE_STATUS_ALL_OK,
-  V2VVMwareStatus,
-  getSimpleV2vVMwareStatus,
-} from '../../../../../../../statuses/v2vvmware';
-import { getLoadedVm, getThumbprint } from '../../../../../selectors/provider/vmware/selectors';
+  getSimpleV2VPRoviderStatus,
+  V2V_PROVIDER_STATUS_ALL_OK,
+  V2VProviderStatus,
+} from '../../../../../../../statuses/v2v';
+import { getThumbprint, getLoadedVm } from '../../../../../selectors/provider/vmware/selectors';
 import { getSimpleName } from '../../../../../../../selectors/utils';
-import { correctVCenterSecretLabels } from '../../../../../../../k8s/requests/v2v/correct-vcenter-secret-labels';
+import { correctVMImportProviderSecretLabels } from '../../../../../../../k8s/requests/v2v/correct-vm-import-provider-secret-labels';
 import {
   createConnectionObjects,
   startV2VVMWareControllerWithCleanup,
@@ -49,32 +48,21 @@ import { prefillUpdateCreator } from './vmware-prefill-vm';
 import { hasImportProvidersChanged } from '../../../../../selectors/immutable/import-providers';
 import { updateExtraWSQueries } from './update-ws-queries';
 import { iGetCreateVMWizardTabs } from '../../../../../selectors/immutable/common';
+import { cleanupVmWareProvider } from './vmware-cleanup';
 
 const startControllerAndCleanup = (options: UpdateOptions) => {
-  const { id, prevState, getState, changedCommonData } = options;
+  const { id, prevState, getState } = options;
   const state = getState();
-  if (
-    !(
-      hasImportProvidersChanged(prevState, state, id, ImportProvidersField.PROVIDER) ||
-      changedCommonData.has(VMWizardProps.activeNamespace)
-    )
-  ) {
+  if (!hasImportProvidersChanged(prevState, state, id, ImportProvidersField.PROVIDER)) {
     return;
   }
 
   const namespace = iGetCommonData(state, id, VMWizardProps.activeNamespace);
 
+  cleanupVmWareProvider(options); // call should be idempotent and called on every provider change
+
   if (isVMWareProvider(state, id) && namespace) {
     startV2VVMWareControllerWithCleanup(options); // fire side effect
-
-    const name = iGetVMWareField(prevState, id, VMWareProviderField.V2V_NAME);
-    if (name) {
-      // delete stale object
-      deleteV2VvmwareObject({
-        name,
-        namespace,
-      });
-    }
   }
 };
 
@@ -141,7 +129,7 @@ const v2vVmWareUpdater = (options: UpdateOptions) => {
   const selectedVmName = iGetVMWareFieldValue(state, id, VMWareProviderField.VM);
   const vm = getLoadedVm(v2vvmware, selectedVmName);
 
-  const vmWareStatus = getSimpleV2vVMwareStatus(v2vvmware, { requestsVM: selectedVmName && !vm }); // hack around unresponsiveness of v2vvmware
+  const vmWareStatus = getSimpleV2VPRoviderStatus(v2vvmware, { requestsVM: selectedVmName && !vm }); // hack around unresponsiveness of v2vvmware
 
   dispatch(
     vmWizardInternalActions[InternalActionType.UpdateImportProvider](id, VMImportProvider.VMWARE, {
@@ -155,18 +143,19 @@ const v2vVmWareUpdater = (options: UpdateOptions) => {
         thumbprint: getThumbprint(v2vvmware),
       },
       [VMWareProviderField.STATUS]: {
-        value: vmWareStatus.serialize(),
+        value: vmWareStatus?.getValue(),
       },
     }),
   );
 
-  if (vmWareStatus === V2VVMwareStatus.CONNECTION_SUCCESSFUL) {
+  if (vmWareStatus === V2VProviderStatus.CONNECTION_SUCCESSFUL) {
     const activeVcenterSecret = iGetLoadedCommonData(
       state,
       id,
       VMWareProviderProps.activeVcenterSecret,
     );
-    correctVCenterSecretLabels({
+    correctVMImportProviderSecretLabels({
+      provider: VMImportProvider.VMWARE,
       secret: toShallowJS(activeVcenterSecret, undefined, true),
       saveCredentialsRequested: iGetVMWareFieldValue(
         state,
@@ -204,12 +193,11 @@ const vmChangedUpdater = (options: UpdateOptions) => {
 };
 
 const providerUpdater = (options: UpdateOptions) => {
-  const { id, prevState, dispatch, getState, changedCommonData } = options;
+  const { id, prevState, dispatch, getState } = options;
   const state = getState();
   if (
     !(
       hasImportProvidersChanged(prevState, state, id, ImportProvidersField.PROVIDER) ||
-      changedCommonData.has(VMWizardProps.activeNamespace) ||
       hasVMWareSettingsChanged(
         prevState,
         state,
@@ -225,11 +213,11 @@ const providerUpdater = (options: UpdateOptions) => {
   const namespace = iGetCommonData(state, id, VMWizardProps.activeNamespace);
   const loadedVm = iGetVMWareFieldAttribute(state, id, VMWareProviderField.VM, 'vm');
   const iStatus = iGetVMWareFieldValue(state, id, VMWareProviderField.STATUS);
-  const status = V2VVMwareStatus.fromString(iStatus && iStatus.get('value'));
+  const status = V2VProviderStatus.fromString(iStatus);
 
   const hasLoadedVm = !!loadedVm;
   const isVmWareProvider = isVMWareProvider(state, id);
-  const isOkStatus = V2V_WMWARE_STATUS_ALL_OK.has(status);
+  const isOkStatus = V2V_PROVIDER_STATUS_ALL_OK.has(status);
 
   const hiddenMetadata = {
     isHidden: asHidden(!namespace || !isVmWareProvider, VMImportProvider.VMWARE),
@@ -271,7 +259,7 @@ const providerUpdater = (options: UpdateOptions) => {
       [VMWareProviderField.VM]: {
         ...requiredMetadata,
         isDisabled: asDisabled(
-          !isOkStatus && status !== V2VVMwareStatus.LOADING_VM_DETAIL_FAILED,
+          !isOkStatus && status !== V2VProviderStatus.LOADING_VM_DETAIL_FAILED,
           VMImportProvider.VMWARE,
         ),
         value: !isVmWareProvider ? null : undefined,
@@ -281,8 +269,8 @@ const providerUpdater = (options: UpdateOptions) => {
       [VMWareProviderField.STATUS]: {
         isHidden: asHidden(
           !isVmWareProvider ||
-            V2V_WMWARE_STATUS_ALL_OK.has(status) ||
-            status === V2VVMwareStatus.UNKNOWN,
+            V2V_PROVIDER_STATUS_ALL_OK.has(status) ||
+            status === V2VProviderStatus.UNKNOWN,
           VMImportProvider.VMWARE,
         ),
       },

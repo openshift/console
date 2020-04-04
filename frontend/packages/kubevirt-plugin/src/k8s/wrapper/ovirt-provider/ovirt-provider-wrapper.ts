@@ -1,6 +1,6 @@
 import { K8sResourceCommon } from '@console/internal/module/k8s';
 import { K8sResourceWrapper } from '../common/k8s-resource-wrapper';
-import { V2VVMwareModel } from '../../../models';
+import { OVirtProviderModel } from '../../../models';
 import { K8sInitAddon } from '../common/util/k8s-mixin';
 import { V2V_TEMPORARY_LABEL } from '../../../constants/v2v';
 
@@ -8,9 +8,12 @@ type InitData = {
   isTemporary?: boolean; // remove this object automatically (by controller)
 };
 
-export class V2VVMwareWrappper extends K8sResourceWrapper<K8sResourceCommon, V2VVMwareWrappper> {
-  constructor(v2vvmware?: K8sResourceCommon | V2VVMwareWrappper | any, copy = false) {
-    super(V2VVMwareModel, v2vvmware, copy);
+export class OVirtProviderWrappper extends K8sResourceWrapper<
+  K8sResourceCommon,
+  OVirtProviderWrappper
+> {
+  constructor(v2vvmware?: K8sResourceCommon | OVirtProviderWrappper | any, copy = false) {
+    super(OVirtProviderModel, v2vvmware, copy);
   }
 
   init(data: K8sInitAddon & InitData = {}) {

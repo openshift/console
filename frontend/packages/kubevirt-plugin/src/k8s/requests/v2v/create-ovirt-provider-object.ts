@@ -1,6 +1,5 @@
-import { V2VVMwareModel } from '../../../models';
+import { OVirtProviderModel } from '../../../models';
 import { EnhancedK8sMethods } from '../../enhancedK8sMethods/enhancedK8sMethods';
-import { V2VVMwareWrappper } from '../../wrapper/v2vvmware/v2vvmware-wrapper';
 import { getDefaultSecretName } from './utils/utils';
 import { getName, getOwnerReferences } from '@console/shared/src';
 import { SecretModel } from '@console/internal/models';
@@ -8,15 +7,23 @@ import { PatchBuilder } from '@console/shared/src/k8s';
 import { buildOwnerReference } from '../../../utils';
 import { compareOwnerReference } from '@console/shared/src/utils/owner-references';
 import { SecretWrappper } from '../../wrapper/k8s/secret-wrapper';
-import { V2V_TEMPORARY_LABEL, VCENTER_TYPE_LABEL } from '../../../constants/v2v';
+import { OVIRT_TYPE_LABEL, V2V_TEMPORARY_LABEL } from '../../../constants/v2v';
+import { OVirtProviderWrappper } from '../../wrapper/ovirt-provider/ovirt-provider-wrapper';
 
-export const createV2VvmwareObjectWithSecret = async (
+export const createOvirtProviderObjectWithSecret = async (
   {
     url,
     username,
     password,
+    caCertificate,
     namespace,
-  }: { url?: string; username?: string; password?: string; namespace?: string },
+  }: {
+    url?: string;
+    username?: string;
+    password?: string;
+    namespace?: string;
+    caCertificate?: string;
+  },
   { k8sCreate, k8sPatch }: EnhancedK8sMethods,
 ) => {
   const secretName = `${getDefaultSecretName({ url, username })}-`;
@@ -27,33 +34,31 @@ export const createV2VvmwareObjectWithSecret = async (
         generateName: secretName,
         namespace,
         labels: {
-          [VCENTER_TYPE_LABEL]: 'true',
+          [OVIRT_TYPE_LABEL]: 'true',
           [V2V_TEMPORARY_LABEL]: 'true', // garbage collect and do not list this temporary secret in the dropdown box
         },
       })
-      .setValue('username', username)
-      .setValue('password', password)
-      .setValue('url', url)
+      .setJSONValue('ovirt', { username, password, apiUrl: url, caCert: caCertificate })
       .asResource(),
   );
 
-  const v2vvmware = await k8sCreate(
-    V2VVMwareModel,
-    new V2VVMwareWrappper()
+  const ovirtProvider = await k8sCreate(
+    OVirtProviderModel,
+    new OVirtProviderWrappper()
       .init({
         namespace,
-        generateName: `check-${getDefaultSecretName({ url, username })}-`,
+        generateName: `ovirt-provider-${getDefaultSecretName({ url, username })}-`,
         isTemporary: true,
       })
       .setConnection(getName(secret))
       .asResource(),
   );
 
-  if (v2vvmware) {
+  if (ovirtProvider) {
     await k8sPatch(SecretModel, secret, [
       new PatchBuilder('/metadata/ownerReferences')
         .setListUpdate(
-          buildOwnerReference(v2vvmware),
+          buildOwnerReference(ovirtProvider),
           getOwnerReferences(secret),
           compareOwnerReference,
         )
@@ -61,25 +66,21 @@ export const createV2VvmwareObjectWithSecret = async (
     ]);
   }
 
-  return v2vvmware;
+  return ovirtProvider;
 };
-// ATM, Kubernetes does not support deletion of CRs with a gracefulPeriod (delayed deletion).
-// The only object with this support are PODs.
-// More info: https://github.com/kubernetes/kubernetes/issues/56567
-// Workaround: handle garbage collection on our own by:
-// - set VCENTER_TEMPORARY_LABEL label to 'true'
-// - controller will set deletionTimestamp label with RFC 3339 timestamp
-// - controller will remove the object after the timeStamp
-// - can be easily extended for delaying the deletionTimestamp (recently not needed, so not implemented)
 
-export const createV2VvmwareObject = async (
+export const createOvirtProviderObject = async (
   { connectionSecretName, namespace }: { connectionSecretName?: string; namespace?: string },
   { k8sCreate }: EnhancedK8sMethods,
 ) =>
   k8sCreate(
-    V2VVMwareModel,
-    new V2VVMwareWrappper()
-      .init({ namespace, generateName: `v2vvmware-${connectionSecretName}-`, isTemporary: true })
+    OVirtProviderModel,
+    new OVirtProviderWrappper()
+      .init({
+        namespace,
+        generateName: `ovirt-provider-${connectionSecretName}-`,
+        isTemporary: true,
+      })
       .setConnection(connectionSecretName)
       .asResource(),
   );

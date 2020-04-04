@@ -218,6 +218,18 @@ export default (state, action: WizardInternalAction) => {
         ],
         fromJS(payload.value),
       );
+    case InternalActionType.SetImportProvider:
+      return state.setIn(
+        [
+          dialogID,
+          'tabs',
+          VMWizardTab.IMPORT_PROVIDERS,
+          'value',
+          ImportProvidersField.PROVIDERS_DATA,
+          payload.provider,
+        ],
+        fromJS(payload.value),
+      );
     case InternalActionType.UpdateImportProvider:
       return mergeDeepInSpecial(
         state,

@@ -27,9 +27,6 @@ export class NetworkInterfaceModel extends ObjectEnum<string> {
   static fromString = (model: string): NetworkInterfaceModel =>
     NetworkInterfaceModel.stringMapper[model];
 
-  static fromSerialized = (networkInterfaceModel: { value: string }): NetworkInterfaceModel =>
-    NetworkInterfaceModel.fromString(networkInterfaceModel && networkInterfaceModel.value);
-
   toString = () => {
     if (this === NetworkInterfaceModel.VIRTIO) {
       return READABLE_VIRTIO;

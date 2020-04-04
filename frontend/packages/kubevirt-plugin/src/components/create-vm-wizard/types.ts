@@ -92,42 +92,55 @@ export enum VMWareProviderProps {
 }
 
 export enum OvirtProviderProps {
+  ovirtEngineSecrets = 'ovirtEngineSecrets',
   deploymentPods = 'ovirtDeploymentPods',
   deployment = 'ovirtDeployment',
+  ovirtProvider = 'ovirtProvider',
+  activeOvirtEngineSecret = 'activeOvirtEngineSecret',
 }
 
 export enum VMWareProviderField {
-  VCENTER = 'VCENTER',
-  HOSTNAME = 'HOSTNAME',
-  USER_NAME = 'USER_NAME',
-  USER_PASSWORD_AND_CHECK_CONNECTION = 'USER_PASSWORD_AND_CHECK_CONNECTION',
-  REMEMBER_PASSWORD = 'REMEMBER_PASSWORD',
+  VCENTER = 'vmware_VCENTER',
+  HOSTNAME = 'vmware_HOSTNAME',
+  USER_NAME = 'vmware_USER_NAME',
+  USER_PASSWORD_AND_CHECK_CONNECTION = 'vmware_USER_PASSWORD_AND_CHECK_CONNECTION',
+  REMEMBER_PASSWORD = 'vmware_REMEMBER_PASSWORD',
 
-  CHECK_CONNECTION = 'CHECK_CONNECTION',
-  STATUS = 'STATUS',
+  VM = 'vmware_VM',
 
-  VM = 'VM',
-  V2V_LAST_ERROR = 'V2V_LAST_ERROR',
+  STATUS = 'vmware_STATUS',
 
-  V2V_NAME = 'V2V_NAME',
-  NEW_VCENTER_NAME = 'NEW_VCENTER_NAME',
+  V2V_LAST_ERROR = 'vmware_V2V_LAST_ERROR',
+
+  V2V_NAME = 'vmware_V2V_NAME',
+  NEW_VCENTER_NAME = 'vmware_NEW_VCENTER_NAME',
 }
 
 export enum OvirtProviderField {
-  API_URL = 'API_URL',
-  USERNAME = 'USERNAME',
-  PASSWORD = 'PASSWORD',
-  REMEMBER_PASSWORD = 'REMEMBER_PASSWORD',
-  CERTIFICATE = 'CERTIFICATE',
+  OVIRT_ENGINE_SECRET_NAME = 'ovirt_OVIRT_ENGINE_SECRET_NAME',
+  API_URL = 'ovirt_API_URL',
+  USERNAME = 'ovirt_USERNAME',
+  PASSWORD = 'ovirt_PASSWORD',
+  REMEMBER_PASSWORD = 'ovirt_REMEMBER_PASSWORD',
+  CERTIFICATE = 'ovirt_CERTIFICATE',
 
-  CONTROLLER_LAST_ERROR = 'CONTROLLER_LAST_ERROR',
+  VM = 'ovirt_VM',
+  CLUSTER = 'ovirt_CLUSTER',
+
+  STATUS = 'ovirt_STATUS',
+
+  CONTROLLER_LAST_ERROR = 'ovirt_CONTROLLER_LAST_ERROR',
+
+  ACTIVE_OVIRT_PROVIDER_CR_NAME = 'ovirt_ACTIVE_OVIRT_PROVIDER_CR_NAME',
+  NEW_OVIRT_ENGINE_SECRET_NAME = 'ovirt_NEW_OVIRT_ENGINE_SECRET_NAME',
 }
 
 export enum CloudInitField {
   IS_FORM = 'IS_FORM',
 }
 
-export type VMSettingsRenderableField = VMSettingsField;
+export type VMSettingsRenderableField = Exclude<VMSettingsField, VMSettingsField.HOSTNAME>;
+
 export type ImportProviderRenderableField = Exclude<
   ImportProvidersField,
   ImportProvidersField.PROVIDERS_DATA
@@ -142,10 +155,22 @@ export type VMWareProviderRenderableField =
   | VMWareProviderField.STATUS
   | VMWareProviderField.VM;
 
+export type OvirtProviderRenderableField =
+  | OvirtProviderField.OVIRT_ENGINE_SECRET_NAME
+  | OvirtProviderField.API_URL
+  | OvirtProviderField.USERNAME
+  | OvirtProviderField.PASSWORD
+  | OvirtProviderField.REMEMBER_PASSWORD
+  | OvirtProviderField.CERTIFICATE
+  | OvirtProviderField.STATUS
+  | OvirtProviderField.CLUSTER
+  | OvirtProviderField.VM;
+
 export type RenderableField =
-  | VMSettingsField
+  | VMSettingsRenderableField
   | ImportProviderRenderableField
-  | VMWareProviderRenderableField;
+  | VMWareProviderRenderableField
+  | OvirtProviderRenderableField;
 
 export type RenderableFieldResolver = {
   [key in RenderableField]: string;
@@ -192,7 +217,10 @@ export type ChangedCommonDataProp =
   | VMWareProviderProps.activeVcenterSecret
   | VMWareProviderProps.vCenterSecrets
   | OvirtProviderProps.deployment
-  | OvirtProviderProps.deploymentPods;
+  | OvirtProviderProps.deploymentPods
+  | OvirtProviderProps.ovirtEngineSecrets
+  | OvirtProviderProps.ovirtProvider
+  | OvirtProviderProps.activeOvirtEngineSecret;
 
 export type CommonDataProp =
   | VMWizardProps.isSimpleView
@@ -219,6 +247,9 @@ export const DetectCommonDataChanges = new Set<ChangedCommonDataProp>([
   VMWareProviderProps.vCenterSecrets,
   OvirtProviderProps.deployment,
   OvirtProviderProps.deploymentPods,
+  OvirtProviderProps.ovirtEngineSecrets,
+  OvirtProviderProps.ovirtProvider,
+  OvirtProviderProps.activeOvirtEngineSecret,
 ]);
 
 export type CommonData = {

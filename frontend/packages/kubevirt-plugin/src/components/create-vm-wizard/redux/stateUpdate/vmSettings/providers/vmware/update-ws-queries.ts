@@ -12,11 +12,10 @@ import {
   isVMWareProvider,
 } from '../../../../../selectors/immutable/provider/vmware/selectors';
 import { hasImportProvidersChanged } from '../../../../../selectors/immutable/import-providers';
-import { getResource } from '../../../../../../../utils';
 import { ConfigMapModel, DeploymentModel, PodModel, SecretModel } from '@console/internal/models';
 import {
   V2VVMWARE_DEPLOYMENT_NAME,
-  VCENTER_TEMPORARY_LABEL,
+  V2V_TEMPORARY_LABEL,
   VCENTER_TYPE_LABEL,
   VMWARE_TO_KUBEVIRT_OS_CONFIG_MAP_NAME,
   VMWARE_TO_KUBEVIRT_OS_CONFIG_MAP_NAMESPACE,
@@ -40,27 +39,34 @@ const getQueries = ({
   activeVcenterSecretName,
 }: GetQueriesParams): FirehoseResourceEnhanced[] => {
   const resources: FirehoseResourceEnhanced[] = [
-    getResource(SecretModel, {
+    {
+      kind: SecretModel.kind,
+      model: SecretModel,
+      isList: true,
       namespace,
       prop: VMWareProviderProps.vCenterSecrets,
-      matchExpressions: [
-        {
-          key: VCENTER_TYPE_LABEL,
-          operator: 'Exists',
-        },
-        {
-          key: VCENTER_TEMPORARY_LABEL,
-          operator: 'DoesNotExist',
-        },
-      ],
-    }),
-    getResource(ConfigMapModel, {
+      selector: {
+        matchExpressions: [
+          {
+            key: VCENTER_TYPE_LABEL,
+            operator: 'Exists',
+          },
+          {
+            key: V2V_TEMPORARY_LABEL,
+            operator: 'DoesNotExist',
+          },
+        ],
+      },
+    },
+    {
+      kind: ConfigMapModel.kind,
+      model: ConfigMapModel,
       name: VMWARE_TO_KUBEVIRT_OS_CONFIG_MAP_NAME,
       namespace: VMWARE_TO_KUBEVIRT_OS_CONFIG_MAP_NAMESPACE,
       isList: false,
       prop: VMWareProviderProps.vmwareToKubevirtOsConfigMap,
       optional: true,
-    }),
+    },
     {
       kind: PodModel.kind,
       model: PodModel,
@@ -85,25 +91,25 @@ const getQueries = ({
   ];
 
   if (v2vVmwareName) {
-    resources.push(
-      getResource(V2VVMwareModel, {
-        name: v2vVmwareName,
-        namespace,
-        isList: false,
-        prop: VMWareProviderProps.v2vvmware,
-      }),
-    );
+    resources.push({
+      kind: V2VVMwareModel.kind,
+      model: V2VVMwareModel,
+      name: v2vVmwareName,
+      namespace,
+      isList: false,
+      prop: VMWareProviderProps.v2vvmware,
+    });
   }
 
   if (activeVcenterSecretName) {
-    resources.push(
-      getResource(SecretModel, {
-        name: activeVcenterSecretName,
-        namespace,
-        isList: false,
-        prop: VMWareProviderProps.activeVcenterSecret,
-      }),
-    );
+    resources.push({
+      kind: SecretModel.kind,
+      model: SecretModel,
+      name: activeVcenterSecretName,
+      namespace,
+      isList: false,
+      prop: VMWareProviderProps.activeVcenterSecret,
+    });
   }
   return resources;
 };

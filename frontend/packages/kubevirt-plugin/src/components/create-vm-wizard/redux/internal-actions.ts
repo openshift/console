@@ -129,7 +129,14 @@ export const vmWizardInternalActions: VMWizardInternalActions = {
     },
     type: InternalActionType.UpdateImportProviderField,
   }),
-
+  [InternalActionType.SetImportProvider]: (id, provider: VMImportProvider, value: any) => ({
+    payload: {
+      id,
+      provider,
+      value,
+    },
+    type: InternalActionType.SetImportProvider,
+  }),
   [InternalActionType.UpdateImportProvider]: (id, provider: VMImportProvider, value: any) => ({
     payload: {
       id,

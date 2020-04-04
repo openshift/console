@@ -23,9 +23,6 @@ export class DataVolumeSourceType extends ObjectEnum<string> {
 
   static getAll = () => DataVolumeSourceType.ALL;
 
-  static fromSerialized = (volumeType: { value: string }): DataVolumeSourceType =>
-    DataVolumeSourceType.fromString(volumeType && volumeType.value);
-
   static fromString = (model: string): DataVolumeSourceType =>
     DataVolumeSourceType.stringMapper[model];
 }

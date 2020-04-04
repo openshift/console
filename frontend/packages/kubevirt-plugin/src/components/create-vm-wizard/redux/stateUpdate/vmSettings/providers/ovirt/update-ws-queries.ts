@@ -1,26 +1,61 @@
-import { DeploymentModel, PodModel } from '@console/internal/models';
+import { DeploymentModel, PodModel, SecretModel } from '@console/internal/models';
 import { InternalActionType, UpdateOptions } from '../../../../types';
 import {
   ImportProvidersField,
   VMImportProvider,
   OvirtProviderProps,
   VMWizardProps,
+  OvirtProviderField,
 } from '../../../../../types';
 import { hasImportProvidersChanged } from '../../../../../selectors/immutable/import-providers';
 import { vmWizardInternalActions } from '../../../../internal-actions';
 import { iGetCommonData } from '../../../../../selectors/immutable/selectors';
 import { iGetIn } from '../../../../../../../utils/immutable';
 import { iGetCreateVMWizard } from '../../../../../selectors/immutable/common';
-import { isOvirtProvider } from '../../../../../selectors/immutable/provider/ovirt/selectors';
+import {
+  hasOvirtSettingsChanged,
+  iGetOvirtField,
+  isOvirtProvider,
+} from '../../../../../selectors/immutable/provider/ovirt/selectors';
 import { FirehoseResourceEnhanced } from '../../../../../../../types/custom';
-import { V2VVMWARE_DEPLOYMENT_NAME } from '../../../../../../../constants/v2v';
+import {
+  V2VVMWARE_DEPLOYMENT_NAME,
+  V2V_TEMPORARY_LABEL,
+  OVIRT_TYPE_LABEL,
+} from '../../../../../../../constants/v2v';
+import { OVirtProviderModel } from '../../../../../../../models';
 
 type GetQueriesParams = {
   namespace: string;
+  activeOvirtProviderCRName: string;
+  activeOvirtProviderSecretName: string;
 };
 
-const getQueries = ({ namespace }: GetQueriesParams): FirehoseResourceEnhanced[] => {
+const getQueries = ({
+  namespace,
+  activeOvirtProviderCRName,
+  activeOvirtProviderSecretName,
+}: GetQueriesParams): FirehoseResourceEnhanced[] => {
   const resources: FirehoseResourceEnhanced[] = [
+    {
+      kind: SecretModel.kind,
+      model: SecretModel,
+      isList: true,
+      namespace,
+      prop: OvirtProviderProps.ovirtEngineSecrets,
+      selector: {
+        matchExpressions: [
+          {
+            key: OVIRT_TYPE_LABEL,
+            operator: 'Exists',
+          },
+          {
+            key: V2V_TEMPORARY_LABEL,
+            operator: 'DoesNotExist',
+          },
+        ],
+      },
+    },
     {
       kind: PodModel.kind,
       model: PodModel,
@@ -44,6 +79,27 @@ const getQueries = ({ namespace }: GetQueriesParams): FirehoseResourceEnhanced[]
     },
   ];
 
+  if (activeOvirtProviderCRName) {
+    resources.push({
+      kind: OVirtProviderModel.kind,
+      model: OVirtProviderModel,
+      name: activeOvirtProviderCRName,
+      namespace,
+      isList: false,
+      prop: OvirtProviderProps.ovirtProvider,
+    });
+  }
+
+  if (activeOvirtProviderSecretName) {
+    resources.push({
+      kind: SecretModel.kind,
+      model: SecretModel,
+      name: activeOvirtProviderSecretName,
+      namespace,
+      isList: false,
+      prop: OvirtProviderProps.activeOvirtEngineSecret,
+    });
+  }
   return resources;
 };
 
@@ -65,17 +121,15 @@ export const updateExtraWSQueries = (options: UpdateOptions) => {
   const state = getState();
   if (
     !(
-      (
-        changedCommonData.has(VMWizardProps.activeNamespace) ||
-        hasImportProvidersChanged(prevState, state, id, ImportProvidersField.PROVIDER)
-      ) // ||
-      // hasVMWareSettingsChanged(
-      //   prevState,
-      //   state,
-      //   id,
-      //   VMWareProviderField.V2V_NAME,
-      //   VMWareProviderField.NEW_VCENTER_NAME,
-      // )
+      changedCommonData.has(VMWizardProps.activeNamespace) ||
+      hasImportProvidersChanged(prevState, state, id, ImportProvidersField.PROVIDER) ||
+      hasOvirtSettingsChanged(
+        prevState,
+        state,
+        id,
+        OvirtProviderField.ACTIVE_OVIRT_PROVIDER_CR_NAME,
+        OvirtProviderField.NEW_OVIRT_ENGINE_SECRET_NAME,
+      )
     )
   ) {
     return;
@@ -88,7 +142,20 @@ export const updateExtraWSQueries = (options: UpdateOptions) => {
   ]);
 
   if (isOvirtProvider(state, id) && namespace) {
-    forceUpdateWSQueries({ id, dispatch }, { namespace });
+    const activeOvirtProviderCRName = iGetOvirtField(
+      state,
+      id,
+      OvirtProviderField.ACTIVE_OVIRT_PROVIDER_CR_NAME,
+    );
+    const activeOvirtProviderSecretName = iGetOvirtField(
+      state,
+      id,
+      OvirtProviderField.NEW_OVIRT_ENGINE_SECRET_NAME,
+    );
+    forceUpdateWSQueries(
+      { id, dispatch },
+      { namespace, activeOvirtProviderCRName, activeOvirtProviderSecretName },
+    );
   } else if (oldQueries && oldQueries.size > 0) {
     // reset when new provider selected
     dispatch(

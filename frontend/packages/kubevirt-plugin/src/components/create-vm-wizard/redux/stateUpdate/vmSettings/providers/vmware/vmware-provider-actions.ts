@@ -14,8 +14,8 @@ import {
 import { vmWizardInternalActions } from '../../../../internal-actions';
 import { asDisabled, asHidden } from '../../../../../utils/utils';
 import { deleteV2VvmwareObject } from '../../../../../../../k8s/requests/v2v/delete-v2vvmware-object';
-import { getSimpleV2vVMwareStatus } from '../../../../../../../statuses/v2vvmware';
-import { getVMWareConnectionName } from '../../../../../../../selectors/v2v';
+import { getSimpleV2VPRoviderStatus } from '../../../../../../../statuses/v2v';
+import { getV2VConnectionName } from '../../../../../../../selectors/v2v';
 import {
   createV2VvmwareObject,
   createV2VvmwareObjectWithSecret,
@@ -120,7 +120,7 @@ export const createConnectionObjects = async (
   return create(params, new EnhancedK8sMethods())
     .then((v2vVmware) => {
       const v2vVmwareName = getName(v2vVmware);
-      const activeVcenterSecretName = getVMWareConnectionName(v2vVmware);
+      const activeVcenterSecretName = getV2VConnectionName(v2vVmware);
       dispatch(
         vmWizardInternalActions[InternalActionType.UpdateImportProvider](
           id,
@@ -143,7 +143,7 @@ export const createConnectionObjects = async (
             [VMWareProviderField.STATUS]: {
               // The CR can not be created
               isHidden: asHidden(false, VMImportProvider.VMWARE),
-              value: getSimpleV2vVMwareStatus(null, { hasConnectionFailed: true }),
+              value: getSimpleV2VPRoviderStatus(null, { hasConnectionFailed: true })?.getValue(),
             },
           },
         ),

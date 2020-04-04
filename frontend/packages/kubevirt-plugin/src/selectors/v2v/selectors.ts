@@ -2,7 +2,7 @@ import * as _ from 'lodash';
 import { VMWARE_KUBEVIRT_VMWARE_CONFIG_MAP_NAME } from '../../constants/v2v';
 import { ConfigMapKind } from '@console/internal/module/k8s';
 
-export const getVMWareConnectionName = (value) => value && value.spec && value.spec.connection;
+export const getV2VConnectionName = (value) => value && value.spec && value.spec.connection;
 
 // full image name of kubevirt-v2v-conversion
 // Presence and proper content of the ConfigMap is hard requirement, so ensure proper info makes it into the logs otherwise.

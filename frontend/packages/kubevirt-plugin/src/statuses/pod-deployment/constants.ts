@@ -45,9 +45,6 @@ export class PodDeploymentStatus extends ObjectEnum<string> {
 
   static getAll = () => PodDeploymentStatus.ALL;
 
-  static fromSerialized = (status: { value: string }): PodDeploymentStatus =>
-    PodDeploymentStatus.fromString(status && status.value);
-
   static fromString = (model: string): PodDeploymentStatus =>
     PodDeploymentStatus.stringMapper[model];
 

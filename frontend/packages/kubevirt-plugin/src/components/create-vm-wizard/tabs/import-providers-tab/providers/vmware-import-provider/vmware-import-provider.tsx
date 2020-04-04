@@ -5,7 +5,11 @@ import {
   iGetVMwareData,
   isVMWareProvider,
 } from '../../../../selectors/immutable/provider/vmware/selectors';
-import { VMImportProvider, VMWareProviderField } from '../../../../types';
+import {
+  VMImportProvider,
+  VMWareProviderField,
+  VMWareProviderRenderableField,
+} from '../../../../types';
 import { vmWizardActions } from '../../../../redux/actions';
 import { ActionType } from '../../../../redux/types';
 import { FormField, FormFieldType } from '../../../../form/form-field';
@@ -15,18 +19,23 @@ import { getFieldId } from '../../../../utils/renderable-field-utils';
 import { FormFieldReviewContext } from '../../../../form/form-field-review-context';
 import { VMImportProviderControllerStatusRow } from '../vm-import-provider-controller-status-row';
 import { VMImportProviderControllerErrors } from '../vm-import-provider-controller-errors';
-import { VMWareSecrets } from './vmware-secrets';
-import { VMWarePassword } from './vmware-password';
-import { VMWareObjectStatus } from './vmware-object-status';
+import { VMImportSecrets } from '../vm-import-secrets';
+import { VMImportPassword } from '../vm-import-password';
 import { VMWareVMs } from './vmware-vms';
+import { VMImportProviderObjectStatus } from '../vm-import-provider-object-status';
+
+import './vmware-import-provider.scss';
+
+const provider = VMImportProvider.VMWARE;
 
 class VMWareImportProviderConnected extends React.Component<VMWareImportProviderProps> {
   // helpers
-  getField = (key: VMWareProviderField) => iGet(this.props.vmWareData, key);
+  getField = (key: VMWareProviderRenderableField) => iGet(this.props.vmWareData, key);
 
-  getValue = (key: VMWareProviderField) => iGetIn(this.props.vmWareData, [key, 'value']);
+  getValue = (key: VMWareProviderRenderableField) => iGetIn(this.props.vmWareData, [key, 'value']);
 
-  onChange = (key: VMWareProviderField) => (value) => this.props.onFieldChange(key, { value });
+  onChange = (key: VMWareProviderRenderableField) => (value) =>
+    this.props.onFieldChange(key, { value });
 
   render() {
     const { wizardReduxID, isVMWare } = this.props;
@@ -41,7 +50,7 @@ class VMWareImportProviderConnected extends React.Component<VMWareImportProvider
           <>
             {!isReview && (
               <>
-                <VMWareSecrets key="secrets" wizardReduxID={wizardReduxID} />
+                <VMImportSecrets key="secrets" wizardReduxID={wizardReduxID} provider={provider} />
                 <FormFieldMemoRow
                   key={VMWareProviderField.HOSTNAME}
                   field={this.getField(VMWareProviderField.HOSTNAME)}
@@ -60,37 +69,41 @@ class VMWareImportProviderConnected extends React.Component<VMWareImportProvider
                     <TextInput onChange={this.onChange(VMWareProviderField.USER_NAME)} />
                   </FormField>
                 </FormFieldMemoRow>
-                <VMWarePassword key="password" wizardReduxID={wizardReduxID} />
+                <VMImportPassword
+                  key="password"
+                  wizardReduxID={wizardReduxID}
+                  provider={provider}
+                />
                 <FormFieldMemoRow
-                  key={FormFieldType.INLINE_CHECKBOX}
+                  key={VMWareProviderField.REMEMBER_PASSWORD}
                   field={this.getField(VMWareProviderField.REMEMBER_PASSWORD)}
                   fieldType={FormFieldType.INLINE_CHECKBOX}
                 >
                   <FormField>
                     <Checkbox
-                      className="kubevirt-create-vm-modal__remember-password"
+                      className="kubevirt-create-vm-modal__vmware-provider-remember-password"
                       id={getFieldId(VMWareProviderField.REMEMBER_PASSWORD)}
                       onChange={this.onChange(VMWareProviderField.REMEMBER_PASSWORD)}
                     />
                   </FormField>
                 </FormFieldMemoRow>
-              </>
-            )}
-            <VMWareVMs key="vms" wizardReduxID={wizardReduxID} />
-            {!isReview && (
-              <>
+                <VMWareVMs key="vms" wizardReduxID={wizardReduxID} />
                 <VMImportProviderControllerErrors
                   key="errors"
                   wizardReduxID={wizardReduxID}
-                  provider={VMImportProvider.VMWARE}
+                  provider={provider}
                 />
                 <VMImportProviderControllerStatusRow
                   key="controllerstatus-row"
                   wizardReduxID={wizardReduxID}
-                  provider={VMImportProvider.VMWARE}
+                  provider={provider}
                   id="v2v-vmware-status"
                 />
-                <VMWareObjectStatus key="object-status" wizardReduxID={wizardReduxID} />
+                <VMImportProviderObjectStatus
+                  key="object-status"
+                  wizardReduxID={wizardReduxID}
+                  provider={provider}
+                />
               </>
             )}
           </>

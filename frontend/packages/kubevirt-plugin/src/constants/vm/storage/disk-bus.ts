@@ -21,9 +21,6 @@ export class DiskBus extends ObjectEnum<string> {
 
   static getAll = () => DiskBus.ALL;
 
-  static fromSerialized = (diskBusType: { value: string }): DiskBus =>
-    DiskBus.fromString(diskBusType && diskBusType.value);
-
   static fromString = (model: string): DiskBus => DiskBus.stringMapper[model];
 
   toString = () => {
