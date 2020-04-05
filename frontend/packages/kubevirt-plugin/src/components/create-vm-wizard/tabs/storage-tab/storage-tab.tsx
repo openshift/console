@@ -15,7 +15,12 @@ import { Firehose, FirehoseResult } from '@console/internal/components/utils';
 import { createLookup, getName } from '@console/shared/src';
 import { PersistentVolumeClaimModel } from '@console/internal/models';
 import { iGetCommonData } from '../../selectors/immutable/selectors';
-import { isStepLocked } from '../../selectors/immutable/wizard-selectors';
+import {
+  hasStepCreateDisabled,
+  hasStepDeleteDisabled,
+  hasStepUpdateDisabled,
+  isStepLocked,
+} from '../../selectors/immutable/wizard-selectors';
 import { VMWizardProps, VMWizardStorage, VMWizardTab } from '../../types';
 import { VMDisksTable } from '../../../vm-disks/vm-disks';
 import { vmWizardActions } from '../../redux/actions';
@@ -82,6 +87,9 @@ const StorageTabFirehose: React.FC<StorageTabFirehoseProps> = ({
   onBootOrderChanged,
   storages,
   persistentVolumeClaims,
+  isCreateDisabled,
+  isUpdateDisabled,
+  isDeleteDisabled,
 }) => {
   const showStorages = storages.length > 0 || isBootDiskRequired;
 
@@ -96,7 +104,7 @@ const StorageTabFirehose: React.FC<StorageTabFirehoseProps> = ({
           wizardReduxID,
         }).result,
       ),
-    isDisabled: isLocked,
+    isDisabled: isLocked || isCreateDisabled,
   };
 
   return (
@@ -120,7 +128,14 @@ const StorageTabFirehose: React.FC<StorageTabFirehoseProps> = ({
           <VMDisksTable
             columnClasses={diskTableColumnClasses}
             data={getStoragesData(storages, persistentVolumeClaims)}
-            customData={{ isDisabled: isLocked, withProgress, removeStorage, wizardReduxID }}
+            customData={{
+              isDisabled: isLocked,
+              withProgress,
+              removeStorage,
+              wizardReduxID,
+              isDeleteDisabled,
+              isUpdateDisabled,
+            }}
             row={VmWizardStorageRow}
           />
           {isBootDiskRequired && (
@@ -155,6 +170,9 @@ type StorageTabFirehoseProps = {
   wizardReduxID: string;
   storages: VMWizardStorage[];
   removeStorage: (id: string) => void;
+  isCreateDisabled: boolean;
+  isUpdateDisabled: boolean;
+  isDeleteDisabled: boolean;
   setTabLocked: (isLocked: boolean) => void;
   onBootOrderChanged: (deviceID: string, bootOrder: number) => void;
   persistentVolumeClaims: FirehoseResult;
@@ -182,6 +200,9 @@ type StorageTabConnectedProps = StorageTabFirehoseProps & {
 const stateToProps = (state, { wizardReduxID }) => ({
   namespace: iGetCommonData(state, wizardReduxID, VMWizardProps.activeNamespace),
   isLocked: isStepLocked(state, wizardReduxID, VMWizardTab.STORAGE),
+  isCreateDisabled: hasStepCreateDisabled(state, wizardReduxID, VMWizardTab.STORAGE),
+  isUpdateDisabled: hasStepUpdateDisabled(state, wizardReduxID, VMWizardTab.STORAGE),
+  isDeleteDisabled: hasStepDeleteDisabled(state, wizardReduxID, VMWizardTab.STORAGE),
   storages: getStorages(state, wizardReduxID),
   isBootDiskRequired: iGetProvisionSource(state, wizardReduxID) === ProvisionSource.DISK,
 });

@@ -48,6 +48,9 @@ export enum InternalActionType {
   SetTabValidity = 'KubevirtVMWizardSetTabValidity',
   SetTabLocked = 'KubevirtVMWizardSetTabLocked',
   SetTabHidden = 'KubevirtVMWizardSetTabHidden',
+  SetTabIsCreateDisabled = 'KubevirtVMWizardSetTabIsCreateDisabled',
+  SetTabIsUpdateDisabled = 'KubevirtVMWizardSetTabIsUpdateDisabled',
+  SetTabIsDeleteDisabled = 'KubevirtVMWizardSetTabIsDeleteDisabled',
   SetVmSettingsFieldValue = 'KubevirtVMWizardSetVmSettingsFieldValue',
   SetImportProvidersFieldValue = 'KubevirtVMWizardSetImportProvidersFieldValue',
   UpdateImportProviderField = 'KubevirtVMWizardUpdateImportProviderField',
@@ -77,6 +80,7 @@ export type WizardInternalAction = {
     isLocked?: boolean;
     isPending?: boolean;
     isHidden?: boolean;
+    isDisabled?: boolean;
     hasAllRequiredFilled?: boolean;
     path?: string[];
     key?:

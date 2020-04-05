@@ -13,10 +13,11 @@ import { vmWizardStorageModalEnhanced } from './vm-wizard-storage-modal-enhanced
 
 const menuActionEdit = (
   wizardStorageData: VMWizardStorage,
-  { wizardReduxID, withProgress }: VMWizardStorageRowActionOpts,
+  { wizardReduxID, withProgress, isUpdateDisabled }: VMWizardStorageRowActionOpts,
 ): KebabOption => {
   return {
     label: 'Edit',
+    isDisabled: !!isUpdateDisabled,
     callback: () =>
       withProgress(
         vmWizardStorageModalEnhanced({
@@ -31,14 +32,16 @@ const menuActionEdit = (
 
 const menuActionRemove = (
   { id, type }: VMWizardStorage,
-  { withProgress, removeStorage }: VMWizardStorageRowActionOpts,
+  { withProgress, removeStorage, isDeleteDisabled }: VMWizardStorageRowActionOpts,
 ): KebabOption => ({
   label: 'Delete',
-  isDisabled: [
-    VMWizardStorageType.PROVISION_SOURCE_DISK,
-    VMWizardStorageType.PROVISION_SOURCE_TEMPLATE_DISK,
-    VMWizardStorageType.V2V_VMWARE_IMPORT_TEMP,
-  ].includes(type),
+  isDisabled:
+    isDeleteDisabled ||
+    [
+      VMWizardStorageType.PROVISION_SOURCE_DISK,
+      VMWizardStorageType.PROVISION_SOURCE_TEMPLATE_DISK,
+      VMWizardStorageType.V2V_VMWARE_IMPORT_TEMP,
+    ].includes(type),
   callback: () =>
     withProgress(
       new Promise((resolve) => {
@@ -58,7 +61,15 @@ export const VmWizardStorageRow: RowFunction<
   VMWizardStorageRowCustomData
 > = ({
   obj: { name, wizardStorageData, ...restData },
-  customData: { isDisabled, columnClasses, removeStorage, withProgress, wizardReduxID },
+  customData: {
+    isDisabled,
+    columnClasses,
+    removeStorage,
+    withProgress,
+    wizardReduxID,
+    isDeleteDisabled,
+    isUpdateDisabled,
+  },
   index,
   style,
 }) => {
@@ -76,7 +87,13 @@ export const VmWizardStorageRow: RowFunction<
       style={style}
       actionsComponent={
         <Kebab
-          options={getActions(wizardStorageData, { wizardReduxID, removeStorage, withProgress })}
+          options={getActions(wizardStorageData, {
+            wizardReduxID,
+            removeStorage,
+            withProgress,
+            isDeleteDisabled,
+            isUpdateDisabled,
+          })}
           isDisabled={isDisabled}
           id={`kebab-for-${name}`}
         />

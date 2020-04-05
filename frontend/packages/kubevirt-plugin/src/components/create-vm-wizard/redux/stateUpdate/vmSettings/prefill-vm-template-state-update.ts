@@ -236,6 +236,14 @@ export const prefillVmTemplateUpdater = ({ id, dispatch, getState }: UpdateOptio
         volume: volumeWrapper.asResource(),
         dataVolume,
         disk: diskWrapper.asResource(),
+        editConfig:
+          type === VMWizardStorageType.PROVISION_SOURCE_TEMPLATE_DISK
+            ? {
+                isFieldEditableOverride: {
+                  source: false,
+                },
+              }
+            : undefined,
       };
     });
     storagesUpdate.unshift(...templateStorages);

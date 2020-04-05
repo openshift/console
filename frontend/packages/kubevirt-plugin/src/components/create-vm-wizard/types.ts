@@ -1,12 +1,12 @@
 import { ConfigMapKind } from '@console/internal/module/k8s';
 import { V1Network, V1NetworkInterface } from '../../types/vm';
 import { IDReferences } from '../../utils/redux/id-reference';
-import { UINetworkInterfaceValidation } from '../../utils/validations/vm/nic';
+import { UINetworkEditConfig, UINetworkInterfaceValidation } from '../../types/ui/nic';
 import { V1Disk } from '../../types/vm/disk/V1Disk';
 import { V1Volume } from '../../types/vm/disk/V1Volume';
 import { V1alpha1DataVolume } from '../../types/vm/disk/V1alpha1DataVolume';
 import { V1PersistentVolumeClaim } from '../../types/vm/disk/V1PersistentVolumeClaim';
-import { UIDiskValidation } from '../../utils/validations/vm/types';
+import { UIStorageEditConfig, UIStorageValidation } from '../../types/ui/storage';
 
 export enum VMWizardTab {
   IMPORT_PROVIDERS = 'IMPORT_PROVIDERS',
@@ -183,6 +183,9 @@ export type VMWizardTabMetadata = {
   isPending?: boolean;
   hasAllRequiredFilled?: boolean;
   error?: string;
+  isCreateDisabled?: boolean;
+  isUpdateDisabled?: boolean;
+  isDeleteDisabled?: boolean;
 };
 
 export type VMWizardTabsMetadata = {
@@ -268,6 +271,7 @@ export type CommonData = {
 };
 
 export enum VMWizardNetworkType {
+  V2V_OVIRT_IMPORT = 'V2V_OVIRT_IMPORT',
   V2V_VMWARE_IMPORT = 'V2V_VMWARE_IMPORT',
   TEMPLATE = 'TEMPLATE',
   UI_DEFAULT_POD_NETWORK = 'UI_DEFAULT_POD_NETWORK',
@@ -280,6 +284,7 @@ export type VMWizardNetwork = {
   network: V1Network;
   networkInterface: V1NetworkInterface;
   validation?: UINetworkInterfaceValidation;
+  editConfig?: UINetworkEditConfig;
 };
 
 export enum VMWizardStorageType {
@@ -299,8 +304,9 @@ export type VMWizardStorage = {
   disk?: V1Disk;
   volume?: V1Volume;
   dataVolume?: V1alpha1DataVolume;
-  validation?: UIDiskValidation;
+  validation?: UIStorageValidation;
   persistentVolumeClaim?: V1PersistentVolumeClaim;
+  editConfig?: UIStorageEditConfig;
   importData?: {
     mountPath?: string;
     devicePath?: string;

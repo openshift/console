@@ -229,7 +229,7 @@ const providerUpdater = (options: UpdateOptions) => {
   };
 
   const isEditingDisabled = isVmWareProvider && !(hasLoadedVm && isOkStatus);
-  const needsValuesReset = isVmWareProvider && !hasLoadedVm;
+  const needsValuesReset = !isVmWareProvider || (isVmWareProvider && !hasLoadedVm);
 
   const vmFieldUpdate = {
     isDisabled: asDisabled(isEditingDisabled, VMImportProvider.VMWARE),

@@ -95,6 +95,30 @@ export const vmWizardInternalActions: VMWizardInternalActions = {
     },
     type: InternalActionType.SetTabHidden,
   }),
+  [InternalActionType.SetTabIsCreateDisabled]: (id, tab: VMWizardTab, isDisabled: boolean) => ({
+    payload: {
+      id,
+      tab,
+      isDisabled,
+    },
+    type: InternalActionType.SetTabIsCreateDisabled,
+  }),
+  [InternalActionType.SetTabIsUpdateDisabled]: (id, tab: VMWizardTab, isDisabled: boolean) => ({
+    payload: {
+      id,
+      tab,
+      isDisabled,
+    },
+    type: InternalActionType.SetTabIsUpdateDisabled,
+  }),
+  [InternalActionType.SetTabIsDeleteDisabled]: (id, tab: VMWizardTab, isDisabled: boolean) => ({
+    payload: {
+      id,
+      tab,
+      isDisabled,
+    },
+    type: InternalActionType.SetTabIsDeleteDisabled,
+  }),
   [InternalActionType.SetVmSettingsFieldValue]: (id, key: VMSettingsField, value: any) => ({
     payload: {
       id,

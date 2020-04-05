@@ -14,7 +14,7 @@ import {
 import { MinusCircleIcon, PlusCircleIcon } from '@patternfly/react-icons';
 import { confirmModal } from '@console/internal/components/modals';
 import { joinGrammaticallyListOfItems } from '@console/shared/src';
-import { CloudInitField, VMWizardStorage, VMWizardStorageType } from '../../types';
+import { CloudInitField, VMWizardStorage, VMWizardStorageType, VMWizardTab } from '../../types';
 import { vmWizardActions } from '../../redux/actions';
 import { ActionType } from '../../redux/types';
 import { iGetCloudInitNoCloudStorage } from '../../selectors/immutable/storage';
@@ -35,6 +35,11 @@ import {
 } from '../../../../k8s/wrapper/vm/cloud-init-data-helper';
 
 import './cloud-init-tab.scss';
+import {
+  hasStepCreateDisabled,
+  hasStepDeleteDisabled,
+  hasStepUpdateDisabled,
+} from '../../selectors/immutable/wizard-selectors';
 
 type CustomScriptProps = {
   id: string;
@@ -160,6 +165,7 @@ const CloudInitTabComponent: React.FC<ResultTabComponentProps> = ({
   setIsForm,
   updateStorage,
   removeStorage,
+  isDisabled,
 }) => {
   const asId = prefixedID.bind(null, 'cloudinit');
 
@@ -168,7 +174,8 @@ const CloudInitTabComponent: React.FC<ResultTabComponentProps> = ({
   );
 
   const isEditable =
-    !iCloudInitStorage || ihasIn(iCloudInitStorage, ['volume', 'cloudInitNoCloud']); // different type, e.g. networkData is not editable
+    !isDisabled &&
+    (!iCloudInitStorage || ihasIn(iCloudInitStorage, ['volume', 'cloudInitNoCloud'])); // different type, e.g. networkData is not editable
 
   const onDataChanged = (userData: string, encodeDataToBase64: boolean) => {
     if (
@@ -268,7 +275,7 @@ const CloudInitTabComponent: React.FC<ResultTabComponentProps> = ({
   };
   return (
     <div>
-      {!isEditable && (
+      {!isDisabled && !isEditable && (
         <Errors
           endMargin
           errors={[
@@ -327,6 +334,7 @@ const CloudInitTabComponent: React.FC<ResultTabComponentProps> = ({
 type ResultTabComponentProps = {
   wizardReduxID: string;
   iCloudInitStorage: any;
+  isDisabled: boolean;
   updateStorage: (storage: VMWizardStorage) => void;
   removeStorage: (storageId: string) => void;
   isForm: boolean;
@@ -338,6 +346,10 @@ const stateToProps = (state, { wizardReduxID }) => {
   return {
     iCloudInitStorage: iGetCloudInitNoCloudStorage(state, wizardReduxID),
     isForm,
+    isDisabled:
+      hasStepCreateDisabled(state, wizardReduxID, VMWizardTab.ADVANCED_CLOUD_INIT) ||
+      hasStepUpdateDisabled(state, wizardReduxID, VMWizardTab.ADVANCED_CLOUD_INIT) ||
+      hasStepDeleteDisabled(state, wizardReduxID, VMWizardTab.ADVANCED_CLOUD_INIT),
   };
 };
 

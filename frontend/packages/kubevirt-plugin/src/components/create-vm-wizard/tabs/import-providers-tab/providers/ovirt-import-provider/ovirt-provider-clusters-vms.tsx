@@ -13,6 +13,7 @@ import { FormSelectPlaceholderOption } from '../../../../../form/form-select-pla
 import { getPlaceholder } from '../../../../utils/renderable-field-utils';
 import { ignoreCaseSort } from '../../../../../../utils/sort';
 import { iGetOvirtField } from '../../../../selectors/immutable/provider/ovirt/selectors';
+import { requestVmDetails } from '../../../../redux/stateUpdate/vmSettings/providers/ovirt/ovirt-provider-actions';
 
 type VMBundle = {
   vmID: string;
@@ -46,7 +47,7 @@ const OvirtProviderClustersVMsConnected: React.FC<OvirtProviderClustersVMsConnec
       if (clusterName) {
         vms = ignoreCaseSort(
           datacenterVMs.filter((vm) => vm.clusterName === clusterName),
-          ['name'],
+          ['vmName'],
         );
       }
     }
@@ -129,9 +130,7 @@ const dispatchToProps = (dispatch, { wizardReduxID }) => {
 
     onVMChange: (vmID) => {
       onVM(vmID);
-      // eslint-disable-next-line no-console
-      console.log('request detail');
-      // dispatch(requestVmDetails(wizardReduxID, vmID));
+      dispatch(requestVmDetails(wizardReduxID, vmID));
     },
   };
 };

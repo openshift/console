@@ -26,4 +26,7 @@ export const getNetworksInitialState: InitialStepStateGetter = (data: CommonData
   isValid: true,
   isLocked: false,
   isHidden: data.data.isProviderImport && data.data.isSimpleView,
+  isCreateDisabled: false,
+  isUpdateDisabled: false,
+  isDeleteDisabled: false,
 });

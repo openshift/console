@@ -6,6 +6,7 @@ import {
   VMImportProvider,
   VMSettingsField,
   VMWizardProps,
+  VMWizardTab,
 } from '../../../../../types';
 import { InternalActionType, UpdateOptions } from '../../../../types';
 import {
@@ -47,6 +48,7 @@ import { correctVMImportProviderSecretLabels } from '../../../../../../../k8s/re
 import { getLoadedVm } from '../../../../../selectors/provider/selectors';
 import { cleanupOvirtProvider } from './ovirt-cleanup';
 import { iGetCreateVMWizardTabs } from '../../../../../selectors/immutable/common';
+import { prefillUpdateCreator } from './ovirt-prefill-vm';
 
 const startControllerAndCleanup = (options: UpdateOptions) => {
   const { id, prevState, getState } = options;
@@ -171,9 +173,7 @@ const ovirtProviderCRUpdater = (options: UpdateOptions) => {
     return;
   }
 
-  // eslint-disable-next-line no-console
-  console.log('prefill', vm);
-  // TODO prefill
+  prefillUpdateCreator(options);
 };
 
 const vmOrClusterChangedUpdater = (options: UpdateOptions) => {
@@ -224,7 +224,7 @@ const providerUpdater = (options: UpdateOptions) => {
   const status = V2VProviderStatus.fromString(iStatus);
 
   const hasLoadedVm = !!loadedVm;
-  const isOvProvider = isOvirtProvider(state, id);
+  const isOvProvider = !!isOvirtProvider(state, id);
   const isOkStatus = V2V_PROVIDER_STATUS_ALL_OK.has(status);
 
   const hiddenMetadata = {
@@ -236,12 +236,14 @@ const providerUpdater = (options: UpdateOptions) => {
     isRequired: asRequired(isOvProvider, VMImportProvider.OVIRT),
   };
 
-  const isEditingDisabled = isOvProvider && !(hasLoadedVm && isOkStatus);
-  const needsValuesReset = isOvProvider && !hasLoadedVm;
+  const isEditingDisabled = isOvProvider;
+  const needsValuesReset = !isOvProvider || (isOvProvider && !hasLoadedVm);
 
   const vmFieldUpdate = {
     isDisabled: asDisabled(isEditingDisabled, VMImportProvider.OVIRT),
     value: needsValuesReset ? null : undefined,
+    // VM Settings override! (Do not use for container and url as it is just a boolean - not by key as isRequired)
+    skipValidation: isOvProvider,
   };
 
   const mainFieldUpdate = {
@@ -256,13 +258,33 @@ const providerUpdater = (options: UpdateOptions) => {
     vmWizardInternalActions[InternalActionType.UpdateVmSettings](id, {
       [VMSettingsField.NAME]: vmFieldUpdate,
       [VMSettingsField.DESCRIPTION]: vmFieldUpdate,
-      [VMSettingsField.OPERATING_SYSTEM]: vmFieldUpdate,
+      [VMSettingsField.OPERATING_SYSTEM]: {
+        ...vmFieldUpdate,
+        display: needsValuesReset ? null : undefined,
+      },
       [VMSettingsField.FLAVOR]: vmFieldUpdate,
       [VMSettingsField.MEMORY]: vmFieldUpdate,
       [VMSettingsField.CPU]: vmFieldUpdate,
       [VMSettingsField.WORKLOAD_PROFILE]: vmFieldUpdate,
     }),
   );
+
+  [
+    VMWizardTab.STORAGE,
+    VMWizardTab.NETWORKING,
+    VMWizardTab.ADVANCED_CLOUD_INIT,
+    VMWizardTab.ADVANCED_VIRTUAL_HARDWARE,
+  ].forEach((tab) => {
+    const isDisabled = isOvProvider;
+    if (!!iGetIn(iGetCreateVMWizardTabs(state, id), [tab, 'isCreateDisabled']) !== isDisabled) {
+      dispatch(
+        vmWizardInternalActions[InternalActionType.SetTabIsCreateDisabled](id, tab, isDisabled),
+      );
+      dispatch(
+        vmWizardInternalActions[InternalActionType.SetTabIsDeleteDisabled](id, tab, isDisabled),
+      );
+    }
+  });
 
   dispatch(
     vmWizardInternalActions[InternalActionType.UpdateImportProvider](id, VMImportProvider.OVIRT, {

@@ -22,6 +22,7 @@ import {
   iGetOvirtField,
   iGetOvirtFieldValue,
 } from '../../../../../selectors/immutable/provider/ovirt/selectors';
+import { requestOvirtProviderCRVMDetail } from '../../../../../../../k8s/requests/v2v/request-ovirt-provider-vm-detail';
 
 const { info: consoleInfo, warn: consoleWarn, error: consoleError } = console;
 
@@ -224,4 +225,26 @@ export const getCheckConnectionAction = (id, prevState = null) => (dispatch, get
         ),
       ),
     );
+};
+
+export const requestVmDetails = (id: string, vmID: string) => (dispatch, getState) => {
+  const state = getState();
+  const namespace = iGetCommonData(state, id, VMWizardProps.activeNamespace);
+  const ovirtProviderCRName = iGetOvirtField(
+    state,
+    id,
+    OvirtProviderField.ACTIVE_OVIRT_PROVIDER_CR_NAME,
+  );
+  const params = { vmID, namespace, ovirtProviderCRName };
+
+  consoleInfo('requesting vm detail');
+  requestOvirtProviderCRVMDetail(params, new EnhancedK8sMethods()).catch((reason) => {
+    // TODO: show in status?
+    consoleWarn(
+      'onVCenterVmSelectedConnected: Failed to patch the V2VVMWare object to query VM details: ',
+      params,
+      ', reason: ',
+      reason,
+    );
+  });
 };

@@ -12,4 +12,7 @@ export const getCloudInitInitialState: InitialStepStateGetter = (data: CommonDat
   hasAllRequiredFilled: true,
   isLocked: false,
   isHidden: data.data.isProviderImport && data.data.isSimpleView,
+  isCreateDisabled: false,
+  isUpdateDisabled: false,
+  isDeleteDisabled: false,
 });

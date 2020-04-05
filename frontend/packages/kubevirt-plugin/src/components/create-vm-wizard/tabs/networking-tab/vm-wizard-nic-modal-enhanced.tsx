@@ -2,13 +2,13 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { Firehose, FirehoseResult } from '@console/internal/components/utils';
 import { createModalLauncher, ModalComponentProps } from '@console/internal/components/factory';
-import { K8sResourceKind, referenceForModel } from '@console/internal/module/k8s';
+import { referenceForModel } from '@console/internal/module/k8s';
 import { NetworkAttachmentDefinitionModel } from '@console/network-attachment-definition-plugin';
 import { NetworkWrapper } from '../../../../k8s/wrapper/vm/network-wrapper';
 import { NetworkInterfaceWrapper } from '../../../../k8s/wrapper/vm/network-interface-wrapper';
 import { iGetCommonData } from '../../selectors/immutable/selectors';
 import { VMWizardNetwork, VMWizardNetworkType, VMWizardProps } from '../../types';
-import { NICModal } from '../../../modals/nic-modal';
+import { NICModal } from '../../../modals/nic-modal/nic-modal';
 import { NetworkType } from '../../../../constants/vm';
 import { vmWizardActions } from '../../redux/actions';
 import { ActionType } from '../../redux/types';
@@ -23,7 +23,7 @@ const VMWizardNICModal: React.FC<VMWizardNICModalProps> = (props) => {
     network: wizardNetwork,
     ...restProps
   } = props;
-  const { id, type, network, networkInterface } = wizardNetwork || {};
+  const { type, network, networkInterface, editConfig } = wizardNetwork || {};
   const networkInterfaceWrapper = new NetworkInterfaceWrapper(networkInterface);
   const networkWrapper = new NetworkWrapper(network);
 
@@ -57,9 +57,10 @@ const VMWizardNICModal: React.FC<VMWizardNICModalProps> = (props) => {
       allowPodNetwork={allowPodNetwork}
       nic={new NetworkInterfaceWrapper(networkInterface, true)}
       network={new NetworkWrapper(network, true)}
+      editConfig={editConfig}
       onSubmit={(resultNetworkInterfaceWrapper, resultNetworkWrapper) => {
         addUpdateNIC({
-          id,
+          ...wizardNetwork,
           type: type || VMWizardNetworkType.UI_INPUT,
           networkInterface: new NetworkInterfaceWrapper(networkInterface, true)
             .mergeWith(resultNetworkInterfaceWrapper)
@@ -96,7 +97,7 @@ type VMWizardNICModalProps = ModalComponentProps & {
   showInitialValidation?: boolean;
   networks?: VMWizardNetwork[];
   hasNADs: boolean;
-  nads?: FirehoseResult<K8sResourceKind[]>;
+  nads?: FirehoseResult;
   addUpdateNIC: (network: VMWizardNetwork) => void;
 };
 

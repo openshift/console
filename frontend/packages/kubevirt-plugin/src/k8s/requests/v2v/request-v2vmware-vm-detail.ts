@@ -1,10 +1,10 @@
+import { PatchBuilder } from '@console/shared/src/k8s';
 import { EnhancedK8sMethods } from '../../enhancedK8sMethods/enhancedK8sMethods';
 import { V2VVMwareModel } from '../../../models';
-import { PatchBuilder } from '@console/shared/src/k8s';
 
 const { warn } = console;
 
-export const requestVmDetail = async (
+export const requestV2VMwareVMDetail = async (
   {
     vmName,
     v2vwmwareName,
@@ -14,7 +14,7 @@ export const requestVmDetail = async (
 ) => {
   const safeVMName = (vmName || '').trim();
 
-  // The V2VVMWare object can be reused from the VCenterVmsConnected component or re-queried here. The later option helps to minimize conflicts.
+  // V2VVMWare object can be reused or re-queried here. The later option helps to minimize conflicts.
   const v2vvmware = await k8sGet(V2VVMwareModel, v2vwmwareName, namespace);
 
   // Strategic merge patches seem not to work, so let's do mapping via positional arrays.

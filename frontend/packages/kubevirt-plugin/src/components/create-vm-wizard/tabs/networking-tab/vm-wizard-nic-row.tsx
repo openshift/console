@@ -9,9 +9,10 @@ import { vmWizardNicModalEnhanced } from './vm-wizard-nic-modal-enhanced';
 
 const menuActionEdit = (
   network: VMWizardNetwork,
-  { wizardReduxID, withProgress }: VMWizardNicRowActionOpts,
+  { wizardReduxID, withProgress, isUpdateDisabled }: VMWizardNicRowActionOpts,
 ): KebabOption => ({
   label: 'Edit',
+  isDisabled: !!isUpdateDisabled,
   callback: () =>
     withProgress(
       vmWizardNicModalEnhanced({
@@ -24,9 +25,10 @@ const menuActionEdit = (
 
 const menuActionRemove = (
   { id }: VMWizardNetwork,
-  { withProgress, removeNIC }: VMWizardNicRowActionOpts,
+  { withProgress, removeNIC, isDeleteDisabled }: VMWizardNicRowActionOpts,
 ): KebabOption => ({
   label: 'Delete',
+  isDisabled: !!isDeleteDisabled,
   callback: () =>
     withProgress(
       new Promise((resolve) => {
@@ -43,7 +45,15 @@ const getActions = (wizardNetworkData: VMWizardNetwork, opts: VMWizardNicRowActi
 
 export const VMWizardNicRow: RowFunction<VMWizardNetworkBundle, VMWizardNicRowCustomData> = ({
   obj: { name, wizardNetworkData, ...restData },
-  customData: { isDisabled, columnClasses, removeNIC, withProgress, wizardReduxID },
+  customData: {
+    isDisabled,
+    isDeleteDisabled,
+    isUpdateDisabled,
+    columnClasses,
+    removeNIC,
+    withProgress,
+    wizardReduxID,
+  },
   index,
   style,
 }) => {
@@ -56,7 +66,13 @@ export const VMWizardNicRow: RowFunction<VMWizardNetworkBundle, VMWizardNicRowCu
       style={style}
       actionsComponent={
         <Kebab
-          options={getActions(wizardNetworkData, { wizardReduxID, removeNIC, withProgress })}
+          options={getActions(wizardNetworkData, {
+            wizardReduxID,
+            isDeleteDisabled,
+            isUpdateDisabled,
+            removeNIC,
+            withProgress,
+          })}
           isDisabled={isDisabled}
           id={`kebab-for-${name}`}
         />

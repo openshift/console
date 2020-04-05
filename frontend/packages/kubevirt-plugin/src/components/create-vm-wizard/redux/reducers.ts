@@ -194,6 +194,12 @@ export default (state, action: WizardInternalAction) => {
       return state.setIn([dialogID, 'tabs', payload.tab, 'isLocked'], payload.isLocked);
     case InternalActionType.SetTabHidden:
       return state.setIn([dialogID, 'tabs', payload.tab, 'isHidden'], payload.isHidden);
+    case InternalActionType.SetTabIsCreateDisabled:
+      return state.setIn([dialogID, 'tabs', payload.tab, 'isCreateDisabled'], payload.isDisabled);
+    case InternalActionType.SetTabIsUpdateDisabled:
+      return state.setIn([dialogID, 'tabs', payload.tab, 'isUpdateDisabled'], payload.isDisabled);
+    case InternalActionType.SetTabIsDeleteDisabled:
+      return state.setIn([dialogID, 'tabs', payload.tab, 'isDeleteDisabled'], payload.isDisabled);
     case InternalActionType.SetVmSettingsFieldValue:
       return state.setIn(
         [dialogID, 'tabs', VMWizardTab.VM_SETTINGS, 'value', payload.key, 'value'],

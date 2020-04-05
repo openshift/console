@@ -37,7 +37,7 @@ const VMWizardStorageModal: React.FC<VMWizardStorageModalProps> = (props) => {
     storageClassConfigMap,
     ...restProps
   } = props;
-  const { type, disk, volume, dataVolume, persistentVolumeClaim, ...storageRest } = storage || {};
+  const { type, disk, volume, dataVolume, persistentVolumeClaim, editConfig } = storage || {};
   const diskWrapper = new DiskWrapper(disk);
 
   const filteredStorages = storages
@@ -98,12 +98,9 @@ const VMWizardStorageModal: React.FC<VMWizardStorageModalProps> = (props) => {
         persistentVolumeClaim={
           persistentVolumeClaim && new PersistentVolumeClaimWrapper(persistentVolumeClaim, true)
         }
-        disableSourceChange={[
-          VMWizardStorageType.PROVISION_SOURCE_DISK,
-          VMWizardStorageType.PROVISION_SOURCE_TEMPLATE_DISK,
-        ].includes(type)}
         isCreateTemplate={isCreateTemplate}
         isEditing={isEditing}
+        editConfig={editConfig}
         onSubmit={(
           resultDiskWrapper,
           resultVolumeWrapper,
@@ -111,7 +108,7 @@ const VMWizardStorageModal: React.FC<VMWizardStorageModalProps> = (props) => {
           resultPersistentVolumeClaim,
         ) => {
           addUpdateStorage({
-            ...storageRest,
+            ...storage,
             type: type || VMWizardStorageType.UI_INPUT,
             disk: new DiskWrapper(disk, true).mergeWith(resultDiskWrapper).asResource(),
             volume: new VolumeWrapper(volume, true).mergeWith(resultVolumeWrapper).asResource(),

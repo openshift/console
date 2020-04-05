@@ -37,6 +37,11 @@ const containerStorage: VMWizardStorage = {
     type: VolumeType.CONTAINER_DISK,
     typeData: { image: '' },
   }).asResource(),
+  editConfig: {
+    isFieldEditableOverride: {
+      source: false,
+    },
+  },
 };
 
 export const windowsToolsStorage: VMWizardStorage = {
@@ -78,6 +83,11 @@ const getUrlStorage = (storageClassConfigMap: ConfigMapKind) => ({
     .setVolumeMode(getDefaultSCVolumeMode(storageClassConfigMap))
     .setAccessModes(getDefaultSCAccessModes(storageClassConfigMap))
     .asResource(),
+  editConfig: {
+    isFieldEditableOverride: {
+      source: false,
+    },
+  },
 });
 
 export const getProvisionSourceStorage = (
@@ -100,4 +110,7 @@ export const getStorageInitialState: InitialStepStateGetter = (data: CommonData)
   isValid: true, // empty Storages are valid
   isLocked: false,
   isHidden: data.data.isProviderImport && data.data.isSimpleView,
+  isCreateDisabled: false,
+  isUpdateDisabled: false,
+  isDeleteDisabled: false,
 });

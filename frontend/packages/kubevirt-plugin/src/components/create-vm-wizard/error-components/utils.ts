@@ -57,8 +57,11 @@ export const computeNetworkErrors = (state, wizardReduxID) => {
     .filter((iNetwork) => !iGetIn(iNetwork, ['validation', 'isValid']))
     .toArray();
 
-  const errors = _.sortedUniqBy([...emptyRequiredNICs, ...invalidNICs], (nic) =>
-    nic.getIn(['networkInterface', 'name']),
+  const errors = _.sortedUniqBy(
+    _.sortBy([...emptyRequiredNICs, ...invalidNICs], (nic) =>
+      nic.getIn(['networkInterface', 'name']),
+    ),
+    (nic) => nic.getIn(['networkInterface', 'name']),
   ).map((nic) => {
     const validations = toJS(nic.getIn(['validation', 'validations']), {});
     return {
@@ -113,8 +116,11 @@ export const computeStorageErrors = (state, wizardReduxID) => {
     .filter((iNetwork) => !iGetIn(iNetwork, ['validation', 'isValid']))
     .toArray();
 
-  const errors = _.sortedUniqBy([...emptyRequiredStorages, ...invalidStorages], (storage) =>
-    storage.getIn(['disk', 'name']),
+  const errors = _.sortedUniqBy(
+    _.sortBy([...emptyRequiredStorages, ...invalidStorages], (storage) =>
+      storage.getIn(['disk', 'name']),
+    ),
+    (storage) => storage.getIn(['disk', 'name']),
   ).map((iStorage) => {
     const validations = toJS(iStorage.getIn(['validation', 'validations']), {});
     const isCD = !!iStorage.getIn(['disk', 'cdrom']);

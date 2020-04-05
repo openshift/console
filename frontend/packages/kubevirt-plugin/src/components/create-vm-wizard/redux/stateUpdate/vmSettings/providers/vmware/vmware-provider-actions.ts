@@ -20,7 +20,7 @@ import {
   createV2VvmwareObject,
   createV2VvmwareObjectWithSecret,
 } from '../../../../../../../k8s/requests/v2v/create-v2vvmware-object';
-import { requestVmDetail } from '../../../../../../../k8s/requests/v2v/request-vm-detail';
+import { requestV2VMwareVMDetail } from '../../../../../../../k8s/requests/v2v/request-v2vmware-vm-detail';
 import { startV2VVMWareController } from '../../../../../../../k8s/requests/v2v/start-v2vvmware-controller';
 import { forceUpdateWSQueries } from './update-ws-queries';
 
@@ -225,7 +225,7 @@ export const requestVmDetails = (id: string, vmName: string) => (dispatch, getSt
   const params = { vmName, namespace, v2vwmwareName };
 
   consoleInfo('requesting vm detail');
-  requestVmDetail(params, new EnhancedK8sMethods()).catch((reason) => {
+  requestV2VMwareVMDetail(params, new EnhancedK8sMethods()).catch((reason) => {
     // TODO: show in status?
     consoleWarn(
       'onVCenterVmSelectedConnected: Failed to patch the V2VVMWare object to query VM details: ',

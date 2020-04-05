@@ -64,7 +64,7 @@ export const getNics = (parsedVm): VMWizardNetwork[] => {
     }
 
     return {
-      id: idx + 1,
+      id: `${idx + 1}`,
       type: VMWizardNetworkType.V2V_VMWARE_IMPORT,
       network: networkWrapper.asResource(),
       networkInterface: NetworkInterfaceWrapper.initializeFromSimpleData({
@@ -102,7 +102,7 @@ export const getDisks = (parsedVm, storageClassConfigMap: ConfigMapKind): VMWiza
     const bootOrder = idx === 0 ? 1 : undefined;
 
     return {
-      id: idx + 1,
+      id: `${idx + 1}`,
       type: VMWizardStorageType.V2V_VMWARE_IMPORT,
       disk: DiskWrapper.initializeFromSimpleData({
         name,

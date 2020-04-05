@@ -15,6 +15,7 @@ import { NetworkInterfaceWrapper } from '../../../k8s/wrapper/vm/network-interfa
 import { NetworkWrapper } from '../../../k8s/wrapper/vm/network-wrapper';
 import { NetworkType } from '../../../constants/vm';
 import { isValidMAC } from './validations';
+import { UINetworkInterfaceValidation } from '../../../types/ui/nic';
 
 export const validateNicName = (
   name: string,
@@ -85,14 +86,4 @@ export const validateNIC = (
     hasAllRequiredFilled: !!hasAllRequiredFilled,
     isValid: !!hasAllRequiredFilled && !Object.keys(validations).find((key) => validations[key]),
   };
-};
-
-export type UINetworkInterfaceValidation = {
-  validations: {
-    name?: ValidationObject;
-    macAddress?: ValidationObject;
-    network?: ValidationObject;
-  };
-  isValid: boolean;
-  hasAllRequiredFilled: boolean;
 };

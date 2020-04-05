@@ -27,6 +27,15 @@ export const isStepPending = (state, wizardID: string, stepId: VMWizardTab) =>
 export const isStepHidden = (state, wizardID: string, stepId: VMWizardTab) =>
   getTabBoolean(state, wizardID, stepId, 'isHidden');
 
+export const hasStepCreateDisabled = (state, wizardID: string, stepId: VMWizardTab) =>
+  getTabBoolean(state, wizardID, stepId, 'isCreateDisabled');
+
+export const hasStepUpdateDisabled = (state, wizardID: string, stepId: VMWizardTab) =>
+  getTabBoolean(state, wizardID, stepId, 'isUpdateDisabled');
+
+export const hasStepDeleteDisabled = (state, wizardID: string, stepId: VMWizardTab) =>
+  getTabBoolean(state, wizardID, stepId, 'isDeleteDisabled');
+
 export const hasStepAllRequiredFilled = (state, wizardID: string, stepId: VMWizardTab) =>
   getTabBoolean(state, wizardID, stepId, 'hasAllRequiredFilled');
 
