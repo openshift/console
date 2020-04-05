@@ -34,7 +34,7 @@ export const DedicatedResourcesModal = withHandlePromise<DedicatedResourcesModal
     const loadError = getLoadError(nodes, NodeModel);
     const isCurrentCPUPinned = isDedicatedCPUPlacement(asVM(vmLikeFinal));
 
-    const qualifiedNodes = useNodeQualifier(DEDICATED_RESOURCES_LABELS, nodes);
+    const qualifiedNodes = useNodeQualifier(nodes, DEDICATED_RESOURCES_LABELS);
 
     const [showCollisionAlert, reload] = useCollisionChecker<VMLikeEntityKind>(
       vmLikeFinal,

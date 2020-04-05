@@ -90,9 +90,7 @@ const VMDetails: React.FC<VMDetailsProps> = (props) => {
       <div className="co-m-pane__body">
         <SectionHeading text="Scheduling and resources requirements" />
         <div className="row">
-          <div className="col-sm-6">
-            <VMSchedulingList canUpdateVM={canUpdate} {...mainResources} />
-          </div>
+          <VMSchedulingList canUpdateVM={canUpdate} {...mainResources} />
         </div>
       </div>
       <div className="co-m-pane__body">

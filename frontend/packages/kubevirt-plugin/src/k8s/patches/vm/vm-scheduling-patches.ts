@@ -1,5 +1,5 @@
 import { PatchBuilder } from '@console/shared/src/k8s';
-import { Patch, Toleration } from '@console/internal/module/k8s';
+import { Patch, Toleration, Affinity } from '@console/internal/module/k8s';
 import { NodeSelector } from '../../../types/vm';
 import { VMLikeEntityKind } from '../../../types/vmLike';
 import { getVMLikePatches } from '../vm-template';
@@ -28,3 +28,8 @@ export const getTolerationsPatch = (
     new PatchBuilder('/spec/template/spec/tolerations').replace(tolerationsWithOperator).build(),
   ]);
 };
+
+export const getAffinityPatch = (vmLikeEntity: VMLikeEntityKind, affinity: Affinity): Patch[] =>
+  getVMLikePatches(vmLikeEntity, () => [
+    new PatchBuilder('/spec/template/spec/affinity').replace(affinity).build(),
+  ]);

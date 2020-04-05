@@ -76,7 +76,11 @@ export type K8sResourceCondition = {
 
 export type MatchExpression =
   | { key: string; operator: 'Exists' | 'DoesNotExist' }
-  | { key: string; operator: 'In' | 'NotIn' | 'Equals' | 'NotEquals'; values: string[] };
+  | {
+      key: string;
+      operator: 'In' | 'NotIn' | 'Exists' | 'DoesNotExist' | 'Equals' | 'NotEquals';
+      values: string[];
+    };
 
 export type MatchLabels = {
   [key: string]: string;
@@ -231,30 +235,45 @@ export enum ImagePullPolicy {
   IfNotPresent = 'IfNotPresent',
 }
 
+export type NodeAffinityTerm = {
+  matchExpressions?: MatchExpression[];
+  matchFields?: MatchExpression[];
+};
+
+export type RequiredNodeAffinityTerm = {
+  nodeSelectorTerms: NodeAffinityTerm[];
+};
+
+export type PreferredNodeAffinityTerm = {
+  preference: NodeAffinityTerm;
+  weight: number;
+};
+
 export type NodeAffinity = {
-  preferredDuringSchedulingIgnoredDuringExecution?: {
-    preference: Selector;
-    weight: number;
-  }[];
-  requiredDuringSchedulingIgnoredDuringExecution?: {
-    nodeSelectorTerms: Selector[];
-  };
+  preferredDuringSchedulingIgnoredDuringExecution?: PreferredNodeAffinityTerm[];
+  requiredDuringSchedulingIgnoredDuringExecution?: RequiredNodeAffinityTerm;
+};
+
+export type PodAffinityTerm = {
+  labelSelector?: Selector;
+  namespaces?: string[];
+  topologyKey: string;
+};
+
+export type PreferredPodAffinityTerm = {
+  podAffinityTerm: PodAffinityTerm;
+  weight?: number;
 };
 
 export type PodAffinity = {
-  preferredDuringSchedulingIgnoredDuringExecution: {
-    podAffinityTerm: {
-      labelSelector?: Selector;
-      namespaces?: string[];
-      topologyKey: string;
-    };
-    weight?: number;
-  }[];
-  requiredDuringSchedulingIgnoredDuringExecution: {
-    labelSelector?: Selector;
-    namespaces?: string[];
-    topologyKey: string;
-  }[];
+  preferredDuringSchedulingIgnoredDuringExecution: PreferredPodAffinityTerm[];
+  requiredDuringSchedulingIgnoredDuringExecution: PodAffinityTerm[];
+};
+
+export type Affinity = {
+  nodeAffinity?: NodeAffinity;
+  podAffinity?: PodAffinity;
+  podAntiAffinity?: PodAffinity;
 };
 
 export type ContainerSpec = {

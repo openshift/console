@@ -156,3 +156,5 @@ export const getStorageClassNameByDisk = (vm: VMKind, diskName: string) =>
 export const getNodeSelector = (vm: VMKind) => vm?.spec?.template?.spec?.nodeSelector;
 
 export const getTolerations = (vm: VMKind) => vm?.spec?.template?.spec?.tolerations;
+
+export const getAffinity = (vm: VMKind) => vm?.spec?.template?.spec?.affinity;

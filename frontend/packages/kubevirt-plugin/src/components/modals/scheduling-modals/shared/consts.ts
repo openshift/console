@@ -1,4 +1,5 @@
 import { pluralize } from '@console/internal/components/utils';
+import { AffinityRowData } from '../affinity-modal/types';
 
 // Node Checker
 const pluralNode = (size) => pluralize(size, 'node', 'nodes', false);
@@ -23,3 +24,26 @@ export const DEDICATED_RESOURCES_PINNED =
 // Tolerations Modal
 export const TOLERATIONS_MODAL_TITLE = 'Tolerations';
 export const TOLERATIONS_EFFECTS = ['NoSchedule', 'PreferNoSchedule', 'NoExecute'];
+
+// Affinity Modal
+export const AFFINITY_MODAL_TITLE = 'Affinity Rules';
+export const AFFINITY_CREATE = 'New Affinity';
+export const AFFINITY_EDITING = 'Edit Affinity';
+
+export const AFFINITY_CONDITION_LABELS = {
+  preferredDuringSchedulingIgnoredDuringExecution: 'Preferred',
+  requiredDuringSchedulingIgnoredDuringExecution: 'Required',
+};
+
+export const AFFINITY_CONDITIONS = {
+  preferred: 'preferredDuringSchedulingIgnoredDuringExecution' as AffinityRowData['condition'],
+  required: 'requiredDuringSchedulingIgnoredDuringExecution' as AffinityRowData['condition'],
+};
+
+export const AFFINITY_TYPE_LABLES = {
+  nodeAffinity: 'Node Affinity',
+  podAffinity: 'Workload (pod) Affinity',
+  podAntiAffinity: 'Workload (pod) Anti-Affinity',
+};
+
+export const EXPRESSION_OPERATORS = ['In', 'NotIn', 'Exists', 'DoesNotExist'];

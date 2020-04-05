@@ -12,6 +12,7 @@ import {
   isDedicatedCPUPlacement,
   getNodeSelector,
   getTolerations,
+  getAffinity,
 } from '../../../selectors/vm/selectors';
 import { VMWizardNetwork, VMWizardStorage } from '../../../components/create-vm-wizard/types';
 import { VMILikeMethods } from './types';
@@ -74,6 +75,8 @@ export class VMWrapper extends K8sResourceWrapper<VMKind, VMWrapper> implements 
     const disk = this.getDisks().find((d) => d.name === diskName);
     return disk && Object.keys(disk).includes('serial') && disk.serial;
   };
+
+  getAffinity = () => getAffinity(this.data);
 
   isDedicatedCPUPlacement = () => isDedicatedCPUPlacement(this.data);
 
