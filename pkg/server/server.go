@@ -63,6 +63,8 @@ type jsGlobals struct {
 	StatuspageID             string `json:"statuspageID"`
 	DocumentationBaseURL     string `json:"documentationBaseURL"`
 	LoadTestFactor           int    `json:"loadTestFactor"`
+	GOARCH                   string `json:"GOARCH"`
+	GOOS                     string `json:"GOOS"`
 }
 
 type Server struct {
@@ -89,6 +91,8 @@ type Server struct {
 	ThanosTenancyProxyConfig *proxy.Config
 	AlertManagerProxyConfig  *proxy.Config
 	MeteringProxyConfig      *proxy.Config
+	GOARCH                   string
+	GOOS                     string
 }
 
 func (s *Server) authDisabled() bool {
@@ -336,6 +340,8 @@ func (s *Server) indexHandler(w http.ResponseWriter, r *http.Request) {
 		StatuspageID:         s.StatuspageID,
 		DocumentationBaseURL: s.DocumentationBaseURL.String(),
 		LoadTestFactor:       s.LoadTestFactor,
+		GOARCH:               s.GOARCH,
+		GOOS:                 s.GOOS,
 	}
 
 	if !s.authDisabled() {

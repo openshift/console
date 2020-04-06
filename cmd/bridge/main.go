@@ -6,6 +6,7 @@ import (
 	"crypto/x509"
 	"flag"
 	"fmt"
+	"runtime"
 
 	"io/ioutil"
 	"net/http"
@@ -187,6 +188,12 @@ func main() {
 		StatuspageID:         *fStatuspageID,
 		DocumentationBaseURL: documentationBaseURL,
 		LoadTestFactor:       *fLoadTestFactor,
+	}
+
+	// if !in-cluster (dev) we should not pass these values to the frontend
+	if *fK8sMode == "in-cluster" {
+		srv.GOARCH = runtime.GOARCH
+		srv.GOOS = runtime.GOOS
 	}
 
 	if (*fKubectlClientID == "") != (*fKubectlClientSecret == "" && *fKubectlClientSecretFile == "") {
