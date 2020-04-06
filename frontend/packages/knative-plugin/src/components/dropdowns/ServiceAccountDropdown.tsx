@@ -37,7 +37,6 @@ const ServiceAccountDropdown: React.FC<ServiceAccountDropdownProps & StateProps>
       placeholder="Select a Service Account Name"
       autocompleteFilter={autocompleteFilter}
       fullWidth
-      autoSelect
       showBadge
     />
   );
@@ -47,4 +46,6 @@ const mapStateToProps = (state: RootState): StateProps => ({
   namespace: getActiveNamespace(state),
 });
 
-export default connect(mapStateToProps)(ServiceAccountDropdown);
+export default connect<StateProps, null, ServiceAccountDropdownProps>(mapStateToProps)(
+  ServiceAccountDropdown,
+);

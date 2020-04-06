@@ -7,6 +7,8 @@ import CronJobSection from '../event-sources/CronJobSection';
 import SinkSection from '../event-sources/SinkSection';
 import { getDefaultEventingData } from '../../../utils/__tests__/knative-serving-data';
 import { EventSources } from '../import-types';
+import KafkaSourceSection from '../event-sources/KafkaSourceSection';
+import AdvancedSection from '../AdvancedSection';
 
 type EventSourceFormProps = React.ComponentProps<typeof EventSourceForm>;
 let formProps: EventSourceFormProps;
@@ -73,5 +75,19 @@ describe('EventSource Form', () => {
     modFormProps.values.type = 'SinkBinding';
     const eventSourceForm = shallow(<EventSourceForm {...modFormProps} />);
     expect(eventSourceForm.find(CronJobSection)).toHaveLength(0);
+  });
+
+  it('should render KafkaSource section when KafkaSource type is selected', () => {
+    const modFormProps = cloneDeep(formProps);
+    modFormProps.values.type = 'KafkaSource';
+    const eventSourceForm = shallow(<EventSourceForm {...modFormProps} />);
+    expect(eventSourceForm.find(KafkaSourceSection)).toHaveLength(1);
+  });
+
+  it('should render Advanced options section when KafkaSource type is selected', () => {
+    const modFormProps = cloneDeep(formProps);
+    modFormProps.values.type = 'KafkaSource';
+    const eventSourceForm = shallow(<EventSourceForm {...modFormProps} />);
+    expect(eventSourceForm.find(AdvancedSection)).toHaveLength(1);
   });
 });

@@ -42,7 +42,7 @@ const EventSourceForm: React.FC<FormikProps<FormikValues> & OwnProps> = ({
       project={values.project}
       noProjectsAvailable={projects?.loaded && _.isEmpty(projects.data)}
     />
-    <AdvancedSection />
+    {values.type === EventSources.KafkaSource && <AdvancedSection />}
     <FormFooter
       handleReset={handleReset}
       errorMessage={status && status.submitError}

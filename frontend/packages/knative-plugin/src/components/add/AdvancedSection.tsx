@@ -3,13 +3,8 @@ import ResourceLimitSection from '@console/dev-console/src/components/import/adv
 import FormSection from '@console/dev-console/src/components/import/section/FormSection';
 import ProgressiveList from '@console/dev-console/src/components/progressive-list/ProgressiveList';
 import ProgressiveListItem from '@console/dev-console/src/components/progressive-list/ProgressiveListItem';
-import { useFormikContext, FormikValues } from 'formik';
-import { EventSources } from './import-types';
 
 const AdvancedSection: React.FC = () => {
-  const {
-    values: { type },
-  } = useFormikContext<FormikValues>();
   const [visibleItems, setVisibleItems] = React.useState([]);
   const handleVisibleItemChange = (item: string) => {
     setVisibleItems([...visibleItems, item]);
@@ -22,11 +17,9 @@ const AdvancedSection: React.FC = () => {
         visibleItems={visibleItems}
         onVisibleItemChange={handleVisibleItemChange}
       >
-        {type === EventSources.KafkaSource && (
-          <ProgressiveListItem name="Resource Limits">
-            <ResourceLimitSection />
-          </ProgressiveListItem>
-        )}
+        <ProgressiveListItem name="Resource Limits">
+          <ResourceLimitSection />
+        </ProgressiveListItem>
       </ProgressiveList>
     </FormSection>
   );

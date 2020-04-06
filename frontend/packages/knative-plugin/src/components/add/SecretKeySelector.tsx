@@ -62,4 +62,6 @@ const mapStateToProps = (state: RootState): StateProps => ({
   namespace: getActiveNamespace(state),
 });
 
-export default connect(mapStateToProps)(SecretKeySelector);
+export default connect<StateProps, null, SecretKeySelectorProps>(mapStateToProps)(
+  SecretKeySelector,
+);
