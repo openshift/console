@@ -66,7 +66,7 @@ const getClosestVisibleParent = (node: Node): Node | null => {
     return null;
   }
 
-  let returnNode: Node | null = node.isVisible() ? node : null;
+  let returnNode = null;
   try {
     let parent = node.getParent();
     while (parent) {

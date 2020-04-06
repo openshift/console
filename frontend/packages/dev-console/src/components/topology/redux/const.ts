@@ -3,6 +3,7 @@ export const DEFAULT_TOPOLOGY_FILTERS = {
   display: {
     podCount: false,
     eventSources: true,
+    virtualMachines: true,
     showLabels: true,
     knativeServices: true,
     appGrouping: true,

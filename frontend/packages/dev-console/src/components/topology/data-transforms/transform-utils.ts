@@ -227,7 +227,6 @@ export const mergeGroup = (newGroup: Group, existingGroups: Group[]): void => {
         existingGroup.nodes.push(id);
       }
     });
-    existingGroup.nodes.push(...newGroup.nodes);
   }
 };
 

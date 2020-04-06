@@ -33,8 +33,13 @@ export interface TopologyDataResources {
   eventSourceKafka?: FirehoseResult;
   eventSourceSinkbinding?: FirehoseResult;
   clusterServiceVersions?: FirehoseResult;
-  serviceBindingRequests?: FirehoseResult;
   events?: FirehoseResult<EventKind[]>;
+  // TODO: Plugin?
+  serviceBindingRequests?: FirehoseResult;
+  virtualmachines?: FirehoseResult;
+  virtualmachineinstances?: FirehoseResult;
+  virtualmachinetemplates?: FirehoseResult;
+  migrations?: FirehoseResult;
 }
 
 export interface Node {

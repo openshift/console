@@ -1,0 +1,46 @@
+.kubevirt-vm-node__bg {
+  fill: var(--pf-global--BackgroundColor--light-100);
+}
+
+.kubevirt-vm-node__status {
+  fill-opacity: 1;
+  fill: var(--pf-color-purple-300);
+  stroke-width: 0;
+  .kubevirt-m-running & {
+    fill: var(--pf-global--primary-color--100);
+  }
+  .kubevirt-m-not-ready & {
+    fill: var(--pf-chart-color-blue-200);
+  }
+  .kubevirt-m-warning & {
+    fill: var(--pf-chart-color-gold-400);
+  }
+  .kubevirt-m-error & {
+    fill: var(--pf-color-red-100);
+  }
+  .kubevirt-m-pending & {
+    fill: var(--pf-chart-color-blue-100);
+  }
+  .kubevirt-m-success & {
+    fill: var(--pf-color-green-500);
+  }
+  .kubevirt-m-terminating & {
+    fill: var(--pf-chart-color-blue-600);
+  }
+  .kubevirt-m-unknown & {
+    fill: var(--pf-color-purple-300);
+  }
+  .kubevirt-m-off & {
+    fill: var(--pf-global--Color--light-100);
+  }
+  .kubevirt-m-importing & {
+    fill: var(--pf-color-black-400);
+  }
+}
+
+.kubevirt-vm-node.kubevirt-m-off {
+  .kubevirt-vm-node__bg, .kubevirt-vm-node__status {
+    stroke-width: 1;
+    stroke: var(--pf-global--BorderColor--100);
+  }
+}

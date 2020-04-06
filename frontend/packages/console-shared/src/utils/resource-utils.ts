@@ -366,7 +366,7 @@ const combinePodAlerts = (pods: K8sResourceKind[]): OverviewItemAlerts =>
     {},
   );
 
-const getReplicationControllerAlerts = (rc: K8sResourceKind): OverviewItemAlerts => {
+export const getReplicationControllerAlerts = (rc: K8sResourceKind): OverviewItemAlerts => {
   const phase = getDeploymentPhase(rc);
   const version = getDeploymentConfigVersion(rc);
   const name = getDeploymentConfigName(rc);
@@ -421,7 +421,7 @@ const getIdledStatus = (
   return rc;
 };
 
-const getRolloutStatus = (
+export const getRolloutStatus = (
   dc: K8sResourceKind,
   current: PodControllerOverviewItem,
   previous: PodControllerOverviewItem,
@@ -474,490 +474,521 @@ export const getOperatorBackedServiceKindMap = (
       }, {})
     : {};
 
-export class TransformResourceData {
-  private resources: any;
+export const isOperatorBackedService = (
+  obj: K8sResourceKind,
+  installedOperators: ClusterServiceVersionKind[],
+): boolean => {
+  const kind = _.get(obj, 'metadata.ownerReferences[0].kind', null);
+  const ownerUid = _.get(obj, 'metadata.ownerReferences[0].uid');
+  const operatBackedServiceKindMap = getOperatorBackedServiceKindMap(installedOperators);
+  const operatorResource: K8sResourceKind = _.find(installedOperators, {
+    metadata: { uid: ownerUid },
+  }) as K8sResourceKind;
+  return (
+    kind &&
+    operatBackedServiceKindMap &&
+    (!_.isEmpty(operatorResource) || kind in operatBackedServiceKindMap)
+  );
+};
 
-  constructor(
-    resources: any,
-    public utils?: Function[],
-    public installedOperators?: ClusterServiceVersionKind[],
-  ) {
-    this.resources = { ...resources };
-  }
+export const getPodsForResource = (resource: K8sResourceKind, resources: any): PodKind[] => {
+  const { pods } = resources;
+  return getOwnedResources(resource, pods.data);
+};
 
-  isOperatorBackedService = (obj: K8sResourceKind): boolean => {
-    const kind = _.get(obj, 'metadata.ownerReferences[0].kind', null);
-    const ownerUid = _.get(obj, 'metadata.ownerReferences[0].uid');
-    const operatBackedServiceKindMap = getOperatorBackedServiceKindMap(this.installedOperators);
-    const operatorResource: K8sResourceKind = _.find(this.installedOperators, {
-      metadata: { uid: ownerUid },
-    }) as K8sResourceKind;
-    return (
-      kind &&
-      operatBackedServiceKindMap &&
-      (!_.isEmpty(operatorResource) || kind in operatBackedServiceKindMap)
-    );
+export const toReplicationControllerItem = (
+  rc: K8sResourceKind,
+  resources: any,
+): PodControllerOverviewItem => {
+  const pods = getPodsForResource(rc, resources);
+  const alerts = {
+    ...combinePodAlerts(pods),
+    ...getReplicationControllerAlerts(rc),
   };
-
-  getPodsForResource = (resource: K8sResourceKind): PodKind[] => {
-    const { pods } = this.resources;
-    return getOwnedResources(resource, pods.data);
+  const phase = getDeploymentPhase(rc);
+  const revision = getDeploymentConfigVersion(rc);
+  const obj = {
+    ...rc,
+    apiVersion: apiVersionForModel(ReplicationControllerModel),
+    kind: ReplicationControllerModel.kind,
   };
-
-  toReplicationControllerItem = (rc: K8sResourceKind): PodControllerOverviewItem => {
-    const pods = this.getPodsForResource(rc);
-    const alerts = {
-      ...combinePodAlerts(pods),
-      ...getReplicationControllerAlerts(rc),
-    };
-    const phase = getDeploymentPhase(rc);
-    const revision = getDeploymentConfigVersion(rc);
-    const obj = {
-      ...rc,
-      apiVersion: apiVersionForModel(ReplicationControllerModel),
-      kind: ReplicationControllerModel.kind,
-    };
-    return {
-      alerts,
-      obj,
-      phase,
-      pods,
-      revision,
-    };
+  return {
+    alerts,
+    obj,
+    phase,
+    pods,
+    revision,
   };
+};
 
-  getReplicationControllersForResource = (
-    resource: K8sResourceKind,
-  ): {
-    mostRecentRC: K8sResourceKind;
-    visibleReplicationControllers: PodControllerOverviewItem[];
-  } => {
-    const { replicationControllers } = this.resources;
-    const ownedRC = getOwnedResources(resource, replicationControllers.data);
-    const sortedRCs = sortReplicationControllersByRevision(ownedRC);
-    // get the most recent RCs included failed or canceled to show warnings
-    const [mostRecentRC] = sortedRCs;
-    // get the visible RCs except failed/canceled
-    const visibleReplicationControllers = _.filter(sortedRCs, isReplicationControllerVisible);
-    return {
-      mostRecentRC,
-      visibleReplicationControllers: visibleReplicationControllers.map((rc) =>
-        getIdledStatus(this.toReplicationControllerItem(rc), resource),
-      ),
-    };
+export const getReplicationControllersForResource = (
+  resource: K8sResourceKind,
+  resources: any,
+): {
+  mostRecentRC: K8sResourceKind;
+  visibleReplicationControllers: PodControllerOverviewItem[];
+} => {
+  const { replicationControllers } = resources;
+  const ownedRC = getOwnedResources(resource, replicationControllers.data);
+  const sortedRCs = sortReplicationControllersByRevision(ownedRC);
+  // get the most recent RCs included failed or canceled to show warnings
+  const [mostRecentRC] = sortedRCs;
+  // get the visible RCs except failed/canceled
+  const visibleReplicationControllers = _.filter(sortedRCs, isReplicationControllerVisible);
+  return {
+    mostRecentRC,
+    visibleReplicationControllers: visibleReplicationControllers.map((rc) =>
+      getIdledStatus(toReplicationControllerItem(rc, resources), resource),
+    ),
   };
+};
 
-  toResourceItem = (rs: K8sResourceKind, model: K8sKind): PodControllerOverviewItem => {
-    const obj = {
-      ...rs,
-      apiVersion: apiVersionForModel(model),
-      kind: `${model.kind}`,
-    };
-    const isKnative = isKnativeServing(rs, 'metadata.labels');
-    const podData = this.getPodsForResource(rs);
-    const pods = podData && !podData.length && isKnative ? getAutoscaledPods(rs) : podData;
-    const alerts = combinePodAlerts(pods);
-    return {
-      alerts,
-      obj,
-      pods,
-      revision: getDeploymentRevision(rs),
-    };
+const toResourceItem = (
+  rs: K8sResourceKind,
+  model: K8sKind,
+  resources: any,
+): PodControllerOverviewItem => {
+  const obj = {
+    ...rs,
+    apiVersion: apiVersionForModel(model),
+    kind: `${model.kind}`,
   };
-
-  getActiveReplicaSets = (deployment: K8sResourceKind): K8sResourceKind[] => {
-    const { replicaSets } = this.resources;
-    const currentRevision = getDeploymentRevision(deployment);
-    const ownedRS = getOwnedResources(deployment, replicaSets.data);
-    return _.filter(
-      ownedRS,
-      (rs) => _.get(rs, 'status.replicas') || getDeploymentRevision(rs) === currentRevision,
-    );
+  const isKnative = isKnativeServing(rs, 'metadata.labels');
+  const podData = getPodsForResource(rs, resources);
+  const pods = podData && !podData.length && isKnative ? getAutoscaledPods(rs) : podData;
+  const alerts = combinePodAlerts(pods);
+  return {
+    alerts,
+    obj,
+    pods,
+    revision: getDeploymentRevision(rs),
   };
+};
 
-  getActiveStatefulSets = (ss: K8sResourceKind): K8sResourceKind[] => {
-    const { statefulSets } = this.resources;
-    const ownedRS = _.filter(statefulSets?.data, (f) => f.metadata.name === ss.metadata.name);
-    return _.filter(ownedRS, (rs) => _.get(rs, 'status.replicas'));
-  };
+const getActiveStatefulSets = (ss: K8sResourceKind, resources: any): K8sResourceKind[] => {
+  const { statefulSets } = resources;
+  const ownedRS = _.filter(statefulSets?.data, (f) => f.metadata.name === ss.metadata.name);
+  return _.filter(ownedRS, (rs) => _.get(rs, 'status.replicas'));
+};
 
-  public getReplicaSetsForResource = (deployment: K8sResourceKind): PodControllerOverviewItem[] => {
-    const replicaSets = this.getActiveReplicaSets(deployment);
-    return sortReplicaSetsByRevision(replicaSets).map((rs) =>
-      getIdledStatus(this.toResourceItem(rs, ReplicaSetModel), deployment),
-    );
-  };
+export const getStatefulSetsResource = (
+  ss: K8sResourceKind,
+  resources: any,
+): PodControllerOverviewItem[] => {
+  const activeStatefulSets = getActiveStatefulSets(ss, resources);
+  return activeStatefulSets.map((pss) =>
+    getIdledStatus(toResourceItem(pss, StatefulSetModel, resources), ss),
+  );
+};
 
-  public getStatefulSetsResource = (ss: K8sResourceKind): PodControllerOverviewItem[] => {
-    const activeStatefulSets = this.getActiveStatefulSets(ss);
-    return activeStatefulSets.map((pss) =>
-      getIdledStatus(this.toResourceItem(pss, StatefulSetModel), ss),
-    );
-  };
+export const getActiveReplicaSets = (
+  deployment: K8sResourceKind,
+  resources: any,
+): K8sResourceKind[] => {
+  const { replicaSets } = resources;
+  const currentRevision = getDeploymentRevision(deployment);
+  const ownedRS = getOwnedResources(deployment, replicaSets.data);
+  return _.filter(
+    ownedRS,
+    (rs) => _.get(rs, 'status.replicas') || getDeploymentRevision(rs) === currentRevision,
+  );
+};
 
-  getBuildsForResource = (buildConfig: K8sResourceKind): K8sResourceKind[] => {
-    const { builds } = this.resources;
-    return getOwnedResources(buildConfig, builds.data);
-  };
+export const getReplicaSetsForResource = (
+  deployment: K8sResourceKind,
+  resources: any,
+): PodControllerOverviewItem[] => {
+  const replicaSets = getActiveReplicaSets(deployment, resources);
+  return sortReplicaSetsByRevision(replicaSets).map((rs) =>
+    getIdledStatus(toResourceItem(rs, ReplicaSetModel, resources), deployment),
+  );
+};
 
-  public getBuildConfigsForResource = (resource: K8sResourceKind): BuildConfigOverviewItem[] => {
-    const buildConfigs = _.get(this.resources, ['buildConfigs', 'data']);
-    const currentNamespace = resource.metadata.namespace;
-    const nativeTriggers = _.get(resource, 'spec.triggers');
-    const annotatedTriggers = getAnnotatedTriggers(resource);
-    const triggers = _.unionWith(nativeTriggers, annotatedTriggers, _.isEqual);
-    return _.flatMap(triggers, (trigger) => {
-      const triggerFrom = trigger.from || _.get(trigger, 'imageChangeParams.from', {});
-      if (triggerFrom.kind !== 'ImageStreamTag') {
-        return [];
-      }
-      return _.reduce(
-        buildConfigs,
-        (acc, buildConfig) => {
-          const triggerImageNamespace = triggerFrom.namespace || currentNamespace;
-          const triggerImageName = triggerFrom.name;
-          const targetImageNamespace = _.get(
-            buildConfig,
-            'spec.output.to.namespace',
-            currentNamespace,
-          );
-          const targetImageName = _.get(buildConfig, 'spec.output.to.name');
-          if (
-            triggerImageNamespace === targetImageNamespace &&
-            triggerImageName === targetImageName
-          ) {
-            const builds = this.getBuildsForResource(buildConfig);
-            return [
-              ...acc,
-              {
-                ...buildConfig,
-                builds: sortBuilds(builds),
-              },
-            ];
-          }
-          return acc;
-        },
-        [],
-      );
-    });
-  };
+export const getBuildsForResource = (
+  buildConfig: K8sResourceKind,
+  resources: any,
+): K8sResourceKind[] => {
+  const { builds } = resources;
+  return getOwnedResources(buildConfig, builds.data);
+};
 
-  getPodTemplate = (resource: K8sResourceKind): PodTemplate => {
-    switch (resource.kind) {
-      case 'Pod':
-        return resource as PodKind;
-      case 'DeploymentConfig':
-        // Include labels automatically added to deployment config pods since a service
-        // might select them.
-        return _.defaultsDeep(
-          {
-            metadata: {
-              labels: {
-                deploymentconfig: resource.metadata.name,
-              },
-            },
-          },
-          resource.spec.template,
-        );
-      default:
-        return resource.spec.template;
+export const getBuildConfigsForResource = (
+  resource: K8sResourceKind,
+  resources: any,
+): BuildConfigOverviewItem[] => {
+  const buildConfigs = _.get(resources, ['buildConfigs', 'data']);
+  const currentNamespace = resource.metadata.namespace;
+  const nativeTriggers = _.get(resource, 'spec.triggers');
+  const annotatedTriggers = getAnnotatedTriggers(resource);
+  const triggers = _.unionWith(nativeTriggers, annotatedTriggers, _.isEqual);
+  return _.flatMap(triggers, (trigger) => {
+    const triggerFrom = trigger.from || _.get(trigger, 'imageChangeParams.from', {});
+    if (triggerFrom.kind !== 'ImageStreamTag') {
+      return [];
     }
-  };
-
-  public getRoutesForServices = (services: K8sResourceKind[]): RouteKind[] => {
-    const { routes } = this.resources;
-    return _.filter(routes.data, (route) => {
-      const name = _.get(route, 'spec.to.name');
-      return _.some(services, { metadata: { name } });
-    });
-  };
-
-  public getServicesForResource = (resource: K8sResourceKind): K8sResourceKind[] => {
-    const { services } = this.resources;
-    const template: PodTemplate = this.getPodTemplate(resource);
-    return _.filter(services.data, (service: K8sResourceKind) => {
-      const selector = new LabelSelector(_.get(service, 'spec.selector', {}));
-      return selector.matches(template);
-    });
-  };
-
-  public createDeploymentConfigItems = (
-    deploymentConfigs: K8sResourceKind[],
-    operatorsFilter?: boolean,
-  ): OverviewItem[] => {
-    const items = _.map(deploymentConfigs, (dc) => {
-      const obj: K8sResourceKind = {
-        ...dc,
-        apiVersion: apiVersionForModel(DeploymentConfigModel),
-        kind: DeploymentConfigModel.kind,
-      };
-      const {
-        mostRecentRC,
-        visibleReplicationControllers,
-      } = this.getReplicationControllersForResource(obj);
-      const [current, previous] = visibleReplicationControllers;
-      const isRollingOut = getRolloutStatus(obj, current, previous);
-      const buildConfigs = this.getBuildConfigsForResource(obj);
-      const services = this.getServicesForResource(obj);
-      const routes = this.getRoutesForServices(services);
-      const rolloutAlerts = mostRecentRC ? getReplicationControllerAlerts(mostRecentRC) : {};
-      const alerts = {
-        ...getResourcePausedAlert(obj),
-        ...getBuildAlerts(buildConfigs),
-        ...rolloutAlerts,
-      };
-      const status = resourceStatus(obj, current, isRollingOut);
-      const pods = [..._.get(current, 'pods', []), ..._.get(previous, 'pods', [])];
-      const isOperatorBackedService = this.isOperatorBackedService(obj);
-      const overviewItems = {
-        alerts,
-        buildConfigs,
-        current,
-        isRollingOut,
-        obj,
-        previous,
-        pods,
-        routes,
-        services,
-        status,
-        isMonitorable: true,
-        isOperatorBackedService,
-      };
-
-      if (this.utils) {
-        return this.utils.reduce((acc, element) => {
-          return { ...acc, ...element(obj, this.resources) };
-        }, overviewItems);
-      }
-      return overviewItems;
-    });
-    if (operatorsFilter !== undefined) {
-      return items.filter((item) => item.isOperatorBackedService === operatorsFilter);
-    }
-    return items;
-  };
-
-  public createDeploymentItems = (
-    deployments: DeploymentKind[],
-    operatorsFilter?: boolean,
-  ): OverviewItem<DeploymentKind>[] => {
-    const items = _.map(deployments, (d) => {
-      const obj: DeploymentKind = {
-        ...d,
-        apiVersion: apiVersionForModel(DeploymentModel),
-        kind: DeploymentModel.kind,
-      };
-      const replicaSets = this.getReplicaSetsForResource(obj);
-      const [current, previous] = replicaSets;
-      const isRollingOut = !!current && !!previous;
-      const buildConfigs = this.getBuildConfigsForResource(obj);
-      const services = this.getServicesForResource(obj);
-      const routes = this.getRoutesForServices(services);
-      const alerts = {
-        ...getResourcePausedAlert(obj),
-        ...getBuildAlerts(buildConfigs),
-      };
-      const status = resourceStatus(obj, current, isRollingOut);
-      const pods = [..._.get(current, 'pods', []), ..._.get(previous, 'pods', [])];
-      const isOperatorBackedService = this.isOperatorBackedService(obj);
-      const overviewItems = {
-        alerts,
-        buildConfigs,
-        current,
-        isRollingOut,
-        obj,
-        previous,
-        pods,
-        routes,
-        services,
-        status,
-        isMonitorable: true,
-        isOperatorBackedService,
-      };
-
-      if (this.utils) {
-        return this.utils.reduce((acc, element) => {
-          return { ...acc, ...element(obj, this.resources) };
-        }, overviewItems);
-      }
-      return overviewItems;
-    });
-    if (operatorsFilter !== undefined) {
-      return items.filter((item) => item.isOperatorBackedService === operatorsFilter);
-    }
-    return items;
-  };
-
-  public createDaemonSetItems = (
-    daemonSets: K8sResourceKind[],
-    operatorsFilter?: boolean,
-  ): OverviewItem[] => {
-    const items = _.map(daemonSets, (ds) => {
-      const obj: K8sResourceKind = {
-        ...ds,
-        apiVersion: apiVersionForModel(DaemonSetModel),
-        kind: DaemonSetModel.kind,
-      };
-      const buildConfigs = this.getBuildConfigsForResource(obj);
-      const services = this.getServicesForResource(obj);
-      const routes = this.getRoutesForServices(services);
-      const pods = this.getPodsForResource(obj);
-      const alerts = {
-        ...combinePodAlerts(pods),
-        ...getBuildAlerts(buildConfigs),
-      };
-      const status = resourceStatus(obj);
-      const isOperatorBackedService = this.isOperatorBackedService(obj);
-      return {
-        alerts,
-        buildConfigs,
-        obj,
-        pods,
-        routes,
-        services,
-        status,
-        isMonitorable: true,
-        isOperatorBackedService,
-      };
-    });
-    if (operatorsFilter !== undefined) {
-      return items.filter((item) => item.isOperatorBackedService === operatorsFilter);
-    }
-    return items;
-  };
-
-  public createStatefulSetItems = (
-    statefulSets: K8sResourceKind[],
-    operatorsFilter?: boolean,
-  ): OverviewItem[] => {
-    const items = _.map(statefulSets, (ss) => {
-      const obj: K8sResourceKind = {
-        ...ss,
-        apiVersion: apiVersionForModel(StatefulSetModel),
-        kind: StatefulSetModel.kind,
-      };
-      const buildConfigs = this.getBuildConfigsForResource(obj);
-      const pods = this.getPodsForResource(obj);
-      const alerts = {
-        ...combinePodAlerts(pods),
-        ...getBuildAlerts(buildConfigs),
-      };
-      const services = this.getServicesForResource(obj);
-      const routes = this.getRoutesForServices(services);
-      const status = resourceStatus(obj);
-      const isOperatorBackedService = this.isOperatorBackedService(obj);
-      return {
-        alerts,
-        buildConfigs,
-        obj,
-        pods,
-        routes,
-        services,
-        status,
-        isMonitorable: true,
-        isOperatorBackedService,
-      };
-    });
-    if (operatorsFilter !== undefined) {
-      return items.filter((item) => item.isOperatorBackedService === operatorsFilter);
-    }
-    return items;
-  };
-
-  public createPodItems = (): OverviewItem[] => {
-    const { pods } = this.resources;
     return _.reduce(
-      pods.data,
-      (acc, pod) => {
-        const obj: PodKind = {
-          ...pod,
-          apiVersion: apiVersionForModel(PodModel),
-          kind: PodModel.kind,
-        };
-        const owners = _.get(obj, 'metadata.ownerReferences');
-        const phase = _.get(obj, 'status.phase');
-        if (!_.isEmpty(owners) || phase === 'Succeeded' || phase === 'Failed') {
-          return acc;
+      buildConfigs,
+      (acc, buildConfig) => {
+        const triggerImageNamespace = triggerFrom.namespace || currentNamespace;
+        const triggerImageName = triggerFrom.name;
+        const targetImageNamespace = _.get(
+          buildConfig,
+          'spec.output.to.namespace',
+          currentNamespace,
+        );
+        const targetImageName = _.get(buildConfig, 'spec.output.to.name');
+        if (
+          triggerImageNamespace === targetImageNamespace &&
+          triggerImageName === targetImageName
+        ) {
+          const builds = getBuildsForResource(buildConfig, resources);
+          return [
+            ...acc,
+            {
+              ...buildConfig,
+              builds: sortBuilds(builds),
+            },
+          ];
         }
-
-        const alerts = getPodAlerts(obj);
-        const services = this.getServicesForResource(obj);
-        const routes = this.getRoutesForServices(services);
-        const status = podStatus(obj);
-        return [
-          ...acc,
-          {
-            alerts,
-            obj,
-            routes,
-            services,
-            status,
-          },
-        ];
+        return acc;
       },
       [],
     );
-  };
+  });
+};
 
-  public getPodsForDeploymentConfigs = (deploymentConfigs: K8sResourceKind[]): PodRCData[] => {
-    return _.map(deploymentConfigs, (dc) => {
-      const obj: K8sResourceKind = {
-        ...dc,
-        apiVersion: apiVersionForModel(DeploymentConfigModel),
-        kind: DeploymentConfigModel.kind,
-      };
-      const { visibleReplicationControllers } = this.getReplicationControllersForResource(obj);
-      const [current, previous] = visibleReplicationControllers;
-      const isRollingOut = getRolloutStatus(obj, current, previous);
-      return {
-        obj,
-        current,
-        previous,
-        pods: [..._.get(current, 'pods', []), ..._.get(previous, 'pods', [])],
-        isRollingOut,
-      };
-    });
-  };
+export const getPodTemplate = (resource: K8sResourceKind): PodTemplate => {
+  switch (resource.kind) {
+    case 'Pod':
+      return resource as PodKind;
+    case 'DeploymentConfig':
+      // Include labels automatically added to deployment config pods since a service
+      // might select them.
+      return _.defaultsDeep(
+        {
+          metadata: {
+            labels: {
+              deploymentconfig: resource.metadata.name,
+            },
+          },
+        },
+        resource.spec.template,
+      );
+    default:
+      return resource.spec.template;
+  }
+};
 
-  public getPodsForDeployments = (deployments: K8sResourceKind[]): PodRCData[] => {
-    return _.map(deployments, (d) => {
-      const obj: K8sResourceKind = {
-        ...d,
-        apiVersion: apiVersionForModel(DeploymentModel),
-        kind: DeploymentModel.kind,
-      };
-      const replicaSets = this.getReplicaSetsForResource(obj);
-      const [current, previous] = replicaSets;
-      const isRollingOut = !!current && !!previous;
+export const getRoutesForServices = (services: K8sResourceKind[], resources: any): RouteKind[] => {
+  const { routes } = resources;
+  return _.filter(routes.data, (route) => {
+    const name = _.get(route, 'spec.to.name');
+    return _.some(services, { metadata: { name } });
+  });
+};
 
-      return {
-        obj,
-        current,
-        previous,
-        isRollingOut,
-        pods: [..._.get(current, 'pods', []), ..._.get(previous, 'pods', [])],
-      };
-    });
-  };
+export const getServicesForResource = (
+  resource: K8sResourceKind,
+  resources: any,
+): K8sResourceKind[] => {
+  const { services } = resources;
+  const template: PodTemplate = getPodTemplate(resource);
+  return _.filter(services.data, (service: K8sResourceKind) => {
+    const selector = new LabelSelector(_.get(service, 'spec.selector', {}));
+    return selector.matches(template);
+  });
+};
 
-  public getPodsForStatefulSets = (ss: K8sResourceKind[]): PodRCData[] => {
-    return _.map(ss, (s) => {
-      const obj: K8sResourceKind = {
-        ...s,
-        apiVersion: apiVersionForModel(StatefulSetModel),
-        kind: StatefulSetModel.kind,
-      };
-      const statefulSets = this.getStatefulSetsResource(obj);
-      const [current, previous] = statefulSets;
-      const isRollingOut = !!current && !!previous;
+export const createDeploymentConfigItems = (
+  deploymentConfigs: K8sResourceKind[],
+  resources: any,
+  installedOperators: ClusterServiceVersionKind[],
+  utils?: Function[],
+  operatorsFilter?: boolean,
+): OverviewItem[] => {
+  const items = _.map(deploymentConfigs, (dc) => {
+    const obj: K8sResourceKind = {
+      ...dc,
+      apiVersion: apiVersionForModel(DeploymentConfigModel),
+      kind: DeploymentConfigModel.kind,
+    };
+    const { mostRecentRC, visibleReplicationControllers } = getReplicationControllersForResource(
+      obj,
+      resources,
+    );
+    const [current, previous] = visibleReplicationControllers;
+    const isRollingOut = getRolloutStatus(obj, current, previous);
+    const buildConfigs = getBuildConfigsForResource(obj, resources);
+    const services = getServicesForResource(obj, resources);
+    const routes = getRoutesForServices(services, resources);
+    const rolloutAlerts = mostRecentRC ? getReplicationControllerAlerts(mostRecentRC) : {};
+    const alerts = {
+      ...getResourcePausedAlert(obj),
+      ...getBuildAlerts(buildConfigs),
+      ...rolloutAlerts,
+    };
+    const status = resourceStatus(obj, current, isRollingOut);
+    const pods = [..._.get(current, 'pods', []), ..._.get(previous, 'pods', [])];
+    const overviewItems = {
+      alerts,
+      buildConfigs,
+      current,
+      isRollingOut,
+      obj,
+      previous,
+      pods,
+      routes,
+      services,
+      status,
+      isMonitorable: true,
+      isOperatorBackedService: isOperatorBackedService(obj, installedOperators),
+    };
 
-      return {
-        obj,
-        current,
-        previous,
-        isRollingOut,
-        pods: [..._.get(current, 'pods', []), ..._.get(previous, 'pods', [])],
+    if (utils) {
+      return utils.reduce((acc, element) => {
+        return { ...acc, ...element(obj, resources) };
+      }, overviewItems);
+    }
+    return overviewItems;
+  });
+  if (operatorsFilter !== undefined) {
+    return items.filter((item) => item.isOperatorBackedService === operatorsFilter);
+  }
+  return items;
+};
+
+export const createDeploymentItems = (
+  deployments: DeploymentKind[],
+  resources: any,
+  installedOperators: ClusterServiceVersionKind[],
+  utils?: Function[],
+  operatorsFilter?: boolean,
+): OverviewItem<DeploymentKind>[] => {
+  const items = _.map(deployments, (d) => {
+    const obj: DeploymentKind = {
+      ...d,
+      apiVersion: apiVersionForModel(DeploymentModel),
+      kind: DeploymentModel.kind,
+    };
+    const replicaSets = getReplicaSetsForResource(obj, resources);
+    const [current, previous] = replicaSets;
+    const isRollingOut = !!current && !!previous;
+    const buildConfigs = getBuildConfigsForResource(obj, resources);
+    const services = getServicesForResource(obj, resources);
+    const routes = getRoutesForServices(services, resources);
+    const alerts = {
+      ...getResourcePausedAlert(obj),
+      ...getBuildAlerts(buildConfigs),
+    };
+    const status = resourceStatus(obj, current, isRollingOut);
+    const pods = [..._.get(current, 'pods', []), ..._.get(previous, 'pods', [])];
+    const overviewItems = {
+      alerts,
+      buildConfigs,
+      current,
+      isRollingOut,
+      obj,
+      previous,
+      pods,
+      routes,
+      services,
+      status,
+      isMonitorable: true,
+      isOperatorBackedService: isOperatorBackedService(obj, installedOperators),
+    };
+
+    if (utils) {
+      return utils.reduce((acc, element) => {
+        return { ...acc, ...element(obj, resources) };
+      }, overviewItems);
+    }
+    return overviewItems;
+  });
+  if (operatorsFilter !== undefined) {
+    return items.filter((item) => item.isOperatorBackedService === operatorsFilter);
+  }
+  return items;
+};
+
+export const createDaemonSetItems = (
+  daemonSets: K8sResourceKind[],
+  resources: any,
+  installedOperators: ClusterServiceVersionKind[],
+  utils?: Function[],
+  operatorsFilter?: boolean,
+): OverviewItem[] => {
+  const items = _.map(daemonSets, (ds) => {
+    const obj: K8sResourceKind = {
+      ...ds,
+      apiVersion: apiVersionForModel(DaemonSetModel),
+      kind: DaemonSetModel.kind,
+    };
+    const buildConfigs = getBuildConfigsForResource(obj, resources);
+    const services = getServicesForResource(obj, resources);
+    const routes = getRoutesForServices(services, resources);
+    const pods = getPodsForResource(obj, resources);
+    const alerts = {
+      ...combinePodAlerts(pods),
+      ...getBuildAlerts(buildConfigs),
+    };
+    const status = resourceStatus(obj);
+    return {
+      alerts,
+      buildConfigs,
+      obj,
+      pods,
+      routes,
+      services,
+      status,
+      isMonitorable: true,
+      isOperatorBackedService: isOperatorBackedService(obj, installedOperators),
+    };
+  });
+  if (operatorsFilter !== undefined) {
+    return items.filter((item) => item.isOperatorBackedService === operatorsFilter);
+  }
+  return items;
+};
+
+export const createStatefulSetItems = (
+  statefulSets: K8sResourceKind[],
+  resources: any,
+  installedOperators: ClusterServiceVersionKind[],
+  utils?: Function[],
+  operatorsFilter?: boolean,
+): OverviewItem[] => {
+  const items = _.map(statefulSets, (ss) => {
+    const obj: K8sResourceKind = {
+      ...ss,
+      apiVersion: apiVersionForModel(StatefulSetModel),
+      kind: StatefulSetModel.kind,
+    };
+    const buildConfigs = getBuildConfigsForResource(obj, resources);
+    const pods = getPodsForResource(obj, resources);
+    const alerts = {
+      ...combinePodAlerts(pods),
+      ...getBuildAlerts(buildConfigs),
+    };
+    const services = getServicesForResource(obj, resources);
+    const routes = getRoutesForServices(services, resources);
+    const status = resourceStatus(obj);
+    return {
+      alerts,
+      buildConfigs,
+      obj,
+      pods,
+      routes,
+      services,
+      status,
+      isMonitorable: true,
+      isOperatorBackedService: isOperatorBackedService(obj, installedOperators),
+    };
+  });
+  if (operatorsFilter !== undefined) {
+    return items.filter((item) => item.isOperatorBackedService === operatorsFilter);
+  }
+  return items;
+};
+
+export const createPodItems = (resources: any): OverviewItem[] => {
+  const { pods } = resources;
+  return _.reduce(
+    pods.data,
+    (acc, pod) => {
+      const obj: PodKind = {
+        ...pod,
+        apiVersion: apiVersionForModel(PodModel),
+        kind: PodModel.kind,
       };
-    });
-  };
-}
+      const owners = _.get(obj, 'metadata.ownerReferences');
+      const phase = _.get(obj, 'status.phase');
+      if (!_.isEmpty(owners) || phase === 'Succeeded' || phase === 'Failed') {
+        return acc;
+      }
+
+      const alerts = getPodAlerts(obj);
+      const services = getServicesForResource(obj, resources);
+      const routes = getRoutesForServices(services, resources);
+      const status = podStatus(obj);
+      return [
+        ...acc,
+        {
+          alerts,
+          obj,
+          routes,
+          services,
+          status,
+        },
+      ];
+    },
+    [],
+  );
+};
+
+export const getPodsForDeploymentConfigs = (
+  deploymentConfigs: K8sResourceKind[],
+  resources: any,
+): PodRCData[] => {
+  return _.map(deploymentConfigs, (dc) => {
+    const obj: K8sResourceKind = {
+      ...dc,
+      apiVersion: apiVersionForModel(DeploymentConfigModel),
+      kind: DeploymentConfigModel.kind,
+    };
+    const { visibleReplicationControllers } = getReplicationControllersForResource(obj, resources);
+    const [current, previous] = visibleReplicationControllers;
+    const isRollingOut = getRolloutStatus(obj, current, previous);
+    return {
+      obj,
+      current,
+      previous,
+      pods: [..._.get(current, 'pods', []), ..._.get(previous, 'pods', [])],
+      isRollingOut,
+    };
+  });
+};
+
+export const getPodsForDeployments = (
+  deployments: K8sResourceKind[],
+  resources: any,
+): PodRCData[] => {
+  return _.map(deployments, (d) => {
+    const obj: K8sResourceKind = {
+      ...d,
+      apiVersion: apiVersionForModel(DeploymentModel),
+      kind: DeploymentModel.kind,
+    };
+    const replicaSets = getReplicaSetsForResource(obj, resources);
+    const [current, previous] = replicaSets;
+    const isRollingOut = !!current && !!previous;
+
+    return {
+      obj,
+      current,
+      previous,
+      isRollingOut,
+      pods: [..._.get(current, 'pods', []), ..._.get(previous, 'pods', [])],
+    };
+  });
+};
+
+export const getPodsForStatefulSets = (ss: K8sResourceKind[], resources: any): PodRCData[] => {
+  return _.map(ss, (s) => {
+    const obj: K8sResourceKind = {
+      ...s,
+      apiVersion: apiVersionForModel(StatefulSetModel),
+      kind: StatefulSetModel.kind,
+    };
+    const statefulSets = getStatefulSetsResource(obj, resources);
+    const [current, previous] = statefulSets;
+    const isRollingOut = !!current && !!previous;
+
+    return {
+      obj,
+      current,
+      previous,
+      isRollingOut,
+      pods: [..._.get(current, 'pods', []), ..._.get(previous, 'pods', [])],
+    };
+  });
+};

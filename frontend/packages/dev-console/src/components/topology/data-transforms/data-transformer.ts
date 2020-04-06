@@ -3,6 +3,10 @@ import { K8sResourceKind } from '@console/internal/module/k8s';
 import { getImageForIconClass } from '@console/internal/components/catalog/catalog-item-icon';
 import { getKnativeTopologyDataModel } from '@console/knative-plugin/src/topology/data-transformer';
 import {
+  getKubevirtTopologyDataModel,
+  kubevirtAllowedResources,
+} from '@console/kubevirt-plugin/src/topology/kubevirt-data-transformer';
+import {
   TopologyDataModel,
   TopologyDataResources,
   Edge,
@@ -117,19 +121,18 @@ export const transformTopologyData = (
     graph: { nodes: [], edges: [], groups: [] },
     topology: {},
   };
+  // TODO: plugin
+  const allResourceTypes = [...allowedResources, ...kubevirtAllowedResources];
   const allResourcesList = _.flatten(
-    allowedResources.map((resourceKind) => {
+    allResourceTypes.map((resourceKind) => {
       return resources[resourceKind] ? resources[resourceKind].data : [];
     }),
   );
-  if (trafficData)
-    topologyGraphAndNodeData.graph.edges = getTrafficConnectors(trafficData, [
-      ...resources.deploymentConfigs.data,
-      ...resources.deployments.data,
-      ...resources.statefulSets.data,
-      ...resources.daemonSets.data,
-    ]);
+  if (trafficData) {
+    topologyGraphAndNodeData.graph.edges = getTrafficConnectors(trafficData, allResourcesList);
+  }
 
+  // TODO: plugins
   const knativeModel = getKnativeTopologyDataModel(
     resources,
     allResourcesList,
@@ -158,6 +161,16 @@ export const transformTopologyData = (
     helmResourcesMap,
   );
   addToTopologyDataModel(helmModel, topologyGraphAndNodeData);
+
+  const vmsModel = getKubevirtTopologyDataModel(
+    resources,
+    allResourcesList,
+    installedOperators,
+    utils,
+    transformBy,
+    serviceBindingRequests,
+  );
+  addToTopologyDataModel(vmsModel, topologyGraphAndNodeData);
 
   const baseModel = getBaseTopologyDataModel(
     resources,

@@ -8,11 +8,17 @@ import { Link } from 'react-router-dom';
 import {
   DEFAULT_GROUP_NAME,
   METRICS_POLL_INTERVAL,
-  TransformResourceData,
   OverviewItem,
   getResourceList,
+  createDaemonSetItems,
+  createDeploymentConfigItems,
+  createDeploymentItems,
+  createPodItems,
+  createStatefulSetItems,
+  formatNamespacedRouteForResource,
 } from '@console/shared';
-import { formatNamespacedRouteForResource } from '@console/shared/src/utils';
+import { OverviewCRD } from '@console/plugin-sdk';
+import { ClusterServiceVersionKind } from '@console/operator-lifecycle-manager';
 import { coFetchJSON } from '../../co-fetch';
 import { PROMETHEUS_TENANCY_BASE_PATH } from '../graphs';
 import { TextFilter } from '../factory';
@@ -23,8 +29,6 @@ import { ProjectOverview } from './project-overview';
 import { ResourceOverviewPage } from './resource-overview-page';
 import { OverviewSpecialGroup } from './constants';
 import * as plugins from '../../plugins';
-import { OverviewCRD } from '@console/plugin-sdk';
-import { ClusterServiceVersionKind } from '@console/operator-lifecycle-manager';
 
 const asOverviewGroups = (keyedItems: { [name: string]: OverviewItem[] }): OverviewGroup[] => {
   const compareGroups = (a: OverviewGroup, b: OverviewGroup) => {
@@ -166,7 +170,6 @@ class OverviewMainContent_ extends React.Component<
   OverviewMainContentState
 > {
   private metricsInterval: any = null;
-  private transformResourceData;
 
   readonly state: OverviewMainContentState = {
     items: [],
@@ -316,11 +319,6 @@ class OverviewMainContent_ extends React.Component<
       updateSelectedGroup,
       updateResources,
     } = this.props;
-    this.transformResourceData = new TransformResourceData(
-      this.props,
-      this.props.utils,
-      this.props?.clusterServiceVersions?.data,
-    );
     if (!loaded) {
       return;
     }
@@ -330,11 +328,31 @@ class OverviewMainContent_ extends React.Component<
     }
 
     const items = [
-      ...this.transformResourceData.createDaemonSetItems(this.props.daemonSets.data),
-      ...this.transformResourceData.createDeploymentItems(this.props.deployments.data),
-      ...this.transformResourceData.createDeploymentConfigItems(this.props.deploymentConfigs.data),
-      ...this.transformResourceData.createStatefulSetItems(this.props.statefulSets.data),
-      ...this.transformResourceData.createPodItems(),
+      ...createDaemonSetItems(
+        this.props.daemonSets.data,
+        this.props,
+        this.props?.clusterServiceVersions?.data,
+        this.props.utils,
+      ),
+      ...createDeploymentItems(
+        this.props.deployments.data,
+        this.props,
+        this.props?.clusterServiceVersions?.data,
+        this.props.utils,
+      ),
+      ...createDeploymentConfigItems(
+        this.props.deploymentConfigs.data,
+        this.props,
+        this.props?.clusterServiceVersions?.data,
+        this.props.utils,
+      ),
+      ...createStatefulSetItems(
+        this.props.statefulSets.data,
+        this.props,
+        this.props?.clusterServiceVersions?.data,
+        this.props.utils,
+      ),
+      ...createPodItems(this.props),
     ];
 
     updateResources(items);

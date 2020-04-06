@@ -14,9 +14,13 @@ import {
 } from '@console/internal/module/k8s';
 import { useSafetyFirst } from '@console/internal/components/safety-first';
 import { PodRCData, PodRingResources, PodRingData, ExtPodKind } from '../types';
-import { TransformResourceData } from './resource-utils';
 import { checkPodEditAccess } from './pod-utils';
 import { RevisionModel } from '@console/knative-plugin';
+import {
+  getPodsForDeploymentConfigs,
+  getPodsForDeployments,
+  getPodsForStatefulSets,
+} from './resource-utils';
 
 type PodRingLabelType = {
   subTitle: string;
@@ -179,7 +183,6 @@ export const transformPodRingData = (resources: PodRingResources, kind: string):
   };
 
   const targetResource = resourceKinds[kind];
-  const transformResourceData = new TransformResourceData(resources);
 
   if (!targetResource) {
     throw new Error(`Invalid target resource: (${targetResource})`);
@@ -192,17 +195,16 @@ export const transformPodRingData = (resources: PodRingResources, kind: string):
   const resourceData = resources[targetResource].data;
 
   if (kind === DeploymentConfigModel.kind) {
-    return transformResourceData
-      .getPodsForDeploymentConfigs(resourceData)
-      .reduce(applyPods, podsData);
+    return getPodsForDeploymentConfigs(resourceData, resources).reduce(applyPods, podsData);
   }
 
   if (kind === DeploymentModel.kind) {
-    return transformResourceData.getPodsForDeployments(resourceData).reduce(applyPods, podsData);
+    return getPodsForDeployments(resourceData, resources).reduce(applyPods, podsData);
   }
 
   if (kind === StatefulSetModel.kind) {
-    return transformResourceData.getPodsForStatefulSets(resourceData).reduce(applyPods, podsData);
+    return getPodsForStatefulSets(resourceData, resources).reduce(applyPods, podsData);
   }
+
   return podsData;
 };

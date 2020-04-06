@@ -58,6 +58,7 @@ import * as mysqlDatabaseImg from '../../imgs/logos/mysql-database.svg';
 import * as nginxImg from '../../imgs/logos/nginx.svg';
 import * as nodejsImg from '../../imgs/logos/nodejs.svg';
 import * as openjdkImg from '../../imgs/logos/openjdk.svg';
+import * as redhatImg from '../../imgs/logos/redhat.svg';
 import * as openlibertyImg from '../../imgs/logos/openliberty.svg';
 import * as openshiftImg from '../../imgs/logos/openshift.svg';
 import * as openstackImg from '../../imgs/logos/openstack.svg';
@@ -169,6 +170,7 @@ const logos = new Map()
   .set('icon-rh-integration', rhIntegrationImg)
   .set('icon-java', openjdkImg)
   // Use the upstream icon.
+  .set('icon-redhat', redhatImg)
   .set('icon-rh-openjdk', openjdkImg)
   .set('icon-rh-tomcat', rhTomcatImg)
   .set('icon-ruby', rubyImg)

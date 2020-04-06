@@ -423,15 +423,15 @@ class BaseLayout implements Layout {
       return undefined;
     }
 
-    let colaNode = _.find(nodes, { id: node.getId() });
-    if (!colaNode && _.size(node.getChildren())) {
-      colaNode = _.find(nodes, { id: node.getChildren()[0].getId() });
+    let layoutNode = _.find(nodes, { id: node.getId() });
+    if (!layoutNode && _.size(node.getChildren())) {
+      layoutNode = _.find(nodes, { id: node.getChildren()[0].getId() });
     }
-    if (!colaNode) {
-      colaNode = this.getLayoutNode(nodes, getClosestVisibleParent(node));
+    if (!layoutNode) {
+      layoutNode = this.getLayoutNode(nodes, getClosestVisibleParent(node));
     }
 
-    return colaNode;
+    return layoutNode;
   }
 
   protected getFauxEdges(groups: LayoutGroup[], nodes: LayoutNode[]): LayoutLink[] {
@@ -507,7 +507,7 @@ class BaseLayout implements Layout {
     let count = 0;
     const groupNodes: LayoutNode[] = [];
     groups.forEach((group: Node) => {
-      if (group.getChildren().length === 0) {
+      if (group.getChildren().filter((c) => c.isVisible()).length === 0) {
         groupNodes.push(this.createLayoutNode(group, nodeDistance, nodeCount + count++));
       }
     });
@@ -519,7 +519,7 @@ class BaseLayout implements Layout {
     let nodeIndex = nodes.length;
     // Create groups only for those with children
     const layoutGroups: LayoutGroup[] = groups
-      .filter((g) => g.getChildren().length > 0)
+      .filter((g) => g.getChildren().filter((c) => c.isVisible()).length > 0)
       .map((group: Node) => this.createLayoutGroup(group, padding, nodeIndex++));
 
     layoutGroups.forEach((groupNode: LayoutGroup) => {
@@ -540,10 +540,10 @@ class BaseLayout implements Layout {
         .getChildren()
         .filter((node: Node) => node.isGroup() && !node.isCollapsed());
       groupElements.forEach((group: Node) => {
-        const colaGroup = layoutGroups.find((g) => g.id === group.getId());
-        if (colaGroup) {
-          childGroups.push(colaGroup);
-          colaGroup.parent = groupNode;
+        const layoutGroup = layoutGroups.find((g) => g.id === group.getId());
+        if (layoutGroup) {
+          childGroups.push(layoutGroup);
+          layoutGroup.parent = groupNode;
         }
       });
       groupNode.groups = childGroups;

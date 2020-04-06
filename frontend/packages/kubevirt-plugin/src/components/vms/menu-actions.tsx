@@ -4,6 +4,7 @@ import { asAccessReview, Kebab, KebabOption } from '@console/internal/components
 import { K8sKind, K8sResourceCommon, K8sResourceKind, PodKind } from '@console/internal/module/k8s';
 import { getName, getNamespace } from '@console/shared';
 import { confirmModal } from '@console/internal/components/modals';
+import { ModifyApplication } from '@console/dev-console/src/actions/modify-application';
 import { VMIKind, VMKind } from '../../types/vm';
 import { isVMRunning, isVMRunningWithVMI } from '../../selectors/vm';
 import { getMigrationVMIName } from '../../selectors/vmi-migration';
@@ -204,6 +205,7 @@ export const vmMenuActions = [
   menuActionCdEdit,
   Kebab.factory.ModifyLabels,
   Kebab.factory.ModifyAnnotations,
+  ModifyApplication,
   menuActionDelete,
 ];
 
@@ -219,7 +221,7 @@ export const vmImportMenuActions = [
   Kebab.factory.Delete,
 ];
 
-type ExtraResources = {
+export type ExtraResources = {
   vmi: VMIKind;
   pods: PodKind[];
   migrations: K8sResourceKind[];
