@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
 import { ResourceDropdownField } from '@console/shared';
-import { NameValueEditor } from '@console/internal/components/utils/name-value-editor';
 import FormSection from '@console/dev-console/src/components/import/section/FormSection';
+import { AsyncComponent } from '@console/internal/components/utils/async';
 import ApiServerSection from '../ApiServerSection';
 
 jest.mock('formik', () => ({
@@ -26,7 +26,7 @@ describe('ApiServerSection', () => {
 
   it('should render NameValueEditor', () => {
     const wrapper = shallow(<ApiServerSection namespace="test-project" />);
-    const nameValueEditorField = wrapper.find(NameValueEditor);
+    const nameValueEditorField = wrapper.find(AsyncComponent);
     expect(nameValueEditorField).toHaveLength(1);
     expect(nameValueEditorField.props().nameString).toBe('apiVersion');
     expect(nameValueEditorField.props().valueString).toBe('kind');

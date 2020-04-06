@@ -4,8 +4,8 @@ import * as fuzzy from 'fuzzysearch';
 import { useFormikContext, FormikValues } from 'formik';
 import { FormGroup } from '@patternfly/react-core';
 import { ServiceAccountModel } from '@console/internal/models';
-import { NameValueEditor } from '@console/internal/components/utils/name-value-editor';
 import { ResourceDropdownField, DropdownField, getFieldId } from '@console/shared';
+import { AsyncComponent } from '@console/internal/components/utils/async';
 import FormSection from '@console/dev-console/src/components/import/section/FormSection';
 
 interface ApiServerSectionProps {
@@ -62,7 +62,12 @@ const ApiServerSection: React.FC<ApiServerSectionProps> = ({ namespace }) => {
   return (
     <FormSection title="ApiServerSource">
       <FormGroup fieldId={fieldId} label="Resource" isRequired>
-        <NameValueEditor
+        <AsyncComponent
+          loader={() =>
+            import('@console/internal/components/utils/name-value-editor').then(
+              (c) => c.NameValueEditor,
+            )
+          }
           nameValuePairs={nameValue}
           valueString="kind"
           nameString="apiVersion"

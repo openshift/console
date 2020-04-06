@@ -3,7 +3,7 @@ import * as _ from 'lodash';
 import { useFormikContext, FormikValues } from 'formik';
 import { TextInputTypes, FormGroup } from '@patternfly/react-core';
 import { InputField, getFieldId } from '@console/shared';
-import { NameValueEditor } from '@console/internal/components/utils/name-value-editor';
+import { AsyncComponent } from '@console/internal/components/utils/async';
 import FormSection from '@console/dev-console/src/components/import/section/FormSection';
 
 const SinkBindingSection: React.FC = () => {
@@ -47,7 +47,12 @@ const SinkBindingSection: React.FC = () => {
         required
       />
       <FormGroup fieldId={fieldId} label="Match Labels">
-        <NameValueEditor
+        <AsyncComponent
+          loader={() =>
+            import('@console/internal/components/utils/name-value-editor').then(
+              (c) => c.NameValueEditor,
+            )
+          }
           nameValuePairs={nameValue}
           valueString="Value"
           nameString="Name"
