@@ -133,8 +133,8 @@ const allStatuses = [
 
 const filters = [
   {
+    filterGroupName: 'Status',
     type: 'cluster-operator-status',
-    selected: allStatuses,
     reducer: getClusterOperatorStatus,
     items: _.map(allStatuses, (phase) => ({
       id: phase,

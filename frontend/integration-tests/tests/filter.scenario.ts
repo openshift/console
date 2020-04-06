@@ -37,7 +37,7 @@ describe('Filtering', () => {
   afterAll(async () => {
     await browser.get(`${appHost}/k8s/ns/${testName}/deployments`);
     await crudView.isLoaded();
-    await crudView.nameFilter.sendKeys(WORKLOAD_NAME);
+    await crudView.textFilter.sendKeys(WORKLOAD_NAME);
     await browser.wait(
       until.elementToBeClickable(crudView.resourceRowNamesAndNs.first()),
       BROWSER_TIMEOUT,
@@ -54,8 +54,8 @@ describe('Filtering', () => {
     expect(crudView.resourceRowNamesAndNs.first().getText()).toContain(WORKLOAD_NAME);
 
     await browser.get(`${appHost}/k8s/ns/${testName}/deployments/${WORKLOAD_NAME}/pods`);
-    await browser.wait(until.elementToBeClickable(crudView.nameFilter), BROWSER_TIMEOUT);
-    await crudView.nameFilter.sendKeys(WORKLOAD_NAME);
+    await browser.wait(until.elementToBeClickable(crudView.textFilter), BROWSER_TIMEOUT);
+    await crudView.textFilter.sendKeys(WORKLOAD_NAME);
     await browser.wait(
       until.elementToBeClickable(crudView.resourceRowNamesAndNs.first()),
       BROWSER_TIMEOUT,
@@ -65,24 +65,16 @@ describe('Filtering', () => {
 
   it('filters invalid Pod from object detail', async () => {
     await browser.get(`${appHost}/k8s/ns/${testName}/deployments/${WORKLOAD_NAME}/pods`);
-    await browser.wait(until.elementToBeClickable(crudView.nameFilter), BROWSER_TIMEOUT);
-    await crudView.nameFilter.sendKeys('XYZ123');
-    await browser.wait(until.elementToBeClickable(crudView.messageLbl), BROWSER_TIMEOUT);
-    expect(crudView.messageLbl.isPresent()).toBe(true);
-  });
-
-  it('filters Deployment from other namespace', async () => {
-    await browser.get(`${appHost}/k8s/ns/kube-system/deployments`);
-    await browser.wait(until.elementToBeClickable(crudView.nameFilter), BROWSER_TIMEOUT);
-    await crudView.nameFilter.sendKeys(WORKLOAD_NAME);
+    await browser.wait(until.elementToBeClickable(crudView.textFilter), BROWSER_TIMEOUT);
+    await crudView.textFilter.sendKeys('XYZ123');
     await browser.wait(until.elementToBeClickable(crudView.messageLbl), BROWSER_TIMEOUT);
     expect(crudView.messageLbl.isPresent()).toBe(true);
   });
 
   it('filters from Pods list', async () => {
     await browser.get(`${appHost}/k8s/all-namespaces/pods`);
-    await browser.wait(until.elementToBeClickable(crudView.nameFilter), BROWSER_TIMEOUT);
-    await crudView.nameFilter.sendKeys(WORKLOAD_NAME);
+    await browser.wait(until.elementToBeClickable(crudView.textFilter), BROWSER_TIMEOUT);
+    await crudView.textFilter.sendKeys(WORKLOAD_NAME);
     await browser.wait(
       until.elementToBeClickable(crudView.resourceRowNamesAndNs.first()),
       BROWSER_TIMEOUT,

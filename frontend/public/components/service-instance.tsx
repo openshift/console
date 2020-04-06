@@ -364,8 +364,8 @@ ServiceInstancesList.displayName = 'ServiceInstancesList';
 
 const filters = [
   {
+    filterGroupName: 'Status',
     type: 'catalog-status',
-    selected: ['Ready', 'Not Ready', 'Failed'],
     reducer: serviceCatalogStatus,
     items: [
       { id: 'Ready', title: 'Ready' },

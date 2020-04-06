@@ -52,7 +52,7 @@ export const clickTab = async (name: string) => {
 };
 
 export const labelsForRow = (name: string) => rowForName(name).$$('.co-m-label');
-export const textFilter = $('.co-m-pane__filter-bar-group--filter input');
+export const textFilter = $('[data-test-id="list-page-search-input"]');
 export const actions = Object.freeze({
   labels: 'Edit Labels',
   annotations: 'Edit Annotations',
@@ -131,11 +131,9 @@ export const deleteRow = (kind: string) => (name: string) =>
     return browser.wait(until.or(kebabIsDisabled, until.or(listIsEmpty, rowIsGone)));
   });
 
-export const rowFilters = $$('.row-filter__box');
-export const rowFiltersPresent = () => browser.wait(until.presenceOf($('.row-filter__box')));
-export const rowFilterFor = (name: string) =>
-  rowFilters.filter((el) => el.getText().then((text) => text.includes(name))).first();
-export const activeRowFilters = $$('.row-filter__box--active');
+export const rowFiltersButton = $('[data-test-id="filter-dropdown-toggle"]');
+export const rowFiltersPresent = () => browser.wait(until.presenceOf(rowFiltersButton));
+export const rowFilterFor = (name: string) => $(`[data-test-row-filter="${name}"]`);
 
 export const statusMessageTitle = $('.cos-status-box__title');
 export const statusMessageDetail = $('.cos-status-box__detail');

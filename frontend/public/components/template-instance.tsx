@@ -96,8 +96,8 @@ const allStatuses = ['Ready', 'Not Ready', 'Failed'];
 
 const filters = [
   {
+    filterGroupName: 'Status',
     type: 'template-instance-status',
-    selected: allStatuses,
     reducer: getTemplateInstanceStatus,
     items: _.map(allStatuses, (status) => ({
       id: status,

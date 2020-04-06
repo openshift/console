@@ -216,8 +216,8 @@ const Details = connectToFlags(FLAGS.CAN_LIST_PV)(Details_);
 const allPhases = ['Pending', 'Bound', 'Lost'];
 const filters = [
   {
+    filterGroupName: 'Status',
     type: 'pvc-status',
-    selected: allPhases,
     reducer: (pvc) => pvc.status.phase,
     items: _.map(allPhases, (phase) => ({
       id: phase,

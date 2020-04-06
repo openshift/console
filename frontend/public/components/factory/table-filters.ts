@@ -1,6 +1,7 @@
 import * as _ from 'lodash-es';
 import * as fuzzy from 'fuzzysearch';
 import { nodeStatus } from '@console/app/src/status/node';
+import { getNodeRole, getLabelsAsString } from '@console/shared';
 import { routeStatus } from '../routes';
 import { secretTypeFilterReducer } from '../secret';
 import { bindingType, roleType } from '../RBAC';
@@ -76,6 +77,14 @@ export const tableFilters: TableFilterMap = {
     return selector.values.has(_.get(obj, selector.field));
   },
 
+  labels: (values, obj) => {
+    const labels = getLabelsAsString(obj);
+    if (!values.all) {
+      return true;
+    }
+    return !!values.all.every((v) => labels.includes(v));
+  },
+
   'pod-status': (phases, pod) => {
     if (!phases || !phases.selected || !phases.selected.size) {
       return true;
@@ -92,6 +101,14 @@ export const tableFilters: TableFilterMap = {
 
     const status = nodeStatus(node);
     return statuses.selected.has(status) || !_.includes(statuses.all, status);
+  },
+
+  'node-role': (roles, node) => {
+    if (!roles || !roles.selected || !roles.selected.size) {
+      return true;
+    }
+    const role = getNodeRole(node);
+    return roles.selected.has(role);
   },
 
   'clusterserviceversion-resource-kind': (filters, resource) => {

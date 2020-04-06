@@ -49,7 +49,7 @@ describe('Modal Annotations', () => {
   afterAll(async () => {
     await browser.get(`${appHost}/k8s/ns/${testName}/configmaps`);
     await crudView.resourceRowsPresent();
-    await crudView.nameFilter.sendKeys(CONFIG_MAP_NAME);
+    await crudView.textFilter.sendKeys(CONFIG_MAP_NAME);
     await crudView.deleteRow('ConfigMap')(CONFIG_MAP_NAME);
     checkLogs();
     checkErrors();

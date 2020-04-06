@@ -3,7 +3,7 @@ import * as classNames from 'classnames';
 import { connect } from 'react-redux';
 import * as _ from 'lodash';
 import { sortable } from '@patternfly/react-table';
-import { getName, getUID } from '@console/shared';
+import { getName, getUID, getNodeRole } from '@console/shared';
 import { NodeModel } from '@console/internal/models';
 import { NodeKind, referenceForModel } from '@console/internal/module/k8s';
 import {
@@ -193,12 +193,27 @@ type NodesTableProps = React.ComponentProps<typeof Table> & {
 
 const filters = [
   {
+    filterGroupName: 'Status',
     type: 'node-status',
-    selected: ['Ready', 'Not Ready'],
     reducer: nodeStatus,
     items: [
       { id: 'Ready', title: 'Ready' },
       { id: 'Not Ready', title: 'Not Ready' },
+    ],
+  },
+  {
+    filterGroupName: 'Role',
+    type: 'node-role',
+    reducer: getNodeRole,
+    items: [
+      {
+        id: 'master',
+        title: 'Master',
+      },
+      {
+        id: 'worker',
+        title: 'Worker',
+      },
     ],
   },
 ];
