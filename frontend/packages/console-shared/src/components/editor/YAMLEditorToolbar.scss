@@ -1,3 +1,5 @@
+@import '~bootstrap-sass/assets/stylesheets/bootstrap/variables';
+
 .ocs-yaml-editor-toolbar {
   &__links {
     display: flex;
@@ -5,7 +7,7 @@
     justify-content: flex-end;
     margin: 2px;
     z-index: 1;
-    @media(max-width: 767px) {
+    @media(max-width: $screen-sm-max) {
       display: none;
     }
   }

@@ -58,7 +58,7 @@ export const EditYAML_ = connect(stateToProps)(
         stale: false,
         sampleObj: props.sampleObj,
         fileUpload: props.fileUpload,
-        showSidebar: props.create,
+        showSidebar: !!props.create,
       };
       this.monacoRef = React.createRef();
       // k8s uses strings for resource versions
