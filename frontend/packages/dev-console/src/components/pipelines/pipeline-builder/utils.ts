@@ -2,6 +2,7 @@ import { history, resourcePathFromModel } from '@console/internal/components/uti
 import { apiVersionForModel, referenceForModel } from '@console/internal/module/k8s';
 import { ClusterTaskModel, PipelineModel } from '../../../models';
 import { Pipeline, PipelineResourceTask, PipelineTask } from '../../../utils/pipeline-augment';
+import { getTaskParameters } from '../resource-utils';
 import { TASK_ERROR_STRINGS, TaskErrorType } from './const';
 import { PipelineBuilderFormikValues, PipelineBuilderFormValues, TaskErrorMap } from './types';
 
@@ -30,7 +31,7 @@ export const convertResourceToTask = (
       kind: resource.kind === ClusterTaskModel.kind ? ClusterTaskModel.kind : undefined,
       name: resource.metadata.name,
     },
-    params: resource.spec.inputs?.params?.map((param) => ({
+    params: getTaskParameters(resource).map((param) => ({
       name: param.name,
       value: param.default,
     })),

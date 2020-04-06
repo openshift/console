@@ -11,6 +11,7 @@ import {
   PipelineTaskParam,
   PipelineTaskResource,
 } from '../../../../utils/pipeline-augment';
+import { getTaskParameters, getTaskResources } from '../../resource-utils';
 import { ResourceTarget, TaskErrorMap, UpdateOperationUpdateTaskData } from '../types';
 import { TaskErrorType } from '../const';
 import TaskSidebarParam from './TaskSidebarParam';
@@ -46,9 +47,10 @@ const TaskSidebar: React.FC<TaskSidebarProps> = (props) => {
 
   const thisTaskError = errorMap[taskField.value.name];
 
-  const params = taskResource.spec?.inputs?.params;
-  const inputResources = taskResource.spec?.inputs?.resources;
-  const outputResources = taskResource.spec?.outputs?.resources;
+  const params = getTaskParameters(taskResource);
+  const resources = getTaskResources(taskResource);
+  const inputResources = resources.inputs;
+  const outputResources = resources.outputs;
 
   const renderResource = (type: ResourceTarget) => (resource: PipelineResourceTaskResource) => {
     const taskResources: PipelineTaskResource[] = taskField.value?.resources?.[type] || [];

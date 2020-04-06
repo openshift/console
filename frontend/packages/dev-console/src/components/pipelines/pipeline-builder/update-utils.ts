@@ -7,6 +7,7 @@ import {
 } from '../../../utils/pipeline-augment';
 import { getRandomChars } from '../../../utils/shared-submit-utils';
 import { AddNodeDirection } from '../pipeline-topology/const';
+import { getTaskParameters, getTaskResources } from '../resource-utils';
 import { TaskErrorType, UpdateOperationType } from './const';
 import {
   CleanupResults,
@@ -113,7 +114,8 @@ const mapAddRelatedToOthers = <TaskType extends PipelineBuilderTaskBase>(
 
 // TODO: Can we use yup? Do we need this level of checking for errors?
 const getErrors = (task: PipelineTask, resource: PipelineResourceTask): TaskErrorMap => {
-  const resourceParams = resource?.spec?.inputs?.params || [];
+  const params = getTaskParameters(resource);
+  const resourceParams = params || [];
   const requiredParamNames = resourceParams
     .filter((param) => !param.default)
     .map((param) => param.name);
@@ -124,12 +126,14 @@ const getErrors = (task: PipelineTask, resource: PipelineResourceTask): TaskErro
 
   const needsName = !task.name;
 
+  const resources = getTaskResources(resource);
+
   const taskInputResources = task.resources?.inputs?.length || 0;
-  const requiredInputResources = resource.spec?.inputs?.resources?.length || 0;
+  const requiredInputResources = resources.inputs?.length || 0;
   const missingInputResources = requiredInputResources - taskInputResources > 0;
 
   const taskOutputResources = task.resources?.outputs?.length || 0;
-  const requiredOutputResources = resource.spec?.outputs?.resources?.length || 0;
+  const requiredOutputResources = resources.outputs?.length || 0;
   const missingOutputResources = requiredOutputResources - taskOutputResources > 0;
 
   const errorListing: TaskErrorType[] = [];
