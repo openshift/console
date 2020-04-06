@@ -5,8 +5,8 @@ import { useFormikContext, FormikValues } from 'formik';
 import { FormGroup } from '@patternfly/react-core';
 import { ServiceAccountModel } from '@console/internal/models';
 import { ResourceDropdownField, DropdownField, getFieldId } from '@console/shared';
+import { AsyncComponent } from '@console/internal/components/utils/async';
 import FormSection from '@console/dev-console/src/components/import/section/FormSection';
-import NameValueEditorComponent from './NameValueEditorComponent';
 
 interface ApiServerSectionProps {
   namespace: string;
@@ -62,7 +62,12 @@ const ApiServerSection: React.FC<ApiServerSectionProps> = ({ namespace }) => {
   return (
     <FormSection title="ApiServerSource">
       <FormGroup fieldId={fieldId} label="Resource" isRequired>
-        <NameValueEditorComponent
+        <AsyncComponent
+          loader={() =>
+            import('@console/internal/components/utils/name-value-editor').then(
+              (c) => c.NameValueEditor,
+            )
+          }
           nameValuePairs={nameValue}
           valueString="kind"
           nameString="apiVersion"
