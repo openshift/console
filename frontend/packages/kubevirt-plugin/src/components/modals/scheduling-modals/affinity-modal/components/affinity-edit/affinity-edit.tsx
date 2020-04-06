@@ -4,57 +4,49 @@ import { FirehoseResult } from '@console/internal/components/utils';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { ModalBody } from '@console/internal/components/factory';
 import { ValidationErrorType } from '@console/shared';
-import { isLoaded } from '../../../../../utils';
-import { ModalFooter } from '../../../modal/modal-footer';
+import { isLoaded } from '../../../../../../utils';
+import { ModalFooter } from '../../../../modal/modal-footer';
 import {
   AFFINITY_TYPE_LABLES,
   AFFINITY_CONDITIONS,
   AFFINITY_CONDITION_LABELS,
-} from '../../shared/consts';
-import { FormRow } from '../../../../form/form-row';
-import {
-  isWeightValid,
-  isRequiredConditionDisabled,
-  isTermsInvalid,
-  getTopologyKeyValidation,
-} from '../validations';
-import { useIDEntities } from '../../../../../hooks/use-id-entities';
-import { NodeChecker } from '../../shared/NodeChecker/node-checker';
-import { useNodeQualifier } from '../../shared/hooks';
-import { AffinityLabel, AffinityRowData } from '../types';
-import { AffinityExpressionList } from './affinity-expression-list/affinity-expression-list';
+} from '../../../shared/consts';
+import { FormRow } from '../../../../../form/form-row';
+import { isWeightValid, isTermsInvalid, getTopologyKeyValidation } from '../../validations';
+import { useIDEntities } from '../../../../../../hooks/use-id-entities';
+import { NodeChecker } from '../../../shared/NodeChecker/node-checker';
+import { useNodeQualifier } from '../../../shared/hooks';
+import { AffinityLabel, AffinityRowData } from '../../types';
+import { AffinityExpressionList } from '../affinity-expression-list/affinity-expression-list';
+import './affinity-edit.scss';
 
 export const AffinityEdit: React.FC<AffinityEditProps> = ({
   nodes,
   affinity,
-  affinities,
   isDisabled,
   onAffinitySubmit,
   onCancel,
 }) => {
   const [focusedAffinity, setFocusedAffinity] = React.useState(affinity);
 
-  const expressionsWithID = affinity?.expressions?.map((exp, i) => ({ ...exp, id: i }));
   const [
     affinityExpressions,
     ,
     onExpressionAdd,
     onExpressionChange,
     onExpressionDelete,
-  ] = useIDEntities<AffinityLabel>(expressionsWithID);
+  ] = useIDEntities<AffinityLabel>(affinity?.expressions);
 
   const onLabelExpressionAdd = () =>
     onExpressionAdd({ id: null, key: '', values: [], operator: 'In' } as AffinityLabel);
 
-  const fieldsWithID = affinity?.fields?.map((field, i) => ({ ...field, id: i }));
   const [affinityFields, , onFieldAdd, onFieldChange, onFieldDelete] = useIDEntities<AffinityLabel>(
-    fieldsWithID,
+    affinity?.fields,
   );
 
   const onLabelFieldAdd = () =>
     onFieldAdd({ id: null, key: '', values: [], operator: 'In' } as AffinityLabel);
 
-  const isRequiredDisabled = isRequiredConditionDisabled(focusedAffinity, affinities);
   const isNodeAffinity = focusedAffinity.type === 'nodeAffinity';
   const {
     isTopologyDisabled,
@@ -131,14 +123,8 @@ export const AffinityEdit: React.FC<AffinityEditProps> = ({
               <FormSelectOption
                 key={AFFINITY_CONDITIONS.required}
                 value={AFFINITY_CONDITIONS.required}
-                label={
-                  !isRequiredDisabled
-                    ? AFFINITY_CONDITION_LABELS[AFFINITY_CONDITIONS.required]
-                    : `${
-                        AFFINITY_CONDITION_LABELS[AFFINITY_CONDITIONS.required]
-                      } - Affinity already in use`
-                }
-                isDisabled={isDisabled || isRequiredDisabled}
+                label={AFFINITY_CONDITION_LABELS[AFFINITY_CONDITIONS.required]}
+                isDisabled={isDisabled}
               />
             </FormSelect>
           </FormRow>
@@ -183,7 +169,7 @@ export const AffinityEdit: React.FC<AffinityEditProps> = ({
           )}
           <Divider />
           <FormRow
-            title="Expressions"
+            title={isNodeAffinity ? 'Node Labels' : 'Workload Labels'}
             fieldId={'expressions'}
             validationType={isExpressionsInvalid && ValidationErrorType.Error}
             validationMessage={isExpressionsInvalid && 'Missing fields'}
@@ -240,7 +226,6 @@ export const AffinityEdit: React.FC<AffinityEditProps> = ({
 type AffinityEditProps = {
   nodes?: FirehoseResult<K8sResourceKind[]>;
   affinity: AffinityRowData;
-  affinities: AffinityRowData[];
   isDisabled?: boolean;
   onAffinitySubmit: (affinity: AffinityRowData) => void;
   onCancel: (affinity: AffinityRowData) => void;

@@ -18,7 +18,7 @@ import { ModalFooter } from '../../modal/modal-footer';
 import { AFFINITY_MODAL_TITLE, AFFINITY_CREATE, AFFINITY_EDITING } from '../shared/consts';
 import { AffinityTable } from './components/affinity-table/affinity-table';
 import { AffinityRow } from './components/affinity-table/affinity-row';
-import { AffinityEdit } from './components/affinity-edit';
+import { AffinityEdit } from './components/affinity-edit/affinity-edit';
 import { AffinityRowData } from './types';
 import {
   getRowsDataFromAffinity,
@@ -157,7 +157,6 @@ export const AffinityModal = withHandlePromise<AffinityModalProps>(
           <AffinityEdit
             nodes={nodes}
             affinity={focusedAffinity}
-            affinities={affinities}
             onAffinitySubmit={isCreating ? onAffinityAdd : onAffinityChange}
             onCancel={onCancel}
           />

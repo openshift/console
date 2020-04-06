@@ -5,18 +5,6 @@ export const isWeightValid = (focusedAffinity: AffinityRowData) =>
   focusedAffinity.condition === AFFINITY_CONDITIONS.required ||
   (focusedAffinity.weight > 0 && focusedAffinity.weight <= 100);
 
-export const isRequiredConditionDisabled = (
-  focusedAffinity: AffinityRowData,
-  affinities: AffinityRowData[],
-) =>
-  focusedAffinity.type === 'nodeAffinity' &&
-  !!affinities?.some(
-    (aff) =>
-      aff.type === 'nodeAffinity' &&
-      aff.condition === AFFINITY_CONDITIONS.required &&
-      aff.id !== focusedAffinity.id,
-  );
-
 export const isTermsInvalid = (terms: AffinityLabel[]) =>
   terms.some(
     ({ key, values, operator }) =>

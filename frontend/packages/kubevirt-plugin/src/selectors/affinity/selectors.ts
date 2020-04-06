@@ -1,5 +1,8 @@
 // import * as _ from 'lodash';
-import { NodeAffinity, PodAffinity } from '@console/internal/module/k8s';
+import {
+  NodeAffinity,
+  PodAffinity,
+} from '../../components/modals/scheduling-modals/affinity-modal/types';
 
 export const getRequiredScheduling = (affinity: NodeAffinity | PodAffinity) =>
   affinity?.requiredDuringSchedulingIgnoredDuringExecution;

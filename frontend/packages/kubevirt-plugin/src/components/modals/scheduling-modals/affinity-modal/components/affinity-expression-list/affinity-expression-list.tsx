@@ -24,10 +24,10 @@ export const AffinityExpressionList = ({
           <GridItem span={4}>
             <Text component={TextVariants.h6}>{LABEL_KEY}</Text>
           </GridItem>
-          <GridItem span={3}>
+          <GridItem span={2}>
             <Text component={TextVariants.h6}>Operator</Text>
           </GridItem>
-          <GridItem span={5}>
+          <GridItem span={6}>
             <Text component={TextVariants.h6}>Values</Text>
           </GridItem>
           {expressions.map((expression) => (
