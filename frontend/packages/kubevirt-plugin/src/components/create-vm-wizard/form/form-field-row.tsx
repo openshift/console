@@ -7,8 +7,6 @@ import { iGet, iGetIn, iGetIsLoaded } from '../../../utils/immutable';
 import { FormRow } from '../../form/form-row';
 import { FormFieldContext } from './form-field-context';
 import { FormFieldType } from './form-field';
-import { FormFieldReviewContext } from './form-field-review-context';
-import { FormFieldReviewMemoRow, FormFieldReviewRow } from './form-field-review-row';
 
 const isLoading = (loadingResources?: { [k: string]: any }) =>
   loadingResources &&
@@ -73,29 +71,19 @@ export const FormFieldRow: React.FC<FieldFormRowProps> = ({
   if (!field || !fieldKey || isFieldHidden(field)) {
     return null;
   }
+  const Component = memoize ? FormFieldInnerMemoRow : FormFieldInnerRow;
 
   return (
-    <FormFieldReviewContext.Consumer>
-      {({ isReview }: { isReview: boolean }) => {
-        if (isReview) {
-          const Component = memoize ? FormFieldReviewMemoRow : FormFieldReviewRow;
-          return <Component key="review" field={field} fieldType={fieldType} />;
-        }
-        const Component = memoize ? FormFieldInnerMemoRow : FormFieldInnerRow;
-        return (
-          <Component
-            key="main"
-            field={field}
-            fieldType={fieldType}
-            fieldHelp={fieldHelp}
-            loadingResources={loadingResources}
-            validation={validation}
-          >
-            {children}
-          </Component>
-        );
-      }}
-    </FormFieldReviewContext.Consumer>
+    <Component
+      key="main"
+      field={field}
+      fieldType={fieldType}
+      fieldHelp={fieldHelp}
+      loadingResources={loadingResources}
+      validation={validation}
+    >
+      {children}
+    </Component>
   );
 };
 

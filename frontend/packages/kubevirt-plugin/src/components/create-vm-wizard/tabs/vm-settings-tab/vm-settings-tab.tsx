@@ -1,6 +1,7 @@
 import * as React from 'react';
 import {
   Checkbox,
+  Form,
   FormSelect,
   FormSelectOption,
   TextArea,
@@ -22,7 +23,6 @@ import { iGetVmSettings } from '../../selectors/immutable/vm-settings';
 import { ActionType } from '../../redux/types';
 import { getFieldId, getPlaceholder } from '../../utils/renderable-field-utils';
 import { iGetCommonData } from '../../selectors/immutable/selectors';
-import { FormFieldForm } from '../../form/form-field-form';
 import { iGetProvisionSourceStorage } from '../../selectors/immutable/storage';
 import { WorkloadProfile } from './workload-profile';
 import { OSFlavor } from './os-flavor';
@@ -50,12 +50,11 @@ export class VMSettingsTabComponent extends React.Component<VMSettingsTabCompone
       commonTemplates,
       provisionSourceStorage,
       updateStorage,
-      isReview,
       openshiftFlag,
     } = this.props;
 
     return (
-      <FormFieldForm isReview={isReview}>
+      <Form>
         <FormFieldMemoRow
           field={this.getField(VMSettingsField.NAME)}
           fieldType={FormFieldType.TEXT}
@@ -75,7 +74,6 @@ export class VMSettingsTabComponent extends React.Component<VMSettingsTabCompone
             />
           </FormField>
         </FormFieldMemoRow>
-        {!isReview && (
           <UserTemplates
             key={VMSettingsField.USER_TEMPLATE}
             userTemplateField={this.getField(VMSettingsField.USER_TEMPLATE)}
@@ -85,7 +83,6 @@ export class VMSettingsTabComponent extends React.Component<VMSettingsTabCompone
             openshiftFlag={openshiftFlag}
             onChange={this.props.onFieldChange}
           />
-        )}
         <FormFieldMemoRow
           key={VMSettingsField.PROVISION_SOURCE_TYPE}
           field={this.getField(VMSettingsField.PROVISION_SOURCE_TYPE)}
@@ -129,7 +126,6 @@ export class VMSettingsTabComponent extends React.Component<VMSettingsTabCompone
           memoryField={this.getField(VMSettingsField.MEMORY)}
           cpuField={this.getField(VMSettingsField.CPU)}
           onChange={this.props.onFieldChange}
-          isReview={isReview}
         />
         <WorkloadProfile
           userTemplates={userTemplates}
@@ -153,7 +149,7 @@ export class VMSettingsTabComponent extends React.Component<VMSettingsTabCompone
             />
           </FormField>
         </FormFieldMemoRow>
-      </FormFieldForm>
+      </Form>
     );
   }
 }
@@ -175,7 +171,6 @@ type VMSettingsTabComponentProps = {
   commonTemplates: any;
   userTemplateName: string;
   userTemplates: any;
-  isReview: boolean;
   openshiftFlag: boolean;
   wizardReduxID: string;
 };
@@ -188,4 +183,7 @@ const dispatchToProps = (dispatch, props) => ({
   },
 });
 
-export const VMSettingsTab = connect(stateToProps, dispatchToProps)(VMSettingsTabComponent);
+export const VMSettingsTab = connect(
+  stateToProps,
+  dispatchToProps,
+)(VMSettingsTabComponent);
