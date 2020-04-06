@@ -11,7 +11,7 @@ export enum GridPosition {
 }
 
 const mapCardsToGrid = (
-  cards: GridDashboardCard[],
+  cards: GridDashboardCard[] = [],
   keyPrefix: string,
   ignoreCardSpan: boolean = false,
 ): React.ReactNode[] =>
@@ -22,40 +22,52 @@ const mapCardsToGrid = (
     </GridItem>
   ));
 
-const DashboardGrid: React.FC<DashboardGridProps> = ({
-  mainCards,
-  leftCards = [],
-  rightCards = [],
-}) => {
+const DashboardGrid: React.FC<DashboardGridProps> = ({ mainCards, leftCards, rightCards }) => {
   const [containerRef, width] = useRefWidth();
-  const grid =
-    width <= parseInt(breakpointLG.value, 10) ? (
-      <Grid className="co-dashboard-grid">
-        <GridItem lg={12} md={12} sm={12}>
-          <Grid className="co-dashboard-grid">{mapCardsToGrid(mainCards, 'main', true)}</Grid>
-        </GridItem>
-        <GridItem key="left" lg={12} md={12} sm={12}>
-          <Grid className="co-dashboard-grid">{mapCardsToGrid(leftCards, 'left', true)}</Grid>
-        </GridItem>
-        <GridItem key="right" lg={12} md={12} sm={12}>
-          <Grid className="co-dashboard-grid">{mapCardsToGrid(rightCards, 'right', true)}</Grid>
-        </GridItem>
-      </Grid>
-    ) : (
-      <Grid className="co-dashboard-grid">
-        <GridItem key="left" lg={3} md={3} sm={3}>
-          <Grid className="co-dashboard-grid">{mapCardsToGrid(leftCards, 'left')}</Grid>
-        </GridItem>
-        <GridItem lg={6} md={6} sm={6}>
-          <Grid className="co-dashboard-grid">{mapCardsToGrid(mainCards, 'main')}</Grid>
-        </GridItem>
-        <GridItem key="right" lg={3} md={3} sm={3}>
-          <Grid className="co-dashboard-grid">{mapCardsToGrid(rightCards, 'right')}</Grid>
-        </GridItem>
-      </Grid>
-    );
+  const smallGrid = !!containerRef.current && width <= parseInt(breakpointLG.value, 10);
 
-  return <div ref={containerRef}>{grid}</div>;
+  const mainGridCards = React.useMemo(() => mapCardsToGrid(mainCards, 'main', smallGrid), [
+    mainCards,
+    smallGrid,
+  ]);
+  const leftGridCards = React.useMemo(() => mapCardsToGrid(leftCards, 'left', smallGrid), [
+    leftCards,
+    smallGrid,
+  ]);
+  const rightGridCards = React.useMemo(() => mapCardsToGrid(rightCards, 'right', smallGrid), [
+    rightCards,
+    smallGrid,
+  ]);
+
+  return (
+    <div ref={containerRef}>
+      {smallGrid ? (
+        <Grid className="co-dashboard-grid">
+          <GridItem lg={12} md={12} sm={12}>
+            <Grid className="co-dashboard-grid">{mainGridCards}</Grid>
+          </GridItem>
+          <GridItem lg={12} md={12} sm={12}>
+            <Grid className="co-dashboard-grid">{leftGridCards}</Grid>
+          </GridItem>
+          <GridItem lg={12} md={12} sm={12}>
+            <Grid className="co-dashboard-grid">{rightGridCards}</Grid>
+          </GridItem>
+        </Grid>
+      ) : (
+        <Grid className="co-dashboard-grid">
+          <GridItem lg={3} md={3} sm={3}>
+            <Grid className="co-dashboard-grid">{leftGridCards}</Grid>
+          </GridItem>
+          <GridItem lg={6} md={6} sm={6}>
+            <Grid className="co-dashboard-grid">{mainGridCards}</Grid>
+          </GridItem>
+          <GridItem lg={3} md={3} sm={3}>
+            <Grid className="co-dashboard-grid">{rightGridCards}</Grid>
+          </GridItem>
+        </Grid>
+      )}
+    </div>
+  );
 };
 
 export default DashboardGrid;

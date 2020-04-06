@@ -59,14 +59,17 @@ const ProjectDashboard_: React.FC<ProjectDashboardReduxProps & ProjectDashboardP
     namespaceLinks,
   };
 
+  const hasNamespaceLinks = !!namespaceLinks.length;
+
+  const rc = React.useMemo(
+    () => (hasNamespaceLinks ? [{ Card: LauncherCard }, ...rightCards] : rightCards),
+    [hasNamespaceLinks],
+  );
+
   return (
     <ProjectDashboardContext.Provider value={context}>
       <Dashboard>
-        <DashboardGrid
-          mainCards={mainCards}
-          leftCards={leftCards}
-          rightCards={namespaceLinks.length ? [{ Card: LauncherCard }, ...rightCards] : rightCards}
-        />
+        <DashboardGrid mainCards={mainCards} leftCards={leftCards} rightCards={rc} />
       </Dashboard>
     </ProjectDashboardContext.Provider>
   );
