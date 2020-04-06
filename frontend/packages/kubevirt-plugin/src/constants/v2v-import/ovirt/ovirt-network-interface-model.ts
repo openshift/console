@@ -34,9 +34,9 @@ export class OvirtNetworkInterfaceModel extends ObjectEnum<string> {
   );
 
   private static readonly stringMapper = OvirtNetworkInterfaceModel.ALL.reduce(
-    (accumulator, diskBusType: OvirtNetworkInterfaceModel) => ({
+    (accumulator, type: OvirtNetworkInterfaceModel) => ({
       ...accumulator,
-      [diskBusType.value]: diskBusType,
+      [type.value]: type,
     }),
     {},
   );

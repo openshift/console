@@ -96,3 +96,15 @@ export const OVirtProviderModel: K8sKind = {
   kind: 'OVirtProvider',
   id: 'ovirtprovider',
 };
+
+export const VirtualMachineImportModel: K8sKind = {
+  label: 'Virtual Machine Import',
+  labelPlural: 'Virtual Machine Imports',
+  apiVersion: 'v1alpha1',
+  apiGroup: 'v2v.kubevirt.io',
+  plural: 'virtualmachineimports',
+  abbr: 'OVMI',
+  namespaced: true,
+  kind: 'VirtualMachineImport',
+  id: 'virtualmachineimport',
+};

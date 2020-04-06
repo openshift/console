@@ -17,6 +17,7 @@ import {
   DiskType,
   NetworkInterfaceModel,
   NetworkInterfaceType,
+  NetworkType,
   VolumeType,
 } from '../../../../../../../constants/vm';
 import { NetworkWrapper } from '../../../../../../../k8s/wrapper/vm/network-wrapper';
@@ -74,6 +75,9 @@ export const getDisks = (vm: OvirtVM, storageClassConfigMap: ConfigMapKind): VMW
         .setVolumeMode(getDefaultSCVolumeMode(storageClassConfigMap))
         .setAccessModes(getDefaultSCAccessModes(storageClassConfigMap))
         .asResource(),
+      importData: {
+        id: disk.id,
+      },
       editConfig: {
         disableEditing: true,
         isFieldEditableOverride: {
@@ -86,35 +90,41 @@ export const getDisks = (vm: OvirtVM, storageClassConfigMap: ConfigMapKind): VMW
 
 export const getNics = (vm: OvirtVM): VMWizardNetwork[] => {
   const getUniqueName = createUniqueNameResolver(vm.nics);
+  const nics = (vm.nics || []).filter((n) => n);
 
-  return (vm.nics || [])
-    .filter((n) => n)
-    .map((nic, idx) => {
-      const name = alignWithDNS1123(getUniqueName(nic.name) || nic.id);
+  return nics.map((nic, idx) => {
+    const name = alignWithDNS1123(getUniqueName(nic.name) || nic.id);
+    const networkWrapper = new NetworkWrapper().init({ name });
 
-      return {
-        id: `${nic.id}-${idx + 1}`,
-        type: VMWizardNetworkType.V2V_OVIRT_IMPORT,
-        network: new NetworkWrapper().init({ name }).asResource(),
-        networkInterface: new NetworkInterfaceWrapper()
-          .init({
-            name,
-            model:
-              OvirtNetworkInterfaceModel.fromString(
-                nic.interface,
-              )?.getKubevirtNetworkInterfaceModel() || NetworkInterfaceModel.VIRTIO,
-            macAddress: nic.mac,
-          })
-          .setType(NetworkInterfaceType.BRIDGE)
-          .asResource(),
-        editConfig: {
-          disableEditing: true,
-          isFieldEditableOverride: {
-            network: true,
-          },
+    if (nics.length === 1) {
+      networkWrapper.setType(NetworkType.POD); // default to POD
+    }
+    return {
+      id: `${nic.id}-${idx + 1}`,
+      type: VMWizardNetworkType.V2V_OVIRT_IMPORT,
+      network: networkWrapper.asResource(),
+      networkInterface: new NetworkInterfaceWrapper()
+        .init({
+          name,
+          model:
+            OvirtNetworkInterfaceModel.fromString(
+              nic.interface,
+            )?.getKubevirtNetworkInterfaceModel() || NetworkInterfaceModel.VIRTIO,
+          macAddress: nic.mac,
+        })
+        .setType(NetworkInterfaceType.BRIDGE)
+        .asResource(),
+      importData: {
+        id: nic.id,
+      },
+      editConfig: {
+        disableEditing: true,
+        isFieldEditableOverride: {
+          network: true,
         },
-      };
-    });
+      },
+    };
+  });
 };
 
 const getWorkload = (vm: OvirtVM) => {

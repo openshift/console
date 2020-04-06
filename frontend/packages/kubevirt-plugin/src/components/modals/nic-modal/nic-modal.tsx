@@ -292,7 +292,9 @@ export const NICModal = withHandlePromise((props: NICModalProps) => {
       <ModalFooter
         id="nic"
         submitButtonText={isEditing ? SAVE : ADD}
-        errorMessage={errorMessage || (showUIError ? getDialogUIError(hasAllRequiredFilled) : null)}
+        errorMessage={
+          errorMessage || (!isValid && showUIError ? getDialogUIError(hasAllRequiredFilled) : null)
+        }
         isDisabled={inProgress}
         isSimpleError={showUIError}
         onSubmit={submit}

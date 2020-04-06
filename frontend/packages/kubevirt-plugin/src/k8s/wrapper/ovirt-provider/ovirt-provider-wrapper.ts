@@ -12,8 +12,8 @@ export class OVirtProviderWrappper extends K8sResourceWrapper<
   K8sResourceCommon,
   OVirtProviderWrappper
 > {
-  constructor(v2vvmware?: K8sResourceCommon | OVirtProviderWrappper | any, copy = false) {
-    super(OVirtProviderModel, v2vvmware, copy);
+  constructor(ovirtProvider?: K8sResourceCommon | OVirtProviderWrappper | any, copy = false) {
+    super(OVirtProviderModel, ovirtProvider, copy);
   }
 
   init(data: K8sInitAddon & InitData = {}) {

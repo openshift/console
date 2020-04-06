@@ -256,7 +256,9 @@ const providerUpdater = (options: UpdateOptions) => {
 
   dispatch(
     vmWizardInternalActions[InternalActionType.UpdateVmSettings](id, {
-      [VMSettingsField.NAME]: vmFieldUpdate,
+      [VMSettingsField.NAME]: {
+        value: needsValuesReset ? null : undefined,
+      },
       [VMSettingsField.DESCRIPTION]: vmFieldUpdate,
       [VMSettingsField.OPERATING_SYSTEM]: {
         ...vmFieldUpdate,
@@ -266,6 +268,9 @@ const providerUpdater = (options: UpdateOptions) => {
       [VMSettingsField.MEMORY]: vmFieldUpdate,
       [VMSettingsField.CPU]: vmFieldUpdate,
       [VMSettingsField.WORKLOAD_PROFILE]: vmFieldUpdate,
+      [VMSettingsField.START_VM]: {
+        isHidden: asHidden(!isOvProvider, VMWizardProps.isProviderImport),
+      },
     }),
   );
 

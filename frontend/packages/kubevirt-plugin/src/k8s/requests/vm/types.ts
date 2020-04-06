@@ -4,7 +4,8 @@ import { VMKind } from '../../../types/vm';
 export type OnVMCreate = (vm: VMKind) => Promise<void>;
 
 export type ImporterResult = {
-  networks: VMWizardNetwork[];
-  storages: VMWizardStorage[];
-  onCreate: OnVMCreate;
+  networks?: VMWizardNetwork[];
+  storages?: VMWizardStorage[];
+  onCreate?: OnVMCreate;
+  skipVMCreation?: boolean;
 };

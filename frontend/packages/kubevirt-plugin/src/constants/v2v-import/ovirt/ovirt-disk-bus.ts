@@ -21,9 +21,9 @@ export class OvirtDiskBus extends ObjectEnum<string> {
   );
 
   private static readonly stringMapper = OvirtDiskBus.ALL.reduce(
-    (accumulator, diskBusType: OvirtDiskBus) => ({
+    (accumulator, type: OvirtDiskBus) => ({
       ...accumulator,
-      [diskBusType.value]: diskBusType,
+      [type.value]: type,
     }),
     {},
   );

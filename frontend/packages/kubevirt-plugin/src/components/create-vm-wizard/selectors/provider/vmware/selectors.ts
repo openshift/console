@@ -6,20 +6,20 @@ import { getSimpleV2VPRoviderStatus, V2VProviderStatus } from '../../../../../st
 import { getVms } from '../selectors';
 
 export const getVmwareField = (
-  vmSettings: ImportProvidersSettings,
+  importSettings: ImportProvidersSettings,
   key: VMWareProviderField,
   defaultValue: any = undefined,
 ) =>
-  _.get(vmSettings, [ImportProvidersField.PROVIDERS_DATA, VMImportProvider.VMWARE, key]) ||
+  _.get(importSettings, [ImportProvidersField.PROVIDERS_DATA, VMImportProvider.VMWARE, key]) ||
   defaultValue;
 
 export const getVmwareAttribute = (
-  vmSettings: ImportProvidersSettings,
+  importSettings: ImportProvidersSettings,
   key: VMWareProviderField,
   attribute = 'value',
   defaultValue: any = undefined,
 ) =>
-  _.get(vmSettings, [
+  _.get(importSettings, [
     ImportProvidersField.PROVIDERS_DATA,
     VMImportProvider.VMWARE,
     key,
@@ -27,10 +27,10 @@ export const getVmwareAttribute = (
   ]) || defaultValue;
 
 export const getVmwareValue = (
-  vmSettings: ImportProvidersSettings,
+  importSettings: ImportProvidersSettings,
   key: VMWareProviderField,
   defaultValue: any = undefined,
-) => getVmwareAttribute(vmSettings, key, 'value', defaultValue);
+) => getVmwareAttribute(importSettings, key, 'value', defaultValue);
 
 export const getThumbprint = (v2vvmware: K8sResourceKind) => _.get(v2vvmware, 'spec.thumbprint');
 

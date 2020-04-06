@@ -285,6 +285,9 @@ export type VMWizardNetwork = {
   networkInterface: V1NetworkInterface;
   validation?: UINetworkInterfaceValidation;
   editConfig?: UINetworkEditConfig;
+  importData?: {
+    id?: string;
+  };
 };
 
 export enum VMWizardStorageType {
@@ -309,6 +312,7 @@ export type VMWizardStorage = {
   persistentVolumeClaim?: V1PersistentVolumeClaim;
   editConfig?: UIStorageEditConfig;
   importData?: {
+    id?: string;
     mountPath?: string;
     devicePath?: string;
     fileName?: string;
