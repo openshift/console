@@ -14,6 +14,7 @@ import {
 import { toIECUnit } from '../../../components/form/size-unit-utils';
 import { DataVolumeModel } from '../../../models';
 import { K8sResourceObjectWithTypePropertyWrapper } from '../common/k8s-resource-object-with-type-property-wrapper';
+import { K8sInitAddon } from '../common/util/k8s-mixin';
 
 type CombinedTypeData = {
   name?: string;
@@ -83,6 +84,20 @@ export class DataVolumeWrapper extends K8sResourceObjectWithTypePropertyWrapper<
     super(DataVolumeModel, dataVolumeTemplate, copy, DataVolumeSourceType, ['spec', 'source']);
   }
 
+  init(
+    data: K8sInitAddon & { size?: string | number; unit?: string; storageClassName?: string } = {},
+  ) {
+    super.init(data);
+    const { size, unit, storageClassName } = data;
+    if (size != null && unit) {
+      this.setSize(size, unit);
+    }
+    if (storageClassName !== undefined) {
+      this.setStorageClassName(storageClassName);
+    }
+    return this;
+  }
+
   getStorageClassName = () => getDataVolumeStorageClassName(this.data as any);
 
   getPesistentVolumeClaimName = () => this.getIn(['spec', 'source', 'pvc', 'name']);
@@ -115,6 +130,18 @@ export class DataVolumeWrapper extends K8sResourceObjectWithTypePropertyWrapper<
   getAccessModesEnum = () => {
     const accessModes = this.getAccessModes();
     return accessModes ? accessModes.map((mode) => AccessMode.fromString(mode)) : accessModes;
+  };
+
+  setSize = (value: string | number, unit = 'Gi') => {
+    this.ensurePath('spec.pvc.resources.requests');
+    (this.data.spec.pvc.resources.requests as any).storage = `${value}${unit}`;
+    return this;
+  };
+
+  setStorageClassName = (storageClassName: string) => {
+    this.ensurePath('spec.pvc');
+    this.data.spec.pvc.storageClassName = storageClassName;
+    return this;
   };
 
   setAccessModes = (accessModes: AccessMode[]) => {

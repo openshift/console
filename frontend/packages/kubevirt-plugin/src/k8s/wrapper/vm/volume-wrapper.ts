@@ -38,6 +38,13 @@ export class VolumeWrapper extends ObjectWithTypePropertyWrapper<
     super(volume, copy, VolumeType);
   }
 
+  init({ name }: { name?: string }) {
+    if (name !== undefined) {
+      this.data.name = name;
+    }
+    return this;
+  }
+
   getName = () => this.get('name');
 
   getCloudInitNoCloud = () => this.get('cloudInitNoCloud');

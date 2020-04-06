@@ -23,11 +23,9 @@ export class PersistentVolumeClaimWrapper extends K8sResourceWrapper<
     super(PersistentVolumeClaimModel, persistentVolumeClaim, copy);
   }
 
-  init(
-    data: K8sInitAddon & { size?: string | number; unit?: string; storageClassName?: string } = {},
-  ) {
+  init(data: K8sInitAddon & { size?: string | number; unit?: string; storageClassName?: string }) {
     super.init(data);
-    const { size, unit, storageClassName } = data;
+    const { size, unit, storageClassName } = data || {};
     if (size != null && unit) {
       this.setSize(size, unit);
     }

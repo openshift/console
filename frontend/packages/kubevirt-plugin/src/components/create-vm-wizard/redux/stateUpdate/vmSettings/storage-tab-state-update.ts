@@ -104,6 +104,7 @@ export const internalStorageDiskBusUpdater = ({
         VMWizardStorageType.PROVISION_SOURCE_DISK,
         VMWizardStorageType.V2V_VMWARE_IMPORT,
         VMWizardStorageType.V2V_VMWARE_IMPORT_TEMP,
+        VMWizardStorageType.V2V_OVIRT_IMPORT,
         VMWizardStorageType.WINDOWS_GUEST_TOOLS,
       ].includes(type)
     ) {

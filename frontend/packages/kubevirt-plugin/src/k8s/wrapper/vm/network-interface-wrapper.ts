@@ -10,28 +10,34 @@ export class NetworkInterfaceWrapper extends ObjectWithTypePropertyWrapper<
   CombinedTypeData,
   NetworkInterfaceWrapper
 > {
-  /**
-   * @deprecated FIXME deprecate initializeFromSimpleData in favor of init
-   */
-  static initializeFromSimpleData = ({
+  constructor(nic?: V1NetworkInterface | NetworkInterfaceWrapper, copy = false) {
+    super(nic, copy, NetworkInterfaceType);
+  }
+
+  init({
     name,
     model,
     macAddress,
-    interfaceType,
     bootOrder,
   }: {
     name?: string;
     model?: NetworkInterfaceModel;
-    interfaceType?: NetworkInterfaceType;
     macAddress?: string;
     bootOrder?: number;
-  }) =>
-    new NetworkInterfaceWrapper({ name, model: model?.getValue(), macAddress, bootOrder }).setType(
-      interfaceType,
-    );
-
-  constructor(nic?: V1NetworkInterface | NetworkInterfaceWrapper, copy = false) {
-    super(nic, copy, NetworkInterfaceType);
+  }) {
+    if (name !== undefined) {
+      this.data.name = name;
+    }
+    if (model !== undefined) {
+      this.data.model = model && model.getValue();
+    }
+    if (macAddress !== undefined) {
+      this.data.macAddress = macAddress;
+    }
+    if (bootOrder !== undefined) {
+      this.data.bootOrder = bootOrder;
+    }
+    return this;
   }
 
   getName = () => this.data?.name;

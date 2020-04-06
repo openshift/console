@@ -57,7 +57,7 @@ export const getNics = (parsedVm): VMWizardNetwork[] => {
   return networkDevices.map((device, idx) => {
     const name = alignWithDNS1123(_.get(device, ['DeviceInfo', 'Label']));
     const macAddress = device.MacAddress;
-    const networkWrapper = NetworkWrapper.initializeFromSimpleData({ name });
+    const networkWrapper = new NetworkWrapper().init({ name });
 
     if (networkDevices.length === 1) {
       networkWrapper.setType(NetworkType.POD); // default to POD
@@ -67,12 +67,14 @@ export const getNics = (parsedVm): VMWizardNetwork[] => {
       id: `${idx + 1}`,
       type: VMWizardNetworkType.V2V_VMWARE_IMPORT,
       network: networkWrapper.asResource(),
-      networkInterface: NetworkInterfaceWrapper.initializeFromSimpleData({
-        name,
-        model: NetworkInterfaceModel.VIRTIO,
-        macAddress,
-        interfaceType: NetworkInterfaceType.BRIDGE,
-      }).asResource(),
+      networkInterface: new NetworkInterfaceWrapper()
+        .init({
+          name,
+          model: NetworkInterfaceModel.VIRTIO,
+          macAddress,
+        })
+        .setType(NetworkInterfaceType.BRIDGE)
+        .asResource(),
     };
   });
 };

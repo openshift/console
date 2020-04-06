@@ -12,21 +12,15 @@ export class NetworkWrapper extends ObjectWithTypePropertyWrapper<
   CombinedTypeData,
   NetworkWrapper
 > {
-  /**
-   * @deprecated FIXME deprecate initializeFromSimpleData in favor of init
-   */
-  static initializeFromSimpleData = ({
-    name,
-    type,
-    multusNetworkName,
-  }: {
-    name?: string;
-    type?: NetworkType;
-    multusNetworkName?: string;
-  }) => new NetworkWrapper({ name }).setType(type, { networkName: multusNetworkName });
-
   constructor(network?: V1Network | NetworkWrapper, copy = false) {
     super(network, copy, NetworkType);
+  }
+
+  init({ name }: { name?: string }) {
+    if (name !== undefined) {
+      this.data.name = name;
+    }
+    return this;
   }
 
   getName = () => this.data?.name;

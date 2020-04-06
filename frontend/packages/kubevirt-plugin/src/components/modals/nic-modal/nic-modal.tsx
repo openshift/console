@@ -45,6 +45,7 @@ export type NetworkProps = {
   allowPodNetwork: boolean;
   network?: NetworkWrapper;
   onChange: (networkChoice: NetworkType, network: string) => void;
+  acceptEmptyValues?: boolean;
 };
 
 export const Network: React.FC<NetworkProps> = ({
@@ -55,6 +56,7 @@ export const Network: React.FC<NetworkProps> = ({
   nads,
   usedMultusNetworkNames,
   allowPodNetwork,
+  acceptEmptyValues,
 }) => {
   const nadsLoading = !isLoaded(nads);
   const nadsLoadError = getLoadError(nads, NetworkAttachmentDefinitionModel);
@@ -81,12 +83,12 @@ export const Network: React.FC<NetworkProps> = ({
           );
           onChange(newNetworkType, newNetworkType === NetworkType.MULTUS ? net : undefined);
         }}
-        value={asFormSelectValue(network && network.getReadableName())}
+        value={asFormSelectValue(network?.getReadableName())}
         id={id}
         isDisabled={isDisabled || nadsLoading || nadsLoadError}
       >
         <FormSelectPlaceholderOption
-          isDisabled
+          isDisabled={!acceptEmptyValues}
           placeholder={
             networkChoices.length === 0
               ? '--- Network Definitions not available ---'
@@ -147,24 +149,28 @@ export const NICModal = withHandlePromise((props: NICModalProps) => {
   const [interfaceType, setInterfaceType] = React.useState<NetworkInterfaceType>(nic.getType());
   const [macAddress, setMacAddress] = React.useState<string>(nic.getMACAddress() || '');
 
-  const resultNIC = NetworkInterfaceWrapper.initializeFromSimpleData({
-    name,
-    model,
-    interfaceType,
-    macAddress,
-  });
+  const resultNIC = new NetworkInterfaceWrapper()
+    .init({
+      name,
+      model,
+      macAddress,
+    })
+    .setType(interfaceType);
 
-  const resultNetwork = NetworkWrapper.initializeFromSimpleData({
-    name,
-    type: networkType,
-    multusNetworkName,
-  });
+  const resultNetwork = new NetworkWrapper()
+    .init({
+      name,
+    })
+    .setType(networkType, { networkName: multusNetworkName });
 
   const {
     validations: { name: nameValidation, macAddress: macAddressValidation },
     isValid,
     hasAllRequiredFilled,
-  } = validateNIC(resultNIC, resultNetwork, { usedInterfacesNames });
+  } = validateNIC(resultNIC, resultNetwork, {
+    usedInterfacesNames,
+    acceptEmptyNetwork: editConfig?.acceptEmptyValuesOverride?.network,
+  });
 
   const [showUIError, setShowUIError] = useShowErrorToggler(
     !!showInitialValidation,
@@ -177,7 +183,7 @@ export const NICModal = withHandlePromise((props: NICModalProps) => {
       setMacAddress('');
     }
 
-    if (!interfaceType || !newType.allowsInterfaceType(interfaceType)) {
+    if (!interfaceType || (newType && !newType.allowsInterfaceType(interfaceType))) {
       setInterfaceType(newType.getDefaultInterfaceType());
     }
 
@@ -246,6 +252,7 @@ export const NICModal = withHandlePromise((props: NICModalProps) => {
             nads={nads}
             usedMultusNetworkNames={usedMultusNetworkNames}
             allowPodNetwork={allowPodNetwork}
+            acceptEmptyValues={editConfig?.acceptEmptyValuesOverride?.network}
           />
           <FormRow title="Type" fieldId={asId('type')} isRequired>
             <FormSelect
@@ -303,7 +310,7 @@ export type NICModalProps = {
   nic?: NetworkInterfaceWrapper;
   network?: NetworkWrapper;
   onSubmit: (networkInterface: NetworkInterfaceWrapper, network: NetworkWrapper) => Promise<any>;
-  nads?: FirehoseResult<K8sResourceKind[]>;
+  nads?: FirehoseResult;
   usedInterfacesNames: Set<string>;
   usedMultusNetworkNames: Set<string>;
   allowPodNetwork: boolean;

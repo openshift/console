@@ -19,4 +19,7 @@ export type UINetworkEditConfig = {
     type?: boolean;
     macAddress?: boolean;
   };
+  acceptEmptyValuesOverride?: {
+    network?: boolean;
+  };
 };

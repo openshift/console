@@ -57,15 +57,29 @@ const VMWizardNICModal: React.FC<VMWizardNICModalProps> = (props) => {
       allowPodNetwork={allowPodNetwork}
       nic={new NetworkInterfaceWrapper(networkInterface, true)}
       network={new NetworkWrapper(network, true)}
-      editConfig={editConfig}
+      editConfig={{
+        ...editConfig,
+        acceptEmptyValuesOverride: {
+          network: true,
+          ...editConfig?.acceptEmptyValuesOverride,
+        },
+      }}
       onSubmit={(resultNetworkInterfaceWrapper, resultNetworkWrapper) => {
+        const finalResultNetworkWrapper = new NetworkWrapper(networkWrapper, true).mergeWith(
+          resultNetworkWrapper,
+        );
+
+        if (!resultNetworkWrapper.hasType()) {
+          finalResultNetworkWrapper.setType(); // clear
+        }
+
         addUpdateNIC({
           ...wizardNetwork,
           type: type || VMWizardNetworkType.UI_INPUT,
           networkInterface: new NetworkInterfaceWrapper(networkInterface, true)
             .mergeWith(resultNetworkInterfaceWrapper)
             .asResource(),
-          network: new NetworkWrapper(network, true).mergeWith(resultNetworkWrapper).asResource(),
+          network: finalResultNetworkWrapper.asResource(),
         });
         return Promise.resolve();
       }}

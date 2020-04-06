@@ -6,35 +6,107 @@ import {
   VMSettingsField,
   VMWizardNetwork,
   VMWizardNetworkType,
+  VMWizardProps,
+  VMWizardStorage,
+  VMWizardStorageType,
 } from '../../../../../types';
 import { vmWizardInternalActions } from '../../../../internal-actions';
 import {
   CUSTOM_FLAVOR,
+  DiskBus,
+  DiskType,
   NetworkInterfaceModel,
   NetworkInterfaceType,
+  VolumeType,
 } from '../../../../../../../constants/vm';
 import { NetworkWrapper } from '../../../../../../../k8s/wrapper/vm/network-wrapper';
 import { NetworkInterfaceWrapper } from '../../../../../../../k8s/wrapper/vm/network-interface-wrapper';
 import { BinaryUnit, convertToHighestUnit } from '../../../../../../form/size-unit-utils';
 import { OvirtVM } from '../../../../../../../types/vm-import/ovirt/ovirt-vm';
 import { iGetOvirtFieldAttribute } from '../../../../../selectors/immutable/provider/ovirt/selectors';
+import { ConfigMapKind } from '@console/internal/module/k8s';
+import { DiskWrapper } from '../../../../../../../k8s/wrapper/vm/disk-wrapper';
+import { VolumeWrapper } from '../../../../../../../k8s/wrapper/vm/volume-wrapper';
+import {
+  getDefaultSCAccessModes,
+  getDefaultSCVolumeMode,
+} from '../../../../../../../selectors/config-map/sc-defaults';
+import { toShallowJS } from '../../../../../../../utils/immutable';
+import { iGetLoadedCommonData } from '../../../../../selectors/immutable/selectors';
+import { OvirtDiskBus } from '../../../../../../../constants/v2v-import/ovirt/ovirt-disk-bus';
+import { OvirtNetworkInterfaceModel } from '../../../../../../../constants/v2v-import/ovirt/ovirt-network-interface-model';
+import { createUniqueNameResolver } from '../../../../../../../utils/strings';
+import { PersistentVolumeClaimWrapper } from '../../../../../../../k8s/wrapper/vm/persistent-volume-claim-wrapper';
+
+export const getDisks = (vm: OvirtVM, storageClassConfigMap: ConfigMapKind): VMWizardStorage[] => {
+  const { boot, disks } = vm;
+  let bootOrder = 0;
+  const getUniqueName = createUniqueNameResolver(disks);
+
+  return (disks || []).map((disk, idx) => {
+    const name = alignWithDNS1123(getUniqueName(disk.name) || disk.id);
+    const size = convertToHighestUnit(disk.size, BinaryUnit.B);
+    const bootable = boot.includes('hd') && disk.bootable;
+
+    if (bootable) {
+      bootOrder++;
+    }
+
+    return {
+      id: `${disk.id}-${idx + 1}`,
+      type: VMWizardStorageType.V2V_OVIRT_IMPORT,
+      disk: new DiskWrapper()
+        .init({ name, bootOrder: bootable ? bootOrder : undefined })
+        .setType(DiskType.DISK, {
+          bus: OvirtDiskBus.fromString(disk.interface)?.getKubevirtBus() || DiskBus.VIRTIO,
+        })
+        .asResource(),
+      volume: new VolumeWrapper()
+        .init({ name })
+        .setType(VolumeType.PERSISTENT_VOLUME_CLAIM, { claimName: name })
+        .asResource(),
+      persistentVolumeClaim: new PersistentVolumeClaimWrapper() // just to show import type - not used actually
+        .init({
+          name,
+          size: size.value,
+          unit: size.unit,
+        })
+        .setVolumeMode(getDefaultSCVolumeMode(storageClassConfigMap))
+        .setAccessModes(getDefaultSCAccessModes(storageClassConfigMap))
+        .asResource(),
+      editConfig: {
+        disableEditing: true,
+        isFieldEditableOverride: {
+          storageClass: true,
+        },
+      },
+    };
+  });
+};
 
 export const getNics = (vm: OvirtVM): VMWizardNetwork[] => {
+  const getUniqueName = createUniqueNameResolver(vm.nics);
+
   return (vm.nics || [])
     .filter((n) => n)
     .map((nic, idx) => {
-      const name = alignWithDNS1123(nic.name);
+      const name = alignWithDNS1123(getUniqueName(nic.name) || nic.id);
 
       return {
         id: `${nic.id}-${idx + 1}`,
         type: VMWizardNetworkType.V2V_OVIRT_IMPORT,
-        network: NetworkWrapper.initializeFromSimpleData({ name }).asResource(),
-        networkInterface: NetworkInterfaceWrapper.initializeFromSimpleData({
-          name,
-          model: NetworkInterfaceModel.fromString(nic.interface),
-          macAddress: nic.mac,
-          interfaceType: NetworkInterfaceType.BRIDGE,
-        }).asResource(),
+        network: new NetworkWrapper().init({ name }).asResource(),
+        networkInterface: new NetworkInterfaceWrapper()
+          .init({
+            name,
+            model:
+              OvirtNetworkInterfaceModel.fromString(
+                nic.interface,
+              )?.getKubevirtNetworkInterfaceModel() || NetworkInterfaceModel.VIRTIO,
+            macAddress: nic.mac,
+          })
+          .setType(NetworkInterfaceType.BRIDGE)
+          .asResource(),
         editConfig: {
           disableEditing: true,
           isFieldEditableOverride: {
@@ -73,6 +145,12 @@ export const prefillUpdateCreator = (options: UpdateOptions) => {
 
   const memWithUnit = memory ? convertToHighestUnit(memory, BinaryUnit.B) : null;
 
+  const storageClassConfigMap = toShallowJS(
+    iGetLoadedCommonData(state, id, VMWizardProps.storageClassConfigMap),
+    undefined,
+    true,
+  );
+
   dispatch(
     vmWizardInternalActions[InternalActionType.UpdateVmSettings](id, {
       [VMSettingsField.NAME]: {
@@ -96,4 +174,10 @@ export const prefillUpdateCreator = (options: UpdateOptions) => {
     }),
   );
   dispatch(vmWizardInternalActions[InternalActionType.SetNetworks](id, getNics(vm)));
+  dispatch(
+    vmWizardInternalActions[InternalActionType.SetStorages](
+      id,
+      getDisks(vm, storageClassConfigMap),
+    ),
+  );
 };

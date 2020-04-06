@@ -11,15 +11,14 @@ export const getNetworkChoices = (
   const networkChoices = nads
     .map((nad) => getName(nad))
     .filter((nadName) => !(usedNetworkNames && usedNetworkNames.has(nadName)))
-    .map((name) =>
-      NetworkWrapper.initializeFromSimpleData({
-        multusNetworkName: name,
-        type: NetworkType.MULTUS,
+    .map((networkName) =>
+      new NetworkWrapper().setType(NetworkType.MULTUS, {
+        networkName,
       }),
     );
 
   if (allowPodNetwork) {
-    networkChoices.push(NetworkWrapper.initializeFromSimpleData({ type: NetworkType.POD }));
+    networkChoices.push(new NetworkWrapper().setType(NetworkType.POD));
   }
   return networkChoices;
 };
