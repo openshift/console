@@ -2,7 +2,7 @@ import * as yup from 'yup';
 import { nameValidationSchema } from '../import/validation-schema';
 import { HelmActionType } from './helm-types';
 
-export const getValidationSchema = (helmAction: HelmActionType) => {
+export const getHelmActionValidationSchema = (helmAction: HelmActionType) => {
   switch (helmAction) {
     case HelmActionType.Install:
       return yup.object().shape({

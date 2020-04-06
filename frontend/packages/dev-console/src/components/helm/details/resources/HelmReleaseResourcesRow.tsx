@@ -5,9 +5,9 @@ import { K8sResourceKind } from '@console/internal/module/k8s';
 import { Status } from '@console/shared';
 import { ResourceLink, Timestamp, resourcePath } from '@console/internal/components/utils';
 import { TableData, TableRow, RowFunction } from '@console/internal/components/factory';
-import { tableColumnClasses } from './HelmReleaseResourceTableHeader';
+import { tableColumnClasses } from './HelmReleaseResourcesHeader';
 
-const HelmReleaseResourceTableRow: RowFunction<K8sResourceKind> = ({
+const HelmReleaseResourcesRow: RowFunction<K8sResourceKind> = ({
   obj: resource,
   index,
   key,
@@ -45,4 +45,4 @@ const HelmReleaseResourceTableRow: RowFunction<K8sResourceKind> = ({
   );
 };
 
-export default HelmReleaseResourceTableRow;
+export default HelmReleaseResourcesRow;

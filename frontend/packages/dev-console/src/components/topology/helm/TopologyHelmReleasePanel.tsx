@@ -10,7 +10,7 @@ import {
 } from '@console/internal/components/utils';
 import * as UIActions from '@console/internal/actions/ui';
 import { Node } from '@console/topology';
-import HelmReleaseOverview from '../../helm/HelmReleaseOverview';
+import HelmReleaseOverview from '../../helm/details/overview/HelmReleaseOverview';
 import TopologyHelmReleaseResourcesPanel from './TopologyHelmReleaseResourcesPanel';
 import { helmReleaseActions } from '../actions/helmReleaseActions';
 import TopologyHelmReleaseNotesPanel from './TopologyHelmReleaseNotesPanel';

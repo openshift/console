@@ -3,8 +3,8 @@ import * as _ from 'lodash';
 import { FormikProps, FormikValues } from 'formik';
 import { TextInputTypes, Grid, GridItem } from '@patternfly/react-core';
 import { InputField, FormFooter, FlexForm, YAMLEditorField } from '@console/shared';
-import FormSection from '../import/section/FormSection';
-import { HelmActionType } from './helm-types';
+import FormSection from '../../import/section/FormSection';
+import { HelmActionType } from '../helm-types';
 import HelmChartVersionDropdown from './HelmChartVersionDropdown';
 
 export interface HelmInstallUpgradeFormProps {

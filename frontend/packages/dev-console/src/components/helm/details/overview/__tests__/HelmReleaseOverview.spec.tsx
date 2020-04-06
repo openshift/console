@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
 import { ResourceSummary, SectionHeading } from '@console/internal/components/utils';
+import { mockHelmReleases } from '../../../__tests__/helm-release-mock-data';
 import HelmReleaseOverview from '../HelmReleaseOverview';
-import { mockHelmReleases } from './helm-release-mock-data';
 import HelmChartSummary from '../HelmChartSummary';
 
 const helmReleaseOverviewProps: React.ComponentProps<typeof HelmReleaseOverview> = {

@@ -5,8 +5,8 @@ import { FormikValues, useFormikContext } from 'formik';
 import { GridItem } from '@patternfly/react-core';
 import { coFetchJSON, coFetch } from '@console/internal/co-fetch';
 import { DropdownField } from '@console/shared';
-import { HelmChartMetaData, HelmRelease } from './helm-types';
-import { getChartURL, getChartVersions } from './helm-utils';
+import { HelmChartMetaData, HelmRelease } from '../helm-types';
+import { getChartURL, getChartVersions } from '../helm-utils';
 
 export type HelmChartVersionDropdownProps = {
   activeChartVersion: string;

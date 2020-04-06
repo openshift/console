@@ -53,20 +53,25 @@ describe('HelmInstallUpgradeForm', () => {
     validateOnBlur: true,
     validateOnChange: true,
   };
+
   let helmInstallUpgradeForm = shallow(<HelmInstallUpgradeForm {...helmInstallUpgradeFormProps} />);
+
   it('should render only the input field component and not the dropdown field when no active version exists', () => {
     expect(helmInstallUpgradeForm.find(InputField).exists()).toBe(true);
     expect(helmInstallUpgradeForm.find(InputField).props().isDisabled).toBe(false);
     expect(helmInstallUpgradeForm.find(HelmChartVersionDropdown).exists()).toBe(false);
   });
+
   it('should render the YAML Editor component', () => {
     expect(helmInstallUpgradeForm.find(YAMLEditorField).exists()).toBe(true);
   });
+
   it('should render the Dropdown Field component when active version exists', () => {
     helmInstallUpgradeFormProps.activeChartVersion = '0.1';
     helmInstallUpgradeForm = shallow(<HelmInstallUpgradeForm {...helmInstallUpgradeFormProps} />);
     expect(helmInstallUpgradeForm.find(HelmChartVersionDropdown).exists()).toBe(true);
   });
+
   it('should have the Release Name field disabled when active version exists', () => {
     expect(helmInstallUpgradeForm.find(InputField).props().label).toBe('Release Name');
     expect(helmInstallUpgradeForm.find(InputField).props().isDisabled).toBe(true);

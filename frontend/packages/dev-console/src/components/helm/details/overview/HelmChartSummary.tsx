@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { HelmRelease } from './helm-types';
+import { HelmRelease } from '../../helm-types';
 import { Timestamp } from '@console/internal/components/utils';
 
 interface HelmChartSummaryProps {
@@ -7,6 +7,8 @@ interface HelmChartSummaryProps {
 }
 
 const HelmChartSummary: React.FC<HelmChartSummaryProps> = ({ helmRelease }) => {
+  if (!helmRelease) return null;
+
   const {
     chart: {
       metadata: { name: chartName, version: chartVersion, appVersion },

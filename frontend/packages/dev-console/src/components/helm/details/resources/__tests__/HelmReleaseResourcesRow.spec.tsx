@@ -3,11 +3,11 @@ import { Link } from 'react-router-dom';
 import { Status } from '@console/shared';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { RowFunctionArgs } from '@console/internal/components/factory';
-import HelmReleaseResourceTableRow from '../HelmReleaseResourceTableRow';
+import HelmReleaseResourcesRow from '../HelmReleaseResourcesRow';
 
 let rowArgs: RowFunctionArgs<K8sResourceKind>;
 
-describe('HelmReleaseResourceTableRow', () => {
+describe('helmReleaseResourcesRow', () => {
   beforeEach(() => {
     rowArgs = {
       obj: {
@@ -25,20 +25,20 @@ describe('HelmReleaseResourceTableRow', () => {
   });
 
   it('should render the TableRow component', () => {
-    const helmReleaseResourceTableRow = shallow(HelmReleaseResourceTableRow(rowArgs));
-    expect(helmReleaseResourceTableRow.find('tr').exists()).toBe(true);
+    const helmReleaseResourcesRow = shallow(HelmReleaseResourcesRow(rowArgs));
+    expect(helmReleaseResourcesRow.find('tr').exists()).toBe(true);
   });
 
   it('should render the number of pods deployed for resources that support it', () => {
-    const helmReleaseResourceTableRow = shallow(HelmReleaseResourceTableRow(rowArgs));
-    expect(helmReleaseResourceTableRow.find(Status).exists()).toBe(true);
-    expect(helmReleaseResourceTableRow.find(Status).props().status).toEqual('Created');
+    const helmReleaseResourcesRow = shallow(HelmReleaseResourcesRow(rowArgs));
+    expect(helmReleaseResourcesRow.find(Status).exists()).toBe(true);
+    expect(helmReleaseResourcesRow.find(Status).props().status).toEqual('Created');
 
     rowArgs.obj.kind = 'Deployment';
     rowArgs.obj.spec = { replicas: 1 };
     rowArgs.obj.status = { replicas: 1 };
 
-    const helmReleaseResourcesTableRow = shallow(HelmReleaseResourceTableRow(rowArgs));
+    const helmReleaseResourcesTableRow = shallow(HelmReleaseResourcesRow(rowArgs));
     expect(helmReleaseResourcesTableRow.find(Link).exists()).toBe(true);
     expect(helmReleaseResourcesTableRow.find(Link).props().title).toEqual('pods');
   });

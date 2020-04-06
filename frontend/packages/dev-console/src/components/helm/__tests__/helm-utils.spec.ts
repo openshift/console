@@ -1,13 +1,19 @@
 import {
+  OtherReleaseStatuses,
   releaseStatusReducer,
-  getFilteredItemsByRow,
-  otherStatuses,
-  getFilteredItemsByText,
+  filterHelmReleasesByName,
+  filterHelmReleasesByStatus,
   getChartURL,
   getChartVersions,
+  flattenReleaseResources,
 } from '../helm-utils';
 import { HelmReleaseStatus } from '../helm-types';
-import { mockHelmReleases, mockHelmChartData } from './helm-release-mock-data';
+import {
+  mockHelmReleases,
+  mockHelmChartData,
+  mockReleaseResources,
+  flattenedMockReleaseResources,
+} from './helm-release-mock-data';
 
 describe('Helm Releases Utils', () => {
   it('should return deployed or failed status for a helm release', () => {
@@ -22,20 +28,20 @@ describe('Helm Releases Utils', () => {
 
   it('should return filtered release items with deployed and failed status for row filters', () => {
     const filter = ['deployed', 'failed'];
-    const filteredReleases = getFilteredItemsByRow(mockHelmReleases, filter);
+    const filteredReleases = filterHelmReleasesByStatus(mockHelmReleases, filter);
     expect(filteredReleases.length).toEqual(2);
     expect(filteredReleases[0].info.status).toBe(HelmReleaseStatus.Deployed);
   });
 
   it('should return filtered release items with other status for row filters', () => {
     const filter = ['other'];
-    const filteredReleases = getFilteredItemsByRow(mockHelmReleases, filter);
+    const filteredReleases = filterHelmReleasesByStatus(mockHelmReleases, filter);
     expect(filteredReleases.length).toEqual(1);
-    expect(otherStatuses.includes(filteredReleases[0].info.status)).toBeTruthy();
+    expect(OtherReleaseStatuses.includes(filteredReleases[0].info.status)).toBeTruthy();
   });
 
   it('should return filtered release items for text filter', () => {
-    const filteredReleases = getFilteredItemsByText(mockHelmReleases, 'ghost');
+    const filteredReleases = filterHelmReleasesByName(mockHelmReleases, 'ghost');
     expect(filteredReleases.length).toEqual(1);
     expect(filteredReleases[0].name).toBe('ghost-test');
   });
@@ -51,5 +57,9 @@ describe('Helm Releases Utils', () => {
   it('should return the chart versions available for the helm chart', () => {
     const chartVersions = getChartVersions(mockHelmChartData);
     expect(chartVersions).toEqual({ '1.0.3': '1.0.3', '1.0.2': '1.0.2', '1.0.1': '1.0.1' });
+  });
+
+  it('should omit resources with no data and flatten them', () => {
+    expect(flattenReleaseResources(mockReleaseResources)).toEqual(flattenedMockReleaseResources);
   });
 });

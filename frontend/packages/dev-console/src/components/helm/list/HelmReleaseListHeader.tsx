@@ -12,7 +12,7 @@ export const tableColumnClasses = {
   kebab: Kebab.columnClass,
 };
 
-const HelmReleaseHeader = () => {
+const HelmReleaseListHeader = () => {
   return [
     {
       title: 'Name',
@@ -63,4 +63,4 @@ const HelmReleaseHeader = () => {
   ];
 };
 
-export default HelmReleaseHeader;
+export default HelmReleaseListHeader;

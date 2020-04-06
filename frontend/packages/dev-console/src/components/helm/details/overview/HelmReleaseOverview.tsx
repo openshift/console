@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { ResourceSummary, SectionHeading } from '@console/internal/components/utils';
 import { K8sResourceKind } from '@console/internal/module/k8s';
-import { HelmRelease } from './helm-types';
+import { HelmRelease } from '../../helm-types';
 import HelmChartSummary from './HelmChartSummary';
 
 export interface HelmReleaseOverviewProps {

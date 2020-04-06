@@ -4,9 +4,9 @@ import { safeLoadAll } from 'js-yaml';
 import { MultiListPage } from '@console/internal/components/factory';
 import { FirehoseResource } from '@console/internal/components/utils';
 import { K8sResourceKind } from '@console/internal/module/k8s';
-import { flattenResources } from './helm-release-resources-utils';
-import HelmResourcesListComponent from './HelmResourcesListComponent';
-import { HelmRelease } from './helm-types';
+import { flattenReleaseResources } from '../../helm-utils';
+import { HelmRelease } from '../../helm-types';
+import HelmReleaseResourcesList from './HelmReleaseResourcesList';
 
 export interface HelmReleaseResourcesProps {
   match: RMatch<{
@@ -33,9 +33,9 @@ const HelmReleaseResources: React.FC<HelmReleaseResourcesProps> = ({ match, cust
     <MultiListPage
       filterLabel="Resources by name"
       resources={helmManifestResources}
-      flatten={flattenResources}
+      flatten={flattenReleaseResources}
       label="Resources"
-      ListComponent={HelmResourcesListComponent}
+      ListComponent={HelmReleaseResourcesList}
     />
   );
 };

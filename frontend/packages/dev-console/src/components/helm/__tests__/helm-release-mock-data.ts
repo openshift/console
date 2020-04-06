@@ -1,3 +1,4 @@
+import { K8sResourceKind } from '@console/internal/module/k8s';
 import { HelmRelease, HelmChartMetaData } from '../helm-types';
 
 /* eslint-disable @typescript-eslint/camelcase */
@@ -155,5 +156,39 @@ export const mockHelmChartData: HelmChartMetaData[] = [
       'https://raw.githubusercontent.com/IBM/charts/master/repo/community/hazelcast-enterprise-1.0.1.tgz',
     ],
     version: '1.0.1',
+  },
+];
+
+export const mockReleaseResources: {
+  [key: string]: { data: K8sResourceKind };
+} = {
+  Deployment: {
+    data: {
+      kind: 'Deployment',
+      metadata: {
+        name: 'helm-mysql',
+        namespace: 'xyz',
+      },
+    },
+  },
+  StatefulSet: {
+    data: {
+      kind: 'StatefulSet',
+      metadata: {
+        name: 'helm-mysql',
+        namespace: 'xyz',
+      },
+    },
+  },
+  Pod: {
+    data: {},
+  },
+};
+
+export const flattenedMockReleaseResources = [
+  { kind: 'Deployment', metadata: { name: 'helm-mysql', namespace: 'xyz' } },
+  {
+    kind: 'StatefulSet',
+    metadata: { name: 'helm-mysql', namespace: 'xyz' },
   },
 ];
