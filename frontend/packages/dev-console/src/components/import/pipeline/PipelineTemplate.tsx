@@ -91,7 +91,7 @@ const PipelineTemplate: React.FC<PipelineTemplateProps> = ({ builderImages }) =>
   }, [resources, image.selected, isDockerStrategy, setFieldValue]);
 
   if (noTemplateForRuntime) {
-    const builderImageTitle = builderImages[image.selected].title;
+    const builderImageTitle = builderImages?.[image.selected]?.title || 'this builder image';
     const resourceName = ReadableResourcesNames[resources];
     return (
       <Alert
