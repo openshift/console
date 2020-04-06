@@ -10,7 +10,7 @@ import { K8sKind, K8sResourceKind } from '@console/internal/module/k8s';
 import { K8sResourceKindMethods } from '../types/types';
 import { ObjectWithTypePropertyWrapper } from './object-with-type-property-wrapper';
 import { ObjectEnum } from '../../../constants';
-import { clearRuntimeMetadata, initK8sObject, K8sInitAddon } from './util/k8s-mixin';
+import { clearMetadata, clearRuntimeMetadata, initK8sObject, K8sInitAddon } from './util/k8s-mixin';
 
 export abstract class K8sResourceObjectWithTypePropertyWrapper<
   RESOURCE extends K8sResourceKind,
@@ -37,6 +37,11 @@ export abstract class K8sResourceObjectWithTypePropertyWrapper<
 
   init(data: K8sInitAddon = {}) {
     initK8sObject(this.data, this.model, data);
+    return (this as any) as SELF;
+  }
+
+  clearMetadata() {
+    clearMetadata(this.data);
     return (this as any) as SELF;
   }
 

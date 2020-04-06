@@ -35,8 +35,17 @@ export const initK8sObject = (
   }
 };
 
+export const clearMetadata = (base: K8sResourceCommon) => {
+  if (base?.metadata) {
+    delete base.metadata;
+  }
+};
+
 export const clearRuntimeMetadata = (base: K8sResourceCommon) => {
-  if (base && base.metadata) {
+  if (base) {
+    delete (base as any).status;
+  }
+  if (base?.metadata) {
     const { metadata } = base;
     delete metadata.selfLink;
     delete metadata.resourceVersion;
