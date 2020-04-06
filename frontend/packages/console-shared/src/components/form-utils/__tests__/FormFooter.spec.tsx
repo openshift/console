@@ -2,6 +2,8 @@ import * as React from 'react';
 import { shallow, ShallowWrapper } from 'enzyme';
 import { FormFooter } from '@console/shared';
 import { Button } from '@patternfly/react-core';
+import { CheckIcon, CloseIcon } from '@patternfly/react-icons';
+import { FormFooterVariant } from '../form-utils-types';
 
 type FormFooterProps = React.ComponentProps<typeof FormFooter>;
 describe('FormFooter', () => {
@@ -19,6 +21,7 @@ describe('FormFooter', () => {
       sticky: false,
       disableSubmit: false,
       isSubmitting: false,
+      formFooterVariant: FormFooterVariant.Default,
     };
     wrapper = shallow(<FormFooter {...props} />);
   });
@@ -53,6 +56,14 @@ describe('FormFooter', () => {
       sticky: true,
     });
     expect(wrapper.at(0).props().className).toBe(`${className} ${className}__sticky`);
+  });
+
+  it('should be able to render Check and Close icons', () => {
+    wrapper.setProps({
+      formFooterVariant: FormFooterVariant.Icons,
+    });
+    expect(wrapper.find('[data-test-id="check-icon"]').props().children).toEqual(<CheckIcon />);
+    expect(wrapper.find('[data-test-id="close-icon"]').props().children).toEqual(<CloseIcon />);
   });
 
   it('should have submit button when handle submit is not passed', () => {

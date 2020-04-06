@@ -13,4 +13,10 @@ export interface FormFooterProps {
   showAlert?: boolean;
   infoTitle?: string;
   infoMessage?: string;
+  formFooterVariant?: FormFooterVariant;
+}
+
+export enum FormFooterVariant {
+  Default = 'Default',
+  Icons = 'Icons',
 }
