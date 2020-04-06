@@ -118,6 +118,12 @@ export const OperatorHubItemDetails: React.SFC<OperatorHubItemDetailsProps> = ({
             process, you can install the Operator on this or other OpenShift clusters. Visit Red Hat
             Marketplace for more details and to track your usage of this application.
           </p>
+          <p>
+            <ExternalLink
+              href="https://marketplace.redhat.com/en-us?utm_source=openshift_console"
+              text="Learn more about the Red Hat Marketplace"
+            />
+          </p>
         </HintBlock>
       );
     }
