@@ -6,7 +6,7 @@ import { Tooltip } from '@patternfly/react-core';
 
 import { Conditions } from './conditions';
 import { errorModal } from './modals';
-import { MachineConfigPoolModel, NodeModel } from '../models';
+import { MachineConfigPoolModel } from '../models';
 import { machineConfigReference, MachineConfigPage } from './machine-config';
 import {
   K8sResourceCondition,
@@ -43,7 +43,6 @@ const pauseAction: KebabAction = (kind, obj) => ({
 });
 
 const machineConfigPoolReference = referenceForModel(MachineConfigPoolModel);
-const nodeReference = referenceForModel(NodeModel);
 const machineConfigPoolMenuActions = [
   pauseAction,
   ...Kebab.getExtensionsActionsForKind(MachineConfigPoolModel),
@@ -155,16 +154,11 @@ const MachineConfigPoolCounts: React.SFC<MachineConfigPoolCountsProps> = ({ obj 
 
 const MachineConfigPoolSummary: React.SFC<MachineConfigPoolSummaryProps> = ({ obj }) => {
   const machineConfigSelector = _.get(obj, 'spec.machineConfigSelector');
-  const machineSelector = _.get(obj, 'spec.machineSelector');
   return (
-    <ResourceSummary resource={obj}>
+    <ResourceSummary resource={obj} showNodeSelector nodeSelector="spec.nodeSelector">
       <dt>Machine Config Selector</dt>
       <dd>
         <Selector kind={machineConfigReference} selector={machineConfigSelector} />
-      </dd>
-      <dt>Machine Selector</dt>
-      <dd>
-        <Selector kind={nodeReference} selector={machineSelector} />
       </dd>
     </ResourceSummary>
   );
