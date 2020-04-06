@@ -286,26 +286,14 @@ export const anchors = () => {
   const NodeWithPointAnchor: React.FC<{ element: Node } & WithDragNodeProps> = (props) => {
     const nodeRef = useSvgAnchor();
     const targetRef = useSvgAnchor(AnchorEnd.target, 'edge-point');
-    const bounds = props.element.getBounds();
+    const { width, height } = props.element.getDimensions();
     return (
       <>
         <Layer id="bottom">
           <NodeRect {...(props as any)} />
         </Layer>
-        <circle
-          ref={nodeRef}
-          fill="lightgreen"
-          r="5"
-          cx={bounds.width * 0.25}
-          cy={bounds.height * 0.25}
-        />
-        <circle
-          ref={targetRef}
-          fill="red"
-          r="5"
-          cx={bounds.width * 0.75}
-          cy={bounds.height * 0.75}
-        />
+        <circle ref={nodeRef} fill="lightgreen" r="5" cx={width * 0.25} cy={height * 0.25} />
+        <circle ref={targetRef} fill="red" r="5" cx={width * 0.75} cy={height * 0.75} />
       </>
     );
   };

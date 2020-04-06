@@ -17,6 +17,8 @@ import CenterAnchor from '../anchors/CenterAnchor';
 import Rect from '../geom/Rect';
 import { Translatable } from '../geom/types';
 import BaseElement from './BaseElement';
+import Dimensions from '../geom/Dimensions';
+import Point from '../geom/Point';
 
 const createAnchorKey = (end: AnchorEnd = AnchorEnd.both, type: string = ''): string =>
   `${end}:${type}`;
@@ -29,7 +31,10 @@ export default class BaseNode<E extends NodeModel = NodeModel, D = any> extends 
   };
 
   @observable.ref
-  private bounds: Rect = new Rect();
+  private dimensions = new Dimensions();
+
+  @observable.ref
+  private position = new Point();
 
   @computed
   private get nodes(): Node[] {
@@ -53,17 +58,17 @@ export default class BaseNode<E extends NodeModel = NodeModel, D = any> extends 
   private get groupBounds(): Rect {
     const children = this.getChildren().filter(isNode);
     if (!children.length) {
-      return this.bounds;
+      return this.getInternalBounds();
     }
 
     let rect: Rect | undefined;
     children.forEach((c) => {
       if (isNode(c)) {
         const { padding } = c.getStyle<NodeStyle>();
-        let b = c.getBounds();
+        const b = c.getBounds();
         // Currently non-group nodes do not include their padding in the bounds
         if (!c.isGroup() && padding) {
-          b = b.clone().padding(c.getStyle<NodeStyle>().padding);
+          b.padding(c.getStyle<NodeStyle>().padding);
         }
         if (!rect) {
           rect = b.clone();
@@ -107,14 +112,40 @@ export default class BaseNode<E extends NodeModel = NodeModel, D = any> extends 
     return ModelKind.node;
   }
 
+  private getInternalBounds(): Rect {
+    const { position, dimensions } = this;
+    return new Rect(position.x, position.y, dimensions.width, dimensions.height);
+  }
+
   getBounds(): Rect {
-    return this.group && !this.collapsed ? this.groupBounds : this.bounds;
+    return this.group && !this.collapsed ? this.groupBounds : this.getInternalBounds();
   }
 
   setBounds(bounds: Rect): void {
-    if (!this.bounds.equals(bounds)) {
-      this.bounds = bounds;
+    const { width, height } = this.dimensions;
+    if (bounds.width !== width || bounds.height !== height) {
+      this.dimensions = new Dimensions(bounds.width, bounds.height);
     }
+    const { x, y } = this.position;
+    if (bounds.x !== x || bounds.y !== y) {
+      this.position = new Point(bounds.x, bounds.y);
+    }
+  }
+
+  getPosition(): Point {
+    return this.position;
+  }
+
+  setPosition(point: Point): void {
+    this.position = point;
+  }
+
+  getDimensions(): Dimensions {
+    return this.dimensions;
+  }
+
+  setDimensions(dimensions: Dimensions): void {
+    this.dimensions = dimensions;
   }
 
   getAnchor(end?: AnchorEnd, type?: string): Anchor {
@@ -148,6 +179,10 @@ export default class BaseNode<E extends NodeModel = NodeModel, D = any> extends 
     return this.group;
   }
 
+  setGroup(group: boolean): void {
+    this.group = group;
+  }
+
   isCollapsed(): boolean {
     return this.collapsed;
   }
@@ -158,9 +193,7 @@ export default class BaseNode<E extends NodeModel = NodeModel, D = any> extends 
       // This updates the new node(s) location(s) to be what the node was originally, basically
       // keeping the nodes ln place so the layout doesn't start fresh (putting the new nodes at 0,0
       // TODO: Update to better position the nodes at a point location rather than relying on the setCenter updating the nodes.
-      const prevCenter = this.getBounds()
-        .getCenter()
-        .clone();
+      const prevCenter = this.getBounds().getCenter();
       this.collapsed = collapsed;
       this.setBounds(this.getBounds().setCenter(prevCenter.x, prevCenter.y));
       this.getController().fireEvent(NODE_COLLAPSE_CHANGE_EVENT, { node: this });
@@ -185,40 +218,43 @@ export default class BaseNode<E extends NodeModel = NodeModel, D = any> extends 
 
   setModel(model: E): void {
     super.setModel(model);
-    const bounds = this.getBounds();
-    let r: Rect | undefined;
+    let d: Dimensions | undefined;
+    let p: Point | undefined;
 
-    // update width and height before position
     if ('width' in model && model.width != null) {
-      if (!r) {
-        r = bounds.clone();
+      if (!d) {
+        d = this.dimensions.clone();
       }
-      r.width = model.width;
+      d.width = model.width;
     }
     if ('height' in model && model.height != null) {
-      if (!r) {
-        r = bounds.clone();
+      if (!d) {
+        d = this.dimensions.clone();
       }
-      r.height = model.height;
+      d.height = model.height;
     }
-    if ('x' in model && model.x != null) {
-      if (!r) {
-        r = bounds.clone();
-      }
-      r.x = model.x;
-    }
-    if ('y' in model && model.y != null) {
-      if (!r) {
-        r = bounds.clone();
-      }
-      r.y = model.y;
+    if (d) {
+      this.setDimensions(d);
     }
 
-    if (r) {
-      this.setBounds(r);
+    if ('x' in model && model.x != null) {
+      if (!p) {
+        p = this.position.clone();
+      }
+      p.x = model.x;
     }
+    if ('y' in model && model.y != null) {
+      if (!p) {
+        p = this.position.clone();
+      }
+      p.y = model.y;
+    }
+    if (p) {
+      this.setPosition(p);
+    }
+
     if ('group' in model) {
-      this.group = !!model.group;
+      this.setGroup(!!model.group);
     }
     if ('shape' in model) {
       this.shape = model.shape;
@@ -230,14 +266,14 @@ export default class BaseNode<E extends NodeModel = NodeModel, D = any> extends 
 
   translateToParent(t: Translatable): void {
     if (!this.group || this.isCollapsed()) {
-      const { x, y } = this.getBounds();
+      const { x, y } = this.getPosition();
       t.translate(x, y);
     }
   }
 
   translateFromParent(t: Translatable): void {
     if (!this.group || this.isCollapsed()) {
-      const { x, y } = this.getBounds();
+      const { x, y } = this.getPosition();
       t.translate(-x, -y);
     }
   }

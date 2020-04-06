@@ -126,9 +126,9 @@ export const dnd = () => {
           return props.element;
         },
         drag: (event, monitor, props) => {
-          props.element.setBounds(
+          props.element.setPosition(
             props.element
-              .getBounds()
+              .getPosition()
               .clone()
               .translate(event.dx, event.dy),
           );

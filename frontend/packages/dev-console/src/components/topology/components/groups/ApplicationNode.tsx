@@ -45,7 +45,7 @@ const ApplicationNode: React.FC<ApplicationGroupProps> = ({
   const dragNodeRef = useDragNode()[1];
   const refs = useCombineRefs<SVGRectElement>(dragNodeRef, hoverRef);
   const [filtered] = useSearchFilter(element.getLabel());
-  const { width, height } = element.getBounds();
+  const { width, height } = element.getDimensions();
 
   const resourcesData = {};
   _.forEach(element.getData().groupResources, (res) => {

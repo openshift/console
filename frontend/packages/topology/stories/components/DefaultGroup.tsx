@@ -41,11 +41,11 @@ const DefaultGroup: React.FC<GroupProps> = ({
 
   if (!droppable || !boxRef.current) {
     // change the box only when not dragging
-    boxRef.current = element.getBounds().clone();
+    boxRef.current = element.getBounds();
   }
 
   if (element.isCollapsed()) {
-    const { width, height } = element.getBounds();
+    const { width, height } = element.getDimensions();
     return (
       <g>
         <rect

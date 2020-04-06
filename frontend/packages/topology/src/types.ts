@@ -1,5 +1,6 @@
 import { ComponentType } from 'react';
 import Point from './geom/Point';
+import Dimensions from './geom/Dimensions';
 import Rect from './geom/Rect';
 import { Padding, Translatable } from './geom/types';
 
@@ -69,6 +70,7 @@ export interface GraphModel extends ElementModel {
   x?: number;
   y?: number;
   scale?: number;
+  layers?: string[];
 }
 
 export interface Anchor {
@@ -114,10 +116,15 @@ export interface Node<E extends NodeModel = NodeModel, D = any> extends GraphEle
   getAnchor(end: AnchorEnd, type?: string): Anchor;
   setAnchor(anchor: Anchor, end?: AnchorEnd, type?: string): void;
   getNodes(): Node[];
-  // TODO return an immutable rect
+  // TODO return an immutable bounds, position, dimensions?
   getBounds(): Rect;
   setBounds(bounds: Rect): void;
+  getPosition(): Point;
+  setPosition(location: Point): void;
+  getDimensions(): Dimensions;
+  setDimensions(dimensions: Dimensions): void;
   isGroup(): boolean;
+  setGroup(group: boolean): void;
   isCollapsed(): boolean;
   setCollapsed(collapsed: boolean): void;
   getNodeShape(): NodeShape;
@@ -147,11 +154,17 @@ export interface Graph<E extends GraphModel = GraphModel, D = any> extends Graph
   getEdges(): Edge[];
   getBounds(): Rect;
   setBounds(bounds: Rect): void;
+  getPosition(): Point;
+  setPosition(location: Point): void;
+  getDimensions(): Dimensions;
+  setDimensions(dimensions: Dimensions): void;
   getScale(): number;
   setScale(scale: number): void;
   getLayout(): string | undefined;
   setLayout(type: string | undefined): void;
   layout(): void;
+  getLayers(): string[];
+  setLayers(layers: string[]): void;
 
   // viewport operations
   reset(): void;

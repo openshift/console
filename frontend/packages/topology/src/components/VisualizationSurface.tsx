@@ -10,6 +10,8 @@ import { State } from '../types';
 import Visualization from '../Visualization';
 import SVGDefsProvider from './defs/SVGDefsProvider';
 import ElementWrapper from './ElementWrapper';
+import Dimensions from '../geom/Dimensions';
+
 import './VisualizationSurface.scss';
 
 interface VisualizationSurfaceProps {
@@ -31,13 +33,9 @@ const VisualizationSurface: React.FC<VisualizationSurfaceProps> = ({ visualizati
     () =>
       _.debounce<any>(
         action((contentRect: { client: { width: number; height: number } }) => {
-          visualization.getGraph().setBounds(
-            visualization
-              .getGraph()
-              .getBounds()
-              .clone()
-              .setSize(contentRect.client.width, contentRect.client.height),
-          );
+          visualization
+            .getGraph()
+            .setDimensions(new Dimensions(contentRect.client.width, contentRect.client.height));
         }),
         100,
         { leading: true, trailing: true },

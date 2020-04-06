@@ -141,7 +141,8 @@ class ColaLayout extends BaseLayout implements Layout {
     edges: LayoutLink[],
     groups: LayoutGroup[],
   ): void {
-    this.d3Cola.size([graph.getBounds().width, graph.getBounds().height]);
+    const { width, height } = graph.getBounds();
+    this.d3Cola.size([width, height]);
 
     // Get any custom constraints
     this.d3Cola.constraints(this.getConstraints(nodes as ColaNode[], groups as ColaGroup[], edges));

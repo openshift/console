@@ -64,8 +64,9 @@ const ObservedBaseNode: React.FC<BaseNodeProps> = ({
 }) => {
   const [hover, hoverRef] = useHover();
   useAnchor(EllipseAnchor);
-  const cx = element.getBounds().width / 2;
-  const cy = element.getBounds().height / 2;
+  const { width, height } = element.getDimensions();
+  const cx = width / 2;
+  const cy = height / 2;
   const resourceObj = getTopologyResourceObject(element.getData());
   const resourceModel = modelFor(referenceFor(resourceObj));
   const iconRadius = innerRadius * 0.9;

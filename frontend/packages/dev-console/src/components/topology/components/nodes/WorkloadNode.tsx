@@ -50,7 +50,7 @@ const ObservedWorkloadNode: React.FC<WorkloadNodeProps> = ({
   cheURL,
   ...rest
 }) => {
-  const { width, height } = element.getBounds();
+  const { width, height } = element.getDimensions();
   const workloadData = element.getData().data;
   const filters = useDisplayFilters();
   const size = Math.min(width, height);

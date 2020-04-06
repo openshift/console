@@ -6,7 +6,6 @@ import { WithDndDropProps } from '../behavior/useDndDrop';
 import { WithSelectionProps } from '../behavior/useSelection';
 import { WithContextMenuProps } from '../behavior/withContextMenu';
 import LayersProvider from './layers/LayersProvider';
-import { DEFAULT_LAYER } from './layers/LayersContext';
 import ElementWrapper from './ElementWrapper';
 
 type ElementProps = {
@@ -34,12 +33,13 @@ const ElementChildren: React.FC<ElementProps> = observer(({ element }) => {
 });
 
 // This inner Component will prevent re-rendering layers when the transform changes
-const Inner: React.FC<ElementProps> = React.memo(({ element }) => (
-  // TODO make layers configurable
-  <LayersProvider layers={['bottom', 'groups', 'groups2', DEFAULT_LAYER, 'top']}>
-    <ElementChildren element={element} />
-  </LayersProvider>
-));
+const Inner: React.FC<ElementProps> = React.memo(
+  observer(({ element }) => (
+    <LayersProvider layers={element.getLayers()}>
+      <ElementChildren element={element} />
+    </LayersProvider>
+  )),
+);
 
 const GraphComponent: React.FC<GraphComponentProps> = ({
   element,
@@ -55,15 +55,15 @@ const GraphComponent: React.FC<GraphComponentProps> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [layout]);
 
-  const bounds = element.getBounds();
+  const { x, y, width, height } = element.getBounds();
   return (
     <>
       <rect
         ref={dndDropRef}
         x={0}
         y={0}
-        width={bounds.width}
-        height={bounds.height}
+        width={width}
+        height={height}
         fillOpacity={0}
         onClick={onSelect}
         onContextMenu={onContextMenu}
@@ -71,7 +71,7 @@ const GraphComponent: React.FC<GraphComponentProps> = ({
       <g
         data-surface="true"
         ref={panZoomRef}
-        transform={`translate(${bounds.x}, ${bounds.y}) scale(${element.getScale()})`}
+        transform={`translate(${x}, ${y}) scale(${element.getScale()})`}
       >
         <Inner element={element} />
       </g>

@@ -1,5 +1,6 @@
 import * as React from 'react';
-import LayersContext, { DEFAULT_LAYER } from './LayersContext';
+import { DEFAULT_LAYER } from '../../const';
+import LayersContext from './LayersContext';
 
 type LayersProviderProps = {
   layers?: string[];
