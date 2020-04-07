@@ -29,6 +29,7 @@ import {
   VMOffGroupIcon,
 } from './components/dashboards-page/overview-dashboard/inventory';
 import kubevirtReducer from './redux';
+import { accessReviewImportVM } from './utils/accessReview-v2v';
 
 import './style.scss';
 
@@ -316,6 +317,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       label: 'Import Virtual Machine',
       description: 'Import a virtual machine from external hypervisor',
       icon: virtualMachineIcon,
+      accessReview: accessReviewImportVM,
     },
   },
 ];
