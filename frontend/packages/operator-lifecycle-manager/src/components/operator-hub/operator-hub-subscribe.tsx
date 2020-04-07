@@ -298,8 +298,14 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
           isInline
           className="co-alert"
           variant="danger"
-          title="Namespace does not support install modes for this Operator"
-        />
+          title="Namespace does not support installation mode"
+        >
+          The operator group in the {selectedTargetNamespace} namespace does not support the
+          {selectedInstallMode === InstallModeType.InstallModeTypeAllNamespaces
+            ? 'global'
+            : 'single namespace'}
+          installation mode.
+        </Alert>
       )) ||
       (subscriptionExists(selectedTargetNamespace) && (
         <Alert
