@@ -1,12 +1,5 @@
 import * as React from 'react';
-import {
-  Checkbox,
-  Form,
-  FormSelect,
-  FormSelectOption,
-  TextArea,
-  TextInput,
-} from '@patternfly/react-core';
+import { Form, FormSelect, FormSelectOption, TextArea, TextInput } from '@patternfly/react-core';
 import { connect } from 'react-redux';
 import { iGet, iGetIn } from '../../../../utils/immutable';
 import { FormFieldMemoRow } from '../../form/form-field-row';
@@ -21,7 +14,7 @@ import {
 } from '../../types';
 import { iGetVmSettings } from '../../selectors/immutable/vm-settings';
 import { ActionType } from '../../redux/types';
-import { getFieldId, getPlaceholder } from '../../utils/renderable-field-utils';
+import { getPlaceholder } from '../../utils/renderable-field-utils';
 import { iGetCommonData } from '../../selectors/immutable/selectors';
 import { iGetProvisionSourceStorage } from '../../selectors/immutable/storage';
 import { WorkloadProfile } from './workload-profile';
@@ -74,15 +67,15 @@ export class VMSettingsTabComponent extends React.Component<VMSettingsTabCompone
             />
           </FormField>
         </FormFieldMemoRow>
-          <UserTemplates
-            key={VMSettingsField.USER_TEMPLATE}
-            userTemplateField={this.getField(VMSettingsField.USER_TEMPLATE)}
-            forceSingleUserTemplateName={userTemplateName}
-            userTemplates={userTemplates}
-            commonTemplates={commonTemplates}
-            openshiftFlag={openshiftFlag}
-            onChange={this.props.onFieldChange}
-          />
+        <UserTemplates
+          key={VMSettingsField.USER_TEMPLATE}
+          userTemplateField={this.getField(VMSettingsField.USER_TEMPLATE)}
+          forceSingleUserTemplateName={userTemplateName}
+          userTemplates={userTemplates}
+          commonTemplates={commonTemplates}
+          openshiftFlag={openshiftFlag}
+          onChange={this.props.onFieldChange}
+        />
         <FormFieldMemoRow
           key={VMSettingsField.PROVISION_SOURCE_TYPE}
           field={this.getField(VMSettingsField.PROVISION_SOURCE_TYPE)}
@@ -136,19 +129,6 @@ export class VMSettingsTabComponent extends React.Component<VMSettingsTabCompone
           flavor={this.getFieldValue(VMSettingsField.FLAVOR)}
           onChange={this.props.onFieldChange}
         />
-
-        <FormFieldMemoRow
-          field={this.getField(VMSettingsField.START_VM)}
-          fieldType={FormFieldType.INLINE_CHECKBOX}
-        >
-          <FormField>
-            <Checkbox
-              className="kubevirt-create-vm-modal__start_vm_checkbox"
-              id={getFieldId(VMSettingsField.START_VM)}
-              onChange={this.onChange(VMSettingsField.START_VM)}
-            />
-          </FormField>
-        </FormFieldMemoRow>
       </Form>
     );
   }

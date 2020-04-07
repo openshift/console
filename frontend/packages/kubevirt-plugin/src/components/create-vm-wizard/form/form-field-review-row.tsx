@@ -1,28 +1,38 @@
 import * as React from 'react';
 import { getFieldTitle } from '../utils/renderable-field-utils';
-import { iGetFieldValue } from '../selectors/immutable/field';
+import { GridItem, Title } from '@patternfly/react-core';
 import { iGet } from '../../../utils/immutable';
-import { getCheckboxReadableValue } from '../../../utils/strings';
 import { FormFieldType } from './form-field';
+import { getReviewValue } from '../tabs/review-tab/utils';
+
+import './form-field-review-row.scss';
 
 type FormFieldReviewRowProps = {
   field: any;
   fieldType: FormFieldType;
+  value?: any;
 };
 
-export const FormFieldReviewRow: React.FC<FormFieldReviewRowProps> = ({ fieldType, field }) => {
+export const FormFieldReviewRow: React.FC<FormFieldReviewRowProps> = ({
+  fieldType,
+  field,
+  value = undefined,
+}) => {
   const fieldKey = iGet(field, 'key');
-  const value = iGetFieldValue(field);
-  const reviewValue = [FormFieldType.CHECKBOX, FormFieldType.INLINE_CHECKBOX].includes(fieldType)
-    ? getCheckboxReadableValue(value)
-    : value;
+  const reviewValue = value || getReviewValue(field, fieldType);
+
   if (!reviewValue) {
     return null;
   }
+
   return (
     <>
-      <dt>{getFieldTitle(fieldKey)}</dt>
-      <dd>{reviewValue}</dd>
+      <GridItem span={2} className="kubevirt-create-vm-modal__form-field-review-row">
+        <Title headingLevel="h4" size="sm">
+          {getFieldTitle(fieldKey)}
+        </Title>
+      </GridItem>
+      <GridItem span={10}>{reviewValue}</GridItem>
     </>
   );
 };

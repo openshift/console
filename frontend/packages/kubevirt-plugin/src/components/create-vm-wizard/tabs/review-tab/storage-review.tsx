@@ -2,6 +2,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { Alert, AlertVariant } from '@patternfly/react-core';
+import { cellWidth, Table, TableBody, TableHeader, TableVariant } from '@patternfly/react-table';
 import { Firehose, FirehoseResult, resourcePath } from '@console/internal/components/utils';
 import { StorageClassResourceKind } from '@console/internal/module/k8s';
 import { createLookup, getAnnotations, getName } from '@console/shared/src';
@@ -13,7 +14,6 @@ import { CombinedDisk } from '../../../../k8s/wrapper/vm/combined-disk';
 import { VolumeWrapper } from '../../../../k8s/wrapper/vm/volume-wrapper';
 import { getLoadedData } from '../../../../utils';
 import { DEFAULT_SC_ANNOTATION } from '../../../../constants/sc';
-import { ReviewList } from './review-list';
 
 import './storage-review.scss';
 
@@ -50,6 +50,15 @@ const StorageReviewFirehose: React.FC<StorageReviewFirehoseProps> = ({
   persistentVolumeClaims,
   storageClasses,
 }) => {
+  const headers = [
+    { title: 'Name', transforms: [cellWidth(10)] },
+    { title: 'Interface', transforms: [cellWidth(10)] },
+    { title: 'Size', transforms: [cellWidth(10)] },
+    { title: 'Storage Class', transforms: [cellWidth(10)] },
+    { title: 'Access Mode', transforms: [cellWidth(10)] },
+    { title: 'Volume Mode', transforms: [cellWidth(10)] },
+  ];
+
   const pvcLookup = createLookup(persistentVolumeClaims, getName);
 
   const combinedDisks = storages.map(({ id, disk, volume, dataVolume, persistentVolumeClaim }) => {
@@ -74,32 +83,41 @@ const StorageReviewFirehose: React.FC<StorageReviewFirehoseProps> = ({
     (sc) => getAnnotations(sc, {})[DEFAULT_SC_ANNOTATION] === 'true',
   );
 
+  const rows = combinedDisks.map(
+    (combinedDisk ) => {
+      const size = combinedDisk.getSize();
+      return [
+        combinedDisk.getName(),
+        combinedDisk.getDiskInterface(),
+        size && `${size?.value} ${size?.unit}`,
+        combinedDisk.getStorageClassName(),
+        combinedDisk.getAccessModes()?.[0].toString(),
+        combinedDisk.getVolumeMode()?.toString(),
+      ];
+    },
+  );
+
   return (
-    <ReviewList
-      title="Storage"
-      className={className}
-      items={combinedDisks.map((combinedDisk) => {
-        return {
-          id: combinedDisk.id,
-          value: combinedDisk.toString(),
-        };
-      })}
-    >
-      {hasStorageWithoutStorageClass && (
-        <Alert
-          title={'Some disks do not have a storage class defined'}
-          isInline
-          variant={AlertVariant.warning}
-          className="kubevirt-create-vm-modal__review-tab-storage-class-alert"
-        >
-          {defaultStorageClass ? (
-            <DefaultSCUsed defaultSCName={getName(defaultStorageClass)} />
-          ) : (
-            <NoDefaultSC />
-          )}
-        </Alert>
-      )}
-    </ReviewList>
+    <>
+    {hasStorageWithoutStorageClass && (
+      <Alert
+        title={'Some disks do not have a storage class defined'}
+        isInline
+        variant={AlertVariant.warning}
+        className="kubevirt-create-vm-modal__review-tab-storage-class-alert"
+      >
+        {defaultStorageClass ? (
+          <DefaultSCUsed defaultSCName={getName(defaultStorageClass)} />
+        ) : (
+          <NoDefaultSC />
+        )}
+      </Alert>
+    )}
+    <Table aria-label="Storage Devices" variant={TableVariant.compact} cells={headers} rows={rows}>
+      <TableHeader />
+      <TableBody />
+    </Table>
+      </>
   );
 };
 
