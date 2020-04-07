@@ -64,6 +64,9 @@ export const silenceState = (s) => s?.status?.state;
 
 export const alertingRuleIsActive = (rule) => (rule.state === 'inactive' ? 'false' : 'true');
 
+export const alertDescription = (alert) =>
+  alert.annotations?.description || alert.annotations?.message || alert.labels?.alertname;
+
 // Sort alerts and silences by their state (sort first by the state itself, then by the timestamp relevant to the state)
 export const alertStateOrder = (alert) => [
   [AlertStates.Firing, AlertStates.Silenced, AlertStates.Pending].indexOf(alertState(alert)),
@@ -71,6 +74,7 @@ export const alertStateOrder = (alert) => [
     ? _.max(_.map(alert.silencedBy, 'endsAt'))
     : _.get(alert, 'activeAt'),
 ];
+
 export const silenceStateOrder = (silence) => [
   [SilenceStates.Active, SilenceStates.Pending, SilenceStates.Expired].indexOf(
     silenceState(silence),
