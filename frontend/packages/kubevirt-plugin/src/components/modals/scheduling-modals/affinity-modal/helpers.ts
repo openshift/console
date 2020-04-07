@@ -23,7 +23,7 @@ import { AFFINITY_CONDITIONS } from '../shared/consts';
 export const defaultNewAffinity = {
   type: 'nodeAffinity',
   condition: AFFINITY_CONDITIONS.required,
-  expressions: [{ key: '', values: [], operator: 'In' }],
+  expressions: [{ id: 0, key: '', values: [], operator: 'In' }],
   fields: [],
   topologyKey: 'kubernetes.io/hostname',
 } as AffinityRowData;

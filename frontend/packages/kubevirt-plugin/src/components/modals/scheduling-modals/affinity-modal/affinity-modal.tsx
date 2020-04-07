@@ -139,50 +139,50 @@ export const AffinityModal = withHandlePromise<AffinityModalProps>(
             )}
           </SplitItem>
         </Split>
-        {!isEditing ? (
-          <ModalBody>
-            <AffinityTable
-              columnClasses={columnClasses}
-              data={affinities}
-              customData={{
-                isDisabled: false,
-                vmLikeFinal,
-                onEdit: onAffinityClickEdit,
-                onDelete: onAffinityDelete,
-              }}
-              row={AffinityRow}
-            />
-          </ModalBody>
-        ) : (
+        {isEditing ? (
           <AffinityEdit
             nodes={nodes}
             affinity={focusedAffinity}
             onAffinitySubmit={isCreating ? onAffinityAdd : onAffinityChange}
             onCancel={onCancel}
           />
-        )}
-        {!isEditing && (
-          <ModalFooter
-            id="affinity"
-            className="kubevirt-affinity__footer"
-            errorMessage={errorMessage}
-            inProgress={!isLoaded(nodes) || inProgress}
-            isSimpleError={!!loadError}
-            onSubmit={submit}
-            onCancel={onCancel}
-            submitButtonText={'Apply'}
-            infoTitle={showCollisionAlert && 'Affinity has been updated outside this flow.'}
-            infoMessage={
-              <>
-                Saving these changes will override any Affinity previously saved.
-                <br />
-                <Button variant={ButtonVariant.link} isInline onClick={onReload}>
-                  Reload Affinity
-                </Button>
-                .
-              </>
-            }
-          />
+        ) : (
+          <>
+            <ModalBody>
+              <AffinityTable
+                columnClasses={columnClasses}
+                data={affinities}
+                customData={{
+                  isDisabled: false,
+                  vmLikeFinal,
+                  onEdit: onAffinityClickEdit,
+                  onDelete: onAffinityDelete,
+                }}
+                row={AffinityRow}
+              />
+            </ModalBody>
+            <ModalFooter
+              id="affinity"
+              className="kubevirt-affinity__footer"
+              errorMessage={errorMessage}
+              inProgress={!isLoaded(nodes) || inProgress}
+              isSimpleError={!!loadError}
+              onSubmit={submit}
+              onCancel={onCancel}
+              submitButtonText={'Apply'}
+              infoTitle={showCollisionAlert && 'Affinity has been updated outside this flow.'}
+              infoMessage={
+                <>
+                  Saving these changes will override any Affinity previously saved.
+                  <br />
+                  <Button variant={ButtonVariant.link} isInline onClick={onReload}>
+                    Reload Affinity
+                  </Button>
+                  .
+                </>
+              }
+            />
+          </>
         )}
       </div>
     );
