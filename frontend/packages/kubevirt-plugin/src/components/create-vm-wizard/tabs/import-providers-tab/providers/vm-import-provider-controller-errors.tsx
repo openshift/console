@@ -61,7 +61,7 @@ const stateToProps = (state, { wizardReduxID, provider }) => ({
     provider,
     provider === VMImportProvider.OVIRT
       ? OvirtProviderField.CONTROLLER_LAST_ERROR
-      : VMWareProviderField.V2V_LAST_ERROR,
+      : VMWareProviderField.CONTROLLER_LAST_ERROR,
     'errors',
   ]),
 });

@@ -88,7 +88,6 @@ export enum VMWareProviderProps {
   deploymentPods = 'vmwareDeploymentPods',
   deployment = 'vmwareDeployment',
   v2vvmware = 'v2vvmware',
-  activeVcenterSecret = 'activeVcenterSecret',
 }
 
 export enum OvirtProviderProps {
@@ -96,24 +95,23 @@ export enum OvirtProviderProps {
   deploymentPods = 'ovirtDeploymentPods',
   deployment = 'ovirtDeployment',
   ovirtProvider = 'ovirtProvider',
-  activeOvirtEngineSecret = 'activeOvirtEngineSecret',
 }
 
 export enum VMWareProviderField {
-  VCENTER = 'vmware_VCENTER',
+  VCENTER_SECRET_NAME = 'vmware_VCENTER',
   HOSTNAME = 'vmware_HOSTNAME',
-  USER_NAME = 'vmware_USER_NAME',
-  USER_PASSWORD_AND_CHECK_CONNECTION = 'vmware_USER_PASSWORD_AND_CHECK_CONNECTION',
+  USERNAME = 'vmware_USER_NAME',
+  PASSWORD = 'vmware_USER_PASSWORD_AND_CHECK_CONNECTION',
   REMEMBER_PASSWORD = 'vmware_REMEMBER_PASSWORD',
 
   VM = 'vmware_VM',
 
   STATUS = 'vmware_STATUS',
 
-  V2V_LAST_ERROR = 'vmware_V2V_LAST_ERROR',
+  CONTROLLER_LAST_ERROR = 'vmware_CONTROLLER_LAST_ERROR',
 
-  V2V_NAME = 'vmware_V2V_NAME',
-  NEW_VCENTER_NAME = 'vmware_NEW_VCENTER_NAME',
+  CURRENT_V2V_VMWARE_CR_NAME = 'vmware_CURRENT_V2V_VMWARE_CR_NAME',
+  CURRENT_RESOLVED_VCENTER_SECRET_NAME = 'vmware_CURRENT_RESOLVED_VCENTER_SECRET_NAME',
 }
 
 export enum OvirtProviderField {
@@ -131,8 +129,8 @@ export enum OvirtProviderField {
 
   CONTROLLER_LAST_ERROR = 'ovirt_CONTROLLER_LAST_ERROR',
 
-  ACTIVE_OVIRT_PROVIDER_CR_NAME = 'ovirt_ACTIVE_OVIRT_PROVIDER_CR_NAME',
-  NEW_OVIRT_ENGINE_SECRET_NAME = 'ovirt_NEW_OVIRT_ENGINE_SECRET_NAME',
+  CURRENT_OVIRT_PROVIDER_CR_NAME = 'ovirt_CURRENT_OVIRT_PROVIDER_CR_NAME',
+  CURRENT_RESOLVED_OVIRT_ENGINE_SECRET_NAME = 'ovirt_CURRENT_RESOLVED_OVIRT_ENGINE_SECRET_NAME',
 }
 
 export enum CloudInitField {
@@ -147,10 +145,10 @@ export type ImportProviderRenderableField = Exclude<
 >;
 
 export type VMWareProviderRenderableField =
-  | VMWareProviderField.VCENTER
+  | VMWareProviderField.VCENTER_SECRET_NAME
   | VMWareProviderField.HOSTNAME
-  | VMWareProviderField.USER_NAME
-  | VMWareProviderField.USER_PASSWORD_AND_CHECK_CONNECTION
+  | VMWareProviderField.USERNAME
+  | VMWareProviderField.PASSWORD
   | VMWareProviderField.REMEMBER_PASSWORD
   | VMWareProviderField.STATUS
   | VMWareProviderField.VM;
@@ -217,13 +215,11 @@ export type ChangedCommonDataProp =
   | VMWareProviderProps.deploymentPods
   | VMWareProviderProps.v2vvmware
   | VMWareProviderProps.vmwareToKubevirtOsConfigMap
-  | VMWareProviderProps.activeVcenterSecret
   | VMWareProviderProps.vCenterSecrets
   | OvirtProviderProps.deployment
   | OvirtProviderProps.deploymentPods
   | OvirtProviderProps.ovirtEngineSecrets
-  | OvirtProviderProps.ovirtProvider
-  | OvirtProviderProps.activeOvirtEngineSecret;
+  | OvirtProviderProps.ovirtProvider;
 
 export type CommonDataProp =
   | VMWizardProps.isSimpleView
@@ -246,13 +242,11 @@ export const DetectCommonDataChanges = new Set<ChangedCommonDataProp>([
   VMWareProviderProps.deploymentPods,
   VMWareProviderProps.v2vvmware,
   VMWareProviderProps.vmwareToKubevirtOsConfigMap,
-  VMWareProviderProps.activeVcenterSecret,
   VMWareProviderProps.vCenterSecrets,
   OvirtProviderProps.deployment,
   OvirtProviderProps.deploymentPods,
   OvirtProviderProps.ovirtEngineSecrets,
   OvirtProviderProps.ovirtProvider,
-  OvirtProviderProps.activeOvirtEngineSecret,
 ]);
 
 export type CommonData = {

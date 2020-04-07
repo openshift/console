@@ -39,8 +39,8 @@ export const getOvirtInitialState = (): OvirtSettings => {
     },
 
     // simple values
-    [OvirtProviderField.ACTIVE_OVIRT_PROVIDER_CR_NAME]: null,
-    [OvirtProviderField.NEW_OVIRT_ENGINE_SECRET_NAME]: null,
+    [OvirtProviderField.CURRENT_OVIRT_PROVIDER_CR_NAME]: null,
+    [OvirtProviderField.CURRENT_RESOLVED_OVIRT_ENGINE_SECRET_NAME]: null,
   };
 
   Object.keys(fields).forEach((k) => {

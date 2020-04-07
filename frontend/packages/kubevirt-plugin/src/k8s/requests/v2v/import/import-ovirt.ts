@@ -36,13 +36,13 @@ const createSecret = async ({
 }: CreateVMParams) => {
   const simpleSettings = asSimpleSettings(vmSettings);
   const targetVMName = simpleSettings[VMSettingsField.NAME];
-  const originalSecretName = getOvirtField(
+  const sourceSecretName = getOvirtField(
     importProviders,
-    OvirtProviderField.NEW_OVIRT_ENGINE_SECRET_NAME,
+    OvirtProviderField.CURRENT_RESOLVED_OVIRT_ENGINE_SECRET_NAME,
   );
 
-  const originalSecretWrapper = new SecretWrappper(
-    await enhancedK8sMethods.k8sGet(SecretModel, originalSecretName, namespace, null, {
+  const sourceSecretWrapper = new SecretWrappper(
+    await enhancedK8sMethods.k8sGet(SecretModel, sourceSecretName, namespace, null, {
       disableHistory: true,
     }),
   );
@@ -53,7 +53,7 @@ const createSecret = async ({
         generateName: `vm-import-${targetVMName}-`,
         namespace,
       })
-      .setData(originalSecretWrapper.getData()),
+      .setData(sourceSecretWrapper.getData()),
   );
 };
 
@@ -111,7 +111,7 @@ const createVMImport = async (
     .setTargetVMName(targetVMName)
     .setStartVM(simpleSettings[VMSettingsField.START_VM])
     .setCredentialsSecret(
-      getOvirtField(importProviders, OvirtProviderField.NEW_OVIRT_ENGINE_SECRET_NAME),
+      getOvirtField(importProviders, OvirtProviderField.CURRENT_RESOLVED_OVIRT_ENGINE_SECRET_NAME),
       namespace,
     );
 

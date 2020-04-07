@@ -30,14 +30,9 @@ import { FirehoseResourceEnhanced } from '../../../../../../types/custom';
 type GetQueriesParams = {
   namespace: string;
   v2vVmwareName: string;
-  activeVcenterSecretName: string;
 };
 
-const getQueries = ({
-  namespace,
-  v2vVmwareName,
-  activeVcenterSecretName,
-}: GetQueriesParams): FirehoseResourceEnhanced[] => {
+const getQueries = ({ namespace, v2vVmwareName }: GetQueriesParams): FirehoseResourceEnhanced[] => {
   const resources: FirehoseResourceEnhanced[] = [
     {
       kind: SecretModel.kind,
@@ -101,16 +96,6 @@ const getQueries = ({
     });
   }
 
-  if (activeVcenterSecretName) {
-    resources.push({
-      kind: SecretModel.kind,
-      model: SecretModel,
-      name: activeVcenterSecretName,
-      namespace,
-      isList: false,
-      prop: VMWareProviderProps.activeVcenterSecret,
-    });
-  }
   return resources;
 };
 
@@ -138,8 +123,8 @@ export const updateExtraWSQueries = (options: UpdateOptions) => {
         prevState,
         state,
         id,
-        VMWareProviderField.V2V_NAME,
-        VMWareProviderField.NEW_VCENTER_NAME,
+        VMWareProviderField.CURRENT_V2V_VMWARE_CR_NAME,
+        VMWareProviderField.CURRENT_RESOLVED_VCENTER_SECRET_NAME,
       )
     )
   ) {
@@ -153,13 +138,12 @@ export const updateExtraWSQueries = (options: UpdateOptions) => {
   ]);
 
   if (isVMWareProvider(state, id) && namespace) {
-    const v2vVmwareName = iGetVMWareField(state, id, VMWareProviderField.V2V_NAME);
-    const activeVcenterSecretName = iGetVMWareField(
+    const v2vVmwareName = iGetVMWareField(
       state,
       id,
-      VMWareProviderField.NEW_VCENTER_NAME,
+      VMWareProviderField.CURRENT_V2V_VMWARE_CR_NAME,
     );
-    forceUpdateWSQueries({ id, dispatch }, { namespace, v2vVmwareName, activeVcenterSecretName });
+    forceUpdateWSQueries({ id, dispatch }, { namespace, v2vVmwareName });
   } else if (oldQueries && oldQueries.size > 0) {
     // reset when new provider selected
     dispatch(

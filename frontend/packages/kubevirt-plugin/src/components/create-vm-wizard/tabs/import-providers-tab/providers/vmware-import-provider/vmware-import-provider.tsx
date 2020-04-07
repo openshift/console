@@ -16,7 +16,6 @@ import { FormField, FormFieldType } from '../../../../form/form-field';
 import { FormFieldMemoRow } from '../../../../form/form-field-row';
 import { iGet, iGetIn } from '../../../../../../utils/immutable';
 import { getFieldId } from '../../../../utils/renderable-field-utils';
-import { FormFieldReviewContext } from '../../../../form/form-field-review-context';
 import { VMImportProviderControllerStatusRow } from '../vm-import-provider-controller-status-row';
 import { VMImportProviderControllerErrors } from '../vm-import-provider-controller-errors';
 import { VMImportSecrets } from '../vm-import-secrets';
@@ -45,70 +44,58 @@ class VMWareImportProviderConnected extends React.Component<VMWareImportProvider
     }
 
     return (
-      <FormFieldReviewContext.Consumer>
-        {({ isReview }: { isReview: boolean }) => (
-          <>
-            {!isReview && (
-              <>
-                <VMImportSecrets key="secrets" wizardReduxID={wizardReduxID} provider={provider} />
-                <FormFieldMemoRow
-                  key={VMWareProviderField.HOSTNAME}
-                  field={this.getField(VMWareProviderField.HOSTNAME)}
-                  fieldType={FormFieldType.TEXT}
-                >
-                  <FormField>
-                    <TextInput onChange={this.onChange(VMWareProviderField.HOSTNAME)} />
-                  </FormField>
-                </FormFieldMemoRow>
-                <FormFieldMemoRow
-                  key={VMWareProviderField.USER_NAME}
-                  field={this.getField(VMWareProviderField.USER_NAME)}
-                  fieldType={FormFieldType.TEXT}
-                >
-                  <FormField>
-                    <TextInput onChange={this.onChange(VMWareProviderField.USER_NAME)} />
-                  </FormField>
-                </FormFieldMemoRow>
-                <VMImportPassword
-                  key="password"
-                  wizardReduxID={wizardReduxID}
-                  provider={provider}
-                />
-                <FormFieldMemoRow
-                  key={VMWareProviderField.REMEMBER_PASSWORD}
-                  field={this.getField(VMWareProviderField.REMEMBER_PASSWORD)}
-                  fieldType={FormFieldType.INLINE_CHECKBOX}
-                >
-                  <FormField>
-                    <Checkbox
-                      className="kubevirt-create-vm-modal__vmware-provider-remember-password"
-                      id={getFieldId(VMWareProviderField.REMEMBER_PASSWORD)}
-                      onChange={this.onChange(VMWareProviderField.REMEMBER_PASSWORD)}
-                    />
-                  </FormField>
-                </FormFieldMemoRow>
-                <VMWareVMs key="vms" wizardReduxID={wizardReduxID} />
-                <VMImportProviderControllerErrors
-                  key="errors"
-                  wizardReduxID={wizardReduxID}
-                  provider={provider}
-                />
-                <VMImportProviderControllerStatusRow
-                  key="controllerstatus-row"
-                  wizardReduxID={wizardReduxID}
-                  provider={provider}
-                  id="v2v-vmware-status"
-                />
-                <VMImportProviderObjectStatus
-                  key="object-status"
-                  wizardReduxID={wizardReduxID}
-                  provider={provider}
-                />
-              </>
-            )}
-          </>
-        )}
-      </FormFieldReviewContext.Consumer>
+      <>
+        <VMImportSecrets key="secrets" wizardReduxID={wizardReduxID} provider={provider} />
+        <FormFieldMemoRow
+          key={VMWareProviderField.HOSTNAME}
+          field={this.getField(VMWareProviderField.HOSTNAME)}
+          fieldType={FormFieldType.TEXT}
+        >
+          <FormField>
+            <TextInput onChange={this.onChange(VMWareProviderField.HOSTNAME)} />
+          </FormField>
+        </FormFieldMemoRow>
+        <FormFieldMemoRow
+          key={VMWareProviderField.USERNAME}
+          field={this.getField(VMWareProviderField.USERNAME)}
+          fieldType={FormFieldType.TEXT}
+        >
+          <FormField>
+            <TextInput onChange={this.onChange(VMWareProviderField.USERNAME)} />
+          </FormField>
+        </FormFieldMemoRow>
+        <VMImportPassword key="password" wizardReduxID={wizardReduxID} provider={provider} />
+        <FormFieldMemoRow
+          key={VMWareProviderField.REMEMBER_PASSWORD}
+          field={this.getField(VMWareProviderField.REMEMBER_PASSWORD)}
+          fieldType={FormFieldType.INLINE_CHECKBOX}
+        >
+          <FormField>
+            <Checkbox
+              className="kubevirt-create-vm-modal__vmware-provider-remember-password"
+              id={getFieldId(VMWareProviderField.REMEMBER_PASSWORD)}
+              onChange={this.onChange(VMWareProviderField.REMEMBER_PASSWORD)}
+            />
+          </FormField>
+        </FormFieldMemoRow>
+        <VMWareVMs key="vms" wizardReduxID={wizardReduxID} />
+        <VMImportProviderControllerErrors
+          key="errors"
+          wizardReduxID={wizardReduxID}
+          provider={provider}
+        />
+        <VMImportProviderControllerStatusRow
+          key="controllerstatus-row"
+          wizardReduxID={wizardReduxID}
+          provider={provider}
+          id="v2v-vmware-status"
+        />
+        <VMImportProviderObjectStatus
+          key="object-status"
+          wizardReduxID={wizardReduxID}
+          provider={provider}
+        />
+      </>
     );
   }
 }

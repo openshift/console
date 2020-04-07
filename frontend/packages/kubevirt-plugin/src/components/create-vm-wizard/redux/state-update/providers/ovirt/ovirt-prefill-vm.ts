@@ -66,7 +66,7 @@ export const getDisks = (vm: OvirtVM, storageClassConfigMap: ConfigMapKind): VMW
         .init({ name })
         .setType(VolumeType.PERSISTENT_VOLUME_CLAIM, { claimName: name })
         .asResource(),
-      persistentVolumeClaim: new PersistentVolumeClaimWrapper() // just to show import type - not used actually
+      persistentVolumeClaim: new PersistentVolumeClaimWrapper()
         .init({
           name,
           size: size.value,

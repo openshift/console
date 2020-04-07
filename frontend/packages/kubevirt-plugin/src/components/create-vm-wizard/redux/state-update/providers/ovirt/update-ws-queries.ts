@@ -28,13 +28,11 @@ import { OVirtProviderModel } from '../../../../../../models';
 type GetQueriesParams = {
   namespace: string;
   activeOvirtProviderCRName: string;
-  activeOvirtProviderSecretName: string;
 };
 
 const getQueries = ({
   namespace,
   activeOvirtProviderCRName,
-  activeOvirtProviderSecretName,
 }: GetQueriesParams): FirehoseResourceEnhanced[] => {
   const resources: FirehoseResourceEnhanced[] = [
     {
@@ -90,16 +88,6 @@ const getQueries = ({
     });
   }
 
-  if (activeOvirtProviderSecretName) {
-    resources.push({
-      kind: SecretModel.kind,
-      model: SecretModel,
-      name: activeOvirtProviderSecretName,
-      namespace,
-      isList: false,
-      prop: OvirtProviderProps.activeOvirtEngineSecret,
-    });
-  }
   return resources;
 };
 
@@ -117,18 +105,16 @@ export const forceUpdateWSQueries = (
 };
 
 export const updateExtraWSQueries = (options: UpdateOptions) => {
-  const { id, prevState, getState, changedCommonData, dispatch } = options;
+  const { id, prevState, getState, dispatch } = options;
   const state = getState();
   if (
     !(
-      changedCommonData.has(VMWizardProps.activeNamespace) ||
       hasImportProvidersChanged(prevState, state, id, ImportProvidersField.PROVIDER) ||
       hasOvirtSettingsChanged(
         prevState,
         state,
         id,
-        OvirtProviderField.ACTIVE_OVIRT_PROVIDER_CR_NAME,
-        OvirtProviderField.NEW_OVIRT_ENGINE_SECRET_NAME,
+        OvirtProviderField.CURRENT_OVIRT_PROVIDER_CR_NAME,
       )
     )
   ) {
@@ -145,17 +131,9 @@ export const updateExtraWSQueries = (options: UpdateOptions) => {
     const activeOvirtProviderCRName = iGetOvirtField(
       state,
       id,
-      OvirtProviderField.ACTIVE_OVIRT_PROVIDER_CR_NAME,
+      OvirtProviderField.CURRENT_OVIRT_PROVIDER_CR_NAME,
     );
-    const activeOvirtProviderSecretName = iGetOvirtField(
-      state,
-      id,
-      OvirtProviderField.NEW_OVIRT_ENGINE_SECRET_NAME,
-    );
-    forceUpdateWSQueries(
-      { id, dispatch },
-      { namespace, activeOvirtProviderCRName, activeOvirtProviderSecretName },
-    );
+    forceUpdateWSQueries({ id, dispatch }, { namespace, activeOvirtProviderCRName });
   } else if (oldQueries && oldQueries.size > 0) {
     // reset when new provider selected
     dispatch(

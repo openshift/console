@@ -9,11 +9,7 @@ import {
   VMWizardTab,
 } from '../../../../types';
 import { InternalActionType, UpdateOptions } from '../../../types';
-import {
-  iGetCommonData,
-  iGetLoadedCommonData,
-  iGetName,
-} from '../../../../selectors/immutable/selectors';
+import { iGetCommonData, iGetLoadedCommonData } from '../../../../selectors/immutable/selectors';
 import { hasImportProvidersChanged } from '../../../../selectors/immutable/import-providers';
 import { updateExtraWSQueries } from './update-ws-queries';
 import {
@@ -149,20 +145,41 @@ const ovirtProviderCRUpdater = (options: UpdateOptions) => {
   );
 
   if (status === V2VProviderStatus.CONNECTION_SUCCESSFUL) {
-    const activeOvirtSecret = iGetLoadedCommonData(
+    const selectedSecretName = iGetOvirtFieldAttribute(
       state,
       id,
-      OvirtProviderProps.activeOvirtEngineSecret,
+      OvirtProviderField.OVIRT_ENGINE_SECRET_NAME,
+      'secretName',
     );
-    correctVMImportProviderSecretLabels({
-      provider: VMImportProvider.OVIRT,
-      secret: toShallowJS(activeOvirtSecret, undefined, true),
-      saveCredentialsRequested: iGetOvirtFieldValue(
-        state,
-        id,
-        OvirtProviderField.REMEMBER_PASSWORD,
-      ),
-    });
+    const currentResolvedSecretName = iGetOvirtField(
+      state,
+      id,
+      OvirtProviderField.CURRENT_RESOLVED_OVIRT_ENGINE_SECRET_NAME,
+    );
+    if (currentResolvedSecretName !== selectedSecretName) {
+      // update - so we don't correct labels twice
+      dispatch(
+        vmWizardInternalActions[InternalActionType.UpdateImportProvider](
+          id,
+          VMImportProvider.OVIRT,
+          {
+            [OvirtProviderField.OVIRT_ENGINE_SECRET_NAME]: {
+              secretName: currentResolvedSecretName,
+            },
+          },
+        ),
+      );
+      correctVMImportProviderSecretLabels({
+        provider: VMImportProvider.OVIRT,
+        secretName: currentResolvedSecretName,
+        secretNamespace: iGetCommonData(state, id, VMWizardProps.activeNamespace),
+        saveCredentialsRequested: iGetOvirtFieldValue(
+          state,
+          id,
+          OvirtProviderField.REMEMBER_PASSWORD,
+        ),
+      });
+    }
   }
 
   const prevVm = iGetOvirtFieldAttribute(prevState, id, OvirtProviderField.VM, 'vm');
@@ -330,8 +347,11 @@ const secretUpdater = (options) => {
     return;
   }
 
-  const connectionSecretName = iGetName(
-    iGetOvirtFieldAttribute(state, id, OvirtProviderField.OVIRT_ENGINE_SECRET_NAME, 'secret'),
+  const connectionSecretName = iGetOvirtFieldAttribute(
+    state,
+    id,
+    OvirtProviderField.OVIRT_ENGINE_SECRET_NAME,
+    'secretName',
   );
   const isNewInstanceSecret = iGetOvirtFieldAttribute(
     state,
@@ -368,7 +388,7 @@ const secretUpdater = (options) => {
       prevOvirtProviderName: iGetOvirtField(
         prevState,
         id,
-        OvirtProviderField.ACTIVE_OVIRT_PROVIDER_CR_NAME,
+        OvirtProviderField.CURRENT_OVIRT_PROVIDER_CR_NAME,
       ),
     });
   }

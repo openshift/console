@@ -68,7 +68,7 @@ const stateToProps = (state, { wizardReduxID, provider }) => {
     wizardReduxID,
     provider,
     OvirtProviderField.PASSWORD,
-    VMWareProviderField.USER_PASSWORD_AND_CHECK_CONNECTION,
+    VMWareProviderField.PASSWORD,
   );
 
   let hasAllPrerequisiteValuesFiled =
@@ -85,7 +85,7 @@ const stateToProps = (state, { wizardReduxID, provider }) => {
       wizardReduxID,
       provider,
       OvirtProviderField.USERNAME,
-      VMWareProviderField.USER_NAME,
+      VMWareProviderField.USERNAME,
     );
 
   if (provider === VMImportProvider.OVIRT && hasAllPrerequisiteValuesFiled) {
@@ -123,7 +123,7 @@ const dispatchToProps = (dispatch, { wizardReduxID, provider }) => ({
         provider,
         provider === VMImportProvider.OVIRT
           ? OvirtProviderField.PASSWORD
-          : VMWareProviderField.USER_PASSWORD_AND_CHECK_CONNECTION,
+          : VMWareProviderField.PASSWORD,
         { value: password },
       ),
     ),

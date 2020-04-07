@@ -22,13 +22,13 @@ export type SettingsField = {
 };
 
 export type VMwareSettings = { [key in VMWareProviderField]: SettingsField } & {
-  [VMWareProviderField.V2V_NAME]: string;
-  [VMWareProviderField.NEW_VCENTER_NAME]: string;
+  [VMWareProviderField.CURRENT_V2V_VMWARE_CR_NAME]: string;
+  [VMWareProviderField.CURRENT_RESOLVED_VCENTER_SECRET_NAME]: string;
 };
 
 export type OvirtSettings = { [key in OvirtProviderField]: SettingsField } & {
-  [OvirtProviderField.ACTIVE_OVIRT_PROVIDER_CR_NAME]: string;
-  [OvirtProviderField.NEW_OVIRT_ENGINE_SECRET_NAME]: string;
+  [OvirtProviderField.CURRENT_OVIRT_PROVIDER_CR_NAME]: string;
+  [OvirtProviderField.CURRENT_RESOLVED_OVIRT_ENGINE_SECRET_NAME]: string;
 };
 
 export type VMSettings = { [key in VMSettingsField]: SettingsField };

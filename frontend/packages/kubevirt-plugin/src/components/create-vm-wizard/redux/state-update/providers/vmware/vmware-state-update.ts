@@ -9,11 +9,7 @@ import {
   VMWizardProps,
 } from '../../../../types';
 import { InternalActionType, UpdateOptions } from '../../../types';
-import {
-  iGetCommonData,
-  iGetLoadedCommonData,
-  iGetName,
-} from '../../../../selectors/immutable/selectors';
+import { iGetCommonData, iGetLoadedCommonData } from '../../../../selectors/immutable/selectors';
 import {
   hasVMWareSettingsChanged,
   hasVMWareSettingsValueChanged,
@@ -90,11 +86,11 @@ const deploymentChanged = (options: UpdateOptions) => {
 
   if (
     iGet(
-      iGetVMWareFieldAttribute(state, id, VMWareProviderField.V2V_LAST_ERROR, 'isHidden'),
+      iGetVMWareFieldAttribute(state, id, VMWareProviderField.CONTROLLER_LAST_ERROR, 'isHidden'),
       VMImportProvider.VMWARE,
     ) !== isLastErrorHidden ||
     iGet(
-      iGetVMWareFieldAttribute(state, id, VMWareProviderField.VCENTER, 'isDisabled'),
+      iGetVMWareFieldAttribute(state, id, VMWareProviderField.VCENTER_SECRET_NAME, 'isDisabled'),
       VMImportProvider.VMWARE,
     ) !== isVCenterDisabled
   ) {
@@ -103,10 +99,10 @@ const deploymentChanged = (options: UpdateOptions) => {
         id,
         VMImportProvider.VMWARE,
         {
-          [VMWareProviderField.V2V_LAST_ERROR]: {
+          [VMWareProviderField.CONTROLLER_LAST_ERROR]: {
             isHidden: asHidden(isLastErrorHidden, VMImportProvider.VMWARE),
           },
-          [VMWareProviderField.VCENTER]: {
+          [VMWareProviderField.VCENTER_SECRET_NAME]: {
             isDisabled: asDisabled(isVCenterDisabled, VMImportProvider.VMWARE),
           },
         },
@@ -149,20 +145,39 @@ const v2vVmWareUpdater = (options: UpdateOptions) => {
   );
 
   if (vmWareStatus === V2VProviderStatus.CONNECTION_SUCCESSFUL) {
-    const activeVcenterSecret = iGetLoadedCommonData(
+    const selectedSecretName = iGetVMWareFieldAttribute(
       state,
       id,
-      VMWareProviderProps.activeVcenterSecret,
+      VMWareProviderField.VCENTER_SECRET_NAME,
+      'secretName',
     );
-    correctVMImportProviderSecretLabels({
-      provider: VMImportProvider.VMWARE,
-      secret: toShallowJS(activeVcenterSecret, undefined, true),
-      saveCredentialsRequested: iGetVMWareFieldValue(
-        state,
-        id,
-        VMWareProviderField.REMEMBER_PASSWORD,
-      ),
-    });
+    const currentResolvedSecretName = iGetVMWareField(
+      state,
+      id,
+      VMWareProviderField.CURRENT_RESOLVED_VCENTER_SECRET_NAME,
+    );
+    if (currentResolvedSecretName !== selectedSecretName) {
+      // update - so we don't correct labels twice
+      dispatch(
+        vmWizardInternalActions[InternalActionType.UpdateImportProvider](
+          id,
+          VMImportProvider.VMWARE,
+          {
+            [VMWareProviderField.VCENTER_SECRET_NAME]: { secretName: currentResolvedSecretName },
+          },
+        ),
+      );
+      correctVMImportProviderSecretLabels({
+        provider: VMImportProvider.VMWARE,
+        secretName: currentResolvedSecretName,
+        secretNamespace: iGetCommonData(state, id, VMWizardProps.activeNamespace),
+        saveCredentialsRequested: iGetVMWareFieldValue(
+          state,
+          id,
+          VMWareProviderField.REMEMBER_PASSWORD,
+        ),
+      });
+    }
   }
 
   const prevVm = iGetVMWareFieldAttribute(prevState, id, VMWareProviderField.VM, 'vm');
@@ -250,12 +265,12 @@ const providerUpdater = (options: UpdateOptions) => {
 
   dispatch(
     vmWizardInternalActions[InternalActionType.UpdateImportProvider](id, VMImportProvider.VMWARE, {
-      [VMWareProviderField.VCENTER]: requiredMetadata,
+      [VMWareProviderField.VCENTER_SECRET_NAME]: requiredMetadata,
       [VMWareProviderField.HOSTNAME]: hiddenMetadata,
-      [VMWareProviderField.USER_NAME]: hiddenMetadata,
-      [VMWareProviderField.USER_PASSWORD_AND_CHECK_CONNECTION]: hiddenMetadata,
+      [VMWareProviderField.USERNAME]: hiddenMetadata,
+      [VMWareProviderField.PASSWORD]: hiddenMetadata,
       [VMWareProviderField.REMEMBER_PASSWORD]: hiddenMetadata,
-      [VMWareProviderField.V2V_LAST_ERROR]: hiddenMetadata,
+      [VMWareProviderField.CONTROLLER_LAST_ERROR]: hiddenMetadata,
       [VMWareProviderField.VM]: {
         ...requiredMetadata,
         isDisabled: asDisabled(
@@ -281,34 +296,39 @@ const providerUpdater = (options: UpdateOptions) => {
 const secretUpdater = (options) => {
   const { id, prevState, dispatch, getState } = options;
   const state = getState();
-  if (!hasVMWareSettingsValueChanged(prevState, state, id, VMWareProviderField.VCENTER)) {
+  if (
+    !hasVMWareSettingsValueChanged(prevState, state, id, VMWareProviderField.VCENTER_SECRET_NAME)
+  ) {
     return;
   }
 
-  const connectionSecretName = iGetName(
-    iGetVMWareFieldAttribute(state, id, VMWareProviderField.VCENTER, 'secret'),
+  const connectionSecretName = iGetVMWareFieldAttribute(
+    state,
+    id,
+    VMWareProviderField.VCENTER_SECRET_NAME,
+    'secretName',
   );
   const isNewInstanceSecret = iGetVMWareFieldAttribute(
     state,
     id,
-    VMWareProviderField.VCENTER,
+    VMWareProviderField.VCENTER_SECRET_NAME,
     'isNewInstance',
   );
 
   const hiddenMetadata = {
-    isHidden: asHidden(!isNewInstanceSecret, VMWareProviderField.VCENTER),
+    isHidden: asHidden(!isNewInstanceSecret, VMWareProviderField.VCENTER_SECRET_NAME),
   };
 
   const metadata = {
     ...hiddenMetadata,
-    isRequired: asRequired(isNewInstanceSecret, VMWareProviderField.VCENTER),
+    isRequired: asRequired(isNewInstanceSecret, VMWareProviderField.VCENTER_SECRET_NAME),
   };
 
   dispatch(
     vmWizardInternalActions[InternalActionType.UpdateImportProvider](id, VMImportProvider.VMWARE, {
       [VMWareProviderField.HOSTNAME]: metadata,
-      [VMWareProviderField.USER_NAME]: metadata,
-      [VMWareProviderField.USER_PASSWORD_AND_CHECK_CONNECTION]: metadata,
+      [VMWareProviderField.USERNAME]: metadata,
+      [VMWareProviderField.PASSWORD]: metadata,
       [VMWareProviderField.REMEMBER_PASSWORD]: hiddenMetadata,
     }),
   );
@@ -319,7 +339,7 @@ const secretUpdater = (options) => {
       namespace: iGetCommonData(state, id, VMWizardProps.activeNamespace),
       connectionSecretName,
       prevNamespace: iGetCommonData(prevState, id, VMWizardProps.activeNamespace),
-      prevV2VName: iGetVMWareField(prevState, id, VMWareProviderField.V2V_NAME),
+      prevV2VName: iGetVMWareField(prevState, id, VMWareProviderField.CURRENT_V2V_VMWARE_CR_NAME),
     });
   }
 };

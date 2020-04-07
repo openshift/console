@@ -14,7 +14,7 @@ export const cleanupVmWareProvider = async (options: UpdateOptions) => {
   const { id, prevState, getState, dispatch } = options;
   const state = getState();
 
-  const name = iGetVMWareField(state, id, VMWareProviderField.V2V_NAME);
+  const name = iGetVMWareField(state, id, VMWareProviderField.CURRENT_V2V_VMWARE_CR_NAME);
   if (name) {
     // delete stale object
     deleteV2VvmwareObject({

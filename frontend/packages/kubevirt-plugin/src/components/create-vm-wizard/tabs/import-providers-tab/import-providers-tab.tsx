@@ -26,10 +26,10 @@ class ImportProvidersTabComponent extends React.Component<ImportProvidersTabComp
     this.props.onFieldChange(key, value);
 
   render() {
-    const { isReview, wizardReduxID } = this.props;
+    const { wizardReduxID } = this.props;
 
     return (
-      <FormFieldForm isReview={isReview}>
+      <FormFieldForm>
         <FormFieldMemoRow
           key={ImportProvidersField.PROVIDER}
           field={this.getField(ImportProvidersField.PROVIDER)}
@@ -63,7 +63,6 @@ const stateToProps = (state, { wizardReduxID }) => ({
 type ImportProvidersTabComponentProps = {
   onFieldChange: (key: ImportProviderRenderableField, value: string) => void;
   importProviders: any;
-  isReview: boolean;
   wizardReduxID: string;
 };
 

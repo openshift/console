@@ -94,8 +94,8 @@ export const createConnectionObjects = async (
     deleteOvirtProviderObject(deleteParams);
     dispatch(
       vmWizardInternalActions[InternalActionType.UpdateImportProvider](id, VMImportProvider.OVIRT, {
-        [OvirtProviderField.ACTIVE_OVIRT_PROVIDER_CR_NAME]: null,
-        [OvirtProviderField.NEW_OVIRT_ENGINE_SECRET_NAME]: null,
+        [OvirtProviderField.CURRENT_OVIRT_PROVIDER_CR_NAME]: null,
+        [OvirtProviderField.CURRENT_RESOLVED_OVIRT_ENGINE_SECRET_NAME]: null,
         [OvirtProviderField.CLUSTER]: {
           value: null,
         },
@@ -109,10 +109,7 @@ export const createConnectionObjects = async (
         },
       }),
     );
-    forceUpdateWSQueries(
-      { id, dispatch },
-      { namespace, activeOvirtProviderCRName: null, activeOvirtProviderSecretName: null },
-    );
+    forceUpdateWSQueries({ id, dispatch }, { namespace, activeOvirtProviderCRName: null });
   }
 
   consoleInfo('creating ovirt provider object');
@@ -125,15 +122,12 @@ export const createConnectionObjects = async (
           id,
           VMImportProvider.OVIRT,
           {
-            [OvirtProviderField.ACTIVE_OVIRT_PROVIDER_CR_NAME]: activeOvirtProviderCRName,
-            [OvirtProviderField.NEW_OVIRT_ENGINE_SECRET_NAME]: activeOvirtProviderSecretName,
+            [OvirtProviderField.CURRENT_OVIRT_PROVIDER_CR_NAME]: activeOvirtProviderCRName,
+            [OvirtProviderField.CURRENT_RESOLVED_OVIRT_ENGINE_SECRET_NAME]: activeOvirtProviderSecretName,
           },
         ),
       );
-      forceUpdateWSQueries(
-        { id, dispatch },
-        { namespace, activeOvirtProviderCRName, activeOvirtProviderSecretName },
-      );
+      forceUpdateWSQueries({ id, dispatch }, { namespace, activeOvirtProviderCRName });
     })
     .catch((err) => {
       consoleWarn(
@@ -153,10 +147,7 @@ export const createConnectionObjects = async (
           },
         ),
       );
-      forceUpdateWSQueries(
-        { id, dispatch },
-        { namespace, activeOvirtProviderCRName: null, activeOvirtProviderSecretName: null },
-      );
+      forceUpdateWSQueries({ id, dispatch }, { namespace, activeOvirtProviderCRName: null });
     });
 };
 
@@ -205,7 +196,7 @@ export const getCheckConnectionAction = (id, prevState = null) => (dispatch, get
       prevOvirtProviderName: iGetOvirtField(
         prevState || state,
         id,
-        OvirtProviderField.ACTIVE_OVIRT_PROVIDER_CR_NAME,
+        OvirtProviderField.CURRENT_OVIRT_PROVIDER_CR_NAME,
       ),
     },
   )
@@ -233,7 +224,7 @@ export const requestVmDetails = (id: string, vmID: string) => (dispatch, getStat
   const ovirtProviderCRName = iGetOvirtField(
     state,
     id,
-    OvirtProviderField.ACTIVE_OVIRT_PROVIDER_CR_NAME,
+    OvirtProviderField.CURRENT_OVIRT_PROVIDER_CR_NAME,
   );
   const params = { vmID, namespace, ovirtProviderCRName };
 
@@ -241,7 +232,7 @@ export const requestVmDetails = (id: string, vmID: string) => (dispatch, getStat
   requestOvirtProviderCRVMDetail(params, new EnhancedK8sMethods()).catch((reason) => {
     // TODO: show in status?
     consoleWarn(
-      'onVCenterVmSelectedConnected: Failed to patch the V2VVMWare object to query VM details: ',
+      'onVCenterVmSelectedConnected: Failed to patch the OvirtProvider object to query VM details: ',
       params,
       ', reason: ',
       reason,

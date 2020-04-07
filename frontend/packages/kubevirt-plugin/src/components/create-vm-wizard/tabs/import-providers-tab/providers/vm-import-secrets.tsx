@@ -4,7 +4,6 @@ import { connect } from 'react-redux';
 import { getName, getUID } from '@console/shared/src';
 import {
   iGetCommonData,
-  iGetName,
   iGetUID,
   immutableListToShallowMetadataJS,
 } from '../../../selectors/immutable/selectors';
@@ -22,23 +21,22 @@ import { FormField, FormFieldType } from '../../../form/form-field';
 import { iGet, iGetLoadedData, toJS } from '../../../../../utils/immutable';
 import { FormSelectPlaceholderOption } from '../../../../form/form-select-placeholder-option';
 import { getPlaceholder } from '../../../utils/renderable-field-utils';
-import { FormFieldReviewContext } from '../../../form/form-field-review-context';
 import { iGetProviderField } from '../../../selectors/immutable/provider/common';
 
 const CONNECT_TO_NEW_INSTANCE = 'Connect to New Instance';
 const CONNECT_TO_NEW_INSTANCE_ID = `30e4f40e-7ce1-4c90-98a1-14ef960b8549-${CONNECT_TO_NEW_INSTANCE}`;
 
-const VMImportSecretsReviewConnected: React.FC<VMImportSecretsReviewConnectedProps> = React.memo(
+const VMImportSecretsConnected: React.FC<VMImportSecretsReviewProps> = React.memo(
   ({ secretField, secrets, onSecretChange, provider }) => {
     const onChange = (value) => {
       const isNewInstance = value === CONNECT_TO_NEW_INSTANCE_ID;
       const secret =
-        !value || isNewInstance
+        isNewInstance || !value
           ? null
           : toJS(iGetLoadedData(secrets).find((s) => iGetUID(s) === value));
       onSecretChange({
         value,
-        secret,
+        secretName: secret && getName(secret),
         isNewInstance,
       });
     };
@@ -55,7 +53,7 @@ const VMImportSecretsReviewConnected: React.FC<VMImportSecretsReviewConnectedPro
               placeholder={getPlaceholder(
                 provider === VMImportProvider.OVIRT
                   ? OvirtProviderField.OVIRT_ENGINE_SECRET_NAME
-                  : VMWareProviderField.VCENTER,
+                  : VMWareProviderField.VCENTER_SECRET_NAME,
               )}
               isDisabled={!!iGet(secretField, 'value')}
             />
@@ -75,27 +73,12 @@ const VMImportSecretsReviewConnected: React.FC<VMImportSecretsReviewConnectedPro
   },
 );
 
-type VMImportSecretsReviewConnectedProps = {
+type VMImportSecretsReviewProps = {
   secretField: any;
   secrets: any;
-  onSecretChange: (secret: { value: string; secret: any; isNewInstance: boolean }) => void;
+  onSecretChange: (secret: { value: string; secretName: string; isNewInstance: boolean }) => void;
   provider: VMImportProvider;
 };
-
-const VMImportSecretsConnected: React.FC<VMImportSecretsProps> = ({ secretField, ...props }) => (
-  <FormFieldReviewContext.Consumer>
-    {({ isReview }: { isReview: boolean }) => (
-      <VMImportSecretsReviewConnected
-        secretField={
-          isReview ? secretField.set('value', iGetName(secretField.get('secret'))) : secretField
-        }
-        {...props}
-      />
-    )}
-  </FormFieldReviewContext.Consumer>
-);
-
-type VMImportSecretsProps = VMImportSecretsReviewConnectedProps;
 
 const stateToProps = (state, { wizardReduxID, provider }) => {
   return {
@@ -104,7 +87,7 @@ const stateToProps = (state, { wizardReduxID, provider }) => {
       wizardReduxID,
       provider,
       OvirtProviderField.OVIRT_ENGINE_SECRET_NAME,
-      VMWareProviderField.VCENTER,
+      VMWareProviderField.VCENTER_SECRET_NAME,
     ),
     secrets: iGetCommonData(
       state,
@@ -124,7 +107,7 @@ const dispatchToProps = (dispatch, { wizardReduxID, provider }) => ({
         provider,
         provider === VMImportProvider.OVIRT
           ? OvirtProviderField.OVIRT_ENGINE_SECRET_NAME
-          : VMWareProviderField.VCENTER,
+          : VMWareProviderField.VCENTER_SECRET_NAME,
         secret,
       ),
     ),

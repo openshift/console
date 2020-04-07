@@ -37,9 +37,9 @@ export const startV2VVMWareControllerWithCleanup = ({ getState, id, dispatch }: 
         vmWizardInternalActions[InternalActionType.UpdateImportProviderField](
           id,
           VMImportProvider.VMWARE,
-          VMWareProviderField.V2V_LAST_ERROR,
+          VMWareProviderField.CONTROLLER_LAST_ERROR,
           {
-            isHidden: asHidden(true, VMWareProviderField.V2V_LAST_ERROR),
+            isHidden: asHidden(true, VMWareProviderField.CONTROLLER_LAST_ERROR),
             errors: null,
           },
         ),
@@ -57,9 +57,9 @@ export const startV2VVMWareControllerWithCleanup = ({ getState, id, dispatch }: 
           vmWizardInternalActions[InternalActionType.UpdateImportProviderField](
             id,
             VMImportProvider.VMWARE,
-            VMWareProviderField.V2V_LAST_ERROR,
+            VMWareProviderField.CONTROLLER_LAST_ERROR,
             {
-              isHidden: asHidden(false, VMWareProviderField.V2V_LAST_ERROR),
+              isHidden: asHidden(false, VMWareProviderField.CONTROLLER_LAST_ERROR),
               errors: results,
             },
           ),
@@ -96,8 +96,8 @@ export const createConnectionObjects = async (
         id,
         VMImportProvider.VMWARE,
         {
-          [VMWareProviderField.V2V_NAME]: null,
-          [VMWareProviderField.NEW_VCENTER_NAME]: null,
+          [VMWareProviderField.CURRENT_V2V_VMWARE_CR_NAME]: null,
+          [VMWareProviderField.CURRENT_RESOLVED_VCENTER_SECRET_NAME]: null,
           [VMWareProviderField.VM]: {
             value: null,
             isDisabled: asDisabled(true, VMWareProviderField.VM),
@@ -110,10 +110,7 @@ export const createConnectionObjects = async (
         },
       ),
     );
-    forceUpdateWSQueries(
-      { id, dispatch },
-      { namespace, v2vVmwareName: null, activeVcenterSecretName: null },
-    );
+    forceUpdateWSQueries({ id, dispatch }, { namespace, v2vVmwareName: null });
   }
 
   consoleInfo('creating v2vvmware object');
@@ -126,12 +123,12 @@ export const createConnectionObjects = async (
           id,
           VMImportProvider.VMWARE,
           {
-            [VMWareProviderField.V2V_NAME]: v2vVmwareName,
-            [VMWareProviderField.NEW_VCENTER_NAME]: activeVcenterSecretName,
+            [VMWareProviderField.CURRENT_V2V_VMWARE_CR_NAME]: v2vVmwareName,
+            [VMWareProviderField.CURRENT_RESOLVED_VCENTER_SECRET_NAME]: activeVcenterSecretName,
           },
         ),
       );
-      forceUpdateWSQueries({ id, dispatch }, { namespace, v2vVmwareName, activeVcenterSecretName });
+      forceUpdateWSQueries({ id, dispatch }, { namespace, v2vVmwareName });
     })
     .catch((err) => {
       consoleWarn('onVmwareCheckConnection(): Check for VMWare credentials failed, reason: ', err);
@@ -148,10 +145,7 @@ export const createConnectionObjects = async (
           },
         ),
       );
-      forceUpdateWSQueries(
-        { id, dispatch },
-        { namespace, v2vVmwareName: null, activeVcenterSecretName: null },
-      );
+      forceUpdateWSQueries({ id, dispatch }, { namespace, v2vVmwareName: null });
     });
 };
 
@@ -159,20 +153,16 @@ export const getCheckConnectionAction = (id, prevState = null) => (dispatch, get
   const state = getState();
 
   const beforeMetadata = {
-    isDisabled: asDisabled(true, VMWareProviderField.USER_PASSWORD_AND_CHECK_CONNECTION),
+    isDisabled: asDisabled(true, VMWareProviderField.PASSWORD),
   };
   const afterMetadata = {
-    isDisabled: asDisabled(false, VMWareProviderField.USER_PASSWORD_AND_CHECK_CONNECTION),
+    isDisabled: asDisabled(false, VMWareProviderField.PASSWORD),
   };
 
   const namespace = iGetCommonData(state, id, VMWizardProps.activeNamespace);
   const url = iGetVMWareFieldValue(state, id, VMWareProviderField.HOSTNAME);
-  const username = iGetVMWareFieldValue(state, id, VMWareProviderField.USER_NAME);
-  const password = iGetVMWareFieldValue(
-    state,
-    id,
-    VMWareProviderField.USER_PASSWORD_AND_CHECK_CONNECTION,
-  );
+  const username = iGetVMWareFieldValue(state, id, VMWareProviderField.USERNAME);
+  const password = iGetVMWareFieldValue(state, id, VMWareProviderField.PASSWORD);
 
   if (!namespace || !url || !username || !password) {
     return;
@@ -182,8 +172,8 @@ export const getCheckConnectionAction = (id, prevState = null) => (dispatch, get
   dispatch(
     vmWizardInternalActions[InternalActionType.UpdateImportProvider](id, VMImportProvider.VMWARE, {
       [VMWareProviderField.HOSTNAME]: beforeMetadata,
-      [VMWareProviderField.USER_NAME]: beforeMetadata,
-      [VMWareProviderField.USER_PASSWORD_AND_CHECK_CONNECTION]: beforeMetadata,
+      [VMWareProviderField.USERNAME]: beforeMetadata,
+      [VMWareProviderField.PASSWORD]: beforeMetadata,
       [VMWareProviderField.REMEMBER_PASSWORD]: beforeMetadata,
     }),
   );
@@ -198,7 +188,11 @@ export const getCheckConnectionAction = (id, prevState = null) => (dispatch, get
       username,
       password,
       prevNamespace: iGetCommonData(prevState || state, id, VMWizardProps.activeNamespace),
-      prevV2VName: iGetVMWareField(prevState || state, id, VMWareProviderField.V2V_NAME),
+      prevV2VName: iGetVMWareField(
+        prevState || state,
+        id,
+        VMWareProviderField.CURRENT_V2V_VMWARE_CR_NAME,
+      ),
     },
   )
     .catch(consoleError)
@@ -209,8 +203,8 @@ export const getCheckConnectionAction = (id, prevState = null) => (dispatch, get
           VMImportProvider.VMWARE,
           {
             [VMWareProviderField.HOSTNAME]: afterMetadata,
-            [VMWareProviderField.USER_NAME]: afterMetadata,
-            [VMWareProviderField.USER_PASSWORD_AND_CHECK_CONNECTION]: afterMetadata,
+            [VMWareProviderField.USERNAME]: afterMetadata,
+            [VMWareProviderField.PASSWORD]: afterMetadata,
             [VMWareProviderField.REMEMBER_PASSWORD]: afterMetadata,
           },
         ),
@@ -221,7 +215,7 @@ export const getCheckConnectionAction = (id, prevState = null) => (dispatch, get
 export const requestVmDetails = (id: string, vmName: string) => (dispatch, getState) => {
   const state = getState();
   const namespace = iGetCommonData(state, id, VMWizardProps.activeNamespace);
-  const v2vwmwareName = iGetVMWareField(state, id, VMWareProviderField.V2V_NAME);
+  const v2vwmwareName = iGetVMWareField(state, id, VMWareProviderField.CURRENT_V2V_VMWARE_CR_NAME);
   const params = { vmName, namespace, v2vwmwareName };
 
   consoleInfo('requesting vm detail');

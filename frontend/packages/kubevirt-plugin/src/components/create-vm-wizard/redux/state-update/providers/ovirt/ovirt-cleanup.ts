@@ -14,7 +14,7 @@ export const cleanupOvirtProvider = async (options: UpdateOptions) => {
   const { id, prevState, getState, dispatch } = options;
   const state = getState();
 
-  const name = iGetOvirtField(state, id, OvirtProviderField.ACTIVE_OVIRT_PROVIDER_CR_NAME);
+  const name = iGetOvirtField(state, id, OvirtProviderField.CURRENT_OVIRT_PROVIDER_CR_NAME);
   if (name) {
     // delete stale object
     deleteOvirtProviderObject({

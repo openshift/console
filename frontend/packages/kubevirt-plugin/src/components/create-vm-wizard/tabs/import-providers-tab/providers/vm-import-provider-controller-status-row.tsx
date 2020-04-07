@@ -175,7 +175,7 @@ const stateToProps = (state, { wizardReduxID, provider }) => {
       provider,
       'errors',
       OvirtProviderField.CONTROLLER_LAST_ERROR,
-      VMWareProviderField.V2V_LAST_ERROR,
+      VMWareProviderField.CONTROLLER_LAST_ERROR,
     ),
     deployment: _.isEmpty(deployment) ? undefined : deployment,
     deploymentPods: iGetLoadedCommonData(
