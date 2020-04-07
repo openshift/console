@@ -93,7 +93,6 @@ const CreateBucketClass: React.FC<CreateBCProps> = ({ match }) => {
   const creationConditionsSatisfied = () => {
     if (!backingStoreNextConditions()) return false;
     if (!state.bucketClassName) return false;
-    if (!state.namespace) return false;
     return true;
   };
 
