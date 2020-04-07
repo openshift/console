@@ -19,8 +19,43 @@ import { NetworkWrapper } from '../../../wrapper/vm/network-wrapper';
 import { NetworkType } from '../../../../constants/vm/network';
 import { DiskMapping, NetworkMapping } from '../../../../types/vm-import/ovirt/vm-import';
 import { PersistentVolumeClaimWrapper } from '../../../wrapper/vm/persistent-volume-claim-wrapper';
+import { SecretModel } from '@console/internal/models';
+import { SecretWrappper } from '../../../wrapper/k8s/secret-wrapper';
+import { SecretKind } from '@console/internal/module/k8s';
+import { PatchBuilder } from '@console/shared/src/k8s';
+import { compareOwnerReference } from '@console/shared/src/utils/owner-references';
+import { buildOwnerReference } from '../../../../utils';
 
 const SUPPORTED_NETWORK_TYPES = new Set([NetworkType.POD, NetworkType.MULTUS]);
+
+const createSecret = async ({
+  vmSettings,
+  importProviders,
+  namespace,
+  enhancedK8sMethods,
+}: CreateVMParams) => {
+  const simpleSettings = asSimpleSettings(vmSettings);
+  const targetVMName = simpleSettings[VMSettingsField.NAME];
+  const originalSecretName = getOvirtField(
+    importProviders,
+    OvirtProviderField.NEW_OVIRT_ENGINE_SECRET_NAME,
+  );
+
+  const originalSecretWrapper = new SecretWrappper(
+    await enhancedK8sMethods.k8sGet(SecretModel, originalSecretName, namespace, null, {
+      disableHistory: true,
+    }),
+  );
+
+  return enhancedK8sMethods.k8sWrapperCreate(
+    new SecretWrappper()
+      .init({
+        generateName: `vm-import-${targetVMName}-`,
+        namespace,
+      })
+      .setData(originalSecretWrapper.getData()),
+  );
+};
 
 const getNetworkMappings = (networks: VMWizardNetwork[]) =>
   networks
@@ -55,20 +90,25 @@ const getDiskMappings = (storage: VMWizardStorage[]) =>
       return diskMapping;
     });
 
-const createVMImport = ({
-  importProviders,
-  vmSettings,
-  networks,
-  storages,
-  namespace,
-}: CreateVMParams) => {
+const createVMImport = async (
+  {
+    importProviders,
+    vmSettings,
+    networks,
+    storages,
+    namespace,
+    enhancedK8sMethods,
+  }: CreateVMParams,
+  { secret }: { secret: SecretKind },
+) => {
   const simpleSettings = asSimpleSettings(vmSettings);
+  const targetVMName = simpleSettings[VMSettingsField.NAME];
   const vm = getOvirtAttribute(importProviders, OvirtProviderField.VM, 'vm');
 
   const vmImport = new VMImportWrappper()
-    .init({ generateName: 'vm-import-', namespace })
+    .init({ generateName: `vm-import-${targetVMName}-`, namespace })
     .setType(VMImportType.OVIRT)
-    .setTargetVMName(simpleSettings[VMSettingsField.NAME])
+    .setTargetVMName(targetVMName)
     .setStartVM(simpleSettings[VMSettingsField.START_VM])
     .setCredentialsSecret(
       getOvirtField(importProviders, OvirtProviderField.NEW_OVIRT_ENGINE_SECRET_NAME),
@@ -82,14 +122,27 @@ const createVMImport = ({
     .setNetworkMappings(getNetworkMappings(networks))
     .setDiskMappings(getDiskMappings(storages));
 
-  return vmImport;
+  const vmImportResult = await enhancedK8sMethods.k8sWrapperCreate(vmImport);
+  const vmImportOwnerReference = buildOwnerReference(vmImportResult);
+
+  const secretWrapper = new SecretWrappper(secret);
+
+  await enhancedK8sMethods.k8sWrapperPatch(secretWrapper, [
+    new PatchBuilder('/metadata/ownerReferences')
+      .setListUpdate(
+        vmImportOwnerReference,
+        secretWrapper.getOwnerReferences(),
+        compareOwnerReference,
+      )
+      .build(),
+  ]);
+
+  return vmImportResult;
 };
 
 export const importV2VOvirtVm = async (params: CreateVMParams): Promise<ImporterResult> => {
-  const { enhancedK8sMethods } = params;
-  const vmImportWrapper = createVMImport(params);
-
-  await enhancedK8sMethods.k8sWrapperCreate(vmImportWrapper);
+  const secret = await createSecret(params);
+  await createVMImport(params, { secret });
 
   return {
     skipVMCreation: true,

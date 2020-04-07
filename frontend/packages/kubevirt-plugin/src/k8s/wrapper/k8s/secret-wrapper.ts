@@ -22,6 +22,10 @@ export class SecretWrappper extends K8sResourceWrapper<K8sResourceCommon, Secret
     return this;
   };
 
+  getData = () => {
+    return this.uncheckedData().data;
+  };
+
   getValue = (key: string, isBase64Encoded = true) => {
     const value = this.uncheckedData().data ? this.uncheckedData().data[key] : undefined;
     return isBase64Encoded ? atob(value) : value;
