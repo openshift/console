@@ -20,6 +20,7 @@ import {
   ResourceSummary,
   SectionHeading,
   navFactory,
+  PageComponentProps,
 } from '@console/internal/components/utils';
 import { getName, getNamespace } from '@console/shared';
 
@@ -172,13 +173,13 @@ export const VolumeSnapshotList: React.FC<TableProps> = (props) => (
   />
 );
 
-export const VolumeSnapshotPage = (props) => (
+export const VolumeSnapshotPage: React.FC<PageComponentProps> = ({ obj }) => (
   <ListPage
     canCreate
     kind={volumeSnapshotKind}
     ListComponent={VolumeSnapshotList}
     showTitle={false}
-    namespace={props.namespace}
-    createHandler={() => volumeSnapshotModal({ ...props })}
+    namespace={obj.metadata.namespace}
+    createHandler={() => volumeSnapshotModal({ resource: obj })}
   />
 );

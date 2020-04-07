@@ -12,6 +12,7 @@ import {
   KebabOptionsCreator,
   Page,
   AsyncComponent,
+  PageComponentProps,
 } from '../utils';
 import {
   K8sResourceKindReference,
@@ -26,14 +27,8 @@ import { breadcrumbsForDetailsPage } from '../utils/breadcrumbs';
 export const DetailsPage = withFallback<DetailsPageProps>(({ pages = [], ...props }) => {
   const resourceKeys = _.map(props.resources, 'prop');
 
-  const renderAsyncComponent = (page: ResourceTabPage, pageProps: DetailsPageProps) => (
-    <AsyncComponent
-      loader={page.properties.loader}
-      namespace={pageProps.namespace}
-      name={pageProps.name}
-      kind={pageProps.kind}
-      match={pageProps.match}
-    />
+  const renderAsyncComponent = (page: ResourceTabPage, cProps: PageComponentProps) => (
+    <AsyncComponent loader={page.properties.loader} {...cProps} />
   );
 
   const resourcePageExtensions = useExtensions<ResourceTabPage>(isResourceTabPage);
@@ -49,7 +44,7 @@ export const DetailsPage = withFallback<DetailsPageProps>(({ pages = [], ...prop
         .map((p) => ({
           href: p.properties.href,
           name: p.properties.name,
-          component: () => renderAsyncComponent(p, props),
+          component: (cProps) => renderAsyncComponent(p, cProps),
         })),
     [resourcePageExtensions, props],
   );

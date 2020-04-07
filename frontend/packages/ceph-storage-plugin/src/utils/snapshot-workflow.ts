@@ -6,15 +6,10 @@ export const SnapshotPVC = (kind: K8sKind, resource: K8sResourceKind): KebabOpti
   return {
     label: 'Create Snapshot',
     callback: () => {
-      const clusterObject = {
-        name: resource.metadata.name,
-        namespace: resource.metadata.namespace,
-        kind: kind.kind,
-      };
       import(
         '../components/modals/volume-snapshot-modal/volume-snapshot-modal' /* webpackChunkName: "ceph-storage-volume-snapshot-modal" */
       )
-        .then((m) => m.volumeSnapshotModal(clusterObject))
+        .then((m) => m.volumeSnapshotModal({ resource }))
         // eslint-disable-next-line no-console
         .catch((e) => console.error(e));
     },

@@ -7,7 +7,7 @@ import { Route, Switch, Link, withRouter, match, matchPath } from 'react-router-
 import { EmptyBox, StatusBox } from '.';
 import { PodsPage } from '../pod';
 import { AsyncComponent } from './async';
-import { K8sResourceKind } from '../../module/k8s';
+import { K8sResourceKind, K8sResourceCommon } from '../../module/k8s';
 import { referenceForModel, referenceFor } from '../../module/k8s/k8s';
 import { useExtensions, HorizontalNavTab, isHorizontalNavTab } from '@console/plugin-sdk';
 
@@ -275,11 +275,11 @@ export type HorizontalNavProps = {
   customData?: any;
 };
 
-export type PageComponentProps = {
+export type PageComponentProps<R extends K8sResourceCommon = K8sResourceKind> = {
   filters?: any;
   selected?: any;
   match?: any;
-  obj?: K8sResourceKind;
+  obj?: R;
   params?: any;
   customData?: any;
   showTitle?: boolean;
