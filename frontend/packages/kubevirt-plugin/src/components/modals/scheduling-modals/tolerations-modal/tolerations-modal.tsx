@@ -48,7 +48,7 @@ export const TModal = withHandlePromise(
       getVMLikeTolerations(vmLikeEntity)?.map((toleration, id) => ({ ...toleration, id })),
     );
 
-    const qualifiedNodes = useNodeQualifier(tolerationsLabels, nodes);
+    const qualifiedNodes = useNodeQualifier(nodes, tolerationsLabels);
 
     const [showCollisionAlert, reload] = useCollisionChecker<VMLikeEntityKind>(
       vmLikeFinal,

@@ -8,6 +8,7 @@ import {
   getVMIInterfaces,
   getVMINodeSelector,
   getVMITolerations,
+  getVMIAffinity,
 } from '../../../selectors/vmi';
 import { VMILikeMethods } from './types';
 import { transformDevices } from '../../../selectors/vm';
@@ -47,4 +48,6 @@ export class VMIWrapper extends K8sResourceWrapper<VMIKind, VMIWrapper> implemen
   getNodeSelector = () => getVMINodeSelector(this.data);
 
   getTolerations = () => getVMITolerations(this.data);
+
+  getAffinity = () => getVMIAffinity(this.data);
 }

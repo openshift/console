@@ -1,0 +1,14 @@
+.kv-affinity-expression-row__key-input {
+  min-height: 42px;
+}
+
+.kv-affinity-expression-row__operator-input {
+  min-height: 42px;
+}
+
+.pf-m-typeahead {
+  min-height: 42px;
+  .pf-c-select__toggle-button {
+    display: none;
+  }
+}

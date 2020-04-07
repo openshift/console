@@ -9,6 +9,8 @@ import { VMCDRomModal } from '../modals/cdrom-vm-modal/vm-cdrom-modal';
 import dedicatedResourcesModal from '../modals/scheduling-modals/dedicated-resources-modal/connected-dedicated-resources-modal';
 import tolerationsModal from '../modals/scheduling-modals/tolerations-modal/connected-tolerations-modal';
 import nodeSelectorModal from '../modals/scheduling-modals/node-selector-modal/connected-node-selector-modal';
+import affinityModal from '../modals/scheduling-modals/affinity-modal/connected-affinity-modal';
+import { getRowsDataFromAffinity } from '../modals/scheduling-modals/affinity-modal/helpers';
 import { getDescription } from '../../selectors/selectors';
 import {
   getCDRoms,
@@ -35,6 +37,7 @@ import {
   DEDICATED_RESOURCES_NOT_PINNED,
   DEDICATED_RESOURCES_MODAL_TITLE,
   TOLERATIONS_MODAL_TITLE,
+  AFFINITY_MODAL_TITLE,
 } from '../modals/scheduling-modals/shared/consts';
 import './_vm-template-resource.scss';
 
@@ -154,61 +157,85 @@ export const VMTemplateSchedulingList: React.FC<VMTemplateResourceSummaryProps> 
     acc[key] = value;
     return acc;
   }, {});
+  const affinityWrapperCount = getRowsDataFromAffinity(vmWrapper?.getAffinity())?.length;
 
   return (
-    <dl className="co-m-pane__details">
-      <VMDetailsItem
-        canEdit={canUpdateTemplate}
-        title={NODE_SELECTOR_MODAL_TITLE}
-        idValue={prefixedID(id, 'node-selector')}
-        editButtonId={prefixedID(id, 'node-selectors-edit')}
-        onEditClick={() => nodeSelectorModal({ vmLikeEntity: template, blocking: true })}
-      >
-        <LabelList kind="Node" labels={nodeSelector} />
-      </VMDetailsItem>
+    <>
+      <div className="col-sm-6">
+        <dl className="co-m-pane__details">
+          <VMDetailsItem
+            canEdit={canUpdateTemplate}
+            title={NODE_SELECTOR_MODAL_TITLE}
+            idValue={prefixedID(id, 'node-selector')}
+            editButtonId={prefixedID(id, 'node-selectors-edit')}
+            onEditClick={() => nodeSelectorModal({ vmLikeEntity: template, blocking: true })}
+          >
+            <LabelList kind="Node" labels={nodeSelector} />
+          </VMDetailsItem>
 
-      <VMDetailsItem
-        canEdit={canUpdateTemplate}
-        title={TOLERATIONS_MODAL_TITLE}
-        idValue={prefixedID(id, 'tolerations')}
-        editButtonId={prefixedID(id, 'tolerations-edit')}
-        onEditClick={() =>
-          tolerationsModal({
-            vmLikeEntity: template,
-            blocking: true,
-            modalClassName: 'modal-lg',
-          })
-        }
-      >
-        <LabelList kind="Node" labels={tolerationsLabels} />
-      </VMDetailsItem>
+          <VMDetailsItem
+            canEdit={canUpdateTemplate}
+            title={TOLERATIONS_MODAL_TITLE}
+            idValue={prefixedID(id, 'tolerations')}
+            editButtonId={prefixedID(id, 'tolerations-edit')}
+            onEditClick={() =>
+              tolerationsModal({
+                vmLikeEntity: template,
+                blocking: true,
+                modalClassName: 'modal-lg',
+              })
+            }
+          >
+            <LabelList kind="Node" labels={tolerationsLabels} />
+          </VMDetailsItem>
 
-      <VMDetailsItem
-        title="Flavor"
-        idValue={prefixedID(id, 'flavor')}
-        canEdit={canUpdateTemplate}
-        onEditClick={() => vmFlavorModal({ vmLike: template, blocking: true })}
-        editButtonId={prefixedID(id, 'flavor-edit')}
-        isNotAvail={!flavorText}
-      >
-        {flavorText}
-      </VMDetailsItem>
+          <VMDetailsItem
+            canEdit={canUpdateTemplate}
+            title={AFFINITY_MODAL_TITLE}
+            idValue={prefixedID(id, 'affinity')}
+            editButtonId={prefixedID(id, 'affinity-edit')}
+            onEditClick={() =>
+              affinityModal({
+                vmLikeEntity: template,
+                blocking: true,
+                modalClassName: 'modal-lg',
+              })
+            }
+          >
+            {affinityWrapperCount} {'Affinity rules'}
+          </VMDetailsItem>
+        </dl>
+      </div>
+      <div className="col-sm-6">
+        <dl className="co-m-pane__details">
+          <VMDetailsItem
+            title="Flavor"
+            idValue={prefixedID(id, 'flavor')}
+            canEdit={canUpdateTemplate}
+            onEditClick={() => vmFlavorModal({ vmLike: template, blocking: true })}
+            editButtonId={prefixedID(id, 'flavor-edit')}
+            isNotAvail={!flavorText}
+          >
+            {flavorText}
+          </VMDetailsItem>
 
-      <VMDetailsItem
-        title={DEDICATED_RESOURCES_MODAL_TITLE}
-        idValue={prefixedID(id, 'dedicated-resources')}
-        canEdit={canUpdateTemplate}
-        onEditClick={() =>
-          dedicatedResourcesModal({
-            vmLikeEntity: template,
-            blocking: true,
-          })
-        }
-        editButtonId={prefixedID(id, 'dedicated-resources-edit')}
-      >
-        {isCPUPinned ? DEDICATED_RESOURCES_PINNED : DEDICATED_RESOURCES_NOT_PINNED}
-      </VMDetailsItem>
-    </dl>
+          <VMDetailsItem
+            title={DEDICATED_RESOURCES_MODAL_TITLE}
+            idValue={prefixedID(id, 'dedicated-resources')}
+            canEdit={canUpdateTemplate}
+            onEditClick={() =>
+              dedicatedResourcesModal({
+                vmLikeEntity: template,
+                blocking: true,
+              })
+            }
+            editButtonId={prefixedID(id, 'dedicated-resources-edit')}
+          >
+            {isCPUPinned ? DEDICATED_RESOURCES_PINNED : DEDICATED_RESOURCES_NOT_PINNED}
+          </VMDetailsItem>
+        </dl>
+      </div>
+    </>
   );
 };
 

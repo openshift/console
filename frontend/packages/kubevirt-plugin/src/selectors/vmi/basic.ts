@@ -41,3 +41,5 @@ export const isVMIPaused = (vmi: VMIKind): boolean =>
 export const getVMINodeSelector = (vmi: VMIKind) => vmi?.spec?.nodeSelector;
 
 export const getVMITolerations = (vmi: VMIKind) => vmi?.spec?.tolerations;
+
+export const getVMIAffinity = (vmi: VMIKind) => vmi?.spec?.affinity;

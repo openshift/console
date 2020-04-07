@@ -1,0 +1,8 @@
+.kv-affinity-edit__radio-container {
+  display: flex;
+  flex-direction: column;
+
+  .kv-affinity-edit__radio {
+    margin-left: var(--pf-global--spacer--sm);
+  }
+}
