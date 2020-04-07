@@ -15,12 +15,22 @@ interface StateProps {
   activeNamespace: string;
 }
 
-export type NamespaceRedirectProps = StateProps & RouteComponentProps;
+export type NamespaceRedirectProps = StateProps &
+  RouteComponentProps & {
+    basePath?: string;
+    appendPath?: string;
+  };
 
 const NamespaceRedirect_: React.FC<NamespaceRedirectProps> = ({
   activeNamespace,
   location: { pathname },
-}) => <Redirect to={appendActiveNamespace(activeNamespace, pathname) + location.search} />;
+  basePath,
+  appendPath = '',
+}) => (
+  <Redirect
+    to={appendActiveNamespace(activeNamespace, basePath ?? pathname) + appendPath + location.search}
+  />
+);
 
 const mapStateToProps = (state: RootState): StateProps => {
   return {

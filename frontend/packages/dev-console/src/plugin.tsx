@@ -37,6 +37,19 @@ import {
   newClusterTaskTemplate,
 } from './templates';
 import reducer from './utils/reducer';
+import { AddAction } from './extensions/add-actions';
+import {
+  BuildConfigModel,
+  ImageStreamModel,
+  DeploymentConfigModel,
+  SecretModel,
+  RouteModel,
+  ServiceModel,
+  ImageStreamImportsModel,
+} from '@console/internal/models';
+import * as yamlIcon from './images/yaml.svg';
+import * as importGitIcon from './images/from-git.svg';
+import * as dockerfileIcon from './images/dockerfile.svg';
 
 const {
   ClusterTaskModel,
@@ -62,7 +75,8 @@ type ConsumedExtensions =
   | OverviewResourceTab
   | OverviewCRD
   | YAMLTemplate
-  | OverviewTabSection;
+  | OverviewTabSection
+  | AddAction;
 
 const plugin: Plugin<ConsumedExtensions> = [
   {
@@ -410,6 +424,14 @@ const plugin: Plugin<ConsumedExtensions> = [
     type: 'Page/Route',
     properties: {
       exact: true,
+      path: ['/import-yaml'],
+      component: (props) => <NamespaceRedirect {...props} basePath="/k8s" appendPath="/import" />,
+    },
+  },
+  {
+    type: 'Page/Route',
+    properties: {
+      exact: true,
       path: ['/add/all-namespaces', '/add/ns/:ns'],
       loader: async () =>
         (await import('./components/AddPage' /* webpackChunkName: "dev-console-add" */)).default,
@@ -712,6 +734,98 @@ const plugin: Plugin<ConsumedExtensions> = [
     properties: {
       model: ClusterTaskModel,
       template: newClusterTaskTemplate,
+    },
+  },
+  {
+    type: 'AddAction',
+    properties: {
+      id: 'import-from-git',
+      url: '/import',
+      label: 'From Git',
+      description: 'Import code from your git repository to be built and deployed',
+      icon: importGitIcon,
+      accessReview: [
+        BuildConfigModel,
+        ImageStreamModel,
+        DeploymentConfigModel,
+        SecretModel,
+        RouteModel,
+        ServiceModel,
+      ].map((model) => ({
+        group: model.apiGroup || '',
+        resource: model.plural,
+        verb: 'create',
+      })),
+    },
+  },
+  {
+    type: 'AddAction',
+    properties: {
+      url: '/deploy-image',
+      label: 'Container Image',
+      description: 'Deploy an existing image from an image registry or image stream tag',
+      iconClass: 'pficon-image',
+      accessReview: [
+        BuildConfigModel,
+        ImageStreamModel,
+        DeploymentConfigModel,
+        ImageStreamImportsModel,
+        SecretModel,
+        RouteModel,
+        ServiceModel,
+      ].map((model) => ({
+        group: model.apiGroup || '',
+        resource: model.plural,
+        verb: 'create',
+      })),
+    },
+  },
+  {
+    type: 'AddAction',
+    properties: {
+      url: '/catalog',
+      label: 'From Catalog',
+      description: 'Browse the catalog to discover, deploy and connect to services',
+      iconClass: 'pficon-catalog',
+    },
+  },
+  {
+    type: 'AddAction',
+    properties: {
+      url: '/import?importType=docker',
+      label: 'From Dockerfile',
+      description: 'Import your Dockerfile from your git repo to be built & deployed',
+      icon: dockerfileIcon,
+      accessReview: [
+        BuildConfigModel,
+        ImageStreamModel,
+        DeploymentConfigModel,
+        SecretModel,
+        RouteModel,
+        ServiceModel,
+      ].map((model) => ({
+        group: model.apiGroup || '',
+        resource: model.plural,
+        verb: 'create',
+      })),
+    },
+  },
+  {
+    type: 'AddAction',
+    properties: {
+      url: '/import-yaml',
+      label: 'YAML',
+      description: 'Create resources from their YAML or JSON definitions',
+      icon: yamlIcon,
+    },
+  },
+  {
+    type: 'AddAction',
+    properties: {
+      url: '/catalog?category=databases',
+      label: 'Database',
+      description: 'Browse the catalog to discover database services to add to your application',
+      iconClass: 'fas fa-database',
     },
   },
 ];

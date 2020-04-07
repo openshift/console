@@ -15,6 +15,7 @@ import {
 } from '@console/plugin-sdk';
 import { NamespaceRedirect } from '@console/internal/components/utils/namespace-redirect';
 import { referenceForModel } from '@console/internal/module/k8s';
+import { AddAction } from '@console/dev-console/src/extensions/add-actions';
 import * as models from './models';
 import { yamlTemplates } from './yaml-templates';
 import {
@@ -68,7 +69,8 @@ type ConsumedExtensions =
   | RoutePage
   | KebabActions
   | YAMLTemplate
-  | ResourceDetailsPage;
+  | ResourceDetailsPage
+  | AddAction;
 
 const plugin: Plugin<ConsumedExtensions> = [
   {
@@ -396,6 +398,18 @@ const plugin: Plugin<ConsumedExtensions> = [
     type: 'KebabActions',
     properties: {
       getKebabActionsForKind,
+    },
+  },
+  {
+    type: 'AddAction',
+    flags: {
+      required: [FLAG_KNATIVE_EVENTING],
+    },
+    properties: {
+      url: '/event-source',
+      label: 'Event Source',
+      description: 'Create an event source and sink it to Knative service',
+      iconClass: 'pficon-help',
     },
   },
 ];
