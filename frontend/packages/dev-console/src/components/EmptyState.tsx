@@ -31,12 +31,15 @@ const Item: React.FC<ItemProps> = ({
       // eslint-disable-next-line react-hooks/rules-of-hooks
       .map((descriptor) => useAccessReview({ namespace, ...descriptor }))
       .every((x) => x);
+
+  const resolvedUrl = url ? url.replace(':namespace', namespace) : undefined;
+
   return access ? (
     <GalleryItem>
       <CatalogTile
         className="odc-empty-state__tile"
-        onClick={(e: React.SyntheticEvent) => navigateTo(e, url)}
-        href={url}
+        onClick={(e: React.SyntheticEvent) => navigateTo(e, resolvedUrl)}
+        href={resolvedUrl}
         title={label}
         iconImg={icon}
         iconClass={iconClass}
