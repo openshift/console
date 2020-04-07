@@ -1269,7 +1269,7 @@ class SilenceForm_ extends React.Component<SilenceFormProps, SilenceFormState> {
   };
 
   render() {
-    const { Info, saveButtonText, title } = this.props;
+    const { Info, title } = this.props;
     const { data, error, inProgress } = this.state;
 
     return (
@@ -1386,7 +1386,7 @@ class SilenceForm_ extends React.Component<SilenceFormProps, SilenceFormState> {
           <ButtonBar errorMessage={error} inProgress={inProgress}>
             <ActionGroup className="pf-c-form">
               <Button type="submit" variant="primary">
-                {saveButtonText || 'Save'}
+                Silence
               </Button>
               <Button onClick={history.goBack} variant="secondary">
                 Cancel
@@ -1433,9 +1433,9 @@ const EditSilence = connect(silenceParamToProps)(({ loaded, loadError, silence }
 const CreateSilence_ = ({ createdBy }) => {
   const matchers = _.map(getURLSearchParams(), (value, name) => ({ name, value, isRegex: false }));
   return _.isEmpty(matchers) ? (
-    <SilenceForm defaults={{ createdBy }} saveButtonText="Create" title="Create Silence" />
+    <SilenceForm defaults={{ createdBy }} title="Create Silence" />
   ) : (
-    <SilenceForm defaults={{ createdBy, matchers }} saveButtonText="Create" title="Silence Alert" />
+    <SilenceForm defaults={{ createdBy, matchers }} title="Silence Alert" />
   );
 };
 const createSilenceStateToProps = ({ UI }: RootState) => ({
@@ -1715,7 +1715,6 @@ export type SilencesDetailsPageProps = {
 export type SilenceFormProps = {
   defaults?: any;
   Info: React.ComponentType<{}>;
-  saveButtonText?: string;
   title: string;
   urls: { key: string }[];
 };
