@@ -1,5 +1,10 @@
 import { FirehoseResult } from '@console/internal/components/utils';
-import { DeploymentKind, PodKind, K8sResourceConditionStatus } from '@console/internal/module/k8s';
+import {
+  DeploymentKind,
+  PodKind,
+  K8sResourceConditionStatus,
+  referenceForModel,
+} from '@console/internal/module/k8s';
 import { TopologyDataResources } from '@console/dev-console/src/components/topology';
 import {
   ConfigurationModel,
@@ -622,7 +627,39 @@ export const sampleClusterServiceVersions: FirehoseResult = {
   loadError: '',
   data: [],
 };
-
+export const knativeTopologyDataModel = {
+  graph: {
+    nodes: [
+      { id: 'e187afa2-53b1-406d-a619-cf9ff1468031', type: 'knative-service', name: 'react-app' },
+    ],
+    edges: [],
+    groups: [],
+  },
+  topology: {
+    'e187afa2-53b1-406d-a619-cf9ff1468031': {
+      id: 'e84d885a-a63f-41c7-8833-ffbc802f296a',
+      name: 'react-app',
+      type: 'knative-service',
+      resources: {
+        obj: knativeServiceObj,
+        buildConfigs: [],
+        routes: [],
+        services: [],
+        configurations: [],
+        revisions: [],
+        ksroutes: [],
+        pods: [],
+      },
+      operatorBackedService: false,
+      data: {
+        url: 'http://react-app.karthik.apps-crc.testing',
+        kind: referenceForModel(ServiceModel),
+        vcsURI: 'https://github.com/sclorg/nodejs-ex',
+        isKnativeResource: true,
+      },
+    },
+  },
+};
 export const MockKnativeResources: TopologyDataResources = {
   deployments: sampleKnativeDeployments,
   deploymentConfigs: sampleKnativeDeploymentConfigs,

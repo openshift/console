@@ -35,6 +35,9 @@ export const getAddPageUrl = (
       pageUrl = `/catalog/ns/${ns}`;
       params.append('category', 'databases');
       break;
+    case ImportOptions.EVENTSOURCE:
+      pageUrl = `/event-source/ns/${ns}`;
+      break;
     default:
       throw new Error('Invalid Import option provided');
   }

@@ -33,6 +33,8 @@ import {
 } from '@console/dev-console/src/components/topology';
 import { getImageForIconClass } from '@console/internal/components/catalog/catalog-item-icon';
 import { DeploymentModel } from '@console/internal/models';
+import { RootState } from '@console/internal/redux';
+import { FLAG_KNATIVE_EVENTING } from '../const';
 import { ServiceModel as knServiceModel } from '../models';
 import { KnativeItem } from '../utils/get-knative-resources';
 
@@ -50,6 +52,13 @@ export enum EdgeType {
 type RevK8sResourceKind = K8sResourceKind & {
   resources?: { [key: string]: any };
 };
+/**
+ * returns if event source is enabled or not
+ * @param Flags
+ */
+export const getEventSourceStatus = ({ FLAGS }: RootState): boolean =>
+  FLAGS.get(FLAG_KNATIVE_EVENTING);
+
 /**
  * fetch the parent resource from a resource
  * @param resource

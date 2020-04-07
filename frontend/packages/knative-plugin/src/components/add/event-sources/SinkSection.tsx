@@ -11,7 +11,9 @@ interface SinkSectionProps {
 }
 
 const SinkSection: React.FC<SinkSectionProps> = ({ namespace }) => {
-  const { setFieldValue, setFieldTouched, validateForm } = useFormikContext<FormikValues>();
+  const { setFieldValue, setFieldTouched, validateForm, initialValues } = useFormikContext<
+    FormikValues
+  >();
   const autocompleteFilter = (strText, item): boolean => fuzzy(strText, item?.props?.name);
   const fieldId = getFieldId('sink-name', 'dropdown');
   const onChange = React.useCallback(
@@ -24,9 +26,14 @@ const SinkSection: React.FC<SinkSectionProps> = ({ namespace }) => {
     },
     [setFieldValue, setFieldTouched, validateForm],
   );
+  const contextAvailable = !!initialValues.sink.knativeService;
   return (
     <FormSection title="Sink">
-      <FormGroup fieldId={fieldId} helperText="Select a Service to sink to." isRequired>
+      <FormGroup
+        fieldId={fieldId}
+        helperText={!contextAvailable ? 'Select a Service to sink to.' : ''}
+        isRequired
+      >
         <ResourceDropdownField
           name="sink.knativeService"
           label="Knative Service"
@@ -36,6 +43,7 @@ const SinkSection: React.FC<SinkSectionProps> = ({ namespace }) => {
           required
           placeholder="Select Knative Service"
           showBadge
+          disabled={contextAvailable}
           onChange={onChange}
           autocompleteFilter={autocompleteFilter}
           autoSelect

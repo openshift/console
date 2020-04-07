@@ -7,6 +7,7 @@ import { RootState } from '@console/internal/redux';
 import { ALL_APPLICATIONS_KEY } from '@console/shared';
 import { K8sResourceKind, modelFor, referenceFor, k8sCreate } from '@console/internal/module/k8s';
 import { FirehoseList } from '@console/dev-console/src/components/import/import-types';
+import { sanitizeApplicationValue } from '@console/dev-console/src/utils/application-utils';
 import { eventSourceValidationSchema } from './eventSource-validation-utils';
 import EventSourceForm from './EventSourceForm';
 import { EventSources, EventSourceFormData } from './import-types';
@@ -18,6 +19,8 @@ import {
 interface EventSourceProps {
   namespace: string;
   projects?: FirehoseList;
+  contextSource?: string;
+  selectedApplication?: string;
 }
 
 interface StateProps {
@@ -26,8 +29,14 @@ interface StateProps {
 
 type Props = EventSourceProps & StateProps;
 
-const EventSource: React.FC<Props> = ({ namespace, projects, activeApplication }) => {
+const EventSource: React.FC<Props> = ({
+  namespace,
+  projects,
+  activeApplication,
+  contextSource,
+}) => {
   const typeEventSource = EventSources.CronJobSource;
+  const serviceName = contextSource?.split('/').pop() || '';
   const initialValues: EventSourceFormData = {
     project: {
       name: namespace || '',
@@ -35,13 +44,13 @@ const EventSource: React.FC<Props> = ({ namespace, projects, activeApplication }
       description: '',
     },
     application: {
-      initial: activeApplication,
-      name: activeApplication,
+      initial: sanitizeApplicationValue(activeApplication),
+      name: sanitizeApplicationValue(activeApplication),
       selectedKey: activeApplication,
     },
     name: '',
     sink: {
-      knativeService: '',
+      knativeService: serviceName,
     },
     type: typeEventSource,
     data: {
@@ -82,8 +91,8 @@ const EventSource: React.FC<Props> = ({ namespace, projects, activeApplication }
   );
 };
 
-const mapStateToProps = (state: RootState): StateProps => {
-  const activeApplication = getActiveApplication(state);
+const mapStateToProps = (state: RootState, ownProps: EventSourceProps): StateProps => {
+  const activeApplication = ownProps.selectedApplication || getActiveApplication(state);
   return {
     activeApplication: activeApplication !== ALL_APPLICATIONS_KEY ? activeApplication : '',
   };
