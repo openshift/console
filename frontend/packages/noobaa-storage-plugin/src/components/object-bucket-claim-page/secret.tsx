@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash';
+import { Base64 } from 'js-base64';
 import { SecretValue } from '@console/internal/components/configmap-and-secret-data';
 import { ConfigMapModel, SecretModel } from '@console/internal/models';
 import { k8sGet, K8sResourceKind } from '@console/internal/module/k8s';
@@ -24,8 +25,8 @@ export const GetSecret: React.FC<GetSecretProps> = ({ obj }) => {
           data[1],
           'data.BUCKET_PORT',
         )}`;
-        const accessKey = _.get(data[0], 'data.AWS_ACCESS_KEY_ID');
-        const secretKey = _.get(data[0], 'data.AWS_SECRET_ACCESS_KEY');
+        const accessKey = Base64.decode(_.get(data[0], 'data.AWS_ACCESS_KEY_ID'));
+        const secretKey = Base64.decode(_.get(data[0], 'data.AWS_SECRET_ACCESS_KEY'));
         const secretValues = [
           { field: 'Endpoint', value: endpoint },
           { field: 'Bucket Name', value: name },
