@@ -6,12 +6,14 @@ import {
   LOG_SOURCE_TERMINATED,
 } from '@console/internal/components/utils';
 import { ContainerStatus } from '@console/internal/module/k8s';
+import { SecretAnnotationId } from '../../components/pipelines/const';
 import {
   getPipelineTasks,
   containerToLogSourceStatus,
   constructCurrentPipeline,
   getPipelineRunParams,
   pipelineRunDuration,
+  getSecretAnnotations,
 } from '../pipeline-utils';
 import {
   constructPipelineData,
@@ -102,5 +104,29 @@ describe('pipeline-utils ', () => {
     const duration = pipelineRunDuration(mockRunDurationTest[2]);
     expect(duration).not.toBeNull();
     expect(duration).toBe('1m 13s');
+  });
+  it('expect annotation to return an empty object if keyValue pair is not passed', () => {
+    const annotation = getSecretAnnotations(null);
+    expect(annotation).toEqual({});
+  });
+
+  it('expect annotation to have a valid git annotation key and value', () => {
+    const annotation = getSecretAnnotations({
+      key: SecretAnnotationId.Git,
+      value: 'github.com',
+    });
+    expect(annotation).toEqual({
+      'tekton.dev/git-0': 'github.com',
+    });
+  });
+
+  it('expect annotation to have a valid image annotation key and value', () => {
+    const annotation = getSecretAnnotations({
+      key: SecretAnnotationId.Image,
+      value: 'docker.io',
+    });
+    expect(annotation).toEqual({
+      'tekton.dev/docker-0': 'docker.io',
+    });
   });
 });

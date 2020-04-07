@@ -9,13 +9,14 @@ import {
 import { SecretModel, ServiceAccountModel } from '@console/internal/models';
 import { SecretType } from '@console/internal/components/secrets/create-secret';
 import { SecondaryStatus } from '@console/shared';
-import { SecretKind, ServiceAccountKind } from '@console/internal/module/k8s';
+import { SecretKind } from '@console/internal/module/k8s';
+import { ServiceAccountType } from '../../../utils/pipeline-utils';
 import { PIPELINE_SERVICE_ACCOUNT } from '../const';
 import './SecretsList.scss';
 
 type SecretsProps = {
   secrets?: FirehoseResult<SecretKind[]>;
-  serviceaccounts?: FirehoseResult<ServiceAccountKind>;
+  serviceaccounts?: FirehoseResult<ServiceAccountType>;
 };
 
 type SecretsListProps = {
@@ -25,12 +26,12 @@ type SecretsListProps = {
 const secretTypes = [SecretType.dockerconfigjson, SecretType.basicAuth, SecretType.sshAuth];
 
 const Secrets: React.FC<SecretsProps> = ({ secrets, serviceaccounts }) => {
-  const servicAccountSecrets = _.map(serviceaccounts.data.secrets, 'name');
+  const serviceAccountSecrets = _.map(serviceaccounts.data.secrets, 'name');
   const filterData = _.filter(
     secrets.data,
     (secret) =>
       _.includes(secretTypes, secret.type) &&
-      _.includes(servicAccountSecrets, secret.metadata.name),
+      _.includes(serviceAccountSecrets, secret.metadata.name),
   );
   const sortedFilterData = _.sortBy(filterData, (data) => data.metadata.name);
 
@@ -41,6 +42,7 @@ const Secrets: React.FC<SecretsProps> = ({ secrets, serviceaccounts }) => {
         {sortedFilterData.map((secret) => {
           return (
             <ResourceLink
+              className="odc-secrets-list__secretsItem"
               key={secret.metadata.uid}
               kind={SecretModel.kind}
               name={secret.metadata.name}

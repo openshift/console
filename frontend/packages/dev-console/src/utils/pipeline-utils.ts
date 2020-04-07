@@ -1,7 +1,7 @@
 import * as _ from 'lodash';
 import { formatDuration } from '@console/internal/components/utils/datetime';
 import {
-  ContainerStatus
+  ContainerStatus,
   K8sResourceKind,
   k8sUpdate,
   k8sGet,
@@ -16,6 +16,7 @@ import {
 } from '@console/internal/components/utils';
 import { ServiceAccountModel } from '@console/internal/models';
 import { errorModal } from '@console/internal/components/modals/error-modal';
+import { PIPELINE_SERVICE_ACCOUNT, SecretAnnotationId } from '../components/pipelines/const';
 import {
   getLatestRun,
   Pipeline,
@@ -28,22 +29,20 @@ import {
   PipelineRunWorkspace,
 } from './pipeline-augment';
 import { pipelineFilterReducer, pipelineRunStatus } from './pipeline-filter-reducer';
-import { PIPELINE_SERVICE_ACCOUNT } from '../components/pipelines/const';
 
 interface Resources {
   inputs?: Resource[];
   outputs?: Resource[];
 }
 
-type ServiceAccountKind = {
-  secrets: { [name: string]: string }[];
-} & K8sResourceCommon;
-
 interface Resource {
   name: string;
   resource?: string;
   from?: string[];
 }
+export type ServiceAccountType = {
+  secrets: { [name: string]: string }[];
+} & K8sResourceCommon;
 
 export interface PipelineVisualizationTaskItem {
   name: string;
@@ -332,8 +331,8 @@ export const pipelineRunDuration = (run: PipelineRun): string => {
 
 export const updateServiceAccount = (
   secretName: string,
-  originalServiceAccount: ServiceAccountKind,
-): Promise<ServiceAccountKind> => {
+  originalServiceAccount: ServiceAccountType,
+): Promise<ServiceAccountType> => {
   const updatedServiceAccount = _.cloneDeep(originalServiceAccount);
   updatedServiceAccount.secrets = [...updatedServiceAccount.secrets, { name: secretName }];
   return k8sUpdate(ServiceAccountModel, updatedServiceAccount);
@@ -349,4 +348,19 @@ export const associateServiceAccountToSecret = (secret: SecretKind, namespace: s
     .catch((err) => {
       errorModal({ error: err.message });
     });
+};
+
+type KeyValuePair = {
+  key: string;
+  value: string;
+};
+export const getSecretAnnotations = (annotation: KeyValuePair) => {
+  const annotations = {};
+  const annotationPrefix = 'tekton.dev';
+  if (annotation?.key === SecretAnnotationId.Git) {
+    annotations[`${annotationPrefix}/${SecretAnnotationId.Git}-0`] = annotation?.value;
+  } else if (annotation?.key === SecretAnnotationId.Image) {
+    annotations[`${annotationPrefix}/${SecretAnnotationId.Image}-0`] = annotation?.value;
+  }
+  return annotations;
 };

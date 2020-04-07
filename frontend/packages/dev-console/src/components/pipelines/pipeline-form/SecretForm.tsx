@@ -11,6 +11,7 @@ import {
   CreateConfigSubform,
 } from '@console/internal/components/secrets/create-secret';
 import { DropdownField, InputField } from '@console/shared';
+import SecretAnnotation from './SecretAnnotation';
 import './SecretForm.scss';
 
 const authTypes = {
@@ -20,11 +21,11 @@ const authTypes = {
 };
 
 const renderSecretForm = (
-  type: string,
+  type: SecretType,
   stringData: {
     [key: string]: any;
   },
-  onDataChanged: (event: Event) => void,
+  onDataChanged: (value: string) => void,
 ) => {
   switch (type) {
     case SecretType.basicAuth:
@@ -60,22 +61,20 @@ const SecretForm: React.FC<FormikValues> = ({
     [SecretType.dockerconfigjson]: {},
   });
 
-  const setValues = (type) => {
-    type === SecretType.dockerconfigjson
-      ? setFieldValue(
-          'formData',
-          _.mapValues({ '.dockerconfigjson': stringData[type] }, JSON.stringify),
-        )
-      : setFieldValue('formData', stringData[type]);
+  const setValues = (type: SecretType) => {
+    if (type === SecretType.dockerconfigjson) {
+      setFieldValue(
+        'formData',
+        _.mapValues({ '.dockerconfigjson': stringData[type] }, JSON.stringify),
+      );
+    } else {
+      setFieldValue('formData', stringData[type]);
+    }
   };
 
-  const onDataChanged = (event) => {
-    setStringData((prevState) => ({ ...prevState, [values.type]: event }));
+  const onDataChanged = (value: string) => {
+    setStringData(_.merge(stringData, { [values.type]: value }));
     setValues(values.type);
-  };
-
-  const handleTypeChange = (type) => {
-    setValues(type);
   };
 
   return (
@@ -94,12 +93,15 @@ const SecretForm: React.FC<FormikValues> = ({
         />
       </div>
       <div className="form-group">
+        <SecretAnnotation fieldName="annotations" />
+      </div>
+      <div className="form-group">
         <DropdownField
           name="type"
           label="Authentication Type"
           items={authTypes}
           title={authTypes[values.type]}
-          onChange={handleTypeChange}
+          onChange={(type: SecretType) => setValues(type)}
           fullWidth
           required
         />
