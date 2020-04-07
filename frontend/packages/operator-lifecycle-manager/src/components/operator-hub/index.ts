@@ -1,4 +1,4 @@
-import { K8sResourceKind } from '@console/internal/module/k8s';
+import { K8sResourceKind, ObjectMetadata } from '@console/internal/module/k8s';
 import { PackageManifestKind, SubscriptionKind } from '../../types';
 
 export enum ProviderType {
@@ -48,23 +48,41 @@ export type OperatorHubItem = {
   infraFeatures: InfraFeatures[];
 };
 
+export enum OperatorHubCSVAnnotationKey {
+  certifiedLevel = 'certifiedLevel',
+  healthIndex = 'healthIndex',
+  repository = 'repository',
+  containerImage = 'containerImage',
+  createdAt = 'createdAt',
+  support = 'support',
+  description = 'description',
+  categories = 'categories',
+  capabilities = 'capabilities',
+  actionText = 'marketplace.openshift.io/actionText',
+  remoteWorkflow = 'marketplace.openshift.io/remote-workflow',
+  supportWorkflow = 'marketplace.openshift.io/support-workflow',
+  infrastructureFeatures = 'operators.openshift.io/infrastructure-features',
+  validSubscription = 'operators.openshift.io/valid-subscription',
+  tags = 'tags',
+}
+
 export type OperatorHubCSVAnnotations = {
-  certifiedLevel?: string;
-  healthIndex?: string;
-  repository?: string;
-  containerImage?: string;
-  createdAt?: string;
-  support?: string;
-  description?: string;
-  categories?: string;
-  capabilities?: CapabilityLevel;
-  'marketplace.openshift.io/action-text'?: string;
-  'marketplace.openshift.io/remote-workflow'?: string;
-  'marketplace.openshift.io/support-workflow'?: string;
-  tags?: string[];
-  'operators.openshift.io/infrastructure-features'?: string;
-  'operators.openshift.io/valid-subscription'?: string;
-};
+  [OperatorHubCSVAnnotationKey.certifiedLevel]?: string;
+  [OperatorHubCSVAnnotationKey.healthIndex]?: string;
+  [OperatorHubCSVAnnotationKey.repository]?: string;
+  [OperatorHubCSVAnnotationKey.containerImage]?: string;
+  [OperatorHubCSVAnnotationKey.createdAt]?: string;
+  [OperatorHubCSVAnnotationKey.support]?: string;
+  [OperatorHubCSVAnnotationKey.description]?: string;
+  [OperatorHubCSVAnnotationKey.categories]?: string;
+  [OperatorHubCSVAnnotationKey.capabilities]?: CapabilityLevel;
+  [OperatorHubCSVAnnotationKey.actionText]?: string;
+  [OperatorHubCSVAnnotationKey.remoteWorkflow]?: string;
+  [OperatorHubCSVAnnotationKey.supportWorkflow]?: string;
+  [OperatorHubCSVAnnotationKey.infrastructureFeatures]?: string;
+  [OperatorHubCSVAnnotationKey.validSubscription]?: string;
+  [OperatorHubCSVAnnotationKey.tags]?: string[];
+} & ObjectMetadata['annotations'];
 
 type OperatorHubSpec = {
   sources?: {
