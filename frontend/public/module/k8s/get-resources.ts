@@ -1,4 +1,5 @@
 import * as _ from 'lodash-es';
+import { plural } from 'pluralize';
 
 import { coFetchJSON } from '../../co-fetch';
 import { K8sKind, K8sVerb } from '../../module/k8s';
@@ -81,6 +82,20 @@ export type DiscoveryResources = {
   safeResources: string[];
 };
 
+export const kindToLabel = (kind: string): string => {
+  return _.startCase(kind).replace(/\bO Auth\b/, 'OAuth');
+};
+
+export const pluralizeKind = (kind: string): string => {
+  const label = kindToLabel(kind);
+  const pluralized = plural(label);
+  // Handle special cases like DB -> DBs (instead of DBS).
+  if (pluralized === `${label}S`) {
+    return `${label}s`;
+  }
+  return pluralized;
+};
+
 export const getResources = () =>
   coFetchJSON('api/kubernetes/apis').then((res) => {
     const preferredVersions = res.groups.map((group) => group.preferredVersion);
@@ -118,12 +133,12 @@ export const getResources = () =>
               namespaced,
               verbs,
               shortNames,
-              label: kind,
+              label: kindToLabel(kind),
               plural: name,
               apiVersion,
               abbr: kindToAbbr(kind),
               ...(apiGroup ? { apiGroup } : {}),
-              labelPlural: `${kind}${kind.endsWith('s') ? 'es' : 's'}`,
+              labelPlural: pluralizeKind(kind),
               path: name,
               id: singularName,
               crd: true,

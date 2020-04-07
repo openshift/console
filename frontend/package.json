@@ -101,6 +101,7 @@
     "openshift-logos-icon": "1.7.1",
     "patternfly": "^3.59.1",
     "patternfly-react": "2.32.3",
+    "pluralize": "^8.0.0",
     "point-in-svg-path": "1.0.1",
     "popper.js": "^1.15.0",
     "prop-types": "15.7.x",
