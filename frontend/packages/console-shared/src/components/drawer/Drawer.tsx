@@ -116,7 +116,7 @@ const Drawer: React.FC<DrawerProps> = ({
         <div ref={headerRef} className="ocs-drawer__header">
           {header}
         </div>
-        {children}
+        <div className="ocs-drawer__body">{children}</div>
       </div>
     </CSSTransition>
   );

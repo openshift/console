@@ -36,7 +36,8 @@ import {
 import { Resources } from './k8s-resource';
 import { StatusDescriptor } from './descriptors/status';
 import { SpecDescriptor } from './descriptors/spec';
-import { referenceForProvidedAPI, OperandLink } from '.';
+import { referenceForProvidedAPI } from '.';
+import { OperandLink } from './operand-link';
 
 const COLUMNS = OperandTableHeader();
 const NAME_INDEX = _.findIndex(COLUMNS, { title: 'Name' });

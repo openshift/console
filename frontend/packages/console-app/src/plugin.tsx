@@ -1,14 +1,19 @@
 import * as React from 'react';
+import * as _ from 'lodash';
 import { CogsIcon } from '@patternfly/react-icons';
 import { FLAGS } from '@console/shared/src/constants';
+import { FLAG_DEVWORKSPACE } from './consts';
 import {
   Plugin,
   Perspective,
+  ModelFeatureFlag,
+  ModelDefinition,
   DashboardsOverviewResourceActivity,
   DashboardsOverviewHealthURLSubsystem,
   DashboardsOverviewHealthPrometheusSubsystem,
   DashboardsOverviewInventoryItem,
   DashboardsOverviewHealthOperator,
+  ReduxReducer,
 } from '@console/plugin-sdk';
 import {
   ClusterVersionModel,
@@ -40,16 +45,34 @@ import {
   getClusterUpdateTimestamp,
   isClusterUpdateActivity,
 } from './components/dashboards-page/activity';
+import reducer from './redux/reducer';
+import * as models from './models';
 
 type ConsumedExtensions =
   | Perspective
+  | ModelDefinition
+  | ModelFeatureFlag
   | DashboardsOverviewResourceActivity
   | DashboardsOverviewHealthURLSubsystem<any>
   | DashboardsOverviewHealthPrometheusSubsystem
   | DashboardsOverviewInventoryItem
-  | DashboardsOverviewHealthOperator<ClusterOperator>;
+  | DashboardsOverviewHealthOperator<ClusterOperator>
+  | ReduxReducer;
 
 const plugin: Plugin<ConsumedExtensions> = [
+  {
+    type: 'ModelDefinition',
+    properties: {
+      models: _.values(models),
+    },
+  },
+  {
+    type: 'FeatureFlag/Model',
+    properties: {
+      model: models.WorkspaceModel,
+      flag: FLAG_DEVWORKSPACE,
+    },
+  },
   {
     type: 'Perspective',
     properties: {
@@ -162,6 +185,13 @@ const plugin: Plugin<ConsumedExtensions> = [
     },
     flags: {
       required: [FLAGS.CLUSTER_VERSION],
+    },
+  },
+  {
+    type: 'ReduxReducer',
+    properties: {
+      namespace: 'console',
+      reducer,
     },
   },
 ];

@@ -23,6 +23,8 @@ import {
 import classNames from 'classnames';
 import { FLAGS, YellowExclamationTriangleIcon } from '@console/shared';
 import { formatNamespacedRouteForResource } from '@console/shared/src/utils';
+/* needs to be updated once Workspace metadata is finalised
+ import CloudShellMastheadButton from '@console/app/src/components/cloud-shell/CloudShellMastheadButton'; */
 import * as UIActions from '../actions/ui';
 import { connectToFlags, flagPending, featureReducerName } from '../reducers/features';
 import { authSvc } from '../module/auth';
@@ -572,6 +574,7 @@ class MastheadToolbarContents_ extends React.Component {
                 <PlusCircleIcon className="co-masthead-icon" />
               </Button>
             </ToolbarItem>
+            {/* To be added after workspace resource metadata is finalised <CloudShellMastheadButton /> */}
             <ToolbarItem>
               <ApplicationLauncher
                 aria-label="Help menu"
