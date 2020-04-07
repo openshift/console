@@ -10,6 +10,7 @@
     "@console/internal": "0.0.0-fixed",
     "@console/plugin-sdk": "0.0.0-fixed",
     "@console/shared": "0.0.0-fixed",
+    "@console/dev-console": "0.0.0-fixed",
     "@patternfly/react-console": "1.x"
   },
   "consolePlugin": {
