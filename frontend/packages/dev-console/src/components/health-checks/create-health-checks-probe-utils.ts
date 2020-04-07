@@ -2,7 +2,7 @@ import * as _ from 'lodash';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { HealthCheckProbeData, RequestType, HealthChecksProbeType } from './health-checks-types';
 import { Resources, HealthChecksData } from '../import/import-types';
-import { healthChecksDefaultValues } from './health-check-probe-utils';
+import { healthChecksDefaultValues } from './health-checks-probe-utils';
 
 export const constructProbeData = (data: HealthCheckProbeData, resourceType?: Resources) => {
   const probeData = {
@@ -41,11 +41,14 @@ export const getRequestType = (data: HealthCheckProbeData) => {
   return '';
 };
 
-export const getHealthChecksData = (resource: K8sResourceKind): HealthChecksData => {
+export const getHealthChecksData = (
+  resource: K8sResourceKind,
+  containerIndex: number = 0,
+): HealthChecksData => {
   const containers = resource?.spec?.template?.spec?.containers ?? [];
-  const readinessProbe = containers?.[0]?.[HealthChecksProbeType.ReadinessProbe] ?? {};
-  const livenessProbe = containers?.[0]?.[HealthChecksProbeType.LivenessProbe] ?? {};
-  const startupProbe = containers?.[0]?.[HealthChecksProbeType.StartupProbe] ?? {};
+  const readinessProbe = containers?.[containerIndex]?.[HealthChecksProbeType.ReadinessProbe] ?? {};
+  const livenessProbe = containers?.[containerIndex]?.[HealthChecksProbeType.LivenessProbe] ?? {};
+  const startupProbe = containers?.[containerIndex]?.[HealthChecksProbeType.StartupProbe] ?? {};
   const healthChecks = {
     readinessProbe: {
       showForm: false,

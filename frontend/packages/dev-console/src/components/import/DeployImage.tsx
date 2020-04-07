@@ -12,7 +12,7 @@ import { DeployImageFormData, FirehoseList, Resources } from './import-types';
 import { createOrUpdateDeployImageResources } from './deployImage-submit-utils';
 import { deployValidationSchema } from './deployImage-validation-utils';
 import DeployImageForm from './DeployImageForm';
-import { healthChecksProbeInitialData } from '../health-checks/health-check-probe-utils';
+import { healthChecksProbeInitialData } from '../health-checks/health-checks-probe-utils';
 
 export interface DeployImageProps {
   namespace: string;

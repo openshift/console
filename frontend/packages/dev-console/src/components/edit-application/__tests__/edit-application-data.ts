@@ -4,8 +4,8 @@ import { ServiceModel } from '@console/knative-plugin';
 import { UNASSIGNED_KEY } from '../../../const';
 import { DeployImageFormData, GitImportFormData, Resources } from '../../import/import-types';
 import { AppResources } from '../edit-application-types';
-import { healthChecksProbeInitialData } from '../../health-checks/health-check-probe-utils';
-import { healthChecksData } from '../../health-checks/__tests__/create-health-check-probe-data';
+import { healthChecksProbeInitialData } from '../../health-checks/health-checks-probe-utils';
+import { healthChecksData } from '../../health-checks/__tests__/create-health-checks-probe-data';
 
 export const knativeService: K8sResourceKind = {
   apiVersion: `${ServiceModel.apiGroup}/${ServiceModel.apiVersion}`,

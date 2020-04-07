@@ -1,11 +1,15 @@
 import { DeploymentConfigModel, ReplicaSetModel } from '@console/internal/models';
 import { getKebabActionsForKind } from '../kebab-actions';
-import { ModifyApplication, EditApplication } from '../../actions/modify-application';
+import {
+  ModifyApplication,
+  EditApplication,
+  EditHealthCheck,
+} from '../../actions/modify-application';
 
 describe('kebab-actions: ', () => {
-  it('kebab action should have "Edit Application Grouping" and "Edit Application" option for deploymentConfig', () => {
+  it('kebab action should have "Edit Application Grouping", "Edit Application" and "Edit Health Checks" option for deploymentConfig', () => {
     const modifyApplication = getKebabActionsForKind(DeploymentConfigModel);
-    expect(modifyApplication).toEqual([ModifyApplication, EditApplication]);
+    expect(modifyApplication).toEqual([ModifyApplication, EditHealthCheck, EditApplication]);
   });
 
   it('kebab action should not have "Edit Application Grouping" option for replicaSet', () => {

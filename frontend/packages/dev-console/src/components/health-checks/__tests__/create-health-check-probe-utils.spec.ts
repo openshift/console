@@ -3,13 +3,13 @@ import {
   healthChecksData,
   healthChecksInputData,
   enabledProbeData,
-} from './create-health-check-probe-data';
+} from './create-health-checks-probe-data';
 import {
   getHealthChecksData,
   getRequestType,
   constructProbeData,
   getProbesData,
-} from '../create-health-check-probe-utils';
+} from '../create-health-checks-probe-utils';
 import { appResources } from '../../edit-application/__tests__/edit-application-data';
 import { Resources } from '../../import/import-types';
 

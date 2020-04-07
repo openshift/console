@@ -13,7 +13,7 @@ import { UNASSIGNED_KEY } from '../../const';
 import { Resources, DeploymentData } from '../import/import-types';
 import { AppResources } from './edit-application-types';
 import { RegistryType } from '../../utils/imagestream-utils';
-import { getHealthChecksData } from '../health-checks/create-health-check-probe-utils';
+import { getHealthChecksData } from '../health-checks/create-health-checks-probe-utils';
 
 export enum CreateApplicationFlow {
   Git = 'Import from Git',
@@ -21,7 +21,7 @@ export enum CreateApplicationFlow {
   Container = 'Deploy Image',
 }
 
-export const getResourcesType = (resource: K8sResourceKind): string => {
+export const getResourcesType = (resource: K8sResourceKind): Resources => {
   switch (resource.kind) {
     case DeploymentConfigModel.kind:
       return Resources.OpenShift;
@@ -30,7 +30,7 @@ export const getResourcesType = (resource: K8sResourceKind): string => {
     case referenceFor(resource) === referenceForModel(ServiceModel) ? ServiceModel.kind : '':
       return Resources.KnativeService;
     default:
-      return '';
+      return null;
   }
 };
 

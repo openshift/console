@@ -1,5 +1,5 @@
 import { FirehoseResult } from '@console/internal/components/utils';
-import { DeploymentKind, PodKind, EventKind } from '@console/internal/module/k8s';
+import { DeploymentKind, PodKind, EventKind, ImagePullPolicy } from '@console/internal/module/k8s';
 import { Model } from '@console/topology';
 import { TopologyDataModel, TopologyDataResources } from '../topology-types';
 import { NODE_HEIGHT, NODE_PADDING, NODE_WIDTH } from '../components/const';
@@ -186,7 +186,38 @@ export const sampleDeployments: FirehoseResult<DeploymentKind[]> = {
             },
           },
           spec: {
-            containers: [],
+            containers: [
+              {
+                resources: {},
+                terminationMessagePath: '/dev/termination-log',
+                name: 'wit-deployment',
+                ports: [
+                  {
+                    containerPort: 8080,
+                    protocol: 'TCP',
+                  },
+                ],
+                imagePullPolicy: ImagePullPolicy.Always,
+                terminationMessagePolicy: 'File',
+                image:
+                  'image-registry.openshift-image-registry.svc:5000/viraj/calculator-react@sha256:84d947d3bb6ae52090c86b5ec7e172dcef2c28a78eedb11a7ff588a3d336d8e0',
+              },
+              {
+                resources: {},
+                terminationMessagePath: '/dev/termination-log',
+                name: 'wit-deployment-1',
+                ports: [
+                  {
+                    containerPort: 8080,
+                    protocol: 'TCP',
+                  },
+                ],
+                imagePullPolicy: ImagePullPolicy.Always,
+                terminationMessagePolicy: 'File',
+                image:
+                  'image-registry.openshift-image-registry.svc:5000/viraj/calculator-react@sha256:84d947d3bb6ae52090c86b5ec7e172dcef2c28a78eedb11a7ff588a3d336d8e0',
+              },
+            ],
           },
         },
         strategy: {
@@ -269,7 +300,32 @@ export const sampleDeployments: FirehoseResult<DeploymentKind[]> = {
             schedulerName: 'default-scheduler',
             terminationGracePeriodSeconds: 30,
             securityContext: {},
-            containers: [],
+            containers: [
+              {
+                resources: {},
+                livenessProbe: {
+                  httpGet: {
+                    path: '/healthz',
+                    port: 8080,
+                    scheme: 'HTTP',
+                  },
+                  failureThreshold: 1,
+                  periodSeconds: 10,
+                },
+                terminationMessagePath: '/dev/termination-log',
+                name: 'jaeger-all-in-one-inmemory',
+                ports: [
+                  {
+                    containerPort: 8080,
+                    protocol: 'TCP',
+                  },
+                ],
+                imagePullPolicy: ImagePullPolicy.Always,
+                terminationMessagePolicy: 'File',
+                image:
+                  'image-registry.openshift-image-registry.svc:5000/viraj/calculator-react@sha256:84d947d3bb6ae52090c86b5ec7e172dcef2c28a78eedb11a7ff588a3d336d8e0',
+              },
+            ],
             serviceAccount: 'jaeger-all-in-one-inmemory-ui-proxy',
             volumes: [],
             dnsPolicy: 'ClusterFirst',
