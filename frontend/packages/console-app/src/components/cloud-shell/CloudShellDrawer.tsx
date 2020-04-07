@@ -35,8 +35,7 @@ const CloudShellDrawer: React.FC<CloudShellDrawerProps> = ({ children, onClose }
           <Button
             variant="plain"
             component="a"
-            // change this once we can open terminal in new tab
-            href={null}
+            href="/terminal"
             target="_blank"
             aria-label="Open terminal in new tab"
           >
