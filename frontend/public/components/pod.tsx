@@ -326,6 +326,7 @@ const PodGraphs = requirePrometheus(({ pod }) => (
         <Area
           title="Network In"
           humanize={humanizeDecimalBytesPerSec}
+          namespace={pod.metadata.namespace}
           query={`sum(irate(container_network_receive_bytes_total{pod='${pod.metadata.name}', namespace='${pod.metadata.namespace}'}[5m])) by (pod, namespace)`}
         />
       </div>
@@ -333,6 +334,7 @@ const PodGraphs = requirePrometheus(({ pod }) => (
         <Area
           title="Network Out"
           humanize={humanizeDecimalBytesPerSec}
+          namespace={pod.metadata.namespace}
           query={`sum(irate(container_network_transmit_bytes_total{pod='${pod.metadata.name}', namespace='${pod.metadata.namespace}'}[5m])) by (pod, namespace)`}
         />
       </div>
