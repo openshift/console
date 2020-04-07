@@ -551,6 +551,24 @@ func main() {
 		},
 	}
 
+	srv.KnativeEventSourceCRDLister = &server.ResourceLister{
+		BearerToken: resourceListerToken,
+		RequestURL: &url.URL{
+			Scheme: k8sEndpoint.Scheme,
+			Host:   k8sEndpoint.Host,
+			Path:   "/apis/apiextensions.k8s.io/v1beta1/customresourcedefinitions",
+			RawQuery: url.Values{
+				"labelSelector": {"duck.knative.dev/source=true"},
+			}.Encode(),
+		},
+
+		Client: &http.Client{
+			Transport: &http.Transport{
+				TLSClientConfig: srv.K8sProxyConfig.TLSClientConfig,
+			},
+		},
+	}
+
 	listenURL := bridge.ValidateFlagIsURL("listen", *fListen)
 	switch listenURL.Scheme {
 	case "http":

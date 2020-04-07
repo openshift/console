@@ -37,7 +37,7 @@ func (l *ResourceLister) handleResources(w http.ResponseWriter, r *http.Request)
 
 	if resp.StatusCode != http.StatusOK {
 		err := fmt.Errorf("console service account cannot list resource: %s", resp.Status)
-		serverutils.SendResponse(w, http.StatusInternalServerError, serverutils.ApiError{Err: err.Error()})
+		serverutils.SendResponse(w, resp.StatusCode, serverutils.ApiError{Err: err.Error()})
 		return
 	}
 
