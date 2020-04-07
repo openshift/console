@@ -150,9 +150,10 @@ export const DetailsCard_ = connect(mapStateToProps)(
                   isLoading={!clusterVersionLoaded}
                 >
                   <div className="co-select-to-copy">{clusterId}</div>
-                  {window.SERVER_FLAGS.branding !== 'okd' && (
-                    <ExternalLink text="OpenShift Cluster Manager" href={getOCMLink(clusterId)} />
-                  )}
+                  {window.SERVER_FLAGS.branding !== 'okd' &&
+                    window.SERVER_FLAGS.branding !== 'azure' && (
+                      <ExternalLink text="OpenShift Cluster Manager" href={getOCMLink(clusterId)} />
+                    )}
                 </DetailItem>
                 <DetailItem
                   title="Provider"
