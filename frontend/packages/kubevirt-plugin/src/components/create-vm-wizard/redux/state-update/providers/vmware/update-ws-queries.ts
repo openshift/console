@@ -1,17 +1,17 @@
-import { InternalActionType, UpdateOptions } from '../../../../types';
+import { InternalActionType, UpdateOptions } from '../../../types';
 import {
   ImportProvidersField,
   VMImportProvider,
   VMWareProviderField,
   VMWareProviderProps,
   VMWizardProps,
-} from '../../../../../types';
+} from '../../../../types';
 import {
   hasVMWareSettingsChanged,
   iGetVMWareField,
   isVMWareProvider,
-} from '../../../../../selectors/immutable/provider/vmware/selectors';
-import { hasImportProvidersChanged } from '../../../../../selectors/immutable/import-providers';
+} from '../../../../selectors/immutable/provider/vmware/selectors';
+import { hasImportProvidersChanged } from '../../../../selectors/immutable/import-providers';
 import { ConfigMapModel, DeploymentModel, PodModel, SecretModel } from '@console/internal/models';
 import {
   V2VVMWARE_DEPLOYMENT_NAME,
@@ -19,13 +19,13 @@ import {
   VCENTER_TYPE_LABEL,
   VMWARE_TO_KUBEVIRT_OS_CONFIG_MAP_NAME,
   VMWARE_TO_KUBEVIRT_OS_CONFIG_MAP_NAMESPACE,
-} from '../../../../../../../constants/v2v';
-import { V2VVMwareModel } from '../../../../../../../models';
-import { vmWizardInternalActions } from '../../../../internal-actions';
-import { iGetCommonData } from '../../../../../selectors/immutable/selectors';
-import { iGetIn } from '../../../../../../../utils/immutable';
-import { iGetCreateVMWizard } from '../../../../../selectors/immutable/common';
-import { FirehoseResourceEnhanced } from '../../../../../../../types/custom';
+} from '../../../../../../constants/v2v';
+import { V2VVMwareModel } from '../../../../../../models';
+import { vmWizardInternalActions } from '../../../internal-actions';
+import { iGetCommonData } from '../../../../selectors/immutable/selectors';
+import { iGetIn } from '../../../../../../utils/immutable';
+import { iGetCreateVMWizard } from '../../../../selectors/immutable/common';
+import { FirehoseResourceEnhanced } from '../../../../../../types/custom';
 
 type GetQueriesParams = {
   namespace: string;

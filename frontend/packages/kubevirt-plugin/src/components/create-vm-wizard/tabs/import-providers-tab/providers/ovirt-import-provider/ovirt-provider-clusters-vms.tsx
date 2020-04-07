@@ -13,7 +13,7 @@ import { FormSelectPlaceholderOption } from '../../../../../form/form-select-pla
 import { getPlaceholder } from '../../../../utils/renderable-field-utils';
 import { ignoreCaseSort } from '../../../../../../utils/sort';
 import { iGetOvirtField } from '../../../../selectors/immutable/provider/ovirt/selectors';
-import { requestVmDetails } from '../../../../redux/stateUpdate/vmSettings/providers/ovirt/ovirt-provider-actions';
+import { requestVmDetails } from '../../../../redux/state-update/providers/ovirt/ovirt-provider-actions';
 
 type VMBundle = {
   vmID: string;

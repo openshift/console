@@ -1,29 +1,29 @@
 import { DeploymentModel, PodModel, SecretModel } from '@console/internal/models';
-import { InternalActionType, UpdateOptions } from '../../../../types';
+import { InternalActionType, UpdateOptions } from '../../../types';
 import {
   ImportProvidersField,
   VMImportProvider,
   OvirtProviderProps,
   VMWizardProps,
   OvirtProviderField,
-} from '../../../../../types';
-import { hasImportProvidersChanged } from '../../../../../selectors/immutable/import-providers';
-import { vmWizardInternalActions } from '../../../../internal-actions';
-import { iGetCommonData } from '../../../../../selectors/immutable/selectors';
-import { iGetIn } from '../../../../../../../utils/immutable';
-import { iGetCreateVMWizard } from '../../../../../selectors/immutable/common';
+} from '../../../../types';
+import { hasImportProvidersChanged } from '../../../../selectors/immutable/import-providers';
+import { vmWizardInternalActions } from '../../../internal-actions';
+import { iGetCommonData } from '../../../../selectors/immutable/selectors';
+import { iGetIn } from '../../../../../../utils/immutable';
+import { iGetCreateVMWizard } from '../../../../selectors/immutable/common';
 import {
   hasOvirtSettingsChanged,
   iGetOvirtField,
   isOvirtProvider,
-} from '../../../../../selectors/immutable/provider/ovirt/selectors';
-import { FirehoseResourceEnhanced } from '../../../../../../../types/custom';
+} from '../../../../selectors/immutable/provider/ovirt/selectors';
+import { FirehoseResourceEnhanced } from '../../../../../../types/custom';
 import {
   V2VVMWARE_DEPLOYMENT_NAME,
   V2V_TEMPORARY_LABEL,
   OVIRT_TYPE_LABEL,
-} from '../../../../../../../constants/v2v';
-import { OVirtProviderModel } from '../../../../../../../models';
+} from '../../../../../../constants/v2v';
+import { OVirtProviderModel } from '../../../../../../models';
 
 type GetQueriesParams = {
   namespace: string;

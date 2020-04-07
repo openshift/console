@@ -1,8 +1,8 @@
 import { VMWizardTab } from '../types';
 import { UpdateOptions } from './types';
-import { updateImportProvidersState } from './stateUpdate/vmSettings/import-provider-tab-state-update';
-import { updateVmSettingsState } from './stateUpdate/vmSettings/vm-settings-tab-state-update';
-import { updateStorageTabState } from './stateUpdate/vmSettings/storage-tab-state-update';
+import { updateImportProvidersState } from './state-update/import-provider-tab-state-update';
+import { updateVmSettingsState } from './state-update/vm-settings-tab-state-update';
+import { updateStorageTabState } from './state-update/storage-tab-state-update';
 import {
   setVmSettingsTabValidity,
   validateVmSettings,

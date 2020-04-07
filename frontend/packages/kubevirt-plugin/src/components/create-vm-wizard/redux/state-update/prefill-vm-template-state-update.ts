@@ -1,6 +1,6 @@
 import { createBasicLookup, getName } from '@console/shared/src';
-import { InternalActionType, UpdateOptions } from '../../types';
-import { iGetProvisionSource, iGetVmSettingValue } from '../../../selectors/immutable/vm-settings';
+import { InternalActionType, UpdateOptions } from '../types';
+import { iGetProvisionSource, iGetVmSettingValue } from '../../selectors/immutable/vm-settings';
 import {
   CloudInitField,
   VMSettingsField,
@@ -9,16 +9,16 @@ import {
   VMWizardProps,
   VMWizardStorage,
   VMWizardStorageType,
-} from '../../../types';
+} from '../../types';
 import {
   iGetCommonData,
   iGetLoadedCommonData,
   iGetName,
-} from '../../../selectors/immutable/selectors';
-import { concatImmutableLists, immutableListToShallowJS } from '../../../../../utils/immutable';
-import { iGetNetworks } from '../../../selectors/immutable/networks';
-import { podNetwork } from '../../initial-state/networks-tab-initial-state';
-import { vmWizardInternalActions } from '../../internal-actions';
+} from '../../selectors/immutable/selectors';
+import { concatImmutableLists, immutableListToShallowJS } from '../../../../utils/immutable';
+import { iGetNetworks } from '../../selectors/immutable/networks';
+import { podNetwork } from '../initial-state/networks-tab-initial-state';
+import { vmWizardInternalActions } from '../internal-actions';
 import {
   CUSTOM_FLAVOR,
   DataVolumeSourceType,
@@ -26,7 +26,7 @@ import {
   DiskType,
   NetworkInterfaceModel,
   VolumeType,
-} from '../../../../../constants/vm';
+} from '../../../../constants/vm';
 import {
   DEFAULT_CPU,
   getCPU,
@@ -39,30 +39,30 @@ import {
   hasAutoAttachPodInterface,
   isWinToolsImage,
   parseCPU,
-} from '../../../../../selectors/vm';
+} from '../../../../selectors/vm';
 import {
   getTemplateFlavors,
   getTemplateHostname,
   getTemplateOperatingSystems,
   getTemplateWorkloadProfiles,
-} from '../../../../../selectors/vm-template/advanced';
-import { V1Network } from '../../../../../types/vm';
-import { getFlavors } from '../../../../../selectors/vm-template/combined-dependent';
-import { getSimpleName } from '../../../../../selectors/utils';
-import { getNextIDResolver } from '../../../../../utils/utils';
-import { ProvisionSource } from '../../../../../constants/vm/provision-source';
-import { DiskWrapper } from '../../../../../k8s/wrapper/vm/disk-wrapper';
-import { V1Volume } from '../../../../../types/vm/disk/V1Volume';
-import { VolumeWrapper } from '../../../../../k8s/wrapper/vm/volume-wrapper';
-import { getProvisionSourceStorage } from '../../initial-state/storage-tab-initial-state';
-import { CloudInitDataHelper } from '../../../../../k8s/wrapper/vm/cloud-init-data-helper';
-import { getStorages } from '../../../selectors/selectors';
-import { DataVolumeWrapper } from '../../../../../k8s/wrapper/vm/data-volume-wrapper';
-import { V1alpha1DataVolume } from '../../../../../types/vm/disk/V1alpha1DataVolume';
-import { joinIDs } from '../../../../../utils';
-import { VM_TEMPLATE_NAME_PARAMETER } from '../../../../../constants/vm-templates';
-import { selectVM } from '../../../../../selectors/vm-template/basic';
-import { convertToHighestUnitFromUnknown } from '../../../../form/size-unit-utils';
+} from '../../../../selectors/vm-template/advanced';
+import { V1Network } from '../../../../types/vm';
+import { getFlavors } from '../../../../selectors/vm-template/combined-dependent';
+import { getSimpleName } from '../../../../selectors/utils';
+import { getNextIDResolver } from '../../../../utils/utils';
+import { ProvisionSource } from '../../../../constants/vm/provision-source';
+import { DiskWrapper } from '../../../../k8s/wrapper/vm/disk-wrapper';
+import { V1Volume } from '../../../../types/vm/disk/V1Volume';
+import { VolumeWrapper } from '../../../../k8s/wrapper/vm/volume-wrapper';
+import { getProvisionSourceStorage } from '../initial-state/storage-tab-initial-state';
+import { CloudInitDataHelper } from '../../../../k8s/wrapper/vm/cloud-init-data-helper';
+import { getStorages } from '../../selectors/selectors';
+import { DataVolumeWrapper } from '../../../../k8s/wrapper/vm/data-volume-wrapper';
+import { V1alpha1DataVolume } from '../../../../types/vm/disk/V1alpha1DataVolume';
+import { joinIDs } from '../../../../utils';
+import { VM_TEMPLATE_NAME_PARAMETER } from '../../../../constants/vm-templates';
+import { selectVM } from '../../../../selectors/vm-template/basic';
+import { convertToHighestUnitFromUnknown } from '../../../form/size-unit-utils';
 
 export const prefillVmTemplateUpdater = ({ id, dispatch, getState }: UpdateOptions) => {
   const state = getState();

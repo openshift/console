@@ -7,14 +7,14 @@ import {
   VMSettingsField,
   VMWizardProps,
   VMWizardTab,
-} from '../../../../../types';
-import { InternalActionType, UpdateOptions } from '../../../../types';
+} from '../../../../types';
+import { InternalActionType, UpdateOptions } from '../../../types';
 import {
   iGetCommonData,
   iGetLoadedCommonData,
   iGetName,
-} from '../../../../../selectors/immutable/selectors';
-import { hasImportProvidersChanged } from '../../../../../selectors/immutable/import-providers';
+} from '../../../../selectors/immutable/selectors';
+import { hasImportProvidersChanged } from '../../../../selectors/immutable/import-providers';
 import { updateExtraWSQueries } from './update-ws-queries';
 import {
   hasOvirtSettingsChanged,
@@ -23,7 +23,7 @@ import {
   iGetOvirtFieldAttribute,
   iGetOvirtFieldValue,
   isOvirtProvider,
-} from '../../../../../selectors/immutable/provider/ovirt/selectors';
+} from '../../../../selectors/immutable/provider/ovirt/selectors';
 import {
   createConnectionObjects,
   startVMImportOperatorWithCleanup,
@@ -33,21 +33,21 @@ import {
   iGetIn,
   immutableListToShallowJS,
   toShallowJS,
-} from '../../../../../../../utils/immutable';
-import { getSimplePodDeploymentStatus } from '../../../../../../../statuses/pod-deployment/pod-deployment-status';
-import { PodDeploymentStatus } from '../../../../../../../statuses/pod-deployment/constants';
-import { vmWizardInternalActions } from '../../../../internal-actions';
-import { asDisabled, asHidden, asRequired } from '../../../../../utils/utils';
+} from '../../../../../../utils/immutable';
+import { getSimplePodDeploymentStatus } from '../../../../../../statuses/pod-deployment/pod-deployment-status';
+import { PodDeploymentStatus } from '../../../../../../statuses/pod-deployment/constants';
+import { vmWizardInternalActions } from '../../../internal-actions';
+import { asDisabled, asHidden, asRequired } from '../../../../utils/utils';
 import {
   getSimpleV2VPRoviderStatus,
   V2V_PROVIDER_STATUS_ALL_OK,
   V2VProviderStatus,
-} from '../../../../../../../statuses/v2v';
+} from '../../../../../../statuses/v2v';
 import * as _ from 'lodash';
-import { correctVMImportProviderSecretLabels } from '../../../../../../../k8s/requests/v2v/correct-vm-import-provider-secret-labels';
-import { getLoadedVm } from '../../../../../selectors/provider/selectors';
+import { correctVMImportProviderSecretLabels } from '../../../../../../k8s/requests/v2v/correct-vm-import-provider-secret-labels';
+import { getLoadedVm } from '../../../../selectors/provider/selectors';
 import { cleanupOvirtProvider } from './ovirt-cleanup';
-import { iGetCreateVMWizardTabs } from '../../../../../selectors/immutable/common';
+import { iGetCreateVMWizardTabs } from '../../../../selectors/immutable/common';
 import { prefillUpdateCreator } from './ovirt-prefill-vm';
 
 const startControllerAndCleanup = (options: UpdateOptions) => {

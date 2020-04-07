@@ -1,5 +1,5 @@
 import { FLAGS } from '@console/shared';
-import { isWinToolsImage, getVolumeContainerImage } from '../../../../../selectors/vm';
+import { isWinToolsImage, getVolumeContainerImage } from '../../../../selectors/vm';
 import {
   hasVmSettingsChanged,
   hasVMSettingsValueChanged,
@@ -7,21 +7,21 @@ import {
   iGetRelevantTemplateSelectors,
   iGetVmSettingValue,
   iGetVmSettingAttribute,
-} from '../../../selectors/immutable/vm-settings';
-import { VMSettingsField, VMWizardProps } from '../../../types';
-import { InternalActionType, UpdateOptions } from '../../types';
-import { asDisabled, asHidden, asRequired } from '../../../utils/utils';
-import { vmWizardInternalActions } from '../../internal-actions';
+} from '../../selectors/immutable/vm-settings';
+import { VMSettingsField, VMWizardProps } from '../../types';
+import { InternalActionType, UpdateOptions } from '../types';
+import { asDisabled, asHidden, asRequired } from '../../utils/utils';
+import { vmWizardInternalActions } from '../internal-actions';
 import {
   iGetCommonData,
   iGetLoadedCommonData,
   iGetName,
-} from '../../../selectors/immutable/selectors';
-import { iGetRelevantTemplate } from '../../../../../selectors/immutable/template/combined';
-import { CUSTOM_FLAVOR } from '../../../../../constants/vm';
-import { ProvisionSource } from '../../../../../constants/vm/provision-source';
-import { windowsToolsStorage } from '../../initial-state/storage-tab-initial-state';
-import { getStorages } from '../../../selectors/selectors';
+} from '../../selectors/immutable/selectors';
+import { iGetRelevantTemplate } from '../../../../selectors/immutable/template/combined';
+import { CUSTOM_FLAVOR } from '../../../../constants/vm';
+import { ProvisionSource } from '../../../../constants/vm/provision-source';
+import { windowsToolsStorage } from '../initial-state/storage-tab-initial-state';
+import { getStorages } from '../../selectors/selectors';
 import { prefillVmTemplateUpdater } from './prefill-vm-template-state-update';
 
 const selectUserTemplateOnLoadedUpdater = (options: UpdateOptions) => {

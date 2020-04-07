@@ -1,13 +1,13 @@
-import { InternalActionType, UpdateOptions } from '../../../../types';
-import { OvirtProviderField, VMImportProvider, VMWizardProps } from '../../../../../types';
+import { InternalActionType, UpdateOptions } from '../../../types';
+import { OvirtProviderField, VMImportProvider, VMWizardProps } from '../../../../types';
 import {
   iGetOvirtField,
   isOvirtProvider,
-} from '../../../../../selectors/immutable/provider/ovirt/selectors';
-import { deleteOvirtProviderObject } from '../../../../../../../k8s/requests/v2v/delete-ovrt-provider-object';
-import { iGetCommonData } from '../../../../../selectors/immutable/selectors';
-import { vmWizardInternalActions } from '../../../../internal-actions';
-import { getOvirtInitialState } from '../../../../initial-state/providers/ovirt-initial-state';
+} from '../../../../selectors/immutable/provider/ovirt/selectors';
+import { deleteOvirtProviderObject } from '../../../../../../k8s/requests/v2v/delete-ovrt-provider-object';
+import { iGetCommonData } from '../../../../selectors/immutable/selectors';
+import { vmWizardInternalActions } from '../../../internal-actions';
+import { getOvirtInitialState } from '../../../initial-state/providers/ovirt-initial-state';
 
 // should be idempotent and called on every provider change
 export const cleanupOvirtProvider = async (options: UpdateOptions) => {

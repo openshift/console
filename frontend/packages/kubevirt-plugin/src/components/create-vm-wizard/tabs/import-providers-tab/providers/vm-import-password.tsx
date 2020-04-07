@@ -12,8 +12,8 @@ import {
   PROVIDER_V2V_CHECK_CONNECTION_BTN_DONT_SAVE,
   PROVIDER_V2V_CHECK_CONNECTION_BTN_SAVE,
 } from '../../../strings/v2v';
-import { getCheckConnectionAction as ovirtGetCheckConnectionAction } from '../../../redux/stateUpdate/vmSettings/providers/ovirt/ovirt-provider-actions';
-import { getCheckConnectionAction as vmwareGetCheckConnectionAction } from '../../../redux/stateUpdate/vmSettings/providers/vmware/vmware-provider-actions';
+import { getCheckConnectionAction as ovirtGetCheckConnectionAction } from '../../../redux/state-update/providers/ovirt/ovirt-provider-actions';
+import { getCheckConnectionAction as vmwareGetCheckConnectionAction } from '../../../redux/state-update/providers/vmware/vmware-provider-actions';
 import {
   iGetProviderField,
   iGetProviderFieldValue,

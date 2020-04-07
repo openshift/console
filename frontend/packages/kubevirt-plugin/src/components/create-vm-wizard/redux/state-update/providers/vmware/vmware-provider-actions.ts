@@ -1,27 +1,27 @@
 import { getName } from '@console/shared/src';
-import { VMImportProvider, VMWareProviderField, VMWizardProps } from '../../../../../types';
-import { InternalActionType, UpdateOptions } from '../../../../types';
-import { iGetCommonData } from '../../../../../selectors/immutable/selectors';
+import { VMImportProvider, VMWareProviderField, VMWizardProps } from '../../../../types';
+import { InternalActionType, UpdateOptions } from '../../../types';
+import { iGetCommonData } from '../../../../selectors/immutable/selectors';
 import {
   iGetVMWareField,
   iGetVMWareFieldValue,
-} from '../../../../../selectors/immutable/provider/vmware/selectors';
-import { EnhancedK8sMethods } from '../../../../../../../k8s/enhancedK8sMethods/enhancedK8sMethods';
+} from '../../../../selectors/immutable/provider/vmware/selectors';
+import { EnhancedK8sMethods } from '../../../../../../k8s/enhancedK8sMethods/enhancedK8sMethods';
 import {
   cleanupAndGetResults,
   errorsFirstSort,
-} from '../../../../../../../k8s/enhancedK8sMethods/k8sMethodsUtils';
-import { vmWizardInternalActions } from '../../../../internal-actions';
-import { asDisabled, asHidden } from '../../../../../utils/utils';
-import { deleteV2VvmwareObject } from '../../../../../../../k8s/requests/v2v/delete-v2vvmware-object';
-import { getSimpleV2VPRoviderStatus } from '../../../../../../../statuses/v2v';
-import { getV2VConnectionName } from '../../../../../../../selectors/v2v';
+} from '../../../../../../k8s/enhancedK8sMethods/k8sMethodsUtils';
+import { vmWizardInternalActions } from '../../../internal-actions';
+import { asDisabled, asHidden } from '../../../../utils/utils';
+import { deleteV2VvmwareObject } from '../../../../../../k8s/requests/v2v/delete-v2vvmware-object';
+import { getSimpleV2VPRoviderStatus } from '../../../../../../statuses/v2v';
+import { getV2VConnectionName } from '../../../../../../selectors/v2v';
 import {
   createV2VvmwareObject,
   createV2VvmwareObjectWithSecret,
-} from '../../../../../../../k8s/requests/v2v/create-v2vvmware-object';
-import { requestV2VMwareVMDetail } from '../../../../../../../k8s/requests/v2v/request-v2vmware-vm-detail';
-import { startV2VVMWareController } from '../../../../../../../k8s/requests/v2v/start-v2vvmware-controller';
+} from '../../../../../../k8s/requests/v2v/create-v2vvmware-object';
+import { requestV2VMwareVMDetail } from '../../../../../../k8s/requests/v2v/request-v2vmware-vm-detail';
+import { startV2VVMWareController } from '../../../../../../k8s/requests/v2v/start-v2vvmware-controller';
 import { forceUpdateWSQueries } from './update-ws-queries';
 
 const { info: consoleInfo, warn: consoleWarn, error: consoleError } = console;

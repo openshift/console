@@ -8,8 +8,8 @@
 import * as _ from 'lodash';
 import { alignWithDNS1123 } from '@console/shared/src';
 import { ConfigMapKind } from '@console/internal/module/k8s';
-import { InternalActionType, UpdateOptions } from '../../../../types';
-import { iGetVMWareFieldAttribute } from '../../../../../selectors/immutable/provider/vmware/selectors';
+import { InternalActionType, UpdateOptions } from '../../../types';
+import { iGetVMWareFieldAttribute } from '../../../../selectors/immutable/provider/vmware/selectors';
 import {
   VMSettingsField,
   VMWareProviderField,
@@ -19,9 +19,9 @@ import {
   VMWizardProps,
   VMWizardStorage,
   VMWizardStorageType,
-} from '../../../../../types';
-import { iGetCommonData, iGetLoadedCommonData } from '../../../../../selectors/immutable/selectors';
-import { vmWizardInternalActions } from '../../../../internal-actions';
+} from '../../../../types';
+import { iGetCommonData, iGetLoadedCommonData } from '../../../../selectors/immutable/selectors';
+import { vmWizardInternalActions } from '../../../internal-actions';
 import {
   AccessMode,
   CUSTOM_FLAVOR,
@@ -32,19 +32,19 @@ import {
   VolumeMode,
   NetworkType,
   VolumeType,
-} from '../../../../../../../constants/vm';
+} from '../../../../../../constants/vm';
 import {
   getDefaultSCAccessModes,
   getDefaultSCVolumeMode,
-} from '../../../../../../../selectors/config-map/sc-defaults';
-import { toShallowJS } from '../../../../../../../utils/immutable';
-import { NetworkWrapper } from '../../../../../../../k8s/wrapper/vm/network-wrapper';
-import { NetworkInterfaceWrapper } from '../../../../../../../k8s/wrapper/vm/network-interface-wrapper';
-import { DiskWrapper } from '../../../../../../../k8s/wrapper/vm/disk-wrapper';
-import { VolumeWrapper } from '../../../../../../../k8s/wrapper/vm/volume-wrapper';
-import { CONVERSION_POD_TEMP_MOUNT_PATH } from '../../../../../../../constants/v2v';
-import { PersistentVolumeClaimWrapper } from '../../../../../../../k8s/wrapper/vm/persistent-volume-claim-wrapper';
-import { BinaryUnit, convertToHighestUnit } from '../../../../../../form/size-unit-utils';
+} from '../../../../../../selectors/config-map/sc-defaults';
+import { toShallowJS } from '../../../../../../utils/immutable';
+import { NetworkWrapper } from '../../../../../../k8s/wrapper/vm/network-wrapper';
+import { NetworkInterfaceWrapper } from '../../../../../../k8s/wrapper/vm/network-interface-wrapper';
+import { DiskWrapper } from '../../../../../../k8s/wrapper/vm/disk-wrapper';
+import { VolumeWrapper } from '../../../../../../k8s/wrapper/vm/volume-wrapper';
+import { CONVERSION_POD_TEMP_MOUNT_PATH } from '../../../../../../constants/v2v';
+import { PersistentVolumeClaimWrapper } from '../../../../../../k8s/wrapper/vm/persistent-volume-claim-wrapper';
+import { BinaryUnit, convertToHighestUnit } from '../../../../../form/size-unit-utils';
 
 export const getNics = (parsedVm): VMWizardNetwork[] => {
   const devices = _.get(parsedVm, ['Config', 'Hardware', 'Device']);
