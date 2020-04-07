@@ -18,7 +18,6 @@ import {
   ExternalLink,
   Firehose,
   HandlePromiseProps,
-  NsDropdown,
   RequestSizeInput,
   withHandlePromise,
 } from '@console/internal/components/utils';
@@ -479,7 +478,6 @@ const secretPayloadCreator = (
 const CreateBackingStoreForm: React.FC<CreateBackingStoreFormProps> = withHandlePromise<
   CreateBackingStoreFormProps & HandlePromiseProps
 >((props) => {
-  const [namespace, setNamespace] = React.useState(props.namespace);
   const [bsName, setBsName] = React.useState('');
   const [provider, setProvider] = React.useState(BC_PROVIDERS.AWS);
   const [providerDataState, providerDataDispatch] = React.useReducer(
@@ -487,7 +485,17 @@ const CreateBackingStoreForm: React.FC<CreateBackingStoreFormProps> = withHandle
     initialState,
   );
 
-  const { cancel, className, close, inProgress, errorMessage, handlePromise, isPage, csv } = props;
+  const {
+    cancel,
+    className,
+    close,
+    inProgress,
+    errorMessage,
+    handlePromise,
+    isPage,
+    csv,
+    namespace,
+  } = props;
 
   const onSubmit = (event) => {
     event.preventDefault();
@@ -532,7 +540,7 @@ const CreateBackingStoreForm: React.FC<CreateBackingStoreFormProps> = withHandle
         [PROVIDERS_NOOBAA_MAP[provider]]: {
           [BUCKET_LABEL_NOOBAA_MAP[provider]]: providerDataState.target,
           secret: {
-            name: providerDataState.secretName,
+            name: secretName,
             namespace,
           },
         },
@@ -566,14 +574,6 @@ const CreateBackingStoreForm: React.FC<CreateBackingStoreFormProps> = withHandle
 
   return (
     <Form className={classNames('nb-bs-form', className)} onSubmit={onSubmit}>
-      <FormGroup label="Namespace" fieldId="namespace" className="nb-bs-form-entry" isRequired>
-        <NsDropdown
-          onChange={setNamespace}
-          selectedKey={namespace}
-          id="nb-bs-form__entry-namespace"
-        />
-      </FormGroup>
-
       <FormGroup
         label="Backing Store Name"
         fieldId="backingstore-name"
