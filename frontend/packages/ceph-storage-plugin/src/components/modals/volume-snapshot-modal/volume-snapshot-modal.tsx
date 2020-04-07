@@ -11,7 +11,6 @@ import {
 import { Form, FormGroup, TextInput } from '@patternfly/react-core';
 import {
   K8sResourceKind,
-  K8sResourceKindReference,
   apiVersionForModel,
   k8sCreate,
   k8sPatch,
@@ -278,26 +277,25 @@ export const VolumeSnapshotModal = withHandlePromise((props: VolumeSnapshotModal
 });
 
 type VolumeSnapshotModalWithFireHoseProps = {
-  name: string;
-  namespace: string;
-  kind: K8sResourceKindReference;
-  pvcData?: FirehoseResourcesResult;
-  resource?: K8sResourceKind;
+  resource: K8sResourceKind;
 } & ModalComponentProps;
 
-const VolumeSnapshotModalWithFireHose: React.FC<VolumeSnapshotModalWithFireHoseProps> = (props) => (
+const VolumeSnapshotModalWithFireHose: React.FC<VolumeSnapshotModalWithFireHoseProps> = ({
+  resource,
+  ...rest
+}) => (
   <Firehose
     resources={[
       {
-        kind: props.kind || PersistentVolumeClaimModel.kind,
+        kind: resource?.kind || PersistentVolumeClaimModel.kind,
         prop: 'pvcData',
-        namespace: props?.resource?.metadata?.namespace || props.namespace,
+        namespace: resource?.metadata?.namespace,
         isList: false,
-        name: props?.resource?.metadata?.name || props.name,
+        name: resource?.metadata?.name,
       },
     ]}
   >
-    <VolumeSnapshotModal {...props} />
+    <VolumeSnapshotModal {...rest} />
   </Firehose>
 );
 

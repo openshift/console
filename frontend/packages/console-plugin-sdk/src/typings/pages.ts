@@ -1,6 +1,12 @@
 import { RouteComponentProps, RouteProps } from 'react-router-dom';
-import { K8sKind, K8sResourceKindReference, K8sResourceKind } from '@console/internal/module/k8s';
+import {
+  K8sKind,
+  K8sResourceKindReference,
+  K8sResourceKind,
+  K8sResourceCommon,
+} from '@console/internal/module/k8s';
 import { Extension, LazyLoader } from './base';
+import { PageComponentProps } from '@console/internal/components/utils';
 
 namespace ExtensionProperties {
   export interface ResourcePage<T> {
@@ -11,16 +17,7 @@ namespace ExtensionProperties {
   }
 
   /** To add an additonal page to public components(ex: PVs, PVCs) via plugins */
-  export type ResourceTabPage = ResourcePage<{
-    /** See https://reacttraining.com/react-router/web/api/match */
-    match: RouteComponentProps['match'];
-    /** The resource kind scope. */
-    kind: K8sResourceKindReference;
-    /** The namespace scope. */
-    namespace: string;
-    /** Name of the resource tab inside detailsPage  */
-    name: string;
-  }> & {
+  export type ResourceTabPage<R extends K8sResourceCommon> = ResourcePage<PageComponentProps<R>> & {
     /** The href for the resource page */
     href: string;
     /** Name of the resource tab inside detailsPage  */
@@ -83,7 +80,8 @@ export interface RoutePage extends Extension<ExtensionProperties.RoutePage> {
   type: 'Page/Route';
 }
 
-export interface ResourceTabPage extends Extension<ExtensionProperties.ResourceTabPage> {
+export interface ResourceTabPage<R extends K8sResourceCommon = K8sResourceCommon>
+  extends Extension<ExtensionProperties.ResourceTabPage<R>> {
   type: 'Page/Resource/Tab';
 }
 
