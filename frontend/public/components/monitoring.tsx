@@ -42,6 +42,7 @@ import { AlertmanagerYAMLEditorWrapper } from './monitoring/alert-manager-yaml-e
 import { AlertmanagerConfigWrapper } from './monitoring/alert-manager-config';
 import { refreshNotificationPollers } from './notification-drawer';
 import {
+  ActionButtons,
   ActionsMenu,
   ButtonBar,
   ExternalLink,
@@ -103,22 +104,22 @@ const silencesToProps = ({ UI }) => UI.getIn(['monitoring', 'silences']) || {};
 const pollers = {};
 const pollerTimeouts = {};
 
-const silenceAlert = (alert) => ({
+const silenceAlert = (alert: Alert) => ({
+  callback: () => history.replace(`${SilenceResource.plural}/~new?${labelsToParams(alert.labels)}`),
   label: 'Silence Alert',
-  href: `${SilenceResource.plural}/~new?${labelsToParams(alert.labels)}`,
 });
 
-const viewAlertRule = (alert) => ({
+const viewAlertRule = (alert: Alert) => ({
   label: 'View Alerting Rule',
   href: ruleURL(alert.rule),
 });
 
-const editSilence = (silence) => ({
+const editSilence = (silence: Silence) => ({
   label: silenceState(silence) === SilenceStates.Expired ? 'Recreate Silence' : 'Edit Silence',
   href: `${SilenceResource.plural}/${silence.id}/edit`,
 });
 
-const cancelSilence = (silence) => ({
+const cancelSilence = (silence: Silence) => ({
   label: 'Expire Silence',
   callback: () =>
     confirmModal({
@@ -132,7 +133,7 @@ const cancelSilence = (silence) => ({
     }),
 });
 
-const silenceMenuActions = (silence) =>
+const silenceMenuActions = (silence: Silence) =>
   silenceState(silence) === SilenceStates.Expired
     ? [editSilence(silence)]
     : [editSilence(silence), cancelSilence(silence)];
@@ -452,9 +453,9 @@ const AlertsDetailsPage = withFallback(
                 {alertname}
                 <SeverityBadge severity={severity} />
               </div>
-              {(state === AlertStates.Firing || state === AlertStates.Pending) && (
+              {state !== AlertStates.Silenced && (
                 <div className="co-actions" data-test-id="details-actions">
-                  <ActionsMenu actions={[silenceAlert(alert)]} />
+                  <ActionButtons actionButtons={[silenceAlert(alert)]} />
                 </div>
               )}
             </h1>
@@ -875,9 +876,9 @@ const AlertTableRow: RowFunction<Alert> = ({ index, key, obj, style }) => {
       <TableData className={tableAlertClasses[3]}>
         <Kebab
           options={
-            state === AlertStates.Firing || state === AlertStates.Pending
-              ? [silenceAlert(obj), viewAlertRule(obj)]
-              : [viewAlertRule(obj)]
+            state === AlertStates.Silenced
+              ? [viewAlertRule(obj)]
+              : [silenceAlert(obj), viewAlertRule(obj)]
           }
         />
       </TableData>

@@ -66,7 +66,7 @@ describe('Monitoring: Alerts', () => {
   });
 
   it('creates a new Silence from an existing alert', async () => {
-    await crudView.clickDetailsPageAction('Silence Alert');
+    await monitoringView.actionButton.click();
     await monitoringView.wait(until.presenceOf(monitoringView.saveButton));
     await monitoringView.saveButton.click();
     expect(crudView.errorMessage.isPresent()).toBe(false);

@@ -52,7 +52,7 @@ export const BreadCrumbs: React.SFC<BreadCrumbsProps> = ({ breadcrumbs }) => (
   </Breadcrumb>
 );
 
-const ActionButtons: React.SFC<ActionButtonsProps> = ({ actionButtons }) => (
+export const ActionButtons: React.SFC<ActionButtonsProps> = ({ actionButtons }) => (
   <div className="co-action-buttons">
     {_.map(actionButtons, (actionButton, i) => {
       if (!_.isEmpty(actionButton)) {
