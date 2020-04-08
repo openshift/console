@@ -47,7 +47,7 @@ export const referenceForOwnerRef = (ownerRef: OwnerReference): GroupVersionKind
   )(ownerRef.kind);
 
 export const referenceForModel = (model: K8sKind): GroupVersionKind =>
-  referenceForGroupVersionKind(model?.apiGroup || 'core')(model?.apiVersion)(model?.kind);
+  referenceForGroupVersionKind(model.apiGroup || 'core')(model.apiVersion)(model.kind);
 
 export const referenceFor = ({ kind, apiVersion }: K8sResourceCommon): GroupVersionKind => {
   if (!kind) {

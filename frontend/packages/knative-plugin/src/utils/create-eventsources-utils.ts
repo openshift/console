@@ -3,7 +3,7 @@ import { K8sResourceKind, K8sKind } from '@console/internal/module/k8s';
 import { useAccessReview } from '@console/internal/components/utils';
 import { getAppLabels } from '@console/dev-console/src/utils/resource-label-utils';
 import { annotations } from '@console/dev-console/src/utils/shared-submit-utils';
-import { EventSources } from '../components/add/import-types';
+import { EventSources, EventSourceFormData } from '../components/add/import-types';
 import {
   ServiceModel,
   EventSourceCronJobModel,
@@ -19,7 +19,7 @@ import * as containerSourceImg from '../imgs/logos/containersource.png';
 import * as cronJobSourceImg from '../imgs/logos/cronjobsource.png';
 import * as kafkaSourceImg from '../imgs/logos/kafkasource.svg';
 
-export const getEventSourcesDepResource = (formData: any): K8sResourceKind => {
+export const getEventSourcesDepResource = (formData: EventSourceFormData): K8sResourceKind => {
   const {
     type,
     name,
@@ -27,7 +27,6 @@ export const getEventSourcesDepResource = (formData: any): K8sResourceKind => {
     project: { name: namespace },
     data,
     sink: { knativeService },
-    limits: { cpu, memory },
   } = formData;
 
   const defaultLabel = getAppLabels(name, applicationName);
@@ -39,25 +38,6 @@ export const getEventSourcesDepResource = (formData: any): K8sResourceKind => {
       : KNATIVE_EVENT_SOURCE_APIGROUP_DEP;
   const apiVersion = 'v1alpha1';
   const eventSrcData = data[type.toLowerCase()];
-  const completeEventSrcData =
-    type === EventSources.KafkaSource && eventSrcData
-      ? _.merge({}, eventSrcData, {
-          resources: {
-            ...((cpu.limit || memory.limit) && {
-              limits: {
-                ...(cpu.limit && { cpu: `${cpu.limit}${cpu.limitUnit}` }),
-                ...(memory.limit && { memory: `${memory.limit}${memory.limitUnit}` }),
-              },
-            }),
-            ...((cpu.request || memory.request) && {
-              requests: {
-                ...(cpu.request && { cpu: `${cpu.request}${cpu.requestUnit}` }),
-                ...(memory.request && { memory: `${memory.request}${memory.requestUnit}` }),
-              },
-            }),
-          },
-        })
-      : eventSrcData;
   const eventSourceResource: K8sResourceKind = {
     kind: type,
     apiVersion: `${apiGroup}/${apiVersion}`,
@@ -77,11 +57,46 @@ export const getEventSourcesDepResource = (formData: any): K8sResourceKind => {
           name: knativeService,
         },
       },
-      ...(completeEventSrcData && completeEventSrcData),
+      ...(eventSrcData && eventSrcData),
     },
   };
 
   return eventSourceResource;
+};
+
+export const getKafkaSourceResource = (formData: EventSourceFormData): K8sResourceKind => {
+  const {
+    limits: { cpu, memory },
+  } = formData;
+  const baseResource = getEventSourcesDepResource(formData);
+  const kafkaSource = {
+    spec: {
+      resources: {
+        ...((cpu.limit || memory.limit) && {
+          limits: {
+            ...(cpu.limit && { cpu: `${cpu.limit}${cpu.limitUnit}` }),
+            ...(memory.limit && { memory: `${memory.limit}${memory.limitUnit}` }),
+          },
+        }),
+        ...((cpu.request || memory.request) && {
+          requests: {
+            ...(cpu.request && { cpu: `${cpu.request}${cpu.requestUnit}` }),
+            ...(memory.request && { memory: `${memory.request}${memory.requestUnit}` }),
+          },
+        }),
+      },
+    },
+  };
+  return _.merge({}, baseResource, kafkaSource);
+};
+
+export const getEventSourceResource = (formData: EventSourceFormData): K8sResourceKind => {
+  switch (formData.type) {
+    case EventSources.KafkaSource:
+      return getKafkaSourceResource(formData);
+    default:
+      return getEventSourcesDepResource(formData);
+  }
 };
 
 export const getEventSourceData = (source: string) => {

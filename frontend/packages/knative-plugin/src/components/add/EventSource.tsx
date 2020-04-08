@@ -11,10 +11,7 @@ import { sanitizeApplicationValue } from '@console/dev-console/src/utils/applica
 import { eventSourceValidationSchema } from './eventSource-validation-utils';
 import EventSourceForm from './EventSourceForm';
 import { EventSources, EventSourceFormData } from './import-types';
-import {
-  getEventSourcesDepResource,
-  getEventSourceData,
-} from '../../utils/create-eventsources-utils';
+import { getEventSourceResource, getEventSourceData } from '../../utils/create-eventsources-utils';
 
 interface EventSourceProps {
   namespace: string;
@@ -77,7 +74,7 @@ const EventSource: React.FC<Props> = ({
   };
 
   const createResources = (rawFormData: any): Promise<K8sResourceKind> => {
-    const knEventSourceResource = getEventSourcesDepResource(rawFormData);
+    const knEventSourceResource = getEventSourceResource(rawFormData);
     return k8sCreate(modelFor(referenceFor(knEventSourceResource)), knEventSourceResource);
   };
 
