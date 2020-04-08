@@ -63,7 +63,7 @@ export const getOCSVersion = (items: FirehoseResult): string => {
     getSubscriptionStatus(operator as SubscriptionKind).status ===
     SubscriptionState.SubscriptionStateAtLatest
   ) {
-    return _.get(operator, 'status.currentCSV');
+    return _.get(operator, 'status.installedCSV');
   }
   return '';
 };
