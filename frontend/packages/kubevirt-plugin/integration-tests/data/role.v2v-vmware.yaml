@@ -1,0 +1,56 @@
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  namespace: openshift-cnv
+  name: v2v-vmware-configmap-read
+rules:
+- apiGroups: [""]
+  resources: ["configmaps"]
+  resourceNames: ["v2v-vmware", "kubevirt-storage-class-defaults"]
+  verbs: ["get", "watch"]
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  namespace: openshift-cnv
+  name: v2v-vmware-configmap-read
+subjects:
+- kind: User
+  name: test # change to particular user who needs to run v2v
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role 
+  name: v2v-vmware-configmap-read
+  apiGroup: rbac.authorization.k8s.io
+
+#####################################
+# Following permissions are optional
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  namespace: kube-public
+  name: vmware-to-kubevirt-os-configmap-read
+rules:
+- apiGroups: [""]
+  resources: ["configmaps"]
+  resourceNames: ["vmware-to-kubevirt-os"]
+  verbs: ["get", "watch"]
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  namespace: kube-public
+  name: vmware-to-kubevirt-os-configmap-read
+subjects:
+- kind: User
+  name: test # change to particular user who needs to run v2v
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role 
+  name: vmware-to-kubevirt-os-configmap-read
+  apiGroup: rbac.authorization.k8s.io
+
