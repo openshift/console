@@ -7,7 +7,7 @@ import ServiceAccountDropdown from '../../dropdowns/ServiceAccountDropdown';
 
 const KafkaSourceSection: React.FC = () => {
   return (
-    <FormSection title="KafkaSource">
+    <FormSection title="KafkaSource" extraMargin>
       <InputField
         data-test-id="kafkasource-bootstrapservers-field"
         type={TextInputTypes.text}

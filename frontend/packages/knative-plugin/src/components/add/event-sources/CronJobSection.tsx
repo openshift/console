@@ -4,7 +4,7 @@ import { InputField } from '@console/shared';
 import FormSection from '@console/dev-console/src/components/import/section/FormSection';
 
 const CronJobSection: React.FC = () => (
-  <FormSection title="CronJobSource">
+  <FormSection title="CronJobSource" extraMargin>
     <InputField type={TextInputTypes.text} name="data.cronjobsource.data" label="Data" />
     <InputField
       type={TextInputTypes.text}

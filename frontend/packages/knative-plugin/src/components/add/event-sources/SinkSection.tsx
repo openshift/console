@@ -28,7 +28,7 @@ const SinkSection: React.FC<SinkSectionProps> = ({ namespace }) => {
   );
   const contextAvailable = !!initialValues.sink.knativeService;
   return (
-    <FormSection title="Sink">
+    <FormSection title="Sink" extraMargin>
       <FormGroup
         fieldId={fieldId}
         helperText={!contextAvailable ? 'Select a Service to sink to.' : ''}

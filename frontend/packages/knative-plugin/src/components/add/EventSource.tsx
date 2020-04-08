@@ -69,6 +69,7 @@ const EventSource: React.FC<Props> = ({
     },
     type: '',
     data: {},
+    yamlData: '',
   };
 
   const createResources = (rawFormData: any): Promise<K8sResourceKind> => {

@@ -12,8 +12,10 @@ export const getAppLabels = (
     app: name,
     'app.kubernetes.io/instance': name,
     'app.kubernetes.io/component': name,
-    'app.kubernetes.io/name': imageStreamName,
-    'app.openshift.io/runtime': imageStreamName,
+    ...(imageStreamName && {
+      'app.kubernetes.io/name': imageStreamName,
+      'app.openshift.io/runtime': imageStreamName,
+    }),
   };
 
   if (application && application.trim().length > 0) {

@@ -1,20 +1,11 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import { FormikProps, FormikValues } from 'formik';
-import { FormFooter } from '@console/shared';
-import { Form } from '@patternfly/react-core';
-import AppSection from '@console/dev-console/src/components/import/app/AppSection';
+import { FormFooter, FlexForm } from '@console/shared';
 import { FirehoseList } from '@console/dev-console/src/components/import/import-types';
-import { useEventSourceList } from '../../utils/create-eventsources-utils';
-import CronJobSection from './event-sources/CronJobSection';
-import SinkBindingSection from './event-sources/SinkBindingSection';
-import ApiServerSection from './event-sources/ApiServerSection';
-import SinkSection from './event-sources/SinkSection';
-import { EventSources } from './import-types';
 import EventSourcesSelector from './event-sources/EventSourcesSelector';
-import KafkaSourceSection from './event-sources/KafkaSourceSection';
-import AdvancedSection from './AdvancedSection';
-import ContainerSourceSection from './event-sources/ContainerSourceSection';
+import { useEventSourceList } from '../../utils/create-eventsources-utils';
+import EventSourceSection from './event-sources/EventSourceSection';
 
 interface OwnProps {
   namespace: string;
@@ -22,7 +13,6 @@ interface OwnProps {
 }
 
 const EventSourceForm: React.FC<FormikProps<FormikValues> & OwnProps> = ({
-  values,
   errors,
   handleSubmit,
   handleReset,
@@ -32,29 +22,19 @@ const EventSourceForm: React.FC<FormikProps<FormikValues> & OwnProps> = ({
   namespace,
   projects,
 }) => (
-  <Form className="co-deploy-image" onSubmit={handleSubmit}>
+  <FlexForm onSubmit={handleSubmit}>
     <EventSourcesSelector eventSourceList={useEventSourceList(namespace)} />
-    {values.type === EventSources.CronJobSource && <CronJobSection />}
-    {values.type === EventSources.SinkBinding && <SinkBindingSection />}
-    {values.type === EventSources.ApiServerSource && <ApiServerSection />}
-    {values.type === EventSources.KafkaSource && <KafkaSourceSection />}
-    {values.type === EventSources.ContainerSource && <ContainerSourceSection />}
-    <SinkSection namespace={namespace} />
-    <AppSection
-      project={values.project}
-      noProjectsAvailable={projects?.loaded && _.isEmpty(projects.data)}
-    />
-    {values.type === EventSources.KafkaSource && <AdvancedSection />}
+    <EventSourceSection projects={projects} namespace={namespace} />
     <FormFooter
       handleReset={handleReset}
       errorMessage={status && status.submitError}
       isSubmitting={isSubmitting}
       submitLabel="Create"
-      sticky
       disableSubmit={!dirty || !_.isEmpty(errors)}
       resetLabel="Cancel"
+      sticky
     />
-  </Form>
+  </FlexForm>
 );
 
 export default EventSourceForm;

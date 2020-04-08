@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
 import { RouteComponentProps } from 'react-router';
+import { PageBody } from '@console/shared';
 import { PageHeading, Firehose } from '@console/internal/components/utils';
 import { ProjectModel } from '@console/internal/models';
 import NamespacedPage, {
@@ -21,7 +22,7 @@ const EventSourcePage: React.FC<EventSourcePageProps> = ({ match, location }) =>
         <title>Event Sources</title>
       </Helmet>
       <PageHeading title="Event Sources" />
-      <div className="co-m-pane__body">
+      <PageBody flexLayout>
         <Firehose resources={resources}>
           <EventSource
             namespace={namespace}
@@ -29,7 +30,7 @@ const EventSourcePage: React.FC<EventSourcePageProps> = ({ match, location }) =>
             contextSource={searchParams.get(QUERY_PROPERTIES.CONTEXT_SOURCE)}
           />
         </Firehose>
-      </div>
+      </PageBody>
     </NamespacedPage>
   );
 };

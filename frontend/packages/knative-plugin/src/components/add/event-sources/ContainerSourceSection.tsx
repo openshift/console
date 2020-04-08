@@ -36,7 +36,7 @@ const ContainerSourceSection: React.FC = () => {
     [setFieldValue],
   );
   return (
-    <FormSection title="ContainerSource">
+    <FormSection title="ContainerSource" extraMargin>
       <h3 className="co-section-heading-tertiary">Container</h3>
       <InputField
         data-test-id="container-image-field"

@@ -4,6 +4,7 @@ exports[`PipelineResourceSection component It should match the previous pipeline
 Array [
   <div
     className="pf-c-form"
+    style={Object {}}
   >
     <h2
       className="odc-form-section__heading"
@@ -25,6 +26,7 @@ Array [
   </div>,
   <div
     className="pf-c-form"
+    style={Object {}}
   >
     <h2
       className="odc-form-section__heading"
