@@ -1,18 +1,19 @@
 import * as React from 'react';
 import * as _ from 'lodash';
-import { connect } from 'react-redux';
 import Helmet from 'react-helmet';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { FirehoseResource } from '@console/internal/components/utils';
 import { MachineModel, NodeModel } from '@console/internal/models';
 import { createLookup, getName, getMachineNodeName } from '@console/shared';
 import { MultiListPage } from '@console/internal/components/factory';
+import { useFlag } from '@console/shared/src/hooks/flag';
 import { getNodeMaintenanceNodeName, getHostMachineName } from '../../selectors';
 import { BareMetalNodeBundle } from '../types';
 import { NodeMaintenanceModel, BareMetalHostModel } from '../../models';
 import { bareMetalNodeStatus } from '../../status/baremetal-node-status';
 import BareMetalNodesTable from './BareMetalNodesTable';
 import { bareMetalNodeStatusFilter } from './table-filters';
+import { NODE_MAINTENANCE_FLAG } from '../../features';
 
 const flattenResources = (resources) => {
   // TODO(jtomasek): Remove loaded check once ListPageWrapper_ is updated to call flatten only
@@ -48,14 +49,8 @@ const flattenResources = (resources) => {
   );
 };
 
-type BareMetalNodesPageProps = {
-  hasNodeMaintenanceCapability: boolean;
-};
-
-const BareMetalNodesPage: React.FC<BareMetalNodesPageProps> = ({
-  hasNodeMaintenanceCapability,
-  ...props
-}) => {
+const BareMetalNodesPage: React.FC = (props) => {
+  const hasNodeMaintenanceCapability = useFlag(NODE_MAINTENANCE_FLAG);
   const resources: FirehoseResource[] = [
     {
       kind: referenceForModel(BareMetalHostModel),
@@ -95,19 +90,10 @@ const BareMetalNodesPage: React.FC<BareMetalNodesPageProps> = ({
         resources={resources}
         flatten={flattenResources}
         ListComponent={BareMetalNodesTable}
-        customData={{ hasNodeMaintenanceCapability }}
         title="Nodes"
       />
     </div>
   );
 };
 
-const mapStateToProps = ({ k8s }) => ({
-  hasNodeMaintenanceCapability: !!k8s.getIn([
-    'RESOURCES',
-    'models',
-    referenceForModel(NodeMaintenanceModel),
-  ]),
-});
-
-export default connect(mapStateToProps)(BareMetalNodesPage);
+export default BareMetalNodesPage;

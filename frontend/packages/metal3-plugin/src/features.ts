@@ -5,6 +5,7 @@ import { setFlag, handleError } from '@console/internal/actions/features';
 import { ActionFeatureFlagDetector } from '@console/plugin-sdk';
 
 export const BAREMETAL_FLAG = 'BAREMETAL';
+export const NODE_MAINTENANCE_FLAG = 'NODE_MAINTENANCE';
 
 export const detectBaremetalPlatform: ActionFeatureFlagDetector = (dispatch) =>
   k8sGet(InfrastructureModel, 'cluster').then(

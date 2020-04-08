@@ -1,6 +1,5 @@
 import * as React from 'react';
 import * as _ from 'lodash';
-import { connect } from 'react-redux';
 import { getName, createLookup, getNodeMachineName } from '@console/shared';
 import { MachineModel, MachineSetModel, NodeModel } from '@console/internal/models';
 import { MultiListPage } from '@console/internal/components/factory';
@@ -11,6 +10,7 @@ import {
   NodeKind,
   referenceForModel,
 } from '@console/internal/module/k8s';
+import { useFlag } from '@console/shared/src/hooks/flag';
 import { BareMetalHostModel, NodeMaintenanceModel } from '../../models';
 import { getHostMachine, getNodeMaintenanceNodeName } from '../../selectors';
 import { getHostStatus } from '../../status/host-status';
@@ -19,6 +19,7 @@ import { BareMetalHostKind } from '../../types';
 import { getMachineMachineSetOwner } from '../../selectors/machine';
 import { hostStatusFilter } from './table-filters';
 import BareMetalHostsTable from './BareMetalHostsTable';
+import { NODE_MAINTENANCE_FLAG } from '../../features';
 
 type Resources = {
   hosts: FirehoseResult<BareMetalHostKind[]>;
@@ -77,7 +78,6 @@ const flattenResources = (resources: Resources) => {
 
 type BareMetalHostsPageProps = {
   namespace: string;
-  hasNodeMaintenanceCapability: boolean;
 };
 
 const getCreateProps = ({ namespace }: { namespace: string }) => {
@@ -102,10 +102,8 @@ const getCreateProps = ({ namespace }: { namespace: string }) => {
   };
 };
 
-const BareMetalHostsPage: React.FC<BareMetalHostsPageProps> = ({
-  hasNodeMaintenanceCapability,
-  ...props
-}) => {
+const BareMetalHostsPage: React.FC<BareMetalHostsPageProps> = (props) => {
+  const hasNodeMaintenanceCapability = useFlag(NODE_MAINTENANCE_FLAG);
   const { namespace } = props;
   const resources: FirehoseResource[] = [
     {
@@ -152,18 +150,9 @@ const BareMetalHostsPage: React.FC<BareMetalHostsPageProps> = ({
       resources={resources}
       flatten={flattenResources}
       ListComponent={BareMetalHostsTable}
-      customData={{ hasNodeMaintenanceCapability }}
       title="Bare Metal Hosts"
     />
   );
 };
 
-const mapStateToProps = ({ k8s }) => ({
-  hasNodeMaintenanceCapability: !!k8s.getIn([
-    'RESOURCES',
-    'models',
-    referenceForModel(NodeMaintenanceModel),
-  ]),
-});
-
-export default connect(mapStateToProps)(BareMetalHostsPage);
+export default BareMetalHostsPage;

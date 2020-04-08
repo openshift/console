@@ -5,6 +5,7 @@ import { sortable } from '@patternfly/react-table';
 import { getName, getUID, getNamespace, DASH } from '@console/shared';
 import { TableRow, TableData, Table, RowFunction } from '@console/internal/components/factory';
 import { referenceForModel } from '@console/internal/module/k8s';
+import { useFlag } from '@console/shared/src/hooks/flag';
 import { BareMetalHostBundle } from '../types';
 import { getHostBMCAddress, getHostVendorInfo } from '../../selectors';
 import { BareMetalHostModel } from '../../models';
@@ -13,6 +14,7 @@ import BareMetalHostStatus from './BareMetalHostStatus';
 import BareMetalHostRole from './BareMetalHostRole';
 import { menuActions } from './host-menu-actions';
 import BareMetalHostSecondaryStatus from './BareMetalHostSecondaryStatus';
+import { NODE_MAINTENANCE_FLAG } from '../../features';
 
 const tableColumnClasses = {
   name: classNames('col-lg-2', 'col-md-4', 'col-sm-12', 'col-xs-12'),
@@ -67,18 +69,13 @@ const HostsTableHeader = () => [
   },
 ];
 
-const HostsTableRow: RowFunction<
-  BareMetalHostBundle,
-  {
-    hasNodeMaintenanceCapability: boolean;
-  }
-> = ({
+const HostsTableRow: RowFunction<BareMetalHostBundle> = ({
   obj: { host, node, nodeMaintenance, machine, machineSet, status },
-  customData: { hasNodeMaintenanceCapability },
   index,
   key,
   style,
 }) => {
+  const hasNodeMaintenanceCapability = useFlag(NODE_MAINTENANCE_FLAG);
   const name = getName(host);
   const namespace = getNamespace(host);
   const address = getHostBMCAddress(host);
@@ -129,9 +126,6 @@ const HostsTableRow: RowFunction<
 
 type BareMetalHostsTableProps = React.ComponentProps<typeof Table> & {
   data: BareMetalHostBundle[];
-  customData: {
-    hasNodeMaintenanceCapability: boolean;
-  };
 };
 
 const BareMetalHostsTable: React.FC<BareMetalHostsTableProps> = (props) => (
