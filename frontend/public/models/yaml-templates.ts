@@ -1007,7 +1007,7 @@ spec:
   machineConfigSelector:
     matchLabels:
       machineconfiguration.openshift.io/role: master
-  machineSelector:
+  nodeSelector:
     matchLabels:
       node-role.kubernetes.io/master: ""
 `,

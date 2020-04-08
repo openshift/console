@@ -368,7 +368,12 @@ export const PodDetailsList: React.FC<PodDetailsListProps> = ({ pod }) => {
 };
 
 export const PodResourceSummary: React.FC<PodResourceSummaryProps> = ({ pod }) => (
-  <ResourceSummary resource={pod} showNodeSelector showTolerations />
+  <ResourceSummary
+    resource={pod}
+    showNodeSelector
+    nodeSelector="spec.nodeSelector"
+    showTolerations
+  />
 );
 
 const Details: React.FC<PodDetailsProps> = ({ obj: pod }) => {
