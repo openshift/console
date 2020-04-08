@@ -1,4 +1,5 @@
 import * as React from 'react';
+import * as _ from 'lodash';
 import { Formik } from 'formik';
 import { connect } from 'react-redux';
 import { history } from '@console/internal/components/utils';
@@ -37,6 +38,7 @@ const EventSource: React.FC<Props> = ({
 }) => {
   const typeEventSource = EventSources.CronJobSource;
   const serviceName = contextSource?.split('/').pop() || '';
+  const name = _.kebabCase(typeEventSource);
   const initialValues: EventSourceFormData = {
     project: {
       name: namespace || '',
@@ -48,7 +50,7 @@ const EventSource: React.FC<Props> = ({
       name: sanitizeApplicationValue(activeApplication),
       selectedKey: activeApplication,
     },
-    name: '',
+    name,
     sink: {
       knativeService: serviceName,
     },
