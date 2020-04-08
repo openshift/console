@@ -140,7 +140,7 @@ const BareMetalHostDetails: React.FC<BareMetalHostDetailsProps> = ({
           <dl>
             <dt>Status</dt>
             <dd>
-              <BareMetalHostStatus {...status} />
+              <BareMetalHostStatus {...status} nodeMaintenance={nodeMaintenance} host={host} />
             </dd>
             {/* power status is not available until host registration/inspection is finished */}
             {!HOST_REGISTERING_STATES.includes(provisioningState) && (

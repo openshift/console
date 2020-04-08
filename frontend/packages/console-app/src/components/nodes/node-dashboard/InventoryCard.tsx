@@ -15,7 +15,11 @@ import { resourcePathFromModel } from '@console/internal/components/utils';
 
 import { NodeDashboardContext } from './NodeDashboardContext';
 
-const NodeInventoryItem: React.FC<NodeInventoryItemProps> = ({ nodeName, model, mapper }) => {
+export const NodeInventoryItem: React.FC<NodeInventoryItemProps> = ({
+  nodeName,
+  model,
+  mapper,
+}) => {
   const resource = React.useMemo(
     () => ({
       kind: model.crd ? referenceForModel(model) : model.kind,

@@ -14,6 +14,7 @@ import {
   DashboardsOverviewInventoryItemReplacement,
   DashboardsInventoryItemGroup,
   ActionFeatureFlag,
+  ResourceTabPage,
 } from '@console/plugin-sdk';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { MachineModel, NodeModel } from '@console/internal/models';
@@ -39,7 +40,8 @@ type ConsumedExtensions =
   | ModelFeatureFlag
   | ModelDefinition
   | ActionFeatureFlag
-  | DashboardsOverviewResourceActivity;
+  | DashboardsOverviewResourceActivity
+  | ResourceTabPage;
 
 const METAL3_FLAG = 'METAL3';
 
@@ -189,7 +191,6 @@ const plugin: Plugin<ConsumedExtensions> = [
   {
     type: 'Page/Route',
     properties: {
-      exact: true,
       path: ['/k8s/cluster/nodes/:name'],
       loader: () =>
         import(
@@ -240,6 +241,36 @@ const plugin: Plugin<ConsumedExtensions> = [
         import(
           './components/baremetal-hosts/dashboard/BareMetalStatusActivity' /* webpackChunkName: "metal3-powering" */
         ).then((m) => m.default),
+    },
+    flags: {
+      required: [BAREMETAL_FLAG, METAL3_FLAG],
+    },
+  },
+  {
+    type: 'Page/Resource/Tab',
+    properties: {
+      href: 'nics',
+      model: NodeModel,
+      name: 'Network Interfaces',
+      loader: () =>
+        import('./components/baremetal-nodes/NICsPage').then(
+          (m) => m.default,
+        ) /* webpackChunkName: "metal3-bmn-nics" */,
+    },
+    flags: {
+      required: [BAREMETAL_FLAG, METAL3_FLAG],
+    },
+  },
+  {
+    type: 'Page/Resource/Tab',
+    properties: {
+      href: 'disks',
+      model: NodeModel,
+      name: 'Disks',
+      loader: () =>
+        import('./components/baremetal-nodes/DisksPage').then(
+          (m) => m.default,
+        ) /* webpackChunkName: "metal3-bmn-disks" */,
     },
     flags: {
       required: [BAREMETAL_FLAG, METAL3_FLAG],

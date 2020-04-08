@@ -193,7 +193,7 @@ const getMachineHealth = (
   };
 };
 
-const HealthChecksItem: React.FC = () => {
+export const HealthChecksItem: React.FC = () => {
   const { obj } = React.useContext(NodeDashboardContext);
   const { name, namespace } = getNodeMachineNameAndNamespace(obj);
   const machineResource = React.useMemo(

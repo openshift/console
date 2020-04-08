@@ -10,7 +10,11 @@ export type StatusProps = {
   status: string;
   title?: string;
   description?: string;
-  [key: string]: any;
+};
+
+export type BareMetalHostStatusProps = StatusProps & {
+  nodeMaintenance?: K8sResourceKind;
+  className?: string;
 };
 
 export type BareMetalHostBundle = {

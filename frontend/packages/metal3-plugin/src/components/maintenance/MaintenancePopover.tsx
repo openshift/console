@@ -8,21 +8,27 @@ import StartingMaintenancePopoverContent from './StartingMaintenancePopoverConte
 
 type MaintenancePopoverProps = {
   title: string;
-  maintenance: K8sResourceKind;
+  nodeMaintenance: K8sResourceKind;
+  className?: string;
 };
 
-const MaintenancePopover: React.FC<MaintenancePopoverProps> = ({ title, maintenance }) => {
-  const phase = getNodeMaintenancePhase(maintenance);
+const MaintenancePopover: React.FC<MaintenancePopoverProps> = ({
+  title,
+  nodeMaintenance,
+  className,
+}) => {
+  const phase = getNodeMaintenancePhase(nodeMaintenance);
 
   return (
     <PopoverStatus
       icon={phase === 'Succeeded' ? <MaintenanceIcon /> : <InProgressIcon />}
       title={title}
+      className={className}
     >
       {phase === 'Succeeded' ? (
-        <UnderMaintenancePopoverContent maintenance={maintenance} />
+        <UnderMaintenancePopoverContent nodeMaintenance={nodeMaintenance} />
       ) : (
-        <StartingMaintenancePopoverContent maintenance={maintenance} />
+        <StartingMaintenancePopoverContent nodeMaintenance={nodeMaintenance} />
       )}
     </PopoverStatus>
   );

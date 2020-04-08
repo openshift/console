@@ -7,7 +7,6 @@ import { StatusComponentProps } from './types';
 type StatusIconAndTextProps = StatusComponentProps & {
   icon?: React.ReactElement;
   spin?: boolean;
-  className?: string;
 };
 
 const StatusIconAndText: React.FC<StatusIconAndTextProps> = ({

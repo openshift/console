@@ -16,19 +16,16 @@ export const getNodeMaintenanceStatus = (maintenance: K8sResourceKind): StatusPr
     return {
       status: NODE_STATUS_STOPPING_MAINTENANCE,
       title: NODE_STATUS_TITLES[NODE_STATUS_STOPPING_MAINTENANCE],
-      maintenance,
     };
   }
   if (getNodeMaintenancePhase(maintenance) === 'Succeeded') {
     return {
       status: NODE_STATUS_UNDER_MAINTENANCE,
       title: NODE_STATUS_TITLES[NODE_STATUS_UNDER_MAINTENANCE],
-      maintenance,
     };
   }
   return {
     status: NODE_STATUS_STARTING_MAINTENANCE,
     title: NODE_STATUS_TITLES[NODE_STATUS_STARTING_MAINTENANCE],
-    maintenance,
   };
 };

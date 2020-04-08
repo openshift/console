@@ -8,14 +8,14 @@ import { getNodeMaintenanceStatus } from './node-maintenance-status';
 
 type BareMetalNodeStatusProps = {
   node: NodeKind;
-  nodeMaintenance: K8sResourceKind;
+  nodeMaintenance?: K8sResourceKind;
 };
 
 export const bareMetalNodeStatus = ({
   node,
   nodeMaintenance,
 }: BareMetalNodeStatusProps): StatusProps =>
-  getNodeMaintenanceStatus(nodeMaintenance) || { status: nodeStatus(node), node };
+  getNodeMaintenanceStatus(nodeMaintenance) || { status: nodeStatus(node) };
 
 type BareMetalNodeSecondaryStatusProps = {
   node: NodeKind;

@@ -33,9 +33,10 @@ const DisksTableRow: RowFunction<BareMetalHostDisk> = ({ obj, index, key, style 
 
 type BareMetalHostDisksProps = {
   obj: BareMetalHostKind;
+  loadError?: any;
 };
 
-const BareMetalHostDisks: React.FC<BareMetalHostDisksProps> = ({ obj: host }) => {
+const BareMetalHostDisks: React.FC<BareMetalHostDisksProps> = ({ obj: host, loadError }) => {
   const disks = getHostStorage(host);
   return (
     <div className="co-m-list">
@@ -45,7 +46,8 @@ const BareMetalHostDisks: React.FC<BareMetalHostDisksProps> = ({ obj: host }) =>
           aria-label="Bare Metal Host Disks"
           Header={DisksTableHeader}
           Row={DisksTableRow}
-          loaded
+          loaded={!!host}
+          loadError={loadError}
         />
       </div>
     </div>

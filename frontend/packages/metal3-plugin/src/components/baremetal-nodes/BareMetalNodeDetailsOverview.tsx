@@ -1,6 +1,6 @@
 import * as _ from 'lodash';
 import * as React from 'react';
-import { NodeKind, referenceForModel } from '@console/internal/module/k8s';
+import { NodeKind, referenceForModel, K8sResourceKind } from '@console/internal/module/k8s';
 import {
   useAccessReview,
   SectionHeading,
@@ -22,22 +22,23 @@ import {
 } from '@console/shared';
 import NodeIPList from '@console/app/src/components/nodes/NodeIPList';
 import NodeGraphs from '@console/app/src/components/nodes/NodeGraphs';
-import { StatusProps } from '../types';
 import { BareMetalHostModel } from '../../models';
 import { BareMetalHostKind } from '../../types';
 import BareMetalNodeStatus from './BareMetalNodeStatus';
+import { bareMetalNodeStatus } from '../../status/baremetal-node-status';
 
 type BareMetalNodeDetailsOverviewProps = {
   node: NodeKind;
-  status: StatusProps;
   host: BareMetalHostKind;
+  nodeMaintenance: K8sResourceKind;
 };
 
 const BareMetalNodeDetailsOverview: React.FC<BareMetalNodeDetailsOverviewProps> = ({
   node,
-  status,
   host,
+  nodeMaintenance,
 }) => {
+  const status = bareMetalNodeStatus({ node, nodeMaintenance });
   const machine = getNodeMachineNameAndNamespace(node);
   const canUpdate = useAccessReview({
     group: NodeModel.apiGroup,
@@ -57,7 +58,7 @@ const BareMetalNodeDetailsOverview: React.FC<BareMetalNodeDetailsOverviewProps> 
             <dd>{node.metadata.name || '-'}</dd>
             <dt>Status</dt>
             <dd>
-              <BareMetalNodeStatus {...status} />
+              <BareMetalNodeStatus {...status} nodeMaintenance={nodeMaintenance} />
             </dd>
             <dt>External ID</dt>
             <dd>{_.get(node, 'spec.externalID', '-')}</dd>
