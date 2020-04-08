@@ -3,6 +3,7 @@ import {
   ChangedCommonData,
   ChangedCommonDataProp,
   CloudInitField,
+  ImportProvidersField,
   VMImportProvider,
   VMSettingsField,
   VMSettingsFieldType,
@@ -12,15 +13,21 @@ import {
   VMWizardTab,
 } from '../types';
 import { DeviceType } from '../../../constants/vm';
+import { FirehoseResource } from '@console/internal/components/utils';
 
 export enum ActionType {
   Create = 'KubevirtVMWizardExternalCreate',
   Dispose = 'KubevirtVMWiExternalDispose',
+  CreateVM = 'KubevirtVMWiExternalCreateVM',
   UpdateCommonData = 'KubevirtVMWizardExternalUpdateCommonData',
+  SetGoToStep = 'KubevirtVMWizardExternalSetGoToStep',
+  OpenDifficultTabs = 'KubevirtVMWizardExternalOpenDifficultTabs',
   SetVmSettingsFieldValue = 'KubevirtVMWizardExternalSetVmSettingsFieldValue',
-  UpdateVmSettingsProviderField = 'KubevirtVMWizardExternalUpdateVmSettingsProviderField',
+  SetImportProvidersFieldValue = 'KubevirtVMWizardExternalSetImportProvidersFieldValue',
+  UpdateImportProviderField = 'KubevirtVMWizardExternalUpdateImportProviderField',
   SetCloudInitFieldValue = 'KubevirtVMWizardExternalSetCloudInitFieldValue',
   SetTabLocked = 'KubevirtVMWizardExternalSetTabLocked',
+  SetTabHidden = 'KubevirtVMWizardExternalSetTabHidden',
   RemoveNIC = 'KubevirtVMWizardExternalRemoveNIC',
   UpdateNIC = 'KubevirtVMWizardExternalUpdateNIC',
   SetDeviceBootOrder = 'KubevirtVMWizardExternalSetDeviceBootOrder',
@@ -35,11 +42,15 @@ export enum InternalActionType {
   Dispose = 'KubevirtVMWizardDispose',
   Update = 'KubevirtVMWizardUpdate',
   UpdateCommonData = 'KubevirtVMWizardUpdateCommonData',
+  SetExtraWSQueries = 'KubevirtVMWizardSetExtraWSQueries',
+  SetGoToStep = 'KubevirtVMWizardSetGoToStep',
   SetTabValidity = 'KubevirtVMWizardSetTabValidity',
   SetTabLocked = 'KubevirtVMWizardSetTabLocked',
+  SetTabHidden = 'KubevirtVMWizardSetTabHidden',
   SetVmSettingsFieldValue = 'KubevirtVMWizardSetVmSettingsFieldValue',
-  UpdateVMSettingsProviderField = 'KubevirtVMWizardUpdateVmSettingsProviderField',
-  UpdateVMSettingsProvider = 'KubevirtVMWizardUpdateVmSettingsProvider',
+  SetImportProvidersFieldValue = 'KubevirtVMWizardSetImportProvidersFieldValue',
+  UpdateImportProviderField = 'KubevirtVMWizardUpdateImportProviderField',
+  UpdateImportProvider = 'KubevirtVMWizardUpdateImportProvider',
   SetCloudInitFieldValue = 'KubevirtVMWizardSetCloudInitFieldValue',
   SetInVmSettings = 'KubevirtVMWizardSetInVmSettings',
   SetInVmSettingsBatch = 'KubevirtVMWizardSetInVmSettingsBatch',
@@ -63,9 +74,12 @@ export type WizardInternalAction = {
     isValid?: boolean;
     isLocked?: boolean;
     isPending?: boolean;
+    isHidden?: boolean;
     hasAllRequiredFilled?: boolean;
     path?: string[];
-    key?: VMSettingsField | CloudInitField | VMWareProviderField;
+    key?: VMSettingsField | CloudInitField | VMWareProviderField | ImportProvidersField;
+    queryKey?: string;
+    wsQueries?: FirehoseResource[];
     provider?: VMImportProvider;
     tab?: VMWizardTab;
     batch?: ActionBatch;

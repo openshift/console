@@ -13,12 +13,12 @@ const vmTemplateEditAction = (kind: K8sKind, obj: TemplateKind) => ({
 
 const vmTemplateCreateVMAction = (kind: K8sKind, obj: TemplateKind) => ({
   label: `Create Virtual Machine`,
-  href: getVMWizardCreateLink(
-    getNamespace(obj),
-    VMWizardName.WIZARD,
-    VMWizardMode.VM,
-    getName(obj),
-  ),
+  href: getVMWizardCreateLink({
+    namespace: getNamespace(obj),
+    wizardName: VMWizardName.WIZARD,
+    mode: VMWizardMode.VM,
+    template: getName(obj),
+  }),
   accessReview: { model: VirtualMachineModel, namespace: getNamespace(obj), verb: 'create' },
 });
 

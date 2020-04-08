@@ -11,33 +11,20 @@ import {
   CloudInitField,
   VMWareProviderField,
   VMImportProvider,
+  ImportProvidersField,
+  VM_WIZARD_DIFFICULT_TABS,
 } from '../types';
 import { DeviceType } from '../../../constants/vm';
-import { cleanup, updateAndValidateState } from './utils';
-import { getTabInitialState } from './initial-state';
+import { getTabInitialState } from './initial-state/initial-state';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { ActionType, InternalActionType, WizardActionDispatcher } from './types';
 import { vmWizardInternalActions } from './internal-actions';
+import { withUpdateAndValidateState } from './main-actions/utils';
+import { createVMAction } from './main-actions/create-vm';
+import { disposeWizard } from './main-actions/dispose-wizard';
+import { isStepHidden } from '../selectors/immutable/wizard-selectors';
 
 type VMWizardActions = { [key in ActionType]: WizardActionDispatcher };
-
-const withUpdateAndValidateState = (
-  id: string,
-  resolveAction,
-  changedCommonData?: Set<ChangedCommonDataProp>,
-) => (dispatch, getState) => {
-  const prevState = getState(); // must be called before dispatch in resolveAction
-
-  resolveAction(dispatch, getState);
-
-  updateAndValidateState({
-    id,
-    dispatch,
-    changedCommonData: changedCommonData || new Set<ChangedCommonDataProp>(),
-    getState,
-    prevState,
-  });
-};
 
 export const vmWizardActions: VMWizardActions = {
   [ActionType.Create]: (id, commonData: CommonData) =>
@@ -50,28 +37,45 @@ export const vmWizardActions: VMWizardActions = {
               initial[tabKey] = getTabInitialState(tabKey, commonData);
               return initial;
             }, {}),
+            extraWSQueries: {},
+            transient: {
+              goToStep: undefined,
+            },
             commonData,
           }),
         ),
       new Set<ChangedCommonDataProp>(DetectCommonDataChanges),
     ),
-  [ActionType.Dispose]: (id) => (dispatch, getState) => {
-    const prevState = getState(); // must be called before dispatch
-    cleanup({
-      id,
-      changedCommonData: new Set<ChangedCommonDataProp>(),
-      dispatch,
-      prevState,
-      getState,
+  [ActionType.Dispose]: disposeWizard,
+  [ActionType.CreateVM]: createVMAction,
+  [ActionType.SetGoToStep]: (id, tab: VMWizardTab) => (dispatch, getState) => {
+    if (!isStepHidden(getState(), id, tab)) {
+      dispatch(vmWizardInternalActions[InternalActionType.SetGoToStep](id, tab));
+      // Hack to make changing steps work through CreateVMWizardFooter
+      setTimeout(
+        () => dispatch(vmWizardInternalActions[InternalActionType.SetGoToStep](id, null)),
+        250,
+      );
+    }
+  },
+  [ActionType.OpenDifficultTabs]: (id) => (dispatch, getState) => {
+    VM_WIZARD_DIFFICULT_TABS.forEach((difficultTab) => {
+      if (isStepHidden(getState(), id, difficultTab)) {
+        dispatch(vmWizardInternalActions[InternalActionType.SetTabHidden](id, difficultTab, false));
+      }
     });
-
-    dispatch(vmWizardInternalActions[InternalActionType.Dispose](id));
   },
   [ActionType.SetVmSettingsFieldValue]: (id, key: VMSettingsField, value: any) =>
     withUpdateAndValidateState(id, (dispatch) =>
       dispatch(vmWizardInternalActions[InternalActionType.SetVmSettingsFieldValue](id, key, value)),
     ),
-  [ActionType.UpdateVmSettingsProviderField]: (
+  [ActionType.SetImportProvidersFieldValue]: (id, key: ImportProvidersField, value: any) =>
+    withUpdateAndValidateState(id, (dispatch) =>
+      dispatch(
+        vmWizardInternalActions[InternalActionType.SetImportProvidersFieldValue](id, key, value),
+      ),
+    ),
+  [ActionType.UpdateImportProviderField]: (
     id,
     provider: VMImportProvider,
     key: VMWareProviderField | any,
@@ -79,7 +83,7 @@ export const vmWizardActions: VMWizardActions = {
   ) =>
     withUpdateAndValidateState(id, (dispatch) =>
       dispatch(
-        vmWizardInternalActions[InternalActionType.UpdateVMSettingsProviderField](
+        vmWizardInternalActions[InternalActionType.UpdateImportProviderField](
           id,
           provider,
           key,
@@ -103,6 +107,9 @@ export const vmWizardActions: VMWizardActions = {
     ),
   [ActionType.SetTabLocked]: (id, tab: VMWizardTab, isLocked: boolean) => (dispatch) => {
     dispatch(vmWizardInternalActions[InternalActionType.SetTabLocked](id, tab, isLocked));
+  },
+  [ActionType.SetTabHidden]: (id, tab: VMWizardTab, isHidden: boolean) => (dispatch) => {
+    dispatch(vmWizardInternalActions[InternalActionType.SetTabHidden](id, tab, isHidden));
   },
   [ActionType.UpdateNIC]: (id, network: VMWizardNetwork) =>
     withUpdateAndValidateState(id, (dispatch) =>

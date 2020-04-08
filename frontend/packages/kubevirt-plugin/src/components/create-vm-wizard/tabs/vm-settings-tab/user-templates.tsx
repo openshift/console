@@ -13,7 +13,7 @@ import {
 } from '../../strings/strings';
 import { nullOnEmptyChange } from '../../utils/utils';
 import { iGetName } from '../../selectors/immutable/selectors';
-import { iGetFieldValue } from '../../selectors/immutable/vm-settings';
+import { iGetFieldValue } from '../../selectors/immutable/field';
 
 export const UserTemplates: React.FC<UserTemplatesProps> = React.memo(
   ({

@@ -2,20 +2,14 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { Title } from '@patternfly/react-core';
 import { Firehose, FirehoseResult } from '@console/internal/components/utils';
-import { K8sResourceKind } from '@console/internal/module/k8s';
 import { createLookup, getName } from '@console/shared/src';
 import { PersistentVolumeClaimModel } from '@console/internal/models';
-import { iGetCommonData, iGetCreateVMWizardTabs } from '../../selectors/immutable/selectors';
+import { iGetCommonData } from '../../selectors/immutable/selectors';
 import { isStepLocked } from '../../selectors/immutable/wizard-selectors';
-import {
-  VMWizardProps,
-  VMWizardStorageWithWrappers,
-  VMWizardTab,
-  VMWizardStorageType,
-} from '../../types';
+import { VMWizardProps, VMWizardTab, VMWizardStorageType, VMWizardStorage } from '../../types';
 import { vmWizardActions } from '../../redux/actions';
 import { ActionType } from '../../redux/types';
-import { getStoragesWithWrappers } from '../../selectors/selectors';
+import { getStorages } from '../../selectors/selectors';
 import { wrapWithProgress } from '../../../../utils/utils';
 import { cdTableColumnClasses } from '../../../vm-disks/utils';
 import { CombinedDisk } from '../../../../k8s/wrapper/vm/combined-disk';
@@ -23,7 +17,6 @@ import { isLoaded } from '../../../../utils';
 import { ATTACH_CD } from '../../strings/storage';
 import { DiskType } from '../../../../constants/vm';
 import { getAvailableCDName } from '../../../modals/cdrom-vm-modal/helpers';
-import { PersistentVolumeClaimWrapper } from '../../../../k8s/wrapper/vm/persistent-volume-claim-wrapper';
 import { VMWizardStorageBundle } from '../storage-tab/types';
 import { vmWizardStorageModalEnhanced } from '../storage-tab/vm-wizard-storage-modal-enhanced';
 import { VMCDsTable } from '../../../vm-disks/vm-cds';
@@ -34,32 +27,27 @@ import './virtual-hardware-tab.scss';
 import { getTemplateValidation } from '../../selectors/template';
 import { TemplateValidations } from 'packages/kubevirt-plugin/src/utils/validations/template/template-validations';
 import { AddCDButton } from '../../../modals/cdrom-vm-modal/cdrom-modal';
+import { VolumeWrapper } from '../../../../k8s/wrapper/vm/volume-wrapper';
 
 const getVirtualStoragesData = (
-  storages: VMWizardStorageWithWrappers[],
-  pvcs: FirehoseResult<K8sResourceKind[]>,
+  storages: VMWizardStorage[],
+  pvcs: FirehoseResult,
 ): VMWizardStorageBundle[] => {
   const pvcLookup = createLookup(pvcs, getName);
 
   return storages
-    .filter((storage) => VHW_TYPES.has(storage.diskWrapper.getType()))
+    .filter((storage) => VHW_TYPES.has(new DiskWrapper(storage.disk).getType()))
     .map((wizardStorageData) => {
-      const {
-        diskWrapper,
-        volumeWrapper,
-        dataVolumeWrapper,
-        persistentVolumeClaimWrapper,
-      } = wizardStorageData;
+      const { disk, volume, dataVolume, persistentVolumeClaim } = wizardStorageData;
 
-      const pvc = pvcLookup[volumeWrapper.getPersistentVolumeClaimName()];
+      const pvc = pvcLookup[new VolumeWrapper(volume).getPersistentVolumeClaimName()];
 
       const combinedDisk = new CombinedDisk({
-        diskWrapper,
-        volumeWrapper,
-        dataVolumeWrapper,
-        persistentVolumeClaimWrapper:
-          persistentVolumeClaimWrapper || (pvc && new PersistentVolumeClaimWrapper(pvc)),
-        isNewPVC: !!persistentVolumeClaimWrapper,
+        disk,
+        volume,
+        dataVolume,
+        persistentVolumeClaim: persistentVolumeClaim || pvc,
+        isNewPVC: !!persistentVolumeClaim,
         pvcsLoading: !isLoaded(pvcs),
       });
 
@@ -102,7 +90,7 @@ const VirtualHardwareTabFirehose: React.FC<VirtualHardwareTabFirehoseProps> = ({
         withProgress(
           vmWizardStorageModalEnhanced({
             storage: {
-              diskWrapper,
+              disk: diskWrapper.asResource(),
               type: VMWizardStorageType.UI_INPUT,
             },
             blocking: true,
@@ -148,11 +136,11 @@ type VirtualHardwareTabFirehoseProps = {
   isLocked: boolean;
   isBootDiskRequired: boolean;
   wizardReduxID: string;
-  storages: VMWizardStorageWithWrappers[];
+  storages: VMWizardStorage[];
   templateValidations: TemplateValidations;
   removeStorage: (id: string) => void;
   setTabLocked: (isLocked: boolean) => void;
-  persistentVolumeClaims: FirehoseResult<K8sResourceKind[]>;
+  persistentVolumeClaims: FirehoseResult;
 };
 
 const VirtualHardwareConnected: React.FC<VirtualHardwareConnectedProps> = ({
@@ -177,15 +165,12 @@ type VirtualHardwareConnectedProps = VirtualHardwareTabFirehoseProps & {
   namespace: string;
 };
 
-const stateToProps = (state, { wizardReduxID }) => {
-  const stepData = iGetCreateVMWizardTabs(state, wizardReduxID);
-  return {
-    namespace: iGetCommonData(state, wizardReduxID, VMWizardProps.activeNamespace),
-    isLocked: isStepLocked(stepData, VMWizardTab.ADVANCED_VIRTUAL_HARDWARE),
-    storages: getStoragesWithWrappers(state, wizardReduxID),
-    templateValidations: getTemplateValidation(state, wizardReduxID),
-  };
-};
+const stateToProps = (state, { wizardReduxID }) => ({
+  namespace: iGetCommonData(state, wizardReduxID, VMWizardProps.activeNamespace),
+  isLocked: isStepLocked(state, wizardReduxID, VMWizardTab.ADVANCED_VIRTUAL_HARDWARE),
+  storages: getStorages(state, wizardReduxID),
+  templateValidations: getTemplateValidation(state, wizardReduxID),
+});
 
 const dispatchToProps = (dispatch, { wizardReduxID }) => ({
   setTabLocked: (isLocked) => {

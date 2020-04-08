@@ -3,12 +3,12 @@ import * as _ from 'lodash';
 import { Kebab, KebabOption } from '@console/internal/components/utils';
 import { RowFunction } from '@console/internal/components/factory';
 import { NicSimpleRow } from '../../../vm-nics/nic-row';
-import { VMWizardNetworkWithWrappers } from '../../types';
+import { VMWizardNetwork } from '../../types';
 import { VMWizardNetworkBundle, VMWizardNicRowActionOpts, VMWizardNicRowCustomData } from './types';
 import { vmWizardNicModalEnhanced } from './vm-wizard-nic-modal-enhanced';
 
 const menuActionEdit = (
-  { networkInterfaceWrapper, networkWrapper, id, type }: VMWizardNetworkWithWrappers,
+  network: VMWizardNetwork,
   { wizardReduxID, withProgress }: VMWizardNicRowActionOpts,
 ): KebabOption => ({
   label: 'Edit',
@@ -17,16 +17,13 @@ const menuActionEdit = (
       vmWizardNicModalEnhanced({
         blocking: true,
         wizardReduxID,
-        id,
-        type,
-        networkInterfaceWrapper,
-        networkWrapper,
+        network,
       }).result,
     ),
 });
 
 const menuActionRemove = (
-  { id }: VMWizardNetworkWithWrappers,
+  { id }: VMWizardNetwork,
   { withProgress, removeNIC }: VMWizardNicRowActionOpts,
 ): KebabOption => ({
   label: 'Delete',
@@ -39,10 +36,7 @@ const menuActionRemove = (
     ),
 });
 
-const getActions = (
-  wizardNetworkData: VMWizardNetworkWithWrappers,
-  opts: VMWizardNicRowActionOpts,
-) => {
+const getActions = (wizardNetworkData: VMWizardNetwork, opts: VMWizardNicRowActionOpts) => {
   const actions = [menuActionEdit, menuActionRemove];
   return actions.map((a) => a(wizardNetworkData, opts));
 };

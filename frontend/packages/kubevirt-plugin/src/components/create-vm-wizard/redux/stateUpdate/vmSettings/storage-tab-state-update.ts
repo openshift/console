@@ -82,13 +82,17 @@ export const internalStorageDiskBusUpdater = ({
 
   // we care only about the first TemplateValidation because storage shows up after the first step
   const oldValidations = getTemplateValidation(prevState, id);
-  const newValidations = getTemplateValidation(state, id);
+  let newValidations = getTemplateValidation(state, id);
 
   if (
     TemplateValidations.areBusesEqual(oldValidations, newValidations) &&
     !hasStoragesChanged(prevState, state, id)
   ) {
     return;
+  }
+
+  if (!newValidations) {
+    newValidations = new TemplateValidations();
   }
 
   let someBusChanged = false;

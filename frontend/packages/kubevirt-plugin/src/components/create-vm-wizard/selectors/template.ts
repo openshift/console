@@ -4,9 +4,9 @@ import {
   iGetRelevantTemplate,
   iGetRelevantTemplates,
 } from '../../../selectors/immutable/template/combined';
-import { VMSettingsField, VMWizardProps } from '../types';
+import { VMWizardProps } from '../types';
 import { iGetLoadedCommonData } from './immutable/selectors';
-import { iGetVmSettingAttribute, iGetVmSettingValue } from './immutable/vm-settings';
+import { iGetRelevantTemplateSelectors } from './immutable/vm-settings';
 
 const getValidationsFromTemplates = (templates): TemplateValidations[] =>
   templates.map(
@@ -14,17 +14,8 @@ const getValidationsFromTemplates = (templates): TemplateValidations[] =>
   );
 
 export const getTemplateValidations = (state, id: string): TemplateValidations[] => {
-  const userTemplateName = iGetVmSettingValue(state, id, VMSettingsField.USER_TEMPLATE);
-  const os = iGetVmSettingAttribute(state, id, VMSettingsField.OPERATING_SYSTEM);
-  const flavor = iGetVmSettingAttribute(state, id, VMSettingsField.FLAVOR);
-  const workload = iGetVmSettingAttribute(state, id, VMSettingsField.WORKLOAD_PROFILE);
-
-  const relevantOptions = {
-    userTemplateName,
-    os,
-    workload,
-    flavor,
-  };
+  const relevantOptions = iGetRelevantTemplateSelectors(state, id);
+  const { userTemplateName, flavor, os, workload } = relevantOptions;
 
   const iUserTemplates = iGetLoadedCommonData(state, id, VMWizardProps.userTemplates);
   const iCommonTemplates = iGetLoadedCommonData(state, id, VMWizardProps.commonTemplates);

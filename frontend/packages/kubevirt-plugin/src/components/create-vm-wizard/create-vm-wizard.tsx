@@ -10,7 +10,7 @@ import {
   FlagsObject,
 } from '@console/internal/reducers/features';
 import { TemplateModel } from '@console/internal/models';
-import { Firehose, history } from '@console/internal/components/utils';
+import { Firehose, FirehoseResource, history } from '@console/internal/components/utils';
 import { Location } from 'history';
 import { match as RouterMatch } from 'react-router';
 import { withReduxID } from '../../utils/redux/common';
@@ -20,37 +20,30 @@ import {
   TEMPLATE_TYPE_LABEL,
   TEMPLATE_TYPE_VM,
   VMWizardMode,
+  VMWizardView,
 } from '../../constants/vm';
 import { getResource } from '../../utils';
-import { EnhancedK8sMethods } from '../../k8s/enhancedK8sMethods/enhancedK8sMethods';
-import { cleanupAndGetResults, getResults } from '../../k8s/enhancedK8sMethods/k8sMethodsUtils';
-import { iGetIn, iGetLoadedData, immutableListToJS } from '../../utils/immutable';
-import { ResultsWrapper } from '../../k8s/enhancedK8sMethods/types';
-import { makeIDReferences } from '../../utils/redux/id-reference';
-import { createVM, createVMTemplate } from '../../k8s/requests/vm/create/create';
+import { IDReferences, makeIDReferences } from '../../utils/redux/id-reference';
 import {
   ChangedCommonData,
   CommonData,
-  CreateVMWizardComponentProps,
+  ChangedCommonDataProp,
   DetectCommonDataChanges,
-  VMWizardNetwork,
   VMWizardProps,
-  VMWizardStorage,
   VMWizardTab,
+  VMWizardTabsMetadata,
 } from './types';
 import { CREATE_VM, CREATE_VM_TEMPLATE, IMPORT_VM, TabTitleResolver } from './strings/strings';
 import { vmWizardActions } from './redux/actions';
 import { ActionType } from './redux/types';
 import { getResultInitialState } from './redux/initial-state/result-tab-initial-state';
-import { iGetCommonData, iGetCreateVMWizardTabs } from './selectors/immutable/selectors';
-import {
-  isLastStepErrorFatal,
-  isStepLocked,
-  isStepPending,
-  isStepValid,
-} from './selectors/immutable/wizard-selectors';
-import { ResourceLoadErrors } from './resource-load-errors';
+import { iGetCommonData } from './selectors/immutable/selectors';
+import { getExtraWSQueries } from './selectors/selectors';
+import { getStepsMetadata, isLastStepErrorFatal } from './selectors/immutable/wizard-selectors';
+import { ResourceLoadErrors } from './error-components/resource-load-errors';
+import { WizardErrors } from './error-components/wizard-errors';
 import { CreateVMWizardFooter } from './create-vm-wizard-footer';
+import { ImportProvidersTab } from './tabs/import-providers-tab/import-providers-tab';
 import { VMSettingsTab } from './tabs/vm-settings-tab/vm-settings-tab';
 import { NetworkingTab } from './tabs/networking-tab/networking-tab';
 import { ReviewTab } from './tabs/review-tab/review-tab';
@@ -59,10 +52,26 @@ import { StorageTab } from './tabs/storage-tab/storage-tab';
 import { CloudInitTab } from './tabs/cloud-init-tab/cloud-init-tab';
 import { VirtualHardwareTab } from './tabs/virtual-hardware-tab/virtual-hardware-tab';
 import { useStorageClassConfigMapWrapped } from '../../hooks/storage-class-config-map';
+import { ValidTabGuard } from './tabs/valid-tab-guard';
 
 import './create-vm-wizard.scss';
 
-export class CreateVMWizardComponent extends React.Component<CreateVMWizardComponentProps> {
+type CreateVMWizardComponentProps = {
+  isSimpleView: boolean;
+  isProviderImport: boolean;
+  isCreateTemplate: boolean;
+  isLastTabErrorFatal: boolean;
+  dataIDReferences: IDReferences;
+  reduxID: string;
+  tabsMetadata: VMWizardTabsMetadata;
+  onInitialize: () => void;
+  onClose: (disposeOnly: boolean) => void;
+  createVM: () => void;
+  onCommonDataChanged: (commonData: CommonData, commonDataChanged: ChangedCommonData) => void;
+  onResultsChanged: (results, isValid: boolean, isLocked: boolean, isPending: boolean) => void;
+} & { [k in ChangedCommonDataProp]: any };
+
+class CreateVMWizardComponent extends React.Component<CreateVMWizardComponentProps> {
   private isClosed = false;
 
   constructor(props) {
@@ -127,59 +136,47 @@ export class CreateVMWizardComponent extends React.Component<CreateVMWizardCompo
     return CREATE_VM;
   }
 
-  finish = async () => {
-    this.props.onResultsChanged({ errors: [], requestResults: [] }, null, true, true); // reset
-    const { isCreateTemplate, activeNamespace, openshiftFlag } = this.props;
-
-    const enhancedK8sMethods = new EnhancedK8sMethods();
-    const vmSettings = iGetIn(this.props.stepData, [VMWizardTab.VM_SETTINGS, 'value']).toJS();
-    const networks = immutableListToJS<VMWizardNetwork>(
-      iGetIn(this.props.stepData, [VMWizardTab.NETWORKING, 'value']),
-    );
-    const storages = immutableListToJS<VMWizardStorage>(
-      iGetIn(this.props.stepData, [VMWizardTab.STORAGE, 'value']),
-    );
-
-    const iUserTemplates = iGetLoadedData(this.props[VMWizardProps.userTemplates]);
-    const iCommonTemplates = iGetLoadedData(this.props[VMWizardProps.commonTemplates]);
-
-    const create = isCreateTemplate ? createVMTemplate : createVM;
-    create({
-      enhancedK8sMethods,
-      vmSettings,
-      networks,
-      storages,
-      iUserTemplates,
-      iCommonTemplates,
-      namespace: activeNamespace,
-      openshiftFlag,
-      isTemplate: isCreateTemplate,
-    })
-      .then(() => getResults(enhancedK8sMethods))
-      .catch((error) => cleanupAndGetResults(enhancedK8sMethods, error))
-      .then(({ isValid, ...rest }: ResultsWrapper) =>
-        this.props.onResultsChanged(rest, isValid, false, false),
-      )
-      .catch((e) => console.error(e)); // eslint-disable-line no-console
-  };
-
   goBackToEditingSteps = () =>
     this.props.onResultsChanged(getResultInitialState({}).value, null, false, false);
 
   render() {
-    const { reduxID, stepData } = this.props;
+    const {
+      reduxID,
+      tabsMetadata,
+      isLastTabErrorFatal,
+      isSimpleView,
+      isProviderImport,
+    } = this.props;
 
-    if (this.isClosed) {
+    if (this.isClosed || _.isEmpty(tabsMetadata)) {
+      // closed or not initialized
       return null;
     }
 
     const steps = [
       {
+        id: VMWizardTab.IMPORT_PROVIDERS,
+        component: (
+          <>
+            <ResourceLoadErrors wizardReduxID={reduxID} key="errors" />
+            <ValidTabGuard
+              wizardReduxID={reduxID}
+              tabID={VMWizardTab.IMPORT_PROVIDERS}
+              key="wizard-errors"
+            >
+              <WizardErrors wizardReduxID={reduxID} />
+            </ValidTabGuard>
+            <ImportProvidersTab wizardReduxID={reduxID} key={VMWizardTab.IMPORT_PROVIDERS} />
+          </>
+        ),
+      },
+      {
         id: VMWizardTab.VM_SETTINGS,
         component: (
           <>
-            <ResourceLoadErrors wizardReduxID={reduxID} />
-            <VMSettingsTab wizardReduxID={reduxID} />
+            <ResourceLoadErrors wizardReduxID={reduxID} key="errors" />
+            <WizardErrors wizardReduxID={reduxID} key="wizard-errors" />
+            <VMSettingsTab wizardReduxID={reduxID} key={VMWizardTab.VM_SETTINGS} />
           </>
         ),
       },
@@ -187,8 +184,9 @@ export class CreateVMWizardComponent extends React.Component<CreateVMWizardCompo
         id: VMWizardTab.NETWORKING,
         component: (
           <>
-            <ResourceLoadErrors wizardReduxID={reduxID} />
-            <NetworkingTab wizardReduxID={reduxID} />
+            <ResourceLoadErrors wizardReduxID={reduxID} key="errors" />
+            <WizardErrors wizardReduxID={reduxID} key="wizard-errors" />
+            <NetworkingTab wizardReduxID={reduxID} key={VMWizardTab.NETWORKING} />
           </>
         ),
       },
@@ -196,8 +194,9 @@ export class CreateVMWizardComponent extends React.Component<CreateVMWizardCompo
         id: VMWizardTab.STORAGE,
         component: (
           <>
-            <ResourceLoadErrors wizardReduxID={reduxID} />
-            <StorageTab wizardReduxID={reduxID} />
+            <ResourceLoadErrors wizardReduxID={reduxID} key="errors" />
+            <WizardErrors wizardReduxID={reduxID} key="wizard-errors" />
+            <StorageTab wizardReduxID={reduxID} key={VMWizardTab.STORAGE} />
           </>
         ),
       },
@@ -208,8 +207,9 @@ export class CreateVMWizardComponent extends React.Component<CreateVMWizardCompo
             id: VMWizardTab.ADVANCED_CLOUD_INIT,
             component: (
               <>
-                <ResourceLoadErrors wizardReduxID={reduxID} />
-                <CloudInitTab wizardReduxID={reduxID} />
+                <ResourceLoadErrors wizardReduxID={reduxID} key="errors" />
+                <WizardErrors wizardReduxID={reduxID} key="wizard-errors" />
+                <CloudInitTab wizardReduxID={reduxID} key={VMWizardTab.ADVANCED_CLOUD_INIT} />
               </>
             ),
           },
@@ -217,8 +217,12 @@ export class CreateVMWizardComponent extends React.Component<CreateVMWizardCompo
             id: VMWizardTab.ADVANCED_VIRTUAL_HARDWARE,
             component: (
               <>
-                <ResourceLoadErrors wizardReduxID={reduxID} />
-                <VirtualHardwareTab wizardReduxID={reduxID} />
+                <ResourceLoadErrors wizardReduxID={reduxID} key="errors" />
+                <WizardErrors wizardReduxID={reduxID} key="wizard-errors" />
+                <VirtualHardwareTab
+                  wizardReduxID={reduxID}
+                  key={VMWizardTab.ADVANCED_VIRTUAL_HARDWARE}
+                />
               </>
             ),
           },
@@ -226,25 +230,33 @@ export class CreateVMWizardComponent extends React.Component<CreateVMWizardCompo
       },
       {
         id: VMWizardTab.REVIEW,
-        component: <ReviewTab wizardReduxID={reduxID} />,
+        component: (
+          <>
+            <WizardErrors wizardReduxID={reduxID} key="wizard-errors" />
+            <ReviewTab wizardReduxID={reduxID} key={VMWizardTab.REVIEW} />
+          </>
+        ),
       },
       {
         id: VMWizardTab.RESULT,
-        component: <ResultTab wizardReduxID={reduxID} />,
+        component: <ResultTab wizardReduxID={reduxID} key={VMWizardTab.RESULT} />,
         isFinishedStep:
-          isStepPending(stepData, VMWizardTab.RESULT) || isStepValid(stepData, VMWizardTab.RESULT),
+          tabsMetadata[VMWizardTab.RESULT].isPending || tabsMetadata[VMWizardTab.RESULT].isValid,
       },
     ];
 
-    const isLocked = _.some(steps, ({ id }) => isStepLocked(stepData, id));
+    const isLocked = _.some(steps, ({ id }) => tabsMetadata[id as VMWizardTab]?.isLocked);
 
-    const calculateSteps = (initialSteps, initialAccumulator: WizardStep[] = []): WizardStep[] =>
+    const calculateStepsCanJumpTo = (
+      initialSteps,
+      initialAccumulator: WizardStep[] = [],
+    ): WizardStep[] =>
       initialSteps.reduce((stepAcc: WizardStep[], step: any) => {
         const isFirstStep = _.isEmpty(stepAcc);
         let innerSteps;
         if (step.steps) {
           // pass reference to last step but remove it afterwards
-          innerSteps = calculateSteps(step.steps, isFirstStep ? [] : [_.last(stepAcc)]);
+          innerSteps = calculateStepsCanJumpTo(step.steps, isFirstStep ? [] : [_.last(stepAcc)]);
           if (!isFirstStep) {
             innerSteps.shift();
           }
@@ -256,22 +268,25 @@ export class CreateVMWizardComponent extends React.Component<CreateVMWizardCompo
             prevStep = _.last(prevStep.steps);
           }
         }
-        const isPrevStepValid = isFirstStep || isStepValid(stepData, prevStep.id as VMWizardTab);
+        const isPrevStepValid =
+          isFirstStep ||
+          (isSimpleView && isProviderImport
+            ? tabsMetadata[VMWizardTab.IMPORT_PROVIDERS].isValid
+            : tabsMetadata[prevStep.id as VMWizardTab]?.isValid);
         const canJumpToPrevStep = isFirstStep || prevStep.canJumpTo;
 
         const calculatedStep = {
           ...step,
           name: TabTitleResolver[step.id] || step.name,
           canJumpTo:
-            isStepLocked(stepData, VMWizardTab.RESULT) || isLastStepErrorFatal(stepData) // request in progress or failed
+            tabsMetadata[VMWizardTab.RESULT].isLocked || isLastTabErrorFatal // request in progress or failed
               ? step.id === VMWizardTab.RESULT
               : !isLocked &&
                 isPrevStepValid &&
                 canJumpToPrevStep &&
                 // disable uninitialized RESULT step
                 !(
-                  step.id === VMWizardTab.RESULT &&
-                  iGetIn(stepData, [VMWizardTab.RESULT, 'isValid']) == null
+                  step.id === VMWizardTab.RESULT && tabsMetadata[VMWizardTab.RESULT].isValid == null
                 ),
           component: step.component,
         };
@@ -284,20 +299,32 @@ export class CreateVMWizardComponent extends React.Component<CreateVMWizardCompo
         return stepAcc;
       }, initialAccumulator);
 
+    const calculateStepsVisibility = (initialSteps: WizardStep[]): WizardStep[] =>
+      initialSteps
+        .map((step) => {
+          if (step.steps) {
+            const newInnerSteps = calculateStepsVisibility(step.steps);
+            return newInnerSteps.length > 0 ? { ...step, steps: newInnerSteps } : null;
+          }
+          return tabsMetadata[step.id as VMWizardTab]?.isHidden ? null : step;
+        })
+        .filter((step) => step);
+
     return (
       <div className="kubevirt-create-vm-modal__container">
-        {!isStepValid(stepData, VMWizardTab.RESULT) && (
-          <div className="yaml-editor__header">
+        {!tabsMetadata[VMWizardTab.RESULT].isValid && (
+          <div className="yaml-editor__header" key="header">
             <h1 className="yaml-editor__header-text">{this.getWizardTitle()}</h1>
           </div>
         )}
         <Wizard
+          key="wizard"
           isInPage
           className="kubevirt-create-vm-modal__wizard-content"
           onClose={this.onClose}
           onNext={({ id }, { prevId }) => {
             if (id === VMWizardTab.RESULT && prevId !== VMWizardTab.RESULT) {
-              this.finish();
+              this.props.createVM();
             }
             if (prevId === VMWizardTab.RESULT && id !== VMWizardTab.RESULT) {
               this.goBackToEditingSteps();
@@ -313,8 +340,8 @@ export class CreateVMWizardComponent extends React.Component<CreateVMWizardCompo
               this.goBackToEditingSteps();
             }
           }}
-          steps={calculateSteps(steps)}
-          footer={<CreateVMWizardFooter wizardReduxID={reduxID} />}
+          steps={calculateStepsVisibility(calculateStepsCanJumpTo(steps))}
+          footer={<CreateVMWizardFooter wizardReduxID={reduxID} key="footer" />}
         />
       </div>
     );
@@ -322,7 +349,8 @@ export class CreateVMWizardComponent extends React.Component<CreateVMWizardCompo
 }
 
 const wizardStateToProps = (state, { reduxID }) => ({
-  stepData: iGetCreateVMWizardTabs(state, reduxID),
+  isLastTabErrorFatal: isLastStepErrorFatal(state, reduxID),
+  tabsMetadata: getStepsMetadata(state, reduxID),
   // fetch data from store to detect and fire changes
   ...[...DetectCommonDataChanges]
     .filter((v) => v !== VMWizardProps.storageClassConfigMap) // passed directly
@@ -341,6 +369,7 @@ const wizardDispatchToProps = (dispatch, props) => ({
           isProviderImport: props.isProviderImport,
           userTemplateName: props.userTemplateName,
           storageClassConfigMap: undefined,
+          isSimpleView: props.isSimpleView,
         },
         dataIDReferences: props.dataIDReferences,
       } as CommonData),
@@ -350,6 +379,10 @@ const wizardDispatchToProps = (dispatch, props) => ({
     dispatch(
       vmWizardActions[ActionType.UpdateCommonData](props.reduxID, commonData, changedCommonData),
     );
+  },
+
+  createVM: () => {
+    dispatch(vmWizardActions[ActionType.CreateVM](props.reduxID));
   },
   onResultsChanged: (results, isValid, isLocked, isPending) => {
     dispatch(
@@ -364,19 +397,27 @@ const wizardDispatchToProps = (dispatch, props) => ({
   },
 });
 
-export const CreateVMWizard = connect(
-  wizardStateToProps,
-  wizardDispatchToProps,
-)(CreateVMWizardComponent);
+const CreateVMWizard = connect(wizardStateToProps, wizardDispatchToProps, null, {
+  areStatePropsEqual: (nextStateProps, prevStateProps) =>
+    Object.keys(nextStateProps).every((key) => {
+      const prev = prevStateProps[key];
+      const next = nextStateProps[key];
+      if (key === 'tabsMetadata') {
+        return _.isEqual(prev, next); // should have only simple values max one level deep
+      }
+      return prev === next;
+    }),
+})(CreateVMWizardComponent);
 
 export const CreateVMWizardPageComponent: React.FC<CreateVMWizardPageComponentProps> = ({
   reduxID,
   match,
   location,
   flags,
+  wsResources,
 }) => {
   const activeNamespace = match && match.params && match.params.ns;
-  const search = location && location.search;
+  const searchParams = new URLSearchParams(location && location.search);
 
   const resources = [
     getResource(VirtualMachineModel, {
@@ -406,14 +447,18 @@ export const CreateVMWizardPageComponent: React.FC<CreateVMWizardPageComponentPr
 
   const storageClassConfigMap = useStorageClassConfigMapWrapped();
 
-  const searchParams = new URLSearchParams(search);
-  const userMode = searchParams.get('mode') || VMWizardMode.VM;
-  const userTemplateName = (userMode === VMWizardMode.VM && searchParams.get('template')) || '';
+  resources.push(...wsResources);
 
   const dataIDReferences = makeIDReferences(resources);
 
   dataIDReferences[VMWizardProps.activeNamespace] = ['UI', 'activeNamespace'];
   dataIDReferences[VMWizardProps.openshiftFlag] = [featureReducerName, FLAGS.OPENSHIFT];
+
+  const userMode = searchParams.get('mode') || VMWizardMode.VM;
+  const userTemplateName = (userMode === VMWizardMode.VM && searchParams.get('template')) || '';
+  const isSimpleView =
+    userMode === VMWizardMode.IMPORT &&
+    searchParams.get('view')?.toLowerCase() !== VMWizardView.ADVANCED; // normal mode defaults to advanced
 
   return (
     <Firehose resources={resources} doNotConnectToState>
@@ -421,6 +466,7 @@ export const CreateVMWizardPageComponent: React.FC<CreateVMWizardPageComponentPr
         isCreateTemplate={userMode === VMWizardMode.TEMPLATE}
         isProviderImport={userMode === VMWizardMode.IMPORT}
         userTemplateName={userTemplateName}
+        isSimpleView={isSimpleView}
         dataIDReferences={dataIDReferences}
         storageClassConfigMap={storageClassConfigMap}
         reduxID={reduxID}
@@ -433,6 +479,7 @@ export const CreateVMWizardPageComponent: React.FC<CreateVMWizardPageComponentPr
 type CreateVMWizardPageComponentProps = {
   reduxID?: string;
   location?: Location;
+  wsResources?: FirehoseResource[];
   match?: RouterMatch<{ ns: string; plural: string; appName?: string }>;
   flags: FlagsObject;
 };
@@ -440,4 +487,12 @@ type CreateVMWizardPageComponentProps = {
 export const CreateVMWizardPage = compose(
   connectToFlags(FLAGS.OPENSHIFT),
   withReduxID,
+  connect(
+    (state, props: any) => ({ wsResources: getExtraWSQueries(state, props.reduxID) }),
+    undefined,
+    undefined,
+    {
+      areStatePropsEqual: _.isEqual,
+    },
+  ),
 )(CreateVMWizardPageComponent);

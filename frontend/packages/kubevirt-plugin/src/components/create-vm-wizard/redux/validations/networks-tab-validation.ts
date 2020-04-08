@@ -6,8 +6,10 @@ import { iGetIn } from '../../../../utils/immutable';
 import { hasNetworksChanged, iGetNetworks } from '../../selectors/immutable/networks';
 import { checkTabValidityChanged } from '../../selectors/immutable/selectors';
 import { iGetProvisionSource } from '../../selectors/immutable/vm-settings';
-import { getNetworksWithWrappers } from '../../selectors/selectors';
+import { getNetworks } from '../../selectors/selectors';
 import { ProvisionSource } from '../../../../constants/vm/provision-source';
+import { NetworkInterfaceWrapper } from '../../../../k8s/wrapper/vm/network-interface-wrapper';
+import { NetworkWrapper } from '../../../../k8s/wrapper/vm/network-wrapper';
 
 export const validateNetworks = (options: UpdateOptions) => {
   const { id, prevState, dispatch, getState } = options;
@@ -17,7 +19,11 @@ export const validateNetworks = (options: UpdateOptions) => {
     return;
   }
 
-  const networks = getNetworksWithWrappers(state, id);
+  const networks = getNetworks(state, id).map((networkBundle) => ({
+    ...networkBundle,
+    networkInterfaceWrapper: new NetworkInterfaceWrapper(networkBundle.networkInterface),
+    networkWrapper: new NetworkWrapper(networkBundle.network),
+  }));
 
   const validatedNetworks = networks.map(
     ({ networkInterfaceWrapper, networkWrapper, ...networkBundle }) => {

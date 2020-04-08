@@ -2,7 +2,12 @@ import * as React from 'react';
 import * as classNames from 'classnames';
 import { TextInput } from '@patternfly/react-core';
 import { getSequence, setNativeValue } from '../../../utils/utils';
-import { isMinus, KEY_CODES, INPUT_NAVIGATION_KEYS } from '../../../constants/keys';
+import {
+  isMinus,
+  KEY_CODES,
+  INPUT_NAVIGATION_KEYS,
+  INPUT_CTRL_COMBINATIONS_KEYS,
+} from '../../../constants/keys';
 
 import './integer.scss';
 
@@ -61,13 +66,15 @@ const isInputValid = (allowedKeys, keyCode, targetValue, additionalValidation) =
   return false;
 };
 
+const additionalPositiveValidation = (keyCode, targetValue) =>
+  !(targetValue === '' && (keyCode === KEY_CODES[0] || keyCode === KEY_CODES.NUMPAD[0]));
+
 export const Integer: React.FC<IntegerProps> = ({
   id,
   value,
   isDisabled,
   defaultValue,
   onChange,
-  onBlur,
   isPositive,
   isNonNegative,
   className,
@@ -86,8 +93,7 @@ export const Integer: React.FC<IntegerProps> = ({
     validRegex = POSITIVE_INT_REGEX;
     fixAfterValue = fixPrecedingZerosPositiveInt;
     min = 1;
-    additionalValidation = (keyCode, targetValue) =>
-      !(targetValue === '' && (keyCode === KEY_CODES[0] || keyCode === KEY_CODES.NUMPAD[0]));
+    additionalValidation = additionalPositiveValidation;
   } else if (isNonNegative) {
     allowedKeys = NON_NEGATIVE_INTEGER_KEYS;
     validRegex = NON_NEGATIVE_INT_REGEX;
@@ -99,30 +105,40 @@ export const Integer: React.FC<IntegerProps> = ({
     fixAfterValue = fixInt;
   }
 
-  const onKeydown = (e) => {
-    const { keyCode, target } = e;
+  const onKeydown = React.useCallback(
+    (e) => {
+      const { keyCode, target, ctrlKey, metaKey } = e;
 
-    if (!isInputValid(allowedKeys, keyCode, target.value, additionalValidation)) {
-      e.preventDefault();
-      return false;
-    }
+      const ctrlDown = ctrlKey || metaKey; // Mac support
 
-    const oldValue = target.value;
-
-    window.setTimeout(() => {
-      if (!validRegex.test(target.value)) {
-        const v = fixAfterValue(target.value, oldValue, keyCode);
-        setNativeValue(target, v);
-        target.dispatchEvent(
-          new Event('input', {
-            bubbles: true,
-            cancelable: true,
-          }),
-        );
+      // check for ctrl+c, a, v and x
+      if (ctrlDown && INPUT_CTRL_COMBINATIONS_KEYS.includes(keyCode)) {
+        return true;
       }
-    }, 0);
-    return true;
-  };
+
+      if (!isInputValid(allowedKeys, keyCode, target.value, additionalValidation)) {
+        e.preventDefault();
+        return false;
+      }
+
+      const oldValue = target.value;
+
+      window.setTimeout(() => {
+        if (!validRegex.test(target.value)) {
+          const v = fixAfterValue(target.value, oldValue, keyCode);
+          setNativeValue(target, v);
+          target.dispatchEvent(
+            new Event('input', {
+              bubbles: true,
+              cancelable: true,
+            }),
+          );
+        }
+      }, 0);
+      return true;
+    },
+    [additionalValidation, allowedKeys, fixAfterValue, validRegex],
+  );
 
   return (
     <TextInput
@@ -133,9 +149,6 @@ export const Integer: React.FC<IntegerProps> = ({
       min={min}
       value={value}
       defaultValue={defaultValue}
-      onBlur={
-        typeof onBlur === 'function' ? (event) => onBlur(event.target.value || '', event) : null
-      }
       onChange={onChange}
       className={classNames(className, {
         'kubevirt-integer-component': isFullWidth,
@@ -152,7 +165,6 @@ type IntegerProps = {
   value?: string;
   defaultValue?: string;
   onChange?: (value: string, event: React.FormEvent<HTMLInputElement>) => void;
-  onBlur?: (value: string, event: React.FormEvent<HTMLInputElement>) => void;
   isPositive?: boolean;
   isNonNegative?: boolean; // is ignored when positive == true
   isDisabled?: boolean;

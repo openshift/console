@@ -1,8 +1,8 @@
-import { VMWizardStorageWithWrappers } from '../../types';
+import { VMWizardStorage } from '../../types';
 import { StorageSimpleData } from '../../../vm-disks/types';
 
 export type VMWizardStorageBundle = StorageSimpleData & {
-  wizardStorageData: VMWizardStorageWithWrappers;
+  wizardStorageData: VMWizardStorage;
 };
 
 export type VMWizardStorageRowActionOpts = {

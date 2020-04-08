@@ -11,7 +11,6 @@ import {
 import {
   FirehoseResult,
   HandlePromiseProps,
-  validate,
   withHandlePromise,
 } from '@console/internal/components/utils';
 import {
@@ -57,7 +56,7 @@ import { K8sResourceSelectRow } from '../../form/k8s-resource-select-row';
 import { SizeUnitFormRow } from '../../form/size-unit-form-row';
 import { CombinedDisk } from '../../../k8s/wrapper/vm/combined-disk';
 import { PersistentVolumeClaimWrapper } from '../../../k8s/wrapper/vm/persistent-volume-claim-wrapper';
-import { BinaryUnit } from '../../form/size-unit-utils';
+import { BinaryUnit, stringValueUnitSplit } from '../../form/size-unit-utils';
 import { StorageUISource } from './storage-ui-source';
 import { TemplateValidations } from '../../../utils/validations/template/template-validations';
 import { ConfigMapKind } from '@console/internal/module/k8s';
@@ -66,6 +65,7 @@ import './disk-modal.scss';
 
 export const DiskModal = withHandlePromise((props: DiskModalProps) => {
   const {
+    showInitialValidation,
     storageClasses,
     usedPVCNames,
     persistentVolumeClaims,
@@ -227,7 +227,11 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
     templateValidations,
   });
 
-  const [showUIError, setShowUIError] = useShowErrorToggler(false, isValid, isValid);
+  const [showUIError, setShowUIError] = useShowErrorToggler(
+    !!showInitialValidation,
+    isValid,
+    isValid,
+  );
 
   const submit = (e) => {
     e.preventDefault();
@@ -290,7 +294,7 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
       const newSizeBundle = getPvcStorageSize(
         getLoadedData(persistentVolumeClaims).find((p) => getName(p) === newPVCName),
       );
-      const [newSize, newUnit] = validate.split(newSizeBundle);
+      const [newSize, newUnit] = stringValueUnitSplit(newSizeBundle);
       setSize(newSize);
       setUnit(newUnit);
     }
@@ -424,10 +428,14 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
               unit={unit as BinaryUnit}
               units={source.getAllowedUnits()}
               validation={sizeValidation}
-              isDisabled={inProgress || !source.isSizeEditingSupported()}
+              isDisabled={inProgress || !source.isSizeEditingSupported(combinedDiskSize?.value)}
               isRequired
-              onSizeChanged={source.isSizeEditingSupported() ? setSize : undefined}
-              onUnitChanged={source.isSizeEditingSupported() ? setUnit : undefined}
+              onSizeChanged={
+                source.isSizeEditingSupported(combinedDiskSize?.value) ? setSize : undefined
+              }
+              onUnitChanged={
+                source.isSizeEditingSupported(combinedDiskSize?.value) ? setUnit : undefined
+              }
             />
           )}
           {!source.requiresSize() && source.hasDynamicSize() && (
@@ -573,6 +581,7 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
 
 export type DiskModalProps = {
   disk?: DiskWrapper;
+  showInitialValidation?: boolean;
   disableSourceChange?: boolean;
   isCreateTemplate?: boolean;
   isEditing?: boolean;

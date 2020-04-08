@@ -15,6 +15,7 @@ import {
   getUID,
 } from '@console/shared/src/selectors';
 import { VM_TEMPLATE_NAME_PARAMETER } from '../constants/vm-templates';
+import { pluralize } from './strings';
 
 export const getBasicID = <A extends K8sResourceKind = K8sResourceKind>(entity: A) =>
   `${getNamespace(entity)}-${getName(entity)}`;
@@ -27,17 +28,21 @@ export const joinIDs = (...ids: string[]) => ids.join('-');
 export const isLoaded = (result: FirehoseResult<K8sResourceKind | K8sResourceKind[]>) =>
   result && result.loaded;
 
-export const getLoadedData = (
-  result: FirehoseResult<K8sResourceKind | K8sResourceKind[]>,
+export const getLoadedData = <T extends K8sResourceKind | K8sResourceKind[] = K8sResourceKind[]>(
+  result: FirehoseResult<T>,
   defaultValue = null,
-) => (result && result.loaded && !result.loadError ? result.data : defaultValue);
+): T => (result && result.loaded && !result.loadError ? result.data : defaultValue);
+
+export const getModelString = (model: K8sKind | any, isList: boolean) =>
+  pluralize(isList ? 2 : 1, model && model.kind ? model.kind : model);
 
 export const getLoadError = (
   result: FirehoseResult<K8sResourceKind | K8sResourceKind[]>,
-  model: K8sKind,
+  model: K8sKind | any,
+  isList = false,
 ) => {
   if (!result) {
-    return `No model registered for ${model.kind}`;
+    return `No model registered for ${getModelString(model, isList)}`;
   }
 
   if (result && result.loadError) {
@@ -45,7 +50,9 @@ export const getLoadError = (
     const message = _.get(result.loadError, 'message');
 
     if (status === 404) {
-      return `Could not find ${model.kind}: ${message}`;
+      return message && !message.toLowerCase().includes('not found')
+        ? `Could not find ${getModelString(model, isList)}: ${message}`
+        : _.capitalize(message);
     }
     if (status === 403) {
       return `Restricted Access: ${message}`;

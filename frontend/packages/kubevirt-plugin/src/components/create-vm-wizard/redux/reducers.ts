@@ -1,6 +1,6 @@
 import * as _ from 'lodash';
 import { fromJS, Map as ImmutableMap } from 'immutable';
-import { VMSettingsField, VMWizardTab } from '../types';
+import { ImportProvidersField, VMWizardTab } from '../types';
 import { iGet } from '../../../utils/immutable';
 import { DeviceType } from '../../../constants/vm';
 import { InternalActionType, WizardInternalAction } from './types';
@@ -178,6 +178,10 @@ export default (state, action: WizardInternalAction) => {
         [dialogID, 'commonData', 'dataIDReferences'],
         payload.value.dataIDReferences,
       );
+    case InternalActionType.SetExtraWSQueries:
+      return state.setIn([dialogID, 'extraWSQueries', payload.queryKey], fromJS(payload.wsQueries));
+    case InternalActionType.SetGoToStep:
+      return state.setIn([dialogID, 'transient', 'goToStep'], payload.tab);
     case InternalActionType.SetTabValidity:
       return state
         .setIn([dialogID, 'tabs', payload.tab, 'isValid'], payload.isValid)
@@ -188,34 +192,41 @@ export default (state, action: WizardInternalAction) => {
         .setIn([dialogID, 'tabs', payload.tab, 'error'], payload.error);
     case InternalActionType.SetTabLocked:
       return state.setIn([dialogID, 'tabs', payload.tab, 'isLocked'], payload.isLocked);
+    case InternalActionType.SetTabHidden:
+      return state.setIn([dialogID, 'tabs', payload.tab, 'isHidden'], payload.isHidden);
     case InternalActionType.SetVmSettingsFieldValue:
       return state.setIn(
         [dialogID, 'tabs', VMWizardTab.VM_SETTINGS, 'value', payload.key, 'value'],
         fromJS(payload.value),
       );
-    case InternalActionType.UpdateVMSettingsProviderField:
+    case InternalActionType.SetImportProvidersFieldValue:
+      return state.setIn(
+        [dialogID, 'tabs', VMWizardTab.IMPORT_PROVIDERS, 'value', payload.key, 'value'],
+        fromJS(payload.value),
+      );
+    case InternalActionType.UpdateImportProviderField:
       return mergeDeepInSpecial(
         state,
         [
           dialogID,
           'tabs',
-          VMWizardTab.VM_SETTINGS,
+          VMWizardTab.IMPORT_PROVIDERS,
           'value',
-          VMSettingsField.PROVIDERS_DATA,
+          ImportProvidersField.PROVIDERS_DATA,
           payload.provider,
           payload.key,
         ],
         fromJS(payload.value),
       );
-    case InternalActionType.UpdateVMSettingsProvider:
+    case InternalActionType.UpdateImportProvider:
       return mergeDeepInSpecial(
         state,
         [
           dialogID,
           'tabs',
-          VMWizardTab.VM_SETTINGS,
+          VMWizardTab.IMPORT_PROVIDERS,
           'value',
-          VMSettingsField.PROVIDERS_DATA,
+          ImportProvidersField.PROVIDERS_DATA,
           payload.provider,
         ],
         fromJS(payload.value),

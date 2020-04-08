@@ -17,8 +17,8 @@ import {
 } from '../../../../selectors/vm-template/combined-dependent';
 import { flavorSort, ignoreCaseSort } from '../../../../utils/sort';
 import { VMSettingsField } from '../../types';
-import { iGetFieldValue } from '../../selectors/immutable/vm-settings';
-import { getPlaceholder } from '../../utils/vm-settings-tab-utils';
+import { iGetFieldValue } from '../../selectors/immutable/field';
+import { getPlaceholder } from '../../utils/renderable-field-utils';
 import { nullOnEmptyChange } from '../../utils/utils';
 import { operatingSystemsNative } from '../../native/consts';
 

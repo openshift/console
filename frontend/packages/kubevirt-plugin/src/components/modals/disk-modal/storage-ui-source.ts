@@ -126,7 +126,7 @@ export class StorageUISource extends ObjectEnum<string> {
 
   isNameEditingSupported = (diskType: DiskType) => diskType !== DiskType.CDROM;
 
-  isSizeEditingSupported = () => this !== StorageUISource.IMPORT_DISK;
+  isSizeEditingSupported = (size: number) => size === 0 || this !== StorageUISource.IMPORT_DISK; // if imported disk has 0 size, leave the user to decide
 
   isPlainDataVolume = (isCreateTemplate: boolean) =>
     isCreateTemplate && this === StorageUISource.URL;

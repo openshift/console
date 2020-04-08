@@ -1,10 +1,18 @@
-import { iGetProvisionSource, iGetVmSettings, iGetVmSettingValue } from '../../vm-settings';
-import { VMImportProvider, VMSettingsField, VMWareProviderField } from '../../../../types';
-import { ProvisionSource } from '../../../../../../constants/vm/provision-source';
+import {
+  ImportProvidersField,
+  VMImportProvider,
+  VMWareProviderField,
+  VMWizardProps,
+} from '../../../../types';
 import { iGet, iGetIn } from '../../../../../../utils/immutable';
+import { iGetImportProviders, iGetImportProvidersValue } from '../../import-providers';
+import { iGetCommonData } from '../../selectors';
 
 export const iGetVMwareData = (state, id: string) =>
-  iGetIn(iGetVmSettings(state, id), [VMSettingsField.PROVIDERS_DATA, VMImportProvider.VMWARE]);
+  iGetIn(iGetImportProviders(state, id), [
+    ImportProvidersField.PROVIDERS_DATA,
+    VMImportProvider.VMWARE,
+  ]);
 
 export const iGetVMWareField = (state, id: string, key: VMWareProviderField, defaultValue?) =>
   iGet(iGetVMwareData(state, id), key, defaultValue);
@@ -21,8 +29,8 @@ export const iGetVMWareFieldValue = (state, id: string, key: VMWareProviderField
   iGetVMWareFieldAttribute(state, id, key, 'value', defaultValue);
 
 export const isVMWareProvider = (state, id: string) =>
-  iGetProvisionSource(state, id) === ProvisionSource.IMPORT &&
-  iGetVmSettingValue(state, id, VMSettingsField.PROVIDER) === VMImportProvider.VMWARE;
+  iGetCommonData(state, id, VMWizardProps.isProviderImport) &&
+  iGetImportProvidersValue(state, id, ImportProvidersField.PROVIDER) === VMImportProvider.VMWARE;
 
 export const hasVMWareSettingsChanged = (
   prevState,

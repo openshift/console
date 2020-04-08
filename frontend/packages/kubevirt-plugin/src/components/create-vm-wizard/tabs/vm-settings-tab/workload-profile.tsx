@@ -11,9 +11,9 @@ import { FormSelectPlaceholderOption } from '../../../form/form-select-placehold
 import { getWorkloadProfiles } from '../../../../selectors/vm-template/combined-dependent';
 import { ignoreCaseSort } from '../../../../utils/sort';
 import { VMSettingsField } from '../../types';
-import { getPlaceholder } from '../../utils/vm-settings-tab-utils';
+import { getPlaceholder } from '../../utils/renderable-field-utils';
 import { nullOnEmptyChange } from '../../utils/utils';
-import { iGetFieldValue } from '../../selectors/immutable/vm-settings';
+import { iGetFieldValue } from '../../selectors/immutable/field';
 
 export const WorkloadProfile: React.FC<WorkloadProps> = React.memo(
   ({

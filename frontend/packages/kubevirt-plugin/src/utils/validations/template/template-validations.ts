@@ -56,6 +56,10 @@ export class TemplateValidations {
   };
 
   areBusesEqual = (otherTempValidations: TemplateValidations): boolean => {
+    if (!otherTempValidations) {
+      return false;
+    }
+
     if (this === otherTempValidations) {
       return true;
     }

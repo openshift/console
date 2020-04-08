@@ -48,24 +48,24 @@ const isImportStorage = (storage: VMWizardStorage) =>
 
 const createConversionPodSecret = async ({
   enhancedK8sMethods: { k8sWrapperCreate },
-  vmSettings,
+  importProviders,
   storages,
   namespace,
 }: CreateVMParams) => {
-  const { vm, thumbprint } = getVmwareField(vmSettings, VMWareProviderField.VM);
+  const { vm, thumbprint } = getVmwareField(importProviders, VMWareProviderField.VM);
   const secret = new SecretWrappper(
-    getVmwareAttribute(vmSettings, VMWareProviderField.VCENTER, 'secret'),
+    getVmwareAttribute(importProviders, VMWareProviderField.VCENTER, 'secret'),
   );
 
   const username = encodeURIComponent(
-    getVmwareValue(vmSettings, VMWareProviderField.USER_NAME) || secret.getValue('username'),
+    getVmwareValue(importProviders, VMWareProviderField.USER_NAME) || secret.getValue('username'),
   );
   const password =
-    getVmwareValue(vmSettings, VMWareProviderField.USER_PASSWORD_AND_CHECK_CONNECTION) ||
+    getVmwareValue(importProviders, VMWareProviderField.USER_PASSWORD_AND_CHECK_CONNECTION) ||
     secret.getValue('password');
 
   const hostname =
-    getVmwareValue(vmSettings, VMWareProviderField.HOSTNAME) || secret.getValue('url');
+    getVmwareValue(importProviders, VMWareProviderField.HOSTNAME) || secret.getValue('url');
 
   const sourceDisks = (storages || [])
     .filter((storage) => storage.type === VMWizardStorageType.V2V_VMWARE_IMPORT)

@@ -9,15 +9,9 @@ import {
   StorageClassModel,
 } from '@console/internal/models';
 import { iGetCommonData } from '../../selectors/immutable/selectors';
-import {
-  VMWizardProps,
-  VMWizardStorage,
-  VMWizardStorageType,
-  VMWizardStorageWithWrappers,
-} from '../../types';
+import { VMWizardProps, VMWizardStorage, VMWizardStorageType } from '../../types';
 import { vmWizardActions } from '../../redux/actions';
 import { ActionType } from '../../redux/types';
-import { getStoragesWithWrappers } from '../../selectors/selectors';
 import { DiskWrapper } from '../../../../k8s/wrapper/vm/disk-wrapper';
 import { VolumeWrapper } from '../../../../k8s/wrapper/vm/volume-wrapper';
 import { DataVolumeWrapper } from '../../../../k8s/wrapper/vm/data-volume-wrapper';
@@ -28,6 +22,7 @@ import { TemplateValidations } from '../../../../utils/validations/template/temp
 import { getTemplateValidation } from '../../selectors/template';
 import { ConfigMapKind } from '@console/internal/module/k8s';
 import { toShallowJS } from '../../../../utils/immutable';
+import { getStorages } from '../../selectors/selectors';
 
 const VMWizardStorageModal: React.FC<VMWizardStorageModalProps> = (props) => {
   const {
@@ -42,18 +37,17 @@ const VMWizardStorageModal: React.FC<VMWizardStorageModalProps> = (props) => {
     storageClassConfigMap,
     ...restProps
   } = props;
-  const {
-    type,
-    diskWrapper,
-    volumeWrapper,
-    dataVolumeWrapper,
-    persistentVolumeClaimWrapper,
-    ...storageRest
-  } = storage || {};
+  const { type, disk, volume, dataVolume, persistentVolumeClaim, ...storageRest } = storage || {};
+  const diskWrapper = new DiskWrapper(disk);
 
-  const filteredStorages = storages.filter(
-    (s) => s && s.diskWrapper.getName() && s.diskWrapper.getName() !== diskWrapper?.getName(),
-  );
+  const filteredStorages = storages
+    .map(({ disk: d, dataVolume: dv }) => ({
+      diskWrapper: new DiskWrapper(d),
+      dataVolumeWrapper: dataVolume && new DataVolumeWrapper(dv),
+    }))
+    .filter(
+      (s) => s && s.diskWrapper.getName() && s.diskWrapper.getName() !== diskWrapper.getName(),
+    );
 
   const usedDiskNames: Set<string> = new Set(
     filteredStorages.map(({ diskWrapper: dw }) => dw.getName()),
@@ -61,7 +55,7 @@ const VMWizardStorageModal: React.FC<VMWizardStorageModalProps> = (props) => {
 
   const usedPVCNames: Set<string> = new Set(
     filteredStorages
-      .filter(({ dataVolume }) => dataVolume)
+      .filter(({ dataVolumeWrapper }) => dataVolumeWrapper)
       .map(({ dataVolumeWrapper: dvw }) => dvw.getName()),
   );
 
@@ -98,12 +92,11 @@ const VMWizardStorageModal: React.FC<VMWizardStorageModalProps> = (props) => {
         usedDiskNames={usedDiskNames}
         usedPVCNames={usedPVCNames}
         templateValidations={templateValidations}
-        disk={new DiskWrapper(diskWrapper, true)}
-        volume={new VolumeWrapper(volumeWrapper, true)}
-        dataVolume={dataVolumeWrapper && new DataVolumeWrapper(dataVolumeWrapper, true)}
+        disk={new DiskWrapper(disk, true)}
+        volume={new VolumeWrapper(volume, true)}
+        dataVolume={dataVolume && new DataVolumeWrapper(dataVolume, true)}
         persistentVolumeClaim={
-          persistentVolumeClaimWrapper &&
-          new PersistentVolumeClaimWrapper(persistentVolumeClaimWrapper, true)
+          persistentVolumeClaim && new PersistentVolumeClaimWrapper(persistentVolumeClaim, true)
         }
         disableSourceChange={[
           VMWizardStorageType.PROVISION_SOURCE_DISK,
@@ -120,18 +113,16 @@ const VMWizardStorageModal: React.FC<VMWizardStorageModalProps> = (props) => {
           addUpdateStorage({
             ...storageRest,
             type: type || VMWizardStorageType.UI_INPUT,
-            disk: new DiskWrapper(diskWrapper, true).mergeWith(resultDiskWrapper).asResource(),
-            volume: new VolumeWrapper(volumeWrapper, true)
-              .mergeWith(resultVolumeWrapper)
-              .asResource(),
+            disk: new DiskWrapper(disk, true).mergeWith(resultDiskWrapper).asResource(),
+            volume: new VolumeWrapper(volume, true).mergeWith(resultVolumeWrapper).asResource(),
             dataVolume:
               resultDataVolumeWrapper &&
-              new DataVolumeWrapper(dataVolumeWrapper, true)
+              new DataVolumeWrapper(dataVolume, true)
                 .mergeWith(resultDataVolumeWrapper)
                 .asResource(),
             persistentVolumeClaim:
               resultPersistentVolumeClaim &&
-              new PersistentVolumeClaimWrapper(persistentVolumeClaimWrapper, true)
+              new PersistentVolumeClaimWrapper(persistentVolumeClaim, true)
                 .mergeWith(resultPersistentVolumeClaim)
                 .asResource(),
           });
@@ -144,12 +135,13 @@ const VMWizardStorageModal: React.FC<VMWizardStorageModalProps> = (props) => {
 
 type VMWizardStorageModalProps = ModalComponentProps & {
   isEditing?: boolean;
-  storage?: VMWizardStorageWithWrappers;
+  storage?: VMWizardStorage;
+  showInitialValidation?: boolean;
   namespace: string;
   useProjects?: boolean;
   isCreateTemplate: boolean;
   storageClassConfigMap: FirehoseResult<ConfigMapKind>;
-  storages: VMWizardStorageWithWrappers[];
+  storages: VMWizardStorage[];
   addUpdateStorage: (storage: VMWizardStorage) => void;
   templateValidations: TemplateValidations;
 };
@@ -163,7 +155,7 @@ const stateToProps = (state, { wizardReduxID }) => {
     storageClassConfigMap: toShallowJS(
       iGetCommonData(state, wizardReduxID, VMWizardProps.storageClassConfigMap),
     ),
-    storages: getStoragesWithWrappers(state, wizardReduxID),
+    storages: getStorages(state, wizardReduxID),
     templateValidations: getTemplateValidation(state, wizardReduxID),
   };
 };

@@ -1,27 +1,32 @@
 import * as _ from 'lodash';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { getSimpleV2vVMwareStatus, V2VVMwareStatus } from '../../../../../statuses/v2vvmware';
-import { VMSettings } from '../../../redux/initial-state/types';
-import { VMImportProvider, VMSettingsField, VMWareProviderField } from '../../../types';
+import { ImportProvidersSettings } from '../../../redux/initial-state/types';
+import { ImportProvidersField, VMImportProvider, VMWareProviderField } from '../../../types';
 
 export const getVmwareField = (
-  vmSettings: VMSettings,
+  vmSettings: ImportProvidersSettings,
   key: VMWareProviderField,
   defaultValue: any = undefined,
 ) =>
-  _.get(vmSettings, [VMSettingsField.PROVIDERS_DATA, VMImportProvider.VMWARE, key]) || defaultValue;
+  _.get(vmSettings, [ImportProvidersField.PROVIDERS_DATA, VMImportProvider.VMWARE, key]) ||
+  defaultValue;
 
 export const getVmwareAttribute = (
-  vmSettings: VMSettings,
+  vmSettings: ImportProvidersSettings,
   key: VMWareProviderField,
   attribute = 'value',
   defaultValue: any = undefined,
 ) =>
-  _.get(vmSettings, [VMSettingsField.PROVIDERS_DATA, VMImportProvider.VMWARE, key, attribute]) ||
-  defaultValue;
+  _.get(vmSettings, [
+    ImportProvidersField.PROVIDERS_DATA,
+    VMImportProvider.VMWARE,
+    key,
+    attribute,
+  ]) || defaultValue;
 
 export const getVmwareValue = (
-  vmSettings: VMSettings,
+  vmSettings: ImportProvidersSettings,
   key: VMWareProviderField,
   defaultValue: any = undefined,
 ) => getVmwareAttribute(vmSettings, key, 'value', defaultValue);

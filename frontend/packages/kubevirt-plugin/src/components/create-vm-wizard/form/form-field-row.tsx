@@ -1,8 +1,8 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import { ValidationObject } from '@console/shared';
-import { getFieldHelp, getFieldId, getFieldTitle } from '../utils/vm-settings-tab-utils';
-import { iGetFieldValue, isFieldHidden, isFieldRequired } from '../selectors/immutable/vm-settings';
+import { getFieldHelp, getFieldId, getFieldTitle } from '../utils/renderable-field-utils';
+import { iGetFieldValue, isFieldHidden, isFieldRequired } from '../selectors/immutable/field';
 import { iGet, iGetIn, iGetIsLoaded } from '../../../utils/immutable';
 import { FormRow } from '../../form/form-row';
 import { FormFieldContext } from './form-field-context';

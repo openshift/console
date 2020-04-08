@@ -2,9 +2,15 @@ import {
   asValidationObject,
   makeSentence,
   validateDNS1123SubdomainValue,
+  ValidationErrorType,
   ValidationObject,
 } from '@console/shared';
-import { MAC_ADDRESS_INVALID_ERROR, NETWORK_MULTUS_NAME_EXISTS, NIC_NAME_EXISTS } from '../strings';
+import {
+  MAC_ADDRESS_INVALID_ERROR,
+  NETWORK_MULTUS_NAME_EXISTS,
+  NETWORK_REQUIRED,
+  NIC_NAME_EXISTS,
+} from '../strings';
 import { NetworkInterfaceWrapper } from '../../../k8s/wrapper/vm/network-interface-wrapper';
 import { NetworkWrapper } from '../../../k8s/wrapper/vm/network-wrapper';
 import { NetworkType } from '../../../constants/vm';
@@ -28,6 +34,10 @@ export const validateNetwork = (
   network: NetworkWrapper,
   usedMultusNetworkNames: Set<string>,
 ): ValidationObject => {
+  if (!network.hasType()) {
+    return asValidationObject(NETWORK_REQUIRED, ValidationErrorType.TrivialError);
+  }
+
   if (
     network.getType() === NetworkType.MULTUS &&
     usedMultusNetworkNames &&

@@ -15,7 +15,7 @@ type SizeUnitFormRowProps = {
   title?: string;
   unit: BinaryUnit;
   units?: BinaryUnit[];
-  validation: ValidationObject;
+  validation?: ValidationObject;
   id?: string;
   isDisabled?: boolean;
   isRequired?: boolean;

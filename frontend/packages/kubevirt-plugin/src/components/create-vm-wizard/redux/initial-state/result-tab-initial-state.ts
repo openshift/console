@@ -12,4 +12,5 @@ export const getResultInitialState: InitialStepStateGetter = () => ({
   hasAllRequiredFilled: null,
   isValid: null,
   isPending: false,
+  isHidden: false,
 });

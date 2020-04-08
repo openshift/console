@@ -26,7 +26,6 @@ export class ProvisionSource extends ObjectEnum<string> {
   static readonly PXE = new ProvisionSource('PXE');
   static readonly CONTAINER = new ProvisionSource('Container');
   static readonly URL = new ProvisionSource('URL');
-  static readonly IMPORT = new ProvisionSource('Import');
   static readonly DISK = new ProvisionSource('Disk');
 
   private static readonly ALL = Object.freeze(

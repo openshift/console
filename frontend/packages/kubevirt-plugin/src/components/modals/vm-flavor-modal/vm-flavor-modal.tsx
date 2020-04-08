@@ -5,7 +5,6 @@ import {
   Firehose,
   FirehoseResult,
   HandlePromiseProps,
-  validate,
   withHandlePromise,
 } from '@console/internal/components/utils';
 import { TemplateModel } from '@console/internal/models';
@@ -29,7 +28,7 @@ import { getUpdateFlavorPatches } from '../../../k8s/patches/vm/vm-patches';
 import { CUSTOM_FLAVOR } from '../../../constants';
 import { getLoadedData } from '../../../utils';
 import { SizeUnitFormRow } from '../../form/size-unit-form-row';
-import { BinaryUnit } from '../../form/size-unit-utils';
+import { BinaryUnit, stringValueUnitSplit } from '../../form/size-unit-utils';
 import { ModalFooter } from '../modal/modal-footer';
 import { FormRow } from '../../form/form-row';
 import { Integer } from '../../form/integer/integer';
@@ -58,7 +57,7 @@ const VMFlavorModal = withHandlePromise((props: VMFlavornModalProps) => {
   const flavors = getAvailableFlavors(underlyingTemplate);
   const vmFlavor = getFlavor(vmLike) || flavors[flavors.length - 1];
 
-  const [sourceMemSize, sourceMemUnit] = validate.split(getMemory(vm) || '');
+  const [sourceMemSize, sourceMemUnit] = stringValueUnitSplit(getMemory(vm) || '');
   const sourceCPURaw = getCPU(vm);
   const sourceCPU = vCPUCount(sourceCPURaw);
 

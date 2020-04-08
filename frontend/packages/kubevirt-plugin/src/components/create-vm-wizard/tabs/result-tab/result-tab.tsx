@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { iGetCreateVMWizardTabs } from '../../selectors/immutable/selectors';
 import { VMWizardTab } from '../../types';
 import { isStepPending, isStepValid } from '../../selectors/immutable/wizard-selectors';
 import { PendingResults } from './pending-results';
@@ -55,12 +54,9 @@ type ResultTabComponentProps = {
   wizardReduxID: string;
 };
 
-const stateToProps = (state, { wizardReduxID }) => {
-  const stepData = iGetCreateVMWizardTabs(state, wizardReduxID);
-  return {
-    isValid: isStepValid(stepData, VMWizardTab.RESULT),
-    isPending: isStepPending(stepData, VMWizardTab.RESULT),
-  };
-};
+const stateToProps = (state, { wizardReduxID }) => ({
+  isValid: isStepValid(state, wizardReduxID, VMWizardTab.RESULT),
+  isPending: isStepPending(state, wizardReduxID, VMWizardTab.RESULT),
+});
 
 export const ResultTab = connect(stateToProps)(ResultTabComponent);

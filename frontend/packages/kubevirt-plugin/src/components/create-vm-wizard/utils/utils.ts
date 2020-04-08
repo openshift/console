@@ -4,6 +4,7 @@ import { VMSettingsField } from '../types';
 import { ResultContentType } from '../../../k8s/enhancedK8sMethods/types';
 
 export const VM_SETTINGS_METADATA_ID = 'VM_SETTINGS_METADATA_ID';
+export const IMPORT_PROVIDES_METADATA_ID = 'IMPORT_PROVIDES_METADATA_ID';
 
 export const asRequired = (value: any, key: string = VM_SETTINGS_METADATA_ID) => ({
   [key]: !!value,

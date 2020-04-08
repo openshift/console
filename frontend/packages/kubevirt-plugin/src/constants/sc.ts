@@ -5,3 +5,4 @@ export const STORAGE_CLASS_CONFIG_MAP_NAMESPACES = [
   'openshift',
   'kubevirt-native',
 ];
+export const DEFAULT_SC_ANNOTATION = 'storageclass.kubernetes.io/is-default-class';

@@ -1,8 +1,8 @@
 import { NetworkSimpleData } from '../../../vm-nics/types';
-import { VMWizardNetworkWithWrappers } from '../../types';
+import { VMWizardNetwork } from '../../types';
 
 export type VMWizardNetworkBundle = NetworkSimpleData & {
-  wizardNetworkData: VMWizardNetworkWithWrappers;
+  wizardNetworkData: VMWizardNetwork;
 };
 
 export type VMWizardNicRowActionOpts = {

@@ -6,6 +6,7 @@
  * The vmwareToKubevirtOsConfigMap is usually created by the web-ui-operator and can be missing.
  */
 import * as _ from 'lodash';
+import { alignWithDNS1123 } from '@console/shared/src';
 import { InternalActionType, UpdateOptions } from '../../../types';
 import { iGetVMWareFieldAttribute } from '../../../../selectors/immutable/provider/vmware/selectors';
 import {
@@ -18,7 +19,7 @@ import {
   VMWizardStorage,
   VMWizardStorageType,
 } from '../../../../types';
-import { iGetLoadedCommonData } from '../../../../selectors/immutable/selectors';
+import { iGetCommonData, iGetLoadedCommonData } from '../../../../selectors/immutable/selectors';
 import { vmWizardInternalActions } from '../../../internal-actions';
 import {
   AccessMode,
@@ -28,6 +29,7 @@ import {
   NetworkInterfaceModel,
   NetworkInterfaceType,
   VolumeMode,
+  NetworkType,
   VolumeType,
 } from '../../../../../../constants/vm';
 import { toShallowJS } from '../../../../../../utils/immutable';
@@ -37,27 +39,12 @@ import { DiskWrapper } from '../../../../../../k8s/wrapper/vm/disk-wrapper';
 import { VolumeWrapper } from '../../../../../../k8s/wrapper/vm/volume-wrapper';
 import { CONVERSION_POD_TEMP_MOUNT_PATH } from '../../../../../../constants/v2v';
 import { PersistentVolumeClaimWrapper } from '../../../../../../k8s/wrapper/vm/persistent-volume-claim-wrapper';
-import { getStringEnumValues } from '../../../../../../utils/types';
-import { BinaryUnit } from '../../../../../form/size-unit-utils';
 import {
   getDefaultSCAccessModes,
   getDefaultSCVolumeMode,
 } from '../../../../../../selectors/config-map/sc-defaults';
 import { ConfigMapKind } from '@console/internal/module/k8s';
-
-const convert = (value: number, unit: BinaryUnit) => {
-  const units = getStringEnumValues<BinaryUnit>(BinaryUnit);
-  const sliceIndex = units.indexOf(unit);
-  const slicedUnits = sliceIndex === -1 ? units : units.slice(sliceIndex);
-
-  let nextValue = value;
-  let nextUnit = slicedUnits.shift();
-  while (nextValue !== 0 && nextValue % 1024 === 0 && slicedUnits.length > 0) {
-    nextValue /= 1024;
-    nextUnit = slicedUnits.shift();
-  }
-  return { value: nextValue, unit: nextUnit };
-};
+import { BinaryUnit, convertToHighestUnit } from '../../../../../form/size-unit-utils';
 
 export const getNics = (parsedVm): VMWizardNetwork[] => {
   const devices = _.get(parsedVm, ['Config', 'Hardware', 'Device']);
@@ -68,12 +55,18 @@ export const getNics = (parsedVm): VMWizardNetwork[] => {
   //   - https://www.vmware.com/support/developer/converter-sdk/conv50_apireference/vim.vm.device.VirtualDevice.html
   const networkDevices = (devices || []).filter((device) => _.has(device, 'MacAddress'));
   return networkDevices.map((device, idx) => {
-    const name = _.get(device, ['DeviceInfo', 'Label']);
+    const name = alignWithDNS1123(_.get(device, ['DeviceInfo', 'Label']));
     const macAddress = device.MacAddress;
+    const networkWrapper = NetworkWrapper.initializeFromSimpleData({ name });
+
+    if (networkDevices.length === 1) {
+      networkWrapper.setType(NetworkType.POD); // default to POD
+    }
+
     return {
       id: idx + 1,
       type: VMWizardNetworkType.V2V_VMWARE_IMPORT,
-      network: NetworkWrapper.initializeFromSimpleData({ name }).asResource(),
+      network: networkWrapper.asResource(),
       networkInterface: NetworkInterfaceWrapper.initializeFromSimpleData({
         name,
         model: NetworkInterfaceModel.VIRTIO,
@@ -100,12 +93,12 @@ export const getDisks = (parsedVm, storageClassConfigMap: ConfigMapKind): VMWiza
 
   const diskRows = diskDevices.map((device, idx) => {
     const unit = _.isNumber(device.CapacityInKB) ? BinaryUnit.Ki : BinaryUnit.B;
-    const size = convert(
+    const size = convertToHighestUnit(
       (unit === BinaryUnit.B ? device.CapacityInBytes : device.CapacityInKB) || 0,
       unit,
     );
 
-    const name = _.get(device, ['DeviceInfo', 'Label']);
+    const name = alignWithDNS1123(_.get(device, ['DeviceInfo', 'Label']));
     const bootOrder = idx === 0 ? 1 : undefined;
 
     return {
@@ -186,6 +179,7 @@ export const prefillUpdateCreator = (options: UpdateOptions) => {
     undefined,
     true,
   );
+  const isSimpleView = iGetCommonData(state, id, VMWizardProps.isSimpleView);
 
   const raw = vm.getIn(['detail', 'raw']);
 
@@ -194,17 +188,18 @@ export const prefillUpdateCreator = (options: UpdateOptions) => {
   const memory = _.get(parsedVm, ['Config', 'Hardware', 'MemoryMB']);
   const guestId = _.get(parsedVm, ['Config', 'GuestId']);
   const kubevirtId = _.get(vmwareToKubevirtOsConfigMap, ['data', guestId]);
+  const memWithUnit = memory ? convertToHighestUnit(memory, BinaryUnit.Mi) : null;
 
   dispatch(
     vmWizardInternalActions[InternalActionType.UpdateVmSettings](id, {
       [VMSettingsField.NAME]: {
-        value: _.get(parsedVm, ['Config', 'Name'], null),
+        value: alignWithDNS1123(_.get(parsedVm, ['Config', 'Name'], null)),
       },
       [VMSettingsField.DESCRIPTION]: {
         value: _.get(parsedVm, ['Config', 'Annotation'], null),
       },
       [VMSettingsField.MEMORY]: {
-        value: memory ? memory / 1024 : null,
+        value: memWithUnit ? `${memWithUnit.value}${memWithUnit.unit}` : null,
       },
       [VMSettingsField.CPU]: {
         value: _.get(parsedVm, ['Config', 'Hardware', 'NumCPU'], null),
@@ -217,7 +212,7 @@ export const prefillUpdateCreator = (options: UpdateOptions) => {
         value: CUSTOM_FLAVOR,
       },
       [VMSettingsField.WORKLOAD_PROFILE]: {
-        value: null,
+        value: isSimpleView ? 'server' : null, // guess - will be erased by vm settings updater if guessed incorrectly
       },
     }),
   );

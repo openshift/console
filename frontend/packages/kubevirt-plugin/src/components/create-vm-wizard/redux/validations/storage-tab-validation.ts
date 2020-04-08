@@ -4,12 +4,17 @@ import { vmWizardInternalActions } from '../internal-actions';
 import { validateDisk } from '../../../../utils/validations/vm';
 import { iGetIn } from '../../../../utils/immutable';
 import { checkTabValidityChanged } from '../../selectors/immutable/selectors';
-import { getStoragesWithWrappers } from '../../selectors/selectors';
+import { getStorages } from '../../selectors/selectors';
 import { hasStoragesChanged, iGetStorages } from '../../selectors/immutable/storage';
 import { iGetProvisionSource } from '../../selectors/immutable/vm-settings';
 import { ProvisionSource } from '../../../../constants/vm/provision-source';
 import { getTemplateValidation } from '../../selectors/template';
 import { TemplateValidations } from '../../../../utils/validations/template/template-validations';
+import { getName } from '@console/shared/src';
+import { DataVolumeWrapper } from '../../../../k8s/wrapper/vm/data-volume-wrapper';
+import { PersistentVolumeClaimWrapper } from '../../../../k8s/wrapper/vm/persistent-volume-claim-wrapper';
+import { DiskWrapper } from '../../../../k8s/wrapper/vm/disk-wrapper';
+import { VolumeWrapper } from '../../../../k8s/wrapper/vm/volume-wrapper';
 
 export const validateStorages = (options: UpdateOptions) => {
   const { id, prevState, dispatch, getState } = options;
@@ -26,41 +31,34 @@ export const validateStorages = (options: UpdateOptions) => {
     return;
   }
 
-  const storages = getStoragesWithWrappers(state, id);
+  const storages = getStorages(state, id);
 
-  const validatedStorages = storages.map(
-    ({
-      diskWrapper,
-      volumeWrapper,
-      dataVolumeWrapper,
-      persistentVolumeClaimWrapper,
-      ...storageBundle
-    }) => {
-      const otherStorageBundles = storages.filter((n) => n.id !== storageBundle.id); // to discard networks with a same name
-      const usedDiskNames = new Set(otherStorageBundles.map(({ diskWrapper: dw }) => dw.getName()));
+  const validatedStorages = storages.map((storage) => {
+    const otherStorageBundles = storages.filter((n) => n.id !== storage.id); // to discard storages with a same name
+    const usedDiskNames = new Set(otherStorageBundles.map(({ disk }) => disk?.name));
 
-      const usedPVCNames: Set<string> = new Set(
-        otherStorageBundles
-          .filter(({ dataVolume }) => dataVolume)
-          .map(({ dataVolumeWrapper: dvw }) => dvw.getName()),
-      );
+    const usedPVCNames: Set<string> = new Set(
+      otherStorageBundles
+        .filter(({ dataVolume }) => dataVolume)
+        .map(({ dataVolume }) => getName(dataVolume)),
+    );
 
-      return {
-        ...storageBundle,
-        validation: validateDisk(
-          diskWrapper,
-          volumeWrapper,
-          dataVolumeWrapper,
-          persistentVolumeClaimWrapper,
-          {
-            usedDiskNames,
-            usedPVCNames,
-            templateValidations: newValidations,
-          },
-        ),
-      };
-    },
-  );
+    return {
+      ...storage,
+      validation: validateDisk(
+        new DiskWrapper(storage.disk),
+        new VolumeWrapper(storage.volume),
+        storage.dataVolume && new DataVolumeWrapper(storage.dataVolume),
+        storage.persistentVolumeClaim &&
+          new PersistentVolumeClaimWrapper(storage.persistentVolumeClaim),
+        {
+          usedDiskNames,
+          usedPVCNames,
+          templateValidations: newValidations,
+        },
+      ),
+    };
+  });
 
   dispatch(vmWizardInternalActions[InternalActionType.SetStorages](id, validatedStorages));
 };

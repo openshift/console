@@ -1,15 +1,7 @@
-import { hasTruthyValue, iGet, iGetIn } from '../../../../utils/immutable';
+import { iGetIn } from '../../../../utils/immutable';
 import { VMSettingsField, VMWizardTab } from '../../types';
 import { ProvisionSource } from '../../../../constants/vm/provision-source';
-import { iGetCreateVMWizardTabs } from './selectors';
-
-export const iGetFieldValue = (field, defaultValue = undefined) =>
-  iGet(field, 'value', defaultValue);
-export const iGetFieldKey = (field, defaultValue = undefined) => iGet(field, 'key', defaultValue);
-
-export const isFieldRequired = (field) => hasTruthyValue(iGet(field, 'isRequired'));
-export const isFieldHidden = (field) => hasTruthyValue(iGet(field, 'isHidden'));
-export const isFieldDisabled = (field) => hasTruthyValue(iGet(field, 'isDisabled'));
+import { iGetCreateVMWizardTabs } from './common';
 
 export const iGetVmSettings = (state, id: string) =>
   iGetIn(iGetCreateVMWizardTabs(state, id), [VMWizardTab.VM_SETTINGS, 'value']);
@@ -44,3 +36,12 @@ export const hasVMSettingsValueChanged = (
 
 export const iGetProvisionSource = (state, id: string): ProvisionSource =>
   ProvisionSource.fromString(iGetVmSettingValue(state, id, VMSettingsField.PROVISION_SOURCE_TYPE));
+
+export const iGetRelevantTemplateSelectors = (state, id: string) => {
+  const userTemplateName = iGetVmSettingValue(state, id, VMSettingsField.USER_TEMPLATE);
+  const os = iGetVmSettingAttribute(state, id, VMSettingsField.OPERATING_SYSTEM);
+  const flavor = iGetVmSettingAttribute(state, id, VMSettingsField.FLAVOR);
+  const workload = iGetVmSettingAttribute(state, id, VMSettingsField.WORKLOAD_PROFILE);
+
+  return { userTemplateName, os, flavor, workload };
+};

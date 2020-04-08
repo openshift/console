@@ -22,6 +22,7 @@ import {
 } from '../../../../../../k8s/requests/v2v/create-v2vvmware-object';
 import { requestVmDetail } from '../../../../../../k8s/requests/v2v/request-vm-detail';
 import { startV2VVMWareController } from '../../../../../../k8s/requests/v2v/start-v2vvmware-controller';
+import { forceUpdateWSQueries } from './update-ws-queries';
 
 const { info: consoleInfo, warn: consoleWarn, error: consoleError } = console;
 
@@ -33,7 +34,7 @@ export const startV2VVMWareControllerWithCleanup = ({ getState, id, dispatch }: 
   return startV2VVMWareController({ namespace }, enhancedK8sMethods)
     .then(() =>
       dispatch(
-        vmWizardInternalActions[InternalActionType.UpdateVMSettingsProviderField](
+        vmWizardInternalActions[InternalActionType.UpdateImportProviderField](
           id,
           VMImportProvider.VMWARE,
           VMWareProviderField.V2V_LAST_ERROR,
@@ -53,7 +54,7 @@ export const startV2VVMWareControllerWithCleanup = ({ getState, id, dispatch }: 
         }
         errors.forEach((o) => consoleWarn(o.title, o.content.data));
         return dispatch(
-          vmWizardInternalActions[InternalActionType.UpdateVMSettingsProviderField](
+          vmWizardInternalActions[InternalActionType.UpdateImportProviderField](
             id,
             VMImportProvider.VMWARE,
             VMWareProviderField.V2V_LAST_ERROR,
@@ -84,14 +85,14 @@ export const createConnectionObjects = async (
   const create = params.connectionSecretName
     ? createV2VvmwareObject
     : createV2VvmwareObjectWithSecret;
-  const { prevNamespace, prevV2VName } = params;
+  const { namespace, prevNamespace, prevV2VName } = params;
 
   if (prevNamespace && prevV2VName) {
     const deleteParams = { name: prevV2VName, namespace: prevNamespace };
     consoleInfo('destroying stale v2vvmware object ', deleteParams);
     deleteV2VvmwareObject(deleteParams);
     dispatch(
-      vmWizardInternalActions[InternalActionType.UpdateVMSettingsProvider](
+      vmWizardInternalActions[InternalActionType.UpdateImportProvider](
         id,
         VMImportProvider.VMWARE,
         {
@@ -109,26 +110,33 @@ export const createConnectionObjects = async (
         },
       ),
     );
+    forceUpdateWSQueries(
+      { id, dispatch },
+      { namespace, v2vVmwareName: null, activeVcenterSecretName: null },
+    );
   }
 
   consoleInfo('creating v2vvmware object');
   return create(params, new EnhancedK8sMethods())
-    .then((v2vVmware) =>
+    .then((v2vVmware) => {
+      const v2vVmwareName = getName(v2vVmware);
+      const activeVcenterSecretName = getVMWareConnectionName(v2vVmware);
       dispatch(
-        vmWizardInternalActions[InternalActionType.UpdateVMSettingsProvider](
+        vmWizardInternalActions[InternalActionType.UpdateImportProvider](
           id,
           VMImportProvider.VMWARE,
           {
-            [VMWareProviderField.V2V_NAME]: getName(v2vVmware),
-            [VMWareProviderField.NEW_VCENTER_NAME]: getVMWareConnectionName(v2vVmware),
+            [VMWareProviderField.V2V_NAME]: v2vVmwareName,
+            [VMWareProviderField.NEW_VCENTER_NAME]: activeVcenterSecretName,
           },
         ),
-      ),
-    )
+      );
+      forceUpdateWSQueries({ id, dispatch }, { namespace, v2vVmwareName, activeVcenterSecretName });
+    })
     .catch((err) => {
       consoleWarn('onVmwareCheckConnection(): Check for VMWare credentials failed, reason: ', err);
       dispatch(
-        vmWizardInternalActions[InternalActionType.UpdateVMSettingsProvider](
+        vmWizardInternalActions[InternalActionType.UpdateImportProvider](
           id,
           VMImportProvider.VMWARE,
           {
@@ -139,6 +147,10 @@ export const createConnectionObjects = async (
             },
           },
         ),
+      );
+      forceUpdateWSQueries(
+        { id, dispatch },
+        { namespace, v2vVmwareName: null, activeVcenterSecretName: null },
       );
     });
 };
@@ -168,16 +180,12 @@ export const getCheckConnectionAction = (id, prevState = null) => (dispatch, get
 
   // start connecting
   dispatch(
-    vmWizardInternalActions[InternalActionType.UpdateVMSettingsProvider](
-      id,
-      VMImportProvider.VMWARE,
-      {
-        [VMWareProviderField.HOSTNAME]: beforeMetadata,
-        [VMWareProviderField.USER_NAME]: beforeMetadata,
-        [VMWareProviderField.USER_PASSWORD_AND_CHECK_CONNECTION]: beforeMetadata,
-        [VMWareProviderField.REMEMBER_PASSWORD]: beforeMetadata,
-      },
-    ),
+    vmWizardInternalActions[InternalActionType.UpdateImportProvider](id, VMImportProvider.VMWARE, {
+      [VMWareProviderField.HOSTNAME]: beforeMetadata,
+      [VMWareProviderField.USER_NAME]: beforeMetadata,
+      [VMWareProviderField.USER_PASSWORD_AND_CHECK_CONNECTION]: beforeMetadata,
+      [VMWareProviderField.REMEMBER_PASSWORD]: beforeMetadata,
+    }),
   );
 
   // side effect
@@ -196,7 +204,7 @@ export const getCheckConnectionAction = (id, prevState = null) => (dispatch, get
     .catch(consoleError)
     .then(() =>
       dispatch(
-        vmWizardInternalActions[InternalActionType.UpdateVMSettingsProvider](
+        vmWizardInternalActions[InternalActionType.UpdateImportProvider](
           id,
           VMImportProvider.VMWARE,
           {

@@ -142,12 +142,12 @@ const VMTemplateTableRow: RowFunction<
       <TableData className={dimensify()}>{getTemplateFlavors([template])[0]}</TableData>
       <TableData className={dimensify()}>
         <Link
-          to={getVMWizardCreateLink(
-            getNamespace(template),
-            VMWizardName.WIZARD,
-            VMWizardMode.VM,
-            getName(template),
-          )}
+          to={getVMWizardCreateLink({
+            namespace: getNamespace(template),
+            wizardName: VMWizardName.WIZARD,
+            mode: VMWizardMode.VM,
+            template: getName(template),
+          })}
           title="Create Virtual Machine"
           className="co-resource-item__resource-name"
         >
@@ -194,7 +194,8 @@ const getCreateProps = ({ namespace }: { namespace: string }) => {
 
   return {
     items,
-    createLink: (itemName) => getVMWizardCreateLink(namespace, itemName, VMWizardMode.TEMPLATE),
+    createLink: (itemName) =>
+      getVMWizardCreateLink({ namespace, wizardName: itemName, mode: VMWizardMode.TEMPLATE }),
   };
 };
 

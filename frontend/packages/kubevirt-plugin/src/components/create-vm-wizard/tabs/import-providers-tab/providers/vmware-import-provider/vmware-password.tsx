@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Button, Split, SplitItem, TextInput } from '@patternfly/react-core';
+import { Button, Split, SplitItem, TextInput, ButtonVariant } from '@patternfly/react-core';
 import { connect } from 'react-redux';
 import { VMImportProvider, VMWareProviderField } from '../../../../types';
 import {
@@ -10,7 +10,7 @@ import { vmWizardActions } from '../../../../redux/actions';
 import { ActionType } from '../../../../redux/types';
 import { FormFieldRow } from '../../../../form/form-field-row';
 import { FormField, FormFieldType } from '../../../../form/form-field';
-import { isFieldDisabled } from '../../../../selectors/immutable/vm-settings';
+import { isFieldDisabled } from '../../../../selectors/immutable/field';
 import { iGet } from '../../../../../../utils/immutable';
 import {
   PROVIDER_VMWARE_CHECK_CONNECTION_BTN_DONT_SAVE,
@@ -38,6 +38,7 @@ const VMWarePasswordConnected: React.FC<VMWareSecretsConnectedProps> = React.mem
             id="vcenter-connect"
             isDisabled={!hasAllPrerequisiteValuesFiled || isFieldDisabled(passwordField)}
             onClick={onCheckConnection}
+            variant={ButtonVariant.secondary}
           >
             {rememberPassword
               ? PROVIDER_VMWARE_CHECK_CONNECTION_BTN_SAVE
@@ -82,7 +83,7 @@ const dispatchToProps = (dispatch, { wizardReduxID }) => ({
   onCheckConnection: () => dispatch(getCheckConnectionAction(wizardReduxID)),
   onPasswordChange: (password) =>
     dispatch(
-      vmWizardActions[ActionType.UpdateVmSettingsProviderField](
+      vmWizardActions[ActionType.UpdateImportProviderField](
         wizardReduxID,
         VMImportProvider.VMWARE,
         VMWareProviderField.USER_PASSWORD_AND_CHECK_CONNECTION,

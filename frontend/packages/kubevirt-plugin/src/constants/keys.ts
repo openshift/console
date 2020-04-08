@@ -16,7 +16,13 @@ export const KEY_CODES = {
   },
   HYPHEN_MINUS: 173,
   MINUS: 189,
+  A: 65,
+  C: 67,
+  V: 86,
+  X: 88,
 };
+
+export const INPUT_CTRL_COMBINATIONS_KEYS = [KEY_CODES.A, KEY_CODES.C, KEY_CODES.V, KEY_CODES.X];
 
 export const INPUT_NAVIGATION_KEYS = [
   KEY_CODES.BACKSPACE,
