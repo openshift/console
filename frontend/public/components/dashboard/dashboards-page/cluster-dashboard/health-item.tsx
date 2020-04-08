@@ -235,7 +235,7 @@ export const ResourceHealthItem: React.FC<ResourceHealthItemProps> = ({ subsyste
   const healthState = healthHandler(resourcesResult);
 
   const PopupComponentCallback = React.useCallback(
-    () => <AsyncComponent loader={popupComponent} resourcesResult={resourcesResult} />,
+    () => <AsyncComponent loader={popupComponent} {...resourcesResult} />,
     [popupComponent, resourcesResult],
   );
 
