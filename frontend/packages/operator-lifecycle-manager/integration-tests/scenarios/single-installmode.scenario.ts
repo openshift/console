@@ -113,7 +113,7 @@ describe('Interacting with a `OwnNamespace` install mode Operator (Prometheus)',
 
     await browser.wait(
       until.visibilityOf(operatorView.rowForOperator('Prometheus Operator')),
-      30000,
+      60000,
     );
   });
 
