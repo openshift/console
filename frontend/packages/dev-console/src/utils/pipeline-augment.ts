@@ -120,13 +120,12 @@ export interface PipelineResourceTaskResource {
 }
 export interface PipelineResourceTask extends K8sResourceKind {
   spec: {
-    inputs?: {
-      params?: PipelineResourceTaskParam[];
-      resources?: PipelineResourceTaskResource[];
+    params?: PipelineResourceTaskParam[];
+    resources?: {
+      inputs?: PipelineResourceTaskResource[];
+      outputs?: PipelineResourceTaskResource[];
     };
-    outputs?: {
-      resources?: PipelineResourceTaskResource[];
-    };
+
     steps: {
       // TODO: Figure out required fields
       args?: string[];
