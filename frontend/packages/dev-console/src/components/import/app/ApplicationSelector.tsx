@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as _ from 'lodash';
 import { useFormikContext, FormikValues, useField } from 'formik';
 import { FormGroup, TextInputTypes } from '@patternfly/react-core';
-import { InputField, getFieldId } from '@console/shared';
+import { InputField, getFieldId, useFormikValidationFix } from '@console/shared';
 import { CREATE_APPLICATION_KEY, UNASSIGNED_KEY } from '../../../const';
 import { sanitizeApplicationValue } from '../../../utils/application-utils';
 import ApplicationDropdown from '../../dropdown/ApplicationDropdown';
@@ -20,16 +20,17 @@ const ApplicationSelector: React.FC<ApplicationSelectorProps> = ({
   const projectsAvailable = !noProjectsAvailable;
 
   const [selectedKey, { touched, error }] = useField('application.selectedKey');
-  const { setFieldValue, setFieldTouched, validateForm } = useFormikContext<FormikValues>();
+  const { setFieldValue, setFieldTouched } = useFormikContext<FormikValues>();
   const fieldId = getFieldId('application-name', 'dropdown');
   const isValid = !(touched && error);
   const errorMessage = !isValid ? error : '';
+
+  useFormikValidationFix(selectedKey.value);
 
   const onDropdownChange = (key: string, application: string) => {
     setFieldTouched('application.selectedKey', true);
     setFieldValue('application.name', sanitizeApplicationValue(application, key));
     setFieldValue('application.selectedKey', key);
-    validateForm();
   };
 
   const handleOnLoad = (applicationList: { [key: string]: string }) => {
