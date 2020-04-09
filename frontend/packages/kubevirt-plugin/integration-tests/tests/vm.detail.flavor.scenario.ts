@@ -30,7 +30,7 @@ describe('KubeVirt VM detail - edit flavor', () => {
   });
 
   it(
-    'changes tiny to custom',
+    'ID(CNV-3076) changes tiny to custom',
     async () => {
       const vm1Config = vmConfig(configName.toLowerCase(), testName, provisionConfig);
       vm1Config.startOnCreation = false;

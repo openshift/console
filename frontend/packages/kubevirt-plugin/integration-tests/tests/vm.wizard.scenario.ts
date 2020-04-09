@@ -55,7 +55,7 @@ describe('Kubevirt create VM using wizard', () => {
     const specTimeout =
       configName === ProvisionConfigName.DISK ? CLONE_VM_TIMEOUT_SECS : VM_BOOTUP_TIMEOUT_SECS;
     it(
-      `Create VM using ${configName}.`,
+      `ID() Create VM using ${configName}.`,
       async () => {
         const vm = new VirtualMachine(
           vmConfig(configName.toLowerCase(), testName, provisionConfig),
@@ -68,7 +68,7 @@ describe('Kubevirt create VM using wizard', () => {
     );
   });
 
-  it('Creates VM with CD ROM added in Wizard', async () => {
+  it('ID(CNV-3657) Creates VM with CD ROM added in Wizard', async () => {
     const vmName = 'vm-with-cdrom';
     const provisionConfig = provisionConfigs.get(ProvisionConfigName.CONTAINER);
     provisionConfig.CDRoms = [cdGuestTools];
@@ -81,7 +81,7 @@ describe('Kubevirt create VM using wizard', () => {
   });
 
   it(
-    'Creates windows 10 VM with correct metadata',
+    'ID(CNV-2039) Creates windows 10 VM with correct metadata',
     async () => {
       const testVMConfig = vmConfig(
         'windows10',
@@ -130,7 +130,7 @@ describe('Kubevirt create VM using wizard', () => {
   );
 
   it(
-    'Creates DV with correct accessMode/volumeMode',
+    'ID(CNV-3052) Creates DV with correct accessMode/volumeMode',
     async () => {
       const testVMConfig = vmConfig(
         'test-dv',
@@ -156,7 +156,7 @@ describe('Kubevirt create VM using wizard', () => {
   );
 
   it(
-    'Multiple VMs created using "Cloned Disk" method from single source',
+    'ID(CNV-2447) Multiple VMs created using "Cloned Disk" method from single source',
     async () => {
       const clonedDiskProvisionConfig = provisionConfigs.get(ProvisionConfigName.DISK);
       const vm1Config = vmConfig('vm1', testName, clonedDiskProvisionConfig);

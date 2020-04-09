@@ -64,7 +64,7 @@ describe('KubeVirt VM console - RDP', () => {
   });
 
   it(
-    'connects via exposed service',
+    'ID(CNV-1721) connects via exposed service',
     async () => {
       const windowsConfig = vmConfig(
         configName.toLowerCase(),
@@ -143,7 +143,7 @@ describe('KubeVirt VM console - RDP', () => {
   );
 
   it(
-    'connects via L2 network',
+    'ID(CNV-1726) connects via L2 network',
     async () => {
       // created just for reusing the later navigation
       const windowsConfig = vmConfig(configName.toLowerCase(), testName, provisionConfig);

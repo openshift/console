@@ -108,3 +108,17 @@ export const getProvisionConfigs = () =>
       networkResources: [multusNetworkInterface],
       storageResources: [getDiskToCloneFrom()],
     });
+
+export const VMTemplateTestCaseIDs = {
+  [ProvisionConfigName.CONTAINER]: 'ID(CNV-871)',
+  [ProvisionConfigName.DISK]: 'ID(CNV-4095)',
+  [ProvisionConfigName.URL]: 'ID(CNV-1503)',
+  [ProvisionConfigName.PXE]: 'ID(CNV-4094)',
+};
+
+export const VMTestCaseIDs = {
+  [ProvisionConfigName.CONTAINER]: 'ID(CNV-870)',
+  [ProvisionConfigName.DISK]: 'ID(CNV-2446)',
+  [ProvisionConfigName.URL]: 'ID(CNV-869)',
+  [ProvisionConfigName.PXE]: 'ID(CNV-771)',
+};

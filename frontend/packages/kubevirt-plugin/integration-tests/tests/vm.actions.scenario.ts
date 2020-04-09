@@ -59,7 +59,7 @@ describe('Test VM actions', () => {
     }, VM_IMPORT_TIMEOUT_SECS);
 
     it(
-      'Starts VM',
+      'ID(CNV-4013) Starts VM',
       async () => {
         await vm.listViewAction(VM_ACTION.Start);
       },
@@ -67,7 +67,7 @@ describe('Test VM actions', () => {
     );
 
     it(
-      'Restarts VM',
+      'ID(CNV-4014)Restarts VM',
       async () => {
         await vm.listViewAction(VM_ACTION.Restart);
       },
@@ -75,7 +75,7 @@ describe('Test VM actions', () => {
     );
 
     it(
-      'Unpauses VM',
+      'ID(CNV-765) Unpauses VM',
       async () => {
         pauseVM(vmName, testName);
         await vm.listViewAction(VM_ACTION.Unpause);
@@ -83,11 +83,11 @@ describe('Test VM actions', () => {
       VM_ACTIONS_TIMEOUT_SECS,
     );
 
-    it('Stops VM', async () => {
+    it('ID(CNV-4015) Stops VM', async () => {
       await vm.listViewAction(VM_ACTION.Stop);
     });
 
-    it('Deletes VM', async () => {
+    it('ID(CNV-4016) Deletes VM', async () => {
       await vm.listViewAction(VM_ACTION.Delete, false);
       await isLoaded();
       await fillInput(textFilter, vmName);
@@ -109,7 +109,7 @@ describe('Test VM actions', () => {
     }, VM_IMPORT_TIMEOUT_SECS);
 
     it(
-      'Starts VM',
+      'ID(CNV-4017) Starts VM',
       async () => {
         await vm.action(VM_ACTION.Start);
       },
@@ -117,7 +117,7 @@ describe('Test VM actions', () => {
     );
 
     it(
-      'Restarts VM',
+      'ID(CNV-4018) Restarts VM',
       async () => {
         await vm.action(VM_ACTION.Restart);
       },
@@ -125,7 +125,7 @@ describe('Test VM actions', () => {
     );
 
     it(
-      'Unpauses VM',
+      'ID(CNV-1794) Unpauses VM',
       async () => {
         pauseVM(vmName, testName);
         await vm.action(VM_ACTION.Unpause);
@@ -133,7 +133,7 @@ describe('Test VM actions', () => {
       VM_ACTIONS_TIMEOUT_SECS,
     );
 
-    it('Unpauses VM via modal dialog', async () => {
+    it('ID(CNV-4019) Unpauses VM via modal dialog', async () => {
       await vm.waitForStatus(VM_STATUS.Running);
       pauseVM(vmName, testName);
       await vm.waitForStatus(VM_STATUS.Paused);
@@ -142,11 +142,11 @@ describe('Test VM actions', () => {
       await vm.waitForStatus(VM_STATUS.Running);
     });
 
-    it('Stops VM', async () => {
+    it('ID(CNV-4020) Stops VM', async () => {
       await vm.action(VM_ACTION.Stop);
     });
 
-    it('Deletes VM', async () => {
+    it('ID(CNV-4021) Deletes VM', async () => {
       await vm.action(VM_ACTION.Delete, false);
       await vm.navigateToListView();
       await fillInput(textFilter, vmName);

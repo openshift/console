@@ -30,7 +30,7 @@ describe('KubeVirt VM detail - Boot Order Dialog', () => {
   });
 
   it(
-    'Displays boot devices',
+    'ID(CNV-3550) Displays boot devices',
     async () => {
       const bootableDevices = getBootableDevicesInOrder(
         getResourceObject(vm.name, vm.namespace, vm.kind),
@@ -44,7 +44,7 @@ describe('KubeVirt VM detail - Boot Order Dialog', () => {
   );
 
   it(
-    'Deletes bootable device',
+    'ID(CNV-3549) Deletes bootable device',
     async () => {
       const FIRST_DEVICE_POSITION = 1;
       const initialBootableDevices = getBootableDevicesInOrder(
@@ -70,7 +70,7 @@ describe('KubeVirt VM detail - Boot Order Dialog', () => {
   );
 
   it(
-    'Adds bootable device',
+    'ID(CNV-3548) Adds bootable device',
     async () => {
       const initialVMObject = getResourceObject(vm.name, vm.namespace, vm.kind);
       const initialBootableDevices = getBootableDevicesInOrder(initialVMObject);
@@ -108,7 +108,7 @@ describe('KubeVirt VM detail - Boot Order Dialog', () => {
   );
 
   it(
-    'Drags and drops to change boot order',
+    'ID(CNV-3547) Drags and drops to change boot order',
     async () => {
       const initialBootableDevices = getBootableDevicesInOrder(
         getResourceObject(vm.name, vm.namespace, vm.kind),

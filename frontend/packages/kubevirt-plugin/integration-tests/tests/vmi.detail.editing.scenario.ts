@@ -33,7 +33,7 @@ describe('KubeVirt VMI detail - editing', () => {
   });
 
   it(
-    'should not have cdrom edit buttons',
+    'ID(CNV-4039) should not have cdrom edit buttons',
     async () => {
       await vm.navigateToDetail();
       expect(vmDetailCdEditButton(vm.namespace, vm.name).isPresent()).toBe(false);
@@ -42,7 +42,7 @@ describe('KubeVirt VMI detail - editing', () => {
   );
 
   it(
-    'should not have boot order edit buttons',
+    'ID(CNV-4040) should not have boot order edit buttons',
     async () => {
       await vm.navigateToDetail();
       expect(vmDetailBootOrderEditButton(vm.namespace, vm.name).isPresent()).toBe(false);
@@ -51,7 +51,7 @@ describe('KubeVirt VMI detail - editing', () => {
   );
 
   it(
-    'should not have add nic button',
+    'ID(CNV-4042) should not have add nic button',
     async () => {
       await vm.navigateToTab(TAB.NetworkInterfaces);
       expect(kubevirtDetailView.createNICButton.isPresent()).toBe(false);
@@ -60,7 +60,7 @@ describe('KubeVirt VMI detail - editing', () => {
   );
 
   it(
-    'nic row kebab button is disabled',
+    'ID(CNV-4043) nic row kebab button is disabled',
     async () => {
       await vm.navigateToTab(TAB.NetworkInterfaces);
       expect(
@@ -74,7 +74,7 @@ describe('KubeVirt VMI detail - editing', () => {
   );
 
   it(
-    'should not have add disk button',
+    'ID(CNV-4041) should not have add disk button',
     async () => {
       await vm.navigateToTab(TAB.Disks);
       expect(kubevirtDetailView.createDiskButton.isPresent()).toBe(false);
@@ -83,7 +83,7 @@ describe('KubeVirt VMI detail - editing', () => {
   );
 
   it(
-    'disk row kebab button is disabled',
+    'ID(CNV-3694) disk row kebab button is disabled',
     async () => {
       await vm.navigateToTab(TAB.Disks);
       expect(

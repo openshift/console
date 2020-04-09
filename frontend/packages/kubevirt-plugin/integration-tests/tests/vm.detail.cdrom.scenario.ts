@@ -39,7 +39,7 @@ describe('KubeVirt VM detail - edit cdroms', () => {
   });
 
   it(
-    'creates new container CD, then removes it',
+    'ID(CNV-3104) creates new container CD, then removes it',
     async () => {
       await vm.navigateToDetail();
       await vm.modalEditCDRoms();
@@ -62,7 +62,7 @@ describe('KubeVirt VM detail - edit cdroms', () => {
   );
 
   it(
-    'creates two new container CDs, then ejects and changes them to URL, PVC',
+    'ID(CNV-3105) creates two new container CDs, then ejects and changes them to URL, PVC',
     async () => {
       await vm.navigateToDetail();
       await vm.modalEditCDRoms();

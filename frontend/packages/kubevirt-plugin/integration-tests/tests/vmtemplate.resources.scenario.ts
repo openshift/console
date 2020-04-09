@@ -76,11 +76,11 @@ describe('Test adding/removing discs/nics to/from a VM template', () => {
       deleteResource(vm.asResource());
     });
 
-    it('Adds a disk to a VM template', async () => {
+    it('ID(CNV-1849) Adds a disk to a VM template', async () => {
       expect(vm.getAttachedDisks()).toContain(hddDisk);
     });
 
-    it('Adds a NIC to a VM template', async () => {
+    it('ID(CNV-1850) Adds a NIC to a VM template', async () => {
       expect(vm.getAttachedNICs()).toContain(multusNetworkInterface);
     });
   });
@@ -96,11 +96,11 @@ describe('Test adding/removing discs/nics to/from a VM template', () => {
       deleteResource(vm.asResource());
     });
 
-    it('Removes a disk from VM template', async () => {
+    it('ID(CNV-4092) Removes a disk from VM template', async () => {
       expect(vm.getAttachedDisks()).not.toContain(hddDisk);
     });
 
-    it('Removes a NIC from VM template', async () => {
+    it('ID(CNV-4091) Removes a NIC from VM template', async () => {
       expect(vm.getAttachedNICs()).not.toContain(multusNetworkInterface);
     });
   });

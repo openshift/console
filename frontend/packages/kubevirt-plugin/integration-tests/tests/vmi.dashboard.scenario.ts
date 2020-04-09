@@ -38,7 +38,7 @@ describe('Test VMI dashboard', () => {
     await vm.navigateToDashboard();
   });
 
-  it('Inventory card', async () => {
+  it('ID(CNV-3072) Inventory card', async () => {
     expect(vmInventoryNICs.getText()).toEqual('1 NIC');
     expect(vmInventoryNICs.$('a').getAttribute('href')).toMatch(
       new RegExp(`.*/k8s/ns/${vm.namespace}/${VirtualMachineInstanceModel.plural}/${vm.name}/nics`),
@@ -51,11 +51,11 @@ describe('Test VMI dashboard', () => {
     );
   });
 
-  it('Status card', async () => {
+  it('ID(CNV-4089) Status card', async () => {
     expect(vmStatus.getText()).toEqual(VM_STATUS.Running);
   });
 
-  it('Details card', async () => {
+  it('ID(CNV-4089) Details card', async () => {
     expect(vmDetailsName.getText()).toEqual(vm.name);
     expect(vmDetailsNamespace.getText()).toEqual(vm.namespace);
     expect(vmDetailsNode.getText()).not.toEqual(NOT_AVAILABLE);

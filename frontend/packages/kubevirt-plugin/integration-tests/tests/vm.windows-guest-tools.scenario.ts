@@ -21,7 +21,7 @@ describe('Kubevirt Windows Guest tools', () => {
   provisionConfig.storageResources = [];
 
   it(
-    'Checks that Guest Tools CD is mounted after Windows VM creation',
+    'ID(CNV-3593) Checks that Guest Tools CD is mounted after Windows VM creation',
     async () => {
       const windowsConfig = vmConfig(
         configName.toLowerCase(),

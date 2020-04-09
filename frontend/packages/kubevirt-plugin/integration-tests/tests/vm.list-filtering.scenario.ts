@@ -17,21 +17,21 @@ describe('Test List View Filtering', () => {
     deleteResource(testVM);
   });
 
-  it('Displays correct count of Other VMs', async () => {
+  it('ID(CNV-3614) Displays correct count of Importing VMs', async () => {
     await vm.waitForStatus(VM_STATUS.Importing);
     await vm.navigateToListView();
     const importingCount = await filterBoxCount(VM_STATUS.Importing);
     expect(importingCount).toEqual(1);
   });
 
-  it('Displays correct count of Off VMs', async () => {
+  it('ID(CNV-3615) Displays correct count of Off VMs', async () => {
     await vm.waitForStatus(VM_STATUS.Off);
     await vm.navigateToListView();
     const offCount = await filterBoxCount(VM_STATUS.Off);
     expect(offCount).toEqual(1);
   });
 
-  it('Displays correct count of Running VMs', async () => {
+  it('ID(CNV-3616) Displays correct count of Running VMs', async () => {
     await vm.action(VM_ACTION.Start);
     await vm.navigateToListView();
     const runningCount = await filterBoxCount(VM_STATUS.Running);

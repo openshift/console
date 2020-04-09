@@ -58,7 +58,7 @@ describe('Add/remove disks and NICs on respective VM pages', () => {
   });
 
   it(
-    'Add/remove disk on VM disks page',
+    'ID(CNV-1502) Add/remove disk on VM disks page',
     async () => {
       await vm.addDisk(hddDisk);
       expect(await vm.getAttachedDisks()).toContain(hddDisk);
@@ -77,7 +77,7 @@ describe('Add/remove disks and NICs on respective VM pages', () => {
   );
 
   it(
-    'Add/remove nic on VM Network Interfaces page',
+    'ID(CNV-1501) Add/remove nic on VM Network Interfaces page',
     async () => {
       await vm.addNIC(multusNetworkInterface);
       expect(await vm.getAttachedNICs()).toContain(multusNetworkInterface);
@@ -90,7 +90,7 @@ describe('Add/remove disks and NICs on respective VM pages', () => {
     VM_ACTIONS_TIMEOUT_SECS,
   );
 
-  it('NIC cannot be added twice using one net-attach-def', async () => {
+  it('ID(CNV-1722) NIC cannot be added twice using one net-attach-def', async () => {
     await vm.navigateToTab(TAB.NetworkInterfaces);
     if (
       (await vm.getAttachedNICs()).filter((nic) => nic.name === multusNetworkInterface.name)
@@ -141,7 +141,7 @@ describe('Test network type presets and options', () => {
     deleteResource(multusNAD);
   });
 
-  it('Test NIC type in VM Wizard', async () => {
+  it('ID(CNV-2073) Test NIC default type in VM Wizard', async () => {
     await browser.get(`${appHost}/k8s/ns/${testName}/virtualmachines`);
     await isLoaded();
     await wizard.openWizard(VirtualMachineModel.labelPlural);
@@ -174,7 +174,7 @@ describe('Test network type presets and options', () => {
     expect((await getSelectOptions(nicType)).sort()).toEqual(nonPodNetworkBindingMethods);
   });
 
-  it('Test NIC type in example VM', async () => {
+  it('ID(CNV-4038) Test NIC default type in example VM', async () => {
     await createExampleVMViaYAML();
     const vm = new VirtualMachine({ name: 'example', namespace: testName });
     const NICDialog = new NetworkInterfaceDialog();

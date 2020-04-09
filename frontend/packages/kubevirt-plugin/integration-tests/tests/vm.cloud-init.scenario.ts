@@ -36,7 +36,7 @@ describe('Kubevirt create VM using cloud-init', () => {
     customScript: basicVMConfig.cloudInitScript,
   };
 
-  it('Create vm using hostname and key as cloud-init data', async () => {
+  it('ID(CNV-874) Create vm using hostname and key as cloud-init data', async () => {
     const testVMConfig = vmConfig('vm-cloudinit-hostname-key', testName, provisionConfig);
     testVMConfig.cloudInit = cloudinitConfig;
     testVMConfig.startOnCreation = false;
@@ -54,7 +54,7 @@ describe('Kubevirt create VM using cloud-init', () => {
     });
   });
 
-  it('Create VM using custom script as cloud-init data', async () => {
+  it('ID(CNV-4022) Create VM using custom script as cloud-init data', async () => {
     const testVMConfig = vmConfig('vm-cloudinit-customscript', testName, provisionConfig);
     testVMConfig.cloudInit = customScript;
     testVMConfig.startOnCreation = false;

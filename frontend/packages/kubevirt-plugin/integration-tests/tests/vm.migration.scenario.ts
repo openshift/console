@@ -40,7 +40,7 @@ describe('Test VM Migration', () => {
   });
 
   it(
-    'Migrate VM action button is displayed appropriately',
+    'ID(CNV-2140) Migrate VM action button is displayed appropriately',
     async () => {
       expect(await getDetailActionDropdownOptions()).not.toContain(MIGRATE_VM);
       expect(await getDetailActionDropdownOptions()).not.toContain(CANCEL_MIGRATION);
@@ -58,7 +58,7 @@ describe('Test VM Migration', () => {
   );
 
   it(
-    'Migrate already migrated VM',
+    'ID(CNV-2133) Migrate already migrated VM',
     async () => {
       await vm.action(VM_ACTION.Start);
       let sourceNode = await vm.getNode();
@@ -75,7 +75,7 @@ describe('Test VM Migration', () => {
   );
 
   it(
-    'Cancel ongoing VM migration',
+    'ID(CNV-2132) Cancel ongoing VM migration',
     async () => {
       await vm.waitForStatus(VM_STATUS.Off, VM_IMPORT_TIMEOUT_SECS);
       await vm.action(VM_ACTION.Start);

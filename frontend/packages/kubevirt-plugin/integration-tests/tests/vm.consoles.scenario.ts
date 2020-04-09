@@ -65,7 +65,7 @@ describe('KubeVirt VM VNC/Serial consoles', () => {
     deleteResource(vmResource);
   });
 
-  it('Serial Console connects', async () => {
+  it('ID(CNV-3609) Serial Console connects', async () => {
     await selectDropdownOption(consoleTypeSelectorId, 'Serial Console');
 
     // Wait for Loading span element to disappear
@@ -89,7 +89,7 @@ describe('KubeVirt VM VNC/Serial consoles', () => {
     expect(extractResult(out)).toEqual('SUCCESS');
   });
 
-  it('VNC Console connects', async () => {
+  it('ID(CNV-872) VNC Console connects', async () => {
     await selectDropdownOption(consoleTypeSelectorId, 'VNC Console');
 
     // Wait for Connecting bar element to disappear

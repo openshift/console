@@ -76,7 +76,7 @@ describe('Test clone VM.', () => {
     });
 
     it(
-      'Displays warning in clone wizard when cloned vm is running.',
+      'ID(CNV-1730) Displays warning in clone wizard when cloned vm is running.',
       async () => {
         await vm.action(VM_ACTION.Start, false);
         await vm.waitForStatus(VM_STATUS.Starting, PAGE_LOAD_TIMEOUT_SECS);
@@ -99,7 +99,7 @@ describe('Test clone VM.', () => {
       VM_BOOTUP_TIMEOUT_SECS,
     );
 
-    it('Prefills correct data in the clone VM dialog.', async () => {
+    it('ID(CNV-1863) Prefills correct data in the clone VM dialog.', async () => {
       await vm.action(VM_ACTION.Clone);
       expect(cloneDialogView.nameInput.getAttribute('value')).toEqual(`${vm.name}-clone`);
       expect(cloneDialogView.descriptionInput.getText()).toEqual(
@@ -110,7 +110,7 @@ describe('Test clone VM.', () => {
       await cloneDialog.close();
     });
 
-    it('Validates VM name.', async () => {
+    it('ID(CNV-1732) Validates VM name.', async () => {
       await vm.action(VM_ACTION.Clone);
 
       expect(cloneDialogView.warningMessage.isPresent()).toBe(false);
@@ -179,7 +179,7 @@ describe('Test clone VM.', () => {
     });
 
     it(
-      'Clones VM to a different namespace',
+      'ID(CNV-3058) Clones VM to a different namespace',
       async () => {
         const vmClonedToOtherNS = new VirtualMachine({
           name: `${vm.name}-${getRandStr(4)}`,
@@ -197,7 +197,7 @@ describe('Test clone VM.', () => {
     );
 
     it(
-      'Start cloned VM on creation',
+      'ID(CNV-1733) Start cloned VM on creation',
       async () => {
         await vm.action(VM_ACTION.Clone);
         await cloneDialog.startOnCreation();
@@ -210,11 +210,11 @@ describe('Test clone VM.', () => {
       VM_BOOTUP_TIMEOUT_SECS + CLONE_VM_TIMEOUT_SECS,
     );
 
-    it('Running VM is stopped when cloned', async () => {
+    it('ID(CNV-2825) Running VM is stopped when cloned', async () => {
       await vm.waitForStatus(VM_STATUS.Off, PAGE_LOAD_TIMEOUT_SECS);
     });
 
-    it('Cloned VM has changed MAC address.', async () => {
+    it('ID(CNV-1734) Cloned VM has changed MAC address.', async () => {
       await clonedVM.navigateToTab(TAB.NetworkInterfaces);
       await browser.wait(until.and(waitForCount(resourceRows, 2)), PAGE_LOAD_TIMEOUT_SECS);
       const addedNIC = (await clonedVM.getAttachedNICs()).find(
@@ -223,7 +223,7 @@ describe('Test clone VM.', () => {
       expect(addedNIC.mac === multusNetworkInterface.mac).toBe(false);
     });
 
-    it('Cloned VM has vm.kubevirt.io/name label.', () => {
+    it('ID(CNV-1739) Cloned VM has vm.kubevirt.io/name label.', () => {
       expect(
         searchYAML(`vm.kubevirt.io/name: ${vm.name}`, clonedVM.name, clonedVM.namespace, 'vm'),
       ).toBeTruthy();
@@ -239,7 +239,7 @@ describe('Test clone VM.', () => {
     };
 
     it(
-      'Test clone VM with URL source.',
+      'ID(CNV-1740) Test clone VM with URL source.',
       async () => {
         createResource(urlVMManifest);
         await withResource(leakedResources, urlVM.asResource(), async () => {
@@ -281,7 +281,7 @@ describe('Test clone VM.', () => {
     );
 
     it(
-      'Test clone VM with URL source and Cloud Init.',
+      'ID(CNV-1744) Test clone VM with URL source and Cloud Init.',
       async () => {
         const ciVMConfig = {
           name: `ci-${testName}`,

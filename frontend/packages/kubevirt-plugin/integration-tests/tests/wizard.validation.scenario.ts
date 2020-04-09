@@ -54,7 +54,7 @@ describe('Wizard validation', () => {
     await wizard.closeWizard();
   });
 
-  it('Displays error when not enough memory provided', async () => {
+  it('ID(CNV-3697) Wizard validates custom flavor memory', async () => {
     await wizard.selectOperatingSystem(OperatingSystem.VALIDATION_TEST);
     await wizard.selectFlavor(customFlavorNotEnoughMemory);
     await browser.wait(
@@ -64,7 +64,7 @@ describe('Wizard validation', () => {
     expect(customFlavorMemoryHintBlock.isPresent()).toBe(false);
   });
 
-  it('Displays warning when interface not recommended', async () => {
+  it('ID(CNV-3698) Disk Dialog displays warning when interface not recommended', async () => {
     const WINDOWS_NOT_RECOMMENDED_INTERFACE = 'sata';
     await wizard.selectProvisionSource(provisionConfig.provision);
     await wizard.selectOperatingSystem(OperatingSystem.WINDOWS_10);

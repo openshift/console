@@ -43,7 +43,7 @@ describe('Test VM creation from YAML', () => {
   });
 
   it(
-    'Creates VM from default YAML.',
+    'ID(CNV-2941) Creates VM from default YAML.',
     async () => {
       const vm = new VirtualMachine({ name: 'example', namespace: testName });
       await withResource(leakedResources, vm.asResource(), async () => {
@@ -56,7 +56,7 @@ describe('Test VM creation from YAML', () => {
     VM_BOOTUP_TIMEOUT_SECS,
   );
 
-  it('Fails to create VM from YAML if VM already exists.', async () => {
+  it('ID(CNV-2942) Fails to create VM from YAML if VM already exists.', async () => {
     createResource(getVMManifest('Container', testName, 'example'));
     const vm = new VirtualMachine({ name: 'example', namespace: testName });
     await withResource(leakedResources, vm.asResource(), async () => {
@@ -66,7 +66,7 @@ describe('Test VM creation from YAML', () => {
     });
   });
 
-  it('Fails to create VM from invalid Manifest.', async () => {
+  it('ID(CNV-2943) Fails to create VM from invalid Manifest.', async () => {
     const vmManifest = getVMManifest('Container', testName);
     vmManifest.kind += testName.slice(-5); // malform VM manifest
     await setEditorContent(JSON.stringify(vmManifest));
@@ -74,7 +74,7 @@ describe('Test VM creation from YAML', () => {
     await browser.wait(until.presenceOf(errorMessage), PAGE_LOAD_TIMEOUT_SECS);
   });
 
-  it('Cancel button on Create from YAML page redirects back to VM list.', async () => {
+  it('ID(CNV-2944) Cancel button on Create from YAML page redirects back to VM list.', async () => {
     await click(cancelButton);
     await browser.wait(
       until.textToBePresentInElement(resourceTitle, 'Virtual Machines'),
