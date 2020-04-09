@@ -666,7 +666,7 @@ export type MachineConfigPoolStatus = {
 
 export type MachineConfigPoolSpec = {
   machineConfigSelector?: Selector;
-  machineSelector?: Selector;
+  nodeSelector?: Selector;
   paused: boolean;
   maxUnavailable: number | string;
 };
