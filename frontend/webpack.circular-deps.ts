@@ -62,7 +62,7 @@ const getCycleStats = (cycles: DetectedCycle[]): string => {
 };
 
 const getCycleEntries = (cycles: DetectedCycle[]): string => {
-  return cycles.map((c) => `${c.causedBy}\n${c.modulePaths.join('\n-> ')}\n`).join('\n');
+  return cycles.map((c) => `${c.causedBy}\n  ${c.modulePaths.join('\n  ')}\n`).join('\n');
 };
 
 export class CircularDependencyPreset {
