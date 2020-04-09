@@ -9,7 +9,6 @@ import openshiftLogoImg from '../imgs/openshift-logo.svg';
 import ocpLogoImg from '../imgs/openshift-platform-logo.svg';
 import onlineLogoImg from '../imgs/openshift-online-logo.svg';
 import dedicatedLogoImg from '../imgs/openshift-dedicated-logo.svg';
-import azureLogoImg from '../imgs/azure-red-hat-openshift-logo.svg';
 
 export const getBrandingDetails = () => {
   let logoImg, productName;
@@ -32,7 +31,7 @@ export const getBrandingDetails = () => {
       productName = 'Red Hat OpenShift Dedicated';
       break;
     case 'azure':
-      logoImg = azureLogoImg;
+      logoImg = openshiftLogoImg;
       productName = 'Azure Red Hat OpenShift';
       break;
     default:
