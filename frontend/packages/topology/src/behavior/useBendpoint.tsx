@@ -5,7 +5,13 @@ import { observer } from 'mobx-react';
 import Point from '../geom/Point';
 import ElementContext from '../utils/ElementContext';
 import { isEdge } from '../types';
-import { ConnectDragSource, DragSourceSpec, DragObjectWithType } from './dnd-types';
+import {
+  ConnectDragSource,
+  DragSourceSpec,
+  DragObjectWithType,
+  DragSpecOperationType,
+  DragOperationWithType,
+} from './dnd-types';
 import { useDndDrag, WithDndDragProps } from './useDndDrag';
 
 export type WithBendpoint = {
@@ -14,7 +20,15 @@ export type WithBendpoint = {
 
 export const useBendpoint = <DropResult, CollectedProps, Props = {}>(
   point: Point,
-  spec?: Omit<DragSourceSpec<DragObjectWithType, DropResult, CollectedProps>, 'type'>,
+  spec?: Omit<
+    DragSourceSpec<
+      DragObjectWithType,
+      DragSpecOperationType<DragOperationWithType>,
+      DropResult,
+      CollectedProps
+    >,
+    'type'
+  >,
   props?: Props,
 ): [CollectedProps, ConnectDragSource] => {
   const element = React.useContext(ElementContext);
@@ -28,7 +42,7 @@ export const useBendpoint = <DropResult, CollectedProps, Props = {}>(
 
   const [connect, dragRef] = useDndDrag(
     React.useMemo(() => {
-      const sourceSpec: DragSourceSpec<any, any, any, Props> = {
+      const sourceSpec: DragSourceSpec<any, any, any, any, Props> = {
         item: { type: '#useBendpoint#' },
         begin: (monitor, p) => {
           return spec && spec.begin ? spec.begin(monitor, p) : undefined;
@@ -76,7 +90,16 @@ export type WithBendpointProps = {
 };
 
 export const WithBendpoint = <DropResult, CollectedProps, Props = {}>(
-  spec?: Omit<DragSourceSpec<DragObjectWithType, DropResult, CollectedProps, Props>, 'type'>,
+  spec?: Omit<
+    DragSourceSpec<
+      DragObjectWithType,
+      DragSpecOperationType<DragOperationWithType>,
+      DropResult,
+      CollectedProps,
+      Props
+    >,
+    'type'
+  >,
 ) => <P extends WithBendpointProps & CollectedProps & Props>(
   WrappedComponent: React.ComponentType<P>,
 ) => {

@@ -1,7 +1,13 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { useDndDrag } from './useDndDrag';
-import { ConnectDragSource, DragObjectWithType, DragSourceSpec } from './dnd-types';
+import {
+  ConnectDragSource,
+  DragObjectWithType,
+  DragOperationWithType,
+  DragSourceSpec,
+  DragSpecOperationType,
+} from './dnd-types';
 
 export type WithSourceDragProps = {
   sourceDragRef: ConnectDragSource;
@@ -13,7 +19,13 @@ export const withSourceDrag = <
   CollectedProps extends {} = {},
   Props extends {} = {}
 >(
-  spec: DragSourceSpec<DragObject, DropResult, CollectedProps, Props>,
+  spec: DragSourceSpec<
+    DragObject,
+    DragSpecOperationType<DragOperationWithType>,
+    DropResult,
+    CollectedProps,
+    Props
+  >,
 ) => <P extends WithSourceDragProps & CollectedProps & Props>(
   WrappedComponent: React.ComponentType<P>,
 ) => {
@@ -35,7 +47,13 @@ export const withTargetDrag = <
   CollectedProps extends {} = {},
   Props extends {} = {}
 >(
-  spec: DragSourceSpec<DragObject, DropResult, CollectedProps, Props>,
+  spec: DragSourceSpec<
+    DragObject,
+    DragSpecOperationType<DragOperationWithType>,
+    DropResult,
+    CollectedProps,
+    Props
+  >,
 ) => <P extends WithSourceDragProps & CollectedProps & Props>(
   WrappedComponent: React.ComponentType<P>,
 ) => {

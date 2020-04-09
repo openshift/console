@@ -15,7 +15,6 @@ import {
   nodeDragSourceSpec,
   withEditReviewAccess,
   nodeContextMenu,
-  registerEditOperation,
 } from '@console/dev-console/src/components/topology';
 import {
   TYPE_EVENT_SOURCE,
@@ -35,14 +34,7 @@ import {
   knativeServiceDropTargetSpec,
 } from './knativeComponentUtils';
 
-const MOVE_EV_SRC_CONNECTOR_OPERATION = 'moveeventsourceconnector';
-
 class KnativeComponentFactory extends AbstractSBRComponentFactory {
-  constructor(serviceBinding: boolean) {
-    super(serviceBinding);
-    registerEditOperation(MOVE_EV_SRC_CONNECTOR_OPERATION);
-  }
-
   getFactory = (): TopologyComponentFactory => {
     return (kind, type): React.ComponentType<{ element: GraphElement }> | undefined => {
       switch (type) {

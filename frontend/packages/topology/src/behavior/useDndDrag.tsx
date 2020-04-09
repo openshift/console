@@ -11,8 +11,9 @@ import {
   DragSourceMonitor,
   Identifier,
   DragEvent,
-  DragSpecOperation,
+  DragSpecOperationType,
   DragSource,
+  DragOperationWithType,
 } from './dnd-types';
 import { useDndManager } from './useDndManager';
 
@@ -45,9 +46,11 @@ const getModifiers = (event: MouseEvent | TouchEvent | KeyboardEvent): number =>
   return modifiers;
 };
 
-const getOperation = (operation: DragSpecOperation | undefined): string => {
-  if (typeof operation === 'string') {
-    return operation;
+const getOperation = (
+  operation: DragSpecOperationType<DragOperationWithType> | undefined,
+): DragOperationWithType | undefined => {
+  if (typeof (operation as any).type === 'string') {
+    return operation as DragOperationWithType;
   }
   return (
     (operation &&
@@ -57,8 +60,13 @@ const getOperation = (operation: DragSpecOperation | undefined): string => {
   );
 };
 
-const hasOperation = (operation: DragSpecOperation | undefined): boolean => {
-  return !!(operation && (typeof operation === 'string' || Object.keys(operation).length > 0));
+const hasOperation = (
+  operation: DragSpecOperationType<DragOperationWithType> | undefined,
+): boolean => {
+  return !!(
+    operation &&
+    (typeof (operation as any).type === 'string' || Object.keys(operation).length > 0)
+  );
 };
 
 const EMPTY_PROPS = Object.freeze({});
@@ -69,7 +77,13 @@ export const useDndDrag = <
   CollectedProps extends {} = {},
   Props extends {} = {}
 >(
-  spec: DragSourceSpec<DragObject, DropResult, CollectedProps, Props>,
+  spec: DragSourceSpec<
+    DragObject,
+    DragSpecOperationType<DragOperationWithType>,
+    DropResult,
+    CollectedProps,
+    Props
+  >,
   props?: Props,
 ): [CollectedProps, ConnectDragSource] => {
   const specRef = React.useRef(spec);
@@ -119,7 +133,7 @@ export const useDndDrag = <
       getDragEvent: (): DragEvent | undefined => {
         return dndManager.getDragEvent();
       },
-      getOperation: (): string => {
+      getOperation: (): DragOperationWithType | undefined => {
         return dndManager.getOperation();
       },
       isCancelled: (): boolean => {
@@ -139,7 +153,7 @@ export const useDndDrag = <
                 drag: [number, number, number, number];
               }
             | undefined;
-          let operation: DragSpecOperation | undefined;
+          let operation: DragSpecOperationType<DragOperationWithType> | undefined;
           d3.select(node).call(
             d3
               .drag()
@@ -316,7 +330,13 @@ export const withDndDrag = <
   CollectedProps extends {} = {},
   Props extends {} = {}
 >(
-  spec: DragSourceSpec<DragObject, DropResult, CollectedProps, Props>,
+  spec: DragSourceSpec<
+    DragObject,
+    DragSpecOperationType<DragOperationWithType>,
+    DropResult,
+    CollectedProps,
+    Props
+  >,
 ) => <P extends WithDndDragProps & CollectedProps & Props>(
   WrappedComponent: React.ComponentType<P>,
 ) => {

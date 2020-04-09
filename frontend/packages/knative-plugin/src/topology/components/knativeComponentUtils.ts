@@ -1,18 +1,24 @@
 import { errorModal } from '@console/internal/components/modals';
-import { Edge, Node, DropTargetSpec, DragSourceSpec, DragObjectWithType } from '@console/topology';
+import {
+  GraphElement,
+  Edge,
+  Node,
+  DropTargetSpec,
+  DragSourceSpec,
+  DragObjectWithType,
+  CREATE_CONNECTOR_DROP_TYPE,
+  CREATE_CONNECTOR_OPERATION,
+  DragSpecOperationType,
+} from '@console/topology';
 import {
   NodeComponentProps,
   NODE_DRAG_TYPE,
   EDGE_DRAG_TYPE,
   EdgeComponentProps,
+  EditableDragOperationType,
 } from '@console/dev-console/src/components/topology';
 import { TYPE_EVENT_SOURCE_LINK } from '../const';
 import { createSinkConnection } from '../knative-topology-utils';
-import {
-  CREATE_CONNECTOR_DROP_TYPE,
-  CREATE_CONNECTOR_OPERATION,
-} from '@console/topology/src/behavior';
-import { GraphElement } from '@console/topology/src/types';
 
 export const MOVE_EV_SRC_CONNECTOR_OPERATION = 'moveeventsourceconnector';
 
@@ -32,12 +38,13 @@ export const knativeServiceDropTargetSpec: DropTargetSpec<
   any,
   { canDrop: boolean; dropTarget: boolean; edgeDragging: boolean },
   NodeComponentProps
-  > = {
+> = {
   accept: [EDGE_DRAG_TYPE],
   canDrop: (item, monitor, props) =>
     item.getType() === TYPE_EVENT_SOURCE_LINK && item.getSource() !== props.element,
   collect: (monitor, props) => ({
-    canDrop: monitor.isDragging() && monitor.getOperation() === MOVE_EV_SRC_CONNECTOR_OPERATION,
+    canDrop:
+      monitor.isDragging() && monitor.getOperation()?.type === MOVE_EV_SRC_CONNECTOR_OPERATION,
     dropTarget: monitor.isOver({ shallow: true }),
     edgeDragging: nodesEdgeIsDragging(monitor, props),
   }),
@@ -45,12 +52,13 @@ export const knativeServiceDropTargetSpec: DropTargetSpec<
 
 export const eventSourceLinkDragSourceSpec = (): DragSourceSpec<
   DragObjectWithType,
+  DragSpecOperationType<EditableDragOperationType>,
   Node,
   { dragging: boolean },
   EdgeComponentProps
-  > => ({
+> => ({
   item: { type: EDGE_DRAG_TYPE },
-  operation: MOVE_EV_SRC_CONNECTOR_OPERATION,
+  operation: { type: MOVE_EV_SRC_CONNECTOR_OPERATION, edit: true },
   begin: (monitor, props) => {
     props.element.raise();
     return props.element;
@@ -63,7 +71,7 @@ export const eventSourceLinkDragSourceSpec = (): DragSourceSpec<
     if (
       monitor.didDrop() &&
       dropResult &&
-      canDropEventSourceSinkOnNode(monitor.getOperation(), props.element, dropResult)
+      canDropEventSourceSinkOnNode(monitor.getOperation().type, props.element, dropResult)
     ) {
       createSinkConnection(props.element.getSource(), dropResult).catch((error) => {
         errorModal({
@@ -84,7 +92,7 @@ export const eventSourceTargetSpec: DropTargetSpec<
   any,
   {},
   { element: GraphElement }
-  > = {
+> = {
   accept: [NODE_DRAG_TYPE, EDGE_DRAG_TYPE, CREATE_CONNECTOR_DROP_TYPE],
   canDrop: () => {
     return false;
