@@ -122,7 +122,7 @@ describe('Interacting with an `AllNamespaces` install mode Operator (Jaeger)', (
     await operatorHubView.viewInstalledOperator();
     await crudView.isLoaded();
 
-    await browser.wait(until.visibilityOf(operatorView.rowForOperator('Jaeger Tracing')), 30000);
+    await browser.wait(until.visibilityOf(operatorView.rowForOperator('Jaeger Tracing')), 60000);
   });
 
   it('creates Operator `Deployment`', async () => {
