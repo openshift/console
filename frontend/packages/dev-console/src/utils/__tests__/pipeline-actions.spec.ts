@@ -24,6 +24,9 @@ export const actionPipelines: Pipeline[] = [
     apiVersion: 'abhiapi/v1',
     kind: 'Pipeline',
     metadata: { name: 'danaerys-targaeryen', namespace: 'corazon' },
+    spec: {
+      tasks: [],
+    },
   },
 ];
 

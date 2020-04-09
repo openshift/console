@@ -7,6 +7,7 @@ import { PipelineModel, PipelineResourceModel } from '../../../../models';
 import { PipelineRunDetails } from '../PipelineRunDetails';
 import { pipelineTestData, PipelineExampleNames, DataState } from '../../../../test/pipeline-data';
 import PipelineRunVisualization from '../PipelineRunVisualization';
+import ResourceLinkList from '../../../pipelines/resource-overview/ResourceLinkList';
 
 const mockPipelineRun =
   pipelineTestData[PipelineExampleNames.SIMPLE_PIPELINE].pipelineRuns[DataState.SUCCESS];
@@ -31,9 +32,8 @@ describe('PipelineRun details page', () => {
   });
 
   it('should render page with pipeline run links', () => {
-    const resources = wrapper
-      .find(ResourceLink)
-      .filter({ kind: referenceForModel(PipelineResourceModel) });
+    const resourceList = wrapper.find(ResourceLinkList).filter({ model: PipelineResourceModel });
+    const resources = resourceList.dive().find(ResourceLink);
     expect(resources).toHaveLength(2);
     expect(resources.get(0).props.name).toBe('mapit-git');
     expect(resources.get(1).props.name).toBe('mapit-image');
@@ -43,18 +43,16 @@ describe('PipelineRun details page', () => {
     const pipelineRun = _.cloneDeep(mockPipelineRun);
     pipelineRun.spec.resources = [];
     wrapper.setProps({ obj: pipelineRun });
-    const resources = wrapper
-      .find(ResourceLink)
-      .filter({ kind: referenceForModel(PipelineResourceModel) });
+    const resourceList = wrapper.find(ResourceLinkList).filter({ model: PipelineResourceModel });
+    const resources = resourceList.dive().find(ResourceLink);
     expect(resources).toHaveLength(0);
   });
 
   it('should not render page with pipeline run links if resources is undefined', () => {
     const pipelineRun = _.omit(_.cloneDeep(mockPipelineRun), 'spec.resources');
     wrapper.setProps({ obj: pipelineRun });
-    const resources = wrapper
-      .find(ResourceLink)
-      .filter({ kind: referenceForModel(PipelineResourceModel) });
+    const resourceList = wrapper.find(ResourceLinkList).filter({ model: PipelineResourceModel });
+    const resources = resourceList.dive().find(ResourceLink);
     expect(resources).toHaveLength(0);
   });
 });

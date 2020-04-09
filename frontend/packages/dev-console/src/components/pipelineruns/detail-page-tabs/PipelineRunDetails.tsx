@@ -1,9 +1,10 @@
 import * as React from 'react';
 import { SectionHeading, ResourceSummary, ResourceLink } from '@console/internal/components/utils';
 import { referenceForModel } from '@console/internal/module/k8s';
-import PipelineRunVisualization from './PipelineRunVisualization';
 import { PipelineRun, PipelineRunReferenceResource } from '../../../utils/pipeline-augment';
 import { PipelineModel, PipelineResourceModel } from '../../../models';
+import ResourceLinkList from '../../pipelines/resource-overview/ResourceLinkList';
+import PipelineRunVisualization from './PipelineRunVisualization';
 import TriggeredBySection from './TriggeredBySection';
 
 import './TriggeredBySection.scss';
@@ -14,8 +15,11 @@ export interface PipelineRunDetailsProps {
 
 export const PipelineRunDetails: React.FC<PipelineRunDetailsProps> = ({ obj: pipelineRun }) => {
   // FIXME: If they are inline resources, we are not going to render them
-  const unfilteredResources = pipelineRun?.spec?.resources as PipelineRunReferenceResource[];
-  const renderResources = unfilteredResources?.filter(({ resourceRef }) => !!resourceRef);
+  const unfilteredResources = pipelineRun.spec.resources as PipelineRunReferenceResource[];
+  const renderResources =
+    unfilteredResources
+      ?.filter(({ resourceRef }) => !!resourceRef)
+      .map((resource) => resource.resourceRef.name) || [];
 
   return (
     <div className="co-m-pane__body odc-pipeline-run-details">
@@ -37,28 +41,12 @@ export const PipelineRunDetails: React.FC<PipelineRunDetailsProps> = ({ obj: pip
             </dd>
           </dl>
           <TriggeredBySection pipelineRun={pipelineRun} />
-          {renderResources?.length > 0 && (
-            <>
-              <SectionHeading text="Pipeline Resources" />
-              <dl>
-                {renderResources.map((res) => {
-                  return (
-                    <React.Fragment key={res.resourceRef.name}>
-                      <dt>Name: {res.resourceRef.name}</dt>
-                      <dd>
-                        <ResourceLink
-                          kind={referenceForModel(PipelineResourceModel)}
-                          name={res.resourceRef.name}
-                          namespace={pipelineRun.metadata.namespace}
-                          inline
-                        />
-                      </dd>
-                    </React.Fragment>
-                  );
-                })}
-              </dl>
-            </>
-          )}
+          <br />
+          <ResourceLinkList
+            model={PipelineResourceModel}
+            links={renderResources}
+            namespace={pipelineRun.metadata.namespace}
+          />
         </div>
       </div>
     </div>
