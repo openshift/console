@@ -20,6 +20,7 @@ export type KnativeServiceProps = {
   highlight?: boolean;
   canDrop?: boolean;
   dropTarget?: boolean;
+  edgeDragging?: boolean;
 } & WithSelectionProps &
   WithDndDropProps &
   WithContextMenuProps &

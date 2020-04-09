@@ -16,10 +16,10 @@ import GraphComponent from './GraphComponent';
 import { workloadContextMenu, groupContextMenu, graphContextMenu } from './nodeContextMenu';
 import {
   NodeComponentProps,
-  graphWorkloadDropTargetSpec,
+  graphDropTargetSpec,
   nodeDragSourceSpec,
   nodeDropTargetSpec,
-  groupWorkloadDropTargetSpec,
+  applicationGroupDropTargetSpec,
   edgeDragSourceSpec,
   removeConnectorCallback,
   MOVE_CONNECTOR_DROP_TYPE,
@@ -44,7 +44,7 @@ class ComponentFactory extends AbstractSBRComponentFactory {
     return (kind, type): React.ComponentType<{ element: GraphElement }> | undefined => {
       switch (type) {
         case TYPE_APPLICATION_GROUP:
-          return withDndDrop(groupWorkloadDropTargetSpec)(
+          return withDndDrop(applicationGroupDropTargetSpec)(
             withSelection(false, true)(withContextMenu(groupContextMenu)(Application)),
           );
         case TYPE_WORKLOAD:
@@ -75,7 +75,7 @@ class ComponentFactory extends AbstractSBRComponentFactory {
         default:
           switch (kind) {
             case ModelKind.graph:
-              return withDndDrop(graphWorkloadDropTargetSpec)(
+              return withDndDrop(graphDropTargetSpec)(
                 withPanZoom()(
                   withSelection(false, true)(withContextMenu(graphContextMenu)(GraphComponent)),
                 ),

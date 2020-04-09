@@ -19,6 +19,7 @@ type ApplicationProps = {
   canDrop?: boolean;
   dropTarget?: boolean;
   dragging?: boolean;
+  dragRegroupable?: boolean;
 } & WithSelectionProps &
   WithDndDropProps &
   WithContextMenuProps;
@@ -31,21 +32,21 @@ const ObservedApplication: React.FC<ApplicationProps> = ({
   droppable,
   canDrop,
   dropTarget,
+  dragRegroupable,
   onContextMenu,
   contextMenuOpen,
   dragging,
 }) => {
   const needsHintRef = React.useRef<boolean>(false);
-
   React.useEffect(() => {
-    const needsHint = dropTarget && !canDrop;
+    const needsHint = dropTarget && !canDrop && dragRegroupable;
     if (needsHint !== needsHintRef.current) {
       needsHintRef.current = needsHint;
       element
         .getController()
         .fireEvent(SHOW_GROUPING_HINT_EVENT, element, needsHint ? <RegroupHint /> : null);
     }
-  }, [dropTarget, canDrop, element]);
+  }, [dropTarget, canDrop, element, dragRegroupable]);
 
   if (element.isCollapsed()) {
     return (

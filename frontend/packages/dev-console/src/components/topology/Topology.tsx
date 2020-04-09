@@ -28,7 +28,7 @@ import { RootState } from '@console/internal/redux';
 import { useAddToProjectAccess } from '../../utils/useAddToProjectAccess';
 import { getActiveApplication } from '@console/internal/reducers/ui';
 import { getEventSourceStatus } from '@console/knative-plugin/src/topology/knative-topology-utils';
-import KnativeComponentFactory from '@console/knative-plugin/src/topology/knativeComponentFactory';
+import KnativeComponentFactory from '@console/knative-plugin/src/topology/components/knativeComponentFactory';
 import TopologySideBar from './TopologySideBar';
 import {
   GraphData,

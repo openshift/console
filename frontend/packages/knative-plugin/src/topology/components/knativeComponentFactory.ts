@@ -12,12 +12,10 @@ import {
   NodeComponentProps,
   withContextMenu,
   withNoDrop,
-  edgeDragSourceSpec,
-  graphEventSourceDropTargetSpec,
-  MOVE_EV_SRC_CONNECTOR_DROP_TYPE,
   nodeDragSourceSpec,
   withEditReviewAccess,
   nodeContextMenu,
+  registerEditOperation,
 } from '@console/dev-console/src/components/topology';
 import {
   TYPE_EVENT_SOURCE,
@@ -25,15 +23,26 @@ import {
   TYPE_KNATIVE_REVISION,
   TYPE_KNATIVE_SERVICE,
   TYPE_REVISION_TRAFFIC,
-} from './const';
-import KnativeService from './components/groups/KnativeService';
-import RevisionNode from './components/nodes/RevisionNode';
-import TrafficLink from './components/edges/TrafficLink';
-import EventSourceLink from './components/edges/EventSourceLink';
-import EventSource from './components/nodes/EventSource';
-import { createSinkConnection } from './knative-topology-utils';
+} from '../const';
+import KnativeService from './groups/KnativeService';
+import RevisionNode from './nodes/RevisionNode';
+import TrafficLink from './edges/TrafficLink';
+import EventSourceLink from './edges/EventSourceLink';
+import EventSource from './nodes/EventSource';
+import {
+  eventSourceLinkDragSourceSpec,
+  eventSourceTargetSpec,
+  knativeServiceDropTargetSpec,
+} from './knativeComponentUtils';
+
+const MOVE_EV_SRC_CONNECTOR_OPERATION = 'moveeventsourceconnector';
 
 class KnativeComponentFactory extends AbstractSBRComponentFactory {
+  constructor(serviceBinding: boolean) {
+    super(serviceBinding);
+    registerEditOperation(MOVE_EV_SRC_CONNECTOR_OPERATION);
+  }
+
   getFactory = (): TopologyComponentFactory => {
     return (kind, type): React.ComponentType<{ element: GraphElement }> | undefined => {
       switch (type) {
@@ -44,7 +53,7 @@ class KnativeComponentFactory extends AbstractSBRComponentFactory {
               any,
               { droppable?: boolean; hover?: boolean; canDrop?: boolean; dropTarget?: boolean },
               NodeComponentProps
-            >(graphEventSourceDropTargetSpec)(
+            >(knativeServiceDropTargetSpec)(
               withEditReviewAccess('update')(
                 withSelection(false, true)(withContextMenu(nodeContextMenu)(KnativeService)),
               ),
@@ -56,7 +65,11 @@ class KnativeComponentFactory extends AbstractSBRComponentFactory {
               withSelection(
                 false,
                 true,
-              )(withContextMenu(nodeContextMenu)(withNoDrop()(EventSource))),
+              )(
+                withContextMenu(nodeContextMenu)(
+                  withDndDrop<any, any, {}, NodeComponentProps>(eventSourceTargetSpec)(EventSource),
+                ),
+              ),
             ),
           );
         case TYPE_KNATIVE_REVISION:
@@ -69,13 +82,7 @@ class KnativeComponentFactory extends AbstractSBRComponentFactory {
         case TYPE_REVISION_TRAFFIC:
           return TrafficLink;
         case TYPE_EVENT_SOURCE_LINK:
-          return withTargetDrag(
-            edgeDragSourceSpec(
-              MOVE_EV_SRC_CONNECTOR_DROP_TYPE,
-              this.serviceBinding,
-              createSinkConnection,
-            ),
-          )(EventSourceLink);
+          return withTargetDrag(eventSourceLinkDragSourceSpec())(EventSourceLink);
         default:
           return undefined;
       }

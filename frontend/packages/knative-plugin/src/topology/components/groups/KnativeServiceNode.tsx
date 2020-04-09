@@ -29,6 +29,7 @@ type KnativeServiceNodeProps = {
   highlight?: boolean;
   canDrop?: boolean;
   dropTarget?: boolean;
+  edgeDragging?: boolean;
   editAccess: boolean;
 } & WithSelectionProps &
   WithDndDropProps &
@@ -43,6 +44,7 @@ const KnativeServiceNode: React.FC<KnativeServiceNodeProps> = ({
   contextMenuOpen,
   canDrop,
   dropTarget,
+  edgeDragging,
   dndDropRef,
   editAccess,
   onHideCreateConnector,
@@ -78,7 +80,7 @@ const KnativeServiceNode: React.FC<KnativeServiceNodeProps> = ({
       onClick={onSelect}
       className={classNames('odc-knative-service', {
         'is-dragging': dragging,
-        'is-highlight': canDrop,
+        'is-highlight': canDrop || edgeDragging,
         'is-selected': selected,
         'is-dropTarget': canDrop && dropTarget,
         'is-filtered': filtered,
