@@ -17,7 +17,11 @@ import { fetchHelmReleases } from '../helm-utils';
 import HelmReleaseResources from './resources/HelmReleaseResources';
 import HelmReleaseOverview from './overview/HelmReleaseOverview';
 import HelmReleaseHistory from './history/HelmReleaseHistory';
-import { deleteHelmRelease, upgradeHelmRelease } from '../../../actions/modify-helm-release';
+import {
+  deleteHelmRelease,
+  upgradeHelmRelease,
+  rollbackHelmRelease,
+} from '../../../actions/modify-helm-release';
 import HelmReleaseNotes from './HelmReleaseNotes';
 import { HelmRelease } from '../helm-types';
 
@@ -66,6 +70,7 @@ export const LoadedHelmReleaseDetails: React.FC<LoadedHelmReleaseDetailsProps> =
   );
 
   const menuActions = [
+    () => rollbackHelmRelease(releaseName, namespace),
     () => upgradeHelmRelease(releaseName, namespace),
     () => deleteHelmRelease(releaseName, namespace, `/helm-releases/ns/${namespace}`),
   ];

@@ -26,3 +26,10 @@ export const upgradeHelmRelease = (releaseName: string, namespace: string) => ({
     history.push(`/helm-releases/ns/${namespace}/${releaseName}/upgrade`);
   },
 });
+
+export const rollbackHelmRelease = (releaseName: string, namespace: string) => ({
+  label: 'Rollback',
+  callback: () => {
+    history.push(`/helm-releases/ns/${namespace}/${releaseName}/rollback`);
+  },
+});
