@@ -21,13 +21,19 @@ export const getDefinitionKey = _.memoize(
   referenceForModel,
 );
 
+// Cache parsed swagger to avoid reparsing the JSON each call.
+let swagger: SwaggerDefinitions;
 export const getStoredSwagger = (): SwaggerDefinitions => {
+  if (swagger) {
+    return swagger;
+  }
   const json = window.localStorage.getItem(SWAGGER_LOCAL_STORAGE_KEY);
   if (!json) {
     return null;
   }
   try {
-    return JSON.parse(json);
+    swagger = JSON.parse(json);
+    return swagger;
   } catch (e) {
     // eslint-disable-next-line no-console
     console.error('Could not parse swagger JSON.', e);
@@ -35,17 +41,23 @@ export const getStoredSwagger = (): SwaggerDefinitions => {
   }
 };
 
-const storeSwagger = (swagger: SwaggerAPISpec) => {
+const storeSwagger = (definitions: SwaggerDefinitions) => {
   // Only store definitions to reduce the document size.
-  const json = JSON.stringify(swagger.definitions || {});
+  const json = JSON.stringify(definitions);
   window.localStorage.setItem(SWAGGER_LOCAL_STORAGE_KEY, json);
+  swagger = definitions;
 };
 
 export const fetchSwagger = async (): Promise<SwaggerDefinitions> => {
   try {
-    const swagger: SwaggerAPISpec = await coFetchJSON('api/kubernetes/openapi/v2');
-    storeSwagger(swagger);
-    return swagger.definitions;
+    const response: SwaggerAPISpec = await coFetchJSON('api/kubernetes/openapi/v2');
+    if (!response.definitions) {
+      // eslint-disable-next-line no-console
+      console.error('Definitions missing in OpenAPI response.');
+      return null;
+    }
+    storeSwagger(response.definitions);
+    return response.definitions;
   } catch (e) {
     // eslint-disable-next-line no-console
     console.error('Could not get OpenAPI definitions', e);
