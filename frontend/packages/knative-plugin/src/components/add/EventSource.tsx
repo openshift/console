@@ -1,5 +1,4 @@
 import * as React from 'react';
-import * as _ from 'lodash';
 import { Formik } from 'formik';
 import { connect } from 'react-redux';
 import { history } from '@console/internal/components/utils';

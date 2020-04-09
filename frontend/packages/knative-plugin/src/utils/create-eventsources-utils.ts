@@ -6,6 +6,7 @@ import { annotations } from '@console/dev-console/src/utils/shared-submit-utils'
 import { EventSources, EventSourceFormData } from '../components/add/import-types';
 import { ServiceModel } from '../models';
 import { getKnativeEventSourceIcon } from './get-knative-icon';
+import { NormalizedEventSources } from '../components/add/import-types';
 
 export const getEventSourcesDepResource = (formData: EventSourceFormData): K8sResourceKind => {
   const {
@@ -139,7 +140,10 @@ export const getKnativeEventingAccess = async (model: K8sKind, namespace: string
   return canCreateEventSource?.status?.allowed;
 };
 
-export const getEventSourceList = (eventSourceModelList: K8sKind[], namespace: string) => {
+export const getEventSourceList = (
+  eventSourceModelList: K8sKind[],
+  namespace: string,
+): NormalizedEventSources => {
   const eventSourceList = _.reduce(
     eventSourceModelList,
     (accumulator, eventSourceModel) => {

@@ -37,6 +37,7 @@ const EventSourcesSelector: React.FC<EventSourcesSelectorProps> = ({
         loadingItems={!eventSourceItems}
         name="type"
         onSelect={handleItemChange}
+        autoSelect
       />
     </FormSection>
   );

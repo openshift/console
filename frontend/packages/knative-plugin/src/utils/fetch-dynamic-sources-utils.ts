@@ -48,7 +48,7 @@ export const getSourcesModel = async () => {
         color: knativeEventingColor.value,
       };
     });
-    eventSourceData.models = [...eventSourceModelList, ...eventSourceData.models];
+    eventSourceData.models = eventSourceModelList;
   } catch {
     eventSourceModelList = [
       EventSourceCronJobModel,
@@ -58,6 +58,6 @@ export const getSourcesModel = async () => {
       EventSourceKafkaModel,
       EventSourceCamelModel,
     ];
-    eventSourceData.models = [...eventSourceModelList, ...eventSourceData.models];
+    eventSourceData.models = eventSourceModelList;
   }
 };

@@ -24,6 +24,7 @@ interface ItemSelectorFieldProps {
   loadingItems?: boolean;
   recommended?: string;
   label?: string;
+  autoSelect?: boolean;
   onSelect?: (name: string) => void;
 }
 
@@ -34,6 +35,7 @@ const ItemSelectorField: React.FC<ItemSelectorFieldProps> = ({
   recommended,
   onSelect,
   label,
+  autoSelect,
 }) => {
   const [selected, { error: selectedError, touched: selectedTouched }] = useField(name);
   const { setFieldValue, setFieldTouched, validateForm } = useFormikContext<FormikValues>();
@@ -57,7 +59,11 @@ const ItemSelectorField: React.FC<ItemSelectorFieldProps> = ({
     if (!selected.value && recommended) {
       handleItemChange(recommended);
     }
-  }, [itemCount, itemList, handleItemChange, selected.value, recommended]);
+    if (!selected.value && autoSelect && !_.isEmpty(itemList)) {
+      const image = _.get(_.keys(itemList), 0);
+      handleItemChange(itemList[image]?.name);
+    }
+  }, [autoSelect, itemCount, itemList, handleItemChange, selected.value, recommended]);
 
   if (itemCount === 1) {
     return null;
