@@ -17,6 +17,10 @@ export const finalizeImportProviderStateUpdate = (options: UpdateOptions) => {
     return;
   }
 
+  if (isStepValid(state, id, VMWizardTab.RESULT)) {
+    return;
+  }
+
   if (isStepValid(state, id, VMWizardTab.IMPORT_PROVIDERS)) {
     const isWizardValid = !ALL_VM_WIZARD_TABS.filter((tab) => tab !== VMWizardTab.RESULT).some(
       (tab) => !isStepValid(state, id, tab),

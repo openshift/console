@@ -25,19 +25,16 @@ export class VMImportOvirtSourceWrappper extends Wrapper<
 
   setNetworkMappings = (networkMappings: NetworkMapping[]) => {
     this.data.networkMappings = networkMappings;
-    this.clearIfEmpty('networkMappings');
     return this;
   };
 
   setStorageMappings = (storageMappings: StorageMapping[]) => {
     this.data.storageMappings = storageMappings;
-    this.clearIfEmpty('storageMappings');
     return this;
   };
 
   setDiskMappings = (diskMappings: DiskMapping[]) => {
     this.data.diskMappings = diskMappings;
-    this.clearIfEmpty('diskMappings');
     return this;
   };
 }

@@ -8,13 +8,18 @@ import { VMMultiStatus } from '../../types';
 import {
   VM_STATUS_IMPORTING,
   VM_STATUS_V2V_CONVERSION_IN_PROGRESS,
+  VM_STATUS_V2V_VM_IMPORT_IN_PROGRESS,
 } from '../../statuses/vm/constants';
 import { OS_WINDOWS_PREFIX } from '../../constants';
 import { isVMIRunning } from '../vmi/basic';
 import { isVMRunning, getOperatingSystem } from './selectors';
 import { VMILikeEntityKind } from '../../types/vmLike';
 
-const IMPORTING_STATUSES = new Set([VM_STATUS_IMPORTING, VM_STATUS_V2V_CONVERSION_IN_PROGRESS]);
+const IMPORTING_STATUSES = new Set([
+  VM_STATUS_IMPORTING,
+  VM_STATUS_V2V_CONVERSION_IN_PROGRESS,
+  VM_STATUS_V2V_VM_IMPORT_IN_PROGRESS,
+]);
 
 export const isVMImporting = (status: VMMultiStatus): boolean =>
   status && IMPORTING_STATUSES.has(status.status);
@@ -23,7 +28,7 @@ export const isVMRunningWithVMI = ({ vm, vmi }: { vm: VMKind; vmi: VMIKind }): b
   isVMRunning(vm) && !_.isEmpty(vmi);
 
 export const isVMStarting = (vm: VMKind, vmi: VMIKind) =>
-  (isVMRunning(vm) || vmi) && !isVMIRunning(vmi);
+  (isVMRunning(vm) || !_.isEmpty(vmi)) && !isVMIRunning(vmi);
 
 export const isWindows = (vm: VMKind): boolean =>
   (getOperatingSystem(vm) || '').startsWith(OS_WINDOWS_PREFIX);

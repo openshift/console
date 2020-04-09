@@ -30,6 +30,7 @@ import { fromNow } from '@console/internal/components/utils/datetime';
 import { K8sResourceKind, PodKind } from '@console/internal/module/k8s';
 import { VMStatus } from '../vm-status/vm-status';
 import {
+  VirtualMachineImportModel,
   VirtualMachineInstanceMigrationModel,
   VirtualMachineInstanceModel,
   VirtualMachineModel,
@@ -48,6 +49,7 @@ import { getVMWizardCreateLink } from '../../utils/url';
 import { VMWizardActionLabels, VMWizardMode, VMWizardName } from '../../constants/vm';
 
 import './vm.scss';
+import { VMImportKind } from '../../types/vm-import/ovirt/vm-import';
 
 const tableColumnClasses = [
   classNames('col-lg-2', 'col-md-2', 'col-sm-6', 'col-xs-6'),
@@ -102,9 +104,10 @@ const VMRow: RowFunction<
   {
     pods: PodKind[];
     migrations: K8sResourceKind[];
+    vmImports: VMImportKind[];
     vmiLookup: K8sEntityMap<VMIKind>;
   }
-> = ({ obj, customData: { pods, migrations }, index, key, style }) => {
+> = ({ obj, customData: { pods, migrations, vmImports }, index, key, style }) => {
   const { vm, vmi, migration } = obj;
   const { name, namespace, node, creationTimestamp, uid, vmStatus } = obj.metadata;
   const dimensify = dimensifyRow(tableColumnClasses);
@@ -128,7 +131,7 @@ const VMRow: RowFunction<
         <ResourceLink kind={NamespaceModel.kind} name={namespace} title={namespace} />
       </TableData>
       <TableData className={dimensify()}>
-        <VMStatus vm={vm} vmi={vmi} pods={pods} migrations={migrations} />
+        <VMStatus vm={vm} vmi={vmi} pods={pods} migrations={migrations} vmImports={vmImports} />
       </TableData>
       <TableData className={dimensify()}>{fromNow(creationTimestamp)}</TableData>
       <TableData className={dimensify()}>
@@ -155,6 +158,7 @@ const VMList: React.FC<React.ComponentProps<typeof Table> & VMListProps> = (prop
         customData={{
           pods: getLoadedData(resources.pods, []),
           migrations: getLoadedData(resources.migrations, []),
+          vmImports: getLoadedData(resources.vmImports, []),
         }}
       />
     </div>
@@ -207,6 +211,12 @@ export const WrappedVirtualMachinesPage: React.FC<VirtualMachinesPageProps> = (p
       namespace,
       prop: 'migrations',
     },
+    {
+      kind: VirtualMachineImportModel.kind,
+      namespace,
+      prop: 'vmImports',
+      optional: true,
+    },
   ];
 
   const flatten = ({
@@ -214,18 +224,22 @@ export const WrappedVirtualMachinesPage: React.FC<VirtualMachinesPageProps> = (p
     vmis,
     pods,
     migrations,
+    vmImports,
   }: {
     vms: FirehoseResult<VMKind[]>;
     vmis: FirehoseResult<VMIKind[]>;
     pods: FirehoseResult<PodKind[]>;
     migrations: FirehoseResult;
+    vmImports: FirehoseResult<VMImportKind[]>;
   }) => {
     const loadedVMs = getLoadedData(vms);
     const loadedVMIs = getLoadedData(vmis);
     const loadedPods = getLoadedData(pods);
     const loadedMigrations = getLoadedData(migrations);
+    const loadedVMImports = getLoadedData(vmImports);
+    const isVMImportLoaded = !vmImports || vmImports.loaded; // go in when CRD missing
 
-    if (!loadedVMs || !loadedVMIs || !loadedPods || !loadedMigrations) {
+    if (![loadedVMs, loadedVMIs, loadedPods, loadedMigrations, isVMImportLoaded].every((v) => v)) {
       return null;
     }
 
@@ -243,7 +257,13 @@ export const WrappedVirtualMachinesPage: React.FC<VirtualMachinesPageProps> = (p
           ? { vm: obj as VMKind, vmi: vmisLookup[lookupID] as VMIKind }
           : { vm: null, vmi: obj as VMIKind };
 
-        const vmStatus = getVMStatus({ vm, vmi, pods: loadedPods, migrations: loadedMigrations });
+        const vmStatus = getVMStatus({
+          vm,
+          vmi,
+          pods: loadedPods,
+          migrations: loadedMigrations,
+          vmImports: loadedVMImports,
+        });
 
         return {
           metadata: {
@@ -318,6 +338,7 @@ type VMListProps = {
     pods: FirehoseResult<PodKind[]>;
     migrations: FirehoseResult;
     vmis: FirehoseResult<VMIKind[]>;
+    vmImports?: FirehoseResult<VMImportKind[]>;
   };
 };
 

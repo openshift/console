@@ -80,14 +80,12 @@ const getDiskMappings = (storage: VMWizardStorage[]) =>
     .filter(({ type, importData }) => type === VMWizardStorageType.V2V_OVIRT_IMPORT && importData)
     .map(({ persistentVolumeClaim, importData: { id } }) => {
       const pvcWrapper = new PersistentVolumeClaimWrapper(persistentVolumeClaim);
-      const diskMapping: DiskMapping = {
+      return {
         source: { id },
-        target: {},
-      };
-      if (pvcWrapper.getStorageClassName()) {
-        diskMapping.target.name = pvcWrapper.getStorageClassName();
-      }
-      return diskMapping;
+        target: {
+          name: pvcWrapper.getStorageClassName() || null,
+        },
+      } as DiskMapping;
     });
 
 const createVMImport = async (
@@ -119,6 +117,7 @@ const createVMImport = async (
     .getOvirtSourceWrapper()
 
     .setVM(vm?.id)
+    .setStorageMappings([]) // TODO may not be needed in the future to send empty
     .setNetworkMappings(getNetworkMappings(networks))
     .setDiskMappings(getDiskMappings(storages));
 

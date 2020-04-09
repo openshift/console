@@ -6,10 +6,11 @@ import { VMKind, VMIKind } from '../../types';
 import { getVMStatus } from '../../statuses/vm/vm';
 import { getVMImporterPods } from '../../selectors/pod/selectors';
 import { VMStatus } from './vm-status';
+import { VMImportKind } from '../../types/vm-import/ovirt/vm-import';
 
 export const VMStatuses: React.FC<VMStatusesProps> = (props) => {
-  const { vm, vmi, pods, migrations } = props;
-  const statusDetail = getVMStatus({ vm, vmi, pods, migrations });
+  const { vm, vmi, pods, migrations, vmImports } = props;
+  const statusDetail = getVMStatus({ vm, vmi, pods, migrations, vmImports });
   const importerPods = getVMImporterPods(vm, pods);
 
   switch (statusDetail.status) {
@@ -34,4 +35,5 @@ type VMStatusesProps = {
   vmi?: VMIKind;
   pods?: PodKind[];
   migrations?: K8sResourceKind[];
+  vmImports?: VMImportKind[];
 };

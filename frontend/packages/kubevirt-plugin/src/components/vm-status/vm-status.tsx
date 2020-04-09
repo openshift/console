@@ -45,17 +45,24 @@ import {
   VM_STATUS_ERROR,
   VM_STATUS_IMPORT_PENDING,
   VM_STATUS_PAUSED,
+  VM_STATUS_V2V_VM_IMPORT_ERROR,
+  VM_STATUS_V2V_VM_IMPORT_IN_PROGRESS,
 } from '../../statuses/vm/constants';
 import { VMKind, VMIKind } from '../../types';
 import { getVMLikeModel } from '../../selectors/vm';
 
 import './vm-status.scss';
+import { VMImportKind } from '../../types/vm-import/ovirt/vm-import';
 
 const VIEW_POD_OVERVIEW = 'View pod overview';
 const VIEW_VM_EVENTS = 'View events';
 const IMPORTING_VMWARE_MESSAGE =
   'The virtual machine is being imported from VMware. Disks will be converted to the libvirt format.';
 const IMPORTING_ERROR_VMWARE_MESSAGE = 'The virtual machine could not be imported from VMware.';
+const IMPORTING_OVIRT_MESSAGE =
+  'The virtual machine is being imported from Red Hat Virtualization.';
+const IMPORTING_ERROR_OVIRT_MESSAGE =
+  'The virtual machine could not be imported from Red Hat Virtualization.';
 const IMPORTING_MESSAGE =
   'The virtual machine is being imported. Disks are being copied from the source image.';
 const IMPORTING_ERROR_MESSAGE = 'The virtual machine could not be imported.';
@@ -99,12 +106,13 @@ export const VMStatus: React.FC<VMStatusProps> = ({
   vm,
   vmi,
   pods,
+  vmImports,
   migrations,
   verbose = false,
 }) => {
   const vmLike = vm || vmi;
 
-  const statusDetail = getVMStatus({ vm, vmi, pods, migrations });
+  const statusDetail = getVMStatus({ vm, vmi, pods, migrations, vmImports });
   const linkToVMEvents = `${resourcePath(
     getVMLikeModel(vmLike).kind,
     getName(vmLike),
@@ -115,7 +123,8 @@ export const VMStatus: React.FC<VMStatusProps> = ({
     getName(statusDetail.launcherPod),
     getNamespace(statusDetail.launcherPod),
   )}`; // to default tab
-  const additionalText = verbose ? getAdditionalImportText(statusDetail.pod) : null;
+  const additionalText =
+    verbose && statusDetail.pod ? getAdditionalImportText(statusDetail.pod) : null;
 
   const unpauseVM = async (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     event.preventDefault();
@@ -123,6 +132,31 @@ export const VMStatus: React.FC<VMStatusProps> = ({
   };
 
   switch (statusDetail.status) {
+    case VM_STATUS_V2V_VM_IMPORT_ERROR:
+      return (
+        <ErrorStatus title="Import error (Red Hat Virtualization)">
+          <VMStatusPopoverContent
+            message={IMPORTING_ERROR_OVIRT_MESSAGE}
+            linkMessage={VIEW_VM_EVENTS}
+            linkTo={linkToVMEvents}
+          >
+            {statusDetail.message} {additionalText}
+          </VMStatusPopoverContent>
+        </ErrorStatus>
+      );
+    case VM_STATUS_V2V_VM_IMPORT_IN_PROGRESS:
+      return (
+        <ProgressStatus title="Importing (Red Hat Virtualization)">
+          <VMStatusPopoverContent
+            message={IMPORTING_OVIRT_MESSAGE}
+            linkMessage={VIEW_VM_EVENTS}
+            linkTo={linkToVMEvents}
+            progress={statusDetail.progress}
+          >
+            {statusDetail.message} {additionalText}
+          </VMStatusPopoverContent>
+        </ProgressStatus>
+      );
     case VM_STATUS_V2V_CONVERSION_PENDING:
       return (
         <PendingStatus title="Import pending (VMware)">
@@ -304,5 +338,6 @@ type VMStatusProps = {
   vmi?: VMIKind;
   pods?: PodKind[];
   migrations?: K8sResourceKind[];
+  vmImports?: VMImportKind[];
   verbose?: boolean;
 };
