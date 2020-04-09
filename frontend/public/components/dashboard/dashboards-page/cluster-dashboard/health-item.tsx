@@ -84,11 +84,6 @@ export const OperatorHealthItem = withDashboardResources<OperatorHealthItemProps
       };
     });
 
-    const PopupComponentCallback = React.useCallback(
-      () => <OperatorsPopup resources={resources} operatorExtensions={operatorExtensions} />,
-      [resources, operatorExtensions],
-    );
-
     const operatorsHealth = getOperatorsHealthState(healthStatuses);
 
     return (
@@ -97,8 +92,9 @@ export const OperatorHealthItem = withDashboardResources<OperatorHealthItemProps
         state={operatorsHealth.health}
         details={operatorsHealth.detailMessage}
         popupTitle="Operator status"
-        PopupComponent={PopupComponentCallback}
-      />
+      >
+        <OperatorsPopup resources={resources} operatorExtensions={operatorExtensions} />
+      </HealthItem>
     );
   },
 );
@@ -137,28 +133,22 @@ export const URLHealthItem = withDashboardResources<URLHealthItemProps>(
       : null;
     const healthState = subsystem.healthHandler(healthResult, healthResultError, k8sResult);
 
-    const PopupComponentCallback = subsystem.popupComponent
-      ? React.useCallback(
-          () => (
-            <AsyncComponent
-              loader={subsystem.popupComponent}
-              healthResult={healthResult}
-              healthResultError={healthResultError}
-              k8sResult={k8sResult}
-            />
-          ),
-          [subsystem, healthResult, healthResultError, k8sResult],
-        )
-      : null;
-
     return (
       <HealthItem
         title={subsystem.title}
         state={healthState.state}
         details={healthState.message}
         popupTitle={subsystem.popupTitle}
-        PopupComponent={PopupComponentCallback}
-      />
+      >
+        {subsystem.popupComponent && (
+          <AsyncComponent
+            loader={subsystem.popupComponent}
+            healthResult={healthResult}
+            healthResultError={healthResultError}
+            k8sResult={k8sResult}
+          />
+        )}
+      </HealthItem>
     );
   },
 );
@@ -212,27 +202,21 @@ export const PrometheusHealthItem = withDashboardResources<PrometheusHealthItemP
       : null;
     const healthState = subsystem.healthHandler(queryResults, k8sResult);
 
-    const PopupComponentCallback = subsystem.popupComponent
-      ? React.useCallback(
-          () => (
-            <AsyncComponent
-              loader={subsystem.popupComponent}
-              responses={queryResults}
-              k8sResult={k8sResult}
-            />
-          ),
-          [k8sResult, queryResults, subsystem.popupComponent],
-        )
-      : null;
-
     return (
       <HealthItem
         title={subsystem.title}
         state={healthState.state}
         details={healthState.message}
         popupTitle={subsystem.popupTitle}
-        PopupComponent={PopupComponentCallback}
-      />
+      >
+        {subsystem.popupComponent && (
+          <AsyncComponent
+            loader={subsystem.popupComponent}
+            responses={queryResults}
+            k8sResult={k8sResult}
+          />
+        )}
+      </HealthItem>
     );
   },
 );
@@ -243,19 +227,15 @@ export const ResourceHealthItem: React.FC<ResourceHealthItemProps> = ({ subsyste
 
   const healthState = healthHandler(resourcesResult);
 
-  const PopupComponentCallback = React.useCallback(
-    () => <AsyncComponent loader={popupComponent} {...resourcesResult} />,
-    [popupComponent, resourcesResult],
-  );
-
   return (
     <HealthItem
       title={title}
       state={healthState.state}
       details={healthState.message}
       popupTitle={popupTitle}
-      PopupComponent={popupComponent ? PopupComponentCallback : null}
-    />
+    >
+      {popupComponent && <AsyncComponent loader={popupComponent} {...resourcesResult} />}
+    </HealthItem>
   );
 };
 

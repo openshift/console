@@ -6,6 +6,8 @@ import {
   InfoCircleIcon,
   UnknownIcon,
   SyncAltIcon,
+  ResourcesAlmostFullIcon,
+  ResourcesFullIcon,
 } from '@patternfly/react-icons';
 import {
   global_warning_color_100 as warningColor,
@@ -37,6 +39,14 @@ export const GrayUnknownIcon: React.FC<ColoredIconProps> = ({ className, alt }) 
 
 export const BlueSyncIcon: React.FC<ColoredIconProps> = ({ className, alt }) => (
   <SyncAltIcon color={blueInfoColor.value} className={className} alt={alt} />
+);
+
+export const RedResourcesFullIcon: React.FC<ColoredIconProps> = ({ className, alt }) => (
+  <ResourcesFullIcon color={dangerColor.value} className={className} alt={alt} />
+);
+
+export const YellowResourcesAlmostFullIcon: React.FC<ColoredIconProps> = ({ className, alt }) => (
+  <ResourcesAlmostFullIcon color={warningColor.value} className={className} alt={alt} />
 );
 
 export type ColoredIconProps = {

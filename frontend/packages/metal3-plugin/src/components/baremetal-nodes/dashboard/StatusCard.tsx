@@ -6,11 +6,12 @@ import DashboardCardHeader from '@console/shared/src/components/dashboard/dashbo
 import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
 import HealthBody from '@console/shared/src/components/dashboard/status-card/HealthBody';
 import { NodeDashboardContext } from '@console/app/src/components/nodes/node-dashboard/NodeDashboardContext';
-import { HealthChecksItem } from '@console/app/src/components/nodes/node-dashboard/StatusCard';
+import { HealthChecksItem } from '@console/app/src/components/nodes/node-dashboard/NodeHealth';
 
 import { BareMetalNodeDashboardContext } from './BareMetalNodeDashboardContext';
 import { bareMetalNodeStatus } from '../../../status/baremetal-node-status';
 import BareMetalNodeStatus from '../BareMetalNodeStatus';
+import NodeAlerts from '@console/app/src/components/nodes/node-dashboard/NodeAlerts';
 
 const StatusCard: React.FC = () => {
   const { obj } = React.useContext(NodeDashboardContext);
@@ -36,6 +37,7 @@ const StatusCard: React.FC = () => {
             </GalleryItem>
           </Gallery>
         </HealthBody>
+        <NodeAlerts />
       </DashboardCardBody>
     </DashboardCard>
   );

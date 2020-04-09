@@ -7,6 +7,7 @@ import UtilizationItem, {
   TopConsumerPopoverProp,
   MultilineUtilizationItem,
   QueryWithDescription,
+  LimitRequested,
 } from '@console/shared/src/components/dashboard/utilization-card/UtilizationItem';
 import UtilizationBody from '@console/shared/src/components/dashboard/utilization-card/UtilizationBody';
 import ConsumerPopover from '@console/shared/src/components/dashboard/utilization-card/TopConsumerPopover';
@@ -175,6 +176,7 @@ export const PrometheusUtilizationItem = withDashboardResources<PrometheusUtiliz
     isDisabled = false,
     limitQuery,
     requestQuery,
+    setLimitReqState,
   }) => {
     let stats: DataPoint[] = [];
     let limitStats: DataPoint[];
@@ -262,6 +264,7 @@ export const PrometheusUtilizationItem = withDashboardResources<PrometheusUtiliz
         query={utilizationQuery}
         max={max && max.length ? max[0].y : null}
         TopConsumerPopover={TopConsumerPopover}
+        setLimitReqState={setLimitReqState}
       />
     );
   },
@@ -522,6 +525,7 @@ type PrometheusUtilizationItemProps = DashboardItemProps &
     requestQuery?: string;
     TopConsumerPopover?: React.ComponentType<TopConsumerPopoverProp>;
     setTimestamps?: (timestamps: Date[]) => void;
+    setLimitReqState?: (state: LimitRequested) => void;
   };
 
 type PrometheusMultilineUtilizationItemProps = DashboardItemProps &

@@ -16,9 +16,9 @@ export const StatusPopupSection: React.FC<StatusPopupSectionProps> = ({
   </>
 );
 
-const Status: React.FC<StatusProps> = ({ title, value, icon, children }) => (
+const Status: React.FC<StatusProps> = ({ value, icon, children }) => (
   <div className="co-status-popup__row">
-    {title || children}
+    {children}
     {!!value && (
       <div className="co-status-popup__status">
         <div className="text-secondary">{value}</div>
@@ -29,7 +29,7 @@ const Status: React.FC<StatusProps> = ({ title, value, icon, children }) => (
 );
 
 type StatusProps = {
-  title?: string;
+  children: React.ReactNode;
   value?: string;
   icon?: React.ReactNode;
 };
