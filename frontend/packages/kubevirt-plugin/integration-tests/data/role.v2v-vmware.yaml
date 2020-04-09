@@ -8,6 +8,7 @@ rules:
 - apiGroups: [""]
   resources: ["configmaps"]
   resourceNames: ["v2v-vmware"]
+  # resourceNames: ["v2v-vmware", "kubevirt-storage-class-defaults"] # workaround for https://bugzilla.redhat.com/show_bug.cgi?id=1784467
   verbs: ["get", "watch"]
 
 ---
