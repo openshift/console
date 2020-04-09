@@ -14,6 +14,7 @@ describe('Create knative Utils', () => {
   it('expect response to be of kind CronJobSource with proper ApiGroup', () => {
     const defaultEventingData = getDefaultEventingData(EventSources.CronJobSource);
     const mockData = _.cloneDeep(defaultEventingData);
+    mockData.apiVersion = 'sources.eventing.knative.dev/v1alpha1';
     const knEventingResource: K8sResourceKind = getEventSourceResource(mockData);
     expect(knEventingResource.kind).toBe(EventSourceCronJobModel.kind);
     expect(knEventingResource.apiVersion).toBe(

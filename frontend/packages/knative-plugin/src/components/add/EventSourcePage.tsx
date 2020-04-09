@@ -2,6 +2,7 @@ import * as React from 'react';
 import { Helmet } from 'react-helmet';
 import { RouteComponentProps } from 'react-router';
 import { PageHeading, Firehose } from '@console/internal/components/utils';
+import { ProjectModel } from '@console/internal/models';
 import NamespacedPage, {
   NamespacedPageVariants,
 } from '@console/dev-console/src/components/NamespacedPage';
@@ -13,7 +14,7 @@ type EventSourcePageProps = RouteComponentProps<{ ns?: string }>;
 const EventSourcePage: React.FC<EventSourcePageProps> = ({ match, location }) => {
   const namespace = match.params.ns;
   const searchParams = new URLSearchParams(location.search);
-  const resources = [{ kind: 'Project', prop: 'projects', isList: true }];
+  const resources = [{ kind: ProjectModel.kind, prop: ProjectModel.id, isList: true }];
   return (
     <NamespacedPage disabled variant={NamespacedPageVariants.light}>
       <Helmet>

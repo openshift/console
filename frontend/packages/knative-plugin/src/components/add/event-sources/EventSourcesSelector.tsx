@@ -8,9 +8,13 @@ import { getEventSourceData } from '../../../utils/create-eventsources-utils';
 
 interface EventSourcesSelectorProps {
   eventSourceList: NormalizedEventSources;
+  handleChange?: (item: string) => void;
 }
 
-const EventSourcesSelector: React.FC<EventSourcesSelectorProps> = ({ eventSourceList }) => {
+const EventSourcesSelector: React.FC<EventSourcesSelectorProps> = ({
+  eventSourceList,
+  handleChange,
+}) => {
   const { setFieldValue, setFieldTouched, validateForm } = useFormikContext<FormikValues>();
   const eventSourceItems = Object.keys(eventSourceList).length;
   const handleItemChange = React.useCallback(
@@ -22,8 +26,9 @@ const EventSourcesSelector: React.FC<EventSourcesSelectorProps> = ({ eventSource
       setFieldValue('name', _.kebabCase(item));
       setFieldTouched('name', true);
       validateForm();
+      handleChange && handleChange(item);
     },
-    [setFieldValue, setFieldTouched, validateForm],
+    [setFieldValue, setFieldTouched, validateForm, handleChange],
   );
   return (
     <FormSection title="Type" fullWidth>

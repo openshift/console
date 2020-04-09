@@ -11,9 +11,11 @@ import ApiServerSection from './event-sources/ApiServerSection';
 import SinkSection from './event-sources/SinkSection';
 import { EventSources } from './import-types';
 import EventSourcesSelector from './event-sources/EventSourcesSelector';
-import { useEventSourceList } from '../../utils/create-eventsources-utils';
 import KafkaSourceSection from './event-sources/KafkaSourceSection';
 import AdvancedSection from './AdvancedSection';
+import { getEventSourceList } from '../../utils/create-eventsources-utils';
+import { eventSourceData } from '../../utils/fetch-dynamic-sources-utils';
+import { KNATIVE_EVENT_SOURCE_APIGROUP } from '../../const';
 
 interface OwnProps {
   namespace: string;
@@ -25,34 +27,52 @@ const EventSourceForm: React.FC<FormikProps<FormikValues> & OwnProps> = ({
   errors,
   handleSubmit,
   handleReset,
+  setFieldValue,
+  setFieldTouched,
   status,
   isSubmitting,
   dirty,
+  validateForm,
   namespace,
   projects,
-}) => (
-  <Form className="co-deploy-image" onSubmit={handleSubmit}>
-    <EventSourcesSelector eventSourceList={useEventSourceList(namespace)} />
-    {values.type === EventSources.CronJobSource && <CronJobSection />}
-    {values.type === EventSources.SinkBinding && <SinkBindingSection />}
-    {values.type === EventSources.ApiServerSource && <ApiServerSection />}
-    {values.type === EventSources.KafkaSource && <KafkaSourceSection />}
-    <SinkSection namespace={namespace} />
-    <AppSection
-      project={values.project}
-      noProjectsAvailable={projects?.loaded && _.isEmpty(projects.data)}
-    />
-    {values.type === EventSources.KafkaSource && <AdvancedSection />}
-    <FormFooter
-      handleReset={handleReset}
-      errorMessage={status && status.submitError}
-      isSubmitting={isSubmitting}
-      submitLabel="Create"
-      sticky
-      disableSubmit={!dirty || !_.isEmpty(errors)}
-      resetLabel="Cancel"
-    />
-  </Form>
-);
+}) => {
+  const eventSourceModels = eventSourceData?.models;
+  const handleChange = (item: string) => {
+    const selDataModel = _.find(eventSourceModels, { kind: item });
+    const selApiVersion = selDataModel
+      ? `${selDataModel?.apiGroup}/${selDataModel?.apiVersion}`
+      : `${KNATIVE_EVENT_SOURCE_APIGROUP}/v1alpha1`;
+    setFieldValue('apiVersion', selApiVersion);
+    setFieldTouched('apiVersion', true);
+    validateForm();
+  };
+  return (
+    <Form className="co-deploy-image" onSubmit={handleSubmit}>
+      <EventSourcesSelector
+        eventSourceList={getEventSourceList(eventSourceModels, namespace)}
+        handleChange={handleChange}
+      />
+      {values.type === EventSources.CronJobSource && <CronJobSection />}
+      {values.type === EventSources.SinkBinding && <SinkBindingSection />}
+      {values.type === EventSources.ApiServerSource && <ApiServerSection />}
+      {values.type === EventSources.KafkaSource && <KafkaSourceSection />}
+      <SinkSection namespace={namespace} />
+      <AppSection
+        project={values.project}
+        noProjectsAvailable={projects?.loaded && _.isEmpty(projects.data)}
+      />
+      {values.type === EventSources.KafkaSource && <AdvancedSection />}
+      <FormFooter
+        handleReset={handleReset}
+        errorMessage={status && status.submitError}
+        isSubmitting={isSubmitting}
+        submitLabel="Create"
+        sticky
+        disableSubmit={!dirty || !_.isEmpty(errors)}
+        resetLabel="Cancel"
+      />
+    </Form>
+  );
+};
 
 export default EventSourceForm;
