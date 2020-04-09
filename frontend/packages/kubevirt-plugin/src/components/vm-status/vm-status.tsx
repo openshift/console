@@ -49,10 +49,10 @@ import {
   VM_STATUS_V2V_VM_IMPORT_IN_PROGRESS,
 } from '../../statuses/vm/constants';
 import { VMKind, VMIKind } from '../../types';
+import { VMImportKind } from '../../types/vm-import/ovirt/vm-import';
 import { getVMLikeModel } from '../../selectors/vm';
 
 import './vm-status.scss';
-import { VMImportKind } from '../../types/vm-import/ovirt/vm-import';
 
 const VIEW_POD_OVERVIEW = 'View pod overview';
 const VIEW_VM_EVENTS = 'View events';

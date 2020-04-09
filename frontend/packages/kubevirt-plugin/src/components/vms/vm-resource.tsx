@@ -29,6 +29,7 @@ import { isVMIPaused, getVMINodeName } from '../../selectors/vmi';
 import { VirtualMachineInstanceModel, VirtualMachineModel } from '../../models';
 import { asVMILikeWrapper } from '../../k8s/wrapper/utils/convert';
 import { getVMTemplate } from '../../selectors/vm-template/selectors';
+import { VMImportKind } from '../../types/vm-import/ovirt/vm-import';
 import {
   NODE_SELECTOR_MODAL_TITLE,
   DEDICATED_RESOURCES_PINNED,
@@ -39,7 +40,6 @@ import {
 } from '../modals/scheduling-modals/shared/consts';
 
 import './vm-resource.scss';
-import { VMImportKind } from '../../types/vm-import/ovirt/vm-import';
 
 export const VMDetailsItem: React.FC<VMDetailsItemProps> = ({
   title,

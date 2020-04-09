@@ -5,6 +5,7 @@ import { K8sResourceKind, PodKind } from '@console/internal/module/k8s';
 import { StatusGroupMapper } from '@console/shared/src/components/dashboard/inventory-card/InventoryItem';
 import { InventoryStatusGroup } from '@console/shared/src/components/dashboard/inventory-card/status-group';
 import { getVMStatus } from '../../../statuses/vm/vm';
+import { VMImportKind } from '../../../types/vm-import/ovirt/vm-import';
 import { VMIKind, VMKind } from '../../../types';
 import {
   VM_STATUS_ERROR,
@@ -25,7 +26,6 @@ import {
 } from '../../../statuses/vm/constants';
 
 import './inventory.scss';
-import { VMImportKind } from '../../../types/vm-import/ovirt/vm-import';
 
 const VM_STATUS_GROUP_MAPPER = {
   [InventoryStatusGroup.NOT_MAPPED]: [VM_STATUS_RUNNING],
