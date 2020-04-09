@@ -7,7 +7,7 @@ metadata:
 rules:
 - apiGroups: [""]
   resources: ["configmaps"]
-  resourceNames: ["v2v-vmware", "kubevirt-storage-class-defaults"]
+  resourceNames: ["v2v-vmware"]
   verbs: ["get", "watch"]
 
 ---
@@ -17,9 +17,14 @@ metadata:
   namespace: openshift-cnv
   name: v2v-vmware-configmap-read
 subjects:
-- kind: User
-  name: test # change to particular user who needs to run v2v
-  apiGroup: rbac.authorization.k8s.io
+# enable for all authenticated users
+- kind: Group
+  name: system:authenticated
+  apiGroup: "rbac.authorization.k8s.io"
+# Or enable for a named user only:
+#- kind: User
+#  name: test # change to particular user who needs to run v2v
+#  apiGroup: rbac.authorization.k8s.io
 roleRef:
   kind: Role 
   name: v2v-vmware-configmap-read
@@ -46,9 +51,13 @@ metadata:
   namespace: kube-public
   name: vmware-to-kubevirt-os-configmap-read
 subjects:
-- kind: User
-  name: test # change to particular user who needs to run v2v
-  apiGroup: rbac.authorization.k8s.io
+- kind: Group
+  name: system:authenticated
+  apiGroup: "rbac.authorization.k8s.io"
+# Or enable for a named user only:
+#- kind: User
+#  name: test # change to particular user who needs to run v2v
+#  apiGroup: rbac.authorization.k8s.io
 roleRef:
   kind: Role 
   name: vmware-to-kubevirt-os-configmap-read
