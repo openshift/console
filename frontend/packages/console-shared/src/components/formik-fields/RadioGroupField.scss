@@ -1,4 +1,4 @@
-.odc-radio-button {
+.odc-radio-group {
   padding-left: var(--pf-global--spacer--sm);
 
   input[type='radio'] {
@@ -6,6 +6,6 @@
   }
 
   &__children {
-    padding: var(--pf-global--spacer--md) 0 var(--pf-global--spacer--md) 1.8rem;
+    padding: var(--pf-global--spacer--md) 0;
   }
 }

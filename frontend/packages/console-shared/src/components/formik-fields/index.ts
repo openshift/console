@@ -7,6 +7,7 @@ export { default as MultiColumnField } from './multi-column-field/MultiColumnFie
 export { default as NSDropdownField } from './NSDropdownField';
 export { default as NumberSpinnerField } from './NumberSpinnerField';
 export { default as RadioButtonField } from './RadioButtonField';
+export { default as RadioGroupField } from './RadioGroupField';
 export { default as ResourceDropdownField } from './ResourceDropdownField';
 export { default as ResourceLimitField } from './ResourceLimitField';
 export { default as SwitchField } from './SwitchField';
