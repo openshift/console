@@ -19,7 +19,7 @@ const RadioGroupField: React.FC<RadioGroupFieldProps> = ({
   const errorMessage = !isValid ? error : '';
   return (
     <FormGroup
-      className="odc-radio-button"
+      className="ocs-radio-group-field"
       fieldId={fieldId}
       helperText={helpText}
       helperTextInvalid={errorMessage}
@@ -32,7 +32,7 @@ const RadioGroupField: React.FC<RadioGroupFieldProps> = ({
         const staticChild = option.children;
 
         const description = (activeChild || staticChild) && (
-          <div className="odc-radio-group__children">
+          <div className="ocs-radio-group-field__children">
             {staticChild}
             {activeChild}
           </div>

@@ -1,4 +1,5 @@
 import { sortable } from '@patternfly/react-table';
+import { Kebab } from '@console/internal/components/utils';
 
 export const tableColumnClasses = {
   revision: 'col-lg-1 col-md-3 col-sm-3 col-xs-3',
@@ -8,6 +9,7 @@ export const tableColumnClasses = {
   chartVersion: 'col-lg-2 hidden-md hidden-sm hidden-xs',
   appVersion: 'col-lg-2 hidden-md hidden-sm hidden-xs',
   description: 'col-lg-2 hidden-md hidden-sm hidden-xs',
+  kebab: Kebab.columnClass,
 };
 
 const HelmReleaseHistoryHeader = () => {
@@ -15,6 +17,7 @@ const HelmReleaseHistoryHeader = () => {
     {
       title: 'Revision',
       sortField: 'version',
+      sortAsNumber: true,
       transforms: [sortable],
       props: { className: tableColumnClasses.revision },
     },
@@ -51,6 +54,10 @@ const HelmReleaseHistoryHeader = () => {
     {
       title: 'Description',
       props: { className: tableColumnClasses.description },
+    },
+    {
+      title: '',
+      props: { className: tableColumnClasses.kebab },
     },
   ];
 };

@@ -1,12 +1,14 @@
 import * as React from 'react';
 import { HelmRelease } from '../../helm-types';
 import { Timestamp } from '@console/internal/components/utils';
+import { K8sResourceKind } from '@console/internal/module/k8s';
 
 interface HelmChartSummaryProps {
+  obj: K8sResourceKind;
   helmRelease: HelmRelease;
 }
 
-const HelmChartSummary: React.FC<HelmChartSummaryProps> = ({ helmRelease }) => {
+const HelmChartSummary: React.FC<HelmChartSummaryProps> = ({ obj, helmRelease }) => {
   if (!helmRelease) return null;
 
   const {
@@ -14,8 +16,13 @@ const HelmChartSummary: React.FC<HelmChartSummaryProps> = ({ helmRelease }) => {
       metadata: { name: chartName, version: chartVersion, appVersion },
     },
     info: { last_deployed: updated },
-    version: revision,
   } = helmRelease;
+
+  const {
+    metadata: {
+      labels: { version: revision },
+    },
+  } = obj;
 
   return (
     <dl className="co-m-pane__details">

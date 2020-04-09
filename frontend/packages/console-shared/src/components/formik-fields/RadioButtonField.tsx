@@ -19,7 +19,7 @@ const RadioButtonField: React.FC<RadioButtonFieldProps> = ({ name, label, value,
       isChecked={field.value === value}
       isValid={isValid}
       isDisabled={props.isDisabled}
-      aria-describedby={`${fieldId}-helper`}
+      aria-label={`${fieldId}-${label}`}
       onChange={() => setFieldValue(name, value)}
     />
   );

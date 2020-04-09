@@ -9,19 +9,16 @@ export interface HelmReleaseOverviewProps {
   customData: HelmRelease;
 }
 
-const HelmReleaseOverview: React.FC<HelmReleaseOverviewProps> = ({
-  obj: resourceDetails,
-  customData,
-}) => {
+const HelmReleaseOverview: React.FC<HelmReleaseOverviewProps> = ({ obj, customData }) => {
   return (
     <div className="co-m-pane__body">
       <SectionHeading text="Helm Release Details" />
       <div className="row">
         <div className="col-sm-6">
-          <ResourceSummary resource={resourceDetails} customPathName={'metadata.labels.name'} />
+          <ResourceSummary resource={obj} customPathName={'metadata.labels.name'} />
         </div>
         <div className="col-sm-6">
-          <HelmChartSummary helmRelease={customData} />
+          <HelmChartSummary helmRelease={customData} obj={obj} />
         </div>
       </div>
     </div>

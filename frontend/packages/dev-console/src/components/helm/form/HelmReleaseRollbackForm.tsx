@@ -21,6 +21,7 @@ const HelmReleaseRollbackForm: React.FC<Props> = ({
   handleSubmit,
   handleReset,
   status,
+  isSubmitting,
   dirty,
   releaseHistory,
 }) => {
@@ -41,10 +42,11 @@ const HelmReleaseRollbackForm: React.FC<Props> = ({
       <FormFooter
         handleReset={handleReset}
         errorMessage={status?.submitError}
-        isSubmitting={status?.isSubmitting}
+        isSubmitting={status?.isSubmitting || isSubmitting}
         submitLabel="Rollback"
         disableSubmit={status?.isSubmitting || !dirty || !_.isEmpty(errors)}
         resetLabel="Cancel"
+        sticky
       />
     </Form>
   );

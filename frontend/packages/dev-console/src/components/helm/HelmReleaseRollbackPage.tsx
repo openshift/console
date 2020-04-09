@@ -30,11 +30,10 @@ const HelmReleaseRollbackPage: React.FC<HelmReleaseRollbackPageProps> = ({ match
       let res: HelmRelease[];
       try {
         res = await coFetchJSON(`/api/helm/release/history?ns=${namespace}&name=${releaseName}`);
-      } catch {
-        if (ignore) return;
-      }
+      } catch {} // eslint-disable-line no-empty
       if (ignore) return;
-      res.length > 0 && setReleaseHistory(res);
+
+      res?.length > 0 && setReleaseHistory(res);
     };
 
     fetchReleaseHistory();
@@ -74,7 +73,7 @@ const HelmReleaseRollbackPage: React.FC<HelmReleaseRollbackPageProps> = ({ match
         <title>Rollback Helm Release</title>
       </Helmet>
       <PageHeading title="Rollback Helm Release">
-        Select the version to rollback <strong>{releaseName}</strong> to, from the table below
+        Select the version to rollback <strong>{releaseName}</strong> to, from the table below:
       </PageHeading>
       <PageBody>
         <Formik initialValues={initialValues} onSubmit={handleSubmit} onReset={history.goBack}>
