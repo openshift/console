@@ -227,8 +227,14 @@ export type ResourcesObject = { [key: string]: K8sResourceCommon | K8sResourceCo
 
 type WatchK8sResult<R extends K8sResourceCommon | K8sResourceCommon[]> = [R, boolean, any];
 
+export type WatchK8sResultsObject<R extends K8sResourceCommon | K8sResourceCommon[]> = {
+  data: R;
+  loaded: boolean;
+  loadError: any;
+};
+
 export type WatchK8sResults<R extends ResourcesObject> = {
-  [k in keyof R]: { data: R[k]; loaded: boolean; loadError: any };
+  [k in keyof R]: WatchK8sResultsObject<R[k]>;
 };
 
 export type WatchK8sResources<R extends ResourcesObject> = {
