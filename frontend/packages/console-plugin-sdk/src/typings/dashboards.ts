@@ -92,7 +92,7 @@ namespace ExtensionProperties {
      * Loader for popup content. If defined health item will be represented as link
      * which opens popup with given content.
      */
-    popupComponent?: LazyLoader<any>;
+    popupComponent?: LazyLoader<WatchK8sResults<R>>;
 
     /**
      * Popup title
