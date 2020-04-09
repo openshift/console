@@ -46,7 +46,8 @@ describe('Using OLM descriptor components', () => {
 
   it('displays list containing operands', async () => {
     await crudView.resourceRowsPresent();
-    expect(operatorView.operandLink(testCR.metadata.name).isDisplayed()).toBe(true);
+    const isDisplayed = retry(() => operatorView.operandLink(testCR.metadata.name).isDisplayed());
+    expect(isDisplayed).toBe(true);
   });
 
   it('displays detail view for operand', async () => {
@@ -90,7 +91,7 @@ describe('Using OLM descriptor components', () => {
     );
     await crudView.isLoaded();
     await crudView.resourceRowsPresent();
-    await crudView.deleteRow(testCR.kind)(testCR.metadata.name);
+    await retry(() => crudView.deleteRow(testCR.kind)(testCR.metadata.name));
   });
 
   it('displays form for creating operand', async () => {
@@ -177,7 +178,7 @@ describe('Using OLM descriptor components', () => {
     await element(by.buttonText('Create')).click();
     await crudView.isLoaded();
     await browser.wait(until.elementToBeClickable(operatorView.operandLink(testCR.metadata.name)));
-    await operatorView.operandLink(testCR.metadata.name).click();
+    await retry(() => operatorView.operandLink(testCR.metadata.name).click());
     await browser.wait(until.presenceOf($('.loading-box__loaded')), 5000);
 
     expect($('.co-operand-details__section--info').isDisplayed()).toBe(true);
