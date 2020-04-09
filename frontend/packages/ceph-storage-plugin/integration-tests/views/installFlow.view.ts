@@ -155,8 +155,8 @@ export class InstallCluster {
     await nsTag.click();
     await primaryButton.click();
     await browser.wait(until.and(crudView.untilNoLoadersPresent));
-    await browser.wait(until.visibilityOf(searchInputOperators));
-    await searchInputOperators.sendKeys(OCS_OPERATOR_NAME);
+    await browser.wait(until.visibilityOf(crudView.textFilter));
+    await crudView.textFilter.sendKeys(OCS_OPERATOR_NAME);
   }
 
   async createStorageCluster() {

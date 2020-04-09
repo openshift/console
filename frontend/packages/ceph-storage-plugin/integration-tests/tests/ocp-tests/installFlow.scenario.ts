@@ -31,7 +31,7 @@ const testNodeLabel = (node) => {
   expect(hasOCSTaint(nodeJSON) || !hasTaints(nodeJSON)).toBe(true);
 };
 
-describe('Testing OCS Cluster Creation', () => {
+xdescribe('Testing OCS Cluster Creation', () => {
   beforeAll(async () => {
     await Installer.createNamespace();
     expect(browser.getCurrentUrl()).toContain(NS);
