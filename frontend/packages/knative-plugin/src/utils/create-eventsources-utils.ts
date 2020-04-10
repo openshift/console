@@ -1,12 +1,16 @@
 import * as _ from 'lodash';
 import { K8sResourceKind, K8sKind, referenceForModel } from '@console/internal/module/k8s';
-import { checkAccess } from '@console/internal/components/utils';
+import { useAccessReview } from '@console/internal/components/utils';
 import { getAppLabels } from '@console/dev-console/src/utils/resource-label-utils';
 import { annotations } from '@console/dev-console/src/utils/shared-submit-utils';
-import { EventSources, EventSourceFormData } from '../components/add/import-types';
+import {
+  EventSources,
+  EventSourceFormData,
+  NormalizedEventSources,
+} from '../components/add/import-types';
 import { ServiceModel } from '../models';
 import { getKnativeEventSourceIcon } from './get-knative-icon';
-import { NormalizedEventSources } from '../components/add/import-types';
+import { getEventSourceModelsData } from './fetch-dynamic-eventsources-utils';
 
 export const getEventSourcesDepResource = (formData: EventSourceFormData): K8sResourceKind => {
   const {
@@ -130,26 +134,26 @@ export const getEventSourceData = (source: string) => {
   return eventSourceData[source];
 };
 
-export const getKnativeEventingAccess = async (model: K8sKind, namespace: string) => {
-  const canCreateEventSource = await checkAccess({
+export const useKnativeEventingAccess = (model: K8sKind, namespace: string): boolean => {
+  const canCreateEventSource = useAccessReview({
     group: model.apiGroup,
     resource: model.plural,
     namespace,
     verb: 'create',
   });
-  return canCreateEventSource?.status?.allowed;
+  return canCreateEventSource;
 };
 
-export const getEventSourceList = (
-  eventSourceModelList: K8sKind[],
-  namespace: string,
-): NormalizedEventSources => {
+export const useEventSourceList = (namespace: string): NormalizedEventSources => {
   const eventSourceList = _.reduce(
-    eventSourceModelList,
+    getEventSourceModelsData(),
     (accumulator, eventSourceModel) => {
+      // Defined extensions are immutable. This check will be consistent.
+      // eslint-disable-next-line react-hooks/rules-of-hooks
+      const checkAccessVal = useKnativeEventingAccess(eventSourceModel, namespace);
       return {
         ...accumulator,
-        ...(getKnativeEventingAccess(eventSourceModel, namespace) && {
+        ...(checkAccessVal && {
           [eventSourceModel.kind]: {
             name: eventSourceModel.kind,
             iconUrl: getKnativeEventSourceIcon(referenceForModel(eventSourceModel)),

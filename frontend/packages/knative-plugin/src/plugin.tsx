@@ -57,7 +57,7 @@ import {
   getEventSourceSinkBinding,
 } from './utils/get-knative-resources';
 import { getKebabActionsForKind } from './utils/kebab-actions';
-import { getSourcesModel } from './utils/fetch-dynamic-sources-utils';
+import { fetchEventSourcesCrd } from './utils/fetch-dynamic-eventsources-utils';
 
 type ConsumedExtensions =
   | ResourceNSNavItem
@@ -73,7 +73,8 @@ type ConsumedExtensions =
   | ResourceDetailsPage
   | AddAction;
 
-getSourcesModel();
+// Added it to perform discovery of Dynamic event sources on cluster on app load as kebab option needed models upfront
+fetchEventSourcesCrd();
 const plugin: Plugin<ConsumedExtensions> = [
   {
     type: 'ModelDefinition',
