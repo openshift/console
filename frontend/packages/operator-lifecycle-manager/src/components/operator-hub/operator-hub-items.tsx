@@ -106,7 +106,6 @@ const operatorHubFilterMap = {
 };
 
 const COMMUNITY_PROVIDER_TYPE = 'Community';
-const CUSTOM_PROVIDER_TYPE = 'Custom';
 const MARKETPLACE_PROVIDER_TYPE = 'Marketplace';
 
 const ignoredProviderTails = [', Inc.', ', Inc', ' Inc.', ' Inc', ', LLC', ' LLC'];
@@ -170,10 +169,8 @@ const providerTypeSort = (provider) => {
       return 2;
     case ProviderType.Marketplace:
       return 3;
-    case ProviderType.Custom:
-      return 4;
     default:
-      return 5;
+      return 4;
   }
 };
 
@@ -224,7 +221,7 @@ const sortFilterValues = (values, field) => {
   }
 
   if (field === 'providerType') {
-    sorter = providerTypeSort;
+    return _.sortBy(values, [providerTypeSort, 'value']);
   }
 
   if (field === 'installState') {
@@ -383,11 +380,7 @@ export const OperatorHubTileView: React.FC<OperatorHubTileViewProps> = (props) =
 
     const { uid, name, imgUrl, provider, description, installed } = item;
     const vendor = provider ? `provided by ${provider}` : null;
-    const badges = [
-      COMMUNITY_PROVIDER_TYPE,
-      CUSTOM_PROVIDER_TYPE,
-      MARKETPLACE_PROVIDER_TYPE,
-    ].includes(item.providerType)
+    const badges = [COMMUNITY_PROVIDER_TYPE, MARKETPLACE_PROVIDER_TYPE].includes(item.providerType)
       ? [badge(item.providerType)]
       : [];
     const icon = (

@@ -27,6 +27,7 @@ describe('Interacting with an `AllNamespaces` install mode Operator (Jaeger)', (
   ]);
   const jaegerOperatorName = 'jaeger-operator';
   const jaegerName = 'my-jaeger';
+  const customProviderUID = 'providerType-console-e-2-e-operators';
 
   const catalogNamespace = _.get(browser.params, 'globalCatalogNamespace', 'openshift-marketplace');
   const jaegerTileID = `jaeger-console-e2e-${catalogNamespace}`;
@@ -90,7 +91,7 @@ describe('Interacting with an `AllNamespaces` install mode Operator (Jaeger)', (
   it('displays subscription creation form for selected Operator', async () => {
     await catalogView.categoryTabsPresent();
     await catalogView.categoryTabs.get(0).click();
-    await catalogPageView.clickFilterCheckbox('providerType-custom');
+    await catalogPageView.clickFilterCheckbox(customProviderUID);
     await catalogPageView.catalogTileByID(jaegerTileID).click();
     await browser.wait(until.visibilityOf(operatorHubView.operatorModal));
     await operatorHubView.operatorModalInstallBtn.click();
@@ -211,7 +212,7 @@ describe('Interacting with an `AllNamespaces` install mode Operator (Jaeger)', (
   it('displays button to uninstall the Operator', async () => {
     await browser.get(`${appHost}/operatorhub/ns/${testName}`);
     await crudView.isLoaded();
-    await catalogPageView.clickFilterCheckbox('providerType-custom');
+    await catalogPageView.clickFilterCheckbox(customProviderUID);
     await catalogPageView.clickFilterCheckbox('installState-installed');
     await catalogPageView.catalogTileByID(jaegerTileID).click();
     await operatorHubView.operatorModalIsLoaded();
