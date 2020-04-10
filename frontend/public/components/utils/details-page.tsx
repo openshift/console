@@ -3,16 +3,14 @@ import * as _ from 'lodash-es';
 import { Button } from '@patternfly/react-core';
 import { PencilAltIcon } from '@patternfly/react-icons';
 
-import {
-  DetailsItem,
-  Kebab,
-  LabelList,
-  OwnerReferences,
-  ResourceLink,
-  Selector,
-  Timestamp,
-  useAccessReview,
-} from './index';
+import { DetailsItem } from './details-item';
+import { Kebab } from './kebab';
+import { LabelList } from './label-list';
+import { OwnerReferences } from './owner-references';
+import { ResourceLink } from './resource-link';
+import { Selector } from './selector';
+import { Timestamp } from './timestamp';
+import { useAccessReview } from './rbac';
 import { K8sResourceKind, modelFor, referenceFor, Toleration } from '../../module/k8s';
 
 export const pluralize = (
