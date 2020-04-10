@@ -4,6 +4,7 @@ import { observer } from 'mobx-react';
 import { action, autorun, IReactionDisposer } from 'mobx';
 import ElementContext from '../utils/ElementContext';
 import useCallbackRef from '../utils/useCallbackRef';
+import Point from '../geom/Point';
 import { isGraph, ModelKind } from '../types';
 import { ATTR_DATA_KIND } from '../const';
 
@@ -47,11 +48,8 @@ export const usePanZoom = (zoomExtent: [number, number] = ZOOM_EXTENT): PanZoomR
             .on(
               'zoom',
               action(() => {
-                elementRef.current.setBounds(
-                  elementRef.current
-                    .getBounds()
-                    .clone()
-                    .setLocation(d3.event.transform.x, d3.event.transform.y),
+                elementRef.current.setPosition(
+                  new Point(d3.event.transform.x, d3.event.transform.y),
                 );
                 elementRef.current.setScale(d3.event.transform.k);
               }),

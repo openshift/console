@@ -552,11 +552,20 @@ class BaseLayout implements Layout {
     return layoutGroups;
   }
 
-  protected initializeNewNodePositions(newNodes: LayoutNode[], graph: Graph): void {
-    const cx = graph.getBounds().width / 2;
-    const cy = graph.getBounds().height / 2;
+  protected initializeNodePositions(
+    newNodes: LayoutNode[],
+    graph: Graph,
+    force: boolean = false,
+  ): void {
+    const { width, height } = graph.getBounds();
+    const cx = width / 2;
+    const cy = height / 2;
     newNodes.forEach((node: LayoutNode) => {
-      node.setPosition(cx, cy);
+      // only init position for nodes that are still at 0, 0
+      const { x, y } = node.element.getPosition();
+      if (force || (x === 0 && y === 0)) {
+        node.setPosition(cx, cy);
+      }
     });
   }
 
@@ -631,7 +640,7 @@ class BaseLayout implements Layout {
     this.edges = this.getLinks(this.graph.getEdges());
 
     // initialize new node positions
-    this.initializeNewNodePositions(newNodes, this.graph);
+    this.initializeNodePositions(newNodes, this.graph, initialRun);
 
     // re-create the nodes map
     this.nodesMap = this.nodes.reduce((acc, n) => {

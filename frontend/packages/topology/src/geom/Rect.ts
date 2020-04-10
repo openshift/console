@@ -1,7 +1,7 @@
-import { Padding, Translatable } from './types';
+import { Padding, Translatable, IRect } from './types';
 import Point from './Point';
 
-export default class Rect implements Translatable {
+export default class Rect implements Translatable, IRect {
   static readonly EMPTY = new Rect();
 
   width: number = 0;
@@ -22,7 +22,7 @@ export default class Rect implements Translatable {
     return Rect.SINGLETON;
   }
 
-  static fromRect(rect: Rect): Rect {
+  static fromRect(rect: IRect): Rect {
     return new Rect(rect.x, rect.y, rect.width, rect.height);
   }
 
@@ -145,7 +145,7 @@ export default class Rect implements Translatable {
     return Rect.fromRect(this);
   }
 
-  equals(r: Rect) {
+  equals(r: IRect) {
     return r.x === this.x && r.y === this.y && r.width === this.width && r.height === this.height;
   }
 }

@@ -1,19 +1,27 @@
 import { computed, observable } from 'mobx';
 import Rect from '../geom/Rect';
 import Point from '../geom/Point';
+import Dimensions from '../geom/Dimensions';
+import { DEFAULT_LAYERS } from '../const';
 import { Graph, Edge, Node, GraphModel, ModelKind, isNode, isEdge, Layout } from '../types';
 import BaseElement from './BaseElement';
 
 export default class BaseGraph<E extends GraphModel = GraphModel, D = any> extends BaseElement<E, D>
   implements Graph<E, D> {
+  @observable.ref
+  private layers = DEFAULT_LAYERS;
+
   @observable
-  private scale: number = 1;
+  private scale = 1;
 
   @observable
   private layoutType?: string;
 
   @observable.ref
-  private bounds: Rect = new Rect();
+  private dimensions = new Dimensions();
+
+  @observable.ref
+  private position = new Point();
 
   private currentLayout?: Layout;
 
@@ -31,14 +39,47 @@ export default class BaseGraph<E extends GraphModel = GraphModel, D = any> exten
     return ModelKind.graph;
   }
 
+  getLayers(): string[] {
+    return this.layers;
+  }
+
+  setLayers(layers: string[]): void {
+    this.layers = layers;
+  }
+
   getBounds(): Rect {
-    return this.bounds;
+    const {
+      position: { x, y },
+      dimensions: { width, height },
+    } = this;
+    return new Rect(x, y, width, height);
   }
 
   setBounds(bounds: Rect): void {
-    if (!this.bounds.equals(bounds)) {
-      this.bounds = bounds;
+    const { width, height } = this.dimensions;
+    if (bounds.width !== width || bounds.height !== height) {
+      this.dimensions = new Dimensions(bounds.width, bounds.height);
     }
+    const { x, y } = this.position;
+    if (bounds.x !== x || bounds.y !== y) {
+      this.position = new Point(bounds.x, bounds.y);
+    }
+  }
+
+  getPosition(): Point {
+    return this.position;
+  }
+
+  setPosition(point: Point): void {
+    this.position = point;
+  }
+
+  getDimensions(): Dimensions {
+    return this.dimensions;
+  }
+
+  setDimensions(dimensions: Dimensions): void {
+    this.dimensions = dimensions;
   }
 
   getNodes(): Node[] {
@@ -82,11 +123,7 @@ export default class BaseGraph<E extends GraphModel = GraphModel, D = any> exten
 
   reset(): void {
     this.scale = 1;
-    this.setBounds(
-      this.getBounds()
-        .clone()
-        .setLocation(0, 0),
-    );
+    this.position = new Point(0, 0);
   }
 
   scaleBy(scale: number, location?: Point): void {
@@ -98,7 +135,7 @@ export default class BaseGraph<E extends GraphModel = GraphModel, D = any> exten
     this.scale *= scale;
     x = c.x - x * this.scale;
     y = c.y - y * this.scale;
-    this.setBounds(b.clone().setLocation(x, y));
+    this.position = new Point(x, y);
   }
 
   fit(padding = 0): void {
@@ -121,7 +158,7 @@ export default class BaseGraph<E extends GraphModel = GraphModel, D = any> exten
       return;
     }
 
-    const { width: fullWidth, height: fullHeight } = this.getBounds();
+    const { width: fullWidth, height: fullHeight } = this.getDimensions();
     const midX = rect.x + width / 2;
     const midY = rect.y + height / 2;
 
@@ -143,12 +180,8 @@ export default class BaseGraph<E extends GraphModel = GraphModel, D = any> exten
     const ty = fullHeight / 2 - midY * scale;
 
     // TODO should scale and bound be kept in a single geom Transform object instead of separately?
-    this.setScale(scale);
-    this.setBounds(
-      this.getBounds()
-        .clone()
-        .setLocation(tx, ty),
-    );
+    this.scale = scale;
+    this.position = new Point(tx, ty);
   }
 
   panIntoView = (
@@ -199,28 +232,30 @@ export default class BaseGraph<E extends GraphModel = GraphModel, D = any> exten
   setModel(model: E): void {
     super.setModel(model);
 
+    if ('layers' in model && model.layers) {
+      this.setLayers(model.layers);
+    }
     if ('layout' in model) {
       this.setLayout(model.layout);
     }
     if ('scale' in model && typeof model.scale === 'number') {
-      this.scale = +model.scale;
+      this.setScale(+model.scale);
     }
-    const bounds = this.getBounds();
-    let r: Rect | undefined;
+    let p: Point | undefined;
     if ('x' in model && model.x != null) {
-      if (!r) {
-        r = bounds.clone();
+      if (!p) {
+        p = this.position.clone();
       }
-      r.x = model.x;
+      p.x = model.x;
     }
     if ('y' in model && model.y != null) {
-      if (!r) {
-        r = bounds.clone();
+      if (!p) {
+        p = this.position.clone();
       }
-      r.y = model.y;
+      p.y = model.y;
     }
-    if (r) {
-      this.setBounds(r);
+    if (p) {
+      this.setPosition(p);
     }
   }
 

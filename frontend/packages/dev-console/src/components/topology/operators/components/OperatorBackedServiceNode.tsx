@@ -50,7 +50,7 @@ const OperatorBackedServiceNode: React.FC<OperatorBackedServiceNodeProps> = ({
   const refs = useCombineRefs<SVGRectElement>(hoverRef, dragNodeRef, dndDropRef);
   const [filtered] = useSearchFilter(element.getLabel());
   const kind = 'Operator';
-  const { width, height } = element.getBounds();
+  const { width, height } = element.getDimensions();
 
   return (
     <g

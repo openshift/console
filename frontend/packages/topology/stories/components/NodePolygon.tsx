@@ -35,7 +35,7 @@ const NodePolygon: React.FC<NodePolygonProps> = ({
 }) => {
   const anchorRef = useSvgAnchor();
   const refs = useCombineRefs<SVGPolygonElement>(dragNodeRef, dndDragRef, dndDropRef, anchorRef);
-  const { width, height } = element.getBounds();
+  const { width, height } = element.getDimensions();
 
   const points: Point[] = [
     new Point(width / 2, 0),

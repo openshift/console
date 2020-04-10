@@ -22,8 +22,9 @@ export default class ForceLayout extends BaseLayout implements Layout {
   };
 
   protected startLayout(graph: Graph): void {
-    const cx = graph.getBounds().width / 2;
-    const cy = graph.getBounds().height / 2;
+    const { width, height } = graph.getBounds();
+    const cx = width / 2;
+    const cy = height / 2;
     this.forceSimulation.forceCenter(cx, cy);
     this.forceSimulation.alpha(1);
     this.forceSimulation.useForceSimulation(this.nodes, this.edges, this.getLinkDistance);

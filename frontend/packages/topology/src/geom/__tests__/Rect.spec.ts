@@ -58,13 +58,13 @@ describe('Rect', () => {
     expect(r.getCenter()).toEqual({ x: 11, y: 18 });
   });
 
-  it('should translate rect', () => {
+  it('should translate Rect', () => {
     const r = new Rect(5, 10, 3, 4);
     expect(r.translate(2, 3)).toBe(r);
     expect(r).toEqual({ x: 7, y: 13, width: 3, height: 4 });
   });
 
-  it('should scale rect', () => {
+  it('should scale Rect', () => {
     const r = new Rect(5, 10, 4, 6);
     expect(r.scale(2)).toBe(r);
     expect(r).toEqual({ x: 10, y: 20, width: 8, height: 12 });
@@ -72,7 +72,7 @@ describe('Rect', () => {
     expect(r).toEqual({ x: 5, y: 40, width: 4, height: 24 });
   });
 
-  it('should resize', () => {
+  it('should resize the Rect ', () => {
     const r = new Rect(5, 10, 8, 9);
     expect(r.resize(2, 3)).toBe(r);
     expect(r).toEqual({ x: 5, y: 10, width: 10, height: 12 });
@@ -88,18 +88,13 @@ describe('Rect', () => {
     expect(r.right()).toBe(13);
   });
 
-  it('should expand the rect in size', () => {
-    const r = new Rect(5, 10, 8, 9);
-    expect(r.right()).toBe(13);
-  });
-
-  it('should expand the rect to enclose another rect', () => {
+  it('should expand the Rect to enclose another Rect', () => {
     const r = new Rect(5, 10, 8, 9);
     expect(r.union(new Rect(2, 12, 4, 27))).toBe(r);
     expect(r).toEqual({ x: 2, y: 10, width: 11, height: 29 });
   });
 
-  it('should expand the rect in size', () => {
+  it('should expand the Rect in size', () => {
     const r = new Rect(5, 10, 8, 9);
     expect(r.expand(4, 5)).toBe(r);
     expect(r).toEqual({ x: 1, y: 5, width: 16, height: 19 });
@@ -123,14 +118,14 @@ describe('Rect', () => {
     expect(r).toEqual({ x: 2, y: 3, width: 6, height: 7 });
   });
 
-  it('should clone rect', () => {
+  it('should clone Rect', () => {
     const r1 = new Rect(5, 10);
     const r2 = r1.clone();
     expect(r1).not.toBe(r2);
     expect(r1).toEqual(r2);
   });
 
-  it('should check rect equality', () => {
+  it('should check Rect equality', () => {
     const r1 = new Rect(5, 10, 1, 2);
     const r2 = new Rect(5, 10, 1, 2);
     const r3 = new Rect(1, 2, 3, 4);

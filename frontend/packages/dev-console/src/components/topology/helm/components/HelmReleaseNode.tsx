@@ -49,7 +49,7 @@ const HelmReleaseNode: React.FC<HelmReleaseNodeProps> = ({
   );
   const refs = useCombineRefs<SVGRectElement>(dragNodeRef, dndDropRef, hoverRef);
   const [filtered] = useSearchFilter(element.getLabel());
-  const { width, height } = element.getBounds();
+  const { width, height } = element.getDimensions();
 
   return (
     <g

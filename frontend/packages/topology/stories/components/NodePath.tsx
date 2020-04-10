@@ -33,7 +33,7 @@ const NodePath: React.FC<NodePathProps> = ({
 }) => {
   const anchorRef = useSvgAnchor();
   const refs = useCombineRefs<SVGPathElement>(dragNodeRef, dndDragRef, dndDropRef, anchorRef);
-  const { width, height } = element.getBounds();
+  const { width, height } = element.getDimensions();
 
   return (
     <path

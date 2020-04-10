@@ -41,7 +41,7 @@ const DefaultNode: React.FC<NodeProps> = ({
 }) => {
   useAnchor(EllipseAnchor);
   const refs = useCombineRefs<SVGEllipseElement>(dragNodeRef, dndDragRef, dndDropRef);
-  const { width, height } = element.getBounds();
+  const { width, height } = element.getDimensions();
 
   return (
     <ellipse

@@ -93,8 +93,9 @@ const ApplicationGroup: React.FC<ApplicationGroupProps> = ({
     const points: (PointWithSize | PointTuple)[] = [];
     _.forEach(children, (c) => {
       if (c.getNodeShape() === NodeShape.circle) {
-        const { width, height } = c.getBounds();
-        const { x, y } = c.getBounds().getCenter();
+        const bounds = c.getBounds();
+        const { width, height } = bounds;
+        const { x, y } = bounds.getCenter();
         const radius = Math.max(width, height) / 2;
         points.push([x, y, radius] as PointWithSize);
       } else {

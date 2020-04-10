@@ -33,7 +33,7 @@ const NodeRect: React.FC<NodeRectProps> = ({
 }) => {
   const anchorRef = useSvgAnchor();
   const refs = useCombineRefs<SVGRectElement>(dragNodeRef, dndDragRef, dndDropRef, anchorRef);
-  const { width, height } = element.getBounds();
+  const { width, height } = element.getDimensions();
 
   return (
     <rect

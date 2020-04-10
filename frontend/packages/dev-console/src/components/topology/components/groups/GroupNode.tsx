@@ -44,6 +44,7 @@ const GroupNode: React.FC<GroupNodeProps> = ({
   const iconWidth = iconSize ? iconSize.width : 0;
   const iconHeight = iconSize ? iconSize.height : 0;
   const title = element.getLabel();
+  const { width, height } = element.getDimensions();
   return (
     <>
       {typeIconClass && (
@@ -82,8 +83,8 @@ const GroupNode: React.FC<GroupNodeProps> = ({
             <ResourceKindsInfo
               groupResources={groupResources}
               emptyValue={emptyValue}
-              width={element.getBounds().width - LEFT_MARGIN}
-              height={element.getBounds().height - TOP_MARGIN - iconHeight}
+              width={width - LEFT_MARGIN}
+              height={height - TOP_MARGIN - iconHeight}
             />
           )}
           {children}

@@ -90,9 +90,9 @@ export const useDragNode = <
               }
             }
             if (moved) {
-              e.setBounds(
+              e.setPosition(
                 e
-                  .getBounds()
+                  .getPosition()
                   .clone()
                   .translate(dx, dy),
               );

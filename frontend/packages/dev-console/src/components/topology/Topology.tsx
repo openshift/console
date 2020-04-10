@@ -19,6 +19,10 @@ import {
   Model,
   SELECTION_EVENT,
   SelectionEventListener,
+  GROUPS_LAYER,
+  TOP_LAYER,
+  BOTTOM_LAYER,
+  DEFAULT_LAYER,
 } from '@console/topology';
 import { RootState } from '@console/internal/redux';
 import { useAddToProjectAccess } from '../../utils/useAddToProjectAccess';
@@ -65,6 +69,7 @@ const graphModel: Model = {
     id: 'g1',
     type: 'graph',
     layout: COLA_LAYOUT,
+    layers: [BOTTOM_LAYER, GROUPS_LAYER, 'groups2', DEFAULT_LAYER, TOP_LAYER],
   },
 };
 

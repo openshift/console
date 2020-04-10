@@ -68,7 +68,7 @@ const ElementWrapper: React.FC<ElementWrapperProps> = observer(({ element }) => 
     );
   }
   if (isNode(element) && (!element.isGroup() || element.isCollapsed())) {
-    const { x, y } = element.getBounds();
+    const { x, y } = element.getPosition();
     return (
       <g {...commonAttrs} transform={`translate(${x}, ${y})`}>
         <ElementComponent element={element} />
