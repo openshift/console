@@ -390,8 +390,8 @@ export const buildPhase = (build) => build.status.phase;
 const allPhases = ['New', 'Pending', 'Running', 'Complete', 'Failed', 'Error', 'Cancelled'];
 const filters = [
   {
+    filterGroupName: 'Status',
     type: 'build-status',
-    selected: allPhases,
     reducer: buildPhase,
     items: _.map(allPhases, (phase) => ({
       id: phase,

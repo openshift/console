@@ -1,0 +1,41 @@
+.co-suggestion-box {
+  background-color: #fff;
+  z-index: 5;
+  width: 100%;
+  max-width: 270px;
+  @media (max-width: $screen-xs-min) {
+    max-width: calc(100% - 95px);
+  }
+  @media (min-width: $screen-xs-min) and (max-width: $screen-sm-min) {
+    max-width: 200px;
+  }
+}
+
+.co-suggestion-box__suggestions {
+  background-color: #fff;
+  /* To make the suggestion box hover on top of the table */
+  margin-bottom: -19em;
+  display: flex;
+  flex-direction: column;
+  @media (min-width: $screen-xs-min) and (max-width: $screen-sm-min) {
+    max-width: 200px;
+  }
+}
+
+.co-suggestion-box__suggestions--shadowed {
+  box-shadow: var(--pf-global--BoxShadow--md);
+  padding: var(--pf-global--spacer--sm);
+}
+
+.co-suggestion-line {
+  border: 1px solid #ededed;
+  background-color: #f5f5f5;
+  border-radius: 12px;
+  overflow: hidden;
+  display: inline;
+  align-self: flex-start;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  max-width: calc(100% - var(--pf-global--spacer--sm));
+  margin: 0.15rem 0;
+}

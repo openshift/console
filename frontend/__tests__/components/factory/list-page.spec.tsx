@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { shallow, ShallowWrapper } from 'enzyme';
-
 import {
   TextFilter,
   ListPageWrapper_,
@@ -8,7 +7,6 @@ import {
   MultiListPage,
 } from '../../../public/components/factory/list-page';
 import { Firehose, PageHeading } from '../../../public/components/utils';
-import { CheckBoxes } from '../../../public/components/row-filter';
 
 describe(TextFilter.displayName, () => {
   let wrapper: ShallowWrapper;
@@ -69,14 +67,6 @@ describe(FireMan_.displayName, () => {
       expect(createProps[key] === button.props()[key]).toBe(true);
     });
   });
-
-  it('renders `TextFilter` with given props', () => {
-    const filterLabel = 'My filter';
-    wrapper.setProps({ filterLabel });
-    const filter = wrapper.find(TextFilter);
-
-    expect(filter.props().label).toEqual(filterLabel);
-  });
 });
 
 describe(ListPageWrapper_.displayName, () => {
@@ -96,7 +86,6 @@ describe(ListPageWrapper_.displayName, () => {
     const rowFilters = [
       {
         type: 'app-type',
-        selected: ['database'],
         reducer: (item) => item.kind,
         items: [
           { id: 'database', title: 'Databases' },
@@ -105,15 +94,8 @@ describe(ListPageWrapper_.displayName, () => {
       },
     ];
     wrapper.setProps({ rowFilters });
-    const checkboxes = wrapper.find(CheckBoxes) as any;
-
-    expect(checkboxes.length).toEqual(rowFilters.length);
-    checkboxes.forEach((checkbox, i) => {
-      expect(checkbox.props().items).toEqual(rowFilters[i].items);
-      expect(checkbox.props().numbers).toEqual({ Pod: 2, Node: 1 });
-      expect(checkbox.props().selected).toEqual(rowFilters[i].selected);
-      expect(checkbox.props().type).toEqual(rowFilters[i].type);
-    });
+    const dropdownFilter = wrapper.find('FilterToolbar') as any;
+    expect(dropdownFilter.props().rowFilters).toEqual(rowFilters);
   });
 
   it('renders given `ListComponent`', () => {

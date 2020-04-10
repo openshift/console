@@ -14,13 +14,8 @@ interface ListPipelineData extends K8sKind {
 }
 export const filters = [
   {
+    filterGroupName: 'Status',
     type: 'pipeline-status',
-    selected: [
-      ListFilterId.Succeeded,
-      ListFilterId.Running,
-      ListFilterId.Failed,
-      ListFilterId.Cancelled,
-    ],
     reducer: pipelineFilterReducer,
     items: [
       { id: ListFilterId.Succeeded, title: ListFilterLabels[ListFilterId.Succeeded] },

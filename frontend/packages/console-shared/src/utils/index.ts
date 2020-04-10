@@ -9,3 +9,4 @@ export * from './storage-utils';
 export * from './useCombineRefs';
 export * from './icon-utils';
 export * from './namespace';
+export * from './label-filter';

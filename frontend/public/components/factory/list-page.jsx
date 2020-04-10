@@ -9,7 +9,7 @@ import { Button } from '@patternfly/react-core';
 import { withFallback } from '@console/shared/src/components/error/error-boundary';
 import { KEYBOARD_SHORTCUTS } from '@console/shared';
 import { filterList } from '../../actions/k8s';
-import { CheckBoxes, storagePrefix } from '../row-filter';
+import { storagePrefix } from '../row-filter';
 import { ErrorPage404, ErrorBoundaryFallback } from '../error';
 import { referenceForModel } from '../../module/k8s';
 import {
@@ -23,6 +23,7 @@ import {
   PageHeading,
   RequireCreatePermission,
 } from '../utils';
+import { FilterToolbar } from '../filter-toolbar';
 
 /** @type {React.SFC<{disabled?: boolean, label?: string, onChange: React.ChangeEventHandler<any>, defaultValue?: string, value?: string, placeholder?: string, autoFocus?: boolean,}}>} */
 export const TextFilter = ({
@@ -87,32 +88,33 @@ export const TextFilter = ({
 TextFilter.displayName = 'TextFilter';
 
 // TODO (jon) make this into "withListPageFilters" HOC
-/** @augments {React.PureComponent<{ListComponent: React.ComponentType<any>, kinds: string[], filters?:any, flatten?: function, data?: any[], rowFilters?: any[]}>} */
+/** @augments {React.PureComponent<{ListComponent: React.ComponentType<any>, kinds: string[], filters?:any, flatten?: function, data?: any[], rowFilters?: any[], hideNameFilter?: boolean, hideLabelFilter?: boolean }>} */
 export class ListPageWrapper_ extends React.PureComponent {
   render() {
-    const { flatten, kinds, ListComponent, reduxIDs, rowFilters } = this.props;
+    const {
+      flatten,
+      ListComponent,
+      reduxIDs,
+      rowFilters,
+      textFilter,
+      hideNameFilter,
+      hideLabelFilter,
+    } = this.props;
     const data = flatten ? flatten(this.props.resources) : [];
-    const RowsOfRowFilters =
-      rowFilters &&
-      _.map(rowFilters, ({ items, reducer, selected, type, numbers }, i) => {
-        const count = _.isFunction(numbers) ? numbers(data) : undefined;
-        return (
-          <CheckBoxes
-            key={i}
-            applyFilter={this.props.applyFilter}
-            items={_.isFunction(items) ? items(_.pick(this.props, kinds)) : items}
-            itemCount={_.size(data)}
-            numbers={count || _.countBy(data, reducer)}
-            selected={selected}
-            type={type}
-            reduxIDs={reduxIDs}
-          />
-        );
-      });
+    const Filter = (
+      <FilterToolbar
+        rowFilters={rowFilters}
+        data={data}
+        reduxIDs={reduxIDs}
+        textFilter={textFilter}
+        hideNameFilter={hideNameFilter}
+        hideLabelFilter={hideLabelFilter}
+      />
+    );
 
     return (
       <div>
-        {!_.isEmpty(data) && RowsOfRowFilters}
+        {!_.isEmpty(data) && Filter}
         <div className="row">
           <div className="col-xs-12">
             <ListComponent {...this.props} data={data} />
@@ -131,6 +133,8 @@ ListPageWrapper_.propTypes = {
   rowFilters: PropTypes.array,
   staticFilters: PropTypes.array,
   customData: PropTypes.any,
+  hideNameFilter: PropTypes.bool,
+  hideLabelFilter: PropTypes.bool,
 };
 
 /** @type {React.FC<<WrappedComponent>, {canCreate?: Boolean, textFilter:string, createAccessReview?: Object, createButtonText?: String, createProps?: Object, fieldSelector?: String, filterLabel?: String, resources: any, badge?: React.ReactNode}>*/
@@ -209,16 +213,12 @@ export const FireMan_ = connect(null, { filterList })(
 
     render() {
       const {
-        autoFocus,
         canCreate,
         createAccessReview,
         createButtonText,
         createProps = {},
-        filterLabel,
         helpText,
         resources,
-        hideTextFilter,
-        textFilter,
         badge,
         title,
       } = this.props;
@@ -275,9 +275,12 @@ export const FireMan_ = connect(null, { filterList })(
             <p className="co-m-pane__help-text co-help-text">{helpText}</p>
           )}
           <div
-            className={classNames('co-m-pane__filter-bar', {
-              'co-m-pane__filter-bar--with-help-text': helpText && !createLink,
-            })}
+            className={classNames(
+              { 'co-m-pane__filter-bar': createLink || helpText },
+              {
+                'co-m-pane__filter-bar--with-help-text': helpText && !createLink,
+              },
+            )}
           >
             {helpText && !createLink && (
               <div className="co-m-pane__filter-bar-group co-m-pane__filter-bar-group--help-text">
@@ -285,17 +288,6 @@ export const FireMan_ = connect(null, { filterList })(
               </div>
             )}
             {createLink && <div className="co-m-pane__filter-bar-group">{createLink}</div>}
-            {!hideTextFilter && (
-              <div className="co-m-pane__filter-bar-group co-m-pane__filter-bar-group--filter">
-                <TextFilter
-                  label={filterLabel}
-                  onChange={(e) => this.applyFilter(textFilter, e.target.value)}
-                  defaultValue={this.defaultValue}
-                  tabIndex={1}
-                  autoFocus={autoFocus}
-                />
-              </div>
-            )}
             {!title && badge && (
               <div className="co-m-pane__filter-bar-group co-m-pane__filter-bar-group--badge">
                 {badge}
@@ -350,7 +342,7 @@ FireMan_.propTypes = {
   title: PropTypes.string,
 };
 
-/** @type {React.SFC<{ListComponent: React.ComponentType<any>, kind: string, helpText?: any, namespace?: string, filterLabel?: string, textFilter?: string, title?: string, showTitle?: boolean, rowFilters?: any[], selector?: any, fieldSelector?: string, canCreate?: boolean, createButtonText?: string, createProps?: any, mock?: boolean, badge?: React.ReactNode, createHandler?: any} >} */
+/** @type {React.SFC<{ListComponent: React.ComponentType<any>, kind: string, helpText?: any, namespace?: string, filterLabel?: string, textFilter?: string, title?: string, showTitle?: boolean, rowFilters?: any[], selector?: any, fieldSelector?: string, canCreate?: boolean, createButtonText?: string, createProps?: any, mock?: boolean, badge?: React.ReactNode, createHandler?: any, hideNameFilter?: boolean, hideLabelFilter?: boolean} >} */
 export const ListPage = withFallback((props) => {
   const {
     autoFocus,
@@ -369,12 +361,13 @@ export const ListPage = withFallback((props) => {
     nameFilter,
     namespace,
     selector,
-    hideTextFilter,
     showTitle = true,
     skipAccessReview,
     textFilter,
     match,
     badge,
+    hideNameFilter,
+    hideLabelFilter,
   } = props;
   let { createProps } = props;
   const ko = kindObj(kind);
@@ -434,18 +427,19 @@ export const ListPage = withFallback((props) => {
       resources={resources}
       rowFilters={rowFilters}
       selectorFilterLabel="Filter by selector (app=nginx) ..."
-      hideTextFilter={hideTextFilter}
       showTitle={showTitle}
       textFilter={textFilter}
       title={title}
       badge={badge}
+      hideNameFilter={hideNameFilter}
+      hideLabelFilter={hideLabelFilter}
     />
   );
 }, ErrorBoundaryFallback);
 
 ListPage.displayName = 'ListPage';
 
-/** @type {React.SFC<{canCreate?: boolean, createButtonText?: string, createProps?: any, createAccessReview?: Object, flatten?: Function, title?: string, label?: string, hideTextFilter?: boolean, showTitle?: boolean, helpText?: any, filterLabel?: string, textFilter?: string, rowFilters?: any[], resources: any[], ListComponent: React.ComponentType<any>, namespace?: string, customData?: any, badge?: React.ReactNode >} */
+/** @type {React.SFC<{canCreate?: boolean, createButtonText?: string, createProps?: any, createAccessReview?: Object, flatten?: Function, title?: string, label?: string, hideTextFilter?: boolean, showTitle?: boolean, helpText?: any, filterLabel?: string, textFilter?: string, rowFilters?: any[], resources: any[], ListComponent: React.ComponentType<any>, namespace?: string, customData?: any, badge?: React.ReactNode, hideNameFilter?: boolean, hideLabelFilter?: boolean >} */
 export const MultiListPage = (props) => {
   const {
     autoFocus,
@@ -461,13 +455,14 @@ export const MultiListPage = (props) => {
     mock,
     namespace,
     rowFilters,
-    hideTextFilter,
     showTitle = true,
     staticFilters,
     textFilter,
     title,
     customData,
     badge,
+    hideNameFilter,
+    hideLabelFilter,
   } = props;
 
   const resources = _.map(props.resources, (r) => ({
@@ -488,7 +483,6 @@ export const MultiListPage = (props) => {
       helpText={helpText}
       resources={mock ? [] : resources}
       selectorFilterLabel="Filter by selector (app=nginx) ..."
-      hideTextFilter={hideTextFilter}
       textFilter={textFilter}
       title={showTitle ? title : undefined}
       badge={badge}
@@ -499,9 +493,12 @@ export const MultiListPage = (props) => {
           kinds={_.map(resources, 'kind')}
           label={label}
           ListComponent={ListComponent}
+          textFilter={textFilter}
           rowFilters={rowFilters}
           staticFilters={staticFilters}
           customData={customData}
+          hideNameFilter={hideNameFilter}
+          hideLabelFilter={hideLabelFilter}
         />
       </Firehose>
     </FireMan_>

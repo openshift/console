@@ -507,8 +507,8 @@ PodList.displayName = 'PodList';
 
 const filters = [
   {
+    filterGroupName: 'Status',
     type: 'pod-status',
-    selected: ['Running', 'Pending', 'Terminating', 'CrashLoopBackOff'],
     reducer: podPhaseFilterReducer,
     items: [
       { id: 'Running', title: 'Running' },

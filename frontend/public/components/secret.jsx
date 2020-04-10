@@ -195,8 +195,8 @@ export const secretTypeFilterReducer = (secret) => {
 
 const filters = [
   {
+    filterGroupName: 'Type',
     type: 'secret-type',
-    selected: secretTypeFilterValues,
     reducer: secretTypeFilterReducer,
     items: secretTypeFilterValues.map((filterValue) => ({ id: filterValue, title: filterValue })),
   },

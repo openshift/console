@@ -50,7 +50,7 @@ describe('Interacting with the environment variable editor', () => {
   afterAll(async () => {
     await browser.get(`${appHost}/k8s/ns/${testName}/deployments`);
     await crudView.isLoaded();
-    await crudView.nameFilter.sendKeys(WORKLOAD_NAME);
+    await crudView.textFilter.sendKeys(WORKLOAD_NAME);
     await browser.wait(
       until.elementToBeClickable(crudView.resourceRowNamesAndNs.first()),
       BROWSER_TIMEOUT,

@@ -184,8 +184,8 @@ const allStrategies = [
 ];
 const filters = [
   {
+    filterGroupName: 'Build Strategy',
     type: 'build-strategy',
-    selected: allStrategies,
     reducer: buildStrategy,
     items: _.map(allStrategies, (strategy) => ({
       id: strategy,

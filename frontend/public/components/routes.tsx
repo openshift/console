@@ -516,8 +516,8 @@ export const RoutesList: React.FC = (props) => (
 
 const filters = [
   {
+    filterGroupName: 'Status',
     type: 'route-status',
-    selected: ['Accepted', 'Rejected', 'Pending'],
     reducer: routeStatus,
     items: [
       { id: 'Accepted', title: 'Accepted' },
