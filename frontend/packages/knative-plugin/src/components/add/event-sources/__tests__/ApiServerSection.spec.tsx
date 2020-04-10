@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
-import { ResourceDropdownField } from '@console/shared';
 import FormSection from '@console/dev-console/src/components/import/section/FormSection';
 import { AsyncComponent } from '@console/internal/components/utils/async';
 import ApiServerSection from '../ApiServerSection';
+import ServiceAccountDropdown from '../../../dropdowns/ServiceAccountDropdown';
 
 jest.mock('formik', () => ({
   useField: jest.fn(() => [{}, {}]),
@@ -19,20 +19,20 @@ jest.mock('formik', () => ({
 }));
 describe('ApiServerSection', () => {
   it('should render FormSection', () => {
-    const wrapper = shallow(<ApiServerSection namespace="test-project" />);
+    const wrapper = shallow(<ApiServerSection />);
     expect(wrapper.find(FormSection)).toHaveLength(1);
     expect(wrapper.find(FormSection).props().title).toBe('ApiServerSource');
   });
 
   it('should render NameValueEditor', () => {
-    const wrapper = shallow(<ApiServerSection namespace="test-project" />);
+    const wrapper = shallow(<ApiServerSection />);
     const nameValueEditorField = wrapper.find(AsyncComponent);
     expect(nameValueEditorField).toHaveLength(1);
     expect(nameValueEditorField.props().nameString).toBe('apiVersion');
     expect(nameValueEditorField.props().valueString).toBe('kind');
   });
-  it('should render ResourceDropdownField', () => {
-    const wrapper = shallow(<ApiServerSection namespace="test-project" />);
-    expect(wrapper.find(ResourceDropdownField)).toHaveLength(1);
+  it('should render ServiceAccountDropdown', () => {
+    const wrapper = shallow(<ApiServerSection />);
+    expect(wrapper.find(ServiceAccountDropdown)).toHaveLength(1);
   });
 });

@@ -339,6 +339,25 @@ const eventSourceData = {
       },
     ],
   },
+  kafkasource: {
+    bootstrapServers: 'my-cluster-kafka-bootstrap.kafka:9092',
+    topics: 'knative-demo-topic',
+    consumerGroup: 'knative-group',
+    net: {
+      sasl: {
+        enable: false,
+        user: { secretKeyRef: { name: '', key: '' } },
+        password: { secretKeyRef: { name: '', key: '' } },
+      },
+      tls: {
+        enable: false,
+        caCert: { secretKeyRef: { name: '', key: '' } },
+        cert: { secretKeyRef: { name: '', key: '' } },
+        key: { secretKeyRef: { name: '', key: '' } },
+      },
+    },
+    serviceAccountName: '',
+  },
 };
 
 export const getDefaultEventingData = (typeEventSource: string): EventSourceFormData => {
@@ -356,6 +375,24 @@ export const getDefaultEventingData = (typeEventSource: string): EventSourceForm
     name: 'esmyapp',
     sink: {
       knativeService: 'event-display',
+    },
+    limits: {
+      cpu: {
+        request: '',
+        requestUnit: 'm',
+        defaultRequestUnit: 'm',
+        limit: '',
+        limitUnit: 'm',
+        defaultLimitUnit: 'm',
+      },
+      memory: {
+        request: '',
+        requestUnit: 'Mi',
+        defaultRequestUnit: 'Mi',
+        limit: '',
+        limitUnit: 'Mi',
+        defaultLimitUnit: 'Mi',
+      },
     },
     type: typeEventSource,
     data: {

@@ -62,6 +62,16 @@ export const sourceDataSpecSchema = yup
           .required('Required'),
       }),
     }),
+  })
+  .when('type', {
+    is: EventSources.KafkaSource,
+    then: yup.object().shape({
+      kafkasource: yup.object().shape({
+        bootstrapServers: yup.string().required('Required'),
+        consumerGroup: yup.string().required('Required'),
+        topics: yup.string().required('Required'),
+      }),
+    }),
   });
 
 export const eventSourceValidationSchema = yup.object().shape({

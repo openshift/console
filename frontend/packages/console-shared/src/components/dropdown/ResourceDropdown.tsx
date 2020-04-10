@@ -72,7 +72,7 @@ class ResourceDropdown extends React.Component<ResourceDropdownProps, State> {
   constructor(props) {
     super(props);
     this.state = {
-      items: this.getDropdownList(props, false),
+      items: this.props.loaded ? this.getDropdownList(props, false) : {},
       title: this.props.loaded ? (
         <span className="btn-dropdown__item--placeholder">{this.props.placeholder}</span>
       ) : (

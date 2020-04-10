@@ -1,8 +1,9 @@
+import * as _ from 'lodash';
 import { K8sResourceKind, K8sKind } from '@console/internal/module/k8s';
 import { useAccessReview } from '@console/internal/components/utils';
 import { getAppLabels } from '@console/dev-console/src/utils/resource-label-utils';
 import { annotations } from '@console/dev-console/src/utils/shared-submit-utils';
-import { EventSources } from '../components/add/import-types';
+import { EventSources, EventSourceFormData } from '../components/add/import-types';
 import {
   ServiceModel,
   EventSourceCronJobModel,
@@ -18,7 +19,7 @@ import * as containerSourceImg from '../imgs/logos/containersource.png';
 import * as cronJobSourceImg from '../imgs/logos/cronjobsource.png';
 import * as kafkaSourceImg from '../imgs/logos/kafkasource.svg';
 
-export const getEventSourcesDepResource = (formData: any): K8sResourceKind => {
+export const getEventSourcesDepResource = (formData: EventSourceFormData): K8sResourceKind => {
   const {
     type,
     name,
@@ -30,7 +31,9 @@ export const getEventSourcesDepResource = (formData: any): K8sResourceKind => {
 
   const defaultLabel = getAppLabels(name, applicationName);
   const apiGroup =
-    type === EventSources.ApiServerSource || type === EventSources.SinkBinding
+    type === EventSources.ApiServerSource ||
+    type === EventSources.SinkBinding ||
+    type === EventSources.KafkaSource
       ? KNATIVE_EVENT_SOURCE_APIGROUP
       : KNATIVE_EVENT_SOURCE_APIGROUP_DEP;
   const apiVersion = 'v1alpha1';
@@ -61,6 +64,41 @@ export const getEventSourcesDepResource = (formData: any): K8sResourceKind => {
   return eventSourceResource;
 };
 
+export const getKafkaSourceResource = (formData: EventSourceFormData): K8sResourceKind => {
+  const {
+    limits: { cpu, memory },
+  } = formData;
+  const baseResource = getEventSourcesDepResource(formData);
+  const kafkaSource = {
+    spec: {
+      resources: {
+        ...((cpu.limit || memory.limit) && {
+          limits: {
+            ...(cpu.limit && { cpu: `${cpu.limit}${cpu.limitUnit}` }),
+            ...(memory.limit && { memory: `${memory.limit}${memory.limitUnit}` }),
+          },
+        }),
+        ...((cpu.request || memory.request) && {
+          requests: {
+            ...(cpu.request && { cpu: `${cpu.request}${cpu.requestUnit}` }),
+            ...(memory.request && { memory: `${memory.request}${memory.requestUnit}` }),
+          },
+        }),
+      },
+    },
+  };
+  return _.merge({}, baseResource, kafkaSource);
+};
+
+export const getEventSourceResource = (formData: EventSourceFormData): K8sResourceKind => {
+  switch (formData.type) {
+    case EventSources.KafkaSource:
+      return getKafkaSourceResource(formData);
+    default:
+      return getEventSourcesDepResource(formData);
+  }
+};
+
 export const getEventSourceData = (source: string) => {
   const eventSourceData = {
     cronjobsource: {
@@ -85,6 +123,25 @@ export const getEventSourceData = (source: string) => {
           kind: '',
         },
       ],
+    },
+    kafkasource: {
+      bootstrapServers: '',
+      topics: '',
+      consumerGroup: '',
+      net: {
+        sasl: {
+          enable: false,
+          user: { secretKeyRef: { name: '', key: '' } },
+          password: { secretKeyRef: { name: '', key: '' } },
+        },
+        tls: {
+          enable: false,
+          caCert: { secretKeyRef: { name: '', key: '' } },
+          cert: { secretKeyRef: { name: '', key: '' } },
+          key: { secretKeyRef: { name: '', key: '' } },
+        },
+      },
+      serviceAccountName: '',
     },
   };
   return eventSourceData[source];

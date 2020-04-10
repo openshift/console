@@ -12,6 +12,8 @@ import SinkSection from './event-sources/SinkSection';
 import { EventSources } from './import-types';
 import EventSourcesSelector from './event-sources/EventSourcesSelector';
 import { useEventSourceList } from '../../utils/create-eventsources-utils';
+import KafkaSourceSection from './event-sources/KafkaSourceSection';
+import AdvancedSection from './AdvancedSection';
 
 interface OwnProps {
   namespace: string;
@@ -33,12 +35,14 @@ const EventSourceForm: React.FC<FormikProps<FormikValues> & OwnProps> = ({
     <EventSourcesSelector eventSourceList={useEventSourceList(namespace)} />
     {values.type === EventSources.CronJobSource && <CronJobSection />}
     {values.type === EventSources.SinkBinding && <SinkBindingSection />}
-    {values.type === EventSources.ApiServerSource && <ApiServerSection namespace={namespace} />}
+    {values.type === EventSources.ApiServerSource && <ApiServerSection />}
+    {values.type === EventSources.KafkaSource && <KafkaSourceSection />}
     <SinkSection namespace={namespace} />
     <AppSection
       project={values.project}
       noProjectsAvailable={projects?.loaded && _.isEmpty(projects.data)}
     />
+    {values.type === EventSources.KafkaSource && <AdvancedSection />}
     <FormFooter
       handleReset={handleReset}
       errorMessage={status && status.submitError}
