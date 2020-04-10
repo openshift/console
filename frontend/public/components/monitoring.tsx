@@ -1268,45 +1268,66 @@ class SilenceForm_ extends React.Component<SilenceFormProps, SilenceFormState> {
     const { data, error, inProgress } = this.state;
 
     return (
-      <div className="co-m-pane__body co-m-pane__form">
+      <>
         <Helmet>
           <title>{title}</title>
         </Helmet>
-        <form className="co-m-pane__body-group silence-form" onSubmit={this.onSubmit}>
-          <SectionHeading text={title} />
+        <div className="co-m-nav-title co-m-nav-title--detail">
+          <h1 className="co-m-pane__heading">{title}</h1>
           <p className="co-m-pane__explanation">
-            A silence is configured based on matchers (label selectors). No notification will be
-            sent out for alerts that match all the values or regular expressions.
+            Silences temporarily mute alerts based on a set of label selectors that you define.
+            Notifications will not be sent for alerts that match all the listed values or regular
+            expressions.
           </p>
-          <hr />
-          {Info && <Info />}
+        </div>
 
-          <div className="form-group">
-            <label className="co-required">Start</label>
-            <Datetime onChange={this.onFieldChange('startsAt')} value={data.startsAt} required />
-          </div>
-          <div className="form-group">
-            <label className="co-required">End</label>
-            <Datetime onChange={this.onFieldChange('endsAt')} value={data.endsAt} required />
-          </div>
-          <div className="co-form-section__separator" />
+        {Info && <Info />}
 
-          <div className="form-group">
-            <label className="co-required">Matchers (label selectors)</label>
-            <p className="co-help-text">
-              Alerts affected by this silence. Matching alerts must satisfy all of the specified
-              label constraints, though they may have additional labels as well.
-            </p>
-            <div className="row monitoring-grid-head text-secondary text-uppercase">
-              <div className="col-xs-5">Name</div>
-              <div className="col-xs-6">Value</div>
-            </div>
-            {_.map(data.matchers, (matcher, i) => (
-              <div className="row form-group" key={i}>
-                <div className="col-xs-10">
+        <div className="co-m-pane__body">
+          <form onSubmit={this.onSubmit}>
+            <div className="co-m-pane__body-group">
+              <div className="form-group row">
+                <div className="col-xs-9">
+                  <SectionHeading text="Duration" />
                   <div className="row">
-                    <div className="col-xs-6 pairs-list__name-field">
-                      <div className="form-group">
+                    <div className="col-xs-6">
+                      <label>Silence alert from...</label>
+                      <Datetime
+                        onChange={this.onFieldChange('startsAt')}
+                        value={data.startsAt}
+                        required
+                      />
+                    </div>
+                    <div className="col-xs-6">
+                      <label>Until...</label>
+                      <Datetime
+                        onChange={this.onFieldChange('endsAt')}
+                        value={data.endsAt}
+                        required
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="co-m-pane__body-group">
+              <div className="form-group row">
+                <div className="col-xs-9">
+                  <SectionHeading text="Alert Labels" />
+                  <p className="co-help-text">
+                    Alerts with labels that match these selectors will be silenced instead of
+                    firing. Label values can be matched exactly or with a regular expression.
+                  </p>
+                </div>
+              </div>
+
+              {_.map(data.matchers, (matcher, i) => (
+                <div className="form-group row" key={i}>
+                  <div className="col-xs-9">
+                    <div className="row">
+                      <div className="col-xs-6">
+                        <label>Label name</label>
                         <Text
                           onChange={this.onFieldChange(`matchers[${i}].name`)}
                           placeholder="Name"
@@ -1314,9 +1335,8 @@ class SilenceForm_ extends React.Component<SilenceFormProps, SilenceFormState> {
                           required
                         />
                       </div>
-                    </div>
-                    <div className="col-xs-6 pairs-list__value-field">
-                      <div className="form-group">
+                      <div className="col-xs-6">
+                        <label>Label value</label>
                         <Text
                           onChange={this.onFieldChange(`matchers[${i}].value`)}
                           placeholder="Value"
@@ -1326,70 +1346,77 @@ class SilenceForm_ extends React.Component<SilenceFormProps, SilenceFormState> {
                       </div>
                     </div>
                   </div>
-                  <div className="row">
-                    <div className="col-xs-12 col-sm-12">
-                      <div className="form-group">
-                        <label className="co-no-bold">
-                          <input
-                            type="checkbox"
-                            onChange={(e) => this.onIsRegexChange(e, i)}
-                            checked={matcher.isRegex}
-                          />
-                          &nbsp; Regular Expression
-                        </label>
-                      </div>
+                  <div className="col-xs-3 monitoring-silence-reg-ex">
+                    <label>&nbsp;</label>
+                    <div>
+                      <label>
+                        <input
+                          type="checkbox"
+                          onChange={(e) => this.onIsRegexChange(e, i)}
+                          checked={matcher.isRegex}
+                        />
+                        &nbsp; Use RegEx
+                      </label>
+                      <Button
+                        className="monitoring-silence-remove-button"
+                        type="button"
+                        onClick={() => this.removeMatcher(i)}
+                        aria-label="Remove matcher"
+                        variant="plain"
+                      >
+                        <MinusCircleIcon />
+                      </Button>
                     </div>
                   </div>
                 </div>
-                <div className="col-xs-2 pairs-list__action">
+              ))}
+
+              <div className="form-group row">
+                <div className="col-xs-9">
                   <Button
+                    className="pf-m-link--align-left"
+                    onClick={this.addMatcher}
                     type="button"
-                    onClick={() => this.removeMatcher(i)}
-                    aria-label="Remove matcher"
-                    variant="plain"
+                    variant="link"
                   >
-                    <MinusCircleIcon />
+                    <PlusCircleIcon className="co-icon-space-r" />
+                    Add Label
                   </Button>
                 </div>
               </div>
-            ))}
-            <Button
-              className="pf-m-link--align-left"
-              onClick={this.addMatcher}
-              type="button"
-              variant="link"
-            >
-              <PlusCircleIcon className="co-icon-space-r" />
-              Add More
-            </Button>
-          </div>
-          <div className="co-form-section__separator" />
+            </div>
 
-          <div className="form-group">
-            <label>Creator</label>
-            <Text onChange={this.onFieldChange('createdBy')} value={data.createdBy} />
-          </div>
-          <div className="form-group">
-            <label>Comment</label>
-            <textarea
-              className="pf-c-form-control"
-              onChange={this.onFieldChange('comment')}
-              value={data.comment}
-            />
-          </div>
+            <div className="row">
+              <div className="col-xs-9">
+                <SectionHeading text="Info" />
+                <div className="form-group">
+                  <label>Creator</label>
+                  <Text onChange={this.onFieldChange('createdBy')} value={data.createdBy} />
+                </div>
+                <div className="form-group">
+                  <label>Comment</label>
+                  <textarea
+                    className="pf-c-form-control"
+                    onChange={this.onFieldChange('comment')}
+                    value={data.comment}
+                  />
+                </div>
+              </div>
+            </div>
 
-          <ButtonBar errorMessage={error} inProgress={inProgress}>
-            <ActionGroup className="pf-c-form">
-              <Button type="submit" variant="primary">
-                Silence
-              </Button>
-              <Button onClick={history.goBack} variant="secondary">
-                Cancel
-              </Button>
-            </ActionGroup>
-          </ButtonBar>
-        </form>
-      </div>
+            <ButtonBar errorMessage={error} inProgress={inProgress}>
+              <ActionGroup className="pf-c-form">
+                <Button type="submit" variant="primary">
+                  Silence
+                </Button>
+                <Button onClick={history.goBack} variant="secondary">
+                  Cancel
+                </Button>
+              </ActionGroup>
+            </ButtonBar>
+          </form>
+        </div>
+      </>
     );
   }
 }

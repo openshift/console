@@ -30,6 +30,15 @@ $monitoring-line-height: 18px;
   text-overflow: ellipsis;
 }
 
+.monitoring-silence-reg-ex {
+  padding-left: 0;
+}
+
+.monitoring-silence-remove-button {
+  padding-left: 30px !important;
+  padding-right: 0 !important;
+}
+
 .monitoring-timestamp {
   display: flex;
   flex-flow: row wrap;
@@ -38,10 +47,6 @@ $monitoring-line-height: 18px;
 
 .monitoring-query {
   color: $color-pf-blue-400;
-}
-
-.btn--silence-add-more {
-  padding: 0;
 }
 
 .monitoring-state-icon--pending {
