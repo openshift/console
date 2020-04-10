@@ -1,6 +1,6 @@
 import * as _ from 'lodash-es';
 
-import { ContainerSpec, ContainerStatus, PodKind, Volume, VolumeMount } from './';
+import { ContainerSpec, ContainerStatus, PodKind, Volume, VolumeMount } from './types';
 
 const getRestartPolicy = (pod: PodKind) =>
   _.find(
