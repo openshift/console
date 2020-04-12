@@ -16,8 +16,16 @@ import {
   ConfigMapKind,
   SecretKind,
   ServiceAccountKind,
+  Patch,
+  TemplateKind,
 } from '@console/internal/module/k8s';
 import { V1Disk } from 'packages/kubevirt-plugin/src/types/vm/disk/V1Disk';
+import { getVolumeWithSourceName } from '../../../selectors/vm';
+import { VMKind } from '../../../types/vm';
+import { PatchBuilder } from '@console/shared/src/k8s/patch';
+import { getTemplateValidationsFromTemplate } from '../../../selectors/vm-template/selectors';
+import { getDisks } from '../../../selectors/vm/selectors';
+import { BUS_VIRTIO } from '../../../constants/vm/constants';
 
 export const getSerial = (ed: EnvDisk): string => ed[0];
 export const getEnvVarSource = (ed: EnvDisk): EnvVarSource => ed[1];
@@ -147,4 +155,43 @@ export const setNewSourceVolume = (
 
 export const areThereDupSerials = (serials: string[]): boolean => {
   return serials.length !== new Set(serials).size;
+};
+
+export const getEnvDiskSerial = (vm: VMKind, sourceName: string) => {
+  const vol: V1Volume = getVolumeWithSourceName(vm, sourceName);
+  if (!vol) {
+    return null;
+  }
+
+  const disk = getDisks(vm).find((d) => d.name === vol.name);
+  return disk?.serial;
+};
+
+export const getVMEnvDiskPatches = (
+  vmObj: VMKind,
+  sourceName: string,
+  sourceKind: string,
+  serialNumber: string,
+  vmTemplate?: TemplateKind,
+): Patch[] => {
+  if (!vmObj || !sourceName || !sourceKind) {
+    return null;
+  }
+
+  const diskBus = vmTemplate
+    ? getTemplateValidationsFromTemplate(vmTemplate)
+        .getDefaultBus()
+        .getValue()
+    : BUS_VIRTIO;
+
+  const sourceDiskName = getNewDiskName(sourceName);
+  const newDisk = setNewSourceDisk(sourceDiskName, serialNumber, diskBus);
+  const newVolume: V1Volume = setNewSourceVolume(sourceKind, sourceName, sourceDiskName);
+
+  const patches = [
+    new PatchBuilder('/spec/template/spec/domain/devices/disks/-').add(newDisk).build(),
+    new PatchBuilder('/spec/template/spec/volumes/-').add(newVolume).build(),
+  ];
+
+  return patches;
 };

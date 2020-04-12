@@ -15,6 +15,7 @@ import {
   ReduxReducer,
   ProjectDashboardInventoryItem,
   DashboardsOverviewResourceActivity,
+  AddSecretToVMExtension,
 } from '@console/plugin-sdk';
 import { DashboardsStorageCapacityDropdownItem } from '@console/ceph-storage-plugin';
 import { TemplateModel, PodModel } from '@console/internal/models';
@@ -29,6 +30,8 @@ import {
 import kubevirtReducer from './redux';
 
 import './style.scss';
+import { K8sResourceCommon, TemplateKind } from '@console/internal/module/k8s';
+import { VMKind } from './types';
 
 type ConsumedExtensions =
   | ResourceNSNavItem
@@ -44,7 +47,8 @@ type ConsumedExtensions =
   | DashboardsStorageCapacityDropdownItem
   | ReduxReducer
   | ProjectDashboardInventoryItem
-  | DashboardsOverviewResourceActivity;
+  | DashboardsOverviewResourceActivity
+  | AddSecretToVMExtension;
 
 export const FLAG_KUBEVIRT = 'KUBEVIRT';
 
@@ -297,6 +301,35 @@ const plugin: Plugin<ConsumedExtensions> = [
         import(
           './components/dashboards-page/overview-dashboard/activity' /* webpackChunkName: "kubevirt-activity" */
         ).then((m) => m.V2VImportActivity),
+    },
+    flags: {
+      required: [FLAG_KUBEVIRT],
+    },
+  },
+  {
+    type: 'Secret/AddSecretToVMExtension',
+    properties: {
+      vmModel: models.VirtualMachineModel,
+      getTemplateOfVM: (vm) =>
+        import(
+          './selectors/vm-template/selectors' /* webpackChunkName: "kubevirt-activity" */
+        ).then((m) => m.getTemplateOfVM(vm)),
+      getEnvDiskSerial: (vm: K8sResourceCommon, secretName: string) =>
+        import(
+          './components/vms/vm-environment/selectors' /* webpackChunkName: "kubevirt-activity" */
+        ).then((m) => m.getEnvDiskSerial(vm as VMKind, secretName)),
+      getVMEnvDiskPatches: (
+        vmObj: K8sResourceCommon,
+        sourceName: string,
+        sourceKind: string,
+        serialNumber: string,
+        vmTemplate?: TemplateKind,
+      ) =>
+        import(
+          './components/vms/vm-environment/selectors' /* webpackChunkName: "kubevirt-activity" */
+        ).then((m) =>
+          m.getVMEnvDiskPatches(vmObj as VMKind, sourceName, sourceKind, serialNumber, vmTemplate),
+        ),
     },
     flags: {
       required: [FLAG_KUBEVIRT],

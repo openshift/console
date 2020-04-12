@@ -7,6 +7,7 @@ import {
   TEMPLATE_OS_LABEL,
   TEMPLATE_OS_NAME_ANNOTATION,
   TEMPLATE_WORKLOAD_LABEL,
+  VolumeType,
 } from '../../constants/vm';
 import { V1Network, V1NetworkInterface, VMKind, VMIKind, CPURaw } from '../../types';
 import { findKeySuffixValue, getSimpleName, getValueByPrefix } from '../utils';
@@ -25,6 +26,7 @@ import { getVMIDisks } from '../vmi/basic';
 import { VirtualMachineModel } from '../../models';
 import { V1Volume } from '../../types/vm/disk/V1Volume';
 import { VMGenericLikeEntityKind, VMILikeEntityKind } from '../../types/vmLike';
+import { VolumeWrapper } from '../../k8s/wrapper/vm/volume-wrapper';
 
 export const getMemory = (vm: VMKind) =>
   _.get(vm, 'spec.template.spec.domain.resources.requests.memory');
@@ -158,3 +160,15 @@ export const getNodeSelector = (vm: VMKind) => vm?.spec?.template?.spec?.nodeSel
 export const getTolerations = (vm: VMKind) => vm?.spec?.template?.spec?.tolerations;
 
 export const getAffinity = (vm: VMKind) => vm?.spec?.template?.spec?.affinity;
+
+export const getVolumeWithSourceName = (vm: VMKind, sourceName: string) => {
+  return getVolumes(vm).find((vol) => {
+    const volType = new VolumeWrapper(vol).getType();
+    return (
+      (volType === VolumeType.SECRET && vol.secret.secretName === sourceName) ||
+      (volType === VolumeType.CONFIG_MAP && vol.configMap.name === sourceName) ||
+      (volType === VolumeType.SERVICE_ACCOUNT &&
+        vol.serviceAccount.serviceAccountName === sourceName)
+    );
+  });
+};

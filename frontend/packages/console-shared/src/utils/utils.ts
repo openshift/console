@@ -33,3 +33,11 @@ export const getRandomChars = (len = 6): string => {
     .replace(/[^a-z0-9]+/g, '')
     .substr(1, len);
 };
+
+export async function asyncForEach(iterable, callback) {
+  const array = [...iterable];
+  for (let index = 0; index < array.length; index++) {
+    /* eslint-disable no-await-in-loop */
+    await callback(array[index], index, array);
+  }
+}

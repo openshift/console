@@ -1,8 +1,10 @@
 import { VMGenericLikeEntityKind } from '../../types/vmLike';
 import { getLabel, getName, getNamespace } from '@console/shared/src';
 import { LABEL_USED_TEMPLATE_NAME, LABEL_USED_TEMPLATE_NAMESPACE } from '../../constants/vm';
-import { TemplateKind } from '@console/internal/module/k8s';
+import { TemplateKind, K8sResourceCommon, k8sGet } from '@console/internal/module/k8s';
 import { TemplateValidations } from '../../utils/validations/template/template-validations';
+import { VMKind } from '../../types/vm';
+import { TemplateModel } from '@console/internal/models';
 
 export const getVMTemplateNamespacedName = (
   vm: VMGenericLikeEntityKind,
@@ -40,4 +42,11 @@ export const getTemplateValidationsFromTemplate = (
   } catch (e) {
     return new TemplateValidations();
   }
+};
+
+export const getTemplateOfVM = async (vm: K8sResourceCommon): Promise<K8sResourceCommon> => {
+  const tmpltObj = getVMTemplateNamespacedName(vm as VMKind);
+  const template = tmpltObj ? await k8sGet(TemplateModel, tmpltObj.name, tmpltObj.namespace) : null;
+
+  return template;
 };
