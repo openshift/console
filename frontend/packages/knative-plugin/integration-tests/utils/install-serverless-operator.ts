@@ -41,7 +41,6 @@ export const installKnOperator = async () => {
   );
   await browser.wait(until.visibilityOf(operatorHubView.createSubscriptionFormInstallMode));
   await operatorHubView.allNamespacesInstallMode.click();
-
   expect(operatorHubView.createSubscriptionError.isPresent()).toBe(false);
   expect(operatorHubView.createSubscriptionFormBtn.getAttribute('disabled')).toEqual(null);
   await operatorHubView.createSubscriptionFormBtn.click();
@@ -50,7 +49,6 @@ export const installKnOperator = async () => {
   await crudView.isLoaded();
   await catalogPageView.clickFilterCheckbox('installState-installed');
   expect(catalogPageView.catalogTileFor('OpenShift Serverless Operator').isDisplayed()).toBe(true);
-
   await retry(() => catalogPageView.catalogTileFor('OpenShift Serverless Operator').click());
   await browser
     .wait(until.presenceOf(installServerlessOperator), 15000)
@@ -78,12 +76,10 @@ export const increaseMachineSets = async () => {
   await browser.wait(until.presenceOf(sidenavView.navSectionFor('Compute')));
   await sidenavView.clickNavLink(['Compute', 'Machine Sets']);
   await crudView.isLoaded();
-
   await browser.wait(until.elementToBeClickable(firstKebabMenu));
   await firstKebabMenu.click();
   await browser.wait(until.elementToBeClickable(crudView.actionForLabel('Edit Count')));
   await crudView.actionForLabel('Edit Count').click();
-
   await browser.wait(until.elementToBeClickable(machineSetsInput));
   await machineSetsInput.sendKeys(protractor.Key.chord(protractor.Key.CONTROL, 'a'));
   await machineSetsInput.clear().sendKeys('6');

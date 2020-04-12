@@ -21,7 +21,6 @@ import * as sidenavView from '../../../../integration-tests/views/sidenav.view';
 import * as crudView from '../../../../integration-tests/views/crud.view';
 import * as operatorView from '../../../operator-lifecycle-manager/integration-tests/views/operator.view';
 
-
 const JASMINE_DEFAULT_TIMEOUT_INTERVAL = jasmine.DEFAULT_TIMEOUT_INTERVAL;
 const JASMINE_EXTENDED_TIMEOUT_INTERVAL = 3000 * 60 * 5;
 
@@ -30,7 +29,6 @@ describe('Serverless', async () => {
     await browser.get(`${appHost}/k8s/cluster/projects`);
     await switchPerspective(Perspective.Administrator);
     expect(sideHeader.getText()).toContain('Administrator');
-
     // Extend the default jasmine timeout interval just in case it takes a while for the htpasswd idp to be ready
     jasmine.DEFAULT_TIMEOUT_INTERVAL = JASMINE_EXTENDED_TIMEOUT_INTERVAL;
   });
