@@ -41,7 +41,7 @@ import { CheckBoxes } from './row-filter';
 import { AlertmanagerYAMLEditorWrapper } from './monitoring/alert-manager-yaml-editor';
 import { AlertmanagerConfigWrapper } from './monitoring/alert-manager-config';
 import { refreshNotificationPollers } from './notification-drawer';
-import { ActionsMenu } from './utils/dropdown';
+import { ActionsMenu, Dropdown } from './utils/dropdown';
 import { ButtonBar } from './utils/button-bar';
 import { ExternalLink, getURLSearchParams } from './utils/link';
 import { Firehose } from './utils/firehose';
@@ -50,7 +50,7 @@ import { Kebab } from './utils/kebab';
 import { LoadingInline, StatusBox } from './utils/status-box';
 import { SectionHeading, ActionButtons } from './utils/headings';
 import { Timestamp } from './utils/timestamp';
-import { formatPrometheusDuration } from './utils/datetime';
+import { formatPrometheusDuration, parsePrometheusDuration } from './utils/datetime';
 import {
   BlueInfoCircleIcon,
   GreenCheckCircleIcon,
@@ -1183,6 +1183,10 @@ const Datetime = (props) => {
   );
 };
 
+const durationOffText = '-';
+const durations = [durationOffText, '30m', '1h', '2h', '6h', '12h', '1d', '2d', '1w'];
+const durationItems = _.zipObject(durations, durations);
+
 class SilenceForm_ extends React.Component<SilenceFormProps, SilenceFormState> {
   constructor(props) {
     super(props);
@@ -1200,7 +1204,7 @@ class SilenceForm_ extends React.Component<SilenceFormProps, SilenceFormState> {
     if (_.isEmpty(data.matchers)) {
       data.matchers.push({ name: '', value: '', isRegex: false });
     }
-    this.state = { data, error: undefined, inProgress: false };
+    this.state = { data, duration: '2h', error: undefined, inProgress: false };
   }
 
   setField = (path: string, v: any): void => {
@@ -1211,6 +1215,19 @@ class SilenceForm_ extends React.Component<SilenceFormProps, SilenceFormState> {
 
   onFieldChange = (path: string): ((e) => void) => {
     return (e) => this.setField(path, e.target.value);
+  };
+
+  onDurationChange = (duration: string): void => {
+    this.setState({ duration });
+    if (duration !== durationOffText) {
+      const startsAt = Date.parse(this.state.data.startsAt);
+      this.setField('endsAt', formatDate(new Date(startsAt + parsePrometheusDuration(duration))));
+    }
+  };
+
+  onEndsAtChange: React.ReactEventHandler<HTMLInputElement> = (e) => {
+    this.setField('endsAt', e.currentTarget.value);
+    this.setState({ duration: durationOffText });
   };
 
   onIsRegexChange = (e, i: number): void => {
@@ -1265,7 +1282,7 @@ class SilenceForm_ extends React.Component<SilenceFormProps, SilenceFormState> {
 
   render() {
     const { Info, title } = this.props;
-    const { data, error, inProgress } = this.state;
+    const { data, duration, error, inProgress } = this.state;
 
     return (
       <>
@@ -1290,7 +1307,7 @@ class SilenceForm_ extends React.Component<SilenceFormProps, SilenceFormState> {
                 <div className="col-xs-9">
                   <SectionHeading text="Duration" />
                   <div className="row">
-                    <div className="col-xs-6">
+                    <div className="col-xs-5">
                       <label>Silence alert from...</label>
                       <Datetime
                         onChange={this.onFieldChange('startsAt')}
@@ -1298,13 +1315,18 @@ class SilenceForm_ extends React.Component<SilenceFormProps, SilenceFormState> {
                         required
                       />
                     </div>
-                    <div className="col-xs-6">
-                      <label>Until...</label>
-                      <Datetime
-                        onChange={this.onFieldChange('endsAt')}
-                        value={data.endsAt}
-                        required
+                    <div className="col-xs-2">
+                      <label>For...</label>
+                      <Dropdown
+                        dropDownClassName="dropdown--full-width"
+                        items={durationItems}
+                        onChange={this.onDurationChange}
+                        selectedKey={duration}
                       />
+                    </div>
+                    <div className="col-xs-5">
+                      <label>Until...</label>
+                      <Datetime onChange={this.onEndsAtChange} value={data.endsAt} required />
                     </div>
                   </div>
                 </div>
@@ -1743,6 +1765,7 @@ export type SilenceFormProps = {
 
 export type SilenceFormState = {
   data: Silence;
+  duration: string;
   error: string;
   inProgress: boolean;
 };
