@@ -16,10 +16,7 @@ export const sourceDataSpecSchema = yup
     is: EventSources.CronJobSource,
     then: yup.object().shape({
       cronjobsource: yup.object().shape({
-        data: yup
-          .string()
-          .max(253, 'Cannot be longer than 253 characters.')
-          .required('Required'),
+        data: yup.string().max(253, 'Cannot be longer than 253 characters.'),
         schedule: yup
           .string()
           .max(253, 'Cannot be longer than 253 characters.')
