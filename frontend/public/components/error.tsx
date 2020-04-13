@@ -83,27 +83,25 @@ export const ErrorPage404: React.SFC<ErrorPage404Props> = (props) => (
 export const ErrorBoundaryFallback: React.SFC<ErrorBoundaryFallbackProps> = (props) => (
   <div className="co-m-pane__body">
     <h1 className="co-m-pane__heading co-m-pane__heading--center">Oh no! Something went wrong.</h1>
-    <div className="row">
-      <ExpandCollapse textCollapsed="Show Details" textExpanded="Hide Details">
-        <h3 className="co-section-heading-tertiary">{props.title}</h3>
-        <div className="form-group">
-          <label htmlFor="description">Description: </label>
-          <p>{props.errorMessage}</p>
+    <ExpandCollapse textCollapsed="Show Details" textExpanded="Hide Details">
+      <h3 className="co-section-heading-tertiary">{props.title}</h3>
+      <div className="form-group">
+        <label htmlFor="description">Description: </label>
+        <p>{props.errorMessage}</p>
+      </div>
+      <div className="form-group">
+        <label htmlFor="componentTrace">Component Trace: </label>
+        <div className="co-copy-to-clipboard__stacktrace-width-height">
+          <CopyToClipboard value={props.componentStack.trim()} />
         </div>
-        <div className="form-group">
-          <label htmlFor="componentTrace">Component Trace: </label>
-          <div className="co-copy-to-clipboard__stacktrace-width-height">
-            <CopyToClipboard value={props.componentStack.trim()} />
-          </div>
+      </div>
+      <div className="form-group">
+        <label htmlFor="stackTrace">Stack Trace: </label>
+        <div className="co-copy-to-clipboard__stacktrace-width-height">
+          <CopyToClipboard value={props.stack.trim()} />
         </div>
-        <div className="form-group">
-          <label htmlFor="stackTrace">Stack Trace: </label>
-          <div className="co-copy-to-clipboard__stacktrace-width-height">
-            <CopyToClipboard value={props.stack.trim()} />
-          </div>
-        </div>
-      </ExpandCollapse>
-    </div>
+      </div>
+    </ExpandCollapse>
   </div>
 );
 
