@@ -326,7 +326,7 @@ export const deploymentKnativeEventData: K8sResourceKind = {
 
 const eventSourceData = {
   cronjobsource: {
-    data: 'hello',
+    data: '',
     schedule: '* * * * *',
   },
   apiserversource: {
