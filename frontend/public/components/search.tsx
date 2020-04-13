@@ -7,12 +7,13 @@ import {
   AccordionContent,
   AccordionItem,
   AccordionToggle,
-  Button,
-  Chip,
-  ChipGroup,
-  ChipGroupToolbarItem,
+  DataToolbar,
+  DataToolbarChip,
+  DataToolbarContent,
+  DataToolbarFilter,
+  DataToolbarItem,
 } from '@patternfly/react-core';
-import { CloseIcon, PlusCircleIcon, MinusCircleIcon } from '@patternfly/react-icons';
+import { PlusCircleIcon, MinusCircleIcon } from '@patternfly/react-icons';
 import { getBadgeFromType } from '@console/shared';
 import { RootState } from '../redux';
 import { getActivePerspective, getPinnedResources } from '../reducers/ui';
@@ -109,6 +110,13 @@ const SearchPage_: React.FC<SearchProps & StateProps & DispatchProps> = (props) 
     setQueryArgument('kind', [...updateItems].join(','));
   };
 
+  const updateNewItems = (filter: string, { key }: DataToolbarChip) => {
+    const updateItems = selectedItems;
+    updateItems.has(key) ? updateItems.delete(key) : updateItems.add(key);
+    setSelectedItems(updateItems);
+    setQueryArgument('kind', [...updateItems].join(','));
+  };
+
   const clearSelectedItems = () => {
     setSelectedItems(new Set([]));
     setQueryArgument('kind', '');
@@ -169,7 +177,7 @@ const SearchPage_: React.FC<SearchProps & StateProps & DispatchProps> = (props) 
       : updateNameFilter(value);
   };
 
-  const removeLabelFilter = (value: string) => {
+  const removeLabelFilter = (filter: string, value: string) => {
     const newLabels = labelFilter.filter((keepItem: string) => keepItem !== value);
     setLabelFilter(newLabels);
     setQueryArgument('q', newLabels.join(','));
@@ -198,70 +206,49 @@ const SearchPage_: React.FC<SearchProps & StateProps & DispatchProps> = (props) 
         <title>Search</title>
       </Helmet>
       <PageHeading detail={true} title="Search">
-        <div className="co-search-group">
-          <ResourceListDropdown
-            selected={[...selectedItems]}
-            onChange={updateSelectedItems}
-            className="co-search-group__resource"
-          />
-          <SearchFilterDropdown
-            onChange={updateSearchFilter}
-            nameFilterInput={typeaheadNameFilter}
-            labelFilterInput={labelFilterInput}
-          />
-        </div>
-        <div className="form-group">
-          <ChipGroup withToolbar defaultIsOpen={false}>
-            <ChipGroupToolbarItem key="resources-category" categoryName="Resource">
-              {[...selectedItems].map((chip) => (
-                <Chip key={chip} onClick={() => updateSelectedItems(chip)}>
-                  <ResourceIcon kind={chip} />
-                  {kindForReference(chip)}
-                </Chip>
-              ))}
-              {selectedItems.size > 0 && (
-                <span>
-                  <Button variant="plain" aria-label="Close" onClick={clearSelectedItems}>
-                    <CloseIcon />
-                  </Button>
-                </span>
-              )}
-            </ChipGroupToolbarItem>
-            <ChipGroupToolbarItem key="label-category" categoryName={searchFilterValues.Label}>
-              {labelFilter.map((chip) => (
-                <Chip key={chip} onClick={() => removeLabelFilter(chip)}>
-                  {chip}
-                </Chip>
-              ))}
-              {labelFilter.length > 0 && (
-                <span>
-                  <Button variant="plain" aria-label="Close" onClick={clearLabelFilter}>
-                    <CloseIcon />
-                  </Button>
-                </span>
-              )}
-            </ChipGroupToolbarItem>
-            <ChipGroupToolbarItem key="name-category" categoryName={searchFilterValues.Name}>
-              {typeaheadNameFilter !== '' && (
-                <Chip key="typehaed-chip" onClick={clearNameFilter}>
-                  {typeaheadNameFilter}
-                </Chip>
-              )}
-              {typeaheadNameFilter !== '' && (
-                <span>
-                  <Button variant="plain" aria-label="Close" onClick={clearNameFilter}>
-                    <CloseIcon />
-                  </Button>
-                </span>
-              )}
-            </ChipGroupToolbarItem>
-          </ChipGroup>
-          {(selectedItems.size > 0 || labelFilter.length > 0 || typeaheadNameFilter !== '') && (
-            <Button variant="link" key="clear-filters" onClick={clearAll}>
-              Clear all filters
-            </Button>
-          )}
-        </div>
+        <DataToolbar id="search-toolbar" clearAllFilters={clearAll}>
+          <DataToolbarContent>
+            <DataToolbarItem>
+              <DataToolbarFilter
+                chips={[...selectedItems].map((resourceKind) => ({
+                  key: resourceKind,
+                  node: (
+                    <>
+                      <ResourceIcon kind={resourceKind} />
+                      {kindForReference(resourceKind)}
+                    </>
+                  ),
+                }))}
+                deleteChip={updateNewItems}
+                categoryName="Resource"
+              >
+                <ResourceListDropdown
+                  selected={[...selectedItems]}
+                  onChange={updateSelectedItems}
+                />
+              </DataToolbarFilter>
+            </DataToolbarItem>
+            <DataToolbarItem className="co-search-group__filter">
+              <DataToolbarFilter
+                chips={[...labelFilter]}
+                deleteChip={removeLabelFilter}
+                categoryName="Label"
+              >
+                <DataToolbarFilter
+                  chips={typeaheadNameFilter.length > 0 && [typeaheadNameFilter]}
+                  deleteChip={clearNameFilter}
+                  categoryName="Name"
+                >
+                  <SearchFilterDropdown
+                    onChange={updateSearchFilter}
+                    nameFilterInput={typeaheadNameFilter}
+                    labelFilterInput={labelFilterInput}
+                  />
+                </DataToolbarFilter>
+              </DataToolbarFilter>
+            </DataToolbarItem>
+          </DataToolbarContent>
+        </DataToolbar>
       </PageHeading>
       <div className="co-search">
         <Accordion className="co-search__accordion" asDefinitionList={false} noBoxShadow>
