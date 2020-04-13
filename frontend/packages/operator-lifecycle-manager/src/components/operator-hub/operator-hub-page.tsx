@@ -21,99 +21,122 @@ import { iconFor } from '..';
 import { installedFor, subscriptionFor } from '../operator-group';
 import { getOperatorProviderType } from './operator-hub-utils';
 import { OperatorHubTileView } from './operator-hub-items';
-import { OperatorHubItem, OperatorHubCSVAnnotations, InstalledState } from './index';
+import {
+  OperatorHubItem,
+  OperatorHubCSVAnnotations,
+  InstalledState,
+  OperatorHubCSVAnnotationKey,
+} from './index';
+import { parseJSONAnnotation } from '@console/shared';
+
+const ANNOTATIONS_WITH_JSON = [
+  OperatorHubCSVAnnotationKey.infrastructureFeatures,
+  OperatorHubCSVAnnotationKey.validSubscription,
+];
 
 export const OperatorHubList: React.SFC<OperatorHubListProps> = (props) => {
   const { operatorGroup, subscription, loaded, loadError, namespace = '' } = props;
+  // FIXME optional chaining
   const marketplaceItems = _.get(
     props.marketplacePackageManifest,
     'data',
     [] as PackageManifestKind[],
   );
-  const localItems = _.get(props, 'packageManifest.data', [] as PackageManifestKind[]);
-  const getPackageStatus = (pkg) => _.get(pkg, 'status');
-  const items: OperatorHubItem[] = marketplaceItems
-    .concat(localItems)
-    .filter((pkg) => {
-      // if a package does not have status.defaultChannel, exclude it so the app doesn't fail
-      const { defaultChannel } = getPackageStatus(pkg);
-      if (!defaultChannel) {
-        // eslint-disable-next-line no-console
-        console.warn(
-          `PackageManifest ${pkg.metadata.name} has no status.defaultChannel and has been excluded`,
-        );
-        return false;
-      }
-      return true;
-    })
-    .map(
-      (pkg): OperatorHubItem => {
-        const { channels, defaultChannel } = getPackageStatus(pkg);
-        const { currentCSVDesc } = _.find(channels || [], { name: defaultChannel } as any);
-        const currentCSVAnnotations: OperatorHubCSVAnnotations = _.get(
-          currentCSVDesc,
-          'annotations',
-          {},
-        );
-        const {
-          certifiedLevel,
-          healthIndex,
-          repository,
-          containerImage,
-          createdAt,
-          support,
-          capabilities: capabilityLevel,
-          'marketplace.openshift.io/action-text': marketplaceActionText,
-          'marketplace.openshift.io/remote-workflow': marketplaceRemoteWorkflow,
-          'marketplace.openshift.io/support-workflow': marketplaceSupportWorkflow,
-          'operators.openshift.io/infrastructure-features': infrastructure,
-          'operators.openshift.io/valid-subscription': validSubscription,
-        } = currentCSVAnnotations;
 
-        return {
-          obj: pkg,
-          kind: PackageManifestModel.kind,
-          name: _.get(currentCSVDesc, 'displayName', pkg.metadata.name),
-          uid: `${pkg.metadata.name}-${pkg.status.catalogSource}-${pkg.status.catalogSourceNamespace}`,
-          installed: installedFor(subscription.data)(operatorGroup.data)(pkg.status.packageName)(
-            namespace,
-          ),
-          subscription: subscriptionFor(subscription.data)(operatorGroup.data)(
-            pkg.status.packageName,
-          )(namespace),
-          // FIXME: Just use `installed`
-          installState: installedFor(subscription.data)(operatorGroup.data)(pkg.status.packageName)(
-            namespace,
-          )
-            ? InstalledState.Installed
-            : InstalledState.NotInstalled,
-          imgUrl: iconFor(pkg),
-          description: currentCSVAnnotations.description || currentCSVDesc.description,
-          longDescription: currentCSVDesc.description || currentCSVAnnotations.description,
-          provider: _.get(pkg, 'status.provider.name', _.get(pkg, 'metadata.labels.provider')),
-          providerType: getOperatorProviderType(pkg),
-          tags: [],
-          version: _.get(currentCSVDesc, 'version'),
-          categories: _.get(currentCSVAnnotations, 'categories', '')
-            .split(',')
-            .map((category) => category.trim()),
-          catalogSource: _.get(pkg, 'status.catalogSource'),
-          catalogSourceNamespace: _.get(pkg, 'status.catalogSourceNamespace'),
-          certifiedLevel,
-          healthIndex,
-          repository,
-          containerImage,
-          createdAt,
-          support,
-          capabilityLevel,
-          marketplaceActionText,
-          marketplaceRemoteWorkflow,
-          marketplaceSupportWorkflow,
-          validSubscription: validSubscription ? JSON.parse(validSubscription) : undefined,
-          infraFeatures: infrastructure ? JSON.parse(infrastructure) : undefined,
-        };
-      },
-    );
+  const localItems = _.get(props, 'packageManifest.data', [] as PackageManifestKind[]); // FIXME optional chaining
+  const getPackageStatus = (pkg) => _.get(pkg, 'status'); // FIXME optional chaining and/or is this needed?
+
+  const items: OperatorHubItem[] = React.useMemo(() => {
+    return marketplaceItems
+      .concat(localItems)
+      .filter((pkg) => {
+        // if a package does not have status.defaultChannel, exclude it so the app doesn't fail
+        const { defaultChannel } = getPackageStatus(pkg);
+        if (!defaultChannel) {
+          // eslint-disable-next-line no-console
+          console.warn(
+            `PackageManifest ${pkg.metadata.name} has no status.defaultChannel and has been excluded`,
+          );
+          return false;
+        }
+        return true;
+      })
+      .map(
+        (pkg): OperatorHubItem => {
+          const { channels, defaultChannel } = getPackageStatus(pkg);
+          const { currentCSVDesc } = _.find(channels || [], { name: defaultChannel } as any);
+          // FIXME optional chaining
+          const currentCSVAnnotations: OperatorHubCSVAnnotations = _.get(
+            currentCSVDesc,
+            'annotations',
+            {},
+          );
+
+          const [infraFeatures, validSubscription] = ANNOTATIONS_WITH_JSON.map((annotationKey) => {
+            return parseJSONAnnotation(currentCSVAnnotations, annotationKey, () =>
+              // eslint-disable-next-line no-console
+              console.warn(`Error parsing annotation in PackageManifest ${pkg.metadata.name}`),
+            );
+          });
+
+          const {
+            certifiedLevel,
+            healthIndex,
+            repository,
+            containerImage,
+            createdAt,
+            support,
+            capabilities: capabilityLevel,
+            [OperatorHubCSVAnnotationKey.actionText]: marketplaceActionText,
+            [OperatorHubCSVAnnotationKey.remoteWorkflow]: marketplaceRemoteWorkflow,
+            [OperatorHubCSVAnnotationKey.supportWorkflow]: marketplaceSupportWorkflow,
+          } = currentCSVAnnotations;
+
+          return {
+            obj: pkg,
+            kind: PackageManifestModel.kind,
+            name: _.get(currentCSVDesc, 'displayName', pkg.metadata.name), // FIXME optional chaining
+            uid: `${pkg.metadata.name}-${pkg.status.catalogSource}-${pkg.status.catalogSourceNamespace}`,
+            installed: installedFor(subscription.data)(operatorGroup.data)(pkg.status.packageName)(
+              namespace,
+            ),
+            subscription: subscriptionFor(subscription.data)(operatorGroup.data)(
+              pkg.status.packageName,
+            )(namespace),
+            // FIXME: Just use `installed`
+            installState: installedFor(subscription.data)(operatorGroup.data)(
+              pkg.status.packageName,
+            )(namespace)
+              ? InstalledState.Installed
+              : InstalledState.NotInstalled,
+            imgUrl: iconFor(pkg),
+            description: currentCSVAnnotations.description || currentCSVDesc.description,
+            longDescription: currentCSVDesc.description || currentCSVAnnotations.description,
+            provider: _.get(pkg, 'status.provider.name', _.get(pkg, 'metadata.labels.provider')), // FIXME optional chaining
+            providerType: getOperatorProviderType(pkg),
+            tags: [],
+            version: _.get(currentCSVDesc, 'version'), // FIXME optional chaining
+            categories: _.get(currentCSVAnnotations, 'categories', '') // FIXME optional chaining
+              .split(',')
+              .map((category) => category.trim()),
+            catalogSource: _.get(pkg, 'status.catalogSource'), // FIXME optional chaining
+            catalogSourceNamespace: _.get(pkg, 'status.catalogSourceNamespace'), // FIXME optional chaining
+            certifiedLevel,
+            healthIndex,
+            repository,
+            containerImage,
+            createdAt,
+            support,
+            capabilityLevel,
+            marketplaceActionText,
+            marketplaceRemoteWorkflow,
+            marketplaceSupportWorkflow,
+            validSubscription,
+            infraFeatures,
+          };
+        },
+      );
+  }, [localItems, marketplaceItems, namespace, operatorGroup.data, subscription.data]);
 
   const uniqueItems = _.uniqBy(items, 'uid');
   if (uniqueItems.length !== items.length) {

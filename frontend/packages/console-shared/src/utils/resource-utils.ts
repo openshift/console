@@ -9,6 +9,7 @@ import {
   apiVersionForModel,
   referenceForModel,
   K8sKind,
+  ObjectMetadata,
 } from '@console/internal/module/k8s';
 import {
   DeploymentConfigModel,
@@ -244,6 +245,22 @@ const getAnnotation = (obj: K8sResourceKind, annotation: string): string => {
   return _.get(obj, ['metadata', 'annotations', annotation]);
 };
 
+export const parseJSONAnnotation = (
+  annotations: ObjectMetadata['annotations'],
+  annotationKey: string,
+  onError?: (err: Error) => void,
+  defaultReturn?: any,
+): any => {
+  try {
+    return annotations?.[annotationKey] ? JSON.parse(annotations?.[annotationKey]) : defaultReturn;
+  } catch (e) {
+    onError && onError(e);
+    // eslint-disable-next-line no-console
+    console.warn(`Could not parse annotation ${annotationKey} as JSON: `, e);
+    return defaultReturn;
+  }
+};
+
 const getDeploymentRevision = (obj: K8sResourceKind): number => {
   const revision = getAnnotation(obj, DEPLOYMENT_REVISION_ANNOTATION);
   return revision && parseInt(revision, 10);
@@ -287,6 +304,7 @@ export const sortBuilds = (builds: K8sResourceKind[]): K8sResourceKind[] => {
   return [...builds].sort(byBuildNumber);
 };
 
+// FIXME use parseJSONAnnotation helper
 const getAnnotatedTriggers = (obj: K8sResourceKind) => {
   const triggersJSON = getAnnotation(obj, TRIGGERS_ANNOTATION) || '[]';
   try {
