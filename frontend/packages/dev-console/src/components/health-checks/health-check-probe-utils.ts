@@ -1,6 +1,6 @@
-import { HealthChecksProbeType } from './health-checks-types';
+import { HealthChecksProbeType, RequestType, HealthCheckProbe } from './health-checks-types';
 
-export const getHealthChecksProbe = (probe: string) => {
+export const getHealthChecksProbeConfig = (probe: string) => {
   switch (probe) {
     case HealthChecksProbeType.ReadinessProbe: {
       return {
@@ -26,4 +26,35 @@ export const getHealthChecksProbe = (probe: string) => {
     default:
       return undefined;
   }
+};
+
+export const defaultHealthChecksProbeValues: HealthCheckProbe = {
+  showForm: false,
+  enabled: false,
+  data: {
+    failureThreshold: 3,
+    requestType: RequestType.HTTPGET,
+    httpGet: {
+      scheme: 'HTTP',
+      path: '/',
+      port: 8080,
+      httpHeaders: [],
+    },
+    tcpSocket: {
+      port: 8080,
+    },
+    exec: { command: [''] },
+    initialDelaySeconds: 0,
+    periodSeconds: 10,
+    timeoutSeconds: 1,
+    successThreshold: 1,
+  },
+};
+
+export const healthChecksProbeInitialData = {
+  healthChecks: {
+    readinessProbe: defaultHealthChecksProbeValues,
+    livenessProbe: defaultHealthChecksProbeValues,
+    startupProbe: defaultHealthChecksProbeValues,
+  },
 };

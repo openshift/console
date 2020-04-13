@@ -1,89 +1,94 @@
 import * as React from 'react';
 import * as _ from 'lodash';
-import { FormikProps, FormikValues, useFormikContext } from 'formik';
+import { FormikValues, useFormikContext } from 'formik';
 import { TextInputTypes, InputGroupText } from '@patternfly/react-core';
-import { InputGroupField, InputField, DropdownField, FormFooter } from '@console/shared';
-import { FormFooterVariant } from '@console/shared/src/components/form-utils/form-utils-types';
-import { HTTPProbeTypeForm, TCPProbeTypeForm, CommandProbeTypeForm } from './ProbeTypeForms';
-import { ProbeType } from './health-checks-types';
+import { InputGroupField, InputField, DropdownField, ActionGroupWithIcons } from '@console/shared';
+import {
+  HTTPRequestTypeForm,
+  TCPRequestTypeForm,
+  CommandRequestTypeForm,
+} from './RequestTypeForms';
+import { RequestType } from './health-checks-types';
 import FormSection from '../import/section/FormSection';
 import './ProbeForm.scss';
 
-const getProbeTypeForm = (value: string, ports: object) => {
+const getRequestTypeForm = (
+  value: string,
+  probeType: string,
+  ports?: { [port: number]: number },
+) => {
   switch (value) {
-    case ProbeType.HTTPGET:
-      return <HTTPProbeTypeForm ports={ports} />;
-    case ProbeType.ContainerCommand:
-      return <CommandProbeTypeForm />;
-    case ProbeType.TCPSocket:
-      return <TCPProbeTypeForm ports={ports} />;
+    case RequestType.HTTPGET:
+      return <HTTPRequestTypeForm ports={ports} probeType={probeType} />;
+    case RequestType.ContainerCommand:
+      return <CommandRequestTypeForm probeType={probeType} />;
+    case RequestType.TCPSocket:
+      return <TCPRequestTypeForm ports={ports} probeType={probeType} />;
     default:
-      return undefined;
+      return null;
   }
 };
 
 interface ProbeFormProps {
-  containerPorts?: object;
+  containerPorts?: { [port: number]: number };
+  onSubmit: () => void;
+  onClose: () => void;
+  probeType: string;
 }
 
-enum probeTypeOptions {
-  'httpGet' = 'HTTP GET',
-  'containerCommand' = 'Container Command',
-  'tcpSocket' = 'TCP Socket',
+enum RequestTypeOptions {
+  httpGet = 'HTTP GET',
+  command = 'Container Command',
+  tcpSocket = 'TCP Socket',
 }
 
-const ProbeForm: React.FC<FormikProps<FormikValues> & ProbeFormProps> = ({
-  handleSubmit,
-  handleReset,
-  status,
-  isSubmitting,
-  errors,
-  containerPorts,
-}) => {
-  const { values, setFieldValue } = useFormikContext<FormikValues>();
-  const onProbeTypeChange = (value) => {
-    setFieldValue('probeType', value);
-  };
+const ProbeForm: React.FC<ProbeFormProps> = ({ onSubmit, onClose, containerPorts, probeType }) => {
+  const {
+    values: { healthChecks },
+    errors,
+  } = useFormikContext<FormikValues>();
+
   return (
-    <div className="odc-heath-check__probe-form">
+    <div className="odc-heath-check-probe-form">
       <FormSection>
         <InputField
           type={TextInputTypes.number}
-          name="failureThreshold"
+          name={`healthChecks.${probeType}.data.failureThreshold`}
           label="Failure Threshold"
           style={{ maxWidth: '100%' }}
           helpText={'How many times the probe will try starting or restarting before giving up.'}
         />
         <DropdownField
-          name="probeType"
+          name={`healthChecks.${probeType}.data.requestType`}
           label="Type"
-          items={probeTypeOptions}
-          title={ProbeType.HTTPGET}
-          onChange={onProbeTypeChange}
+          items={RequestTypeOptions}
+          title={RequestType.HTTPGET}
           fullWidth
         />
-        {getProbeTypeForm(values.probeType, containerPorts)}
+        {getRequestTypeForm(
+          healthChecks?.[probeType]?.data?.requestType,
+          probeType,
+          containerPorts,
+        )}
         <InputGroupField
           type={TextInputTypes.number}
-          name="initialDelaySeconds"
+          name={`healthChecks.${probeType}.data.initialDelaySeconds`}
           label="Initial Delay"
-          helpText="How long to wait before the container starts before checking it's health."
+          helpText="How long to wait after the container starts before checking it's health."
           afterInput={<InputGroupText>{'seconds'}</InputGroupText>}
           style={{ maxWidth: '100%' }}
-          required
         />
         <InputGroupField
           type={TextInputTypes.number}
-          name="periodSeconds"
+          name={`healthChecks.${probeType}.data.periodSeconds`}
           label="Period"
           helpText="How often to perform the probe."
           afterInput={<InputGroupText>{'seconds'}</InputGroupText>}
           style={{ maxWidth: '100%' }}
-          required
         />
         <InputGroupField
           type={TextInputTypes.number}
-          name="timeoutSeconds"
+          name={`healthChecks.${probeType}.data.timeoutSeconds`}
           label="Timeout"
           helpText="How long to wait for the probe to finish, if the time is exceeded, the probe is considered failed."
           afterInput={<InputGroupText>{'seconds'}</InputGroupText>}
@@ -91,7 +96,7 @@ const ProbeForm: React.FC<FormikProps<FormikValues> & ProbeFormProps> = ({
         />
         <InputField
           type={TextInputTypes.number}
-          name="successThreshold"
+          name={`healthChecks.${probeType}.data.successThreshold`}
           label="Success Threshold"
           style={{ maxWidth: '100%' }}
           helpText={
@@ -99,13 +104,10 @@ const ProbeForm: React.FC<FormikProps<FormikValues> & ProbeFormProps> = ({
           }
         />
       </FormSection>
-      <FormFooter
-        handleReset={handleReset}
-        errorMessage={status && status.submitError}
-        isSubmitting={isSubmitting}
-        disableSubmit={!_.isEmpty(errors)}
-        handleSubmit={handleSubmit}
-        formFooterVariant={FormFooterVariant.Icons}
+      <ActionGroupWithIcons
+        onSubmit={onSubmit}
+        onClose={onClose}
+        isDisabled={!_.isEmpty(errors?.healthChecks?.[probeType])}
       />
     </div>
   );

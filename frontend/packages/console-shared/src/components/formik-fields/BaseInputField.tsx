@@ -36,7 +36,7 @@ const BaseInputField: React.FC<BaseInputFieldProps & {
         value: field.value || '',
         id: fieldId,
         label,
-        isValid,
+        validated: !isValid ? ValidatedOptions.error : validated,
         'aria-describedby': `${fieldId}-helper`,
         onChange: (value, event) => {
           field.onChange(event);

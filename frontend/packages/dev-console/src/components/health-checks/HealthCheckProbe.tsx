@@ -1,76 +1,65 @@
 import * as React from 'react';
-import * as _ from 'lodash';
-import { Formik } from 'formik';
+import { useFormikContext, FormikValues } from 'formik';
 import { PlusCircleIcon, MinusCircleIcon } from '@patternfly/react-icons';
+import { GreenCheckCircleIcon } from '@console/shared';
 import { Button, ButtonVariant } from '@patternfly/react-core';
 import ProbeForm from './ProbeForm';
-import { HealthCheckProbeDataType } from './health-checks-types';
-import { getHealthChecksProbe } from './health-check-probe-utils';
-import { getValidationSchema } from './health-check-probe-validation-utils';
+import { getHealthChecksProbeConfig } from './health-check-probe-utils';
 import './HealthCheckProbe.scss';
 
 interface HealthCheckProbeProps {
-  probe: string;
-  initialValues: HealthCheckProbeDataType;
+  probeType: string;
 }
 
-const HealthCheckProbe: React.FC<HealthCheckProbeProps> = ({ probe, initialValues }) => {
-  const [addProbe, setAddProbe] = React.useState(false);
-  const [selectedProbe, setSelectedProbe] = React.useState<React.ReactNode>('');
-  const [probeData, setProbeData] = React.useState<HealthCheckProbeDataType>();
-
+const HealthCheckProbe: React.FC<HealthCheckProbeProps> = ({ probeType }) => {
+  const {
+    values: { healthChecks },
+    setFieldValue,
+    initialValues,
+  } = useFormikContext<FormikValues>();
   const onEditProbe = () => {
-    setAddProbe(true);
+    setFieldValue(`healthChecks.${probeType}.showForm`, true);
   };
 
   const handleDeleteProbe = () => {
-    setAddProbe(false);
-    setSelectedProbe('');
-    setProbeData(initialValues);
+    setFieldValue(`healthChecks.${probeType}`, initialValues.healthChecks[probeType]);
   };
 
-  const handleReset = (values, actions) => {
-    actions.resetForm({ values: initialValues, status: {} });
-    setAddProbe(false);
+  const handleReset = () => {
+    if (!healthChecks?.[probeType]?.enabled) {
+      setFieldValue(`healthChecks.${probeType}`, initialValues.healthChecks[probeType]);
+    }
+    setFieldValue(`healthChecks.${probeType}.showForm`, false);
   };
 
-  const handleSubmit = (values, actions) => {
-    actions.setSubmitting(true);
-    setAddProbe(false);
-    setProbeData(values);
-    setSelectedProbe(
-      <>
-        {`${getHealthChecksProbe(probe).formTitle} Added`}
-        <Button
-          className="pf-m-plain--align-left"
-          variant={ButtonVariant.plain}
-          onClick={handleDeleteProbe}
-        >
-          <MinusCircleIcon />
-        </Button>
-      </>,
-    );
+  const handleSubmit = () => {
+    setFieldValue(`healthChecks.${probeType}.showForm`, false);
+    setFieldValue(`healthChecks.${probeType}.enabled`, true);
   };
 
   const handleAddProbe = () => {
-    setAddProbe(true);
+    setFieldValue(`healthChecks.${probeType}.showForm`, true);
   };
 
   const renderProbe = () => {
-    if (addProbe) {
-      return (
-        <Formik
-          initialValues={!_.isEmpty(probeData) ? probeData : initialValues}
-          onSubmit={handleSubmit}
-          onReset={handleReset}
-          validationSchema={getValidationSchema}
-        >
-          {(props) => <ProbeForm {...props} />}
-        </Formik>
-      );
+    if (healthChecks?.[probeType]?.showForm) {
+      return <ProbeForm onSubmit={handleSubmit} onClose={handleReset} probeType={probeType} />;
     }
-    if (selectedProbe) {
-      return selectedProbe;
+    if (healthChecks?.[probeType]?.enabled) {
+      return (
+        <>
+          <span className="odc-heath-check-probe__successText">
+            <GreenCheckCircleIcon /> {`${getHealthChecksProbeConfig(probeType).formTitle} Added`}
+          </span>
+          <Button
+            className="pf-m-plain--align-left"
+            variant={ButtonVariant.plain}
+            onClick={handleDeleteProbe}
+          >
+            <MinusCircleIcon />
+          </Button>
+        </>
+      );
     }
     return (
       <Button
@@ -79,7 +68,7 @@ const HealthCheckProbe: React.FC<HealthCheckProbeProps> = ({ probe, initialValue
         onClick={handleAddProbe}
         icon={<PlusCircleIcon />}
       >
-        {`Add ${getHealthChecksProbe(probe).formTitle}`}
+        {`Add ${getHealthChecksProbeConfig(probeType).formTitle}`}
       </Button>
     );
   };
@@ -87,8 +76,8 @@ const HealthCheckProbe: React.FC<HealthCheckProbeProps> = ({ probe, initialValue
   return (
     <>
       <div className="co-section-heading-tertiary odc-heath-check-probe__formTitle">
-        {getHealthChecksProbe(probe).formTitle}
-        {!_.isEmpty(selectedProbe) && (
+        {getHealthChecksProbeConfig(probeType).formTitle}
+        {healthChecks?.[probeType]?.enabled && (
           <Button
             className="pf-m-link--align-left"
             variant={ButtonVariant.link}
@@ -99,7 +88,9 @@ const HealthCheckProbe: React.FC<HealthCheckProbeProps> = ({ probe, initialValue
           </Button>
         )}
       </div>
-      <div className="pf-c-form__helper-text">{getHealthChecksProbe(probe).formSubtitle}</div>
+      <div className="pf-c-form__helper-text">
+        {getHealthChecksProbeConfig(probeType).formSubtitle}
+      </div>
       <div className="co-toolbar__group co-toolbar__group--left">{renderProbe()}</div>
     </>
   );

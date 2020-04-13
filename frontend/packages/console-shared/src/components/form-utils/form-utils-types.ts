@@ -13,10 +13,10 @@ export interface FormFooterProps {
   showAlert?: boolean;
   infoTitle?: string;
   infoMessage?: string;
-  formFooterVariant?: FormFooterVariant;
 }
 
-export enum FormFooterVariant {
-  Default = 'Default',
-  Icons = 'Icons',
+export interface ActionGroupWithIconsProps {
+  onSubmit: () => void;
+  onClose: () => void;
+  isDisabled?: boolean;
 }

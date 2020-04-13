@@ -1,33 +1,39 @@
+import { NameValuePair } from '@console/shared';
+
 export enum HealthChecksProbeType {
   ReadinessProbe = 'readinessProbe',
   LivenessProbe = 'livenessProbe',
   StartupProbe = 'startupProbe',
 }
 
-export enum ProbeType {
+export enum RequestType {
   HTTPGET = 'httpGet',
-  ContainerCommand = 'containerCommand',
+  ContainerCommand = 'command',
   TCPSocket = 'tcpSocket',
 }
 
-export interface ProbeTypeDataType {
-  httpGet: {
+export interface HealthCheckProbeData {
+  failureThreshold: number;
+  requestType?: string;
+  httpGet?: {
     scheme: string;
     path: string;
-    port: string;
-    httpHeaders: object;
+
+    port: number;
+    httpHeaders: NameValuePair[];
   };
-  tcpSocket: {
-    port: string;
+  tcpSocket?: {
+    port: number;
   };
-  command: string[];
+  exec: { command?: string[] };
+  initialDelaySeconds: number;
+  periodSeconds: number;
+  timeoutSeconds: number;
+  successThreshold: number;
 }
 
-export interface HealthCheckProbeDataType extends ProbeTypeDataType {
-  failureThreshold: string;
-  probeType: string;
-  initialDelaySeconds: string;
-  periodSeconds: string;
-  timeoutSeconds: string;
-  successThreshold: string;
+export interface HealthCheckProbe {
+  showForm?: boolean;
+  enabled?: boolean;
+  data: HealthCheckProbeData;
 }

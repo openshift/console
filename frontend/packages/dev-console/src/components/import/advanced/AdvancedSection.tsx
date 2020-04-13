@@ -14,7 +14,6 @@ import BuildConfigSection from './BuildConfigSection';
 import DeploymentConfigSection from './DeploymentConfigSection';
 import ResourceLimitSection from './ResourceLimitSection';
 import { AppResources } from '../../edit-application/edit-application-types';
-import HealthChecks from '../../health-checks/HealthChecks';
 
 export interface AdvancedSectionProps {
   values: FormikValues;
@@ -41,9 +40,6 @@ const AdvancedSection: React.FC<AdvancedSectionProps> = ({ values, appResources 
           ) : (
             <RouteSection route={values.route} />
           )}
-        </ProgressiveListItem>
-        <ProgressiveListItem name="Health Checks">
-          <HealthChecks />
         </ProgressiveListItem>
         {/* Hide Build for Deploy Image */}
         {values.isi ? null : (
