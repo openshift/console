@@ -65,10 +65,10 @@ const validateStatus = (response, url) => {
       reason = json.message;
     }
     if (!reason) {
-      reason = response.statusText;
+      reason = json.error;
     }
     if (!reason) {
-      reason = json.error;
+      reason = response.statusText;
     }
     const error = new Error(reason);
     error.response = response;
