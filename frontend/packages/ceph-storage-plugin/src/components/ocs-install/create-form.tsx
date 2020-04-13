@@ -2,7 +2,13 @@ import * as React from 'react';
 import * as _ from 'lodash';
 import { match } from 'react-router';
 import { Alert, ActionGroup, Button, Form, FormGroup } from '@patternfly/react-core';
-import { NodeKind, k8sPatch, k8sCreate, referenceForModel } from '@console/internal/module/k8s';
+import {
+  NodeKind,
+  k8sPatch,
+  k8sCreate,
+  referenceForModel,
+  StorageClassResourceKind,
+} from '@console/internal/module/k8s';
 import { ListPage } from '@console/internal/components/factory';
 import { NodeModel } from '@console/internal/models';
 import { hasLabel, getName } from '@console/shared';
@@ -18,12 +24,15 @@ import {
   labelTooltip,
   minSelectedNode,
   storageClassTooltip,
+  defaultRequestSize,
 } from '../../constants/ocs-install';
+import { NO_PROVISIONER } from '../../constants';
 import { OCSServiceModel } from '../../models';
 import { OCSStorageClassDropdown } from '../modals/storage-class-dropdown';
 import { OSDSizeDropdown } from '../../utils/osd-size-dropdown';
 import { cephStorageLabel } from '../../selectors';
 import NodeTable from './node-list';
+import { PVsAvailableCapacity } from './pvs-available-capacity';
 import './ocs-install.scss';
 
 const makeLabelNodesRequest = (selectedNodes: NodeKind[]): Promise<NodeKind>[] => {
@@ -47,16 +56,24 @@ const makeLabelNodesRequest = (selectedNodes: NodeKind[]): Promise<NodeKind>[] =
 
 const makeOCSRequest = (
   selectedData: NodeKind[],
-  storageClass: string,
+  storageClass: StorageClassResourceKind,
   osdSize: string,
 ): Promise<any> => {
   const promises = makeLabelNodesRequest(selectedData);
   const ocsObj = _.cloneDeep(ocsRequestData);
-  ocsObj.spec.storageDeviceSets[0].dataPVCTemplate.spec.storageClassName = storageClass;
+
+  // for baremetal infra
+  if (storageClass?.provisioner === NO_PROVISIONER) {
+    ocsObj.spec.monDataDirHostPath = '/var/lib/rook';
+    ocsObj.spec.storageDeviceSets[0].portable = false;
+  }
+
+  const scName = getName(storageClass);
+  ocsObj.spec.storageDeviceSets[0].dataPVCTemplate.spec.storageClassName = scName;
   ocsObj.spec.storageDeviceSets[0].dataPVCTemplate.spec.resources.requests.storage = osdSize;
 
   return Promise.all(promises).then(() => {
-    if (!storageClass) {
+    if (!scName) {
       throw new Error('No StorageClass selected');
     }
     return k8sCreate(OCSServiceModel, ocsObj);
@@ -76,8 +93,8 @@ export const CreateOCSServiceForm = withHandlePromise<
   } = props;
   const [selectedNodes, setSelectedNodes] = React.useState<NodeKind[]>(null);
   const [visibleRows, setVisibleRows] = React.useState<NodeKind[]>(null);
-  const [osdSize, setOSDSize] = React.useState('2Ti');
-  const [storageClass, setStorageClass] = React.useState<string>('');
+  const [osdSize, setOSDSize] = React.useState(defaultRequestSize.NON_BAREMETAL);
+  const [storageClass, setStorageClass] = React.useState<StorageClassResourceKind>(null);
 
   const submit = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
@@ -89,6 +106,17 @@ export const CreateOCSServiceForm = withHandlePromise<
         )}/${getName(ocsRequestData)}`,
       );
     });
+  };
+
+  const handleStorageClass = (sc: StorageClassResourceKind) => {
+    setStorageClass(sc);
+    const provisioner: string = sc?.provisioner; // required if user selects 'No Default Storage Class' option
+
+    if (provisioner === NO_PROVISIONER) {
+      setOSDSize(defaultRequestSize.BAREMETAL); // for baremetal environment, set requested capacity as 1 Byte
+    } else {
+      setOSDSize(defaultRequestSize.NON_BAREMETAL);
+    }
   };
 
   return (
@@ -130,25 +158,34 @@ export const CreateOCSServiceForm = withHandlePromise<
         }
       >
         <div className="ceph-ocs-install__ocs-service-capacity--dropdown">
-          <OCSStorageClassDropdown onChange={setStorageClass} data-test-id="ocs-dropdown" />
+          <OCSStorageClassDropdown onChange={handleStorageClass} data-test-id="ocs-dropdown" />
         </div>
+        {storageClass?.provisioner === NO_PROVISIONER && (
+          <PVsAvailableCapacity
+            replica={ocsRequestData.spec.storageDeviceSets[0].replica}
+            data-test-id="ceph-ocs-install-pvs-available-capacity"
+            sc={storageClass}
+          />
+        )}
       </FormGroup>
-      <FormGroup
-        fieldId="select-osd-size"
-        label={
-          <>
-            OCS Service Capacity
-            <FieldLevelHelp>{labelTooltip}</FieldLevelHelp>
-          </>
-        }
-      >
-        <OSDSizeDropdown
-          className="ceph-ocs-install__ocs-service-capacity--dropdown"
-          selectedKey={osdSize}
-          onChange={setOSDSize}
-          data-test-id="osd-dropdown"
-        />
-      </FormGroup>
+      {storageClass?.provisioner !== NO_PROVISIONER && (
+        <FormGroup
+          fieldId="select-osd-size"
+          label={
+            <>
+              OCS Service Capacity
+              <FieldLevelHelp>{labelTooltip}</FieldLevelHelp>
+            </>
+          }
+        >
+          <OSDSizeDropdown
+            className="ceph-ocs-install__ocs-service-capacity--dropdown"
+            selectedKey={osdSize}
+            onChange={setOSDSize}
+            data-test-id="osd-dropdown"
+          />
+        </FormGroup>
+      )}
       <ButtonBar errorMessage={errorMessage} inProgress={inProgress}>
         <ActionGroup className="pf-c-form">
           <Button

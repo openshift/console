@@ -1,12 +1,16 @@
 import * as _ from 'lodash';
 import { Alert } from '@console/internal/components/monitoring';
 import { K8sResourceKind } from '@console/internal/module/k8s';
-import { FirehoseResult } from '@console/internal/components/utils';
+import { FirehoseResult, convertToBaseValue } from '@console/internal/components/utils';
 import { cephStorageProvisioners } from '@console/shared/src/utils';
 import { OCS_OPERATOR } from '../constants';
 
 export const cephStorageLabel = 'cluster.ocs.openshift.io/openshift-storage';
 
+const enum status {
+  BOUND = 'Bound',
+  AVAILABLE = 'Available',
+}
 export const filterCephAlerts = (alerts: Alert[]): Alert[] =>
   alerts.filter((alert) => _.get(alert, 'annotations.storage_type') === 'ceph');
 
@@ -23,7 +27,7 @@ const getPVStorageClass = (pv: K8sResourceKind) => _.get(pv, 'spec.storageClassN
 const getStorageClassName = (pvc: K8sResourceKind) =>
   _.get(pvc, ['metadata', 'annotations', 'volume.beta.kubernetes.io/storage-class']) ||
   _.get(pvc, 'spec.storageClassName');
-const isBound = (pvc: K8sResourceKind) => _.get(pvc, 'status.phase') === 'Bound';
+const isBound = (pvc: K8sResourceKind) => pvc.status.phase === status.BOUND;
 
 export const getCephPVCs = (
   cephSCNames: string[] = [],
@@ -59,3 +63,12 @@ export const getOCSVersion = (items: FirehoseResult): string => {
   );
   return _.get(operator, 'status.installedCSV');
 };
+
+export const calcPVsCapacity = (pvs: K8sResourceKind[]): number =>
+  pvs.reduce((sum, pv) => {
+    const storage = Number(convertToBaseValue(pv.spec.capacity.storage));
+    return sum + storage;
+  }, 0);
+
+export const getSCAvailablePVs = (pvsData: K8sResourceKind[], sc: string): K8sResourceKind[] =>
+  pvsData.filter((pv) => getPVStorageClass(pv) === sc && pv.status.phase === status.AVAILABLE);

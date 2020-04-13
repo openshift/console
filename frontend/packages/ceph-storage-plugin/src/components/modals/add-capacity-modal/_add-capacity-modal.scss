@@ -30,9 +30,11 @@
   padding-top: 2em;
 }
 
-.ceph-add-capacity_sc-dropdown {
+.ceph-add-capacity__sc-dropdown {
   width: 16rem;
-  margin-bottom: 1rem;
+  &--margin {
+    margin-bottom: 1rem;
+  }
 }
 
 .ceph-add-capacity__sc-dropdown--hide {
