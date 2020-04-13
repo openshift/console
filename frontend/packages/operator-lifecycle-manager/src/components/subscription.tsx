@@ -454,7 +454,13 @@ export class SubscriptionUpdates extends React.Component<
                 {this.state.waitingForUpdate ? (
                   <LoadingInline />
                 ) : (
-                  <Button type="button" isInline onClick={() => channelModal()} variant="link">
+                  <Button
+                    type="button"
+                    isInline
+                    onClick={channelModal}
+                    variant={!pkg ? 'plain' : 'link'}
+                    isDisabled={!pkg}
+                  >
                     {obj.spec.channel || 'default'}
                     <PencilAltIcon className="co-icon-space-l pf-c-button-icon--plain" />
                   </Button>
@@ -469,7 +475,7 @@ export class SubscriptionUpdates extends React.Component<
                 {this.state.waitingForUpdate ? (
                   <LoadingInline />
                 ) : (
-                  <Button type="button" isInline onClick={() => approvalModal()} variant="link">
+                  <Button type="button" isInline onClick={approvalModal} variant="link">
                     {obj.spec.installPlanApproval || 'Automatic'}
                     <PencilAltIcon className="co-icon-space-l pf-c-button-icon--plain" />
                   </Button>
