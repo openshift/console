@@ -160,6 +160,7 @@ export const ExampleDockerCommandPopover: React.FC<ImageStreamManipulationHelpPr
     <Popover
       headerContent={<>Image registry commands</>}
       className="co-example-docker-command__popover"
+      minWidth="600px"
       bodyContent={
         <div>
           <p>
