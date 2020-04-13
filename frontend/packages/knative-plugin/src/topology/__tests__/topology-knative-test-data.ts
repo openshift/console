@@ -4,6 +4,7 @@ import {
   PodKind,
   K8sResourceConditionStatus,
   referenceForModel,
+  K8sKind,
 } from '@console/internal/module/k8s';
 import { TopologyDataResources } from '@console/dev-console/src/components/topology';
 import {
@@ -15,6 +16,7 @@ import {
   EventSourceContainerModel,
   EventSourceCamelModel,
   EventSourceKafkaModel,
+  EventSourcePingModel,
   EventSourceSinkBindingModel,
 } from '../../models';
 import {
@@ -394,103 +396,30 @@ export const sampleKnativeServices: FirehoseResult = {
   data: [knativeServiceObj],
 };
 
-export const sampleEventSourceCronjob: FirehoseResult = {
-  loaded: true,
-  loadError: '',
-  data: [
-    {
-      apiVersion: `${EventSourceCronJobModel.apiGroup}/${EventSourceCronJobModel.apiVersion}`,
-      kind: EventSourceCronJobModel.kind,
-      metadata: {
-        name: 'overlayimage',
-        namespace: 'testproject3',
-        uid: '1317f615-9636-11e9-b134-06a61d886b689',
-        creationTimestamp: '2019-06-12T07:07:57Z',
-      },
-      spec: {
-        sink: {
-          apiVersion: 'serving.knative.dev/v1alpha1',
-          kind: 'Service',
+export const getEventSourceResponse = (eventSourceModel: K8sKind): FirehoseResult => {
+  return {
+    loaded: true,
+    loadError: '',
+    data: [
+      {
+        apiVersion: `${eventSourceModel.apiGroup}/${eventSourceModel.apiVersion}`,
+        kind: eventSourceModel.kind,
+        metadata: {
           name: 'overlayimage',
+          namespace: 'testproject3',
+          uid: '1317f615-9636-11e9-b134-06a61d886b689_1',
+          creationTimestamp: '2019-06-12T07:07:57Z',
+        },
+        spec: {
+          sink: {
+            apiVersion: 'serving.knative.dev/v1alpha1',
+            kind: 'Service',
+            name: 'overlayimage',
+          },
         },
       },
-    },
-  ],
-};
-
-export const sampleEventSourceContainers: FirehoseResult = {
-  loaded: true,
-  loadError: '',
-  data: [
-    {
-      apiVersion: `${EventSourceContainerModel.apiGroup}/${EventSourceContainerModel.apiVersion}`,
-      kind: EventSourceContainerModel.kind,
-      metadata: {
-        name: 'overlayimage',
-        namespace: 'testproject3',
-        uid: '1317f615-9636-11e9-b134-06a61d886b689_1',
-        creationTimestamp: '2019-06-12T07:07:57Z',
-      },
-      spec: {
-        sink: {
-          apiVersion: 'serving.knative.dev/v1alpha1',
-          kind: 'Service',
-          name: 'overlayimage',
-        },
-      },
-      status: {
-        sinkUri: 'http://event-display.testproject3.svc.cluster.local',
-      },
-    },
-  ],
-};
-
-export const sampleEventSourceCamel: FirehoseResult = {
-  loaded: true,
-  loadError: '',
-  data: [
-    {
-      apiVersion: `${EventSourceCamelModel.apiGroup}/${EventSourceCamelModel.apiVersion}`,
-      kind: EventSourceCamelModel.kind,
-      metadata: {
-        name: 'overlayimage',
-        namespace: 'testproject3',
-        uid: '1317f615-9636-11e9-b134-06a61d886b689_2',
-        creationTimestamp: '2019-06-12T07:07:57Z',
-      },
-      spec: {
-        sink: {
-          apiVersion: `${ServiceModel.apiGroup}/${ServiceModel.apiVersion}`,
-          kind: ServiceModel.kind,
-          name: 'overlayimage',
-        },
-      },
-    },
-  ],
-};
-
-export const sampleEventSourceKafka: FirehoseResult = {
-  loaded: true,
-  loadError: '',
-  data: [
-    {
-      apiVersion: `${EventSourceKafkaModel.apiGroup}/${EventSourceKafkaModel.apiVersion}`,
-      kind: EventSourceKafkaModel.kind,
-      metadata: {
-        name: 'overlayimage',
-        namespace: 'testproject3',
-        uid: '1317f615-9636-11e9-b134-06a61d886b689_3',
-        creationTimestamp: '2019-06-12T07:07:57Z',
-      },
-      spec: {
-        sink: {
-          apiVersion: `${ServiceModel.apiGroup}/${ServiceModel.apiVersion}`,
-          kind: ServiceModel.kind,
-          name: 'overlayimage',
-        },
-      },
-    },
-  ],
+    ],
+  };
 };
 
 export const sampleEventSourceSinkbinding: FirehoseResult = {
@@ -503,7 +432,7 @@ export const sampleEventSourceSinkbinding: FirehoseResult = {
       metadata: {
         name: 'bind-wss',
         namespace: 'testproject3',
-        uid: '1317f615-9636-11e9-b134-06a61d886b689_4',
+        uid: '1317f615-9636-11e9-b134-06a61d886b689_1',
         creationTimestamp: '2019-06-12T07:07:57Z',
       },
       spec: {
@@ -676,10 +605,11 @@ export const MockKnativeResources: TopologyDataResources = {
   revisions: sampleKnativeRevisions,
   pipelines: samplePipeline,
   pipelineRuns: samplePipelineRun,
-  [referenceForModel(EventSourceCronJobModel)]: sampleEventSourceCronjob,
-  [referenceForModel(EventSourceContainerModel)]: sampleEventSourceContainers,
-  [referenceForModel(EventSourceCamelModel)]: sampleEventSourceCamel,
-  [referenceForModel(EventSourceKafkaModel)]: sampleEventSourceKafka,
+  [referenceForModel(EventSourceCronJobModel)]: getEventSourceResponse(EventSourceCronJobModel),
+  [referenceForModel(EventSourceContainerModel)]: getEventSourceResponse(EventSourceContainerModel),
+  [referenceForModel(EventSourceCamelModel)]: getEventSourceResponse(EventSourceCamelModel),
+  [referenceForModel(EventSourceKafkaModel)]: getEventSourceResponse(EventSourceKafkaModel),
   [referenceForModel(EventSourceSinkBindingModel)]: sampleEventSourceSinkbinding,
+  [referenceForModel(EventSourcePingModel)]: getEventSourceResponse(EventSourcePingModel),
   clusterServiceVersions: sampleClusterServiceVersions,
 };

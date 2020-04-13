@@ -26,6 +26,18 @@ export const sourceDataSpecSchema = yup
     }),
   })
   .when('type', {
+    is: EventSources.PingSource,
+    then: yup.object().shape({
+      pingsource: yup.object().shape({
+        data: yup.string().max(253, 'Cannot be longer than 253 characters.'),
+        schedule: yup
+          .string()
+          .max(253, 'Cannot be longer than 253 characters.')
+          .required('Required'),
+      }),
+    }),
+  })
+  .when('type', {
     is: EventSources.SinkBinding,
     then: yup.object().shape({
       sinkbinding: yup.object().shape({

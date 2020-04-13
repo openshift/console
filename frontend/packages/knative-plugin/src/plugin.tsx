@@ -24,12 +24,6 @@ import {
   FLAG_KNATIVE_SERVING_REVISION,
   FLAG_KNATIVE_SERVING_ROUTE,
   FLAG_KNATIVE_SERVING_SERVICE,
-  FLAG_EVENT_SOURCE_CRONJOB,
-  FLAG_EVENT_SOURCE_CONTAINER,
-  FLAG_EVENT_SOURCE_APISERVER,
-  FLAG_EVENT_SOURCE_CAMEL,
-  FLAG_EVENT_SOURCE_KAFKA,
-  FLAG_EVENT_SOURCE_SINKBINDING,
   FLAG_KNATIVE_EVENTING,
 } from './const';
 import {
@@ -111,48 +105,6 @@ const plugin: Plugin<ConsumedExtensions> = [
     properties: {
       model: models.ServiceModel,
       flag: FLAG_KNATIVE_SERVING_SERVICE,
-    },
-  },
-  {
-    type: 'FeatureFlag/Model',
-    properties: {
-      model: models.EventSourceCronJobModel,
-      flag: FLAG_EVENT_SOURCE_CRONJOB,
-    },
-  },
-  {
-    type: 'FeatureFlag/Model',
-    properties: {
-      model: models.EventSourceContainerModel,
-      flag: FLAG_EVENT_SOURCE_CONTAINER,
-    },
-  },
-  {
-    type: 'FeatureFlag/Model',
-    properties: {
-      model: models.EventSourceApiServerModel,
-      flag: FLAG_EVENT_SOURCE_APISERVER,
-    },
-  },
-  {
-    type: 'FeatureFlag/Model',
-    properties: {
-      model: models.EventSourceCamelModel,
-      flag: FLAG_EVENT_SOURCE_CAMEL,
-    },
-  },
-  {
-    type: 'FeatureFlag/Model',
-    properties: {
-      model: models.EventSourceKafkaModel,
-      flag: FLAG_EVENT_SOURCE_KAFKA,
-    },
-  },
-  {
-    type: 'FeatureFlag/Model',
-    properties: {
-      model: models.EventSourceSinkBindingModel,
-      flag: FLAG_EVENT_SOURCE_SINKBINDING,
     },
   },
   {

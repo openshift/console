@@ -14,7 +14,7 @@ export type KnativeItem = {
   eventSourceApiserver?: K8sResourceKind[];
   eventSourceCamel?: K8sResourceKind[];
   eventSourceKafka?: K8sResourceKind[];
-  eventSourceServicebinding?: K8sResourceKind[];
+  eventSourceSinkbinding?: K8sResourceKind[];
   pods?: PodKind[];
 };
 

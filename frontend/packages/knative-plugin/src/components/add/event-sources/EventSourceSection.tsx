@@ -6,13 +6,14 @@ import { FirehoseList } from '@console/dev-console/src/components/import/import-
 import CronJobSection from './CronJobSection';
 import SinkBindingSection from './SinkBindingSection';
 import ApiServerSection from './ApiServerSection';
+import ContainerSourceSection from './ContainerSourceSection';
+import PingSourceSection from './PingSourceSection';
 import KafkaSourceSection from './KafkaSourceSection';
 import YAMLEditorSection from './YAMLEditorSection';
 import { EventSources } from '../import-types';
 import SinkSection from './SinkSection';
 import AdvancedSection from '../AdvancedSection';
 import { isKnownEventSource } from '../../../utils/create-eventsources-utils';
-import ContainerSourceSection from './ContainerSourceSection';
 
 interface EventSourceSectionProps {
   projects: FirehoseList;
@@ -42,6 +43,9 @@ const EventSourceSection: React.FC<EventSourceSectionProps> = ({ projects, names
       break;
     case EventSources.ContainerSource:
       EventSource = <ContainerSourceSection />;
+      break;
+    case EventSources.PingSource:
+      EventSource = <PingSourceSection />;
       break;
     default:
       EventSource = <YAMLEditorSection />;

@@ -1,12 +1,23 @@
 import { LimitsData } from '@console/dev-console/src/components/import/import-types';
+import {
+  EventSourceApiServerModel,
+  EventSourceContainerModel,
+  EventSourceCronJobModel,
+  EventSourceKafkaModel,
+  EventSourcePingModel,
+  EventSourceSinkBindingModel,
+  EventSourceCamelModel,
+} from '../../models';
 
-export enum EventSources {
-  CronJobSource = 'CronJobSource',
-  ContainerSource = 'ContainerSource',
-  ApiServerSource = 'ApiServerSource',
-  KafkaSource = 'KafkaSource',
-  SinkBinding = 'SinkBinding',
-}
+export const EventSources = {
+  ApiServerSource: EventSourceApiServerModel.kind,
+  ContainerSource: EventSourceContainerModel.kind,
+  CronJobSource: EventSourceCronJobModel.kind,
+  KafkaSource: EventSourceKafkaModel.kind,
+  PingSource: EventSourcePingModel.kind,
+  SinkBinding: EventSourceSinkBindingModel.kind,
+  CamelSource: EventSourceCamelModel.kind,
+};
 
 export interface ProjectData {
   name: string;
