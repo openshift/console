@@ -33,9 +33,11 @@ export type VMImportOvirtSource = {
       id?: string;
     };
   };
-  networkMappings?: NetworkMapping[];
-  storageMappings?: StorageMapping[];
-  diskMappings?: DiskMapping[];
+  mappings: {
+    networkMappings?: NetworkMapping[];
+    storageMappings?: StorageMapping[];
+    diskMappings?: DiskMapping[];
+  };
 };
 
 export type VMImportKind = {
