@@ -5,6 +5,7 @@ import {
   LOG_SOURCE_RUNNING,
   LOG_SOURCE_TERMINATED,
 } from '@console/internal/components/utils';
+import { ContainerStatus } from '@console/internal/module/k8s';
 import {
   getPipelineTasks,
   containerToLogSourceStatus,
@@ -34,17 +35,26 @@ describe('pipeline-utils ', () => {
   });
 
   it('should return correct Container Status', () => {
-    let status = containerToLogSourceStatus({ name: 'test', state: { waiting: {} } });
+    let status = containerToLogSourceStatus({
+      name: 'test',
+      state: { waiting: {} },
+    } as ContainerStatus);
     expect(status).toBe(LOG_SOURCE_WAITING);
     status = containerToLogSourceStatus({
       name: 'test',
       state: { waiting: {} },
-      lastState: LOG_SOURCE_WAITING,
-    });
+      lastState: { [LOG_SOURCE_WAITING]: {} },
+    } as ContainerStatus);
     expect(status).toBe(LOG_SOURCE_RESTARTING);
-    status = containerToLogSourceStatus({ name: 'test', state: { running: {} } });
+    status = containerToLogSourceStatus({
+      name: 'test',
+      state: { running: {} },
+    } as ContainerStatus);
     expect(status).toBe(LOG_SOURCE_RUNNING);
-    status = containerToLogSourceStatus({ name: 'test', state: { terminated: {} } });
+    status = containerToLogSourceStatus({
+      name: 'test',
+      state: { terminated: {} },
+    } as ContainerStatus);
     expect(status).toBe(LOG_SOURCE_TERMINATED);
   });
 

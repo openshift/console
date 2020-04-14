@@ -48,7 +48,7 @@ const replaceVariables = (template, values) => {
 };
 
 // Component for log stream controls
-const LogControls = ({
+export const LogControls = ({
   dropdown,
   onDownload,
   toggleFullscreen,
@@ -138,6 +138,19 @@ const LogControls = ({
       </div>
     </div>
   );
+};
+
+LogControls.propTypes = {
+  isFullscreen: PropTypes.bool.isRequired,
+  dropdown: PropTypes.node,
+  status: PropTypes.string,
+  resource: PropTypes.object,
+  containerName: PropTypes.string,
+  podLogLinks: PropTypes.arrayOf(PropTypes.object), // k8sResourceKind
+  namespaceUID: PropTypes.string,
+  toggleStreaming: PropTypes.func,
+  onDownload: PropTypes.func.isRequired,
+  toggleFullscreen: PropTypes.func.isRequired,
 };
 
 // Resource agnostic log component

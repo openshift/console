@@ -124,8 +124,8 @@ export const coFetchUtils = {
   parseJson,
 };
 
-export const coFetchJSON = (url, method = 'GET', options = {}) => {
-  const headers = { Accept: 'application/json' };
+export const coFetchCommon = (url, method = 'GET', options = {}) => {
+  const headers = {};
   const { kind, name } = store.getState().UI.get('impersonate', {});
   if ((kind === 'User' || kind === 'Group') && name) {
     // Even if we are impersonating a group, we still need to set Impersonate-User to something or k8s will complain
@@ -145,8 +145,20 @@ export const coFetchJSON = (url, method = 'GET', options = {}) => {
     if (response.headers.get('Content-Length') === '0') {
       return Promise.resolve({});
     }
+    if (response.headers.get('Content-Type') === 'text/plain') {
+      return response.text();
+    }
     return response.json();
   });
+};
+
+export const coFetchJSON = (url, method = 'GET', options = {}) => {
+  const allOptions = _.defaultsDeep({}, options, { headers: { Accept: 'application/json' } });
+  return coFetchCommon(url, method, allOptions);
+};
+
+export const coFetchText = (url, options = {}) => {
+  return coFetchCommon(url, 'GET', options);
 };
 
 const coFetchSendJSON = (url, method, json = null, options = {}) => {

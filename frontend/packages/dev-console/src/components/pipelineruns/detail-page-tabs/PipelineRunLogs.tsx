@@ -8,7 +8,7 @@ import { Firehose, resourcePathFromModel } from '@console/internal/components/ut
 import { pipelineRunFilterReducer } from '../../../utils/pipeline-filter-reducer';
 import { PipelineRun } from '../../../utils/pipeline-augment';
 import { PipelineRunModel } from '../../../models';
-import PipelineTaskLogs from './PipelineTaskLogs';
+import LogsWrapperComponent from '../logs/LogsWrapperComponent';
 import './PipelineRunLogs.scss';
 
 interface PipelineRunLogsProps {
@@ -129,8 +129,8 @@ class PipelineRunLogs extends React.Component<PipelineRunLogsProps, PipelineRunL
         </div>
         <div className="odc-pipeline-run-logs__container">
           {activeItem ? (
-            <Firehose resources={resources}>
-              <PipelineTaskLogs
+            <Firehose key={activeItem} resources={resources}>
+              <LogsWrapperComponent
                 taskName={_.get(taskRunFromYaml, [activeItem, 'pipelineTaskName'], '-')}
               />
             </Firehose>
