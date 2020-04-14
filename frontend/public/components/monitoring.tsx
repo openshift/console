@@ -731,8 +731,8 @@ const SilencesDetailsPage = withFallback(
   connect(silenceParamToProps)((props: SilencesDetailsPageProps) => {
     const { alertsLoaded, loaded, loadError, silence } = props;
     const {
-      createdBy = '',
       comment = '',
+      createdBy = '',
       endsAt = '',
       firingAlerts = [],
       matchers = {},
@@ -1149,7 +1149,8 @@ const SilencesPage_ = (props) => (
 );
 const SilencesPage = withFallback(connect(silencesToProps)(SilencesPage_));
 
-const pad = (i) => (i < 10 ? `0${i}` : i);
+const pad = (i: number): string => (i < 10 ? `0${i}` : String(i));
+
 const formatDate = (d: Date): string =>
   `${d.getFullYear()}/${pad(d.getMonth() + 1)}/${pad(d.getDate())} ${pad(d.getHours())}:${pad(
     d.getMinutes(),
@@ -1183,265 +1184,264 @@ const Datetime = (props) => {
   );
 };
 
-const durationOffText = '-';
-const durations = [durationOffText, '30m', '1h', '2h', '6h', '12h', '1d', '2d', '1w'];
+const durationOff = '-';
+const durations = [durationOff, '30m', '1h', '2h', '6h', '12h', '1d', '2d', '1w'];
 const durationItems = _.zipObject(durations, durations);
 
-class SilenceForm_ extends React.Component<SilenceFormProps, SilenceFormState> {
-  constructor(props) {
-    super(props);
+const SilenceForm_: React.FC<SilenceFormProps> = ({ defaults, Info, title }) => {
+  const now = new Date();
 
-    const now = new Date();
-    const startsAt = formatDate(now);
-    const endsAt = formatDate(new Date(now.setHours(now.getHours() + 2)));
-    const data = _.defaults(props.defaults, {
-      startsAt,
-      endsAt,
-      matchers: [],
-      createdBy: '',
-      comment: '',
-    });
-    if (_.isEmpty(data.matchers)) {
-      data.matchers.push({ name: '', value: '', isRegex: false });
-    }
-    this.state = { data, duration: '2h', error: undefined, inProgress: false };
-  }
+  const [comment, setComment] = React.useState(defaults.comment ?? '');
+  const [createdBy, setCreatedBy] = React.useState(defaults.createdBy ?? '');
+  const [duration, setDuration] = React.useState(defaults.endsAt ? durationOff : '2h');
+  const [endsAt, setEndsAt] = React.useState(
+    defaults.endsAt ?? formatDate(new Date(now.setHours(now.getHours() + 2))),
+  );
+  const [error, setError] = React.useState<string>();
+  const [inProgress, setInProgress] = React.useState(false);
+  const [isStartNow, setIsStartNow] = React.useState(_.isEmpty(defaults.startsAt));
+  const [matchers, setMatchers] = React.useState(
+    defaults.matchers ?? [{ isRegex: false, name: '', value: '' }],
+  );
+  const [startsAt, setStartsAt] = React.useState(defaults.startsAt ?? formatDate(now));
 
-  setField = (path: string, v: any): void => {
-    const data = Object.assign({}, this.state.data);
-    _.set(data, path, v);
-    this.setState({ data });
+  const durationEnd = formatDate(
+    new Date((isStartNow ? Date.now() : Date.parse(startsAt)) + parsePrometheusDuration(duration)),
+  );
+
+  const setMatcherField = (i: number, field: string, v: any): void => {
+    const newMatchers = _.clone(matchers);
+    _.set(newMatchers, [i, field], v);
+    setMatchers(newMatchers);
   };
 
-  onFieldChange = (path: string): ((e) => void) => {
-    return (e) => this.setField(path, e.target.value);
+  const addMatcher = (): void => {
+    setMatchers([...matchers, { isRegex: false, name: '', value: '' }]);
   };
 
-  onDurationChange = (duration: string): void => {
-    this.setState({ duration });
-    if (duration !== durationOffText) {
-      const startsAt = Date.parse(this.state.data.startsAt);
-      this.setField('endsAt', formatDate(new Date(startsAt + parsePrometheusDuration(duration))));
-    }
+  const removeMatcher = (i: number): void => {
+    const newMatchers = _.clone(matchers);
+    newMatchers.splice(i, 1);
+
+    // If all matchers have been removed, add back a single blank matcher
+    setMatchers(_.isEmpty(newMatchers) ? [{ isRegex: false, name: '', value: '' }] : newMatchers);
   };
 
-  onEndsAtChange: React.ReactEventHandler<HTMLInputElement> = (e) => {
-    this.setField('endsAt', e.currentTarget.value);
-    this.setState({ duration: durationOffText });
-  };
-
-  onIsRegexChange = (e, i: number): void => {
-    this.setField(`matchers[${i}].isRegex`, e.target.checked);
-  };
-
-  addMatcher = (): void => {
-    this.setField(`matchers[${this.state.data.matchers.length}]`, {
-      name: '',
-      value: '',
-      isRegex: false,
-    });
-  };
-
-  removeMatcher = (i: number): void => {
-    const data = Object.assign({}, this.state.data);
-    data.matchers.splice(i, 1);
-    this.setState({ data });
-    if (!data.matchers.length) {
-      // All matchers have been removed, so add back a single blank matcher
-      this.addMatcher();
-    }
-  };
-
-  onSubmit = (e): void => {
+  const onSubmit: React.FormEventHandler<HTMLFormElement> = (e) => {
     e.preventDefault();
 
     const { alertManagerBaseURL } = window.SERVER_FLAGS;
     if (!alertManagerBaseURL) {
-      this.setState({ error: 'Alertmanager URL not set' });
+      setError('Alertmanager URL not set');
       return;
     }
 
-    this.setState({ inProgress: true });
+    setInProgress(true);
 
-    const body = Object.assign({}, this.state.data);
-    body.startsAt = toISODate(body.startsAt);
-    body.endsAt = toISODate(body.endsAt);
+    const body = {
+      comment,
+      createdBy,
+      endsAt: toISODate(duration === durationOff ? endsAt : durationEnd),
+      id: defaults.id,
+      matchers,
+      startsAt: toISODate(isStartNow ? formatDate(new Date()) : startsAt),
+    };
 
     coFetchJSON
       .post(`${alertManagerBaseURL}/api/v1/silences`, body)
       .then(({ data }) => {
-        this.setState({ error: undefined });
+        setError(undefined);
         refreshNotificationPollers();
         history.push(`${SilenceResource.plural}/${encodeURIComponent(_.get(data, 'silenceId'))}`);
       })
-      .catch((err) =>
-        this.setState({ error: _.get(err, 'json.error') || err.message || 'Error saving Silence' }),
-      )
-      .then(() => this.setState({ inProgress: false }));
+      .catch((err) => setError(_.get(err, 'json.error') || err.message || 'Error saving Silence'))
+      .then(() => setInProgress(false));
   };
 
-  render() {
-    const { Info, title } = this.props;
-    const { data, duration, error, inProgress } = this.state;
+  return (
+    <>
+      <Helmet>
+        <title>{title}</title>
+      </Helmet>
+      <div className="co-m-nav-title co-m-nav-title--detail">
+        <h1 className="co-m-pane__heading">{title}</h1>
+        <p className="co-m-pane__explanation">
+          Silences temporarily mute alerts based on a set of label selectors that you define.
+          Notifications will not be sent for alerts that match all the listed values or regular
+          expressions.
+        </p>
+      </div>
 
-    return (
-      <>
-        <Helmet>
-          <title>{title}</title>
-        </Helmet>
-        <div className="co-m-nav-title co-m-nav-title--detail">
-          <h1 className="co-m-pane__heading">{title}</h1>
-          <p className="co-m-pane__explanation">
-            Silences temporarily mute alerts based on a set of label selectors that you define.
-            Notifications will not be sent for alerts that match all the listed values or regular
-            expressions.
-          </p>
-        </div>
+      {Info && <Info />}
 
-        {Info && <Info />}
-
-        <div className="co-m-pane__body">
-          <form onSubmit={this.onSubmit}>
-            <div className="co-m-pane__body-group">
-              <div className="form-group row">
-                <div className="col-xs-9">
-                  <SectionHeading text="Duration" />
-                  <div className="row">
-                    <div className="col-xs-5">
-                      <label>Silence alert from...</label>
+      <div className="co-m-pane__body">
+        <form onSubmit={onSubmit}>
+          <div className="co-m-pane__body-group">
+            <div className="form-group row">
+              <div className="col-xs-9">
+                <SectionHeading text="Duration" />
+                <div className="row">
+                  <div className="col-xs-5">
+                    <label>Silence alert from...</label>
+                    {isStartNow ? (
+                      <Datetime disabled value="Now" />
+                    ) : (
                       <Datetime
-                        onChange={this.onFieldChange('startsAt')}
-                        value={data.startsAt}
+                        onChange={(e) => setStartsAt(e.currentTarget.value)}
+                        required
+                        value={startsAt}
+                      />
+                    )}
+                  </div>
+                  <div className="col-xs-2">
+                    <label>For...</label>
+                    <Dropdown
+                      dropDownClassName="dropdown--full-width"
+                      items={durationItems}
+                      onChange={setDuration}
+                      selectedKey={duration}
+                    />
+                  </div>
+                  <div className="col-xs-5">
+                    <label>Until...</label>
+                    {duration === durationOff ? (
+                      <Datetime
+                        onChange={(e) => setEndsAt(e.currentTarget.value)}
+                        required
+                        value={endsAt}
+                      />
+                    ) : (
+                      <Datetime
+                        disabled
+                        value={isStartNow ? `${duration} from now` : durationEnd}
+                      />
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="form-group row">
+              <div className="col-xs-9">
+                <label>
+                  <input
+                    checked={isStartNow}
+                    onChange={(e) => setIsStartNow(e.currentTarget.checked)}
+                    type="checkbox"
+                  />
+                  &nbsp; Start Immediately
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <div className="co-m-pane__body-group">
+            <div className="form-group row">
+              <div className="col-xs-9">
+                <SectionHeading text="Alert Labels" />
+                <p className="co-help-text">
+                  Alerts with labels that match these selectors will be silenced instead of firing.
+                  Label values can be matched exactly or with a regular expression.
+                </p>
+              </div>
+            </div>
+
+            {_.map(matchers, (matcher, i: number) => (
+              <div className="form-group row" key={i}>
+                <div className="col-xs-9">
+                  <div className="row">
+                    <div className="col-xs-6">
+                      <label>Label name</label>
+                      <Text
+                        onChange={(e) => setMatcherField(i, 'name', e.currentTarget.value)}
+                        placeholder="Name"
+                        value={matcher.name}
                         required
                       />
                     </div>
-                    <div className="col-xs-2">
-                      <label>For...</label>
-                      <Dropdown
-                        dropDownClassName="dropdown--full-width"
-                        items={durationItems}
-                        onChange={this.onDurationChange}
-                        selectedKey={duration}
+                    <div className="col-xs-6">
+                      <label>Label value</label>
+                      <Text
+                        onChange={(e) => setMatcherField(i, 'value', e.currentTarget.value)}
+                        placeholder="Value"
+                        value={matcher.value}
+                        required
                       />
                     </div>
-                    <div className="col-xs-5">
-                      <label>Until...</label>
-                      <Datetime onChange={this.onEndsAtChange} value={data.endsAt} required />
-                    </div>
+                  </div>
+                </div>
+                <div className="col-xs-3 monitoring-silence-reg-ex">
+                  <label>&nbsp;</label>
+                  <div>
+                    <label>
+                      <input
+                        type="checkbox"
+                        onChange={(e) => setMatcherField(i, 'isRegex', e.currentTarget.checked)}
+                        checked={matcher.isRegex}
+                      />
+                      &nbsp; Use RegEx
+                    </label>
+                    <Button
+                      className="monitoring-silence-remove-button"
+                      type="button"
+                      onClick={() => removeMatcher(i)}
+                      aria-label="Remove matcher"
+                      variant="plain"
+                    >
+                      <MinusCircleIcon />
+                    </Button>
                   </div>
                 </div>
               </div>
-            </div>
+            ))}
 
-            <div className="co-m-pane__body-group">
-              <div className="form-group row">
-                <div className="col-xs-9">
-                  <SectionHeading text="Alert Labels" />
-                  <p className="co-help-text">
-                    Alerts with labels that match these selectors will be silenced instead of
-                    firing. Label values can be matched exactly or with a regular expression.
-                  </p>
-                </div>
-              </div>
-
-              {_.map(data.matchers, (matcher, i) => (
-                <div className="form-group row" key={i}>
-                  <div className="col-xs-9">
-                    <div className="row">
-                      <div className="col-xs-6">
-                        <label>Label name</label>
-                        <Text
-                          onChange={this.onFieldChange(`matchers[${i}].name`)}
-                          placeholder="Name"
-                          value={matcher.name}
-                          required
-                        />
-                      </div>
-                      <div className="col-xs-6">
-                        <label>Label value</label>
-                        <Text
-                          onChange={this.onFieldChange(`matchers[${i}].value`)}
-                          placeholder="Value"
-                          value={matcher.value}
-                          required
-                        />
-                      </div>
-                    </div>
-                  </div>
-                  <div className="col-xs-3 monitoring-silence-reg-ex">
-                    <label>&nbsp;</label>
-                    <div>
-                      <label>
-                        <input
-                          type="checkbox"
-                          onChange={(e) => this.onIsRegexChange(e, i)}
-                          checked={matcher.isRegex}
-                        />
-                        &nbsp; Use RegEx
-                      </label>
-                      <Button
-                        className="monitoring-silence-remove-button"
-                        type="button"
-                        onClick={() => this.removeMatcher(i)}
-                        aria-label="Remove matcher"
-                        variant="plain"
-                      >
-                        <MinusCircleIcon />
-                      </Button>
-                    </div>
-                  </div>
-                </div>
-              ))}
-
-              <div className="form-group row">
-                <div className="col-xs-9">
-                  <Button
-                    className="pf-m-link--align-left"
-                    onClick={this.addMatcher}
-                    type="button"
-                    variant="link"
-                  >
-                    <PlusCircleIcon className="co-icon-space-r" />
-                    Add Label
-                  </Button>
-                </div>
-              </div>
-            </div>
-
-            <div className="row">
+            <div className="form-group row">
               <div className="col-xs-9">
-                <SectionHeading text="Info" />
-                <div className="form-group">
-                  <label>Creator</label>
-                  <Text onChange={this.onFieldChange('createdBy')} value={data.createdBy} />
-                </div>
-                <div className="form-group">
-                  <label>Comment</label>
-                  <textarea
-                    className="pf-c-form-control"
-                    onChange={this.onFieldChange('comment')}
-                    value={data.comment}
-                  />
-                </div>
+                <Button
+                  className="pf-m-link--align-left"
+                  onClick={addMatcher}
+                  type="button"
+                  variant="link"
+                >
+                  <PlusCircleIcon className="co-icon-space-r" />
+                  Add Label
+                </Button>
               </div>
             </div>
+          </div>
 
-            <ButtonBar errorMessage={error} inProgress={inProgress}>
-              <ActionGroup className="pf-c-form">
-                <Button type="submit" variant="primary">
-                  Silence
-                </Button>
-                <Button onClick={history.goBack} variant="secondary">
-                  Cancel
-                </Button>
-              </ActionGroup>
-            </ButtonBar>
-          </form>
-        </div>
-      </>
-    );
-  }
-}
+          <div className="row">
+            <div className="col-xs-9">
+              <SectionHeading text="Info" />
+              <div className="form-group">
+                <label>Creator</label>
+                <Text onChange={(e) => setCreatedBy(e.currentTarget.value)} value={createdBy} />
+              </div>
+              <div className="form-group">
+                <label>Comment</label>
+                <textarea
+                  className="pf-c-form-control"
+                  onChange={(e) => setComment(e.currentTarget.value)}
+                  value={comment}
+                />
+              </div>
+            </div>
+          </div>
+
+          <ButtonBar errorMessage={error} inProgress={inProgress}>
+            <ActionGroup className="pf-c-form">
+              <Button type="submit" variant="primary">
+                Silence
+              </Button>
+              <Button onClick={history.goBack} variant="secondary">
+                Cancel
+              </Button>
+            </ActionGroup>
+          </ButtonBar>
+        </form>
+      </div>
+    </>
+  );
+};
 const SilenceForm = withFallback(SilenceForm_);
 
 const EditInfo = () => (
@@ -1467,7 +1467,7 @@ const EditSilence = connect(silenceParamToProps)(({ loaded, loadError, silence }
     <StatusBox data={silence} label={SilenceResource.label} loaded={loaded} loadError={loadError}>
       <SilenceForm
         defaults={defaults}
-        Info={isExpired ? null : EditInfo}
+        Info={isExpired ? undefined : EditInfo}
         title={isExpired ? 'Recreate Silence' : 'Edit Silence'}
       />
     </StatusBox>
@@ -1757,17 +1757,9 @@ export type SilencesDetailsPageProps = {
 };
 
 export type SilenceFormProps = {
-  defaults?: any;
-  Info: React.ComponentType<{}>;
+  defaults: any;
+  Info?: React.ComponentType<{}>;
   title: string;
-  urls: { key: string }[];
-};
-
-export type SilenceFormState = {
-  data: Silence;
-  duration: string;
-  error: string;
-  inProgress: boolean;
 };
 
 export type ListPageProps = {
