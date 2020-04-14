@@ -1,0 +1,19 @@
+.odc-multiple-key-selector {
+  padding-top: var(--pf-global--spacer--md);
+
+  &__item {
+    position: relative;
+    padding-top: var(--pf-global--spacer--xs);
+  }
+
+  &__delete--button {
+    cursor: pointer;
+    position: absolute;
+    right: -22px;
+    top: 25px;
+    &.is-disabled {
+      pointer-events: none;
+      color: var(--pf-global--disabled-color--200);
+    }
+  }
+}

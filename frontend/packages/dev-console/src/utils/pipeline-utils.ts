@@ -15,6 +15,8 @@ import {
   PipelineParam,
   PipelineRunParam,
   PipelineTaskRef,
+  PipelineWorkspace,
+  PipelineRunWorkspace,
 } from './pipeline-augment';
 import { pipelineFilterReducer, pipelineRunStatus } from './pipeline-filter-reducer';
 
@@ -291,6 +293,18 @@ export const getPipelineRunParams = (pipelineParams: PipelineParam[]): PipelineR
     pipelineParams.map((param) => ({
       name: param.name,
       value: param.default,
+    }))
+  );
+};
+
+export const getPipelineRunWorkspaces = (
+  pipelineWorkspaces: PipelineWorkspace[],
+): PipelineRunWorkspace[] => {
+  return (
+    pipelineWorkspaces &&
+    pipelineWorkspaces.map((workspace) => ({
+      name: workspace.name,
+      ...workspace.data,
     }))
   );
 };
