@@ -82,7 +82,7 @@ $skeleton-tile-desc-line-bone: linear-gradient(#fff $skeleton-tile-desc-line-hei
 
 .loading-skeleton--catalog {
   background: #fff;
-  box-shadow: 0 0.0625rem 0.125rem 0 rgba(3,3,3,.2);
+  border: 1px solid var(--pf-global--BorderColor--300);
   display: flex;
   flex: 1;
   height: 100%;
