@@ -99,7 +99,7 @@ const FilterToolbar_: React.FC<FilterToolbarProps & RouteComponentProps> = (prop
   const { name: nameFilter, labels: labelFilters, rowFiltersFromURL: selectedRowFilters } = (() => {
     const rowFiltersFromURL: string[] = [];
     const params = new URLSearchParams(location.search);
-    const q = params.get('q');
+    const q = params.get('label');
     const name = params.get('name');
     _.map(filterKeys, (f) => {
       const vals = params.get(f);
@@ -120,9 +120,9 @@ const FilterToolbar_: React.FC<FilterToolbarProps & RouteComponentProps> = (prop
 
   const updateLabelFilter = (filterValues: string[]) => {
     if (filterValues.length > 0) {
-      setQueryArgument('q', filterValues.join(','));
+      setQueryArgument('label', filterValues.join(','));
     } else {
-      removeQueryArgument('q');
+      removeQueryArgument('label');
     }
     setInputText('');
     applyFilter(filterValues, FilterType.LABEL);
@@ -251,7 +251,7 @@ const FilterToolbar_: React.FC<FilterToolbarProps & RouteComponentProps> = (prop
             <AutocompleteInput
               className="co-text-node"
               onSuggestionSelect={(selected) => {
-                updateLabelFilter([...labelFilters, selected]);
+                updateLabelFilter(_.uniq([...labelFilters, selected]));
               }}
               showSuggestions={FilterType.LABEL === filterType}
               textValue={inputText}
