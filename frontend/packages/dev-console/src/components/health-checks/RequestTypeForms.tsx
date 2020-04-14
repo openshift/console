@@ -10,21 +10,38 @@ import {
   TextColumnField,
 } from '@console/shared';
 import { NameValueEditor } from '@console/internal/components/utils/name-value-editor';
+import { Resources } from '../import/import-types';
 
 interface RequestTypeFormProps {
   ports?: { [port: number]: number };
   probeType?: string;
 }
 
-export const renderPortField = (ports: object, name: string, defaultValue: string) => {
+export const renderPortField = (
+  ports: { [port: number]: number },
+  fieldName: string,
+  defaultPort: number,
+  resourceType: Resources,
+) => {
+  if (resourceType === Resources.KnativeService) {
+    return (
+      <InputField
+        type={TextInputTypes.text}
+        name="knative-port"
+        label="Port"
+        placeholder="0"
+        isDisabled
+      />
+    );
+  }
   return _.isEmpty(ports) ? (
-    <InputField type={TextInputTypes.text} name={name} label="Port" required />
+    <InputField type={TextInputTypes.text} name={fieldName} label="Port" required />
   ) : (
     <DropdownField
-      name={name}
+      name={fieldName}
       label="Port"
       items={ports}
-      title={ports[defaultValue] || 'Select target port'}
+      title={ports[defaultPort] || 'Select target port'}
       fullWidth
       required
     />
@@ -33,15 +50,16 @@ export const renderPortField = (ports: object, name: string, defaultValue: strin
 
 export const HTTPRequestTypeForm: React.FC<RequestTypeFormProps> = ({ ports, probeType }) => {
   const {
-    values: { healthChecks },
+    values: { healthChecks, resources },
     setFieldValue,
   } = useFormikContext<FormikValues>();
   const httpHeaders = healthChecks?.[probeType]?.data?.httpGet?.httpHeaders;
-  const port = healthChecks?.[probeType]?.data?.httpGet?.port;
+  const defaultPort = healthChecks?.[probeType]?.data?.httpGet?.port;
   const initialNameValuePairs = !_.isEmpty(httpHeaders)
     ? httpHeaders.map((val) => _.values(val))
     : [['', '']];
   const [nameValue, setNameValue] = React.useState(initialNameValuePairs);
+  const portFieldName = `healthChecks.${probeType}.data.httpGet.port`;
 
   const handleNameValuePairs = React.useCallback(
     ({ nameValuePairs }) => {
@@ -61,7 +79,6 @@ export const HTTPRequestTypeForm: React.FC<RequestTypeFormProps> = ({ ports, pro
     },
     [setFieldValue, probeType],
   );
-
   return (
     <>
       <CheckboxField
@@ -90,17 +107,18 @@ export const HTTPRequestTypeForm: React.FC<RequestTypeFormProps> = ({ ports, pro
         label="Path"
         placeholder="/"
       />
-      {renderPortField(ports, `healthChecks.${probeType}.data.httpGet.port`, port)}
+      {renderPortField(ports, portFieldName, defaultPort, resources)}
     </>
   );
 };
 
 export const TCPRequestTypeForm: React.FC<RequestTypeFormProps> = ({ ports, probeType }) => {
   const {
-    values: { healthChecks },
+    values: { healthChecks, resources },
   } = useFormikContext<FormikValues>();
-  const port = healthChecks?.[probeType]?.data?.tcpSocket?.port;
-  return renderPortField(ports, `healthChecks.${probeType}.data.tcpSocket.port`, port);
+  const defaultPort = healthChecks?.[probeType]?.data?.tcpSocket?.port;
+  const portFieldName = `healthChecks.${probeType}.data.tcpSocket.port`;
+  return renderPortField(ports, portFieldName, defaultPort, resources);
 };
 
 export const CommandRequestTypeForm: React.FC<RequestTypeFormProps> = ({ probeType }) => {
@@ -110,7 +128,7 @@ export const CommandRequestTypeForm: React.FC<RequestTypeFormProps> = ({ probeTy
       label="Command"
       addLabel="Add command"
       placeholder="argument"
-      helpText={'The command to run inside the container.'}
+      helpText="The command to run inside the container."
       required
     />
   );

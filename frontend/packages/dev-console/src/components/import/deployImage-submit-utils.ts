@@ -18,6 +18,7 @@ import {
   annotations,
   dryRunOpt,
 } from '../../utils/shared-submit-utils';
+import { getProbesData } from '../health-checks/create-health-check-probe-utils';
 import { RegistryType } from '../../utils/imagestream-utils';
 import { AppResources } from '../edit-application/edit-application-types';
 import { DeployImageFormData, Resources } from './import-types';
@@ -144,6 +145,7 @@ export const createOrUpdateDeployment = (
     labels: userLabels,
     limits: { cpu, memory },
     imageStream: { image: imgName, namespace: imgNamespace },
+    healthChecks,
   } = formData;
 
   const defaultAnnotations = {
@@ -212,6 +214,7 @@ export const createOrUpdateDeployment = (
                   },
                 }),
               },
+              ...getProbesData(healthChecks),
             },
           ],
         },
@@ -240,6 +243,7 @@ export const createOrUpdateDeploymentConfig = (
     labels: userLabels,
     limits: { cpu, memory },
     imageStream: { image: imgName, namespace: imgNamespace },
+    healthChecks,
   } = formData;
 
   const { labels, podLabels, volumes, volumeMounts } = getMetadata(formData);
@@ -283,6 +287,7 @@ export const createOrUpdateDeploymentConfig = (
                   },
                 }),
               },
+              ...getProbesData(healthChecks),
             },
           ],
         },

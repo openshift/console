@@ -13,6 +13,7 @@ import { UNASSIGNED_KEY } from '../../const';
 import { Resources, DeploymentData } from '../import/import-types';
 import { AppResources } from './edit-application-types';
 import { RegistryType } from '../../utils/imagestream-utils';
+import { getHealthChecksData } from '../health-checks/create-health-check-probe-utils';
 
 export enum CreateApplicationFlow {
   Git = 'Import from Git',
@@ -246,6 +247,7 @@ export const getCommonInitialValues = (
     deployment: getDeploymentData(editAppResource),
     labels: getUserLabels(editAppResource),
     limits: getLimitsData(editAppResource),
+    healthChecks: getHealthChecksData(editAppResource),
   };
   return commonInitialValues;
 };

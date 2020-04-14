@@ -1,4 +1,8 @@
+import * as _ from 'lodash';
 import { K8sResourceKind, ImagePullPolicy } from '@console/internal/module/k8s';
+import { Resources } from '@console/dev-console/src/components/import/import-types';
+import { RequestType } from '@console/dev-console/src/components/health-checks/health-checks-types';
+import { healthChecksDefaultValues } from '@console/dev-console/src/components/health-checks/health-check-probe-utils';
 import { getKnativeServiceDepResource } from '../create-knative-utils';
 import { defaultData } from './knative-serving-data';
 
@@ -122,6 +126,38 @@ describe('Create knative Utils', () => {
       expect(knDeploymentResource.spec.template.spec.containers[0].imagePullPolicy).toEqual(
         ImagePullPolicy.IfNotPresent,
       );
+    });
+
+    it('should have port value as 0 in the health checks probe data', () => {
+      const dataWithHealthChecksEnabled = _.cloneDeep(defaultData);
+      dataWithHealthChecksEnabled.resources = Resources.KnativeService;
+      dataWithHealthChecksEnabled.healthChecks.readinessProbe = {
+        ...healthChecksDefaultValues,
+        enabled: true,
+        data: {
+          ...healthChecksDefaultValues.data,
+          requestType: RequestType.HTTPGET,
+        },
+      };
+      dataWithHealthChecksEnabled.healthChecks.livenessProbe = {
+        ...healthChecksDefaultValues,
+        enabled: true,
+        data: {
+          ...healthChecksDefaultValues.data,
+          requestType: RequestType.TCPSocket,
+        },
+      };
+
+      const knDeploymentResource: K8sResourceKind = getKnativeServiceDepResource(
+        dataWithHealthChecksEnabled,
+        'imgStream',
+      );
+      expect(
+        knDeploymentResource.spec.template.spec.containers[0].readinessProbe.httpGet.port,
+      ).toBe(0);
+      expect(
+        knDeploymentResource.spec.template.spec.containers[0].livenessProbe.tcpSocket.port,
+      ).toBe(0);
     });
   });
 });

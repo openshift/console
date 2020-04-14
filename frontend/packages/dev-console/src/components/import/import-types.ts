@@ -5,6 +5,7 @@ import { LazyLoader } from '@console/plugin-sdk';
 import { NameValuePair, NameValueFromPair } from '@console/shared';
 import { ServiceModel } from '@console/knative-plugin/src/models';
 import { NormalizedBuilderImages } from '../../utils/imagestream-utils';
+import { HealthCheckProbe } from '../health-checks/health-checks-types';
 
 export interface DeployImageFormProps {
   builderImages?: NormalizedBuilderImages;
@@ -81,6 +82,7 @@ export interface DeployImageFormData {
   build: BuildData;
   deployment: DeploymentData;
   limits: LimitsData;
+  healthChecks: HealthChecksData;
 }
 
 export interface GitImportFormData {
@@ -100,6 +102,7 @@ export interface GitImportFormData {
   deployment: DeploymentData;
   labels: { [name: string]: string };
   limits: LimitsData;
+  healthChecks: HealthChecksData;
 }
 
 export interface ApplicationData {
@@ -292,4 +295,10 @@ export enum ImportOptions {
   DOCKERFILE = 'DOCKERFILE',
   DATABASE = 'DATABASE',
   EVENTSOURCE = 'EVENTSOURCE',
+}
+
+export interface HealthChecksData {
+  readinessProbe: HealthCheckProbe;
+  livenessProbe: HealthCheckProbe;
+  startupProbe?: HealthCheckProbe;
 }

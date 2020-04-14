@@ -4,8 +4,13 @@ import { PlusCircleIcon, MinusCircleIcon } from '@patternfly/react-icons';
 import { GreenCheckCircleIcon } from '@console/shared';
 import { Button, ButtonVariant } from '@patternfly/react-core';
 import ProbeForm from './ProbeForm';
-import { getHealthChecksProbeConfig } from './health-check-probe-utils';
+import {
+  getHealthChecksProbeConfig,
+  getContainerPorts,
+  healthChecksDefaultValues,
+} from './health-check-probe-utils';
 import './HealthCheckProbe.scss';
+import { HealthCheckProbeData } from './health-checks-types';
 
 interface HealthCheckProbeProps {
   probeType: string;
@@ -13,23 +18,29 @@ interface HealthCheckProbeProps {
 
 const HealthCheckProbe: React.FC<HealthCheckProbeProps> = ({ probeType }) => {
   const {
-    values: { healthChecks },
+    values: {
+      image: { ports },
+      healthChecks,
+    },
     setFieldValue,
-    initialValues,
   } = useFormikContext<FormikValues>();
+  const [temporaryProbeData, setTemporaryProbeData] = React.useState<HealthCheckProbeData>();
   const onEditProbe = () => {
     setFieldValue(`healthChecks.${probeType}.showForm`, true);
+    setTemporaryProbeData(healthChecks?.[probeType].data);
   };
 
   const handleDeleteProbe = () => {
-    setFieldValue(`healthChecks.${probeType}`, initialValues.healthChecks[probeType]);
+    setFieldValue(`healthChecks.${probeType}`, healthChecksDefaultValues);
   };
 
   const handleReset = () => {
     if (!healthChecks?.[probeType]?.enabled) {
-      setFieldValue(`healthChecks.${probeType}`, initialValues.healthChecks[probeType]);
+      setFieldValue(`healthChecks.${probeType}`, healthChecksDefaultValues);
+    } else {
+      setFieldValue(`healthChecks.${probeType}.showForm`, false);
+      setFieldValue(`healthChecks.${probeType}.data`, temporaryProbeData);
     }
-    setFieldValue(`healthChecks.${probeType}.showForm`, false);
   };
 
   const handleSubmit = () => {
@@ -43,7 +54,14 @@ const HealthCheckProbe: React.FC<HealthCheckProbeProps> = ({ probeType }) => {
 
   const renderProbe = () => {
     if (healthChecks?.[probeType]?.showForm) {
-      return <ProbeForm onSubmit={handleSubmit} onClose={handleReset} probeType={probeType} />;
+      return (
+        <ProbeForm
+          onSubmit={handleSubmit}
+          onClose={handleReset}
+          probeType={probeType}
+          containerPorts={getContainerPorts(ports)}
+        />
+      );
     }
     if (healthChecks?.[probeType]?.enabled) {
       return (

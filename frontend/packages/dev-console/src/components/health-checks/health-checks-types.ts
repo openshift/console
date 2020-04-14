@@ -18,14 +18,13 @@ export interface HealthCheckProbeData {
   httpGet?: {
     scheme: string;
     path: string;
-
     port: number;
     httpHeaders: NameValuePair[];
   };
   tcpSocket?: {
     port: number;
   };
-  exec: { command?: string[] };
+  exec?: { command?: string[] };
   initialDelaySeconds: number;
   periodSeconds: number;
   timeoutSeconds: number;

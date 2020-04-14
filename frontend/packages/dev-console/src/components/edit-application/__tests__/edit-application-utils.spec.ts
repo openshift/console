@@ -16,6 +16,7 @@ import {
   gitImportInitialValues,
   externalImageValues,
   internalImageValues,
+  gitImportInitialValuesWithHealthChecksEnabled,
 } from './edit-application-data';
 
 describe('Edit Application Utils', () => {
@@ -50,5 +51,33 @@ describe('Edit Application Utils', () => {
     expect(
       getInitialValues({ editAppResource, route, imageStream }, 'nationalparks-py', 'div'),
     ).toEqual(knExternalImageValues);
+  });
+
+  it('getInitialValues should return health checks data based on the resources', () => {
+    const { buildConfig, route, editAppResource } = appResources;
+    editAppResource.data.spec.template.spec.containers[0].readinessProbe = {
+      failureThreshold: 3,
+      httpGet: {
+        scheme: 'HTTP',
+        path: '/',
+        port: 8080,
+        httpHeaders: [{ name: 'header', value: 'val' }],
+      },
+      initialDelaySeconds: 0,
+      periodSeconds: 10,
+      timeoutSeconds: 1,
+      successThreshold: 1,
+    };
+    editAppResource.data.spec.template.spec.containers[0].livenessProbe = {
+      failureThreshold: 3,
+      exec: { command: ['cat', '/tmp/healthy'] },
+      initialDelaySeconds: 0,
+      periodSeconds: 10,
+      timeoutSeconds: 1,
+      successThreshold: 1,
+    };
+    expect(
+      getInitialValues({ editAppResource, buildConfig, route }, 'nationalparks-py', 'div'),
+    ).toEqual(gitImportInitialValuesWithHealthChecksEnabled);
   });
 });
