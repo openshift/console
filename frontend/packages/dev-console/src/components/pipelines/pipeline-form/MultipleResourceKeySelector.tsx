@@ -7,7 +7,7 @@ import * as _ from 'lodash';
 import { RootState } from '@console/internal/redux';
 import { getActiveNamespace } from '@console/internal/reducers/ui';
 import { K8sKind, K8sResourceKind } from '@console/internal/module/k8s';
-import { ResourceDropdown, getFieldId } from '@console/shared';
+import { ResourceDropdown, getFieldId, useFormikValidationFix } from '@console/shared';
 import { FormGroup } from '@patternfly/react-core';
 import {
   useK8sWatchResource,
@@ -16,10 +16,12 @@ import {
 import MultipleKeySelector from './MultipleKeySelector';
 
 interface MultipleResourceKeySelectorProps {
-  name: string;
   label: string;
   resourceModel: K8sKind;
   fullWidth?: boolean;
+  required?: boolean;
+  resourceNameField: string;
+  resourceKeysField: string;
 }
 
 interface StateProps {
@@ -28,16 +30,20 @@ interface StateProps {
 
 const MultipleResourceKeySelector: React.FC<StateProps & MultipleResourceKeySelectorProps> = ({
   fullWidth,
-  name,
   label,
   namespace,
   resourceModel,
+  required,
+  resourceNameField,
+  resourceKeysField,
 }) => {
   const { setFieldValue, setFieldTouched } = useFormikContext<FormikValues>();
-  const [field, { touched, error }] = useField(`${name}.name`);
+  const [field, { touched, error }] = useField(resourceNameField);
   const isValid = !(touched && error);
-  const fieldId = getFieldId(`${name}.name`, 'res-dropdown');
+  const fieldId = getFieldId(resourceNameField, 'res-dropdown');
   const [keys, setKeys] = React.useState({});
+
+  useFormikValidationFix(field.value);
 
   const resource: WatchK8sResource = React.useMemo(
     () => ({
@@ -69,6 +75,7 @@ const MultipleResourceKeySelector: React.FC<StateProps & MultipleResourceKeySele
       label={label}
       isValid={isValid}
       className="odc-multiple-key-selector"
+      isRequired={required}
     >
       <ResourceDropdown
         resources={[
@@ -82,13 +89,18 @@ const MultipleResourceKeySelector: React.FC<StateProps & MultipleResourceKeySele
         autocompleteFilter={autocompleteFilter}
         dropDownClassName={cx({ 'dropdown--full-width': fullWidth })}
         onChange={(value: string) => {
-          setFieldValue(`${name}.name`, value);
-          setFieldTouched(`${name}.name`, true);
+          setFieldValue(resourceNameField, value);
+          setFieldTouched(resourceNameField, true);
           generateKeys(value);
         }}
         showBadge
       />
-      <MultipleKeySelector name={`${name}.items`} keys={keys} fullWidth={fullWidth} />
+      <MultipleKeySelector
+        name={resourceKeysField}
+        keys={keys}
+        fullWidth={fullWidth}
+        required={required}
+      />
     </FormGroup>
   );
 };

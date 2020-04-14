@@ -1,4 +1,5 @@
 import * as yup from 'yup';
+import { VolumeTypes } from './PiplelineWorkspacesSection';
 
 export const resourcesValidationSchema = yup.object().shape({
   resources: yup.array().of(
@@ -19,6 +20,43 @@ export const parametersValidationSchema = yup.object().shape({
   ),
 });
 
+const volumeTypeSchema = yup
+  .object()
+  .when('type', {
+    is: VolumeTypes.Secret,
+    then: yup.object().shape({
+      secret: yup.object().shape({
+        secretName: yup.string().required('Required'),
+        items: yup.array().of(
+          yup.object().shape({
+            key: yup.string().required('Required'),
+          }),
+        ),
+      }),
+    }),
+  })
+  .when('type', {
+    is: VolumeTypes['Config Map'],
+    then: yup.object().shape({
+      configMap: yup.object().shape({
+        name: yup.string().required('Required'),
+        items: yup.array().of(
+          yup.object().shape({
+            key: yup.string().required('Required'),
+          }),
+        ),
+      }),
+    }),
+  })
+  .when('type', {
+    is: VolumeTypes.PVC,
+    then: yup.object().shape({
+      persistentVolumeClaim: yup.object().shape({
+        claimName: yup.string().required('Required'),
+      }),
+    }),
+  });
+
 export const startPipelineSchema = yup.object().shape({
   resources: yup.array().of(
     yup.object().shape({
@@ -34,6 +72,12 @@ export const startPipelineSchema = yup.object().shape({
       name: yup.string().required('Required'),
       description: yup.string(),
       default: yup.string().required('Required'),
+    }),
+  ),
+  workspaces: yup.array().of(
+    yup.object().shape({
+      type: yup.string().required('Required'),
+      data: volumeTypeSchema,
     }),
   ),
 });

@@ -18,20 +18,24 @@ const getVolumeTypeFields = (volumeType: string, index: number) => {
     case VolumeTypes.Secret: {
       return (
         <MultipleResourceKeySelector
-          name={`workspaces.${index}.data.secret`}
+          resourceNameField={`workspaces.${index}.data.secret.secretName`}
+          resourceKeysField={`workspaces.${index}.data.secret.items`}
           label="Secret"
           resourceModel={SecretModel}
           fullWidth
+          required
         />
       );
     }
     case VolumeTypes['Config Map']: {
       return (
         <MultipleResourceKeySelector
-          name={`workspaces.${index}.data.configMaps`}
+          resourceNameField={`workspaces.${index}.data.configMap.name`}
+          resourceKeysField={`workspaces.${index}.data.configMap.items`}
           label="Config Map"
           resourceModel={ConfigMapModel}
           fullWidth
+          required
         />
       );
     }
@@ -61,6 +65,7 @@ const PipelineWorkspacesSection: React.FC = () => {
                   label={`${workspace.name}`}
                   items={VolumeTypes}
                   fullWidth
+                  required
                 />
                 {getVolumeTypeFields(workspaces[index].type, index)}
               </div>

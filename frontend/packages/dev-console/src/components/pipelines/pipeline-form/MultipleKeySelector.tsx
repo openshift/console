@@ -3,7 +3,7 @@ import { FieldArray, useFormikContext, FormikValues } from 'formik';
 import * as _ from 'lodash';
 import cx from 'classnames';
 import { PlusCircleIcon, MinusCircleIcon } from '@patternfly/react-icons';
-import { DropdownField, InputField, getFieldId } from '@console/shared';
+import { DropdownField, InputField, getFieldId, useFormikValidationFix } from '@console/shared';
 import { TextInputTypes, Button, FormGroup } from '@patternfly/react-core';
 import './MultipleKeySelector.scss';
 
@@ -11,11 +11,18 @@ interface MultipleKeySelectorProps {
   name: string;
   keys: { [key: string]: string };
   fullWidth?: boolean;
+  required?: boolean;
 }
 
-const MultipleKeySelector: React.FC<MultipleKeySelectorProps> = ({ name, keys, fullWidth }) => {
+const MultipleKeySelector: React.FC<MultipleKeySelectorProps> = ({
+  name,
+  keys,
+  fullWidth,
+  required,
+}) => {
   const { values } = useFormikContext<FormikValues>();
   const items = _.get(values, name, [{ key: '', path: '' }]);
+  useFormikValidationFix(items);
   return (
     <FieldArray
       name={name}
@@ -26,9 +33,10 @@ const MultipleKeySelector: React.FC<MultipleKeySelectorProps> = ({ name, keys, f
             fieldId={getFieldId(name, 'multiple-key-selector')}
             label="Items"
             className="odc-multiple-key-selector"
+            isRequired={required}
           >
             {items.length > 0 &&
-              items.map((_item, index) => (
+              items.map((item, index) => (
                 <div
                   className="form-group odc-multiple-key-selector__item"
                   // eslint-disable-next-line react/no-array-index-key

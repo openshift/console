@@ -69,6 +69,8 @@ export const getPipelineRunData = (
 
   const params = latestRunParams || getPipelineRunParams(pipelineParams);
 
+  const workspaces = _.get(latestRun, ['spec', 'workspaces'], []);
+
   const newPipelineRun = {
     apiVersion: pipeline ? pipeline.apiVersion : latestRun.apiVersion,
     kind: PipelineRunModel.kind,
@@ -89,9 +91,9 @@ export const getPipelineRunData = (
       },
       resources,
       ...(params && { params }),
+      ...(workspaces && { workspaces }),
     },
   };
-
   return migratePipelineRun(newPipelineRun);
 };
 
@@ -150,8 +152,9 @@ export const startPipeline: KebabAction = (
   callback: () => {
     const params = _.get(pipeline, ['spec', 'params'], []);
     const resources = _.get(pipeline, ['spec', 'resources'], []);
+    const workspaces = _.get(pipeline, ['spec', 'workspaces'], []);
 
-    if (!_.isEmpty(params) || !_.isEmpty(resources)) {
+    if (!_.isEmpty(params) || !_.isEmpty(resources) || !_.isEmpty(workspaces)) {
       startPipelineModal({
         pipeline,
         getPipelineRunData,
