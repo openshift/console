@@ -125,12 +125,11 @@ const SearchPage_: React.FC<SearchProps> = (props) => {
 
   const updateLabelFilter = (value: string, endOfString: boolean) => {
     setLabelFilterInput(value);
-    if (requirementFromString(value) !== undefined) {
-      if (endOfString) {
-        setLabelFilter([...labelFilter, value]);
-        setQueryArgument('q', [...labelFilter, value].join(','));
-        setLabelFilterInput('');
-      }
+    if (requirementFromString(value) !== undefined && endOfString) {
+      const updatedLabels = _.uniq([...labelFilter, value]);
+      setLabelFilter(updatedLabels);
+      setQueryArgument('q', updatedLabels.join(','));
+      setLabelFilterInput('');
     }
   };
 
