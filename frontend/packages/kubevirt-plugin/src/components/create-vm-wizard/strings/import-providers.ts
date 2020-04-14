@@ -1,12 +1,12 @@
 import { VMImportProvider } from '../types';
 
 const titleResolver = {
-  [VMImportProvider.OVIRT]: 'Red Hat Virtualization',
+  [VMImportProvider.OVIRT]: 'Red Hat Virtualization (RHV)',
   [VMImportProvider.VMWARE]: 'VMware',
 };
 
 const endpointTitleResolver = {
-  [VMImportProvider.OVIRT]: 'Red Hat Virtualization API',
+  [VMImportProvider.OVIRT]: 'RHV API',
   [VMImportProvider.VMWARE]: 'vCenter',
 };
 

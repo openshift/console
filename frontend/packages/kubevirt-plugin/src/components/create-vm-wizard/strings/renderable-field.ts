@@ -9,11 +9,11 @@ import {
 import { ProvisionSource } from '../../../constants/vm/provision-source';
 
 export const titleResolver: RenderableFieldResolver = {
-  [OvirtProviderField.OVIRT_ENGINE_SECRET_NAME]: 'Red Hat Virtualization Instance',
+  [OvirtProviderField.OVIRT_ENGINE_SECRET_NAME]: 'RHV Instance',
   [OvirtProviderField.API_URL]: 'API URL',
   [OvirtProviderField.USERNAME]: 'Username',
   [OvirtProviderField.PASSWORD]: 'Password',
-  [OvirtProviderField.REMEMBER_PASSWORD]: 'Save as new Red Hat Virtualization Instance secret',
+  [OvirtProviderField.REMEMBER_PASSWORD]: 'Save as new RHV Instance secret',
   [OvirtProviderField.CERTIFICATE]: 'CA certificate',
   [OvirtProviderField.CLUSTER]: 'Cluster',
   [OvirtProviderField.VM]: 'VM to Import',
@@ -42,8 +42,7 @@ export const titleResolver: RenderableFieldResolver = {
 
 export const placeholderResolver = {
   [ImportProvidersField.PROVIDER]: '--- Select Provider ---',
-  [OvirtProviderField.OVIRT_ENGINE_SECRET_NAME]:
-    '--- Select Red Hat Virtualization Instance Secret ---',
+  [OvirtProviderField.OVIRT_ENGINE_SECRET_NAME]: '--- Select RHV Instance Secret ---',
   [OvirtProviderField.CLUSTER]: '--- Select Cluster ---',
   [OvirtProviderField.VM]: '--- Select VM ---',
   [VMWareProviderField.VCENTER_SECRET_NAME]: '--- Select vCenter Instance Secret ---',
