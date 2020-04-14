@@ -14,6 +14,7 @@
     "@console/internal": "0.0.0-fixed",
     "@console/knative-plugin": "0.0.0-fixed",
     "@console/kubevirt-plugin": "0.0.0-fixed",
+    "@console/local-storage-operator-plugin": "0.0.0-fixed",
     "@console/metal3-plugin": "0.0.0-fixed",
     "@console/network-attachment-definition-plugin": "0.0.0-fixed",
     "@console/noobaa-storage-plugin": "0.0.0-fixed",

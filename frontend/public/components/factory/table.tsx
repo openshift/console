@@ -39,6 +39,7 @@ import {
   TableBody,
   TableGridBreakpoint,
   SortByDirection,
+  OnSelect,
 } from '@patternfly/react-table';
 
 import { CellMeasurerCache, CellMeasurer } from 'react-virtualized';
@@ -367,6 +368,7 @@ export type TableProps = {
   Row?: RowFunction;
   Rows?: (...args) => any[];
   'aria-label': string;
+  onSelect?: OnSelect;
   virtualize?: boolean;
   NoDataEmptyMsg?: React.ComponentType<{}>;
   EmptyMsg?: React.ComponentType<{}>;
