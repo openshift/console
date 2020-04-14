@@ -4,6 +4,7 @@ import {
   ChangedCommonDataProp,
   CloudInitField,
   ImportProvidersField,
+  OvirtProviderField,
   VMImportProvider,
   VMSettingsField,
   VMSettingsFieldType,
@@ -13,7 +14,7 @@ import {
   VMWizardTab,
 } from '../types';
 import { DeviceType } from '../../../constants/vm';
-import { FirehoseResource } from '@console/internal/components/utils';
+import { FirehoseResourceEnhanced } from '../../../types/custom';
 
 export enum ActionType {
   Create = 'KubevirtVMWizardExternalCreate',
@@ -47,9 +48,13 @@ export enum InternalActionType {
   SetTabValidity = 'KubevirtVMWizardSetTabValidity',
   SetTabLocked = 'KubevirtVMWizardSetTabLocked',
   SetTabHidden = 'KubevirtVMWizardSetTabHidden',
+  SetTabIsCreateDisabled = 'KubevirtVMWizardSetTabIsCreateDisabled',
+  SetTabIsUpdateDisabled = 'KubevirtVMWizardSetTabIsUpdateDisabled',
+  SetTabIsDeleteDisabled = 'KubevirtVMWizardSetTabIsDeleteDisabled',
   SetVmSettingsFieldValue = 'KubevirtVMWizardSetVmSettingsFieldValue',
   SetImportProvidersFieldValue = 'KubevirtVMWizardSetImportProvidersFieldValue',
   UpdateImportProviderField = 'KubevirtVMWizardUpdateImportProviderField',
+  SetImportProvider = 'KubevirtVMWizardSetImportProvider',
   UpdateImportProvider = 'KubevirtVMWizardUpdateImportProvider',
   SetCloudInitFieldValue = 'KubevirtVMWizardSetCloudInitFieldValue',
   SetInVmSettings = 'KubevirtVMWizardSetInVmSettings',
@@ -75,11 +80,17 @@ export type WizardInternalAction = {
     isLocked?: boolean;
     isPending?: boolean;
     isHidden?: boolean;
+    isDisabled?: boolean;
     hasAllRequiredFilled?: boolean;
     path?: string[];
-    key?: VMSettingsField | CloudInitField | VMWareProviderField | ImportProvidersField;
+    key?:
+      | VMSettingsField
+      | CloudInitField
+      | VMWareProviderField
+      | OvirtProviderField
+      | ImportProvidersField;
     queryKey?: string;
-    wsQueries?: FirehoseResource[];
+    wsQueries?: FirehoseResourceEnhanced[];
     provider?: VMImportProvider;
     tab?: VMWizardTab;
     batch?: ActionBatch;

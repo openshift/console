@@ -8,8 +8,11 @@ export const VM_STATUS_PAUSED = 'VM_STATUS_PAUSED';
 
 export const VM_STATUS_V2V_CONVERSION_IN_PROGRESS = 'VM_STATUS_CONVERSION_IN_PROGRESS';
 export const VM_STATUS_V2V_CONVERSION_PENDING = 'VM_STATUS_CONVERSION_PENDING';
-
 export const VM_STATUS_V2V_CONVERSION_ERROR = 'VM_STATUS_CONVERSION_FAILED';
+
+export const VM_STATUS_V2V_VM_IMPORT_IN_PROGRESS = 'VM_STATUS_V2V_VM_IMPORT_IN_PROGRESS';
+export const VM_STATUS_V2V_VM_IMPORT_ERROR = 'VM_STATUS_V2V_VM_IMPORT_ERROR';
+
 export const VM_STATUS_POD_ERROR = 'VM_STATUS_POD_ERROR';
 export const VM_STATUS_ERROR = 'VM_STATUS_ERROR';
 export const VM_STATUS_IMPORT_ERROR = 'VM_STATUS_IMPORT_ERROR';
@@ -18,6 +21,7 @@ export const VM_STATUS_MIGRATING = 'VM_STATUS_MIGRATING';
 export const VM_STATUS_IMPORT_PENDING = 'VM_STATUS_IMPORT_PENDING';
 
 export const CONVERSION_PROGRESS_ANNOTATION = 'v2vConversionProgress';
+export const VM_IMPORT_PROGRESS_ANNOTATION = 'vmimport.v2v.kubevirt.io/progress';
 
 export const VM_STATUS_FILTER_STRINGS = [
   'Pending',
@@ -37,8 +41,12 @@ export const getVMStatusSortString = (vmStatus) => {
       return 'Pending (Import VMware)';
     case VM_STATUS_IMPORT_PENDING:
       return 'Pending (Import)';
+    case VM_STATUS_V2V_VM_IMPORT_IN_PROGRESS:
+      return 'Importing (Red Hat Virtualization)';
     case VM_STATUS_V2V_CONVERSION_IN_PROGRESS:
       return 'Importing (VMware)';
+    case VM_STATUS_V2V_VM_IMPORT_ERROR:
+      return 'Error (Import Red Hat Virtualization)';
     case VM_STATUS_V2V_CONVERSION_ERROR:
       return 'Error (Import VMware)';
     case VM_STATUS_POD_ERROR:

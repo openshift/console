@@ -3,6 +3,7 @@ import { FormSelect, FormSelectOption } from '@patternfly/react-core';
 import { ValidationErrorType, asValidationObject } from '@console/shared/src/utils/validation';
 import {
   concatImmutableLists,
+  iGet,
   iGetIsLoaded,
   iGetLoadedData,
   immutableListToShallowJS,
@@ -35,6 +36,9 @@ export const OSFlavor: React.FC<OSFlavorProps> = React.memo(
   }) => {
     const flavor = iGetFieldValue(flavorField);
     const os = iGetFieldValue(operatinSystemField);
+    const display = iGet(operatinSystemField, 'display');
+    const displayOnly = !!display;
+
     const params = {
       userTemplate,
       flavor,
@@ -46,9 +50,15 @@ export const OSFlavor: React.FC<OSFlavorProps> = React.memo(
       concatImmutableLists(iGetLoadedData(commonTemplates), iGetLoadedData(userTemplates)),
     );
 
-    const operatingSystems = openshiftFlag
-      ? ignoreCaseSort(getOperatingSystems(vanillaTemplates, params), ['name'])
-      : operatingSystemsNative;
+    let operatingSystems;
+
+    if (displayOnly) {
+      operatingSystems = [{ name: display, id: display }];
+    } else {
+      operatingSystems = openshiftFlag
+        ? ignoreCaseSort(getOperatingSystems(vanillaTemplates, params), ['name'])
+        : operatingSystemsNative;
+    }
 
     const flavors = flavorSort(getFlavors(vanillaTemplates, params));
 
@@ -88,12 +98,14 @@ export const OSFlavor: React.FC<OSFlavorProps> = React.memo(
           validation={operatingSystemValidation}
           loadingResources={loadingResources}
         >
-          <FormField>
+          <FormField value={displayOnly ? display : undefined}>
             <FormSelect onChange={nullOnEmptyChange(onChange, VMSettingsField.OPERATING_SYSTEM)}>
-              <FormSelectPlaceholderOption
-                placeholder={getPlaceholder(VMSettingsField.OPERATING_SYSTEM)}
-                isDisabled={!!os}
-              />
+              {!displayOnly && (
+                <FormSelectPlaceholderOption
+                  placeholder={getPlaceholder(VMSettingsField.OPERATING_SYSTEM)}
+                  isDisabled={!!os}
+                />
+              )}
               {operatingSystems.map(({ id, name }) => {
                 return <FormSelectOption key={id} value={id} label={name || id} />;
               })}

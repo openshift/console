@@ -7,4 +7,7 @@ export const getReviewInitialState: InitialStepStateGetter = () => ({
   hasAllRequiredFilled: true,
   isLocked: false,
   isHidden: false,
+  isCreateDisabled: false,
+  isUpdateDisabled: false,
+  isDeleteDisabled: false,
 });

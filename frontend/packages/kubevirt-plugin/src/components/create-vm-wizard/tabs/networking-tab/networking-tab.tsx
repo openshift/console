@@ -11,7 +11,12 @@ import {
   Title,
 } from '@patternfly/react-core';
 import { PlusCircleIcon } from '@patternfly/react-icons';
-import { isStepLocked } from '../../selectors/immutable/wizard-selectors';
+import {
+  hasStepCreateDisabled,
+  hasStepDeleteDisabled,
+  hasStepUpdateDisabled,
+  isStepLocked,
+} from '../../selectors/immutable/wizard-selectors';
 import { VMWizardNetwork, VMWizardTab } from '../../types';
 import { VMNicsTable } from '../../../vm-nics/vm-nics';
 import { nicTableColumnClasses } from '../../../vm-nics/utils';
@@ -55,6 +60,9 @@ const NetworkingTabComponent: React.FC<NetworkingTabComponentProps> = ({
   removeNIC,
   onBootOrderChanged,
   networks,
+  isCreateDisabled,
+  isUpdateDisabled,
+  isDeleteDisabled,
 }) => {
   const showNetworks = networks.length > 0 || isBootNICRequired;
 
@@ -69,7 +77,7 @@ const NetworkingTabComponent: React.FC<NetworkingTabComponentProps> = ({
           wizardReduxID,
         }).result,
       ),
-    isDisabled: isLocked,
+    isDisabled: isLocked || isCreateDisabled,
   };
 
   return (
@@ -93,7 +101,14 @@ const NetworkingTabComponent: React.FC<NetworkingTabComponentProps> = ({
           <VMNicsTable
             columnClasses={nicTableColumnClasses}
             data={getNicsData(networks)}
-            customData={{ isDisabled: isLocked, withProgress, removeNIC, wizardReduxID }}
+            customData={{
+              isDisabled: isLocked,
+              isDeleteDisabled,
+              isUpdateDisabled,
+              withProgress,
+              removeNIC,
+              wizardReduxID,
+            }}
             row={VMWizardNicRow}
           />
           {isBootNICRequired && (
@@ -124,6 +139,9 @@ const NetworkingTabComponent: React.FC<NetworkingTabComponentProps> = ({
 
 type NetworkingTabComponentProps = {
   isLocked: boolean;
+  isCreateDisabled: boolean;
+  isUpdateDisabled: boolean;
+  isDeleteDisabled: boolean;
   isBootNICRequired: boolean;
   wizardReduxID: string;
   networks: VMWizardNetwork[];
@@ -134,6 +152,9 @@ type NetworkingTabComponentProps = {
 
 const stateToProps = (state, { wizardReduxID }) => ({
   isLocked: isStepLocked(state, wizardReduxID, VMWizardTab.NETWORKING),
+  isCreateDisabled: hasStepCreateDisabled(state, wizardReduxID, VMWizardTab.NETWORKING),
+  isUpdateDisabled: hasStepUpdateDisabled(state, wizardReduxID, VMWizardTab.NETWORKING),
+  isDeleteDisabled: hasStepDeleteDisabled(state, wizardReduxID, VMWizardTab.NETWORKING),
   networks: getNetworks(state, wizardReduxID),
   isBootNICRequired: iGetProvisionSource(state, wizardReduxID) === ProvisionSource.PXE,
 });

@@ -19,6 +19,9 @@ const tabStateChecks = [
   { key: 'hasAllRequiredFilled', typeCheck: _.isBoolean, typeName: 'boolean' },
   { key: 'isHidden', typeCheck: _.isBoolean, typeName: 'boolean' },
   { key: 'isPending', typeCheck: _.isBoolean, typeName: 'boolean' },
+  { key: 'isCreateDisabled', typeCheck: _.isBoolean, typeName: 'boolean' },
+  { key: 'isUpdateDisabled', typeCheck: _.isBoolean, typeName: 'boolean' },
+  { key: 'isDeleteDisabled', typeCheck: _.isBoolean, typeName: 'boolean' },
 ];
 
 const tabStateKeys = new Set(tabStateChecks.map((value) => value.key));
@@ -66,6 +69,9 @@ export const getTabInitialState = (tabKey: VMWizardTab, data: CommonData): VMWiz
       isLocked: false,
       hasAllRequiredFilled: false,
       isHidden: false,
+      isCreateDisabled: false,
+      isUpdateDisabled: false,
+      isDeleteDisabled: false,
     };
   }
 

@@ -8,4 +8,7 @@ export const getVirtualHardwareInitialState: InitialStepStateGetter = (data: Com
   isLocked: false,
   error: null,
   isHidden: data.data.isProviderImport && data.data.isSimpleView,
+  isCreateDisabled: false,
+  isUpdateDisabled: false,
+  isDeleteDisabled: false,
 });

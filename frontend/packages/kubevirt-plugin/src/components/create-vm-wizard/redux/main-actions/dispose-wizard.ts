@@ -14,7 +14,7 @@ export const disposeWizard = (id: string) => (dispatch, getState) => {
     getState,
   };
 
-  getProviders().forEach((provider) => provider.cleanup(options));
+  getProviders().forEach((provider) => provider.cleanup && provider.cleanup(options));
 
   dispatch(vmWizardInternalActions[InternalActionType.Dispose](id));
 };

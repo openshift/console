@@ -62,7 +62,7 @@ export const FormRow: React.FC<FormRowProps> = ({
 type FormRowProps = {
   fieldId: string;
   title?: string;
-  help?: string;
+  help?: React.ReactNode;
   helpTitle?: string;
   isHidden?: boolean;
   isRequired?: boolean;

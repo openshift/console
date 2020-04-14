@@ -1,9 +1,10 @@
+import * as _ from 'lodash';
 import { ObjectWithTypePropertyWrapper } from '../common/object-with-type-property-wrapper';
 import { V1Disk } from '../../../types/vm/disk/V1Disk';
 import { DiskType, DiskBus } from '../../../constants/vm/storage';
 
 type CombinedTypeData = {
-  bus?: string;
+  bus?: string | DiskBus;
 };
 
 export class DiskWrapper extends ObjectWithTypePropertyWrapper<
@@ -35,6 +36,16 @@ export class DiskWrapper extends ObjectWithTypePropertyWrapper<
     super(disk, copy, DiskType);
   }
 
+  init({ name, bootOrder }: { name?: string; bootOrder?: number }) {
+    if (name !== undefined) {
+      this.data.name = name;
+    }
+    if (bootOrder !== undefined) {
+      this.data.bootOrder = bootOrder;
+    }
+    return this;
+  }
+
   getName = () => this.get('name');
 
   getDiskBus = (): DiskBus => DiskBus.fromString(this.getIn([this.getTypeValue(), 'bus']));
@@ -55,7 +66,9 @@ export class DiskWrapper extends ObjectWithTypePropertyWrapper<
       case DiskType.FLOPPY:
         return {};
       default:
-        return { bus };
+        return {
+          bus: _.isString(bus) ? bus : bus?.getValue(),
+        };
     }
   }
 }

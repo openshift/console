@@ -17,6 +17,7 @@ import { VMCDRomModal } from '../modals/cdrom-vm-modal/vm-cdrom-modal';
 import { getVMStatus } from '../../statuses/vm/vm';
 import { isVMIPaused } from '../../selectors/vmi';
 import { unpauseVMI, VMIActionType } from '../../k8s/requests/vmi/actions';
+import { VMImportKind } from '../../types/vm-import/ovirt/vm-import';
 
 type ActionArgs = {
   migration?: K8sResourceKind;
@@ -183,14 +184,19 @@ export const vmiMenuActions = [
   Kebab.factory.Delete,
 ];
 
-type ExtraResources = { vmi: VMIKind; pods: PodKind[]; migrations: K8sResourceKind[] };
+type ExtraResources = {
+  vmi: VMIKind;
+  pods: PodKind[];
+  migrations: K8sResourceKind[];
+  vmImports: VMImportKind[];
+};
 
 export const vmMenuActionsCreator = (
   kindObj: K8sKind,
   vm: VMKind,
-  { vmi, pods, migrations }: ExtraResources,
+  { vmi, pods, migrations, vmImports }: ExtraResources,
 ) => {
-  const vmStatus = getVMStatus({ vm, vmi, pods, migrations });
+  const vmStatus = getVMStatus({ vm, vmi, pods, migrations, vmImports });
   const migration = findVMIMigration(vmi, migrations);
 
   return vmMenuActions.map((action) => {

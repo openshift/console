@@ -1,4 +1,3 @@
-import { validate } from '@console/internal/components/utils';
 import { V1PersistentVolumeClaim } from '../../../types/vm/disk/V1PersistentVolumeClaim';
 import {
   getPvcAccessModes,
@@ -6,7 +5,11 @@ import {
   getPvcStorageSize,
   getPvcVolumeMode,
 } from '../../../selectors/pvc/selectors';
-import { toIECUnit } from '../../../components/form/size-unit-utils';
+import {
+  BinaryUnit,
+  stringValueUnitSplit,
+  toIECUnit,
+} from '../../../components/form/size-unit-utils';
 import { K8sResourceWrapper } from '../common/k8s-resource-wrapper';
 import { PersistentVolumeClaimModel } from '@console/internal/models';
 import { K8sInitAddon } from '../common/util/k8s-mixin';
@@ -23,11 +26,9 @@ export class PersistentVolumeClaimWrapper extends K8sResourceWrapper<
     super(PersistentVolumeClaimModel, persistentVolumeClaim, copy);
   }
 
-  init(
-    data: K8sInitAddon & { size?: string | number; unit?: string; storageClassName?: string } = {},
-  ) {
+  init(data: K8sInitAddon & { size?: string | number; unit?: string; storageClassName?: string }) {
     super.init(data);
-    const { size, unit, storageClassName } = data;
+    const { size, unit, storageClassName } = data || {};
     if (size != null && unit) {
       this.setSize(size, unit);
     }
@@ -41,7 +42,7 @@ export class PersistentVolumeClaimWrapper extends K8sResourceWrapper<
   getStorageClassName = () => getPvcStorageClassName(this.data as any);
 
   getSize = (): { value: number; unit: string } => {
-    const parts = validate.split(getPvcStorageSize(this.data as any) || '');
+    const parts = stringValueUnitSplit(getPvcStorageSize(this.data as any) || '');
     return {
       value: parts[0],
       unit: parts[1],
@@ -50,7 +51,7 @@ export class PersistentVolumeClaimWrapper extends K8sResourceWrapper<
 
   getReadabableSize = () => {
     const { value, unit } = this.getSize();
-    return `${value} ${toIECUnit(unit)}`;
+    return `${value} ${toIECUnit(unit) || BinaryUnit.B}`;
   };
 
   hasSize = () => this.getSize().value > 0;

@@ -11,7 +11,7 @@ import { VMAlerts } from './vm-alerts';
 
 export const VMStatusCard: React.FC<VMStatusCardProps> = () => {
   const vmDashboardContext = React.useContext(VMDashboardContext);
-  const { vm, vmi, pods, migrations } = vmDashboardContext;
+  const { vm, vmi, pods, migrations, vmImports } = vmDashboardContext;
 
   return (
     <DashboardCard gradient>
@@ -20,7 +20,7 @@ export const VMStatusCard: React.FC<VMStatusCardProps> = () => {
       </DashboardCardHeader>
       <DashboardCardBody>
         <HealthBody>
-          <VMStatus vm={vm} vmi={vmi} pods={pods} migrations={migrations} />
+          <VMStatus vm={vm} vmi={vmi} pods={pods} migrations={migrations} vmImports={vmImports} />
         </HealthBody>
         <VMAlerts vm={vm} vmi={vmi} />
       </DashboardCardBody>

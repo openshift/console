@@ -80,4 +80,7 @@ export const getVmSettingsInitialState: InitialStepStateGetter = (data) => ({
   isValid: false,
   isLocked: false,
   isHidden: data.data.isProviderImport && data.data.isSimpleView,
+  isCreateDisabled: false,
+  isUpdateDisabled: false,
+  isDeleteDisabled: false,
 });

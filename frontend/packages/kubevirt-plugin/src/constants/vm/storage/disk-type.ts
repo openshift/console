@@ -29,9 +29,6 @@ export class DiskType extends ObjectEnum<string> {
 
   static getAll = () => DiskType.ALL;
 
-  static fromSerialized = (diskType: { value: string }): DiskType =>
-    DiskType.fromString(diskType && diskType.value);
-
   static fromString = (model: string): DiskType => DiskType.stringMapper[model];
 
   // Overide ObjectEnum's default toString method.

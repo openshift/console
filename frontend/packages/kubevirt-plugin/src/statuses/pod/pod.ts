@@ -1,5 +1,4 @@
 import { PodKind } from '@console/internal/module/k8s';
-import { NOT_HANDLED } from '../constants';
 import {
   isPodSchedulable,
   getPodStatusPhase,
@@ -43,7 +42,7 @@ const isNotSchedulable = (pod: PodKind): Status => {
       message: 'Pod scheduling failed.',
     };
   }
-  return NOT_HANDLED;
+  return null;
 };
 
 const hasErrorStatus = (pod: PodKind): Status => {
@@ -55,7 +54,7 @@ const hasErrorStatus = (pod: PodKind): Status => {
       message: getContainerStatusReason(findFailingContainerStatus(pod)),
     };
   }
-  return NOT_HANDLED;
+  return null;
 };
 
 const isContainerFailing = (pod: PodKind): Status => {
@@ -66,7 +65,7 @@ const isContainerFailing = (pod: PodKind): Status => {
       message: getContainerStatusReason(failingContainer),
     };
   }
-  return NOT_HANDLED;
+  return null;
 };
 const isNotReady = (pod: PodKind): Status => {
   const message = findPodFalseStatusConditionMessage(pod);
@@ -76,7 +75,7 @@ const isNotReady = (pod: PodKind): Status => {
       message,
     };
   }
-  return NOT_HANDLED;
+  return null;
 };
 
 const hasOkStatus = (pod: PodKind): Status => {
@@ -87,7 +86,7 @@ const hasOkStatus = (pod: PodKind): Status => {
       status,
     };
   }
-  return NOT_HANDLED;
+  return null;
 };
 
 export const getPodStatus = (pod: PodKind) =>

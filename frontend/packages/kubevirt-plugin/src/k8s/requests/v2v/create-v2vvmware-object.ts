@@ -8,7 +8,7 @@ import { PatchBuilder } from '@console/shared/src/k8s';
 import { buildOwnerReference } from '../../../utils';
 import { compareOwnerReference } from '@console/shared/src/utils/owner-references';
 import { SecretWrappper } from '../../wrapper/k8s/secret-wrapper';
-import { VCENTER_TEMPORARY_LABEL, VCENTER_TYPE_LABEL } from '../../../constants/v2v';
+import { V2V_TEMPORARY_LABEL, VCENTER_TYPE_LABEL } from '../../../constants/v2v';
 
 export const createV2VvmwareObjectWithSecret = async (
   {
@@ -28,7 +28,7 @@ export const createV2VvmwareObjectWithSecret = async (
         namespace,
         labels: {
           [VCENTER_TYPE_LABEL]: 'true',
-          [VCENTER_TEMPORARY_LABEL]: 'true', // garbage collect and do not list this temporary secret in the dropdown box
+          [V2V_TEMPORARY_LABEL]: 'true', // garbage collect and do not list this temporary secret in the dropdown box
         },
       })
       .setValue('username', username)

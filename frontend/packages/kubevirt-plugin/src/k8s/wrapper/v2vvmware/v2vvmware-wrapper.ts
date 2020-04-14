@@ -2,7 +2,7 @@ import { K8sResourceCommon } from '@console/internal/module/k8s';
 import { K8sResourceWrapper } from '../common/k8s-resource-wrapper';
 import { V2VVMwareModel } from '../../../models';
 import { K8sInitAddon } from '../common/util/k8s-mixin';
-import { VCENTER_TEMPORARY_LABEL } from '../../../constants/v2v';
+import { V2V_TEMPORARY_LABEL } from '../../../constants/v2v';
 
 type InitData = {
   isTemporary?: boolean; // remove this object automatically (by controller)
@@ -19,7 +19,7 @@ export class V2VVMwareWrappper extends K8sResourceWrapper<K8sResourceCommon, V2V
 
     if (isTemporary) {
       this.ensurePath('metadata.labels');
-      this.data.metadata.labels[VCENTER_TEMPORARY_LABEL] = 'true'; // will be automatically garbage-collected by the controller
+      this.data.metadata.labels[V2V_TEMPORARY_LABEL] = 'true'; // will be automatically garbage-collected by the controller
     }
 
     return this;

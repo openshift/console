@@ -16,5 +16,5 @@ export const FormFieldForm: React.FC<FormFieldFormProps> = ({ children, isReview
 };
 type FormFieldFormProps = {
   children?: React.ReactNode;
-  isReview: boolean;
+  isReview?: boolean;
 };

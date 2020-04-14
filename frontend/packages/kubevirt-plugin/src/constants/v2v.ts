@@ -19,7 +19,8 @@ export const VMWARE_TO_KUBEVIRT_OS_CONFIG_MAP_NAME = 'vmware-to-kubevirt-os'; //
 export const CONVERSION_SERVICEACCOUNT_DELAY = 2 * 1000; // in ms
 
 export const VCENTER_TYPE_LABEL = 'kubevirt.io/vcenter';
-export const VCENTER_TEMPORARY_LABEL = 'kubevirt.io/temporary';
+export const OVIRT_TYPE_LABEL = 'kubevirt.io/ovirt';
+export const V2V_TEMPORARY_LABEL = 'kubevirt.io/temporary';
 
 export const CONVERSION_VDDK_INIT_POD_NAME = 'vddk-init';
 export const CONVERSION_VOLUME_VDDK_NAME = 'volume-vddk';

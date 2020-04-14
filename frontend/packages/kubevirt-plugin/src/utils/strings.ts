@@ -48,3 +48,27 @@ export const intervalBracket = (isInclusive: boolean, leftValue?: number, rightV
 
   return isInclusive && Number.isFinite(rightValue) ? ']' : ')';
 };
+
+export const createUniqueNameResolver = (data: { name: string }[]) => {
+  const nameCounts = (data || [])
+    .filter(({ name }) => name)
+    .reduce((acc, { name }) => {
+      if (acc[name]) {
+        acc[name].max++;
+      } else {
+        acc[name] = { max: 1, next: 1 };
+      }
+      return acc;
+    }, {});
+
+  return (name: string) => {
+    if (!name) {
+      return name;
+    }
+    if (nameCounts[name].max === 1) {
+      return name;
+    }
+    nameCounts[name].next++;
+    return `${name}-${nameCounts[name].next - 1}`;
+  };
+};

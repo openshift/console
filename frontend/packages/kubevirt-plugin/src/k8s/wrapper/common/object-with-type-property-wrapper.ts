@@ -22,7 +22,7 @@ export abstract class ObjectWithTypePropertyWrapper<
     super(data, copy);
     this.TypeClass = typeClass;
     this.typeDataPath = typeDataPath;
-    if (!_.isFunction(typeClass.getAll) || typeClass.getAll === ObjectEnum.getAll) {
+    if (!typeClass || !_.isFunction(typeClass.getAll) || typeClass.getAll === ObjectEnum.getAll) {
       throw new Error('typeClass must implement ObjectEnum.getAll method');
     }
   }

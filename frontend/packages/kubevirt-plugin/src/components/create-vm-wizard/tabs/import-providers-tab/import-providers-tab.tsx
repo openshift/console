@@ -12,6 +12,7 @@ import { getPlaceholder } from '../../utils/renderable-field-utils';
 import { FormFieldForm } from '../../form/form-field-form';
 import { VMWareImportProvider } from './providers/vmware-import-provider/vmware-import-provider';
 import { iGetImportProviders } from '../../selectors/immutable/import-providers';
+import { OvirtImportProvider } from './providers/ovirt-import-provider/ovirt-import-provider';
 
 class ImportProvidersTabComponent extends React.Component<ImportProvidersTabComponentProps> {
   getField = (key: ImportProvidersField) => iGet(this.props.importProviders, key);
@@ -25,10 +26,10 @@ class ImportProvidersTabComponent extends React.Component<ImportProvidersTabComp
     this.props.onFieldChange(key, value);
 
   render() {
-    const { isReview, wizardReduxID } = this.props;
+    const { wizardReduxID } = this.props;
 
     return (
-      <FormFieldForm isReview={isReview}>
+      <FormFieldForm>
         <FormFieldMemoRow
           key={ImportProvidersField.PROVIDER}
           field={this.getField(ImportProvidersField.PROVIDER)}
@@ -48,6 +49,7 @@ class ImportProvidersTabComponent extends React.Component<ImportProvidersTabComp
             </FormSelect>
           </FormField>
         </FormFieldMemoRow>
+        <OvirtImportProvider key={VMImportProvider.OVIRT} wizardReduxID={wizardReduxID} />
         <VMWareImportProvider key={VMImportProvider.VMWARE} wizardReduxID={wizardReduxID} />
       </FormFieldForm>
     );
@@ -61,7 +63,6 @@ const stateToProps = (state, { wizardReduxID }) => ({
 type ImportProvidersTabComponentProps = {
   onFieldChange: (key: ImportProviderRenderableField, value: string) => void;
   importProviders: any;
-  isReview: boolean;
   wizardReduxID: string;
 };
 

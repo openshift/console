@@ -10,6 +10,7 @@ import {
   TEMPLATE_OS_LABEL,
   TEMPLATE_WORKLOAD_LABEL,
 } from '../../../constants/vm';
+import { K8sInitAddon } from '../common/util/k8s-mixin';
 
 export class VMTemplateWrapper extends K8sResourceWrapper<TemplateKind, VMTemplateWrapper> {
   /**
@@ -39,6 +40,19 @@ export class VMTemplateWrapper extends K8sResourceWrapper<TemplateKind, VMTempla
 
   constructor(template?: TemplateKind | VMTemplateWrapper | any, copy = false) {
     super(TemplateModel, template, copy);
+  }
+
+  init(data: K8sInitAddon & { parameters?: any[]; objects?: any[] } = {}) {
+    super.init(data);
+    const { parameters, objects } = data || {};
+    if (parameters !== undefined) {
+      this.data.parameters = parameters;
+    }
+    if (objects !== undefined) {
+      this.data.objects = objects;
+    }
+
+    return this;
   }
 
   getOperatingSystem = () => findKeySuffixValue(this.getLabels(), TEMPLATE_OS_LABEL);

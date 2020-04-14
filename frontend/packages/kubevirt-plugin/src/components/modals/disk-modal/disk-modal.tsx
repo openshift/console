@@ -60,6 +60,8 @@ import { BinaryUnit, stringValueUnitSplit } from '../../form/size-unit-utils';
 import { StorageUISource } from './storage-ui-source';
 import { TemplateValidations } from '../../../utils/validations/template/template-validations';
 import { ConfigMapKind } from '@console/internal/module/k8s';
+import { UIStorageEditConfig } from '../../../types/ui/storage';
+import { isFieldDisabled } from '../../../utils/ui/edit-config';
 
 import './disk-modal.scss';
 
@@ -75,7 +77,6 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
     namespaces,
     onNamespaceChanged,
     usedDiskNames,
-    disableSourceChange,
     isCreateTemplate,
     onSubmit,
     inProgress: _inProgress,
@@ -86,8 +87,12 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
     cancel,
     templateValidations,
     storageClassConfigMap: _storageClassConfigMap,
+    editConfig,
   } = props;
   const inProgress = _inProgress || !isLoaded(_storageClassConfigMap);
+  const isDisabled = (fieldName: string, disabled?: boolean) =>
+    inProgress || disabled || isFieldDisabled(editConfig, fieldName);
+
   const storageClassConfigMap = getLoadedData(_storageClassConfigMap);
 
   const asId = prefixedID.bind(null, 'disk');
@@ -275,9 +280,6 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
   };
 
   const onSourceChanged = (uiSource) => {
-    if (disableSourceChange) {
-      return;
-    }
     setSize('');
     setUnit('Gi');
     setURL('');
@@ -313,16 +315,10 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
         <Form>
           <FormRow title="Source" fieldId={asId('source')} isRequired>
             <FormSelect
-              onChange={
-                disableSourceChange || !source.canBeChangedToThisSource(type)
-                  ? undefined
-                  : onSourceChanged
-              }
+              onChange={onSourceChanged}
               value={asFormSelectValue(source)}
               id={asId('source')}
-              isDisabled={
-                inProgress || disableSourceChange || !source.canBeChangedToThisSource(type)
-              }
+              isDisabled={isDisabled('source', !source.canBeChangedToThisSource(type))}
             >
               {StorageUISource.getAll()
                 .filter(
@@ -346,7 +342,7 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
               <TextInput
                 isValid={!isValidationError(urlValidation)}
                 key="url"
-                isDisabled={inProgress}
+                isDisabled={isDisabled('url')}
                 isRequired
                 id={asId('url')}
                 value={url}
@@ -364,7 +360,7 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
               <TextInput
                 isValid={!isValidationError(containerValidation)}
                 key="container"
-                isDisabled={inProgress}
+                isDisabled={isDisabled('container')}
                 isRequired
                 id={asId('container')}
                 value={containerImage}
@@ -374,9 +370,9 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
           )}
           {source.requiresNamespace() && (
             <K8sResourceSelectRow
-              key="namespace"
-              id={asId('namespace')}
-              isDisabled={inProgress}
+              key="pvc-namespace"
+              id={asId('pvc-namespace')}
+              isDisabled={isDisabled('pvcNamespace')}
               name={namespace}
               data={namespaces}
               model={NamespaceModel}
@@ -391,7 +387,7 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
             <K8sResourceSelectRow
               key="pvc-select"
               id={asId('pvc')}
-              isDisabled={inProgress || !namespace}
+              isDisabled={isDisabled('pvc', !namespace)}
               isRequired
               name={pvcName}
               validation={pvcValidation}
@@ -412,7 +408,10 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
           >
             <TextInput
               isValid={!isValidationError(nameValidation)}
-              isDisabled={!usedDiskNames || inProgress || !source.isNameEditingSupported(type)}
+              isDisabled={isDisabled(
+                'name',
+                !usedDiskNames || !source.isNameEditingSupported(type),
+              )}
               isRequired
               id={asId('name')}
               value={name}
@@ -428,7 +427,10 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
               unit={unit as BinaryUnit}
               units={source.getAllowedUnits()}
               validation={sizeValidation}
-              isDisabled={inProgress || !source.isSizeEditingSupported(combinedDiskSize?.value)}
+              isDisabled={isDisabled(
+                'size',
+                !source.isSizeEditingSupported(combinedDiskSize?.value),
+              )}
               isRequired
               onSizeChanged={
                 source.isSizeEditingSupported(combinedDiskSize?.value) ? setSize : undefined
@@ -461,7 +463,7 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
               isValid={!isValidationError(busValidation)}
               value={asFormSelectValue(bus)}
               id={asId('interface')}
-              isDisabled={inProgress}
+              isDisabled={isDisabled('interface')}
             >
               <FormSelectPlaceholderOption isDisabled placeholder="--- Select Interface ---" />
               {!validAllowedBuses.has(bus) && (
@@ -489,7 +491,7 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
             <K8sResourceSelectRow
               key="storage-class"
               id={asId('storage-class')}
-              isDisabled={inProgress}
+              isDisabled={isDisabled('storageClass')}
               name={storageClassName}
               data={storageClasses}
               model={StorageClassModel}
@@ -516,7 +518,7 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
                     onChange={(vMode) => setVolumeMode(VolumeMode.fromString(vMode))}
                     value={asFormSelectValue(volumeMode?.getValue())}
                     id={asId('volume-mode')}
-                    isDisabled={inProgress}
+                    isDisabled={isDisabled('volumeMode')}
                   >
                     <FormSelectPlaceholderOption
                       isDisabled={inProgress}
@@ -542,7 +544,7 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
                     onChange={(aMode) => setAccessMode(AccessMode.fromString(aMode))}
                     value={asFormSelectValue(accessMode?.getValue())}
                     id={asId('access-mode')}
-                    isDisabled={inProgress}
+                    isDisabled={isDisabled('accessMode')}
                   >
                     <FormSelectPlaceholderOption
                       isDisabled={inProgress}
@@ -582,7 +584,6 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
 export type DiskModalProps = {
   disk?: DiskWrapper;
   showInitialValidation?: boolean;
-  disableSourceChange?: boolean;
   isCreateTemplate?: boolean;
   isEditing?: boolean;
   volume?: VolumeWrapper;
@@ -605,6 +606,7 @@ export type DiskModalProps = {
   templateValidations?: TemplateValidations;
   usedDiskNames: Set<string>;
   usedPVCNames: Set<string>;
+  editConfig?: UIStorageEditConfig;
 } & ModalComponentProps &
   HandlePromiseProps;
 

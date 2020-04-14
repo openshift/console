@@ -24,6 +24,7 @@ import { ProcessedTemplatesModel } from '../../../../models/models';
 import { ImporterResult, OnVMCreate } from '../types';
 import { importV2VVMwareVm } from '../../v2v/import/import-v2vvmware';
 import { getImportProvidersFieldValue } from '../../../../components/create-vm-wizard/selectors/import-providers';
+import { importV2VOvirtVm } from '../../v2v/import/import-ovirt';
 
 export const getInitializedVMTemplate = (params: CreateVMParams) => {
   const { vmSettings, iCommonTemplates, iUserTemplates } = params;
@@ -99,6 +100,8 @@ const importVM = async (params: CreateVMParams): Promise<ImporterResult> => {
   switch (getImportProvidersFieldValue(params.importProviders, ImportProvidersField.PROVIDER)) {
     case VMImportProvider.VMWARE:
       return importV2VVMwareVm(params);
+    case VMImportProvider.OVIRT:
+      return importV2VOvirtVm(params);
     default:
       return null;
   }
@@ -115,6 +118,11 @@ export const createVM = async (params: CreateVMParams) => {
   let onVMCreate: OnVMCreate = null;
   if (isProviderImport) {
     const result = await importVM(params);
+
+    if (result?.skipVMCreation) {
+      return getActualState();
+    }
+
     params.storages = result?.storages || params.storages;
     params.networks = result?.networks || params.networks;
     onVMCreate = result?.onCreate;

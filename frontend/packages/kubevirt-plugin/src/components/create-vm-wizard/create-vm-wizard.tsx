@@ -10,7 +10,7 @@ import {
   FlagsObject,
 } from '@console/internal/reducers/features';
 import { TemplateModel } from '@console/internal/models';
-import { Firehose, FirehoseResource, history } from '@console/internal/components/utils';
+import { Firehose, history } from '@console/internal/components/utils';
 import { Location } from 'history';
 import { match as RouterMatch } from 'react-router';
 import { withReduxID } from '../../utils/redux/common';
@@ -26,8 +26,8 @@ import { getResource } from '../../utils';
 import { IDReferences, makeIDReferences } from '../../utils/redux/id-reference';
 import {
   ChangedCommonData,
-  CommonData,
   ChangedCommonDataProp,
+  CommonData,
   DetectCommonDataChanges,
   VMWizardProps,
   VMWizardTab,
@@ -39,7 +39,11 @@ import { ActionType } from './redux/types';
 import { getResultInitialState } from './redux/initial-state/result-tab-initial-state';
 import { iGetCommonData } from './selectors/immutable/selectors';
 import { getExtraWSQueries } from './selectors/selectors';
-import { getStepsMetadata, isLastStepErrorFatal } from './selectors/immutable/wizard-selectors';
+import {
+  getStepsMetadata,
+  isLastStepErrorFatal,
+  isStepValid,
+} from './selectors/immutable/wizard-selectors';
 import { ResourceLoadErrors } from './error-components/resource-load-errors';
 import { WizardErrors } from './error-components/wizard-errors';
 import { CreateVMWizardFooter } from './create-vm-wizard-footer';
@@ -53,6 +57,7 @@ import { CloudInitTab } from './tabs/cloud-init-tab/cloud-init-tab';
 import { VirtualHardwareTab } from './tabs/virtual-hardware-tab/virtual-hardware-tab';
 import { useStorageClassConfigMapWrapped } from '../../hooks/storage-class-config-map';
 import { ValidTabGuard } from './tabs/valid-tab-guard';
+import { FirehoseResourceEnhanced } from '../../types/custom';
 
 import './create-vm-wizard.scss';
 
@@ -279,7 +284,10 @@ class CreateVMWizardComponent extends React.Component<CreateVMWizardComponentPro
           ...step,
           name: TabTitleResolver[step.id] || step.name,
           canJumpTo:
-            tabsMetadata[VMWizardTab.RESULT].isLocked || isLastTabErrorFatal // request in progress or failed
+            tabsMetadata[VMWizardTab.RESULT].isLocked ||
+            tabsMetadata[VMWizardTab.RESULT].isValid ||
+            tabsMetadata[VMWizardTab.RESULT].isPending ||
+            isLastTabErrorFatal // last tab active
               ? step.id === VMWizardTab.RESULT
               : !isLocked &&
                 isPrevStepValid &&
@@ -415,39 +423,43 @@ export const CreateVMWizardPageComponent: React.FC<CreateVMWizardPageComponentPr
   location,
   flags,
   wsResources,
+  hasCompleted,
 }) => {
   const activeNamespace = match && match.params && match.params.ns;
   const searchParams = new URLSearchParams(location && location.search);
 
-  const resources = [
-    getResource(VirtualMachineModel, {
-      namespace: activeNamespace,
-      prop: VMWizardProps.virtualMachines,
-    }),
-    getResource(DataVolumeModel, {
-      namespace: activeNamespace,
-      prop: VMWizardProps.dataVolumes,
-    }),
-  ];
+  let resources: FirehoseResourceEnhanced[] = [];
 
-  if (flags[FLAGS.OPENSHIFT]) {
-    resources.push(
-      getResource(TemplateModel, {
+  if (!hasCompleted) {
+    resources = [
+      getResource(VirtualMachineModel, {
         namespace: activeNamespace,
-        prop: VMWizardProps.userTemplates,
-        matchLabels: { [TEMPLATE_TYPE_LABEL]: TEMPLATE_TYPE_VM },
+        prop: VMWizardProps.virtualMachines,
       }),
-      getResource(TemplateModel, {
-        namespace: 'openshift',
-        prop: VMWizardProps.commonTemplates,
-        matchLabels: { [TEMPLATE_TYPE_LABEL]: TEMPLATE_TYPE_BASE },
+      getResource(DataVolumeModel, {
+        namespace: activeNamespace,
+        prop: VMWizardProps.dataVolumes,
       }),
-    );
+    ];
+
+    if (flags[FLAGS.OPENSHIFT]) {
+      resources.push(
+        getResource(TemplateModel, {
+          namespace: activeNamespace,
+          prop: VMWizardProps.userTemplates,
+          matchLabels: { [TEMPLATE_TYPE_LABEL]: TEMPLATE_TYPE_VM },
+        }),
+        getResource(TemplateModel, {
+          namespace: 'openshift',
+          prop: VMWizardProps.commonTemplates,
+          matchLabels: { [TEMPLATE_TYPE_LABEL]: TEMPLATE_TYPE_BASE },
+        }),
+      );
+    }
+    resources.push(...wsResources);
   }
 
   const storageClassConfigMap = useStorageClassConfigMapWrapped();
-
-  resources.push(...wsResources);
 
   const dataIDReferences = makeIDReferences(resources);
 
@@ -479,7 +491,8 @@ export const CreateVMWizardPageComponent: React.FC<CreateVMWizardPageComponentPr
 type CreateVMWizardPageComponentProps = {
   reduxID?: string;
   location?: Location;
-  wsResources?: FirehoseResource[];
+  wsResources?: FirehoseResourceEnhanced[];
+  hasCompleted: boolean;
   match?: RouterMatch<{ ns: string; plural: string; appName?: string }>;
   flags: FlagsObject;
 };
@@ -488,7 +501,10 @@ export const CreateVMWizardPage = compose(
   connectToFlags(FLAGS.OPENSHIFT),
   withReduxID,
   connect(
-    (state, props: any) => ({ wsResources: getExtraWSQueries(state, props.reduxID) }),
+    (state, props: any) => ({
+      hasCompleted: isStepValid(state, props.reduxID, VMWizardTab.RESULT),
+      wsResources: getExtraWSQueries(state, props.reduxID),
+    }),
     undefined,
     undefined,
     {

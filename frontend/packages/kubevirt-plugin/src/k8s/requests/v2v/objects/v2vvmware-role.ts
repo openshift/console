@@ -8,7 +8,6 @@ export const buildV2VVMwareRole = ({ name, namespace }: { name: string; namespac
         apiGroups: [''],
         attributeRestrictions: null,
         resources: [
-          // TODO: review what's really needed
           'configmaps',
           'endpoints',
           'events',
@@ -42,6 +41,11 @@ export const buildV2VVMwareRole = ({ name, namespace }: { name: string; namespac
         attributeRestrictions: null,
         resources: ['*'],
         verbs: ['*'],
+      },
+      {
+        apiGroups: ['v2v.kubevirt.io'],
+        resources: ['*'],
+        verbs: ['create', 'delete', 'get', 'list', 'patch', 'update', 'watch'],
       },
     )
     .asResource();

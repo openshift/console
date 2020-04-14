@@ -13,4 +13,7 @@ export const getResultInitialState: InitialStepStateGetter = () => ({
   isValid: null,
   isPending: false,
   isHidden: false,
+  isCreateDisabled: false,
+  isUpdateDisabled: false,
+  isDeleteDisabled: false,
 });

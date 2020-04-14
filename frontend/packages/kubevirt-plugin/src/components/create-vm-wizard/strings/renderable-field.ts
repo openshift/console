@@ -4,20 +4,29 @@ import {
   VMSettingsField,
   RenderableFieldResolver,
   VMWareProviderField,
+  OvirtProviderField,
 } from '../types';
 import { ProvisionSource } from '../../../constants/vm/provision-source';
 
 export const titleResolver: RenderableFieldResolver = {
+  [OvirtProviderField.OVIRT_ENGINE_SECRET_NAME]: 'RHV Instance',
+  [OvirtProviderField.API_URL]: 'API URL',
+  [OvirtProviderField.USERNAME]: 'Username',
+  [OvirtProviderField.PASSWORD]: 'Password',
+  [OvirtProviderField.REMEMBER_PASSWORD]: 'Save as new RHV Instance secret',
+  [OvirtProviderField.CERTIFICATE]: 'CA certificate',
+  [OvirtProviderField.CLUSTER]: 'Cluster',
+  [OvirtProviderField.VM]: 'VM to Import',
+  [OvirtProviderField.STATUS]: '',
   [ImportProvidersField.PROVIDER]: 'Provider',
-  [VMWareProviderField.VCENTER]: 'vCenter instance',
+  [VMWareProviderField.VCENTER_SECRET_NAME]: 'vCenter instance',
   [VMWareProviderField.HOSTNAME]: 'vCenter hostname',
-  [VMWareProviderField.USER_NAME]: 'Username',
-  [VMWareProviderField.USER_PASSWORD_AND_CHECK_CONNECTION]: 'Password',
+  [VMWareProviderField.USERNAME]: 'Username',
+  [VMWareProviderField.PASSWORD]: 'Password',
   [VMWareProviderField.REMEMBER_PASSWORD]: 'Save as new vCenter instance secret',
   [VMWareProviderField.STATUS]: '',
   [VMWareProviderField.VM]: 'VM or Template to Import',
   [VMSettingsField.NAME]: 'Name',
-  [VMSettingsField.HOSTNAME]: 'Hostname',
   [VMSettingsField.DESCRIPTION]: 'Description',
   [VMSettingsField.USER_TEMPLATE]: 'Template',
   [VMSettingsField.PROVISION_SOURCE_TYPE]: 'Source',
@@ -33,7 +42,10 @@ export const titleResolver: RenderableFieldResolver = {
 
 export const placeholderResolver = {
   [ImportProvidersField.PROVIDER]: '--- Select Provider ---',
-  [VMWareProviderField.VCENTER]: '--- Select vCenter Instance Secret ---',
+  [OvirtProviderField.OVIRT_ENGINE_SECRET_NAME]: '--- Select RHV Instance Secret ---',
+  [OvirtProviderField.CLUSTER]: '--- Select Cluster ---',
+  [OvirtProviderField.VM]: '--- Select VM ---',
+  [VMWareProviderField.VCENTER_SECRET_NAME]: '--- Select vCenter Instance Secret ---',
   [VMWareProviderField.VM]: '--- Select VM or Template ---',
   [VMSettingsField.USER_TEMPLATE]: '--- Select Template ---',
   [VMSettingsField.PROVISION_SOURCE_TYPE]: '--- Select Source ---',
@@ -56,13 +68,14 @@ const providerHelpResolver = {
 
 export const helpResolver = {
   [ImportProvidersField.PROVIDER]: (provider) => providerHelpResolver[provider],
-  [VMWareProviderField.VCENTER]: () =>
+  [OvirtProviderField.USERNAME]: () => 'Should be in the following format: admin@internal',
+  [VMWareProviderField.VCENTER_SECRET_NAME]: () =>
     'Select secret containing connection details for a vCenter instance.',
   [VMWareProviderField.HOSTNAME]: () =>
     'Address to be used for connection to a vCenter instance. The "https://" protocol will be added automatically. Example: "my.domain.com:1234".',
-  [VMWareProviderField.USER_NAME]: () =>
+  [VMWareProviderField.USERNAME]: () =>
     'User name to be used for connection to a vCenter instance.',
-  [VMWareProviderField.USER_PASSWORD_AND_CHECK_CONNECTION]: () =>
+  [VMWareProviderField.PASSWORD]: () =>
     'User password to be used for connection to a vCenter instance.',
   [VMWareProviderField.VM]: () =>
     'Select a vCenter virtual machine to import. Loading of their list might take some time. The list will be enabled for selection once data are loaded.',

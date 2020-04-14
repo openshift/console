@@ -15,8 +15,8 @@ import { StorageUISource } from '../../../components/modals/disk-modal/storage-u
 import { CombinedDisk } from '../../../k8s/wrapper/vm/combined-disk';
 import { PersistentVolumeClaimWrapper } from '../../../k8s/wrapper/vm/persistent-volume-claim-wrapper';
 import { DiskType } from '../../../constants/vm/storage/disk-type';
-import { UIDiskValidation } from './types';
 import { TemplateValidations } from '../template/template-validations';
+import { UIStorageValidation } from '../../../types/ui/storage';
 
 const validateDiskName = (name: string, usedDiskNames: Set<string>): ValidationObject => {
   let validation = validateDNS1123SubdomainValue(name);
@@ -60,7 +60,7 @@ export const validateDisk = (
     usedPVCNames?: Set<string>;
     templateValidations: TemplateValidations;
   },
-): UIDiskValidation => {
+): UIStorageValidation => {
   const validations = {
     name: validateDiskName(disk && disk.getName(), usedDiskNames),
     size: null,

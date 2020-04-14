@@ -19,8 +19,5 @@ export class VolumeMode extends ObjectEnum<string> {
 
   static getAll = () => VolumeMode.ALL;
 
-  static fromSerialized = (volumeMode: { value: string }): VolumeMode =>
-    VolumeMode.fromString(volumeMode && volumeMode.value);
-
   static fromString = (model: string): VolumeMode => VolumeMode.stringMapper[model];
 }

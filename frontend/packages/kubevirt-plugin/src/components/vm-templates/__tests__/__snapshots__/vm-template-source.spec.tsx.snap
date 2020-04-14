@@ -106,7 +106,6 @@ ShallowWrapper {
       "source": undefined,
       "type": ProvisionSource {
         "getValue": [Function],
-        "serialize": [Function],
         "toString": [Function],
         "value": "PXE",
       },
@@ -125,7 +124,6 @@ ShallowWrapper {
         "source": undefined,
         "type": ProvisionSource {
           "getValue": [Function],
-          "serialize": [Function],
           "toString": [Function],
           "value": "PXE",
         },
@@ -274,7 +272,6 @@ ShallowWrapper {
           type={
             ProvisionSource {
               "getValue": [Function],
-              "serialize": [Function],
               "toString": [Function],
               "value": "PXE",
             }
@@ -286,7 +283,6 @@ ShallowWrapper {
           type={
             ProvisionSource {
               "getValue": [Function],
-              "serialize": [Function],
               "toString": [Function],
               "value": "PXE",
             }
@@ -305,7 +301,6 @@ ShallowWrapper {
           "source": undefined,
           "type": ProvisionSource {
             "getValue": [Function],
-            "serialize": [Function],
             "toString": [Function],
             "value": "PXE",
           },
@@ -323,7 +318,6 @@ ShallowWrapper {
           "source": undefined,
           "type": ProvisionSource {
             "getValue": [Function],
-            "serialize": [Function],
             "toString": [Function],
             "value": "PXE",
           },
@@ -348,7 +342,6 @@ ShallowWrapper {
             type={
               ProvisionSource {
                 "getValue": [Function],
-                "serialize": [Function],
                 "toString": [Function],
                 "value": "PXE",
               }
@@ -360,7 +353,6 @@ ShallowWrapper {
             type={
               ProvisionSource {
                 "getValue": [Function],
-                "serialize": [Function],
                 "toString": [Function],
                 "value": "PXE",
               }
@@ -379,7 +371,6 @@ ShallowWrapper {
             "source": undefined,
             "type": ProvisionSource {
               "getValue": [Function],
-              "serialize": [Function],
               "toString": [Function],
               "value": "PXE",
             },
@@ -397,7 +388,6 @@ ShallowWrapper {
             "source": undefined,
             "type": ProvisionSource {
               "getValue": [Function],
-              "serialize": [Function],
               "toString": [Function],
               "value": "PXE",
             },
@@ -547,7 +537,6 @@ ShallowWrapper {
       "source": "fooContainer",
       "type": ProvisionSource {
         "getValue": [Function],
-        "serialize": [Function],
         "toString": [Function],
         "value": "Container",
       },
@@ -566,7 +555,6 @@ ShallowWrapper {
         "source": "fooContainer",
         "type": ProvisionSource {
           "getValue": [Function],
-          "serialize": [Function],
           "toString": [Function],
           "value": "Container",
         },
@@ -717,7 +705,6 @@ ShallowWrapper {
           type={
             ProvisionSource {
               "getValue": [Function],
-              "serialize": [Function],
               "toString": [Function],
               "value": "Container",
             }
@@ -729,7 +716,6 @@ ShallowWrapper {
           type={
             ProvisionSource {
               "getValue": [Function],
-              "serialize": [Function],
               "toString": [Function],
               "value": "Container",
             }
@@ -748,7 +734,6 @@ ShallowWrapper {
           "source": "fooContainer",
           "type": ProvisionSource {
             "getValue": [Function],
-            "serialize": [Function],
             "toString": [Function],
             "value": "Container",
           },
@@ -766,7 +751,6 @@ ShallowWrapper {
           "source": "fooContainer",
           "type": ProvisionSource {
             "getValue": [Function],
-            "serialize": [Function],
             "toString": [Function],
             "value": "Container",
           },
@@ -791,7 +775,6 @@ ShallowWrapper {
             type={
               ProvisionSource {
                 "getValue": [Function],
-                "serialize": [Function],
                 "toString": [Function],
                 "value": "Container",
               }
@@ -803,7 +786,6 @@ ShallowWrapper {
             type={
               ProvisionSource {
                 "getValue": [Function],
-                "serialize": [Function],
                 "toString": [Function],
                 "value": "Container",
               }
@@ -822,7 +804,6 @@ ShallowWrapper {
             "source": "fooContainer",
             "type": ProvisionSource {
               "getValue": [Function],
-              "serialize": [Function],
               "toString": [Function],
               "value": "Container",
             },
@@ -840,7 +821,6 @@ ShallowWrapper {
             "source": "fooContainer",
             "type": ProvisionSource {
               "getValue": [Function],
-              "serialize": [Function],
               "toString": [Function],
               "value": "Container",
             },

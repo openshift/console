@@ -26,6 +26,7 @@ import { menuActionStart } from './menu-actions';
 import { SerialConsoleConnector } from './serial-console-connector';
 import { DesktopViewerSelector } from './desktop-viewer-selector';
 import { VMTabProps } from './types';
+import { VMImportKind } from '../../types/vm-import/ovirt/vm-import';
 
 const { VNC_CONSOLE_TYPE } = AccessConsoles.constants;
 
@@ -96,12 +97,12 @@ const VMConsoles: React.FC<VMConsolesProps> = ({
 };
 
 const VmConsolesWrapper: React.FC<VmConsolesWrapperProps> = (props) => {
-  const { vm: vmProp, vmi, pods, migrations } = props;
+  const { vm: vmProp, vmi, pods, migrations, vmImports } = props;
   const vm = asVM(vmProp);
   const services = getLoadedData(props.services);
 
   const onStartVm = () => {
-    const vmStatus = getVMStatus({ vm, vmi, pods, migrations });
+    const vmStatus = getVMStatus({ vm, vmi, pods, migrations, vmImports });
     menuActionStart(VirtualMachineModel, vm, { vmStatus }).callback();
   };
 
@@ -129,6 +130,7 @@ export const VMConsoleFirehose: React.FC<VMTabProps> = ({
   obj: objProp,
   vm: vmProp,
   vmi: vmiProp,
+  vmImports,
   pods,
   migrations,
   customData: { kindObj },
@@ -147,7 +149,13 @@ export const VMConsoleFirehose: React.FC<VMTabProps> = ({
   return (
     <div className="co-m-pane__body">
       <Firehose resources={resources}>
-        <VmConsolesWrapper vm={vm} vmi={vmi} migrations={migrations} pods={pods} />
+        <VmConsolesWrapper
+          vm={vm}
+          vmi={vmi}
+          migrations={migrations}
+          pods={pods}
+          vmImports={vmImports}
+        />
       </Firehose>
     </div>
   );
@@ -159,6 +167,7 @@ type VmConsolesWrapperProps = {
   services?: FirehoseResult;
   pods?: PodKind[];
   migrations?: K8sResourceKind[];
+  vmImports?: VMImportKind[];
 };
 
 type VMConsolesProps = {

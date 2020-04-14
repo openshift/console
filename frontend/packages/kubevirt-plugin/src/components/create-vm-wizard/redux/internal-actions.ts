@@ -11,7 +11,7 @@ import {
 import { DeviceType } from '../../../constants/vm';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { ActionBatch, InternalActionType, WizardInternalActionDispatcher } from './types';
-import { FirehoseResource } from '@console/internal/components/utils';
+import { FirehoseResourceEnhanced } from '../../../types/custom';
 
 type VMWizardInternalActions = { [key in InternalActionType]: WizardInternalActionDispatcher };
 
@@ -47,7 +47,7 @@ export const vmWizardInternalActions: VMWizardInternalActions = {
   [InternalActionType.SetExtraWSQueries]: (
     id,
     queryKey: string,
-    wsQueries: FirehoseResource[],
+    wsQueries: FirehoseResourceEnhanced[],
   ) => ({
     payload: {
       id,
@@ -95,6 +95,30 @@ export const vmWizardInternalActions: VMWizardInternalActions = {
     },
     type: InternalActionType.SetTabHidden,
   }),
+  [InternalActionType.SetTabIsCreateDisabled]: (id, tab: VMWizardTab, isDisabled: boolean) => ({
+    payload: {
+      id,
+      tab,
+      isDisabled,
+    },
+    type: InternalActionType.SetTabIsCreateDisabled,
+  }),
+  [InternalActionType.SetTabIsUpdateDisabled]: (id, tab: VMWizardTab, isDisabled: boolean) => ({
+    payload: {
+      id,
+      tab,
+      isDisabled,
+    },
+    type: InternalActionType.SetTabIsUpdateDisabled,
+  }),
+  [InternalActionType.SetTabIsDeleteDisabled]: (id, tab: VMWizardTab, isDisabled: boolean) => ({
+    payload: {
+      id,
+      tab,
+      isDisabled,
+    },
+    type: InternalActionType.SetTabIsDeleteDisabled,
+  }),
   [InternalActionType.SetVmSettingsFieldValue]: (id, key: VMSettingsField, value: any) => ({
     payload: {
       id,
@@ -129,7 +153,14 @@ export const vmWizardInternalActions: VMWizardInternalActions = {
     },
     type: InternalActionType.UpdateImportProviderField,
   }),
-
+  [InternalActionType.SetImportProvider]: (id, provider: VMImportProvider, value: any) => ({
+    payload: {
+      id,
+      provider,
+      value,
+    },
+    type: InternalActionType.SetImportProvider,
+  }),
   [InternalActionType.UpdateImportProvider]: (id, provider: VMImportProvider, value: any) => ({
     payload: {
       id,

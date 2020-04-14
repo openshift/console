@@ -11,7 +11,15 @@ export const VmWizardVirtualHardwareRow: RowFunction<
   VMWizardStorageRowCustomData
 > = ({
   obj: { name, wizardStorageData, ...restData },
-  customData: { isDisabled, columnClasses, removeStorage, withProgress, wizardReduxID },
+  customData: {
+    isDisabled,
+    columnClasses,
+    removeStorage,
+    withProgress,
+    wizardReduxID,
+    isDeleteDisabled,
+    isUpdateDisabled,
+  },
   index,
   style,
 }) => {
@@ -29,7 +37,13 @@ export const VmWizardVirtualHardwareRow: RowFunction<
       style={style}
       actionsComponent={
         <Kebab
-          options={getActions(wizardStorageData, { wizardReduxID, removeStorage, withProgress })}
+          options={getActions(wizardStorageData, {
+            wizardReduxID,
+            removeStorage,
+            withProgress,
+            isDeleteDisabled,
+            isUpdateDisabled,
+          })}
           isDisabled={isDisabled}
           id={`kebab-for-${name}`}
         />

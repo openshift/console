@@ -1,12 +1,12 @@
 import { ConfigMapKind } from '@console/internal/module/k8s';
 import { V1Network, V1NetworkInterface } from '../../types/vm';
 import { IDReferences } from '../../utils/redux/id-reference';
-import { UINetworkInterfaceValidation } from '../../utils/validations/vm/nic';
+import { UINetworkEditConfig, UINetworkInterfaceValidation } from '../../types/ui/nic';
 import { V1Disk } from '../../types/vm/disk/V1Disk';
 import { V1Volume } from '../../types/vm/disk/V1Volume';
 import { V1alpha1DataVolume } from '../../types/vm/disk/V1alpha1DataVolume';
 import { V1PersistentVolumeClaim } from '../../types/vm/disk/V1PersistentVolumeClaim';
-import { UIDiskValidation } from '../../utils/validations/vm/types';
+import { UIStorageEditConfig, UIStorageValidation } from '../../types/ui/storage';
 
 export enum VMWizardTab {
   IMPORT_PROVIDERS = 'IMPORT_PROVIDERS',
@@ -79,57 +79,96 @@ export enum ImportProvidersField {
 
 export enum VMImportProvider {
   VMWARE = 'VMWARE',
+  OVIRT = 'OVIRT',
 }
 
 export enum VMWareProviderProps {
   vCenterSecrets = 'vCenterSecrets',
   vmwareToKubevirtOsConfigMap = 'vmwareToKubevirtOsConfigMap',
-  deploymentPods = 'deploymentPods',
-  deployment = 'deployment',
+  deploymentPods = 'vmwareDeploymentPods',
+  deployment = 'vmwareDeployment',
   v2vvmware = 'v2vvmware',
-  activeVcenterSecret = 'activeVcenterSecret',
+}
+
+export enum OvirtProviderProps {
+  ovirtEngineSecrets = 'ovirtEngineSecrets',
+  deploymentPods = 'ovirtDeploymentPods',
+  deployment = 'ovirtDeployment',
+  ovirtProvider = 'ovirtProvider',
 }
 
 export enum VMWareProviderField {
-  VCENTER = 'VCENTER',
-  HOSTNAME = 'HOSTNAME',
-  USER_NAME = 'USER_NAME',
-  USER_PASSWORD_AND_CHECK_CONNECTION = 'USER_PASSWORD_AND_CHECK_CONNECTION',
-  REMEMBER_PASSWORD = 'REMEMBER_PASSWORD',
+  VCENTER_SECRET_NAME = 'vmware_VCENTER',
+  HOSTNAME = 'vmware_HOSTNAME',
+  USERNAME = 'vmware_USER_NAME',
+  PASSWORD = 'vmware_USER_PASSWORD_AND_CHECK_CONNECTION',
+  REMEMBER_PASSWORD = 'vmware_REMEMBER_PASSWORD',
 
-  CHECK_CONNECTION = 'CHECK_CONNECTION',
-  STATUS = 'STATUS',
+  VM = 'vmware_VM',
 
-  VM = 'VM',
+  STATUS = 'vmware_STATUS',
 
-  V2V_NAME = 'V2V_NAME',
-  V2V_LAST_ERROR = 'V2V_LAST_ERROR',
-  NEW_VCENTER_NAME = 'NEW_VCENTER_NAME',
+  CONTROLLER_LAST_ERROR = 'vmware_CONTROLLER_LAST_ERROR',
+
+  CURRENT_V2V_VMWARE_CR_NAME = 'vmware_CURRENT_V2V_VMWARE_CR_NAME',
+  CURRENT_RESOLVED_VCENTER_SECRET_NAME = 'vmware_CURRENT_RESOLVED_VCENTER_SECRET_NAME',
+}
+
+export enum OvirtProviderField {
+  OVIRT_ENGINE_SECRET_NAME = 'ovirt_OVIRT_ENGINE_SECRET_NAME',
+  API_URL = 'ovirt_API_URL',
+  USERNAME = 'ovirt_USERNAME',
+  PASSWORD = 'ovirt_PASSWORD',
+  REMEMBER_PASSWORD = 'ovirt_REMEMBER_PASSWORD',
+  CERTIFICATE = 'ovirt_CERTIFICATE',
+
+  VM = 'ovirt_VM',
+  CLUSTER = 'ovirt_CLUSTER',
+
+  STATUS = 'ovirt_STATUS',
+
+  CONTROLLER_LAST_ERROR = 'ovirt_CONTROLLER_LAST_ERROR',
+
+  CURRENT_OVIRT_PROVIDER_CR_NAME = 'ovirt_CURRENT_OVIRT_PROVIDER_CR_NAME',
+  CURRENT_RESOLVED_OVIRT_ENGINE_SECRET_NAME = 'ovirt_CURRENT_RESOLVED_OVIRT_ENGINE_SECRET_NAME',
 }
 
 export enum CloudInitField {
   IS_FORM = 'IS_FORM',
 }
 
-export type VMSettingsRenderableField = VMSettingsField;
+export type VMSettingsRenderableField = Exclude<VMSettingsField, VMSettingsField.HOSTNAME>;
+
 export type ImportProviderRenderableField = Exclude<
   ImportProvidersField,
   ImportProvidersField.PROVIDERS_DATA
 >;
 
 export type VMWareProviderRenderableField =
-  | VMWareProviderField.VCENTER
+  | VMWareProviderField.VCENTER_SECRET_NAME
   | VMWareProviderField.HOSTNAME
-  | VMWareProviderField.USER_NAME
-  | VMWareProviderField.USER_PASSWORD_AND_CHECK_CONNECTION
+  | VMWareProviderField.USERNAME
+  | VMWareProviderField.PASSWORD
   | VMWareProviderField.REMEMBER_PASSWORD
   | VMWareProviderField.STATUS
   | VMWareProviderField.VM;
 
+export type OvirtProviderRenderableField =
+  | OvirtProviderField.OVIRT_ENGINE_SECRET_NAME
+  | OvirtProviderField.API_URL
+  | OvirtProviderField.USERNAME
+  | OvirtProviderField.PASSWORD
+  | OvirtProviderField.REMEMBER_PASSWORD
+  | OvirtProviderField.CERTIFICATE
+  | OvirtProviderField.STATUS
+  | OvirtProviderField.CLUSTER
+  | OvirtProviderField.VM;
+
 export type RenderableField =
-  | VMSettingsField
+  | VMSettingsRenderableField
   | ImportProviderRenderableField
-  | VMWareProviderRenderableField;
+  | VMWareProviderRenderableField
+  | OvirtProviderRenderableField;
 
 export type RenderableFieldResolver = {
   [key in RenderableField]: string;
@@ -142,6 +181,9 @@ export type VMWizardTabMetadata = {
   isPending?: boolean;
   hasAllRequiredFilled?: boolean;
   error?: string;
+  isCreateDisabled?: boolean;
+  isUpdateDisabled?: boolean;
+  isDeleteDisabled?: boolean;
 };
 
 export type VMWizardTabsMetadata = {
@@ -173,8 +215,11 @@ export type ChangedCommonDataProp =
   | VMWareProviderProps.deploymentPods
   | VMWareProviderProps.v2vvmware
   | VMWareProviderProps.vmwareToKubevirtOsConfigMap
-  | VMWareProviderProps.activeVcenterSecret
-  | VMWareProviderProps.vCenterSecrets;
+  | VMWareProviderProps.vCenterSecrets
+  | OvirtProviderProps.deployment
+  | OvirtProviderProps.deploymentPods
+  | OvirtProviderProps.ovirtEngineSecrets
+  | OvirtProviderProps.ovirtProvider;
 
 export type CommonDataProp =
   | VMWizardProps.isSimpleView
@@ -197,8 +242,11 @@ export const DetectCommonDataChanges = new Set<ChangedCommonDataProp>([
   VMWareProviderProps.deploymentPods,
   VMWareProviderProps.v2vvmware,
   VMWareProviderProps.vmwareToKubevirtOsConfigMap,
-  VMWareProviderProps.activeVcenterSecret,
   VMWareProviderProps.vCenterSecrets,
+  OvirtProviderProps.deployment,
+  OvirtProviderProps.deploymentPods,
+  OvirtProviderProps.ovirtEngineSecrets,
+  OvirtProviderProps.ovirtProvider,
 ]);
 
 export type CommonData = {
@@ -217,6 +265,7 @@ export type CommonData = {
 };
 
 export enum VMWizardNetworkType {
+  V2V_OVIRT_IMPORT = 'V2V_OVIRT_IMPORT',
   V2V_VMWARE_IMPORT = 'V2V_VMWARE_IMPORT',
   TEMPLATE = 'TEMPLATE',
   UI_DEFAULT_POD_NETWORK = 'UI_DEFAULT_POD_NETWORK',
@@ -229,6 +278,10 @@ export type VMWizardNetwork = {
   network: V1Network;
   networkInterface: V1NetworkInterface;
   validation?: UINetworkInterfaceValidation;
+  editConfig?: UINetworkEditConfig;
+  importData?: {
+    id?: string;
+  };
 };
 
 export enum VMWizardStorageType {
@@ -238,6 +291,7 @@ export enum VMWizardStorageType {
   UI_INPUT = 'UI_INPUT',
   V2V_VMWARE_IMPORT = 'V2V_VMWARE_IMPORT',
   V2V_VMWARE_IMPORT_TEMP = 'V2V_VMWARE_IMPORT_TEMP',
+  V2V_OVIRT_IMPORT = 'V2V_OVIRT_IMPORT',
   WINDOWS_GUEST_TOOLS = 'WINDOWS_GUEST_TOOLS',
   WINDOWS_GUEST_TOOLS_TEMPLATE = 'WINDOWS_GUEST_TOOLS_TEMPLATE',
 }
@@ -248,9 +302,11 @@ export type VMWizardStorage = {
   disk?: V1Disk;
   volume?: V1Volume;
   dataVolume?: V1alpha1DataVolume;
-  validation?: UIDiskValidation;
+  validation?: UIStorageValidation;
   persistentVolumeClaim?: V1PersistentVolumeClaim;
+  editConfig?: UIStorageEditConfig;
   importData?: {
+    id?: string;
     mountPath?: string;
     devicePath?: string;
     fileName?: string;

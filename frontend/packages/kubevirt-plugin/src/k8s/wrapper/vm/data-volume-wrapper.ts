@@ -1,6 +1,5 @@
 import * as _ from 'lodash';
 import { getOwnerReferences } from '@console/shared/src';
-import { validate } from '@console/internal/components/utils';
 import { compareOwnerReference } from '@console/shared/src/utils/owner-references';
 import { apiVersionForModel } from '@console/internal/module/k8s';
 import { V1alpha1DataVolume } from '../../../types/vm/disk/V1alpha1DataVolume';
@@ -11,9 +10,14 @@ import {
   getDataVolumeStorageSize,
   getDataVolumeVolumeMode,
 } from '../../../selectors/dv/selectors';
-import { toIECUnit } from '../../../components/form/size-unit-utils';
+import {
+  BinaryUnit,
+  stringValueUnitSplit,
+  toIECUnit,
+} from '../../../components/form/size-unit-utils';
 import { DataVolumeModel } from '../../../models';
 import { K8sResourceObjectWithTypePropertyWrapper } from '../common/k8s-resource-object-with-type-property-wrapper';
+import { K8sInitAddon } from '../common/util/k8s-mixin';
 
 type CombinedTypeData = {
   name?: string;
@@ -83,6 +87,20 @@ export class DataVolumeWrapper extends K8sResourceObjectWithTypePropertyWrapper<
     super(DataVolumeModel, dataVolumeTemplate, copy, DataVolumeSourceType, ['spec', 'source']);
   }
 
+  init(
+    data: K8sInitAddon & { size?: string | number; unit?: string; storageClassName?: string } = {},
+  ) {
+    super.init(data);
+    const { size, unit, storageClassName } = data;
+    if (size != null && unit) {
+      this.setSize(size, unit);
+    }
+    if (storageClassName !== undefined) {
+      this.setStorageClassName(storageClassName);
+    }
+    return this;
+  }
+
   getStorageClassName = () => getDataVolumeStorageClassName(this.data as any);
 
   getPesistentVolumeClaimName = () => this.getIn(['spec', 'source', 'pvc', 'name']);
@@ -92,7 +110,7 @@ export class DataVolumeWrapper extends K8sResourceObjectWithTypePropertyWrapper<
   getURL = () => this.getIn(['spec', 'source', 'http', 'url']);
 
   getSize = (): { value: number; unit: string } => {
-    const parts = validate.split(getDataVolumeStorageSize(this.data as any) || '');
+    const parts = stringValueUnitSplit(getDataVolumeStorageSize(this.data as any) || '');
     return {
       value: parts[0],
       unit: parts[1],
@@ -101,7 +119,7 @@ export class DataVolumeWrapper extends K8sResourceObjectWithTypePropertyWrapper<
 
   getReadabableSize = () => {
     const { value, unit } = this.getSize();
-    return `${value} ${toIECUnit(unit)}`;
+    return `${value} ${toIECUnit(unit) || BinaryUnit.B}`;
   };
 
   hasSize = () => this.getSize().value > 0;
@@ -115,6 +133,18 @@ export class DataVolumeWrapper extends K8sResourceObjectWithTypePropertyWrapper<
   getAccessModesEnum = () => {
     const accessModes = this.getAccessModes();
     return accessModes ? accessModes.map((mode) => AccessMode.fromString(mode)) : accessModes;
+  };
+
+  setSize = (value: string | number, unit = 'Gi') => {
+    this.ensurePath('spec.pvc.resources.requests');
+    (this.data.spec.pvc.resources.requests as any).storage = `${value}${unit}`;
+    return this;
+  };
+
+  setStorageClassName = (storageClassName: string) => {
+    this.ensurePath('spec.pvc');
+    this.data.spec.pvc.storageClassName = storageClassName;
+    return this;
   };
 
   setAccessModes = (accessModes: AccessMode[]) => {

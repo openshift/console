@@ -20,6 +20,7 @@ const asError = ({
   name,
   namespace,
   isList,
+  ignore404,
 }: {
   state: any;
   wizardReduxID: string;
@@ -29,18 +30,21 @@ const asError = ({
   isList?: boolean;
   name?: string;
   namespace?: string;
+  ignore404?: boolean;
 }): Error => {
   const firehoseResult = iGetCommonData(state, wizardReduxID, key);
-  return (
-    (iGet(firehoseResult, 'loadError') || !firehoseResult) && {
-      message: getLoadError(toShallowJS(firehoseResult), model, isList),
-      title: `Could not load ${getModelString(model, isList)}${name ? ` ${name}` : ''}${
-        namespace ? ` in ${namespace} namespace` : ''
-      }`,
-      key: key as string,
-      variant: variant || AlertVariant.danger,
-    }
-  );
+  const loadError = iGet(firehoseResult, 'loadError');
+  if (firehoseResult && (!loadError || (ignore404 && loadError?.response?.status === 404))) {
+    return null;
+  }
+  return {
+    message: getLoadError(toShallowJS(firehoseResult), model, isList),
+    title: `Could not load ${getModelString(model, isList)}${name ? ` ${name}` : ''}${
+      namespace ? ` in ${namespace} namespace` : ''
+    }`,
+    key: key as string,
+    variant: variant || AlertVariant.danger,
+  };
 };
 
 const stateToProps = (state, { wizardReduxID }) => {
@@ -91,6 +95,7 @@ const stateToProps = (state, { wizardReduxID }) => {
         name: query.name,
         namespace: query.namespace,
         variant: query.optional ? AlertVariant.warning : AlertVariant.danger,
+        ignore404: query.errorBehaviour?.ignore404,
       }),
     ),
   );

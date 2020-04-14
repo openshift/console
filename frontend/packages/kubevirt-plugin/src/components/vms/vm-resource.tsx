@@ -29,6 +29,7 @@ import { isVMIPaused, getVMINodeName } from '../../selectors/vmi';
 import { VirtualMachineInstanceModel, VirtualMachineModel } from '../../models';
 import { asVMILikeWrapper } from '../../k8s/wrapper/utils/convert';
 import { getVMTemplate } from '../../selectors/vm-template/selectors';
+import { VMImportKind } from '../../types/vm-import/ovirt/vm-import';
 import {
   NODE_SELECTOR_MODAL_TITLE,
   DEDICATED_RESOURCES_PINNED,
@@ -112,6 +113,7 @@ export const VMDetailsList: React.FC<VMResourceListProps> = ({
   vm,
   vmi,
   pods,
+  vmImports,
   migrations,
   canUpdateVM,
   kindObj,
@@ -143,7 +145,7 @@ export const VMDetailsList: React.FC<VMResourceListProps> = ({
         idValue={prefixedID(id, 'vm-statuses')}
       >
         <VMStatusModal isOpen={isStatusModalOpen} setOpen={setStatusModalOpen} vmi={vmi} />
-        <VMStatuses vm={vm} vmi={vmi} pods={pods} migrations={migrations} />
+        <VMStatuses vm={vm} vmi={vmi} pods={pods} migrations={migrations} vmImports={vmImports} />
       </VMDetailsItem>
 
       <VMDetailsItem title="Pod" idValue={prefixedID(id, 'pod')} isNotAvail={!launcherPod}>
@@ -331,6 +333,7 @@ type VMResourceListProps = {
   vm?: VMKind;
   pods?: PodKind[];
   migrations?: any[];
+  vmImports: VMImportKind[];
   vmi?: VMIKind;
   canUpdateVM: boolean;
 };

@@ -8,15 +8,19 @@ import { InitialStepStateGetter } from './types';
 export const podNetwork: VMWizardNetwork = {
   id: '0',
   type: VMWizardNetworkType.UI_DEFAULT_POD_NETWORK,
-  networkInterface: NetworkInterfaceWrapper.initializeFromSimpleData({
-    name: getSequenceName('nic'),
-    model: NetworkInterfaceModel.VIRTIO,
-    interfaceType: NetworkType.POD.getDefaultInterfaceType(),
-  }).asResource(),
-  network: NetworkWrapper.initializeFromSimpleData({
-    name: getSequenceName('nic'),
-    type: NetworkType.POD,
-  }).asResource(),
+  networkInterface: new NetworkInterfaceWrapper()
+    .init({
+      name: getSequenceName('nic'),
+      model: NetworkInterfaceModel.VIRTIO,
+    })
+    .setType(NetworkType.POD.getDefaultInterfaceType())
+    .asResource(),
+  network: new NetworkWrapper()
+    .init({
+      name: getSequenceName('nic'),
+    })
+    .setType(NetworkType.POD)
+    .asResource(),
 };
 
 export const getNetworksInitialState: InitialStepStateGetter = (data: CommonData) => ({
@@ -26,4 +30,7 @@ export const getNetworksInitialState: InitialStepStateGetter = (data: CommonData
   isValid: true,
   isLocked: false,
   isHidden: data.data.isProviderImport && data.data.isSimpleView,
+  isCreateDisabled: false,
+  isUpdateDisabled: false,
+  isDeleteDisabled: false,
 });

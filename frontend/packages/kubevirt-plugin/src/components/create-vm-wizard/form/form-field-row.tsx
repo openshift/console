@@ -15,7 +15,7 @@ const isLoading = (loadingResources?: { [k: string]: any }) =>
   _.some(Object.keys(loadingResources), (key) => !iGetIsLoaded(loadingResources[key]));
 
 export const FormFieldInnerRow: React.FC<FieldFormInnerRowProps> = React.memo(
-  ({ field, fieldType, children, loadingResources, validation }) => {
+  ({ field, fieldType, fieldHelp, children, loadingResources, validation }) => {
     const fieldKey = iGet(field, 'key');
     const loading = isLoading(loadingResources);
 
@@ -24,7 +24,7 @@ export const FormFieldInnerRow: React.FC<FieldFormInnerRowProps> = React.memo(
         key={fieldKey}
         fieldId={getFieldId(fieldKey)}
         title={fieldType === FormFieldType.INLINE_CHECKBOX ? undefined : getFieldTitle(fieldKey)}
-        help={getFieldHelp(fieldKey, iGetFieldValue(field))}
+        help={fieldHelp || getFieldHelp(fieldKey, iGetFieldValue(field))}
         isRequired={isFieldRequired(field)}
         isHidden={isFieldHidden(field)}
         validationMessage={validation ? undefined : iGetIn(field, ['validation', 'message'])}
@@ -43,6 +43,7 @@ export const FormFieldInnerRow: React.FC<FieldFormInnerRowProps> = React.memo(
 type FieldFormInnerRowProps = {
   field: any;
   fieldType: FormFieldType;
+  fieldHelp?: React.ReactNode;
   children?: React.ReactNode;
   loadingResources?: { [k: string]: any };
   validation?: ValidationObject;
@@ -61,6 +62,7 @@ export const FormFieldInnerMemoRow = React.memo(
 export const FormFieldRow: React.FC<FieldFormRowProps> = ({
   field,
   fieldType,
+  fieldHelp,
   children,
   loadingResources,
   validation,
@@ -85,6 +87,7 @@ export const FormFieldRow: React.FC<FieldFormRowProps> = ({
             key="main"
             field={field}
             fieldType={fieldType}
+            fieldHelp={fieldHelp}
             loadingResources={loadingResources}
             validation={validation}
           >
@@ -99,6 +102,7 @@ export const FormFieldRow: React.FC<FieldFormRowProps> = ({
 type FieldFormRowProps = {
   field: any;
   fieldType?: FormFieldType;
+  fieldHelp?: React.ReactNode;
   children?: React.ReactNode;
   loadingResources?: { [k: string]: any };
   validation?: ValidationObject;

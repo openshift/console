@@ -27,8 +27,5 @@ export class VolumeType extends ObjectEnum<string> {
 
   static getAll = () => VolumeType.ALL;
 
-  static fromSerialized = (volumeType: { value: string }): VolumeType =>
-    VolumeType.fromString(volumeType && volumeType.value);
-
   static fromString = (model: string): VolumeType => VolumeType.stringMapper[model];
 }

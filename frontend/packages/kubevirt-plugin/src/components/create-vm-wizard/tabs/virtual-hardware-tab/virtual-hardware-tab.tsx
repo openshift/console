@@ -5,7 +5,12 @@ import { Firehose, FirehoseResult } from '@console/internal/components/utils';
 import { createLookup, getName } from '@console/shared/src';
 import { PersistentVolumeClaimModel } from '@console/internal/models';
 import { iGetCommonData } from '../../selectors/immutable/selectors';
-import { isStepLocked } from '../../selectors/immutable/wizard-selectors';
+import {
+  hasStepCreateDisabled,
+  hasStepDeleteDisabled,
+  hasStepUpdateDisabled,
+  isStepLocked,
+} from '../../selectors/immutable/wizard-selectors';
 import { VMWizardProps, VMWizardTab, VMWizardStorageType, VMWizardStorage } from '../../types';
 import { vmWizardActions } from '../../redux/actions';
 import { ActionType } from '../../redux/types';
@@ -69,10 +74,13 @@ const VirtualHardwareTabFirehose: React.FC<VirtualHardwareTabFirehoseProps> = ({
   storages,
   templateValidations,
   persistentVolumeClaims,
+  isCreateDisabled,
+  isUpdateDisabled,
+  isDeleteDisabled,
 }) => {
   const virtualStorages = getVirtualStoragesData(storages, persistentVolumeClaims);
   const showStorages = virtualStorages.length > 0;
-  const disableAddCD = isLocked || virtualStorages.length > 1;
+  const disableAddCD = isLocked || virtualStorages.length > 1 || isCreateDisabled;
   const availableCDName = getAvailableCDName(storages.map((storage) => storage.disk));
   const withProgress = wrapWithProgress(setTabLocked);
   const diskWrapper = DiskWrapper.initializeFromSimpleData({
@@ -115,7 +123,14 @@ const VirtualHardwareTabFirehose: React.FC<VirtualHardwareTabFirehoseProps> = ({
             <VMCDsTable
               columnClasses={cdTableColumnClasses}
               data={virtualStorages}
-              customData={{ isDisabled: isLocked, withProgress, removeStorage, wizardReduxID }}
+              customData={{
+                isDisabled: isLocked,
+                withProgress,
+                removeStorage,
+                wizardReduxID,
+                isDeleteDisabled,
+                isUpdateDisabled,
+              }}
               row={VmWizardVirtualHardwareRow}
             />
             {addButton}
@@ -138,6 +153,9 @@ type VirtualHardwareTabFirehoseProps = {
   wizardReduxID: string;
   storages: VMWizardStorage[];
   templateValidations: TemplateValidations;
+  isCreateDisabled: boolean;
+  isUpdateDisabled: boolean;
+  isDeleteDisabled: boolean;
   removeStorage: (id: string) => void;
   setTabLocked: (isLocked: boolean) => void;
   persistentVolumeClaims: FirehoseResult;
@@ -168,6 +186,21 @@ type VirtualHardwareConnectedProps = VirtualHardwareTabFirehoseProps & {
 const stateToProps = (state, { wizardReduxID }) => ({
   namespace: iGetCommonData(state, wizardReduxID, VMWizardProps.activeNamespace),
   isLocked: isStepLocked(state, wizardReduxID, VMWizardTab.ADVANCED_VIRTUAL_HARDWARE),
+  isCreateDisabled: hasStepCreateDisabled(
+    state,
+    wizardReduxID,
+    VMWizardTab.ADVANCED_VIRTUAL_HARDWARE,
+  ),
+  isUpdateDisabled: hasStepUpdateDisabled(
+    state,
+    wizardReduxID,
+    VMWizardTab.ADVANCED_VIRTUAL_HARDWARE,
+  ),
+  isDeleteDisabled: hasStepDeleteDisabled(
+    state,
+    wizardReduxID,
+    VMWizardTab.ADVANCED_VIRTUAL_HARDWARE,
+  ),
   storages: getStorages(state, wizardReduxID),
   templateValidations: getTemplateValidation(state, wizardReduxID),
 });

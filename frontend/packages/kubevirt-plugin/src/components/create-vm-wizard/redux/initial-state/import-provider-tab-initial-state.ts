@@ -33,5 +33,8 @@ export const getImportProvidersInitialState: InitialStepStateGetter = (data) => 
     isValid: !isProviderImport,
     isLocked: false,
     isHidden: !isProviderImport,
+    isCreateDisabled: false,
+    isUpdateDisabled: false,
+    isDeleteDisabled: false,
   };
 };

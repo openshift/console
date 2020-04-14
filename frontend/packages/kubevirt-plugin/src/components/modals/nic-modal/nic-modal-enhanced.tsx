@@ -46,7 +46,10 @@ const NICModalFirehoseComponent: React.FC<NICModalFirehoseComponentProps> = (pro
     networkWrapper.isPodNetwork() ||
     !usedNetworksChoices.find((usedNetwork) => usedNetwork.isPodNetwork());
 
-  const onSubmit = (resultNetworkInterfaceWrapper, resultNetworkWrapper) =>
+  const onSubmit = (
+    resultNetworkInterfaceWrapper: NetworkInterfaceWrapper,
+    resultNetworkWrapper: NetworkWrapper,
+  ) =>
     k8sPatch(
       getVMLikeModel(vmLikeEntity),
       vmLikeEntity,

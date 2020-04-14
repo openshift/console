@@ -34,9 +34,9 @@ import {
 } from './strings/strings';
 import { vmWizardActions } from './redux/actions';
 import { ActionType } from './redux/types';
+import { getGoToStep } from './selectors/selectors';
 
 import './create-vm-wizard-footer.scss';
-import { getGoToStep } from './selectors/selectors';
 
 type WizardContext = {
   onNext: () => void;

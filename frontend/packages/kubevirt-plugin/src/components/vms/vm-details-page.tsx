@@ -5,6 +5,7 @@ import { PodModel, TemplateModel } from '@console/internal/models';
 import { VMDisksFirehose } from '../vm-disks';
 import { VMNics } from '../vm-nics';
 import {
+  VirtualMachineImportModel,
   VirtualMachineInstanceMigrationModel,
   VirtualMachineInstanceModel,
   VirtualMachineModel,
@@ -98,6 +99,12 @@ export const VirtualMachinesDetailsPage: React.FC<VirtualMachinesDetailsPageProp
       prop: 'templates',
       matchLabels: { [TEMPLATE_TYPE_LABEL]: TEMPLATE_TYPE_VM },
     }),
+    {
+      kind: VirtualMachineImportModel.kind,
+      isList: true,
+      namespace,
+      prop: 'vmImports',
+    },
   ];
 
   return (

@@ -84,3 +84,27 @@ export const V2VVMwareModel: K8sKind = {
   kind: 'V2VVmware',
   id: 'v2vvmware',
 };
+
+export const OVirtProviderModel: K8sKind = {
+  label: 'Ovirt Provider',
+  labelPlural: 'Ovirt Providers',
+  apiVersion: 'v1alpha1',
+  apiGroup: 'v2v.kubevirt.io',
+  plural: 'ovirtproviders',
+  abbr: 'OVP',
+  namespaced: true,
+  kind: 'OVirtProvider',
+  id: 'ovirtprovider',
+};
+
+export const VirtualMachineImportModel: K8sKind = {
+  label: 'Virtual Machine Import',
+  labelPlural: 'Virtual Machine Imports',
+  apiVersion: 'v1alpha1',
+  apiGroup: 'v2v.kubevirt.io',
+  plural: 'virtualmachineimports',
+  abbr: 'OVMI',
+  namespaced: true,
+  kind: 'VirtualMachineImport',
+  id: 'virtualmachineimport',
+};

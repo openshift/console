@@ -66,9 +66,6 @@ export class StorageUISource extends ObjectEnum<string> {
 
   static getAll = () => StorageUISource.ALL;
 
-  static fromSerialized = (volumeType: { value: string }): StorageUISource =>
-    StorageUISource.fromString(volumeType && volumeType.value);
-
   static fromString = (model: string): StorageUISource => StorageUISource.stringMapper[model];
 
   static fromTypes = (

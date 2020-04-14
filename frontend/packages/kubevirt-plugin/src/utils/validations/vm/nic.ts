@@ -15,6 +15,7 @@ import { NetworkInterfaceWrapper } from '../../../k8s/wrapper/vm/network-interfa
 import { NetworkWrapper } from '../../../k8s/wrapper/vm/network-wrapper';
 import { NetworkType } from '../../../constants/vm';
 import { isValidMAC } from './validations';
+import { UINetworkInterfaceValidation } from '../../../types/ui/nic';
 
 export const validateNicName = (
   name: string,
@@ -60,9 +61,11 @@ export const validateNIC = (
   {
     usedInterfacesNames,
     usedMultusNetworkNames,
+    acceptEmptyNetwork,
   }: {
     usedInterfacesNames?: Set<string>;
     usedMultusNetworkNames?: Set<string>;
+    acceptEmptyNetwork?: boolean; // do not use for strict validation
   },
 ): UINetworkInterfaceValidation => {
   const validations = {
@@ -71,28 +74,24 @@ export const validateNIC = (
     network: validateNetwork(network, usedMultusNetworkNames),
   };
 
-  const hasAllRequiredFilled =
+  let hasAllRequiredFilled =
     interfaceWrapper &&
     interfaceWrapper.getName() &&
     interfaceWrapper.getModel() &&
-    interfaceWrapper.hasType() &&
-    network &&
-    network.getReadableName() &&
-    network.hasType();
+    interfaceWrapper.hasType();
+
+  if (!acceptEmptyNetwork) {
+    hasAllRequiredFilled =
+      hasAllRequiredFilled && network && network.getReadableName() && network.hasType();
+  }
 
   return {
     validations,
     hasAllRequiredFilled: !!hasAllRequiredFilled,
-    isValid: !!hasAllRequiredFilled && !Object.keys(validations).find((key) => validations[key]),
+    isValid:
+      !!hasAllRequiredFilled &&
+      !Object.keys(validations)
+        .filter((key) => !(acceptEmptyNetwork && key === 'network'))
+        .find((key) => validations[key]),
   };
-};
-
-export type UINetworkInterfaceValidation = {
-  validations: {
-    name?: ValidationObject;
-    macAddress?: ValidationObject;
-    network?: ValidationObject;
-  };
-  isValid: boolean;
-  hasAllRequiredFilled: boolean;
 };

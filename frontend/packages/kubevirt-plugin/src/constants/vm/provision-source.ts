@@ -42,9 +42,6 @@ export class ProvisionSource extends ObjectEnum<string> {
 
   static getAll = () => ProvisionSource.ALL;
 
-  static fromSerialized = (provisionSource: { value: string }): ProvisionSource =>
-    ProvisionSource.fromString(provisionSource && provisionSource.value);
-
   static fromString = (source: string): ProvisionSource => ProvisionSource.stringMapper[source];
 
   static getProvisionSourceDetails = (

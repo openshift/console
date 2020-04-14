@@ -19,11 +19,13 @@ import { getServicesForVmi } from '../../selectors/service';
 import { VMResourceSummary, VMDetailsList, VMSchedulingList } from './vm-resource';
 import { VMTabProps } from './types';
 import { isVM, isVMI } from '../../selectors/vm/vmlike';
+import { VMImportKind } from '../../types/vm-import/ovirt/vm-import';
 
 export const VMDetailsFirehose: React.FC<VMTabProps> = ({
   obj: objProp,
   vm: vmProp,
   vmi: vmiProp,
+  vmImports,
   pods,
   migrations,
   templates,
@@ -50,6 +52,7 @@ export const VMDetailsFirehose: React.FC<VMTabProps> = ({
           vm={vm}
           vmi={vmi}
           pods={pods}
+          vmImports={vmImports}
           migrations={migrations}
           templates={templates}
         />
@@ -59,13 +62,14 @@ export const VMDetailsFirehose: React.FC<VMTabProps> = ({
 };
 
 const VMDetails: React.FC<VMDetailsProps> = (props) => {
-  const { kindObj, vm, vmi, pods, migrations, templates, ...restProps } = props;
+  const { kindObj, vm, vmi, pods, migrations, vmImports, templates, ...restProps } = props;
   const mainResources = {
     vm,
     vmi,
     pods,
     migrations,
     templates,
+    vmImports,
     kindObj,
   };
 
@@ -107,6 +111,7 @@ type VMDetailsProps = {
   vmi?: VMIKind;
   pods?: PodKind[];
   migrations?: K8sResourceKind[];
-  services?: FirehoseResult<K8sResourceKind[]>;
+  services?: FirehoseResult;
   templates?: TemplateKind[];
+  vmImports?: VMImportKind[];
 };

@@ -3,7 +3,7 @@ import { CreateVMParams } from '../../vm/create/types';
 import { ImporterResult } from '../../vm/types';
 import { buildOwnerReference } from '../../../../utils';
 import { PatchBuilder } from '@console/shared/src/k8s';
-import { ServiceAccountModel } from '@console/internal/models';
+import { SecretModel, ServiceAccountModel } from '@console/internal/models';
 import { createBasicLookup, getName, getNamespace } from '@console/shared/src';
 import { compareOwnerReference } from '@console/shared/src/utils/owner-references';
 import { SecretWrappper } from '../../../wrapper/k8s/secret-wrapper';
@@ -17,11 +17,7 @@ import {
   VMWizardStorage,
   VMWizardStorageType,
 } from '../../../../components/create-vm-wizard/types';
-import {
-  getVmwareAttribute,
-  getVmwareField,
-  getVmwareValue,
-} from '../../../../components/create-vm-wizard/selectors/provider/vmware/selectors';
+import { getVmwareField } from '../../../../components/create-vm-wizard/selectors/provider/vmware/selectors';
 import { K8sResourceCommon } from '@console/internal/module/k8s';
 import { ServiceAccountWrappper } from '../../../wrapper/k8s/service-account-wrapper';
 import { RoleWrappper } from '../../../wrapper/k8s/role-wrapper';
@@ -47,25 +43,27 @@ const isImportStorage = (storage: VMWizardStorage) =>
   );
 
 const createConversionPodSecret = async ({
-  enhancedK8sMethods: { k8sWrapperCreate },
+  enhancedK8sMethods: { k8sWrapperCreate, k8sGet },
   importProviders,
   storages,
   namespace,
 }: CreateVMParams) => {
   const { vm, thumbprint } = getVmwareField(importProviders, VMWareProviderField.VM);
-  const secret = new SecretWrappper(
-    getVmwareAttribute(importProviders, VMWareProviderField.VCENTER, 'secret'),
+
+  const sourceSecretName = getVmwareField(
+    importProviders,
+    VMWareProviderField.CURRENT_RESOLVED_VCENTER_SECRET_NAME,
   );
 
-  const username = encodeURIComponent(
-    getVmwareValue(importProviders, VMWareProviderField.USER_NAME) || secret.getValue('username'),
+  const sourceSecretWrapper = new SecretWrappper(
+    await k8sGet(SecretModel, sourceSecretName, namespace, null, {
+      disableHistory: true,
+    }),
   );
-  const password =
-    getVmwareValue(importProviders, VMWareProviderField.USER_PASSWORD_AND_CHECK_CONNECTION) ||
-    secret.getValue('password');
 
-  const hostname =
-    getVmwareValue(importProviders, VMWareProviderField.HOSTNAME) || secret.getValue('url');
+  const username = encodeURIComponent(sourceSecretWrapper.getValue('username'));
+  const password = sourceSecretWrapper.getValue('password');
+  const hostname = sourceSecretWrapper.getValue('url');
 
   const sourceDisks = (storages || [])
     .filter((storage) => storage.type === VMWizardStorageType.V2V_VMWARE_IMPORT)

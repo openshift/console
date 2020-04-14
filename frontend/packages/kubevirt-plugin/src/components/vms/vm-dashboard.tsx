@@ -12,13 +12,14 @@ import {
 } from '../dashboards-page/vm-dashboard';
 import { VMDashboardContext } from './vm-dashboard-context';
 import { asVM, isVMI, isVM } from '../../selectors/vm/vmlike';
+import { VMImportKind } from '../../types/vm-import/ovirt/vm-import';
 
 const mainCards = [{ Card: VMStatusCard }, { Card: VMUtilizationCard }];
 const leftCards = [{ Card: VMDetailsCard }, { Card: VMInventoryCard }];
 const rightCards = [{ Card: VMActivityCard }];
 
 export const VMDashboard: React.FC<VMDashboardProps> = (props) => {
-  const { obj: objProp, vm: vmProp, vmi: vmiProp, pods, migrations } = props;
+  const { obj: objProp, vm: vmProp, vmi: vmiProp, pods, migrations, vmImports } = props;
 
   const vm = asVM(objProp) || (isVM(vmProp) && vmProp);
   const vmi = (isVMI(objProp) && objProp) || vmiProp;
@@ -28,6 +29,7 @@ export const VMDashboard: React.FC<VMDashboardProps> = (props) => {
     vmi,
     pods,
     migrations,
+    vmImports,
   };
 
   return (
@@ -45,4 +47,5 @@ type VMDashboardProps = {
   vmi?: VMIKind;
   pods?: PodKind[];
   migrations?: K8sResourceKind[];
+  vmImports?: VMImportKind[];
 };
