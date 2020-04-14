@@ -1,5 +1,4 @@
 import * as React from 'react';
-import * as _ from 'lodash';
 import { match } from 'react-router';
 import { k8sGet } from '@console/internal/module/k8s';
 import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager';
@@ -25,7 +24,6 @@ const InstallCluster: React.FC<InstallClusterProps> = ({ match }) => {
 
   const [isIndependent, setIsIndependent] = React.useState(false);
   const [mode, setMode] = React.useState(MODES.CONVERGED);
-  const [sample, setSample] = React.useState(null);
   const [clusterServiceVersion, setClusterServiceVersion] = React.useState(null);
 
   const handleModeChange = (_checked: boolean, event: React.FormEvent<HTMLInputElement>) => {
@@ -38,9 +36,6 @@ const InstallCluster: React.FC<InstallClusterProps> = ({ match }) => {
       .then((clusterServiceVersionObj) => {
         setIsIndependent(checkForIndependentSupport(clusterServiceVersionObj));
         try {
-          setSample(
-            JSON.parse(_.get(clusterServiceVersionObj.metadata.annotations, 'alm-examples'))[0],
-          );
           setClusterServiceVersion(clusterServiceVersionObj);
         } catch (e) {
           setClusterServiceVersion(null);
@@ -65,10 +60,8 @@ const InstallCluster: React.FC<InstallClusterProps> = ({ match }) => {
             />
           )}
         </div>
-        <h1 className="co-m-pane__heading co-m-pane__heading--baseline">
-          <div className="co-m-pane__name">Create a new storage cluster</div>
-        </h1>
-        <p className="co-m-pane__explanation">
+        <h1 className="co-create-operand__header-text">Create Storage Cluster</h1>
+        <p className="help-block">
           OCS runs as a cloud-native service for optimal integration with applications in need of
           storage, and handles the scenes such as provisioning and management.
         </p>
@@ -102,16 +95,9 @@ const InstallCluster: React.FC<InstallClusterProps> = ({ match }) => {
             </div>
           </div>
         )}
-        {(isIndependent === false || mode === MODES.CONVERGED) &&
-          clusterServiceVersion &&
-          sample && (
-            <CreateOCSServiceForm
-              namespace={ns}
-              operandModel={OCSServiceModel}
-              sample={sample}
-              clusterServiceVersion={clusterServiceVersion !== null && clusterServiceVersion}
-            />
-          )}
+        {(isIndependent === false || mode === MODES.CONVERGED) && (
+          <CreateOCSServiceForm match={match} />
+        )}
         {mode === MODES.INDEPENDENT && <InstallExternalCluster match={match} />}
       </div>
     </>
