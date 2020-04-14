@@ -1,28 +1,30 @@
 import * as React from 'react';
 import { FormControl } from 'patternfly-react';
-import * as _ from 'lodash';
 import { Alert } from '@patternfly/react-core';
+// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+// @ts-ignore: FIXME missing exports due to out-of-sync @types/react-redux version
+import { useSelector } from 'react-redux';
 import {
   withHandlePromise,
   FirehoseResource,
   FirehoseResult,
+  Firehose,
+  HandlePromiseProps,
 } from '@console/internal/components/utils';
-import { ModalTitle, ModalBody, ModalSubmitFooter } from '@console/internal/components/factory';
-import { referenceForModel } from '@console/internal/module/k8s';
+import {
+  ModalTitle,
+  ModalBody,
+  ModalSubmitFooter,
+  createModalLauncher,
+} from '@console/internal/components/factory';
+import { referenceForModel, K8sResourceKind } from '@console/internal/module/k8s';
 import { CephClusterModel } from '@console/ceph-storage-plugin/src/models';
 import { startNodeMaintenance } from '../../k8s/requests/node-maintenance';
-import { createModalResourceLauncher } from './create-modal-resource-launcher';
+import { CEPH_FLAG } from '../../features';
+import { RootState } from '@console/internal/redux';
 
-const StartNodeMaintenanceModal = withHandlePromise((props: NodeMaintenanceModalProps) => {
-  const {
-    nodeName,
-    cephClusterHealthy,
-    inProgress,
-    errorMessage,
-    handlePromise,
-    close,
-    cancel,
-  } = props;
+const StartNodeMaintenanceModal = withHandlePromise<StartNodeMaintenanceModalProps>((props) => {
+  const { nodeName, cephClusters, inProgress, errorMessage, handlePromise, close, cancel } = props;
 
   const [reason, setReason] = React.useState('');
 
@@ -31,6 +33,9 @@ const StartNodeMaintenanceModal = withHandlePromise((props: NodeMaintenanceModal
     const promise = startNodeMaintenance(nodeName, reason);
     return handlePromise(promise).then(close);
   };
+
+  const cephCluster = cephClusters?.data?.[0];
+  const cephClusterHealthy = !cephCluster || cephCluster?.status?.health === 'OK';
 
   const action = 'Start Maintenance';
   return (
@@ -74,9 +79,9 @@ const StartNodeMaintenanceModal = withHandlePromise((props: NodeMaintenanceModal
   );
 });
 
-export type NodeMaintenanceModalProps = {
+export type StartNodeMaintenanceModalProps = {
   nodeName: string;
-  cephClusterHealthy: boolean;
+  cephClusters?: FirehoseResult<K8sResourceKind[]>;
   handlePromise: <T>(promise: Promise<T>) => Promise<T>;
   inProgress: boolean;
   errorMessage: string;
@@ -84,25 +89,33 @@ export type NodeMaintenanceModalProps = {
   close?: () => void;
 };
 
-const resourcesToProps = ({ cephClusters }: { [key: string]: FirehoseResult }) => {
-  const cephCluster = _.get(cephClusters, 'data.0');
-  return {
-    cephClusterHealthy: !cephCluster || _.get(cephCluster, 'status.health') === 'OK',
-  };
+type StartNodeMaintenanceModalFirehoseProps = Diff<
+  StartNodeMaintenanceModalProps,
+  HandlePromiseProps
+>;
+const StartNodeMaintenanceModalFirehose: React.FC<StartNodeMaintenanceModalFirehoseProps> = (
+  props,
+) => {
+  const hasCephStorageCapability = useSelector<RootState, boolean>(({ FLAGS }) =>
+    FLAGS.get(CEPH_FLAG),
+  );
+
+  const resources: FirehoseResource[] = [];
+  if (hasCephStorageCapability) {
+    resources.push({
+      kind: referenceForModel(CephClusterModel),
+      namespaced: true,
+      namespace: 'openshift-storage',
+      isList: true,
+      prop: 'cephClusters',
+    });
+  }
+
+  return (
+    <Firehose resources={resources}>
+      <StartNodeMaintenanceModal {...props} />
+    </Firehose>
+  );
 };
 
-const resources: FirehoseResource[] = [
-  {
-    kind: referenceForModel(CephClusterModel),
-    namespaced: true,
-    namespace: 'openshift-storage',
-    isList: true,
-    prop: 'cephClusters',
-  },
-];
-
-export const startNodeMaintenanceModal = createModalResourceLauncher(
-  StartNodeMaintenanceModal,
-  resources,
-  resourcesToProps,
-);
+export const startNodeMaintenanceModal = createModalLauncher(StartNodeMaintenanceModalFirehose);
