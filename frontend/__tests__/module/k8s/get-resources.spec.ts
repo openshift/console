@@ -7,6 +7,7 @@ describe('kindToLabel', () => {
     });
   };
 
+  testKindToLabel('APIcast', 'APIcast');
   testKindToLabel('DNS', 'DNS');
   testKindToLabel('DNSRecord', 'DNS Record');
   testKindToLabel('DeploymentConfig', 'Deployment Config');

@@ -83,7 +83,9 @@ export type DiscoveryResources = {
 };
 
 export const kindToLabel = (kind: string): string => {
-  return _.startCase(kind).replace(/\bO Auth\b/, 'OAuth');
+  return _.startCase(kind)
+    .replace(/\bAP Icast\b/, 'APIcast')
+    .replace(/\bO Auth\b/, 'OAuth');
 };
 
 export const pluralizeKind = (kind: string): string => {
