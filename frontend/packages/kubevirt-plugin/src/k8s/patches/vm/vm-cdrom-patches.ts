@@ -19,7 +19,7 @@ import {
   getBootableDevicesInOrder,
 } from '../../../selectors/vm';
 import { getVMLikePatches } from '../vm-template';
-import { BOOT_ORDER_FIRST, BOOT_ORDER_SECOND } from '../../../constants';
+import { BOOT_ORDER_FIRST, BOOT_ORDER_SECOND, DiskBus } from '../../../constants';
 import { CD } from '../../../components/modals/cdrom-vm-modal/types';
 
 const getNextAvailableBootOrderIndex = (vm: VMLikeEntityKind) => {
@@ -58,7 +58,7 @@ export const getCDsPatch = async (vm: VMLikeEntityKind, cds: CD[]) => {
       const disk: CD = {
         name,
         bootOrder: existingCD ? bootOrder : newBootOrder,
-        cdrom: { bus: bus || 'virtio' },
+        cdrom: { bus: bus || DiskBus.SATA.getValue() },
       };
       let volume: Volume = { name };
       let finalDataVolume;
