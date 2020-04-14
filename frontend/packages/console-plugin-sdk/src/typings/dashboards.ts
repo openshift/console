@@ -72,7 +72,7 @@ namespace ExtensionProperties {
      * Loader for popup content. If defined health item will be represented as link
      * which opens popup with given content.
      */
-    popupComponent?: LazyLoader<any>;
+    popupComponent?: LazyLoader<PrometheusHealthPopupProps>;
 
     /**
      * Popup title
@@ -371,9 +371,13 @@ export type URLHealthHandler<R> = (
   additionalResource?: FirehoseResult<K8sResourceKind | K8sResourceKind[]>,
 ) => SubsystemHealth;
 
+export type PrometheusHealthPopupProps = {
+  responses: { response: PrometheusResponse; error: any }[];
+  additionalResource?: FirehoseResult<K8sResourceKind | K8sResourceKind[]>;
+};
+
 export type PrometheusHealthHandler = (
-  responses: PrometheusResponse[],
-  errors: any[],
+  responses: { response: PrometheusResponse; error: any }[],
   additionalResource?: FirehoseResult<K8sResourceKind | K8sResourceKind[]>,
 ) => SubsystemHealth;
 

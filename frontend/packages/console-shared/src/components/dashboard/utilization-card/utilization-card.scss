@@ -1,10 +1,5 @@
 @import '~@patternfly/patternfly/sass-utilities/colors';
 
-.co-utilization-card-popover__consumer-link {
-  display: flex;
-  justify-content: space-between;
-}
-
 .co-utilization-card__body {
   padding: 0;
 }
@@ -61,6 +56,10 @@
 
 .co-utilization-card__item:not(:first-child) {
   border-top: var(--pf-global--BorderWidth--sm) solid var(--pf-global--BorderColor--100);
+}
+
+.co-utilization-card__item-icon {
+  margin-right: var(--pf-global--spacer--sm);
 }
 
 @media screen and (min-width: 1200px) {

@@ -39,7 +39,7 @@ export const BlueSyncIcon: React.FC<ColoredIconProps> = ({ className, alt }) => 
   <SyncAltIcon color={blueInfoColor.value} className={className} alt={alt} />
 );
 
-type ColoredIconProps = {
+export type ColoredIconProps = {
   className?: string;
   alt?: string;
 };

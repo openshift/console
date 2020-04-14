@@ -71,9 +71,9 @@ export const getControlPlaneComponentHealth = (
 
 const errorStates = [HealthState.WARNING, HealthState.ERROR, HealthState.NOT_AVAILABLE];
 
-export const getControlPlaneHealth: PrometheusHealthHandler = (responses = [], errors = []) => {
-  const componentsHealth = responses.map((r, index) =>
-    getControlPlaneComponentHealth(r, errors[index]),
+export const getControlPlaneHealth: PrometheusHealthHandler = (responses) => {
+  const componentsHealth = responses.map(({ response, error }) =>
+    getControlPlaneComponentHealth(response, error),
   );
   if (componentsHealth.some((c) => c.state === HealthState.LOADING)) {
     return { state: HealthState.LOADING };

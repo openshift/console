@@ -20,7 +20,6 @@ export const VMAlerts: React.FC<VMAlertsProps> = ({ vm, vmi }) => (
       <StatusItem
         Icon={BlueInfoCircleIcon}
         message="This VM does not have guest agent installed. Some metrics and management features will not be available."
-        LinkComponent={() => null /* TODO(mlibra) */}
       />
     )}
   </AlertsBody>

@@ -25,7 +25,7 @@ export type DataPoint<X = Date | number | string> = {
   y?: number;
   label?: string;
   metric?: { [key: string]: string };
-  description?: string;
+  description?: (date: string, value: string) => string;
 };
 
 export type PrometheusLabels = { [key: string]: string };

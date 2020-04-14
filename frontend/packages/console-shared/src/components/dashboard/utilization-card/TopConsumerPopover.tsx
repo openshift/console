@@ -1,6 +1,8 @@
 import * as React from 'react';
 import { Link } from 'react-router-dom';
-import { connect } from 'react-redux';
+// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+// @ts-ignore: FIXME missing exports due to out-of-sync @types/react-redux version
+import { useSelector } from 'react-redux';
 import { DataPoint } from '@console/internal/components/graphs';
 import { Humanize, resourcePathFromModel } from '@console/internal/components/utils';
 import { Dropdown } from '@console/internal/components/utils/dropdown';
@@ -12,18 +14,18 @@ import {
 import { getInstantVectorStats } from '@console/internal/components/graphs/utils';
 import { featureReducerName } from '@console/internal/reducers/features';
 import { RootState } from '@console/internal/redux';
-import { getActivePerspective } from '@console/internal/reducers/ui';
 import { getPrometheusQueryResponse } from '@console/internal/actions/dashboards';
 import { PopoverPosition } from '@patternfly/react-core';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { FLAGS } from '@console/shared/src/constants';
 import { getName, getNamespace } from '../../..';
 import { DashboardCardPopupLink } from '../dashboard-card/DashboardCardLink';
+import { ColoredIconProps } from '../../status';
 
 import './top-consumer-popover.scss';
 
 const ConsumerPopover: React.FC<ConsumerPopoverProps> = React.memo(
-  ({ current, title, humanize, consumers, namespace, position, description }) => {
+  ({ current, title, humanize, consumers, namespace, position, description, children }) => {
     const [isOpen, setOpen] = React.useState(false);
     return (
       <DashboardCardPopupLink
@@ -39,7 +41,9 @@ const ConsumerPopover: React.FC<ConsumerPopoverProps> = React.memo(
           namespace={namespace}
           isOpen={isOpen}
           description={description}
-        />
+        >
+          {children}
+        </PopoverBody>
       </DashboardCardPopupLink>
     );
   },
@@ -47,203 +51,232 @@ const ConsumerPopover: React.FC<ConsumerPopoverProps> = React.memo(
 
 export default ConsumerPopover;
 
-const getResourceToWatch = (model: K8sKind, namespace: string) => ({
+const getResourceToWatch = (model: K8sKind, namespace: string, fieldSelector: string) => ({
   isList: true,
   kind: model.crd ? referenceForModel(model) : model.kind,
+  fieldSelector,
   namespace,
 });
 
-const PopoverBodyInternal: React.FC<DashboardItemProps &
-  PopoverBodyProps &
-  PopoverReduxProps> = React.memo((props) => {
-  const {
-    humanize,
-    consumers,
-    namespace,
-    watchPrometheus,
-    stopWatchPrometheusQuery,
-    prometheusResults,
-    isOpen,
-    canAccessMonitoring,
-    activePerspective,
-    description,
-  } = props;
-  const [currentConsumer, setCurrentConsumer] = React.useState(consumers[0]);
-  const { query, model, metric } = currentConsumer;
-  const k8sResource = React.useMemo(() => (isOpen ? getResourceToWatch(model, namespace) : null), [
-    isOpen,
-    model,
-    namespace,
-  ]);
-  const [consumerData, consumerLoaded, consumersLoadError] = useK8sWatchResource<
-    K8sResourceCommon[]
-  >(k8sResource);
-  React.useEffect(() => {
-    if (!isOpen) {
-      return () => {};
-    }
-    watchPrometheus(query, namespace);
-    return () => {
-      stopWatchPrometheusQuery(query);
-    };
-  }, [query, stopWatchPrometheusQuery, watchPrometheus, namespace, isOpen]);
+export const LimitsBody: React.FC<LimitsBodyProps> = ({
+  LimitIcon,
+  total,
+  limit,
+  current,
+  available,
+  requested,
+}) => (
+  <ul className="co-utilization-card-popover__consumer-list">
+    <ListItem value={total}>Total capacity</ListItem>
+    <ListItem value={limit} Icon={LimitIcon}>
+      Total limit
+    </ListItem>
+    <ListItem value={current}>Current utilization</ListItem>
+    <ListItem value={available}>Current available capacity</ListItem>
+    <ListItem value={requested}>Total requested</ListItem>
+  </ul>
+);
 
-  let top5Data = [];
-
-  const [data, error] = getPrometheusQueryResponse(prometheusResults, query);
-  const bodyData = getInstantVectorStats(data, metric);
-
-  if (consumerLoaded && !consumersLoadError) {
-    for (const d of bodyData) {
-      const consumerExists = consumerData.some(
-        (consumer) =>
-          getName(consumer) === d.metric[metric] &&
-          (model.namespaced ? getNamespace(consumer) === d.metric.namespace : true),
+export const PopoverBody = withDashboardResources<DashboardItemProps & PopoverBodyProps>(
+  React.memo(
+    ({
+      humanize,
+      consumers,
+      namespace,
+      watchPrometheus,
+      stopWatchPrometheusQuery,
+      prometheusResults,
+      isOpen,
+      description,
+      children,
+    }) => {
+      const [currentConsumer, setCurrentConsumer] = React.useState(consumers[0]);
+      const activePerspective = useSelector<RootState, string>(({ UI }) =>
+        UI.get('activePerspective'),
       );
-      if (consumerExists) {
-        top5Data.push(d);
+      const canAccessMonitoring = useSelector<RootState, boolean>(
+        (state) =>
+          !!state[featureReducerName].get(FLAGS.CAN_GET_NS) &&
+          !!window.SERVER_FLAGS.prometheusBaseURL,
+      );
+      const { query, model, metric, fieldSelector } = currentConsumer;
+      const k8sResource = React.useMemo(
+        () => (isOpen ? getResourceToWatch(model, namespace, fieldSelector) : null),
+        [fieldSelector, isOpen, model, namespace],
+      );
+      const [consumerData, consumerLoaded, consumersLoadError] = useK8sWatchResource<
+        K8sResourceCommon[]
+      >(k8sResource);
+      React.useEffect(() => {
+        if (!isOpen) {
+          return () => {};
+        }
+        watchPrometheus(query, namespace);
+        return () => {
+          stopWatchPrometheusQuery(query);
+        };
+      }, [query, stopWatchPrometheusQuery, watchPrometheus, namespace, isOpen]);
+
+      const top5Data = [];
+
+      const [data, error] = getPrometheusQueryResponse(prometheusResults, query);
+      const bodyData = getInstantVectorStats(data, metric);
+
+      if (consumerLoaded && !consumersLoadError) {
+        for (const d of bodyData) {
+          const consumerExists = consumerData.some(
+            (consumer) =>
+              getName(consumer) === d.metric[metric] &&
+              (model.namespaced ? getNamespace(consumer) === d.metric.namespace : true),
+          );
+          if (consumerExists) {
+            top5Data.push({ ...d, y: humanize(d.y).string });
+          }
+          if (top5Data.length === 5) {
+            break;
+          }
+        }
       }
-      if (top5Data.length === 5) {
-        break;
-      }
-    }
-  }
 
-  top5Data = top5Data.map((elem) => Object.assign({}, elem, { y: humanize(elem.y).string }));
+      const monitoringParams = React.useMemo(() => {
+        const params = new URLSearchParams();
+        params.set('query0', currentConsumer.query);
+        return params;
+      }, [currentConsumer.query]);
 
-  const monitoringParams = React.useMemo(() => {
-    const params = new URLSearchParams();
-    params.set('query0', currentConsumer.query);
-    return params;
-  }, [currentConsumer.query]);
+      const dropdownItems = React.useMemo(
+        () =>
+          consumers.reduce((items, curr) => {
+            items[referenceForModel(curr.model)] = `By ${curr.model.labelPlural}`;
+            return items;
+          }, {}),
+        [consumers],
+      );
 
-  const dropdownItems = React.useMemo(
-    () =>
-      consumers.reduce((items, current) => {
-        items[referenceForModel(current.model)] = `By ${current.model.labelPlural}`;
-        return items;
-      }, {}),
-    [consumers],
-  );
+      const onDropdownChange = React.useCallback(
+        (key) => setCurrentConsumer(consumers.find((c) => referenceForModel(c.model) === key)),
+        [consumers],
+      );
 
-  const onDropdownChange = React.useCallback(
-    (key) => setCurrentConsumer(consumers.find((c) => referenceForModel(c.model) === key)),
-    [consumers],
-  );
+      const monitoringURL =
+        canAccessMonitoring && activePerspective === 'admin'
+          ? `/monitoring/query-browser?${monitoringParams.toString()}`
+          : `/dev-monitoring/ns/${namespace}/metrics?${monitoringParams.toString()}`;
 
-  const monitoringURL =
-    canAccessMonitoring && activePerspective === 'admin'
-      ? `/monitoring/query-browser?${monitoringParams.toString()}`
-      : `/dev-monitoring/ns/${namespace}/metrics?${monitoringParams.toString()}`;
-
-  let body: React.ReactNode;
-  if (error || consumersLoadError) {
-    body = <div className="text-secondary">Not available</div>;
-  } else if (!consumerLoaded || !data) {
-    body = (
-      <ul className="co-utilization-card-popover__consumer-list">
-        <li className="skeleton-consumer" />
-        <li className="skeleton-consumer" />
-        <li className="skeleton-consumer" />
-        <li className="skeleton-consumer" />
-        <li className="skeleton-consumer" />
-      </ul>
-    );
-  } else {
-    body = (
-      <>
-        <ul
-          className="co-utilization-card-popover__consumer-list"
-          aria-label={`Top consumer by ${model.labelPlural}`}
-        >
-          <ConsumerItems items={top5Data} model={model} />
-        </ul>
-        <Link to={monitoringURL}>View more</Link>
-      </>
-    );
-  }
-
-  return (
-    <div className="co-utilization-card-popover__body">
-      <div className="co-utilization-card-popover__description">{description}</div>
-      <h4 className="co-utilization-card-popover__title">
-        {consumers.length === 1
-          ? `Top ${currentConsumer.model.label.toLowerCase()} consumers`
-          : 'Top consumers'}
-      </h4>
-      {consumers.length > 1 && (
-        <Dropdown
-          className="co-utilization-card-popover__dropdown"
-          id="consumer-select"
-          name="selectConsumerType"
-          aria-label="Select consumer type"
-          items={dropdownItems}
-          onChange={onDropdownChange}
-          selectedKey={referenceForModel(model)}
-        />
-      )}
-      {body}
-    </div>
-  );
-});
-
-const mapStateToProps = (state: RootState) => ({
-  activePerspective: getActivePerspective(state),
-  canAccessMonitoring:
-    !!state[featureReducerName].get(FLAGS.CAN_GET_NS) && !!window.SERVER_FLAGS.prometheusBaseURL,
-});
-
-const PopoverBody = connect(mapStateToProps)(withDashboardResources(PopoverBodyInternal));
-
-const ConsumerItems: React.FC<ConsumerItemsProps> = React.memo(({ items, model }) => {
-  return items ? (
-    <>
-      {items.map((item) => {
-        const title = String(item.x);
-        return (
-          <li key={title} className="co-utilization-card-popover__consumer-item">
-            <div className="co-utilization-card-popover__consumer-link">
-              <Link
-                className="co-utilization-card-popover__consumer-name"
-                to={resourcePathFromModel(model, title, item.metric.namespace)}
-              >
-                {title}
-              </Link>
-              <small className="co-utilization-card-popover__consumer-value">{item.y}</small>
-            </div>
-          </li>
+      let body: React.ReactNode;
+      if (error || consumersLoadError) {
+        body = <div className="text-secondary">Not available</div>;
+      } else if (!consumerLoaded || !data) {
+        body = (
+          <ul className="co-utilization-card-popover__consumer-list">
+            <li className="skeleton-consumer" />
+            <li className="skeleton-consumer" />
+            <li className="skeleton-consumer" />
+            <li className="skeleton-consumer" />
+            <li className="skeleton-consumer" />
+          </ul>
         );
-      })}
-    </>
-  ) : null;
-});
+      } else {
+        body = (
+          <>
+            <ul
+              className="co-utilization-card-popover__consumer-list"
+              aria-label={`Top consumer by ${model.labelPlural}`}
+            >
+              {top5Data &&
+                top5Data.map((item) => {
+                  const title = String(item.x);
+                  return (
+                    <ListItem key={title} value={item.y}>
+                      <Link
+                        className="co-utilization-card-popover__consumer-name"
+                        to={resourcePathFromModel(model, title, item.metric.namespace)}
+                      >
+                        {title}
+                      </Link>
+                    </ListItem>
+                  );
+                })}
+            </ul>
+            <Link to={monitoringURL}>View more</Link>
+          </>
+        );
+      }
 
-type ConsumerItemsProps = {
-  items?: DataPoint[];
-  model?: K8sKind;
+      return (
+        <div className="co-utilization-card-popover__body">
+          {description && (
+            <div className="co-utilization-card-popover__description">{description}</div>
+          )}
+          {children}
+          <div className="co-utilization-card-popover__title">
+            {consumers.length === 1
+              ? `Top ${currentConsumer.model.label.toLowerCase()} consumers`
+              : 'Top consumers'}
+          </div>
+          {consumers.length > 1 && (
+            <Dropdown
+              className="co-utilization-card-popover__dropdown"
+              id="consumer-select"
+              name="selectConsumerType"
+              aria-label="Select consumer type"
+              items={dropdownItems}
+              onChange={onDropdownChange}
+              selectedKey={referenceForModel(model)}
+            />
+          )}
+          {body}
+        </div>
+      );
+    },
+  ),
+);
+
+const ListItem: React.FC<ListItemProps> = ({ children, value, Icon }) => (
+  <li className="co-utilization-card-popover__consumer-item">
+    {children}
+    <div className="co-utilization-card-popover__consumer-value">
+      {Icon ? (
+        <>
+          <Icon className="co-utilization-card-popover__limit-icon" />
+          {value}
+        </>
+      ) : (
+        value
+      )}
+    </div>
+  </li>
+);
+
+type ListItemProps = {
+  value: React.ReactText;
+  Icon?: React.ComponentType<ColoredIconProps>;
 };
 
-type PopoverReduxProps = {
-  activePerspective: string;
-  canAccessMonitoring: boolean;
+type LimitsBodyProps = {
+  LimitIcon?: React.ComponentType<ColoredIconProps>;
+  limit?: string;
+  requested?: string;
+  available?: string;
+  total?: string;
+  current: string;
 };
 
-type PopoverBodyProps = {
+type PopoverProps = {
+  humanize: Humanize;
+  consumers: { model: K8sKind; query: string; metric: string; fieldSelector?: string }[];
+  namespace?: string;
+  description?: React.ReactText;
+};
+
+type PopoverBodyProps = PopoverProps & {
   topConsumers?: DataPoint[][];
   error?: boolean;
-  humanize: Humanize;
-  consumers: { model: K8sKind; query: string; metric: string }[];
-  namespace?: string;
   isOpen: boolean;
-  description?: React.ReactText;
 };
 
-export type ConsumerPopoverProps = {
-  current: string;
-  title: string;
-  humanize: Humanize;
-  consumers: { model: K8sKind; query: string; metric: string }[];
-  namespace?: string;
+export type ConsumerPopoverProps = PopoverProps & {
   position?: PopoverPosition;
-  description?: React.ReactText;
+  title: string;
+  current: string;
 };

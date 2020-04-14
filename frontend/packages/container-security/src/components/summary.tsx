@@ -50,7 +50,7 @@ export const SecurityBreakdownPopup: React.FC<WatchK8sResults<WatchImageVuln>> =
 
   return (
     <>
-      <div className="co-overview-status__control-plane-description">
+      <div className="co-status-popup__description">
         Container images from Quay are analyzed to identify vulnerabilities. Images from other
         registries are not scanned.
       </div>
@@ -58,15 +58,15 @@ export const SecurityBreakdownPopup: React.FC<WatchK8sResults<WatchImageVuln>> =
         <div>
           <div style={{ display: 'flex', justifyContent: 'space-between' }}>
             <div style={{ width: '66%', marginRight: '24px' }}>
-              <div className="co-overview-status__row">
-                <div className="co-overview-status__text--bold">Severity</div>
+              <div className="co-status-popup__row">
+                <div className="co-status-popup__text--bold">Severity</div>
                 <div className="text-secondary">Fixable</div>
               </div>
               {vulnPriority
                 .map((priority) =>
                   !_.isEmpty(vulnsFor(priority.value)) ? (
-                    <div className="co-overview-status__row" key={priority.value}>
-                      <div className="co-overview-status__text--bold">
+                    <div className="co-status-popup__row" key={priority.value}>
+                      <div className="co-status-popup__text--bold">
                         {vulnsFor(priority.value).length} {priority.title}
                       </div>
                       <div className="text-secondary">
@@ -100,11 +100,11 @@ export const SecurityBreakdownPopup: React.FC<WatchK8sResults<WatchImageVuln>> =
           </div>
           {!_.isEmpty(fixableVulns) && (
             <>
-              <div className="co-overview-status__row">
-                <div className="co-overview-status__text--bold">Fixable Vulnerabilities</div>
+              <div className="co-status-popup__row">
+                <div className="co-status-popup__text--bold">Fixable Vulnerabilities</div>
               </div>
               {_.take([...fixableVulns.values()], 5).map((v) => (
-                <div className="co-overview-status__row" key={v.metadata.name}>
+                <div className="co-status-popup__row" key={v.metadata.name}>
                   <span>
                     <SecurityIcon
                       color={

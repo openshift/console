@@ -17,6 +17,7 @@ export const PressureQueries = {
   [Condition.DISK_PRESSURE]: (node: string) => [
     {
       model: PodModel,
+      fieldSelector: `spec.nodeName=${node}`,
       metric: 'pod',
       query: `(sort_desc(topk(25,sum by(pod, namespace) (container_fs_reads_total{node="${node}"}))))`,
     },
@@ -25,6 +26,7 @@ export const PressureQueries = {
   [Condition.MEM_PRESSURE]: (node: string) => [
     {
       model: PodModel,
+      fieldSelector: `spec.nodeName=${node}`,
       metric: 'pod',
       query: `(sort_desc(topk(25,sum by(pod, namespace) (container_memory_usage_bytes{node="${node}"}))))`,
     },
@@ -33,6 +35,7 @@ export const PressureQueries = {
   [Condition.PID_PRESSURE]: (node: string) => [
     {
       model: PodModel,
+      fieldSelector: `spec.nodeName=${node}`,
       metric: 'pod',
       query: `(sort_desc(topk(25,sum by(pod, namespace) (container_processes{node="${node}"}))))`,
     },

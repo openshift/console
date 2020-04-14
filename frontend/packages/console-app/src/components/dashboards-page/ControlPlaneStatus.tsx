@@ -3,62 +3,33 @@ import {
   HealthState,
   healthStateMapping,
 } from '@console/shared/src/components/dashboard/status-card/states';
-import { PrometheusResponse } from '@console/internal/components/graphs';
 import { getControlPlaneComponentHealth } from './status';
+import Status, {
+  StatusPopupSection,
+} from '@console/shared/src/components/dashboard/status-card/StatusPopup';
+import { PrometheusHealthPopupProps } from '@console/plugin-sdk';
 
-const ResponseRate: React.FC<ResponseRateProps> = ({ response, children, error }) => {
-  const health = getControlPlaneComponentHealth(response, error);
-  let icon: React.ReactNode;
-  if (health.state === HealthState.LOADING) {
-    icon = <div className="skeleton-health" />;
-  } else if (health.state !== HealthState.NOT_AVAILABLE) {
-    icon = healthStateMapping[health.state].icon;
-  }
-  return (
-    <div className="co-overview-status__row">
-      <div>{children}</div>
-      <div className="co-overview-status__response-rate">
-        <div className="text-secondary">{health.message}</div>
-        {icon && <div className="co-overview-status__response-rate-icon">{icon}</div>}
-      </div>
-    </div>
-  );
-};
+const titles = ['API Servers', 'Controller Managers', 'Schedulers', 'API Request Success Rate'];
 
-const ControlPlanePopup: React.FC<ControlPlanePopupProps> = ({ results, errors }) => (
+const ControlPlanePopup: React.FC<PrometheusHealthPopupProps> = ({ responses }) => (
   <>
-    <div className="co-overview-status__control-plane-description">
-      Components of the Control Plane are responsible for maintaining and reconciling the state of
-      the cluster.
-    </div>
-    <div className="co-overview-status__row">
-      <div className="co-overview-status__text--bold">Components</div>
-      <div className="text-secondary">Response rate</div>
-    </div>
-    <ResponseRate response={results[0]} error={errors[0]}>
-      API Servers
-    </ResponseRate>
-    <ResponseRate response={results[1]} error={errors[1]}>
-      Controller Managers
-    </ResponseRate>
-    <ResponseRate response={results[2]} error={errors[2]}>
-      Schedulers
-    </ResponseRate>
-    <ResponseRate response={results[3]} error={errors[3]}>
-      API Request Success Rate
-    </ResponseRate>
+    Components of the Control Plane are responsible for maintaining and reconciling the state of the
+    cluster.
+    <StatusPopupSection firstColumn="Components" secondColumn="Response rate">
+      {responses.map(({ response, error }, index) => {
+        const health = getControlPlaneComponentHealth(response, error);
+        let icon: React.ReactNode;
+        if (health.state === HealthState.LOADING) {
+          icon = <div className="skeleton-health" />;
+        } else if (health.state !== HealthState.NOT_AVAILABLE) {
+          icon = healthStateMapping[health.state].icon;
+        }
+        return (
+          <Status key={titles[index]} title={titles[index]} value={health.message} icon={icon} />
+        );
+      })}
+    </StatusPopupSection>
   </>
 );
 
 export default ControlPlanePopup;
-
-type ControlPlanePopupProps = {
-  results: PrometheusResponse[];
-  errors: any[];
-};
-
-type ResponseRateProps = {
-  response: PrometheusResponse;
-  children: React.ReactNode;
-  error: any;
-};

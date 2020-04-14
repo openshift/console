@@ -1,8 +1,17 @@
 import * as React from 'react';
 import { Humanize } from '@console/internal/components/utils/types';
-import { AreaChart, AreaChartStatus } from '@console/internal/components/graphs/area';
+import {
+  AreaChart,
+  AreaChartStatus,
+  chartStatusColors,
+} from '@console/internal/components/graphs/area';
 import { DataPoint } from '@console/internal/components/graphs';
 import { ByteDataTypes } from 'packages/console-shared/src/graph-helper/data-utils';
+import {
+  YellowExclamationTriangleIcon,
+  RedExclamationCircleIcon,
+  ColoredIconProps,
+} from '../../status';
 
 const getCurrentData = (
   humanizeValue: Humanize,
@@ -53,7 +62,11 @@ export const MultilineUtilizationItem: React.FC<MultilineUtilizationItemProps> =
 
     const currentValue = current.map((curr, index) => {
       const TopConsumerPopover = TopConsumerPopovers && TopConsumerPopovers[index];
-      return TopConsumerPopover ? <TopConsumerPopover current={curr} /> : <div>{curr}</div>;
+      return TopConsumerPopover ? (
+        <TopConsumerPopover key={queries[index].desc} current={curr} />
+      ) : (
+        <div key={queries[index].desc}>{curr}</div>
+      );
     });
 
     return (
@@ -85,43 +98,73 @@ export const UtilizationItem: React.FC<UtilizationItemProps> = React.memo(
     max = null,
     TopConsumerPopover,
     byteDataType,
+    limit = null,
+    requested = null,
   }) => {
-    let current;
+    let current: string;
     if (data.length) {
       const latestData = data[data.length - 1];
       current = humanizeValue(latestData.y).string;
     }
 
-    let humanMax;
-    let chartStatus;
+    let humanMax: string;
+    const chartStyle = [null, null, null];
 
-    let humanAvailable;
+    let humanAvailable: string;
     if (current && max) {
       humanMax = humanizeValue(max).string;
       const percentage = (100 * data[data.length - 1].y) / max;
 
       if (percentage >= 90) {
-        chartStatus = AreaChartStatus.ERROR;
-      } else if (percentage >= 75) {
-        chartStatus = AreaChartStatus.WARNING;
+        chartStyle[0] = { data: { fill: chartStatusColors[AreaChartStatus.ERROR] } };
+      } else if (percentage >= 80) {
+        chartStyle[0] = { data: { fill: chartStatusColors[AreaChartStatus.WARNING] } };
       }
 
       humanAvailable = humanizeValue(max - data[data.length - 1].y).string;
     }
 
+    const chartData = error ? [[]] : [data];
+    if (!error && limit) {
+      chartData.push(limit);
+      chartStyle[1] = { data: { strokeDasharray: '3,3', fillOpacity: 0 } };
+    }
+    if (!error && requested) {
+      chartData.push(requested);
+      chartStyle[2] = {
+        data: {
+          stroke: chartStatusColors[AreaChartStatus.ERROR],
+          strokeDasharray: '3,3',
+          fillOpacity: 0,
+        },
+      };
+    }
+
     const chart = (
       <AreaChart
-        data={error ? [[]] : [data]}
+        data={chartData}
         loading={!error && isLoading}
         query={query}
         xAxis={false}
         humanize={humanizeValue}
         padding={{ top: 13, left: 70, bottom: 0, right: 0 }}
         height={70}
-        chartStatus={chartStatus}
+        chartStyle={chartStyle}
         byteDataType={byteDataType}
       />
     );
+
+    let LimitIcon: React.ComponentType<ColoredIconProps>;
+    let humanLimit: string;
+    if (max && limit && limit.length) {
+      humanLimit = humanizeValue(limit[limit.length - 1].y).string;
+      const limitPercentage = (100 * limit[limit.length - 1].y) / max;
+      if (limitPercentage >= 90) {
+        LimitIcon = RedExclamationCircleIcon;
+      } else if (limitPercentage >= 80) {
+        LimitIcon = YellowExclamationTriangleIcon;
+      }
+    }
 
     return (
       <div className="co-utilization-card__item" data-test-id="utilization-item">
@@ -130,10 +173,29 @@ export const UtilizationItem: React.FC<UtilizationItemProps> = React.memo(
             <h4 className="pf-c-title pf-m-md">{title}</h4>
             {error || (!isLoading && !data.length) ? (
               <div className="text-secondary">Not available</div>
-            ) : TopConsumerPopover ? (
-              <TopConsumerPopover current={current} />
             ) : (
-              current
+              <div>
+                {LimitIcon && <LimitIcon className="co-utilization-card__item-icon" />}
+                {TopConsumerPopover ? (
+                  <TopConsumerPopover
+                    current={current}
+                    max={humanMax}
+                    limit={
+                      limit && limit.length ? humanizeValue(limit[limit.length - 1].y).string : null
+                    }
+                    requested={
+                      requested && requested.length
+                        ? humanizeValue(requested[requested.length - 1].y).string
+                        : null
+                    }
+                    available={humanAvailable}
+                    total={humanMax}
+                    LimitIcon={LimitIcon}
+                  />
+                ) : (
+                  current
+                )}
+              </div>
             )}
           </div>
           {!error && (humanAvailable || humanMax) && (
@@ -142,7 +204,8 @@ export const UtilizationItem: React.FC<UtilizationItemProps> = React.memo(
                 {humanAvailable && <span>{humanAvailable} available</span>}
               </span>
               <span className="co-utilization-card__item-text">
-                {humanMax && <span>of {humanMax}</span>}
+                {humanLimit && <span>{humanLimit} total limit</span>}
+                {!humanLimit && humanMax && <span>of {humanMax}</span>}
               </span>
             </div>
           )}
@@ -158,6 +221,8 @@ export default UtilizationItem;
 type UtilizationItemProps = {
   title: string;
   data?: DataPoint[];
+  limit?: DataPoint[];
+  requested?: DataPoint[];
   isLoading: boolean;
   humanizeValue: Humanize;
   query: string;
@@ -182,6 +247,12 @@ type MultilineUtilizationItemProps = {
 
 export type TopConsumerPopoverProp = {
   current: string;
+  max?: string;
+  limit?: string;
+  available?: string;
+  requested?: string;
+  total?: string;
+  LimitIcon?: React.ComponentType<ColoredIconProps>;
 };
 
 export type QueryWithDescription = {

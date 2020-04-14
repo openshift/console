@@ -31,12 +31,12 @@ export const getCephHealthState: ResourceHealthHandler<WatchCephResource> = ({ c
   return CephHealthStatus[status] || { state: HealthState.UNKNOWN };
 };
 
-export const getDataResiliencyState: PrometheusHealthHandler = (responses = [], errors = []) => {
-  const progress: number = getResiliencyProgress(responses[0]);
-  if (errors[0]) {
+export const getDataResiliencyState: PrometheusHealthHandler = (responses) => {
+  const progress: number = getResiliencyProgress(responses[0].response);
+  if (responses[0].error) {
     return { state: HealthState.NOT_AVAILABLE };
   }
-  if (!responses[0]) {
+  if (!responses[0].response) {
     return { state: HealthState.LOADING };
   }
   if (Number.isNaN(progress)) {

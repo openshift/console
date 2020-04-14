@@ -1,27 +1,4 @@
-.co-overview-status__control-plane-description {
-  padding-bottom: 0.7rem;
-}
-
 .co-overview-status__health.pf-l-gallery {
   width: 100%;
   --pf-l-gallery--GridTemplateColumns: repeat(auto-fill, minmax(150px, 1fr));
-}
-
-.co-overview-status__response-rate {
-  align-items: center;
-  display: flex;
-}
-
-.co-overview-status__response-rate-icon {
-  padding-left: 0.4rem;
-}
-
-.co-overview-status__row {
-  display: flex;
-  justify-content: space-between;
-  padding-bottom: 0.5rem;
-}
-
-.co-overview-status__text--bold {
-  font-weight: var(--pf-global--FontWeight--bold);
 }

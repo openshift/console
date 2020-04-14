@@ -122,10 +122,9 @@ const StatusCard: React.FC<DashboardItemProps> = ({
     noobaa,
   );
 
-  const dataResiliencyState: ObjectServiceState = getDataResiliencyState(
-    [progressResult],
-    [progressError],
-  );
+  const dataResiliencyState: ObjectServiceState = getDataResiliencyState([
+    { response: progressResult, error: progressError },
+  ]);
 
   return (
     <DashboardCard gradient>

@@ -946,3 +946,16 @@ export type EventKind = {
     state?: string;
   };
 } & K8sResourceCommon;
+
+export type MachineHealthCondition = {
+  type: string;
+  status: string;
+  timeout: string;
+};
+
+export type MachineHealthCheckKind = K8sResourceCommon & {
+  spec: {
+    selector: Selector;
+    unhealthyConditions: MachineHealthCondition[];
+  };
+};

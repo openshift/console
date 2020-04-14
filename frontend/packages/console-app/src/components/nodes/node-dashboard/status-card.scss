@@ -1,0 +1,13 @@
+.co-node-status__health {
+  height: 100%;
+  align-items: center;
+  .co-icon-and-text__icon {
+    margin-right: var(--pf-global--spacer--md);
+    top: 0;
+    font-size: 1.2rem;
+  }
+}
+
+.co-node-status__popup-alert {
+  margin-top: var(--pf-global--spacer--md);
+}

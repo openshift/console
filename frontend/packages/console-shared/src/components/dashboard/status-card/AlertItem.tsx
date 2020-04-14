@@ -38,9 +38,11 @@ export const StatusItem: React.FC<StatusItemProps> = ({
           </div>
           <span className="co-status-card__health-item-text co-break-word">{message}</span>
         </div>
-        <div className="co-status-card__alert-item-more">
-          <LinkComponent />
-        </div>
+        {LinkComponent && (
+          <div className="co-status-card__alert-item-more">
+            <LinkComponent />
+          </div>
+        )}
       </div>
     </div>
   );
@@ -67,7 +69,7 @@ type StatusItemProps = {
   Icon: React.ComponentType<any>;
   timestamp?: string;
   message: string;
-  LinkComponent: React.ComponentType<any>;
+  LinkComponent?: React.ComponentType<any>;
 };
 
 type AlertItemProps = {
