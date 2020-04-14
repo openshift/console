@@ -9,9 +9,7 @@ import HelmChartVersionDropdown from './HelmChartVersionDropdown';
 
 export interface HelmInstallUpgradeFormProps {
   chartHasValues: boolean;
-  activeChartVersion?: string;
   submitLabel: string;
-  chartName: string;
 }
 
 const HelmInstallUpgradeForm: React.FC<FormikProps<FormikValues> & HelmInstallUpgradeFormProps> = ({
@@ -21,11 +19,11 @@ const HelmInstallUpgradeForm: React.FC<FormikProps<FormikValues> & HelmInstallUp
   handleReset,
   status,
   isSubmitting,
-  activeChartVersion,
-  chartName,
   submitLabel,
+  values,
   dirty,
 }) => {
+  const { chartName, chartVersion } = values;
   return (
     <FlexForm onSubmit={handleSubmit}>
       <FormSection fullWidth>
@@ -37,14 +35,11 @@ const HelmInstallUpgradeForm: React.FC<FormikProps<FormikValues> & HelmInstallUp
               label="Release Name"
               helpText="A unique name for the Helm Chart release."
               required
-              isDisabled={!_.isEmpty(activeChartVersion)}
+              isDisabled={!!chartVersion}
             />
           </GridItem>
-          {activeChartVersion && (
-            <HelmChartVersionDropdown
-              activeChartVersion={activeChartVersion}
-              chartName={chartName}
-            />
+          {chartVersion && (
+            <HelmChartVersionDropdown chartName={chartName} chartVersion={chartVersion} />
           )}
         </Grid>
       </FormSection>
@@ -54,7 +49,7 @@ const HelmInstallUpgradeForm: React.FC<FormikProps<FormikValues> & HelmInstallUp
         errorMessage={status && status.submitError}
         isSubmitting={isSubmitting}
         submitLabel={submitLabel}
-        disableSubmit={(activeChartVersion && !dirty) || !_.isEmpty(errors)}
+        disableSubmit={(chartVersion && !dirty) || !_.isEmpty(errors)}
         resetLabel="Cancel"
       />
     </FlexForm>

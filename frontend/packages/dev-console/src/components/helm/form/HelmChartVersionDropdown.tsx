@@ -1,24 +1,23 @@
 import * as React from 'react';
 import * as _ from 'lodash';
-import { safeDump, safeLoad } from 'js-yaml';
+import { safeLoad } from 'js-yaml';
 import { FormikValues, useFormikContext } from 'formik';
 import { GridItem } from '@patternfly/react-core';
 import { coFetchJSON, coFetch } from '@console/internal/co-fetch';
 import { DropdownField } from '@console/shared';
-import { HelmChartMetaData, HelmRelease } from '../helm-types';
-import { getChartURL, getChartVersions } from '../helm-utils';
+import { HelmChartMetaData, HelmRelease, HelmChart } from '../helm-types';
+import { getChartURL, getChartVersions, getChartValuesYAML } from '../helm-utils';
 
 export type HelmChartVersionDropdownProps = {
-  activeChartVersion: string;
+  chartVersion: string;
   chartName: string;
 };
 
 const HelmChartVersionDropdown: React.FunctionComponent<HelmChartVersionDropdownProps> = ({
-  activeChartVersion,
+  chartVersion,
   chartName,
 }) => {
   const { setFieldValue } = useFormikContext<FormikValues>();
-  const [chartVersion, setChartVersion] = React.useState<string>('');
   const [helmChartVersions, setHelmChartVersions] = React.useState({});
   const [helmChartEntries, setHelmChartEntries] = React.useState<HelmChartMetaData[]>([]);
 
@@ -46,15 +45,17 @@ const HelmChartVersionDropdown: React.FunctionComponent<HelmChartVersionDropdown
   }, [chartName]);
 
   const onChartVersionChange = (value: string) => {
+    if (chartVersion === value) return;
+
     const chartURL = getChartURL(helmChartEntries, value);
 
-    setChartVersion(value);
     setFieldValue('chartVersion', value);
     setFieldValue('helmChartURL', chartURL);
 
     coFetchJSON(`/api/helm/chart?url=${chartURL}`)
-      .then((res) => {
-        setFieldValue('chartValuesYAML', !_.isEmpty(res.values) ? safeDump(res.values) : undefined);
+      .then((res: HelmChart) => {
+        const chartValues = getChartValuesYAML(res);
+        setFieldValue('chartValuesYAML', chartValues);
       })
       .catch((err) => {
         // eslint-disable-next-line no-console
@@ -68,12 +69,12 @@ const HelmChartVersionDropdown: React.FunctionComponent<HelmChartVersionDropdown
         name="chartVersion"
         label="Chart Version"
         items={helmChartVersions}
-        fullWidth
         helpText={'Select the version to upgrade to.'}
-        required
         disabled={_.isEmpty(helmChartVersions)}
-        title={chartVersion || activeChartVersion}
+        title={chartVersion}
         onChange={onChartVersionChange}
+        required
+        fullWidth
       />
     </GridItem>
   );

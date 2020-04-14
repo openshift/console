@@ -11,7 +11,7 @@ import NamespacedPage, { NamespacedPageVariants } from '../NamespacedPage';
 import HelmInstallUpgradeForm from './form/HelmInstallUpgradeForm';
 import { HelmActionType, HelmChart, HelmActionConfigType } from './helm-types';
 import { getHelmActionValidationSchema } from './helm-validation-utils';
-import { getHelmActionConfig } from './helm-utils';
+import { getHelmActionConfig, getChartValuesYAML } from './helm-utils';
 
 export type HelmInstallUpgradePageProps = RouteComponentProps<{
   ns?: string;
@@ -21,6 +21,7 @@ export type HelmInstallUpgradePageProps = RouteComponentProps<{
 export type HelmInstallUpgradeFormData = {
   helmReleaseName: string;
   helmChartURL?: string;
+  chartName?: string;
   chartValuesYAML: string;
   chartVersion?: string;
 };
@@ -35,10 +36,10 @@ const HelmInstallUpgradePage: React.FunctionComponent<HelmInstallUpgradePageProp
   const namespace = match.params.ns || searchParams.get('preselected-ns');
   const releaseName = !_.isEmpty(match.params.releaseName) && match.params.releaseName;
   const helmChartName = searchParams.get('chartName');
-  const [chartDataLoaded, setChartDataLoaded] = React.useState(false);
-  const [chartName, setChartName] = React.useState('');
-  const [chartHasValues, setChartHasValues] = React.useState(false);
-  const [YAMLData, setYAMLData] = React.useState({});
+  const [chartDataLoaded, setChartDataLoaded] = React.useState<boolean>(false);
+  const [chartName, setChartName] = React.useState<string>('');
+  const [chartHasValues, setChartHasValues] = React.useState<boolean>(false);
+  const [YAMLData, setYAMLData] = React.useState<string>('');
   const [activeChartVersion, setActiveChartVersion] = React.useState<string>('');
   const helmAction: HelmActionType =
     chartURL !== 'null' ? HelmActionType.Install : HelmActionType.Upgrade;
@@ -55,18 +56,24 @@ const HelmInstallUpgradePage: React.FunctionComponent<HelmInstallUpgradePageProp
       let res;
       try {
         res = await coFetchJSON(config.helmReleaseApi);
-      } catch {
-        if (ignore) return;
-      }
+      } catch {} // eslint-disable-line no-empty
       if (ignore) return;
-      const data: HelmChart = !_.isEmpty(res?.chart) ? res?.chart : res;
-      setYAMLData(!_.isEmpty(res?.config) ? _.merge(data?.values, res?.config) : data?.values);
-      if (helmAction === HelmActionType.Upgrade) {
-        setChartName(data.metadata.name);
-        setActiveChartVersion(data.metadata.version);
+
+      if (helmAction === HelmActionType.Install) {
+        const chartValues = getChartValuesYAML(res);
+        setYAMLData(chartValues);
+        setChartHasValues(!!chartValues);
+      } else {
+        const chart: HelmChart = res?.chart;
+        const releaseValues = !_.isEmpty(res?.config) ? safeDump(res?.config) : '';
+        const chartValues = getChartValuesYAML(chart);
+        const values = releaseValues || chartValues;
+        setYAMLData(values);
+        setChartHasValues(!!values);
+        setChartName(chart.metadata.name);
+        setActiveChartVersion(chart.metadata.version);
       }
       setChartDataLoaded(true);
-      !_.isEmpty(data.values) && setChartHasValues(true);
     };
 
     fetchHelmRelease();
@@ -79,7 +86,8 @@ const HelmInstallUpgradePage: React.FunctionComponent<HelmInstallUpgradePageProp
   const initialValues: HelmInstallUpgradeFormData = {
     helmReleaseName: releaseName || helmChartName || '',
     helmChartURL: chartURL,
-    chartValuesYAML: !_.isEmpty(YAMLData) ? safeDump(YAMLData) : undefined,
+    chartName,
+    chartValuesYAML: YAMLData,
     chartVersion: activeChartVersion,
   };
 
@@ -138,8 +146,6 @@ const HelmInstallUpgradePage: React.FunctionComponent<HelmInstallUpgradePageProp
             <HelmInstallUpgradeForm
               {...props}
               chartHasValues={chartHasValues}
-              activeChartVersion={activeChartVersion}
-              chartName={chartName}
               submitLabel={helmAction}
             />
           )}
