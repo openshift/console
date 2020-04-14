@@ -20,6 +20,11 @@
   padding: 0.2rem var(--pf-c-card--child--PaddingRight) 0.2rem var(--pf-c-card--child--PaddingLeft);
 }
 
+
+.co-activity-card__recent-more-link {
+  padding: 0 var(--pf-c-card--child--PaddingRight) var(--pf-c-card--child--PaddingBottom) var(--pf-c-card--child--PaddingLeft);
+}
+
 .co-activity-card__recent-accordion.pf-c-accordion {
   box-shadow: none;
   padding-bottom: 0;
