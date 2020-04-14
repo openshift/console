@@ -302,8 +302,8 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
         >
           The operator group in the {selectedTargetNamespace} namespace does not support the
           {selectedInstallMode === InstallModeType.InstallModeTypeAllNamespaces
-            ? 'global'
-            : 'single namespace'}
+            ? ' global '
+            : ' single namespace '}
           installation mode.
         </Alert>
       )) ||
