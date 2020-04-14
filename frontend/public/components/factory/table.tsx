@@ -289,6 +289,7 @@ const VirtualBody: React.SFC<VirtualBodyProps> = (props) => {
       style,
       customData,
     };
+
     const row = Row(rowArgs);
 
     // do not render non visible elements (this excludes overscan)

@@ -13,8 +13,9 @@ import {
   ModalBody,
   ModalSubmitFooter,
 } from '@console/internal/components/factory';
-import { PodKind } from '@console/internal/module/k8s';
 import { PodModel } from '@console/internal/models';
+import { useFlag } from '@console/shared/src/hooks/flag';
+import { PodKind } from '@console/internal/module/k8s';
 import { powerOffHost } from '../../k8s/requests/bare-metal-host';
 import {
   NODE_STATUS_UNDER_MAINTENANCE,
@@ -25,6 +26,7 @@ import { BareMetalHostKind } from '../../types';
 import { startNodeMaintenanceModal } from './StartNodeMaintenanceModal';
 import { StatusProps } from '../types';
 import { StatusValidations, getStaticPods } from './PowerOffStatusValidations';
+import { NODE_MAINTENANCE_FLAG } from '../../features';
 
 type SafePowerOffDialogProps = { isUnderMaintenance: boolean };
 
@@ -113,7 +115,6 @@ const isPowerOffSafe = (status: string, nodePods?: PodKind[]) => {
 
 export type PowerOffHostModalProps = {
   host: BareMetalHostKind;
-  hasNodeMaintenanceCapability: boolean;
   nodeName: string;
   status: StatusProps;
   cancel?: () => void;
@@ -125,7 +126,6 @@ export type PowerOffHostModalProps = {
 
 const PowerOffHostModal = withHandlePromise(
   ({
-    hasNodeMaintenanceCapability,
     host,
     nodeName,
     status,
@@ -137,6 +137,7 @@ const PowerOffHostModal = withHandlePromise(
     nodePods,
     loadError,
   }: PowerOffHostModalProps & HandlePromiseProps) => {
+    const hasNodeMaintenanceCapability = useFlag(NODE_MAINTENANCE_FLAG);
     const [canPowerOffSafely, setCanPowerOffSafely] = React.useState(false);
     const [forceOff, setForceOff] = React.useState(false);
 

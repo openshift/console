@@ -126,13 +126,13 @@ export const Deprovision = (
 export const PowerOff = (
   kindObj: K8sKind,
   host: BareMetalHostKind,
-  { hasNodeMaintenanceCapability, nodeName, status }: ActionArgs,
+  { nodeName, status }: ActionArgs,
 ) => ({
   hidden: [HOST_POWER_STATUS_POWERED_OFF, HOST_POWER_STATUS_POWERING_OFF].includes(
     getHostPowerStatus(host),
   ),
   label: 'Power Off',
-  callback: () => powerOffHostModal({ hasNodeMaintenanceCapability, host, nodeName, status }),
+  callback: () => powerOffHostModal({ host, nodeName, status }),
   accessReview: host && asAccessReview(BareMetalHostModel, host, 'update'),
 });
 

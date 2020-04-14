@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { connect } from 'react-redux';
 import Helmet from 'react-helmet';
 import { navFactory, FirehoseResource } from '@console/internal/components/utils';
 import { PodsPage } from '@console/internal/components/pod';
@@ -9,9 +8,11 @@ import { referenceForModel } from '@console/internal/module/k8s';
 import { MachineModel, NodeModel } from '@console/internal/models';
 import { connectToPlural } from '@console/internal/kinds';
 import { ResourceDetailsPageProps } from '@console/internal/components/resource-list';
+import { useFlag } from '@console/shared/src/hooks/flag';
 import { NodeMaintenanceModel, BareMetalHostModel } from '../../models';
 import { menuActionsCreator } from './menu-actions';
 import BareMetalNodeDetails from './BareMetalNodeDetails';
+import { NODE_MAINTENANCE_FLAG } from '../../features';
 
 const { details, editYaml, events, pods } = navFactory;
 
@@ -25,14 +26,11 @@ const pages = [
 ];
 
 type BareMetalNodeDetailsPageProps = ResourceDetailsPageProps & {
-  hasNodeMaintenanceCapability: boolean;
   plural: string;
 };
 
-const BareMetalNodeDetailsPage: React.FC<BareMetalNodeDetailsPageProps> = ({
-  hasNodeMaintenanceCapability,
-  ...props
-}) => {
+const BareMetalNodeDetailsPage = connectToPlural((props: BareMetalNodeDetailsPageProps) => {
+  const hasNodeMaintenanceCapability = useFlag(NODE_MAINTENANCE_FLAG);
   const resources: FirehoseResource[] = [
     {
       kind: referenceForModel(MachineModel),
@@ -83,15 +81,6 @@ const BareMetalNodeDetailsPage: React.FC<BareMetalNodeDetailsPageProps> = ({
       />
     </>
   );
-};
-
-const mapStateToProps = ({ k8s }) => ({
-  hasNodeMaintenanceCapability: !!k8s.getIn([
-    'RESOURCES',
-    'models',
-    referenceForModel(NodeMaintenanceModel),
-  ]),
-  plural: NodeModel.plural,
 });
 
-export default connect(mapStateToProps)(connectToPlural(BareMetalNodeDetailsPage));
+export default (props) => <BareMetalNodeDetailsPage plural={NodeModel.plural} {...props} />;

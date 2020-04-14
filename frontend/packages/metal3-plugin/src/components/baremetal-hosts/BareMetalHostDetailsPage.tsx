@@ -1,28 +1,26 @@
 import * as React from 'react';
-import { connect } from 'react-redux';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { DetailsPage } from '@console/internal/components/factory';
 import { navFactory, FirehoseResource } from '@console/internal/components/utils';
 import { MachineModel, MachineSetModel, NodeModel } from '@console/internal/models';
 import { ResourceEventStream } from '@console/internal/components/events';
+import { useFlag } from '@console/shared/src/hooks/flag';
 import { BareMetalHostModel, NodeMaintenanceModel } from '../../models';
 import BareMetalHostDashboard from './dashboard/BareMetalHostDashboard';
 import BareMetalHostNICs from './BareMetalHostNICs';
 import { menuActionsCreator } from './host-menu-actions';
 import BareMetalHostDisks from './BareMetalHostDisks';
 import BareMetalHostDetails from './BareMetalHostDetails';
+import { NODE_MAINTENANCE_FLAG } from '../../features';
 
 type BareMetalHostDetailsPageProps = {
   namespace: string;
   name: string;
   match: any;
-  hasNodeMaintenanceCapability: boolean;
 };
 
-const BareMetalHostDetailsPage: React.FC<BareMetalHostDetailsPageProps> = ({
-  hasNodeMaintenanceCapability,
-  ...props
-}) => {
+const BareMetalHostDetailsPage: React.FC<BareMetalHostDetailsPageProps> = (props) => {
+  const hasNodeMaintenanceCapability = useFlag(NODE_MAINTENANCE_FLAG);
   const resources: FirehoseResource[] = [
     {
       kind: referenceForModel(MachineModel),
@@ -92,13 +90,4 @@ const BareMetalHostDetailsPage: React.FC<BareMetalHostDetailsPageProps> = ({
     />
   );
 };
-
-const mapStateToProps = ({ k8s }) => ({
-  hasNodeMaintenanceCapability: !!k8s.getIn([
-    'RESOURCES',
-    'models',
-    referenceForModel(NodeMaintenanceModel),
-  ]),
-});
-
-export default connect(mapStateToProps)(BareMetalHostDetailsPage);
+export default BareMetalHostDetailsPage;
