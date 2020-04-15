@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash';
+import * as virtualMachineIcon from './images/virtual-machine.svg';
 import {
   Plugin,
   ResourceNSNavItem,
@@ -19,6 +20,7 @@ import {
 import { DashboardsStorageCapacityDropdownItem } from '@console/ceph-storage-plugin';
 import { TemplateModel, PodModel } from '@console/internal/models';
 import { getName } from '@console/shared/src/selectors/common';
+import { AddAction } from '@console/dev-console/src/extensions/add-actions';
 import * as models from './models';
 import { VMTemplateYAMLTemplates, VirtualMachineYAMLTemplates } from './models/templates';
 import { getKubevirtHealthState } from './components/dashboards-page/overview-dashboard/health';
@@ -27,6 +29,7 @@ import {
   VMOffGroupIcon,
 } from './components/dashboards-page/overview-dashboard/inventory';
 import kubevirtReducer from './redux';
+import { accessReviewImportVM } from './utils/accessReview-v2v';
 
 import './style.scss';
 
@@ -44,7 +47,8 @@ type ConsumedExtensions =
   | DashboardsStorageCapacityDropdownItem
   | ReduxReducer
   | ProjectDashboardInventoryItem
-  | DashboardsOverviewResourceActivity;
+  | DashboardsOverviewResourceActivity
+  | AddAction;
 
 export const FLAG_KUBEVIRT = 'KUBEVIRT';
 
@@ -311,6 +315,20 @@ const plugin: Plugin<ConsumedExtensions> = [
     },
     flags: {
       required: [FLAG_KUBEVIRT],
+    },
+  },
+  {
+    type: 'AddAction',
+    flags: {
+      required: [FLAG_KUBEVIRT],
+    },
+    properties: {
+      id: 'import-via-v2v',
+      url: '/k8s/ns/:namespace/virtualization/~new-wizard?mode=import',
+      label: 'Import Virtual Machine',
+      description: 'Import a virtual machine from external hypervisor',
+      icon: virtualMachineIcon,
+      accessReview: accessReviewImportVM,
     },
   },
 ];
