@@ -120,24 +120,28 @@ export const AddCapacityModal = (props: AddCapacityModalProps) => {
             />
           ) : (
             <div>
-              <label className="control-label" htmlFor="requestSize">
-                Raw Capacity
-                <FieldLevelHelp>{labelTooltip}</FieldLevelHelp>
-              </label>
-              <div className="ceph-add-capacity__form">
-                <input
-                  className={classNames('pf-c-form-control', 'ceph-add-capacity__input')}
-                  type="number"
-                  name="requestSize"
-                  value={osdSizeWithoutUnit}
-                  required
-                  disabled
-                  data-test-id="requestSize"
-                />
-                <div className="ceph-add-capacity__input--info-text">
-                  x 3 replicas = <strong>{provisionedCapacity} TiB</strong>
-                </div>
-              </div>
+              {osdSizeWithoutUnit && (
+                <>
+                  <label className="control-label" htmlFor="requestSize">
+                    Raw Capacity
+                    <FieldLevelHelp>{labelTooltip}</FieldLevelHelp>
+                  </label>
+                  <div className="ceph-add-capacity__form">
+                    <input
+                      className={classNames('pf-c-form-control', 'ceph-add-capacity__input')}
+                      type="number"
+                      name="requestSize"
+                      value={osdSizeWithoutUnit}
+                      required
+                      disabled
+                      data-test-id="requestSize"
+                    />
+                    <div className="ceph-add-capacity__input--info-text">
+                      x 3 replicas = <strong>{provisionedCapacity} TiB</strong>
+                    </div>
+                  </div>
+                </>
+              )}
               <div className="ceph-add-capacity__current-capacity">
                 <div className="text-secondary ceph-add-capacity__current-capacity--text">
                   <strong>Currently Used:</strong>
