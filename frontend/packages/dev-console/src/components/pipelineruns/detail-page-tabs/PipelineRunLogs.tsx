@@ -9,6 +9,7 @@ import { pipelineRunFilterReducer } from '../../../utils/pipeline-filter-reducer
 import { PipelineRun } from '../../../utils/pipeline-augment';
 import { PipelineRunModel } from '../../../models';
 import LogsWrapperComponent from '../logs/LogsWrapperComponent';
+import { getDownloadAllLogsCallback } from '../logs/logs-utils';
 import './PipelineRunLogs.scss';
 
 interface PipelineRunLogsProps {
@@ -58,8 +59,8 @@ class PipelineRunLogs extends React.Component<PipelineRunLogsProps, PipelineRunL
           : -1;
       }
       return taskRunFromYaml[b].status.completionTime ||
-        new Date(taskRunFromYaml[a].status.startTime) >
-          new Date(taskRunFromYaml[b].status.startTime)
+        new Date(taskRunFromYaml[a].status?.startTime) >
+          new Date(taskRunFromYaml[b].status?.startTime)
         ? 1
         : -1;
     });
@@ -80,6 +81,15 @@ class PipelineRunLogs extends React.Component<PipelineRunLogsProps, PipelineRunL
     const taskRuns = this.getSortedTaskRun(taskRunFromYaml);
 
     const taskCount = taskRuns.length;
+    const downloadAllCallback =
+      taskCount > 1
+        ? getDownloadAllLogsCallback(
+            taskRuns,
+            taskRunFromYaml,
+            obj.metadata?.namespace,
+            obj.metadata?.name,
+          )
+        : undefined;
     const resources = taskCount > 0 && [
       {
         name: _.get(taskRunFromYaml[activeItem], ['status', 'podName'], ''),
@@ -132,6 +142,8 @@ class PipelineRunLogs extends React.Component<PipelineRunLogsProps, PipelineRunL
             <Firehose key={activeItem} resources={resources}>
               <LogsWrapperComponent
                 taskName={_.get(taskRunFromYaml, [activeItem, 'pipelineTaskName'], '-')}
+                downloadAllLabel="Download All Task Logs"
+                onDownloadAll={downloadAllCallback}
               />
             </Firehose>
           ) : _.has(obj, ['status', 'conditions', 0, 'message']) ? (

@@ -90,6 +90,12 @@ export interface Pipeline extends K8sResourceKind {
   };
 }
 
+export type TaskRunKind = { pipelineTaskName?: string } & K8sResourceKind;
+
+export interface TaskRuns {
+  [key: string]: TaskRunKind;
+}
+
 export interface PipelineRun extends K8sResourceKind {
   spec?: {
     pipelineRef: { name: string };
@@ -107,9 +113,7 @@ export interface PipelineRun extends K8sResourceKind {
     conditions?: Condition[];
     startTime?: string;
     completionTime?: string;
-    taskRuns?: {
-      [key: string]: { pipelineTaskName?: string } & K8sResourceKind;
-    };
+    taskRuns?: TaskRuns;
   };
 }
 
