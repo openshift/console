@@ -18,7 +18,6 @@ import MultipleKeySelector from './MultipleKeySelector';
 interface MultipleResourceKeySelectorProps {
   label: string;
   resourceModel: K8sKind;
-  fullWidth?: boolean;
   required?: boolean;
   resourceNameField: string;
   resourceKeysField: string;
@@ -29,7 +28,6 @@ interface StateProps {
 }
 
 const MultipleResourceKeySelector: React.FC<StateProps & MultipleResourceKeySelectorProps> = ({
-  fullWidth,
   label,
   namespace,
   resourceModel,
@@ -64,8 +62,7 @@ const MultipleResourceKeySelector: React.FC<StateProps & MultipleResourceKeySele
       return _.get(res, 'metadata.name') === resourceName;
     });
     const keyMap = selectedResource?.data;
-    const itemKeys = {};
-    _.mapKeys(keyMap, (value, key) => (itemKeys[key] = key));
+    const itemKeys = Object.keys(keyMap).reduce((acc, key) => ({ ...acc, [key]: key }), {});
     setKeys(itemKeys);
   };
 
@@ -87,20 +84,16 @@ const MultipleResourceKeySelector: React.FC<StateProps & MultipleResourceKeySele
         selectedKey={field.value}
         placeholder={`Select a ${resourceModel.label}`}
         autocompleteFilter={autocompleteFilter}
-        dropDownClassName={cx({ 'dropdown--full-width': fullWidth })}
+        dropDownClassName={cx({ 'dropdown--full-width': true })}
         onChange={(value: string) => {
+          setFieldValue(resourceKeysField, undefined);
           setFieldValue(resourceNameField, value);
           setFieldTouched(resourceNameField, true);
           generateKeys(value);
         }}
         showBadge
       />
-      <MultipleKeySelector
-        name={resourceKeysField}
-        keys={keys}
-        fullWidth={fullWidth}
-        required={required}
-      />
+      {field.value && <MultipleKeySelector name={resourceKeysField} keys={keys} />}
     </FormGroup>
   );
 };

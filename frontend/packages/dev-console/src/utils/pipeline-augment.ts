@@ -84,6 +84,7 @@ export interface Pipeline extends K8sResourceKind {
   spec?: {
     params?: PipelineParam[];
     resources?: PipelineResource[];
+    workspaces?: PipelineWorkspace[];
     tasks: PipelineTask[];
     serviceAccountName?: string;
   };
@@ -162,7 +163,7 @@ export interface PipelineRunParam extends Param {
 }
 
 export interface PipelineWorkspace extends Param {
-  type?: string;
+  type: string;
   data?: {
     [key: string]: string;
   };

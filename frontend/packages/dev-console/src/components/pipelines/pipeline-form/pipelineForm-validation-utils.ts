@@ -1,5 +1,5 @@
 import * as yup from 'yup';
-import { VolumeTypes } from './PiplelineWorkspacesSection';
+import { VolumeTypes } from '../const';
 
 export const resourcesValidationSchema = yup.object().shape({
   resources: yup.array().of(
@@ -23,33 +23,41 @@ export const parametersValidationSchema = yup.object().shape({
 const volumeTypeSchema = yup
   .object()
   .when('type', {
-    is: VolumeTypes.Secret,
+    is: (type) => VolumeTypes[type] === VolumeTypes.Secret,
     then: yup.object().shape({
       secret: yup.object().shape({
         secretName: yup.string().required('Required'),
         items: yup.array().of(
           yup.object().shape({
-            key: yup.string().required('Required'),
+            key: yup.string(),
+            path: yup.string().when('key', {
+              is: (key) => !!key,
+              then: yup.string().required('Required'),
+            }),
           }),
         ),
       }),
     }),
   })
   .when('type', {
-    is: VolumeTypes['Config Map'],
+    is: (type) => VolumeTypes[type] === VolumeTypes.ConfigMap,
     then: yup.object().shape({
       configMap: yup.object().shape({
         name: yup.string().required('Required'),
         items: yup.array().of(
           yup.object().shape({
-            key: yup.string().required('Required'),
+            key: yup.string(),
+            path: yup.string().when('key', {
+              is: (key) => !!key,
+              then: yup.string().required('Required'),
+            }),
           }),
         ),
       }),
     }),
   })
   .when('type', {
-    is: VolumeTypes.PVC,
+    is: (type) => VolumeTypes[type] === VolumeTypes.PVC,
     then: yup.object().shape({
       persistentVolumeClaim: yup.object().shape({
         claimName: yup.string().required('Required'),

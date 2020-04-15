@@ -69,7 +69,7 @@ export const getPipelineRunData = (
 
   const params = latestRunParams || getPipelineRunParams(pipelineParams);
 
-  const workspaces = _.get(latestRun, ['spec', 'workspaces'], []);
+  const workspaces = _.get(latestRun, ['spec', 'workspaces']);
 
   const newPipelineRun = {
     apiVersion: pipeline ? pipeline.apiVersion : latestRun.apiVersion,
@@ -91,7 +91,7 @@ export const getPipelineRunData = (
       },
       resources,
       ...(params && { params }),
-      ...(workspaces && { workspaces }),
+      workspaces,
     },
   };
   return migratePipelineRun(newPipelineRun);

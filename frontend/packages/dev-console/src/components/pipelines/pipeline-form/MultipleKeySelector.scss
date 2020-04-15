@@ -6,12 +6,12 @@
     padding-top: var(--pf-global--spacer--xs);
   }
 
-  &__delete--button {
+  &__deleteButton {
     cursor: pointer;
     position: absolute;
     right: -22px;
     top: 25px;
-    &.is-disabled {
+    &.--disabled {
       pointer-events: none;
       color: var(--pf-global--disabled-color--200);
     }

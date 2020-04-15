@@ -18,7 +18,6 @@ import {
 import { getPipelineRunParams, getPipelineRunWorkspaces } from '../../../utils/pipeline-utils';
 import StartPipelineForm from './StartPipelineForm';
 import { startPipelineSchema } from './pipelineForm-validation-utils';
-import { VolumeTypes } from './PiplelineWorkspacesSection';
 
 export type newPipelineRunData = (Pipeline: Pipeline, latestRun?: PipelineRun) => {};
 
@@ -44,18 +43,14 @@ const StartPipelineModal: React.FC<StartPipelineModalProps & ModalComponentProps
     namespace: pipeline.metadata.namespace,
     parameters: _.get(pipeline, 'spec.params', []),
     resources: _.get(pipeline, 'spec.resources', []),
-    workspaces: _.get(pipeline, 'spec.workspaces', [
-      { name: 'password - vault' },
-      { name: 'recipe - store' },
-      { name: 'shared - data' },
-    ]),
+    workspaces:
+      pipeline.spec.workspaces?.map((workspace: PipelineWorkspace) => ({
+        ...workspace,
+        type: 'EmptyDirectory',
+      })) ?? [],
   };
   initialValues.resources.map((resource: PipelineResource) =>
     _.merge(resource, { resourceRef: { name: '' } }),
-  );
-
-  initialValues.workspaces.map((workspace: PipelineWorkspace) =>
-    _.merge(workspace, { type: VolumeTypes['Empty Directory'] }),
   );
 
   const handleSubmit = (values: StartPipelineFormValues, actions): void => {
