@@ -8,6 +8,7 @@ import {
 import { k8sCreate, K8sKind, k8sPatch, referenceForModel } from '@console/internal/module/k8s';
 import { errorModal } from '@console/internal/components/modals';
 import { getRandomChars } from '@console/shared/src/utils';
+import { removeTriggerModal } from '../components/pipelines/modals';
 import { PipelineModel, PipelineRunModel } from '../models';
 import startPipelineModal from '../components/pipelines/pipeline-form/StartPipelineModal';
 import { Pipeline, PipelineRun } from './pipeline-augment';
@@ -266,15 +267,30 @@ export const stopPipelineRun: KebabAction = (kind: K8sKind, pipelineRun: Pipelin
   };
 };
 
-export const getPipelineKebabActions = (pipelineRun?: PipelineRun): KebabAction[] => [
-  (model, resource: Pipeline) => startPipeline(model, resource, handlePipelineRunSubmit),
-  ...(pipelineRun ? [() => rerunPipelineAndRedirect(PipelineRunModel, pipelineRun)] : []),
-  editPipeline,
-  Kebab.factory.Delete,
-];
+const removeTrigger: KebabAction = (kind: K8sKind, pipeline: Pipeline) => ({
+  label: 'Remove Trigger',
+  callback: () => {
+    removeTriggerModal({ pipeline });
+  },
+  accessReview: {
+    group: kind.apiGroup,
+    resource: kind.plural,
+    name: pipeline.metadata.name,
+    namespace: pipeline.metadata.namespace,
+    verb: 'delete',
+  },
+});
 
 export const getPipelineRunKebabActions = (redirectReRun?: boolean): KebabAction[] => [
   redirectReRun ? rerunPipelineRunAndRedirect : reRunPipelineRun,
   stopPipelineRun,
+  Kebab.factory.Delete,
+];
+
+export const getPipelineKebabActions = (pipelineRun?: PipelineRun): KebabAction[] => [
+  (model, resource: Pipeline) => startPipeline(model, resource, handlePipelineRunSubmit),
+  ...(pipelineRun ? [() => rerunPipelineAndRedirect(PipelineRunModel, pipelineRun)] : []),
+  removeTrigger,
+  editPipeline,
   Kebab.factory.Delete,
 ];
