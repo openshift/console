@@ -1,5 +1,4 @@
 import * as React from 'react';
-import * as _ from 'lodash';
 import { Formik } from 'formik';
 import { connect } from 'react-redux';
 import { history } from '@console/internal/components/utils';
@@ -11,8 +10,8 @@ import { FirehoseList } from '@console/dev-console/src/components/import/import-
 import { sanitizeApplicationValue } from '@console/dev-console/src/utils/application-utils';
 import { eventSourceValidationSchema } from './eventSource-validation-utils';
 import EventSourceForm from './EventSourceForm';
-import { EventSources, EventSourceFormData } from './import-types';
-import { getEventSourceResource, getEventSourceData } from '../../utils/create-eventsources-utils';
+import { getEventSourceResource } from '../../utils/create-eventsources-utils';
+import { EventSourceFormData } from './import-types';
 
 interface EventSourceProps {
   namespace: string;
@@ -33,9 +32,7 @@ const EventSource: React.FC<Props> = ({
   activeApplication,
   contextSource,
 }) => {
-  const typeEventSource = EventSources.CronJobSource;
   const serviceName = contextSource?.split('/').pop() || '';
-  const name = _.kebabCase(typeEventSource);
   const initialValues: EventSourceFormData = {
     project: {
       name: namespace || '',
@@ -47,7 +44,8 @@ const EventSource: React.FC<Props> = ({
       name: sanitizeApplicationValue(activeApplication),
       selectedKey: activeApplication,
     },
-    name,
+    name: '',
+    apiVersion: '',
     sink: {
       knativeService: serviceName,
     },
@@ -69,10 +67,8 @@ const EventSource: React.FC<Props> = ({
         defaultLimitUnit: 'Mi',
       },
     },
-    type: typeEventSource,
-    data: {
-      [typeEventSource.toLowerCase()]: getEventSourceData(typeEventSource.toLowerCase()),
-    },
+    type: '',
+    data: {},
   };
 
   const createResources = (rawFormData: any): Promise<K8sResourceKind> => {

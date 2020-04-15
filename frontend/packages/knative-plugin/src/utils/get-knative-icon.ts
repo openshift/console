@@ -1,5 +1,5 @@
 import { referenceForModel } from '@console/internal/module/k8s';
-import * as openshiftImg from '@console/internal/imgs/logos/openshift.svg';
+import * as knativeImg from '@console/internal/imgs/logos/knative.svg';
 import * as apiServerSourceImg from '../imgs/logos/apiserversource.png';
 import * as camelSourceImg from '../imgs/logos/camelsource.svg';
 import * as containerSourceImg from '../imgs/logos/containersource.png';
@@ -11,7 +11,6 @@ import {
   EventSourceApiServerModel,
   EventSourceCamelModel,
   EventSourceKafkaModel,
-  EventSourceSinkBindingModel,
 } from '../models';
 
 export const getKnativeEventSourceIcon = (kind: string): string => {
@@ -26,9 +25,7 @@ export const getKnativeEventSourceIcon = (kind: string): string => {
       return cronJobSourceImg;
     case referenceForModel(EventSourceKafkaModel):
       return kafkaSourceImg;
-    case referenceForModel(EventSourceSinkBindingModel):
-      return containerSourceImg;
     default:
-      return openshiftImg;
+      return knativeImg;
   }
 };

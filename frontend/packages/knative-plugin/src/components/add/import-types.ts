@@ -33,6 +33,7 @@ export interface EventSourceFormData {
   project: ProjectData;
   application: ApplicationData;
   name: string;
+  apiVersion: string;
   type: string;
   sink: KnativeServiceName;
   limits: LimitsData;

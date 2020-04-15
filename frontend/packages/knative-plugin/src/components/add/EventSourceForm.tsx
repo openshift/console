@@ -11,9 +11,9 @@ import ApiServerSection from './event-sources/ApiServerSection';
 import SinkSection from './event-sources/SinkSection';
 import { EventSources } from './import-types';
 import EventSourcesSelector from './event-sources/EventSourcesSelector';
-import { useEventSourceList } from '../../utils/create-eventsources-utils';
 import KafkaSourceSection from './event-sources/KafkaSourceSection';
 import AdvancedSection from './AdvancedSection';
+import { useEventSourceList } from '../../utils/create-eventsources-utils';
 
 interface OwnProps {
   namespace: string;

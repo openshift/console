@@ -367,6 +367,7 @@ export const getDefaultEventingData = (typeEventSource: string): EventSourceForm
       displayName: '',
       description: '',
     },
+    apiVersion: 'sources.knative.dev/v1alpha1',
     application: {
       initial: 'mock-app',
       name: 'mock-app',

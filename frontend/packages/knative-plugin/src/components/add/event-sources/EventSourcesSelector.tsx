@@ -5,6 +5,8 @@ import { ItemSelectorField } from '@console/shared';
 import FormSection from '@console/dev-console/src/components/import/section/FormSection';
 import { NormalizedEventSources } from '../import-types';
 import { getEventSourceData } from '../../../utils/create-eventsources-utils';
+import { KNATIVE_EVENT_SOURCE_APIGROUP } from '../../../const';
+import { getEventSourceModels } from '../../../utils/fetch-dynamic-eventsources-utils';
 
 interface EventSourcesSelectorProps {
   eventSourceList: NormalizedEventSources;
@@ -17,10 +19,16 @@ const EventSourcesSelector: React.FC<EventSourcesSelectorProps> = ({ eventSource
     (item: string) => {
       const nameData = `data.${item.toLowerCase()}`;
       const sourceData = getEventSourceData(item.toLowerCase());
+      const selDataModel = _.find(getEventSourceModels(), { kind: item });
+      const selApiVersion = selDataModel
+        ? `${selDataModel?.apiGroup}/${selDataModel?.apiVersion}`
+        : `${KNATIVE_EVENT_SOURCE_APIGROUP}/v1alpha1`;
       setFieldValue(nameData, sourceData);
       setFieldTouched(nameData, true);
       setFieldValue('name', _.kebabCase(item));
       setFieldTouched('name', true);
+      setFieldValue('apiVersion', selApiVersion);
+      setFieldTouched('apiVersion', true);
       validateForm();
     },
     [setFieldValue, setFieldTouched, validateForm],
@@ -32,6 +40,7 @@ const EventSourcesSelector: React.FC<EventSourcesSelectorProps> = ({ eventSource
         loadingItems={!eventSourceItems}
         name="type"
         onSelect={handleItemChange}
+        autoSelect
       />
     </FormSection>
   );
