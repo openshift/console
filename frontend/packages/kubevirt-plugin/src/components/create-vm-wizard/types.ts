@@ -281,6 +281,7 @@ export type VMWizardNetwork = {
   editConfig?: UINetworkEditConfig;
   importData?: {
     id?: string;
+    netID?: string;
   };
 };
 
