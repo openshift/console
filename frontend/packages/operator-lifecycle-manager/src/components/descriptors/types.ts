@@ -58,6 +58,7 @@ export type DescriptorProps = {
   obj: K8sResourceKind;
   model: K8sKind;
   namespace?: string;
+  onHandleError?: (message: string) => void;
 };
 
 export type CapabilityProps<C extends SpecCapability | StatusCapability> = {
@@ -67,4 +68,7 @@ export type CapabilityProps<C extends SpecCapability | StatusCapability> = {
   obj?: K8sResourceKind;
   model?: K8sKind;
   namespace?: string;
+  onHandleError?: (message: string) => void;
 };
+
+export type Error = { message: string };

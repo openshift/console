@@ -5,10 +5,10 @@ import { Button, Switch, Tooltip, Checkbox } from '@patternfly/react-core';
 import { EyeIcon, EyeSlashIcon, PencilAltIcon } from '@patternfly/react-icons';
 import { LoadingInline, ResourceLink, Selector } from '@console/internal/components/utils';
 import { withFallback } from '@console/shared/src/components/error/error-boundary';
-import { k8sPatch } from '@console/internal/module/k8s';
+import { k8sPatch, k8sUpdate } from '@console/internal/module/k8s';
 import { YellowExclamationTriangleIcon } from '@console/shared';
 import { SecretValue } from '@console/internal/components/configmap-and-secret-data';
-import { CapabilityProps, DescriptorProps, SpecCapability } from '../types';
+import { CapabilityProps, DescriptorProps, SpecCapability, Error } from '../types';
 import { ResourceRequirementsModalLink } from './resource-requirements';
 import { EndpointList } from './endpoint';
 import { configureSizeModal } from './configure-size';
@@ -90,42 +90,66 @@ const BasicSelector: React.SFC<SpecCapabilityProps> = ({ value, capability }) =>
 );
 
 const BooleanSwitch: React.FC<SpecCapabilityProps> = (props) => {
+  const { model, obj, descriptor, onHandleError } = props;
   const convertedValue = !_.isNil(props.value) ? props.value : false;
   const [value, setValue] = React.useState(convertedValue);
   const [confirmed, setConfirmed] = React.useState(false);
+  const [errorMessage, setErrorMessage] = React.useState(null);
 
-  const patchFor = (val: boolean) => [
-    { op: 'add', path: `/spec/${props.descriptor.path.replace('.', '/')}`, value: val },
-  ];
+  const errorCb = (err: Error): void => {
+    setConfirmed(false);
+    setValue(convertedValue);
+    setErrorMessage(err.message);
+    onHandleError(err.message);
+  };
+
   const update = () => {
     setConfirmed(true);
-    return k8sPatch(props.model, props.obj, patchFor(value));
+    setErrorMessage(null);
+
+    if (_.has(obj, `spec.${descriptor.path}`)) {
+      const patchFor = (val: boolean) => [
+        { op: 'add', path: `/spec/${descriptor.path.replace(/\./g, '/')}`, value: val },
+      ];
+      return k8sPatch(model, obj, patchFor(value)).catch((err) => errorCb(err));
+    }
+
+    const newObj = _.cloneDeep(obj);
+    _.set(newObj, `spec.${descriptor.path}`, value);
+    return k8sUpdate(model, newObj).catch((err) => errorCb(err));
   };
 
   return (
-    <div className="co-spec-descriptor--switch">
-      <Switch
-        id={props.descriptor.path}
-        isChecked={value}
-        onChange={(val) => {
-          setValue(val);
-          setConfirmed(false);
-        }}
-        label="True"
-        labelOff="False"
-      />
-      &nbsp;&nbsp;
-      {value !== convertedValue && confirmed && <LoadingInline />}
-      {value !== convertedValue && !confirmed && (
-        <>
-          &nbsp;&nbsp;
-          <Button className="pf-m-link--align-left" type="button" variant="link" onClick={update}>
-            <YellowExclamationTriangleIcon className="co-icon-space-r pf-c-button-icon--plain" />
-            Confirm change
-          </Button>
-        </>
+    <>
+      <div className="co-spec-descriptor--switch">
+        <Switch
+          id={descriptor.path}
+          isChecked={value}
+          onChange={(val) => {
+            setValue(val);
+            setConfirmed(false);
+            setErrorMessage(null);
+            onHandleError(null);
+          }}
+          label="True"
+          labelOff="False"
+        />
+        &nbsp;&nbsp;
+        {value !== convertedValue && confirmed && <LoadingInline />}
+        {value !== convertedValue && !confirmed && (
+          <>
+            &nbsp;&nbsp;
+            <Button className="pf-m-link--align-left" type="button" variant="link" onClick={update}>
+              <YellowExclamationTriangleIcon className="co-icon-space-r pf-c-button-icon--plain" />
+              Confirm change
+            </Button>
+          </>
+        )}
+      </div>
+      {errorMessage && (
+        <div className="cos-error-title co-break-word">{errorMessage || 'An error occurred'}</div>
       )}
-    </div>
+    </>
   );
 };
 
@@ -246,7 +270,7 @@ const capabilityFor = (specCapability: SpecCapability) => {
  * individual components from this module.
  */
 export const SpecDescriptor = withFallback((props: DescriptorProps) => {
-  const { model, obj, descriptor, value, namespace } = props;
+  const { model, obj, descriptor, value, namespace, onHandleError } = props;
   const capability = _.get(descriptor, ['x-descriptors'], []).find(
     (c) =>
       !c.startsWith(SpecCapability.fieldGroup) &&
@@ -271,6 +295,7 @@ export const SpecDescriptor = withFallback((props: DescriptorProps) => {
           namespace={namespace}
           model={model}
           obj={obj}
+          onHandleError={onHandleError}
         />
       </dd>
     </dl>
