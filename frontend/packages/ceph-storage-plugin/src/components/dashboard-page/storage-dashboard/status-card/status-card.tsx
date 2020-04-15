@@ -37,14 +37,10 @@ export const CephAlerts = withDashboardResources(
     const alerts = filterCephAlerts(data);
 
     return (
-      <AlertsBody
-        isLoading={!loaded}
-        error={!_.isEmpty(loadError)}
-        emptyMessage="No persistent storage alerts"
-      >
-        {alerts.length
-          ? alerts.map((alert) => <AlertItem key={alertURL(alert, alert.rule.id)} alert={alert} />)
-          : null}
+      <AlertsBody error={!_.isEmpty(loadError)}>
+        {loaded &&
+          alerts.length &&
+          alerts.map((alert) => <AlertItem key={alertURL(alert, alert.rule.id)} alert={alert} />)}
       </AlertsBody>
     );
   },

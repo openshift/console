@@ -2,7 +2,7 @@ import * as React from 'react';
 import AlertsBody from '@console/shared/src/components/dashboard/status-card/AlertsBody';
 import { StatusItem } from '@console/shared/src/components/dashboard/status-card/AlertItem';
 import { BlueInfoCircleIcon } from '@console/shared/src/components/status';
-import { VMIKind, VMKind } from '../../../types';
+import { VMIKind } from '../../../types';
 import { getVMIConditionsByType } from '../../../selectors/vmi';
 
 // Based on: https://github.com/kubevirt/kubevirt/blob/f71e9c9615a6c36178169d66814586a93ba515b5/staging/src/kubevirt.io/client-go/api/v1/types.go#L337
@@ -14,8 +14,8 @@ const isGuestAgentInstalled = (vmi: VMIKind) => {
   return conditions && conditions.length > 0 && conditions[0].status === 'True';
 };
 
-export const VMAlerts: React.FC<VMAlertsProps> = ({ vm, vmi }) => (
-  <AlertsBody emptyMessage="No VM messages" isLoading={!(vm || vmi)}>
+export const VMAlerts: React.FC<VMAlertsProps> = ({ vmi }) => (
+  <AlertsBody>
     {vmi && vmi.status && !isGuestAgentInstalled(vmi) && (
       <StatusItem
         Icon={BlueInfoCircleIcon}
@@ -26,6 +26,5 @@ export const VMAlerts: React.FC<VMAlertsProps> = ({ vm, vmi }) => (
 );
 
 type VMAlertsProps = {
-  vm?: VMKind;
   vmi?: VMIKind;
 };
