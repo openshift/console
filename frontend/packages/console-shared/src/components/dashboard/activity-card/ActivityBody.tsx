@@ -3,16 +3,16 @@ import classNames from 'classnames';
 import { K8sActivityProps, PrometheusActivityProps, LazyLoader } from '@console/plugin-sdk';
 import { PlayIcon, PauseIcon } from '@patternfly/react-icons';
 import { Accordion } from '@patternfly/react-core';
+import { K8sResourceKind, EventKind } from '@console/internal/module/k8s';
 import { ErrorLoadingEvents, sortEvents } from '@console/internal/components/events';
 import { Timestamp } from '@console/internal/components/utils/timestamp';
 import { AsyncComponent } from '@console/internal/components/utils/async';
 import { FirehoseResult } from '@console/internal/components/utils/types';
-import { EventStreamList } from '@console/internal/components/utils/event-stream';
-import { K8sResourceKind, EventKind } from '@console/internal/module/k8s';
 import { PrometheusResponse } from '@console/internal/components/graphs';
 import { DashboardCardButtonLink } from '../dashboard-card/DashboardCardLink';
 import EventItem from './EventItem';
 import './activity-card.scss';
+import { Link } from 'react-router-dom';
 
 export const Activity: React.FC<ActivityProps> = ({ timestamp, children }) => (
   <div className="co-activity-item__ongoing">
@@ -30,8 +30,9 @@ export const RecentEventsBodyContent: React.FC<RecentEventsBodyContentProps> = (
   filter,
   paused,
   setPaused,
+  moreLink,
 }) => {
-  const ref = React.useRef([]);
+  const ref = React.useRef<EventKind[]>([]);
   React.useEffect(() => {
     if (paused && events) {
       ref.current = events.data;
@@ -42,7 +43,7 @@ export const RecentEventsBodyContent: React.FC<RecentEventsBodyContentProps> = (
     ref.current = events.data;
   }
   const eventsData = ref.current;
-  const [expanded, setExpanded] = React.useState([]);
+  const [expanded, setExpanded] = React.useState<string[]>([]);
   const onToggle = React.useCallback(
     (uid: string) => {
       const isExpanded = expanded.includes(uid);
@@ -57,10 +58,6 @@ export const RecentEventsBodyContent: React.FC<RecentEventsBodyContentProps> = (
       return expanded.includes(uid);
     },
     [expanded],
-  );
-  const eventItem = React.useCallback(
-    (props) => <EventItem isExpanded={isExpanded} onToggle={onToggle} {...props} />,
-    [isExpanded, onToggle],
   );
 
   if (events && events.loadError) {
@@ -81,8 +78,9 @@ export const RecentEventsBodyContent: React.FC<RecentEventsBodyContentProps> = (
   }
 
   const filteredEvents = filter ? eventsData.filter(filter) : eventsData;
-  const sortedEvents = sortEvents(filteredEvents);
-  if (filteredEvents.length === 0) {
+  const sortedEvents: EventKind[] = sortEvents(filteredEvents);
+  const lastEvents = sortedEvents.slice(0, 50);
+  if (sortedEvents.length === 0) {
     return (
       <Activity>
         <div className="text-secondary">There are no recent events.</div>
@@ -90,17 +88,22 @@ export const RecentEventsBodyContent: React.FC<RecentEventsBodyContentProps> = (
     );
   }
   return (
-    <Accordion
-      asDefinitionList={false}
-      headingLevel="h5"
-      className="co-activity-card__recent-accordion"
-    >
-      <EventStreamList
-        className="co-activity-card__recent-list"
-        events={sortedEvents}
-        EventComponent={eventItem}
-      />
-    </Accordion>
+    <>
+      <Accordion
+        asDefinitionList={false}
+        headingLevel="h5"
+        className="co-activity-card__recent-accordion"
+      >
+        {lastEvents.map((e) => (
+          <EventItem key={e.metadata.uid} isExpanded={isExpanded} onToggle={onToggle} event={e} />
+        ))}
+      </Accordion>
+      {sortedEvents.length > 50 && !!moreLink && (
+        <Link className="co-activity-card__recent-more-link" to={moreLink}>
+          View all events
+        </Link>
+      )}
+    </>
   );
 };
 
@@ -207,6 +210,7 @@ type OngoingActivityBodyProps = {
 type RecentEventsBodyProps = {
   events: FirehoseResult<EventKind[]>;
   filter?: (event: EventKind) => boolean;
+  moreLink?: string;
 };
 
 type RecentEventsBodyContentProps = RecentEventsBodyProps & {

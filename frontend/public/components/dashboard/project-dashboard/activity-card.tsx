@@ -32,8 +32,8 @@ const getEventsResource = (projectName: string): FirehoseResource => ({
   namespace: projectName,
 });
 
-const RecentEvent = withDashboardResources(
-  ({ watchK8sResource, stopWatchK8sResource, resources, projectName }: RecentEventProps) => {
+const RecentEvent = withDashboardResources<RecentEventProps>(
+  ({ watchK8sResource, stopWatchK8sResource, resources, projectName, viewEvents }) => {
     React.useEffect(() => {
       if (projectName) {
         const eventsResource = getEventsResource(projectName);
@@ -43,7 +43,12 @@ const RecentEvent = withDashboardResources(
         };
       }
     }, [watchK8sResource, stopWatchK8sResource, projectName]);
-    return <RecentEventsBody events={resources.events as FirehoseResult<EventKind[]>} />;
+    return (
+      <RecentEventsBody
+        events={resources.events as FirehoseResult<EventKind[]>}
+        moreLink={viewEvents}
+      />
+    );
   },
 );
 
@@ -130,16 +135,17 @@ const OngoingActivity = connect(mapStateToProps)(
 export const ActivityCard: React.FC = () => {
   const { obj } = React.useContext(ProjectDashboardContext);
   const projectName = getName(obj);
+  const viewEvents = `/k8s/ns/${projectName}/events`;
   return (
     <DashboardCard gradient data-test-id="activity-card">
       <DashboardCardHeader>
         <DashboardCardTitle>Activity</DashboardCardTitle>
-        <DashboardCardLink to={`/k8s/ns/${projectName}/events`}>View events</DashboardCardLink>
+        <DashboardCardLink to={viewEvents}>View events</DashboardCardLink>
       </DashboardCardHeader>
       <DashboardCardBody>
         <ActivityBody className="co-project-dashboard__activity-body">
           <OngoingActivity projectName={projectName} />
-          <RecentEvent projectName={projectName} />
+          <RecentEvent projectName={projectName} viewEvents={viewEvents} />
         </ActivityBody>
       </DashboardCardBody>
     </DashboardCard>
@@ -148,6 +154,7 @@ export const ActivityCard: React.FC = () => {
 
 type RecentEventProps = DashboardItemProps & {
   projectName: string;
+  viewEvents: string;
 };
 
 type OngoingActivityReduxProps = {

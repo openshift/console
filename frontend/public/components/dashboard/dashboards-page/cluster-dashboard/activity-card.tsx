@@ -27,6 +27,7 @@ import { uniqueResource } from './utils';
 import { PrometheusResponse } from '../../../graphs';
 
 const eventsResource: FirehoseResource = { isList: true, kind: EventModel.kind, prop: 'events' };
+const viewEvents = '/k8s/all-namespaces/events';
 
 const RecentEvent = withDashboardResources(
   ({ watchK8sResource, stopWatchK8sResource, resources }) => {
@@ -36,7 +37,12 @@ const RecentEvent = withDashboardResources(
         stopWatchK8sResource(eventsResource);
       };
     }, [watchK8sResource, stopWatchK8sResource]);
-    return <RecentEventsBody events={resources.events as FirehoseResult<EventKind[]>} />;
+    return (
+      <RecentEventsBody
+        events={resources.events as FirehoseResult<EventKind[]>}
+        moreLink={viewEvents}
+      />
+    );
   },
 );
 
@@ -169,7 +175,7 @@ export const ActivityCard: React.FC<{}> = React.memo(() => (
   <DashboardCard gradient data-test-id="activity-card">
     <DashboardCardHeader>
       <DashboardCardTitle>Activity</DashboardCardTitle>
-      <DashboardCardLink to="/k8s/all-namespaces/events">View events</DashboardCardLink>
+      <DashboardCardLink to={viewEvents}>View events</DashboardCardLink>
     </DashboardCardHeader>
     <DashboardCardBody>
       <ActivityBody className="co-overview-dashboard__activity-body">
