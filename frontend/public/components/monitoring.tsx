@@ -1,7 +1,15 @@
 import * as classNames from 'classnames';
 import * as _ from 'lodash-es';
 import { murmur3 } from 'murmurhash-js';
-import { Alert, ActionGroup, Badge, Button, TextInput, Tooltip } from '@patternfly/react-core';
+import {
+  Alert,
+  ActionGroup,
+  Badge,
+  Button,
+  TextArea,
+  TextInput,
+  Tooltip,
+} from '@patternfly/react-core';
 import { sortable } from '@patternfly/react-table';
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
@@ -1415,11 +1423,7 @@ const SilenceForm_: React.FC<SilenceFormProps> = ({ defaults, Info, title }) => 
               </div>
               <div className="form-group">
                 <label>Comment</label>
-                <textarea
-                  className="pf-c-form-control"
-                  onChange={(e) => setComment(e.currentTarget.value)}
-                  value={comment}
-                />
+                <TextArea aria-label="Comment" onChange={setComment} value={comment} />
               </div>
             </div>
           </div>
