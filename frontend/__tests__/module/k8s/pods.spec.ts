@@ -26,6 +26,13 @@ describe('podPhase', () => {
     expect(phase).toEqual('Terminating');
   });
 
+  it('returns `Unknown` if given pod has reason `NodeLost`', () => {
+    pod.status.reason = 'NodeLost';
+    const phase: string = podPhase(pod);
+
+    expect(phase).toEqual('Unknown');
+  });
+
   it('returns the pod status phase', () => {
     pod.status.phase = 'Pending';
     const phase: string = podPhase(pod);
@@ -40,22 +47,15 @@ describe('podPhase', () => {
     expect(phase).toEqual(pod.status.reason);
   });
 
-  it('returns the state reason of the last waiting or terminated container in the pod', () => {
+  it('returns the state reason of the first waiting or terminated container in the pod', () => {
     pod.status.containerStatuses = [
+      { state: { running: {} } },
       { state: { waiting: { reason: 'Unschedulable' } } },
       { state: { terminated: { reason: 'Initialized' } } },
       { state: { waiting: { reason: 'Ready' } } },
-      { state: { running: {} } },
     ];
-    const expectedPhase: string = pod.status.containerStatuses
-      .filter(({ state }) => state.waiting !== undefined || state.terminated !== undefined)
-      .map(({ state }) =>
-        state.waiting !== undefined ? state.waiting.reason : state.terminated.reason,
-      )
-      .slice(-1)[0];
     const phase: string = podPhase(pod);
-
-    expect(phase).toEqual(expectedPhase);
+    expect(phase).toEqual('Unschedulable');
   });
 });
 
