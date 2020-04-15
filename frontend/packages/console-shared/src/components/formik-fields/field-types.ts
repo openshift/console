@@ -3,7 +3,7 @@ import { K8sResourceKind } from '@console/internal/module/k8s';
 
 export interface FieldProps {
   name: string;
-  label?: string;
+  label?: React.ReactNode;
   helpText?: React.ReactNode;
   helpTextInvalid?: React.ReactNode;
   required?: boolean;
@@ -99,12 +99,17 @@ export interface SecretKeyRef {
   };
 }
 
-export interface RadioButtonProps extends FieldProps {
-  options: RadioOption[];
+export interface RadioButtonFieldProps extends FieldProps {
+  value: string | number;
+  description?: React.ReactNode;
 }
 
-export interface RadioOption {
-  value: string;
+export interface RadioGroupFieldProps extends FieldProps {
+  options: RadioGroupOption[];
+}
+
+export interface RadioGroupOption {
+  value: string | number;
   label: React.ReactNode;
   isDisabled?: boolean;
   children?: React.ReactNode;

@@ -1,61 +1,27 @@
 import * as React from 'react';
-import { useField } from 'formik';
-import { FormGroup, Radio } from '@patternfly/react-core';
-import { RadioButtonProps } from './field-types';
+import { useField, useFormikContext, FormikValues } from 'formik';
+import { Radio } from '@patternfly/react-core';
+import { RadioButtonFieldProps } from './field-types';
 import { getFieldId } from './field-utils';
-import './RadioButtonField.scss';
 
-const RadioButtonField: React.FC<RadioButtonProps> = ({
-  label,
-  options,
-  helpText,
-  required,
-  ...props
-}) => {
-  const [field, { touched, error }] = useField(props.name);
-  const fieldId = getFieldId(props.name, 'radiobutton');
+const RadioButtonField: React.FC<RadioButtonFieldProps> = ({ name, label, value, ...props }) => {
+  const [field, { touched, error }] = useField(name);
+  const { setFieldValue } = useFormikContext<FormikValues>();
+  const fieldId = getFieldId(`${name}-${value}`, 'radiobutton');
   const isValid = !(touched && error);
-  const errorMessage = !isValid ? error : '';
   return (
-    <FormGroup
-      className="odc-radio-button"
-      fieldId={fieldId}
-      helperText={helpText}
-      helperTextInvalid={errorMessage}
-      isValid={isValid}
-      isRequired={required}
+    <Radio
+      {...field}
+      {...props}
+      id={fieldId}
+      value={value}
       label={label}
-    >
-      {options.map((option) => {
-        const activeChild = field.value === option.value && option.activeChildren;
-        const staticChild = option.children;
-
-        return (
-          <React.Fragment key={option.value}>
-            <Radio
-              {...field}
-              {...props}
-              id={getFieldId(option.value, 'radiobutton')}
-              value={option.value}
-              label={option.label}
-              isChecked={field.value === option.value}
-              isValid={isValid}
-              isDisabled={option.isDisabled}
-              aria-describedby={`${fieldId}-helper`}
-              onChange={(val, event) => {
-                field.onChange(event);
-              }}
-            />
-            {(activeChild || staticChild) && (
-              <div className="odc-radio-button__children">
-                {staticChild}
-                {activeChild}
-              </div>
-            )}
-          </React.Fragment>
-        );
-      })}
-    </FormGroup>
+      isChecked={field.value === value}
+      isValid={isValid}
+      isDisabled={props.isDisabled}
+      aria-label={`${fieldId}-${label}`}
+      onChange={() => setFieldValue(name, value)}
+    />
   );
 };
 

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useFormikContext, FormikValues } from 'formik';
-import { RadioButtonField } from '@console/shared';
+import { RadioGroupField } from '@console/shared';
 import FormSection from '../section/FormSection';
 import { imageRegistryType } from '../../../utils/imagestream-utils';
 import ImageStream from './ImageStream';
@@ -30,7 +30,7 @@ const ImageSearchSection: React.FC = () => {
       title="Image"
       subTitle="Deploy an existing image from an image stream or image registry."
     >
-      <RadioButtonField
+      <RadioGroupField
         name="registry"
         options={[
           {

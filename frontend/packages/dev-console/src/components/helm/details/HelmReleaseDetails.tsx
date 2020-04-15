@@ -17,7 +17,11 @@ import { fetchHelmReleases } from '../helm-utils';
 import HelmReleaseResources from './resources/HelmReleaseResources';
 import HelmReleaseOverview from './overview/HelmReleaseOverview';
 import HelmReleaseHistory from './history/HelmReleaseHistory';
-import { deleteHelmRelease, upgradeHelmRelease } from '../../../actions/modify-helm-release';
+import {
+  deleteHelmRelease,
+  upgradeHelmRelease,
+  rollbackHelmRelease,
+} from '../../../actions/modify-helm-release';
 import HelmReleaseNotes from './HelmReleaseNotes';
 import { HelmRelease } from '../helm-types';
 
@@ -49,23 +53,31 @@ export const LoadedHelmReleaseDetails: React.FC<LoadedHelmReleaseDetailsProps> =
     return <StatusBox loaded={secret.loaded} loadError={secret.loadError} />;
   }
 
-  const secretResource = secret.data;
+  const secretResources = secret.data;
 
-  if (_.isEmpty(secretResource)) return <ErrorPage404 />;
+  if (_.isEmpty(secretResources)) return <ErrorPage404 />;
 
-  const secretName = secretResource[0]?.metadata.name;
+  const sortedSecretResources = _.orderBy(
+    secretResources,
+    (o) => Number(o.metadata.labels.version),
+    'desc',
+  );
+
+  const latestReleaseSecret = sortedSecretResources[0];
+  const secretName = latestReleaseSecret?.metadata.name;
   const releaseName = helmReleaseData?.name;
 
   const title = (
     <>
       {releaseName}
       <Badge isRead style={{ verticalAlign: 'middle', marginLeft: 'var(--pf-global--spacer--md)' }}>
-        <Status status={_.capitalize(helmReleaseData?.info?.status)} />
+        <Status status={_.capitalize(latestReleaseSecret?.metadata.labels.status)} />
       </Badge>
     </>
   );
 
   const menuActions = [
+    () => rollbackHelmRelease(releaseName, namespace),
     () => upgradeHelmRelease(releaseName, namespace),
     () => deleteHelmRelease(releaseName, namespace, `/helm-releases/ns/${namespace}`),
   ];
@@ -96,7 +108,7 @@ export const LoadedHelmReleaseDetails: React.FC<LoadedHelmReleaseDetailsProps> =
         },
         {
           href: 'history',
-          name: 'History',
+          name: 'Revision History',
           component: HelmReleaseHistory,
         },
         {

@@ -8,7 +8,7 @@ import {
   ServiceModel,
   KnativeServingModel,
 } from '@console/knative-plugin';
-import { getBadgeFromType, RadioButtonField, RadioOption } from '@console/shared';
+import { getBadgeFromType, RadioGroupField, RadioGroupOption } from '@console/shared';
 import { useAccessReview } from '@console/internal/components/utils';
 import { getActiveNamespace } from '@console/internal/actions/ui';
 import { Resources, ReadableResourcesNames } from '../import-types';
@@ -34,7 +34,7 @@ const ResourceSection: React.FC<ResourceSectionProps> = ({ flags }) => {
   const [field] = useField<Resources[]>('resourceTypesNotValid');
   const invalidTypes = field.value || [];
 
-  const radioOptions: RadioOption[] = [];
+  const radioOptions: RadioGroupOption[] = [];
   if (!invalidTypes.includes(Resources.Kubernetes)) {
     radioOptions.push({
       label: ReadableResourcesNames[Resources.Kubernetes],
@@ -86,7 +86,7 @@ const ResourceSection: React.FC<ResourceSectionProps> = ({ flags }) => {
   return (
     <FormSection title="Resources" fullWidth>
       <div>Select the resource type to generate</div>
-      <RadioButtonField name="resources" options={radioOptions} />
+      <RadioGroupField name="resources" options={radioOptions} />
     </FormSection>
   );
 };

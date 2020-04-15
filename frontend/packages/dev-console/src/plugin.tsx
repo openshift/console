@@ -632,6 +632,19 @@ const plugin: Plugin<ConsumedExtensions> = [
     type: 'Page/Route',
     properties: {
       exact: true,
+      path: [`/helm-releases/ns/:ns/:releaseName/rollback`],
+      loader: async () =>
+        (
+          await import(
+            './components/helm/HelmReleaseRollbackPage' /* webpackChunkName: "dev-console-helm-rollback" */
+          )
+        ).default,
+    },
+  },
+  {
+    type: 'Page/Route',
+    properties: {
+      exact: true,
       path: ['/helm-releases/all-namespaces', '/helm-releases/ns/:ns'],
       loader: async () =>
         (
