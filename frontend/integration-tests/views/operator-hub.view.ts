@@ -13,7 +13,6 @@ export const operatorModalIsClosed = () => browser.wait(until.not(until.presence
   .then(() => browser.sleep(500));
 export const viewInstalledOperator = () => $('.hint-block-pf').element(by.linkText('View it here.')).click();
 
-export const createSubscriptionFormTitle = element(by.cssContainingText('h1', 'Create Operator Subscription'));
 export const createSubscriptionFormBtn = element(by.buttonText('Subscribe'));
 export const createSubscriptionFormInstallMode = element(by.cssContainingText('label', 'Installation Mode'));
 
