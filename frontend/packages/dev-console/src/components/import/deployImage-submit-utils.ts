@@ -8,10 +8,8 @@ import {
   RoleBindingModel,
 } from '@console/internal/models';
 import { k8sCreate, K8sResourceKind, K8sVerb, k8sUpdate } from '@console/internal/module/k8s';
-import {
-  getKnativeServiceDepResource,
-  ServiceModel as KnServiceModel,
-} from '@console/knative-plugin';
+import { ServiceModel as KnServiceModel } from '@console/knative-plugin';
+import { getKnativeServiceDepResource } from '@console/knative-plugin/src/utils/create-knative-utils';
 import { getRandomChars } from '@console/shared/src/utils';
 import { getAppLabels, getPodLabels, mergeData } from '../../utils/resource-label-utils';
 import {

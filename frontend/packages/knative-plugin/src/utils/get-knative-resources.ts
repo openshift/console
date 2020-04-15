@@ -1,6 +1,19 @@
 import * as _ from 'lodash';
-import { K8sResourceKind, PodKind } from '@console/internal/module/k8s';
+import { K8sResourceKind, PodKind, referenceForModel } from '@console/internal/module/k8s';
+import { FirehoseResource } from '@console/internal/components/utils';
 import { KNATIVE_SERVING_LABEL } from '../const';
+import {
+  ServiceModel,
+  RevisionModel,
+  ConfigurationModel,
+  RouteModel,
+  EventSourceCronJobModel,
+  EventSourceContainerModel,
+  EventSourceApiServerModel,
+  EventSourceCamelModel,
+  EventSourceKafkaModel,
+  EventSourceSinkBindingModel,
+} from '../models';
 
 export type KnativeItem = {
   revisions?: K8sResourceKind[];
@@ -116,4 +129,134 @@ export const getEventSourceSinkBinding = (dc: K8sResourceKind, props): KnativeIt
   return eventSourceServicebinding && eventSourceServicebinding.length > 0
     ? { eventSourceServicebinding }
     : undefined;
+};
+
+export const knativeServingResourcesRevision = (namespace: string): FirehoseResource[] => {
+  const knativeResource = [
+    {
+      isList: true,
+      kind: referenceForModel(RevisionModel),
+      namespace,
+      prop: 'revisions',
+      optional: true,
+    },
+  ];
+  return knativeResource;
+};
+
+export const knativeServingResourcesConfigurations = (namespace: string): FirehoseResource[] => {
+  const knativeResource = [
+    {
+      isList: true,
+      kind: referenceForModel(ConfigurationModel),
+      namespace,
+      prop: 'configurations',
+      optional: true,
+    },
+  ];
+  return knativeResource;
+};
+
+export const knativeServingResourcesRoutes = (namespace: string): FirehoseResource[] => {
+  const knativeResource = [
+    {
+      isList: true,
+      kind: referenceForModel(RouteModel),
+      namespace,
+      prop: 'ksroutes',
+      optional: true,
+    },
+  ];
+  return knativeResource;
+};
+
+export const knativeServingResourcesServices = (namespace: string): FirehoseResource[] => {
+  const knativeResource = [
+    {
+      isList: true,
+      kind: referenceForModel(ServiceModel),
+      namespace,
+      prop: 'ksservices',
+      optional: true,
+    },
+  ];
+  return knativeResource;
+};
+
+export const eventSourceResourcesCronJob = (namespace: string): FirehoseResource[] => {
+  const knativeResource = [
+    {
+      isList: true,
+      kind: referenceForModel(EventSourceCronJobModel),
+      namespace,
+      prop: 'eventSourceCronjob',
+      optional: true,
+    },
+  ];
+  return knativeResource;
+};
+
+export const eventSourceResourcesContainer = (namespace: string): FirehoseResource[] => {
+  const knativeResource = [
+    {
+      isList: true,
+      kind: referenceForModel(EventSourceContainerModel),
+      namespace,
+      prop: 'eventSourceContainers',
+      optional: true,
+    },
+  ];
+  return knativeResource;
+};
+
+export const eventSourceResourcesApiServer = (namespace: string): FirehoseResource[] => {
+  const knativeResource = [
+    {
+      isList: true,
+      kind: referenceForModel(EventSourceApiServerModel),
+      namespace,
+      prop: 'eventSourceApiserver',
+      optional: true,
+    },
+  ];
+  return knativeResource;
+};
+
+export const eventSourceResourcesCamel = (namespace: string): FirehoseResource[] => {
+  const knativeResource = [
+    {
+      isList: true,
+      kind: referenceForModel(EventSourceCamelModel),
+      namespace,
+      prop: 'eventSourceCamel',
+      optional: true,
+    },
+  ];
+  return knativeResource;
+};
+
+export const eventSourceResourcesKafka = (namespace: string): FirehoseResource[] => {
+  const knativeResource = [
+    {
+      isList: true,
+      kind: referenceForModel(EventSourceKafkaModel),
+      namespace,
+      prop: 'eventSourceKafka',
+      optional: true,
+    },
+  ];
+  return knativeResource;
+};
+
+export const eventSourceResourcesSinkBinding = (namespace: string): FirehoseResource[] => {
+  const knativeResource = [
+    {
+      isList: true,
+      kind: referenceForModel(EventSourceSinkBindingModel),
+      namespace,
+      prop: 'eventSourceSinkbinding',
+      optional: true,
+    },
+  ];
+  return knativeResource;
 };

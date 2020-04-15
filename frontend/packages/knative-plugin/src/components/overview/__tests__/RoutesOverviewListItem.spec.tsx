@@ -3,7 +3,7 @@ import { shallow, ShallowWrapper } from 'enzyme';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { ResourceLink, ExternalLink } from '@console/internal/components/utils';
 import { MockKnativeResources } from '@console/dev-console/src/components/topology/__tests__/topology-knative-test-data';
-import { RouteModel } from '@console/knative-plugin';
+import { RouteModel } from '../../../models';
 import RoutesOverviewListItem from '../RoutesOverviewListItem';
 
 type RoutesOverviewListItemProps = React.ComponentProps<typeof RoutesOverviewListItem>;

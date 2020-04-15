@@ -1,19 +1,18 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import { shallow, ShallowWrapper } from 'enzyme';
+import { Link } from 'react-router-dom';
 import { Button } from '@patternfly/react-core';
 import * as utils from '@console/internal/components/utils';
+import { referenceForModel } from '@console/internal/module/k8s';
 import { MockKnativeResources } from '@console/dev-console/src/components/topology/__tests__/topology-knative-test-data';
 import {
   mockRevisions,
   mockTrafficData,
-} from '@console/knative-plugin/src/utils/__mocks__/traffic-splitting-utils-mock';
-
+} from '../../../utils/__mocks__/traffic-splitting-utils-mock';
 import * as modal from '../../modals';
 import RevisionsOverviewList, { RevisionsOverviewListProps } from '../RevisionsOverviewList';
 import RevisionsOverviewListItem from '../RevisionsOverviewListItem';
-import { Link } from 'react-router-dom';
-import { referenceForModel } from '@console/internal/module/k8s';
 import { RevisionModel } from '../../../models';
 
 describe('RevisionsOverviewList', () => {

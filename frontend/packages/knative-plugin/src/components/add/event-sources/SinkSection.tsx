@@ -4,7 +4,7 @@ import { useFormikContext, FormikValues } from 'formik';
 import { FormGroup } from '@patternfly/react-core';
 import { getFieldId, ResourceDropdownField } from '@console/shared';
 import FormSection from '@console/dev-console/src/components/import/section/FormSection';
-import { knativeServingResourcesServices } from '../../../utils/create-knative-utils';
+import { knativeServingResourcesServices } from '../../../utils/get-knative-resources';
 
 interface SinkSectionProps {
   namespace: string;

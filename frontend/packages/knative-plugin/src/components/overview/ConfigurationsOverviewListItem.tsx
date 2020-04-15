@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { K8sResourceKind, referenceForModel } from '@console/internal/module/k8s';
 import { ResourceLink } from '@console/internal/components/utils';
-import { ConfigurationModel } from '@console/knative-plugin';
+import { ConfigurationModel } from '../../models';
 
 export type ConfigurationsOverviewListItemProps = {
   configuration: K8sResourceKind;

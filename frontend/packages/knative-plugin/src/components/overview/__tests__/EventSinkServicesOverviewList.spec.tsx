@@ -13,7 +13,7 @@ import {
   ExternalLink,
   SidebarSectionHeading,
 } from '@console/internal/components/utils';
-import { ServiceModel } from '@console/knative-plugin';
+import { ServiceModel } from '../../../models';
 import EventSinkServicesOverviewList from '../EventSinkServicesOverviewList';
 
 describe('EventSinkServicesOverviewList', () => {

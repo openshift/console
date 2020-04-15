@@ -1,9 +1,9 @@
 import { ValidatedOptions } from '@patternfly/react-core';
 import { K8sResourceKind, ContainerPort } from '@console/internal/module/k8s';
 import { DeploymentModel, DeploymentConfigModel } from '@console/internal/models';
-import { ServiceModel } from '@console/knative-plugin';
 import { LazyLoader } from '@console/plugin-sdk';
 import { NameValuePair, NameValueFromPair } from '@console/shared';
+import { ServiceModel } from '@console/knative-plugin/src/models';
 import { NormalizedBuilderImages } from '../../utils/imagestream-utils';
 
 export interface DeployImageFormProps {
