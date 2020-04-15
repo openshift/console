@@ -84,6 +84,7 @@ export interface Pipeline extends K8sResourceKind {
   spec?: {
     params?: PipelineParam[];
     resources?: PipelineResource[];
+    workspaces?: PipelineWorkspace[];
     tasks: PipelineTask[];
     serviceAccountName?: string;
   };
@@ -94,6 +95,7 @@ export interface PipelineRun extends K8sResourceKind {
     pipelineRef: { name: string };
     params?: PipelineRunParam[];
     resources?: PipelineResource[];
+    workspaces?: PipelineRunWorkspace[];
     serviceAccountName?: string;
     // Odd status value that only appears in a single case - cancelling a pipeline
     status?: 'PipelineRunCancelled';
@@ -158,6 +160,17 @@ export interface PipelineRunParam extends Param {
   input?: string;
   output?: string;
   resource?: object;
+}
+
+export interface PipelineWorkspace extends Param {
+  type: string;
+  data?: {
+    [key: string]: string;
+  };
+}
+
+export interface PipelineRunWorkspace extends Param {
+  [key: string]: string;
 }
 
 interface FirehoseResource {

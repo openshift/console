@@ -13,8 +13,9 @@ import {
   PipelineResource,
   PipelineParam,
   PipelineRun,
+  PipelineWorkspace,
 } from '../../../utils/pipeline-augment';
-import { getPipelineRunParams } from '../../../utils/pipeline-utils';
+import { getPipelineRunParams, getPipelineRunWorkspaces } from '../../../utils/pipeline-utils';
 import StartPipelineForm from './StartPipelineForm';
 import { startPipelineSchema } from './pipelineForm-validation-utils';
 
@@ -29,6 +30,7 @@ export interface StartPipelineFormValues extends FormikValues {
   namespace: string;
   parameters: PipelineParam[];
   resources: PipelineResource[];
+  workspaces: PipelineWorkspace[];
 }
 
 const StartPipelineModal: React.FC<StartPipelineModalProps & ModalComponentProps> = ({
@@ -41,6 +43,11 @@ const StartPipelineModal: React.FC<StartPipelineModalProps & ModalComponentProps
     namespace: pipeline.metadata.namespace,
     parameters: _.get(pipeline, 'spec.params', []),
     resources: _.get(pipeline, 'spec.resources', []),
+    workspaces:
+      pipeline.spec.workspaces?.map((workspace: PipelineWorkspace) => ({
+        ...workspace,
+        type: 'EmptyDirectory',
+      })) ?? [],
   };
   initialValues.resources.map((resource: PipelineResource) =>
     _.merge(resource, { resourceRef: { name: '' } }),
@@ -56,6 +63,7 @@ const StartPipelineModal: React.FC<StartPipelineModalProps & ModalComponentProps
         },
         params: getPipelineRunParams(values.parameters),
         resources: values.resources,
+        workspaces: getPipelineRunWorkspaces(values.workspaces),
       },
     };
     k8sCreate(PipelineRunModel, getPipelineRunData(pipeline, pipelineRunData))
