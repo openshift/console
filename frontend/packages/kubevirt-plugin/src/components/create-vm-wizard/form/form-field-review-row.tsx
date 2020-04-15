@@ -9,7 +9,7 @@ import './form-field-review-row.scss';
 
 type FormFieldReviewRowProps = {
   field: any;
-  fieldType: FormFieldType;
+  fieldType?: FormFieldType;
   value?: any;
 };
 

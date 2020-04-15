@@ -2,7 +2,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { Alert, AlertVariant } from '@patternfly/react-core';
-import { cellWidth, Table, TableBody, TableHeader, TableVariant } from '@patternfly/react-table';
+import { Table, TableBody, TableHeader, TableVariant } from '@patternfly/react-table';
 import { Firehose, FirehoseResult, resourcePath } from '@console/internal/components/utils';
 import { StorageClassResourceKind } from '@console/internal/module/k8s';
 import { createLookup, getAnnotations, getName } from '@console/shared/src';
@@ -51,12 +51,13 @@ const StorageReviewFirehose: React.FC<StorageReviewFirehoseProps> = ({
   storageClasses,
 }) => {
   const headers = [
-    { title: 'Name', transforms: [cellWidth(10)] },
-    { title: 'Interface', transforms: [cellWidth(10)] },
-    { title: 'Size', transforms: [cellWidth(10)] },
-    { title: 'Storage Class', transforms: [cellWidth(10)] },
-    { title: 'Access Mode', transforms: [cellWidth(10)] },
-    { title: 'Volume Mode', transforms: [cellWidth(10)] },
+    { title: 'Name' },
+    { title: 'Interface' },
+    { title: 'Size' },
+    { title: 'Storage Class' },
+    { title: 'Access Mode' },
+    { title: 'Volume Mode' },
+    { title: 'Source' }
   ];
 
   const pvcLookup = createLookup(persistentVolumeClaims, getName);
@@ -85,14 +86,14 @@ const StorageReviewFirehose: React.FC<StorageReviewFirehoseProps> = ({
 
   const rows = combinedDisks.map(
     (combinedDisk ) => {
-      const size = combinedDisk.getSize();
       return [
         combinedDisk.getName(),
         combinedDisk.getDiskInterface(),
-        size && `${size?.value} ${size?.unit}`,
+        combinedDisk.getReadableSize(),
         combinedDisk.getStorageClassName(),
-        combinedDisk.getAccessModes()?.[0].toString(),
+        combinedDisk.getAccessModes()?.join(', '),
         combinedDisk.getVolumeMode()?.toString(),
+        combinedDisk.getSourceValue(),
       ];
     },
   );

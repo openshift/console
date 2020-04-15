@@ -15,11 +15,11 @@ import { VMSettings } from '../../redux/initial-state/types';
 import './general-tab.scss';
 
 const GeneralReviewConnected: React.FC<GeneralReviewConnectedProps> = (props) => {
-  const { vmSettings, iUserTemplates, iCommonTemplates, openshiftFlag } = props;
+  const { iVMSettings, iUserTemplates, iCommonTemplates, openshiftFlag } = props;
 
   const osName =
     getOS({
-      osID: getFieldValue(vmSettings.toJS() as VMSettings, VMSettingsField.OPERATING_SYSTEM),
+      osID: getFieldValue(iVMSettings.toJS() as VMSettings, VMSettingsField.OPERATING_SYSTEM),
       iUserTemplates,
       openshiftFlag,
       iCommonTemplates,
@@ -28,33 +28,26 @@ const GeneralReviewConnected: React.FC<GeneralReviewConnectedProps> = (props) =>
   return (
     <Grid className="kubevirt-create-vm-modal__general-tab-container" gutter={'sm'}>
       <FormFieldReviewMemoRow
-        field={getField(VMSettingsField.NAME, vmSettings)}
-        fieldType={FormFieldType.TEXT}
+        field={getField(VMSettingsField.NAME, iVMSettings)}
       />
 
       <FormFieldReviewMemoRow
-        field={getField(VMSettingsField.DESCRIPTION, vmSettings)}
-        fieldType={FormFieldType.TEXT_AREA}
+        field={getField(VMSettingsField.DESCRIPTION, iVMSettings)}
       />
 
       <FormFieldReviewMemoRow
-        key={VMSettingsField.PROVISION_SOURCE_TYPE}
-        field={getField(VMSettingsField.PROVISION_SOURCE_TYPE, vmSettings)}
-        fieldType={FormFieldType.SELECT}
+        field={getField(VMSettingsField.PROVISION_SOURCE_TYPE, iVMSettings)}
       />
 
       <FormFieldReviewMemoRow
-        key={VMSettingsField.OPERATING_SYSTEM}
-        field={getField(VMSettingsField.OPERATING_SYSTEM, vmSettings)}
-        fieldType={FormFieldType.SELECT}
+        field={getField(VMSettingsField.OPERATING_SYSTEM, iVMSettings)}
         value={osName}
       />
 
-      <FlavorReviewRow vmSettings={vmSettings} />
+      <FlavorReviewRow vmSettings={iVMSettings} />
 
       <FormFieldReviewMemoRow
-        key={VMSettingsField.WORKLOAD_PROFILE}
-        field={getField(VMSettingsField.WORKLOAD_PROFILE, vmSettings)}
+        field={getField(VMSettingsField.WORKLOAD_PROFILE, iVMSettings)}
         fieldType={FormFieldType.SELECT}
       />
     </Grid>
@@ -62,14 +55,14 @@ const GeneralReviewConnected: React.FC<GeneralReviewConnectedProps> = (props) =>
 };
 
 type GeneralReviewConnectedProps = {
-  vmSettings: any;
+  iVMSettings: any;
   openshiftFlag: boolean;
   iCommonTemplates: any;
   iUserTemplates: any;
 };
 
 const stateToProps = (state, { wizardReduxID }) => ({
-  vmSettings: iGetVmSettings(state, wizardReduxID),
+  iVMSettings: iGetVmSettings(state, wizardReduxID),
   openshiftFlag: iGetCommonData(state, wizardReduxID, VMWizardProps.openshiftFlag),
   iCommonTemplates: iGetLoadedCommonData(state, wizardReduxID, VMWizardProps.commonTemplates),
   iUserTemplates: iGetLoadedCommonData(state, wizardReduxID, VMWizardProps.userTemplates),

@@ -4,17 +4,17 @@ import { VMWizardNetwork } from '../../types';
 import { getNetworks } from '../../selectors/selectors';
 import { NetworkInterfaceWrapper } from '../../../../k8s/wrapper/vm/network-interface-wrapper';
 import { NetworkWrapper } from '../../../../k8s/wrapper/vm/network-wrapper';
-import { cellWidth, Table, TableBody, TableHeader, TableVariant } from '@patternfly/react-table';
+import { Table, TableBody, TableHeader, TableVariant } from '@patternfly/react-table';
 
 const NetworkingReviewConnected: React.FC<NetworkingTabComponentProps> = ({
   networks,
   className,
 }) => {
   const headers = [
-    { title: 'Name', transforms: [cellWidth(10)] },
-    { title: 'Model', transforms: [cellWidth(10)] },
-    { title: 'MAC Address', transforms: [cellWidth(10)] },
-    { title: 'Network', transforms: [cellWidth(10)] },
+    { title: 'Name' },
+    { title: 'Model' },
+    { title: 'MAC Address' },
+    { title: 'Network' },
   ];
 
   const rows = networks.map(({ networkInterface, network }) => {
