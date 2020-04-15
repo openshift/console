@@ -69,8 +69,19 @@ export const sourceDataSpecSchema = yup
         topics: yup.string().required('Required'),
       }),
     }),
+  })
+  .when('type', {
+    is: EventSources.ContainerSource,
+    then: yup.object().shape({
+      containersource: yup.object().shape({
+        containers: yup.array().of(
+          yup.object({
+            image: yup.string().required('Required'),
+          }),
+        ),
+      }),
+    }),
   });
-
 export const eventSourceValidationSchema = yup.object().shape({
   project: projectNameValidationSchema,
   application: applicationNameValidationSchema,
