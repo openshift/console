@@ -9,7 +9,7 @@ import { isVMImporting, isVMRunning, isVMRunningWithVMI } from '../../selectors/
 import { getMigrationVMIName, isMigrating, findVMIMigration } from '../../selectors/vmi-migration';
 import { VirtualMachineInstanceMigrationModel } from '../../models';
 import { VMMultiStatus } from '../../types';
-import { restartVM, startVM, stopVM, VMActionType } from '../../k8s/requests/vm';
+import { deleteVM, restartVM, startVM, stopVM, VMActionType } from '../../k8s/requests/vm';
 import { startVMIMigration } from '../../k8s/requests/vmi';
 import { cancelMigration } from '../../k8s/requests/vmim';
 import { cloneVMModal } from '../modals/clone-vm-modal';
@@ -18,6 +18,7 @@ import { getVMStatus } from '../../statuses/vm/vm';
 import { isVMIPaused } from '../../selectors/vmi';
 import { unpauseVMI, VMIActionType } from '../../k8s/requests/vmi/actions';
 import { VMImportKind } from '../../types/vm-import/ovirt/vm-import';
+import { getVMLikeModelListPath } from '../../utils/utils';
 
 type ActionArgs = {
   migration?: K8sResourceKind;
@@ -164,6 +165,13 @@ const menuActionCdEdit = (kindObj: K8sKind, vm: VMKind, { vmStatus }: ActionArgs
   };
 };
 
+export const menuActionDelete = (kindObj: K8sKind, vm: VMKind): KebabOption => ({
+  label: `Delete ${kindObj.label}`,
+  href: getVMLikeModelListPath(false, getNamespace(vm)),
+  callback: () => deleteVM(vm),
+  accessReview: asAccessReview(kindObj, vm, 'delete'),
+});
+
 export const vmMenuActions = [
   menuActionStart,
   menuActionStop,
@@ -175,7 +183,7 @@ export const vmMenuActions = [
   menuActionCdEdit,
   Kebab.factory.ModifyLabels,
   Kebab.factory.ModifyAnnotations,
-  Kebab.factory.Delete,
+  menuActionDelete,
 ];
 
 export const vmiMenuActions = [

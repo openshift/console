@@ -57,6 +57,8 @@ export class VMImportWrappper extends K8sResourceObjectWithTypePropertyWrapper<
       : undefined;
   };
 
+  getResolvedVMTargetName = () => this.data.status?.targetVmName || this.data.spec?.targetVmName;
+
   protected sanitize(type: VMImportType, data: VMImportOvirtSource) {
     return super.sanitize(type, data) || ({} as any);
   }
