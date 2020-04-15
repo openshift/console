@@ -1,4 +1,9 @@
 /* eslint-disable camelcase, @typescript-eslint/camelcase,no-await-in-loop */
+import * as _ from 'lodash';
+import { SecretModel } from '@console/internal/models';
+import { SecretKind } from '@console/internal/module/k8s';
+import { PatchBuilder } from '@console/shared/src/k8s';
+import { compareOwnerReference } from '@console/shared/src/utils/owner-references';
 import { CreateVMParams } from '../../vm/create/types';
 import { ImporterResult } from '../../vm/types';
 import { VMImportWrappper } from '../../../wrapper/vm-import/vm-import-wrapper';
@@ -19,11 +24,7 @@ import { NetworkWrapper } from '../../../wrapper/vm/network-wrapper';
 import { NetworkType } from '../../../../constants/vm/network';
 import { DiskMapping, NetworkMapping } from '../../../../types/vm-import/ovirt/vm-import';
 import { PersistentVolumeClaimWrapper } from '../../../wrapper/vm/persistent-volume-claim-wrapper';
-import { SecretModel } from '@console/internal/models';
 import { SecretWrappper } from '../../../wrapper/k8s/secret-wrapper';
-import { SecretKind } from '@console/internal/module/k8s';
-import { PatchBuilder } from '@console/shared/src/k8s';
-import { compareOwnerReference } from '@console/shared/src/utils/owner-references';
 import { buildOwnerReference } from '../../../../utils';
 
 const SUPPORTED_NETWORK_TYPES = new Set([NetworkType.POD, NetworkType.MULTUS]);
@@ -57,23 +58,27 @@ const createSecret = async ({
   );
 };
 
-const getNetworkMappings = (networks: VMWizardNetwork[]) =>
-  networks
-    .filter(
+const getNetworkMappings = (networks: VMWizardNetwork[]) => {
+  const networksToMap = _.uniqBy(
+    networks.filter(
       ({ network, importData }) =>
-        SUPPORTED_NETWORK_TYPES.has(new NetworkWrapper(network).getType()) && importData,
-    )
-    .map(({ network, importData: { id } }) => {
-      const networkWrapper = new NetworkWrapper(network);
-      const nicMapping: NetworkMapping = {
-        source: { id },
-        type: networkWrapper.getType().getValue(),
-      };
-      if (networkWrapper.getType() === NetworkType.MULTUS) {
-        nicMapping.target = { name: networkWrapper.getMultusNetworkName() };
-      }
-      return nicMapping;
-    });
+        SUPPORTED_NETWORK_TYPES.has(new NetworkWrapper(network).getType()) && importData?.netID,
+    ),
+    (wizardNetwork) => wizardNetwork.importData?.netID, // should be mapped 1 to 1
+  );
+
+  return networksToMap.map(({ network, importData: { netID } }) => {
+    const networkWrapper = new NetworkWrapper(network);
+    const nicMapping: NetworkMapping = {
+      source: { id: netID },
+      type: networkWrapper.getType().getValue(),
+    };
+    if (networkWrapper.getType() === NetworkType.MULTUS) {
+      nicMapping.target = { name: networkWrapper.getMultusNetworkName() };
+    }
+    return nicMapping;
+  });
+};
 
 const getDiskMappings = (storage: VMWizardStorage[]) =>
   storage

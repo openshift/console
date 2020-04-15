@@ -1,5 +1,7 @@
 export type OvirtNIC = {
   id: string;
+  netid: string;
+  netname: string;
   name: string;
   mac: string;
   interface: string;
