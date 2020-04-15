@@ -189,7 +189,7 @@ const nodeDropTargetSpec: DropTargetSpec<
 };
 
 const graphDropTargetSpec: DropTargetSpec<
-  GraphElement | DragNodeObject,
+  DragNodeObject,
   any,
   { dragEditInProgress: boolean },
   GraphComponentProps
@@ -201,8 +201,8 @@ const graphDropTargetSpec: DropTargetSpec<
       monitor.isOver({ shallow: monitor.getItemType() === CREATE_CONNECTOR_DROP_TYPE }) &&
       ((monitor.getOperation()?.type === REGROUP_OPERATION &&
         // FIXME: the hasParent check is necessary due to model updates during async actions
-        (item as DragNodeObject).element.hasParent() &&
-        (item as DragNodeObject).element.getParent() !== props.element) ||
+        item.element.hasParent() &&
+        item.element.getParent() !== props.element) ||
         monitor.getItemType() === CREATE_CONNECTOR_DROP_TYPE)
     );
   },

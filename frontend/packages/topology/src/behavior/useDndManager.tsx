@@ -180,7 +180,7 @@ export class DndManagerImpl implements DndManager {
 
   beginDrag(
     sourceIds: string | string[],
-    operation: DragOperationWithType,
+    operation: DragOperationWithType | undefined,
     x: number,
     y: number,
     pageX: number,

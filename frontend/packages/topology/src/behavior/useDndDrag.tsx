@@ -49,24 +49,22 @@ const getModifiers = (event: MouseEvent | TouchEvent | KeyboardEvent): number =>
 const getOperation = (
   operation: DragSpecOperationType<DragOperationWithType> | undefined,
 ): DragOperationWithType | undefined => {
-  if (typeof (operation as any).type === 'string') {
+  if (!operation) {
+    return undefined;
+  }
+  if (operation.hasOwnProperty('type')) {
     return operation as DragOperationWithType;
   }
   return (
-    (operation &&
-      (operation[getModifiers((d3.event && d3.event.sourceEvent) || d3.event)] ||
-        operation[Modifiers.DEFAULT])) ||
-    ''
+    operation[getModifiers((d3.event && d3.event.sourceEvent) || d3.event)] ||
+    operation[Modifiers.DEFAULT]
   );
 };
 
 const hasOperation = (
   operation: DragSpecOperationType<DragOperationWithType> | undefined,
 ): boolean => {
-  return !!(
-    operation &&
-    (typeof (operation as any).type === 'string' || Object.keys(operation).length > 0)
-  );
+  return !!(operation && (operation.hasOwnProperty('type') || Object.keys(operation).length > 0));
 };
 
 const EMPTY_PROPS = Object.freeze({});
