@@ -4,7 +4,7 @@ import { PodStatus } from '@console/shared';
 import { ChartLabel } from '@patternfly/react-charts';
 import { K8sResourceKind, referenceForModel } from '@console/internal/module/k8s';
 import { ResourceLink } from '@console/internal/components/utils';
-import { RevisionModel } from '@console/knative-plugin';
+import { RevisionModel } from '../../models';
 import './RevisionsOverviewListItem.scss';
 
 export type RevisionsOverviewListItemProps = {

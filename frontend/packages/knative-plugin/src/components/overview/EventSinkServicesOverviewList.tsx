@@ -9,7 +9,7 @@ import {
 import { PodControllerOverviewItem } from '@console/shared';
 import { PodModel } from '@console/internal/models';
 import { PodsOverview } from '@console/internal/components/overview/pods-overview';
-import { ServiceModel } from '@console/knative-plugin';
+import { ServiceModel } from '../../models';
 
 export type EventSinkServicesOverviewListProps = {
   obj: K8sResourceKind;

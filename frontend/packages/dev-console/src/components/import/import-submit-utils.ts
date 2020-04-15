@@ -10,10 +10,8 @@ import {
   RouteModel,
 } from '@console/internal/models';
 import { k8sCreate, K8sResourceKind, k8sUpdate, K8sVerb } from '@console/internal/module/k8s';
-import {
-  getKnativeServiceDepResource,
-  ServiceModel as KnServiceModel,
-} from '@console/knative-plugin';
+import { ServiceModel as KnServiceModel } from '@console/knative-plugin';
+import { getKnativeServiceDepResource } from '@console/knative-plugin/src/utils/create-knative-utils';
 import { SecretType } from '@console/internal/components/secrets/create-secret';
 import * as plugins from '@console/internal/plugins';
 import { history } from '@console/internal/components/utils';

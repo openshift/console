@@ -1,15 +1,16 @@
+import { K8sResourceKind } from '@console/internal/module/k8s';
 import {
   DeployImageFormData,
   Resources,
 } from '@console/dev-console/src/components/import/import-types';
-import { K8sResourceKind } from '@console/internal/module/k8s';
-import { RevisionModel, EventSourceCronJobModel } from '@console/knative-plugin';
 import { EventSourceFormData } from '../../components/add/import-types';
 import {
+  RevisionModel,
   EventSourceCamelModel,
   EventSourceContainerModel,
   EventSourceKafkaModel,
   EventSourceSinkBindingModel,
+  EventSourceCronJobModel,
 } from '../../models';
 
 export const defaultData: DeployImageFormData = {

@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as _ from 'lodash';
 import { K8sResourceKind, referenceForModel } from '@console/internal/module/k8s';
 import { ResourceLink, ExternalLink } from '@console/internal/components/utils';
-import { RouteModel } from '@console/knative-plugin';
+import { RouteModel } from '../../models';
 
 export type RoutesOverviewListItemProps = {
   route: K8sResourceKind;

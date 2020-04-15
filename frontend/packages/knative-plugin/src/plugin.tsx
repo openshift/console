@@ -33,18 +33,6 @@ import {
   FLAG_KNATIVE_EVENTING,
 } from './const';
 import {
-  knativeServingResourcesRevision,
-  knativeServingResourcesConfigurations,
-  knativeServingResourcesRoutes,
-  knativeServingResourcesServices,
-  eventSourceResourcesCronJob,
-  eventSourceResourcesContainer,
-  eventSourceResourcesApiServer,
-  eventSourceResourcesCamel,
-  eventSourceResourcesKafka,
-  eventSourceResourcesSinkBinding,
-} from './utils/create-knative-utils';
-import {
   getKnativeServingConfigurations,
   getKnativeServingRoutes,
   getKnativeServingRevisions,
@@ -55,6 +43,16 @@ import {
   getEventSourceCamel,
   getEventSourceKafka,
   getEventSourceSinkBinding,
+  knativeServingResourcesRevision,
+  knativeServingResourcesConfigurations,
+  knativeServingResourcesRoutes,
+  knativeServingResourcesServices,
+  eventSourceResourcesCronJob,
+  eventSourceResourcesContainer,
+  eventSourceResourcesApiServer,
+  eventSourceResourcesCamel,
+  eventSourceResourcesKafka,
+  eventSourceResourcesSinkBinding,
 } from './utils/get-knative-resources';
 import { getKebabActionsForKind } from './utils/kebab-actions';
 

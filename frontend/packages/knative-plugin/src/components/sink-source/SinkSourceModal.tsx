@@ -8,7 +8,7 @@ import {
 } from '@console/internal/components/factory/modal';
 import { ResourceDropdownField } from '@console/shared';
 import FormSection from '@console/dev-console/src/components/import/section/FormSection';
-import { knativeServingResourcesServices } from '../../utils/create-knative-utils';
+import { knativeServingResourcesServices } from '../../utils/get-knative-resources';
 
 export interface SinkSourceModalProps {
   namespace: string;

@@ -5,7 +5,7 @@ import { getKnativeServiceData } from '../topology/knative-topology-utils';
 import {
   knativeServingResourcesRevision,
   knativeServingResourcesConfigurations,
-} from './create-knative-utils';
+} from './get-knative-resources';
 
 export const getRevisionItems = (revisions: K8sResourceKind[]) => {
   return revisions.reduce((acc, currValue) => {

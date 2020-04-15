@@ -3,7 +3,7 @@ import { shallow, ShallowWrapper } from 'enzyme';
 import { PodStatus } from '@console/shared';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { ResourceLink } from '@console/internal/components/utils';
-import { RevisionModel } from '@console/knative-plugin';
+import { RevisionModel } from '../../../models';
 import { MockKnativeResources } from '@console/dev-console/src/components/topology/__tests__/topology-knative-test-data';
 import RevisionsOverviewListItem, {
   RevisionsOverviewListItemProps,
