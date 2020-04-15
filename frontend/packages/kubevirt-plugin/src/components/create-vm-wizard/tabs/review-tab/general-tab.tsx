@@ -6,10 +6,11 @@ import { VMSettingsField, VMWizardProps } from '../../types';
 import { FormFieldReviewMemoRow } from '../../form/form-field-review-row';
 import { FormFieldType } from '../../form/form-field';
 import { iGetCommonData, iGetLoadedCommonData } from '../../selectors/immutable/selectors';
-import { getOS } from '../../../../k8s/requests/vm/create/common';
-import { VMSettings } from '../../redux/initial-state/types';
+import { getOS } from '../../selectors/common';
+import { getFieldValue } from '../../selectors/vm-settings';
 import { getField } from './utils';
 import { FlavorReviewRow } from './FlavorRow';
+import { VMSettings } from '../../redux/initial-state/types';
 
 import './general-tab.scss';
 
@@ -18,7 +19,7 @@ const GeneralReviewConnected: React.FC<GeneralReviewConnectedProps> = (props) =>
 
   const osName =
     getOS({
-      vmSettings: vmSettings.toJS() as VMSettings,
+      osID: getFieldValue(vmSettings.toJS() as VMSettings, VMSettingsField.OPERATING_SYSTEM),
       iUserTemplates,
       openshiftFlag,
       iCommonTemplates,
@@ -56,7 +57,6 @@ const GeneralReviewConnected: React.FC<GeneralReviewConnectedProps> = (props) =>
         field={getField(VMSettingsField.WORKLOAD_PROFILE, vmSettings)}
         fieldType={FormFieldType.SELECT}
       />
-
     </Grid>
   );
 };
