@@ -1,7 +1,15 @@
 import * as classNames from 'classnames';
 import * as _ from 'lodash-es';
 import { murmur3 } from 'murmurhash-js';
-import { Alert, ActionGroup, Badge, Button, Tooltip } from '@patternfly/react-core';
+import {
+  Alert,
+  ActionGroup,
+  Badge,
+  Button,
+  TextArea,
+  TextInput,
+  Tooltip,
+} from '@patternfly/react-core';
 import { sortable } from '@patternfly/react-table';
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
@@ -1161,24 +1169,27 @@ const toISODate = (dateStr: string): string => {
   return isNaN(timestamp) ? undefined : new Date(timestamp).toISOString();
 };
 
-const Text = (props) => <input {...props} type="text" className="pf-c-form-control" />;
-
-const Datetime = (props) => {
+const DatetimeTextInput = (props) => {
   const pattern =
     '\\d{4}/(0?[1-9]|1[012])/(0?[1-9]|[12]\\d|3[01]) (0?\\d|1\\d|2[0-3]):[0-5]\\d(:[0-5]\\d)?';
-  const tooltip = new RegExp(`^${pattern}$`).test(props.value)
-    ? toISODate(props.value)
-    : 'Invalid date / time';
+  const isValid = new RegExp(`^${pattern}$`).test(props.value);
+
   return (
     <div>
       <Tooltip
         content={[
           <span className="co-nowrap" key="co-timestamp">
-            {tooltip}
+            {isValid ? toISODate(props.value) : 'Invalid date / time'}
           </span>,
         ]}
       >
-        <Text {...props} pattern={pattern} placeholder="YYYY/MM/DD hh:mm:ss" />
+        <TextInput
+          {...props}
+          aria-label="Datetime"
+          isValid={isValid || !!props.isDisabled}
+          pattern={pattern}
+          placeholder="YYYY/MM/DD hh:mm:ss"
+        />
       </Tooltip>
     </div>
   );
@@ -1284,13 +1295,9 @@ const SilenceForm_: React.FC<SilenceFormProps> = ({ defaults, Info, title }) => 
                   <div className="col-xs-5">
                     <label>Silence alert from...</label>
                     {isStartNow ? (
-                      <Datetime disabled value="Now" />
+                      <DatetimeTextInput isDisabled value="Now" />
                     ) : (
-                      <Datetime
-                        onChange={(e) => setStartsAt(e.currentTarget.value)}
-                        required
-                        value={startsAt}
-                      />
+                      <DatetimeTextInput isRequired onChange={setStartsAt} value={startsAt} />
                     )}
                   </div>
                   <div className="col-xs-2">
@@ -1305,14 +1312,10 @@ const SilenceForm_: React.FC<SilenceFormProps> = ({ defaults, Info, title }) => 
                   <div className="col-xs-5">
                     <label>Until...</label>
                     {duration === durationOff ? (
-                      <Datetime
-                        onChange={(e) => setEndsAt(e.currentTarget.value)}
-                        required
-                        value={endsAt}
-                      />
+                      <DatetimeTextInput isRequired onChange={setEndsAt} value={endsAt} />
                     ) : (
-                      <Datetime
-                        disabled
+                      <DatetimeTextInput
+                        isDisabled
                         value={isStartNow ? `${duration} from now` : durationEnd}
                       />
                     )}
@@ -1351,20 +1354,22 @@ const SilenceForm_: React.FC<SilenceFormProps> = ({ defaults, Info, title }) => 
                   <div className="row">
                     <div className="col-xs-6">
                       <label>Label name</label>
-                      <Text
-                        onChange={(e) => setMatcherField(i, 'name', e.currentTarget.value)}
+                      <TextInput
+                        aria-label="Label name"
+                        isRequired
+                        onChange={(v: string) => setMatcherField(i, 'name', v)}
                         placeholder="Name"
                         value={matcher.name}
-                        required
                       />
                     </div>
                     <div className="col-xs-6">
                       <label>Label value</label>
-                      <Text
-                        onChange={(e) => setMatcherField(i, 'value', e.currentTarget.value)}
+                      <TextInput
+                        aria-label="Label value"
+                        isRequired
+                        onChange={(v: string) => setMatcherField(i, 'value', v)}
                         placeholder="Value"
                         value={matcher.value}
-                        required
                       />
                     </div>
                   </div>
@@ -1414,15 +1419,11 @@ const SilenceForm_: React.FC<SilenceFormProps> = ({ defaults, Info, title }) => 
               <SectionHeading text="Info" />
               <div className="form-group">
                 <label>Creator</label>
-                <Text onChange={(e) => setCreatedBy(e.currentTarget.value)} value={createdBy} />
+                <TextInput aria-label="Creator" onChange={setCreatedBy} value={createdBy} />
               </div>
               <div className="form-group">
                 <label>Comment</label>
-                <textarea
-                  className="pf-c-form-control"
-                  onChange={(e) => setComment(e.currentTarget.value)}
-                  value={comment}
-                />
+                <TextArea aria-label="Comment" onChange={setComment} value={comment} />
               </div>
             </div>
           </div>
