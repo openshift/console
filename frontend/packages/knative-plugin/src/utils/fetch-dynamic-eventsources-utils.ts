@@ -12,7 +12,7 @@ import {
   EventSourceCamelModel,
 } from '../models';
 
-const defaultEventSourceModelsData = [
+const defaultEventSourceModels = [
   EventSourceApiServerModel,
   EventSourceCamelModel,
   EventSourceContainerModel,
@@ -21,7 +21,7 @@ const defaultEventSourceModelsData = [
   EventSourceSinkBindingModel,
 ];
 
-let eventSourceData: K8sKind[] = defaultEventSourceModelsData;
+let eventSourceModels: K8sKind[] = defaultEventSourceModels;
 
 // To order sources with known followed by CamelSource and everything else
 export const orderedEventSourceModelData = (allModels: K8sKind[]): K8sKind[] => {
@@ -29,7 +29,7 @@ export const orderedEventSourceModelData = (allModels: K8sKind[]): K8sKind[] => 
   const knownSourcesCrd = _.filter(
     sortModels,
     (model) =>
-      !!_.find(defaultEventSourceModelsData, { kind: model?.kind }) &&
+      !!_.find(defaultEventSourceModels, { kind: model?.kind }) &&
       model?.kind !== EventSourceCamelModel.kind,
   );
   const camelSourcesCrd = _.filter(
@@ -39,7 +39,7 @@ export const orderedEventSourceModelData = (allModels: K8sKind[]): K8sKind[] => 
   const dynamicSourcesCrd = _.filter(
     sortModels,
     (model) =>
-      !_.find(defaultEventSourceModelsData, { kind: model?.kind }) &&
+      !_.find(defaultEventSourceModels, { kind: model?.kind }) &&
       model?.kind !== EventSourceCamelModel.kind,
   );
   return [...knownSourcesCrd, ...camelSourcesCrd, ...dynamicSourcesCrd];
@@ -82,9 +82,9 @@ export const fetchEventSourcesCrd = async () => {
     // show warning if there is an error fetching the CRDs
     // eslint-disable-next-line no-console
     console.warn('Error fetching CRDs for dynamic event sources', err);
-    eventSourceModelList = defaultEventSourceModelsData;
+    eventSourceModelList = defaultEventSourceModels;
   }
-  eventSourceData = eventSourceModelList;
+  eventSourceModels = eventSourceModelList;
 };
 
-export const getEventSourceModelsData = (): K8sKind[] => eventSourceData;
+export const getEventSourceModels = (): K8sKind[] => eventSourceModels;

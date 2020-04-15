@@ -10,7 +10,7 @@ import {
 } from '../components/add/import-types';
 import { ServiceModel } from '../models';
 import { getKnativeEventSourceIcon } from './get-knative-icon';
-import { getEventSourceModelsData } from './fetch-dynamic-eventsources-utils';
+import { getEventSourceModels } from './fetch-dynamic-eventsources-utils';
 
 export const getEventSourcesDepResource = (formData: EventSourceFormData): K8sResourceKind => {
   const {
@@ -146,7 +146,7 @@ export const useKnativeEventingAccess = (model: K8sKind, namespace: string): boo
 
 export const useEventSourceList = (namespace: string): NormalizedEventSources => {
   const eventSourceList = _.reduce(
-    getEventSourceModelsData(),
+    getEventSourceModels(),
     (accumulator, eventSourceModel) => {
       // Defined extensions are immutable. This check will be consistent.
       // eslint-disable-next-line react-hooks/rules-of-hooks

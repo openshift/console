@@ -1,8 +1,5 @@
 import * as coFetch from '@console/internal/co-fetch';
-import {
-  getEventSourceModelsData,
-  fetchEventSourcesCrd,
-} from '../fetch-dynamic-eventsources-utils';
+import { getEventSourceModels, fetchEventSourcesCrd } from '../fetch-dynamic-eventsources-utils';
 
 describe('fetch-dynamic-eventsources: ', () => {
   it('should call coFetch to fetch CRDs for duck type', async () => {
@@ -14,6 +11,6 @@ describe('fetch-dynamic-eventsources: ', () => {
   it('should fetch models for duck type in case of error', async () => {
     jest.spyOn(coFetch, 'coFetch').mockImplementation(() => Promise.reject(new Error('Error')));
     await fetchEventSourcesCrd();
-    expect(getEventSourceModelsData()).toHaveLength(6);
+    expect(getEventSourceModels()).toHaveLength(6);
   });
 });

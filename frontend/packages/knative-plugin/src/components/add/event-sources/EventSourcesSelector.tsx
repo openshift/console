@@ -6,7 +6,7 @@ import FormSection from '@console/dev-console/src/components/import/section/Form
 import { NormalizedEventSources } from '../import-types';
 import { getEventSourceData } from '../../../utils/create-eventsources-utils';
 import { KNATIVE_EVENT_SOURCE_APIGROUP } from '../../../const';
-import { getEventSourceModelsData } from '../../../utils/fetch-dynamic-eventsources-utils';
+import { getEventSourceModels } from '../../../utils/fetch-dynamic-eventsources-utils';
 
 interface EventSourcesSelectorProps {
   eventSourceList: NormalizedEventSources;
@@ -19,7 +19,7 @@ const EventSourcesSelector: React.FC<EventSourcesSelectorProps> = ({ eventSource
     (item: string) => {
       const nameData = `data.${item.toLowerCase()}`;
       const sourceData = getEventSourceData(item.toLowerCase());
-      const selDataModel = _.find(getEventSourceModelsData(), { kind: item });
+      const selDataModel = _.find(getEventSourceModels(), { kind: item });
       const selApiVersion = selDataModel
         ? `${selDataModel?.apiGroup}/${selDataModel?.apiVersion}`
         : `${KNATIVE_EVENT_SOURCE_APIGROUP}/v1alpha1`;
