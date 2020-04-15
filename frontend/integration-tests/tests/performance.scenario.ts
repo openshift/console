@@ -62,7 +62,7 @@ describe('Performance test', () => {
     };
 
     // Temporarily disable performance tests.
-    xit(`downloads new bundle for ${routeName}`, async () => {
+    it(`downloads new bundle for ${routeName}`, async () => {
       await browser.get(`${appHost}/k8s/cluster/namespaces`);
       await crudView.isLoaded();
       await browser.executeScript(() => performance.setResourceTimingBufferSize(1000));
