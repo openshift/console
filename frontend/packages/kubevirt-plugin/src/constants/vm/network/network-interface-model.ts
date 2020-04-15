@@ -27,10 +27,10 @@ export class NetworkInterfaceModel extends ObjectEnum<string> {
   static fromString = (model: string): NetworkInterfaceModel =>
     NetworkInterfaceModel.stringMapper[model];
 
-  toString = () => {
+  toString() {
     if (this === NetworkInterfaceModel.VIRTIO) {
       return READABLE_VIRTIO;
     }
     return this.value;
-  };
+  }
 }

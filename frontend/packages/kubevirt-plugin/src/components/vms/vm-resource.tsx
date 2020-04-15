@@ -19,7 +19,7 @@ import VMStatusModal from '../modals/vm-status-modal/vm-status-modal';
 import { getDescription } from '../../selectors/selectors';
 import { getFlavorText } from '../flavor-text';
 import { EditButton } from '../edit-button';
-import { VMStatuses } from '../vm-status';
+import { VMStatus } from '../vm-status/vm-status';
 import { DiskSummary } from '../vm-disks/disk-summary';
 import { BootOrderSummary } from '../boot-order';
 import { getOperatingSystemName, getOperatingSystem } from '../../selectors/vm';
@@ -29,7 +29,6 @@ import { isVMIPaused, getVMINodeName } from '../../selectors/vmi';
 import { VirtualMachineInstanceModel, VirtualMachineModel } from '../../models';
 import { asVMILikeWrapper } from '../../k8s/wrapper/utils/convert';
 import { getVMTemplate } from '../../selectors/vm-template/selectors';
-import { VMImportKind } from '../../types/vm-import/ovirt/vm-import';
 import {
   NODE_SELECTOR_MODAL_TITLE,
   DEDICATED_RESOURCES_PINNED,
@@ -38,6 +37,7 @@ import {
   TOLERATIONS_MODAL_TITLE,
   AFFINITY_MODAL_TITLE,
 } from '../modals/scheduling-modals/shared/consts';
+import { VMStatusBundle } from '../../statuses/vm/types';
 
 import './vm-resource.scss';
 
@@ -113,8 +113,7 @@ export const VMDetailsList: React.FC<VMResourceListProps> = ({
   vm,
   vmi,
   pods,
-  vmImports,
-  migrations,
+  vmStatusBundle,
   canUpdateVM,
   kindObj,
 }) => {
@@ -145,7 +144,7 @@ export const VMDetailsList: React.FC<VMResourceListProps> = ({
         idValue={prefixedID(id, 'vm-statuses')}
       >
         <VMStatusModal isOpen={isStatusModalOpen} setOpen={setStatusModalOpen} vmi={vmi} />
-        <VMStatuses vm={vm} vmi={vmi} pods={pods} migrations={migrations} vmImports={vmImports} />
+        <VMStatus vm={vm} vmi={vmi} vmStatusBundle={vmStatusBundle} />
       </VMDetailsItem>
 
       <VMDetailsItem title="Pod" idValue={prefixedID(id, 'pod')} isNotAvail={!launcherPod}>
@@ -332,10 +331,9 @@ type VMResourceListProps = {
   kindObj: K8sKind;
   vm?: VMKind;
   pods?: PodKind[];
-  migrations?: any[];
-  vmImports: VMImportKind[];
   vmi?: VMIKind;
   canUpdateVM: boolean;
+  vmStatusBundle: VMStatusBundle;
 };
 
 type VMSchedulingListProps = {

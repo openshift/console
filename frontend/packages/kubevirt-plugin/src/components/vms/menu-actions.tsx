@@ -5,10 +5,9 @@ import { K8sKind, K8sResourceCommon, K8sResourceKind, PodKind } from '@console/i
 import { getName, getNamespace } from '@console/shared';
 import { confirmModal } from '@console/internal/components/modals';
 import { VMIKind, VMKind } from '../../types/vm';
-import { isVMImporting, isVMRunning, isVMRunningWithVMI } from '../../selectors/vm';
-import { getMigrationVMIName, isMigrating, findVMIMigration } from '../../selectors/vmi-migration';
+import { isVMRunning, isVMRunningWithVMI } from '../../selectors/vm';
+import { getMigrationVMIName } from '../../selectors/vmi-migration';
 import { VirtualMachineInstanceMigrationModel } from '../../models';
-import { VMMultiStatus } from '../../types';
 import { deleteVM, restartVM, startVM, stopVM, VMActionType } from '../../k8s/requests/vm';
 import { startVMIMigration } from '../../k8s/requests/vmi';
 import { cancelMigration } from '../../k8s/requests/vmim';
@@ -19,11 +18,12 @@ import { isVMIPaused } from '../../selectors/vmi';
 import { unpauseVMI, VMIActionType } from '../../k8s/requests/vmi/actions';
 import { VMImportKind } from '../../types/vm-import/ovirt/vm-import';
 import { getVMLikeModelListPath } from '../../utils/utils';
+import { V1alpha1DataVolume } from '../../types/vm/disk/V1alpha1DataVolume';
+import { VMStatusBundle } from '../../statuses/vm/types';
 
 type ActionArgs = {
-  migration?: K8sResourceKind;
   vmi?: VMIKind;
-  vmStatus?: VMMultiStatus;
+  vmStatusBundle?: VMStatusBundle;
 };
 
 const getActionMessage = (obj: K8sResourceCommon, action: VMActionType | VMIActionType) => (
@@ -36,11 +36,14 @@ const getActionMessage = (obj: K8sResourceCommon, action: VMActionType | VMIActi
 export const menuActionStart = (
   kindObj: K8sKind,
   vm: VMKind,
-  { vmStatus }: ActionArgs,
+  { vmStatusBundle }: ActionArgs,
 ): KebabOption => {
   const title = 'Start Virtual Machine';
   return {
-    hidden: isVMImporting(vmStatus) || isVMRunning(vm),
+    hidden:
+      vmStatusBundle?.status?.isImporting() ||
+      vmStatusBundle?.status?.isMigrating() ||
+      isVMRunning(vm),
     label: title,
     callback: () => startVM(vm),
     accessReview: asAccessReview(kindObj, vm, 'patch'),
@@ -66,11 +69,14 @@ const menuActionStop = (kindObj: K8sKind, vm: VMKind): KebabOption => {
 const menuActionRestart = (
   kindObj: K8sKind,
   vm: VMKind,
-  { vmStatus, vmi, migration }: ActionArgs,
+  { vmStatusBundle, vmi }: ActionArgs,
 ): KebabOption => {
   const title = 'Restart Virtual Machine';
   return {
-    hidden: isVMImporting(vmStatus) || !isVMRunningWithVMI({ vm, vmi }) || isMigrating(migration),
+    hidden:
+      vmStatusBundle?.status?.isImporting() ||
+      vmStatusBundle?.status?.isMigrating() ||
+      !isVMRunningWithVMI({ vm, vmi }),
     label: title,
     callback: () =>
       confirmModal({
@@ -101,11 +107,14 @@ const menuActionUnpause = (kindObj: K8sKind, vm: VMKind, { vmi }: ActionArgs): K
 const menuActionMigrate = (
   kindObj: K8sKind,
   vm: VMKind,
-  { vmStatus, vmi, migration }: ActionArgs,
+  { vmStatusBundle, vmi }: ActionArgs,
 ): KebabOption => {
   const title = 'Migrate Virtual Machine';
   return {
-    hidden: isVMImporting(vmStatus) || isMigrating(migration) || !isVMRunningWithVMI({ vm, vmi }),
+    hidden:
+      vmStatusBundle?.status?.isImporting() ||
+      vmStatusBundle?.status?.isMigrating() ||
+      !isVMRunningWithVMI({ vm, vmi }),
     label: title,
     callback: () =>
       confirmModal({
@@ -124,11 +133,12 @@ const menuActionMigrate = (
 const menuActionCancelMigration = (
   kindObj: K8sKind,
   vm: VMKind,
-  { migration }: ActionArgs,
+  { vmStatusBundle }: ActionArgs,
 ): KebabOption => {
   const title = 'Cancel Virtual Machine Migration';
+  const migration = vmStatusBundle?.migration;
   return {
-    hidden: !isMigrating(migration),
+    hidden: !vmStatusBundle?.status?.isMigrating(),
     label: title,
     callback: () =>
       confirmModal({
@@ -147,18 +157,29 @@ const menuActionCancelMigration = (
   };
 };
 
-const menuActionClone = (kindObj: K8sKind, vm: VMKind, { vmStatus }: ActionArgs): KebabOption => {
+const menuActionClone = (
+  kindObj: K8sKind,
+  vm: VMKind,
+  { vmStatusBundle }: ActionArgs,
+): KebabOption => {
   return {
-    hidden: isVMImporting(vmStatus),
+    hidden: vmStatusBundle?.status?.isImporting(),
     label: 'Clone Virtual Machine',
     callback: () => cloneVMModal({ vm }),
     accessReview: asAccessReview(kindObj, vm, 'patch'),
   };
 };
 
-const menuActionCdEdit = (kindObj: K8sKind, vm: VMKind, { vmStatus }: ActionArgs): KebabOption => {
+const menuActionCdEdit = (
+  kindObj: K8sKind,
+  vm: VMKind,
+  { vmStatusBundle }: ActionArgs,
+): KebabOption => {
   return {
-    hidden: isVMImporting(vmStatus),
+    hidden:
+      vmStatusBundle?.status?.isImporting() ||
+      vmStatusBundle?.status?.isMigrating() ||
+      isVMRunning(vm),
     label: 'Edit CD-ROMs',
     callback: () => VMCDRomModal({ vmLikeEntity: vm, modalClassName: 'modal-lg' }),
     accessReview: asAccessReview(kindObj, vm, 'patch'),
@@ -196,19 +217,19 @@ type ExtraResources = {
   vmi: VMIKind;
   pods: PodKind[];
   migrations: K8sResourceKind[];
+  dataVolumes: V1alpha1DataVolume[];
   vmImports: VMImportKind[];
 };
 
 export const vmMenuActionsCreator = (
   kindObj: K8sKind,
   vm: VMKind,
-  { vmi, pods, migrations, vmImports }: ExtraResources,
+  { vmi, pods, migrations, vmImports, dataVolumes }: ExtraResources,
 ) => {
-  const vmStatus = getVMStatus({ vm, vmi, pods, migrations, vmImports });
-  const migration = findVMIMigration(vmi, migrations);
+  const vmStatusBundle = getVMStatus({ vm, vmi, pods, migrations, dataVolumes, vmImports });
 
   return vmMenuActions.map((action) => {
-    return action(kindObj, vm, { vmi, vmStatus, migration });
+    return action(kindObj, vm, { vmi, vmStatusBundle });
   });
 };
 

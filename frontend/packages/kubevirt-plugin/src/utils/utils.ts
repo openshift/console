@@ -48,11 +48,7 @@ export const getVMLikeModelListPath = (isCreateTemplate: boolean, namespace: str
     ? `/k8s/ns/${namespace}/virtualization/templates`
     : `/k8s/ns/${namespace}/virtualization`;
 
-export const getVMLikeModelDetailPath = (
-  isCreateTemplate: boolean,
-  namespace: string,
-  name: string,
-) =>
-  isCreateTemplate
+export const getVMLikeModelDetailPath = (isTemplate: boolean, namespace: string, name: string) =>
+  isTemplate
     ? `/k8s/ns/${namespace}/vmtemplates/${name}`
     : `/k8s/ns/${namespace}/${VirtualMachineModel.plural}/${name}`;

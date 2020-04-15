@@ -7,48 +7,9 @@ import { InventoryStatusGroup } from '@console/shared/src/components/dashboard/i
 import { getVMStatus } from '../../../statuses/vm/vm';
 import { VMImportKind } from '../../../types/vm-import/ovirt/vm-import';
 import { VMIKind, VMKind } from '../../../types';
-import {
-  VM_STATUS_ERROR,
-  VM_STATUS_IMPORT_ERROR,
-  VM_STATUS_IMPORT_PENDING,
-  VM_STATUS_IMPORTING,
-  VM_STATUS_MIGRATING,
-  VM_STATUS_OFF,
-  VM_STATUS_POD_ERROR,
-  VM_STATUS_RUNNING,
-  VM_STATUS_STARTING,
-  VM_STATUS_STOPPING,
-  VM_STATUS_V2V_CONVERSION_ERROR,
-  VM_STATUS_V2V_CONVERSION_IN_PROGRESS,
-  VM_STATUS_V2V_CONVERSION_PENDING,
-  VM_STATUS_V2V_VM_IMPORT_ERROR,
-  VM_STATUS_VMI_WAITING,
-} from '../../../statuses/vm/constants';
+import { VMStatusSimpleLabel } from '../../../constants/vm/vm-status';
 
 import './inventory.scss';
-
-const VM_STATUS_GROUP_MAPPER = {
-  [InventoryStatusGroup.NOT_MAPPED]: [VM_STATUS_RUNNING],
-  'vm-off': [VM_STATUS_OFF],
-  [InventoryStatusGroup.PROGRESS]: [
-    VM_STATUS_V2V_CONVERSION_IN_PROGRESS,
-    VM_STATUS_V2V_CONVERSION_IN_PROGRESS,
-    VM_STATUS_IMPORTING,
-    VM_STATUS_MIGRATING,
-    VM_STATUS_STARTING,
-    VM_STATUS_VMI_WAITING,
-    VM_STATUS_V2V_CONVERSION_PENDING,
-    VM_STATUS_IMPORT_PENDING,
-    VM_STATUS_STOPPING,
-  ],
-  [InventoryStatusGroup.ERROR]: [
-    VM_STATUS_V2V_CONVERSION_ERROR,
-    VM_STATUS_V2V_VM_IMPORT_ERROR,
-    VM_STATUS_POD_ERROR,
-    VM_STATUS_ERROR,
-    VM_STATUS_IMPORT_ERROR,
-  ],
-};
 
 export const getVMStatusGroups: StatusGroupMapper = (
   vms,
@@ -66,49 +27,65 @@ export const getVMStatusGroups: StatusGroupMapper = (
 ) => {
   const groups = {
     [InventoryStatusGroup.NOT_MAPPED]: {
-      statusIDs: ['Running'],
+      statusIDs: [VMStatusSimpleLabel.Running],
       count: 0,
       filterType: 'vm-status',
     },
     [InventoryStatusGroup.PROGRESS]: {
-      statusIDs: ['Importing', 'Starting', 'Migrating', 'Stopping', 'Pending'],
+      statusIDs: [
+        VMStatusSimpleLabel.Importing,
+        VMStatusSimpleLabel.Starting,
+        VMStatusSimpleLabel.Migrating,
+        VMStatusSimpleLabel.Stopping,
+        VMStatusSimpleLabel.Pending,
+      ],
       count: 0,
       filterType: 'vm-status',
     },
     [InventoryStatusGroup.ERROR]: {
-      statusIDs: ['Error'],
+      statusIDs: [VMStatusSimpleLabel.Error],
+      count: 0,
+      filterType: 'vm-status',
+    },
+    [InventoryStatusGroup.WARN]: {
+      statusIDs: [VMStatusSimpleLabel.Paused],
       count: 0,
       filterType: 'vm-status',
     },
     [InventoryStatusGroup.UNKNOWN]: {
-      statusIDs: ['Other'],
+      statusIDs: [VMStatusSimpleLabel.Other],
       count: 0,
       filterType: 'vm-status',
     },
     'vm-off': {
-      statusIDs: ['Off'],
+      statusIDs: [VMStatusSimpleLabel.Off],
       count: 0,
       filterType: 'vm-status',
     },
   };
 
-  const vmStatuses = vms.map((vm: VMKind) => {
+  const vmSimpleStatuses = vms.map((vm: VMKind) => {
     const vmi = (vmis || []).find((instance) => getName(vm) === getName(instance));
-    return getVMStatus({ vm, vmi, pods, migrations, vmImports }).status;
+    return getVMStatus({ vm, vmi, pods, migrations, vmImports }).status.getSimpleLabel();
   });
 
   const vmisWithoutVM = (vmis || []).filter(
     (instance) => !vms.find((vm) => getName(vm) === getName(instance)),
   );
-  const vmiStatuses = vmisWithoutVM.map(
-    (vmi) => getVMStatus({ vm: undefined, vmi, pods, migrations, vmImports: undefined }).status,
+  const vmiSimpleStatuses = vmisWithoutVM.map((vmi) =>
+    getVMStatus({
+      vm: undefined,
+      vmi,
+      pods,
+      migrations,
+      vmImports: undefined,
+    }).status.getSimpleLabel(),
   );
 
-  [...vmStatuses, ...vmiStatuses].forEach((status) => {
+  [...vmSimpleStatuses, ...vmiSimpleStatuses].forEach((simpleStatus) => {
     const group =
-      Object.keys(VM_STATUS_GROUP_MAPPER).find((key) =>
-        VM_STATUS_GROUP_MAPPER[key].includes(status),
-      ) || InventoryStatusGroup.UNKNOWN;
+      Object.keys(groups).find((key) => groups[key].statusIDs.includes(simpleStatus)) ||
+      InventoryStatusGroup.UNKNOWN;
     groups[group].count++;
   });
 

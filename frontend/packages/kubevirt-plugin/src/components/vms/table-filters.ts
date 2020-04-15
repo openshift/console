@@ -1,17 +1,21 @@
 import * as _ from 'lodash';
 import { Filter } from '@console/shared';
-import { VM_STATUS_FILTER_STRINGS } from '../../statuses/vm/constants';
+import { VMStatusSimpleLabel } from '../../constants/vm/vm-status';
+import { VMStatusBundle } from '../../statuses/vm/types';
+import { getStringEnumValues } from '../../utils/types';
 
 export const vmStatusFilter: Filter = {
   type: 'vm-status',
-  selected: VM_STATUS_FILTER_STRINGS,
-  reducer: (obj) => _.get(obj, 'metadata.status').split(' ')[0],
-  items: VM_STATUS_FILTER_STRINGS.map((status) => ({
+  selected: getStringEnumValues<VMStatusSimpleLabel>(VMStatusSimpleLabel),
+  reducer: (obj) => {
+    return ((obj?.metadata as any)?.vmStatus as VMStatusBundle)?.status?.getSimpleLabel();
+  },
+  items: getStringEnumValues<VMStatusSimpleLabel>(VMStatusSimpleLabel).map((status) => ({
     id: status,
     title: status,
   })),
   filter: (statuses, obj) => {
-    const status = _.get(obj, 'metadata.status').split(' ')[0];
+    const status = ((obj?.metadata as any)?.vmStatus as VMStatusBundle)?.status.getSimpleLabel();
     return statuses.selected.has(status) || !_.includes(statuses.all, status);
   },
 };

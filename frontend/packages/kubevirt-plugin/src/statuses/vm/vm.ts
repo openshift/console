@@ -1,13 +1,14 @@
-import { K8sResourceCondition, K8sResourceKind, PodKind } from '@console/internal/module/k8s';
-import { getAnnotations, getOwnerReferences } from '@console/shared/src/selectors/common'; // do not import just from shared - causes cycles
+import { K8sResourceKind, PodKind } from '@console/internal/module/k8s';
+import { createBasicLookup } from '@console/shared/src/utils/utils';
+import { getName, getOwnerReferences } from '@console/shared/src/selectors/common'; // do not import just from shared - causes cycles
 import { compareOwnerReference } from '@console/shared/src/utils/owner-references';
-import { buildOwnerReference, buildOwnerReferenceForModel, parseNumber } from '../../utils';
 import {
-  getAnnotationKeySuffix,
-  getStatusConditionOfType,
-  getStatusConditions,
-  getStatusPhase,
-} from '../../selectors/selectors';
+  buildOwnerReference,
+  buildOwnerReferenceForModel,
+  parseNumber,
+  parsePercentage,
+} from '../../utils';
+import { getAnnotationKeySuffix, getLabelValue, getStatusPhase } from '../../selectors/selectors';
 import {
   findVMIMigration,
   getMigrationStatusPhase,
@@ -36,45 +37,165 @@ import {
   POD_STATUS_NOT_SCHEDULABLE,
 } from '../pod/constants';
 import { VMIKind, VMKind } from '../../types';
-import {
-  CONVERSION_PROGRESS_ANNOTATION,
-  VM_IMPORT_PROGRESS_ANNOTATION,
-  VM_STATUS_ERROR,
-  VM_STATUS_IMPORT_ERROR,
-  VM_STATUS_IMPORT_PENDING,
-  VM_STATUS_IMPORTING,
-  VM_STATUS_MIGRATING,
-  VM_STATUS_OFF,
-  VM_STATUS_PAUSED,
-  VM_STATUS_POD_ERROR,
-  VM_STATUS_RUNNING,
-  VM_STATUS_STARTING,
-  VM_STATUS_STOPPING,
-  VM_STATUS_UNKNOWN,
-  VM_STATUS_V2V_CONVERSION_ERROR,
-  VM_STATUS_V2V_CONVERSION_IN_PROGRESS,
-  VM_STATUS_V2V_CONVERSION_PENDING,
-  VM_STATUS_V2V_VM_IMPORT_ERROR,
-  VM_STATUS_V2V_VM_IMPORT_IN_PROGRESS,
-  VM_STATUS_VMI_WAITING,
-} from './constants';
-import { Status } from '..';
 import { isVMIPaused } from '../../selectors/vmi/basic';
 import { VMILikeEntityKind } from '../../types/vmLike';
 import { VMImportKind } from '../../types/vm-import/ovirt/vm-import';
 import { VirtualMachineImportModel } from '../../models';
-import { VirtualMachineImportConditionType } from '../vm-import/types';
-import { VMImportSucceededConditionReason } from '../vm-import/vm-import-succeeded-condition-reason';
+import { getVMImportStatus } from '../vm-import/vm-import-status';
+import { VMStatus } from '../../constants/vm/vm-status';
+import { VMStatusBundle } from './types';
+import {
+  IMPORTING_CDI_ERROR_MESSAGE,
+  IMPORTING_ERROR_VMWARE_MESSAGE,
+  IMPORTING_CDI_MESSAGE,
+  IMPORTING_VMWARE_MESSAGE,
+  VMI_WAITING_MESSAGE,
+  STARTING_MESSAGE,
+  IMPORT_CDI_PENDING_MESSAGE,
+} from '../../strings/vm/status';
+import { CDI_KUBEVIRT_IO, STORAGE_IMPORT_PVC_NAME } from '../../constants';
+import { CONVERSION_PROGRESS_ANNOTATION } from '../../constants/v2v';
+import { PAUSED_VM_MODAL_MESSAGE } from '../../constants/vm';
+import { V1alpha1DataVolume } from '../../types/vm/disk/V1alpha1DataVolume';
 
-const isBeingMigrated = (vm: VMILikeEntityKind, migrations?: K8sResourceKind[]): VMStatus => {
-  const migration = findVMIMigration(vm, migrations);
-  if (isMigrating(migration)) {
-    return { status: VM_STATUS_MIGRATING, message: getMigrationStatusPhase(migration) };
+const isPaused = (vmi: VMIKind): VMStatusBundle =>
+  isVMIPaused(vmi) ? { status: VMStatus.PAUSED, message: PAUSED_VM_MODAL_MESSAGE } : null;
+
+const isV2VVMWareConversion = (vm: VMILikeEntityKind, pods?: PodKind[]): VMStatusBundle => {
+  const conversionPod = findConversionPod(vm, pods);
+  const podPhase = getPodStatusPhase(conversionPod);
+  if (conversionPod && podPhase !== POD_PHASE_SUCEEDED) {
+    const conversionPodStatus = getPodStatus(conversionPod);
+    if (podPhase === POD_PHASE_PENDING) {
+      return {
+        ...conversionPodStatus,
+        status: VMStatus.V2V_CONVERSION_PENDING,
+        message: IMPORTING_VMWARE_MESSAGE,
+        detailedMessage: conversionPodStatus.message,
+        pod: conversionPod,
+        progress: null,
+      };
+    }
+    if (POD_STATUS_ALL_ERROR.includes(conversionPodStatus.status)) {
+      return {
+        ...conversionPodStatus,
+        status: VMStatus.V2V_CONVERSION_ERROR,
+        message: IMPORTING_ERROR_VMWARE_MESSAGE,
+        detailedMessage: conversionPodStatus.message,
+        pod: conversionPod,
+        progress: null,
+      };
+    }
+    const progress = parseNumber(
+      getAnnotationKeySuffix(conversionPod, CONVERSION_PROGRESS_ANNOTATION),
+      0,
+    );
+    return {
+      ...conversionPodStatus,
+      status: VMStatus.V2V_CONVERSION_IN_PROGRESS,
+      message: IMPORTING_VMWARE_MESSAGE,
+      pod: conversionPod,
+      progress,
+    };
   }
   return null;
 };
 
-const isBeingStopped = (vm: VMILikeEntityKind, launcherPod: PodKind = null): VMStatus => {
+const isV2VVMImportConversion = (
+  vm: VMILikeEntityKind,
+  vmImports?: VMImportKind[],
+): VMStatusBundle => {
+  const vmImportOwnerReference = (getOwnerReferences(vm) || []).find((reference) =>
+    compareOwnerReference(reference, buildOwnerReferenceForModel(VirtualMachineImportModel), true),
+  );
+  if (!vmImportOwnerReference || !vmImports) {
+    return null;
+  }
+  const vmImport = vmImports.find((i) =>
+    compareOwnerReference(buildOwnerReference(i), vmImportOwnerReference),
+  );
+
+  const status = getVMImportStatus({ vmImport });
+
+  if (status.status.isCompleted() || status.status.isUnknown()) {
+    return null;
+  }
+
+  return {
+    ...status,
+    status: VMStatus.fromV2VImportStatus(status.status),
+  };
+};
+
+const isBeingMigrated = (vm: VMILikeEntityKind, migrations?: K8sResourceKind[]): VMStatusBundle => {
+  const migration = findVMIMigration(vm, migrations);
+  if (isMigrating(migration)) {
+    return {
+      status: VMStatus.MIGRATING,
+      migration,
+      detailedMessage: getMigrationStatusPhase(migration),
+    };
+  }
+  return null;
+};
+
+const isBeingImported = (
+  vm: VMKind,
+  pods?: PodKind[],
+  dataVolumes?: V1alpha1DataVolume[],
+): VMStatusBundle => {
+  const importerPods = getVMImporterPods(vm, pods);
+  if (importerPods && importerPods.length > 0 && !isVMCreated(vm)) {
+    const dvLookup = createBasicLookup(dataVolumes, getName);
+    const importerPodsStatuses = importerPods.map((pod) => {
+      const podStatus = getPodStatus(pod);
+      const dvName = getLabelValue(pod, `${CDI_KUBEVIRT_IO}/${STORAGE_IMPORT_PVC_NAME}`);
+      const dataVolume = dvLookup[dvName];
+
+      if (POD_STATUS_ALL_ERROR.includes(podStatus.status)) {
+        let status = VMStatus.CDI_IMPORT_ERROR;
+        if (
+          podStatus.status === POD_STATUS_NOT_SCHEDULABLE &&
+          getPodStatusPhase(pod) === POD_PHASE_PENDING
+        ) {
+          status = VMStatus.CDI_IMPORT_PENDING;
+        }
+
+        return {
+          message: podStatus.message,
+          status,
+          progress: null,
+          dataVolume,
+          pod,
+        };
+      }
+      return {
+        status: VMStatus.CDI_IMPORTING,
+        message: podStatus.message,
+        pod,
+        dataVolume,
+        progress: parsePercentage(dataVolume?.status?.progress, 0),
+      };
+    });
+    const importStatus =
+      importerPodsStatuses.find(({ status }) => status.isError()) ||
+      importerPodsStatuses.find(({ status }) => status.isPending()) ||
+      importerPodsStatuses[0];
+    const resultStatus = importStatus?.status || VMStatus.CDI_IMPORT_PENDING;
+    return {
+      status: resultStatus,
+      message: resultStatus.isError()
+        ? IMPORTING_CDI_ERROR_MESSAGE
+        : resultStatus.isPending()
+        ? IMPORT_CDI_PENDING_MESSAGE
+        : IMPORTING_CDI_MESSAGE,
+      importerPodsStatuses,
+    };
+  }
+  return null;
+};
+
+const isBeingStopped = (vm: VMILikeEntityKind, launcherPod: PodKind = null): VMStatusBundle => {
   if (isVMI(vm)) {
     return null;
   }
@@ -93,8 +214,8 @@ const isBeingStopped = (vm: VMILikeEntityKind, launcherPod: PodKind = null): VMS
       if (terminatedContainers.length > 0 || (runningContainers.length > 0 && !isVMRunning(vm))) {
         return {
           ...podStatus,
-          status: VM_STATUS_STOPPING,
-          launcherPod,
+          status: VMStatus.STOPPING,
+          pod: launcherPod,
         };
       }
     }
@@ -103,35 +224,32 @@ const isBeingStopped = (vm: VMILikeEntityKind, launcherPod: PodKind = null): VMS
   return null;
 };
 
-const isOff = (vm: VMKind): VMStatus => (isVMRunning(vm) ? null : { status: VM_STATUS_OFF });
+const isOff = (vm: VMKind): VMStatusBundle => (isVMRunning(vm) ? null : { status: VMStatus.OFF });
 
-const isReady = (vmi: VMIKind, launcherPod: PodKind): VMStatus => {
+const isReady = (vmi: VMIKind, launcherPod: PodKind): VMStatusBundle => {
   if ((getStatusPhase(vmi) || '').toLowerCase() === 'running') {
     // we are all set
     return {
-      status: VM_STATUS_RUNNING,
-      launcherPod,
+      status: VMStatus.RUNNING,
+      pod: launcherPod,
     };
   }
   return null;
 };
 
-const isPaused = (vmi: VMIKind): VMStatus =>
-  isVMIPaused(vmi) ? { status: VM_STATUS_PAUSED } : null;
-
-const isVMError = (vm: VMILikeEntityKind): VMStatus => {
+const isVMError = (vm: VMILikeEntityKind): VMStatusBundle => {
   // is an issue with the VM definition?
   const condition = getVMStatusConditions(vm)[0];
   if (condition) {
     // Do we need to analyze additional conditions in the array? Probably not.
     if (condition.type === 'Failure') {
-      return { status: VM_STATUS_ERROR, message: condition.message };
+      return { status: VMStatus.VM_ERROR, detailedMessage: condition.message };
     }
   }
   return null;
 };
 
-const isCreated = (vm: VMILikeEntityKind, launcherPod: PodKind = null): VMStatus => {
+const isCreated = (vm: VMILikeEntityKind, launcherPod: PodKind = null): VMStatusBundle => {
   if (isVMI(vm)) {
     return null;
   }
@@ -143,172 +261,29 @@ const isCreated = (vm: VMILikeEntityKind, launcherPod: PodKind = null): VMStatus
       if (POD_STATUS_ALL_ERROR.includes(podStatus.status)) {
         return {
           ...podStatus,
-          status: VM_STATUS_POD_ERROR,
-          launcherPod,
+          status: VMStatus.POD_ERROR,
+          pod: launcherPod,
         };
       }
       if (!POD_STATUS_ALL_READY.includes(podStatus.status)) {
         return {
           ...podStatus,
-          status: VM_STATUS_STARTING,
-          launcherPod,
+          status: VMStatus.STARTING,
+          message: STARTING_MESSAGE,
+          detailedMessage: podStatus.message,
+          pod: launcherPod,
         };
       }
     }
-    return { status: VM_STATUS_STARTING, launcherPod };
+    return { status: VMStatus.STARTING, message: STARTING_MESSAGE, pod: launcherPod };
   }
   return null;
 };
 
-const isBeingImported = (vm: VMKind, pods?: PodKind[]): VMStatus => {
-  const importerPods = getVMImporterPods(vm, pods);
-  if (importerPods && importerPods.length > 0 && !isVMCreated(vm)) {
-    const importerPodsStatuses = importerPods.map((pod) => {
-      const podStatus = getPodStatus(pod);
-      if (POD_STATUS_ALL_ERROR.includes(podStatus.status)) {
-        let status = VM_STATUS_IMPORT_ERROR;
-        if (
-          podStatus.status === POD_STATUS_NOT_SCHEDULABLE &&
-          getPodStatusPhase(pod) === POD_PHASE_PENDING
-        ) {
-          status = VM_STATUS_IMPORT_PENDING;
-        }
-
-        return {
-          ...podStatus,
-          message: podStatus.message,
-          status,
-          pod,
-        };
-      }
-      return {
-        status: VM_STATUS_IMPORTING,
-        message: podStatus.message,
-        pod,
-      };
-    });
-    const importErrorOrPendingStatus = importerPodsStatuses.find((status) =>
-      [VM_STATUS_IMPORT_PENDING, VM_STATUS_IMPORT_ERROR].includes(status.status),
-    );
-    const message = importerPodsStatuses
-      .map((podStatus) => `${podStatus.pod.metadata.name}: ${podStatus.message}`)
-      .join('\n\n');
-
-    return {
-      status: importErrorOrPendingStatus ? importErrorOrPendingStatus.status : VM_STATUS_IMPORTING,
-      message,
-      pod: importErrorOrPendingStatus ? importErrorOrPendingStatus.pod : importerPods[0],
-      importerPodsStatuses,
-    };
-  }
-  return null;
-};
-
-const isV2VVMImportConversion = (vm: VMILikeEntityKind, vmImports?: VMImportKind[]): VMStatus => {
-  const vmImportOwnerReference = (getOwnerReferences(vm) || []).find((reference) =>
-    compareOwnerReference(reference, buildOwnerReferenceForModel(VirtualMachineImportModel), true),
-  );
-  if (!vmImportOwnerReference || !vmImports) {
-    return null;
-  }
-  const vmImport = vmImports.find((i) =>
-    compareOwnerReference(buildOwnerReference(i), vmImportOwnerReference),
-  );
-
-  if (!vmImport) {
-    return null;
-  }
-
-  const suceededCond: K8sResourceCondition = getStatusConditionOfType(
-    vmImport,
-    VirtualMachineImportConditionType.Succeeded,
-  );
-
-  if (suceededCond?.status === 'True') {
-    const reason = VMImportSucceededConditionReason.fromString(suceededCond.reason);
-    if (!reason?.hasfailed()) {
-      return null;
-    }
-    return {
-      status: VM_STATUS_V2V_VM_IMPORT_ERROR,
-      message: `${suceededCond.reason}: ${suceededCond.message}`,
-      vmImport,
-    };
-  }
-
-  // TODO double check in the future - show error?
-  const failedProgressingCondType: VirtualMachineImportConditionType = [
-    VirtualMachineImportConditionType.MappingRulesChecking,
-    VirtualMachineImportConditionType.Validating,
-    VirtualMachineImportConditionType.Processing,
-  ].find((type) => getStatusConditionOfType(vmImport, type)?.status === 'False');
-
-  const progressingCondType: VirtualMachineImportConditionType =
-    failedProgressingCondType ||
-    [
-      VirtualMachineImportConditionType.Processing,
-      VirtualMachineImportConditionType.Validating,
-      VirtualMachineImportConditionType.MappingRulesChecking,
-    ].find((type) => getStatusConditionOfType(vmImport, type)?.status === 'True');
-
-  const progressingCondMaybe: K8sResourceCondition = progressingCondType
-    ? getStatusConditionOfType(vmImport, progressingCondType)
-    : getStatusConditions(vmImport, [])[0];
-
-  const progress = parseNumber(getAnnotations(vmImport, {})[VM_IMPORT_PROGRESS_ANNOTATION], 0);
-
-  return {
-    status: VM_STATUS_V2V_VM_IMPORT_IN_PROGRESS,
-    message:
-      progressingCondMaybe && `${progressingCondMaybe.reason}: ${progressingCondMaybe.message}`,
-    vmImport,
-    progress,
-  };
-};
-
-const isV2VVMWareConversion = (vm: VMILikeEntityKind, pods?: PodKind[]): VMStatus => {
-  const conversionPod = findConversionPod(vm, pods);
-  const podPhase = getPodStatusPhase(conversionPod);
-  if (conversionPod && podPhase !== POD_PHASE_SUCEEDED) {
-    const conversionPodStatus = getPodStatus(conversionPod);
-    if (
-      conversionPodStatus.status === POD_STATUS_NOT_SCHEDULABLE &&
-      podPhase === POD_PHASE_PENDING
-    ) {
-      return {
-        ...conversionPodStatus,
-        status: VM_STATUS_V2V_CONVERSION_PENDING,
-        pod: conversionPod,
-        progress: null,
-      };
-    }
-    if (POD_STATUS_ALL_ERROR.includes(conversionPodStatus.status)) {
-      return {
-        ...conversionPodStatus,
-        status: VM_STATUS_V2V_CONVERSION_ERROR,
-        pod: conversionPod,
-        progress: null,
-      };
-    }
-    const progress = parseNumber(
-      getAnnotationKeySuffix(conversionPod, CONVERSION_PROGRESS_ANNOTATION),
-      0,
-    );
-    return {
-      ...conversionPodStatus,
-      status: VM_STATUS_V2V_CONVERSION_IN_PROGRESS,
-      message: `${progress}% progress`,
-      pod: conversionPod,
-      progress,
-    };
-  }
-  return null;
-};
-
-const isWaitingForVMI = (vm: VMKind): VMStatus => {
+const isWaitingForVMI = (vm: VMKind): VMStatusBundle => {
   // assumption: spec.running === true
   if (!isVMCreated(vm)) {
-    return { status: VM_STATUS_VMI_WAITING };
+    return { status: VMStatus.VMI_WAITING, message: VMI_WAITING_MESSAGE };
   }
   return null;
 };
@@ -318,14 +293,16 @@ export const getVMStatus = ({
   vmi,
   pods,
   migrations,
+  dataVolumes,
   vmImports,
 }: {
   vm?: VMKind;
   vmi?: VMIKind;
   pods?: PodKind[];
+  dataVolumes?: V1alpha1DataVolume[];
   migrations?: K8sResourceKind[];
   vmImports?: VMImportKind[];
-}): VMStatus => {
+}): VMStatusBundle => {
   const vmLike = vm || vmi;
   const launcherPod = findVMIPod(vmi, pods);
   return (
@@ -333,32 +310,21 @@ export const getVMStatus = ({
     isV2VVMWareConversion(vmLike, pods) || // these statuses must precede isRunning() because they do not rely on ready vms
     isV2VVMImportConversion(vmLike, vmImports) || //  -||-
     isBeingMigrated(vmLike, migrations) || //  -||-
-    (vm && isBeingImported(vm, pods)) || //  -||-
+    (vm && isBeingImported(vm, pods, dataVolumes)) || //  -||-
     isBeingStopped(vmLike, launcherPod) ||
     (vm && isOff(vm)) ||
     isReady(vmi, launcherPod) ||
     isVMError(vmLike) ||
     isCreated(vmLike, launcherPod) ||
     (!vmi && vm && isWaitingForVMI(vm)) ||
-    (getStatusPhase(vmi) === 'Running' && { status: VM_STATUS_RUNNING }) ||
-    (['Scheduling', 'Scheduled'].includes(getStatusPhase(vmi)) && { status: VM_STATUS_STARTING }) ||
-    (getStatusPhase(vmi) === 'Pending' && { status: VM_STATUS_VMI_WAITING }) ||
-    (getStatusPhase(vmi) === 'Failed' && { status: VM_STATUS_ERROR }) || {
-      status: VM_STATUS_UNKNOWN,
+    (getStatusPhase(vmi) === 'Running' && { status: VMStatus.RUNNING }) ||
+    (['Scheduling', 'Scheduled'].includes(getStatusPhase(vmi)) && {
+      status: VMStatus.STARTING,
+      message: STARTING_MESSAGE,
+    }) ||
+    (getStatusPhase(vmi) === 'Pending' && { status: VMStatus.VMI_WAITING }) ||
+    (getStatusPhase(vmi) === 'Failed' && { status: VMStatus.VM_ERROR }) || {
+      status: VMStatus.UNKNOWN,
     }
   );
-};
-
-export const isVmOff = (vmStatus: VMStatus) => vmStatus.status === VM_STATUS_OFF;
-
-export type VMStatus = Status & {
-  pod?: PodKind;
-  launcherPod?: PodKind;
-  vmImport?: VMImportKind;
-  progress?: number;
-  importerPodsStatuses?: {
-    message: string;
-    status: string;
-    pod: PodKind;
-  }[];
 };
