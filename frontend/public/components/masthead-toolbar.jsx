@@ -19,12 +19,13 @@ import {
   Toolbar,
   ToolbarGroup,
   ToolbarItem,
+  TooltipPosition,
+  Tooltip,
 } from '@patternfly/react-core';
 import classNames from 'classnames';
 import { FLAGS, YellowExclamationTriangleIcon } from '@console/shared';
 import { formatNamespacedRouteForResource } from '@console/shared/src/utils';
-/* needs to be updated once Workspace metadata is finalised
- import CloudShellMastheadButton from '@console/app/src/components/cloud-shell/CloudShellMastheadButton'; */
+import CloudShellMastheadButton from '@console/app/src/components/cloud-shell/CloudShellMastheadButton';
 import * as UIActions from '../actions/ui';
 import { connectToFlags, flagPending, featureReducerName } from '../reducers/features';
 import { authSvc } from '../module/auth';
@@ -574,11 +575,13 @@ class MastheadToolbarContents_ extends React.Component {
               </ToolbarItem>
             )}
             <ToolbarItem>
-              <Button variant="plain" aria-label="Import YAML" onClick={this._onImportYAML}>
-                <PlusCircleIcon className="co-masthead-icon" />
-              </Button>
+              <Tooltip content="Import YAML" position={TooltipPosition.bottom}>
+                <Button variant="plain" aria-label="Import YAML" onClick={this._onImportYAML}>
+                  <PlusCircleIcon className="co-masthead-icon" />
+                </Button>
+              </Tooltip>
             </ToolbarItem>
-            {/* To be added after workspace resource metadata is finalised <CloudShellMastheadButton /> */}
+            <CloudShellMastheadButton />
             <ToolbarItem>
               <ApplicationLauncher
                 aria-label="Help menu"

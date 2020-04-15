@@ -1,45 +1,68 @@
 import * as React from 'react';
-import { referenceForModel, k8sCreate } from '@console/internal/module/k8s';
-import { Firehose, FirehoseResource, FirehoseResult } from '@console/internal/components/utils';
-
+import { connect } from 'react-redux';
+import { RootState } from '@console/internal/redux';
+import { referenceForModel } from '@console/internal/module/k8s/k8s';
+import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
+import { LoadingBox, StatusBox } from '@console/internal/components/utils/status-box';
 import { WorkspaceModel } from '../../models';
-import { newCloudShellWorkSpace, CloudShellResource } from './utils/cloudshell-resource';
 import CloudShellTerminalFrame from './CloudShellTerminalFrame';
+import {
+  CLOUD_SHELL_LABEL,
+  CLOUD_SHELL_USER_ANNOTATION,
+  CloudShellResource,
+} from './cloud-shell-utils';
+import CloudShellSetup from './setup/CloudShellSetup';
 
-// TODO use proper namespace and resource name
-const namespace = 'che-workspace-controller';
-const name = 'cloudshell-userid';
+type StateProps = {
+  username: string;
+};
 
-const Inner: React.FC<{ cloudShell?: FirehoseResult<CloudShellResource[]> }> = ({ cloudShell }) => {
-  const loaded = cloudShell?.loaded;
-  const data = cloudShell?.data?.[0];
-  React.useEffect(() => {
-    if (loaded && data == null) {
-      k8sCreate(WorkspaceModel, newCloudShellWorkSpace(name, namespace));
+type Props = {
+  onCancel?: () => void;
+};
+
+type CloudShellTerminalProps = StateProps & Props;
+
+const resource = {
+  kind: referenceForModel(WorkspaceModel),
+  isList: true,
+  selector: {
+    matchLabels: { [CLOUD_SHELL_LABEL]: 'true' },
+  },
+};
+
+const CloudShellTerminal: React.FC<CloudShellTerminalProps> = ({ username, onCancel }) => {
+  const [data, loaded, loadError] = useK8sWatchResource<CloudShellResource>(resource);
+
+  if (loadError) {
+    return (
+      <StatusBox loaded={loaded} loadError={loadError} label="OpenShift command line terminal" />
+    );
+  }
+
+  if (!loaded) {
+    return <LoadingBox />;
+  }
+
+  if (Array.isArray(data)) {
+    const workspace = data.find(
+      (d) => d?.metadata?.annotations?.[CLOUD_SHELL_USER_ANNOTATION] === username,
+    );
+    if (workspace) {
+      const running = workspace.status?.phase === 'Running';
+      const url = workspace.status?.ideUrl;
+      return <CloudShellTerminalFrame loading={!running} url={url} />;
     }
-  }, [loaded, data]);
+  }
 
-  const running = data?.status?.phase === 'Running';
-  const url = data?.status?.ideUrl;
-  return <CloudShellTerminalFrame loading={!running} url={url} />;
+  return <CloudShellSetup onCancel={onCancel} />;
 };
 
-const CloudShellTerminal: React.FC = () => {
-  const resources: FirehoseResource[] = [
-    {
-      kind: referenceForModel(WorkspaceModel),
-      namespace,
-      prop: `cloudShell`,
-      isList: true,
-      fieldSelector: `metadata.name=${name}`,
-    },
-  ];
+const stateToProps = (state: RootState): StateProps => ({
+  username: state.UI.get('user')?.metadata?.name || '',
+});
 
-  return (
-    <Firehose resources={resources}>
-      <Inner />
-    </Firehose>
-  );
-};
+// exposed for testing
+export const InternalCloudShellTerminal = CloudShellTerminal;
 
-export default CloudShellTerminal;
+export default connect(stateToProps)(CloudShellTerminal);

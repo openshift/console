@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { LoadingBox } from '@console/internal/components/utils';
+import { LoadingBox } from '@console/internal/components/utils/status-box';
 import './CloudShellTerminalFrame.scss';
 
 type CloudShellTerminalFrameProps = {
@@ -9,7 +9,11 @@ type CloudShellTerminalFrameProps = {
 
 const CloudShellTerminalFrame: React.FC<CloudShellTerminalFrameProps> = ({ loading, url }) => (
   <div className="co-cloud-shell-terminal-frame">
-    {loading ? <LoadingBox /> : <iframe title="Command Line Terminal" src={url} />}
+    {loading ? (
+      <LoadingBox message="Connecting to your OpenShift command line terminal…" />
+    ) : (
+      <iframe title="Command line terminal" src={url} />
+    )}
   </div>
 );
 

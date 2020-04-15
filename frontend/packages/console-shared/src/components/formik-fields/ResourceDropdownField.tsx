@@ -18,7 +18,12 @@ export interface ResourceDropdownFieldProps extends DropdownFieldProps {
   resourceFilter?: (resource: K8sResourceKind) => boolean;
   autoSelect?: boolean;
   placeholder?: string;
+  actionItems?: {
+    actionTitle: string;
+    actionKey: string;
+  }[];
 }
+
 const ResourceDropdownField: React.FC<ResourceDropdownFieldProps> = ({
   label,
   helpText,

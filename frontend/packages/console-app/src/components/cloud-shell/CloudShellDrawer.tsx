@@ -18,7 +18,7 @@ const getMastheadHeight = (): number => {
 };
 
 const CloudShellDrawer: React.FC<CloudShellDrawerProps> = ({ children, onClose }) => {
-  const [height, setHeight] = React.useState(326);
+  const [height, setHeight] = React.useState(365);
   const [expanded, setExpanded] = React.useState<boolean>(true);
   const onMRButtonClick = (expandedState: boolean) => {
     setExpanded(!expandedState);
@@ -29,7 +29,7 @@ const CloudShellDrawer: React.FC<CloudShellDrawerProps> = ({ children, onClose }
   };
   const header = (
     <Flex style={{ flexGrow: 1 }}>
-      <FlexItem className="co-cloud-shell-drawer__heading">Command Line Terminal</FlexItem>
+      <FlexItem className="co-cloud-shell-drawer__heading">Command line terminal</FlexItem>
       <FlexItem breakpointMods={[{ modifier: FlexModifiers['align-right'] }]}>
         <Tooltip content="Open terminal in new tab">
           <Button

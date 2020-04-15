@@ -22,6 +22,10 @@
   &__access-denied-icon {
     margin: 10px;
   }
+
+  &__loading-message {
+    margin-top: var(--pf-global--spacer--sm);
+  }
 }
 
 .cos-status-box--loading {
@@ -31,6 +35,7 @@
   justify-content: center;
   min-height: 50px;
   width: 100%;
+  flex-direction: column;
 }
 
 .co-m-loader--inline {
