@@ -1,9 +1,11 @@
 import * as fuzzy from 'fuzzysearch';
 import * as _ from 'lodash';
+import { safeDump } from 'js-yaml';
 import { coFetchJSON } from '@console/internal/co-fetch';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import {
   HelmRelease,
+  HelmChart,
   HelmReleaseStatus,
   HelmChartMetaData,
   HelmActionType,
@@ -126,3 +128,12 @@ export const flattenReleaseResources = (resources: { [kind: string]: { data: K8s
     }
     return acc;
   }, []);
+
+export const getChartValuesYAML = (chart: HelmChart): string => {
+  const orderedValuesFile = chart?.files?.find((file) => file.name === 'ordered-values.yaml');
+  const orderedValues = orderedValuesFile ? atob(orderedValuesFile.data) : '';
+
+  if (orderedValues) return orderedValues;
+
+  return !_.isEmpty(chart?.values) ? safeDump(chart?.values) : '';
+};

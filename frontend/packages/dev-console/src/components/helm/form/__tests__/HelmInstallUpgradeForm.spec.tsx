@@ -9,15 +9,19 @@ let helmInstallUpgradeFormProps: React.ComponentProps<typeof HelmInstallUpgradeF
 describe('HelmInstallUpgradeForm', () => {
   helmInstallUpgradeFormProps = {
     chartHasValues: true,
-    chartName: 'helm-release',
-    activeChartVersion: null,
     submitLabel: 'Install',
-    values: {},
+    values: {
+      helmReleaseName: 'helm-release',
+      chartName: 'helm-release',
+      chartValuesYAML: 'chart-yaml-values',
+      chartVersion: '',
+    },
     errors: {},
     touched: {},
     isValid: true,
     initialValues: {
       helmReleaseName: 'helm-release',
+      chartName: 'helm-release',
       chartValuesYAML: 'chart-yaml-values',
       chartVersion: '0.3',
     },
@@ -67,7 +71,7 @@ describe('HelmInstallUpgradeForm', () => {
   });
 
   it('should render the Dropdown Field component when active version exists', () => {
-    helmInstallUpgradeFormProps.activeChartVersion = '0.1';
+    helmInstallUpgradeFormProps.values.chartVersion = '0.1';
     helmInstallUpgradeForm = shallow(<HelmInstallUpgradeForm {...helmInstallUpgradeFormProps} />);
     expect(helmInstallUpgradeForm.find(HelmChartVersionDropdown).exists()).toBe(true);
   });
