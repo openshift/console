@@ -14,8 +14,10 @@ import {
   PipelineParam,
   PipelineRun,
   PipelineWorkspace,
+  PipelineRunResource,
 } from '../../../utils/pipeline-augment';
 import { getPipelineRunParams, getPipelineRunWorkspaces } from '../../../utils/pipeline-utils';
+import { useUserLabelForManualStart } from '../../pipelineruns/triggered-by';
 import StartPipelineForm from './StartPipelineForm';
 import { startPipelineSchema } from './pipelineForm-validation-utils';
 
@@ -39,6 +41,8 @@ const StartPipelineModal: React.FC<StartPipelineModalProps & ModalComponentProps
   close,
   onSubmit,
 }) => {
+  const userStartedLabel = useUserLabelForManualStart();
+
   const initialValues: StartPipelineFormValues = {
     namespace: pipeline.metadata.namespace,
     parameters: _.get(pipeline, 'spec.params', []),
@@ -62,11 +66,15 @@ const StartPipelineModal: React.FC<StartPipelineModalProps & ModalComponentProps
           name: pipeline.metadata.name,
         },
         params: getPipelineRunParams(values.parameters),
-        resources: values.resources,
+        resources: values.resources as PipelineRunResource[],
         workspaces: getPipelineRunWorkspaces(values.workspaces),
       },
     };
-    k8sCreate(PipelineRunModel, getPipelineRunData(pipeline, pipelineRunData))
+    const pipelineRun = _.merge({}, getPipelineRunData(pipeline, pipelineRunData), {
+      metadata: { labels: userStartedLabel },
+    });
+
+    k8sCreate(PipelineRunModel, pipelineRun)
       .then((res) => {
         actions.setSubmitting(false);
         onSubmit && onSubmit(res);

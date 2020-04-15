@@ -1,27 +1,20 @@
 import * as React from 'react';
 import { Status } from '@console/shared';
 import { TableRow, TableData, RowFunction } from '@console/internal/components/factory';
-import { Kebab, ResourceLink, Timestamp, ResourceKebab } from '@console/internal/components/utils';
+import { ResourceLink, Timestamp } from '@console/internal/components/utils';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { pipelineRunFilterReducer } from '../../../utils/pipeline-filter-reducer';
-import { reRunPipelineRun, stopPipelineRun } from '../../../utils/pipeline-actions';
+import { getPipelineRunKebabActions } from '../../../utils/pipeline-actions';
 import { pipelineRunDuration } from '../../../utils/pipeline-utils';
 import { PipelineRun } from '../../../utils/pipeline-augment';
 import { PipelineRunModel } from '../../../models';
 import LinkedPipelineRunTaskStatus from '../status/LinkedPipelineRunTaskStatus';
+import { ResourceKebabWithUserLabel } from '../triggered-by';
 import { tableColumnClasses } from './pipelinerun-table';
 
 const pipelinerunReference = referenceForModel(PipelineRunModel);
 
 const PipelineRunRow: RowFunction<PipelineRun> = ({ obj, index, key, style }) => {
-  const pipelineRunStatus = pipelineRunFilterReducer(obj);
-
-  const menuActions = [
-    reRunPipelineRun,
-    ...(obj && pipelineRunStatus === 'Running' ? [stopPipelineRun] : []),
-    Kebab.factory.Delete,
-  ];
-
   return (
     <TableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
       <TableData className={tableColumnClasses[0]}>
@@ -47,7 +40,11 @@ const PipelineRunRow: RowFunction<PipelineRun> = ({ obj, index, key, style }) =>
       </TableData>
       <TableData className={tableColumnClasses[5]}>{pipelineRunDuration(obj)}</TableData>
       <TableData className={tableColumnClasses[6]}>
-        <ResourceKebab actions={menuActions} kind={pipelinerunReference} resource={obj} />
+        <ResourceKebabWithUserLabel
+          actions={getPipelineRunKebabActions()}
+          kind={pipelinerunReference}
+          resource={obj}
+        />
       </TableData>
     </TableRow>
   );

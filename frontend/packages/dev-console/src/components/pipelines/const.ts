@@ -1,3 +1,8 @@
+export enum StartedByLabel {
+  user = 'pipeline.openshift.io/started-by',
+  triggers = 'tekton.dev/eventlistener',
+}
+
 export enum PipelineResourceType {
   '' = 'Select resource type',
   git = 'Git',

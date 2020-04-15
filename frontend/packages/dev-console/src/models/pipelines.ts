@@ -108,3 +108,18 @@ export const ConditionModel: K8sKind = {
   badge: BadgeType.DEV,
   color,
 };
+
+export const EventListenerModel: K8sKind = {
+  apiGroup: 'tekton.dev',
+  apiVersion: 'v1alpha1',
+  label: 'Event Listener',
+  plural: 'eventlisteners',
+  abbr: 'EL',
+  namespaced: true,
+  kind: 'EventListener',
+  id: 'eventlistener',
+  labelPlural: 'Event Listeners',
+  crd: true,
+  badge: BadgeType.DEV,
+  color,
+};
