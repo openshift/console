@@ -8,7 +8,7 @@ import {
   kebabOptionsToMenu,
   isKebabSubMenu,
 } from '@console/internal/components/utils';
-import { KebabActionFactory } from '@console/plugin-sdk';
+import { ResourceActionProvider } from '@console/plugin-sdk';
 import { workloadActions } from '../actions/workloadActions';
 import { groupActions } from '../actions/groupActions';
 import { nodeActions } from '../actions/nodeActions';
@@ -73,5 +73,5 @@ export const helmReleaseContextMenu = (element: Node) =>
 
 type NodeContextMenuOptions = {
   connectorSource?: Node;
-  actionExtensions?: KebabActionFactory[];
+  actionExtensions?: ResourceActionProvider[];
 };

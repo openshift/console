@@ -11,7 +11,11 @@ import {
   Split,
 } from '@patternfly/react-core';
 import { Status } from '@console/shared';
-import { useExtensions, KebabActionFactory, isKebabActionFactory } from '@console/plugin-sdk';
+import {
+  useExtensions,
+  ResourceActionProvider,
+  isResourceActionProvider,
+} from '@console/plugin-sdk';
 import {
   ActionsMenu,
   ResourceIcon,
@@ -19,7 +23,7 @@ import {
   resourcePath,
   FirehoseResult,
   KebabOption,
-  mergePluginKebabOptions,
+  extendKebabOptions,
 } from './index';
 import { connectToModel } from '../../kinds';
 import {
@@ -105,7 +109,7 @@ export const PageHeading = connectToModel((props: PageHeadingProps) => {
     (hasButtonActions || hasMenuActions) && hasData && !_.get(data, 'metadata.deletionTimestamp');
   const resourceStatus = hasData && getResourceStatus ? getResourceStatus(data) : null;
   const showHeading = props.icon || kind || resourceTitle || resourceStatus || badge || showActions;
-  const actionExtensions = useExtensions<KebabActionFactory>(isKebabActionFactory);
+  const actionExtensions = useExtensions<ResourceActionProvider>(isResourceActionProvider);
 
   let menuOptions = _.isFunction(menuActions)
     ? menuActions(kindObj, data, extraResources, customData)
@@ -114,7 +118,7 @@ export const PageHeading = connectToModel((props: PageHeadingProps) => {
       );
 
   if (extendMenuActions) {
-    menuOptions = mergePluginKebabOptions(menuOptions, actionExtensions, kindObj, data);
+    menuOptions = extendKebabOptions(menuOptions, actionExtensions, kindObj, data);
   }
 
   return (
@@ -208,10 +212,10 @@ export const ResourceOverviewHeading: React.SFC<ResourceOverviewHeadingProps> = 
   resource,
 }) => {
   const isDeleting = !!resource.metadata.deletionTimestamp;
-  const actionExtensions = useExtensions<KebabActionFactory>(isKebabActionFactory);
+  const actionExtensions = useExtensions<ResourceActionProvider>(isResourceActionProvider);
 
   let options = actions.map((a) => a(kindObj, resource));
-  options = mergePluginKebabOptions(options, actionExtensions, kindObj, resource);
+  options = extendKebabOptions(options, actionExtensions, kindObj, resource);
 
   return (
     <div className="overview__sidebar-pane-head resource-overview__heading">

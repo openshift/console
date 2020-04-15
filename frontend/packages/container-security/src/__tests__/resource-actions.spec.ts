@@ -1,10 +1,10 @@
 import * as k8sModels from '@console/internal/module/k8s';
 import { ServiceModel, PodModel } from '@console/internal/models';
 import { mockPod } from '@console/shared/src/utils/__mocks__/pod-utils-test-data';
-import { getKebabActions } from '../kebab-actions';
+import { getResourceActions } from '../resource-actions';
 import { ImageManifestVulnModel } from '../models';
 
-describe('getKebabActions', () => {
+describe('getResourceActions', () => {
   const pod: k8sModels.K8sResourceKind = {
     ...mockPod,
     status: {
@@ -26,7 +26,7 @@ describe('getKebabActions', () => {
 
   it('returns `ViewImageVulnerabilities` kebab action if given `PodModel`', () => {
     spyOn(k8sModels, 'modelFor').and.returnValue(PodModel);
-    const actions = getKebabActions(PodModel);
+    const actions = getResourceActions(PodModel);
 
     expect(actions.length).toEqual(1);
     expect(actions[0](PodModel, pod).label).toEqual('View Image Vulnerabilities');
@@ -43,6 +43,6 @@ describe('getKebabActions', () => {
 
   it('returns no actions if not given `PodModel`', () => {
     spyOn(k8sModels, 'modelFor').and.returnValue(ServiceModel);
-    expect(getKebabActions(ServiceModel).length).toEqual(0);
+    expect(getResourceActions(ServiceModel).length).toEqual(0);
   });
 });

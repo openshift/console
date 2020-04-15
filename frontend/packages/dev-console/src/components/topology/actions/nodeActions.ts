@@ -1,13 +1,13 @@
 import * as _ from 'lodash';
-import { Kebab, KebabOption, mergePluginKebabOptions } from '@console/internal/components/utils';
+import { Kebab, KebabOption, extendKebabOptions } from '@console/internal/components/utils';
 import { modelFor, referenceFor } from '@console/internal/module/k8s';
-import { KebabActionFactory } from '@console/plugin-sdk';
+import { ResourceActionProvider } from '@console/plugin-sdk';
 import { TopologyDataObject } from '../topology-types';
 import { getTopologyResourceObject } from '../topology-utils';
 
 export const nodeActions = (
   node: TopologyDataObject,
-  actionExtensions: KebabActionFactory[],
+  actionExtensions: ResourceActionProvider[],
 ): KebabOption[] => {
   const contextMenuResource = getTopologyResourceObject(node);
   if (!contextMenuResource) {
@@ -18,5 +18,5 @@ export const nodeActions = (
   const menuActions = [...Kebab.factory.common];
   const menuOptions = _.map(menuActions, (a) => a(resourceKind, contextMenuResource));
 
-  return mergePluginKebabOptions(menuOptions, actionExtensions, resourceKind, contextMenuResource);
+  return extendKebabOptions(menuOptions, actionExtensions, resourceKind, contextMenuResource);
 };

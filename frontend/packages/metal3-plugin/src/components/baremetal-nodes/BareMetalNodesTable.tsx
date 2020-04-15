@@ -1,9 +1,13 @@
 import * as React from 'react';
 import * as classNames from 'classnames';
-import { Kebab, ResourceLink, mergePluginKebabOptions } from '@console/internal/components/utils';
+import { Kebab, ResourceLink, extendKebabOptions } from '@console/internal/components/utils';
 import { sortable } from '@patternfly/react-table';
 import { DASH, getName, getUID, getNamespace, SecondaryStatus } from '@console/shared';
-import { useExtensions, KebabActionFactory, isKebabActionFactory } from '@console/plugin-sdk';
+import {
+  useExtensions,
+  ResourceActionProvider,
+  isResourceActionProvider,
+} from '@console/plugin-sdk';
 import {
   TableRow,
   TableData,
@@ -82,11 +86,11 @@ const BareMetalNodesTableRow: React.FC<RowFunctionArgs<BareMetalNodeBundle>> = (
   const address = getHostBMCAddress(host);
   const uid = getUID(node);
 
-  const actionExtensions = useExtensions<KebabActionFactory>(isKebabActionFactory);
+  const actionExtensions = useExtensions<ResourceActionProvider>(isResourceActionProvider);
   let options = menuActions.map((action) =>
     action(NodeModel, node, null, { nodeMaintenance, hasNodeMaintenanceCapability }),
   );
-  options = mergePluginKebabOptions(options, actionExtensions, NodeModel, node);
+  options = extendKebabOptions(options, actionExtensions, NodeModel, node);
 
   return (
     <TableRow id={uid} index={index} trKey={key} style={style}>

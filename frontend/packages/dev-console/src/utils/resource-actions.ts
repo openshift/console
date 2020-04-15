@@ -6,7 +6,7 @@ import {
   DeploymentModel,
   StatefulSetModel,
 } from '@console/internal/models';
-import { GetKebabActions } from '@console/plugin-sdk';
+import { GetResourceActions } from '@console/plugin-sdk';
 import { ModifyApplication, EditApplication } from '../actions/modify-application';
 
 const modifyWebConsoleApplicationRefs = [
@@ -21,7 +21,7 @@ const editApplicationRefs = [
   referenceForModel(DeploymentModel),
 ];
 
-export const getKebabActions: GetKebabActions = (resourceKind) => {
+export const getResourceActions: GetResourceActions = (resourceKind) => {
   if (!resourceKind) {
     // no common actions
     return [];

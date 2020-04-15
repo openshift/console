@@ -1,6 +1,10 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { useExtensions, KebabActionFactory, isKebabActionFactory } from '@console/plugin-sdk';
+import {
+  useExtensions,
+  ResourceActionProvider,
+  isResourceActionProvider,
+} from '@console/plugin-sdk';
 import {} from '@console/topology/';
 import { GraphElement as TopologyElement } from '../types';
 import ElementContext from '../utils/ElementContext';
@@ -10,7 +14,7 @@ type Reference = React.ComponentProps<typeof ContextMenu>['reference'];
 
 type ActionsCreator<E extends TopologyElement> = (
   element: E,
-  options?: { actionExtensions?: KebabActionFactory[] },
+  options?: { actionExtensions?: ResourceActionProvider[] },
 ) => React.ReactElement[];
 
 export type WithContextMenuProps = {
@@ -39,7 +43,7 @@ export const withContextMenu = <E extends TopologyElement>(
           : e.currentTarget,
       );
     }, []);
-    const actionExtensions = useExtensions<KebabActionFactory>(isKebabActionFactory);
+    const actionExtensions = useExtensions<ResourceActionProvider>(isResourceActionProvider);
     const menuItems = actions(element as E, { actionExtensions });
 
     return (

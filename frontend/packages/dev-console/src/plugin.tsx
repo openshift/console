@@ -4,7 +4,7 @@ import {
   Plugin,
   ModelDefinition,
   ModelFeatureFlag,
-  KebabActionFactory,
+  ResourceActionProvider,
   HrefNavItem,
   ResourceNSNavItem,
   ResourceClusterNavItem,
@@ -23,7 +23,7 @@ import { CodeIcon } from '@patternfly/react-icons';
 import { FLAGS } from '@console/shared/src/constants';
 import { referenceForModel } from '@console/internal/module/k8s';
 import * as models from './models';
-import { getKebabActions } from './utils/kebab-actions';
+import { getResourceActions } from './utils/resource-actions';
 import {
   tknPipelineAndPipelineRunsResources,
   getPipelinesAndPipelineRunsForResource,
@@ -71,7 +71,7 @@ type ConsumedExtensions =
   | Perspective
   | RoutePage
   | ReduxReducer
-  | KebabActionFactory
+  | ResourceActionProvider
   | OverviewResourceTab
   | OverviewCRD
   | YAMLTemplate
@@ -701,9 +701,9 @@ const plugin: Plugin<ConsumedExtensions> = [
     },
   },
   {
-    type: 'KebabActionFactory',
+    type: 'Resource/Actions',
     properties: {
-      getKebabActions,
+      getResourceActions,
     },
   },
   {

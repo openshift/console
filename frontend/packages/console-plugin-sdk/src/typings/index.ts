@@ -3,7 +3,7 @@ export * from './base';
 // specific extension types
 export * from './dashboards';
 export * from './features';
-export * from './kebab-actions';
+export * from './resource-actions';
 export * from './models';
 export * from './nav-items';
 export * from './overview';

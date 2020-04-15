@@ -7,7 +7,11 @@ import { KEY_CODES, Tooltip } from '@patternfly/react-core';
 import { EllipsisVIcon, AngleRightIcon } from '@patternfly/react-icons';
 import Popper from '@console/shared/src/components/popper/Popper';
 import { arrayInsert } from '@console/shared/src/utils/array-utils';
-import { useExtensions, KebabActionFactory, isKebabActionFactory } from '@console/plugin-sdk';
+import {
+  useExtensions,
+  ResourceActionProvider,
+  isResourceActionProvider,
+} from '@console/plugin-sdk';
 import {
   annotationsModal,
   configureReplicaCountModal,
@@ -340,14 +344,14 @@ kebabFactory.common = [
   kebabFactory.Delete,
 ];
 
-export const mergePluginKebabOptions = (
+export const extendKebabOptions = (
   options: KebabOption[],
-  extensions: KebabActionFactory[],
+  extensions: ResourceActionProvider[],
   kind: K8sKind,
   obj: K8sResourceKind,
 ): KebabOption[] =>
   extensions.reduce((mergedOptions, e) => {
-    const newActions = e.properties.getKebabActions(kind, obj);
+    const newActions = e.properties.getResourceActions(kind, obj);
     const newOptions = newActions.map((a) => a(kind, obj));
     const mergeBefore = e.properties.mergeBefore || 'Edit Labels';
     const index = mergedOptions.findIndex((o) => o.label === mergeBefore);
@@ -359,7 +363,7 @@ export const mergePluginKebabOptions = (
 
 export const ResourceKebab = connectToModel((props: ResourceKebabProps) => {
   const { actions, kindObj, resource, isDisabled } = props;
-  const actionExtensions = useExtensions<KebabActionFactory>(isKebabActionFactory);
+  const actionExtensions = useExtensions<ResourceActionProvider>(isResourceActionProvider);
 
   if (!kindObj) {
     return null;
@@ -369,7 +373,7 @@ export const ResourceKebab = connectToModel((props: ResourceKebabProps) => {
     actions.map((a) => a(kindObj, resource)),
     'hidden',
   );
-  options = mergePluginKebabOptions(options, actionExtensions, kindObj, resource);
+  options = extendKebabOptions(options, actionExtensions, kindObj, resource);
 
   return (
     <Kebab

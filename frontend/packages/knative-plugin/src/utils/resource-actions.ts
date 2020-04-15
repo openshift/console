@@ -5,7 +5,7 @@ import {
   ModifyApplication,
   EditApplication,
 } from '@console/dev-console/src/actions/modify-application';
-import { GetKebabActions } from '@console/plugin-sdk';
+import { GetResourceActions } from '@console/plugin-sdk';
 import { setTrafficDistribution } from '../actions/traffic-splitting';
 import { setSinkSource } from '../actions/sink-source';
 import {
@@ -28,7 +28,7 @@ const eventSourceModelrefs = [
 ];
 const modifyApplicationRefs = [...eventSourceModelrefs, referenceForModel(ServiceModel)];
 
-export const getKebabActions: GetKebabActions = (resourceKind) => {
+export const getResourceActions: GetResourceActions = (resourceKind) => {
   const menuActions: KebabAction[] = [];
   if (resourceKind) {
     if (_.includes(modifyApplicationRefs, referenceForModel(resourceKind))) {

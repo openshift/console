@@ -1,4 +1,4 @@
-import { mergePluginKebabOptions } from '../../../public/components/utils';
+import { extendKebabOptions } from '../../../public/components/utils';
 import { NamespaceModel } from '../../../public/models';
 import { testNamespace } from '../../../__mocks__/k8sResourcesMocks';
 
@@ -10,23 +10,23 @@ const Ext2 = { label: 'Ext2' };
 const Ext3 = { label: 'Ext3' };
 const Ext4 = { label: 'Ext4' };
 
-describe('mergePluginKebabOptions', () => {
-  it('adds extension related options at the right position', () => {
+describe('extendKebabOptions', () => {
+  it('adds new options at the right position', () => {
     expect(
-      mergePluginKebabOptions(
+      extendKebabOptions(
         [Foo, Bar, Qux],
         [
           {
-            type: 'KebabActionFactory',
+            type: 'Resource/Actions',
             properties: {
-              getKebabActions: () => [() => Ext1, () => Ext2],
+              getResourceActions: () => [() => Ext1, () => Ext2],
               mergeBefore: 'Bar',
             },
           },
           {
-            type: 'KebabActionFactory',
+            type: 'Resource/Actions',
             properties: {
-              getKebabActions: () => [() => Ext3, () => Ext4],
+              getResourceActions: () => [() => Ext3, () => Ext4],
               mergeBefore: 'NonExistent',
             },
           },
@@ -39,13 +39,13 @@ describe('mergePluginKebabOptions', () => {
 
   it('does not modify the original options object', () => {
     const options = [Foo, Bar];
-    const result = mergePluginKebabOptions(
+    const result = extendKebabOptions(
       options,
       [
         {
-          type: 'KebabActionFactory',
+          type: 'Resource/Actions',
           properties: {
-            getKebabActions: () => [() => Ext1, () => Ext2],
+            getResourceActions: () => [() => Ext1, () => Ext2],
             mergeBefore: 'Bar',
           },
         },
