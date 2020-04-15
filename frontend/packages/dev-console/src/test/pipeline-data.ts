@@ -786,3 +786,88 @@ export const pipelineTestData: PipelineTestData = {
     },
   },
 };
+
+export const taskTestData = {
+  v1alpha1: {
+    buildah: {
+      apiVersion: 'tekton.dev/v1alpha1',
+      kind: 'ClusterTask',
+      metadata: {
+        name: 'buildah',
+      },
+      spec: {
+        inputs: {
+          params: [
+            {
+              default: 'quay.io/buildah/stable:v1.11.0',
+              description: 'The location of the buildah builder image.',
+              name: 'BUILDER_IMAGE',
+              type: 'string',
+            },
+            {
+              default: './Dockerfile',
+              description: 'Path to the Dockerfile to build.',
+              name: 'DOCKERFILE',
+              type: 'string',
+            },
+          ],
+          resources: [
+            {
+              name: 'source',
+              type: 'git',
+            },
+          ],
+        },
+        outputs: {
+          resources: [
+            {
+              name: 'image',
+              type: 'image',
+            },
+          ],
+        },
+        steps: [],
+      },
+    },
+  },
+  v1beta1: {
+    buildah: {
+      apiVersion: 'tekton.dev/v1beta1',
+      kind: 'ClusterTask',
+      metadata: {
+        name: 'buildah',
+      },
+      spec: {
+        params: [
+          {
+            default: 'quay.io/buildah/stable:v1.11.0',
+            description: 'The location of the buildah builder image.',
+            name: 'BUILDER_IMAGE',
+            type: 'string',
+          },
+          {
+            default: './Dockerfile',
+            description: 'Path to the Dockerfile to build.',
+            name: 'DOCKERFILE',
+            type: 'string',
+          },
+        ],
+        resources: {
+          inputs: [
+            {
+              name: 'source',
+              type: 'git',
+            },
+          ],
+          outputs: [
+            {
+              name: 'image',
+              type: 'image',
+            },
+          ],
+        },
+        steps: [],
+      },
+    },
+  },
+};
