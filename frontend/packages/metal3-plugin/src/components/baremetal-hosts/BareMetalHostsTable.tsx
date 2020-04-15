@@ -3,7 +3,13 @@ import * as classNames from 'classnames';
 import { Kebab, ResourceLink } from '@console/internal/components/utils';
 import { sortable } from '@patternfly/react-table';
 import { getName, getUID, getNamespace, DASH } from '@console/shared';
-import { TableRow, TableData, Table, RowFunction } from '@console/internal/components/factory';
+import {
+  TableRow,
+  TableData,
+  Table,
+  RowFunction,
+  RowFunctionArgs,
+} from '@console/internal/components/factory';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { useFlag } from '@console/shared/src/hooks/flag';
 import { BareMetalHostBundle } from '../types';
@@ -69,7 +75,7 @@ const HostsTableHeader = () => [
   },
 ];
 
-const HostsTableRow: RowFunction<BareMetalHostBundle> = ({
+const HostsTableRow: React.FC<RowFunctionArgs<BareMetalHostBundle>> = ({
   obj: { host, node, nodeMaintenance, machine, machineSet, status },
   index,
   key,
@@ -128,15 +134,21 @@ type BareMetalHostsTableProps = React.ComponentProps<typeof Table> & {
   data: BareMetalHostBundle[];
 };
 
-const BareMetalHostsTable: React.FC<BareMetalHostsTableProps> = (props) => (
-  <Table
-    {...props}
-    defaultSortField="host.metadata.name"
-    aria-label="Bare Metal Hosts"
-    Header={HostsTableHeader}
-    Row={HostsTableRow}
-    virtualize
-  />
-);
+const BareMetalHostsTable: React.FC<BareMetalHostsTableProps> = (props) => {
+  const row = React.useCallback<RowFunction<BareMetalHostBundle>>(
+    (rowProps) => <HostsTableRow {...rowProps} />,
+    [],
+  );
+  return (
+    <Table
+      {...props}
+      defaultSortField="host.metadata.name"
+      aria-label="Bare Metal Hosts"
+      Header={HostsTableHeader}
+      Row={row}
+      virtualize
+    />
+  );
+};
 
 export default BareMetalHostsTable;
