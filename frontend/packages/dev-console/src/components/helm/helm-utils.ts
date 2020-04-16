@@ -106,7 +106,7 @@ export const getHelmActionConfig = (
         subTitle: 'The helm chart will be installed using the YAML shown in the editor below.',
         helmReleaseApi: `/api/helm/chart?url=${chartURL}`,
         fetch: coFetchJSON.post,
-        redirectURL: `/topology/ns/${namespace}`,
+        redirectURL: `/topology/ns/${namespace}/graph`,
       };
     case HelmActionType.Upgrade:
       return {

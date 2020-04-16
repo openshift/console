@@ -7,11 +7,14 @@ import { RouteComponentProps } from 'react-router-dom';
 import { PageHeading, history, LoadingBox } from '@console/internal/components/utils';
 import { coFetchJSON } from '@console/internal/co-fetch';
 import { PageBody } from '@console/shared';
-import NamespacedPage, { NamespacedPageVariants } from '../NamespacedPage';
-import HelmInstallUpgradeForm from './form/HelmInstallUpgradeForm';
-import { HelmActionType, HelmChart, HelmActionConfigType } from './helm-types';
+import { SecretModel } from '@console/internal/models';
+import { k8sGet } from '@console/internal/module/k8s';
+
+import { HelmActionType, HelmChart, HelmRelease, HelmActionConfigType } from './helm-types';
 import { getHelmActionValidationSchema } from './helm-validation-utils';
 import { getHelmActionConfig, getChartValuesYAML } from './helm-utils';
+import NamespacedPage, { NamespacedPageVariants } from '../NamespacedPage';
+import HelmInstallUpgradeForm from './form/HelmInstallUpgradeForm';
 
 export type HelmInstallUpgradePageProps = RouteComponentProps<{
   ns?: string;
@@ -34,7 +37,7 @@ const HelmInstallUpgradePage: React.FunctionComponent<HelmInstallUpgradePageProp
 
   const chartURL = decodeURIComponent(searchParams.get('chartURL'));
   const namespace = match.params.ns || searchParams.get('preselected-ns');
-  const releaseName = !_.isEmpty(match.params.releaseName) && match.params.releaseName;
+  const releaseName = match.params.releaseName || '';
   const helmChartName = searchParams.get('chartName');
   const [chartDataLoaded, setChartDataLoaded] = React.useState<boolean>(false);
   const [chartName, setChartName] = React.useState<string>('');
@@ -92,6 +95,7 @@ const HelmInstallUpgradePage: React.FunctionComponent<HelmInstallUpgradePageProp
   };
 
   const handleSubmit = (values, actions) => {
+    actions.setStatus({ isSubmitting: true });
     const { helmReleaseName, helmChartURL, chartValuesYAML }: HelmInstallUpgradeFormData = values;
     let valuesObj;
     if (chartValuesYAML) {
@@ -115,13 +119,31 @@ const HelmInstallUpgradePage: React.FunctionComponent<HelmInstallUpgradePageProp
 
     config
       .fetch('/api/helm/release', payload)
-      .then(() => {
-        actions.setSubmitting(false);
-        history.push(config.redirectURL);
+      .then(async (res: HelmRelease) => {
+        let redirect = config.redirectURL;
+
+        if (helmAction === HelmActionType.Install && res?.info?.notes) {
+          const options = {
+            queryParams: { labelSelector: `name=${res.name},version=${res.version},owner=helm` },
+          };
+          let secret;
+          try {
+            secret = await k8sGet(SecretModel, null, res.namespace, options);
+          } catch (err) {
+            console.error(err); // eslint-disable-line no-console
+          }
+          const secretId = secret?.items?.[0]?.metadata?.uid;
+          if (secretId) {
+            redirect = `${config.redirectURL}?selectId=${secretId}&selectTab=Release+Notes`;
+          }
+        }
+
+        actions.setStatus({ isSubmitting: false });
+        history.push(redirect);
       })
       .catch((err) => {
         actions.setSubmitting(false);
-        actions.setStatus({ submitError: err.message });
+        actions.setStatus({ submitError: err.message, isSubmitting: false });
       });
   };
 

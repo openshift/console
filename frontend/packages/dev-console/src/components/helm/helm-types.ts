@@ -44,6 +44,7 @@ export interface HelmChartMetaData {
 
 export interface HelmReleaseResourcesData {
   releaseName: string;
+  releaseVersion: number | string;
   chartIcon: string;
   manifestResources: K8sResourceKind[];
   releaseNotes: string;
