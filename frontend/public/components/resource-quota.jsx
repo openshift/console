@@ -399,8 +399,8 @@ export const ResourceQuotasPage = connectToFlags(FLAGS.OPENSHIFT)(({ namespace, 
     });
     rowFilters = [
       {
+        filterGroupName: 'Role',
         type: 'role-kind',
-        selected: ['cluster', 'namespace'],
         reducer: quotaType,
         items: [
           { id: 'cluster', title: 'Cluster-wide Resource Quotas' },

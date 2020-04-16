@@ -109,6 +109,7 @@ export class ListPageWrapper_ extends React.PureComponent {
         textFilter={textFilter}
         hideNameFilter={hideNameFilter}
         hideLabelFilter={hideLabelFilter}
+        {...this.props}
       />
     );
 

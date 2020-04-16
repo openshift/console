@@ -1,5 +1,5 @@
 import * as _ from 'lodash';
-import { Filter } from '@console/shared/src/types';
+import { RowFilter } from '@console/internal/components/filter-toolbar';
 import { NODE_STATUS_TITLES } from '../../constants';
 import { BareMetalNodeBundle } from '../types';
 
@@ -22,13 +22,15 @@ export const getBareMetalNodeFilterStatus = (bundle: BareMetalNodeBundle): strin
   return _.findKey(statesToFilterMap, ({ states }) => states.includes(bundle.status.status));
 };
 
-export const bareMetalNodeStatusFilter: Filter = {
+export const bareMetalNodeStatusFilter: RowFilter = {
+  filterGroupName: 'Status',
   type: 'bare-metal-node-status',
-  selected: Object.keys(statesToFilterMap),
   reducer: getBareMetalNodeFilterStatus,
   items: _.map(statesToFilterMap, ({ title }, id) => ({ id, title })),
   filter: (groups, bundle: BareMetalNodeBundle) => {
     const status = getBareMetalNodeFilterStatus(bundle);
-    return groups.selected.has(status) || !_.includes(groups.all, status);
+    return (
+      groups.selected.has(status) || !_.includes(groups.all, status) || _.isEmpty(groups.selected)
+    );
   },
 };

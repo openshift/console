@@ -159,7 +159,7 @@ export const Resources: React.FC<ResourcesProps> = (props) => {
       rowFilters={[
         {
           type: 'clusterserviceversion-resource-kind',
-          selected: firehoseResources.map(({ kind }) => kindForReference(kind)),
+          filterGroupName: 'Kind',
           reducer: ({ kind }) => kindForReference(kind),
           items: firehoseResources.map(({ kind }) => ({
             id: kindForReference(kind),

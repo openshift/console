@@ -267,10 +267,10 @@ const roleResources = [
 
 const rowFilters = [
   {
+    filterGroupName: 'Kind',
     type: 'role-binding-kind',
-    selected: ['cluster', 'namespace'],
     reducer: bindingType,
-    items: ({ ClusterRoleBinding: data }) => {
+    itemsGenerator: ({ ClusterRoleBinding: data }) => {
       const items = [
         { id: 'namespace', title: 'Namespace Role Bindings' },
         { id: 'system', title: 'System Role Bindings' },

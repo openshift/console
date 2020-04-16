@@ -45,34 +45,37 @@ type FilterKeys = {
   [key: string]: string;
 };
 
-const getDropdownItems = (rowFilters: RowFilter[], selectedItems, data) =>
-  rowFilters.map((grp) => (
-    <DropdownGroup
-      key={grp.filterGroupName}
-      label={grp.filterGroupName}
-      className="co-filter-dropdown-group"
-    >
-      {_.map(grp.items, (item) => (
-        <DropdownItem
-          data-test-row-filter={item.id}
-          key={item.id}
-          id={item.id}
-          className="co-filter-dropdown__item"
-          listItemClassName="co-filter-dropdown__list-item"
-        >
-          <div className="co-filter-dropdown-item">
-            <span className="co-filter-dropdown-item__checkbox">
-              <Checkbox isChecked={selectedItems.includes(item.id)} id={`${item.id}-checkbox`} />
-            </span>
-            <span className="co-filter-dropdown-item__name">{item.title}</span>
-            <Badge key={item.id} isRead>
-              {_.countBy(data, grp.reducer)?.[item.id] ?? '0'}
-            </Badge>
-          </div>
-        </DropdownItem>
-      ))}
-    </DropdownGroup>
-  ));
+const getDropdownItems = (rowFilters: RowFilter[], selectedItems, data, props) =>
+  rowFilters.map((grp) => {
+    const items = grp.itemsGenerator ? grp.itemsGenerator(props, props.kind) : grp.items;
+    return (
+      <DropdownGroup
+        key={grp.filterGroupName}
+        label={grp.filterGroupName}
+        className="co-filter-dropdown-group"
+      >
+        {_.map(items, (item) => (
+          <DropdownItem
+            data-test-row-filter={item.id}
+            key={item.id}
+            id={item.id}
+            className="co-filter-dropdown__item"
+            listItemClassName="co-filter-dropdown__list-item"
+          >
+            <div className="co-filter-dropdown-item">
+              <span className="co-filter-dropdown-item__checkbox">
+                <Checkbox isChecked={selectedItems.includes(item.id)} id={`${item.id}-checkbox`} />
+              </span>
+              <span className="co-filter-dropdown-item__name">{item.title}</span>
+              <Badge key={item.id} isRead>
+                {_.countBy(data, grp.reducer)?.[item.id] ?? '0'}
+              </Badge>
+            </div>
+          </DropdownItem>
+        ))}
+      </DropdownGroup>
+    );
+  });
 
 const FilterToolbar_: React.FC<FilterToolbarProps & RouteComponentProps> = (props) => {
   const { rowFilters = [], data, hideNameFilter, hideLabelFilter, location } = props;
@@ -83,9 +86,20 @@ const FilterToolbar_: React.FC<FilterToolbarProps & RouteComponentProps> = (prop
 
   // (rowFilters) => {'rowFilterTypeA': ['staA', 'staB'], 'rowFilterTypeB': ['stbA'] }
   const filters: Filter = rowFilters.reduce((acc, curr) => {
-    const items = _.map(curr.items, 'id');
+    const rowItems = curr.itemsGenerator ? curr.itemsGenerator(props, props?.kinds) : curr.items;
+    const items = _.map(rowItems, 'id');
     acc[curr.filterGroupName] = items;
     return acc;
+  }, {});
+
+  // {id: 'a' , title: 'A'} => filterNameMap['a'] = A
+  const filtersNameMap: FilterKeys = rowFilters.reduce((acc, curr) => {
+    const rowItems = curr.itemsGenerator ? curr.itemsGenerator(props, props?.kinds) : curr.items;
+    const items = rowItems.reduce((itemAcc, itemCurr) => {
+      itemAcc[itemCurr.id] = itemCurr.title;
+      return itemAcc;
+    }, {});
+    return { ...acc, ...items };
   }, {});
 
   // (storagePrefix, rowFilters) => { 'rowFilterTypeA' = 'storagePrefix-filterTypeA' ...}
@@ -193,7 +207,7 @@ const FilterToolbar_: React.FC<FilterToolbarProps & RouteComponentProps> = (prop
   };
 
   const clearAll = () => {
-    Object.keys(filters).forEach((key) => clearAllRowFilter(key));
+    updateRowFilterSelected(selectedRowFilters);
     if (!hideNameFilter) {
       updateNameFilter('');
     }
@@ -215,7 +229,7 @@ const FilterToolbar_: React.FC<FilterToolbarProps & RouteComponentProps> = (prop
     setInputText('');
   };
 
-  const dropdownItems = getDropdownItems(rowFilters, selectedRowFilters, data);
+  const dropdownItems = getDropdownItems(rowFilters, selectedRowFilters, data, props);
 
   return (
     <>
@@ -283,7 +297,7 @@ const FilterToolbar_: React.FC<FilterToolbarProps & RouteComponentProps> = (prop
             <ChipGroupToolbarItem key={key} categoryName={key}>
               {selected.map((item) => (
                 <Chip key={item} onClick={() => updateRowFilterSelected([item])}>
-                  {item}
+                  {filtersNameMap[item]}
                 </Chip>
               ))}
               {selected.length > 0 && (
@@ -335,15 +349,18 @@ type FilterToolbarProps = {
   hideNameFilter?: boolean;
   hideLabelFilter?: boolean;
   parseAutoComplete?: any;
+  kinds?: any;
 };
 
-type RowFilter = {
+export type RowFilter = {
   filterGroupName: string;
   type: string;
-  items: {
+  items?: {
     [key: string]: string;
   }[];
+  itemsGenerator?: (...args) => { [key: string]: string }[];
   reducer: (param) => React.ReactText;
+  filter?: any;
 };
 
 export const FilterToolbar = compose(withRouter, connect(null, { filterList }))(FilterToolbar_);

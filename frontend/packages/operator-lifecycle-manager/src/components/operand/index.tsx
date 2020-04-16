@@ -421,8 +421,8 @@ export const ProvidedAPIsPage = connect(inFlightStateToProps)((props: ProvidedAP
 
   const rowFilters = [
     {
+      filterGroupName: 'Resource Kind',
       type: 'clusterserviceversion-resource-kind',
-      selected: firehoseResources.map(({ kind }) => kindForReference(kind)),
       reducer: ({ kind }) => kind,
       items: firehoseResources.map(({ kind }) => ({
         id: kindForReference(kind),

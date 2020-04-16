@@ -18,7 +18,7 @@ import {
   RowFunction,
 } from '@console/internal/components/factory';
 import { sortable } from '@patternfly/react-table';
-import { Filter } from '@console/shared';
+import { RowFilter } from '@console/internal/components/filter-toolbar';
 import { NooBaaBackingStoreModel, NooBaaBucketClassModel } from '../../models';
 
 const kindsFilterMap = Object.freeze({
@@ -32,14 +32,14 @@ const kindsFilterMap = Object.freeze({
   },
 });
 
-const resourceTableFilter: Filter = {
+const resourceTableFilter: RowFilter = {
+  filterGroupName: 'Type',
   type: 'noobaa-resources-type',
-  selected: Object.keys(kindsFilterMap),
   reducer: (r) => r.kind,
   items: _.map(kindsFilterMap, ({ title }, id) => ({ id, title })),
   filter: (groups, resource) => {
     const { kind } = resource;
-    return groups.selected.has(kind) || !_.includes(groups.all, kind);
+    return groups.selected.has(kind) || !_.includes(groups.all, kind) || _.isEmpty(groups.selected);
   },
 };
 

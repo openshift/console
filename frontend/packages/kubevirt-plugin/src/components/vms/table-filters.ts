@@ -1,12 +1,11 @@
 import * as _ from 'lodash';
-import { Filter } from '@console/shared/src';
+import { RowFilter } from '@console/internal/components/filter-toolbar';
 import { VM_STATUS_SIMPLE_LABELS } from '../../constants/vm/vm-status';
 import { VMStatusBundle } from '../../statuses/vm/types';
 
-export const vmStatusFilter: Filter | any = {
+export const vmStatusFilter: RowFilter = {
   filterGroupName: 'Status',
   type: 'vm-status',
-  selected: VM_STATUS_SIMPLE_LABELS,
   reducer: (obj) => {
     return ((obj?.metadata as any)?.vmStatusBundle as VMStatusBundle)?.status?.getSimpleLabel();
   },
