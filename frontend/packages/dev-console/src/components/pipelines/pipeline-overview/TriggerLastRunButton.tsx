@@ -5,6 +5,7 @@ import { useAccessReview } from '@console/internal/components/utils';
 import { Button } from '@patternfly/react-core';
 import { rerunPipelineAndStay } from '../../../utils/pipeline-actions';
 import { PipelineModel } from '../../../models';
+import { usePipelineRunWithUserLabel } from '../../pipelineruns/triggered-by';
 import { getLatestRun, PipelineRun } from '../../../utils/pipeline-augment';
 
 type TriggerLastRunButtonProps = {
@@ -16,7 +17,9 @@ const TriggerLastRunButton: React.FC<TriggerLastRunButtonProps> = ({
   pipelineRuns,
   impersonate,
 }) => {
-  const latestRun = getLatestRun({ data: pipelineRuns }, 'startTimestamp');
+  const latestRun = usePipelineRunWithUserLabel(
+    getLatestRun({ data: pipelineRuns }, 'startTimestamp'),
+  );
   const { label, callback, accessReview } = rerunPipelineAndStay(PipelineModel, latestRun);
   const isAllowed = useAccessReview(accessReview, impersonate);
   return (

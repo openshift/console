@@ -1,16 +1,12 @@
 import * as React from 'react';
 import { DetailsPage, DetailsPageProps } from '@console/internal/components/factory';
-import { Kebab, navFactory } from '@console/internal/components/utils';
+import { KebabAction, navFactory } from '@console/internal/components/utils';
 import { k8sGet, k8sList } from '@console/internal/module/k8s';
 import { ErrorPage404 } from '@console/internal/components/error';
-import {
-  rerunPipelineAndRedirect,
-  startPipeline,
-  handlePipelineRunSubmit,
-  editPipeline,
-} from '../../utils/pipeline-actions';
+import { getPipelineKebabActions } from '../../utils/pipeline-actions';
 import { getLatestRun } from '../../utils/pipeline-augment';
 import { PipelineRunModel, PipelineModel } from '../../models';
+import { useMenuActionsWithUserLabel } from '../pipelineruns/triggered-by';
 import {
   PipelineDetails,
   PipelineParametersForm,
@@ -23,91 +19,77 @@ import {
   resourcesValidationSchema,
 } from './pipeline-form/pipelineForm-validation-utils';
 
-interface PipelineDetailsPageStates {
-  menuActions: Function[];
-  errorCode?: number;
-}
+const PipelineDetailsPage: React.FC<DetailsPageProps> = (props) => {
+  const [errorCode, setErrorCode] = React.useState(null);
+  const [menuActions, setMenuActions] = React.useState<KebabAction[]>([]);
 
-class PipelineDetailsPage extends React.Component<DetailsPageProps, PipelineDetailsPageStates> {
-  constructor(props) {
-    super(props);
-    this.state = { menuActions: [], errorCode: null };
-  }
+  const { name, namespace } = props;
 
-  componentDidMount() {
-    k8sGet(PipelineModel, this.props.name, this.props.namespace)
+  React.useEffect(() => {
+    k8sGet(PipelineModel, name, namespace)
       .then((res) => {
         // eslint-disable-next-line promise/no-nesting
         k8sList(PipelineRunModel, {
-          ns: this.props.namespace,
+          ns: namespace,
           labelSelector: { 'tekton.dev/pipeline': res.metadata.name },
         })
           .then((listres) => {
             const latestRun = getLatestRun({ data: listres }, 'creationTimestamp');
-            this.setState({
-              menuActions: [
-                () => startPipeline(PipelineModel, res, handlePipelineRunSubmit),
-                ...(latestRun && latestRun.metadata
-                  ? [() => rerunPipelineAndRedirect(PipelineRunModel, latestRun)]
-                  : []),
-                editPipeline,
-                Kebab.factory.Delete,
-              ],
-            });
+            setMenuActions(getPipelineKebabActions(latestRun));
           })
           .catch((error) => {
-            this.setState({ errorCode: error.response.status });
+            setErrorCode(error.response.status);
           });
       })
-      .catch((error) => this.setState({ errorCode: error.response.status }));
-  }
+      .catch((error) => setErrorCode(error.response.status));
+  }, [name, namespace]);
 
-  render() {
-    if (this.state.errorCode === 404) {
-      return <ErrorPage404 />;
-    }
-    return (
-      <DetailsPage
-        {...this.props}
-        menuActions={this.state.menuActions}
-        pages={[
-          navFactory.details(PipelineDetails),
-          navFactory.editYaml(),
-          {
-            href: 'Runs',
-            name: 'Pipeline Runs',
-            component: PipelineRuns,
-          },
-          {
-            href: 'parameters',
-            name: 'Parameters',
-            component: (props) => (
-              <PipelineForm
-                PipelineFormComponent={PipelineParametersForm}
-                formName="parameters"
-                validationSchema={parametersValidationSchema}
-                obj={props.obj}
-                {...props}
-              />
-            ),
-          },
-          {
-            href: 'resources',
-            name: 'Resources',
-            component: (props) => (
-              <PipelineForm
-                PipelineFormComponent={PipelineResourcesForm}
-                formName="resources"
-                validationSchema={resourcesValidationSchema}
-                obj={props.obj}
-                {...props}
-              />
-            ),
-          },
-        ]}
-      />
-    );
+  const augmentedMenuActions: KebabAction[] = useMenuActionsWithUserLabel(menuActions);
+
+  if (errorCode === 404) {
+    return <ErrorPage404 />;
   }
-}
+  return (
+    <DetailsPage
+      {...props}
+      menuActions={augmentedMenuActions}
+      pages={[
+        navFactory.details(PipelineDetails),
+        navFactory.editYaml(),
+        {
+          href: 'Runs',
+          name: 'Pipeline Runs',
+          component: PipelineRuns,
+        },
+        {
+          href: 'parameters',
+          name: 'Parameters',
+          component: (pageProps) => (
+            <PipelineForm
+              PipelineFormComponent={PipelineParametersForm}
+              formName="parameters"
+              validationSchema={parametersValidationSchema}
+              obj={pageProps.obj}
+              {...pageProps}
+            />
+          ),
+        },
+        {
+          href: 'resources',
+          name: 'Resources',
+          component: (pageProps) => (
+            <PipelineForm
+              PipelineFormComponent={PipelineResourcesForm}
+              formName="resources"
+              validationSchema={resourcesValidationSchema}
+              obj={pageProps.obj}
+              {...pageProps}
+            />
+          ),
+        },
+      ]}
+    />
+  );
+};
 
 export default PipelineDetailsPage;

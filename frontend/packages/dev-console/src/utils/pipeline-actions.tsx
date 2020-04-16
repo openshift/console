@@ -1,5 +1,10 @@
 import * as _ from 'lodash';
-import { history, resourcePathFromModel, KebabAction } from '@console/internal/components/utils';
+import {
+  history,
+  resourcePathFromModel,
+  Kebab,
+  KebabAction,
+} from '@console/internal/components/utils';
 import { k8sCreate, K8sKind, k8sPatch, referenceForModel } from '@console/internal/module/k8s';
 import { errorModal } from '@console/internal/components/modals';
 import { getRandomChars } from '@console/shared/src/utils';
@@ -77,12 +82,9 @@ export const getPipelineRunData = (
     metadata: {
       name: `${pipelineName}-${getRandomChars(6)}`,
       namespace: pipeline ? pipeline.metadata.namespace : latestRun.metadata.namespace,
-      labels:
-        latestRun && latestRun.metadata && latestRun.metadata.labels
-          ? latestRun.metadata.labels
-          : {
-              'tekton.dev/pipeline': pipelineName,
-            },
+      labels: _.merge({}, pipeline?.metadata?.labels, latestRun?.metadata?.labels, {
+        'tekton.dev/pipeline': pipelineName,
+      }),
     },
     spec: {
       ..._.get(latestRun, 'spec', {}),
@@ -263,3 +265,16 @@ export const stopPipelineRun: KebabAction = (kind: K8sKind, pipelineRun: Pipelin
     },
   };
 };
+
+export const getPipelineKebabActions = (pipelineRun?: PipelineRun): KebabAction[] => [
+  (model, resource: Pipeline) => startPipeline(model, resource, handlePipelineRunSubmit),
+  ...(pipelineRun ? [() => rerunPipelineAndRedirect(PipelineRunModel, pipelineRun)] : []),
+  editPipeline,
+  Kebab.factory.Delete,
+];
+
+export const getPipelineRunKebabActions = (redirectReRun?: boolean): KebabAction[] => [
+  redirectReRun ? rerunPipelineRunAndRedirect : reRunPipelineRun,
+  stopPipelineRun,
+  Kebab.factory.Delete,
+];

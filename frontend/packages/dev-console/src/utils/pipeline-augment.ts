@@ -68,10 +68,24 @@ export interface Resource {
 export interface PipelineResource {
   name: string;
   type?: string;
-  resourceRef?: {
+}
+
+type PipelineRunResourceCommonProperties = {
+  name: string;
+};
+export type PipelineRunInlineResourceParam = { name: string; value: string };
+export type PipelineRunInlineResource = PipelineRunResourceCommonProperties & {
+  resourceSpec: {
+    params: PipelineRunInlineResourceParam[];
+    type: string;
+  };
+};
+export type PipelineRunReferenceResource = PipelineRunResourceCommonProperties & {
+  resourceRef: {
     name: string;
   };
-}
+};
+export type PipelineRunResource = PipelineRunReferenceResource | PipelineRunInlineResource;
 
 export interface Runs {
   data?: PipelineRun[];
@@ -100,8 +114,8 @@ export interface PipelineRun extends K8sResourceKind {
   spec?: {
     pipelineRef: { name: string };
     params?: PipelineRunParam[];
-    resources?: PipelineResource[];
     workspaces?: PipelineRunWorkspace[];
+    resources?: PipelineRunResource[];
     serviceAccountName?: string;
     // Odd status value that only appears in a single case - cancelling a pipeline
     status?: 'PipelineRunCancelled';
