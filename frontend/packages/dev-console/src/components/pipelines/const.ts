@@ -17,3 +17,15 @@ export enum VolumeTypes {
   Secret = 'Secret',
   PVC = 'PVC',
 }
+
+export enum SecretAnnotationId {
+  Git = 'git',
+  Image = 'docker',
+}
+
+export const SecretAnnotationType = {
+  [SecretAnnotationId.Git]: 'Git Server',
+  [SecretAnnotationId.Image]: 'Docker Registry',
+};
+
+export const PIPELINE_SERVICE_ACCOUNT = 'pipeline';

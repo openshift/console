@@ -52,6 +52,7 @@ const StartPipelineModal: React.FC<StartPipelineModalProps & ModalComponentProps
         ...workspace,
         type: 'EmptyDirectory',
       })) ?? [],
+    secretOpen: false,
   };
   initialValues.resources.map((resource: PipelineResource) =>
     _.merge(resource, { resourceRef: { name: '' } }),
@@ -93,8 +94,9 @@ const StartPipelineModal: React.FC<StartPipelineModalProps & ModalComponentProps
       initialValues={initialValues}
       onSubmit={handleSubmit}
       validationSchema={startPipelineSchema}
-      render={(props) => <StartPipelineForm {...props} close={close} />}
-    />
+    >
+      {(props) => <StartPipelineForm {...props} close={close} />}
+    </Formik>
   );
 };
 

@@ -1,12 +1,22 @@
 import * as _ from 'lodash';
 import { formatDuration } from '@console/internal/components/utils/datetime';
-import { K8sResourceKind, ContainerStatus } from '@console/internal/module/k8s';
+import {
+  ContainerStatus,
+  K8sResourceKind,
+  k8sUpdate,
+  k8sGet,
+  SecretKind,
+  K8sResourceCommon,
+} from '@console/internal/module/k8s';
 import {
   LOG_SOURCE_RESTARTING,
   LOG_SOURCE_WAITING,
   LOG_SOURCE_RUNNING,
   LOG_SOURCE_TERMINATED,
 } from '@console/internal/components/utils';
+import { ServiceAccountModel } from '@console/internal/models';
+import { errorModal } from '@console/internal/components/modals/error-modal';
+import { PIPELINE_SERVICE_ACCOUNT, SecretAnnotationId } from '../components/pipelines/const';
 import {
   getLatestRun,
   Pipeline,
@@ -30,6 +40,9 @@ interface Resource {
   resource?: string;
   from?: string[];
 }
+export type ServiceAccountType = {
+  secrets: { [name: string]: string }[];
+} & K8sResourceCommon;
 
 export interface PipelineVisualizationTaskItem {
   name: string;
@@ -314,4 +327,40 @@ export const pipelineRunDuration = (run: PipelineRun): string => {
     ? new Date(completionTime).getTime() - start
     : new Date().getTime() - start;
   return formatDuration(duration);
+};
+
+export const updateServiceAccount = (
+  secretName: string,
+  originalServiceAccount: ServiceAccountType,
+): Promise<ServiceAccountType> => {
+  const updatedServiceAccount = _.cloneDeep(originalServiceAccount);
+  updatedServiceAccount.secrets = [...updatedServiceAccount.secrets, { name: secretName }];
+  return k8sUpdate(ServiceAccountModel, updatedServiceAccount);
+};
+
+export const associateServiceAccountToSecret = (secret: SecretKind, namespace: string) => {
+  k8sGet(ServiceAccountModel, PIPELINE_SERVICE_ACCOUNT, namespace)
+    .then((serviceAccount) => {
+      if (_.find(serviceAccount.secrets, (s) => s.name === secret.metadata.name) === undefined) {
+        updateServiceAccount(secret.metadata.name, serviceAccount);
+      }
+    })
+    .catch((err) => {
+      errorModal({ error: err.message });
+    });
+};
+
+type KeyValuePair = {
+  key: string;
+  value: string;
+};
+export const getSecretAnnotations = (annotation: KeyValuePair) => {
+  const annotations = {};
+  const annotationPrefix = 'tekton.dev';
+  if (annotation?.key === SecretAnnotationId.Git) {
+    annotations[`${annotationPrefix}/${SecretAnnotationId.Git}-0`] = annotation?.value;
+  } else if (annotation?.key === SecretAnnotationId.Image) {
+    annotations[`${annotationPrefix}/${SecretAnnotationId.Image}-0`] = annotation?.value;
+  }
+  return annotations;
 };

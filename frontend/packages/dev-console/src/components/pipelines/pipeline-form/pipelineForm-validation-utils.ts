@@ -88,4 +88,14 @@ export const startPipelineSchema = yup.object().shape({
       data: volumeTypeSchema,
     }),
   ),
+  secretOpen: yup.boolean().equals([false]),
+});
+
+export const advancedSectionValidationSchema = yup.object().shape({
+  secretName: yup.string().required('Required'),
+  type: yup.string().required('Required'),
+  annotations: yup.object().shape({
+    key: yup.string().required('Required'),
+    value: yup.string().required('Required'),
+  }),
 });

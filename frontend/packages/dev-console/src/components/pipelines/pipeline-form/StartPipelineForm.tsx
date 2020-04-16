@@ -7,9 +7,11 @@ import {
   ModalBody,
   ModalSubmitFooter,
 } from '@console/internal/components/factory/modal';
+import FormSection from '../../import/section/FormSection';
 import PipelineResourceSection, { ResourceProps } from './PipelineResourceSection';
 import PipelineParameterSection from './PipelineParameterSection';
 import PipelineWorkspacesSection from './PiplelineWorkspacesSection';
+import PipelineSecretSection from './PipelineSecretSection';
 
 const StartPipelineForm: React.FC<FormikValues> = ({
   values,
@@ -40,6 +42,9 @@ const StartPipelineForm: React.FC<FormikValues> = ({
           <PipelineParameterSection parameters={values.parameters} />
           <PipelineResourceSection resources={resources} />
           <PipelineWorkspacesSection />
+          <FormSection title="Advanced Options" fullWidth>
+            <PipelineSecretSection namespace={values.namespace} />
+          </FormSection>
         </ModalBody>
         <ModalSubmitFooter
           errorMessage={status && status.submitError}

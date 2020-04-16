@@ -96,10 +96,9 @@ const PipelineResourceForm: React.FC<PipelineResourceFormProps> = ({
       onSubmit={handleSubmit}
       onReset={handleReset}
       validationSchema={validationSchema}
-      render={(props) => (
-        <PipelineResourceParam {...props} type={type} closeDisabled={closeDisabled} />
-      )}
-    />
+    >
+      {(props) => <PipelineResourceParam {...props} type={type} closeDisabled={closeDisabled} />}
+    </Formik>
   );
 };
 
