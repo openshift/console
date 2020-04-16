@@ -161,19 +161,6 @@ export const waitForStringNotInElement = (elem: any, needle: string) => {
   };
 };
 
-/**
- * Search YAML manifest for a given string. Return true if found.
- * @param     {string}    needle    String to search in YAML.
- * @param     {string}    name      Name of the resource.
- * @param     {string}    namespace Namespace of the resource.
- * @param     {string}    kind      Kind of the resource.
- * @returns   {boolean}             True if found, false otherwise.
- */
-export function searchYAML(needle: string, name: string, namespace: string, kind: string): boolean {
-  const result = execSync(`kubectl get -o yaml -n ${namespace} ${kind} ${name}`).toString();
-  return result.search(needle) >= 0;
-}
-
 type CardInfo = {
   text: string;
   index: number;

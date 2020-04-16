@@ -5,6 +5,7 @@ import { isLoaded, resourceTitle } from '@console/internal-integration-tests/vie
 import { activeTab } from '../../views/detailView.view';
 import * as VmsListView from '../../views/vms.list.view';
 import { TAB } from '../utils/consts';
+import { getResourceObject } from '../utils/utils';
 
 export class DetailView {
   readonly name: string;
@@ -17,6 +18,10 @@ export class DetailView {
     this.name = instance.name;
     this.namespace = instance.namespace;
     this.kind = instance.kind;
+  }
+
+  getResource() {
+    return getResourceObject(this.name, this.namespace, this.kind);
   }
 
   static async getResourceTitle() {
