@@ -1,11 +1,10 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { Grid, GridItem, Title } from '@patternfly/react-core';
 import { VMWizardStorage } from '../../types';
 import { getStorages } from '../../selectors/selectors';
 import { VolumeWrapper } from '../../../../k8s/wrapper/vm/volume-wrapper';
 import { VolumeType } from '../../../../constants/vm/storage';
-import {getBooleanAsEnabledValue} from '../../../../utils/strings';
+import { getBooleanAsEnabledValue } from '../../../../utils/strings';
 
 import './review-tab.scss';
 
@@ -19,25 +18,19 @@ const AdvancedReviewConnected: React.FC<AdvancedReviewConnectedProps> = (props) 
   );
 
   return (
-    <Grid className="kubevirt-create-vm-modal__review-tab-section-container">
-      <GridItem span={1}>
-        <Title headingLevel="h4" size="sm">
-          Cloud Init
-        </Title>
-      </GridItem>
-      <GridItem span={11}>{cloudInitEnabledValue}</GridItem>
-    </Grid>
+    <dl className="kubevirt-create-vm-modal__review-tab__data-list">
+      <dt>Cloud Init</dt>
+      <dd>{cloudInitEnabledValue}</dd>
+    </dl>
   );
 };
 
 type AdvancedReviewConnectedProps = {
   storages: VMWizardStorage[];
-  // vmSettings: any;
 };
 
 const stateToProps = (state, { wizardReduxID }) => ({
   storages: getStorages(state, wizardReduxID),
-  // vmSettings: iGetVmSettings(state, wizardReduxID),
 });
 
 export const AdvancedReviewTab = connect(stateToProps)(AdvancedReviewConnected);
