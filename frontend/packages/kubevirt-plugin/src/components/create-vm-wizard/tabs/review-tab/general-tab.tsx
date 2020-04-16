@@ -7,7 +7,6 @@ import {
 } from '../../selectors/immutable/vm-settings';
 import { VMSettingsField, VMWizardProps } from '../../types';
 import { FormFieldReviewMemoRow } from '../../form/form-field-review-row';
-import { FormFieldType } from '../../form/form-field';
 import { iGetCommonData, iGetLoadedCommonData } from '../../selectors/immutable/selectors';
 import { getFieldValue } from '../../selectors/vm-settings';
 import { getField, getFlavorValue } from './utils';
@@ -56,7 +55,6 @@ const GeneralReviewConnected: React.FC<GeneralReviewConnectedProps> = (props) =>
 
       <FormFieldReviewMemoRow
         field={getField(VMSettingsField.WORKLOAD_PROFILE, iVMSettings)}
-        fieldType={FormFieldType.SELECT}
       />
     </dl>
   );
