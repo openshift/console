@@ -23,12 +23,10 @@ import DashboardCardLink from '@console/shared/src/components/dashboard/dashboar
 import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
 import AlertsBody from '@console/shared/src/components/dashboard/status-card/AlertsBody';
 import HealthBody from '@console/shared/src/components/dashboard/status-card/HealthBody';
-import { withDashboardResources, DashboardItemProps } from '../../with-dashboard-resources';
+import { withDashboardResources } from '../../with-dashboard-resources';
 import AlertItem, {
   StatusItem,
 } from '@console/shared/src/components/dashboard/status-card/AlertItem';
-import { connectToFlags, WithFlagsProps, flagPending } from '../../../../reducers/features';
-import { FirehoseResource } from '../../../utils';
 import { alertURL } from '../../../monitoring';
 import {
   ClusterVersionKind,
@@ -45,6 +43,8 @@ import {
   URLHealthItem,
   ResourceHealthItem,
 } from './health-item';
+import { WatchK8sResource, useK8sWatchResource } from '../../../utils/k8s-watch-hook';
+import { useFlag } from '@console/shared/src/hooks/flag';
 
 const filterSubsystems = (
   subsystems: DashboardsOverviewHealthSubsystem[],
@@ -66,95 +66,60 @@ const filterSubsystems = (
     return true;
   });
 
-const cvResource: FirehoseResource = {
+const cvResource: WatchK8sResource = {
   kind: referenceForModel(ClusterVersionModel),
   namespaced: false,
   name: 'version',
   isList: false,
-  prop: 'cv',
 };
 
-const ClusterAlerts = connectToFlags(FLAGS.CLUSTER_VERSION)(
-  withDashboardResources<WithFlagsProps & DashboardItemProps>(
-    ({
-      watchAlerts,
-      stopWatchAlerts,
-      notificationAlerts,
-      watchK8sResource,
-      stopWatchK8sResource,
-      resources,
-      flags,
-    }) => {
-      const hasCVResource = flags[FLAGS.CLUSTER_VERSION];
-      React.useEffect(() => {
-        watchAlerts();
-        if (hasCVResource) {
-          watchK8sResource(cvResource);
-        }
-        return () => {
-          stopWatchAlerts();
-          if (hasCVResource) {
-            stopWatchK8sResource(cvResource);
-          }
-        };
-      }, [watchAlerts, stopWatchAlerts, watchK8sResource, stopWatchK8sResource, hasCVResource]);
+const ClusterAlerts = withDashboardResources(
+  ({ watchAlerts, stopWatchAlerts, notificationAlerts }) => {
+    const hasCVResource = useFlag(FLAGS.CLUSTER_VERSION);
+    const [cv, cvLoaded] = useK8sWatchResource<ClusterVersionKind>(
+      hasCVResource ? cvResource : ({} as WatchK8sResource),
+    );
+    React.useEffect(() => {
+      watchAlerts();
+      return stopWatchAlerts;
+    }, [watchAlerts, stopWatchAlerts]);
 
-      const { data: alerts, loaded: alertsLoaded, loadError: alertsResponseError } =
-        notificationAlerts || {};
+    const { data: alerts, loaded: alertsLoaded, loadError: alertsResponseError } =
+      notificationAlerts || {};
 
-      const cv = _.get(resources.cv, 'data') as ClusterVersionKind;
-      const cvLoaded = _.get(resources.cv, 'loaded');
-      const cvError = resources.cv?.loadError;
-      const LinkComponent = React.useCallback(
-        () => (
-          <Button variant="link" onClick={() => clusterUpdateModal({ cv })} isInline>
-            View details
-          </Button>
-        ),
-        [cv],
+    const LinkComponent = React.useCallback(
+      () => (
+        <Button variant="link" onClick={() => clusterUpdateModal({ cv })} isInline>
+          View details
+        </Button>
+      ),
+      [cv],
+    );
+    const UpdateIcon = React.useCallback(
+      () => <ArrowCircleUpIcon className="update-pending" />,
+      [],
+    );
+
+    const items: React.ReactNode[] = [];
+
+    if (hasCVResource && cvLoaded && hasAvailableUpdates(cv)) {
+      items.push(
+        <StatusItem
+          Icon={UpdateIcon}
+          message="A cluster version update is available"
+          LinkComponent={LinkComponent}
+        />,
       );
-      const UpdateIcon = React.useCallback(
-        () => <ArrowCircleUpIcon className="update-pending" />,
-        [],
-      );
+    }
 
-      let items: React.ReactNode;
-      if (!flagPending(hasCVResource)) {
-        if (hasCVResource && (hasAvailableUpdates(cv) || !_.isEmpty(alerts))) {
-          items = (
-            <>
-              {hasAvailableUpdates(cv) && (
-                <StatusItem
-                  Icon={UpdateIcon}
-                  message="A cluster version update is available"
-                  LinkComponent={LinkComponent}
-                />
-              )}
-              {alerts.map((alert) => (
-                <AlertItem key={alertURL(alert, alert.rule.id)} alert={alert} />
-              ))}
-            </>
-          );
-        } else if (!_.isEmpty(alerts)) {
-          items = alerts.map((alert) => (
-            <AlertItem key={alertURL(alert, alert.rule.id)} alert={alert} />
-          ));
-        }
-      }
-
-      return (
-        <AlertsBody
-          isLoading={
-            flagPending(hasCVResource) || !alertsLoaded || (hasCVResource && !cvLoaded && !cvError)
-          }
-          error={!_.isEmpty(alertsResponseError)}
-          emptyMessage="No cluster alerts or messages"
-        >
-          {items}
-        </AlertsBody>
+    if (alertsLoaded) {
+      items.push(
+        ...alerts.map((alert) => <AlertItem key={alertURL(alert, alert.rule.id)} alert={alert} />),
       );
-    },
-  ),
+    }
+
+    return <AlertsBody error={!_.isEmpty(alertsResponseError)}>{items}</AlertsBody>;
+  },
 );
 
 const mapStateToProps = (state: RootState) => ({

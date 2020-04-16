@@ -45,12 +45,9 @@ const NooBaaAlerts = withDashboardResources(
     const alerts = filterNooBaaAlerts(data);
 
     return (
-      <AlertsBody
-        isLoading={!loaded}
-        error={!_.isEmpty(loadError)}
-        emptyMessage="No object service alerts"
-      >
-        {alerts.length > 0 &&
+      <AlertsBody error={!_.isEmpty(loadError)}>
+        {loaded &&
+          alerts.length > 0 &&
           alerts.map((alert) => <AlertItem key={alertURL(alert, alert.rule.id)} alert={alert} />)}
       </AlertsBody>
     );

@@ -98,12 +98,8 @@ const HealthCard: React.FC<HealthCardProps> = ({
             </GalleryItem>
           </Gallery>
         </HealthBody>
-        <AlertsBody
-          isLoading={!loaded}
-          error={!_.isEmpty(loadError)}
-          emptyMessage="No alerts or messages"
-        >
-          {alerts.length !== 0
+        <AlertsBody error={!_.isEmpty(loadError)}>
+          {loaded && alerts.length !== 0
             ? alerts.map((alert) => (
                 <AlertItem key={alertURL(alert, alert.rule.id)} alert={alert} />
               ))
