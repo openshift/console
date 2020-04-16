@@ -79,7 +79,7 @@ export type RouteTemplate = {
 };
 
 export const usePipelineTriggerTemplateNames = (pipeline: Pipeline): RouteTemplate[] | null => {
-  const eventListenerResources: EventListenerKind[] = useAllEventListeners(pipeline);
+  const eventListenerResources = useAllEventListeners(pipeline);
   const {
     metadata: { namespace },
   } = pipeline;
@@ -87,7 +87,11 @@ export const usePipelineTriggerTemplateNames = (pipeline: Pipeline): RouteTempla
     if (!eventListenerResources) {
       return {};
     }
-    return flatten(eventListenerResources.map(getEventListenerTemplateNames)).reduce(
+    return flatten(
+      eventListenerResources.map((el: EventListenerKind) =>
+        el.spec.triggers.map((elTrigger: EventListenerKindTrigger) => elTrigger.template.name),
+      ),
+    ).reduce(
       (resourceMap, triggerTemplateName: string) => ({
         ...resourceMap,
         [triggerTemplateName]: {
