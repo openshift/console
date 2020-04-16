@@ -15,6 +15,7 @@ import * as sidenavView from '@console/internal-integration-tests/views/sidenav.
 import * as operatorView from '../views/operator.view';
 import * as operatorHubView from '../views/operator-hub.view';
 import { click } from '@console/shared/src/test-utils/utils';
+import { NAME_FIELD_ID, formFieldIsPresent } from '../views/descriptors.view';
 
 describe('Interacting with an `AllNamespaces` install mode Operator (Jaeger)', () => {
   const jaegerResources = new Set([
@@ -164,8 +165,7 @@ describe('Interacting with an `AllNamespaces` install mode Operator (Jaeger)', (
   it('displays form editor for creating a new `Jaeger` instance', async () => {
     await browser.wait(until.visibilityOf(element(by.buttonText('Create Jaeger'))));
     await retry(() => element(by.buttonText('Create Jaeger')).click());
-    await browser.wait(until.presenceOf($('#metadata\\.name')));
-
+    await formFieldIsPresent(NAME_FIELD_ID);
     expect($('.co-create-operand__header').getText()).toContain('Create Jaeger');
   });
 

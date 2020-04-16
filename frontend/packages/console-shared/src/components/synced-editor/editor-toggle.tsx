@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { RadioGroup, RadioGroupProps } from '@console/internal/components/radio';
+import { RadioGroup } from '@console/internal/components/radio';
+import './styles.scss';
 
 export enum EditorType {
   Form = 'form',
@@ -8,7 +9,7 @@ export enum EditorType {
 
 export const EditorToggle: React.FC<EditorToggleProps> = ({ value, onChange }) => {
   return (
-    <div className="co-create-operand__editor-toggle">
+    <div className="co-synced-editor__editor-toggle">
       <RadioGroup
         label="Configure via:"
         currentValue={value}
@@ -23,7 +24,7 @@ export const EditorToggle: React.FC<EditorToggleProps> = ({ value, onChange }) =
             title: 'YAML View',
           },
         ]}
-        onChange={onChange}
+        onChange={({ currentTarget }) => onChange(currentTarget.value as EditorType)}
       />
     </div>
   );
@@ -31,5 +32,5 @@ export const EditorToggle: React.FC<EditorToggleProps> = ({ value, onChange }) =
 
 type EditorToggleProps = {
   value: EditorType;
-  onChange: RadioGroupProps['onChange'];
+  onChange?: (newValue: EditorType) => void;
 };

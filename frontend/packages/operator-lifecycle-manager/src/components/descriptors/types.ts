@@ -39,13 +39,16 @@ export enum StatusCapability {
   k8sResourcePrefix = 'urn:alm:descriptor:io.kubernetes:',
 }
 
-export type Descriptor = {
+export type Descriptor<T = any> = {
   path: string;
   displayName: string;
   description: string;
-  'x-descriptors': StatusCapability[] | SpecCapability[];
+  'x-descriptors'?: T[];
   value?: any;
 };
+
+export type SpecDescriptor = Descriptor<SpecCapability>;
+export type StatusDescriptor = Descriptor<StatusCapability>;
 
 export type DescriptorProps = {
   descriptor: Descriptor;

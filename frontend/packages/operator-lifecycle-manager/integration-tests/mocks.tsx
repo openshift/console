@@ -74,48 +74,6 @@ const prefixedCapabilities = new Set([
   StatusCapability.k8sResourcePrefix,
 ]);
 
-const specDescriptorFieldGroup = [
-  {
-    description: 'Field #1 for specDescriptorFieldGroup',
-    displayName: 'Field Group Field1',
-    path: 'specDescriptorFieldGroup.fieldOne',
-    'x-descriptors': [
-      SpecCapability.fieldGroup.concat('specDescriptorFieldGroup'),
-      SpecCapability.number,
-    ],
-  },
-  {
-    description: 'Field #2 for specDescriptorFieldGroup',
-    displayName: 'Field Group Field2',
-    path: 'specDescriptorFieldGroup.fieldTwo',
-    'x-descriptors': [
-      SpecCapability.fieldGroup.concat('specDescriptorFieldGroup'),
-      SpecCapability.number,
-    ],
-  },
-];
-
-const specDescriptorArrayFieldGroup = [
-  {
-    description: 'Field #1 for specDescriptorArrayFieldGroup',
-    displayName: 'Array Field Group Field1',
-    path: 'specDescriptorArrayFieldGroup[0].fieldOne',
-    'x-descriptors': [
-      SpecCapability.arrayFieldGroup.concat('specDescriptorArrayFieldGroup'),
-      SpecCapability.number,
-    ],
-  },
-  {
-    description: 'Field #2 for specDescriptorArrayFieldGroup',
-    displayName: 'Array Field Group Field2',
-    path: 'specDescriptorArrayFieldGroup[0].fieldTwo',
-    'x-descriptors': [
-      SpecCapability.arrayFieldGroup.concat('specDescriptorArrayFieldGroup'),
-      SpecCapability.text,
-    ],
-  },
-];
-
 export const testCRD = {
   apiVersion: 'apiextensions.k8s.io/v1beta1',
   kind: 'CustomResourceDefinition',
@@ -169,6 +127,7 @@ export const testCRD = {
               arrayFieldGroup: {
                 type: 'array',
                 items: {
+                  type: 'object',
                   properties: {
                     itemOne: {
                       type: 'string',
@@ -204,6 +163,16 @@ export const testCR = {
     labels: { [testLabel]: testName },
   },
   spec: {
+    fieldGroup: {
+      itemOne: 'Field group item 1',
+      itemTwo: 2,
+    },
+    arrayFieldGroup: [
+      {
+        itemOne: 'Array field group item 1',
+        itemTwo: 2,
+      },
+    ],
     ...Object.keys(SpecCapability)
       .filter((c) => !prefixedCapabilities.has(SpecCapability[c]))
       .reduce(
@@ -292,9 +261,7 @@ export const testCSV = {
                 .replace(/^./, (str) => str.toUpperCase()),
               path: capability,
               'x-descriptors': [SpecCapability[capability]],
-            }))
-            .concat(specDescriptorFieldGroup)
-            .concat(specDescriptorArrayFieldGroup),
+            })),
           statusDescriptors: Object.keys(StatusCapability)
             .filter((c) => !prefixedCapabilities.has(StatusCapability[c]))
             .map((capability) => ({

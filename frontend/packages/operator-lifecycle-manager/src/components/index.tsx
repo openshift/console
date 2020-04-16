@@ -4,6 +4,10 @@ import {
   GroupVersionKind,
   referenceForGroupVersionKind,
   resourceURL,
+  referenceFor,
+  referenceForModel,
+  K8sKind,
+  K8sResourceKind,
 } from '@console/internal/module/k8s';
 import { PackageManifestModel } from '../models';
 import {
@@ -13,14 +17,13 @@ import {
   PackageManifestKind,
   StepResource,
   ClusterServiceVersionIcon,
+  ProvidedAPI,
 } from '../types';
 import * as operatorLogo from '../operator.svg';
 
 export const visibilityLabel = 'olm-visibility';
 
-type ProvidedAPIsFor = (
-  csv: ClusterServiceVersionKind,
-) => (CRDDescription | APIServiceDefinition)[];
+type ProvidedAPIsFor = (csv: ClusterServiceVersionKind) => ProvidedAPI[];
 export const providedAPIsFor: ProvidedAPIsFor = (csv) =>
   _.get(csv, 'spec.customresourcedefinitions.owned', []).concat(
     _.get(csv, 'spec.apiservicedefinitions.owned', []),
@@ -96,6 +99,28 @@ export const ClusterServiceVersionLogo: React.SFC<ClusterServiceVersionLogoProps
     </div>
   );
 };
+
+export const providedAPIForModel = (csv: ClusterServiceVersionKind, model: K8sKind): ProvidedAPI =>
+  _.find<ProvidedAPI>(
+    providedAPIsFor(csv),
+    (crd) => referenceForProvidedAPI(crd) === referenceForModel(model),
+  );
+
+export const parseALMExamples = (csv: ClusterServiceVersionKind) =>
+  JSON.parse(_.get(csv, 'metadata.annotations.alm-examples', '[]'));
+
+export const exampleForModel = (csv: ClusterServiceVersionKind, model: K8sKind) =>
+  _.defaultsDeep(
+    {},
+    {
+      kind: model.kind,
+      apiVersion: `${model.apiGroup}/${model.apiVersion}`,
+    },
+    _.find(
+      parseALMExamples(csv),
+      (s: K8sResourceKind) => referenceFor(s) === referenceForModel(model),
+    ),
+  );
 
 export type ClusterServiceVersionLogoProps = {
   displayName: string;

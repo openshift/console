@@ -1,4 +1,59 @@
 import { SpecCapability } from '../../src/components/descriptors/types';
+import { $, $$, browser, ExpectedConditions as until } from 'protractor';
+
+export const ARRAY_FIELD_GROUP_ID = '#root_spec_arrayFieldGroup';
+export const FIELD_GROUP_ID = '#root_spec_fieldGroup';
+export const HIDDEN_FIELD_ID = '#root_spec_hiddenFieldGroup';
+export const LABELS_FIELD_ID = '#root_metadata_labels';
+export const NAME_FIELD_ID = '#root_metadata_name';
+export const NUMBER_FIELD_ID = '#root_spec_number';
+export const PASSWORD_FIELD_ID = '#root_spec_password';
+export const SELECT_FIELD_ID = '#root_spec_select';
+
+export const atomicFields = [
+  {
+    label: 'Name',
+    path: 'metadata.name',
+    id: NAME_FIELD_ID,
+  },
+  {
+    label: 'Password',
+    path: 'spec.password',
+    id: PASSWORD_FIELD_ID,
+  },
+  {
+    label: 'Select',
+    path: 'spec.select',
+    id: SELECT_FIELD_ID,
+  },
+  {
+    label: 'Number',
+    path: 'spec.number',
+    id: NUMBER_FIELD_ID,
+  },
+];
+
+export const formGroups = $$('.co-dynamic-form .form-group');
+export const formFieldIsPresent = async (id) => browser.wait(until.presenceOf($(id)));
+
+export const getOperandFormField = (id) => ({
+  element: $(`${id}_field`),
+  label: $(`${id}_field .form-label`),
+  input: $(id),
+});
+
+export const getOperandFormFieldGroup = (id) => ({
+  element: $(`${id}_field-group`),
+  label: $(`${id}_field-group .pf-c-accordion__toggle-text`),
+  toggleButton: $(`button${id}_accordion-toggle`),
+});
+
+export const getOperandFormArrayFieldGroup = (id) => ({
+  element: $(`${id}_field-group`),
+  label: $(`${id}_field-group .pf-c-accordion__toggle-text`),
+  toggleButton: $(`button${id}_accordion-toggle`),
+  addButton: $(`${id}`),
+});
 
 export const inputValueFor = (capability: SpecCapability) => async (el: any) => {
   switch (capability) {

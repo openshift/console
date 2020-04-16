@@ -1,0 +1,47 @@
+.co-dynamic-form {
+  .form-group {
+    display: flex;
+    flex-direction: column;
+  }
+}
+
+.co-dynamic-form__accordion {
+  --pf-c-accordion--BoxShadow: none !important;
+  --pf-c-accordion--PaddingBottom: 0rem !important;
+  --pf-c-accordion--PaddingTop: 0rem !important;
+}
+
+.co-dynamic-form__field-group {
+  --pf-c-accordion__toggle--PaddingLeft: 0rem !important;
+  --pf-c-accordion__toggle--PaddingRight: 0.9375rem !important;
+  --pf-c-accordion__toggle--m-expanded--BorderLeftColor: none !important;
+  --pf-c-accordion__expanded-content-body--PaddingLeft: 0.9375rem !important;
+  --pf-c-accordion__expanded-content--Color: var(--pf-global--Color--100) !important;
+  --pf-c-accordion__toggle-text--active--Color: var(--pf-global--Color--100) !important;
+  --pf-c-accordion__toggle-text--active--FontWeight: 600 !important;
+  --pf-c-accordion__toggle-text--expanded--Color: var(--pf-global--Color--100) !important;
+  --pf-c-accordion__toggle-text--expanded--FontWeight: 600 !important;
+  --pf-c-accordion__toggle-text--focus--Color: var(--pf-global--Color--100) !important;
+  --pf-c-accordion__toggle-text--focus--FontWeight: 600 !important;
+  --pf-c-accordion__toggle-text--hover--Color: var(--pf-global--Color--100) !important;
+  --pf-c-accordion__toggle-text--hover--FontWeight: 600 !important;
+
+  .pf-c-accordion__toggle::before {
+    display: none;
+  }
+
+  h3 {
+    margin: 0rem;
+    font-size: var(--pf-global--FontSize);
+  }
+
+  margin-bottom: 0.5rem;
+}
+
+.co-dynamic-form__array-field-group-remove {
+  display: flex;
+
+  button {
+    margin-left: auto !important;
+  }
+}

@@ -11,8 +11,8 @@ import {
   testClusterServiceVersion,
   testOwnedResourceInstance,
   testModel,
-} from '../../mocks';
-import { ClusterServiceVersionModel } from '../models';
+} from '../../../mocks';
+import { ClusterServiceVersionModel } from '../../models';
 import {
   OperandList_,
   OperandList,
@@ -32,11 +32,11 @@ import {
   OperandStatusIconAndTextProps,
   OperatorStatusTypeText,
   OperatorStatusType,
-} from './operand';
-import { Resources } from './k8s-resource';
-import { StatusDescriptor } from './descriptors/status';
-import { SpecDescriptor } from './descriptors/spec';
-import { referenceForProvidedAPI } from '.';
+} from '.';
+import { Resources } from '../k8s-resource';
+import { StatusDescriptor } from '../descriptors/status';
+import { SpecDescriptor } from '../descriptors/spec';
+import { referenceForProvidedAPI } from '..';
 import { OperandLink } from './operand-link';
 
 const COLUMNS = OperandTableHeader();

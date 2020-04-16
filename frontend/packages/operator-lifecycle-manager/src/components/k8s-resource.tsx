@@ -26,7 +26,7 @@ import {
 } from '@console/internal/module/k8s';
 import { CRDDescription, ClusterServiceVersionKind } from '../types';
 import { referenceForProvidedAPI, providedAPIsFor } from './index';
-import { OperandLink } from './operand-link';
+import { OperandLink } from './operand/operand-link';
 
 const tableColumnClasses = [
   classNames('col-lg-4', 'col-md-4', 'col-sm-4', 'col-xs-6'),
