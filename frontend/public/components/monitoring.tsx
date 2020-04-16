@@ -29,6 +29,8 @@ import { withFallback } from '@console/shared/src/components/error/error-boundar
 import * as k8sActions from '../actions/k8s';
 import * as UIActions from '../actions/ui';
 import { coFetchJSON } from '../co-fetch';
+import { DeploymentModel, NamespaceModel, NodeModel, PodModel } from '../models';
+import { K8sKind } from '../module/k8s';
 import {
   alertDescription,
   alertingRuleIsActive,
@@ -55,6 +57,7 @@ import { ExternalLink, getURLSearchParams } from './utils/link';
 import { Firehose } from './utils/firehose';
 import { history } from './utils/router';
 import { Kebab } from './utils/kebab';
+import { ResourceLink } from './utils/resource-link';
 import { LoadingInline, StatusBox } from './utils/status-box';
 import { SectionHeading, ActionButtons } from './utils/headings';
 import { Timestamp } from './utils/timestamp';
@@ -422,6 +425,67 @@ const SilenceTableRow: RowFunction<Silence> = ({ index, key, obj, style }) => {
   );
 };
 
+const alertMessageResources: { [labelName: string]: K8sKind } = {
+  deployment: DeploymentModel,
+  namespace: NamespaceModel,
+  node: NodeModel,
+  pod: PodModel,
+};
+
+const matchCount = (haystack: string, regExpString: string) =>
+  _.size(haystack.match(new RegExp(regExpString, 'g')));
+
+const AlertMessage: React.FC<{ alert: Alert; rule: Rule }> = ({ alert, rule }) => {
+  let alertText = '';
+  let ruleText = '';
+  if (alert.annotations.description) {
+    alertText = alert.annotations.description;
+    ruleText = rule.annotations.description;
+  } else if (alert.annotations.message) {
+    alertText = alert.annotations.message;
+    ruleText = rule.annotations.message;
+  } else {
+    return null;
+  }
+
+  let messageParts: React.ReactNode[] = [alertText];
+
+  // Go through each recognized resource type and replace any resource names that exist in alertText
+  // with a link to the resource's details page
+  _.each(alertMessageResources, (model, label) => {
+    const labelValue = alert.labels[label];
+
+    if (labelValue && !(model.namespaced && _.isEmpty(alert.labels.namespace))) {
+      const tagCount = matchCount(ruleText, `\\{\\{ *\\$labels\\.${label} *\\}\\}`);
+      const resourceNameCount = matchCount(alertText, _.escapeRegExp(labelValue));
+
+      // Don't do the replacement unless the counts match. This avoids overwriting the wrong string
+      // if labelValue happens to appear elsewhere in alertText
+      if (tagCount > 0 && tagCount === resourceNameCount) {
+        const link = (
+          <ResourceLink
+            className="co-resource-item--monitoring-alert"
+            inline
+            key={model.kind}
+            kind={model.kind}
+            name={labelValue}
+            namespace={model.namespaced ? alert.labels.namespace : undefined}
+          />
+        );
+        messageParts = _.flatMap(messageParts, (part) => {
+          if (_.isString(part) && part.indexOf(labelValue) !== -1) {
+            const [before, after] = part.split(labelValue);
+            return [before, link, after];
+          }
+          return [part];
+        });
+      }
+    }
+  });
+
+  return <p>{messageParts}</p>;
+};
+
 const alertStateToProps = (state: RootState, { match }): AlertsDetailsPageProps => {
   const { data, loaded, loadError }: Alerts = alertsToProps(state);
   const { loaded: silencesLoaded }: Silences = silencesToProps(state);
@@ -462,6 +526,7 @@ const AlertsDetailsPage = withFallback(
                 </div>
               )}
             </h1>
+            <AlertMessage alert={alert} rule={rule} />
           </div>
           <div className="co-m-pane__body">
             <ToggleGraph />
