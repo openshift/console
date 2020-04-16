@@ -1,11 +1,7 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import * as classNames from 'classnames';
-import {
-  FieldLevelHelp,
-  withHandlePromise,
-  humanizeBinaryBytes,
-} from '@console/internal/components/utils/index';
+import { FieldLevelHelp, humanizeBinaryBytes } from '@console/internal/components/utils/index';
 import {
   createModalLauncher,
   ModalBody,
@@ -26,7 +22,7 @@ import './_add-capacity-modal.scss';
 
 const getProvisionedCapacity = (value: number) => (value % 1 ? (value * 3).toFixed(2) : value * 3);
 
-export const AddCapacityModal = withHandlePromise((props: AddCapacityModalProps) => {
+export const AddCapacityModal = (props: AddCapacityModalProps) => {
   const { ocsConfig, close, cancel } = props;
 
   const [response, loadError, loading] = usePrometheusPoll({
@@ -68,21 +64,32 @@ export const AddCapacityModal = withHandlePromise((props: AddCapacityModalProps)
   const submit = (event: React.FormEvent<EventTarget>) => {
     event.preventDefault();
     setProgress(true);
-    const patch = {
-      op: 'replace',
-      path: `/spec/storageDeviceSets/0/count`,
-      value: presentCount + 1,
-    };
-    props
-      .handlePromise(k8sPatch(OCSServiceModel, ocsConfig, [patch]))
-      .then(() => {
-        setProgress(false);
-        close();
-      })
-      .catch((error) => {
-        setError(error);
-        setProgress(false);
-      });
+    const patch = [
+      {
+        op: 'replace',
+        path: `/spec/storageDeviceSets/0/count`,
+        value: presentCount + 1,
+      },
+      {
+        op: 'replace',
+        path: `/spec/storageDeviceSets/0/dataPVCTemplate/spec/storageClassName`,
+        value: storageClass,
+      },
+    ];
+    if (!storageClass) {
+      setError('No StorageClass selected');
+      setProgress(false);
+    } else {
+      k8sPatch(OCSServiceModel, ocsConfig, patch)
+        .then(() => {
+          setProgress(false);
+          close();
+        })
+        .catch((err) => {
+          setError(err);
+          setProgress(false);
+        });
+    }
   };
 
   return (
@@ -108,7 +115,6 @@ export const AddCapacityModal = withHandlePromise((props: AddCapacityModalProps)
               type="number"
               name="requestSize"
               value={osdSizeWithoutUnit}
-              required
               disabled
             />
             <div className="ceph-add-capacity__input--info-text">
@@ -131,12 +137,11 @@ export const AddCapacityModal = withHandlePromise((props: AddCapacityModalProps)
       />
     </form>
   );
-});
+};
 
 export type AddCapacityModalProps = {
   kind?: any;
   ocsConfig?: any;
-  handlePromise: <T>(promise: Promise<T>) => Promise<T>;
   cancel?: () => void;
   close?: () => void;
 };
