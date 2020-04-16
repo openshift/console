@@ -1422,8 +1422,8 @@ const SilenceForm_: React.FC<SilenceFormProps> = ({ defaults, Info, title }) => 
                 <TextInput aria-label="Creator" onChange={setCreatedBy} value={createdBy} />
               </div>
               <div className="form-group">
-                <label>Comment</label>
-                <TextArea aria-label="Comment" onChange={setComment} value={comment} />
+                <label className="co-required">Comment</label>
+                <TextArea aria-label="Comment" isRequired onChange={setComment} value={comment} />
               </div>
             </div>
           </div>
