@@ -52,7 +52,7 @@ const getConditionStatus = (
   mcp: MachineConfigPoolKind,
   type: MachineConfigPoolConditionType,
 ): K8sResourceCondition['status'] => {
-  const { conditions } = mcp.status;
+  const { conditions } = mcp.status || {};
   const condition = _.find(conditions, { type });
   return condition ? condition.status : K8sResourceConditionStatus.Unknown;
 };
