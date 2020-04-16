@@ -7,18 +7,14 @@ import {
   TextArea,
   TextInput,
 } from '@patternfly/react-core';
-import { NsDropdown, ExternalLink } from '@console/internal/components/utils';
+import { ExternalLink } from '@console/internal/components/utils';
 import { Action, State } from '../state';
 
 const GeneralPage: React.FC<GeneralPageProps> = ({ dispatch, state }) => {
   const [showHelp, setShowHelp] = React.useState(true);
 
-  const onChange = (value: string, event: React.FormEvent<HTMLInputElement> | string) => {
-    if (event === 'Project' || event === 'Namespace') {
-      dispatch({ type: 'setNamespace', name: value });
-    } else {
-      dispatch({ type: 'setBucketClassName', name: value });
-    }
+  const onChange = (value: string) => {
+    dispatch({ type: 'setBucketClassName', name: value });
   };
 
   return (
@@ -39,14 +35,6 @@ const GeneralPage: React.FC<GeneralPageProps> = ({ dispatch, state }) => {
         </Alert>
       )}
       <Form className="nb-create-bc-step-page-form">
-        <FormGroup
-          className="nb-create-bc-step-page-form__element"
-          label="Namespace"
-          isRequired
-          fieldId="namespace-dropdown"
-        >
-          <NsDropdown onChange={onChange} selectedKey={state.namespace} />
-        </FormGroup>
         <FormGroup
           isRequired
           className="nb-create-bc-step-page-form__element"

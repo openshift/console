@@ -1,14 +1,12 @@
 import * as React from 'react';
 import { Alert, Title } from '@patternfly/react-core';
-import { LoadingInline, ResourceLink } from '@console/internal/components/utils';
-import { ProjectModel } from '@console/internal/models';
+import { LoadingInline } from '@console/internal/components/utils';
 import { State } from '../state';
 
 const ReviewPage: React.FC<ReviewPageProps> = ({ state }) => {
   const {
     bucketClassName,
     description,
-    namespace,
     tier1BackingStore,
     tier2BackingStore,
     tier1Policy,
@@ -20,12 +18,6 @@ const ReviewPage: React.FC<ReviewPageProps> = ({ state }) => {
       <Title size="xl" headingLevel="h2">
         Review and confirm Bucket Class settings
       </Title>
-      <div className="nb-create-bc-step-page-review__item">
-        <Title size="lg" headingLevel="h4" className="nb-create-bc-step-page-review__item-header">
-          Namespace
-        </Title>
-        <p>{<ResourceLink kind={ProjectModel.kind} name={namespace} linkTo={false} />}</p>
-      </div>
       <div className="nb-create-bc-step-page-review__item">
         <Title size="lg" headingLevel="h4" className="nb-create-bc-step-page-review__item-header">
           Bucket Class name
