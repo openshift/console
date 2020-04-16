@@ -5,6 +5,7 @@ import { FormFooter } from '@console/shared';
 import { Form } from '@patternfly/react-core';
 import AppSection from '@console/dev-console/src/components/import/app/AppSection';
 import { FirehoseList } from '@console/dev-console/src/components/import/import-types';
+import { useEventSourceList } from '../../utils/create-eventsources-utils';
 import CronJobSection from './event-sources/CronJobSection';
 import SinkBindingSection from './event-sources/SinkBindingSection';
 import ApiServerSection from './event-sources/ApiServerSection';
@@ -13,7 +14,7 @@ import { EventSources } from './import-types';
 import EventSourcesSelector from './event-sources/EventSourcesSelector';
 import KafkaSourceSection from './event-sources/KafkaSourceSection';
 import AdvancedSection from './AdvancedSection';
-import { useEventSourceList } from '../../utils/create-eventsources-utils';
+import ContainerSourceSection from './event-sources/ContainerSourceSection';
 
 interface OwnProps {
   namespace: string;
@@ -37,6 +38,7 @@ const EventSourceForm: React.FC<FormikProps<FormikValues> & OwnProps> = ({
     {values.type === EventSources.SinkBinding && <SinkBindingSection />}
     {values.type === EventSources.ApiServerSource && <ApiServerSection />}
     {values.type === EventSources.KafkaSource && <KafkaSourceSection />}
+    {values.type === EventSources.ContainerSource && <ContainerSourceSection />}
     <SinkSection namespace={namespace} />
     <AppSection
       project={values.project}

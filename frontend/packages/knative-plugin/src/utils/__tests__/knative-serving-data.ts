@@ -359,6 +359,16 @@ const eventSourceData = {
     },
     serviceAccountName: '',
   },
+  containersource: {
+    containers: [
+      {
+        image: 'test-knative-image',
+        name: '',
+        args: [{ name: '' }],
+        env: [],
+      },
+    ],
+  },
 };
 
 export const getDefaultEventingData = (typeEventSource: string): EventSourceFormData => {

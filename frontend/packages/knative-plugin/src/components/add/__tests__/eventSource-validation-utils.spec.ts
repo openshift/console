@@ -73,4 +73,28 @@ describe('Event Source ValidationUtils', () => {
       });
     });
   });
+  describe('ContainerSource : Event Source Validation', () => {
+    it('should not throw error when the form data has valid values', async () => {
+      const ContainerSourceData = {
+        ...getDefaultEventingData(EventSources.ContainerSource),
+      };
+      await eventSourceValidationSchema
+        .isValid(ContainerSourceData)
+        .then((valid) => expect(valid).toEqual(true));
+    });
+
+    it('should throw an error for required fields if empty', async () => {
+      const ContainerSourceData = {
+        ...getDefaultEventingData(EventSources.ContainerSource),
+      };
+      ContainerSourceData.data.containersource.containers[0].image = '';
+      await eventSourceValidationSchema
+        .isValid(ContainerSourceData)
+        .then((valid) => expect(valid).toEqual(false));
+      await eventSourceValidationSchema.validate(ContainerSourceData).catch((err) => {
+        expect(err.message).toBe('Required');
+        expect(err.type).toBe('required');
+      });
+    });
+  });
 });
