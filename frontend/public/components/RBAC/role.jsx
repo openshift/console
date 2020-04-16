@@ -306,7 +306,7 @@ export const RolesPage = ({ namespace, mock, showTitle }) => {
       rowFilters={[
         {
           type: 'role-kind',
-          selected: ['cluster', 'namespace'],
+          filterGroupName: 'Scope',
           reducer: roleType,
           items: [
             { id: 'cluster', title: 'Cluster-wide Roles' },

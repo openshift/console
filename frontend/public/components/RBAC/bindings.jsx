@@ -268,18 +268,13 @@ const roleResources = [
 const rowFilters = [
   {
     type: 'role-binding-kind',
-    selected: ['cluster', 'namespace'],
+    filterGroupName: 'Scope',
     reducer: bindingType,
-    items: ({ ClusterRoleBinding: data }) => {
-      const items = [
-        { id: 'namespace', title: 'Namespace Role Bindings' },
-        { id: 'system', title: 'System Role Bindings' },
-      ];
-      if (data && data.loaded && !data.loadError) {
-        items.unshift({ id: 'cluster', title: 'Cluster-wide Role Bindings' });
-      }
-      return items;
-    },
+    items: [
+      { id: 'cluster', title: 'Cluster-wide Role Bindings' },
+      { id: 'system', title: 'System Role Bindings' },
+      { id: 'namespace', title: 'Namespace Role Bindings' },
+    ],
   },
 ];
 
