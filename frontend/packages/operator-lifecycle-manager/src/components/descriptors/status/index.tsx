@@ -3,7 +3,7 @@ import * as _ from 'lodash';
 import { Map as ImmutableMap } from 'immutable';
 import { Tooltip } from '@patternfly/react-core';
 import { Status, SuccessStatus, YellowExclamationTriangleIcon } from '@console/shared';
-import { ResourceLink } from '@console/internal/components/utils';
+import { ResourceLink, withFallback } from '@console/internal/components/utils';
 import { Conditions } from '@console/internal/components/conditions';
 import { StatusCapability, CapabilityProps, DescriptorProps } from '../types';
 import { Phase } from './phase';
@@ -104,7 +104,7 @@ const capabilityFor = (statusCapability: StatusCapability) => {
  * Main entrypoint component for rendering custom UI for a given status descriptor. This should be used instead of importing
  * individual components from this module.
  */
-export const StatusDescriptor: React.SFC<DescriptorProps> = (props) => {
+export const StatusDescriptor = withFallback((props: DescriptorProps) => {
   const { descriptor, value, namespace } = props;
   // Only using first capability instead of dealing with combimations/permutations
   const capability = _.get(descriptor, ['x-descriptors', 0], null) as StatusCapability;
@@ -137,7 +137,7 @@ export const StatusDescriptor: React.SFC<DescriptorProps> = (props) => {
       </dd>
     </dl>
   );
-};
+});
 
 type StatusCapabilityProps = CapabilityProps<StatusCapability>;
 

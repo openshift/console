@@ -3,7 +3,12 @@ import * as _ from 'lodash';
 import { Map as ImmutableMap } from 'immutable';
 import { Button, Switch, Tooltip, Checkbox } from '@patternfly/react-core';
 import { EyeIcon, EyeSlashIcon, PencilAltIcon } from '@patternfly/react-icons';
-import { LoadingInline, ResourceLink, Selector } from '@console/internal/components/utils';
+import {
+  LoadingInline,
+  ResourceLink,
+  Selector,
+  withFallback,
+} from '@console/internal/components/utils';
 import { k8sPatch } from '@console/internal/module/k8s';
 import { YellowExclamationTriangleIcon } from '@console/shared';
 import { SecretValue } from '@console/internal/components/configmap-and-secret-data';
@@ -236,7 +241,7 @@ const capabilityFor = (specCapability: SpecCapability) => {
  * Main entrypoint component for rendering custom UI for a given spec descriptor. This should be used instead of importing
  * individual components from this module.
  */
-export const SpecDescriptor: React.SFC<DescriptorProps> = (props) => {
+export const SpecDescriptor = withFallback((props: DescriptorProps) => {
   const { model, obj, descriptor, value, namespace } = props;
   const capability = _.get(descriptor, ['x-descriptors'], []).find(
     (c) =>
@@ -267,6 +272,6 @@ export const SpecDescriptor: React.SFC<DescriptorProps> = (props) => {
       </dd>
     </dl>
   );
-};
+});
 
 type SpecCapabilityProps = CapabilityProps<SpecCapability>;

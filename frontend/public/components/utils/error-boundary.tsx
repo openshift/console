@@ -30,6 +30,9 @@ export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoun
       error,
       errorInfo,
     });
+    // Log the error so something shows up in the JS console when `DefaultFallback` is used.
+    // eslint-disable-next-line no-console
+    console.error(error);
   }
 
   render() {
