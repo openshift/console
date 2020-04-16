@@ -6,12 +6,10 @@ export const createConnection = (
   sourceNode: Node,
   targetNode: Node,
   replaceTargetNode: Node = null,
-  serviceBindingFlag: boolean = false,
 ): Promise<K8sResourceKind[] | K8sResourceKind> => {
   return createTopologyResourceConnection(
     sourceNode.getData(),
     targetNode.getData(),
     replaceTargetNode ? replaceTargetNode.getData() : null,
-    serviceBindingFlag,
   );
 };

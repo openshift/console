@@ -18,7 +18,12 @@ import { modelFor, referenceFor } from '@console/internal/module/k8s';
 import { useAccessReview } from '@console/internal/components/utils';
 import SvgBoxedText from '../../../svg/SvgBoxedText';
 import { getTopologyResourceObject } from '../../topology-utils';
-import { useDisplayFilters, useSearchFilter } from '../../filters';
+import {
+  getFilterById,
+  useDisplayFilters,
+  useSearchFilter,
+  SHOW_LABELS_FILTER_ID,
+} from '../../filters';
 import { NodeShadows, NODE_SHADOW_FILTER_ID_HOVER, NODE_SHADOW_FILTER_ID } from '../NodeShadows';
 
 import './BaseNode.scss';
@@ -81,7 +86,8 @@ const ObservedBaseNode: React.FC<BaseNodeProps> = ({
   });
   const [filtered] = useSearchFilter(element.getLabel());
   const displayFilters = useDisplayFilters();
-  const showLabels = displayFilters.showLabels || hover;
+  const showLabelsFilter = getFilterById(SHOW_LABELS_FILTER_ID, displayFilters);
+  const showLabels = showLabelsFilter?.value || hover;
   const refs = useCombineRefs<SVGEllipseElement>(hoverRef, dragNodeRef);
 
   React.useLayoutEffect(() => {

@@ -63,6 +63,7 @@ describe('knative topology utils', () => {
     const knServiceNode = getKnativeTopologyNodeItems(
       MockKnativeResources.ksservices.data[0],
       NodeType.KnService,
+      null,
       MockKnativeResources,
     );
     expect(knServiceNode).toBeDefined();
@@ -73,6 +74,7 @@ describe('knative topology utils', () => {
     const knServiceNode = getKnativeTopologyNodeItems(
       getEventSourceResponse(EventSourceCronJobModel).data[0],
       NodeType.EventSource,
+      null,
       MockKnativeResources,
     );
     expect(knServiceNode).toBeDefined();

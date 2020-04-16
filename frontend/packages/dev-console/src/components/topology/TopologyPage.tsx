@@ -15,13 +15,14 @@ import EmptyState from '../EmptyState';
 import NamespacedPage, { NamespacedPageVariants } from '../NamespacedPage';
 import ProjectsExistWrapper from '../ProjectsExistWrapper';
 import ProjectListPage from '../projects/ProjectListPage';
-import ConnectedTopologyDataController, { RenderProps } from './TopologyDataController';
+import ConnectedTopologyDataController from './TopologyDataController';
+import { RenderProps } from './TopologyDataRenderer';
 import Topology from './Topology';
 import TopologyShortcuts from './TopologyShortcuts';
 import { LAST_TOPOLOGY_VIEW_LOCAL_STORAGE_KEY } from './components/const';
+import { TOPOLOGY_SEARCH_FILTER_KEY } from './filters';
 
 import './TopologyPage.scss';
-import { TOPOLOGY_SEARCH_FILTER_KEY } from './filters';
 
 export interface TopologyPageProps {
   match: RMatch<{
@@ -51,17 +52,17 @@ const EmptyMsg = () => (
   />
 );
 
-export function renderTopology({ loaded, loadError, data, namespace }: RenderProps) {
+export function renderTopology({ loaded, loadError, model, namespace }: RenderProps) {
   return (
     <StatusBox
-      data={data ? data.graph.nodes : null}
+      data={model ? model.nodes : null}
       label="Topology"
       loaded={loaded}
       loadError={loadError}
       EmptyMsg={EmptyMsg}
     >
       <div className="odc-topology">
-        <Topology data={data} namespace={namespace} />
+        <Topology model={model} namespace={namespace} />
       </div>
     </StatusBox>
   );

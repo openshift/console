@@ -15,7 +15,12 @@ import {
 import SvgBoxedText from '../../../svg/SvgBoxedText';
 import { nodeDragSourceSpec } from '../../components/componentUtils';
 import { TYPE_OPERATOR_BACKED_SERVICE } from './const';
-import { useDisplayFilters, useSearchFilter } from '../../filters';
+import {
+  getFilterById,
+  useDisplayFilters,
+  useSearchFilter,
+  SHOW_LABELS_FILTER_ID,
+} from '../../filters';
 import {
   NodeShadows,
   NODE_SHADOW_FILTER_ID,
@@ -58,7 +63,8 @@ const OperatorBackedServiceGroup: React.FC<OperatorBackedServiceGroupProps> = ({
   const { data } = element.getData();
   const [filtered] = useSearchFilter(element.getLabel());
   const displayFilters = useDisplayFilters();
-  const showLabels = displayFilters.showLabels || hover || innerHover;
+  const showLabelsFilter = getFilterById(SHOW_LABELS_FILTER_ID, displayFilters);
+  const showLabels = showLabelsFilter?.value || hover || innerHover;
   const { x, y, width, height } = element.getBounds();
 
   return (

@@ -33,6 +33,7 @@ import {
 import kubevirtReducer from './redux';
 import { accessReviewImportVM } from './utils/accessReview-v2v';
 import { diskImportKindMapping } from './components/dashboards-page/overview-dashboard/utils';
+import { TopologyConsumedExtensions, getTopologyPlugin } from './topology/topology-plugin';
 
 import './style.scss';
 
@@ -52,7 +53,8 @@ type ConsumedExtensions =
   | ReduxReducer
   | ProjectDashboardInventoryItem
   | DashboardsOverviewResourceActivity
-  | AddAction;
+  | AddAction
+  | TopologyConsumedExtensions;
 
 export const FLAG_KUBEVIRT = 'KUBEVIRT';
 
@@ -122,7 +124,6 @@ const plugin: Plugin<ConsumedExtensions> = [
     type: 'Overview/CRD',
     properties: {
       resources: virtualMachineConfigurations,
-      utils: () => null,
     },
     flags: {
       required: [FLAG_KUBEVIRT],
@@ -450,6 +451,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       accessReview: accessReviewImportVM,
     },
   },
+  ...getTopologyPlugin([FLAG_KUBEVIRT]),
 ];
 
 export default plugin;

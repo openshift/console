@@ -10,7 +10,17 @@ import {
   createTopologyControlButtons,
   defaultControlButtonsOptions,
 } from '@patternfly/react-topology';
+import { useExtensions } from '@console/plugin-sdk';
 import {
+  isTopologyComponentFactory,
+  TopologyComponentFactory,
+  isTopologyCreateConnector,
+  TopologyCreateConnector,
+  isTopologyDisplayFilter,
+  TopologyDisplayFilters,
+} from '../../extensions/topology';
+import {
+  ComponentFactory,
   Visualization,
   VisualizationSurface,
   isNode,
@@ -33,54 +43,53 @@ import {
   setQueryArgument,
   removeQueryArgument,
 } from '@console/internal/components/utils';
-import KnativeComponentFactory from '@console/knative-plugin/src/topology/components/knativeComponentFactory';
-import { KubevirtComponentFactory } from '@console/kubevirt-plugin/src/topology/components/kubevirtComponentFactory';
 import { TYPE_VIRTUAL_MACHINE } from '@console/kubevirt-plugin/src/topology/components/const';
 import TopologyVmPanel from '@console/kubevirt-plugin/src/topology/TopologyVmPanel';
 import { useAddToProjectAccess } from '../../utils/useAddToProjectAccess';
 import TopologySideBar from './TopologySideBar';
 import {
   GraphData,
-  TopologyDataModel,
   TopologyDataObject,
   SHOW_GROUPING_HINT_EVENT,
   ShowGroupingHintEventListener,
+  TopologyApplyDisplayOptions,
+  DisplayFilters,
+  CreateConnectionGetter,
 } from './topology-types';
 import TopologyResourcePanel from './TopologyResourcePanel';
 import TopologyApplicationPanel from './application-panel/TopologyApplicationPanel';
 import ConnectedTopologyEdgePanel from './TopologyEdgePanel';
-import { topologyModelFromDataModel } from './data-transforms/topology-model';
 import { layoutFactory, COLA_LAYOUT, COLA_FORCE_LAYOUT } from './layouts/layoutFactory';
-import { TYPE_APPLICATION_GROUP, ComponentFactory } from './components';
+import { TYPE_APPLICATION_GROUP, componentFactory } from './components';
 import TopologyFilterBar from './filters/TopologyFilterBar';
 import {
-  getTopologyFilters,
   getTopologySearchQuery,
-  TopologyFilters,
   TOPOLOGY_SEARCH_FILTER_KEY,
-  FILTER_ACTIVE_CLASS,
+  useDisplayFilters,
+  useAppliedDisplayFilters,
 } from './filters';
 import TopologyHelmReleasePanel from './helm/TopologyHelmReleasePanel';
 import { TYPE_HELM_RELEASE, TYPE_HELM_WORKLOAD } from './helm/components/const';
-import { HelmComponentFactory } from './helm/components/helmComponentFactory';
 import { TYPE_OPERATOR_BACKED_SERVICE } from './operators/components/const';
-import { OperatorsComponentFactory } from './operators/components/operatorsComponentFactory';
-import { getServiceBindingStatus } from './topology-utils';
 import TopologyHelmWorkloadPanel from './helm/TopologyHelmWorkloadPanel';
+import { updateModelFromFilters } from './data-transforms';
+import { setSupportedTopologyFilters, setTopologyFilters } from './redux/action';
+
+export const FILTER_ACTIVE_CLASS = 'odc-m-filter-active';
 
 interface StateProps {
-  filters: TopologyFilters;
   application: string;
-  serviceBinding: boolean;
   eventSourceEnabled: boolean;
 }
 
 interface DispatchProps {
   onSelectTab?: (name: string) => void;
+  onFiltersChange: (filters: DisplayFilters) => void;
+  onSupportedFiltersChange: (supportedFilterIds: string[]) => void;
 }
 
 interface TopologyProps {
-  data: TopologyDataModel;
+  model: Model;
   namespace: string;
 }
 
@@ -96,99 +105,184 @@ const graphModel: Model = {
 type ComponentProps = TopologyProps & StateProps & DispatchProps;
 
 const Topology: React.FC<ComponentProps> = ({
-  data,
-  filters,
+  model,
   application,
   namespace,
-  serviceBinding,
   eventSourceEnabled,
   onSelectTab,
+  onFiltersChange,
+  onSupportedFiltersChange,
 }) => {
-  const visRef = React.useRef<Visualization | null>(null);
   const applicationRef = React.useRef<string>(null);
-  const componentFactoryRef = React.useRef<ComponentFactory | null>(null);
-  const knativeComponentFactoryRef = React.useRef<KnativeComponentFactory | null>(null);
-  const helmComponentFactoryRef = React.useRef<HelmComponentFactory | null>(null);
-  const operatorsComponentFactoryRef = React.useRef<OperatorsComponentFactory | null>(null);
-  const vmsComponentFactoryRef = React.useRef<KubevirtComponentFactory | null>(null);
   const [layout, setLayout] = React.useState<string>(graphModel.graph.layout);
-  const [model, setModel] = React.useState<Model>();
+  const [filteredModel, setFilteredModel] = React.useState<Model>();
   const [graphData, setGraphData] = React.useState<GraphData>();
   const [selectedIds, setSelectedIds] = React.useState<string[]>([]);
   const createResourceAccess: string[] = useAddToProjectAccess(namespace);
   const [dragHint, setDragHint] = React.useState<string>('');
+  const filters = useDisplayFilters();
+  const appliedFilters = useAppliedDisplayFilters();
+  const [displayFilterers, setDisplayFilterers] = React.useState<TopologyApplyDisplayOptions[]>(
+    null,
+  );
+  const [componentFactories, setComponentFactories] = React.useState<ComponentFactory[]>([]);
+  const componentFactoryExtensions = useExtensions<TopologyComponentFactory>(
+    isTopologyComponentFactory,
+  );
+  const displayFilterExtensions = useExtensions<TopologyDisplayFilters>(isTopologyDisplayFilter);
+  const createConnectorExtensions = useExtensions<TopologyCreateConnector>(
+    isTopologyCreateConnector,
+  );
+  const [createConnectors, setCreateConnectors] = React.useState<CreateConnectionGetter[]>(null);
+  const searchParams = window.location.search;
+  const [filtersLoaded, setFiltersLoaded] = React.useState<boolean>(false);
+  const componentFactoriesPromises = React.useMemo(
+    () => componentFactoryExtensions.map((factory) => factory.properties.getFactory()),
+    [componentFactoryExtensions],
+  );
 
-  if (!componentFactoryRef.current) {
-    componentFactoryRef.current = new ComponentFactory(serviceBinding);
-  }
-  if (!knativeComponentFactoryRef.current) {
-    knativeComponentFactoryRef.current = new KnativeComponentFactory(serviceBinding);
-  }
-  if (!helmComponentFactoryRef.current) {
-    helmComponentFactoryRef.current = new HelmComponentFactory(serviceBinding);
-  }
-  if (!operatorsComponentFactoryRef.current) {
-    operatorsComponentFactoryRef.current = new OperatorsComponentFactory(serviceBinding);
-  }
-  if (!vmsComponentFactoryRef.current) {
-    vmsComponentFactoryRef.current = new KubevirtComponentFactory(serviceBinding);
-  }
+  React.useEffect(() => {
+    Promise.all(componentFactoriesPromises)
+      .then((res) => setComponentFactories(res))
+      .catch(() => {});
+  }, [componentFactoriesPromises]);
 
-  if (!visRef.current) {
-    visRef.current = new Visualization();
-    visRef.current.registerLayoutFactory(layoutFactory);
-    visRef.current.registerComponentFactory(componentFactoryRef.current.getFactory());
-    // TODO: Use Plugins
-    visRef.current.registerComponentFactory(knativeComponentFactoryRef.current.getFactory());
-    visRef.current.registerComponentFactory(helmComponentFactoryRef.current.getFactory());
-    visRef.current.registerComponentFactory(operatorsComponentFactoryRef.current.getFactory());
-    visRef.current.registerComponentFactory(vmsComponentFactoryRef.current.getFactory());
-    visRef.current.addEventListener<SelectionEventListener>(SELECTION_EVENT, (ids: string[]) => {
-      // set empty selection when selecting the graph
-      if (ids.length > 0 && ids[0] === graphModel.graph.id) {
-        setSelectedIds([]);
-        removeQueryArgument('selectId');
-      } else {
-        setSelectedIds(ids);
-        ids.length > 0 ? setQueryArgument('selectId', ids[0]) : removeQueryArgument('selectId');
+  const createConnectorPromises = React.useMemo(
+    () => createConnectorExtensions.map((creator) => creator.properties.getCreateConnector()),
+    [createConnectorExtensions],
+  );
+
+  React.useEffect(() => {
+    if (createConnectorPromises) {
+      if (createConnectorPromises.length === 0) {
+        setCreateConnectors([]);
       }
+      Promise.all(createConnectorPromises)
+        .then((res) => setCreateConnectors(res))
+        .catch(() => {
+          setCreateConnectors([]);
+        });
+    }
+  }, [createConnectorPromises]);
+
+  const displayFilterPromises = React.useMemo(
+    () => displayFilterExtensions.map((filterer) => filterer.properties.applyDisplayOptions()),
+    [displayFilterExtensions],
+  );
+
+  React.useEffect(() => {
+    if (displayFilterPromises) {
+      if (displayFilterPromises.length === 0) {
+        setDisplayFilterers([]);
+      }
+      Promise.all(displayFilterPromises)
+        .then((res) => setDisplayFilterers(res))
+        .catch(() => {
+          setDisplayFilterers([]);
+        });
+    }
+  }, [displayFilterPromises]);
+
+  const topologyFilterPromises = React.useMemo(
+    () => displayFilterExtensions.map((filterer) => filterer.properties.getTopologyFilters()),
+    [displayFilterExtensions],
+  );
+
+  React.useEffect(() => {
+    Promise.all(topologyFilterPromises)
+      .then((res) => {
+        const updateFilters = [...filters];
+        res.forEach((getter) => {
+          const extFilters = getter();
+          extFilters.forEach((filter) => {
+            if (!updateFilters.find((f) => f.id === filter.id)) {
+              if (appliedFilters[filter.id] !== undefined) {
+                filter.value = appliedFilters[filter.id];
+              }
+              updateFilters.push(filters.find((f) => f.id === filter.id) || filter);
+            }
+          });
+        });
+        onFiltersChange(updateFilters);
+        setFiltersLoaded(true);
+      })
+      .catch(() => {});
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [topologyFilterPromises]);
+
+  const onSelect = (ids: string[]) => {
+    // set empty selection when selecting the graph
+    if (ids.length > 0 && ids[0] === graphModel.graph.id) {
+      setSelectedIds([]);
+      removeQueryArgument('selectId');
+    } else {
+      setSelectedIds(ids);
+      setQueryArgument('selectId', ids[0]);
+    }
+  };
+
+  const visualization: Visualization = React.useMemo(() => {
+    if (componentFactoriesPromises.length && !componentFactories.length) {
+      return null;
+    }
+
+    const vis = new Visualization();
+    vis.registerLayoutFactory(layoutFactory);
+    vis.registerComponentFactory(componentFactory);
+    componentFactories.forEach((factory) => {
+      vis.registerComponentFactory(factory);
     });
-    visRef.current.addEventListener<ShowGroupingHintEventListener>(
+
+    vis.addEventListener<SelectionEventListener>(SELECTION_EVENT, onSelect);
+    vis.addEventListener<ShowGroupingHintEventListener>(
       SHOW_GROUPING_HINT_EVENT,
       (element, hint) => {
         setDragHint(hint);
       },
     );
-    visRef.current.fromModel(graphModel);
-  }
+    vis.fromModel(graphModel);
+    return vis;
+  }, [componentFactoriesPromises, componentFactories]);
 
   React.useEffect(() => {
     const newGraphData: GraphData = {
       createResourceAccess,
       namespace,
       eventSourceEnabled,
+      createConnectorExtensions: createConnectors,
     };
-    visRef.current.getGraph().setData(newGraphData);
+    if (visualization) {
+      visualization.getGraph().setData(newGraphData);
+    }
     setGraphData(newGraphData);
-  }, [namespace, createResourceAccess, eventSourceEnabled]);
+  }, [namespace, createResourceAccess, eventSourceEnabled, visualization, createConnectors]);
 
   React.useEffect(() => {
-    const newModel = topologyModelFromDataModel(data, application, filters);
-    visRef.current.fromModel(newModel);
-    setModel(newModel);
-    if (selectedIds.length && !visRef.current.getElementById(selectedIds[0])) {
-      setSelectedIds([]);
-    } else {
-      const selectId = getQueryArgument('selectId');
-      const selectTab = getQueryArgument('selectTab');
-      visRef.current.getElementById(selectId) && setSelectedIds([selectId]);
-      if (selectTab) {
-        onSelectTab(selectTab);
-        removeQueryArgument('selectTab');
+    if (visualization && displayFilterers && filtersLoaded) {
+      const newModel = updateModelFromFilters(
+        model,
+        filters,
+        application,
+        displayFilterers,
+        onSupportedFiltersChange,
+      );
+      visualization.fromModel(newModel);
+      setFilteredModel(newModel);
+      visualization.fromModel(model);
+      if (selectedIds.length && !visualization.getElementById(selectedIds[0])) {
+        setSelectedIds([]);
+      } else {
+        const selectId = getQueryArgument('selectId');
+        const selectTab = getQueryArgument('selectTab');
+        visualization.getElementById(selectId) && setSelectedIds([selectId]);
+        if (selectTab) {
+          onSelectTab(selectTab);
+          removeQueryArgument('selectTab');
+        }
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data]);
+  }, [model, visualization, filters, application, displayFilterers, filtersLoaded]);
 
   React.useEffect(() => {
     if (!applicationRef.current) {
@@ -197,28 +291,32 @@ const Topology: React.FC<ComponentProps> = ({
     }
     if (application !== applicationRef.current) {
       applicationRef.current = application;
-      visRef.current.getGraph().reset();
-      visRef.current.getGraph().layout();
+      if (visualization) {
+        visualization.getGraph().reset();
+        visualization.getGraph().layout();
+      }
     }
-  }, [application]);
+  }, [application, visualization]);
 
   React.useEffect(() => {
     let resizeTimeout = null;
-    if (selectedIds.length > 0) {
-      const selectedEntity = visRef.current.getElementById(selectedIds[0]);
-      if (selectedEntity) {
-        const visibleEntity = isNode(selectedEntity)
-          ? selectedEntity
-          : (selectedEntity as BaseEdge).getSource();
-        resizeTimeout = setTimeout(
-          action(() => {
-            visRef.current
-              .getGraph()
-              .panIntoView(visibleEntity, { offset: 20, minimumVisible: 40 });
-            resizeTimeout = null;
-          }),
-          500,
-        );
+    if (visualization) {
+      if (selectedIds.length > 0) {
+        const selectedEntity = visualization.getElementById(selectedIds[0]);
+        if (selectedEntity) {
+          const visibleEntity = isNode(selectedEntity)
+            ? selectedEntity
+            : (selectedEntity as BaseEdge).getSource();
+          resizeTimeout = setTimeout(
+            action(() => {
+              visualization
+                .getGraph()
+                .panIntoView(visibleEntity, { offset: 20, minimumVisible: 40 });
+              resizeTimeout = null;
+            }),
+            500,
+          );
+        }
       }
     }
     return () => {
@@ -226,13 +324,15 @@ const Topology: React.FC<ComponentProps> = ({
         clearTimeout(resizeTimeout);
       }
     };
-  }, [selectedIds]);
+  }, [selectedIds, visualization]);
 
   React.useEffect(() => {
     action(() => {
-      visRef.current.getGraph().setLayout(layout);
+      if (visualization) {
+        visualization.getGraph().setLayout(layout);
+      }
     })();
-  }, [layout]);
+  }, [layout, visualization]);
 
   const onSearchChange = (searchQuery) => {
     if (searchQuery.length > 0) {
@@ -247,7 +347,11 @@ const Topology: React.FC<ComponentProps> = ({
   React.useEffect(() => {
     const searchQuery = getTopologySearchQuery();
     searchQuery && onSearchChange(searchQuery);
-  }, []);
+  }, [searchParams]);
+
+  if (!visualization) {
+    return null;
+  }
 
   const onSidebarClose = () => {
     setSelectedIds([]);
@@ -261,17 +365,17 @@ const Topology: React.FC<ComponentProps> = ({
           ...createTopologyControlButtons({
             ...defaultControlButtonsOptions,
             zoomInCallback: action(() => {
-              visRef.current.getGraph().scaleBy(4 / 3);
+              visualization.getGraph().scaleBy(4 / 3);
             }),
             zoomOutCallback: action(() => {
-              visRef.current.getGraph().scaleBy(0.75);
+              visualization.getGraph().scaleBy(0.75);
             }),
             fitToScreenCallback: action(() => {
-              visRef.current.getGraph().fit(80);
+              visualization.getGraph().fit(80);
             }),
             resetViewCallback: action(() => {
-              visRef.current.getGraph().reset();
-              visRef.current.getGraph().layout();
+              visualization.getGraph().reset();
+              visualization.getGraph().layout();
             }),
             legend: false,
           }),
@@ -312,7 +416,7 @@ const Topology: React.FC<ComponentProps> = ({
   };
 
   const selectedItemDetails = () => {
-    const selectedEntity = selectedIds[0] ? visRef.current.getElementById(selectedIds[0]) : null;
+    const selectedEntity = selectedIds[0] ? visualization.getElementById(selectedIds[0]) : null;
     if (isNode(selectedEntity)) {
       if (selectedEntity.getType() === TYPE_APPLICATION_GROUP) {
         return (
@@ -343,14 +447,14 @@ const Topology: React.FC<ComponentProps> = ({
     }
 
     if (isEdge(selectedEntity)) {
-      return <ConnectedTopologyEdgePanel edge={selectedEntity as BaseEdge} data={data} />;
+      return <ConnectedTopologyEdgePanel edge={selectedEntity as BaseEdge} model={filteredModel} />;
     }
     return null;
   };
 
   const renderSideBar = () => {
     const selectedEntity =
-      selectedIds.length === 0 ? null : visRef.current.getElementById(selectedIds[0]);
+      selectedIds.length === 0 ? null : visualization.getElementById(selectedIds[0]);
     const details = selectedItemDetails();
     if (!selectedEntity || !details) {
       return null;
@@ -363,7 +467,7 @@ const Topology: React.FC<ComponentProps> = ({
     );
   };
 
-  if (!model) {
+  if (!filteredModel) {
     return null;
   }
 
@@ -372,13 +476,13 @@ const Topology: React.FC<ComponentProps> = ({
   return (
     <TopologyView
       viewToolbar={
-        <TopologyFilterBar visualization={visRef.current} onSearchChange={onSearchChange} />
+        <TopologyFilterBar visualization={visualization} onSearchChange={onSearchChange} />
       }
       controlBar={renderControlBar()}
       sideBar={sideBar}
       sideBarOpen={!!sideBar}
     >
-      <VisualizationSurface visualization={visRef.current} state={{ selectedIds }} />
+      <VisualizationSurface visualization={visualization} state={{ selectedIds }} />
       {dragHint && <div className="odc-topology__hint-container">{dragHint}</div>}
     </TopologyView>
   );
@@ -386,15 +490,19 @@ const Topology: React.FC<ComponentProps> = ({
 
 const TopologyStateToProps = (state: RootState): StateProps => {
   return {
-    filters: getTopologyFilters(state),
     application: getActiveApplication(state),
-    serviceBinding: getServiceBindingStatus(state),
     eventSourceEnabled: getEventSourceStatus(state),
   };
 };
 
 const TopologyDispatchToProps = (dispatch): DispatchProps => ({
   onSelectTab: (name) => dispatch(selectOverviewDetailsTab(name)),
+  onFiltersChange: (filters: DisplayFilters) => {
+    dispatch(setTopologyFilters(filters));
+  },
+  onSupportedFiltersChange: (supportedFilterIds: string[]) => {
+    dispatch(setSupportedTopologyFilters(supportedFilterIds));
+  },
 });
 
 export default connect<StateProps, DispatchProps, TopologyProps>(

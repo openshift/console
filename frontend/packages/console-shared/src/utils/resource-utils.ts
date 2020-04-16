@@ -1,4 +1,5 @@
 import * as _ from 'lodash';
+import { OverviewResourceUtil } from '@console/plugin-sdk';
 import {
   DeploymentKind,
   K8sResourceKind,
@@ -23,6 +24,10 @@ import {
 import { getBuildNumber } from '@console/internal/module/k8s/builds';
 import { FirehoseResource } from '@console/internal/components/utils';
 import {
+  ClusterServiceVersionModel,
+  ClusterServiceVersionKind,
+} from '@console/operator-lifecycle-manager';
+import {
   BuildConfigOverviewItem,
   OverviewItemAlerts,
   PodControllerOverviewItem,
@@ -43,12 +48,8 @@ import {
 } from '../constants';
 import { resourceStatus, podStatus } from './ResourceStatus';
 import { isKnativeServing, isIdled } from './pod-utils';
-import {
-  ClusterServiceVersionModel,
-  ClusterServiceVersionKind,
-} from '@console/operator-lifecycle-manager';
 
-export const getResourceList = (namespace: string, resList?: any) => {
+export const getResourceList = (namespace: string, resList?: any): FirehoseResource[] => {
   let resources: FirehoseResource[] = [
     {
       isList: true,
@@ -143,15 +144,13 @@ export const getResourceList = (namespace: string, resList?: any) => {
     },
   ];
 
-  let utils = [];
   if (resList) {
     resList.forEach((resource) => {
       resources = [...resources, ...resource.properties.resources(namespace)];
-      utils = [...utils, resource.properties.utils];
     });
   }
 
-  return { resources, utils };
+  return resources;
 };
 
 export const getResourcePausedAlert = (resource: K8sResourceKind): OverviewItemAlerts => {
@@ -485,23 +484,6 @@ export const getOperatorBackedServiceKindMap = (
       }, {})
     : {};
 
-export const isOperatorBackedService = (
-  obj: K8sResourceKind,
-  installedOperators: ClusterServiceVersionKind[],
-): boolean => {
-  const kind = _.get(obj, 'metadata.ownerReferences[0].kind', null);
-  const ownerUid = _.get(obj, 'metadata.ownerReferences[0].uid');
-  const operatBackedServiceKindMap = getOperatorBackedServiceKindMap(installedOperators);
-  const operatorResource: K8sResourceKind = _.find(installedOperators, {
-    metadata: { uid: ownerUid },
-  }) as K8sResourceKind;
-  return (
-    kind &&
-    operatBackedServiceKindMap &&
-    (!_.isEmpty(operatorResource) || kind in operatBackedServiceKindMap)
-  );
-};
-
 export const getPodsForResource = (resource: K8sResourceKind, resources: any): PodKind[] => {
   const { pods } = resources;
   return getOwnedResources(resource, pods.data);
@@ -713,9 +695,7 @@ export const getServicesForResource = (
 export const createDeploymentConfigItems = (
   deploymentConfigs: K8sResourceKind[],
   resources: any,
-  installedOperators: ClusterServiceVersionKind[],
-  utils?: Function[],
-  operatorsFilter?: boolean,
+  utils?: OverviewResourceUtil[],
 ): OverviewItem[] => {
   const items = _.map(deploymentConfigs, (dc) => {
     const obj: K8sResourceKind = {
@@ -752,28 +732,23 @@ export const createDeploymentConfigItems = (
       services,
       status,
       isMonitorable: true,
-      isOperatorBackedService: isOperatorBackedService(obj, installedOperators),
     };
 
     if (utils) {
-      return utils.reduce((acc, element) => {
-        return { ...acc, ...element(obj, resources) };
+      return utils.reduce((acc, util) => {
+        return { ...acc, ...util.properties.getResources(obj, resources) };
       }, overviewItems);
     }
     return overviewItems;
   });
-  if (operatorsFilter !== undefined) {
-    return items.filter((item) => item.isOperatorBackedService === operatorsFilter);
-  }
+
   return items;
 };
 
 export const createDeploymentItems = (
   deployments: DeploymentKind[],
   resources: any,
-  installedOperators: ClusterServiceVersionKind[],
-  utils?: Function[],
-  operatorsFilter?: boolean,
+  utils?: OverviewResourceUtil[],
 ): OverviewItem<DeploymentKind>[] => {
   const items = _.map(deployments, (d) => {
     const obj: DeploymentKind = {
@@ -805,28 +780,23 @@ export const createDeploymentItems = (
       services,
       status,
       isMonitorable: true,
-      isOperatorBackedService: isOperatorBackedService(obj, installedOperators),
     };
 
     if (utils) {
-      return utils.reduce((acc, element) => {
-        return { ...acc, ...element(obj, resources) };
+      return utils.reduce((acc, util) => {
+        return { ...acc, ...util.properties.getResources(obj, resources) };
       }, overviewItems);
     }
     return overviewItems;
   });
-  if (operatorsFilter !== undefined) {
-    return items.filter((item) => item.isOperatorBackedService === operatorsFilter);
-  }
+
   return items;
 };
 
 export const createDaemonSetItems = (
   daemonSets: K8sResourceKind[],
   resources: any,
-  installedOperators: ClusterServiceVersionKind[],
-  utils?: Function[],
-  operatorsFilter?: boolean,
+  utils?: OverviewResourceUtil[],
 ): OverviewItem[] => {
   const items = _.map(daemonSets, (ds) => {
     const obj: K8sResourceKind = {
@@ -843,7 +813,7 @@ export const createDaemonSetItems = (
       ...getBuildAlerts(buildConfigs),
     };
     const status = resourceStatus(obj);
-    return {
+    const overviewItems = {
       alerts,
       buildConfigs,
       obj,
@@ -852,21 +822,23 @@ export const createDaemonSetItems = (
       services,
       status,
       isMonitorable: true,
-      isOperatorBackedService: isOperatorBackedService(obj, installedOperators),
     };
+
+    if (utils) {
+      return utils.reduce((acc, util) => {
+        return { ...acc, ...util.properties.getResources(obj, resources) };
+      }, overviewItems);
+    }
+    return overviewItems;
   });
-  if (operatorsFilter !== undefined) {
-    return items.filter((item) => item.isOperatorBackedService === operatorsFilter);
-  }
+
   return items;
 };
 
 export const createStatefulSetItems = (
   statefulSets: K8sResourceKind[],
   resources: any,
-  installedOperators: ClusterServiceVersionKind[],
-  utils?: Function[],
-  operatorsFilter?: boolean,
+  utils?: OverviewResourceUtil[],
 ): OverviewItem[] => {
   const items = _.map(statefulSets, (ss) => {
     const obj: K8sResourceKind = {
@@ -883,7 +855,7 @@ export const createStatefulSetItems = (
     const services = getServicesForResource(obj, resources);
     const routes = getRoutesForServices(services, resources);
     const status = resourceStatus(obj);
-    return {
+    const overviewItems = {
       alerts,
       buildConfigs,
       obj,
@@ -892,13 +864,37 @@ export const createStatefulSetItems = (
       services,
       status,
       isMonitorable: true,
-      isOperatorBackedService: isOperatorBackedService(obj, installedOperators),
     };
+
+    if (utils) {
+      return utils.reduce((acc, util) => {
+        return { ...acc, ...util.properties.getResources(obj, resources) };
+      }, overviewItems);
+    }
+    return overviewItems;
   });
-  if (operatorsFilter !== undefined) {
-    return items.filter((item) => item.isOperatorBackedService === operatorsFilter);
-  }
+
   return items;
+};
+
+export const createOverviewItemsForType = (
+  type: string,
+  resources: any,
+  utils?: OverviewResourceUtil[],
+): OverviewItem[] => {
+  const typedItems = resources[type]?.data ?? [];
+  switch (type) {
+    case 'deployments':
+      return createDeploymentItems(typedItems, resources, utils);
+    case 'deploymentConfigs':
+      return createDeploymentConfigItems(typedItems, resources, utils);
+    case 'statefulSets':
+      return createStatefulSetItems(typedItems, resources, utils);
+    case 'daemonSets':
+      return createDaemonSetItems(typedItems, resources, utils);
+    default:
+      return [];
+  }
 };
 
 export const createPodItems = (resources: any): OverviewItem[] => {

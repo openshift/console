@@ -1,4 +1,9 @@
-import { apiVersionForModel, K8sResourceKind, referenceFor } from '@console/internal/module/k8s';
+import {
+  apiVersionForModel,
+  K8sResourceKind,
+  PodKind,
+  referenceFor,
+} from '@console/internal/module/k8s';
 import {
   OverviewItem,
   getRoutesForServices,
@@ -7,16 +12,15 @@ import {
   getServicesForResource,
 } from '@console/shared';
 import { getImageForIconClass } from '@console/internal/components/catalog/catalog-item-icon';
+import { Model } from '@console/topology';
 import {
-  TopologyDataModel,
   TopologyDataObject,
   TopologyDataResources,
   getRoutesURL,
-  addToTopologyDataModel,
-  getTopologyEdgeItems,
   getTopologyGroupItems,
   getTopologyNodeItem,
   mergeGroup,
+  WorkloadModelProps,
 } from '@console/dev-console/src/components/topology';
 import { VMIKind, VMKind } from '../types';
 import { VirtualMachineModel } from '../models';
@@ -26,8 +30,6 @@ import { getVMStatus } from '../statuses/vm/vm-status';
 import { V1alpha1DataVolume } from '../types/vm/disk/V1alpha1DataVolume';
 import { VMImportKind } from '../types/vm-import/ovirt/vm-import';
 import { VMNodeData } from './types';
-
-export const kubevirtAllowedResources = ['virtualmachines'];
 
 export const getOperatingSystemImage = (vm: VMKind, templates: K8sResourceKind[]): string => {
   const templateName = vm.metadata?.labels?.['vm.kubevirt.io/template'];
@@ -52,7 +54,8 @@ export const createVMOverviewItem = (vm: VMKind, vmi: VMIKind, resources: any): 
   const routes = getRoutesForServices(services, resources);
   const laucherPod = findVMIPod(vmi, resources.pods.data);
   const pods = laucherPod ? [laucherPod] : [];
-  return {
+
+  const overviewItems = {
     buildConfigs,
     current,
     obj,
@@ -63,6 +66,8 @@ export const createVMOverviewItem = (vm: VMKind, vmi: VMIKind, resources: any): 
     isMonitorable: false,
     isOperatorBackedService: false,
   };
+
+  return overviewItems;
 };
 
 export const createVMOverviewItems = (resources: any): OverviewItem[] => {
@@ -87,7 +92,7 @@ const createTopologyVMNodeData = (
   const { uid, name, labels } = vm.metadata;
   const vmis = resources.virtualmachineinstances?.data;
   const vmi = vmis.find((instance) => instance.metadata.name === name) as VMIKind;
-  const pods = resources.pods?.data;
+  const pods = resources.pods?.data as PodKind[];
   const migrations = resources.migrations?.data;
   const dataVolumes = resources.dataVolumes?.data as V1alpha1DataVolume[];
   const vmImports = resources.vmImports?.data as VMImportKind[];
@@ -106,7 +111,6 @@ const createTopologyVMNodeData = (
     name: name || labels['app.kubernetes.io/instance'],
     type: TYPE_VIRTUAL_MACHINE,
     resources: vmOverview,
-    operatorBackedService: false,
     data: {
       url: getRoutesURL(vmOverview),
       kind: referenceFor(vm),
@@ -118,40 +122,25 @@ const createTopologyVMNodeData = (
 };
 
 export const getKubevirtTopologyDataModel = (
+  namespace: string,
   resources: TopologyDataResources,
-  allResources: K8sResourceKind[],
-  installedOperators,
-  utils: Function[],
-  transformBy: string[],
-  serviceBindingRequests: K8sResourceKind[],
-): TopologyDataModel => {
-  const vmsDataModel: TopologyDataModel = {
-    graph: { nodes: [], edges: [], groups: [] },
-    topology: {},
-  };
+): Promise<Model> => {
+  const vmsDataModel: Model = { nodes: [], edges: [] };
   const vmsResources = [];
 
   if (resources.virtualmachines?.data.length) {
-    const typedDataModel: TopologyDataModel = {
-      graph: { nodes: [], edges: [], groups: [] },
-      topology: {},
-    };
-
     const vmOverviewItems = createVMOverviewItems(resources);
     vmOverviewItems.forEach((vmOverview: OverviewItem) => {
       const vm = vmOverview.obj;
       const { uid } = vm.metadata;
       vmsResources.push(uid);
-      typedDataModel.topology[uid] = createTopologyVMNodeData(vmOverview, resources);
-      typedDataModel.graph.nodes.push(getTopologyNodeItem(vm, TYPE_VIRTUAL_MACHINE));
-      typedDataModel.graph.edges.push(
-        ...getTopologyEdgeItems(vm, allResources, serviceBindingRequests),
+      const data = createTopologyVMNodeData(vmOverview, resources);
+      vmsDataModel.nodes.push(
+        getTopologyNodeItem(vm, TYPE_VIRTUAL_MACHINE, data, WorkloadModelProps),
       );
-      mergeGroup(getTopologyGroupItems(vm), typedDataModel.graph.groups);
+      mergeGroup(getTopologyGroupItems(vm), vmsDataModel.nodes);
     });
-
-    addToTopologyDataModel(typedDataModel, vmsDataModel);
   }
 
-  return vmsDataModel;
+  return Promise.resolve(vmsDataModel);
 };

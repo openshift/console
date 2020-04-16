@@ -1,57 +1,48 @@
 import * as _ from 'lodash';
-import { K8sResourceKind, referenceFor } from '@console/internal/module/k8s';
-import { TransformResourceData, isKnativeServing } from '@console/shared';
-import { ClusterServiceVersionKind } from '@console/operator-lifecycle-manager';
+import {
+  apiVersionForReference,
+  isGroupVersionKind,
+  K8sResourceKind,
+  kindForReference,
+  referenceFor,
+  referenceForModel,
+} from '@console/internal/module/k8s';
+import { WatchK8sResources } from '@console/internal/components/utils/k8s-watch-hook';
+import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager/src';
+import { isKnativeServing } from '@console/shared';
+import { Model, EdgeModel, NodeModel } from '@console/topology';
 import { getImageForIconClass } from '@console/internal/components/catalog/catalog-item-icon';
 import {
   TYPE_EVENT_SOURCE,
   TYPE_KNATIVE_REVISION,
 } from '@console/knative-plugin/src/topology/const';
-import { edgesFromAnnotations, edgesFromServiceBinding } from '../../../utils/application-utils';
+import { edgesFromAnnotations } from '../../../utils/application-utils';
 import {
-  TopologyDataModel,
-  TopologyDataResources,
   TopologyDataObject,
-  Node,
-  Edge,
-  Group,
   TopologyOverviewItem,
   ConnectsToData,
+  TopologyDataResources,
+  TopologyDataModelDepicted,
 } from '../topology-types';
 import {
   TYPE_APPLICATION_GROUP,
-  TYPE_WORKLOAD,
   TYPE_CONNECTS_TO,
-  TYPE_SERVICE_BINDING,
+  NODE_WIDTH,
+  NODE_HEIGHT,
+  NODE_PADDING,
+  GROUP_WIDTH,
+  GROUP_HEIGHT,
+  GROUP_PADDING,
 } from '../components/const';
-import { getRoutesURL } from '../topology-utils';
+import { getRoutesURL, getTopologyResourceObject, WORKLOAD_TYPES } from '../topology-utils';
 
-export const dataObjectFromModel = (node: Node | Group): TopologyDataObject => {
+export const dataObjectFromModel = (node: NodeModel): TopologyDataObject => {
   return {
     id: node.id,
-    name: node.name,
+    name: node.label,
     type: node.type,
     resources: null,
-    operatorBackedService: false,
     data: null,
-  };
-};
-
-/**
- * create instance of TransformResourceData, return object containing all methods
- */
-export const createInstanceForResource = (
-  resources: TopologyDataResources,
-  utils?: Function[],
-  installedOperators?: ClusterServiceVersionKind[],
-) => {
-  const transformResourceData = new TransformResourceData(resources, utils, installedOperators);
-
-  return {
-    deployments: transformResourceData.createDeploymentItems,
-    deploymentConfigs: transformResourceData.createDeploymentConfigItems,
-    daemonSets: transformResourceData.createDaemonSetItems,
-    statefulSets: transformResourceData.createStatefulSetItems,
   };
 };
 
@@ -87,7 +78,6 @@ export const createTopologyNodeData = (
     type,
     resources: { ...dc, isOperatorBackedService: operatorBackedService },
     pods: dc.pods,
-    operatorBackedService,
     data: {
       url: getRoutesURL(dc),
       kind: referenceFor(deploymentConfig),
@@ -119,19 +109,33 @@ export const createTopologyNodeData = (
  */
 export const getTopologyNodeItem = (
   dc: K8sResourceKind,
-  type?: string,
+  type: string,
+  data: any,
+  nodeProps?: Omit<NodeModel, 'type' | 'data' | 'children' | 'id' | 'label'>,
   children?: string[],
-): Node => {
+): NodeModel => {
   const uid = _.get(dc, ['metadata', 'uid']);
   const name = _.get(dc, ['metadata', 'name']);
   const label = _.get(dc, ['metadata', 'labels', 'app.openshift.io/instance']);
 
   return {
     id: uid,
-    type: type || TYPE_WORKLOAD,
-    name: label || name,
+    type,
+    label: label || name,
+    data,
     ...(children && children.length && { children }),
+    ...(nodeProps || {}),
   };
+};
+
+export const WorkloadModelProps = {
+  width: NODE_WIDTH,
+  height: NODE_HEIGHT,
+  group: false,
+  visible: true,
+  style: {
+    padding: NODE_PADDING,
+  },
 };
 
 /**
@@ -140,8 +144,7 @@ export const getTopologyNodeItem = (
 export const getTopologyEdgeItems = (
   dc: K8sResourceKind,
   resources: K8sResourceKind[],
-  sbrs: K8sResourceKind[],
-): Edge[] => {
+): EdgeModel[] => {
   const annotations = _.get(dc, 'metadata.annotations');
   const edges = [];
 
@@ -178,39 +181,13 @@ export const getTopologyEdgeItems = (
     }
   });
 
-  _.forEach(edgesFromServiceBinding(dc, sbrs), (sbr) => {
-    // look for multiple backing services first in `backingServiceSelectors`
-    // followed by a fallback to the single reference in `backingServiceSelector`
-    _.forEach(sbr.spec.backingServiceSelectors || [sbr.spec.backingServiceSelector], (bss) => {
-      if (bss) {
-        // handles multiple edges
-        const targetResource = resources.find(
-          (deployment) =>
-            deployment?.metadata?.ownerReferences?.[0]?.kind === bss.kind &&
-            deployment?.metadata?.ownerReferences?.[0]?.name === bss.resourceRef,
-        );
-        const target = targetResource?.metadata?.uid;
-        const source = dc?.metadata?.uid;
-        if (source && target) {
-          edges.push({
-            id: `${source}_${target}`,
-            type: TYPE_SERVICE_BINDING,
-            source,
-            target,
-            data: { sbr },
-          });
-        }
-      }
-    });
-  });
-
   return edges;
 };
 
 /**
  * create groups data for graph
  */
-export const getTopologyGroupItems = (dc: K8sResourceKind): Group => {
+export const getTopologyGroupItems = (dc: K8sResourceKind): NodeModel => {
   const groupName = _.get(dc, ['metadata', 'labels', 'app.kubernetes.io/part-of']);
   if (!groupName) {
     return null;
@@ -219,30 +196,57 @@ export const getTopologyGroupItems = (dc: K8sResourceKind): Group => {
   return {
     id: `group:${groupName}`,
     type: TYPE_APPLICATION_GROUP,
-    name: groupName,
-    nodes: [_.get(dc, ['metadata', 'uid'])],
+    group: true,
+    label: groupName,
+    children: [_.get(dc, ['metadata', 'uid'])],
+    width: GROUP_WIDTH,
+    height: GROUP_HEIGHT,
+    data: {},
+    visible: true,
+    collapsed: false,
+    style: {
+      padding: GROUP_PADDING,
+    },
   };
 };
 
-export const mergeGroup = (newGroup: Group, existingGroups: Group[]): void => {
-  if (!newGroup) {
+const mergeGroupData = (newGroup: NodeModel, existingGroup: NodeModel): void => {
+  if (!existingGroup.data?.groupResources && !newGroup.data?.groupResources) {
     return;
   }
 
-  // find and add the groups
-  const existingGroup = existingGroups.find((g) => g.id === newGroup.id);
-  if (!existingGroup) {
-    existingGroups.push(newGroup);
-  } else {
-    newGroup.nodes.forEach((id) => {
-      if (!existingGroup.nodes.includes(id)) {
-        existingGroup.nodes.push(id);
+  if (!existingGroup.data?.groupResources) {
+    existingGroup.data.groupResources = [];
+  }
+  if (newGroup?.data?.groupResources) {
+    newGroup.data.groupResources.forEach((obj) => {
+      if (!existingGroup.data.groupResources.includes(obj)) {
+        existingGroup.data.groupResources.push(obj);
       }
     });
   }
 };
 
-export const mergeGroups = (newGroups: Group[], existingGroups: Group[]): void => {
+export const mergeGroup = (newGroup: NodeModel, existingGroups: NodeModel[]): void => {
+  if (!newGroup) {
+    return;
+  }
+
+  // find and add the groups
+  const existingGroup = existingGroups.find((g) => g.group && g.id === newGroup.id);
+  if (!existingGroup) {
+    existingGroups.push(newGroup);
+  } else {
+    newGroup.children.forEach((id) => {
+      if (!existingGroup.children.includes(id)) {
+        existingGroup.children.push(id);
+      }
+      mergeGroupData(newGroup, existingGroup);
+    });
+  }
+};
+
+export const mergeGroups = (newGroups: NodeModel[], existingGroups: NodeModel[]): void => {
   if (!newGroups || !newGroups.length) {
     return;
   }
@@ -252,14 +256,144 @@ export const mergeGroups = (newGroups: Group[], existingGroups: Group[]): void =
 };
 
 export const addToTopologyDataModel = (
-  newModel: TopologyDataModel,
-  graphModel: TopologyDataModel,
+  newModel: Model,
+  graphModel: Model,
+  dataModelDepicters: TopologyDataModelDepicted[] = [],
 ) => {
-  graphModel.graph.nodes.push(...newModel.graph.nodes);
-  graphModel.graph.edges.push(...newModel.graph.edges);
-  mergeGroups(newModel.graph.groups, graphModel.graph.groups);
-  graphModel.topology = {
-    ...graphModel.topology,
-    ...newModel.topology,
+  graphModel.edges.push(...newModel.edges);
+  graphModel.nodes.push(
+    ...newModel.nodes.filter(
+      (n) =>
+        !n.group &&
+        !graphModel.nodes.find((existing) => {
+          if (n.id === existing.id) {
+            return true;
+          }
+          return !!dataModelDepicters.find((depicter) =>
+            depicter(getTopologyResourceObject(n.data), graphModel),
+          );
+        }),
+    ),
+  );
+  mergeGroups(
+    newModel.nodes.filter((n) => n.group),
+    graphModel.nodes,
+  );
+};
+
+/**
+ * Mapping of TopologyResourcesObject key to k8s resource kind
+ */
+export interface KindsMap {
+  [key: string]: string;
+}
+
+export const getWorkloadResources = (
+  resources: TopologyDataResources,
+  kindsMap: KindsMap,
+  workloadTypes: string[] = WORKLOAD_TYPES,
+) => {
+  return _.flatten(
+    workloadTypes.map((resourceKind) => {
+      return resources[resourceKind]
+        ? resources[resourceKind].data.map((res) => {
+            const resKind = res.kind || kindsMap[resourceKind];
+            let kind = resKind;
+            let apiVersion;
+            if (resKind && isGroupVersionKind(resKind)) {
+              kind = kindForReference(resKind);
+              apiVersion = apiVersionForReference(resKind);
+            }
+            return {
+              kind,
+              apiVersion,
+              ...res,
+            };
+          })
+        : [];
+    }),
+  );
+};
+
+export const getBaseWatchedResources = (namespace: string): WatchK8sResources<any> => {
+  return {
+    deploymentConfigs: {
+      isList: true,
+      kind: 'DeploymentConfig',
+      namespace,
+      optional: true,
+    },
+    deployments: {
+      isList: true,
+      kind: 'Deployment',
+      namespace,
+      optional: true,
+    },
+    daemonSets: {
+      isList: true,
+      kind: 'DaemonSet',
+      namespace,
+      optional: true,
+    },
+    pods: {
+      isList: true,
+      kind: 'Pod',
+      namespace,
+      optional: true,
+    },
+    replicationControllers: {
+      isList: true,
+      kind: 'ReplicationController',
+      namespace,
+      optional: true,
+    },
+    routes: {
+      isList: true,
+      kind: 'Route',
+      namespace,
+      optional: true,
+    },
+    services: {
+      isList: true,
+      kind: 'Service',
+      namespace,
+      optional: true,
+    },
+    replicaSets: {
+      isList: true,
+      kind: 'ReplicaSet',
+      namespace,
+      optional: true,
+    },
+    buildConfigs: {
+      isList: true,
+      kind: 'BuildConfig',
+      namespace,
+      optional: true,
+    },
+    builds: {
+      isList: true,
+      kind: 'Build',
+      namespace,
+      optional: true,
+    },
+    statefulSets: {
+      isList: true,
+      kind: 'StatefulSet',
+      namespace,
+      optional: true,
+    },
+    secrets: {
+      isList: true,
+      kind: 'Secret',
+      namespace,
+      optional: true,
+    },
+    clusterServiceVersions: {
+      isList: true,
+      kind: referenceForModel(ClusterServiceVersionModel),
+      namespace,
+      optional: true,
+    },
   };
 };

@@ -27,6 +27,8 @@ import {
   Decorator,
   useSearchFilter,
   useDisplayFilters,
+  getFilterById,
+  SHOW_LABELS_FILTER_ID,
 } from '@console/dev-console/src/components/topology';
 import BuildDecorator from '@console/dev-console/src/components/topology/components/nodes/build-decorators/BuildDecorator';
 import { TYPE_KNATIVE_SERVICE } from '../../const';
@@ -90,7 +92,8 @@ const KnativeServiceGroup: React.FC<KnativeServiceGroupProps> = ({
 
   const [filtered] = useSearchFilter(element.getLabel());
   const displayFilters = useDisplayFilters();
-  const showLabels = displayFilters.showLabels || hover || innerHover;
+  const showLabelsFilter = getFilterById(SHOW_LABELS_FILTER_ID, displayFilters);
+  const showLabels = showLabelsFilter?.value || hover || innerHover;
   const { x, y, width, height } = element.getBounds();
 
   React.useLayoutEffect(() => {

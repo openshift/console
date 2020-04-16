@@ -18,13 +18,12 @@ import { Decorator } from './Decorator';
 import PodSet, { podSetInnerRadius } from './PodSet';
 import BuildDecorator from './build-decorators/BuildDecorator';
 import { BaseNode } from './BaseNode';
-import { getCheURL, getEditURL, getServiceBindingStatus } from '../../topology-utils';
-import { useDisplayFilters } from '../../filters/useDisplayFilters';
+import { getCheURL, getEditURL } from '../../topology-utils';
+import { useDisplayFilters, getFilterById, SHOW_POD_COUNT_FILTER_ID } from '../../filters';
 
 import './WorkloadNode.scss';
 
 interface StateProps {
-  serviceBinding: boolean;
   cheURL: string;
 }
 
@@ -36,6 +35,7 @@ export type WorkloadNodeProps = {
   canDrop?: boolean;
   dropTarget?: boolean;
   urlAnchorRef?: React.Ref<SVGCircleElement>;
+  dropTooltip?: React.ReactNode;
 } & WithSelectionProps &
   WithDragNodeProps &
   WithDndDropProps &
@@ -48,7 +48,7 @@ const ObservedWorkloadNode: React.FC<WorkloadNodeProps> = ({
   urlAnchorRef,
   canDrop,
   dropTarget,
-  serviceBinding,
+  dropTooltip,
   cheURL,
   ...rest
 }) => {
@@ -63,9 +63,9 @@ const ObservedWorkloadNode: React.FC<WorkloadNodeProps> = ({
   const cy = height / 2;
   const editUrl = editURL || getEditURL(vcsURI, cheURL);
   const repoIcon = routeDecoratorIcon(editUrl, decoratorRadius, cheEnabled);
-  const tipContent = `Create a ${
-    serviceBinding && element.getData().operatorBackedService ? 'binding' : 'visual'
-  } connector`;
+  const tipContent = dropTooltip || `Create a visual connector`;
+  const showPodCountFilter = getFilterById(SHOW_POD_COUNT_FILTER_ID, filters);
+  const showPodCount = showPodCountFilter?.value ?? false;
 
   return (
     <g>
@@ -79,7 +79,7 @@ const ObservedWorkloadNode: React.FC<WorkloadNodeProps> = ({
           className="odc-workload-node"
           outerRadius={radius}
           innerRadius={podSetInnerRadius(size, donutStatus)}
-          icon={!filters.podCount ? workloadData.builderImage : undefined}
+          icon={!showPodCount ? workloadData.builderImage : undefined}
           kind={workloadData.kind}
           element={element}
           dropTarget={dropTarget}
@@ -126,7 +126,7 @@ const ObservedWorkloadNode: React.FC<WorkloadNodeProps> = ({
             />,
           ]}
         >
-          <PodSet size={size} x={cx} y={cy} data={donutStatus} showPodCount={filters.podCount} />
+          <PodSet size={size} x={cx} y={cy} data={donutStatus} showPodCount={showPodCount} />
         </BaseNode>
       </Tooltip>
     </g>
@@ -137,7 +137,6 @@ const mapStateToProps = (state: RootState): StateProps => {
   const consoleLinks = state.UI.get('consoleLinks');
   return {
     cheURL: getCheURL(consoleLinks),
-    serviceBinding: getServiceBindingStatus(state),
   };
 };
 

@@ -1,29 +1,40 @@
 import * as _ from 'lodash';
-import { getImageForCSVIcon } from '@console/shared';
-import { WorkloadData, TopologyDataResources, TopologyDataMap } from '../../topology-types';
-import { transformTopologyData } from '../../data-transforms/data-transformer';
-import { MockResources, sampleHelmResourcesMap } from '../../__tests__/topology-test-data';
+import { getImageForCSVIcon, ALL_APPLICATIONS_KEY } from '@console/shared';
+import { Model, NodeModel } from '@console/topology/';
+import { WorkloadData, TopologyDataResources } from '../../topology-types';
+import { MockResources, TEST_KINDS_MAP } from '../../__tests__/topology-test-data';
 import { TYPE_OPERATOR_BACKED_SERVICE } from '../components/const';
+import { DEFAULT_TOPOLOGY_FILTERS } from '../../filters/const';
+import { getOperatorTopologyDataModel } from '../operators-data-transformer';
+import {
+  baseDataModelGetter,
+  getWorkloadResources,
+  updateModelFromFilters,
+} from '../../data-transforms';
+import { WORKLOAD_TYPES } from '../../topology-utils';
+import {
+  applyOperatorDisplayOptions,
+  EXPAND_OPERATORS_RELEASE_FILTER,
+  getTopologyFilters,
+} from '../operatorFilters';
+import { getFilterById } from '../../filters';
 
-export function getTranformedTopologyData(
-  mockData: TopologyDataResources,
-  transformByProp: string[],
-) {
-  const result = transformTopologyData(
-    mockData,
-    transformByProp,
-    undefined,
-    undefined,
-    sampleHelmResourcesMap,
-  );
-  const topologyTransformedData = result.topology;
-  const graphData = result.graph;
-  return { topologyTransformedData, graphData, keys: Object.keys(topologyTransformedData) };
-}
+const filterers = [applyOperatorDisplayOptions];
 
-function getKeyForName(name: string, keys: string[], topologyTransformedData: TopologyDataMap) {
-  return keys.find((key) => topologyTransformedData[key].resources.obj.metadata.name === name);
-}
+const getTransformedTopologyData = (mockData: TopologyDataResources) => {
+  const workloadResources = getWorkloadResources(mockData, TEST_KINDS_MAP, WORKLOAD_TYPES);
+  return getOperatorTopologyDataModel('test-project', mockData, workloadResources).then((model) => {
+    return baseDataModelGetter(model, 'test-project', mockData, workloadResources, []);
+  });
+};
+
+const getNodeById = (id: string, graphData: Model): NodeModel => {
+  return graphData.nodes.find((n) => n.id === id);
+};
+
+const getNodeByName = (name: string, graphData: Model): NodeModel => {
+  return graphData.nodes.find((n) => n.label === name);
+};
 
 describe('operator data transformer ', () => {
   let mockResources: TopologyDataResources;
@@ -32,30 +43,41 @@ describe('operator data transformer ', () => {
     mockResources = _.cloneDeep(MockResources);
   });
 
-  it('should return graph nodes for operator backed services', () => {
-    const totalNodes =
-      mockResources.deployments.data.length + mockResources.clusterServiceVersions.data.length;
-    const { topologyTransformedData, graphData, keys } = getTranformedTopologyData(mockResources, [
-      'deployments',
-    ]);
+  it('should return graph nodes for operator backed services', async () => {
+    const graphData = await getTransformedTopologyData(mockResources);
     const operatorBackedServices = _.filter(graphData.nodes, {
       type: TYPE_OPERATOR_BACKED_SERVICE,
     });
     expect(operatorBackedServices).toHaveLength(1);
-    expect(topologyTransformedData[operatorBackedServices[0].id].type).toBe(
+    expect(getNodeById(operatorBackedServices[0].id, graphData).type).toBe(
       TYPE_OPERATOR_BACKED_SERVICE,
     );
-    expect(keys).toHaveLength(totalNodes);
+    expect(graphData.nodes.filter((n) => !n.group)).toHaveLength(7);
+    expect(graphData.nodes.filter((n) => n.group)).toHaveLength(3);
+    expect(graphData.edges).toHaveLength(1);
   });
 
-  it('should return csv icon for operator backed service', () => {
+  it('should return csv icon for operator backed service', async () => {
     const icon = _.get(mockResources.clusterServiceVersions.data[0], 'spec.icon.0');
     const csvIcon = getImageForCSVIcon(icon);
-    const { topologyTransformedData, keys } = getTranformedTopologyData(mockResources, [
-      'deployments',
-    ]);
+    const graphData = await getTransformedTopologyData(mockResources);
 
-    const itemKey = getKeyForName('jaeger-all-in-one-inmemory', keys, topologyTransformedData);
-    expect((topologyTransformedData[itemKey].data as WorkloadData).builderImage).toBe(csvIcon);
+    const node = getNodeByName('jaeger-all-in-one-inmemory', graphData);
+    expect((node.data.data as WorkloadData).builderImage).toBe(csvIcon);
+  });
+
+  it('should flag operator groups as collapsed when display filter is set', async () => {
+    const filters = [...DEFAULT_TOPOLOGY_FILTERS];
+    filters.push(...getTopologyFilters());
+    const topologyTransformedData = await getTransformedTopologyData(mockResources);
+    getFilterById(EXPAND_OPERATORS_RELEASE_FILTER, filters).value = false;
+    const newModel = updateModelFromFilters(
+      topologyTransformedData,
+      filters,
+      ALL_APPLICATIONS_KEY,
+      filterers,
+    );
+    expect(newModel.nodes.filter((n) => n.group).length).toBe(3);
+    expect(newModel.nodes.filter((n) => n.group && n.collapsed).length).toBe(1);
   });
 });

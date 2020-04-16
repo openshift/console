@@ -20,6 +20,7 @@ import {
   withContextMenu as withTopologyContextMenu,
   isGraph,
   withDndDrop,
+  DragEvent,
 } from '@console/topology';
 import { createConnection } from './createConnection';
 import { removeConnection } from './removeConnection';
@@ -250,12 +251,10 @@ const applicationGroupDropTargetSpec: DropTargetSpec<
 
 const edgeDragSourceSpec = (
   type: string,
-  serviceBinding: boolean,
   callback: (
     sourceNode: Node,
     targetNode: Node,
     replaceTargetNode?: Node,
-    serviceBindingFlag?: boolean,
   ) => Promise<K8sResourceKind[] | K8sResourceKind>,
   failureTitle: string = 'Error moving connection',
 ): DragSourceSpec<
@@ -281,12 +280,7 @@ const edgeDragSourceSpec = (
       dropResult &&
       canDropEdgeOnNode(monitor.getOperation()?.type, props.element, dropResult)
     ) {
-      callback(
-        props.element.getSource(),
-        dropResult,
-        props.element.getTarget(),
-        serviceBinding,
-      ).catch((error) => {
+      callback(props.element.getSource(), dropResult, props.element.getTarget()).catch((error) => {
         errorModal({ title: failureTitle, error: error.message, showIcon: true });
       });
     }
@@ -315,24 +309,40 @@ const withContextMenu = <E extends GraphElement>(actions: (element: E) => React.
   );
 };
 
-const createConnectorCallback = (serviceBinding: boolean) => (
-  source: Node,
-  target: Node | Graph,
-): React.ReactElement[] | null => {
-  if (source === target) {
-    return null;
-  }
-
+const createVisualConnector = (source: Node, target: Node | Graph): React.ReactElement[] | null => {
   if (isGraph(target)) {
     return graphContextMenu(target, source);
   }
   if (target.isGroup()) {
     return groupContextMenu(target, source);
   }
-  createConnection(source, target, null, serviceBinding).catch((error) => {
+
+  createConnection(source, target, null).catch((error) => {
     errorModal({ title: 'Error creating connection', error: error.message });
   });
+
   return null;
+};
+
+const createConnectorCallback = () => (
+  source: Node,
+  target: Node | Graph,
+  event: DragEvent,
+  dropHints: string[] | undefined,
+): Promise<React.ReactElement[] | null> => {
+  if (source === target) {
+    return null;
+  }
+  const createConnectors = target.getGraph()?.getData()?.createConnectorExtensions;
+  if (isGraph(target) || !createConnectors) {
+    return Promise.resolve(createVisualConnector(source, target));
+  }
+
+  const creator = createConnectors.find((getter) => !!getter(dropHints));
+  if (creator) {
+    return creator(dropHints)(source, target);
+  }
+  return Promise.resolve(createVisualConnector(source, target));
 };
 
 const removeConnectorCallback = (edge: Edge): void => {

@@ -19,9 +19,11 @@ const TopologyResourcePanel: React.FC<TopologyResourcePanelProps> = ({ item }) =
   }
 
   let customActions: KebabAction[] = null;
-  if (!item.operatorBackedService) {
-    customActions = [ModifyApplication];
-  }
+  // TODO: remove modify application action from OBS nodes
+  //  if (!item.operatorBackedService) {
+  //    customActions = [ModifyApplication];
+  //  }
+  customActions = [ModifyApplication];
 
   return (
     resourceItemToShowOnSideBar && (

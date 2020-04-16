@@ -3,19 +3,18 @@ import { K8sResourceKind, modelFor, referenceFor } from '@console/internal/modul
 import { RootState } from '@console/internal/redux';
 import { getRouteWebURL } from '@console/internal/components/routes';
 import { OverviewItem } from '@console/shared';
+import { Edge } from '@console/topology';
 import {
   createResourceConnection,
   updateResourceApplication,
   removeResourceConnection,
-  createServiceBinding,
-  removeServiceBinding,
 } from '../../utils/application-utils';
 import { TopologyDataObject } from './topology-types';
 import { TYPE_OPERATOR_BACKED_SERVICE } from './operators/components/const';
 import { HelmReleaseResourcesMap } from '../helm/helm-types';
 import { ALLOW_SERVICE_BINDING } from '../../const';
 
-export const allowedResources = ['deployments', 'deploymentConfigs', 'daemonSets', 'statefulSets'];
+export const WORKLOAD_TYPES = ['deployments', 'deploymentConfigs', 'daemonSets', 'statefulSets'];
 
 export const getServiceBindingStatus = ({ FLAGS }: RootState): boolean =>
   FLAGS.get(ALLOW_SERVICE_BINDING);
@@ -128,7 +127,6 @@ export const createTopologyResourceConnection = (
   source: TopologyDataObject,
   target: TopologyDataObject,
   replaceTarget: TopologyDataObject = null,
-  serviceBindingFlag: boolean,
 ): Promise<K8sResourceKind[] | K8sResourceKind> => {
   if (!source || !target || source === target) {
     return Promise.reject(new Error('Can not create a connection from a node to itself.'));
@@ -138,42 +136,19 @@ export const createTopologyResourceConnection = (
   const targetObj = getTopologyResourceObject(target);
   const replaceTargetObj = replaceTarget && getTopologyResourceObject(replaceTarget);
 
-  if (serviceBindingFlag && target.operatorBackedService) {
-    if (replaceTarget) {
-      return new Promise<K8sResourceKind[] | K8sResourceKind>((resolve, reject) => {
-        createServiceBinding(sourceObj, targetObj)
-          .then(() => {
-            // eslint-disable-next-line promise/no-nesting
-            removeResourceConnection(sourceObj, replaceTargetObj)
-              .then(resolve)
-              .catch(reject);
-          })
-          .catch(reject);
-      });
-    }
-
-    return createServiceBinding(sourceObj, targetObj);
-  }
-
   return createResourceConnection(sourceObj, targetObj, replaceTargetObj);
 };
 
-export const removeTopologyResourceConnection = (
-  source: TopologyDataObject,
-  target: TopologyDataObject,
-  sbr: K8sResourceKind,
-  edgeType: string,
-): Promise<any> => {
+export const removeTopologyResourceConnection = (edge: Edge): Promise<any> => {
+  const source = edge.getSource().getData();
+  const target = edge.getTarget().getData();
+
   if (!source || !target) {
     return Promise.reject();
   }
 
   const sourceObj = getTopologyResourceObject(source);
   const targetObj = getTopologyResourceObject(target);
-
-  if (edgeType === 'service-binding') {
-    return removeServiceBinding(sbr);
-  }
 
   return removeResourceConnection(sourceObj, targetObj);
 };

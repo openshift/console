@@ -46,7 +46,7 @@ describe('graphActions: ', () => {
       createResourceAccess: [allCatalogImageResourceAccess, allImportResourceAccess],
     };
     const connectorSource = new BaseNode();
-    connectorSource.setData(topologyDataModel.topology['e187afa2-53b1-406d-a619-cf9ff1468031']);
+    connectorSource.setData(topologyDataModel.nodes[0].data);
     const actions = graphActions(graphData, connectorSource);
     expect(actions).toHaveLength(3);
   });

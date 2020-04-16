@@ -1,24 +1,21 @@
 import * as _ from 'lodash';
 import { KebabOption } from '@console/internal/components/utils/kebab';
 import { modelFor, referenceFor, referenceForModel } from '@console/internal/module/k8s';
-import { Node } from '@console/topology';
+import { Model, Node } from '@console/topology';
 import { asAccessReview } from '@console/internal/components/utils';
 import { ServiceModel, addEventSource } from '@console/knative-plugin';
 import { addResourceMenuWithoutCatalog } from '../../../actions/add-resources';
-import { TopologyDataMap, TopologyApplicationObject, GraphData } from '../topology-types';
+import { TopologyApplicationObject, GraphData } from '../topology-types';
 import { getTopologyResourceObject } from '../topology-utils';
 import { deleteResourceModal } from '../../modals';
 import { cleanUpWorkload } from '../../../utils/application-utils';
 
-export const getGroupComponents = (
-  groupId: string,
-  topology: TopologyDataMap,
-): TopologyApplicationObject => {
-  return _.values(topology).reduce(
+export const getGroupComponents = (groupId: string, model: Model): TopologyApplicationObject => {
+  return _.values(model.nodes).reduce(
     (acc, val) => {
-      const dc = getTopologyResourceObject(val);
+      const dc = getTopologyResourceObject(val.data);
       if (_.get(dc, ['metadata', 'labels', 'app.kubernetes.io/part-of']) === groupId) {
-        acc.resources.push(topology[dc.metadata.uid]);
+        acc.resources.push(model.nodes.find((n) => n.id === dc.metadata.uid));
       }
       return acc;
     },

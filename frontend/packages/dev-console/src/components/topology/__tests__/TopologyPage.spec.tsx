@@ -39,11 +39,10 @@ describe('Topology page tests', () => {
     };
 
     renderTopologyProps = {
-      data: topologyData,
+      model: topologyData,
       loaded: true,
       loadError: '',
       namespace: 'topology-test',
-      serviceBinding: false,
     };
   });
 
