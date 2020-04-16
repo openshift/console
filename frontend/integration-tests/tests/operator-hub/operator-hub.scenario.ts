@@ -11,7 +11,7 @@ import * as operatorHubView from '../../views/operator-hub.view';
 
 describe('Subscribing to an Operator from OperatorHub', () => {
   const openCloudServices = new Set([
-    {id: 'amq-streams-openshift-marketplace', name: 'AMQ Streams'},
+    {id: 'amq-streams-openshift-marketplace', name: 'Red Hat Integration - AMQ Streams'},
     {id: 'mongodb-enterprise-openshift-marketplace', name: 'MongoDB'},
   ]);
 
@@ -129,7 +129,6 @@ describe('Subscribing to an Operator from OperatorHub', () => {
     await operatorHubView.operatorModalInstallBtn.click();
 
     expect(browser.getCurrentUrl()).toContain('/operatorhub/subscribe?pkg=etcd&catalog=community-operators&catalogNamespace=openshift-marketplace&targetNamespace=');
-    expect(operatorHubView.createSubscriptionFormTitle.isDisplayed()).toBe(true);
   });
 
   it('selects target namespace for Operator subscription', async() => {
