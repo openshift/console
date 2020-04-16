@@ -5,3 +5,8 @@
 .kubevirt-create-vm-modal__review-tab-lower-section {
   margin-top: 20px;
 }
+
+.kubevirt-create-vm-modal__review-tab-section-container {
+  margin-top: var(--pf-global--spacer--md);
+}
+

@@ -19,7 +19,7 @@ import { iGetFieldValue } from '../../selectors/immutable/field';
 import { getField } from './utils';
 import { VMSettings } from '../../redux/initial-state/types';
 
-import './general-tab.scss';
+import './review-tab.scss';
 
 const GeneralReviewConnected: React.FC<GeneralReviewConnectedProps> = (props) => {
   const { iVMSettings, iUserTemplates, iCommonTemplates, openshiftFlag, relevantOptions } = props;
@@ -53,7 +53,7 @@ const GeneralReviewConnected: React.FC<GeneralReviewConnectedProps> = (props) =>
     })?.osName || '';
 
   return (
-    <Grid className="kubevirt-create-vm-modal__general-tab-container">
+    <Grid className="kubevirt-create-vm-modal__review-tab-section-container">
       <FormFieldReviewMemoRow field={getField(VMSettingsField.NAME, iVMSettings)} />
 
       <FormFieldReviewMemoRow field={getField(VMSettingsField.DESCRIPTION, iVMSettings)} />

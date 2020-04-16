@@ -22,7 +22,9 @@ export const getDialogUIError = (hasAllRequiredFilled) =>
 export const getSimpleDialogUIError = (hasAllRequiredFilled) =>
   hasAllRequiredFilled ? 'Some fields are not correct' : 'Required fields not completed';
 
-export const getCheckboxReadableValue = (value: boolean) => (value ? 'yes' : 'no');
+export const getBooleanReadableValue = (value: boolean) => (value ? 'yes' : 'no');
+
+export const getBooleanAsEnabledValue = (value: boolean) => (value ? 'Enabled' : 'Not Enabled');
 
 export const getSequenceName = (name: string, usedSequenceNames?: Set<string>) => {
   if (!usedSequenceNames) {

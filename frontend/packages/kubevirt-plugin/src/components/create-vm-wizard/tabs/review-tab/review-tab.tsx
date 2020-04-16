@@ -12,6 +12,7 @@ import { getField } from './utils';
 import { GeneralReview } from './general-tab';
 import { NetworkingReview } from './networking-review';
 import { StorageReview } from './storage-review';
+import { AdvancedReviewTab } from './advanced-tab';
 
 import './review-tab.scss';
 
@@ -55,6 +56,14 @@ export const ReviewTabConnected: React.FC<ReviewTabProps> = (props) => {
         wizardReduxID={wizardReduxID}
         className="kubevirt-create-vm-modal__review-tab-lower-section"
       />
+      <Title
+        headingLevel="h4"
+        size="lg"
+        className="kubevirt-create-vm-modal__review-tab-lower-section"
+      >
+        Advanced
+      </Title>
+      <AdvancedReviewTab wizardReduxID={wizardReduxID} />
       <Form>
         <FormFieldMemoRow
           field={getField(VMSettingsField.START_VM, vmSettings)}
