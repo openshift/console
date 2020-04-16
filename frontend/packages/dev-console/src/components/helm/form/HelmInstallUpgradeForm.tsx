@@ -47,9 +47,9 @@ const HelmInstallUpgradeForm: React.FC<FormikProps<FormikValues> & HelmInstallUp
       <FormFooter
         handleReset={handleReset}
         errorMessage={status && status.submitError}
-        isSubmitting={isSubmitting}
+        isSubmitting={status?.isSubmitting || isSubmitting}
         submitLabel={submitLabel}
-        disableSubmit={(chartVersion && !dirty) || !_.isEmpty(errors)}
+        disableSubmit={(chartVersion && !dirty) || status?.isSubmitting || !_.isEmpty(errors)}
         resetLabel="Cancel"
       />
     </FlexForm>

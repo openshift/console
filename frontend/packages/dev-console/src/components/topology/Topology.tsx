@@ -25,10 +25,16 @@ import {
   DEFAULT_LAYER,
 } from '@console/topology';
 import { RootState } from '@console/internal/redux';
-import { useAddToProjectAccess } from '../../utils/useAddToProjectAccess';
 import { getActiveApplication } from '@console/internal/reducers/ui';
+import { selectOverviewDetailsTab } from '@console/internal/actions/ui';
 import { getEventSourceStatus } from '@console/knative-plugin/src/topology/knative-topology-utils';
+import {
+  getQueryArgument,
+  setQueryArgument,
+  removeQueryArgument,
+} from '@console/internal/components/utils';
 import KnativeComponentFactory from '@console/knative-plugin/src/topology/components/knativeComponentFactory';
+import { useAddToProjectAccess } from '../../utils/useAddToProjectAccess';
 import TopologySideBar from './TopologySideBar';
 import {
   GraphData,
@@ -59,7 +65,11 @@ interface StateProps {
   eventSourceEnabled: boolean;
 }
 
-export interface TopologyProps extends StateProps {
+interface DispatchProps {
+  onSelectTab?: (name: string) => void;
+}
+
+interface TopologyProps {
   data: TopologyDataModel;
   namespace: string;
 }
@@ -73,13 +83,16 @@ const graphModel: Model = {
   },
 };
 
-const Topology: React.FC<TopologyProps> = ({
+type ComponentProps = TopologyProps & StateProps & DispatchProps;
+
+const Topology: React.FC<ComponentProps> = ({
   data,
   filters,
   application,
   namespace,
   serviceBinding,
   eventSourceEnabled,
+  onSelectTab,
 }) => {
   const visRef = React.useRef<Visualization | null>(null);
   const applicationRef = React.useRef<string>(null);
@@ -117,8 +130,10 @@ const Topology: React.FC<TopologyProps> = ({
       // set empty selection when selecting the graph
       if (ids.length > 0 && ids[0] === graphModel.graph.id) {
         setSelectedIds([]);
+        removeQueryArgument('selectId');
       } else {
         setSelectedIds(ids);
+        setQueryArgument('selectId', ids[0]);
       }
     });
     visRef.current.addEventListener<ShowGroupingHintEventListener>(
@@ -146,6 +161,14 @@ const Topology: React.FC<TopologyProps> = ({
     setModel(newModel);
     if (selectedIds.length && !visRef.current.getElementById(selectedIds[0])) {
       setSelectedIds([]);
+    } else {
+      const selectId = getQueryArgument('selectId');
+      const selectTab = getQueryArgument('selectTab');
+      visRef.current.getElementById(selectId) && setSelectedIds([selectId]);
+      if (selectTab) {
+        onSelectTab(selectTab);
+        removeQueryArgument('selectTab');
+      }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data]);
@@ -328,4 +351,11 @@ const TopologyStateToProps = (state: RootState): StateProps => {
   };
 };
 
-export default connect(TopologyStateToProps)(Topology);
+const TopologyDispatchToProps = (dispatch): DispatchProps => ({
+  onSelectTab: (name) => dispatch(selectOverviewDetailsTab(name)),
+});
+
+export default connect<StateProps, DispatchProps, TopologyProps>(
+  TopologyStateToProps,
+  TopologyDispatchToProps,
+)(Topology);
