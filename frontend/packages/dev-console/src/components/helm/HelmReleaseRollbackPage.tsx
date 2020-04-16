@@ -56,7 +56,7 @@ const HelmReleaseRollbackPage: React.FC<HelmReleaseRollbackPageProps> = ({ match
     };
 
     coFetchJSON
-      .put('/api/helm/release', payload)
+      .patch('/api/helm/release', payload)
       .then(() => {
         actions.setStatus({ isSubmitting: false });
         history.push(`/helm-releases/ns/${namespace}`);
