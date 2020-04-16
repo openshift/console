@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { getFieldTitle } from '../utils/renderable-field-utils';
-import { GridItem, Title } from '@patternfly/react-core';
 import { iGet } from '../../../utils/immutable';
 import { FormFieldType } from './form-field';
 import { getReviewValue } from '../tabs/review-tab/utils';
@@ -27,12 +26,8 @@ export const FormFieldReviewRow: React.FC<FormFieldReviewRowProps> = ({
 
   return (
     <>
-      <GridItem span={1} className="kubevirt-create-vm-modal__form-field-review-row">
-        <Title headingLevel="h4" size="sm">
-          {getFieldTitle(fieldKey)}
-        </Title>
-      </GridItem>
-      <GridItem span={11}>{reviewValue}</GridItem>
+      <dt>{getFieldTitle(fieldKey)}</dt>
+      <dd>{reviewValue}</dd>
     </>
   );
 };

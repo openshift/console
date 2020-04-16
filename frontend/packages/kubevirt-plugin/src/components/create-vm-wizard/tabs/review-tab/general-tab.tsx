@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { Grid } from '@patternfly/react-core';
 import {
   iGetRelevantTemplateSelectors,
   iGetVmSettings,
@@ -53,7 +52,7 @@ const GeneralReviewConnected: React.FC<GeneralReviewConnectedProps> = (props) =>
     })?.osName || '';
 
   return (
-    <Grid className="kubevirt-create-vm-modal__review-tab-section-container">
+    <dl className="kubevirt-create-vm-modal__review-tab__data-list">
       <FormFieldReviewMemoRow field={getField(VMSettingsField.NAME, iVMSettings)} />
 
       <FormFieldReviewMemoRow field={getField(VMSettingsField.DESCRIPTION, iVMSettings)} />
@@ -76,7 +75,7 @@ const GeneralReviewConnected: React.FC<GeneralReviewConnectedProps> = (props) =>
         field={getField(VMSettingsField.WORKLOAD_PROFILE, iVMSettings)}
         fieldType={FormFieldType.SELECT}
       />
-    </Grid>
+    </dl>
   );
 };
 
