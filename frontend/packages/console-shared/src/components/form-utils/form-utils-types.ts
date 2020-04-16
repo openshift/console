@@ -14,3 +14,9 @@ export interface FormFooterProps {
   infoTitle?: string;
   infoMessage?: string;
 }
+
+export interface ActionGroupWithIconsProps {
+  onSubmit: () => void;
+  onClose: () => void;
+  isDisabled?: boolean;
+}

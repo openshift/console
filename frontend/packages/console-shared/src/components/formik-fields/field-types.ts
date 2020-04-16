@@ -1,4 +1,4 @@
-import { TextInputTypes, ValidatedOptions } from '@patternfly/react-core';
+import { ValidatedOptions, TextInputTypes } from '@patternfly/react-core';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 
 export interface FieldProps {
@@ -16,11 +16,17 @@ export interface FieldProps {
   validated?: ValidatedOptions;
 }
 
-export interface InputFieldProps extends FieldProps {
-  type: TextInputTypes;
+export interface BaseInputFieldProps extends FieldProps {
+  type?: TextInputTypes;
   placeholder?: string;
   onChange?: (event) => void;
   onBlur?: (event) => void;
+}
+
+export interface GroupInputProps extends BaseInputFieldProps {
+  beforeInput?: React.ReactNode;
+  afterInput?: React.ReactNode;
+  groupTextType?: GroupTextType;
 }
 
 export interface TextAreaProps extends FieldProps {
@@ -29,12 +35,17 @@ export interface TextAreaProps extends FieldProps {
   onBlur?: (event) => void;
 }
 
+export enum GroupTextType {
+  TextInput = 'text',
+  TextArea = 'textArea',
+}
+
 export interface CheckboxFieldProps extends FieldProps {
   formLabel?: string;
   value?: string;
 }
 
-export interface SearchInputFieldProps extends InputFieldProps {
+export interface SearchInputFieldProps extends BaseInputFieldProps {
   onSearch: (searchTerm: string) => void;
 }
 
