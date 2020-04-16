@@ -35,6 +35,7 @@ const NetworkingReviewConnected: React.FC<NetworkingTabComponentProps> = ({
       variant={TableVariant.compact}
       cells={headers}
       rows={rows}
+      className={className}
     >
       <TableHeader />
       <TableBody />

@@ -29,7 +29,10 @@ export const ReviewTabConnected: React.FC<ReviewTabProps> = (props) => {
         <h3 className="kubevirt-create-vm-modal__review-tab-section__title pf-c-title pf-m-lg">
           General
         </h3>
-        <GeneralReview wizardReduxID={wizardReduxID} />
+        <GeneralReview
+          wizardReduxID={wizardReduxID}
+          className="kubevirt-create-vm-modal__review-tab-section__content"
+        />
       </section>
 
       <section className="kubevirt-create-vm-modal__review-tab-section">
@@ -38,7 +41,7 @@ export const ReviewTabConnected: React.FC<ReviewTabProps> = (props) => {
         </h3>
         <NetworkingReview
           wizardReduxID={wizardReduxID}
-          className="kubevirt-create-vm-modal__review-tab-lower-section"
+          className="kubevirt-create-vm-modal__review-tab-section__content"
         />
       </section>
 
@@ -48,7 +51,7 @@ export const ReviewTabConnected: React.FC<ReviewTabProps> = (props) => {
         </h3>
         <StorageReview
           wizardReduxID={wizardReduxID}
-          className="kubevirt-create-vm-modal__review-tab-lower-section"
+          className="kubevirt-create-vm-modal__review-tab-section__content"
         />
       </section>
 

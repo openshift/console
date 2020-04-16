@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
+import classNames from 'classnames';
 import {
   iGetRelevantTemplateSelectors,
   iGetVmSettings,
@@ -16,7 +17,7 @@ import { getOS } from '../../selectors/combined';
 import './review-tab.scss';
 
 const GeneralReviewConnected: React.FC<GeneralReviewConnectedProps> = (props) => {
-  const { iVMSettings, iUserTemplates, iCommonTemplates, openshiftFlag, relevantOptions } = props;
+  const { iVMSettings, iUserTemplates, iCommonTemplates, openshiftFlag, relevantOptions, className } = props;
 
   const flavorValue = getFlavorValue({
     iVMSettings,
@@ -34,7 +35,7 @@ const GeneralReviewConnected: React.FC<GeneralReviewConnectedProps> = (props) =>
     })?.osName || '';
 
   return (
-    <dl className="kubevirt-create-vm-modal__review-tab__data-list">
+    <dl className={classNames('kubevirt-create-vm-modal__review-tab__data-list', className)}>
       <FormFieldReviewMemoRow field={getField(VMSettingsField.NAME, iVMSettings)} />
 
       <FormFieldReviewMemoRow field={getField(VMSettingsField.DESCRIPTION, iVMSettings)} />
@@ -67,6 +68,7 @@ type GeneralReviewConnectedProps = {
   iCommonTemplates: any;
   iUserTemplates: any;
   relevantOptions: any;
+  className: string;
 };
 
 const stateToProps = (state, { wizardReduxID }) => ({

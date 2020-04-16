@@ -57,7 +57,7 @@ const StorageReviewFirehose: React.FC<StorageReviewFirehoseProps> = ({
     { title: 'Storage Class' },
     { title: 'Access Mode' },
     { title: 'Volume Mode' },
-    { title: 'Source' }
+    { title: 'Source' },
   ];
 
   const pvcLookup = createLookup(persistentVolumeClaims, getName);
@@ -84,41 +84,44 @@ const StorageReviewFirehose: React.FC<StorageReviewFirehoseProps> = ({
     (sc) => getAnnotations(sc, {})[DEFAULT_SC_ANNOTATION] === 'true',
   );
 
-  const rows = combinedDisks.map(
-    (combinedDisk ) => {
-      return [
-        combinedDisk.getName(),
-        combinedDisk.getDiskInterface(),
-        combinedDisk.getReadableSize(),
-        combinedDisk.getStorageClassName(),
-        combinedDisk.getAccessModes()?.join(', '),
-        combinedDisk.getVolumeMode()?.toString(),
-        combinedDisk.getSourceValue(),
-      ];
-    },
-  );
+  const rows = combinedDisks.map((combinedDisk) => {
+    return [
+      combinedDisk.getName(),
+      combinedDisk.getDiskInterface(),
+      combinedDisk.getReadableSize(),
+      combinedDisk.getStorageClassName(),
+      combinedDisk.getAccessModes()?.join(', '),
+      combinedDisk.getVolumeMode()?.toString(),
+      combinedDisk.getSourceValue(),
+    ];
+  });
 
   return (
-    <>
-    {hasStorageWithoutStorageClass && (
-      <Alert
-        title={'Some disks do not have a storage class defined'}
-        isInline
-        variant={AlertVariant.warning}
-        className="kubevirt-create-vm-modal__review-tab-storage-class-alert"
+    <span className={className}>
+      {hasStorageWithoutStorageClass && (
+        <Alert
+          title={'Some disks do not have a storage class defined'}
+          isInline
+          variant={AlertVariant.warning}
+          className="kubevirt-create-vm-modal__review-tab-storage-class-alert"
+        >
+          {defaultStorageClass ? (
+            <DefaultSCUsed defaultSCName={getName(defaultStorageClass)} />
+          ) : (
+            <NoDefaultSC />
+          )}
+        </Alert>
+      )}
+      <Table
+        aria-label="Storage Devices"
+        variant={TableVariant.compact}
+        cells={headers}
+        rows={rows}
       >
-        {defaultStorageClass ? (
-          <DefaultSCUsed defaultSCName={getName(defaultStorageClass)} />
-        ) : (
-          <NoDefaultSC />
-        )}
-      </Alert>
-    )}
-    <Table aria-label="Storage Devices" variant={TableVariant.compact} cells={headers} rows={rows}>
-      <TableHeader />
-      <TableBody />
-    </Table>
-      </>
+        <TableHeader />
+        <TableBody />
+      </Table>
+    </span>
   );
 };
 
