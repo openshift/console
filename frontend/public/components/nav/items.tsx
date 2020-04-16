@@ -1,4 +1,5 @@
 import * as React from 'react';
+import * as classNames from 'classnames';
 import { Link, LinkProps } from 'react-router-dom';
 import * as _ from 'lodash-es';
 import { NavItem } from '@patternfly/react-core';
@@ -53,16 +54,28 @@ class NavLink<P extends NavLinkProps> extends React.PureComponent<P> {
   }
 
   render() {
-    const { isActive, id, name, onClick, testID } = this.props;
+    const { isActive, id, name, tipText, onClick, testID, children, className } = this.props;
 
     // onClick is now handled globally by the Nav's onSelect,
     // however onClick can still be passed if desired in certain cases
 
+    const itemClasses = classNames(className, { 'pf-m-current': isActive });
+    const linkClasses = classNames('pf-c-nav__link', { 'pf-m-current': isActive });
     return (
-      <NavItem isActive={isActive}>
-        <Link id={id} data-test-id={testID} to={this.to} onClick={onClick}>
-          {name}
-        </Link>
+      <NavItem className={itemClasses} isActive={isActive}>
+        <>
+          <Link
+            className={linkClasses}
+            id={id}
+            data-test-id={testID}
+            to={this.to}
+            onClick={onClick}
+            title={tipText}
+          >
+            {name}
+          </Link>
+          {children}
+        </>
       </NavItem>
     );
   }
@@ -108,12 +121,14 @@ export class HrefLink extends NavLink<HrefLinkProps> {
 export type NavLinkProps = {
   name: string;
   id?: LinkProps['id'];
+  className?: string;
   onClick?: LinkProps['onClick'];
   isActive?: boolean;
   required?: string | string[];
   disallowed?: string;
   startsWith?: string[];
   activePath?: string;
+  tipText?: string;
   testID?: string;
 };
 
@@ -132,7 +147,7 @@ export type HrefLinkProps = NavLinkProps & {
   href: string;
 };
 
-type NavLinkComponent<T extends NavLinkProps = NavLinkProps> = React.ComponentType<T> & {
+export type NavLinkComponent<T extends NavLinkProps = NavLinkProps> = React.ComponentType<T> & {
   isActive: (props: T, resourcePath: string, activeNamespace: string) => boolean;
 };
 
@@ -174,12 +189,18 @@ const RootNavLink_: React.FC<RootNavLinkProps & RootNavLinkStateProps> = ({
   canRender,
   component: Component,
   isActive,
+  className,
+  children,
   ...props
 }) => {
   if (!canRender) {
     return null;
   }
-  return <Component {...props} isActive={isActive} />;
+  return (
+    <Component className={className} {...props} isActive={isActive}>
+      {children}
+    </Component>
+  );
 };
 
 const rootNavLinkMapStateToProps = (

@@ -102,7 +102,7 @@ export const NavSection = connect(navSectionStateToProps)(
             }
             return c.type.isActive && c.type.isActive(c.props, resourcePath, activeNamespace);
           })
-          .map((c) => c.props.name)[0];
+          .map((c) => `${c.props.id}-${c.props.name}`)[0];
       }
 
       componentDidUpdate(prevProps, prevState) {
@@ -145,7 +145,7 @@ export const NavSection = connect(navSectionStateToProps)(
 
         const { activeChild } = this.state;
         const { flags, activeNamespace } = this.props;
-        const { name, required, disallowed } = c.props;
+        const { name, required, disallowed, id } = c.props;
 
         const requiredArray = required ? _.castArray(required) : [];
         const requirementMissing = _.some(
@@ -161,7 +161,7 @@ export const NavSection = connect(navSectionStateToProps)(
 
         return React.cloneElement(c, {
           key: name,
-          isActive: name === activeChild,
+          isActive: `${id}-${name}` === activeChild,
           activeNamespace,
           flags,
         });

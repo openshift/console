@@ -12,6 +12,8 @@ namespace ExtensionProperties {
     icon: React.ReactElement;
     /** Whether the perspective is the default. There can only be one default. */
     default?: boolean;
+    /** Default pinned resources on the nav */
+    defaultPins?: string[];
     /** The function to get perspective landing page URL. */
     getLandingPageURL: GetLandingPage;
     /** The function to get perspective landing page URL for k8s. */

@@ -1,0 +1,40 @@
+.oc-nav-pinned-item.pf-c-nav__item {
+  display: flex;
+
+  .pf-c-nav__link {
+    display: block;
+    flex-grow: 1;
+    overflow: hidden;
+    padding-right: 0;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+
+    &:hover, &:focus {
+      + .oc-nav-pinned-item__unpin-button {
+        .oc-nav-pinned-item__icon {
+          opacity: 1;
+        }
+      }
+    }
+  }
+
+  .oc-nav-pinned-item__unpin-button {
+    padding-top: var(--pf-c-nav__list-link--PaddingTop);
+    padding-bottom: var(--pf-c-nav__list-link--PaddingBottom);
+    background-color: var(--pf-c-nav--m-dark__item--BackgroundColor);
+
+    .pf-m-current & {
+      background-color: var(--pf-c-nav--m-dark__item--m-current--BackgroundColor);
+    }
+
+    .oc-nav-pinned-item__icon {
+      opacity: 0;
+    }
+
+    &:hover, &:focus {
+      .oc-nav-pinned-item__icon {
+        opacity: 1;
+      }
+    }
+  }
+}

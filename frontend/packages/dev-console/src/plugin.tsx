@@ -46,6 +46,7 @@ import {
   RouteModel,
   ServiceModel,
   ImageStreamImportsModel,
+  ConfigMapModel,
 } from '@console/internal/models';
 import * as yamlIcon from './images/yaml.svg';
 import * as importGitIcon from './images/from-git.svg';
@@ -438,6 +439,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       id: 'dev',
       name: 'Developer',
       icon: <CodeIcon />,
+      defaultPins: [ConfigMapModel.kind, SecretModel.kind],
       getLandingPageURL: () => '/topology',
       getK8sLandingPageURL: () => '/add',
       getImportRedirectURL: (project) => `/topology/ns/${project}`,

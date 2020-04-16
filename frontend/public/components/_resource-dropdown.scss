@@ -26,8 +26,33 @@
 .co-search-group__accordion-label {
   display: flex;
   align-items: center;
+  flex: 1;
   .text-muted {
     margin-left: 10px;
+  }
+}
+.co-search-group__accordion-toggle {
+  .pf-c-accordion__toggle-text {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+
+    @media (min-width: 480px) {
+      flex-direction: row;
+    }
+  }
+
+  .co-search-group__pin-toggle {
+    padding-left: var(--pf-global--spacer--xs);
+    padding-right: var(--pf-global--spacer--xs);
+    margin-right: var(--pf-global--spacer--sm);
+    text-align: left;
+    &:focus {
+      outline: none;
+    }
+  }
+  .co-search-group__pin-toggle__icon {
+    margin-right: var(--pf-global--spacer--xs);
   }
 }
 

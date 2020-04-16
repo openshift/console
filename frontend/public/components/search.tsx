@@ -1,6 +1,7 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
+import { connect, Dispatch } from 'react-redux';
 import {
   Accordion,
   AccordionContent,
@@ -11,9 +12,11 @@ import {
   ChipGroup,
   ChipGroupToolbarItem,
 } from '@patternfly/react-core';
-import { CloseIcon } from '@patternfly/react-icons';
+import { CloseIcon, PlusCircleIcon, MinusCircleIcon } from '@patternfly/react-icons';
 import { getBadgeFromType } from '@console/shared';
-import { AsyncComponent } from './utils/async';
+import { RootState } from '../redux';
+import { getActivePerspective, getPinnedResources } from '../reducers/ui';
+import { setPinnedResources } from '../actions/ui';
 import { connectToModel } from '../kinds';
 import { DefaultPage } from './default-resource';
 import { requirementFromString } from '../module/k8s/selector-requirement';
@@ -22,9 +25,16 @@ import { resourceListPages } from './resource-pages';
 import { withStartGuide } from './start-guide';
 import { split, selectorFromString } from '../module/k8s/selector';
 import { kindForReference, modelFor, referenceForModel } from '../module/k8s';
-import { LoadingBox, MsgBox, PageHeading, ResourceIcon } from './utils';
+import {
+  LoadingBox,
+  MsgBox,
+  PageHeading,
+  ResourceIcon,
+  setQueryArgument,
+  AsyncComponent,
+} from './utils';
+import confirmNavUnpinModal from './nav/confirmNavUnpinModal';
 import { SearchFilterDropdown, searchFilterValues } from './search-filter-dropdown';
-import { setQueryArgument } from './utils/router';
 
 const ResourceList = connectToModel(({ kindObj, mock, namespace, selector, nameFilter }) => {
   if (!kindObj) {
@@ -54,14 +64,22 @@ const ResourceList = connectToModel(({ kindObj, mock, namespace, selector, nameF
   );
 });
 
-const SearchPage_: React.FC<SearchProps> = (props) => {
+interface StateProps {
+  perspective: string;
+  pinnedResources: string[];
+}
+
+interface DispatchProps {
+  onPinnedResourcesChange: (searches: string[]) => void;
+}
+
+const SearchPage_: React.FC<SearchProps & StateProps & DispatchProps> = (props) => {
   const [selectedItems, setSelectedItems] = React.useState(new Set<string>([]));
   const [collapsedKinds, setCollapsedKinds] = React.useState(new Set<string>([]));
   const [labelFilter, setLabelFilter] = React.useState([]);
   const [labelFilterInput, setLabelFilterInput] = React.useState('');
   const [typeaheadNameFilter, setTypeaheadNameFilter] = React.useState('');
-
-  const { namespace, noProjectsAvailable } = props;
+  const { namespace, noProjectsAvailable, pinnedResources } = props;
 
   // Set state variables from the URL
   React.useEffect(() => {
@@ -110,6 +128,18 @@ const SearchPage_: React.FC<SearchProps> = (props) => {
     clearSelectedItems();
     clearNameFilter();
     clearLabelFilter();
+  };
+
+  const pinToggle = (e: React.MouseEvent<HTMLElement>, resource: string) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    const index = props.pinnedResources.indexOf(resource);
+    if (index >= 0) {
+      confirmNavUnpinModal(resource, pinnedResources, props.onPinnedResourcesChange);
+      return;
+    }
+    props.onPinnedResourcesChange([...pinnedResources, resource]);
   };
 
   const toggleKindExpanded = (kindView: string) => {
@@ -235,26 +265,45 @@ const SearchPage_: React.FC<SearchProps> = (props) => {
       </PageHeading>
       <div className="co-search">
         <Accordion className="co-search__accordion" asDefinitionList={false} noBoxShadow>
-          {[...selectedItems].map((item) => {
-            const isCollapsed = collapsedKinds.has(item);
+          {[...selectedItems].map((resource) => {
+            const isCollapsed = collapsedKinds.has(resource);
             return (
-              <AccordionItem key={item}>
+              <AccordionItem key={resource}>
                 <AccordionToggle
-                  onClick={() => toggleKindExpanded(item)}
+                  className="co-search-group__accordion-toggle"
+                  onClick={() => toggleKindExpanded(resource)}
                   isExpanded={!isCollapsed}
-                  id={`${item}-toggle`}
+                  id={`${resource}-toggle`}
                 >
-                  {getToggleText(item)}
+                  {getToggleText(resource)}
+                  {props.perspective !== 'admin' && (
+                    <a
+                      className="pf-c-button pf-m-link co-search-group__pin-toggle"
+                      onClick={(e) => pinToggle(e, resource)}
+                    >
+                      {pinnedResources.includes(resource) ? (
+                        <>
+                          <MinusCircleIcon className="co-search-group__pin-toggle__icon" />
+                          Remove from navigation
+                        </>
+                      ) : (
+                        <>
+                          <PlusCircleIcon className="co-search-group__pin-toggle__icon" />
+                          Add to navigation
+                        </>
+                      )}
+                    </a>
+                  )}
                 </AccordionToggle>
                 <AccordionContent isHidden={isCollapsed}>
                   {!isCollapsed && (
                     <ResourceList
-                      kind={item}
+                      kind={resource}
                       selector={selectorFromString(labelFilter.join(','))}
                       nameFilter={typeaheadNameFilter}
                       namespace={namespace}
                       mock={noProjectsAvailable}
-                      key={item}
+                      key={resource}
                     />
                   )}
                 </AccordionContent>
@@ -273,7 +322,18 @@ const SearchPage_: React.FC<SearchProps> = (props) => {
   );
 };
 
-export const SearchPage = withStartGuide(SearchPage_);
+const mapStateToProps = (state: RootState): StateProps => ({
+  perspective: getActivePerspective(state),
+  pinnedResources: getPinnedResources(state),
+});
+
+const mapDispatchToProps = (dispatch: Dispatch): DispatchProps => ({
+  onPinnedResourcesChange: (searches: string[]) => {
+    dispatch(setPinnedResources(searches));
+  },
+});
+
+export const SearchPage = connect(mapStateToProps, mapDispatchToProps)(withStartGuide(SearchPage_));
 
 export type SearchProps = {
   location: any;
