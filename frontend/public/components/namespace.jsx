@@ -201,7 +201,7 @@ export const NamespacesPage = (props) => (
   />
 );
 
-const projectMenuActions = [Kebab.factory.Edit, deleteModal];
+export const projectMenuActions = [Kebab.factory.Edit, deleteModal];
 
 const projectColumnClasses = [
   '', // name
@@ -549,12 +549,12 @@ export const NamespaceSummary = ({ ns }) => {
   );
 };
 
-const NamespaceDetails_ = ({ obj: ns, consoleLinks }) => {
+const NamespaceDetails_ = ({ obj: ns, consoleLinks, customData }) => {
   const links = getNamespaceDashboardConsoleLinks(ns, consoleLinks);
   return (
     <div>
       <div className="co-m-pane__body">
-        <SectionHeading text={`${ns.kind} Details`} />
+        {!customData?.hideHeading && <SectionHeading text={`${ns.kind} Details`} />}
         <NamespaceSummary ns={ns} />
       </div>
       {ns.kind === 'Namespace' && <ResourceUsage ns={ns} />}
@@ -580,7 +580,7 @@ const DetailsStateToProps = ({ UI }) => ({
   consoleLinks: UI.get('consoleLinks'),
 });
 
-const NamespaceDetails = connect(DetailsStateToProps)(NamespaceDetails_);
+export const NamespaceDetails = connect(DetailsStateToProps)(NamespaceDetails_);
 
 const RolesPage = ({ obj: { metadata } }) => (
   <RoleBindingsPage
