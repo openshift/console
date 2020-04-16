@@ -8,7 +8,6 @@ import {
   deleteResources,
   createResource,
   deleteResource,
-  searchYAML,
   withResource,
 } from '@console/shared/src/test-utils/utils';
 import { createNICButton } from '../views/kubevirtDetailView.view';
@@ -82,7 +81,12 @@ describe('Add/remove disks and NICs on respective VM pages', () => {
       await vm.addNIC(multusNetworkInterface);
       expect(await vm.getAttachedNICs()).toContain(multusNetworkInterface);
       await vm.action(VM_ACTION.Start);
-      expect(searchYAML(multusNetworkInterface.network, vm.name, vm.namespace, 'vmi')).toBe(true);
+      expect(
+        _.find(
+          getInterfaces(getResourceObject(vm.name, vm.namespace, 'vmi')),
+          (o) => o.name === multusNetworkInterface.name,
+        ),
+      ).toBeDefined();
       await vm.action(VM_ACTION.Stop);
       await vm.removeNIC(multusNetworkInterface.name);
       expect(await vm.getAttachedNICs()).not.toContain(multusNetworkInterface);
@@ -100,9 +104,9 @@ describe('Add/remove disks and NICs on respective VM pages', () => {
     }
 
     // Verify the NIC is added in VM Manifest
-    const resource = getResourceObject(vm.name, vm.namespace, vm.kind);
-    const nic = _.find(getInterfaces(resource), (o) => o.name === multusNetworkInterface.name);
-    expect(nic).not.toBe(undefined);
+    expect(
+      _.find(getInterfaces(vm.getResource()), (o) => o.name === multusNetworkInterface.name),
+    ).toBeDefined();
 
     // Try to add the NIC again
     await click(createNICButton, 1000);

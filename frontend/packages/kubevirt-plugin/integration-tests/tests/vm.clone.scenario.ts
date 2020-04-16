@@ -12,7 +12,6 @@ import {
 import {
   removeLeakedResources,
   waitForCount,
-  searchYAML,
   withResource,
   createResources,
   deleteResources,
@@ -22,6 +21,7 @@ import {
 } from '@console/shared/src/test-utils/utils';
 import * as cloneDialogView from '../views/dialogs/cloneVirtualMachineDialog.view';
 import { getVolumes, getDataVolumeTemplates } from '../../src/selectors/vm/selectors';
+import { getLabels } from '../../src/selectors/selectors';
 import { getResourceObject, getRandStr, createProject } from './utils/utils';
 import {
   CLONE_VM_TIMEOUT_SECS,
@@ -225,8 +225,8 @@ describe('Test clone VM.', () => {
 
     it('Cloned VM has vm.kubevirt.io/name label.', () => {
       expect(
-        searchYAML(`vm.kubevirt.io/name: ${vm.name}`, clonedVM.name, clonedVM.namespace, 'vm'),
-      ).toBeTruthy();
+        _.has(getLabels(getResourceObject(vm.name, vm.namespace, 'vmi')), 'vm.kubevirt.io/name'),
+      ).toBe(true);
     });
   });
 
