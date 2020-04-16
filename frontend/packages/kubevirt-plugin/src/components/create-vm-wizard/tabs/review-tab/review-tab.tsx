@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { Checkbox, Form, Title } from '@patternfly/react-core';
+import { Checkbox, Form } from '@patternfly/react-core';
 import { vmWizardActions } from '../../redux/actions';
 import { ActionType } from '../../redux/types';
 import { FormFieldMemoRow } from '../../form/form-field-row';
@@ -23,47 +23,42 @@ export const ReviewTabConnected: React.FC<ReviewTabProps> = (props) => {
 
   return (
     <>
-      <Title headingLevel="h3" size="lg" className="kubevirt-create-vm-modal__review-tab-title">
-        Review and confirm your settings
-      </Title>
-      <Title
-        headingLevel="h4"
-        size="lg"
-        className="kubevirt-create-vm-modal__review-tab-lower-section"
-      >
-        General
-      </Title>
-      <GeneralReview wizardReduxID={wizardReduxID} />
-      <Title
-        headingLevel="h4"
-        size="lg"
-        className="kubevirt-create-vm-modal__review-tab-lower-section"
-      >
-        Networking
-      </Title>
-      <NetworkingReview
-        wizardReduxID={wizardReduxID}
-        className="kubevirt-create-vm-modal__review-tab-lower-section"
-      />
-      <Title
-        headingLevel="h4"
-        size="lg"
-        className="kubevirt-create-vm-modal__review-tab-lower-section"
-      >
-        Storage
-      </Title>
-      <StorageReview
-        wizardReduxID={wizardReduxID}
-        className="kubevirt-create-vm-modal__review-tab-lower-section"
-      />
-      <Title
-        headingLevel="h4"
-        size="lg"
-        className="kubevirt-create-vm-modal__review-tab-lower-section"
-      >
-        Advanced
-      </Title>
-      <AdvancedReviewTab wizardReduxID={wizardReduxID} />
+      <h2 className="pf-c-title pf-m-xl">Review and confirm your settings</h2>
+
+      <section className="kubevirt-create-vm-modal__review-tab-section">
+        <h3 className="kubevirt-create-vm-modal__review-tab-section__title pf-c-title pf-m-lg">
+          General
+        </h3>
+        <GeneralReview wizardReduxID={wizardReduxID} />
+      </section>
+
+      <section className="kubevirt-create-vm-modal__review-tab-section">
+        <h3 className="kubevirt-create-vm-modal__review-tab-section__title pf-c-title pf-m-lg">
+          Networking
+        </h3>
+        <NetworkingReview
+          wizardReduxID={wizardReduxID}
+          className="kubevirt-create-vm-modal__review-tab-lower-section"
+        />
+      </section>
+
+      <section className="kubevirt-create-vm-modal__review-tab-section">
+        <h3 className="kubevirt-create-vm-modal__review-tab-section__title pf-c-title pf-m-lg">
+          Storage
+        </h3>
+        <StorageReview
+          wizardReduxID={wizardReduxID}
+          className="kubevirt-create-vm-modal__review-tab-lower-section"
+        />
+      </section>
+
+      <section className="kubevirt-create-vm-modal__review-tab-section">
+        <h3 className="kubevirt-create-vm-modal__review-tab-section__title pf-c-title pf-m-lg">
+          Advanced
+        </h3>
+        <AdvancedReviewTab wizardReduxID={wizardReduxID} />
+      </section>
+
       <Form>
         <FormFieldMemoRow
           field={getField(VMSettingsField.START_VM, vmSettings)}

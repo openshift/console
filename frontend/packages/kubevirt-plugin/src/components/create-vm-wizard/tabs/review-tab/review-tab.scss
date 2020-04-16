@@ -10,3 +10,51 @@
   margin-top: var(--pf-global--spacer--md);
 }
 
+.kubevirt-create-vm-modal__review-tab-section {
+  padding-bottom: var(--pf-global--spacer--xl);
+  &__title {
+    margin-top: var(--pf-global--spacer--lg);
+    margin-bottom: var(--pf-global--spacer--md);
+  }
+  &__content {
+    // padding-left: var(--pf-global--spacer--lg);
+
+    &.pf-c-content ol {
+      --pf-c-content--ol--MarginLeft: 0;
+      --pf-c-content--ol--PaddingLeft: var(--pf-global--spacer--md);
+    }
+  }
+}
+
+.kubevirt-create-vm-modal__review-tab__data-list {
+  display: grid;
+  grid-template-columns: 1fr;
+
+  @media screen and (min-width: 576px) {
+    grid-template: auto / auto 1fr;
+    grid-column-gap: var(--pf-global--spacer--2xl);
+    grid-row-gap: var(--pf-global--spacer--sm);
+  }
+}
+
+dt {
+  font-weight: var(--pf-global--FontWeight--semi-bold);
+
+  &:not(:first-child) {
+    margin-top: var(--pf-global--spacer--md);
+
+    @media screen and (min-width: 576px) {
+      margin-top: 0;
+    }
+  }
+
+  @media screen and (min-width: 576px) {
+    grid-column: 1;
+  }
+}
+
+dd {
+  @media screen and (min-width: 576px) {
+    grid-column: 2;
+  }
+}
