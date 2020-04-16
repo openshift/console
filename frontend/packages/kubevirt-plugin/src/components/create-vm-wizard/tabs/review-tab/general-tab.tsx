@@ -1,21 +1,48 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { Grid } from '@patternfly/react-core';
-import { iGetVmSettings } from '../../selectors/immutable/vm-settings';
+import {
+  iGetRelevantTemplateSelectors,
+  iGetVmSettings,
+} from '../../selectors/immutable/vm-settings';
 import { VMSettingsField, VMWizardProps } from '../../types';
 import { FormFieldReviewMemoRow } from '../../form/form-field-review-row';
 import { FormFieldType } from '../../form/form-field';
 import { iGetCommonData, iGetLoadedCommonData } from '../../selectors/immutable/selectors';
 import { getOS } from '../../selectors/common';
 import { getFieldValue } from '../../selectors/vm-settings';
+import { iGetRelevantTemplate } from '../../../../selectors/immutable/template/combined';
+import { toShallowJS } from '../../../../utils/immutable';
+import { VMTemplateWrapper } from '../../../../k8s/wrapper/vm/vm-template-wrapper';
+import { CUSTOM_FLAVOR } from '../../../../constants/vm';
+import { iGetFieldValue } from '../../selectors/immutable/field';
 import { getField } from './utils';
-import { FlavorReviewRow } from './FlavorRow';
 import { VMSettings } from '../../redux/initial-state/types';
 
 import './general-tab.scss';
 
 const GeneralReviewConnected: React.FC<GeneralReviewConnectedProps> = (props) => {
-  const { iVMSettings, iUserTemplates, iCommonTemplates, openshiftFlag } = props;
+  const { iVMSettings, iUserTemplates, iCommonTemplates, openshiftFlag, relevantOptions } = props;
+
+  const getFlavorValue = () => {
+    const flavor = iGetFieldValue(getField(VMSettingsField[VMSettingsField.FLAVOR], iVMSettings));
+    let cpuCores, memory;
+
+    if (flavor === CUSTOM_FLAVOR) {
+      cpuCores = iGetFieldValue(getField(VMSettingsField.CPU, iVMSettings));
+      memory = iGetFieldValue(getField(VMSettingsField.MEMORY, iVMSettings));
+    } else {
+      const template_ = toShallowJS(
+        iGetRelevantTemplate(iUserTemplates, iCommonTemplates, relevantOptions),
+      );
+      const template = new VMTemplateWrapper(template_, true).init().clearRuntimeMetadata();
+
+      cpuCores = template.getCPU()?.cores;
+      memory = template.getMemory();
+    }
+
+    return `${flavor}: ${cpuCores} CPU, ${memory}`;
+  };
 
   const osName =
     getOS({
@@ -27,13 +54,9 @@ const GeneralReviewConnected: React.FC<GeneralReviewConnectedProps> = (props) =>
 
   return (
     <Grid className="kubevirt-create-vm-modal__general-tab-container" gutter={'sm'}>
-      <FormFieldReviewMemoRow
-        field={getField(VMSettingsField.NAME, iVMSettings)}
-      />
+      <FormFieldReviewMemoRow field={getField(VMSettingsField.NAME, iVMSettings)} />
 
-      <FormFieldReviewMemoRow
-        field={getField(VMSettingsField.DESCRIPTION, iVMSettings)}
-      />
+      <FormFieldReviewMemoRow field={getField(VMSettingsField.DESCRIPTION, iVMSettings)} />
 
       <FormFieldReviewMemoRow
         field={getField(VMSettingsField.PROVISION_SOURCE_TYPE, iVMSettings)}
@@ -44,7 +67,10 @@ const GeneralReviewConnected: React.FC<GeneralReviewConnectedProps> = (props) =>
         value={osName}
       />
 
-      <FlavorReviewRow vmSettings={iVMSettings} />
+      <FormFieldReviewMemoRow
+        field={getField(VMSettingsField.FLAVOR, iVMSettings)}
+        value={getFlavorValue()}
+      />
 
       <FormFieldReviewMemoRow
         field={getField(VMSettingsField.WORKLOAD_PROFILE, iVMSettings)}
@@ -59,6 +85,7 @@ type GeneralReviewConnectedProps = {
   openshiftFlag: boolean;
   iCommonTemplates: any;
   iUserTemplates: any;
+  relevantOptions: any;
 };
 
 const stateToProps = (state, { wizardReduxID }) => ({
@@ -66,6 +93,7 @@ const stateToProps = (state, { wizardReduxID }) => ({
   openshiftFlag: iGetCommonData(state, wizardReduxID, VMWizardProps.openshiftFlag),
   iCommonTemplates: iGetLoadedCommonData(state, wizardReduxID, VMWizardProps.commonTemplates),
   iUserTemplates: iGetLoadedCommonData(state, wizardReduxID, VMWizardProps.userTemplates),
+  relevantOptions: iGetRelevantTemplateSelectors(state, wizardReduxID),
 });
 
 export const GeneralReview = connect(stateToProps)(GeneralReviewConnected);
