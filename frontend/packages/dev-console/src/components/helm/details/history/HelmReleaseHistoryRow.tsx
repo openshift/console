@@ -25,7 +25,7 @@ const confirmModalRollbackHelmRelease = (
     version: revision,
   };
 
-  const executeFn = () => coFetchJSON.put('/api/helm/release', payload);
+  const executeFn = () => coFetchJSON.patch('/api/helm/release', payload);
 
   return {
     label: `Rollback to Revision ${revision}`,
