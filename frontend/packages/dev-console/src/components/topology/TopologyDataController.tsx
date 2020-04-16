@@ -78,6 +78,7 @@ const Controller: React.FC<ControllerProps> = ({
                   if (!acc.hasOwnProperty(resourceKindName)) {
                     acc[resourceKindName] = {
                       releaseName: release.name,
+                      releaseVersion: release.version,
                       chartIcon: release.chart.metadata.icon,
                       manifestResources,
                       releaseNotes: release.info.notes,
