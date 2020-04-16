@@ -37,25 +37,16 @@ import {
   getKnativeServingRoutes,
   getKnativeServingRevisions,
   getKnativeServingServices,
-  getEventSourceCronjob,
-  getEventSourceContainer,
-  getEventSourceApiserver,
-  getEventSourceCamel,
-  getEventSourceKafka,
-  getEventSourceSinkBinding,
   knativeServingResourcesRevision,
   knativeServingResourcesConfigurations,
   knativeServingResourcesRoutes,
   knativeServingResourcesServices,
-  eventSourceResourcesCronJob,
-  eventSourceResourcesContainer,
-  eventSourceResourcesApiServer,
-  eventSourceResourcesCamel,
-  eventSourceResourcesKafka,
-  eventSourceResourcesSinkBinding,
 } from './utils/get-knative-resources';
 import { getKebabActionsForKind } from './utils/kebab-actions';
-import { fetchEventSourcesCrd } from './utils/fetch-dynamic-eventsources-utils';
+import {
+  fetchEventSourcesCrd,
+  getDynamicEventSourcesResourceList,
+} from './utils/fetch-dynamic-eventsources-utils';
 
 type ConsumedExtensions =
   | ResourceNSNavItem
@@ -260,49 +251,9 @@ const plugin: Plugin<ConsumedExtensions> = [
   {
     type: 'Overview/CRD',
     properties: {
-      resources: eventSourceResourcesCronJob,
-      required: FLAG_EVENT_SOURCE_CRONJOB,
-      utils: getEventSourceCronjob,
-    },
-  },
-  {
-    type: 'Overview/CRD',
-    properties: {
-      resources: eventSourceResourcesContainer,
-      required: FLAG_EVENT_SOURCE_CONTAINER,
-      utils: getEventSourceContainer,
-    },
-  },
-  {
-    type: 'Overview/CRD',
-    properties: {
-      resources: eventSourceResourcesApiServer,
-      required: FLAG_EVENT_SOURCE_APISERVER,
-      utils: getEventSourceApiserver,
-    },
-  },
-  {
-    type: 'Overview/CRD',
-    properties: {
-      resources: eventSourceResourcesCamel,
-      required: FLAG_EVENT_SOURCE_CAMEL,
-      utils: getEventSourceCamel,
-    },
-  },
-  {
-    type: 'Overview/CRD',
-    properties: {
-      resources: eventSourceResourcesKafka,
-      required: FLAG_EVENT_SOURCE_KAFKA,
-      utils: getEventSourceKafka,
-    },
-  },
-  {
-    type: 'Overview/CRD',
-    properties: {
-      resources: eventSourceResourcesSinkBinding,
-      required: FLAG_EVENT_SOURCE_SINKBINDING,
-      utils: getEventSourceSinkBinding,
+      resources: getDynamicEventSourcesResourceList,
+      required: FLAG_KNATIVE_EVENTING,
+      utils: () => null,
     },
   },
   {

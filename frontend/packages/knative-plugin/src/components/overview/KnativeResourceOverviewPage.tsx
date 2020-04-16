@@ -2,14 +2,11 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { Kebab, LoadingBox } from '@console/internal/components/utils';
 import { ResourceOverviewDetails } from '@console/internal/components/overview/resource-overview-details';
-import { groupVersionFor, K8sKind } from '@console/internal/module/k8s';
+import { groupVersionFor, K8sKind, referenceForModel } from '@console/internal/module/k8s';
 import { RootState } from '@console/internal/redux';
 import { OverviewItem } from '@console/shared';
-import {
-  KNATIVE_SERVING_APIGROUP,
-  KNATIVE_EVENT_SOURCE_APIGROUP,
-  KNATIVE_EVENT_SOURCE_APIGROUP_DEP,
-} from '../../const';
+import { KNATIVE_SERVING_APIGROUP } from '../../const';
+import { isDynamicEventResourceKind } from '../../utils/fetch-dynamic-eventsources-utils';
 import OverviewDetailsKnativeResourcesTab from './OverviewDetailsKnativeResourcesTab';
 import KnativeOverview from './KnativeOverview';
 
@@ -66,8 +63,7 @@ const mapStateToProps = (state: RootState): StateProps => {
       .filter(
         (model: K8sKind) =>
           model.apiGroup === KNATIVE_SERVING_APIGROUP ||
-          model.apiGroup === KNATIVE_EVENT_SOURCE_APIGROUP ||
-          model.apiGroup === KNATIVE_EVENT_SOURCE_APIGROUP_DEP,
+          isDynamicEventResourceKind(referenceForModel(model)),
       ),
   };
 };

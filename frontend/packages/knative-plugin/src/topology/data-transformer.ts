@@ -7,6 +7,7 @@ import {
   TopologyDataResources,
   addToTopologyDataModel,
 } from '@console/dev-console/src/components/topology';
+import { getDynamicEventSourcesModelRefs } from '../utils/fetch-dynamic-eventsources-utils';
 import { NodeType, transformKnNodeData } from './knative-topology-utils';
 
 /**
@@ -53,14 +54,11 @@ const addKnativeTopologyData = (
 };
 
 const getKnativeEventSources = (resources: TopologyDataResources): K8sResourceKind[] => {
-  return _.concat(
-    _.get(resources, 'eventSourceCronjob.data', []),
-    _.get(resources, 'eventSourceContainers.data', []),
-    _.get(resources, 'eventSourceApiserver.data', []),
-    _.get(resources, 'eventSourceCamel.data', []),
-    _.get(resources, 'eventSourceKafka.data', []),
-    _.get(resources, 'eventSourceSinkbinding.data', []),
-  );
+  const evenSourceProps = getDynamicEventSourcesModelRefs();
+  return evenSourceProps.reduce((acc, currProp) => {
+    const currPropResource = resources[currProp]?.data ?? [];
+    return [...acc, ...currPropResource];
+  }, []);
 };
 
 export const getKnativeTopologyDataModel = (
@@ -74,7 +72,6 @@ export const getKnativeTopologyDataModel = (
     topology: {},
   };
   const operatorBackedServiceKindMap = getOperatorBackedServiceKindMap(installedOperators);
-
   const knSvcResources: K8sResourceKind[] = _.get(resources, ['ksservices', 'data'], []);
   const knEventSources: K8sResourceKind[] = getKnativeEventSources(resources);
   const knRevResources: K8sResourceKind[] = _.get(resources, ['revisions', 'data'], []);

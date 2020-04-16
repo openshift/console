@@ -1,22 +1,15 @@
 import * as React from 'react';
 import { OverviewItem } from '@console/shared';
 import OperatorBackedOwnerReferences from '@console/internal/components/utils';
-import {
-  RevisionModel,
-  ServiceModel,
-  EventSourceCronJobModel,
-  EventSourceContainerModel,
-  EventSourceApiServerModel,
-  EventSourceCamelModel,
-  EventSourceKafkaModel,
-  EventSourceSinkBindingModel,
-} from '../../models';
+import { referenceFor } from '@console/internal/module/k8s';
+import { RevisionModel, ServiceModel } from '../../models';
 import KnativeServiceResources from './KnativeServiceResources';
 import KnativeRevisionResources from './KnativeRevisionResources';
 import RevisionsOverviewList from './RevisionsOverviewList';
 import KSRoutesOverviewList from './RoutesOverviewList';
 import ConfigurationsOverviewList from './ConfigurationsOverviewList';
 import EventSinkServicesOverviewList from './EventSinkServicesOverviewList';
+import { isDynamicEventResourceKind } from '../../utils/fetch-dynamic-eventsources-utils';
 
 type OverviewDetailsResourcesTabProps = {
   item: OverviewItem;
@@ -30,6 +23,9 @@ const getSidebarResources = ({
   pods,
   current,
 }: OverviewItem) => {
+  if (isDynamicEventResourceKind(referenceFor(obj))) {
+    return <EventSinkServicesOverviewList obj={obj} pods={pods} current={current} />;
+  }
   switch (obj.kind) {
     case RevisionModel.kind:
       return (
@@ -45,13 +41,6 @@ const getSidebarResources = ({
       return (
         <KnativeServiceResources ksroutes={ksroutes} obj={obj} revisions={revisions} pods={pods} />
       );
-    case EventSourceCronJobModel.kind:
-    case EventSourceContainerModel.kind:
-    case EventSourceApiServerModel.kind:
-    case EventSourceCamelModel.kind:
-    case EventSourceKafkaModel.kind:
-    case EventSourceSinkBindingModel.kind:
-      return <EventSinkServicesOverviewList obj={obj} pods={pods} current={current} />;
     default:
       return (
         <>

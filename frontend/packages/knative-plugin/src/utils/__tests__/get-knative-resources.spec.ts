@@ -6,25 +6,12 @@ import {
   getKnativeServingConfigurations,
   getKnativeServingRoutes,
   getKnativeServingServices,
-  getEventSourceCronjob,
-  getEventSourceContainer,
-  getEventSourceCamel,
-  getEventSourceKafka,
-  getEventSourceSinkBinding,
   knativeServingResourcesServices,
   knativeServingResourcesRevision,
   knativeServingResourcesConfigurations,
   knativeServingResourcesRoutes,
 } from '../get-knative-resources';
-import {
-  deploymentData,
-  deploymentKnativeData,
-  deploymentKnativeEventData,
-  deploymentKnativeEventSourceCamelEventData,
-  deploymentKnativeEventSourceContainerEventData,
-  deploymentKnativeEventSourceKafkaEventData,
-  deploymentKnativeEventSourceSinkBindingEventData,
-} from './knative-serving-data';
+import { deploymentData, deploymentKnativeData } from './knative-serving-data';
 
 describe('Get knative resources', () => {
   describe('knative Serving Resources', () => {
@@ -76,64 +63,8 @@ describe('Get knative resources', () => {
       const knServingResource = getKnativeServingServices(deploymentData, MockResources);
       expect(knServingResource).toBeUndefined();
     });
-    it('expect getEventSourceCronjob to return event source data', () => {
-      const knEventResource = getEventSourceCronjob(
-        deploymentKnativeEventData,
-        MockKnativeResources,
-      );
-      expect(knEventResource.eventSourceCronjob).toBeDefined();
-      expect(knEventResource.eventSourceCronjob).toHaveLength(1);
-    });
     it('expect getEventSourceCronjob to return event source as undefined', () => {
       const knEventResource = getKnativeServingServices(deploymentData, MockResources);
-      expect(knEventResource).toBeUndefined();
-    });
-    it('expect getEventSourceContainer to return event source data', () => {
-      const knEventResource = getEventSourceContainer(
-        deploymentKnativeEventSourceContainerEventData,
-        MockKnativeResources,
-      );
-      expect(knEventResource.eventSourceContainers).toBeDefined();
-      expect(knEventResource.eventSourceContainers).toHaveLength(1);
-    });
-    it('expect getEventSourceContainer to return event source as undefined', () => {
-      const knEventResource = getEventSourceContainer(deploymentData, MockResources);
-      expect(knEventResource).toBeUndefined();
-    });
-    it('expect getEventSourceCamel to return event source data', () => {
-      const knEventResource = getEventSourceCamel(
-        deploymentKnativeEventSourceCamelEventData,
-        MockKnativeResources,
-      );
-      expect(knEventResource.eventSourceCamel).toBeDefined();
-      expect(knEventResource.eventSourceCamel).toHaveLength(1);
-    });
-    it('expect getEventSourceCamel to return event source as undefined', () => {
-      const knEventResource = getEventSourceCamel(deploymentData, MockResources);
-      expect(knEventResource).toBeUndefined();
-    });
-    it('expect getEventSourceKafka to return event source data', () => {
-      const knEventResource = getEventSourceKafka(
-        deploymentKnativeEventSourceKafkaEventData,
-        MockKnativeResources,
-      );
-      expect(knEventResource.eventSourceKafka).toBeDefined();
-      expect(knEventResource.eventSourceKafka).toHaveLength(1);
-    });
-    it('expect getEventSourceKafka to return event source as undefined', () => {
-      const knEventResource = getEventSourceKafka(deploymentData, MockResources);
-      expect(knEventResource).toBeUndefined();
-    });
-    it('expect getEventSourceSinkBinding to return event source data', () => {
-      const knEventResource = getEventSourceSinkBinding(
-        deploymentKnativeEventSourceSinkBindingEventData,
-        MockKnativeResources,
-      );
-      expect(knEventResource.eventSourceServicebinding).toBeDefined();
-      expect(knEventResource.eventSourceServicebinding).toHaveLength(1);
-    });
-    it('expect getEventSourceSinkBinding to return event source as undefined', () => {
-      const knEventResource = getEventSourceSinkBinding(deploymentData, MockResources);
       expect(knEventResource).toBeUndefined();
     });
   });

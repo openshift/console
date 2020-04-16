@@ -7,28 +7,16 @@ import {
 } from '@console/dev-console/src/actions/modify-application';
 import { setTrafficDistribution } from '../actions/traffic-splitting';
 import { setSinkSource } from '../actions/sink-source';
-import {
-  EventSourceApiServerModel,
-  EventSourceCamelModel,
-  EventSourceContainerModel,
-  EventSourceCronJobModel,
-  EventSourceKafkaModel,
-  EventSourceSinkBindingModel,
-  ServiceModel,
-} from '../models';
-
-const eventSourceModelrefs = [
-  referenceForModel(EventSourceApiServerModel),
-  referenceForModel(EventSourceContainerModel),
-  referenceForModel(EventSourceCronJobModel),
-  referenceForModel(EventSourceCamelModel),
-  referenceForModel(EventSourceKafkaModel),
-  referenceForModel(EventSourceSinkBindingModel),
-];
-const modifyApplicationRefs = [...eventSourceModelrefs, referenceForModel(ServiceModel)];
+import { ServiceModel } from '../models';
+import { getDynamicEventSourcesModelRefs } from './fetch-dynamic-eventsources-utils';
 
 export const getKebabActionsForKind = (resourceKind: K8sKind): KebabAction[] => {
   const menuActions: KebabAction[] = [];
+  const eventSourceModelrefs: string[] = getDynamicEventSourcesModelRefs();
+  const modifyApplicationRefs: string[] = [
+    ...eventSourceModelrefs,
+    referenceForModel(ServiceModel),
+  ];
   if (resourceKind) {
     if (_.includes(modifyApplicationRefs, referenceForModel(resourceKind))) {
       menuActions.push(ModifyApplication);
