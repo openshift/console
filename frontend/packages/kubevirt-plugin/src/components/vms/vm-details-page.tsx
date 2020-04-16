@@ -105,18 +105,13 @@ export const VirtualMachinesDetailsPage: React.FC<VirtualMachinesDetailsPageProp
       isList: true,
       namespace,
       prop: 'vmImports',
+      optional: true,
     },
     {
       kind: DataVolumeModel.kind,
       isList: true,
       namespace,
       prop: 'dataVolumes',
-    },
-    {
-      kind: VirtualMachineImportModel.kind,
-      namespace,
-      prop: 'vmImports',
-      optional: true,
     },
   ];
 

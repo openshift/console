@@ -22,7 +22,10 @@ const isV2VVMImportConversion = (vmImport?: VMImportKind): VMImportStatus => {
     VirtualMachineImportConditionType.MappingRulesChecking,
     VirtualMachineImportConditionType.Validating,
     VirtualMachineImportConditionType.Processing,
-  ].find((type) => !isConditionStatusTrue(getStatusConditionOfType(vmImport, type)));
+  ].find((type) => {
+    const condition = getStatusConditionOfType(vmImport, type);
+    return condition && !isConditionStatusTrue(condition);
+  });
 
   if (failedProgressingCondType) {
     const failedCond: K8sResourceCondition = getStatusConditionOfType(
@@ -58,7 +61,7 @@ const isV2VVMImportConversion = (vmImport?: VMImportKind): VMImportStatus => {
     VirtualMachineImportConditionType.MappingRulesChecking,
   ].find((type) => isConditionStatusTrue(getStatusConditionOfType(vmImport, type)));
 
-  const progressingCondMaybe: K8sResourceCondition = progressingCondType
+  const progressingCond: K8sResourceCondition = progressingCondType
     ? getStatusConditionOfType(vmImport, progressingCondType)
     : getStatusConditions(vmImport, [])[0];
 
@@ -67,8 +70,7 @@ const isV2VVMImportConversion = (vmImport?: VMImportKind): VMImportStatus => {
   return {
     status: V2VVMImportStatus.IN_PROGRESS,
     message: IMPORTING_OVIRT_MESSAGE,
-    detailedMessage:
-      progressingCondMaybe && `${progressingCondMaybe.reason}: ${progressingCondMaybe.message}`,
+    detailedMessage: progressingCond && `${progressingCond.reason}: ${progressingCond.message}`,
     vmImport,
     progress,
   };

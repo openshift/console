@@ -202,6 +202,7 @@ export const WrappedVirtualMachinesPage: React.FC<VirtualMachinesPageProps> = (p
     },
     {
       kind: VirtualMachineImportModel.kind,
+      isList: true,
       namespace,
       prop: 'vmImports',
       optional: true,
