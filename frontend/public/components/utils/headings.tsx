@@ -87,6 +87,7 @@ export const PageHeading = connectToModel((props: PageHeadingProps) => {
     badge,
     getResourceStatus = (resource: K8sResourceKind): string =>
       _.get(resource, ['status', 'phase'], null),
+    className,
   } = props;
   const extraResources = _.reduce(
     props.resourceKeys,
@@ -109,6 +110,7 @@ export const PageHeading = connectToModel((props: PageHeadingProps) => {
         { 'co-m-nav-title--detail': detail },
         { 'co-m-nav-title--logo': props.icon },
         { 'co-m-nav-title--breadcrumbs': breadcrumbsFor && !_.isEmpty(data) },
+        className,
       )}
       style={style}
     >
@@ -117,7 +119,9 @@ export const PageHeading = connectToModel((props: PageHeadingProps) => {
           <SplitItem isFilled>
             <BreadCrumbs breadcrumbs={breadcrumbsFor(data)} />
           </SplitItem>
-          {badge && <SplitItem>{badge}</SplitItem>}
+          {badge && (
+            <SplitItem>{<span className="co-m-pane__heading-badge">{badge}</span>}</SplitItem>
+          )}
         </Split>
       )}
       {showHeading && (
@@ -141,7 +145,7 @@ export const PageHeading = connectToModel((props: PageHeadingProps) => {
               )}
             </div>
           )}
-          {!breadcrumbsFor && badge}
+          {!breadcrumbsFor && badge && <span className="co-m-pane__heading-badge">{badge}</span>}
           {showActions && (
             <div className="co-actions" data-test-id="details-actions">
               {hasButtonActions && (
@@ -264,6 +268,7 @@ export type PageHeadingProps = {
   badge?: React.ReactNode;
   icon?: React.ComponentType<{ obj?: K8sResourceKind }>;
   getResourceStatus?: (resource: K8sResourceKind) => string;
+  className?: string;
 };
 
 export type ResourceOverviewHeadingProps = {

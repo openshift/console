@@ -39,8 +39,8 @@ describe(FireMan_.displayName, () => {
     wrapper = shallow(<FireMan_.WrappedComponent resources={resources} />);
   });
 
-  it('renders `PageHeading` if given `title`', () => {
-    expect(wrapper.find(PageHeading).exists()).toBe(false);
+  it('renders `title` if given `title`', () => {
+    expect(wrapper.find(PageHeading).props().title).toBe(undefined);
 
     const title = 'My pods';
     wrapper.setProps({ title });
@@ -53,7 +53,12 @@ describe(FireMan_.displayName, () => {
 
     const createProps = { foo: 'bar' };
     const button = wrapper
-      .setProps({ canCreate: true, createProps, createButtonText: 'Create Me!' })
+      .setProps({
+        canCreate: true,
+        createProps,
+        createButtonText: 'Create Me!',
+        title: 'Nights Watch',
+      })
       .find('#yaml-create');
 
     expect(
