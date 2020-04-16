@@ -10,8 +10,6 @@
 
 FROM golang:1.13-stretch
 
-MAINTAINER Ed Rooth - CoreOS
-
 ### For golang testing stuff
 RUN go get -u golang.org/x/lint/golint
 RUN go get github.com/jstemmer/go-junit-report
@@ -59,3 +57,13 @@ RUN wget --quiet -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | ap
     apt-get update && \
     apt-get install --no-install-recommends -y -q \
     google-chrome-stable ca-certificates
+
+LABEL \
+        io.k8s.description="This is a component of OpenShift Container Platform and provides a web console." \
+        com.redhat.component="openshift-enterprise-console-container" \
+        maintainer="Samuel Padgett <spadgett@redhat.com>" \
+        name="openshift3/ose-console" \
+        License="Apache 2.0" \
+        io.k8s.display-name="OpenShift Console" \
+        vendor="Red Hat" \
+        io.openshift.tags="openshift,console"
