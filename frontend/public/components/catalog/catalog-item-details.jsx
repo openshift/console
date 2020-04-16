@@ -47,6 +47,7 @@ export class CatalogTileDetails extends React.Component {
       longDescription,
       documentationUrl,
       sampleRepo,
+      customProperties,
     } = this.props.item;
     const { plans, markdown } = this.state;
 
@@ -73,6 +74,7 @@ export class CatalogTileDetails extends React.Component {
           <div className="modal-body-inner-shadow-covers">
             <div className="co-catalog-page__overlay-body">
               <PropertiesSidePanel>
+                {customProperties}
                 {tileProvider && <PropertyItem label="Provider" value={tileProvider} />}
                 {supportUrl && <PropertyItem label="Support" value={supportUrlLink} />}
                 {creationTimestamp && (

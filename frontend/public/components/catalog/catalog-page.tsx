@@ -3,6 +3,7 @@ import * as _ from 'lodash-es';
 import { Helmet } from 'react-helmet';
 import { safeLoad } from 'js-yaml';
 
+import { PropertyItem } from '@patternfly/react-catalog-view-extension';
 import { ANNOTATIONS, FLAGS, APIError } from '@console/shared';
 import { CatalogTileViewPage } from './catalog-items';
 import {
@@ -22,6 +23,7 @@ import {
   skeletonCatalog,
   StatusBox,
   FirehoseResult,
+  ExternalLink,
 } from '../utils';
 import { getAnnotationTags, getMostRecentBuilderTag, isBuilder } from '../image-stream';
 import {
@@ -208,6 +210,8 @@ export class CatalogListPage extends React.Component<CatalogListPageProps, Catal
         charts.forEach((chart: HelmChart) => {
           const tags = chart.keywords;
           const chartName = chart.name;
+          const chartVersion = chart.version;
+          const appVersion = chart.appVersion;
           const tileName = `${_.startCase(chartName)} v${chart.version}`;
           const tileImgUrl = chart.icon || getImageForIconClass('icon-helm');
           const chartURL = _.get(chart, 'urls.0');
@@ -216,15 +220,47 @@ export class CatalogListPage extends React.Component<CatalogListPageProps, Catal
             let chartData;
             try {
               chartData = await coFetchJSON(`/api/helm/chart?url=${chartURL}`);
-            } catch (err) {
-              return '';
+            } catch {
+              return null;
             }
             const readmeFile = chartData?.files?.find((file) => file.name === 'README.md');
-            return readmeFile?.data && atob(readmeFile?.data);
+            const readmeData = readmeFile?.data && atob(readmeFile?.data);
+            return readmeData && `## README\n${readmeData}`;
+          };
+
+          const maintainers = chart.maintainers?.length > 0 && (
+            <>
+              {chart.maintainers?.map((maintainer) => (
+                <>
+                  {maintainer.name}
+                  <br />
+                  <a href={`mailto:${maintainer.email}`}>{maintainer.email}</a>
+                  <br />
+                </>
+              ))}
+            </>
+          );
+
+          const homePage = (
+            <ExternalLink href={chart.home} additionalClassName="co-break-all" text={chart.home} />
+          );
+
+          const customProperties = (
+            <>
+              <PropertyItem label="Chart Version" value={chartVersion} />
+              <PropertyItem label="App Version" value={appVersion} />
+              <PropertyItem label="Home Page" value={homePage} />
+              {maintainers && <PropertyItem label="Maintainers" value={maintainers} />}
+            </>
+          );
+
+          const obj = {
+            ...chart,
+            ...{ metadata: { uid: chart.digest, creationTimestamp: chart.created } },
           };
 
           normalizedCharts.push({
-            obj: { ...chart, ...{ metadata: { uid: chart.digest } } },
+            obj,
             kind: 'HelmChart',
             tileName,
             tileIconClass: null,
@@ -232,10 +268,8 @@ export class CatalogListPage extends React.Component<CatalogListPageProps, Catal
             tileDescription: chart.description,
             tags,
             createLabel: 'Install Helm Chart',
-            tileProvider: _.get(chart, 'maintainers.0.name'),
-            documentationUrl: chart.home,
-            supportUrl: chart.home,
             markdownDescription,
+            customProperties,
             href: `/catalog/helm-install?chartName=${chartName}&chartURL=${encodedChartURL}&preselected-ns=${currentNamespace}`,
           });
         });
