@@ -95,7 +95,7 @@ const BareMetalNodesTableRow: React.FC<RowFunctionArgs<BareMetalNodeBundle>> = (
         )}
       </TableData>
       <TableData className={tableColumnClasses.status}>
-        <BareMetalNodeStatus {...status} />
+        <BareMetalNodeStatus {...status} nodeMaintenance={nodeMaintenance} />
         <SecondaryStatus status={baremetalNodeSecondaryStatus({ node, nodeMaintenance, host })} />
       </TableData>
       <TableData className={tableColumnClasses.role}>

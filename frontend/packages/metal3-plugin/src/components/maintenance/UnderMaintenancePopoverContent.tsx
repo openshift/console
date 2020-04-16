@@ -6,14 +6,14 @@ import { getNodeMaintenanceReason, getNodeMaintenanceCreationTimestamp } from '.
 import stopNodeMaintenanceModal from '../modals/StopNodeMaintenanceModal';
 
 type UnderMaintenancePopoverContentProps = {
-  maintenance: K8sResourceKind;
+  nodeMaintenance: K8sResourceKind;
 };
 
 const UnderMaintenancePopoverContent: React.FC<UnderMaintenancePopoverContentProps> = ({
-  maintenance,
+  nodeMaintenance,
 }) => {
-  const reason = getNodeMaintenanceReason(maintenance);
-  const creationTimestamp = getNodeMaintenanceCreationTimestamp(maintenance);
+  const reason = getNodeMaintenanceReason(nodeMaintenance);
+  const creationTimestamp = getNodeMaintenanceCreationTimestamp(nodeMaintenance);
 
   return (
     <>
@@ -30,7 +30,7 @@ const UnderMaintenancePopoverContent: React.FC<UnderMaintenancePopoverContentPro
         </dd>
       </dl>
       <br />
-      <Button variant="link" onClick={() => stopNodeMaintenanceModal(maintenance)} isInline>
+      <Button variant="link" onClick={() => stopNodeMaintenanceModal(nodeMaintenance)} isInline>
         Stop maintenance
       </Button>
     </>

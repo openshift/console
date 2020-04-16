@@ -13,11 +13,21 @@ import { NodeMaintenanceModel, BareMetalHostModel } from '../../models';
 import { menuActionsCreator } from './menu-actions';
 import BareMetalNodeDetails from './BareMetalNodeDetails';
 import { NODE_MAINTENANCE_FLAG } from '../../features';
+import BareMetalNodeDashboard from './dashboard/BareMetalNodeDashboard';
 
-const { details, editYaml, events, pods } = navFactory;
+const { editYaml, events, pods } = navFactory;
 
 const pages = [
-  details(BareMetalNodeDetails),
+  {
+    href: '',
+    name: 'Overview',
+    component: BareMetalNodeDashboard,
+  },
+  {
+    href: 'details',
+    name: 'Details',
+    component: BareMetalNodeDetails,
+  },
   editYaml(),
   pods(({ obj }) => (
     <PodsPage showTitle={false} fieldSelector={`spec.nodeName=${obj.metadata.name}`} />

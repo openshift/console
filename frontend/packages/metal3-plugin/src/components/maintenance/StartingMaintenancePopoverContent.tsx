@@ -13,16 +13,16 @@ import stopNodeMaintenanceModal from '../modals/StopNodeMaintenanceModal';
 import MaintenancePopoverPodList from './MaintenancePopoverPodList';
 
 type StartingMaintenancePopoverContentProps = {
-  maintenance: K8sResourceKind;
+  nodeMaintenance: K8sResourceKind;
 };
 
 const StartingMaintenancePopoverContent: React.FC<StartingMaintenancePopoverContentProps> = ({
-  maintenance,
+  nodeMaintenance,
 }) => {
-  const reason = getNodeMaintenanceReason(maintenance);
-  const creationTimestamp = getNodeMaintenanceCreationTimestamp(maintenance);
-  const lastError = getNodeMaintenanceLastError(maintenance);
-  const pendingPods = getNodeMaintenancePendingPods(maintenance);
+  const reason = getNodeMaintenanceReason(nodeMaintenance);
+  const creationTimestamp = getNodeMaintenanceCreationTimestamp(nodeMaintenance);
+  const lastError = getNodeMaintenanceLastError(nodeMaintenance);
+  const pendingPods = getNodeMaintenancePendingPods(nodeMaintenance);
 
   return (
     <>
@@ -48,7 +48,7 @@ const StartingMaintenancePopoverContent: React.FC<StartingMaintenancePopoverCont
         </>
       )}
       <Progress
-        value={getNodeMaintenanceProgressPercent(maintenance)}
+        value={getNodeMaintenanceProgressPercent(nodeMaintenance)}
         title="Moving workloads"
         size={ProgressSize.sm}
       />
@@ -57,7 +57,7 @@ const StartingMaintenancePopoverContent: React.FC<StartingMaintenancePopoverCont
         <MaintenancePopoverPodList pods={pendingPods} />
       </Expandable>
       <br />
-      <Button variant="link" onClick={() => stopNodeMaintenanceModal(maintenance)} isInline>
+      <Button variant="link" onClick={() => stopNodeMaintenanceModal(nodeMaintenance)} isInline>
         Stop
       </Button>
     </>

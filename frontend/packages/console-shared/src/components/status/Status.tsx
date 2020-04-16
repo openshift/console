@@ -106,5 +106,4 @@ type StatusIconProps = {
 
 type StatusProps = StatusComponentProps & {
   status: string;
-  className?: string;
 };

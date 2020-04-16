@@ -91,14 +91,16 @@ export const useK8sWatchResource = <R extends K8sResourceCommon | K8sResourceCom
   return React.useMemo(() => {
     if (!resourceK8s) {
       const data = resource?.isList ? [] : {};
-      return modelsLoaded ? [data, true, new NoModelError()] : [data, false, undefined];
+      return modelsLoaded && !k8sModel
+        ? [data, true, new NoModelError()]
+        : [data, false, undefined];
     }
 
     const data = getReduxData(resourceK8s.get('data'), resource);
     const loaded = resourceK8s.get('loaded');
     const loadError = resourceK8s.get('loadError');
     return [data, loaded, loadError];
-  }, [modelsLoaded, resourceK8s, resource]);
+  }, [resourceK8s, resource, modelsLoaded, k8sModel]);
 };
 
 export const useK8sWatchResources = <R extends ResourcesObject>(

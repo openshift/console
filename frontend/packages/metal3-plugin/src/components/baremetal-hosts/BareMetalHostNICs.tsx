@@ -32,9 +32,10 @@ const NICsTableRow: RowFunction<BareMetalHostNIC> = ({ obj: nic, index, key, sty
 
 type BareMetalHostNICsProps = {
   obj: BareMetalHostKind;
+  loadError?: any;
 };
 
-const BareMetalHostNICs: React.FC<BareMetalHostNICsProps> = ({ obj: host }) => {
+const BareMetalHostNICs: React.FC<BareMetalHostNICsProps> = ({ obj: host, loadError }) => {
   const nics = getHostNICs(host);
   return (
     <div className="co-m-list">
@@ -44,7 +45,8 @@ const BareMetalHostNICs: React.FC<BareMetalHostNICsProps> = ({ obj: host }) => {
           aria-label="Bare Metal Host NICs"
           Header={NICsTableHeader}
           Row={NICsTableRow}
-          loaded
+          loaded={!!host}
+          loadError={loadError}
         />
       </div>
     </div>

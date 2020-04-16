@@ -24,6 +24,7 @@ import { getHostErrorMessage } from '../../selectors';
 import { StatusProps } from '../types';
 import MaintenancePopover from '../maintenance/MaintenancePopover';
 import { BareMetalHostKind } from '../../types';
+import { K8sResourceKind } from '@console/internal/module/k8s';
 
 // TODO(jtomasek): Update this with onClick handler once add discovered host functionality
 // is available
@@ -41,20 +42,26 @@ export const AddDiscoveredHostButton: React.FC<{ host: BareMetalHostKind }> = (
   );
 };
 
-const BareMetalHostStatus: React.FC<StatusProps> = ({ status, title, description, ...props }) => {
+const BareMetalHostStatus: React.FC<BareMetalHostStatusProps> = ({
+  status,
+  title,
+  description,
+  host,
+  nodeMaintenance,
+}) => {
   const statusTitle = title || status;
   switch (true) {
     case status === HOST_STATUS_DISCOVERED:
-      return <AddDiscoveredHostButton host={props.host} />;
+      return <AddDiscoveredHostButton host={host} />;
     case [NODE_STATUS_STARTING_MAINTENANCE, NODE_STATUS_UNDER_MAINTENANCE].includes(status):
-      return <MaintenancePopover title={statusTitle} maintenance={props.maintenance} />;
+      return <MaintenancePopover title={statusTitle} nodeMaintenance={nodeMaintenance} />;
     case [NODE_STATUS_STOPPING_MAINTENANCE, ...HOST_PROGRESS_STATES].includes(status):
       return <ProgressStatus title={statusTitle}>{description}</ProgressStatus>;
     case HOST_ERROR_STATES.includes(status):
       return (
         <ErrorStatus title={statusTitle}>
           <p>{description}</p>
-          <p>{getHostErrorMessage(props.host)}</p>
+          <p>{getHostErrorMessage(host)}</p>
         </ErrorStatus>
       );
     case HOST_SUCCESS_STATES.includes(status):
@@ -62,6 +69,11 @@ const BareMetalHostStatus: React.FC<StatusProps> = ({ status, title, description
     default:
       return <Status status={status} title={statusTitle} />;
   }
+};
+
+type BareMetalHostStatusProps = StatusProps & {
+  host?: BareMetalHostKind;
+  nodeMaintenance?: K8sResourceKind;
 };
 
 export default BareMetalHostStatus;
