@@ -27,12 +27,12 @@ export const FormFieldReviewRow: React.FC<FormFieldReviewRowProps> = ({
 
   return (
     <>
-      <GridItem span={2} className="kubevirt-create-vm-modal__form-field-review-row">
+      <GridItem span={1} className="kubevirt-create-vm-modal__form-field-review-row">
         <Title headingLevel="h4" size="sm">
           {getFieldTitle(fieldKey)}
         </Title>
       </GridItem>
-      <GridItem span={10}>{reviewValue}</GridItem>
+      <GridItem span={11}>{reviewValue}</GridItem>
     </>
   );
 };

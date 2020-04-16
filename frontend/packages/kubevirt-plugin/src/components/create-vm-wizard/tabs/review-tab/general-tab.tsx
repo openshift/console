@@ -53,7 +53,7 @@ const GeneralReviewConnected: React.FC<GeneralReviewConnectedProps> = (props) =>
     })?.osName || '';
 
   return (
-    <Grid className="kubevirt-create-vm-modal__general-tab-container" gutter={'sm'}>
+    <Grid className="kubevirt-create-vm-modal__general-tab-container">
       <FormFieldReviewMemoRow field={getField(VMSettingsField.NAME, iVMSettings)} />
 
       <FormFieldReviewMemoRow field={getField(VMSettingsField.DESCRIPTION, iVMSettings)} />
