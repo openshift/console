@@ -11,6 +11,7 @@ import {
   Unregister,
   DndState,
   DndStateContainer,
+  DragOperationWithType,
 } from './dnd-types';
 
 let nextUniqueId = 0;
@@ -169,8 +170,8 @@ export class DndManagerImpl implements DndManager {
     return this.state.event;
   }
 
-  getOperation(): string {
-    return this.state.operation || '';
+  getOperation(): DragOperationWithType | undefined {
+    return this.state.operation;
   }
 
   isCancelled(): boolean {
@@ -179,7 +180,7 @@ export class DndManagerImpl implements DndManager {
 
   beginDrag(
     sourceIds: string | string[],
-    operation: string,
+    operation: DragOperationWithType | undefined,
     x: number,
     y: number,
     pageX: number,

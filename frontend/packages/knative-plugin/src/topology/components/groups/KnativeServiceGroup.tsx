@@ -36,6 +36,7 @@ export type KnativeServiceGroupProps = {
   highlight?: boolean;
   canDrop?: boolean;
   dropTarget?: boolean;
+  edgeDragging?: boolean;
   editAccess?: boolean;
 } & WithSelectionProps &
   WithDndDropProps &
@@ -51,6 +52,7 @@ const KnativeServiceGroup: React.FC<KnativeServiceGroupProps> = ({
   contextMenuOpen,
   canDrop,
   dropTarget,
+  edgeDragging,
   dndDropRef,
   editAccess,
   onHideCreateConnector,
@@ -113,7 +115,7 @@ const KnativeServiceGroup: React.FC<KnativeServiceGroupProps> = ({
         onContextMenu={editAccess ? onContextMenu : null}
         className={classNames('odc-knative-service', {
           'is-dragging': dragging || labelDragging,
-          'is-highlight': canDrop,
+          'is-highlight': canDrop || edgeDragging,
           'is-filtered': filtered,
         })}
       >
@@ -128,7 +130,7 @@ const KnativeServiceGroup: React.FC<KnativeServiceGroupProps> = ({
             className={classNames('odc-knative-service', {
               'is-selected': selected,
               'is-dragging': dragging || labelDragging,
-              'is-highlight': canDrop,
+              'is-highlight': canDrop || edgeDragging,
               'is-dropTarget': canDrop && dropTarget,
               'is-filtered': filtered,
             })}

@@ -74,9 +74,9 @@ const CreateConnectorWidget: React.FC<CreateConnectorWidgetProps> = observer((pr
   const hintsRef = React.useRef<string[] | undefined>();
 
   const spec = React.useMemo(() => {
-    const dragSourceSpec: DragSourceSpec<any, any, CollectProps> = {
+    const dragSourceSpec: DragSourceSpec<any, any, any, CollectProps> = {
       item: { type: CREATE_CONNECTOR_DROP_TYPE },
-      operation: CREATE_CONNECTOR_OPERATION,
+      operation: { type: CREATE_CONNECTOR_OPERATION },
       begin: (monitor: DragSourceMonitor, dragProps: CreateConnectorWidgetProps) => {
         setActive(true);
         return dragProps.element;

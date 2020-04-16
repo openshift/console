@@ -1,3 +1,20 @@
+// TODO support Symbols
+export type Identifier = string;
+
+export type TargetType = Identifier | Identifier[];
+
+export type SourceType = Identifier;
+
+export interface DragObjectWithType {
+  type: SourceType;
+}
+
+export type DragOperationType = Identifier;
+
+export interface DragOperationWithType {
+  type: DragOperationType;
+}
+
 export type DragEvent = {
   // in subject coordinates
   initialX: number;
@@ -40,7 +57,7 @@ export interface DndState {
   dropResult?: any;
   didDrop?: boolean;
   event?: DragEvent;
-  operation?: string;
+  operation?: DragOperationWithType;
   cancelled?: boolean;
 }
 
@@ -73,10 +90,10 @@ export interface DndManager {
   getDropResult(): any;
   didDrop(): boolean;
   getDragEvent(): DragEvent | undefined;
-  getOperation(): string;
+  getOperation(): DragOperationWithType | undefined;
   beginDrag(
     sourceIds: string | string[],
-    operation: string,
+    operation: DragOperationWithType | undefined,
     x: number,
     y: number,
     pageX: number,
@@ -100,21 +117,15 @@ export type DragElementWrapper = (elementOrNode: Element | null) => void;
 export type ConnectDragSource = DragElementWrapper;
 export type ConnectDropTarget = DragElementWrapper;
 
-// TODO support Symbols
-export type Identifier = string;
-
-export type TargetType = Identifier | Identifier[];
-
-export type SourceType = Identifier;
-
-export interface DragObjectWithType {
-  type: SourceType;
-}
-
-export type DragSpecOperation = string | { [ModifierFlags: number]: string };
+export type DragSpecOperationType<T extends DragOperationWithType> =
+  | T
+  | { [ModifierFlags: number]: T };
 
 export interface DragSourceSpec<
   DragObject extends DragObjectWithType = DragObjectWithType,
+  DragSpecOperation extends DragSpecOperationType<DragOperationWithType> = DragSpecOperationType<
+    DragOperationWithType
+  >,
   DropResult = any,
   CollectedProps extends {} = {},
   Props extends {} = {}
@@ -165,7 +176,7 @@ export interface DragSourceMonitor extends HandlerManager {
   getDropResult(): any;
   didDrop(): boolean;
   getDragEvent(): DragEvent | undefined;
-  getOperation(): string | undefined;
+  getOperation(): DragOperationWithType | undefined;
 }
 
 export interface DropTargetMonitor extends HandlerManager {
@@ -180,5 +191,5 @@ export interface DropTargetMonitor extends HandlerManager {
   getDropResult(): any;
   didDrop(): boolean;
   getDragEvent(): DragEvent | undefined;
-  getOperation(): string | undefined;
+  getOperation(): DragOperationWithType | undefined;
 }

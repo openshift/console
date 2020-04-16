@@ -15,6 +15,7 @@ import {
   Identifier,
   DragEvent,
   DropTarget,
+  DragOperationWithType,
 } from './dnd-types';
 import { useDndManager } from './useDndManager';
 
@@ -78,7 +79,7 @@ export const useDndDrop = <
       getDragEvent: (): DragEvent | undefined => {
         return dndManager.getDragEvent();
       },
-      getOperation: (): string => {
+      getOperation: (): DragOperationWithType | undefined => {
         return dndManager.getOperation();
       },
       isCancelled: (): boolean => {

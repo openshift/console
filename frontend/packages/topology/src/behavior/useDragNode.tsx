@@ -4,7 +4,14 @@ import { observer } from 'mobx-react';
 import ElementContext from '../utils/ElementContext';
 import { EventListener, isNode, Node } from '../types';
 import { useDndDrag, WithDndDragProps, Modifiers } from './useDndDrag';
-import { DragSourceSpec, DragEvent, ConnectDragSource, DragObjectWithType } from './dnd-types';
+import {
+  DragSourceSpec,
+  DragEvent,
+  ConnectDragSource,
+  DragObjectWithType,
+  DragSpecOperationType,
+  DragOperationWithType,
+} from './dnd-types';
 import { useDndManager } from './useDndManager';
 
 export const DRAG_NODE_EVENT = 'drag_node';
@@ -16,7 +23,7 @@ export type DragNodeEventListener = EventListener<[Node, DragEvent, string]>;
 export const DRAG_MOVE_OPERATION = 'move.useDragNode';
 
 const defaultOperation = {
-  [Modifiers.DEFAULT]: DRAG_MOVE_OPERATION,
+  [Modifiers.DEFAULT]: { type: DRAG_MOVE_OPERATION },
 };
 
 export const useDragNode = <
@@ -25,7 +32,16 @@ export const useDragNode = <
   CollectedProps extends {} = {},
   Props extends {} = {}
 >(
-  spec?: Omit<DragSourceSpec<DragObject, DropResult, CollectedProps, Props>, 'item'> & {
+  spec?: Omit<
+    DragSourceSpec<
+      DragObject,
+      DragSpecOperationType<DragOperationWithType>,
+      DropResult,
+      CollectedProps,
+      Props
+    >,
+    'item'
+  > & {
     item?: DragObject;
   },
   props?: Props,
@@ -41,7 +57,7 @@ export const useDragNode = <
 
   return useDndDrag(
     React.useMemo(() => {
-      const sourceSpec: DragSourceSpec<any, any, any, Props> = {
+      const sourceSpec: DragSourceSpec<any, any, any, any, Props> = {
         item: (spec && spec.item) || { type: '#useDragNode#' },
         operation: (monitor, p) => {
           if (spec) {
@@ -147,7 +163,16 @@ export const withDragNode = <
   CollectedProps extends {} = {},
   Props extends {} = {}
 >(
-  spec?: Omit<DragSourceSpec<DragObject, DropResult, CollectedProps, Props>, 'item'> & {
+  spec?: Omit<
+    DragSourceSpec<
+      DragObject,
+      DragSpecOperationType<DragOperationWithType>,
+      DropResult,
+      CollectedProps,
+      Props
+    >,
+    'item'
+  > & {
     item?: DragObject;
   },
 ) => <P extends WithDragNodeProps & CollectedProps & Props>(

@@ -231,13 +231,13 @@ export const dndShiftRegroup = () => {
         canDrop: (item, monitor, props) => {
           return (
             item &&
-            monitor.getOperation() === 'regroup' &&
+            monitor.getOperation()?.type === 'regroup' &&
             !!props &&
             item.getParent() !== props.element
           );
         },
         collect: (monitor) => ({
-          droppable: monitor.isDragging() && monitor.getOperation() === 'regroup',
+          droppable: monitor.isDragging() && monitor.getOperation()?.type === 'regroup',
           hover: monitor.isOver(),
           canDrop: monitor.canDrop(),
         }),
@@ -247,7 +247,7 @@ export const dndShiftRegroup = () => {
       return withDragNode<DragObjectWithType, Node, {}, ElementProps>({
         item: { type: 'test' },
         operation: () => ({
-          [Modifiers.SHIFT]: 'regroup',
+          [Modifiers.SHIFT]: { type: 'regroup' },
         }),
         end: (dropResult, monitor, props) => {
           if (monitor.didDrop() && dropResult && props) {
