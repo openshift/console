@@ -109,6 +109,51 @@ export const ConditionModel: K8sKind = {
   color,
 };
 
+export const TriggerBindingModel: K8sKind = {
+  apiGroup: 'tekton.dev',
+  apiVersion: 'v1alpha1',
+  label: 'Trigger Binding',
+  plural: 'triggerbindings',
+  abbr: 'TB',
+  namespaced: true,
+  kind: 'TriggerBinding',
+  id: 'triggerbinding',
+  labelPlural: 'Trigger Bindings',
+  crd: true,
+  badge: BadgeType.DEV,
+  color,
+};
+
+export const ClusterTriggerBindingModel: K8sKind = {
+  apiGroup: 'tekton.dev',
+  apiVersion: 'v1alpha1',
+  label: 'Cluster Trigger Binding',
+  plural: 'clustertriggerbindings',
+  abbr: 'CTB',
+  namespaced: false,
+  kind: 'ClusterTriggerBinding',
+  id: 'clustertriggerbinding',
+  labelPlural: 'Cluster Trigger Bindings',
+  crd: true,
+  badge: BadgeType.DEV,
+  color,
+};
+
+export const TriggerTemplateModel: K8sKind = {
+  apiGroup: 'tekton.dev',
+  apiVersion: 'v1alpha1',
+  label: 'Trigger Template',
+  plural: 'triggertemplates',
+  abbr: 'TT',
+  namespaced: true,
+  kind: 'TriggerTemplate',
+  id: 'triggertemplate',
+  labelPlural: 'Trigger Templates',
+  crd: true,
+  badge: BadgeType.DEV,
+  color,
+};
+
 export const EventListenerModel: K8sKind = {
   apiGroup: 'tekton.dev',
   apiVersion: 'v1alpha1',

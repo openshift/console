@@ -95,7 +95,7 @@ export type KeyedRuns = { [key: string]: Runs };
 
 export interface Pipeline extends K8sResourceKind {
   latestRun?: PipelineRun;
-  spec?: {
+  spec: {
     params?: PipelineParam[];
     resources?: PipelineResource[];
     workspaces?: PipelineWorkspace[];

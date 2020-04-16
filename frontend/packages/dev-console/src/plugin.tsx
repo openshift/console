@@ -58,6 +58,9 @@ const {
   PipelineRunModel,
   TaskModel,
   TaskRunModel,
+  EventListenerModel,
+  TriggerTemplateModel,
+  TriggerBindingModel,
 } = models;
 
 type ConsumedExtensions =
@@ -365,6 +368,42 @@ const plugin: Plugin<ConsumedExtensions> = [
         (
           await import(
             './components/taskruns/TaskRunDetailsPage' /* webpackChunkName: "taskrun-details" */
+          )
+        ).default,
+    },
+  },
+  {
+    type: 'Page/Resource/Details',
+    properties: {
+      model: EventListenerModel,
+      loader: async () =>
+        (
+          await import(
+            './components/pipelines/EventListenerPage' /* webpackChunkName: "eventlistener-details" */
+          )
+        ).default,
+    },
+  },
+  {
+    type: 'Page/Resource/Details',
+    properties: {
+      model: TriggerTemplateModel,
+      loader: async () =>
+        (
+          await import(
+            './components/pipelines/TriggerTemplatePage' /* webpackChunkName: "trigger-template-details" */
+          )
+        ).default,
+    },
+  },
+  {
+    type: 'Page/Resource/Details',
+    properties: {
+      model: TriggerBindingModel,
+      loader: async () =>
+        (
+          await import(
+            './components/pipelines/TriggerBindingPage' /* webpackChunkName: "trigger-binding-details" */
           )
         ).default,
     },

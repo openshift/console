@@ -12,7 +12,7 @@ import {
 } from '@patternfly/react-core';
 import { InputField } from '@console/shared';
 import { ButtonBar } from '@console/internal/components/utils';
-import { K8sResourceKind } from '@console/internal/module/k8s';
+import { Pipeline } from '../../../utils/pipeline-augment';
 import { PipelineParameters, PipelineResources } from '../detail-page-tabs';
 import { UpdateOperationType } from './const';
 import { useResourceValidation } from './hooks';
@@ -33,7 +33,7 @@ import { applyChange } from './update-utils';
 import './PipelineBuilderForm.scss';
 
 type PipelineBuilderFormProps = FormikProps<FormikValues> & {
-  existingPipeline: K8sResourceKind;
+  existingPipeline: Pipeline;
   namespace: string;
 };
 
