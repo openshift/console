@@ -52,12 +52,13 @@ const StorageReviewFirehose: React.FC<StorageReviewFirehoseProps> = ({
 }) => {
   const headers = [
     { title: 'Name' },
-    { title: 'Interface' },
+    { title: 'Source' },
     { title: 'Size' },
+    { title: 'Interface' },
     { title: 'Storage Class' },
     { title: 'Access Mode' },
     { title: 'Volume Mode' },
-    { title: 'Source' },
+
   ];
 
   const pvcLookup = createLookup(persistentVolumeClaims, getName);
@@ -87,12 +88,13 @@ const StorageReviewFirehose: React.FC<StorageReviewFirehoseProps> = ({
   const rows = combinedDisks.map((combinedDisk) => {
     return [
       combinedDisk.getName(),
-      combinedDisk.getDiskInterface(),
+      combinedDisk.getSourceValue(),
       combinedDisk.getReadableSize(),
+      combinedDisk.getDiskInterface(),
       combinedDisk.getStorageClassName(),
       combinedDisk.getAccessModes()?.join(', '),
       combinedDisk.getVolumeMode()?.toString(),
-      combinedDisk.getSourceValue(),
+
     ];
   });
 
