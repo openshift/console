@@ -1,7 +1,6 @@
+import * as _ from 'lodash';
 import { execSync } from 'child_process';
 import { browser, element, by, $, $$, ExpectedConditions as until } from 'protractor';
-import { safeDump } from 'js-yaml';
-import { startCase, get, find, isUndefined } from 'lodash';
 import {
   appHost,
   checkErrors,
@@ -13,17 +12,21 @@ import {
 import * as crudView from '@console/internal-integration-tests/views/crud.view';
 import * as operatorView from '../views/operator.view';
 import { testCR, testCRD, testCSV } from '../mocks';
-import { inputValueFor } from '../views/descriptors.view';
+import {
+  ARRAY_FIELD_GROUP_ID,
+  atomicFields,
+  FIELD_GROUP_ID,
+  formFieldIsPresent,
+  formGroups,
+  getOperandFormField,
+  getOperandFormFieldGroup,
+  HIDDEN_FIELD_ID,
+  LABELS_FIELD_ID,
+  NAME_FIELD_ID,
+} from '../views/descriptors.view';
 
 describe('Using OLM descriptor components', () => {
   beforeAll(async () => {
-    /* eslint-disable no-console */
-    console.log('\nUsing ClusterServiceVersion:');
-    console.log(safeDump(testCSV));
-    console.log('\nUsing custom resource:');
-    console.log(safeDump(testCR));
-    /* eslint-enable no-console */
-
     create(testCRD);
     create(testCSV);
     create(testCR);
@@ -98,64 +101,69 @@ describe('Using OLM descriptor components', () => {
     await $$('[data-test-id=breadcrumb-link-1]').click();
     await browser.wait(until.visibilityOf(element(by.buttonText('Create App'))));
     await retry(() => element(by.buttonText('Create App')).click());
-    await browser.wait(until.presenceOf($('#metadata\\.name')));
-    expect($$('.co-create-operand__form-group').count()).not.toEqual(0);
+    await formFieldIsPresent(NAME_FIELD_ID);
+    expect(formGroups.count()).not.toEqual(0);
   });
 
-  it('pre-populates form values using sample operand from ClusterServiceVersion', async () => {
-    $$('.pf-c-accordion__toggle').each(async (toggleBtn) => {
-      const toggleBtnClasses = await toggleBtn.getAttribute('class');
-      if (!toggleBtnClasses.includes('pf-m-expanded')) {
-        await toggleBtn.click();
-      }
-    });
-    $$('.co-create-operand__form-group').each(async (input) => {
-      await browser
-        .actions()
-        .mouseMove(input)
-        .perform();
-
-      const label = await input.$('.form-label').getText();
-      const descriptor = testCSV.spec.customresourcedefinitions.owned[0].specDescriptors.find(
-        (d) => d.displayName === label,
-      );
-      if (isUndefined(descriptor)) {
-        const hasProperty = (properties) =>
-          find(properties, (_, nestedKey) => startCase(nestedKey) === label);
-        expect(
-          find(
-            testCRD.spec.validation.openAPIV3Schema.properties.spec.properties as any,
-            (p, k) => startCase(k) === label || hasProperty(p.properties),
-          ),
-        ).toBeDefined();
-      } else {
-        const helpText = await input
-          .$$('.help-block')
-          .last()
-          .getText();
-        expect(descriptor).toBeDefined();
-        expect(label).toEqual(descriptor.displayName);
-        expect(helpText).toEqual(descriptor.description);
-
-        if ((await inputValueFor(descriptor['x-descriptors'][0])(input)) !== null) {
-          const value = await inputValueFor(descriptor['x-descriptors'][0])(input);
-          expect(value).toEqual(get(testCR, ['spec', descriptor.path]));
-        }
-      }
+  // TODO implement tests for more descriptor based form fields and widgets as well as data syncing.
+  atomicFields.forEach(({ label, id, path }) => {
+    it(`pre-populates ${label} field`, async () => {
+      const field = getOperandFormField(id);
+      await field.element.isPresent();
+      expect(field.label.getText()).toEqual(label);
+      expect(field.input.getAttribute('value')).toEqual(_.get(testCR, path).toString());
     });
   });
 
-  it('renders groups of fields together from specDescriptors', async () => {
-    expect(element(by.id('specDescriptorFieldGroup')).isDisplayed()).toBe(true);
+  it('pre-populates Labels field', async () => {
+    const field = getOperandFormField(LABELS_FIELD_ID);
+    await field.element.isPresent();
+    expect(field.label.getText()).toEqual('Labels');
+    expect(field.element.element(by.css('.tag-item__content')).getText()).toEqual(
+      `automatedTestName=${testName}`,
+    );
   });
 
-  it('renders groups of fields together from nested properties in OpenAPI schema', async () => {
-    expect(element(by.id('fieldGroup')).isDisplayed()).toBe(true);
-    expect(element(by.id('hiddenFieldGroup')).isPresent()).toBe(false);
+  it('pre-populates Field Group', async () => {
+    const fieldGroup = getOperandFormFieldGroup(FIELD_GROUP_ID);
+    const item1 = getOperandFormField(`${FIELD_GROUP_ID}_itemOne`);
+    const item2 = getOperandFormField(`${FIELD_GROUP_ID}_itemTwo`);
+    await browser.wait(until.presenceOf(fieldGroup.toggleButton));
+    expect(fieldGroup.label.getText()).toEqual('Field Group');
+    await fieldGroup.toggleButton.click();
+    await browser.wait(until.and(until.presenceOf(item1.element), until.presenceOf(item2.element)));
+    expect(item1.label.getText()).toEqual('Item One');
+    expect(item1.input.getAttribute('value')).toEqual(testCR.spec.fieldGroup.itemOne);
+    expect(item2.label.getText()).toEqual('Item Two');
+    expect(item2.input.getAttribute('value')).toEqual(testCR.spec.fieldGroup.itemTwo.toString());
   });
 
-  it('prevents creation and displays validation errors for required or non-empty fields', async () => {
-    await element(by.id('spec.number')).sendKeys('4000');
+  it('pre-populates Array Field Group', async () => {
+    const fieldGroup = getOperandFormFieldGroup(ARRAY_FIELD_GROUP_ID);
+    const item1 = getOperandFormField(`${ARRAY_FIELD_GROUP_ID}_0_itemOne`);
+    const item2 = getOperandFormField(`${ARRAY_FIELD_GROUP_ID}_0_itemTwo`);
+    await browser.wait(
+      until.and(until.presenceOf(fieldGroup.label), until.presenceOf(fieldGroup.toggleButton)),
+    );
+    expect(fieldGroup.label.getText()).toEqual('Array Field Group');
+    await fieldGroup.toggleButton.click();
+    await browser.wait(until.and(until.presenceOf(item1.element), until.presenceOf(item2.element)));
+    expect(item1.label.getText()).toEqual('Item One');
+    expect(item1.input.getAttribute('value')).toEqual(testCR.spec.arrayFieldGroup[0].itemOne);
+    expect(item2.label.getText()).toEqual('Item Two');
+    expect(item2.input.getAttribute('value')).toEqual(
+      testCR.spec.arrayFieldGroup[0].itemTwo.toString(),
+    );
+  });
+
+  it('does not render hidden field group', () => {
+    const hiddenFieldGroup = getOperandFormFieldGroup(HIDDEN_FIELD_ID);
+    expect(hiddenFieldGroup.element.isPresent()).toBeFalsy();
+  });
+
+  // Disabled until client side validation is implemented for new create operand form
+  xit('prevents creation and displays validation errors for required or non-empty fields', async () => {
+    await element(by.id('root_number')).sendKeys('4000');
     await element(by.buttonText('Create')).click();
 
     expect($('.co-error').getText()).toContain('Must be less than 4');
@@ -174,13 +182,12 @@ describe('Using OLM descriptor components', () => {
 
   it('successfully creates operand using form', async () => {
     await browser.refresh();
-    await browser.wait(until.presenceOf($('#metadata\\.name')));
+    await formFieldIsPresent(NAME_FIELD_ID);
     await element(by.buttonText('Create')).click();
     await crudView.isLoaded();
     await browser.wait(until.elementToBeClickable(operatorView.operandLink(testCR.metadata.name)));
     await retry(() => operatorView.operandLink(testCR.metadata.name).click());
     await browser.wait(until.presenceOf($('.loading-box__loaded')), 5000);
-
     expect($('.co-operand-details__section--info').isDisplayed()).toBe(true);
   });
 });

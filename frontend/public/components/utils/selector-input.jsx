@@ -93,12 +93,14 @@ export class SelectorInput extends React.Component {
       spellCheck: 'false',
       value: inputValue,
       id: 'tags-input',
+      ...(this.props.inputProps || {}),
     };
 
     const renderTag = ({ tag, key, onRemove, getTagDisplayValue }) => {
       return (
         <span className={classNames('tag-item', this.props.labelClassName)} key={key}>
-          {getTagDisplayValue(tag)}&nbsp;
+          <span className="tag-item__content">{getTagDisplayValue(tag)}</span>
+          &nbsp;
           <a className="remove-button" onClick={() => onRemove(key)}>
             ×
           </a>

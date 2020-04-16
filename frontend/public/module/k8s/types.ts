@@ -60,9 +60,12 @@ export type K8sResourceCondition = {
   message?: string;
 };
 
-export type MatchExpression =
-  | { key: string; operator: 'Exists' | 'DoesNotExist' }
-  | { key: string; operator: 'In' | 'NotIn' | 'Equals' | 'NotEquals'; values: string[] };
+export type MatchExpression = {
+  key: string;
+  operator: 'Exists' | 'DoesNotExist' | 'In' | 'NotIn' | 'Equals' | 'NotEqual';
+  values?: string[];
+  value?: string;
+};
 
 export type MatchLabels = {
   [key: string]: string;
@@ -227,20 +230,18 @@ export type NodeAffinity = {
   };
 };
 
+export type PodAffinityTerm = {
+  labelSelector?: Selector;
+  namespaces?: string[];
+  topologyKey: string;
+};
+
 export type PodAffinity = {
   preferredDuringSchedulingIgnoredDuringExecution: {
-    podAffinityTerm: {
-      labelSelector?: Selector;
-      namespaces?: string[];
-      topologyKey: string;
-    };
+    podAffinityTerm: PodAffinityTerm;
     weight?: number;
   }[];
-  requiredDuringSchedulingIgnoredDuringExecution: {
-    labelSelector?: Selector;
-    namespaces?: string[];
-    topologyKey: string;
-  }[];
+  requiredDuringSchedulingIgnoredDuringExecution: PodAffinityTerm[];
 };
 
 export type ContainerSpec = {

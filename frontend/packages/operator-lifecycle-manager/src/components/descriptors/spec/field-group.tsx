@@ -1,7 +1,11 @@
 import * as React from 'react';
 import { ExpandableSection } from '@console/internal/components/utils/expandable-section';
 
-export const FieldGroup: React.FC<FieldGroupProps> = ({ groupName, defaultExpand, children }) => {
+export const FieldGroup: React.FC<FieldGroupProps> = ({
+  groupName,
+  defaultExpand = false,
+  children,
+}) => {
   const [expand, setExpand] = React.useState<boolean>(defaultExpand);
 
   const onExpandableSectionToggle = (event) => {
@@ -26,6 +30,6 @@ export const FieldGroup: React.FC<FieldGroupProps> = ({ groupName, defaultExpand
 FieldGroup.displayName = 'FieldGroup';
 
 export type FieldGroupProps = {
-  defaultExpand: boolean;
+  defaultExpand?: boolean;
   groupName: string;
 };

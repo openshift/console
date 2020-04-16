@@ -89,8 +89,11 @@ const plugin: Plugin<ConsumedExtensions> = [
         models.ClusterServiceVersionModel,
       )}/:appName/:plural/~new`,
       loader: async () =>
-        (await import('./components/create-operand' /* webpackChunkName: "create-operand" */))
-          .CreateOperandPage,
+        (
+          await import(
+            './components/operand/create-operand' /* webpackChunkName: "create-operand" */
+          )
+        ).CreateOperandPage,
     },
   },
   {
@@ -99,8 +102,11 @@ const plugin: Plugin<ConsumedExtensions> = [
       exact: true,
       path: `/k8s/ns/:ns/${models.ClusterServiceVersionModel.plural}/:appName/:plural/~new`,
       loader: async () =>
-        (await import('./components/create-operand' /* webpackChunkName: "create-operand" */))
-          .CreateOperandPage,
+        (
+          await import(
+            './components/operand/create-operand' /* webpackChunkName: "create-operand" */
+          )
+        ).CreateOperandPage,
     },
   },
   {
@@ -173,8 +179,11 @@ const plugin: Plugin<ConsumedExtensions> = [
       exact: true,
       path: `/k8s/ns/:ns/${models.ClusterServiceVersionModel.plural}/:appName/:plural/~new`,
       loader: async () =>
-        (await import('./components/create-operand' /* webpackChunkName: "create-operand" */))
-          .CreateOperandPage,
+        (
+          await import(
+            './components/operand/create-operand' /* webpackChunkName: "create-operand" */
+          )
+        ).CreateOperandPage,
     },
   },
   {

@@ -1,23 +1,25 @@
 import * as React from 'react';
 import { shallow, ShallowWrapper } from 'enzyme';
 import * as _ from 'lodash';
+import { safeDump } from 'js-yaml';
 import { Alert, Button } from '@patternfly/react-core';
 import { Firehose } from '@console/internal/components/utils/firehose';
 import * as k8s from '@console/internal/module/k8s';
 import { CustomResourceDefinitionModel } from '@console/internal/models';
 import { CreateYAML } from '@console/internal/components/create-yaml';
 import { BreadCrumbs } from '@console/internal/components/utils';
-import { testClusterServiceVersion, testResourceInstance, testModel, testCRD } from '../../mocks';
-import { ClusterServiceVersionModel } from '../models';
-import { CreateOperandForm, CreateOperandFormProps } from './create-operand-form';
 import {
-  CreateOperandPage,
-  CreateOperandYAML,
-  CreateOperandYAMLProps,
-  CreateOperand,
-  CreateOperandProps,
-} from './create-operand';
-import { referenceForProvidedAPI } from '.';
+  testClusterServiceVersion,
+  testResourceInstance,
+  testModel,
+  testCRD,
+} from '../../../mocks';
+import { ClusterServiceVersionModel } from '../../models';
+import { CreateOperandPage, CreateOperand, CreateOperandProps } from './create-operand';
+import { OperandYAML, OperandYAMLProps } from './operand-yaml';
+import { OperandForm, OperandFormProps } from './operand-form';
+import { referenceForProvidedAPI } from '..';
+import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
 
 import Spy = jasmine.Spy;
 
@@ -35,8 +37,9 @@ xdescribe('[https://issues.redhat.com/browse/CONSOLE-2137] CreateOperand', () =>
     };
     wrapper = shallow(
       <CreateOperand
+        initialEditorType={EditorType.YAML}
         activePerspective={activePerspective}
-        operandModel={testModel}
+        model={testModel}
         clusterServiceVersion={{ data: testClusterServiceVersion, loaded: true, loadError: null }}
         customResourceDefinition={{ data: testCRD, loaded: true, loadError: null }}
         loaded
@@ -62,16 +65,17 @@ xdescribe('[https://issues.redhat.com/browse/CONSOLE-2137] CreateOperand', () =>
         .childAt(0)
         .text(),
     ).toEqual('Edit Form');
-    expect(wrapper.find(CreateOperandYAML).exists()).toBe(true);
-    expect(wrapper.find(CreateOperandForm).exists()).toBe(false);
+    expect(wrapper.find(OperandYAML).exists()).toBe(true);
+    expect(wrapper.find(OperandForm).exists()).toBe(false);
   });
 
-  it('passes buffer object to YAML editor', () => {
+  it('passes correct YAML to YAML editor', () => {
     const data = _.cloneDeep(testClusterServiceVersion);
+    const testResourceInstanceYAML = safeDump(testResourceInstance);
     data.metadata.annotations = { 'alm-examples': JSON.stringify([testResourceInstance]) };
     wrapper = wrapper.setProps({ clusterServiceVersion: { data, loaded: true, loadError: null } });
 
-    expect(wrapper.find(CreateOperandYAML).props().buffer).toEqual(testResourceInstance);
+    expect(wrapper.find(OperandYAML).props().initialYAML).toEqual(testResourceInstanceYAML);
   });
 
   it('switches to form component when button is clicked', () => {
@@ -83,8 +87,8 @@ xdescribe('[https://issues.redhat.com/browse/CONSOLE-2137] CreateOperand', () =>
         .childAt(0)
         .text(),
     ).toEqual('Edit YAML');
-    expect(wrapper.find(CreateOperandYAML).exists()).toBe(false);
-    expect(wrapper.find(CreateOperandForm).exists()).toBe(true);
+    expect(wrapper.find(OperandYAML).exists()).toBe(false);
+    expect(wrapper.find(OperandForm).exists()).toBe(true);
   });
 });
 
@@ -97,9 +101,7 @@ describe('CreateOperandPage', () => {
   };
 
   it('renders a <Firehose> for the correct resources', () => {
-    const wrapper = shallow(
-      <CreateOperandPage.WrappedComponent match={match} operandModel={testModel} />,
-    );
+    const wrapper = shallow(<CreateOperandPage.WrappedComponent match={match} model={testModel} />);
 
     expect(wrapper.find(Firehose).props().resources).toEqual([
       {
@@ -121,7 +123,7 @@ describe('CreateOperandPage', () => {
 });
 
 xdescribe('[https://issues.redhat.com/browse/CONSOLE-2136] CreateOperandForm', () => {
-  let wrapper: ShallowWrapper<CreateOperandFormProps>;
+  let wrapper: ShallowWrapper<OperandFormProps>;
 
   const spyAndExpect = (spy: Spy) => (returnValue: any) =>
     new Promise((resolve) =>
@@ -133,13 +135,12 @@ xdescribe('[https://issues.redhat.com/browse/CONSOLE-2136] CreateOperandForm', (
 
   beforeEach(() => {
     wrapper = shallow(
-      <CreateOperandForm
-        activePerspective={activePerspective}
-        namespace="default"
-        operandModel={testModel}
+      <OperandForm
+        match={{ params: { ns: 'default' } }}
+        model={testModel}
         providedAPI={testClusterServiceVersion.spec.customresourcedefinitions.owned[0]}
-        clusterServiceVersion={testClusterServiceVersion}
-        openAPI={testCRD.spec.validation.openAPIV3Schema as k8s.SwaggerDefinition}
+        csv={testClusterServiceVersion}
+        schema={testCRD.spec.validation.openAPIV3Schema}
       />,
     );
   });
@@ -153,7 +154,7 @@ xdescribe('[https://issues.redhat.com/browse/CONSOLE-2136] CreateOperandForm', (
   });
 
   it('renders input component for each field', () => {
-    wrapper.find('.co-create-operand__form-group').forEach((formGroup) => {
+    wrapper.find('.co-dynamic-form__form-group').forEach((formGroup) => {
       const descriptor = testClusterServiceVersion.spec.customresourcedefinitions.owned[0].specDescriptors.find(
         (d) => d.displayName === formGroup.find('.form-label').text(),
       );
@@ -204,16 +205,12 @@ xdescribe('[https://issues.redhat.com/browse/CONSOLE-2136] CreateOperandForm', (
   });
 });
 
-describe(CreateOperandYAML.displayName, () => {
-  let wrapper: ShallowWrapper<CreateOperandYAMLProps>;
+describe(OperandYAML.displayName, () => {
+  let wrapper: ShallowWrapper<OperandYAMLProps>;
 
   beforeEach(() => {
     wrapper = shallow(
-      <CreateOperandYAML
-        activePerspective={activePerspective}
-        operandModel={testModel}
-        providedAPI={testClusterServiceVersion.spec.customresourcedefinitions.owned[0]}
-        clusterServiceVersion={testClusterServiceVersion}
+      <OperandYAML
         match={{
           isExact: true,
           url: '',

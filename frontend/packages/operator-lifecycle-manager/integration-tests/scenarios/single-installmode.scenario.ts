@@ -15,6 +15,7 @@ import * as sidenavView from '@console/internal-integration-tests/views/sidenav.
 import * as operatorView from '../views/operator.view';
 import * as operatorHubView from '../views/operator-hub.view';
 import { click } from '@console/shared/src/test-utils/utils';
+import { NAME_FIELD_ID, formFieldIsPresent } from '../views/descriptors.view';
 
 describe('Interacting with a `OwnNamespace` install mode Operator (Prometheus)', () => {
   const prometheusResources = new Set(['StatefulSet', 'Pod']);
@@ -171,7 +172,7 @@ describe('Interacting with a `OwnNamespace` install mode Operator (Prometheus)',
       .first()
       .element(by.buttonText('Prometheus'))
       .click();
-    await browser.wait(until.presenceOf($('#metadata\\.name')));
+    await formFieldIsPresent(NAME_FIELD_ID);
 
     expect($('.co-create-operand__header').getText()).toContain('Create Prometheus');
   });

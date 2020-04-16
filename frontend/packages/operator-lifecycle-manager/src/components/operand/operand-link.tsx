@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Link } from 'react-router-dom';
 import { referenceForModel, K8sResourceKind, referenceFor } from '@console/internal/module/k8s';
 import { ResourceIcon } from '@console/internal/components/utils';
-import { ClusterServiceVersionModel } from '../models';
+import { ClusterServiceVersionModel } from '../../models';
 
 export const OperandLink: React.SFC<OperandLinkProps> = (props) => {
   const { namespace, name } = props.obj.metadata;

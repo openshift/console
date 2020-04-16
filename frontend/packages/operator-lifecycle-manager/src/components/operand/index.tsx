@@ -48,16 +48,16 @@ import {
 import { deleteModal } from '@console/internal/components/modals';
 import { RootState } from '@console/internal/redux';
 import * as plugins from '@console/internal/plugins';
-import { ClusterServiceVersionModel } from '../models';
-import { ClusterServiceVersionKind } from '../types';
-import { isInternalObject, getInternalAPIReferences, getInternalObjects } from '../utils';
-import { StatusDescriptor } from './descriptors/status';
-import { SpecDescriptor } from './descriptors/spec';
-import { StatusCapability, Descriptor } from './descriptors/types';
-import { Resources } from './k8s-resource';
-import { referenceForProvidedAPI } from './index';
+import { ClusterServiceVersionModel } from '../../models';
+import { ClusterServiceVersionKind } from '../../types';
+import { isInternalObject, getInternalAPIReferences, getInternalObjects } from '../../utils';
+import { StatusDescriptor } from '../descriptors/status';
+import { SpecDescriptor } from '../descriptors/spec';
+import { StatusCapability, Descriptor } from '../descriptors/types';
+import { Resources } from '../k8s-resource';
+import { referenceForProvidedAPI } from '../index';
 import { OperandLink } from './operand-link';
-import { FlagsObject, connectToFlags, WithFlagsProps } from '@console/internal/reducers/features';
+import { FlagsObject, WithFlagsProps, connectToFlags } from '@console/internal/reducers/features';
 
 const csvName = () =>
   window.location.pathname

@@ -113,7 +113,7 @@
     "react-dom": "^16.9.0",
     "react-draggable": "4.x",
     "react-helmet": "^5.2.1",
-    "react-jsonschema-form": "^1.0.4",
+    "react-jsonschema-form": "1.7.0",
     "react-lazyload": "^2.6.2",
     "react-linkify": "^0.2.2",
     "react-measure": "^2.2.6",
