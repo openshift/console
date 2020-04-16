@@ -19,7 +19,7 @@ import { getName } from '@console/shared';
 import { OCSServiceModel } from '../../../models';
 import { OSD_CAPACITY_SIZES } from '../../../utils/osd-size-dropdown';
 import { CEPH_STORAGE_NAMESPACE } from '../../../constants';
-import { labelTooltip } from '../../../constants/ocs-install';
+import { labelTooltip, storageClassTooltip } from '../../../constants/ocs-install';
 import { CAPACITY_USAGE_QUERIES, StorageDashboardQuery } from '../../../constants/queries';
 import { OCSStorageClassDropdown } from '../storage-class-dropdown';
 import './_add-capacity-modal.scss';
@@ -92,6 +92,10 @@ export const AddCapacityModal = withHandlePromise((props: AddCapacityModalProps)
         Adding capacity for <strong>{getName(ocsConfig)}</strong>, may increase your cloud expenses.
         <div className="ceph-add-capacity__modal">
           <div className="ceph-add-capacity_sc-dropdown">
+            <label className="control-label" htmlFor="storageClass">
+              Storage Class
+              <FieldLevelHelp>{storageClassTooltip}</FieldLevelHelp>
+            </label>
             <OCSStorageClassDropdown onChange={setStorageClass} defaultClass={storageClass} />
           </div>
           <label className="control-label" htmlFor="requestSize">

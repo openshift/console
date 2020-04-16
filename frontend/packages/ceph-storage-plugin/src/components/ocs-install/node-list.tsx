@@ -1,57 +1,20 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import * as classNames from 'classnames';
-import { connect } from 'react-redux';
-import {
-  Table,
-  TableHeader,
-  TableBody,
-  TableVariant,
-  TableGridBreakpoint,
-} from '@patternfly/react-table';
 import {
   getName,
   getNodeRoles,
   getNodeCPUCapacity,
   getNodeAllocatableMemory,
+  hasLabel,
 } from '@console/shared';
-import { ActionGroup, Button } from '@patternfly/react-core';
-import { tableFilters } from '@console/internal/components/factory/table-filters';
-import { ButtonBar } from '@console/internal/components/utils/button-bar';
-import { history } from '@console/internal/components/utils/router';
-import {
-  convertToBaseValue,
-  FieldLevelHelp,
-  humanizeCpuCores,
-  humanizeBinaryBytes,
-  ResourceLink,
-} from '@console/internal/components/utils/';
-import {
-  k8sCreate,
-  k8sPatch,
-  K8sResourceKind,
-  NodeKind,
-  referenceForModel,
-  Taint,
-} from '@console/internal/module/k8s';
-import { NodeModel } from '@console/internal/models';
-import { OCSServiceModel } from '../../models';
-import {
-  minSelectedNode,
-  labelTooltip,
-  ocsRequestData,
-  ocsTaint,
-} from '../../constants/ocs-install';
+import { humanizeCpuCores, ResourceLink, pluralize } from '@console/internal/components/utils/';
+import { NodeKind } from '@console/internal/module/k8s';
+import { Table } from '@console/internal/components/factory';
+import { IRow, OnSelect } from '@patternfly/react-table';
+import { hasOCSTaint, hasTaints, getConvertedUnits } from '../../utils/install';
+import { cephStorageLabel } from '../../selectors';
 import './ocs-install.scss';
-import { OSDSizeDropdown } from '../../utils/osd-size-dropdown';
-import { hasLabel } from '../../../../console-shared/src/selectors/common';
-import { OCSStorageClassDropdown } from '../modals/storage-class-dropdown';
-
-const ocsLabel = 'cluster.ocs.openshift.io/openshift-storage';
-
-const getConvertedUnits = (value: string) => {
-  return humanizeBinaryBytes(convertToBaseValue(value)).string || '-';
-};
 
 const tableColumnClasses = [
   classNames('col-md-1', 'col-sm-1', 'col-xs-1'),
@@ -87,302 +50,126 @@ const getColumns = () => {
   ];
 };
 
-const hasTaints = (node: NodeKind) => {
-  return !_.isEmpty(node.spec.taints);
-};
+const getSelected = (selected: NodeKind[], nodeUID: string) =>
+  selected.map((node) => node.metadata.uid).includes(nodeUID);
 
-const hasOCSTaint = (node: NodeKind) => {
-  const taints: Taint[] = node.spec.taints || [];
-  return taints.some((taint: Taint) => _.isEqual(taint, ocsTaint));
-};
-
-// return an empty array when there is no data
-const getRows = (nodes: NodeKind[]) => {
-  return nodes
-    .filter((node) => hasOCSTaint(node) || !hasTaints(node))
-    .map((node) => {
-      const roles = getNodeRoles(node).sort();
-      const cpuCapacity: string = getNodeCPUCapacity(node);
-      const allocatableMemory: string = getNodeAllocatableMemory(node);
-      const cells = [
-        {
-          title: <ResourceLink kind="Node" name={node.metadata.name} title={node.metadata.uid} />,
-        },
-        {
-          title: roles.join(', ') || '-',
-        },
-        {
-          title: _.get(node.metadata.labels, 'failure-domain.beta.kubernetes.io/zone') || '-',
-        },
-        {
-          title: `${humanizeCpuCores(cpuCapacity).string || '-'}`,
-        },
-        {
-          title: `${getConvertedUnits(allocatableMemory)}`,
-        },
-      ];
-      const obj = {
-        cells,
-        selected: false,
-        id: node.metadata.name,
-        metadata: _.clone(node.metadata),
-        spec: _.clone(node.spec),
-        cpuCapacity,
-        allocatableMemory,
-      };
-
-      return obj;
-    });
-};
-
-const getFilteredRows = (filters: {}, objects: any[]) => {
-  if (_.isEmpty(filters)) {
-    return objects;
-  }
-
-  let filteredObjects = objects;
-  _.each(filters, (value, name) => {
-    const filter = tableFilters[name];
-    if (_.isFunction(filter)) {
-      filteredObjects = _.filter(filteredObjects, (o) => filter(value, o));
-    }
-  });
-
-  return filteredObjects;
-};
-
-const getPreSelectedNodes = (nodes: formattedNodeType[]) => {
-  return nodes.map((node) => ({
-    ...node,
-    selected: _.has(node, ['metadata', 'labels', ocsLabel]),
-  }));
-};
-
-const stateToProps = (obj, { data = [], filters = {}, staticFilters = [{}] }) => {
-  const allFilters = staticFilters ? Object.assign({}, filters, ...staticFilters) : filters;
-  const newData = getFilteredRows(allFilters, data);
-  return {
-    data: newData,
-    unfilteredData: data,
-    isFiltered: !!_.get(filters, 'name'),
+type GetRows = ({
+  componentProps,
+  customData,
+}: {
+  componentProps: { data: NodeKind[] };
+  customData: {
+    selectedNodes: NodeKind[];
+    setSelectedNodes: React.Dispatch<React.SetStateAction<NodeKind[]>>;
+    visibleRows: NodeKind[];
+    setVisibleRows: React.Dispatch<React.SetStateAction<NodeKind[]>>;
   };
-};
-const CustomNodeTable: React.FC<CustomNodeTableProps> = ({
-  data,
-  unfilteredData,
-  isFiltered,
-  loaded,
-  ocsProps,
-}) => {
-  const columns = getColumns();
-  const [osdSize, setOsdSize] = React.useState('2Ti');
-  const [nodes, setNodes] = React.useState([]);
-  const [unfilteredNodes, setUnfilteredNodes] = React.useState([]);
-  const [error, setError] = React.useState('');
-  const [inProgress, setProgress] = React.useState(false);
-  const [selectedNodesCnt, setSelectedNodesCnt] = React.useState(0);
-  const [storageClass, setStorageClass] = React.useState(null);
+}) => NodeTableRow[];
 
-  // pre-selection of nodes
-  if (loaded && !unfilteredNodes.length) {
-    const formattedNodes: formattedNodeType[] = getRows(unfilteredData);
-    const preSelectedNodes = getPreSelectedNodes(formattedNodes);
-    setUnfilteredNodes(preSelectedNodes);
-    setNodes(preSelectedNodes);
-  }
+const getRows: GetRows = ({ componentProps, customData }) => {
+  const { data } = componentProps;
+  const { selectedNodes, setSelectedNodes, setVisibleRows, visibleRows } = customData;
 
-  React.useEffect(() => {
-    const selectedNodes = _.filter(unfilteredNodes, 'selected');
-    setSelectedNodesCnt(selectedNodes.length);
-  }, [nodes, unfilteredNodes]);
+  const filteredData = data.filter((node: NodeKind) => hasOCSTaint(node) || !hasTaints(node));
 
-  React.useEffect(() => {
-    if (isFiltered || nodes.length !== data.length) {
-      const unfilteredNodesByID = _.keyBy(unfilteredNodes, 'metadata.name');
-      const filterData = _.each(getRows(data), (n) => {
-        n.selected = _.get(unfilteredNodesByID, [n.id, 'selected'], false);
-      });
-      setNodes(filterData);
-    }
-  }, [data, isFiltered, nodes.length, unfilteredNodes]);
-  const onSelect = (
-    event: React.MouseEvent<HTMLButtonElement>,
-    isSelected: boolean,
-    index: number,
-  ) => {
-    event.stopPropagation();
-    let formattedNodes;
-    if (index === -1) {
-      formattedNodes = nodes.map((node) => {
-        node.selected = isSelected;
-        return node;
-      });
-    } else {
-      formattedNodes = [...nodes];
-      formattedNodes[index].selected = isSelected;
-    }
-    setNodes(formattedNodes);
-    const nodesByID = _.keyBy(nodes, 'id');
-    const setSelectedUnfilteredNodes = _.each(unfilteredNodes, (n) => {
-      if (_.get(nodesByID, [n.id, 'id']) === n.metadata.name) {
-        n.selected = _.get(nodesByID, [getName(n), 'selected'], false);
-      }
-    });
-    setUnfilteredNodes(setSelectedUnfilteredNodes);
-  };
-
-  const makeLabelNodesRequest = (selectedNodes: NodeKind[]): Promise<NodeKind>[] => {
-    const patch = [
+  const rows = filteredData.map((node: NodeKind) => {
+    const roles = getNodeRoles(node).sort();
+    const cpuSpec: string = getNodeCPUCapacity(node);
+    const memSpec: string = getNodeAllocatableMemory(node);
+    const cells: IRow['cells'] = [
       {
-        op: 'add',
-        path: '/metadata/labels/cluster.ocs.openshift.io~1openshift-storage',
-        value: '',
+        title: <ResourceLink kind="Node" name={getName(node)} title={node.metadata.uid} />,
+      },
+      {
+        title: roles.join(', ') || '-',
+      },
+      {
+        title: node.metadata.labels?.['failure-domain.beta.kubernetes.io/zone'] || '-',
+      },
+      {
+        title: `${humanizeCpuCores(cpuSpec).string || '-'}`,
+      },
+      {
+        title: `${getConvertedUnits(memSpec)}`,
       },
     ];
-    return _.reduce(
-      selectedNodes,
-      (accumulator, node) => {
-        return hasLabel(node, ocsLabel)
-          ? accumulator
-          : [...accumulator, k8sPatch(NodeModel, node, patch)];
+    return {
+      cells,
+      selected: _.isArray(selectedNodes)
+        ? getSelected(selectedNodes, node.metadata.uid)
+        : hasLabel(node, cephStorageLabel),
+      props: {
+        id: node.metadata.uid,
       },
-      [],
-    );
-  };
+    };
+  });
 
-  // tainting the selected nodes
-  // const makeTaintNodesRequest = (selectedNode: NodeKind[]): Promise<NodeKind>[] => {
-  //   const taintNodesRequest = selectedNode
-  //     .filter((node: NodeKind) => {
-  //       const roles = getNodeRoles(node);
-  //       // don't taint master nodes as its already tainted
-  //       return roles.indexOf('master') === -1;
-  //     })
-  //     .map((node) => {
-  //       const taints = node.spec && node.spec.taints ? [...node.spec.taints, taintObj] : [taintObj];
-  //       const patch = [
-  //         {
-  //           value: taints,
-  //           path: '/spec/taints',
-  //           op: node.spec.taints ? 'replace' : 'add',
-  //         },
-  //       ];
-  //       return k8sPatch(NodeModel, node, patch);
-  //     });
+  if (!_.isEqual(filteredData, visibleRows)) {
+    setVisibleRows(filteredData);
+    if (!selectedNodes && filteredData.length) {
+      const preSelected = filteredData.filter((row) => hasLabel(row, cephStorageLabel));
+      setSelectedNodes(preSelected);
+    }
+  }
+  return rows;
+};
 
-  //   return taintNodesRequest;
-  // };
+const NodeTable: React.FC<NodeTableProps> = (props) => {
+  const { selectedNodes, setSelectedNodes, visibleRows } = props.customData;
 
-  const makeOCSRequest = () => {
-    const selectedData: NodeKind[] = _.filter(nodes, 'selected');
-    const promises = makeLabelNodesRequest(selectedData);
-    // intentionally keeping the taint logic as its required in 4.3 and will be handled with checkbox selection
-    // promises.push(...makeTaintNodesRequest(selectedData));
-
-    const ocsObj = _.cloneDeep(ocsRequestData);
-    ocsObj.spec.storageDeviceSets[0].dataPVCTemplate.spec.storageClassName = storageClass;
-    ocsObj.spec.storageDeviceSets[0].dataPVCTemplate.spec.resources.requests.storage = osdSize;
-
-    Promise.all(promises)
-      .then(() => {
-        return k8sCreate(OCSServiceModel, ocsObj);
-      })
-      .then(() => {
-        history.push(
-          `/k8s/ns/${ocsProps.namespace}/clusterserviceversions/${
-            ocsProps.clusterServiceVersion.metadata.name
-          }/${referenceForModel(OCSServiceModel)}/${ocsObj.metadata.name}`,
-        );
-      })
-      .catch((err) => {
-        setProgress(false);
-        setError(err.message);
-      });
-  };
-
-  const submit = (event: React.MouseEvent<HTMLButtonElement>) => {
-    event.preventDefault();
-    setProgress(true);
-    setError('');
-    makeOCSRequest();
+  const onSelect: OnSelect = (_event, isSelected, rowIndex, rowData) => {
+    const selectedUIDs = selectedNodes?.map((node) => node.metadata.uid) ?? [];
+    const visibleUIDs = visibleRows?.map((row) => row.metadata.uid);
+    if (rowIndex === -1) {
+      if (isSelected) {
+        const uniqueUIDs = _.uniq([...visibleUIDs, ...selectedUIDs]);
+        setSelectedNodes(visibleRows.filter((node) => uniqueUIDs.includes(node.metadata.uid)));
+      } else {
+        const uniqueUIDs = _.xor(visibleUIDs, selectedUIDs);
+        setSelectedNodes(visibleRows.filter((node) => uniqueUIDs.includes(node.metadata.uid)));
+      }
+    } else {
+      const uniqueUIDs = _.xor(selectedUIDs, [rowData.props.id]);
+      setSelectedNodes(visibleRows.filter((node) => uniqueUIDs.includes(node.metadata.uid)));
+    }
   };
 
   return (
     <>
       <div className="ceph-node-list__max-height">
         <Table
-          aria-label="node list table"
+          aria-label="Node Table"
+          {...props}
+          Rows={getRows}
+          Header={getColumns}
+          virtualize={false}
           onSelect={onSelect}
-          cells={columns}
-          rows={nodes}
-          variant={TableVariant.compact}
-          gridBreakPoint={TableGridBreakpoint.none}
-        >
-          <TableHeader />
-          <TableBody />
-        </Table>
-      </div>
-      <p className="control-label help-block" id="nodes-selected">
-        {selectedNodesCnt} node(s) selected
-      </p>
-      <div className="ceph-ocs-install__ocs-service-capacity--dropdown">
-        <OCSStorageClassDropdown onChange={setStorageClass} />
-      </div>
-      <div className="ceph-ocs-install__ocs-service-capacity">
-        <label className="control-label" htmlFor="ocs-service-stoargeclass">
-          OCS Service Capacity
-          <FieldLevelHelp>{labelTooltip}</FieldLevelHelp>
-        </label>
-        <OSDSizeDropdown
-          className="ceph-ocs-install__ocs-service-capacity--dropdown"
-          selectedKey={osdSize}
-          onChange={setOsdSize}
         />
       </div>
-      <ButtonBar errorMessage={error} inProgress={inProgress}>
-        <ActionGroup className="pf-c-form">
-          <Button
-            type="button"
-            variant="primary"
-            onClick={submit}
-            isDisabled={selectedNodesCnt < minSelectedNode}
-          >
-            Create
-          </Button>
-          <Button type="button" variant="secondary" onClick={history.goBack}>
-            Cancel
-          </Button>
-        </ActionGroup>
-      </ButtonBar>
+      <p className="control-label help-block" data-test-id="nodes-selected">
+        {`${pluralize(selectedNodes?.length || 0, 'node')} selected`}
+      </p>
     </>
   );
 };
 
-export const NodeList = connect<{}, CustomNodeTableProps>(stateToProps)(CustomNodeTable);
+export default NodeTable;
 
-type CustomNodeTableProps = {
+type NodeTableProps = {
   data: NodeKind[];
-  unfilteredData: UnfilteredDataType[];
-  loaded: boolean;
-  ocsProps: ocsPropsType;
-  isFiltered: boolean;
+  customData: {
+    selectedNodes: NodeKind[];
+    setSelectedNodes: React.Dispatch<React.SetStateAction<NodeKind[]>>;
+    visibleRows: NodeKind[];
+    setVisibleRows: React.Dispatch<React.SetStateAction<NodeKind[]>>;
+  };
+  filters: { name: string; label: { all: string[] } };
 };
 
-type ocsPropsType = {
-  namespace: string;
-  clusterServiceVersion: K8sResourceKind;
-};
-
-type UnfilteredDataType = NodeKind & {
+type NodeTableRow = {
+  cells: IRow['cells'];
+  props: {
+    id: string;
+  };
   selected: boolean;
-};
-
-type formattedNodeType = {
-  cells: any[];
-  selected: boolean;
-  id: string;
-  metadata: {};
-  spec: {};
-  cpuCapacity: string;
-  allocatableMemory: string;
 };
