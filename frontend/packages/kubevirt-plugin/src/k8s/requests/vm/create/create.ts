@@ -25,7 +25,7 @@ import { ImporterResult, OnVMCreate } from '../types';
 import { importV2VVMwareVm } from '../../v2v/import/import-v2vvmware';
 import { getImportProvidersFieldValue } from '../../../../components/create-vm-wizard/selectors/import-providers';
 import { importV2VOvirtVm } from '../../v2v/import/import-ovirt';
-import { getOS } from "../../../../components/create-vm-wizard/selectors/common";
+import { getOS } from '../../../../components/create-vm-wizard/selectors/combined';
 
 export const getInitializedVMTemplate = (params: CreateVMParams) => {
   const { vmSettings, iCommonTemplates, iUserTemplates } = params;

@@ -8,7 +8,6 @@ import { VMSettingsField, VMWizardProps } from '../../types';
 import { FormFieldReviewMemoRow } from '../../form/form-field-review-row';
 import { FormFieldType } from '../../form/form-field';
 import { iGetCommonData, iGetLoadedCommonData } from '../../selectors/immutable/selectors';
-import { getOS } from '../../selectors/common';
 import { getFieldValue } from '../../selectors/vm-settings';
 import { iGetRelevantTemplate } from '../../../../selectors/immutable/template/combined';
 import { toShallowJS } from '../../../../utils/immutable';
@@ -17,6 +16,7 @@ import { CUSTOM_FLAVOR } from '../../../../constants/vm';
 import { iGetFieldValue } from '../../selectors/immutable/field';
 import { getField } from './utils';
 import { VMSettings } from '../../redux/initial-state/types';
+import { getOS } from '../../selectors/combined';
 
 import './review-tab.scss';
 
