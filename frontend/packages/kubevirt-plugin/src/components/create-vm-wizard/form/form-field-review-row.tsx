@@ -3,6 +3,7 @@ import { getFieldTitle } from '../utils/renderable-field-utils';
 import { iGet } from '../../../utils/immutable';
 import { FormFieldType } from './form-field';
 import { getReviewValue } from '../tabs/review-tab/utils';
+import { EMPTY_MESSAGE } from '../../../utils/strings';
 
 import './form-field-review-row.scss';
 
@@ -18,11 +19,7 @@ export const FormFieldReviewRow: React.FC<FormFieldReviewRowProps> = ({
   value = undefined,
 }) => {
   const fieldKey = iGet(field, 'key');
-  const reviewValue = value || getReviewValue(field, fieldType);
-
-  if (!reviewValue) {
-    return null;
-  }
+  const reviewValue = value || getReviewValue(field, fieldType) || EMPTY_MESSAGE;
 
   return (
     <>
