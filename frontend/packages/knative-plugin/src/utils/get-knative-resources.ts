@@ -2,18 +2,7 @@ import * as _ from 'lodash';
 import { K8sResourceKind, PodKind, referenceForModel } from '@console/internal/module/k8s';
 import { FirehoseResource } from '@console/internal/components/utils';
 import { KNATIVE_SERVING_LABEL } from '../const';
-import {
-  ServiceModel,
-  RevisionModel,
-  ConfigurationModel,
-  RouteModel,
-  EventSourceCronJobModel,
-  EventSourceContainerModel,
-  EventSourceApiServerModel,
-  EventSourceCamelModel,
-  EventSourceKafkaModel,
-  EventSourceSinkBindingModel,
-} from '../models';
+import { ServiceModel, RevisionModel, ConfigurationModel, RouteModel } from '../models';
 
 export type KnativeItem = {
   revisions?: K8sResourceKind[];
@@ -76,61 +65,6 @@ export const getKnativeServingServices = (dc: K8sResourceKind, props): KnativeIt
   return ksservices && ksservices.length > 0 ? { ksservices } : undefined;
 };
 
-const getEventSourceResource = (
-  dc: K8sResourceKind,
-  { data }: K8sResourceKind,
-): K8sResourceKind[] => {
-  const ownerUid = _.get(dc, ['metadata', 'ownerReferences', '0', 'uid'], null);
-  const eventSourceResources = _.filter(data, (config: K8sResourceKind) => {
-    return ownerUid === _.get(config, ['metadata', 'uid']);
-  });
-  return eventSourceResources;
-};
-
-export const getEventSourceCronjob = (dc: K8sResourceKind, props): KnativeItem | undefined => {
-  const eventSourceCronjob =
-    props && props.eventSourceCronjob && getEventSourceResource(dc, props.eventSourceCronjob);
-  return eventSourceCronjob && eventSourceCronjob.length > 0 ? { eventSourceCronjob } : undefined;
-};
-
-export const getEventSourceContainer = (dc: K8sResourceKind, props): KnativeItem | undefined => {
-  const eventSourceContainers =
-    props && props.eventSourceContainers && getEventSourceResource(dc, props.eventSourceContainers);
-  return eventSourceContainers && eventSourceContainers.length > 0
-    ? { eventSourceContainers }
-    : undefined;
-};
-
-export const getEventSourceApiserver = (dc: K8sResourceKind, props): KnativeItem | undefined => {
-  const eventSourceApiserver =
-    props && props.eventSourceApiserver && getEventSourceResource(dc, props.eventSourceApiserver);
-  return eventSourceApiserver && eventSourceApiserver.length > 0
-    ? { eventSourceApiserver }
-    : undefined;
-};
-
-export const getEventSourceCamel = (dc: K8sResourceKind, props): KnativeItem | undefined => {
-  const eventSourceCamel =
-    props && props.eventSourceCamel && getEventSourceResource(dc, props.eventSourceCamel);
-  return eventSourceCamel && eventSourceCamel.length > 0 ? { eventSourceCamel } : undefined;
-};
-
-export const getEventSourceKafka = (dc: K8sResourceKind, props): KnativeItem | undefined => {
-  const eventSourceKafka =
-    props && props.eventSourceKafka && getEventSourceResource(dc, props.eventSourceKafka);
-  return eventSourceKafka && eventSourceKafka.length > 0 ? { eventSourceKafka } : undefined;
-};
-
-export const getEventSourceSinkBinding = (dc: K8sResourceKind, props): KnativeItem | undefined => {
-  const eventSourceServicebinding =
-    props &&
-    props.eventSourceSinkbinding &&
-    getEventSourceResource(dc, props.eventSourceSinkbinding);
-  return eventSourceServicebinding && eventSourceServicebinding.length > 0
-    ? { eventSourceServicebinding }
-    : undefined;
-};
-
 export const knativeServingResourcesRevision = (namespace: string): FirehoseResource[] => {
   const knativeResource = [
     {
@@ -177,84 +111,6 @@ export const knativeServingResourcesServices = (namespace: string): FirehoseReso
       kind: referenceForModel(ServiceModel),
       namespace,
       prop: 'ksservices',
-      optional: true,
-    },
-  ];
-  return knativeResource;
-};
-
-export const eventSourceResourcesCronJob = (namespace: string): FirehoseResource[] => {
-  const knativeResource = [
-    {
-      isList: true,
-      kind: referenceForModel(EventSourceCronJobModel),
-      namespace,
-      prop: 'eventSourceCronjob',
-      optional: true,
-    },
-  ];
-  return knativeResource;
-};
-
-export const eventSourceResourcesContainer = (namespace: string): FirehoseResource[] => {
-  const knativeResource = [
-    {
-      isList: true,
-      kind: referenceForModel(EventSourceContainerModel),
-      namespace,
-      prop: 'eventSourceContainers',
-      optional: true,
-    },
-  ];
-  return knativeResource;
-};
-
-export const eventSourceResourcesApiServer = (namespace: string): FirehoseResource[] => {
-  const knativeResource = [
-    {
-      isList: true,
-      kind: referenceForModel(EventSourceApiServerModel),
-      namespace,
-      prop: 'eventSourceApiserver',
-      optional: true,
-    },
-  ];
-  return knativeResource;
-};
-
-export const eventSourceResourcesCamel = (namespace: string): FirehoseResource[] => {
-  const knativeResource = [
-    {
-      isList: true,
-      kind: referenceForModel(EventSourceCamelModel),
-      namespace,
-      prop: 'eventSourceCamel',
-      optional: true,
-    },
-  ];
-  return knativeResource;
-};
-
-export const eventSourceResourcesKafka = (namespace: string): FirehoseResource[] => {
-  const knativeResource = [
-    {
-      isList: true,
-      kind: referenceForModel(EventSourceKafkaModel),
-      namespace,
-      prop: 'eventSourceKafka',
-      optional: true,
-    },
-  ];
-  return knativeResource;
-};
-
-export const eventSourceResourcesSinkBinding = (namespace: string): FirehoseResource[] => {
-  const knativeResource = [
-    {
-      isList: true,
-      kind: referenceForModel(EventSourceSinkBindingModel),
-      namespace,
-      prop: 'eventSourceSinkbinding',
       optional: true,
     },
   ];

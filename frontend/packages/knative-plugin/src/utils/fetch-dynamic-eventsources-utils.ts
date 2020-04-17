@@ -1,6 +1,6 @@
 import * as _ from 'lodash';
 import { coFetch } from '@console/internal/co-fetch';
-import { K8sKind, kindToAbbr } from '@console/internal/module/k8s';
+import { K8sKind, kindToAbbr, referenceForModel } from '@console/internal/module/k8s';
 import { CustomResourceDefinitionModel } from '@console/internal/models';
 import { chart_color_red_300 as knativeEventingColor } from '@patternfly/react-tokens';
 import {
@@ -88,3 +88,30 @@ export const fetchEventSourcesCrd = async () => {
 };
 
 export const getEventSourceModels = (): K8sKind[] => eventSourceModels;
+
+export const getDynamicEventSourcesResourceList = (namespace: string) => {
+  return eventSourceModels.map((model) => {
+    return {
+      isList: true,
+      kind: referenceForModel(model),
+      namespace,
+      prop: referenceForModel(model),
+      optional: true,
+    };
+  });
+};
+
+export const getDynamicEventSourceModel = (resourceRef: string): K8sKind => {
+  return eventSourceModels.find((model: K8sKind) => referenceForModel(model) === resourceRef);
+};
+
+export const getDynamicEventSourcesModelRefs = (): string[] => {
+  return eventSourceModels.map((model: K8sKind) => referenceForModel(model));
+};
+
+export const isDynamicEventResourceKind = (resourceRef: string): boolean => {
+  const index = eventSourceModels.findIndex(
+    (model: K8sKind) => referenceForModel(model) === resourceRef,
+  );
+  return index !== -1;
+};

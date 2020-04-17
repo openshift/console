@@ -27,13 +27,8 @@ import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager'
 import {
   ServiceModel as KnativeServiceModel,
   RouteModel as KnativeRouteModel,
-  EventSourceCronJobModel,
-  EventSourceContainerModel,
-  EventSourceApiServerModel,
-  EventSourceCamelModel,
-  EventSourceKafkaModel,
-  EventSourceSinkBindingModel,
 } from '@console/knative-plugin';
+import { isDynamicEventResourceKind } from '@console/knative-plugin/src/utils/fetch-dynamic-eventsources-utils';
 import { checkAccess } from '@console/internal/components/utils';
 import { getOperatorBackedServiceKindMap } from '@console/shared';
 import { CREATE_APPLICATION_KEY, UNASSIGNED_KEY } from '../const';
@@ -414,6 +409,8 @@ export const cleanUpWorkload = (
   const batchDeleteRequests = (models: K8sKind[], resourceObj: K8sResourceKind): void => {
     models.forEach((model) => deleteRequest(model, resourceObj));
   };
+  if (isDynamicEventResourceKind(referenceFor(resource)))
+    deleteRequest(modelFor(referenceFor(resource)), resource);
   switch (resource.kind) {
     case DaemonSetModel.kind:
     case StatefulSetModel.kind:
@@ -425,14 +422,6 @@ export const cleanUpWorkload = (
       batchDeleteRequests(deleteModels, resource);
       deleteRequest(ImageStreamModel, resource); // delete imageStream
       webhooksAvailable = true;
-      break;
-    case EventSourceCronJobModel.kind:
-    case EventSourceApiServerModel.kind:
-    case EventSourceContainerModel.kind:
-    case EventSourceKafkaModel.kind:
-    case EventSourceCamelModel.kind:
-    case EventSourceSinkBindingModel.kind:
-      deleteRequest(modelFor(referenceFor(resource)), resource);
       break;
     case KnativeServiceModel.kind:
       batchDeleteRequests(knativeDeleteModels, resourceData);
