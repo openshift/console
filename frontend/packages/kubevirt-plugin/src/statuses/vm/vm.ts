@@ -115,15 +115,15 @@ const isV2VVMImportConversion = (
     compareOwnerReference(buildOwnerReference(i), vmImportOwnerReference),
   );
 
-  const status = getVMImportStatus({ vmImport });
+  const statusBundle = getVMImportStatus({ vmImport });
 
-  if (status.status.isCompleted() || status.status.isUnknown()) {
+  if (statusBundle.status.isCompleted() || statusBundle.status.isUnknown()) {
     return null;
   }
 
   return {
-    ...status,
-    status: VMStatus.fromV2VImportStatus(status.status),
+    ...statusBundle,
+    status: VMStatus.fromV2VImportStatus(statusBundle.status),
   };
 };
 

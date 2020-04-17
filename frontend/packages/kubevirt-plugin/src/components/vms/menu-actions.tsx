@@ -213,6 +213,12 @@ export const vmiMenuActions = [
   Kebab.factory.Delete,
 ];
 
+export const vmImportMenuActions = [
+  Kebab.factory.ModifyLabels,
+  Kebab.factory.ModifyAnnotations,
+  Kebab.factory.Delete,
+];
+
 type ExtraResources = {
   vmi: VMIKind;
   pods: PodKind[];

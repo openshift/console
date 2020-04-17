@@ -127,7 +127,11 @@ export const VMStatus: React.FC<VMStatusProps> = ({ vm, vmi, vmStatusBundle }) =
   const detailedMessage = vmStatusBundle.message ? vmStatusBundle.detailedMessage : null;
   const isPaused = status === VMStatusEnum.PAUSED;
 
-  const links: LinkType[] = [{ to: getVMILikeLink(vmiLike), message: VIEW_VM_EVENTS }];
+  const links: LinkType[] = [];
+
+  if (vmiLike) {
+    links.push({ to: getVMILikeLink(vmiLike), message: VIEW_VM_EVENTS });
+  }
 
   if (pod) {
     links.push({ to: getPodLink(pod), message: VIEW_POD_OVERVIEW });

@@ -8,6 +8,7 @@ import { getVMStatus } from '../../../statuses/vm/vm';
 import { VMImportKind } from '../../../types/vm-import/ovirt/vm-import';
 import { VMIKind, VMKind } from '../../../types';
 import { VMStatusSimpleLabel } from '../../../constants/vm/vm-status';
+import { StatusSimpleLabel } from '../../../constants/status-simple-label';
 
 import './inventory.scss';
 
@@ -33,17 +34,17 @@ export const getVMStatusGroups: StatusGroupMapper = (
     },
     [InventoryStatusGroup.PROGRESS]: {
       statusIDs: [
-        VMStatusSimpleLabel.Importing,
+        StatusSimpleLabel.Importing,
         VMStatusSimpleLabel.Starting,
         VMStatusSimpleLabel.Migrating,
         VMStatusSimpleLabel.Stopping,
-        VMStatusSimpleLabel.Pending,
+        StatusSimpleLabel.Pending,
       ],
       count: 0,
       filterType: 'vm-status',
     },
     [InventoryStatusGroup.ERROR]: {
-      statusIDs: [VMStatusSimpleLabel.Error],
+      statusIDs: [StatusSimpleLabel.Error],
       count: 0,
       filterType: 'vm-status',
     },
@@ -53,7 +54,7 @@ export const getVMStatusGroups: StatusGroupMapper = (
       filterType: 'vm-status',
     },
     [InventoryStatusGroup.UNKNOWN]: {
-      statusIDs: [VMStatusSimpleLabel.Other],
+      statusIDs: [StatusSimpleLabel.Other],
       count: 0,
       filterType: 'vm-status',
     },

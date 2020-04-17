@@ -2,6 +2,7 @@ import { getName, getNamespace } from '@console/shared';
 import { PodModel } from '@console/internal/models';
 import { EventInvolvedObject } from '@console/internal/module/k8s';
 import {
+  VirtualMachineImportModel,
   VirtualMachineInstanceMigrationModel,
   VirtualMachineInstanceModel,
   VirtualMachineModel,
@@ -30,7 +31,7 @@ const launcherPodEventFilter = (vm: VMILikeEntityKind): EventFilterFunction => {
     kind === PodModel.kind && namespace === getNamespace(vm) && name.startsWith(podNameStart);
 };
 
-const importerPodEventFilter = (vm: VMILikeEntityKind): EventFilterFunction => ({
+const cdiImporterPodEventFilter = (vm: VMILikeEntityKind): EventFilterFunction => ({
   kind,
   namespace,
   name,
@@ -92,11 +93,26 @@ const v2vConversionPodEventFilter = (vm: VMILikeEntityKind): EventFilterFunction
   return false;
 };
 
+const virtualMachineImportEventFilter = (vm: VMILikeEntityKind): EventFilterFunction => ({
+  kind,
+  namespace,
+  name,
+}) => {
+  if (kind !== VirtualMachineImportModel.kind || namespace !== getNamespace(vm)) {
+    return false;
+  }
+
+  const lastDashIndex = name.lastIndexOf('-');
+  const vmImportName = name.slice(0, lastDashIndex);
+  return vmImportName === `vm-import-${getName(vm)}`;
+};
+
 export const getVmEventsFilters = (vm: VMILikeEntityKind): EventFilterFunction[] => [
   vmiEventFilter(vm),
   vmEventFilter(vm),
   launcherPodEventFilter(vm),
-  importerPodEventFilter(vm),
+  cdiImporterPodEventFilter(vm),
   vmiMigrationEventFilter(vm),
   v2vConversionPodEventFilter(vm),
+  virtualMachineImportEventFilter(vm),
 ];
