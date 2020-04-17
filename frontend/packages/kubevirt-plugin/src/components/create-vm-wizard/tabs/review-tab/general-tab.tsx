@@ -49,6 +49,7 @@ const GeneralReviewConnected: React.FC<GeneralReviewConnectedProps> = (props) =>
 
       {!isImport && (
         <FormFieldReviewMemoRow
+          key={VMSettingsField.PROVISION_SOURCE_TYPE}
           field={getField(VMSettingsField.PROVISION_SOURCE_TYPE, iVMSettings)}
         />
       )}
