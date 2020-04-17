@@ -1,4 +1,5 @@
-import { apiVersionForModel, K8sKind, K8sResourceCommon } from '@console/internal/module/k8s';
+import { K8sKind, K8sResourceCommon } from '@console/internal/module/k8s/types';
+import { apiVersionForModel } from '@console/internal/module/k8s/k8s';
 import { ensurePath } from '../../utils/utils';
 import { omitEmpty } from '../../../../utils/common';
 
