@@ -2,7 +2,7 @@ import * as _ from 'lodash';
 import {
   knativeServiceObj,
   revisionObj,
-} from '@console/dev-console/src/components/topology/__tests__/topology-knative-test-data';
+} from '../../topology/__tests__/topology-knative-test-data';
 import { RevisionKind, ServiceKind as knativeServiceKind } from '../../types';
 
 export const mockServiceData: knativeServiceKind = _.cloneDeep(knativeServiceObj);

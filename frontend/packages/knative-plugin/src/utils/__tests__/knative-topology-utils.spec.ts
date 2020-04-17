@@ -1,6 +1,9 @@
 import * as _ from 'lodash';
 import * as k8s from '@console/internal/module/k8s';
-import { MockKnativeResources } from '@console/dev-console/src/components/topology/__tests__/topology-knative-test-data';
+import {
+  MockKnativeResources,
+  getEventSourceResponse,
+} from '../../topology/__tests__/topology-knative-test-data';
 import {
   getKnativeServiceData,
   getKnativeTopologyNodeItems,
@@ -13,6 +16,7 @@ import {
   createKnativeEventSourceSink,
 } from '../../topology/knative-topology-utils';
 import { mockServiceData, mockRevisions } from '../__mocks__/traffic-splitting-utils-mock';
+import { EventSourceCronJobModel } from '../../models';
 
 describe('knative topology utils', () => {
   it('expect getKnativeServiceData to return knative resources', () => {
@@ -67,23 +71,23 @@ describe('knative topology utils', () => {
 
   it('expect getKnativeTopologyNodeItems to return node data for event sources', () => {
     const knServiceNode = getKnativeTopologyNodeItems(
-      MockKnativeResources.eventSourceCronjob.data[0],
+      getEventSourceResponse(EventSourceCronJobModel).data[0],
       NodeType.EventSource,
       MockKnativeResources,
     );
     expect(knServiceNode).toBeDefined();
-    expect(knServiceNode[0].id).toBe('1317f615-9636-11e9-b134-06a61d886b689');
+    expect(knServiceNode[0].id).toBe('1317f615-9636-11e9-b134-06a61d886b689_1');
     expect(knServiceNode[0].type).toBe(NodeType.EventSource);
   });
 
   it('expect getEventTopologyEdgeItems to return edge data for event sources', () => {
     const knEventEdge = getEventTopologyEdgeItems(
-      MockKnativeResources.eventSourceCronjob.data[0],
+      getEventSourceResponse(EventSourceCronJobModel).data[0],
       MockKnativeResources.ksservices,
     );
     expect(knEventEdge).toBeDefined();
     expect(knEventEdge).toHaveLength(1);
-    expect(knEventEdge[0].source).toBe('1317f615-9636-11e9-b134-06a61d886b689');
+    expect(knEventEdge[0].source).toBe('1317f615-9636-11e9-b134-06a61d886b689_1');
     expect(knEventEdge[0].target).toBe('cea9496b-8ce0-11e9-bb7b-0ebb55b110b8');
     expect(knEventEdge[0].type).toBe('event-source-link');
   });
@@ -144,7 +148,7 @@ describe('Knative Topology Utils', () => {
 
   it('should move sink to the target knServcice', (done) => {
     createKnativeEventSourceSink(
-      MockKnativeResources.eventSourceCronjob.data[0],
+      getEventSourceResponse(EventSourceCronJobModel).data[0],
       MockKnativeResources.ksservices.data[0],
     )
       .then(({ data }) => {

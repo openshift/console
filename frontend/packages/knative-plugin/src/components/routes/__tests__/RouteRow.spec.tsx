@@ -2,7 +2,7 @@ import { shallow } from 'enzyme';
 import * as _ from 'lodash';
 import { TableData, RowFunctionArgs } from '@console/internal/components/factory';
 import { ResourceLink, ExternalLink } from '@console/internal/components/utils';
-import { knativeRouteObj } from '@console/dev-console/src/components/topology/__tests__/topology-knative-test-data';
+import { knativeRouteObj } from '../../../topology/__tests__/topology-knative-test-data';
 import RouteRow from '../RouteRow';
 import { RouteKind } from '../../../types';
 

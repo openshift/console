@@ -6,13 +6,15 @@ import {
   WorkloadData,
   transformTopologyData,
 } from '@console/dev-console/src/components/topology';
-import { MockKnativeResources, sampleKnativeDeployments } from './topology-knative-test-data';
-import {
-  sampleEventSourceApiServer,
-  sampleEventSourceDeployments,
-} from '@console/dev-console/src/components/topology/__tests__/topology-knative-test-data';
 import { sampleDeployments } from '@console/dev-console/src/components/topology/__tests__/topology-test-data';
 import { filterNonKnativeDeployments } from '../data-transformer';
+import {
+  MockKnativeResources,
+  sampleKnativeDeployments,
+  getEventSourceResponse,
+  sampleEventSourceDeployments,
+} from './topology-knative-test-data';
+import { EventSourceApiServerModel } from '../../models';
 
 export function getTranformedTopologyData(
   mockData: TopologyDataResources,
@@ -89,7 +91,7 @@ describe('knative data transformer ', () => {
       sampleDeployments.data[0],
     ];
     const filteredResources: k8s.DeploymentKind[] = filterNonKnativeDeployments(MockResources, [
-      sampleEventSourceApiServer.data[0],
+      getEventSourceResponse(EventSourceApiServerModel).data[0],
     ]);
     expect(filteredResources).toHaveLength(1);
     expect(filteredResources[0].metadata.name).toEqual('analytics-deployment');

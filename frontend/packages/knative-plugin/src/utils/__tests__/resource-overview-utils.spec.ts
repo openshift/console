@@ -1,4 +1,4 @@
-import { MockKnativeResources } from '@console/dev-console/src/components/topology/__tests__/topology-knative-test-data';
+import { MockKnativeResources } from '../../topology/__tests__/topology-knative-test-data';
 import { getKnativeRoutesLinks } from '../resource-overview-utils';
 
 describe('resource overview utils', () => {

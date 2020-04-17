@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 import { Button } from '@patternfly/react-core';
 import * as utils from '@console/internal/components/utils';
 import { referenceForModel } from '@console/internal/module/k8s';
-import { MockKnativeResources } from '@console/dev-console/src/components/topology/__tests__/topology-knative-test-data';
+import { MockKnativeResources } from '../../../topology/__tests__/topology-knative-test-data';
 import {
   mockRevisions,
   mockTrafficData,
