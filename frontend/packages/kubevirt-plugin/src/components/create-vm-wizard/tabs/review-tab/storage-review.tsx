@@ -128,7 +128,9 @@ const StorageReviewFirehose: React.FC<StorageReviewFirehoseProps> = ({
         </>
       )}
       {!showStorages && (
-        <p><strong>No disks found</strong></p>
+        <p>
+          <strong>No disks found</strong>
+        </p>
       )}
     </>
   );

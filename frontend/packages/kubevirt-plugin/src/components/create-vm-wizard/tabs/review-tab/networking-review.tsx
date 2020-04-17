@@ -43,7 +43,9 @@ const NetworkingReviewConnected: React.FC<NetworkingTabComponentProps> = ({ netw
         </Table>
       )}
       {!showNetworks && (
-        <p><strong>No network interfaces found</strong></p>
+        <p>
+          <strong>No network interfaces found</strong>
+        </p>
       )}
     </>
   );
