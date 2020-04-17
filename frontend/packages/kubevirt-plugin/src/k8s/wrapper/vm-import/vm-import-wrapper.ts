@@ -31,7 +31,7 @@ export class VMImportWrappper extends K8sResourceObjectWithTypePropertyWrapper<
 
   setStartVM = (startVM = false) => {
     this.ensurePath('spec');
-    this.data.spec.startVM = startVM;
+    this.data.spec.startVm = startVM;
     return this;
   };
 
