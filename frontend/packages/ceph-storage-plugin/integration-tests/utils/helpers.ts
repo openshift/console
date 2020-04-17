@@ -193,6 +193,6 @@ export type PvcType = {
   namespace: string;
   size: string;
   sizeUnits: string;
-  storageClass: string;
-  accessMode: string;
+  storageClass?: string;
+  accessMode?: string;
 };

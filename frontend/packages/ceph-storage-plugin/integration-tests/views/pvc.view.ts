@@ -1,4 +1,4 @@
-import { $, $$, browser, ExpectedConditions as until } from 'protractor';
+import { $, $$, browser, ExpectedConditions as until, by } from 'protractor';
 import * as crudView from '@console/internal-integration-tests/views/crud.view';
 import * as sideNavView from '@console/internal-integration-tests/views/sidenav.view';
 import { click } from '@console/shared/src/test-utils/utils';
@@ -17,6 +17,11 @@ export const inputPVCName = $('#pvc-name');
 export const selectAccessMode = (accessMode) => $(`input[value=${accessMode}]`);
 export const inputPVCSize = $('[name=requestSizeValue]');
 export const sizeUnitsDropdown = $('[data-test-id=dropdown-button]');
+
+// expand pvc
+export const expandButton = $(by.buttonText('Expand'));
+export const capacityUnitDropdown = $('[data-test-id="dropdown-button"]');
+export const expandSizeOption = (size: string) => $(`[data-test-dropdown-menu="${size}"]`);
 
 // pvc details
 export const pvcName = $('[data-test-id=pvc-name]');
@@ -37,7 +42,11 @@ export const goToPersistentVolumeClaims = async () => {
   await crudView.isLoaded();
 };
 
-export const createNewPersistentVolumeClaim = async (pvc: PvcType, waitForBinding: boolean) => {
+export const createNewPersistentVolumeClaim = async (
+  pvc: PvcType,
+  waitForBinding: boolean,
+  performBeforeWaiting?: Function,
+) => {
   await goToPersistentVolumeClaims();
   await selectItemFromDropdown(pvc.namespace, namespaceDropdown);
   await click(crudView.createYAMLButton);
@@ -45,13 +54,22 @@ export const createNewPersistentVolumeClaim = async (pvc: PvcType, waitForBindin
     until.textToBePresentInElement($('.co-m-pane__heading'), 'Create Persistent Volume Claim'),
   );
   await browser.wait(until.and(crudView.untilNoLoadersPresent));
-  await selectItemFromDropdown(pvc.storageClass, storageclassDropdown);
+  // Selects default sc if not provided
+  if (pvc.storageClass) {
+    await selectItemFromDropdown(pvc.storageClass, storageclassDropdown);
+  }
   await inputPVCName.sendKeys(pvc.name);
-  await click(selectAccessMode(pvc.accessMode));
+  // Selects RWO by default
+  if (pvc.accessMode) {
+    await click(selectAccessMode(pvc.accessMode));
+  }
   await inputPVCSize.sendKeys(pvc.size);
   // Units should be Mi, Gi or Ti
   await selectItemFromDropdown(pvc.sizeUnits, sizeUnitsDropdown);
   await click(crudView.saveChangesBtn);
+  if (performBeforeWaiting) {
+    await performBeforeWaiting();
+  }
   if (waitForBinding === true)
     await browser.wait(until.textToBePresentInElement(pvcStatus, PVC_STATUS.BOUND));
 };
