@@ -15,7 +15,7 @@ import {
 } from '@console/plugin-sdk';
 import { ArrowCircleUpIcon } from '@patternfly/react-icons';
 import { Gallery, GalleryItem, Button } from '@patternfly/react-core';
-import { FLAGS } from '@console/shared';
+import { FLAGS, getInfrastructurePlatform } from '@console/shared';
 import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
 import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
 import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
@@ -45,6 +45,7 @@ import {
 } from './health-item';
 import { WatchK8sResource, useK8sWatchResource } from '../../../utils/k8s-watch-hook';
 import { useFlag } from '@console/shared/src/hooks/flag';
+import { ClusterDashboardContext } from './context';
 
 const filterSubsystems = (
   subsystems: DashboardsOverviewHealthSubsystem[],
@@ -132,6 +133,7 @@ export const StatusCard = connect<StatusCardProps>(mapStateToProps)(({ k8sModels
     () => subsystems.findIndex(isDashboardsOverviewHealthOperator),
     [subsystems],
   );
+  const { infrastructure, infrastructureLoaded } = React.useContext(ClusterDashboardContext);
 
   const healthItems: { title: string; Component: React.ReactNode }[] = [];
   subsystems.forEach((subsystem) => {
@@ -141,6 +143,14 @@ export const StatusCard = connect<StatusCardProps>(mapStateToProps)(({ k8sModels
         Component: <URLHealthItem subsystem={subsystem.properties} models={k8sModels} />,
       });
     } else if (isDashboardsOverviewHealthPrometheusSubsystem(subsystem)) {
+      const { disallowedProviders } = subsystem.properties;
+      if (
+        disallowedProviders?.length &&
+        (!infrastructureLoaded ||
+          disallowedProviders.includes(getInfrastructurePlatform(infrastructure)))
+      ) {
+        return;
+      }
       healthItems.push({
         title: subsystem.properties.title,
         Component: <PrometheusHealthItem subsystem={subsystem.properties} models={k8sModels} />,

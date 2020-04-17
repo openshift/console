@@ -134,6 +134,7 @@ const plugin: Plugin<ConsumedExtensions> = [
           './components/dashboards-page/ControlPlaneStatus' /* webpackChunkName: "console-app" */
         ).then((m) => m.default),
       popupTitle: 'Control Plane status',
+      disallowedProviders: ['IBMCloud'],
     },
   },
   {
