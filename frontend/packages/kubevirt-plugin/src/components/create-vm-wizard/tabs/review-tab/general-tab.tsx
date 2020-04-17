@@ -16,7 +16,14 @@ import { getOS } from '../../selectors/combined';
 import './review-tab.scss';
 
 const GeneralReviewConnected: React.FC<GeneralReviewConnectedProps> = (props) => {
-  const { iVMSettings, iUserTemplates, iCommonTemplates, openshiftFlag, relevantOptions, className } = props;
+  const {
+    iVMSettings,
+    iUserTemplates,
+    iCommonTemplates,
+    openshiftFlag,
+    relevantOptions,
+    className,
+  } = props;
 
   const flavorValue = getFlavorValue({
     iVMSettings,
@@ -31,7 +38,7 @@ const GeneralReviewConnected: React.FC<GeneralReviewConnectedProps> = (props) =>
       iUserTemplates,
       openshiftFlag,
       iCommonTemplates,
-    })?.osName || '';
+    })?.osName || getField(VMSettingsField.OPERATING_SYSTEM, iVMSettings)?.display;
 
   return (
     <dl className={classNames('kubevirt-create-vm-modal__review-tab__data-list', className)}>
@@ -53,9 +60,7 @@ const GeneralReviewConnected: React.FC<GeneralReviewConnectedProps> = (props) =>
         value={flavorValue}
       />
 
-      <FormFieldReviewMemoRow
-        field={getField(VMSettingsField.WORKLOAD_PROFILE, iVMSettings)}
-      />
+      <FormFieldReviewMemoRow field={getField(VMSettingsField.WORKLOAD_PROFILE, iVMSettings)} />
     </dl>
   );
 };
