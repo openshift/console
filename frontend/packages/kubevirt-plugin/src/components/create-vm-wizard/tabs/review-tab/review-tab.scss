@@ -1,3 +1,5 @@
+@import '~@patternfly/patternfly/sass-utilities/all';
+
 .kubevirt-create-vm-modal__review-tab-section {
   padding-bottom: var(--pf-global--spacer--xl);
   &__title {
@@ -29,18 +31,18 @@ dt {
   &:not(:first-child) {
     margin-top: var(--pf-global--spacer--md);
 
-    @media screen and (min-width: 576px) {
+    @media screen and (min-width: $pf-global--breakpoint--sm) {
       margin-top: 0;
     }
   }
 
-  @media screen and (min-width: 576px) {
+  @media screen and (min-width: $pf-global--breakpoint--sm) {
     grid-column: 1;
   }
 }
 
 dd {
-  @media screen and (min-width: 576px) {
+  @media screen and (min-width: $pf-global--breakpoint--sm) {
     grid-column: 2;
   }
 
