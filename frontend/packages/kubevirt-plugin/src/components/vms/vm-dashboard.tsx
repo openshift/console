@@ -11,7 +11,7 @@ import {
 import { VMDashboardContext } from './vm-dashboard-context';
 import { asVM, isVMI, isVM } from '../../selectors/vm/vmlike';
 import { VMTabProps } from './types';
-import { getVMStatus } from '../../statuses/vm/vm';
+import { getVMStatus } from '../../statuses/vm/vm-status';
 
 const mainCards = [{ Card: VMStatusCard }, { Card: VMUtilizationCard }];
 const leftCards = [{ Card: VMDetailsCard }, { Card: VMInventoryCard }];

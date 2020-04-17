@@ -42,7 +42,7 @@ import {
 } from '../../models';
 import { VMIKind, VMKind } from '../../types';
 import { buildOwnerReferenceForModel, getBasicID, getLoadedData } from '../../utils';
-import { getVMStatus } from '../../statuses/vm/vm';
+import { getVMStatus } from '../../statuses/vm/vm-status';
 import { getVmiIpAddresses, getVMINodeName } from '../../selectors/vmi';
 import { isVM, isVMI } from '../../selectors/vm';
 import { vmStatusFilter } from './table-filters';

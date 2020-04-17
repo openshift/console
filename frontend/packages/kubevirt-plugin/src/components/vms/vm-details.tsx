@@ -19,7 +19,7 @@ import { getServicesForVmi } from '../../selectors/service';
 import { VMResourceSummary, VMDetailsList, VMSchedulingList } from './vm-resource';
 import { VMTabProps } from './types';
 import { isVM, isVMI } from '../../selectors/vm/vmlike';
-import { getVMStatus } from '../../statuses/vm/vm';
+import { getVMStatus } from '../../statuses/vm/vm-status';
 import { VMStatusBundle } from '../../statuses/vm/types';
 
 export const VMDetailsFirehose: React.FC<VMTabProps> = ({

@@ -4,7 +4,7 @@ import { getName } from '@console/shared/src/selectors/common';
 import { K8sResourceKind, PodKind } from '@console/internal/module/k8s';
 import { StatusGroupMapper } from '@console/shared/src/components/dashboard/inventory-card/InventoryItem';
 import { InventoryStatusGroup } from '@console/shared/src/components/dashboard/inventory-card/status-group';
-import { getVMStatus } from '../../../statuses/vm/vm';
+import { getVMStatus } from '../../../statuses/vm/vm-status';
 import { VMImportKind } from '../../../types/vm-import/ovirt/vm-import';
 import { VMIKind, VMKind } from '../../../types';
 import { VMStatusSimpleLabel } from '../../../constants/vm/vm-status';

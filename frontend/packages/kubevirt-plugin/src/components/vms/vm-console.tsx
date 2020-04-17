@@ -16,7 +16,7 @@ import {
   RDPConnectionDetailsType,
   VNCConnectionDetailsType,
 } from '../../selectors/vmi';
-import { getVMStatus } from '../../statuses/vm/vm';
+import { getVMStatus } from '../../statuses/vm/vm-status';
 import { getLoadedData, getResource } from '../../utils';
 import { findVMIPod } from '../../selectors/pod/selectors';
 import { isWindows, asVM, isVM, isVMI } from '../../selectors/vm';
