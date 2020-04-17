@@ -9,13 +9,14 @@ import ApplicationSelector from './ApplicationSelector';
 export interface AppSectionProps {
   project: ProjectData;
   noProjectsAvailable?: boolean;
+  extraMargin?: boolean;
 }
 
-const AppSection: React.FC<AppSectionProps> = ({ project, noProjectsAvailable }) => {
+const AppSection: React.FC<AppSectionProps> = ({ project, noProjectsAvailable, extraMargin }) => {
   const [initialApplication] = useField('application.initial');
   const [formType] = useField('formType');
   return (
-    <FormSection title="General">
+    <FormSection title="General" extraMargin={extraMargin}>
       {noProjectsAvailable && (
         <>
           <InputField

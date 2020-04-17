@@ -9,6 +9,7 @@ describe('Event Source ValidationUtils', () => {
       const defaultEventingData = getDefaultEventingData(EventSources.CronJobSource);
       const mockData = _.omit(_.cloneDeep(defaultEventingData), 'data.cronjobsource.data');
       await eventSourceValidationSchema
+        .resolve({ value: mockData })
         .isValid(mockData)
         .then((valid) => expect(valid).toEqual(true));
     });
@@ -18,6 +19,7 @@ describe('Event Source ValidationUtils', () => {
       const mockData = _.cloneDeep(defaultEventingData);
       mockData.sink.knativeService = '';
       await eventSourceValidationSchema
+        .resolve({ value: mockData })
         .isValid(mockData)
         .then((valid) => expect(valid).toEqual(false));
       await eventSourceValidationSchema.validate(mockData).catch((err) => {
@@ -32,6 +34,7 @@ describe('Event Source ValidationUtils', () => {
       const defaultEventingData = getDefaultEventingData(EventSources.ApiServerSource);
       const mockData = _.cloneDeep(defaultEventingData);
       await eventSourceValidationSchema
+        .resolve({ value: mockData })
         .isValid(mockData)
         .then((valid) => expect(valid).toEqual(true));
     });
@@ -42,6 +45,7 @@ describe('Event Source ValidationUtils', () => {
       mockData.sink.knativeService = '';
       mockData.data.apiserversource.resources[0] = { apiVersion: '', kind: '' };
       await eventSourceValidationSchema
+        .resolve({ value: mockData })
         .isValid(mockData)
         .then((valid) => expect(valid).toEqual(false));
       await eventSourceValidationSchema.validate(mockData).catch((err) => {
@@ -56,6 +60,7 @@ describe('Event Source ValidationUtils', () => {
       const defaultEventingData = getDefaultEventingData(EventSources.KafkaSource);
       const mockData = _.cloneDeep(defaultEventingData);
       await eventSourceValidationSchema
+        .resolve({ value: mockData })
         .isValid(mockData)
         .then((valid) => expect(valid).toEqual(true));
     });
@@ -65,6 +70,7 @@ describe('Event Source ValidationUtils', () => {
       const mockData = _.cloneDeep(defaultEventingData);
       mockData.data.kafkasource.bootstrapServers = '';
       await eventSourceValidationSchema
+        .resolve({ value: mockData })
         .isValid(mockData)
         .then((valid) => expect(valid).toEqual(false));
       await eventSourceValidationSchema.validate(mockData).catch((err) => {
@@ -79,6 +85,7 @@ describe('Event Source ValidationUtils', () => {
         ...getDefaultEventingData(EventSources.ContainerSource),
       };
       await eventSourceValidationSchema
+        .resolve({ value: ContainerSourceData })
         .isValid(ContainerSourceData)
         .then((valid) => expect(valid).toEqual(true));
     });
@@ -89,6 +96,7 @@ describe('Event Source ValidationUtils', () => {
       };
       ContainerSourceData.data.containersource.containers[0].image = '';
       await eventSourceValidationSchema
+        .resolve({ value: ContainerSourceData })
         .isValid(ContainerSourceData)
         .then((valid) => expect(valid).toEqual(false));
       await eventSourceValidationSchema.validate(ContainerSourceData).catch((err) => {

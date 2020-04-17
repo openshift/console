@@ -410,6 +410,7 @@ export const getDefaultEventingData = (typeEventSource: string): EventSourceForm
     data: {
       [typeEventSource.toLowerCase()]: eventSourceData[typeEventSource.toLowerCase()],
     },
+    yamlData: '',
   };
   return defaultEventingData;
 };

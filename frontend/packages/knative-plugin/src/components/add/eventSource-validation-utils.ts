@@ -5,6 +5,7 @@ import {
   applicationNameValidationSchema,
 } from '@console/dev-console/src/components/import/validation-schema';
 import { EventSources } from './import-types';
+import { isKnownEventSource } from '../../utils/create-eventsources-utils';
 
 const sinkServiceSchema = yup.object().shape({
   knativeService: yup.string().required('Required'),
@@ -82,10 +83,18 @@ export const sourceDataSpecSchema = yup
       }),
     }),
   });
-export const eventSourceValidationSchema = yup.object().shape({
-  project: projectNameValidationSchema,
-  application: applicationNameValidationSchema,
-  name: nameValidationSchema,
-  sink: sinkServiceSchema,
-  data: sourceDataSpecSchema,
+
+export const eventSourceValidationSchema = yup.lazy((formData) => {
+  if (isKnownEventSource(formData.type)) {
+    return yup.object().shape({
+      project: projectNameValidationSchema,
+      application: applicationNameValidationSchema,
+      name: nameValidationSchema,
+      sink: sinkServiceSchema,
+      data: sourceDataSpecSchema,
+    });
+  }
+  return yup.object().shape({
+    yamlData: yup.string(),
+  });
 });

@@ -11,7 +11,7 @@ const AdvancedSection: React.FC = () => {
   };
 
   return (
-    <FormSection title="Advanced Options" fullWidth>
+    <FormSection title="Advanced Options" fullWidth extraMargin>
       <ProgressiveList
         text="Click on the names to access advanced options for"
         visibleItems={visibleItems}

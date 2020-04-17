@@ -1,4 +1,5 @@
 import * as _ from 'lodash';
+import { safeLoad } from 'js-yaml';
 import { K8sResourceKind, K8sKind, referenceForModel } from '@console/internal/module/k8s';
 import { useAccessReview } from '@console/internal/components/utils';
 import { getAppLabels } from '@console/dev-console/src/utils/resource-label-utils';
@@ -11,6 +12,9 @@ import {
 import { ServiceModel } from '../models';
 import { getKnativeEventSourceIcon } from './get-knative-icon';
 import { getEventSourceModels } from './fetch-dynamic-eventsources-utils';
+
+export const isKnownEventSource = (eventSource: string): boolean =>
+  Object.keys(EventSources).includes(eventSource);
 
 export const getEventSourcesDepResource = (formData: EventSourceFormData): K8sResourceKind => {
   const {
@@ -104,8 +108,12 @@ export const getEventSourceResource = (formData: EventSourceFormData): K8sResour
       return getKafkaSourceResource(formData);
     case EventSources.ContainerSource:
       return getContainerSourceResource(formData);
-    default:
+    case EventSources.CronJobSource:
+    case EventSources.ApiServerSource:
+    case EventSources.SinkBinding:
       return getEventSourcesDepResource(formData);
+    default:
+      return safeLoad(formData.yamlData);
   }
 };
 

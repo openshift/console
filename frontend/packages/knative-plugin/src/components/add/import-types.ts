@@ -5,7 +5,6 @@ export enum EventSources {
   ContainerSource = 'ContainerSource',
   ApiServerSource = 'ApiServerSource',
   KafkaSource = 'KafkaSource',
-  CamelkSource = 'CamelSource',
   SinkBinding = 'SinkBinding',
 }
 
@@ -38,6 +37,7 @@ export interface EventSourceFormData {
   sink: KnativeServiceName;
   limits: LimitsData;
   data?: EventSourceData;
+  yamlData?: string;
 }
 
 export interface EventSourceList {

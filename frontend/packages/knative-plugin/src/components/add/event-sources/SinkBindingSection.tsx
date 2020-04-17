@@ -30,7 +30,7 @@ const SinkBindingSection: React.FC = () => {
   );
   const fieldId = getFieldId(values.type, 'subject-matchLabels');
   return (
-    <FormSection title="SinkBinding">
+    <FormSection title="SinkBinding" extraMargin>
       <h3 className="co-section-heading-tertiary">Subject</h3>
       <InputField
         data-test-id="sinkbinding-apiversion-field"

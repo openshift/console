@@ -35,7 +35,7 @@ const ApiServerSection: React.FC = () => {
   };
   const fieldId = getFieldId(values.type, 'res-input');
   return (
-    <FormSection title="ApiServerSource">
+    <FormSection title="ApiServerSource" extraMargin>
       <FormGroup fieldId={fieldId} label="Resource" isRequired>
         <AsyncComponent
           loader={() =>
