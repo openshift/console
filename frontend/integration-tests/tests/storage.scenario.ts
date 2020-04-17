@@ -1,4 +1,4 @@
-import { $, browser, ExpectedConditions as until, by, element } from 'protractor';
+import { $, browser, ExpectedConditions as until } from 'protractor';
 import { testName, checkLogs, checkErrors } from '../protractor.conf';
 import * as crudView from '../views/crud.view';
 import * as storageView from '../views/storage.view';
@@ -36,24 +36,19 @@ describe('Add storage is applicable for all workloads', () => {
       const pvcName = `${resourceType}-pvc`;
       const pvcSize = '1';
       const mountPath = '/data';
+
       it(`create a ${resourceType} resource`, async () => {
         await crudView.createNamespacedResourceWithDefaultYAML(resourceType);
         expect(crudView.errorMessage.isPresent()).toBe(false);
       });
+
       it(`add storage to ${resourceType}`, async () => {
         await storageView.addNewStorageToWorkload(pvcName, pvcSize, mountPath);
         expect(crudView.errorMessage.isPresent()).toBe(false);
 
-        const volumeTile = element(by.cssContainingText('.co-section-heading', 'Volumes'));
-        await browser.wait(until.presenceOf(volumeTile));
-        const volumeRow = await $(`[data-id="${pvcName}-${mountPath}"]`);
-        await browser.wait(until.presenceOf(volumeRow));
-        expect($(`[data-id="${pvcName}-${mountPath}"] [data-test-id="name"]`).getText()).toContain(
-          pvcName,
-        );
-        expect($(`[data-id="${pvcName}-${mountPath}"] [data-test-id="path"]`).getText()).toContain(
-          mountPath,
-        );
+        await browser.wait(until.presenceOf($(`[data-test-volume-name-for="${pvcName}"]`)));
+        expect($(`[data-test-volume-name-for="${pvcName}"]`).getText()).toEqual(pvcName);
+        expect($(`[data-test-mount-path-for="${pvcName}"]`).getText()).toEqual(mountPath);
       });
     });
   });
