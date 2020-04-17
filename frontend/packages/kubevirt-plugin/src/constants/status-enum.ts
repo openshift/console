@@ -40,7 +40,11 @@ export abstract class StatusEnum<SIMPLE_LABEL = StatusSimpleLabel> extends Objec
 
     const isKnown = isError || isCompleted || isPending || isImporting || isInProgress;
 
-    this._isUnknown = isKnown ? false : isUnknown || false; // unknown status can't have other metadata
+    if (isUnknown && isKnown) {
+      throw new Error('StatusEnum: isUnknown flag should not include other metadata');
+    }
+
+    this._isUnknown = isUnknown;
 
     this.label = label;
     this.simpleLabel = this.resolveSimpleLabel();

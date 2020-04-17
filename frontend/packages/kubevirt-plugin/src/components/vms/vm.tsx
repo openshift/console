@@ -132,7 +132,7 @@ const VMRow: RowFunction<VMRowObjType> = ({ obj, index, key, style }) => {
   }
 
   return (
-    <TableRow id={uid} index={index} trKey={key} style={style}>
+    <TableRow key={`${key}${name}`} id={uid} index={index} trKey={key} style={style}>
       <TableData className={dimensify()}>
         <ResourceLink kind={model?.kind} name={name} namespace={namespace} />
       </TableData>

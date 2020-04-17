@@ -20,10 +20,11 @@ import {
   getVMLikeModelListPath,
   getVMLikeModelName,
 } from '../../../../utils/utils';
+import { isOvirtProvider } from '../../selectors/immutable/provider/ovirt/selectors';
 
 const SuccessResultsComponent: React.FC<SuccessResultsProps> = ({
   isCreateTemplate,
-  isProviderImport,
+  isOvirtImportProvider,
   name,
   namespace,
   className,
@@ -54,18 +55,18 @@ const SuccessResultsComponent: React.FC<SuccessResultsProps> = ({
     <EmptyState variant={EmptyStateVariant.full} className={className}>
       <EmptyStateIcon icon={CheckIcon} color="#92d400" />
       <Title headingLevel="h5" size="lg" data-test-id="kubevirt-wizard-success-result">
-        {isProviderImport
+        {isOvirtImportProvider
           ? `Started import of  ${modelName}`
           : `Successfully created ${modelName}.`}
       </Title>
-      {!isProviderImport && (
+      {!isOvirtImportProvider && (
         <EmptyStateBody key="info">
           You can either go to the details of this {modelName} or see it in the list of available{' '}
           {modelName}s.
         </EmptyStateBody>
       )}
-      {isProviderImport ? listButton : detailsButton}
-      {!isProviderImport && (
+      {isOvirtImportProvider ? listButton : detailsButton}
+      {!isOvirtImportProvider && (
         <EmptyStateSecondaryActions key="secondary">{listButton}</EmptyStateSecondaryActions>
       )}
     </EmptyState>
@@ -74,7 +75,7 @@ const SuccessResultsComponent: React.FC<SuccessResultsProps> = ({
 
 type SuccessResultsProps = {
   isCreateTemplate: boolean;
-  isProviderImport: boolean;
+  isOvirtImportProvider: boolean;
   name: string;
   namespace: string;
   className?: string;
@@ -82,7 +83,7 @@ type SuccessResultsProps = {
 
 const stateToProps = (state, { wizardReduxID }) => ({
   isCreateTemplate: iGetCommonData(state, wizardReduxID, VMWizardProps.isCreateTemplate),
-  isProviderImport: iGetCommonData(state, wizardReduxID, VMWizardProps.isProviderImport),
+  isOvirtImportProvider: isOvirtProvider(state, wizardReduxID),
   name: iGetVmSettingValue(state, wizardReduxID, VMSettingsField.NAME),
   namespace: iGetCommonData(state, wizardReduxID, VMWizardProps.activeNamespace),
 });
