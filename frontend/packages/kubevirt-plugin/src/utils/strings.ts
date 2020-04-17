@@ -14,8 +14,6 @@ export const ADD = 'Add';
 export const ADD_DISK = 'Add Disk';
 export const ADD_NETWORK_INTERFACE = 'Add Network Interface';
 
-export const EMPTY_MESSAGE = 'Empty';
-
 export const getDialogUIError = (hasAllRequiredFilled) =>
   hasAllRequiredFilled
     ? 'Please correct the invalid fields.'
