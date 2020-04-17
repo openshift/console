@@ -128,7 +128,7 @@ const StorageReviewFirehose: React.FC<StorageReviewFirehoseProps> = ({
         </>
       )}
       {!showStorages && (
-        <EmptyState variant={EmptyStateVariant.full}>
+        <EmptyState variant={EmptyStateVariant.small}>
           <Title headingLevel="h3" size="sm">
             No disks attached
           </Title>
