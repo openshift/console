@@ -8,9 +8,7 @@ import {
 import { VMSettingsField, VMWizardProps } from '../../types';
 import { FormFieldReviewMemoRow } from '../../form/form-field-review-row';
 import { iGetCommonData, iGetLoadedCommonData } from '../../selectors/immutable/selectors';
-import { getFieldValue } from '../../selectors/vm-settings';
-import { getField, getFlavorValue } from './utils';
-import { VMSettings } from '../../redux/initial-state/types';
+import { getField, getFieldValue, getFlavorValue } from './utils';
 import { getOS } from '../../selectors/combined';
 
 import './review-tab.scss';
@@ -35,7 +33,7 @@ const GeneralReviewConnected: React.FC<GeneralReviewConnectedProps> = (props) =>
 
   const osName =
     getOS({
-      osID: getFieldValue(iVMSettings.toJS() as VMSettings, VMSettingsField.OPERATING_SYSTEM),
+      osID: getFieldValue(iVMSettings, VMSettingsField.OPERATING_SYSTEM),
       iUserTemplates,
       openshiftFlag,
       iCommonTemplates,
