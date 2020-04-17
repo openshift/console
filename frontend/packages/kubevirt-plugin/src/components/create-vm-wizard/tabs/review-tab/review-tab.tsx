@@ -15,7 +15,7 @@ export const ReviewTabConnected: React.FC<ReviewTabProps> = (props) => {
   const { wizardReduxID } = props;
 
   return (
-    <>
+    <div className="kubevirt-create-vm-modal__review-tab__body">
       <h2 className="pf-c-title pf-m-xl">Review and confirm your settings</h2>
 
       <section className="kubevirt-create-vm-modal__review-tab-section">
@@ -55,13 +55,13 @@ export const ReviewTabConnected: React.FC<ReviewTabProps> = (props) => {
         <AdvancedReviewTab wizardReduxID={wizardReduxID} />
       </section>
 
-      <section className="kubevirt-create-vm-modal__review-tab-section">
+      <footer className="kubevirt-create-vm-modal__review-tab__footer">
         <ReviewOptions
           wizardReduxID={wizardReduxID}
           className="kubevirt-create-vm-modal__review-tab-section__content"
         />
-      </section>
-    </>
+      </footer>
+    </div>
   );
 };
 
