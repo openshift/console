@@ -5,11 +5,14 @@ import { getNetworks } from '../../selectors/selectors';
 import { NetworkInterfaceWrapper } from '../../../../k8s/wrapper/vm/network-interface-wrapper';
 import { NetworkWrapper } from '../../../../k8s/wrapper/vm/network-wrapper';
 import { Table, TableBody, TableHeader, TableVariant } from '@patternfly/react-table';
+import { Bullseye, EmptyState, EmptyStateVariant, Title } from '@patternfly/react-core';
 
 const NetworkingReviewConnected: React.FC<NetworkingTabComponentProps> = ({
   networks,
   className,
 }) => {
+  const showNetworks = networks.length > 0;
+
   const headers = [
     { title: 'Name' },
     { title: 'Model' },
@@ -30,17 +33,30 @@ const NetworkingReviewConnected: React.FC<NetworkingTabComponentProps> = ({
   });
 
   return (
-    <Table
-      aria-label="Network Interfaces"
-      variant={TableVariant.compact}
-      cells={headers}
-      rows={rows}
-      className={className}
-      gridBreakPoint="grid-xl"
-    >
-      <TableHeader />
-      <TableBody />
-    </Table>
+    <>
+      {showNetworks && (
+        <Table
+          aria-label="Network Interfaces"
+          variant={TableVariant.compact}
+          cells={headers}
+          rows={rows}
+          className={className}
+          gridBreakPoint="grid-xl"
+        >
+          <TableHeader />
+          <TableBody />
+        </Table>
+      )}
+      {!showNetworks && (
+        <Bullseye>
+          <EmptyState variant={EmptyStateVariant.full}>
+            <Title headingLevel="h5" size="lg">
+              No network interface added
+            </Title>
+          </EmptyState>
+        </Bullseye>
+      )}
+    </>
   );
 };
 

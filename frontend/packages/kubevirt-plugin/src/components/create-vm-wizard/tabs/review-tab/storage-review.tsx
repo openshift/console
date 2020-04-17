@@ -1,7 +1,14 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { Alert, AlertVariant } from '@patternfly/react-core';
+import {
+  Alert,
+  AlertVariant,
+  Bullseye,
+  EmptyState,
+  EmptyStateVariant,
+  Title,
+} from '@patternfly/react-core';
 import { Table, TableBody, TableHeader, TableVariant } from '@patternfly/react-table';
 import { Firehose, FirehoseResult, resourcePath } from '@console/internal/components/utils';
 import { StorageClassResourceKind } from '@console/internal/module/k8s';
@@ -50,6 +57,8 @@ const StorageReviewFirehose: React.FC<StorageReviewFirehoseProps> = ({
   persistentVolumeClaims,
   storageClasses,
 }) => {
+  const showStorages = storages.length > 0;
+
   const headers = [
     { title: 'Name' },
     { title: 'Source' },
@@ -58,7 +67,6 @@ const StorageReviewFirehose: React.FC<StorageReviewFirehoseProps> = ({
     { title: 'Storage Class' },
     { title: 'Access Mode' },
     { title: 'Volume Mode' },
-
   ];
 
   const pvcLookup = createLookup(persistentVolumeClaims, getName);
@@ -94,37 +102,49 @@ const StorageReviewFirehose: React.FC<StorageReviewFirehoseProps> = ({
       combinedDisk.getStorageClassName(),
       combinedDisk.getAccessModes()?.join(', '),
       combinedDisk.getVolumeMode()?.toString(),
-
     ];
   });
 
   return (
-    <span className={className}>
-      {hasStorageWithoutStorageClass && (
-        <Alert
-          title={'Some disks do not have a storage class defined'}
-          isInline
-          variant={AlertVariant.warning}
-          className="kubevirt-create-vm-modal__review-tab-storage-class-alert"
-        >
-          {defaultStorageClass ? (
-            <DefaultSCUsed defaultSCName={getName(defaultStorageClass)} />
-          ) : (
-            <NoDefaultSC />
+    <>
+      {showStorages && (
+        <span className={className}>
+          {hasStorageWithoutStorageClass && (
+            <Alert
+              title={'Some disks do not have a storage class defined'}
+              isInline
+              variant={AlertVariant.warning}
+              className="kubevirt-create-vm-modal__review-tab-storage-class-alert"
+            >
+              {defaultStorageClass ? (
+                <DefaultSCUsed defaultSCName={getName(defaultStorageClass)} />
+              ) : (
+                <NoDefaultSC />
+              )}
+            </Alert>
           )}
-        </Alert>
+          <Table
+            aria-label="Storage Devices"
+            variant={TableVariant.compact}
+            cells={headers}
+            rows={rows}
+            gridBreakPoint="grid-xl"
+          >
+            <TableHeader />
+            <TableBody />
+          </Table>
+        </span>
       )}
-      <Table
-        aria-label="Storage Devices"
-        variant={TableVariant.compact}
-        cells={headers}
-        rows={rows}
-        gridBreakPoint="grid-xl"
-      >
-        <TableHeader />
-        <TableBody />
-      </Table>
-    </span>
+      {!showStorages && (
+        <Bullseye>
+          <EmptyState variant={EmptyStateVariant.full}>
+            <Title headingLevel="h5" size="lg">
+              No disks attached
+            </Title>
+          </EmptyState>
+        </Bullseye>
+      )}
+    </>
   );
 };
 
