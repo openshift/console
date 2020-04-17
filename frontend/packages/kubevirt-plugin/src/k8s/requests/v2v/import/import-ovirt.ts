@@ -83,18 +83,16 @@ const getNetworkMappings = (networks: VMWizardNetwork[]) => {
 const getDiskMappings = (storage: VMWizardStorage[]) =>
   storage
     .filter(({ type, importData }) => type === VMWizardStorageType.V2V_OVIRT_IMPORT && importData)
-    .map(({ persistentVolumeClaim, importData: { id } }) => {
-      const pvcWrapper = new PersistentVolumeClaimWrapper(persistentVolumeClaim);
-      return pvcWrapper.getStorageClassName()
-        ? ({
-            source: { id },
-            target: {
-              name: pvcWrapper.getStorageClassName(),
-            },
-          } as DiskMapping)
-        : null;
-    })
-    .filter((m) => m);
+    .map(
+      ({ persistentVolumeClaim, importData: { id } }) =>
+        ({
+          source: { id },
+          target: {
+            name:
+              new PersistentVolumeClaimWrapper(persistentVolumeClaim).getStorageClassName() || null,
+          },
+        } as DiskMapping),
+    );
 
 const createVMImport = async (
   {

@@ -70,9 +70,9 @@ export class V2VProviderStatus extends ObjectEnum<string> {
     this.phase = phase;
   }
 
-  toString = () => {
+  toString() {
     return this.phase;
-  };
+  }
 }
 
 export const V2V_PROVIDER_STATUS_ALL_OK = new Set([V2VProviderStatus.CONNECTION_SUCCESSFUL]);

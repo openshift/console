@@ -23,10 +23,10 @@ export class DiskBus extends ObjectEnum<string> {
 
   static fromString = (model: string): DiskBus => DiskBus.stringMapper[model];
 
-  toString = () => {
+  toString() {
     if (this === DiskBus.VIRTIO) {
       return READABLE_VIRTIO;
     }
     return this.value;
-  };
+  }
 }

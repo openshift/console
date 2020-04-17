@@ -5,8 +5,8 @@ import {
   getLabels,
   getOwnerReferences,
   getCreationTimestamp,
-} from '@console/shared/src';
-import { K8sKind, K8sResourceKind } from '@console/internal/module/k8s';
+} from '@console/shared/src/selectors/common';
+import { K8sKind, K8sResourceKind } from '@console/internal/module/k8s/types';
 import { K8sResourceKindMethods } from '../types/types';
 import { ObjectWithTypePropertyWrapper } from './object-with-type-property-wrapper';
 import { ObjectEnum } from '../../../constants';

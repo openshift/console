@@ -5,6 +5,7 @@ import { PodModel, TemplateModel } from '@console/internal/models';
 import { VMDisksFirehose } from '../vm-disks';
 import { VMNics } from '../vm-nics';
 import {
+  DataVolumeModel,
   VirtualMachineImportModel,
   VirtualMachineInstanceMigrationModel,
   VirtualMachineInstanceModel,
@@ -104,6 +105,13 @@ export const VirtualMachinesDetailsPage: React.FC<VirtualMachinesDetailsPageProp
       isList: true,
       namespace,
       prop: 'vmImports',
+      optional: true,
+    },
+    {
+      kind: DataVolumeModel.kind,
+      isList: true,
+      namespace,
+      prop: 'dataVolumes',
     },
   ];
 

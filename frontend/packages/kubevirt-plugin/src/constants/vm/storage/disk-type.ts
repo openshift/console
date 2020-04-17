@@ -32,5 +32,7 @@ export class DiskType extends ObjectEnum<string> {
   static fromString = (model: string): DiskType => DiskType.stringMapper[model];
 
   // Overide ObjectEnum's default toString method.
-  toString = () => this.label;
+  toString() {
+    return this.label;
+  }
 }

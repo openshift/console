@@ -29,7 +29,7 @@ export class AccessMode extends ObjectEnum<string> {
 
   static fromString = (model: string): AccessMode => AccessMode.stringMapper[model];
 
-  toString = () => {
+  toString() {
     return this.label;
-  };
+  }
 }

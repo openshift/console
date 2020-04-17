@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Kebab, KebabOption, pluralize } from '@console/internal/components/utils';
-import { asVM, isVMI, isVMRunning } from '../../../../../../selectors/vm';
+import { asVM, isVMRunning } from '../../../../../../selectors/vm';
+import { isVMI } from '../../../../../../selectors/check-type';
 import { VMLikeEntityKind } from '../../../../../../types/vmLike';
 import { TableData, TableRow, RowFunction } from '@console/internal/components/factory';
 import { DASH, dimensifyRow } from '@console/shared';

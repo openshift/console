@@ -200,6 +200,11 @@ const plugin: Plugin<ConsumedExtensions> = [
           isList: true,
           kind: models.VirtualMachineInstanceMigrationModel.kind,
         },
+        dataVolumes: {
+          kind: models.DataVolumeModel.kind,
+          isList: true,
+          optional: true,
+        },
         vmImports: {
           isList: true,
           kind: models.VirtualMachineImportModel.kind,
@@ -261,6 +266,12 @@ const plugin: Plugin<ConsumedExtensions> = [
           isList: true,
           kind: models.VirtualMachineInstanceMigrationModel.kind,
           prop: 'migrations',
+        },
+        {
+          isList: true,
+          optional: true,
+          kind: models.DataVolumeModel.kind,
+          prop: 'dataVolumes',
         },
         {
           isList: true,

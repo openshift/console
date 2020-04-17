@@ -26,7 +26,8 @@ import {
   withHandlePromise,
 } from '@console/internal/components/utils';
 import { VMTabProps } from '../types';
-import { isVM, getVMLikeModel } from '../../../selectors/vm';
+import { getVMLikeModel } from '../../../selectors/vm';
+import { isVM } from '../../../selectors/check-type';
 import * as _ from 'lodash';
 import {
   areEnvDisksEqual,

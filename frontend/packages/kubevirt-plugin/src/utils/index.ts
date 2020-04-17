@@ -76,6 +76,10 @@ export const parseNumber = (value, defaultValue = null) => {
   return Number.isNaN(result) ? defaultValue : result;
 };
 
+export const parsePercentage = (value: string, defaultValue = null) => {
+  return parseNumber(value?.replace('%', ''), defaultValue);
+};
+
 export const buildOwnerReference = (
   owner: K8sResourceKind,
   opts: { blockOwnerDeletion?: boolean; controller?: boolean } = { blockOwnerDeletion: true },

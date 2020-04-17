@@ -1,9 +1,8 @@
 import * as React from 'react';
 import { AccessConsoles, VncConsole } from '@patternfly/react-console';
-import { Button } from '@patternfly/react-core';
 import { Firehose, FirehoseResult, LoadingInline } from '@console/internal/components/utils';
 import { getNamespace } from '@console/shared';
-import { K8sResourceKind, PodKind } from '@console/internal/module/k8s';
+import { PodKind } from '@console/internal/module/k8s';
 import { ServiceModel } from '@console/internal/models';
 import { VirtualMachineInstanceModel, VirtualMachineModel } from '../../models';
 import {
@@ -17,34 +16,27 @@ import {
   RDPConnectionDetailsType,
   VNCConnectionDetailsType,
 } from '../../selectors/vmi';
-import { getVMStatus } from '../../statuses/vm/vm';
+import { getVMStatus } from '../../statuses/vm/vm-status';
 import { getLoadedData, getResource } from '../../utils';
 import { findVMIPod } from '../../selectors/pod/selectors';
-import { isVMStarting, isWindows, asVM, isVM, isVMI } from '../../selectors/vm';
+import { isWindows, asVM } from '../../selectors/vm';
+import { isVM, isVMI } from '../../selectors/check-type';
 import { VMIKind, VMKind } from '../../types/vm';
-import { menuActionStart } from './menu-actions';
 import { SerialConsoleConnector } from './serial-console-connector';
 import { DesktopViewerSelector } from './desktop-viewer-selector';
 import { VMTabProps } from './types';
-import { VMImportKind } from '../../types/vm-import/ovirt/vm-import';
+import { VMStatusBundle } from '../../statuses/vm/types';
+import { VMStatus } from '../../constants/vm/vm-status';
 
 const { VNC_CONSOLE_TYPE } = AccessConsoles.constants;
 
-const VMIsDown: React.FC<VMIsDownProps> = ({ onStartVm }) => {
-  const action = (
-    <Button variant="link" onClick={onStartVm}>
-      start
-    </Button>
-  );
-
-  return (
-    <div className="co-m-pane__body">
-      <div className="kubevirt-vm-consoles__loading">
-        This Virtual Machine is down. Please {action} it to access its console.
-      </div>
+const VMIsDown: React.FC = () => (
+  <div className="co-m-pane__body">
+    <div className="kubevirt-vm-consoles__loading">
+      This Virtual Machine is down. Please start it to access its console.
     </div>
-  );
-};
+  </div>
+);
 
 const VMIsStarting: React.FC<VMIsStartingProps> = ({ LoadingComponent }) => (
   <div className="co-m-pane__body">
@@ -55,20 +47,33 @@ const VMIsStarting: React.FC<VMIsStartingProps> = ({ LoadingComponent }) => (
   </div>
 );
 
+const VMCannotBeStarted: React.FC = () => (
+  <div className="co-m-pane__body">
+    <div className="kubevirt-vm-consoles__loading">
+      This Virtual Machine is down and cannot be started at the moment.
+    </div>
+  </div>
+);
+
 const VMConsoles: React.FC<VMConsolesProps> = ({
   vm,
   vmi,
-  onStartVm,
+  vmStatusBundle,
   vnc,
   serial,
   rdp,
   LoadingComponent,
 }) => {
   if (!isVMIRunning(vmi)) {
-    return isVMStarting(vm, vmi) ? (
+    if (vmStatusBundle?.status?.isImporting() || vmStatusBundle?.status?.isMigrating()) {
+      return <VMCannotBeStarted />;
+    }
+
+    return vmStatusBundle?.status === VMStatus.STARTING ||
+      vmStatusBundle?.status === VMStatus.VMI_WAITING ? (
       <VMIsStarting LoadingComponent={LoadingComponent} />
     ) : (
-      <VMIsDown onStartVm={onStartVm} />
+      <VMIsDown />
     );
   }
 
@@ -97,14 +102,9 @@ const VMConsoles: React.FC<VMConsolesProps> = ({
 };
 
 const VmConsolesWrapper: React.FC<VmConsolesWrapperProps> = (props) => {
-  const { vm: vmProp, vmi, pods, migrations, vmImports } = props;
+  const { vm: vmProp, vmi, pods, vmStatusBundle } = props;
   const vm = asVM(vmProp);
   const services = getLoadedData(props.services);
-
-  const onStartVm = () => {
-    const vmStatus = getVMStatus({ vm, vmi, pods, migrations, vmImports });
-    menuActionStart(VirtualMachineModel, vm, { vmStatus }).callback();
-  };
 
   let rdp;
   if (isWindows(vm)) {
@@ -117,7 +117,7 @@ const VmConsolesWrapper: React.FC<VmConsolesWrapperProps> = (props) => {
     <VMConsoles
       vm={vm}
       vmi={vmi}
-      onStartVm={onStartVm}
+      vmStatusBundle={vmStatusBundle}
       vnc={getVncConnectionDetails(vmi)}
       serial={getSerialConsoleConnectionDetails(vmi)}
       rdp={rdp}
@@ -133,6 +133,7 @@ export const VMConsoleFirehose: React.FC<VMTabProps> = ({
   vmImports,
   pods,
   migrations,
+  dataVolumes,
   customData: { kindObj },
 }) => {
   const vm = kindObj === VirtualMachineModel && isVM(objProp) ? objProp : vmProp;
@@ -146,16 +147,19 @@ export const VMConsoleFirehose: React.FC<VMTabProps> = ({
     getResource(ServiceModel, { namespace, prop: 'services' }),
   ];
 
+  const vmStatusBundle = getVMStatus({
+    vm,
+    vmi,
+    pods,
+    migrations,
+    dataVolumes,
+    vmImports,
+  });
+
   return (
     <div className="co-m-pane__body">
       <Firehose resources={resources}>
-        <VmConsolesWrapper
-          vm={vm}
-          vmi={vmi}
-          migrations={migrations}
-          pods={pods}
-          vmImports={vmImports}
-        />
+        <VmConsolesWrapper vm={vm} vmi={vmi} vmStatusBundle={vmStatusBundle} pods={pods} />
       </Firehose>
     </div>
   );
@@ -166,22 +170,17 @@ type VmConsolesWrapperProps = {
   vmi?: VMIKind;
   services?: FirehoseResult;
   pods?: PodKind[];
-  migrations?: K8sResourceKind[];
-  vmImports?: VMImportKind[];
+  vmStatusBundle: VMStatusBundle;
 };
 
 type VMConsolesProps = {
   vm: VMKind;
-  onStartVm: () => void;
   LoadingComponent: React.ComponentType;
   vmi?: VMIKind;
   vnc?: VNCConnectionDetailsType;
   serial?: SerialConsoleConnectionDetailsType;
   rdp?: RDPConnectionDetailsType;
-};
-
-type VMIsDownProps = {
-  onStartVm: () => void;
+  vmStatusBundle: VMStatusBundle;
 };
 
 type VMIsStartingProps = {
