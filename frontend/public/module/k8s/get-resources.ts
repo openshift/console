@@ -82,16 +82,12 @@ export type DiscoveryResources = {
   safeResources: string[];
 };
 
-export const kindToLabel = (kind: string): string => {
-  return _.startCase(kind).replace(/\bO Auth\b/, 'OAuth');
-};
-
 export const pluralizeKind = (kind: string): string => {
-  const label = kindToLabel(kind);
-  const pluralized = plural(label);
+  // Use startCase to separate words so the last can be pluralized but remove spaces so as not to humanize
+  const pluralized = plural(_.startCase(kind)).replace(/\s+/g, '');
   // Handle special cases like DB -> DBs (instead of DBS).
-  if (pluralized === `${label}S`) {
-    return `${label}s`;
+  if (pluralized === `${kind}S`) {
+    return `${kind}s`;
   }
   return pluralized;
 };
@@ -133,7 +129,7 @@ export const getResources = () =>
               namespaced,
               verbs,
               shortNames,
-              label: kindToLabel(kind),
+              label: kind,
               plural: name,
               apiVersion,
               abbr: kindToAbbr(kind),
