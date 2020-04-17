@@ -1,6 +1,7 @@
 /* eslint-disable lines-between-class-members,no-underscore-dangle */
 import { ObjectEnum } from './object-enum';
-import { StatusSimpleLabel } from './status-simple-label';
+import { StatusSimpleLabel } from './status-constants';
+import { StatusGroup } from './status-group';
 
 export interface StatusMetadata {
   isError?: boolean;
@@ -9,6 +10,7 @@ export interface StatusMetadata {
   isImporting?: boolean;
   isInProgress?: boolean;
   isUnknown?: boolean;
+  group?: StatusGroup;
 }
 
 export abstract class StatusEnum<SIMPLE_LABEL = StatusSimpleLabel> extends ObjectEnum<string> {
@@ -19,13 +21,22 @@ export abstract class StatusEnum<SIMPLE_LABEL = StatusSimpleLabel> extends Objec
   protected readonly _isInProgress: boolean;
   protected readonly _isUnknown: boolean;
 
+  protected readonly group: StatusGroup;
   protected readonly label: string;
   protected readonly simpleLabel: SIMPLE_LABEL | StatusSimpleLabel; // cache resolveSimpleLabel call
 
   protected constructor(
     value: string,
     label: string,
-    { isError, isCompleted, isPending, isImporting, isInProgress, isUnknown }: StatusMetadata = {},
+    {
+      isError,
+      isCompleted,
+      isPending,
+      isImporting,
+      isInProgress,
+      isUnknown,
+      group,
+    }: StatusMetadata = {},
   ) {
     super(value);
     if (label == null) {
@@ -46,6 +57,7 @@ export abstract class StatusEnum<SIMPLE_LABEL = StatusSimpleLabel> extends Objec
 
     this._isUnknown = isUnknown;
 
+    this.group = group;
     this.label = label;
     this.simpleLabel = this.resolveSimpleLabel();
   }
@@ -70,18 +82,27 @@ export abstract class StatusEnum<SIMPLE_LABEL = StatusSimpleLabel> extends Objec
       isImporting: this._isImporting,
       isInProgress: this._isInProgress,
       isUnknown: this._isUnknown,
+      group: this.group,
     } as any);
 
   getLabel = () => this.label;
 
+  getGroup = () => this.group;
+
   getSimpleLabel = () => this.simpleLabel;
 
   toString() {
-    return this.label || super.toString();
+    const result = this.label || super.toString();
+    return this.group && !this._isUnknown ? `${result} (${this.group.toString()})` : result;
   }
 
   toSimpleSortString = () => {
-    return `${this.simpleLabel}${this.simpleLabel === this.label ? '' : this.label}`;
+    return `${this.simpleLabel}${this.simpleLabel === this.toString() ? '' : this.toString()}`;
+  };
+
+  toVerboseString = () => {
+    const result = this.label || super.toString();
+    return this.group && !this._isUnknown ? `${result} (${this.group.getVerboseName()})` : result;
   };
 
   protected resolveSimpleLabel(): SIMPLE_LABEL | StatusSimpleLabel {

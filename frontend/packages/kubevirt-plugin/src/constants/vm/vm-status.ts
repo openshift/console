@@ -3,7 +3,8 @@ import { ObjectEnum } from '../object-enum';
 import { V2VVMImportStatus } from '../v2v-import/ovirt/v2v-vm-import-status';
 import { StatusEnum, StatusMetadata } from '../status-enum';
 import { getStringEnumValues } from '../../utils/types';
-import { StatusSimpleLabel } from '../status-simple-label';
+import { StatusSimpleLabel } from '../status-constants';
+import { StatusGroup } from '../status-group';
 
 export enum VMStatusSimpleLabel {
   Starting = 'Starting',
@@ -44,22 +45,25 @@ export class VMStatus extends StatusEnum<VMStatusSimpleLabel | StatusSimpleLabel
   });
   static readonly VM_ERROR = new VMStatus('VMStatus_VM_ERROR', 'VM error', { isError: true });
   static readonly POD_ERROR = new VMStatus('VMStatus_POD_ERROR', 'Pod error', { isError: true });
-  static readonly CDI_IMPORT_ERROR = new VMStatus(
-    'VMStatus_CDI_IMPORT_ERROR',
-    'Import error (CDI)',
+  static readonly CDI_IMPORT_ERROR = new VMStatus('VMStatus_CDI_IMPORT_ERROR', 'Import error', {
+    isError: true,
+    group: StatusGroup.CDI,
+  });
+  static readonly CDI_IMPORTING = new VMStatus(
+    'VMStatus_CDI_IMPORTING',
+    StatusSimpleLabel.Importing,
     {
-      isError: true,
+      isImporting: true,
+      group: StatusGroup.CDI,
     },
   );
-  static readonly CDI_IMPORTING = new VMStatus('VMStatus_CDI_IMPORTING', 'Importing (CDI)', {
-    isImporting: true,
-  });
   static readonly CDI_IMPORT_PENDING = new VMStatus(
     'VMStatus_CDI_IMPORT_PENDING',
-    'Import pending (CDI)',
+    'Import pending',
     {
       isImporting: true,
       isPending: true,
+      group: StatusGroup.CDI,
     },
   );
   static readonly MIGRATING = new VMStatus('VMStatus_MIGRATING', VMStatusSimpleLabel.Migrating, {
@@ -67,22 +71,24 @@ export class VMStatus extends StatusEnum<VMStatusSimpleLabel | StatusSimpleLabel
   });
   static readonly V2V_CONVERSION_ERROR = new VMStatus(
     'VMStatus_V2V_CONVERSION_ERROR',
-    'Import error (VMware)',
-    { isError: true },
+    'Import error',
+    { isError: true, group: StatusGroup.VMWARE },
   );
   static readonly V2V_CONVERSION_IN_PROGRESS = new VMStatus(
     'VMStatus_V2V_CONVERSION_IN_PROGRESS',
-    'Importing (VMware)',
+    StatusSimpleLabel.Importing,
     {
       isImporting: true,
+      group: StatusGroup.VMWARE,
     },
   );
   static readonly V2V_CONVERSION_PENDING = new VMStatus(
     'VMStatus_V2V_CONVERSION_PENDING',
-    'Import pending (VMware)',
+    'Import pending',
     {
       isImporting: true,
       isPending: true,
+      group: StatusGroup.VMWARE,
     },
   );
 

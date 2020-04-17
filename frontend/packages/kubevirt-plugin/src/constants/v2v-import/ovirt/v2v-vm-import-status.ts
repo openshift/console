@@ -1,36 +1,37 @@
 /* eslint-disable lines-between-class-members */
 import { ObjectEnum } from '../../object-enum';
 import { StatusEnum } from '../../status-enum';
+import { StatusSimpleLabel } from '../../status-constants';
+import { StatusGroup } from '../../status-group';
 
 export class V2VVMImportStatus extends StatusEnum {
-  static readonly ERROR = new V2VVMImportStatus(
-    'V2VVMImportStatus_ERROR',
-    'Import error (Red Hat Virtualization)',
-    { isError: true },
-  );
+  static readonly ERROR = new V2VVMImportStatus('V2VVMImportStatus_ERROR', 'Import error', {
+    isError: true,
+    group: StatusGroup.RHV,
+  });
   static readonly COMPLETE = new V2VVMImportStatus(
     'V2VVMImportStatus_COMPLETE',
-    'Import complete (Red Hat Virtualization)',
+    'Import complete',
     {
       isCompleted: true,
+      group: StatusGroup.RHV,
     },
   );
-  static readonly PENDING = new V2VVMImportStatus(
-    'V2VVMImportStatus_PENDING',
-    'Import pending (Red Hat Virtualization)',
-    {
-      isPending: true,
-    },
-  );
+  static readonly PENDING = new V2VVMImportStatus('V2VVMImportStatus_PENDING', 'Import pending', {
+    isPending: true,
+    group: StatusGroup.RHV,
+  });
   static readonly IN_PROGRESS = new V2VVMImportStatus(
     'V2VVMImportStatus_IN_PROGRESS',
-    'Importing (Red Hat Virtualization)',
+    StatusSimpleLabel.Importing,
     {
       isImporting: true,
+      group: StatusGroup.RHV,
     },
   );
   static readonly UNKNOWN = new V2VVMImportStatus('V2VVMImportStatus_UNKNOWN', 'Unknown', {
     isUnknown: true,
+    group: StatusGroup.RHV,
   });
 
   private static readonly ALL = Object.freeze(

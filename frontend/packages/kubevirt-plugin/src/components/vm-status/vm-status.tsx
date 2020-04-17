@@ -72,7 +72,7 @@ const ImporterPods: React.FC<ImporterPodsProps> = ({ statuses }) => (
         {statuses.map(({ message, status, progress, pod, dataVolume }) => {
           return (
             <li key={getName(pod)} className="kubevirt-vm-status__detail-section">
-              {status.toString().replace('CDI', getName(dataVolume))}
+              {`${status.getLabel()} (${getName(dataVolume)})`}
               <ResourceLink
                 className="kubevirt-vm-status__detail-small-section"
                 kind={PodModel.kind}
@@ -122,7 +122,7 @@ export const VMStatus: React.FC<VMStatusProps> = ({ vm, vmi, vmStatusBundle }) =
   const vmiLike = vm || vmi;
 
   const { status, pod, progress, importerPodsStatuses } = vmStatusBundle;
-  const title = status.toString();
+  const title = status.toString(); // TODO status.toVerboseString() should be called to pass to popup header
   const message = vmStatusBundle.message || vmStatusBundle.detailedMessage;
   const detailedMessage = vmStatusBundle.message ? vmStatusBundle.detailedMessage : null;
   const isPaused = status === VMStatusEnum.PAUSED;
