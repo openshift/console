@@ -27,7 +27,7 @@ const GeneralReviewConnected: React.FC<GeneralReviewConnectedProps> = (props) =>
 
   const osName =
     getOS({
-      osID: getFieldValue(iVMSettings as VMSettings, VMSettingsField.OPERATING_SYSTEM),
+      osID: getFieldValue(iVMSettings.toJS() as VMSettings, VMSettingsField.OPERATING_SYSTEM),
       iUserTemplates,
       openshiftFlag,
       iCommonTemplates,
