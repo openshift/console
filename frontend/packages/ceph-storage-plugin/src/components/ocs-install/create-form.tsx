@@ -56,6 +56,9 @@ const makeOCSRequest = (
   ocsObj.spec.storageDeviceSets[0].dataPVCTemplate.spec.resources.requests.storage = osdSize;
 
   return Promise.all(promises).then(() => {
+    if (!storageClass) {
+      throw new Error('No StorageClass selected');
+    }
     return k8sCreate(OCSServiceModel, ocsObj);
   });
 };
@@ -74,11 +77,12 @@ export const CreateOCSServiceForm = withHandlePromise<
   const [selectedNodes, setSelectedNodes] = React.useState<NodeKind[]>(null);
   const [visibleRows, setVisibleRows] = React.useState<NodeKind[]>(null);
   const [osdSize, setOSDSize] = React.useState('2Ti');
-  const [storageClass, setStorageClass] = React.useState<string>(null);
+  const [storageClass, setStorageClass] = React.useState<string>('');
 
   const submit = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
-    return handlePromise(makeOCSRequest(selectedNodes, storageClass, osdSize)).then(() => {
+    // eslint-disable-next-line promise/catch-or-return
+    handlePromise(makeOCSRequest(selectedNodes, storageClass, osdSize)).then(() => {
       history.push(
         `/k8s/ns/${ns}/clusterserviceversions/${appName}/${referenceForModel(
           OCSServiceModel,
