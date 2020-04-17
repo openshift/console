@@ -17,7 +17,6 @@ import affinityModal from '../modals/scheduling-modals/affinity-modal/connected-
 import { getRowsDataFromAffinity } from '../modals/scheduling-modals/affinity-modal/helpers';
 import VMStatusModal from '../modals/vm-status-modal/vm-status-modal';
 import { getDescription } from '../../selectors/selectors';
-import { getFlavorText } from '../flavor-text';
 import { EditButton } from '../edit-button';
 import { VMStatus } from '../vm-status/vm-status';
 import { DiskSummary } from '../vm-disks/disk-summary';
@@ -29,6 +28,7 @@ import { isVMIPaused, getVMINodeName } from '../../selectors/vmi';
 import { VirtualMachineInstanceModel, VirtualMachineModel } from '../../models';
 import { asVMILikeWrapper } from '../../k8s/wrapper/utils/convert';
 import { getVMTemplate } from '../../selectors/vm-template/selectors';
+import { getFlavorText } from '../../selectors/vm/flavor-text';
 import {
   NODE_SELECTOR_MODAL_TITLE,
   DEDICATED_RESOURCES_PINNED,

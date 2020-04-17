@@ -1,7 +1,7 @@
-import * as _ from 'lodash';
+import { CPURaw } from '../../types/vm';
+import { vCPUCount } from './cpu';
 import { convertToBaseValue, humanizeBinaryBytes } from '@console/internal/components/utils';
-import { vCPUCount } from '../selectors/vm';
-import { CPURaw } from '../types/vm';
+import * as _ from 'lodash';
 
 export const getFlavorText = ({
   cpu,

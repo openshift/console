@@ -20,7 +20,6 @@ import {
 } from '../../selectors/vm/selectors';
 import { getTemplateOperatingSystems } from '../../selectors/vm-template/advanced';
 import { vmFlavorModal } from '../modals';
-import { getFlavorText } from '../flavor-text';
 import { EditButton } from '../edit-button';
 import { VMDetailsItem } from '../vms/vm-resource';
 import { DiskSummary } from '../vm-disks/disk-summary';
@@ -40,6 +39,7 @@ import {
   AFFINITY_MODAL_TITLE,
 } from '../modals/scheduling-modals/shared/consts';
 import './_vm-template-resource.scss';
+import { getFlavorText } from '../../selectors/vm/flavor-text';
 
 export const VMTemplateResourceSummary: React.FC<VMTemplateResourceSummaryProps> = ({
   template,
