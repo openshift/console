@@ -1,13 +1,7 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
-import {
-  Alert,
-  AlertVariant,
-  EmptyState,
-  EmptyStateVariant,
-  Title,
-} from '@patternfly/react-core';
+import { Alert, AlertVariant, EmptyState, EmptyStateVariant, Title } from '@patternfly/react-core';
 import { Table, TableBody, TableHeader, TableVariant } from '@patternfly/react-table';
 import { Firehose, FirehoseResult, resourcePath } from '@console/internal/components/utils';
 import { StorageClassResourceKind } from '@console/internal/module/k8s';

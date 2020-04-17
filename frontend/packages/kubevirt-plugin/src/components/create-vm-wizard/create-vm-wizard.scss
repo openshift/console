@@ -8,6 +8,13 @@
   flex-flow: wrap
 }
 
+.kubevirt-create-vm-modal__wizard-content .pf-c-wizard__main-body {
+  display: flex;
+  height: 100%;
+  flex-direction: column;
+  padding-bottom: 0;
+}
+
 .pf-c-wizard__outer-wrap {
   min-height: inherit;
 }
