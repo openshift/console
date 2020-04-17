@@ -36,7 +36,7 @@ const NetworkingReviewConnected: React.FC<NetworkingTabComponentProps> = ({
       cells={headers}
       rows={rows}
       className={className}
-      gridBreakPoint="grid-2xl"
+      gridBreakPoint="grid-xl"
     >
       <TableHeader />
       <TableBody />

@@ -119,6 +119,7 @@ const StorageReviewFirehose: React.FC<StorageReviewFirehoseProps> = ({
         variant={TableVariant.compact}
         cells={headers}
         rows={rows}
+        gridBreakPoint="grid-xl"
       >
         <TableHeader />
         <TableBody />
