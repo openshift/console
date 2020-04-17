@@ -4,7 +4,6 @@ import { Link } from 'react-router-dom';
 import {
   Alert,
   AlertVariant,
-  Bullseye,
   EmptyState,
   EmptyStateVariant,
   Title,
@@ -53,7 +52,6 @@ const NoDefaultSC: React.FC = () => (
 
 const StorageReviewFirehose: React.FC<StorageReviewFirehoseProps> = ({
   storages,
-  className,
   persistentVolumeClaims,
   storageClasses,
 }) => {
@@ -108,7 +106,7 @@ const StorageReviewFirehose: React.FC<StorageReviewFirehoseProps> = ({
   return (
     <>
       {showStorages && (
-        <span className={className}>
+        <>
           {hasStorageWithoutStorageClass && (
             <Alert
               title={'Some disks do not have a storage class defined'}
@@ -133,16 +131,14 @@ const StorageReviewFirehose: React.FC<StorageReviewFirehoseProps> = ({
             <TableHeader />
             <TableBody />
           </Table>
-        </span>
+        </>
       )}
       {!showStorages && (
-        <Bullseye>
-          <EmptyState variant={EmptyStateVariant.full}>
-            <Title headingLevel="h5" size="lg">
-              No disks attached
-            </Title>
-          </EmptyState>
-        </Bullseye>
+        <EmptyState variant={EmptyStateVariant.full}>
+          <Title headingLevel="h3" size="sm">
+            No disks attached
+          </Title>
+        </EmptyState>
       )}
     </>
   );
@@ -152,7 +148,6 @@ type StorageReviewFirehoseProps = {
   storages: VMWizardStorage[];
   storageClasses?: FirehoseResult<StorageClassResourceKind[]>;
   persistentVolumeClaims?: FirehoseResult;
-  className: string;
 };
 
 const StorageReviewConnected: React.FC<StorageReviewConnectedProps> = ({ namespace, ...rest }) => (

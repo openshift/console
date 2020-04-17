@@ -13,14 +13,13 @@ import { FormField, FormFieldType } from '../../form/form-field';
 import './review-options.scss';
 
 const ReviewOptionsConnected: React.FC<ReviewOptionsConnectedProps> = ({
-  className,
   onFieldChange,
   iVMSettings,
 }) => {
   const onChange = (key: VMSettingsRenderableField) => (value) => onFieldChange(key, value);
 
   return (
-    <Form className={className}>
+    <Form>
       <FormFieldMemoRow
         field={getField(VMSettingsField.START_VM, iVMSettings)}
         fieldType={FormFieldType.INLINE_CHECKBOX}
@@ -41,7 +40,6 @@ const ReviewOptionsConnected: React.FC<ReviewOptionsConnectedProps> = ({
 type ReviewOptionsConnectedProps = {
   onFieldChange: (key: VMSettingsRenderableField, value: string) => void;
   iVMSettings: any;
-  className: string;
 };
 
 const stateToProps = (state, { wizardReduxID }) => ({

@@ -5,12 +5,9 @@ import { getNetworks } from '../../selectors/selectors';
 import { NetworkInterfaceWrapper } from '../../../../k8s/wrapper/vm/network-interface-wrapper';
 import { NetworkWrapper } from '../../../../k8s/wrapper/vm/network-wrapper';
 import { Table, TableBody, TableHeader, TableVariant } from '@patternfly/react-table';
-import { Bullseye, EmptyState, EmptyStateVariant, Title } from '@patternfly/react-core';
+import { EmptyState, EmptyStateVariant, Title } from '@patternfly/react-core';
 
-const NetworkingReviewConnected: React.FC<NetworkingTabComponentProps> = ({
-  networks,
-  className,
-}) => {
+const NetworkingReviewConnected: React.FC<NetworkingTabComponentProps> = ({ networks }) => {
   const showNetworks = networks.length > 0;
 
   const headers = [
@@ -40,7 +37,6 @@ const NetworkingReviewConnected: React.FC<NetworkingTabComponentProps> = ({
           variant={TableVariant.compact}
           cells={headers}
           rows={rows}
-          className={className}
           gridBreakPoint="grid-xl"
         >
           <TableHeader />
@@ -48,13 +44,11 @@ const NetworkingReviewConnected: React.FC<NetworkingTabComponentProps> = ({
         </Table>
       )}
       {!showNetworks && (
-        <Bullseye>
-          <EmptyState variant={EmptyStateVariant.full}>
-            <Title headingLevel="h5" size="lg">
-              No network interface added
-            </Title>
-          </EmptyState>
-        </Bullseye>
+        <EmptyState variant={EmptyStateVariant.small}>
+          <Title headingLevel="h3" size="sm">
+            No network interface added
+          </Title>
+        </EmptyState>
       )}
     </>
   );
@@ -62,7 +56,6 @@ const NetworkingReviewConnected: React.FC<NetworkingTabComponentProps> = ({
 
 type NetworkingTabComponentProps = {
   networks: VMWizardNetwork[];
-  className: string;
 };
 
 const stateToProps = (state, { wizardReduxID }) => ({
