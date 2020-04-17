@@ -1,5 +1,5 @@
 import { iGet } from '../../../../utils/immutable';
-import { getCreateVMWizards } from '../common';
+import { getCreateVMWizards } from '../wizards';
 
 export const iGetCreateVMWizard = (state, reduxID: string) =>
   iGet(getCreateVMWizards(state), reduxID);

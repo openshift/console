@@ -1,6 +1,9 @@
 import * as _ from 'lodash';
 import { List } from 'immutable';
 
+// ATTENTION: please do not add any new imports here
+//   - it can easily cause cyclic dependencies
+
 export const concatImmutableLists = (...args): List<any> =>
   args.filter((list) => list).reduce((acc, nextArray) => acc.concat(nextArray), List());
 
