@@ -1,21 +1,14 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { VMWizardStorage } from '../../types';
-import { getStorages } from '../../selectors/selectors';
-import { VolumeWrapper } from '../../../../k8s/wrapper/vm/volume-wrapper';
-import { VolumeType } from '../../../../constants/vm/storage';
 import { getBooleanAsEnabledValue } from '../../../../utils/strings';
+import { iGetCloudInitNoCloudStorage } from '../../selectors/immutable/storage';
 
 import './review-tab.scss';
 
 const AdvancedReviewConnected: React.FC<AdvancedReviewConnectedProps> = (props) => {
-  const { storages } = props;
+  const { cloudInitEnabled } = props;
 
-  const cloudInitEnabledValue = getBooleanAsEnabledValue(
-    storages.filter(
-      (storage) => new VolumeWrapper(storage.volume).getType() === VolumeType.CLOUD_INIT_NO_CLOUD,
-    ).length > 0,
-  );
+  const cloudInitEnabledValue = getBooleanAsEnabledValue(cloudInitEnabled);
 
   return (
     <dl className="kubevirt-create-vm-modal__review-tab__data-list">
@@ -26,11 +19,11 @@ const AdvancedReviewConnected: React.FC<AdvancedReviewConnectedProps> = (props) 
 };
 
 type AdvancedReviewConnectedProps = {
-  storages: VMWizardStorage[];
+  cloudInitEnabled: boolean;
 };
 
 const stateToProps = (state, { wizardReduxID }) => ({
-  storages: getStorages(state, wizardReduxID),
+  cloudInitEnabled: !!iGetCloudInitNoCloudStorage(state, wizardReduxID),
 });
 
 export const AdvancedReviewTab = connect(stateToProps)(AdvancedReviewConnected);
