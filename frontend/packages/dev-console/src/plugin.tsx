@@ -19,9 +19,10 @@ import {
   ReduxReducer,
 } from '@console/plugin-sdk';
 import { NamespaceRedirect } from '@console/internal/components/utils/namespace-redirect';
-import { CodeIcon } from '@patternfly/react-icons';
+import { CodeIcon, BoltIcon, DatabaseIcon, CatalogIcon } from '@patternfly/react-icons';
 import { FLAGS } from '@console/shared/src/constants';
 import { referenceForModel } from '@console/internal/module/k8s';
+import * as helmIcon from '@console/internal/imgs/logos/helm.svg';
 import * as models from './models';
 import { getKebabActionsForKind } from './utils/kebab-actions';
 import {
@@ -51,6 +52,7 @@ import {
 import * as yamlIcon from './images/yaml.svg';
 import * as importGitIcon from './images/from-git.svg';
 import * as dockerfileIcon from './images/dockerfile.svg';
+import * as pipelineIcon from './images/pipeline.svg';
 
 const {
   ClusterTaskModel,
@@ -830,20 +832,10 @@ const plugin: Plugin<ConsumedExtensions> = [
   {
     type: 'AddAction',
     properties: {
-      id: 'dev-catalog',
-      url: '/catalog',
-      label: 'From Catalog',
-      description: 'Browse the catalog to discover, deploy and connect to services',
-      iconClass: 'pficon-catalog',
-    },
-  },
-  {
-    type: 'AddAction',
-    properties: {
       id: 'import-from-dockerfile',
       url: '/import?importType=docker',
       label: 'From Dockerfile',
-      description: 'Import your Dockerfile from your git repo to be built & deployed',
+      description: 'Import your Dockerfile from your git repo to be built and deployed',
       icon: dockerfileIcon,
       accessReview: [
         BuildConfigModel,
@@ -872,11 +864,54 @@ const plugin: Plugin<ConsumedExtensions> = [
   {
     type: 'AddAction',
     properties: {
+      id: 'dev-catalog',
+      url: '/catalog',
+      label: 'From Catalog',
+      description: 'Browse the catalog to discover, deploy and connect to services',
+      icon: <CatalogIcon />,
+    },
+  },
+  {
+    type: 'AddAction',
+    properties: {
       id: 'dev-catalog-databases',
       url: '/catalog?category=databases',
       label: 'Database',
       description: 'Browse the catalog to discover database services to add to your application',
-      iconClass: 'fas fa-database',
+      icon: <DatabaseIcon />,
+    },
+  },
+  {
+    type: 'AddAction',
+    properties: {
+      id: 'operator-backed',
+      url: '/catalog/ns/cvogt?kind=%5B"ClusterServiceVersion"%5D',
+      label: 'Operator Backed',
+      description: 'Browse the catalog to discover and deploy operator managed services',
+      icon: <BoltIcon />,
+    },
+  },
+  {
+    type: 'AddAction',
+    properties: {
+      id: 'helm',
+      url: '/catalog?kind=%5B"HelmChart"%5D',
+      label: 'Helm Chart',
+      description: 'Browse the catalog to discover and install Helm Charts',
+      icon: helmIcon,
+    },
+  },
+  {
+    type: 'AddAction',
+    flags: {
+      required: [FLAG_OPENSHIFT_PIPELINE],
+    },
+    properties: {
+      id: 'pipeline',
+      url: `/k8s/ns/:namespace/${referenceForModel(PipelineModel)}/~new/builder`,
+      label: 'Pipeline',
+      description: 'Create a Tekton Pipeline to automate delivery of your application',
+      icon: pipelineIcon,
     },
   },
 ];
