@@ -23,8 +23,6 @@ import { TemplateModel, PodModel } from '@console/internal/models';
 import { getName } from '@console/shared/src/selectors/common';
 import { AddAction } from '@console/dev-console/src/extensions/add-actions';
 import { FirehoseResource } from '@console/internal/components/utils';
-import { K8sResourceKind } from '@console/internal/module/k8s';
-import { OverviewMainContentProps } from '@console/internal/components/overview';
 import * as models from './models';
 import { VMTemplateYAMLTemplates, VirtualMachineYAMLTemplates } from './models/templates';
 import { getKubevirtHealthState } from './components/dashboards-page/overview-dashboard/health';
@@ -57,7 +55,7 @@ type ConsumedExtensions =
 
 export const FLAG_KUBEVIRT = 'KUBEVIRT';
 
-export const virtualMachineConfigurations = (namespace: string): FirehoseResource[] => {
+const virtualMachineConfigurations = (namespace: string): FirehoseResource[] => {
   const virtualMachineResource = [
     {
       isList: true,
@@ -89,11 +87,6 @@ export const virtualMachineConfigurations = (namespace: string): FirehoseResourc
   return virtualMachineResource;
 };
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export const getVirtualMachines = (dc: K8sResourceKind, props: OverviewMainContentProps) => {
-  return {};
-};
-
 const plugin: Plugin<ConsumedExtensions> = [
   {
     type: 'ModelDefinition',
@@ -113,7 +106,7 @@ const plugin: Plugin<ConsumedExtensions> = [
     properties: {
       resources: virtualMachineConfigurations,
       required: FLAG_KUBEVIRT,
-      utils: getVirtualMachines,
+      utils: () => null,
     },
   },
   {

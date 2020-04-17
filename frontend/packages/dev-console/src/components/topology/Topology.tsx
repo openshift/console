@@ -100,25 +100,33 @@ const Topology: React.FC<ComponentProps> = ({
   const visRef = React.useRef<Visualization | null>(null);
   const applicationRef = React.useRef<string>(null);
   const displayFiltersRef = React.useRef<DisplayFilters>(null);
-  const componentFactoryRef = React.useRef<ComponentFactory>(new ComponentFactory(serviceBinding));
-  const knativeComponentFactoryRef = React.useRef<KnativeComponentFactory>(
-    new KnativeComponentFactory(serviceBinding),
-  );
-  const helmComponentFactoryRef = React.useRef<HelmComponentFactory>(
-    new HelmComponentFactory(serviceBinding),
-  );
-  const operatorsComponentFactoryRef = React.useRef<OperatorsComponentFactory>(
-    new OperatorsComponentFactory(serviceBinding),
-  );
-  const vmsComponentFactoryRef = React.useRef<KubevirtComponentFactory>(
-    new KubevirtComponentFactory(serviceBinding),
-  );
+  const componentFactoryRef = React.useRef<ComponentFactory | null>(null);
+  const knativeComponentFactoryRef = React.useRef<KnativeComponentFactory | null>(null);
+  const helmComponentFactoryRef = React.useRef<HelmComponentFactory | null>(null);
+  const operatorsComponentFactoryRef = React.useRef<OperatorsComponentFactory | null>(null);
+  const vmsComponentFactoryRef = React.useRef<KubevirtComponentFactory | null>(null);
   const [layout, setLayout] = React.useState<string>(graphModel.graph.layout);
   const [model, setModel] = React.useState<Model>();
   const [graphData, setGraphData] = React.useState<GraphData>();
   const [selectedIds, setSelectedIds] = React.useState<string[]>([]);
   const createResourceAccess: string[] = useAddToProjectAccess(namespace);
   const [dragHint, setDragHint] = React.useState<string>('');
+
+  if (!componentFactoryRef.current) {
+    componentFactoryRef.current = new ComponentFactory(serviceBinding);
+  }
+  if (!knativeComponentFactoryRef.current) {
+    knativeComponentFactoryRef.current = new KnativeComponentFactory(serviceBinding);
+  }
+  if (!helmComponentFactoryRef.current) {
+    helmComponentFactoryRef.current = new HelmComponentFactory(serviceBinding);
+  }
+  if (!operatorsComponentFactoryRef.current) {
+    operatorsComponentFactoryRef.current = new OperatorsComponentFactory(serviceBinding);
+  }
+  if (!vmsComponentFactoryRef.current) {
+    vmsComponentFactoryRef.current = new KubevirtComponentFactory(serviceBinding);
+  }
 
   if (!visRef.current) {
     visRef.current = new Visualization();
