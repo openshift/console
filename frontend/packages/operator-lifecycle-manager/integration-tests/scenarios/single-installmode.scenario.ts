@@ -119,7 +119,7 @@ describe('Interacting with a `OwnNamespace` install mode Operator (Prometheus)',
     );
   });
 
-  it('creates Prometheus Operator `Deployment`', async () => {
+  xit('creates Prometheus Operator `Deployment`', async () => {
     await browser.get(`${appHost}/k8s/ns/${testName}/deployments`);
     await crudView.isLoaded();
     await crudView.filterForName(prometheusOperatorName);
@@ -204,7 +204,7 @@ describe('Interacting with a `OwnNamespace` install mode Operator (Prometheus)',
     expect(crudView.successMessage.getText()).toContain('example has been updated to version');
   });
 
-  it('displays Kubernetes objects associated with the `Prometheus` in its "Resources" section', async () => {
+  xit('displays Kubernetes objects associated with the `Prometheus` in its "Resources" section', async () => {
     await element(by.linkText('Resources')).click();
     await crudView.isLoaded();
 
