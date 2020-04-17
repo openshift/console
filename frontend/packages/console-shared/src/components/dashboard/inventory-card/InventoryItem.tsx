@@ -52,7 +52,7 @@ const getTop3Groups = (groups: DashboardsInventoryItemGroup[], groupIDs: string[
     }
   });
   groupStatuses.push(InventoryStatusGroup.UNKNOWN);
-  return groupIDs.sort((a, b) => groupStatuses.indexOf(b) - groupStatuses.indexOf(a)).slice(0, 3);
+  return groupIDs.sort((a, b) => groupStatuses.indexOf(a) - groupStatuses.indexOf(b)).slice(0, 3);
 };
 
 export const InventoryItem: React.FC<InventoryItemProps> = React.memo(
