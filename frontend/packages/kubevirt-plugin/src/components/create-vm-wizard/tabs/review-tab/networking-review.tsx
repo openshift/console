@@ -13,8 +13,8 @@ const NetworkingReviewConnected: React.FC<NetworkingTabComponentProps> = ({
   const headers = [
     { title: 'Name' },
     { title: 'Model' },
-    { title: 'MAC Address' },
     { title: 'Network' },
+    { title: 'MAC Address' },
   ];
 
   const rows = networks.map(({ networkInterface, network }) => {
@@ -24,8 +24,8 @@ const NetworkingReviewConnected: React.FC<NetworkingTabComponentProps> = ({
     return [
       networkInterfaceWrapper.getName(),
       networkInterfaceWrapper.getReadableModel(),
-      networkInterfaceWrapper.getMACAddress(),
       networkWrapper.getReadableName(),
+      networkInterfaceWrapper.getMACAddress(),
     ];
   });
 
