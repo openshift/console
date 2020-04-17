@@ -22,6 +22,7 @@ const GeneralReviewConnected: React.FC<GeneralReviewConnectedProps> = (props) =>
     iCommonTemplates,
     openshiftFlag,
     relevantOptions,
+    isImport,
     className,
   } = props;
 
@@ -46,9 +47,11 @@ const GeneralReviewConnected: React.FC<GeneralReviewConnectedProps> = (props) =>
 
       <FormFieldReviewMemoRow field={getField(VMSettingsField.DESCRIPTION, iVMSettings)} />
 
-      <FormFieldReviewMemoRow
-        field={getField(VMSettingsField.PROVISION_SOURCE_TYPE, iVMSettings)}
-      />
+      {!isImport && (
+        <FormFieldReviewMemoRow
+          field={getField(VMSettingsField.PROVISION_SOURCE_TYPE, iVMSettings)}
+        />
+      )}
 
       <FormFieldReviewMemoRow
         field={getField(VMSettingsField.OPERATING_SYSTEM, iVMSettings)}
@@ -71,6 +74,7 @@ type GeneralReviewConnectedProps = {
   iCommonTemplates: any;
   iUserTemplates: any;
   relevantOptions: any;
+  isImport: boolean;
   className: string;
 };
 
@@ -80,6 +84,7 @@ const stateToProps = (state, { wizardReduxID }) => ({
   iCommonTemplates: iGetLoadedCommonData(state, wizardReduxID, VMWizardProps.commonTemplates),
   iUserTemplates: iGetLoadedCommonData(state, wizardReduxID, VMWizardProps.userTemplates),
   relevantOptions: iGetRelevantTemplateSelectors(state, wizardReduxID),
+  isImport: iGetCommonData(state, wizardReduxID, VMWizardProps.isProviderImport),
 });
 
 export const GeneralReview = connect(stateToProps)(GeneralReviewConnected);
