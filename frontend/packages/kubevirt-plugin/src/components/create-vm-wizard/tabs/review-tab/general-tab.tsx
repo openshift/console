@@ -37,7 +37,7 @@ const GeneralReviewConnected: React.FC<GeneralReviewConnectedProps> = (props) =>
       iUserTemplates,
       openshiftFlag,
       iCommonTemplates,
-    })?.osName || getField(VMSettingsField.OPERATING_SYSTEM, iVMSettings)?.display;
+    })?.osName || getField(VMSettingsField.OPERATING_SYSTEM, iVMSettings)?.get('display');
 
   return (
     <dl className={classNames('kubevirt-create-vm-modal__review-tab__data-list', className)}>
