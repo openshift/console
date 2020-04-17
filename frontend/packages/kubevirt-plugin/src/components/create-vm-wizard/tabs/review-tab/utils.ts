@@ -30,16 +30,21 @@ export const getFlavorValue = ({
   relevantOptions,
 }: GetFlavorValueParams) => {
   const flavor = getFieldValue(iVMSettings, VMSettingsField.FLAVOR);
-  let cpu, memory;
+  let cpu;
+  let memory;
 
   if (flavor === CUSTOM_FLAVOR) {
-    cpu = { sockets: 1, cores: parseInt(getFieldValue(iVMSettings, VMSettingsField.CPU)), threads: 1 };
+    cpu = {
+      sockets: 1,
+      cores: parseInt(getFieldValue(iVMSettings, VMSettingsField.CPU), 10),
+      threads: 1,
+    };
     memory = getFieldValue(iVMSettings, VMSettingsField.MEMORY);
   } else {
-    const template_ = toShallowJS(
+    const template = toShallowJS(
       iGetRelevantTemplate(iUserTemplates, iCommonTemplates, relevantOptions),
     );
-    const vm = new VMTemplateWrapper(template_, true).getVM();
+    const vm = new VMTemplateWrapper(template, true).getVM();
     cpu = vm.getCPU();
     memory = vm.getMemory();
   }

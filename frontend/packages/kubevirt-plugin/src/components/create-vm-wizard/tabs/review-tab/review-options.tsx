@@ -53,7 +53,4 @@ const dispatchToProps = (dispatch, props) => ({
     dispatch(vmWizardActions[ActionType.SetVmSettingsFieldValue](props.wizardReduxID, key, value)),
 });
 
-export const ReviewOptions = connect(
-  stateToProps,
-  dispatchToProps,
-)(ReviewOptionsConnected);
+export const ReviewOptions = connect(stateToProps, dispatchToProps)(ReviewOptionsConnected);

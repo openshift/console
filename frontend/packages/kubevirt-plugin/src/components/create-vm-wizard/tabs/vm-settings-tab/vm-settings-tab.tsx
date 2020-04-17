@@ -163,7 +163,4 @@ const dispatchToProps = (dispatch, props) => ({
   },
 });
 
-export const VMSettingsTab = connect(
-  stateToProps,
-  dispatchToProps,
-)(VMSettingsTabComponent);
+export const VMSettingsTab = connect(stateToProps, dispatchToProps)(VMSettingsTabComponent);

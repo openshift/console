@@ -3,7 +3,10 @@ import {
   VMImportProvider,
   VMSettingsField,
 } from '../../../../components/create-vm-wizard/types';
-import {asSimpleSettings, getFieldValue} from '../../../../components/create-vm-wizard/selectors/vm-settings';
+import {
+  asSimpleSettings,
+  getFieldValue,
+} from '../../../../components/create-vm-wizard/selectors/vm-settings';
 import { VMTemplateWrapper } from '../../../wrapper/vm/vm-template-wrapper';
 import {
   TEMPLATE_PARAM_VM_NAME,
@@ -59,7 +62,7 @@ export const createVMTemplate = async (params: CreateVMParams) => {
 
   const combinedSimpleSettings = {
     ...asSimpleSettings(vmSettings),
-    ...getOS({ osID: getFieldValue(vmSettings, VMSettingsField.OPERATING_SYSTEM), ...params}),
+    ...getOS({ osID: getFieldValue(vmSettings, VMSettingsField.OPERATING_SYSTEM), ...params }),
   };
 
   const { template, storages } = getInitializedVMTemplate(params);
@@ -114,7 +117,7 @@ export const createVM = async (params: CreateVMParams) => {
 
   const combinedSimpleSettings = {
     ...asSimpleSettings(vmSettings),
-    ...getOS({ osID: getFieldValue(vmSettings, VMSettingsField.OPERATING_SYSTEM), ...params}),
+    ...getOS({ osID: getFieldValue(vmSettings, VMSettingsField.OPERATING_SYSTEM), ...params }),
   };
   let onVMCreate: OnVMCreate = null;
   if (isProviderImport) {
