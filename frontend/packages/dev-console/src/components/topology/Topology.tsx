@@ -133,7 +133,7 @@ const Topology: React.FC<ComponentProps> = ({
         removeQueryArgument('selectId');
       } else {
         setSelectedIds(ids);
-        setQueryArgument('selectId', ids[0]);
+        ids.length > 0 ? setQueryArgument('selectId', ids[0]) : removeQueryArgument('selectId');
       }
     });
     visRef.current.addEventListener<ShowGroupingHintEventListener>(
@@ -219,6 +219,7 @@ const Topology: React.FC<ComponentProps> = ({
 
   const onSidebarClose = () => {
     setSelectedIds([]);
+    removeQueryArgument('selectId');
   };
 
   const renderControlBar = () => {
