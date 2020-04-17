@@ -10,7 +10,6 @@ import {
   TEMPLATE_OS_LABEL,
   TEMPLATE_WORKLOAD_LABEL,
 } from '../../../constants/vm';
-import { CPURaw } from '../../../types/vm';
 import { K8sInitAddon } from '../common/util/k8s-mixin';
 
 export class VMTemplateWrapper extends K8sResourceWrapper<TemplateKind, VMTemplateWrapper> {
@@ -59,8 +58,6 @@ export class VMTemplateWrapper extends K8sResourceWrapper<TemplateKind, VMTempla
   getOperatingSystem = () => findKeySuffixValue(this.getLabels(), TEMPLATE_OS_LABEL);
   getWorkloadProfile = () => findKeySuffixValue(this.getLabels(), TEMPLATE_WORKLOAD_LABEL);
   getFlavor = () => findKeySuffixValue(this.getLabels(), TEMPLATE_FLAVOR_LABEL);
-  getCPU = (): CPURaw => this.getVM().getCPU();
-  getMemory = () => this.getVM().getMemory();
 
   getParameters = (defaultValue = []) => (this.data && this.data.parameters) || defaultValue;
 

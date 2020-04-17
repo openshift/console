@@ -39,10 +39,9 @@ export const getFlavorValue = ({
     const template_ = toShallowJS(
       iGetRelevantTemplate(iUserTemplates, iCommonTemplates, relevantOptions),
     );
-    const template = new VMTemplateWrapper(template_, true);
-
-    cpu = template.getCPU();
-    memory = template.getMemory();
+    const vm = new VMTemplateWrapper(template_, true).getVM();
+    cpu = vm.getCPU();
+    memory = vm.getMemory();
   }
 
   return getFlavorText({ cpu, memory, flavor });
