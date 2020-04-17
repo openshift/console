@@ -68,6 +68,7 @@ describe('Monitoring: Alerts', () => {
   it('creates a new Silence from an existing alert', async () => {
     await monitoringView.actionButton.click();
     await monitoringView.wait(until.presenceOf(monitoringView.saveButton));
+    await monitoringView.commentTextarea.sendKeys('Test Comment');
     await monitoringView.saveButton.click();
     expect(crudView.errorMessage.isPresent()).toBe(false);
 
@@ -128,6 +129,7 @@ describe('Monitoring: Silences', () => {
     await monitoringView.wait(until.presenceOf(monitoringView.matcherNameInput));
     await monitoringView.matcherNameInput.sendKeys('alertname');
     await monitoringView.matcherValueInput.sendKeys(testAlertName);
+    await monitoringView.commentTextarea.sendKeys('Test Comment');
     await monitoringView.saveButton.click();
     expect(crudView.errorMessage.isPresent()).toBe(false);
   });
@@ -160,14 +162,14 @@ describe('Monitoring: Silences', () => {
   it('edits the Silence', async () => {
     await crudView.clickDetailsPageAction('Edit Silence');
     await monitoringView.wait(until.presenceOf(monitoringView.commentTextarea));
-    await monitoringView.commentTextarea.sendKeys('Test Comment');
+    await monitoringView.commentTextarea.sendKeys(' (edited)');
     await monitoringView.saveButton.click();
     expect(crudView.errorMessage.isPresent()).toBe(false);
 
     // After editing the Silence, should be redirected to its details page, where we check that the edit is reflected
     await monitoringView.wait(until.presenceOf(monitoringView.detailsHeadingSilenceIcon));
     testDetailsPage('Silence Details', testAlertName);
-    expect(monitoringView.silenceComment.getText()).toEqual('Test Comment');
+    expect(monitoringView.silenceComment.getText()).toEqual('Test Comment (edited)');
   });
 
   it('expires the Silence', async () => {
