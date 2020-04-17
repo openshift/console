@@ -6,6 +6,7 @@ import {
   ResourceRequirementsField,
   UpdateStrategyField,
   BooleanField,
+  HiddenField,
 } from '@console/shared/src/components/dynamic-form/fields';
 import {
   CheckboxWidget,
@@ -23,6 +24,7 @@ export const capabilityFieldMap = Immutable.Map({
   [SpecCapability.resourceRequirements]: ResourceRequirementsField,
   [SpecCapability.updateStrategy]: UpdateStrategyField,
   [SpecCapability.booleanSwitch]: BooleanField,
+  [SpecCapability.hidden]: HiddenField,
 });
 
 export const capabilityWidgetMap = Immutable.Map({

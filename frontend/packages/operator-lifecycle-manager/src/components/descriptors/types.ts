@@ -24,6 +24,7 @@ export enum SpecCapability {
   select = 'urn:alm:descriptor:com.tectonic.ui:select:',
   advanced = 'urn:alm:descriptor:com.tectonic.ui:advanced',
   fieldDependency = 'urn:alm:descriptor:com.tectonic.ui:fieldDependency:',
+  hidden = 'urn:alm:descriptor:com.tectonic.ui:hidden',
 }
 
 export enum StatusCapability {
@@ -37,6 +38,7 @@ export enum StatusCapability {
   k8sPhaseReason = 'urn:alm:descriptor:io.kubernetes.phase:reason',
   // Prefix for all kubernetes resource status descriptors.
   k8sResourcePrefix = 'urn:alm:descriptor:io.kubernetes:',
+  hidden = 'urn:alm:descriptor:com.tectonic.ui:hidden',
 }
 
 export type Descriptor<T = any> = {
