@@ -65,7 +65,7 @@ const StorageReviewFirehose: React.FC<StorageReviewFirehoseProps> = ({
     { title: 'Size' },
     { title: 'Interface' },
     { title: 'Storage Class' },
-    { title: 'Access Mode' },
+    { title: 'Access' },
     { title: 'Volume Mode' },
   ];
 
