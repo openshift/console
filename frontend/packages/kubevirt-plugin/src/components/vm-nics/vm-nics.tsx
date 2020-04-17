@@ -6,7 +6,7 @@ import { createBasicLookup, dimensifyHeader } from '@console/shared';
 import { EmptyBox } from '@console/internal/components/utils';
 import { Button, ButtonVariant } from '@patternfly/react-core';
 import { VMGenericLikeEntityKind } from '../../types/vmLike';
-import { isVMI } from '../../selectors/vm';
+import { isVMI } from '../../selectors/check-type';
 import { VMLikeEntityTabProps } from '../vms/types';
 import { NetworkInterfaceWrapper } from '../../k8s/wrapper/vm/network-interface-wrapper';
 import { nicModalEnhanced } from '../modals/nic-modal/nic-modal-enhanced';

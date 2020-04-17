@@ -19,7 +19,8 @@ import {
 import { getVMStatus } from '../../statuses/vm/vm-status';
 import { getLoadedData, getResource } from '../../utils';
 import { findVMIPod } from '../../selectors/pod/selectors';
-import { isWindows, asVM, isVM, isVMI } from '../../selectors/vm';
+import { isWindows, asVM } from '../../selectors/vm';
+import { isVM, isVMI } from '../../selectors/check-type';
 import { VMIKind, VMKind } from '../../types/vm';
 import { SerialConsoleConnector } from './serial-console-connector';
 import { DesktopViewerSelector } from './desktop-viewer-selector';

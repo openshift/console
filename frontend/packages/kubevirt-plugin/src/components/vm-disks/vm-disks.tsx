@@ -18,7 +18,7 @@ import { V1alpha1DataVolume } from '../../types/vm/disk/V1alpha1DataVolume';
 import { StorageBundle } from './types';
 import { DiskRow } from './disk-row';
 import { diskTableColumnClasses } from './utils';
-import { isVMI } from '../../selectors/vm';
+import { isVMI } from '../../selectors/check-type';
 import { ADD_DISK } from '../../utils/strings';
 import {
   getVMTemplateNamespacedName,

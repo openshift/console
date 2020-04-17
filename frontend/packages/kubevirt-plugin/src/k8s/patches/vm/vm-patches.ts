@@ -2,15 +2,8 @@ import * as _ from 'lodash';
 import { Patch, TemplateKind } from '@console/internal/module/k8s';
 import { VMGenericLikeEntityKind, VMLikeEntityKind } from '../../../types/vmLike';
 import { getAnnotations, getDescription } from '../../../selectors/selectors';
-import {
-  getFlavor,
-  getCPU,
-  getMemory,
-  parseCPU,
-  DEFAULT_CPU,
-  isVM,
-  isTemplate,
-} from '../../../selectors/vm';
+import { getFlavor, getCPU, getMemory, parseCPU, DEFAULT_CPU } from '../../../selectors/vm';
+import { isTemplate, isVM } from '../../../selectors/check-type';
 import { CUSTOM_FLAVOR, TEMPLATE_FLAVOR_LABEL } from '../../../constants';
 import { getVMLikePatches } from '../vm-template';
 import { selectVM } from '../../../selectors/vm-template/basic';

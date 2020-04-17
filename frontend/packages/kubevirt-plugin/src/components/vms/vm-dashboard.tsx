@@ -9,9 +9,10 @@ import {
   VMUtilizationCard,
 } from '../dashboards-page/vm-dashboard';
 import { VMDashboardContext } from './vm-dashboard-context';
-import { asVM, isVMI, isVM } from '../../selectors/vm/vmlike';
+import { asVM } from '../../selectors/vm/vmlike';
 import { VMTabProps } from './types';
 import { getVMStatus } from '../../statuses/vm/vm-status';
+import { isVM, isVMI } from '../../selectors/check-type';
 
 const mainCards = [{ Card: VMStatusCard }, { Card: VMUtilizationCard }];
 const leftCards = [{ Card: VMDetailsCard }, { Card: VMInventoryCard }];

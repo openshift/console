@@ -24,10 +24,10 @@ import {
   findConversionPod,
   getVMStatusConditions,
   isVMCreated,
-  isVMI,
   isVMReady,
   isVMRunning,
 } from '../../selectors/vm';
+import { isVMI } from '../../selectors/check-type';
 import { getPodStatus } from '../pod/pod';
 import {
   POD_PHASE_PENDING,
