@@ -5,7 +5,6 @@ import { getNetworks } from '../../selectors/selectors';
 import { NetworkInterfaceWrapper } from '../../../../k8s/wrapper/vm/network-interface-wrapper';
 import { NetworkWrapper } from '../../../../k8s/wrapper/vm/network-wrapper';
 import { Table, TableBody, TableHeader, TableVariant } from '@patternfly/react-table';
-import { EmptyState, EmptyStateVariant, Title } from '@patternfly/react-core';
 
 const NetworkingReviewConnected: React.FC<NetworkingTabComponentProps> = ({ networks }) => {
   const showNetworks = networks.length > 0;
@@ -44,11 +43,7 @@ const NetworkingReviewConnected: React.FC<NetworkingTabComponentProps> = ({ netw
         </Table>
       )}
       {!showNetworks && (
-        <EmptyState variant={EmptyStateVariant.small}>
-          <Title headingLevel="h3" size="sm">
-            No network interface added
-          </Title>
-        </EmptyState>
+        <p><strong>No network interfaces found</strong></p>
       )}
     </>
   );
