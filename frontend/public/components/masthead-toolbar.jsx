@@ -245,7 +245,11 @@ class MastheadToolbarContents_ extends React.Component {
     const launcherItems = this._getAdditionalLinks(consoleLinks, 'ApplicationMenu');
 
     const sections = [];
-    if (clusterID && window.SERVER_FLAGS.branding !== 'okd') {
+    if (
+      clusterID &&
+      window.SERVER_FLAGS.branding !== 'okd' &&
+      window.SERVER_FLAGS.branding !== 'azure'
+    ) {
       sections.push({
         name: 'Red Hat Applications',
         isSection: true,
