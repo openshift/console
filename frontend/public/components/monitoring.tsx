@@ -29,7 +29,16 @@ import { withFallback } from '@console/shared/src/components/error/error-boundar
 import * as k8sActions from '../actions/k8s';
 import * as UIActions from '../actions/ui';
 import { coFetchJSON } from '../co-fetch';
-import { DeploymentModel, NamespaceModel, NodeModel, PodModel } from '../models';
+import {
+  ContainerModel,
+  DaemonSetModel,
+  DeploymentModel,
+  JobModel,
+  NamespaceModel,
+  NodeModel,
+  PodModel,
+  StatefulSetModel,
+} from '../models';
 import { K8sKind } from '../module/k8s';
 import {
   alertDescription,
@@ -426,10 +435,14 @@ const SilenceTableRow: RowFunction<Silence> = ({ index, key, obj, style }) => {
 };
 
 const alertMessageResources: { [labelName: string]: K8sKind } = {
+  container: ContainerModel,
+  daemonset: DaemonSetModel,
   deployment: DeploymentModel,
+  job: JobModel,
   namespace: NamespaceModel,
   node: NodeModel,
   pod: PodModel,
+  statefulset: StatefulSetModel,
 };
 
 const matchCount = (haystack: string, regExpString: string) =>
