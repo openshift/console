@@ -225,7 +225,8 @@ const capabilityComponents = ImmutableMap<
   .set(SpecCapability.booleanSwitch, BooleanSwitch)
   .set(SpecCapability.password, Secret)
   .set(SpecCapability.updateStrategy, UpdateStrategy)
-  .set(SpecCapability.checkbox, CheckboxUIComponent);
+  .set(SpecCapability.checkbox, CheckboxUIComponent)
+  .set(SpecCapability.hidden, null);
 
 const capabilityFor = (specCapability: SpecCapability) => {
   if (_.isEmpty(specCapability)) {
@@ -255,7 +256,7 @@ export const SpecDescriptor = withFallback((props: DescriptorProps) => {
   ) as SpecCapability;
   const Capability = capabilityFor(capability);
 
-  return (
+  return Capability ? (
     <dl className="olm-descriptor">
       <Tooltip content={descriptor.description}>
         <dt className="olm-descriptor__title" data-test-descriptor-label={descriptor.displayName}>
@@ -273,7 +274,7 @@ export const SpecDescriptor = withFallback((props: DescriptorProps) => {
         />
       </dd>
     </dl>
-  );
+  ) : null;
 });
 
 type SpecCapabilityProps = CapabilityProps<SpecCapability>;

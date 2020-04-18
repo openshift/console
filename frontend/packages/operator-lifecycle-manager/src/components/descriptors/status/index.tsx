@@ -89,7 +89,8 @@ const capabilityComponents = ImmutableMap<
   .set(StatusCapability.w3Link, Link)
   .set(StatusCapability.k8sPhase, K8sPhase)
   .set(StatusCapability.k8sPhaseReason, K8sPhaseReason)
-  .set(StatusCapability.k8sResourcePrefix, K8sResourceLink);
+  .set(StatusCapability.k8sResourcePrefix, K8sResourceLink)
+  .set(StatusCapability.hidden, null);
 
 const capabilityFor = (statusCapability: StatusCapability) => {
   if (_.isEmpty(statusCapability)) {
@@ -111,7 +112,7 @@ export const StatusDescriptor = withFallback((props: DescriptorProps) => {
   const capability = _.get(descriptor, ['x-descriptors', 0], null) as StatusCapability;
   const Capability = capabilityFor(capability);
 
-  return (
+  return Capability ? (
     <dl className="olm-descriptor">
       <Tooltip content={descriptor.description}>
         <dt className="olm-descriptor__title" data-test-descriptor-label={descriptor.displayName}>
@@ -135,7 +136,7 @@ export const StatusDescriptor = withFallback((props: DescriptorProps) => {
         )}
       </dd>
     </dl>
-  );
+  ) : null;
 });
 
 type StatusCapabilityProps = CapabilityProps<StatusCapability>;

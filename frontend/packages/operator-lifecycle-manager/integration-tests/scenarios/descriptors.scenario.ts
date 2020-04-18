@@ -68,20 +68,34 @@ describe('Using OLM descriptor components', () => {
   });
 
   testCSV.spec.customresourcedefinitions.owned[0].specDescriptors.forEach((descriptor) => {
-    it(`displays spec descriptor for ${descriptor.displayName}`, async () => {
-      const label = operatorView.descriptorLabel(descriptor);
-      expect(label.isDisplayed()).toBe(true);
-    });
+    if (descriptor.path === 'hidden') {
+      it(`does not display spec descriptor for ${descriptor.displayName}`, async () => {
+        const label = operatorView.descriptorLabel(descriptor);
+        expect(label.isPresent()).toBe(false);
+      });
+    } else {
+      it(`displays spec descriptor for ${descriptor.displayName}`, async () => {
+        const label = operatorView.descriptorLabel(descriptor);
+        expect(label.isDisplayed()).toBe(true);
+      });
+    }
   });
 
   testCSV.spec.customresourcedefinitions.owned[0].statusDescriptors
     // exclude Conditions since they are included in their own section
     .filter((descriptor) => descriptor.path !== 'conditions')
     .forEach((descriptor) => {
-      it(`displays status descriptor for ${descriptor.displayName}`, async () => {
-        const label = operatorView.descriptorLabel(descriptor);
-        expect(label.isDisplayed()).toBe(true);
-      });
+      if (descriptor.path === 'hidden') {
+        it(`does not display status descriptor for ${descriptor.displayName}`, async () => {
+          const label = operatorView.descriptorLabel(descriptor);
+          expect(label.isPresent()).toBe(false);
+        });
+      } else {
+        it(`displays status descriptor for ${descriptor.displayName}`, async () => {
+          const label = operatorView.descriptorLabel(descriptor);
+          expect(label.isDisplayed()).toBe(true);
+        });
+      }
     });
 
   // Delete operand instance created in proir steps. Fixes a failure when trying to create a
