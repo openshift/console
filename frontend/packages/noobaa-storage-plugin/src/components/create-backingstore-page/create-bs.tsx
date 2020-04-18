@@ -578,7 +578,7 @@ const CreateBackingStoreForm: React.FC<CreateBackingStoreFormProps> = withHandle
         label="Backing Store Name"
         fieldId="backingstore-name"
         className="nb-bs-form-entry"
-        helperText="A unqiue name for the Backing Store within the project"
+        helperText="A unique name for the Backing Store within the project"
         isRequired
       >
         <TextInput
