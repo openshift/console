@@ -1440,7 +1440,11 @@ const SilenceForm_: React.FC<SilenceFormProps> = ({ defaults, Info, title }) => 
                 <SectionHeading text="Alert Labels" />
                 <p className="co-help-text">
                   Alerts with labels that match these selectors will be silenced instead of firing.
-                  Label values can be matched exactly or with a regular expression.
+                  Label values can be matched exactly or with a{' '}
+                  <ExternalLink
+                    href="https://github.com/google/re2/wiki/Syntax"
+                    text="regular expression"
+                  />
                 </p>
               </div>
             </div>
