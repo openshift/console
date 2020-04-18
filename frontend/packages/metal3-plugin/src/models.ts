@@ -16,8 +16,8 @@ export const BareMetalHostModel: K8sKind = {
 export const NodeMaintenanceModel: K8sKind = {
   label: 'Node Maintenance',
   labelPlural: 'Node Maintenances',
-  apiVersion: 'v1alpha1',
-  apiGroup: 'kubevirt.io',
+  apiVersion: 'v1beta1',
+  apiGroup: 'nodemaintenance.kubevirt.io',
   plural: 'nodemaintenances',
   abbr: 'NM',
   namespaced: false,
