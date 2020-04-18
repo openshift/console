@@ -227,8 +227,25 @@ const ReceiverBaseForm: React.FC<ReceiverBaseFormProps> = ({
 
   const { route, global } = config || {};
 
+  // there is no api to get default values for these adv. config props
+  const advancedConfigGlobals = {
+    ['pagerduty_send_resolved']: true,
+    ['pagerduty_client']: '{{ template "pagerduty.default.client" . }}',
+    ['pagerduty_client_url']: '{{ template "pagerduty.default.clientURL" . }}',
+    ['pagerduty_description']: '{{ template "pagerduty.default.description" .}}',
+    ['pagerduty_severity']: 'error',
+    ['email_send_resolved']: false,
+    ['email_html']: '{{ template "email.default.html" . }}',
+    ['slack_send_resolved']: false,
+    ['slack_username']: '{{ template "slack.default.username" . }}',
+    ['slack_icon_emoji']: '{{ template "slack.default.iconemoji" .}}',
+    ['slack_icon_url']: '{{ template "slack.default.iconurl" .}}',
+    ['slack_link_names']: false,
+    ['webhook_send_resolved']: true,
+  };
+
   // default globals to config.global props first, then alertmanagerGlobals
-  const defaultGlobals = { ...alertmanagerGlobals, ...global };
+  const defaultGlobals = { ...alertmanagerGlobals, ...global, ...advancedConfigGlobals };
 
   const INITIAL_STATE = {
     receiverName: '',
@@ -465,10 +482,10 @@ export const SaveAsDefaultCheckbox: React.FC<SaveAsDefaultCheckboxProps> = ({
 }) => {
   const saveAsDefaultLabelClass = classNames('checkbox', { 'co-no-bold': disabled });
   return (
-    <label className={saveAsDefaultLabelClass}>
+    <label className={saveAsDefaultLabelClass} htmlFor={formField}>
       <input
         type="checkbox"
-        name={formField}
+        id={formField}
         data-test-id="save-as-default"
         onChange={(e) =>
           dispatchFormChange({
@@ -486,6 +503,29 @@ export const SaveAsDefaultCheckbox: React.FC<SaveAsDefaultCheckboxProps> = ({
         <BlueInfoCircleIcon />
       </Tooltip>
     </label>
+  );
+};
+
+export const SendResolvedAlertsCheckbox = ({ formField, formValues, dispatchFormChange }) => {
+  return (
+    <div className="checkbox">
+      <label className="control-label" htmlFor={formField}>
+        <input
+          type="checkbox"
+          id={formField}
+          data-test-id="send-resolved-alerts"
+          onChange={(e) =>
+            dispatchFormChange({
+              type: 'setFormValues',
+              payload: { [formField]: e.target.checked },
+            })
+          }
+          checked={formValues[formField]}
+          aria-checked={formValues[formField]}
+        />
+        Send resolved alerts to this receiver?
+      </label>
+    </div>
   );
 };
 

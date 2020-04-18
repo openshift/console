@@ -2,9 +2,22 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
 
-import { FormProps, SaveAsDefaultCheckbox } from './alert-manager-receiver-forms';
+import { RadioInput } from '../../radio';
+import { ExpandCollapse, ExternalLink } from '../../utils';
+import {
+  SaveAsDefaultCheckbox,
+  SendResolvedAlertsCheckbox,
+  FormProps,
+} from './alert-manager-receiver-forms';
 
-const GLOBAL_FIELDS = ['slack_api_url']; //TODO follow up PR will add advanced fields
+const GLOBAL_FIELDS = [
+  'slack_api_url',
+  'slack_send_resolved',
+  'slack_username',
+  'slack_icon_emoji',
+  'slack_icon_url',
+  'slack_link_names',
+];
 
 export const Form: React.FC<FormProps> = ({ globals, formValues, dispatchFormChange }) => {
   return (
@@ -47,7 +60,7 @@ export const Form: React.FC<FormProps> = ({ globals, formValues, dispatchFormCha
           </div>
         </div>
         <div className="help-block" id="slack-api-url-help">
-          The URL of the Slack Webhook
+          The URL of the Slack Webhook.
         </div>
       </div>
       <div className="form-group">
@@ -69,8 +82,150 @@ export const Form: React.FC<FormProps> = ({ globals, formValues, dispatchFormCha
           }
         />
         <div className="help-block" id="slack-channel-help">
-          The Slack channel or user to send notifications to
+          The Slack channel or user to send notifications to.
         </div>
+      </div>
+      <div className="form-group">
+        <ExpandCollapse
+          textCollapsed="Show advanced configuration"
+          textExpanded="Hide advanced configuration"
+        >
+          <div className="co-form-subsection">
+            <div className="form-group">
+              <SendResolvedAlertsCheckbox
+                formField="slack_send_resolved"
+                formValues={formValues}
+                dispatchFormChange={dispatchFormChange}
+              />
+            </div>
+            <div className="form-group">
+              <label className="control-label" htmlFor="slack-icon-type">
+                Icon &nbsp;
+                <RadioInput
+                  title="URL"
+                  name="slackIconType"
+                  id="slack-icon-type"
+                  value="url"
+                  onChange={(e) =>
+                    dispatchFormChange({
+                      type: 'setFormValues',
+                      payload: { slackIconType: e.target.value },
+                    })
+                  }
+                  checked={formValues.slackIconType === 'url'}
+                  inline
+                />
+                <RadioInput
+                  title="Emoji"
+                  name="slackIconType"
+                  value="emoji"
+                  data-test-id="slack-icon-type-emoji"
+                  onChange={(e) =>
+                    dispatchFormChange({
+                      type: 'setFormValues',
+                      payload: { slackIconType: e.target.value },
+                    })
+                  }
+                  checked={formValues.slackIconType === 'emoji'}
+                  inline
+                />
+              </label>
+              {formValues.slackIconType === 'url' && (
+                <>
+                  <input
+                    className="pf-c-form-control"
+                    type="text"
+                    aria-describedby="slack-icon-url-help"
+                    aria-label="The URL of the icon."
+                    data-test-id="slack-icon-url"
+                    value={formValues.slack_icon_url}
+                    onChange={(e) =>
+                      dispatchFormChange({
+                        type: 'setFormValues',
+                        payload: { slack_icon_url: e.target.value },
+                      })
+                    }
+                  />
+                  <div className="help-block" id="slack-icon-url-help">
+                    The URL of the icon.
+                  </div>
+                </>
+              )}
+              {formValues.slackIconType === 'emoji' && (
+                <>
+                  <input
+                    className="pf-c-form-control"
+                    type="text"
+                    aria-describedby="slack-icon-emoji-help"
+                    aria-label="An emoji code to use in place of the default icon."
+                    name="slackIconEmoji"
+                    data-test-id="slack-icon-emoji"
+                    value={formValues.slack_icon_emoji}
+                    onChange={(e) =>
+                      dispatchFormChange({
+                        type: 'setFormValues',
+                        payload: { slack_icon_emoji: e.target.value },
+                      })
+                    }
+                  />
+                  <div className="help-block" id="slack-icon-emoji-help">
+                    An{' '}
+                    <ExternalLink
+                      href="https://www.webfx.com/tools/emoji-cheat-sheet/"
+                      text="emoji code"
+                    />{' '}
+                    to use in place of the default icon.
+                  </div>
+                </>
+              )}
+            </div>
+            <div className="form-group">
+              <label className="control-label" htmlFor="slack-username">
+                Username
+              </label>
+              <input
+                className="pf-c-form-control"
+                type="text"
+                aria-describedby="slack-username-help"
+                id="slack-username"
+                data-test-id="slack-username"
+                value={formValues.slack_username}
+                onChange={(e) =>
+                  dispatchFormChange({
+                    type: 'setFormValues',
+                    payload: { slack_username: e.target.value },
+                  })
+                }
+              />
+              <div className="help-block" id="slack-username-help">
+                The displayed username.
+              </div>
+            </div>
+            <div className="form-group">
+              <div className="checkbox">
+                <label className="control-label" htmlFor="slack-link-names">
+                  <input
+                    type="checkbox"
+                    id="slack-link-names"
+                    data-test-id="slack-link-names"
+                    aria-describedby="slack-link-names-help"
+                    onChange={(e) =>
+                      dispatchFormChange({
+                        type: 'setFormValues',
+                        payload: { slack_link_names: e.target.checked },
+                      })
+                    }
+                    checked={formValues.slack_link_names}
+                  />
+                  Link Names
+                </label>
+              </div>
+              <div className="help-block" id="slack-link-names-help">
+                Find and link channel names and usernames.
+              </div>
+            </div>
+          </div>
+        </ExpandCollapse>
       </div>
     </div>
   );
@@ -81,6 +236,8 @@ export const getInitialValues = (globals, receiverConfig) => {
     slackSaveAsDefault: false,
     slackChannel: _.get(receiverConfig, 'channel'),
   };
+
+  initValues.slackIconType = _.has(receiverConfig, 'icon_emoji') ? 'emoji' : 'url';
 
   GLOBAL_FIELDS.forEach((fld) => {
     const configFieldName = fld.substring(fld.indexOf('_') + 1); //strip off leading 'slack_' prefix
@@ -119,6 +276,8 @@ export const createReceiverConfig = (globals, formValues, receiverConfig) => {
       _.unset(receiverConfig, configFieldName); // equals global, unset in config so global is used
     }
   });
+
+  _.unset(receiverConfig, formValues.slackIconType === 'url' ? 'icon_emoji' : 'icon_url');
 
   return receiverConfig;
 };

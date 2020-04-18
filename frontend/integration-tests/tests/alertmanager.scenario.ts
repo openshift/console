@@ -54,6 +54,19 @@ describe('Alertmanager: PagerDuty Receiver Form', () => {
       'https://events.pagerduty.com/v2/enqueue',
     );
 
+    // adv config options
+    await monitoringView.showAdvancedConfiguration.click();
+    expect(firstElementByTestID('send-resolved-alerts').getAttribute('checked')).toBeTruthy();
+    expect(firstElementByTestID('pagerduty-client').getAttribute('value')).toEqual(
+      '{{ template "pagerduty.default.client" . }}',
+    );
+    expect(firstElementByTestID('pagerduty-client-url').getAttribute('value')).toEqual(
+      '{{ template "pagerduty.default.clientURL" . }}',
+    );
+    expect(firstElementByTestID('pagerduty-description').getAttribute('value')).toEqual(
+      '{{ template "pagerduty.default.description" .}}',
+    );
+    expect(firstElementByTestID('pagerduty-severity').getAttribute('value')).toEqual('error');
     await monitoringView.saveButton.click();
     await crudView.isLoaded();
     await monitoringView.wait(until.elementToBeClickable(crudView.nameFilter));
@@ -64,7 +77,7 @@ describe('Alertmanager: PagerDuty Receiver Form', () => {
     });
   });
 
-  it('saves as default/global correctly', async () => {
+  it('saves globals correctly', async () => {
     await browser.get(`${appHost}/monitoring/alertmanagerconfig/receivers/MyReceiver/edit`);
     await browser.wait(until.presenceOf(firstElementByTestID('cancel')));
 
@@ -128,6 +141,66 @@ describe('Alertmanager: PagerDuty Receiver Form', () => {
     expect(configs.globals.pagerduty_url).toBe('http://global-pagerduty-url');
     expect(configs.receiverConfig.url).toBe('http://pagerduty-url-specific-to-receiver');
   });
+
+  it('saves advanced configuration fields correctly', async () => {
+    await browser.get(`${appHost}/monitoring/alertmanagerconfig/receivers/MyReceiver/edit`);
+    await browser.wait(until.presenceOf(firstElementByTestID('cancel')));
+
+    await monitoringView.showAdvancedConfiguration.click();
+
+    // change first 3 props so that they are diff from global values, thus saved to Receiver config
+    expect(monitoringView.sendResolvedAlerts.getAttribute('checked')).toBeTruthy();
+    await monitoringView.sendResolvedAlerts.click();
+    expect(monitoringView.sendResolvedAlerts.getAttribute('checked')).toBeFalsy();
+    await fillInput(firstElementByTestID('pagerduty-client'), 'updated-client');
+    await fillInput(firstElementByTestID('pagerduty-client-url'), 'http://updated-client-url');
+
+    await monitoringView.saveButton.click();
+    await crudView.isLoaded();
+
+    // 3 changed fields should be saved with Receiver.  description and severity should not be
+    // saved with Receiver since they equal global values
+    await horizontalnavView.clickHorizontalTab('YAML');
+    await yamlView.isLoaded();
+    let yamlStr = await yamlView.getEditorContent();
+    let configs = getGlobalsAndReceiverConfig('pagerduty_configs', yamlStr);
+    expect(configs.receiverConfig.send_resolved).toBeFalsy();
+    expect(configs.receiverConfig.client).toBe('updated-client');
+    expect(configs.receiverConfig.client_url).toBe('http://updated-client-url');
+    expect(configs.receiverConfig.description).toBe(undefined);
+    expect(configs.receiverConfig.severity).toBe(undefined);
+
+    // restore default values for the 3, change desc and severity -which should then be saved
+    // with Receiver while initial 3 are removed from Receiver config
+    await browser.get(`${appHost}/monitoring/alertmanagerconfig/receivers/MyReceiver/edit`);
+    await browser.wait(until.presenceOf(firstElementByTestID('cancel')));
+    await monitoringView.showAdvancedConfiguration.click();
+    expect(monitoringView.sendResolvedAlerts.getAttribute('checked')).toBeFalsy();
+    await monitoringView.sendResolvedAlerts.click();
+    expect(monitoringView.sendResolvedAlerts.getAttribute('checked')).toBeTruthy();
+    await fillInput(
+      firstElementByTestID('pagerduty-client'),
+      '{{ template "pagerduty.default.client" . }}',
+    );
+    await fillInput(
+      firstElementByTestID('pagerduty-client-url'),
+      '{{ template "pagerduty.default.clientURL" . }}',
+    );
+    await fillInput(firstElementByTestID('pagerduty-description'), 'new description');
+    await fillInput(firstElementByTestID('pagerduty-severity'), 'warning');
+    await monitoringView.saveButton.click();
+    await crudView.isLoaded();
+
+    await horizontalnavView.clickHorizontalTab('YAML');
+    await yamlView.isLoaded();
+    yamlStr = await yamlView.getEditorContent();
+    configs = getGlobalsAndReceiverConfig('pagerduty_configs', yamlStr);
+    expect(configs.receiverConfig.send_resolved).toBe(undefined);
+    expect(configs.receiverConfig.client).toBe(undefined);
+    expect(configs.receiverConfig.client_url).toBe(undefined);
+    expect(configs.receiverConfig.description).toBe('new description');
+    expect(configs.receiverConfig.severity).toBe('warning');
+  });
 });
 
 describe('Alertmanager: Email Receiver Form', () => {
@@ -157,6 +230,12 @@ describe('Alertmanager: Email Receiver Form', () => {
     expect(monitoringView.saveAsDefault.isEnabled()).toBeFalsy(); // prior to smtp change, monitoringView.saveAsDefault disabled
     expect(firstElementByTestID('email-hello').getAttribute('value')).toEqual('localhost');
     expect(firstElementByTestID('email-require-tls').getAttribute('checked')).toBeTruthy();
+    // adv fields
+    await monitoringView.showAdvancedConfiguration.click();
+    expect(monitoringView.sendResolvedAlerts.getAttribute('checked')).toBeFalsy();
+    expect(firstElementByTestID('email-html').getAttribute('value')).toEqual(
+      '{{ template "email.default.html" . }}',
+    );
 
     // change required fields
     await fillInput(firstElementByTestID('email-to'), 'you@there.com');
@@ -183,30 +262,35 @@ describe('Alertmanager: Email Receiver Form', () => {
     expect(_.has(configs.receiverConfig, 'require_tls')).toBeFalsy(); // unchanged from global value
   });
 
-  it('saves as default/global correctly', async () => {
+  it('saves globals and advanced fields correctly', async () => {
     await browser.get(`${appHost}/monitoring/alertmanagerconfig/receivers/MyReceiver/edit`);
     await browser.wait(until.presenceOf(firstElementByTestID('cancel')));
 
-    // Check Updated Values
+    // Check updated form fields
     expect(firstElementByTestID('email-to').getAttribute('value')).toEqual('you@there.com');
     expect(monitoringView.saveAsDefault.isEnabled()).toBeTruthy(); // smtp_from different from global
     expect(monitoringView.saveAsDefault.getAttribute('checked')).toBeFalsy();
     expect(firstElementByTestID('email-from').getAttribute('value')).toEqual('me@here.com');
     expect(firstElementByTestID('email-hello').getAttribute('value')).toEqual('localhost');
 
-    // Change All Remaining Fields
+    // Change smtp global fields
     await fillInput(firstElementByTestID('email-auth-username'), 'username');
     await fillInput(firstElementByTestID('email-auth-password'), 'password');
     await fillInput(firstElementByTestID('email-auth-identity'), 'identity');
     await fillInput(firstElementByTestID('email-auth-secret'), 'secret');
     await firstElementByTestID('email-require-tls').click();
 
+    // Change advanced fields
+    await monitoringView.showAdvancedConfiguration.click();
+    await monitoringView.sendResolvedAlerts.click();
+    await fillInput(firstElementByTestID('email-html'), 'myhtml');
     await monitoringView.saveButton.click(); // monitoringView.saveAsDefault not checked, so all should be saved with Reciever
     await crudView.isLoaded();
 
-    // all fields saved with Receiver
+    // all fields saved to receiver since save as default not checked
     await horizontalnavView.clickHorizontalTab('YAML');
     await yamlView.isLoaded();
+
     let yamlStr = await yamlView.getEditorContent();
     let configs = getGlobalsAndReceiverConfig('email_configs', yamlStr);
     expect(_.has(configs.globals, 'smtp_auth_username')).toBeFalsy();
@@ -215,6 +299,9 @@ describe('Alertmanager: Email Receiver Form', () => {
     expect(configs.receiverConfig.auth_identity).toBe('identity');
     expect(configs.receiverConfig.auth_secret).toBe('secret');
     expect(configs.receiverConfig.require_tls).toBeFalsy();
+    // adv fields
+    expect(configs.receiverConfig.send_resolved).toBeTruthy();
+    expect(configs.receiverConfig.html).toBe('myhtml');
 
     // Save As Default
     await browser.get(`${appHost}/monitoring/alertmanagerconfig/receivers/MyReceiver/edit`);
@@ -265,6 +352,22 @@ describe('Alertmanager: Slack Receiver Form', () => {
 
     // check defaults
     expect(monitoringView.saveAsDefault.isEnabled()).toBeFalsy();
+    // adv fields
+    await monitoringView.showAdvancedConfiguration.click();
+    expect(monitoringView.sendResolvedAlerts.getAttribute('checked')).toBeFalsy();
+    expect(firstElementByTestID('slack-icon-url').getAttribute('value')).toEqual(
+      '{{ template "slack.default.iconurl" .}}',
+    );
+    expect(firstElementByTestID('slack-icon-emoji').isPresent()).toBe(false);
+    await firstElementByTestID('slack-icon-type-emoji').click();
+    expect(firstElementByTestID('slack-icon-url').isPresent()).toBe(false);
+    expect(firstElementByTestID('slack-icon-emoji').getAttribute('value')).toEqual(
+      '{{ template "slack.default.iconemoji" .}}',
+    );
+    expect(firstElementByTestID('slack-username').getAttribute('value')).toEqual(
+      '{{ template "slack.default.username" . }}',
+    );
+    expect(firstElementByTestID('slack-link-names').getAttribute('checked')).toBeFalsy();
 
     // change required fields
     await fillInput(firstElementByTestID('slack-api-url'), 'http://myslackapi');
@@ -283,29 +386,57 @@ describe('Alertmanager: Slack Receiver Form', () => {
     expect(_.has(configs.globals, 'slack_api_url')).toBeFalsy();
     expect(configs.receiverConfig.channel).toBe('myslackchannel');
     expect(configs.receiverConfig.api_url).toBe('http://myslackapi');
+    // make sure adv fields are not saved since they equal their global values
+    expect(_.has(configs.receiverConfig, 'send_resolved')).toBeFalsy();
+    expect(_.has(configs.receiverConfig, 'username')).toBeFalsy();
   });
 
-  it('saves as default/global correctly', async () => {
+  it('saves globals and advanced fields correctly', async () => {
     await browser.get(`${appHost}/monitoring/alertmanagerconfig/receivers/MyReceiver/edit`);
     await browser.wait(until.presenceOf(firstElementByTestID('cancel')));
 
-    // Check Updated Values
+    // Check updated form fields
     expect(firstElementByTestID('slack-channel').getAttribute('value')).toEqual('myslackchannel');
     expect(monitoringView.saveAsDefault.isEnabled()).toBeTruthy(); // different from global
     expect(firstElementByTestID('slack-api-url').getAttribute('value')).toEqual(
       'http://myslackapi',
     );
 
-    monitoringView.saveAsDefault.click(); // save in global section
+    // Change advanced fields
+    await monitoringView.showAdvancedConfiguration.click();
+    await monitoringView.sendResolvedAlerts.click();
+    await fillInput(firstElementByTestID('slack-icon-url'), 'http://myslackicon');
+    await fillInput(firstElementByTestID('slack-username'), 'slackuser');
+    await firstElementByTestID('slack-link-names').click();
+
+    monitoringView.saveAsDefault.click();
     await monitoringView.saveButton.click();
     await crudView.isLoaded();
-    await horizontalnavView.clickHorizontalTab('YAML');
+    await browser.get(`${appHost}/monitoring/alertmanagerconfig/receivers/MyReceiver/edit`);
+    await crudView.isLoaded();
+    // check updated advanced form fields
+    await monitoringView.showAdvancedConfiguration.click();
+    expect(monitoringView.sendResolvedAlerts.getAttribute('checked')).toBeTruthy();
+    expect(firstElementByTestID('slack-icon-url').getAttribute('value')).toEqual(
+      'http://myslackicon',
+    );
+    expect(firstElementByTestID('slack-icon-emoji').isPresent()).toBe(false);
+    expect(firstElementByTestID('slack-username').getAttribute('value')).toEqual('slackuser');
+    expect(firstElementByTestID('slack-link-names').getAttribute('checked')).toBeTruthy();
+
+    // check saved to slack receiver config yaml
+    await browser.get(`${appHost}/monitoring/alertmanageryaml`);
     await yamlView.isLoaded();
     const yamlStr = await yamlView.getEditorContent();
     const configs = getGlobalsAndReceiverConfig('slack_configs', yamlStr);
     expect(configs.globals.slack_api_url).toBe('http://myslackapi');
     expect(_.has(configs.receiverConfig, 'api_url')).toBeFalsy();
     expect(configs.receiverConfig.channel).toBe('myslackchannel');
+    // advanced fields
+    expect(configs.receiverConfig.send_resolved).toBeTruthy();
+    expect(configs.receiverConfig.icon_url).toBe('http://myslackicon');
+    expect(configs.receiverConfig.username).toBe('slackuser');
+    expect(configs.receiverConfig.link_names).toBeTruthy();
   });
 });
 
@@ -332,6 +463,10 @@ describe('Alertmanager: Webhook Receiver Form', () => {
     await dropdownMenuForTestID('webhook_configs').click();
     await crudView.isLoaded();
 
+    // check adv field default value
+    await monitoringView.showAdvancedConfiguration.click();
+    expect(monitoringView.sendResolvedAlerts.getAttribute('checked')).toBeTruthy();
+
     // change required fields
     await fillInput(firstElementByTestID('webhook-url'), 'http://mywebhookurl');
     await fillInput(firstElementByTestID('label-name-0'), 'severity');
@@ -345,23 +480,40 @@ describe('Alertmanager: Webhook Receiver Form', () => {
     const yamlStr = await yamlView.getEditorContent();
     const configs = getGlobalsAndReceiverConfig('webhook_configs', yamlStr);
     expect(configs.receiverConfig.url).toBe('http://mywebhookurl');
+    expect(_.has(configs.receiverConfig, 'send_resolved')).toBeFalsy();
   });
 
-  it('edits Webhook Receiver correctly', async () => {
+  it('edits Webhook Receiver and saves advanced fields correctly', async () => {
     await browser.get(`${appHost}/monitoring/alertmanagerconfig/receivers/MyReceiver/edit`);
     await browser.wait(until.presenceOf(firstElementByTestID('cancel')));
 
-    // Check Updated Values
+    // Check updated form fields
     expect(firstElementByTestID('webhook-url').getAttribute('value')).toEqual(
       'http://mywebhookurl',
     );
+
     await fillInput(firstElementByTestID('webhook-url'), 'http://myupdatedwebhookurl');
+    // Change advanced fields
+    await monitoringView.showAdvancedConfiguration.click();
+    await monitoringView.sendResolvedAlerts.click();
+
     await monitoringView.saveButton.click();
     await crudView.isLoaded();
+    await browser.get(`${appHost}/monitoring/alertmanagerconfig/receivers/MyReceiver/edit`);
+    await crudView.isLoaded();
+    // check updated advanced form fields
+    await monitoringView.showAdvancedConfiguration.click();
+    expect(monitoringView.sendResolvedAlerts.getAttribute('checked')).toBeFalsy();
+
+    // check saved to slack receiver config yaml
+    await browser.get(`${appHost}/monitoring/alertmanageryaml`);
+    await yamlView.isLoaded();
     await horizontalnavView.clickHorizontalTab('YAML');
     await yamlView.isLoaded();
     const yamlStr = await yamlView.getEditorContent();
     const configs = getGlobalsAndReceiverConfig('webhook_configs', yamlStr);
     expect(configs.receiverConfig.url).toBe('http://myupdatedwebhookurl');
+    // advanced field
+    expect(configs.receiverConfig.send_resolved).toBeFalsy();
   });
 });
