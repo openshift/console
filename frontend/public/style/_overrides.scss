@@ -234,6 +234,12 @@ h6 {
   }
 
   // `.pf-c-page` specificity required
+  .pf-c-data-toolbar {
+    --pf-c-data-toolbar--PaddingTop: 0;
+    --pf-c-data-toolbar__content--PaddingLeft: 0;
+    --pf-c-data-toolbar__content--PaddingRight: 0;
+  }
+
   .pf-c-page__main-section {
     --pf-c-page__main-section--PaddingBottom: 0;
     --pf-c-page__main-section--PaddingLeft: 0;

@@ -38,29 +38,27 @@ export const SearchFilterDropdown: React.SFC<SearchFilterDropdownProps> = (props
   };
 
   return (
-    <div className="form-group co-search-group__filter">
-      <div className="pf-c-input-group">
-        <Dropdown
-          onSelect={onSelect}
-          toggle={
-            <DropdownToggle id="toggle-id" onToggle={onToggle} iconComponent={CaretDownIcon}>
-              <>
-                <FilterIcon className="span--icon__right-margin" /> {selected}
-              </>
-            </DropdownToggle>
-          }
-          isOpen={isOpen}
-          dropdownItems={dropdownItems}
-        />
-        <TextInput
-          onChange={handleInputValue}
-          placeholder={selected === searchFilterValues.Label ? 'app=frontend' : 'my-resource'}
-          name="search-filter-input"
-          id="search-filter-input"
-          value={selected === searchFilterValues.Label ? labelFilterInput : nameFilterInput}
-          onKeyDown={handleKeyDown}
-        />
-      </div>
+    <div className="pf-c-input-group">
+      <Dropdown
+        onSelect={onSelect}
+        toggle={
+          <DropdownToggle id="toggle-id" onToggle={onToggle} iconComponent={CaretDownIcon}>
+            <>
+              <FilterIcon className="span--icon__right-margin" /> {selected}
+            </>
+          </DropdownToggle>
+        }
+        isOpen={isOpen}
+        dropdownItems={dropdownItems}
+      />
+      <TextInput
+        onChange={handleInputValue}
+        placeholder={selected === searchFilterValues.Label ? 'app=frontend' : 'my-resource'}
+        name="search-filter-input"
+        id="search-filter-input"
+        value={selected === searchFilterValues.Label ? labelFilterInput : nameFilterInput}
+        onKeyDown={handleKeyDown}
+      />
     </div>
   );
 };
