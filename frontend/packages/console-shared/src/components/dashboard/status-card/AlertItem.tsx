@@ -20,12 +20,7 @@ const getSeverityIcon = (severity: string) => {
   }
 };
 
-export const StatusItem: React.FC<StatusItemProps> = ({
-  Icon,
-  timestamp,
-  message,
-  LinkComponent,
-}) => {
+export const StatusItem: React.FC<StatusItemProps> = ({ Icon, timestamp, message, children }) => {
   return (
     <div className="co-status-card__alert-item">
       <div className="co-status-card__alert-item-icon co-dashboard-icon">
@@ -38,30 +33,21 @@ export const StatusItem: React.FC<StatusItemProps> = ({
           </div>
           <span className="co-status-card__health-item-text co-break-word">{message}</span>
         </div>
-        {LinkComponent && (
-          <div className="co-status-card__alert-item-more">
-            <LinkComponent />
-          </div>
-        )}
+        {children && <div className="co-status-card__alert-item-more">{children}</div>}
       </div>
     </div>
   );
 };
 
-const AlertItem: React.FC<AlertItemProps> = ({ alert }) => {
-  const LinkComponent = React.useCallback(
-    () => <Link to={alertURL(alert, alert.rule.id)}>View details</Link>,
-    [alert],
-  );
-  return (
-    <StatusItem
-      Icon={getSeverityIcon(getAlertSeverity(alert))}
-      timestamp={getAlertTime(alert)}
-      message={getAlertDescription(alert) || getAlertMessage(alert)}
-      LinkComponent={LinkComponent}
-    />
-  );
-};
+const AlertItem: React.FC<AlertItemProps> = ({ alert }) => (
+  <StatusItem
+    Icon={getSeverityIcon(getAlertSeverity(alert))}
+    timestamp={getAlertTime(alert)}
+    message={getAlertDescription(alert) || getAlertMessage(alert)}
+  >
+    <Link to={alertURL(alert, alert.rule.id)}>View details</Link>
+  </StatusItem>
+);
 
 export default AlertItem;
 
@@ -69,7 +55,6 @@ type StatusItemProps = {
   Icon: React.ComponentType<any>;
   timestamp?: string;
   message: string;
-  LinkComponent?: React.ComponentType<any>;
 };
 
 type AlertItemProps = {

@@ -43,61 +43,91 @@ const getPodConsumers = (query: string, nodeName: string) => ({
   metric: 'pod',
 });
 
+export const CPUPopover: React.FC<PopoverProps> = ({
+  nodeName,
+  nodeIp,
+  current,
+  title,
+  position = PopoverPosition.top,
+  ...rest
+}) => {
+  const consumers = React.useMemo(() => {
+    const queries = getTopConsumerQueries(nodeIp);
+    return [getPodConsumers(queries[NodeQueries.PODS_BY_CPU], nodeName)];
+  }, [nodeIp, nodeName]);
+  return (
+    <ConsumerPopover
+      current={title}
+      title="CPU"
+      consumers={consumers}
+      humanize={humanizeCpuCores}
+      position={position}
+    >
+      <LimitsBody {...rest} current={current} />
+    </ConsumerPopover>
+  );
+};
+
+export const MemoryPopover: React.FC<PopoverProps> = ({
+  nodeName,
+  nodeIp,
+  current,
+  title,
+  position = PopoverPosition.top,
+  ...rest
+}) => {
+  const consumers = React.useMemo(() => {
+    const queries = getTopConsumerQueries(nodeIp);
+    return [getPodConsumers(queries[NodeQueries.PODS_BY_MEMORY], nodeName)];
+  }, [nodeIp, nodeName]);
+  return (
+    <ConsumerPopover
+      current={title}
+      title="Memory"
+      consumers={consumers}
+      humanize={humanizeBinaryBytes}
+      position={position}
+    >
+      <LimitsBody {...rest} current={current} />
+    </ConsumerPopover>
+  );
+};
+
 const UtilizationCard: React.FC = () => {
   const [timestamps, setTimestamps] = React.useState<Date[]>();
   const [duration, setDuration] = useMetricDuration();
 
-  const { obj } = React.useContext(NodeDashboardContext);
+  const { obj, setCPULimit, setMemoryLimit } = React.useContext(NodeDashboardContext);
 
   const nodeName = obj.metadata.name;
   const nodeIp = getNodeAddresses(obj).find((addr) => addr.type === 'InternalIP')?.address;
 
-  const queries = React.useMemo(() => getUtilizationQueries(nodeName, nodeIp), [nodeName, nodeIp]);
-  const [multilineQueries, resourceQuotaQueries] = React.useMemo(
-    () => [getMultilineQueries(nodeName), getResourceQutoaQueries(nodeName)],
-    [nodeName],
-  );
-  const topConsumerQueries = React.useMemo(() => getTopConsumerQueries(nodeIp), [nodeIp]);
-
-  const consumers = React.useMemo(
-    () => [
-      [getPodConsumers(topConsumerQueries[NodeQueries.PODS_BY_CPU], nodeName)],
-      [getPodConsumers(topConsumerQueries[NodeQueries.PODS_BY_MEMORY], nodeName)],
-      [getPodConsumers(topConsumerQueries[NodeQueries.PODS_BY_FILESYSTEM], nodeName)],
-      [getPodConsumers(topConsumerQueries[NodeQueries.PODS_BY_NETWORK_IN], nodeName)],
-      [getPodConsumers(topConsumerQueries[NodeQueries.PODS_BY_NETWORK_OUT], nodeName)],
-    ],
-    [nodeName, topConsumerQueries],
-  );
+  const [queries, multilineQueries, resourceQuotaQueries, consumers] = React.useMemo(() => {
+    const topConsumerQueries = getTopConsumerQueries(nodeIp);
+    return [
+      getUtilizationQueries(nodeName, nodeIp),
+      getMultilineQueries(nodeName),
+      getResourceQutoaQueries(nodeName),
+      [
+        [getPodConsumers(topConsumerQueries[NodeQueries.PODS_BY_FILESYSTEM], nodeName)],
+        [getPodConsumers(topConsumerQueries[NodeQueries.PODS_BY_NETWORK_IN], nodeName)],
+        [getPodConsumers(topConsumerQueries[NodeQueries.PODS_BY_NETWORK_OUT], nodeName)],
+      ],
+    ];
+  }, [nodeIp, nodeName]);
 
   const cpuPopover = React.useCallback(
-    ({ current, LimitIcon, ...rest }: TopConsumerPopoverProp) => (
-      <ConsumerPopover
-        current={current}
-        title="CPU"
-        consumers={consumers[0]}
-        humanize={humanizeCpuCores}
-        position={PopoverPosition.top}
-      >
-        {LimitIcon && <LimitsBody {...rest} LimitIcon={LimitIcon} current={current} />}
-      </ConsumerPopover>
+    (props: TopConsumerPopoverProp) => (
+      <CPUPopover {...props} title={props.current} nodeIp={nodeIp} nodeName={nodeName} />
     ),
-    [consumers],
+    [nodeIp, nodeName],
   );
 
   const memPopover = React.useCallback(
-    ({ current, LimitIcon, ...rest }: TopConsumerPopoverProp) => (
-      <ConsumerPopover
-        current={current}
-        title="Memory"
-        consumers={consumers[1]}
-        humanize={humanizeBinaryBytes}
-        position={PopoverPosition.top}
-      >
-        {LimitIcon && <LimitsBody {...rest} LimitIcon={LimitIcon} current={current} />}
-      </ConsumerPopover>
+    (props: TopConsumerPopoverProp) => (
+      <MemoryPopover {...props} title={props.current} nodeIp={nodeIp} nodeName={nodeName} />
     ),
-    [consumers],
+    [nodeIp, nodeName],
   );
 
   const filesystemPopover = React.useCallback(
@@ -105,7 +135,7 @@ const UtilizationCard: React.FC = () => {
       <ConsumerPopover
         title="Filesystem"
         current={current}
-        consumers={consumers[2]}
+        consumers={consumers[0]}
         humanize={humanizeBinaryBytes}
         position={PopoverPosition.top}
       />
@@ -118,7 +148,7 @@ const UtilizationCard: React.FC = () => {
       <ConsumerPopover
         title="Network In"
         current={current}
-        consumers={consumers[3]}
+        consumers={consumers[1]}
         humanize={humanizeDecimalBytesPerSec}
         position={PopoverPosition.top}
       />
@@ -131,7 +161,7 @@ const UtilizationCard: React.FC = () => {
       <ConsumerPopover
         title="Network Out"
         current={current}
-        consumers={consumers[4]}
+        consumers={consumers[2]}
         humanize={humanizeDecimalBytesPerSec}
         position={PopoverPosition.top}
       />
@@ -161,6 +191,7 @@ const UtilizationCard: React.FC = () => {
           TopConsumerPopover={cpuPopover}
           duration={duration}
           setTimestamps={setTimestamps}
+          setLimitReqState={setCPULimit}
         />
         <PrometheusUtilizationItem
           title="Memory"
@@ -172,6 +203,7 @@ const UtilizationCard: React.FC = () => {
           byteDataType={ByteDataTypes.BinaryBytes}
           TopConsumerPopover={memPopover}
           duration={duration}
+          setLimitReqState={setMemoryLimit}
         />
         <PrometheusUtilizationItem
           title="Filesystem"
@@ -201,3 +233,10 @@ const UtilizationCard: React.FC = () => {
 };
 
 export default UtilizationCard;
+
+export type PopoverProps = TopConsumerPopoverProp & {
+  nodeIp: string;
+  nodeName: string;
+  title: string;
+  position?: PopoverPosition;
+};

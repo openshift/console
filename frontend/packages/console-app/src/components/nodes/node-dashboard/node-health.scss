@@ -1,4 +1,8 @@
-.co-node-status__health {
+.co-node-health__popup-alert {
+  margin-top: var(--pf-global--spacer--md);
+}
+
+.co-node-health__status {
   height: 100%;
   align-items: center;
   .co-icon-and-text__icon {
@@ -6,8 +10,4 @@
     top: 0;
     font-size: 1.2rem;
   }
-}
-
-.co-node-status__popup-alert {
-  margin-top: var(--pf-global--spacer--md);
 }

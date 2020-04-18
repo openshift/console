@@ -87,14 +87,6 @@ const ClusterAlerts = withDashboardResources(
     const { data: alerts, loaded: alertsLoaded, loadError: alertsResponseError } =
       notificationAlerts || {};
 
-    const LinkComponent = React.useCallback(
-      () => (
-        <Button variant="link" onClick={() => clusterUpdateModal({ cv })} isInline>
-          View details
-        </Button>
-      ),
-      [cv],
-    );
     const UpdateIcon = React.useCallback(
       () => <ArrowCircleUpIcon className="update-pending" />,
       [],
@@ -104,15 +96,15 @@ const ClusterAlerts = withDashboardResources(
 
     if (hasCVResource && cvLoaded && hasAvailableUpdates(cv)) {
       items.push(
-        <StatusItem
-          Icon={UpdateIcon}
-          message="A cluster version update is available"
-          LinkComponent={LinkComponent}
-        />,
+        <StatusItem Icon={UpdateIcon} message="A cluster version update is available">
+          <Button variant="link" onClick={() => clusterUpdateModal({ cv })} isInline>
+            View details
+          </Button>
+        </StatusItem>,
       );
     }
 
-    if (alertsLoaded) {
+    if (alertsLoaded && !_.isEmpty(alerts)) {
       items.push(
         ...alerts.map((alert) => <AlertItem key={alertURL(alert, alert.rule.id)} alert={alert} />),
       );

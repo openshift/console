@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { chart_color_orange_300 as limitColor } from '@patternfly/react-tokens';
 import { Humanize } from '@console/internal/components/utils/types';
 import {
   AreaChart,
@@ -12,6 +13,12 @@ import {
   RedExclamationCircleIcon,
   ColoredIconProps,
 } from '../../status';
+
+export enum LIMIT_STATE {
+  ERROR = 'ERROR',
+  WARN = 'WARN',
+  OK = 'OK',
+}
 
 const getCurrentData = (
   humanizeValue: Humanize,
@@ -100,6 +107,7 @@ export const UtilizationItem: React.FC<UtilizationItemProps> = React.memo(
     byteDataType,
     limit = null,
     requested = null,
+    setLimitReqState,
   }) => {
     let current: string;
     if (data.length) {
@@ -133,7 +141,7 @@ export const UtilizationItem: React.FC<UtilizationItemProps> = React.memo(
       chartData.push(requested);
       chartStyle[2] = {
         data: {
-          stroke: chartStatusColors[AreaChartStatus.ERROR],
+          stroke: limitColor.value,
           strokeDasharray: '3,3',
           fillOpacity: 0,
         },
@@ -156,13 +164,30 @@ export const UtilizationItem: React.FC<UtilizationItemProps> = React.memo(
 
     let LimitIcon: React.ComponentType<ColoredIconProps>;
     let humanLimit: string;
-    if (max && limit && limit.length) {
-      humanLimit = humanizeValue(limit[limit.length - 1].y).string;
-      const limitPercentage = (100 * limit[limit.length - 1].y) / max;
-      if (limitPercentage >= 90) {
-        LimitIcon = RedExclamationCircleIcon;
-      } else if (limitPercentage >= 80) {
-        LimitIcon = YellowExclamationTriangleIcon;
+    let limitState = LIMIT_STATE.OK;
+    let requestedState = LIMIT_STATE.OK;
+
+    if (max) {
+      if (limit && limit.length && requested && requested.length) {
+        humanLimit = humanizeValue(limit[limit.length - 1].y).string;
+        const limitPercentage = (100 * limit[limit.length - 1].y) / max;
+        const reqPercentage = (100 * requested[requested.length - 1].y) / max;
+        if (limitPercentage > 100) {
+          limitState = LIMIT_STATE.ERROR;
+        } else if (limitPercentage >= 75) {
+          limitState = LIMIT_STATE.WARN;
+        }
+        if (reqPercentage > 100) {
+          requestedState = LIMIT_STATE.ERROR;
+        } else if (reqPercentage >= 75) {
+          requestedState = LIMIT_STATE.WARN;
+        }
+        if ([limitState, requestedState].includes(LIMIT_STATE.ERROR)) {
+          LimitIcon = RedExclamationCircleIcon;
+        } else if ([limitState, requestedState].includes(LIMIT_STATE.WARN)) {
+          LimitIcon = YellowExclamationTriangleIcon;
+        }
+        setLimitReqState && setLimitReqState({ limit: limitState, requested: requestedState });
       }
     }
 
@@ -190,7 +215,8 @@ export const UtilizationItem: React.FC<UtilizationItemProps> = React.memo(
                     }
                     available={humanAvailable}
                     total={humanMax}
-                    LimitIcon={LimitIcon}
+                    limitState={limitState}
+                    requestedState={requestedState}
                   />
                 ) : (
                   current
@@ -218,6 +244,11 @@ export const UtilizationItem: React.FC<UtilizationItemProps> = React.memo(
 
 export default UtilizationItem;
 
+export type LimitRequested = {
+  limit: LIMIT_STATE;
+  requested: LIMIT_STATE;
+};
+
 type UtilizationItemProps = {
   title: string;
   data?: DataPoint[];
@@ -230,6 +261,7 @@ type UtilizationItemProps = {
   max?: number;
   byteDataType?: ByteDataTypes;
   TopConsumerPopover?: React.ComponentType<TopConsumerPopoverProp>;
+  setLimitReqState?: (state: LimitRequested) => void;
 };
 
 type MultilineUtilizationItemProps = {
@@ -252,7 +284,8 @@ export type TopConsumerPopoverProp = {
   available?: string;
   requested?: string;
   total?: string;
-  LimitIcon?: React.ComponentType<ColoredIconProps>;
+  limitState?: LIMIT_STATE;
+  requestedState?: LIMIT_STATE;
 };
 
 export type QueryWithDescription = {

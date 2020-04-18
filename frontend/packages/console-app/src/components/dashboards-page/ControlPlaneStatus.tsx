@@ -25,7 +25,9 @@ const ControlPlanePopup: React.FC<PrometheusHealthPopupProps> = ({ responses }) 
           icon = healthStateMapping[health.state].icon;
         }
         return (
-          <Status key={titles[index]} title={titles[index]} value={health.message} icon={icon} />
+          <Status key={titles[index]} value={health.message} icon={icon}>
+            {titles[index]}
+          </Status>
         );
       })}
     </StatusPopupSection>

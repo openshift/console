@@ -5,7 +5,13 @@ import { NodeKind, K8sResourceKind } from '@console/internal/module/k8s';
 import UtilizationCard from '@console/app/src/components/nodes/node-dashboard/UtilizationCard';
 import ActivityCard from '@console/app/src/components/nodes/node-dashboard/ActivityCard';
 import { NodeDashboardContext } from '@console/app/src/components/nodes/node-dashboard/NodeDashboardContext';
+import {
+  reducer,
+  initialState,
+  ActionType,
+} from '@console/app/src/components/nodes/node-dashboard/NodeDashboard';
 import { createBasicLookup, getNodeMachineName, getName } from '@console/shared';
+import { LimitRequested } from '@console/shared/src/components/dashboard/utilization-card/UtilizationItem';
 
 import InventoryCard from './InventoryCard';
 import DetailsCard from './DetailsCard';
@@ -23,13 +29,37 @@ const BareMetalNodeDashboard: React.FC<BareMetalNodeDashboardProps> = ({
   hosts,
   nodeMaintenances,
 }) => {
+  const [state, dispatch] = React.useReducer(reducer, initialState(obj));
+
+  if (obj !== state.obj) {
+    dispatch({ type: ActionType.OBJ, payload: obj });
+  }
+
   const hostsByMachineName = createBasicLookup(hosts, getHostMachineName);
   const host = hostsByMachineName[getNodeMachineName(obj)];
   const maintenancesByNodeName = createBasicLookup(nodeMaintenances, getNodeMaintenanceNodeName);
   const nodeMaintenance = maintenancesByNodeName[getName(obj)];
 
+  const setCPULimit = React.useCallback(
+    (payload: LimitRequested) => dispatch({ type: ActionType.CPU_LIMIT, payload }),
+    [],
+  );
+  const setMemoryLimit = React.useCallback(
+    (payload: LimitRequested) => dispatch({ type: ActionType.MEMORY_LIMIT, payload }),
+    [],
+  );
+  const setHealthCheck = React.useCallback(
+    (payload: boolean) => dispatch({ type: ActionType.HEALTH_CHECK, payload }),
+    [],
+  );
+
   const context = {
     obj,
+    cpuLimit: state.cpuLimit,
+    memoryLimit: state.memoryLimit,
+    setCPULimit,
+    setMemoryLimit,
+    setHealthCheck,
   };
 
   const bmnContext = {

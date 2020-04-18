@@ -10,7 +10,7 @@ const HealthItemIcon: React.FC<HealthItemIconProps> = ({ state }) => (
 );
 
 const HealthItem: React.FC<HealthItemProps> = React.memo(
-  ({ className, state, title, details, popupTitle, PopupComponent, noIcon = false }) => {
+  ({ className, state, title, details, popupTitle, noIcon = false, children }) => {
     const detailMessage =
       details || (healthStateMapping[state] || healthStateMapping[HealthState.UNKNOWN]).message;
     return (
@@ -22,13 +22,13 @@ const HealthItem: React.FC<HealthItemProps> = React.memo(
         )}
         <div>
           <span className="co-dashboard-text--small co-status-card__health-item-text">
-            {PopupComponent && state !== HealthState.LOADING ? (
+            {React.Children.toArray(children).length && state !== HealthState.LOADING ? (
               <DashboardCardPopupLink
                 linkTitle={title}
                 popupTitle={popupTitle}
                 className="co-status-card__popup"
               >
-                <PopupComponent />
+                {children}
               </DashboardCardPopupLink>
             ) : (
               title
@@ -52,7 +52,6 @@ type HealthItemProps = {
   className?: string;
   details?: string;
   state?: HealthState;
-  PopupComponent?: React.ComponentType<any>;
   popupTitle?: string;
   noIcon?: boolean;
 };

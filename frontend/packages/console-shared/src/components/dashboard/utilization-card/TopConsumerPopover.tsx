@@ -20,7 +20,9 @@ import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watc
 import { FLAGS } from '@console/shared/src/constants';
 import { getName, getNamespace } from '../../..';
 import { DashboardCardPopupLink } from '../dashboard-card/DashboardCardLink';
-import { ColoredIconProps } from '../../status';
+import { RedExclamationCircleIcon, YellowExclamationTriangleIcon } from '../../status';
+import Status from '../status-card/StatusPopup';
+import { LIMIT_STATE } from './UtilizationItem';
 
 import './top-consumer-popover.scss';
 
@@ -51,6 +53,17 @@ const ConsumerPopover: React.FC<ConsumerPopoverProps> = React.memo(
 
 export default ConsumerPopover;
 
+const getLimitIcon = (state: LIMIT_STATE): React.ReactNode => {
+  switch (state) {
+    case LIMIT_STATE.ERROR:
+      return <RedExclamationCircleIcon />;
+    case LIMIT_STATE.WARN:
+      return <YellowExclamationTriangleIcon />;
+    default:
+      return null;
+  }
+};
+
 const getResourceToWatch = (model: K8sKind, namespace: string, fieldSelector: string) => ({
   isList: true,
   kind: model.crd ? referenceForModel(model) : model.kind,
@@ -59,23 +72,28 @@ const getResourceToWatch = (model: K8sKind, namespace: string, fieldSelector: st
 });
 
 export const LimitsBody: React.FC<LimitsBodyProps> = ({
-  LimitIcon,
+  limitState,
+  requestedState,
   total,
   limit,
   current,
   available,
   requested,
-}) => (
-  <ul className="co-utilization-card-popover__consumer-list">
-    <ListItem value={total}>Total capacity</ListItem>
-    <ListItem value={limit} Icon={LimitIcon}>
-      Total limit
-    </ListItem>
-    <ListItem value={current}>Current utilization</ListItem>
-    <ListItem value={available}>Current available capacity</ListItem>
-    <ListItem value={requested}>Total requested</ListItem>
-  </ul>
-);
+}) =>
+  ((!!limitState && limitState !== LIMIT_STATE.OK) ||
+    (!!requestedState && requestedState !== LIMIT_STATE.OK)) && (
+    <ul className="co-utilization-card-popover__consumer-list">
+      <Status value={total}>Total capacity</Status>
+      <Status value={limit} icon={getLimitIcon(limitState)}>
+        Total limit
+      </Status>
+      <Status value={current}>Current utilization</Status>
+      <Status value={available}>Current available capacity</Status>
+      <Status value={requested} icon={getLimitIcon(requestedState)}>
+        Total requested
+      </Status>
+    </ul>
+  );
 
 export const PopoverBody = withDashboardResources<DashboardItemProps & PopoverBodyProps>(
   React.memo(
@@ -232,29 +250,20 @@ export const PopoverBody = withDashboardResources<DashboardItemProps & PopoverBo
   ),
 );
 
-const ListItem: React.FC<ListItemProps> = ({ children, value, Icon }) => (
+const ListItem: React.FC<ListItemProps> = ({ children, value }) => (
   <li className="co-utilization-card-popover__consumer-item">
     {children}
-    <div className="co-utilization-card-popover__consumer-value">
-      {Icon ? (
-        <>
-          <Icon className="co-utilization-card-popover__limit-icon" />
-          {value}
-        </>
-      ) : (
-        value
-      )}
-    </div>
+    <div className="co-utilization-card-popover__consumer-value">{value}</div>
   </li>
 );
 
 type ListItemProps = {
   value: React.ReactText;
-  Icon?: React.ComponentType<ColoredIconProps>;
 };
 
 type LimitsBodyProps = {
-  LimitIcon?: React.ComponentType<ColoredIconProps>;
+  limitState?: LIMIT_STATE;
+  requestedState?: LIMIT_STATE;
   limit?: string;
   requested?: string;
   available?: string;
