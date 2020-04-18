@@ -210,6 +210,7 @@ const SearchPage_: React.FC<SearchProps & StateProps & DispatchProps> = (props) 
           <DataToolbarContent>
             <DataToolbarItem>
               <DataToolbarFilter
+                deleteChipGroup={clearSelectedItems}
                 chips={[...selectedItems].map((resourceKind) => ({
                   key: resourceKind,
                   node: (
@@ -230,6 +231,7 @@ const SearchPage_: React.FC<SearchProps & StateProps & DispatchProps> = (props) 
             </DataToolbarItem>
             <DataToolbarItem className="co-search-group__filter">
               <DataToolbarFilter
+                deleteChipGroup={clearLabelFilter}
                 chips={[...labelFilter]}
                 deleteChip={removeLabelFilter}
                 categoryName="Label"
