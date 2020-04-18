@@ -1,17 +1,10 @@
-import { K8sResourceKind } from '@console/internal/module/k8s';
+import { K8sResourceKind, K8sKind } from '@console/internal/module/k8s';
 import {
   DeployImageFormData,
   Resources,
 } from '@console/dev-console/src/components/import/import-types';
 import { EventSourceFormData } from '../../components/add/import-types';
-import {
-  RevisionModel,
-  EventSourceCamelModel,
-  EventSourceContainerModel,
-  EventSourceKafkaModel,
-  EventSourceSinkBindingModel,
-  EventSourceCronJobModel,
-} from '../../models';
+import { RevisionModel } from '../../models';
 
 export const defaultData: DeployImageFormData = {
   project: {
@@ -269,64 +262,12 @@ export const deploymentKnativeData: K8sResourceKind = {
   },
 };
 
-export const deploymentKnativeEventData: K8sResourceKind = {
-  kind: 'Deployment',
-  apiVersion: 'apps/v1',
-  metadata: {
-    annotations: { 'deployment.kubernetes.io/revision': '1' },
-    selfLink: '/apis/apps/v1/namespaces/testproject3/deployments/overlayimage',
-    resourceVersion: '471849',
-    name: 'overlayimage',
-    uid: '64b34874-debd-11e9-8cdf-0a0700ae5e38',
-    creationTimestamp: '2019-09-24T11:21:03Z',
-    generation: 4,
-    namespace: 'testproject3',
-    ownerReferences: [
-      {
-        apiVersion: `${EventSourceCronJobModel.apiGroup}/${EventSourceCronJobModel.apiVersion}`,
-        kind: EventSourceCronJobModel.kind,
-        name: 'overlayimage-fdqsffg',
-        uid: '1317f615-9636-11e9-b134-06a61d886b689',
-        controller: true,
-        blockOwnerDeletion: true,
-      },
-    ],
-  },
-  spec: {
-    replicas: 6,
-    selector: { matchLabels: { app: 'hello-openshift' } },
-    template: {
-      metadata: { creationTimestamp: null, labels: { app: 'hello-openshift' } },
-      spec: {
-        containers: [
-          {
-            name: 'hello-openshift',
-            image: 'openshift/hello-openshift',
-            ports: [{ containerPort: 8080, protocol: 'TCP' }],
-            resources: {},
-            terminationMessagePath: '/dev/termination-log',
-            terminationMessagePolicy: 'File',
-            imagePullPolicy: 'Always',
-          },
-        ],
-        restartPolicy: 'Always',
-        terminationGracePeriodSeconds: 30,
-        dnsPolicy: 'ClusterFirst',
-        securityContext: {},
-        schedulerName: 'default-scheduler',
-      },
-    },
-    strategy: {
-      type: 'RollingUpdate',
-      rollingUpdate: { maxUnavailable: '25%', maxSurge: '25%' },
-    },
-    revisionHistoryLimit: 10,
-    progressDeadlineSeconds: 600,
-  },
-};
-
 const eventSourceData = {
   cronjobsource: {
+    data: '',
+    schedule: '* * * * *',
+  },
+  pingsource: {
     data: '',
     schedule: '* * * * *',
   },
@@ -415,226 +356,54 @@ export const getDefaultEventingData = (typeEventSource: string): EventSourceForm
   return defaultEventingData;
 };
 
-export const deploymentKnativeEventSourceContainerEventData: K8sResourceKind = {
-  kind: 'Deployment',
-  apiVersion: 'apps/v1',
-  metadata: {
-    annotations: { 'deployment.kubernetes.io/revision': '1' },
-    selfLink: '/apis/apps/v1/namespaces/testproject3/deployments/overlayimage',
-    resourceVersion: '471849',
-    name: 'overlayimage',
-    uid: '64b34874-debd-11e9-8cdf-0a0700ae5e38',
-    creationTimestamp: '2019-09-24T11:21:03Z',
-    generation: 4,
-    namespace: 'testproject3',
-    ownerReferences: [
-      {
-        apiVersion: `${EventSourceContainerModel.apiGroup}/${EventSourceContainerModel.apiVersion}`,
-        kind: EventSourceContainerModel.kind,
-        name: 'overlayimage-fdqsffg',
-        uid: '1317f615-9636-11e9-b134-06a61d886b689_1',
-        controller: true,
-        blockOwnerDeletion: true,
-      },
-    ],
-  },
-  spec: {
-    replicas: 6,
-    selector: { matchLabels: { app: 'hello-openshift' } },
-    template: {
-      metadata: { creationTimestamp: null, labels: { app: 'hello-openshift' } },
-      spec: {
-        containers: [
-          {
-            name: 'hello-openshift',
-            image: 'openshift/hello-openshift',
-            ports: [{ containerPort: 8080, protocol: 'TCP' }],
-            resources: {},
-            terminationMessagePath: '/dev/termination-log',
-            terminationMessagePolicy: 'File',
-            imagePullPolicy: 'Always',
-          },
-        ],
-        restartPolicy: 'Always',
-        terminationGracePeriodSeconds: 30,
-        dnsPolicy: 'ClusterFirst',
-        securityContext: {},
-        schedulerName: 'default-scheduler',
-      },
+export const getEventSourceDeploymentData = (EventSourceModel: K8sKind): K8sResourceKind => {
+  return {
+    kind: 'Deployment',
+    apiVersion: 'apps/v1',
+    metadata: {
+      name: 'overlayimage',
+      uid: '64b34874-debd-11e9-8cdf-0a0700ae5e38',
+      namespace: 'testproject3',
+      ownerReferences: [
+        {
+          apiVersion: `${EventSourceModel.apiGroup}/${EventSourceModel.apiVersion}`,
+          kind: EventSourceModel.kind,
+          name: 'overlayimage-fdqsffg',
+          uid: '1317f615-9636-11e9-b134-06a61d886b689_1',
+          controller: true,
+          blockOwnerDeletion: true,
+        },
+      ],
     },
-    strategy: {
-      type: 'RollingUpdate',
-      rollingUpdate: { maxUnavailable: '25%', maxSurge: '25%' },
-    },
-    revisionHistoryLimit: 10,
-    progressDeadlineSeconds: 600,
-  },
-};
-
-export const deploymentKnativeEventSourceCamelEventData: K8sResourceKind = {
-  kind: 'Deployment',
-  apiVersion: 'apps/v1',
-  metadata: {
-    annotations: { 'deployment.kubernetes.io/revision': '1' },
-    selfLink: '/apis/apps/v1/namespaces/testproject3/deployments/overlayimage',
-    resourceVersion: '471849',
-    name: 'overlayimage',
-    uid: '64b34874-debd-11e9-8cdf-0a0700ae5e38',
-    creationTimestamp: '2019-09-24T11:21:03Z',
-    generation: 4,
-    namespace: 'testproject3',
-    ownerReferences: [
-      {
-        apiVersion: `${EventSourceCamelModel.apiGroup}/${EventSourceCamelModel.apiVersion}`,
-        kind: EventSourceCamelModel.kind,
-        name: 'overlayimage-fdqsffg',
-        uid: '1317f615-9636-11e9-b134-06a61d886b689_2',
-        controller: true,
-        blockOwnerDeletion: true,
+    spec: {
+      replicas: 1,
+      template: {
+        metadata: { creationTimestamp: null, labels: { app: 'hello-openshift' } },
+        spec: {
+          containers: [
+            {
+              name: 'hello-openshift',
+              image: 'openshift/hello-openshift',
+              ports: [{ containerPort: 8080, protocol: 'TCP' }],
+              resources: {},
+              terminationMessagePath: '/dev/termination-log',
+              terminationMessagePolicy: 'File',
+              imagePullPolicy: 'Always',
+            },
+          ],
+          restartPolicy: 'Always',
+          terminationGracePeriodSeconds: 30,
+          dnsPolicy: 'ClusterFirst',
+          securityContext: {},
+          schedulerName: 'default-scheduler',
+        },
       },
-    ],
-  },
-  spec: {
-    replicas: 6,
-    selector: { matchLabels: { app: 'hello-openshift' } },
-    template: {
-      metadata: { creationTimestamp: null, labels: { app: 'hello-openshift' } },
-      spec: {
-        containers: [
-          {
-            name: 'hello-openshift',
-            image: 'openshift/hello-openshift',
-            ports: [{ containerPort: 8080, protocol: 'TCP' }],
-            resources: {},
-            terminationMessagePath: '/dev/termination-log',
-            terminationMessagePolicy: 'File',
-            imagePullPolicy: 'Always',
-          },
-        ],
-        restartPolicy: 'Always',
-        terminationGracePeriodSeconds: 30,
-        dnsPolicy: 'ClusterFirst',
-        securityContext: {},
-        schedulerName: 'default-scheduler',
+      strategy: {
+        type: 'RollingUpdate',
+        rollingUpdate: { maxUnavailable: '25%', maxSurge: '25%' },
       },
+      revisionHistoryLimit: 10,
+      progressDeadlineSeconds: 600,
     },
-    strategy: {
-      type: 'RollingUpdate',
-      rollingUpdate: { maxUnavailable: '25%', maxSurge: '25%' },
-    },
-    revisionHistoryLimit: 10,
-    progressDeadlineSeconds: 600,
-  },
-};
-
-export const deploymentKnativeEventSourceKafkaEventData: K8sResourceKind = {
-  kind: 'Deployment',
-  apiVersion: 'apps/v1',
-  metadata: {
-    annotations: { 'deployment.kubernetes.io/revision': '1' },
-    selfLink: '/apis/apps/v1/namespaces/testproject3/deployments/overlayimage',
-    resourceVersion: '471849',
-    name: 'overlayimage',
-    uid: '64b34874-debd-11e9-8cdf-0a0700ae5e38',
-    creationTimestamp: '2019-09-24T11:21:03Z',
-    generation: 4,
-    namespace: 'testproject3',
-    ownerReferences: [
-      {
-        apiVersion: `${EventSourceKafkaModel.apiGroup}/${EventSourceKafkaModel.apiVersion}`,
-        kind: EventSourceKafkaModel.kind,
-        name: 'overlayimage-fdqsffg',
-        uid: '1317f615-9636-11e9-b134-06a61d886b689_3',
-        controller: true,
-        blockOwnerDeletion: true,
-      },
-    ],
-  },
-  spec: {
-    replicas: 6,
-    selector: { matchLabels: { app: 'hello-openshift' } },
-    template: {
-      metadata: { creationTimestamp: null, labels: { app: 'hello-openshift' } },
-      spec: {
-        containers: [
-          {
-            name: 'hello-openshift',
-            image: 'openshift/hello-openshift',
-            ports: [{ containerPort: 8080, protocol: 'TCP' }],
-            resources: {},
-            terminationMessagePath: '/dev/termination-log',
-            terminationMessagePolicy: 'File',
-            imagePullPolicy: 'Always',
-          },
-        ],
-        restartPolicy: 'Always',
-        terminationGracePeriodSeconds: 30,
-        dnsPolicy: 'ClusterFirst',
-        securityContext: {},
-        schedulerName: 'default-scheduler',
-      },
-    },
-    strategy: {
-      type: 'RollingUpdate',
-      rollingUpdate: { maxUnavailable: '25%', maxSurge: '25%' },
-    },
-    revisionHistoryLimit: 10,
-    progressDeadlineSeconds: 600,
-  },
-};
-
-export const deploymentKnativeEventSourceSinkBindingEventData: K8sResourceKind = {
-  kind: 'Deployment',
-  apiVersion: 'apps/v1',
-  metadata: {
-    annotations: { 'deployment.kubernetes.io/revision': '1' },
-    selfLink: '/apis/apps/v1/namespaces/testproject3/deployments/overlayimage',
-    resourceVersion: '471849',
-    name: 'overlayimage',
-    uid: '64b34874-debd-11e9-8cdf-0a0700ae5e38',
-    creationTimestamp: '2019-09-24T11:21:03Z',
-    generation: 4,
-    namespace: 'testproject3',
-    ownerReferences: [
-      {
-        apiVersion: `${EventSourceSinkBindingModel.apiGroup}/${EventSourceSinkBindingModel.apiVersion}`,
-        kind: EventSourceSinkBindingModel.kind,
-        name: 'overlayimage-fdqsffg',
-        uid: '1317f615-9636-11e9-b134-06a61d886b689_4',
-        controller: true,
-        blockOwnerDeletion: true,
-      },
-    ],
-  },
-  spec: {
-    replicas: 6,
-    selector: { matchLabels: { app: 'hello-openshift' } },
-    template: {
-      metadata: { creationTimestamp: null, labels: { app: 'hello-openshift' } },
-      spec: {
-        containers: [
-          {
-            name: 'hello-openshift',
-            image: 'openshift/hello-openshift',
-            ports: [{ containerPort: 8080, protocol: 'TCP' }],
-            resources: {},
-            terminationMessagePath: '/dev/termination-log',
-            terminationMessagePolicy: 'File',
-            imagePullPolicy: 'Always',
-          },
-        ],
-        restartPolicy: 'Always',
-        terminationGracePeriodSeconds: 30,
-        dnsPolicy: 'ClusterFirst',
-        securityContext: {},
-        schedulerName: 'default-scheduler',
-      },
-    },
-    strategy: {
-      type: 'RollingUpdate',
-      rollingUpdate: { maxUnavailable: '25%', maxSurge: '25%' },
-    },
-    revisionHistoryLimit: 10,
-    progressDeadlineSeconds: 600,
-  },
+  };
 };

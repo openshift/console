@@ -123,6 +123,10 @@ export const getEventSourceData = (source: string) => {
       data: '',
       schedule: '',
     },
+    pingsource: {
+      data: '',
+      schedule: '',
+    },
     sinkbinding: {
       subject: {
         apiVersion: '',

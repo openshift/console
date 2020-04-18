@@ -115,6 +115,20 @@ export const EventSourceCronJobModel: K8sKind = {
   color: knativeEventingColor.value,
 };
 
+export const EventSourcePingModel: K8sKind = {
+  apiGroup: KNATIVE_EVENT_SOURCE_APIGROUP,
+  apiVersion: 'v1alpha1',
+  kind: 'PingSource',
+  label: 'Ping Source',
+  labelPlural: 'Ping Sources',
+  plural: 'pingsources',
+  id: 'pingsource',
+  abbr: 'PS',
+  namespaced: true,
+  crd: true,
+  color: knativeEventingColor.value,
+};
+
 export const EventSourceContainerModel: K8sKind = {
   apiGroup: KNATIVE_EVENT_SOURCE_APIGROUP_DEP,
   apiVersion: 'v1alpha1',
