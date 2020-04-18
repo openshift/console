@@ -43,7 +43,7 @@ export type VMImportOvirtSource = {
 export type VMImportKind = {
   spec: {
     targetVmName?: string;
-    startVM?: boolean;
+    startVm?: boolean;
     providerCredentialsSecret: {
       name: string;
       namespace?: string;
