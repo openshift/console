@@ -1,4 +1,5 @@
 import { DeployImageFormData, Resources } from '../import-types';
+import { healthChecksProbeInitialData } from '../../health-checks/health-check-probe-utils';
 
 export const defaultData: DeployImageFormData = {
   project: {
@@ -97,6 +98,7 @@ export const defaultData: DeployImageFormData = {
       defaultLimitUnit: 'Mi',
     },
   },
+  healthChecks: healthChecksProbeInitialData,
 };
 
 export const dataWithTargetPort: DeployImageFormData = {
@@ -210,6 +212,7 @@ export const dataWithTargetPort: DeployImageFormData = {
       defaultLimitUnit: 'Mi',
     },
   },
+  healthChecks: healthChecksProbeInitialData,
 };
 
 export const dataWithPorts: DeployImageFormData = {
@@ -431,6 +434,7 @@ export const dataWithPorts: DeployImageFormData = {
       defaultLimitUnit: 'Mi',
     },
   },
+  healthChecks: healthChecksProbeInitialData,
 };
 
 export const dataWithoutPorts: DeployImageFormData = {
@@ -544,6 +548,7 @@ export const dataWithoutPorts: DeployImageFormData = {
       defaultLimitUnit: 'Mi',
     },
   },
+  healthChecks: healthChecksProbeInitialData,
 };
 
 export const internalImageData: DeployImageFormData = {
@@ -828,4 +833,5 @@ export const internalImageData: DeployImageFormData = {
       defaultLimitUnit: 'Mi',
     },
   },
+  healthChecks: healthChecksProbeInitialData,
 };

@@ -16,6 +16,7 @@ import {
   gitUrlRegex,
   resourcesValidationSchema,
 } from './validation-schema';
+import { healthChecksProbesValidationSchema } from '../health-checks/health-check-probe-validation-utils';
 
 export const validationSchema = yup.object().shape({
   name: nameValidationSchema,
@@ -30,6 +31,7 @@ export const validationSchema = yup.object().shape({
   limits: limitsValidationSchema,
   build: buildValidationSchema,
   resources: resourcesValidationSchema,
+  healthChecks: healthChecksProbesValidationSchema,
 });
 
 const hasDomain = (url: string, domain: string): boolean => {

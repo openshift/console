@@ -1,6 +1,7 @@
 import * as _ from 'lodash';
 import { K8sResourceKind, ImagePullPolicy } from '@console/internal/module/k8s';
 import { getAppLabels, mergeData } from '@console/dev-console/src/utils/resource-label-utils';
+import { getProbesData } from '@console/dev-console/src/components/health-checks/create-health-check-probe-utils';
 import {
   DeployImageFormData,
   GitImportFormData,
@@ -29,6 +30,8 @@ export const getKnativeServiceDepResource = (
       env,
       triggers: { image: imagePolicy },
     },
+    healthChecks,
+    resources,
   } = formData;
   const contTargetPort = targetPort
     ? parseInt(targetPort.split('-')[0], 10)
@@ -114,13 +117,13 @@ export const getKnativeServiceDepResource = (
                   },
                 }),
               },
+              ...getProbesData(healthChecks, resources),
             },
           ],
         },
       },
     },
   };
-
   let knativeServiceUpdated = {};
   if (!_.isEmpty(originalKnativeService)) {
     knativeServiceUpdated = _.omit(originalKnativeService, [

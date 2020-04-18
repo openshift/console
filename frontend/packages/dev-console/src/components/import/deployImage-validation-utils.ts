@@ -10,6 +10,7 @@ import {
   isiValidationSchema,
   resourcesValidationSchema,
 } from './validation-schema';
+import { healthChecksProbesValidationSchema } from '../health-checks/health-check-probe-validation-utils';
 
 export const deployValidationSchema = yup.object().shape({
   project: projectNameValidationSchema,
@@ -21,4 +22,5 @@ export const deployValidationSchema = yup.object().shape({
   route: routeValidationSchema,
   limits: limitsValidationSchema,
   resources: resourcesValidationSchema,
+  healthChecks: healthChecksProbesValidationSchema,
 });

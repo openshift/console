@@ -56,7 +56,7 @@ const ProbeForm: React.FC<ProbeFormProps> = ({ onSubmit, onClose, containerPorts
           name={`healthChecks.${probeType}.data.failureThreshold`}
           label="Failure Threshold"
           style={{ maxWidth: '100%' }}
-          helpText={'How many times the probe will try starting or restarting before giving up.'}
+          helpText="How many times the probe will try starting or restarting before giving up."
         />
         <DropdownField
           name={`healthChecks.${probeType}.data.requestType`}
@@ -99,9 +99,7 @@ const ProbeForm: React.FC<ProbeFormProps> = ({ onSubmit, onClose, containerPorts
           name={`healthChecks.${probeType}.data.successThreshold`}
           label="Success Threshold"
           style={{ maxWidth: '100%' }}
-          helpText={
-            'How many consecutive successes for the probe to be considered successful after having failed.'
-          }
+          helpText="How many consecutive successes for the probe to be considered successful after having failed."
         />
       </FormSection>
       <ActionGroupWithIcons

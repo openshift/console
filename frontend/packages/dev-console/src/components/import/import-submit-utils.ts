@@ -23,6 +23,7 @@ import {
   mergeData,
 } from '../../utils/resource-label-utils';
 import { createService, createRoute, dryRunOpt } from '../../utils/shared-submit-utils';
+import { getProbesData } from '../health-checks/create-health-check-probe-utils';
 import { AppResources } from '../edit-application/edit-application-types';
 import {
   GitImportFormData,
@@ -236,6 +237,7 @@ export const createOrUpdateDeployment = (
     labels: userLabels,
     limits: { cpu, memory },
     git: { url: repository, ref },
+    healthChecks,
   } = formData;
 
   const imageStreamName = imageStream && imageStream.metadata.name;
@@ -293,6 +295,7 @@ export const createOrUpdateDeployment = (
                   },
                 }),
               },
+              ...getProbesData(healthChecks),
             },
           ],
         },
@@ -322,6 +325,7 @@ export const createOrUpdateDeploymentConfig = (
     labels: userLabels,
     limits: { cpu, memory },
     git: { url: repository, ref },
+    healthChecks,
   } = formData;
 
   const imageStreamName = imageStream && imageStream.metadata.name;
@@ -366,6 +370,7 @@ export const createOrUpdateDeploymentConfig = (
                   },
                 }),
               },
+              ...getProbesData(healthChecks),
             },
           ],
         },

@@ -5,6 +5,7 @@ import {
 } from '@console/dev-console/src/components/import/import-types';
 import { EventSourceFormData } from '../../components/add/import-types';
 import { RevisionModel } from '../../models';
+import { healthChecksProbeInitialData } from '@console/dev-console/src/components/health-checks/health-check-probe-utils';
 
 export const defaultData: DeployImageFormData = {
   project: {
@@ -103,6 +104,7 @@ export const defaultData: DeployImageFormData = {
       defaultLimitUnit: 'Mi',
     },
   },
+  healthChecks: healthChecksProbeInitialData,
 };
 
 export const deploymentData: K8sResourceKind = {

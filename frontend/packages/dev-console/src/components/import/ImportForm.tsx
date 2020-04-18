@@ -13,6 +13,7 @@ import { ALLOW_SERVICE_BINDING } from '../../const';
 import { GitImportFormData, FirehoseList, ImportData, Resources } from './import-types';
 import { createOrUpdateResources, handleRedirect } from './import-submit-utils';
 import { validationSchema } from './import-validation-utils';
+import { healthChecksProbeInitialData } from '../health-checks/health-check-probe-utils';
 
 export interface ImportFormProps {
   namespace: string;
@@ -141,6 +142,7 @@ const ImportForm: React.FC<ImportFormProps & StateProps> = ({
         defaultLimitUnit: 'Mi',
       },
     },
+    healthChecks: healthChecksProbeInitialData,
   };
   const builderImages: NormalizedBuilderImages =
     imageStreams && imageStreams.loaded && normalizeBuilderImages(imageStreams.data);

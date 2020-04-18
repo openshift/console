@@ -1,5 +1,6 @@
 import { ValidatedOptions } from '@patternfly/react-core';
 import { GitImportFormData, Resources } from '../import-types';
+import { healthChecksProbeInitialData } from '../../health-checks/health-check-probe-utils';
 
 export const mockFormData: GitImportFormData = {
   name: 'test-app',
@@ -96,4 +97,5 @@ export const mockFormData: GitImportFormData = {
       defaultLimitUnit: 'Mi',
     },
   },
+  healthChecks: healthChecksProbeInitialData,
 };

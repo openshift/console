@@ -1,4 +1,5 @@
 import { DeployImageFormData, Resources } from '../import-types';
+import { healthChecksProbeInitialData } from '../../health-checks/health-check-probe-utils';
 
 export const mockDeployImageFormData: DeployImageFormData = {
   project: {
@@ -134,4 +135,5 @@ export const mockDeployImageFormData: DeployImageFormData = {
       defaultLimitUnit: 'Mi',
     },
   },
+  healthChecks: healthChecksProbeInitialData,
 };

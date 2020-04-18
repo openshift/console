@@ -4,6 +4,8 @@ import { ServiceModel } from '@console/knative-plugin';
 import { UNASSIGNED_KEY } from '../../../const';
 import { DeployImageFormData, GitImportFormData, Resources } from '../../import/import-types';
 import { AppResources } from '../edit-application-types';
+import { healthChecksProbeInitialData } from '../../health-checks/health-check-probe-utils';
+import { healthChecksData } from '../../health-checks/__tests__/create-health-check-probe-data';
 
 export const knativeService: K8sResourceKind = {
   apiVersion: `${ServiceModel.apiGroup}/${ServiceModel.apiVersion}`,
@@ -437,6 +439,7 @@ export const gitImportInitialValues: GitImportFormData = {
     triggers: { webhook: true, image: true, config: true },
     strategy: 'Source',
   },
+  healthChecks: healthChecksProbeInitialData,
 };
 
 export const externalImageValues: DeployImageFormData = {
@@ -511,6 +514,7 @@ export const externalImageValues: DeployImageFormData = {
   },
   build: { env: [], triggers: {}, strategy: '' },
   isSearchingForImage: false,
+  healthChecks: healthChecksProbeInitialData,
 };
 
 export const internalImageValues: DeployImageFormData = {
@@ -585,6 +589,7 @@ export const internalImageValues: DeployImageFormData = {
   },
   build: { env: [], triggers: {}, strategy: '' },
   isSearchingForImage: false,
+  healthChecks: healthChecksProbeInitialData,
 };
 
 export const knAppResources: AppResources = {
@@ -663,4 +668,10 @@ export const knExternalImageValues: DeployImageFormData = {
   },
   searchTerm: 'openshift/hello-openshift',
   serverless: { scaling: { concurrencylimit: '', concurrencytarget: '', maxpods: '', minpods: 0 } },
+  healthChecks: healthChecksProbeInitialData,
+};
+
+export const gitImportInitialValuesWithHealthChecksEnabled: GitImportFormData = {
+  ...gitImportInitialValues,
+  healthChecks: healthChecksData,
 };

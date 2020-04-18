@@ -1,5 +1,13 @@
 import { HealthChecksProbeType, RequestType, HealthCheckProbe } from './health-checks-types';
 
+export const getContainerPorts = (ports): { [port: number]: number } => {
+  const containerPorts = ports.reduce((acc, port) => {
+    acc[port.containerPort] = port.containerPort;
+    return acc;
+  }, {});
+  return containerPorts;
+};
+
 export const getHealthChecksProbeConfig = (probe: string) => {
   switch (probe) {
     case HealthChecksProbeType.ReadinessProbe: {
@@ -28,7 +36,7 @@ export const getHealthChecksProbeConfig = (probe: string) => {
   }
 };
 
-export const defaultHealthChecksProbeValues: HealthCheckProbe = {
+export const healthChecksDefaultValues: HealthCheckProbe = {
   showForm: false,
   enabled: false,
   data: {
@@ -52,9 +60,7 @@ export const defaultHealthChecksProbeValues: HealthCheckProbe = {
 };
 
 export const healthChecksProbeInitialData = {
-  healthChecks: {
-    readinessProbe: defaultHealthChecksProbeValues,
-    livenessProbe: defaultHealthChecksProbeValues,
-    startupProbe: defaultHealthChecksProbeValues,
-  },
+  readinessProbe: healthChecksDefaultValues,
+  livenessProbe: healthChecksDefaultValues,
+  startupProbe: healthChecksDefaultValues,
 };
