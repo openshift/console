@@ -24,11 +24,13 @@
     background-color: var(--pf-global--palette--black-200);
     display: flex;
     align-items: center;
+    flex-shrink: 0;
   }
 
   &__body {
     position: relative;
     flex-grow: 1;
+    overflow: auto;
   }
 
   &-appear {

@@ -6,8 +6,6 @@ import { Provider } from 'react-redux';
 import { Route, Router, Switch } from 'react-router-dom';
 // AbortController is not supported in some older browser versions
 import 'abort-controller/polyfill';
-import CloudShell from '@console/app/src/components/cloud-shell/CloudShell';
-import CloudShellTab from '@console/app/src/components/cloud-shell/CloudShellTab';
 import store from '../redux';
 import { detectFeatures } from '../actions/features';
 import AppContents from './app-contents';
@@ -20,6 +18,9 @@ import * as UIActions from '../actions/ui';
 import { fetchSwagger, getCachedResources, referenceForModel } from '../module/k8s';
 import { receivedResources, watchAPIServices } from '../actions/k8s';
 import { ClusterVersionModel } from '../models';
+// cloud shell imports must come later than features
+import CloudShell from '@console/app/src/components/cloud-shell/CloudShell';
+import CloudShellTab from '@console/app/src/components/cloud-shell/CloudShellTab';
 import '../vendor.scss';
 import '../style.scss';
 

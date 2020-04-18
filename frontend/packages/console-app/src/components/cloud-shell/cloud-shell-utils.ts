@@ -1,3 +1,6 @@
+import { K8sResourceKind } from '@console/internal/module/k8s';
+import { getRandomChars } from '@console/shared';
+
 type environment = {
   value: string;
   name: string;
@@ -20,11 +23,7 @@ interface Devfile {
   apiVersion?: string;
 }
 
-export interface CloudShellResource {
-  metadata: {
-    name: string;
-    namespace: string;
-  };
+export type CloudShellResource = K8sResourceKind & {
   status?: {
     phase: string;
     ideUrl: string;
@@ -33,16 +32,29 @@ export interface CloudShellResource {
     started?: boolean;
     devfile?: Devfile;
   };
-  apiVersion?: string;
-  kind: string;
-}
+};
 
-export const newCloudShellWorkSpace = (name: string, namespace: string): CloudShellResource => ({
+export const CLOUD_SHELL_LABEL = 'console.openshift.io/cloudshell';
+export const CLOUD_SHELL_USER_ANNOTATION = 'console.openshift.io/cloudshell-user';
+
+export const createCloudShellResourceName = () => `terminal-${getRandomChars(6)}`;
+
+export const newCloudShellWorkSpace = (
+  name: string,
+  namespace: string,
+  username: string,
+): CloudShellResource => ({
   apiVersion: 'workspace.che.eclipse.org/v1alpha1',
   kind: 'Workspace',
   metadata: {
     name,
     namespace,
+    labels: {
+      [CLOUD_SHELL_LABEL]: 'true',
+    },
+    annotations: {
+      [CLOUD_SHELL_USER_ANNOTATION]: username,
+    },
   },
   spec: {
     started: true,
