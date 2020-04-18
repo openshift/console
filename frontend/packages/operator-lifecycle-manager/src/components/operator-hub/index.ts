@@ -58,7 +58,7 @@ export enum OperatorHubCSVAnnotationKey {
   description = 'description',
   categories = 'categories',
   capabilities = 'capabilities',
-  actionText = 'marketplace.openshift.io/actionText',
+  actionText = 'marketplace.openshift.io/action-text',
   remoteWorkflow = 'marketplace.openshift.io/remote-workflow',
   supportWorkflow = 'marketplace.openshift.io/support-workflow',
   infrastructureFeatures = 'operators.openshift.io/infrastructure-features',
