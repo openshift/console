@@ -1,3 +1,4 @@
+import * as React from 'react';
 import { Extension } from '@console/plugin-sdk/src/typings/base';
 import { AccessReviewResourceAttributes } from '@console/internal/module/k8s';
 
@@ -10,7 +11,7 @@ namespace ExtensionProperties {
     /** The description of the action. */
     description: string;
     /** The perspective display icon. */
-    icon?: string;
+    icon?: string | React.ReactElement;
     /** The perspective display icon css class. */
     iconClass?: string;
     /** The URL to navigate to. */

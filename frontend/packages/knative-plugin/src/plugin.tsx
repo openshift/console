@@ -41,6 +41,7 @@ import {
   fetchEventSourcesCrd,
   getDynamicEventSourcesResourceList,
 } from './utils/fetch-dynamic-eventsources-utils';
+import * as eventSourceIcon from './imgs/event-source.svg';
 
 type ConsumedExtensions =
   | ResourceNSNavItem
@@ -313,8 +314,9 @@ const plugin: Plugin<ConsumedExtensions> = [
       id: 'knative-event-source',
       url: '/event-source',
       label: 'Event Source',
-      description: 'Create an event source and sink it to Knative service',
-      iconClass: 'pficon-help',
+      description:
+        'Create an event source to register interest in a class of events from a particular system',
+      icon: eventSourceIcon,
     },
   },
 ];

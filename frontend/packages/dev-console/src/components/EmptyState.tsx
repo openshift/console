@@ -38,8 +38,9 @@ const Item: React.FC<ItemProps> = ({
         onClick={(e: React.SyntheticEvent) => navigateTo(e, resolvedUrl)}
         href={resolvedUrl}
         title={label}
-        iconImg={icon}
+        iconImg={typeof icon === 'string' ? icon : undefined}
         iconClass={iconClass}
+        icon={React.isValidElement(icon) ? icon : undefined}
         description={description}
       />
     </GalleryItem>
