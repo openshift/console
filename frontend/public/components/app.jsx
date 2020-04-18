@@ -3,11 +3,11 @@ import * as React from 'react';
 import { render } from 'react-dom';
 import { Helmet } from 'react-helmet';
 import { Provider } from 'react-redux';
-import { Route, Router } from 'react-router-dom';
+import { Route, Router, Switch } from 'react-router-dom';
 // AbortController is not supported in some older browser versions
 import 'abort-controller/polyfill';
 import CloudShell from '@console/app/src/components/cloud-shell/CloudShell';
-
+import CloudShellTab from '@console/app/src/components/cloud-shell/CloudShellTab';
 import store from '../redux';
 import { detectFeatures } from '../actions/features';
 import AppContents from './app-contents';
@@ -227,7 +227,10 @@ if ('serviceWorker' in navigator) {
 render(
   <Provider store={store}>
     <Router history={history} basename={window.SERVER_FLAGS.basePath}>
-      <Route path="/" component={App} />
+      <Switch>
+        <Route path="/terminal" component={CloudShellTab} />
+        <Route path="/" component={App} />
+      </Switch>
     </Router>
   </Provider>,
   document.getElementById('app'),
