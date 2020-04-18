@@ -1,27 +1,31 @@
 import * as React from 'react';
 import { getFieldTitle } from '../utils/renderable-field-utils';
-import { iGetFieldValue } from '../selectors/immutable/field';
 import { iGet } from '../../../utils/immutable';
-import { getCheckboxReadableValue } from '../../../utils/strings';
 import { FormFieldType } from './form-field';
+import { getReviewValue } from '../tabs/review-tab/utils';
+
+import './form-field-review-row.scss';
 
 type FormFieldReviewRowProps = {
   field: any;
-  fieldType: FormFieldType;
+  fieldType?: FormFieldType;
+  value?: any;
 };
 
-export const FormFieldReviewRow: React.FC<FormFieldReviewRowProps> = ({ fieldType, field }) => {
+export const FormFieldReviewRow: React.FC<FormFieldReviewRowProps> = ({
+  fieldType,
+  field,
+  value = undefined,
+}) => {
   const fieldKey = iGet(field, 'key');
-  const value = iGetFieldValue(field);
-  const reviewValue = [FormFieldType.CHECKBOX, FormFieldType.INLINE_CHECKBOX].includes(fieldType)
-    ? getCheckboxReadableValue(value)
-    : value;
-  if (!reviewValue) {
-    return null;
-  }
+  const fieldTitle = getFieldTitle(fieldKey);
+  const reviewValue = value || getReviewValue(field, fieldType) || (
+    <span className="text-secondary">{`No ${fieldTitle.toLowerCase()}`}</span>
+  );
+
   return (
     <>
-      <dt>{getFieldTitle(fieldKey)}</dt>
+      <dt>{fieldTitle}</dt>
       <dd>{reviewValue}</dd>
     </>
   );

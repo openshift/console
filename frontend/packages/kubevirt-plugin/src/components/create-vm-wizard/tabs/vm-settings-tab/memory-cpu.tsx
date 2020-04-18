@@ -16,74 +16,59 @@ import {
 import './vm-settings-tab.scss';
 
 export const MemoryCPU: React.FC<MemoryCPUProps> = React.memo(
-  ({ memoryField, cpuField, onChange, isReview }) => {
+  ({ memoryField, cpuField, onChange }) => {
     if (isFieldHidden(memoryField) && isFieldHidden(cpuField)) {
       return null;
     }
     const mem = iGetFieldValue(memoryField);
     const [size, unit] = stringValueUnitSplit(_.isString(mem) ? mem : '');
     const hasSize = size != null && !_.isNaN(size);
-    const memory = (
-      <FormFieldMemoRow field={memoryField} fieldType={FormFieldType.TEXT}>
-        <FormField>
-          <SizeUnitFormRow
-            title={''}
-            size={hasSize ? size : ''}
-            unit={(unit as BinaryUnit) || BinaryUnit.Gi}
-            units={getReasonableUnits(unit)}
-            onSizeChanged={React.useCallback(
-              (value) =>
-                onChange(
-                  VMSettingsField.MEMORY,
-                  value == null ? unit : `${value}${unit || BinaryUnit.Gi}`,
-                ),
-              [onChange, unit],
-            )}
-            onUnitChanged={React.useCallback(
-              (value) => onChange(VMSettingsField.MEMORY, hasSize ? `${size}${value}` : value),
-              [hasSize, onChange, size],
-            )}
-          />
-        </FormField>
-      </FormFieldMemoRow>
-    );
-
-    const cpu = (
-      <FormFieldMemoRow field={cpuField} fieldType={FormFieldType.TEXT}>
-        <FormField>
-          <Integer
-            isFullWidth
-            isPositive
-            onChange={React.useCallback((value) => onChange(VMSettingsField.CPU, value), [
-              onChange,
-            ])}
-          />
-        </FormField>
-      </FormFieldMemoRow>
-    );
-
-    if (isReview) {
-      return (
-        <>
-          {memory}
-          {cpu}
-        </>
-      );
-    }
 
     return (
       <Grid>
         <GridItem span={6} className="kubevirt-create-vm-modal__memory-row">
-          {memory}
+          <FormFieldMemoRow field={memoryField} fieldType={FormFieldType.TEXT}>
+            <FormField>
+              <SizeUnitFormRow
+                title={''}
+                size={hasSize ? size : ''}
+                unit={(unit as BinaryUnit) || BinaryUnit.Gi}
+                units={getReasonableUnits(unit)}
+                onSizeChanged={React.useCallback(
+                  (value) =>
+                    onChange(
+                      VMSettingsField.MEMORY,
+                      value == null ? unit : `${value}${unit || BinaryUnit.Gi}`,
+                    ),
+                  [onChange, unit],
+                )}
+                onUnitChanged={React.useCallback(
+                  (value) => onChange(VMSettingsField.MEMORY, hasSize ? `${size}${value}` : value),
+                  [hasSize, onChange, size],
+                )}
+              />
+            </FormField>
+          </FormFieldMemoRow>
         </GridItem>
-        <GridItem span={6}>{cpu}</GridItem>
+        <GridItem span={6}>
+          <FormFieldMemoRow field={cpuField} fieldType={FormFieldType.TEXT}>
+            <FormField>
+              <Integer
+                isFullWidth
+                isPositive
+                onChange={React.useCallback((value) => onChange(VMSettingsField.CPU, value), [
+                  onChange,
+                ])}
+              />
+            </FormField>
+          </FormFieldMemoRow>
+        </GridItem>
       </Grid>
     );
   },
 );
 
 type MemoryCPUProps = {
-  isReview: boolean;
   memoryField: any;
   cpuField: any;
   onChange: (key: string, value: string) => void;

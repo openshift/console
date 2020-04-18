@@ -2,6 +2,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { Alert, AlertVariant } from '@patternfly/react-core';
+import { Table, TableBody, TableHeader, TableVariant } from '@patternfly/react-table';
 import { Firehose, FirehoseResult, resourcePath } from '@console/internal/components/utils';
 import { StorageClassResourceKind } from '@console/internal/module/k8s';
 import { createLookup, getAnnotations, getName } from '@console/shared/src';
@@ -13,7 +14,6 @@ import { CombinedDisk } from '../../../../k8s/wrapper/vm/combined-disk';
 import { VolumeWrapper } from '../../../../k8s/wrapper/vm/volume-wrapper';
 import { getLoadedData } from '../../../../utils';
 import { DEFAULT_SC_ANNOTATION } from '../../../../constants/sc';
-import { ReviewList } from './review-list';
 
 import './storage-review.scss';
 
@@ -46,10 +46,21 @@ const NoDefaultSC: React.FC = () => (
 
 const StorageReviewFirehose: React.FC<StorageReviewFirehoseProps> = ({
   storages,
-  className,
   persistentVolumeClaims,
   storageClasses,
 }) => {
+  const showStorages = storages.length > 0;
+
+  const headers = [
+    { title: 'Name' },
+    { title: 'Source' },
+    { title: 'Size' },
+    { title: 'Interface' },
+    { title: 'Storage Class' },
+    { title: 'Access' },
+    { title: 'Volume Mode' },
+  ];
+
   const pvcLookup = createLookup(persistentVolumeClaims, getName);
 
   const combinedDisks = storages.map(({ id, disk, volume, dataVolume, persistentVolumeClaim }) => {
@@ -74,32 +85,54 @@ const StorageReviewFirehose: React.FC<StorageReviewFirehoseProps> = ({
     (sc) => getAnnotations(sc, {})[DEFAULT_SC_ANNOTATION] === 'true',
   );
 
+  const rows = combinedDisks.map((combinedDisk) => {
+    return [
+      combinedDisk.getName(),
+      combinedDisk.getSourceValue(),
+      combinedDisk.getReadableSize(),
+      combinedDisk.getDiskInterface(),
+      combinedDisk.getStorageClassName(),
+      combinedDisk.getAccessModes()?.join(', '),
+      combinedDisk.getVolumeMode()?.toString(),
+    ];
+  });
+
   return (
-    <ReviewList
-      title="Storage"
-      className={className}
-      items={combinedDisks.map((combinedDisk) => {
-        return {
-          id: combinedDisk.id,
-          value: combinedDisk.toString(),
-        };
-      })}
-    >
-      {hasStorageWithoutStorageClass && (
-        <Alert
-          title={'Some disks do not have a storage class defined'}
-          isInline
-          variant={AlertVariant.warning}
-          className="kubevirt-create-vm-modal__review-tab-storage-class-alert"
-        >
-          {defaultStorageClass ? (
-            <DefaultSCUsed defaultSCName={getName(defaultStorageClass)} />
-          ) : (
-            <NoDefaultSC />
+    <>
+      {showStorages && (
+        <>
+          {hasStorageWithoutStorageClass && (
+            <Alert
+              title={'Some disks do not have a storage class defined'}
+              isInline
+              variant={AlertVariant.warning}
+              className="kubevirt-create-vm-modal__review-tab-storage-class-alert"
+            >
+              {defaultStorageClass ? (
+                <DefaultSCUsed defaultSCName={getName(defaultStorageClass)} />
+              ) : (
+                <NoDefaultSC />
+              )}
+            </Alert>
           )}
-        </Alert>
+          <Table
+            aria-label="Storage Devices"
+            variant={TableVariant.compact}
+            cells={headers}
+            rows={rows}
+            gridBreakPoint="grid-xl"
+          >
+            <TableHeader />
+            <TableBody />
+          </Table>
+        </>
       )}
-    </ReviewList>
+      {!showStorages && (
+        <p>
+          <strong>No disks found</strong>
+        </p>
+      )}
+    </>
   );
 };
 
@@ -107,7 +140,6 @@ type StorageReviewFirehoseProps = {
   storages: VMWizardStorage[];
   storageClasses?: FirehoseResult<StorageClassResourceKind[]>;
   persistentVolumeClaims?: FirehoseResult;
-  className: string;
 };
 
 const StorageReviewConnected: React.FC<StorageReviewConnectedProps> = ({ namespace, ...rest }) => (

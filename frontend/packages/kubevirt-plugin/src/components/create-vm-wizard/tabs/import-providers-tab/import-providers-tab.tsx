@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { FormSelect, FormSelectOption } from '@patternfly/react-core';
+import { Form, FormSelect, FormSelectOption } from '@patternfly/react-core';
 import { connect } from 'react-redux';
 import { iGet, iGetIn, immutableListToShallowJS } from '../../../../utils/immutable';
 import { FormFieldMemoRow } from '../../form/form-field-row';
@@ -9,7 +9,6 @@ import { vmWizardActions } from '../../redux/actions';
 import { ImportProviderRenderableField, ImportProvidersField, VMImportProvider } from '../../types';
 import { ActionType } from '../../redux/types';
 import { getPlaceholder } from '../../utils/renderable-field-utils';
-import { FormFieldForm } from '../../form/form-field-form';
 import { VMWareImportProvider } from './providers/vmware-import-provider/vmware-import-provider';
 import { iGetImportProviders } from '../../selectors/immutable/import-providers';
 import { OvirtImportProvider } from './providers/ovirt-import-provider/ovirt-import-provider';
@@ -29,7 +28,7 @@ class ImportProvidersTabComponent extends React.Component<ImportProvidersTabComp
     const { wizardReduxID } = this.props;
 
     return (
-      <FormFieldForm>
+      <Form>
         <FormFieldMemoRow
           key={ImportProvidersField.PROVIDER}
           field={this.getField(ImportProvidersField.PROVIDER)}
@@ -51,7 +50,7 @@ class ImportProvidersTabComponent extends React.Component<ImportProvidersTabComp
         </FormFieldMemoRow>
         <OvirtImportProvider key={VMImportProvider.OVIRT} wizardReduxID={wizardReduxID} />
         <VMWareImportProvider key={VMImportProvider.VMWARE} wizardReduxID={wizardReduxID} />
-      </FormFieldForm>
+      </Form>
     );
   }
 }

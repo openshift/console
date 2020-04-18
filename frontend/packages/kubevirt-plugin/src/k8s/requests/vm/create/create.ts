@@ -3,7 +3,10 @@ import {
   VMImportProvider,
   VMSettingsField,
 } from '../../../../components/create-vm-wizard/types';
-import { asSimpleSettings } from '../../../../components/create-vm-wizard/selectors/vm-settings';
+import {
+  asSimpleSettings,
+  getFieldValue,
+} from '../../../../components/create-vm-wizard/selectors/vm-settings';
 import { VMTemplateWrapper } from '../../../wrapper/vm/vm-template-wrapper';
 import {
   TEMPLATE_PARAM_VM_NAME,
@@ -18,13 +21,14 @@ import { toShallowJS } from '../../../../utils/immutable';
 import { iGetRelevantTemplate } from '../../../../selectors/immutable/template/combined';
 import { CreateVMParams } from './types';
 import { initializeVM } from './initialize-vm';
-import { getOS, initializeCommonMetadata, initializeCommonVMMetadata } from './common';
+import { initializeCommonMetadata, initializeCommonVMMetadata } from './common';
 import { selectVM } from '../../../../selectors/vm-template/basic';
 import { ProcessedTemplatesModel } from '../../../../models/models';
 import { ImporterResult, OnVMCreate } from '../types';
 import { importV2VVMwareVm } from '../../v2v/import/import-v2vvmware';
 import { getImportProvidersFieldValue } from '../../../../components/create-vm-wizard/selectors/import-providers';
 import { importV2VOvirtVm } from '../../v2v/import/import-ovirt';
+import { getOS } from '../../../../components/create-vm-wizard/selectors/combined';
 
 export const getInitializedVMTemplate = (params: CreateVMParams) => {
   const { vmSettings, iCommonTemplates, iUserTemplates } = params;
@@ -58,7 +62,7 @@ export const createVMTemplate = async (params: CreateVMParams) => {
 
   const combinedSimpleSettings = {
     ...asSimpleSettings(vmSettings),
-    ...getOS(params),
+    ...getOS({ osID: getFieldValue(vmSettings, VMSettingsField.OPERATING_SYSTEM), ...params }),
   };
 
   const { template, storages } = getInitializedVMTemplate(params);
@@ -113,7 +117,7 @@ export const createVM = async (params: CreateVMParams) => {
 
   const combinedSimpleSettings = {
     ...asSimpleSettings(vmSettings),
-    ...getOS(params),
+    ...getOS({ osID: getFieldValue(vmSettings, VMSettingsField.OPERATING_SYSTEM), ...params }),
   };
   let onVMCreate: OnVMCreate = null;
   if (isProviderImport) {
