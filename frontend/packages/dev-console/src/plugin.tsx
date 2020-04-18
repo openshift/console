@@ -6,6 +6,7 @@ import {
   ModelFeatureFlag,
   KebabActions,
   HrefNavItem,
+  SeparatorNavItem,
   ResourceNSNavItem,
   ResourceClusterNavItem,
   ResourceListPage,
@@ -71,6 +72,7 @@ type ConsumedExtensions =
   | ModelFeatureFlag
   | HrefNavItem
   | ResourceClusterNavItem
+  | SeparatorNavItem
   | ResourceNSNavItem
   | ResourceListPage
   | ResourceDetailsPage
@@ -145,6 +147,26 @@ const plugin: Plugin<ConsumedExtensions> = [
     },
   },
   {
+    type: 'NavItem/Href',
+    properties: {
+      perspective: 'dev',
+      componentProps: {
+        name: 'Search',
+        href: '/search',
+        testID: 'search-header',
+      },
+    },
+  },
+  {
+    type: 'NavItem/Separator',
+    properties: {
+      perspective: 'dev',
+      componentProps: {
+        testID: 'dev-separator',
+      },
+    },
+  },
+  {
     type: 'NavItem/ResourceNS',
     properties: {
       perspective: 'dev',
@@ -175,19 +197,6 @@ const plugin: Plugin<ConsumedExtensions> = [
   {
     type: 'NavItem/Href',
     properties: {
-      section: 'More',
-      perspective: 'dev',
-      componentProps: {
-        name: 'Search',
-        href: '/search',
-        testID: 'more-search-header',
-      },
-    },
-  },
-  {
-    type: 'NavItem/Href',
-    properties: {
-      section: 'More',
       perspective: 'dev',
       componentProps: {
         name: 'Helm',
@@ -200,30 +209,17 @@ const plugin: Plugin<ConsumedExtensions> = [
     },
   },
   {
-    type: 'NavItem/ResourceCluster',
+    type: 'NavItem/Href',
     properties: {
-      section: 'More',
       perspective: 'dev',
       componentProps: {
-        name: 'Project Details',
-        resource: 'projects',
-        testID: 'more-project-header',
+        name: 'Project',
+        href: '/project-details',
+        testID: 'project-details-header',
       },
     },
     flags: {
       required: [FLAGS.OPENSHIFT],
-    },
-  },
-  {
-    type: 'NavItem/Href',
-    properties: {
-      section: 'More',
-      perspective: 'dev',
-      componentProps: {
-        name: 'Project Access',
-        href: '/project-access',
-        testID: 'more-project-access-header',
-      },
     },
   },
   {
@@ -456,7 +452,7 @@ const plugin: Plugin<ConsumedExtensions> = [
         '/import',
         '/topology',
         '/deploy-image',
-        '/project-access',
+        '/project-details',
         '/dev-monitoring',
         '/helm-releases',
       ],
@@ -621,33 +617,6 @@ const plugin: Plugin<ConsumedExtensions> = [
   {
     type: 'Page/Route',
     properties: {
-      perspective: 'dev',
-      exact: true,
-      path: ['/k8s/cluster/projects'],
-      loader: async () =>
-        (
-          await import(
-            './components/projects/details/AllProjectsDetailList' /* webpackChunkName: "all-projects-detail-list" */
-          )
-        ).default,
-    },
-  },
-  {
-    type: 'Page/Route',
-    properties: {
-      perspective: 'dev',
-      path: ['/k8s/cluster/projects/:name'],
-      loader: async () =>
-        (
-          await import(
-            './components/projects/details/ProjectDetailsPage' /* webpackChunkName: "project-details" */
-          )
-        ).default,
-    },
-  },
-  {
-    type: 'Page/Route',
-    properties: {
       exact: true,
       path: ['/catalog/helm-install'],
       loader: async () =>
@@ -713,12 +682,13 @@ const plugin: Plugin<ConsumedExtensions> = [
   {
     type: 'Page/Route',
     properties: {
-      exact: true,
-      path: ['/project-access/all-namespaces', '/project-access/ns/:ns'],
+      perspective: 'dev',
+      exact: false,
+      path: ['/project-details/all-namespaces', '/project-details/ns/:ns'],
       loader: async () =>
         (
           await import(
-            './components/project-access/ProjectAccessPage' /* webpackChunkName: "dev-console-projectAccess" */
+            './components/projects/details/ProjectDetailsPage' /* webpackChunkName: "dev-console-projectDetails" */
           )
         ).default,
     },

@@ -18,6 +18,12 @@ namespace ExtensionProperties {
     mergeBefore?: string;
   }
 
+  export interface SeparatorNavItem extends Omit<NavItem, 'componentProps'> {
+    componentProps: {
+      testID?: string;
+    };
+  }
+
   export interface HrefNavItem extends NavItem {
     componentProps: NavItem['componentProps'] & Pick<HrefLinkProps, 'href' | 'activePath'>;
   }
@@ -30,6 +36,10 @@ namespace ExtensionProperties {
     componentProps: NavItem['componentProps'] &
       Pick<ResourceClusterLinkProps, 'resource' | 'model'>;
   }
+}
+
+export interface SeparatorNavItem extends Extension<ExtensionProperties.SeparatorNavItem> {
+  type: 'NavItem/Separator';
 }
 
 export interface HrefNavItem extends Extension<ExtensionProperties.HrefNavItem> {
@@ -59,6 +69,15 @@ export const isResourceClusterNavItem = (e: Extension): e is ResourceClusterNavI
   return e.type === 'NavItem/ResourceCluster';
 };
 
+export const isSeparatorNavItem = (e: Extension): e is SeparatorNavItem => {
+  return e.type === 'NavItem/Separator';
+};
+
 export const isNavItem = (e: Extension): e is NavItem => {
-  return isHrefNavItem(e) || isResourceNSNavItem(e) || isResourceClusterNavItem(e);
+  return (
+    isHrefNavItem(e) ||
+    isResourceNSNavItem(e) ||
+    isResourceClusterNavItem(e) ||
+    isSeparatorNavItem(e)
+  );
 };

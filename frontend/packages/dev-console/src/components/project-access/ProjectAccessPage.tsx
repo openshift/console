@@ -1,23 +1,31 @@
 import * as React from 'react';
-import { match as RMatch } from 'react-router';
-import RenderProjectAccess from './RenderProjectAccessPage';
-import NamespacedPage, { NamespacedPageVariants } from '../NamespacedPage';
+import { Firehose } from '@console/internal/components/utils';
+import ProjectAccess from './ProjectAccess';
 
 export interface ProjectAccessPageProps {
-  match: RMatch<{
-    ns?: string;
-  }>;
+  customData: { activeNamespace: string };
 }
 
-const ProjectAccessPage: React.FC<ProjectAccessPageProps> = ({ match }) => {
-  const namespace = match.params.ns;
-  const props: React.ComponentProps<typeof RenderProjectAccess> = {
-    namespace,
+const ProjectAccessPage: React.FC<ProjectAccessPageProps> = ({ customData }) => {
+  const { activeNamespace } = customData;
+  const props: React.ComponentProps<typeof ProjectAccess> = {
+    formName: 'project access',
+    namespace: activeNamespace,
   };
   return (
-    <NamespacedPage variant={NamespacedPageVariants.light}>
-      <RenderProjectAccess {...props} />
-    </NamespacedPage>
+    <Firehose
+      resources={[
+        {
+          activeNamespace,
+          kind: 'RoleBinding',
+          prop: 'roleBindings',
+          isList: true,
+          optional: true,
+        },
+      ]}
+    >
+      <ProjectAccess {...props} />
+    </Firehose>
   );
 };
 

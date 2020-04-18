@@ -3,7 +3,7 @@ import { connect, Dispatch } from 'react-redux';
 import * as _ from 'lodash-es';
 import { NavItemSeparator, Button } from '@patternfly/react-core';
 import { MinusCircleIcon } from '@patternfly/react-icons';
-import { useExtensions, NavItem, isNavItem } from '@console/plugin-sdk';
+import { useExtensions, NavItem, isNavItem, isSeparatorNavItem } from '@console/plugin-sdk';
 import { RootState } from '../../redux';
 import { setPinnedResources } from '../../actions/ui';
 import { getActivePerspective, getPinnedResources } from '../../reducers/ui';
@@ -117,7 +117,7 @@ const PerspectiveNav: React.FC<StateProps & DispatchProps> = ({
   return (
     <>
       {_.compact(
-        matchingNavItems.map((item) => {
+        matchingNavItems.map((item, index) => {
           const { section } = item.properties;
           if (section) {
             if (renderedSections.includes(section)) {
@@ -125,6 +125,9 @@ const PerspectiveNav: React.FC<StateProps & DispatchProps> = ({
             }
             renderedSections.push(section);
             return <NavSection title={section} key={section} />;
+          }
+          if (isSeparatorNavItem(item)) {
+            return <NavItemSeparator key={`separator-${index}`} />;
           }
           return createLink(item, true);
         }),
