@@ -29,7 +29,16 @@ import { withFallback } from '@console/shared/src/components/error/error-boundar
 import * as k8sActions from '../actions/k8s';
 import * as UIActions from '../actions/ui';
 import { coFetchJSON } from '../co-fetch';
-import { DeploymentModel, NamespaceModel, NodeModel, PodModel } from '../models';
+import {
+  ContainerModel,
+  DaemonSetModel,
+  DeploymentModel,
+  JobModel,
+  NamespaceModel,
+  NodeModel,
+  PodModel,
+  StatefulSetModel,
+} from '../models';
 import { K8sKind } from '../module/k8s';
 import {
   alertDescription,
@@ -426,25 +435,21 @@ const SilenceTableRow: RowFunction<Silence> = ({ index, key, obj, style }) => {
 };
 
 const alertMessageResources: { [labelName: string]: K8sKind } = {
+  container: ContainerModel,
+  daemonset: DaemonSetModel,
   deployment: DeploymentModel,
+  job: JobModel,
   namespace: NamespaceModel,
   node: NodeModel,
   pod: PodModel,
+  statefulset: StatefulSetModel,
 };
 
 const matchCount = (haystack: string, regExpString: string) =>
   _.size(haystack.match(new RegExp(regExpString, 'g')));
 
-const AlertMessage: React.FC<{ alert: Alert; rule: Rule }> = ({ alert, rule }) => {
-  let alertText = '';
-  let ruleText = '';
-  if (alert.annotations.description) {
-    alertText = alert.annotations.description;
-    ruleText = rule.annotations.description;
-  } else if (alert.annotations.message) {
-    alertText = alert.annotations.message;
-    ruleText = rule.annotations.message;
-  } else {
+const AlertMessage: React.FC<AlertMessageProps> = ({ alertText, labels, template }) => {
+  if (_.isEmpty(alertText)) {
     return null;
   }
 
@@ -453,10 +458,10 @@ const AlertMessage: React.FC<{ alert: Alert; rule: Rule }> = ({ alert, rule }) =
   // Go through each recognized resource type and replace any resource names that exist in alertText
   // with a link to the resource's details page
   _.each(alertMessageResources, (model, label) => {
-    const labelValue = alert.labels[label];
+    const labelValue = labels[label];
 
-    if (labelValue && !(model.namespaced && _.isEmpty(alert.labels.namespace))) {
-      const tagCount = matchCount(ruleText, `\\{\\{ *\\$labels\\.${label} *\\}\\}`);
+    if (labelValue && !(model.namespaced && _.isEmpty(labels.namespace))) {
+      const tagCount = matchCount(template, `\\{\\{ *\\$labels\\.${label} *\\}\\}`);
       const resourceNameCount = matchCount(alertText, _.escapeRegExp(labelValue));
 
       // Don't do the replacement unless the counts match. This avoids overwriting the wrong string
@@ -469,7 +474,7 @@ const AlertMessage: React.FC<{ alert: Alert; rule: Rule }> = ({ alert, rule }) =
             key={model.kind}
             kind={model.kind}
             name={labelValue}
-            namespace={model.namespaced ? alert.labels.namespace : undefined}
+            namespace={model.namespaced ? labels.namespace : undefined}
           />
         );
         messageParts = _.flatMap(messageParts, (part) => {
@@ -484,6 +489,17 @@ const AlertMessage: React.FC<{ alert: Alert; rule: Rule }> = ({ alert, rule }) =
   });
 
   return <p>{messageParts}</p>;
+};
+
+const HeaderAlertMessage: React.FC<{ alert: Alert; rule: Rule }> = ({ alert, rule }) => {
+  const annotation = alert.annotations.description ? 'description' : 'message';
+  return (
+    <AlertMessage
+      alertText={alert.annotations[annotation]}
+      labels={alert.labels}
+      template={rule.annotations[annotation]}
+    />
+  );
 };
 
 const alertStateToProps = (state: RootState, { match }): AlertsDetailsPageProps => {
@@ -526,7 +542,7 @@ const AlertsDetailsPage = withFallback(
                 </div>
               )}
             </h1>
-            <AlertMessage alert={alert} rule={rule} />
+            <HeaderAlertMessage alert={alert} rule={rule} />
           </div>
           <div className="co-m-pane__body">
             <ToggleGraph />
@@ -546,9 +562,25 @@ const AlertsDetailsPage = withFallback(
                 </div>
                 <div className="col-sm-6">
                   <dl className="co-m-pane__details">
-                    <Annotation title="Description">{annotations.description}</Annotation>
+                    {annotations.description && (
+                      <Annotation title="Description">
+                        <AlertMessage
+                          alertText={annotations.description}
+                          labels={labels}
+                          template={rule?.annotations.description}
+                        />
+                      </Annotation>
+                    )}
                     <Annotation title="Summary">{annotations.summary}</Annotation>
-                    <Annotation title="Message">{annotations.message}</Annotation>
+                    {annotations.message && (
+                      <Annotation title="Message">
+                        <AlertMessage
+                          alertText={annotations.message}
+                          labels={labels}
+                          template={rule?.annotations.message}
+                        />
+                      </Annotation>
+                    )}
                   </dl>
                 </div>
               </div>
@@ -1801,7 +1833,7 @@ type AlertStateProps = {
   state: AlertStates;
 };
 
-export type AlertsDetailsPageProps = {
+type AlertsDetailsPageProps = {
   alert: Alert;
   loaded: boolean;
   loadError?: string;
@@ -1809,20 +1841,26 @@ export type AlertsDetailsPageProps = {
   silencesLoaded: boolean;
 };
 
-export type AlertRulesDetailsPageProps = {
+type AlertMessageProps = {
+  alertText: string;
+  labels: PrometheusLabels;
+  template: string;
+};
+
+type AlertRulesDetailsPageProps = {
   loaded: boolean;
   loadError?: string;
   rule: Rule;
 };
 
-export type SilencesDetailsPageProps = {
+type SilencesDetailsPageProps = {
   alertsLoaded: boolean;
   loaded: boolean;
   loadError?: string;
   silence: Silence;
 };
 
-export type SilenceFormProps = {
+type SilenceFormProps = {
   defaults: any;
   Info?: React.ComponentType<{}>;
   title: string;
