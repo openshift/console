@@ -20,6 +20,7 @@ import {
   getJobTypeAndCompletions,
   getTemplateInstanceStatus,
   K8sResourceKind,
+  K8sResourceKindReference,
   NodeKind,
   planExternalName,
   PodKind,
@@ -385,6 +386,14 @@ type TableOptionProps = {
   UI: any;
 };
 
+type ComponentProps = {
+  data?: any[];
+  filters?: Object;
+  selected?: any;
+  match?: any;
+  kindObj?: K8sResourceKindReference;
+};
+
 export const Table = connect<
   TablePropsFromState,
   TablePropsFromDispatch,
@@ -430,7 +439,7 @@ export const Table = connect<
 
     constructor(props) {
       super(props);
-      const componentProps: any = _.pick(props, [
+      const componentProps: ComponentProps = _.pick(props, [
         'data',
         'filters',
         'selected',
@@ -457,11 +466,18 @@ export const Table = connect<
           sortBy = { index: columnIndex + this._columnShift, direction: currentSortOrder };
         }
       }
-      this.state = { columns, sortBy };
+      this.state = { sortBy };
     }
 
     componentDidMount() {
-      const { columns } = this.state;
+      const componentProps: ComponentProps = _.pick(this.props, [
+        'data',
+        'filters',
+        'selected',
+        'match',
+        'kindObj',
+      ]);
+      const columns = this.props.Header(componentProps);
       const sp = new URLSearchParams(window.location.search);
       const columnIndex = _.findIndex(columns, { title: sp.get('sortBy') });
 
@@ -503,7 +519,15 @@ export const Table = connect<
 
     _onSort(event, index, direction) {
       event.preventDefault();
-      const sortColumn = this.state.columns[index - this._columnShift];
+      const componentProps: ComponentProps = _.pick(this.props, [
+        'data',
+        'filters',
+        'selected',
+        'match',
+        'kindObj',
+      ]);
+      const columns = this.props.Header(componentProps);
+      const sortColumn = columns[index - this._columnShift];
       this._applySort(
         sortColumn.sortField,
         sortColumn.sortFunc,
@@ -533,8 +557,9 @@ export const Table = connect<
         virtualize = true,
         customData,
         gridBreakPoint = TableGridBreakpoint.none,
+        Header,
       } = this.props;
-      const { sortBy, columns } = this.state;
+      const { sortBy } = this.state;
       const componentProps: any = _.pick(this.props, [
         'data',
         'filters',
@@ -542,6 +567,7 @@ export const Table = connect<
         'match',
         'kindObj',
       ]);
+      const columns = Header(componentProps);
       const ariaRowCount = componentProps.data && componentProps.data.length;
       const scrollNode = typeof scrollElement === 'function' ? scrollElement() : scrollElement;
       const renderVirtualizedTable = (scrollContainer) => (
@@ -660,6 +686,5 @@ export type TableInnerProps = {
 };
 
 export type TableInnerState = {
-  columns?: any[];
   sortBy: object;
 };

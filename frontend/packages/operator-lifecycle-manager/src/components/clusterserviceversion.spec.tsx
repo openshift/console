@@ -9,11 +9,9 @@ import {
   TableInnerProps,
   Table,
   TableRow,
-  MultiListPage,
 } from '@console/internal/components/factory';
 import {
   Timestamp,
-  ResourceLink,
   ResourceKebab,
   ScrollToTopOnMount,
   SectionHeading,
@@ -30,23 +28,23 @@ import {
   testCatalogSource,
   testInstallPlan,
 } from '../../mocks';
-import { ClusterServiceVersionModel, SubscriptionModel, CatalogSourceModel } from '../models';
+import { ClusterServiceVersionModel } from '../models';
 import { ClusterServiceVersionKind, ClusterServiceVersionPhase } from '../types';
 import {
   ClusterServiceVersionsDetailsPage,
   ClusterServiceVersionsDetailsPageProps,
   ClusterServiceVersionDetails,
   ClusterServiceVersionDetailsProps,
-  ClusterServiceVersionsPage,
-  ClusterServiceVersionsPageProps,
-  ClusterServiceVersionList,
-  ClusterServiceVersionTableHeader,
+  NamespacedClusterServiceVersionList,
   ClusterServiceVersionTableRow,
+  NamespacedClusterServiceVersionTableRow,
   ClusterServiceVersionTableRowProps,
   CRDCard,
   CRDCardRow,
   CSVSubscription,
   CSVSubscriptionProps,
+  SingleProjectTableHeader,
+  AllProjectsTableHeader,
 } from './clusterserviceversion';
 import { SubscriptionUpdates, SubscriptionDetails } from './subscription';
 import {
@@ -55,9 +53,15 @@ import {
   referenceForProvidedAPI,
 } from '.';
 
-describe(ClusterServiceVersionTableHeader.displayName, () => {
-  it('returns column header definition for cluster service version table header', () => {
-    expect(Array.isArray(ClusterServiceVersionTableHeader()));
+describe('SingleProjectTableHeader.displayName', () => {
+  it('returns single project column header definition for cluster service version table header', () => {
+    expect(Array.isArray(SingleProjectTableHeader()));
+  });
+});
+
+describe('AllProjectsTableHeader.displayName', () => {
+  it('returns all projects column header definition for cluster service version table header', () => {
+    expect(Array.isArray(AllProjectsTableHeader()));
   });
 });
 
@@ -66,7 +70,8 @@ describe(ClusterServiceVersionTableRow.displayName, () => {
 
   beforeEach(() => {
     wrapper = shallow(
-      <ClusterServiceVersionTableRow
+      <NamespacedClusterServiceVersionTableRow
+        activeNamespace="test"
         catalogSourceMissing={false}
         obj={testClusterServiceVersion}
         subscription={testSubscription}
@@ -81,7 +86,7 @@ describe(ClusterServiceVersionTableRow.displayName, () => {
 
   it('renders a component wrapped in an `ErrorBoundary', () => {
     wrapper = shallow(
-      <ClusterServiceVersionTableRow
+      <NamespacedClusterServiceVersionTableRow
         catalogSourceMissing={false}
         obj={testClusterServiceVersion}
         subscription={testSubscription}
@@ -118,24 +123,15 @@ describe(ClusterServiceVersionTableRow.displayName, () => {
     ).toBe(true);
   });
 
-  it('renders column for app namespace link', () => {
-    const link = wrapper
-      .find(TableRow)
-      .childAt(1)
-      .find(ResourceLink);
-
-    expect(link.props().kind).toEqual('Namespace');
-    expect(link.props().title).toEqual(testClusterServiceVersion.metadata.namespace);
-    expect(link.props().name).toEqual(testClusterServiceVersion.metadata.namespace);
+  it('renders column for managedNamespace', () => {
+    const col = wrapper.find(TableRow).childAt(1);
+    const managedNamespace = col.childAt(0);
+    expect(managedNamespace.exists()).toBeTruthy();
   });
 
-  it('renders column with link to Operator deployment', () => {
+  it('renders column for last updated', () => {
     const col = wrapper.find(TableRow).childAt(3);
-
-    expect(col.find(ResourceLink).props().kind).toEqual('Deployment');
-    expect(col.find(ResourceLink).props().name).toEqual(
-      testClusterServiceVersion.spec.install.spec.deployments[0].name,
-    );
+    expect(col.render().text()).toContain('years from now');
   });
 
   it('renders column for app status', () => {
@@ -217,10 +213,11 @@ describe(ClusterServiceVersionLogo.displayName, () => {
   });
 });
 
-describe(ClusterServiceVersionList.displayName, () => {
+describe(NamespacedClusterServiceVersionList.displayName, () => {
   it('renders `List` with correct props', () => {
     const wrapper = shallow(
-      <ClusterServiceVersionList
+      <NamespacedClusterServiceVersionList
+        activeNamespace="test"
         data={[]}
         subscriptions={{ loaded: true, data: [testSubscription], loadError: null }}
         catalogSources={{ loaded: true, data: [testCatalogSource], loadError: null }}
@@ -228,48 +225,7 @@ describe(ClusterServiceVersionList.displayName, () => {
       />,
     );
 
-    expect(wrapper.find<TableInnerProps>(Table).props().Header).toEqual(
-      ClusterServiceVersionTableHeader,
-    );
-  });
-});
-
-describe(ClusterServiceVersionsPage.displayName, () => {
-  let wrapper: ShallowWrapper<ClusterServiceVersionsPageProps>;
-
-  beforeEach(() => {
-    spyOn(rbac, 'useAccessReview').and.returnValue(true);
-    wrapper = shallow(
-      <ClusterServiceVersionsPage
-        kind={referenceForModel(ClusterServiceVersionModel)}
-        resourceDescriptions={[]}
-        namespace="foo"
-      />,
-    );
-  });
-
-  it('renders a `MultiListPage` with correct props', () => {
-    const listPage = wrapper.find(MultiListPage);
-
-    expect(listPage.props().resources).toEqual([
-      {
-        kind: referenceForModel(ClusterServiceVersionModel),
-        namespace: 'foo',
-        prop: 'clusterServiceVersions',
-      },
-      {
-        kind: referenceForModel(SubscriptionModel),
-        prop: 'subscriptions',
-        optional: true,
-      },
-      {
-        kind: referenceForModel(CatalogSourceModel),
-        prop: 'catalogSources',
-        optional: true,
-      },
-    ]);
-    expect(listPage.props().ListComponent).toEqual(ClusterServiceVersionList);
-    expect(listPage.props().showTitle).toBe(false);
+    expect(wrapper.find<TableInnerProps>(Table).props().Header).toEqual(SingleProjectTableHeader);
   });
 });
 
