@@ -51,3 +51,8 @@ export const infraProvisionerMap = {
   aws: 'kubernetes.io/aws-ebs',
   vsphere: 'kubernetes.io/vsphere-volume',
 };
+
+export enum defaultRequestSize {
+  BAREMETAL = '1',
+  NON_BAREMETAL = '2Ti',
+}

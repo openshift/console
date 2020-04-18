@@ -9,15 +9,16 @@ import {
   ModalTitle,
 } from '@console/internal/components/factory';
 import { usePrometheusPoll } from '@console/internal/components/graphs/prometheus-poll-hook';
-import { k8sPatch } from '@console/internal/module/k8s';
+import { k8sPatch, StorageClassResourceKind } from '@console/internal/module/k8s';
 import { PrometheusEndpoint } from '@console/internal/components/graphs/helpers';
 import { getName } from '@console/shared';
 import { OCSServiceModel } from '../../../models';
 import { OSD_CAPACITY_SIZES } from '../../../utils/osd-size-dropdown';
-import { CEPH_STORAGE_NAMESPACE } from '../../../constants';
+import { CEPH_STORAGE_NAMESPACE, NO_PROVISIONER } from '../../../constants';
 import { labelTooltip, storageClassTooltip } from '../../../constants/ocs-install';
 import { CAPACITY_USAGE_QUERIES, StorageDashboardQuery } from '../../../constants/queries';
 import { OCSStorageClassDropdown } from '../storage-class-dropdown';
+import { PVsAvailableCapacity } from '../../ocs-install/pvs-available-capacity';
 import './_add-capacity-modal.scss';
 
 const getProvisionedCapacity = (value: number) => (value % 1 ? (value * 3).toFixed(2) : value * 3);
@@ -30,7 +31,7 @@ export const AddCapacityModal = (props: AddCapacityModalProps) => {
     namespace: CEPH_STORAGE_NAMESPACE,
     query: CAPACITY_USAGE_QUERIES[StorageDashboardQuery.CEPH_CAPACITY_USED],
   });
-  const [storageClass, setStorageClass] = React.useState('');
+  const [storageClass, setStorageClass] = React.useState<StorageClassResourceKind>(null);
   const [inProgress, setProgress] = React.useState(false);
   const [errorMessage, setError] = React.useState('');
 
@@ -64,6 +65,7 @@ export const AddCapacityModal = (props: AddCapacityModalProps) => {
   const submit = (event: React.FormEvent<EventTarget>) => {
     event.preventDefault();
     setProgress(true);
+    const scName = getName(storageClass);
     const patch = [
       {
         op: 'replace',
@@ -73,10 +75,10 @@ export const AddCapacityModal = (props: AddCapacityModalProps) => {
       {
         op: 'replace',
         path: `/spec/storageDeviceSets/0/dataPVCTemplate/spec/storageClassName`,
-        value: storageClass,
+        value: scName,
       },
     ];
-    if (!storageClass) {
+    if (!scName) {
       setError('No StorageClass selected');
       setProgress(false);
     } else {
@@ -96,37 +98,54 @@ export const AddCapacityModal = (props: AddCapacityModalProps) => {
     <form onSubmit={submit} className="modal-content modal-content--no-inner-scroll">
       <ModalTitle>Add Capacity</ModalTitle>
       <ModalBody>
-        Adding capacity for <strong>{getName(ocsConfig)}</strong>, may increase your cloud expenses.
+        Adding capacity for <strong>{getName(ocsConfig)}</strong>, may increase your expenses.
         <div className="ceph-add-capacity__modal">
-          <div className="ceph-add-capacity_sc-dropdown">
+          <div
+            className={classNames('ceph-add-capacity__sc-dropdown', {
+              'ceph-add-capacity__sc-dropdown--margin':
+                storageClass?.provisioner !== NO_PROVISIONER,
+            })}
+          >
             <label className="control-label" htmlFor="storageClass">
               Storage Class
               <FieldLevelHelp>{storageClassTooltip}</FieldLevelHelp>
             </label>
-            <OCSStorageClassDropdown onChange={setStorageClass} defaultClass={storageClass} />
+            <OCSStorageClassDropdown onChange={setStorageClass} />
           </div>
-          <label className="control-label" htmlFor="requestSize">
-            Raw Capacity
-            <FieldLevelHelp>{labelTooltip}</FieldLevelHelp>
-          </label>
-          <div className="ceph-add-capacity__form">
-            <input
-              className={classNames('pf-c-form-control', 'ceph-add-capacity__input')}
-              type="number"
-              name="requestSize"
-              value={osdSizeWithoutUnit}
-              disabled
+          {storageClass?.provisioner === NO_PROVISIONER ? (
+            <PVsAvailableCapacity
+              replica={ocsConfig.spec.storageDeviceSets[0].replica}
+              data-test-id="ceph-add-capacity-pvs-available-capacity"
+              sc={storageClass}
             />
-            <div className="ceph-add-capacity__input--info-text">
-              x 3 replicas = <strong>{provisionedCapacity} TiB</strong>
+          ) : (
+            <div>
+              <label className="control-label" htmlFor="requestSize">
+                Raw Capacity
+                <FieldLevelHelp>{labelTooltip}</FieldLevelHelp>
+              </label>
+              <div className="ceph-add-capacity__form">
+                <input
+                  className={classNames('pf-c-form-control', 'ceph-add-capacity__input')}
+                  type="number"
+                  name="requestSize"
+                  value={osdSizeWithoutUnit}
+                  required
+                  disabled
+                  data-test-id="requestSize"
+                />
+                <div className="ceph-add-capacity__input--info-text">
+                  x 3 replicas = <strong>{provisionedCapacity} TiB</strong>
+                </div>
+              </div>
+              <div className="ceph-add-capacity__current-capacity">
+                <div className="text-secondary ceph-add-capacity__current-capacity--text">
+                  <strong>Currently Used:</strong>
+                </div>
+                {currentCapacity}
+              </div>
             </div>
-          </div>
-          <div className="ceph-add-capacity__current-capacity">
-            <div className="text-secondary ceph-add-capacity__current-capacity--text">
-              <strong>Currently Used:</strong>
-            </div>
-            {currentCapacity}
-          </div>
+          )}
         </div>
       </ModalBody>
       <ModalSubmitFooter

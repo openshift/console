@@ -1,39 +1,24 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import { Firehose } from '@console/internal/components/utils';
-import { InfrastructureModel } from '@console/internal/models';
-import { K8sResourceKind, StorageClassResourceKind, k8sGet } from '@console/internal/module/k8s';
+import { StorageClassResourceKind } from '@console/internal/module/k8s';
 import { StorageClassDropdownInner } from '@console/internal/components/utils/storage-class-dropdown';
-import { getInfrastructurePlatform, getName } from '@console/shared';
-import { infraProvisionerMap } from '../../constants/ocs-install';
 import './storage-class-dropdown.scss';
+
+const cephStorageProvisioners = ['ceph.rook.io/block', 'cephfs.csi.ceph.com', 'rbd.csi.ceph.com'];
 
 const StorageClassDropdown = (props: any) => {
   const scConfig = _.cloneDeep(props);
-  const [infrastructure, setInfrastructure] = React.useState<K8sResourceKind>();
-  const [infrastructureError, setInfrastructureError] = React.useState();
-  /* 'S' of Storage should be Capital as its defined key in resourses object */
+  /* 'S' of Storage should be Capital as its defined key in resources object */
   const scLoaded = _.get(scConfig.resources.StorageClass, 'loaded');
   const scData = _.get(scConfig.resources.StorageClass, 'data', []) as StorageClassResourceKind[];
 
-  React.useEffect(() => {
-    const fetchInfrastructure = async () => {
-      try {
-        const infra = await k8sGet(InfrastructureModel, 'cluster');
-        setInfrastructure(infra);
-      } catch (error) {
-        setInfrastructureError(error);
-      }
-    };
-    fetchInfrastructure();
-  }, []);
+  const filteredSCData = scData.filter((sc: StorageClassResourceKind) =>
+    cephStorageProvisioners.every((provisioner: string) => !sc?.provisioner?.includes(provisioner)),
+  );
 
-  const infrastructurePlatform = getInfrastructurePlatform(infrastructure);
-
-  if (scLoaded && !infrastructureError && !!infrastructurePlatform) {
-    // find infra supported provisioner
-    const provisioner: string = infraProvisionerMap[_.toLower(infrastructurePlatform)];
-    scConfig.resources.StorageClass.data = _.filter(scData, (sc) => sc.provisioner === provisioner);
+  if (scLoaded) {
+    scConfig.resources.StorageClass.data = filteredSCData;
   }
 
   return <StorageClassDropdownInner {...scConfig} />;
@@ -42,16 +27,11 @@ const StorageClassDropdown = (props: any) => {
 export const OCSStorageClassDropdown: React.FC<OCSStorageClassDropdownProps> = (props) => {
   const { onChange, defaultClass } = props;
 
-  const handleStorageClass = (sc: K8sResourceKind) => {
-    const name = getName(sc);
-    onChange(name);
-  };
-
   return (
     <>
       <Firehose resources={[{ kind: 'StorageClass', prop: 'StorageClass', isList: true }]}>
         <StorageClassDropdown
-          onChange={handleStorageClass}
+          onChange={onChange}
           name="storageClass"
           defaultClass={defaultClass}
           hideClassName="ceph-sc-dropdown__hide-default"
@@ -63,6 +43,6 @@ export const OCSStorageClassDropdown: React.FC<OCSStorageClassDropdownProps> = (
 };
 
 type OCSStorageClassDropdownProps = {
-  onChange: React.Dispatch<React.SetStateAction<string>>;
+  onChange: (sc: StorageClassResourceKind) => void;
   defaultClass?: string;
 };
