@@ -1,5 +1,5 @@
 import * as _ from 'lodash';
-import { Filter } from '@console/shared/src/types';
+import { RowFilter } from '@console/internal/components/filter-toolbar';
 import {
   HOST_REGISTERING_STATES,
   HOST_PROVISIONING_STATES,
@@ -48,13 +48,15 @@ export const getHostFilterStatus = (bundle: BareMetalHostBundle): string => {
   return _.findKey(hostStatesToFilterMap, ({ states }) => states.includes(bundle.status.status));
 };
 
-export const hostStatusFilter: Filter = {
+export const hostStatusFilter: RowFilter = {
+  filterGroupName: 'Status',
   type: 'host-status',
-  selected: Object.keys(hostStatesToFilterMap),
   reducer: getHostFilterStatus,
   items: _.map(hostStatesToFilterMap, ({ title }, id) => ({ id, title })),
   filter: (groups, bundle: BareMetalHostBundle) => {
     const status = getHostFilterStatus(bundle);
-    return groups.selected.has(status) || !_.includes(groups.all, status);
+    return (
+      groups.selected.has(status) || !_.includes(groups.all, status) || _.isEmpty(groups.selected)
+    );
   },
 };
