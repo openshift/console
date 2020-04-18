@@ -1,3 +1,13 @@
 .co-notification-drawer {
+  overflow-y: hidden !important;
   z-index: 10;
+}
+
+.pf-c-drawer.pf-m-inline .pf-c-notification-drawer__header {
+  // fix upstream bug where header overlays divider
+  margin-left: 1px;
+}
+
+.pf-c-drawer__content {
+  --pf-c-drawer__content--ZIndex: auto;
 }
