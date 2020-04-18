@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { TextInputTypes } from '@patternfly/react-core';
 import { InputField, DropdownField } from '@console/shared';
-import { SecretAnnotationType } from '../const';
+import { SecretAnnotationType } from '../../const';
 
 type SecretAnnotationParam = {
   fieldName: string;

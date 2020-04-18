@@ -1,12 +1,12 @@
 import * as React from 'react';
 import { useFormikContext, FormikValues, useField } from 'formik';
-import FormSection from '../../import/section/FormSection';
+import { SecretModel, ConfigMapModel } from '@console/internal/models';
 import { DropdownField } from '@console/shared';
+import { PipelineWorkspace } from '../../../../utils/pipeline-augment';
+import FormSection from '../../../import/section/FormSection';
+import { VolumeTypes } from '../../const';
 import PVCDropdown from './PVCDropdown';
 import MultipleResourceKeySelector from './MultipleResourceKeySelector';
-import { SecretModel, ConfigMapModel } from '@console/internal/models';
-import { PipelineWorkspace } from '../../../utils/pipeline-augment';
-import { VolumeTypes } from '../const';
 
 const getVolumeTypeFields = (volumeType: VolumeTypes, index: number) => {
   switch (VolumeTypes[volumeType]) {

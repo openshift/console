@@ -4,12 +4,19 @@ export enum StartedByLabel {
 }
 
 export enum PipelineResourceType {
-  '' = 'Select resource type',
-  git = 'Git',
-  image = 'Image',
-  cluster = 'Cluster',
-  storage = 'Storage',
+  git = 'git',
+  image = 'image',
+  cluster = 'cluster',
+  storage = 'storage',
 }
+
+export const pipelineResourceTypeSelections = {
+  '': 'Select resource type',
+  [PipelineResourceType.git]: 'Git',
+  [PipelineResourceType.image]: 'Image',
+  [PipelineResourceType.cluster]: 'Cluster',
+  [PipelineResourceType.storage]: 'Storage',
+};
 
 export enum VolumeTypes {
   EmptyDirectory = 'Empty Directory',

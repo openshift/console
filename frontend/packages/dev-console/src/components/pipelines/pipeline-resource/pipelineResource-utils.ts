@@ -3,6 +3,7 @@ import { k8sCreate, K8sResourceKind } from '@console/internal/module/k8s';
 import { SecretModel } from '@console/internal/models';
 import { getRandomChars } from '@console/shared/src/utils/utils';
 import { PipelineResourceModel } from '../../../models';
+import { convertMapToNameValueArray } from '../modals/common/utils';
 
 export interface ParamData {
   [key: string]: any;
@@ -28,7 +29,7 @@ export const createPipelineResource = (
     },
     spec: {
       type,
-      params: _.map(getDefinedObj(params), (value, name) => ({ name, value })),
+      params: convertMapToNameValueArray(getDefinedObj(params)),
       ...(secretResp && {
         secrets: _.map(secretResp.data, (value, name) => {
           return {

@@ -6,14 +6,14 @@ import { ExpandCollapse } from '@console/internal/components/utils';
 import { SecretType } from '@console/internal/components/secrets/create-secret';
 import { SecretModel } from '@console/internal/models';
 import { k8sCreate } from '@console/internal/module/k8s';
-import SecretForm from './SecretForm';
 import {
   associateServiceAccountToSecret,
   getSecretAnnotations,
-} from '../../../utils/pipeline-utils';
+} from '../../../../utils/pipeline-utils';
+import { SecretAnnotationId } from '../../const';
+import { advancedSectionValidationSchema } from './validation-utils';
+import SecretForm from './SecretForm';
 import SecretsList from './SecretsList';
-import { advancedSectionValidationSchema } from './pipelineForm-validation-utils';
-import { SecretAnnotationId } from '../const';
 
 import './PipelineSecretSection.scss';
 

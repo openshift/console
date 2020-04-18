@@ -1,6 +1,5 @@
 import { getRandomChars } from '@console/shared/src/utils';
 import {
-  PipelineResource,
   PipelineResourceTask,
   PipelineTask,
   PipelineTaskParam,
@@ -284,7 +283,7 @@ const applyResourceUpdate = (
 ): PipelineTask => {
   const { resourceTarget, selectedPipelineResource, taskResourceName } = resources;
 
-  const existingResources: PipelineResource[] = pipelineTask.resources?.[resourceTarget] || [];
+  const existingResources: PipelineTaskResource[] = pipelineTask.resources?.[resourceTarget] || [];
   const filteredResources = existingResources.filter((resource: PipelineTaskResource) => {
     return resource.name !== taskResourceName;
   });

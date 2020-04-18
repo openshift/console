@@ -27,26 +27,26 @@ type TriggerTemplateMapping = { [key: string]: TriggerTemplateKind };
 const getResourceName = (resource: K8sResourceCommon): string => resource.metadata.name;
 const getEventListenerTemplateNames = (el: EventListenerKind): string[] =>
   el.spec.triggers.map((elTrigger: EventListenerKindTrigger) => elTrigger.template.name);
+const getEventListenerGeneratedName = (eventListener: EventListenerKind) =>
+  eventListener.status?.configuration.generatedName;
 
 const useEventListenerRoutes = (
   namespace: string,
   eventListenerResources: EventListenerKind[],
 ): RouteMap => {
   const memoResources: WatchK8sResources<RouteMap> = React.useMemo(() => {
-    return (eventListenerResources || [])
-      .map((eventListener: EventListenerKind) => eventListener.status.configuration.generatedName)
-      .reduce(
-        (acc, generatedName) => ({
-          ...acc,
-          [generatedName]: {
-            kind: RouteModel.kind,
-            name: generatedName,
-            namespace,
-            optional: true,
-          } as WatchK8sResource,
-        }),
-        {},
-      );
+    return (eventListenerResources || []).map(getEventListenerGeneratedName).reduce(
+      (acc, generatedName) => ({
+        ...acc,
+        [generatedName]: {
+          kind: RouteModel.kind,
+          name: generatedName,
+          namespace,
+          optional: true,
+        } as WatchK8sResource,
+      }),
+      {},
+    );
   }, [namespace, eventListenerResources]);
 
   const results: WatchK8sResults<RouteMap> = useK8sWatchResources<RouteMap>(memoResources);
@@ -109,13 +109,18 @@ export const usePipelineTriggerTemplateNames = (pipeline: Pipeline): RouteTempla
   );
   const routes: RouteMap = useEventListenerRoutes(namespace, eventListenerResources);
 
+  const triggerTemplateResults: WatchK8sResultsObject<TriggerTemplateKind>[] = Object.values(
+    triggerTemplates,
+  );
   const countExpected = Object.keys(triggerTemplateResources).length;
-  const countLoaded = Object.values(triggerTemplates).filter(({ loaded }) => loaded).length;
-  if (countLoaded !== countExpected) {
+  const countLoaded = triggerTemplateResults.filter(({ loaded }) => loaded).length;
+  const countErrored = triggerTemplateResults.filter(({ loadError }) => !!loadError).length;
+  if (countLoaded === 0 || countLoaded !== countExpected - countErrored) {
     return null;
   }
-  const matchingTriggerTemplateNames: string[] = Object.values(triggerTemplates)
-    .map((resourceWatch: { data: TriggerTemplateKind }) => resourceWatch.data)
+  const matchingTriggerTemplateNames: string[] = triggerTemplateResults
+    .filter((resourceWatch) => resourceWatch.loaded)
+    .map((resourceWatch) => resourceWatch.data)
     .filter((triggerTemplate: TriggerTemplateKind) => {
       const plr: PipelineRun = triggerTemplate?.spec?.resourcetemplates?.find(
         ({ kind }) => kind === PipelineRunModel.kind,
@@ -126,7 +131,7 @@ export const usePipelineTriggerTemplateNames = (pipeline: Pipeline): RouteTempla
 
   return (eventListenerResources || []).reduce((acc, ev: EventListenerKind) => {
     const eventListenerTemplateNames = getEventListenerTemplateNames(ev);
-    const generatedRouteName = ev.status.configuration.generatedName;
+    const generatedRouteName = getEventListenerGeneratedName(ev);
 
     const triggerTemplateName = matchingTriggerTemplateNames.find((name) =>
       eventListenerTemplateNames.includes(name),
@@ -137,7 +142,16 @@ export const usePipelineTriggerTemplateNames = (pipeline: Pipeline): RouteTempla
       return acc;
     }
 
-    return [...acc, { routeURL: route ? getRouteWebURL(route) : null, triggerTemplateName }];
+    let routeURL = null;
+    try {
+      if (route) {
+        routeURL = getRouteWebURL(route);
+      }
+    } catch (e) {
+      // swallow errors, we don't care if we can't create a good route right now
+    }
+
+    return [...acc, { routeURL, triggerTemplateName }];
   }, []);
 };
 

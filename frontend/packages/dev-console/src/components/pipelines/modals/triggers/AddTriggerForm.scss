@@ -1,0 +1,14 @@
+.odc-add-trigger-form {
+  &__variable-container {
+    border: 1px solid var(--pf-global--BorderColor--100);
+    margin-left: var(--pf-global--spacer--lg);
+    padding: var(--pf-global--spacer--sm);
+  }
+  &__variable-descriptor {
+    margin-bottom: var(--pf-global--spacer--sm);
+  }
+  &__variable-badge {
+    margin-bottom: var(--pf-global--spacer--xs);
+    margin-right: var(--pf-global--spacer--xs);
+  }
+}

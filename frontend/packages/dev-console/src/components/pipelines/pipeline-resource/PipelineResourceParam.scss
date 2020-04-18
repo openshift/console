@@ -1,10 +1,4 @@
 .odc-pipeline-resource-param {
-    &__content {
-      border: 1px dashed var(--pf-global--BorderColor--100);
-      padding: var(--pf-global--spacer--sm);
-    }
-    &__action-btn {
-      padding: 0;
-    }
-  }
-  
+  border: 1px dashed var(--pf-global--BorderColor--100);
+  padding: var(--pf-global--spacer--sm);
+}
