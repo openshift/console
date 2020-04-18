@@ -71,7 +71,7 @@ export const VMDetailsFirehose: React.FC<VMTabProps> = ({
   );
 };
 
-const VMDetails: React.FC<VMDetailsProps> = (props) => {
+export const VMDetails: React.FC<VMDetailsProps> = (props) => {
   const { kindObj, vm, vmi, pods, vmStatusBundle, templates, ...restProps } = props;
 
   const vmiLike = kindObj === VirtualMachineModel ? vm : vmi;

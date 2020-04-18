@@ -19,6 +19,7 @@ describe('topology model ', () => {
       display: {
         podCount: true,
         eventSources: true,
+        virtualMachines: true,
         showLabels: true,
         knativeServices: true,
         appGrouping: true,

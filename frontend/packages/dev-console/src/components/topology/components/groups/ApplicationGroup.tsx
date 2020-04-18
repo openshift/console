@@ -86,7 +86,7 @@ const ApplicationGroup: React.FC<ApplicationGroupProps> = ({
   const hullPadding = (point: PointWithSize | PointTuple) => (point[2] || 0) + padding;
 
   if (!droppable || !pathRef.current || !labelLocation.current) {
-    const children = element.getNodes();
+    const children = element.getNodes().filter((c) => c.isVisible());
     if (children.length === 0) {
       return null;
     }

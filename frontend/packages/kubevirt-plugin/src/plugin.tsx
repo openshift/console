@@ -4,6 +4,7 @@ import * as virtualMachineIcon from './images/virtual-machine.svg';
 import {
   Plugin,
   ResourceNSNavItem,
+  OverviewCRD,
   ResourceListPage,
   ResourceDetailsPage,
   ModelFeatureFlag,
@@ -21,6 +22,7 @@ import { DashboardsStorageCapacityDropdownItem } from '@console/ceph-storage-plu
 import { TemplateModel, PodModel } from '@console/internal/models';
 import { getName } from '@console/shared/src/selectors/common';
 import { AddAction } from '@console/dev-console/src/extensions/add-actions';
+import { FirehoseResource } from '@console/internal/components/utils';
 import * as models from './models';
 import { VMTemplateYAMLTemplates, VirtualMachineYAMLTemplates } from './models/templates';
 import { getKubevirtHealthState } from './components/dashboards-page/overview-dashboard/health';
@@ -35,6 +37,7 @@ import './style.scss';
 
 type ConsumedExtensions =
   | ResourceNSNavItem
+  | OverviewCRD
   | ResourceListPage
   | ResourceDetailsPage
   | ModelFeatureFlag
@@ -52,6 +55,38 @@ type ConsumedExtensions =
 
 export const FLAG_KUBEVIRT = 'KUBEVIRT';
 
+const virtualMachineConfigurations = (namespace: string): FirehoseResource[] => {
+  const virtualMachineResource = [
+    {
+      isList: true,
+      kind: models.VirtualMachineModel.kind,
+      namespace,
+      prop: 'virtualmachines',
+    },
+    {
+      isList: true,
+      kind: models.VirtualMachineInstanceModel.kind,
+      namespace,
+      prop: 'virtualmachineinstances',
+    },
+    {
+      isList: true,
+      kind: TemplateModel.kind,
+      prop: 'virtualmachinetemplates',
+      selector: {
+        matchLabels: { 'template.kubevirt.io/type': 'base' },
+      },
+    },
+    {
+      isList: true,
+      kind: models.VirtualMachineInstanceMigrationModel.kind,
+      namespace,
+      prop: 'migrations',
+    },
+  ];
+  return virtualMachineResource;
+};
+
 const plugin: Plugin<ConsumedExtensions> = [
   {
     type: 'ModelDefinition',
@@ -64,6 +99,14 @@ const plugin: Plugin<ConsumedExtensions> = [
     properties: {
       model: models.VirtualMachineModel,
       flag: FLAG_KUBEVIRT,
+    },
+  },
+  {
+    type: 'Overview/CRD',
+    properties: {
+      resources: virtualMachineConfigurations,
+      required: FLAG_KUBEVIRT,
+      utils: () => null,
     },
   },
   {

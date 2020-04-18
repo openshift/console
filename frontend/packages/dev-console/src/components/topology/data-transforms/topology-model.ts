@@ -1,4 +1,21 @@
 import { EdgeModel, Model, NodeModel, createAggregateEdges } from '@console/topology';
+import { ALL_APPLICATIONS_KEY } from '@console/shared/src';
+import {
+  getKnativeNodeModel,
+  getKnativeGroupModel,
+  getKnativeEdgeModel,
+} from '@console/knative-plugin/src/topology/knative-topology-model';
+import {
+  getKubevirtGroupModel,
+  getKubevirtNodeModel,
+  getKubevirtEdgeModel,
+} from '@console/kubevirt-plugin/src/topology/kubevirt-topology-model';
+import { getHelmEdgeModel, getHelmGroupModel, getHelmNodeModel } from '../helm/helm-topology-model';
+import {
+  getOperatorEdgeModel,
+  getOperatorGroupModel,
+  getOperatorNodeModel,
+} from '../operators/operators-topology-model';
 import { TopologyFilters } from '../filters/filter-utils';
 import { TopologyDataModel, TopologyDataObject, Node } from '../topology-types';
 import {
@@ -11,18 +28,6 @@ import {
   GROUP_HEIGHT,
   GROUP_PADDING,
 } from '../components/const';
-import { ALL_APPLICATIONS_KEY } from '@console/shared/src';
-import {
-  getKnativeNodeModel,
-  getKnativeGroupModel,
-  getKnativeEdgeModel,
-} from '@console/knative-plugin/src/topology/knative-topology-model';
-import { getHelmEdgeModel, getHelmGroupModel, getHelmNodeModel } from '../helm/helm-topology-model';
-import {
-  getOperatorEdgeModel,
-  getOperatorGroupModel,
-  getOperatorNodeModel,
-} from '../operators/operators-topology-model';
 import { dataObjectFromModel } from './transform-utils';
 
 const getApplicationGroupForNode = (node: Node, groups: NodeModel[]): NodeModel => {
@@ -42,7 +47,12 @@ export const topologyModelFromDataModel = (
   filters?: TopologyFilters,
 ): Model => {
   const groupNodes: NodeModel[] = dataModel.graph.groups.map((d) => {
+    // TODO: Change to use plugins
     let node = getKnativeGroupModel(d, dataModel, filters);
+    if (node) {
+      return node;
+    }
+    node = getKubevirtGroupModel(d, dataModel, filters);
     if (node) {
       return node;
     }
@@ -78,7 +88,12 @@ export const topologyModelFromDataModel = (
   });
 
   const nodes: NodeModel[] = dataModel.graph.nodes.map((d) => {
+    // TODO: Change to use plugins
     let node = getKnativeNodeModel(d, dataModel, filters);
+    if (node) {
+      return node;
+    }
+    node = getKubevirtNodeModel(d, dataModel, filters);
     if (node) {
       return node;
     }
@@ -127,7 +142,12 @@ export const topologyModelFromDataModel = (
     })
     .map(
       (d): EdgeModel => {
+        // TODO: Change to use plugins
         let edge = getKnativeEdgeModel(d, dataModel, filters);
+        if (edge) {
+          return edge;
+        }
+        edge = getKubevirtEdgeModel(d, dataModel, filters);
         if (edge) {
           return edge;
         }

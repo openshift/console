@@ -14,7 +14,7 @@ const getDisplayedNodeForNode = (
   }
 
   let displayedNode = nodes && nodes.find((n) => n.id === nodeId);
-  let parent = getNodeParent(nodeId, nodes);
+  let parent = displayedNode ? getNodeParent(displayedNode.id, nodes) : null;
   while (parent) {
     if (parent.collapsed) {
       displayedNode = parent;

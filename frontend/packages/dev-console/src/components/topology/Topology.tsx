@@ -34,6 +34,7 @@ import {
   removeQueryArgument,
 } from '@console/internal/components/utils';
 import KnativeComponentFactory from '@console/knative-plugin/src/topology/components/knativeComponentFactory';
+import { KubevirtComponentFactory } from '@console/kubevirt-plugin/src/topology/components/kubevirtComponentFactory';
 import { useAddToProjectAccess } from '../../utils/useAddToProjectAccess';
 import TopologySideBar from './TopologySideBar';
 import {
@@ -50,13 +51,15 @@ import { topologyModelFromDataModel } from './data-transforms/topology-model';
 import { layoutFactory, COLA_LAYOUT, COLA_FORCE_LAYOUT } from './layouts/layoutFactory';
 import { TYPE_APPLICATION_GROUP, ComponentFactory } from './components';
 import TopologyFilterBar from './filters/TopologyFilterBar';
-import { getTopologyFilters, TopologyFilters } from './filters/filter-utils';
+import { DisplayFilters, getTopologyFilters, TopologyFilters } from './filters/filter-utils';
 import TopologyHelmReleasePanel from './helm/TopologyHelmReleasePanel';
 import { TYPE_HELM_RELEASE } from './helm/components/const';
 import { HelmComponentFactory } from './helm/components/helmComponentFactory';
 import { TYPE_OPERATOR_BACKED_SERVICE } from './operators/components/const';
 import { OperatorsComponentFactory } from './operators/components/operatorsComponentFactory';
 import { getServiceBindingStatus } from './topology-utils';
+import { TYPE_VIRTUAL_MACHINE } from '@console/kubevirt-plugin/src/topology/components/const';
+import TopologyVmPanel from '@console/kubevirt-plugin/src/topology/TopologyVmPanel';
 
 interface StateProps {
   filters: TopologyFilters;
@@ -96,10 +99,12 @@ const Topology: React.FC<ComponentProps> = ({
 }) => {
   const visRef = React.useRef<Visualization | null>(null);
   const applicationRef = React.useRef<string>(null);
+  const displayFiltersRef = React.useRef<DisplayFilters>(null);
   const componentFactoryRef = React.useRef<ComponentFactory | null>(null);
   const knativeComponentFactoryRef = React.useRef<KnativeComponentFactory | null>(null);
   const helmComponentFactoryRef = React.useRef<HelmComponentFactory | null>(null);
   const operatorsComponentFactoryRef = React.useRef<OperatorsComponentFactory | null>(null);
+  const vmsComponentFactoryRef = React.useRef<KubevirtComponentFactory | null>(null);
   const [layout, setLayout] = React.useState<string>(graphModel.graph.layout);
   const [model, setModel] = React.useState<Model>();
   const [graphData, setGraphData] = React.useState<GraphData>();
@@ -119,13 +124,19 @@ const Topology: React.FC<ComponentProps> = ({
   if (!operatorsComponentFactoryRef.current) {
     operatorsComponentFactoryRef.current = new OperatorsComponentFactory(serviceBinding);
   }
+  if (!vmsComponentFactoryRef.current) {
+    vmsComponentFactoryRef.current = new KubevirtComponentFactory(serviceBinding);
+  }
+
   if (!visRef.current) {
     visRef.current = new Visualization();
     visRef.current.registerLayoutFactory(layoutFactory);
     visRef.current.registerComponentFactory(componentFactoryRef.current.getFactory());
+    // TODO: Use Plugins
     visRef.current.registerComponentFactory(knativeComponentFactoryRef.current.getFactory());
     visRef.current.registerComponentFactory(helmComponentFactoryRef.current.getFactory());
     visRef.current.registerComponentFactory(operatorsComponentFactoryRef.current.getFactory());
+    visRef.current.registerComponentFactory(vmsComponentFactoryRef.current.getFactory());
     visRef.current.addEventListener<SelectionEventListener>(SELECTION_EVENT, (ids: string[]) => {
       // set empty selection when selecting the graph
       if (ids.length > 0 && ids[0] === graphModel.graph.id) {
@@ -172,6 +183,24 @@ const Topology: React.FC<ComponentProps> = ({
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data]);
+
+  React.useEffect(() => {
+    if (!displayFiltersRef.current) {
+      displayFiltersRef.current = filters.display;
+      return;
+    }
+
+    if (
+      (filters.display.eventSources && !displayFiltersRef.current.eventSources) ||
+      (filters.display.virtualMachines && !displayFiltersRef.current.virtualMachines)
+    ) {
+      action(() => {
+        visRef.current.getGraph().reset();
+        visRef.current.getGraph().layout();
+      })();
+    }
+    displayFiltersRef.current = filters.display;
+  }, [filters.display]);
 
   React.useEffect(() => {
     if (!applicationRef.current) {
@@ -294,11 +323,15 @@ const Topology: React.FC<ComponentProps> = ({
           />
         );
       }
+      // TODO: Use Plugins
       if (selectedEntity.getType() === TYPE_HELM_RELEASE) {
         return <TopologyHelmReleasePanel helmRelease={selectedEntity} />;
       }
       if (selectedEntity.getType() === TYPE_OPERATOR_BACKED_SERVICE) {
         return null;
+      }
+      if (selectedEntity.getType() === TYPE_VIRTUAL_MACHINE) {
+        return <TopologyVmPanel vm={selectedEntity} />;
       }
       return <TopologyResourcePanel item={selectedEntity.getData() as TopologyDataObject} />;
     }

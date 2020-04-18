@@ -310,7 +310,7 @@ const withNoDrop = () => {
 const withContextMenu = <E extends GraphElement>(actions: (element: E) => React.ReactElement[]) => {
   return withTopologyContextMenu(
     actions,
-    document.getElementById('modal-container'),
+    document.getElementById('popper-container'),
     'odc-topology-context-menu',
   );
 };

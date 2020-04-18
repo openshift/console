@@ -56,7 +56,9 @@ export default class BaseNode<E extends NodeModel = NodeModel, D = any> extends 
 
   @computed
   private get groupBounds(): Rect {
-    const children = this.getChildren().filter(isNode);
+    const children = this.getChildren()
+      .filter(isNode)
+      .filter((n) => n.isVisible());
     if (!children.length) {
       return this.getInternalBounds();
     }
