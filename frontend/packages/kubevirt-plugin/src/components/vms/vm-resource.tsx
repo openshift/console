@@ -244,7 +244,7 @@ export const VMSchedulingList: React.FC<VMSchedulingListProps> = ({
             canEdit={canEdit}
             title={NODE_SELECTOR_MODAL_TITLE}
             idValue={prefixedID(id, 'node-selector')}
-            editButtonId={prefixedID(id, 'node-selectors-edit')}
+            editButtonId={prefixedID(id, 'node-selector-edit')}
             onEditClick={() => nodeSelectorModal({ vmLikeEntity: vm, blocking: true })}
           >
             <Selector kind="Node" selector={nodeSelector} />

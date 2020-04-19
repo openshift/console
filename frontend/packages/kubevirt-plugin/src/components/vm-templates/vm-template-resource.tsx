@@ -167,7 +167,7 @@ export const VMTemplateSchedulingList: React.FC<VMTemplateResourceSummaryProps> 
             canEdit={canUpdateTemplate}
             title={NODE_SELECTOR_MODAL_TITLE}
             idValue={prefixedID(id, 'node-selector')}
-            editButtonId={prefixedID(id, 'node-selectors-edit')}
+            editButtonId={prefixedID(id, 'node-selector-edit')}
             onEditClick={() => nodeSelectorModal({ vmLikeEntity: template, blocking: true })}
           >
             <LabelList kind="Node" labels={nodeSelector} />

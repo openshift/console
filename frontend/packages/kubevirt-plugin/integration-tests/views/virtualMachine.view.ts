@@ -51,10 +51,6 @@ export const vmDetailBootOrder = (namespace, vmName) =>
   $(vmDetailItemId(namespace, vmName, 'boot-order')).$$('li');
 export const vmDetailBootOrderEditButton = (namespace, vmName) =>
   $(vmDetailItemId(namespace, vmName, 'boot-order-edit'));
-export const vmDetailDedicatedResources = (namespace, vmName) =>
-  $(vmDetailItemId(namespace, vmName, 'dedicated-resources'));
-export const vmDetailDedicatedResourcesEditButton = (namespace, vmName) =>
-  $(vmDetailItemId(namespace, vmName, 'dedicated-resources-edit'));
 export const vmDetailStatusEditButton = (namespace, vmName) =>
   $(vmDetailItemId(namespace, vmName, 'status-edit'));
 export const vmDetailLabelValue = async (labelKey) => {
@@ -70,3 +66,13 @@ export const vmDetailLabelValue = async (labelKey) => {
 };
 
 export const vmDetailService = (serviceName) => $(`[data-test-id="${serviceName}"]`);
+
+// Scheduling view
+export const vmDetailDedicatedResources = (namespace, vmName) =>
+  $(vmDetailItemId(namespace, vmName, 'dedicated-resources'));
+export const vmDetailDedicatedResourcesEditButton = (namespace, vmName) =>
+  $(vmDetailItemId(namespace, vmName, 'dedicated-resources-edit'));
+export const vmDetailNodeSelector = (namespace, vmName) =>
+  $(vmDetailItemId(namespace, vmName, 'node-selector'));
+export const vmDetailNodeSelectorEditButton = (namespace, vmName) =>
+  $(vmDetailItemId(namespace, vmName, 'node-selector-edit'));

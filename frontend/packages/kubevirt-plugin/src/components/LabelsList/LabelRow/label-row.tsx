@@ -13,6 +13,7 @@ export const LabelRow = <T extends IDLabel = IDLabel>({
     <>
       <GridItem span={6}>
         <TextInput
+          id={`label-${id}-key-input`}
           className="kv-label__key"
           placeholder="key"
           isRequired
@@ -24,6 +25,7 @@ export const LabelRow = <T extends IDLabel = IDLabel>({
       </GridItem>
       <GridItem span={5}>
         <TextInput
+          id={`label-${id}-value-input`}
           className="kv-label__value"
           placeholder="value"
           isRequired
@@ -34,7 +36,7 @@ export const LabelRow = <T extends IDLabel = IDLabel>({
         />
       </GridItem>
       <GridItem span={1}>
-        <Button id={`${key}-delete-btn`} onClick={() => onDelete(id)} variant="plain">
+        <Button id={`label-${id}-delete-btn`} onClick={() => onDelete(id)} variant="plain">
           <MinusCircleIcon />
         </Button>
       </GridItem>
