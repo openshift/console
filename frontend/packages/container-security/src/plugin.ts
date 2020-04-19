@@ -10,13 +10,15 @@ import {
   RoutePage,
   ResourceDetailsPage,
   ResourceNSNavItem,
+  HorizontalNavTab,
 } from '@console/plugin-sdk';
 import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager';
 import { ImageManifestVulnModel } from './models';
-import { SecurityLabellerFlag } from './const';
+import { ContainerSecurityFlag } from './const';
 import { securityHealthHandler } from './components/summary';
 import { getKebabActionsForKind } from './kebab-actions';
 import { WatchImageVuln } from './types';
+import { PodModel } from '@console/internal/models';
 
 type ConsumedExtensions =
   | ModelDefinition
@@ -27,7 +29,8 @@ type ConsumedExtensions =
   | DashboardsOverviewHealthResourceSubsystem<WatchImageVuln>
   | RoutePage
   | KebabActions
-  | ResourceNSNavItem;
+  | ResourceNSNavItem
+  | HorizontalNavTab;
 
 const plugin: Plugin<ConsumedExtensions> = [
   {
@@ -40,7 +43,7 @@ const plugin: Plugin<ConsumedExtensions> = [
     type: 'FeatureFlag/Model',
     properties: {
       model: ImageManifestVulnModel,
-      flag: SecurityLabellerFlag,
+      flag: ContainerSecurityFlag,
     },
   },
   {
@@ -110,7 +113,7 @@ const plugin: Plugin<ConsumedExtensions> = [
         ),
     },
     flags: {
-      required: [SecurityLabellerFlag],
+      required: [ContainerSecurityFlag],
     },
   },
   {
@@ -132,7 +135,24 @@ const plugin: Plugin<ConsumedExtensions> = [
       },
     },
     flags: {
-      required: [SecurityLabellerFlag],
+      required: [ContainerSecurityFlag],
+    },
+  },
+  {
+    type: 'HorizontalNavTab',
+    properties: {
+      model: PodModel,
+      page: {
+        name: 'Vulnerabilities',
+        href: 'vulnerabilities',
+      },
+      loader: () =>
+        import(
+          './components/image-manifest-vuln' /* webpackChunkName: "container-security" */
+        ).then((m) => m.ImageManifestVulnPodTab),
+    },
+    flags: {
+      required: [ContainerSecurityFlag],
     },
   },
 ];
