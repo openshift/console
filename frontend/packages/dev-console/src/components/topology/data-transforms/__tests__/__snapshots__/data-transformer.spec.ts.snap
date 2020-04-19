@@ -1789,7 +1789,36 @@ Object {
                   },
                 },
                 "spec": Object {
-                  "containers": Array [],
+                  "containers": Array [
+                    Object {
+                      "image": "image-registry.openshift-image-registry.svc:5000/viraj/calculator-react@sha256:84d947d3bb6ae52090c86b5ec7e172dcef2c28a78eedb11a7ff588a3d336d8e0",
+                      "imagePullPolicy": "Always",
+                      "name": "wit-deployment",
+                      "ports": Array [
+                        Object {
+                          "containerPort": 8080,
+                          "protocol": "TCP",
+                        },
+                      ],
+                      "resources": Object {},
+                      "terminationMessagePath": "/dev/termination-log",
+                      "terminationMessagePolicy": "File",
+                    },
+                    Object {
+                      "image": "image-registry.openshift-image-registry.svc:5000/viraj/calculator-react@sha256:84d947d3bb6ae52090c86b5ec7e172dcef2c28a78eedb11a7ff588a3d336d8e0",
+                      "imagePullPolicy": "Always",
+                      "name": "wit-deployment-1",
+                      "ports": Array [
+                        Object {
+                          "containerPort": 8080,
+                          "protocol": "TCP",
+                        },
+                      ],
+                      "resources": Object {},
+                      "terminationMessagePath": "/dev/termination-log",
+                      "terminationMessagePolicy": "File",
+                    },
+                  ],
                 },
               },
             },
@@ -2279,7 +2308,36 @@ Object {
                 },
               },
               "spec": Object {
-                "containers": Array [],
+                "containers": Array [
+                  Object {
+                    "image": "image-registry.openshift-image-registry.svc:5000/viraj/calculator-react@sha256:84d947d3bb6ae52090c86b5ec7e172dcef2c28a78eedb11a7ff588a3d336d8e0",
+                    "imagePullPolicy": "Always",
+                    "name": "wit-deployment",
+                    "ports": Array [
+                      Object {
+                        "containerPort": 8080,
+                        "protocol": "TCP",
+                      },
+                    ],
+                    "resources": Object {},
+                    "terminationMessagePath": "/dev/termination-log",
+                    "terminationMessagePolicy": "File",
+                  },
+                  Object {
+                    "image": "image-registry.openshift-image-registry.svc:5000/viraj/calculator-react@sha256:84d947d3bb6ae52090c86b5ec7e172dcef2c28a78eedb11a7ff588a3d336d8e0",
+                    "imagePullPolicy": "Always",
+                    "name": "wit-deployment-1",
+                    "ports": Array [
+                      Object {
+                        "containerPort": 8080,
+                        "protocol": "TCP",
+                      },
+                    ],
+                    "resources": Object {},
+                    "terminationMessagePath": "/dev/termination-log",
+                    "terminationMessagePolicy": "File",
+                  },
+                ],
               },
             },
           },
@@ -2612,7 +2670,31 @@ Object {
                   },
                 },
                 "spec": Object {
-                  "containers": Array [],
+                  "containers": Array [
+                    Object {
+                      "image": "image-registry.openshift-image-registry.svc:5000/viraj/calculator-react@sha256:84d947d3bb6ae52090c86b5ec7e172dcef2c28a78eedb11a7ff588a3d336d8e0",
+                      "imagePullPolicy": "Always",
+                      "livenessProbe": Object {
+                        "failureThreshold": 1,
+                        "httpGet": Object {
+                          "path": "/healthz",
+                          "port": 8080,
+                          "scheme": "HTTP",
+                        },
+                        "periodSeconds": 10,
+                      },
+                      "name": "jaeger-all-in-one-inmemory",
+                      "ports": Array [
+                        Object {
+                          "containerPort": 8080,
+                          "protocol": "TCP",
+                        },
+                      ],
+                      "resources": Object {},
+                      "terminationMessagePath": "/dev/termination-log",
+                      "terminationMessagePolicy": "File",
+                    },
+                  ],
                   "dnsPolicy": "ClusterFirst",
                   "restartPolicy": "Always",
                   "schedulerName": "default-scheduler",
@@ -2728,7 +2810,31 @@ Object {
                 },
               },
               "spec": Object {
-                "containers": Array [],
+                "containers": Array [
+                  Object {
+                    "image": "image-registry.openshift-image-registry.svc:5000/viraj/calculator-react@sha256:84d947d3bb6ae52090c86b5ec7e172dcef2c28a78eedb11a7ff588a3d336d8e0",
+                    "imagePullPolicy": "Always",
+                    "livenessProbe": Object {
+                      "failureThreshold": 1,
+                      "httpGet": Object {
+                        "path": "/healthz",
+                        "port": 8080,
+                        "scheme": "HTTP",
+                      },
+                      "periodSeconds": 10,
+                    },
+                    "name": "jaeger-all-in-one-inmemory",
+                    "ports": Array [
+                      Object {
+                        "containerPort": 8080,
+                        "protocol": "TCP",
+                      },
+                    ],
+                    "resources": Object {},
+                    "terminationMessagePath": "/dev/termination-log",
+                    "terminationMessagePolicy": "File",
+                  },
+                ],
                 "dnsPolicy": "ClusterFirst",
                 "restartPolicy": "Always",
                 "schedulerName": "default-scheduler",
@@ -2831,7 +2937,31 @@ Object {
                     },
                   },
                   "spec": Object {
-                    "containers": Array [],
+                    "containers": Array [
+                      Object {
+                        "image": "image-registry.openshift-image-registry.svc:5000/viraj/calculator-react@sha256:84d947d3bb6ae52090c86b5ec7e172dcef2c28a78eedb11a7ff588a3d336d8e0",
+                        "imagePullPolicy": "Always",
+                        "livenessProbe": Object {
+                          "failureThreshold": 1,
+                          "httpGet": Object {
+                            "path": "/healthz",
+                            "port": 8080,
+                            "scheme": "HTTP",
+                          },
+                          "periodSeconds": 10,
+                        },
+                        "name": "jaeger-all-in-one-inmemory",
+                        "ports": Array [
+                          Object {
+                            "containerPort": 8080,
+                            "protocol": "TCP",
+                          },
+                        ],
+                        "resources": Object {},
+                        "terminationMessagePath": "/dev/termination-log",
+                        "terminationMessagePolicy": "File",
+                      },
+                    ],
                     "dnsPolicy": "ClusterFirst",
                     "restartPolicy": "Always",
                     "schedulerName": "default-scheduler",

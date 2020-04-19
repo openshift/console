@@ -18,7 +18,7 @@ import {
   annotations,
   dryRunOpt,
 } from '../../utils/shared-submit-utils';
-import { getProbesData } from '../health-checks/create-health-check-probe-utils';
+import { getProbesData } from '../health-checks/create-health-checks-probe-utils';
 import { RegistryType } from '../../utils/imagestream-utils';
 import { AppResources } from '../edit-application/edit-application-types';
 import { DeployImageFormData, Resources } from './import-types';

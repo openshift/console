@@ -10,7 +10,7 @@ import {
   SplitItem,
   Split,
 } from '@patternfly/react-core';
-import { Status } from '@console/shared';
+import { Status, HealthChecksAlert } from '@console/shared';
 import {
   ActionsMenu,
   ResourceIcon,
@@ -227,6 +227,7 @@ export const ResourceOverviewHeading: React.SFC<ResourceOverviewHeadingProps> = 
           </div>
         )}
       </h1>
+      <HealthChecksAlert resource={resource} />
     </div>
   );
 };

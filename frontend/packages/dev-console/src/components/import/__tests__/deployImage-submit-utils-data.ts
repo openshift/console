@@ -1,5 +1,5 @@
 import { DeployImageFormData, Resources } from '../import-types';
-import { healthChecksProbeInitialData } from '../../health-checks/health-check-probe-utils';
+import { healthChecksProbeInitialData } from '../../health-checks/health-checks-probe-utils';
 
 export const defaultData: DeployImageFormData = {
   project: {

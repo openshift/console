@@ -1,6 +1,6 @@
 import * as React from 'react';
 import FormSection from '../import/section/FormSection';
-import HealthCheckProbe from './HealthCheckProbe';
+import HealthCheckProbe from './HealthChecksProbe';
 import { HealthChecksProbeType } from './health-checks-types';
 import { Resources } from '../import/import-types';
 

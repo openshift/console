@@ -1,6 +1,6 @@
 import { ValidatedOptions } from '@patternfly/react-core';
 import { GitImportFormData, Resources } from '../import-types';
-import { healthChecksProbeInitialData } from '../../health-checks/health-check-probe-utils';
+import { healthChecksProbeInitialData } from '../../health-checks/health-checks-probe-utils';
 
 export const mockPipelineTemplate = {
   apiVersion: 'tekton.dev/v1alpha1',

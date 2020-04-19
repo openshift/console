@@ -8,9 +8,9 @@ import {
   getHealthChecksProbeConfig,
   getContainerPorts,
   healthChecksDefaultValues,
-} from './health-check-probe-utils';
-import './HealthCheckProbe.scss';
+} from './health-checks-probe-utils';
 import { HealthCheckProbeData } from './health-checks-types';
+import './HealthChecksProbe.scss';
 
 interface HealthCheckProbeProps {
   probeType: string;

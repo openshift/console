@@ -2,6 +2,7 @@ import { ServiceModel } from '@console/internal/models';
 import {
   ModifyApplication,
   EditApplication,
+  EditHealthCheck,
 } from '@console/dev-console/src/actions/modify-application';
 import { getKebabActionsForKind } from '../kebab-actions';
 import { setTrafficDistribution } from '../../actions/traffic-splitting';
@@ -16,7 +17,12 @@ describe('kebab-actions: ', () => {
 
   it('kebab action should have "setTrafficDistribution", "Edit Application Grouping" and "Edit Application" option for knSvcModel', () => {
     const modifyApplication = getKebabActionsForKind(knSvcModel);
-    expect(modifyApplication).toEqual([ModifyApplication, setTrafficDistribution, EditApplication]);
+    expect(modifyApplication).toEqual([
+      ModifyApplication,
+      setTrafficDistribution,
+      EditHealthCheck,
+      EditApplication,
+    ]);
   });
 
   it('kebab action should not have "Edit Application Grouping" option for ServiceModel', () => {

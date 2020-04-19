@@ -4,6 +4,7 @@ import { KebabAction } from '@console/internal/components/utils';
 import {
   ModifyApplication,
   EditApplication,
+  EditHealthCheck,
 } from '@console/dev-console/src/actions/modify-application';
 import { setTrafficDistribution } from '../actions/traffic-splitting';
 import { setSinkSource } from '../actions/sink-source';
@@ -22,7 +23,7 @@ export const getKebabActionsForKind = (resourceKind: K8sKind): KebabAction[] => 
       menuActions.push(ModifyApplication);
     }
     if (referenceForModel(resourceKind) === referenceForModel(ServiceModel)) {
-      menuActions.push(setTrafficDistribution, EditApplication);
+      menuActions.push(setTrafficDistribution, EditHealthCheck, EditApplication);
     }
     if (_.includes(eventSourceModelrefs, referenceForModel(resourceKind))) {
       menuActions.push(setSinkSource);

@@ -2,7 +2,8 @@ import * as yup from 'yup';
 
 const pathRegex = /^\/.*$/;
 
-const healthChecksValidationSchema = yup.object().shape({
+export const healthChecksValidationSchema = yup.object().shape({
+  containerName: yup.string(),
   showForm: yup.boolean(),
   enabled: yup.boolean(),
   data: yup.object().when('showForm', {
