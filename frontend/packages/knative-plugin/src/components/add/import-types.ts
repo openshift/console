@@ -6,7 +6,6 @@ import {
   EventSourceKafkaModel,
   EventSourcePingModel,
   EventSourceSinkBindingModel,
-  EventSourceCamelModel,
 } from '../../models';
 
 export const EventSources = {
@@ -16,7 +15,6 @@ export const EventSources = {
   KafkaSource: EventSourceKafkaModel.kind,
   PingSource: EventSourcePingModel.kind,
   SinkBinding: EventSourceSinkBindingModel.kind,
-  CamelSource: EventSourceCamelModel.kind,
 };
 
 export interface ProjectData {
