@@ -13,7 +13,7 @@ import { DetailsPage } from '@console/internal/components/factory';
 import { K8sResourceKindReference } from '@console/internal/module/k8s';
 import { Status } from '@console/shared';
 import { Badge } from '@patternfly/react-core';
-import { fetchHelmReleases } from '../helm-utils';
+import { fetchHelmRelease } from '../helm-utils';
 import HelmReleaseResources from './resources/HelmReleaseResources';
 import HelmReleaseOverview from './overview/HelmReleaseOverview';
 import HelmReleaseHistory from './history/HelmReleaseHistory';
@@ -133,10 +133,9 @@ const HelmReleaseDetails: React.FC<HelmReleaseDetailsProps> = ({ secret, match }
 
     const getHelmReleases = async () => {
       try {
-        const helmReleases = await fetchHelmReleases(namespace);
+        const helmRelease = await fetchHelmRelease(namespace, helmReleaseName);
         if (!ignore) {
-          const releaseData = helmReleases.find((release) => release.name === helmReleaseName);
-          setHelmReleaseData(releaseData);
+          setHelmReleaseData(helmRelease);
         }
         // eslint-disable-next-line no-empty
       } catch {}
