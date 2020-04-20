@@ -29,7 +29,9 @@ describe('Interacting with OperatorHub', () => {
     execSync(`echo '${JSON.stringify(catalogSource)}' | kubectl create -n ${testName} -f -`);
     await new Promise((resolve) =>
       (function checkForPackages() {
-        const output = execSync(`kubectl get packagemanifests -n ${testName} -o json`);
+        const output = execSync(
+          `kubectl get packagemanifests -n ${testName} --selector=catalog=console-e2e -o json`,
+        );
         if (
           JSON.parse(output.toString('utf-8')).items.find(
             (pkg) => pkg.status.catalogSource === catalogSource.metadata.name,

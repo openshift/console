@@ -75,6 +75,8 @@ describe('Serverless', async () => {
     expect(operatorHubView.createSubscriptionError.isPresent()).toBe(false);
     expect(operatorHubView.createSubscriptionFormBtn.getAttribute('disabled')).toEqual(null);
     await operatorHubView.createSubscriptionFormBtn.click();
+    await operatorHubView.operatorInstallPageLoaded();
+    await operatorHubView.viewInstalledOperatorsBtn.click();
     await crudView.isLoaded();
     await browser.get(`${appHost}/operatorhub/ns/${testName}`);
     await crudView.isLoaded();

@@ -58,7 +58,9 @@ describe('Interacting with an `AllNamespaces` install mode Operator (Jaeger)', (
     );
     await new Promise((resolve) =>
       (function checkForPackages() {
-        const output = execSync(`kubectl get packagemanifests -n ${testName} -o json`);
+        const output = execSync(
+          `kubectl get packagemanifests -n ${testName} --selector=catalog=console-e2e -o json`,
+        );
         if (
           JSON.parse(output.toString('utf-8')).items.find(
             (pkg) => pkg.status.catalogSource === catalogSource.metadata.name,
@@ -105,13 +107,14 @@ describe('Interacting with an `AllNamespaces` install mode Operator (Jaeger)', (
   it('selects all namespaces for Operator subscription', async () => {
     await browser.wait(until.visibilityOf(operatorHubView.createSubscriptionFormInstallMode));
     await operatorHubView.allNamespacesInstallMode.click();
-
     expect(operatorHubView.createSubscriptionError.isPresent()).toBe(false);
     expect(operatorHubView.createSubscriptionFormBtn.getAttribute('disabled')).toEqual(null);
   });
 
   it('displays Operator as subscribed in OperatorHub', async () => {
     await operatorHubView.createSubscriptionFormBtn.click();
+    await operatorHubView.operatorInstallPageLoaded();
+    await operatorHubView.viewInstalledOperatorsBtn.click();
     await crudView.isLoaded();
     await browser.get(`${appHost}/operatorhub/ns/${testName}`);
     await crudView.isLoaded();
