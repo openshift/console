@@ -10,8 +10,8 @@ import {
   constructProbeData,
   getProbesData,
 } from '../create-health-checks-probe-utils';
-import { appResources } from '../../edit-application/__tests__/edit-application-data';
-import { Resources } from '../../import/import-types';
+import { appResources } from '@console/dev-console/src/components/edit-application/__tests__/edit-application-data';
+import { Resources } from '@console/dev-console/src/components/import/import-types';
 
 describe('Create Health Check probe Utils', () => {
   const { editAppResource } = appResources;

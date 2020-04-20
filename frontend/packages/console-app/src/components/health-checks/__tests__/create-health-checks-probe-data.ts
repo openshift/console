@@ -1,4 +1,4 @@
-import { HealthChecksData } from '../../import/import-types';
+import { HealthChecksData } from '@console/dev-console/src/components/import/import-types';
 import { RequestType } from '../health-checks-types';
 import { healthChecksDefaultValues } from '../health-checks-probe-utils';
 

@@ -12,12 +12,13 @@ import {
 } from '@console/internal/components/utils';
 import { K8sResourceKind, referenceFor } from '@console/internal/module/k8s';
 import { FormFooter } from '@console/shared';
-import { getResourcesType } from '../edit-application/edit-application-utils';
+import { getResourcesType } from '@console/dev-console/src/components/edit-application/edit-application-utils';
 import HealthChecks from './HealthChecks';
 import Helmet from 'react-helmet';
 import { ContainerModel } from '@console/internal/models';
-import './AddHealthChecks.scss';
 import { getHealthChecksData } from './create-health-checks-probe-utils';
+import { healthCheckAdded } from '../../actions/modify-health-checks';
+import './AddHealthChecks.scss';
 
 type AddHealthChecksProps = {
   resource?: K8sResourceKind;
@@ -37,12 +38,8 @@ const AddHealthChecks: React.FC<FormikProps<FormikValues> & AddHealthChecksProps
 }) => {
   const [currentKey, setCurrentKey] = React.useState(currentContainer);
   const containers = resource?.spec?.template?.spec?.containers;
-  const healthCheckAdded = _.every(
-    containers,
-    (container) => container.readinessProbe || container.livenessProbe || container.startupProbe,
-  );
   const containersByKey = _.keyBy(containers, 'name');
-  const pageTitle = healthCheckAdded ? 'Edit Health Checks' : 'Add Health Checks';
+  const pageTitle = healthCheckAdded(containers) ? 'Edit Health Checks' : 'Add Health Checks';
 
   const handleSelectContainer = (containerName: string) => {
     const containerIndex = _.findIndex(resource.spec.template.spec.containers, [
@@ -109,7 +106,7 @@ const AddHealthChecks: React.FC<FormikProps<FormikValues> & AddHealthChecksProps
             handleReset={handleReset}
             errorMessage={status && status?.errors?.json?.message}
             isSubmitting={isSubmitting}
-            submitLabel={healthCheckAdded ? 'Edit' : 'Add'}
+            submitLabel={healthCheckAdded(containers) ? 'Edit' : 'Add'}
             disableSubmit={!dirty || !_.isEmpty(errors)}
             resetLabel="Cancel"
           />

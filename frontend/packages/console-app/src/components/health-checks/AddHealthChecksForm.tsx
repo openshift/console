@@ -4,7 +4,7 @@ import * as yup from 'yup';
 import { Formik } from 'formik';
 import { FirehoseResult, LoadingBox, StatusBox, history } from '@console/internal/components/utils';
 import { K8sResourceKind, k8sUpdate, modelFor, referenceFor } from '@console/internal/module/k8s';
-import { getResourcesType } from '../edit-application/edit-application-utils';
+import { getResourcesType } from '@console/dev-console/src/components/edit-application/edit-application-utils';
 import { healthChecksProbesValidationSchema } from './health-checks-probe-validation-utils';
 import { getHealthChecksData } from './create-health-checks-probe-utils';
 import AddHealthChecks from './AddHealthChecks';

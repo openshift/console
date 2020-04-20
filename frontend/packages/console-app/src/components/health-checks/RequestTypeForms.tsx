@@ -10,7 +10,7 @@ import {
   TextColumnField,
 } from '@console/shared';
 import { NameValueEditor } from '@console/internal/components/utils/name-value-editor';
-import { Resources } from '../import/import-types';
+import { Resources } from '@console/dev-console/src/components/import/import-types';
 
 interface RequestTypeFormProps {
   ports?: { [port: number]: number };

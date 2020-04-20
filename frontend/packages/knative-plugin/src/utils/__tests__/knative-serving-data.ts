@@ -3,9 +3,9 @@ import {
   DeployImageFormData,
   Resources,
 } from '@console/dev-console/src/components/import/import-types';
+import { healthChecksProbeInitialData } from '@console/app/src/components/health-checks/health-checks-probe-utils';
 import { EventSourceFormData } from '../../components/add/import-types';
 import { RevisionModel } from '../../models';
-import { healthChecksProbeInitialData } from '@console/dev-console/src/components/health-checks/health-checks-probe-utils';
 
 export const defaultData: DeployImageFormData = {
   project: {

@@ -13,7 +13,7 @@ import { ALLOW_SERVICE_BINDING } from '../../const';
 import { GitImportFormData, FirehoseList, ImportData, Resources } from './import-types';
 import { createOrUpdateResources, handleRedirect } from './import-submit-utils';
 import { validationSchema } from './import-validation-utils';
-import { healthChecksProbeInitialData } from '../health-checks/health-checks-probe-utils';
+import { healthChecksProbeInitialData } from '@console/app/src/components/health-checks/health-checks-probe-utils';
 
 export interface ImportFormProps {
   namespace: string;

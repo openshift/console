@@ -1,8 +1,8 @@
 import * as _ from 'lodash';
 import { K8sResourceKind, ImagePullPolicy } from '@console/internal/module/k8s';
 import { Resources } from '@console/dev-console/src/components/import/import-types';
-import { RequestType } from '@console/dev-console/src/components/health-checks/health-checks-types';
-import { healthChecksDefaultValues } from '@console/dev-console/src/components/health-checks/health-checks-probe-utils';
+import { healthChecksDefaultValues } from '@console/app/src/components/health-checks/health-checks-probe-utils';
+import { RequestType } from '@console/app/src/components/health-checks/health-checks-types';
 import { getKnativeServiceDepResource } from '../create-knative-utils';
 import { defaultData } from './knative-serving-data';
 

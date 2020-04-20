@@ -16,7 +16,7 @@ import {
   gitUrlRegex,
   resourcesValidationSchema,
 } from './validation-schema';
-import { healthChecksProbesValidationSchema } from '../health-checks/health-checks-probe-validation-utils';
+import { healthChecksProbesValidationSchema } from '@console/app/src/components/health-checks/health-checks-probe-validation-utils';
 
 export const validationSchema = yup.object().shape({
   name: nameValidationSchema,

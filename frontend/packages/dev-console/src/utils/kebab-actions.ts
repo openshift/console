@@ -7,7 +7,8 @@ import {
   DeploymentModel,
   StatefulSetModel,
 } from '@console/internal/models';
-import { ModifyApplication, EditApplication, EditHealthCheck } from '../actions/modify-application';
+import { ModifyApplication, EditApplication } from '../actions/modify-application';
+import { ModifyHealthChecks } from '@console/app/src/actions/modify-health-checks';
 
 const modifyWebConsoleApplicationRefs = [
   referenceForModel(DeploymentConfigModel),
@@ -30,7 +31,7 @@ export const getKebabActionsForKind = (resourceKind: K8sKind): KebabAction[] => 
   return _.includes(modifyWebConsoleApplicationRefs, referenceForModel(resourceKind))
     ? [
         ModifyApplication,
-        EditHealthCheck,
+        ModifyHealthChecks,
         ...(_.includes(editApplicationRefs, referenceForModel(resourceKind))
           ? [EditApplication]
           : []),

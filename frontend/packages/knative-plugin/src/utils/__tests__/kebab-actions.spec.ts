@@ -2,8 +2,8 @@ import { ServiceModel } from '@console/internal/models';
 import {
   ModifyApplication,
   EditApplication,
-  EditHealthCheck,
 } from '@console/dev-console/src/actions/modify-application';
+import { ModifyHealthChecks } from '@console/app/src/actions/modify-health-checks';
 import { getKebabActionsForKind } from '../kebab-actions';
 import { setTrafficDistribution } from '../../actions/traffic-splitting';
 import { setSinkSource } from '../../actions/sink-source';
@@ -20,7 +20,7 @@ describe('kebab-actions: ', () => {
     expect(modifyApplication).toEqual([
       ModifyApplication,
       setTrafficDistribution,
-      EditHealthCheck,
+      ModifyHealthChecks,
       EditApplication,
     ]);
   });

@@ -10,6 +10,7 @@ import {
   DaemonSetModel,
   StatefulSetModel,
 } from '@console/internal/models';
+import { healthCheckAdded } from '@console/app/src/actions/modify-health-checks';
 import { STORAGE_PREFIX } from '../../constants';
 import './HealthChecksAlert.scss';
 
@@ -40,10 +41,6 @@ const HealthChecksAlert: React.FC<HealthChecksAlertProps> = ({ resource }) => {
 
   const containers = resource?.spec?.template?.spec?.containers;
   const containersName = containers?.map((container) => container.name);
-  const healthCheckAdded = _.every(
-    containers,
-    (container) => container.readinessProbe || container.livenessProbe || container.startupProbe,
-  );
 
   const handleAlertAction = () => {
     const hideHealthCheckAlert = [...hideHealthCheckAlertFor, resource.metadata.uid];
@@ -52,7 +49,7 @@ const HealthChecksAlert: React.FC<HealthChecksAlertProps> = ({ resource }) => {
   };
 
   const showAlert =
-    !healthCheckAdded && !_.includes(hideHealthCheckAlertFor, resource.metadata.uid);
+    !healthCheckAdded(containers) && !_.includes(hideHealthCheckAlertFor, resource.metadata.uid);
 
   const addHealthChecksLink = `/k8s/ns/${resource.metadata.namespace}/${
     resource.kind === KnativeServiceModel.kind ? referenceFor(resource) : resource.kind

@@ -14,7 +14,7 @@ import BuildConfigSection from './BuildConfigSection';
 import DeploymentConfigSection from './DeploymentConfigSection';
 import ResourceLimitSection from './ResourceLimitSection';
 import { AppResources } from '../../edit-application/edit-application-types';
-import HealthChecks from '../../health-checks/HealthChecks';
+import HealthChecks from '@console/app/src/components/health-checks/HealthChecks';
 
 export interface AdvancedSectionProps {
   values: FormikValues;

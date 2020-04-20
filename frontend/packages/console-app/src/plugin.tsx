@@ -14,6 +14,7 @@ import {
   DashboardsOverviewInventoryItem,
   DashboardsOverviewHealthOperator,
   ReduxReducer,
+  RoutePage,
 } from '@console/plugin-sdk';
 import {
   ClusterVersionModel,
@@ -57,7 +58,8 @@ type ConsumedExtensions =
   | DashboardsOverviewHealthPrometheusSubsystem
   | DashboardsOverviewInventoryItem
   | DashboardsOverviewHealthOperator<ClusterOperator>
-  | ReduxReducer;
+  | ReduxReducer
+  | RoutePage;
 
 const plugin: Plugin<ConsumedExtensions> = [
   {
@@ -192,6 +194,19 @@ const plugin: Plugin<ConsumedExtensions> = [
     properties: {
       namespace: 'console',
       reducer,
+    },
+  },
+  {
+    type: 'Page/Route',
+    properties: {
+      exact: true,
+      path: ['/k8s/ns/:ns/:kind/:name/containers/:containerName/health-checks'],
+      loader: async () =>
+        (
+          await import(
+            './components/health-checks/HealthChecksPage' /* webpackChunkName: "dev-console-healthCheck" */
+          )
+        ).default,
     },
   },
 ];

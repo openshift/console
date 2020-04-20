@@ -13,7 +13,7 @@ import { UNASSIGNED_KEY } from '../../const';
 import { Resources, DeploymentData } from '../import/import-types';
 import { AppResources } from './edit-application-types';
 import { RegistryType } from '../../utils/imagestream-utils';
-import { getHealthChecksData } from '../health-checks/create-health-checks-probe-utils';
+import { getHealthChecksData } from '@console/app/src/components/health-checks/create-health-checks-probe-utils';
 
 export enum CreateApplicationFlow {
   Git = 'Import from Git',

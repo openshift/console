@@ -1,7 +1,10 @@
 import * as _ from 'lodash';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { HealthCheckProbeData, RequestType, HealthChecksProbeType } from './health-checks-types';
-import { Resources, HealthChecksData } from '../import/import-types';
+import {
+  Resources,
+  HealthChecksData,
+} from '@console/dev-console/src/components/import/import-types';
 import { healthChecksDefaultValues } from './health-checks-probe-utils';
 
 export const constructProbeData = (data: HealthCheckProbeData, resourceType?: Resources) => {

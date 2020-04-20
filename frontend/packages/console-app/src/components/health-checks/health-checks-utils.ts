@@ -1,7 +1,7 @@
 import { K8sResourceKind, ContainerSpec } from '@console/internal/module/k8s';
 import * as _ from 'lodash';
 import { getProbesData } from './create-health-checks-probe-utils';
-import { getResourcesType } from '../edit-application/edit-application-utils';
+import { getResourcesType } from '@console/dev-console/src/components/edit-application/edit-application-utils';
 import { HealthChecksProbeType } from './health-checks-types';
 
 export const updateHealthChecksProbe = (

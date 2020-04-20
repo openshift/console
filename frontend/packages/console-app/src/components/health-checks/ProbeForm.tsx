@@ -9,7 +9,7 @@ import {
   CommandRequestTypeForm,
 } from './RequestTypeForms';
 import { RequestType } from './health-checks-types';
-import FormSection from '../import/section/FormSection';
+import FormSection from '@console/dev-console/src/components/import/section/FormSection';
 import './ProbeForm.scss';
 
 const getRequestTypeForm = (

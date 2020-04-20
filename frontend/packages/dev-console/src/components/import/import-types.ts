@@ -5,7 +5,7 @@ import { LazyLoader } from '@console/plugin-sdk';
 import { NameValuePair, NameValueFromPair } from '@console/shared';
 import { ServiceModel } from '@console/knative-plugin/src/models';
 import { NormalizedBuilderImages } from '../../utils/imagestream-utils';
-import { HealthCheckProbe } from '../health-checks/health-checks-types';
+import { HealthCheckProbe } from '@console/app/src/components/health-checks/health-checks-types';
 
 export interface DeployImageFormProps {
   builderImages?: NormalizedBuilderImages;

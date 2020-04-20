@@ -23,7 +23,7 @@ import {
   mergeData,
 } from '../../utils/resource-label-utils';
 import { createService, createRoute, dryRunOpt } from '../../utils/shared-submit-utils';
-import { getProbesData } from '../health-checks/create-health-checks-probe-utils';
+import { getProbesData } from '@console/app/src/components/health-checks/create-health-checks-probe-utils';
 import { AppResources } from '../edit-application/edit-application-types';
 import {
   GitImportFormData,
