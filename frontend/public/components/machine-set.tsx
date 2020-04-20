@@ -35,6 +35,7 @@ const machineReplicasModal = (
   configureReplicaCountModal({
     resourceKind,
     resource,
+    title: 'Edit Machine Count',
     message: `${resourceKind.labelPlural} maintain the proper number of healthy machines.`,
   });
 
@@ -42,7 +43,7 @@ export const editCountAction: KebabAction = (
   kind: K8sKind,
   resource: MachineSetKind | MachineDeploymentKind,
 ) => ({
-  label: 'Edit Count',
+  label: 'Edit Machine Count',
   callback: () => machineReplicasModal(kind, resource),
   accessReview: {
     group: kind.apiGroup,

@@ -61,7 +61,7 @@ export const configureReplicaCountModal = (props) => {
       {},
       {
         defaultValue: 0,
-        title: 'Edit Count',
+        title: 'Edit Pod Count',
         message: `${props.resourceKind.labelPlural} maintain the desired number of healthy pods.`,
         path: '/spec/replicas',
         buttonText: 'Save',
