@@ -117,8 +117,8 @@ describe('Serverless', async () => {
 
     await browser.wait(until.elementToBeClickable(firstKebabMenu));
     await firstKebabMenu.click();
-    await browser.wait(until.elementToBeClickable(crudView.actionForLabel('Edit Count')));
-    await crudView.actionForLabel('Edit Count').click();
+    await browser.wait(until.elementToBeClickable(crudView.actionForLabel('Edit Machine Count')));
+    await crudView.actionForLabel('Edit Machine Count').click();
 
     await browser.wait(until.elementToBeClickable(machineSetsInput));
     await machineSetsInput.sendKeys(protractor.Key.chord(protractor.Key.CONTROL, 'a'));

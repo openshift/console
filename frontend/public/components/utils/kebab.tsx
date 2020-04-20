@@ -287,7 +287,7 @@ const kebabFactory: KebabFactory = {
     accessReview: asAccessReview(kind, obj, 'patch'),
   }),
   ModifyCount: (kind, obj) => ({
-    label: 'Edit Count',
+    label: 'Edit Pod Count',
     callback: () =>
       configureReplicaCountModal({
         resourceKind: kind,

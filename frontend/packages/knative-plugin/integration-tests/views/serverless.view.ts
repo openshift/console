@@ -3,7 +3,7 @@ import { by, element } from 'protractor';
 export const firstKebabMenu = element.all(by.css('[data-test-id="kebab-button"]')).first();
 export const actionItems = element(by.css('[data-test-id="action-items"]'));
 export const editCount = element.all(
-  by.cssContainingText('.pf-c-dropdown__menu-item', 'Edit Count'),
+  by.cssContainingText('.pf-c-dropdown__menu-item', 'Edit Pod Count'),
 );
 export const machineSetsInput = element(
   by.className('pf-c-form-control co-m-number-spinner__input'),
