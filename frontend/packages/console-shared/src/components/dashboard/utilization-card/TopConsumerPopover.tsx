@@ -165,7 +165,7 @@ export const PopoverBody = withDashboardResources<DashboardItemProps & PopoverBo
       const dropdownItems = React.useMemo(
         () =>
           consumers.reduce((items, curr) => {
-            items[referenceForModel(curr.model)] = `By ${curr.model.labelPlural}`;
+            items[referenceForModel(curr.model)] = `By ${curr.model.label}`;
             return items;
           }, {}),
         [consumers],
@@ -199,7 +199,7 @@ export const PopoverBody = withDashboardResources<DashboardItemProps & PopoverBo
           <>
             <ul
               className="co-utilization-card-popover__consumer-list"
-              aria-label={`Top consumer by ${model.labelPlural}`}
+              aria-label={`Top consumer by ${model.label}`}
             >
               {top5Data &&
                 top5Data.map((item) => {

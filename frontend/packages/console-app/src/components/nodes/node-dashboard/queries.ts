@@ -12,6 +12,11 @@ export enum NodeQueries {
   PODS_BY_FILESYSTEM = 'PODS_BY_FILESYSTEM',
   PODS_BY_NETWORK_IN = 'PODS_BY_NETWORK_IN',
   PODS_BY_NETWORK_OUT = 'PODS_BY_NETWORK_OUT',
+  PROJECTS_BY_CPU = 'PROJECTS_BY_CPU',
+  PROJECTS_BY_MEMORY = 'PROJECTS_BY_MEMORY',
+  PROJECTS_BY_FILESYSTEM = 'PROJECTS_BY_FILESYSTEM',
+  PROJECTS_BY_NETWORK_IN = 'PROJECTS_BY_NETWORK_IN',
+  PROJECTS_BY_NETWORK_OUT = 'PROJECTS_BY_NETWORK_OUT',
   FILESYSTEM_USAGE = 'FILESYSTEM_USAGE',
   FILESYSTEM_TOTAL = 'FILESYSTEM_TOTAL',
   NETWORK_IN_UTILIZATION = 'NETWORK_IN_UTILIZATION',
@@ -58,6 +63,21 @@ const top25Queries = {
   ),
   [NodeQueries.PODS_BY_NETWORK_OUT]: _.template(
     `topk(25, sort_desc(sum(rate(container_network_transmit_bytes_total{ container="POD", pod!= "", instance=~'<%= ipAddress %>:.*'}[5m])) BY (pod, namespace)))`,
+  ),
+  [NodeQueries.PROJECTS_BY_CPU]: _.template(
+    `topk(25, sort_desc(sum(rate(container_cpu_usage_seconds_total{container="",pod!="", instance=~'<%= ipAddress %>:.*'}[5m])) by (namespace)))`,
+  ),
+  [NodeQueries.PROJECTS_BY_MEMORY]: _.template(
+    `topk(25, sort_desc(sum(avg_over_time(container_memory_working_set_bytes{container="",pod!="",instance=~'<%= ipAddress %>:.*'}[5m])) BY (namespace)))`,
+  ),
+  [NodeQueries.PROJECTS_BY_FILESYSTEM]: _.template(
+    `topk(25, sort_desc(sum(container_fs_usage_bytes{instance=~'<%= ipAddress %>:.*'}) BY (namespace)))`,
+  ),
+  [NodeQueries.PROJECTS_BY_NETWORK_IN]: _.template(
+    `topk(25, sort_desc(sum(rate(container_network_receive_bytes_total{ container="POD", pod!= "", instance=~'<%= ipAddress %>:.*'}[5m])) BY (namespace)))`,
+  ),
+  [NodeQueries.PROJECTS_BY_NETWORK_OUT]: _.template(
+    `topk(25, sort_desc(sum(rate(container_network_transmit_bytes_total{ container="POD", pod!= "", instance=~'<%= ipAddress %>:.*'}[5m])) BY (namespace)))`,
   ),
 };
 
@@ -150,6 +170,17 @@ export const getTopConsumerQueries = (ipAddress: string) => ({
   [NodeQueries.PODS_BY_FILESYSTEM]: top25Queries[NodeQueries.PODS_BY_FILESYSTEM]({ ipAddress }),
   [NodeQueries.PODS_BY_NETWORK_IN]: top25Queries[NodeQueries.PODS_BY_NETWORK_IN]({ ipAddress }),
   [NodeQueries.PODS_BY_NETWORK_OUT]: top25Queries[NodeQueries.PODS_BY_NETWORK_OUT]({
+    ipAddress,
+  }),
+  [NodeQueries.PROJECTS_BY_CPU]: top25Queries[NodeQueries.PROJECTS_BY_CPU]({ ipAddress }),
+  [NodeQueries.PROJECTS_BY_MEMORY]: top25Queries[NodeQueries.PROJECTS_BY_MEMORY]({ ipAddress }),
+  [NodeQueries.PROJECTS_BY_FILESYSTEM]: top25Queries[NodeQueries.PROJECTS_BY_FILESYSTEM]({
+    ipAddress,
+  }),
+  [NodeQueries.PROJECTS_BY_NETWORK_IN]: top25Queries[NodeQueries.PROJECTS_BY_NETWORK_IN]({
+    ipAddress,
+  }),
+  [NodeQueries.PROJECTS_BY_NETWORK_OUT]: top25Queries[NodeQueries.PROJECTS_BY_NETWORK_OUT]({
     ipAddress,
   }),
 });

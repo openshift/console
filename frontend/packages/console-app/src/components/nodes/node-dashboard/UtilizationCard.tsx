@@ -14,7 +14,7 @@ import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboa
 import UtilizationBody from '@console/shared/src/components/dashboard/utilization-card/UtilizationBody';
 import { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
 import { getNodeAddresses } from '@console/shared/src/selectors/node';
-import { PodModel } from '@console/internal/models';
+import { PodModel, ProjectModel } from '@console/internal/models';
 import {
   humanizeCpuCores,
   humanizeBinaryBytes,
@@ -43,6 +43,12 @@ const getPodConsumers = (query: string, nodeName: string) => ({
   metric: 'pod',
 });
 
+const getProjectConsumers = (query: string) => ({
+  query,
+  model: ProjectModel,
+  metric: 'namespace',
+});
+
 export const CPUPopover: React.FC<PopoverProps> = ({
   nodeName,
   nodeIp,
@@ -53,7 +59,10 @@ export const CPUPopover: React.FC<PopoverProps> = ({
 }) => {
   const consumers = React.useMemo(() => {
     const queries = getTopConsumerQueries(nodeIp);
-    return [getPodConsumers(queries[NodeQueries.PODS_BY_CPU], nodeName)];
+    return [
+      getProjectConsumers(queries[NodeQueries.PROJECTS_BY_CPU]),
+      getPodConsumers(queries[NodeQueries.PODS_BY_CPU], nodeName),
+    ];
   }, [nodeIp, nodeName]);
   return (
     <ConsumerPopover
@@ -78,7 +87,10 @@ export const MemoryPopover: React.FC<PopoverProps> = ({
 }) => {
   const consumers = React.useMemo(() => {
     const queries = getTopConsumerQueries(nodeIp);
-    return [getPodConsumers(queries[NodeQueries.PODS_BY_MEMORY], nodeName)];
+    return [
+      getProjectConsumers(queries[NodeQueries.PROJECTS_BY_MEMORY]),
+      getPodConsumers(queries[NodeQueries.PODS_BY_MEMORY], nodeName),
+    ];
   }, [nodeIp, nodeName]);
   return (
     <ConsumerPopover
@@ -109,9 +121,18 @@ const UtilizationCard: React.FC = () => {
       getMultilineQueries(nodeName),
       getResourceQutoaQueries(nodeName),
       [
-        [getPodConsumers(topConsumerQueries[NodeQueries.PODS_BY_FILESYSTEM], nodeName)],
-        [getPodConsumers(topConsumerQueries[NodeQueries.PODS_BY_NETWORK_IN], nodeName)],
-        [getPodConsumers(topConsumerQueries[NodeQueries.PODS_BY_NETWORK_OUT], nodeName)],
+        [
+          getProjectConsumers(topConsumerQueries[NodeQueries.PROJECTS_BY_FILESYSTEM]),
+          getPodConsumers(topConsumerQueries[NodeQueries.PODS_BY_FILESYSTEM], nodeName),
+        ],
+        [
+          getProjectConsumers(topConsumerQueries[NodeQueries.PROJECTS_BY_NETWORK_IN]),
+          getPodConsumers(topConsumerQueries[NodeQueries.PODS_BY_NETWORK_IN], nodeName),
+        ],
+        [
+          getProjectConsumers(topConsumerQueries[NodeQueries.PROJECTS_BY_NETWORK_OUT]),
+          getPodConsumers(topConsumerQueries[NodeQueries.PODS_BY_NETWORK_OUT], nodeName),
+        ],
       ],
     ];
   }, [nodeIp, nodeName]);
