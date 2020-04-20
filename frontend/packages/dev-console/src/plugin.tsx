@@ -868,7 +868,7 @@ const plugin: Plugin<ConsumedExtensions> = [
     type: 'AddAction',
     properties: {
       id: 'operator-backed',
-      url: '/catalog/ns/cvogt?kind=%5B"ClusterServiceVersion"%5D',
+      url: '/catalog/ns/:namespace?kind=%5B"ClusterServiceVersion"%5D',
       label: 'Operator Backed',
       description: 'Browse the catalog to discover and deploy operator managed services',
       icon: <BoltIcon />,
