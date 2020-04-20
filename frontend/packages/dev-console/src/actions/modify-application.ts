@@ -1,6 +1,6 @@
 import { KebabOption } from '@console/internal/components/utils';
 import { truncateMiddle } from '@console/internal/components/utils/truncate-middle';
-import { K8sResourceKind, K8sKind, referenceForModel } from '@console/internal/module/k8s';
+import { K8sResourceKind, K8sKind, referenceFor } from '@console/internal/module/k8s';
 import { ServiceModel as KnativeServiceModel } from '@console/knative-plugin';
 import { RESOURCE_NAME_TRUNCATE_LENGTH } from '../const';
 import { editApplicationModal } from '../components/modals';
@@ -43,13 +43,15 @@ export const EditApplication = (model: K8sKind, obj: K8sResourceKind): KebabOpti
 };
 
 export const EditHealthCheck = (model: K8sKind, obj: K8sResourceKind): KebabOption => {
+  const {
+    kind,
+    metadata: { name, namespace },
+  } = obj;
+  const resourceKind = model.crd ? referenceFor(obj) : kind;
+  const containerName = obj?.spec?.template?.spec?.containers?.[0]?.name;
   return {
     label: 'Edit Health Checks',
-    href: `/k8s/ns/${obj.metadata.namespace}/${
-      model.kind === KnativeServiceModel.kind ? referenceForModel(KnativeServiceModel) : model.kind
-    }/${obj.metadata.name}/containers/${
-      obj?.spec?.template?.spec?.containers?.[0]?.name
-    }/health-checks`,
+    href: `/k8s/ns/${namespace}/${resourceKind}/${name}/containers/${containerName}/health-checks`,
     accessReview: {
       group: model.apiGroup,
       resource: model.plural,

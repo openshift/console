@@ -10,7 +10,7 @@ import {
   ResourceLink,
   ResourceIcon,
 } from '@console/internal/components/utils';
-import { K8sResourceKind, referenceFor } from '@console/internal/module/k8s';
+import { K8sResourceKind, referenceFor, modelFor } from '@console/internal/module/k8s';
 import { FormFooter } from '@console/shared';
 import { getResourcesType } from '../edit-application/edit-application-utils';
 import HealthChecks from './HealthChecks';
@@ -43,6 +43,12 @@ const AddHealthChecks: React.FC<FormikProps<FormikValues> & AddHealthChecksProps
   );
   const containersByKey = _.keyBy(containers, 'name');
   const pageTitle = healthCheckAdded ? 'Edit Health Checks' : 'Add Health Checks';
+  const {
+    kind,
+    metadata: { name, namespace },
+  } = resource;
+  const kindForCRDResource = referenceFor(resource);
+  const resourceKind = modelFor(kindForCRDResource).crd ? kindForCRDResource : kind;
 
   const handleSelectContainer = (containerName: string) => {
     const containerIndex = _.findIndex(resource.spec.template.spec.containers, [
@@ -53,7 +59,7 @@ const AddHealthChecks: React.FC<FormikProps<FormikValues> & AddHealthChecksProps
     setFieldValue('containerName', containerName);
     setFieldValue('healthChecks', getHealthChecksData(resource, containerIndex));
     history.replace(
-      `/k8s/ns/${resource.metadata.namespace}/${resource.kind}/${resource.metadata.name}/containers/${containerName}/health-checks`,
+      `/k8s/ns/${namespace}/${resourceKind}/${name}/containers/${containerName}/health-checks`,
     );
   };
 
@@ -82,9 +88,9 @@ const AddHealthChecks: React.FC<FormikProps<FormikValues> & AddHealthChecksProps
           Health checks for &nbsp;
           <ResourceLink
             kind={referenceFor(resource)}
-            name={resource.metadata.name}
-            namespace={resource.metadata.namespace}
-            title={resource.metadata.name}
+            name={name}
+            namespace={namespace}
+            title={name}
             inline
           />
         </p>
