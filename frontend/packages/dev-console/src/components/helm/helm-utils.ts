@@ -68,7 +68,7 @@ export const filterHelmReleasesByName = (releases: HelmRelease[], filter: string
 
 export const fetchHelmRelease = (
   namespace: string,
-  helmReleaseName?: string,
+  helmReleaseName: string,
 ): Promise<HelmRelease> => {
   const fetchString = `/api/helm/release?ns=${namespace}&release_name=${helmReleaseName}`;
   return coFetchJSON(fetchString);
