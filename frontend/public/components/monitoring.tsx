@@ -1338,6 +1338,12 @@ const SilenceForm_: React.FC<SilenceFormProps> = ({ defaults, Info, title }) => 
   const onSubmit: React.FormEventHandler<HTMLFormElement> = (e) => {
     e.preventDefault();
 
+    // Don't allow comments to only contain whitespace
+    if (_.trim(comment) === '') {
+      setError('Comment is required.');
+      return;
+    }
+
     const { alertManagerBaseURL } = window.SERVER_FLAGS;
     if (!alertManagerBaseURL) {
       setError('Alertmanager URL not set');
