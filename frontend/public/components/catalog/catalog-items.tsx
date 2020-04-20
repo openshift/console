@@ -226,11 +226,18 @@ const setURLParams = (params): void => {
   history.replace(`${url.pathname}${searchParams}`);
 };
 
+const sortByOperators = (items: Record<string, Item[]>): Record<string, Item[]> => {
+  const sortedItemsByOperators = {};
+  _.forEach(Object.keys(items).sort(), (key) => (sortedItemsByOperators[key] = items[key]));
+  return sortedItemsByOperators;
+};
+
 export const groupItems = (items: Item[], groupBy: string): Item[] | Record<string, Item[]> => {
   if (groupBy === GroupByTypes.Operator) {
     const installedOperators = _.filter(items, (item) => item.kind === 'InstalledOperator');
     const nonOperators = _.filter(items, (item) => item.kind !== 'InstalledOperator');
-    const groupedOperators = _.groupBy(installedOperators, (item) => item.obj.csv.spec.displayName);
+    let groupedOperators = _.groupBy(installedOperators, (item) => item.obj.csv.spec.displayName);
+    groupedOperators = sortByOperators(groupedOperators);
     const groupAllItems = { ...groupedOperators, 'Non Operators': nonOperators };
     return groupAllItems;
   }
