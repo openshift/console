@@ -8,8 +8,10 @@ import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboa
 import {
   PodModel,
   DeploymentModel,
+  DeploymentConfigModel,
   PersistentVolumeClaimModel,
   ServiceModel,
+  StatefulSetModel,
   RouteModel,
   ConfigMapModel,
   SecretModel,
@@ -122,6 +124,8 @@ export const InventoryCard = () => {
       </DashboardCardHeader>
       <DashboardCardBody>
         <ProjectInventoryItem projectName={projectName} model={DeploymentModel} />
+        <ProjectInventoryItem projectName={projectName} model={DeploymentConfigModel} />
+        <ProjectInventoryItem projectName={projectName} model={StatefulSetModel} />
         <ProjectInventoryItem
           projectName={projectName}
           model={PodModel}
