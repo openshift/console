@@ -111,6 +111,7 @@ export const getEventSourceResource = (formData: EventSourceFormData): K8sResour
     case EventSources.CronJobSource:
     case EventSources.ApiServerSource:
     case EventSources.SinkBinding:
+    case EventSources.PingSource:
       return getEventSourcesDepResource(formData);
     default:
       return safeLoad(formData.yamlData);
