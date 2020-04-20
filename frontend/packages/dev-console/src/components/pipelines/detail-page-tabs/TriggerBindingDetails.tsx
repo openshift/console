@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { SectionHeading, ResourceSummary } from '@console/internal/components/utils';
 import { EventListenerModel } from '../../../models';
+import { getResourceModelFromBindingKind } from '../../../utils/pipeline-augment';
 import ResourceLinkList from '../resource-overview/ResourceLinkList';
 import { useTriggerBindingEventListenerNames } from '../utils/triggers';
 import { TriggerBindingKind } from '../resource-types';
@@ -13,7 +14,9 @@ const TriggerBindingDetails: React.FC<TriggerBindingDetailsProps> = ({ obj: trig
   const eventListeners: string[] = useTriggerBindingEventListenerNames(triggerBinding);
   return (
     <div className="co-m-pane__body">
-      <SectionHeading text="Trigger Binding Details" />
+      <SectionHeading
+        text={`${getResourceModelFromBindingKind(triggerBinding.kind).label} Details`}
+      />
       <div className="row">
         <div className="col-sm-6">
           <ResourceSummary resource={triggerBinding} />

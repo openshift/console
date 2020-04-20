@@ -1,10 +1,15 @@
 import * as React from 'react';
 import { SectionHeading, ResourceSummary } from '@console/internal/components/utils';
-import { Pipeline } from '../../../../utils/pipeline-augment';
-import { TriggerTemplateModel, TaskModel } from '../../../../models';
+import {
+  getResourceModelFromTaskKind,
+  Pipeline,
+  PipelineTask,
+  PipelineTaskRef,
+} from '../../../../utils/pipeline-augment';
+import { TriggerTemplateModel } from '../../../../models';
 import { usePipelineTriggerTemplateNames, RouteTemplate } from '../../utils/triggers';
+import DynamicResourceLinkList from '../../resource-overview/DynamicResourceLinkList';
 import TriggerTemplateResourceLink from '../../resource-overview/TriggerTemplateResourceLink';
-import ResourceLinkList from '../../resource-overview/ResourceLinkList';
 import PipelineVisualization from './PipelineVisualization';
 
 interface PipelineDetailsProps {
@@ -13,7 +18,13 @@ interface PipelineDetailsProps {
 
 const PipelineDetails: React.FC<PipelineDetailsProps> = ({ obj: pipeline }) => {
   const routeTemplates: RouteTemplate[] = usePipelineTriggerTemplateNames(pipeline) || [];
-  const pipelineTasks = pipeline.spec.tasks.map((task) => task.taskRef.name);
+  const taskLinks = pipeline.spec.tasks
+    .map((task: PipelineTask) => task.taskRef)
+    .filter((ref) => !!ref)
+    .map((taskRef: PipelineTaskRef) => ({
+      model: getResourceModelFromTaskKind(taskRef.kind),
+      name: taskRef.name,
+    }));
   return (
     <div className="co-m-pane__body">
       <SectionHeading text="Pipeline Details" />
@@ -28,10 +39,10 @@ const PipelineDetails: React.FC<PipelineDetailsProps> = ({ obj: pipeline }) => {
             model={TriggerTemplateModel}
             links={routeTemplates}
           />
-          <ResourceLinkList
+          <DynamicResourceLinkList
             namespace={pipeline.metadata.namespace}
-            links={pipelineTasks}
-            model={TaskModel}
+            links={taskLinks}
+            title="Tasks"
           />
         </div>
       </div>

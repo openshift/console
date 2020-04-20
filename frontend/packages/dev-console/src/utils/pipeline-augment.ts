@@ -7,7 +7,13 @@ import {
   chart_color_black_500 as cancelledColor,
 } from '@patternfly/react-tokens';
 import { K8sKind, K8sResourceKind, referenceForModel } from '@console/internal/module/k8s';
-import { ClusterTaskModel, PipelineRunModel, TaskModel } from '../models';
+import {
+  ClusterTaskModel,
+  ClusterTriggerBindingModel,
+  PipelineRunModel,
+  TaskModel,
+  TriggerBindingModel,
+} from '../models';
 import { pipelineRunFilterReducer } from './pipeline-filter-reducer';
 
 interface Metadata {
@@ -382,6 +388,9 @@ export const getTaskStatus = (pipelinerun: PipelineRun, pipeline: Pipeline): Tas
 
 export const getResourceModelFromTaskKind = (kind: string): K8sKind =>
   kind === ClusterTaskModel.kind ? ClusterTaskModel : TaskModel;
+
+export const getResourceModelFromBindingKind = (kind: string): K8sKind =>
+  kind === ClusterTriggerBindingModel.kind ? ClusterTriggerBindingModel : TriggerBindingModel;
 
 export const getResourceModelFromTask = (task: PipelineTask): K8sKind => {
   const {

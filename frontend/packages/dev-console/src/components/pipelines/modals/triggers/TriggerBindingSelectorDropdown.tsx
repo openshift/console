@@ -4,6 +4,7 @@ import { DropdownField } from '@console/shared';
 import { TriggerBindingKind } from '../../resource-types';
 
 type TriggerBindingSelectorProps = {
+  clusterTriggerBindingData?: FirehoseResult<TriggerBindingKind[]>;
   description?: string;
   label: string;
   onChange: (selectedTriggerBinding: TriggerBindingKind) => void;
@@ -11,9 +12,11 @@ type TriggerBindingSelectorProps = {
 };
 
 const TriggerBindingSelectorDropdown: React.FC<TriggerBindingSelectorProps> = (props) => {
-  const { description, label, onChange, triggerBindingData } = props;
-  const triggerBindings = triggerBindingData.data;
-  const dropdownItems = triggerBindings.reduce(
+  const { clusterTriggerBindingData, description, label, onChange, triggerBindingData } = props;
+  const triggerBindings = triggerBindingData?.data || [];
+  const clusterTriggerBindings = clusterTriggerBindingData?.data || [];
+  const bindings = [...triggerBindings, ...clusterTriggerBindings];
+  const dropdownItems = bindings.reduce(
     (acc, triggerBinding) => ({
       ...acc,
       [triggerBinding.metadata.name]: triggerBinding.metadata.name,
@@ -26,10 +29,11 @@ const TriggerBindingSelectorDropdown: React.FC<TriggerBindingSelectorProps> = (p
       fullWidth
       helpText={description}
       items={dropdownItems}
+      disabled={Object.keys(dropdownItems).length === 0}
       label={label}
       name="triggerBinding.name"
       onChange={(name: string) => {
-        onChange(triggerBindings.find((triggerBinding) => triggerBinding.metadata.name === name));
+        onChange(bindings.find((triggerBinding) => triggerBinding.metadata.name === name));
       }}
       title={`Select ${label}`}
     />

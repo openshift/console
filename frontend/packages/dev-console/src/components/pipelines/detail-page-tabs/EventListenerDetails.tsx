@@ -1,9 +1,11 @@
 import * as React from 'react';
 import { SectionHeading, ResourceSummary } from '@console/internal/components/utils';
-import { TriggerTemplateModel, TriggerBindingModel } from '../../../models';
+import { TriggerBindingModel, TriggerTemplateModel } from '../../../models';
 import { EventListenerKind } from '../resource-types';
+import DynamicResourceLinkList, {
+  ResourceModelLink,
+} from '../resource-overview/DynamicResourceLinkList';
 import TriggerTemplateResourceLink from '../resource-overview/TriggerTemplateResourceLink';
-import ResourceLinkList from '../resource-overview/ResourceLinkList';
 import {
   RouteTemplate,
   useEventListenerTriggerTemplateNames,
@@ -16,7 +18,7 @@ export interface EventListenerDetailsProps {
 
 const EventListenerDetails: React.FC<EventListenerDetailsProps> = ({ obj: eventListener }) => {
   const routeTemplates: RouteTemplate[] = useEventListenerTriggerTemplateNames(eventListener) || [];
-  const bindings: string[] = getEventListenerTriggerBindingNames(eventListener) || [];
+  const bindings: ResourceModelLink[] = getEventListenerTriggerBindingNames(eventListener);
   return (
     <div className="co-m-pane__body">
       <SectionHeading text="Event Listener Details" />
@@ -30,10 +32,10 @@ const EventListenerDetails: React.FC<EventListenerDetailsProps> = ({ obj: eventL
             model={TriggerTemplateModel}
             links={routeTemplates}
           />
-          <ResourceLinkList
-            namespace={eventListener.metadata.namespace}
-            model={TriggerBindingModel}
+          <DynamicResourceLinkList
             links={bindings}
+            namespace={eventListener.metadata.namespace}
+            title={TriggerBindingModel.labelPlural}
           />
         </div>
       </div>
