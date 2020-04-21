@@ -113,7 +113,7 @@ export const VMDetails: React.FC<VMDetailsProps> = (props) => {
       </div>
       <div className="co-m-pane__body">
         <SectionHeading text="Services" />
-        <ServicesList {...restProps} data={vmServicesData} />
+        <ServicesList {...restProps} data={vmServicesData} label="Services" />
       </div>
     </StatusBox>
   );
