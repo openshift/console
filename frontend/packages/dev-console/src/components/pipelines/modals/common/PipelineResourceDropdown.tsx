@@ -79,7 +79,7 @@ const PipelineResourceDropdown: React.FC<PipelineResourceDropdownProps> = (props
         setExpanded(false);
       }}
       placeholderText={!loaded ? <LoadingInline /> : 'Select Pipeline Resource'}
-      isDisabled={loaded && resources.length === 0}
+      isDisabled={loaded && availableResources.length === 0}
     >
       {options.map(({ label, value }) => (
         <SelectOption key={value} value={value}>
