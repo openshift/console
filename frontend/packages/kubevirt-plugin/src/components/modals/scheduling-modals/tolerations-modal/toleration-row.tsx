@@ -11,6 +11,7 @@ export const TolerationRow = ({ label, onChange, onDelete }: TolerationRowProps)
     <>
       <GridItem span={4}>
         <TextInput
+          id={`toleration-${id}-key-input`}
           className="kv-label__key"
           placeholder="key"
           isRequired
@@ -22,6 +23,7 @@ export const TolerationRow = ({ label, onChange, onDelete }: TolerationRowProps)
       </GridItem>
       <GridItem span={4}>
         <TextInput
+          id={`toleration-${id}-value-input`}
           className="kv-label__value"
           placeholder="value"
           isRequired
@@ -33,6 +35,7 @@ export const TolerationRow = ({ label, onChange, onDelete }: TolerationRowProps)
       </GridItem>
       <GridItem span={3}>
         <FormSelect
+          id={`toleration-${id}-effect-select`}
           className="kv-label__effect"
           isRequired
           value={effect}
@@ -45,7 +48,7 @@ export const TolerationRow = ({ label, onChange, onDelete }: TolerationRowProps)
         </FormSelect>
       </GridItem>
       <GridItem span={1}>
-        <Button id={`${key}-delete-btn`} onClick={() => onDelete(id)} variant="plain">
+        <Button id={`toleration-${id}-delete-btn`} onClick={() => onDelete(id)} variant="plain">
           <MinusCircleIcon />
         </Button>
       </GridItem>
