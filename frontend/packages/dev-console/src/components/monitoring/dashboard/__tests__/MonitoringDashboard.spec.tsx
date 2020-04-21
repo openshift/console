@@ -37,7 +37,7 @@ describe('Monitoring Dashboard Tab', () => {
       workloadType: 'deployment',
     });
     const spygetURLSearchParams = jest.spyOn(link, 'getURLSearchParams');
-    spygetURLSearchParams.mockReturnValue({ workloadName: 'dotnet', workloadType: 'deployment' });
+    spygetURLSearchParams.mockReturnValue({ workloadName: 'dotnet', workloadType: 'Deployment' });
     const wrapper = shallow(<MonitoringDashboard {...monitoringDashboardProps} />);
     expect(
       wrapper
@@ -66,5 +66,22 @@ describe('Monitoring Dashboard Tab', () => {
     const wrapper = shallow(<MonitoringDashboard {...monitoringDashboardProps} />);
     expect(wrapper.find(TimespanDropdown).exists()).toBe(true);
     expect(wrapper.find(PollIntervalDropdown).exists()).toBe(true);
+  });
+
+  it('should render ResourceLink for workload queries dashboard', () => {
+    const spygetURLSearchParams = jest.spyOn(link, 'getURLSearchParams');
+    spygetURLSearchParams.mockReturnValue({
+      workloadName: 'calculator-react',
+      workloadType: 'Deployment',
+    });
+    const wrapper = shallow(<MonitoringDashboard {...monitoringDashboardProps} />);
+    expect(wrapper.find(link.ResourceLink).exists()).toBe(true);
+  });
+
+  it('should not render ResourceLink for namespace queries dashboard', () => {
+    const spygetURLSearchParams = jest.spyOn(link, 'getURLSearchParams');
+    spygetURLSearchParams.mockReturnValue({});
+    const wrapper = shallow(<MonitoringDashboard {...monitoringDashboardProps} />);
+    expect(wrapper.find(link.ResourceLink).exists()).toBe(false);
   });
 });

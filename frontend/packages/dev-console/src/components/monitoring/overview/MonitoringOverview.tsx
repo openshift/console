@@ -100,9 +100,7 @@ const MonitoringOverview: React.FC<MonitoringOverviewProps> = ({ resource, event
               <>
                 <div className="odc-monitoring-overview__view-monitoring-dashboard">
                   <Link
-                    to={`/dev-monitoring/ns/${resource?.metadata?.namespace}/?workloadName=${
-                      resource?.metadata?.name
-                    }&workloadType=${resource?.kind?.toLowerCase()}`}
+                    to={`/dev-monitoring/ns/${resource?.metadata?.namespace}/?workloadName=${resource?.metadata?.name}&workloadType=${resource?.kind}`}
                   >
                     View monitoring dashboard
                   </Link>
