@@ -253,6 +253,6 @@ export const searchTermValidationSchema = yup.string().required('Required');
 export const isiValidationSchema = yup.object().shape({
   name: yup.string().required('Required'),
   image: yup.object().required('Required'),
-  tag: yup.string().required('Required'),
+  tag: yup.string(),
   status: yup.string().required('Required'),
 });
