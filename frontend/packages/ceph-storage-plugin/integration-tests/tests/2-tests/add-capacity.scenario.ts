@@ -12,7 +12,6 @@ import {
   ocsOp,
   storageClusterRow,
   verifyFields,
-  getStorageClusterLink,
 } from '../../views/add-capacity.view';
 import {
   CLUSTER_STATUS,
@@ -42,6 +41,7 @@ import {
   verifyNodeOSDMapping,
   verifyZoneOSDMapping,
 } from '../../utils/helpers';
+import { currentSelectors } from '../../views/installFlow.view';
 
 const storageCluster = JSON.parse(execSync(`kubectl get -o json -n ${NS} ${KIND}`).toString());
 const cephValue = JSON.parse(execSync(`kubectl get cephCluster -n ${NS} -o json`).toString());
@@ -110,7 +110,7 @@ if (clusterStatus && cephHealth) {
 
       await goToInstalledOperators();
       await click(ocsOp);
-      const storageClusterLink = await getStorageClusterLink();
+      const storageClusterLink = await currentSelectors.getStorageClusterLink();
       await click(storageClusterLink);
 
       await clickKebabAction(uid, 'Add Capacity');

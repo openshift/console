@@ -18,6 +18,15 @@ export const checkIfClusterIsReady = async () => {
   }
 };
 
+export const waitUntil = async (functor, expected, count = 1) => {
+  const value = await functor();
+  if (value < expected) {
+    await browser.sleep(2 * SECOND);
+    await waitUntil(functor, expected, count - 1);
+  }
+  return true;
+};
+
 export const waitFor = async (element, text, count = 1) => {
   let rowNumber = 0;
   while (rowNumber !== count) {
