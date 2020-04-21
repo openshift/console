@@ -1,10 +1,10 @@
 import { referenceForModel } from '@console/internal/module/k8s';
-import * as knativeImg from '@console/internal/imgs/logos/knative.svg';
 import * as apiServerSourceImg from '../imgs/logos/apiserversource.png';
 import * as camelSourceImg from '../imgs/logos/camelsource.svg';
 import * as containerSourceImg from '../imgs/logos/containersource.png';
 import * as cronJobSourceImg from '../imgs/logos/cronjobsource.png';
 import * as kafkaSourceImg from '../imgs/logos/kafkasource.svg';
+import * as eventSourceImg from '../imgs/event-source.svg';
 import {
   EventSourceCronJobModel,
   EventSourceContainerModel,
@@ -26,6 +26,6 @@ export const getKnativeEventSourceIcon = (kind: string): string => {
     case referenceForModel(EventSourceKafkaModel):
       return kafkaSourceImg;
     default:
-      return knativeImg;
+      return eventSourceImg;
   }
 };
