@@ -29,7 +29,7 @@ const StatusCard: React.FC = () => {
               <BareMetalNodeStatus
                 {...status}
                 nodeMaintenance={nodeMaintenance}
-                className="co-node-status__health"
+                className="co-node-health__status"
               />
             </GalleryItem>
             <GalleryItem>
