@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useFormikContext } from 'formik';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { Firehose } from '@console/internal/components/utils';
-import { TriggerBindingModel } from '../../../../models';
+import { ClusterTriggerBindingModel, TriggerBindingModel } from '../../../../models';
 import { TriggerBindingKind } from '../../resource-types';
 import TriggerBindingSelectorDropdown from './TriggerBindingSelectorDropdown';
 import { AddTriggerFormValues } from './types';
@@ -25,6 +25,13 @@ const TriggerBindingSelector: React.FC<TriggerBindingSelectorProps> = (props) =>
           namespace: values.namespace,
           kind: referenceForModel(TriggerBindingModel),
           prop: 'triggerBindingData',
+          isOptional: true,
+        },
+        {
+          isList: true,
+          kind: referenceForModel(ClusterTriggerBindingModel),
+          prop: 'clusterTriggerBindingData',
+          isOptional: true,
         },
       ]}
     >

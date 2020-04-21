@@ -110,7 +110,7 @@ export const ConditionModel: K8sKind = {
 };
 
 export const TriggerBindingModel: K8sKind = {
-  apiGroup: 'tekton.dev',
+  apiGroup: 'triggers.tekton.dev',
   apiVersion: 'v1alpha1',
   label: 'Trigger Binding',
   plural: 'triggerbindings',
@@ -125,7 +125,7 @@ export const TriggerBindingModel: K8sKind = {
 };
 
 export const ClusterTriggerBindingModel: K8sKind = {
-  apiGroup: 'tekton.dev',
+  apiGroup: 'triggers.tekton.dev',
   apiVersion: 'v1alpha1',
   label: 'Cluster Trigger Binding',
   plural: 'clustertriggerbindings',
@@ -140,7 +140,7 @@ export const ClusterTriggerBindingModel: K8sKind = {
 };
 
 export const TriggerTemplateModel: K8sKind = {
-  apiGroup: 'tekton.dev',
+  apiGroup: 'triggers.tekton.dev',
   apiVersion: 'v1alpha1',
   label: 'Trigger Template',
   plural: 'triggertemplates',
@@ -155,7 +155,7 @@ export const TriggerTemplateModel: K8sKind = {
 };
 
 export const EventListenerModel: K8sKind = {
-  apiGroup: 'tekton.dev',
+  apiGroup: 'triggers.tekton.dev',
   apiVersion: 'v1alpha1',
   label: 'Event Listener',
   plural: 'eventlisteners',

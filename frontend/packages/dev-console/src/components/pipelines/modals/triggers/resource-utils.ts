@@ -42,7 +42,7 @@ export const createEventListener = (
       serviceAccountName: PIPELINE_SERVICE_ACCOUNT,
       triggers: [
         {
-          bindings: triggerBindings.map(({ metadata: { name } }) => ({ name })),
+          bindings: triggerBindings.map(({ kind, metadata: { name } }) => ({ kind, name })),
           template: { name: triggerTemplate.metadata.name },
         },
       ],
