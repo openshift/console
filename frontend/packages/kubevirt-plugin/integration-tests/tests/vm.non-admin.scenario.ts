@@ -60,7 +60,7 @@ describe('Kubevirt non-admin Flow', () => {
   });
 
   it(
-    'non-admin create project and create/remove vm',
+    'ID(CNV-1718) non-admin create project and create/remove vm',
     async () => {
       // Navigate to Virtual Machines page
       await browser.get(`${appHost}/k8s/ns/${testNonAdminNamespace}/virtualmachines`);
@@ -90,7 +90,7 @@ describe('Kubevirt non-admin Flow', () => {
     JASMINE_EXTENDED_TIMEOUT_INTERVAL,
   );
 
-  it('non-admin cannot create vm in foreign namespace', async () => {
+  it('ID(CNV-1720) non-admin cannot create vm in foreign namespace', async () => {
     // Navigate to Virtual Machines page with foreign default namespace
     await browser.get(`${appHost}/k8s/ns/default/virtualmachines`);
     // Check to make sure Access is Restricted.

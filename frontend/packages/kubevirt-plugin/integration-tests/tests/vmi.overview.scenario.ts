@@ -52,7 +52,7 @@ describe('Test VMI Details', () => {
     await isLoaded();
   });
 
-  it('Check VMI data in Details', async () => {
+  it('ID(CNV-3703) Check VMI data in Details', async () => {
     const expectation = {
       name: vmiName,
       status: VM_STATUS.Running,
@@ -95,7 +95,7 @@ describe('Test VMI Details', () => {
     ).not.toEqual(NOT_AVAILABLE);
   });
 
-  it('Check VMI services', async () => {
+  it('ID(CNV-3704) Check VMI services', async () => {
     await asyncForEach(nodePortServices, async (srv) => {
       expect(await vmView.vmDetailService(srv.exposeName).getText()).toEqual(srv.exposeName);
       expect(await vmView.vmDetailService(srv.exposeName).getAttribute('href')).toContain(

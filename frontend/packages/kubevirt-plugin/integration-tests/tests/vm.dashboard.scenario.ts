@@ -53,7 +53,7 @@ describe('Test VM dashboard', () => {
     deleteResources([vm.asResource(), multusNAD]);
   });
 
-  it('Inventory card', async () => {
+  it('ID(CNV-3333) Inventory card', async () => {
     expect(vmInventoryNICs.getText()).toEqual('1 NIC');
     expect(vmInventoryNICs.$('a').getAttribute('href')).toMatch(
       new RegExp(`.*/k8s/ns/${vm.namespace}/${VirtualMachineModel.plural}/${vm.name}/nics`),
@@ -74,7 +74,7 @@ describe('Test VM dashboard', () => {
     await vm.removeNIC(multusNetworkInterface.name);
   });
 
-  it('Status card', async () => {
+  it('ID(CNV-3330) Status card', async () => {
     await vm.waitForStatus(VM_STATUS.Off);
     await vm.navigateToDashboard();
     expect(vmStatus.getText()).toEqual(VM_STATUS.Off);
@@ -84,7 +84,7 @@ describe('Test VM dashboard', () => {
     expect(vmStatus.getText()).toEqual(VM_STATUS.Running);
   });
 
-  it('Details card', async () => {
+  it('ID(CNV-3332) Details card', async () => {
     expect(vmDetailsName.getText()).toEqual(vm.name);
     expect(vmDetailsNamespace.getText()).toEqual(vm.namespace);
     expect(vmDetailsNode.getText()).not.toEqual(NOT_AVAILABLE);

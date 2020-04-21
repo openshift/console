@@ -1,11 +1,7 @@
 import { browser } from 'protractor';
 import { appHost, testName } from '@console/internal-integration-tests/protractor.conf';
-import { createResource, deleteResources, fillInput } from '@console/shared/src/test-utils/utils';
-import {
-  resourceRowsPresent,
-  textFilter,
-  isLoaded,
-} from '@console/internal-integration-tests/views/crud.view';
+import { createResource, deleteResources } from '@console/shared/src/test-utils/utils';
+import { isLoaded } from '@console/internal-integration-tests/views/crud.view';
 import { getVMManifest, getVMIManifest } from './utils/mocks';
 import { VM_STATUS } from './utils/consts';
 import { filterBoxCount } from '../views/vms.list.view';
@@ -42,23 +38,13 @@ describe('Test List View Filtering (VMI)', () => {
     deleteResources([testVM, testVMI]);
   });
 
-  it('Displays correct count of Off VMs', async () => {
+  it('ID(CNV-3701) Displays correct count of Off VMs', async () => {
     const vmImportingCount = await filterBoxCount(VM_STATUS.Off);
     expect(vmImportingCount).toEqual(1);
   });
 
-  it('Displays correct count of Running VMIs', async () => {
+  it('ID(CNV-3700) Displays correct count of Running VMIs', async () => {
     const vmiImportingCount = await filterBoxCount(VM_STATUS.Running);
     expect(vmiImportingCount).toEqual(1);
-  });
-
-  it('Displays VMs in the list of VirtualMachines', async () => {
-    await fillInput(textFilter, testVM.metadata.name);
-    await resourceRowsPresent();
-  });
-
-  it('Displays VMIs in the list of VirtualMachines', async () => {
-    await fillInput(textFilter, testVMI.metadata.name);
-    await resourceRowsPresent();
   });
 });

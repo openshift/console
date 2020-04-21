@@ -11,7 +11,7 @@ import {
 } from '@console/shared/src/test-utils/utils';
 import { VM_BOOTUP_TIMEOUT_SECS, TAB, NOT_AVAILABLE } from './utils/consts';
 import { basicVMConfig, multusNAD } from './utils/mocks';
-import { getProvisionConfigs, getTestDataVolume } from './vm.wizard.configs';
+import { getProvisionConfigs, getTestDataVolume, VMTemplateTestCaseIDs } from './vm.wizard.configs';
 import { VirtualMachine } from './models/virtualMachine';
 import { VirtualMachineTemplate } from './models/virtualMachineTemplate';
 import { ProvisionConfigName } from './utils/constants/wizard';
@@ -69,7 +69,7 @@ describe('Kubevirt create VM Template using wizard', () => {
 
   provisionConfigs.forEach((provisionConfig, configName) => {
     it(
-      `Create VM Template using ${configName}.`,
+      `${VMTemplateTestCaseIDs[configName]}Create VM Template using ${configName}.`,
       async () => {
         const templateCfg = vmTemplateConfig(configName.toLowerCase(), provisionConfig);
         const vmTemplate = new VirtualMachineTemplate(templateCfg);
@@ -87,7 +87,7 @@ describe('Kubevirt create VM Template using wizard', () => {
     );
   });
 
-  it('Displays correct data on VM Template Details page', async () => {
+  it('ID(CNV-1847) Displays correct data on VM Template Details page', async () => {
     const provisionConfig = provisionConfigs.get(ProvisionConfigName.CONTAINER);
     const templateCfg = vmTemplateConfig(
       provisionConfig.provision.method.toLowerCase(),

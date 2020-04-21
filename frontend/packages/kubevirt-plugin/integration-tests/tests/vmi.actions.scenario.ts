@@ -60,7 +60,7 @@ describe('Test VMI actions', () => {
       vm = await waitForVM(testVM, VM_STATUS.Running, leakedResources, 'virtualmachineinstances');
     }, VM_IMPORT_TIMEOUT_SECS);
 
-    it('Deletes VMI', async () => {
+    it('ID(CNV-3693) Deletes VMI', async () => {
       await vm.navigateToListView();
       await isLoaded();
 
@@ -79,7 +79,7 @@ describe('Test VMI actions', () => {
       vm = await waitForVM(testVM, VM_STATUS.Running, leakedResources, 'virtualmachineinstances');
     }, VM_IMPORT_TIMEOUT_SECS);
 
-    it('Deletes VM', async () => {
+    it('ID(CNV-3699) Deletes VMI', async () => {
       await vm.navigateToTab(TAB.Details);
       await isLoaded();
 

@@ -48,7 +48,7 @@ describe('Test VM overview', () => {
     await vm.navigateToTab(TAB.Details);
   });
 
-  it('Check VM details in overview when VM is off', async () => {
+  it('ID(CNV-763) Check VM details in overview when VM is off', async () => {
     const expectation = {
       name: vmName,
       status: VM_STATUS.Off,
@@ -86,7 +86,7 @@ describe('Test VM overview', () => {
   });
 
   it(
-    'Check VM details in overview when VM is running',
+    'ID(CNV-4037) Check VM details in overview when VM is running',
     async () => {
       await vm.action(VM_ACTION.Start);
       // Empty fields turn into non-empty
@@ -107,7 +107,7 @@ describe('Test VM overview', () => {
     VM_BOOTUP_TIMEOUT_SECS,
   );
 
-  it('Check vm services', async () => {
+  it('ID(CNV-2081) Check exposed vm services', async () => {
     await asyncForEach(nodePortServices, async (srv) => {
       expect(await vmView.vmDetailService(srv.exposeName).getText()).toEqual(srv.exposeName);
       expect(await vmView.vmDetailService(srv.exposeName).getAttribute('href')).toContain(
