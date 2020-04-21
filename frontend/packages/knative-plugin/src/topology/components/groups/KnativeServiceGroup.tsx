@@ -30,6 +30,7 @@ import {
 } from '@console/dev-console/src/components/topology';
 import { TYPE_KNATIVE_SERVICE } from '../../const';
 import RevisionTrafficSourceAnchor from '../anchors/RevisionTrafficSourceAnchor';
+import BuildDecorator from '@console/dev-console/src/components/topology/components/nodes/build-decorators/BuildDecorator';
 
 export type KnativeServiceGroupProps = {
   element: Node;
@@ -166,6 +167,7 @@ const KnativeServiceGroup: React.FC<KnativeServiceGroupProps> = ({
             </Decorator>
           </Tooltip>
         )}
+        <BuildDecorator x={x} y={y + height} radius={DECORATOR_RADIUS} workloadData={data} />
         {showLabels && (data.kind || element.getLabel()) && (
           <SvgBoxedText
             className="odc-knative-service__label odc-base-node__label"
