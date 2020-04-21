@@ -30,66 +30,79 @@ export const OperatorHubList: React.SFC<OperatorHubListProps> = (props) => {
     [] as PackageManifestKind[],
   );
   const localItems = _.get(props, 'packageManifest.data', [] as PackageManifestKind[]);
-  const items: OperatorHubItem[] = marketplaceItems.concat(localItems).map(
-    (pkg): OperatorHubItem => {
-      const { channels, defaultChannel } = _.get(pkg, 'status');
-      const { currentCSVDesc } = _.find(channels || [], { name: defaultChannel } as any);
-      const currentCSVAnnotations: OperatorHubCSVAnnotations = _.get(
-        currentCSVDesc,
-        'annotations',
-        {},
-      );
-      const {
-        certifiedLevel,
-        healthIndex,
-        repository,
-        containerImage,
-        createdAt,
-        support,
-        capabilities: capabilityLevel,
-      } = currentCSVAnnotations;
+  const getPackageStatus = (pkg) => _.get(pkg, 'status');
+  const items: OperatorHubItem[] = marketplaceItems
+    .concat(localItems)
+    .filter((pkg) => {
+      // if a package does not have status.defaultChannel, exclude it so the app doesn't fail
+      const { defaultChannel } = getPackageStatus(pkg);
+      if (!defaultChannel) {
+        // eslint-disable-next-line no-console
+        console.warn(
+          `PackageManifest ${pkg.metadata.name} has no status.defaultChannel and has been excluded`,
+        );
+        return false;
+      }
+      return true;
+    })
+    .map(
+      (pkg): OperatorHubItem => {
+        const { channels, defaultChannel } = _.get(pkg, 'status');
+        const { currentCSVDesc } = _.find(channels || [], { name: defaultChannel } as any);
+        const currentCSVAnnotations: OperatorHubCSVAnnotations = _.get(
+          currentCSVDesc,
+          'annotations',
+          {},
+        );
+        const {
+          certifiedLevel,
+          healthIndex,
+          repository,
+          containerImage,
+          createdAt,
+          support,
+          capabilities: capabilityLevel,
+        } = currentCSVAnnotations;
 
-      return {
-        obj: pkg,
-        kind: PackageManifestModel.kind,
-        name: _.get(currentCSVDesc, 'displayName', pkg.metadata.name),
-        uid: `${pkg.metadata.name}-${pkg.status.catalogSource}-${
-          pkg.status.catalogSourceNamespace
-        }`,
-        installed: installedFor(subscription.data)(operatorGroup.data)(pkg.status.packageName)(
-          namespace,
-        ),
-        subscription: subscriptionFor(subscription.data)(operatorGroup.data)(
-          pkg.status.packageName,
-        )(namespace),
-        // FIXME: Just use `installed`
-        installState: installedFor(subscription.data)(operatorGroup.data)(pkg.status.packageName)(
-          namespace,
-        )
-          ? InstalledState.Installed
-          : InstalledState.NotInstalled,
-        imgUrl: iconFor(pkg),
-        description: currentCSVAnnotations.description || currentCSVDesc.description,
-        longDescription: currentCSVDesc.description || currentCSVAnnotations.description,
-        provider: _.get(pkg, 'status.provider.name', _.get(pkg, 'metadata.labels.provider')),
-        providerType: getOperatorProviderType(pkg),
-        tags: [],
-        version: _.get(currentCSVDesc, 'version'),
-        categories: _.get(currentCSVAnnotations, 'categories', '')
-          .split(',')
-          .map((category) => category.trim()),
-        catalogSource: _.get(pkg, 'status.catalogSource'),
-        catalogSourceNamespace: _.get(pkg, 'status.catalogSourceNamespace'),
-        certifiedLevel,
-        healthIndex,
-        repository,
-        containerImage,
-        createdAt,
-        support,
-        capabilityLevel,
-      };
-    },
-  );
+        return {
+          obj: pkg,
+          kind: PackageManifestModel.kind,
+          name: _.get(currentCSVDesc, 'displayName', pkg.metadata.name),
+          uid: `${pkg.metadata.name}-${pkg.status.catalogSource}-${pkg.status.catalogSourceNamespace}`,
+          installed: installedFor(subscription.data)(operatorGroup.data)(pkg.status.packageName)(
+            namespace,
+          ),
+          subscription: subscriptionFor(subscription.data)(operatorGroup.data)(
+            pkg.status.packageName,
+          )(namespace),
+          // FIXME: Just use `installed`
+          installState: installedFor(subscription.data)(operatorGroup.data)(pkg.status.packageName)(
+            namespace,
+          )
+            ? InstalledState.Installed
+            : InstalledState.NotInstalled,
+          imgUrl: iconFor(pkg),
+          description: currentCSVAnnotations.description || currentCSVDesc.description,
+          longDescription: currentCSVDesc.description || currentCSVAnnotations.description,
+          provider: _.get(pkg, 'status.provider.name', _.get(pkg, 'metadata.labels.provider')),
+          providerType: getOperatorProviderType(pkg),
+          tags: [],
+          version: _.get(currentCSVDesc, 'version'),
+          categories: _.get(currentCSVAnnotations, 'categories', '')
+            .split(',')
+            .map((category) => category.trim()),
+          catalogSource: _.get(pkg, 'status.catalogSource'),
+          catalogSourceNamespace: _.get(pkg, 'status.catalogSourceNamespace'),
+          certifiedLevel,
+          healthIndex,
+          repository,
+          containerImage,
+          createdAt,
+          support,
+          capabilityLevel,
+        };
+      },
+    );
 
   return (
     <StatusBox
@@ -169,7 +182,7 @@ export const OperatorHubPage = withFallback(
               ]}
             >
               {/* FIXME(alecmerdler): Hack because `Firehose` injects props without TypeScript knowing about it */}
-              <OperatorHubList {...props as any} namespace={props.match.params.ns} />
+              <OperatorHubList {...(props as any)} namespace={props.match.params.ns} />
             </Firehose>
           </div>
         </div>
