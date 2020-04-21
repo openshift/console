@@ -20,7 +20,9 @@ const BuildConfigPage: React.FC<BuildConfigPageProps> = ({ noProjectsAvailable, 
         <title>Builds</title>
       </Helmet>
       {namespace ? (
-        <BuildConfigsPage {...props} mock={noProjectsAvailable} />
+        <div>
+          <BuildConfigsPage {...props} mock={noProjectsAvailable} />
+        </div>
       ) : (
         <ProjectListPage title="Build Configs">
           Select a project to view the list of build configs

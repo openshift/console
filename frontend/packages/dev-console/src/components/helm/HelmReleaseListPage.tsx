@@ -31,10 +31,12 @@ export const HelmReleaseListPage: React.FC<HelmReleaseListPageProps> = (props) =
       <Helmet>
         <title>Helm Releases</title>
       </Helmet>
-      <PageHeading title="Helm Releases" />
-      <Firehose resources={resources}>
-        <HelmReleaseList namespace={namespace} />
-      </Firehose>
+      <div>
+        <PageHeading title="Helm Releases" />
+        <Firehose resources={resources}>
+          <HelmReleaseList namespace={namespace} />
+        </Firehose>
+      </div>
     </NamespacedPage>
   ) : (
     <ProjectListPage title="Helm Releases">

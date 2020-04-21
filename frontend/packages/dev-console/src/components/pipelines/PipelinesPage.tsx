@@ -14,12 +14,14 @@ export const PipelinesPage: React.FC<PipelinesPageProps> = (props) => {
     },
   } = props;
   return namespace ? (
-    <PipelinesResourceList
-      {...props}
-      badge={getBadgeFromType(PipelineModel.badge)}
-      namespace={namespace}
-      title={PipelineModel.labelPlural}
-    />
+    <div>
+      <PipelinesResourceList
+        {...props}
+        badge={getBadgeFromType(PipelineModel.badge)}
+        namespace={namespace}
+        title={PipelineModel.labelPlural}
+      />
+    </div>
   ) : (
     <ProjectListPage
       title={PipelineModel.labelPlural}
