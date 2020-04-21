@@ -229,7 +229,7 @@ export const VolumeSnapshotModal = withHandlePromise((props: VolumeSnapshotModal
   };
 
   return (
-    <Form onSubmit={submit}>
+    <Form onSubmit={submit} name="form">
       <div className="modal-content modal-content--no-inner-scroll">
         <ModalTitle>Create Snapshot</ModalTitle>
         <ModalBody>
@@ -280,7 +280,7 @@ type VolumeSnapshotModalWithFireHoseProps = {
   resource: K8sResourceKind;
 } & ModalComponentProps;
 
-const VolumeSnapshotModalWithFireHose: React.FC<VolumeSnapshotModalWithFireHoseProps> = ({
+export const VolumeSnapshotModalWithFireHose: React.FC<VolumeSnapshotModalWithFireHoseProps> = ({
   resource,
   ...rest
 }) => (

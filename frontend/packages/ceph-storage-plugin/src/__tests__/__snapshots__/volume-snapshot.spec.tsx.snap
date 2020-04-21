@@ -1,0 +1,70 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<VolumeSnapshotDetails> should render the Details component 1`] = `
+<UNDEFINED>
+  <div
+    className="co-m-pane__body"
+  >
+    <SectionHeading
+      text="Volume Snapshot Details"
+    />
+    <div
+      className="row"
+    >
+      <div
+        className="col-md-6"
+      >
+        <ResourceSummary
+          resource={
+            Object {
+              "apiVersion": "snapshot.storage.k8s.io/v1beta1",
+              "kind": "VolumeSnapshot",
+              "metadata": Object {
+                "name": "fakeSnapshot",
+                "namespace": "fakes",
+              },
+              "spec": Object {
+                "source": Object {
+                  "persistentVolumeClaimName": "fake-pvc",
+                },
+                "volumeSnapshotClassName": "fake-snc",
+              },
+              "status": Object {
+                "readyToUse": true,
+                "restoreSize": "1Gi",
+              },
+            }
+          }
+        >
+          <dt>
+            Status
+          </dt>
+          <dd>
+            Ready
+          </dd>
+          <dt>
+            Size
+          </dt>
+          <dd>
+            1Gi
+          </dd>
+        </ResourceSummary>
+      </div>
+      <div
+        className="col-md-6"
+      >
+        <dt>
+          Persistent Volume Claim
+        </dt>
+        <dd>
+          <UNDEFINED
+            kind="PersistentVolumeClaim"
+            name="fake-pvc"
+            namespace="fakes"
+          />
+        </dd>
+      </div>
+    </div>
+  </div>
+</UNDEFINED>
+`;

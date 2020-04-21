@@ -59,7 +59,7 @@ export const RestorePVCModal = withHandlePromise((props: RestorePVCModalProps) =
           kind: VolumeSnapshotModel.kind,
           apiGroup: 'snapshot.storage.k8s.io',
         },
-        accessModes: [...accessModes],
+        accessModes,
         resources: {
           requests: {
             storage: pvcSize,
@@ -77,7 +77,7 @@ export const RestorePVCModal = withHandlePromise((props: RestorePVCModalProps) =
   return (
     <div className="modal-content modal-content--no-inner-scroll">
       <ModalTitle>Restore</ModalTitle>
-      <Form onSubmit={submit}>
+      <Form onSubmit={submit} name="form">
         <ModalBody>
           <p>After restore action is finished, a new PVC will be created.</p>
           <FormGroup label="Name" isRequired fieldId="restore-pvc-modal__name">
@@ -95,15 +95,17 @@ export const RestorePVCModal = withHandlePromise((props: RestorePVCModalProps) =
               <GridItem span={6}>
                 <div>
                   <p className="ceph-restore-pvc-modal__pvc-details">Date</p>
-                  <p>{resource?.metadata?.creationTimestamp}</p>
+                  <p data-test-id="snapshot-name">{resource?.metadata?.creationTimestamp}</p>
                 </div>
                 <div>
                   <p className="ceph-restore-pvc-modal__pvc-details">Status</p>
-                  <p>{resource?.status?.readyToUse ? 'Ready' : 'Not Ready'}</p>
+                  <p data-test-id="snapshot-status">
+                    {resource?.status?.readyToUse ? 'Ready' : 'Not Ready'}
+                  </p>
                 </div>
                 <div>
                   <p className="ceph-restore-pvc-modal__pvc-details">Size</p>
-                  <p>{resource?.status?.restoreSize || 'No Data'}</p>
+                  <p data-test-id="snapshot-size">{resource?.status?.restoreSize || 'No Data'}</p>
                 </div>
               </GridItem>
               <GridItem span={6}>
@@ -111,17 +113,19 @@ export const RestorePVCModal = withHandlePromise((props: RestorePVCModalProps) =
                   <p className="ceph-restore-pvc-modal__pvc-details">Namespace</p>
                   <p>
                     <ResourceIcon kind={NamespaceModel.kind} />
-                    {getNamespace(resource)}
+                    <span data-test-id="snapshot-ns">{getNamespace(resource)}</span>
                   </p>
                 </div>
                 <div>
                   <p className="ceph-restore-pvc-modal__pvc-details">API Version</p>
-                  <p>{resource?.apiVersion}</p>
+                  <p data-test-id="snapshot-apiversion">{resource?.apiVersion}</p>
                 </div>
                 <div>
                   <p className="ceph-restore-pvc-modal__pvc-details">Persistent Volume Claim</p>
                   <ResourceIcon kind={PersistentVolumeClaimModel.kind} />
-                  {resource?.spec?.source?.persistentVolumeClaimName}
+                  <span data-test-id="snapshot-source">
+                    {resource?.spec?.source?.persistentVolumeClaimName}
+                  </span>
                 </div>
               </GridItem>
             </Grid>

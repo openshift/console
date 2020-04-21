@@ -22,7 +22,7 @@ import {
   navFactory,
   PageComponentProps,
 } from '@console/internal/components/utils';
-import { getName, getNamespace } from '@console/shared';
+import { getName, getNamespace, Status } from '@console/shared';
 
 import { PersistentVolumeClaimModel } from '@console/internal/models';
 import { VolumeSnapshotModel } from '../../models';
@@ -30,7 +30,7 @@ import { getKebabActionsForKind } from '../../utils/kebab-actions';
 import { sortable } from '@patternfly/react-table';
 import { volumeSnapshotModal } from '../modals/volume-snapshot-modal/volume-snapshot-modal';
 
-const snapshotMenuActions = [...getKebabActionsForKind(VolumeSnapshotModel)];
+export const snapshotMenuActions = [...getKebabActionsForKind(VolumeSnapshotModel)];
 
 const snapshotTableColumnClasses = [
   '',
@@ -41,7 +41,7 @@ const snapshotTableColumnClasses = [
   Kebab.columnClass,
 ];
 
-const VolumeSnapshotTableHeader = () => {
+export const VolumeSnapshotTableHeader = () => {
   return [
     {
       title: 'Name',
@@ -83,8 +83,6 @@ VolumeSnapshotTableHeader.displayName = 'SnapshotTableHeader';
 
 const volumeSnapshotKind = referenceFor(VolumeSnapshotModel);
 
-const { details } = navFactory;
-
 const breadcrumbsForSnapshotDetailsPage = (match: any) => () => [
   {
     name: PersistentVolumeClaimModel.labelPlural,
@@ -96,7 +94,7 @@ const breadcrumbsForSnapshotDetailsPage = (match: any) => () => [
   },
 ];
 
-const DetailsComponent = ({ obj: volumeSnapshot }) => (
+export const DetailsComponent = ({ obj: volumeSnapshot }) => (
   <>
     <div className="co-m-pane__body">
       <SectionHeading text="Volume Snapshot Details" />
@@ -132,12 +130,17 @@ export const VolumeSnapshotDetails = (props) => (
     name={props.match.params.name}
     kindObj={VolumeSnapshotModel}
     namespace={props.match.params.ns}
-    pages={[details(DetailsComponent)]}
+    pages={[navFactory.details(DetailsComponent)]}
     breadcrumbsFor={breadcrumbsForSnapshotDetailsPage(props.match)}
   />
 );
 
-const VolumeSnapshotTableRow: RowFunction<K8sResourceKind> = ({ obj, index, key, style }) => (
+export const VolumeSnapshotTableRow: RowFunction<K8sResourceKind> = ({
+  obj,
+  index,
+  key,
+  style,
+}) => (
   <TableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
     <TableData className={snapshotTableColumnClasses[0]}>
       <ResourceLink
@@ -151,7 +154,7 @@ const VolumeSnapshotTableRow: RowFunction<K8sResourceKind> = ({ obj, index, key,
       {obj?.metadata?.creationTimestamp}
     </TableData>
     <TableData className={snapshotTableColumnClasses[2]}>
-      {obj?.status?.readyToUse ? 'Ready' : 'Not Ready'}
+      <Status status={obj?.status?.readyToUse ? 'Ready' : 'Not Ready'} />
     </TableData>
     <TableData className={snapshotTableColumnClasses[3]}>
       {obj?.status?.restoreSize || 'No Data'}
