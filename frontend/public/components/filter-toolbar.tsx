@@ -169,7 +169,10 @@ const FilterToolbar_: React.FC<FilterToolbarProps & RouteComponentProps> = (prop
 
   const applyRowFilter = (selected: string[]) => {
     rowFilters.forEach((filter) => {
-      const all = _.map(filter.items, 'id');
+      const rowItems = filter.itemsGenerator
+        ? filter.itemsGenerator(props, props?.kinds)
+        : filter.items;
+      const all = _.map(rowItems, 'id');
       const recognized = _.intersection(selected, all);
       (props.reduxIDs || []).forEach((id) =>
         props.filterList(id, filter.type, { selected: new Set(recognized), all }),
