@@ -16,7 +16,14 @@ export class TogglePlay extends React.Component {
       this.props.className,
       this.props.active ? 'co-toggle-play--active' : 'co-toggle-play--inactive',
     );
-    return <Button variant="plain" className={klass} onClick={this.props.onClick} />;
+    return (
+      <Button
+        variant="plain"
+        className={klass}
+        onClick={this.props.onClick}
+        aria-label={this.props.active ? 'Pause event streaming' : 'Start streaming events'}
+      />
+    );
   }
 }
 TogglePlay.propTypes = {
