@@ -55,10 +55,11 @@ export const tableFilters: TableFilterMap = {
   'silence-state': (filter, silence) => filter.selected.has(silenceState(silence)),
 
   // Filter role by role kind
-  'role-kind': (filter, role) => filter.selected.has(roleType(role)),
+  'role-kind': (filter, role) => filter.selected.has(roleType(role)) || filter.selected.size === 0,
 
   // Filter role bindings by role kind
-  'role-binding-kind': (filter, binding) => filter.selected.has(bindingType(binding)),
+  'role-binding-kind': (filter, binding) =>
+    filter.selected.has(bindingType(binding)) || filter.selected.size === 0,
 
   // Filter role bindings by text match
   'role-binding': (str, { metadata, roleRef, subject }) => {
