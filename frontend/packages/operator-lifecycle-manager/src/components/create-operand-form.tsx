@@ -580,6 +580,14 @@ export const CreateOperandForm: React.FC<CreateOperandFormProps> = ({
           ],
           field,
         ) => {
+          if (hasDescriptor(field, SpecCapability.advanced)) {
+            return [
+              [...advancedFieldsAccumulator, field],
+              arrayFieldsAccumulator,
+              groupFieldsAccumulator,
+              normalFieldsAccumulator,
+            ];
+          }
           if (hasDescriptor(field, SpecCapability.arrayFieldGroup)) {
             return [
               advancedFieldsAccumulator,
@@ -593,14 +601,6 @@ export const CreateOperandForm: React.FC<CreateOperandFormProps> = ({
               advancedFieldsAccumulator,
               arrayFieldsAccumulator,
               [...groupFieldsAccumulator, field],
-              normalFieldsAccumulator,
-            ];
-          }
-          if (hasDescriptor(field, SpecCapability.advanced)) {
-            return [
-              [...advancedFieldsAccumulator, field],
-              arrayFieldsAccumulator,
-              groupFieldsAccumulator,
               normalFieldsAccumulator,
             ];
           }
