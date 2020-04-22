@@ -46,7 +46,19 @@ export const OperandForm: React.FC<OperandFormProps> = ({
   return (
     <div className="co-m-pane__body">
       <div className="row">
-        <div className="col-md-8 col-lg-7">
+        <div className="col-md-4 col-md-push-8 col-lg-5 col-lg-push-7">
+          {csv && providedAPI && (
+            <div style={{ marginBottom: '30px' }}>
+              <ClusterServiceVersionLogo
+                displayName={providedAPI.displayName}
+                icon={_.get(csv, 'spec.icon[0]')}
+                provider={_.get(csv, 'spec.provider')}
+              />
+              {providedAPI.description}
+            </div>
+          )}
+        </div>
+        <div className="col-md-8 col-md-pull-4 col-lg-7 col-lg-pull-5">
           <DynamicForm
             noValidate
             errors={errors}
@@ -58,18 +70,6 @@ export const OperandForm: React.FC<OperandFormProps> = ({
             onSubmit={handleSubmit}
             schema={schema}
           />
-        </div>
-        <div className="col-md-4 col-lg-5">
-          {csv && providedAPI && (
-            <div style={{ marginBottom: '30px' }}>
-              <ClusterServiceVersionLogo
-                displayName={providedAPI.displayName}
-                icon={_.get(csv, 'spec.icon[0]')}
-                provider={_.get(csv, 'spec.provider')}
-              />
-              {providedAPI.description}
-            </div>
-          )}
         </div>
       </div>
     </div>
