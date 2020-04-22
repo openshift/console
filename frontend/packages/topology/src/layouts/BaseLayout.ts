@@ -12,6 +12,9 @@ import {
   NODE_COLLAPSE_CHANGE_EVENT,
   NodeCollapseChangeEventListener,
   NodeStyle,
+  ElementVisibilityChangeEventListener,
+  ELEMENT_VISIBILITY_CHANGE_EVENT,
+  ElementVisibilityChangeEvent,
 } from '../types';
 import {
   leafNodeElements,
@@ -365,31 +368,52 @@ class BaseLayout implements Layout {
   };
 
   private startListening(): void {
-    this.graph.getController().addEventListener(ADD_CHILD_EVENT, this.handleChildAdded);
-    this.graph.getController().addEventListener(REMOVE_CHILD_EVENT, this.handleChildRemoved);
-    this.graph
-      .getController()
-      .addEventListener(NODE_COLLAPSE_CHANGE_EVENT, this.handleNodeCollapse);
+    const controller = this.graph.getController();
+    if (controller) {
+      controller.addEventListener(ADD_CHILD_EVENT, this.handleChildAdded);
+      controller.addEventListener(REMOVE_CHILD_EVENT, this.handleChildRemoved);
+      controller.addEventListener(
+        ELEMENT_VISIBILITY_CHANGE_EVENT,
+        this.handleElementVisibilityChange,
+      );
+      controller.addEventListener(NODE_COLLAPSE_CHANGE_EVENT, this.handleNodeCollapse);
+    }
   }
 
   private stopListening(): void {
-    clearTimeout(this.scheduleHandle);
-    this.graph.getController().removeEventListener(ADD_CHILD_EVENT, this.handleChildAdded);
-    this.graph.getController().removeEventListener(REMOVE_CHILD_EVENT, this.handleChildRemoved);
-    this.graph
-      .getController()
-      .removeEventListener(NODE_COLLAPSE_CHANGE_EVENT, this.handleNodeCollapse);
+    const controller = this.graph.getController();
+    if (this.scheduleHandle) {
+      window.cancelAnimationFrame(this.scheduleHandle);
+    }
+    if (controller) {
+      controller.removeEventListener(ADD_CHILD_EVENT, this.handleChildAdded);
+      controller.removeEventListener(REMOVE_CHILD_EVENT, this.handleChildRemoved);
+      controller.removeEventListener(
+        ELEMENT_VISIBILITY_CHANGE_EVENT,
+        this.handleElementVisibilityChange,
+      );
+      controller.removeEventListener(NODE_COLLAPSE_CHANGE_EVENT, this.handleNodeCollapse);
+    }
   }
 
-  private handleChildAdded: ElementChildEventListener = ({ child }): void => {
+  protected handleChildAdded: ElementChildEventListener = ({ child }): void => {
     if (!this.nodesMap[child.getId()]) {
       this.scheduleRestart = true;
       this.scheduleLayout();
     }
   };
 
-  private handleChildRemoved: ElementChildEventListener = ({ child }): void => {
+  protected handleChildRemoved: ElementChildEventListener = ({ child }): void => {
     if (this.nodesMap[child.getId()]) {
+      this.scheduleRestart = true;
+      this.scheduleLayout();
+    }
+  };
+
+  protected handleElementVisibilityChange: ElementVisibilityChangeEventListener = (
+    event: ElementVisibilityChangeEvent,
+  ): void => {
+    if (event.visible === (this.nodesMap[event.target.getId()] === undefined)) {
       this.scheduleRestart = true;
       this.scheduleLayout();
     }
@@ -404,11 +428,11 @@ class BaseLayout implements Layout {
 
   private scheduleLayout = (): void => {
     if (!this.scheduleHandle) {
-      this.scheduleHandle = window.setTimeout(() => {
+      this.scheduleHandle = window.requestAnimationFrame(() => {
         delete this.scheduleHandle;
         this.runLayout(false, this.scheduleRestart);
         this.scheduleRestart = false;
-      }, 0);
+      });
     }
   };
 
