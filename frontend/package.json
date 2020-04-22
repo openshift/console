@@ -21,6 +21,7 @@
     "debug-test": "node --inspect-brk node_modules/.bin/jest --runInBand",
     "webdriver-update": "webdriver-manager update",
     "webdriver-update-macos": "CHROME_VERSION=$(/Applications/Google\\ Chrome.app/Contents/MacOS/Google\\ Chrome --version) && yarn webdriver-update --versions.chrome=\"${CHROME_VERSION}\"",
+    "webdriver-update-fedora": "CHROME_VERSION=$(/usr/bin/google-chrome-stable --version) && yarn webdriver-update --versions.chrome=\"${CHROME_VERSION}\"",
     "test-gui-tap": "TAP=true yarn run test-gui",
     "test-gui-openshift": "yarn run test-suite --suite crud --params.openshift true",
     "test-gui": "yarn run test-suite --suite all",
