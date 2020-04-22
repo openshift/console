@@ -48,7 +48,7 @@ export class BitbucketService extends BaseService {
         repo_slug: this.metadata.repoName,
         username: this.metadata.owner,
       });
-      return data.name === this.metadata.repoName;
+      return data.name.toLocaleLowerCase() === this.metadata.repoName.toLocaleLowerCase();
     } catch (e) {
       return false;
     }
