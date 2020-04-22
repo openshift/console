@@ -30,6 +30,17 @@ const BuilderImageSelector: React.FC<BuilderImageSelectorProps> = ({
 
   const fieldId = getFieldId('image.name', 'selector');
 
+  if (_.keys(builderImages).length === 1) {
+    return (
+      <ItemSelectorField
+        itemList={builderImages}
+        name="image.selected"
+        loadingItems={loadingImageStream}
+        recommended={values.image.recommended}
+      />
+    );
+  }
+
   return (
     <FormGroup fieldId={fieldId} label="Builder Image">
       {values.image.isRecommending && (
