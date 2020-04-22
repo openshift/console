@@ -269,10 +269,7 @@ export const ClusterServiceVersionTableRow = withFallback<ClusterServiceVersionT
           ))}
           {providedAPIsFor(obj).filter((desc) => !isInternalObject(internalObjects, desc.name))
             .length > 4 && (
-            <Link
-              to={`${route}/instances`}
-              title={`View ${providedAPIsFor(obj).length - 4} more...`}
-            >
+            <Link to={route} title={`View ${providedAPIsFor(obj).length - 4} more...`}>
               {`View ${providedAPIsFor(obj).length - 4} more...`}
             </Link>
           )}
