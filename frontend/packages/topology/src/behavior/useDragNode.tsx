@@ -18,7 +18,7 @@ export const DRAG_NODE_EVENT = 'drag_node';
 export const DRAG_NODE_START_EVENT = `${DRAG_NODE_EVENT}_start`;
 export const DRAG_NODE_END_EVENT = `${DRAG_NODE_EVENT}_end`;
 
-export type DragNodeEventListener = EventListener<[Node, DragEvent, string]>;
+export type DragNodeEventListener = EventListener<[Node, DragEvent, DragOperationWithType]>;
 
 export const DRAG_MOVE_OPERATION = 'move.useDragNode';
 

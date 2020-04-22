@@ -24,6 +24,7 @@ import {
   DRAG_NODE_START_EVENT,
   DragEvent,
   DragNodeEventListener,
+  DragOperationWithType,
 } from '../behavior';
 import { BaseEdge } from '../elements';
 import { ForceSimulation } from './ForceSimulation';
@@ -283,19 +284,19 @@ class BaseLayout implements Layout {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  protected initDrag(element: Node, event: DragEvent, operation: string): void {}
+  protected initDrag(element: Node, event: DragEvent, operation: DragOperationWithType): void {}
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  protected endDrag(element: Node, event: DragEvent, operation: string): void {}
+  protected endDrag(element: Node, event: DragEvent, operation: DragOperationWithType): void {}
 
-  handleDragStart = (element: Node, event: DragEvent, operation: string) => {
+  handleDragStart = (element: Node, event: DragEvent, operation: DragOperationWithType) => {
     this.initDrag(element, event, operation);
 
     if (!this.options.layoutOnDrag) {
       return;
     }
 
-    if (operation !== DRAG_MOVE_OPERATION) {
+    if (operation.type !== DRAG_MOVE_OPERATION) {
       this.forceSimulation.stopSimulation();
       return;
     }
@@ -326,14 +327,14 @@ class BaseLayout implements Layout {
     }
   };
 
-  handleDragEnd = (element: Node, event: DragEvent, operation: string) => {
+  handleDragEnd = (element: Node, event: DragEvent, operation: DragOperationWithType) => {
     this.endDrag(element, event, operation);
 
     if (!this.options.layoutOnDrag) {
       return;
     }
 
-    if (operation !== DRAG_MOVE_OPERATION) {
+    if (operation.type !== DRAG_MOVE_OPERATION) {
       this.forceSimulation.restart();
       return;
     }
