@@ -171,16 +171,22 @@ export const CloneVMModal = withHandlePromise((props: CloneVMModalProps) => {
               onChange={(v) => onNamespaceChanged(v)}
               id={asId('namespace')}
             >
-              {getLoadedData(namespaces, []).map((n) => {
-                const namespaceName = getName(n);
-                return (
-                  <FormSelectOption
-                    key={namespaceName}
-                    value={namespaceName}
-                    label={namespaceName}
-                  />
-                );
-              })}
+              {[...getLoadedData(namespaces, [])]
+                .sort((n1, n2) => {
+                  const n1Name = getName(n1);
+                  const n2Name = getName(n2);
+                  return n1Name.localeCompare(n2Name);
+                })
+                .map((n) => {
+                  const namespaceName = getName(n);
+                  return (
+                    <FormSelectOption
+                      key={namespaceName}
+                      value={namespaceName}
+                      label={namespaceName}
+                    />
+                  );
+                })}
             </FormSelect>
           </FormGroup>
           <FormGroup fieldId={asId('start')}>
