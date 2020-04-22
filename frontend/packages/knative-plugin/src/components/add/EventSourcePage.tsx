@@ -21,7 +21,9 @@ const EventSourcePage: React.FC<EventSourcePageProps> = ({ match, location }) =>
       <Helmet>
         <title>Event Sources</title>
       </Helmet>
-      <PageHeading title="Event Sources" />
+      <PageHeading title="Event Sources">
+        Create an event source to register interest in a class of events from a particular system
+      </PageHeading>
       <PageBody flexLayout>
         <Firehose resources={resources}>
           <EventSource

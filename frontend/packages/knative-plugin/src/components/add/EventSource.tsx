@@ -12,6 +12,8 @@ import { eventSourceValidationSchema } from './eventSource-validation-utils';
 import EventSourceForm from './EventSourceForm';
 import { getEventSourceResource } from '../../utils/create-eventsources-utils';
 import { EventSourceFormData } from './import-types';
+import ShowResourceAlert from './ShowResourceAlert';
+import { knativeServingResourcesServices } from '../../utils/get-knative-resources';
 
 interface EventSourceProps {
   namespace: string;
@@ -93,15 +95,24 @@ const EventSource: React.FC<Props> = ({
       });
   };
 
+  const knServiceResource = { ...knativeServingResourcesServices(namespace)[0], limit: 1 };
+
   return (
-    <Formik
-      initialValues={initialValues}
-      onSubmit={handleSubmit}
-      onReset={history.goBack}
-      validationSchema={eventSourceValidationSchema}
-    >
-      {(props) => <EventSourceForm {...props} namespace={namespace} projects={projects} />}
-    </Formik>
+    <>
+      <ShowResourceAlert
+        title="Event Source can not be created"
+        message="An event source must sink to Knative Service, but no Knative Service exist in this project"
+        resource={knServiceResource}
+      />
+      <Formik
+        initialValues={initialValues}
+        onSubmit={handleSubmit}
+        onReset={history.goBack}
+        validationSchema={eventSourceValidationSchema}
+      >
+        {(props) => <EventSourceForm {...props} namespace={namespace} projects={projects} />}
+      </Formik>
+    </>
   );
 };
 

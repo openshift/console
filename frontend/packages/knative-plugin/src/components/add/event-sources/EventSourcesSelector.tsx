@@ -36,7 +36,7 @@ const EventSourcesSelector: React.FC<EventSourcesSelectorProps> = ({ eventSource
     [setFieldValue, setFieldTouched, validateForm],
   );
   return (
-    <FormSection title="Type" fullWidth>
+    <FormSection title="Type" fullWidth extraMargin>
       <ItemSelectorField
         itemList={eventSourceList}
         loadingItems={!eventSourceItems}

@@ -24,12 +24,12 @@ describe('EventSource Form', () => {
     };
   });
 
-  it('should render EventSourcesSelector ', () => {
+  it('should render EventSourcesSelector', () => {
     const eventSourceForm = shallow(<EventSourceForm {...formProps} />);
     expect(eventSourceForm.find(EventSourcesSelector)).toHaveLength(1);
   });
 
-  it('should render EventSourceSection ', () => {
+  it('should render EventSourceSection', () => {
     const eventSourceForm = shallow(<EventSourceForm {...formProps} />);
     expect(eventSourceForm.find(EventSourceSection)).toHaveLength(1);
   });
