@@ -463,11 +463,11 @@ export class SubscriptionUpdates extends React.Component<
                     type="button"
                     isInline
                     onClick={channelModal}
-                    variant={!pkg ? 'plain' : 'link'}
+                    variant="link"
                     isDisabled={!pkg}
                   >
                     {obj.spec.channel || 'default'}
-                    <PencilAltIcon className="co-icon-space-l pf-c-button-icon--plain" />
+                    {pkg && <PencilAltIcon className="co-icon-space-l pf-c-button-icon--plain" />}
                   </Button>
                 )}
               </dd>
