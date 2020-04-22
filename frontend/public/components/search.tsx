@@ -237,7 +237,7 @@ const SearchPage_: React.FC<SearchProps & StateProps & DispatchProps> = (props) 
                 categoryName="Label"
               >
                 <DataToolbarFilter
-                  chips={typeaheadNameFilter.length > 0 && [typeaheadNameFilter]}
+                  chips={typeaheadNameFilter.length > 0 ? [typeaheadNameFilter] : []}
                   deleteChip={clearNameFilter}
                   categoryName="Name"
                 >
