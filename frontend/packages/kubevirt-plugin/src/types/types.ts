@@ -11,3 +11,8 @@ export type BootableDeviceType = {
 export type IDEntity = {
   id: number;
 };
+
+export type OperatingSystemRecord = {
+  id: string;
+  name: string;
+};
