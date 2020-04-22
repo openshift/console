@@ -113,7 +113,7 @@ const HelmReleaseGroup: React.FC<HelmReleaseGroupProps> = ({
           paddingY={4}
           kind="HelmRelease"
           dragRef={dragLabelRef}
-          typeIconClass="icon-helm"
+          typeIconClass={element.getData().data.chartIcon || 'icon-helm'}
         >
           {element.getLabel()}
         </SvgBoxedText>

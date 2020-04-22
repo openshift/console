@@ -78,6 +78,7 @@ export const getTopologyHelmReleaseGroupItem = (
     routes: null,
   };
   dataModel.data = {
+    chartIcon: helmResources?.chartIcon,
     manifestResources: helmResources?.manifestResources || [],
     releaseNotes,
   };
