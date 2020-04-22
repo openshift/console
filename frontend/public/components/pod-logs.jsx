@@ -3,11 +3,13 @@ import * as React from 'react';
 
 import {
   ContainerDropdown,
-  ResourceLog,
+  getQueryArgument,
   LOG_SOURCE_RESTARTING,
-  LOG_SOURCE_WAITING,
   LOG_SOURCE_RUNNING,
   LOG_SOURCE_TERMINATED,
+  LOG_SOURCE_WAITING,
+  ResourceLog,
+  setQueryArgument,
 } from './utils';
 
 const containersToStatuses = ({ status }, containers) => {
@@ -57,7 +59,7 @@ export class PodLogs extends React.Component {
     this._selectContainer = this._selectContainer.bind(this);
     this.state = {
       containers: {},
-      currentKey: '',
+      currentKey: getQueryArgument('container') || '',
       initContainers: {},
     };
   }
@@ -71,12 +73,15 @@ export class PodLogs extends React.Component {
     if (!currentKey) {
       const firstContainer = _.find(newState.containers, { order: 0 });
       newState.currentKey = firstContainer ? firstContainer.name : '';
+      setQueryArgument('container', newState.currentKey);
     }
     return newState;
   }
 
   _selectContainer(name) {
-    this.setState({ currentKey: name });
+    this.setState({ currentKey: name }, () => {
+      setQueryArgument('container', this.state.currentKey);
+    });
   }
 
   render() {
