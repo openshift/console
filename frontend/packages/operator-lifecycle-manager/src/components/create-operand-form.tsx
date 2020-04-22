@@ -733,8 +733,8 @@ export const CreateOperandForm: React.FC<CreateOperandFormProps> = ({
         _.isArray(controlFieldPathList) && controlFieldPathList.length === 1
           ? controlFieldPathList[0]
           : null;
-      const currentControlFieldValue = !_.isNil(getFormData(controlFieldPath))
-        ? getFormData(controlFieldPath).toString()
+      const currentControlFieldValue = !_.isNil(getFormData(`spec.${controlFieldPath}`))
+        ? getFormData(`spec.${controlFieldPath}`).toString()
         : null;
       const expectedControlFieldValueList = controlFieldInfoList
         .map((c) => c.split(SpecCapability.fieldDependency)[1])
