@@ -1,10 +1,9 @@
 import * as React from 'react';
+import FormSection from '../../import/section/FormSection';
 import PipelineGitOptions from './PipelineGitOptions';
 import PipelineImageOptions from './PipelineImageOptions';
 import PipelineClusterOptions from './PipelineClusterOptions';
 import PipelineStorageOptions from './PipelineStorageOptions';
-
-import './PipelineResourceParam.scss';
 
 export interface PipelineResourceParamProps {
   name: string;
@@ -29,7 +28,7 @@ const PipelineResourceParam: React.FC<PipelineResourceParamProps> = (props) => {
     }
   };
 
-  return <div className="odc-pipeline-resource-param">{renderTypeFields()}</div>;
+  return <FormSection fullWidth>{renderTypeFields()}</FormSection>;
 };
 
 export default PipelineResourceParam;
