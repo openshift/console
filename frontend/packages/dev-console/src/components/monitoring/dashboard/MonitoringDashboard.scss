@@ -7,7 +7,7 @@ $no-wrap-breakpoint: 915px;
     position: absolute;
     right: 30px;
     top: -65px;
-    @media(max-width: $no-wrap-breakpoint) {
+    @media (max-width: $no-wrap-breakpoint) {
       display: block;
       margin-left: 15px;
       margin-top: 15px;
@@ -18,7 +18,7 @@ $no-wrap-breakpoint: 915px;
     }
 
     .monitoring-dashboards__dropdown-wrap {
-      @media(max-width: $no-wrap-breakpoint) {
+      @media (max-width: $no-wrap-breakpoint) {
         display: inline-block;
         .monitoring-dashboards__dropdown-title {
           margin-right: 10px;
@@ -28,5 +28,8 @@ $no-wrap-breakpoint: 915px;
         margin-right: 0;
       }
     }
+  }
+  &__resource-link {
+    padding: var(--pf-global--spacer--sm) var(--pf-global--spacer--xl);
   }
 }
