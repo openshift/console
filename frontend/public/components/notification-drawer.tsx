@@ -66,13 +66,10 @@ const AlertEmptyState: React.FC<AlertEmptyProps> = ({ drawerToggle }) => (
   </EmptyState>
 );
 
-const actionAlerts: ActionAlertType[] = [
-  {
-    name: 'AlertmanagerReceiversNotConfigured',
-    text: 'Configure receivers',
-    path: '/monitoring/alertmanagerconfig',
-  },
-];
+export const alertActions = new Map().set('AlertmanagerReceiversNotConfigured', {
+  text: 'Configure',
+  path: '/monitoring/alertmanagerconfig',
+});
 
 const getAlertNotificationEntries = (
   isLoaded: boolean,
@@ -84,9 +81,7 @@ const getAlertNotificationEntries = (
     ? alertData
         .filter((a) => (isCritical ? criticalCompare(a) : otherAlertCompare(a)))
         .map((alert, i) => {
-          const actionAlertMatch = actionAlerts.find(
-            (actionAlert) => actionAlert.name === alert.rule.name,
-          );
+          const action = alertActions.get(alert.rule.name);
           return (
             <NotificationEntry
               key={`${i}_${alert.activeAt}`}
@@ -96,8 +91,8 @@ const getAlertNotificationEntries = (
               title={getAlertName(alert)}
               toggleNotificationDrawer={toggleNotificationDrawer}
               targetPath={alertURL(alert, alert.rule.id)}
-              actionText={actionAlertMatch?.text}
-              actionPath={actionAlertMatch?.path}
+              actionText={action?.text}
+              actionPath={action?.path}
             />
           );
         })
@@ -335,12 +330,6 @@ const notificationStateToProps = ({ UI }: RootState): WithNotificationsProps => 
   alerts: UI.getIn(['monitoring', 'notificationAlerts']),
   silences: UI.getIn(['monitoring', 'silences']),
 });
-
-type ActionAlertType = {
-  name: string;
-  text: string;
-  path: string;
-};
 
 type AlertErrorProps = {
   errorText: string;
