@@ -65,11 +65,16 @@ export interface EdgeModel extends ElementModel {
   bendpoints?: PointTuple[];
 }
 
+// Scale extent: [min scale, max scale]
+export type ScaleExtent = [number, number];
+
 export interface GraphModel extends ElementModel {
   layout?: string;
   x?: number;
   y?: number;
   scale?: number;
+  scaleExtent?: ScaleExtent;
+  maxScale?: number;
   layers?: string[];
 }
 
@@ -158,6 +163,8 @@ export interface Graph<E extends GraphModel = GraphModel, D = any> extends Graph
   setPosition(location: Point): void;
   getDimensions(): Dimensions;
   setDimensions(dimensions: Dimensions): void;
+  getScaleExtent(): ScaleExtent;
+  setScaleExtent(scaleExtent: ScaleExtent): void;
   getScale(): number;
   setScale(scale: number): void;
   getLayout(): string | undefined;

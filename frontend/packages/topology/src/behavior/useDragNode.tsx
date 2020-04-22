@@ -11,6 +11,7 @@ import {
   DragObjectWithType,
   DragSpecOperationType,
   DragOperationWithType,
+  DragSourceMonitor,
 } from './dnd-types';
 import { useDndManager } from './useDndManager';
 
@@ -59,7 +60,7 @@ export const useDragNode = <
     React.useMemo(() => {
       const sourceSpec: DragSourceSpec<any, any, any, any, Props> = {
         item: (spec && spec.item) || { type: '#useDragNode#' },
-        operation: (monitor, p) => {
+        operation: (monitor: DragSourceMonitor, p: Props) => {
           if (spec) {
             const operation =
               typeof spec.operation === 'function' ? spec.operation(monitor, p) : spec.operation;
