@@ -261,8 +261,5 @@ export const detectFeatures = () => (dispatch: Dispatch) =>
     detectLoggingURL,
     detectConsoleLinks,
     ...ssarCheckActions,
-    ...plugins.registry
-      .getFeatureFlags()
-      .filter(plugins.isActionFeatureFlag)
-      .map((ff) => ff.properties.detect),
+    ...plugins.registry.getCustomFeatureFlags().map((ff) => ff.properties.detect),
   ].forEach((detect) => detect(dispatch));

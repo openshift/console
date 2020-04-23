@@ -42,18 +42,12 @@ export const baseCRDs = {
 
 const CRDs = { ...baseCRDs };
 
-plugins.registry
-  .getFeatureFlags()
-  .filter(plugins.isModelFeatureFlag)
-  .forEach((ff) => {
-    const modelRef = referenceForModel(ff.properties.model);
-    if (!CRDs[modelRef]) {
-      CRDs[modelRef] = ff.properties.flag as FLAGS;
-    }
-  });
-
-const pluginFlagNames = _.uniq(plugins.registry.getFeatureFlags().map((ff) => ff.properties.flag));
-const isKnownFlag = (flag: string) => !!FLAGS[flag] || pluginFlagNames.includes(flag);
+plugins.registry.getModelFeatureFlags().forEach((ff) => {
+  const modelRef = referenceForModel(ff.properties.model);
+  if (!CRDs[modelRef]) {
+    CRDs[modelRef] = ff.properties.flag as FLAGS;
+  }
+});
 
 export type FeatureState = ImmutableMap<string, boolean>;
 
@@ -65,9 +59,6 @@ export const featureReducer = (state: FeatureState, action: FeatureAction): Feat
 
   switch (action.type) {
     case ActionType.SetFlag:
-      if (!isKnownFlag(action.payload.flag)) {
-        throw new Error(`unknown flag ${action.payload.flag}`);
-      }
       return state.set(action.payload.flag, action.payload.value);
 
     case ActionType.ClearSSARFlags:

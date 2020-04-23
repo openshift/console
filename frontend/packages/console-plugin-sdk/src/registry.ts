@@ -6,10 +6,10 @@ import {
   ExtensionTypeGuard,
   isClusterServiceVersionAction,
   isDevCatalogModel,
-  isFeatureFlag,
   isGlobalConfig,
   isKebabActions,
   isModelDefinition,
+  isModelFeatureFlag,
   isOverviewCRD,
   isOverviewResourceTab,
   isOverviewTabSection,
@@ -19,6 +19,7 @@ import {
   isResourceListPage,
   isRoutePage,
   isYAMLTemplate,
+  isCustomFeatureFlag,
 } from './typings';
 
 import { FlagsObject } from '@console/internal/reducers/features';
@@ -60,8 +61,12 @@ export class ExtensionRegistry {
     return this.extensions.filter(isModelDefinition);
   }
 
-  public getFeatureFlags() {
-    return this.extensions.filter(isFeatureFlag);
+  public getModelFeatureFlags() {
+    return this.extensions.filter(isModelFeatureFlag);
+  }
+
+  public getCustomFeatureFlags() {
+    return this.extensions.filter(isCustomFeatureFlag);
   }
 
   public getResourceListPages() {
