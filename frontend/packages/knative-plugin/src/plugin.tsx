@@ -298,18 +298,6 @@ const plugin: Plugin<ConsumedExtensions> = [
     },
   },
   {
-    type: 'Page/Resource/Details',
-    properties: {
-      model: models.ServiceModel,
-      loader: async () =>
-        (
-          await import(
-            './components/services/ServiceDetailsPage' /* webpackChunkName: "knative-service-details-page" */
-          )
-        ).default,
-    },
-  },
-  {
     type: 'Page/Resource/List',
     properties: {
       model: models.RouteModel,
@@ -317,18 +305,6 @@ const plugin: Plugin<ConsumedExtensions> = [
         (
           await import(
             './components/routes/RoutesPage' /* webpackChunkName: "knative-routes-page" */
-          )
-        ).default,
-    },
-  },
-  {
-    type: 'Page/Resource/Details',
-    properties: {
-      model: models.RouteModel,
-      loader: async () =>
-        (
-          await import(
-            './components/routes/RouteDetailsPage' /* webpackChunkName: "knative-route-details-page" */
           )
         ).default,
     },
