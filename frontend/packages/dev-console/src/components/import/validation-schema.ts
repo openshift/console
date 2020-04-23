@@ -156,8 +156,8 @@ export const limitsValidationSchema = yup.object().shape({
         },
         message: 'CPU request must be less than or equal to limit.',
       }),
-    requestUnit: yup.string('Unit must be millicores or cores.'),
-    limitUnit: yup.string('Unit must be millicores or cores.'),
+    requestUnit: yup.string('Unit must be millicores or cores.').ensure(),
+    limitUnit: yup.string('Unit must be millicores or cores.').ensure(),
     limit: yup
       .number()
       .transform((limit) => (_.isNaN(limit) ? undefined : limit))

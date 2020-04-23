@@ -35,8 +35,8 @@ const ResourceLimitField: React.FC<ResourceLimitFieldProps> = ({
         {...props}
         onChange={(val) => {
           setFieldValue(props.name, val.value);
-          setFieldValue(unitName, val.unit);
           setFieldTouched(props.name, true);
+          setFieldValue(unitName, val.unit);
         }}
         dropdownUnits={unitOptions}
         defaultRequestSizeUnit={defaultUnitSize}
