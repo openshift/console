@@ -19,7 +19,7 @@ import {
 } from '../../utils/resource-label-utils';
 import { createRoute, createService, dryRunOpt } from '../../utils/shared-submit-utils';
 import { getProbesData } from '../health-checks/create-health-checks-probe-utils';
-import { RegistryType } from '../../utils/imagestream-utils';
+import { RegistryType, getRuntime } from '../../utils/imagestream-utils';
 import { AppResources } from '../edit-application/edit-application-types';
 import { DeployImageFormData, Resources } from './import-types';
 
@@ -104,10 +104,10 @@ const getMetadata = (formData: DeployImageFormData) => {
     name,
     isi: { image },
     labels: userLabels,
-    imageStream: { image: imgName, tag: imgTag, namespace: imgNamespace },
+    imageStream: { tag: imgTag, namespace: imgNamespace },
   } = formData;
-
-  const defaultLabels = getAppLabels(name, application, imgName || undefined, imgTag, imgNamespace);
+  const imgStreamName = getRuntime(image.metadata?.labels);
+  const defaultLabels = getAppLabels(name, application, imgStreamName, imgTag, imgNamespace);
   const labels = { ...defaultLabels, ...userLabels };
   const podLabels = getPodLabels(name);
 
@@ -355,9 +355,9 @@ export const createOrUpdateDeployImageResources = async (
     registry,
     route: { create: canCreateRoute, disable },
     isi: { ports, tag: imageStreamTag, image },
-    imageStream: { image: internalImageName, namespace: internalImageNamespace },
+    imageStream: { namespace: internalImageNamespace },
   } = formData;
-
+  const internalImageName = getRuntime(image.metadata?.labels);
   const requests: Promise<K8sResourceKind>[] = [];
   if (registry === RegistryType.Internal) {
     formData.imageStream.grantAccess &&

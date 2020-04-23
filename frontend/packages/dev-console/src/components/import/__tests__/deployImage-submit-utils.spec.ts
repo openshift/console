@@ -88,6 +88,50 @@ describe('DeployImage Submit Utils', () => {
         });
     });
 
+    it('should create deployment with the internal imagestream labels instead of creating new imagestream name', (done) => {
+      const internalImageStreamData = _.merge(_.cloneDeep(internalImageData), {
+        isi: {
+          image: {
+            metadata: {
+              labels: {
+                'app.kubernetes.io/name': 'nodejs',
+                'app.openshift.io/runtime': 'nodejs',
+                'app.openshift.io/runtime-version': '10-SCL',
+              },
+            },
+          },
+        },
+      });
+
+      createOrUpdateDeployment(internalImageStreamData, false)
+        .then((returnValue) => {
+          const { data: Deployment } = returnValue;
+          expect(Deployment.metadata.labels.app).toEqual('react-web-app');
+          expect(Deployment.metadata.labels['app.kubernetes.io/name']).toEqual('nodejs');
+          expect(Deployment.metadata.labels['app.kubernetes.io/runtime']).toEqual('nodejs');
+          expect(Deployment.metadata.labels['app.kubernetes.io/runtime-version']).toEqual('10-SCL');
+          done();
+        })
+        .catch(() => {
+          done();
+        });
+    });
+
+    it('should not have the internal imagestream labels', (done) => {
+      createOrUpdateDeployment(internalImageData, false)
+        .then((returnValue) => {
+          const { data: Deployment } = returnValue;
+          expect(Deployment.metadata.labels.app).toEqual('react-web-app');
+          expect(Deployment.metadata.labels['app.kubernetes.io/name']).toBeUndefined();
+          expect(Deployment.metadata.labels['app.kubernetes.io/runtime']).toBeUndefined();
+          expect(Deployment.metadata.labels['app.kubernetes.io/runtime-version']).toBeUndefined();
+          done();
+        })
+        .catch(() => {
+          done();
+        });
+    });
+
     it('should assign limits on creating Deployment', (done) => {
       const data = _.cloneDeep(defaultData);
       data.limits = {
