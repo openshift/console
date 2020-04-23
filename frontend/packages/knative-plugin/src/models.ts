@@ -3,7 +3,6 @@ import {
   chart_color_red_300 as knativeEventingColor,
 } from '@patternfly/react-tokens';
 import { K8sKind } from '@console/internal/module/k8s';
-import { BadgeType } from '@console/shared/src/components/badges/badge-factory';
 import {
   KNATIVE_EVENT_SOURCE_APIGROUP,
   KNATIVE_EVENT_SOURCE_APIGROUP_DEP,
@@ -23,7 +22,6 @@ export const ConfigurationModel: K8sKind = {
   abbr: 'CFG',
   namespaced: true,
   crd: true,
-  badge: BadgeType.TECH,
   color: knativeServingColor.value,
 };
 
@@ -38,7 +36,6 @@ export const KnativeServingModel: K8sKind = {
   abbr: 'KS',
   namespaced: true,
   crd: true,
-  badge: BadgeType.TECH,
   color: knativeServingColor.value,
 };
 
@@ -67,7 +64,6 @@ export const RevisionModel: K8sKind = {
   abbr: 'REV',
   namespaced: true,
   crd: true,
-  badge: BadgeType.TECH,
   color: knativeServingColor.value,
 };
 
@@ -82,7 +78,6 @@ export const RouteModel: K8sKind = {
   abbr: 'RT',
   namespaced: true,
   crd: true,
-  badge: BadgeType.TECH,
   color: knativeServingColor.value,
 };
 
@@ -97,7 +92,6 @@ export const ServiceModel: K8sKind = {
   abbr: 'KSVC',
   namespaced: true,
   crd: true,
-  badge: BadgeType.TECH,
   color: knativeServingColor.value,
 };
 
