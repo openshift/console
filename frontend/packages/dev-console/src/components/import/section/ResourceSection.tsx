@@ -2,12 +2,7 @@ import * as React from 'react';
 import { connectToFlags, FlagsObject } from '@console/internal/reducers/features';
 import { K8sKind } from '@console/internal/module/k8s';
 import { DeploymentModel, DeploymentConfigModel } from '@console/internal/models';
-import {
-  FLAG_KNATIVE_SERVING_SERVICE,
-  ServiceModel,
-  KnativeServingModel,
-} from '@console/knative-plugin';
-import { getBadgeFromType } from '@console/shared';
+import { FLAG_KNATIVE_SERVING_SERVICE, ServiceModel } from '@console/knative-plugin';
 import { useAccessReview } from '@console/internal/components/utils';
 import { getActiveNamespace } from '@console/internal/actions/ui';
 import { Resources } from '../import-types';
@@ -61,16 +56,7 @@ const ResourceSection: React.FC<ResourceSectionProps> = ({ flags }) => {
 
   if (flags[FLAG_KNATIVE_SERVING_SERVICE] && knativeServiceAccess) {
     radioOptions.push({
-      label: (
-        <div>
-          Knative Service
-          <span className="odc-resource-section__badge-wrapper">
-            <span className="odc-resource-section__inline-badge">
-              {getBadgeFromType(KnativeServingModel.badge)}
-            </span>
-          </span>
-        </div>
-      ),
+      label: 'Knative Service',
       value: Resources.KnativeService,
       children: createHelpText(ServiceModel, `A Knative Service enables scaling to zero when idle`),
     });
