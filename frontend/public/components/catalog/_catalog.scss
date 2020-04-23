@@ -367,7 +367,24 @@ $catalog-tile-width: $co-m-catalog-tile-width;
   list-style: none;
 }
 
-// set font size to 14px
-.vertical-tabs-pf-tab > a {
-  font-size: $font-size-base;
+// Override upstream issue where PF3 colors are still being used.
+// Remove once https://github.com/patternfly/patternfly-react/issues/4117 is fixed
+.vertical-tabs-pf-tab {
+  &.active a {
+    color: var(--pf-global--link--Color);
+
+    &::before {
+      background: var(--pf-global--link--Color);
+    }
+  }
+
+  > a {
+    color: var(--pf-global--link--Color);
+    font-size: $font-size-base;
+
+    &:focus,
+    &:hover {
+      color: var(--pf-global--link--Color--hover);
+    }
+  }
 }
