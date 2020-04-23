@@ -6,7 +6,6 @@ import { getActiveApplication } from '@console/internal/reducers/ui';
 import { RootState } from '@console/internal/redux';
 import { ALL_APPLICATIONS_KEY } from '@console/shared';
 import { K8sResourceKind, modelFor, referenceFor, k8sCreate } from '@console/internal/module/k8s';
-import { FirehoseList } from '@console/dev-console/src/components/import/import-types';
 import { sanitizeApplicationValue } from '@console/dev-console/src/utils/application-utils';
 import { eventSourceValidationSchema } from './eventSource-validation-utils';
 import EventSourceForm from './EventSourceForm';
@@ -15,7 +14,6 @@ import { EventSourceFormData } from './import-types';
 
 interface EventSourceProps {
   namespace: string;
-  projects?: FirehoseList;
   contextSource?: string;
   selectedApplication?: string;
 }
@@ -26,12 +24,7 @@ interface StateProps {
 
 type Props = EventSourceProps & StateProps;
 
-const EventSource: React.FC<Props> = ({
-  namespace,
-  projects,
-  activeApplication,
-  contextSource,
-}) => {
+const EventSource: React.FC<Props> = ({ namespace, activeApplication, contextSource }) => {
   const serviceName = contextSource?.split('/').pop() || '';
   const initialValues: EventSourceFormData = {
     project: {
@@ -100,7 +93,7 @@ const EventSource: React.FC<Props> = ({
       onReset={history.goBack}
       validationSchema={eventSourceValidationSchema}
     >
-      {(props) => <EventSourceForm {...props} namespace={namespace} projects={projects} />}
+      {(props) => <EventSourceForm {...props} namespace={namespace} />}
     </Formik>
   );
 };

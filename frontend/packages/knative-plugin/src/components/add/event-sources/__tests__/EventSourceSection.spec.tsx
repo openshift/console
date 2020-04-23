@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
 import { FormikValues } from 'formik';
+import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import AppSection from '@console/dev-console/src/components/import/app/AppSection';
 import EventSourceSection from '../EventSourceSection';
 import CronJobSection from '../CronJobSection';
@@ -18,22 +19,23 @@ jest.mock('formik', () => ({
   })),
 }));
 
-describe('EventSource Form', () => {
-  const projects = { loaded: true, loadError: '', data: [] };
+jest.mock('@console/internal/components/utils/k8s-watch-hook', () => ({
+  useK8sWatchResource: jest.fn(),
+}));
+
+describe('EventSource Section', () => {
   const namespace = 'myapp';
 
   it('should render SinkSection, AppSection for CronjobSource', () => {
-    const eventSourceSection = shallow(
-      <EventSourceSection projects={projects} namespace={namespace} />,
-    );
+    (useK8sWatchResource as jest.Mock).mockReturnValueOnce([[], true]);
+    const eventSourceSection = shallow(<EventSourceSection namespace={namespace} />);
     expect(eventSourceSection.find(SinkSection)).toHaveLength(1);
     expect(eventSourceSection.find(AppSection)).toHaveLength(1);
   });
 
   it('should render CronJobSection for cronJob source', () => {
-    const eventSourceSection = shallow(
-      <EventSourceSection namespace={namespace} projects={projects} />,
-    );
+    (useK8sWatchResource as jest.Mock).mockReturnValueOnce([[], true]);
+    const eventSourceSection = shallow(<EventSourceSection namespace={namespace} />);
     expect(eventSourceSection.find(CronJobSection)).toHaveLength(1);
   });
 });

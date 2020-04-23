@@ -4,7 +4,7 @@ import { InputField } from '@console/shared';
 import FormSection from '@console/dev-console/src/components/import/section/FormSection';
 
 const PingSourceSection: React.FC = () => (
-  <FormSection title="PingSource">
+  <FormSection title="PingSource" extraMargin>
     <InputField type={TextInputTypes.text} name="data.pingsource.data" label="Data" />
     <InputField
       type={TextInputTypes.text}
