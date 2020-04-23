@@ -371,7 +371,7 @@ $catalog-tile-width: $co-m-catalog-tile-width;
 // Remove once https://github.com/patternfly/patternfly-react/issues/4117 is fixed
 .vertical-tabs-pf-tab {
   &.active a {
-    color: var(--pf-global--link--Color);
+    color: var(--pf-global--link--Color) !important;
 
     &::before {
       background: var(--pf-global--link--Color);
@@ -379,7 +379,6 @@ $catalog-tile-width: $co-m-catalog-tile-width;
   }
 
   > a {
-    color: var(--pf-global--link--Color);
     font-size: $font-size-base;
 
     &:focus,
