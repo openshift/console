@@ -13244,7 +13244,7 @@ react-lazyload@^2.6.2:
   resolved "https://registry.yarnpkg.com/react-lazyload/-/react-lazyload-2.6.2.tgz#6a1660de6e8653632797539189d19d64e924482c"
   integrity sha512-zbFiwI3H7W0/Qvb6T/ew2NiGe2wj+soYNW7vv5Dte1eZuJDvvyUOHo8GpYfEeWoP5x4Rree2Hwop+lCISalBwg==
 
-react-lifecycles-compat@^3.0.4:
+react-lifecycles-compat@^3.0.0, react-lifecycles-compat@^3.0.4:
   version "3.0.4"
   resolved "https://registry.yarnpkg.com/react-lifecycles-compat/-/react-lifecycles-compat-3.0.4.tgz#4f1a273afdfc8f3488a8c516bfda78f872352362"
 
@@ -13267,13 +13267,15 @@ react-measure@^2.2.6:
     prop-types "^15.6.2"
     resize-observer-polyfill "^1.5.0"
 
-react-modal@3.x:
-  version "3.3.2"
-  resolved "https://registry.yarnpkg.com/react-modal/-/react-modal-3.3.2.tgz#b13da9490653a7c76bc0e9600323eb1079c620e7"
+react-modal@^3.4.1:
+  version "3.11.2"
+  resolved "https://registry.yarnpkg.com/react-modal/-/react-modal-3.11.2.tgz#bad911976d4add31aa30dba8a41d11e21c4ac8a4"
+  integrity sha512-o8gvvCOFaG1T7W6JUvsYjRjMVToLZgLIsi5kdhFIQCtHxDkA47LznX62j+l6YQkpXDbvQegsDyxe/+JJsFQN7w==
   dependencies:
     exenv "^1.2.0"
     prop-types "^15.5.10"
-    warning "^3.0.0"
+    react-lifecycles-compat "^3.0.0"
+    warning "^4.0.3"
 
 react-monaco-editor@0.20.x:
   version "0.20.0"

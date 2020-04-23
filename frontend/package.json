@@ -118,7 +118,7 @@
     "react-lazyload": "^2.6.2",
     "react-linkify": "^0.2.2",
     "react-measure": "^2.2.6",
-    "react-modal": "3.x",
+    "react-modal": "^3.4.1",
     "react-monaco-editor": "0.20.x",
     "react-redux": "7.1.0",
     "react-router": "5.0.1",
