@@ -1,8 +1,10 @@
 import * as React from 'react';
 import { useFormikContext, FormikValues } from 'formik';
 import * as _ from 'lodash';
+import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
+import { K8sResourceKind } from '@console/internal/module/k8s';
 import AppSection from '@console/dev-console/src/components/import/app/AppSection';
-import { FirehoseList } from '@console/dev-console/src/components/import/import-types';
+import { ProjectModel } from '@console/internal/models';
 import CronJobSection from './CronJobSection';
 import SinkBindingSection from './SinkBindingSection';
 import ApiServerSection from './ApiServerSection';
@@ -16,12 +18,13 @@ import AdvancedSection from '../AdvancedSection';
 import { isKnownEventSource } from '../../../utils/create-eventsources-utils';
 
 interface EventSourceSectionProps {
-  projects: FirehoseList;
   namespace: string;
 }
 
-const EventSourceSection: React.FC<EventSourceSectionProps> = ({ projects, namespace }) => {
+const EventSourceSection: React.FC<EventSourceSectionProps> = ({ namespace }) => {
   const { values } = useFormikContext<FormikValues>();
+  const projectResource = { kind: ProjectModel.kind, prop: ProjectModel.id, isList: true };
+  const [data, loaded] = useK8sWatchResource<K8sResourceKind[]>(projectResource);
 
   if (!values.type) {
     return null;
@@ -58,7 +61,7 @@ const EventSourceSection: React.FC<EventSourceSectionProps> = ({ projects, names
           <SinkSection namespace={namespace} />
           <AppSection
             project={values.project}
-            noProjectsAvailable={projects?.loaded && _.isEmpty(projects.data)}
+            noProjectsAvailable={loaded && _.isEmpty(data)}
             extraMargin
           />
         </>

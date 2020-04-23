@@ -19,7 +19,6 @@ describe('EventSource Form', () => {
         type: 'CronJobSource',
       },
       namespace: 'myapp',
-      projects: { loaded: true, loadError: '', data: [] },
       initialValues: defaultEventingData,
     };
   });

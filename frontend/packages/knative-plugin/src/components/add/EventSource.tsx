@@ -6,18 +6,14 @@ import { getActiveApplication } from '@console/internal/reducers/ui';
 import { RootState } from '@console/internal/redux';
 import { ALL_APPLICATIONS_KEY } from '@console/shared';
 import { K8sResourceKind, modelFor, referenceFor, k8sCreate } from '@console/internal/module/k8s';
-import { FirehoseList } from '@console/dev-console/src/components/import/import-types';
 import { sanitizeApplicationValue } from '@console/dev-console/src/utils/application-utils';
 import { eventSourceValidationSchema } from './eventSource-validation-utils';
 import EventSourceForm from './EventSourceForm';
 import { getEventSourceResource } from '../../utils/create-eventsources-utils';
 import { EventSourceFormData } from './import-types';
-import ShowResourceAlert from './ShowResourceAlert';
-import { knativeServingResourcesServices } from '../../utils/get-knative-resources';
 
 interface EventSourceProps {
   namespace: string;
-  projects?: FirehoseList;
   contextSource?: string;
   selectedApplication?: string;
 }
@@ -28,12 +24,7 @@ interface StateProps {
 
 type Props = EventSourceProps & StateProps;
 
-const EventSource: React.FC<Props> = ({
-  namespace,
-  projects,
-  activeApplication,
-  contextSource,
-}) => {
+const EventSource: React.FC<Props> = ({ namespace, activeApplication, contextSource }) => {
   const serviceName = contextSource?.split('/').pop() || '';
   const initialValues: EventSourceFormData = {
     project: {
@@ -95,24 +86,15 @@ const EventSource: React.FC<Props> = ({
       });
   };
 
-  const knServiceResource = { ...knativeServingResourcesServices(namespace)[0], limit: 1 };
-
   return (
-    <>
-      <ShowResourceAlert
-        title="Event Source can not be created"
-        message="An event source must sink to Knative Service, but no Knative Service exist in this project"
-        resource={knServiceResource}
-      />
-      <Formik
-        initialValues={initialValues}
-        onSubmit={handleSubmit}
-        onReset={history.goBack}
-        validationSchema={eventSourceValidationSchema}
-      >
-        {(props) => <EventSourceForm {...props} namespace={namespace} projects={projects} />}
-      </Formik>
-    </>
+    <Formik
+      initialValues={initialValues}
+      onSubmit={handleSubmit}
+      onReset={history.goBack}
+      validationSchema={eventSourceValidationSchema}
+    >
+      {(props) => <EventSourceForm {...props} namespace={namespace} />}
+    </Formik>
   );
 };
 
