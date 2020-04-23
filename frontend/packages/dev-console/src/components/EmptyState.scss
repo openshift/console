@@ -8,12 +8,11 @@
 
   &__title {
     background-color: var(--pf-global--BackgroundColor--light-100);
-    display: flex;
-    flex-direction: column;
   }
 
   &__content {
     padding: var(--pf-global--spacer--lg);
+    flex: 1;
   }
 
   &__tile {

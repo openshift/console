@@ -38,14 +38,14 @@
 
       &.pf-m-active {
         background-color: var(--pf-global--Color--light-300);
-        color: var(--pf-global--icon--Color--dark	);
+        color: var(--pf-global--icon--Color--dark);
       }
 
       &:hover {
         z-index: 20;
         color: var(--pf-global--active-color--400);
         &.pf-m-active {
-          color: var(--pf-global--icon--Color--dark	);
+          color: var(--pf-global--icon--Color--dark);
         }
       }
     }
@@ -71,8 +71,7 @@
     margin-right: var(--pf-global--spacer--2xl);
   }
 
-  // WORKAROUND: see https://github.com/patternfly/patternfly-react/issues/3312
-  .pf-topology-container__with-sidebar {
-    flex: 1;
+  .pf-topology-container {
+    display: flex;
   }
 }
