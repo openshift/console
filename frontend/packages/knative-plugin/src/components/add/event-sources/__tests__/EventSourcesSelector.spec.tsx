@@ -4,6 +4,7 @@ import { shallow, ShallowWrapper } from 'enzyme';
 import { ItemSelectorField } from '@console/shared';
 import EventSourcesSelector from '../EventSourcesSelector';
 import * as sourceUtils from '../../../../utils/create-eventsources-utils';
+import FormSection from '@console/dev-console/src/components/import/section/FormSection';
 
 type EventSourcesSelectorProps = React.ComponentProps<typeof EventSourcesSelector>;
 
@@ -25,6 +26,38 @@ describe('EventSourcesSelector', () => {
   beforeEach(() => {
     const eventSourceList = {};
     wrapper = shallow(<EventSourcesSelector eventSourceList={eventSourceList} />);
+  });
+
+  it('should not render FormSection if no more than one eventSource present', () => {
+    const eventSourceList = {
+      SinkBinding: {
+        title: 'sinkBinding',
+        iconUrl: 'sinkBindingIcon',
+        name: 'SinkBinding',
+        displayName: 'Sink Binding',
+      },
+    };
+    wrapper = shallow(<EventSourcesSelector eventSourceList={eventSourceList} />);
+    expect(wrapper.find(FormSection).exists()).toBe(false);
+  });
+
+  it('should render FormSection if more than one eventSource present', () => {
+    const eventSourceList = {
+      SinkBinding: {
+        title: 'sinkBinding',
+        iconUrl: 'sinkBindingIcon',
+        name: 'SinkBinding',
+        displayName: 'Sink Binding',
+      },
+      PingSource: {
+        title: 'pingSource',
+        iconUrl: 'pingSourceIcon',
+        name: 'PingSource',
+        displayName: 'Ping Source',
+      },
+    };
+    wrapper = shallow(<EventSourcesSelector eventSourceList={eventSourceList} />);
+    expect(wrapper.find(FormSection).exists()).toBe(true);
   });
 
   it('should render ItemSelectorField', () => {
