@@ -30,11 +30,13 @@ const consoleLoader = () =>
     '@console/kubevirt-plugin/src/components/connected-vm-console/vm-console-page' /* webpackChunkName: "kubevirt" */
   ).then((m) => m.VMConsolePage);
 import QuickStartDrawer from '@console/app/src/components/quick-starts/QuickStartDrawer';
+import { useTranslation, withTranslation } from 'react-i18next';
+import '../../i18n';
 import '../vendor.scss';
 import '../style.scss';
 
 //PF4 Imports
-import { Page } from '@patternfly/react-core';
+import { Page, Spinner } from '@patternfly/react-core';
 
 const breakpointMD = 768;
 const NOTIFICATION_DRAWER_BREAKPOINT = 1800;
@@ -144,12 +146,14 @@ class App_ extends React.PureComponent {
     const { isNavOpen, isDrawerInline } = this.state;
     const { contextProviderExtensions } = this.props;
     const { productName } = getBrandingDetails();
+    const { t, i18n } = this.props;
 
     const content = (
       <>
         <Helmet titleTemplate={`%s · ${productName}`} defaultTitle={productName} />
         <QuickStartDrawer>
           <ConsoleNotifier location="BannerTop" />
+          <div>Current locale: {i18n.language}</div>
           <Page
             header={<Masthead onNavToggle={this._onNavToggle} />}
             sidebar={
@@ -190,7 +194,7 @@ class App_ extends React.PureComponent {
   }
 }
 
-const App = withExtensions({ contextProviderExtensions: isContextProvider })(App_);
+const AppWithTranslation = withExtensions({ contextProviderExtensions: isContextProvider })(withTranslation())(App_);
 
 const startDiscovery = () => store.dispatch(watchAPIServices());
 
@@ -250,17 +254,19 @@ if ('serviceWorker' in navigator) {
 }
 
 render(
-  <Provider store={store}>
-    <Router history={history} basename={window.SERVER_FLAGS.basePath}>
-      <Switch>
-        <Route
-          path="/k8s/ns/:ns/virtualmachineinstances/:name/standaloneconsole"
-          render={(componentProps) => <AsyncComponent loader={consoleLoader} {...componentProps} />}
-        />
-        <Route path="/terminal" component={CloudShellTab} />
-        <Route path="/" component={App} />
-      </Switch>
-    </Router>
-  </Provider>,
+  <React.Suspense fallback={<Spinner />}>
+    <Provider store={store}>
+      <Router history={history} basename={window.SERVER_FLAGS.basePath}>
+        <Switch>
+          <Route
+            path="/k8s/ns/:ns/virtualmachineinstances/:name/standaloneconsole"
+            render={(componentProps) => <AsyncComponent loader={consoleLoader} {...componentProps} />}
+          />
+          <Route path="/terminal" component={CloudShellTab} />
+          <Route path="/" component={AppWithTranslation} />
+        </Switch>
+      </Router>
+    </Provider>
+  </React.Suspense>,
   document.getElementById('app'),
 );
