@@ -26,19 +26,14 @@ interface DispatchProps {
 type Props = ApplicationSelectorProps & StateProps & DispatchProps;
 
 const ApplicationSelector: React.FC<Props> = ({ namespace, application, onChange, disabled }) => {
+  if (namespace === ALL_NAMESPACES_KEY) return null;
+
+  const allApplicationsTitle = 'all applications';
+  const title: string = application === ALL_APPLICATIONS_KEY ? allApplicationsTitle : application;
+
   const onApplicationChange = (newApplication: string, key: string) => {
     key === ALL_APPLICATIONS_KEY ? onChange(key) : onChange(newApplication);
   };
-  const allApplicationsTitle = 'all applications';
-
-  const allNamespaces = namespace === ALL_NAMESPACES_KEY;
-
-  let title: string = application;
-  if (allNamespaces) {
-    title = 'No applications';
-  } else if (title === ALL_APPLICATIONS_KEY) {
-    title = allApplicationsTitle;
-  }
 
   return (
     <ApplicationDropdown
@@ -55,7 +50,7 @@ const ApplicationSelector: React.FC<Props> = ({ namespace, application, onChange
       selectedKey={application || ALL_APPLICATIONS_KEY}
       onChange={onApplicationChange}
       storageKey={APPLICATION_LOCAL_STORAGE_KEY}
-      disabled={disabled || allNamespaces}
+      disabled={disabled}
     />
   );
 };
