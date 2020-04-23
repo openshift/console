@@ -14,6 +14,9 @@ import {
   getBuildAlerts,
   getOwnedResources,
   OperatorBackedServiceKindMap,
+  sortBuilds,
+  getBuildsForResource,
+  BuildConfigOverviewItem,
 } from '@console/shared';
 import {
   Node,
@@ -105,6 +108,26 @@ export const filterRevisionsByActiveApplication = (
   return filteredRevisions;
 };
 
+const getBuildConfigforKnativeService = (
+  resource: K8sResourceKind,
+  resources: TopologyDataResources,
+): BuildConfigOverviewItem[] => {
+  const service = resource.metadata.labels?.['app.kubernetes.io/instance'];
+  const buildConfigs = resources.buildConfigs.data.filter(
+    (res) => res.metadata.labels?.['app.kubernetes.io/instance'] === service,
+  );
+  return buildConfigs.reduce((acc, bc) => {
+    const builds = sortBuilds(getBuildsForResource(bc, resources));
+    return [
+      ...acc,
+      {
+        ...bc,
+        builds,
+      },
+    ];
+  }, []);
+};
+
 /**
  * Forms data with respective revisions, configurations, routes based on kntaive service
  */
@@ -147,11 +170,12 @@ export const getKnativeServiceData = (
   const ksroutes = resources.ksroutes
     ? getOwnedResources(resource, resources.ksroutes.data)
     : undefined;
-
+  const buildConfigs = getBuildConfigforKnativeService(resource, resources);
   const overviewItem = {
     configurations,
     revisions: revisionsDeploymentData.revisionsDep,
     ksroutes,
+    buildConfigs,
     pods: revisionsDeploymentData.allPods,
   };
   if (utils) {
@@ -341,6 +365,7 @@ export const createTopologyServiceNodeData = (
         pipeline: pipelines[0],
         pipelineRuns,
       },
+      build: svcRes.buildConfigs?.[0]?.builds?.[0],
     },
   };
 };

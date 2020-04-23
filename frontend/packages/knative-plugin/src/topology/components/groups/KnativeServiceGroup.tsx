@@ -28,9 +28,9 @@ import {
   useSearchFilter,
   useDisplayFilters,
 } from '@console/dev-console/src/components/topology';
+import BuildDecorator from '@console/dev-console/src/components/topology/components/nodes/build-decorators/BuildDecorator';
 import { TYPE_KNATIVE_SERVICE } from '../../const';
 import RevisionTrafficSourceAnchor from '../anchors/RevisionTrafficSourceAnchor';
-import BuildDecorator from '@console/dev-console/src/components/topology/components/nodes/build-decorators/BuildDecorator';
 
 export type KnativeServiceGroupProps = {
   element: Node;
