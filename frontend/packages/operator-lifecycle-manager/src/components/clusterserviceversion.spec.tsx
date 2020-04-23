@@ -106,7 +106,7 @@ describe(ClusterServiceVersionTableRow.displayName, () => {
     expect(col.find(ResourceKebab).props().kind).toEqual(
       referenceForModel(ClusterServiceVersionModel),
     );
-    expect(col.find(ResourceKebab).props().actions.length).toEqual(3);
+    expect(col.find(ResourceKebab).props().actions.length).toEqual(2);
   });
 
   it('renders clickable column for app logo and name', () => {
