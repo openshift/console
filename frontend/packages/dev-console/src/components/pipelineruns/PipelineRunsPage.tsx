@@ -14,7 +14,9 @@ const PipelineRunsPage: React.FC<PipelineRunsPageProps> = (props) => {
     },
   } = props;
   return namespace ? (
-    <PipelineRunsResourceList {...props} namespace={namespace} />
+    <div>
+      <PipelineRunsResourceList {...props} namespace={namespace} />
+    </div>
   ) : (
     <ProjectListPage
       title={PipelineRunModel.labelPlural}
