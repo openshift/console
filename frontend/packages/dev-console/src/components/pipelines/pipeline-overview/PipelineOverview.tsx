@@ -8,7 +8,7 @@ import {
   resourcePath,
 } from '@console/internal/components/utils';
 import { referenceForModel } from '@console/internal/module/k8s';
-import { PipelineRunModel, PipelineModel } from '@console/dev-console/src/models';
+import { PipelineModel } from '@console/dev-console/src/models';
 import { TopologyOverviewItem } from '../../topology/topology-types';
 import TriggerLastRunButton from './TriggerLastRunButton';
 import PipelineRunItem from './PipelineRunItem';
@@ -30,7 +30,7 @@ const PipelinesOverview: React.FC<PipelinesOverviewProps> = ({
   } = pipeline;
   return (
     <>
-      <SidebarSectionHeading text={PipelineRunModel.labelPlural}>
+      <SidebarSectionHeading text={PipelineModel.labelPlural}>
         {pipelineRuns.length > MAX_VISIBLE && (
           <Link
             className="sidebar__section-view-all"
