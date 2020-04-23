@@ -3,7 +3,7 @@ import './project';
 import './selectors';
 import './nav';
 import './resources';
-
+import './i18n';
 import { a11yTestResults } from './a11y';
 
 Cypress.Cookies.defaults({

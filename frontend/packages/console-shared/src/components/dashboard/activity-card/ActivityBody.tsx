@@ -13,17 +13,24 @@ import { DashboardCardButtonLink } from '../dashboard-card/DashboardCardLink';
 import EventItem from './EventItem';
 import './activity-card.scss';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
-export const Activity: React.FC<ActivityProps> = ({ timestamp, children }) => (
-  <div className="co-activity-item__ongoing">
-    {timestamp && (
-      <span className="text-secondary">
-        Started <Timestamp simple timestamp={timestamp.toString()} />
-      </span>
-    )}
-    {children}
-  </div>
-);
+export const Activity: React.FC<ActivityProps> = ({ timestamp, children }) => {
+  const { t } = useTranslation();
+  return (
+    <div className="co-activity-item__ongoing" data-test="activity">
+      {timestamp && (
+        <span className="text-secondary">
+          {t('dashboard~Started')}{' '}
+          <span data-test="timestamp">
+            <Timestamp simple timestamp={timestamp.toString()} />
+          </span>
+        </span>
+      )}
+      {children}
+    </div>
+  );
+};
 
 export const RecentEventsBodyContent: React.FC<RecentEventsBodyContentProps> = ({
   events,
@@ -32,6 +39,7 @@ export const RecentEventsBodyContent: React.FC<RecentEventsBodyContentProps> = (
   setPaused,
   moreLink,
 }) => {
+  const { t } = useTranslation();
   const ref = React.useRef<EventKind[]>([]);
   React.useEffect(() => {
     if (paused && events) {
@@ -83,7 +91,7 @@ export const RecentEventsBodyContent: React.FC<RecentEventsBodyContentProps> = (
   if (sortedEvents.length === 0) {
     return (
       <Activity>
-        <div className="text-secondary">There are no recent events.</div>
+        <div className="text-secondary">{t('dashboard~There are no recent events.')}</div>
       </Activity>
     );
   }
@@ -99,32 +107,41 @@ export const RecentEventsBodyContent: React.FC<RecentEventsBodyContentProps> = (
         ))}
       </Accordion>
       {sortedEvents.length > 50 && !!moreLink && (
-        <Link className="co-activity-card__recent-more-link" to={moreLink}>
-          View all events
+        <Link
+          className="co-activity-card__recent-more-link"
+          to={moreLink}
+          data-test="events-view-all-link"
+        >
+          {t('dashboard~View all events')}
         </Link>
       )}
     </>
   );
 };
 
-export const PauseButton: React.FC<PauseButtonProps> = ({ paused, togglePause }) => (
-  <DashboardCardButtonLink
-    onClick={togglePause}
-    className="co-activity-card__recent-actions"
-    icon={paused ? <PlayIcon /> : <PauseIcon />}
-    data-test-id="events-pause-button"
-  >
-    {paused ? 'Resume' : 'Pause'}
-  </DashboardCardButtonLink>
-);
+export const PauseButton: React.FC<PauseButtonProps> = ({ paused, togglePause }) => {
+  const { t } = useTranslation();
+  return (
+    <DashboardCardButtonLink
+      onClick={togglePause}
+      className="co-activity-card__recent-actions"
+      icon={paused ? <PlayIcon /> : <PauseIcon />}
+      data-test-id="events-pause-button"
+      data-test="events-pause-button"
+    >
+      {paused ? t('public~Resume') : t('public~Pause')}
+    </DashboardCardButtonLink>
+  );
+};
 
 export const RecentEventsBody: React.FC<RecentEventsBodyProps> = (props) => {
+  const { t } = useTranslation();
   const [paused, setPaused] = React.useState(false);
   const togglePause = React.useCallback(() => setPaused(!paused), [paused]);
   return (
     <>
-      <div className="co-activity-card__recent-title">
-        Recent Events
+      <div className="co-activity-card__recent-title" data-test="activity-recent-title">
+        {t('dashboard~Recent events')}
         <PauseButton paused={paused} togglePause={togglePause} />
       </div>
       <RecentEventsBodyContent {...props} paused={paused} setPaused={setPaused} />
@@ -137,6 +154,7 @@ export const OngoingActivityBody: React.FC<OngoingActivityBodyProps> = ({
   resourceActivities = [],
   prometheusActivities = [],
 }) => {
+  const { t } = useTranslation();
   const activitiesLoaded =
     loaded || resourceActivities.length > 0 || prometheusActivities.length > 0;
   let body: React.ReactNode;
@@ -166,13 +184,15 @@ export const OngoingActivityBody: React.FC<OngoingActivityBodyProps> = ({
       allActivities
     ) : (
       <Activity>
-        <div className="text-secondary">There are no ongoing activities.</div>
+        <div className="text-secondary">{t('dashboard~There are no ongoing activities.')}</div>
       </Activity>
     );
   }
   return (
     <>
-      <div className="co-activity-card__ongoing-title">Ongoing</div>
+      <div className="co-activity-card__ongoing-title" data-test="ongoing-title">
+        {t('dashboard~Ongoing')}
+      </div>
       <div className="co-activity-card__ongoing-body">{body}</div>
     </>
   );

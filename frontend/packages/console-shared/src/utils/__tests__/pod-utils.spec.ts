@@ -1,4 +1,4 @@
-import * as utils from '@console/internal/components/utils';
+import * as utils from '@console/internal/components/utils/rbac';
 import {
   isIdled,
   isKnativeServing,
@@ -17,7 +17,7 @@ import {
 } from '../__mocks__/pod-utils-test-data';
 import { PodControllerOverviewItem } from '../../types';
 import { DeploymentConfigModel } from '@console/internal/models';
-import { K8sResourceKind } from '@console/internal/module/k8s';
+import { K8sResourceKind } from '@console/internal/module/k8s/types';
 
 describe('Pod Utils:', () => {
   it('isIdle should return true', () => {

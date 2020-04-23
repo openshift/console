@@ -42,9 +42,7 @@ Cypress.Commands.add('logout', () => {
     return;
   }
   cy.task('log', '  Logging out');
-  cy.byTestID('user-dropdown')
-    .click()
-    .contains('Log out')
-    .click();
+  cy.byTestID('user-dropdown').click();
+  cy.byTestID('log-out').click();
   cy.byLegacyTestID('login').should('be.visible');
 });

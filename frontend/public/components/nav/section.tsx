@@ -209,6 +209,7 @@ export const NavSection = connect(navSectionStateToProps)(
             isActive={isActive}
             isExpanded={isOpen}
             onExpand={this.toggle}
+            data-test="nav"
           >
             {children}
           </NavExpandable>

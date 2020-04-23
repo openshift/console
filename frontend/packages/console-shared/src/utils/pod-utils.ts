@@ -5,7 +5,7 @@ import {
   SelfSubjectAccessReviewKind,
   AccessReviewResourceAttributes,
 } from '@console/internal/module/k8s';
-import { checkAccess } from '@console/internal/components/utils';
+import { checkAccess } from '@console/internal/components/utils/rbac';
 import { podColor, AllPodStatus, DEPLOYMENT_STRATEGY, DEPLOYMENT_PHASE } from '../constants';
 import { ExtPodKind } from '../types/pod';
 import { PodControllerOverviewItem, DeploymentStrategy } from '../types';

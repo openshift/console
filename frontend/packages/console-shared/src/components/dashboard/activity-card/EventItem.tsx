@@ -7,6 +7,7 @@ import { ResourceIcon } from '@console/internal/components/utils/resource-icon';
 import { ResourceLink } from '@console/internal/components/utils/resource-link';
 import { EventKind, referenceFor } from '@console/internal/module/k8s';
 import { YellowExclamationTriangleIcon } from '../../status';
+import { useTranslation } from 'react-i18next';
 
 const propsAreEqual = (prevProps: EventItemProps, nextProps: EventItemProps) =>
   prevProps.event.metadata.uid === nextProps.event.metadata.uid &&
@@ -15,6 +16,7 @@ const propsAreEqual = (prevProps: EventItemProps, nextProps: EventItemProps) =>
   prevProps.onToggle === nextProps.onToggle;
 
 const EventItem: React.FC<EventItemProps> = React.memo(({ event, isExpanded, onToggle }) => {
+  const { t } = useTranslation();
   const { involvedObject, message, metadata } = event;
   const lastTime = getLastTime(event);
   const isWarning = typeFilter('warning', event);
@@ -41,7 +43,7 @@ const EventItem: React.FC<EventItemProps> = React.memo(({ event, isExpanded, onT
             <div className="co-recent-item__title-message">
               {isWarning && (
                 <YellowExclamationTriangleIcon
-                  title="Warning"
+                  title={t('public~Warning')}
                   className="co-dashboard-icon co-recent-item__icon--warning"
                 />
               )}

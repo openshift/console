@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
 // @ts-ignore: FIXME missing exports due to out-of-sync @types/react-redux version
 import { useSelector } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import { DataPoint } from '@console/internal/components/graphs';
 import { Humanize, resourcePathFromModel } from '@console/internal/components/utils';
 import { Dropdown } from '@console/internal/components/utils/dropdown';
@@ -28,10 +29,11 @@ import './top-consumer-popover.scss';
 
 const ConsumerPopover: React.FC<ConsumerPopoverProps> = React.memo(
   ({ current, title, humanize, consumers, namespace, position, description, children }) => {
+    const { t } = useTranslation();
     const [isOpen, setOpen] = React.useState(false);
     return (
       <DashboardCardPopupLink
-        popupTitle={`${title} breakdown`}
+        popupTitle={t('dashboard~{{title}} breakdown', { title })}
         linkTitle={current}
         onHide={React.useCallback(() => setOpen(false), [])}
         onShow={React.useCallback(() => setOpen(true), [])}
@@ -79,21 +81,25 @@ export const LimitsBody: React.FC<LimitsBodyProps> = ({
   current,
   available,
   requested,
-}) =>
-  ((!!limitState && limitState !== LIMIT_STATE.OK) ||
-    (!!requestedState && requestedState !== LIMIT_STATE.OK)) && (
-    <ul className="co-utilization-card-popover__consumer-list">
-      <Status value={total}>Total capacity</Status>
-      <Status value={limit} icon={getLimitIcon(limitState)}>
-        Total limit
-      </Status>
-      <Status value={current}>Current utilization</Status>
-      <Status value={available}>Current available capacity</Status>
-      <Status value={requested} icon={getLimitIcon(requestedState)}>
-        Total requested
-      </Status>
-    </ul>
+}) => {
+  const { t } = useTranslation();
+  return (
+    ((!!limitState && limitState !== LIMIT_STATE.OK) ||
+      (!!requestedState && requestedState !== LIMIT_STATE.OK)) && (
+      <ul className="co-utilization-card-popover__consumer-list">
+        <Status value={total}>{t('dashboard~Total capacity')}</Status>
+        <Status value={limit} icon={getLimitIcon(limitState)}>
+          {t('dashboard~Total limit')}
+        </Status>
+        <Status value={current}>{t('dashboard~Current utilization')}</Status>
+        <Status value={available}>{t('dashboard~Current available capacity')}</Status>
+        <Status value={requested} icon={getLimitIcon(requestedState)}>
+          {t('dashboard~Total requested')}
+        </Status>
+      </ul>
+    )
   );
+};
 
 export const PopoverBody = withDashboardResources<DashboardItemProps & PopoverBodyProps>(
   React.memo(
@@ -108,6 +114,7 @@ export const PopoverBody = withDashboardResources<DashboardItemProps & PopoverBo
       description,
       children,
     }) => {
+      const { t } = useTranslation();
       const [currentConsumer, setCurrentConsumer] = React.useState(consumers[0]);
       const activePerspective = useSelector<RootState, string>(({ UI }) =>
         UI.get('activePerspective'),
@@ -165,10 +172,12 @@ export const PopoverBody = withDashboardResources<DashboardItemProps & PopoverBo
       const dropdownItems = React.useMemo(
         () =>
           consumers.reduce((items, curr) => {
-            items[referenceForModel(curr.model)] = `By ${curr.model.label}`;
+            items[referenceForModel(curr.model)] = t('dashboard~By {{label}}', {
+              label: curr.model.label,
+            });
             return items;
           }, {}),
-        [consumers],
+        [consumers, t],
       );
 
       const onDropdownChange = React.useCallback(
@@ -183,7 +192,7 @@ export const PopoverBody = withDashboardResources<DashboardItemProps & PopoverBo
 
       let body: React.ReactNode;
       if (error || consumersLoadError) {
-        body = <div className="text-secondary">Not available</div>;
+        body = <div className="text-secondary">{t('public~Not available')}</div>;
       } else if (!consumerLoaded || !data) {
         body = (
           <ul className="co-utilization-card-popover__consumer-list">
@@ -199,7 +208,7 @@ export const PopoverBody = withDashboardResources<DashboardItemProps & PopoverBo
           <>
             <ul
               className="co-utilization-card-popover__consumer-list"
-              aria-label={`Top consumer by ${model.label}`}
+              aria-label={t('dashboard~Top consumer by {{label}}', { label: model.label })}
             >
               {top5Data &&
                 top5Data.map((item) => {
@@ -216,7 +225,7 @@ export const PopoverBody = withDashboardResources<DashboardItemProps & PopoverBo
                   );
                 })}
             </ul>
-            <Link to={monitoringURL}>View more</Link>
+            <Link to={monitoringURL}>{t('dashboard~View more')}</Link>
           </>
         );
       }
@@ -229,15 +238,17 @@ export const PopoverBody = withDashboardResources<DashboardItemProps & PopoverBo
           {children}
           <div className="co-utilization-card-popover__title">
             {consumers.length === 1
-              ? `Top ${currentConsumer.model.label.toLowerCase()} consumers`
-              : 'Top consumers'}
+              ? t('dashboard~Top {{label}} consumers', {
+                  label: currentConsumer.model.label.toLowerCase(),
+                })
+              : t('dashboard~Top consumers')}
           </div>
           {consumers.length > 1 && (
             <Dropdown
               className="co-utilization-card-popover__dropdown"
               id="consumer-select"
               name="selectConsumerType"
-              aria-label="Select consumer type"
+              aria-label={t('dashboard~Select consumer type')}
               items={dropdownItems}
               onChange={onDropdownChange}
               selectedKey={referenceForModel(model)}
