@@ -38,7 +38,6 @@ import {
   Timestamp,
 } from './utils';
 import { BuildPipeline, BuildPipelineLogLink } from './build-pipeline';
-import { fromNow } from './utils/datetime';
 import { BuildLogs } from './build-logs';
 import { ResourceEventStream } from './events';
 import { Area, requirePrometheus } from './graphs';
@@ -364,7 +363,7 @@ const BuildsTableRow: RowFunction<K8sResourceKind> = ({ obj, index, key, style }
         <Status status={obj.status.phase} />
       </TableData>
       <TableData className={tableColumnClasses[3]}>
-        {fromNow(obj.metadata.creationTimestamp)}
+        <Timestamp timestamp={obj.metadata.creationTimestamp} />
       </TableData>
       <TableData className={tableColumnClasses[4]}>
         <ResourceKebab actions={menuActions} kind={BuildsReference} resource={obj} />

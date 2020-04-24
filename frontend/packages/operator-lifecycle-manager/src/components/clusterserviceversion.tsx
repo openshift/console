@@ -59,7 +59,6 @@ import {
   resourceObjPath,
   KebabAction,
 } from '@console/internal/components/utils';
-import { fromNow } from '@console/internal/components/utils/datetime';
 import { useAccessReview } from '@console/internal/components/utils/rbac';
 import { RootState } from '@console/internal/redux';
 import {
@@ -325,7 +324,7 @@ export const NamespacedClusterServiceVersionTableRow = withFallback<
 
       {/* Last Updated */}
       <TableData className={lastUpdatedColumnClass}>
-        {obj.status == null ? '-' : fromNow(obj.status.lastUpdateTime)}
+        {obj.status == null ? '-' : <Timestamp timestamp={obj.status.lastUpdateTime} />}
       </TableData>
 
       {/* Provided APIs */}
@@ -425,7 +424,7 @@ const NamespacedSubscriptionTableRow: React.FC<SubscriptionTableRowProps> = ({
 
       {/* Last Updated */}
       <TableData className={lastUpdatedColumnClass}>
-        {obj.status == null ? '-' : fromNow(obj.status.lastUpdated)}
+        {obj.status == null ? '-' : <Timestamp timestamp={obj.status.lastUpdated} />}
       </TableData>
 
       {/* Provided APIs */}

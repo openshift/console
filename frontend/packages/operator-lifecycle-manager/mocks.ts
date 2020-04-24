@@ -125,6 +125,7 @@ export const testClusterServiceVersion: ClusterServiceVersionKind = {
   status: {
     phase: ClusterServiceVersionPhase.CSVPhaseSucceeded,
     reason: CSVConditionReason.CSVReasonInstallSuccessful,
+    lastUpdateTime: '2020-04-21T18:19:49Z',
   },
 };
 

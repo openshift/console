@@ -22,7 +22,7 @@ const RevisionHeader = () => {
       props: { className: tableColumnClasses[2] },
     },
     {
-      title: 'Age',
+      title: 'Created',
       sortField: 'metadata.creationTimestamp',
       transforms: [sortable],
       props: { className: tableColumnClasses[3] },

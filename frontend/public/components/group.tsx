@@ -9,7 +9,6 @@ import { referenceForModel, GroupKind, K8sKind } from '../module/k8s';
 import { DetailsPage, ListPage, Table, TableRow, TableData, RowFunction } from './factory';
 import { addUsersModal, removeUserModal } from './modals';
 import { RoleBindingsPage } from './RBAC';
-import { fromNow } from './utils/datetime';
 import {
   asAccessReview,
   EmptyBox,
@@ -21,6 +20,7 @@ import {
   ResourceLink,
   ResourceSummary,
   SectionHeading,
+  Timestamp,
 } from './utils';
 
 const addUsers: KebabAction = (kind: K8sKind, group: GroupKind) => ({
@@ -89,7 +89,7 @@ const GroupTableRow: RowFunction<GroupKind> = ({ obj, index, key, style }) => {
       </TableData>
       <TableData className={tableColumnClasses[1]}>{_.size(obj.users)}</TableData>
       <TableData className={tableColumnClasses[2]}>
-        {fromNow(obj.metadata.creationTimestamp)}
+        <Timestamp timestamp={obj.metadata.creationTimestamp} />
       </TableData>
       <TableData className={tableColumnClasses[3]}>
         <ResourceKebab actions={menuActions} kind={referenceForModel(GroupModel)} resource={obj} />

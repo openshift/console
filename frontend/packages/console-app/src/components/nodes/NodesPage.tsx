@@ -17,13 +17,13 @@ import {
   Kebab,
   ResourceKebab,
   ResourceLink,
+  Timestamp,
   humanizeBinaryBytes,
   formatCores,
 } from '@console/internal/components/utils';
 import { NodeMetrics, setNodeMetrics } from '@console/internal/actions/ui';
 import { PROMETHEUS_BASE_PATH } from '@console/internal/components/graphs';
 import { coFetchJSON } from '@console/internal/co-fetch';
-import { fromNow } from '@console/internal/components/utils/datetime';
 import { getPrometheusURL, PrometheusEndpoint } from '@console/internal/components/graphs/helpers';
 import { nodeStatus } from '../../status/node';
 import NodeRoles from './NodeRoles';
@@ -87,7 +87,7 @@ const NodeTableHeader = () => {
       props: { className: tableColumnClasses[6] },
     },
     {
-      title: 'Created At',
+      title: 'Created',
       sortField: 'metadata.creationTimestamp',
       transforms: [sortable],
       props: { className: tableColumnClasses[7] },
@@ -150,7 +150,7 @@ const NodesTableRow = connect<NodesRowMapFromStateProps, null, NodesTableRowProp
         </TableData>
         <TableData className={tableColumnClasses[6]}>{storage}</TableData>
         <TableData className={tableColumnClasses[7]}>
-          {fromNow(node.metadata.creationTimestamp)}
+          <Timestamp timestamp={node.metadata.creationTimestamp} />
         </TableData>
         <TableData className={tableColumnClasses[8]}>
           <ResourceKebab

@@ -10,11 +10,11 @@ import {
   ResourceKebab,
   ResourceLink,
   ResourceSummary,
+  Timestamp,
   detailsPage,
   navFactory,
   resourceObjPath,
 } from './utils';
-import { fromNow } from './utils/datetime';
 import { SecretType } from './secrets/create-secret';
 import { configureAddSecretToWorkloadModal } from './modals/add-secret-to-workload';
 
@@ -101,7 +101,6 @@ SecretTableHeader.displayName = 'SecretTableHeader';
 
 const SecretTableRow = ({ obj: secret, index, key, style }) => {
   const data = _.size(secret.data);
-  const age = fromNow(secret.metadata.creationTimestamp);
   return (
     <TableRow id={secret.metadata.uid} index={index} trKey={key} style={style}>
       <TableData className={tableColumnClasses[0]}>
@@ -123,7 +122,9 @@ const SecretTableRow = ({ obj: secret, index, key, style }) => {
         {secret.type}
       </TableData>
       <TableData className={tableColumnClasses[3]}>{data}</TableData>
-      <TableData className={tableColumnClasses[4]}>{age}</TableData>
+      <TableData className={tableColumnClasses[4]}>
+        <Timestamp timestamp={secret.metadata.creationTimestamp} />
+      </TableData>
       <TableData className={tableColumnClasses[5]}>
         <ResourceKebab actions={menuActions} kind={kind} resource={secret} />
       </TableData>

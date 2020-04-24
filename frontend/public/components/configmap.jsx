@@ -11,21 +11,15 @@ import {
   ResourceKebab,
   ResourceLink,
   ResourceSummary,
+  Timestamp,
 } from './utils';
-import { fromNow } from './utils/datetime';
 import { ConfigMapModel } from '../models';
 
 const menuActions = [...Kebab.getExtensionsActionsForKind(ConfigMapModel), ...Kebab.factory.common];
 
 const kind = 'ConfigMap';
 
-const tableColumnClasses = [
-  classNames('col-sm-4', 'col-xs-6'),
-  classNames('col-sm-4', 'col-xs-6'),
-  classNames('col-sm-2', 'hidden-xs'),
-  classNames('col-sm-2', 'hidden-xs'),
-  Kebab.columnClass,
-];
+const tableColumnClasses = ['', '', 'hidden-xs', 'hidden-xs', Kebab.columnClass];
 
 const ConfigMapTableHeader = () => {
   return [
@@ -83,7 +77,7 @@ const ConfigMapTableRow = ({ obj: configMap, index, key, style }) => {
         {_.size(configMap.data) + _.size(configMap.binaryData)}
       </TableData>
       <TableData className={tableColumnClasses[3]}>
-        {fromNow(configMap.metadata.creationTimestamp)}
+        <Timestamp timestamp={configMap.metadata.creationTimestamp} />
       </TableData>
       <TableData className={tableColumnClasses[4]}>
         <ResourceKebab actions={menuActions} kind={kind} resource={configMap} />

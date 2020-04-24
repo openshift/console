@@ -4,7 +4,6 @@ import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
 import { Conditions } from './conditions';
 import { DetailsPage, ListPage, Table, TableRow, TableData } from './factory';
-import { fromNow } from './utils/datetime';
 import { referenceFor, kindForReference } from '../module/k8s';
 import {
   Kebab,
@@ -14,6 +13,7 @@ import {
   ResourceLink,
   ResourceSummary,
   SectionHeading,
+  Timestamp,
 } from './utils';
 
 const { common } = Kebab.factory;
@@ -79,7 +79,7 @@ const TableRowForKind = ({ obj, index, key, style, customData }) => {
         )}
       </TableData>
       <TableData className={tableColumnClasses[2]}>
-        {fromNow(obj.metadata.creationTimestamp)}
+        <Timestamp timestamp={obj.metadata.creationTimestamp} />
       </TableData>
       <TableData className={tableColumnClasses[3]}>
         <ResourceKebab actions={menuActions} kind={kind} resource={obj} />

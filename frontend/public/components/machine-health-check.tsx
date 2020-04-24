@@ -16,9 +16,9 @@ import {
   ResourceSummary,
   SectionHeading,
   Selector,
+  Timestamp,
   navFactory,
 } from './utils';
-import { fromNow } from './utils/datetime';
 
 const { common } = Kebab.factory;
 const menuActions = [...Kebab.getExtensionsActionsForKind(MachineHealthCheckModel), ...common];
@@ -73,7 +73,7 @@ const MachineHealthCheckTableRow: RowFunction<K8sResourceKind> = ({ obj, index, 
         <ResourceLink kind="Namespace" name={obj.metadata.namespace} />
       </TableData>
       <TableData className={tableColumnClasses[2]}>
-        {fromNow(obj.metadata.creationTimestamp)}
+        <Timestamp timestamp={obj.metadata.creationTimestamp} />
       </TableData>
       <TableData className={tableColumnClasses[3]}>
         <ResourceKebab actions={menuActions} kind={machineHealthCheckReference} resource={obj} />

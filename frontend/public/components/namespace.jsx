@@ -37,6 +37,7 @@ import {
   ResourceLink,
   ResourceSummary,
   SectionHeading,
+  Timestamp,
   formatBytesAsMiB,
   formatCores,
   humanizeBinaryBytes,
@@ -44,7 +45,6 @@ import {
   navFactory,
   useAccessReview,
 } from './utils';
-import { fromNow } from './utils/datetime';
 import {
   createNamespaceModal,
   createProjectModal,
@@ -173,7 +173,7 @@ const NamespacesTableRow = ({ obj: ns, index, key, style }) => {
         <LabelList kind="Namespace" labels={ns.metadata.labels} />
       </TableData>
       <TableData className={namespacesColumnClasses[3]}>
-        {fromNow(ns.metadata.creationTimestamp)}
+        <Timestamp timestamp={ns.metadata.creationTimestamp} />
       </TableData>
       <TableData className={namespacesColumnClasses[4]}>
         <ResourceKebab actions={nsMenuActions} kind="Namespace" resource={ns} />
@@ -333,7 +333,7 @@ const ProjectTableRow = connect(projectRowStateToProps)(
           </>
         )}
         <TableData className={projectColumnClasses[6]}>
-          {fromNow(project.metadata.creationTimestamp)}
+          <Timestamp timestamp={project.metadata.creationTimestamp} />
         </TableData>
         {actionsEnabled && (
           <TableData className={projectColumnClasses[7]}>

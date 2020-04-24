@@ -28,7 +28,7 @@ const ServiceHeader = () => {
       props: { className: tableColumnClasses[3] },
     },
     {
-      title: 'Age',
+      title: 'Created',
       sortField: 'metadata.creationTimestamp',
       transforms: [sortable],
       props: { className: tableColumnClasses[4] },

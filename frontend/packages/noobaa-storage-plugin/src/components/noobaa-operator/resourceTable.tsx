@@ -79,7 +79,7 @@ const ResourceTableHeader = () => {
       props: { className: tableColumnClasses[3] },
     },
     {
-      title: 'Created At',
+      title: 'Created',
       sortField: 'metadata.creationTimestamp',
       transforms: [sortable],
       props: { className: tableColumnClasses[4] },
