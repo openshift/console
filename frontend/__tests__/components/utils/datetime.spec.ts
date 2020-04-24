@@ -89,6 +89,10 @@ describe('fromNow', () => {
     expect(fromNow(new Date('Feb 02 1971'), new Date('Jan 01 1970'))).toEqual('a year from now');
     expect(fromNow(new Date('Feb 02 1973'), new Date('Jan 01 1970'))).toEqual('3 years from now');
   });
+
+  it('check for null value', () => {
+    expect(fromNow(null, new Date('Jan 01 1970 00:00:00'))).toEqual('-');
+  });
 });
 
 describe('isValid', () => {
