@@ -26,12 +26,22 @@ import SingleStat from './single-stat';
 import Table from './table';
 import { Panel } from './types';
 
-const evaluateTemplate = (s: string, variables: VariablesMap): string => {
+const NUM_SAMPLES = 30;
+
+const evaluateTemplate = (s: string, variables: VariablesMap, timespan: number): string => {
   if (_.isEmpty(s)) {
     return undefined;
   }
   let result = s;
-  _.each(variables, (v, k) => {
+  // Handle the special `$__interval` variable.
+  // https://grafana.com/docs/grafana/latest/reference/templating/#the-interval-variable
+  const intervalMS = timespan / NUM_SAMPLES;
+  const intervalMinutes = Math.floor(intervalMS / 1000 / 60);
+  // Use a minimum of 5m to make sure we have enough data to perform `irate`
+  // calculations, which require 2 data points each. Otherwise, there could be
+  // gaps in the graph.
+  const __interval: Variable = { value: `${Math.max(intervalMinutes, 5)}m` };
+  _.each({ ...variables, __interval }, (v, k) => {
     const re = new RegExp(`\\$${k}`, 'g');
     if (result.match(re)) {
       if (v.isLoading) {
@@ -119,7 +129,7 @@ const SingleVariableDropdown_: React.FC<SingleVariableDropdownProps> = ({
       const url = getPrometheusURL({
         endpoint: PrometheusEndpoint.QUERY_RANGE,
         query: prometheusQuery,
-        samples: 30,
+        samples: NUM_SAMPLES,
         timeout: '5s',
         timespan,
       });
@@ -163,12 +173,13 @@ const SingleVariableDropdown_: React.FC<SingleVariableDropdownProps> = ({
 const SingleVariableDropdown = connect(
   ({ UI }: RootState, { name }: { name: string }) => {
     const variables = UI.getIn(['monitoringDashboards', 'variables']).toJS();
+    const timespan = UI.getIn(['monitoringDashboards', 'timespan']);
     const { isHidden, options, query, value } = variables[name] ?? {};
     return {
       isHidden,
       options,
-      query: evaluateTemplate(query, variables),
-      timespan: UI.getIn(['monitoringDashboards', 'timespan']),
+      query: evaluateTemplate(query, variables, timespan),
+      timespan,
       value,
     };
   },
@@ -272,7 +283,7 @@ export const PollIntervalDropdown = connect(
 // Matches Prometheus labels surrounded by {{ }} in the graph legend label templates
 const legendTemplateOptions = { interpolate: /{{([a-zA-Z_][a-zA-Z0-9_]*)}}/g };
 
-const CardBody_: React.FC<CardBodyProps> = ({ panel, pollInterval, variables }) => {
+const CardBody_: React.FC<CardBodyProps> = ({ panel, pollInterval, timespan, variables }) => {
   const formatLegendLabel = React.useCallback(
     (labels, i) => {
       const legendFormat = panel.targets?.[i]?.legendFormat;
@@ -294,7 +305,7 @@ const CardBody_: React.FC<CardBodyProps> = ({ panel, pollInterval, variables }) 
   if (!rawQueries.length) {
     return null;
   }
-  const queries = rawQueries.map((expr) => evaluateTemplate(expr, variablesJS));
+  const queries = rawQueries.map((expr) => evaluateTemplate(expr, variablesJS, timespan));
 
   if (_.some(queries, _.isUndefined)) {
     return <LoadingInline />;
@@ -324,6 +335,7 @@ const CardBody_: React.FC<CardBodyProps> = ({ panel, pollInterval, variables }) 
 };
 const CardBody = connect(({ UI }: RootState) => ({
   pollInterval: UI.getIn(['monitoringDashboards', 'pollInterval']),
+  timespan: UI.getIn(['monitoringDashboards', 'timespan']),
   variables: UI.getIn(['monitoringDashboards', 'variables']),
 }))(CardBody_);
 
@@ -602,6 +614,7 @@ type PollIntervalDropdownProps = {
 type CardBodyProps = {
   panel: Panel;
   pollInterval: null | number;
+  timespan: number;
   variables: ImmutableMap<string, ImmutableMap<string, any>>;
 };
 
