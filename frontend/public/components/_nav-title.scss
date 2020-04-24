@@ -24,6 +24,15 @@
     padding-left: $grid-gutter-width;
     padding-right: $grid-gutter-width;
   }
+  &--row {
+    @media (max-width: $screen-xs-max) {
+      margin-bottom: 30px;
+    }
+    @media (min-width: $screen-sm) {
+      display: flex;
+      flex-direction: row;
+    }
+  }
   &--detail {
     border-bottom: 1px solid $color-grey-background-border;
     flex-shrink: 0; // do not allow to shrink

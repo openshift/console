@@ -40,6 +40,12 @@ $co-external-link-padding-right: 15px;
     margin-right: 10px;
     min-width: 0; // enables truncation of selected item, if needed
   }
+  &--inline {
+    margin-left: auto;
+  }
+  &--no-title {
+    margin-bottom: 30px;
+  }
 }
 
 .co-m-pane__filter-bar,
@@ -103,6 +109,11 @@ $co-external-link-padding-right: 15px;
     align-items: center;
     margin-bottom: ($grid-gutter-width / 2);
   }
+}
+
+.co-m-pane__heading-badge {
+  line-height: 0;
+  margin-left: var(--pf-global--spacer--sm);
 }
 
 .co-m-pane__heading-link {
@@ -374,9 +385,9 @@ $co-external-link-padding-right: 15px;
 
 .help-block {
   margin-bottom: 0;
- }
+}
 
- // Note: include .co-select-to-copy to enable single click selection of full text
+// Note: include .co-select-to-copy to enable single click selection of full text
 .co-truncate {
   @include co-truncate;
 }

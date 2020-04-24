@@ -270,32 +270,31 @@ export const FireMan_ = connect(null, { filterList })(
 
       return (
         <>
-          {title && <PageHeading title={title} badge={badge} />}
-          {/* Show help text above the filter bar if there's a create button. */}
-          {helpText && createLink && (
-            <p className="co-m-pane__help-text co-help-text">{helpText}</p>
-          )}
-          <div
-            className={classNames(
-              { 'co-m-pane__filter-bar': createLink || helpText },
-              {
-                'co-m-pane__filter-bar--with-help-text': helpText && !createLink,
-              },
-            )}
-          >
-            {helpText && !createLink && (
-              <div className="co-m-pane__filter-bar-group co-m-pane__filter-bar-group--help-text">
-                {helpText}
-              </div>
-            )}
-            {createLink && <div className="co-m-pane__filter-bar-group">{createLink}</div>}
-            {!title && badge && (
-              <div className="co-m-pane__filter-bar-group co-m-pane__filter-bar-group--badge">
-                {badge}
-              </div>
-            )}
-          </div>
-          <div className="co-m-pane__body">
+          <PageHeading title={title} badge={badge} className="co-m-nav-title--row">
+            <div
+              className={classNames(
+                { 'co-m-pane__filter-bar--inline': (createLink || helpText) && title },
+                { 'co-m-pane__filter-bar--no-title': !title },
+                { 'co-m-pane__filter-bar': !createLink || helpText },
+                {
+                  'co-m-pane__filter-bar--with-help-text': helpText && !createLink,
+                },
+              )}
+            >
+              {createLink && (
+                <div className="co-m-pane__filter-bar-group co-m-pane__createLink">
+                  {createLink}
+                </div>
+              )}
+              {!title && badge && (
+                <div className="co-m-pane__filter-bar-group co-m-pane__filter-bar-group--badge">
+                  {badge}
+                </div>
+              )}
+            </div>
+          </PageHeading>
+          {helpText && <p className="co-m-pane__help-text co-help-text">{helpText}</p>}
+          <div className="co-m-pane__body co-m-pane__body--no-top-margin">
             {inject(this.props.children, {
               resources,
               expand: this.state.expand,
