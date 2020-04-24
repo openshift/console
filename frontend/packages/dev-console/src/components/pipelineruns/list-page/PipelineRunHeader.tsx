@@ -17,13 +17,13 @@ const PipelineRunHeader = () => {
     },
     {
       title: 'Status',
-      sortField: 'status.completionTime',
+      sortField: 'status.conditions[0].reason',
       transforms: [sortable],
       props: { className: tableColumnClasses[2] },
     },
     {
       title: 'Task Status',
-      sortField: 'status.completionTime',
+      sortField: 'status.conditions[0].reason',
       transforms: [sortable],
       props: { className: tableColumnClasses[3] },
     },
