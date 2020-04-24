@@ -5,12 +5,12 @@ const SUPPORTED_LOCALES = {
   'zh': '中文'
 };
 
-const DEFAULT_LOCALE = 'en';
+const FALLBACK_LOCALE = 'en';
 
 module.exports = {
   SUPPORTED_LOCALES,
 
-  DEFAULT_LOCALE,
+  FALLBACK_LOCALE,
 
   contextSeparator: '_',
   // Key separator used in your translation keys

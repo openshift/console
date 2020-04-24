@@ -31,6 +31,7 @@ const consoleLoader = () =>
   ).then((m) => m.VMConsolePage);
 import QuickStartDrawer from '@console/app/src/components/quick-starts/QuickStartDrawer';
 import { useTranslation, withTranslation } from 'react-i18next';
+import * as moment from 'moment';
 import '../../i18n';
 import '../vendor.scss';
 import '../style.scss';
@@ -153,7 +154,7 @@ class App_ extends React.PureComponent {
         <Helmet titleTemplate={`%s · ${productName}`} defaultTitle={productName} />
         <QuickStartDrawer>
           <ConsoleNotifier location="BannerTop" />
-          <div>Current locale: {i18n.language}</div>
+          <div>Current locale: {i18n.language} | moment locale: {moment.locale()} | {t('Date: It is now {{date, MM/DD/YYYY}}', { date: new Date() })} | {t('Number: ${{value, number}}', { value: 1550.95 })}</div>
           <Page
             header={<Masthead onNavToggle={this._onNavToggle} />}
             sidebar={

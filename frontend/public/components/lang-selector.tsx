@@ -5,7 +5,6 @@ import {
   SelectOptionObject
 } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import moment from 'moment';
 
 const { SUPPORTED_LOCALES } = require('../../i18next-parser.config');
 
@@ -24,7 +23,6 @@ export const LangSelector: React.FunctionComponent = () => {
         setSelected(value as string); 
         setIsExpanded(false);
         const match = langOptions.find((option) => option.value === value);
-        moment.locale(match ? match.lang : 'en');
         i18n.changeLanguage(match ? match.lang : 'en');
       }}
       selections={selected}

@@ -9,10 +9,10 @@ import zhLocale from 'moment/locale/zh-cn';
 import deLocale from 'moment/locale/de';
 import moment from 'moment';
 
-const { DEFAULT_LOCALE } = require('./i18next-parser.config');
+const { FALLBACK_LOCALE } = require('./i18next-parser.config');
 
 // Set default locale
-moment.locale(DEFAULT_LOCALE);
+// moment.locale(DEFAULT_LOCALE);
 
 i18n
   // fetch json files
@@ -29,15 +29,27 @@ i18n
     backend: {
       loadPath: 'static/locales/{{lng}}/{{ns}}.json'
     },
-    fallbackLng: DEFAULT_LOCALE,
+    fallbackLng: FALLBACK_LOCALE,
     load: 'languageOnly',
     debug: process.env.NODE_ENV === 'development',
     ns: ['public', 'nav'],
     defaultNS: 'public',
     nsSeparator: '~',
     interpolation: {
-      format: function(value, format, lng) {
+      format: function(value, format, lng, options) {
+        console.log(`i18n format - value: ${value} | format: ${format} | lng: ${lng} | options: ${JSON.stringify(options)}`);
+        if (format === 'number') {
+          // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat#Browser_compatibility
+          return new Intl.NumberFormat(lng).format(value);
+        }
         if (value instanceof Date) {
+          if (format === 'fromNow') {
+            // Intl.RelativeTimeFormat doesn't support Edge, IE, Safari yet as of this writing
+            // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/RelativeTimeFormat
+            return moment(value).fromNow(options.omitSuffix === true);
+          }
+          // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat#Browser_compatibility
+          // return new Intl.DateTimeFormat(lng).format(value);
           return moment(value).format(format);
         }
         return value;
@@ -48,7 +60,12 @@ i18n
       useSuspense: false,
       wait: true
     }
+  }, () => { 
+    moment.locale(i18n.language === 'zh' ? 'zh-cn' : i18n.language); 
   });
 
+i18n.on('languageChanged', function(lng) {
+  moment.locale(lng === 'zh' ? 'zh-cn' : lng);
+});
 
 export default i18n; 

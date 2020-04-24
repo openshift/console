@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { Tooltip } from '@patternfly/react-core';
 import * as classNames from 'classnames';
 import { GlobeAmericasIcon } from '@patternfly/react-icons';
+import { useTranslation } from  'react-i18next';
 
 import * as dateTime from './datetime';
 
@@ -22,6 +23,8 @@ const monthAbbrs = [
 ];
 
 const timestampFor = (mdate: Date, now: Date, omitSuffix: boolean) => {
+  const { t } = useTranslation();
+
   if (!dateTime.isValid(mdate)) {
     return '-';
   }
@@ -35,6 +38,9 @@ const timestampFor = (mdate: Date, now: Date, omitSuffix: boolean) => {
     // Show a relative time if within 10.5 minutes in the past from the current time.
     return dateTime.fromNow(mdate);
   }
+
+  // Apr 23, 4:33 pm
+  return t('{{date, MMM D, h:mm a}}', { date: mdate });
 
   let a = 'am';
   let hours = mdate.getHours();

@@ -1,0 +1,5 @@
+{
+  "Date: It is now {{date, MM/DD/YYYY}}": "Date: It is now {{date, DD/MM/YYYY}}",
+  "Number: ${{value, number}}": "Number: {{value, number}} €",
+  "{{date, MMM D, h:mm a}}": "{{date, D MMM, H:mm}}"
+}

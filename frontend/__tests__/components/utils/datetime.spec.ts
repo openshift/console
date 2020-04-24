@@ -33,36 +33,36 @@ describe('fromNow', () => {
       fromNow(new Date('Jan 01 1970 00:00:00'), new Date('Jan 01 1970 00:00:02'), {
         omitSuffix: true,
       }),
-    ).toEqual('few seconds');
+    ).toEqual('a few seconds');
     expect(
       fromNow(new Date('Jan 01 1970 00:00:00'), new Date('Jan 01 1970 00:01:00'), {
         omitSuffix: true,
       }),
-    ).toEqual('minute');
+    ).toEqual('a minute');
     expect(
       fromNow(new Date('Jan 01 1970 00:00:00'), new Date('Jan 01 1970 00:51:00'), {
         omitSuffix: true,
       }),
-    ).toEqual('hour');
+    ).toEqual('an hour');
     expect(
       fromNow(new Date('Jan 01 1970 00:00:00'), new Date('Jan 01 1970 12:45:00'), {
         omitSuffix: true,
       }),
     ).toEqual('13 hours');
     expect(fromNow(new Date('Jan 01 1970'), new Date('Jan 02 1970'), { omitSuffix: true })).toEqual(
-      'day',
+      'a day',
     );
     expect(fromNow(new Date('Jan 01 1970'), new Date('Jan 09 1970'), { omitSuffix: true })).toEqual(
       '8 days',
     );
     expect(fromNow(new Date('Jan 01 1970'), new Date('Feb 02 1970'), { omitSuffix: true })).toEqual(
-      'month',
+      'a month',
     );
     expect(fromNow(new Date('Jan 01 1970'), new Date('Mar 02 1970'), { omitSuffix: true })).toEqual(
       '2 months',
     );
     expect(fromNow(new Date('Jan 01 1970'), new Date('Feb 02 1971'), { omitSuffix: true })).toEqual(
-      'year',
+      'a year',
     );
     expect(fromNow(new Date('Jan 01 1970'), new Date('Feb 02 1973'), { omitSuffix: true })).toEqual(
       '3 years',
@@ -71,23 +71,23 @@ describe('fromNow', () => {
 
   it('prints future dates correctly', () => {
     expect(fromNow(new Date('Jan 01 1970 00:00:02'), new Date('Jan 01 1970 00:00:00'))).toEqual(
-      'a few seconds from now',
+      'in a few seconds',
     );
     expect(fromNow(new Date('Jan 01 1970 00:01:01'), new Date('Jan 01 1970 00:00:00'))).toEqual(
-      'a minute from now',
+      'in a minute',
     );
     expect(fromNow(new Date('Jan 01 1970 01:01:00'), new Date('Jan 01 1970 00:00:00'))).toEqual(
-      'an hour from now',
+      'in an hour',
     );
     expect(fromNow(new Date('Jan 01 1970 14:20:00'), new Date('Jan 01 1970 00:00:00'))).toEqual(
-      '14 hours from now',
+      'in 14 hours',
     );
-    expect(fromNow(new Date('Jan 02 1970'), new Date('Jan 01 1970'))).toEqual('a day from now');
-    expect(fromNow(new Date('Jan 09 1970'), new Date('Jan 01 1970'))).toEqual('8 days from now');
-    expect(fromNow(new Date('Feb 02 1970'), new Date('Jan 01 1970'))).toEqual('a month from now');
-    expect(fromNow(new Date('Mar 01 1970'), new Date('Jan 01 1970'))).toEqual('2 months from now');
-    expect(fromNow(new Date('Feb 02 1971'), new Date('Jan 01 1970'))).toEqual('a year from now');
-    expect(fromNow(new Date('Feb 02 1973'), new Date('Jan 01 1970'))).toEqual('3 years from now');
+    expect(fromNow(new Date('Jan 02 1970'), new Date('Jan 01 1970'))).toEqual('in a day');
+    expect(fromNow(new Date('Jan 09 1970'), new Date('Jan 01 1970'))).toEqual('in 8 days');
+    expect(fromNow(new Date('Feb 02 1970'), new Date('Jan 01 1970'))).toEqual('in a month');
+    expect(fromNow(new Date('Mar 01 1970'), new Date('Jan 01 1970'))).toEqual('in 2 months');
+    expect(fromNow(new Date('Feb 02 1971'), new Date('Jan 01 1970'))).toEqual('in a year');
+    expect(fromNow(new Date('Feb 02 1973'), new Date('Jan 01 1970'))).toEqual('in 3 years');
   });
 
   it('check for null value', () => {
