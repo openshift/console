@@ -3,12 +3,8 @@ import { useField } from 'formik';
 import { connectToFlags, FlagsObject } from '@console/internal/reducers/features';
 import { K8sKind } from '@console/internal/module/k8s';
 import { DeploymentModel, DeploymentConfigModel } from '@console/internal/models';
-import {
-  FLAG_KNATIVE_SERVING_SERVICE,
-  ServiceModel,
-  KnativeServingModel,
-} from '@console/knative-plugin';
-import { getBadgeFromType, RadioGroupField, RadioGroupOption } from '@console/shared';
+import { FLAG_KNATIVE_SERVING_SERVICE, ServiceModel } from '@console/knative-plugin';
+import { RadioGroupField, RadioGroupOption } from '@console/shared';
 import { useAccessReview } from '@console/internal/components/utils';
 import { getActiveNamespace } from '@console/internal/actions/ui';
 import { Resources, ReadableResourcesNames } from '../import-types';
@@ -69,16 +65,7 @@ const ResourceSection: React.FC<ResourceSectionProps> = ({ flags }) => {
     knativeServiceAccess;
   if (canIncludeKnative) {
     radioOptions.push({
-      label: (
-        <div>
-          {ReadableResourcesNames[Resources.KnativeService]}
-          <span className="odc-resource-section__badge-wrapper">
-            <span className="odc-resource-section__inline-badge">
-              {getBadgeFromType(KnativeServingModel.badge)}
-            </span>
-          </span>
-        </div>
-      ),
+      label: ReadableResourcesNames[Resources.KnativeService],
       value: Resources.KnativeService,
       children: createHelpText(ServiceModel, `A Knative Service enables scaling to zero when idle`),
     });
