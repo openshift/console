@@ -20,7 +20,7 @@ export const Conditions: React.SFC<ConditionsProps> = ({ conditions }) => {
         <CamelCaseWrap value={condition.reason} />
       </div>
       {/* remove initial newline which appears in route messages */}
-      <div className="hidden-xs col-sm-5 col-md-4 co-break-word co-pre-line">
+      <div className="hidden-xs col-sm-5 col-md-4 co-break-word co-pre-line co-conditions__message">
         {condition.message?.trim() || '-'}
       </div>
     </div>
