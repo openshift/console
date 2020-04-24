@@ -21,6 +21,7 @@ export const GetSecret: React.FC<GetSecretProps> = ({ obj }) => {
     const configMap = k8sGet(ConfigMapModel, name, namespace);
     Promise.all([secret, configMap])
       .then((data) => {
+        const bucketName = _.get(data[1], 'data.BUCKET_NAME');
         const endpoint = `${_.get(data[1], 'data.BUCKET_HOST')}:${_.get(
           data[1],
           'data.BUCKET_PORT',
@@ -29,7 +30,7 @@ export const GetSecret: React.FC<GetSecretProps> = ({ obj }) => {
         const secretKey = Base64.decode(_.get(data[0], 'data.AWS_SECRET_ACCESS_KEY'));
         const secretValues = [
           { field: 'Endpoint', value: endpoint },
-          { field: 'Bucket Name', value: name },
+          { field: 'Bucket Name', value: bucketName },
           { field: 'Access Key', value: accessKey },
           { field: 'Secret Key', value: secretKey },
         ];
