@@ -11,9 +11,6 @@ import moment from 'moment';
 
 const { FALLBACK_LOCALE } = require('./i18next-parser.config');
 
-// Set default locale
-// moment.locale(DEFAULT_LOCALE);
-
 i18n
   // fetch json files
   // learn more: https://github.com/i18next/i18next-http-backend
@@ -37,7 +34,6 @@ i18n
     nsSeparator: '~',
     interpolation: {
       format: function(value, format, lng, options) {
-        console.log(`i18n format - value: ${value} | format: ${format} | lng: ${lng} | options: ${JSON.stringify(options)}`);
         if (format === 'number') {
           // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat#Browser_compatibility
           return new Intl.NumberFormat(lng).format(value);
