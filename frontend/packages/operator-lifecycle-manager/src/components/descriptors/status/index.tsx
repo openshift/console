@@ -71,14 +71,17 @@ const K8sPhaseReason: React.SFC<StatusCapabilityProps> = ({ value }) =>
     <pre style={{ width: 'max-content' }}>{value}</pre>
   );
 
-const K8sResourceLink: React.SFC<StatusCapabilityProps> = (props) => (
-  <ResourceLink
-    kind={props.capability.substr(StatusCapability.k8sResourcePrefix.length)}
-    name={props.value}
-    namespace={props.namespace}
-    title={props.value}
-  />
-);
+const K8sResourceLink: React.SFC<StatusCapabilityProps> = ({ capability, namespace, value }) =>
+  _.isEmpty(value) ? (
+    <span className="text-muted">None</span>
+  ) : (
+    <ResourceLink
+      kind={capability.substr(StatusCapability.k8sResourcePrefix.length)}
+      name={value}
+      namespace={namespace}
+      title={value}
+    />
+  );
 
 const capabilityComponents = ImmutableMap<
   StatusCapability,
