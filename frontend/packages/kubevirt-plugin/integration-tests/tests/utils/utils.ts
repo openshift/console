@@ -17,7 +17,8 @@ import {
   saveButton,
 } from '@console/internal-integration-tests/views/yaml.view';
 import { STORAGE_CLASS, PAGE_LOAD_TIMEOUT_SECS, SEC } from './consts';
-import { NodePortService } from './types';
+import { NodePortService, Status } from './types';
+import { filterCount } from '../../views/vms.list.view';
 
 export async function setCheckboxState(elem: any, targetState: boolean) {
   const checkboxState = await elem.isSelected();
@@ -51,7 +52,7 @@ export async function createProject(name: string) {
 }
 
 export async function createExampleVMViaYAML() {
-  await browser.get(`${appHost}/k8s/ns/${testName}/virtualmachines`);
+  await browser.get(`${appHost}/k8s/ns/${testName}/virtualization`);
   await isLoaded();
   await click(createItemButton);
   await click(createYAMLLink);
@@ -133,6 +134,13 @@ export function resolveStorageDataAttribute(configMap: any, attribute: string): 
   }
   return _.get(configMap, ['data', attribute]);
 }
+
+export const waitForFilterCount = (status: Status, targetCount: number) => {
+  return async () => {
+    const count = await filterCount(status);
+    return count === targetCount;
+  };
+};
 
 export const waitFor = async (element, text, count = 1) => {
   let sequenceNumber = 0;

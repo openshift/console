@@ -64,18 +64,20 @@ export const INNER_TEMPLATE_VERSION = 'v0.9.1';
 export const COMMON_TEMPLATES_NAMESPACE = 'openshift';
 export const COMMON_TEMPLATES_REVISION = '1';
 
+export const DEFAULT_YAML_VM_NAME = 'vm-example';
+
 export const KUBEVIRT_SCRIPTS_PATH =
   './packages/kubevirt-plugin/integration-tests/tests/utils/scripts';
 export const KUBEVIRT_TEMPLATES_PATH =
   './packages/kubevirt-plugin/integration-tests/tests/utils/templates';
 
 export enum TAB {
-  Consoles = 'Consoles',
+  Overview = 'Overview',
   Details = 'Details',
+  Consoles = 'Consoles',
   Disks = 'Disks',
   Events = 'Events',
   NetworkInterfaces = 'Network Interfaces',
-  Overview = 'Overview',
   Yaml = 'YAML',
 }
 
@@ -92,15 +94,27 @@ export enum VM_ACTION {
   Unpause = 'Unpause Virtual Machine',
 }
 
+export enum VMI_ACTION {
+  Delete = 'Delete Virtual Machine Instance',
+  EditAnnotations = 'Edit Annotations',
+  EditLabels = 'Edit Labels',
+}
+
 export enum VM_STATUS {
   Error = 'Error',
-  Starting = 'Starting',
-  Running = 'Running',
-  Off = 'Off',
   Pending = 'Pending',
   Importing = 'Importing',
-  Migrating = 'Migrating',
+  Other = 'Other',
+  Starting = 'Starting',
   Paused = 'Paused',
+  Migrating = 'Migrating',
+  Stopping = 'Stopping',
+  Running = 'Running',
+  Off = 'Off',
+}
+
+export enum POD_STATUS {
+  Terminating = 'Terminating',
 }
 
 export enum DISK_SOURCE {
@@ -155,9 +169,3 @@ export const diskTabCol = {
   storageClass: 4,
 };
 Object.freeze(diskTabCol);
-
-export enum VMI_ACTION {
-  Delete = 'Delete Virtual Machine Instance',
-  EditAnnotations = 'Edit Annotations',
-  EditLabels = 'Edit Labels',
-}

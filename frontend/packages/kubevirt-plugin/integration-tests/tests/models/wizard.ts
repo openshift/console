@@ -6,19 +6,31 @@ import {
 } from '@console/internal-integration-tests/views/crud.view';
 import { clickNavLink } from '@console/internal-integration-tests/views/sidenav.view';
 import { click, fillInput, asyncForEach } from '@console/shared/src/test-utils/utils';
+import { K8sKind } from '@console/internal/module/k8s';
 import { selectOptionByText } from '../utils/utils';
-import { CloudInitConfig, StorageResource, NetworkResource, FlavorConfig } from '../utils/types';
+import {
+  CloudInitConfig,
+  StorageResource,
+  NetworkResource,
+  FlavorConfig,
+  VirtualMachineTemplateModel,
+} from '../utils/types';
 import { WIZARD_CREATE_VM_SUCCESS, PAGE_LOAD_TIMEOUT_SECS, KEBAP_ACTION } from '../utils/consts';
 import * as wizardView from '../../views/wizard.view';
 import { NetworkInterfaceDialog } from '../dialogs/networkInterfaceDialog';
 import { DiskDialog } from '../dialogs/diskDialog';
 import { Flavor } from '../utils/constants/wizard';
+import { resourceHorizontalTab } from '../../views/uiResource.view';
 
 export class Wizard {
-  async openWizard(kind: string) {
+  async openWizard(kind: K8sKind) {
     if (!(await resourceTitle.isPresent()) || (await resourceTitle.getText()) !== kind) {
-      await clickNavLink(['Workloads', kind]);
+      await clickNavLink(['Workloads', 'Virtualization']);
       await isLoaded();
+      if (kind.plural === VirtualMachineTemplateModel.plural) {
+        await click(resourceHorizontalTab(VirtualMachineTemplateModel));
+        await isLoaded();
+      }
     }
     await click(createItemButton);
     await click(wizardView.createWithWizardButton);

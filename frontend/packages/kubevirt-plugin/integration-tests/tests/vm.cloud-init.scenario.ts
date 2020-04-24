@@ -3,7 +3,6 @@ import { testName } from '@console/internal-integration-tests/protractor.conf';
 import { withResource } from '@console/shared/src/test-utils/utils';
 import { getCloudInitVolume } from '../../src/selectors/vm/selectors';
 import { basicVMConfig } from './utils/mocks';
-import { getResourceObject } from './utils/utils';
 import { CloudInitConfig, ProvisionConfig } from './utils/types';
 import { ProvisionConfigName } from './utils/constants/wizard';
 import { vmConfig } from './vm.wizard.configs';
@@ -45,7 +44,7 @@ describe('Kubevirt create VM using cloud-init', () => {
     await withResource(leakedResources, vm.asResource(), async () => {
       await vm.create(testVMConfig);
       const volumeUserData = get(
-        getCloudInitVolume(getResourceObject(vm.name, vm.namespace, vm.kind)),
+        getCloudInitVolume(vm.getResource()),
         'cloudInitNoCloud.userData',
         {},
       );
@@ -63,7 +62,7 @@ describe('Kubevirt create VM using cloud-init', () => {
     await withResource(leakedResources, vm.asResource(), async () => {
       await vm.create(testVMConfig);
       const volumeUserData = get(
-        getCloudInitVolume(getResourceObject(vm.name, vm.namespace, vm.kind)),
+        getCloudInitVolume(vm.getResource()),
         'cloudInitNoCloud.userData',
         {},
       );

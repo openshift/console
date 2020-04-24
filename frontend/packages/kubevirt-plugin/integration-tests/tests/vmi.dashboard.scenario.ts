@@ -11,15 +11,11 @@ import {
   vmInventoryDisks,
 } from '../views/dashboard.view';
 import { getVMIManifest } from './utils/mocks';
-import { VirtualMachine } from './models/virtualMachine';
 import { VM_STATUS, NOT_AVAILABLE } from './utils/consts';
+import { VirtualMachineInstance } from './models/virtualMachineInstance';
 
-const waitForVM = async (
-  manifest: any,
-  status: VM_STATUS,
-  kind?: 'virtualmachines' | 'virtualmachineinstances',
-) => {
-  const vm = new VirtualMachine(manifest.metadata, kind || 'virtualmachines');
+const waitForVM = async (manifest: any, status: VM_STATUS) => {
+  const vm = new VirtualMachineInstance(manifest.metadata);
   createResource(manifest);
   await vm.waitForStatus(status);
   return vm;
@@ -27,26 +23,28 @@ const waitForVM = async (
 
 describe('Test VMI dashboard', () => {
   const testVM = getVMIManifest('Container', testName);
-  let vm: VirtualMachine;
+  let vmi: VirtualMachineInstance;
 
   afterAll(() => {
     deleteResource(testVM);
   });
 
   beforeAll(async () => {
-    vm = await waitForVM(testVM, VM_STATUS.Running, 'virtualmachineinstances');
-    await vm.navigateToDashboard();
+    vmi = await waitForVM(testVM, VM_STATUS.Running);
+    await vmi.navigateToOverview();
   });
 
   it('ID(CNV-3072) Inventory card', async () => {
     expect(vmInventoryNICs.getText()).toEqual('1 NIC');
     expect(vmInventoryNICs.$('a').getAttribute('href')).toMatch(
-      new RegExp(`.*/k8s/ns/${vm.namespace}/${VirtualMachineInstanceModel.plural}/${vm.name}/nics`),
+      new RegExp(
+        `.*/k8s/ns/${vmi.namespace}/${VirtualMachineInstanceModel.plural}/${vmi.name}/nics`,
+      ),
     );
     expect(vmInventoryDisks.getText()).toEqual('1 Disk');
     expect(vmInventoryDisks.$('a').getAttribute('href')).toMatch(
       new RegExp(
-        `.*/k8s/ns/${vm.namespace}/${VirtualMachineInstanceModel.plural}/${vm.name}/disks`,
+        `.*/k8s/ns/${vmi.namespace}/${VirtualMachineInstanceModel.plural}/${vmi.name}/disks`,
       ),
     );
   });
@@ -56,8 +54,8 @@ describe('Test VMI dashboard', () => {
   });
 
   it('ID(CNV-4089) Details card', async () => {
-    expect(vmDetailsName.getText()).toEqual(vm.name);
-    expect(vmDetailsNamespace.getText()).toEqual(vm.namespace);
+    expect(vmDetailsName.getText()).toEqual(vmi.name);
+    expect(vmDetailsNamespace.getText()).toEqual(vmi.namespace);
     expect(vmDetailsNode.getText()).not.toEqual(NOT_AVAILABLE);
     expect(vmDetailsIPAddress.getText()).not.toEqual(NOT_AVAILABLE);
   });

@@ -25,6 +25,7 @@ import {
   getProvisionConfigs,
   getTestDataVolume,
   kubevirtStorage,
+  VMTestCaseIDs,
 } from './vm.wizard.configs';
 import {
   Flavor,
@@ -55,7 +56,7 @@ describe('Kubevirt create VM using wizard', () => {
     const specTimeout =
       configName === ProvisionConfigName.DISK ? CLONE_VM_TIMEOUT_SECS : VM_BOOTUP_TIMEOUT_SECS;
     it(
-      `ID() Create VM using ${configName}.`,
+      `${VMTestCaseIDs[configName]} Create VM using ${configName}.`,
       async () => {
         const vm = new VirtualMachine(
           vmConfig(configName.toLowerCase(), testName, provisionConfig),
@@ -100,7 +101,7 @@ describe('Kubevirt create VM using wizard', () => {
 
       await withResource(leakedResources, vm.asResource(), async () => {
         await vm.create(testVMConfig);
-        const vmResult = getResourceObject(vm.name, vm.namespace, vm.kind);
+        const vmResult = vm.getResource();
         const annotations = getAnnotations(vmResult);
         const labels = getLabels(vmResult);
 

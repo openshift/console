@@ -1,9 +1,8 @@
 import { browser, ExpectedConditions as until } from 'protractor';
-import { appHost, testName } from '@console/internal-integration-tests/protractor.conf';
+import { testName } from '@console/internal-integration-tests/protractor.conf';
 import {
   resourceRows,
   resourceRowsPresent,
-  isLoaded,
   textFilter,
 } from '@console/internal-integration-tests/views/crud.view';
 import {
@@ -27,7 +26,7 @@ import {
   VM_STATUS,
 } from './utils/consts';
 import { VirtualMachine } from './models/virtualMachine';
-import { unpauseButton } from '../views/editStatusView';
+import { unpauseButton } from '../views/dialogs/editStatusView';
 
 describe('Test VM actions', () => {
   const leakedResources = new Set<string>();
@@ -48,8 +47,7 @@ describe('Test VM actions', () => {
       vm = new VirtualMachine(testVM.metadata);
 
       // Navigate to Virtual Machines page
-      await browser.get(`${appHost}/k8s/ns/${testName}/virtualmachines`);
-      await isLoaded();
+      await vm.navigateToListView();
       await fillInput(textFilter, vmName);
       await resourceRowsPresent();
       await browser.wait(
@@ -67,7 +65,7 @@ describe('Test VM actions', () => {
     );
 
     it(
-      'ID(CNV-4014)Restarts VM',
+      'ID(CNV-4014) Restarts VM',
       async () => {
         await vm.listViewAction(VM_ACTION.Restart);
       },
@@ -89,8 +87,6 @@ describe('Test VM actions', () => {
 
     it('ID(CNV-4016) Deletes VM', async () => {
       await vm.listViewAction(VM_ACTION.Delete, false);
-      await isLoaded();
-      await fillInput(textFilter, vmName);
       await browser.wait(until.and(waitForCount(resourceRows, 0)), PAGE_LOAD_TIMEOUT_SECS);
       removeLeakableResource(leakedResources, testVM);
     });
@@ -149,8 +145,6 @@ describe('Test VM actions', () => {
     it('ID(CNV-4021) Deletes VM', async () => {
       await vm.action(VM_ACTION.Delete, false);
       await vm.navigateToListView();
-      await fillInput(textFilter, vmName);
-      await isLoaded();
       await browser.wait(until.and(waitForCount(resourceRows, 0)), PAGE_LOAD_TIMEOUT_SECS);
       removeLeakableResource(leakedResources, testVM);
     });

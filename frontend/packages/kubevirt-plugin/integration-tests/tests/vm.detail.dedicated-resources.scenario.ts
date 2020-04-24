@@ -2,18 +2,17 @@ import { browser, ExpectedConditions as until } from 'protractor';
 import { testName } from '@console/internal-integration-tests/protractor.conf';
 import { createResource, deleteResource, click } from '@console/shared/src/test-utils/utils';
 import { isDedicatedCPUPlacement } from '../../src/selectors/vm';
-import * as editDedicatedResourcesView from '../views/editDedicatedResourcesView';
+import * as editDedicatedResourcesView from '../views/dialogs/editDedicatedResourcesView';
 import * as virtualMachineView from '../views/virtualMachine.view';
 import { VM_CREATE_AND_EDIT_TIMEOUT_SECS } from './utils/consts';
 import { VirtualMachine } from './models/virtualMachine';
 import { getVMManifest } from './utils/mocks';
-import { getRandStr, getResourceObject } from './utils/utils';
+import { getRandStr } from './utils/utils';
 
 describe('KubeVirt VM detail - edit Dedicated Resources', () => {
   const testVM = getVMManifest('Container', testName, `dedicatedresourcevm-${getRandStr(5)}`);
   const vm = new VirtualMachine(testVM.metadata);
-  const isDedicatedCPU = () =>
-    expect(isDedicatedCPUPlacement(getResourceObject(vm.name, vm.namespace, vm.kind)));
+  const isDedicatedCPU = () => expect(isDedicatedCPUPlacement(vm.getResource()));
 
   beforeAll(async () => {
     createResource(testVM);

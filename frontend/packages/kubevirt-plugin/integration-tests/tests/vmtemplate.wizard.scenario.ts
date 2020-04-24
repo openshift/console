@@ -69,7 +69,7 @@ describe('Kubevirt create VM Template using wizard', () => {
 
   provisionConfigs.forEach((provisionConfig, configName) => {
     it(
-      `${VMTemplateTestCaseIDs[configName]}Create VM Template using ${configName}.`,
+      `${VMTemplateTestCaseIDs[configName]} Create VM Template using ${configName}.`,
       async () => {
         const templateCfg = vmTemplateConfig(configName.toLowerCase(), provisionConfig);
         const vmTemplate = new VirtualMachineTemplate(templateCfg);

@@ -24,7 +24,7 @@ export const provisionSources = {
 export const operatingSystemSelect = $('#operating-system-dropdown');
 export const flavorSelect = $('#flavor-dropdown');
 export const workloadProfileSelect = $('#workload-profile-dropdown');
-export const customFlavorMemoryInput = $('#resources-memory');
+export const customFlavorMemoryInput = $('#resources-memory-size');
 export const customFlavorCpusInput = $('#resources-cpu');
 
 export const customFlavorMemoryHintBlock = $('#resources-memory-helper');
@@ -50,9 +50,9 @@ export const addCDButton = $('#vm-cd-add-btn');
 export const cloudInitFormCheckbox = $('#cloud-init-edit-mode-first-option');
 export const cloudInitCustomScriptCheckbox = $('#cloud-init-edit-mode-second-option');
 export const customCloudInitScriptTextArea = $('#cloudinit-custom-custom-script');
-export const cloudInitAddKeyButton = $('#cloudinit-ssh-authorized-keys-add');
+export const cloudInitAddKeyButton = $('#cloudinit-ssh_authorized_keys-add');
 export const cloudInitHostname = $('#cloudinit-hostname');
-export const cloudInitSSHKey = (rowNumber) => $(`#cloudinit-ssh-authorized-keys-key-${rowNumber}`);
+export const cloudInitSSHKey = (rowNumber) => $(`#cloudinit-ssh_authorized_keys-key-${rowNumber}`);
 
 // Result tab
 export const creationSuccessResult = $('[data-test-id="kubevirt-wizard-success-result"]');
