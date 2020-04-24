@@ -98,7 +98,8 @@ type Server struct {
 	AlertManagerProxyConfig  *proxy.Config
 	MeteringProxyConfig      *proxy.Config
 	// A lister for resource listing of a particular kind
-	MonitoringDashboardConfigMapLister *ResourceLister
+	MonitoringDashboardConfigMapLister ResourceLister
+	KnativeEventSourceCRDLister        ResourceLister
 	HelmChartRepoProxyConfig           *proxy.Config
 	GOARCH                             string
 	GOOS                               string
@@ -311,6 +312,7 @@ func (s *Server) HTTPHandler() http.Handler {
 	}
 
 	handle("/api/console/monitoring-dashboard-config", authHandler(s.handleMonitoringDashboardConfigmaps))
+	handle("/api/console/knative-event-sources", authHandler(s.handleKnativeEventSourceCRDs))
 	handle("/api/console/version", authHandler(s.versionHandler))
 
 	// Helm Endpoints
@@ -351,7 +353,11 @@ func (s *Server) HTTPHandler() http.Handler {
 }
 
 func (s *Server) handleMonitoringDashboardConfigmaps(w http.ResponseWriter, r *http.Request) {
-	s.MonitoringDashboardConfigMapLister.handleResources(w, r)
+	s.MonitoringDashboardConfigMapLister.HandleResources(w, r)
+}
+
+func (s *Server) handleKnativeEventSourceCRDs(w http.ResponseWriter, r *http.Request) {
+	s.KnativeEventSourceCRDLister.HandleResources(w, r)
 }
 
 func (s *Server) indexHandler(w http.ResponseWriter, r *http.Request) {
