@@ -1,12 +1,14 @@
 import * as _ from 'lodash';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { GitImportFormData, DeployImageFormData } from '../components/import/import-types';
-import { getAppLabels, getPodLabels, getAppAnnotations, mergeData } from './resource-label-utils';
+import {
+  getAppLabels,
+  getPodLabels,
+  getGitAnnotations,
+  getCommonAnnotations,
+  mergeData,
+} from './resource-label-utils';
 import { makePortName } from './imagestream-utils';
-
-export const annotations = {
-  'openshift.io/generated-by': 'OpenShiftWebConsole',
-};
 
 export const dryRunOpt = { queryParams: { dryRun: 'All' } };
 
@@ -34,7 +36,9 @@ export const createService = (
 
   const defaultLabels = getAppLabels(name, application, imageStreamName, imageTag);
   const podLabels = getPodLabels(name);
-  const defaultAnnotations = git ? getAppAnnotations(git.url, git.ref) : annotations;
+  const defaultAnnotations = git
+    ? { ...getGitAnnotations(git.url, git.ref), ...getCommonAnnotations() }
+    : getCommonAnnotations();
 
   let ports = imagePorts;
   if (_.get(formData, 'build.strategy') === 'Docker') {
@@ -91,7 +95,9 @@ export const createRoute = (
   const git = _.get(formData, 'git');
 
   const defaultLabels = getAppLabels(name, application, imageStreamName, imageTag);
-  const defaultAnnotations = git ? getAppAnnotations(git.url, git.ref) : annotations;
+  const defaultAnnotations = git
+    ? { ...getGitAnnotations(git.url, git.ref), ...getCommonAnnotations() }
+    : getCommonAnnotations();
 
   let ports = imagePorts;
   if (isDeployImageFormData(formData)) {

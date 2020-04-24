@@ -31,11 +31,16 @@ export const getAppLabels = (
   return labels;
 };
 
-export const getAppAnnotations = (gitURL: string, gitRef: string) => {
+export const getGitAnnotations = (gitURL: string, gitRef?: string) => {
   const ref = gitRef || 'master';
   return {
     'app.openshift.io/vcs-uri': gitURL,
     'app.openshift.io/vcs-ref': ref,
+  };
+};
+
+export const getCommonAnnotations = () => {
+  return {
     'openshift.io/generated-by': 'OpenShiftWebConsole',
   };
 };

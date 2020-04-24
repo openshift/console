@@ -19,7 +19,8 @@ import { getRandomChars } from '@console/shared/src/utils';
 import {
   getAppLabels,
   getPodLabels,
-  getAppAnnotations,
+  getGitAnnotations,
+  getCommonAnnotations,
   mergeData,
 } from '../../utils/resource-label-utils';
 import { createService, createRoute, dryRunOpt } from '../../utils/shared-submit-utils';
@@ -76,7 +77,7 @@ export const createOrUpdateImageStream = (
   } = formData;
   const imageStreamName = imageStreamData && imageStreamData.metadata.name;
   const defaultLabels = getAppLabels(name, application, imageStreamName, tag);
-  const defaultAnnotations = getAppAnnotations(repository, ref);
+  const defaultAnnotations = { ...getGitAnnotations(repository, ref), ...getCommonAnnotations() };
   const newImageStream = {
     apiVersion: 'image.openshift.io/v1',
     kind: 'ImageStream',
@@ -141,7 +142,7 @@ export const createOrUpdateBuildConfig = (
   const imageStreamNamespace = imageStream && imageStream.metadata.namespace;
 
   const defaultLabels = getAppLabels(name, application, imageStreamName, selectedTag);
-  const defaultAnnotations = getAppAnnotations(repository, ref);
+  const defaultAnnotations = { ...getGitAnnotations(repository, ref), ...getCommonAnnotations() };
   let buildStrategyData;
 
   switch (buildStrategy) {
@@ -243,7 +244,8 @@ export const createOrUpdateDeployment = (
   const imageStreamName = imageStream && imageStream.metadata.name;
   const defaultLabels = getAppLabels(name, application, imageStreamName, tag);
   const annotations = {
-    ...getAppAnnotations(repository, ref),
+    ...getGitAnnotations(repository, ref),
+    ...getCommonAnnotations(),
     'alpha.image.policy.openshift.io/resolve-names': '*',
     'image.openshift.io/triggers': JSON.stringify([
       {
@@ -330,7 +332,7 @@ export const createOrUpdateDeploymentConfig = (
 
   const imageStreamName = imageStream && imageStream.metadata.name;
   const defaultLabels = getAppLabels(name, application, imageStreamName, tag);
-  const defaultAnnotations = getAppAnnotations(repository, ref);
+  const defaultAnnotations = { ...getGitAnnotations(repository, ref), ...getCommonAnnotations() };
   const podLabels = getPodLabels(name);
 
   const newDeploymentConfig = {
@@ -455,7 +457,7 @@ export const createOrUpdateResources = async (
 
   verb === 'create' && requests.push(createWebhookSecret(formData, 'generic', dryRun));
 
-  const defaultAnnotations = getAppAnnotations(repository, ref);
+  const defaultAnnotations = getGitAnnotations(repository, ref);
 
   if (pipeline.enabled && pipeline.template && !dryRun) {
     requests.push(createPipelineForImportFlow(formData));

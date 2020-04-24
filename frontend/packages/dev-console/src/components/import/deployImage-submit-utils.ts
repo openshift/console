@@ -11,13 +11,13 @@ import { k8sCreate, K8sResourceKind, K8sVerb, k8sUpdate } from '@console/interna
 import { ServiceModel as KnServiceModel } from '@console/knative-plugin';
 import { getKnativeServiceDepResource } from '@console/knative-plugin/src/utils/create-knative-utils';
 import { getRandomChars } from '@console/shared/src/utils';
-import { getAppLabels, getPodLabels, mergeData } from '../../utils/resource-label-utils';
 import {
-  createRoute,
-  createService,
-  annotations,
-  dryRunOpt,
-} from '../../utils/shared-submit-utils';
+  getAppLabels,
+  getPodLabels,
+  mergeData,
+  getCommonAnnotations,
+} from '../../utils/resource-label-utils';
+import { createRoute, createService, dryRunOpt } from '../../utils/shared-submit-utils';
 import { getProbesData } from '../health-checks/create-health-checks-probe-utils';
 import { RegistryType } from '../../utils/imagestream-utils';
 import { AppResources } from '../edit-application/edit-application-types';
@@ -79,7 +79,7 @@ export const createOrUpdateImageStream = (
         {
           name: tag,
           annotations: {
-            ...annotations,
+            ...getCommonAnnotations(),
             'openshift.io/imported-from': isiName,
           },
           from: {
@@ -148,6 +148,7 @@ export const createOrUpdateDeployment = (
     healthChecks,
   } = formData;
 
+  const annotations = getCommonAnnotations();
   const defaultAnnotations = {
     ...annotations,
     'alpha.image.policy.openshift.io/resolve-names': '*',
@@ -247,6 +248,7 @@ export const createOrUpdateDeploymentConfig = (
   } = formData;
 
   const { labels, podLabels, volumes, volumeMounts } = getMetadata(formData);
+  const annotations = getCommonAnnotations();
   const newDeploymentConfig = {
     kind: 'DeploymentConfig',
     apiVersion: 'apps.openshift.io/v1',
@@ -434,7 +436,6 @@ export const createOrUpdateDeployImageResources = async (
       internalImageName || name,
       imageStreamTag,
       internalImageNamespace,
-      annotations,
       _.get(appResources, 'editAppResource.data'),
     );
     requests.push(

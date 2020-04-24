@@ -2,8 +2,11 @@ import * as _ from 'lodash';
 import { safeLoad } from 'js-yaml';
 import { K8sResourceKind, K8sKind, referenceForModel } from '@console/internal/module/k8s';
 import { useAccessReview } from '@console/internal/components/utils';
-import { getAppLabels } from '@console/dev-console/src/utils/resource-label-utils';
-import { annotations } from '@console/dev-console/src/utils/shared-submit-utils';
+import {
+  getAppLabels,
+  getCommonAnnotations,
+} from '@console/dev-console/src/utils/resource-label-utils';
+
 import {
   EventSources,
   EventSourceFormData,
@@ -38,7 +41,7 @@ export const getEventSourcesDepResource = (formData: EventSourceFormData): K8sRe
       labels: {
         ...defaultLabel,
       },
-      annotations,
+      annotations: getCommonAnnotations(),
     },
     spec: {
       sink: {
