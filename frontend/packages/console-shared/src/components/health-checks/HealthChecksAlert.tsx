@@ -3,7 +3,12 @@ import * as _ from 'lodash';
 import { Link } from 'react-router-dom';
 import { Alert, AlertActionCloseButton } from '@patternfly/react-core';
 import { ServiceModel as KnativeServiceModel } from '@console/knative-plugin';
-import { K8sResourceKind, referenceForModel, referenceFor } from '@console/internal/module/k8s';
+import {
+  K8sResourceKind,
+  referenceForModel,
+  referenceFor,
+  modelFor,
+} from '@console/internal/module/k8s';
 import {
   DeploymentConfigModel,
   DeploymentModel,
@@ -44,21 +49,23 @@ const HealthChecksAlert: React.FC<HealthChecksAlertProps> = ({ resource }) => {
     containers,
     (container) => container.readinessProbe || container.livenessProbe || container.startupProbe,
   );
+  const {
+    kind,
+    metadata: { name, namespace, uid },
+  } = resource;
 
   const handleAlertAction = () => {
-    const hideHealthCheckAlert = [...hideHealthCheckAlertFor, resource.metadata.uid];
+    const hideHealthCheckAlert = [...hideHealthCheckAlertFor, uid];
     setHideHealthCheckAlertFor(hideHealthCheckAlert);
     localStorage.setItem(HIDE_HEALTH_CHECK_ALERT_FOR, JSON.stringify(hideHealthCheckAlert));
   };
 
-  const showAlert =
-    !healthCheckAdded && !_.includes(hideHealthCheckAlertFor, resource.metadata.uid);
+  const showAlert = !healthCheckAdded && !_.includes(hideHealthCheckAlertFor, uid);
 
-  const addHealthChecksLink = `/k8s/ns/${resource.metadata.namespace}/${
-    resource.kind === KnativeServiceModel.kind ? referenceFor(resource) : resource.kind
-  }/${resource.metadata.name}/containers/${
-    resource?.spec?.template?.spec?.containers?.[0]?.name
-  }/health-checks`;
+  const kindForCRDResource = referenceFor(resource);
+  const resourceKind = modelFor(kindForCRDResource).crd ? kindForCRDResource : kind;
+
+  const addHealthChecksLink = `/k8s/ns/${namespace}/${resourceKind}/${name}/containers/${containersName[0]}/health-checks`;
 
   return (
     <>
