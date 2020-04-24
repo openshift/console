@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { Link } from 'react-router-dom';
+import { alertActions } from '@console/internal/components/notification-drawer';
 import { Timestamp } from '@console/internal/components/utils/timestamp';
 import { alertURL, Alert } from '@console/internal/components/monitoring';
 import { RedExclamationCircleIcon, YellowExclamationTriangleIcon } from '../../status/icons';
@@ -39,15 +40,22 @@ export const StatusItem: React.FC<StatusItemProps> = ({ Icon, timestamp, message
   );
 };
 
-const AlertItem: React.FC<AlertItemProps> = ({ alert }) => (
-  <StatusItem
-    Icon={getSeverityIcon(getAlertSeverity(alert))}
-    timestamp={getAlertTime(alert)}
-    message={getAlertDescription(alert) || getAlertMessage(alert)}
-  >
-    <Link to={alertURL(alert, alert.rule.id)}>View details</Link>
-  </StatusItem>
-);
+const AlertItem: React.FC<AlertItemProps> = ({ alert }) => {
+  const action = alertActions.get(alert.rule.name);
+  return (
+    <StatusItem
+      Icon={getSeverityIcon(getAlertSeverity(alert))}
+      timestamp={getAlertTime(alert)}
+      message={getAlertDescription(alert) || getAlertMessage(alert)}
+    >
+      {action ? (
+        <Link to={action.path}>{action.text}</Link>
+      ) : (
+        <Link to={alertURL(alert, alert.rule.id)}>View details</Link>
+      )}
+    </StatusItem>
+  );
+};
 
 export default AlertItem;
 
