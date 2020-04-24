@@ -31,7 +31,7 @@ export const metricsQuery = {
 export const monitoringDashboardQueries: MonitoringQuery[] = [
   {
     query: _.template(
-      `sum(node_namespace_pod_container:container_cpu_usage_seconds_total:sum_rate{cluster="",namespace='<%= namespace %>'}) by (pod)`,
+      `sum(node_namespace_pod_container:container_cpu_usage_seconds_total:sum_rate{cluster="", namespace='<%= namespace %>'}) by (pod)`,
     ),
     chartType: GraphTypes.area,
     title: 'CPU Usage',
