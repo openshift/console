@@ -1,8 +1,16 @@
 import * as React from 'react';
 import { FieldArray, useField } from 'formik';
-import { Flex, FlexItem, FlexModifiers, FormGroup, TextInputTypes } from '@patternfly/react-core';
+import {
+  Flex,
+  FlexItem,
+  FlexModifiers,
+  FormGroup,
+  TextInputTypes,
+  Button,
+  ButtonVariant,
+  ButtonType,
+} from '@patternfly/react-core';
 import { MinusCircleIcon } from '@patternfly/react-icons';
-import { global_disabled_color_200 as disabledColor } from '@patternfly/react-tokens';
 import { InputField, useFormikValidationFix } from '@console/shared';
 import MultiColumnFieldFooter from './multi-column-field/MultiColumnFieldFooter';
 import { getFieldId } from './field-utils';
@@ -25,6 +33,7 @@ const TextColumnField: React.FC<TextColumnFieldProps> = ({
   helpText,
   placeholder,
   isReadOnly,
+  disableDeleteRow,
 }) => {
   const [field, { touched, error }] = useField<string[]>(name);
   useFormikValidationFix(field.value);
@@ -60,16 +69,18 @@ const TextColumnField: React.FC<TextColumnFieldProps> = ({
                     </FlexItem>
                     {!isReadOnly && (
                       <FlexItem>
-                        <MinusCircleIcon
-                          aria-hidden="true"
-                          style={{ color: rowValues.length === 1 ? disabledColor.value : null }}
+                        <Button
+                          aria-label="Delete"
+                          variant={ButtonVariant.plain}
+                          type={ButtonType.button}
+                          isInline
+                          isDisabled={disableDeleteRow}
                           onClick={() => {
-                            if (rowValues.length === 1) {
-                              return;
-                            }
                             arrayHelpers.remove(idx);
                           }}
-                        />
+                        >
+                          <MinusCircleIcon />
+                        </Button>
                       </FlexItem>
                     )}
                   </Flex>

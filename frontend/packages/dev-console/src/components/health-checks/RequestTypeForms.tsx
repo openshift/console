@@ -122,6 +122,10 @@ export const TCPRequestTypeForm: React.FC<RequestTypeFormProps> = ({ ports, prob
 };
 
 export const CommandRequestTypeForm: React.FC<RequestTypeFormProps> = ({ probeType }) => {
+  const {
+    values: { healthChecks },
+  } = useFormikContext<FormikValues>();
+  const commands = healthChecks?.[probeType]?.data?.exec?.command;
   return (
     <TextColumnField
       name={`healthChecks.${probeType}.data.exec.command`}
@@ -130,6 +134,7 @@ export const CommandRequestTypeForm: React.FC<RequestTypeFormProps> = ({ probeTy
       placeholder="argument"
       helpText="The command to run inside the container."
       required
+      disableDeleteRow={commands.length === 1}
     />
   );
 };
