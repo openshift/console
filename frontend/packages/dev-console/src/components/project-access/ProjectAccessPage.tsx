@@ -16,7 +16,7 @@ const ProjectAccessPage: React.FC<ProjectAccessPageProps> = ({ customData }) => 
     <Firehose
       resources={[
         {
-          activeNamespace,
+          namespace: activeNamespace,
           kind: 'RoleBinding',
           prop: 'roleBindings',
           isList: true,
