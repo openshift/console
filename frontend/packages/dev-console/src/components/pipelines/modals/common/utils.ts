@@ -76,6 +76,7 @@ export const getPipelineRunData = (
       resources,
       ...(params && { params }),
       workspaces,
+      status: null,
     },
   };
   return migratePipelineRun(newPipelineRun);
