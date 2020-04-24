@@ -410,6 +410,7 @@ export class Dropdown extends DropdownMixin {
       favoriteKey,
     } = this.state;
     const {
+      ariaLabel,
       autocompleteFilter,
       autocompletePlaceholder,
       className,
@@ -563,6 +564,7 @@ export class Dropdown extends DropdownMixin {
           )}
         >
           <button
+            aria-label={ariaLabel}
             aria-haspopup="true"
             aria-expanded={this.state.active}
             className={classNames('pf-c-dropdown__toggle', buttonClassName)}
