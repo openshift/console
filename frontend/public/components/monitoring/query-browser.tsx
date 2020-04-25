@@ -120,6 +120,7 @@ const SpanControls: React.FC<SpanControlsProps> = React.memo(
           value={text}
         />
         <Dropdown
+          ariaLabel="graph timespan"
           buttonClassName="dropdown-button--icon-only"
           items={dropdownItems}
           menuClassName="query-browser__span-dropdown-menu"
