@@ -17,6 +17,7 @@ import {
   vmDetailStatusEditButton,
   vmDetailNodeSelectorEditButton,
   vmDetailTolerationsEditButton,
+  vmDetailAffinityEditButton,
 } from '../../views/virtualMachine.view';
 import {
   activeTab,
@@ -31,6 +32,7 @@ import * as editDedicatedResourcesView from '../../views/dialogs/editDedicatedRe
 import * as editStatusView from '../../views/dialogs/editStatusView';
 import * as editNodeSelectorView from '../../views/editNodeSelectorView';
 import * as editTolerationsView from '../../views/editTolerationsView';
+import * as editAffinityView from '../../views/editAffinityView';
 import { NetworkInterfaceDialog } from '../dialogs/networkInterfaceDialog';
 import { DiskDialog } from '../dialogs/diskDialog';
 import { UIResource } from './uiResource';
@@ -200,5 +202,10 @@ export class KubevirtUIResource extends UIResource {
   async modalEditTolerations() {
     await click(vmDetailTolerationsEditButton(this.namespace, this.name));
     await browser.wait(until.presenceOf(editTolerationsView.modalTitle));
+  }
+
+  async modalEditAffinity() {
+    await click(vmDetailAffinityEditButton(this.namespace, this.name));
+    await browser.wait(until.presenceOf(editAffinityView.modalTitle));
   }
 }

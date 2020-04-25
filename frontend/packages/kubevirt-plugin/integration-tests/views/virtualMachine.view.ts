@@ -80,3 +80,7 @@ export const vmDetailTolerations = (namespace, vmName) =>
   $(vmDetailItemId(namespace, vmName, 'tolerations'));
 export const vmDetailTolerationsEditButton = (namespace, vmName) =>
   $(vmDetailItemId(namespace, vmName, 'tolerations-edit'));
+export const vmDetailAffinity = (namespace, vmName) =>
+  $(vmDetailItemId(namespace, vmName, 'affinity'));
+export const vmDetailAffinityEditButton = (namespace, vmName) =>
+  $(vmDetailItemId(namespace, vmName, 'affinity-edit'));
