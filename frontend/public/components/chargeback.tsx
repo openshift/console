@@ -478,7 +478,7 @@ const ReportGenerationQueriesTableHeader = () => {
       props: { className: reportsGenerationColumnClasses[2] },
     },
     {
-      title: 'Created At',
+      title: 'Created',
       sortField: 'metadata.creationTimestamp',
       transforms: [sortable],
       props: { className: reportsGenerationColumnClasses[3] },

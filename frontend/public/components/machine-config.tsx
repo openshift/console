@@ -4,7 +4,6 @@ import { sortable } from '@patternfly/react-table';
 import * as classNames from 'classnames';
 import { MachineConfigKind, referenceForModel } from '../module/k8s';
 import { MachineConfigModel } from '../models';
-import { fromNow } from './utils/datetime';
 import { DetailsPage, ListPage, Table, TableRow, TableData, RowFunction } from './factory';
 import {
   Kebab,
@@ -13,6 +12,7 @@ import {
   ResourceLink,
   ResourceSummary,
   SectionHeading,
+  Timestamp,
 } from './utils';
 import { ResourceEventStream } from './events';
 
@@ -135,7 +135,7 @@ const MachineConfigTableRow: RowFunction<MachineConfigKind> = ({ obj, index, key
         {_.get(obj, 'spec.osImageURL') || '-'}
       </TableData>
       <TableData className={tableColumnClasses[4]}>
-        {fromNow(obj.metadata.creationTimestamp)}
+        <Timestamp timestamp={obj.metadata.creationTimestamp} />
       </TableData>
       <TableData className={tableColumnClasses[5]}>
         <ResourceKebab

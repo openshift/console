@@ -21,12 +21,12 @@ import {
   ResourceKebab,
   asAccessReview,
   OwnerReferences,
+  Timestamp,
 } from './utils';
 
 import { VolumesTable } from './volumes-table';
 import { confirmModal } from './modals';
 import { k8sPatch } from '../module/k8s';
-import { fromNow } from './utils/datetime';
 
 const Details = ({ obj: replicationController }) => {
   const revision = _.get(replicationController, [
@@ -197,7 +197,7 @@ const ReplicationControllerTableRow = ({ obj, index, key, style }) => {
         <OwnerReferences resource={obj} />
       </TableData>
       <TableData className={tableColumnClasses[5]}>
-        {fromNow(obj.metadata.creationTimestamp)}
+        <Timestamp timestamp={obj.metadata.creationTimestamp} />
       </TableData>
       <TableData className={tableColumnClasses[6]}>
         <ResourceKebab actions={menuActions} kind={kind} resource={obj} />

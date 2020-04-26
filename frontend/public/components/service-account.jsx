@@ -12,8 +12,8 @@ import {
   ResourceKebab,
   ResourceLink,
   ResourceSummary,
+  Timestamp,
 } from './utils';
-import { fromNow } from './utils/datetime';
 import { k8sList } from '../module/k8s';
 import { SecretModel, ServiceAccountModel } from '../models';
 import { SecretsPage } from './secret';
@@ -134,7 +134,7 @@ const ServiceAccountTableHeader = () => {
       props: { className: tableColumnClasses[2] },
     },
     {
-      title: 'Age',
+      title: 'Created',
       sortField: 'metadata.creationTimestamp',
       transforms: [sortable],
       props: { className: tableColumnClasses[3] },
@@ -161,7 +161,9 @@ const ServiceAccountTableRow = ({ obj: serviceaccount, index, key, style }) => {
         <ResourceLink kind="Namespace" name={namespace} title={namespace} /> {}
       </TableData>
       <TableData className={tableColumnClasses[2]}>{secrets ? secrets.length : 0}</TableData>
-      <TableData className={tableColumnClasses[3]}>{fromNow(creationTimestamp)}</TableData>
+      <TableData className={tableColumnClasses[3]}>
+        <Timestamp timestamp={creationTimestamp} />
+      </TableData>
       <TableData className={tableColumnClasses[4]}>
         <ResourceKebab actions={menuActions} kind={kind} resource={serviceaccount} />
       </TableData>

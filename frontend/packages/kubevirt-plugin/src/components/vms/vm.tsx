@@ -29,8 +29,8 @@ import {
   Kebab,
   KebabOption,
   ResourceLink,
+  Timestamp,
 } from '@console/internal/components/utils';
-import { fromNow } from '@console/internal/components/utils/datetime';
 import { K8sKind, PodKind } from '@console/internal/module/k8s';
 import { VMStatus } from '../vm-status/vm-status';
 import {
@@ -142,7 +142,9 @@ const VMRow: RowFunction<VMRowObjType> = ({ obj, index, key, style }) => {
       <TableData className={dimensify()}>
         <VMStatus vm={vm} vmi={vmi} vmStatusBundle={vmStatusBundle} />
       </TableData>
-      <TableData className={dimensify()}>{fromNow(creationTimestamp)}</TableData>
+      <TableData className={dimensify()}>
+        <Timestamp timestamp={creationTimestamp} />
+      </TableData>
       <TableData className={dimensify()}>
         {node && (
           <ResourceLink key="node-link" kind={NodeModel.kind} name={node} namespace={namespace} />

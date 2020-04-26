@@ -42,7 +42,6 @@ import {
   pluralize,
   units,
 } from './utils';
-import { fromNow } from './utils/datetime';
 import { PodLogs } from './pod-logs';
 import {
   Area,
@@ -146,7 +145,9 @@ const PodTableRow = connect<PodTableRowPropsFromState, null, PodTableRowProps>(p
         <TableData className={tableColumnClasses[7]}>
           {cores ? `${formatCores(cores)} cores` : '-'}
         </TableData>
-        <TableData className={tableColumnClasses[8]}>{fromNow(creationTimestamp)}</TableData>
+        <TableData className={tableColumnClasses[8]}>
+          <Timestamp timestamp={creationTimestamp} />
+        </TableData>
         <TableData className={tableColumnClasses[9]}>
           <ResourceKebab
             actions={menuActions}

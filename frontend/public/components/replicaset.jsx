@@ -20,11 +20,11 @@ import {
   LabelList,
   ResourceKebab,
   OwnerReferences,
+  Timestamp,
 } from './utils';
 import { ResourceEventStream } from './events';
 import { VolumesTable } from './volumes-table';
 import { ReplicaSetModel } from '../models';
-import { fromNow } from './utils/datetime';
 
 const { ModifyCount, AddStorage, common } = Kebab.factory;
 
@@ -149,7 +149,7 @@ const ReplicaSetTableRow = ({ obj, index, key, style }) => {
         <OwnerReferences resource={obj} />
       </TableData>
       <TableData className={tableColumnClasses[5]}>
-        {fromNow(obj.metadata.creationTimestamp)}
+        <Timestamp timestamp={obj.metadata.creationTimestamp} />
       </TableData>
       <TableData className={tableColumnClasses[6]}>
         <ResourceKebab actions={replicaSetMenuActions} kind={kind} resource={obj} />

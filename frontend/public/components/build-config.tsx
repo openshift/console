@@ -19,6 +19,7 @@ import {
   resourceObjPath,
   ResourceSummary,
   SectionHeading,
+  Timestamp,
   WebhookTriggers,
 } from './utils';
 import {
@@ -27,7 +28,6 @@ import {
   BuildStrategyType,
   PipelineBuildStrategyAlert,
 } from './build';
-import { fromNow } from './utils/datetime';
 import { ResourceEventStream } from './events';
 import { BuildConfigModel } from '../models';
 
@@ -164,7 +164,7 @@ const BuildConfigsTableRow: RowFunction<K8sResourceKind> = ({ obj, index, key, s
         <LabelList kind={BuildConfigsReference} labels={obj.metadata.labels} />
       </TableData>
       <TableData className={tableColumnClasses[3]}>
-        {fromNow(obj.metadata.creationTimestamp)}
+        <Timestamp timestamp={obj.metadata.creationTimestamp} />
       </TableData>
       <TableData className={tableColumnClasses[4]}>
         <ResourceKebab actions={menuActions} kind={BuildConfigsReference} resource={obj} />

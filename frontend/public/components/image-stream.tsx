@@ -20,7 +20,6 @@ import { ResourceLink } from './utils/resource-link';
 import { ResourceSummary } from './utils/details-page';
 import { Timestamp } from './utils/timestamp';
 import { ImageStreamTimeline } from './image-stream-timeline';
-import { fromNow } from './utils/datetime';
 import { YellowExclamationTriangleIcon } from '@console/shared';
 
 const ImageStreamsReference: K8sResourceKindReference = 'ImageStream';
@@ -347,7 +346,7 @@ const ImageStreamsTableRow: RowFunction<K8sResourceKind> = ({ obj, index, key, s
         <LabelList kind={ImageStreamsReference} labels={obj.metadata.labels} />
       </TableData>
       <TableData className={tableColumnClasses[3]}>
-        {fromNow(obj.metadata.creationTimestamp)}
+        <Timestamp timestamp={obj.metadata.creationTimestamp} />
       </TableData>
       <TableData className={tableColumnClasses[4]}>
         <ResourceKebab actions={menuActions} kind={ImageStreamsReference} resource={obj} />

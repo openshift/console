@@ -131,7 +131,7 @@ describe(ClusterServiceVersionTableRow.displayName, () => {
 
   it('renders column for last updated', () => {
     const col = wrapper.find(TableRow).childAt(3);
-    expect(col.render().text()).toContain('years from now');
+    expect(col.find(Timestamp).props().timestamp).toEqual('2020-04-21T18:19:49Z');
   });
 
   it('renders column for app status', () => {
