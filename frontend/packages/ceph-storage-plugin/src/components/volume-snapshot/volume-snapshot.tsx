@@ -21,6 +21,7 @@ import {
   SectionHeading,
   navFactory,
   PageComponentProps,
+  Timestamp,
 } from '@console/internal/components/utils';
 import { getName, getNamespace, Status } from '@console/shared';
 
@@ -33,11 +34,10 @@ import { volumeSnapshotModal } from '../modals/volume-snapshot-modal/volume-snap
 export const snapshotMenuActions = [...getKebabActionsForKind(VolumeSnapshotModel)];
 
 const snapshotTableColumnClasses = [
-  '',
-  classNames('pf-m-hidden', 'pf-m-visible-on-sm', 'pf-u-w-16-on-lg'),
-  classNames('pf-m-hidden', 'pf-m-visible-on-lg'),
-  classNames('pf-m-hidden', 'pf-m-visible-on-xl'),
-  classNames('pf-m-hidden', 'pf-m-visible-on-2xl'),
+  classNames('col-lg-4', 'col-md-4', 'col-sm-6', 'col-xs-6'),
+  classNames('col-lg-3', 'col-md-3', 'col-sm-6', 'col-xs-6'),
+  classNames('col-lg-3', 'col-md-3', 'hidden-sm', 'hidden-xs'),
+  classNames('col-lg-2', 'col-md-2', 'hidden-sm', 'hidden-xs'),
   Kebab.columnClass,
 ];
 
@@ -57,7 +57,7 @@ export const VolumeSnapshotTableHeader = () => {
     },
     {
       title: 'Status',
-      sortField: 'status.phase',
+      sortField: 'status.readyToUse',
       transforms: [sortable],
       props: { className: snapshotTableColumnClasses[2] },
     },
@@ -68,14 +68,8 @@ export const VolumeSnapshotTableHeader = () => {
       props: { className: snapshotTableColumnClasses[3] },
     },
     {
-      title: 'Labels',
-      sortField: 'metadata.labels',
-      transforms: [sortable],
-      props: { className: snapshotTableColumnClasses[4] },
-    },
-    {
       title: '',
-      props: { className: snapshotTableColumnClasses[5] },
+      props: { className: snapshotTableColumnClasses[4] },
     },
   ];
 };
@@ -151,16 +145,13 @@ export const VolumeSnapshotTableRow: RowFunction<K8sResourceKind> = ({
       />
     </TableData>
     <TableData className={snapshotTableColumnClasses[1]}>
-      {obj?.metadata?.creationTimestamp}
+      <Timestamp timestamp={obj.metadata.creationTimestamp} />
     </TableData>
     <TableData className={snapshotTableColumnClasses[2]}>
-      <Status status={obj?.status?.readyToUse ? 'Ready' : 'Not Ready'} />
+      <Status status={obj.status.readyToUse ? 'Ready' : 'Not Ready'} />
     </TableData>
-    <TableData className={snapshotTableColumnClasses[3]}>
-      {obj?.status?.restoreSize || 'No Data'}
-    </TableData>
-    <TableData className={snapshotTableColumnClasses[4]}>None</TableData>
-    <TableData className={snapshotTableColumnClasses[5]}>
+    <TableData className={snapshotTableColumnClasses[3]}>{obj.status.restoreSize || '-'}</TableData>
+    <TableData className={snapshotTableColumnClasses[4]}>
       <ResourceKebab actions={snapshotMenuActions} kind={volumeSnapshotKind} resource={obj} />
     </TableData>
   </TableRow>
@@ -169,7 +160,7 @@ export const VolumeSnapshotTableRow: RowFunction<K8sResourceKind> = ({
 export const VolumeSnapshotList: React.FC<TableProps> = (props) => (
   <Table
     {...props}
-    aria-label="Volume Snapshot"
+    aria-label="Volume Snapshot List"
     Header={VolumeSnapshotTableHeader}
     Row={VolumeSnapshotTableRow}
     virtualize

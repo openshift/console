@@ -55,7 +55,7 @@ describe('<VolumeSnapshotList>', () => {
   });
 
   it('should render the proper Headers in the Resources tab', () => {
-    const expectedHeader: string[] = ['Name', 'Date', 'Status', 'Size', 'Labels'];
+    const expectedHeader: string[] = ['Name', 'Date', 'Status', 'Size'];
 
     const headers = wrapper
       .find(Table)
