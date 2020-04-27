@@ -4,7 +4,7 @@ import { useField, useFormikContext, FormikValues } from 'formik';
 import { FormGroup } from '@patternfly/react-core';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { Firehose, FirehoseResource } from '@console/internal/components/utils';
-import ResourceDropdown from '../dropdown/ResourceDropdown';
+import ResourceDropdown, { ResourceDropdownItems } from '../dropdown/ResourceDropdown';
 import { DropdownFieldProps } from './field-types';
 import { getFieldId } from './field-utils';
 import { useFormikValidationFix } from '../../hooks';
@@ -13,7 +13,7 @@ export interface ResourceDropdownFieldProps extends DropdownFieldProps {
   dataSelector: string[] | number[] | symbol[];
   resources: FirehoseResource[];
   showBadge?: boolean;
-  onLoad?: (items: { [key: string]: string }) => void;
+  onLoad?: (items: ResourceDropdownItems) => void;
   onChange?: (key: string, name?: string | object) => void;
   resourceFilter?: (resource: K8sResourceKind) => boolean;
   autoSelect?: boolean;
@@ -22,6 +22,7 @@ export interface ResourceDropdownFieldProps extends DropdownFieldProps {
     actionTitle: string;
     actionKey: string;
   }[];
+  appendItems?: ResourceDropdownItems;
 }
 
 const ResourceDropdownField: React.FC<ResourceDropdownFieldProps> = ({
