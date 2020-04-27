@@ -28,11 +28,11 @@ export const getBooleanAsEnabledValue = (value: boolean) => (value ? 'Enabled' :
 
 export const getSequenceName = (name: string, usedSequenceNames?: Set<string>) => {
   if (!usedSequenceNames) {
-    return `${name}${0}`;
+    return `${name}-${0}`;
   }
 
   for (let i = 0; i < usedSequenceNames.size + 1; i++) {
-    const sequenceName = `${name}${i}`;
+    const sequenceName = `${name}-${i}`;
     if (!usedSequenceNames.has(sequenceName)) {
       return sequenceName;
     }

@@ -5,11 +5,11 @@ import { VMWizardStorage } from '../../types';
 import { FormRow } from '../../../form/form-row';
 import { FormSelectPlaceholderOption } from '../../../form/form-select-placeholder-option';
 import { ignoreCaseSort } from '../../../../utils/sort';
-import { StorageUISource } from '../../../modals/disk-modal/storage-ui-source';
 import { NO_BOOTABLE_ATTACHED_DISK_ERROR, SELECT_BOOTABLE_DISK } from '../../strings/storage';
 import { VolumeWrapper } from '../../../../k8s/wrapper/vm/volume-wrapper';
 import { DataVolumeWrapper } from '../../../../k8s/wrapper/vm/data-volume-wrapper';
 import { DiskWrapper } from '../../../../k8s/wrapper/vm/disk-wrapper';
+import { DataVolumeSourceType, VolumeType } from '../../../../constants/vm/storage';
 
 const STORAGE_BOOT_SOURCE = 'storage-bootsource';
 
@@ -26,13 +26,12 @@ export const StorageBootSource: React.FC<StorageBootOrderProps> = ({
   storages,
   className,
 }) => {
-  const filteredStorages = storages.filter(({ volume, dataVolume }) =>
-    [StorageUISource.ATTACH_DISK, StorageUISource.ATTACH_CLONED_DISK].includes(
-      StorageUISource.fromTypes(
-        new VolumeWrapper(volume).getType(),
-        dataVolume && new DataVolumeWrapper(dataVolume).getType(),
+  const filteredStorages = storages.filter(
+    ({ volume, dataVolume }) =>
+      new VolumeWrapper(volume).getType() === VolumeType.PERSISTENT_VOLUME_CLAIM ||
+      [DataVolumeSourceType.PVC, DataVolumeSourceType.HTTP].includes(
+        new DataVolumeWrapper(dataVolume).getType(),
       ),
-    ),
   );
   const hasStorages = filteredStorages.length > 0;
 
