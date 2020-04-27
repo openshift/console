@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash';
+import { CodeIcon, BoltIcon, DatabaseIcon, CatalogIcon } from '@patternfly/react-icons';
 import {
   Plugin,
   ModelDefinition,
@@ -20,9 +21,18 @@ import {
   ReduxReducer,
 } from '@console/plugin-sdk';
 import { NamespaceRedirect } from '@console/internal/components/utils/namespace-redirect';
-import { CodeIcon, BoltIcon, DatabaseIcon, CatalogIcon } from '@patternfly/react-icons';
 import { FLAGS } from '@console/shared/src/constants';
 import { referenceForModel } from '@console/internal/module/k8s';
+import {
+  BuildConfigModel,
+  ImageStreamModel,
+  DeploymentConfigModel,
+  SecretModel,
+  RouteModel,
+  ServiceModel,
+  ImageStreamImportsModel,
+  ConfigMapModel,
+} from '@console/internal/models';
 import * as helmIcon from '@console/internal/imgs/logos/helm.svg';
 import * as models from './models';
 import { getKebabActionsForKind } from './utils/kebab-actions';
@@ -40,16 +50,6 @@ import {
 } from './templates';
 import reducer from './utils/reducer';
 import { AddAction } from './extensions/add-actions';
-import {
-  BuildConfigModel,
-  ImageStreamModel,
-  DeploymentConfigModel,
-  SecretModel,
-  RouteModel,
-  ServiceModel,
-  ImageStreamImportsModel,
-  ConfigMapModel,
-} from '@console/internal/models';
 import * as yamlIcon from './images/yaml.svg';
 import * as importGitIcon from './images/from-git.svg';
 import * as dockerfileIcon from './images/dockerfile.svg';
@@ -728,6 +728,20 @@ const plugin: Plugin<ConsumedExtensions> = [
         (
           await import(
             './components/health-checks/HealthChecksPage' /* webpackChunkName: "dev-console-healthCheck" */
+          )
+        ).default,
+    },
+  },
+  {
+    type: 'Page/Route',
+    properties: {
+      perspective: 'dev',
+      exact: false,
+      path: ['/k8s/all-namespaces/:plural'],
+      loader: async () =>
+        (
+          await import(
+            './components/ProjectSelectPage' /* webpackChunkName: "dev-console-projectselectpage" */
           )
         ).default,
     },
