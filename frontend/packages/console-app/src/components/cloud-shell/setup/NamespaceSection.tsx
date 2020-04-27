@@ -3,12 +3,14 @@ import * as _ from 'lodash';
 import { useFormikContext, FormikValues, useField } from 'formik';
 import { TextInputTypes } from '@patternfly/react-core';
 import { ProjectModel } from '@console/internal/models';
-import { InputField, ResourceDropdownField, useFormikValidationFix } from '@console/shared';
+import { InputField, ResourceDropdownField, useFormikValidationFix, FLAGS } from '@console/shared';
 import { CREATE_NAMESPACE_KEY } from './cloud-shell-setup-utils';
+import { connectToFlags, WithFlagsProps } from '@console/internal/reducers/features';
 
-type NamespaceSectionProps = {};
+type NamespaceSectionProps = WithFlagsProps;
 
-const NamespaceSection: React.FC<NamespaceSectionProps> = () => {
+const NamespaceSection: React.FC<NamespaceSectionProps> = ({ flags }) => {
+  const canCreate = flags[FLAGS.CAN_CREATE_PROJECT];
   const [namespace] = useField('namespace');
   const { setFieldValue, setFieldTouched } = useFormikContext<FormikValues>();
 
@@ -23,12 +25,14 @@ const NamespaceSection: React.FC<NamespaceSectionProps> = () => {
   );
 
   const handleOnLoad = (projectList: { [key: string]: string }) => {
-    if (
-      (_.isEmpty(projectList) || !projectList[namespace.value]) &&
-      namespace.value !== CREATE_NAMESPACE_KEY
-    ) {
-      setFieldTouched('namespace', true);
-      setFieldValue('namespace', CREATE_NAMESPACE_KEY);
+    const noProjects = _.isEmpty(projectList);
+    if (noProjects || !projectList[namespace.value]) {
+      if (canCreate && namespace.value !== CREATE_NAMESPACE_KEY) {
+        setFieldValue('namespace', CREATE_NAMESPACE_KEY);
+      }
+      if (!canCreate && namespace.value) {
+        setFieldValue('namespace', undefined);
+      }
     }
   };
 
@@ -50,12 +54,16 @@ const NamespaceSection: React.FC<NamespaceSectionProps> = () => {
         ]}
         dataSelector={['metadata', 'name']}
         onChange={onDropdownChange}
-        actionItems={[
-          {
-            actionTitle: 'Create Project',
-            actionKey: CREATE_NAMESPACE_KEY,
-          },
-        ]}
+        actionItems={
+          canCreate
+            ? [
+                {
+                  actionTitle: 'Create Project',
+                  actionKey: CREATE_NAMESPACE_KEY,
+                },
+              ]
+            : undefined
+        }
         onLoad={handleOnLoad}
         helpText="This project will be used to initialize your command line terminal"
       />
@@ -66,4 +74,7 @@ const NamespaceSection: React.FC<NamespaceSectionProps> = () => {
   );
 };
 
-export default NamespaceSection;
+// exposed for testing
+export const InternalNamespaceSection = NamespaceSection;
+
+export default connectToFlags(FLAGS.CAN_CREATE_PROJECT)(NamespaceSection);
