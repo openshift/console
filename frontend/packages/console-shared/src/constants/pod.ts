@@ -12,6 +12,7 @@ export enum AllPodStatus {
   Idle = 'Idle',
   AutoScaledTo0 = 'Autoscaled to 0',
   ScalingUp = 'Scaling Up',
+  CrashLoopBackOff = 'CrashLoopBackOff',
 }
 
 export const podColor = {
@@ -28,4 +29,5 @@ export const podColor = {
   [AllPodStatus.Idle]: '#FFFFFF',
   [AllPodStatus.AutoScaledTo0]: '#FFFFFF',
   [AllPodStatus.ScalingUp]: '#FFFFFF',
+  [AllPodStatus.CrashLoopBackOff]: '#CC0000',
 };
