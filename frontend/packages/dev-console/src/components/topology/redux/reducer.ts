@@ -13,19 +13,19 @@ export const getDefaultTopologyFilters = () => {
   const displayFilters = localStorage.getItem(TOPOLOGY_DISPLAY_FILTERS_LOCAL_STORAGE_KEY);
   const searchQuery = new URLSearchParams(window.location.search).get(TOPOLOGY_SEARCH_FILTER_KEY);
 
-  if (displayFilters && searchQuery) {
-    return merge({}, DEFAULT_TOPOLOGY_FILTERS, {
-      display: JSON.parse(displayFilters),
-      searchQuery,
-    });
+  if (!displayFilters) {
+    localStorage.setItem(
+      TOPOLOGY_DISPLAY_FILTERS_LOCAL_STORAGE_KEY,
+      JSON.stringify(DEFAULT_TOPOLOGY_FILTERS.display),
+    );
   }
 
-  localStorage.setItem(
-    TOPOLOGY_DISPLAY_FILTERS_LOCAL_STORAGE_KEY,
-    JSON.stringify(DEFAULT_TOPOLOGY_FILTERS.display),
-  );
+  const filters = merge({}, DEFAULT_TOPOLOGY_FILTERS, {
+    display: JSON.parse(displayFilters) ?? {},
+    searchQuery: searchQuery ?? '',
+  });
 
-  return DEFAULT_TOPOLOGY_FILTERS;
+  return filters;
 };
 
 export default (state: State, action: TopologyAction) => {
