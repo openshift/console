@@ -5,7 +5,12 @@ import { StorageClassResourceKind } from '@console/internal/module/k8s';
 import { StorageClassDropdownInner } from '@console/internal/components/utils/storage-class-dropdown';
 import './storage-class-dropdown.scss';
 
-const cephStorageProvisioners = ['ceph.rook.io/block', 'cephfs.csi.ceph.com', 'rbd.csi.ceph.com'];
+const ocsProvisioners = [
+  'ceph.rook.io/block',
+  'cephfs.csi.ceph.com',
+  'rbd.csi.ceph.com',
+  'noobaa.io/obc',
+];
 
 const StorageClassDropdown = (props: any) => {
   const scConfig = _.cloneDeep(props);
@@ -14,7 +19,7 @@ const StorageClassDropdown = (props: any) => {
   const scData = _.get(scConfig.resources.StorageClass, 'data', []) as StorageClassResourceKind[];
 
   const filteredSCData = scData.filter((sc: StorageClassResourceKind) =>
-    cephStorageProvisioners.every((provisioner: string) => !sc?.provisioner?.includes(provisioner)),
+    ocsProvisioners.every((provisioner: string) => !sc?.provisioner?.includes(provisioner)),
   );
 
   if (scLoaded) {
