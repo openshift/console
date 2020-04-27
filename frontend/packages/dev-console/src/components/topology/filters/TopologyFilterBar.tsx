@@ -6,9 +6,11 @@ import { RootState } from '@console/internal/redux';
 import { TextFilter } from '@console/internal/components/factory';
 import { InfoCircleIcon } from '@patternfly/react-icons';
 import { Visualization } from '@console/topology';
+import { setQueryArgument, removeQueryArgument } from '@console/internal/components/utils';
 import { setTopologyFilters } from '../redux/action';
-import FilterDropdown from './FilterDropdown';
+import { TOPOLOGY_SEARCH_FILTER_KEY } from '../redux/const';
 import { TopologyFilters, DisplayFilters, getTopologyFilters } from './filter-utils';
+import FilterDropdown from './FilterDropdown';
 import './TopologyFilterBar.scss';
 
 type StateProps = {
@@ -98,6 +100,11 @@ const mergeProps = (
   },
   onSearchQueryChange: (searchQuery) => {
     onFiltersChange({ ...filters, searchQuery });
+    if (searchQuery.length > 0) {
+      setQueryArgument(TOPOLOGY_SEARCH_FILTER_KEY, searchQuery);
+    } else {
+      removeQueryArgument(TOPOLOGY_SEARCH_FILTER_KEY);
+    }
   },
   visualization,
 });
