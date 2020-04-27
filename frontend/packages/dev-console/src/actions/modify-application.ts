@@ -1,6 +1,6 @@
 import { KebabOption } from '@console/internal/components/utils';
 import { truncateMiddle } from '@console/internal/components/utils/truncate-middle';
-import { K8sResourceKind, K8sKind, referenceFor } from '@console/internal/module/k8s';
+import { K8sResourceKind, K8sKind } from '@console/internal/module/k8s';
 import { ServiceModel as KnativeServiceModel } from '@console/knative-plugin';
 import { RESOURCE_NAME_TRUNCATE_LENGTH } from '../const';
 import { editApplicationModal } from '../components/modals';
@@ -32,26 +32,6 @@ export const EditApplication = (model: K8sKind, obj: K8sResourceKind): KebabOpti
     hidden: obj.kind !== KnativeServiceModel.kind && annotation !== 'OpenShiftWebConsole',
     href: `/edit/ns/${obj.metadata.namespace}?name=${obj.metadata.name}&kind=${obj.kind ||
       model.kind}`,
-    accessReview: {
-      group: model.apiGroup,
-      resource: model.plural,
-      name: obj.metadata.name,
-      namespace: obj.metadata.namespace,
-      verb: 'update',
-    },
-  };
-};
-
-export const EditHealthCheck = (model: K8sKind, obj: K8sResourceKind): KebabOption => {
-  const {
-    kind,
-    metadata: { name, namespace },
-  } = obj;
-  const resourceKind = model.crd ? referenceFor(obj) : kind;
-  const containerName = obj?.spec?.template?.spec?.containers?.[0]?.name;
-  return {
-    label: 'Edit Health Checks',
-    href: `/k8s/ns/${namespace}/${resourceKind}/${name}/containers/${containerName}/health-checks`,
     accessReview: {
       group: model.apiGroup,
       resource: model.plural,

@@ -51,13 +51,6 @@ const ProbeForm: React.FC<ProbeFormProps> = ({ onSubmit, onClose, containerPorts
   return (
     <div className="odc-heath-check-probe-form">
       <FormSection>
-        <InputField
-          type={TextInputTypes.number}
-          name={`healthChecks.${probeType}.data.failureThreshold`}
-          label="Failure Threshold"
-          style={{ maxWidth: '100%' }}
-          helpText="How many times the probe will try starting or restarting before giving up."
-        />
         <DropdownField
           name={`healthChecks.${probeType}.data.requestType`}
           label="Type"
@@ -70,6 +63,20 @@ const ProbeForm: React.FC<ProbeFormProps> = ({ onSubmit, onClose, containerPorts
           probeType,
           containerPorts,
         )}
+        <InputField
+          type={TextInputTypes.number}
+          name={`healthChecks.${probeType}.data.failureThreshold`}
+          label="Failure Threshold"
+          style={{ maxWidth: '100%' }}
+          helpText="How many times the probe will try starting or restarting before giving up."
+        />
+        <InputField
+          type={TextInputTypes.number}
+          name={`healthChecks.${probeType}.data.successThreshold`}
+          label="Success Threshold"
+          style={{ maxWidth: '100%' }}
+          helpText="How many consecutive successes for the probe to be considered successful after having failed."
+        />
         <InputGroupField
           type={TextInputTypes.number}
           name={`healthChecks.${probeType}.data.initialDelaySeconds`}
@@ -93,13 +100,6 @@ const ProbeForm: React.FC<ProbeFormProps> = ({ onSubmit, onClose, containerPorts
           helpText="How long to wait for the probe to finish, if the time is exceeded, the probe is considered failed."
           afterInput={<InputGroupText>{'seconds'}</InputGroupText>}
           style={{ maxWidth: '100%' }}
-        />
-        <InputField
-          type={TextInputTypes.number}
-          name={`healthChecks.${probeType}.data.successThreshold`}
-          label="Success Threshold"
-          style={{ maxWidth: '100%' }}
-          helpText="How many consecutive successes for the probe to be considered successful after having failed."
         />
       </FormSection>
       <ActionGroupWithIcons

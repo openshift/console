@@ -115,7 +115,7 @@ const AddHealthChecks: React.FC<FormikProps<FormikValues> & AddHealthChecksProps
             handleReset={handleReset}
             errorMessage={status && status?.errors?.json?.message}
             isSubmitting={isSubmitting}
-            submitLabel={healthCheckAdded ? 'Edit' : 'Add'}
+            submitLabel={healthCheckAdded ? 'Save' : 'Add'}
             disableSubmit={!dirty || !_.isEmpty(errors)}
             resetLabel="Cancel"
           />
