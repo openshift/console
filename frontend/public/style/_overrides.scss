@@ -96,16 +96,11 @@ h6 {
   margin-top: var(--pf-global--spacer--lg);
 }
 
-// Temp fix to adjust dropdown item spacing until issue can be addressed upstream in PatternFly
-.pf-c-app-launcher {
-  &__group {
-    padding-top: 0 !important;
-  }
-  &__group-title {
-    font-family: $font-family-base;
-    padding-top: 8px !important;
-  }
+.pf-c-app-launcher__group-title {
+  // Reset font to RedHatText so it doesn't appear too bold
+  font-family: $font-family-base;
 }
+
 // Temp fix to adjust user menu dropdown toggle padding until it can be converted back to a standard dropdown
 .co-user-menu .pf-c-app-launcher__toggle {
   padding-left: 0;
