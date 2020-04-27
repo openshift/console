@@ -17,6 +17,8 @@ interface Configuration extends webpack.Configuration {
 
 const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
+const MomentLocalesPlugin = require('moment-locales-webpack-plugin');
+const { SUPPORTED_LOCALES } = require('./i18next-parser.config');
 
 const NODE_ENV = process.env.NODE_ENV || 'development';
 const HOT_RELOAD = process.env.HOT_RELOAD || 'true';
@@ -191,6 +193,9 @@ const config: Configuration = {
     new CopyWebpackPlugin([
       { from: 'locales', to: 'locales' }
     ]),
+    new MomentLocalesPlugin({
+      localesToKeep: Object.keys(SUPPORTED_LOCALES).map(key => key === 'zh' ? 'zh-cn' : key),
+    }),
     new webpack.IgnorePlugin(/prettier/),
     extractCSS,
     ...(IS_WDS

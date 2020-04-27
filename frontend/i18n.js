@@ -4,9 +4,9 @@ import detector from 'i18next-browser-languagedetector';
 import httpBackend from 'i18next-http-backend';
 
 // Load moment.js locales (en is default and always loaded)
-import arLocale from 'moment/locale/ar';
-import zhLocale from 'moment/locale/zh-cn';
-import deLocale from 'moment/locale/de';
+import 'moment/locale/ar';
+import 'moment/locale/zh-cn';
+import 'moment/locale/de';
 import moment from 'moment';
 
 const { FALLBACK_LOCALE } = require('./i18next-parser.config');
@@ -40,12 +40,8 @@ i18n
         }
         if (value instanceof Date) {
           if (format === 'fromNow') {
-            // Intl.RelativeTimeFormat doesn't support Edge, IE, Safari yet as of this writing
-            // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/RelativeTimeFormat
             return moment(value).fromNow(options.omitSuffix === true);
           }
-          // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat#Browser_compatibility
-          // return new Intl.DateTimeFormat(lng).format(value);
           return moment(value).format(format);
         }
         return value;
