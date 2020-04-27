@@ -80,7 +80,7 @@ const VMConsoles: React.FC<VMConsolesProps> = ({
   const vncServiceManual = (vnc && vnc.manual) || undefined;
   const rdpServiceManual = (rdp && rdp.manual) || undefined;
 
-  const desktopViewverSelector = isWindows(vm) && (
+  const desktopViewverSelector = isWindows(vm) ? (
     <DesktopViewerSelector
       vncServiceManual={vncServiceManual}
       rdpServiceManual={rdpServiceManual}
@@ -88,7 +88,7 @@ const VMConsoles: React.FC<VMConsolesProps> = ({
       vmi={vmi}
       guestAgent={isGuestAgentConnected(vmi)}
     />
-  );
+  ) : null;
 
   return (
     <div className="co-m-pane__body">
