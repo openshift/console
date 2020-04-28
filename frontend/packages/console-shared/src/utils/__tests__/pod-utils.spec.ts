@@ -5,6 +5,7 @@ import {
   getPodStatus,
   getPodData,
   checkPodEditAccess,
+  isContainerLoopingFilter,
 } from '../pod-utils';
 import {
   deploymentConfig,
@@ -43,6 +44,22 @@ describe('Pod Utils:', () => {
   it('getPodStatus should return `pending` phase', () => {
     const mData = { ...mockPod, status: { phase: 'Pending' } };
     expect(getPodStatus(mData)).toBe('Pending');
+  });
+
+  it('should return CrashLoopBackOff status', () => {
+    const mData = {
+      ...mockPod,
+      status: {
+        phase: 'Running',
+        containerStatuses: [{ state: { waiting: { reason: 'CrashLoopBackOff' } } }],
+      },
+    };
+    expect(getPodStatus(mData)).toBe('CrashLoopBackOff');
+  });
+
+  it('isContainerLoopingFilter should return true', () => {
+    const containerStatus = { state: { waiting: { reason: 'CrashLoopBackOff' } } };
+    expect(isContainerLoopingFilter(containerStatus)).toBe(true);
   });
 
   it('should return pods if there are no rolling strategy', () => {

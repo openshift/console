@@ -16,7 +16,7 @@ const isContainerFailedFilter = (containerStatus) => {
   return containerStatus.state.terminated && containerStatus.state.terminated.exitCode !== 0;
 };
 
-const isContainerLoopingFilter = (containerStatus) => {
+export const isContainerLoopingFilter = (containerStatus) => {
   return (
     containerStatus.state.waiting && containerStatus.state.waiting.reason === 'CrashLoopBackOff'
   );
@@ -49,7 +49,7 @@ const podWarnings = (pod) => {
   const {
     status: { phase, containerStatuses },
   } = pod;
-  if (phase === 'Running' && containerStatuses) {
+  if (phase === AllPodStatus.Running && containerStatuses) {
     return _.map(containerStatuses, (containerStatus) => {
       if (!containerStatus.state) {
         return null;
@@ -57,12 +57,12 @@ const podWarnings = (pod) => {
 
       if (isContainerFailedFilter(containerStatus)) {
         if (_.has(pod, ['metadata', 'deletionTimestamp'])) {
-          return 'Failed';
+          return AllPodStatus.Failed;
         }
-        return 'Warning';
+        return AllPodStatus.Warning;
       }
       if (isContainerLoopingFilter(containerStatus)) {
-        return 'Failed';
+        return AllPodStatus.CrashLoopBackOff;
       }
       return null;
     }).filter((x) => x);
@@ -72,18 +72,21 @@ const podWarnings = (pod) => {
 
 export const getPodStatus = (pod) => {
   if (_.has(pod, ['metadata', 'deletionTimestamp'])) {
-    return 'Terminating';
+    return AllPodStatus.Terminating;
   }
   const warnings = podWarnings(pod);
   if (warnings !== null && warnings.length) {
-    if (warnings.includes('Failed')) {
-      return 'Failed';
+    if (warnings.includes(AllPodStatus.CrashLoopBackOff)) {
+      return AllPodStatus.CrashLoopBackOff;
     }
-    return 'Warning';
+    if (warnings.includes(AllPodStatus.Failed)) {
+      return AllPodStatus.Failed;
+    }
+    return AllPodStatus.Warning;
   }
-  const phase = _.get(pod, ['status', 'phase'], 'Unknown');
-  if (phase === 'Running' && !isReady(pod)) {
-    return 'Not Ready';
+  const phase = _.get(pod, ['status', 'phase'], AllPodStatus.Unknown);
+  if (phase === AllPodStatus.Running && !isReady(pod)) {
+    return AllPodStatus.NotReady;
   }
   return phase;
 };
