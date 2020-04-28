@@ -89,6 +89,7 @@ export const getPipelineRunData = (
       },
       resources,
       ...(params && { params }),
+      status: null,
     },
   };
 
