@@ -1299,9 +1299,17 @@ const durationItems = _.zipObject(durations, durations);
 const SilenceForm_: React.FC<SilenceFormProps> = ({ defaults, Info, title }) => {
   const now = new Date();
 
+  let defaultDuration = '2h';
+  if (defaults.startsAt && defaults.endsAt) {
+    const durationFromDefaults = formatPrometheusDuration(
+      Date.parse(defaults.endsAt) - Date.parse(defaults.startsAt),
+    );
+    defaultDuration = durations.includes(durationFromDefaults) ? durationFromDefaults : durationOff;
+  }
+
   const [comment, setComment] = React.useState(defaults.comment ?? '');
   const [createdBy, setCreatedBy] = React.useState(defaults.createdBy ?? '');
-  const [duration, setDuration] = React.useState(defaults.endsAt ? durationOff : '2h');
+  const [duration, setDuration] = React.useState(defaultDuration);
   const [endsAt, setEndsAt] = React.useState(
     defaults.endsAt ?? formatDate(new Date(now.setHours(now.getHours() + 2))),
   );
