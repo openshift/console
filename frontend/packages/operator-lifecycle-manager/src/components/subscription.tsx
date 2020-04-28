@@ -315,7 +315,7 @@ export const SubscriptionDetails: React.FC<SubscriptionDetailsProps> = ({
       {!catalogSource && (
         <Alert isInline className="co-alert" variant="warning" title="Catalog Source Removed">
           The catalog source for this operator has been removed. The catalog source must be added
-          back in order for this opertor to receive any updates.
+          back in order for this operator to receive any updates.
         </Alert>
       )}
       {installStatusPhase === InstallPlanPhase.InstallPlanPhaseFailed && (
