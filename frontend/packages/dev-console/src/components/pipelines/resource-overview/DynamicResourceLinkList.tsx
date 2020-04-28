@@ -7,6 +7,7 @@ import './DynamicResourceLinkList.scss';
 export type ResourceModelLink = {
   model: K8sKind;
   name: string;
+  displayName?: string;
 };
 
 type DynamicResourceLinkListProps = {
@@ -28,11 +29,22 @@ const DynamicResourceLinkList: React.FC<DynamicResourceLinkListProps> = ({
       <dl>
         <dt>{title}</dt>
         <dd>
-          {links.map(({ name, model }) => {
+          {links.map(({ name, model, displayName = '' }) => {
             const kind = referenceForModel(model);
+            let linkName = name;
+            if (displayName.length > 0 && name !== displayName) {
+              linkName += ` (${displayName})`;
+            }
             return (
               <div key={`${kind}/${name}`}>
-                <ResourceLink kind={kind} name={name} namespace={namespace} title={name} inline />
+                <ResourceLink
+                  kind={kind}
+                  name={name}
+                  displayName={linkName}
+                  namespace={namespace}
+                  title={name}
+                  inline
+                />
               </div>
             );
           })}
