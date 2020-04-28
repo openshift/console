@@ -23,6 +23,7 @@ import {
   HIDDEN_FIELD_ID,
   LABELS_FIELD_ID,
   NAME_FIELD_ID,
+  SELECT_FIELD_ID,
 } from '../views/descriptors.view';
 
 describe('Using OLM descriptor components', () => {
@@ -129,6 +130,15 @@ describe('Using OLM descriptor components', () => {
     });
   });
 
+  it('pre-populates Select field', async () => {
+    const field = getOperandFormField(SELECT_FIELD_ID);
+    await field.element.isPresent();
+    expect(field.label.getText()).toEqual('Select');
+    expect(field.element.$('.pf-c-dropdown__toggle-text').getText()).toEqual(
+      testCR?.spec?.select.toString(),
+    );
+  });
+
   it('pre-populates Labels field', async () => {
     const field = getOperandFormField(LABELS_FIELD_ID);
     await field.element.isPresent();
@@ -146,9 +156,9 @@ describe('Using OLM descriptor components', () => {
     expect(fieldGroup.label.getText()).toEqual('Field Group');
     await fieldGroup.toggleButton.click();
     await browser.wait(until.and(until.presenceOf(item1.element), until.presenceOf(item2.element)));
-    expect(item1.label.getText()).toEqual('Item One');
+    expect(item1.label.getText()).toEqual('itemOne');
     expect(item1.input.getAttribute('value')).toEqual(testCR.spec.fieldGroup.itemOne);
-    expect(item2.label.getText()).toEqual('Item Two');
+    expect(item2.label.getText()).toEqual('itemTwo');
     expect(item2.input.getAttribute('value')).toEqual(testCR.spec.fieldGroup.itemTwo.toString());
   });
 

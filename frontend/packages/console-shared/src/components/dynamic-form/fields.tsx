@@ -52,19 +52,10 @@ const FieldWrapper: React.FC<FieldProps> = ({
   );
 };
 
-export const ResourceRequirementsField: React.FC<FieldProps> = ({
-  formData,
-  idSchema,
-  name,
-  onChange,
-  required,
-  schema,
-  uiSchema,
-}) => {
-  const options = getUiOptions(uiSchema);
-  const title = (options?.title || schema?.title || name) as string;
+export const ResourceRequirementsField: React.FC<FieldProps> = (props) => {
+  const { formData, idSchema, onChange } = props;
   return (
-    <FieldSet title={title} idSchema={idSchema} required={required}>
+    <FieldSet {...props}>
       <dl id={idSchema.$id} style={{ marginLeft: '15px' }}>
         <dt>Limits</dt>
         <dd>
@@ -121,15 +112,10 @@ export const UpdateStrategyField: React.FC<FieldProps> = (props) => {
   );
 };
 
-export const NodeAffinityField: React.FC<FieldProps> = ({
-  formData,
-  idSchema,
-  name,
-  onChange,
-  required,
-}) => {
+export const NodeAffinityField: React.FC<FieldProps> = (props) => {
+  const { formData, idSchema, onChange } = props;
   return (
-    <FieldSet title={name} idSchema={idSchema} required={required}>
+    <FieldSet {...props}>
       <NodeAffinity
         affinity={formData}
         onChange={(affinity) => onChange(affinity)}
@@ -139,22 +125,10 @@ export const NodeAffinityField: React.FC<FieldProps> = ({
   );
 };
 
-export const PodAffinityField: React.FC<FieldProps> = ({
-  formData,
-  idSchema,
-  name,
-  onChange,
-  required,
-  schema,
-  uiSchema,
-}) => {
-  const options = getUiOptions(uiSchema);
+export const PodAffinityField: React.FC<FieldProps> = (props) => {
+  const { formData, idSchema, onChange } = props;
   return (
-    <FieldSet
-      title={(options?.title as string) || schema?.title || name}
-      idSchema={idSchema}
-      required={required}
-    >
+    <FieldSet {...props}>
       <PodAffinity
         affinity={formData}
         onChange={(affinity) => onChange(affinity)}
@@ -205,25 +179,15 @@ export const LabelsField: React.FC<FieldProps> = (props) => {
   );
 };
 
-export const SelectField: React.FC<FieldProps> = ({
+export const DropdownField: React.FC<FieldProps> = ({
   formData,
   idSchema,
   name,
   onChange,
   schema,
-  uiSchema,
+  uiSchema = {},
 }) => {
-  const { enumOptions = [], title } = getUiOptions(uiSchema);
-  const items = _.reduce(
-    enumOptions as OptionsList,
-    (itemAccumulator, option) => {
-      return {
-        ...itemAccumulator,
-        [option.label]: option.value,
-      };
-    },
-    {},
-  );
+  const { items = {}, title } = getUiOptions(uiSchema);
   return (
     <Dropdown
       id={idSchema.$id}
@@ -237,25 +201,23 @@ export const SelectField: React.FC<FieldProps> = ({
 };
 
 export const CustomSchemaField: React.FC<SchemaFieldProps> = (props) => {
-  const errors = getSchemaErrors(props.schema);
+  const errors = getSchemaErrors(props.schema ?? {});
   if (errors.length) {
     // eslint-disable-next-line no-console
     console.warn('DynamicForm component does not support the provided JSON schema: ', errors);
+    return null;
   }
-  return errors.length ? null : <SchemaField {...props} />;
+
+  return <SchemaField {...props} />;
 };
 
 export const HiddenField = () => null;
 export const NullField = () => null;
 
-type OptionsList = {
-  label: string;
-  value: string;
-}[];
-
 export default {
   BooleanField,
   DescriptionField,
+  DropdownField,
   HiddenField,
   LabelsField,
   MatchExpressionsField,
@@ -264,6 +226,5 @@ export default {
   PodAffinityField,
   ResourceRequirementsField,
   SchemaField: CustomSchemaField,
-  SelectField,
   UpdateStrategyField,
 };

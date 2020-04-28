@@ -22,11 +22,6 @@ export const atomicFields = [
     id: PASSWORD_FIELD_ID,
   },
   {
-    label: 'Select',
-    path: 'spec.select',
-    id: SELECT_FIELD_ID,
-  },
-  {
     label: 'Number',
     path: 'spec.number',
     id: NUMBER_FIELD_ID,

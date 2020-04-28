@@ -33,13 +33,23 @@ export const DEFAULT_K8S_SCHEMA: JSONSchema6 = {
   },
 };
 
-export const K8S_RESOURCE_CAPABILITY_PATTERN = _.escapeRegExp(SpecCapability.k8sResourcePrefix);
-export const K8S_RESOURCE_SUFFIX_MATCH_PATTERN = new RegExp(
-  `^${K8S_RESOURCE_CAPABILITY_PATTERN}(?:core~v1~)?(.*)$`,
+export const REGEXP_K8S_RESOURCE_CAPABILITY = _.escapeRegExp(SpecCapability.k8sResourcePrefix);
+export const REGEXP_FIELD_DEPENDENCY_CAPABILITY = _.escapeRegExp(SpecCapability.fieldDependency);
+export const REGEXP_SELECT_CAPABILITY = _.escapeRegExp(SpecCapability.select);
+
+export const REGEXP_K8S_RESOURCE_SUFFIX = new RegExp(
+  `^${REGEXP_K8S_RESOURCE_CAPABILITY}(?:core~v1~)?(.*)$`,
 );
-export const SELECT_CAPABILITY_PATTERN = _.escapeRegExp(SpecCapability.select);
-export const SELECT_OPTION_MATCH_PATTERN = new RegExp(`${SELECT_CAPABILITY_PATTERN}(.*)$`);
+export const REGEXP_SELECT_OPTION = new RegExp(`${REGEXP_SELECT_CAPABILITY}(.*)$`);
+export const REGEXP_FIELD_DEPENDENCY_PATH_VALUE = new RegExp(
+  `^${REGEXP_FIELD_DEPENDENCY_CAPABILITY}([^:]*):(.*)$`,
+);
 export const HIDDEN_UI_SCHEMA = {
   'ui:widget': 'hidden',
   'ui:options': { label: false },
 };
+
+const SORT_WEIGHT_BASE = 10;
+export const SORT_WEIGHT_SCALE_1 = SORT_WEIGHT_BASE ** 1;
+export const SORT_WEIGHT_SCALE_2 = SORT_WEIGHT_BASE ** 2;
+export const SORT_WEIGHT_SCALE_3 = SORT_WEIGHT_BASE ** 3;
