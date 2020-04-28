@@ -14,13 +14,7 @@ export const PipelineTaskStatus: React.FC<PipelineTaskStatusProps> = ({
   pipelinerun,
   pipeline,
 }) => {
-  return !pipeline &&
-    pipelinerun &&
-    pipelinerun.spec &&
-    pipelinerun.spec.pipelineRef &&
-    pipelinerun.spec.pipelineRef.name &&
-    pipelinerun.metadata &&
-    pipelinerun.metadata.namespace ? (
+  return !pipeline && pipelinerun.spec?.pipelineRef?.name && pipelinerun.metadata?.namespace ? (
     <Firehose
       resources={[
         {

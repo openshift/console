@@ -10,7 +10,6 @@ export type StackedValue = {
 
 export type HorizontalStackedBarsProps = {
   barGap?: number;
-  disableAnimation?: boolean;
   height?: number | string;
   inline?: boolean;
   values: StackedValue[];
@@ -19,7 +18,6 @@ export type HorizontalStackedBarsProps = {
 
 const HorizontalStackedBars: React.FC<HorizontalStackedBarsProps> = ({
   barGap,
-  disableAnimation,
   height,
   inline,
   values,
@@ -38,7 +36,6 @@ const HorizontalStackedBars: React.FC<HorizontalStackedBarsProps> = ({
             style={{
               background: color,
               flexGrow: size,
-              transition: disableAnimation ? 'initial' : undefined,
             }}
           />
         ))}
