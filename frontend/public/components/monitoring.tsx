@@ -1261,11 +1261,6 @@ const formatDate = (d: Date): string =>
     d.getMinutes(),
   )}:${pad(d.getSeconds())}`;
 
-const toISODate = (dateStr: string): string => {
-  const timestamp = Date.parse(dateStr);
-  return isNaN(timestamp) ? undefined : new Date(timestamp).toISOString();
-};
-
 const DatetimeTextInput = (props) => {
   const pattern =
     '\\d{4}/(0?[1-9]|1[012])/(0?[1-9]|[12]\\d|3[01]) (0?\\d|1\\d|2[0-3]):[0-5]\\d(:[0-5]\\d)?';
@@ -1276,7 +1271,7 @@ const DatetimeTextInput = (props) => {
       <Tooltip
         content={[
           <span className="co-nowrap" key="co-timestamp">
-            {isValid ? toISODate(props.value) : 'Invalid date / time'}
+            {isValid ? new Date(props.value).toISOString() : 'Invalid date / time'}
           </span>,
         ]}
       >
@@ -1299,9 +1294,17 @@ const durationItems = _.zipObject(durations, durations);
 const SilenceForm_: React.FC<SilenceFormProps> = ({ defaults, Info, title }) => {
   const now = new Date();
 
+  let defaultDuration = '2h';
+  if (defaults.startsAt && defaults.endsAt) {
+    const durationFromDefaults = formatPrometheusDuration(
+      Date.parse(defaults.endsAt) - Date.parse(defaults.startsAt),
+    );
+    defaultDuration = durations.includes(durationFromDefaults) ? durationFromDefaults : durationOff;
+  }
+
   const [comment, setComment] = React.useState(defaults.comment ?? '');
   const [createdBy, setCreatedBy] = React.useState(defaults.createdBy ?? '');
-  const [duration, setDuration] = React.useState(defaults.endsAt ? durationOff : '2h');
+  const [duration, setDuration] = React.useState(defaultDuration);
   const [endsAt, setEndsAt] = React.useState(
     defaults.endsAt ?? formatDate(new Date(now.setHours(now.getHours() + 2))),
   );
@@ -1352,13 +1355,19 @@ const SilenceForm_: React.FC<SilenceFormProps> = ({ defaults, Info, title }) => 
 
     setInProgress(true);
 
+    const saveStartsAt: Date = isStartNow ? new Date() : new Date(startsAt);
+    const saveEndsAt: Date =
+      duration === durationOff
+        ? new Date(endsAt)
+        : new Date(saveStartsAt.getTime() + parsePrometheusDuration(duration));
+
     const body = {
       comment,
       createdBy,
-      endsAt: toISODate(duration === durationOff ? endsAt : durationEnd),
+      endsAt: saveEndsAt.toISOString(),
       id: defaults.id,
       matchers,
-      startsAt: toISODate(isStartNow ? formatDate(new Date()) : startsAt),
+      startsAt: saveStartsAt.toISOString(),
     };
 
     coFetchJSON
