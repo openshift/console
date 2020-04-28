@@ -24,7 +24,6 @@ const blacklistGroups = ImmutableSet([
 const blacklistResources = ImmutableSet([
   // Prefer core/v1
   'events.k8s.io/v1beta1.Event',
-  'security.openshift.io/v1.SecurityContextConstraints',
 ]);
 
 const DropdownItem: React.SFC<DropdownItemProps> = ({ model, showGroup, checked }) => (
