@@ -7,7 +7,6 @@ import {
   DashboardsOverviewHealthResourceSubsystem,
   DashboardsOverviewUtilizationItem,
   DashboardsTab,
-  FeatureFlag,
   KebabActions,
   ModelDefinition,
   ModelFeatureFlag,
@@ -15,8 +14,8 @@ import {
   ResourceTabPage,
   RoutePage,
   ResourceDetailsPage,
-  ActionFeatureFlag,
   DashboardsOverviewResourceActivity,
+  CustomFeatureFlag,
 } from '@console/plugin-sdk';
 import {
   OCS_INDEPENDENT_FLAG,
@@ -41,14 +40,13 @@ type ConsumedExtensions =
   | DashboardsOverviewHealthResourceSubsystem<WatchCephResource>
   | DashboardsOverviewUtilizationItem
   | RoutePage
-  | ActionFeatureFlag
+  | CustomFeatureFlag
   | ClusterServiceVersionAction
   | KebabActions
   | ResourceDetailsPage
   | ResourceTabPage
   | ClusterServiceVersionAction
   | KebabActions
-  | FeatureFlag
   | DashboardsOverviewResourceActivity;
 
 const CEPH_FLAG = 'CEPH';
@@ -70,9 +68,8 @@ const plugin: Plugin<ConsumedExtensions> = [
     },
   },
   {
-    type: 'FeatureFlag/Action',
+    type: 'FeatureFlag/Custom',
     properties: {
-      flag: OCS_VERSION_4_5_FLAG,
       detect: detectOCSVersion45AndAbove,
     },
   },
@@ -265,9 +262,8 @@ const plugin: Plugin<ConsumedExtensions> = [
   },
   // Independent mode dashboard
   {
-    type: 'FeatureFlag/Action',
+    type: 'FeatureFlag/Custom',
     properties: {
-      flag: OCS_INDEPENDENT_FLAG,
       detect: detectIndependentMode,
     },
   },

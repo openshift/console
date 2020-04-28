@@ -13,7 +13,7 @@ import {
   DashboardsOverviewResourceActivity,
   DashboardsOverviewInventoryItemReplacement,
   DashboardsInventoryItemGroup,
-  ActionFeatureFlag,
+  CustomFeatureFlag,
   ResourceTabPage,
 } from '@console/plugin-sdk';
 import { referenceForModel } from '@console/internal/module/k8s';
@@ -39,7 +39,7 @@ type ConsumedExtensions =
   | RoutePage
   | ModelFeatureFlag
   | ModelDefinition
-  | ActionFeatureFlag
+  | CustomFeatureFlag
   | DashboardsOverviewResourceActivity
   | ResourceTabPage;
 
@@ -67,9 +67,8 @@ const plugin: Plugin<ConsumedExtensions> = [
     },
   },
   {
-    type: 'FeatureFlag/Action',
+    type: 'FeatureFlag/Custom',
     properties: {
-      flag: BAREMETAL_FLAG,
       detect: detectBaremetalPlatform,
     },
   },

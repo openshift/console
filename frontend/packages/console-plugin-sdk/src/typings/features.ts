@@ -4,19 +4,16 @@ import { Extension, AlwaysOnExtension } from './base';
 import { Action } from 'typesafe-actions';
 
 namespace ExtensionProperties {
-  interface FeatureFlag {
+  export interface ModelFeatureFlag {
     /** The name of the feature flag. */
     flag: string;
-  }
-
-  export interface ModelFeatureFlag extends FeatureFlag {
     /** If a CRD for this model exists, the feature will be enabled. */
     model: K8sKind;
   }
 
-  export interface ActionFeatureFlag extends FeatureFlag {
-    /** Function used to detect the feature and set flag name/value via Redux action dispatch. */
-    detect: ActionFeatureFlagDetector;
+  export interface CustomFeatureFlag {
+    /** Function used to detect the feature and set arbitrary flag name/value via Redux action dispatch. */
+    detect: FeatureDetector;
   }
 }
 
@@ -24,22 +21,16 @@ export interface ModelFeatureFlag extends AlwaysOnExtension<ExtensionProperties.
   type: 'FeatureFlag/Model';
 }
 
-export interface ActionFeatureFlag extends Extension<ExtensionProperties.ActionFeatureFlag> {
-  type: 'FeatureFlag/Action';
+export interface CustomFeatureFlag extends Extension<ExtensionProperties.CustomFeatureFlag> {
+  type: 'FeatureFlag/Custom';
 }
-
-export type FeatureFlag = ModelFeatureFlag | ActionFeatureFlag;
 
 export const isModelFeatureFlag = (e: Extension): e is ModelFeatureFlag => {
   return e.type === 'FeatureFlag/Model';
 };
 
-export const isActionFeatureFlag = (e: Extension): e is ActionFeatureFlag => {
-  return e.type === 'FeatureFlag/Action';
+export const isCustomFeatureFlag = (e: Extension): e is CustomFeatureFlag => {
+  return e.type === 'FeatureFlag/Custom';
 };
 
-export const isFeatureFlag = (e: Extension): e is FeatureFlag => {
-  return isModelFeatureFlag(e) || isActionFeatureFlag(e);
-};
-
-export type ActionFeatureFlagDetector = (dispatch: Dispatch) => Promise<void | Action>;
+export type FeatureDetector = (dispatch: Dispatch) => Promise<void | Action>;
