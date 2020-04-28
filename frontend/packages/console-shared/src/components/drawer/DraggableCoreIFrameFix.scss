@@ -1,0 +1,5 @@
+.ocs-draggable-core-iframe-fix {
+  & iframe {
+    pointer-events: none !important;
+  }
+}
