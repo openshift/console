@@ -21,6 +21,7 @@ import {
   getPodLabels,
   getGitAnnotations,
   getCommonAnnotations,
+  getTriggerAnnotation,
   mergeData,
 } from '../../utils/resource-label-utils';
 import { createService, createRoute, dryRunOpt } from '../../utils/shared-submit-utils';
@@ -247,12 +248,7 @@ export const createOrUpdateDeployment = (
     ...getGitAnnotations(repository, ref),
     ...getCommonAnnotations(),
     'alpha.image.policy.openshift.io/resolve-names': '*',
-    'image.openshift.io/triggers': JSON.stringify([
-      {
-        from: { kind: 'ImageStreamTag', name: `${name}:latest` },
-        fieldPath: `spec.template.spec.containers[?(@.name=="${name}")].image`,
-      },
-    ]),
+    ...getTriggerAnnotation(name),
   };
   const podLabels = getPodLabels(name);
 
@@ -476,7 +472,7 @@ export const createOrUpdateResources = async (
       imageStreamName,
       undefined,
       undefined,
-      defaultAnnotations,
+      { ...defaultAnnotations, ...getTriggerAnnotation(name) },
       _.get(appResources, 'editAppResource.data'),
     );
     return Promise.all([

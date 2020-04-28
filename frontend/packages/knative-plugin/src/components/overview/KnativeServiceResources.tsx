@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as _ from 'lodash';
-import * as plugins from '@console/internal/plugins';
 import { podPhase } from '@console/internal/module/k8s';
+import { isOverviewTabSection, useExtensions } from '@console/internal/plugins';
 import { AsyncComponent } from '@console/internal/components/utils';
 import { BuildOverview } from '@console/internal/components/overview/build-overview';
 import { PodModel } from '@console/internal/models';
@@ -16,9 +16,9 @@ const getResourceTabSectionComp = (t) => (props) => (
   <AsyncComponent {...props} loader={t.properties.loader} />
 );
 
-const getPluginTabSectionResource = (item: OverviewItem) => {
-  return plugins.registry
-    .getOverviewTabSections()
+const usePluginTabSectionResource = (item: OverviewItem) => {
+  const tabSections = useExtensions(isOverviewTabSection);
+  return tabSections
     .filter((section) => item[section.properties.key])
     .map((section) => ({
       Component: getResourceTabSectionComp(section),
@@ -40,7 +40,7 @@ const KnativeServiceResources: React.FC<KnativeServiceResourceProps> = ({ item }
   const linkUrl = `/search/ns/${namespace}?kind=${PodModel.kind}&q=${encodeURIComponent(
     `serving.knative.dev/${resKind.toLowerCase()}=${name}`,
   )}`;
-  const pluginComponents = getPluginTabSectionResource(item);
+  const pluginComponents = usePluginTabSectionResource(item);
   return (
     <>
       <PodsOverview

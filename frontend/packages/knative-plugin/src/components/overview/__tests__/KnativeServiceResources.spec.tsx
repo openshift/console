@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
+import { useExtensions } from '@console/plugin-sdk';
 import { PodsOverview } from '@console/internal/components/overview/pods-overview';
 import {
   sampleKnativePods,
@@ -13,7 +14,15 @@ import KnativeServiceResources from '../KnativeServiceResources';
 import KSRoutesOverviewList from '../RoutesOverviewList';
 import RevisionsOverviewList from '../RevisionsOverviewList';
 
+jest.mock('@console/plugin-sdk/src/useExtensions', () => ({
+  useExtensions: jest.fn(),
+}));
+
 describe('KnativeServiceResources', () => {
+  beforeEach(() => {
+    (useExtensions as jest.Mock).mockReturnValueOnce([]);
+  });
+
   it('should render KnativeServiceResources', () => {
     const item = {
       revisions: sampleKnativeRevisions.data,

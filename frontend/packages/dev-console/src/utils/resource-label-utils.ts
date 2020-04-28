@@ -45,6 +45,15 @@ export const getCommonAnnotations = () => {
   };
 };
 
+export const getTriggerAnnotation = (name: string) => ({
+  'image.openshift.io/triggers': JSON.stringify([
+    {
+      from: { kind: 'ImageStreamTag', name: `${name}:latest` },
+      fieldPath: `spec.template.spec.containers[?(@.name=="${name}")].image`,
+    },
+  ]),
+});
+
 export const getPodLabels = (name: string) => {
   return {
     app: name,
