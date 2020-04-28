@@ -5,6 +5,7 @@ import {
   getImageForCSVIcon,
   getOperatorBackedServiceKindMap,
 } from '@console/shared/src';
+import { ClusterServiceVersionKind } from '@console/operator-lifecycle-manager/src';
 import { TopologyDataModel, TopologyDataResources } from '../topology-types';
 import { TYPE_OPERATOR_BACKED_SERVICE, TYPE_OPERATOR_WORKLOAD } from './components/const';
 import {
@@ -16,7 +17,6 @@ import {
   getTopologyNodeItem,
   mergeGroup,
 } from '../data-transforms/transform-utils';
-import { ClusterServiceVersionKind } from '@console/operator-lifecycle-manager/src';
 
 export const getOperatorTopologyDataModel = (
   resources: TopologyDataResources,
@@ -44,30 +44,29 @@ export const getOperatorTopologyDataModel = (
 
       transformResourceData[key](resources[key].data, true).forEach((item) => {
         const { obj: deploymentConfig } = item;
-        const uid = _.get(deploymentConfig, ['metadata', 'uid']);
-        const ownerUid = _.get(deploymentConfig, 'metadata.ownerReferences[0].uid');
-        const nodeResourceKind = _.get(deploymentConfig, 'metadata.ownerReferences[0].kind');
-        const appGroup = _.get(deploymentConfig, [
-          'metadata',
-          'labels',
-          'app.kubernetes.io/part-of',
-        ]);
+        const uid = deploymentConfig?.metadata?.uid;
+        const ownerReference = deploymentConfig?.metadata?.ownerReferences?.[0];
+        const ownerUid = ownerReference?.uid;
+        const nodeResourceKind = ownerReference?.kind;
+        const operatorBackedServiceKind = operatorBackedServiceKindMap?.[nodeResourceKind];
+        const appGroup = deploymentConfig?.metadata?.labels?.['app.kubernetes.io/part-of'];
         let operator: K8sResourceKind = _.find(installedOperators, {
           metadata: { uid: ownerUid },
         }) as K8sResourceKind;
 
         if (_.isEmpty(operator)) {
-          operator = operatorBackedServiceKindMap[nodeResourceKind];
+          operator = operatorBackedServiceKind;
         }
+
+        const csvIcon = operatorBackedServiceKind?.spec?.icon?.[0] || operator?.spec?.icon?.[0];
+
         const operatorName = appGroup
           ? `${appGroup}:${operator.metadata.name}`
           : operator.metadata.name;
         typedDataModel.topology[uid] = createTopologyNodeData(
           item,
           TYPE_OPERATOR_BACKED_SERVICE,
-          getImageForCSVIcon(
-            _.get(operatorBackedServiceKindMap[nodeResourceKind], 'spec.icon.0'),
-          ) || getDefaultOperatorIcon(),
+          getImageForCSVIcon(csvIcon) || getDefaultOperatorIcon(),
           true,
         );
         typedDataModel.graph.nodes.push(
@@ -123,7 +122,7 @@ export const getOperatorTopologyDataModel = (
       operatorBackedService: true,
       data: {
         builderImage:
-          getImageForCSVIcon(_.get(operatorMap[grp], 'spec.icon.0')) || getDefaultOperatorIcon(),
+          getImageForCSVIcon(operatorMap?.[grp]?.spec?.icon?.[0]) || getDefaultOperatorIcon(),
       },
     };
     addToTopologyDataModel(groupDataModel, operatorsDataModel);
