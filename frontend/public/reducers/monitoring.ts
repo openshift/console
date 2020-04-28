@@ -75,6 +75,15 @@ export const alertStateOrder = (alert) => [
     : _.get(alert, 'activeAt'),
 ];
 
+export const silenceFiringAlertsOrder = (silence) => {
+  const severityCounts = _.countBy(silence.firingAlerts, 'labels.severity');
+  return [
+    severityCounts[AlertSeverity.Critical],
+    severityCounts[AlertSeverity.Warning],
+    silence.firingAlerts.length,
+  ];
+};
+
 export const silenceStateOrder = (silence) => [
   [SilenceStates.Active, SilenceStates.Pending, SilenceStates.Expired].indexOf(
     silenceState(silence),
