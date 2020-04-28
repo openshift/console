@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
+import { match as RMatch } from 'react-router';
 import { Firehose } from '@console/internal/components/utils';
 import * as plugins from '@console/internal/plugins';
 import { getResourceList } from '@console/shared';
@@ -38,7 +39,9 @@ export interface ControllerProps {
 }
 
 export interface TopologyDataControllerProps extends StateProps {
-  namespace: string;
+  match: RMatch<{
+    name?: string;
+  }>;
   render(RenderProps): React.ReactElement;
 }
 
@@ -111,11 +114,12 @@ const Controller: React.FC<ControllerProps> = ({
 };
 
 export const TopologyDataController: React.FC<TopologyDataControllerProps> = ({
-  namespace,
+  match,
   render,
   resourceList,
   serviceBinding,
 }) => {
+  const namespace = match.params.name;
   const { resources, utils } = getResourceList(namespace, resourceList);
   if (serviceBinding) {
     resources.push({

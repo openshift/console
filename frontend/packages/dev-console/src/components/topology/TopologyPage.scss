@@ -1,11 +1,10 @@
 .odc-topology {
-  display: flex;
-  flex-direction: column;
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 0;
-  bottom: 0;
+  display: grid;
+  height: 100%;
+
+  .pf-topology-container__with-sidebar .pf-topology-content {
+    position: relative;
+  }
 
   &__hint-container {
     align-items: center;
