@@ -253,6 +253,10 @@ const SeverityBadge: React.FC<{ severity: string }> = ({ severity }) =>
   );
 
 const SeverityCounts: React.FC<{ alerts: Alert[] }> = ({ alerts }) => {
+  if (_.isEmpty(alerts)) {
+    return <>-</>;
+  }
+
   const counts = _.countBy(alerts, (a) => {
     const { severity } = a.labels;
     return severity === AlertSeverity.Critical || severity === AlertSeverity.Warning
@@ -418,7 +422,7 @@ const SilenceTableRow: RowFunction<Silence> = ({ index, key, obj, style }) => {
         </div>
       </TableData>
       <TableData className={tableSilenceClasses[1]}>
-        {_.isEmpty(firingAlerts) ? '-' : <SeverityCounts alerts={firingAlerts} />}
+        <SeverityCounts alerts={firingAlerts} />
       </TableData>
       <TableData className={classNames(tableSilenceClasses[2], 'co-break-word')}>
         <SilenceState silence={obj} />
