@@ -18,14 +18,15 @@ const LinkedPipelineRunTaskStatus: React.FC<LinkedPipelineRunTaskStatusProps> = 
   pipeline,
   pipelineRun,
 }) => {
-  const pipelineStatus = <PipelineTaskStatus pipeline={pipeline} pipelinerun={pipelineRun} />;
+  const pipelineStatus = (
+    <PipelineTaskStatus
+      key={pipelineRun.metadata?.name}
+      pipeline={pipeline}
+      pipelinerun={pipelineRun}
+    />
+  );
 
-  if (
-    pipelineRun &&
-    pipelineRun.metadata &&
-    pipelineRun.metadata.name &&
-    pipelineRun.metadata.namespace
-  ) {
+  if (pipelineRun.metadata?.name && pipelineRun.metadata?.namespace) {
     return (
       <Link
         to={`${resourcePathFromModel(
