@@ -53,6 +53,8 @@ const (
 
 	// Well-known location of metering service for OpenShift. This is only accessible in-cluster.
 	openshiftMeteringHost = "reporting-operator.openshift-metering.svc:8080"
+
+	openshiftGraphQLHost = "localhost:4000"
 )
 
 func main() {
@@ -343,6 +345,11 @@ func main() {
 				HeaderBlacklist: []string{"Cookie", "X-CSRFToken"},
 				Endpoint:        &url.URL{Scheme: "https", Host: openshiftMeteringHost, Path: "/api"},
 			}
+			srv.GraphQLProxyConfig = &proxy.Config{
+				TLSClientConfig: serviceProxyTLSConfig,
+				HeaderBlacklist: []string{"Cookie", "X-CSRFToken"},
+				Endpoint:        &url.URL{Scheme: "https", Host: openshiftGraphQLHost, Path: "/graphql"},
+			}
 		}
 
 	case "off-cluster":
@@ -400,6 +407,11 @@ func main() {
 			}
 		}
 
+		srv.GraphQLProxyConfig = &proxy.Config{
+			TLSClientConfig: serviceProxyTLSConfig,
+			HeaderBlacklist: []string{"Cookie", "X-CSRFToken"},
+			Endpoint:        &url.URL{Scheme: "http", Host: openshiftGraphQLHost, Path: "/graphql"},
+		}
 	default:
 		bridge.FlagFatalf("k8s-mode", "must be one of: in-cluster, off-cluster")
 	}

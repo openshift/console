@@ -1,15 +1,17 @@
 import { Dispatch } from 'react-redux';
 import * as _ from 'lodash-es';
 import { ActionType as Action, action } from 'typesafe-actions';
+import gql from 'graphql-tag';
 import { FLAGS } from '@console/shared/src/constants/common';
-import { GroupModel, SelfSubjectAccessReviewModel, UserModel } from '../models';
-import { k8sBasePath, ClusterVersionKind, k8sCreate } from '../module/k8s';
+import { GroupModel, UserModel } from '../models';
+import { k8sBasePath, ClusterVersionKind } from '../module/k8s';
 import { receivedResources } from './k8s';
 import { coFetchJSON } from '../co-fetch';
 import { MonitoringRoutes } from '../reducers/monitoring';
 import { setMonitoringURL } from './monitoring';
 import * as plugins from '../plugins';
 import { setClusterID, setCreateProjectMessage, setUser, setConsoleLinks } from './common';
+import client, { fetchURL } from '../graphql/client';
 
 export enum ActionType {
   SetFlag = 'setFlag',
@@ -151,9 +153,9 @@ export type FeatureAction = Action<
   typeof featureActions | typeof receivedResources | typeof clearFlags
 >;
 
-const openshiftPath = `${k8sBasePath}/apis/apps.openshift.io/v1`;
+const openshiftPath = '/apis/apps.openshift.io/v1';
 const detectOpenShift = (dispatch) =>
-  coFetchJSON(openshiftPath).then(
+  fetchURL(openshiftPath).then(
     (res) => dispatch(setFlag(FLAGS.OPENSHIFT, _.size(res.resources) > 0)),
     (err) =>
       _.get(err, 'response.status') === 404
@@ -161,10 +163,10 @@ const detectOpenShift = (dispatch) =>
         : handleError(err, FLAGS.OPENSHIFT, dispatch, detectOpenShift),
   );
 
-const clusterVersionPath = `${k8sBasePath}/apis/config.openshift.io/v1/clusterversions/version`;
+const clusterVersionPath = '/apis/config.openshift.io/v1/clusterversions/version';
 const detectClusterVersion = (dispatch) =>
-  coFetchJSON(clusterVersionPath).then(
-    (clusterVersion: ClusterVersionKind) => {
+  fetchURL<ClusterVersionKind>(clusterVersionPath).then(
+    (clusterVersion) => {
       const hasClusterVersion = !_.isEmpty(clusterVersion);
       dispatch(setFlag(FLAGS.CLUSTER_VERSION, hasClusterVersion));
       dispatch(setClusterID(clusterVersion.spec.clusterID));
@@ -178,9 +180,9 @@ const detectClusterVersion = (dispatch) =>
     },
   );
 
-const projectRequestPath = `${k8sBasePath}/apis/project.openshift.io/v1/projectrequests`;
+const projectRequestPath = '/apis/project.openshift.io/v1/projectrequests';
 const detectCanCreateProject = (dispatch) =>
-  coFetchJSON(projectRequestPath).then(
+  fetchURL(projectRequestPath).then(
     (res) => dispatch(setFlag(FLAGS.CAN_CREATE_PROJECT, res.status === 'Success')),
     (err) => {
       const status = _.get(err, 'response.status');
@@ -193,9 +195,9 @@ const detectCanCreateProject = (dispatch) =>
     },
   );
 
-const loggingConfigMapPath = `${k8sBasePath}/api/v1/namespaces/openshift-logging/configmaps/sharing-config`;
+const loggingConfigMapPath = '/api/v1/namespaces/openshift-logging/configmaps/sharing-config';
 const detectLoggingURL = (dispatch) =>
-  coFetchJSON(loggingConfigMapPath).then(
+  fetchURL(loggingConfigMapPath).then(
     (res) => {
       const { kibanaAppURL } = res.data;
       if (!_.isEmpty(kibanaAppURL)) {
@@ -210,7 +212,7 @@ const detectLoggingURL = (dispatch) =>
   );
 
 const detectUser = (dispatch) =>
-  coFetchJSON('api/kubernetes/apis/user.openshift.io/v1/users/~').then(
+  fetchURL('/apis/user.openshift.io/v1/users/~').then(
     (user) => {
       dispatch(setUser(user));
     },
@@ -222,7 +224,7 @@ const detectUser = (dispatch) =>
   );
 
 const detectConsoleLinks = (dispatch) =>
-  coFetchJSON('api/kubernetes/apis/console.openshift.io/v1/consolelinks').then(
+  fetchURL('/apis/console.openshift.io/v1/consolelinks').then(
     (consoleLinks) => {
       dispatch(setConsoleLinks(_.get(consoleLinks, 'items')));
     },
@@ -233,20 +235,30 @@ const detectConsoleLinks = (dispatch) =>
     },
   );
 
+const ssarQuery = gql(`
+  query q($resource: String, $verb: String, $group: String, $namespace: String){
+    selfSubjectAccessReview(resource: $resource, verb: $verb, group: $group, namespace: $namespace) {
+      status {
+        allowed
+      }
+    }
+  }
+`);
+
+const querySSAR = (resourceAttributes) =>
+  client.query({ query: ssarQuery, variables: resourceAttributes, fetchPolicy: 'network-only' });
+
 const ssarCheckActions = ssarChecks.map(({ flag, resourceAttributes, after }) => {
-  const req = {
-    spec: { resourceAttributes },
-  };
-  const fn = (dispatch) => {
-    return k8sCreate(SelfSubjectAccessReviewModel, req).then(
+  const fn = (dispatch: Dispatch) => {
+    return querySSAR(resourceAttributes).then(
       (res) => {
-        const allowed: boolean = res.status.allowed;
+        const allowed: boolean = res.data.selfSubjectAccessReview.status.allowed;
         dispatch(setFlag(flag, allowed));
         if (after) {
           after(dispatch, allowed);
         }
       },
-      (err) => handleError(err, flag, dispatch, fn),
+      (err) => handleError(err.graphQLErrors[0].extensions, flag, dispatch, fn),
     );
   };
   return fn;

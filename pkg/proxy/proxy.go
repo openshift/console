@@ -65,6 +65,9 @@ func NewProxy(cfg *Config) *Proxy {
 }
 
 func SingleJoiningSlash(a, b string) string {
+	if b == "" {
+		return a
+	}
 	aslash := strings.HasSuffix(a, "/")
 	bslash := strings.HasPrefix(b, "/")
 	switch {

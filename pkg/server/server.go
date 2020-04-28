@@ -30,6 +30,7 @@ const (
 	AuthLoginErrorEndpoint         = "/error"
 	authLogoutEndpoint             = "/auth/logout"
 	k8sProxyEndpoint               = "/api/kubernetes/"
+	graphQLProxyEndpoint           = "/api/graphql"
 	prometheusProxyEndpoint        = "/api/prometheus"
 	prometheusTenancyProxyEndpoint = "/api/prometheus-tenancy"
 	alertManagerProxyEndpoint      = "/api/alertmanager"
@@ -71,6 +72,7 @@ type jsGlobals struct {
 	LoadTestFactor           int    `json:"loadTestFactor"`
 	GOARCH                   string `json:"GOARCH"`
 	GOOS                     string `json:"GOOS"`
+	GraphQLBaseURL      	 string `json:"graphqlBaseURL"`
 }
 
 type Server struct {
@@ -97,6 +99,7 @@ type Server struct {
 	ThanosTenancyProxyConfig *proxy.Config
 	AlertManagerProxyConfig  *proxy.Config
 	MeteringProxyConfig      *proxy.Config
+	GraphQLProxyConfig       *proxy.Config
 	// A lister for resource listing of a particular kind
 	MonitoringDashboardConfigMapLister ResourceLister
 	KnativeEventSourceCRDLister        ResourceLister
@@ -217,6 +220,15 @@ func (s *Server) HTTPHandler() http.Handler {
 		authHandlerWithUser(func(user *auth.User, w http.ResponseWriter, r *http.Request) {
 			r.Header.Set("Authorization", fmt.Sprintf("Bearer %s", user.Token))
 			k8sProxy.ServeHTTP(w, r)
+		})),
+	)
+
+	graphQLProxy := proxy.NewProxy(s.GraphQLProxyConfig)
+	handle(graphQLProxyEndpoint, http.StripPrefix(
+		proxy.SingleJoiningSlash(s.BaseURL.Path, graphQLProxyEndpoint),
+		authHandlerWithUser(func(user *auth.User, w http.ResponseWriter, r *http.Request) {
+			r.Header.Set("Authorization", fmt.Sprintf("Bearer %s", user.Token))
+			graphQLProxy.ServeHTTP(w, r)
 		})),
 	)
 
@@ -383,6 +395,7 @@ func (s *Server) indexHandler(w http.ResponseWriter, r *http.Request) {
 		GOARCH:                s.GOARCH,
 		GOOS:                  s.GOOS,
 		LoadTestFactor:        s.LoadTestFactor,
+		GraphQLBaseURL:        proxy.SingleJoiningSlash(s.BaseURL.Path, graphQLProxyEndpoint),
 	}
 
 	if !s.authDisabled() {
