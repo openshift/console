@@ -2,6 +2,10 @@ import * as _ from 'lodash-es';
 
 // Behaves like moment.js's fromNow
 export const fromNow = (dateTime, now = undefined, options = { omitSuffix: false }) => {
+  // Check for null. If dateTime is null, it returns incorrect date and time of Wed Dec 31 1969 19:00:00 GMT-0500 (Eastern Standard Time)
+  if (!dateTime) {
+    return '-';
+  }
   if (!now) {
     now = new Date();
   }
