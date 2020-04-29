@@ -1,7 +1,12 @@
 import { history, resourcePathFromModel } from '@console/internal/components/utils';
 import { apiVersionForModel, referenceForModel } from '@console/internal/module/k8s';
 import { ClusterTaskModel, PipelineModel } from '../../../models';
-import { Pipeline, PipelineResourceTask, PipelineTask } from '../../../utils/pipeline-augment';
+import {
+  Pipeline,
+  PipelineResourceTask,
+  PipelineResourceTaskParam,
+  PipelineTask,
+} from '../../../utils/pipeline-augment';
 import { getTaskParameters } from '../resource-utils';
 import { TASK_ERROR_STRINGS, TaskErrorType } from './const';
 import { PipelineBuilderFormikValues, PipelineBuilderFormValues, TaskErrorMap } from './types';
@@ -18,6 +23,10 @@ export const getErrorMessage = (errorTypes: TaskErrorType[], errorMap: TaskError
 
   const hasRequestedError = errorList.filter((error) => errorTypes.includes(error));
   return hasRequestedError.length > 0 ? TASK_ERROR_STRINGS[hasRequestedError[0]] : null;
+};
+
+export const taskParamIsRequired = (param: PipelineResourceTaskParam): boolean => {
+  return !('default' in param);
 };
 
 export const convertResourceToTask = (

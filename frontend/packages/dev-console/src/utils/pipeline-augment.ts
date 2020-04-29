@@ -149,12 +149,12 @@ export interface Param {
 }
 
 export interface PipelineParam extends Param {
-  default?: string;
+  default?: string | string[];
   description?: string;
 }
 
 export interface PipelineRunParam extends Param {
-  value: string;
+  value: string | string[];
   input?: string;
   output?: string;
   resource?: object;
