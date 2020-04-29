@@ -236,6 +236,7 @@ h6 {
   }
 
   .pf-c-page__main-section {
+    overflow: hidden; // needed for Firefox to enable proper scrolling of content-scrollable
     --pf-c-page__main-section--PaddingBottom: 0;
     --pf-c-page__main-section--PaddingLeft: 0;
     --pf-c-page__main-section--PaddingRight: 0;
