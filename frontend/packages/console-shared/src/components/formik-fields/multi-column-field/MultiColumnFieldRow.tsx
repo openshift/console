@@ -1,6 +1,14 @@
 import * as React from 'react';
 import { MinusCircleIcon } from '@patternfly/react-icons';
-import { Tooltip, Button, ButtonVariant, ButtonType } from '@patternfly/react-core';
+import {
+  Tooltip,
+  Button,
+  ButtonVariant,
+  ButtonType,
+  GridItem,
+  Grid,
+  gridItemSpanValueShape,
+} from '@patternfly/react-core';
 import './MultiColumnField.scss';
 
 export interface MultiColumnFieldRowProps {
@@ -11,6 +19,7 @@ export interface MultiColumnFieldRowProps {
   onDelete: () => void;
   isReadOnly?: boolean;
   disableDeleteRow?: boolean;
+  spans: gridItemSpanValueShape[];
 }
 
 const minusCircleIcon = (onDelete: () => void, disableDeleteRow?: boolean, toolTip?: string) => {
@@ -51,17 +60,20 @@ const MultiColumnFieldRow: React.FC<MultiColumnFieldRowProps> = ({
   children,
   isReadOnly,
   disableDeleteRow,
+  spans,
 }) => (
   <div className="odc-multi-column-field__row">
-    {React.Children.map(children, (child: React.ReactElement) => {
-      const fieldName = `${name}.${rowIndex}.${child.props.name}`;
-      const newProps = { ...child.props, name: fieldName };
-      return (
-        <div key={fieldName} className="odc-multi-column-field__col">
-          {React.cloneElement(child, newProps)}
-        </div>
-      );
-    })}
+    <Grid>
+      {React.Children.map(children, (child: React.ReactElement, i) => {
+        const fieldName = `${name}.${rowIndex}.${child.props.name}`;
+        const newProps = { ...child.props, name: fieldName };
+        return (
+          <GridItem span={spans[i]} key={fieldName}>
+            <div className="odc-multi-column-field__col">{React.cloneElement(child, newProps)}</div>
+          </GridItem>
+        );
+      })}
+    </Grid>
     {!isReadOnly && renderMinusCircleIcon(onDelete, toolTip, disableDeleteRow)}
   </div>
 );
