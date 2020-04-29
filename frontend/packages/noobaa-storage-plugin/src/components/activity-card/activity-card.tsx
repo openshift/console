@@ -18,21 +18,31 @@ import {
 } from '@console/internal/components/dashboard/with-dashboard-resources';
 import { getResiliencyProgress } from '@console/ceph-storage-plugin/src/utils';
 import { DATA_RESILIENCE_QUERIES } from '../../queries';
+import {
+  NooBaaBackingStoreModel,
+  NooBaaBucketClassModel,
+  NooBaaObjectBucketClaimModel,
+} from '../../models';
 import './activity-card.scss';
 
 const eventsResource: FirehoseResource = { isList: true, kind: EventModel.kind, prop: 'events' };
 
 const isNoobaaEventObject = (event: EventKind): boolean => {
-  const eventName: string = _.get(event, 'involvedObject.name');
+  const eventName: string = event?.involvedObject?.name;
   return _.startsWith(eventName, 'noobaa');
 };
 
 const noobaaEventsFilter = (event: EventKind): boolean => {
-  const eventKind: string = _.get(event, 'involvedObject.kind');
+  const eventKind: string = event?.involvedObject?.kind;
+  const noobaaResources = [
+    NooBaaBackingStoreModel.kind,
+    NooBaaBucketClassModel.kind,
+    NooBaaObjectBucketClaimModel.kind,
+  ];
   if (eventKind === PodModel.kind || eventKind === StatefulSetModel.kind) {
     return isNoobaaEventObject(event);
   }
-  return false;
+  return noobaaResources.includes(eventKind);
 };
 
 const RecentEvent = withDashboardResources(
