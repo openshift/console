@@ -109,7 +109,7 @@ Located at `frontend/__tests__/components/operator-lifecycle-manager/descriptors
 Add a corresponding unit test file (named `<module>.spec.tsx`) that imports your component and provides sufficient coverage.
 
 ```shell
-$ yarn run test
+$ yarn test
 ```
 
 #### E2E Tests
@@ -120,5 +120,5 @@ To sufficiently test your component, modify `descriptors.scenario.ts` and add a 
 Run the OLM end-to-end tests against a cluster with OLM installed:
 
 ```shell
-$ yarn run test-suite --suite olmFull
+$ yarn test-suite --suite olmFull
 ```

@@ -6,12 +6,12 @@ import * as fuzzy from 'fuzzysearch';
 import * as _ from 'lodash-es';
 import { ActionGroup, Button } from '@patternfly/react-core';
 import { getName } from '@console/shared';
+import { withExtensions } from '@console/plugin-sdk';
 import {
   StorageClassProvisioner,
   isStorageClassProvisioner,
   ExtensionSCProvisionerProp,
 } from '@console/plugin-sdk/src/typings/storage-class-params';
-import { withExtensions } from '@console/plugin-sdk';
 
 import {
   AsyncComponent,

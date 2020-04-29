@@ -1,0 +1,15 @@
+{
+  "name": "@console/dynamic-plugin-sdk",
+  "version": "0.0.0-fixed",
+  "description": "Tools and APIs for building OpenShift Console dynamic plugins",
+  "private": true,
+  "scripts": {
+    "clean": "rm -rf ./dist",
+    "schema": "yarn clean && yarn ts-node ./generate-schema.ts",
+    "ts-node": "ts-node -O '{\"module\":\"commonjs\"}'"
+  },
+  "devDependencies": {
+    "ts-json-schema-generator": "0.71.x",
+    "webpack": "5.0.0-beta.16"
+  }
+}

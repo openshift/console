@@ -7,7 +7,7 @@
   "scripts": {
     "coverage": "yarn test --coverage --collectCoverageFrom='[\"packages/git-service/src/**\",\"!**/__tests__/**\"]'",
     "lint": "yarn --cwd ../.. eslint packages/git-service",
-    "test": "yarn --cwd ../.. run test packages/git-service"
+    "test": "yarn --cwd ../.. test packages/git-service"
   },
   "dependencies": {
     "@octokit/rest": "^16.30.1",

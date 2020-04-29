@@ -7,7 +7,7 @@
   "scripts": {
     "coverage": "yarn test --coverage --collectCoverageFrom='[\"packages/knative-plugin/src/**\",\"!**/__tests__/**\"]'",
     "lint": "yarn --cwd ../.. eslint packages/knative-plugin",
-    "test": "yarn --cwd ../.. run test packages/knative-plugin"
+    "test": "yarn --cwd ../.. test packages/knative-plugin"
   },
   "dependencies": {
     "@console/plugin-sdk": "0.0.0-fixed"

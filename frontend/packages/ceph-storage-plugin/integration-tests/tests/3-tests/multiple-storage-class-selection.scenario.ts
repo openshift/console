@@ -1,5 +1,5 @@
 import { ExpectedConditions as until, browser } from 'protractor';
-import { execSync, ExecFileOptionsWithStringEncoding } from 'child_process';
+import { execSync } from 'child_process';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { appHost } from '@console/internal-integration-tests/protractor.conf';
 import { click } from '@console/shared/src/test-utils/utils';
@@ -14,17 +14,15 @@ import {
 } from '../../views/add-capacity.view';
 import { NS } from '../../utils/consts';
 
-const fetchStorageClusterJson = () => {
-  const options: ExecFileOptionsWithStringEncoding = {
-    encoding: 'utf8',
-  };
-  return JSON.parse(
+const fetchStorageClusterJson = () =>
+  JSON.parse(
     execSync(
       `kubectl get --ignore-not-found storagecluster ${OCS_INTERNAL_CR_NAME} -n ${NS} -o json`,
-      options,
+      {
+        encoding: 'utf8',
+      },
     ),
   );
-};
 
 const addCapacity = async (uid: string, scName: string) => {
   await clickKebabAction(uid, 'Add Capacity');
