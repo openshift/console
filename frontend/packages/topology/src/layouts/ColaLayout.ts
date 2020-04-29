@@ -79,7 +79,8 @@ class ColaLayout extends BaseLayout implements Layout {
     this.d3Cola.avoidOverlaps(true);
     this.d3Cola.linkDistance(this.getLinkDistance);
     this.d3Cola.on('tick', () => {
-      if (this.tickCount++ % this.options.simulationSpeed === 0) {
+      this.tickCount++;
+      if (this.tickCount === 1 || this.tickCount % this.options.simulationSpeed === 0) {
         action(() => this.nodes.forEach((d) => d.update()))();
       }
       if (this.colaOptions.maxTicks >= 0 && this.tickCount > this.colaOptions.maxTicks) {
@@ -87,6 +88,7 @@ class ColaLayout extends BaseLayout implements Layout {
       }
     });
     this.d3Cola.on('end', () => {
+      this.tickCount = 0;
       action(() => {
         if (this.destroyed) {
           return;
@@ -161,6 +163,7 @@ class ColaLayout extends BaseLayout implements Layout {
   protected startLayout(graph: Graph, initialRun: boolean, addingNodes: boolean): void {
     // start the layout
     this.d3Cola.alpha(0.2);
+    this.tickCount = 0;
     this.d3Cola.start(
       addingNodes ? 0 : this.colaOptions.initialUnconstrainedIterations,
       addingNodes ? 0 : this.colaOptions.initialUserConstraintIterations,

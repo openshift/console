@@ -51,7 +51,7 @@ import { topologyModelFromDataModel } from './data-transforms/topology-model';
 import { layoutFactory, COLA_LAYOUT, COLA_FORCE_LAYOUT } from './layouts/layoutFactory';
 import { TYPE_APPLICATION_GROUP, ComponentFactory } from './components';
 import TopologyFilterBar from './filters/TopologyFilterBar';
-import { DisplayFilters, getTopologyFilters, TopologyFilters } from './filters/filter-utils';
+import { getTopologyFilters, TopologyFilters } from './filters/filter-utils';
 import TopologyHelmReleasePanel from './helm/TopologyHelmReleasePanel';
 import { TYPE_HELM_RELEASE } from './helm/components/const';
 import { HelmComponentFactory } from './helm/components/helmComponentFactory';
@@ -99,7 +99,6 @@ const Topology: React.FC<ComponentProps> = ({
 }) => {
   const visRef = React.useRef<Visualization | null>(null);
   const applicationRef = React.useRef<string>(null);
-  const displayFiltersRef = React.useRef<DisplayFilters>(null);
   const componentFactoryRef = React.useRef<ComponentFactory | null>(null);
   const knativeComponentFactoryRef = React.useRef<KnativeComponentFactory | null>(null);
   const helmComponentFactoryRef = React.useRef<HelmComponentFactory | null>(null);
@@ -183,24 +182,6 @@ const Topology: React.FC<ComponentProps> = ({
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data]);
-
-  React.useEffect(() => {
-    if (!displayFiltersRef.current) {
-      displayFiltersRef.current = filters.display;
-      return;
-    }
-
-    if (
-      (filters.display.eventSources && !displayFiltersRef.current.eventSources) ||
-      (filters.display.virtualMachines && !displayFiltersRef.current.virtualMachines)
-    ) {
-      action(() => {
-        visRef.current.getGraph().reset();
-        visRef.current.getGraph().layout();
-      })();
-    }
-    displayFiltersRef.current = filters.display;
-  }, [filters.display]);
 
   React.useEffect(() => {
     if (!applicationRef.current) {
