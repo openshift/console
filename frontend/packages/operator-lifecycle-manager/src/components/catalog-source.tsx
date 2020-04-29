@@ -54,6 +54,7 @@ import { PackageManifestList } from './package-manifest';
 import { deleteCatalogSourceModal } from './modals/delete-catalog-source-modal';
 import { disableDefaultSourceModal } from './modals/disable-default-source-modal';
 import { OperatorHubKind } from './operator-hub';
+import { fromRequirements } from '@console/internal/module/k8s/selector';
 
 const DEFAULT_SOURCE_NAMESPACE = 'openshift-marketplace';
 const catalogSourceModelReference = referenceForModel(CatalogSourceModel);
@@ -409,6 +410,7 @@ const DisabledPopover: React.FC<DisabledPopoverProps> = ({ operatorHub, sourceNa
 const flatten = ({
   catalogSources,
   operatorHub,
+  marketplacePackageManifest,
   packageManifests,
 }: FlattenArgType): CatalogSourceTableRowObj[] => {
   const defaultSources: CatalogSourceTableRowObj[] = _.map(
@@ -434,7 +436,7 @@ const flatten = ({
         ...(catalogSourceExists && {
           source: catalogSource,
           endpoint: getEndpoint(catalogSource),
-          operatorCount: getOperatorCount(catalogSource, packageManifests.data),
+          operatorCount: getOperatorCount(catalogSource, marketplacePackageManifest.data),
           publisher: catalogSource.spec.publisher,
         }),
       };
@@ -476,6 +478,16 @@ export const CatalogSourceListPage: React.FC<CatalogSourceListPageProps> = (prop
       {
         isList: true,
         kind: referenceForModel(PackageManifestModel),
+        selector: { 'openshift-marketplace': 'true' },
+        prop: 'marketplacePackageManifest',
+      },
+      {
+        isList: true,
+        kind: referenceForModel(PackageManifestModel),
+        selector: fromRequirements([
+          { key: 'opsrc-owner-name', operator: 'DoesNotExist' },
+          { key: 'csc-owner-name', operator: 'DoesNotExist' },
+        ]),
         prop: 'packageManifests',
       },
       {
@@ -516,6 +528,7 @@ type FlattenArgType = {
   catalogSources: { data: CatalogSourceKind[] };
   packageManifests: { data: PackageManifestKind[] };
   operatorHub: OperatorHubKind;
+  marketplacePackageManifest: { data: PackageManifestKind[] };
 };
 
 export type CatalogSourceDetailsProps = {
