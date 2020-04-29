@@ -26,7 +26,7 @@ export const OperandForm: React.FC<OperandFormProps> = ({
     return {
       metadata: {
         ...metadata,
-        ...(match?.params?.ns && { namespace: match.params.ns }),
+        ...(match?.params?.ns && model.namespaced && { namespace: match.params.ns }),
       },
       spec: prune(spec),
       ...rest,
