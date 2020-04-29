@@ -44,19 +44,23 @@ import {
   BUCKET_LABEL_NOOBAA_MAP,
 } from '../../constants';
 
-const PROVIDERS = {
-  'AWS S3': 'AWS S3',
-  'Azure Blob': 'Azure Blob',
-  'Google cloud storage': 'Google cloud storage',
-  'S3 Compatible': 'S3 Compatible',
-  PVC: 'PVC',
-};
+const PROVIDERS = (() => {
+  const values = _.values(BC_PROVIDERS);
+  return _.zipObject(values, values);
+})();
 
 const awsRegionItems = _.zipObject(AWS_REGIONS, AWS_REGIONS);
-const externalProviders = [BC_PROVIDERS.AWS, BC_PROVIDERS.AZURE, BC_PROVIDERS.S3, BC_PROVIDERS.GCP];
+const externalProviders = [
+  BC_PROVIDERS.AWS,
+  BC_PROVIDERS.AZURE,
+  BC_PROVIDERS.S3,
+  BC_PROVIDERS.GCP,
+  BC_PROVIDERS.IBM,
+];
+const endpointSupported = [BC_PROVIDERS.S3, BC_PROVIDERS.IBM];
 
 /**
- * aws-s3, s3 compatible share the same form
+ * aws-s3, s3 compatible, IBM COS share the same form
  */
 const S3EndPointType: React.FC<S3EndpointTypeProps> = (props) => {
   const [showSecret, setShowSecret] = React.useState(true);
@@ -87,7 +91,7 @@ const S3EndPointType: React.FC<S3EndpointTypeProps> = (props) => {
 
   return (
     <>
-      {provider === 'AWS S3' && (
+      {provider === BC_PROVIDERS.AWS && (
         <FormGroup label="Region" fieldId="region" className="nb-bs-form-entry" isRequired>
           <Dropdown
             className="nb-bs-form-entry__dropdown"
@@ -103,15 +107,17 @@ const S3EndPointType: React.FC<S3EndpointTypeProps> = (props) => {
         </FormGroup>
       )}
 
-      <FormGroup label="Endpoint" fieldId="endpoint" className="nb-bs-form-entry">
-        <TextInput
-          onChange={(e) => {
-            dispatch({ type: 'setEndpoint', value: e });
-          }}
-          value={state.endpoint}
-          aria-label="Endpoint Address"
-        />
-      </FormGroup>
+      {endpointSupported.includes(provider) && (
+        <FormGroup label="Endpoint" fieldId="endpoint" className="nb-bs-form-entry" isRequired>
+          <TextInput
+            onChange={(e) => {
+              dispatch({ type: 'setEndpoint', value: e });
+            }}
+            value={state.endpoint}
+            aria-label="Endpoint Address"
+          />
+        </FormGroup>
+      )}
 
       {showSecret ? (
         <FormGroup
@@ -466,6 +472,12 @@ const secretPayloadCreator = (
         GoogleServiceAccountPrivateKeyJson: field1,
       };
       break;
+    case BC_PROVIDERS.IBM:
+      payload.stringData = {
+        IBM_COS_ACCESS_KEY_ID: field1,
+        IBM_COS_SECRET_ACCESS_KEY: field2,
+      };
+      break;
     default:
       payload.stringData = {
         AWS_ACCESS_KEY_ID: field1,
@@ -554,6 +566,8 @@ const CreateBackingStoreForm: React.FC<CreateBackingStoreFormProps> = withHandle
         ...bsPayload.spec['s3Compatible'],
         endpoint: providerDataState.endpoint,
       };
+    } else if (provider === BC_PROVIDERS.IBM) {
+      bsPayload.spec.ibmCos = { ...bsPayload.spec.ibmCos, endpoint: providerDataState.endpoint };
     }
     // Add region in the end
     if (provider === BC_PROVIDERS.AWS) {
@@ -604,6 +618,7 @@ const CreateBackingStoreForm: React.FC<CreateBackingStoreFormProps> = withHandle
       )}
       {(provider === BC_PROVIDERS.AWS ||
         provider === BC_PROVIDERS.S3 ||
+        provider === BC_PROVIDERS.IBM ||
         provider === BC_PROVIDERS.AZURE) && (
         <S3EndPointType
           provider={provider}
@@ -641,7 +656,7 @@ type CreateBackingStoreFormProps = ModalComponentProps & {
 type S3EndpointTypeProps = {
   state: ProviderDataState;
   dispatch: React.Dispatch<Action>;
-  provider: string;
+  provider: BC_PROVIDERS;
   namespace: string;
 };
 
