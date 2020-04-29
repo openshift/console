@@ -31,6 +31,7 @@
     @media (min-width: $screen-sm) {
       display: flex;
       flex-direction: row;
+      justify-content: space-between;
     }
   }
   &--detail {

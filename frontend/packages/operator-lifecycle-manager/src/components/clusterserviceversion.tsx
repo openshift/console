@@ -41,7 +41,6 @@ import {
   Kebab,
   MsgBox,
   navFactory,
-  PageHeading,
   ResourceKebab,
   ResourceLink,
   Timestamp,
@@ -643,7 +642,6 @@ export const ClusterServiceVersionsPage: React.FC<ClusterServiceVersionsPageProp
       <Helmet>
         <title>{title}</title>
       </Helmet>
-      <PageHeading title={title} />
       <MultiListPage
         {...props}
         resources={[
@@ -663,11 +661,11 @@ export const ClusterServiceVersionsPage: React.FC<ClusterServiceVersionsPageProp
             optional: true,
           },
         ]}
+        title={title}
         flatten={flatten}
         namespace={props.namespace}
         ListComponent={ClusterServiceVersionList}
         helpText={helpText}
-        showTitle={false}
       />
     </>
   );

@@ -270,28 +270,22 @@ export const FireMan_ = connect(null, { filterList })(
 
       return (
         <>
-          <PageHeading title={title} badge={badge} className="co-m-nav-title--row">
-            <div
-              className={classNames(
-                { 'co-m-pane__filter-bar--inline': (createLink || helpText) && title },
-                { 'co-m-pane__filter-bar--no-title': !title },
-                { 'co-m-pane__filter-bar': !createLink || helpText },
-                {
-                  'co-m-pane__filter-bar--with-help-text': helpText && !createLink,
-                },
-              )}
-            >
-              {createLink && (
-                <div className="co-m-pane__filter-bar-group co-m-pane__createLink">
-                  {createLink}
-                </div>
-              )}
-              {!title && badge && (
-                <div className="co-m-pane__filter-bar-group co-m-pane__filter-bar-group--badge">
-                  {badge}
-                </div>
-              )}
-            </div>
+          {/* Badge rendered from PageHeading only when title is present */}
+          <PageHeading
+            title={title}
+            badge={title ? badge : null}
+            className={classNames({ 'co-m-nav-title--row': createLink })}
+          >
+            {createLink && (
+              <div
+                className={classNames('co-m-pane__createLink', {
+                  'co-m-pane__createLink--no-title': !title,
+                })}
+              >
+                {createLink}
+              </div>
+            )}
+            {!title && badge && <div>{badge}</div>}
           </PageHeading>
           {helpText && <p className="co-m-pane__help-text co-help-text">{helpText}</p>}
           <div className="co-m-pane__body co-m-pane__body--no-top-margin">
