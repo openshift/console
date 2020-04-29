@@ -668,6 +668,7 @@ export const ClusterServiceVersionsPage: React.FC<ClusterServiceVersionsPageProp
         ListComponent={ClusterServiceVersionList}
         helpText={helpText}
         showTitle={false}
+        noHeading
       />
     </>
   );

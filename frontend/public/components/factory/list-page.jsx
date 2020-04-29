@@ -222,6 +222,7 @@ export const FireMan_ = connect(null, { filterList })(
         resources,
         badge,
         title,
+        noHeading,
       } = this.props;
 
       let createLink;
@@ -270,29 +271,31 @@ export const FireMan_ = connect(null, { filterList })(
 
       return (
         <>
-          <PageHeading title={title} badge={badge} className="co-m-nav-title--row">
-            <div
-              className={classNames(
-                { 'co-m-pane__filter-bar--inline': (createLink || helpText) && title },
-                { 'co-m-pane__filter-bar--no-title': !title },
-                { 'co-m-pane__filter-bar': !createLink || helpText },
-                {
-                  'co-m-pane__filter-bar--with-help-text': helpText && !createLink,
-                },
-              )}
-            >
-              {createLink && (
-                <div className="co-m-pane__filter-bar-group co-m-pane__createLink">
-                  {createLink}
-                </div>
-              )}
-              {!title && badge && (
-                <div className="co-m-pane__filter-bar-group co-m-pane__filter-bar-group--badge">
-                  {badge}
-                </div>
-              )}
-            </div>
-          </PageHeading>
+          {!noHeading && (
+            <PageHeading title={title} badge={badge} className="co-m-nav-title--row">
+              <div
+                className={classNames(
+                  { 'co-m-pane__filter-bar--inline': (createLink || helpText) && title },
+                  { 'co-m-pane__filter-bar--no-title': !title },
+                  { 'co-m-pane__filter-bar': !createLink || helpText },
+                  {
+                    'co-m-pane__filter-bar--with-help-text': helpText && !createLink,
+                  },
+                )}
+              >
+                {createLink && (
+                  <div className="co-m-pane__filter-bar-group co-m-pane__createLink">
+                    {createLink}
+                  </div>
+                )}
+                {!title && badge && (
+                  <div className="co-m-pane__filter-bar-group co-m-pane__filter-bar-group--badge">
+                    {badge}
+                  </div>
+                )}
+              </div>
+            </PageHeading>
+          )}
           {helpText && <p className="co-m-pane__help-text co-help-text">{helpText}</p>}
           <div className="co-m-pane__body co-m-pane__body--no-top-margin">
             {inject(this.props.children, {
@@ -441,7 +444,7 @@ export const ListPage = withFallback((props) => {
 
 ListPage.displayName = 'ListPage';
 
-/** @type {React.SFC<{canCreate?: boolean, createButtonText?: string, createProps?: any, createAccessReview?: Object, flatten?: Function, title?: string, label?: string, hideTextFilter?: boolean, showTitle?: boolean, helpText?: any, filterLabel?: string, textFilter?: string, rowFilters?: any[], resources: any[], ListComponent: React.ComponentType<any>, namespace?: string, customData?: any, badge?: React.ReactNode, hideNameFilter?: boolean, hideLabelFilter?: boolean >} */
+/** @type {React.SFC<{canCreate?: boolean, createButtonText?: string, createProps?: any, createAccessReview?: Object, flatten?: Function, title?: string, label?: string, hideTextFilter?: boolean, showTitle?: boolean, helpText?: any, filterLabel?: string, textFilter?: string, rowFilters?: any[], resources: any[], ListComponent: React.ComponentType<any>, namespace?: string, customData?: any, badge?: React.ReactNode, hideNameFilter?: boolean, hideLabelFilter?: boolean, noHeading?: boolean >} */
 export const MultiListPage = (props) => {
   const {
     autoFocus,
@@ -465,6 +468,7 @@ export const MultiListPage = (props) => {
     badge,
     hideNameFilter,
     hideLabelFilter,
+    noHeading,
   } = props;
 
   const resources = _.map(props.resources, (r) => ({
@@ -488,6 +492,7 @@ export const MultiListPage = (props) => {
       textFilter={textFilter}
       title={showTitle ? title : undefined}
       badge={badge}
+      noHeading={noHeading}
     >
       <Firehose resources={mock ? [] : resources}>
         <ListPageWrapper_
