@@ -11,10 +11,9 @@
 /frontend/__coverage__
 /frontend/__chrome_browser__
 /frontend/**/node_modules
-/frontend/public/bower_components
-/frontend/public/dist
-/frontend/npm-debug.log
-/frontend/yarn-error.log
+/frontend/**/npm-debug.log
+/frontend/**/yarn-error.log
+/frontend/**/dist
+/frontend/@types/gql
 /frontend/gui_test_screenshots
 /frontend/packages/integration-tests-cypress/cypress-a11y-report.json
-/frontend/@types

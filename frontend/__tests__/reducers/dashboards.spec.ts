@@ -34,7 +34,7 @@ describe('dashboardsReducer', () => {
   });
 
   it('updates watch timeout reference', () => {
-    const timeout = { ref: noop, unref: noop };
+    const timeout = { ref: noop, refresh: noop, unref: noop } as NodeJS.Timer;
     const action = updateWatchTimeout(RESULTS_TYPE.URL, 'fooUrl', timeout);
     const initialState = Immutable.Map(defaults);
     const stateWithTimeout = dashboardsReducer(initialState, action);
@@ -43,7 +43,7 @@ describe('dashboardsReducer', () => {
       initialState.setIn([RESULTS_TYPE.URL, 'fooUrl', 'timeout'], timeout),
     );
 
-    const nextTimeout = { ref: noop, unref: noop };
+    const nextTimeout = { ref: noop, refresh: noop, unref: noop } as NodeJS.Timer;
     const nextAction = updateWatchTimeout(RESULTS_TYPE.URL, 'fooUrl', nextTimeout);
 
     const nextState = dashboardsReducer(stateWithTimeout, nextAction);
@@ -69,7 +69,7 @@ describe('dashboardsReducer', () => {
   });
 
   it('stops watch', () => {
-    const timeout = { ref: noop, unref: noop };
+    const timeout = { ref: noop, refresh: noop, unref: noop } as NodeJS.Timer;
     const action = stopWatch(RESULTS_TYPE.URL, 'fooUrl');
     const initialState = Immutable.Map(defaults).merge({
       [RESULTS_TYPE.URL]: { fooUrl: { active: 2, timeout } },

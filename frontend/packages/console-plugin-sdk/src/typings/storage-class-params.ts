@@ -1,4 +1,4 @@
-import { Extension } from '@console/plugin-sdk';
+import { Extension } from './base';
 
 namespace ExtensionProperties {
   export interface StorageClassProvisioner {

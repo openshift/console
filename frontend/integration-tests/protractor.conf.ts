@@ -242,7 +242,7 @@ export const config = {
   params: {
     // Set to 'true' to enable OpenShift resources in the crud scenario.
     // Use a string rather than boolean so it can be specified on the command line:
-    // $ yarn run test-gui --params.openshift true
+    // $ yarn test-gui --params.openshift true
     openshift: 'false',
     // Set to 'true' to enable Service Catalog resources in the crud scenario.
     servicecatalog: 'false',

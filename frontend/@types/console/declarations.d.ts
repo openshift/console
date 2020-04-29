@@ -45,6 +45,8 @@ declare interface Window {
   __REDUX_DEVTOOLS_EXTENSION_COMPOSE__?: Function;
   store?: {}; // Redux store
   pluginStore?: {}; // Console plugin store
+  loadPluginEntry?: Function;
+  loadPluginFromURL?: Function;
   Cypress?: {};
 }
 

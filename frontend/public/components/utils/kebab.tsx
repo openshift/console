@@ -29,7 +29,7 @@ import {
 } from '../../module/k8s';
 import { impersonateStateToProps } from '../../reducers/ui';
 import { connectToModel } from '../../kinds';
-import * as plugins from '../../plugins';
+import { registry } from '../../plugins';
 import { VolumeSnapshotModel } from '../../models';
 
 export const kebabOptionsToMenu = (options: KebabOption[]): KebabMenuOption[] => {
@@ -376,7 +376,7 @@ kebabFactory.common = [
 
 export const getExtensionsKebabActionsForKind = (kind: K8sKind) => {
   const extensionActions = [];
-  _.forEach(plugins.registry.getKebabActions(), (getActions: any) => {
+  _.forEach(registry.getKebabActions(), (getActions: any) => {
     if (getActions) {
       _.forEach(getActions.properties.getKebabActionsForKind(kind), (kebabAction) => {
         extensionActions.push(kebabAction);
