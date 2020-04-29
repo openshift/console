@@ -35,12 +35,13 @@ import { connectToModel, connectToPlural } from '@console/internal/kinds';
 import {
   GroupVersionKind,
   K8sKind,
+  K8sResourceCondition,
   K8sResourceKind,
-  OwnerReference,
-  apiVersionForReference,
-  apiGroupForReference,
-  kindForReference,
   K8sResourceKindReference,
+  OwnerReference,
+  apiGroupForReference,
+  apiVersionForReference,
+  kindForReference,
   modelFor,
   referenceFor,
   referenceForModel,
@@ -180,93 +181,64 @@ export const OperandTableHeader = () => {
   ];
 };
 
-export enum OperatorStatusType {
-  phase = 'phase',
-  status = 'status',
-  state = 'state',
-  conditions = 'conditions',
-}
-
-export const OperatorStatusTypeText = {
-  [OperatorStatusType.phase]: 'Phase:',
-  [OperatorStatusType.status]: 'Status:',
-  [OperatorStatusType.state]: 'State:',
-  [OperatorStatusType.conditions]: 'Condition:',
-};
-
-export type ConditionType = {
+type OperandStatusType = {
   type: string;
-  status: string;
-  reason?: string;
-  message?: string;
-  lastUpdateTime?: string;
-  lastTransitionTime?: string;
+  value: string;
 };
 
-const DeriveIconFromStatusCondition = (conditionStatus: [ConditionType]) => {
-  let statusIcon;
-  if (!_.isEmpty(conditionStatus)) {
-    if (_.has(conditionStatus[0], 'type')) {
-      statusIcon = <Status status={conditionStatus[0].type} />;
-    }
+const getOperandStatus = (obj: K8sResourceKind): OperandStatusType => {
+  const { phase, status, state, conditions } = obj?.status || {};
+
+  if (phase && _.isString(phase)) {
+    return {
+      type: 'Phase',
+      value: phase,
+    };
   }
-  return statusIcon;
+
+  if (status && _.isString(status)) {
+    return {
+      type: 'Status',
+      value: status,
+    };
+  }
+
+  if (state && _.isString(state)) {
+    return {
+      type: 'State',
+      value: state,
+    };
+  }
+
+  const trueCondition = conditions?.find((c: K8sResourceCondition) => c.status === 'True');
+  if (trueCondition) {
+    return {
+      type: 'Condition',
+      value: trueCondition.type,
+    };
+  }
+
+  return null;
 };
 
-const DeriveIconFromStatus = (status: string) => {
-  let statusIcon;
-  if (!_.isEmpty(status)) {
-    statusIcon =
-      status === 'Running' ? <SuccessStatus title={status} /> : <Status status={status} />;
+export const OperandStatus: React.FunctionComponent<OperandStatusProps> = ({ operand }) => {
+  const status: OperandStatusType = getOperandStatus(operand);
+  if (!status) {
+    return <div className="text-muted">Unknown</div>;
   }
-  return statusIcon;
+
+  const { type, value } = status;
+  return (
+    <span className="co-icon-and-text">
+      {type}:&nbsp;
+      {value === 'Running' ? <SuccessStatus title={value} /> : <Status status={value} />}
+    </span>
+  );
 };
 
-export const OperandStatusIconAndText: React.FunctionComponent<OperandStatusIconAndTextProps> = ({
-  statusObject,
-}) => {
-  let iconAndText = <div className="text-muted">Unknown</div>;
-  if (_.isEmpty(statusObject)) {
-    return iconAndText;
-  }
-  _.find(Object.keys(OperatorStatusType), (key) => {
-    if (_.has(statusObject, key)) {
-      const status = statusObject[key];
-      const statusIcon =
-        key === OperatorStatusType.conditions
-          ? DeriveIconFromStatusCondition(status)
-          : DeriveIconFromStatus(status);
-      if (statusIcon) {
-        return (iconAndText = (
-          <span className="co-icon-and-text">
-            {OperatorStatusTypeText[key]}&nbsp;{statusIcon}
-          </span>
-        ));
-      }
-    }
-    return false;
-  });
-
-  return iconAndText;
-};
-
-const getSortableOperandStatus = (statusObject: K8sResourceKind['status']) => {
-  let statusText = 'Unknown';
-  if (_.isEmpty(statusObject)) {
-    return statusText;
-  }
-  _.find(Object.keys(OperatorStatusType), (key) => {
-    if (_.has(statusObject, key)) {
-      const status = statusObject[key];
-      const statusSubText = key === OperatorStatusType.conditions ? status[0]?.type : status;
-      if (statusSubText) {
-        return (statusText = `${OperatorStatusTypeText[key]}${statusSubText}`);
-      }
-    }
-    return false;
-  });
-
-  return statusText;
+const getOperandStatusText = (operand: K8sResourceKind) => {
+  const status = getOperandStatus(operand);
+  return status ? `${status.type}: ${status.value}` : 'Unknown';
 };
 
 export const OperandTableRow: React.FC<OperandTableRowProps> = ({
@@ -289,7 +261,7 @@ export const OperandTableRow: React.FC<OperandTableRowProps> = ({
         {obj.kind}
       </TableData>
       <TableData className={tableColumnClasses[2]}>
-        <OperandStatusIconAndText statusObject={obj.status} />
+        <OperandStatus operand={obj} />
       </TableData>
       <TableData className={tableColumnClasses[3]}>
         {_.get(obj.spec, 'version') || <div className="text-muted">Unknown</div>}
@@ -345,8 +317,7 @@ export const OperandList_: React.FC<OperandListProps & WithFlagsProps> = (props)
     <Table
       {...props}
       customSorts={{
-        operandStatus: (operand: K8sResourceKind): string =>
-          getSortableOperandStatus(operand.status),
+        operandStatus: getOperandStatusText,
       }}
       data={ensureKind(props.data)}
       EmptyMsg={EmptyMsg}
@@ -689,8 +660,8 @@ export type OperandListProps = {
   flags?: FlagsObject;
 };
 
-export type OperandStatusIconAndTextProps = {
-  statusObject: K8sResourceKind['status'];
+export type OperandStatusProps = {
+  operand: K8sResourceKind;
 };
 
 export type OperandHeaderProps = {
