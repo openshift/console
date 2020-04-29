@@ -472,6 +472,7 @@ export const CatalogSourceListPage: React.FC<CatalogSourceListPageProps> = (prop
     flatten={(data) => flatten({ operatorHub: props.obj, ...data })}
     ListComponent={CatalogSourceList}
     textFilter="catalog-source-name"
+    hideLabelFilter
     resources={[
       {
         isList: true,
