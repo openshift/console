@@ -35,16 +35,23 @@ const EventSourcesSelector: React.FC<EventSourcesSelectorProps> = ({ eventSource
     },
     [setFieldValue, setFieldTouched, validateForm],
   );
-  return (
+
+  const itemSelectorField = (
+    <ItemSelectorField
+      itemList={eventSourceList}
+      loadingItems={!eventSourceItems}
+      name="type"
+      onSelect={handleItemChange}
+      autoSelect
+    />
+  );
+
+  return eventSourceItems > 1 ? (
     <FormSection title="Type" fullWidth extraMargin>
-      <ItemSelectorField
-        itemList={eventSourceList}
-        loadingItems={!eventSourceItems}
-        name="type"
-        onSelect={handleItemChange}
-        autoSelect
-      />
+      {itemSelectorField}
     </FormSection>
+  ) : (
+    itemSelectorField
   );
 };
 
