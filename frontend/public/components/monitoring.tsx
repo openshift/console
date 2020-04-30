@@ -1298,12 +1298,21 @@ const durationItems = _.zipObject(durations, durations);
 const SilenceForm_: React.FC<SilenceFormProps> = ({ defaults, Info, title }) => {
   const now = new Date();
 
-  let defaultDuration = '2h';
-  if (defaults.startsAt && defaults.endsAt) {
+  // Default to starting now if we have no default start time or if the default start time is in the
+  // past (because Alertmanager will change a time in the past to the current time on save anyway)
+  const defaultIsStartNow = _.isEmpty(defaults.startsAt) || new Date(defaults.startsAt) < now;
+
+  let defaultDuration = _.isEmpty(defaults.endsAt) ? '2h' : durationOff;
+
+  // If we have both a default start and end time and the difference between them exactly matches
+  // one of the duration options, automatically select that option in the duration menu
+  if (!defaultIsStartNow && defaults.startsAt && defaults.endsAt) {
     const durationFromDefaults = formatPrometheusDuration(
       Date.parse(defaults.endsAt) - Date.parse(defaults.startsAt),
     );
-    defaultDuration = durations.includes(durationFromDefaults) ? durationFromDefaults : durationOff;
+    if (durations.includes(durationFromDefaults)) {
+      defaultDuration = durationFromDefaults;
+    }
   }
 
   const [comment, setComment] = React.useState(defaults.comment ?? '');
@@ -1314,7 +1323,7 @@ const SilenceForm_: React.FC<SilenceFormProps> = ({ defaults, Info, title }) => 
   );
   const [error, setError] = React.useState<string>();
   const [inProgress, setInProgress] = React.useState(false);
-  const [isStartNow, setIsStartNow] = React.useState(_.isEmpty(defaults.startsAt));
+  const [isStartNow, setIsStartNow] = React.useState(defaultIsStartNow);
   const [matchers, setMatchers] = React.useState(
     defaults.matchers ?? [{ isRegex: false, name: '', value: '' }],
   );
