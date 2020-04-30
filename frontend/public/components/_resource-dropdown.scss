@@ -69,15 +69,13 @@
 }
 
 .co-type-selector {
-  .pf-c-dropdown__menu {
-    min-width: 290px;
-    @media (min-width: 480px) {
-      min-width: 350px;
-    }
-    .co-resource-item__tech-dev-preview {
-      color: red;
-      margin-left: 10px;
-    }
+  min-width: 290px;
+  @media (min-width: 480px) {
+    min-width: 350px;
+  }
+  .co-resource-item__tech-dev-preview {
+    color: red;
+    margin-left: 10px;
   }
 }
 
