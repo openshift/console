@@ -4,9 +4,10 @@ import { Formik } from 'formik';
 import { RouteComponentProps } from 'react-router';
 import { PageBody } from '@console/shared';
 import { coFetchJSON } from '@console/internal/co-fetch';
-import { PageHeading, history } from '@console/internal/components/utils';
+import { PageHeading, history, getQueryArgument } from '@console/internal/components/utils';
 
-import { HelmRelease } from './helm-types';
+import { HelmRelease, HelmActionType, HelmActionOrigins } from './helm-types';
+import { getHelmActionConfig } from './helm-utils';
 import NamespacedPage, { NamespacedPageVariants } from '../NamespacedPage';
 import HelmReleaseRollbackForm from './form/HelmReleaseRollbackForm';
 
@@ -21,7 +22,13 @@ type HelmRollbackFormData = {
 
 const HelmReleaseRollbackPage: React.FC<HelmReleaseRollbackPageProps> = ({ match }) => {
   const { releaseName, ns: namespace } = match.params;
+  const actionOrigin = getQueryArgument('actionOrigin') as HelmActionOrigins;
   const [releaseHistory, setReleaseHistory] = React.useState<HelmRelease[]>(null);
+
+  const config = React.useMemo(
+    () => getHelmActionConfig(HelmActionType.Rollback, releaseName, namespace, actionOrigin),
+    [actionOrigin, namespace, releaseName],
+  );
 
   React.useEffect(() => {
     let ignore = false;
@@ -29,7 +36,7 @@ const HelmReleaseRollbackPage: React.FC<HelmReleaseRollbackPageProps> = ({ match
     const fetchReleaseHistory = async () => {
       let res: HelmRelease[];
       try {
-        res = await coFetchJSON(`/api/helm/release/history?ns=${namespace}&name=${releaseName}`);
+        res = await coFetchJSON(config.helmReleaseApi);
       } catch {} // eslint-disable-line no-empty
       if (ignore) return;
 
@@ -41,7 +48,7 @@ const HelmReleaseRollbackPage: React.FC<HelmReleaseRollbackPageProps> = ({ match
     return () => {
       ignore = true;
     };
-  }, [namespace, releaseName]);
+  }, [config.helmReleaseApi]);
 
   const initialValues: HelmRollbackFormData = {
     revision: -1,
@@ -55,11 +62,11 @@ const HelmReleaseRollbackPage: React.FC<HelmReleaseRollbackPageProps> = ({ match
       version: values.revision,
     };
 
-    coFetchJSON
-      .patch('/api/helm/release', payload)
+    config
+      .fetch('/api/helm/release', payload)
       .then(() => {
         actions.setStatus({ isSubmitting: false });
-        history.push(`/helm-releases/ns/${namespace}`);
+        history.push(config.redirectURL);
       })
       .catch((err) => {
         actions.setSubmitting(false);
@@ -70,9 +77,9 @@ const HelmReleaseRollbackPage: React.FC<HelmReleaseRollbackPageProps> = ({ match
   return (
     <NamespacedPage variant={NamespacedPageVariants.light} disabled hideApplications>
       <Helmet>
-        <title>Rollback Helm Release</title>
+        <title>{config.title}</title>
       </Helmet>
-      <PageHeading title="Rollback Helm Release">
+      <PageHeading title={config.title}>
         Select the version to rollback <strong>{releaseName}</strong> to, from the table below:
       </PageHeading>
       <PageBody>

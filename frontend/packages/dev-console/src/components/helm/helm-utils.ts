@@ -10,6 +10,7 @@ import {
   HelmChartMetaData,
   HelmActionType,
   HelmActionConfigType,
+  HelmActionOrigins,
 } from './helm-types';
 import { CustomResourceListRowFilter } from '../custom-resource-list/custom-resource-list-types';
 
@@ -93,11 +94,29 @@ export const getChartVersions = (chartEntries: HelmChartMetaData[]) => {
   return chartVersions;
 };
 
+export const getOriginRedirectURL = (
+  actionOrigin: string,
+  namespace: string,
+  releaseName?: string,
+) => {
+  switch (actionOrigin) {
+    case HelmActionOrigins.topology:
+      return `/topology/ns/${namespace}/graph`;
+    case HelmActionOrigins.list:
+      return `/helm-releases/ns/${namespace}`;
+    case HelmActionOrigins.details:
+      return `/helm-releases/ns/${namespace}/release/${releaseName}`;
+    default:
+      return `/helm-releases/ns/${namespace}`;
+  }
+};
+
 export const getHelmActionConfig = (
   helmAction: HelmActionType,
   releaseName: string,
   namespace: string,
-  chartURL: string,
+  actionOrigin?: HelmActionOrigins,
+  chartURL?: string,
 ): HelmActionConfigType | undefined => {
   switch (helmAction) {
     case HelmActionType.Install:
@@ -106,15 +125,25 @@ export const getHelmActionConfig = (
         subTitle: 'The helm chart will be installed using the YAML shown in the editor below.',
         helmReleaseApi: `/api/helm/chart?url=${chartURL}`,
         fetch: coFetchJSON.post,
-        redirectURL: `/topology/ns/${namespace}/graph`,
+        redirectURL: getOriginRedirectURL(HelmActionOrigins.topology, namespace, releaseName),
       };
     case HelmActionType.Upgrade:
       return {
         title: 'Upgrade Helm Release',
-        subTitle: '',
+        subTitle:
+          'Upgrade by selecting a new chart version or manually changing the YAML shown in the editor below.',
         helmReleaseApi: `/api/helm/release?ns=${namespace}&release_name=${releaseName}`,
         fetch: coFetchJSON.put,
-        redirectURL: `/helm-releases/ns/${namespace}`,
+        redirectURL: getOriginRedirectURL(actionOrigin, namespace, releaseName),
+      };
+
+    case HelmActionType.Rollback:
+      return {
+        title: 'Rollback Helm Release',
+        subTitle: ``,
+        helmReleaseApi: `/api/helm/release/history?ns=${namespace}&name=${releaseName}`,
+        fetch: coFetchJSON.patch,
+        redirectURL: getOriginRedirectURL(actionOrigin, namespace, releaseName),
       };
     default:
       return undefined;

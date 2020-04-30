@@ -23,7 +23,7 @@ import {
   rollbackHelmRelease,
 } from '../../../actions/modify-helm-release';
 import HelmReleaseNotes from './HelmReleaseNotes';
-import { HelmRelease } from '../helm-types';
+import { HelmRelease, HelmActionOrigins } from '../helm-types';
 
 const SecretReference: K8sResourceKindReference = 'Secret';
 const HelmReleaseReference = 'HelmRelease';
@@ -77,8 +77,8 @@ export const LoadedHelmReleaseDetails: React.FC<LoadedHelmReleaseDetailsProps> =
   );
 
   const menuActions = [
-    () => rollbackHelmRelease(releaseName, namespace),
-    () => upgradeHelmRelease(releaseName, namespace),
+    () => upgradeHelmRelease(releaseName, namespace, HelmActionOrigins.details),
+    () => rollbackHelmRelease(releaseName, namespace, HelmActionOrigins.details),
     () => deleteHelmRelease(releaseName, namespace, `/helm-releases/ns/${namespace}`),
   ];
 

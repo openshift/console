@@ -20,16 +20,28 @@ export const deleteHelmRelease = (releaseName: string, namespace: string, redire
   };
 };
 
-export const upgradeHelmRelease = (releaseName: string, namespace: string) => ({
-  label: 'Upgrade Helm Release',
+export const upgradeHelmRelease = (
+  releaseName: string,
+  namespace: string,
+  actionOrigin: string,
+) => ({
+  label: 'Upgrade',
   callback: () => {
-    history.push(`/helm-releases/ns/${namespace}/${releaseName}/upgrade`);
+    history.push(
+      `/helm-releases/ns/${namespace}/${releaseName}/upgrade?actionOrigin=${actionOrigin}`,
+    );
   },
 });
 
-export const rollbackHelmRelease = (releaseName: string, namespace: string) => ({
+export const rollbackHelmRelease = (
+  releaseName: string,
+  namespace: string,
+  actionOrigin: string,
+) => ({
   label: 'Rollback',
   callback: () => {
-    history.push(`/helm-releases/ns/${namespace}/${releaseName}/rollback`);
+    history.push(
+      `/helm-releases/ns/${namespace}/${releaseName}/rollback?actionOrigin=${actionOrigin}`,
+    );
   },
 });
