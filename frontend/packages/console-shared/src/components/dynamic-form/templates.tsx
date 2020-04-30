@@ -17,7 +17,7 @@ import {
 } from '@patternfly/react-core';
 import { MinusCircleIcon, PlusCircleIcon } from '@patternfly/react-icons';
 import { JSON_SCHEMA_GROUP_TYPES } from './const';
-import { getUiOptions } from 'react-jsonschema-form/lib/utils';
+import { getUiOptions, getSchemaType } from 'react-jsonschema-form/lib/utils';
 import { ExpandCollapse } from '@console/internal/components/utils';
 
 export const FieldLabel: React.FC<FieldLabelProps> = ({ htmlFor, label, required }) => (
@@ -35,9 +35,7 @@ export const FormField: React.FC<FormFieldProps> = ({
 }) => {
   return (
     <div id={`${id}_field`} className="form-group">
-      {displayTitle && (
-        <FieldLabel label={_.startCase(title) || 'Value'} required={required} htmlFor={id} />
-      )}
+      {displayTitle && <FieldLabel label={title || 'Value'} required={required} htmlFor={id} />}
       {children}
     </div>
   );
@@ -59,13 +57,7 @@ export const AtomicFieldTemplate: React.FC<FieldTemplateProps> = ({
   const displayTitle = displayLabel || !_.isEmpty(title);
 
   return (
-    <FormField
-      id={id}
-      displayLabel={displayLabel}
-      displayTitle={displayTitle}
-      title={title as string}
-      required={required}
-    >
+    <FormField id={id} displayTitle={displayTitle} title={title as string} required={required}>
       <>
         {children}
         {description}
@@ -93,12 +85,12 @@ export const FieldSet: React.FC<FieldSetProps> = ({
   const [expanded, setExpanded] = React.useState(false);
   const options = getUiOptions(uiSchema);
   const { label: showLabel = true } = options;
-  const displayName = (options?.title as string) || schema?.title || title || name;
+  const displayName = (options?.title as string) ?? schema?.title ?? title ?? name;
   const onToggle = (e) => {
     e.preventDefault();
     setExpanded((current) => !current);
   };
-  return showLabel && title ? (
+  return showLabel && displayName ? (
     <div id={`${idSchema.$id}_field-group`} className="co-dynamic-form__field-group">
       <AccordionItem>
         <AccordionToggle
@@ -132,14 +124,23 @@ const AdvancedProperties: React.FC<Pick<ObjectFieldTemplateProps, 'properties'>>
 );
 
 export const FieldTemplate: React.FC<FieldTemplateProps> = (props) => {
-  const { hidden, schema, children } = props;
-  if (hidden) {
+  const { hidden, schema = {}, children, uiSchema = {}, formContext = {} } = props;
+  const type = getSchemaType(schema);
+  const [dependencyMet, setDependencyMet] = React.useState(true);
+  React.useEffect(() => {
+    const { dependency } = getUiOptions(uiSchema ?? {}) as DependencyUIOption; // Type defs for this function are awful
+    if (dependency) {
+      setDependencyMet(
+        dependency.value ===
+          _.get(formContext.formData ?? {}, ['spec', ...(dependency.path ?? [])], '').toString(),
+      );
+    }
+  }, [uiSchema, formContext]);
+
+  if (hidden || !dependencyMet) {
     return null;
   }
-  const isGroup =
-    JSON_SCHEMA_GROUP_TYPES.includes(schema?.type as JSONSchema6TypeName) ||
-    schema.properties ||
-    schema.items;
+  const isGroup = JSON_SCHEMA_GROUP_TYPES.includes(type as JSONSchema6TypeName);
   return isGroup ? children : <AtomicFieldTemplate {...props} />;
 };
 
@@ -162,8 +163,8 @@ export const ObjectFieldTemplate: React.FC<ObjectFieldTemplateProps> = (props) =
 export const ArrayFieldTemplate: React.FC<ArrayFieldTemplateProps> = (props) => {
   const { idSchema, items = [], onAddClick, schema, title, uiSchema } = props;
   const options = getUiOptions(uiSchema);
-  const displayName = (options?.title as string) || schema?.title || title || 'Item';
-  const singularTitle = _.startCase(displayName.replace(/s$/, ''));
+  const displayName = (options?.title as string) || schema?.title || title || 'Items';
+  const singularTitle = displayName.replace(/s$/, '');
   return (
     <FieldSet {...props}>
       {_.map(items, (item) => {
@@ -212,6 +213,13 @@ export const ErrorTemplate: React.FC<{ errors: string[] }> = ({ errors }) => (
     </ul>
   </Alert>
 );
+
+type DependencyUIOption = {
+  dependency?: {
+    path: string;
+    value: string;
+  };
+};
 
 type FieldLabelProps = {
   htmlFor: string;

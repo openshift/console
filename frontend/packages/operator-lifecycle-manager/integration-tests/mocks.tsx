@@ -111,6 +111,7 @@ export const testCRD = {
               },
               select: {
                 type: 'string',
+                title: 'Select',
                 enum: ['DEBUG', 'INFO', 'WARN', 'ERROR', 'FATAL'],
               },
               fieldGroup: {
@@ -130,9 +131,11 @@ export const testCRD = {
                   type: 'object',
                   properties: {
                     itemOne: {
+                      title: 'Item One',
                       type: 'string',
                     },
                     itemTwo: {
+                      title: 'Item Two',
                       type: 'integer',
                     },
                   },
@@ -173,6 +176,7 @@ export const testCR = {
         itemTwo: 2,
       },
     ],
+    select: 'WARN',
     ...Object.keys(SpecCapability)
       .filter((c) => !prefixedCapabilities.has(SpecCapability[c]))
       .reduce(
@@ -180,7 +184,7 @@ export const testCR = {
           ...acc,
           [cur]: defaultValueFor(SpecCapability[cur]),
         }),
-        { select: 'WARN' },
+        {},
       ),
   },
   status: {

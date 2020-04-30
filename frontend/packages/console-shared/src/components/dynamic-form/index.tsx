@@ -63,7 +63,7 @@ export const DynamicForm: React.FC<DynamicFormProps> = ({
           ArrayFieldTemplate={ArrayFieldTemplate}
           fields={{ ...defaultFields, ...fields }}
           FieldTemplate={FieldTemplate}
-          formContext={formContext}
+          formContext={{ ...formContext, formData }}
           formData={formData}
           noHtml5Validate
           ObjectFieldTemplate={ObjectFieldTemplate}

@@ -2,56 +2,19 @@ import * as _ from 'lodash';
 import * as React from 'react';
 import { Checkbox } from '@patternfly/react-core';
 import { WidgetProps } from 'react-jsonschema-form';
-import { NumberSpinner, ListDropdown } from '@console/internal/components/utils';
+import { NumberSpinner, ListDropdown, Dropdown } from '@console/internal/components/utils';
 import { K8sKind, GroupVersionKind, ImagePullPolicy } from '@console/internal/module/k8s';
 import { RadioGroup } from '@console/internal/components/radio';
 
-export const BaseInput: React.FC<WidgetProps> = ({
-  disabled = false,
-  formContext,
-  id,
-  label,
-  onBlur,
-  onChange,
-  onFocus,
-  options,
-  readonly = false,
-  required = false,
-  schema,
-  value = '',
-  ...inputProps
-}) => {
-  return (
-    <input
-      className="pf-c-form-control"
-      disabled={disabled}
-      id={id}
-      key={id}
-      onBlur={onBlur && ((event) => onBlur(id, event.target.value))}
-      onChange={({ currentTarget }) => onChange(currentTarget.value)}
-      onFocus={onFocus && ((event) => onFocus(id, event.target.value))}
-      readOnly={readonly}
-      required={required}
-      type={(options.inputType as string) || 'text'}
-      value={value}
-      {...inputProps}
-    />
-  );
-};
-
 export const TextWidget: React.FC<WidgetProps> = ({
   disabled = false,
-  formContext,
   id,
-  label,
   onBlur,
   onChange,
   onFocus,
-  options,
   readonly = false,
   required = false,
   value = '',
-  ...inputProps
 }) => {
   return (
     <input
@@ -66,12 +29,12 @@ export const TextWidget: React.FC<WidgetProps> = ({
       required={required}
       type="text"
       value={value}
-      {...inputProps}
     />
   );
 };
 
 export const NumberWidget: React.FC<WidgetProps> = ({ value, id, onChange }) => {
+  const numberValue = _.toNumber(value);
   return (
     <input
       className="pf-c-form-control"
@@ -81,7 +44,7 @@ export const NumberWidget: React.FC<WidgetProps> = ({ value, id, onChange }) => 
         onChange(currentTarget.value !== '' ? _.toNumber(currentTarget.value) : '')
       }
       type="number"
-      value={value !== '' ? _.toNumber(value) : ''}
+      value={_.isFinite(numberValue) ? numberValue : ''}
     />
   );
 };
@@ -177,6 +140,42 @@ export const ImagePullPolicyWidget: React.FC<WidgetProps> = ({ id, value, onChan
   );
 };
 
+export const SelectWidget: React.FC<WidgetProps> = ({
+  id,
+  label,
+  onChange,
+  options,
+  schema,
+  value,
+}) => {
+  const { enumOptions = [], title } = options;
+  const items = _.reduce(
+    enumOptions as OptionsList,
+    (itemAccumulator, option) => {
+      return {
+        ...itemAccumulator,
+        [option.label]: option.value,
+      };
+    },
+    {},
+  );
+  return (
+    <Dropdown
+      id={id}
+      key={id}
+      title={`Select ${title || schema?.title || label}`}
+      selectedKey={value}
+      items={items}
+      onChange={(val) => onChange(val)}
+    />
+  );
+};
+
+type OptionsList = {
+  label: string;
+  value: string;
+}[];
+
 type K8sResourceWidgetProps = WidgetProps & {
   options: {
     model: K8sKind;
@@ -185,13 +184,14 @@ type K8sResourceWidgetProps = WidgetProps & {
 };
 
 export default {
-  BaseInput,
+  BaseInput: TextWidget,
   CheckboxWidget,
   ImagePullPolicyWidget,
   K8sResourceWidget,
   NumberWidget,
   PasswordWidget,
   PodCountWidget,
+  SelectWidget,
   TextWidget,
   int32: NumberWidget,
   int64: NumberWidget,

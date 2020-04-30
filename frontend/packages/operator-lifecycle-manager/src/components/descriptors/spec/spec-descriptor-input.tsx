@@ -15,6 +15,7 @@ import {
   PasswordWidget,
   TextWidget,
   PodCountWidget,
+  SelectWidget,
 } from '@console/shared/src/components/dynamic-form/widgets';
 
 export const capabilityFieldMap = Immutable.Map({
@@ -34,4 +35,5 @@ export const capabilityWidgetMap = Immutable.Map({
   [SpecCapability.password]: PasswordWidget,
   [SpecCapability.podCount]: PodCountWidget,
   [SpecCapability.text]: TextWidget,
+  [SpecCapability.select]: SelectWidget,
 });

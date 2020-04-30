@@ -43,10 +43,10 @@ describe('getJSONSchemaOrder', () => {
       'number',
       'fieldGroup',
       'arrayFieldGroup',
-      '*',
+      'hiddenFieldGroup',
     ]);
-    expect(uiOrder.fieldGroup['ui:order']).toEqual(['itemTwo', '*']);
-    expect(uiOrder.arrayFieldGroup.items['ui:order']).toEqual(['itemTwo', '*']);
+    expect(uiOrder.fieldGroup['ui:order']).toEqual(['itemTwo', 'itemOne']);
+    expect(uiOrder.arrayFieldGroup.items['ui:order']).toEqual(['itemTwo', 'itemOne']);
   });
 });
 
@@ -67,14 +67,14 @@ describe('capabilitiesToUISchema', () => {
       `${SpecCapability.select}ERROR`,
       `${SpecCapability.select}FATAL`,
     ] as SpecCapability[]);
-    expect(uiSchema['ui:options'].enumOptions).toEqual([
-      { label: 'DEBUG', value: 'DEBUG' },
-      { label: 'INFO', value: 'INFO' },
-      { label: 'WARN', value: 'WARN' },
-      { label: 'ERROR', value: 'ERROR' },
-      { label: 'FATAL', value: 'FATAL' },
-    ]);
-    expect(uiSchema['ui:field']).toEqual('SelectField');
+    expect(uiSchema['ui:items']).toEqual({
+      DEBUG: 'DEBUG',
+      INFO: 'INFO',
+      WARN: 'WARN',
+      ERROR: 'ERROR',
+      FATAL: 'FATAL',
+    });
+    expect(uiSchema['ui:field']).toEqual('DropdownField');
   });
 });
 

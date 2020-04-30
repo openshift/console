@@ -7,8 +7,12 @@ import { capabilityFieldMap, capabilityWidgetMap } from '../descriptors/spec/spe
 import {
   DEFAULT_K8S_SCHEMA,
   HIDDEN_UI_SCHEMA,
-  K8S_RESOURCE_SUFFIX_MATCH_PATTERN,
-  SELECT_OPTION_MATCH_PATTERN,
+  REGEXP_K8S_RESOURCE_SUFFIX,
+  REGEXP_SELECT_OPTION,
+  REGEXP_FIELD_DEPENDENCY_PATH_VALUE,
+  SORT_WEIGHT_SCALE_1,
+  SORT_WEIGHT_SCALE_2,
+  SORT_WEIGHT_SCALE_3,
 } from './const';
 import { UiSchema } from 'react-jsonschema-form';
 import { SchemaType } from '@console/shared/src/components/dynamic-form';
@@ -16,14 +20,14 @@ import { getSchemaType } from 'react-jsonschema-form/lib/utils';
 
 // Transform a path string from a descriptor to a JSON schema path array
 export const descriptorPathToUISchemaPath = (path: string): string[] =>
-  (_.toPath(path) || []).map((subPath) => {
+  (_.toPath(path) ?? []).map((subPath) => {
     return /^\d+$/.test(subPath) ? 'items' : subPath;
   });
 
 // Determine if a given path is defined on a JSONSchema
 export const jsonSchemaHas = (jsonSchema: JSONSchema6, schemaPath: string[]): boolean => {
   const [next, ...rest] = schemaPath;
-  const nextSchema = jsonSchema?.[next] || jsonSchema?.properties?.[next];
+  const nextSchema = jsonSchema?.[next] ?? jsonSchema?.properties?.[next];
   if (rest.length && !!nextSchema) {
     return jsonSchemaHas(nextSchema, rest);
   }
@@ -33,7 +37,7 @@ export const jsonSchemaHas = (jsonSchema: JSONSchema6, schemaPath: string[]): bo
 // Gets a JSONSchema from the CRD or stored swagger definition with some default types defined.
 export const getJSONSchema = (crd, model) => {
   const baseSchema =
-    crd?.spec?.validation?.openAPIV3Schema || (definitionFor(model) as JSONSchema6);
+    crd?.spec?.validation?.openAPIV3Schema ?? (definitionFor(model) as JSONSchema6);
   return _.defaultsDeep({}, DEFAULT_K8S_SCHEMA, _.omit(baseSchema, 'properties.status'));
 };
 
@@ -62,11 +66,11 @@ export const getDefaultUISchemaForPropertyName = (name) =>
     podAntiAffinity: { 'ui:field': 'PodAffinityField', 'ui:title': 'Pod Anti-Affinity' },
     replicas: { 'ui:widget': 'PodCountWidget', 'ui:title': 'Replicas' },
     matchExpressions: { 'ui:field': 'MatchExpressionsField', 'ui:title': 'Match Expressions' },
-  }?.[name] || {});
+  }?.[name] ?? {});
 
 // Determine if a schema will produce an empty form field.
 export const hasNoFields = (jsonSchema: JSONSchema6): boolean => {
-  const type = getSchemaType(jsonSchema || {});
+  const type = getSchemaType(jsonSchema ?? {});
   const handleArray = () => {
     return hasNoFields(jsonSchema.items as JSONSchema6);
   };
@@ -89,7 +93,7 @@ export const hasNoFields = (jsonSchema: JSONSchema6): boolean => {
 
 // Map json schema to default ui schema
 export const getDefaultUISchema = (jsonSchema: JSONSchema6): UiSchema => {
-  const type = getSchemaType(jsonSchema || {});
+  const type = getSchemaType(jsonSchema ?? {});
   if (hasNoFields(jsonSchema)) {
     return HIDDEN_UI_SCHEMA;
   }
@@ -113,7 +117,7 @@ export const getDefaultUISchema = (jsonSchema: JSONSchema6): UiSchema => {
         }
 
         return {
-          ...(uiSchemaAccumulator || {}),
+          ...(uiSchemaAccumulator ?? {}),
           [name]: schemaForProperty,
         };
       },
@@ -131,48 +135,76 @@ export const getDefaultUISchema = (jsonSchema: JSONSchema6): UiSchema => {
   }
 };
 
+const k8sResourceCapabilityToUISchema = (capability: SpecCapability): UiSchema => {
+  const [, groupVersionKind] = capability.match(REGEXP_K8S_RESOURCE_SUFFIX) ?? [];
+  const model = groupVersionKind && modelFor(groupVersionKind);
+  if (model) {
+    return {
+      'ui:widget': 'K8sResourceWidget',
+      'ui:options': { model, groupVersionKind },
+    };
+  }
+  return {};
+};
+
+const fieldDependencyCapabilityToUISchema = (capability: SpecCapability): UiSchema => {
+  const [, path, value] = capability.match(REGEXP_FIELD_DEPENDENCY_PATH_VALUE) ?? [];
+  if (!!path && !!value) {
+    return { 'ui:dependency': { path: descriptorPathToUISchemaPath(path), value } };
+  }
+  return {};
+};
+
+const selectCapabilitiesToUISchema = (capabilities: SpecCapability[]): UiSchema => {
+  const items = capabilities.reduce((optionAccumulator, capability) => {
+    const [, option] = capability.match(REGEXP_SELECT_OPTION) ?? [];
+    return {
+      ...optionAccumulator,
+      ...(option && { [option]: option }),
+    };
+  }, {});
+
+  if (!_.isEmpty(items)) {
+    return {
+      'ui:field': 'DropdownField',
+      'ui:items': items,
+    };
+  }
+
+  return {};
+};
+
 // Given an array of SpecCapabilities, return the appropriate corresponding UISchema
 export const capabilitiesToUISchema = (capabilities: SpecCapability[] = []) => {
   if (!capabilities?.length) {
     return {};
   }
 
-  const k8SResourceCapability = _.find(capabilities, (capability) => {
-    return capability.startsWith(SpecCapability.k8sResourcePrefix);
-  });
-
-  if (k8SResourceCapability) {
-    const [, groupVersionKind] =
-      k8SResourceCapability.match(K8S_RESOURCE_SUFFIX_MATCH_PATTERN) || [];
-    const model = groupVersionKind && modelFor(groupVersionKind);
-    if (model) {
-      return {
-        'ui:widget': 'K8sResourceWidget',
-        'ui:options': { model, groupVersionKind },
-      };
-    }
+  const k8sResourceCapability = _.find(capabilities, (capability) =>
+    capability.startsWith(SpecCapability.k8sResourcePrefix),
+  );
+  if (k8sResourceCapability) {
+    return k8sResourceCapabilityToUISchema(k8sResourceCapability);
   }
 
-  const enumOptions = _.reduce(
-    capabilities,
-    (optionAccumulator, capability) => {
-      const [, option] = capability.match(SELECT_OPTION_MATCH_PATTERN) || [];
-      return option ? optionAccumulator.add({ label: option, value: option }) : optionAccumulator;
-    },
-    Immutable.Set(),
-  ).toJS();
+  const fieldDependencyCapability = _.find(capabilities, (capability) =>
+    capability.startsWith(SpecCapability.fieldDependency),
+  );
+  if (fieldDependencyCapability) {
+    return fieldDependencyCapabilityToUISchema(fieldDependencyCapability);
+  }
 
-  if (enumOptions.length) {
-    return {
-      'ui:field': 'SelectField',
-      'ui:options': { enumOptions },
-    };
+  const hasSelectOptions = _.some(capabilities, (capability) =>
+    capability.startsWith(SpecCapability.select),
+  );
+  if (hasSelectOptions) {
+    return selectCapabilitiesToUISchema(capabilities);
   }
 
   const field = _.reduce(
     capabilities,
     (fieldAccumulator, capability) => {
-      return fieldAccumulator || capabilityFieldMap.get(capability);
+      return fieldAccumulator ?? capabilityFieldMap.get(capability);
     },
     undefined,
   );
@@ -180,7 +212,7 @@ export const capabilitiesToUISchema = (capabilities: SpecCapability[] = []) => {
   const widget = _.reduce(
     capabilities,
     (widgetAccumulator, capability) => {
-      return widgetAccumulator || capabilityWidgetMap.get(capability);
+      return widgetAccumulator ?? capabilityWidgetMap.get(capability);
     },
     undefined,
   );
@@ -198,27 +230,93 @@ export const capabilitiesToUISchema = (capabilities: SpecCapability[] = []) => {
 //  - optional fields with an associated ui schema next,
 //  - all other properties
 export const getJSONSchemaOrder = (jsonSchema, uiSchema) => {
-  const type = getSchemaType(jsonSchema || {});
+  const type = getSchemaType(jsonSchema ?? {});
   const handleArray = () => {
     const descendantOrder = getJSONSchemaOrder(jsonSchema?.items as JSONSchema6, uiSchema?.items);
     return !_.isEmpty(descendantOrder) ? { items: descendantOrder } : {};
   };
 
   const handleObject = () => {
-    const propertyNames = _.keys(jsonSchema?.properties || {});
+    const propertyNames = _.keys(jsonSchema?.properties ?? {});
     if (_.isEmpty(propertyNames)) {
       return {};
     }
-    const describedProperties = _.filter(propertyNames, (propertyName) => uiSchema?.[propertyName]);
-    const required = jsonSchema?.required || [];
-    const requiredAndDescribed = _.intersection(required, describedProperties);
-    const requiredNotDescribed = _.difference(required, requiredAndDescribed);
-    const optionalAndDescribed = _.difference(describedProperties, requiredAndDescribed);
-    const order = [...requiredAndDescribed, ...requiredNotDescribed, ...optionalAndDescribed, '*'];
+
+    // Map control fields to an array so that  an index can be used to apply a modifier to sort weigths of dependent fields
+    const controlProperties = _.reduce(
+      uiSchema,
+      (controlPropertyAccumulator, { 'ui:dependency': dependency }) => {
+        const control = _.last(dependency?.path ?? []);
+        return !control ? controlPropertyAccumulator : [...controlPropertyAccumulator, control];
+      },
+      [],
+    );
+
+    /**
+     * Give a property name a sort wieght based on whether it has a descriptor (uiSchema has property), is required, or is a control
+     * field for a property with a field dependency. A lower weight means higher sort order. Fields are weighted according to the following criteria:
+     *  - Required fields with descriptor - 0 to 999
+     *  - Required fields without descriptor 1000 to 1999
+     *  - Optional fields with descriptor 2000 to 2999
+     *  - Control fields that don't fit any above - 3000 to 3999
+     *  - All other fields - Infinity
+     *
+     * Within each of the above criteria, fields are further weighted based on field dependency:
+     *   - Fields without dependency - base weight
+     *   - Control field - base weight  + (nth control field) * 100
+     *   - Dependent field - corresponding control field weight + 10
+     *
+     * These weight numbers are arbitrary, but spaced far enough apart to leave room for multiple levels of sorting.
+     */
+    const getSortWeight = (property: string): number => {
+      // This property's control field, if it exists
+      const control = _.last<string>(uiSchema?.[property]?.['ui:dependency']?.path ?? []);
+
+      // A small offset that is added to the base weight so that control fields get sorted last within
+      // their appropriate group
+      const controlOffset = (controlProperties.indexOf(property) + 1) * SORT_WEIGHT_SCALE_2;
+
+      // If this property is a dependent, it's weight is based on it's control property
+      if (control) {
+        return getSortWeight(control) + controlOffset + SORT_WEIGHT_SCALE_1;
+      }
+
+      const isRequired = (jsonSchema?.required ?? []).includes(property);
+      const hasDescriptor = uiSchema?.[property];
+
+      // Required fields with a desriptor are sorted first (lowest weight).
+      if (isRequired && hasDescriptor) {
+        return SORT_WEIGHT_SCALE_3 + controlOffset;
+      }
+
+      // Fields that are required, but have no descriptors get sorted next
+      if (isRequired) {
+        return SORT_WEIGHT_SCALE_3 * 2 + controlOffset;
+      }
+
+      // Optional fields with descriptors get sorted next
+      if (hasDescriptor) {
+        return SORT_WEIGHT_SCALE_3 * 3 + controlOffset;
+      }
+
+      // Control fields that don't fit into any of the above criteria come next
+      if (controlOffset > 0) {
+        return SORT_WEIGHT_SCALE_3 * 4 + controlOffset;
+      }
+
+      // All other fields are sorted in the order in which they are encountered
+      // in the schema
+      return Infinity;
+    };
+
+    const uiOrder = Immutable.Set(propertyNames)
+      .sortBy(getSortWeight)
+      .toJS();
+
     return {
-      ...(order.length > 1 && { 'ui:order': order }),
+      ...(uiOrder.length > 1 && { 'ui:order': uiOrder }),
       ..._.reduce(
-        jsonSchema?.properties || {},
+        jsonSchema?.properties ?? {},
         (orderAccumulator, property, propertyName) => {
           const descendantOrder = getJSONSchemaOrder(property, uiSchema?.[propertyName]);
           if (_.isEmpty(descendantOrder)) {
@@ -255,8 +353,8 @@ export const descriptorsToUISchema = (
       uiSchemaAccumulator,
       { path, description, displayName, 'x-descriptors': capabilities = [] },
     ) => {
-      const schemaPath = descriptorPathToUISchemaPath(path);
-      if (!jsonSchemaHas(jsonSchema, schemaPath)) {
+      const uiSchemaPath = descriptorPathToUISchemaPath(path);
+      if (!jsonSchemaHas(jsonSchema, uiSchemaPath)) {
         // eslint-disable-next-line no-console
         console.warn('SpecDescriptor path references a non-existent schema property:', path);
         return uiSchemaAccumulator;
@@ -267,13 +365,14 @@ export const descriptorsToUISchema = (
       );
       return uiSchemaAccumulator.withMutations((mutable) => {
         if (isAdvanced) {
-          const advancedPropertyName = _.last(schemaPath);
-          const pathToAdvanced = [...schemaPath.slice(0, schemaPath.length - 1), 'ui:advanced'];
-          const currentAdvanced = mutable.getIn(pathToAdvanced) || Immutable.List();
+          const advancedPropertyName = _.last(uiSchemaPath);
+          const pathToAdvanced = [...uiSchemaPath.slice(0, uiSchemaPath.length - 1), 'ui:advanced'];
+          const currentAdvanced = mutable.getIn(pathToAdvanced) ?? Immutable.List();
           mutable.setIn(pathToAdvanced, currentAdvanced.push(advancedPropertyName));
         }
+
         mutable.setIn(
-          schemaPath,
+          uiSchemaPath,
           Immutable.Map({
             ...(description && { 'ui:description': description }),
             ...(displayName && { 'ui:title': displayName }),
@@ -289,26 +388,31 @@ export const descriptorsToUISchema = (
 
 // Use jsonSchema, descriptors, and some defaults to generate a uiSchema
 export const getUISchema = (jsonSchema, providedAPI) => {
-  return _.defaultsDeep({}, getDefaultUISchema(jsonSchema), {
-    metadata: {
-      ...hideAllExistingProperties(jsonSchema?.properties?.metadata as JSONSchema6),
-      name: {
-        'ui:widget': 'TextWidget',
+  return _.defaultsDeep(
+    {
+      metadata: {
+        ...hideAllExistingProperties(jsonSchema?.properties?.metadata as JSONSchema6),
+        name: {
+          'ui:title': 'Name',
+          'ui:widget': 'TextWidget',
+        },
+        labels: {
+          'ui:title': 'Labels',
+          'ui:field': 'LabelsField',
+        },
+        'ui:options': {
+          label: false,
+        },
+        'ui:order': ['name', 'labels', '*'],
       },
-      labels: {
-        'ui:field': 'LabelsField',
+      spec: {
+        ...descriptorsToUISchema(providedAPI?.specDescriptors, jsonSchema?.properties?.spec),
+        'ui:options': {
+          label: false,
+        },
       },
-      'ui:options': {
-        label: false,
-      },
-      'ui:order': ['name', 'labels', '*'],
+      'ui:order': ['metadata', 'spec', '*'],
     },
-    spec: {
-      ...descriptorsToUISchema(providedAPI?.specDescriptors, jsonSchema?.properties?.spec),
-      'ui:options': {
-        label: false,
-      },
-    },
-    'ui:order': ['metadata', 'spec', '*'],
-  });
+    getDefaultUISchema(jsonSchema),
+  );
 };
