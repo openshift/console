@@ -7,8 +7,8 @@ import { Dropdown } from '@console/internal/components/utils';
 import { ModalTitle, ModalSubmitFooter } from '@console/internal/components/factory';
 
 import { newSnapshotData, pvcData } from '../__mocks__/volume-snapshot-data';
-import { snapshotTypes } from '../components/modals/volume-snapshot-modal/volume-snapshot';
 import {
+  snapshotTypes,
   VolumeSnapshotModal,
   VolumeSnapshotModalProps,
 } from '../components/modals/volume-snapshot-modal/volume-snapshot-modal';
@@ -46,7 +46,7 @@ describe(VolumeSnapshotModal.name, () => {
 
   it('renders a modal with placeholder name', () => {
     expect(wrapper.find(TextInput).exists()).toBe(true);
-    expect(wrapper.find(TextInput).props().placeholder).toEqual('fake-pvc-snapshot');
+    expect(wrapper.find(TextInput).props().value).toEqual('fake-pvc-snapshot');
   });
 
   it('check for required field', () => {

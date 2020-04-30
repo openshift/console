@@ -3,32 +3,3 @@
     display: grid;
     margin-right: var(--pf-global--spacer--md) !important;
   }
-
-.ceph-volume-snapshot-modal__input--count {
-    width: fit-content;
-}
-
-.ceph-volume-snapshot-modal__input--inline {
-    display: inline-flex;
-}
-
-.ceph-volume-snapshot-modal__input--group {
-    display: grid;
-}
-
-.ceph-volume-snapshot-modal__input--keep {
-    display: inline-flex;
-}
-
-.ceph-volume-snapshot-modal__input--link {
-    padding-left: var(--pf-global--spacer--2xl);
-}
-
-.ceph-volume-snapshot-modal__label {
-    width: fit-content !important;
-}
-
-.ceph-volume-snapshot-modal__span--keep {
-    font-size: var(--pf-global--FontSize--md);
-    padding: var(--pf-global--spacer--xs);
-}

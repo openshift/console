@@ -38,16 +38,3 @@ export const VolumeSnapshotModel: K8sKind = {
   labelPlural: 'Volume Snapshots',
   crd: true,
 };
-
-export const SnapshotScheduleModel: K8sKind = {
-  label: 'Snapshot Schedule',
-  apiVersion: 'v1',
-  apiGroup: 'snapscheduler.backube',
-  plural: 'snapshotschedules',
-  abbr: 'SH',
-  namespaced: true,
-  kind: 'SnapshotSchedule',
-  id: 'snapshotSchedule',
-  labelPlural: 'Snapshot Schedules',
-  crd: true,
-};
