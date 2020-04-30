@@ -1,5 +1,9 @@
 // This module utilizes dynamic `import()` to enable lazy-loading for each modal instead of including them in the main bundle.
 
+// Helper to detect if a modal is open. This is used to disable autofocus in elements under a modal.
+// TODO: Improve focus and keybinding handling, see https://issues.redhat.com/browse/ODC-3554
+export const isModalOpen = () => document.body.classList.contains('ReactModal__Body--open');
+
 export const configureCountModal = (props) =>
   import('./configure-count-modal' /* webpackChunkName: "configure-count-modal" */).then((m) =>
     m.configureCountModal(props),
