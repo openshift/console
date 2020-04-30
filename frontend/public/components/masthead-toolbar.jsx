@@ -23,6 +23,7 @@ import {
   Tooltip,
 } from '@patternfly/react-core';
 import classNames from 'classnames';
+import { Link } from 'react-router-dom';
 import { FLAGS, YellowExclamationTriangleIcon } from '@console/shared';
 import { formatNamespacedRouteForResource } from '@console/shared/src/utils';
 import CloudShellMastheadButton from '@console/app/src/components/cloud-shell/CloudShellMastheadButton';
@@ -80,6 +81,7 @@ class MastheadToolbarContents_ extends React.Component {
     };
 
     this._getStatuspageData = this._getStatuspageData.bind(this);
+    this._getImportYAMLPath = this._getImportYAMLPath.bind(this);
     this._updateUser = this._updateUser.bind(this);
     this._onUserDropdownToggle = this._onUserDropdownToggle.bind(this);
     this._onUserDropdownSelect = this._onUserDropdownSelect.bind(this);
@@ -93,7 +95,6 @@ class MastheadToolbarContents_ extends React.Component {
     this._onApplicationLauncherDropdownToggle = this._onApplicationLauncherDropdownToggle.bind(
       this,
     );
-    this._onImportYAML = this._onImportYAML.bind(this);
     this._onHelpDropdownSelect = this._onHelpDropdownSelect.bind(this);
     this._onHelpDropdownToggle = this._onHelpDropdownToggle.bind(this);
     this._onAboutModal = this._onAboutModal.bind(this);
@@ -122,6 +123,10 @@ class MastheadToolbarContents_ extends React.Component {
     })
       .then((response) => response.json())
       .then((statuspageData) => this.setState({ statuspageData }));
+  }
+
+  _getImportYAMLPath() {
+    return formatNamespacedRouteForResource('import', this.props.activeNamespace);
   }
 
   _updateUser() {
@@ -175,12 +180,6 @@ class MastheadToolbarContents_ extends React.Component {
     });
   }
 
-  _onImportYAML(e) {
-    e.preventDefault();
-    const importYAMLPath = formatNamespacedRouteForResource('import', this.props.activeNamespace);
-    history.push(importYAMLPath);
-  }
-
   _onHelpDropdownSelect() {
     this.setState({
       isHelpDropdownOpen: !this.state.isHelpDropdownOpen,
@@ -200,16 +199,6 @@ class MastheadToolbarContents_ extends React.Component {
 
   _closeAboutModal() {
     this.setState({ showAboutModal: false });
-  }
-
-  _onCommandLineTools(e) {
-    e.preventDefault();
-    history.push('/command-line-tools');
-  }
-
-  _openLink(e, url) {
-    e.preventDefault();
-    window.open(url, '_blank').opener = null;
   }
 
   _getAdditionalLinks(links, type) {
@@ -309,8 +298,7 @@ class MastheadToolbarContents_ extends React.Component {
         ...(flags[FLAGS.CONSOLE_CLI_DOWNLOAD]
           ? [
               {
-                label: 'Command Line Tools',
-                callback: this._onCommandLineTools,
+                component: <Link to="/command-line-tools">Command Line Tools</Link>,
               },
             ]
           : []),
@@ -319,13 +307,14 @@ class MastheadToolbarContents_ extends React.Component {
               {
                 label: reportBugLink.label,
                 externalLink: true,
-                callback: (e) => this._openLink(e, reportBugLink.href),
+                href: reportBugLink.href,
               },
             ]
           : []),
         {
           label: 'About',
           callback: this._onAboutModal,
+          component: 'button',
         },
       ],
     });
@@ -340,12 +329,9 @@ class MastheadToolbarContents_ extends React.Component {
   _getAdditionalActions(links) {
     const actions = _.map(links, (link) => {
       return {
-        callback: (e) => {
-          e.preventDefault();
-          window.open(link.spec.href, '_blank').opener = null;
-        },
         label: link.spec.text,
         externalLink: true,
+        href: link.spec.href,
       };
     });
 
@@ -372,6 +358,7 @@ class MastheadToolbarContents_ extends React.Component {
                     icon={sectionAction.image}
                     href={sectionAction.href || '#'}
                     onClick={sectionAction.callback}
+                    component={sectionAction.component}
                     {...this._externalProps(sectionAction)}
                   >
                     {sectionAction.label}
@@ -394,6 +381,7 @@ class MastheadToolbarContents_ extends React.Component {
               icon={action.image}
               href={action.href || '#'}
               onClick={action.callback}
+              component={action.component}
               {...this._externalProps(action)}
             >
               {action.label}
@@ -442,7 +430,7 @@ class MastheadToolbarContents_ extends React.Component {
       if (window.SERVER_FLAGS.requestTokenURL) {
         userActions.push({
           label: 'Copy Login Command',
-          callback: (e) => this._openLink(e, window.SERVER_FLAGS.requestTokenURL),
+          href: window.SERVER_FLAGS.requestTokenURL,
           externalLink: true,
         });
       }
@@ -450,6 +438,7 @@ class MastheadToolbarContents_ extends React.Component {
       userActions.push({
         label: 'Log out',
         callback: logout,
+        component: 'button',
       });
 
       actions.push({
@@ -471,8 +460,7 @@ class MastheadToolbarContents_ extends React.Component {
         isSection: true,
         actions: [
           {
-            label: 'Import YAML',
-            callback: this._onImportYAML,
+            component: <Link to={this._getImportYAMLPath()}>Import YAML</Link>,
           },
         ],
       });
@@ -576,9 +564,13 @@ class MastheadToolbarContents_ extends React.Component {
             )}
             <ToolbarItem>
               <Tooltip content="Import YAML" position={TooltipPosition.bottom}>
-                <Button variant="plain" aria-label="Import YAML" onClick={this._onImportYAML}>
+                <Link
+                  to={this._getImportYAMLPath()}
+                  className="pf-c-button pf-m-plain"
+                  aria-lable="Import YAML"
+                >
                   <PlusCircleIcon className="co-masthead-icon" />
-                </Button>
+                </Link>
               </Tooltip>
             </ToolbarItem>
             <CloudShellMastheadButton />
