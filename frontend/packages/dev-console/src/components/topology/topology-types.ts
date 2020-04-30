@@ -40,6 +40,8 @@ export interface TopologyDataResources {
   virtualmachineinstances?: FirehoseResult;
   virtualmachinetemplates?: FirehoseResult;
   migrations?: FirehoseResult;
+  dataVolumes?: FirehoseResult;
+  vmImports?: FirehoseResult;
 }
 
 export interface Node {

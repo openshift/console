@@ -23,6 +23,8 @@ import { VirtualMachineModel } from '../models';
 import { TYPE_VIRTUAL_MACHINE } from './components/const';
 import { findVMIPod } from '../selectors/pod/selectors';
 import { getVMStatus } from '../statuses/vm/vm-status';
+import { V1alpha1DataVolume } from '../types/vm/disk/V1alpha1DataVolume';
+import { VMImportKind } from '../types/vm-import/ovirt/vm-import';
 
 export const kubevirtAllowedResources = ['virtualmachines'];
 
@@ -85,8 +87,17 @@ const createTopologyVMNodeData = (
   const vmis = resources.virtualmachineinstances.data;
   const vmi = vmis.find((instance) => instance.metadata.name === name) as VMIKind;
   const migrations = resources.migrations.data;
+  const dataVolumes = resources.dataVolumes?.data as V1alpha1DataVolume[];
+  const vmImports = resources.vmImports?.data as VMImportKind[];
 
-  const statusDetail = getVMStatus({ vm, vmi, pods: vmOverview.pods, migrations });
+  const statusDetail = getVMStatus({
+    vm,
+    vmi,
+    pods: vmOverview.pods,
+    migrations,
+    dataVolumes,
+    vmImports,
+  });
 
   return {
     id: uid,

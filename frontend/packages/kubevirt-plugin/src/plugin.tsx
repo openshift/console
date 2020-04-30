@@ -83,6 +83,18 @@ const virtualMachineConfigurations = (namespace: string): FirehoseResource[] => 
       namespace,
       prop: 'migrations',
     },
+    {
+      isList: true,
+      optional: true,
+      kind: models.DataVolumeModel.kind,
+      prop: 'dataVolumes',
+    },
+    {
+      isList: true,
+      optional: true,
+      kind: models.VirtualMachineImportModel.kind,
+      prop: 'vmImports',
+    },
   ];
   return virtualMachineResource;
 };
