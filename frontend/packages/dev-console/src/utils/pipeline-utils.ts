@@ -74,6 +74,7 @@ export enum ListFilterId {
   Failed = 'Failed',
   Succeeded = 'Succeeded',
   Cancelled = 'Cancelled',
+  Other = '-',
 }
 
 export const ListFilterLabels = {
@@ -81,6 +82,7 @@ export const ListFilterLabels = {
   [ListFilterId.Failed]: 'Failed',
   [ListFilterId.Succeeded]: 'Complete',
   [ListFilterId.Cancelled]: 'Cancelled',
+  [ListFilterId.Other]: 'Other',
 };
 
 // to be used by both Pipeline and Pipelinerun visualisation
