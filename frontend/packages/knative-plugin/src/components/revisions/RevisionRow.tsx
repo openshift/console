@@ -2,12 +2,13 @@ import * as React from 'react';
 import * as cx from 'classnames';
 import * as _ from 'lodash';
 import { TableRow, TableData, RowFunction } from '@console/internal/components/factory';
-import { Kebab, ResourceLink, ResourceKebab, Timestamp } from '@console/internal/components/utils';
+import { ResourceLink, ResourceKebab, Timestamp } from '@console/internal/components/utils';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { RevisionModel, ServiceModel } from '../../models';
 import { getConditionString, getCondition } from '../../utils/condition-utils';
 import { RevisionKind, ConditionTypes } from '../../types';
 import { tableColumnClasses } from './revision-table';
+import { getRevisionActions } from '../../actions/getRevisionActions';
 
 const revisionReference = referenceForModel(RevisionModel);
 const serviceReference = referenceForModel(ServiceModel);
@@ -53,7 +54,7 @@ const RevisionRow: RowFunction<RevisionKind> = ({ obj, index, key, style }) => {
         {(readyCondition && readyCondition.message) || '-'}
       </TableData>
       <TableData className={tableColumnClasses[7]}>
-        <ResourceKebab actions={Kebab.factory.common} kind={revisionReference} resource={obj} />
+        <ResourceKebab actions={getRevisionActions()} kind={revisionReference} resource={obj} />
       </TableData>
     </TableRow>
   );

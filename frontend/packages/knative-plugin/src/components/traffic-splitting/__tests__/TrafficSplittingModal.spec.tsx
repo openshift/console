@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { shallow, ShallowWrapper } from 'enzyme';
-import { MultiColumnField } from '@console/shared';
-import { ModalBody, ModalSubmitFooter } from '@console/internal/components/factory/modal';
+import { ModalSubmitFooter } from '@console/internal/components/factory/modal';
 import { formikFormProps } from '@console/shared/src/test-utils/formik-props-utils';
 import TrafficSplittingModal from '../TrafficSplittingModal';
 import {
@@ -22,35 +21,6 @@ describe('TrafficSplittingModal', () => {
       revisionItems: mockRevisionItems,
     };
     wrapper = shallow(<TrafficSplittingModal {...formProps} />);
-  });
-
-  it('should disable delete row button for one value', () => {
-    wrapper = shallow(
-      <TrafficSplittingModal
-        {...formProps}
-        revisionItems={[{ 'overlayimage-fdqsf': 'overlayimage-fdqsf' }]}
-        values={{ trafficSplitting: [{ percent: 100, revisionName: 'overlayimage-fdqsf' }] }}
-      />,
-    );
-    expect(
-      wrapper
-        .find(ModalBody)
-        .dive()
-        .find(MultiColumnField)
-        .first()
-        .props().disableDeleteRow,
-    ).toBe(true);
-  });
-
-  it('should not disable delete row button for more than one values', () => {
-    expect(
-      wrapper
-        .find(ModalBody)
-        .dive()
-        .find(MultiColumnField)
-        .first()
-        .props().disableDeleteRow,
-    ).toBe(false);
   });
 
   it('should render modal footer with proper values', () => {
