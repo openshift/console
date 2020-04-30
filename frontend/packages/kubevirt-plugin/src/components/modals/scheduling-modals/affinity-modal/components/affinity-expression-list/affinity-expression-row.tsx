@@ -8,6 +8,7 @@ import {
   FormSelectOption,
   Select,
   SelectVariant,
+  SelectOption,
 } from '@patternfly/react-core';
 import { EXPRESSION_OPERATORS } from '../../../shared/consts';
 import { AffinityLabel } from '../../types';
@@ -34,6 +35,7 @@ export const AffinityExpressionRow = ({
     <>
       <GridItem span={4}>
         <TextInput
+          id={`affinity-${id}-key-input`}
           className="kv-affinity-expression-row__key-input"
           placeholder="key"
           isRequired
@@ -45,6 +47,7 @@ export const AffinityExpressionRow = ({
       </GridItem>
       <GridItem span={2}>
         <FormSelect
+          id={`affinity-${id}-effect-select`}
           className="kv-affinity-expression-row__operator-input"
           isRequired
           value={operator}
@@ -69,10 +72,15 @@ export const AffinityExpressionRow = ({
           selections={enableValueField ? values : []}
           ariaLabelledBy="values select"
           placeholderText={enableValueField ? 'Enter Value' : ''}
-        />
+        >
+          {values.map((option, index) => (
+            // eslint-disable-next-line react/no-array-index-key
+            <SelectOption isDisabled={false} key={index} value={option} />
+          ))}
+        </Select>
       </GridItem>
       <GridItem span={1}>
-        <Button id={`${key}-delete-btn`} onClick={() => onDelete(id)} variant="plain">
+        <Button id={`affinity-${id}-delete-btn`} onClick={() => onDelete(id)} variant="plain">
           <MinusCircleIcon />
         </Button>
       </GridItem>
