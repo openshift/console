@@ -112,7 +112,7 @@ export const VirtualMachinesInstanceDetailsPage: React.FC<VirtualMachinesInstanc
           the cluster.
         </p>
         <ExternalLink
-          href="https://kubevirt.io/user-guide/docs/latest/architecture/virtual-machine.html"
+          href="https://kubevirt.io/user-guide/#/architecture?id=virtualmachine"
           text="Learn more"
         />
       </HintBlock>
