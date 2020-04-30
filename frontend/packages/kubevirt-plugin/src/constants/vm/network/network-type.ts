@@ -12,9 +12,12 @@ export class NetworkType extends ObjectEnum<string> {
     NetworkInterfaceType.BRIDGE,
     NetworkInterfaceType.SRIOV,
   ]);
-  static readonly GENIE = new NetworkType('genie', NetworkInterfaceType.BRIDGE, [
+  static readonly GENIE = new NetworkType(
+    'genie',
     NetworkInterfaceType.BRIDGE,
-  ]);
+    [NetworkInterfaceType.BRIDGE],
+    false,
+  ); // not possible to select in NIC modal
 
   private static ALL = Object.freeze(
     ObjectEnum.getAllClassEnumProperties<NetworkType>(NetworkType),
@@ -35,20 +38,46 @@ export class NetworkType extends ObjectEnum<string> {
   private readonly defaultInterfaceType: NetworkInterfaceType;
   private readonly allowedInterfaceTypes: Readonly<NetworkInterfaceType[]>;
   private readonly allowedInterfaceTypesSet: Set<NetworkInterfaceType>;
+  private readonly supported: boolean;
 
   private constructor(
     value?: string,
     defaultInterfaceType?: NetworkInterfaceType,
     allowedInterfaceTypes?: NetworkInterfaceType[],
+    isSupported = true,
   ) {
     super(value);
     this.defaultInterfaceType = defaultInterfaceType;
     this.allowedInterfaceTypes = Object.freeze(allowedInterfaceTypes);
     this.allowedInterfaceTypesSet = new Set(allowedInterfaceTypes);
+    this.supported = isSupported;
   }
 
   getDefaultInterfaceType = () => this.defaultInterfaceType;
   getAllowedInterfaceTypes = () => this.allowedInterfaceTypes;
   allowsInterfaceType = (interfaceType: NetworkInterfaceType) =>
     this.allowedInterfaceTypesSet.has(interfaceType);
+
+  isSupported = () => this.supported;
+
+  private static getSupportedAllowedInterfaceTypesInternal = () => {
+    const allowedSupportedInterfaceTypes = new Set();
+
+    NetworkType.ALL.filter((network) => network.isSupported()).forEach((network) =>
+      network
+        .getAllowedInterfaceTypes()
+        .forEach((iType) => allowedSupportedInterfaceTypes.add(iType)),
+    );
+
+    // preserve order
+    return NetworkInterfaceType.getAll().filter((interfaceType) =>
+      allowedSupportedInterfaceTypes.has(interfaceType),
+    );
+  };
+
+  private static ALLOWED_SUPPORTED_INTERFACES = Object.freeze(
+    NetworkType.getSupportedAllowedInterfaceTypesInternal(),
+  );
+
+  static getSupportedAllowedInterfaceTypes = () => NetworkType.ALLOWED_SUPPORTED_INTERFACES;
 }

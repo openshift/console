@@ -64,7 +64,7 @@ export const Network: React.FC<NetworkProps> = ({
     getLoadedData(nads, []),
     usedMultusNetworkNames,
     allowPodNetwork,
-  );
+  ).filter((n) => n.getType().isSupported());
 
   return (
     <FormRow
@@ -264,7 +264,7 @@ export const NICModal = withHandlePromise((props: NICModalProps) => {
               <FormSelectPlaceholderOption isDisabled placeholder="--- Select Type ---" />
               {(resultNetwork.getType()
                 ? resultNetwork.getType().getAllowedInterfaceTypes()
-                : NetworkInterfaceType.getAll()
+                : NetworkType.getSupportedAllowedInterfaceTypes()
               ).map((iType) => (
                 <FormSelectOption
                   key={iType.getValue()}
