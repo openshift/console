@@ -14,6 +14,8 @@ import { BootOrder, deviceKey } from '../../boot-order';
 import { DeviceType } from '../../../constants';
 import { ModalFooter } from '../modal/modal-footer';
 
+import './boot-order-modal.scss';
+
 const modalTitle = 'Virtual machine boot order';
 
 const BootOrderModalComponent = ({
@@ -136,6 +138,7 @@ const BootOrderModalComponent = ({
           .
         </>
       }
+      className={'kubevirt-boot-order-modal__footer'}
     />
   );
 
@@ -146,7 +149,8 @@ const BootOrderModalComponent = ({
       isSmall
       onClose={() => setOpen(false)}
       footer={footer}
-      isFooterLeftAligned
+      showClose={false}
+      isFooterLeftAligned={false}
     >
       <BootOrder devices={devices} setDevices={setDevices} />
     </Modal>

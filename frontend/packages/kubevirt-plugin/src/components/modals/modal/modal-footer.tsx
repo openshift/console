@@ -1,8 +1,7 @@
 import * as React from 'react';
 import classNames from 'classnames';
-import { Alert, Button, ButtonVariant, AlertProps } from '@patternfly/react-core';
+import { Alert, Button, AlertProps, ActionGroup } from '@patternfly/react-core';
 import { LoadingInline } from '@console/internal/components/utils';
-import { prefixedID } from '../../../utils';
 
 import './modal-footer.scss';
 
@@ -59,7 +58,6 @@ type ModalFooterProps = {
 };
 
 export const ModalFooter: React.FC<ModalFooterProps> = ({
-  id,
   className = '',
   errorMessage = null,
   warningMessage = null,
@@ -74,10 +72,7 @@ export const ModalFooter: React.FC<ModalFooterProps> = ({
   infoTitle = null,
 }) => (
   <footer
-    className={classNames(
-      'co-m-btn-bar modal-footer kubevirt-create-nic-modal__buttons',
-      className,
-    )}
+    className={classNames('co-m-btn-bar modal-footer kubevirt-modal-footer__buttons', className)}
   >
     {warningMessage && isSimpleError && (
       <ModalSimpleMessage message={warningMessage} variant="warning" />
@@ -85,17 +80,21 @@ export const ModalFooter: React.FC<ModalFooterProps> = ({
     {errorMessage && isSimpleError && <ModalSimpleMessage message={errorMessage} />}
     {errorMessage && !isSimpleError && <ModalErrorMessage message={errorMessage} />}
     {infoTitle && <ModalInfoMessage title={infoTitle}>{infoMessage}</ModalInfoMessage>}
-    <Button
-      variant={ButtonVariant.primary}
-      onClick={onSubmit}
-      id={prefixedID(id, 'submit')}
-      isDisabled={isDisabled}
-    >
-      {submitButtonText}
-    </Button>
-    <Button variant={ButtonVariant.link} onClick={onCancel} id={prefixedID(id, 'cancel')}>
-      {cancelButtonText}
-    </Button>
+
+    <ActionGroup className="pf-c-form pf-c-form__actions--right pf-c-form__group--no-top-margin">
+      <Button
+        type="button"
+        variant="secondary"
+        data-test-id="modal-cancel-action"
+        onClick={onCancel}
+      >
+        {cancelButtonText}
+      </Button>
+      <Button variant="primary" isDisabled={isDisabled} id="confirm-action" onClick={onSubmit}>
+        {submitButtonText}
+      </Button>
+    </ActionGroup>
+
     {inProgress && <LoadingInline />}
   </footer>
 );
