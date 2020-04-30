@@ -13,7 +13,7 @@ interface PodRingProps {
   obj: K8sResourceKind;
   rc?: K8sResourceKind;
   resourceKind: K8sKind;
-  path: string;
+  path?: string;
   impersonate?: string;
   enableScaling?: boolean;
 }

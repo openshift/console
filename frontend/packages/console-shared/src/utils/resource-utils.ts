@@ -992,3 +992,20 @@ export const getPodsForStatefulSets = (ss: K8sResourceKind[], resources: any): P
     };
   });
 };
+
+export const getPodsForDaemonSets = (ds: K8sResourceKind[], resources: any): PodRCData[] => {
+  return _.map(ds, (d) => {
+    const obj: K8sResourceKind = {
+      ...d,
+      apiVersion: apiVersionForModel(StatefulSetModel),
+      kind: StatefulSetModel.kind,
+    };
+    return {
+      obj,
+      current: undefined,
+      previous: undefined,
+      isRollingOut: undefined,
+      pods: getPodsForResource(d, resources),
+    };
+  });
+};

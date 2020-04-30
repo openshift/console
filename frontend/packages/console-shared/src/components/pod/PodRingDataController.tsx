@@ -1,7 +1,16 @@
 import * as React from 'react';
 import { Firehose, FirehoseResource } from '@console/internal/components/utils';
 import { PodRingResources, PodRingData } from '../../types';
-import { transformPodRingData } from '../../utils';
+import { transformPodRingData, podRingFirehoseProps } from '../../utils';
+import {
+  DaemonSetModel,
+  PodModel,
+  ReplicaSetModel,
+  ReplicationControllerModel,
+  DeploymentModel,
+  DeploymentConfigModel,
+  StatefulSetModel,
+} from '@console/internal/models';
 
 interface RenderPropsType {
   loaded: boolean;
@@ -37,45 +46,59 @@ const PodRingController: React.FC<PodRingDataControllerProps> = ({ namespace, ki
   const resources: FirehoseResource[] = [
     {
       isList: true,
-      kind: 'Pod',
+      kind: PodModel.kind,
       namespace,
-      prop: 'pods',
+      prop: podRingFirehoseProps[PodModel.kind],
     },
     {
       isList: true,
-      kind: 'ReplicaSet',
+      kind: ReplicaSetModel.kind,
       namespace,
-      prop: 'replicaSets',
+      prop: podRingFirehoseProps[ReplicaSetModel.kind],
     },
     {
       isList: true,
-      kind: 'ReplicationController',
+      kind: ReplicationControllerModel.kind,
       namespace,
-      prop: 'replicationControllers',
+      prop: podRingFirehoseProps[ReplicationControllerModel.kind],
     },
   ];
 
-  if (kind === 'Deployment') {
-    resources.push({
-      isList: true,
-      kind: 'Deployment',
-      namespace,
-      prop: 'deployments',
-    });
-  } else if (kind === 'DeploymentConfig') {
-    resources.push({
-      isList: true,
-      kind: 'DeploymentConfig',
-      namespace,
-      prop: 'deploymentConfigs',
-    });
-  } else if (kind === 'StatefulSet') {
-    resources.push({
-      isList: true,
-      kind: 'StatefulSet',
-      namespace,
-      prop: 'statefulSets',
-    });
+  switch (kind) {
+    case DeploymentModel.kind:
+      resources.push({
+        isList: true,
+        kind,
+        namespace,
+        prop: podRingFirehoseProps[kind],
+      });
+      break;
+    case DeploymentConfigModel.kind:
+      resources.push({
+        isList: true,
+        kind,
+        namespace,
+        prop: podRingFirehoseProps[kind],
+      });
+      break;
+    case StatefulSetModel.kind:
+      resources.push({
+        isList: true,
+        kind,
+        namespace,
+        prop: podRingFirehoseProps[kind],
+      });
+      break;
+    case DaemonSetModel.kind:
+      resources.push({
+        isList: true,
+        kind,
+        namespace,
+        prop: podRingFirehoseProps[kind],
+      });
+      break;
+    default:
+      break;
   }
 
   return (
