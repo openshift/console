@@ -5,7 +5,18 @@ import {
   HandlePromiseProps,
   FirehoseResult,
 } from '@console/internal/components/utils';
-import { Button, ButtonVariant, Split, SplitItem } from '@patternfly/react-core';
+import {
+  Button,
+  ButtonVariant,
+  Split,
+  SplitItem,
+  Text,
+  TextVariants,
+  EmptyState,
+  EmptyStateVariant,
+  Title,
+  EmptyStateBody,
+} from '@patternfly/react-core';
 import { ModalTitle, ModalBody, ModalComponentProps } from '@console/internal/components/factory';
 import { NodeModel } from '@console/internal/models';
 import { K8sResourceKind, k8sPatch } from '@console/internal/module/k8s';
@@ -132,9 +143,9 @@ export const AffinityModal = withHandlePromise<AffinityModalProps>(
           </SplitItem>
           <SplitItem isFilled />
           <SplitItem className="affinity-modal__add-btn">
-            {!isEditing && (
+            {!isEditing && affinities.length > 0 && (
               <Button onClick={() => onAffinityClickAdd()} variant="secondary">
-                Add Affinity
+                Add Affinity rule
               </Button>
             )}
           </SplitItem>
@@ -149,17 +160,68 @@ export const AffinityModal = withHandlePromise<AffinityModalProps>(
         ) : (
           <>
             <ModalBody>
-              <AffinityTable
-                columnClasses={columnClasses}
-                data={affinities}
-                customData={{
-                  isDisabled: false,
-                  vmLikeFinal,
-                  onEdit: onAffinityClickEdit,
-                  onDelete: onAffinityDelete,
-                }}
-                row={AffinityRow}
-              />
+              {affinities.length > 0 && (
+                <div className="affinity-modal__desc-container">
+                  <Text className="affinity-modal__desc" component={TextVariants.small}>
+                    {
+                      'Set scheduling requirements and affect the ranking of the nodes candidate for scheduling.'
+                    }
+                  </Text>
+                  <Text className="affinity-modal__desc" component={TextVariants.small}>
+                    {
+                      "Rules with 'Preferred' condition will stack with an 'AND' relation between them."
+                    }
+                  </Text>
+
+                  <Text className="affinity-modal__desc" component={TextVariants.small}>
+                    {
+                      "Rules with 'Required' condition will stack with an 'OR' relation between them."
+                    }
+                  </Text>
+                </div>
+              )}
+              {affinities.length > 0 ? (
+                <AffinityTable
+                  columnClasses={columnClasses}
+                  data={affinities}
+                  customData={{
+                    isDisabled: false,
+                    vmLikeFinal,
+                    onEdit: onAffinityClickEdit,
+                    onDelete: onAffinityDelete,
+                  }}
+                  row={AffinityRow}
+                />
+              ) : (
+                <EmptyState variant={EmptyStateVariant.full}>
+                  <Title headingLevel="h5" size="lg">
+                    No Affinity rules found
+                  </Title>
+                  <EmptyStateBody>
+                    <div className="affinity-modal__desc-container">
+                      <Text className="affinity-modal__desc" component={TextVariants.small}>
+                        {
+                          'Set scheduling requirements and affect the ranking of the nodes candidate for scheduling.'
+                        }
+                      </Text>
+                      <Text className="affinity-modal__desc" component={TextVariants.small}>
+                        {
+                          "Rules with 'Preferred' condition will stack with an 'AND' relation between them."
+                        }
+                      </Text>
+
+                      <Text className="affinity-modal__desc" component={TextVariants.small}>
+                        {
+                          "Rules with 'Required' condition will stack with an 'OR' relation between them."
+                        }
+                      </Text>
+                    </div>
+                  </EmptyStateBody>
+                  <Button variant="secondary" onClick={() => onAffinityClickAdd()}>
+                    Add Affinity rule
+                  </Button>
+                </EmptyState>
+              )}
             </ModalBody>
             <ModalFooter
               id="affinity"
@@ -169,7 +231,7 @@ export const AffinityModal = withHandlePromise<AffinityModalProps>(
               isSimpleError={!!loadError}
               onSubmit={submit}
               onCancel={onCancel}
-              submitButtonText={'Apply'}
+              submitButtonText={'Save'}
               infoTitle={showCollisionAlert && 'Affinity has been updated outside this flow.'}
               infoMessage={
                 <>

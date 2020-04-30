@@ -1,3 +1,13 @@
 .affinity-modal__add-btn {
   padding: var(--pf-global--spacer--xl);
 }
+
+.affinity-modal__desc-container {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: var(--pf-global--spacer--md);
+
+  .affinity-modal__desc {
+    color: var(--pf-global--Color--200);
+  }
+}
