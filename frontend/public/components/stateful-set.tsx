@@ -22,9 +22,10 @@ import {
 import { VolumesTable } from './volumes-table';
 import { StatefulSetModel } from '../models';
 
-const { AddStorage, common } = Kebab.factory;
+const { AddStorage, common, ModifyCount } = Kebab.factory;
 export const menuActions: KebabAction[] = [
   AddHealthChecks,
+  ModifyCount,
   AddStorage,
   ...Kebab.getExtensionsActionsForKind(StatefulSetModel),
   EditHealthChecks,
