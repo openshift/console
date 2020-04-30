@@ -366,7 +366,7 @@ const silenceTableHeader = () => [
   },
   {
     title: 'Firing Alerts',
-    sortField: 'firingAlerts.length',
+    sortFunc: 'silenceFiringAlertsOrder',
     transforms: [sortable],
     props: { className: tableSilenceClasses[1] },
   },

@@ -11,8 +11,12 @@ import {
   nodePods,
 } from '@console/shared';
 import * as UIActions from '../../actions/ui';
+import {
+  alertStateOrder,
+  silenceFiringAlertsOrder,
+  silenceStateOrder,
+} from '../../reducers/monitoring';
 import { ingressValidHosts } from '../ingress';
-import { alertStateOrder, silenceStateOrder } from '../../reducers/monitoring';
 import { convertToBaseValue, EmptyBox, StatusBox, WithScrollContainer } from '../utils';
 import {
   getClusterOperatorStatus,
@@ -123,6 +127,7 @@ const sorts = {
   pvStorage: (pv) => _.toInteger(convertToBaseValue(pv?.spec?.capacity?.storage)),
   pvcStorage: (pvc) => _.toInteger(convertToBaseValue(pvc?.status?.capacity?.storage)),
   serviceClassDisplayName,
+  silenceFiringAlertsOrder,
   silenceStateOrder,
   string: (val) => JSON.stringify(val),
   number: (val) => _.toNumber(val),
