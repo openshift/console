@@ -1,6 +1,6 @@
 import * as React from 'react';
 import classNames from 'classnames';
-import { Alert, Button, AlertProps, ActionGroup } from '@patternfly/react-core';
+import { Alert, Button, ButtonVariant, AlertProps, ActionGroup } from '@patternfly/react-core';
 import { LoadingInline } from '@console/internal/components/utils';
 
 import './modal-footer.scss';
@@ -84,13 +84,18 @@ export const ModalFooter: React.FC<ModalFooterProps> = ({
     <ActionGroup className="pf-c-form pf-c-form__actions--right pf-c-form__group--no-top-margin">
       <Button
         type="button"
-        variant="secondary"
+        variant={ButtonVariant.secondary}
         data-test-id="modal-cancel-action"
         onClick={onCancel}
       >
         {cancelButtonText}
       </Button>
-      <Button variant="primary" isDisabled={isDisabled} id="confirm-action" onClick={onSubmit}>
+      <Button
+        variant={ButtonVariant.primary}
+        isDisabled={isDisabled}
+        id="confirm-action"
+        onClick={onSubmit}
+      >
         {submitButtonText}
       </Button>
     </ActionGroup>
