@@ -92,10 +92,11 @@ export const CreateOperand: React.FC<CreateOperandProps> = ({
           </div>
           <SyncedEditor
             context={{
-              formContext: { csv, match, model, next, schema, providedAPI, initialValue: sample },
+              formContext: { csv, match, model, next, schema, providedAPI },
               yamlContext: { next, match },
             }}
             FormEditor={OperandForm}
+            initialData={sample}
             initialType={initialEditorType}
             onChangeEditorType={onChangeEditorType}
             YAMLEditor={OperandYAML}
