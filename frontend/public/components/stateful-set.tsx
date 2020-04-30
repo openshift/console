@@ -1,5 +1,8 @@
 import * as React from 'react';
 
+import PodRingSet from '@console/shared/src/components/pod/PodRingSet';
+import { PodRingController } from '@console/shared';
+import { AddHealthChecks, EditHealthChecks } from '@console/app/src/actions/modify-health-checks';
 import { K8sResourceKind } from '../module/k8s';
 import { ResourceEventStream } from './events';
 import { DetailsPage, ListPage, Table, RowFunction } from './factory';
@@ -18,13 +21,13 @@ import {
 } from './utils';
 import { VolumesTable } from './volumes-table';
 import { StatefulSetModel } from '../models';
-import PodRingSet from '@console/shared/src/components/pod/PodRingSet';
-import { PodRingController } from '@console/shared';
 
 const { AddStorage, common } = Kebab.factory;
 export const menuActions: KebabAction[] = [
+  AddHealthChecks,
   AddStorage,
   ...Kebab.getExtensionsActionsForKind(StatefulSetModel),
+  EditHealthChecks,
   ...common,
 ];
 

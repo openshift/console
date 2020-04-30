@@ -2,8 +2,8 @@ import { ServiceModel } from '@console/internal/models';
 import {
   ModifyApplication,
   EditApplication,
-  EditHealthCheck,
 } from '@console/dev-console/src/actions/modify-application';
+import { AddHealthChecks, EditHealthChecks } from '@console/app/src/actions/modify-health-checks';
 import { getKebabActionsForKind } from '../kebab-actions';
 import { setTrafficDistribution } from '../../actions/traffic-splitting';
 import { setSinkSource } from '../../actions/sink-source';
@@ -15,13 +15,14 @@ describe('kebab-actions: ', () => {
     expect(modifyApplication).toEqual([ModifyApplication, setSinkSource]);
   });
 
-  it('kebab action should have "setTrafficDistribution", "Edit Application Grouping" and "Edit Application" option for knSvcModel', () => {
+  it('kebab action should have "setTrafficDistribution", "Add Health Checks", "Edit Application Grouping", "Edit Application" and "Edit Health Checks" option for knSvcModel', () => {
     const modifyApplication = getKebabActionsForKind(knSvcModel);
     expect(modifyApplication).toEqual([
       ModifyApplication,
       setTrafficDistribution,
-      EditHealthCheck,
+      AddHealthChecks,
       EditApplication,
+      EditHealthChecks,
     ]);
   });
 

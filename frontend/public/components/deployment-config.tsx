@@ -2,6 +2,8 @@ import * as React from 'react';
 import * as _ from 'lodash-es';
 
 import { Status, PodRingController } from '@console/shared';
+import PodRingSet from '@console/shared/src/components/pod/PodRingSet';
+import { AddHealthChecks, EditHealthChecks } from '@console/app/src/actions/modify-health-checks';
 import { k8sCreate, K8sKind, K8sResourceKind, K8sResourceKindReference } from '../module/k8s';
 import { errorModal } from './modals';
 import { DeploymentConfigModel } from '../models';
@@ -27,7 +29,6 @@ import {
 import { ReplicationControllersPage } from './replication-controller';
 
 import { WorkloadTableRow, WorkloadTableHeader } from './workload-table';
-import PodRingSet from '@console/shared/src/components/pod/PodRingSet';
 
 const DeploymentConfigsReference: K8sResourceKindReference = 'DeploymentConfig';
 
@@ -82,8 +83,10 @@ export const menuActions: KebabAction[] = [
   RolloutAction,
   PauseAction,
   ModifyCount,
+  AddHealthChecks,
   AddStorage,
   ...getExtensionsKebabActionsForKind(DeploymentConfigModel),
+  EditHealthChecks,
   ...common,
 ];
 

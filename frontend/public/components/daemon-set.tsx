@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
 
+import { AddHealthChecks, EditHealthChecks } from '@console/app/src/actions/modify-health-checks';
 import { K8sResourceKind } from '../module/k8s';
 import { DetailsPage, ListPage, Table, TableRow, TableData, RowFunction } from './factory';
 import {
@@ -25,8 +26,10 @@ import { VolumesTable } from './volumes-table';
 import { DaemonSetModel } from '../models';
 
 export const menuActions: KebabAction[] = [
+  AddHealthChecks,
   Kebab.factory.AddStorage,
   ...Kebab.getExtensionsActionsForKind(DaemonSetModel),
+  EditHealthChecks,
   ...Kebab.factory.common,
 ];
 
