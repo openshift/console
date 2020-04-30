@@ -1,5 +1,6 @@
-import { K8sResourceKind } from '@console/internal/module/k8s';
 import * as _ from 'lodash';
+import { K8sResourceKind } from '@console/internal/module/k8s';
+import { TRIGGERS_ANNOTATION } from '@console/shared';
 
 export const getAppLabels = (
   name: string,
@@ -44,6 +45,15 @@ export const getCommonAnnotations = () => {
     'openshift.io/generated-by': 'OpenShiftWebConsole',
   };
 };
+
+export const getTriggerAnnotation = (name: string) => ({
+  [TRIGGERS_ANNOTATION]: JSON.stringify([
+    {
+      from: { kind: 'ImageStreamTag', name: `${name}:latest` },
+      fieldPath: `spec.template.spec.containers[?(@.name=="${name}")].image`,
+    },
+  ]),
+});
 
 export const getPodLabels = (name: string) => {
   return {

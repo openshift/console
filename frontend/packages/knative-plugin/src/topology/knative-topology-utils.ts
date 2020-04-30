@@ -13,8 +13,8 @@ import {
   getResourcePausedAlert,
   getBuildAlerts,
   getOwnedResources,
-  OverviewItem,
   OperatorBackedServiceKindMap,
+  getBuildConfigsForResource,
 } from '@console/shared';
 import {
   Node,
@@ -30,6 +30,7 @@ import {
   getRoutesURL,
   filterBasedOnActiveApplication,
   getTopologyResourceObject,
+  TopologyOverviewItem,
 } from '@console/dev-console/src/components/topology';
 import { getImageForIconClass } from '@console/internal/components/catalog/catalog-item-icon';
 import { DeploymentModel } from '@console/internal/models';
@@ -111,6 +112,7 @@ export const filterRevisionsByActiveApplication = (
 export const getKnativeServiceData = (
   resource: K8sResourceKind,
   resources: TopologyDataResources,
+  utils?: Function[],
 ): KnativeItem => {
   const configurations = getOwnedResources(resource, resources.configurations.data);
   const revisions =
@@ -146,12 +148,20 @@ export const getKnativeServiceData = (
   const ksroutes = resources.ksroutes
     ? getOwnedResources(resource, resources.ksroutes.data)
     : undefined;
-  return {
+  const buildConfigs = getBuildConfigsForResource(resource, resources);
+  const overviewItem = {
     configurations,
     revisions: revisionsDeploymentData.revisionsDep,
     ksroutes,
+    buildConfigs,
     pods: revisionsDeploymentData.allPods,
   };
+  if (utils) {
+    return utils.reduce((acc, element) => {
+      return { ...acc, ...element(resource, resources) };
+    }, overviewItem);
+  }
+  return overviewItem;
 };
 
 /**
@@ -161,7 +171,7 @@ const createKnativeDeploymentItems = (
   resource: K8sResourceKind,
   resources: TopologyDataResources,
   utils?: Function[],
-): OverviewItem => {
+): TopologyOverviewItem => {
   const transformResourceData = new TransformResourceData(resources, utils);
   const associatedDeployment = getOwnedResources(resource, resources.deployments.data);
   if (!_.isEmpty(associatedDeployment)) {
@@ -199,7 +209,7 @@ const createKnativeDeploymentItems = (
     }
     return overviewItems;
   }
-  const knResources = getKnativeServiceData(resource, resources);
+  const knResources = getKnativeServiceData(resource, resources, utils);
   return {
     obj: resource,
     buildConfigs: [],
@@ -307,10 +317,11 @@ export const getTrafficTopologyEdgeItems = (resource: K8sResourceKind, { data })
  * create all data that need to be shown on a topology data for knative service
  */
 export const createTopologyServiceNodeData = (
-  svcRes: OverviewItem,
+  svcRes: TopologyOverviewItem,
   operatorBackedServiceKindMap: OperatorBackedServiceKindMap,
   type: string,
 ): TopologyDataObject => {
+  const { pipelines = [], pipelineRuns = [] } = svcRes;
   const { obj: knativeSvc } = svcRes;
   const uid = _.get(knativeSvc, 'metadata.uid');
   const labels = _.get(knativeSvc, 'metadata.labels', {});
@@ -328,6 +339,11 @@ export const createTopologyServiceNodeData = (
       editURL: annotations['app.openshift.io/edit-url'],
       vcsURI: annotations['app.openshift.io/vcs-uri'],
       isKnativeResource: true,
+      connectedPipeline: {
+        pipeline: pipelines[0],
+        pipelineRuns,
+      },
+      build: svcRes.buildConfigs?.[0]?.builds?.[0],
     },
   };
 };
@@ -363,7 +379,7 @@ export const transformKnNodeData = (
       }
       case NodeType.Revision: {
         knDataModel.topology[uid] = createTopologyNodeData(
-          item,
+          item.pipelines ? _.omit(item, ['pipelines', 'pipelineRuns']) : item,
           type,
           getImageForIconClass(`icon-openshift`),
         );
