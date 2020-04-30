@@ -1,20 +1,31 @@
 import { Map } from 'immutable';
 import { merge } from 'lodash';
 import { TopologyAction, Actions } from './action';
-import { TOPOLOGGY_FILTERS_LOCAL_STORAGE_KEY, DEFAULT_TOPOLOGY_FILTERS } from './const';
+import {
+  TOPOLOGY_DISPLAY_FILTERS_LOCAL_STORAGE_KEY,
+  DEFAULT_TOPOLOGY_FILTERS,
+  TOPOLOGY_SEARCH_FILTER_KEY,
+} from './const';
 
 export type State = Map<string, any>;
 
 export const getDefaultTopologyFilters = () => {
-  const filters = localStorage.getItem(TOPOLOGGY_FILTERS_LOCAL_STORAGE_KEY);
-  if (filters) {
-    return merge({}, DEFAULT_TOPOLOGY_FILTERS, JSON.parse(filters));
+  const displayFilters = localStorage.getItem(TOPOLOGY_DISPLAY_FILTERS_LOCAL_STORAGE_KEY);
+  const searchQuery = new URLSearchParams(window.location.search).get(TOPOLOGY_SEARCH_FILTER_KEY);
+
+  if (!displayFilters) {
+    localStorage.setItem(
+      TOPOLOGY_DISPLAY_FILTERS_LOCAL_STORAGE_KEY,
+      JSON.stringify(DEFAULT_TOPOLOGY_FILTERS.display),
+    );
   }
-  localStorage.setItem(
-    TOPOLOGGY_FILTERS_LOCAL_STORAGE_KEY,
-    JSON.stringify(DEFAULT_TOPOLOGY_FILTERS),
-  );
-  return DEFAULT_TOPOLOGY_FILTERS;
+
+  const filters = merge({}, DEFAULT_TOPOLOGY_FILTERS, {
+    display: JSON.parse(displayFilters) ?? {},
+    searchQuery: searchQuery ?? '',
+  });
+
+  return filters;
 };
 
 export default (state: State, action: TopologyAction) => {

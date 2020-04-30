@@ -16,6 +16,15 @@ type RenderTopologyProps = React.ComponentProps<typeof renderTopology>;
 let topologyProps: TopologyPageProps;
 let renderTopologyProps: RenderTopologyProps;
 
+jest.mock('react-redux', () => {
+  const ActualReactRedux = require.requireActual('react-redux');
+  return {
+    ...ActualReactRedux,
+    useSelector: jest.fn(),
+    useDispatch: jest.fn(),
+  };
+});
+
 describe('Topology page tests', () => {
   beforeEach(() => {
     topologyProps = {
