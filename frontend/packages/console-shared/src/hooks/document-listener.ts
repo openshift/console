@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { isModalOpen } from '@console/internal/components/modals';
 
 /**
  * Use this hook for components that require visibility only
@@ -21,13 +22,23 @@ export const useDocumentListener = <T extends HTMLElement>(keyEventMap: KeyEvent
   };
 
   const handleKeyEvents = (e) => {
+    // Don't steal focus from a modal open on top of the page.
+    if (isModalOpen()) {
+      return;
+    }
+    const { nodeName } = e.target;
     switch (keyEventMap[e.key]) {
       case KeyEventModes.HIDE:
         setVisible(false);
         ref.current.blur();
         break;
       case KeyEventModes.FOCUS:
-        if (document.activeElement !== ref.current) {
+        if (
+          document.activeElement !== ref.current &&
+          // Don't steal focus if the user types the focus shortcut in another text input.
+          nodeName !== 'INPUT' &&
+          nodeName !== 'TEXTAREA'
+        ) {
           ref.current.focus();
           e.preventDefault();
         }

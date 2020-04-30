@@ -53,11 +53,15 @@
   }
 }
 
-.co-text-filter {
-  min-width: 270px;
-  &:focus + .form-control-feedback--keyboard-hint {
+.co-suggestion-box input:focus,
+.co-text-filter:focus {
+  + .form-control-feedback--keyboard-hint {
     display: none;
   }
+}
+
+.co-text-filter {
+  min-width: 270px;
 }
 
 .form-control-feedback--keyboard-hint {

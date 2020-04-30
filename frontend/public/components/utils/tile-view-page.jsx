@@ -21,6 +21,7 @@ import {
 } from '@patternfly/react-core';
 
 import { history } from './router';
+import { isModalOpen } from '../modals';
 import { Dropdown } from '../utils';
 
 export const FilterTypes = {
@@ -666,7 +667,11 @@ export class TileViewPage extends React.Component {
 
     this.updateMountedState(this.getUpdatedState(categories, selectedCategoryId, clearedFilters));
 
-    this.filterByKeywordInput.focus({ preventScroll: true });
+    // Don't take focus if a modal was opened while the page was loading.
+    if (!isModalOpen()) {
+      this.filterByKeywordInput.focus({ preventScroll: true });
+    }
+
     if (this.props.storeFilterKey) {
       localStorage.removeItem(this.props.storeFilterKey);
     }
