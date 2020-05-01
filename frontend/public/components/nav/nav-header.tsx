@@ -72,7 +72,7 @@ const NavHeader_: React.FC<NavHeaderProps & StateProps> = ({
             onPerspectiveSelect(event, nextPerspective)
           }
           isHovered={nextPerspective.properties.id === activePerspective}
-          href="#"
+          component="button"
         >
           <Title size="md">
             <span className="oc-nav-header__icon">{nextPerspective.properties.icon}</span>
