@@ -346,15 +346,15 @@ class MastheadToolbarContents_ extends React.Component {
     action.externalLink ? { isExternal: true, target: '_blank', rel: 'noopener noreferrer' } : {};
 
   _renderApplicationItems(actions) {
-    return _.map(actions, (action, index) => {
+    return _.map(actions, (action, groupIndex) => {
       if (action.isSection) {
         return (
-          <ApplicationLauncherGroup key={`group_${index}`} label={action.name}>
+          <ApplicationLauncherGroup key={groupIndex} label={action.name}>
             <>
-              {_.map(action.actions, (sectionAction) => {
+              {_.map(action.actions, (sectionAction, itemIndex) => {
                 return (
                   <ApplicationLauncherItem
-                    key={sectionAction.label}
+                    key={itemIndex}
                     icon={sectionAction.image}
                     href={sectionAction.href || '#'}
                     onClick={sectionAction.callback}
@@ -365,8 +365,8 @@ class MastheadToolbarContents_ extends React.Component {
                   </ApplicationLauncherItem>
                 );
               })}
-              {index < actions.length - 1 && (
-                <ApplicationLauncherSeparator key={`separator-${index}`} />
+              {groupIndex < actions.length - 1 && (
+                <ApplicationLauncherSeparator key={`separator-${groupIndex}`} />
               )}
             </>
           </ApplicationLauncherGroup>
@@ -374,7 +374,7 @@ class MastheadToolbarContents_ extends React.Component {
       }
 
       return (
-        <ApplicationLauncherGroup key={`group_${index}`}>
+        <ApplicationLauncherGroup key={groupIndex}>
           <>
             <ApplicationLauncherItem
               key={action.label}
@@ -386,8 +386,8 @@ class MastheadToolbarContents_ extends React.Component {
             >
               {action.label}
             </ApplicationLauncherItem>
-            {index < actions.length - 1 && (
-              <ApplicationLauncherSeparator key={`separator-${index}`} />
+            {groupIndex < actions.length - 1 && (
+              <ApplicationLauncherSeparator key={`separator-${groupIndex}`} />
             )}
           </>
         </ApplicationLauncherGroup>
@@ -567,7 +567,7 @@ class MastheadToolbarContents_ extends React.Component {
                 <Link
                   to={this._getImportYAMLPath()}
                   className="pf-c-button pf-m-plain"
-                  aria-lable="Import YAML"
+                  aria-label="Import YAML"
                 >
                   <PlusCircleIcon className="co-masthead-icon" />
                 </Link>
