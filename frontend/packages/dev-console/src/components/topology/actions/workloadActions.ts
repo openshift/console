@@ -5,31 +5,38 @@ import { menuActions as deploymentConfigMenuActions } from '@console/internal/co
 import { menuActions as deploymentMenuActions } from '@console/internal/components/deployment';
 import { menuActions as statefulSetMenuActions } from '@console/internal/components/stateful-set';
 import { menuActions as daemonSetMenuActions } from '@console/internal/components/daemon-set';
+import { ModifyApplication } from '../../../actions/modify-application';
 import { TopologyDataObject } from '../topology-types';
 import { getTopologyResourceObject } from '../topology-utils';
 
-export const workloadActions = (workload: TopologyDataObject): KebabOption[] => {
+export const workloadActions = (
+  workload: TopologyDataObject,
+  allowRegroup: boolean = true,
+): KebabOption[] => {
   const contextMenuResource = getTopologyResourceObject(workload);
   if (!contextMenuResource) {
     return null;
   }
 
-  let menuActions: KebabAction[];
+  const menuActions: KebabAction[] = [];
+  if (allowRegroup) {
+    menuActions.push(ModifyApplication);
+  }
   switch (contextMenuResource.kind) {
     case 'DeploymentConfig':
-      menuActions = deploymentConfigMenuActions;
+      menuActions.push(...deploymentConfigMenuActions);
       break;
     case 'Deployment':
-      menuActions = deploymentMenuActions;
+      menuActions.push(...deploymentMenuActions);
       break;
     case 'StatefulSet':
-      menuActions = statefulSetMenuActions;
+      menuActions.push(...statefulSetMenuActions);
       break;
     case 'DaemonSet':
-      menuActions = daemonSetMenuActions;
+      menuActions.push(...daemonSetMenuActions);
       break;
     default:
-      menuActions = [];
+      break;
   }
 
   return _.map(menuActions, (a) =>

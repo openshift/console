@@ -40,18 +40,12 @@ const HelmReleaseGroup: React.FC<HelmReleaseGroupProps> = ({
 }) => {
   const [hover, hoverRef] = useHover();
   const [innerHover, innerHoverRef] = useHover();
-  const [{ dragging, regrouping }, dragNodeRef] = useDragNode(
-    nodeDragSourceSpec(TYPE_HELM_RELEASE, true, editAccess),
-    {
-      element,
-    },
-  );
-  const [{ dragging: labelDragging, regrouping: labelRegrouping }, dragLabelRef] = useDragNode(
-    nodeDragSourceSpec(TYPE_HELM_RELEASE, true, editAccess),
-    {
-      element,
-    },
-  );
+  const dragSpec = nodeDragSourceSpec(TYPE_HELM_RELEASE, false);
+  const [{ dragging, regrouping }, dragNodeRef] = useDragNode(dragSpec, { element });
+  const [
+    { dragging: labelDragging, regrouping: labelRegrouping },
+    dragLabelRef,
+  ] = useDragNode(dragSpec, { element });
 
   const nodeRefs = useCombineRefs(innerHoverRef, dragNodeRef);
   const [filtered] = useSearchFilter(element.getLabel());
