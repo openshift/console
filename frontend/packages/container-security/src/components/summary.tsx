@@ -5,6 +5,7 @@ import { ChartDonut } from '@patternfly/react-charts';
 import { SecurityIcon } from '@patternfly/react-icons';
 import { ResourceHealthHandler } from '@console/plugin-sdk';
 import { WatchK8sResults } from '@console/internal/components/utils/k8s-watch-hook';
+import { ExternalLink } from '@console/internal/components/utils/link';
 import { HealthState } from '@console/shared/src/components/dashboard/status-card/states';
 import { Link } from 'react-router-dom';
 import { referenceForModel } from '@console/internal/module/k8s';
@@ -112,7 +113,7 @@ export const SecurityBreakdownPopup: React.FC<WatchK8sResults<WatchImageVuln>> =
                           .color.value
                       }
                     />{' '}
-                    <a href={quayURLFor(v)}>{v.spec.features[0].name}</a>
+                    <ExternalLink href={quayURLFor(v)} text={v.spec.features[0].name} />
                   </span>
                   <div className="text-secondary">
                     <Link
