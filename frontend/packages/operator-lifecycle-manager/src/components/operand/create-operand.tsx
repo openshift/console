@@ -1,3 +1,4 @@
+import { JSONSchema6 } from 'json-schema';
 import {
   K8sKind,
   K8sResourceKind,
@@ -6,6 +7,7 @@ import {
   referenceForModel,
   nameForModel,
   CustomResourceDefinitionKind,
+  definitionFor,
 } from '@console/internal/module/k8s';
 import { CustomResourceDefinitionModel } from '@console/internal/models';
 import { Firehose } from '@console/internal/components/utils/firehose';
@@ -29,8 +31,11 @@ import { ClusterServiceVersionKind, ProvidedAPI } from '../../types';
 import { OperandForm } from './operand-form';
 import { OperandYAML } from './operand-yaml';
 import { exampleForModel, providedAPIForModel } from '..';
-import { FORM_HELP_TEXT, YAML_HELP_TEXT } from './const';
-import { getJSONSchema } from './utils';
+import { FORM_HELP_TEXT, YAML_HELP_TEXT, DEFAULT_K8S_SCHEMA } from './const';
+import { getSchemaErrors } from '@console/shared/src/components/dynamic-form/utils';
+import { hasNoFields } from './utils';
+// eslint-disable-next-line @typescript-eslint/camelcase
+import { DEPRECATED_CreateOperandForm } from './DEPRECATED_operand-form';
 
 export const CreateOperand: React.FC<CreateOperandProps> = ({
   clusterServiceVersion,
@@ -59,7 +64,26 @@ export const CreateOperand: React.FC<CreateOperandProps> = ({
     model,
   ]);
 
-  const schema = React.useMemo(() => _.omit(getJSONSchema(crd, model), 'status'), [crd, model]);
+  // TODO This logic should be removed in 4.6 and we should only be using
+  // the OperandForm component. We are providing a temporary fallback
+  // to the old form component to ease the transition to structural schemas
+  // over descriptors. In 4.6, structural schemas will be required, and
+  // the fallback will no longer be necessary/provided. If no structural schema
+  // is provided in 4.6, a form will not be generated.
+  const [schema, FormComponent] = React.useMemo(() => {
+    const baseSchema =
+      crd?.spec?.validation?.openAPIV3Schema ?? (definitionFor(model) as JSONSchema6);
+    const useFallback =
+      getSchemaErrors(baseSchema).length ||
+      hasNoFields((baseSchema?.properties?.spec ?? {}) as JSONSchema6);
+    return useFallback
+      ? // eslint-disable-next-line @typescript-eslint/camelcase
+        [baseSchema, DEPRECATED_CreateOperandForm]
+      : [
+          _.defaultsDeep({}, DEFAULT_K8S_SCHEMA, _.omit(baseSchema, 'properties.status')),
+          OperandForm,
+        ];
+  }, [crd, model]);
 
   const sample = React.useMemo<K8sResourceKind>(() => exampleForModel(csv, model), [csv, model]);
 
@@ -95,7 +119,7 @@ export const CreateOperand: React.FC<CreateOperandProps> = ({
               formContext: { csv, match, model, next, schema, providedAPI },
               yamlContext: { next, match },
             }}
-            FormEditor={OperandForm}
+            FormEditor={FormComponent}
             initialData={sample}
             initialType={initialEditorType}
             onChangeEditorType={onChangeEditorType}

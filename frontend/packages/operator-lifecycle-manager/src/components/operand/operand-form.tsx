@@ -11,7 +11,7 @@ import { prune } from '@console/shared';
 
 export const OperandForm: React.FC<OperandFormProps> = ({
   csv,
-  initialData,
+  formData,
   match,
   model,
   next,
@@ -33,8 +33,8 @@ export const OperandForm: React.FC<OperandFormProps> = ({
     };
   };
 
-  const handleSubmit = ({ formData }) => {
-    k8sCreate(model, processFormData(formData))
+  const handleSubmit = ({ formData: submitFormData }) => {
+    k8sCreate(model, processFormData(submitFormData))
       .then(() => next && history.push(next))
       .catch((e) => setErrors([e.message]));
   };
@@ -64,7 +64,7 @@ export const OperandForm: React.FC<OperandFormProps> = ({
             errors={errors}
             formContext={{ namespace: match.params.ns }}
             uiSchema={uiSchema}
-            formData={initialData}
+            formData={formData}
             onChange={onChange}
             onError={setErrors}
             onSubmit={handleSubmit}
@@ -79,7 +79,7 @@ export const OperandForm: React.FC<OperandFormProps> = ({
 type ProvidedAPI = CRDDescription | APIServiceDefinition;
 
 export type OperandFormProps = {
-  initialData?: K8sResourceKind;
+  formData?: K8sResourceKind;
   onChange?: (formData?: any) => void;
   match: { params: { ns: string } };
   next?: string;
