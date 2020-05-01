@@ -503,15 +503,13 @@ export const OperandDetails = connectToModel((props: OperandDetailsProps) => {
 
   const primaryDescriptor = primaryDescriptors.map((statusDescriptor: Descriptor) => {
     return (
-      <div className="row" key={statusDescriptor.displayName}>
-        <div className="col-sm-6 col-md-4">
-          <StatusDescriptor
-            descriptor={statusDescriptor}
-            value={blockValue(statusDescriptor, status)}
-            obj={props.obj}
-            model={props.kindObj}
-          />
-        </div>
+      <div key={statusDescriptor.displayName} className="col-sm-6">
+        <StatusDescriptor
+          descriptor={statusDescriptor}
+          value={blockValue(statusDescriptor, status)}
+          obj={props.obj}
+          model={props.kindObj}
+        />
       </div>
     );
   });
@@ -519,11 +517,11 @@ export const OperandDetails = connectToModel((props: OperandDetailsProps) => {
   const details = (
     <div className="co-operand-details__section co-operand-details__section--info">
       <div className="row">
-        <div className="col-xs-6">
+        <div className="col-sm-6">
           <ResourceSummary resource={props.obj} />
         </div>
         {currentStatus && (
-          <div className="col-xs-6" key={currentStatus.path}>
+          <div className="col-sm-6" key={currentStatus.path}>
             <StatusDescriptor
               namespace={metadata.namespace}
               obj={props.obj}
@@ -535,7 +533,7 @@ export const OperandDetails = connectToModel((props: OperandDetailsProps) => {
         )}
 
         {specDescriptors.map((specDescriptor: Descriptor) => (
-          <div key={specDescriptor.path} className="col-xs-6">
+          <div key={specDescriptor.path} className="col-sm-6">
             <SpecDescriptor
               namespace={metadata.namespace}
               obj={props.obj}
@@ -553,7 +551,7 @@ export const OperandDetails = connectToModel((props: OperandDetailsProps) => {
           .map((statusDescriptor: Descriptor) => {
             const statusValue = blockValue(statusDescriptor, status);
             return (
-              <div className="col-xs-6" key={statusDescriptor.path}>
+              <div className="col-sm-6" key={statusDescriptor.path}>
                 <StatusDescriptor
                   namespace={metadata.namespace}
                   obj={props.obj}
@@ -579,7 +577,7 @@ export const OperandDetails = connectToModel((props: OperandDetailsProps) => {
         <>
           <div className="co-m-pane__body">
             {header}
-            {primaryDescriptor}
+            <div className="row">{primaryDescriptor}</div>
           </div>
           <div className="co-m-pane__body">{details}</div>
         </>

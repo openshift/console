@@ -6,7 +6,17 @@
   text-align: left;
   text-overflow: ellipsis;
   overflow: hidden;
-  white-space: nowrap; 
+  white-space: nowrap;
+}
+
+.graph-donut-subtitle {
+  bottom: 20px;
+  color: var(--pf-global--palette--black-400);
+  line-height: 1.1;
+  margin: 0 0 10px;
+  position: relative;
+  text-align: center;
+  @include co-break-word;
 }
 
 .graph-wrapper {

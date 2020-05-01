@@ -19,8 +19,8 @@ describe(PodStatusChart.displayName, () => {
   });
 
   it('renders a donut chart component with correct props', () => {
-    expect(wrapper.find(ChartDonut).props().subTitle).toEqual(descriptor.path);
     expect(wrapper.find(ChartDonut).props().title).toEqual('0');
+    expect(wrapper.find('[data-test-id="chart-donut-subtitle"]').text()).toEqual(descriptor.path);
   });
 
   it('passes data to donut chart', () => {

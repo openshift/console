@@ -32,10 +32,13 @@ export const PodStatusChart: React.SFC<PodStatusChartProps> = ({ statuses, statu
         colorScale={colorScale}
         data={data}
         height={width}
-        subTitle={statusDescriptor.path}
         title={total.toString()}
         width={width}
       />
+      {/* Use instead of `subTitle` on <ChartDonut> so long paths do not clip  */}
+      <div className="graph-donut-subtitle" data-test-id="chart-donut-subtitle">
+        {statusDescriptor.path}
+      </div>
     </div>
   );
 };
