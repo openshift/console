@@ -168,7 +168,7 @@ export const TopologyPage: React.FC<TopologyPageProps> = ({ match }) => {
                   }
                 />
               ) : (
-                <ConnectedTopologyDataController namespace={namespace} render={renderTopology} />
+                <ConnectedTopologyDataController match={match} render={renderTopology} />
               )
             ) : (
               <ProjectListPage title="Topology">

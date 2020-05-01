@@ -3,6 +3,7 @@ import { shallow, ShallowWrapper } from 'enzyme';
 import { TopologyDataControllerProps, TopologyDataController } from '../TopologyDataController';
 
 const TestInner = () => null;
+const testProjectMatch = { url: '', params: { name: 'namespace' }, isExact: true, path: '' };
 
 describe('TopologyDataController', () => {
   let wrapper: ShallowWrapper<TopologyDataControllerProps>;
@@ -11,7 +12,7 @@ describe('TopologyDataController', () => {
     wrapper = shallow(
       <TopologyDataController
         resourceList={[]}
-        namespace="namespace"
+        match={testProjectMatch}
         serviceBinding={false}
         render={() => <TestInner />}
       />,
