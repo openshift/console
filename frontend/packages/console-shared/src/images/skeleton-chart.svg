@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="198px" height="74px" viewBox="0 0 198 74" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 42 (36781) - http://www.bohemiancoding.com/sketch -->
+    <title>dashboard-chart-cpu</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="dashboard-chart-cpu" transform="translate(1.000000, 1.000000)" stroke="#C8CED8">
+            <g id="Page-1">
+                <g id="dashboard-chart-cpu">
+                    <g id="Group">
+                        <path d="M0,0 L0,72" id="Shape" stroke-linecap="round" stroke-linejoin="round" fill="#000000" fill-rule="nonzero"></path>
+                        <path d="M196,0 L196,72" id="Shape" stroke-linecap="round" stroke-linejoin="round" fill="#000000" fill-rule="nonzero"></path>
+                        <path d="M0,38 L196,38" id="Shape" stroke-linecap="round" stroke-linejoin="round"></path>
+                        <path d="M0,6 L196,6" id="Shape" stroke-linecap="round" stroke-linejoin="round"></path>
+                        <polygon id="Shape" fill="#DCE1E9" fill-rule="nonzero" points="0 46.9711505 17.8181818 45.2434529 35.6363636 23.7156847 53.4545455 47.5469936 71.2727273 32.6267229 89.0909091 46.2219245 106.909091 45.2051404 124.727273 48.5992929 142.545455 42.5467095 160.363636 30.5818368 178.181818 45.7526754 196 25.1998225 196 72 178.181818 72 160.363636 72 142.545455 72 124.727273 72 106.909091 72 89.0909091 72 71.2727273 72 53.4545455 72 35.6363636 72 17.8181818 72 0 72"></polygon>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

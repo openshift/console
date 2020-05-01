@@ -24,6 +24,22 @@ $skeleton-activity-icon-size: $skeleton-status-resource-icon-size;
 $skeleton-activity-position: 45px 0;
 $skeleton-activity-size: auto;
 
+.skeleton-chart {
+  height: inherit;
+  position: relative;
+  width: 100%;
+  &::after {
+    background-image: url('../images/skeleton-chart.svg');
+    background-position: 0px bottom;
+    background-repeat: no-repeat;
+    background-size: cover;
+    content: "";
+    height: 100%;
+    left: 0;
+    position: absolute;
+    width: 100%;
+  }
+}
 
 .skeleton-text {
   animation: $skeleton-animation;
@@ -37,17 +53,4 @@ $skeleton-activity-size: auto;
     height: 100%;
     width: 100%;
   }
-}
-
-.skeleton-chart {
-  animation: $skeleton-animation;
-  background-image: url('../images/skeleton-chart-cpu.png');
-  background-position: center;
-  background-repeat: no-repeat;
-  background-size: 100% 100%;
-  display: inline-block;
-  height: 100%;
-  opacity: 0;
-  vertical-align: middle;
-  width: 90%;
 }
