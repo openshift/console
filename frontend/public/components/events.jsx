@@ -100,7 +100,7 @@ const Inner = connectToFlags(FLAGS.CAN_LIST_NODE)(
             <i className="co-sysevent-icon" title={tooltipMsg} />
             <div className="co-sysevent__icon-line" />
           </div>
-          <div className="co-sysevent__box">
+          <div className="co-sysevent__box" role="gridcell">
             <div className="co-sysevent__header">
               <div className="co-sysevent__subheader">
                 <ResourceLink
