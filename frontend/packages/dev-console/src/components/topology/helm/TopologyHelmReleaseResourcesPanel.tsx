@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { K8sResourceKind, modelFor } from '@console/internal/module/k8s';
+import { K8sResourceKind, modelFor, referenceFor } from '@console/internal/module/k8s';
 import { SidebarSectionHeading } from '@console/internal/components/utils';
 import TopologyHelmReleaseResourceList from './TopologyHelmReleaseResourceList';
 
@@ -12,8 +12,9 @@ const TopologyHelmReleaseResourcesPanel: React.SFC<TopologyHelmReleaseResourcesP
 }) => {
   const kinds = manifestResources
     .reduce((resourceKinds, resource) => {
-      if (!resourceKinds.includes(resource.kind)) {
-        resourceKinds.push(resource.kind);
+      const kind = referenceFor(resource);
+      if (!resourceKinds.includes(kind)) {
+        resourceKinds.push(kind);
       }
       return resourceKinds;
     }, [])

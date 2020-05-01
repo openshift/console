@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { ResourceLink } from '@console/internal/components/utils';
-import { K8sResourceKind } from '@console/internal/module/k8s';
+import { K8sResourceKind, referenceFor } from '@console/internal/module/k8s';
 
 type TopologyHelmReleaseResourceItemProps = {
   item: K8sResourceKind;
@@ -10,9 +10,9 @@ const TopologyHelmReleaseResourceItem: React.FC<TopologyHelmReleaseResourceItemP
   item,
 }) => {
   const {
-    kind,
     metadata: { name, namespace },
   } = item;
+  const kind = referenceFor(item);
 
   return (
     <li className="list-group-item container-fluid">
