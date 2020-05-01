@@ -15,8 +15,11 @@ const setNext = (next) => {
   if (!next) {
     return;
   }
+
   try {
-    localStorage.setItem('next', stripBasePath(next));
+    // Don't redirect the user back to the error page after logging in.
+    const path = stripBasePath(next);
+    localStorage.setItem('next', path.startsWith('/error') ? '/' : path);
   } catch (e) {
     // eslint-disable-next-line no-console
     console.error(e);
