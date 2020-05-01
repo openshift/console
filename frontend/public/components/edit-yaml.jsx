@@ -452,7 +452,7 @@ export const EditYAML_ = connect(stateToProps)(
             </div>
           )}
 
-          <div className="pf-c-form co-m-page__body" style={{ display: 'flex', flexGrow: 1 }}>
+          <div className="pf-c-form co-m-page__body">
             <div className="co-p-has-sidebar">
               <div className="co-p-has-sidebar__body">
                 <div

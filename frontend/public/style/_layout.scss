@@ -57,6 +57,11 @@ body,
     }
   }
 
+  &__sidebar-body {
+    position: absolute;
+    width: 100%;
+  }
+
   &__sidebar-heading {
     @include co-break-word;
     margin-bottom: 20px;

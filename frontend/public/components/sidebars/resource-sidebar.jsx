@@ -21,7 +21,7 @@ class ResourceSidebarWrapper extends React.Component {
 
     return (
       <div className="co-p-has-sidebar__sidebar co-p-has-sidebar__sidebar--bordered hidden-sm hidden-xs">
-        <div className="co-m-pane__body" style={{ position: 'absolute' }}>
+        <div className="co-m-pane__body co-p-has-sidebar__sidebar-body">
           <Button
             type="button"
             className="co-p-has-sidebar__sidebar-close"
