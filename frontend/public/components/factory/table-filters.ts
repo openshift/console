@@ -68,7 +68,10 @@ export const tableFilters: TableFilterMap = {
   },
 
   // Filter role bindings by roleRef name
-  'role-binding-roleRef': (roleRef, binding) => binding.roleRef.name === roleRef,
+  'role-binding-roleRef-name': (name: string, binding) => binding.roleRef.name === name,
+
+  // Filter role bindings by roleRef kind
+  'role-binding-roleRef-kind': (kind: string, binding) => binding.roleRef.kind === kind,
 
   // Filter role bindings by user name
   'role-binding-user': (userName, binding) =>

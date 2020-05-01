@@ -231,7 +231,7 @@ export const BindingsForRolePage = (props) => {
         }/rolebindings/~new?rolekind=${kind}&rolename=${name}`,
       }}
       ListComponent={BindingsListComponent}
-      staticFilters={[{ 'role-binding-roleRef': name }]}
+      staticFilters={[{ 'role-binding-roleRef-name': name }, { 'role-binding-roleRef-kind': kind }]}
       resources={resources}
       textFilter="role-binding"
       filterLabel="by role or subject"
