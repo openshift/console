@@ -106,8 +106,15 @@ export const providedAPIForModel = (csv: ClusterServiceVersionKind, model: K8sKi
     (crd) => referenceForProvidedAPI(crd) === referenceForModel(model),
   );
 
-export const parseALMExamples = (csv: ClusterServiceVersionKind) =>
-  JSON.parse(_.get(csv, 'metadata.annotations.alm-examples', '[]'));
+export const parseALMExamples = (csv: ClusterServiceVersionKind) => {
+  try {
+    return JSON.parse(csv?.metadata?.annotations?.['alm-examples'] ?? '[]');
+  } catch (e) {
+    // eslint-disable-next-line no-console
+    console.warn('Unable to parse ALM expamples\n', e);
+    return [];
+  }
+};
 
 export const exampleForModel = (csv: ClusterServiceVersionKind, model: K8sKind) =>
   _.defaultsDeep(
