@@ -461,6 +461,7 @@ const QueryInput_: React.FC<QueryInputProps> = ({
   return (
     <div className="query-browser__query pf-c-dropdown">
       <textarea
+        aria-label="Expression (press Shift+Enter for newlines)"
         autoFocus
         className="pf-c-form-control query-browser__query-input"
         onBlur={onBlur}
