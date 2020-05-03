@@ -8,7 +8,7 @@ import {
   FirehoseResult,
   Label,
 } from '@console/internal/components/utils';
-import { k8sPatch } from '@console/internal/module/k8s';
+import { k8sPatch, NodeKind } from '@console/internal/module/k8s';
 import { VMLikeEntityKind } from '../../../../types/vmLike';
 import { getVMLikeModel, isDedicatedCPUPlacement, asVM } from '../../../../selectors/vm';
 import { getDedicatedCpuPatch } from '../../../../k8s/patches/vm/vm-cpu-patches';
@@ -34,7 +34,7 @@ export const DedicatedResourcesModal = withHandlePromise<DedicatedResourcesModal
     const loadError = getLoadError(nodes, NodeModel);
     const isCurrentCPUPinned = isDedicatedCPUPlacement(asVM(vmLikeFinal));
 
-    const qualifiedNodes = useNodeQualifier(nodes, DEDICATED_RESOURCES_LABELS);
+    const qualifiedNodes = useNodeQualifier(nodes, 'label', DEDICATED_RESOURCES_LABELS);
 
     const [showCollisionAlert, reload] = useCollisionChecker<VMLikeEntityKind>(
       vmLikeFinal,
@@ -114,6 +114,6 @@ export const DedicatedResourcesModal = withHandlePromise<DedicatedResourcesModal
 type DedicatedResourcesModalProps = HandlePromiseProps &
   ModalComponentProps & {
     vmLikeEntity: VMLikeEntityKind;
-    nodes?: FirehoseResult<VMLikeEntityKind[]>;
+    nodes?: FirehoseResult<NodeKind[]>;
     vmLikeEntityLoading?: FirehoseResult<VMLikeEntityKind>;
   };

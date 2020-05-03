@@ -1,4 +1,5 @@
 import * as React from 'react';
+import * as _ from 'lodash';
 import {
   Form,
   FormSelect,
@@ -9,7 +10,7 @@ import {
   TextVariants,
 } from '@patternfly/react-core';
 import { FirehoseResult } from '@console/internal/components/utils';
-import { K8sResourceKind } from '@console/internal/module/k8s';
+import { NodeKind } from '@console/internal/module/k8s';
 import { ModalBody } from '@console/internal/components/factory';
 import { ValidationErrorType } from '@console/shared';
 import { isLoaded } from '../../../../../../utils';
@@ -67,7 +68,9 @@ export const AffinityEdit: React.FC<AffinityEditProps> = ({
       setFocusedAffinity({ ...focusedAffinity, topologyKey: 'kubernetes.io/hostname' });
   }, [focusedAffinity, isTopologyDisabled]);
 
-  const qualifiedNodes = useNodeQualifier(nodes, affinityExpressions, affinityFields);
+  const qualifiedExpressionNodes = useNodeQualifier(nodes, 'label', affinityExpressions);
+  const qualifiedFieldNodes = useNodeQualifier(nodes, 'field', affinityFields);
+  const qualifiedNodes = _.intersection(qualifiedExpressionNodes, qualifiedFieldNodes);
 
   const isExpressionsInvalid = isTermsInvalid(affinityExpressions);
   const isFieldsInvalid = isTermsInvalid(affinityFields);
@@ -260,7 +263,7 @@ export const AffinityEdit: React.FC<AffinityEditProps> = ({
 };
 
 type AffinityEditProps = {
-  nodes?: FirehoseResult<K8sResourceKind[]>;
+  nodes?: FirehoseResult<NodeKind[]>;
   affinity: AffinityRowData;
   isDisabled?: boolean;
   onAffinitySubmit: (affinity: AffinityRowData) => void;

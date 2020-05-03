@@ -59,3 +59,5 @@ export const getNodeCPUCapacity = (node: NodeKind): string => _.get(node.status,
 
 export const getNodeAllocatableMemory = (node: NodeKind): string =>
   _.get(node.status, 'allocatable.memory');
+
+export const getNodeTaints = (node: NodeKind) => node?.spec?.taints;

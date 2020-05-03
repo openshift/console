@@ -7,7 +7,7 @@ import {
   withHandlePromise,
   HandlePromiseProps,
 } from '@console/internal/components/utils';
-import { k8sPatch } from '@console/internal/module/k8s';
+import { k8sPatch, NodeKind } from '@console/internal/module/k8s';
 import { NodeModel } from '@console/internal/models';
 import { isLoaded, getLoadedData, getLoadError } from '../../../../utils';
 import { ModalFooter } from '../../modal/modal-footer';
@@ -47,7 +47,7 @@ export const NSModal = withHandlePromise(
       onLabelDelete,
     ] = useIDEntities<IDLabel>(nodeSelectorToIDLabels(getVMLikeNodeSelector(vmLikeEntity)));
 
-    const qualifiedNodes = useNodeQualifier(nodes, selectorLabels);
+    const qualifiedNodes = useNodeQualifier(nodes, 'label', selectorLabels);
     const [showCollisionAlert, reload] = useCollisionChecker<VMLikeEntityKind>(
       vmLikeFinal,
       (oldVM: VMLikeEntityKind, newVM: VMLikeEntityKind) =>
@@ -134,7 +134,7 @@ export const NSModal = withHandlePromise(
 type NSModalProps = HandlePromiseProps &
   ModalComponentProps & {
     vmLikeEntity: VMLikeEntityKind;
-    nodes?: FirehoseResult<VMLikeEntityKind[]>;
+    nodes?: FirehoseResult<NodeKind[]>;
     inProgress: boolean;
     vmLikeEntityLoading?: FirehoseResult<VMLikeEntityKind>;
     errorMessage: string;
