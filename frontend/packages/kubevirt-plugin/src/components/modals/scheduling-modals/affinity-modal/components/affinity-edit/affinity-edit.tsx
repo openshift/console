@@ -1,5 +1,13 @@
 import * as React from 'react';
-import { Form, FormSelect, FormSelectOption, TextInput, Divider } from '@patternfly/react-core';
+import {
+  Form,
+  FormSelect,
+  FormSelectOption,
+  TextInput,
+  Divider,
+  Text,
+  TextVariants,
+} from '@patternfly/react-core';
 import { FirehoseResult } from '@console/internal/components/utils';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { ModalBody } from '@console/internal/components/factory';
@@ -75,6 +83,13 @@ export const AffinityEdit: React.FC<AffinityEditProps> = ({
   return (
     <>
       <ModalBody>
+        <div className="affinity-modal__desc-container">
+          <Text className="affinity-modal__desc" component={TextVariants.small}>
+            {
+              'Define an affinity rule. This rule will be added to the list of affinity rules applied to this workload.'
+            }
+          </Text>
+        </div>
         <Form>
           <FormRow title="Type" fieldId={'affinity-type'} isRequired>
             <FormSelect
@@ -82,10 +97,6 @@ export const AffinityEdit: React.FC<AffinityEditProps> = ({
                 setFocusedAffinity({
                   ...focusedAffinity,
                   type: value as AffinityRowData['type'],
-                  condition:
-                    value === 'nodeAffinity'
-                      ? AFFINITY_CONDITIONS.preferred
-                      : focusedAffinity.condition,
                 })
               }
               value={focusedAffinity.type}
@@ -124,7 +135,6 @@ export const AffinityEdit: React.FC<AffinityEditProps> = ({
                 key={AFFINITY_CONDITIONS.required}
                 value={AFFINITY_CONDITIONS.required}
                 label={AFFINITY_CONDITION_LABELS[AFFINITY_CONDITIONS.required]}
-                isDisabled={isDisabled}
               />
             </FormSelect>
           </FormRow>
@@ -167,13 +177,40 @@ export const AffinityEdit: React.FC<AffinityEditProps> = ({
               />
             </FormRow>
           )}
-          <Divider />
+          <Divider component="div" />
           <FormRow
             title={isNodeAffinity ? 'Node Labels' : 'Workload Labels'}
             fieldId={'expressions'}
             validationType={isExpressionsInvalid && ValidationErrorType.Error}
-            validationMessage={isExpressionsInvalid && 'Missing fields'}
+            validationMessage={
+              isExpressionsInvalid && isNodeAffinity
+                ? 'Missing fields in node labels'
+                : 'Missing fields in workload labels'
+            }
           >
+            <div className="affinity-modal__desc-container">
+              {isNodeAffinity ? (
+                <>
+                  <Text className="affinity-modal__desc" component={TextVariants.small}>
+                    {'Select nodes that must have all the following expressions.'}
+                  </Text>
+                  <Text className="affinity-modal__desc" component={TextVariants.small}>
+                    {
+                      'Note that for Node field expressions, entering a full path is required in the Key field (e.g. `metadata.name: value`)'
+                    }
+                  </Text>
+                  <Text className="affinity-modal__desc" component={TextVariants.small}>
+                    {'A list of matching nodes will be provided on label input below.'}
+                  </Text>
+                </>
+              ) : (
+                <>
+                  <Text className="affinity-modal__desc" component={TextVariants.small}>
+                    {'Select workloads that must have all the following expressions.'}
+                  </Text>
+                </>
+              )}
+            </div>
             <AffinityExpressionList
               expressions={affinityExpressions}
               addRowText="Add Expression"
@@ -184,12 +221,11 @@ export const AffinityEdit: React.FC<AffinityEditProps> = ({
           </FormRow>
           {isNodeAffinity && (
             <>
-              <Divider />
               <FormRow
                 title="Node Fields"
                 fieldId={'fields'}
                 validationType={isFieldsInvalid && ValidationErrorType.Error}
-                validationMessage={isFieldsInvalid && 'Missing fields'}
+                validationMessage={isFieldsInvalid && 'Missing fields in node fields'}
               >
                 <AffinityExpressionList
                   expressions={affinityFields}
@@ -216,7 +252,7 @@ export const AffinityEdit: React.FC<AffinityEditProps> = ({
           })
         }
         onCancel={onCancel}
-        submitButtonText="Save Affinity"
+        submitButtonText="Save Affinity rule"
         isDisabled={isAffinityInvalid}
       />
     </>

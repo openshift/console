@@ -31,8 +31,8 @@ export const AFFINITY_CREATE = 'New Affinity';
 export const AFFINITY_EDITING = 'Edit Affinity';
 
 export const AFFINITY_CONDITION_LABELS = {
-  preferredDuringSchedulingIgnoredDuringExecution: 'Preferred',
-  requiredDuringSchedulingIgnoredDuringExecution: 'Required',
+  preferredDuringSchedulingIgnoredDuringExecution: 'Preferred during scheduling',
+  requiredDuringSchedulingIgnoredDuringExecution: 'Required during scheduling',
 };
 
 export const AFFINITY_CONDITIONS = {
