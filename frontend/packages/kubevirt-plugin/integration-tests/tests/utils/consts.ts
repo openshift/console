@@ -79,6 +79,7 @@ export enum TAB {
   Events = 'Events',
   NetworkInterfaces = 'Network Interfaces',
   Yaml = 'YAML',
+  Environment = 'Environment',
 }
 
 export enum VM_ACTION {

@@ -90,6 +90,11 @@ export class KubevirtUIResource extends UIResource {
     await isLoaded();
   }
 
+  async navigateToEnvironment() {
+    await this.navigateToTab(TAB.Environment);
+    await isLoaded();
+  }
+
   async getAttachedDisks(): Promise<StorageResource[]> {
     await this.navigateToTab(TAB.Disks);
     const rows = await kubevirtDetailView.tableRows();

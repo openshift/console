@@ -392,8 +392,8 @@ export type NodeKind = {
 } & K8sResourceCommon;
 
 export type ConfigMapKind = {
-  data: { [key: string]: string };
-  binaryData: { [key: string]: string };
+  data?: { [key: string]: string };
+  binaryData?: { [key: string]: string };
 } & K8sResourceCommon;
 
 export type JobTemplate = {
@@ -914,13 +914,14 @@ export type K8sResourceKindReference = GroupVersionKind | string;
 
 export type SecretKind = {
   data: { [key: string]: string };
-  stringData: { [key: string]: string };
+  stringData?: { [key: string]: string };
   type: string;
 } & K8sResourceCommon;
 
 export type ServiceAccountKind = {
   automountServiceAccountToken?: boolean;
-  secrets: SecretKind[];
+  imagePullSecrets?: { [key: string]: string };
+  secrets?: SecretKind[] | { [key: string]: string };
 } & K8sResourceCommon;
 
 export type ListKind<R extends K8sResourceCommon> = K8sResourceCommon & {

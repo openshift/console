@@ -14,6 +14,7 @@ import {
 } from './consts';
 import { getRandomMacAddress, getResourceObject, resolveStorageDataAttribute } from './utils';
 import { Flavor, OperatingSystem, WorkloadProfile } from './constants/wizard';
+import { ConfigMapKind, SecretKind, ServiceAccountKind } from '@console/internal/module/k8s/types';
 
 export const multusNAD = {
   apiVersion: 'k8s.cni.cncf.io/v1',
@@ -131,6 +132,49 @@ export const cloudInitCustomScriptConfig: CloudInitConfig = {
   useCloudInit: true,
   useCustomScript: true,
   customScript: basicVMConfig.cloudInitScript,
+};
+
+export const getConfigMap = (namespace: string, name: string): ConfigMapKind => {
+  return {
+    apiVersion: 'v1',
+    kind: 'ConfigMap',
+    data: {
+      data1: 'value1',
+      data2: 'value2',
+      data3: 'value3',
+    },
+    metadata: {
+      name,
+      namespace,
+    },
+  };
+};
+
+export const getSecret = (namespace: string, name: string): SecretKind => {
+  return {
+    apiVersion: 'v1',
+    kind: 'Secret',
+    data: {
+      password: 'MWYyZDFlMmU2N2Rm',
+      username: 'YWRtaW4=',
+    },
+    metadata: {
+      name,
+      namespace,
+    },
+    type: 'Opaque',
+  };
+};
+
+export const getServiceAccount = (namespace: string, name: string): ServiceAccountKind => {
+  return {
+    apiVersion: 'v1',
+    kind: 'ServiceAccount',
+    metadata: {
+      name,
+      namespace,
+    },
+  };
 };
 
 function getMetadata(

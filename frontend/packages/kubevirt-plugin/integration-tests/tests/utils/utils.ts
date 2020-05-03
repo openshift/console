@@ -3,6 +3,7 @@ import { execSync } from 'child_process';
 import * as _ from 'lodash';
 import { $, $$, browser, by, ExpectedConditions as until } from 'protractor';
 import { testName, appHost } from '@console/internal-integration-tests/protractor.conf';
+import { safeLoad } from 'js-yaml';
 import {
   isLoaded,
   createYAMLButton,
@@ -15,6 +16,7 @@ import { click } from '@console/shared/src/test-utils/utils';
 import {
   isLoaded as yamlPageIsLoaded,
   saveButton,
+  getEditorContent,
 } from '@console/internal-integration-tests/views/yaml.view';
 import { STORAGE_CLASS, PAGE_LOAD_TIMEOUT_SECS, SEC } from './consts';
 import { NodePortService, Status } from './types';
@@ -51,14 +53,23 @@ export async function createProject(name: string) {
   }
 }
 
-export async function createExampleVMViaYAML() {
+export async function createExampleVMViaYAML(getVMObj?: boolean) {
+  let vm = null;
   await browser.get(`${appHost}/k8s/ns/${testName}/virtualization`);
   await isLoaded();
   await click(createItemButton);
   await click(createYAMLLink);
   await yamlPageIsLoaded();
+  if (getVMObj) {
+    try {
+      vm = safeLoad(await getEditorContent());
+    } catch {
+      return null;
+    }
+  }
   await click(saveButton);
   await browser.wait(until.presenceOf(resourceTitle));
+  return vm;
 }
 
 export async function getInputValue(elem: any) {
