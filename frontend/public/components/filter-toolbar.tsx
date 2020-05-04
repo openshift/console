@@ -78,7 +78,14 @@ const getDropdownItems = (rowFilters: RowFilter[], selectedItems, data, props) =
   });
 
 const FilterToolbar_: React.FC<FilterToolbarProps & RouteComponentProps> = (props) => {
-  const { rowFilters = [], data, hideNameFilter, hideLabelFilter, location } = props;
+  const {
+    rowFilters = [],
+    data,
+    hideNameFilter,
+    hideLabelFilter,
+    location,
+    textFilter = filterTypeMap[FilterType.NAME],
+  } = props;
 
   const [inputText, setInputText] = React.useState('');
   const [filterType, setFilterType] = React.useState(FilterType.NAME);
@@ -114,7 +121,7 @@ const FilterToolbar_: React.FC<FilterToolbarProps & RouteComponentProps> = (prop
     const rowFiltersFromURL: string[] = [];
     const params = new URLSearchParams(location.search);
     const q = params.get('label');
-    const name = params.get('name');
+    const name = params.get(textFilter);
     _.map(filterKeys, (f) => {
       const vals = params.get(f);
       if (vals) {
@@ -127,9 +134,10 @@ const FilterToolbar_: React.FC<FilterToolbarProps & RouteComponentProps> = (prop
 
   /* Logic for Name and Label Filter */
 
-  const applyFilter = (value: string | string[], type: FilterType) => {
-    const filter = type === FilterType.NAME ? value : { all: value };
-    props.reduxIDs.forEach((id) => props.filterList(id, filterTypeMap[type], filter));
+  const applyFilter = (input: string | string[], type: FilterType) => {
+    const filter = type === FilterType.NAME ? textFilter : filterTypeMap[FilterType.LABEL];
+    const value = type === FilterType.NAME ? input : { all: input };
+    props.reduxIDs.forEach((id) => props.filterList(id, filter, value));
   };
 
   const updateLabelFilter = (filterValues: string[]) => {
@@ -144,9 +152,9 @@ const FilterToolbar_: React.FC<FilterToolbarProps & RouteComponentProps> = (prop
 
   const updateNameFilter = (filterValue: string) => {
     if (!_.isEmpty(filterValue)) {
-      setQueryArgument('name', filterValue);
+      setQueryArgument(textFilter, filterValue);
     } else {
-      removeQueryArgument('name');
+      removeQueryArgument(textFilter);
     }
     setInputText(filterValue);
     applyFilter(filterValue, FilterType.NAME);

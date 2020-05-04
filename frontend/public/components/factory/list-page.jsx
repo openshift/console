@@ -399,7 +399,7 @@ export const ListPage = withFallback((props) => {
   ];
 
   // Don't show row filters if props.filters were passed. The content is already filtered and the row filters will have incorrect counts.
-  const rowFilters = _.isEmpty(filters) ? props.rowFilters : null;
+  const rowFilters = _.isEmpty(filters) ? props.rowFilters : undefined;
 
   if (!namespaced && usedNamespace) {
     return <ErrorPage404 />;
