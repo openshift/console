@@ -61,7 +61,9 @@ const ImageStream: React.FC = () => {
   } = state;
 
   React.useEffect(() => {
-    setFieldValue('imageStream.grantAccess', true);
+    if (imageStream.namespace !== BuilderImagesNamespace.Openshift) {
+      setFieldValue('imageStream.grantAccess', true);
+    }
   }, [imageStream.namespace, setFieldValue]);
   const imageStreamTagList = getImageStreamTags(selectedImageStream as K8sResourceKind);
   const isNamespaceSelected = imageStream.namespace !== '' && !accessLoading;

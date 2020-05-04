@@ -34,6 +34,10 @@ interface State {
   title: React.ReactNode;
 }
 
+export interface ResourceDropdownItems {
+  [key: string]: string | React.ReactElement;
+}
+
 interface ResourceDropdownProps {
   id?: string;
   className?: string;
@@ -63,9 +67,10 @@ interface ResourceDropdownProps {
   autoSelect?: boolean;
   resourceFilter?: (resource: K8sResourceKind) => boolean;
   onChange?: (key: string, name?: string | object, isListEmpty?: boolean) => void;
-  onLoad?: (items: { [key: string]: string }) => void;
+  onLoad?: (items: ResourceDropdownItems) => void;
   showBadge?: boolean;
   autocompleteFilter?: (strText: string, item: object) => boolean;
+  appendItems?: ResourceDropdownItems;
 }
 
 class ResourceDropdown extends React.Component<ResourceDropdownProps, State> {
@@ -143,10 +148,11 @@ class ResourceDropdown extends React.Component<ResourceDropdownProps, State> {
       transformLabel,
       allSelectorItem,
       showBadge = false,
+      appendItems,
     }: ResourceDropdownProps,
     updateSelection: boolean,
   ) => {
-    const unsortedList = {};
+    const unsortedList = { ...appendItems };
     _.each(resources, ({ data, kind }) => {
       _.reduce(
         data,

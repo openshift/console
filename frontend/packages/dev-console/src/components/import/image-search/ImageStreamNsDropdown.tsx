@@ -4,7 +4,7 @@ import { k8sGet } from '@console/internal/module/k8s';
 import { RoleBindingModel } from '@console/internal/models';
 import { checkAccess } from '@console/internal/components/utils';
 import { ResourceDropdownField } from '@console/shared';
-import { getProjectResource } from '../../../utils/imagestream-utils';
+import { getProjectResource, BuilderImagesNamespace } from '../../../utils/imagestream-utils';
 import { ImageStreamActions as Action } from '../import-types';
 import { ImageStreamContext } from './ImageStreamContext';
 
@@ -19,28 +19,36 @@ const ImageStreamNsDropdown: React.FC = () => {
       setFieldValue('isi', initialValues.isi);
       dispatch({ type: Action.setLoading, value: true });
       dispatch({ type: Action.setAccessLoading, value: true });
-      promiseArr.push(
-        checkAccess({
-          group: RoleBindingModel.apiGroup,
-          resource: RoleBindingModel.plural,
-          verb: 'create',
-          name: 'system:image-puller',
-          namespace: selectedProject,
-        })
-          .then((resp) => dispatch({ type: Action.setHasCreateAccess, value: resp.status.allowed }))
-          .catch(() => dispatch({ type: Action.setHasAccessToPullImage, value: false })),
-      );
-      promiseArr.push(
-        k8sGet(RoleBindingModel, 'system:image-puller', selectedProject)
-          .then(() => {
-            dispatch({
-              type: Action.setHasAccessToPullImage,
-              value: true,
-            });
-            setFieldValue('imageStream.grantAccess', false);
+      if (selectedProject === BuilderImagesNamespace.Openshift) {
+        dispatch({ type: Action.setHasCreateAccess, value: true });
+        dispatch({ type: Action.setHasAccessToPullImage, value: true });
+        setFieldValue('imageStream.grantAccess', false);
+      } else {
+        promiseArr.push(
+          checkAccess({
+            group: RoleBindingModel.apiGroup,
+            resource: RoleBindingModel.plural,
+            verb: 'create',
+            name: 'system:image-puller',
+            namespace: selectedProject,
           })
-          .catch(() => dispatch({ type: Action.setHasAccessToPullImage, value: false })),
-      );
+            .then((resp) =>
+              dispatch({ type: Action.setHasCreateAccess, value: resp.status.allowed }),
+            )
+            .catch(() => dispatch({ type: Action.setHasAccessToPullImage, value: false })),
+        );
+        promiseArr.push(
+          k8sGet(RoleBindingModel, 'system:image-puller', selectedProject)
+            .then(() => {
+              dispatch({
+                type: Action.setHasAccessToPullImage,
+                value: true,
+              });
+              setFieldValue('imageStream.grantAccess', false);
+            })
+            .catch(() => dispatch({ type: Action.setHasAccessToPullImage, value: false })),
+        );
+      }
       return Promise.all(promiseArr).then(() =>
         dispatch({ type: Action.setAccessLoading, value: false }),
       );
@@ -80,6 +88,7 @@ const ImageStreamNsDropdown: React.FC = () => {
       resources={getProjectResource()}
       dataSelector={['metadata', 'name']}
       onChange={onDropdownChange}
+      appendItems={{ openshift: BuilderImagesNamespace.Openshift }}
     />
   );
 };
