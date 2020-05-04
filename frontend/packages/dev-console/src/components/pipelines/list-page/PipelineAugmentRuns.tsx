@@ -22,6 +22,7 @@ export const filters = [
       { id: ListFilterId.Running, title: ListFilterLabels[ListFilterId.Running] },
       { id: ListFilterId.Failed, title: ListFilterLabels[ListFilterId.Failed] },
       { id: ListFilterId.Cancelled, title: ListFilterLabels[ListFilterId.Cancelled] },
+      { id: ListFilterId.Other, title: ListFilterLabels[ListFilterId.Other] },
     ],
     filter: pipelineStatusFilter,
   },
