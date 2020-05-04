@@ -268,11 +268,19 @@ export const WrappedVirtualMachinesPage: React.FC<VirtualMachinesPageProps> = (p
     }
 
     const vmisLookup = createLookup<VMIKind>(vmis, getBasicID);
+
+    const uniqueVMImportsByTargetName = _.sortedUniqBy(
+      [...(loadedVMImports || [])].sort((a, b) =>
+        getCreationTimestamp(a) > getCreationTimestamp(b) ? -1 : 1,
+      ),
+      (vmImport) => new VMImportWrappper(vmImport).getResolvedVMTargetName(),
+    );
+
     const virtualMachines = _.unionBy(
       // order of arrays designates the priority
       loadedVMs,
       loadedVMIs,
-      loadedVMImports,
+      uniqueVMImportsByTargetName,
       (entity: VMKind | VMIKind | VMImportKind) =>
         entity.kind === VirtualMachineImportModel.kind
           ? `${getNamespace(entity)}-${new VMImportWrappper(entity).getResolvedVMTargetName()}`
