@@ -1,8 +1,8 @@
+import { last } from 'lodash';
 import { $, browser, ExpectedConditions as until } from 'protractor';
+import { click } from '@console/shared/src/test-utils/utils';
 import { PAGE_LOAD_TIMEOUT_SECS } from '../tests/utils/consts';
 import { Status } from '../tests/utils/types';
-import { click } from '@console/shared/src/test-utils/utils';
-import { last } from 'lodash';
 
 export const virtualizationTitle = $('[data-test-id="cluster-settings-page-heading"]');
 export const vmLinkByName = (vmName) => $(`[data-test-id="${vmName}"]`);
@@ -27,7 +27,7 @@ export const filterCount = async (status: Status): Promise<number> => {
   }
   await click(filterToggle);
   const filterText = await filterItem(status);
-  const count = last(filterText.split(''));
+  const count = last(filterText.split('\n'));
   await click(filterToggle);
   return Number(count);
 };

@@ -36,6 +36,8 @@ export const JASMINE_EXTENDED_TIMEOUT_INTERVAL = 500 * SEC;
 export const V2V_INSTANCE_CONNECTION_TIMEOUT = 30 * SEC;
 export const V2V_VM_IMPORT_TIMEOUT = 3600 * SEC;
 
+export const VIRTUALIZATION_TITLE = 'Virtualization';
+
 // Wizard strings
 export const IMPORT_WIZARD_CONN_TO_NEW_INSTANCE = 'Connect to New Instance';
 export const NOT_RECOMMENDED_BUS_TYPE_WARN = 'Not recommended bus type';
@@ -114,7 +116,13 @@ export enum VM_STATUS {
 }
 
 export enum POD_STATUS {
+  Running = 'Running',
   Terminating = 'Terminating',
+  Pending = 'Pending',
+  CrashLoopBackOff = 'CrashLoopBackOff',
+  Completed = 'Completed',
+  Failed = 'Failed',
+  Unknown = 'Unknown',
 }
 
 export enum DISK_SOURCE {

@@ -332,7 +332,6 @@ export function getVMManifest(
     namespace,
     name,
     cloudinit,
-    ['k8s.v1.cni.cncf.io/kubeMacPool'],
   );
 
   const vmResource = {
