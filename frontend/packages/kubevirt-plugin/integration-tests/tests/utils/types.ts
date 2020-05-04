@@ -125,7 +125,7 @@ export type Status = VM_STATUS | POD_STATUS;
 
 // Not an actual type, since VM Templates are just templates
 // Used as a convenience type for VirtualMachineTemplate class
-// and distinguishing it from VirtualMachine/VirtualMachineTemplates
+// and distinguishing it from VirtualMachine/VirtualMachineInstance
 // and for UI navigation purposes
 export const VirtualMachineTemplateModel: K8sKind = {
   label: 'Virtual Machine Template',

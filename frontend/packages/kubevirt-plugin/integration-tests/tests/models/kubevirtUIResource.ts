@@ -53,7 +53,7 @@ export class KubevirtUIResource extends UIResource {
         await isLoaded();
       }
     }
-    if (this.kind.plural === VirtualMachineTemplateModel.plural) {
+    if (this.model === VirtualMachineTemplateModel) {
       await click(resourceHorizontalTab(VirtualMachineTemplateModel));
       await isLoaded();
     }
@@ -172,14 +172,9 @@ export class KubevirtUIResource extends UIResource {
   }
 
   async modalEditDedicatedResources() {
-    // console.log('Opening modal');
-    // await browser.sleep(2000);
     await click(vmDetailDedicatedResourcesEditButton(this.namespace, this.name));
-    // console.log('Opened modall, waiting for checkbox');
-    // await browser.sleep(2000);
     await browser.wait(until.presenceOf(editDedicatedResourcesView.guaranteedPolicyCheckbox));
     await isLoaded();
-    // console.log('waiting done');
   }
 
   async modalEditStatus() {

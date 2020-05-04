@@ -13,8 +13,6 @@ metadata:
     kubevirt.io/storage-observed-api-version: v1alpha3
     name.os.template.kubevirt.io/win10: Microsoft Windows 10
   name: ${name}
-  finalizers:
-    - k8s.v1.cni.cncf.io/kubeMacPool
   labels:
     app: fake-windows
     flavor.template.kubevirt.io/medium: 'true'

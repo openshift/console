@@ -8,22 +8,22 @@ const noConfirmDialogActions: VMI_ACTION[] = [];
 
 export class VirtualMachineInstance extends BaseVirtualMachine {
   constructor(config) {
-    super({ ...config, kind: VirtualMachineInstanceModel.plural });
+    super({ ...config, model: VirtualMachineInstanceModel });
   }
 
-  async action(action: VMI_ACTION, waitForAction?: boolean, timeout?: number) {
+  async action(action: VMI_ACTION, waitForAction = true, timeout?: number) {
     await this.navigateToTab(TAB.Details);
 
     await detailViewAction(action, !noConfirmDialogActions.includes(action));
-    if (waitForAction !== false) {
+    if (waitForAction) {
       await this.waitForActionFinished(action, timeout);
     }
   }
 
-  async listViewAction(action: VMI_ACTION, waitForAction?: boolean, timeout?: number) {
+  async listViewAction(action: VMI_ACTION, waitForAction = true, timeout?: number) {
     await this.navigateToListView();
     await listViewAction(this.name)(action, !noConfirmDialogActions.includes(action));
-    if (waitForAction !== false) {
+    if (waitForAction) {
       await this.waitForActionFinished(action, timeout);
     }
   }

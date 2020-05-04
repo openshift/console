@@ -10,7 +10,7 @@ import { KubevirtUIResource } from './kubevirtUIResource';
 
 export class VirtualMachineTemplate extends KubevirtUIResource {
   constructor(templateConfig) {
-    super({ ...templateConfig, kind: VirtualMachineTemplateModel });
+    super({ ...templateConfig, model: VirtualMachineTemplateModel });
   }
 
   async create({
@@ -28,7 +28,7 @@ export class VirtualMachineTemplate extends KubevirtUIResource {
 
     // Basic Settings for VM template
     const wizard = new Wizard();
-    await wizard.openWizard(this.kind);
+    await wizard.openWizard(this.model);
 
     await wizard.selectProvisionSource(provisionSource);
     await wizard.selectOperatingSystem(operatingSystem);
@@ -85,15 +85,5 @@ export class VirtualMachineTemplate extends KubevirtUIResource {
     await this.navigateToListView();
     await filterForName(name);
     await resourceRowsPresent();
-  }
-
-  asResource() {
-    return {
-      kind: 'template',
-      metadata: {
-        namespace: this.namespace,
-        name: this.name,
-      },
-    };
   }
 }

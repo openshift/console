@@ -18,28 +18,28 @@ import { ImportWizard } from './importWizard';
 import { VirtualMachineModel } from '../../../src/models/index';
 import { BaseVirtualMachine } from './baseVirtualMachine';
 
-// TODO: Remove VM_ACTION.Delete action from the list when BZ 1827640 if resolved
+// TODO: Remove VM_ACTION.Delete action from the list when BZ 1827640 is resolved
 const noConfirmDialogActions: VM_ACTION[] = [VM_ACTION.Start, VM_ACTION.Clone, VM_ACTION.Delete];
 
 export class VirtualMachine extends BaseVirtualMachine {
   constructor(config) {
-    super({ ...config, kind: VirtualMachineModel });
+    super({ ...config, model: VirtualMachineModel });
   }
 
-  async action(action: VM_ACTION, waitForAction?: boolean, timeout?: number) {
+  async action(action: VM_ACTION, waitForAction = true, timeout?: number) {
     await this.navigateToTab(TAB.Details);
 
     await detailViewAction(action, !noConfirmDialogActions.includes(action));
-    if (waitForAction !== false) {
+    if (waitForAction) {
       await this.waitForActionFinished(action, timeout);
     }
   }
 
-  async listViewAction(action: VM_ACTION, waitForAction?: boolean, timeout?: number) {
+  async listViewAction(action: VM_ACTION, waitForAction = true, timeout?: number) {
     await this.navigateToListView();
 
     await listViewAction(this.name)(action, !noConfirmDialogActions.includes(action));
-    if (waitForAction !== false) {
+    if (waitForAction) {
       await this.waitForActionFinished(action, timeout);
     }
   }
@@ -69,7 +69,7 @@ export class VirtualMachine extends BaseVirtualMachine {
   }: VMConfig) {
     const wizard = new Wizard();
     await this.navigateToListView();
-    await wizard.openWizard(this.kind);
+    await wizard.openWizard(this.model);
     if (template !== undefined) {
       await wizard.selectTemplate(template);
     } else {
@@ -137,7 +137,7 @@ export class VirtualMachine extends BaseVirtualMachine {
     await wizard.confirmAndCreate();
     await wizard.waitForCreation();
     await this.navigateToTab(TAB.Details);
-    if (startOnCreation === true) {
+    if (startOnCreation) {
       // If startOnCreation is true, wait for VM to boot up
       await this.waitForStatus(VM_STATUS.Running, VM_BOOTUP_TIMEOUT_SECS);
     } else {
