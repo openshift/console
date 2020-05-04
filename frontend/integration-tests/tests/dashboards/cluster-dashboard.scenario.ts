@@ -20,21 +20,26 @@ describe('Cluster Dashboard', () => {
   describe('Details Card', () => {
     it('has all fields populated', async () => {
       expect(clusterDashboardView.detailsCard.isDisplayed()).toBe(true);
+      const expectedItems = [
+        'Cluster API Address',
+        'Cluster ID',
+        'Provider',
+        'OpenShift Version',
+        'Update Channel',
+      ];
       const items = clusterDashboardView.detailsCardList.$$('dt');
       const values = clusterDashboardView.detailsCardList.$$('dd');
-
-      expect(items.count()).toBe(5);
-      expect(values.count()).toBe(5);
-      expect(items.get(0).getText()).toEqual('Cluster API Address');
-      expect(items.get(1).getText()).toEqual('Cluster ID');
-      expect(items.get(2).getText()).toEqual('Provider');
-      expect(items.get(3).getText()).toEqual('OpenShift Version');
-      expect(items.get(4).getText()).toEqual('Update Channel');
-      for (let i = 0; i < 5; i++) {
+      expect(items.count()).toBe(expectedItems.length);
+      expect(values.count()).toBe(expectedItems.length);
+      expectedItems.forEach((label: string, i: number) => {
+        expect(items.get(i).getText()).toBe(label);
         const text = values.get(i).getText();
         expect(text.length).not.toBe(0);
-        expect(text).not.toBe('Not available');
-      }
+        // `Update Channel` is expected to be `Not available` in CI.
+        if (label !== 'Update Channel') {
+          expect(text).not.toBe('Not available');
+        }
+      });
     });
     it('has View settings link', () => {
       const link = clusterDashboardView.detailsCard.$('[href="/settings/cluster/"]');
