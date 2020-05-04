@@ -19,9 +19,10 @@ type Config struct {
 
 // ServingInfo holds configuration for serving HTTP.
 type ServingInfo struct {
-	BindAddress string `yaml:"bindAddress,omitempty"`
-	CertFile    string `yaml:"certFile,omitempty"`
-	KeyFile     string `yaml:"keyFile,omitempty"`
+	BindAddress  string `yaml:"bindAddress,omitempty"`
+	CertFile     string `yaml:"certFile,omitempty"`
+	KeyFile      string `yaml:"keyFile,omitempty"`
+	RedirectPort int    `yaml:"redirectPort,omitempty"`
 
 	// These fields are defined in `HTTPServingInfo`, but are not supported for console. Fail if any are specified.
 	// https://github.com/openshift/api/blob/0cb4131a7636e1ada6b2769edc9118f0fe6844c8/config/v1/types.go#L7-L38
