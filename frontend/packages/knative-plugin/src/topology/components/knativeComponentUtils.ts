@@ -17,7 +17,7 @@ import {
   EdgeComponentProps,
   EditableDragOperationType,
 } from '@console/dev-console/src/components/topology';
-import { TYPE_EVENT_SOURCE_LINK } from '../const';
+import { TYPE_EVENT_SOURCE_LINK, TYPE_KNATIVE_SERVICE } from '../const';
 import { createSinkConnection } from '../knative-topology-utils';
 
 export const MOVE_EV_SRC_CONNECTOR_OPERATION = 'moveeventsourceconnector';
@@ -30,6 +30,7 @@ export const nodesEdgeIsDragging = (monitor, props) =>
 
 export const canDropEventSourceSinkOnNode = (operation: string, edge: Edge, node: Node): boolean =>
   edge.getSource() !== node &&
+  node.getType() === TYPE_KNATIVE_SERVICE &&
   operation === MOVE_EV_SRC_CONNECTOR_OPERATION &&
   !node.getTargetEdges().find((e) => e.getSource() === edge.getSource());
 
