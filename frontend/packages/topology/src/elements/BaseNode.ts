@@ -33,6 +33,9 @@ export default class BaseNode<E extends NodeModel = NodeModel, D = any> extends 
   @observable.ref
   private dimensions = new Dimensions();
 
+  @observable
+  private dimensionsInitialized = false;
+
   @observable.ref
   private position = new Point();
 
@@ -148,6 +151,21 @@ export default class BaseNode<E extends NodeModel = NodeModel, D = any> extends 
 
   setDimensions(dimensions: Dimensions): void {
     this.dimensions = dimensions;
+    this.dimensionsInitialized = true;
+  }
+
+  isDimensionsInitialized(): boolean {
+    if (!this.dimensionsInitialized && this.isGroup()) {
+      const nodes = this.getChildren().filter(isNode);
+      if (nodes.length === 0) {
+        return this.dimensionsInitialized;
+      }
+      const result = nodes.every((c) => c.isDimensionsInitialized());
+      if (result) {
+        this.dimensionsInitialized = true;
+      }
+    }
+    return this.dimensionsInitialized;
   }
 
   getAnchor(end?: AnchorEnd, type?: string): Anchor {
@@ -216,6 +234,10 @@ export default class BaseNode<E extends NodeModel = NodeModel, D = any> extends 
 
   getTargetEdges(): Edge[] {
     return this.targetEdges;
+  }
+
+  isVisible(): boolean {
+    return super.isVisible() && this.isDimensionsInitialized();
   }
 
   setModel(model: E): void {
