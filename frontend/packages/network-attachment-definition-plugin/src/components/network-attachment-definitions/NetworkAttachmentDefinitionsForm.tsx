@@ -29,7 +29,6 @@ import NetworkTypeOptions from './NetworkTypeOptions';
 const buildConfig = (name, networkType, typeParamsData): NetworkAttachmentDefinitionConfig => {
   const config: NetworkAttachmentDefinitionConfig = {
     name,
-    type: networkType,
     cniVersion: '0.3.1',
   };
 
@@ -53,6 +52,7 @@ const buildConfig = (name, networkType, typeParamsData): NetworkAttachmentDefini
     ];
   } else if (networkType === 'sriov') {
     config.ipam = ipam;
+    config.type = networkType;
   }
 
   return config;
