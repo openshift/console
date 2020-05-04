@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { getFieldTitle } from '../utils/renderable-field-utils';
 import { iGet } from '../../../utils/immutable';
+import { prefixedID } from '../../../utils';
 import { FormFieldType } from './form-field';
 import { getReviewValue } from '../tabs/review-tab/utils';
 
@@ -17,6 +18,7 @@ export const FormFieldReviewRow: React.FC<FormFieldReviewRowProps> = ({
   field,
   value = undefined,
 }) => {
+  const asId = prefixedID.bind(null, 'wizard-review');
   const fieldKey = iGet(field, 'key');
   const fieldTitle = getFieldTitle(fieldKey);
   const reviewValue = value || getReviewValue(field, fieldType) || (
@@ -26,7 +28,7 @@ export const FormFieldReviewRow: React.FC<FormFieldReviewRowProps> = ({
   return (
     <>
       <dt>{fieldTitle}</dt>
-      <dd>{reviewValue}</dd>
+      <dd id={asId(fieldKey.toLowerCase())}>{reviewValue}</dd>
     </>
   );
 };
