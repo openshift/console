@@ -21,8 +21,7 @@ import {
 } from '@console/shared/src/test-utils/utils';
 import * as cloneDialogView from '../views/dialogs/cloneVirtualMachineDialog.view';
 import { getVolumes, getDataVolumeTemplates } from '../../src/selectors/vm/selectors';
-import { getLabels } from '../../src/selectors/selectors';
-import { getResourceObject, getRandStr, createProject } from './utils/utils';
+import { getRandStr, createProject } from './utils/utils';
 import {
   CLONE_VM_TIMEOUT_SECS,
   VM_BOOTUP_TIMEOUT_SECS,
@@ -225,7 +224,10 @@ describe('Test clone VM.', () => {
 
     it('ID(CNV-1739) Cloned VM has vm.kubevirt.io/name label.', () => {
       expect(
-        _.has(getLabels(getResourceObject(vm.name, vm.namespace, 'vmi')), 'vm.kubevirt.io/name'),
+        _.has(
+          _.get(clonedVM.getResource(), 'spec.template.metadata.labels'),
+          'vm.kubevirt.io/name',
+        ),
       ).toBe(true);
     });
   });
@@ -263,12 +265,7 @@ describe('Test clone VM.', () => {
             await resourceRowsPresent();
 
             // Verify cloned disk dataVolumeTemplate is present in cloned VM manifest
-            const clonedVMJSON = getResourceObject(
-              clonedVM.name,
-              clonedVM.namespace,
-              clonedVM.kind,
-            );
-            const clonedDataVolumeTemplate = getDataVolumeTemplates(clonedVMJSON);
+            const clonedDataVolumeTemplate = getDataVolumeTemplates(clonedVM.getResource());
             const result = _.find(
               clonedDataVolumeTemplate,
               (o) => o.metadata.name === clonedVMDiskName,
@@ -317,12 +314,7 @@ describe('Test clone VM.', () => {
             });
 
             // Verify configuration of cloudinitdisk is the same
-            const clonedVMJSON = getResourceObject(
-              clonedVM.name,
-              clonedVM.namespace,
-              clonedVM.kind,
-            );
-            const clonedVMVolumes = getVolumes(clonedVMJSON);
+            const clonedVMVolumes = getVolumes(clonedVM.getResource());
             const result = _.find(clonedVMVolumes, (o) => o.name === 'cloudinitdisk');
             expect(result).toBeDefined();
             expect(_.get(result, 'cloudInitNoCloud.userData', '')).toEqual(

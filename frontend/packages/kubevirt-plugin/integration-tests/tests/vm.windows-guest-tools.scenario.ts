@@ -7,8 +7,7 @@ import { VM_BOOTUP_TIMEOUT_SECS } from './utils/consts';
 import { getProvisionConfigs, vmConfig } from './vm.wizard.configs';
 import { ProvisionConfigName } from './utils/constants/wizard';
 import { windowsVMConfig } from './utils/mocks';
-import { getResourceObject } from './utils/utils';
-import { windowsGuestToolsCDElement } from '../views/editCDView';
+import { windowsGuestToolsCDElement } from '../views/dialogs/editCDView';
 
 describe('Kubevirt Windows Guest tools', () => {
   const leakedResources = new Set<string>();
@@ -33,7 +32,7 @@ describe('Kubevirt Windows Guest tools', () => {
       const vm = new VirtualMachine(windowsConfig);
 
       const isWindowsCDMounted = () =>
-        !!getVolumes(getResourceObject(vm.name, vm.namespace, vm.kind)).some((volume) =>
+        !!getVolumes(vm.getResource()).some((volume) =>
           isWinToolsImage(getVolumeContainerImage(volume)),
         );
 

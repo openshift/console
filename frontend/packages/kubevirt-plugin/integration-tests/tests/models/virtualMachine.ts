@@ -1,161 +1,46 @@
 /* eslint-disable no-await-in-loop, no-console */
-import { browser, ExpectedConditions as until } from 'protractor';
-import { isLoaded, resourceTitle } from '@console/internal-integration-tests/views/crud.view';
-import {
-  selectDropdownOption,
-  waitForStringNotInElement,
-  resolveTimeout,
-} from '@console/shared/src/test-utils/utils';
+import { browser } from 'protractor';
+import { waitForStringNotInElement } from '@console/shared/src/test-utils/utils';
 import * as vmView from '../../views/virtualMachine.view';
 import { VMConfig, VMImportConfig } from '../utils/types';
 import {
-  PAGE_LOAD_TIMEOUT_SECS,
   VM_BOOTUP_TIMEOUT_SECS,
   VM_MIGRATION_TIMEOUT_SECS,
   VM_ACTION,
   TAB,
   VM_IMPORT_TIMEOUT_SECS,
-  UNEXPECTED_ACTION_ERROR,
-  VM_ACTIONS_TIMEOUT_SECS,
-  VM_STOP_TIMEOUT_SECS,
   VM_STATUS,
-  VMI_ACTION,
 } from '../utils/consts';
 import { detailViewAction, listViewAction } from '../../views/vm.actions.view';
-import { nameInput as cloneDialogNameInput } from '../../views/dialogs/cloneVirtualMachineDialog.view';
 import { ProvisionConfigName } from '../utils/constants/wizard';
 import { Wizard } from './wizard';
-import { appHost, testName } from '@console/internal-integration-tests/protractor.conf';
-import { KubevirtDetailView } from './kubevirtDetailView';
 import { ImportWizard } from './importWizard';
 import { VirtualMachineModel } from '../../../src/models/index';
+import { BaseVirtualMachine } from './baseVirtualMachine';
 
-const noConfirmDialogActions: (VM_ACTION | VMI_ACTION)[] = [VM_ACTION.Start, VM_ACTION.Clone];
+// TODO: Remove VM_ACTION.Delete action from the list when BZ 1827640 if resolved
+const noConfirmDialogActions: VM_ACTION[] = [VM_ACTION.Start, VM_ACTION.Clone, VM_ACTION.Delete];
 
-export class VirtualMachine extends KubevirtDetailView {
-  constructor(config, kind?: 'virtualmachines' | 'virtualmachineinstances') {
-    super({ ...config, kind: kind || 'virtualmachines' });
+export class VirtualMachine extends BaseVirtualMachine {
+  constructor(config) {
+    super({ ...config, kind: VirtualMachineModel });
   }
 
-  async getStatus(): Promise<string> {
-    return vmView.vmDetailStatus(this.namespace, this.name).getText();
-  }
-
-  async getNode(): Promise<string> {
-    return vmView.vmDetailNode(this.namespace, this.name).getText();
-  }
-
-  async getBootDevices(): Promise<string[]> {
-    return vmView.vmDetailBootOrder(this.namespace, this.name).getText();
-  }
-
-  async action(action: VM_ACTION | VMI_ACTION, waitForAction?: boolean, timeout?: number) {
+  async action(action: VM_ACTION, waitForAction?: boolean, timeout?: number) {
     await this.navigateToTab(TAB.Details);
 
-    const confirmDialog = !noConfirmDialogActions.includes(action);
-
-    await detailViewAction(action, confirmDialog);
+    await detailViewAction(action, !noConfirmDialogActions.includes(action));
     if (waitForAction !== false) {
       await this.waitForActionFinished(action, timeout);
     }
   }
 
-  async navigateToListView() {
-    const vmsListUrl = (namespace) =>
-      `${appHost}/k8s/${namespace === 'all-namespaces' ? '' : 'ns/'}${namespace}/virtualmachines`;
-    const currentUrl = await browser.getCurrentUrl();
-    if (![vmsListUrl(testName), vmsListUrl('all-namespaces')].includes(currentUrl)) {
-      await browser.get(vmsListUrl(this.namespace));
-      await isLoaded();
-    }
-  }
-
-  async listViewAction(action: VM_ACTION | VMI_ACTION, waitForAction?: boolean, timeout?: number) {
+  async listViewAction(action: VM_ACTION, waitForAction?: boolean, timeout?: number) {
     await this.navigateToListView();
 
-    const confirmDialog = !noConfirmDialogActions.includes(action);
-    await listViewAction(this.name)(action, confirmDialog);
+    await listViewAction(this.name)(action, !noConfirmDialogActions.includes(action));
     if (waitForAction !== false) {
       await this.waitForActionFinished(action, timeout);
-    }
-  }
-
-  async waitForStatus(status: string, timeout?: number) {
-    await this.navigateToTab(TAB.Details);
-    await browser.wait(
-      until.textToBePresentInElement(vmView.vmDetailStatus(this.namespace, this.name), status),
-      resolveTimeout(timeout, VM_BOOTUP_TIMEOUT_SECS),
-    );
-  }
-
-  async waitForActionFinished(action: string, timeout?: number) {
-    await this.navigateToTab(TAB.Details);
-    switch (action) {
-      case VM_ACTION.Start:
-        await this.waitForStatus(
-          VM_STATUS.Running,
-          resolveTimeout(timeout, VM_BOOTUP_TIMEOUT_SECS),
-        );
-        break;
-      case VM_ACTION.Restart:
-        await browser.wait(
-          until.or(
-            until.textToBePresentInElement(
-              vmView.vmDetailStatus(this.namespace, this.name),
-              VM_STATUS.Error,
-            ),
-            until.textToBePresentInElement(
-              vmView.vmDetailStatus(this.namespace, this.name),
-              VM_STATUS.Starting,
-            ),
-          ),
-          resolveTimeout(timeout, VM_BOOTUP_TIMEOUT_SECS),
-        );
-        await this.waitForStatus(
-          VM_STATUS.Running,
-          resolveTimeout(timeout, VM_BOOTUP_TIMEOUT_SECS),
-        );
-        break;
-      case VM_ACTION.Stop:
-        await this.waitForStatus(VM_STATUS.Off, resolveTimeout(timeout, VM_STOP_TIMEOUT_SECS));
-        break;
-      case VM_ACTION.Clone:
-        await browser.wait(
-          until.visibilityOf(cloneDialogNameInput),
-          resolveTimeout(timeout, PAGE_LOAD_TIMEOUT_SECS),
-        );
-        break;
-      case VM_ACTION.Migrate:
-        await this.waitForStatus(
-          VM_STATUS.Migrating,
-          resolveTimeout(timeout, PAGE_LOAD_TIMEOUT_SECS),
-        );
-        await this.waitForStatus(
-          VM_STATUS.Running,
-          resolveTimeout(timeout, VM_ACTIONS_TIMEOUT_SECS),
-        );
-        break;
-      case VM_ACTION.Cancel:
-        await this.waitForStatus(
-          VM_STATUS.Running,
-          resolveTimeout(timeout, PAGE_LOAD_TIMEOUT_SECS),
-        );
-        break;
-      case VM_ACTION.Delete:
-        // wait for redirect
-        await browser.wait(
-          until.textToBePresentInElement(resourceTitle, 'Virtual Machines'),
-          resolveTimeout(timeout, PAGE_LOAD_TIMEOUT_SECS),
-        );
-        break;
-      case VM_ACTION.Unpause:
-        await this.waitForStatus(
-          VM_STATUS.Running,
-          resolveTimeout(timeout, VM_ACTIONS_TIMEOUT_SECS),
-        );
-        break;
-      default:
-        throw Error(UNEXPECTED_ACTION_ERROR);
     }
   }
 
@@ -165,21 +50,6 @@ export class VirtualMachine extends KubevirtDetailView {
       waitForStringNotInElement(vmView.vmDetailNode(this.namespace, this.name), fromNode),
       timeout,
     );
-  }
-
-  async selectConsole(type: string) {
-    await selectDropdownOption(vmView.consoleSelectorDropdownId, type);
-    await isLoaded();
-  }
-
-  async getConsoleVmIpAddress(): Promise<string> {
-    await browser.wait(until.presenceOf(vmView.rdpIpAddress), PAGE_LOAD_TIMEOUT_SECS);
-    return vmView.rdpIpAddress.getText();
-  }
-
-  async getConsoleRdpPort(): Promise<string> {
-    await browser.wait(until.presenceOf(vmView.rdpPort), PAGE_LOAD_TIMEOUT_SECS);
-    return vmView.rdpPort.getText();
   }
 
   async create({
@@ -199,7 +69,7 @@ export class VirtualMachine extends KubevirtDetailView {
   }: VMConfig) {
     const wizard = new Wizard();
     await this.navigateToListView();
-    await wizard.openWizard(VirtualMachineModel.labelPlural);
+    await wizard.openWizard(this.kind);
     if (template !== undefined) {
       await wizard.selectTemplate(template);
     } else {
@@ -210,9 +80,6 @@ export class VirtualMachine extends KubevirtDetailView {
     await wizard.selectFlavor(flavorConfig);
     await wizard.fillName(name);
     await wizard.fillDescription(description);
-    if (startOnCreation) {
-      await wizard.startOnCreation();
-    }
     await wizard.next();
 
     // Networking
@@ -264,6 +131,9 @@ export class VirtualMachine extends KubevirtDetailView {
     await wizard.next();
 
     // Review page
+    if (startOnCreation) {
+      await wizard.startOnCreation();
+    }
     await wizard.confirmAndCreate();
     await wizard.waitForCreation();
     await this.navigateToTab(TAB.Details);

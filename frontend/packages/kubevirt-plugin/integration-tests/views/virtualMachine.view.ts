@@ -32,8 +32,7 @@ export const vmDetailNode = (namespace, vmName) => $(vmDetailItemId(namespace, v
 export const vmDetailCd = (namespace, vmName) => $(vmDetailItemId(namespace, vmName, 'cdrom'));
 export const vmDetailCdEditButton = (namespace, vmName) =>
   $(vmDetailItemId(namespace, vmName, 'cdrom-edit'));
-export const vmDetailFlavor = (namespace, vmName) =>
-  $(vmDetailButtonItemId(namespace, vmName, 'flavor'));
+export const vmDetailFlavor = (namespace, vmName) => $(vmDetailItemId(namespace, vmName, 'flavor'));
 export const vmDetailFlavorEditButton = (namespace, vmName) =>
   $(vmDetailItemId(namespace, vmName, 'flavor-edit'));
 export const vmDetailFlavorDropdownId = (namespace, vmName) =>

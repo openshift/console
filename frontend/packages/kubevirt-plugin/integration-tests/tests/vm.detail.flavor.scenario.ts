@@ -1,4 +1,3 @@
-import { browser, ExpectedConditions as until } from 'protractor';
 import { testName } from '@console/internal-integration-tests/protractor.conf';
 import {
   withResource,
@@ -10,9 +9,10 @@ import * as virtualMachineView from '../views/virtualMachine.view';
 import { VM_CREATE_AND_EDIT_TIMEOUT_SECS } from './utils/consts';
 import { VirtualMachine } from './models/virtualMachine';
 import { vmConfig, getProvisionConfigs } from './vm.wizard.configs';
-import * as editFlavorView from './models/editFlavorView';
+import * as editFlavorView from '../views/dialogs/editFlavorView';
 import { selectOptionByText, getSelectedOptionText } from './utils/utils';
 import { ProvisionConfigName } from './utils/constants/wizard';
+import { getCPU, getMemory } from '../../src/selectors/vm/selectors';
 
 describe('KubeVirt VM detail - edit flavor', () => {
   const leakedResources = new Set<string>();
@@ -39,12 +39,6 @@ describe('KubeVirt VM detail - edit flavor', () => {
       await withResource(leakedResources, vm.asResource(), async () => {
         await vm.create(vm1Config);
         await vm.navigateToDetail();
-        await browser.wait(
-          until.textToBePresentInElement(
-            virtualMachineView.vmDetailFlavor(vm.namespace, vm.name),
-            'Tiny: 1 vCPU, 1 GiB Memory',
-          ),
-        );
         await vm.modalEditFlavor();
         expect(await getSelectedOptionText(editFlavorView.flavorDropdown)).toEqual('Tiny');
         await selectOptionByText(editFlavorView.flavorDropdown, 'Custom');
@@ -52,13 +46,8 @@ describe('KubeVirt VM detail - edit flavor', () => {
         await fillInput(editFlavorView.memoryInput(), '3');
         await click(editFlavorView.saveButton());
 
-        await browser.wait(
-          until.textToBePresentInElement(
-            virtualMachineView.vmDetailFlavor(vm.namespace, vm.name),
-            'Custom: 2 vCPUs, 3 GiB Memory',
-          ),
-        );
-
+        expect(getCPU(vm.getResource()).cores).toEqual(2);
+        expect(getMemory(vm.getResource())).toEqual('3Gi');
         expect(
           await virtualMachineView.vmDetailLabelValue('flavor.template.kubevirt.io/Custom'),
         ).toBe('true');

@@ -7,7 +7,7 @@ import {
   deleteResource,
   click,
 } from '@console/shared/src/test-utils/utils';
-import * as editCdView from '../views/editCDView';
+import * as editCdView from '../views/dialogs/editCDView';
 import * as virtualMachineView from '../views/virtualMachine.view';
 import { VM_CREATE_AND_EDIT_TIMEOUT_SECS, STORAGE_CLASS, NOT_AVAILABLE } from './utils/consts';
 import { selectOptionByOptionValue, getRandStr } from './utils/utils';

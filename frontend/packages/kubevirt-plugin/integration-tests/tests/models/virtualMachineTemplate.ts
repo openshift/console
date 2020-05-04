@@ -3,14 +3,14 @@ import {
   filterForName,
   resourceRowsPresent,
 } from '@console/internal-integration-tests/views/crud.view';
-import { VMTemplateConfig } from '../utils/types';
+import { VMTemplateConfig, VirtualMachineTemplateModel } from '../utils/types';
 import { ProvisionConfigName } from '../utils/constants/wizard';
 import { Wizard } from './wizard';
-import { KubevirtDetailView } from './kubevirtDetailView';
+import { KubevirtUIResource } from './kubevirtUIResource';
 
-export class VirtualMachineTemplate extends KubevirtDetailView {
+export class VirtualMachineTemplate extends KubevirtUIResource {
   constructor(templateConfig) {
-    super({ ...templateConfig, kind: 'vmtemplates' });
+    super({ ...templateConfig, kind: VirtualMachineTemplateModel });
   }
 
   async create({
@@ -28,7 +28,7 @@ export class VirtualMachineTemplate extends KubevirtDetailView {
 
     // Basic Settings for VM template
     const wizard = new Wizard();
-    await wizard.openWizard('Virtual Machine Templates');
+    await wizard.openWizard(this.kind);
 
     await wizard.selectProvisionSource(provisionSource);
     await wizard.selectOperatingSystem(operatingSystem);

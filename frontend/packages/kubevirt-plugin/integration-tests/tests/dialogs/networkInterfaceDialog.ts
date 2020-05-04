@@ -2,7 +2,7 @@ import { click, fillInput } from '@console/shared/src/test-utils/utils';
 import * as view from '../../views/dialogs/networkInterface.view';
 import { selectOptionByText, getSelectOptions } from '../utils/utils';
 import { NetworkResource } from '../utils/types';
-import { modalSubmitButton, saveButton } from '../../views/kubevirtDetailView.view';
+import { modalSubmitButton, saveButton } from '../../views/kubevirtUIResource.view';
 import { waitForNoLoaders } from '../../views/wizard.view';
 
 export class NetworkInterfaceDialog {

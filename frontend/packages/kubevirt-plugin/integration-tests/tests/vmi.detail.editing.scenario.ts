@@ -2,18 +2,13 @@ import { testName } from '@console/internal-integration-tests/protractor.conf';
 import { createResource, deleteResource } from '@console/shared/src/test-utils/utils';
 import { VM_CREATE_AND_EDIT_TIMEOUT_SECS, VM_STATUS, TAB } from './utils/consts';
 import { getVMIManifest } from './utils/mocks';
-import { VirtualMachine } from './models/virtualMachine';
 import { resourceRows } from '@console/internal-integration-tests/views/crud.view';
 import { vmDetailCdEditButton, vmDetailBootOrderEditButton } from '../views/virtualMachine.view';
+import { VirtualMachineInstance } from './models/virtualMachineInstance';
+import * as kubevirtDetailView from '../views/kubevirtUIResource.view';
 
-import * as kubevirtDetailView from '../views/kubevirtDetailView.view';
-
-const waitForVM = async (
-  manifest: any,
-  status: VM_STATUS,
-  kind?: 'virtualmachines' | 'virtualmachineinstances',
-) => {
-  const vm = new VirtualMachine(manifest.metadata, kind || 'virtualmachines');
+const waitForVM = async (manifest: any, status: VM_STATUS) => {
+  const vm = new VirtualMachineInstance(manifest.metadata);
   createResource(manifest);
   await vm.waitForStatus(status);
   return vm;
@@ -21,22 +16,22 @@ const waitForVM = async (
 
 describe('KubeVirt VMI detail - editing', () => {
   const testVM = getVMIManifest('Container', testName);
-  let vm: VirtualMachine;
+  let vmi: VirtualMachineInstance;
 
   afterAll(() => {
     deleteResource(testVM);
   });
 
   beforeAll(async () => {
-    vm = await waitForVM(testVM, VM_STATUS.Running, 'virtualmachineinstances');
-    await vm.navigateToDashboard();
+    vmi = await waitForVM(testVM, VM_STATUS.Running);
+    await vmi.navigateToOverview();
   });
 
   it(
     'ID(CNV-4039) should not have cdrom edit buttons',
     async () => {
-      await vm.navigateToDetail();
-      expect(vmDetailCdEditButton(vm.namespace, vm.name).isPresent()).toBe(false);
+      await vmi.navigateToDetail();
+      expect(vmDetailCdEditButton(vmi.namespace, vmi.name).isPresent()).toBe(false);
     },
     VM_CREATE_AND_EDIT_TIMEOUT_SECS,
   );
@@ -44,8 +39,8 @@ describe('KubeVirt VMI detail - editing', () => {
   it(
     'ID(CNV-4040) should not have boot order edit buttons',
     async () => {
-      await vm.navigateToDetail();
-      expect(vmDetailBootOrderEditButton(vm.namespace, vm.name).isPresent()).toBe(false);
+      await vmi.navigateToDetail();
+      expect(vmDetailBootOrderEditButton(vmi.namespace, vmi.name).isPresent()).toBe(false);
     },
     VM_CREATE_AND_EDIT_TIMEOUT_SECS,
   );
@@ -53,7 +48,7 @@ describe('KubeVirt VMI detail - editing', () => {
   it(
     'ID(CNV-4042) should not have add nic button',
     async () => {
-      await vm.navigateToTab(TAB.NetworkInterfaces);
+      await vmi.navigateToTab(TAB.NetworkInterfaces);
       expect(kubevirtDetailView.createNICButton.isPresent()).toBe(false);
     },
     VM_CREATE_AND_EDIT_TIMEOUT_SECS,
@@ -62,7 +57,7 @@ describe('KubeVirt VMI detail - editing', () => {
   it(
     'ID(CNV-4043) nic row kebab button is disabled',
     async () => {
-      await vm.navigateToTab(TAB.NetworkInterfaces);
+      await vmi.navigateToTab(TAB.NetworkInterfaces);
       expect(
         resourceRows
           .first()
@@ -76,7 +71,7 @@ describe('KubeVirt VMI detail - editing', () => {
   it(
     'ID(CNV-4041) should not have add disk button',
     async () => {
-      await vm.navigateToTab(TAB.Disks);
+      await vmi.navigateToTab(TAB.Disks);
       expect(kubevirtDetailView.createDiskButton.isPresent()).toBe(false);
     },
     VM_CREATE_AND_EDIT_TIMEOUT_SECS,
@@ -85,7 +80,7 @@ describe('KubeVirt VMI detail - editing', () => {
   it(
     'ID(CNV-3694) disk row kebab button is disabled',
     async () => {
-      await vm.navigateToTab(TAB.Disks);
+      await vmi.navigateToTab(TAB.Disks);
       expect(
         resourceRows
           .first()

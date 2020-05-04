@@ -1,5 +1,6 @@
-import { DISK_SOURCE } from './consts';
+import { DISK_SOURCE, POD_STATUS, VM_STATUS } from './consts';
 import { Flavor, OperatingSystem, WorkloadProfile } from './constants/wizard';
+import { K8sKind } from '@console/internal/module/k8s';
 
 export type ProvisionOption = {
   method: string;
@@ -118,4 +119,22 @@ export type VMTemplateConfig = {
   cloudInit?: CloudInitConfig;
   storageResources?: StorageResource[];
   networkResources?: NetworkResource[];
+};
+
+export type Status = VM_STATUS | POD_STATUS;
+
+// Not an actual type, since VM Templates are just templates
+// Used as a convenience type for VirtualMachineTemplate class
+// and distinguishing it from VirtualMachine/VirtualMachineTemplates
+// and for UI navigation purposes
+export const VirtualMachineTemplateModel: K8sKind = {
+  label: 'Virtual Machine Template',
+  labelPlural: 'Virtual Machine Templates',
+  apiVersion: 'v1alpha3',
+  apiGroup: 'kubevirt.io',
+  plural: 'vmtemplates',
+  abbr: '',
+  namespaced: true,
+  kind: 'Template',
+  id: 'template',
 };

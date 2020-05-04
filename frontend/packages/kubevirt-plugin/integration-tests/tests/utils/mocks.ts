@@ -113,7 +113,7 @@ export const rootDisk: StorageResource = {
 
 export const cdGuestTools: StorageResource = {
   source: DISK_SOURCE.Container,
-  interface: DISK_INTERFACE.VirtIO,
+  interface: DISK_INTERFACE.sata,
   storageClass: `${STORAGE_CLASS}`,
   sourceConfig: {
     container: 'kubevirt/virtio-container-disk',

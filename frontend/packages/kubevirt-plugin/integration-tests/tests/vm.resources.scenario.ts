@@ -10,7 +10,7 @@ import {
   deleteResource,
   withResource,
 } from '@console/shared/src/test-utils/utils';
-import { createNICButton } from '../views/kubevirtDetailView.view';
+import { createNICButton } from '../views/kubevirtUIResource.view';
 import { nicNetwork, nicType } from '../views/dialogs/networkInterface.view';
 import { getInterfaces } from '../../src/selectors/vm/selectors';
 import { getVMIDisks } from '../../src/selectors/vmi/basic';
@@ -24,12 +24,7 @@ import {
   defaultWizardPodNetworkingInterface,
   defaultYAMLPodNetworkingInterface,
 } from './utils/mocks';
-import {
-  getSelectOptions,
-  getResourceObject,
-  getRandStr,
-  createExampleVMViaYAML,
-} from './utils/utils';
+import { getSelectOptions, getRandStr, createExampleVMViaYAML } from './utils/utils';
 import {
   VM_BOOTUP_TIMEOUT_SECS,
   VM_ACTIONS_TIMEOUT_SECS,
@@ -38,6 +33,7 @@ import {
   NIC_TYPE,
   DISK_SOURCE,
   networkTabCol,
+  DEFAULT_YAML_VM_NAME,
 } from './utils/consts';
 import { VirtualMachine } from './models/virtualMachine';
 import { Wizard } from './models/wizard';
@@ -62,12 +58,7 @@ describe('Add/remove disks and NICs on respective VM pages', () => {
       await vm.addDisk(hddDisk);
       expect(await vm.getAttachedDisks()).toContain(hddDisk);
       await vm.action(VM_ACTION.Start);
-      expect(
-        _.find(
-          getVMIDisks(getResourceObject(vm.name, vm.namespace, 'vmi')),
-          (o) => o.name === hddDisk.name,
-        ),
-      ).toBeDefined();
+      expect(_.find(getVMIDisks(vm.getResource()), (o) => o.name === hddDisk.name)).toBeDefined();
       await vm.action(VM_ACTION.Stop);
       await vm.removeDisk(hddDisk.name);
       expect(await vm.getAttachedDisks()).not.toContain(hddDisk);
@@ -82,10 +73,7 @@ describe('Add/remove disks and NICs on respective VM pages', () => {
       expect(await vm.getAttachedNICs()).toContain(multusNetworkInterface);
       await vm.action(VM_ACTION.Start);
       expect(
-        _.find(
-          getInterfaces(getResourceObject(vm.name, vm.namespace, 'vmi')),
-          (o) => o.name === multusNetworkInterface.name,
-        ),
+        _.find(getInterfaces(vm.getResource()), (o) => o.name === multusNetworkInterface.name),
       ).toBeDefined();
       await vm.action(VM_ACTION.Stop);
       await vm.removeNIC(multusNetworkInterface.name);
@@ -146,9 +134,9 @@ describe('Test network type presets and options', () => {
   });
 
   it('ID(CNV-2073) Test NIC default type in VM Wizard', async () => {
-    await browser.get(`${appHost}/k8s/ns/${testName}/virtualmachines`);
+    await browser.get(`${appHost}/k8s/ns/${testName}/virtualization`);
     await isLoaded();
-    await wizard.openWizard(VirtualMachineModel.labelPlural);
+    await wizard.openWizard(VirtualMachineModel);
 
     await wizard.fillName(getRandStr(5));
     await wizard.fillDescription(testName);
@@ -178,9 +166,9 @@ describe('Test network type presets and options', () => {
     expect((await getSelectOptions(nicType)).sort()).toEqual(nonPodNetworkBindingMethods);
   });
 
-  it('ID(CNV-4038) Test NIC default type in example VM', async () => {
+  xit('BZ(1828739) ID(CNV-4038) Test NIC default type in example VM', async () => {
     await createExampleVMViaYAML();
-    const vm = new VirtualMachine({ name: 'example', namespace: testName });
+    const vm = new VirtualMachine({ name: DEFAULT_YAML_VM_NAME, namespace: testName });
     const NICDialog = new NetworkInterfaceDialog();
     await withResource(leakedResources, vm.asResource(), async () => {
       await vm.navigateToTab(TAB.NetworkInterfaces);

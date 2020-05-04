@@ -5,7 +5,7 @@ import { asyncForEach, createResource, deleteResource } from '@console/shared/sr
 import * as vmView from '../views/virtualMachine.view';
 import { getVMIManifest, basicVMConfig } from './utils/mocks';
 import { exposeServices } from './utils/utils';
-import { VirtualMachine } from './models/virtualMachine';
+import { VirtualMachineInstance } from './models/virtualMachineInstance';
 import { TAB, VM_STATUS, NOT_AVAILABLE } from './utils/consts';
 import { NodePortService } from './utils/types';
 import { vmiDetailFlavor } from '../views/virtualMachineInstance.view';
@@ -15,7 +15,7 @@ describe('Test VMI Details', () => {
   const cloudInit = `#cloud-config\nuser: cloud-user\npassword: atomic\nchpasswd: {expire: False}`;
   const serviceCommon = { name: vmiName, kind: 'vmi', type: 'NodePort', namespace: testName };
   const testVMI = getVMIManifest('Container', testName, vmiName, cloudInit);
-  const vmi = new VirtualMachine(testVMI.metadata, 'virtualmachineinstances');
+  const vmi = new VirtualMachineInstance(testVMI.metadata);
   const nodePortServices = new Set<NodePortService>();
   nodePortServices.add({
     ...serviceCommon,

@@ -1,46 +1,33 @@
 import { browser, ExpectedConditions as until } from 'protractor';
 import { testName } from '@console/internal-integration-tests/protractor.conf';
-import {
-  resourceRows,
-  isLoaded,
-  textFilter,
-} from '@console/internal-integration-tests/views/crud.view';
+import { resourceRows } from '@console/internal-integration-tests/views/crud.view';
 import {
   addLeakableResource,
   createResource,
   removeLeakedResources,
   removeLeakableResource,
   waitForCount,
-  fillInput,
 } from '@console/shared/src/test-utils/utils';
 import { getVMIManifest } from './utils/mocks';
 import {
   VM_DELETE_TIMEOUT_SECS,
   VMI_ACTION,
-  TAB,
   VM_IMPORT_TIMEOUT_SECS,
   VM_STATUS,
 } from './utils/consts';
-import { VirtualMachine } from './models/virtualMachine';
+import { VirtualMachineInstance } from './models/virtualMachineInstance';
+import { BaseVirtualMachine } from './models/baseVirtualMachine';
 
-const waitForVM = async (
-  manifest: any,
-  status: VM_STATUS,
-  resourcesSet: Set<string>,
-  kind?: 'virtualmachines' | 'virtualmachineinstances',
-) => {
-  const vm = new VirtualMachine(manifest.metadata, kind || 'virtualmachines');
-
+const waitForVM = async (manifest: any, status: VM_STATUS, resourcesSet: Set<string>) => {
+  const vmi = new VirtualMachineInstance(manifest.metadata);
   createResource(manifest);
   addLeakableResource(resourcesSet, manifest);
-  await vm.waitForStatus(status);
-
-  return vm;
+  await vmi.waitForStatus(status);
+  return vmi;
 };
 
-const waitForVMDelete = async (vm: VirtualMachine) => {
+const waitForVMDeleted = async (vm: BaseVirtualMachine) => {
   await vm.navigateToListView();
-  await fillInput(textFilter, vm.name);
   await browser.wait(until.and(waitForCount(resourceRows, 0)), VM_DELETE_TIMEOUT_SECS);
 };
 
@@ -52,40 +39,36 @@ describe('Test VMI actions', () => {
   });
 
   describe('Test VMI list view kebab dropdown', () => {
-    let vm: VirtualMachine;
-    let testVM: any;
+    let vmi: VirtualMachineInstance;
+    let testVMI: any;
 
     beforeAll(async () => {
-      testVM = getVMIManifest('Container', testName, `vm-list-actions-${testName}`);
-      vm = await waitForVM(testVM, VM_STATUS.Running, leakedResources, 'virtualmachineinstances');
+      testVMI = getVMIManifest('Container', testName, `vm-list-actions-${testName}`);
+      vmi = await waitForVM(testVMI, VM_STATUS.Running, leakedResources);
     }, VM_IMPORT_TIMEOUT_SECS);
 
     it('ID(CNV-3693) Deletes VMI', async () => {
-      await vm.navigateToListView();
-      await isLoaded();
+      await vmi.navigateToListView();
 
-      await vm.listViewAction(VMI_ACTION.Delete, false);
-      removeLeakableResource(leakedResources, testVM);
-      await waitForVMDelete(vm);
+      await vmi.listViewAction(VMI_ACTION.Delete, false);
+      removeLeakableResource(leakedResources, testVMI);
+      await waitForVMDeleted(vmi);
     });
   });
 
   describe('Test VMI detail view actions dropdown', () => {
-    let vm: VirtualMachine;
-    let testVM: any;
+    let vmi: VirtualMachineInstance;
+    let testVMI: any;
 
     beforeAll(async () => {
-      testVM = getVMIManifest('Container', testName, `vm-detail-actions-${testName}`);
-      vm = await waitForVM(testVM, VM_STATUS.Running, leakedResources, 'virtualmachineinstances');
+      testVMI = getVMIManifest('Container', testName, `vm-detail-actions-${testName}`);
+      vmi = await waitForVM(testVMI, VM_STATUS.Running, leakedResources);
     }, VM_IMPORT_TIMEOUT_SECS);
 
     it('ID(CNV-3699) Deletes VMI', async () => {
-      await vm.navigateToTab(TAB.Details);
-      await isLoaded();
-
-      await vm.action(VMI_ACTION.Delete, false);
-      removeLeakableResource(leakedResources, testVM);
-      await waitForVMDelete(vm);
+      await vmi.action(VMI_ACTION.Delete, false);
+      removeLeakableResource(leakedResources, testVMI);
+      await waitForVMDeleted(vmi);
     });
   });
 });

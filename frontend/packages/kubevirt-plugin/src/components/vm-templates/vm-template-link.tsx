@@ -9,6 +9,7 @@ export const VMTemplateLink: React.FC<VMTemplateLinkProps> = ({ name, namespace,
     <Link
       to={`/k8s/ns/${namespace}/vmtemplates/${name}`}
       title={uid}
+      data-test-id={name}
       className="co-resource-item__resource-name"
     >
       {name}

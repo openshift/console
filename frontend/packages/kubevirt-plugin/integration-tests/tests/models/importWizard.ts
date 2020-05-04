@@ -3,7 +3,7 @@ import { createItemButton, isLoaded } from '@console/internal-integration-tests/
 import { click, fillInput, asyncForEach } from '@console/shared/src/test-utils/utils';
 import { NetworkInterfaceDialog } from '../dialogs/networkInterfaceDialog';
 import { DiskDialog } from '../dialogs/diskDialog';
-import { tableRows, saveButton } from '../../views/kubevirtDetailView.view';
+import { tableRows, saveButton } from '../../views/kubevirtUIResource.view';
 import { selectOptionByText, setCheckboxState } from '../utils/utils';
 import {
   POD_CREATION_TIMEOUT_SECS,

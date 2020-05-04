@@ -33,7 +33,7 @@ describe('Test VM dashboard', () => {
   beforeAll(async () => {
     createResources([multusNAD, testVM]);
     vm = new VirtualMachine(testVM.metadata);
-    await vm.navigateToDashboard();
+    await vm.navigateToOverview();
     try {
       await browser.wait(
         until.not(until.textToBePresentInElement(vmStatus, VM_STATUS.Off)),
@@ -76,7 +76,7 @@ describe('Test VM dashboard', () => {
 
   it('ID(CNV-3330) Status card', async () => {
     await vm.waitForStatus(VM_STATUS.Off);
-    await vm.navigateToDashboard();
+    await vm.navigateToOverview();
     expect(vmStatus.getText()).toEqual(VM_STATUS.Off);
 
     await vm.action(VM_ACTION.Start, true, VM_BOOTUP_TIMEOUT_SECS);

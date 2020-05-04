@@ -19,9 +19,17 @@ import {
   createResource,
   deleteResource,
 } from '@console/shared/src/test-utils/utils';
+import { VirtualMachineModel } from '../../src/models/index';
 import { VirtualMachine } from './models/virtualMachine';
-import { VM_BOOTUP_TIMEOUT_SECS, PAGE_LOAD_TIMEOUT_SECS, VM_ACTION } from './utils/consts';
+import {
+  VM_BOOTUP_TIMEOUT_SECS,
+  PAGE_LOAD_TIMEOUT_SECS,
+  VM_ACTION,
+  DEFAULT_YAML_VM_NAME,
+} from './utils/consts';
 import { getVMManifest, multusNAD } from './utils/mocks';
+import { virtualizationTitle } from '../views/vms.list.view';
+import { activeTab } from '../views/uiResource.view';
 
 describe('Test VM creation from YAML', () => {
   const leakedResources = new Set<string>();
@@ -35,7 +43,7 @@ describe('Test VM creation from YAML', () => {
   });
 
   beforeEach(async () => {
-    await browser.get(`${appHost}/k8s/ns/${testName}/virtualmachines`);
+    await browser.get(`${appHost}/k8s/ns/${testName}/virtualization`);
     await isLoaded();
     await click(createItemButton);
     await click(createYAMLLink);
@@ -45,7 +53,7 @@ describe('Test VM creation from YAML', () => {
   it(
     'ID(CNV-2941) Creates VM from default YAML.',
     async () => {
-      const vm = new VirtualMachine({ name: 'example', namespace: testName });
+      const vm = new VirtualMachine({ name: DEFAULT_YAML_VM_NAME, namespace: testName });
       await withResource(leakedResources, vm.asResource(), async () => {
         await click(saveButton);
         await isLoaded();
@@ -57,8 +65,8 @@ describe('Test VM creation from YAML', () => {
   );
 
   it('ID(CNV-2942) Fails to create VM from YAML if VM already exists.', async () => {
-    createResource(getVMManifest('Container', testName, 'example'));
-    const vm = new VirtualMachine({ name: 'example', namespace: testName });
+    createResource(getVMManifest('Container', testName, DEFAULT_YAML_VM_NAME));
+    const vm = new VirtualMachine({ name: DEFAULT_YAML_VM_NAME, namespace: testName });
     await withResource(leakedResources, vm.asResource(), async () => {
       await click(saveButton);
       await browser.wait(until.presenceOf(errorMessage), PAGE_LOAD_TIMEOUT_SECS);
@@ -77,7 +85,10 @@ describe('Test VM creation from YAML', () => {
   it('ID(CNV-2944) Cancel button on Create from YAML page redirects back to VM list.', async () => {
     await click(cancelButton);
     await browser.wait(
-      until.textToBePresentInElement(resourceTitle, 'Virtual Machines'),
+      until.and(
+        until.textToBePresentInElement(virtualizationTitle, 'Virtualization'),
+        until.textToBePresentInElement(activeTab, VirtualMachineModel.labelPlural),
+      ),
       PAGE_LOAD_TIMEOUT_SECS,
     );
   });

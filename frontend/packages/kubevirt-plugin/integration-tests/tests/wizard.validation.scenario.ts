@@ -20,7 +20,7 @@ import { getProvisionConfigs } from './vm.wizard.configs';
 import { getRandStr } from './utils/utils';
 import { diskInterfaceHelper } from '../views/dialogs/diskDialog.view';
 import { DiskDialog } from './dialogs/diskDialog';
-import { saveButton } from '../views/kubevirtDetailView.view';
+import { saveButton } from '../views/kubevirtUIResource.view';
 import { VirtualMachineModel } from '../../src/models/index';
 
 describe('Wizard validation', () => {
@@ -47,7 +47,7 @@ describe('Wizard validation', () => {
   });
 
   beforeEach(async () => {
-    await wizard.openWizard(VirtualMachineModel.labelPlural);
+    await wizard.openWizard(VirtualMachineModel);
   });
 
   afterEach(async () => {
