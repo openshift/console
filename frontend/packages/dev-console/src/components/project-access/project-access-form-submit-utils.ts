@@ -21,18 +21,6 @@ export const getRolesWithNameChange = (
   return rolesWithNameChange;
 };
 
-export const getFinalRoles = (
-  initialValues: UserRoleBinding[],
-  removeRoles: UserRoleBinding[],
-  newRoles: UserRoleBinding[],
-) => {
-  const finalRoles = _.filter(
-    initialValues,
-    (o1) => !removeRoles.find((o2) => o1.roleBindingName === o2.roleBindingName),
-  );
-  return [...finalRoles, ...newRoles];
-};
-
 export const sendK8sRequest = (verb: string, roleBinding): Promise<K8sResourceKind> => {
   switch (verb) {
     case Verb.Create:

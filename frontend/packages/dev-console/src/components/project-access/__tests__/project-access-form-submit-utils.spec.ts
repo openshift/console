@@ -1,6 +1,5 @@
 import {
   getRolesWithNameChange,
-  getFinalRoles,
   getNewRoles,
   getRemovedRoles,
 } from '../project-access-form-submit-utils';
@@ -8,10 +7,6 @@ import {
   roleBindingsToBeCreated1,
   rolesBindingsToBeRemoved1,
   rolesWithNameChangeResult,
-  initialRoles2,
-  roleBindingsToBeCreated3,
-  rolesBindingsToBeRemoved2,
-  displayRoleBindings,
   initialRoles1,
   formValues1,
   rolesBindingsToBeRemoved,
@@ -36,14 +31,5 @@ describe('Project Access handleSubmit Utils', () => {
       rolesBindingsToBeRemoved1,
     );
     expect(rolesWithNameChange).toEqual(rolesWithNameChangeResult);
-  });
-
-  it('should get the final list of roles to be displayed in the form', async () => {
-    const finalRoles = getFinalRoles(
-      initialRoles2,
-      rolesBindingsToBeRemoved2,
-      roleBindingsToBeCreated3,
-    );
-    expect(finalRoles).toEqual(displayRoleBindings);
   });
 });
