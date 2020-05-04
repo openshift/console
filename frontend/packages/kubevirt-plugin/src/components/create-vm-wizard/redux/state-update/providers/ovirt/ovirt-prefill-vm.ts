@@ -116,7 +116,7 @@ export const getNics = (vm: OvirtVM): VMWizardNetwork[] => {
         .asResource(),
       importData: {
         id: nic.id,
-        netID: nic.netid,
+        vnicID: nic.vnicid,
       },
       editConfig: {
         disableEditing: true,

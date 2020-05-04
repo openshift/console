@@ -62,15 +62,15 @@ const getNetworkMappings = (networks: VMWizardNetwork[]) => {
   const networksToMap = _.uniqBy(
     networks.filter(
       ({ network, importData }) =>
-        SUPPORTED_NETWORK_TYPES.has(new NetworkWrapper(network).getType()) && importData?.netID,
+        SUPPORTED_NETWORK_TYPES.has(new NetworkWrapper(network).getType()) && importData?.vnicID,
     ),
-    (wizardNetwork) => wizardNetwork.importData?.netID, // should be mapped 1 to 1
+    (wizardNetwork) => wizardNetwork.importData?.vnicID, // should be mapped 1 to 1
   );
 
-  return networksToMap.map(({ network, importData: { netID } }) => {
+  return networksToMap.map(({ network, importData: { vnicID } }) => {
     const networkWrapper = new NetworkWrapper(network);
     const nicMapping: NetworkMapping = {
-      source: { id: netID },
+      source: { id: vnicID },
       type: networkWrapper.getType().getValue(),
     };
     if (networkWrapper.getType() === NetworkType.MULTUS) {
