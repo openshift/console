@@ -16,7 +16,6 @@ import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager'
 import { ImageManifestVulnModel } from './models';
 import { ContainerSecurityFlag } from './const';
 import { securityHealthHandler } from './components/summary';
-import { getKebabActionsForKind } from './kebab-actions';
 import { WatchImageVuln } from './types';
 import { PodModel } from '@console/internal/models';
 
@@ -114,12 +113,6 @@ const plugin: Plugin<ConsumedExtensions> = [
     },
     flags: {
       required: [ContainerSecurityFlag],
-    },
-  },
-  {
-    type: 'KebabActions',
-    properties: {
-      getKebabActionsForKind,
     },
   },
   {
