@@ -16,6 +16,7 @@ import {
   getTemplatesWithLabels,
   getTemplateWorkloadProfiles,
 } from './advanced';
+import { isCustomFlavor } from '../vm-like/flavor';
 
 const getLabel = (labelPrefix: string, value: string) => {
   if (!value) {
@@ -27,7 +28,7 @@ const getLabel = (labelPrefix: string, value: string) => {
 export const getWorkloadLabel = (workload: string) => getLabel(TEMPLATE_WORKLOAD_LABEL, workload);
 export const getOsLabel = (os: string) => getLabel(TEMPLATE_OS_LABEL, os);
 export const getFlavorLabel = (flavor: string) => {
-  if (flavor && flavor !== CUSTOM_FLAVOR) {
+  if (!isCustomFlavor(flavor)) {
     return `${TEMPLATE_FLAVOR_LABEL}/${flavor}`;
   }
   return undefined;
@@ -84,9 +85,8 @@ export const getFlavors = (
       [getWorkloadLabel(workload), getOsLabel(os)],
     );
   }
-  const flavors = getTemplateFlavors(templatesWithLabels);
-  if (!flavors.some((flavor) => flavor === CUSTOM_FLAVOR)) {
-    flavors.push(CUSTOM_FLAVOR);
-  }
+  const flavors = getTemplateFlavors(templatesWithLabels).filter((f) => !isCustomFlavor(f));
+  flavors.push(CUSTOM_FLAVOR);
+
   return flavors;
 };

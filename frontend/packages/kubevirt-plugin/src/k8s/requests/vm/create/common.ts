@@ -15,6 +15,7 @@ import {
 } from '../../../../constants/vm';
 import { VMWrapper } from '../../../wrapper/vm/vm-wrapper';
 import { VMTemplateWrapper } from '../../../wrapper/vm/vm-template-wrapper';
+import { isCustomFlavor } from '../../../../selectors/vm-like/flavor';
 
 export const initializeCommonMetadata = (
   settings: {
@@ -34,7 +35,10 @@ export const initializeCommonMetadata = (
   }
 
   entity.addLabel(`${TEMPLATE_OS_LABEL}/${settings.osID}`, 'true');
-  entity.addLabel(`${TEMPLATE_FLAVOR_LABEL}/${settings[VMSettingsField.FLAVOR]}`, 'true');
+
+  if (!isCustomFlavor(settings[VMSettingsField.FLAVOR])) {
+    entity.addLabel(`${TEMPLATE_FLAVOR_LABEL}/${settings[VMSettingsField.FLAVOR]}`, 'true');
+  }
 
   if (settings[VMSettingsField.WORKLOAD_PROFILE]) {
     entity.addLabel(
@@ -75,7 +79,10 @@ export const initializeCommonVMMetadata = (
   // show metadata inside a VMI
 
   entity.addTemplateLabel(`${TEMPLATE_OS_LABEL}/${settings.osID}`, 'true');
-  entity.addTemplateLabel(`${TEMPLATE_FLAVOR_LABEL}/${settings[VMSettingsField.FLAVOR]}`, 'true');
+
+  if (!isCustomFlavor(settings[VMSettingsField.FLAVOR])) {
+    entity.addTemplateLabel(`${TEMPLATE_FLAVOR_LABEL}/${settings[VMSettingsField.FLAVOR]}`, 'true');
+  }
 
   if (settings[VMSettingsField.WORKLOAD_PROFILE]) {
     entity.addTemplateLabel(

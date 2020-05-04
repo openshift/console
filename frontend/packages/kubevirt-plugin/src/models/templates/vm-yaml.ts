@@ -11,7 +11,6 @@ metadata:
   labels:
     app: vm-example
     os.template.kubevirt.io/fedora31: 'true'
-    flavor.template.kubevirt.io/Custom: 'true'
     workload.template.kubevirt.io/server: 'true'
   annotations:
     name.os.template.kubevirt.io/fedora31: Fedora 31
@@ -22,10 +21,8 @@ spec:
     metadata:
       labels:
         kubevirt.io/domain: vm-example
-        kubevirt.io/size: Custom
         vm.kubevirt.io/name: vm-example
         os.template.kubevirt.io/fedora31: 'true'
-        flavor.template.kubevirt.io/Custom: 'true'
         workload.template.kubevirt.io/server: 'true'
     spec:
       domain:

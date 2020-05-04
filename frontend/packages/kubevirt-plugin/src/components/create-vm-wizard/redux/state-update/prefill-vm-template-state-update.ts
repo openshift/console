@@ -20,7 +20,6 @@ import { iGetNetworks } from '../../selectors/immutable/networks';
 import { podNetwork } from '../initial-state/networks-tab-initial-state';
 import { vmWizardInternalActions } from '../internal-actions';
 import {
-  CUSTOM_FLAVOR,
   DataVolumeSourceType,
   DiskBus,
   DiskType,
@@ -63,6 +62,7 @@ import { joinIDs } from '../../../../utils';
 import { VM_TEMPLATE_NAME_PARAMETER } from '../../../../constants/vm-templates';
 import { selectVM } from '../../../../selectors/vm-template/basic';
 import { convertToHighestUnitFromUnknown } from '../../../form/size-unit-utils';
+import { toUIFlavor, isCustomFlavor } from '../../../../selectors/vm-like/flavor';
 
 export const prefillVmTemplateUpdater = ({ id, dispatch, getState }: UpdateOptions) => {
   const state = getState();
@@ -122,8 +122,10 @@ export const prefillVmTemplateUpdater = ({ id, dispatch, getState }: UpdateOptio
 
     // update flavor
     const [flavor] = getTemplateFlavors([userTemplate]);
-    vmSettingsUpdate[VMSettingsField.FLAVOR] = { value: flavor };
-    if (flavor === CUSTOM_FLAVOR) {
+    vmSettingsUpdate[VMSettingsField.FLAVOR] = {
+      value: toUIFlavor(flavor),
+    };
+    if (isCustomFlavor(flavor)) {
       vmSettingsUpdate[VMSettingsField.CPU] = { value: parseCPU(getCPU(vm), DEFAULT_CPU).cores }; // TODO also add sockets + threads
       const memory = convertToHighestUnitFromUnknown(getMemory(vm));
       vmSettingsUpdate[VMSettingsField.MEMORY] = {
@@ -259,7 +261,9 @@ export const prefillVmTemplateUpdater = ({ id, dispatch, getState }: UpdateOptio
       },
     );
     if (flavors.length === 1) {
-      vmSettingsUpdate[VMSettingsField.FLAVOR] = { value: flavors[0] };
+      vmSettingsUpdate[VMSettingsField.FLAVOR] = {
+        value: toUIFlavor(flavors[0]),
+      };
     }
 
     const newSourceStorage = getProvisionSourceStorage(

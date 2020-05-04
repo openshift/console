@@ -39,13 +39,15 @@ import { getDialogUIError } from '../../../utils/strings';
 import { flavorSort } from '../../../utils/sort';
 import { getTemplateFlavors } from '../../../selectors/vm-template/advanced';
 import { getVMTemplateNamespacedName } from '../../../selectors/vm-template/selectors';
+import { toUIFlavor, isCustomFlavor } from '../../../selectors/vm-like/flavor';
 
 const getId = (field: string) => `vm-flavor-modal-${field}`;
 
 const getAvailableFlavors = (template: TemplateKind) => {
-  const flavors = [...getTemplateFlavors([template]), CUSTOM_FLAVOR];
+  const flavors = getTemplateFlavors([template]).filter((f) => f && !isCustomFlavor(f));
+  flavors.push(CUSTOM_FLAVOR);
 
-  return _.uniq(flavorSort(flavors).filter((f) => f));
+  return _.uniq(flavorSort(flavors));
 };
 
 const VMFlavorModal = withHandlePromise((props: VMFlavornModalProps) => {
@@ -55,14 +57,14 @@ const VMFlavorModal = withHandlePromise((props: VMFlavornModalProps) => {
   const underlyingTemplate = getLoadedData(template);
 
   const flavors = getAvailableFlavors(underlyingTemplate);
-  const vmFlavor = getFlavor(vmLike) || flavors[flavors.length - 1];
+  const vmFlavor = toUIFlavor(getFlavor(vmLike) || flavors[flavors.length - 1]);
 
   const [sourceMemSize, sourceMemUnit] = stringValueUnitSplit(getMemory(vm) || '');
   const sourceCPURaw = getCPU(vm);
   const sourceCPU = vCPUCount(sourceCPURaw);
 
   const [flavor, setFlavor] = React.useState(vmFlavor);
-  const isCustom = flavor === CUSTOM_FLAVOR;
+  const isCustom = isCustomFlavor(flavor);
 
   const [memSize, setMemSize] = React.useState<string>(isCustom ? sourceMemSize || '' : '');
   const [memUnit, setMemUnit] = React.useState<string>(
@@ -111,8 +113,8 @@ const VMFlavorModal = withHandlePromise((props: VMFlavornModalProps) => {
           <FormRow title="Flavor" fieldId={getId('flavor')} isRequired>
             <FormSelect
               onChange={(f) => {
-                if (f === CUSTOM_FLAVOR) {
-                  const isSourceCustom = vmFlavor === CUSTOM_FLAVOR;
+                if (isCustomFlavor(f)) {
+                  const isSourceCustom = isCustomFlavor(vmFlavor);
                   setMemSize(isSourceCustom ? sourceMemSize || '' : '');
                   setMemUnit(isSourceCustom ? sourceMemUnit || BinaryUnit.Gi : BinaryUnit.Gi);
                   setCpus(isSourceCustom ? `${sourceCPU}` : '');

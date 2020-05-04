@@ -1,6 +1,6 @@
 import * as _ from 'lodash';
-import { CUSTOM_FLAVOR } from '../constants/vm';
 import { OperatingSystemRecord } from '../types';
+import { isCustomFlavor } from '../selectors/vm-like/flavor';
 
 const FLAVOR_ORDER = {
   tiny: 0,
@@ -11,10 +11,10 @@ const FLAVOR_ORDER = {
 
 export const flavorSort = (array: string[] = []) =>
   array.sort((a, b) => {
-    if (a === CUSTOM_FLAVOR) {
+    if (isCustomFlavor(a)) {
       return 1;
     }
-    if (b === CUSTOM_FLAVOR) {
+    if (isCustomFlavor(b)) {
       return -1;
     }
     const resolvedFlavorA = FLAVOR_ORDER[a];

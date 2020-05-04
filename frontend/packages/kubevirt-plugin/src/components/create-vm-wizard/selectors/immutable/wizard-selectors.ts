@@ -8,9 +8,9 @@ import {
   VMWizardTabsMetadata,
 } from '../../types';
 import { getStringEnumValues } from '../../../../utils/types';
-import { CUSTOM_FLAVOR } from '../../../../constants/vm/constants';
 import { iGetCreateVMWizardTabs } from './common';
 import { iGetCommonData } from './selectors';
+import { isCustomFlavor } from '../../../../selectors/vm-like/flavor';
 
 const getTabBoolean = (state, wizardID: string, stepId: VMWizardTab, key) =>
   !!iGetIn(iGetCreateVMWizardTabs(state, wizardID), [stepId, key]);
@@ -88,6 +88,6 @@ export const isWizardEmpty = (state, wizardID: string) => {
 
   return ![...fields].some((fieldKey) => {
     const value = iGetIn(stepData, [VMWizardTab.VM_SETTINGS, 'value', fieldKey, 'value']);
-    return fieldKey === VMSettingsField.FLAVOR && value === CUSTOM_FLAVOR ? null : value;
+    return fieldKey === VMSettingsField.FLAVOR && isCustomFlavor(value) ? null : value;
   });
 };

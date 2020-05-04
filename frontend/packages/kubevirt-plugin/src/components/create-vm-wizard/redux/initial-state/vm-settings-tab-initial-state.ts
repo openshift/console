@@ -3,6 +3,7 @@ import { CommonData, VMSettingsField, VMWizardProps } from '../../types';
 import { asDisabled, asHidden, asRequired } from '../../utils/utils';
 import { ProvisionSource } from '../../../../constants/vm/provision-source';
 import { InitialStepStateGetter, VMSettings } from './types';
+import { CUSTOM_FLAVOR } from '../../../../constants/vm';
 
 export const getInitialVmSettings = (data: CommonData): VMSettings => {
   const {
@@ -53,6 +54,7 @@ export const getInitialVmSettings = (data: CommonData): VMSettings => {
     },
     [VMSettingsField.FLAVOR]: {
       isRequired: asRequired(true),
+      value: CUSTOM_FLAVOR,
     },
     [VMSettingsField.MEMORY]: {
       binaryUnitValidation: true,
