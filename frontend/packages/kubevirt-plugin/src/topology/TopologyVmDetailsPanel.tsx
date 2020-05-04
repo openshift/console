@@ -7,15 +7,18 @@ import {
   useAccessReview,
   asAccessReview,
 } from '@console/internal/components/utils';
-import { Node } from '@console/topology';
+import { TopologyDataObject } from '@console/dev-console/src/components/topology';
+import { Node, NodeModel } from '@console/topology/src/types';
 import { TemplateKind } from '@console/internal/module/k8s';
 import { TemplateModel } from '@console/internal/models';
 import { VirtualMachineModel } from '../models';
 import { TEMPLATE_TYPE_LABEL, TEMPLATE_TYPE_VM } from '../constants/vm';
 import { VMDetailsList, VMResourceSummary } from '../components/vms/vm-resource';
+import { VMNodeData } from './types';
+import { VMKind } from '../types/vm';
 
 type TopologyVmDetailsPanelProps = {
-  vm: Node;
+  vm: Node<NodeModel, TopologyDataObject<VMNodeData>>;
 };
 
 type LoadedTopologyVmDetailsPanelProps = TopologyVmDetailsPanelProps & {
@@ -29,8 +32,9 @@ export const LoadedTopologyVmDetailsPanel: React.FC<LoadedTopologyVmDetailsPanel
   templates,
 }) => {
   const vmData = vm.getData();
-  const { pods, obj: vmObj } = vmData.resources;
-  const { vmi, statusDetail } = vmData.data;
+  const { pods, obj } = vmData.resources;
+  const vmObj = obj as VMKind;
+  const { vmi, vmStatusBundle } = vmData.data;
   const canUpdate =
     useAccessReview(asAccessReview(VirtualMachineModel, vmObj || {}, 'patch')) && !!vmObj;
 
@@ -55,7 +59,7 @@ export const LoadedTopologyVmDetailsPanel: React.FC<LoadedTopologyVmDetailsPanel
           vmi={vmi}
           pods={pods}
           kindObj={VirtualMachineModel}
-          vmStatusBundle={statusDetail}
+          vmStatusBundle={vmStatusBundle}
         />
       </GridItem>
     </Grid>

@@ -26,12 +26,15 @@ import {
   NODE_SHADOW_FILTER_ID,
   NODE_SHADOW_FILTER_ID_HOVER,
   NodeShadows,
+  TopologyDataObject,
 } from '@console/dev-console/src/components/topology';
+import { NodeModel } from '@console/topology/src/types';
 import './VmNode.scss';
 import { VMStatus } from '../../../constants/vm/vm-status';
+import { VMNodeData } from '../../types';
 
 export type VmNodeProps = {
-  element: Node;
+  element: Node<NodeModel, TopologyDataObject<VMNodeData>>;
   hover?: boolean;
   dragging?: boolean;
   edgeDragging?: boolean;
@@ -70,7 +73,7 @@ const ObservedVmNode: React.FC<VmNodeProps> = ({
   const refs = useCombineRefs<SVGEllipseElement>(hoverRef, dragNodeRef);
   const { width, height } = element.getBounds();
   const vmData = element.getData().data;
-  const { kind, osImage, statusDetail } = vmData;
+  const { kind, osImage, vmStatusBundle } = vmData;
   const displayFilters = useDisplayFilters();
   const [filtered] = useSearchFilter(element.getLabel());
   const iconRadius = Math.min(width, height) * 0.25;
@@ -97,8 +100,8 @@ const ObservedVmNode: React.FC<VmNodeProps> = ({
   }, [hover, onShowCreateConnector, onHideCreateConnector, editAccess]);
 
   let statusClass;
-  const statusMessage = statusDetail.message;
-  switch (statusDetail.status) {
+  const statusMessage = vmStatusBundle.message;
+  switch (vmStatusBundle.status) {
     case VMStatus.V2V_CONVERSION_PENDING:
     case VMStatus.V2V_VM_IMPORT_PENDING:
     case VMStatus.CDI_IMPORT_PENDING:
