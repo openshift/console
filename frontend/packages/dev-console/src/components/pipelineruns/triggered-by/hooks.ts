@@ -26,7 +26,7 @@ export const useUserLabelForManualStart = (): LabelMap => {
 export const usePipelineRunWithUserLabel = (plr: PipelineRun): PipelineRun => {
   const labels = useUserLabelForManualStart();
 
-  return mergeLabelsWithResource(labels, plr);
+  return plr && mergeLabelsWithResource(labels, plr);
 };
 
 export const useMenuActionsWithUserLabel = (menuActions: KebabAction[]): KebabAction[] => {
