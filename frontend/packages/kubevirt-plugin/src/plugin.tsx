@@ -209,10 +209,7 @@ const plugin: Plugin<ConsumedExtensions> = [
     type: 'Page/Route',
     properties: {
       exact: true,
-      path: [
-        '/k8s/ns/:ns/virtualmachines',
-        '/k8s/all-namespaces/virtualmachines',
-      ],
+      path: ['/k8s/ns/:ns/virtualmachines', '/k8s/all-namespaces/virtualmachines'],
       loader: () =>
         import('./components/vms/virtualization' /* webpackChunkName: "kubevirt" */).then(
           (m) => m.RedirectToVirtualizationPage,
