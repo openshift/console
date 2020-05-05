@@ -1,21 +1,5 @@
-.co-list-filter-block {
-  display: flex;
-  margin: 0 0 var(--pf-global--spacer--md) 0;
-}
-
-.co-list-filter-block__row-dropdown {
-  margin-right: var(--pf-global--spacer--lg);
-}
-
-.co-list-fliter-block__user-input-filter {
-  display: inline-flex;
-}
-
 .co-filter-dropdown__item {
   display: inline-flex;
-}
-
-.co-filter-dropdown__item {
   pointer-events: none;
 }
 
