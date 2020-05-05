@@ -1,10 +1,10 @@
 import * as React from 'react';
 import * as classNames from 'classnames';
-import { TextInput } from '@patternfly/react-core';
 import { useDocumentListener, getLabelsAsString } from '@console/shared';
 import { KeyEventModes } from '@console/shared/src/hooks';
 import { fuzzyCaseInsensitive } from './factory/table-filters';
 import { K8sResourceCommon } from '../module/k8s';
+import { TextFilter } from './factory';
 
 const MAX_SUGGESTIONS = 5;
 
@@ -19,15 +19,9 @@ const suggestionBoxKeyHandler = {
   Escape: KeyEventModes.HIDE,
 };
 
-const textInputKeyHandler = {
-  Escape: KeyEventModes.HIDE,
-  '/': KeyEventModes.FOCUS,
-};
-
 const AutocompleteInput: React.FC<AutocompleteInputProps> = (props) => {
   const [suggestions, setSuggestions] = React.useState<string[]>();
   const { visible, setVisible, ref } = useDocumentListener<HTMLDivElement>(suggestionBoxKeyHandler);
-  const { ref: textInputRef } = useDocumentListener<HTMLInputElement>(textInputKeyHandler);
   const {
     textValue,
     setTextValue,
@@ -73,18 +67,14 @@ const AutocompleteInput: React.FC<AutocompleteInputProps> = (props) => {
   return (
     <div className="co-suggestion-box" ref={ref}>
       <div className="has-feedback">
-        <TextInput
+        <TextFilter
           data-test-id="list-page-search-input"
           aria-label="Enter Query"
           value={textValue}
           onChange={handleInput}
           placeholder={placeholder}
           onFocus={activate}
-          ref={textInputRef}
         />
-        <span className="form-control-feedback form-control-feedback--keyboard-hint">
-          <kbd>/</kbd>
-        </span>
       </div>
       {showSuggestions && (
         <div

@@ -209,7 +209,7 @@ export class EventsList extends React.Component {
             <TextFilter
               autoFocus={autoFocus}
               label="Events by name or message"
-              onChange={(e) => this.setState({ textFilter: e.target.value || '' })}
+              onChange={(val) => this.setState({ textFilter: val || '' })}
             />
           </div>
           <div className="form-group">

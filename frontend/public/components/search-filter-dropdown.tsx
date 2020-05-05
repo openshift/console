@@ -1,6 +1,7 @@
 import * as React from 'react';
-import { Dropdown, DropdownToggle, DropdownItem, TextInput } from '@patternfly/react-core';
+import { Dropdown, DropdownToggle, DropdownItem } from '@patternfly/react-core';
 import { CaretDownIcon, FilterIcon } from '@patternfly/react-icons';
+import { TextFilter } from './factory';
 
 export enum searchFilterValues {
   Label = 'Label',
@@ -51,7 +52,8 @@ export const SearchFilterDropdown: React.SFC<SearchFilterDropdownProps> = (props
         isOpen={isOpen}
         dropdownItems={dropdownItems}
       />
-      <TextInput
+      <TextFilter
+        parentClassName="co-search__filter-input"
         onChange={handleInputValue}
         placeholder={selected === searchFilterValues.Label ? 'app=frontend' : 'my-resource'}
         name="search-filter-input"

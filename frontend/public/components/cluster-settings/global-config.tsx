@@ -166,7 +166,7 @@ class GlobalConfigPage_ extends React.Component<GlobalConfigPageProps, GlobalCon
               <TextFilter
                 value={textFilter}
                 label="by name or description"
-                onChange={(e) => this.setState({ textFilter: e.target.value })}
+                onChange={(val) => this.setState({ textFilter: val })}
               />
             </div>
           </div>
