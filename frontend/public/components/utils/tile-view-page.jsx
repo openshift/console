@@ -910,6 +910,7 @@ export class TileViewPage extends React.Component {
                   bsClass="pf-c-form-control"
                   value={activeFilters.keyword.value}
                   onChange={(e) => this.onKeywordChange(e.target.value)}
+                  aria-label="Filter by keyword..."
                 />
                 {groupItems && (
                   <Dropdown
