@@ -21,6 +21,9 @@ body,
   overflow-y: auto;
   position: relative;
   -webkit-overflow-scrolling: touch;
+  &:focus {
+    outline: 0;
+  }
 }
 
 .co-m-page__body {
@@ -35,23 +38,22 @@ body,
   flex: 1;
   height: 100%;
 
-
   &__body {
     flex: 1 1 700px;
   }
 
   &__sidebar {
     position: relative;
-    @media(min-width: $screen-md-min) {
+    @media (min-width: $screen-md-min) {
       flex: 1 0 300px;
       overflow-y: auto;
     }
 
     &--bordered {
-      @media(max-width: $screen-sm-max) {
+      @media (max-width: $screen-sm-max) {
         border-top: 1px solid #ccc;
       }
-      @media(min-width: $screen-md-min) {
+      @media (min-width: $screen-md-min) {
         border-left: 1px solid #ccc;
       }
     }
@@ -60,6 +62,9 @@ body,
   &__sidebar-body {
     position: absolute;
     width: 100%;
+    &:focus {
+      outline: 0;
+    }
   }
 
   &__sidebar-heading {
