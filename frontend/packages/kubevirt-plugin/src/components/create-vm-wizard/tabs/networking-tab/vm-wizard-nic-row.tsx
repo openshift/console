@@ -17,6 +17,7 @@ const menuActionEdit = (
     withProgress(
       vmWizardNicModalEnhanced({
         blocking: true,
+        isEditing: true,
         wizardReduxID,
         network,
       }).result,

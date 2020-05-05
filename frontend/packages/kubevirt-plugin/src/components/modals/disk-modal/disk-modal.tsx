@@ -13,12 +13,7 @@ import {
   HandlePromiseProps,
   withHandlePromise,
 } from '@console/internal/components/utils';
-import {
-  createModalLauncher,
-  ModalBody,
-  ModalComponentProps,
-  ModalTitle,
-} from '@console/internal/components/factory';
+import { ModalBody, ModalComponentProps, ModalTitle } from '@console/internal/components/factory';
 import {
   NamespaceModel,
   PersistentVolumeClaimModel,
@@ -609,5 +604,3 @@ export type DiskModalProps = {
   editConfig?: UIStorageEditConfig;
 } & ModalComponentProps &
   HandlePromiseProps;
-
-export const diskModal = createModalLauncher(DiskModal);

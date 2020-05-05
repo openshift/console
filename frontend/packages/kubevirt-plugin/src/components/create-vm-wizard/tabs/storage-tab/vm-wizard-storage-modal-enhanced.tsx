@@ -28,7 +28,6 @@ const VMWizardStorageModal: React.FC<VMWizardStorageModalProps> = (props) => {
   const {
     storage,
     isCreateTemplate,
-    isEditing,
     namespace: vmNamespace,
     useProjects,
     addUpdateStorage,
@@ -99,7 +98,6 @@ const VMWizardStorageModal: React.FC<VMWizardStorageModalProps> = (props) => {
           persistentVolumeClaim && new PersistentVolumeClaimWrapper(persistentVolumeClaim, true)
         }
         isCreateTemplate={isCreateTemplate}
-        isEditing={isEditing}
         editConfig={editConfig}
         onSubmit={(
           resultDiskWrapper,

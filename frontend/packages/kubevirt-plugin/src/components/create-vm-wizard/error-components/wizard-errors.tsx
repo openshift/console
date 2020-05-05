@@ -52,6 +52,7 @@ const Errors: React.FC<ErrorsProps> = ({
             wrapWithProgress(setTabLocked)(
               vmWizardNicModalEnhanced({
                 blocking: true,
+                isEditing: true,
                 wizardReduxID,
                 network: toJS(iNIC) as VMWizardNetwork,
                 showInitialValidation,

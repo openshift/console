@@ -5,13 +5,7 @@ import {
   HandlePromiseProps,
   withHandlePromise,
 } from '@console/internal/components/utils';
-import {
-  createModalLauncher,
-  ModalBody,
-  ModalComponentProps,
-  ModalTitle,
-} from '@console/internal/components/factory';
-import { K8sResourceKind } from '@console/internal/module/k8s';
+import { ModalBody, ModalComponentProps, ModalTitle } from '@console/internal/components/factory';
 import { ValidationErrorType } from '@console/shared';
 import { NetworkAttachmentDefinitionModel } from '@console/network-attachment-definition-plugin';
 import { getLoadedData, getLoadError, isLoaded, prefixedID } from '../../../utils';
@@ -40,7 +34,7 @@ import { isFieldDisabled } from '../../../utils/ui/edit-config';
 export type NetworkProps = {
   id: string;
   isDisabled: boolean;
-  nads?: FirehoseResult<K8sResourceKind[]>;
+  nads?: FirehoseResult;
   usedMultusNetworkNames: Set<string>;
   allowPodNetwork: boolean;
   network?: NetworkWrapper;
@@ -117,6 +111,7 @@ export const NICModal = withHandlePromise((props: NICModalProps) => {
   const {
     nads,
     showInitialValidation,
+    isEditing,
     usedInterfacesNames,
     usedMultusNetworkNames,
     allowPodNetwork,
@@ -134,7 +129,6 @@ export const NICModal = withHandlePromise((props: NICModalProps) => {
   const asId = prefixedID.bind(null, 'nic');
   const nic = props.nic || new NetworkInterfaceWrapper();
   const network = props.network || new NetworkWrapper();
-  const isEditing = !!props.nic;
 
   const [name, setName] = React.useState<string>(
     nic.getName() || getSequenceName('nic', usedInterfacesNames),
@@ -309,6 +303,7 @@ export const NICModal = withHandlePromise((props: NICModalProps) => {
 
 export type NICModalProps = {
   showInitialValidation?: boolean;
+  isEditing?: boolean;
   nic?: NetworkInterfaceWrapper;
   network?: NetworkWrapper;
   onSubmit: (networkInterface: NetworkInterfaceWrapper, network: NetworkWrapper) => Promise<any>;
@@ -319,5 +314,3 @@ export type NICModalProps = {
   editConfig?: UINetworkEditConfig;
 } & ModalComponentProps &
   HandlePromiseProps;
-
-export const nicModal = createModalLauncher(NICModal);
