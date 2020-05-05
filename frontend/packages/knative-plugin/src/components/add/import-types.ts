@@ -60,3 +60,8 @@ export interface EventSourceList {
 export interface NormalizedEventSources {
   [eventSourceName: string]: EventSourceList;
 }
+
+export interface EventSourceListData {
+  loaded: boolean;
+  eventSourceList: NormalizedEventSources;
+}

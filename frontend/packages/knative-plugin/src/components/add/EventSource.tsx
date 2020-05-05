@@ -10,10 +10,11 @@ import { sanitizeApplicationValue } from '@console/dev-console/src/utils/applica
 import { eventSourceValidationSchema } from './eventSource-validation-utils';
 import EventSourceForm from './EventSourceForm';
 import { getEventSourceResource } from '../../utils/create-eventsources-utils';
-import { EventSourceFormData } from './import-types';
+import { EventSourceFormData, EventSourceListData } from './import-types';
 
 interface EventSourceProps {
   namespace: string;
+  eventSourceStatus: EventSourceListData | null;
   contextSource?: string;
   selectedApplication?: string;
 }
@@ -24,7 +25,12 @@ interface StateProps {
 
 type Props = EventSourceProps & StateProps;
 
-const EventSource: React.FC<Props> = ({ namespace, activeApplication, contextSource }) => {
+const EventSource: React.FC<Props> = ({
+  namespace,
+  eventSourceStatus,
+  activeApplication,
+  contextSource,
+}) => {
   const serviceName = contextSource?.split('/').pop() || '';
   const initialValues: EventSourceFormData = {
     project: {
@@ -93,7 +99,9 @@ const EventSource: React.FC<Props> = ({ namespace, activeApplication, contextSou
       onReset={history.goBack}
       validationSchema={eventSourceValidationSchema}
     >
-      {(props) => <EventSourceForm {...props} namespace={namespace} />}
+      {(props) => (
+        <EventSourceForm {...props} namespace={namespace} eventSourceStatus={eventSourceStatus} />
+      )}
     </Formik>
   );
 };

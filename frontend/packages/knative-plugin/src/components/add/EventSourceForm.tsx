@@ -2,12 +2,14 @@ import * as React from 'react';
 import * as _ from 'lodash';
 import { FormikProps, FormikValues } from 'formik';
 import { FormFooter, FlexForm } from '@console/shared';
+import { LoadingInline } from '@console/internal/components/utils';
 import EventSourcesSelector from './event-sources/EventSourcesSelector';
-import { useEventSourceList } from '../../utils/create-eventsources-utils';
 import EventSourceSection from './event-sources/EventSourceSection';
+import { EventSourceListData } from './import-types';
 
 interface OwnProps {
   namespace: string;
+  eventSourceStatus: EventSourceListData | null;
 }
 
 const EventSourceForm: React.FC<FormikProps<FormikValues> & OwnProps> = ({
@@ -18,10 +20,16 @@ const EventSourceForm: React.FC<FormikProps<FormikValues> & OwnProps> = ({
   isSubmitting,
   dirty,
   namespace,
+  eventSourceStatus,
 }) => (
   <FlexForm onSubmit={handleSubmit}>
-    <EventSourcesSelector eventSourceList={useEventSourceList(namespace)} />
-    <EventSourceSection namespace={namespace} />
+    {eventSourceStatus && !_.isEmpty(eventSourceStatus.eventSourceList) && (
+      <>
+        <EventSourcesSelector eventSourceList={eventSourceStatus.eventSourceList} />
+        <EventSourceSection namespace={namespace} />{' '}
+      </>
+    )}
+    {eventSourceStatus && !eventSourceStatus.loaded && <LoadingInline />}
     <FormFooter
       handleReset={handleReset}
       errorMessage={status && status.submitError}
