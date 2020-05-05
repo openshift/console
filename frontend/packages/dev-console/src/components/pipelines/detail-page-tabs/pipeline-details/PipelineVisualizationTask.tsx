@@ -122,6 +122,12 @@ const TaskComponent: React.FC<TaskProps> = ({
     ? `${resourcePathFromModel(PipelineRunModel, pipelineRunName, namespace)}/logs/${name}`
     : undefined;
 
+  const enableLogLink =
+    status?.reason !== runStatus.Idle &&
+    status?.reason !== runStatus.Pending &&
+    status?.reason !== runStatus.Cancelled &&
+    !!path;
+
   let taskPill = (
     <div className={cx('odc-pipeline-vis-task__content', { 'is-selected': selected })}>
       <div
@@ -164,6 +170,8 @@ const TaskComponent: React.FC<TaskProps> = ({
     </>
   );
   return (
-    <div className="odc-pipeline-vis-task">{path ? <Link to={path}>{visTask}</Link> : visTask}</div>
+    <div className={cx('odc-pipeline-vis-task', { 'is-linked': enableLogLink })}>
+      {enableLogLink ? <Link to={path}>{visTask}</Link> : visTask}
+    </div>
   );
 };

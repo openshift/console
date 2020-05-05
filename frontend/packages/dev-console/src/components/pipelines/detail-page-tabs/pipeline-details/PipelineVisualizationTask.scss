@@ -48,13 +48,19 @@ $border-color: var(--pf-global--BorderColor--light-100);
     display: flex;
     flex-direction: column;
     min-width: 0;
-    &:hover {
-      cursor: pointer;
-    }
+
     &.is-text-center {
       text-align: center;
       margin: 0 auto;
       flex: 0 0 100px;
+    }
+  }
+
+  &.is-linked {
+    &__title-wrapper {
+      &:hover {
+        cursor: pointer;
+      }
     }
   }
 
