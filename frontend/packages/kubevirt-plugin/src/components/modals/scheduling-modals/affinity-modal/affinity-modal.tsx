@@ -19,7 +19,7 @@ import {
 } from '@patternfly/react-core';
 import { ModalTitle, ModalBody, ModalComponentProps } from '@console/internal/components/factory';
 import { NodeModel } from '@console/internal/models';
-import { K8sResourceKind, k8sPatch } from '@console/internal/module/k8s';
+import { NodeKind, k8sPatch } from '@console/internal/module/k8s';
 import { VMLikeEntityKind } from '../../../../types/vmLike';
 import { getVMLikeModel } from '../../../../selectors/vm';
 import { getVMLikeAffinity } from '../../../../selectors/vm-like/selectors';
@@ -254,6 +254,6 @@ export const AffinityModal = withHandlePromise<AffinityModalProps>(
 type AffinityModalProps = HandlePromiseProps &
   ModalComponentProps & {
     vmLikeEntity: VMLikeEntityKind;
-    nodes?: FirehoseResult<K8sResourceKind[]>;
+    nodes?: FirehoseResult<NodeKind[]>;
     vmLikeEntityLoading?: FirehoseResult<VMLikeEntityKind>;
   };

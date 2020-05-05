@@ -1,12 +1,10 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import { FirehoseResult } from '@console/internal/components/utils';
-import { NodeKind, K8sResourceKind } from '@console/internal/module/k8s';
-import { getLabels } from '@console/shared';
+import { NodeKind } from '@console/internal/module/k8s';
+import { getLabels, getNodeTaints } from '@console/shared';
 import { getLoadedData, isLoaded } from '../../../../utils';
 import { IDLabel } from '../../../LabelsList/types';
-
-// path.key => value || key => value
 
 const withOperatorPredicate = <T extends IDLabel = IDLabel>(store: any, label: T) => {
   const { key, value, values, operator } = label;
@@ -31,9 +29,9 @@ const withOperatorPredicate = <T extends IDLabel = IDLabel>(store: any, label: T
 };
 
 export const useNodeQualifier = <T extends IDLabel = IDLabel>(
-  nodes: FirehoseResult<K8sResourceKind[]>,
-  labels: T[],
-  fields?: T[],
+  nodes: FirehoseResult<NodeKind[]>,
+  constraintType: NodeQualifierPropertyType,
+  constraints: T[],
 ): NodeKind[] => {
   const loadedNodes = getLoadedData(nodes, []);
   const isNodesLoaded = isLoaded(nodes);
@@ -41,33 +39,45 @@ export const useNodeQualifier = <T extends IDLabel = IDLabel>(
   const [qualifiedNodes, setQualifiedNodes] = React.useState([]);
 
   React.useEffect(() => {
-    if (isNodesLoaded) {
-      const filteredLabels = labels.filter(({ key }) => !!key);
-
-      const labelFilteredNodes = [];
+    const filteredConstraints = constraints.filter(({ key }) => !!key);
+    if (!_.isEmpty(filteredConstraints) && isNodesLoaded) {
+      const filteredNodes = [];
       loadedNodes.forEach((node) => {
-        const nodeLabels = getLabels(node);
+        if (constraintType === 'label') {
+          const nodeLabels = getLabels(node);
+          if (
+            nodeLabels &&
+            filteredConstraints.every((label) => withOperatorPredicate<T>(nodeLabels, label))
+          ) {
+            filteredNodes.push(node);
+          }
+        }
         if (
-          nodeLabels &&
-          filteredLabels.every((label) => withOperatorPredicate<T>(nodeLabels, label))
+          constraintType === 'field' &&
+          filteredConstraints.every((field) => withOperatorPredicate<T>(node, field))
         ) {
-          labelFilteredNodes.push(node);
+          filteredNodes.push(node);
+        }
+
+        if (constraintType === 'taint') {
+          const nodeTaints = getNodeTaints(node);
+          if (
+            nodeTaints &&
+            filteredConstraints.every(({ key, value, effect }) =>
+              nodeTaints.some(
+                (taint) => taint.key === key && taint.value === value && taint.effect === effect,
+              ),
+            )
+          ) {
+            filteredNodes.push(node);
+          }
         }
       });
-      setQualifiedNodes(labelFilteredNodes);
-
-      if (fields) {
-        const filteredFields = fields.filter(({ key }) => !!key);
-        const fieldFilteredNodes = [];
-        loadedNodes.forEach((node) => {
-          if (filteredFields.every((field) => withOperatorPredicate<T>(node, field))) {
-            fieldFilteredNodes.push(node);
-          }
-        });
-        setQualifiedNodes(_.intersection(labelFilteredNodes, fieldFilteredNodes));
-      }
+      setQualifiedNodes(filteredNodes);
     }
-  }, [labels, fields, loadedNodes, isNodesLoaded]);
+  }, [constraintType, constraints, loadedNodes, isNodesLoaded]);
 
   return qualifiedNodes;
 };
+
+export type NodeQualifierPropertyType = 'label' | 'taint' | 'field';

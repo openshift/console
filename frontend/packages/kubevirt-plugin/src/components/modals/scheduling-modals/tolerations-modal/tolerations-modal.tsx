@@ -7,7 +7,7 @@ import {
   withHandlePromise,
   HandlePromiseProps,
 } from '@console/internal/components/utils';
-import { k8sPatch, K8sResourceKind } from '@console/internal/module/k8s';
+import { k8sPatch, NodeKind } from '@console/internal/module/k8s';
 import { NodeModel } from '@console/internal/models';
 import { isLoaded, getLoadedData, getLoadError } from '../../../../utils';
 import { ModalFooter } from '../../modal/modal-footer';
@@ -48,7 +48,7 @@ export const TModal = withHandlePromise(
       getVMLikeTolerations(vmLikeEntity)?.map((toleration, id) => ({ ...toleration, id })),
     );
 
-    const qualifiedNodes = useNodeQualifier(nodes, tolerationsLabels);
+    const qualifiedNodes = useNodeQualifier(nodes, 'taint', tolerationsLabels);
 
     const [showCollisionAlert, reload] = useCollisionChecker<VMLikeEntityKind>(
       vmLikeFinal,
@@ -146,7 +146,7 @@ export const TModal = withHandlePromise(
 type TModalProps = HandlePromiseProps &
   ModalComponentProps & {
     vmLikeEntity: VMLikeEntityKind;
-    nodes?: FirehoseResult<K8sResourceKind[]>;
+    nodes?: FirehoseResult<NodeKind[]>;
     inProgress: boolean;
     vmLikeEntityLoading?: FirehoseResult<VMLikeEntityKind>;
     errorMessage: string;
