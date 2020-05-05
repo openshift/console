@@ -103,7 +103,7 @@ export const VirtualMachineImportModel: K8sKind = {
   apiVersion: 'v1alpha1',
   apiGroup: 'v2v.kubevirt.io',
   plural: 'virtualmachineimports',
-  abbr: 'OVMI',
+  abbr: 'VMImport',
   namespaced: true,
   kind: 'VirtualMachineImport',
   id: 'virtualmachineimport',
