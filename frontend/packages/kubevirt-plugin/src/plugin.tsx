@@ -212,8 +212,6 @@ const plugin: Plugin<ConsumedExtensions> = [
       path: [
         '/k8s/ns/:ns/virtualmachines',
         '/k8s/all-namespaces/virtualmachines',
-        '/k8s/ns/:ns/virtualmachineinstances',
-        '/k8s/all-namespaces/virtualmachineinstances',
       ],
       loader: () =>
         import('./components/vms/virtualization' /* webpackChunkName: "kubevirt" */).then(
