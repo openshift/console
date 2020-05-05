@@ -246,7 +246,7 @@ const FilterToolbar_: React.FC<FilterToolbarProps & RouteComponentProps> = (prop
     <DataToolbar id="filter-toolbar" clearAllFilters={clearAll}>
       <DataToolbarContent>
         {rowFilters.length > 0 && (
-          <DataToolbarItem>
+          <DataToolbarItem className="co-search-group__resource">
             {_.reduce(
               Object.keys(filters),
               (acc, key) => (
@@ -282,7 +282,7 @@ const FilterToolbar_: React.FC<FilterToolbarProps & RouteComponentProps> = (prop
             )}
           </DataToolbarItem>
         )}
-        <DataToolbarItem>
+        <DataToolbarItem className="co-filter-search--full-width">
           <DataToolbarFilter
             deleteChipGroup={() => updateLabelFilter([])}
             chips={[...labelFilters]}

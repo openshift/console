@@ -21,3 +21,8 @@
 .co-filter-dropdown-item__name {
   padding: 0 var(--pf-global--spacer--xs);
 }
+
+.co-filter-search--full-width {
+    flex-grow: 1;
+    max-width: 90vw;
+}
