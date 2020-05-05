@@ -14,20 +14,13 @@ import {
   getMigrationStatusPhase,
   isMigrating,
 } from '../../selectors/vmi-migration';
-import {
-  findVMIPod,
-  getPodContainerStatuses,
-  getPodStatusPhase,
-  getVMImporterPods,
-} from '../../selectors/pod/selectors';
+import { findVMIPod, getPodStatusPhase, getVMImporterPods } from '../../selectors/pod/selectors';
 import {
   findConversionPod,
   getVMStatusConditions,
   isVMCreated,
-  isVMReady,
   isVMRunning,
 } from '../../selectors/vm';
-import { isVMI } from '../../selectors/check-type';
 import { getPodStatus } from '../pod/pod';
 import {
   POD_PHASE_PENDING,
@@ -38,30 +31,34 @@ import {
 } from '../pod/constants';
 import { VMIKind, VMKind } from '../../types';
 import { isVMIPaused } from '../../selectors/vmi/basic';
-import { VMILikeEntityKind } from '../../types/vmLike';
 import { VMImportKind } from '../../types/vm-import/ovirt/vm-import';
 import { VirtualMachineImportModel } from '../../models';
 import { getVMImportStatus } from '../vm-import/vm-import-status';
 import { VMStatus } from '../../constants/vm/vm-status';
 import { VMStatusBundle } from './types';
 import {
-  IMPORTING_CDI_ERROR_MESSAGE,
-  IMPORTING_ERROR_VMWARE_MESSAGE,
-  IMPORTING_CDI_MESSAGE,
-  IMPORTING_VMWARE_MESSAGE,
-  VMI_WAITING_MESSAGE,
-  STARTING_MESSAGE,
   IMPORT_CDI_PENDING_MESSAGE,
+  IMPORTING_CDI_ERROR_MESSAGE,
+  IMPORTING_CDI_MESSAGE,
+  IMPORTING_ERROR_VMWARE_MESSAGE,
+  IMPORTING_VMWARE_MESSAGE,
+  STARTING_MESSAGE,
+  VMI_WAITING_MESSAGE,
 } from '../../strings/vm/status';
 import { CDI_KUBEVIRT_IO, STORAGE_IMPORT_PVC_NAME } from '../../constants';
 import { CONVERSION_PROGRESS_ANNOTATION } from '../../constants/v2v';
 import { PAUSED_VM_MODAL_MESSAGE } from '../../constants/vm';
 import { V1alpha1DataVolume } from '../../types/vm/disk/V1alpha1DataVolume';
+import { VMIPhase } from '../../constants/vmi/phase';
 
 const isPaused = (vmi: VMIKind): VMStatusBundle =>
   isVMIPaused(vmi) ? { status: VMStatus.PAUSED, message: PAUSED_VM_MODAL_MESSAGE } : null;
 
-const isV2VVMWareConversion = (vm: VMILikeEntityKind, pods?: PodKind[]): VMStatusBundle => {
+const isV2VVMWareConversion = (vm: VMKind, pods?: PodKind[]): VMStatusBundle => {
+  if (!vm || !pods) {
+    return null;
+  }
+
   const conversionPod = findConversionPod(vm, pods);
   const podPhase = getPodStatusPhase(conversionPod);
   if (conversionPod && podPhase !== POD_PHASE_SUCEEDED) {
@@ -101,10 +98,7 @@ const isV2VVMWareConversion = (vm: VMILikeEntityKind, pods?: PodKind[]): VMStatu
   return null;
 };
 
-const isV2VVMImportConversion = (
-  vm: VMILikeEntityKind,
-  vmImports?: VMImportKind[],
-): VMStatusBundle => {
+const isV2VVMImportConversion = (vm: VMKind, vmImports?: VMImportKind[]): VMStatusBundle => {
   const vmImportOwnerReference = (getOwnerReferences(vm) || []).find((reference) =>
     compareOwnerReference(reference, buildOwnerReferenceForModel(VirtualMachineImportModel), true),
   );
@@ -127,8 +121,12 @@ const isV2VVMImportConversion = (
   };
 };
 
-const isBeingMigrated = (vm: VMILikeEntityKind, migrations?: K8sResourceKind[]): VMStatusBundle => {
-  const migration = findVMIMigration(vm, migrations);
+const isBeingMigrated = (
+  vm: VMKind,
+  vmi: VMIKind,
+  migrations?: K8sResourceKind[],
+): VMStatusBundle => {
+  const migration = findVMIMigration(vm || vmi, migrations);
   if (isMigrating(migration)) {
     return {
       status: VMStatus.MIGRATING,
@@ -195,76 +193,61 @@ const isBeingImported = (
   return null;
 };
 
-const isBeingStopped = (vm: VMILikeEntityKind, launcherPod: PodKind = null): VMStatusBundle => {
-  if (isVMI(vm)) {
-    return null;
-  }
+const isBeingStopped = (vm: VMKind, vmi: VMIKind = null): VMStatusBundle => {
+  const vmiPhase = getStatusPhase<VMIPhase>(vmi);
+  // according to https://github.com/kubevirt/kubevirt/blob/master/pkg/virt-api/rest/subresource.go
+  const isFinalPhase =
+    !vmiPhase || [VMIPhase.Unknown, VMIPhase.Failed, VMIPhase.Succeeded].includes(vmiPhase);
 
-  if (isVMReady(vm) || isVMCreated(vm)) {
-    const podStatus = getPodStatus(launcherPod);
-    const containerStatuses = getPodContainerStatuses(launcherPod);
-
-    if (containerStatuses) {
-      const terminatedContainers = containerStatuses.filter(
-        (containerStatus) => containerStatus.state.terminated,
-      );
-      const runningContainers = containerStatuses.filter(
-        (containerStatus) => containerStatus.state.running,
-      );
-      if (terminatedContainers.length > 0 || (runningContainers.length > 0 && !isVMRunning(vm))) {
-        return {
-          ...podStatus,
-          status: VMStatus.STOPPING,
-          pod: launcherPod,
-        };
-      }
-    }
-  }
-
-  return null;
-};
-
-const isOff = (vm: VMKind): VMStatusBundle => (isVMRunning(vm) ? null : { status: VMStatus.OFF });
-
-const isReady = (vmi: VMIKind, launcherPod: PodKind): VMStatusBundle => {
-  if ((getStatusPhase(vmi) || '').toLowerCase() === 'running') {
-    // we are all set
+  if (vm && !isVMRunning(vm) && vmi && !isFinalPhase) {
     return {
-      status: VMStatus.RUNNING,
-      pod: launcherPod,
+      status: VMStatus.STOPPING,
     };
   }
+
   return null;
 };
 
-const isVMError = (vm: VMILikeEntityKind): VMStatusBundle => {
+const isOff = (vm: VMKind): VMStatusBundle =>
+  !vm || isVMRunning(vm) ? null : { status: VMStatus.OFF };
+
+const isVMError = (vm: VMKind, vmi: VMIKind, launcherPod: PodKind): VMStatusBundle => {
   // is an issue with the VM definition?
-  const condition = getVMStatusConditions(vm)[0];
+  const condition = getVMStatusConditions(vmi || vm)[0];
   if (condition) {
     // Do we need to analyze additional conditions in the array? Probably not.
     if (condition.type === 'Failure') {
       return { status: VMStatus.VM_ERROR, detailedMessage: condition.message };
     }
   }
+
+  if ((vmi || isVMCreated(vm)) && launcherPod) {
+    const podStatus = getPodStatus(launcherPod);
+    if (POD_STATUS_ALL_ERROR.includes(podStatus.status)) {
+      return {
+        ...podStatus,
+        status: VMStatus.POD_ERROR,
+        pod: launcherPod,
+      };
+    }
+  }
   return null;
 };
 
-const isCreated = (vm: VMILikeEntityKind, launcherPod: PodKind = null): VMStatusBundle => {
-  if (isVMI(vm)) {
-    return null;
+const isRunning = (vmi: VMIKind): VMStatusBundle => {
+  if (getStatusPhase(vmi) === VMIPhase.Running) {
+    return {
+      status: VMStatus.RUNNING,
+    };
   }
+  return null;
+};
 
+const isStarting = (vm: VMKind, launcherPod: PodKind = null): VMStatusBundle => {
   if (isVMCreated(vm)) {
     // created but not yet ready
     if (launcherPod) {
       const podStatus = getPodStatus(launcherPod);
-      if (POD_STATUS_ALL_ERROR.includes(podStatus.status)) {
-        return {
-          ...podStatus,
-          status: VMStatus.POD_ERROR,
-          pod: launcherPod,
-        };
-      }
       if (!POD_STATUS_ALL_READY.includes(podStatus.status)) {
         return {
           ...podStatus,
@@ -303,27 +286,26 @@ export const getVMStatus = ({
   migrations?: K8sResourceKind[];
   vmImports?: VMImportKind[];
 }): VMStatusBundle => {
-  const vmLike = vm || vmi;
   const launcherPod = findVMIPod(vmi, pods);
+
   return (
     isPaused(vmi) ||
-    isV2VVMWareConversion(vmLike, pods) || // these statuses must precede isRunning() because they do not rely on ready vms
-    isV2VVMImportConversion(vmLike, vmImports) || //  -||-
-    isBeingMigrated(vmLike, migrations) || //  -||-
-    (vm && isBeingImported(vm, pods, dataVolumes)) || //  -||-
-    isBeingStopped(vmLike, launcherPod) ||
-    (vm && isOff(vm)) ||
-    isReady(vmi, launcherPod) ||
-    isVMError(vmLike) ||
-    isCreated(vmLike, launcherPod) ||
+    isV2VVMWareConversion(vm, pods) || // these statuses must precede isRunning() because they do not rely on ready vms
+    isV2VVMImportConversion(vm, vmImports) ||
+    isBeingMigrated(vm, vmi, migrations) ||
+    isBeingImported(vm, pods, dataVolumes) ||
+    isBeingStopped(vm, vmi) ||
+    isOff(vm) ||
+    isVMError(vm, vmi, launcherPod) ||
+    isRunning(vmi) ||
+    isStarting(vm, launcherPod) ||
     (!vmi && vm && isWaitingForVMI(vm)) ||
-    (getStatusPhase(vmi) === 'Running' && { status: VMStatus.RUNNING }) ||
-    (['Scheduling', 'Scheduled'].includes(getStatusPhase(vmi)) && {
+    ([VMIPhase.Scheduling, VMIPhase.Scheduled].includes(getStatusPhase<VMIPhase>(vmi)) && {
       status: VMStatus.STARTING,
       message: STARTING_MESSAGE,
     }) ||
-    (getStatusPhase(vmi) === 'Pending' && { status: VMStatus.VMI_WAITING }) ||
-    (getStatusPhase(vmi) === 'Failed' && { status: VMStatus.VM_ERROR }) || {
+    (getStatusPhase(vmi) === VMIPhase.Pending && { status: VMStatus.VMI_WAITING }) ||
+    (getStatusPhase(vmi) === VMIPhase.Failed && { status: VMStatus.VM_ERROR }) || {
       status: VMStatus.UNKNOWN,
     }
   );

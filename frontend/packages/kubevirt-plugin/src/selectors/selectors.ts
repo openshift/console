@@ -41,8 +41,7 @@ export const getAnnotationKeySuffix = (
   return getValueByPrefix(annotations, annotationPrefix);
 };
 
-export const getStatusPhase = (entity: K8sResourceKind): string =>
-  entity && entity.status && entity.status.phase;
+export const getStatusPhase = <T = string>(entity: K8sResourceKind): T => entity?.status?.phase;
 
 export const getStatusConditions = (statusResource: K8sResourceKind, defaultValue = []) =>
   _.get(statusResource, 'status.conditions') === undefined
