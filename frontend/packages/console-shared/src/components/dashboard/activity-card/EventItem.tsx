@@ -20,7 +20,7 @@ const EventItem: React.FC<EventItemProps> = React.memo(({ event, isExpanded, onT
   const isWarning = typeFilter('warning', event);
   const expanded = isExpanded(metadata.uid);
   return (
-    <div className="co-recent-item__body" role="gridcell">
+    <div className="co-recent-item__body">
       <AccordionItem>
         <AccordionToggle
           onClick={() => onToggle(metadata.uid)}
