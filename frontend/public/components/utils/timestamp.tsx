@@ -60,6 +60,11 @@ const timestampFor = (mdate: Date, now: Date, omitSuffix: boolean) => {
 const nowStateToProps = ({ UI }) => ({ now: UI.get('lastTick') });
 
 export const Timestamp = connect(nowStateToProps)((props: TimestampProps) => {
+  // Check for null. If props.timestamp is null, it returns incorrect date and time of Wed Dec 31 1969 19:00:00 GMT-0500 (Eastern Standard Time)
+  if (!props.timestamp) {
+    return <div className="co-timestamp">-</div>;
+  }
+
   const mdate = props.isUnix
     ? new Date((props.timestamp as number) * 1000)
     : new Date(props.timestamp);
