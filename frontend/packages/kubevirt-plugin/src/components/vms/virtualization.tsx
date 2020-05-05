@@ -16,7 +16,7 @@ export const RedirectToVirtualizationPage: React.FC<VirtualizationPageProps> = (
       pathname: props.match.ns
         ? `/k8s/ns/${props.match.ns}/virtualization`
         : `/k8s/all-namespaces/virtualization`,
-      search: decodeURI(props.location.search),
+      search: decodeURI(props.location?.search),
     }}
   />
 );
@@ -25,9 +25,9 @@ export const RedirectToVirtualizationTemplatePage: React.FC<VirtualizationPagePr
   <Redirect
     to={{
       pathname: props.match.ns
-        ? `/k8s/ns/${props.match.ns}/virtualization/templates${search && `?${search}`}`
-        : `/k8s/all-namespaces/virtualization/templates${search && `?${search}`}`,
-      search: decodeURI(props.location.search),
+        ? `/k8s/ns/${props.match.ns}/virtualization/templates`
+        : `/k8s/all-namespaces/virtualization/templates`,
+      search: decodeURI(props.location?.search),
     }}
   />
 );
