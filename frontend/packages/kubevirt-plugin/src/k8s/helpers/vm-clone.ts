@@ -65,7 +65,7 @@ export class VMClone {
     delete data.status;
     spec.dataVolumeTemplates = [];
 
-    this.vm.getInterfaces().forEach((intface) => delete intface.macAddress);
+    this.vm.getNetworkInterfaces().forEach((intface) => delete intface.macAddress);
   };
 
   private setValues({ name, namespace, description, startVM = false }: CloneTo) {

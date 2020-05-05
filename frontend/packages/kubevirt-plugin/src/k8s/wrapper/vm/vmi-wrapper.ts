@@ -32,7 +32,7 @@ export class VMIWrapper extends K8sResourceWrapper<VMIKind, VMIWrapper> implemen
   getMemory = () => this.data?.spec?.domain?.resources?.requests?.memory;
   getCPU = (): CPURaw => this.data?.spec?.domain?.cpu;
 
-  getInterfaces = (defaultValue = []) => getVMIInterfaces(this.data, defaultValue);
+  getNetworkInterfaces = (defaultValue = []) => getVMIInterfaces(this.data, defaultValue);
 
   getDisks = (defaultValue = []) => getVMIDisks(this.data, defaultValue);
   getCDROMs = () => this.getDisks().filter((device) => !!device.cdrom);
@@ -41,7 +41,7 @@ export class VMIWrapper extends K8sResourceWrapper<VMIKind, VMIWrapper> implemen
 
   getVolumes = (defaultValue = []) => getVMIVolumes(this.data, defaultValue);
 
-  getLabeledDevices = () => transformDevices(this.getDisks(), this.getInterfaces());
+  getLabeledDevices = () => transformDevices(this.getDisks(), this.getNetworkInterfaces());
 
   isDedicatedCPUPlacement = () => this.data.spec?.domain?.cpu?.dedicatedCpuPlacement || false;
 

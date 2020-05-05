@@ -67,7 +67,7 @@ export const createVMTemplate = async (params: CreateVMParams) => {
 
   const { template, storages } = getInitializedVMTemplate(params);
 
-  const finalTemplate = VMTemplateWrapper.initializeFromSimpleData({
+  const finalTemplate = new VMTemplateWrapper().init({
     name: combinedSimpleSettings[VMSettingsField.NAME],
     namespace,
     labels: {

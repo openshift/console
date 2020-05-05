@@ -2,7 +2,7 @@
 import * as _ from 'lodash';
 import { getLabels } from '@console/shared/src';
 import { K8sResourceWrapper } from '../common/k8s-resource-wrapper';
-import { CPURaw, VMKind } from '../../../types/vm';
+import { CPURaw, V1NetworkInterface, VMKind } from '../../../types/vm';
 import {
   getDataVolumeTemplates,
   getDisks,
@@ -49,7 +49,7 @@ export class VMWrapper extends K8sResourceWrapper<VMKind, VMWrapper> implements 
 
   getDataVolumeTemplates = (defaultValue = []) => getDataVolumeTemplates(this.data, defaultValue);
 
-  getInterfaces = (defaultValue = []) => getInterfaces(this.data, defaultValue);
+  getNetworkInterfaces = (defaultValue = []) => getInterfaces(this.data, defaultValue);
 
   getDisks = (defaultValue = []) => getDisks(this.data, defaultValue);
   getCDROMs = () => this.getDisks().filter((device) => !!device.cdrom);
@@ -58,7 +58,7 @@ export class VMWrapper extends K8sResourceWrapper<VMKind, VMWrapper> implements 
 
   getVolumes = (defaultValue = []) => getVolumes(this.data, defaultValue);
 
-  getLabeledDevices = () => transformDevices(this.getDisks(), this.getInterfaces());
+  getLabeledDevices = () => transformDevices(this.getDisks(), this.getNetworkInterfaces());
 
   getNodeSelector = () => getNodeSelector(this.data);
 
@@ -124,7 +124,14 @@ export class VMWrapper extends K8sResourceWrapper<VMKind, VMWrapper> implements 
     return this;
   };
 
-  setNetworks = (networks: VMWizardNetwork[]) => {
+  setNetworkInterfaces = (networks: V1NetworkInterface[]) => {
+    this.ensurePath('spec.template.spec.domain.devices');
+    this.data.spec.template.spec.domain.devices.interfaces = _.compact(networks);
+    this.ensureNetworksConsistency();
+    return this;
+  };
+
+  setWizardNetworks = (networks: VMWizardNetwork[]) => {
     this.ensurePath('spec.template.spec.domain.devices');
     this.data.spec.template.spec.domain.devices.interfaces = _.compact(
       networks.map((network) => network.networkInterface),
@@ -176,7 +183,7 @@ export class VMWrapper extends K8sResourceWrapper<VMKind, VMWrapper> implements 
     return this;
   };
 
-  setStorages = (storages: VMWizardStorage[]) => {
+  setWizardStorages = (storages: VMWizardStorage[]) => {
     this.ensurePath('spec.template.spec.domain.devices');
     this.data.spec.template.spec.domain.devices.disks = _.compact(
       storages.map((storage) => storage.disk),

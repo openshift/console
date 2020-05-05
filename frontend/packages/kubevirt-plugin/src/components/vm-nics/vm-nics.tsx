@@ -23,7 +23,7 @@ const getNicsData = (vmLikeEntity: VMGenericLikeEntityKind): NetworkBundle[] => 
   const vmiLikeWrapper = asVMILikeWrapper(vmLikeEntity);
 
   const networks = vmiLikeWrapper?.getNetworks() || [];
-  const interfaces = vmiLikeWrapper?.getInterfaces() || [];
+  const interfaces = vmiLikeWrapper?.getNetworkInterfaces() || [];
 
   const networkLookup = createBasicLookup(networks, getSimpleName);
 

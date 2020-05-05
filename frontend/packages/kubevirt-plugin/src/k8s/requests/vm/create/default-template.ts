@@ -5,6 +5,7 @@ import { VM_TEMPLATE_NAME_PARAMETER } from '../../../../constants/vm-templates';
 import {
   DiskBus,
   DiskType,
+  NetworkInterfaceModel,
   TEMPLATE_OS_LABEL,
   TEMPLATE_OS_NAME_ANNOTATION,
   TEMPLATE_PARAM_VM_NAME,
@@ -20,6 +21,7 @@ import { VMSettingsField } from '../../../../components/create-vm-wizard/types';
 import { getFlavor, getWorkloadProfile } from '../../../../selectors/vm';
 import { DiskWrapper } from '../../../wrapper/vm/disk-wrapper';
 import { VolumeWrapper } from '../../../wrapper/vm/volume-wrapper';
+import { NetworkInterfaceWrapper } from '../../../wrapper/vm/network-interface-wrapper';
 
 export const resolveDefaultVMTemplate = (params: DefaultVMLikeEntityParams): TemplateKind => {
   const { commonTemplate, name, namespace, containerImage, baseOSName } = params;
@@ -29,22 +31,33 @@ export const resolveDefaultVMTemplate = (params: DefaultVMLikeEntityParams): Tem
   const containerDiskName = 'containerdisk';
 
   vm.setHostname(VM_TEMPLATE_NAME_PARAMETER)
+    .setNetworkInterfaces(
+      vm.getNetworkInterfaces().map((networkInterface) => {
+        const networkInterfaceWrapper = new NetworkInterfaceWrapper(networkInterface);
+        if (!networkInterfaceWrapper.getModel()) {
+          networkInterfaceWrapper.setModel(NetworkInterfaceModel.VIRTIO);
+        }
+        return networkInterfaceWrapper.asResource();
+      }),
+    )
     .removeStorage('rootdisk')
     .prependStorage({
-      disk: DiskWrapper.initializeFromSimpleData({
-        name: containerDiskName,
-        type: DiskType.DISK,
-        bus: DiskBus.VIRTIO,
-        bootOrder: 1,
-      }).asResource(),
-      volume: VolumeWrapper.initializeFromSimpleData({
-        name: containerDiskName,
-        type: VolumeType.CONTAINER_DISK,
-        typeData: { image: containerImage },
-      }).asResource(),
+      disk: new DiskWrapper()
+        .init({
+          name: containerDiskName,
+          bootOrder: 1,
+        })
+        .setType(DiskType.DISK, { bus: DiskBus.VIRTIO })
+        .asResource(),
+      volume: new VolumeWrapper()
+        .init({
+          name: containerDiskName,
+        })
+        .setType(VolumeType.CONTAINER_DISK, { image: containerImage })
+        .asResource(),
     });
 
-  const finalTemplate = VMTemplateWrapper.initializeFromSimpleData({
+  const finalTemplate = new VMTemplateWrapper().init({
     name,
     namespace,
     labels: {
