@@ -51,19 +51,20 @@ export const PipelineVisualizationStepList: React.FC<PipelineVisualizationStepLi
     <div className="odc-pipeline-vis-steps-list__task-name">{taskName}</div>
     {steps.map(({ duration, name, runStatus: status }) => {
       return (
-        <div className="odc-pipeline-vis-steps-list__step" key={name}>
-          {!isSpecOverview && (
+        <div
+          className={classNames('odc-pipeline-vis-steps-list__step', {
+            'odc-pipeline-vis-steps-list__step--task-run': !isSpecOverview,
+          })}
+          key={name}
+        >
+          {!isSpecOverview ? (
             <div className="odc-pipeline-vis-steps-list__icon">
               <TooltipColoredStatusIcon status={status} />
             </div>
+          ) : (
+            <span className="odc-pipeline-vis-steps-list__bullet">&bull;</span>
           )}
-          <div
-            className={classNames('odc-pipeline-vis-steps-list__name', {
-              'is-main-focus': isSpecOverview,
-            })}
-          >
-            {name}
-          </div>
+          <div className="odc-pipeline-vis-steps-list__name">{name}</div>
           {!isSpecOverview && (
             <div className="odc-pipeline-vis-steps-list__duration">{duration}</div>
           )}
