@@ -20,20 +20,28 @@ import {
   TopologyDataObject,
   getTopologyResourceObject,
 } from '@console/dev-console/src/components/topology';
-import { ExtraResources, vmMenuActionsCreator } from '../../components/vms/menu-actions';
+import { vmMenuActions } from '../../components/vms/menu-actions';
 import { VmNode } from './nodes/VmNode';
 import { TYPE_VIRTUAL_MACHINE } from './const';
-import { VMKind } from '../../types/vm';
+import { VMNodeData } from '../types';
 
-export const vmActions = (vm: TopologyDataObject): KebabOption[] => {
+export const vmActions = (vm: TopologyDataObject<VMNodeData>): KebabOption[] => {
   const contextMenuResource = getTopologyResourceObject(vm);
   if (!contextMenuResource) {
     return null;
   }
-  const data = vm.data as ExtraResources;
+  const {
+    data: { vmi, vmStatusBundle },
+  } = vm;
 
   const model = modelFor(referenceFor(contextMenuResource));
-  return vmMenuActionsCreator(model, contextMenuResource as VMKind, data);
+
+  return vmMenuActions.map((action) => {
+    return action(model, contextMenuResource, {
+      vmi,
+      vmStatusBundle,
+    });
+  });
 };
 
 export const vmContextMenu = (element: Node) => {

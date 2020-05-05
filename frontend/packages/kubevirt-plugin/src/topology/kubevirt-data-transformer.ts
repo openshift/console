@@ -23,6 +23,9 @@ import { VirtualMachineModel } from '../models';
 import { TYPE_VIRTUAL_MACHINE } from './components/const';
 import { findVMIPod } from '../selectors/pod/selectors';
 import { getVMStatus } from '../statuses/vm/vm-status';
+import { V1alpha1DataVolume } from '../types/vm/disk/V1alpha1DataVolume';
+import { VMImportKind } from '../types/vm-import/ovirt/vm-import';
+import { VMNodeData } from './types';
 
 export const kubevirtAllowedResources = ['virtualmachines'];
 
@@ -79,14 +82,23 @@ export const createVMOverviewItems = (resources: any): OverviewItem[] => {
 const createTopologyVMNodeData = (
   vmOverview: OverviewItem,
   resources: TopologyDataResources,
-): TopologyDataObject => {
+): TopologyDataObject<VMNodeData> => {
   const vm = vmOverview.obj as VMKind;
   const { uid, name, labels } = vm.metadata;
   const vmis = resources.virtualmachineinstances.data;
   const vmi = vmis.find((instance) => instance.metadata.name === name) as VMIKind;
   const migrations = resources.migrations.data;
+  const dataVolumes = resources.dataVolumes?.data as V1alpha1DataVolume[];
+  const vmImports = resources.vmImports?.data as VMImportKind[];
 
-  const statusDetail = getVMStatus({ vm, vmi, pods: vmOverview.pods, migrations });
+  const vmStatusBundle = getVMStatus({
+    vm,
+    vmi,
+    pods: vmOverview.pods,
+    migrations,
+    dataVolumes,
+    vmImports,
+  });
 
   return {
     id: uid,
@@ -98,7 +110,7 @@ const createTopologyVMNodeData = (
       url: getRoutesURL(vmOverview),
       kind: referenceFor(vm),
       vmi,
-      statusDetail,
+      vmStatusBundle,
       osImage: getOperatingSystemImage(vm as VMKind, resources.virtualmachinetemplates.data),
     },
   };
