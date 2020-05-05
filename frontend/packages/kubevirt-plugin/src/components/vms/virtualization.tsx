@@ -12,21 +12,23 @@ import { VirtualMachineModel } from '../../models';
 
 export const RedirectToVirtualizationPage: React.FC<VirtualizationPageProps> = (props) => (
   <Redirect
-    to={
-      props.match.ns
+    to={{
+      pathname: props.match.ns
         ? `/k8s/ns/${props.match.ns}/virtualization`
-        : `/k8s/all-namespaces/virtualization`
-    }
+        : `/k8s/all-namespaces/virtualization`,
+      search: decodeURI(props.location.search),
+    }}
   />
 );
 
 export const RedirectToVirtualizationTemplatePage: React.FC<VirtualizationPageProps> = (props) => (
   <Redirect
-    to={
-      props.match.ns
-        ? `/k8s/ns/${props.match.ns}/virtualization/templates`
-        : `/k8s/all-namespaces/virtualization/templates`
-    }
+    to={{
+      pathname: props.match.ns
+        ? `/k8s/ns/${props.match.ns}/virtualization/templates${search && `?${search}`}`
+        : `/k8s/all-namespaces/virtualization/templates${search && `?${search}`}`,
+      search: decodeURI(props.location.search),
+    }}
   />
 );
 
@@ -76,6 +78,7 @@ type VirtualizationPageProps = {
   skipAccessReview?: boolean;
   noProjectsAvailable?: boolean;
   flags: FlagsObject;
+  location?: { search?: string };
 };
 
 const VirtualizationPage = withStartGuide(
