@@ -96,7 +96,7 @@ const plugin: Plugin<ConsumedExtensions> = [
   {
     type: 'Dashboards/Overview/Health/Resource',
     properties: {
-      title: 'Quay Image Security',
+      title: 'Image Vulnerabilities',
       resources: {
         imageManifestVuln: {
           kind: referenceForModel(ImageManifestVulnModel),
@@ -105,7 +105,7 @@ const plugin: Plugin<ConsumedExtensions> = [
         },
       },
       healthHandler: securityHealthHandler,
-      popupTitle: 'Quay Image Security breakdown',
+      popupTitle: 'Image Vulnerabilities breakdown',
       popupComponent: () =>
         import('./components/summary' /* webpackChunkName: "container-security" */).then(
           (m) => m.SecurityBreakdownPopup,
@@ -122,7 +122,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       section: 'Administration',
       mergeBefore: 'Custom Resource Definitions',
       componentProps: {
-        name: 'Image Manifest Vulnerabilities',
+        name: 'Image Vulnerabilities',
         resource: referenceForModel(ImageManifestVulnModel),
         testID: 'imagemanifestvuln-header',
       },

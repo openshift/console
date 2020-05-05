@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as _ from 'lodash';
 import { pluralize } from '@patternfly/react-core';
 import { ChartDonut } from '@patternfly/react-charts';
-import { SecurityIcon } from '@patternfly/react-icons';
+import { ExclamationTriangleIcon } from '@patternfly/react-icons';
 import { ResourceHealthHandler } from '@console/plugin-sdk';
 import { WatchK8sResults } from '@console/internal/components/utils/k8s-watch-hook';
 import { ExternalLink } from '@console/internal/components/utils/link';
@@ -10,7 +10,7 @@ import { HealthState } from '@console/shared/src/components/dashboard/status-car
 import { Link } from 'react-router-dom';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { ImageManifestVuln, WatchImageVuln } from '../types';
-import { vulnPriority } from '../const';
+import { vulnPriority, priorityFor } from '../const';
 import { ImageManifestVulnModel } from '../models';
 
 export const securityHealthHandler: ResourceHealthHandler<WatchImageVuln> = ({
@@ -25,28 +25,32 @@ export const securityHealthHandler: ResourceHealthHandler<WatchImageVuln> = ({
     return { state: HealthState.LOADING, message: 'Scanning in progress' };
   }
   if (!_.isEmpty(data)) {
-    return { state: HealthState.ERROR, message: `${data.length} vulnerabilities` };
+    return {
+      state: HealthState.ERROR,
+      message: pluralize(_.uniqBy(data, 'metadata.name').length, 'vulnerable image'),
+    };
   }
-  return { state: HealthState.OK, message: '0 vulnerabilities' };
+  return { state: HealthState.OK, message: '0 vulnerable images' };
 };
 
 export const quayURLFor = (vuln: ImageManifestVuln) => {
   const base = vuln.spec.image
+    .replace('@sha256', '')
     .split('/')
     .reduce((url, part, i) => [...url, part, ...(i === 0 ? ['repository'] : [])], [])
     .join('/');
   return `//${base}/manifest/${vuln.spec.manifest}?tab=vulnerabilities`;
 };
 
-export const SecurityBreakdownPopup: React.FC<WatchK8sResults<WatchImageVuln>> = ({
+export const SecurityBreakdownPopup: React.FC<SecurityBreakdownPopupProps> = ({
   imageManifestVuln,
 }) => {
   const resource = imageManifestVuln.data;
 
   const vulnsFor = (severity: string) =>
-    resource.filter((v) => _.get(v.status, 'highestSeverity') === severity);
+    resource.filter((v) => v.status?.highestSeverity === severity);
   const fixableVulns = resource
-    .filter((v) => _.get(v.status, 'fixableCount', 0) > 0)
+    .filter((v) => v.status?.fixableCount > 0)
     .reduce((all, v) => all.set(v.metadata.name, v), new Map<string, ImageManifestVuln>());
 
   return (
@@ -56,66 +60,71 @@ export const SecurityBreakdownPopup: React.FC<WatchK8sResults<WatchImageVuln>> =
         registries are not scanned.
       </div>
       {!_.isEmpty(resource) ? (
-        <div>
-          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-            <div style={{ width: '66%', marginRight: '24px' }}>
-              <div className="co-status-popup__row">
-                <div className="co-status-popup__text--bold">Severity</div>
-                <div className="text-secondary">Fixable</div>
-              </div>
-              {vulnPriority
-                .map((priority) =>
-                  !_.isEmpty(vulnsFor(priority.value)) ? (
-                    <div className="co-status-popup__row" key={priority.value}>
-                      <div className="co-status-popup__text--bold">
-                        {vulnsFor(priority.value).length} {priority.title}
-                      </div>
-                      <div className="text-secondary">
-                        {
-                          resource.filter(
-                            (v) =>
-                              _.get(v.status, 'highestSeverity') === priority.value &&
-                              _.get(v.status, 'fixableCount', 0) > 0,
-                          ).length
-                        }{' '}
-                        <SecurityIcon color={priority.color.value} />
-                      </div>
-                    </div>
-                  ) : null,
-                )
-                .toArray()}
+        <>
+          <div className="co-status-popup__section">
+            <div className="co-status-popup__row">
+              <div className="co-status-popup__text--bold">Vulnerable Container Images</div>
             </div>
-            <div>
-              <ChartDonut
-                colorScale={vulnPriority.map((priority) => priority.color.value).toArray()}
-                data={vulnPriority
-                  .map((priority) => ({
-                    label: priority.title,
-                    x: priority.value,
-                    y: vulnsFor(priority.value).length,
-                  }))
+            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+              <div style={{ width: '66%', marginRight: '24px' }}>
+                {vulnPriority
+                  .map((priority) =>
+                    !_.isEmpty(vulnsFor(priority.value)) ? (
+                      <div className="co-status-popup__row" key={priority.value}>
+                        <div>
+                          <ExclamationTriangleIcon
+                            color={priority.color.value}
+                            alt={priority.title}
+                          />
+                          &nbsp;
+                          {_.uniqBy(vulnsFor(priority.value), 'metadata.name').length}{' '}
+                          {priority.title}
+                        </div>
+                      </div>
+                    ) : null,
+                  )
                   .toArray()}
-                title={`${resource.length} total`}
-              />
+              </div>
+              <div>
+                <Link
+                  to={`/k8s/all-namespaces/${referenceForModel(ImageManifestVulnModel)}`}
+                  aria-label="View all"
+                >
+                  <ChartDonut
+                    colorScale={vulnPriority.map((priority) => priority.color.value).toArray()}
+                    data={vulnPriority
+                      .map((priority) => ({
+                        label: priority.title,
+                        x: priority.value,
+                        y: _.uniqBy(vulnsFor(priority.value), 'metadata.name').length,
+                      }))
+                      .toArray()}
+                    title={`${_.uniqBy(resource, 'metadata.name').length} total`}
+                  />
+                </Link>
+              </div>
             </div>
           </div>
           {!_.isEmpty(fixableVulns) && (
-            <>
+            <div className="co-status-popup__section">
               <div className="co-status-popup__row">
-                <div className="co-status-popup__text--bold">Fixable Vulnerabilities</div>
+                <div>
+                  <span className="co-status-popup__text--bold">Fixable Container Images</span>
+                  <span className="text-secondary">&nbsp;({fixableVulns.size} total)</span>
+                </div>
               </div>
-              {_.take([...fixableVulns.values()], 5).map((v) => (
+              <div className="co-status-popup__row">
+                <span className="co-status-popup__text--bold">Impact</span>
+                <span className="co-status-popup__text--bold">Vulnerabilities</span>
+              </div>
+              {_.sortBy(_.take([...fixableVulns.values()], 5), [
+                (v) => priorityFor(v.status?.highestSeverity).index,
+              ]).map((v) => (
                 <div className="co-status-popup__row" key={v.metadata.name}>
                   <span>
-                    <SecurityIcon
-                      color={
-                        vulnPriority.find((p) => p.title === _.get(v.status, 'highestSeverity'))
-                          .color.value
-                      }
+                    <ExclamationTriangleIcon
+                      color={priorityFor(v.status?.highestSeverity).color.value}
                     />{' '}
-                    <ExternalLink href={quayURLFor(v)} text={v.spec.features[0].name} />
-                  </span>
-                  <div className="text-secondary">
                     <Link
                       to={`/k8s/all-namespaces/${referenceForModel(ImageManifestVulnModel)}?name=${
                         v.metadata.name
@@ -126,17 +135,34 @@ export const SecurityBreakdownPopup: React.FC<WatchK8sResults<WatchImageVuln>> =
                         'namespace',
                       )}
                     </Link>
+                  </span>
+                  <div className="text-secondary">
+                    <ExternalLink href={quayURLFor(v)} text={`${v.status?.fixableCount} fixable`} />
                   </div>
                 </div>
               ))}
-            </>
+              <div className="co-status-popup__row">
+                <Link
+                  to={{
+                    pathname: `/k8s/all-namespaces/${referenceForModel(ImageManifestVulnModel)}`,
+                    search: '?orderBy=desc&sortBy=Fixable',
+                  }}
+                >
+                  View all
+                </Link>
+              </div>
+            </div>
           )}
-        </div>
+        </>
       ) : (
-        <div>No vulnerabilities detected.</div>
+        <div className="co-status-popup__section">
+          <span className="text-secondary">No vulnerabilities detected.</span>
+        </div>
       )}
     </>
   );
 };
+
+export type SecurityBreakdownPopupProps = WatchK8sResults<WatchImageVuln>;
 
 SecurityBreakdownPopup.displayName = 'SecurityBreakdownPopup';
