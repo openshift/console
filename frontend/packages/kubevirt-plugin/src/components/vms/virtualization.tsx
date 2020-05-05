@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Redirect } from 'react-router-dom';
+import { Redirect, RouteComponentProps } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
 import { compose } from 'redux';
 import { withStartGuide } from '@console/internal/components/start-guide';
@@ -10,24 +10,28 @@ import { VirtualMachinesPage } from './vm';
 import { VirtualMachineTemplatesPage } from '../vm-templates/vm-template';
 import { VirtualMachineModel } from '../../models';
 
-export const RedirectToVirtualizationPage: React.FC<VirtualizationPageProps> = (props) => (
+export const RedirectToVirtualizationPage: React.FC<RouteComponentProps<{ ns: string }>> = (
+  props,
+) => (
   <Redirect
     to={{
-      pathname: props.match.ns
-        ? `/k8s/ns/${props.match.ns}/virtualization`
+      pathname: props.match.params.ns
+        ? `/k8s/ns/${props.match.params.ns}/virtualization`
         : `/k8s/all-namespaces/virtualization`,
-      search: decodeURI(props.location?.search),
+      search: decodeURI(props.location.search),
     }}
   />
 );
 
-export const RedirectToVirtualizationTemplatePage: React.FC<VirtualizationPageProps> = (props) => (
+export const RedirectToVirtualizationTemplatePage: React.FC<RouteComponentProps<{ ns: string }>> = (
+  props,
+) => (
   <Redirect
     to={{
-      pathname: props.match.ns
-        ? `/k8s/ns/${props.match.ns}/virtualization/templates`
+      pathname: props.match.params.ns
+        ? `/k8s/ns/${props.match.params.ns}/virtualization/templates`
         : `/k8s/all-namespaces/virtualization/templates`,
-      search: decodeURI(props.location?.search),
+      search: decodeURI(props.location.search),
     }}
   />
 );
