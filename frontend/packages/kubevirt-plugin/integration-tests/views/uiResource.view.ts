@@ -6,8 +6,8 @@ export const namespaceDropdownButton = $('[data-test-id="namespace-bar-dropdown"
 export const namespaceButton = (namespace: string) => $(`#${namespace}-link`);
 
 export const activeTab = $('li.co-m-horizontal-nav-item--active');
-export const resourceHorizontalTab = (kind: K8sKind) =>
-  $(`[data-test-id="horizontal-link-${kind.labelPlural}"]`);
+export const resourceHorizontalTab = (model: K8sKind) =>
+  $(`[data-test-id="horizontal-link-${model.labelPlural}"]`);
 
 export const modalDialog = $('.pf-c-modal-box__footer');
 export const cancelDialog = modalDialog.element(by.buttonText('Cancel'));
