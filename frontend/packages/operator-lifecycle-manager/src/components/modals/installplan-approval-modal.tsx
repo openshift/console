@@ -18,6 +18,13 @@ import { RadioInput } from '@console/internal/components/radio';
 import { SubscriptionKind, InstallPlanApproval, InstallPlanKind } from '../../types';
 import { SubscriptionModel, InstallPlanModel } from '../../models';
 
+const getApprovalStrategy = (props: InstallPlanApprovalModalProps) =>
+  (referenceFor(props.obj) === referenceForModel(SubscriptionModel) &&
+    _.get(props.obj, 'spec.installPlanApproval')) ||
+  (referenceFor(props.obj) === referenceForModel(InstallPlanModel) &&
+    _.get(props.obj, 'spec.approval')) ||
+  InstallPlanApproval.Automatic;
+
 export class InstallPlanApprovalModal extends PromiseComponent<
   InstallPlanApprovalModalProps,
   InstallPlanApprovalModalState
@@ -27,12 +34,7 @@ export class InstallPlanApprovalModal extends PromiseComponent<
   constructor(public props: InstallPlanApprovalModalProps) {
     super(props);
 
-    this.state.selectedApprovalStrategy =
-      (referenceFor(props.obj) === referenceForModel(SubscriptionModel) &&
-        _.get(props.obj, 'spec.installPlanApproval')) ||
-      (referenceFor(props.obj) === referenceForModel(InstallPlanModel) &&
-        _.get(props.obj, 'spec.approval')) ||
-      InstallPlanApproval.Automatic;
+    this.state.selectedApprovalStrategy = getApprovalStrategy(props);
   }
 
   private submit(event): void {
@@ -94,6 +96,7 @@ export class InstallPlanApprovalModal extends PromiseComponent<
           errorMessage={this.state.errorMessage}
           cancel={() => this.props.cancel()}
           submitText="Save"
+          submitDisabled={getApprovalStrategy(this.props) === this.state.selectedApprovalStrategy}
         />
       </form>
     );

@@ -12,6 +12,9 @@ import { RadioInput } from '@console/internal/components/radio';
 import { SubscriptionKind, PackageManifestKind } from '../../types';
 import { SubscriptionModel, ClusterServiceVersionModel } from '../../models';
 
+const getSelectedChannel = (props: SubscriptionChannelModalProps) =>
+  props.subscription.spec.channel || props.pkg.status.channels[0].name;
+
 export class SubscriptionChannelModal extends PromiseComponent<
   SubscriptionChannelModalProps,
   SubscriptionChannelModalState
@@ -21,8 +24,7 @@ export class SubscriptionChannelModal extends PromiseComponent<
   constructor(public props: SubscriptionChannelModalProps) {
     super(props);
 
-    this.state.selectedChannel =
-      props.subscription.spec.channel || props.pkg.status.channels[0].name;
+    this.state.selectedChannel = getSelectedChannel(props);
   }
 
   private submit(event): void {
@@ -69,6 +71,7 @@ export class SubscriptionChannelModal extends PromiseComponent<
           errorMessage={this.state.errorMessage}
           cancel={() => this.props.cancel()}
           submitText="Save"
+          submitDisabled={this.state.selectedChannel === getSelectedChannel(this.props)}
         />
       </form>
     );
