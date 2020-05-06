@@ -12,6 +12,7 @@ import {
   getPorts,
   getSuggestedName,
   makePortName,
+  imageStreamLabels,
 } from '../../../utils/imagestream-utils';
 import { ImageStreamContext } from './ImageStreamContext';
 
@@ -19,6 +20,7 @@ const ImageStreamTagDropdown: React.FC = () => {
   let imageStreamTagList = {};
   const {
     values: {
+      name: resourceName,
       imageStream,
       application,
       formType,
@@ -41,17 +43,24 @@ const ImageStreamTagDropdown: React.FC = () => {
       setFieldValue('isSearchingForImage', true);
       k8sGet(ImageStreamTagModel, `${imageStream.image}:${selectedTag}`, imageStream.namespace)
         .then((imageStreamImport) => {
-          const { image, tag, status } = imageStreamImport;
+          const {
+            image,
+            tag,
+            status,
+            metadata: { labels },
+          } = imageStreamImport;
+
+          const imgStreamLabels = _.pick(labels, imageStreamLabels);
           const name = imageStream.image;
           const isi = { name, image, tag, status };
           const ports = getPorts(isi);
           setFieldValue('isSearchingForImage', false);
           setFieldValue('isi.name', name);
-          setFieldValue('isi.image', image);
+          setFieldValue('isi.image', _.merge(image, { metadata: { labels: imgStreamLabels } }));
           setFieldValue('isi.tag', selectedTag);
           setFieldValue('isi.ports', ports);
           setFieldValue('image.ports', ports);
-          formType !== 'edit' && setFieldValue('name', getSuggestedName(name));
+          !resourceName && formType !== 'edit' && setFieldValue('name', getSuggestedName(name));
           application.selectedKey !== UNASSIGNED_KEY &&
             !application.name &&
             setFieldValue('application.name', `${getSuggestedName(name)}-app`);
@@ -76,6 +85,7 @@ const ImageStreamTagDropdown: React.FC = () => {
       formType,
       application.selectedKey,
       application.name,
+      resourceName,
       setValidated,
       imageStream.namespace,
       initialValues.route.targetPort,
