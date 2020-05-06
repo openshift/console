@@ -18,6 +18,7 @@ import {
   EventSourceKafkaModel,
   EventSourcePingModel,
   EventSourceSinkBindingModel,
+  EventSourceApiServerModel,
 } from '../../models';
 import {
   RevisionKind,
@@ -611,5 +612,6 @@ export const MockKnativeResources: TopologyDataResources = {
   [referenceForModel(EventSourceKafkaModel)]: getEventSourceResponse(EventSourceKafkaModel),
   [referenceForModel(EventSourceSinkBindingModel)]: sampleEventSourceSinkbinding,
   [referenceForModel(EventSourcePingModel)]: getEventSourceResponse(EventSourcePingModel),
+  [referenceForModel(EventSourceApiServerModel)]: getEventSourceResponse(EventSourceApiServerModel),
   clusterServiceVersions: sampleClusterServiceVersions,
 };
