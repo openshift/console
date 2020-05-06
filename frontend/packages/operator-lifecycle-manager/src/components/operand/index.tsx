@@ -130,7 +130,6 @@ const tableColumnClasses = [
   '',
   '',
   classNames('pf-m-hidden', 'pf-m-visible-on-sm', 'pf-u-w-16-on-lg'),
-  classNames('pf-m-hidden', 'pf-m-visible-on-lg'),
   classNames('pf-m-hidden', 'pf-m-visible-on-xl'),
   classNames('pf-m-hidden', 'pf-m-visible-on-2xl'),
   Kebab.columnClass,
@@ -155,12 +154,6 @@ export const OperandTableHeader = () => {
       sortFunc: 'operandStatus',
       transforms: [sortable],
       props: { className: tableColumnClasses[2] },
-    },
-    {
-      title: 'Version',
-      sortField: 'spec.version',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[3] },
     },
     {
       title: 'Labels',
@@ -224,7 +217,7 @@ const getOperandStatus = (obj: K8sResourceKind): OperandStatusType => {
 export const OperandStatus: React.FunctionComponent<OperandStatusProps> = ({ operand }) => {
   const status: OperandStatusType = getOperandStatus(operand);
   if (!status) {
-    return <div className="text-muted">Unknown</div>;
+    return <>-</>;
   }
 
   const { type, value } = status;
@@ -238,7 +231,7 @@ export const OperandStatus: React.FunctionComponent<OperandStatusProps> = ({ ope
 
 const getOperandStatusText = (operand: K8sResourceKind) => {
   const status = getOperandStatus(operand);
-  return status ? `${status.type}: ${status.value}` : 'Unknown';
+  return status ? `${status.type}: ${status.value}` : '';
 };
 
 export const OperandTableRow: React.FC<OperandTableRowProps> = ({
@@ -262,9 +255,6 @@ export const OperandTableRow: React.FC<OperandTableRowProps> = ({
       </TableData>
       <TableData className={tableColumnClasses[2]}>
         <OperandStatus operand={obj} />
-      </TableData>
-      <TableData className={tableColumnClasses[3]}>
-        {_.get(obj.spec, 'version') || <div className="text-muted">Unknown</div>}
       </TableData>
       <TableData className={tableColumnClasses[4]}>
         <LabelList kind={obj.kind} labels={obj.metadata.labels} />

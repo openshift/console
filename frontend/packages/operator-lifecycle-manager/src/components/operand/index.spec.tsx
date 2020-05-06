@@ -41,7 +41,6 @@ const COLUMNS = OperandTableHeader();
 const NAME_INDEX = _.findIndex(COLUMNS, { title: 'Name' });
 const KIND_INDEX = _.findIndex(COLUMNS, { title: 'Kind' });
 const STATUS_INDEX = _.findIndex(COLUMNS, { title: 'Status' });
-const VERSION_INDEX = _.findIndex(COLUMNS, { title: 'Version' });
 const LABELS_INDEX = _.findIndex(COLUMNS, { title: 'Labels' });
 const LAST_UPDATED_INDEX = _.findIndex(COLUMNS, { title: 'Last Updated' });
 
@@ -98,12 +97,6 @@ describe(OperandTableRow.displayName, () => {
     const col = wrapper.childAt(STATUS_INDEX);
 
     expect(col.find(OperandStatus).props().operand).toEqual(testResourceInstance);
-  });
-
-  it('renders column for resource version', () => {
-    const col = wrapper.childAt(VERSION_INDEX);
-
-    expect(col.shallow().text()).toEqual(testResourceInstance.spec.version || 'Unknown');
   });
 
   it('renders column for last updated timestamp', () => {
@@ -598,7 +591,7 @@ describe('OperandStatus', () => {
     expect(wrapper.childAt(2).props().title).toEqual('Running');
   });
 
-  it('displays the `Unknown` status when no conditions are `True`', () => {
+  it('displays the `-` status when no conditions are `True`', () => {
     const obj = {
       status: {
         conditions: [
@@ -614,12 +607,12 @@ describe('OperandStatus', () => {
       },
     };
     wrapper = shallow(<OperandStatus operand={obj} />);
-    expect(wrapper.find('.text-muted').text()).toEqual('Unknown');
+    expect(wrapper.text()).toEqual('-');
   });
 
-  it('displays Unknown for a missing status stanza', () => {
+  it('displays the `-` for a missing status stanza', () => {
     const obj = {};
     wrapper = shallow(<OperandStatus operand={obj} />);
-    expect(wrapper.find('.text-muted').text()).toEqual('Unknown');
+    expect(wrapper.text()).toEqual('-');
   });
 });
