@@ -32,7 +32,7 @@ import { isDynamicEventResourceKind } from '@console/knative-plugin/src/utils/fe
 import { checkAccess } from '@console/internal/components/utils';
 import { getOperatorBackedServiceKindMap } from '@console/shared';
 import { CREATE_APPLICATION_KEY, UNASSIGNED_KEY } from '../const';
-import { TopologyDataObject } from '../components/topology/topology-types';
+import { TopologyDataObject, ConnectsToData } from '../components/topology/topology-types';
 import { detectGitType } from '../components/import/import-validation-utils';
 import { GitTypes } from '../components/import/import-types';
 import { ServiceBindingRequestModel } from '../models';
@@ -50,8 +50,8 @@ export const sanitizeApplicationValue = (
   }
 };
 
-export const edgesFromAnnotations = (annotations): string[] => {
-  let edges: string[] = [];
+export const edgesFromAnnotations = (annotations): (string | ConnectsToData)[] => {
+  let edges: (string | ConnectsToData)[] = [];
   if (_.has(annotations, ['app.openshift.io/connects-to'])) {
     try {
       edges = JSON.parse(annotations['app.openshift.io/connects-to']);
@@ -195,8 +195,9 @@ export const updateResourceApplication = (
 // Updates the item to add an new connect's to value replacing an old value if provided
 const updateItemAppConnectTo = (
   item: K8sResourceKind,
-  connectValue: string,
-  oldValue: string = undefined,
+  connections: (string | ConnectsToData)[],
+  connectValue: ConnectsToData,
+  oldValueIndex: number,
 ) => {
   const model = modelFor(referenceFor(item) || item.kind);
 
@@ -209,20 +210,18 @@ const updateItemAppConnectTo = (
 
   const existingTag = _.find(tags, (tag) => tag[0] === 'app.openshift.io/connects-to');
   if (existingTag) {
-    const connections = edgesFromAnnotations(item.metadata.annotations);
     if (connections.includes(connectValue)) {
       return Promise.resolve();
     }
 
-    const index = connections.indexOf(oldValue);
     if (!connectValue) {
-      _.remove(connections, (connection) => connection === oldValue);
-    } else if (index >= 0) {
-      connections[index] = connectValue;
+      _.pullAt(connections, [oldValueIndex]);
+    } else if (oldValueIndex >= 0) {
+      connections[oldValueIndex] = connectValue;
     } else {
       connections.push(connectValue);
     }
-    existingTag[1] = connections.join(',');
+    existingTag[1] = _.size(connections) && JSON.stringify(connections);
 
     if (!existingTag[1]) {
       _.remove(tags, (tag) => tag === existingTag);
@@ -236,7 +235,10 @@ const updateItemAppConnectTo = (
       return Promise.resolve();
     }
 
-    const connectionTag: [string, string] = ['app.openshift.io/connects-to', connectValue];
+    const connectionTag: [string, string] = [
+      'app.openshift.io/connects-to',
+      JSON.stringify([connectValue]),
+    ];
     tags.push(connectionTag);
   }
 
@@ -295,6 +297,34 @@ export const removeServiceBinding = (sbr: K8sResourceKind): Promise<any> => {
   return k8sKill(ServiceBindingRequestModel, sbr);
 };
 
+// Get the index of the replaced target of the visual connector
+const getReplacedTargetIndex = (
+  replacedTarget: K8sResourceKind,
+  connections: (string | ConnectsToData)[],
+): number => {
+  if (replacedTarget) {
+    const replaceTargetName = replacedTarget.metadata?.name;
+    const replaceTargetKind = replacedTarget.kind;
+    const replaceTargetApiVersion = replacedTarget.apiVersion;
+    const replaceValue = {
+      apiVersion: replaceTargetApiVersion,
+      kind: replaceTargetKind,
+      name: replaceTargetName,
+    };
+    const replaceTargetInstanceName =
+      replacedTarget.metadata?.labels?.['app.kubernetes.io/instance'];
+    let index = _.findIndex(connections, replaceValue);
+    if (index === -1) {
+      index = _.findIndex(
+        connections,
+        (connection) => connection === (replaceTargetInstanceName || replaceTargetName),
+      );
+    }
+    return index;
+  }
+  return -1;
+};
+
 // Create a connection from the source to the target replacing the connection to replacedTarget if provided
 export const createResourceConnection = (
   source: K8sResourceKind,
@@ -305,20 +335,23 @@ export const createResourceConnection = (
     return Promise.reject();
   }
 
-  const connectValue =
-    _.get(target, ['metadata', 'labels', 'app.kubernetes.io/instance']) || target.metadata.name;
+  const connectTargetName = target.metadata?.name;
+  const connectTargetKind = target.kind;
+  const connectTargetApiVersion = target.apiVersion;
+  const connectValue = {
+    apiVersion: connectTargetApiVersion,
+    kind: connectTargetKind,
+    name: connectTargetName,
+  };
 
-  const replaceValue =
-    replacedTarget &&
-    _.get(
-      replacedTarget.metadata,
-      ['labels', 'app.kubernetes.io/instance'],
-      replacedTarget.metadata.name,
-    );
+  const connections = edgesFromAnnotations(source.metadata?.annotations);
+
+  const replacedTargetIndex = getReplacedTargetIndex(replacedTarget, connections);
+
   const instanceName = _.get(source, ['metadata', 'labels', 'app.kubernetes.io/instance']);
 
   const patches: Promise<K8sResourceKind>[] = [
-    updateItemAppConnectTo(source, connectValue, replaceValue),
+    updateItemAppConnectTo(source, connections, connectValue, replacedTargetIndex),
   ];
 
   // If there is no instance label, only update this item
@@ -330,7 +363,7 @@ export const createResourceConnection = (
   return listInstanceResources(source.metadata.namespace, instanceName).then((listsValue) => {
     _.forEach(listsValue, (list) => {
       _.forEach(list, (item) => {
-        patches.push(updateItemAppConnectTo(item, connectValue, replaceValue));
+        patches.push(updateItemAppConnectTo(item, connections, connectValue, replacedTargetIndex));
       });
     });
 
@@ -346,13 +379,15 @@ export const removeResourceConnection = (
   if (!source || !target || source === target) {
     return Promise.reject();
   }
+  const connections = edgesFromAnnotations(source.metadata?.annotations);
 
-  const replaceValue =
-    _.get(target, ['metadata', 'labels', 'app.kubernetes.io/instance']) || target.metadata.name;
+  const replacedTargetIndex = getReplacedTargetIndex(target, connections);
 
   const instanceName = _.get(source, ['metadata', 'labels', 'app.kubernetes.io/instance']);
 
-  const patches: Promise<any>[] = [updateItemAppConnectTo(source, '', replaceValue)];
+  const patches: Promise<any>[] = [
+    updateItemAppConnectTo(source, connections, null, replacedTargetIndex),
+  ];
 
   // If there is no instance label, only update this item
   if (!instanceName) {
@@ -363,7 +398,7 @@ export const removeResourceConnection = (
   return listInstanceResources(source.metadata.namespace, instanceName).then((listsValue) => {
     _.forEach(listsValue, (list) => {
       _.forEach(list, (item) => {
-        patches.push(updateItemAppConnectTo(item, '', replaceValue));
+        patches.push(updateItemAppConnectTo(item, connections, null, replacedTargetIndex));
       });
     });
 

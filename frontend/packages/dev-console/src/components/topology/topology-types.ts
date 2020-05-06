@@ -238,6 +238,8 @@ export type KialiEdge = {
   };
 };
 
+export type ConnectsToData = { apiVersion: string; kind: string; name: string };
+
 export type NodeProvider = (type: string) => ComponentType<NodeProps>;
 
 export type EdgeProvider = (type: string) => ComponentType<EdgeProps>;

@@ -16,6 +16,7 @@ import {
   Edge,
   Group,
   TopologyOverviewItem,
+  ConnectsToData,
 } from '../topology-types';
 import {
   TYPE_APPLICATION_GROUP,
@@ -144,14 +145,25 @@ export const getTopologyEdgeItems = (
   const annotations = _.get(dc, 'metadata.annotations');
   const edges = [];
 
-  _.forEach(edgesFromAnnotations(annotations), (edge) => {
+  _.forEach(edgesFromAnnotations(annotations), (edge: string | ConnectsToData) => {
     // handles multiple edges
     const targetNode = _.get(
       _.find(resources, (deployment) => {
-        const name =
-          _.get(deployment, ['metadata', 'labels', 'app.kubernetes.io/instance']) ||
-          deployment.metadata.name;
-        return name === edge;
+        let name;
+        if (typeof edge === 'string') {
+          name =
+            deployment.metadata?.labels?.['app.kubernetes.io/instance'] ??
+            deployment.metadata?.name;
+          return name === edge;
+        }
+        name = deployment.metadata?.name;
+        const { apiVersion: edgeApiVersion, kind: edgeKind, name: edgeName } = edge;
+        const { kind, apiVersion } = deployment;
+        let edgeExists = name === edgeName && kind === edgeKind;
+        if (apiVersion) {
+          edgeExists = edgeExists && apiVersion === edgeApiVersion;
+        }
+        return edgeExists;
       }),
       ['metadata', 'uid'],
     );
