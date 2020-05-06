@@ -222,7 +222,6 @@ const DataTable = ({ cols, rows, schema }: DataTableProps) => {
   const DataTableHeader = () =>
     _.map(cols, (col) => {
       return {
-        sortAsNumber: numericUnits.has(getUnit(col)),
         sortField: col,
         title: <span className="pf-m-wrap co-break-word">{col.replace(/_/g, ' ')}</span>,
         transforms: [sortable],

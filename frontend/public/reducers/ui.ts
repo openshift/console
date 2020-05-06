@@ -154,7 +154,7 @@ export default (state: UIState, action: UIAction): UIState => {
     case ActionType.SortList:
       return state.mergeIn(
         ['listSorts', action.payload.listId],
-        _.pick(action.payload, ['field', 'func', 'sortAsNumber', 'orderBy']),
+        _.pick(action.payload, ['field', 'func', 'orderBy']),
       );
 
     case ActionType.SetCreateProjectMessage:

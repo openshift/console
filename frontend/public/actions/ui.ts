@@ -259,7 +259,6 @@ export const sortList = (
   listId: string,
   field: string,
   func: string,
-  sortAsNumber: boolean,
   orderBy: string,
   column: string,
 ) => {
@@ -269,7 +268,7 @@ export const sortList = (
   sp.set('sortBy', column);
   history.replace(`${url.pathname}?${sp.toString()}${url.hash}`);
 
-  return action(ActionType.SortList, { listId, field, func, sortAsNumber, orderBy });
+  return action(ActionType.SortList, { listId, field, func, orderBy });
 };
 export const selectOverviewItem = (uid: string) => action(ActionType.SelectOverviewItem, { uid });
 export const selectOverviewDetailsTab = (tab: string) =>
