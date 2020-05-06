@@ -88,6 +88,7 @@ func main() {
 	fK8sAuth := fs.String("k8s-auth", "service-account", "service-account | bearer-token | oidc | openshift")
 	fK8sAuthBearerToken := fs.String("k8s-auth-bearer-token", "", "Authorization token to send with proxied Kubernetes API requests.")
 
+	fRedirectPort := fs.Int("redirect-port", 0, "Port number under which the console should listen for custom hostname redirect.")
 	fLogLevel := fs.String("log-level", "", "level of logging information by package (pkg=level).")
 	fPublicDir := fs.String("public-dir", "./frontend/public/dist", "directory containing static web assets.")
 	fTlSCertFile := fs.String("tls-cert-file", "", "TLS certificate. If the certificate is signed by a certificate authority, the certFile should be the concatenation of the server's certificate followed by the CA's certificate.")
@@ -590,6 +591,25 @@ func main() {
 		TLSConfig: &tls.Config{
 			CipherSuites: crypto.DefaultCiphers(),
 		},
+	}
+
+	if *fRedirectPort != 0 {
+		go func() {
+			// Listen on passed port number to be redirected to the console
+			redirectServer := http.NewServeMux()
+			redirectServer.HandleFunc("/", func(res http.ResponseWriter, req *http.Request) {
+				redirectURL := &url.URL{
+					Scheme:   srv.BaseURL.Scheme,
+					Host:     srv.BaseURL.Host,
+					RawQuery: req.URL.RawQuery,
+					Path:     req.URL.Path,
+				}
+				http.Redirect(res, req, redirectURL.String(), http.StatusMovedPermanently)
+			})
+			redirectPort := fmt.Sprintf(":%d", *fRedirectPort)
+			log.Infof("Listening on %q for custom hostname redirect...", redirectPort)
+			log.Fatal(http.ListenAndServe(redirectPort, redirectServer))
+		}()
 	}
 
 	log.Infof("Binding to %s...", httpsrv.Addr)

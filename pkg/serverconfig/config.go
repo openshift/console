@@ -5,6 +5,7 @@ import (
 	"flag"
 	"fmt"
 	"io/ioutil"
+	"strconv"
 
 	"gopkg.in/yaml.v2"
 )
@@ -62,6 +63,10 @@ func addServingInfo(fs *flag.FlagSet, servingInfo *ServingInfo) (err error) {
 
 	if servingInfo.KeyFile != "" {
 		fs.Set("tls-key-file", servingInfo.KeyFile)
+	}
+
+	if servingInfo.RedirectPort != 0 {
+		fs.Set("redirect-port", strconv.Itoa(servingInfo.RedirectPort))
 	}
 
 	// Test for fields specified in HTTPServingInfo that we don't currently support in the console.
