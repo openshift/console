@@ -208,6 +208,30 @@ const plugin: Plugin<ConsumedExtensions> = [
   {
     type: 'Page/Route',
     properties: {
+      exact: true,
+      path: ['/k8s/ns/:ns/virtualmachines', '/k8s/all-namespaces/virtualmachines'],
+      loader: () =>
+        import('./components/vms/virtualization' /* webpackChunkName: "kubevirt" */).then(
+          (m) => m.RedirectToVirtualizationPage,
+        ),
+      required: FLAG_KUBEVIRT,
+    },
+  },
+  {
+    type: 'Page/Route',
+    properties: {
+      exact: true,
+      path: ['/k8s/ns/:ns/vmtemplates', '/k8s/all-namespaces/vmtemplates'],
+      loader: () =>
+        import('./components/vms/virtualization' /* webpackChunkName: "kubevirt" */).then(
+          (m) => m.RedirectToVirtualizationTemplatePage,
+        ),
+      required: FLAG_KUBEVIRT,
+    },
+  },
+  {
+    type: 'Page/Route',
+    properties: {
       path: '/k8s/ns/:ns/vmtemplates/:name',
       loader: () =>
         import(
