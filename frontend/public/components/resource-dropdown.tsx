@@ -29,7 +29,7 @@ const ResourceListDropdown_: React.SFC<ResourceListDropdownProps> = (props) => {
   const { selected, onChange, allModels, showAll, className, preferredVersions } = props;
   const [isExpanded, setExpanded] = React.useState(false);
 
-  const resources = allModels
+  const resources = [...allModels.values()]
     .filter(({ apiGroup, apiVersion, kind, verbs }) => {
       // Remove blacklisted items.
       if (
@@ -53,26 +53,34 @@ const ResourceListDropdown_: React.SFC<ResourceListDropdownProps> = (props) => {
         m.kind === kind && m.apiGroup === apiGroup && m.apiVersion !== apiVersion;
 
       return !allModels.find((m) => sameGroupKind(m) && preferred(m));
-    })
-    .toOrderedMap()
-    .sortBy(({ kind, apiGroup }) => `${kind} ${apiGroup}`);
+    });
+
+  const compareKinds = (resourceA, resourceB) => {
+    if (`${resourceA.kind} ${resourceA.apiGroup}` > `${resourceB.kind} ${resourceB.apiGroup}`) {
+      return 1;
+    }
+    if (`${resourceA.kind} ${resourceA.apiGroup}` < `${resourceB.kind} ${resourceB.apiGroup}`) {
+      return -1;
+    }
+  }
+  const sortedResources = [...resources].sort(compareKinds);
 
   // Track duplicate names so we know when to show the group.
-  const kinds = resources.groupBy((m) => m.kind);
-  const isDup = (kind) => kinds.get(kind).size > 1;
+  const kinds = _.groupBy(sortedResources, (m) => m.kind);
+  const isDup = (kind) => kinds[kind].length > 1;
 
   const isKindSelected = (kind: string) => {
     return _.includes(selected, kind);
   };
 
   // Create select option for each resource.
-  const items = resources.toArray().map((model) => (
+  const items = sortedResources.map((model) => (
     <SelectOption
       key={referenceForModel(model)}
       value={model}
       isChecked={isKindSelected(referenceForModel(model))}
     >
-      <span className={'co-resource-item'}>
+      <span className="co-resource-item">
         <span className="co-resource-icon--fixed-width">
           <ResourceIcon kind={referenceForModel(model)} />
         </span>
@@ -97,7 +105,7 @@ const ResourceListDropdown_: React.SFC<ResourceListDropdownProps> = (props) => {
   const allItems = showAll
     ? [
         <SelectOption key="All" value="All" isChecked={isKindSelected('All')}>
-          <span className={'co-resource-item'}>
+          <span className="co-resource-item">
             <span className="co-resource-icon--fixed-width">
               <ResourceIcon kind="All" />
             </span>
@@ -119,7 +127,7 @@ const ResourceListDropdown_: React.SFC<ResourceListDropdownProps> = (props) => {
     setExpanded(isOpen);
   };
 
-  const handleSelected = (event, value: K8sKind) => {
+  const handleSelected = (event, value: (K8sKind | string)) => {
     value === 'All' ? onChange(value) : onChange(referenceForModel(value));
   };
 

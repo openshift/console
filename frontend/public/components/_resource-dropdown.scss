@@ -70,6 +70,14 @@
 
 .co-type-selector {
   min-width: 290px;
+  .pf-c-select__menu {
+    max-height: 58vh;
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+  .pf-c-check__input {
+    margin: 0;
+  }
   @media (min-width: 480px) {
     min-width: 350px;
   }
