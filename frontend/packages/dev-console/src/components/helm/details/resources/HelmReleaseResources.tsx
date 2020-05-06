@@ -3,7 +3,12 @@ import { match as RMatch } from 'react-router';
 import { safeLoadAll } from 'js-yaml';
 import { MultiListPage } from '@console/internal/components/factory';
 import { FirehoseResource } from '@console/internal/components/utils';
-import { K8sResourceKind } from '@console/internal/module/k8s';
+import {
+  K8sResourceKind,
+  referenceFor,
+  modelFor,
+  referenceForModel,
+} from '@console/internal/module/k8s';
 import { flattenReleaseResources } from '../../helm-utils';
 import { HelmRelease } from '../../helm-types';
 import HelmReleaseResourcesList from './HelmReleaseResourcesList';
@@ -20,14 +25,18 @@ const HelmReleaseResources: React.FC<HelmReleaseResourcesProps> = ({ match, cust
   const namespace = match.params.ns;
   const helmManifest = customData ? safeLoadAll(customData.manifest) : [];
   const helmManifestResources: FirehoseResource[] = helmManifest.map(
-    (resource: K8sResourceKind) => ({
-      kind: resource.kind,
-      name: resource.metadata.name,
-      namespace,
-      prop: `${resource.metadata.name}-${resource.kind.toLowerCase()}`,
-      isList: false,
-      optional: true,
-    }),
+    (resource: K8sResourceKind) => {
+      const resourceKind = referenceFor(resource);
+      const model = modelFor(resourceKind);
+      return {
+        ...(model.namespaced ? { namespace } : {}),
+        kind: model.crd ? referenceForModel(model) : model.kind,
+        name: resource.metadata.name,
+        prop: `${resource.metadata.name}-${resource.kind.toLowerCase()}`,
+        isList: false,
+        optional: true,
+      };
+    },
   );
   return (
     <MultiListPage
