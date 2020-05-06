@@ -4,7 +4,7 @@ import { Status } from '@console/shared';
 import { TableRow, TableData, RowFunction } from '@console/internal/components/factory';
 import { Timestamp, Kebab, ResourceIcon } from '@console/internal/components/utils';
 import { Link } from 'react-router-dom';
-import { HelmRelease } from '../helm-types';
+import { HelmRelease, HelmActionOrigins } from '../helm-types';
 import { tableColumnClasses } from './HelmReleaseListHeader';
 import {
   deleteHelmRelease,
@@ -14,8 +14,8 @@ import {
 
 const HelmReleaseListRow: RowFunction<HelmRelease> = ({ obj, index, key, style }) => {
   const menuActions = [
-    rollbackHelmRelease(obj.name, obj.namespace),
-    upgradeHelmRelease(obj.name, obj.namespace),
+    upgradeHelmRelease(obj.name, obj.namespace, HelmActionOrigins.list),
+    rollbackHelmRelease(obj.name, obj.namespace, HelmActionOrigins.list),
     deleteHelmRelease(obj.name, obj.namespace),
   ];
   return (
