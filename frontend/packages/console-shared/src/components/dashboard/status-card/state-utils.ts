@@ -5,7 +5,7 @@ import {
   OperatorHealth,
   GetOperatorStatusPriority,
 } from '@console/plugin-sdk';
-import { operatorHealthPriority, HealthState } from './states';
+import { healthPriority, HealthState } from './states';
 
 export const getMostImportantStatuses = (
   operatorStatuses: OperatorStatusWithResources[],
@@ -21,7 +21,7 @@ export const getOperatorsStatus = <R extends K8sResourceCommon>(
   if (!operators.length) {
     return {
       status: {
-        ...operatorHealthPriority[HealthState.OK],
+        ...healthPriority[HealthState.OK],
         title: 'Available',
       },
       operators: [],
@@ -62,7 +62,7 @@ export const getOperatorsHealthState = (
     return { health: HealthState.LOADING, detailMessage: undefined };
   }
   const sortedStatuses = healthStatuses.sort(
-    (a, b) => operatorHealthPriority[b.health].priority - operatorHealthPriority[a.health].priority,
+    (a, b) => healthPriority[b.health].priority - healthPriority[a.health].priority,
   );
   const groupedStatuses = _.groupBy(sortedStatuses, (s) => s.health);
   const statusKeys = Object.keys(groupedStatuses);
@@ -87,8 +87,8 @@ export const getOperatorsHealthState = (
 
   return {
     health: HealthState[statusKeys[0]],
-    detailMessage: operatorHealthPriority[statusKeys[0]].message
-      ? `${finalCount} ${operatorHealthPriority[statusKeys[0]].message}`
+    detailMessage: healthPriority[statusKeys[0]].message
+      ? `${finalCount} ${healthPriority[statusKeys[0]].message.toLowerCase()}`
       : undefined,
   };
 };
