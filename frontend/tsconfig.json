@@ -13,7 +13,8 @@
     "types": ["jest"],
     "paths": {
       "protractor": ["integration-tests/protractor.d.ts"]
-    }
+    },
+    "typeRoots": ["node_modules/@types", "@types"]
   },
   "exclude": [".yarn", "**/node_modules", "public/dist"],
   "include": ["**/*.js", "**/*.jsx", "**/*.ts", "**/*.tsx", "**/*.json"]

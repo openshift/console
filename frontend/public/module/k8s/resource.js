@@ -7,13 +7,7 @@ import { WSFactory } from '../ws-factory';
 /** @type {(model: K8sKind) => string} */
 const getK8sAPIPath = ({ apiGroup = 'core', apiVersion }) => {
   const isLegacy = apiGroup === 'core' && apiVersion === 'v1';
-  let p = k8sBasePath;
-
-  if (isLegacy) {
-    p += '/api/';
-  } else {
-    p += '/apis/';
-  }
+  let p = isLegacy ? '/api/' : '/apis/';
 
   if (!isLegacy && apiGroup) {
     p += `${apiGroup}/`;
@@ -24,7 +18,7 @@ const getK8sAPIPath = ({ apiGroup = 'core', apiVersion }) => {
 };
 
 /** @type {(model: GroupVersionKind, options: {ns?: string, name?: string, path?: string, queryParams?: {[k: string]: string}}) => string} */
-export const resourceURL = (model, options) => {
+export const getK8sResourcePath = (model, options) => {
   let q = '';
   let u = getK8sAPIPath(model);
 
@@ -48,6 +42,10 @@ export const resourceURL = (model, options) => {
 
   return u;
 };
+
+/** @type {(model: GroupVersionKind, options: {ns?: string, name?: string, path?: string, queryParams?: {[k: string]: string}}) => string} */
+export const resourceURL = (model, options) =>
+  `${k8sBasePath}${getK8sResourcePath(model, options)}`;
 
 export const watchURL = (kind, options) => {
   const opts = options || {};

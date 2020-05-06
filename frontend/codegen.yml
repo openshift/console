@@ -1,0 +1,15 @@
+schema: ../pkg/graphql/schema.graphql
+documents: ./**/*.(gql|graphql)
+generates:
+  '@types/gql/schema.ts':
+    plugins:
+      - typescript
+      - typescript-operations
+    config:
+      dedupeOperationSuffix: true
+      namingConvention: keep
+      operationResultSuffix: Type
+      skipTypename: true
+  '@types/gql/queries.d.ts':
+    plugins:
+      - typescript-graphql-files-modules

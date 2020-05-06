@@ -9,6 +9,7 @@ FROM openshift/origin-base
 
 COPY --from=build /go/src/github.com/openshift/console/frontend/public/dist /opt/bridge/static
 COPY --from=build /go/src/github.com/openshift/console/bin/bridge /opt/bridge/bin/bridge
+COPY --from=build /go/src/github.com/openshift/console/pkg/graphql/schema.graphql /pkg/graphql/schema.graphql
 
 LABEL io.k8s.display-name="OpenShift Console" \
       io.k8s.description="This is a component of OpenShift Container Platform and provides a web console." \
