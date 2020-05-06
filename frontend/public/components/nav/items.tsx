@@ -63,19 +63,17 @@ class NavLink<P extends NavLinkProps> extends React.PureComponent<P> {
     const linkClasses = classNames('pf-c-nav__link', { 'pf-m-current': isActive });
     return (
       <NavItem className={itemClasses} isActive={isActive}>
-        <>
-          <Link
-            className={linkClasses}
-            id={id}
-            data-test-id={testID}
-            to={this.to}
-            onClick={onClick}
-            title={tipText}
-          >
-            {name}
-          </Link>
+        <Link
+          className={linkClasses}
+          id={id}
+          data-test-id={testID}
+          to={this.to}
+          onClick={onClick}
+          title={tipText}
+        >
+          {name}
           {children}
-        </>
+        </Link>
       </NavItem>
     );
   }

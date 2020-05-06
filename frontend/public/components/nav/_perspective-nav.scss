@@ -6,11 +6,12 @@
     flex-grow: 1;
     overflow: hidden;
     padding-right: 0;
+    position: relative;
     text-overflow: ellipsis;
     white-space: nowrap;
 
     &:hover, &:focus {
-      + .oc-nav-pinned-item__unpin-button {
+      .oc-nav-pinned-item__unpin-button {
         .oc-nav-pinned-item__icon {
           opacity: 1;
         }
@@ -19,9 +20,11 @@
   }
 
   .oc-nav-pinned-item__unpin-button {
-    padding-top: var(--pf-c-nav__list-link--PaddingTop);
-    padding-bottom: var(--pf-c-nav__list-link--PaddingBottom);
     background-color: var(--pf-c-nav--m-dark__item--BackgroundColor);
+    padding-bottom: 0;
+    padding-top: 0;
+    position: absolute;
+    right: 0;
 
     .pf-m-current & {
       background-color: var(--pf-c-nav--m-dark__item--m-current--BackgroundColor);
