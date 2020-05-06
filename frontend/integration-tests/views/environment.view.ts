@@ -26,13 +26,34 @@ export const addVariable = async (key: string, value: string) => {
   await saveBtn.click();
 };
 
-export const addVariableFrom = async (resourceName: string, resourcePrefix: string) => {
+export const addVariableFrom = async (
+  resourceName: string,
+  resourcePrefix?: string,
+  getExactResource?: boolean,
+) => {
   await isLoaded();
-  await dropDownBtn.first().click();
+  await dropDownBtn
+    .filter(async (elem) => {
+      const elemText = await elem.getText();
+      return elemText === 'Select a resource';
+    })
+    .first()
+    .click();
   await textFilter.sendKeys(resourceName);
-  await option.first().click();
-  await prefix.clear();
-  await prefix.sendKeys(resourcePrefix);
+  if (getExactResource) {
+    await option
+      .filter(async (elem) => {
+        return (await elem.$('.co-resource-item__resource-name').getText()) === resourceName;
+      })
+      .first()
+      .click();
+  } else {
+    await option.first().click();
+  }
+  if (resourcePrefix) {
+    await prefix.clear();
+    await prefix.sendKeys(resourcePrefix);
+  }
   await browser.wait(until.elementToBeClickable(saveBtn), BROWSER_TIMEOUT);
   await saveBtn.click();
 };

@@ -43,6 +43,7 @@ export type CloudInitConfig = {
   customScript?: string;
   hostname?: string;
   sshKeys?: string[];
+  password?: string;
 };
 
 export type NodePortService = {
