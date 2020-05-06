@@ -17,7 +17,7 @@ import {
 } from '@console/internal/module/k8s';
 import { useSafetyFirst } from '@console/internal/components/safety-first';
 import { PodRCData, PodRingResources, PodRingData, ExtPodKind } from '../types';
-import { checkPodEditAccess } from './pod-utils';
+import { checkPodEditAccess, getPodStatus } from './pod-utils';
 import { RevisionModel } from '@console/knative-plugin';
 import {
   getPodsForDeploymentConfigs,
@@ -25,6 +25,7 @@ import {
   getPodsForStatefulSets,
   getPodsForDaemonSets,
 } from './resource-utils';
+import { AllPodStatus } from '../constants';
 
 import './pod-ring-text.scss';
 
@@ -73,6 +74,16 @@ const isPendingPods = (
 ): boolean =>
   (pods?.length === 1 && pods[0].status?.phase === 'Pending') ||
   (!currentPodCount && !!desiredPodCount);
+
+export const getFailedPods = (pods: ExtPodKind[]): number => {
+  return pods.reduce((acc, currValue) => {
+    if ([AllPodStatus.CrashLoopBackOff, AllPodStatus.Failed].includes(getPodStatus(currValue))) {
+      return acc + 1;
+    }
+    return acc;
+  }, 0);
+};
+
 const getTitleAndSubtitle = (
   isPending: boolean,
   currentPodCount: number,
@@ -125,9 +136,10 @@ export const podRingLabel = (
   let subTitle;
   let isPending;
   let titleData;
+  const failedPodCount = getFailedPods(pods);
   switch (ownerKind) {
     case DaemonSetModel.kind:
-      currentPodCount = obj.status?.currentNumberScheduled;
+      currentPodCount = (obj.status?.currentNumberScheduled || 0) + failedPodCount;
       desiredPodCount = obj.status?.desiredNumberScheduled;
       desiredPodCount = obj.status?.desiredNumberScheduled;
       isPending = isPendingPods(pods, currentPodCount, desiredPodCount);
@@ -138,7 +150,7 @@ export const podRingLabel = (
         titleComponent: getTitleComponent(titleData.longSubtitle),
       };
     case RevisionModel.kind:
-      currentPodCount = obj.status?.readyReplicas;
+      currentPodCount = (obj.status?.readyReplicas || 0) + failedPodCount;
       desiredPodCount = obj.spec?.replicas;
       isPending = isPendingPods(pods, currentPodCount, desiredPodCount);
       if (!isPending && !desiredPodCount) {
@@ -163,7 +175,7 @@ export const podRingLabel = (
         titleComponent: getTitleComponent(),
       };
     default:
-      currentPodCount = obj.status?.readyReplicas;
+      currentPodCount = (obj.status?.readyReplicas || 0) + failedPodCount;
       desiredPodCount = obj.spec?.replicas;
       isPending = isPendingPods(pods, currentPodCount, desiredPodCount);
       titleData = getTitleAndSubtitle(isPending, currentPodCount, desiredPodCount);
