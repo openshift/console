@@ -465,7 +465,7 @@ export const EditYAML_ = connect(stateToProps)(
                     options={options}
                     showShortcuts={!genericYAML}
                     minHeight="100px"
-                    toolbarLinks={[sidebarLink]}
+                    toolbarLinks={sidebarLink ? [sidebarLink] : []}
                     onChange={(newValue) =>
                       this.setState({ yaml: newValue }, () => onChange(newValue))
                     }
