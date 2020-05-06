@@ -211,11 +211,12 @@ const getOperandStatus = (obj: K8sResourceKind): OperandStatusType => {
     };
   }
 
-  const trueCondition = conditions?.find((c: K8sResourceCondition) => c.status === 'True');
-  if (trueCondition) {
+  const trueConditions = conditions?.filter((c: K8sResourceCondition) => c.status === 'True');
+  if (trueConditions?.length) {
+    const types = trueConditions.map((c: K8sResourceCondition) => c.type);
     return {
-      type: 'Condition',
-      value: trueCondition.type,
+      type: types.length === 1 ? 'Condition' : 'Conditions',
+      value: types.join(', '),
     };
   }
 
