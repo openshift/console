@@ -211,14 +211,12 @@ export const CustomSchemaField: React.FC<SchemaFieldProps> = (props) => {
   return <SchemaField {...props} />;
 };
 
-export const HiddenField = () => null;
 export const NullField = () => null;
 
 export default {
   BooleanField,
   DescriptionField,
   DropdownField,
-  HiddenField,
   LabelsField,
   MatchExpressionsField,
   NodeAffinityField,
