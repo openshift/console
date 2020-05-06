@@ -7,6 +7,9 @@
   margin-left: var(--pf-global--spacer--lg);
   margin-right: var(--pf-global--spacer--lg);
   margin-bottom: var(--pf-global--spacer--md);
+  &--error {
+    color: var(--pf-chart-global--danger--Color--100);
+  }
 }
 
 .im-install-page__form {
@@ -26,6 +29,12 @@
   justify-content: space-between;
 }
 
-.im-install-page--error {
-  color: var(--pf-chart-global--danger--Color--100);
+.im-install-page__input-box {
+  background-color: var(--pf-global--disabled-color--200);
+  color: var(--pf-global--disabled-color--100);
+}
+
+.im-install-page__text-box {
+  min-height: 15em;
+  color: var(--pf-global--palette--black-700);
 }

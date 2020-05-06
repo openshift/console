@@ -14,9 +14,11 @@
   position: absolute;
   opacity: 0;
   border: none;
-  max-width: 4em;
+  min-height: 2.5em;
+  max-width: 5.5em;
+  cursor: grab;
 }
 
 .upload-component__textInput {
-    color: var(--pf-global--Color--dark-200);
+  color: var(--pf-global--Color--dark-200);
 }

@@ -6,26 +6,32 @@ import {
   withHandlePromise,
   HandlePromiseProps,
 } from '@console/internal/components/utils';
-import { k8sGet, k8sCreate, referenceForModel } from '@console/internal/module/k8s';
+import {
+  k8sGet,
+  k8sCreate,
+  referenceForModel,
+  k8sKill,
+  apiVersionForModel,
+} from '@console/internal/module/k8s';
 import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager';
-import { Title, FormGroup, Form, ActionGroup, Button, TextInput } from '@patternfly/react-core';
+import {
+  Title,
+  FormGroup,
+  Form,
+  ActionGroup,
+  Button,
+  TextInput,
+  InputGroup,
+  Alert,
+  TextArea,
+} from '@patternfly/react-core';
 import { history } from '@console/internal/components/utils/router';
-import { SecretModel, ConfigMapModel } from '@console/internal/models';
+import { SecretModel } from '@console/internal/models';
 import { getName } from '@console/shared';
 import { OCSServiceModel } from '../../models';
 import FileUpload from './fileUpload';
-import { DataState, ErrorType, Field } from './types';
-import { getValidJSON, checkError } from './utils';
+import { isValidJSON, checkError, prettifyJSON } from './utils';
 import './install.scss';
-
-const ERROR: DataState = {
-  clusterName: '',
-  fsid: '',
-  admin: '',
-  monData: '',
-};
-
-const getErrorText = (text: string) => <span className="im-install-page--error">{text}</span>;
 
 const InstallExternalCluster = withHandlePromise((props: InstallExternalClusterProps) => {
   const {
@@ -35,39 +41,14 @@ const InstallExternalCluster = withHandlePromise((props: InstallExternalClusterP
     match: {
       params: { ns, appName },
     },
+    minRequiredKeys: { configMaps, secrets: encodedKeys, storageClasses },
+    downloadFile,
   } = props;
   const [clusterServiceVersion, setClusterServiceVersion] = React.useState(null);
   const [fileData, setFileData] = React.useState('');
-  const [clusterName, setClusterName] = React.useState(null);
-  const [externalFSID, setExternalFSID] = React.useState(null);
-  const [externalAdminSecret, setExternalAdminSecret] = React.useState(null);
-  const [externalMonData, setExternalMonData] = React.useState(null);
-  const [dataError, setDataError] = React.useState(ERROR);
-  const [fileError, setFileError] = React.useState('');
-  const [, updateState] = React.useState();
+  const [dataError, setDataError] = React.useState('');
 
-  // Todo(bipuladh): React does shallow comparison dataError and fileError need deep comparison.
-  const forceUpdate = React.useCallback(() => updateState({}), []);
-
-  const setErrors = React.useCallback((errors: ErrorType[]): void => {
-    for (const err of errors) {
-      setDataError(Object.assign(ERROR, { [err.field]: err.message }));
-    }
-  }, []);
-
-  const getState = React.useCallback(
-    () => ({
-      [Field.CLUSTER_NAME]: clusterName,
-      [Field.FSID]: externalFSID,
-      [Field.ADMIN]: externalAdminSecret,
-      [Field.MONDATA]: externalMonData,
-    }),
-    [externalAdminSecret, externalFSID, externalMonData, clusterName],
-  );
-
-  React.useEffect(() => {
-    setErrors(checkError(getState()));
-  }, [getState, setErrors]);
+  const plainKeys = _.concat(configMaps, storageClasses);
 
   // File Upload handler
   const onUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -76,44 +57,35 @@ const InstallExternalCluster = withHandlePromise((props: InstallExternalClusterP
     const file = event.target.files[0];
     reader.onload = (ev) => {
       const data = ev.target?.result as string;
-      setFileData(data);
+      if (isValidJSON(data)) {
+        setDataError(checkError(data, plainKeys, encodedKeys));
+        setFileData(data);
+      } else {
+        setDataError('The uploaded file is not a valid JSON file');
+      }
     };
     reader.readAsText(file);
   };
 
   const onSubmit = (event) => {
     event.preventDefault();
-    // https://github.com/rook/rook/blob/master/cluster/examples/kubernetes/ceph/import-external-cluster.sh
+
     const secret = {
       apiVersion: SecretModel.apiVersion,
       kind: SecretModel.kind,
       metadata: {
-        name: 'rook-ceph-mon',
+        name: 'rook-ceph-external-cluster-details',
         namespace: ns,
       },
       stringData: {
-        'cluster-name': clusterName,
-        fsid: externalFSID,
-        'admin-secret': externalAdminSecret,
-        'mon-secret': 'mon-secret',
+        // eslint-disable-next-line @typescript-eslint/camelcase
+        external_cluster_details: fileData,
       },
       type: 'Opaque',
     };
-    const cmap = {
-      apiVersion: ConfigMapModel.apiVersion,
-      kind: ConfigMapModel.kind,
-      metadata: {
-        name: 'rook-ceph-mon-endpoints',
-        namespace: ns,
-      },
-      data: {
-        data: `${externalMonData}`,
-        mapping: '{}',
-        maxMonId: '2',
-      },
-    };
+
     const ocsObj = {
-      apiVersion: 'ocs.openshift.io/v1',
+      apiVersion: apiVersionForModel(OCSServiceModel),
       kind: OCSServiceModel.kind,
       metadata: {
         name: 'ocs-independent-storagecluster',
@@ -126,13 +98,7 @@ const InstallExternalCluster = withHandlePromise((props: InstallExternalClusterP
       },
     };
 
-    handlePromise(
-      Promise.all([
-        k8sCreate(SecretModel, secret),
-        k8sCreate(ConfigMapModel, cmap),
-        k8sCreate(OCSServiceModel, ocsObj),
-      ]),
-    )
+    handlePromise(Promise.all([k8sCreate(SecretModel, secret), k8sCreate(OCSServiceModel, ocsObj)]))
       .then((data) => {
         history.push(
           `/k8s/ns/${ns}/clusterserviceversions/${getName(
@@ -143,39 +109,14 @@ const InstallExternalCluster = withHandlePromise((props: InstallExternalClusterP
       .catch((e) => {
         // eslint-disable-next-line no-console
         console.error(e);
+        // Remove secret if cluster creation was not possible
+        handlePromise(k8sKill(SecretModel, secret));
       });
   };
 
   const onCancel = () => {
     history.goBack();
   };
-
-  const mapValidDataToState = (json: DataState) => {
-    const { clusterName: clusterName_, fsid, admin, monData } = json;
-    setClusterName(clusterName_);
-    setExternalFSID(fsid);
-    setExternalAdminSecret(admin);
-    setExternalMonData(monData);
-  };
-
-  const validate = React.useCallback(() => {
-    if (!_.isEmpty(fileData)) {
-      const data = getValidJSON(fileData);
-      if (data.isValid) {
-        mapValidDataToState(data.parsedData);
-        setFileError(null);
-      } else {
-        setFileError(data.errorMessage);
-      }
-    }
-    setErrors(checkError(getState()));
-  }, [fileData, getState, setErrors]);
-
-  // File Data validator
-  React.useEffect(() => {
-    validate();
-    forceUpdate();
-  }, [validate, setFileData, forceUpdate]);
 
   React.useEffect(() => {
     k8sGet(ClusterServiceVersionModel, appName, ns)
@@ -190,76 +131,65 @@ const InstallExternalCluster = withHandlePromise((props: InstallExternalClusterP
       <div className="im-install-page">
         <div className="im-install-page__sub-header">
           <Title size="lg" headingLevel="h5" className="nb-bs-page-title__main">
-            <div className="im-install-page-sub-header__title">
-              Connect to external cluster
-              <FileUpload onUpload={onUpload} />
-            </div>
+            <div className="im-install-page-sub-header__title">Connect to external cluster</div>
           </Title>
           <p className="im--light">
-            Run &lsaquo;utility-name&rsaquo; to obtain metadata needed for connecting to the
-            external cluster.
+            Run metadata exporter script to obtain metadata needed for connecting to the external
+            cluster.{' '}
+            {downloadFile && (
+              <a
+                id="downloadAnchorElem"
+                href={downloadFile}
+                download="exporter.py"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Download Script
+              </a>
+            )}
           </p>
+          <Alert
+            className="co-alert"
+            variant="info"
+            title="A bucket will be created to provide the OCS Service."
+            aria-label="Bucket created for OCS Service"
+            isInline
+          />
         </div>
-        <Form className="im-install-page__form" onSubmit={onSubmit}>
-          <FormGroup
-            label="Cluster Name"
-            isRequired
-            fieldId="namespace-dropdown"
-            helperText={getErrorText(dataError.clusterName)}
-          >
-            <TextInput
-              onChange={(val) => setClusterName(val)}
-              value={clusterName}
-              aria-label="Enter Cluster name"
-              placeholder="openshift-storage"
+        <Form
+          className="im-install-page__form"
+          onSubmit={onSubmit}
+          aria-label="Create External Storage Cluster"
+        >
+          <FormGroup label="External cluster metadata" isRequired fieldId="cluster-metadata">
+            <InputGroup>
+              <TextInput
+                aria-label="Upload JSON File"
+                value="Upload Credentials file"
+                className="im-install-page__input-box"
+              />
+              <FileUpload onUpload={onUpload} />
+            </InputGroup>
+          </FormGroup>
+          <FormGroup fieldId="preview-box">
+            <TextArea
+              value={prettifyJSON(fileData)}
+              className="im-install-page__text-box"
+              isValid={!dataError}
+              aria-label="JSON data"
             />
           </FormGroup>
-          <FormGroup
-            label="External FSID"
-            isRequired
-            fieldId="ext-fsid"
-            helperText={getErrorText(dataError.fsid)}
-          >
-            <TextInput
-              onChange={(val) => setExternalFSID(val)}
-              value={externalFSID ?? ''}
-              aria-label="Enter External FSID"
-              placeholder="asdf-ghjk-qwer-tyui"
-            />
-          </FormGroup>
-          <FormGroup
-            label="External admin secret"
-            isRequired
-            fieldId="ext-admin"
-            helperText={getErrorText(dataError.admin)}
-          >
-            <TextInput
-              onChange={(val) => setExternalAdminSecret(val)}
-              value={externalAdminSecret ?? ''}
-              aria-label="Enter Admin secret"
-              placeholder="!123jakajs==djjzla2"
-            />
-          </FormGroup>
-          <FormGroup
-            label="External mon data"
-            isRequired
-            fieldId="ext-mon-data"
-            helperText={getErrorText(dataError.monData)}
-          >
-            <TextInput
-              onChange={(val) => setExternalMonData(val)}
-              value={externalMonData ?? ''}
-              aria-label="Enter Mon Data"
-              placeholder="a='12.22.123.22'"
-            />
-          </FormGroup>
-
-          <ButtonBar errorMessage={fileError || errorMessage} inProgress={inProgress}>
+          <ButtonBar errorMessage={dataError || errorMessage} inProgress={inProgress}>
             <ActionGroup>
-              <Button type="submit" variant="primary">
+              <Button
+                type="submit"
+                variant="primary"
+                isDisabled={_.isEmpty(fileData) || !_.isEmpty(dataError)}
+                aria-label="Create Button"
+              >
                 Create
               </Button>
-              <Button onClick={onCancel} variant="secondary">
+              <Button onClick={onCancel} variant="secondary" aria-label="Cancel">
                 Cancel
               </Button>
             </ActionGroup>
@@ -272,6 +202,8 @@ const InstallExternalCluster = withHandlePromise((props: InstallExternalClusterP
 
 type InstallExternalClusterProps = HandlePromiseProps & {
   match: match<{ ns?: string; appName?: string }>;
+  minRequiredKeys?: { [key: string]: string[] };
+  downloadFile: string;
 };
 
 export default InstallExternalCluster;
