@@ -5,8 +5,8 @@ import { connect } from 'react-redux';
 import * as UIActions from '../../actions/ui';
 import { K8sKind } from '../../module/k8s';
 import { AsyncComponent, KebabAction, ResourceOverviewHeading, SimpleTabNav } from '../utils';
-import * as plugins from '../../plugins';
 import { OverviewItem } from '@console/shared';
+import { useExtensions, OverviewResourceTab, isOverviewResourceTab } from '@console/plugin-sdk';
 
 const stateToProps = ({ UI }): PropsFromState => ({
   selectedDetailsTab: UI.getIn(['overview', 'selectedDetailsTab']),
@@ -20,10 +20,12 @@ const getResourceTabComp = (t) => (props) => (
   <AsyncComponent {...props} loader={t.properties.loader} />
 );
 
-const getPluginTabResources = (item, tabs): ResourceOverviewDetailsProps['tabs'] => {
-  let tabEntry = plugins.registry
-    .getOverviewResourceTabs()
-    .filter((tab) => item[tab.properties.key]);
+const getPluginTabResources = (
+  item,
+  tabs,
+  overviewResourceTabs,
+): ResourceOverviewDetailsProps['tabs'] => {
+  let tabEntry = overviewResourceTabs.filter((tab) => item[tab.properties.key]);
   const overridenTabs = tabs.map((tab) => {
     const tabEntryConfig = tabEntry.find((t) => tab.name === t.properties.name);
     if (tabEntryConfig) {
@@ -59,6 +61,7 @@ export const ResourceOverviewDetails = connect<PropsFromState, PropsFromDispatch
     selectedDetailsTab,
     tabs,
   }: ResourceOverviewDetailsProps) => {
+    const resourceTabExtensions = useExtensions<OverviewResourceTab>(isOverviewResourceTab);
     const keys = Object.keys(item);
     const keysRef = React.useRef(keys);
     const tabsRef = React.useRef(tabs);
@@ -70,7 +73,7 @@ export const ResourceOverviewDetails = connect<PropsFromState, PropsFromDispatch
     ) {
       keysRef.current = keys;
       tabsRef.current = tabs;
-      pluginTabsRef.current = getPluginTabResources(item, tabs);
+      pluginTabsRef.current = getPluginTabResources(item, tabs, resourceTabExtensions);
     }
     return (
       <div className="overview__sidebar-pane resource-overview">

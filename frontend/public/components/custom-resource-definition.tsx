@@ -35,9 +35,10 @@ import {
 } from '../module/k8s';
 import { CustomResourceDefinitionModel } from '../models';
 import { Conditions } from './conditions';
-import { resourceListPages } from './resource-pages';
+import { getResourceListPages } from './resource-pages';
 import { DefaultPage } from './default-resource';
 import { GreenCheckCircleIcon } from '@console/shared';
+import { useExtensions, isResourceListPage, ResourceListPage } from '@console/plugin-sdk';
 
 const { common } = Kebab.factory;
 
@@ -250,8 +251,11 @@ const Details: React.FC<{ obj: CustomResourceDefinitionKind }> = ({ obj: crd }) 
 };
 
 const Instances: React.FC<InstancesProps> = ({ obj, namespace }) => {
+  const resourceListPageExtensions = useExtensions<ResourceListPage>(isResourceListPage);
   const crdKind = referenceForCRD(obj);
-  const componentLoader = resourceListPages.get(crdKind, () => Promise.resolve(DefaultPage));
+  const componentLoader = getResourceListPages(resourceListPageExtensions).get(crdKind, () =>
+    Promise.resolve(DefaultPage),
+  );
   return (
     <AsyncComponent
       loader={componentLoader}

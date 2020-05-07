@@ -11,8 +11,6 @@ namespace ExtensionProperties {
     apiGroup: string;
     /** action callback */
     callback: (kind: K8sResourceKindReference, obj: any) => () => any;
-    required?: string[];
-    disallowed?: string[];
   }
 }
 

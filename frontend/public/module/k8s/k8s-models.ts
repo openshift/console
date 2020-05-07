@@ -5,7 +5,8 @@ import { K8sResourceKindReference, K8sKind } from './index';
 import * as staticModels from '../../models';
 import { referenceForModel, kindForReference } from './k8s';
 import store from '../../redux';
-import { registry } from '../../plugins';
+import { pluginStore } from '../../plugins';
+import { isModelDefinition } from '@console/plugin-sdk';
 
 const modelKey = (model: K8sKind): string => {
   // TODO: Use `referenceForModel` even for known API objects
@@ -27,7 +28,12 @@ let k8sModels = modelsToMap(_.values(staticModels));
 const hasModel = (model: K8sKind) => k8sModels.has(modelKey(model));
 
 k8sModels = k8sModels.withMutations((map) => {
-  const pluginModels = _.flatMap(registry.getModelDefinitions().map((md) => md.properties.models));
+  const pluginModels = _.flatMap(
+    pluginStore
+      .getAllExtensions()
+      .filter(isModelDefinition)
+      .map((md) => md.properties.models),
+  );
   map.merge(modelsToMap(pluginModels.filter((model) => !hasModel(model))));
 });
 

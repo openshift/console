@@ -8,7 +8,7 @@ import { ErrorPage404 } from './error';
 import { withStartGuide } from './start-guide';
 import { AsyncComponent, LoadingBox } from './utils';
 import { DefaultPage, DefaultDetailsPage } from './default-resource';
-import { resourceListPages, resourceDetailsPages } from './resource-pages';
+import { getResourceListPages, getResourceDetailsPages } from './resource-pages';
 import {
   apiVersionForReference,
   isGroupVersionKind,
@@ -17,12 +17,20 @@ import {
   kindForReference,
   referenceForModel,
 } from '../module/k8s';
+import {
+  useExtensions,
+  isResourceDetailsPage,
+  ResourceDetailsPage as ResourceDetailsPageExt,
+  ResourceListPage as ResourceListPageExt,
+  isResourceListPage,
+} from '@console/plugin-sdk';
 
 // Parameters can be in pros.params (in URL) or in props.route (attribute of Route tag)
 const allParams = (props) => Object.assign({}, _.get(props, 'match.params'), props);
 
 export const ResourceListPage = connectToPlural(
   withStartGuide((props: ResourceListPageProps) => {
+    const resourceListPageExtensions = useExtensions<ResourceListPageExt>(isResourceListPage);
     const { kindObj, kindsInFlight, modelRef, noProjectsAvailable, ns, plural } = allParams(props);
 
     if (!kindObj) {
@@ -39,7 +47,9 @@ export const ResourceListPage = connectToPlural(
       );
     }
     const ref = referenceForModel(kindObj);
-    const componentLoader = resourceListPages.get(ref, () => Promise.resolve(DefaultPage));
+    const componentLoader = getResourceListPages(resourceListPageExtensions).get(ref, () =>
+      Promise.resolve(DefaultPage),
+    );
 
     return (
       <div className="co-m-list">
@@ -61,6 +71,7 @@ export const ResourceListPage = connectToPlural(
 );
 
 export const ResourceDetailsPage = connectToPlural((props: ResourceDetailsPageProps) => {
+  const detailsPageExtensions = useExtensions<ResourceDetailsPageExt>(isResourceDetailsPage);
   const { name, ns, kindObj, kindsInFlight } = allParams(props);
 
   if (!name || !kindObj) {
@@ -74,7 +85,9 @@ export const ResourceDetailsPage = connectToPlural((props: ResourceDetailsPagePr
     props.match.path.indexOf('customresourcedefinitions') === -1
       ? referenceForModel(kindObj)
       : null;
-  const componentLoader = resourceDetailsPages.get(ref, () => Promise.resolve(DefaultDetailsPage));
+  const componentLoader = getResourceDetailsPages(detailsPageExtensions).get(ref, () =>
+    Promise.resolve(DefaultDetailsPage),
+  );
 
   return (
     <>

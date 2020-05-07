@@ -13,9 +13,6 @@ namespace ExtensionProperties {
     /** Resources list to be fetched from Firehose. */
     resources: (namespace: string) => FirehoseResource[];
 
-    /** The name of the feature flag. */
-    required: string;
-
     /** util to check get resources. */
     utils: (dc: K8sResourceKind, props: OverviewMainContentProps) => ResourceItem | undefined;
   }

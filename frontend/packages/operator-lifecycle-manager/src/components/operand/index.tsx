@@ -2,7 +2,6 @@ import * as React from 'react';
 import { match } from 'react-router-dom';
 import * as _ from 'lodash';
 import { connect } from 'react-redux';
-import { compose } from 'redux';
 import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
 import { Status, SuccessStatus } from '@console/shared';
@@ -47,7 +46,6 @@ import {
 } from '@console/internal/module/k8s';
 import { deleteModal } from '@console/internal/components/modals';
 import { RootState } from '@console/internal/redux';
-import * as plugins from '@console/internal/plugins';
 import { ClusterServiceVersionModel } from '../../models';
 import { ClusterServiceVersionKind } from '../../types';
 import { isInternalObject, getInternalAPIReferences, getInternalObjects } from '../../utils';
@@ -57,8 +55,12 @@ import { StatusCapability, Descriptor } from '../descriptors/types';
 import { Resources } from '../k8s-resource';
 import { referenceForProvidedAPI } from '../index';
 import { OperandLink } from './operand-link';
-import { FlagsObject, connectToFlags, WithFlagsProps } from '@console/internal/reducers/features';
 import ErrorAlert from '@console/shared/src/components/alerts/error';
+import {
+  ClusterServiceVersionAction,
+  useExtensions,
+  isClusterServiceVersionAction,
+} from '@console/plugin-sdk';
 
 const csvName = () =>
   window.location.pathname
@@ -69,15 +71,15 @@ const csvName = () =>
         allParts[i - 1] === ClusterServiceVersionModel.plural,
     );
 
-const getActions = (ref: K8sResourceKindReference, flags: FlagsObject) => {
-  const actions = plugins.registry
-    .getClusterServiceVersionActions()
-    .filter(
-      (action) =>
-        plugins.registry.isExtensionInUse(action, flags) &&
-        action.properties.kind === kindForReference(ref) &&
-        apiGroupForReference(ref) === action.properties.apiGroup,
-    );
+const getActions = (
+  ref: K8sResourceKindReference,
+  actionExtensions: ClusterServiceVersionAction[],
+) => {
+  const actions = actionExtensions.filter(
+    (action) =>
+      action.properties.kind === kindForReference(ref) &&
+      apiGroupForReference(ref) === action.properties.apiGroup,
+  );
   const pluginActions = actions.map((action) => (kind, ocsObj) => ({
     label: action.properties.label,
     callback: action.properties.callback(kind, ocsObj),
@@ -235,14 +237,15 @@ const getOperandStatusText = (operand: K8sResourceKind) => {
   return status ? `${status.type}: ${status.value}` : '';
 };
 
-export const OperandTableRow: React.FC<OperandTableRowProps> = ({
-  obj,
-  index,
-  rowKey,
-  style,
-  flags,
-}) => {
-  const actions = getActions(referenceFor(obj), flags);
+export const OperandTableRow: React.FC<OperandTableRowProps> = ({ obj, index, rowKey, style }) => {
+  const actionExtensions = useExtensions<ClusterServiceVersionAction>(
+    isClusterServiceVersionAction,
+  );
+  const objReference = referenceFor(obj);
+  const actions = React.useMemo(() => getActions(objReference, actionExtensions), [
+    objReference,
+    actionExtensions,
+  ]);
   return (
     <TableRow id={obj.metadata.uid} index={index} trKey={rowKey} style={style}>
       <TableData className={tableColumnClasses[0]}>
@@ -270,9 +273,7 @@ export const OperandTableRow: React.FC<OperandTableRowProps> = ({
   );
 };
 
-// eslint-disable-next-line no-underscore-dangle
-export const OperandList_: React.FC<OperandListProps & WithFlagsProps> = (props) => {
-  const { flags } = props;
+export const OperandList: React.FC<OperandListProps> = (props) => {
   const Row = React.useCallback(
     (rowArgs: RowFunctionArgs<K8sResourceKind>) => (
       <OperandTableRow
@@ -280,10 +281,9 @@ export const OperandList_: React.FC<OperandListProps & WithFlagsProps> = (props)
         index={rowArgs.index}
         rowKey={rowArgs.key}
         style={rowArgs.style}
-        flags={flags ?? null}
       />
     ),
-    [flags],
+    [],
   );
   const ensureKind = (data: K8sResourceKind[]) =>
     data.map((obj) => {
@@ -319,10 +319,6 @@ export const OperandList_: React.FC<OperandListProps & WithFlagsProps> = (props)
     />
   );
 };
-
-export const OperandList = connectToFlags(
-  ...plugins.registry.getGatingFlagNames([plugins.isClusterServiceVersionAction]),
-)(OperandList_);
 
 const inFlightStateToProps = ({ k8s }: RootState) => ({
   inFlight: k8s.getIn(['RESOURCES', 'inFlight']),
@@ -587,55 +583,59 @@ const ResourcesTab = (resourceProps) => (
   <Resources {...resourceProps} clusterServiceVersion={resourceProps.csv} />
 );
 
-export const OperandDetailsPage = compose(
-  connectToFlags<OperandDetailsPageProps & WithFlagsProps>(
-    ...plugins.registry.getGatingFlagNames([plugins.isClusterServiceVersionAction]),
-  ),
-  connectToPlural,
-)((props: OperandDetailsPageProps & WithFlagsProps) => (
-  <DetailsPage
-    match={props.match}
-    name={props.match.params.name}
-    kind={props.modelRef}
-    namespace={props.match.params.ns}
-    resources={[
-      {
-        kind: referenceForModel(ClusterServiceVersionModel),
-        name: props.match.params.appName,
-        namespace: props.match.params.ns,
-        isList: false,
-        prop: 'csv',
-      },
-    ]}
-    menuActions={getActions(props.modelRef, props.flags)}
-    breadcrumbsFor={() => [
-      {
-        name: 'Installed Operators',
-        path: `/k8s/ns/${props.match.params.ns}/${ClusterServiceVersionModel.plural}`,
-      },
-      {
-        name: props.match.params.appName,
-        path: props.match.url.slice(0, props.match.url.lastIndexOf('/')),
-      },
-      { name: `${kindForReference(props.modelRef)} Details`, path: `${props.match.url}` },
-    ]}
-    pages={[
-      navFactory.details((detailsProps) => (
-        <OperandDetails
-          {...detailsProps}
-          clusterServiceVersion={detailsProps.csv}
-          appName={props.match.params.appName}
-        />
-      )),
-      navFactory.editYaml(),
-      {
-        name: 'Resources',
-        href: 'resources',
-        component: ResourcesTab,
-      },
-    ]}
-  />
-));
+export const OperandDetailsPage = connectToPlural((props: OperandDetailsPageProps) => {
+  const actionExtensions = useExtensions<ClusterServiceVersionAction>(
+    isClusterServiceVersionAction,
+  );
+  const menuActions = React.useMemo(() => getActions(props.modelRef, actionExtensions), [
+    props.modelRef,
+    actionExtensions,
+  ]);
+  return (
+    <DetailsPage
+      match={props.match}
+      name={props.match.params.name}
+      kind={props.modelRef}
+      namespace={props.match.params.ns}
+      resources={[
+        {
+          kind: referenceForModel(ClusterServiceVersionModel),
+          name: props.match.params.appName,
+          namespace: props.match.params.ns,
+          isList: false,
+          prop: 'csv',
+        },
+      ]}
+      menuActions={menuActions}
+      breadcrumbsFor={() => [
+        {
+          name: 'Installed Operators',
+          path: `/k8s/ns/${props.match.params.ns}/${ClusterServiceVersionModel.plural}`,
+        },
+        {
+          name: props.match.params.appName,
+          path: props.match.url.slice(0, props.match.url.lastIndexOf('/')),
+        },
+        { name: `${kindForReference(props.modelRef)} Details`, path: `${props.match.url}` },
+      ]}
+      pages={[
+        navFactory.details((detailsProps) => (
+          <OperandDetails
+            {...detailsProps}
+            clusterServiceVersion={detailsProps.csv}
+            appName={props.match.params.appName}
+          />
+        )),
+        navFactory.editYaml(),
+        {
+          name: 'Resources',
+          href: 'resources',
+          component: ResourcesTab,
+        },
+      ]}
+    />
+  );
+});
 
 export type OperandListProps = {
   loaded: boolean;
@@ -646,7 +646,6 @@ export type OperandListProps = {
   reduxIDs?: string[];
   rowSplitter?: any;
   staticFilters?: any;
-  flags?: FlagsObject;
 };
 
 export type OperandStatusProps = {
@@ -703,12 +702,10 @@ export type OperandTableRowProps = {
   index: number;
   rowKey: string;
   style: object;
-  flags?: FlagsObject;
 };
 
 // TODO(alecmerdler): Find Webpack loader/plugin to add `displayName` to React components automagically
 OperandList.displayName = 'OperandList';
-OperandList_.displayName = 'OperandList';
 OperandDetails.displayName = 'OperandDetails';
 OperandList.displayName = 'OperandList';
 ProvidedAPIsPage.displayName = 'ProvidedAPIsPage';

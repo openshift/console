@@ -116,8 +116,10 @@ const plugin: Plugin<ConsumedExtensions> = [
       model: models.KnativeServingModel,
       name: 'knative-serving',
       namespace: 'knative-serving',
-      required: FLAG_KNATIVE_SERVING,
       uid: 'knative-serving',
+    },
+    flags: {
+      required: [FLAG_KNATIVE_SERVING],
     },
   },
   {
@@ -174,40 +176,50 @@ const plugin: Plugin<ConsumedExtensions> = [
     type: 'Overview/CRD',
     properties: {
       resources: knativeServingResourcesRevision,
-      required: FLAG_KNATIVE_SERVING_REVISION,
       utils: getKnativeServingRevisions,
+    },
+    flags: {
+      required: [FLAG_KNATIVE_SERVING_REVISION],
     },
   },
   {
     type: 'Overview/CRD',
     properties: {
       resources: knativeServingResourcesConfigurations,
-      required: FLAG_KNATIVE_SERVING_CONFIGURATION,
       utils: getKnativeServingConfigurations,
+    },
+    flags: {
+      required: [FLAG_KNATIVE_SERVING_CONFIGURATION],
     },
   },
   {
     type: 'Overview/CRD',
     properties: {
       resources: knativeServingResourcesRoutes,
-      required: FLAG_KNATIVE_SERVING_ROUTE,
       utils: getKnativeServingRoutes,
+    },
+    flags: {
+      required: [FLAG_KNATIVE_SERVING_ROUTE],
     },
   },
   {
     type: 'Overview/CRD',
     properties: {
       resources: knativeServingResourcesServices,
-      required: FLAG_KNATIVE_SERVING_SERVICE,
       utils: getKnativeServingServices,
+    },
+    flags: {
+      required: [FLAG_KNATIVE_SERVING_REVISION],
     },
   },
   {
     type: 'Overview/CRD',
     properties: {
       resources: getDynamicEventSourcesResourceList,
-      required: FLAG_KNATIVE_EVENTING,
       utils: () => null,
+    },
+    flags: {
+      required: [FLAG_KNATIVE_EVENTING],
     },
   },
   {
@@ -264,7 +276,9 @@ const plugin: Plugin<ConsumedExtensions> = [
       exact: true,
       path: ['/event-source'],
       component: NamespaceRedirect,
-      required: FLAG_KNATIVE_EVENTING,
+    },
+    flags: {
+      required: [FLAG_KNATIVE_EVENTING],
     },
   },
   {
@@ -278,7 +292,9 @@ const plugin: Plugin<ConsumedExtensions> = [
             './components/add/EventSourcePage' /* webpackChunkName: "knative-event-source-page" */
           )
         ).default,
-      required: FLAG_KNATIVE_EVENTING,
+    },
+    flags: {
+      required: [FLAG_KNATIVE_EVENTING],
     },
   },
   {

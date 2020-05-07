@@ -20,7 +20,8 @@ import { RootState } from '../redux';
 import { ActionType as K8sActionType } from '../actions/k8s';
 import { FeatureAction, ActionType } from '../actions/features';
 import { FLAGS } from '@console/shared/src/constants';
-import * as plugins from '../plugins';
+import { pluginStore } from '../plugins';
+import { isModelFeatureFlag } from '@console/plugin-sdk';
 
 export const defaults = _.mapValues(FLAGS, (flag) =>
   flag === FLAGS.AUTH_ENABLED ? !window.SERVER_FLAGS.authDisabled : undefined,
@@ -42,12 +43,15 @@ export const baseCRDs = {
 
 const CRDs = { ...baseCRDs };
 
-plugins.registry.getModelFeatureFlags().forEach((ff) => {
-  const modelRef = referenceForModel(ff.properties.model);
-  if (!CRDs[modelRef]) {
-    CRDs[modelRef] = ff.properties.flag as FLAGS;
-  }
-});
+pluginStore
+  .getAllExtensions()
+  .filter(isModelFeatureFlag)
+  .forEach((ff) => {
+    const modelRef = referenceForModel(ff.properties.model);
+    if (!CRDs[modelRef]) {
+      CRDs[modelRef] = ff.properties.flag as FLAGS;
+    }
+  });
 
 export type FeatureState = ImmutableMap<string, boolean>;
 

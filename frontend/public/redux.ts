@@ -6,8 +6,8 @@ import { monitoringReducer, monitoringReducerName, MonitoringState } from './red
 import k8sReducers, { K8sState } from './reducers/k8s';
 import UIReducers, { UIState } from './reducers/ui';
 import { dashboardsReducer, DashboardsState } from './reducers/dashboards';
-import { registry } from './plugins';
-import { isReduxReducer } from '@console/plugin-sdk';
+import { pluginStore } from './plugins';
+import { isReduxReducer, isExtensionInUse, getGatingFlagNames } from '@console/plugin-sdk';
 
 const composeEnhancers =
   (process.env.NODE_ENV !== 'production' && window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__) || compose;
@@ -56,8 +56,9 @@ const store = createStore(
 );
 
 const addPluginListener = () => {
+  const reducerExtensions = pluginStore.getAllExtensions().filter(isReduxReducer);
   const getReduxFlagsObject = () => {
-    const gatingFlags = registry.getGatingFlagNames([isReduxReducer]);
+    const gatingFlags = getGatingFlagNames(reducerExtensions);
     const featureState = store.getState()[featureReducerName];
     return featureState ? _.pick(featureState.toObject(), gatingFlags) : null;
   };
@@ -70,9 +71,9 @@ const addPluginListener = () => {
     if (JSON.stringify(flagsObject) !== JSON.stringify(currentFlagsObject)) {
       flagsObject = currentFlagsObject;
 
-      const pluginReducerExtensions = registry
-        .getReduxReducers()
-        .filter((e) => registry.isExtensionInUse(e, flagsObject));
+      const pluginReducerExtensions = reducerExtensions.filter((e) =>
+        isExtensionInUse(e, flagsObject),
+      );
 
       const pluginReducers: ReducersMapObject = pluginReducerExtensions.reduce((map, e) => {
         map[e.properties.namespace] = e.properties.reducer;

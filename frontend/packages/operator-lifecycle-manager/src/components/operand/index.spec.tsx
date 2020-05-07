@@ -1,10 +1,14 @@
 import * as React from 'react';
 import { match as RouterMatch } from 'react-router-dom';
-import { shallow, ShallowWrapper } from 'enzyme';
+import { shallow, ShallowWrapper, mount, ReactWrapper } from 'enzyme';
 import * as _ from 'lodash';
+import * as extensionHooks from '@console/plugin-sdk';
+import { Provider } from 'react-redux';
 import * as k8sModels from '@console/internal/module/k8s';
 import { Table, DetailsPage, MultiListPage, ListPage } from '@console/internal/components/factory';
 import { Timestamp, LabelList, StatusBox, ResourceKebab } from '@console/internal/components/utils';
+import store from '@console/internal/redux';
+
 import {
   testCRD,
   testResourceInstance,
@@ -14,7 +18,6 @@ import {
 } from '../../../mocks';
 import { ClusterServiceVersionModel } from '../../models';
 import {
-  OperandList_,
   OperandList,
   OperandListProps,
   ProvidedAPIsPage,
@@ -54,8 +57,9 @@ describe(OperandTableRow.displayName, () => {
   let wrapper: ShallowWrapper<OperandTableRowProps>;
 
   beforeEach(() => {
+    spyOn(extensionHooks, 'useExtensions').and.returnValue([]);
     wrapper = shallow(
-      <OperandTableRow obj={testResourceInstance} index={0} rowKey={'0'} style={{}} flags={{}} />,
+      <OperandTableRow obj={testResourceInstance} index={0} rowKey={'0'} style={{}} />,
     );
   });
 
@@ -107,14 +111,15 @@ describe(OperandTableRow.displayName, () => {
   });
 });
 
-describe(OperandList_.displayName, () => {
+describe(OperandList.displayName, () => {
   let wrapper: ShallowWrapper<OperandListProps>;
   let resources: k8sModels.K8sResourceKind[];
 
   beforeEach(() => {
     resources = [testResourceInstance];
+    spyOn(extensionHooks, 'useExtensions').and.returnValue([]);
     // eslint-disable-next-line react/jsx-pascal-case
-    wrapper = shallow(<OperandList_ loaded data={resources} filters={{}} flags={{}} />);
+    wrapper = shallow(<OperandList loaded data={resources} filters={{}} />);
   });
 
   it('renders a `Table` of the custom resource instances of the given kind', () => {
@@ -242,7 +247,7 @@ describe('ResourcesList', () => {
 });
 
 describe(OperandDetailsPage.displayName, () => {
-  let wrapper: ShallowWrapper<OperandDetailsPageProps>;
+  let wrapper: ReactWrapper<OperandDetailsPageProps>;
   let match: RouterMatch<any>;
 
   beforeEach(() => {
@@ -253,12 +258,14 @@ describe(OperandDetailsPage.displayName, () => {
       path: `/k8s/ns/:ns/${ClusterServiceVersionModel.plural}/:appName/:plural/:name`,
     };
 
-    wrapper = shallow(
+    wrapper = mount(
       <OperandDetailsPage.WrappedComponent
         modelRef={k8sModels.referenceFor(testResourceInstance)}
         match={match}
-        flags={{}}
       />,
+      {
+        wrappingComponent: ({ children }) => <Provider store={store}>{children}</Provider>,
+      },
     );
   });
 

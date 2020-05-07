@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { match as RouterMatch } from 'react-router-dom';
-import { yamlTemplates } from '../models/yaml-templates';
+import { getYAMLTemplates } from '../models/yaml-templates';
 import { connectToPlural } from '../kinds';
 import { AsyncComponent } from './utils/async';
 import { Firehose, LoadingBox } from './utils';
@@ -13,6 +13,7 @@ import {
 } from '../module/k8s';
 import { ErrorPage404 } from './error';
 import { safeYAMLToJS } from '@console/shared/src/utils/yaml';
+import { useExtensions, isYAMLTemplate, YAMLTemplate } from '@console/plugin-sdk';
 
 export const CreateYAML = connectToPlural((props: CreateYAMLProps) => {
   const {
@@ -24,6 +25,10 @@ export const CreateYAML = connectToPlural((props: CreateYAMLProps) => {
     resourceObjPath,
   } = props;
   const { params } = match;
+  const templateExtensions = useExtensions<YAMLTemplate>(isYAMLTemplate);
+  const yamlTemplates = React.useMemo(() => getYAMLTemplates(templateExtensions), [
+    templateExtensions,
+  ]);
 
   if (!kindObj) {
     if (kindsInFlight) {

@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 import { getActivePerspective } from '@console/internal/reducers/ui';
 import { RootState } from '@console/internal/redux';
 import { history } from '@console/internal/components/utils';
+import { useExtensions, Perspective, isPerspective } from '@console/plugin-sdk';
 import { NormalizedBuilderImages, normalizeBuilderImages } from '../../utils/imagestream-utils';
 import {
   createOrUpdateResources as createOrUpdateGitResources,
@@ -27,6 +28,7 @@ const EditApplication: React.FC<EditApplicationProps & StateProps> = ({
   appName,
   resources: appResources,
 }) => {
+  const perspectiveExtensions = useExtensions<Perspective>(isPerspective);
   const imageStreamsData =
     appResources.imageStreams && appResources.imageStreams.loaded
       ? appResources.imageStreams.data
@@ -52,7 +54,7 @@ const EditApplication: React.FC<EditApplicationProps & StateProps> = ({
       .then(() => {
         actions.setSubmitting(false);
         actions.setStatus({ submitError: '' });
-        handleRedirect(namespace, perspective);
+        handleRedirect(namespace, perspective, perspectiveExtensions);
       })
       .catch((err) => {
         actions.setSubmitting(false);

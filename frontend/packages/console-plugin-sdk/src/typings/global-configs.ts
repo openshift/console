@@ -11,8 +11,6 @@ namespace ExtensionProperties {
     name: string;
     /** Namespace of this item. */
     namespace: string;
-    /** Name of feature flag for this item. */
-    required: string;
     /** Unique identifier for this item. */
     uid: string;
   }

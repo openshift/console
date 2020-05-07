@@ -2,8 +2,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { Dropdown, DropdownItem, DropdownToggle, Title } from '@patternfly/react-core';
 import { CaretDownIcon } from '@patternfly/react-icons';
-import { Perspective } from '@console/plugin-sdk';
-import * as plugins from '../../plugins';
+import { Perspective, useExtensions, isPerspective } from '@console/plugin-sdk';
 import { RootState } from '../../redux';
 import { featureReducerName, getFlagsObject, FlagsObject } from '../../reducers/features';
 import { getActivePerspective } from '../../reducers/ui';
@@ -27,6 +26,7 @@ const NavHeader_: React.FC<NavHeaderProps & StateProps> = ({
   flags,
 }) => {
   const [isPerspectiveDropdownOpen, setPerspectiveDropdownOpen] = React.useState(false);
+  const perspectiveExtensions = useExtensions<Perspective>(isPerspective);
 
   const togglePerspectiveOpen = React.useCallback(() => {
     setPerspectiveDropdownOpen(!isPerspectiveDropdownOpen);
@@ -63,9 +63,9 @@ const NavHeader_: React.FC<NavHeaderProps & StateProps> = ({
     [isPerspectiveDropdownOpen, togglePerspectiveOpen],
   );
 
-  const getPerspectiveItems = React.useCallback(
-    (perspectives: Perspective[]) => {
-      return perspectives.map((nextPerspective: Perspective) => (
+  const perspectiveItems = React.useMemo(
+    () =>
+      perspectiveExtensions.map((nextPerspective: Perspective) => (
         <DropdownItem
           key={nextPerspective.properties.id}
           onClick={(event: React.MouseEvent<HTMLLinkElement>) =>
@@ -79,15 +79,13 @@ const NavHeader_: React.FC<NavHeaderProps & StateProps> = ({
             {nextPerspective.properties.name}
           </Title>
         </DropdownItem>
-      ));
-    },
-    [activePerspective, onPerspectiveSelect],
+      )),
+    [activePerspective, onPerspectiveSelect, perspectiveExtensions],
   );
 
-  const perspectives = React.useMemo(() => plugins.registry.getPerspectives(), []);
   const { icon, name } = React.useMemo(
-    () => perspectives.find((p) => p.properties.id === activePerspective).properties,
-    [activePerspective, perspectives],
+    () => perspectiveExtensions.find((p) => p.properties.id === activePerspective).properties,
+    [activePerspective, perspectiveExtensions],
   );
 
   return (
@@ -95,7 +93,7 @@ const NavHeader_: React.FC<NavHeaderProps & StateProps> = ({
       <Dropdown
         isOpen={isPerspectiveDropdownOpen}
         toggle={renderToggle(icon, name)}
-        dropdownItems={getPerspectiveItems(perspectives)}
+        dropdownItems={perspectiveItems}
         data-test-id="perspective-switcher-menu"
       />
     </div>
