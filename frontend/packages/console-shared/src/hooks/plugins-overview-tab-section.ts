@@ -11,10 +11,16 @@ export const usePluginsOverviewTabSection = (
   item: OverviewItem,
 ): { Component: React.FC<AsyncComponentProps>; key: string }[] => {
   const tabSections = useExtensions(isOverviewTabSection);
-  return tabSections
-    .filter((section) => item[section.properties.key])
-    .map((section: OverviewTabSection) => ({
-      Component: getResourceTabSectionComp(section),
-      key: section.properties.key,
-    }));
+  return React.useMemo(
+    () =>
+      tabSections
+        .filter((section) => item[section.properties.key])
+        .map((section: OverviewTabSection) => ({
+          Component: getResourceTabSectionComp(section),
+          key: section.properties.key,
+        })),
+    // `item` is complex object but we only use the presence of keys as a dependency
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [JSON.stringify(Object.keys(item).sort())],
+  );
 };
