@@ -2,6 +2,7 @@ import * as React from 'react';
 import * as _ from 'lodash';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { SidebarSectionHeading } from '@console/internal/components/utils';
+import { getKnativeRoutesLinks } from '../../utils/resource-overview-utils';
 import RoutesOverviewListItem from './RoutesOverviewListItem';
 
 export type RoutesOverviewListProps = {
@@ -16,9 +17,12 @@ const RoutesOverviewList: React.FC<RoutesOverviewListProps> = ({ ksroutes, resou
       <span className="text-muted">No Routes found for this resource.</span>
     ) : (
       <ul className="list-group">
-        {_.map(ksroutes, (route) => (
-          <RoutesOverviewListItem key={route.metadata.uid} route={route} resource={resource} />
-        ))}
+        {_.map(ksroutes, (route) => {
+          const routeLinks = getKnativeRoutesLinks(route, resource);
+          return routeLinks.map((routeLink) => (
+            <RoutesOverviewListItem key={routeLink.uid} routeLink={routeLink} />
+          ));
+        })}
       </ul>
     )}
   </>

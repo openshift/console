@@ -57,7 +57,7 @@ export interface Edge {
   type?: string;
   source: string;
   target: string;
-  data?: {};
+  data?: { [key: string]: any };
 }
 
 export interface Group {

@@ -41,4 +41,13 @@ export type Traffic = {
   percent: number;
   latestRevision?: boolean;
   tag?: string;
+  url?: string;
+};
+
+export type RoutesOverviewListItem = {
+  uid: string;
+  url: string;
+  percent: string;
+  name: string;
+  namespace: string;
 };
