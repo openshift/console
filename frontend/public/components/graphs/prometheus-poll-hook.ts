@@ -1,9 +1,10 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useCallback, useState } from 'react';
 
+import { PrometheusResponse } from '@console/shared/src/types/monitoring';
+
 import { usePoll, useSafeFetch } from '../utils';
 import { getPrometheusURL, PrometheusEndpoint } from './helpers';
-import { PrometheusResponse } from '.';
 
 const DEFAULT_DELAY = 15000; // 15 seconds
 const DEFAULT_SAMPLES = 60;

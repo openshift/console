@@ -4,12 +4,10 @@ import {
   CustomResourceDefinitionKind,
   GroupVersionKind,
   K8sKind,
-  K8sResourceCommon,
   K8sResourceKind,
   K8sResourceKindReference,
   OwnerReference,
-  modelFor,
-} from './index';
+} from './types';
 
 export const getQN: (obj: K8sResourceKind) => string = ({ metadata: { name, namespace } }) =>
   (namespace ? `(${namespace})-` : '') + name;
@@ -104,23 +102,6 @@ export const referenceForOwnerRef = (ownerRef: OwnerReference): GroupVersionKind
 
 export const referenceForModel = (model: K8sKind): GroupVersionKind =>
   referenceForGroupVersionKind(model.apiGroup || 'core')(model.apiVersion)(model.kind);
-
-export const referenceFor = ({ kind, apiVersion }: K8sResourceCommon): GroupVersionKind => {
-  if (!kind) {
-    return '';
-  }
-
-  // `apiVersion` is optional in some k8s object references (for instance,
-  // event `involvedObject`). The CLI resolves the version from API discovery.
-  // Use `modelFor` to get the version from the model when missing.
-  if (!apiVersion) {
-    const m = modelFor(kind);
-    return m ? referenceForModel(m) : '';
-  }
-
-  const { group, version } = groupVersionFor(apiVersion);
-  return referenceForGroupVersionKind(group)(version)(kind);
-};
 
 export const kindForReference = (ref: K8sResourceKindReference) =>
   isGroupVersionKind(ref) ? ref.split('~')[2] : ref;

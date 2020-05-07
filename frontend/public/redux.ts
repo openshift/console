@@ -1,13 +1,14 @@
 import { applyMiddleware, combineReducers, createStore, compose, ReducersMapObject } from 'redux';
 import * as _ from 'lodash-es';
 
-import { featureReducer, featureReducerName, FeatureState } from './reducers/features';
-import { monitoringReducer, monitoringReducerName, MonitoringState } from './reducers/monitoring';
-import k8sReducers, { K8sState } from './reducers/k8s';
-import UIReducers, { UIState } from './reducers/ui';
-import { dashboardsReducer, DashboardsState } from './reducers/dashboards';
+import { featureReducer } from './reducers/features';
+import { monitoringReducer } from './reducers/monitoring';
+import k8sReducers from './reducers/k8s';
+import UIReducers from './reducers/ui';
+import { dashboardsReducer } from './reducers/dashboards';
 import { pluginStore } from './plugins';
 import { isReduxReducer, isExtensionInUse, getGatingFlagNames } from '@console/plugin-sdk';
+import { RootState } from './redux-types';
 
 const composeEnhancers =
   (process.env.NODE_ENV !== 'production' && window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__) || compose;
@@ -30,22 +31,11 @@ function createThunkMiddleware(extraArgument?) {
 const thunk = createThunkMiddleware();
 (thunk as any).withExtraArgument = createThunkMiddleware;
 
-export type RootState = {
-  k8s: K8sState;
-  UI: UIState;
-  [featureReducerName]: FeatureState;
-  [monitoringReducerName]: MonitoringState;
-  dashboards: DashboardsState;
-  plugins?: {
-    [namespace: string]: any;
-  };
-};
-
 const baseReducers = Object.freeze({
   k8s: k8sReducers, // data
   UI: UIReducers,
-  [featureReducerName]: featureReducer,
-  [monitoringReducerName]: monitoringReducer,
+  FLAGS: featureReducer,
+  monitoringURLs: monitoringReducer,
   dashboards: dashboardsReducer,
 });
 
@@ -59,7 +49,7 @@ const addPluginListener = () => {
   const reducerExtensions = pluginStore.getAllExtensions().filter(isReduxReducer);
   const getReduxFlagsObject = () => {
     const gatingFlags = getGatingFlagNames(reducerExtensions);
-    const featureState = store.getState()[featureReducerName];
+    const featureState = store.getState().FLAGS;
     return featureState ? _.pick(featureState.toObject(), gatingFlags) : null;
   };
 

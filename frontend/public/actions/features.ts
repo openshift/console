@@ -6,7 +6,7 @@ import { GroupModel, SelfSubjectAccessReviewModel, UserModel } from '../models';
 import { k8sBasePath, ClusterVersionKind, k8sCreate } from '../module/k8s';
 import { receivedResources } from './k8s';
 import { coFetchJSON } from '../co-fetch';
-import { MonitoringRoutes } from '../reducers/monitoring';
+import { MonitoringRoutes } from '../redux-types';
 import { setMonitoringURL } from './monitoring';
 import { pluginStore } from '../plugins';
 import { setClusterID, setCreateProjectMessage, setUser, setConsoleLinks } from './common';

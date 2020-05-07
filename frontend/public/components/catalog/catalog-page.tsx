@@ -5,6 +5,7 @@ import { safeLoad } from 'js-yaml';
 
 import { PropertyItem } from '@patternfly/react-catalog-view-extension';
 import { ANNOTATIONS, FLAGS, APIError } from '@console/shared';
+import { connectToFlags, flagPending, FlagsObject } from '@console/shared/src/hocs/connect-flags';
 import { CatalogTileViewPage, Item } from './catalog-items';
 import {
   k8sListPartialMetadata,
@@ -16,7 +17,6 @@ import {
   TemplateKind,
 } from '../../module/k8s';
 import { withStartGuide } from '../start-guide';
-import { connectToFlags, flagPending, FlagsObject } from '../../reducers/features';
 import {
   Firehose,
   LoadError,

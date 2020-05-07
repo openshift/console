@@ -3,8 +3,8 @@ import { Helmet } from 'react-helmet';
 import * as _ from 'lodash-es';
 
 import { FLAGS } from '@console/shared';
+import { connectToFlags } from '@console/shared/src/hocs/connect-flags';
 import { ExternalLink, Firehose, FirehoseResult } from './utils';
-import { connectToFlags } from '../reducers/features';
 import { ConsoleCLIDownloadModel } from '../models';
 import { referenceForModel } from '../module/k8s';
 import { SyncMarkdownView } from './markdown-view';

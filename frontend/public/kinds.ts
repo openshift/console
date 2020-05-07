@@ -11,7 +11,7 @@ import {
   allModels,
   getGroupVersionKind,
 } from './module/k8s';
-import { RootState } from './redux';
+import { RootState } from './redux-types';
 
 export const connectToModel = connect(
   (state: RootState, props: { kind: K8sResourceKindReference } & any) => {

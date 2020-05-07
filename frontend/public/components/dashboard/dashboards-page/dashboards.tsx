@@ -18,7 +18,7 @@ import {
   isDashboardsCard,
   isDashboardsTab,
 } from '@console/plugin-sdk';
-import { RootState } from '../../../redux';
+import { RootState } from '../../../redux-types';
 
 const getCardsOnPosition = (cards: DashboardsCard[], position: GridPosition): GridDashboardCard[] =>
   cards

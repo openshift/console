@@ -1,11 +1,10 @@
 import * as React from 'react';
 import { Redirect, RouteComponentProps } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
-import { compose } from 'redux';
 import { withStartGuide } from '@console/internal/components/start-guide';
 import { HorizontalNav } from '@console/internal/components/utils';
-import { connectToFlags, FlagsObject } from '@console/internal/reducers/features';
 import { FLAGS } from '@console/shared';
+import { useFlag } from '@console/shared/src/hooks/flag';
 import { VirtualMachinesPage } from './vm';
 import { VirtualMachineTemplatesPage } from '../vm-templates/vm-template';
 import { VirtualMachineModel } from '../../models';
@@ -37,6 +36,7 @@ export const RedirectToVirtualizationTemplatePage: React.FC<RouteComponentProps<
 );
 
 export const WrappedVirtualizationPage: React.FC<VirtualizationPageProps> = (props) => {
+  const openshiftFlag = useFlag(FLAGS.OPENSHIFT);
   const title = 'Virtualization';
 
   const obj = { loaded: true, data: { kind: VirtualMachineModel.kind } };
@@ -48,7 +48,7 @@ export const WrappedVirtualizationPage: React.FC<VirtualizationPageProps> = (pro
     },
   ];
 
-  if (props.flags[FLAGS.OPENSHIFT]) {
+  if (openshiftFlag) {
     pages.push({
       href: 'templates',
       name: 'Virtual Machine Templates',
@@ -81,12 +81,9 @@ type VirtualizationPageProps = {
   match: any;
   skipAccessReview?: boolean;
   noProjectsAvailable?: boolean;
-  flags: FlagsObject;
   location?: { search?: string };
 };
 
-const VirtualizationPage = withStartGuide(
-  compose(connectToFlags(FLAGS.OPENSHIFT))(WrappedVirtualizationPage),
-);
+const VirtualizationPage = withStartGuide(WrappedVirtualizationPage);
 
 export { VirtualizationPage };

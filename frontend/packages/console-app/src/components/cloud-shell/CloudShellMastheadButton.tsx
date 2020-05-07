@@ -1,11 +1,11 @@
 import * as React from 'react';
 import { Dispatch } from 'redux';
 import { connect } from 'react-redux';
-import { RootState } from '@console/internal/redux';
+import { useFlag } from '@console/shared/src/hooks/flag';
+import { RootState } from '@console/internal/redux-types';
 import { TerminalIcon } from '@patternfly/react-icons';
 import { isCloudShellExpanded } from '../../redux/reducers/cloud-shell-reducer';
 import { Button, ToolbarItem, Tooltip, TooltipPosition } from '@patternfly/react-core';
-import { connectToFlags, WithFlagsProps } from '@console/internal/reducers/features';
 import { FLAG_DEVWORKSPACE } from '../../consts';
 import { toggleCloudShellExpanded } from '../../redux/actions/cloud-shell-actions';
 import cloudShellConfirmationModal from './cloudShellConfirmationModal';
@@ -19,11 +19,11 @@ type StateProps = {
   open?: boolean;
 };
 
-type Props = WithFlagsProps & StateProps & DispatchProps;
+type Props = StateProps & DispatchProps;
 
-const ClouldShellMastheadButton: React.FC<Props> = ({ flags, onClick, open }) => {
+const ClouldShellMastheadButton: React.FC<Props> = ({ onClick, open }) => {
   const [terminalAvailable, setTerminalAvailable] = React.useState(false);
-  const flagEnabled = flags[FLAG_DEVWORKSPACE];
+  const flagEnabled = useFlag(FLAG_DEVWORKSPACE);
   React.useEffect(() => {
     let mounted = true;
     if (flagEnabled) {
@@ -87,4 +87,4 @@ const cloudShellPropsToState = (dispatch: Dispatch): DispatchProps => ({
 export default connect<StateProps, DispatchProps>(
   cloudShellStateToProps,
   cloudShellPropsToState,
-)(connectToFlags(FLAG_DEVWORKSPACE)(ClouldShellMastheadButton));
+)(ClouldShellMastheadButton);

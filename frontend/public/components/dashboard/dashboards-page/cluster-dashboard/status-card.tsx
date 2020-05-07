@@ -27,7 +27,7 @@ import { withDashboardResources } from '../../with-dashboard-resources';
 import AlertItem, {
   StatusItem,
 } from '@console/shared/src/components/dashboard/status-card/AlertItem';
-import { alertURL } from '../../../monitoring';
+import { alertURL } from '@console/shared/src/selectors/monitoring';
 import {
   ClusterVersionKind,
   referenceForModel,
@@ -36,7 +36,7 @@ import {
 } from '../../../../module/k8s';
 import { ClusterVersionModel } from '../../../../models';
 import { clusterUpdateModal } from '../../../modals/cluster-update-modal';
-import { RootState } from '../../../../redux';
+import { RootState } from '../../../../redux-types';
 import {
   OperatorHealthItem,
   PrometheusHealthItem,

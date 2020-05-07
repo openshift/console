@@ -10,7 +10,8 @@ import {
   ChartTooltip,
   ChartVoronoiContainer,
 } from '@patternfly/react-charts';
-import { DataPoint, PrometheusResponse } from '@console/internal/components/graphs';
+import { PrometheusResponse } from '@console/shared/src/types/monitoring';
+import { DataPoint } from '@console/internal/components/graphs';
 import { humanizeBinaryBytes, LoadingInline } from '@console/internal/components/utils';
 import { twentyFourHourTime } from '@console/internal/components/utils/datetime';
 import { GraphEmpty } from '@console/internal/components/graphs/graph-empty';

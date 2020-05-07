@@ -45,7 +45,7 @@ import {
   referenceForModel,
 } from '@console/internal/module/k8s';
 import { deleteModal } from '@console/internal/components/modals';
-import { RootState } from '@console/internal/redux';
+import { RootState } from '@console/internal/redux-types';
 import { ClusterServiceVersionModel } from '../../models';
 import { ClusterServiceVersionKind } from '../../types';
 import { isInternalObject, getInternalAPIReferences, getInternalObjects } from '../../utils';

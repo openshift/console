@@ -11,10 +11,10 @@ import {
 } from '@patternfly/react-table';
 
 import ErrorAlert from '@console/shared/src/components/alerts/error';
+import { PrometheusResponse } from '@console/shared/src/types/monitoring';
 
 import { formatNumber } from './format';
 import { ColumnStyle, Panel } from './types';
-import { PrometheusResponse } from '../../graphs';
 import { getPrometheusURL, PrometheusEndpoint } from '../../graphs/helpers';
 import { EmptyBox, usePoll, useSafeFetch } from '../../utils';
 import { TablePagination } from '../metrics';

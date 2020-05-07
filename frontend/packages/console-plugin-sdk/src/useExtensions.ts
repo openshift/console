@@ -3,8 +3,8 @@ import * as React from 'react';
 // @ts-ignore: FIXME missing exports due to out-of-sync @types/react-redux version
 import { useSelector } from 'react-redux';
 import { createSelectorCreator, defaultMemoize } from 'reselect';
-import { RootState } from '@console/internal/redux';
-import { stateToFlagsObject, FlagsObject, FeatureState } from '@console/internal/reducers/features';
+import { RootState, FeatureState } from '@console/internal/redux-types';
+import { stateToFlagsObject, FlagsObject } from '@console/shared/src/hocs/connect-flags';
 import { pluginStore } from '@console/internal/plugins';
 import { getGatingFlagNames, isExtensionInUse } from './store';
 import { Extension, ExtensionTypeGuard } from './typings';

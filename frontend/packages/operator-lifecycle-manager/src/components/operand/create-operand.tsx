@@ -17,9 +17,9 @@ import {
   BreadCrumbs,
   resourcePathFromModel,
 } from '@console/internal/components/utils';
-import { RootState } from '@console/internal/redux';
+import { RootState } from '@console/internal/redux-types';
 import { SyncedEditor } from '@console/shared/src/components/synced-editor';
-import { getActivePerspective } from '@console/internal/reducers/ui';
+import { getActivePerspective } from '@console/internal/reducers/ui-selectors';
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
 import * as _ from 'lodash';
 import * as React from 'react';

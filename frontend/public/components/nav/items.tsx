@@ -8,9 +8,8 @@ import { formatNamespacedRouteForResource } from '@console/shared/src/utils';
 import { referenceForModel, K8sKind } from '../../module/k8s';
 import { stripBasePath } from '../utils';
 import * as plugins from '../../plugins';
-import { featureReducerName } from '../../reducers/features';
-import { RootState } from '../../redux';
-import { getActiveNamespace } from '../../reducers/ui';
+import { RootState } from '../../redux-types';
+import { getActiveNamespace } from '../../reducers/ui-selectors';
 import { LAST_NAMESPACE_NAME_LOCAL_STORAGE_KEY } from '@console/shared/src/constants';
 import { ALL_NAMESPACES_KEY } from '@console/shared/src/constants/common';
 
@@ -211,7 +210,7 @@ const rootNavLinkMapStateToProps = (
   state: RootState,
   { required, component: Component, ...props }: RootNavLinkProps,
 ): RootNavLinkStateProps => ({
-  canRender: required ? _.castArray(required).every((r) => state[featureReducerName].get(r)) : true,
+  canRender: required ? _.castArray(required).every((r) => state.FLAGS.get(r)) : true,
   activeNamespace: getActiveNamespace(state),
   isActive: Component.isActive(props, stripNS(state.UI.get('location')), getActiveNamespace(state)),
 });

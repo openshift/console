@@ -6,8 +6,8 @@ import {
   APPLICATION_LOCAL_STORAGE_KEY,
 } from '@console/shared';
 import { setActiveApplication } from '@console/internal/actions/ui';
-import { RootState } from '@console/internal/redux';
-import { getActiveNamespace, getActiveApplication } from '@console/internal/reducers/ui';
+import { RootState } from '@console/internal/redux-types';
+import { getActiveNamespace, getActiveApplication } from '@console/internal/reducers/ui-selectors';
 import ApplicationDropdown from './ApplicationDropdown';
 
 export interface ApplicationSelectorProps {

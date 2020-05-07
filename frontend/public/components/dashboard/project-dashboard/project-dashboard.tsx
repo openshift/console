@@ -12,7 +12,7 @@ import { ActivityCard } from './activity-card';
 import { ProjectDashboardContext } from './project-dashboard-context';
 import { LauncherCard } from './launcher-card';
 import { connect } from 'react-redux';
-import { RootState } from '../../../redux';
+import { RootState } from '../../../redux-types';
 import { ResourceQuotaCard } from './resource-quota-card';
 
 const mainCards = [{ Card: StatusCard }, { Card: UtilizationCard }, { Card: ResourceQuotaCard }];

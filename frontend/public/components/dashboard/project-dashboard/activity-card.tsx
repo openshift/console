@@ -21,7 +21,7 @@ import {
   isDashboardsOverviewResourceActivity,
 } from '@console/plugin-sdk';
 import { uniqueResource } from '../dashboards-page/cluster-dashboard/utils';
-import { RootState } from '../../../redux';
+import { RootState } from '../../../redux-types';
 import { ProjectDashboardContext } from './project-dashboard-context';
 import { getName } from '@console/shared';
 

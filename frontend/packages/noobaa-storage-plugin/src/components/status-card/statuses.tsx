@@ -1,6 +1,6 @@
 import * as _ from 'lodash';
 import { HealthState } from '@console/shared/src/components/dashboard/status-card/states';
-import { PrometheusResponse } from '@console/internal/components/graphs';
+import { PrometheusResponse } from '@console/shared/src/types/monitoring';
 import { FirehoseResult } from '@console/internal/components/utils';
 import { getGaugeValue } from '../../utils';
 

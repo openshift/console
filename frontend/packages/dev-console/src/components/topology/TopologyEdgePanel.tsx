@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import * as classNames from 'classnames';
 import * as _ from 'lodash';
 import { Edge } from '@console/topology';
-import { RootState } from '@console/internal/redux';
+import { RootState } from '@console/internal/redux-types';
 import { referenceFor, K8sResourceKind } from '@console/internal/module/k8s';
 import {
   ActionsMenu,

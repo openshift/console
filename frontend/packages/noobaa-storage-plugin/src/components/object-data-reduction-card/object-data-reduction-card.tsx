@@ -7,7 +7,7 @@ import {
   DashboardItemProps,
   withDashboardResources,
 } from '@console/internal/components/dashboard/with-dashboard-resources';
-import { PrometheusResponse } from '@console/internal/components/graphs';
+import { PrometheusResponse } from '@console/shared/src/types/monitoring';
 import { getGaugeValue } from '../../utils';
 import { ObjectDataReductionQueries } from '../../queries';
 import { EfficiencyItem, SavingsItem } from './object-data-reduction-card-item';

@@ -15,7 +15,7 @@ import { Edge, Node } from '@console/topology';
 import FormSection from '../../import/section/FormSection';
 import { TYPE_EVENT_SOURCE_LINK } from '@console/knative-plugin/src/topology/const';
 import { createSinkConnection } from '@console/knative-plugin/src/topology/knative-topology-utils';
-import { RootState } from '@console/internal/redux';
+import { RootState } from '@console/internal/redux-types';
 import { getServiceBindingStatus } from '../topology-utils';
 import { TYPE_CONNECTS_TO, TYPE_SERVICE_BINDING } from './const';
 import { createConnection } from './createConnection';

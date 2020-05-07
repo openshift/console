@@ -9,9 +9,10 @@ import {
   NotificationTypes,
 } from '@console/patternfly';
 import * as UIActions from '@console/internal/actions/ui';
-import store, { RootState } from '@console/internal/redux';
-import { Alert, alertURL } from '@console/internal/components/monitoring';
-import { NotificationAlerts } from '@console/internal/reducers/ui';
+import store from '@console/internal/redux';
+import { RootState, NotificationAlerts } from '@console/internal/redux-types';
+import { alertURL } from '@console/shared/src/selectors/monitoring';
+import { Alert } from '@console/shared/src/types/monitoring';
 import { RedExclamationCircleIcon } from '@console/shared';
 import {
   getAlertDescription,

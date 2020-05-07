@@ -41,7 +41,8 @@ import {
   UTILIZATION_QUERY_HOUR_MAP,
   Duration,
 } from '@console/shared/src/components/dashboard/duration-hook';
-import { DataPoint, PrometheusResponse } from '../../../graphs';
+import { PrometheusResponse } from '@console/shared/src/types/monitoring';
+import { DataPoint } from '../../../graphs';
 
 const cpuQueriesPopup = [
   {

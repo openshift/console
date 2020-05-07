@@ -4,7 +4,7 @@ import { match as RMatch } from 'react-router';
 import { Firehose } from '@console/internal/components/utils';
 import { getResourceList } from '@console/shared';
 import { referenceForModel, K8sResourceKind } from '@console/internal/module/k8s';
-import { RootState } from '@console/internal/redux';
+import { RootState } from '@console/internal/redux-types';
 import { safeLoadAll } from 'js-yaml';
 import { ServiceBindingRequestModel } from '../../models';
 import { transformTopologyData } from './data-transforms/data-transformer';

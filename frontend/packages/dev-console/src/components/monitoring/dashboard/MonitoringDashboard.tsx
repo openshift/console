@@ -4,7 +4,7 @@ import { match as RMatch } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { Helmet } from 'react-helmet';
 import Dashboard from '@console/shared/src/components/dashboard/Dashboard';
-import { RootState } from '@console/internal/redux';
+import { RootState } from '@console/internal/redux-types';
 import { getURLSearchParams, ResourceLink } from '@console/internal/components/utils';
 import {
   TimespanDropdown,

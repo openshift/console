@@ -19,7 +19,7 @@ import {
   withDashboardResources,
 } from '@console/internal/components/dashboard/with-dashboard-resources';
 import { GraphEmpty } from '@console/internal/components/graphs/graph-empty';
-import { PrometheusResponse } from '@console/internal/components/graphs';
+import { PrometheusResponse } from '@console/shared/src/types/monitoring';
 import { BY_IOPS, CHART_LABELS, PROVIDERS, BY_EGRESS } from '../../constants';
 import {
   DataConsumersValue,

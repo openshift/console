@@ -2,7 +2,7 @@ import {
   getRangeVectorStats,
   getInstantVectorStats,
 } from '@console/internal/components/graphs/utils';
-import { PrometheusResponse } from '@console/internal/components/graphs';
+import { PrometheusResponse } from '@console/shared/src/types/monitoring';
 import { Humanize } from '@console/internal/components/utils';
 
 const RANGE_VECTOR_RESPONSE: PrometheusResponse = {

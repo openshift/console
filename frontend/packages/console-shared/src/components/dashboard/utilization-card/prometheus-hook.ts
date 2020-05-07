@@ -7,8 +7,7 @@ import {
   watchPrometheusQuery,
   stopWatchPrometheusQuery,
 } from '@console/internal/actions/dashboards';
-import { RootState } from '@console/internal/redux';
-import { RESULTS_TYPE } from '@console/internal/reducers/dashboards';
+import { RootState, RESULTS_TYPE } from '@console/internal/redux-types';
 import { getInstantVectorStats } from '@console/internal/components/graphs/utils';
 import { Humanize, HumanizeResult } from '@console/internal/components/utils/types';
 

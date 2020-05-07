@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as _ from 'lodash-es';
 
 import { FLAGS } from '@console/shared';
-import { connectToFlags } from '../reducers/features';
+import { connectToFlags } from '@console/shared/src/hocs/connect-flags';
 import { Firehose, FirehoseResult } from './utils';
 import { referenceForModel } from '../module/k8s';
 import { ConsoleNotificationModel } from '../models/index';

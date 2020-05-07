@@ -10,8 +10,8 @@ import { DownloadIcon, InfoCircleIcon } from '@patternfly/react-icons';
 import { FLAGS, ALL_NAMESPACES_KEY, getBadgeFromType } from '@console/shared';
 import YAMLEditor from '@console/shared/src/components/editor/YAMLEditor';
 import { isYAMLTemplate, withExtensions } from '@console/plugin-sdk';
+import { connectToFlags } from '@console/shared/src/hocs/connect-flags';
 
-import { connectToFlags } from '../reducers/features';
 import { errorModal } from './modals';
 import { Firehose, checkAccess, history, Loading, resourceObjPath } from './utils';
 import {

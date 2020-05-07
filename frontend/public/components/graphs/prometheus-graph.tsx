@@ -5,9 +5,8 @@ import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 
 import { FLAGS } from '@console/shared';
-import { featureReducerName } from '../../reducers/features';
-import { getActivePerspective, getActiveNamespace } from '../../reducers/ui';
-import { RootState } from '../../redux';
+import { getActivePerspective, getActiveNamespace } from '../../reducers/ui-selectors';
+import { RootState } from '../../redux-types';
 
 export const getPrometheusExpressionBrowserURL = (url, queries): string => {
   if (!url || _.isEmpty(queries)) {
@@ -24,7 +23,7 @@ export const getPrometheusExpressionBrowserURL = (url, queries): string => {
 
 const mapStateToProps = (state: RootState) => ({
   canAccessMonitoring:
-    !!state[featureReducerName].get(FLAGS.CAN_GET_NS) && !!window.SERVER_FLAGS.prometheusBaseURL,
+    !!state.FLAGS.get(FLAGS.CAN_GET_NS) && !!window.SERVER_FLAGS.prometheusBaseURL,
   perspective: getActivePerspective(state),
   namespace: getActiveNamespace(state),
 });

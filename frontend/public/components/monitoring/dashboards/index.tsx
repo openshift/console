@@ -16,7 +16,7 @@ import { withFallback } from '@console/shared/src/components/error/error-boundar
 
 import * as UIActions from '../../../actions/ui';
 import { ErrorBoundaryFallback } from '../../error';
-import { RootState } from '../../../redux';
+import { RootState } from '../../../redux-types';
 import { getPrometheusURL, PrometheusEndpoint } from '../../graphs/helpers';
 import { ExternalLink, history, LoadingInline, useSafeFetch } from '../../utils';
 import { formatPrometheusDuration, parsePrometheusDuration } from '../../utils/datetime';

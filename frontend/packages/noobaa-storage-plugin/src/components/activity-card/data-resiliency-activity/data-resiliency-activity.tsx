@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { PrometheusResponse } from '@console/internal/components/graphs';
+import { PrometheusResponse } from '@console/shared/src/types/monitoring';
 import { formatDuration } from '@console/internal/components/utils/datetime';
 import { DataResiliency } from '@console/ceph-storage-plugin/src/components/dashboard-page/storage-dashboard/activity-card/data-resiliency-activity';
 import { getGaugeValue } from '../../../utils';

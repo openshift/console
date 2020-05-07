@@ -1,8 +1,5 @@
-import {
-  Alert,
-  getAlerts as getPrometheusAlerts,
-  PrometheusRulesResponse,
-} from '@console/internal/components/monitoring';
+import { getAlerts as getPrometheusAlerts } from '@console/shared/src/selectors/monitoring';
+import { Alert, PrometheusRulesResponse } from '@console/shared/src/types/monitoring';
 
 export const getAlertSeverity = (alert: Alert) =>
   alert && alert.labels ? alert.labels.severity : null;

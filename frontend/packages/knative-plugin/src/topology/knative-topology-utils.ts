@@ -33,7 +33,7 @@ import {
 } from '@console/dev-console/src/components/topology';
 import { getImageForIconClass } from '@console/internal/components/catalog/catalog-item-icon';
 import { DeploymentModel } from '@console/internal/models';
-import { RootState } from '@console/internal/redux';
+import { RootState } from '@console/internal/redux-types';
 import { FLAG_KNATIVE_EVENTING } from '../const';
 import { ServiceModel as knServiceModel } from '../models';
 import { KnativeItem } from '../utils/get-knative-resources';

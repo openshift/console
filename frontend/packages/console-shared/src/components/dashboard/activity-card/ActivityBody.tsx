@@ -8,7 +8,7 @@ import { ErrorLoadingEvents, sortEvents } from '@console/internal/components/eve
 import { Timestamp } from '@console/internal/components/utils/timestamp';
 import { AsyncComponent } from '@console/internal/components/utils/async';
 import { FirehoseResult } from '@console/internal/components/utils/types';
-import { PrometheusResponse } from '@console/internal/components/graphs';
+import { PrometheusResponse } from '@console/shared/src/types/monitoring';
 import { DashboardCardButtonLink } from '../dashboard-card/DashboardCardLink';
 import EventItem from './EventItem';
 import './activity-card.scss';

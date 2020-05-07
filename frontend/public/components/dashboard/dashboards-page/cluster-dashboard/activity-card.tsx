@@ -23,8 +23,8 @@ import {
   isDashboardsOverviewResourceActivity,
   isDashboardsOverviewPrometheusActivity,
 } from '@console/plugin-sdk';
+import { PrometheusResponse } from '@console/shared/src/types/monitoring';
 import { uniqueResource } from './utils';
-import { PrometheusResponse } from '../../../graphs';
 
 const eventsResource: FirehoseResource = { isList: true, kind: EventModel.kind, prop: 'events' };
 const viewEvents = '/k8s/all-namespaces/events';

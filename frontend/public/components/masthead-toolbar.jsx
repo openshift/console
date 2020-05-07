@@ -24,8 +24,8 @@ import { Link } from 'react-router-dom';
 import { FLAGS, YellowExclamationTriangleIcon } from '@console/shared';
 import { formatNamespacedRouteForResource } from '@console/shared/src/utils';
 import CloudShellMastheadButton from '@console/app/src/components/cloud-shell/CloudShellMastheadButton';
+import { connectToFlags, flagPending } from '@console/shared/src/hocs/connect-flags';
 import * as UIActions from '../actions/ui';
-import { connectToFlags, flagPending, featureReducerName } from '../reducers/features';
 import { authSvc } from '../module/auth';
 import { getOCMLink } from '../module/k8s';
 import { Firehose } from './utils';
@@ -595,7 +595,7 @@ const mastheadToolbarStateToProps = (state) => ({
   user: state.UI.get('user'),
   consoleLinks: state.UI.get('consoleLinks'),
   notificationsRead: !!state.UI.getIn(['notifications', 'isRead']),
-  canAccessNS: !!state[featureReducerName].get(FLAGS.CAN_GET_NS),
+  canAccessNS: !!state.FLAGS.get(FLAGS.CAN_GET_NS),
 });
 
 const MastheadToolbarContents = connect(mastheadToolbarStateToProps, {

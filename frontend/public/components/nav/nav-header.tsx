@@ -3,9 +3,9 @@ import { connect } from 'react-redux';
 import { Dropdown, DropdownItem, DropdownToggle, Title } from '@patternfly/react-core';
 import { CaretDownIcon } from '@patternfly/react-icons';
 import { Perspective, useExtensions, isPerspective } from '@console/plugin-sdk';
-import { RootState } from '../../redux';
-import { featureReducerName, getFlagsObject, FlagsObject } from '../../reducers/features';
-import { getActivePerspective } from '../../reducers/ui';
+import { getFlagsObject, FlagsObject } from '@console/shared/src/hocs/connect-flags';
+import { RootState } from '../../redux-types';
+import { getActivePerspective } from '../../reducers/ui-selectors';
 import * as UIActions from '../../actions/ui';
 import { history } from '../utils';
 
@@ -111,7 +111,6 @@ export default connect<StateProps, {}, NavHeaderProps, RootState>(
   null,
   {
     areStatesEqual: (next, prev) =>
-      next[featureReducerName] === prev[featureReducerName] &&
-      getActivePerspective(next) === getActivePerspective(prev),
+      next.FLAGS === prev.FLAGS && getActivePerspective(next) === getActivePerspective(prev),
   },
 )(NavHeader_);

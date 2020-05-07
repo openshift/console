@@ -4,11 +4,7 @@ import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { Wizard, WizardStep } from '@patternfly/react-core';
 import { FLAGS } from '@console/shared';
-import {
-  connectToFlags,
-  featureReducerName,
-  FlagsObject,
-} from '@console/internal/reducers/features';
+import { connectToFlags, FlagsObject } from '@console/shared/src/hocs/connect-flags';
 import { TemplateModel } from '@console/internal/models';
 import { Firehose, history } from '@console/internal/components/utils';
 import { Location } from 'history';
@@ -464,7 +460,7 @@ export const CreateVMWizardPageComponent: React.FC<CreateVMWizardPageComponentPr
   const dataIDReferences = makeIDReferences(resources);
 
   dataIDReferences[VMWizardProps.activeNamespace] = ['UI', 'activeNamespace'];
-  dataIDReferences[VMWizardProps.openshiftFlag] = [featureReducerName, FLAGS.OPENSHIFT];
+  dataIDReferences[VMWizardProps.openshiftFlag] = ['FLAGS', FLAGS.OPENSHIFT];
 
   const userMode = searchParams.get('mode') || VMWizardMode.VM;
   const userTemplateName = (userMode === VMWizardMode.VM && searchParams.get('template')) || '';

@@ -3,8 +3,11 @@ import { Formik } from 'formik';
 import * as _ from 'lodash';
 import { ValidatedOptions } from '@patternfly/react-core';
 import { history, AsyncComponent } from '@console/internal/components/utils';
-import { getActivePerspective, getActiveApplication } from '@console/internal/reducers/ui';
-import { RootState } from '@console/internal/redux';
+import {
+  getActivePerspective,
+  getActiveApplication,
+} from '@console/internal/reducers/ui-selectors';
+import { RootState } from '@console/internal/redux-types';
 import { connect } from 'react-redux';
 import { ALL_APPLICATIONS_KEY } from '@console/shared';
 import { useExtensions, Perspective, isPerspective } from '@console/plugin-sdk';

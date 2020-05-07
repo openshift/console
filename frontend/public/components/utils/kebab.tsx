@@ -24,7 +24,7 @@ import {
   K8sResourceKindReference,
   referenceForModel,
 } from '../../module/k8s';
-import { impersonateStateToProps } from '../../reducers/ui';
+import { impersonateStateToProps } from '../../reducers/ui-selectors';
 import { connectToModel } from '../../kinds';
 import * as plugins from '../../plugins';
 

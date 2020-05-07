@@ -17,6 +17,7 @@ import {
   FLAGS,
 } from '@console/shared';
 import { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
+import { flagPending, connectToFlags } from '@console/shared/src/hocs/connect-flags';
 
 import { NamespaceModel, ProjectModel, SecretModel } from '../models';
 import { coFetchJSON } from '../co-fetch';
@@ -54,7 +55,6 @@ import {
 } from './modals';
 import { RoleBindingsPage } from './RBAC';
 import { Bar, Area, PROMETHEUS_BASE_PATH, requirePrometheus } from './graphs';
-import { featureReducerName, flagPending, connectToFlags } from '../reducers/features';
 import { setFlag } from '../actions/features';
 import { OpenShiftGettingStarted } from './start-guide';
 import { Overview } from './overview';
@@ -604,8 +604,8 @@ const defaultBookmarks = {};
 
 const namespaceBarDropdownStateToProps = (state) => {
   const activeNamespace = state.UI.get('activeNamespace');
-  const canListNS = state[featureReducerName].get(FLAGS.CAN_LIST_NS);
-  const canCreateProject = state[featureReducerName].get(FLAGS.CAN_CREATE_PROJECT);
+  const canListNS = state.FLAGS.get(FLAGS.CAN_LIST_NS);
+  const canCreateProject = state.FLAGS.get(FLAGS.CAN_CREATE_PROJECT);
 
   return { activeNamespace, canListNS, canCreateProject };
 };

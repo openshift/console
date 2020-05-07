@@ -11,7 +11,7 @@ import {
   ModalBody,
   ModalSubmitFooter,
 } from '@console/internal/components/factory/modal';
-import { RootState } from '@console/internal/redux';
+import { RootState } from '@console/internal/redux-types';
 
 export const ResourceRequirements: React.FC<ResourceRequirementsProps> = (props) => {
   const { cpu, memory, storage, onChangeCPU, onChangeMemory, onChangeStorage, path = '' } = props;

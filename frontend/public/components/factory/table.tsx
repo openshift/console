@@ -10,12 +10,12 @@ import {
   nodeFS,
   nodePods,
 } from '@console/shared';
-import * as UIActions from '../../actions/ui';
 import {
   alertStateOrder,
   silenceFiringAlertsOrder,
   silenceStateOrder,
-} from '../../reducers/monitoring';
+} from '@console/shared/src/selectors/monitoring';
+import * as UIActions from '../../actions/ui';
 import { ingressValidHosts } from '../ingress';
 import { convertToBaseValue, EmptyBox, StatusBox, WithScrollContainer } from '../utils';
 import {

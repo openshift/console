@@ -10,7 +10,7 @@ import {
 import { Link } from 'react-router-dom';
 
 import { FLAGS } from '@console/shared';
-import { connectToFlags, FlagsObject } from '../reducers/features';
+import { connectToFlags, FlagsObject } from '@console/shared/src/hocs/connect-flags';
 import { getBrandingDetails } from './masthead';
 import { ExternalLink, Firehose } from './utils';
 import { ClusterVersionModel } from '../models';

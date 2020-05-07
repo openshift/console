@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Dispatch } from 'redux';
 import { connect } from 'react-redux';
 import { Toolbar, ToolbarGroup, ToolbarItem, Popover, Button } from '@patternfly/react-core';
-import { RootState } from '@console/internal/redux';
+import { RootState } from '@console/internal/redux-types';
 import { TextFilter } from '@console/internal/components/factory';
 import { InfoCircleIcon } from '@patternfly/react-icons';
 import { Visualization } from '@console/topology';

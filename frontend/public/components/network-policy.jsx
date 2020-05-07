@@ -3,7 +3,7 @@ import * as React from 'react';
 import { Link } from 'react-router-dom';
 import { sortable } from '@patternfly/react-table';
 import * as classNames from 'classnames';
-import { connectToFlags } from '../reducers/features';
+import { connectToFlags } from '@console/shared/src/hocs/connect-flags';
 import { FLAGS } from '@console/shared';
 import { DetailsPage, ListPage, Table, TableRow, TableData } from './factory';
 import {

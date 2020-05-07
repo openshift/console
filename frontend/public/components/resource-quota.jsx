@@ -11,6 +11,7 @@ import {
 } from '@patternfly/react-icons';
 
 import { FLAGS, YellowExclamationTriangleIcon } from '@console/shared';
+import { connectToFlags, flagPending } from '@console/shared/src/hocs/connect-flags';
 import { DetailsPage, MultiListPage, Table, TableRow, TableData } from './factory';
 import {
   Kebab,
@@ -22,7 +23,6 @@ import {
   convertToBaseValue,
   FieldLevelHelp,
 } from './utils';
-import { connectToFlags, flagPending } from '../reducers/features';
 import { GaugeChart } from './graphs/gauge';
 import { LoadingBox } from './utils/status-box';
 import { referenceForModel } from '../module/k8s';

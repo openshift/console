@@ -11,6 +11,7 @@ import { sortable } from '@patternfly/react-table';
 
 import { ALL_NAMESPACES_KEY, FLAGS, APIError } from '@console/shared';
 import { useAccessReview } from '@console/internal/components/utils';
+import { connectToFlags, FlagsObject } from '@console/shared/src/hocs/connect-flags';
 import { connectToModel } from '../kinds';
 import { LocalResourceAccessReviewsModel, ResourceAccessReviewsModel } from '../models';
 import {
@@ -24,8 +25,7 @@ import {
   ResourceAccessReviewRequest,
   ResourceAccessReviewResponse,
 } from '../module/k8s';
-import { connectToFlags, FlagsObject } from '../reducers/features';
-import { RootState } from '../redux';
+import { RootState } from '../redux-types';
 import { CheckBox, CheckBoxControls } from './row-filter';
 import { DefaultPage } from './default-resource';
 import { Table, TextFilter } from './factory';

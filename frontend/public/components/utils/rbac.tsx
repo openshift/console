@@ -5,7 +5,7 @@ import * as _ from 'lodash-es';
 import { getName, getNamespace } from '@console/shared';
 
 import store from '../../redux';
-import { impersonateStateToProps } from '../../reducers/ui';
+import { impersonateStateToProps } from '../../reducers/ui-selectors';
 import {
   AccessReviewResourceAttributes,
   k8sCreate,

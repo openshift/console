@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { setActiveApplication } from '@console/internal/actions/ui';
-import { RootState } from '@console/internal/redux';
-import { getActiveApplication } from '@console/internal/reducers/ui';
+import { RootState } from '@console/internal/redux-types';
+import { getActiveApplication } from '@console/internal/reducers/ui-selectors';
 import { QUERY_PROPERTIES } from '../const';
 import { sanitizeApplicationValue } from '../utils/application-utils';
 

@@ -8,7 +8,8 @@ import { EmptyBox, StatusBox } from './status-box';
 import { PodsPage } from '../pod';
 import { AsyncComponent } from './async';
 import { K8sResourceKind, K8sResourceCommon } from '../../module/k8s';
-import { referenceForModel, referenceFor } from '../../module/k8s/k8s';
+import { referenceForModel } from '../../module/k8s/k8s';
+import { referenceFor } from '../../module/k8s/k8s-models';
 import { useExtensions, HorizontalNavTab, isHorizontalNavTab } from '@console/plugin-sdk';
 
 const editYamlComponent = (props) => (

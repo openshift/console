@@ -3,14 +3,14 @@ import * as _ from 'lodash';
 import { Gallery, GalleryItem } from '@patternfly/react-core';
 import AlertsBody from '@console/shared/src/components/dashboard/status-card/AlertsBody';
 import AlertItem from '@console/shared/src/components/dashboard/status-card/AlertItem';
-import { alertURL } from '@console/internal/components/monitoring';
+import { alertURL } from '@console/shared/src/selectors/monitoring';
 import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
 import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
 import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
 import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
 import HealthBody from '@console/shared/src/components/dashboard/status-card/HealthBody';
 import HealthItem from '@console/shared/src/components/dashboard/status-card/HealthItem';
-import { PrometheusResponse } from '@console/internal/components/graphs';
+import { PrometheusResponse } from '@console/shared/src/types/monitoring';
 import {
   withDashboardResources,
   DashboardItemProps,

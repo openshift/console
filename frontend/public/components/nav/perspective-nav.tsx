@@ -11,9 +11,9 @@ import {
   Perspective,
   isPerspective,
 } from '@console/plugin-sdk';
-import { RootState } from '../../redux';
+import { RootState } from '../../redux-types';
 import { setPinnedResources } from '../../actions/ui';
-import { getActivePerspective, getPinnedResources } from '../../reducers/ui';
+import { getActivePerspective, getPinnedResources } from '../../reducers/ui-selectors';
 import { modelFor, referenceForModel } from '../../module/k8s';
 import confirmNavUnpinModal from './confirmNavUnpinModal';
 import { NavSection } from './section';

@@ -2,6 +2,12 @@ import * as _ from 'lodash-es';
 import * as fuzzy from 'fuzzysearch';
 import { nodeStatus } from '@console/app/src/status/node';
 import { getNodeRole, getLabelsAsString } from '@console/shared';
+import {
+  alertState,
+  alertingRuleIsActive,
+  silenceState,
+  alertDescription,
+} from '@console/shared/src/selectors/monitoring';
 import { routeStatus } from '../routes';
 import { secretTypeFilterReducer } from '../secret';
 import { bindingType, roleType } from '../RBAC';
@@ -15,13 +21,6 @@ import {
   getClusterOperatorStatus,
   getTemplateInstanceStatus,
 } from '../../module/k8s';
-
-import {
-  alertingRuleIsActive,
-  alertDescription,
-  alertState,
-  silenceState,
-} from '../../reducers/monitoring';
 
 export const fuzzyCaseInsensitive = (a: string, b: string): boolean =>
   fuzzy(_.toLower(a), _.toLower(b));

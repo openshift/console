@@ -59,7 +59,7 @@ import {
   KebabAction,
 } from '@console/internal/components/utils';
 import { useAccessReview } from '@console/internal/components/utils/rbac';
-import { RootState } from '@console/internal/redux';
+import { RootState } from '@console/internal/redux-types';
 import {
   ClusterServiceVersionModel,
   SubscriptionModel,

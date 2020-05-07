@@ -1,4 +1,4 @@
-import { RootState } from '@console/internal/redux';
+import { RootState } from '@console/internal/redux-types';
 import { getQueryArgument } from '@console/internal/components/utils';
 import { getDefaultTopologyFilters } from '../redux/reducer';
 import { TOPOLOGY_SEARCH_FILTER_KEY, TopologyFilters } from './filter-types';

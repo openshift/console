@@ -19,7 +19,7 @@ import {
   OperatorStatus,
   ClusterOperator,
 } from '@console/internal/module/k8s';
-import { PrometheusResponse } from '@console/internal/components/graphs';
+import { PrometheusResponse } from '@console/shared/src/types/monitoring';
 import { humanizePercentage } from '@console/internal/components/utils/units';
 import { getOperatorsStatus } from '@console/shared/src/components/dashboard/status-card/state-utils';
 import { pluralize } from '@patternfly/react-core';

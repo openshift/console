@@ -1,7 +1,7 @@
 import * as React from 'react';
 
 import { FLAGS } from '@console/shared/src/constants';
-import { connectToFlags } from '../../reducers/features';
+import { connectToFlags } from '@console/shared/src/hocs/connect-flags';
 import { PROMETHEUS_BASE_PATH, PROMETHEUS_TENANCY_BASE_PATH } from '.';
 
 const canAccessPrometheus = (prometheusFlag) =>

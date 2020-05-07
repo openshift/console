@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { Redirect, Route, Switch } from 'react-router-dom';
 
 import { FLAGS } from '@console/shared';
-import { connectToFlags, flagPending, FlagsObject } from '../reducers/features';
+import { connectToFlags, flagPending, FlagsObject } from '@console/shared/src/hocs/connect-flags';
 import { GlobalNotifications } from './global-notifications';
 import { NamespaceBar } from './namespace';
 import { SearchPage } from './search';
@@ -14,8 +14,8 @@ import { namespacedPrefixes } from './utils/link';
 import { AlertmanagerModel } from '../models';
 import { referenceForModel } from '../module/k8s';
 import { NamespaceRedirect } from './utils/namespace-redirect';
-import { getActivePerspective } from '../reducers/ui';
-import { RootState } from '../redux';
+import { getActivePerspective } from '../reducers/ui-selectors';
+import { RootState } from '../redux-types';
 
 //PF4 Imports
 import { PageSection, PageSectionVariants } from '@patternfly/react-core';

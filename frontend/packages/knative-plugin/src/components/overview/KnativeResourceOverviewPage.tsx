@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { Kebab, LoadingBox } from '@console/internal/components/utils';
 import { ResourceOverviewDetails } from '@console/internal/components/overview/resource-overview-details';
 import { groupVersionFor, K8sKind, referenceForModel } from '@console/internal/module/k8s';
-import { RootState } from '@console/internal/redux';
+import { RootState } from '@console/internal/redux-types';
 import { OverviewItem } from '@console/shared';
 import { ModifyApplication } from '@console/dev-console/src/actions/modify-application';
 import { KNATIVE_SERVING_APIGROUP } from '../../const';

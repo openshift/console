@@ -42,10 +42,11 @@ import {
   TechPreviewBadge,
   YellowExclamationTriangleIcon,
 } from '@console/shared';
+import { PrometheusData, PrometheusLabels } from '@console/shared/src/types/monitoring';
 import * as UIActions from '../../actions/ui';
-import { RootState } from '../../redux';
+import { RootState } from '../../redux-types';
 import { fuzzyCaseInsensitive } from '../factory/table-filters';
-import { PrometheusData, PrometheusLabels, PROMETHEUS_BASE_PATH } from '../graphs';
+import { PROMETHEUS_BASE_PATH } from '../graphs';
 import { getPrometheusURL, PrometheusEndpoint } from '../graphs/helpers';
 import { getPrometheusExpressionBrowserURL } from '../graphs/prometheus-graph';
 import {

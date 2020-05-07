@@ -10,7 +10,7 @@ import {
   WithDndDropProps,
   WithContextMenuProps,
 } from '@console/topology';
-import { RootState } from '@console/internal/redux';
+import { RootState } from '@console/internal/redux-types';
 import { Tooltip, TooltipPosition } from '@patternfly/react-core';
 import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 import { routeDecoratorIcon } from '../../../import/render-utils';

@@ -3,8 +3,8 @@ import * as fuzzy from 'fuzzysearch';
 import { connect } from 'react-redux';
 import { ResourceDropdownField } from '@console/shared';
 import { ServiceAccountModel } from '@console/internal/models';
-import { RootState } from '@console/internal/redux';
-import { getActiveNamespace } from '@console/internal/reducers/ui';
+import { RootState } from '@console/internal/redux-types';
+import { getActiveNamespace } from '@console/internal/reducers/ui-selectors';
 
 interface ServiceAccountDropdownProps {
   name: string;

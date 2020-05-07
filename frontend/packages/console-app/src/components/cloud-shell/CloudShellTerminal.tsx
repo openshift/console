@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { RootState } from '@console/internal/redux';
+import { RootState } from '@console/internal/redux-types';
 import { StatusBox, LoadError } from '@console/internal/components/utils/status-box';
-import { UserKind } from '@console/internal/module/k8s';
+import { UserKind } from '@console/internal/module/k8s/types';
 import CloudshellExec from './CloudShellExec';
 import TerminalLoadingBox from './TerminalLoadingBox';
 import {

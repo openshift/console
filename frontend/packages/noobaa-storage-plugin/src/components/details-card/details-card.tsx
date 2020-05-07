@@ -15,7 +15,7 @@ import { FirehoseResource, ExternalLink, FirehoseResult } from '@console/interna
 import { InfrastructureModel } from '@console/internal/models/index';
 import { SubscriptionModel } from '@console/operator-lifecycle-manager/src/models';
 import { referenceForModel, K8sResourceKind } from '@console/internal/module/k8s';
-import { PrometheusResponse } from '@console/internal/components/graphs';
+import { PrometheusResponse } from '@console/shared/src/types/monitoring';
 import { getOCSVersion } from '@console/ceph-storage-plugin/src/selectors';
 import { useK8sGet } from '@console/internal/components/utils/k8s-get-hook';
 import { getMetric } from '../../utils';

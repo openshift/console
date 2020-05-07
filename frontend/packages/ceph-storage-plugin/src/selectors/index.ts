@@ -1,5 +1,5 @@
 import * as _ from 'lodash';
-import { Alert } from '@console/internal/components/monitoring';
+import { Alert } from '@console/shared/src/types/monitoring';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { FirehoseResult, convertToBaseValue } from '@console/internal/components/utils';
 import { cephStorageProvisioners } from '@console/shared/src/utils';

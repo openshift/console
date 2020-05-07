@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as _ from 'lodash';
 import { connect } from 'react-redux';
 import { Button } from '@patternfly/react-core';
-import { impersonateStateToProps } from '@console/internal/reducers/ui';
+import { impersonateStateToProps } from '@console/internal/reducers/ui-selectors';
 import { useAccessReview } from '@console/internal/components/utils';
 import { AccessReviewResourceAttributes } from '@console/internal/module/k8s';
 import { rerunPipelineAndStay } from '../../../utils/pipeline-actions';

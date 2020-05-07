@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Formik } from 'formik';
 import { ALL_NAMESPACES_KEY } from '@console/shared';
 import { ProjectRequestModel } from '@console/internal/models';
-import { RootState } from '@console/internal/redux';
+import { RootState } from '@console/internal/redux-types';
 import { connect } from 'react-redux';
 
 import { k8sCreate } from '@console/internal/module/k8s';

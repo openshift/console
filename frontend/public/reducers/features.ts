@@ -1,4 +1,3 @@
-import { connect } from 'react-redux';
 import { Map as ImmutableMap } from 'immutable';
 import * as _ from 'lodash-es';
 
@@ -15,13 +14,13 @@ import {
   MachineModel,
   PrometheusModel,
 } from '../models';
-import { referenceForModel } from '../module/k8s';
-import { RootState } from '../redux';
+import { referenceForModel } from '../module/k8s/k8s';
 import { ActionType as K8sActionType } from '../actions/k8s';
 import { FeatureAction, ActionType } from '../actions/features';
 import { FLAGS } from '@console/shared/src/constants';
 import { pluginStore } from '../plugins';
 import { isModelFeatureFlag } from '@console/plugin-sdk';
+import { FeatureState } from '../redux-types';
 
 export const defaults = _.mapValues(FLAGS, (flag) =>
   flag === FLAGS.AUTH_ENABLED ? !window.SERVER_FLAGS.authDisabled : undefined,
@@ -53,9 +52,6 @@ pluginStore
     }
   });
 
-export type FeatureState = ImmutableMap<string, boolean>;
-
-export const featureReducerName = 'FLAGS';
 export const featureReducer = (state: FeatureState, action: FeatureAction): FeatureState => {
   if (!state) {
     return ImmutableMap(defaults);
@@ -88,35 +84,3 @@ export const featureReducer = (state: FeatureState, action: FeatureAction): Feat
       return state;
   }
 };
-
-export const stateToFlagsObject = (state: FeatureState, desiredFlags: string[]): FlagsObject =>
-  desiredFlags.reduce((allFlags, f) => ({ ...allFlags, [f]: state.get(f) }), {} as FlagsObject);
-
-const stateToProps = (state: FeatureState, desiredFlags: string[]): WithFlagsProps => ({
-  flags: stateToFlagsObject(state, desiredFlags),
-});
-
-export const getFlagsObject = ({ [featureReducerName]: featureState }: RootState): FlagsObject =>
-  featureState.toObject();
-
-export type FlagsObject = { [key: string]: boolean };
-
-export type WithFlagsProps = {
-  flags: FlagsObject;
-};
-
-export type ConnectToFlags = <P extends WithFlagsProps>(
-  ...flags: (FLAGS | string)[]
-) => (
-  C: React.ComponentType<P>,
-) => React.ComponentType<Omit<P, keyof WithFlagsProps>> & {
-  WrappedComponent: React.ComponentType<P>;
-};
-
-export const connectToFlags: ConnectToFlags = (...flags) =>
-  connect((state: RootState) => stateToProps(state[featureReducerName], flags), null, null, {
-    areStatePropsEqual: _.isEqual,
-  });
-
-// Flag detection is not complete if the flag's value is `undefined`.
-export const flagPending = (flag: boolean) => flag === undefined;

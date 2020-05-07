@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useField } from 'formik';
-import { connectToFlags, FlagsObject } from '@console/internal/reducers/features';
+import { useFlag } from '@console/shared/src/hooks/flag';
 import { K8sKind } from '@console/internal/module/k8s';
 import { DeploymentModel, DeploymentConfigModel } from '@console/internal/models';
 import { FLAG_KNATIVE_SERVING_SERVICE, ServiceModel } from '@console/knative-plugin';
@@ -10,10 +10,6 @@ import { getActiveNamespace } from '@console/internal/actions/ui';
 import { Resources, ReadableResourcesNames } from '../import-types';
 import FormSection from './FormSection';
 import './ResourceSection.scss';
-
-type ResourceSectionProps = {
-  flags: FlagsObject;
-};
 
 const createHelpText = (k8sModel: K8sKind, helpText: string) => {
   return (
@@ -26,7 +22,8 @@ const createHelpText = (k8sModel: K8sKind, helpText: string) => {
   );
 };
 
-const ResourceSection: React.FC<ResourceSectionProps> = ({ flags }) => {
+const ResourceSection: React.FC = () => {
+  const knativeServingServiceFlag = useFlag(FLAG_KNATIVE_SERVING_SERVICE);
   const [field] = useField<Resources[]>('resourceTypesNotValid');
   const invalidTypes = field.value || [];
 
@@ -61,7 +58,7 @@ const ResourceSection: React.FC<ResourceSectionProps> = ({ flags }) => {
   });
   const canIncludeKnative =
     !invalidTypes.includes(Resources.KnativeService) &&
-    flags[FLAG_KNATIVE_SERVING_SERVICE] &&
+    knativeServingServiceFlag &&
     knativeServiceAccess;
   if (canIncludeKnative) {
     radioOptions.push({
@@ -78,4 +75,4 @@ const ResourceSection: React.FC<ResourceSectionProps> = ({ flags }) => {
   );
 };
 
-export default connectToFlags(FLAG_KNATIVE_SERVING_SERVICE)(ResourceSection);
+export default ResourceSection;

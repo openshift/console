@@ -4,7 +4,7 @@ import * as classNames from 'classnames';
 import * as PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { CaretDownIcon, MinusCircleIcon, PlusCircleIcon, StarIcon } from '@patternfly/react-icons';
-import { impersonateStateToProps } from '../../reducers/ui';
+import { impersonateStateToProps } from '../../reducers/ui-selectors';
 import { checkAccess } from './rbac';
 import { history } from './router';
 import { KebabItems } from './kebab';

@@ -1,8 +1,7 @@
 import * as classNames from 'classnames';
 import * as _ from 'lodash-es';
-import { murmur3 } from 'murmurhash-js';
 import {
-  Alert,
+  Alert as PfAlert,
   ActionGroup,
   Badge,
   Button,
@@ -26,6 +25,35 @@ import {
 } from '@patternfly/react-icons';
 
 import { withFallback } from '@console/shared/src/components/error/error-boundary';
+import {
+  BlueInfoCircleIcon,
+  GreenCheckCircleIcon,
+  RedExclamationCircleIcon,
+  YellowExclamationTriangleIcon,
+} from '@console/shared';
+import {
+  Alert,
+  SilenceStates,
+  AlertStates,
+  PrometheusLabels,
+  Rule,
+  Silence,
+  AlertSeverity,
+  PrometheusAlert,
+  RuleResource,
+  SilenceResource,
+  AlertResource,
+  MonitoringResource,
+} from '@console/shared/src/types/monitoring';
+import {
+  silenceState,
+  alertState,
+  alertDescription,
+  alertingRuleIsActive,
+  getAlertsAndRules,
+  alertURL,
+  labelsToParams,
+} from '@console/shared/src/selectors/monitoring';
 import * as k8sActions from '../actions/k8s';
 import * as UIActions from '../actions/ui';
 import { coFetchJSON } from '../co-fetch';
@@ -40,21 +68,12 @@ import {
   StatefulSetModel,
 } from '../models';
 import { K8sKind } from '../module/k8s';
-import {
-  alertDescription,
-  alertingRuleIsActive,
-  AlertSeverity,
-  alertState,
-  AlertStates,
-  silenceState,
-  SilenceStates,
-} from '../reducers/monitoring';
-import store, { RootState } from '../redux';
+import store from '../redux';
+import { RootState } from '../redux-types';
 import { RowFunction, Table, TableData, TableRow, TextFilter } from './factory';
 import { confirmModal } from './modals';
 import MonitoringDashboardsPage from './monitoring/dashboards';
 import { graphStateToProps, QueryBrowserPage, ToggleGraph } from './monitoring/metrics';
-import { PrometheusLabels } from './graphs';
 import { QueryBrowser, QueryObj } from './monitoring/query-browser';
 import { CheckBoxes } from './row-filter';
 import { AlertmanagerYAMLEditorWrapper } from './monitoring/alert-manager-yaml-editor';
@@ -71,39 +90,7 @@ import { LoadingInline, StatusBox } from './utils/status-box';
 import { SectionHeading, ActionButtons } from './utils/headings';
 import { Timestamp } from './utils/timestamp';
 import { formatPrometheusDuration, parsePrometheusDuration } from './utils/datetime';
-import {
-  BlueInfoCircleIcon,
-  GreenCheckCircleIcon,
-  RedExclamationCircleIcon,
-  YellowExclamationTriangleIcon,
-} from '@console/shared';
 
-const AlertResource: MonitoringResource = {
-  kind: 'Alert',
-  label: 'Alert',
-  plural: '/monitoring/alerts',
-  abbr: 'AL',
-};
-
-const RuleResource: MonitoringResource = {
-  kind: 'AlertRule',
-  label: 'Alerting Rule',
-  plural: '/monitoring/alertrules',
-  abbr: 'AR',
-};
-
-const SilenceResource: MonitoringResource = {
-  kind: 'Silence',
-  label: 'Silence',
-  plural: '/monitoring/silences',
-  abbr: 'SL',
-};
-
-const labelsToParams = (labels: PrometheusLabels) =>
-  _.map(labels, (v, k) => `${encodeURIComponent(k)}=${encodeURIComponent(v)}`).join('&');
-
-export const alertURL = (alert: Alert, ruleID: string) =>
-  `${AlertResource.plural}/${ruleID}?${labelsToParams(alert.labels)}`;
 const ruleURL = (rule: Rule) => `${RuleResource.plural}/${_.get(rule, 'id')}`;
 
 const alertsToProps = ({ UI }) => UI.getIn(['monitoring', 'alerts']) || {};
@@ -1581,10 +1568,10 @@ const SilenceForm_: React.FC<SilenceFormProps> = ({ defaults, Info, title }) => 
 const SilenceForm = withFallback(SilenceForm_);
 
 const EditInfo = () => (
-  <Alert isInline className="co-alert" variant="info" title="Overwriting current silence">
+  <PfAlert isInline className="co-alert" variant="info" title="Overwriting current silence">
     When changes are saved, the currently existing silence will be expired and a new silence with
     the new configuration will take its place.
-  </Alert>
+  </PfAlert>
 );
 
 const EditSilence = connect(silenceParamToProps)(({ loaded, loadError, silence }) => {
@@ -1727,36 +1714,6 @@ const AlertingPage: React.FC<AlertingPageProps> = ({ match }) => {
   );
 };
 
-const getAlertsAndRules = (
-  data: PrometheusRulesResponse['data'],
-): { alerts: Alert[]; rules: Rule[] } => {
-  // Flatten the rules data to make it easier to work with, discard non-alerting rules since those are the only
-  // ones we will be using and add a unique ID to each rule.
-  const groups = _.get(data, 'groups') as PrometheusRulesResponse['data']['groups'];
-  const rules = _.flatMap(groups, (g) => {
-    const addID = (r: PrometheusRule): Rule => {
-      const key = [
-        g.file,
-        g.name,
-        r.name,
-        r.duration,
-        r.query,
-        ..._.map(r.labels, (k, v) => `${k}=${v}`),
-      ].join(',');
-      return { ...r, id: String(murmur3(key, 'monitoring-salt')) };
-    };
-
-    return _.filter(g.rules, { type: 'alerting' }).map(addID);
-  });
-
-  // Add `rule` object to each alert
-  const alerts = _.flatMap(rules, (rule) => rule.alerts.map((a) => ({ rule, ...a })));
-
-  return { alerts, rules };
-};
-
-export const getAlerts = (data: PrometheusRulesResponse['data']) => getAlertsAndRules(data).alerts;
-
 const PollerPages = () => {
   React.useEffect(() => {
     const { prometheusBaseURL } = window.SERVER_FLAGS;
@@ -1807,59 +1764,10 @@ export const MonitoringUI = () => (
   </Switch>
 );
 
-type MonitoringResource = {
-  abbr: string;
-  kind: string;
-  label: string;
-  plural: string;
-};
-
-type Silence = {
-  comment: string;
-  createdBy: string;
-  endsAt: string;
-  // eslint-disable-next-line no-use-before-define
-  firingAlerts: Alert[];
-  id?: string;
-  matchers: { name: string; value: string; isRegex: boolean }[];
-  name?: string;
-  startsAt: string;
-  status?: { state: SilenceStates };
-  updatedAt?: string;
-};
-
 type Silences = {
   data: Silence[];
   loaded: boolean;
   loadError?: string;
-};
-
-type PrometheusAlert = {
-  activeAt?: string;
-  annotations: PrometheusLabels;
-  labels: PrometheusLabels & {
-    alertname: string;
-  };
-  state: AlertStates;
-  value?: number;
-};
-
-export type Alert = PrometheusAlert & {
-  rule: Rule;
-  silencedBy?: Silence[];
-};
-
-type PrometheusRule = {
-  alerts: PrometheusAlert[];
-  annotations: PrometheusLabels;
-  duration: number;
-  labels: PrometheusLabels;
-  name: string;
-  query: string;
-};
-
-type Rule = PrometheusRule & {
-  id: string;
 };
 
 type Rules = {
@@ -1949,18 +1857,4 @@ type GraphProps = {
 type MonitoringResourceIconProps = {
   className?: string;
   resource: MonitoringResource;
-};
-
-type Group = {
-  rules: PrometheusRule[];
-  file: string;
-  inverval: number;
-  name: string;
-};
-
-export type PrometheusRulesResponse = {
-  data: {
-    groups: Group[];
-  };
-  status: string;
 };

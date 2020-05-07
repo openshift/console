@@ -5,11 +5,11 @@ import * as PropTypes from 'prop-types';
 import { Alert } from '@patternfly/react-core';
 
 import { FLAGS } from '@console/shared/src/constants';
+import { connectToFlags, flagPending } from '@console/shared/src/hocs/connect-flags';
 import { Dropdown } from './dropdown';
 import { Firehose } from './firehose';
 import { LoadingInline } from './status-box';
 import { ResourceName } from './resource-icon';
-import { connectToFlags, flagPending } from '../../reducers/features';
 
 class ListDropdown_ extends React.Component {
   constructor(props) {

@@ -2,7 +2,7 @@ import * as React from 'react';
 import { FLAGS } from '@console/shared/src/constants';
 import { Area } from '@console/internal/components/graphs/area';
 import { humanizeDecimalBytesPerSec } from '@console/internal/components/utils';
-import { connectToFlags, WithFlagsProps } from '../../reducers/features';
+import { connectToFlags, WithFlagsProps } from '@console/shared/src/hocs/connect-flags';
 
 // Build the RouteCharts component that presents 3 charts side by side in full screen
 const chartClasses = 'col-md-4 col-sm-12';

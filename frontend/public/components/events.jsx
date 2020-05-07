@@ -6,6 +6,8 @@ import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
 import { Button, Chip, ChipGroup, ChipGroupToolbarItem } from '@patternfly/react-core';
 import { CloseIcon } from '@patternfly/react-icons';
+import { FLAGS } from '@console/shared/src/constants';
+import { connectToFlags } from '@console/shared/src/hocs/connect-flags';
 
 import { namespaceProptype } from '../propTypes';
 import { ResourceListDropdown } from './resource-dropdown';
@@ -20,8 +22,6 @@ import {
 import { withStartGuide } from './start-guide';
 import { WSFactory } from '../module/ws-factory';
 import { EventModel, NodeModel } from '../models';
-import { connectToFlags } from '../reducers/features';
-import { FLAGS } from '@console/shared/src/constants';
 import {
   Box,
   Dropdown,

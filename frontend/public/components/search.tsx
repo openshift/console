@@ -15,8 +15,8 @@ import {
 } from '@patternfly/react-core';
 import { PlusCircleIcon, MinusCircleIcon } from '@patternfly/react-icons';
 import { getBadgeFromType } from '@console/shared';
-import { RootState } from '../redux';
-import { getActivePerspective, getPinnedResources } from '../reducers/ui';
+import { RootState } from '../redux-types';
+import { getActivePerspective, getPinnedResources } from '../reducers/ui-selectors';
 import { setPinnedResources } from '../actions/ui';
 import { connectToModel } from '../kinds';
 import { DefaultPage } from './default-resource';

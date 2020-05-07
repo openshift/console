@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { FlagsObject } from '@console/internal/reducers/features';
+import { FlagsObject } from '@console/shared/src/hocs/connect-flags';
 import { Extension } from './base';
 
 namespace ExtensionProperties {

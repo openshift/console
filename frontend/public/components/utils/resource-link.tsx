@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import * as classNames from 'classnames';
 
 import { FLAGS } from '@console/shared/src/constants';
+import { connectToFlags, FlagsObject } from '@console/shared/src/hocs/connect-flags';
 import { ResourceIcon } from './resource-icon';
 import {
   modelFor,
@@ -13,7 +14,6 @@ import {
   K8sResourceKind,
 } from '../../module/k8s';
 import { connectToModel } from '../../kinds';
-import { connectToFlags, FlagsObject } from '../../reducers/features';
 
 const unknownKinds = new Set();
 

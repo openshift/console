@@ -12,8 +12,7 @@ import {
   DashboardItemProps,
 } from '@console/internal/components/dashboard/with-dashboard-resources';
 import { getInstantVectorStats } from '@console/internal/components/graphs/utils';
-import { featureReducerName } from '@console/internal/reducers/features';
-import { RootState } from '@console/internal/redux';
+import { RootState } from '@console/internal/redux-types';
 import { getPrometheusQueryResponse } from '@console/internal/actions/dashboards';
 import { PopoverPosition } from '@patternfly/react-core';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
@@ -113,9 +112,7 @@ export const PopoverBody = withDashboardResources<DashboardItemProps & PopoverBo
         UI.get('activePerspective'),
       );
       const canAccessMonitoring = useSelector<RootState, boolean>(
-        (state) =>
-          !!state[featureReducerName].get(FLAGS.CAN_GET_NS) &&
-          !!window.SERVER_FLAGS.prometheusBaseURL,
+        (state) => !!state.FLAGS.get(FLAGS.CAN_GET_NS) && !!window.SERVER_FLAGS.prometheusBaseURL,
       );
       const { query, model, metric, fieldSelector } = currentConsumer;
       const k8sResource = React.useMemo(

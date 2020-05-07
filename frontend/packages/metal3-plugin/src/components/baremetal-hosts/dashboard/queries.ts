@@ -1,5 +1,5 @@
 import * as _ from 'lodash';
-import { PrometheusResponse } from '@console/internal/components/graphs';
+import { PrometheusResponse } from '@console/shared/src/types/monitoring';
 
 export enum HostQuery {
   CPU_UTILIZATION = 'CPU_UTILIZATION',

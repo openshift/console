@@ -3,7 +3,6 @@ import { Helmet } from 'react-helmet';
 import { match as RMatch } from 'react-router';
 import { connect } from 'react-redux';
 import { HorizontalNav, PageHeading, history } from '@console/internal/components/utils';
-import { featureReducerName } from '@console/internal/reducers/features';
 import { TechPreviewBadge, ALL_NAMESPACES_KEY, FLAGS } from '@console/shared';
 import { withStartGuide } from '@console/internal/components/start-guide';
 import NamespacedPage, { NamespacedPageVariants } from '../NamespacedPage';
@@ -91,7 +90,7 @@ export const MonitoringPage: React.FC<Props> = (props) => (
 );
 
 const stateToProps = (state) => ({
-  canAccess: !!state[featureReducerName].get(FLAGS.CAN_GET_NS),
+  canAccess: !!state.FLAGS.get(FLAGS.CAN_GET_NS),
 });
 
 export default connect<StateProps, {}, MonitoringPageProps>(stateToProps)(MonitoringPage);

@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import * as _ from 'lodash';
-import { RootState } from '@console/internal/redux';
-import { stateToFlagsObject } from '@console/internal/reducers/features';
+import { RootState } from '@console/internal/redux-types';
+import { stateToFlagsObject } from '@console/shared/src/hocs/connect-flags';
 import { pluginStore } from '@console/internal/plugins';
 import { getGatingFlagNames, isExtensionInUse } from './store';
 import { Extension, ExtensionTypeGuard } from './typings';

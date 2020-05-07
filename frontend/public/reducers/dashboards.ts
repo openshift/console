@@ -1,31 +1,11 @@
 import { ActionType, DashboardsAction } from '../actions/dashboards';
 import { Map as ImmutableMap, fromJS } from 'immutable';
-
-export enum RESULTS_TYPE {
-  PROMETHEUS = 'PROMETHEUS',
-  URL = 'URL',
-  ALERTS = 'ALERTS',
-}
+import { DashboardsState, RESULTS_TYPE } from '../redux-types';
 
 export const defaults = {
   [RESULTS_TYPE.PROMETHEUS]: fromJS({}),
   [RESULTS_TYPE.URL]: fromJS({}),
 };
-
-type Request<R> = {
-  active: boolean;
-  timeout: NodeJS.Timer;
-  inFlight: boolean;
-  data: R;
-  error: any;
-};
-
-export type RequestMap<R> = ImmutableMap<string, Request<R>>;
-
-export type DashboardsState = ImmutableMap<string, RequestMap<any>>;
-
-export const isWatchActive = (state: DashboardsState, type: string, key: string): boolean =>
-  state.getIn([type, key, 'active']) > 0 || state.getIn([type, key, 'inFlight']);
 
 export const dashboardsReducer = (
   state: DashboardsState,

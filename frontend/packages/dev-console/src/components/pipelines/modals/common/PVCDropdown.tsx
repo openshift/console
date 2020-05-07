@@ -3,8 +3,8 @@ import * as fuzzy from 'fuzzysearch';
 import { connect } from 'react-redux';
 import { ResourceDropdownField } from '@console/shared';
 import { PersistentVolumeClaimModel } from '@console/internal/models';
-import { getActiveNamespace } from '@console/internal/reducers/ui';
-import { RootState } from '@console/internal/redux';
+import { getActiveNamespace } from '@console/internal/reducers/ui-selectors';
+import { RootState } from '@console/internal/redux-types';
 import './PVCDropdown.scss';
 
 interface PVCDropdownProps {

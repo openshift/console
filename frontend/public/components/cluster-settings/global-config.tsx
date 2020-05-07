@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { AlertVariant } from '@patternfly/react-core';
 
-import { RootState } from '../../redux';
+import { RootState } from '../../redux-types';
 import { K8sKind, k8sList, referenceForModel, getResourceDescription } from '../../module/k8s';
 import { EmptyBox, ExpandableAlert, Kebab, LoadingBox, resourcePathFromModel } from '../utils';
 import { addIDPItems } from './oauth';

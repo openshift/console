@@ -14,7 +14,8 @@ import HealthItem from '@console/shared/src/components/dashboard/status-card/Hea
 import { HealthState } from '@console/shared/src/components/dashboard/status-card/states';
 import AlertsBody from '@console/shared/src/components/dashboard/status-card/AlertsBody';
 import AlertItem from '@console/shared/src/components/dashboard/status-card/AlertItem';
-import { Alert, alertURL } from '@console/internal/components/monitoring';
+import { Alert } from '@console/shared/src/types/monitoring';
+import { alertURL } from '@console/shared/src/selectors/monitoring';
 import { getBareMetalHostStatus } from '../../../status/host-status';
 import {
   HOST_SUCCESS_STATES,

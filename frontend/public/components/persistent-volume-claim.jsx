@@ -4,7 +4,7 @@ import { sortable } from '@patternfly/react-table';
 import * as classNames from 'classnames';
 
 import { Status, FLAGS } from '@console/shared';
-import { connectToFlags } from '../reducers/features';
+import { connectToFlags } from '@console/shared/src/hocs/connect-flags';
 import { Conditions } from './conditions';
 import { DetailsPage, ListPage, Table, TableRow, TableData } from './factory';
 import {

@@ -5,7 +5,7 @@ import {
   humanizeNumber,
   HumanizeResult,
 } from '@console/internal/components/utils';
-import { PrometheusResponse } from '@console/internal/components/graphs';
+import { PrometheusResponse } from '@console/shared/src/types/monitoring';
 import {
   ACCOUNTS,
   BY_IOPS,

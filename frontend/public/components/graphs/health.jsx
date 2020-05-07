@@ -3,7 +3,6 @@ import { connect } from 'react-redux';
 
 import { Status, errorStatus } from './';
 import { coFetch, coFetchJSON } from '../../co-fetch';
-import { featureReducerName } from '../../reducers/features';
 import { FLAGS } from '@console/shared';
 import { k8sBasePath } from '../../module/k8s';
 
@@ -35,7 +34,7 @@ export const KubernetesHealth = () => <Status title="Kubernetes API" fetch={fetc
 export const ConsoleHealth = () => <Status title={consoleName} fetch={fetchConsoleHealth} />;
 
 const alertsFiringStateToProps = (state) => ({
-  canAccessMonitoring: !!state[featureReducerName].get(FLAGS.CAN_GET_NS),
+  canAccessMonitoring: !!state.FLAGS.get(FLAGS.CAN_GET_NS),
 });
 
 const AlertsFiring_ = ({ canAccessMonitoring, namespace }) => {

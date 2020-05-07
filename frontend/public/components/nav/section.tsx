@@ -10,17 +10,17 @@ import {
   isNavItem,
   isPerspective,
 } from '@console/plugin-sdk';
-import { RootState } from '../../redux';
-import { featureReducerName, flagPending, FeatureState } from '../../reducers/features';
+import { flagPending } from '@console/shared/src/hocs/connect-flags';
+import { RootState, FeatureState } from '../../redux-types';
 import { stripBasePath } from '../utils';
 import { stripNS, createLink } from './items';
-import { getActivePerspective } from '../../reducers/ui';
+import { getActivePerspective } from '../../reducers/ui-selectors';
 
 const navSectionStateToProps = (
   state: RootState,
   { required }: NavSectionProps,
 ): NavSectionStateProps => {
-  const flags = state[featureReducerName];
+  const flags = state.FLAGS;
   const canRender = required ? flags.get(required) : true;
 
   return {

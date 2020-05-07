@@ -1,9 +1,9 @@
 import * as _ from 'lodash';
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { RootState } from '@console/internal/redux';
+import { RootState } from '@console/internal/redux-types';
 import { queryBrowserDeleteAllQueries } from '@console/internal/actions/ui';
-import { getActiveNamespace } from '@console/internal/reducers/ui';
+import { getActiveNamespace } from '@console/internal/reducers/ui-selectors';
 import {
   QueryBrowser,
   QueryObj,

@@ -24,8 +24,8 @@ import {
   BOTTOM_LAYER,
   DEFAULT_LAYER,
 } from '@console/topology';
-import { RootState } from '@console/internal/redux';
-import { getActiveApplication } from '@console/internal/reducers/ui';
+import { RootState } from '@console/internal/redux-types';
+import { getActiveApplication } from '@console/internal/reducers/ui-selectors';
 import { selectOverviewDetailsTab } from '@console/internal/actions/ui';
 import { getEventSourceStatus } from '@console/knative-plugin/src/topology/knative-topology-utils';
 import {

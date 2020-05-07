@@ -7,8 +7,7 @@ import { createSelectorCreator, defaultMemoize } from 'reselect';
 import { makeQuery, makeReduxID } from './k8s-watcher';
 import * as k8sActions from '../../actions/k8s';
 import { K8sResourceCommon, K8sKind, K8sResourceKindReference, Selector } from '../../module/k8s';
-import { RootState } from '../../redux';
-import { K8sState } from '../../reducers/k8s';
+import { K8sState, RootState } from '../../redux-types';
 
 export class NoModelError extends Error {
   constructor() {

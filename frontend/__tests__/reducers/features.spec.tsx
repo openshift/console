@@ -2,19 +2,17 @@ import * as React from 'react';
 import * as Immutable from 'immutable';
 import * as _ from 'lodash-es';
 
-import { setFlag } from '../../public/actions/features';
-import { receivedResources } from '../../public/actions/k8s';
 import { FLAGS } from '@console/shared';
 import {
-  featureReducer,
-  featureReducerName,
-  defaults,
   connectToFlags,
   stateToFlagsObject,
   getFlagsObject,
-  FeatureState,
-} from '../../public/reducers/features';
-import { RootState } from '../../public/redux';
+} from '@console/shared/src/hocs/connect-flags';
+
+import { setFlag } from '../../public/actions/features';
+import { receivedResources } from '../../public/actions/k8s';
+import { featureReducer, defaults } from '../../public/reducers/features';
+import { RootState, FeatureState } from '../../public/redux-types';
 
 describe('featureReducer', () => {
   it('returns default values if state is uninitialized', () => {
@@ -121,7 +119,7 @@ describe('getFlagsObject', () => {
     });
 
     const rootState = {
-      [featureReducerName]: featureState,
+      FLAGS: featureState,
     };
 
     expect(

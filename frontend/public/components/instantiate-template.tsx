@@ -29,8 +29,8 @@ import {
   TemplateInstanceKind,
   TemplateParameter,
 } from '../module/k8s';
-import { getActivePerspective } from '../reducers/ui';
-import { RootState } from '../redux';
+import { getActivePerspective } from '../reducers/ui-selectors';
+import { RootState } from '../redux-types';
 
 const TemplateResourceDetails: React.FC<TemplateResourceDetailsProps> = ({ template }) => {
   const resources = _.uniq(_.compact(_.map(template.objects, 'kind'))).sort();

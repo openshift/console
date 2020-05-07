@@ -3,11 +3,11 @@ import * as _ from 'lodash-es';
 import { Base64 } from 'js-base64';
 import { ExpandIcon } from '@patternfly/react-icons';
 import { Button } from '@patternfly/react-core';
+import { connectToFlags } from '@console/shared/src/hocs/connect-flags';
+import { FLAGS } from '@console/shared';
 
 import store from '../redux';
 import { LoadingBox, LoadingInline, Dropdown, ResourceIcon } from './utils';
-import { connectToFlags } from '../reducers/features';
-import { FLAGS } from '@console/shared';
 import { Terminal } from './terminal';
 import { WSFactory } from '../module/ws-factory';
 import { resourceURL } from '../module/k8s';

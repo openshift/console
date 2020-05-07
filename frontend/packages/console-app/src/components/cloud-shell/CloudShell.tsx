@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { Dispatch } from 'redux';
 import { connect } from 'react-redux';
-import { RootState } from '@console/internal/redux';
-import { WithFlagsProps, connectToFlags } from '@console/internal/reducers/features';
+import { useFlag } from '@console/shared/src/hooks/flag';
+import { RootState } from '@console/internal/redux-types';
 import { isCloudShellExpanded } from '../../redux/reducers/cloud-shell-reducer';
 import { toggleCloudShellExpanded } from '../../redux/actions/cloud-shell-actions';
 import cloudShellConfirmationModal from './cloudShellConfirmationModal';
@@ -18,10 +18,11 @@ type DispatchProps = {
   onClose: () => void;
 };
 
-type CloudShellProps = WithFlagsProps & StateProps & DispatchProps;
+type CloudShellProps = StateProps & DispatchProps;
 
-const CloudShell: React.FC<CloudShellProps> = ({ flags, open, onClose }) => {
-  if (!flags[FLAG_DEVWORKSPACE]) {
+const CloudShell: React.FC<CloudShellProps> = ({ open, onClose }) => {
+  const devWorkspaceFlag = useFlag(FLAG_DEVWORKSPACE);
+  if (!devWorkspaceFlag) {
     return null;
   }
   const toggleWithModal = () => cloudShellConfirmationModal(onClose);
@@ -40,7 +41,4 @@ const dispatchToProps = (dispatch: Dispatch): DispatchProps => ({
   onClose: () => dispatch(toggleCloudShellExpanded()),
 });
 
-export default connect<StateProps, DispatchProps>(
-  stateToProps,
-  dispatchToProps,
-)(connectToFlags(FLAG_DEVWORKSPACE)(CloudShell));
+export default connect<StateProps, DispatchProps>(stateToProps, dispatchToProps)(CloudShell);

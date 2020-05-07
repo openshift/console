@@ -5,7 +5,7 @@ import * as _ from 'lodash';
 // @ts-ignore
 import { useSelector, useDispatch } from 'react-redux';
 import * as fuzzy from 'fuzzysearch';
-import { RootState } from '@console/internal/redux';
+import { RootState } from '@console/internal/redux-types';
 import { Button } from '@patternfly/react-core';
 import { Dropdown, removeQueryArgument, useSafeFetch } from '@console/internal/components/utils';
 import {
@@ -13,7 +13,7 @@ import {
   queryBrowserPatchQuery,
   queryBrowserSetMetrics,
 } from '@console/internal/actions/ui';
-import { getActiveNamespace } from '@console/internal/reducers/ui';
+import { getActiveNamespace } from '@console/internal/reducers/ui-selectors';
 import { QueryInput } from '@console/internal/components/monitoring/metrics';
 import { QueryObj } from '@console/internal/components/monitoring/query-browser';
 import { getPrometheusURL, PrometheusEndpoint } from '@console/internal/components/graphs/helpers';

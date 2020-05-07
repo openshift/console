@@ -4,7 +4,7 @@ import { CatalogTile } from '@patternfly/react-catalog-view-extension';
 import { connect } from 'react-redux';
 import { history, PageHeading, useAccessReview } from '@console/internal/components/utils';
 import { useExtensions } from '@console/plugin-sdk';
-import { RootState } from '@console/internal/redux';
+import { RootState } from '@console/internal/redux-types';
 import { isAddAction, AddAction } from '../extensions/add-actions';
 import './EmptyState.scss';
 import { ALL_NAMESPACES_KEY } from '@console/shared';
