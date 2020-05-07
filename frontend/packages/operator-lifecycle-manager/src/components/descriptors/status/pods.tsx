@@ -34,6 +34,7 @@ export const PodStatusChart: React.SFC<PodStatusChartProps> = ({ statuses, statu
         height={width}
         title={total.toString()}
         width={width}
+        radius={58.75}
       />
       {/* Use instead of `subTitle` on <ChartDonut> so long paths do not clip  */}
       <div className="graph-donut-subtitle" data-test-id="chart-donut-subtitle">
