@@ -1318,7 +1318,7 @@ const SilenceForm_: React.FC<SilenceFormProps> = ({ defaults, Info, title }) => 
   const [createdBy, setCreatedBy] = React.useState(defaults.createdBy ?? '');
   const [duration, setDuration] = React.useState(defaultDuration);
   const [endsAt, setEndsAt] = React.useState(
-    defaults.endsAt ?? formatDate(new Date(now.setHours(now.getHours() + 2))),
+    defaults.endsAt ?? formatDate(new Date(new Date(now).setHours(now.getHours() + 2))),
   );
   const [error, setError] = React.useState<string>();
   const [inProgress, setInProgress] = React.useState(false);
