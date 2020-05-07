@@ -21,6 +21,7 @@ export enum BC_PROVIDERS {
   PVC = 'PVC',
   GCP = 'Google cloud storage',
   AZURE = 'Azure Blob',
+  IBM = 'IBM COS',
 }
 
 export const PROVIDERS_NOOBAA_MAP = {
@@ -29,6 +30,7 @@ export const PROVIDERS_NOOBAA_MAP = {
   [BC_PROVIDERS.AZURE]: 'azureBlob',
   [BC_PROVIDERS.GCP]: 'googleCloudStorage',
   [BC_PROVIDERS.PVC]: 'pvPool',
+  [BC_PROVIDERS.IBM]: 'ibmCos',
 };
 
 export const BUCKET_LABEL_NOOBAA_MAP = {
@@ -36,6 +38,7 @@ export const BUCKET_LABEL_NOOBAA_MAP = {
   [BC_PROVIDERS.S3]: 'targetBucket',
   [BC_PROVIDERS.AZURE]: 'targetBlobContainer',
   [BC_PROVIDERS.GCP]: 'targetBucket',
+  [BC_PROVIDERS.IBM]: 'targetBucket',
 };
 
 export const NOOBAA_TYPE_MAP = {
@@ -44,6 +47,7 @@ export const NOOBAA_TYPE_MAP = {
   [BC_PROVIDERS.AZURE]: 'azure-blob',
   [BC_PROVIDERS.GCP]: 'google-cloud-storage',
   [BC_PROVIDERS.PVC]: 'pv-pool',
+  [BC_PROVIDERS.IBM]: 'ibm-cos',
 };
 
 export const AWS_REGIONS = [
