@@ -10,6 +10,7 @@ import {
 } from '@patternfly/react-tokens';
 import { useRefWidth } from '@console/internal/components/utils';
 import { Descriptor } from '../types';
+import { calculateRadius } from '@console/shared/';
 
 const colorScale = [blue300.value, blue200.value, blue100.value];
 
@@ -25,6 +26,7 @@ export const PodStatusChart: React.SFC<PodStatusChartProps> = ({ statuses, statu
     };
   });
   const total = data.reduce((sum, dataPoint) => sum + dataPoint.y, 0);
+  const { podStatusInnerRadius, podStatusOuterRadius } = calculateRadius(130); // default value of size is 130
 
   return (
     <div ref={ref} className="graph-wrapper--gauge">
@@ -34,7 +36,8 @@ export const PodStatusChart: React.SFC<PodStatusChartProps> = ({ statuses, statu
         height={width}
         title={total.toString()}
         width={width}
-        radius={58.75}
+        innerRadius={podStatusInnerRadius}
+        radius={podStatusOuterRadius}
       />
       {/* Use instead of `subTitle` on <ChartDonut> so long paths do not clip  */}
       <div className="graph-donut-subtitle" data-test-id="chart-donut-subtitle">
