@@ -114,7 +114,14 @@ const podRowStateToProps = ({ UI }) => ({
 });
 
 const PodTableRow = connect<PodTableRowPropsFromState, null, PodTableRowProps>(podRowStateToProps)(
-  ({ obj: pod, index, rowKey, style, metrics }: PodTableRowProps & PodTableRowPropsFromState) => {
+  ({
+    obj: pod,
+    index,
+    rowKey,
+    style,
+    metrics,
+    showNodes,
+  }: PodTableRowProps & PodTableRowPropsFromState) => {
     const { name, namespace, creationTimestamp } = pod.metadata;
     const { readyCount, totalContainers } = podReadiness(pod);
     const phase = podPhase(pod);
@@ -137,7 +144,11 @@ const PodTableRow = connect<PodTableRowPropsFromState, null, PodTableRowProps>(p
         </TableData>
         <TableData className={tableColumnClasses[4]}>{restarts}</TableData>
         <TableData className={tableColumnClasses[5]}>
-          <OwnerReferences resource={pod} />
+          {showNodes ? (
+            <ResourceLink kind="Node" name={pod.spec.nodeName} namespace={namespace} />
+          ) : (
+            <OwnerReferences resource={pod} />
+          )}
         </TableData>
         <TableData className={tableColumnClasses[6]}>
           {bytes ? `${formatBytesAsMiB(bytes)} MiB` : '-'}
@@ -162,69 +173,70 @@ const PodTableRow = connect<PodTableRowPropsFromState, null, PodTableRowProps>(p
 );
 PodTableRow.displayName = 'PodTableRow';
 
-const PodTableHeader = () => {
-  return [
-    {
-      title: 'Name',
-      sortField: 'metadata.name',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[0] },
-    },
-    {
-      title: 'Namespace',
-      sortField: 'metadata.namespace',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[1] },
-    },
-    {
-      title: 'Status',
-      sortFunc: 'podPhase',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[2] },
-    },
-    {
-      title: 'Ready',
-      sortFunc: 'podReadiness',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[3] },
-    },
-    {
-      title: 'Restarts',
-      sortFunc: 'podRestarts',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[4] },
-    },
-    {
-      title: 'Owner',
-      sortField: 'metadata.ownerReferences[0].name',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[5] },
-    },
-    {
-      title: 'Memory',
-      sortFunc: 'podMemory',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[6] },
-    },
-    {
-      title: 'CPU',
-      sortFunc: 'podCPU',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[7] },
-    },
-    {
-      title: 'Created',
-      sortField: 'metadata.creationTimestamp',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[8] },
-    },
-    {
-      title: '',
-      props: { className: tableColumnClasses[9] },
-    },
-  ];
+const getHeader = (showNodes) => {
+  return () => {
+    return [
+      {
+        title: 'Name',
+        sortField: 'metadata.name',
+        transforms: [sortable],
+        props: { className: tableColumnClasses[0] },
+      },
+      {
+        title: 'Namespace',
+        sortField: 'metadata.namespace',
+        transforms: [sortable],
+        props: { className: tableColumnClasses[1] },
+      },
+      {
+        title: 'Status',
+        sortFunc: 'podPhase',
+        transforms: [sortable],
+        props: { className: tableColumnClasses[2] },
+      },
+      {
+        title: 'Ready',
+        sortFunc: 'podReadiness',
+        transforms: [sortable],
+        props: { className: tableColumnClasses[3] },
+      },
+      {
+        title: 'Restarts',
+        sortFunc: 'podRestarts',
+        transforms: [sortable],
+        props: { className: tableColumnClasses[4] },
+      },
+      {
+        title: showNodes ? 'Node' : 'Owner',
+        sortField: showNodes ? 'spec.nodeName' : 'metadata.ownerReferences[0].name',
+        transforms: [sortable],
+        props: { className: tableColumnClasses[5] },
+      },
+      {
+        title: 'Memory',
+        sortFunc: 'podMemory',
+        transforms: [sortable],
+        props: { className: tableColumnClasses[6] },
+      },
+      {
+        title: 'CPU',
+        sortFunc: 'podCPU',
+        transforms: [sortable],
+        props: { className: tableColumnClasses[7] },
+      },
+      {
+        title: 'Created',
+        sortField: 'metadata.creationTimestamp',
+        transforms: [sortable],
+        props: { className: tableColumnClasses[8] },
+      },
+      {
+        title: '',
+        props: { className: tableColumnClasses[9] },
+      },
+    ];
+  };
 };
-PodTableHeader.displayName = 'PodTableHeader';
 
 export const ContainerLink: React.FC<ContainerLinkProps> = ({ pod, name }) => (
   <span className="co-resource-item co-resource-item--inline">
@@ -498,13 +510,30 @@ export const PodsDetailsPage: React.FC<PodDetailsPageProps> = (props) => (
 );
 PodsDetailsPage.displayName = 'PodsDetailsPage';
 
-const Row = (rowArgs: RowFunctionArgs<PodKind>) => (
-  <PodTableRow obj={rowArgs.obj} index={rowArgs.index} rowKey={rowArgs.key} style={rowArgs.style} />
-);
+const getRow = (showNodes) => {
+  return (rowArgs: RowFunctionArgs<PodKind>) => (
+    <PodTableRow
+      obj={rowArgs.obj}
+      index={rowArgs.index}
+      rowKey={rowArgs.key}
+      style={rowArgs.style}
+      showNodes={showNodes}
+    />
+  );
+};
 
-export const PodList: React.FC = (props) => (
-  <Table {...props} aria-label="Pods" Header={PodTableHeader} Row={Row} virtualize />
-);
+export const PodList: React.FC<PodListProps> = (props) => {
+  const showNodes = props?.customData?.showNodes;
+  return (
+    <Table
+      {...props}
+      aria-label="Pods"
+      Header={getHeader(showNodes)}
+      Row={getRow(showNodes)}
+      virtualize
+    />
+  );
+};
 PodList.displayName = 'PodList';
 
 const filters = [
@@ -534,7 +563,7 @@ export const PodsPage = connect<{}, PodPagePropsFromDispatch, PodPageProps>(
   null,
   dispatchToProps,
 )((props: PodPageProps & PodPagePropsFromDispatch) => {
-  const { canCreate = true, namespace, setPodMetrics, ...listProps } = props;
+  const { canCreate = true, namespace, setPodMetrics, customData, ...listProps } = props;
   /* eslint-disable react-hooks/exhaustive-deps */
   React.useEffect(() => {
     if (showMetrics) {
@@ -563,6 +592,7 @@ export const PodsPage = connect<{}, PodPagePropsFromDispatch, PodPageProps>(
       ListComponent={PodList}
       rowFilters={filters}
       namespace={namespace}
+      customData={customData}
     />
   );
 });
@@ -609,10 +639,15 @@ type PodTableRowProps = {
   index: number;
   rowKey: string;
   style: object;
+  showNodes?: boolean;
 };
 
 type PodTableRowPropsFromState = {
   metrics: UIActions.PodMetrics;
+};
+
+type PodListProps = {
+  customData?: any;
 };
 
 type PodPageProps = {
@@ -621,6 +656,7 @@ type PodPageProps = {
   namespace?: string;
   selector?: any;
   showTitle?: boolean;
+  customData?: any;
 };
 
 type PodPagePropsFromDispatch = {
