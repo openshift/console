@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as _ from 'lodash';
 import { k8sCreate, ContainerPort } from '@console/internal/module/k8s';
 import { ImageStreamImportsModel } from '@console/internal/models';
-import { useFormikContext, FormikValues } from 'formik';
+import { useFormikContext, FormikValues, FormikTouched } from 'formik';
 import {
   TextInputTypes,
   Alert,
@@ -14,7 +14,7 @@ import { SecretTypeAbstraction } from '@console/internal/components/secrets/crea
 import { InputField, useDebounceCallback } from '@console/shared';
 import { getSuggestedName, getPorts, makePortName } from '../../../utils/imagestream-utils';
 import { secretModalLauncher } from '../CreateSecretModal';
-import { UNASSIGNED_KEY } from '../../../const';
+import { UNASSIGNED_KEY, CREATE_APPLICATION_KEY } from '../../../const';
 
 const ImageSearch: React.FC = () => {
   const { values, setFieldValue, dirty, initialValues, touched } = useFormikContext<FormikValues>();
@@ -22,6 +22,8 @@ const ImageSearch: React.FC = () => {
   const [alertVisible, shouldHideAlert] = React.useState(true);
   const [validated, setValidated] = React.useState<ValidatedOptions>(ValidatedOptions.default);
   const namespace = values.project.name;
+  const { application = {}, name: nameTouched } = touched;
+  const { name: applicationNameTouched } = application as FormikTouched<{ name: boolean }>;
 
   const handleSearch = React.useCallback(
     (searchTermImage: string) => {
@@ -120,6 +122,20 @@ const ImageSearch: React.FC = () => {
     return '';
   };
 
+  const resetFields = () => {
+    if (values.formType === 'edit') {
+      values.application.selectedKey !== UNASSIGNED_KEY &&
+        values.application.selectedKey === CREATE_APPLICATION_KEY &&
+        !applicationNameTouched &&
+        setFieldValue('application.name', '');
+      return;
+    }
+    !nameTouched && setFieldValue('name', '');
+    values.application.selectedKey !== UNASSIGNED_KEY &&
+      !applicationNameTouched &&
+      setFieldValue('application.name', '');
+  };
+
   const helpTextInvalid = validated === ValidatedOptions.error && (
     <span>{values.searchTerm === '' ? 'Required' : values.isi.status?.message}</span>
   );
@@ -151,6 +167,9 @@ const ImageSearch: React.FC = () => {
         helpTextInvalid={helpTextInvalid}
         validated={validated}
         onChange={(e: KeyboardEvent) => {
+          resetFields();
+          setFieldValue('isi', {});
+          setValidated(ValidatedOptions.default);
           debouncedHandleSearch((e.target as HTMLInputElement).value);
         }}
         data-test-id="deploy-image-search-term"
