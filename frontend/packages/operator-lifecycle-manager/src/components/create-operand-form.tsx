@@ -885,6 +885,21 @@ export const CreateOperandForm: React.FC<CreateOperandFormProps> = ({
         />
       );
     }
+    if (capabilities.some((c) => c.startsWith(SpecCapability.select))) {
+      return (
+        <div>
+          <Dropdown
+            title={`Select ${displayName}`}
+            selectedKey={currentValue}
+            items={capabilities
+              .filter((c) => c.startsWith(SpecCapability.select))
+              .map((c) => c.split(SpecCapability.select)[1])
+              .reduce((all, option) => ({ [option]: option, ...all }), {})}
+            onChange={(value) => updateFormData(path, value)}
+          />
+        </div>
+      );
+    }
     if (capabilities.includes(SpecCapability.text)) {
       return (
         <div>
@@ -936,21 +951,6 @@ export const CreateOperandForm: React.FC<CreateOperandFormProps> = ({
             affinity={currentValue.toJS()}
             onChangeAffinity={(value) => updateFormData(path, Immutable.fromJS(value))}
             uid={path}
-          />
-        </div>
-      );
-    }
-    if (capabilities.some((c) => c.startsWith(SpecCapability.select))) {
-      return (
-        <div>
-          <Dropdown
-            title={`Select ${displayName}`}
-            selectedKey={currentValue}
-            items={capabilities
-              .filter((c) => c.startsWith(SpecCapability.select))
-              .map((c) => c.split(SpecCapability.select)[1])
-              .reduce((all, option) => ({ [option]: option, ...all }), {})}
-            onChange={(value) => updateFormData(path, value)}
           />
         </div>
       );
