@@ -1,4 +1,4 @@
-import { ValidatedOptions, TextInputTypes } from '@patternfly/react-core';
+import { ValidatedOptions, TextInputTypes, gridItemSpanValueShape } from '@patternfly/react-core';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 
 export interface FieldProps {
@@ -79,6 +79,7 @@ export interface MultiColumnFieldProps extends FieldProps {
   emptyMessage?: string;
   headers: string[];
   children: React.ReactNode;
+  spans?: gridItemSpanValueShape[];
 }
 
 export interface YAMLEditorFieldProps extends FieldProps {

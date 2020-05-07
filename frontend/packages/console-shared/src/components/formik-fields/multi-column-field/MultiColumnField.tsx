@@ -1,12 +1,13 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import { FieldArray, useFormikContext, FormikValues } from 'formik';
-import { FormGroup } from '@patternfly/react-core';
+import { FormGroup, gridItemSpanValueShape } from '@patternfly/react-core';
 import { SecondaryStatus, useFormikValidationFix } from '@console/shared';
 import { MultiColumnFieldProps } from '../field-types';
 import MultiColumnFieldHeader from './MultiColumnFieldHeader';
 import MultiColumnFieldRow from './MultiColumnFieldRow';
 import MultiColumnFieldFooter from './MultiColumnFieldFooter';
+import { getSpans } from './multicolumn-field-utils';
 import './MultiColumnField.scss';
 
 const MultiColumnField: React.FC<MultiColumnFieldProps> = ({
@@ -23,9 +24,14 @@ const MultiColumnField: React.FC<MultiColumnFieldProps> = ({
   disableDeleteRow,
   disableAddRow,
   toolTip,
+  spans,
 }) => {
   const { values } = useFormikContext<FormikValues>();
   const fieldValue = _.get(values, name, []);
+  const totalFieldCount: gridItemSpanValueShape = React.Children.count(
+    children,
+  ) as gridItemSpanValueShape;
+  const fieldSpans = spans || getSpans(totalFieldCount);
   useFormikValidationFix(fieldValue);
   return (
     <FieldArray
@@ -45,7 +51,7 @@ const MultiColumnField: React.FC<MultiColumnFieldProps> = ({
                 </div>
               )
             ) : (
-              <MultiColumnFieldHeader headers={headers} />
+              <MultiColumnFieldHeader headers={headers} spans={fieldSpans} />
             )}
             {fieldValue.length > 0 &&
               fieldValue.map((value, index) => (
@@ -57,6 +63,7 @@ const MultiColumnField: React.FC<MultiColumnFieldProps> = ({
                   onDelete={() => remove(index)}
                   isReadOnly={isReadOnly}
                   disableDeleteRow={disableDeleteRow}
+                  spans={fieldSpans}
                 >
                   {children}
                 </MultiColumnFieldRow>

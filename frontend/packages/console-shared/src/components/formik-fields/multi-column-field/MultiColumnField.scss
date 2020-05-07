@@ -1,7 +1,5 @@
 .odc-multi-column-field {
   &__row {
-    display: flex;
-    flex-direction: row;
     position: relative;
     margin-right: var(--pf-global--spacer--lg);
     margin-bottom: var(--pf-global--spacer--lg);
@@ -9,15 +7,15 @@
   }
 
   &__col {
-    flex: 1 0 0;
     margin-right: var(--pf-global--spacer--md);
   }
 
   &__col--button {
-    cursor: pointer;
     line-height: var(--pf-global--spacer--xl);
     position: absolute;
     right: -30px;
+    top: 50%;
+    transform: translateY(-50%);
   }
   &__empty-message {
     margin-bottom: var(--pf-global--spacer--sm);
