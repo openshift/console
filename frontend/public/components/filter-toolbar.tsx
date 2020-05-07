@@ -83,6 +83,7 @@ const FilterToolbar_: React.FC<FilterToolbarProps & RouteComponentProps> = (prop
     data,
     hideNameFilter,
     hideLabelFilter,
+    hideRowFilter,
     location,
     textFilter = filterTypeMap[FilterType.NAME],
   } = props;
@@ -245,7 +246,7 @@ const FilterToolbar_: React.FC<FilterToolbarProps & RouteComponentProps> = (prop
   return (
     <DataToolbar id="filter-toolbar" clearAllFilters={clearAll}>
       <DataToolbarContent>
-        {rowFilters.length > 0 && (
+        {!hideRowFilter && rowFilters.length > 0 && (
           <DataToolbarItem>
             {_.reduce(
               Object.keys(filters),
@@ -337,6 +338,7 @@ type FilterToolbarProps = {
   textFilter?: string;
   hideNameFilter?: boolean;
   hideLabelFilter?: boolean;
+  hideRowFilter?: boolean;
   parseAutoComplete?: any;
   kinds?: any;
 };

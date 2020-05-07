@@ -55,12 +55,12 @@ const ResourceList = connectToModel(({ kindObj, mock, namespace, selector, nameF
       nameFilter={nameFilter}
       kind={kindObj.crd ? referenceForModel(kindObj) : kindObj.kind}
       showTitle={false}
-      hideTextFilter
       autoFocus={false}
       mock={mock}
       badge={getBadgeFromType(kindObj.badge)}
       hideNameFilter
       hideLabelFilter
+      hideRowFilter
     />
   );
 });

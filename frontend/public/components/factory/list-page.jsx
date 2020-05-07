@@ -7,11 +7,11 @@ import { Link } from 'react-router-dom';
 import { Button, TextInput } from '@patternfly/react-core';
 
 import { withFallback } from '@console/shared/src/components/error/error-boundary';
+import { newResourcePathFromModel } from '@console/internal/components/utils/resource-link';
 import { useDocumentListener, KEYBOARD_SHORTCUTS } from '@console/shared';
 import { filterList } from '../../actions/k8s';
 import { storagePrefix } from '../row-filter';
 import { ErrorPage404, ErrorBoundaryFallback } from '../error';
-import { referenceForModel } from '../../module/k8s';
 import {
   Dropdown,
   Firehose,
@@ -58,7 +58,7 @@ export const TextFilter = (props) => {
 TextFilter.displayName = 'TextFilter';
 
 // TODO (jon) make this into "withListPageFilters" HOC
-/** @augments {React.PureComponent<{ListComponent: React.ComponentType<any>, kinds: string[], filters?:any, flatten?: function, data?: any[], rowFilters?: any[], hideNameFilter?: boolean, hideLabelFilter?: boolean }>} */
+/** @augments {React.PureComponent<{ListComponent: React.ComponentType<any>, kinds: string[], filters?:any, flatten?: function, data?: any[], rowFilters?: any[], hideNameFilter?: boolean, hideLabelFilter?: boolean, hideRowFilter?: boolean }>} */
 export class ListPageWrapper_ extends React.PureComponent {
   render() {
     const {
@@ -69,6 +69,7 @@ export class ListPageWrapper_ extends React.PureComponent {
       textFilter,
       hideNameFilter,
       hideLabelFilter,
+      hideRowFilter,
     } = this.props;
     const data = flatten ? flatten(this.props.resources) : [];
     const Filter = (
@@ -79,6 +80,7 @@ export class ListPageWrapper_ extends React.PureComponent {
         textFilter={textFilter}
         hideNameFilter={hideNameFilter}
         hideLabelFilter={hideLabelFilter}
+        hideRowFilter={hideRowFilter}
         {...this.props}
       />
     );
@@ -106,6 +108,7 @@ ListPageWrapper_.propTypes = {
   customData: PropTypes.any,
   hideNameFilter: PropTypes.bool,
   hideLabelFilter: PropTypes.bool,
+  hideRowFilter: PropTypes.bool,
 };
 
 /** @type {React.FC<<WrappedComponent>, {canCreate?: Boolean, textFilter:string, createAccessReview?: Object, createButtonText?: String, createProps?: Object, fieldSelector?: String, filterLabel?: String, resources: any, badge?: React.ReactNode}>*/
@@ -307,7 +310,7 @@ FireMan_.propTypes = {
   title: PropTypes.string,
 };
 
-/** @type {React.SFC<{ListComponent: React.ComponentType<any>, kind: string, helpText?: any, namespace?: string, filterLabel?: string, textFilter?: string, title?: string, showTitle?: boolean, rowFilters?: any[], selector?: any, fieldSelector?: string, canCreate?: boolean, createButtonText?: string, createProps?: any, mock?: boolean, badge?: React.ReactNode, createHandler?: any, hideNameFilter?: boolean, hideLabelFilter?: boolean, customData?: any} >} */
+/** @type {React.SFC<{ListComponent: React.ComponentType<any>, kind: string, helpText?: any, namespace?: string, filterLabel?: string, textFilter?: string, title?: string, showTitle?: boolean, rowFilters?: any[], selector?: any, fieldSelector?: string, canCreate?: boolean, createButtonText?: string, createProps?: any, mock?: boolean, badge?: React.ReactNode, createHandler?: any, hideNameFilter?: boolean, hideLabelFilter?: boolean, hideRowFilter?: boolean,  customData?: any} >} */
 export const ListPage = withFallback((props) => {
   const {
     autoFocus,
@@ -334,26 +337,14 @@ export const ListPage = withFallback((props) => {
     badge,
     hideNameFilter,
     hideLabelFilter,
+    hideRowFilter,
   } = props;
   let { createProps } = props;
   const ko = kindObj(kind);
-  const { label, labelPlural, namespaced, plural } = ko;
+  const { label, labelPlural, namespaced } = ko;
   const title = props.title || labelPlural;
   const usedNamespace = !namespace && namespaced ? _.get(match, 'params.ns') : namespace;
-
-  let href = usedNamespace
-    ? `/k8s/ns/${usedNamespace || 'default'}/${plural}/~new`
-    : `/k8s/cluster/${plural}/~new`;
-  if (ko.crd) {
-    try {
-      const ref = referenceForModel(ko);
-      href = usedNamespace
-        ? `/k8s/ns/${usedNamespace || 'default'}/${ref}/~new`
-        : `/k8s/cluster/${ref}/~new`;
-    } catch (unused) {
-      /**/
-    }
-  }
+  const href = newResourcePathFromModel(ko, usedNamespace || 'default');
 
   createProps = createProps || (createHandler ? { onClick: createHandler } : { to: href });
   const createAccessReview = skipAccessReview ? null : { model: ko, namespace: usedNamespace };
@@ -400,13 +391,14 @@ export const ListPage = withFallback((props) => {
       badge={badge}
       hideNameFilter={hideNameFilter}
       hideLabelFilter={hideLabelFilter}
+      hideRowFilter={hideRowFilter}
     />
   );
 }, ErrorBoundaryFallback);
 
 ListPage.displayName = 'ListPage';
 
-/** @type {React.SFC<{canCreate?: boolean, createButtonText?: string, createProps?: any, createAccessReview?: Object, flatten?: Function, title?: string, label?: string, hideTextFilter?: boolean, showTitle?: boolean, helpText?: any, filterLabel?: string, textFilter?: string, rowFilters?: any[], resources: any[], ListComponent: React.ComponentType<any>, namespace?: string, customData?: any, badge?: React.ReactNode, hideNameFilter?: boolean, hideLabelFilter?: boolean >} */
+/** @type {React.SFC<{canCreate?: boolean, createButtonText?: string, createProps?: any, createAccessReview?: Object, flatten?: Function, title?: string, label?: string, showTitle?: boolean, helpText?: any, filterLabel?: string, textFilter?: string, rowFilters?: any[], resources: any[], ListComponent: React.ComponentType<any>, namespace?: string, customData?: any, badge?: React.ReactNode, hideNameFilter?: boolean, hideLabelFilter?: boolean , hideRowFilter?: boolean >} */
 export const MultiListPage = (props) => {
   const {
     autoFocus,
@@ -430,6 +422,7 @@ export const MultiListPage = (props) => {
     badge,
     hideNameFilter,
     hideLabelFilter,
+    hideRowFilter,
   } = props;
 
   const resources = _.map(props.resources, (r) => ({
@@ -466,6 +459,7 @@ export const MultiListPage = (props) => {
           customData={customData}
           hideNameFilter={hideNameFilter}
           hideLabelFilter={hideLabelFilter}
+          hideRowFilter={hideRowFilter}
         />
       </Firehose>
     </FireMan_>

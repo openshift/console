@@ -46,6 +46,10 @@ export const resourcePathFromModel = (model: K8sKind, name?: string, namespace?:
 export const resourceListPathFromModel = (model: K8sKind, namespace: string) =>
   resourcePathFromModel(model, null, namespace);
 
+export const newResourcePathFromModel = (model: K8sKind, namespace: string) => {
+  return `${resourceListPathFromModel(model, namespace)}/~new`;
+};
+
 /**
  * NOTE: This will not work for runtime-defined resources. Use a `connect`-ed component like `ResourceLink` instead.
  */
