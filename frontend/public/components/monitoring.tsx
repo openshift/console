@@ -1328,9 +1328,12 @@ const SilenceForm_: React.FC<SilenceFormProps> = ({ defaults, Info, title }) => 
   );
   const [startsAt, setStartsAt] = React.useState(defaults.startsAt ?? formatDate(now));
 
-  const durationEnd = formatDate(
-    new Date((isStartNow ? Date.now() : Date.parse(startsAt)) + parsePrometheusDuration(duration)),
-  );
+  const getEndsAtValue = (): string => {
+    const startsAtDate = Date.parse(startsAt);
+    return startsAtDate
+      ? formatDate(new Date(startsAtDate + parsePrometheusDuration(duration)))
+      : '-';
+  };
 
   const setMatcherField = (i: number, field: string, v: any): void => {
     const newMatchers = _.clone(matchers);
@@ -1440,7 +1443,7 @@ const SilenceForm_: React.FC<SilenceFormProps> = ({ defaults, Info, title }) => 
                     ) : (
                       <DatetimeTextInput
                         isDisabled
-                        value={isStartNow ? `${duration} from now` : durationEnd}
+                        value={isStartNow ? `${duration} from now` : getEndsAtValue()}
                       />
                     )}
                   </div>
