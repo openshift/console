@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { shallow, ShallowWrapper } from 'enzyme';
+import { TextInput } from '@patternfly/react-core';
 import {
   TextFilter,
   ListPageWrapper_,
@@ -22,7 +23,7 @@ describe(TextFilter.displayName, () => {
   });
 
   it('renders text input', () => {
-    const input: ShallowWrapper<React.InputHTMLAttributes<any>> = wrapper.find('input');
+    const input: ShallowWrapper<any> = wrapper.find(TextInput);
 
     expect(input.props().type).toEqual('text');
     expect(input.props().placeholder).toEqual(`Filter ${label}...`);

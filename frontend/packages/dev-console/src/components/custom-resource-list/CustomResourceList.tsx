@@ -97,7 +97,7 @@ const CustomResourceList: React.FC<CustomResourceListProps> = ({
       {textFilterReducer && (
         <div className="co-m-pane__filter-bar">
           <div className="co-m-pane__filter-bar-group co-m-pane__filter-bar-group--filter">
-            <TextFilter label="by name" onChange={(e) => applyTextFilter(e.target.value)} />
+            <TextFilter label="by name" onChange={applyTextFilter} />
           </div>
         </div>
       )}

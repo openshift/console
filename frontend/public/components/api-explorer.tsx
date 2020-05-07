@@ -318,11 +318,7 @@ const APIResourcesList = compose(
           />
         </div>
         <div className="co-m-pane__filter-bar-group co-m-pane__filter-bar-group--filter">
-          <TextFilter
-            value={textFilter}
-            label="by kind"
-            onChange={(e) => setTextFilter(e.target.value)}
-          />
+          <TextFilter value={textFilter} label="by kind" onChange={setTextFilter} />
         </div>
       </div>
       <div className="co-m-pane__body">
@@ -536,8 +532,6 @@ const APIResourceAccessReview: React.FC<APIResourceTabProps> = ({
   const sortedData = _.orderBy(filteredData, ['type', 'name'], ['asc', 'asc']);
 
   // event handlers
-  const onFilterChange: React.ReactEventHandler<HTMLInputElement> = (e) =>
-    setFilter(e.currentTarget.value);
   const toggleShowUsers = (e: React.MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault();
     setShowUsers(!showUsers);
@@ -569,7 +563,7 @@ const APIResourceAccessReview: React.FC<APIResourceTabProps> = ({
           />
         </div>
         <div className="co-m-pane__filter-bar-group co-m-pane__filter-bar-group--filter">
-          <TextFilter defaultValue={filter} label="by subject" onChange={onFilterChange} />
+          <TextFilter defaultValue={filter} label="by subject" onChange={(val) => setFilter(val)} />
         </div>
       </div>
       <div className="co-m-pane__body">

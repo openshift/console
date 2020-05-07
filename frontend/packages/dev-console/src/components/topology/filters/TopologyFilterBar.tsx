@@ -52,7 +52,7 @@ const TopologyFilterBar: React.FC<TopologyFilterBarProps> = ({
             placeholder="Find by name..."
             value={searchQuery}
             autoFocus
-            onChange={(e) => onSearchQueryChange(e.target.value)}
+            onChange={onSearchQueryChange}
           />
         </ToolbarItem>
         <ToolbarItem>

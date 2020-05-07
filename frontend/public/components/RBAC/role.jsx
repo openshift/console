@@ -89,7 +89,7 @@ class Details extends React.Component {
   constructor(props) {
     super(props);
     this.state = {};
-    this.changeFilter = (e) => this.setState({ ruleFilter: e.target.value });
+    this.changeFilter = (val) => this.setState({ ruleFilter: val });
   }
 
   render() {

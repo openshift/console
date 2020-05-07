@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { isModalOpen } from '@console/internal/components/modals';
+import { KEYBOARD_SHORTCUTS } from '../constants/common';
 
 /**
  * Use this hook for components that require visibility only
@@ -11,7 +12,14 @@ export enum KeyEventModes {
   FOCUS = 'FOCUS',
 }
 
-export const useDocumentListener = <T extends HTMLElement>(keyEventMap: KeyEventMap) => {
+const textInputKeyHandler = {
+  [KEYBOARD_SHORTCUTS.blurFilterInput]: KeyEventModes.HIDE,
+  [KEYBOARD_SHORTCUTS.focusFilterInput]: KeyEventModes.FOCUS,
+};
+
+export const useDocumentListener = <T extends HTMLElement>(
+  keyEventMap: KeyEventMap = textInputKeyHandler,
+) => {
   const [visible, setVisible] = React.useState(true);
   const ref = React.useRef<T>(null);
 

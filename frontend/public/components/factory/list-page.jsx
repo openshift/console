@@ -4,10 +4,10 @@ import * as PropTypes from 'prop-types';
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { Button } from '@patternfly/react-core';
+import { Button, TextInput } from '@patternfly/react-core';
 
 import { withFallback } from '@console/shared/src/components/error/error-boundary';
-import { KEYBOARD_SHORTCUTS } from '@console/shared';
+import { useDocumentListener, KEYBOARD_SHORTCUTS } from '@console/shared';
 import { filterList } from '../../actions/k8s';
 import { storagePrefix } from '../row-filter';
 import { ErrorPage404, ErrorBoundaryFallback } from '../error';
@@ -25,66 +25,36 @@ import {
 } from '../utils';
 import { FilterToolbar } from '../filter-toolbar';
 
-/** @type {React.SFC<{disabled?: boolean, label?: string, onChange: React.ChangeEventHandler<any>, defaultValue?: string, value?: string, placeholder?: string, autoFocus?: boolean,}}>} */
-export const TextFilter = ({
-  label,
-  onChange,
-  defaultValue,
-  style,
-  className,
-  value,
-  placeholder = `Filter ${label}...`,
-  autoFocus = false,
-}) => {
-  const input = React.useRef();
-  const onKeyDown = (e) => {
-    const { nodeName } = e.target;
-    if (
-      nodeName === 'INPUT' ||
-      nodeName === 'TEXTAREA' ||
-      e.key !== KEYBOARD_SHORTCUTS.focusFilterInput
-    ) {
-      return;
-    }
-
-    e.stopPropagation();
-    e.preventDefault();
-    input.current.focus();
-  };
-
-  React.useEffect(() => {
-    window.addEventListener('keydown', onKeyDown);
-    // Remove event listeners on cleanup
-    return () => {
-      window.removeEventListener('keydown', onKeyDown);
-    };
-  }, []);
+/** @type {React.SFC<{disabled?: boolean, label?: string, onChange: (value: string) => void;, defaultValue?: string, value?: string, placeholder?: string, autoFocus?: boolean, onFocus?:any, name?:string, id?: string, onKeyDown?: any, parentClassName?: string }}>} */
+export const TextFilter = (props) => {
+  const {
+    label,
+    className,
+    placeholder = `Filter ${label}...`,
+    autoFocus = false,
+    parentClassName,
+  } = props;
+  const { ref } = useDocumentListener();
 
   return (
-    <div className="has-feedback">
-      <input
-        ref={input}
-        autoCapitalize="none"
-        className={classNames('pf-c-form-control co-text-filter', className)}
+    <div className={classNames('has-feedback', parentClassName)}>
+      <TextInput
+        {...props}
+        className={classNames('co-text-filter', className)}
         data-test-id="item-filter"
-        value={value}
-        defaultValue={defaultValue}
-        onChange={onChange}
-        onKeyDown={(e) => e.key === 'Escape' && e.target.blur()}
+        aria-label={placeholder}
         placeholder={placeholder}
-        style={style}
+        ref={ref}
+        autoFocus={autoFocus}
         tabIndex={0}
         type="text"
-        autoFocus={autoFocus}
-        aria-label={placeholder}
       />
       <span className="form-control-feedback form-control-feedback--keyboard-hint">
-        <kbd>/</kbd>
+        <kbd>{KEYBOARD_SHORTCUTS.focusFilterInput}</kbd>
       </span>
     </div>
   );
 };
-
 TextFilter.displayName = 'TextFilter';
 
 // TODO (jon) make this into "withListPageFilters" HOC
