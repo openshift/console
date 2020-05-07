@@ -244,7 +244,7 @@ const Severity: React.FC<{ severity: string }> = ({ severity }) =>
   );
 
 const SeverityBadge: React.FC<{ severity: string }> = ({ severity }) =>
-  _.isNil(severity) || severity === 'none' ? null : (
+  _.isNil(severity) ? null : (
     <span className="co-resource-item__resource-status">
       <Badge className="co-resource-item__resource-status-badge" isRead>
         <Severity severity={severity} />
