@@ -17,7 +17,6 @@ const HelmReleaseHistoryHeader = () => {
     {
       title: 'Revision',
       sortField: 'version',
-      sortAsNumber: true,
       transforms: [sortable],
       props: { className: tableColumnClasses.revision },
     },
