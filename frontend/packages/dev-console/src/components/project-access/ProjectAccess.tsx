@@ -13,7 +13,6 @@ import { RoleBindingModel, RoleModel } from '@console/internal/models';
 import { filterRoleBindings, getUserRoleBindings } from './project-access-form-utils';
 import {
   getRolesWithNameChange,
-  getFinalRoles,
   sendRoleBindingRequest,
   getNewRoles,
   getRemovedRoles,
@@ -44,17 +43,6 @@ const ProjectAccess: React.FC<ProjectAccessProps> = ({ formName, namespace, role
   const handleSubmit = (values, actions) => {
     let newRoles = getNewRoles(initialValues.projectAccess, values.projectAccess);
     let removeRoles = getRemovedRoles(initialValues.projectAccess, values.projectAccess);
-    if (_.isEmpty(newRoles) && _.isEmpty(removeRoles)) {
-      actions.setSubmitting(false);
-      actions.resetForm({
-        values: {
-          projectAccess: initialValues.projectAccess,
-        },
-        status: { success: `Successfully updated the ${formName}.` },
-      });
-      return;
-    }
-
     const updateRoles = getRolesWithNameChange(newRoles, removeRoles);
 
     if (!_.isEmpty(updateRoles)) {
@@ -67,10 +55,6 @@ const ProjectAccess: React.FC<ProjectAccessProps> = ({ formName, namespace, role
         (o1) => !updateRoles.find((o2) => o1.roleBindingName === o2.roleBindingName),
       );
     }
-
-    const finalValues = _.isEmpty(newRoles)
-      ? values.projectAccess
-      : getFinalRoles(initialValues.projectAccess, removeRoles, newRoles);
 
     const roleBindingRequests = [];
     roleBinding.metadata.namespace = namespace;
@@ -91,7 +75,7 @@ const ProjectAccess: React.FC<ProjectAccessProps> = ({ formName, namespace, role
         actions.setSubmitting(false);
         actions.resetForm({
           values: {
-            projectAccess: finalValues,
+            projectAccess: values.projectAccess,
           },
           status: { success: `Successfully updated the ${formName}.` },
         });

@@ -377,7 +377,7 @@ const Receivers = () => {
           <TextFilter
             defaultValue=""
             label="Receivers by Name"
-            onChange={(e) => setReceiverFilter(e.target.value)}
+            onChange={(val) => setReceiverFilter(val)}
           />
         </div>
       </div>

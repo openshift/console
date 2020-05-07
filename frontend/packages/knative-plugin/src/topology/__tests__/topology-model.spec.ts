@@ -55,7 +55,7 @@ describe('topology model ', () => {
     );
     const eventSources = newModel.nodes.filter((n) => n.type === TYPE_EVENT_SOURCE);
     const visibleEventSources = eventSources.filter((n) => n.visible);
-    expect(eventSources.length).toBe(5);
+    expect(eventSources.length).toBe(4);
     expect(visibleEventSources.length).toBe(0);
   });
 
@@ -71,7 +71,7 @@ describe('topology model ', () => {
     );
     const eventSources = newModel.nodes.filter((n) => n.type === TYPE_EVENT_SOURCE);
     const visibleEventSources = eventSources.filter((n) => n.visible);
-    expect(eventSources.length).toBe(5);
-    expect(visibleEventSources.length).toBe(5);
+    expect(eventSources.length).toBe(4);
+    expect(visibleEventSources.length).toBe(4);
   });
 });

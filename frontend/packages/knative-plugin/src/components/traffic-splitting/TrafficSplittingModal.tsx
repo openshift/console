@@ -33,6 +33,7 @@ const TrafficSplittingModal: React.FC<Props> = ({
           headers={['Split', 'Tag', 'Revision']}
           emptyValues={{ percent: '', tag: '', revisionName: '' }}
           disableDeleteRow={values.trafficSplitting.length === 1}
+          spans={[2, 3, 7]}
         >
           <InputField
             name="percent"
@@ -41,7 +42,7 @@ const TrafficSplittingModal: React.FC<Props> = ({
             style={{ maxWidth: '100%' }}
             required
           />
-          <InputField name="tag" type={TextInputTypes.text} required />
+          <InputField name="tag" type={TextInputTypes.text} />
           <DropdownField
             name="revisionName"
             items={revisionItems}

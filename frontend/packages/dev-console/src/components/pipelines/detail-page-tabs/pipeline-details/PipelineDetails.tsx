@@ -4,7 +4,6 @@ import {
   getResourceModelFromTaskKind,
   Pipeline,
   PipelineTask,
-  PipelineTaskRef,
 } from '../../../../utils/pipeline-augment';
 import { TriggerTemplateModel } from '../../../../models';
 import { usePipelineTriggerTemplateNames, RouteTemplate } from '../../utils/triggers';
@@ -19,11 +18,11 @@ interface PipelineDetailsProps {
 const PipelineDetails: React.FC<PipelineDetailsProps> = ({ obj: pipeline }) => {
   const routeTemplates: RouteTemplate[] = usePipelineTriggerTemplateNames(pipeline) || [];
   const taskLinks = pipeline.spec.tasks
-    .map((task: PipelineTask) => task.taskRef)
-    .filter((ref) => !!ref)
-    .map((taskRef: PipelineTaskRef) => ({
-      model: getResourceModelFromTaskKind(taskRef.kind),
-      name: taskRef.name,
+    .filter((pipelineTask: PipelineTask) => !!pipelineTask.taskRef)
+    .map((task) => ({
+      model: getResourceModelFromTaskKind(task.taskRef.kind),
+      name: task.taskRef.name,
+      displayName: task.name,
     }));
   return (
     <div className="co-m-pane__body">

@@ -52,7 +52,7 @@ export const clickTab = async (name: string) => {
 };
 
 export const labelsForRow = (name: string) => rowForName(name).$$('.co-m-label');
-export const textFilter = $('[data-test-id="list-page-search-input"]');
+export const textFilter = $('[data-test-id="item-filter"]');
 export const actions = Object.freeze({
   labels: 'Edit Labels',
   annotations: 'Edit Annotations',

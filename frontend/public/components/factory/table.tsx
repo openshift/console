@@ -153,7 +153,6 @@ const stateToProps = (
     defaultSortField = 'metadata.name',
     defaultSortFunc = undefined,
     defaultSortOrder = SortByDirection.asc,
-    defaultSortAsNumber = false,
     filters = {},
     loaded = false,
     reduxID = null,
@@ -163,7 +162,7 @@ const stateToProps = (
   },
 ) => {
   const allFilters = staticFilters ? Object.assign({}, filters, ...staticFilters) : filters;
-  let newData = getFilteredRows(allFilters, rowFilters, data);
+  const newData = getFilteredRows(allFilters, rowFilters, data);
 
   const listId = reduxIDs ? reduxIDs.join(',') : reduxID;
   // Only default to 'metadata.name' if no `defaultSortFunc`
@@ -172,17 +171,12 @@ const stateToProps = (
     defaultSortFunc ? undefined : defaultSortField,
   );
   const currentSortFunc = UI.getIn(['listSorts', listId, 'func'], defaultSortFunc);
-  const currentSortAsNumber = UI.getIn(['listSorts', listId, 'sortAsNumber'], defaultSortAsNumber);
   const currentSortOrder = UI.getIn(['listSorts', listId, 'orderBy'], defaultSortOrder);
 
   if (loaded) {
     let sortBy: string | Function = 'metadata.name';
     if (currentSortField) {
-      if (currentSortAsNumber) {
-        sortBy = (resource) => sorts.number(_.get(resource, currentSortField, ''));
-      } else {
-        sortBy = (resource) => sorts.string(_.get(resource, currentSortField, ''));
-      }
+      sortBy = (resource) => sorts.string(_.get(resource, currentSortField, ''));
     } else if (currentSortFunc && customSorts[currentSortFunc]) {
       // Sort resources by a function in the 'customSorts' prop
       sortBy = customSorts[currentSortFunc];
@@ -191,12 +185,29 @@ const stateToProps = (
       sortBy = sorts[currentSortFunc];
     }
 
-    // Always set the secondary sort criteria to ascending by name
-    newData = _.orderBy(
-      newData,
-      [sortBy, 'metadata.name'],
-      [currentSortOrder, SortByDirection.asc],
-    );
+    const getSortValue = (resource) => {
+      const val = _.isFunction(sortBy) ? sortBy(resource) : _.get(resource, sortBy as string);
+      return val ?? '';
+    };
+    newData?.sort((a, b) => {
+      const lang = navigator.languages[0] || navigator.language;
+      // Use `localCompare` with `numeric: true` for a natural sort order (e.g., pv-1, pv-9, pv-10)
+      const compareOpts = { numeric: true, ignorePunctuation: true };
+      const aValue = getSortValue(a);
+      const bValue = getSortValue(b);
+      const result: number =
+        Number.isFinite(aValue) && Number.isFinite(bValue)
+          ? aValue - bValue
+          : `${aValue}`.localeCompare(`${bValue}`, lang, compareOpts);
+      if (result !== 0) {
+        return currentSortOrder === SortByDirection.asc ? result : result * -1;
+      }
+
+      // Use name as a secondary sort for a stable sort.
+      const aName = a?.metadata?.name || '';
+      const bName = b?.metadata?.name || '';
+      return aName.localeCompare(bName, lang, compareOpts);
+    });
   }
 
   return {
@@ -489,13 +500,7 @@ export const Table = connect<
       if (columnIndex > -1) {
         const sortOrder = sp.get('orderBy') || SortByDirection.asc;
         const column = columns[columnIndex];
-        this._applySort(
-          column.sortField,
-          column.sortFunc,
-          column.sortAsNumber,
-          sortOrder,
-          column.title,
-        );
+        this._applySort(column.sortField, column.sortFunc, sortOrder, column.title);
         this.setState({
           sortBy: {
             index: columnIndex + this._columnShift,
@@ -516,10 +521,10 @@ export const Table = connect<
       this.forceUpdate();
     }
 
-    _applySort(sortField, sortFunc, sortAsNumber, direction, columnTitle) {
+    _applySort(sortField, sortFunc, direction, columnTitle) {
       const { sortList, listId, currentSortFunc } = this.props;
       const applySort = _.partial(sortList, listId);
-      applySort(sortField, sortFunc || currentSortFunc, sortAsNumber, direction, columnTitle);
+      applySort(sortField, sortFunc || currentSortFunc, direction, columnTitle);
     }
 
     _onSort(event, index, direction) {
@@ -533,13 +538,7 @@ export const Table = connect<
       ]);
       const columns = this.props.Header(componentProps);
       const sortColumn = columns[index - this._columnShift];
-      this._applySort(
-        sortColumn.sortField,
-        sortColumn.sortFunc,
-        sortColumn.sortAsNumber,
-        direction,
-        sortColumn.title,
-      );
+      this._applySort(sortColumn.sortField, sortColumn.sortFunc, direction, sortColumn.title);
       this.setState({
         sortBy: {
           index,
@@ -667,14 +666,7 @@ export type TableInnerProps = {
   Row?: RowFunction;
   Rows?: (...args) => any[];
   selector?: Object;
-  sortList?: (
-    listId: string,
-    field: string,
-    func: any,
-    sortAsNumber: boolean,
-    orderBy: string,
-    column: string,
-  ) => any;
+  sortList?: (listId: string, field: string, func: any, orderBy: string, column: string) => any;
   selectedResourcesForKind?: string[];
   onSelect?: (
     event: React.MouseEvent,

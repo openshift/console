@@ -20,10 +20,12 @@ import {
   ResourceSummary,
   SectionHeading,
   Selector,
+  LoadingInline,
 } from './utils';
 import { ResourceEventStream } from './events';
 import { VolumesTable } from './volumes-table';
 import { DaemonSetModel } from '../models';
+import { PodRingController, PodRing } from '@console/shared';
 
 export const menuActions: KebabAction[] = [
   AddHealthChecks,
@@ -135,6 +137,23 @@ const DaemonSetDetails: React.FC<DaemonSetDetailsProps> = ({ obj: daemonset }) =
   <>
     <div className="co-m-pane__body">
       <SectionHeading text="Daemon Set Details" />
+      <PodRingController
+        namespace={daemonset.metadata.namespace}
+        kind={daemonset.kind}
+        render={(d) => {
+          return d.loaded ? (
+            <PodRing
+              key={daemonset.metadata.uid}
+              pods={d.data[daemonset.metadata.uid].pods}
+              obj={daemonset}
+              resourceKind={DaemonSetModel}
+              enableScaling={false}
+            />
+          ) : (
+            <LoadingInline />
+          );
+        }}
+      />
       <div className="row">
         <div className="col-lg-6">
           <ResourceSummary resource={daemonset} showPodSelector showNodeSelector showTolerations />

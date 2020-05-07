@@ -43,7 +43,10 @@ describe('OverviewDetailsKnativeResourcesTab', () => {
   });
 
   it('should render EventSinkServicesOverviewList on sidebar', () => {
-    knItem.item = { ...knItem.item, ...{ obj: MockKnativeResources.eventSourceCronjob.data[0] } };
+    knItem.item = {
+      ...knItem.item,
+      ...{ obj: MockKnativeResources.eventSourceContainers.data[0] },
+    };
     const wrapper = shallow(<OverviewDetailsKnativeResourcesTab {...knItem} />);
     expect(wrapper.find(EventSinkServicesOverviewList)).toHaveLength(1);
   });

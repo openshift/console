@@ -59,8 +59,9 @@ const TrafficSplitting: React.FC<TrafficSplittingProps> = ({
       onSubmit={handleSubmit}
       onReset={cancel}
       initialStatus={{ error: '' }}
-      render={(props) => <TrafficSplittingModal {...props} revisionItems={revisionItems} />}
-    />
+    >
+      {(props) => <TrafficSplittingModal {...props} revisionItems={revisionItems} />}
+    </Formik>
   );
 };
 export default TrafficSplitting;

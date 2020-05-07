@@ -53,11 +53,8 @@
   }
 }
 
-.co-suggestion-box input:focus,
-.co-text-filter:focus {
-  + .form-control-feedback--keyboard-hint {
-    display: none;
-  }
+.co-text-filter:focus + .form-control-feedback--keyboard-hint {
+  display: none;
 }
 
 .co-text-filter {
@@ -84,4 +81,3 @@
 .pf-c-form__group--no-top-margin {
   margin-top: 0 !important;
 }
-

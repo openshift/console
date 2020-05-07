@@ -10,7 +10,13 @@ import { PageBody } from '@console/shared';
 import { SecretModel } from '@console/internal/models';
 import { k8sGet } from '@console/internal/module/k8s';
 
-import { HelmActionType, HelmChart, HelmRelease, HelmActionConfigType } from './helm-types';
+import {
+  HelmActionType,
+  HelmChart,
+  HelmRelease,
+  HelmActionConfigType,
+  HelmActionOrigins,
+} from './helm-types';
 import { getHelmActionValidationSchema } from './helm-validation-utils';
 import { getHelmActionConfig, getChartValuesYAML } from './helm-utils';
 import NamespacedPage, { NamespacedPageVariants } from '../NamespacedPage';
@@ -39,17 +45,20 @@ const HelmInstallUpgradePage: React.FunctionComponent<HelmInstallUpgradePageProp
   const namespace = match.params.ns || searchParams.get('preselected-ns');
   const releaseName = match.params.releaseName || '';
   const helmChartName = searchParams.get('chartName');
+  const helmActionOrigin = searchParams.get('actionOrigin') as HelmActionOrigins;
+
   const [chartDataLoaded, setChartDataLoaded] = React.useState<boolean>(false);
   const [chartName, setChartName] = React.useState<string>('');
   const [chartHasValues, setChartHasValues] = React.useState<boolean>(false);
   const [YAMLData, setYAMLData] = React.useState<string>('');
   const [activeChartVersion, setActiveChartVersion] = React.useState<string>('');
+
   const helmAction: HelmActionType =
     chartURL !== 'null' ? HelmActionType.Install : HelmActionType.Upgrade;
 
   const config = React.useMemo<HelmActionConfigType>(
-    () => getHelmActionConfig(helmAction, releaseName, namespace, chartURL),
-    [chartURL, helmAction, namespace, releaseName],
+    () => getHelmActionConfig(helmAction, releaseName, namespace, helmActionOrigin, chartURL),
+    [chartURL, helmAction, helmActionOrigin, namespace, releaseName],
   );
 
   React.useEffect(() => {
@@ -117,12 +126,15 @@ const HelmInstallUpgradePage: React.FunctionComponent<HelmInstallUpgradePageProp
       ...(valuesObj ? { values: valuesObj } : {}),
     };
 
+    const isGoingToTopology =
+      helmAction === HelmActionType.Install || helmActionOrigin === HelmActionOrigins.topology;
+
     config
       .fetch('/api/helm/release', payload)
       .then(async (res: HelmRelease) => {
         let redirect = config.redirectURL;
 
-        if (helmAction === HelmActionType.Install && res?.info?.notes) {
+        if (isGoingToTopology && res?.info?.notes) {
           const options = {
             queryParams: { labelSelector: `name=${res.name},version=${res.version},owner=helm` },
           };

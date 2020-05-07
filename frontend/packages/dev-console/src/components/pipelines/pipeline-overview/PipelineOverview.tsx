@@ -52,7 +52,7 @@ const PipelinesOverview: React.FC<PipelinesOverviewProps> = ({
               />
             </FlexItem>
             <FlexItem>
-              <TriggerLastRunButton pipelineRuns={pipelineRuns} />
+              <TriggerLastRunButton pipelineRuns={pipelineRuns} namespace={namespace} />
             </FlexItem>
           </Flex>
         </li>

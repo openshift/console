@@ -4,10 +4,8 @@ import { referenceForModel } from '@console/internal/module/k8s';
 import {
   EventSourceApiServerModel,
   EventSourceSinkBindingModel,
-  EventSourceKafkaModel,
-  EventSourceCronJobModel,
   EventSourceContainerModel,
-  EventSourceCamelModel,
+  EventSourcePingModel,
   ServiceModel,
 } from '../../models';
 import {
@@ -28,11 +26,11 @@ describe('fetch-dynamic-eventsources: ', () => {
   it('should fetch models for duck type in case of error', async () => {
     jest.spyOn(coFetch, 'coFetch').mockImplementation(() => Promise.reject(new Error('Error')));
     await fetchEventSourcesCrd();
-    expect(getEventSourceModels()).toHaveLength(6);
+    expect(getEventSourceModels()).toHaveLength(4);
   });
 
   it('should return true for event source model', () => {
-    expect(isDynamicEventResourceKind(referenceForModel(EventSourceCronJobModel))).toBe(true);
+    expect(isDynamicEventResourceKind(referenceForModel(EventSourceContainerModel))).toBe(true);
   });
 
   it('should return false for event source model', () => {
@@ -41,23 +39,21 @@ describe('fetch-dynamic-eventsources: ', () => {
 
   it('should return refs for all event source models', () => {
     const expectedRefs = [
-      referenceForModel(EventSourceCronJobModel),
       referenceForModel(EventSourceContainerModel),
       referenceForModel(EventSourceApiServerModel),
       referenceForModel(EventSourceSinkBindingModel),
-      referenceForModel(EventSourceKafkaModel),
-      referenceForModel(EventSourceCamelModel),
+      referenceForModel(EventSourcePingModel),
     ];
     const modelRefs = getDynamicEventSourcesModelRefs();
-    expect(modelRefs).toHaveLength(6);
+    expect(modelRefs).toHaveLength(4);
     modelRefs.forEach((ref) => {
       expect(expectedRefs.includes(ref)).toBe(true);
     });
   });
 
   it('should return model from the dynamic event sources', () => {
-    const resultModel = getDynamicEventSourceModel(referenceForModel(EventSourceCronJobModel));
-    expect(isEqual(resultModel, EventSourceCronJobModel)).toBe(true);
+    const resultModel = getDynamicEventSourceModel(referenceForModel(EventSourceContainerModel));
+    expect(isEqual(resultModel, EventSourceContainerModel)).toBe(true);
   });
 
   it('should return undefined if model is not found', () => {

@@ -1,3 +1,5 @@
+@import '~@patternfly/patternfly/sass-utilities/scss-variables';
+
 $color-bookmarker--hover: $color-pf-black-500;
 $color-bookmarker: $color-pf-black-400;
 $dropdown-background--hover: $color-pf-black-200; // pf-c-dropdown__menu-item--hover--BackgroundColor
@@ -236,6 +238,12 @@ $dropdown-background--hover: $color-pf-black-200; // pf-c-dropdown__menu-item--h
   border-width: 0 !important; // TEMP fix until https://github.com/patternfly/patternfly-next/issues/2019 is fixed upstream
   list-style: none;
   -webkit-overflow-scrolling: touch;
+  @media (min-width: $pf-global--breakpoint--md) {
+    &.pf-m-align-right-on-md {
+      right: 0;
+    }
+
+  }
 }
 
 .pf-c-dropdown__toggle {

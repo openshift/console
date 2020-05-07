@@ -5,6 +5,9 @@ import {
   DeploymentModel,
   DaemonSetModel,
   StatefulSetModel,
+  ReplicationControllerModel,
+  ReplicaSetModel,
+  PodModel,
 } from '@console/internal/models';
 import { ChartLabel } from '@patternfly/react-charts';
 import {
@@ -20,6 +23,7 @@ import {
   getPodsForDeploymentConfigs,
   getPodsForDeployments,
   getPodsForStatefulSets,
+  getPodsForDaemonSets,
 } from './resource-utils';
 
 type PodRingLabelType = {
@@ -27,6 +31,16 @@ type PodRingLabelType = {
   title: string;
   titleComponent: React.ReactElement;
   subTitleComponent: React.ReactElement;
+};
+
+export const podRingFirehoseProps = {
+  [PodModel.kind]: 'pods',
+  [ReplicaSetModel.kind]: 'replicaSets',
+  [ReplicationControllerModel.kind]: 'replicationControllers',
+  [DeploymentModel.kind]: 'deployments',
+  [DeploymentConfigModel.kind]: 'deploymentConfigs',
+  [StatefulSetModel.kind]: 'statefulSets',
+  [DaemonSetModel.kind]: 'daemonSets',
 };
 
 const applyPods = (podsData: PodRingData, dc: PodRCData) => {
@@ -176,13 +190,7 @@ export const usePodScalingAccessStatus = (
 };
 
 export const transformPodRingData = (resources: PodRingResources, kind: string): PodRingData => {
-  const resourceKinds = {
-    [DeploymentModel.kind]: 'deployments',
-    [DeploymentConfigModel.kind]: 'deploymentConfigs',
-    [StatefulSetModel.kind]: 'statefulSets',
-  };
-
-  const targetResource = resourceKinds[kind];
+  const targetResource = podRingFirehoseProps[kind];
 
   if (!targetResource) {
     throw new Error(`Invalid target resource: (${targetResource})`);
@@ -204,6 +212,10 @@ export const transformPodRingData = (resources: PodRingResources, kind: string):
 
   if (kind === StatefulSetModel.kind) {
     return getPodsForStatefulSets(resourceData, resources).reduce(applyPods, podsData);
+  }
+
+  if (kind === DaemonSetModel.kind) {
+    return getPodsForDaemonSets(resourceData, resources).reduce(applyPods, podsData);
   }
 
   return podsData;

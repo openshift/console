@@ -1052,14 +1052,13 @@ const MonitoringListPage = connect(filtersToProps)(
       this.applyTextFilter = this.applyTextFilter.bind(this);
     }
 
-    applyTextFilter(e) {
-      const v = e.target.value;
+    applyTextFilter(val) {
       const { nameFilterID, reduxID } = this.props;
-      store.dispatch(k8sActions.filterList(reduxID, nameFilterID, v));
+      store.dispatch(k8sActions.filterList(reduxID, nameFilterID, val));
 
       const params = new URLSearchParams(window.location.search);
-      if (v) {
-        params.set(nameFilterID, v);
+      if (val) {
+        params.set(nameFilterID, val);
       } else {
         params.delete(nameFilterID);
       }
@@ -1077,7 +1076,7 @@ const MonitoringListPage = connect(filtersToProps)(
 
       if (!params.get('sortBy')) {
         // Sort by rule name by default
-        store.dispatch(UIActions.sortList(reduxID, 'name', undefined, false, 'asc', 'Name'));
+        store.dispatch(UIActions.sortList(reduxID, 'name', undefined, 'asc', 'Name'));
       }
     }
 

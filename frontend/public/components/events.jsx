@@ -100,7 +100,7 @@ const Inner = connectToFlags(FLAGS.CAN_LIST_NODE)(
             <i className="co-sysevent-icon" title={tooltipMsg} />
             <div className="co-sysevent__icon-line" />
           </div>
-          <div className="co-sysevent__box">
+          <div className="co-sysevent__box" role="gridcell">
             <div className="co-sysevent__header">
               <div className="co-sysevent__subheader">
                 <ResourceLink
@@ -209,7 +209,7 @@ export class EventsList extends React.Component {
             <TextFilter
               autoFocus={autoFocus}
               label="Events by name or message"
-              onChange={(e) => this.setState({ textFilter: e.target.value || '' })}
+              onChange={(val) => this.setState({ textFilter: val || '' })}
             />
           </div>
           <div className="form-group">

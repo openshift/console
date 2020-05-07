@@ -58,7 +58,8 @@ import { StatusCapability, Descriptor } from '../descriptors/types';
 import { Resources } from '../k8s-resource';
 import { referenceForProvidedAPI } from '../index';
 import { OperandLink } from './operand-link';
-import { FlagsObject, WithFlagsProps, connectToFlags } from '@console/internal/reducers/features';
+import { FlagsObject, connectToFlags, WithFlagsProps } from '@console/internal/reducers/features';
+import ErrorAlert from '@console/shared/src/components/alerts/error';
 
 const csvName = () =>
   window.location.pathname
@@ -210,11 +211,12 @@ const getOperandStatus = (obj: K8sResourceKind): OperandStatusType => {
     };
   }
 
-  const trueCondition = conditions?.find((c: K8sResourceCondition) => c.status === 'True');
-  if (trueCondition) {
+  const trueConditions = conditions?.filter((c: K8sResourceCondition) => c.status === 'True');
+  if (trueConditions?.length) {
+    const types = trueConditions.map((c: K8sResourceCondition) => c.type);
     return {
-      type: 'Condition',
-      value: trueCondition.type,
+      type: types.length === 1 ? 'Condition' : 'Conditions',
+      value: types.join(', '),
     };
   }
 
@@ -514,6 +516,9 @@ export const OperandDetails = connectToModel((props: OperandDetailsProps) => {
     );
   });
 
+  const [errorMessage, setErrorMessage] = React.useState(null);
+  const handleError = (errorMsg: string) => setErrorMessage(errorMsg);
+
   const details = (
     <div className="co-operand-details__section co-operand-details__section--info">
       <div className="row">
@@ -540,6 +545,7 @@ export const OperandDetails = connectToModel((props: OperandDetailsProps) => {
               model={props.kindObj}
               value={blockValue(specDescriptor, spec)}
               descriptor={specDescriptor}
+              onHandleError={handleError}
             />
           </div>
         ))}
@@ -570,6 +576,7 @@ export const OperandDetails = connectToModel((props: OperandDetailsProps) => {
     <div className="co-operand-details co-m-pane">
       {_.isEmpty(primaryDescriptors) ? (
         <div className="co-m-pane__body">
+          {errorMessage && <ErrorAlert message={errorMessage} />}
           {header}
           {details}
         </div>

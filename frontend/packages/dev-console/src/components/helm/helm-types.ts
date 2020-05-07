@@ -63,6 +63,7 @@ export enum HelmReleaseStatus {
 export enum HelmActionType {
   Install = 'Install',
   Upgrade = 'Upgrade',
+  Rollback = 'Rollback',
 }
 
 export interface HelmActionConfigType {
@@ -71,4 +72,10 @@ export interface HelmActionConfigType {
   helmReleaseApi: string;
   fetch: (url: any, json: any, options?: {}) => Promise<any>;
   redirectURL: string;
+}
+
+export enum HelmActionOrigins {
+  details = 'details',
+  list = 'list',
+  topology = 'topology',
 }

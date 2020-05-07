@@ -18,6 +18,7 @@ export interface GitSectionProps {
 const GitSection: React.FC<GitSectionProps> = ({ showSample }) => {
   const { values, setFieldValue, setFieldTouched } = useFormikContext<FormikValues>();
   const [, { touched: gitTypeTouched }] = useField('git.type');
+  const [, { touched: userSelection }] = useField('image.selected');
   const tag = values.image.tagObj;
   const sampleRepo = showSample && getSampleRepo(tag);
 
@@ -72,9 +73,13 @@ const GitSection: React.FC<GitSectionProps> = ({ showSample }) => {
 
   const handleGitUrlChange: React.ReactEventHandler = React.useCallback(() => {
     setFieldValue('git.urlValidation', ValidatedOptions.default);
+    if (!userSelection) {
+      setFieldValue('image.selected', '');
+      setFieldValue('image.tag', '');
+    }
     values.image.recommended && setFieldValue('image.recommended', '');
     values.image.couldNotRecommend && setFieldValue('image.couldNotRecommend', false);
-  }, [setFieldValue, values.image.couldNotRecommend, values.image.recommended]);
+  }, [setFieldValue, values.image.couldNotRecommend, values.image.recommended, userSelection]);
 
   const fillSample: React.ReactEventHandler<HTMLButtonElement> = React.useCallback(() => {
     const url = sampleRepo;

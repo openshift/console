@@ -100,14 +100,15 @@ export class SyncMarkdownView extends React.Component<
         min-width: auto !important;
       }
       table {
+        display: block;
         margin-bottom: 11.5px;
+        overflow-x: auto;
       }
       td,
       th {
         border-bottom: 1px solid #ededed;
         padding: 10px;
         vertical-align: top;
-        word-break: break-word;
       }
       th {
         padding-top: 0;

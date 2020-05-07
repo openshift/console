@@ -132,11 +132,7 @@ class OverviewHeading_ extends React.Component<OverviewHeadingProps> {
           />
         </div>
         <div className="co-m-pane__filter-bar-group co-m-pane__filter-bar-group--filter">
-          <TextFilter
-            defaultValue={filterValue}
-            label="by name"
-            onChange={(e) => changeFilter(e.target.value)}
-          />
+          <TextFilter defaultValue={filterValue} label="by name" onChange={changeFilter} />
         </div>
       </div>
     );

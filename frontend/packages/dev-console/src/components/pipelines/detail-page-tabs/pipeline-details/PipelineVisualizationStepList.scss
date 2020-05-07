@@ -20,11 +20,19 @@
 
   &__step {
     display: flex;
-    margin-bottom: 10px;
+    margin-bottom: var(--pf-global--spacer--xs);
+
+    &--task-run {
+      margin-bottom: var(--pf-global--spacer--sm);
+    }
 
     &:last-child {
       margin-bottom: 0;
     }
+  }
+
+  &__bullet {
+    font-size: 1rem;
   }
 
   &__icon {
