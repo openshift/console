@@ -58,12 +58,22 @@ const ItemSelectorField: React.FC<ItemSelectorFieldProps> = ({
     }
     if (!selected.value && recommended) {
       handleItemChange(recommended);
+      setFieldTouched(name, false);
     }
     if (!selected.value && autoSelect && !_.isEmpty(itemList)) {
       const image = _.get(_.keys(itemList), 0);
       handleItemChange(itemList[image]?.name);
     }
-  }, [autoSelect, itemCount, itemList, handleItemChange, selected.value, recommended]);
+  }, [
+    autoSelect,
+    itemCount,
+    itemList,
+    handleItemChange,
+    selected.value,
+    recommended,
+    name,
+    setFieldTouched,
+  ]);
 
   if (itemCount === 1) {
     return null;
