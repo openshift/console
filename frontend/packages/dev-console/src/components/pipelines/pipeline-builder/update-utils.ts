@@ -24,7 +24,7 @@ import {
   UpdateTaskParamData,
   UpdateTaskResourceData,
 } from './types';
-import { convertResourceToTask } from './utils';
+import { convertResourceToTask, taskParamIsRequired } from './utils';
 
 const mapReplaceRelatedInOthers = <TaskType extends PipelineBuilderTaskBase>(
   taskName: string,
@@ -115,9 +115,7 @@ const mapAddRelatedToOthers = <TaskType extends PipelineBuilderTaskBase>(
 const getErrors = (task: PipelineTask, resource: PipelineResourceTask): TaskErrorMap => {
   const params = getTaskParameters(resource);
   const resourceParams = params || [];
-  const requiredParamNames = resourceParams
-    .filter((param) => !param.default)
-    .map((param) => param.name);
+  const requiredParamNames = resourceParams.filter(taskParamIsRequired).map((param) => param.name);
   const hasNonDefaultParams = task.params
     ?.filter(({ name }) => requiredParamNames.includes(name))
     ?.map(({ value }) => !value)

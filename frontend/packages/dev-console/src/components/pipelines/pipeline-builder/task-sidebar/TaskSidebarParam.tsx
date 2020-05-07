@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { FormGroup } from '@patternfly/react-core';
 import { PipelineResourceTaskParam, PipelineTaskParam } from '../../../../utils/pipeline-augment';
+import { taskParamIsRequired } from '../utils';
 import { ArrayParam, ParameterProps, SidebarInputWrapper, StringParam } from './temp-utils';
 
 type TaskSidebarParamProps = {
@@ -15,7 +16,7 @@ const TaskSidebarParam: React.FC<TaskSidebarParamProps> = (props) => {
   const [dirty, setDirty] = React.useState(false);
 
   const currentValue = taskParam?.value;
-  const emptyIsInvalid = !resourceParam.default;
+  const emptyIsInvalid = taskParamIsRequired(resourceParam);
 
   const isValid = !(dirty && hasParamError && emptyIsInvalid && currentValue != null);
 
