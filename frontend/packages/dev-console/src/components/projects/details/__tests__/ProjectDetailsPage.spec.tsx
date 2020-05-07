@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
-import { BreadCrumbs } from '@console/internal/components/utils';
+import * as _ from 'lodash';
+import * as utils from '@console/internal/components/utils';
 import { ProjectDetailsPage } from '../ProjectDetailsPage';
 import ProjectListPage from '../../ProjectListPage';
 import NamespacedPage from '../../../NamespacedPage';
@@ -27,6 +28,14 @@ describe('ProjectDetailsPage', () => {
     // Currently rendering the breadcrumbs will buck-up against the redirects and not work as expected
     const component = shallow(<ProjectDetailsPage match={testProjectMatch} />);
 
-    expect(component.find(BreadCrumbs).exists()).not.toBe(true);
+    expect(component.find(utils.BreadCrumbs).exists()).not.toBe(true);
+  });
+
+  it('should not render the Project Access tab if user has no access to role bindings', () => {
+    const spyUseAccessReview = jest.spyOn(utils, 'useAccessReview');
+    spyUseAccessReview.mockReturnValue(false);
+    const component = shallow(<ProjectDetailsPage match={testProjectMatch} />);
+    const pages = component.find(DetailsPage).prop('pages');
+    expect(_.find(pages, { name: 'Project Access' })).toBe(undefined);
   });
 });

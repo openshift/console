@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { match as RMatch } from 'react-router';
-import { history } from '@console/internal/components/utils';
+import { history, useAccessReview } from '@console/internal/components/utils';
 import { ALL_NAMESPACES_KEY } from '@console/shared';
 import { NamespaceDetails, projectMenuActions } from '@console/internal/components/namespace';
-import { ProjectModel } from '@console/internal/models';
+import { ProjectModel, RoleBindingModel } from '@console/internal/models';
 import { DetailsPage } from '@console/internal/components/factory';
 import { ProjectDashboard } from '@console/internal/components/dashboard/project-dashboard/project-dashboard';
 import { withStartGuide } from '@console/internal/components/start-guide';
@@ -28,6 +28,20 @@ const handleNamespaceChange = (newNamespace: string): void => {
 
 export const ProjectDetailsPage: React.FC<MonitoringPageProps> = ({ match, ...props }) => {
   const activeNamespace = match.params.ns;
+
+  const canListRoleBindings = useAccessReview({
+    group: RoleBindingModel.apiGroup,
+    resource: RoleBindingModel.plural,
+    verb: 'list',
+    namespace: activeNamespace,
+  });
+
+  const canCreateRoleBindings = useAccessReview({
+    group: RoleBindingModel.apiGroup,
+    resource: RoleBindingModel.plural,
+    verb: 'create',
+    namespace: activeNamespace,
+  });
 
   return (
     <>
@@ -60,11 +74,12 @@ export const ProjectDetailsPage: React.FC<MonitoringPageProps> = ({ match, ...pr
                 name: 'Details',
                 component: NamespaceDetails,
               },
-              {
-                href: 'access',
-                name: 'Project Access',
-                component: ProjectAccessPage,
-              },
+              canListRoleBindings &&
+                canCreateRoleBindings && {
+                  href: 'access',
+                  name: 'Project Access',
+                  component: ProjectAccessPage,
+                },
             ]}
           />
         ) : (
