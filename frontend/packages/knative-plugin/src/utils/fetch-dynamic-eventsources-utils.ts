@@ -121,3 +121,6 @@ export const isDynamicEventResourceKind = (resourceRef: string): boolean => {
   );
   return index !== -1;
 };
+
+export const hideDynamicEventSourceCard = (id: string) =>
+  id === 'knative-event-source' ? eventSourceModels && eventSourceModels.length > 0 : true;

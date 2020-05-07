@@ -63,7 +63,9 @@ const ODCEmptyState: React.FC<Props> = ({
   activeNamespace,
   hintBlock = 'Select a way to create an application, component or service from one of the options.',
 }) => {
-  const addActionExtensions = useExtensions<AddAction>(isAddAction);
+  const addActionExtensions = useExtensions<AddAction>(
+    isAddAction,
+  ).filter(({ properties: { id, hide } }) => (hide ? hide(id) : true));
   return (
     <>
       <div className="odc-empty-state__title">
