@@ -1423,7 +1423,11 @@ const SilenceForm_: React.FC<SilenceFormProps> = ({ defaults, Info, title }) => 
                     {isStartNow ? (
                       <DatetimeTextInput isDisabled value="Now" />
                     ) : (
-                      <DatetimeTextInput isRequired onChange={setStartsAt} value={startsAt} />
+                      <DatetimeTextInput
+                        isRequired
+                        onChange={(v: string) => setStartsAt(v)}
+                        value={startsAt}
+                      />
                     )}
                   </div>
                   <div className="col-xs-2">
@@ -1431,14 +1435,18 @@ const SilenceForm_: React.FC<SilenceFormProps> = ({ defaults, Info, title }) => 
                     <Dropdown
                       dropDownClassName="dropdown--full-width"
                       items={durationItems}
-                      onChange={setDuration}
+                      onChange={(v: string) => setDuration(v)}
                       selectedKey={duration}
                     />
                   </div>
                   <div className="col-xs-5">
                     <label>Until...</label>
                     {duration === durationOff ? (
-                      <DatetimeTextInput isRequired onChange={setEndsAt} value={endsAt} />
+                      <DatetimeTextInput
+                        isRequired
+                        onChange={(v: string) => setEndsAt(v)}
+                        value={endsAt}
+                      />
                     ) : (
                       <DatetimeTextInput
                         isDisabled
@@ -1549,11 +1557,20 @@ const SilenceForm_: React.FC<SilenceFormProps> = ({ defaults, Info, title }) => 
               <SectionHeading text="Info" />
               <div className="form-group">
                 <label>Creator</label>
-                <TextInput aria-label="Creator" onChange={setCreatedBy} value={createdBy} />
+                <TextInput
+                  aria-label="Creator"
+                  onChange={(v: string) => setCreatedBy(v)}
+                  value={createdBy}
+                />
               </div>
               <div className="form-group">
                 <label className="co-required">Comment</label>
-                <TextArea aria-label="Comment" isRequired onChange={setComment} value={comment} />
+                <TextArea
+                  aria-label="Comment"
+                  isRequired
+                  onChange={(v: string) => setComment(v)}
+                  value={comment}
+                />
               </div>
             </div>
           </div>
