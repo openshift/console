@@ -39,7 +39,6 @@ import {
   SubscriptionUpdatesState,
   SubscriptionStatus,
 } from './subscription';
-import { Button } from '@patternfly/react-core';
 
 describe(SubscriptionTableHeader.displayName, () => {
   it('returns column header definition for subscription table header', () => {
@@ -329,32 +328,30 @@ describe(SubscriptionUpdates.name, () => {
 
   it('renders link to configure update channel', () => {
     const channel = wrapper
-      .findWhere((node) =>
-        node.equals(<dt className="co-detail-table__section-header">Channel</dt>),
-      )
+      .find('EditButton')
+      .first()
       .parents()
       .at(0)
       .shallow()
-      .find(Button)
+      .find('.co-detail-table__section-header')
       .render()
       .text();
 
-    expect(channel).toEqual(testSubscription.spec.channel);
+    expect(channel).toEqual('Channel');
   });
 
   it('renders link to set approval strategy', () => {
     const strategy = wrapper
-      .findWhere((node) =>
-        node.equals(<dt className="co-detail-table__section-header">Approval</dt>),
-      )
+      .find('EditButton')
+      .at(1)
       .parents()
       .at(0)
       .shallow()
-      .find(Button)
+      .find('.co-detail-table__section-header')
       .render()
       .text();
 
-    expect(strategy).toEqual(testSubscription.spec.installPlanApproval || 'Automatic');
+    expect(strategy).toEqual('Approval');
   });
 });
 

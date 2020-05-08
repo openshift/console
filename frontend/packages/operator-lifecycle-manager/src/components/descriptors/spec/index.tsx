@@ -1,15 +1,16 @@
 import * as React from 'react';
 import * as _ from 'lodash';
+import { EditButton, YellowExclamationTriangleIcon } from '@console/shared';
 import { Map as ImmutableMap } from 'immutable';
 import { Button, Switch, Tooltip, Checkbox } from '@patternfly/react-core';
-import { EyeIcon, EyeSlashIcon, PencilAltIcon } from '@patternfly/react-icons';
+import { EyeIcon, EyeSlashIcon } from '@patternfly/react-icons';
 import { LoadingInline, ResourceLink, Selector } from '@console/internal/components/utils';
 import { withFallback } from '@console/shared/src/components/error/error-boundary';
 import { k8sPatch, k8sUpdate } from '@console/internal/module/k8s';
-import { YellowExclamationTriangleIcon } from '@console/shared';
+
 import { SecretValue } from '@console/internal/components/configmap-and-secret-data';
 import { CapabilityProps, DescriptorProps, SpecCapability, Error } from '../types';
-import { ResourceRequirementsModalLink } from './resource-requirements';
+import { ResourceRequirementsModalLink, ResourceRequirementsText } from './resource-requirements';
 import { EndpointList } from './endpoint';
 import { configureSizeModal } from './configure-size';
 import { configureUpdateStrategyModal } from './configure-update-strategy';
@@ -24,10 +25,16 @@ const Default: React.SFC<SpecCapabilityProps> = ({ value }) => {
   return <span>{_.toString(value)}</span>;
 };
 
-const PodCount: React.SFC<SpecCapabilityProps> = ({ model, obj, descriptor, value }) => (
-  <Button
-    isInline
-    type="button"
+const PodCount: React.SFC<SpecCapabilityProps> = ({ value }) => (
+  <span>
+    {value || 0} {value === 1 ? 'pod' : 'pods'}
+  </span>
+);
+
+const PodLink: React.SFC<SpecCapabilityProps> = ({ model, obj, descriptor, value }) => (
+  <EditButton
+    canEdit
+    ariaLabel="Edit Size"
     onClick={() =>
       configureSizeModal({
         kindObj: model,
@@ -36,11 +43,7 @@ const PodCount: React.SFC<SpecCapabilityProps> = ({ model, obj, descriptor, valu
         specValue: value,
       })
     }
-    variant="link"
-  >
-    {value} pods
-    <PencilAltIcon className="co-icon-space-l pf-c-button-icon--plain" />
-  </Button>
+  />
 );
 
 const Endpoints: React.SFC<SpecCapabilityProps> = ({ value }) => <EndpointList endpoints={value} />;
@@ -56,13 +59,19 @@ const NamespaceSelector: React.SFC<SpecCapabilityProps> = ({ value }) =>
 
 const ResourceRequirements: React.SFC<SpecCapabilityProps> = ({ obj, descriptor }) => (
   <dl className="co-spec-descriptor--resource-requirements">
-    <dt>Resource Limits</dt>
-    <dd>
+    <dt>
+      Resource Limits
       <ResourceRequirementsModalLink type="limits" obj={obj} path={descriptor.path} />
-    </dd>
-    <dt>Resource Requests</dt>
+    </dt>
     <dd>
+      <ResourceRequirementsText type="limits" obj={obj} path={descriptor.path} />
+    </dd>
+    <dt>
+      Resource Requests
       <ResourceRequirementsModalLink type="requests" obj={obj} path={descriptor.path} />
+    </dt>
+    <dd>
+      <ResourceRequirementsText type="requests" obj={obj} path={descriptor.path} />
     </dd>
   </dl>
 );
@@ -224,11 +233,14 @@ const Secret: React.FC<SpecCapabilityProps> = (props) => {
   );
 };
 
-const UpdateStrategy: React.FC<SpecCapabilityProps> = ({ model, obj, descriptor, value }) => (
-  <Button
-    type="button"
-    variant="link"
-    isInline
+const UpdateStrategy: React.FC<SpecCapabilityProps> = ({ value }) => (
+  <span>{_.get(value, 'type', 'None')}</span>
+);
+
+const UpdateStrategyLink: React.FC<SpecCapabilityProps> = ({ model, obj, descriptor, value }) => (
+  <EditButton
+    canEdit
+    ariaLabel="Edit Update Strategy"
     onClick={() =>
       configureUpdateStrategyModal({
         kindObj: model,
@@ -237,10 +249,7 @@ const UpdateStrategy: React.FC<SpecCapabilityProps> = ({ model, obj, descriptor,
         specValue: value,
       })
     }
-  >
-    {_.get(value, 'type', 'None')}
-    <PencilAltIcon className="co-icon-space-l pf-c-button-icon--plain" />
-  </Button>
+  />
 );
 
 const capabilityComponents = ImmutableMap<
@@ -293,6 +302,24 @@ export const SpecDescriptor = withFallback((props: DescriptorProps) => {
       <Tooltip content={descriptor.description}>
         <dt className="olm-descriptor__title" data-test-descriptor-label={descriptor.displayName}>
           {descriptor.displayName}
+          {Capability === PodCount && (
+            <PodLink
+              model={model}
+              obj={obj}
+              descriptor={descriptor}
+              value={value}
+              capability={capability}
+            />
+          )}
+          {Capability === UpdateStrategy && (
+            <UpdateStrategyLink
+              model={model}
+              obj={obj}
+              descriptor={descriptor}
+              value={value}
+              capability={capability}
+            />
+          )}
         </dt>
       </Tooltip>
       <dd className="olm-descriptor__value">

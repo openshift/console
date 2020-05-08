@@ -1,8 +1,7 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
-import { Button } from '@patternfly/react-core';
-import { PencilAltIcon } from '@patternfly/react-icons';
 
+import { EditButton } from '@console/shared';
 import { DetailsItem } from './details-item';
 import { Kebab } from './kebab';
 import { LabelList } from './label-list';
@@ -72,7 +71,18 @@ export const ResourceSummary: React.SFC<ResourceSummaryProps> = ({
       )}
       {type ? <dt>Type</dt> : null}
       {type ? <dd>{type}</dd> : null}
-      <DetailsItem label="Labels" obj={resource} path="metadata.labels">
+      <DetailsItem
+        label="Labels"
+        obj={resource}
+        path="metadata.labels"
+        action={
+          <EditButton
+            canEdit={canUpdate}
+            ariaLabel="Edit Labels"
+            onClick={Kebab.factory.ModifyLabels(model, resource).callback}
+          />
+        }
+      >
         <LabelList kind={reference} labels={metadata.labels} />
       </DetailsItem>
       {showPodSelector && (
@@ -89,38 +99,36 @@ export const ResourceSummary: React.SFC<ResourceSummaryProps> = ({
         </DetailsItem>
       )}
       {showTolerations && (
-        <DetailsItem label="Tolerations" obj={resource} path={tolerationsPath}>
-          {canUpdate ? (
-            <Button
-              type="button"
-              isInline
+        <DetailsItem
+          label="Tolerations"
+          action={
+            <EditButton
+              canEdit={canUpdate}
+              ariaLabel="Edit Tolerations"
               onClick={Kebab.factory.ModifyTolerations(model, resource).callback}
-              variant="link"
-            >
-              {pluralize(_.size(tolerations), 'Toleration')}
-              <PencilAltIcon className="co-icon-space-l pf-c-button-icon--plain" />
-            </Button>
-          ) : (
-            pluralize(_.size(tolerations), 'Toleration')
-          )}
+            />
+          }
+          obj={resource}
+          path={tolerationsPath}
+        >
+          {pluralize(_.size(tolerations), 'Toleration')}
         </DetailsItem>
       )}
       {showAnnotations && (
-        <DetailsItem label="Annotations" obj={resource} path="metadata.annotations">
-          {canUpdate ? (
-            <Button
+        <DetailsItem
+          label="Annotations"
+          action={
+            <EditButton
+              canEdit={canUpdate}
+              ariaLabel="Edit Annotations"
               data-test-id="edit-annotations"
-              type="button"
-              isInline
               onClick={Kebab.factory.ModifyAnnotations(model, resource).callback}
-              variant="link"
-            >
-              {pluralize(_.size(metadata.annotations), 'Annotation')}
-              <PencilAltIcon className="co-icon-space-l pf-c-button-icon--plain" />
-            </Button>
-          ) : (
-            pluralize(_.size(metadata.annotations), 'Annotation')
-          )}
+            />
+          }
+          obj={resource}
+          path="metadata.annotations"
+        >
+          {pluralize(_.size(metadata.annotations), 'Annotation')}
         </DetailsItem>
       )}
       {children}

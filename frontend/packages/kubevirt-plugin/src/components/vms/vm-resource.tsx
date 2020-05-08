@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { ResourceSummary, NodeLink, ResourceLink } from '@console/internal/components/utils';
 import { K8sKind, PodKind, TemplateKind } from '@console/internal/module/k8s';
-import { getName, getNamespace, getNodeName } from '@console/shared';
+import { getName, getNamespace, getNodeName, EditButton } from '@console/shared';
 import { PodModel } from '@console/internal/models';
 import { Selector } from '@console/internal/components/utils/selector';
 import { VMKind, VMIKind } from '../../types';
@@ -17,7 +17,6 @@ import affinityModal from '../modals/scheduling-modals/affinity-modal/connected-
 import { getRowsDataFromAffinity } from '../modals/scheduling-modals/affinity-modal/helpers';
 import VMStatusModal from '../modals/vm-status-modal/vm-status-modal';
 import { getDescription } from '../../selectors/selectors';
-import { EditButton } from '../edit-button';
 import { VMStatus } from '../vm-status/vm-status';
 import { DiskSummary } from '../vm-disks/disk-summary';
 import { BootOrderSummary } from '../boot-order';
@@ -49,6 +48,7 @@ export const VMDetailsItem: React.FC<VMDetailsItemProps> = ({
   title,
   canEdit = false,
   editButtonId,
+  editButtonAriaLabel,
   onEditClick,
   idValue,
   isNotAvail = false,
@@ -58,7 +58,13 @@ export const VMDetailsItem: React.FC<VMDetailsItemProps> = ({
   return (
     <>
       <dt>
-        {title} <EditButton id={editButtonId} canEdit={canEdit} onClick={onEditClick} />
+        {title}
+        <EditButton
+          ariaLabel={editButtonAriaLabel}
+          id={editButtonId}
+          canEdit={canEdit}
+          onClick={onEditClick}
+        />
       </dt>
       <dd id={idValue} className={valueClassName}>
         {isNotAvail ? <span className="text-secondary">Not available</span> : children}
@@ -88,14 +94,11 @@ export const VMResourceSummary: React.FC<VMResourceSummaryProps> = ({
         title="Description"
         idValue={prefixedID(id, 'description')}
         valueClassName="kubevirt-vm-resource-summary__description"
+        canEdit={canUpdateVM}
+        onEditClick={() => vmDescriptionModal({ vmLikeEntity: vmiLike })}
+        editButtonAriaLabel="Edit Description"
       >
-        {!description && <span className="text-secondary">Not available</span>}
-        <EditButton
-          canEdit={canUpdateVM}
-          onClick={() => vmDescriptionModal({ vmLikeEntity: vmiLike })}
-        >
-          {description}
-        </EditButton>
+        {!description ? <span className="text-secondary">Not available</span> : description}
       </VMDetailsItem>
 
       <VMDetailsItem title="Operating System" idValue={prefixedID(id, 'os')} isNotAvail={!os}>
@@ -148,6 +151,7 @@ export const VMDetailsList: React.FC<VMResourceListProps> = ({
         title="Status"
         canEdit={isVMIPaused(vmi)}
         editButtonId={prefixedID(id, 'status-edit')}
+        editButtonAriaLabel="Edit Status"
         onEditClick={() => setStatusModalOpen(true)}
         idValue={prefixedID(id, 'vm-statuses')}
       >
@@ -169,6 +173,7 @@ export const VMDetailsList: React.FC<VMResourceListProps> = ({
         title="Boot Order"
         canEdit={canEdit}
         editButtonId={prefixedID(id, 'boot-order-edit')}
+        editButtonAriaLabel="Edit Boot Order"
         onEditClick={() => setBootOrderModalOpen(true)}
         idValue={prefixedID(id, 'boot-order')}
       >
@@ -184,6 +189,7 @@ export const VMDetailsList: React.FC<VMResourceListProps> = ({
         title="CD-ROMs"
         canEdit={canEdit}
         editButtonId={prefixedID(id, 'cdrom-edit')}
+        editButtonAriaLabel="Edit CD-ROMs"
         onEditClick={() => VMCDRomModal({ vmLikeEntity: vm, modalClassName: 'modal-lg' })}
         idValue={prefixedID(id, 'cdrom')}
         isNotAvail={cds.length === 0}
@@ -253,6 +259,7 @@ export const VMSchedulingList: React.FC<VMSchedulingListProps> = ({
             title={NODE_SELECTOR_MODAL_TITLE}
             idValue={prefixedID(id, 'node-selector')}
             editButtonId={prefixedID(id, 'node-selector-edit')}
+            editButtonAriaLabel={`Edit ${NODE_SELECTOR_MODAL_TITLE}`}
             onEditClick={() => nodeSelectorModal({ vmLikeEntity: vm, blocking: true })}
           >
             <Selector kind="Node" selector={nodeSelector} />
@@ -263,6 +270,7 @@ export const VMSchedulingList: React.FC<VMSchedulingListProps> = ({
             title={TOLERATIONS_MODAL_TITLE}
             idValue={prefixedID(id, 'tolerations')}
             editButtonId={prefixedID(id, 'tolerations-edit')}
+            editButtonAriaLabel={`Edit ${TOLERATIONS_MODAL_TITLE}`}
             onEditClick={() =>
               tolerationsModal({
                 vmLikeEntity: vm,
@@ -283,6 +291,7 @@ export const VMSchedulingList: React.FC<VMSchedulingListProps> = ({
             title={AFFINITY_MODAL_TITLE}
             idValue={prefixedID(id, 'affinity')}
             editButtonId={prefixedID(id, 'affinity-edit')}
+            editButtonAriaLabel={`Edit ${AFFINITY_MODAL_TITLE}`}
             onEditClick={() =>
               affinityModal({ vmLikeEntity: vm, blocking: true, modalClassName: 'modal-lg' })
             }
@@ -304,6 +313,7 @@ export const VMSchedulingList: React.FC<VMSchedulingListProps> = ({
             canEdit={canEdit}
             onEditClick={() => vmFlavorModal({ vmLike: vm, blocking: true })}
             editButtonId={prefixedID(id, 'flavor-edit')}
+            editButtonAriaLabel="Edit Flavor"
             isNotAvail={!flavorText}
           >
             {flavorText}
@@ -315,6 +325,7 @@ export const VMSchedulingList: React.FC<VMSchedulingListProps> = ({
             canEdit={canEdit}
             onEditClick={() => dedicatedResourcesModal({ vmLikeEntity: vm, blocking: true })}
             editButtonId={prefixedID(id, 'dedicated-resources-edit')}
+            editButtonAriaLabel={`Edit ${DEDICATED_RESOURCES_MODAL_TITLE}`}
           >
             {isCPUPinned ? DEDICATED_RESOURCES_PINNED : DEDICATED_RESOURCES_NOT_PINNED}
           </VMDetailsItem>
@@ -328,6 +339,7 @@ type VMDetailsItemProps = {
   title: string;
   canEdit?: boolean;
   editButtonId?: string;
+  editButtonAriaLabel?: string;
   onEditClick?: () => void;
   idValue?: string;
   isNotAvail?: boolean;

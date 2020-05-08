@@ -9,8 +9,8 @@ import {
   ResourceRequirementsModalProps,
   ResourceRequirementsModalLink,
   ResourceRequirementsModalLinkProps,
+  ResourceRequirementsText,
 } from './resource-requirements';
-import { Button } from '@patternfly/react-core';
 
 import Spy = jasmine.Spy;
 
@@ -83,6 +83,46 @@ describe(ResourceRequirementsModal.name, () => {
   });
 });
 
+describe(ResourceRequirementsText.displayName, () => {
+  let wrapper: ShallowWrapper<ResourceRequirementsModalLinkProps>;
+  let obj: k8s.K8sResourceKind;
+
+  beforeEach(() => {
+    obj = _.cloneDeep(testResourceInstance);
+    obj.spec.resources = {
+      limits: { memory: '50Mi', cpu: '500m', 'ephemeral-storage': '50Mi' },
+      requests: { memory: '50Mi', cpu: '500m', 'ephemeral-storage': '50Mi' },
+    };
+    wrapper = shallow(
+      <ResourceRequirementsText.WrappedComponent
+        obj={obj}
+        model={testModel}
+        type="limits"
+        path="resources"
+      />,
+    );
+  });
+
+  it('renders the resource requests limits', () => {
+    const { memory, cpu, 'ephemeral-storage': storage } = obj.spec.resources.limits;
+    wrapper = wrapper.setProps({ type: 'requests' });
+
+    expect(wrapper.render().text()).toEqual(`CPU: ${cpu}, Memory: ${memory}, Storage: ${storage}`);
+  });
+
+  it('renders the resource limits', () => {
+    const { memory, cpu, 'ephemeral-storage': storage } = obj.spec.resources.requests;
+    expect(wrapper.render().text()).toEqual(`CPU: ${cpu}, Memory: ${memory}, Storage: ${storage}`);
+  });
+
+  it('renders default values if undefined', () => {
+    obj.spec.resources = undefined;
+    wrapper.setProps({ obj });
+
+    expect(wrapper.render().text()).toEqual('CPU: none, Memory: none, Storage: none');
+  });
+});
+
 describe(ResourceRequirementsModalLink.displayName, () => {
   let wrapper: ShallowWrapper<ResourceRequirementsModalLinkProps>;
   let obj: k8s.K8sResourceKind;
@@ -103,40 +143,6 @@ describe(ResourceRequirementsModalLink.displayName, () => {
     );
   });
 
-  it('renders a button link with the resource requests limits', () => {
-    const { memory, cpu, 'ephemeral-storage': storage } = obj.spec.resources.limits;
-    wrapper = wrapper.setProps({ type: 'requests' });
-
-    expect(
-      wrapper
-        .find(Button)
-        .render()
-        .text(),
-    ).toEqual(`CPU: ${cpu}, Memory: ${memory}, Storage: ${storage}`);
-  });
-
-  it('renders a button link with the resource limits', () => {
-    const { memory, cpu, 'ephemeral-storage': storage } = obj.spec.resources.requests;
-    expect(
-      wrapper
-        .find(Button)
-        .render()
-        .text(),
-    ).toEqual(`CPU: ${cpu}, Memory: ${memory}, Storage: ${storage}`);
-  });
-
-  it('renders default values if undefined', () => {
-    obj.spec.resources = undefined;
-    wrapper.setProps({ obj });
-
-    expect(
-      wrapper
-        .find(Button)
-        .render()
-        .text(),
-    ).toEqual('CPU: none, Memory: none, Storage: none');
-  });
-
   it('opens resource requirements modal when clicked', (done) => {
     const modalSpy = jasmine.createSpy('modalSpy').and.callFake((args) => {
       expect(args.title).toEqual(`${obj.kind} Resource Limits`);
@@ -149,6 +155,6 @@ describe(ResourceRequirementsModalLink.displayName, () => {
     });
     spyOn(modal, 'createModalLauncher').and.returnValue(modalSpy);
 
-    wrapper.find(Button).simulate('click');
+    wrapper.find('EditButton').simulate('click');
   });
 });

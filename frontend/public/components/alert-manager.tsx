@@ -1,16 +1,15 @@
 import * as React from 'react';
 import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
-import { Button } from '@patternfly/react-core';
-import { PencilAltIcon } from '@patternfly/react-icons';
 
+import { EditButton } from '@console/shared';
 import { referenceForModel, K8sResourceKind } from '../module/k8s';
 import { ListPage, DetailsPage, Table, TableRow, TableData, RowFunction } from './factory';
 import { SectionHeading, LabelList, navFactory, ResourceLink, Selector, pluralize } from './utils';
 import { configureReplicaCountModal } from './modals';
 import { AlertmanagerModel } from '../models';
 
-const Details: React.SFC<DetailsProps> = (props) => {
+export const Details: React.SFC<DetailsProps> = (props) => {
   const alertManager = props.obj;
   const { metadata, spec } = alertManager;
 
@@ -45,13 +44,11 @@ const Details: React.SFC<DetailsProps> = (props) => {
             <dl className="co-m-pane__details">
               <dt>Version</dt>
               <dd>{spec.version}</dd>
-              <dt>Replicas</dt>
-              <dd>
-                <Button variant="link" type="button" isInline onClick={openReplicaCountModal}>
-                  {pluralize(spec.replicas, 'pod')}
-                  <PencilAltIcon className="co-icon-space-l pf-c-button-icon--plain" />
-                </Button>
-              </dd>
+              <dt>
+                Replicas
+                <EditButton canEdit ariaLabel="Edit Replicas" onClick={openReplicaCountModal} />
+              </dt>
+              <dd>{pluralize(spec.replicas, 'pod')}</dd>
             </dl>
           </div>
         </div>

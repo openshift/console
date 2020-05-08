@@ -302,8 +302,8 @@ const ReceiverTableRow: RowFunction<
           receiver.name === InitialReceivers.Default) &&
         !integrationTypesLabel ? (
           <Link to={`/monitoring/alertmanagerconfig/receivers/${receiver.name}/edit`}>
-            <PencilAltIcon className="co-icon-space-r pf-c-button-icon--plain" />
             Configure
+            <PencilAltIcon className="co-icon-space-l pf-c-button-icon--plain" />
           </Link>
         ) : (
           integrationTypesLabel

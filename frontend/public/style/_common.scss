@@ -557,3 +557,8 @@ $co-external-link-padding-right: 15px;
 .no-margin {
   margin: 0 !important;
 }
+
+.co-m-edit-pencil {
+  margin-left: var(--pf-global--spacer--sm);
+  padding: var(--pf-global--spacer--sm) !important;
+}

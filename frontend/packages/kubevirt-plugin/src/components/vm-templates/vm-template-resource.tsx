@@ -20,7 +20,6 @@ import {
 } from '../../selectors/vm/selectors';
 import { getTemplateOperatingSystems } from '../../selectors/vm-template/advanced';
 import { vmFlavorModal } from '../modals';
-import { EditButton } from '../edit-button';
 import { VMDetailsItem } from '../vms/vm-resource';
 import { DiskSummary } from '../vm-disks/disk-summary';
 import { asVM, getDevices } from '../../selectors/vm';
@@ -58,14 +57,11 @@ export const VMTemplateResourceSummary: React.FC<VMTemplateResourceSummaryProps>
         title="Description"
         idValue={prefixedID(id, 'description')}
         valueClassName="kubevirt-vm-resource-summary__description"
+        canEdit={canUpdateTemplate}
+        onEditClick={() => vmDescriptionModal({ vmLikeEntity: template })}
+        editButtonAriaLabel="Edit Description"
       >
-        {!description && <span className="text-secondary">Not available</span>}
-        <EditButton
-          canEdit={canUpdateTemplate}
-          onClick={() => vmDescriptionModal({ vmLikeEntity: template })}
-        >
-          {description}
-        </EditButton>
+        {!description ? <span className="text-secondary">Not available</span> : description}
       </VMDetailsItem>
 
       <VMDetailsItem title="Operating System" idValue={prefixedID(id, 'os')} isNotAvail={!os}>
@@ -109,6 +105,7 @@ export const VMTemplateDetailsList: React.FC<VMTemplateResourceListProps> = ({
         title="Boot Order"
         canEdit
         editButtonId={prefixedID(id, 'boot-order-edit')}
+        editButtonAriaLabel="Edit Boot Order"
         onEditClick={() => setBootOrderModalOpen(true)}
         idValue={prefixedID(id, 'boot-order')}
       >
@@ -124,6 +121,7 @@ export const VMTemplateDetailsList: React.FC<VMTemplateResourceListProps> = ({
         title="CD-ROMs"
         canEdit={canUpdateTemplate}
         editButtonId={prefixedID(id, 'cdrom-edit')}
+        editButtonAriaLabel="Edit CD-ROMs"
         onEditClick={() => VMCDRomModal({ vmLikeEntity: template, modalClassName: 'modal-lg' })}
         idValue={prefixedID(id, 'cdrom')}
         isNotAvail={cds.length === 0}
@@ -168,6 +166,7 @@ export const VMTemplateSchedulingList: React.FC<VMTemplateResourceSummaryProps> 
             title={NODE_SELECTOR_MODAL_TITLE}
             idValue={prefixedID(id, 'node-selector')}
             editButtonId={prefixedID(id, 'node-selector-edit')}
+            editButtonAriaLabel={`Edit ${NODE_SELECTOR_MODAL_TITLE}`}
             onEditClick={() => nodeSelectorModal({ vmLikeEntity: template, blocking: true })}
           >
             <LabelList kind="Node" labels={nodeSelector} />
@@ -178,6 +177,7 @@ export const VMTemplateSchedulingList: React.FC<VMTemplateResourceSummaryProps> 
             title={TOLERATIONS_MODAL_TITLE}
             idValue={prefixedID(id, 'tolerations')}
             editButtonId={prefixedID(id, 'tolerations-edit')}
+            editButtonAriaLabel={`Edit ${TOLERATIONS_MODAL_TITLE}`}
             onEditClick={() =>
               tolerationsModal({
                 vmLikeEntity: template,
@@ -194,6 +194,7 @@ export const VMTemplateSchedulingList: React.FC<VMTemplateResourceSummaryProps> 
             title={AFFINITY_MODAL_TITLE}
             idValue={prefixedID(id, 'affinity')}
             editButtonId={prefixedID(id, 'affinity-edit')}
+            editButtonAriaLabel={`Edit ${AFFINITY_MODAL_TITLE}`}
             onEditClick={() =>
               affinityModal({
                 vmLikeEntity: template,
@@ -214,6 +215,7 @@ export const VMTemplateSchedulingList: React.FC<VMTemplateResourceSummaryProps> 
             canEdit={canUpdateTemplate}
             onEditClick={() => vmFlavorModal({ vmLike: template, blocking: true })}
             editButtonId={prefixedID(id, 'flavor-edit')}
+            editButtonAriaLabel="Edit Flavor"
             isNotAvail={!flavorText}
           >
             {flavorText}
@@ -230,6 +232,7 @@ export const VMTemplateSchedulingList: React.FC<VMTemplateResourceSummaryProps> 
               })
             }
             editButtonId={prefixedID(id, 'dedicated-resources-edit')}
+            editButtonAriaLabel={`Edit ${DEDICATED_RESOURCES_MODAL_TITLE}`}
           >
             {isCPUPinned ? DEDICATED_RESOURCES_PINNED : DEDICATED_RESOURCES_NOT_PINNED}
           </VMDetailsItem>

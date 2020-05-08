@@ -4,12 +4,7 @@ import { Helmet } from 'react-helmet';
 import { Button, Tooltip } from '@patternfly/react-core';
 import { Link } from 'react-router-dom';
 
-import {
-  AddCircleOIcon,
-  ArrowCircleUpIcon,
-  SyncAltIcon,
-  PencilAltIcon,
-} from '@patternfly/react-icons';
+import { AddCircleOIcon, ArrowCircleUpIcon, SyncAltIcon } from '@patternfly/react-icons';
 
 import { ClusterOperatorPage } from './cluster-operator';
 import { clusterChannelModal, clusterUpdateModal, errorModal } from '../modals';
@@ -45,6 +40,7 @@ import {
   truncateMiddle,
 } from '../utils';
 import {
+  EditButton,
   GreenCheckCircleIcon,
   RedExclamationCircleIcon,
   YellowExclamationTriangleIcon,
@@ -61,17 +57,13 @@ const cancelUpdate = (cv: ClusterVersionKind) => {
 
 export const clusterAutoscalerReference = referenceForModel(ClusterAutoscalerModel);
 
-export const CurrentChannel: React.SFC<CurrentChannelProps> = ({ cv }) => (
-  <Button
-    type="button"
-    isInline
+export const EditCurrentChannel: React.SFC<EditCurrentChannelProps> = ({ cv }) => (
+  <EditButton
+    canEdit
+    ariaLabel="Edit Channel"
     data-test-id="current-channel-update-link"
     onClick={() => clusterChannelModal({ cv })}
-    variant="link"
-  >
-    {cv.spec.channel || '-'}
-    <PencilAltIcon className="co-icon-space-l pf-c-button-icon--plain" />
-  </Button>
+  />
 );
 
 const InvalidMessage: React.SFC<CVStatusMessageProps> = ({ cv }) => (
@@ -246,10 +238,11 @@ export const ClusterVersionDetailsTable: React.SFC<ClusterVersionDetailsTablePro
             <div className="co-detail-table__row row">
               <div className="co-detail-table__section col-sm-4 col-md-3">
                 <dl className="co-m-pane__details">
-                  <dt className="co-detail-table__section-header">Channel</dt>
-                  <dd>
-                    <CurrentChannel cv={cv} />
-                  </dd>
+                  <dt className="co-detail-table__section-header">
+                    Channel
+                    <EditCurrentChannel cv={cv} />
+                  </dt>
+                  <dd>{cv.spec.channel || '-'}</dd>
                 </dl>
               </div>
               <div className="co-detail-table__section col-sm-4 col-md-4">
@@ -430,7 +423,7 @@ type CVStatusMessageProps = {
   cv: ClusterVersionKind;
 };
 
-type CurrentChannelProps = {
+type EditCurrentChannelProps = {
   cv: K8sResourceKind;
 };
 

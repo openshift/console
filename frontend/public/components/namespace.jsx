@@ -5,7 +5,6 @@ import { sortable } from '@patternfly/react-table';
 import { connect } from 'react-redux';
 import { Tooltip, Button } from '@patternfly/react-core';
 
-import { PencilAltIcon } from '@patternfly/react-icons';
 import { Link } from 'react-router-dom';
 import * as fuzzy from 'fuzzysearch';
 import {
@@ -15,6 +14,7 @@ import {
   KEYBOARD_SHORTCUTS,
   NAMESPACE_LOCAL_STORAGE_KEY,
   FLAGS,
+  EditButton,
 } from '@console/shared';
 import { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
 
@@ -464,15 +464,40 @@ export const PullSecret = (props) => {
   if (isLoading) {
     return <LoadingInline />;
   }
+
+  return _.get(data, 'metadata.name') || 'Not Configured';
+};
+
+/** @type {React.SFC<{namespace: K8sResourceKind}>} */
+export const EditPullSecret = (props) => {
+  const [isLoading, setIsLoading] = React.useState(true);
+  const [data, setData] = React.useState(undefined);
+
+  React.useEffect(() => {
+    k8sGet(SecretModel, null, props.namespace.metadata.name, {
+      queryParams: { fieldSelector: 'type=kubernetes.io/dockerconfigjson' },
+    })
+      .then((pullSecrets) => {
+        setIsLoading(false);
+        setData(_.get(pullSecrets, 'items[0]'));
+      })
+      .catch((error) => {
+        setIsLoading(false);
+        setData(undefined);
+        // A 404 just means that no pull secrets exist
+        if (error.status !== 404) {
+          throw error;
+        }
+      });
+  }, [props.namespace.metadata.name]);
+
+  if (isLoading) {
+    return <LoadingInline />;
+  }
   const modal = () =>
     configureNamespacePullSecretModal({ namespace: props.namespace, pullSecret: data });
 
-  return (
-    <Button variant="link" type="button" isInline onClick={modal}>
-      {_.get(data, 'metadata.name') || 'Not Configured'}
-      <PencilAltIcon className="co-icon-space-l pf-c-button-icon--plain" />
-    </Button>
-  );
+  return (<EditButton canEdit aria-label="Edit Default Pull Secret" onClick={modal} />);
 };
 
 export const NamespaceLineCharts = ({ ns }) => (
@@ -541,7 +566,10 @@ export const NamespaceSummary = ({ ns }) => {
           </DetailsItem>
           {canListSecrets && (
             <>
-              <dt>Default Pull Secret</dt>
+              <dt>
+                Default Pull Secret
+                <EditPullSecret namespace={ns} />
+              </dt>
               <dd>
                 <PullSecret namespace={ns} />
               </dd>

@@ -146,6 +146,7 @@ export const resourceTitle = $('[data-test-id="resource-title"]');
 
 export const nameFilter = $('.pf-c-form-control.co-text-filter');
 export const messageLbl = $('.cos-status-box');
+export const numAnnotations = element(by.xpath('//dd[contains(., "Annotation")]'));
 export const modalAnnotationsLink = $(
   '[data-test-id=resource-summary] [data-test-id=edit-annotations]',
 );

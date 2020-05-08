@@ -7,7 +7,6 @@ import { EndpointList, Endpoint } from './endpoint';
 import { ResourceRequirementsModalLink } from './resource-requirements';
 import * as configureSize from './configure-size';
 import { SpecDescriptor } from '.';
-import { Button } from '@patternfly/react-core';
 
 describe(SpecDescriptor.name, () => {
   let wrapper: ShallowWrapper<DescriptorProps>;
@@ -56,13 +55,12 @@ describe(SpecDescriptor.name, () => {
 
     expect(
       wrapper
-        .find('dd')
-        .childAt(0)
+        .find('dt')
+        .childAt(1)
         .shallow()
-        .find(Button)
-        .render()
-        .text(),
-    ).toEqual(`${value} pods`);
+        .find('EditButton')
+        .render()[0].attribs.class,
+    ).toEqual('pf-c-button pf-m-plain co-m-edit-pencil');
 
     spyOn(configureSize, 'configureSizeModal').and.callFake((props) => {
       expect(props).toEqual({
@@ -74,10 +72,10 @@ describe(SpecDescriptor.name, () => {
       done();
     });
     wrapper
-      .find('dd')
-      .childAt(0)
+      .find('dt')
+      .childAt(1)
       .shallow()
-      .find(Button)
+      .find('EditButton')
       .props()
       .onClick(null);
   });
@@ -160,8 +158,9 @@ describe(SpecDescriptor.name, () => {
         .find('dd')
         .childAt(0)
         .shallow()
-        .find(ResourceRequirementsModalLink)
+        .find('dt')
         .at(0)
+        .find(ResourceRequirementsModalLink)
         .props().type,
     ).toEqual('limits');
     expect(
@@ -178,8 +177,9 @@ describe(SpecDescriptor.name, () => {
         .find('dd')
         .childAt(0)
         .shallow()
-        .find(ResourceRequirementsModalLink)
+        .find('dt')
         .at(1)
+        .find(ResourceRequirementsModalLink)
         .props().type,
     ).toEqual('requests');
   });

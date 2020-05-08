@@ -2,13 +2,13 @@ import * as React from 'react';
 import { mount, ReactWrapper } from 'enzyme';
 import Spy = jasmine.Spy;
 
-import { PullSecret } from '../../public/components/namespace';
+import { EditPullSecret } from '../../public/components/namespace';
 import * as k8s from '../../public/module/k8s';
 import { LoadingInline } from '../../public/components/utils';
 import { testNamespace } from '../../__mocks__/k8sResourcesMocks';
 import { SecretModel } from '../../public/models';
 
-describe(PullSecret.displayName, () => {
+describe(EditPullSecret.displayName, () => {
   let wrapper: ReactWrapper;
 
   const spyAndExpect = (spy: Spy) => (returnValue: any) =>
@@ -31,16 +31,16 @@ describe(PullSecret.displayName, () => {
       })
       .then(() => {
         wrapper.update();
-        expect(wrapper.find('button').exists()).toBe(true);
+        expect(wrapper.find('.co-m-edit-pencil').exists()).toBe(true);
         done();
       });
 
-    wrapper = mount(<PullSecret namespace={testNamespace} />);
+    wrapper = mount(<EditPullSecret namespace={testNamespace} />);
   });
 
   it('does not render link if still loading', () => {
     spyOn(k8s, 'k8sGet').and.returnValue(Promise.resolve({ items: [] }));
-    wrapper = mount(<PullSecret namespace={testNamespace} />);
+    wrapper = mount(<EditPullSecret namespace={testNamespace} />);
 
     expect(wrapper.find(LoadingInline).exists()).toBe(true);
   });

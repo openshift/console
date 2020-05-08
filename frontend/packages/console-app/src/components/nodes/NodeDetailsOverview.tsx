@@ -1,6 +1,7 @@
 import * as _ from 'lodash';
 import * as React from 'react';
 import { NodeKind, referenceForModel } from '@console/internal/module/k8s';
+import { EditButton, getNodeMachineNameAndNamespace, getNodeAddresses } from '@console/shared';
 import {
   useAccessReview,
   SectionHeading,
@@ -12,9 +13,8 @@ import {
   Timestamp,
 } from '@console/internal/components/utils';
 import { NodeModel, MachineModel } from '@console/internal/models';
-import { Button, pluralize } from '@patternfly/react-core';
-import { PencilAltIcon } from '@patternfly/react-icons';
-import { getNodeMachineNameAndNamespace, getNodeAddresses } from '@console/shared';
+import { pluralize } from '@patternfly/react-core';
+
 import NodeIPList from './NodeIPList';
 import NodeStatus from './NodeStatus';
 
@@ -49,42 +49,35 @@ const NodeDetailsOverview: React.FC<NodeDetailsOverviewProps> = ({ node }) => {
             <dd>
               <NodeIPList ips={getNodeAddresses(node)} expand />
             </dd>
-            <dt>Node Labels</dt>
+            <dt>
+              Node Labels
+              <EditButton
+                canEdit={canUpdate}
+                ariaLabel="Edit Node Labels"
+                onClick={Kebab.factory.ModifyLabels(NodeModel, node).callback}
+              />
+            </dt>
             <dd>
               <LabelList kind="Node" labels={node.metadata.labels} />
             </dd>
-            <dt>Taints</dt>
-            <dd>
-              {canUpdate ? (
-                <Button
-                  variant="link"
-                  type="button"
-                  isInline
-                  onClick={Kebab.factory.ModifyTaints(NodeModel, node).callback}
-                >
-                  {pluralize(_.size(node.spec.taints), 'Taint')}
-                  <PencilAltIcon className="co-icon-space-l pf-c-button-icon--plain" />
-                </Button>
-              ) : (
-                pluralize(_.size(node.spec.taints), 'Taint')
-              )}
-            </dd>
-            <dt>Annotations</dt>
-            <dd>
-              {canUpdate ? (
-                <Button
-                  variant="link"
-                  type="button"
-                  isInline
-                  onClick={Kebab.factory.ModifyAnnotations(NodeModel, node).callback}
-                >
-                  {pluralize(_.size(node.metadata.annotations), 'Annotation')}
-                  <PencilAltIcon className="co-icon-space-l pf-c-button-icon--plain" />
-                </Button>
-              ) : (
-                pluralize(_.size(node.metadata.annotations), 'Annotation')
-              )}
-            </dd>
+            <dt>
+              Taints
+              <EditButton
+                canEdit={canUpdate}
+                ariaLabel="Edit Taints"
+                onClick={Kebab.factory.ModifyTaints(NodeModel, node).callback}
+              />
+            </dt>
+            <dd>{pluralize(_.size(node.spec.taints), 'Taint')}</dd>
+            <dt>
+              Annotations
+              <EditButton
+                canEdit={canUpdate}
+                ariaLabel="Edit Annotations"
+                onClick={Kebab.factory.ModifyAnnotations(NodeModel, node).callback}
+              />
+            </dt>
+            <dd>{pluralize(_.size(node.metadata.annotations), 'Annotation')}</dd>
             {machine.name && (
               <>
                 <dt>Machine</dt>

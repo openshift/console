@@ -6,9 +6,9 @@ import { clusterVersionProps } from '../../__mocks__/clusterVersinMock';
 import {
   ClusterSettingsPage,
   ClusterVersionDetailsTable,
-  CurrentChannel,
   CurrentVersionHeader,
   CurrentVersion,
+  EditCurrentChannel,
   UpdateLink,
   UpdateStatus,
   ClusterOperatorTabPage,
@@ -130,7 +130,6 @@ describe('Cluster Version Details Table page', () => {
     expect(wrapper.exists()).toBe(true);
   });
   it('should render the child components of ClusterVersionDetailsTable component', () => {
-    expect(wrapper.find(CurrentChannel).exists()).toBe(true);
     expect(wrapper.find(CurrentVersionHeader).exists()).toBe(true);
     expect(wrapper.find(CurrentVersion).exists()).toBe(true);
     expect(wrapper.find(UpdateLink).exists()).toBe(true);
@@ -142,9 +141,9 @@ describe('Cluster Version Details Table page', () => {
   it('should render correct values of ClusterVersionDetailsTable component', () => {
     expect(
       wrapper
-        .find(CurrentChannel)
-        .at(0)
-        .props().cv.spec.channel,
+        .find('.co-m-pane__details dd')
+        .first()
+        .text(),
     ).toEqual('stable-4.2');
     expect(
       wrapper
@@ -213,18 +212,18 @@ describe('Cluster Version Details Table page', () => {
   });
 });
 
-describe('Current Channel component', () => {
+describe('Edit Current Channel component', () => {
   let wrapper;
 
   beforeEach(() => {
-    wrapper = mount(<CurrentChannel cv={clusterVersionProps} />);
+    wrapper = mount(<EditCurrentChannel cv={clusterVersionProps} />);
   });
 
   it('should accept props', () => {
     expect(wrapper.props().cv).toEqual(clusterVersionProps);
   });
-  it('should render the value of channel', () => {
-    expect(wrapper.text()).toBe('stable-4.2');
+  it('should render an edit icon', () => {
+    expect(wrapper.find('.co-m-edit-pencil').exists()).toBe(true);
   });
 });
 

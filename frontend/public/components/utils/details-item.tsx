@@ -36,6 +36,7 @@ export const DetailsItem: React.FC<DetailsItemProps> = ({
   defaultValue = '-',
   hideEmpty,
   children,
+  action,
 }) => {
   if (hideEmpty && _.isEmpty(_.get(obj, path))) {
     return null;
@@ -59,12 +60,18 @@ export const DetailsItem: React.FC<DetailsItemProps> = ({
             footerContent={<PropertyPath kind={model.kind} path={path} />}
             maxWidth="30rem"
           >
-            <Button variant="plain" className="co-m-pane__details-popover-button">
-              {label}
-            </Button>
+            <>
+              <Button variant="plain" className="co-m-pane__details-popover-button">
+                {label}
+              </Button>
+              {action}
+            </>
           </Popover>
         ) : (
-          label
+          <>
+            {label}
+            {action}
+          </>
         )}
       </dt>
       <dd>{value}</dd>
@@ -74,6 +81,7 @@ export const DetailsItem: React.FC<DetailsItemProps> = ({
 
 export type DetailsItemProps = {
   label: string;
+  action?: React.ReactNode;
   obj: K8sResourceKind;
   path: string | string[];
   defaultValue?: React.ReactNode;

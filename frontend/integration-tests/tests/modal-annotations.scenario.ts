@@ -147,7 +147,7 @@ describe('Modal Annotations', () => {
     await crudAnnotationFromDetail(Actions.add, annotationKey, annotationValue);
     await browser.get(`${appHost}/k8s/ns/${testName}/configmaps/${CONFIG_MAP_NAME}`);
     await browser.wait(
-      until.textToBePresentInElement(crudView.modalAnnotationsLink, '2'),
+      until.textToBePresentInElement(crudView.numAnnotations, '2'),
       BROWSER_TIMEOUT,
     );
     await clickModalAnnotationsLink();
@@ -157,7 +157,7 @@ describe('Modal Annotations', () => {
     await crudAnnotationFromDetail(Actions.delete, annotationKey, annotationValue);
     await browser.get(`${appHost}/k8s/ns/${testName}/configmaps/${CONFIG_MAP_NAME}`);
     await browser.wait(
-      until.textToBePresentInElement(crudView.modalAnnotationsLink, '1'),
+      until.textToBePresentInElement(crudView.numAnnotations, '1'),
       BROWSER_TIMEOUT,
     );
     await clickModalAnnotationsLink();

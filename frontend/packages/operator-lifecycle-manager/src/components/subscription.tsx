@@ -3,8 +3,16 @@ import * as _ from 'lodash';
 import { match, Link } from 'react-router-dom';
 import { sortable } from '@patternfly/react-table';
 import * as classNames from 'classnames';
-import { Alert, Button } from '@patternfly/react-core';
-import { ArrowCircleUpIcon, InProgressIcon, PencilAltIcon } from '@patternfly/react-icons';
+import { Alert } from '@patternfly/react-core';
+import { ArrowCircleUpIcon, InProgressIcon } from '@patternfly/react-icons';
+import {
+  EditButton,
+  YellowExclamationTriangleIcon,
+  GreenCheckCircleIcon,
+  getNamespace,
+  getName,
+  WarningStatus,
+} from '@console/shared';
 import {
   DetailsPage,
   MultiListPage,
@@ -32,13 +40,7 @@ import {
   k8sKill,
   k8sUpdate,
 } from '@console/internal/module/k8s';
-import {
-  YellowExclamationTriangleIcon,
-  GreenCheckCircleIcon,
-  getNamespace,
-  getName,
-  WarningStatus,
-} from '@console/shared';
+
 import {
   SubscriptionModel,
   ClusterServiceVersionModel,
@@ -476,36 +478,34 @@ export class SubscriptionUpdates extends React.Component<
         <div className="co-detail-table__row row">
           <div className="co-detail-table__section col-sm-3">
             <dl className="co-m-pane__details">
-              <dt className="co-detail-table__section-header">Channel</dt>
+              <dt className="co-detail-table__section-header">
+                Channel
+                <EditButton
+                  canEdit={!this.state.waitingForUpdate && pkg !== null}
+                  ariaLabel="Edit Channel"
+                  onClick={channelModal}
+                />
+              </dt>
               <dd>
-                {this.state.waitingForUpdate ? (
-                  <LoadingInline />
-                ) : (
-                  <Button
-                    type="button"
-                    isInline
-                    onClick={channelModal}
-                    variant="link"
-                    isDisabled={!pkg}
-                  >
-                    {obj.spec.channel || 'default'}
-                    {pkg && <PencilAltIcon className="co-icon-space-l pf-c-button-icon--plain" />}
-                  </Button>
-                )}
+                {this.state.waitingForUpdate ? <LoadingInline /> : obj.spec.channel || 'default'}
               </dd>
             </dl>
           </div>
           <div className="co-detail-table__section col-sm-3">
             <dl className="co-m-pane__details">
-              <dt className="co-detail-table__section-header">Approval</dt>
+              <dt className="co-detail-table__section-header">
+                Approval
+                <EditButton
+                  canEdit={!this.state.waitingForUpdate}
+                  ariaLabel="Edit Approval"
+                  onClick={approvalModal}
+                />
+              </dt>
               <dd>
                 {this.state.waitingForUpdate ? (
                   <LoadingInline />
                 ) : (
-                  <Button type="button" isInline onClick={approvalModal} variant="link">
-                    {obj.spec.installPlanApproval || 'Automatic'}
-                    <PencilAltIcon className="co-icon-space-l pf-c-button-icon--plain" />
-                  </Button>
+                  obj.spec.installPlanApproval || 'Automatic'
                 )}
               </dd>
             </dl>

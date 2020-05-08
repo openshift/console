@@ -1,9 +1,8 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import { connect } from 'react-redux';
-import { Button } from '@patternfly/react-core';
-import { PencilAltIcon } from '@patternfly/react-icons';
 import { withHandlePromise } from '@console/internal/components/utils';
+import { EditButton } from '@console/shared';
 import { k8sUpdate, referenceFor, K8sKind, K8sResourceKind } from '@console/internal/module/k8s';
 import {
   createModalLauncher,
@@ -134,14 +133,25 @@ const stateToProps = ({ k8s }: RootState, { obj }) => ({
   model: k8s.getIn(['RESOURCES', 'models', referenceFor(obj)]) as K8sKind,
 });
 
-export const ResourceRequirementsModalLink = connect(stateToProps)(
+export const ResourceRequirementsText = connect(stateToProps)(
   (props: ResourceRequirementsModalLinkProps) => {
-    const { obj, type, path, model } = props;
+    const { obj, type, path } = props;
     const { cpu, memory, 'ephemeral-storage': storage } = _.get(
       obj.spec,
       `${path}.${type}`,
       'none',
     );
+
+    return (
+      <span>{`CPU: ${cpu || 'none'}, Memory: ${memory || 'none'}, Storage: ${storage ||
+        'none'}`}</span>
+    );
+  },
+);
+
+export const ResourceRequirementsModalLink = connect(stateToProps)(
+  (props: ResourceRequirementsModalLinkProps) => {
+    const { obj, type, path, model } = props;
 
     const onClick = () => {
       const modal = createModalLauncher(ResourceRequirementsModal);
@@ -152,16 +162,12 @@ export const ResourceRequirementsModalLink = connect(stateToProps)(
     };
 
     return (
-      <Button
-        type="button"
-        isInline
+      <EditButton
+        canEdit
+        ariaLabel={`Edit Resource ${_.capitalize(type)}`}
         data-test-id="configure-modal-btn"
         onClick={onClick}
-        variant="link"
-      >
-        {`CPU: ${cpu || 'none'}, Memory: ${memory || 'none'}, Storage: ${storage || 'none'}`}
-        <PencilAltIcon className="co-icon-space-l pf-c-button-icon--plain" />
-      </Button>
+      />
     );
   },
 );

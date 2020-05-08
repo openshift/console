@@ -3,10 +3,8 @@ import * as _ from 'lodash-es';
 import { Link } from 'react-router-dom';
 import { sortable } from '@patternfly/react-table';
 import * as classNames from 'classnames';
-import { getMachineAWSPlacement, getMachineRole } from '@console/shared';
-import { Tooltip, Button } from '@patternfly/react-core';
-
-import { PencilAltIcon } from '@patternfly/react-icons';
+import { EditButton, getMachineAWSPlacement, getMachineRole } from '@console/shared';
+import { Tooltip } from '@patternfly/react-core';
 
 import { MachineAutoscalerModel, MachineModel, MachineSetModel } from '../models';
 import { K8sKind, MachineDeploymentKind, MachineSetKind, referenceForModel } from '../module/k8s';
@@ -185,17 +183,15 @@ export const MachineCounts: React.SFC<MachineCountsProps> = ({
         <div className="co-detail-table__row row">
           <div className="co-detail-table__section">
             <dl className="co-m-pane__details">
-              <dt className="co-detail-table__section-header">Desired Count</dt>
-              <dd>
-                {canUpdate ? (
-                  <Button variant="link" type="button" isInline onClick={editReplicas}>
-                    {desiredReplicasText}
-                    <PencilAltIcon className="co-icon-space-l pf-c-button-icon--plain" />
-                  </Button>
-                ) : (
-                  desiredReplicasText
-                )}
-              </dd>
+              <dt className="co-detail-table__section-header">
+                Desired Count
+                <EditButton
+                  canEdit={canUpdate}
+                  ariaLabel="Edit Desired Count"
+                  onClick={editReplicas}
+                />
+              </dt>
+              <dd>{desiredReplicasText}</dd>
             </dl>
           </div>
           <div className="co-detail-table__section">
