@@ -12,7 +12,7 @@ import {
   ImageManifestVulnDetailsProps,
 } from '../image-manifest-vuln';
 import { fakeVulnFor } from '../../../integration-tests/bad-pods';
-import { Priority, vulnPriority, totalFor } from '../../const';
+import { Priority, vulnPriority, totalFor, priorityFor } from '../../const';
 
 describe(ImageVulnerabilityRow.displayName, () => {
   let wrapper: ShallowWrapper<ImageVulnerabilityRowProps>;
@@ -45,7 +45,7 @@ describe(ImageVulnerabilitiesTable.displayName, () => {
     expect(wrapper.find(ImageVulnerabilityRow).length).toEqual(3);
     const indexes = wrapper
       .find(ImageVulnerabilityRow)
-      .map((r) => vulnPriority.find((p) => p.title === r.props().vulnerability.severity).index);
+      .map((r) => priorityFor(r.props().vulnerability.severity).index);
     expect(indexes).toEqual(_.sortBy(indexes));
   });
 });

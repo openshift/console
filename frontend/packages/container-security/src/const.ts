@@ -125,3 +125,6 @@ export const totalFor = (priority: Priority) => (obj: ImageManifestVuln) => {
       return 0;
   }
 };
+
+export const priorityFor = (severity: string) =>
+  vulnPriority.find(({ title }) => title === severity) || vulnPriority.get(Priority.Unknown);
