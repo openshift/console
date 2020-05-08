@@ -1,7 +1,5 @@
 import * as React from 'react';
 import { match as RouterMatch } from 'react-router-dom';
-
-import { safeLoad } from 'js-yaml';
 import { yamlTemplates } from '../models/yaml-templates';
 import { connectToPlural } from '../kinds';
 import { AsyncComponent } from './utils/async';
@@ -14,6 +12,7 @@ import {
   K8sResourceKind,
 } from '../module/k8s';
 import { ErrorPage404 } from './error';
+import { safeYAMLToJS } from '@console/shared/src/utils/yaml';
 
 export const CreateYAML = connectToPlural((props: CreateYAMLProps) => {
   const {
@@ -39,7 +38,7 @@ export const CreateYAML = connectToPlural((props: CreateYAMLProps) => {
     yamlTemplates.getIn([referenceForModel(kindObj), 'default']) ||
     yamlTemplates.getIn(['DEFAULT', 'default']);
 
-  const obj = safeLoad(template);
+  const obj = safeYAMLToJS(template);
   obj.kind = kindObj.kind;
   obj.metadata = obj.metadata || {};
   if (kindObj.namespaced) {
