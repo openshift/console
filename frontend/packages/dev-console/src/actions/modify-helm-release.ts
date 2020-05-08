@@ -13,7 +13,12 @@ export const deleteHelmRelease = (releaseName: string, namespace: string, redire
         actionLabel: 'Uninstall',
         redirect,
         onSubmit: () => {
-          return coFetchJSON.delete(`/api/helm/release?name=${releaseName}&ns=${namespace}`);
+          return coFetchJSON.delete(
+            `/api/helm/release?name=${releaseName}&ns=${namespace}`,
+            null,
+            null,
+            -1,
+          );
         },
       });
     },

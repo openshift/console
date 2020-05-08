@@ -130,7 +130,7 @@ const HelmInstallUpgradePage: React.FunctionComponent<HelmInstallUpgradePageProp
       helmAction === HelmActionType.Install || helmActionOrigin === HelmActionOrigins.topology;
 
     config
-      .fetch('/api/helm/release', payload)
+      .fetch('/api/helm/release', payload, null, -1)
       .then(async (res: HelmRelease) => {
         let redirect = config.redirectURL;
 
