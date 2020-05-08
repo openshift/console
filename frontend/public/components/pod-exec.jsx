@@ -169,8 +169,7 @@ export const PodExec = connectToFlags(FLAGS.OPENSHIFT)(
 
     render() {
       const { containers, activeContainer, open, error } = this.state;
-      const { message } = this.props;
-
+      const { message, header = true } = this.props;
       let contents = <LoadingBox />;
       if (error) {
         contents = <div className="text-center cos-error-title">{error}</div>;
@@ -180,33 +179,36 @@ export const PodExec = connectToFlags(FLAGS.OPENSHIFT)(
 
       return (
         <div>
-          <div className="co-toolbar">
-            <div className="co-toolbar__group co-toolbar__group--left">
-              <div className="co-toolbar__item">Connecting to</div>
-              <div className="co-toolbar__item">
-                <Dropdown
-                  className="btn-group"
-                  items={_.mapValues(containers, nameWithIcon)}
-                  title={nameWithIcon(activeContainer || <LoadingInline />)}
-                  onChange={this.onChangeContainer}
-                />
-              </div>
-            </div>
-            {!error && (
-              <div className="co-toolbar__group co-toolbar__group--right">
+          {header && (
+            <div className="co-toolbar">
+              <div className="co-toolbar__group co-toolbar__group--left">
+                <div className="co-toolbar__item">Connecting to</div>
                 <div className="co-toolbar__item">
-                  <Button
-                    variant="link"
-                    className="pf-m-link--align-right"
-                    onClick={() => this.setFullscreen(true)}
-                  >
-                    <ExpandIcon className="co-icon-space-r" />
-                    Expand
-                  </Button>
+                  <Dropdown
+                    className="btn-group"
+                    items={_.mapValues(containers, nameWithIcon)}
+                    title={nameWithIcon(activeContainer || <LoadingInline />)}
+                    onChange={this.onChangeContainer}
+                  />
                 </div>
               </div>
-            )}
-          </div>
+
+              {!error && (
+                <div className="co-toolbar__group co-toolbar__group--right">
+                  <div className="co-toolbar__item">
+                    <Button
+                      variant="link"
+                      className="pf-m-link--align-right"
+                      onClick={() => this.setFullscreen(true)}
+                    >
+                      <ExpandIcon className="co-icon-space-r" />
+                      Expand
+                    </Button>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
           {message}
           {contents}
         </div>

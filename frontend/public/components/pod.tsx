@@ -461,7 +461,7 @@ const PodEnvironmentComponent = (props) => (
   <EnvironmentPage obj={props.obj} rawEnvData={props.obj.spec} envPath={envPath} readOnly={true} />
 );
 
-export const PodExecLoader: React.FC<PodExecLoaderProps> = ({ obj, message }) => (
+export const PodExecLoader: React.FC<PodExecLoaderProps> = ({ obj, message, header }) => (
   <div className="co-m-pane__body">
     <div className="row">
       <div className="col-xs-12">
@@ -470,6 +470,7 @@ export const PodExecLoader: React.FC<PodExecLoaderProps> = ({ obj, message }) =>
             loader={() => import('./pod-exec').then((c) => c.PodExec)}
             obj={obj}
             message={message}
+            header={header}
           />
         </div>
       </div>
@@ -598,6 +599,7 @@ type PodDetailsListProps = {
 type PodExecLoaderProps = {
   obj: PodKind;
   message?: React.ReactElement;
+  header?: boolean;
 };
 
 type PodDetailsProps = {

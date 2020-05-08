@@ -9,7 +9,9 @@ import CloudShellTerminalFrame from './CloudShellTerminalFrame';
 import {
   CLOUD_SHELL_LABEL,
   CLOUD_SHELL_USER_ANNOTATION,
+  fetchPodList,
   CloudShellResource,
+  makeTerminalConfigCalls,
 } from './cloud-shell-utils';
 import CloudShellSetup from './setup/CloudShellSetup';
 
@@ -34,6 +36,7 @@ const resource = {
 const CloudShellTerminal: React.FC<CloudShellTerminalProps> = ({ username, onCancel }) => {
   const [data, loaded, loadError] = useK8sWatchResource<CloudShellResource>(resource);
 
+  const [workSpacePod, setWorkspacePod] = React.useState();
   if (loadError) {
     return (
       <StatusBox loaded={loaded} loadError={loadError} label="OpenShift command line terminal" />
@@ -50,8 +53,19 @@ const CloudShellTerminal: React.FC<CloudShellTerminalProps> = ({ username, onCan
     );
     if (workspace) {
       const running = workspace.status?.phase === 'Running';
-      const url = workspace.status?.ideUrl;
-      return <CloudShellTerminalFrame loading={!running} url={url} />;
+      if (running && !workSpacePod) {
+        // making async config calls to terminal API
+        try {
+          makeTerminalConfigCalls(workspace);
+        } catch (e) {
+          // shrug
+        }
+        // Fetching Pod lyst async.
+        fetchPodList(workspace.metadata.namespace, workspace.metadata.name).then((res) => {
+          setWorkspacePod(res[0]);
+        });
+      }
+      return <CloudShellTerminalFrame loading={!running} obj={workSpacePod} />;
     }
   }
 

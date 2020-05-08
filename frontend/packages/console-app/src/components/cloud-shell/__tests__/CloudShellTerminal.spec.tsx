@@ -38,6 +38,5 @@ describe('CloudShellTerminal', () => {
     const frame = wrapper.find(CloudShellTerminalFrame);
     expect(frame).toHaveLength(1);
     expect(frame.props().loading).toBe(false);
-    expect(frame.props().url).toBe('testURL');
   });
 });

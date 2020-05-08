@@ -17,7 +17,9 @@ export class Terminal extends React.Component {
     this.outerRef = React.createRef();
     this.isFullscreen = false;
     this.onResize = () => this.onResize_();
-    this.onDataReceived = (data) => this.terminal && this.terminal.write(data);
+    this.onDataReceived = (data) => {
+      this.terminal && this.terminal.write(data);
+    };
 
     this.terminal = new XTerminal(Object.assign({}, this.props.options));
     this.terminal.on('data', this.props.onData);
@@ -88,14 +90,20 @@ export class Terminal extends React.Component {
       return;
     }
 
-    const pageRect = document.getElementsByClassName('pf-c-page')[0].getBoundingClientRect();
+    const pageRect =
+      document.getElementsByClassName('pf-c-page') &&
+      document.getElementsByClassName('pf-c-page')[0]
+        ? document.getElementsByClassName('pf-c-page')[0].getBoundingClientRect()
+        : document.body.getBoundingClientRect();
     const bodyRect = document.body.getBoundingClientRect();
     const nodeRect = node.getBoundingClientRect();
 
     const { padding } = this.props;
 
     // This assumes we want to fill everything below and to the right.  In full-screen, fill entire viewport
-    const height = Math.floor(pageRect.bottom - (this.isFullscreen ? 0 : nodeRect.top) - padding);
+    // Use body height when node top is too close to pageRect height
+    const bottom = pageRect.bottom - nodeRect.top > 200 ? pageRect.bottom : bodyRect.bottom;
+    const height = Math.floor(bottom - (this.isFullscreen ? 0 : nodeRect.top) - padding);
     const width = Math.floor(
       bodyRect.width - (this.isFullscreen ? 0 : nodeRect.left) - (this.isFullscreen ? 10 : padding),
     );
@@ -145,7 +153,7 @@ Terminal.propTypes = {
 };
 
 Terminal.defaultProps = {
-  padding: 30,
+  padding: 10,
   options: {
     fontFamily: 'monospace',
     fontSize: 16,

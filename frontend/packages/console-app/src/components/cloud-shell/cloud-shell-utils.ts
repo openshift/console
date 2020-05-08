@@ -1,5 +1,7 @@
-import { K8sResourceKind } from '@console/internal/module/k8s';
+import { K8sResourceKind, k8sList } from '@console/internal/module/k8s';
 import { getRandomChars } from '@console/shared';
+import { PodModel } from '@console/internal/models';
+import { coFetchJSON } from '@console/internal/co-fetch';
 
 type environment = {
   value: string;
@@ -35,6 +37,7 @@ export type CloudShellResource = K8sResourceKind & {
 };
 
 export const CLOUD_SHELL_LABEL = 'console.openshift.io/cloudshell';
+export const CLOUD_SHELL_PODNAME_LABEL = 'che.workspace_name';
 export const CLOUD_SHELL_USER_ANNOTATION = 'console.openshift.io/cloudshell-user';
 
 export const createCloudShellResourceName = () => `terminal-${getRandomChars(6)}`;
@@ -86,3 +89,22 @@ export const newCloudShellWorkSpace = (
     },
   },
 });
+
+export const fetchPodList = (ns, worspaceName) => {
+  const labelSelector = { [CLOUD_SHELL_PODNAME_LABEL]: worspaceName };
+  return k8sList(PodModel, {
+    ns,
+    labelSelector,
+  });
+};
+
+export const makeTerminalConfigCalls = (workspace) => {
+  if (workspace?.metadata?.name && workspace?.metadata?.namespace) {
+    const consumeUrl = `api/terminal/${workspace.metadata.namespace}/${workspace.metadata.name}/exec/config`;
+    coFetchJSON
+      .post(consumeUrl, {
+        container: 'dev',
+      })
+      .catch((error) => console.warn(error));
+  }
+};

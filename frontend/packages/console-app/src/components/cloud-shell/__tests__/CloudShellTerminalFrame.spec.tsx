@@ -12,10 +12,4 @@ describe('CloudShellTerminalFrame', () => {
     wrapper.setProps({ loading: false });
     expect(wrapper.find(LoadingBox).exists()).toBe(false);
   });
-
-  it('should render iframe', () => {
-    const wrapper = shallow(<CloudShellTerminalFrame url="test" />);
-    const iframe = wrapper.find('iframe');
-    expect(iframe.props().src).toBe('test');
-  });
 });
