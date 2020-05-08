@@ -450,6 +450,12 @@ export type CronJobKind = {
   };
 };
 
+export type CRDVersion = {
+  name: string;
+  served: boolean;
+  storage: boolean;
+};
+
 export type CustomResourceDefinitionKind = {
   spec: {
     version: string;
@@ -466,6 +472,7 @@ export type CustomResourceDefinitionKind = {
       // NOTE: Actually a subset of JSONSchema, but using this type for convenience
       openAPIV3Schema: JSONSchema6;
     };
+    versions?: CRDVersion[];
   };
   status?: {
     conditions?: K8sResourceCondition[];

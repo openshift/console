@@ -1,6 +1,7 @@
 import * as _ from 'lodash-es';
 
 import {
+  CRDVersion,
   CustomResourceDefinitionKind,
   GroupVersionKind,
   K8sKind,
@@ -38,8 +39,40 @@ export const groupVersionFor = (apiVersion: string) => ({
   version: apiVersion.split('/').length === 2 ? apiVersion.split('/')[1] : apiVersion,
 });
 
+export const getLatestVersionForCRD = (crdVersions: CRDVersion[], legacyCRDVersion: string) => {
+  const served = crdVersions.filter((version) => version.served);
+  const sorted = served.sort((v1, v2) => {
+    // First sort on major version
+    const majorV1 = _.toNumber(v1.name.match(/\d+/)[0]);
+    const majorV2 = _.toNumber(v2.name.match(/\d+/)[0]);
+    if (majorV1 !== majorV2) {
+      return majorV2 - majorV1;
+    }
+    // Then sort on numerical release only
+    if (!v1.name.match(/^(alpha|beta)$/)) {
+      return -1;
+    }
+    if (!v2.name.match(/^(alpha|beta)$/)) {
+      return 1;
+    }
+    // Beta beats alpha
+    const isBetaV1 = v1.name.match(/^(beta)$/);
+    const isBetaV2 = v2.name.match(/^(beta)$/);
+    if (isBetaV1 !== isBetaV2) {
+      return isBetaV1 ? -1 : 1;
+    }
+    // Finally compare minor version
+    const minorV1 = _.toNumber(v1.name.match(/\d+/)[1]);
+    const minorV2 = _.toNumber(v2.name.match(/\d+/)[1]);
+    return minorV2 - minorV1;
+  });
+  return sorted && sorted.length > 0 ? sorted[0].name : legacyCRDVersion;
+};
+
 export const referenceForCRD = (obj: CustomResourceDefinitionKind): GroupVersionKind =>
-  referenceForGroupVersionKind(obj.spec.group)(obj.spec.version)(obj.spec.names.kind);
+  referenceForGroupVersionKind(obj.spec.group)(
+    getLatestVersionForCRD(obj.spec.versions, obj.spec.version),
+  )(obj.spec.names.kind);
 
 export const referenceForOwnerRef = (ownerRef: OwnerReference): GroupVersionKind =>
   referenceForGroupVersionKind(groupVersionFor(ownerRef.apiVersion).group)(

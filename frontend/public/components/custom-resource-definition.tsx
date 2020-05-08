@@ -16,7 +16,13 @@ import {
   ResourceSummary,
   SectionHeading,
 } from './utils';
-import { CustomResourceDefinitionKind, K8sKind, referenceForCRD } from '../module/k8s';
+import {
+  CRDVersion,
+  CustomResourceDefinitionKind,
+  getLatestVersionForCRD,
+  K8sKind,
+  referenceForCRD,
+} from '../module/k8s';
 import { CustomResourceDefinitionModel } from '../models';
 import { Conditions } from './conditions';
 import { resourceListPages } from './resource-pages';
@@ -107,6 +113,31 @@ const Established: React.FC<{ crd: CustomResourceDefinitionKind }> = ({ crd }) =
   );
 };
 
+const CRDVersionList: React.FC<CRDVersionProps> = ({ crdVersions }) => (
+  <div className="table-responsive">
+    <table className="co-m-table-grid co-m-table-grid--bordered table">
+      <thead className="co-m-table-grid__head">
+        <tr>
+          <td>Name</td>
+          <td>Served</td>
+          <td>Storage</td>
+        </tr>
+      </thead>
+      <tbody className="co-m-table-grid__body">
+        <>
+          {_.map(crdVersions, (version) => (
+            <tr className="co-resource-list__item">
+              <td>{version.name}</td>
+              <td>{version.served.toString()}</td>
+              <td>{version.storage.toString()}</td>
+            </tr>
+          ))}
+        </>
+      </tbody>
+    </table>
+  </div>
+);
+
 const CRDTableRow: RowFunction<CustomResourceDefinitionKind> = ({
   obj: crd,
   index,
@@ -128,7 +159,9 @@ const CRDTableRow: RowFunction<CustomResourceDefinitionKind> = ({
       <TableData className={classNames(tableColumnClasses[1], 'co-break-word')}>
         {crd.spec.group}
       </TableData>
-      <TableData className={tableColumnClasses[2]}>{crd.spec.version}</TableData>
+      <TableData className={tableColumnClasses[2]}>
+        {getLatestVersionForCRD(crd.spec.versions, crd.spec.version)}
+      </TableData>
       <TableData className={tableColumnClasses[3]}>{namespaced(crd) ? 'Yes' : 'No'}</TableData>
       <TableData className={tableColumnClasses[4]}>
         <Established crd={crd} />
@@ -167,6 +200,10 @@ const Details: React.FC<{ obj: CustomResourceDefinitionKind }> = ({ obj: crd }) 
       <div className="co-m-pane__body">
         <SectionHeading text="Conditions" />
         <Conditions conditions={crd.status.conditions} />
+      </div>
+      <div className="co-m-pane__body">
+        <SectionHeading text="Versions" />
+        <CRDVersionList crdVersions={crd.spec.versions} />
       </div>
     </>
   );
@@ -238,4 +275,8 @@ CustomResourceDefinitionsPage.displayName = 'CustomResourceDefinitionsPage';
 
 type CustomResourceDefinitionsDetailsPageProps = {
   match: any;
+};
+
+export type CRDVersionProps = {
+  crdVersions: CRDVersion[];
 };
