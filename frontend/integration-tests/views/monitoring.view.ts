@@ -26,6 +26,12 @@ export const firstAlertsListLink = $$('.co-resource-list__item a.co-resource-ite
 // Silence form
 export const matcherNameInput = $('input[placeholder=Name]');
 export const matcherValueInput = $('input[placeholder=Value]');
+export const silenceStartNowCheckbox = $('input[type=checkbox]');
+export const silenceStartsAtInput = $$('[data-test-id="datetime"]').get(0);
+export const silenceEndsAtInput = $$('[data-test-id="datetime"]').get(1);
+export const silenceDurationMenuButton = $('[data-test-id="dropdown-button"]');
+export const silenceDurationOption = (duration: string) =>
+  $(`[data-test-dropdown-menu="${duration}"]`);
 export const commentTextarea = $('textarea');
 export const saveButton = $('button[type=submit]');
 

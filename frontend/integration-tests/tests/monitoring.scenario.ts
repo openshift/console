@@ -20,6 +20,48 @@ const testDetailsPage = (subTitle, alertName, expectLabel = true) => {
   }
 };
 
+const testSilenceTimeInputs = async () => {
+  // Default start and end times
+  expect(monitoringView.silenceStartNowCheckbox.getAttribute('checked')).toBeTruthy();
+  expect(monitoringView.silenceStartsAtInput.getAttribute('value')).toEqual('Now');
+  expect(monitoringView.silenceDurationMenuButton.getText()).toEqual('2h');
+  expect(monitoringView.silenceEndsAtInput.getAttribute('value')).toEqual('2h from now');
+
+  // Change duration
+  await monitoringView.silenceDurationMenuButton.click();
+  await monitoringView.wait(until.presenceOf(monitoringView.silenceDurationOption('1h')));
+  await monitoringView.silenceDurationOption('1h').click();
+  expect(monitoringView.silenceEndsAtInput.getAttribute('value')).toEqual('1h from now');
+
+  // Change to not start now
+  await monitoringView.silenceStartNowCheckbox.click();
+  expect(monitoringView.silenceStartNowCheckbox.getAttribute('checked')).toBeFalsy();
+  // Allow for some difference in times
+  expect(monitoringView.silenceStartsAtInput.getAttribute('value')).not.toEqual('Now');
+  expect(monitoringView.silenceStartsAtInput.getAttribute('value')).toBeTruthy();
+  monitoringView.silenceStartsAtInput.getAttribute('value').then((start: string) => {
+    expect(Date.parse(start) - Date.now()).toBeLessThan(10000);
+    monitoringView.silenceEndsAtInput.getAttribute('value').then((end: string) => {
+      expect(Date.parse(end) - Date.parse(start)).toEqual(60 * 60 * 1000);
+    });
+  });
+
+  // Invalid start time
+  await monitoringView.silenceStartsAtInput.sendKeys('abc');
+  expect(monitoringView.silenceEndsAtInput.getAttribute('value')).toEqual('-');
+
+  // Change to back to start now
+  await monitoringView.silenceStartNowCheckbox.click();
+  expect(monitoringView.silenceStartNowCheckbox.getAttribute('checked')).toBeTruthy();
+  expect(monitoringView.silenceEndsAtInput.getAttribute('value')).toEqual('1h from now');
+
+  // Change duration back again
+  await monitoringView.silenceDurationMenuButton.click();
+  await monitoringView.wait(until.presenceOf(monitoringView.silenceDurationOption('2h')));
+  await monitoringView.silenceDurationOption('2h').click();
+  expect(monitoringView.silenceEndsAtInput.getAttribute('value')).toEqual('2h from now');
+};
+
 describe('Monitoring: Alerts', () => {
   afterEach(() => {
     checkLogs();
@@ -68,6 +110,7 @@ describe('Monitoring: Alerts', () => {
   it('creates a new Silence from an existing alert', async () => {
     await monitoringView.actionButton.click();
     await monitoringView.wait(until.presenceOf(monitoringView.saveButton));
+    await testSilenceTimeInputs();
     await monitoringView.commentTextarea.sendKeys('Test Comment');
     await monitoringView.saveButton.click();
     expect(crudView.errorMessage.isPresent()).toBe(false);
@@ -127,6 +170,7 @@ describe('Monitoring: Silences', () => {
   it('creates a new Silence', async () => {
     await monitoringView.createButton.click();
     await monitoringView.wait(until.presenceOf(monitoringView.matcherNameInput));
+    await testSilenceTimeInputs();
     await monitoringView.matcherNameInput.sendKeys('alertname');
     await monitoringView.matcherValueInput.sendKeys(testAlertName);
     await monitoringView.commentTextarea.sendKeys('Test Comment');
