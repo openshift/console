@@ -244,8 +244,6 @@ github.com/opencontainers/runc/libcontainer/user
 github.com/peterbourgon/diskv
 # github.com/pkg/errors v0.8.1
 github.com/pkg/errors
-# github.com/pmezard/go-difflib v1.0.0
-github.com/pmezard/go-difflib/difflib
 # github.com/pquerna/cachecontrol v0.0.0-20180517163645-1555304b9b35
 github.com/pquerna/cachecontrol
 github.com/pquerna/cachecontrol/cacheobject
@@ -273,8 +271,6 @@ github.com/spf13/cast
 github.com/spf13/cobra
 # github.com/spf13/pflag v1.0.5
 github.com/spf13/pflag
-# github.com/stretchr/testify v1.4.0
-github.com/stretchr/testify/assert
 # github.com/xeipuuv/gojsonpointer v0.0.0-20180127040702-4e3ac2762d5f
 github.com/xeipuuv/gojsonpointer
 # github.com/xeipuuv/gojsonreference v0.0.0-20180127040603-bd5ef7bd5415
@@ -396,7 +392,6 @@ helm.sh/helm/v3/pkg/chart
 helm.sh/helm/v3/pkg/chart/loader
 helm.sh/helm/v3/pkg/chartutil
 helm.sh/helm/v3/pkg/cli
-helm.sh/helm/v3/pkg/cli/values
 helm.sh/helm/v3/pkg/downloader
 helm.sh/helm/v3/pkg/engine
 helm.sh/helm/v3/pkg/getter
@@ -414,7 +409,6 @@ helm.sh/helm/v3/pkg/releaseutil
 helm.sh/helm/v3/pkg/repo
 helm.sh/helm/v3/pkg/storage
 helm.sh/helm/v3/pkg/storage/driver
-helm.sh/helm/v3/pkg/strvals
 helm.sh/helm/v3/pkg/time
 # k8s.io/api v0.0.0-20191016110408-35e52d86657a
 k8s.io/api/admission/v1
