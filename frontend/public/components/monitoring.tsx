@@ -1389,8 +1389,10 @@ const SilenceForm_: React.FC<SilenceFormProps> = ({ defaults, Info, title }) => 
         refreshNotificationPollers();
         history.push(`${SilenceResource.plural}/${encodeURIComponent(_.get(data, 'silenceId'))}`);
       })
-      .catch((err) => setError(_.get(err, 'json.error') || err.message || 'Error saving Silence'))
-      .then(() => setInProgress(false));
+      .catch((err) => {
+        setError(_.get(err, 'json.error') || err.message || 'Error saving Silence');
+        setInProgress(false);
+      });
   };
 
   return (
