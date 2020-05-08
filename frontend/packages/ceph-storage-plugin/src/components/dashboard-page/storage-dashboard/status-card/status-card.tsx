@@ -39,7 +39,7 @@ export const CephAlerts = withDashboardResources(
     return (
       <AlertsBody error={!_.isEmpty(loadError)}>
         {loaded &&
-          alerts.length &&
+          alerts.length > 0 &&
           alerts.map((alert) => <AlertItem key={alertURL(alert, alert.rule.id)} alert={alert} />)}
       </AlertsBody>
     );
@@ -55,7 +55,6 @@ export const StatusCard: React.FC<DashboardItemProps> = ({
 
   React.useEffect(() => {
     watchPrometheus(resiliencyProgressQuery);
-
     return () => {
       stopWatchPrometheusQuery(resiliencyProgressQuery);
     };
@@ -81,10 +80,18 @@ export const StatusCard: React.FC<DashboardItemProps> = ({
         <HealthBody>
           <Gallery className="co-overview-status__health" gutter="md">
             <GalleryItem>
-              <HealthItem title="OCS Cluster" state={cephHealthState.state} />
+              <HealthItem
+                title="OCS Cluster"
+                state={cephHealthState.state}
+                details={cephHealthState.message}
+              />
             </GalleryItem>
             <GalleryItem>
-              <HealthItem title="Data Resiliency" state={dataResiliencyState.state} />
+              <HealthItem
+                title="Data Resiliency"
+                state={dataResiliencyState.state}
+                details={dataResiliencyState.message}
+              />
             </GalleryItem>
           </Gallery>
         </HealthBody>
