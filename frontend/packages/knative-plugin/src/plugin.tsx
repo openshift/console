@@ -222,6 +222,18 @@ const plugin: Plugin<ConsumedExtensions> = [
     },
   },
   {
+    type: 'Page/Resource/Details',
+    properties: {
+      model: models.RevisionModel,
+      loader: async () =>
+        (
+          await import(
+            './components/revisions/RevisionDetailsPage' /* webpackChunkName: "knative-revisions-details page" */
+          )
+        ).default,
+    },
+  },
+  {
     type: 'Page/Resource/List',
     properties: {
       model: models.ServiceModel,

@@ -9,6 +9,8 @@ import { KNATIVE_SERVING_APIGROUP } from '../../const';
 import { isDynamicEventResourceKind } from '../../utils/fetch-dynamic-eventsources-utils';
 import OverviewDetailsKnativeResourcesTab from './OverviewDetailsKnativeResourcesTab';
 import KnativeOverview from './KnativeOverview';
+import { RevisionModel } from '../../models';
+import { getRevisionActions } from '../../actions/getRevisionActions';
 
 interface StateProps {
   kindsInFlight?: boolean;
@@ -45,11 +47,16 @@ export const KnativeResourceOverviewPage: React.ComponentType<KnativeResourceOve
       model.apiGroup === apiInfo.group &&
       model.apiVersion === apiInfo.version,
   );
+  let actions = [...Kebab.getExtensionsActionsForKind(resourceModel), ...Kebab.factory.common];
+  if (resourceModel.kind === RevisionModel.kind) {
+    actions = getRevisionActions();
+  }
+
   return (
     <ResourceOverviewDetails
       item={item}
       kindObj={resourceModel}
-      menuActions={[...Kebab.getExtensionsActionsForKind(resourceModel), ...Kebab.factory.common]}
+      menuActions={actions}
       tabs={tabs}
     />
   );

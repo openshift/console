@@ -7,11 +7,13 @@ import {
   knativeServingResourcesConfigurations,
 } from './get-knative-resources';
 
-export const getRevisionItems = (revisions: K8sResourceKind[]) => {
+export type RevisionItems = { [name: string]: string };
+
+export const getRevisionItems = (revisions: K8sResourceKind[]): RevisionItems => {
   return revisions.reduce((acc, currValue) => {
     acc[currValue.metadata.name] = currValue.metadata.name;
     return acc;
-  }, {});
+  }, {} as RevisionItems);
 };
 
 export const constructObjForUpdate = (traffic, service) => {
@@ -22,7 +24,7 @@ export const constructObjForUpdate = (traffic, service) => {
   };
 };
 
-export const transformTrafficSplitingData = (
+export const transformTrafficSplittingData = (
   obj: K8sResourceKind,
   resources,
 ): K8sResourceKind[] => {

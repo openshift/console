@@ -1,6 +1,7 @@
 import * as React from 'react';
 import {
   GraphElement,
+  Node,
   ComponentFactory as TopologyComponentFactory,
   withDragNode,
   withTargetDrag,
@@ -15,6 +16,9 @@ import {
   nodeDragSourceSpec,
   withEditReviewAccess,
   nodeContextMenu,
+  createMenuItems,
+  TopologyDataObject,
+  getTopologyResourceObject,
 } from '@console/dev-console/src/components/topology';
 import {
   TYPE_EVENT_SOURCE,
@@ -33,6 +37,22 @@ import {
   eventSourceTargetSpec,
   knativeServiceDropTargetSpec,
 } from './knativeComponentUtils';
+import { KebabOption, kebabOptionsToMenu } from '@console/internal/components/utils';
+import { RevisionModel } from '../../models';
+import { getRevisionActions } from '../../actions/getRevisionActions';
+
+const revisionActions = (node: TopologyDataObject): KebabOption[] => {
+  const contextMenuResource = getTopologyResourceObject(node);
+  if (!contextMenuResource) {
+    return null;
+  }
+
+  const menuActions = getRevisionActions();
+  return menuActions.map((a) => a(RevisionModel, contextMenuResource));
+};
+
+const revisionContextMenu = (element: Node) =>
+  createMenuItems(kebabOptionsToMenu(revisionActions(element.getData())));
 
 class KnativeComponentFactory extends AbstractSBRComponentFactory {
   getFactory = (): TopologyComponentFactory => {
@@ -69,7 +89,7 @@ class KnativeComponentFactory extends AbstractSBRComponentFactory {
             withSelection(
               false,
               true,
-            )(withContextMenu(nodeContextMenu)(withNoDrop()(RevisionNode))),
+            )(withContextMenu(revisionContextMenu)(withNoDrop()(RevisionNode))),
           );
         case TYPE_REVISION_TRAFFIC:
           return TrafficLink;
