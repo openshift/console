@@ -23,8 +23,7 @@ import {
   NooBaaBucketClassModel,
 } from '@console/noobaa-storage-plugin/src/models';
 import { ActionGroup, Button } from '@patternfly/react-core';
-import { StorageClass } from '@console/internal/components/storage-class-form';
-import { filterScOnProvisioner, getName, ResourceDropdown } from '@console/shared';
+import { getName, ResourceDropdown, isObjectSC } from '@console/shared';
 import { commonReducer, defaultState } from '../object-bucket-page/state';
 import { OCS_NS } from '../../constants';
 import './create-obc.scss';
@@ -75,11 +74,6 @@ export const CreateOBCPage: React.FC<CreateOBCPageProps> = (props) => {
       });
   };
 
-  const showOnlyObcScs = React.useCallback(
-    (sc: StorageClass) => filterScOnProvisioner(sc, 'noobaa.io/obc'),
-    [],
-  );
-
   return (
     <div className="co-m-pane__body co-m-pane__form">
       <Helmet>
@@ -123,7 +117,7 @@ export const CreateOBCPage: React.FC<CreateOBCPageProps> = (props) => {
                 required
                 name="storageClass"
                 hideClassName="co-required"
-                filter={showOnlyObcScs}
+                filter={isObjectSC}
                 id="sc-dropdown"
               />
               <p className="help-block">
