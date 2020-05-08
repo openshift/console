@@ -1,13 +1,15 @@
 import * as React from 'react';
 import {
+  Node,
   GraphElement,
   ComponentFactory as TopologyComponentFactory,
   withDragNode,
   withSelection,
   withDndDrop,
 } from '@console/topology';
+import { kebabOptionsToMenu } from '@console/internal/components/utils';
 import { WorkloadNode } from '../../components/nodes';
-import { workloadContextMenu, helmReleaseContextMenu } from '../../components/nodeContextMenu';
+import { noRegroupWorkloadContextMenu, createMenuItems } from '../../components/nodeContextMenu';
 import {
   NodeComponentProps,
   nodeDragSourceSpec,
@@ -15,10 +17,14 @@ import {
   withContextMenu,
   withNoDrop,
 } from '../../components/componentUtils';
-import { TYPE_HELM_RELEASE, TYPE_HELM_WORKLOAD } from './const';
 import { withEditReviewAccess } from '../../components/withEditReviewAccess';
-import HelmRelease from './HelmRelease';
 import { AbstractSBRComponentFactory } from '../../components/AbstractSBRComponentFactory';
+import { helmReleaseActions } from '../actions/helmReleaseActions';
+import { TYPE_HELM_RELEASE, TYPE_HELM_WORKLOAD } from './const';
+import HelmRelease from './HelmRelease';
+
+export const helmReleaseContextMenu = (element: Node) =>
+  createMenuItems(kebabOptionsToMenu(helmReleaseActions(element)));
 
 class HelmComponentFactory extends AbstractSBRComponentFactory {
   getFactory = (): TopologyComponentFactory => {
@@ -39,7 +45,10 @@ class HelmComponentFactory extends AbstractSBRComponentFactory {
             >(nodeDropTargetSpec)(
               withEditReviewAccess('patch')(
                 withDragNode(nodeDragSourceSpec(type, false))(
-                  withSelection(false, true)(withContextMenu(workloadContextMenu)(WorkloadNode)),
+                  withSelection(
+                    false,
+                    true,
+                  )(withContextMenu(noRegroupWorkloadContextMenu)(WorkloadNode)),
                 ),
               ),
             ),

@@ -14,7 +14,6 @@ import { nodeActions } from '../actions/nodeActions';
 import { graphActions } from '../actions/graphActions';
 import { TopologyApplicationObject } from '../topology-types';
 import { regroupActions } from '../actions/regroupActions';
-import { helmReleaseActions } from '../actions/helmReleaseActions';
 
 const onKebabOptionClick = (option: KebabOption) => {
   if (option.callback) {
@@ -42,6 +41,9 @@ export const createMenuItems = (actions: KebabMenuOption[]) =>
 export const workloadContextMenu = (element: Node) =>
   createMenuItems(kebabOptionsToMenu(workloadActions(element.getData())));
 
+export const noRegroupWorkloadContextMenu = (element: Node) =>
+  createMenuItems(kebabOptionsToMenu(workloadActions(element.getData(), false)));
+
 export const groupContextMenu = (element: Node, connectorSource?: Node) => {
   const applicationData: TopologyApplicationObject = {
     id: element.getId(),
@@ -65,6 +67,3 @@ export const regroupContextMenu = (element: Node) =>
 
 export const regroupGroupContextMenu = (element: Node) =>
   createMenuItems(kebabOptionsToMenu(regroupActions(element, true)));
-
-export const helmReleaseContextMenu = (element: Node) =>
-  createMenuItems(kebabOptionsToMenu(helmReleaseActions(element)));

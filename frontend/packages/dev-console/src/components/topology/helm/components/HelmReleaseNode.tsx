@@ -41,12 +41,9 @@ const HelmReleaseNode: React.FC<HelmReleaseNodeProps> = ({
 }) => {
   useAnchor(React.useCallback((node: Node) => new RectAnchor(node, 1.5), []));
   const [hover, hoverRef] = useHover();
-  const [{ dragging }, dragNodeRef] = useDragNode(
-    nodeDragSourceSpec(TYPE_HELM_RELEASE, true, editAccess),
-    {
-      element,
-    },
-  );
+  const [{ dragging }, dragNodeRef] = useDragNode(nodeDragSourceSpec(TYPE_HELM_RELEASE, false), {
+    element,
+  });
   const refs = useCombineRefs<SVGRectElement>(dragNodeRef, dndDropRef, hoverRef);
   const [filtered] = useSearchFilter(element.getLabel());
   const { width, height } = element.getDimensions();

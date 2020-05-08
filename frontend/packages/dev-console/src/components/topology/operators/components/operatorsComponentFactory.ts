@@ -8,8 +8,7 @@ import {
 } from '@console/topology';
 import { WorkloadNode } from '../../components/nodes';
 import {
-  workloadContextMenu,
-  regroupGroupContextMenu,
+  noRegroupWorkloadContextMenu,
   NodeComponentProps,
   nodeDragSourceSpec,
   nodeDropTargetSpec,
@@ -26,10 +25,7 @@ class OperatorsComponentFactory extends AbstractSBRComponentFactory {
     return (kind, type): React.ComponentType<{ element: GraphElement }> | undefined => {
       switch (type) {
         case TYPE_OPERATOR_BACKED_SERVICE:
-          return withSelection(
-            false,
-            true,
-          )(withContextMenu(regroupGroupContextMenu)(withNoDrop()(OperatorBackedService)));
+          return withSelection(false, true)(withNoDrop()(OperatorBackedService));
         case TYPE_OPERATOR_WORKLOAD:
           return this.withAddResourceConnector()(
             withEditReviewAccess('patch')(
@@ -40,7 +36,10 @@ class OperatorsComponentFactory extends AbstractSBRComponentFactory {
                 NodeComponentProps
               >(nodeDropTargetSpec)(
                 withDragNode(nodeDragSourceSpec(type, false))(
-                  withSelection(false, true)(withContextMenu(workloadContextMenu)(WorkloadNode)),
+                  withSelection(
+                    false,
+                    true,
+                  )(withContextMenu(noRegroupWorkloadContextMenu)(WorkloadNode)),
                 ),
               ),
             ),

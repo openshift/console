@@ -15,11 +15,14 @@ import {
   withNoDrop,
   nodeDragSourceSpec,
   withEditReviewAccess,
-  nodeContextMenu,
   createMenuItems,
-  TopologyDataObject,
   getTopologyResourceObject,
 } from '@console/dev-console/src/components/topology';
+import { ModifyApplication } from '@console/dev-console/src/actions/modify-application';
+import { Kebab, kebabOptionsToMenu } from '@console/internal/components/utils';
+import { modelFor, referenceFor } from '@console/internal/module/k8s';
+import { RevisionModel, ServiceModel } from '../../models';
+import { getRevisionActions } from '../../actions/getRevisionActions';
 import {
   TYPE_EVENT_SOURCE,
   TYPE_EVENT_SOURCE_LINK,
@@ -37,22 +40,27 @@ import {
   eventSourceTargetSpec,
   knativeServiceDropTargetSpec,
 } from './knativeComponentUtils';
-import { KebabOption, kebabOptionsToMenu } from '@console/internal/components/utils';
-import { RevisionModel } from '../../models';
-import { getRevisionActions } from '../../actions/getRevisionActions';
 
-const revisionActions = (node: TopologyDataObject): KebabOption[] => {
-  const contextMenuResource = getTopologyResourceObject(node);
-  if (!contextMenuResource) {
-    return null;
+export const knativeContextMenu = (element: Node) => {
+  const item = getTopologyResourceObject(element.getData());
+  const model = modelFor(referenceFor(item));
+
+  const actions = [];
+  if (model.kind === ServiceModel.kind) {
+    actions.push(ModifyApplication);
+  }
+  if (model.kind === RevisionModel.kind) {
+    actions.push(...getRevisionActions());
+  } else {
+    actions.push(...Kebab.getExtensionsActionsForKind(model), ...Kebab.factory.common);
   }
 
-  const menuActions = getRevisionActions();
-  return menuActions.map((a) => a(RevisionModel, contextMenuResource));
-};
+  const kebabOptions = actions.map((action) => {
+    return action(model, item);
+  });
 
-const revisionContextMenu = (element: Node) =>
-  createMenuItems(kebabOptionsToMenu(revisionActions(element.getData())));
+  return createMenuItems(kebabOptionsToMenu(kebabOptions));
+};
 
 class KnativeComponentFactory extends AbstractSBRComponentFactory {
   getFactory = (): TopologyComponentFactory => {
@@ -67,7 +75,7 @@ class KnativeComponentFactory extends AbstractSBRComponentFactory {
               NodeComponentProps
             >(knativeServiceDropTargetSpec)(
               withEditReviewAccess('update')(
-                withSelection(false, true)(withContextMenu(nodeContextMenu)(KnativeService)),
+                withSelection(false, true)(withContextMenu(knativeContextMenu)(KnativeService)),
               ),
             ),
           );
@@ -78,7 +86,7 @@ class KnativeComponentFactory extends AbstractSBRComponentFactory {
                 false,
                 true,
               )(
-                withContextMenu(nodeContextMenu)(
+                withContextMenu(knativeContextMenu)(
                   withDndDrop<any, any, {}, NodeComponentProps>(eventSourceTargetSpec)(EventSource),
                 ),
               ),
@@ -89,7 +97,7 @@ class KnativeComponentFactory extends AbstractSBRComponentFactory {
             withSelection(
               false,
               true,
-            )(withContextMenu(revisionContextMenu)(withNoDrop()(RevisionNode))),
+            )(withContextMenu(knativeContextMenu)(withNoDrop()(RevisionNode))),
           );
         case TYPE_REVISION_TRAFFIC:
           return TrafficLink;
