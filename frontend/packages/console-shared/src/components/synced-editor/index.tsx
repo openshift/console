@@ -3,7 +3,8 @@ import * as _ from 'lodash';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { EditorType, EditorToggle } from './editor-toggle';
 import { prune } from '../../utils';
-import { safeYAMLToJS, safeJSToYAML } from '../../utils/yaml';
+import { safeJSToYAML, asyncYAMLToJS } from '../../utils/yaml';
+import { Alert, Button } from '@patternfly/react-core';
 
 const YAML_KEY_ORDER = ['apiVerion', 'kind', 'metadata', 'spec', 'status'];
 export const YAML_TO_JS_OPTIONS = {
@@ -37,6 +38,8 @@ export const SyncedEditor: React.FC<SyncedEditorProps> = ({
   const [formData, setFormData] = React.useState<K8sResourceKind>(initialData);
   const [yaml, setYAML] = React.useState(safeJSToYAML(initialData));
   const [type, setType] = React.useState<EditorType>(initialType);
+  const [safeToSwitch, setSafeToSwitch] = React.useState<boolean>(true);
+  const [yamlWarning, setYAMLWarning] = React.useState<boolean>(false);
 
   const handleFormDataChange = (newFormData: K8sResourceKind = {}) => {
     if (!_.isEqual(newFormData, formData)) {
@@ -46,20 +49,75 @@ export const SyncedEditor: React.FC<SyncedEditorProps> = ({
   };
 
   const handleYAMLChange = (newYAML: string = '') => {
-    handleFormDataChange(safeYAMLToJS(newYAML, formData));
+    asyncYAMLToJS(newYAML)
+      .then((js) => {
+        setSafeToSwitch(true);
+        handleFormDataChange(js);
+      })
+      .catch(() => setSafeToSwitch(false));
+  };
+
+  const changeEditorType = (newType: EditorType): void => {
+    setType(newType);
+    onChangeEditorType(newType);
+  };
+
+  const handleToggleToForm = () => {
+    if (safeToSwitch) {
+      changeEditorType(EditorType.Form);
+    } else {
+      setYAMLWarning(true);
+    }
+  };
+
+  const handleToggleToYAML = () => {
+    setYAML(safeJSToYAML({ ...formData, spec: prune(formData.spec) }, yaml, YAML_TO_JS_OPTIONS));
+    changeEditorType(EditorType.YAML);
+  };
+
+  const onClickYAMLWarningConfirm = () => {
+    setSafeToSwitch(true);
+    setYAMLWarning(false);
+    changeEditorType(EditorType.Form);
+  };
+
+  const onClickYAMLWarningCancel = () => {
+    setYAMLWarning(false);
   };
 
   const onChangeType = (newType) => {
-    if (newType === EditorType.YAML) {
-      setYAML(safeJSToYAML({ ...formData, spec: prune(formData.spec) }, yaml, YAML_TO_JS_OPTIONS));
+    switch (newType) {
+      case EditorType.YAML:
+        handleToggleToYAML();
+        break;
+      case EditorType.Form:
+        handleToggleToForm();
+        break;
+      default:
+        break;
     }
-    setType(newType);
-    onChangeEditorType(newType);
   };
 
   return (
     <>
       <EditorToggle value={type} onChange={onChangeType} />
+      {yamlWarning && (
+        <Alert
+          className="co-synced-editor__yaml-warning"
+          variant="danger"
+          isInline
+          title="Invalid YAML cannot be persisted"
+        >
+          <p>Switching to Form View will delete any invalid YAML.</p>
+          <Button variant="danger" onClick={onClickYAMLWarningConfirm}>
+            Switch and Delete
+          </Button>
+          &nbsp;
+          <Button variant="secondary" onClick={onClickYAMLWarningCancel}>
+            Cancel
+          </Button>
+        </Alert>
+      )}
       {type === EditorType.Form ? (
         <FormEditor initialData={formData} onChange={handleFormDataChange} {...formContext} />
       ) : (

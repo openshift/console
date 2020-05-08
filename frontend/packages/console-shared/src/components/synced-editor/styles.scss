@@ -1,7 +1,13 @@
+@import '../../../../../public/style/vars';
+
 .co-synced-editor__editor-toggle {
   padding: 8px 30px;
   border-bottom: 1px solid #ddd;
   & label {
     margin: 0;
   }
+}
+
+.co-synced-editor__yaml-warning {
+  margin: $grid-gutter-width $grid-gutter-width 0;
 }
