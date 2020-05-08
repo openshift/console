@@ -63,7 +63,7 @@ const HelmReleaseRollbackPage: React.FC<HelmReleaseRollbackPageProps> = ({ match
     };
 
     config
-      .fetch('/api/helm/release', payload)
+      .fetch('/api/helm/release', payload, null, -1)
       .then(() => {
         actions.setStatus({ isSubmitting: false });
         history.push(config.redirectURL);
