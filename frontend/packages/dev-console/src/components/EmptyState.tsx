@@ -65,7 +65,7 @@ const ODCEmptyState: React.FC<Props> = ({
 }) => {
   const addActionExtensions = useExtensions<AddAction>(
     isAddAction,
-  ).filter(({ properties: { id, hide } }) => (hide ? hide(id) : true));
+  ).filter(({ properties: { hide } }) => (hide ? hide() : true));
   return (
     <>
       <div className="odc-empty-state__title">

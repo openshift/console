@@ -19,7 +19,7 @@ namespace ExtensionProperties {
     /** Optional access review to control visibility / enablement of the action. */
     accessReview?: AccessReviewResourceAttributes[];
     /** Optional funtion used to show/hide the add action */
-    hide?: (id: string) => boolean;
+    hide?: () => boolean;
   };
 }
 

@@ -78,6 +78,7 @@ export const fetchEventSourcesCrd = async () => {
     // show warning if there is an error fetching the CRDs
     // eslint-disable-next-line no-console
     console.warn('Error fetching CRDs for dynamic event sources', err);
+    eventSourceModels = [];
   }
 };
 
@@ -110,5 +111,4 @@ export const isDynamicEventResourceKind = (resourceRef: string): boolean => {
   return index !== -1;
 };
 
-export const hideDynamicEventSourceCard = (id: string) =>
-  id === 'knative-event-source' ? eventSourceModels && eventSourceModels.length > 0 : true;
+export const hideDynamicEventSourceCard = () => eventSourceModels && eventSourceModels.length > 0;
