@@ -10,6 +10,7 @@ import { Tooltip } from '@patternfly/react-core';
 import { sortable } from '@patternfly/react-table';
 
 import { ALL_NAMESPACES_KEY, FLAGS, APIError } from '@console/shared';
+import { useAccessReview } from '@console/internal/components/utils';
 import { connectToModel } from '../kinds';
 import { LocalResourceAccessReviewsModel, ResourceAccessReviewsModel } from '../models';
 import {
@@ -623,6 +624,19 @@ const APIResourcePage_ = ({
   kindsInFlight: boolean;
   flags: FlagsObject;
 }) => {
+  const namespace = kindObj?.namespaced ? match.params.ns : undefined;
+
+  const canCreateResourceAccessReview = useAccessReview({
+    group: namespace
+      ? LocalResourceAccessReviewsModel.apiGroup
+      : ResourceAccessReviewsModel.apiGroup,
+    resource: namespace
+      ? LocalResourceAccessReviewsModel.plural
+      : ResourceAccessReviewsModel.plural,
+    namespace,
+    verb: 'create',
+  });
+
   if (!kindObj) {
     return kindsInFlight ? (
       <LoadingBox />
@@ -665,15 +679,13 @@ const APIResourcePage_ = ({
     });
   }
 
-  if (flags[FLAGS.OPENSHIFT]) {
+  if (flags[FLAGS.OPENSHIFT] && canCreateResourceAccessReview) {
     pages.push({
       href: 'access',
       name: 'Access Review',
       component: APIResourceAccessReview,
     });
   }
-
-  const namespace = kindObj.namespaced ? match.params.ns : null;
 
   return (
     <>
