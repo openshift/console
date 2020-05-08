@@ -1,4 +1,3 @@
-import * as Bitbucket from 'bitbucket';
 import * as ParseBitbucketUrl from 'parse-bitbucket-url';
 import {
   GitSource,
@@ -9,18 +8,16 @@ import {
   RepoFileList,
 } from '../types';
 import { BaseService } from './base-service';
+import { coFetchJSON } from '@console/internal/co-fetch';
 
 export class BitbucketService extends BaseService {
-  private readonly client: Bitbucket;
-
   private readonly metadata: RepoMetadata;
+
+  private readonly baseURL = 'https://api.bitbucket.org/2.0';
 
   constructor(gitsource: GitSource) {
     super(gitsource);
     this.metadata = this.getRepoMetadata();
-    this.client = new Bitbucket();
-    const creds = this.getAuthProvider();
-    if (creds) this.client.authenticate(creds);
   }
 
   protected getAuthProvider = (): any => {
@@ -37,30 +34,24 @@ export class BitbucketService extends BaseService {
   };
 
   getRepoMetadata = (): RepoMetadata => {
-    const { name, owner, source } = ParseBitbucketUrl(this.gitsource.url);
-    return { repoName: name, owner, host: source, defaultBranch: this.gitsource.ref || 'master' };
+    const { name, owner, host, branch } = ParseBitbucketUrl(this.gitsource.url);
+    return { repoName: name, owner, host, defaultBranch: this.gitsource.ref || branch };
   };
 
   isRepoReachable = async (): Promise<boolean> => {
+    const url = `${this.baseURL}/repositories/${this.metadata.owner}/${this.metadata.repoName}`;
     try {
-      const { data } = await this.client.repositories.get({
-        // eslint-disable-next-line @typescript-eslint/camelcase
-        repo_slug: this.metadata.repoName,
-        username: this.metadata.owner,
-      });
-      return data.name.toLocaleLowerCase() === this.metadata.repoName.toLocaleLowerCase();
+      const data = await coFetchJSON(url);
+      return data.slug === this.metadata.repoName;
     } catch (e) {
       return false;
     }
   };
 
   getRepoBranchList = async (): Promise<BranchList> => {
+    const url = `${this.baseURL}/repositories/${this.metadata.owner}/${this.metadata.repoName}/refs/branches`;
     try {
-      const { data } = await this.client.refs.listBranches({
-        // eslint-disable-next-line @typescript-eslint/camelcase
-        repo_slug: this.metadata.repoName,
-        username: this.metadata.owner,
-      });
+      const data = await coFetchJSON(url);
       const list = data.values.map((b) => b.name);
       return { branches: list };
     } catch (e) {
@@ -69,15 +60,9 @@ export class BitbucketService extends BaseService {
   };
 
   getRepoFileList = async (): Promise<RepoFileList> => {
+    const url = `${this.baseURL}/repositories/${this.metadata.owner}/${this.metadata.repoName}/src/${this.metadata.defaultBranch}/?pagelen=50`;
     try {
-      const { data } = await this.client.repositories.readSrc({
-        node: this.metadata.defaultBranch,
-        path: '',
-        username: this.metadata.owner,
-        // eslint-disable-next-line @typescript-eslint/camelcase
-        repo_slug: this.metadata.repoName,
-        pagelen: 50,
-      });
+      const data = await coFetchJSON(url);
       const files = data.values.map((f) => f.path);
       return { files };
     } catch (e) {
@@ -86,12 +71,9 @@ export class BitbucketService extends BaseService {
   };
 
   getRepoLanguageList = async (): Promise<RepoLanguageList> => {
+    const url = `${this.baseURL}/repositories/${this.metadata.owner}/${this.metadata.repoName}`;
     try {
-      const { data } = await this.client.repositories.get({
-        // eslint-disable-next-line @typescript-eslint/camelcase
-        repo_slug: this.metadata.repoName,
-        username: this.metadata.owner,
-      });
+      const data = await coFetchJSON(url);
       return { languages: [data.language] };
     } catch (e) {
       return { languages: [] };
@@ -99,15 +81,9 @@ export class BitbucketService extends BaseService {
   };
 
   isDockerfilePresent = async (): Promise<boolean> => {
+    const url = `${this.baseURL}/repositories/${this.metadata.owner}/${this.metadata.repoName}/src/${this.metadata.defaultBranch}/Dockerfile`;
     try {
-      // this would throw an error if Dockerfile doesn't exist.
-      await this.client.repositories.readSrc({
-        username: this.metadata.owner,
-        // eslint-disable-next-line @typescript-eslint/camelcase
-        repo_slug: this.metadata.repoName,
-        path: 'Dockerfile',
-        node: this.metadata.defaultBranch,
-      });
+      await coFetchJSON(url);
       return true;
     } catch (e) {
       return false;
@@ -115,30 +91,20 @@ export class BitbucketService extends BaseService {
   };
 
   getDockerfileContent = async (): Promise<string | null> => {
+    const url = `${this.baseURL}/repositories/${this.metadata.owner}/${this.metadata.repoName}/src/${this.metadata.defaultBranch}/Dockerfile`;
     try {
-      const resp = await this.client.repositories.readSrc({
-        username: this.metadata.owner,
-        // eslint-disable-next-line @typescript-eslint/camelcase
-        repo_slug: this.metadata.repoName,
-        path: 'Dockerfile',
-        node: this.metadata.defaultBranch,
-      });
-      return resp.data as string;
+      const data = await coFetchJSON(url);
+      return data as string;
     } catch (e) {
       return null;
     }
   };
 
   getPackageJsonContent = async (): Promise<string | null> => {
+    const url = `${this.baseURL}/repositories/${this.metadata.owner}/${this.metadata.repoName}/src/${this.metadata.defaultBranch}/package.json`;
     try {
-      const resp = await this.client.repositories.readSrc({
-        username: this.metadata.owner,
-        // eslint-disable-next-line @typescript-eslint/camelcase
-        repo_slug: this.metadata.repoName,
-        path: 'package.json',
-        node: this.metadata.defaultBranch,
-      });
-      return resp.data as string;
+      const data = await coFetchJSON(url);
+      return data as string;
     } catch (e) {
       return null;
     }
