@@ -5,6 +5,7 @@
   height: 100%;
   color: var(--pf-global--Color--light-100);
   overflow: hidden;
+  position: absolute;
 
   & > iframe {
     height: 100%;

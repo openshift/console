@@ -1,26 +1,29 @@
 import * as React from 'react';
 import { CSSTransition } from 'react-transition-group';
-import { DraggableData, DraggableCore } from 'react-draggable';
+import { DraggableEvent } from 'react-draggable';
+import DraggableCoreIFrameFix from './DraggableCoreIFrameFix';
 import './Drawer.scss';
 
 type DrawerProps = {
   /**
-   * Height of the drawer,
-   * should be set when used as controlled component with onChange callback
+   * Controlled height of the drawer.
+   * Should be set when used as controlled component with onChange callback.
    */
   height?: number;
   /**
    * Default Value: 300
-   * default height of the drawer component,
-   * should be set when used as Uncontrolled component
+   * Uncontrolled default height of the drawer.
    */
   defaultHeight?: number;
   /**
-   * Defines the minimized state of drawer
-   * false: Height is minimum height (minimized state)
-   * true: Height is greater than minimum height
+   * Toggles controlled open state.
    */
   open?: boolean;
+  /**
+   * Default Value: true
+   * Uncontrolled open state of the drawer on first render.
+   */
+  defaultOpen?: boolean;
   /**
    * Maximum height drawer can be resized to.
    */
@@ -53,61 +56,79 @@ const useSize = <T extends HTMLElement>(): [number, (element: T) => void] => {
   return [height, callback];
 };
 
+// get the pageX value from a mouse or touch event
+const getPageY = (e: DraggableEvent): number =>
+  (e as MouseEvent).pageY ?? (e as TouchEvent).touches?.[0]?.pageY;
+
 const Drawer: React.FC<DrawerProps> = ({
   children,
   defaultHeight = 300,
   height,
   maxHeight = '100%',
-  open = true,
+  open,
+  defaultOpen = true,
   resizable = false,
   header,
   onChange,
 }) => {
+  const drawerRef = React.useRef<HTMLDivElement>();
   const [heightState, setHeightState] = React.useState(defaultHeight);
-  const lastObservedHeightRef = React.useRef<number>(0);
+  const [openState, setOpenState] = React.useState(defaultOpen);
+  const lastObservedHeightRef = React.useRef<number>();
+  const startRef = React.useRef<number>();
   const [minHeight, headerRef] = useSize<HTMLDivElement>();
-  const resizeHeight = height ?? heightState;
   const minimumHeight = minHeight ?? 0;
-  const handleDrag = (e: MouseEvent, data: DraggableData) => {
-    const newHeight = resizeHeight - data.y;
+
+  // merge controlled and uncontrolled states
+  const currentOpen = open ?? openState;
+  const currentHeight = height ?? heightState;
+
+  const setHeight = (drawerHeight: number, forceOpen?: boolean) => {
+    const newHeight = Math.max(drawerHeight, minimumHeight);
+    const newOpen = forceOpen ?? newHeight > minimumHeight;
+    setHeightState(newHeight);
+    setOpenState(newOpen);
     if (onChange) {
-      if (newHeight > minimumHeight) {
-        onChange(true, newHeight);
-      } else {
-        onChange(false, minimumHeight);
-      }
-    } else {
-      setHeightState(newHeight);
+      onChange(newOpen, newHeight);
     }
   };
 
-  const handleResizeStart = (e: MouseEvent, data: DraggableData) => {
-    lastObservedHeightRef.current = resizeHeight;
-    const newHeight = resizeHeight - data.y;
-    // if the drawer is in minimized state and drag started then
-    // reset the lastObservedHeight to minimumHeight
-    if (onChange && !open && newHeight > minimumHeight) {
-      onChange(false, minimumHeight);
+  const handleDrag = (e: DraggableEvent) => {
+    setHeight(startRef.current - getPageY(e));
+  };
+
+  const handleResizeStart = (e: DraggableEvent) => {
+    lastObservedHeightRef.current = currentHeight;
+    // always start with actual drawer height
+    const drawerHeight = drawerRef.current?.offsetHeight || currentHeight;
+    startRef.current = drawerHeight + getPageY(e);
+    if (drawerHeight !== currentHeight) {
+      setHeight(drawerHeight);
     }
   };
 
-  const handleResizeStop = (e: MouseEvent, data: DraggableData) => {
-    const newHeight = resizeHeight - data.y;
-    if (onChange && newHeight <= minimumHeight) {
-      onChange(false, lastObservedHeightRef.current);
+  const handleResizeStop = () => {
+    if (currentHeight <= minimumHeight) {
+      setHeight(lastObservedHeightRef.current, false);
     }
   };
+
   const draggable = resizable && (
-    <DraggableCore onDrag={handleDrag} onStart={handleResizeStart} onStop={handleResizeStop}>
+    <DraggableCoreIFrameFix
+      onDrag={handleDrag}
+      onStart={handleResizeStart}
+      onStop={handleResizeStop}
+    >
       <div className="ocs-drawer__drag-handle" />
-    </DraggableCore>
+    </DraggableCoreIFrameFix>
   );
   return (
     <CSSTransition appear in timeout={225} classNames="ocs-drawer">
       <div
+        ref={drawerRef}
         className="ocs-drawer"
         style={{
-          height: open ? resizeHeight : minimumHeight,
+          height: currentOpen ? currentHeight : minimumHeight,
           maxHeight,
           minHeight: minimumHeight,
         }}

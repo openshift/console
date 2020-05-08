@@ -18,14 +18,12 @@ const getMastheadHeight = (): number => {
 };
 
 const CloudShellDrawer: React.FC<CloudShellDrawerProps> = ({ children, onClose }) => {
-  const [height, setHeight] = React.useState(365);
   const [expanded, setExpanded] = React.useState<boolean>(true);
   const onMRButtonClick = (expandedState: boolean) => {
     setExpanded(!expandedState);
   };
-  const handleChange = (openState: boolean, resizeHeight: number) => {
+  const handleChange = (openState: boolean) => {
     setExpanded(openState);
-    setHeight(resizeHeight);
   };
   const header = (
     <Flex style={{ flexGrow: 1 }}>
@@ -65,7 +63,7 @@ const CloudShellDrawer: React.FC<CloudShellDrawerProps> = ({ children, onClose }
   return (
     <Drawer
       open={expanded}
-      height={height}
+      defaultHeight={365}
       header={header}
       maxHeight={`calc(100vh - ${getMastheadHeight()}px)`}
       onChange={handleChange}
