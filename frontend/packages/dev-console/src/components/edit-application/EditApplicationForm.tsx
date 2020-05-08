@@ -52,6 +52,7 @@ const EditApplicationForm: React.FC<FormikProps<FormikValues> & EditApplicationF
         submitLabel="Save"
         disableSubmit={!dirty || !_.isEmpty(errors)}
         resetLabel="Cancel"
+        sticky
       />
     </Form>
   </>
