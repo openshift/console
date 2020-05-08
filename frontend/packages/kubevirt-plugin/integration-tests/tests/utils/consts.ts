@@ -163,6 +163,26 @@ export enum DISK_INTERFACE {
   scsi = 'scsi',
 }
 
+export const diskAccessMode = {
+  ReadWriteOnce: {
+    value: 'ReadWriteOnce',
+    label: 'Single User (RWO)',
+  },
+  ReadWriteMany: {
+    value: 'ReadWriteMany',
+    label: 'Shared Access (RWX)',
+  },
+  ReadOnlyMany: {
+    value: 'ReadOnlyMany',
+    label: 'Read Only (ROX)',
+  },
+};
+
+export const diskVolumeMode = {
+  Block: 'Block',
+  Filesystem: 'Filesystem',
+};
+
 export const networkTabCol = {
   name: 0,
   model: 1,

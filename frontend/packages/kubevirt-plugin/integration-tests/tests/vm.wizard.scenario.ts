@@ -8,7 +8,12 @@ import {
 } from '@console/shared/src/test-utils/utils';
 import { getAnnotations, getLabels } from '../../src/selectors/selectors';
 import { VirtualMachine } from './models/virtualMachine';
-import { getResourceObject, resolveStorageDataAttribute } from './utils/utils';
+import {
+  getResourceObject,
+  resolveStorageDataAttribute,
+  selectNonDefaultAccessMode,
+  selectNonDefaultVolumeMode,
+} from './utils/utils';
 import {
   VM_BOOTUP_TIMEOUT_SECS,
   CLONE_VM_TIMEOUT_SECS,
@@ -24,8 +29,8 @@ import {
   vmConfig,
   getProvisionConfigs,
   getTestDataVolume,
-  kubevirtStorage,
   VMTestCaseIDs,
+  kubevirtStorage,
 } from './vm.wizard.configs';
 import {
   Flavor,
@@ -39,6 +44,8 @@ describe('Kubevirt create VM using wizard', () => {
   const leakedResources = new Set<string>();
   const provisionConfigs = getProvisionConfigs();
   const testDataVolume = getTestDataVolume();
+  const defaultAccessMode = resolveStorageDataAttribute(kubevirtStorage, 'accessMode');
+  const defaultVolumeMode = resolveStorageDataAttribute(kubevirtStorage, 'volumeMode');
 
   beforeAll(async () => {
     createResources([multusNAD, testDataVolume]);
@@ -133,6 +140,9 @@ describe('Kubevirt create VM using wizard', () => {
   it(
     'ID(CNV-3052) Creates DV with correct accessMode/volumeMode',
     async () => {
+      expect(defaultAccessMode).toBeDefined();
+      expect(defaultVolumeMode).toBeDefined();
+
       const testVMConfig = vmConfig(
         'test-dv',
         testName,
@@ -144,11 +154,42 @@ describe('Kubevirt create VM using wizard', () => {
       await withResource(leakedResources, vm.asResource(), async () => {
         await vm.create(testVMConfig);
         const vmDataVolume = getResourceObject(`${vm.name}-rootdisk`, vm.namespace, 'dv');
-        const expectedAccessMode = resolveStorageDataAttribute(kubevirtStorage, 'accessMode');
-        const expectedVolumeMode = resolveStorageDataAttribute(kubevirtStorage, 'volumeMode');
 
-        expect(expectedAccessMode).toBeDefined();
-        expect(expectedVolumeMode).toBeDefined();
+        expect(vmDataVolume.spec.pvc.accessModes[0]).toEqual(defaultAccessMode);
+        expect(vmDataVolume.spec.pvc.volumeMode).toEqual(defaultVolumeMode);
+      });
+    },
+    VM_BOOTUP_TIMEOUT_SECS,
+  );
+
+  it(
+    'ID(CNV-4096) Creates DV with user-selected accessMode/volumeMode',
+    async () => {
+      expect(defaultAccessMode).toBeDefined();
+      expect(defaultVolumeMode).toBeDefined();
+      const expectedAccessMode = selectNonDefaultAccessMode(defaultAccessMode).value;
+      const expectedVolumeMode = selectNonDefaultVolumeMode(defaultVolumeMode);
+
+      const clonedDiskProvisionConfig = provisionConfigs.get(ProvisionConfigName.DISK);
+      clonedDiskProvisionConfig.storageResources[0].accessMode = expectedAccessMode;
+      clonedDiskProvisionConfig.storageResources[0].volumeMode = expectedVolumeMode;
+
+      const testVMConfig = vmConfig(
+        'test-dv',
+        testName,
+        provisionConfigs.get(ProvisionConfigName.URL),
+      );
+      testVMConfig.networkResources = [];
+      const vm = new VirtualMachine(testVMConfig);
+
+      await withResource(leakedResources, vm.asResource(), async () => {
+        await vm.create(testVMConfig);
+        const vmDataVolume = getResourceObject(
+          `${vm.name}-${testDataVolume.metadata.name}`,
+          vm.namespace,
+          'dv',
+        );
+
         expect(vmDataVolume.spec.pvc.accessModes[0]).toEqual(expectedAccessMode);
         expect(vmDataVolume.spec.pvc.volumeMode).toEqual(expectedVolumeMode);
       });
