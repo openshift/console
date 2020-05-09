@@ -1,9 +1,15 @@
+import * as _ from 'lodash';
 import { k8sGet, K8sResourceKind } from '@console/internal/module/k8s';
-import { setFlag, handleError } from '@console/internal/actions/features';
+import { ClusterServiceVersionModel, SubscriptionModel } from '@console/operator-lifecycle-manager';
+import { handleError, setFlag } from '@console/internal/actions/features';
 import { FeatureDetector } from '@console/plugin-sdk';
-import { SubscriptionModel } from '@console/operator-lifecycle-manager';
 import { OCSServiceModel } from './models';
-import { OCS_INDEPENDENT_CR_NAME, CEPH_STORAGE_NAMESPACE } from './constants';
+import {
+  OCS_INDEPENDENT_CR_NAME,
+  CEPH_STORAGE_NAMESPACE,
+  OCS_SUPPORT_ANNOTATION,
+} from './constants';
+import { getAnnotations } from '@console/shared/src/selectors/common';
 
 export const OCS_INDEPENDENT_FLAG = 'OCS_INDEPENDENT';
 
@@ -20,19 +26,46 @@ export const detectIndependentMode: FeatureDetector = (dispatch) =>
     },
   );
 
-export const OCS_VERSION_4_5_FLAG = 'OCS_VERSION_4_5_FLAG';
-
-export const isOCS45AndAboveVersion = (subscription: K8sResourceKind): boolean => {
-  const version = subscription?.status?.currentCSV;
-  return version && version.includes('ocs-operator.v4') && version.split('.')[2] >= 5;
+/* Key and Value should be same value received in CSV  */
+export const OCS_SUPPORT_FLAGS = {
+  SNAPSHOT: 'SNAPSHOT',
+  EXTERNAL: 'EXTERNAL',
 };
 
-export const detectOCSVersion45AndAbove: FeatureDetector = (dispatch) =>
-  k8sGet(SubscriptionModel, 'ocs-subscription', CEPH_STORAGE_NAMESPACE).then(
-    (obj: K8sResourceKind) => dispatch(setFlag(OCS_VERSION_4_5_FLAG, isOCS45AndAboveVersion(obj))),
-    (err) => {
-      err?.response?.status === 404
-        ? dispatch(setFlag(OCS_VERSION_4_5_FLAG, false))
-        : handleError(err, OCS_VERSION_4_5_FLAG, dispatch, detectOCSVersion45AndAbove);
-    },
-  );
+const handleOCSError = (res, flags, dispatch, cb) => {
+  const status = res?.response?.status;
+  if (_.includes([403, 502], status)) {
+    _.keys(flags).forEach((feature) => {
+      dispatch(setFlag(feature, undefined));
+    });
+  }
+  if (!_.includes([401, 403, 500], status)) {
+    setTimeout(() => cb(dispatch), 15000);
+  }
+};
+
+export const detectOCSSupportedFeatures: FeatureDetector = async (dispatch) => {
+  try {
+    const subscription = await k8sGet(
+      SubscriptionModel,
+      'ocs-subscription',
+      CEPH_STORAGE_NAMESPACE,
+    );
+    const ocsCSV = await k8sGet(
+      ClusterServiceVersionModel,
+      subscription?.status?.currentCSV,
+      CEPH_STORAGE_NAMESPACE,
+    );
+
+    const support = getAnnotations(ocsCSV)[OCS_SUPPORT_ANNOTATION];
+    _.keys(OCS_SUPPORT_FLAGS).forEach((feature) => {
+      dispatch(setFlag(feature, support.includes(feature.toLowerCase())));
+    });
+  } catch (error) {
+    error?.response?.status === 404
+      ? _.keys(OCS_SUPPORT_FLAGS).forEach((feature) => {
+          dispatch(setFlag(feature, false));
+        })
+      : handleOCSError(error, OCS_SUPPORT_FLAGS, dispatch, detectOCSSupportedFeatures);
+  }
+};

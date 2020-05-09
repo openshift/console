@@ -1,5 +1,4 @@
 import * as _ from 'lodash';
-import { ClusterServiceVersionKind } from '@console/operator-lifecycle-manager';
 import { HealthState } from '@console/shared/src/components/dashboard/status-card/states';
 import { DataValidator, DataState, ErrorType, Field } from './types';
 import { K8sResourceKind } from '@console/internal/module/k8s';
@@ -22,12 +21,6 @@ export const checkError = (data: DataState): ErrorType[] => {
     else errors.push({ field: key as Field, message: '' });
   }
   return errors;
-};
-
-export const checkForIndependentSupport = (csv: ClusterServiceVersionKind): boolean => {
-  const independent: string =
-    csv.metadata.annotations?.['external.cluster.ocs.openshift.io/supported'];
-  return independent === 'true';
 };
 
 enum ClusterPhase {
