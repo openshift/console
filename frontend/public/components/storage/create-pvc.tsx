@@ -266,6 +266,7 @@ export const CreatePVCForm: React.FC<CreatePVCFormProps> = (props) => {
         defaultRequestSizeValue={requestSizeValue}
         dropdownUnits={dropdownUnits}
         describedBy="request-size-help"
+        inputID="request-size-input"
       />
       <p className="help-block" id="request-size-help">
         Desired storage capacity.
