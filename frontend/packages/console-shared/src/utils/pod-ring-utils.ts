@@ -26,11 +26,12 @@ import {
   getPodsForDaemonSets,
 } from './resource-utils';
 
+import './pod-ring-text.scss';
+
 type PodRingLabelType = {
   subTitle: string;
   title: string;
   titleComponent: React.ReactElement;
-  subTitleComponent: React.ReactElement;
 };
 
 export const podRingFirehoseProps = {
@@ -78,40 +79,40 @@ const getTitleAndSubtitle = (
   desiredPodCount: number,
 ) => {
   let titlePhrase;
-  let subTitlePhrase;
+  let subTitlePhrase = '';
+  let longSubtitle = false;
 
-  // handles the intial state when the first pod is coming up and the state for no pods(scaled to zero)
+  // handles the initial state when the first pod is coming up and the state for no pods(scaled to zero)
   if (!currentPodCount) {
     titlePhrase = isPending ? '0' : `Scaled to 0`;
-    subTitlePhrase = desiredPodCount ? `scaling to ${desiredPodCount}` : '';
+    if (desiredPodCount) {
+      subTitlePhrase = `scaling to ${desiredPodCount}`;
+      longSubtitle = true;
+    }
   }
 
   // handles the idle state or scaling to desired no. of pods
   if (currentPodCount) {
     titlePhrase = currentPodCount.toString();
-    subTitlePhrase =
-      currentPodCount === desiredPodCount
-        ? pluralizeString(currentPodCount, 'pod')
-        : `scaling to ${desiredPodCount}`;
+    if (currentPodCount === desiredPodCount) {
+      subTitlePhrase = pluralizeString(currentPodCount, 'pod');
+    } else {
+      subTitlePhrase = `scaling to ${desiredPodCount}`;
+      longSubtitle = true;
+    }
   }
 
-  return { title: titlePhrase, subTitle: subTitlePhrase };
+  return { title: titlePhrase, subTitle: subTitlePhrase, longSubtitle };
 };
 
-const getTitleAndSubtitleComponent = (
-  isPending: boolean,
-  currentPodCount: number,
-  kind: string,
-) => ({
-  titleComponent:
-    !currentPodCount && !isPending
-      ? React.createElement(ChartLabel, { style: { fontSize: '14px' } })
-      : undefined,
-  subTitleComponent:
-    kind === 'Revision'
-      ? React.createElement(ChartLabel, { style: { fontSize: '14px' } })
-      : undefined,
-});
+const getTitleComponent = (longSubtitle: boolean = false, reversed: boolean = false) =>
+  React.createElement(ChartLabel, {
+    dy: longSubtitle ? -5 : 0,
+    style: { lineHeight: '11px' },
+    className: `pf-chart-donut-title ${
+      reversed ? 'pod-ring__center-text--reversed' : 'pod-ring__center-text'
+    }`,
+  });
 
 export const podRingLabel = (
   obj: K8sResourceKind,
@@ -123,14 +124,18 @@ export const podRingLabel = (
   let title;
   let subTitle;
   let isPending;
+  let titleData;
   switch (ownerKind) {
     case DaemonSetModel.kind:
       currentPodCount = obj.status?.currentNumberScheduled;
       desiredPodCount = obj.status?.desiredNumberScheduled;
+      desiredPodCount = obj.status?.desiredNumberScheduled;
       isPending = isPendingPods(pods, currentPodCount, desiredPodCount);
+      titleData = getTitleAndSubtitle(isPending, currentPodCount, desiredPodCount);
       return {
-        ...getTitleAndSubtitle(isPending, currentPodCount, desiredPodCount),
-        ...getTitleAndSubtitleComponent(isPending, currentPodCount, ownerKind),
+        title: titleData.title,
+        subTitle: titleData.subTitle,
+        titleComponent: getTitleComponent(titleData.longSubtitle),
       };
     case RevisionModel.kind:
       currentPodCount = obj.status?.readyReplicas;
@@ -139,7 +144,13 @@ export const podRingLabel = (
       if (!isPending && !desiredPodCount) {
         title = 'Autoscaled';
         subTitle = 'to 0';
-      } else if (isPending) {
+        return {
+          title,
+          subTitle,
+          titleComponent: getTitleComponent(false, true),
+        };
+      }
+      if (isPending) {
         title = '0';
         subTitle = `scaling to ${desiredPodCount}`;
       } else {
@@ -149,15 +160,17 @@ export const podRingLabel = (
       return {
         title,
         subTitle,
-        ...getTitleAndSubtitleComponent(isPending, currentPodCount, ownerKind),
+        titleComponent: getTitleComponent(),
       };
     default:
       currentPodCount = obj.status?.readyReplicas;
       desiredPodCount = obj.spec?.replicas;
       isPending = isPendingPods(pods, currentPodCount, desiredPodCount);
+      titleData = getTitleAndSubtitle(isPending, currentPodCount, desiredPodCount);
       return {
-        ...getTitleAndSubtitle(isPending, currentPodCount, desiredPodCount),
-        ...getTitleAndSubtitleComponent(isPending, currentPodCount, ownerKind),
+        title: titleData.title,
+        subTitle: titleData.subTitle,
+        titleComponent: getTitleComponent(titleData.longSubtitle),
       };
   }
 };

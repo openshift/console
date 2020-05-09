@@ -68,11 +68,7 @@ const PodRing: React.FC<PodRingProps> = ({
     handleScaling(clickCount + operation);
   };
   const resourceObj = rc || obj;
-  const { title, subTitle, titleComponent, subTitleComponent } = podRingLabel(
-    resourceObj,
-    obj.kind,
-    pods,
-  );
+  const { title, subTitle, titleComponent } = podRingLabel(resourceObj, obj.kind, pods);
 
   return (
     <Split>
@@ -84,7 +80,6 @@ const PodRing: React.FC<PodRingProps> = ({
             subTitle={subTitle}
             title={title}
             titleComponent={titleComponent}
-            subTitleComponent={subTitleComponent}
           />
         </div>
       </SplitItem>
