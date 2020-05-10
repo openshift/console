@@ -9,7 +9,7 @@ import {
   Patch,
   ServiceAccountKind,
 } from '@console/internal/module/k8s';
-import { getNamespace } from '@console/shared';
+import { getNamespace, getRandomChars } from '@console/shared';
 import { getResource } from '../../../utils';
 import {
   SecretModel,
@@ -39,11 +39,9 @@ import {
   getNewDiskName,
   setNewSourceDisk,
   getSourceKind,
-  getSerialNumber,
   setNewSourceVolume,
   areThereDupSerials,
   getSerial,
-  getEnvVarSource,
 } from './selectors';
 import { SOURCES, EnvDisk, NameValuePairs } from './types';
 import { VMWrapper } from '../../../k8s/wrapper/vm/vm-wrapper';
@@ -151,12 +149,8 @@ const VMEnvironment = withHandlePromise<VMEnvironmentProps>(
     const [errMsg, setErrMsg] = React.useState(errorMessage);
     const [isSuccess, setIsSuccess] = React.useState(false);
 
-    const setUsedSources = (isReload: boolean = false): EnvDisk[] => {
+    const setUsedSources = (): EnvDisk[] => {
       let counter = 0;
-      if (isReload) {
-        setErrMsg('');
-        setIsSuccess(false);
-      }
       const configmapEnvDisks: EnvDisk[] = vmWrapper
         .getConfigMaps()
         .map((cm) => [
@@ -188,7 +182,11 @@ const VMEnvironment = withHandlePromise<VMEnvironmentProps>(
     const [envDisks, setEnvDisks] = React.useState(setUsedSources());
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    const onReload = React.useCallback(() => setEnvDisks(setUsedSources(true)), []);
+    const onReload = () => {
+      setEnvDisks(setUsedSources());
+      setErrMsg('');
+      setIsSuccess(false);
+    };
 
     const detectSourceChange = (update: NameValuePairs): EnvDisk => {
       setIsSuccess(false);
@@ -235,12 +233,13 @@ const VMEnvironment = withHandlePromise<VMEnvironmentProps>(
 
       if (newEnvDisk) {
         // new envDisk was added
-        newEnvDisks.nameValuePairs[newEnvDisk[2]][0] = getSerialNumber();
+        newEnvDisks.nameValuePairs[newEnvDisk[2]][0] = getRandomChars().toLocaleUpperCase();
       }
 
-      // Update index
+      // Update index and capitalize serial number
       for (let i = 0; i < newEnvDisks.nameValuePairs.length; i++) {
         newEnvDisks.nameValuePairs[i][2] = i;
+        newEnvDisks.nameValuePairs[i][0] = newEnvDisks.nameValuePairs[i][0].toLocaleUpperCase();
       }
 
       if (newEnvDisks.nameValuePairs[0].length > 2) {
@@ -295,7 +294,7 @@ const VMEnvironment = withHandlePromise<VMEnvironmentProps>(
       let newSourcesDisks: V1Disk[] = [];
       let newSourcesVolumes: V1Volume[] = [];
       envDisks.forEach((ed) => {
-        const sourceName = getSourceName(getEnvVarSource(ed));
+        const sourceName = getSourceName(ed);
 
         if (sourceName) {
           const sourceDiskName = getNewDiskName(sourceName);
@@ -325,7 +324,7 @@ const VMEnvironment = withHandlePromise<VMEnvironmentProps>(
       handlePromise(promise)
         .then(() => {
           setIsSuccess(true);
-          setEnvDisks(envDisks.filter((ed) => getSerial(ed)));
+          setEnvDisks(envDisks.filter((ed) => getSerial(ed) && getSourceName(ed)));
         })
         .catch((err) => {
           setIsSuccess(false);
@@ -377,6 +376,7 @@ const VMEnvironment = withHandlePromise<VMEnvironmentProps>(
             firstTitle="configmap / secret / service account"
             secondTitle="Serial Number"
             addButtonDisabled={addButtonDisabled || inProgress}
+            addButtonLabel="Add Config Map, Secret or Service Account"
           />
         </div>
         <div className="environment-buttons">

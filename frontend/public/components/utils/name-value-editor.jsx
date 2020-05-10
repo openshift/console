@@ -263,6 +263,7 @@ export const EnvFromEditor = withDragDropContext(
         firstTitle,
         secondTitle,
         addButtonDisabled,
+        addButtonLabel,
       } = this.props;
       const pairElems = nameValuePairs.map((pair, i) => {
         const key = _.get(pair, [EnvFromPair.Index], i);
@@ -305,7 +306,7 @@ export const EnvFromEditor = withDragDropContext(
                   variant="link"
                   isDisabled={addButtonDisabled}
                 >
-                  <PlusCircleIcon /> Add All From Config Map or Secret
+                  <PlusCircleIcon /> {addButtonLabel}
                 </Button>
               )}
             </div>
@@ -341,6 +342,7 @@ EnvFromEditor.defaultProps = {
   firstTitle: 'Config map/secret',
   secondTitle: 'Prefix (Optional)',
   addButtonDisabled: false,
+  addButtonLabel: 'Add All From Config Map or Secret',
 };
 
 const pairSource = {

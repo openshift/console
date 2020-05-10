@@ -20,10 +20,12 @@ export const saveBtn = element(by.cssContainingText('.pf-m-primary', 'Save'));
 export const noSerialError = 'Some sources are missing a Serial Number';
 export const dupSerialsError = 'There are two or more sources with the same Serial Number';
 
-export const addVariableButton = element(by.buttonText('Add All From Config Map or Secret'));
+export const addVariableButton = element(
+  by.buttonText('Add Config Map, Secret or Service Account'),
+);
 
 export const addSource = async (sourceName) => {
   await browser.wait(until.elementToBeClickable(addVariableButton), PAGE_LOAD_TIMEOUT_SECS);
-  await click(element(by.buttonText('Add All From Config Map or Secret')));
+  await click(addVariableButton);
   await addVariableFrom(sourceName);
 };
