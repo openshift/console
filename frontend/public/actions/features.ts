@@ -173,7 +173,7 @@ const detectClusterVersion = (dispatch) =>
       if (_.includes([403, 404], _.get(err, 'response.status'))) {
         dispatch(setFlag(FLAGS.CLUSTER_VERSION, false));
       } else {
-        handleError(err, FLAGS.CLUSTER_VERSION, dispatch, detectOpenShift);
+        handleError(err, FLAGS.CLUSTER_VERSION, dispatch, detectClusterVersion);
       }
     },
   );
