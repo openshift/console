@@ -3,7 +3,7 @@ import { clickKebabAction } from '@console/internal-integration-tests/views/crud
 import { click } from '@console/shared/src/test-utils/utils';
 import { testName } from '@console/internal-integration-tests/protractor.conf';
 import { testPVC, testDeployment } from '../../mocks/expand-test-mocks';
-import { requestSizeValueInput } from '../../views/add-capacity.view';
+import { currentACSelector } from '../../views/add-capacity.view';
 import {
   goToPersistentVolumeClaims,
   expandButton,
@@ -21,7 +21,7 @@ const createDeployment = () =>
 
 const expandPVC = async (value: string, sizeUnit: SIZE_UNITS) => {
   await clickKebabAction(testPVC.name, 'Expand PVC');
-  sendKeys(requestSizeValueInput, value);
+  sendKeys(currentACSelector.capacityValueInput, value);
   await click(capacityUnitDropdown);
   await click(expandSizeOption(sizeUnit));
   await click(expandButton);
