@@ -4,7 +4,10 @@ import DashboardGrid from '@console/shared/src/components/dashboard/DashboardGri
 import { NodeKind, K8sResourceKind } from '@console/internal/module/k8s';
 import UtilizationCard from '@console/app/src/components/nodes/node-dashboard/UtilizationCard';
 import ActivityCard from '@console/app/src/components/nodes/node-dashboard/ActivityCard';
-import { NodeDashboardContext } from '@console/app/src/components/nodes/node-dashboard/NodeDashboardContext';
+import {
+  NodeDashboardContext,
+  HealthCheck,
+} from '@console/app/src/components/nodes/node-dashboard/NodeDashboardContext';
 import {
   reducer,
   initialState,
@@ -49,7 +52,7 @@ const BareMetalNodeDashboard: React.FC<BareMetalNodeDashboardProps> = ({
     [],
   );
   const setHealthCheck = React.useCallback(
-    (payload: boolean) => dispatch({ type: ActionType.HEALTH_CHECK, payload }),
+    (payload: HealthCheck) => dispatch({ type: ActionType.HEALTH_CHECK, payload }),
     [],
   );
 

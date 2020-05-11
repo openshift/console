@@ -163,8 +163,11 @@ const NodeAlerts: React.FC = () => {
 
   return (
     <AlertsBody>
-      {!!healthCheck && (
-        <StatusItem Icon={YellowExclamationTriangleIcon} message={msg.CONDITIONS_WARNING}>
+      {!!healthCheck?.failingHealthCheck && (
+        <StatusItem
+          Icon={YellowExclamationTriangleIcon}
+          message={msg.CONDITIONS_WARNING(healthCheck.reboot)}
+        >
           <HealthChecksLink />
         </StatusItem>
       )}

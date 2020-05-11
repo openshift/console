@@ -5,7 +5,7 @@ import DashboardGrid from '@console/shared/src/components/dashboard/DashboardGri
 import { NodeKind } from '@console/internal/module/k8s';
 import { LimitRequested } from '@console/shared/src/components/dashboard/utilization-card/UtilizationItem';
 
-import { NodeDashboardContext } from './NodeDashboardContext';
+import { NodeDashboardContext, HealthCheck } from './NodeDashboardContext';
 import InventoryCard from './InventoryCard';
 import DetailsCard from './DetailsCard';
 import StatusCard from './StatusCard';
@@ -51,7 +51,7 @@ export const reducer = (state: NodeDashboardState, action: NodeDashboardAction) 
       };
     }
     case ActionType.HEALTH_CHECK: {
-      if (action.payload === state.healthCheck) {
+      if (_.isEqual(action.payload, state.healthCheck)) {
         return state;
       }
       return {
@@ -89,7 +89,7 @@ const NodeDashboard: React.FC<NodeDashboardProps> = ({ obj }) => {
     [],
   );
   const setHealthCheck = React.useCallback(
-    (payload: boolean) => dispatch({ type: ActionType.HEALTH_CHECK, payload }),
+    (payload: HealthCheck) => dispatch({ type: ActionType.HEALTH_CHECK, payload }),
     [],
   );
 
@@ -122,11 +122,11 @@ type NodeDashboardState = {
   obj: NodeKind;
   cpuLimit: LimitRequested;
   memoryLimit: LimitRequested;
-  healthCheck: boolean;
+  healthCheck: HealthCheck;
 };
 
 type NodeDashboardAction =
   | { type: ActionType.CPU_LIMIT; payload: LimitRequested }
   | { type: ActionType.MEMORY_LIMIT; payload: LimitRequested }
-  | { type: ActionType.HEALTH_CHECK; payload: boolean }
+  | { type: ActionType.HEALTH_CHECK; payload: HealthCheck }
   | { type: ActionType.OBJ; payload: NodeKind };

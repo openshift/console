@@ -38,7 +38,8 @@ export const HealthChecksPopup: React.FC<HealthChecksPopupProps> = ({
   conditions = [],
   machineHealthChecks,
 }) => {
-  let showRestart: boolean = false;
+  let conditionFailing: boolean = false;
+  let reboot: boolean = false;
   const grouppedConditions = Object.values(
     _.groupBy(
       conditions.sort((a, b) => a.type.localeCompare(b.type)),
@@ -47,7 +48,11 @@ export const HealthChecksPopup: React.FC<HealthChecksPopupProps> = ({
   ).map((cds) => {
     const failing = cds.some((c) => c.failing);
     if (failing) {
-      showRestart = true;
+      conditionFailing = true;
+      reboot =
+        machineHealthChecks?.[0]?.metadata?.annotations?.[
+          'machine.openshift.io/remediation-strategy'
+        ] === 'external-baremetal';
     }
     return {
       title: cds[0].type,
@@ -90,14 +95,14 @@ export const HealthChecksPopup: React.FC<HealthChecksPopupProps> = ({
           ))}
         </StatusPopupSection>
       )}
-      {showRestart && (
+      {conditionFailing && (
         <Alert
           variant="warning"
           isInline
-          title="Restart pending"
+          title={`${reboot ? 'Reboot' : 'Reprovision'} pending`}
           className="co-node-health__popup-alert"
         >
-          {CONDITIONS_WARNING}
+          {CONDITIONS_WARNING(reboot)}
         </Alert>
       )}
       {machineHealthChecks?.length > 1 && (
@@ -204,9 +209,24 @@ export const HealthChecksItem: React.FC = () => {
   const healthChecks = useK8sWatchResource<MachineHealthCheckKind[]>(machineHealthChecksResource);
   const healthState = getMachineHealth(obj, machine, healthChecks);
 
-  setHealthCheck(
-    healthState.state === HealthState.WARNING && healthState.conditions.some((c) => c.failing),
-  );
+  let failingHealthCheck = false;
+  let reboot = false;
+  _.forEach(healthState.conditions, (c) => {
+    if (c.failing) {
+      failingHealthCheck = true;
+      reboot =
+        healthState.matchingHC?.[0]?.metadata?.annotations?.[
+          'machine.openshift.io/remediation-strategy'
+        ] === 'external-baremetal';
+      return false;
+    }
+    return true;
+  });
+
+  setHealthCheck({
+    failingHealthCheck,
+    reboot,
+  });
 
   return (
     <HealthItem title="Health Checks" popupTitle="Health Checks" {...healthState}>

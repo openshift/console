@@ -1,5 +1,7 @@
-export const CONDITIONS_WARNING =
-  'One or more health check remediation conditions have been met. The node will restart automatically.';
+export const CONDITIONS_WARNING = (reboot = false) =>
+  `One or more health check remediation conditions have been met. The node will ${
+    reboot ? 'reboot' : 'reprovision'
+  } automatically.`;
 
 export const CPU_LIMIT_REQ_ERROR =
   'This node’s CPU resources are overcommitted. The total CPU resource limit of all pods exceeds the node’s total capacity. The total CPU requested is also approaching the node’s capacity. Pod performance will be throttled under high load, and new pods may not be schedulable on this node.';
