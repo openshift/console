@@ -69,17 +69,18 @@
 }
 
 .co-type-selector {
-  min-width: 290px;
+  max-width: 190px !important;
   .pf-c-select__menu {
     max-height: 58vh;
     overflow-x: hidden;
     overflow-y: auto;
   }
-  .pf-c-check__input {
-    margin: 0;
+  .pf-c-select__menu-item {
+    display: flex;
+    align-items: flex-start;
   }
-  @media (min-width: 480px) {
-    min-width: 350px;
+  .pf-c-check__input {
+    margin-right: var(--pf-global--spacer--sm);
   }
   .co-resource-item__tech-dev-preview {
     color: red;

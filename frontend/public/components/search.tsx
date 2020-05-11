@@ -80,6 +80,7 @@ const SearchPage_: React.FC<SearchProps & StateProps & DispatchProps> = (props) 
   const [labelFilter, setLabelFilter] = React.useState([]);
   const [labelFilterInput, setLabelFilterInput] = React.useState('');
   const [typeaheadNameFilter, setTypeaheadNameFilter] = React.useState('');
+  const [customBadgeText, setCustomBadgeText] = React.useState(0);
   const { namespace, noProjectsAvailable, pinnedResources } = props;
 
   // Set state variables from the URL
@@ -101,6 +102,7 @@ const SearchPage_: React.FC<SearchProps & StateProps & DispatchProps> = (props) 
     const validTags = _.reject(tags, (tag) => requirementFromString(tag) === undefined);
     setLabelFilter(validTags);
     setTypeaheadNameFilter(name || '');
+    setCustomBadgeText([...selectedItems].length);
   }, []);
 
   const updateSelectedItems = (selection: string) => {
@@ -108,6 +110,7 @@ const SearchPage_: React.FC<SearchProps & StateProps & DispatchProps> = (props) 
     updateItems.has(selection) ? updateItems.delete(selection) : updateItems.add(selection);
     setSelectedItems(updateItems);
     setQueryArgument('kind', [...updateItems].join(','));
+    setCustomBadgeText([...updateItems].length === 0 ? 0 : null);
   };
 
   const updateNewItems = (filter: string, { key }: DataToolbarChip) => {
@@ -120,6 +123,7 @@ const SearchPage_: React.FC<SearchProps & StateProps & DispatchProps> = (props) 
   const clearSelectedItems = () => {
     setSelectedItems(new Set([]));
     setQueryArgument('kind', '');
+    setCustomBadgeText(0);
   };
 
   const clearNameFilter = () => {
@@ -226,6 +230,7 @@ const SearchPage_: React.FC<SearchProps & StateProps & DispatchProps> = (props) 
                 <ResourceListDropdown
                   selected={[...selectedItems]}
                   onChange={updateSelectedItems}
+                  customBadgeText={customBadgeText}
                 />
               </DataToolbarFilter>
             </DataToolbarItem>

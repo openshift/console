@@ -167,25 +167,31 @@ export class EventsList extends React.Component {
       type: 'all',
       textFilter: '',
       selected: new Set(['All']),
+      customBadgeText: 'All'
     };
   }
 
   toggleSelected = (selection) => {
-    if (this.state.selected.has('All') || selection === 'All') {
-      this.setState({ selected: new Set([selection]) });
+    if (selection === 'All') {
+      this.setState({ selected: new Set([selection]), customBadgeText: 'All' });
     } else {
-      const updateItems = new Set(this.state.selected);
+      let updateItems;
+      if (this.state.selected.has('All')) {
+        updateItems = new Set([]);
+      } else {
+        updateItems = new Set(this.state.selected);
+      }
       updateItems.has(selection) ? updateItems.delete(selection) : updateItems.add(selection);
-      this.setState({ selected: updateItems });
+      this.setState({ selected: updateItems, customBadgeText: null });
     }
   };
 
   clearSelection = () => {
-    this.setState({ selected: new Set(['All']) });
+    this.setState({ selected: new Set(['All']), customBadgeText: 'All' });
   };
 
   render() {
-    const { type, selected, textFilter } = this.state;
+    const { customBadgeText, type, selected, textFilter } = this.state;
     const { autoFocus = true } = this.props;
 
     return (
@@ -198,6 +204,7 @@ export class EventsList extends React.Component {
               showAll
               clearSelection={this.clearSelection}
               className="co-search-group__resource"
+              customBadgeText={customBadgeText}
             />
             <Dropdown
               className="btn-group co-search-group__resource"

@@ -1231,7 +1231,19 @@
     file-saver "^1.3.8"
     xterm "^3.3.0"
 
-"@patternfly/react-core@3.153.13", "@patternfly/react-core@^3.153.13":
+"@patternfly/react-core@3.158.0":
+  version "3.158.0"
+  resolved "https://registry.yarnpkg.com/@patternfly/react-core/-/react-core-3.158.0.tgz#1c0103f57411edef6013244f3534a1f4ee6ad846"
+  integrity sha512-QBGhA5sP5auQ9ixoo9aLoyQEg7BA7Zic7LBlFnSRxPypBeTJ82hChf0qFDdN//439fVmE6wMjZeWWHB+hpekjQ==
+  dependencies:
+    "@patternfly/react-icons" "^3.15.16"
+    "@patternfly/react-styles" "^3.7.13"
+    "@patternfly/react-tokens" "^2.8.13"
+    focus-trap "4.0.2"
+    react-dropzone "9.0.0"
+    tippy.js "5.1.2"
+
+"@patternfly/react-core@^3.153.13":
   version "3.153.13"
   resolved "https://registry.yarnpkg.com/@patternfly/react-core/-/react-core-3.153.13.tgz#f05dead48f3fff7dae156798c6a5b4c244d77c9d"
   integrity sha512-OyssAlsdsHWXRuKXvkcagG8PcplpE02FSLClON+407Fzhj4t0BLGWECI8RQwZ0Tapr+qVXikKQRukM5MY9zIqg==

@@ -26,10 +26,11 @@ const blacklistResources = ImmutableSet([
 ]);
 
 const ResourceListDropdown_: React.SFC<ResourceListDropdownProps> = (props) => {
-  const { selected, onChange, allModels, showAll, className, preferredVersions } = props;
+  const { selected, onChange, allModels, showAll, className, preferredVersions, customBadgeText } = props;
   const [isExpanded, setExpanded] = React.useState(false);
 
-  const resources = [...allModels.values()]
+  // @ts-ignore
+  const resources = Array.from(allModels.values())
     .filter(({ apiGroup, apiVersion, kind, verbs }) => {
       // Remove blacklisted items.
       if (
@@ -127,7 +128,7 @@ const ResourceListDropdown_: React.SFC<ResourceListDropdownProps> = (props) => {
     setExpanded(isOpen);
   };
 
-  const handleSelected = (event, value: (K8sKind | string)) => {
+  const handleSelected = (event, value: any) => {
     value === 'All' ? onChange(value) : onChange(referenceForModel(value));
   };
 
@@ -145,6 +146,8 @@ const ResourceListDropdown_: React.SFC<ResourceListDropdownProps> = (props) => {
       onSelect={handleSelected}
       className={classNames('co-type-selector', className)}
       noResultsFoundText=""
+      customBadgeText={customBadgeText}
+      inlineFilterPlaceholderText="Select Resource"
     >
       {allItems}
     </Select>
@@ -168,4 +171,5 @@ export type ResourceListDropdownProps = {
   className?: string;
   id?: string;
   showAll?: boolean;
+  customBadgeText?: string | number;
 };
