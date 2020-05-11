@@ -161,6 +161,8 @@ export const TopologyPage: React.FC<TopologyPageProps> = ({ match }) => {
                   mock={false}
                   match={match}
                   title=""
+                  EmptyMsg={EmptyMsg}
+                  emptyBodyClass="odc-namespaced-page__content"
                   loader={() =>
                     import(
                       '@console/internal/components/overview' /* webpackChunkName: "topology-overview" */
