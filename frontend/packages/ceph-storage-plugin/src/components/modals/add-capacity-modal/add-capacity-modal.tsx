@@ -72,11 +72,6 @@ export const AddCapacityModal = (props: AddCapacityModalProps) => {
         path: `/spec/storageDeviceSets/0/count`,
         value: presentCount + 1,
       },
-      {
-        op: 'replace',
-        path: `/spec/storageDeviceSets/0/dataPVCTemplate/spec/storageClassName`,
-        value: scName,
-      },
     ];
     if (!scName) {
       setError('No StorageClass selected');
