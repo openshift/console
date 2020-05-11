@@ -201,8 +201,8 @@ metadata:
   namespace: openshift-metering
 spec:
   query: namespace-memory-request
-  reportingStart: '2019-01-01T00:00:00Z'
-  reportingEnd: '2019-12-30T23:59:59Z'
+  reportingStart: '${new Date().getFullYear()}-01-01T00:00:00Z'
+  reportingEnd: '${new Date().getFullYear()}-12-31T23:59:59Z'
   runImmediately: true
 `,
   )
