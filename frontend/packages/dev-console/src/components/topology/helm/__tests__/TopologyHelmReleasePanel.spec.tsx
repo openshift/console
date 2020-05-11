@@ -43,7 +43,10 @@ describe('TopologyHelmReleaseResourcesPanel', () => {
 
   it('should render the correct number of resource categories', () => {
     const component = shallow(
-      <TopologyHelmReleaseResourcesPanel manifestResources={manifestResources} />,
+      <TopologyHelmReleaseResourcesPanel
+        manifestResources={manifestResources}
+        releaseNamespace="mock-ns"
+      />,
     );
     expect(component.find(SidebarSectionHeading)).toHaveLength(5);
   });

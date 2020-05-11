@@ -5,10 +5,12 @@ import TopologyHelmReleaseResourceList from './TopologyHelmReleaseResourceList';
 
 type TopologyHelmReleaseResourcesPanelProps = {
   manifestResources: K8sResourceKind[];
+  releaseNamespace: string;
 };
 
 const TopologyHelmReleaseResourcesPanel: React.SFC<TopologyHelmReleaseResourcesPanelProps> = ({
   manifestResources,
+  releaseNamespace,
 }) => {
   const kinds = manifestResources
     .reduce((resourceKinds, resource) => {
@@ -27,7 +29,10 @@ const TopologyHelmReleaseResourcesPanel: React.SFC<TopologyHelmReleaseResourcesP
       lists.push(
         <div key={model.kind}>
           <SidebarSectionHeading text={model.labelPlural} />
-          <TopologyHelmReleaseResourceList resources={resources} />
+          <TopologyHelmReleaseResourceList
+            resources={resources}
+            releaseNamespace={releaseNamespace}
+          />
         </div>,
       );
     }
