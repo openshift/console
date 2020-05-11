@@ -9,12 +9,11 @@ import './PipelineBuilderHeader.scss';
 
 type PipelineBuilderHeaderProps = {
   existingPipeline: Pipeline;
-  formIsDirty: boolean;
   namespace: string;
 };
 
 const PipelineBuilderHeader: React.FC<PipelineBuilderHeaderProps> = (props) => {
-  const { existingPipeline, formIsDirty, namespace } = props;
+  const { existingPipeline, namespace } = props;
 
   return (
     <div className="odc-pipeline-builder-header">
@@ -26,11 +25,7 @@ const PipelineBuilderHeader: React.FC<PipelineBuilderHeaderProps> = (props) => {
           <Button
             variant="link"
             onClick={() => {
-              if (formIsDirty) {
-                warnYAML(() => goToYAML(existingPipeline, namespace));
-              } else {
-                goToYAML(existingPipeline, namespace);
-              }
+              warnYAML(() => goToYAML(existingPipeline, namespace));
             }}
           >
             Edit YAML

@@ -31,7 +31,8 @@ export const warnYAML = (onAccept: ModalCallback) => {
       <ModalContent
         icon={<ExclamationTriangleIcon size="lg" color={warningColor.value} />}
         title="Switch to YAML Editor?"
-        message="Your changes will be lost if you continue. Are you sure you want to leave this form?"
+        message="Switching to YAML will lose any unsaved changes in this pipeline builder and allow you to build your pipeline in YAML.
+        Are you sure you want to switch?"
       />
     ),
     submitDanger: true,
