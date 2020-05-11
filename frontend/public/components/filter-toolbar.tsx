@@ -237,7 +237,7 @@ const FilterToolbar_: React.FC<FilterToolbarProps & RouteComponentProps> = (prop
 
   const switchFilter = (type: FilterType) => {
     setFilterType(FilterType[type]);
-    FilterType[type] === FilterType.NAME ? setInputText(nameFilter) : setInputText('');
+    setInputText(nameFilter && FilterType[type] === FilterType.NAME ? nameFilter : '');
   };
 
   const dropdownItems = getDropdownItems(rowFilters, selectedRowFilters, data, props);
@@ -246,7 +246,7 @@ const FilterToolbar_: React.FC<FilterToolbarProps & RouteComponentProps> = (prop
     <DataToolbar id="filter-toolbar" clearAllFilters={clearAll}>
       <DataToolbarContent>
         {rowFilters.length > 0 && (
-          <DataToolbarItem className="co-search-group__resource">
+          <DataToolbarItem>
             {_.reduce(
               Object.keys(filters),
               (acc, key) => (
