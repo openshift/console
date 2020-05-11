@@ -1,6 +1,6 @@
 import * as _ from 'lodash';
 import { safeLoad } from 'js-yaml';
-import { K8sResourceKind, K8sKind, referenceForModel } from '@console/internal/module/k8s';
+import { K8sResourceKind, K8sKind } from '@console/internal/module/k8s';
 import { useAccessReview } from '@console/internal/components/utils';
 import {
   getAppLabels,
@@ -205,7 +205,7 @@ export const useEventSourceList = (namespace: string): NormalizedEventSources =>
         ...(checkAccessVal && {
           [eventSourceModel.kind]: {
             name: eventSourceModel.kind,
-            iconUrl: getKnativeEventSourceIcon(referenceForModel(eventSourceModel)),
+            iconUrl: getKnativeEventSourceIcon(eventSourceModel.kind),
             displayName: eventSourceModel.kind,
             title: eventSourceModel.kind,
           },
