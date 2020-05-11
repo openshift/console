@@ -542,7 +542,7 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
         {formError()}
         <ActionGroup className="pf-c-form">
           <Button onClick={() => submit()} isDisabled={formValid()} variant="primary">
-            Subscribe
+            Install
           </Button>
           <Button variant="secondary" onClick={() => history.push('/operatorhub')}>
             Cancel
@@ -590,16 +590,16 @@ export const OperatorHubSubscribePage: React.SFC<OperatorHubSubscribePageProps> 
   return (
     <>
       <Helmet>
-        <title>OperatorHub Subscription</title>
+        <title>Operator Installation</title>
       </Helmet>
       <div className="co-m-nav-title co-m-nav-title--breadcrumbs">
         <BreadCrumbs
           breadcrumbs={[
             { name: 'OperatorHub', path: `/operatorhub?${search.toString()}` },
-            { name: 'Operator Subscription', path: props.match.url },
+            { name: 'Operator Installation', path: props.match.url },
           ]}
         />
-        <h1 className="co-m-pane__heading">Create Operator Subscription</h1>
+        <h1 className="co-m-pane__heading">Install Operator</h1>
         <p className="co-help-text">
           Install your Operator by subscribing to one of the update channels to keep the Operator up
           to date. The strategy determines either manual or automatic updates.

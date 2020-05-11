@@ -16,13 +16,11 @@ export const viewInstalledOperator = () =>
     .element(by.linkText('View it here.'))
     .click();
 
-export const createSubscriptionFormTitle = element(
-  by.cssContainingText('h1', 'Create Operator Subscription'),
-);
+export const createSubscriptionFormTitle = element(by.cssContainingText('h1', 'Install Operator'));
 export const createSubscriptionFormName = $(
   '.co-clusterserviceversion-logo__name__clusterserviceversion',
 );
-export const createSubscriptionFormBtn = element(by.buttonText('Subscribe'));
+export const createSubscriptionFormBtn = element(by.buttonText('Install'));
 export const createSubscriptionFormLoaded = () =>
   browser.wait(until.visibilityOf(createSubscriptionFormBtn), 60000);
 export const createSubscriptionFormInstallMode = element(
