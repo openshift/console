@@ -186,6 +186,12 @@ h6 {
 .pf-c-chip-group.pf-m-toolbar {
   margin-bottom: var(--pf-global--spacer--xs);
 }
+
+// Fix bug where search background image doesn't appear
+.pf-c-form-control.pf-m-search {
+  --pf-c-form-control--m-search--BackgroundSize: 1rem 1rem;
+}
+
 // PF components that calculate their correct height based on --pf-global--FontSize--md: 1rem
 .pf-c-modal-box,
 .pf-c-switch {
