@@ -127,7 +127,7 @@ export class VirtualMachine extends BaseVirtualMachine {
     await wizard.next();
 
     // Advanced - Cloud Init
-    if (cloudInit.useCloudInit) {
+    if (cloudInit?.useCloudInit) {
       if (template !== undefined) {
         // TODO: wizard.useCloudInit needs to check state of checkboxes before clicking them to ensure desired state is achieved with specified template
         throw new Error('Using cloud init with template not implemented.');
@@ -215,7 +215,7 @@ export class VirtualMachine extends BaseVirtualMachine {
     // First update imported network interfaces to comply with k8s
     await importWizard.updateImportedNICs();
     // Optionally add new interfaces, if any
-    if (networkResources !== undefined) {
+    if (networkResources) {
       for (const NIC of networkResources) {
         await importWizard.addNIC(NIC);
       }
@@ -226,7 +226,7 @@ export class VirtualMachine extends BaseVirtualMachine {
     // First update disks that come from the source VM
     await importWizard.updateImportedDisks();
     // Optionally add new disks
-    if (networkResources !== undefined) {
+    if (networkResources) {
       for (const disk of storageResources) {
         await importWizard.addDisk(disk);
       }
@@ -234,7 +234,7 @@ export class VirtualMachine extends BaseVirtualMachine {
     await importWizard.next();
 
     // Advanced - Cloud Init
-    if (cloudInit !== undefined) {
+    if (cloudInit) {
       await importWizard.configureCloudInit(cloudInit);
     }
     await importWizard.next();

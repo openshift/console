@@ -59,7 +59,7 @@ export const dataVolumeManifest = ({ name, namespace, sourceURL, accessMode, vol
 };
 
 export const basicVMConfig: BaseVMConfig = {
-  operatingSystem: OperatingSystem.RHEL7_6,
+  operatingSystem: OperatingSystem.RHEL7,
   flavorConfig: { flavor: Flavor.TINY },
   workloadProfile: WorkloadProfile.DESKTOP,
   sourceURL:

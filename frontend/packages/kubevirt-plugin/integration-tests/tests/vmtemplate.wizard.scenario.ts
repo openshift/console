@@ -8,6 +8,7 @@ import {
   withResource,
   createResources,
   deleteResources,
+  deleteResource,
 } from '@console/shared/src/test-utils/utils';
 import { VM_BOOTUP_TIMEOUT_SECS, TAB, NOT_AVAILABLE } from './utils/consts';
 import { basicVMConfig, multusNAD } from './utils/mocks';
@@ -16,7 +17,7 @@ import { VirtualMachine } from './models/virtualMachine';
 import { VirtualMachineTemplate } from './models/virtualMachineTemplate';
 import { ProvisionConfigName } from './utils/constants/wizard';
 
-describe('Kubevirt create VM Template using wizard', () => {
+describe('Create VM from Template using wizard', () => {
   const leakedResources = new Set<string>();
   const provisionConfigs = getProvisionConfigs();
   const testDataVolume = getTestDataVolume();
@@ -124,6 +125,40 @@ describe('Kubevirt create VM Template using wizard', () => {
         console.error(`Expected:\n${JSON.stringify(expectation)},\nGot:\n${JSON.stringify(found)}`);
       }
       expect(equal).toBe(true);
+    });
+  });
+
+  describe('Create VM from Template using Template actions', () => {
+    const provisionConfig = provisionConfigs.get(ProvisionConfigName.CONTAINER);
+    const templateCfg = vmTemplateConfig(
+      provisionConfig.provision.method.toLowerCase(),
+      provisionConfig,
+    );
+    const vmTemplate = new VirtualMachineTemplate(templateCfg);
+    let vm: VirtualMachine;
+
+    beforeAll(async () => {
+      await vmTemplate.create(templateCfg);
+    });
+
+    afterAll(() => {
+      deleteResource(vmTemplate.asResource());
+    });
+
+    afterEach(() => {
+      deleteResource(vm.asResource());
+    });
+
+    it('ID(CNV-4097) Creates VM using VM Template kebab menu ', async () => {
+      const vmCfg = vmConfig('vm-from-vmt-kebab', templateCfg);
+      vmCfg.startOnCreation = false;
+      vm = await vmTemplate.createVM(vmCfg);
+    });
+
+    it('ID(CNV-4202) Creates VM using VM Template actions dropdown ', async () => {
+      const vmCfg = vmConfig('vm-from-vmt-actions', templateCfg);
+      vmCfg.startOnCreation = false;
+      vm = await vmTemplate.createVM(vmCfg);
     });
   });
 });

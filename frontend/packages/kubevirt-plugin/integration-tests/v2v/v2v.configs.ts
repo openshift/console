@@ -18,8 +18,8 @@ export const vmwareVMConfig: VMImportConfig = {
     password: V2V_INSTANCE_PASSWORD,
     saveInstance: false,
   },
-  operatingSystem: OperatingSystem.RHEL7_6,
-  workloadProfile: WorkloadProfile.SERVER,
+  operatingSystem: OperatingSystem.RHEL7,
+  workloadProfile: WorkloadProfile.DESKTOP,
 };
 
 export const vmwareVMMultiNicConfig: VMImportConfig = {
@@ -33,7 +33,7 @@ export const vmwareVMMultiNicConfig: VMImportConfig = {
     password: V2V_INSTANCE_PASSWORD,
     saveInstance: true,
   },
-  operatingSystem: OperatingSystem.RHEL7_6,
+  operatingSystem: OperatingSystem.RHEL7,
   workloadProfile: WorkloadProfile.SERVER,
 };
 
@@ -51,7 +51,7 @@ export const vmware2VMsConfig1: VMImportConfig = {
     password: V2V_INSTANCE_PASSWORD,
     saveInstance: false,
   },
-  operatingSystem: OperatingSystem.RHEL7_6,
+  operatingSystem: OperatingSystem.RHEL7,
   workloadProfile: WorkloadProfile.SERVER,
 };
 
@@ -66,7 +66,7 @@ export const vmware2VMsConfig2: VMImportConfig = {
     password: V2V_INSTANCE_PASSWORD,
     saveInstance: false,
   },
-  operatingSystem: OperatingSystem.RHEL7_6,
+  operatingSystem: OperatingSystem.RHEL7,
   workloadProfile: WorkloadProfile.SERVER,
 };
 
@@ -88,7 +88,7 @@ function getFlavorConfig(currentFlavor: Flavor, currentProfile: WorkloadProfile)
       password: V2V_INSTANCE_PASSWORD,
       saveInstance: false,
     },
-    operatingSystem: OperatingSystem.RHEL7_6,
+    operatingSystem: OperatingSystem.RHEL7,
     workloadProfile: currentProfile,
     flavorConfig: {
       flavor: currentFlavor,

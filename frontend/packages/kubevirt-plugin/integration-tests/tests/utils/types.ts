@@ -66,8 +66,8 @@ export type VMConfig = {
   operatingSystem?: string;
   flavorConfig?: FlavorConfig;
   workloadProfile?: string;
-  startOnCreation: boolean;
-  cloudInit: CloudInitConfig;
+  startOnCreation?: boolean;
+  cloudInit?: CloudInitConfig;
   storageResources: StorageResource[];
   CDRoms?: StorageResource[];
   networkResources: NetworkResource[];

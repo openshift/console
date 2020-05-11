@@ -78,7 +78,7 @@ export const KUBEVIRT_TEMPLATES_PATH =
 export enum TAB {
   Overview = 'Overview',
   Details = 'Details',
-  Consoles = 'Consoles',
+  Console = 'Console',
   Disks = 'Disks',
   Events = 'Events',
   NetworkInterfaces = 'Network Interfaces',
@@ -103,6 +103,12 @@ export enum VMI_ACTION {
   Delete = 'Delete Virtual Machine Instance',
   EditAnnotations = 'Edit Annotations',
   EditLabels = 'Edit Labels',
+}
+
+export enum VMT_ACTION {
+  Create = 'Create Virtual Machine',
+  Delete = 'Delete Template',
+  Edit = 'Edit VM Template',
 }
 
 export enum VM_STATUS {
