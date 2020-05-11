@@ -2,6 +2,7 @@ import * as React from 'react';
 import { shallow } from 'enzyme';
 import { MockKnativeResources } from '@console/dev-console/src/components/topology/__tests__/topology-knative-test-data';
 import OperatorBackedOwnerReferences from '@console/internal/components/utils';
+import * as fetchDynamicEventSources from '../../../utils/fetch-dynamic-eventsources-utils';
 import OverviewDetailsKnativeResourcesTab from '../OverviewDetailsKnativeResourcesTab';
 import KnativeServiceResources from '../KnativeServiceResources';
 import KnativeRevisionResources from '../KnativeRevisionResources';
@@ -43,6 +44,9 @@ describe('OverviewDetailsKnativeResourcesTab', () => {
   });
 
   it('should render EventSinkServicesOverviewList on sidebar', () => {
+    jest
+      .spyOn(fetchDynamicEventSources, 'isDynamicEventResourceKind')
+      .mockImplementationOnce(() => true);
     knItem.item = {
       ...knItem.item,
       ...{ obj: MockKnativeResources.eventSourceContainers.data[0] },
@@ -52,6 +56,9 @@ describe('OverviewDetailsKnativeResourcesTab', () => {
   });
 
   it('should render EventSinkServicesOverviewList on sidebar for sinkBinding', () => {
+    jest
+      .spyOn(fetchDynamicEventSources, 'isDynamicEventResourceKind')
+      .mockImplementationOnce(() => true);
     knItem.item = {
       ...knItem.item,
       ...{ obj: MockKnativeResources.eventSourceSinkbinding.data[0] },
