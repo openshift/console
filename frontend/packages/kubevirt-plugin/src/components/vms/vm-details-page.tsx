@@ -31,6 +31,10 @@ export const breadcrumbsForVMPage = (match: any) => () => [
     name: 'Virtualization',
     path: `/k8s/ns/${match.params.ns || 'default'}/virtualization`,
   },
+  {
+    name: 'Virtual Machines',
+    path: `/k8s/ns/${match.params.ns || 'default'}/virtualization`,
+  },
   { name: `${match.params.name} Details`, path: `${match.url}` },
 ];
 
