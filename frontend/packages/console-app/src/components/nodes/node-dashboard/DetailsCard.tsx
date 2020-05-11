@@ -18,7 +18,7 @@ const DetailsCard: React.FC = () => {
   const { obj } = React.useContext(NodeDashboardContext);
   const detailsLink = `${resourcePathFromModel(NodeModel, obj.metadata.name)}/details`;
   const instanceType = obj.metadata.labels?.['beta.kubernetes.io/instance-type'];
-  const zone = obj.metadata.labels?.['topology.kubernetes.io/region'];
+  const zone = obj.metadata.labels?.['topology.kubernetes.io/zone'];
   return (
     <DashboardCard data-test-id="details-card">
       <DashboardCardHeader>
