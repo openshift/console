@@ -1,5 +1,5 @@
-import { formatDuration } from '@console/internal/components/utils/datetime';
 import { runStatus } from '../../../../utils/pipeline-augment';
+import { calculateRelativeTime } from '../../../../utils/pipeline-utils';
 
 enum TerminatedReasons {
   Completed = 'Completed',
@@ -31,22 +31,14 @@ const getMatchingStep = (step, status: TaskStatus): TaskStatusStep => {
   });
 };
 
-const calculateDurationFormatted = ({ startedAt, finishedAt }): string => {
-  const date = new Date(finishedAt).getTime() - new Date(startedAt).getTime();
-  return formatDuration(date);
-};
-
 const getMatchingStepDuration = (matchingStep?: TaskStatusStep) => {
   if (!matchingStep) return '';
 
   if (matchingStep.terminated) {
-    return calculateDurationFormatted(matchingStep.terminated);
+    return calculateRelativeTime(matchingStep.terminated.startedAt);
   }
   if (matchingStep.running) {
-    return calculateDurationFormatted({
-      startedAt: matchingStep.running.startedAt,
-      finishedAt: Date.now(),
-    });
+    return calculateRelativeTime(matchingStep.running.startedAt);
   }
 
   return '';
