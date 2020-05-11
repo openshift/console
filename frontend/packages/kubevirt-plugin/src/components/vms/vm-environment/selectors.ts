@@ -22,8 +22,12 @@ import { V1Disk } from 'packages/kubevirt-plugin/src/types/vm/disk/V1Disk';
 export const getSerial = (ed: EnvDisk): string => ed[0];
 export const getEnvVarSource = (ed: EnvDisk): EnvVarSource => ed[1];
 
-export const getSourceName = (source): string =>
-  source?.configMapRef?.name || source?.secretRef?.name || source?.serviceAccountRef?.name || '';
+export const getSourceName = (ed: EnvDisk): string => {
+  const source = getEnvVarSource(ed);
+  return (
+    source?.configMapRef?.name || source?.secretRef?.name || source?.serviceAccountRef?.name || ''
+  );
+};
 
 export const getEnvDiskRefKind = (envDisk: EnvDisk) =>
   getEnvVarSource(envDisk) && Object.keys(getEnvVarSource(envDisk))[0];
@@ -93,11 +97,6 @@ export const getNewEnvVarSource = (kind: string, name: string): EnvVarSource => 
       return null;
   }
 };
-
-export const getSerialNumber = () =>
-  getRandomChars(10)
-    .concat(getRandomChars(6))
-    .toLocaleUpperCase();
 
 export const setNewSourceDisk = (diskName: string, serial: string, diskBus: string): V1Disk => {
   return {
