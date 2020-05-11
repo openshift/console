@@ -54,6 +54,15 @@ export const cloudInitAddKeyButton = $('#cloudinit-ssh_authorized_keys-add');
 export const cloudInitHostname = $('#cloudinit-hostname');
 export const cloudInitSSHKey = (rowNumber) => $(`#cloudinit-ssh_authorized_keys-key-${rowNumber}`);
 
+// Review tab
+export const nameReviewValue = $('#wizard-review-name');
+export const descriptionReviewValue = $('#wizard-review-description');
+export const provisionSourceTypeReviewValue = $('#wizard-review-provision_source_type');
+export const osReviewValue = $('#wizard-review-operating_system');
+export const flavorReviewValue = $('#wizard-review-flavor');
+export const workloadProfileReviewValue = $('#wizard-review-workload_profile');
+export const cloudInitReviewValue = $('#wizard-review-cloud_init');
+
 // Result tab
 export const creationSuccessResult = $('[data-test-id="kubevirt-wizard-success-result"]');
 export const creationErrorResult = $('[data-test-id="kubevirt-wizard-error-result"]');
