@@ -58,7 +58,10 @@ export const ConnectedTopologyHelmReleasePanel: React.FC<TopologyHelmReleasePane
 
   const resourcesComponent = () =>
     manifestResources ? (
-      <TopologyHelmReleaseResourcesPanel manifestResources={manifestResources} />
+      <TopologyHelmReleaseResourcesPanel
+        manifestResources={manifestResources}
+        releaseNamespace={namespace}
+      />
     ) : null;
 
   const releaseNotesComponent = () =>
