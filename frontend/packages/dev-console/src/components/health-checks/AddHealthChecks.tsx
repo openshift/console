@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash';
+import Helmet from 'react-helmet';
 import { FormikProps, FormikValues } from 'formik';
 import { Form, Button } from '@patternfly/react-core';
 import { ExternalLinkAltIcon } from '@patternfly/react-icons';
@@ -9,15 +10,15 @@ import {
   PageHeading,
   ResourceLink,
   ResourceIcon,
+  openshiftHelpBase,
 } from '@console/internal/components/utils';
+import { ContainerModel } from '@console/internal/models';
 import { K8sResourceKind, referenceFor, modelFor } from '@console/internal/module/k8s';
 import { FormFooter } from '@console/shared';
 import { getResourcesType } from '../edit-application/edit-application-utils';
 import HealthChecks from './HealthChecks';
-import Helmet from 'react-helmet';
-import { ContainerModel } from '@console/internal/models';
-import './AddHealthChecks.scss';
 import { getHealthChecksData } from './create-health-checks-probe-utils';
+import './AddHealthChecks.scss';
 
 type AddHealthChecksProps = {
   resource?: K8sResourceKind;
@@ -75,7 +76,7 @@ const AddHealthChecks: React.FC<FormikProps<FormikValues> & AddHealthChecksProps
             <Button
               variant="link"
               component="a"
-              href="https://docs.openshift.com/container-platform/3.11/dev_guide/application_health.html"
+              href={`${openshiftHelpBase}applications/application-health.html`}
               target="_blank"
             >
               Learn More <ExternalLinkAltIcon />
