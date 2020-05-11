@@ -14,7 +14,7 @@ export const breadcrumbsForVMTemplatePage = (match: any) => () => [
     path: `/k8s/ns/${match.params.ns || 'default'}/virtualization`,
   },
   {
-    name: 'Templates',
+    name: 'Virtual Machines Templates',
     path: `/k8s/ns/${match.params.ns || 'default'}/virtualization/templates`,
   },
   { name: `${match.params.name} Details`, path: `${match.url}` },
