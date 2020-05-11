@@ -122,7 +122,7 @@ export class ImportWizard extends Wizard {
       await diskDialog.fillName(disk.name.replace(/\s/g, '').toLowerCase());
       // This if is required to workaround bug 1814611.
       // NFS is not supported for conversion PV and HPP should be used instead.
-      if (disk.name === 'v2v-conversion-temp' && STORAGE_CLASS == 'nfs') {
+      if (disk.name === 'v2v-conversion-temp' && STORAGE_CLASS === 'nfs') {
         await diskDialog.selectStorageClass('hostpath-provisioner');
       } else {
         await diskDialog.selectStorageClass(disk.storageClass);
