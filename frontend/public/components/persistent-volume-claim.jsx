@@ -127,11 +127,11 @@ const PVCTableRow = ({ obj, index, key, style }) => {
         {obj?.spec?.storageClassName ? (
           <ResourceLink
             kind="StorageClass"
-            name={obj?.spec?.storageClassName}
-            title={obj?.spec?.storageClassName}
+            name={obj.spec.storageClassName}
+            title={obj.spec.storageClassName}
           />
         ) : (
-          <div className="text-muted">-</div>
+          '-'
         )}
       </TableData>
       <TableData className={tableColumnClasses[6]}>
