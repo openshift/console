@@ -1,5 +1,5 @@
 import { VMImportConfig } from '../tests/utils/types';
-import { IMPORT_WIZARD_CONN_TO_NEW_INSTANCE, IMPORT_WIZARD_CONN_TO_EXISTING_INSTANCE } from '../tests/utils/consts';
+import { IMPORT_WIZARD_CONN_TO_NEW_INSTANCE, IMPORT_WIZARD_CONN_NAME_PREFIX } from '../tests/utils/consts';
 import { OperatingSystem, WorkloadProfile, Flavor } from '../tests/utils/constants/wizard';
 
 const { V2V_INSTANCE_HOSTNAME, V2V_INSTANCE_USERNAME, V2V_INSTANCE_PASSWORD } = process.env;
@@ -60,7 +60,7 @@ export const vmware2VMsConfig2: VMImportConfig = {
   sourceVMName: 'v2v-rhel7-igor',
   provider: 'VMware',
   instanceConfig: {
-    instance: IMPORT_WIZARD_CONN_TO_EXISTING_INSTANCE,
+    instance: IMPORT_WIZARD_CONN_NAME_PREFIX,
     hostname: V2V_INSTANCE_HOSTNAME,
     username: V2V_INSTANCE_USERNAME,
     password: V2V_INSTANCE_PASSWORD,

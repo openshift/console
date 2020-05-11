@@ -40,7 +40,7 @@ export const V2V_VM_IMPORT_TIMEOUT = 3600 * SEC;
 export const IMPORT_WIZARD_CONN_TO_NEW_INSTANCE = 'Connect to New Instance';
 export const NOT_RECOMMENDED_BUS_TYPE_WARN = 'Not recommended bus type';
 // Some times we need to use existing VMWare instance, which name always starts from 'administrator'
-export const IMPORT_WIZARD_CONN_TO_EXISTING_INSTANCE = 'administrator';
+export const IMPORT_WIZARD_CONN_NAME_PREFIX = 'administrator';
 
 // Web-UI Exceptions
 export const WAIT_TIMEOUT_ERROR = 'Wait Timeout Error.';
