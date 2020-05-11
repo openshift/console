@@ -1,10 +1,12 @@
 import * as React from 'react';
 import { useFormikContext } from 'formik';
-import { Badge, Expandable } from '@patternfly/react-core';
+import { Badge, Expandable, FormHelperText } from '@patternfly/react-core';
 import FormSection from '../../../import/section/FormSection';
 import { TriggerBindingKind, TriggerBindingParam } from '../../resource-types';
 import TriggerBindingSelector from './TriggerBindingSelector';
 import { AddTriggerFormValues } from './types';
+
+import './TriggerBindingSection.scss';
 
 const TriggerBindingSection: React.FC = () => {
   const { setFieldValue } = useFormikContext<AddTriggerFormValues>();
@@ -18,7 +20,7 @@ const TriggerBindingSection: React.FC = () => {
   );
 
   return (
-    <div className="odc-add-trigger-form">
+    <div className="odc-trigger-binding-section">
       <FormSection title="Webhook" fullWidth>
         <TriggerBindingSelector
           description="Select your git provider type to be associated with the Trigger"
@@ -27,16 +29,23 @@ const TriggerBindingSection: React.FC = () => {
         />
         {bindingVars && (
           <Expandable toggleTextExpanded="Hide Variables" toggleTextCollapsed="Show Variables">
-            <div className="odc-add-trigger-form__variable-container">
-              <p className="odc-add-trigger-form__variable-descriptor">
+            <div className="odc-trigger-binding-section__variable-container">
+              <p className="odc-trigger-binding-section__variable-descriptor">
                 The following variables can be used in the Parameters or when created new Resources.
               </p>
               {bindingVars.map(({ name }) => (
-                <Badge key={name} className="odc-add-trigger-form__variable-badge" isRead>
+                <Badge key={name} className="odc-trigger-binding-section__variable-badge" isRead>
                   {name}
                 </Badge>
               ))}
             </div>
+            <FormHelperText
+              isHidden={false}
+              className="odc-trigger-binding-section__variable-help-text"
+            >
+              Use this format when referencing variables in this form:{' '}
+              <code>{'$(params.parameter)'}</code>
+            </FormHelperText>
           </Expandable>
         )}
       </FormSection>
