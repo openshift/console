@@ -40,7 +40,7 @@ export const KnativeServingModel: K8sKind = {
 };
 
 export const KnativeEventingModel: K8sKind = {
-  apiGroup: 'eventing.knative.dev',
+  apiGroup: 'operator.knative.dev',
   apiVersion: 'v1alpha1',
   kind: 'KnativeEventing',
   label: 'Knative Eventing',
