@@ -89,13 +89,18 @@ export const AreaChart: React.FC<AreaChartProps> = ({
     [humanize, unit, formatDate],
   );
 
+  const multiLine = data && data.filter((d) => !!d).length > 1;
+
   const container = (
     <ChartVoronoiContainer
       voronoiDimension="x"
       labels={getLabel}
       activateData={false}
       labelComponent={
-        <ChartTooltip centerOffset={data.filter((d) => !!d).length > 1 ? { x: 0, y: -40 } : null} />
+        <ChartTooltip
+          centerOffset={multiLine ? { x: 0, y: -40 } : undefined}
+          pointerLength={multiLine ? 40 : undefined}
+        />
       }
     />
   );
