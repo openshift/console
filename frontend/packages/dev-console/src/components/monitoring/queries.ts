@@ -22,39 +22,11 @@ export const metricsQuery = {
   PODS_BY_FILESYSTEM: 'Filesystem Usage',
   PODS_BY_NETWORK_IN: 'Receive Bandwidth',
   PODS_BY_NETWORK_OUT: 'Transmit Bandwidth',
+  RATE_OF_RECEIVED_PACKETS: 'Rate of Received Packets',
+  RATE_OF_TRANSMITTED_PACKETS: 'Rate of Transmitted Packets',
+  RATE_OF_RECEIVED_PACKETS_DROPPED: 'Rate of Received Packets Dropped',
+  RATE_OF_TRANSMITTED_PACKETS_DROPPED: 'Rate of Transmitted Packets Dropped',
 };
-
-const topMetricsQueries = {
-  [metricsQuery.PODS_BY_CPU]: _.template(
-    `topk(25, sort_desc(sum(avg_over_time(pod:container_cpu_usage:sum{container="",pod!="",namespace='<%= namespace %>'}[5m])) BY (pod, namespace)))`,
-  ),
-  [metricsQuery.PODS_BY_MEMORY]: _.template(
-    `topk(25, sort_desc(sum(avg_over_time(container_memory_working_set_bytes{container="",pod!="",namespace='<%= namespace %>'}[5m])) BY (pod, namespace)))`,
-  ),
-  [metricsQuery.PODS_BY_FILESYSTEM]: _.template(
-    `topk(25, sort_desc(sum(pod:container_fs_usage_bytes:sum{container="",pod!="",namespace='<%= namespace %>'}) BY (pod, namespace)))`,
-  ),
-  [metricsQuery.PODS_BY_NETWORK_IN]: _.template(
-    `topk(25, sort_desc(sum(rate(container_network_receive_bytes_total{ container="POD", pod!= "", namespace='<%= namespace %>'}[5m])) BY (namespace, pod)))`,
-  ),
-  [metricsQuery.PODS_BY_NETWORK_OUT]: _.template(
-    `topk(25, sort_desc(sum(rate(container_network_transmit_bytes_total{ container="POD", pod!= "", namespace='<%= namespace %>'}[5m])) BY (namespace, pod)))`,
-  ),
-};
-
-export const getTopMetricsQueries = (namespace: string) => ({
-  [metricsQuery.PODS_BY_CPU]: topMetricsQueries[metricsQuery.PODS_BY_CPU]({ namespace }),
-  [metricsQuery.PODS_BY_MEMORY]: topMetricsQueries[metricsQuery.PODS_BY_MEMORY]({ namespace }),
-  [metricsQuery.PODS_BY_FILESYSTEM]: topMetricsQueries[metricsQuery.PODS_BY_FILESYSTEM]({
-    namespace,
-  }),
-  [metricsQuery.PODS_BY_NETWORK_IN]: topMetricsQueries[metricsQuery.PODS_BY_NETWORK_IN]({
-    namespace,
-  }),
-  [metricsQuery.PODS_BY_NETWORK_OUT]: topMetricsQueries[metricsQuery.PODS_BY_NETWORK_OUT]({
-    namespace,
-  }),
-});
 
 export const monitoringDashboardQueries: MonitoringQuery[] = [
   {
@@ -236,3 +208,52 @@ export const workloadMetricsQueries: MonitoringQuery[] = [
     ),
   },
 ];
+
+const getMetricsQuery = (title: string): _.TemplateExecutor => {
+  const queryObject = _.find(monitoringDashboardQueries, (q) => q.title === title);
+  return queryObject.query;
+};
+
+const topMetricsQueries = {
+  PODS_BY_CPU: getMetricsQuery('CPU Usage'),
+  PODS_BY_MEMORY: getMetricsQuery('Memory Usage'),
+  PODS_BY_FILESYSTEM: _.template(
+    `topk(25, sort_desc(sum(pod:container_fs_usage_bytes:sum{container="",pod!="",namespace='<%= namespace %>'}) BY (pod, namespace)))`,
+  ),
+  PODS_BY_NETWORK_IN: getMetricsQuery('Receive Bandwidth'),
+  PODS_BY_NETWORK_OUT: getMetricsQuery('Transmit Bandwidth'),
+  RATE_OF_RECEIVED_PACKETS: getMetricsQuery('Rate of Received Packets'),
+  RATE_OF_TRANSMITTED_PACKETS: getMetricsQuery('Rate of Transmitted Packets'),
+  RATE_OF_RECEIVED_PACKETS_DROPPED: getMetricsQuery('Rate of Received Packets Dropped'),
+  RATE_OF_TRANSMITTED_PACKETS_DROPPED: getMetricsQuery('Rate of Transmitted Packets Dropped'),
+};
+
+export const getTopMetricsQueries = (namespace: string) => ({
+  [metricsQuery.PODS_BY_CPU]: topMetricsQueries.PODS_BY_CPU({ namespace }),
+  [metricsQuery.PODS_BY_MEMORY]: topMetricsQueries.PODS_BY_MEMORY({ namespace }),
+  [metricsQuery.PODS_BY_FILESYSTEM]: topMetricsQueries.PODS_BY_FILESYSTEM({
+    namespace,
+  }),
+  [metricsQuery.PODS_BY_NETWORK_IN]: topMetricsQueries.PODS_BY_NETWORK_IN({
+    namespace,
+  }),
+  [metricsQuery.PODS_BY_NETWORK_OUT]: topMetricsQueries.PODS_BY_NETWORK_OUT({
+    namespace,
+  }),
+  [metricsQuery.RATE_OF_RECEIVED_PACKETS]: topMetricsQueries.RATE_OF_RECEIVED_PACKETS({
+    namespace,
+  }),
+  [metricsQuery.RATE_OF_TRANSMITTED_PACKETS]: topMetricsQueries.RATE_OF_TRANSMITTED_PACKETS({
+    namespace,
+  }),
+  [metricsQuery.RATE_OF_RECEIVED_PACKETS_DROPPED]: topMetricsQueries.RATE_OF_RECEIVED_PACKETS_DROPPED(
+    {
+      namespace,
+    },
+  ),
+  [metricsQuery.RATE_OF_TRANSMITTED_PACKETS_DROPPED]: topMetricsQueries.RATE_OF_TRANSMITTED_PACKETS_DROPPED(
+    {
+      namespace,
+    },
+  ),
+});
