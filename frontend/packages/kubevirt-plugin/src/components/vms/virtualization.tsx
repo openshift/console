@@ -71,7 +71,7 @@ export const WrappedVirtualizationPage: React.FC<VirtualizationPageProps> = (pro
         pages={pages}
         match={props.match}
         obj={obj}
-        customData={{ showTitle: false }}
+        customData={{ showTitle: false, noProjectsAvailable: props.noProjectsAvailable }}
       />
     </>
   );
