@@ -127,7 +127,10 @@ const ErrorRetrievingMessage: React.SFC<CVStatusMessageProps> = ({ cv }) => {
   ) : (
     <Tooltip content={truncateMiddle(retrievedUpdatesCondition.message, { length: 256 })}>
       <span>
-        <RedExclamationCircleIcon /> Error retrieving
+        <RedExclamationCircleIcon />{' '}
+        {retrievedUpdatesCondition.reason === 'VersionNotFound'
+          ? 'Version not found'
+          : 'Error retrieving'}
       </span>
     </Tooltip>
   );
