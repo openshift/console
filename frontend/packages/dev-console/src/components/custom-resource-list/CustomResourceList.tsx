@@ -1,12 +1,15 @@
 import * as React from 'react';
+import * as _ from 'lodash';
+import { EmptyState, EmptyStateVariant } from '@patternfly/react-core';
 import { Table } from '@console/internal/components/factory';
-import { getQueryArgument } from '@console/internal/components/utils';
+import { getQueryArgument, LoadingBox } from '@console/internal/components/utils';
 import { CustomResourceListProps } from './custom-resource-list-types';
 import { FilterToolbar } from '@console/internal/components/filter-toolbar';
 
 const CustomResourceList: React.FC<CustomResourceListProps> = ({
-  dependentResource,
-  fetchCustomResources,
+  resources,
+  loaded = true,
+  EmptyMsg,
   queryArg,
   rowFilters,
   rowFilterReducer,
@@ -17,43 +20,13 @@ const CustomResourceList: React.FC<CustomResourceListProps> = ({
   sortBy,
   sortOrder,
 }) => {
-  const [listItems, setListItems] = React.useState([]);
-  const [fetched, setFetched] = React.useState(false);
-
-  React.useEffect(() => {
-    let ignore = false;
-
-    const fetchListItems = async () => {
-      let newListItems: any;
-      try {
-        newListItems = await fetchCustomResources();
-      } catch {
-        if (ignore) return;
-
-        setListItems([]);
-        setFetched(true);
-      }
-
-      if (ignore) return;
-
-      setListItems(newListItems || []);
-      setFetched(true);
-    };
-
-    fetchListItems();
-
-    return () => {
-      ignore = true;
-    };
-  }, [dependentResource, fetchCustomResources]);
-
   const applyFilters = React.useCallback(() => {
     const queryArgument = queryArg ? getQueryArgument(queryArg) : undefined;
     const activeFilters = queryArgument?.split(',');
     const params = new URLSearchParams(window.location.search);
     const filteredText = params.get(textFilter);
 
-    let filteredItems = listItems;
+    let filteredItems = resources;
     if (activeFilters) {
       filteredItems = rowFilterReducer(filteredItems, activeFilters);
     }
@@ -61,16 +34,30 @@ const CustomResourceList: React.FC<CustomResourceListProps> = ({
       filteredItems = textFilterReducer(filteredItems, filteredText);
     }
     return filteredItems;
-  }, [listItems, queryArg, rowFilterReducer, textFilter, textFilterReducer]);
+  }, [resources, queryArg, rowFilterReducer, textFilter, textFilterReducer]);
 
   const filteredListItems = applyFilters();
+
+  if (!loaded) {
+    return <LoadingBox />;
+  }
+
+  if (_.isEmpty(resources)) {
+    return EmptyMsg ? (
+      <EmptyMsg />
+    ) : (
+      <EmptyState variant={EmptyStateVariant.full}>
+        <p>No resources found</p>
+      </EmptyState>
+    );
+  }
 
   return (
     <div className="co-m-pane__body">
       {(rowFilters || textFilter) && (
         <FilterToolbar
           rowFilters={rowFilters}
-          data={listItems}
+          data={resources}
           textFilter={textFilter}
           hideNameFilter={false}
           hideLabelFilter
@@ -84,7 +71,7 @@ const CustomResourceList: React.FC<CustomResourceListProps> = ({
         aria-label="CustomResources"
         Header={resourceHeader}
         Row={resourceRow}
-        loaded={fetched}
+        loaded={loaded}
         virtualize
       />
     </div>

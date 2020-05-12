@@ -4,6 +4,8 @@ import * as fuzzy from 'fuzzysearch';
 import { SortByDirection, sortable } from '@patternfly/react-table';
 import { TableRow, TableData, Table, RowFunction } from '@console/internal/components/factory';
 import { RowFilter, FilterToolbar } from '@console/internal/components/filter-toolbar';
+import { EmptyState } from '@patternfly/react-core';
+import { LoadingBox } from '@console/internal/components/utils';
 import CustomResourceList from '../CustomResourceList';
 import { CustomResourceListProps } from '../custom-resource-list-types';
 
@@ -53,23 +55,20 @@ describe('CustomeResourceList', () => {
     return item.status;
   };
 
-  const getItems = () => {
-    const items = [
-      { name: 'item1', version: '1', status: 'successful' },
-      {
-        name: 'item2',
-        version: '2',
-        status: 'successful',
-      },
-      { name: 'item3', version: '3', status: 'failed' },
-      {
-        name: 'item4',
-        version: '4',
-        status: 'failed',
-      },
-    ];
-    return Promise.resolve(items);
-  };
+  const resources = [
+    { name: 'item1', version: '1', status: 'successful' },
+    {
+      name: 'item2',
+      version: '2',
+      status: 'successful',
+    },
+    { name: 'item3', version: '3', status: 'failed' },
+    {
+      name: 'item4',
+      version: '4',
+      status: 'failed',
+    },
+  ];
 
   const getFilteredItemsByRow = (items: any, filters: string[]) => {
     return items.filter((item) => {
@@ -97,7 +96,7 @@ describe('CustomeResourceList', () => {
 
   customResourceListProps = {
     queryArg: '',
-    fetchCustomResources: getItems,
+    resources,
     textFilter: 'name',
     rowFilters: mockRowFilters,
     sortBy: 'version',
@@ -134,5 +133,19 @@ describe('CustomeResourceList', () => {
     customResourceListProps.rowFilters = mockRowFilters;
     customResourceList = shallow(<CustomResourceList {...customResourceListProps} />);
     expect(customResourceList.find(FilterToolbar).exists()).toBe(true);
+  });
+
+  it('should render the EmptyState component by default', () => {
+    const customResourceList = shallow(
+      <CustomResourceList {...customResourceListProps} resources={[]} />,
+    );
+    expect(customResourceList.find(EmptyState).exists()).toBe(true);
+  });
+
+  it('should render the loading box while loading', () => {
+    const customResourceList = shallow(
+      <CustomResourceList {...customResourceListProps} loaded={false} />,
+    );
+    expect(customResourceList.find(LoadingBox).exists()).toBe(true);
   });
 });
