@@ -1,17 +1,12 @@
 import { Map } from 'immutable';
 import { merge } from 'lodash';
 import { TopologyAction, Actions } from './action';
-import {
-  TOPOLOGY_DISPLAY_FILTERS_LOCAL_STORAGE_KEY,
-  DEFAULT_TOPOLOGY_FILTERS,
-  TOPOLOGY_SEARCH_FILTER_KEY,
-} from './const';
+import { TOPOLOGY_DISPLAY_FILTERS_LOCAL_STORAGE_KEY, DEFAULT_TOPOLOGY_FILTERS } from './const';
 
 export type State = Map<string, any>;
 
 export const getDefaultTopologyFilters = () => {
   const displayFilters = localStorage.getItem(TOPOLOGY_DISPLAY_FILTERS_LOCAL_STORAGE_KEY);
-  const searchQuery = new URLSearchParams(window.location.search).get(TOPOLOGY_SEARCH_FILTER_KEY);
 
   if (!displayFilters) {
     localStorage.setItem(
@@ -22,7 +17,6 @@ export const getDefaultTopologyFilters = () => {
 
   const filters = merge({}, DEFAULT_TOPOLOGY_FILTERS, {
     display: JSON.parse(displayFilters) ?? {},
-    searchQuery: searchQuery ?? '',
   });
 
   return filters;

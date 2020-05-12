@@ -11,13 +11,6 @@ import {
   removeQueryArgument,
 } from '@console/internal/components/utils';
 
-// FIXME upgrading redux types is causing many errors at this time
-// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
-// @ts-ignore
-import { useSelector, useDispatch } from 'react-redux';
-import { RootState } from '@console/internal/redux';
-import { getTopologyFilters } from './filters/filter-utils';
-
 import EmptyState from '../EmptyState';
 import NamespacedPage, { NamespacedPageVariants } from '../NamespacedPage';
 import ProjectsExistWrapper from '../ProjectsExistWrapper';
@@ -28,8 +21,7 @@ import TopologyShortcuts from './TopologyShortcuts';
 import { LAST_TOPOLOGY_VIEW_LOCAL_STORAGE_KEY } from './components/const';
 
 import './TopologyPage.scss';
-import { TOPOLOGY_SEARCH_FILTER_KEY } from './redux/const';
-import { setTopologyFilters } from './redux/action';
+import { TOPOLOGY_SEARCH_FILTER_KEY } from './filters';
 
 export interface TopologyPageProps {
   match: RMatch<{
@@ -86,13 +78,9 @@ export const TopologyPage: React.FC<TopologyPageProps> = ({ match }) => {
     exact: true,
   });
 
-  const dispatch = useDispatch();
-  const displayFilters = useSelector((state: RootState) => getTopologyFilters(state).display);
-
   const handleNamespaceChange = (ns: string) => {
     if (ns !== namespace) {
       removeQueryArgument(TOPOLOGY_SEARCH_FILTER_KEY);
-      dispatch(setTopologyFilters({ display: displayFilters, searchQuery: '' }));
     }
   };
 

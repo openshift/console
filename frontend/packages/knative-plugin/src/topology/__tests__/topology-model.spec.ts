@@ -1,5 +1,6 @@
 import * as _ from 'lodash';
 import { ALL_APPLICATIONS_KEY } from '@console/shared/src';
+import { DEFAULT_TOPOLOGY_FILTERS } from '@console/dev-console/src/components/topology/redux/const';
 import { TopologyFilters } from '@console/dev-console/src/components/topology/filters/filter-utils';
 import {
   transformTopologyData,
@@ -12,19 +13,7 @@ describe('topology model ', () => {
   let filters: TopologyFilters;
 
   beforeEach(() => {
-    filters = {
-      display: {
-        podCount: true,
-        eventSources: true,
-        virtualMachines: true,
-        showLabels: true,
-        knativeServices: true,
-        appGrouping: true,
-        operatorGrouping: true,
-        helmGrouping: true,
-      },
-      searchQuery: '',
-    };
+    filters = _.cloneDeep(DEFAULT_TOPOLOGY_FILTERS);
   });
 
   it('should flag knative groups as collapsed when display filter is set', () => {

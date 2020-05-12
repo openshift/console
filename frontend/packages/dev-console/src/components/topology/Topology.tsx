@@ -51,7 +51,13 @@ import { topologyModelFromDataModel } from './data-transforms/topology-model';
 import { layoutFactory, COLA_LAYOUT, COLA_FORCE_LAYOUT } from './layouts/layoutFactory';
 import { TYPE_APPLICATION_GROUP, ComponentFactory } from './components';
 import TopologyFilterBar from './filters/TopologyFilterBar';
-import { getTopologyFilters, TopologyFilters } from './filters/filter-utils';
+import {
+  getTopologyFilters,
+  getTopologySearchQuery,
+  TopologyFilters,
+  TOPOLOGY_SEARCH_FILTER_KEY,
+  FILTER_ACTIVE_CLASS,
+} from './filters/filter-utils';
 import TopologyHelmReleasePanel from './helm/TopologyHelmReleasePanel';
 import { TYPE_HELM_RELEASE } from './helm/components/const';
 import { HelmComponentFactory } from './helm/components/helmComponentFactory';
@@ -227,6 +233,21 @@ const Topology: React.FC<ComponentProps> = ({
     })();
   }, [layout]);
 
+  const onSearchChange = (searchQuery) => {
+    if (searchQuery.length > 0) {
+      setQueryArgument(TOPOLOGY_SEARCH_FILTER_KEY, searchQuery);
+      document.body.classList.add(FILTER_ACTIVE_CLASS);
+    } else {
+      removeQueryArgument(TOPOLOGY_SEARCH_FILTER_KEY);
+      document.body.classList.remove(FILTER_ACTIVE_CLASS);
+    }
+  };
+
+  React.useEffect(() => {
+    const searchQuery = getTopologySearchQuery();
+    searchQuery && onSearchChange(searchQuery);
+  }, []);
+
   const onSidebarClose = () => {
     setSelectedIds([]);
     removeQueryArgument('selectId');
@@ -346,7 +367,9 @@ const Topology: React.FC<ComponentProps> = ({
 
   return (
     <TopologyView
-      viewToolbar={<TopologyFilterBar visualization={visRef.current} />}
+      viewToolbar={
+        <TopologyFilterBar visualization={visRef.current} onSearchChange={onSearchChange} />
+      }
       controlBar={renderControlBar()}
       sideBar={sideBar}
       sideBarOpen={!!sideBar}

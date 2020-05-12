@@ -1,26 +1,17 @@
-// FIXME upgrading redux types is causing many errors at this time
-// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
-// @ts-ignore
-import { useSelector } from 'react-redux';
-import { RootState } from '@console/internal/redux';
 import { testHook } from '../../../../test/test-utils';
 import { useSearchFilter } from '../useSearchFilter';
+import { getTopologySearchQuery } from '../filter-utils';
 
-jest.mock('react-redux', () => ({
-  useSelector: jest.fn(),
+jest.mock('../filter-utils', () => ({
+  getTopologySearchQuery: jest.fn(),
 }));
 
 const testUseSearchFilter = (
   text: string | null | undefined,
   searchQuery: string | undefined,
 ): ReturnType<typeof useSearchFilter> => {
-  (useSelector as jest.Mock).mockImplementation((fn: (state: Partial<RootState>) => any) => {
-    return fn({
-      plugins: {
-        devconsole: { topology: new Map(Object.entries({ filters: { searchQuery } })) },
-      },
-    });
-  });
+  (getTopologySearchQuery as jest.Mock).mockImplementation(() => searchQuery);
+
   // eslint-disable-next-line react-hooks/rules-of-hooks
   return useSearchFilter(text);
 };

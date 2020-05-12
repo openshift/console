@@ -10,24 +10,13 @@ import { topologyModelFromDataModel } from '../topology-model';
 import { transformTopologyData } from '../data-transformer';
 import { TopologyFilters } from '../../filters/filter-utils';
 import { allowedResources } from '../../topology-utils';
+import { DEFAULT_TOPOLOGY_FILTERS } from '../../redux/const';
 
 describe('topology model ', () => {
   let filters: TopologyFilters;
 
   beforeEach(() => {
-    filters = {
-      display: {
-        podCount: true,
-        eventSources: true,
-        virtualMachines: true,
-        showLabels: true,
-        knativeServices: true,
-        appGrouping: true,
-        operatorGrouping: true,
-        helmGrouping: true,
-      },
-      searchQuery: '',
-    };
+    filters = _.cloneDeep(DEFAULT_TOPOLOGY_FILTERS);
   });
 
   it('should return topology model data', () => {

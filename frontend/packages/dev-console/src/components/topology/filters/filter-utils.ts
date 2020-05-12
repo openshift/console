@@ -1,4 +1,8 @@
 import { RootState } from '@console/internal/redux';
+import { getQueryArgument } from '@console/internal/components/utils';
+
+export const TOPOLOGY_SEARCH_FILTER_KEY = 'searchQuery';
+export const FILTER_ACTIVE_CLASS = 'odc-m-filter-active';
 
 export enum ShowFiltersKeyValue {
   podCount = 'Pod Count',
@@ -20,12 +24,11 @@ export const getTopologyFilters = ({
   },
 }: RootState): TopologyFilters => topology.get('filters');
 
+export const getTopologySearchQuery = () => getQueryArgument(TOPOLOGY_SEARCH_FILTER_KEY) ?? '';
+
 export type TopologyFilters = {
   display: DisplayFilters;
-  searchQuery: SearchQuery;
 };
-
-export type SearchQuery = string;
 
 export type DisplayFilters = {
   podCount: boolean;
