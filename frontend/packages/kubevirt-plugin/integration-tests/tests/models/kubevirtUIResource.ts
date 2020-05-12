@@ -15,6 +15,7 @@ import {
   vmDetailBootOrderEditButton,
   vmDetailDedicatedResourcesEditButton,
   vmDetailStatusEditButton,
+  vmDetailNodeSelectorEditButton,
 } from '../../views/virtualMachine.view';
 import {
   activeTab,
@@ -27,6 +28,7 @@ import * as editCD from '../../views/dialogs/editCDView';
 import * as editBootOrder from '../../views/dialogs/editBootOrderView';
 import * as editDedicatedResourcesView from '../../views/dialogs/editDedicatedResourcesView';
 import * as editStatusView from '../../views/dialogs/editStatusView';
+import * as editNodeSelectorView from '../../views/editNodeSelectorView';
 import { NetworkInterfaceDialog } from '../dialogs/networkInterfaceDialog';
 import { DiskDialog } from '../dialogs/diskDialog';
 import { UIResource } from './uiResource';
@@ -186,5 +188,10 @@ export class KubevirtUIResource extends UIResource {
     await click(vmDetailStatusEditButton(this.namespace, this.name));
     await browser.wait(until.presenceOf(editStatusView.unpauseVMDialog));
     await isLoaded();
+  }
+
+  async modalEditNodeSelector() {
+    await click(vmDetailNodeSelectorEditButton(this.namespace, this.name));
+    await browser.wait(until.presenceOf(editNodeSelectorView.modalTitle));
   }
 }
