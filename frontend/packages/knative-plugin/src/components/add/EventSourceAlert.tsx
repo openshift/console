@@ -25,14 +25,13 @@ const EventSourceAlert: React.FC<EventSourceAlertProps> = ({ namespace, eventSou
   const showAlert = noKnativeService || noEventSources || noEventSourceAccess;
 
   return showAlert ? (
-    <Alert variant="default" title="Event Source can not be created" isInline>
-      {noEventSourceAccess &&
-        'You do not have write access in this namespace due to cluster policy'}
-      {noEventSources && 'There are no Event Sources present in the cluster'}
+    <Alert variant="default" title="Event Source cannot be created" isInline>
+      {noEventSourceAccess && 'You do not have write access in this project.'}
+      {noEventSources && 'Creation of event sources are not currently supported on this cluster.'}
       {noKnativeService &&
         !noEventSourceAccess &&
         !noEventSources &&
-        'An event source must sink to Knative Service, but no Knative Service exist in this project'}
+        'Event Sources can only sink to Knative Services. No Knative Services exist in this project.'}
     </Alert>
   ) : null;
 };

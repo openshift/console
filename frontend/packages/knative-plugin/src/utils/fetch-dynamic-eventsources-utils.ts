@@ -1,5 +1,7 @@
 import * as _ from 'lodash';
+import { useEffect } from 'react';
 import { coFetch } from '@console/internal/co-fetch';
+import { useSafetyFirst } from '@console/internal/components/safety-first';
 import { K8sKind, kindToAbbr, referenceForModel } from '@console/internal/module/k8s';
 import { chart_color_red_300 as knativeEventingColor } from '@patternfly/react-tokens';
 import {
@@ -12,7 +14,15 @@ import {
   EventSourceCronJobModel,
 } from '../models';
 
-let eventSourceModels: K8sKind[] = [];
+interface EventSourcetData {
+  loaded: boolean;
+  eventSourceModels: K8sKind[];
+}
+
+const eventSourceData: EventSourcetData = {
+  loaded: false,
+  eventSourceModels: [],
+};
 
 // To order sources with known followed by CamelSource and everything else
 export const orderedEventSourceModelData = (allModels: K8sKind[]): K8sKind[] => {
@@ -73,19 +83,42 @@ export const fetchEventSourcesCrd = async () => {
       [],
     );
 
-    eventSourceModels = orderedEventSourceModelData(allModels);
+    eventSourceData.eventSourceModels = orderedEventSourceModelData(allModels);
   } catch (err) {
     // show warning if there is an error fetching the CRDs
     // eslint-disable-next-line no-console
     console.warn('Error fetching CRDs for dynamic event sources', err);
-    eventSourceModels = [];
+    eventSourceData.eventSourceModels = [];
   }
+  eventSourceData.loaded = true;
+  return eventSourceData.eventSourceModels;
 };
 
-export const getEventSourceModels = (): K8sKind[] => eventSourceModels;
+export const useEventSourceModels = (): EventSourcetData => {
+  const [modelsData, setModelsData] = useSafetyFirst({ loaded: false, eventSourceModels: [] });
+  useEffect(() => {
+    if (!eventSourceData.loaded) {
+      fetchEventSourcesCrd()
+        .then((data) => {
+          setModelsData({ loaded: true, eventSourceModels: data });
+        })
+        .catch((err) => {
+          setModelsData({ loaded: true, eventSourceModels: eventSourceData.eventSourceModels });
+          // eslint-disable-next-line no-console
+          console.warn('Error fetching CRDs for dynamic event sources', err);
+        });
+    } else {
+      setModelsData({ loaded: true, eventSourceModels: eventSourceData.eventSourceModels });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+  return modelsData;
+};
+
+export const getEventSourceModels = (): K8sKind[] => eventSourceData.eventSourceModels;
 
 export const getDynamicEventSourcesResourceList = (namespace: string) => {
-  return eventSourceModels.map((model) => {
+  return eventSourceData.eventSourceModels.map((model) => {
     return {
       isList: true,
       kind: referenceForModel(model),
@@ -97,18 +130,21 @@ export const getDynamicEventSourcesResourceList = (namespace: string) => {
 };
 
 export const getDynamicEventSourceModel = (resourceRef: string): K8sKind => {
-  return eventSourceModels.find((model: K8sKind) => referenceForModel(model) === resourceRef);
+  return eventSourceData.eventSourceModels.find(
+    (model: K8sKind) => referenceForModel(model) === resourceRef,
+  );
 };
 
 export const getDynamicEventSourcesModelRefs = (): string[] => {
-  return eventSourceModels.map((model: K8sKind) => referenceForModel(model));
+  return eventSourceData.eventSourceModels.map((model: K8sKind) => referenceForModel(model));
 };
 
 export const isDynamicEventResourceKind = (resourceRef: string): boolean => {
-  const index = eventSourceModels.findIndex(
+  const index = eventSourceData.eventSourceModels.findIndex(
     (model: K8sKind) => referenceForModel(model) === resourceRef,
   );
   return index !== -1;
 };
 
-export const hideDynamicEventSourceCard = () => eventSourceModels && eventSourceModels.length > 0;
+export const hideDynamicEventSourceCard = () =>
+  eventSourceData.eventSourceModels && eventSourceData.eventSourceModels.length > 0;

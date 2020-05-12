@@ -15,7 +15,7 @@ import {
 } from '../components/add/import-types';
 import { ServiceModel } from '../models';
 import { getKnativeEventSourceIcon } from './get-knative-icon';
-import { getEventSourceModels } from './fetch-dynamic-eventsources-utils';
+import { useEventSourceModels } from './fetch-dynamic-eventsources-utils';
 
 export const isKnownEventSource = (eventSource: string): boolean =>
   Object.keys(EventSources).includes(eventSource);
@@ -186,38 +186,40 @@ export const getEventSourceData = (source: string) => {
 
 export const useEventSourceList = (namespace: string): EventSourceListData | null => {
   const [accessData, setAccessData] = useSafetyFirst({ loaded: false, eventSourceList: {} });
-  const models = getEventSourceModels();
+  const { eventSourceModels, loaded: modelLoaded } = useEventSourceModels();
   React.useEffect(() => {
     const accessList = [];
-    models.map((model) => {
-      const { apiGroup, plural, kind } = model;
-      const modelData = {
-        [model.kind]: {
-          name: kind,
-          iconUrl: getKnativeEventSourceIcon(kind),
-          displayName: kind,
-          title: kind,
-        },
-      };
-      return accessList.push(
-        checkAccess({
-          group: apiGroup,
-          resource: plural,
-          namespace,
-          verb: 'create',
-        }).then((result) => (result.status.allowed ? modelData : {})),
-      );
-    });
-    Promise.all(accessList)
-      .then((results) => {
-        const eventSourceList = results.reduce((acc, result) => {
-          return { ...acc, ...result };
-        }, {});
-        setAccessData({ loaded: true, eventSourceList });
-      })
-      // eslint-disable-next-line no-console
-      .catch((err) => console.warn(err.message));
+    if (modelLoaded) {
+      eventSourceModels.map((model) => {
+        const { apiGroup, plural, kind } = model;
+        const modelData = {
+          [model.kind]: {
+            name: kind,
+            iconUrl: getKnativeEventSourceIcon(kind),
+            displayName: kind,
+            title: kind,
+          },
+        };
+        return accessList.push(
+          checkAccess({
+            group: apiGroup,
+            resource: plural,
+            namespace,
+            verb: 'create',
+          }).then((result) => (result.status.allowed ? modelData : {})),
+        );
+      });
+      Promise.all(accessList)
+        .then((results) => {
+          const eventSourceList = results.reduce((acc, result) => {
+            return { ...acc, ...result };
+          }, {});
+          setAccessData({ loaded: true, eventSourceList });
+        })
+        // eslint-disable-next-line no-console
+        .catch((err) => console.warn(err.message));
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-  return models.length === 0 ? null : accessData;
+  }, [modelLoaded]);
+  return eventSourceModels.length === 0 && modelLoaded ? null : accessData;
 };
