@@ -111,6 +111,7 @@ type VMWizardNICModalProps = ModalComponentProps & {
   showInitialValidation?: boolean;
   networks?: VMWizardNetwork[];
   hasNADs: boolean;
+  isEditing?: boolean;
   nads?: FirehoseResult;
   addUpdateNIC: (network: VMWizardNetwork) => void;
 };

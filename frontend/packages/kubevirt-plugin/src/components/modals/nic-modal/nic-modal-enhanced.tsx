@@ -2,7 +2,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { Firehose, FirehoseResource, FirehoseResult } from '@console/internal/components/utils';
 import { createModalLauncher, ModalComponentProps } from '@console/internal/components/factory';
-import { k8sPatch, K8sResourceKind, referenceForModel } from '@console/internal/module/k8s';
+import { k8sPatch, referenceForModel } from '@console/internal/module/k8s';
 import { NetworkAttachmentDefinitionModel } from '@console/network-attachment-definition-plugin';
 import { getName, getNamespace } from '@console/shared';
 import { getLoadedData } from '../../../utils';
@@ -81,7 +81,8 @@ const NICModalFirehoseComponent: React.FC<NICModalFirehoseComponentProps> = (pro
 type NICModalFirehoseComponentProps = ModalComponentProps & {
   nic?: any;
   network?: any;
-  nads?: FirehoseResult<K8sResourceKind[]>;
+  isEditing?: boolean;
+  nads?: FirehoseResult;
   vmLikeEntityLoading?: FirehoseResult<VMLikeEntityKind>;
   vmLikeEntity: VMLikeEntityKind;
 };
@@ -123,6 +124,7 @@ type NICModalFirehoseProps = ModalComponentProps & {
   vmLikeEntity: VMLikeEntityKind;
   nic?: any;
   network?: any;
+  isEditing?: boolean;
   hasNADs: boolean;
 };
 
