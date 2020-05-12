@@ -10,3 +10,4 @@ export const serviceAccountRef = 'serviceAccountRef';
 
 export const duplicateSerialsErrorMsg = 'There are two or more sources with the same Serial Number';
 export const emptySerialErrorMsg = 'Some sources are missing a Serial Number';
+export const serialWithoutResourceErrorMsg = 'Serial number was entered for an empty resource';
