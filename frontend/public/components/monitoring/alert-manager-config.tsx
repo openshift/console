@@ -50,10 +50,14 @@ const AlertRouting = () => {
       </SectionHeading>
       <div className="row">
         <div className="col-sm-6">
-          <dt>Group By</dt>
-          <dd data-test-id="group_by_value">{_.isEmpty(groupBy) ? '-' : _.join(groupBy, ', ')}</dd>
-          <dt>Group Wait</dt>
-          <dd data-test-id="group_wait_value">{_.get(config, ['route', 'group_wait'], '-')}</dd>
+          <dl className="co-m-pane__details">
+            <dt>Group By</dt>
+            <dd data-test-id="group_by_value">
+              {_.isEmpty(groupBy) ? '-' : _.join(groupBy, ', ')}
+            </dd>
+            <dt>Group Wait</dt>
+            <dd data-test-id="group_wait_value">{_.get(config, ['route', 'group_wait'], '-')}</dd>
+          </dl>
         </div>
         <div className="col-sm-6">
           <dl className="co-m-pane__details">
