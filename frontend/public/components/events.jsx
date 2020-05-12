@@ -220,10 +220,10 @@ export class EventsList extends React.Component {
             />
           </div>
           <div className="form-group">
-            <ChipGroup withToolbar defaultIsOpen={false}>
+            {[...selected].filter(chip => chip !== 'All').length >= 1 && <ChipGroup withToolbar defaultIsOpen={false}>
               <ChipGroupToolbarItem key="resources-category" categoryName="Resource">
-                {[...selected].map((chip) => (
-                  chip !== 'All' && <Chip key={chip} onClick={() => this.toggleSelected(chip)}>
+                {[...selected].filter(chip => chip !== 'All').map((chip) => (
+                  <Chip key={chip} onClick={() => this.toggleSelected(chip)}>
                     <ResourceIcon kind={chip} />
                     {kindForReference(chip)}
                   </Chip>
@@ -236,7 +236,7 @@ export class EventsList extends React.Component {
                   </>
                 )}
               </ChipGroupToolbarItem>
-            </ChipGroup>
+            </ChipGroup>}
           </div>
         </PageHeading>
         <EventStream
