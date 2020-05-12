@@ -58,9 +58,6 @@ const AddHealthChecksForm: React.FC<AddHealthChecksFormProps> = ({
     healthChecks: getHealthChecksData(resource.data, containerIndex),
     containerName: container.name,
     resources: getResourcesType(resource.data),
-    image: {
-      ports: container.ports || [],
-    },
   };
 
   return (

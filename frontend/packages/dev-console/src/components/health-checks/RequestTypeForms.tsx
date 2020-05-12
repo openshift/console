@@ -2,27 +2,15 @@ import * as React from 'react';
 import * as _ from 'lodash';
 import { FormikValues, useFormikContext } from 'formik';
 import { TextInputTypes, FormGroup } from '@patternfly/react-core';
-import {
-  InputField,
-  CheckboxField,
-  DropdownField,
-  getFieldId,
-  TextColumnField,
-} from '@console/shared';
+import { InputField, CheckboxField, getFieldId, TextColumnField } from '@console/shared';
 import { NameValueEditor } from '@console/internal/components/utils/name-value-editor';
 import { Resources } from '../import/import-types';
 
 interface RequestTypeFormProps {
-  ports?: { [port: number]: number };
   probeType?: string;
 }
 
-export const renderPortField = (
-  ports: { [port: number]: number },
-  fieldName: string,
-  defaultPort: number,
-  resourceType: Resources,
-) => {
+export const renderPortField = (fieldName: string, resourceType: Resources) => {
   if (resourceType === Resources.KnativeService) {
     return (
       <InputField
@@ -34,27 +22,15 @@ export const renderPortField = (
       />
     );
   }
-  return _.isEmpty(ports) ? (
-    <InputField type={TextInputTypes.text} name={fieldName} label="Port" required />
-  ) : (
-    <DropdownField
-      name={fieldName}
-      label="Port"
-      items={ports}
-      title={ports[defaultPort] || 'Select target port'}
-      fullWidth
-      required
-    />
-  );
+  return <InputField type={TextInputTypes.text} name={fieldName} label="Port" required />;
 };
 
-export const HTTPRequestTypeForm: React.FC<RequestTypeFormProps> = ({ ports, probeType }) => {
+export const HTTPRequestTypeForm: React.FC<RequestTypeFormProps> = ({ probeType }) => {
   const {
     values: { healthChecks, resources },
     setFieldValue,
   } = useFormikContext<FormikValues>();
   const httpHeaders = healthChecks?.[probeType]?.data?.httpGet?.httpHeaders;
-  const defaultPort = healthChecks?.[probeType]?.data?.httpGet?.port;
   const initialNameValuePairs = !_.isEmpty(httpHeaders)
     ? httpHeaders.map((val) => _.values(val))
     : [['', '']];
@@ -107,18 +83,17 @@ export const HTTPRequestTypeForm: React.FC<RequestTypeFormProps> = ({ ports, pro
         label="Path"
         placeholder="/"
       />
-      {renderPortField(ports, portFieldName, defaultPort, resources)}
+      {renderPortField(portFieldName, resources)}
     </>
   );
 };
 
-export const TCPRequestTypeForm: React.FC<RequestTypeFormProps> = ({ ports, probeType }) => {
+export const TCPRequestTypeForm: React.FC<RequestTypeFormProps> = ({ probeType }) => {
   const {
-    values: { healthChecks, resources },
+    values: { resources },
   } = useFormikContext<FormikValues>();
-  const defaultPort = healthChecks?.[probeType]?.data?.tcpSocket?.port;
   const portFieldName = `healthChecks.${probeType}.data.tcpSocket.port`;
-  return renderPortField(ports, portFieldName, defaultPort, resources);
+  return renderPortField(portFieldName, resources);
 };
 
 export const CommandRequestTypeForm: React.FC<RequestTypeFormProps> = ({ probeType }) => {

@@ -1,13 +1,5 @@
 import { HealthChecksProbeType, RequestType, HealthCheckProbe } from './health-checks-types';
 
-export const getContainerPorts = (ports): { [port: number]: number } => {
-  const containerPorts = ports.reduce((acc, port) => {
-    acc[port.containerPort] = port.containerPort;
-    return acc;
-  }, {});
-  return containerPorts;
-};
-
 export const getHealthChecksProbeConfig = (probe: string) => {
   switch (probe) {
     case HealthChecksProbeType.ReadinessProbe: {

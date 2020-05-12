@@ -4,11 +4,7 @@ import { PlusCircleIcon, MinusCircleIcon } from '@patternfly/react-icons';
 import { GreenCheckCircleIcon } from '@console/shared';
 import { Button, ButtonVariant } from '@patternfly/react-core';
 import ProbeForm from './ProbeForm';
-import {
-  getHealthChecksProbeConfig,
-  getContainerPorts,
-  healthChecksDefaultValues,
-} from './health-checks-probe-utils';
+import { getHealthChecksProbeConfig, healthChecksDefaultValues } from './health-checks-probe-utils';
 import { HealthCheckProbeData } from './health-checks-types';
 import './HealthChecksProbe.scss';
 
@@ -18,10 +14,7 @@ interface HealthCheckProbeProps {
 
 const HealthCheckProbe: React.FC<HealthCheckProbeProps> = ({ probeType }) => {
   const {
-    values: {
-      image: { ports },
-      healthChecks,
-    },
+    values: { healthChecks },
     setFieldValue,
   } = useFormikContext<FormikValues>();
   const [temporaryProbeData, setTemporaryProbeData] = React.useState<HealthCheckProbeData>();
@@ -54,14 +47,7 @@ const HealthCheckProbe: React.FC<HealthCheckProbeProps> = ({ probeType }) => {
 
   const renderProbe = () => {
     if (healthChecks?.[probeType]?.showForm) {
-      return (
-        <ProbeForm
-          onSubmit={handleSubmit}
-          onClose={handleReset}
-          probeType={probeType}
-          containerPorts={getContainerPorts(ports)}
-        />
-      );
+      return <ProbeForm onSubmit={handleSubmit} onClose={handleReset} probeType={probeType} />;
     }
     if (healthChecks?.[probeType]?.enabled) {
       return (
