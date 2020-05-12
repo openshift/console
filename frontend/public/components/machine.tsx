@@ -149,52 +149,54 @@ const MachineDetails: React.SFC<MachineDetailsProps> = ({ obj }: { obj: MachineK
               <ResourceSummary resource={obj} />
             </div>
             <div className="col-sm-6">
-              <DetailsItem label="Phase" obj={obj} path="status.phase">
-                <Status status={getMachinePhase(obj)} />
-              </DetailsItem>
-              <DetailsItem
-                label="Provider State"
-                obj={obj}
-                path="status.providerStatus.instanceState"
-              >
-                {providerState}
-              </DetailsItem>
-              {nodeName && (
-                <>
-                  <dt>Node</dt>
-                  <dd>
-                    <NodeLink name={nodeName} />
-                  </dd>
-                </>
-              )}
-              {machineRole && (
-                <>
-                  <dt>Machine Role</dt>
-                  <dd>{machineRole}</dd>
-                </>
-              )}
-              {instanceType && (
-                <>
-                  <dt>Instance Type</dt>
-                  <dd>{instanceType}</dd>
-                </>
-              )}
-              {region && (
-                <>
-                  <dt>Region</dt>
-                  <dd>{region}</dd>
-                </>
-              )}
-              {zone && (
-                <>
-                  <dt>Availability Zone</dt>
-                  <dd>{zone}</dd>
-                </>
-              )}
-              <dt>Machine Addresses</dt>
-              <dd>
-                <NodeIPList ips={getMachineAddresses(obj)} expand />
-              </dd>
+              <dl className="co-m-pane__details">
+                <DetailsItem label="Phase" obj={obj} path="status.phase">
+                  <Status status={getMachinePhase(obj)} />
+                </DetailsItem>
+                <DetailsItem
+                  label="Provider State"
+                  obj={obj}
+                  path="status.providerStatus.instanceState"
+                >
+                  {providerState}
+                </DetailsItem>
+                {nodeName && (
+                  <>
+                    <dt>Node</dt>
+                    <dd>
+                      <NodeLink name={nodeName} />
+                    </dd>
+                  </>
+                )}
+                {machineRole && (
+                  <>
+                    <dt>Machine Role</dt>
+                    <dd>{machineRole}</dd>
+                  </>
+                )}
+                {instanceType && (
+                  <>
+                    <dt>Instance Type</dt>
+                    <dd>{instanceType}</dd>
+                  </>
+                )}
+                {region && (
+                  <>
+                    <dt>Region</dt>
+                    <dd>{region}</dd>
+                  </>
+                )}
+                {zone && (
+                  <>
+                    <dt>Availability Zone</dt>
+                    <dd>{zone}</dd>
+                  </>
+                )}
+                <dt>Machine Addresses</dt>
+                <dd>
+                  <NodeIPList ips={getMachineAddresses(obj)} expand />
+                </dd>
+              </dl>
             </div>
           </div>
         </div>
