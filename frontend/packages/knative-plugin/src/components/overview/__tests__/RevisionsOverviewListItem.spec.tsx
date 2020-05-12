@@ -54,6 +54,23 @@ describe('RevisionsOverviewListItem', () => {
     expect(wrapper.find('.odc-revision-deployment-list').exists()).toBeFalsy();
   });
 
+  it('should sum the traffic percentage for the same revision', () => {
+    const { revisionName } = MockKnativeResources.ksservices.data[0].status.traffic[0];
+    const mockServiceData = {
+      ...MockKnativeResources.ksservices.data[0],
+      status: {
+        ...MockKnativeResources.ksservices.data[0].status,
+        traffic: [
+          { percent: 50, tag: 'tag-1', revisionName },
+          { percent: 50, tag: 'tag-2', revisionName },
+        ],
+      },
+    };
+    wrapper.setProps({ service: mockServiceData });
+    expect(wrapper.find(ResourceLink)).toHaveLength(1);
+    expect(wrapper.find('span.text-right').text()).toBe('100%');
+  });
+
   describe('RevisionsOverviewListItem: deployments', () => {
     beforeEach(() => {
       const resources = {

@@ -27,7 +27,6 @@ import {
   getTopologyNodeItem,
   getTopologyEdgeItems,
   mergeGroup,
-  getRoutesURL,
   filterBasedOnActiveApplication,
   getTopologyResourceObject,
   TopologyOverviewItem,
@@ -38,6 +37,7 @@ import { RootState } from '@console/internal/redux';
 import { FLAG_KNATIVE_EVENTING } from '../const';
 import { ServiceModel as knServiceModel } from '../models';
 import { KnativeItem } from '../utils/get-knative-resources';
+import { Traffic as TrafficData } from '../types';
 
 export enum NodeType {
   EventSource = 'event-source',
@@ -59,6 +59,17 @@ type RevK8sResourceKind = K8sResourceKind & {
  */
 export const getEventSourceStatus = ({ FLAGS }: RootState): boolean =>
   FLAGS.get(FLAG_KNATIVE_EVENTING);
+
+/**
+ * get knative service routes url based on the revision's traffic
+ */
+export const getKnativeServiceRoutesURL = (ksvc: K8sResourceKind): string => {
+  if (!ksvc.status) {
+    return '';
+  }
+  const maximumTraffic: TrafficData = _.maxBy(ksvc.status.traffic as TrafficData[], 'percent');
+  return maximumTraffic?.url || ksvc.status.url;
+};
 
 /**
  * fetch the parent resource from a resource
@@ -301,13 +312,18 @@ export const getTrafficTopologyEdgeItems = (resource: K8sResourceKind, { data })
     });
     const resUid = _.get(revisionObj, ['metadata', 'uid'], null);
     if (resUid) {
-      edges.push({
-        id: `${uid}_${resUid}`,
-        type: EdgeType.Traffic,
-        source: uid,
-        target: resUid,
-        data: { percent: trafficPercent },
-      });
+      const revisionIndex = _.findIndex(edges, (edge) => edge.id === `${uid}_${resUid}`);
+      if (revisionIndex >= 0) {
+        edges[revisionIndex].data.percent += trafficPercent;
+      } else {
+        edges.push({
+          id: `${uid}_${resUid}`,
+          type: EdgeType.Traffic,
+          source: uid,
+          target: resUid,
+          data: { percent: trafficPercent },
+        });
+      }
     }
   });
   return edges;
@@ -334,7 +350,7 @@ export const createTopologyServiceNodeData = (
     resources: { ...svcRes },
     operatorBackedService: nodeResourceKind in operatorBackedServiceKindMap,
     data: {
-      url: getRoutesURL(svcRes),
+      url: getKnativeServiceRoutesURL(knativeSvc),
       kind: referenceFor(knativeSvc),
       editURL: annotations['app.openshift.io/edit-url'],
       vcsURI: annotations['app.openshift.io/vcs-uri'],

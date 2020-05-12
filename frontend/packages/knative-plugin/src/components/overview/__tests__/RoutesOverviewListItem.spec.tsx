@@ -5,18 +5,18 @@ import { ResourceLink, ExternalLink } from '@console/internal/components/utils';
 import { MockKnativeResources } from '@console/dev-console/src/components/topology/__tests__/topology-knative-test-data';
 import { RouteModel } from '../../../models';
 import RoutesOverviewListItem from '../RoutesOverviewListItem';
+import { getKnativeRoutesLinks } from '../../../utils/resource-overview-utils';
 
 type RoutesOverviewListItemProps = React.ComponentProps<typeof RoutesOverviewListItem>;
 
 describe('RoutesOverviewListItem', () => {
   let wrapper: ShallowWrapper<RoutesOverviewListItemProps>;
   beforeEach(() => {
-    wrapper = shallow(
-      <RoutesOverviewListItem
-        route={MockKnativeResources.ksroutes.data[0]}
-        resource={MockKnativeResources.revisions.data[0]}
-      />,
+    const [routeLink] = getKnativeRoutesLinks(
+      MockKnativeResources.ksroutes.data[0],
+      MockKnativeResources.revisions.data[0],
     );
+    wrapper = shallow(<RoutesOverviewListItem routeLink={routeLink} />);
   });
 
   it('should list the Route', () => {
@@ -64,12 +64,11 @@ describe('RoutesOverviewListItem', () => {
         ],
       },
     };
-    wrapper = shallow(
-      <RoutesOverviewListItem
-        route={mockRouteData}
-        resource={MockKnativeResources.revisions.data[0]}
-      />,
+    const [routeLink] = getKnativeRoutesLinks(
+      mockRouteData,
+      MockKnativeResources.revisions.data[0],
     );
+    wrapper.setProps({ routeLink });
     expect(wrapper.find(ExternalLink)).toHaveLength(1);
     expect(
       wrapper
@@ -79,5 +78,29 @@ describe('RoutesOverviewListItem', () => {
     ).toEqual(
       'http://abc-overlayimage.knativeapps.apps.bpetersen-june-23.devcluster.openshift.com',
     );
+  });
+  it('should not show the route url and traffic percentage section, if there are not available', () => {
+    const mockRouteData = {
+      ...MockKnativeResources.ksroutes.data[0],
+      status: {
+        ...MockKnativeResources.ksroutes.data[0].status,
+        url: undefined,
+        traffic: [
+          {
+            ...MockKnativeResources.ksroutes.data[0].status.traffic[0],
+            percent: undefined,
+            url: undefined,
+          },
+        ],
+      },
+    };
+    const [routeLink] = getKnativeRoutesLinks(
+      mockRouteData,
+      MockKnativeResources.revisions.data[0],
+    );
+    wrapper.setProps({ routeLink });
+    expect(wrapper.find(ResourceLink)).toHaveLength(1);
+    expect(wrapper.find(ExternalLink)).toHaveLength(0);
+    expect(wrapper.find('span.text-right')).toHaveLength(0);
   });
 });

@@ -100,6 +100,20 @@ describe('knative topology utils', () => {
     expect(knRevisionsEdge[0].type).toBe('revision-traffic');
   });
 
+  it('expect getTrafficTopologyEdgeItems to return the sum of the percentage if there are multiple same revisions', () => {
+    const ksvc = _.cloneDeep(MockKnativeResources.ksservices.data[0]);
+    const { uid, name: revisionName } = MockKnativeResources.revisions.data[0].metadata;
+    ksvc.status = {
+      traffic: [
+        { uid, revisionName, percent: 40 },
+        { uid, revisionName, percent: 60 },
+      ],
+    };
+    const knRevisionsEdge = getTrafficTopologyEdgeItems(ksvc, MockKnativeResources.revisions);
+    expect(knRevisionsEdge).toBeDefined();
+    expect(knRevisionsEdge).toHaveLength(1);
+    expect(knRevisionsEdge[0].data.percent).toBe(100);
+  });
   it('should only return revisions which are in the service traffic status', () => {
     expect(filterRevisionsBaseOnTrafficStatus(mockServiceData, mockRevisions)).toHaveLength(1);
     const mockRev = {

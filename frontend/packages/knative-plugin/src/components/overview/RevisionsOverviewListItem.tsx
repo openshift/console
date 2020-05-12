@@ -4,6 +4,7 @@ import { PodStatus } from '@console/shared';
 import { ChartLabel } from '@patternfly/react-charts';
 import { K8sResourceKind, referenceForModel } from '@console/internal/module/k8s';
 import { ResourceLink } from '@console/internal/components/utils';
+import { Traffic } from '../../types';
 import { RevisionModel } from '../../models';
 import './RevisionsOverviewListItem.scss';
 
@@ -26,7 +27,11 @@ const RevisionsOverviewListItem: React.FC<RevisionsOverviewListItemProps> = ({
     if (!traffic || !traffic.length) {
       return null;
     }
-    const trafficPercent = _.get(_.find(traffic, { revisionName: revName }), 'percent', null);
+    const trafficPercent = traffic
+      .filter((t: Traffic) => t.revisionName === revName)
+      .map((tr: Traffic) => tr.percent)
+      .reduce((a: number, b: number) => a + b, 0);
+
     return trafficPercent ? `${trafficPercent}%` : null;
   };
   const deploymentData = _.get(revision, 'resources.current.obj.metadata.ownerReferences[0]', {});
