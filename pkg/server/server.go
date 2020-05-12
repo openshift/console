@@ -17,6 +17,7 @@ import (
 	helmhandlerspkg "github.com/openshift/console/pkg/helm/handlers"
 	"github.com/openshift/console/pkg/proxy"
 	"github.com/openshift/console/pkg/serverutils"
+	"github.com/openshift/console/pkg/terminal"
 	"github.com/openshift/console/pkg/version"
 )
 
@@ -219,6 +220,12 @@ func (s *Server) HTTPHandler() http.Handler {
 			k8sProxy.ServeHTTP(w, r)
 		})),
 	)
+
+	terminalProxy := &terminal.Proxy{
+		TLSClientConfig: s.K8sProxyConfig.TLSClientConfig,
+		ClusterEndpoint: s.K8sProxyConfig.Endpoint,
+	}
+	handle(terminal.Endpoint, authHandlerWithUser(terminalProxy.Handle))
 
 	if s.prometheusProxyEnabled() {
 		// Only proxy requests to the Prometheus API, not the UI.
