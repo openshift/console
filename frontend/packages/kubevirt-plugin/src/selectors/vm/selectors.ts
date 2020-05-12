@@ -71,7 +71,10 @@ export const getFlavor = (vmLike: VMGenericLikeEntityKind) =>
   findKeySuffixValue(getLabels(vmLike), TEMPLATE_FLAVOR_LABEL);
 
 export const isVMRunning = (value: VMKind) =>
-  _.get(value, 'spec.running', false) as VMKind['spec']['running'];
+  (_.get(value, 'spec.runStrategy', null) === null &&
+    _.get(value, 'spec.running', null) === true) ||
+  (_.get(value, 'spec.running', null) === null &&
+    _.get(value, 'spec.runStrategy', null) !== 'Halted');
 
 export const isVMReady = (value: VMKind) =>
   _.get(value, 'status.ready', false) as VMKind['status']['ready'];
