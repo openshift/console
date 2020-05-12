@@ -5,21 +5,21 @@ import { compose } from 'redux';
 import { connect } from 'react-redux';
 import {
   Checkbox,
+  DataToolbar,
+  DataToolbarContent,
+  DataToolbarFilter,
+  DataToolbarChip,
+  DataToolbarItem,
   DropdownItem,
   Dropdown,
   DropdownToggle,
   DropdownGroup,
-  ChipGroup,
-  Chip,
-  ChipGroupToolbarItem,
-  Button,
   Badge,
 } from '@patternfly/react-core';
-import { CaretDownIcon, CloseIcon, FilterIcon } from '@patternfly/react-icons';
+import { CaretDownIcon, FilterIcon } from '@patternfly/react-icons';
 import { Dropdown as DropdownInternal } from '@console/internal/components/utils';
 import { setQueryArgument, removeQueryArgument } from './utils';
 import { filterList } from '../actions/k8s';
-import { searchFilterValues } from './search-filter-dropdown';
 import AutocompleteInput from './autocomplete';
 import { storagePrefix } from './row-filter';
 
@@ -237,117 +237,95 @@ const FilterToolbar_: React.FC<FilterToolbarProps & RouteComponentProps> = (prop
 
   const switchFilter = (type: FilterType) => {
     setFilterType(FilterType[type]);
-    setInputText('');
+    setInputText(nameFilter && FilterType[type] === FilterType.NAME ? nameFilter : '');
   };
 
   const dropdownItems = getDropdownItems(rowFilters, selectedRowFilters, data, props);
 
   return (
-    <>
-      <div className="co-search-group co-search-group__filter co-filter__block">
+    <DataToolbar id="filter-toolbar" clearAllFilters={clearAll}>
+      <DataToolbarContent>
         {rowFilters.length > 0 && (
-          <Dropdown
-            dropdownItems={dropdownItems}
-            className="co-list-filter-block__row-dropdown co-search-group__resource"
-            onSelect={onRowFilterSelect}
-            isOpen={isOpen}
-            toggle={
-              <DropdownToggle
-                data-test-id="filter-dropdown-toggle"
-                onToggle={() => setOpen(!isOpen)}
-                iconComponent={CaretDownIcon}
-              >
-                <FilterIcon className="span--icon__right-margin" />
-                Filter
-              </DropdownToggle>
-            }
-          />
+          <DataToolbarItem>
+            {_.reduce(
+              Object.keys(filters),
+              (acc, key) => (
+                <DataToolbarFilter
+                  key={key}
+                  chips={_.intersection(selectedRowFilters, filters[key]).map((item) => {
+                    return { key: item, node: filtersNameMap[item] };
+                  })}
+                  deleteChip={(filter, chip: DataToolbarChip) =>
+                    updateRowFilterSelected([chip.key])
+                  }
+                  categoryName={key}
+                  deleteChipGroup={() => clearAllRowFilter(key)}
+                >
+                  {acc}
+                </DataToolbarFilter>
+              ),
+              <Dropdown
+                dropdownItems={dropdownItems}
+                onSelect={onRowFilterSelect}
+                isOpen={isOpen}
+                toggle={
+                  <DropdownToggle
+                    data-test-id="filter-dropdown-toggle"
+                    onToggle={() => setOpen(!isOpen)}
+                    iconComponent={CaretDownIcon}
+                  >
+                    <FilterIcon className="span--icon__right-margin" />
+                    Filter
+                  </DropdownToggle>
+                }
+              />,
+            )}
+          </DataToolbarItem>
         )}
-        <div className="pf-c-input-group co-search-group__filters co-search-group__resource">
-          {!hideLabelFilter && (
-            <DropdownInternal
-              items={FilterType}
-              onChange={switchFilter}
-              selectedKey={filterType}
-              title={filterType}
-            />
-          )}
-          {!hideNameFilter && (
-            <AutocompleteInput
-              className="co-text-node"
-              onSuggestionSelect={(selected) => {
-                updateLabelFilter(_.uniq([...labelFilters, selected]));
-              }}
-              showSuggestions={FilterType.LABEL === filterType}
-              textValue={inputText}
-              setTextValue={updateSearchFilter}
-              placeholder={FilterType.NAME === filterType ? 'Search by name...' : 'app=frontend'}
-              data={data}
-            />
-          )}
-        </div>
-      </div>
-      <ChipGroup className="co-filter__chips" withToolbar defaultIsOpen={false} numChips={8}>
-        <ChipGroupToolbarItem key="name-category" categoryName={searchFilterValues.Name}>
-          {!hideNameFilter && nameFilter && (
-            <Chip key="typehaed-chip" onClick={() => updateNameFilter('')}>
-              {nameFilter}
-            </Chip>
-          )}
-          {!hideNameFilter && nameFilter && (
-            <span>
-              <Button variant="plain" aria-label="Close" onClick={() => updateNameFilter('')}>
-                <CloseIcon />
-              </Button>
-            </span>
-          )}
-        </ChipGroupToolbarItem>
-        {Object.keys(filters).map((key) => {
-          const selected = _.intersection(selectedRowFilters, filters[key]);
-          return (
-            <ChipGroupToolbarItem key={key} categoryName={key}>
-              {selected.map((item) => (
-                <Chip key={item} onClick={() => updateRowFilterSelected([item])}>
-                  {filtersNameMap[item]}
-                </Chip>
-              ))}
-              {selected.length > 0 && (
-                <span>
-                  <Button variant="plain" aria-label="Close" onClick={() => clearAllRowFilter(key)}>
-                    <CloseIcon />
-                  </Button>
-                </span>
-              )}
-            </ChipGroupToolbarItem>
-          );
-        })}
-        <ChipGroupToolbarItem key="label-category" categoryName={searchFilterValues.Label}>
-          {!hideLabelFilter &&
-            labelFilters.map((chip) => (
-              <Chip
-                key={chip}
-                onClick={() => updateLabelFilter(_.difference(labelFilters, [chip]))}
-              >
-                {chip}
-              </Chip>
-            ))}
-          {!hideLabelFilter && labelFilters.length > 0 && (
-            <span>
-              <Button variant="plain" aria-label="Close" onClick={() => updateLabelFilter([])}>
-                <CloseIcon />
-              </Button>
-            </span>
-          )}
-        </ChipGroupToolbarItem>
-      </ChipGroup>
-      {((labelFilters.length > 0 && !hideLabelFilter) ||
-        selectedRowFilters.length > 0 ||
-        (nameFilter && !hideLabelFilter)) && (
-        <Button variant="link" key="clear-filters" onClick={clearAll}>
-          Clear all filters
-        </Button>
-      )}
-    </>
+        <DataToolbarItem className="co-filter-search--full-width">
+          <DataToolbarFilter
+            deleteChipGroup={() => updateLabelFilter([])}
+            chips={[...labelFilters]}
+            deleteChip={(filter, chip: string) =>
+              updateLabelFilter(_.difference(labelFilters, [chip]))
+            }
+            categoryName="Label"
+          >
+            <DataToolbarFilter
+              chips={nameFilter && nameFilter.length > 0 ? [nameFilter] : []}
+              deleteChip={() => updateNameFilter('')}
+              categoryName="Name"
+            >
+              <div className="pf-c-input-group">
+                {!hideLabelFilter && (
+                  <DropdownInternal
+                    items={FilterType}
+                    onChange={switchFilter}
+                    selectedKey={filterType}
+                    title={filterType}
+                  />
+                )}
+                {!hideNameFilter && (
+                  <AutocompleteInput
+                    className="co-text-node"
+                    onSuggestionSelect={(selected) => {
+                      updateLabelFilter(_.uniq([...labelFilters, selected]));
+                    }}
+                    showSuggestions={FilterType.LABEL === filterType}
+                    textValue={inputText}
+                    setTextValue={updateSearchFilter}
+                    placeholder={
+                      FilterType.NAME === filterType ? 'Search by name...' : 'app=frontend'
+                    }
+                    data={data}
+                  />
+                )}
+              </div>
+            </DataToolbarFilter>
+          </DataToolbarFilter>
+        </DataToolbarItem>
+      </DataToolbarContent>
+    </DataToolbar>
   );
 };
 
