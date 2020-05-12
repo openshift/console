@@ -2,16 +2,16 @@ import * as React from 'react';
 import * as _ from 'lodash';
 import { useFormikContext, FormikValues } from 'formik';
 import { TextInputTypes, FormGroup } from '@patternfly/react-core';
-import { InputField, MultiColumnField } from '@console/shared';
+import { InputField, TextColumnField } from '@console/shared';
 import { AsyncComponent } from '@console/internal/components/utils';
 import FormSection from '@console/dev-console/src/components/import/section/FormSection';
 import { getSuggestedName } from '@console/dev-console/src/utils/imagestream-utils';
 
 const containerPaths = {
-  Image: 'data.containersource.containers[0].image',
-  Name: 'data.containersource.containers[0].name',
-  Env: 'data.containersource.containers[0].env',
-  Args: 'data.containersource.containers[0].args',
+  Image: 'data.containersource.template.spec.containers[0].image',
+  Name: 'data.containersource.template.spec.containers[0].name',
+  Env: 'data.containersource.template.spec.containers[0].env',
+  Args: 'data.containersource.template.spec.containers[0].args',
 };
 
 const ContainerSourceSection: React.FC = () => {
@@ -19,7 +19,11 @@ const ContainerSourceSection: React.FC = () => {
   const {
     data: {
       containersource: {
-        containers: [{ env: envs, args }],
+        template: {
+          spec: {
+            containers: [{ env: envs, args }],
+          },
+        },
       },
     },
   } = values;
@@ -54,18 +58,15 @@ const ContainerSourceSection: React.FC = () => {
         name={containerPaths.Name}
         label="Name"
       />
-      <MultiColumnField
+      <TextColumnField
         data-test-id="container-arg-field"
         name={containerPaths.Args}
-        addLabel="Add args"
         label="Arguments"
-        headers={[]}
-        emptyValues={{ name: '' }}
+        addLabel="Add args"
+        placeholder="argument"
+        helpText="The command to run inside the container."
         disableDeleteRow={args?.length === 1}
-        emptyMessage="No args are associated with the container."
-      >
-        <InputField name="name" type={TextInputTypes.text} placeholder="args" />
-      </MultiColumnField>
+      />
       <FormGroup fieldId="containersource-env" label="Environment variables">
         <AsyncComponent
           loader={() =>

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { shallow, ShallowWrapper } from 'enzyme';
-import { MultiColumnField } from '@console/shared';
+import { TextColumnField } from '@console/shared';
 import FormSection from '@console/dev-console/src/components/import/section/FormSection';
 import { AsyncComponent } from '@console/internal/components/utils/async';
 import ContainerSourceSection from '../ContainerSourceSection';
@@ -18,11 +18,15 @@ jest.mock('formik', () => ({
       type: 'ContainerSource',
       data: {
         containersource: {
-          containers: [
-            {
-              args: [],
+          template: {
+            spec: {
+              containers: [
+                {
+                  args: [],
+                },
+              ],
             },
-          ],
+          },
         },
       },
     },
@@ -47,7 +51,7 @@ describe('ContainerSourceSection', () => {
   });
 
   it('should render Container args field', () => {
-    const argsField = wrapper.find(MultiColumnField);
+    const argsField = wrapper.find(TextColumnField);
     expect(argsField).toHaveLength(1);
   });
 
