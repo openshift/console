@@ -259,7 +259,12 @@ export const EditYAML_ = connect(stateToProps)(
         return;
       }
 
-      // If this is a namesapced resource, default to the active namespace when none is specified in the YAML.
+      if (!obj.metadata) {
+        this.handleError('No "metadata" field found in YAML.');
+        return;
+      }
+
+      // If this is a namespaced resource, default to the active namespace when none is specified in the YAML.
       if (!obj.metadata.namespace && model.namespaced) {
         if (this.props.activeNamespace === ALL_NAMESPACES_KEY) {
           this.handleError('No "metadata.namespace" field found in YAML.');
