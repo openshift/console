@@ -57,6 +57,7 @@ import {
   serviceAccountRef,
   duplicateSerialsErrorMsg,
   emptySerialErrorMsg,
+  serialWithoutResourceErrorMsg,
 } from './constants';
 import { VMEnvironmentFooter } from './vm-environment-footer';
 import './vm-environment.scss';
@@ -149,7 +150,7 @@ const VMEnvironment = withHandlePromise<VMEnvironmentProps>(
     const [errMsg, setErrMsg] = React.useState(errorMessage);
     const [isSuccess, setIsSuccess] = React.useState(false);
 
-    const setUsedSources = (): EnvDisk[] => {
+    const getUsedSources = (): EnvDisk[] => {
       let counter = 0;
       const configmapEnvDisks: EnvDisk[] = vmWrapper
         .getConfigMaps()
@@ -178,14 +179,38 @@ const VMEnvironment = withHandlePromise<VMEnvironmentProps>(
       const usedSources = [...configmapEnvDisks, ...secretsEnvDisks, ...serviceAccountEnvDisks];
       return usedSources.length > 0 ? usedSources : [emptyEnvDisk];
     };
+    const [savedEnvDisks, setSavedEnvDisks] = React.useState(getUsedSources());
+    const [envDisks, setEnvDisks] = React.useState(savedEnvDisks);
 
-    const [envDisks, setEnvDisks] = React.useState(setUsedSources());
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     const onReload = () => {
-      setEnvDisks(setUsedSources());
+      setEnvDisks(getUsedSources());
       setErrMsg('');
       setIsSuccess(false);
+    };
+
+    const checkForErrors = () => {
+      // Check for empty serials
+      const isEmptySerial: EnvDisk = envDisks.find(
+        (ed) => getSerial(ed) === '' && getSourceKind(ed),
+      );
+      if (isEmptySerial) {
+        setErrMsg(emptySerialErrorMsg);
+        return;
+      }
+      // Check for duplicate serials:
+      const duplicateSerials: boolean = areThereDupSerials(
+        envDisks.map((ed) => getSerial(ed)).filter((srl) => srl.length > 0),
+      );
+      if (duplicateSerials) {
+        setErrMsg(duplicateSerialsErrorMsg);
+        return;
+      }
+
+      if (envDisks.find((ed) => getSerial(ed) && !getSourceName(ed))) {
+        setErrMsg(serialWithoutResourceErrorMsg);
+        return;
+      }
+      setErrMsg(null);
     };
 
     const detectSourceChange = (update: NameValuePairs): EnvDisk => {
@@ -228,10 +253,42 @@ const VMEnvironment = withHandlePromise<VMEnvironmentProps>(
       return null;
     };
 
+    // Return true if there was a valid change in at least one of the resources
+    const hasValidChange = (newEnvDisks: EnvDisk[]): boolean => {
+      if (
+        // An edge case were the only saved envDisk is the empty disk
+        // and there are no new envDisks
+        newEnvDisks.length === 0 &&
+        savedEnvDisks.length === 1 &&
+        _.isEqual(savedEnvDisks[0], emptyEnvDisk)
+      ) {
+        return false;
+      }
+
+      if (newEnvDisks.length !== savedEnvDisks.length) {
+        return true;
+      }
+
+      const isNoChange = !!newEnvDisks.every(
+        (ed) =>
+          !!savedEnvDisks.find(
+            (sed) => getSerial(ed) === getSerial(sed) && getSourceName(ed) === getSourceName(sed),
+          ),
+      );
+      return !isNoChange;
+    };
+
+    // Save button disable when there is an error or no real change took place
+    // e.g no resource was added, removed or modified.
+    const isSaveBtnDisabled = (): boolean => {
+      const filterdEnvDisks = envDisks.filter((ed) => getSerial(ed) && getSourceName(ed));
+      return !hasValidChange(filterdEnvDisks) || !!errMsg;
+    };
+
     const updateEnvDisks = (newEnvDisks: NameValuePairs) => {
       const newEnvDisk: EnvDisk = detectSourceChange(newEnvDisks);
 
-      if (newEnvDisk) {
+      if (newEnvDisk && newEnvDisk.length > 2) {
         // new envDisk was added
         newEnvDisks.nameValuePairs[newEnvDisk[2]][0] = getRandomChars().toLocaleUpperCase();
       }
@@ -251,24 +308,6 @@ const VMEnvironment = withHandlePromise<VMEnvironmentProps>(
 
     const onSubmit = async (event) => {
       event.preventDefault();
-
-      // Check for empty serials
-      const isEmptySerial: EnvDisk = envDisks.find(
-        (ed) => getSerial(ed) === '' && getSourceKind(ed),
-      );
-      if (isEmptySerial) {
-        setErrMsg(emptySerialErrorMsg);
-        return;
-      }
-      // Check for duplicate serials:
-      const duplicateSerials: boolean = areThereDupSerials(
-        envDisks.map((ed) => getSerial(ed)).filter((srl) => srl.length > 0),
-      );
-      if (duplicateSerials) {
-        setErrMsg(duplicateSerialsErrorMsg);
-        return;
-      }
-      setErrMsg('');
 
       // Get all current non-source disks
       const currentOtherDisks: V1Disk[] = vmWrapper
@@ -321,16 +360,21 @@ const VMEnvironment = withHandlePromise<VMEnvironmentProps>(
         getVMLikePatches(vm, () => patches),
       );
 
+      const filterdEnvDisks = envDisks.filter((ed) => getSerial(ed) && getSourceName(ed));
       handlePromise(promise)
         .then(() => {
           setIsSuccess(true);
-          setEnvDisks(envDisks.filter((ed) => getSerial(ed) && getSourceName(ed)));
+          setEnvDisks(filterdEnvDisks.length > 0 ? filterdEnvDisks : [emptyEnvDisk]);
+          setSavedEnvDisks(filterdEnvDisks);
         })
         .catch((err) => {
           setIsSuccess(false);
           setErrMsg(err);
         });
     };
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    React.useEffect(() => checkForErrors(), [envDisks]);
 
     const usedConfigMaps: EnvDisk[] = envDisks.filter(
       (ed) => getEnvDiskRefKind(ed) === configMapRef,
@@ -373,7 +417,7 @@ const VMEnvironment = withHandlePromise<VMEnvironmentProps>(
             configMaps={availableConfigMaps}
             secrets={availableSecrets}
             serviceAccounts={availableServiceAccounts}
-            firstTitle="configmap / secret / service account"
+            firstTitle="config map / secret / service account"
             secondTitle="Serial Number"
             addButtonDisabled={addButtonDisabled || inProgress}
             addButtonLabel="Add Config Map, Secret or Service Account"
@@ -385,6 +429,7 @@ const VMEnvironment = withHandlePromise<VMEnvironmentProps>(
             reload={onReload}
             errorMsg={errMsg}
             isSuccess={isSuccess}
+            isSaveBtnDisabled={isSaveBtnDisabled()}
           />
         </div>
       </>
