@@ -26,10 +26,11 @@ import {
   Firehose,
   FirehoseResult,
   Loading,
+  MsgBox,
 } from '@console/internal/components/utils';
 import { ChartDonut } from '@patternfly/react-charts';
 import { DefaultList } from '@console/internal/components/default-resource';
-import { vulnPriority, totalFor } from '../const';
+import { vulnPriority, totalFor, priorityFor } from '../const';
 import { ImageManifestVuln, Feature, Vulnerability } from '../types';
 import { ImageManifestVulnModel } from '../models';
 import { quayURLFor } from './summary';
@@ -38,6 +39,7 @@ import { ContainerLink } from '@console/internal/components/pod';
 
 const shortenImage = (img: string) =>
   img
+    .replace('@sha256', '')
     .split('/')
     .slice(1, 3)
     .join('/');
@@ -50,9 +52,7 @@ export const ImageVulnerabilityRow: React.FC<ImageVulnerabilityRowProps> = (prop
         <ExternalLink text={props.vulnerability.name} href={props.vulnerability.link} />
       </div>
       <div className="col-lg-2 col-md-2 col-sm-5 col-xs-6">
-        <SecurityIcon
-          color={vulnPriority.find((p) => p.title === props.vulnerability.severity).color.value}
-        />
+        <SecurityIcon color={priorityFor(props.vulnerability.severity).color.value} />
         &nbsp;{props.vulnerability.severity}
       </div>
       <div className="col-lg-2 col-md-2 col-sm-3 hidden-xs">{props.packageName}</div>
@@ -71,7 +71,7 @@ export const ImageVulnerabilitiesTable: React.FC<ImageVulnerabilitiesTableProps>
         feature.vulnerabilities.map((vulnerability) => ({ feature, vulnerability })),
       ),
     ),
-    (v) => vulnPriority.find((p) => p.title === v.vulnerability.severity).index,
+    (v) => priorityFor(v.vulnerability.severity).index,
   );
 
   return (
@@ -231,15 +231,19 @@ export const ImageManifestVulnTableRow: RowFunction<ImageManifestVuln> = ({
         <ResourceLink kind="Namespace" name={namespace} />
       </TableData>
       <TableData className={tableColumnClasses[2]}>
-        <SecurityIcon
-          color={vulnPriority.find(({ title }) => obj.status.highestSeverity === title).color.value}
-        />
-        &nbsp;{obj.status.highestSeverity}
+        {_.get(obj.status, 'highestSeverity') ? (
+          <>
+            <SecurityIcon color={priorityFor(obj.status.highestSeverity).color.value} />
+            &nbsp;{obj.status.highestSeverity}
+          </>
+        ) : (
+          <Loading />
+        )}
       </TableData>
       <TableData className={tableColumnClasses[3]}>
         {Object.keys(obj.status.affectedPods).length}
       </TableData>
-      <TableData className={tableColumnClasses[4]}>{obj.status.fixableCount}</TableData>
+      <TableData className={tableColumnClasses[4]}>{obj.status.fixableCount || 0}</TableData>
       <TableData className={tableColumnClasses[4]}>
         <ExternalLink text={shortenHash(obj.spec.manifest)} href={quayURLFor(obj)} />
       </TableData>
@@ -283,19 +287,22 @@ export const ImageManifestVulnTableHeader = () => [
 ];
 
 export const ImageManifestVulnList: React.FC<ImageManifestVulnListProps> = (props) => {
+  const EmptyMsg = () => <MsgBox title="No Image Vulnerabilities Found" detail="" />;
+
   return (
     <Table
       {...props}
-      aria-label="Image Manifest Vulns"
+      aria-label="Image Manifest Vulnerabilities"
       Header={ImageManifestVulnTableHeader}
       Row={ImageManifestVulnTableRow}
+      EmptyMsg={EmptyMsg}
       virtualize
     />
   );
 };
 
 export const ImageManifestVulnPage: React.FC<ImageManifestVulnPageProps> = (props) => {
-  const namespace = _.get(props.match, 'params.ns');
+  const namespace = props.match.params?.ns;
 
   return (
     <MultiListPage
@@ -365,10 +372,7 @@ export const ContainerVulnerabilities: React.FC<ContainerVulnerabilitiesProps> =
                     (vuln) => (
                       <span style={{ display: 'flex', alignItems: 'center' }}>
                         <SecurityIcon
-                          color={
-                            vulnPriority.find(({ title }) => vuln.status.highestSeverity === title)
-                              .color.value
-                          }
+                          color={priorityFor(_.get(vuln.status, 'highestSeverity')).color.value}
                         />
                         &nbsp;
                         <ResourceLink
@@ -378,7 +382,7 @@ export const ContainerVulnerabilities: React.FC<ContainerVulnerabilitiesProps> =
                           title={vuln.metadata.uid}
                           displayName={`${totalFor(
                             vulnPriority.findKey(
-                              ({ title }) => vuln.status.highestSeverity === title,
+                              ({ title }) => _.get(vuln.status, 'highestSeverity') === title,
                             ),
                           )(vuln)} ${vuln.status.highestSeverity}`}
                           hideIcon

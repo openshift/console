@@ -4,8 +4,8 @@ import {
   deleteHelmRelease,
   upgradeHelmRelease,
   rollbackHelmRelease,
-} from '../../../actions/modify-helm-release';
-import { HelmActionOrigins } from '../../helm/helm-types';
+} from '../../../../actions/modify-helm-release';
+import { HelmActionOrigins } from '../../../helm/helm-types';
 
 export const helmReleaseActions = (helmRelease: Node): KebabOption[] => {
   const name = helmRelease.getLabel();

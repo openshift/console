@@ -70,7 +70,19 @@ export const AffinityEdit: React.FC<AffinityEditProps> = ({
 
   const qualifiedExpressionNodes = useNodeQualifier(nodes, 'label', affinityExpressions);
   const qualifiedFieldNodes = useNodeQualifier(nodes, 'field', affinityFields);
-  const qualifiedNodes = _.intersection(qualifiedExpressionNodes, qualifiedFieldNodes);
+
+  const getQualifiedNodes = () => {
+    if (affinityExpressions.length > 0 && affinityFields.length > 0) {
+      return _.intersection(qualifiedExpressionNodes, qualifiedFieldNodes);
+    }
+    if (affinityExpressions.length > 0) {
+      return qualifiedExpressionNodes;
+    }
+    if (affinityFields.length > 0) {
+      return qualifiedFieldNodes;
+    }
+    return [];
+  };
 
   const isExpressionsInvalid = isTermsInvalid(affinityExpressions);
   const isFieldsInvalid = isTermsInvalid(affinityFields);
@@ -238,7 +250,7 @@ export const AffinityEdit: React.FC<AffinityEditProps> = ({
                   onDelete={onFieldDelete}
                 />
               </FormRow>
-              <NodeChecker qualifiedNodes={qualifiedNodes} />
+              <NodeChecker qualifiedNodes={getQualifiedNodes()} />
             </>
           )}
         </Form>

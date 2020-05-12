@@ -17,6 +17,7 @@ export const storageClusterRow = (uid) => $(`tr[data-id='${uid}']`);
 
 const capacityValueInput = $('input.add-capacity-modal__input--width');
 const capacityUnitButton = $('button[data-test-id="dropdown-button"] .pf-c-dropdown__toggle-text');
+export const requestSizeValueInput = $('input[name="requestSizeValue"]');
 
 export const verifyFields = async () => {
   await browser.wait(until.presenceOf(capacityValueInput));

@@ -11,8 +11,8 @@ import {
 import * as UIActions from '@console/internal/actions/ui';
 import { Node } from '@console/topology';
 import HelmReleaseOverview from '../../helm/details/overview/HelmReleaseOverview';
+import { helmReleaseActions } from './actions/helmReleaseActions';
 import TopologyHelmReleaseResourcesPanel from './TopologyHelmReleaseResourcesPanel';
-import { helmReleaseActions } from '../actions/helmReleaseActions';
 import TopologyHelmReleaseNotesPanel from './TopologyHelmReleaseNotesPanel';
 
 type PropsFromState = {
@@ -58,7 +58,10 @@ export const ConnectedTopologyHelmReleasePanel: React.FC<TopologyHelmReleasePane
 
   const resourcesComponent = () =>
     manifestResources ? (
-      <TopologyHelmReleaseResourcesPanel manifestResources={manifestResources} />
+      <TopologyHelmReleaseResourcesPanel
+        manifestResources={manifestResources}
+        releaseNamespace={namespace}
+      />
     ) : null;
 
   const releaseNotesComponent = () =>

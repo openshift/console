@@ -17,6 +17,8 @@ import { Wizard } from './wizard';
 import { ImportWizard } from './importWizard';
 import { VirtualMachineModel } from '../../../src/models/index';
 import { BaseVirtualMachine } from './baseVirtualMachine';
+import * as wizardView from '../../views/wizard.view';
+import { enabledAsBoolean } from '../utils/utils';
 
 // TODO: Remove VM_ACTION.Delete action from the list when BZ 1827640 is resolved
 const noConfirmDialogActions: VM_ACTION[] = [VM_ACTION.Start, VM_ACTION.Clone, VM_ACTION.Delete];
@@ -52,21 +54,39 @@ export class VirtualMachine extends BaseVirtualMachine {
     );
   }
 
-  async create({
-    name,
-    description,
-    template,
-    provisionSource,
-    operatingSystem,
-    flavorConfig,
-    workloadProfile,
-    startOnCreation,
-    cloudInit,
-    storageResources,
-    CDRoms,
-    networkResources,
-    bootableDevice,
-  }: VMConfig) {
+  async validateReviewTab(config, isCreate: boolean = false) {
+    expect(await wizardView.nameReviewValue.getText()).toEqual(config.name);
+    expect(await wizardView.descriptionReviewValue.getText()).toEqual(config.description);
+    expect(await wizardView.osReviewValue.getText()).toEqual(config.operatingSystem);
+    expect(await wizardView.flavorReviewValue.getText()).toEqual(config.flavorConfig.flavor);
+    expect(await wizardView.workloadProfileReviewValue.getText()).toEqual(config.workloadProfile);
+    expect(enabledAsBoolean(await wizardView.cloudInitReviewValue.getText())).toEqual(
+      config.cloudInit.useCloudInit,
+    );
+
+    if (isCreate) {
+      expect(await wizardView.provisionSourceTypeReviewValue.getText()).toEqual(
+        config.provisionSource?.source,
+      );
+    }
+  }
+
+  async create(config: VMConfig) {
+    const {
+      name,
+      description,
+      template,
+      provisionSource,
+      operatingSystem,
+      flavorConfig,
+      workloadProfile,
+      startOnCreation,
+      cloudInit,
+      storageResources,
+      CDRoms,
+      networkResources,
+      bootableDevice,
+    } = config;
     const wizard = new Wizard();
     await this.navigateToListView();
     await wizard.openWizard(this.model);
@@ -134,8 +154,13 @@ export class VirtualMachine extends BaseVirtualMachine {
     if (startOnCreation) {
       await wizard.startOnCreation();
     }
+    await this.validateReviewTab(config, true);
+
+    // Create
     await wizard.confirmAndCreate();
     await wizard.waitForCreation();
+
+    // Navigate to detail and check results
     await this.navigateToTab(TAB.Details);
     if (startOnCreation) {
       // If startOnCreation is true, wait for VM to boot up
@@ -146,19 +171,20 @@ export class VirtualMachine extends BaseVirtualMachine {
     }
   }
 
-  async import({
-    provider,
-    instanceConfig,
-    sourceVMName,
-    name,
-    description,
-    operatingSystem,
-    flavorConfig,
-    workloadProfile,
-    storageResources,
-    networkResources,
-    cloudInit,
-  }: VMImportConfig) {
+  async import(config: VMImportConfig) {
+    const {
+      provider,
+      instanceConfig,
+      sourceVMName,
+      name,
+      description,
+      operatingSystem,
+      flavorConfig,
+      workloadProfile,
+      storageResources,
+      networkResources,
+      cloudInit,
+    } = config;
     const importWizard = new ImportWizard();
     await this.navigateToListView();
     await importWizard.openWizard();
@@ -192,7 +218,7 @@ export class VirtualMachine extends BaseVirtualMachine {
     await importWizard.next();
 
     // Networking
-    // Frst update imported network interfaces to comply with k8s
+    // First update imported network interfaces to comply with k8s
     await importWizard.updateImportedNICs();
     // Optionally add new interfaces, if any
     if (networkResources !== undefined) {
@@ -218,9 +244,14 @@ export class VirtualMachine extends BaseVirtualMachine {
       await importWizard.configureCloudInit(cloudInit);
     }
     await importWizard.next();
+
     // Advanced - Virtual HW
     await importWizard.next();
+
     // Review
+    await this.validateReviewTab(config);
+
+    // Import
     await importWizard.confirmAndCreate();
     await importWizard.waitForCreation();
 

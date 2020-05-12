@@ -40,6 +40,7 @@ import { getKebabActionsForKind } from './utils/kebab-actions';
 import {
   fetchEventSourcesCrd,
   getDynamicEventSourcesResourceList,
+  hideDynamicEventSourceCard,
 } from './utils/fetch-dynamic-eventsources-utils';
 import * as eventSourceIcon from './imgs/event-source.svg';
 
@@ -222,6 +223,18 @@ const plugin: Plugin<ConsumedExtensions> = [
     },
   },
   {
+    type: 'Page/Resource/Details',
+    properties: {
+      model: models.RevisionModel,
+      loader: async () =>
+        (
+          await import(
+            './components/revisions/RevisionDetailsPage' /* webpackChunkName: "knative-revisions-details page" */
+          )
+        ).default,
+    },
+  },
+  {
     type: 'Page/Resource/List',
     properties: {
       model: models.ServiceModel,
@@ -293,6 +306,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       description:
         'Create an event source to register interest in a class of events from a particular system',
       icon: eventSourceIcon,
+      hide: hideDynamicEventSourceCard,
     },
   },
 ];

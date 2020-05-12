@@ -27,6 +27,7 @@ import {
   isWizardEmpty as _isWizardEmpty,
 } from './selectors/immutable/wizard-selectors';
 import { iGetCommonData } from './selectors/immutable/selectors';
+import { setActiveNamespace, getActiveNamespace } from '@console/internal/actions/ui';
 import {
   getCreateVMLikeEntityLabel,
   getReviewAndCreateVMLikeEntityLabel,
@@ -54,6 +55,7 @@ type CreateVMWizardFooterComponentProps = {
   isProviderImport: boolean;
   isSimpleView: boolean;
   onEdit: (activeStepID: VMWizardTab) => void;
+  setActiveNS: (ns: string) => void;
 };
 
 const CreateVMWizardFooterComponent: React.FC<CreateVMWizardFooterComponentProps> = ({
@@ -65,8 +67,17 @@ const CreateVMWizardFooterComponent: React.FC<CreateVMWizardFooterComponentProps
   isSimpleView,
   goToStep,
   onEdit,
+  setActiveNS,
 }) => {
   const [showError, setShowError, checkValidity] = useShowErrorToggler();
+  const activeNS = getActiveNamespace();
+
+  const prevNamespaceRef = React.useRef('');
+  React.useEffect(() => {
+    prevNamespaceRef.current = activeNS;
+  }, [activeNS]);
+
+  const prevNS = prevNamespaceRef.current;
 
   return (
     <WizardContextConsumer>
@@ -92,6 +103,12 @@ const CreateVMWizardFooterComponent: React.FC<CreateVMWizardFooterComponentProps
         // goToStep should be reset to null by redux to allow the navigation in subsequent state update
         if (canNavigateEverywhere && goToStep && goToStep !== activeStepID) {
           goToStepById(goToStep);
+        }
+
+        // When the user try to change namespace and click cancel on prompt the namespaces does change.
+        // This line change it back to the previous namespace.
+        if (prevNS && prevNS !== getActiveNamespace()) {
+          setActiveNS(prevNS);
         }
 
         const isFirstStep = isProviderImport
@@ -233,6 +250,7 @@ const stateToProps = (state, { wizardReduxID }) => ({
 
 const dispatchToProps = (dispatch, { wizardReduxID }) => ({
   //  no callback like this can be passed through the Wizard component
+  setActiveNS: (ns) => dispatch(setActiveNamespace(ns)),
   onEdit: (activeStepID: VMWizardTab) => {
     dispatch(vmWizardActions[ActionType.OpenDifficultTabs](wizardReduxID));
     dispatch(vmWizardActions[ActionType.SetGoToStep](wizardReduxID, activeStepID)); // keep on the same tab

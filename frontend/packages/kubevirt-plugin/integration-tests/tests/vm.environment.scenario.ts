@@ -51,7 +51,7 @@ describe('Test VM enviromnet tab', () => {
 
     // Add Service Account
     await click(
-      element(by.buttonText('Add All From Config Map or Secret')),
+      element(by.buttonText('Add Config Map, Secret or Service Account')),
       PAGE_LOAD_TIMEOUT_SECS,
     );
     await addVariableFrom(serviceAccountName, null, true);

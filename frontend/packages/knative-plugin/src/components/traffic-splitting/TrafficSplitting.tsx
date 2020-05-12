@@ -18,7 +18,7 @@ export interface TrafficSplittingType {
     percent: number;
     tag: string;
     revisionName: string;
-  };
+  }[];
 }
 
 const TrafficSplitting: React.FC<TrafficSplittingProps> = ({

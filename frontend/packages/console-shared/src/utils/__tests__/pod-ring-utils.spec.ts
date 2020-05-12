@@ -36,7 +36,7 @@ describe('pod-ring utils:', () => {
     ).toEqual('');
   });
 
-  it('should return title 0, subtitle scaling to 2 and no titleComponent, subtitleComponent for podRingLabel when scaling from 1 to 2 pods', () => {
+  it('should return title 0, subtitle scaling to 2 and titleComponent for podRingLabel when scaling from 1 to 2 pods', () => {
     const deploymentWithReplicas = _.set(_.cloneDeep(deployment), 'spec.replicas', 2);
     const mockDeploymentData = _.set(deploymentWithReplicas, 'status.readyReplicas', 1);
     expect(
@@ -48,14 +48,10 @@ describe('pod-ring utils:', () => {
     expect(
       podRingLabel(mockDeploymentData, mockDeploymentData.kind, [mockPod as ExtPodKind])
         .titleComponent,
-    ).toEqual(undefined);
-    expect(
-      podRingLabel(mockDeploymentData, mockDeploymentData.kind, [mockPod as ExtPodKind])
-        .subTitleComponent,
-    ).toEqual(undefined);
+    ).not.toBeUndefined();
   });
 
-  it('should return title 0, subtitle scaling to 1 and no titleComponent, subtitleComponent for podRingLabel when the first pod is being created', () => {
+  it('should return title 0, subtitle scaling to 1 and titleComponent for podRingLabel when the first pod is being created', () => {
     const deploymentWithReplicas = _.set(_.cloneDeep(deployment), 'spec.replicas', 1);
     const mockDeploymentData = _.set(deploymentWithReplicas, 'status.readyReplicas', 0);
     expect(
@@ -67,14 +63,10 @@ describe('pod-ring utils:', () => {
     expect(
       podRingLabel(mockDeploymentData, mockDeploymentData.kind, [mockPod as ExtPodKind])
         .titleComponent,
-    ).toEqual(undefined);
-    expect(
-      podRingLabel(mockDeploymentData, mockDeploymentData.kind, [mockPod as ExtPodKind])
-        .subTitleComponent,
-    ).toEqual(undefined);
+    ).not.toBeUndefined();
   });
 
-  it('should return title 0, subtitle scaling to 1 and no titleComponent, subtitleComponent for podRingLabel when pod count is 1 and status is pending', () => {
+  it('should return title 0, subtitle scaling to 1 and titleComponent for podRingLabel when pod count is 1 and status is pending', () => {
     const mockDeploymentData = _.set(_.cloneDeep(deployment), 'spec.replicas', 1);
     const mockPodData = _.set(_.cloneDeep(mockPod), 'status.phase', 'Pending');
     expect(
@@ -87,11 +79,7 @@ describe('pod-ring utils:', () => {
     expect(
       podRingLabel(mockDeploymentData, mockDeploymentData.kind, [mockPodData as ExtPodKind])
         .titleComponent,
-    ).toEqual(undefined);
-    expect(
-      podRingLabel(mockDeploymentData, mockDeploymentData.kind, [mockPodData as ExtPodKind])
-        .subTitleComponent,
-    ).toEqual(undefined);
+    ).not.toBeUndefined();
   });
 
   it('should return proper title, subtitle for podRingLabel for Daemon sets', () => {

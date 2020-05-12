@@ -31,6 +31,10 @@ export const breadcrumbsForVMPage = (match: any) => () => [
     name: 'Virtualization',
     path: `/k8s/ns/${match.params.ns || 'default'}/virtualization`,
   },
+  {
+    name: 'Virtual Machines',
+    path: `/k8s/ns/${match.params.ns || 'default'}/virtualization`,
+  },
   { name: `${match.params.name} Details`, path: `${match.url}` },
 ];
 
@@ -51,7 +55,7 @@ export const VirtualMachinesDetailsPage: React.FC<VirtualMachinesDetailsPageProp
 
   const consolePage = {
     href: VM_DETAIL_CONSOLES_HREF,
-    name: 'Consoles',
+    name: 'Console',
     component: VMConsoleFirehose,
   };
 
@@ -77,11 +81,11 @@ export const VirtualMachinesDetailsPage: React.FC<VirtualMachinesDetailsPageProp
     dashboardPage,
     overviewPage,
     navFactory.editYaml(),
-    consolePage,
+    environmentPage,
     navFactory.events(VMEvents),
+    consolePage,
     nicsPage,
     disksPage,
-    environmentPage,
   ];
 
   const resources = [

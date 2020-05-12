@@ -13,7 +13,7 @@ const AdvancedReviewConnected: React.FC<AdvancedReviewConnectedProps> = (props) 
   return (
     <dl className="kubevirt-create-vm-modal__review-tab__data-list">
       <dt>Cloud Init</dt>
-      <dd>{cloudInitEnabledValue}</dd>
+      <dd id="wizard-review-cloud_init">{cloudInitEnabledValue}</dd>
     </dl>
   );
 };

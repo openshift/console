@@ -468,45 +468,44 @@ export const OperatorHubTileView: React.FC<OperatorHubTileViewProps> = (props) =
                 data-test-id="operator-modal-header"
               />
               <div className="co-catalog-page__overlay-actions">
-                {detailsItem.marketplaceRemoteWorkflow && detailsItem.marketplaceActionText && (
+                {detailsItem.marketplaceRemoteWorkflow && (
                   <ExternalLink
                     additionalClassName="pf-c-button pf-m-primary co-catalog-page__overlay-action"
                     href={detailsItem.marketplaceRemoteWorkflow}
                     text={
                       <>
                         <div className="co-catalog-page__overlay-action-label">
-                          {detailsItem.marketplaceActionText}
+                          {detailsItem.marketplaceActionText || 'Purchase'}
                         </div>
                         <ExternalLinkAltIcon className="co-catalog-page__overlay-action-icon" />
                       </>
                     }
                   />
                 )}
-                {!detailsItem.marketplaceActionText &&
-                  (!detailsItem.installed ? (
-                    <Link
-                      className={classNames(
-                        'pf-c-button',
-                        { 'pf-m-secondary': detailsItem.marketplaceActionText },
-                        { 'pf-m-primary': !detailsItem.marketplaceActionText },
-                        'co-catalog-page__overlay-action',
-                      )}
-                      data-test-id="operator-install-btn"
-                      to={createLink}
-                    >
-                      Install
-                    </Link>
-                  ) : (
-                    <Button
-                      className="co-catalog-page__overlay-action"
-                      data-test-id="operator-uninstall-btn"
-                      isDisabled={!detailsItem.installed}
-                      onClick={() => history.push(uninstallLink())}
-                      variant="secondary"
-                    >
-                      Uninstall
-                    </Button>
-                  ))}
+                {!detailsItem.installed ? (
+                  <Link
+                    className={classNames(
+                      'pf-c-button',
+                      { 'pf-m-secondary': detailsItem.marketplaceRemoteWorkflow },
+                      { 'pf-m-primary': !detailsItem.marketplaceRemoteWorkflow },
+                      'co-catalog-page__overlay-action',
+                    )}
+                    data-test-id="operator-install-btn"
+                    to={createLink}
+                  >
+                    Install
+                  </Link>
+                ) : (
+                  <Button
+                    className="co-catalog-page__overlay-action"
+                    data-test-id="operator-uninstall-btn"
+                    isDisabled={!detailsItem.installed}
+                    onClick={() => history.push(uninstallLink())}
+                    variant="secondary"
+                  >
+                    Uninstall
+                  </Button>
+                )}
               </div>
             </>
           }

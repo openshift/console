@@ -12,14 +12,7 @@ import {
   EventSourceCronJobModel,
 } from '../models';
 
-const defaultEventSourceModels = [
-  EventSourceApiServerModel,
-  EventSourceContainerModel,
-  EventSourcePingModel,
-  EventSourceSinkBindingModel,
-];
-
-let eventSourceModels: K8sKind[] = defaultEventSourceModels;
+let eventSourceModels: K8sKind[] = [];
 
 // To order sources with known followed by CamelSource and everything else
 export const orderedEventSourceModelData = (allModels: K8sKind[]): K8sKind[] => {
@@ -45,7 +38,6 @@ export const orderedEventSourceModelData = (allModels: K8sKind[]): K8sKind[] => 
 };
 
 export const fetchEventSourcesCrd = async () => {
-  let eventSourceModelList: K8sKind[] = [];
   const url = 'api/console/knative-event-sources';
   try {
     const res = await coFetch(url);
@@ -81,16 +73,13 @@ export const fetchEventSourcesCrd = async () => {
       [],
     );
 
-    eventSourceModelList = allModels.length
-      ? orderedEventSourceModelData(allModels)
-      : defaultEventSourceModels;
+    eventSourceModels = orderedEventSourceModelData(allModels);
   } catch (err) {
     // show warning if there is an error fetching the CRDs
     // eslint-disable-next-line no-console
     console.warn('Error fetching CRDs for dynamic event sources', err);
-    eventSourceModelList = defaultEventSourceModels;
+    eventSourceModels = [];
   }
-  eventSourceModels = eventSourceModelList;
 };
 
 export const getEventSourceModels = (): K8sKind[] => eventSourceModels;
@@ -121,3 +110,5 @@ export const isDynamicEventResourceKind = (resourceRef: string): boolean => {
   );
   return index !== -1;
 };
+
+export const hideDynamicEventSourceCard = () => eventSourceModels && eventSourceModels.length > 0;

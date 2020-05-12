@@ -19,7 +19,7 @@ export const defaultState = {
   payload: {},
   sizeUnit: 'GiB',
   sizeValue: '',
-  bucketClass: '',
+  bucketClass: 'noobaa-default-bucket-class',
 };
 
 type Action =

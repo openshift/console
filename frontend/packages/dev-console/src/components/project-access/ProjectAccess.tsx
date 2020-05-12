@@ -104,7 +104,6 @@ const ProjectAccess: React.FC<ProjectAccessProps> = ({ formName, namespace, role
         />{' '}
         .
       </PageHeading>
-      <hr />
       <div className="co-m-pane__body">
         {roleBindings.loadError ? (
           <StatusBox loaded={roleBindings.loaded} loadError={roleBindings.loadError} />

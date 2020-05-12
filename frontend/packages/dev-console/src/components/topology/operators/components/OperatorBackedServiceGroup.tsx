@@ -41,13 +41,13 @@ const OperatorBackedServiceGroup: React.FC<OperatorBackedServiceGroupProps> = ({
   const [hover, hoverRef] = useHover();
   const [innerHover, innerHoverRef] = useHover();
   const [{ dragging, regrouping }, dragNodeRef] = useDragNode(
-    nodeDragSourceSpec(TYPE_OPERATOR_BACKED_SERVICE, true, editAccess),
+    nodeDragSourceSpec(TYPE_OPERATOR_BACKED_SERVICE, false),
     {
       element,
     },
   );
   const [{ dragging: labelDragging, regrouping: labelRegrouping }, dragLabelRef] = useDragNode(
-    nodeDragSourceSpec(TYPE_OPERATOR_BACKED_SERVICE, true, editAccess),
+    nodeDragSourceSpec(TYPE_OPERATOR_BACKED_SERVICE, false),
     {
       element,
     },

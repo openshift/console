@@ -1,0 +1,22 @@
+@import '~@patternfly/patternfly/sass-utilities/colors';
+
+.pod-ring__center-text {
+  tspan {
+    font-size: 14px !important;
+    fill: var(--pf-global--Color--200) !important;
+  }
+  tspan:first-of-type {
+    font-size: 24px !important;
+    fill: var(--pf-global--Color--100) !important;
+  }
+}
+
+.pod-ring__center-text--reversed {
+  tspan {
+    font-size: 14px !important;
+    fill: var(--pf-global--Color--200) !important;
+  }
+  tspan:first-of-type {
+    fill: var(--pf-global--Color--100) !important;
+  }
+}

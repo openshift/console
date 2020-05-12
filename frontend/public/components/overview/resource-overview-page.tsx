@@ -13,30 +13,15 @@ import { BuildOverview } from './build-overview';
 import { NetworkingOverview } from './networking-overview';
 import { PodsOverview } from './pods-overview';
 import { resourceOverviewPages } from './resource-overview-pages';
-import { OverviewItem } from '@console/shared';
-import * as plugins from '../../plugins';
+import { OverviewItem, usePluginsOverviewTabSection } from '@console/shared';
 
 const { common } = Kebab.factory;
-
-const getResourceTabSectionComp = (t) => (props) => (
-  <AsyncComponent {...props} loader={t.properties.loader} />
-);
-
-const getPluginTabSectionResource = (item) => {
-  return plugins.registry
-    .getOverviewTabSections()
-    .filter((section) => item[section.properties.key])
-    .map((section) => ({
-      Component: getResourceTabSectionComp(section),
-      key: section.properties.key,
-    }));
-};
 
 export const OverviewDetailsResourcesTab: React.SFC<OverviewDetailsResourcesTabProps> = ({
   item,
 }) => {
   const { buildConfigs, routes, services, pods, obj } = item;
-  const pluginComponents = getPluginTabSectionResource(item);
+  const pluginComponents = usePluginsOverviewTabSection(item);
   return (
     <div className="overview__sidebar-pane-body">
       <OperatorBackedOwnerReferences item={item} />

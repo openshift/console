@@ -92,11 +92,7 @@ const PipelineBuilderForm: React.FC<PipelineBuilderFormProps> = (props) => {
   return (
     <Stack className="odc-pipeline-builder-form">
       <StackItem>
-        <PipelineBuilderHeader
-          formIsDirty={dirty}
-          existingPipeline={existingPipeline}
-          namespace={namespace}
-        />
+        <PipelineBuilderHeader existingPipeline={existingPipeline} namespace={namespace} />
       </StackItem>
       <StackItem isFilled className="odc-pipeline-builder-form__content">
         <Form className="odc-pipeline-builder-form__grid" onSubmit={handleSubmit}>

@@ -127,7 +127,7 @@ const ResourceListDropdown_: React.SFC<ResourceListDropdownProps> = (props) => {
   };
 
   const handleSelected = (value: string) => {
-    onChange(referenceForModel(modelFor(value)));
+    value === 'All' ? onChange('All') : onChange(referenceForModel(modelFor(value)));
   };
 
   return (

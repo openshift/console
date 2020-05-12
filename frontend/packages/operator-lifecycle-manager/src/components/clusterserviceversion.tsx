@@ -279,6 +279,9 @@ export const NamespacedClusterServiceVersionTableRow = withFallback<
   const route = resourceObjPath(obj, referenceFor(obj));
   const uid = getUID(obj);
   const internalObjects = getInternalObjects(obj);
+  const providedAPIs = providedAPIsFor(obj).filter(
+    (desc) => !isInternalObject(internalObjects, desc.name),
+  );
 
   return (
     <TableRow id={uid} trKey={rowKey} index={index} style={style}>
@@ -328,18 +331,18 @@ export const NamespacedClusterServiceVersionTableRow = withFallback<
 
       {/* Provided APIs */}
       <TableData className={providedAPIsColumnClass}>
-        {_.take(
-          providedAPIsFor(obj).filter((desc) => !isInternalObject(internalObjects, desc.name)),
-          4,
-        ).map((desc) => (
-          <div key={referenceForProvidedAPI(desc)}>
-            <Link to={`${route}/${referenceForProvidedAPI(desc)}`} title={desc.name}>
-              {desc.displayName}
-            </Link>
-          </div>
-        ))}
-        {providedAPIsFor(obj).filter((desc) => !isInternalObject(internalObjects, desc.name))
-          .length > 4 && (
+        {!_.isEmpty(providedAPIs) ? (
+          _.take(providedAPIs, 4).map((desc) => (
+            <div key={referenceForProvidedAPI(desc)}>
+              <Link to={`${route}/${referenceForProvidedAPI(desc)}`} title={desc.name}>
+                {desc.displayName}
+              </Link>
+            </div>
+          ))
+        ) : (
+          <div> - </div>
+        )}
+        {providedAPIs.length > 4 && (
           <Link to={route} title={`View ${providedAPIsFor(obj).length - 4} more...`}>
             {`View ${providedAPIsFor(obj).length - 4} more...`}
           </Link>
@@ -970,7 +973,9 @@ export const ClusterServiceVersionsDetailsPage: React.FC<ClusterServiceVersionsD
                 ...acc,
                 {
                   href: referenceForProvidedAPI(desc),
-                  name: desc.displayName,
+                  name: ['Details', 'YAML', 'Subscription', 'Events'].includes(desc.displayName)
+                    ? `${desc.displayName} Operand`
+                    : desc.displayName,
                   component: React.memo(
                     () => (
                       <ProvidedAPIPage

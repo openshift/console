@@ -88,7 +88,7 @@ const TableRowForKind = ({ obj, index, key, style, customData }) => {
   );
 };
 
-const DetailsForKind = (kind) =>
+export const DetailsForKind = (kind) =>
   function DetailsForKind_({ obj }) {
     const conditions = obj.status && obj.status.conditions;
     return (

@@ -84,7 +84,7 @@ export const ClusterServiceVersionLogo: React.SFC<ClusterServiceVersionLogoProps
         <img
           className="co-catalog-item-icon__img co-catalog-item-icon__img--large"
           src={imgSrc}
-          alt={displayName}
+          alt=""
         />
       </div>
       <div className="co-clusterserviceversion-logo__name">

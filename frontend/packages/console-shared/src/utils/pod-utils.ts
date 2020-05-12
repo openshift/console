@@ -105,6 +105,7 @@ export const calculateRadius = (size: number) => {
     podStatusOuterRadius,
     decoratorRadius,
     podStatusStrokeWidth,
+    podStatusInset,
   };
 };
 
@@ -156,6 +157,19 @@ const getScalingUp = (dc: K8sResourceKind): ExtPodKind => {
       phase: AllPodStatus.ScalingUp,
     },
   };
+};
+
+export const podDataInProgress = (
+  dc: K8sResourceKind,
+  current: PodControllerOverviewItem,
+  isRollingOut: boolean,
+): boolean => {
+  const strategy: DeploymentStrategy = dc?.spec?.strategy?.type;
+  return (
+    current?.phase !== DEPLOYMENT_PHASE.complete &&
+    (strategy === DEPLOYMENT_STRATEGY.recreate || strategy === DEPLOYMENT_STRATEGY.rolling) &&
+    isRollingOut
+  );
 };
 
 export const getPodData = (

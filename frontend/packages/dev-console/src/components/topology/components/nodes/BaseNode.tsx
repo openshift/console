@@ -24,6 +24,7 @@ import { NodeShadows, NODE_SHADOW_FILTER_ID_HOVER, NODE_SHADOW_FILTER_ID } from 
 import './BaseNode.scss';
 
 export type BaseNodeProps = {
+  className: string;
   outerRadius: number;
   innerRadius?: number;
   icon?: string;
@@ -42,6 +43,7 @@ export type BaseNodeProps = {
   WithCreateConnectorProps;
 
 const ObservedBaseNode: React.FC<BaseNodeProps> = ({
+  className,
   outerRadius,
   innerRadius,
   icon,
@@ -94,7 +96,7 @@ const ObservedBaseNode: React.FC<BaseNodeProps> = ({
 
   return (
     <g
-      className={classNames('odc-base-node', {
+      className={classNames('odc-base-node', className, {
         'is-hover': hover || contextMenuOpen,
         'is-highlight': canDrop,
         'is-dragging': dragging || edgeDragging,

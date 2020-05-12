@@ -1,53 +1,55 @@
 [
-  {
-    "scope": "https://api.bitbucket.org:443",
-    "method": "GET",
-    "path": "/2.0/repositories/akshinde/testgitsource/src/master/Dockerfile",
-    "body": "",
-    "status": 404,
-    "response": {
-      "type": "error",
-      "error": {
-        "message": "No such file or directory: Dockerfile"
-      }
-    },
-    "rawHeaders": [
-      "Server",
-      "nginx",
-      "Vary",
-      "Authorization",
-      "Cache-Control",
-      "max-age=900",
-      "Content-Type",
-      "application/json; charset=utf-8",
-      "Strict-Transport-Security",
-      "max-age=31536000; includeSubDomains; preload",
-      "Date",
-      "Fri, 11 Oct 2019 17:58:03 GMT",
-      "X-Served-By",
-      "app-139",
-      "ETag",
-      "\"5fbc7f76f68a057c35563dc481de987b\"",
-      "X-Static-Version",
-      "f306cfbb5c90",
-      "X-Accepted-OAuth-Scopes",
-      "repository",
-      "X-Render-Time",
-      "0.173252105713",
-      "Connection",
-      "close",
-      "X-Reads-Before-Write-From",
-      "default",
-      "X-Request-Count",
-      "2342",
-      "X-Version",
-      "f306cfbb5c90",
-      "X-Frame-Options",
-      "SAMEORIGIN",
-      "X-Cache-Info",
-      "caching",
-      "Content-Length",
-      "76"
-    ]
-  }
+    {
+        "scope": "https://api.bitbucket.org:443",
+        "method": "GET",
+        "path": "/2.0/repositories/akshinde/testgitsource/src/master/Dockerfile",
+        "body": "",
+        "status": 404,
+        "response": {
+            "type": "error",
+            "error": {
+                "message": "No such file or directory: Dockerfile"
+            }
+        },
+        "rawHeaders": [
+            "Server",
+            "nginx",
+            "Vary",
+            "Authorization",
+            "Cache-Control",
+            "max-age=900",
+            "Content-Type",
+            "application/json; charset=utf-8",
+            "Access-Control-Expose-Headers",
+            "Accept-Ranges, Content-Encoding, Content-Length, Content-Type, ETag, Last-Modified",
+            "Strict-Transport-Security",
+            "max-age=31536000; includeSubDomains; preload",
+            "Date",
+            "Thu, 07 May 2020 20:36:33 GMT",
+            "X-Served-By",
+            "app-1107",
+            "Access-Control-Allow-Origin",
+            "*",
+            "ETag",
+            "\"5fbc7f76f68a057c35563dc481de987b\"",
+            "X-Static-Version",
+            "4db2538192ba",
+            "X-Accepted-OAuth-Scopes",
+            "repository",
+            "X-Render-Time",
+            "0.0357370376587",
+            "Connection",
+            "Keep-Alive",
+            "X-Request-Count",
+            "1557",
+            "X-Version",
+            "4db2538192ba",
+            "X-Frame-Options",
+            "SAMEORIGIN",
+            "X-Cache-Info",
+            "caching",
+            "Content-Length",
+            "76"
+        ]
+    }
 ]

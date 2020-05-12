@@ -1,53 +1,55 @@
 [
-  {
-    "scope": "https://api.bitbucket.org:443",
-    "method": "GET",
-    "path": "/2.0/repositories/atlassian/confluencereact-components",
-    "body": "",
-    "status": 404,
-    "response": {
-      "type": "error",
-      "error": {
-        "message": "Repository atlassian/confluencereact-components not found"
-      }
-    },
-    "rawHeaders": [
-      "Server",
-      "nginx",
-      "Vary",
-      "Authorization",
-      "Cache-Control",
-      "max-age=900",
-      "Content-Type",
-      "application/json; charset=utf-8",
-      "Strict-Transport-Security",
-      "max-age=31536000; includeSubDomains; preload",
-      "Date",
-      "Fri, 03 Jan 2020 10:15:14 GMT",
-      "X-Served-By",
-      "app-1117",
-      "X-Static-Version",
-      "2f9ead9c461e",
-      "ETag",
-      "\"ee4b15c22652dd3941a33d9bfa474a89\"",
-      "X-Render-Time",
-      "0.0246829986572",
-      "X-Accepted-OAuth-Scopes",
-      "repository",
-      "Connection",
-      "close",
-      "X-Version",
-      "2f9ead9c461e",
-      "X-Frame-Options",
-      "SAMEORIGIN",
-      "X-Reads-Before-Write-From",
-      "default",
-      "X-Request-Count",
-      "664",
-      "X-Cache-Info",
-      "caching",
-      "Content-Length",
-      "100"
-    ]
-  }
+    {
+        "scope": "https://api.bitbucket.org:443",
+        "method": "GET",
+        "path": "/2.0/repositories/atlassian/confluencereact-components",
+        "body": "",
+        "status": 404,
+        "response": {
+            "type": "error",
+            "error": {
+                "message": "Repository atlassian/confluencereact-components not found"
+            }
+        },
+        "rawHeaders": [
+            "Server",
+            "nginx",
+            "Vary",
+            "Authorization",
+            "Cache-Control",
+            "max-age=900",
+            "Content-Type",
+            "application/json; charset=utf-8",
+            "Access-Control-Expose-Headers",
+            "Accept-Ranges, Content-Encoding, Content-Length, Content-Type, ETag, Last-Modified",
+            "Strict-Transport-Security",
+            "max-age=31536000; includeSubDomains; preload",
+            "Date",
+            "Thu, 07 May 2020 20:36:30 GMT",
+            "X-Served-By",
+            "app-1118",
+            "Access-Control-Allow-Origin",
+            "*",
+            "X-Static-Version",
+            "4db2538192ba",
+            "ETag",
+            "\"ee4b15c22652dd3941a33d9bfa474a89\"",
+            "X-Render-Time",
+            "0.0131540298462",
+            "X-Accepted-OAuth-Scopes",
+            "repository",
+            "Connection",
+            "Keep-Alive",
+            "X-Version",
+            "4db2538192ba",
+            "X-Request-Count",
+            "2559",
+            "X-Frame-Options",
+            "SAMEORIGIN",
+            "X-Cache-Info",
+            "caching",
+            "Content-Length",
+            "100"
+        ]
+    }
 ]

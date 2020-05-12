@@ -1281,6 +1281,7 @@ const DatetimeTextInput = (props) => {
         <TextInput
           {...props}
           aria-label="Datetime"
+          data-test-id="datetime"
           isValid={isValid || !!props.isDisabled}
           pattern={pattern}
           placeholder="YYYY/MM/DD hh:mm:ss"
@@ -1318,7 +1319,7 @@ const SilenceForm_: React.FC<SilenceFormProps> = ({ defaults, Info, title }) => 
   const [createdBy, setCreatedBy] = React.useState(defaults.createdBy ?? '');
   const [duration, setDuration] = React.useState(defaultDuration);
   const [endsAt, setEndsAt] = React.useState(
-    defaults.endsAt ?? formatDate(new Date(now.setHours(now.getHours() + 2))),
+    defaults.endsAt ?? formatDate(new Date(new Date(now).setHours(now.getHours() + 2))),
   );
   const [error, setError] = React.useState<string>();
   const [inProgress, setInProgress] = React.useState(false);
@@ -1328,9 +1329,12 @@ const SilenceForm_: React.FC<SilenceFormProps> = ({ defaults, Info, title }) => 
   );
   const [startsAt, setStartsAt] = React.useState(defaults.startsAt ?? formatDate(now));
 
-  const durationEnd = formatDate(
-    new Date((isStartNow ? Date.now() : Date.parse(startsAt)) + parsePrometheusDuration(duration)),
-  );
+  const getEndsAtValue = (): string => {
+    const startsAtDate = Date.parse(startsAt);
+    return startsAtDate
+      ? formatDate(new Date(startsAtDate + parsePrometheusDuration(duration)))
+      : '-';
+  };
 
   const setMatcherField = (i: number, field: string, v: any): void => {
     const newMatchers = _.clone(matchers);
@@ -1389,8 +1393,10 @@ const SilenceForm_: React.FC<SilenceFormProps> = ({ defaults, Info, title }) => 
         refreshNotificationPollers();
         history.push(`${SilenceResource.plural}/${encodeURIComponent(_.get(data, 'silenceId'))}`);
       })
-      .catch((err) => setError(_.get(err, 'json.error') || err.message || 'Error saving Silence'))
-      .then(() => setInProgress(false));
+      .catch((err) => {
+        setError(_.get(err, 'json.error') || err.message || 'Error saving Silence');
+        setInProgress(false);
+      });
   };
 
   return (
@@ -1421,7 +1427,11 @@ const SilenceForm_: React.FC<SilenceFormProps> = ({ defaults, Info, title }) => 
                     {isStartNow ? (
                       <DatetimeTextInput isDisabled value="Now" />
                     ) : (
-                      <DatetimeTextInput isRequired onChange={setStartsAt} value={startsAt} />
+                      <DatetimeTextInput
+                        isRequired
+                        onChange={(v: string) => setStartsAt(v)}
+                        value={startsAt}
+                      />
                     )}
                   </div>
                   <div className="col-xs-2">
@@ -1429,18 +1439,22 @@ const SilenceForm_: React.FC<SilenceFormProps> = ({ defaults, Info, title }) => 
                     <Dropdown
                       dropDownClassName="dropdown--full-width"
                       items={durationItems}
-                      onChange={setDuration}
+                      onChange={(v: string) => setDuration(v)}
                       selectedKey={duration}
                     />
                   </div>
                   <div className="col-xs-5">
                     <label>Until...</label>
                     {duration === durationOff ? (
-                      <DatetimeTextInput isRequired onChange={setEndsAt} value={endsAt} />
+                      <DatetimeTextInput
+                        isRequired
+                        onChange={(v: string) => setEndsAt(v)}
+                        value={endsAt}
+                      />
                     ) : (
                       <DatetimeTextInput
                         isDisabled
-                        value={isStartNow ? `${duration} from now` : durationEnd}
+                        value={isStartNow ? `${duration} from now` : getEndsAtValue()}
                       />
                     )}
                   </div>
@@ -1547,11 +1561,20 @@ const SilenceForm_: React.FC<SilenceFormProps> = ({ defaults, Info, title }) => 
               <SectionHeading text="Info" />
               <div className="form-group">
                 <label>Creator</label>
-                <TextInput aria-label="Creator" onChange={setCreatedBy} value={createdBy} />
+                <TextInput
+                  aria-label="Creator"
+                  onChange={(v: string) => setCreatedBy(v)}
+                  value={createdBy}
+                />
               </div>
               <div className="form-group">
                 <label className="co-required">Comment</label>
-                <TextArea aria-label="Comment" isRequired onChange={setComment} value={comment} />
+                <TextArea
+                  aria-label="Comment"
+                  isRequired
+                  onChange={(v: string) => setComment(v)}
+                  value={comment}
+                />
               </div>
             </div>
           </div>

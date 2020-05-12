@@ -5,7 +5,10 @@ import { ResourceOverviewDetails } from '@console/internal/components/overview/r
 import { groupVersionFor, K8sKind, referenceForModel } from '@console/internal/module/k8s';
 import { RootState } from '@console/internal/redux';
 import { OverviewItem } from '@console/shared';
+import { ModifyApplication } from '@console/dev-console/src/actions/modify-application';
 import { KNATIVE_SERVING_APIGROUP } from '../../const';
+import { RevisionModel, ServiceModel } from '../../models';
+import { getRevisionActions } from '../../actions/getRevisionActions';
 import { isDynamicEventResourceKind } from '../../utils/fetch-dynamic-eventsources-utils';
 import OverviewDetailsKnativeResourcesTab from './OverviewDetailsKnativeResourcesTab';
 import KnativeOverview from './KnativeOverview';
@@ -45,11 +48,22 @@ export const KnativeResourceOverviewPage: React.ComponentType<KnativeResourceOve
       model.apiGroup === apiInfo.group &&
       model.apiVersion === apiInfo.version,
   );
+
+  const actions = [];
+  if (resourceModel.kind === ServiceModel.kind) {
+    actions.push(ModifyApplication);
+  }
+  if (resourceModel.kind === RevisionModel.kind) {
+    actions.push(...getRevisionActions());
+  } else {
+    actions.push(...Kebab.getExtensionsActionsForKind(resourceModel), ...Kebab.factory.common);
+  }
+
   return (
     <ResourceOverviewDetails
       item={item}
       kindObj={resourceModel}
-      menuActions={[...Kebab.getExtensionsActionsForKind(resourceModel), ...Kebab.factory.common]}
+      menuActions={actions}
       tabs={tabs}
     />
   );

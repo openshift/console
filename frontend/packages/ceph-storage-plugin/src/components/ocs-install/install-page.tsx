@@ -3,11 +3,12 @@ import { match } from 'react-router';
 import { k8sGet } from '@console/internal/module/k8s';
 import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager';
 import { BreadCrumbs } from '@console/internal/components/utils';
+import { getAnnotations } from '@console/shared/src/selectors/common';
 import { Radio, Title } from '@patternfly/react-core';
-import { checkForIndependentSupport } from '../independent-mode/utils';
 import { OCSServiceModel } from '../../models';
 import InstallExternalCluster from '../independent-mode/install';
 import { CreateOCSServiceForm } from './create-form';
+import { OCS_SUPPORT_ANNOTATION } from '../../constants';
 import './install-page.scss';
 
 enum MODES {
@@ -34,7 +35,9 @@ const InstallCluster: React.FC<InstallClusterProps> = ({ match }) => {
   React.useEffect(() => {
     k8sGet(ClusterServiceVersionModel, appName, ns)
       .then((clusterServiceVersionObj) => {
-        setIsIndependent(checkForIndependentSupport(clusterServiceVersionObj));
+        setIsIndependent(
+          getAnnotations(clusterServiceVersionObj)[OCS_SUPPORT_ANNOTATION].includes('external'),
+        );
         try {
           setClusterServiceVersion(clusterServiceVersionObj);
         } catch (e) {

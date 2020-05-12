@@ -1,6 +1,12 @@
 import * as React from 'react';
 import { get } from 'lodash';
-import { PodStatus, calculateRadius, getPodData, podRingLabel } from '@console/shared';
+import {
+  PodStatus,
+  calculateRadius,
+  getPodData,
+  podRingLabel,
+  podDataInProgress,
+} from '@console/shared';
 import { DonutStatusData } from '../../topology-types';
 
 interface PodSetProps {
@@ -28,6 +34,23 @@ const calculateInnerPodStatusRadius = (
   return { innerPodStatusOuterRadius, innerPodStatusInnerRadius };
 };
 
+export const podSetInnerRadius = (size: number, data: DonutStatusData) => {
+  const { podStatusInnerRadius, podStatusStrokeWidth } = calculateRadius(size);
+  let radius = podStatusInnerRadius;
+
+  if (podDataInProgress(data.dc, data.current, data.isRollingOut)) {
+    const { innerPodStatusInnerRadius } = calculateInnerPodStatusRadius(
+      radius,
+      podStatusStrokeWidth,
+    );
+    radius = innerPodStatusInnerRadius;
+  }
+
+  const { podStatusStrokeWidth: innerStrokeWidth, podStatusInset } = calculateRadius(radius * 2);
+
+  return radius - innerStrokeWidth - podStatusInset;
+};
+
 const PodSet: React.FC<PodSetProps> = ({ size, data, x = 0, y = 0, showPodCount }) => {
   const { podStatusOuterRadius, podStatusInnerRadius, podStatusStrokeWidth } = calculateRadius(
     size,
@@ -45,11 +68,7 @@ const PodSet: React.FC<PodSetProps> = ({ size, data, x = 0, y = 0, showPodCount 
   );
 
   const obj = get(data, ['current', 'obj'], null) || data.dc;
-  const { title, subTitle, titleComponent, subTitleComponent } = podRingLabel(
-    obj,
-    data.dc.kind,
-    data?.pods,
-  );
+  const { title, subTitle, titleComponent } = podRingLabel(obj, data.dc.kind, data?.pods);
   return (
     <>
       <PodStatus
@@ -63,7 +82,6 @@ const PodSet: React.FC<PodSetProps> = ({ size, data, x = 0, y = 0, showPodCount 
         subTitle={showPodCount && subTitle}
         title={showPodCount && title}
         titleComponent={showPodCount && titleComponent}
-        subTitleComponent={showPodCount && subTitleComponent}
       />
       {inProgressDeploymentData && (
         <PodStatus

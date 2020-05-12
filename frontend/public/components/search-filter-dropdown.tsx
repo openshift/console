@@ -60,6 +60,7 @@ export const SearchFilterDropdown: React.SFC<SearchFilterDropdownProps> = (props
         id="search-filter-input"
         value={selected === searchFilterValues.Label ? labelFilterInput : nameFilterInput}
         onKeyDown={handleKeyDown}
+        aria-labelledby="toggle-id"
       />
     </div>
   );

@@ -1,79 +1,57 @@
 import * as React from 'react';
 import * as _ from 'lodash';
-import { safeDump, safeLoad } from 'js-yaml';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { EditorType, EditorToggle } from './editor-toggle';
 import { prune } from '../../utils';
+import { safeYAMLToJS, safeJSToYAML } from '../../utils/yaml';
 
-const DEFAULT_YAML_KEY_ORDER = ['apiVerion', 'kind', 'metadata', 'spec', 'status'];
-export const DEFAULT_YAML_DUMP_OPTIONS = {
+const YAML_KEY_ORDER = ['apiVerion', 'kind', 'metadata', 'spec', 'status'];
+export const YAML_TO_JS_OPTIONS = {
   skipInvalid: true,
-  sortKeys: (a, b) => _.indexOf(DEFAULT_YAML_KEY_ORDER, a) - _.indexOf(DEFAULT_YAML_KEY_ORDER, b),
+  sortKeys: (a, b) => _.indexOf(YAML_KEY_ORDER, a) - _.indexOf(YAML_KEY_ORDER, b),
 };
 
+// Provides toggling and syncing between a form and yaml editor. The formData state is the source
+// of truth. Both the form editor and the yaml editor update the formData state. Here's the basic logic of this component:
+// In the form view:
+//   - formData is both rendered and updated by the form component
+//   - on toggle to YAML editor, yaml is parsed from current formData state.
+// In the YAML view:
+//   - on each yaml change, attempt to parse yaml to js:
+//       - If it fails, nothing happens. formData remains unchanged.
+//       - If successful, formData is updated to resulting js
+//   - on toggle to form view, no action needs to be taken to sync because formData has remained up to date with each yaml change
+//
+//  This means that when switching from YAML to Form, you can lose changes if the YAML editor contains unparsable YAML
+//  TODO Add an extra step when switching from yaml to form to warn user if they are about to lose changes.
 export const SyncedEditor: React.FC<SyncedEditorProps> = ({
-  context,
+  context = {},
   FormEditor,
   initialType = EditorType.Form,
+  initialData = {},
   onChangeEditorType = _.noop,
-  onFormChange = _.noop,
-  onYAMLChange = _.noop,
+  onChange = _.noop,
   YAMLEditor,
 }) => {
   const { formContext, yamlContext } = context;
-  const [formData, setFormData] = React.useState<K8sResourceKind>(formContext?.initialValue || {});
-  const [yaml, setYAML] = React.useState(yamlContext?.initialValue || '');
+  const [formData, setFormData] = React.useState<K8sResourceKind>(initialData);
+  const [yaml, setYAML] = React.useState(safeJSToYAML(initialData));
   const [type, setType] = React.useState<EditorType>(initialType);
 
+  const handleFormDataChange = (newFormData: K8sResourceKind = {}) => {
+    if (!_.isEqual(newFormData, formData)) {
+      setFormData(newFormData);
+      onChange(newFormData);
+    }
+  };
+
   const handleYAMLChange = (newYAML: string = '') => {
-    setYAML(newYAML);
-    if (newYAML !== yaml) {
-      onYAMLChange(newYAML);
-    }
-  };
-
-  const handleFormChange = (newFormData: K8sResourceKind = {}) => {
-    setFormData(newFormData);
-    if (!_.isEqual(formData, newFormData)) {
-      onFormChange(formData);
-    }
-  };
-
-  const yamlToFormData = () => {
-    try {
-      const newFormData = safeLoad(yaml);
-      handleFormChange(newFormData);
-    } catch (e) {
-      // eslint-disable-next-line no-console
-      console.error('SyncedEditor could not parse form data from yaml: ', yaml);
-    }
-  };
-
-  const formDataToYAML = () => {
-    try {
-      const newYAML = safeDump(
-        { ...formData, spec: prune(formData.spec) },
-        DEFAULT_YAML_DUMP_OPTIONS,
-      );
-      handleYAMLChange(newYAML);
-    } catch (e) {
-      // eslint-disable-next-line no-console
-      console.error('<SynceEditor> could not parse yaml from form data: ', formData);
-    }
+    handleFormDataChange(safeYAMLToJS(newYAML, formData));
   };
 
   const onChangeType = (newType) => {
-    switch (newType) {
-      case EditorType.Form:
-        yamlToFormData();
-        break;
-      case EditorType.YAML:
-        formDataToYAML();
-        break;
-      default:
-        // eslint-disable-next-line no-console
-        console.warn('Unsupported editor type:', newType);
-        break;
+    if (newType === EditorType.YAML) {
+      setYAML(safeJSToYAML({ ...formData, spec: prune(formData.spec) }, yaml, YAML_TO_JS_OPTIONS));
     }
     setType(newType);
     onChangeEditorType(newType);
@@ -83,7 +61,7 @@ export const SyncedEditor: React.FC<SyncedEditorProps> = ({
     <>
       <EditorToggle value={type} onChange={onChangeType} />
       {type === EditorType.Form ? (
-        <FormEditor initialData={formData} onChange={handleFormChange} {...formContext} />
+        <FormEditor initialData={formData} onChange={handleFormDataChange} {...formContext} />
       ) : (
         <YAMLEditor initialYAML={yaml} onChange={handleYAMLChange} {...yamlContext} />
       )}
@@ -93,19 +71,13 @@ export const SyncedEditor: React.FC<SyncedEditorProps> = ({
 
 type SyncedEditorProps = {
   context: {
-    formContext: {
-      initialValue?: K8sResourceKind;
-      [key: string]: any;
-    };
-    yamlContext: {
-      initialValue?: string;
-      [key: string]: any;
-    };
+    formContext: { [key: string]: any };
+    yamlContext: { [key: string]: any };
   };
   FormEditor: React.FC<any>;
   initialType?: EditorType;
+  initialData?: K8sResourceKind;
   onChangeEditorType?: (newType: EditorType) => void;
-  onFormChange?: (formData: K8sResourceKind) => void;
-  onYAMLChange?: (yaml: string) => void;
+  onChange?: (data: K8sResourceKind) => void;
   YAMLEditor: React.FC<any>;
 };

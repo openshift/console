@@ -70,7 +70,7 @@ export interface HelmActionConfigType {
   title: string;
   subTitle: string;
   helmReleaseApi: string;
-  fetch: (url: any, json: any, options?: {}) => Promise<any>;
+  fetch: (url: string, json: any, options?: {}, timeout?: number) => Promise<any>;
   redirectURL: string;
 }
 

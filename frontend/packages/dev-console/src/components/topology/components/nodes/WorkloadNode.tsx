@@ -15,11 +15,13 @@ import { Tooltip, TooltipPosition } from '@patternfly/react-core';
 import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 import { routeDecoratorIcon } from '../../../import/render-utils';
 import { Decorator } from './Decorator';
-import PodSet from './PodSet';
+import PodSet, { podSetInnerRadius } from './PodSet';
 import BuildDecorator from './build-decorators/BuildDecorator';
 import { BaseNode } from './BaseNode';
 import { getCheURL, getEditURL, getServiceBindingStatus } from '../../topology-utils';
 import { useDisplayFilters } from '../../filters/useDisplayFilters';
+
+import './WorkloadNode.scss';
 
 interface StateProps {
   serviceBinding: boolean;
@@ -74,8 +76,9 @@ const ObservedWorkloadNode: React.FC<WorkloadNodeProps> = ({
         tippyProps={{ duration: 0, delay: 0 }}
       >
         <BaseNode
+          className="odc-workload-node"
           outerRadius={radius}
-          innerRadius={donutStatus && donutStatus.isRollingOut ? radius * 0.45 : radius * 0.55}
+          innerRadius={podSetInnerRadius(size, donutStatus)}
           icon={!filters.podCount ? workloadData.builderImage : undefined}
           kind={workloadData.kind}
           element={element}
@@ -123,13 +126,7 @@ const ObservedWorkloadNode: React.FC<WorkloadNodeProps> = ({
             />,
           ]}
         >
-          <PodSet
-            size={size}
-            x={cx}
-            y={cy}
-            data={workloadData.donutStatus}
-            showPodCount={filters.podCount}
-          />
+          <PodSet size={size} x={cx} y={cy} data={donutStatus} showPodCount={filters.podCount} />
         </BaseNode>
       </Tooltip>
     </g>
