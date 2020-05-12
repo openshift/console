@@ -96,13 +96,15 @@ const SearchPage_: React.FC<SearchProps & StateProps & DispatchProps> = (props) 
     // Ensure that the "kind" route parameter is a valid resource kind ID
     kind = kind || '';
     if (kind !== '') {
-      setSelectedItems(new Set(kind.split(',')));
+      const kindArray = kind.split(',');
+      const kindLength = kindArray.length;
+      setSelectedItems(new Set(kindArray));
+      setCustomBadgeText(kindLength);
     }
     const tags = split(q || '');
     const validTags = _.reject(tags, (tag) => requirementFromString(tag) === undefined);
     setLabelFilter(validTags);
     setTypeaheadNameFilter(name || '');
-    setCustomBadgeText([...selectedItems].length);
   }, []);
 
   const updateSelectedItems = (selection: string) => {

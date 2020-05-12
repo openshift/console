@@ -223,7 +223,7 @@ export class EventsList extends React.Component {
             <ChipGroup withToolbar defaultIsOpen={false}>
               <ChipGroupToolbarItem key="resources-category" categoryName="Resource">
                 {[...selected].map((chip) => (
-                  <Chip key={chip} onClick={() => this.toggleSelected(chip)}>
+                  chip !== 'All' && <Chip key={chip} onClick={() => this.toggleSelected(chip)}>
                     <ResourceIcon kind={chip} />
                     {kindForReference(chip)}
                   </Chip>
