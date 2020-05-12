@@ -98,13 +98,12 @@ export const fetchPodList = (ns, worspaceName) => {
   });
 };
 
-export const makeTerminalConfigCalls = (workspace) => {
-  if (workspace?.metadata?.name && workspace?.metadata?.namespace) {
-    const consumeUrl = `api/terminal/${workspace.metadata.namespace}/${workspace.metadata.name}/exec/config`;
-    coFetchJSON
-      .post(consumeUrl, {
-        container: 'dev',
-      })
-      .catch((error) => console.warn(error));
-  }
+export const makeTerminalInitCalls = (username, wname, wnamespace) => {
+  const consumeUrl = `api/terminal/${wnamespace}/${wname}/exec/init`;
+  return coFetchJSON.post(consumeUrl, {
+    kubeconfig: {
+      username: username,
+      namespace: wnamespace,
+    },
+  });
 };
