@@ -8,7 +8,7 @@ import {
 } from '@console/plugin-sdk';
 import {
   HealthState,
-  operatorHealthPriority,
+  healthPriority,
 } from '@console/shared/src/components/dashboard/status-card/states';
 import { coFetch } from '@console/internal/co-fetch';
 import {
@@ -22,6 +22,7 @@ import {
 import { PrometheusResponse } from '@console/internal/components/graphs';
 import { humanizePercentage } from '@console/internal/components/utils/units';
 import { getOperatorsStatus } from '@console/shared/src/components/dashboard/status-card/state-utils';
+import { pluralize } from '@patternfly/react-core';
 
 export const fetchK8sHealth = async (url: string) => {
   const response = await coFetch(url);
@@ -48,18 +49,20 @@ export const getControlPlaneComponentHealth = (
   response: PrometheusResponse,
   error,
 ): SubsystemHealth => {
-  if (
-    error ||
-    (response &&
-      response.status === 'success' &&
-      _.isNil(_.get(response, 'data.result[0].value[1]')))
-  ) {
-    return { state: HealthState.NOT_AVAILABLE, message: 'Not available' };
+  if (error) {
+    return {
+      state: HealthState.NOT_AVAILABLE,
+      message: healthPriority[HealthState.NOT_AVAILABLE].message,
+    };
   }
   if (!response) {
     return { state: HealthState.LOADING };
   }
-  const perc = humanizePercentage(_.get(response, 'data.result[0].value[1]'));
+  const value = response.data?.result?.[0]?.value?.[1];
+  if (_.isNil(value)) {
+    return { state: HealthState.UNKNOWN, message: healthPriority[HealthState.UNKNOWN].message };
+  }
+  const perc = humanizePercentage(value);
   if (perc.value > 90) {
     return { state: HealthState.OK, message: perc.string };
   }
@@ -69,7 +72,18 @@ export const getControlPlaneComponentHealth = (
   return { state: HealthState.ERROR, message: perc.string };
 };
 
-const errorStates = [HealthState.WARNING, HealthState.ERROR, HealthState.NOT_AVAILABLE];
+const getWorstStatus = (
+  componentsHealth: SubsystemHealth[],
+): { state: HealthState; message: string; count: number } => {
+  const withPriority = componentsHealth.map((h) => healthPriority[h.state]);
+  const mostImportantState = Math.max(...withPriority.map(({ priority }) => priority));
+  const worstStatuses = withPriority.filter(({ priority }) => priority === mostImportantState);
+  return {
+    state: worstStatuses[0].health,
+    message: worstStatuses[0].message,
+    count: worstStatuses.length,
+  };
+};
 
 export const getControlPlaneHealth: PrometheusHealthHandler = (responses) => {
   const componentsHealth = responses.map(({ response, error }) =>
@@ -78,14 +92,16 @@ export const getControlPlaneHealth: PrometheusHealthHandler = (responses) => {
   if (componentsHealth.some((c) => c.state === HealthState.LOADING)) {
     return { state: HealthState.LOADING };
   }
-  const errComponents = componentsHealth.filter(({ state }) => errorStates.includes(state));
-  if (errComponents.length) {
-    return {
-      state: errComponents.length === 4 ? HealthState.NOT_AVAILABLE : HealthState.WARNING,
-      message: errComponents.length === 4 ? null : `${errComponents.length} components degraded`,
-    };
-  }
-  return { state: HealthState.OK };
+  const worstStatus = getWorstStatus(componentsHealth);
+
+  return {
+    state: worstStatus.state,
+    message: worstStatus.message
+      ? worstStatus.count === 4
+        ? worstStatus.message
+        : `${pluralize(worstStatus.count, 'component')} ${worstStatus.message.toLowerCase()}`
+      : null,
+  };
 };
 
 export const getClusterOperatorStatusPriority: GetOperatorStatusPriority<ClusterOperator> = (
@@ -93,15 +109,15 @@ export const getClusterOperatorStatusPriority: GetOperatorStatusPriority<Cluster
 ) => {
   const status = getClusterOperatorStatus(co);
   if (status === OperatorStatus.Degraded) {
-    return { ...operatorHealthPriority[HealthState.WARNING], title: status };
+    return { ...healthPriority[HealthState.WARNING], title: status };
   }
   if (status === OperatorStatus.Unknown) {
-    return { ...operatorHealthPriority[HealthState.UNKNOWN], title: status };
+    return { ...healthPriority[HealthState.UNKNOWN], title: status };
   }
   if (status === OperatorStatus.Updating) {
-    return { ...operatorHealthPriority[HealthState.UPDATING], title: status };
+    return { ...healthPriority[HealthState.UPDATING], title: status };
   }
-  return { ...operatorHealthPriority[HealthState.OK], title: status };
+  return { ...healthPriority[HealthState.OK], title: status };
 };
 
 export const getClusterOperatorHealthStatus: GetOperatorsWithStatuses<ClusterOperator> = (

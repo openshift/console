@@ -18,14 +18,15 @@ const ControlPlanePopup: React.FC<PrometheusHealthPopupProps> = ({ responses }) 
     <StatusPopupSection firstColumn="Components" secondColumn="Response rate">
       {responses.map(({ response, error }, index) => {
         const health = getControlPlaneComponentHealth(response, error);
-        let icon: React.ReactNode;
-        if (health.state === HealthState.LOADING) {
-          icon = <div className="skeleton-health" />;
-        } else if (health.state !== HealthState.NOT_AVAILABLE) {
-          icon = healthStateMapping[health.state].icon;
-        }
+        const icon =
+          health.state === HealthState.LOADING ? (
+            <div className="skeleton-health" />
+          ) : (
+            healthStateMapping[health.state].icon
+          );
+        const value = health.message || healthStateMapping[health.state]?.message;
         return (
-          <Status key={titles[index]} value={health.message} icon={icon}>
+          <Status key={titles[index]} value={value} icon={icon}>
             {titles[index]}
           </Status>
         );

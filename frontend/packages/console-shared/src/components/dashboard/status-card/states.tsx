@@ -49,11 +49,8 @@ export const healthStateMapping: { [key in HealthStateMappingKeys]: HealthStateM
   },
 };
 
-export const operatorHealthPriority: {
-  [key in HealthStateMappingKeys]: {
-    priority: number;
-    health: HealthState;
-  } & HealthStateMappingValues;
+export const healthPriority: {
+  [key in HealthStateMappingKeys]: PriorityHealthState;
 } = {
   [HealthState.OK]: {
     priority: 0,
@@ -91,6 +88,11 @@ export const operatorHealthPriority: {
     ...healthStateMapping[HealthState.NOT_AVAILABLE],
   },
 };
+
+export type PriorityHealthState = {
+  priority: number;
+  health: HealthState;
+} & HealthStateMappingValues;
 
 type HealthStateMappingKeys = Exclude<keyof typeof HealthState, 'LOADING'>;
 

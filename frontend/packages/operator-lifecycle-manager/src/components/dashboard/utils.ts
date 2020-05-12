@@ -1,7 +1,7 @@
 import * as _ from 'lodash';
 import {
   HealthState,
-  operatorHealthPriority,
+  healthPriority,
 } from '@console/shared/src/components/dashboard/status-card/states';
 import { OperatorStatusPriority, GetOperatorsWithStatuses } from '@console/plugin-sdk';
 import { getOperatorsStatus } from '@console/shared/src/components/dashboard/status-card/state-utils';
@@ -36,12 +36,12 @@ const getOperatorStatus = (
     subscriptionStatus.status === SubscriptionState.SubscriptionStateUpgradePending
   ) {
     return {
-      ...operatorHealthPriority[HealthState.UPDATING],
+      ...healthPriority[HealthState.UPDATING],
       title: subscriptionStatus.title,
     };
   }
   return {
-    ...operatorHealthPriority[operatorHealth],
+    ...healthPriority[operatorHealth],
     title: csvStatus.title,
   };
 };
