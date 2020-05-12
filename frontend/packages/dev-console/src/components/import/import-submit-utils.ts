@@ -235,7 +235,11 @@ export const createOrUpdateDeployment = (
     project: { name: namespace },
     application: { name: application },
     image: { ports, tag },
-    deployment: { env, replicas },
+    deployment: {
+      env,
+      replicas,
+      triggers: { image: imageChange },
+    },
     labels: userLabels,
     limits: { cpu, memory },
     git: { url: repository, ref },
@@ -248,7 +252,7 @@ export const createOrUpdateDeployment = (
     ...getGitAnnotations(repository, ref),
     ...getCommonAnnotations(),
     'alpha.image.policy.openshift.io/resolve-names': '*',
-    ...getTriggerAnnotation(name),
+    ...(imageChange && getTriggerAnnotation(name, namespace)),
   };
   const podLabels = getPodLabels(name);
 
@@ -472,7 +476,7 @@ export const createOrUpdateResources = async (
       imageStreamName,
       undefined,
       undefined,
-      { ...defaultAnnotations, ...getTriggerAnnotation(name) },
+      { ...defaultAnnotations, ...getTriggerAnnotation(name, namespace) },
       _.get(appResources, 'editAppResource.data'),
     );
     return Promise.all([
