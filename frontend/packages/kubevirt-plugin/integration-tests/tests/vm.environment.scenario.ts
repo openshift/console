@@ -45,7 +45,7 @@ describe('Test VM enviromnet tab', () => {
     await vm.navigateToEnvironment();
   });
 
-  it('Add configmap, secret and service account', async () => {
+  it('ID(CNV-4046) Add configmap, secret and service account', async () => {
     await vmEnv.addSource(configmapName);
     await vmEnv.addSource(secretName);
 
@@ -59,7 +59,7 @@ describe('Test VM enviromnet tab', () => {
     expect(vmEnv.successAlert.isDisplayed()).toEqual(true);
   });
 
-  it('Verify all the sources are present at the disks tab', async () => {
+  it('ID(CNV-4179) Verify all the sources are present at the disks tab', async () => {
     const disks = await vm.getAttachedDisks();
     expect(!!disks.find((d) => d.name.includes(configmapName))).toBeTruthy();
     expect(!!disks.find((d) => d.name.includes(secretName))).toBeTruthy();
@@ -67,7 +67,7 @@ describe('Test VM enviromnet tab', () => {
   });
 
   it(
-    'Verify all sources are readable inside the VM',
+    'ID(CNV-4185) Verify all sources are readable inside the VM',
     async () => {
       await vm.action(VM_ACTION.Start);
       const out = execSync(`expect ${expecScriptPath} ${vmName} ${testName}`).toString();
@@ -77,7 +77,7 @@ describe('Test VM enviromnet tab', () => {
     VM_BOOTUP_TIMEOUT_SECS * 2, // VM boot time + test sources time
   );
 
-  it('Error when resource has no serial', async () => {
+  it('ID(CNV-4186) Error when resource has no serial', async () => {
     await vmEnv.serialField.get(1).clear();
     await vmEnv.serialField.get(1).sendKeys('i', Key.BACK_SPACE); // workaround: for some reason clear() is not enough
     await browser.wait(until.elementToBeClickable(vmEnv.saveBtn), PAGE_LOAD_TIMEOUT_SECS);
@@ -88,7 +88,7 @@ describe('Test VM enviromnet tab', () => {
     expect(errorText).toContain(vmEnv.noSerialError);
   });
 
-  it('Error when two sources have the same serial', async () => {
+  it('ID(CNV-4187) Error when two sources have the same serial', async () => {
     const firstSerial = await vmEnv.serialField.get(0).getAttribute('value');
     await vmEnv.serialField.get(1).clear();
     await vmEnv.serialField.get(1).sendKeys(firstSerial);
@@ -100,7 +100,7 @@ describe('Test VM enviromnet tab', () => {
     expect(errorText).toContain(vmEnv.dupSerialsError);
   });
 
-  it('Cannot use the same resource more than once', async () => {
+  it('ID(CNV-4188) Cannot use the same resource more than once', async () => {
     await click(
       element(by.buttonText('Add All From Config Map or Secret')),
       PAGE_LOAD_TIMEOUT_SECS,
@@ -122,7 +122,7 @@ describe('Test VM enviromnet tab', () => {
     expect(optionSize).toEqual(0);
   });
 
-  it('Delete a source', async () => {
+  it('ID(CNV-4189) Delete a source', async () => {
     const pairCountBefore = await vmEnv.allPairRows.count();
     await vmEnv.deleteButton.first().click();
     await browser.wait(until.elementToBeClickable(vmEnv.saveBtn), PAGE_LOAD_TIMEOUT_SECS);
