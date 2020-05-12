@@ -30,7 +30,6 @@ import {
   K8sEntityMap,
 } from '@console/shared';
 import { match } from 'react-router';
-import { withStartGuide } from '@console/internal/components/start-guide';
 import { VM_TEMPLATE_LABEL_PLURAL } from '../../constants/vm-templates';
 import {
   getTemplateOperatingSystems,
@@ -199,7 +198,7 @@ const getCreateProps = ({ namespace }: { namespace: string }) => {
   };
 };
 
-const WrappedVirtualMachineTemplatesPage: React.FC<VirtualMachineTemplatesPageProps &
+const VirtualMachineTemplatesPage: React.FC<VirtualMachineTemplatesPageProps &
   React.ComponentProps<typeof ListPage>> = (props) => {
   const { skipAccessReview, noProjectsAvailable, showTitle } = props.customData;
   const namespace = props.match.params.ns;
@@ -245,8 +244,6 @@ const WrappedVirtualMachineTemplatesPage: React.FC<VirtualMachineTemplatesPagePr
     />
   );
 };
-
-const VirtualMachineTemplatesPage = withStartGuide(WrappedVirtualMachineTemplatesPage);
 
 type VirtualMachineTemplatesPageProps = {
   match: match<{ ns?: string }>;

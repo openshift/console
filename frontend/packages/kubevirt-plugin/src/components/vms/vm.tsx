@@ -14,7 +14,6 @@ import {
   getOwnerReferences,
   getUID,
 } from '@console/shared';
-import { withStartGuide } from '@console/internal/components/start-guide';
 import { compareOwnerReference } from '@console/shared/src/utils/owner-references';
 import { NamespaceModel, PodModel, NodeModel } from '@console/internal/models';
 import {
@@ -191,7 +190,7 @@ const getCreateProps = ({ namespace }: { namespace: string }) => {
   };
 };
 
-export const WrappedVirtualMachinesPage: React.FC<VirtualMachinesPageProps> = (props) => {
+const VirtualMachinesPage: React.FC<VirtualMachinesPageProps> = (props) => {
   const { skipAccessReview, noProjectsAvailable, showTitle } = props.customData;
   const namespace = props.match.params.ns;
 
@@ -371,8 +370,6 @@ export const WrappedVirtualMachinesPage: React.FC<VirtualMachinesPageProps> = (p
     />
   );
 };
-
-const VirtualMachinesPage = withStartGuide(WrappedVirtualMachinesPage);
 
 type ObjectBundle = {
   vm: VMKind;
