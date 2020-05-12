@@ -120,7 +120,13 @@ export class ImportWizard extends Wizard {
       await waitForNoLoaders();
       // Change name to comply with k8s
       await diskDialog.fillName(disk.name.replace(/\s/g, '').toLowerCase());
-      await diskDialog.selectStorageClass(disk.storageClass);
+      // This if is required to workaround bug 1814611.
+      // NFS is not supported for conversion PV and HPP should be used instead.
+      if (disk.name === 'v2v-conversion-temp' && STORAGE_CLASS === 'nfs') {
+        await diskDialog.selectStorageClass('hostpath-provisioner');
+      } else {
+        await diskDialog.selectStorageClass(disk.storageClass);
+      }
       await click(saveButton);
       await waitForNoLoaders();
     });
