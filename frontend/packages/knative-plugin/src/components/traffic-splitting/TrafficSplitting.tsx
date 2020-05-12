@@ -5,6 +5,7 @@ import { K8sResourceKind, k8sUpdate } from '@console/internal/module/k8s';
 import { ServiceModel } from '../../models';
 import { getRevisionItems, constructObjForUpdate } from '../../utils/traffic-splitting-utils';
 import TrafficSplittingModal from './TrafficSplittingModal';
+import { trafficModalValidationSchema } from '../../utils/trafficSplitting-validation-utils';
 
 export interface TrafficSplittingProps {
   service: K8sResourceKind;
@@ -59,6 +60,7 @@ const TrafficSplitting: React.FC<TrafficSplittingProps> = ({
       onSubmit={handleSubmit}
       onReset={cancel}
       initialStatus={{ error: '' }}
+      validationSchema={trafficModalValidationSchema}
     >
       {(props) => <TrafficSplittingModal {...props} revisionItems={revisionItems} />}
     </Formik>
