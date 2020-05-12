@@ -8,12 +8,17 @@ export const NodeDashboardContext = React.createContext<NodeDashboardContext>({
   setHealthCheck: () => {},
 });
 
+export type HealthCheck = {
+  failingHealthCheck: boolean;
+  reboot: boolean;
+};
+
 type NodeDashboardContext = {
   obj?: NodeKind;
   cpuLimit?: LimitRequested;
   setCPULimit: (state: LimitRequested) => void;
   memoryLimit?: LimitRequested;
   setMemoryLimit: (state: LimitRequested) => void;
-  healthCheck?: boolean;
-  setHealthCheck: (state: boolean) => void;
+  healthCheck?: HealthCheck;
+  setHealthCheck: (state: HealthCheck) => void;
 };
