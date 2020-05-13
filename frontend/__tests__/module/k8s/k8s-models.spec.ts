@@ -1,4 +1,6 @@
 import {
+  crdVersionSort,
+  getLatestVersionForCRD,
   referenceFor,
   referenceForCRD,
   referenceForOwnerRef,
@@ -11,6 +13,13 @@ import {
   testNamespace,
   testCRD,
   testOwnedResourceInstance,
+  testCRDVersionV1Alpha1,
+  testCRDVersionV1Alpha2,
+  testCRDVersionV8,
+  testCRDVersionV2Beta1,
+  testCRDVersionV2Alpha1,
+  testCRDVersionV3Beta1,
+  testCRDVersionV1,
 } from '../../../__mocks__/k8sResourcesMocks';
 import {
   PodModel,
@@ -85,5 +94,52 @@ describe('modelsToMap', () => {
       [referenceForModel(ClusterResourceQuotaModel)]: ClusterResourceQuotaModel,
       [referenceForModel(PrometheusModel)]: PrometheusModel,
     });
+  });
+});
+
+describe('crdVersionSort', () => {
+  it('returns a CRDVersion array in correct sort order', () => {
+    expect(
+      crdVersionSort([
+        testCRDVersionV1Alpha1,
+        testCRDVersionV1Alpha2,
+        testCRDVersionV8,
+        testCRDVersionV2Beta1,
+        testCRDVersionV2Alpha1,
+        testCRDVersionV3Beta1,
+        testCRDVersionV1,
+      ]),
+    ).toEqual([
+      testCRDVersionV8,
+      testCRDVersionV1,
+      testCRDVersionV3Beta1,
+      testCRDVersionV2Beta1,
+      testCRDVersionV2Alpha1,
+      testCRDVersionV1Alpha2,
+      testCRDVersionV1Alpha1,
+    ]);
+  });
+});
+
+describe('getLatestVersionForCRD', () => {
+  it('returns latest version from array of versions', () => {
+    expect(
+      getLatestVersionForCRD(
+        [
+          testCRDVersionV1Alpha1,
+          testCRDVersionV1Alpha2,
+          testCRDVersionV8,
+          testCRDVersionV2Beta1,
+          testCRDVersionV2Alpha1,
+          testCRDVersionV3Beta1,
+          testCRDVersionV1,
+        ],
+        'invalid-version',
+      ),
+    ).toEqual(testCRDVersionV1.name);
+  });
+
+  it('returns deprecated version string from array of unserved versions', () => {
+    expect(getLatestVersionForCRD([testCRDVersionV8], 'valid-version')).toEqual('valid-version');
   });
 });

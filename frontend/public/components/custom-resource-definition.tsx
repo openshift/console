@@ -8,6 +8,7 @@ import { DetailsPage, ListPage, Table, TableRow, TableData, RowFunction } from '
 import {
   AsyncComponent,
   DetailsItem,
+  EmptyBox,
   Kebab,
   KebabAction,
   navFactory,
@@ -113,30 +114,52 @@ const Established: React.FC<{ crd: CustomResourceDefinitionKind }> = ({ crd }) =
   );
 };
 
-const CRDVersionList: React.FC<CRDVersionProps> = ({ crdVersions }) => (
-  <div className="table-responsive">
-    <table className="co-m-table-grid co-m-table-grid--bordered table">
-      <thead className="co-m-table-grid__head">
-        <tr>
-          <td>Name</td>
-          <td>Served</td>
-          <td>Storage</td>
-        </tr>
-      </thead>
-      <tbody className="co-m-table-grid__body">
-        <>
-          {_.map(crdVersions, (version) => (
-            <tr className="co-resource-list__item">
-              <td>{version.name}</td>
-              <td>{version.served.toString()}</td>
-              <td>{version.storage.toString()}</td>
-            </tr>
-          ))}
-        </>
-      </tbody>
-    </table>
-  </div>
-);
+const EmptyVersionsMsg: React.FC<{}> = () => <EmptyBox label="CRD Versions" />;
+
+const CRDVersionsHeader = () => [
+  {
+    title: 'Name',
+    sortField: 'name',
+    transforms: [sortable],
+  },
+  {
+    title: 'Served',
+    sortField: 'served',
+    transforms: [sortable],
+  },
+  {
+    title: 'Storage',
+    sortField: 'storage',
+    transforms: [sortable],
+  },
+];
+
+const CRDVersionsRows = ({ componentProps: { data } }) =>
+  _.map(data, (version: CRDVersion) => [
+    {
+      title: version.name,
+    },
+    {
+      title: version.served.toString(),
+    },
+    {
+      title: version.storage.toString(),
+    },
+  ]);
+
+const CRDVersionList: React.FC<CRDVersionProps> = ({ crdVersions }) => {
+  return (
+    <Table
+      EmptyMsg={EmptyVersionsMsg}
+      Header={CRDVersionsHeader}
+      Rows={CRDVersionsRows}
+      aria-label="CRD Versions"
+      data={crdVersions}
+      loaded
+      virtualize={false}
+    />
+  );
+};
 
 const CRDTableRow: RowFunction<CustomResourceDefinitionKind> = ({
   obj: crd,

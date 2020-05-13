@@ -39,34 +39,47 @@ export const groupVersionFor = (apiVersion: string) => ({
   version: apiVersion.split('/').length === 2 ? apiVersion.split('/')[1] : apiVersion,
 });
 
-export const getLatestVersionForCRD = (crdVersions: CRDVersion[], legacyCRDVersion: string) => {
-  const served = crdVersions.filter((version) => version.served);
-  const sorted = served.sort((v1, v2) => {
-    // First sort on major version
-    const majorV1 = _.toNumber(v1.name.match(/\d+/)[0]);
-    const majorV2 = _.toNumber(v2.name.match(/\d+/)[0]);
-    if (majorV1 !== majorV2) {
-      return majorV2 - majorV1;
+const parseAPIVersion = (version: string) => {
+  const parsed = /^v(\d+)(?:(alpha|beta)(\d+))?$/.exec(version);
+  return parsed
+    ? { majorVersion: Number(parsed[1]), qualifier: parsed[2], minorVersion: Number(parsed[3]) }
+    : null;
+};
+
+export const crdVersionSort = (crdVersions: CRDVersion[]) => {
+  return crdVersions?.sort((v1, v2) => {
+    const v1Parsed = parseAPIVersion(v1.name);
+    const v2Parsed = parseAPIVersion(v2.name);
+    // First sort on major version with no qualifiers: v3 > v1
+    if (
+      v1Parsed.majorVersion !== v2Parsed.majorVersion &&
+      !v1Parsed.qualifier &&
+      !v2Parsed.qualifier
+    ) {
+      return v2Parsed.majorVersion - v1Parsed.majorVersion;
     }
-    // Then sort on numerical release only
-    if (!v1.name.match(/^(alpha|beta)$/)) {
-      return -1;
+    // Then sort on any version with no qualifier over a qualifier: v1 > v3alpha
+    if (_.isEmpty(v1Parsed.qualifier) !== _.isEmpty(v2Parsed.qualifier)) {
+      return v1Parsed.qualifier ? 1 : -1;
     }
-    if (!v2.name.match(/^(alpha|beta)$/)) {
-      return 1;
-    }
-    // Beta beats alpha
-    const isBetaV1 = v1.name.match(/^(beta)$/);
-    const isBetaV2 = v2.name.match(/^(beta)$/);
+    // Beta beats alpha: v1beta1 > v1alpha1
+    const isBetaV1 = v1Parsed.qualifier === 'beta';
+    const isBetaV2 = v2Parsed.qualifier === 'beta';
     if (isBetaV1 !== isBetaV2) {
       return isBetaV1 ? -1 : 1;
     }
-    // Finally compare minor version
-    const minorV1 = _.toNumber(v1.name.match(/\d+/)[1]);
-    const minorV2 = _.toNumber(v2.name.match(/\d+/)[1]);
-    return minorV2 - minorV1;
+    // Same qualifier, then numeric values win: v2beta2 > v1beta2
+    if (v1Parsed.majorVersion !== v2Parsed.majorVersion) {
+      return v2Parsed.majorVersion - v1Parsed.majorVersion;
+    }
+    // Finally compare minor version: v1beta2 > v1beta1
+    return v2Parsed.minorVersion - v1Parsed.minorVersion;
   });
-  return sorted && sorted.length > 0 ? sorted[0].name : legacyCRDVersion;
+};
+
+export const getLatestVersionForCRD = (crdVersions: CRDVersion[], legacyCRDVersion: string) => {
+  const sorted = crdVersionSort(crdVersions?.filter((version) => version.served));
+  return sorted?.[0]?.name || legacyCRDVersion;
 };
 
 export const referenceForCRD = (obj: CustomResourceDefinitionKind): GroupVersionKind =>

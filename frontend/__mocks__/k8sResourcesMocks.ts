@@ -1,4 +1,4 @@
-import { CustomResourceDefinitionKind, K8sResourceKind } from '../public/module/k8s';
+import { CRDVersion, CustomResourceDefinitionKind, K8sResourceKind } from '../public/module/k8s';
 
 export const testNamespace: K8sResourceKind = {
   apiVersion: 'v1',
@@ -78,4 +78,46 @@ export const testOwnedResourceInstance: K8sResourceKind = {
   status: {
     'some-filled-path': 'this is filled!',
   },
+};
+
+export const testCRDVersionV1Alpha1: CRDVersion = {
+  name: 'v1alpha1',
+  storage: true,
+  served: true,
+};
+
+export const testCRDVersionV1Alpha2: CRDVersion = {
+  name: 'v1alpha2',
+  storage: true,
+  served: true,
+};
+
+export const testCRDVersionV8: CRDVersion = {
+  name: 'v8',
+  storage: true,
+  served: false,
+};
+
+export const testCRDVersionV2Beta1: CRDVersion = {
+  name: 'v2beta1',
+  storage: true,
+  served: true,
+};
+
+export const testCRDVersionV2Alpha1: CRDVersion = {
+  name: 'v2alpha1',
+  storage: true,
+  served: true,
+};
+
+export const testCRDVersionV3Beta1: CRDVersion = {
+  name: 'v3beta1',
+  storage: true,
+  served: true,
+};
+
+export const testCRDVersionV1: CRDVersion = {
+  name: 'v1',
+  storage: true,
+  served: true,
 };
