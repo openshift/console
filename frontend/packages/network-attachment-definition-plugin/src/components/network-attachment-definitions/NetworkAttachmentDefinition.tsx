@@ -114,6 +114,7 @@ export const NetworkAttachmentDefinitionsList: React.FC<React.ComponentProps<typ
       Row={NetworkAttachmentDefinitionsRow}
       virtualize
       loaded={props.loaded}
+      label={props.label}
     />
   );
 };
