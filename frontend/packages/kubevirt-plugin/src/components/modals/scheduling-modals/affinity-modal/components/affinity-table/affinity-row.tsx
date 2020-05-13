@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { Kebab, KebabOption, pluralize } from '@console/internal/components/utils';
-import { asVM, isVMRunning } from '../../../../../../selectors/vm';
 import { isVMI } from '../../../../../../selectors/check-type';
 import { VMLikeEntityKind } from '../../../../../../types/vmLike';
 import { TableData, TableRow, RowFunction } from '@console/internal/components/factory';
@@ -34,7 +33,7 @@ const getActions = (
   onDelete,
 ) => {
   const actions = [];
-  if (isVMI(vmLikeEntity) || isVMRunning(asVM(vmLikeEntity))) {
+  if (isVMI(vmLikeEntity)) {
     return actions;
   }
   actions.push(menuActionEdit(affinity, onEdit));
@@ -73,7 +72,7 @@ export const AffinityRow: RowFunction<AffinityRowData, AffinityRowCustomData> = 
       <TableData className={dimensify(true)}>
         <Kebab
           options={getActions(obj, vmLikeEntity, onEdit, onDelete)}
-          isDisabled={isDisabled || isVMI(vmLikeEntity) || isVMRunning(asVM(vmLikeEntity))}
+          isDisabled={isDisabled || isVMI(vmLikeEntity)}
         />
       </TableData>
     </TableRow>
