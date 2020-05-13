@@ -27,7 +27,7 @@ const NODE_STATUS_GROUP_MAPPING = {
   [InventoryStatusGroup.PROGRESS]: ['Not Ready'],
 };
 
-const getStatusGroups = (resources, mapping, mapper, filterType) => {
+export const getStatusGroups = (resources, mapping, mapper, filterType) => {
   const groups = {
     [InventoryStatusGroup.UNKNOWN]: {
       statusIDs: [],

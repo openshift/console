@@ -193,6 +193,7 @@ const ResourceTitleComponent: React.FC<ResourceTitleComponentComponent> = ({
 export const ResourceInventoryItem: React.FC<ResourceInventoryItemProps> = ({
   kind,
   useAbbr,
+  TitleComponent,
   resources = [],
   additionalResources,
   isLoading,
@@ -203,12 +204,14 @@ export const ResourceInventoryItem: React.FC<ResourceInventoryItemProps> = ({
   ExpandedComponent,
   basePath,
 }) => {
-  const TitleComponent = React.useCallback(
+  let Title: React.ComponentType = React.useCallback(
     (props) => (
       <ResourceTitleComponent kind={kind} namespace={namespace} basePath={basePath} {...props} />
     ),
     [kind, namespace, basePath],
   );
+
+  if (TitleComponent) Title = TitleComponent;
 
   const groupExtensions = useExtensions<DashboardsInventoryItemGroup>(
     isDashboardsInventoryItemGroup,
@@ -245,7 +248,7 @@ export const ResourceInventoryItem: React.FC<ResourceInventoryItemProps> = ({
       titlePlural={useAbbr ? undefined : kind.labelPlural}
       count={totalCount}
       error={error}
-      TitleComponent={showLink ? TitleComponent : null}
+      TitleComponent={showLink ? Title : null}
       ExpandedComponent={ExpandedComponent}
     >
       {top3Groups.map((key) =>
@@ -322,6 +325,7 @@ type ResourceInventoryItemProps = {
   namespace?: string;
   error: boolean;
   showLink?: boolean;
+  TitleComponent?: React.ComponentType<{}>;
   ExpandedComponent?: React.ComponentType<{}>;
   basePath?: string;
 };
