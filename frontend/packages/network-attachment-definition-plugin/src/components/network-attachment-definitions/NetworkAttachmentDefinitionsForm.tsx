@@ -29,7 +29,6 @@ import NetworkTypeOptions from './NetworkTypeOptions';
 const buildConfig = (name, networkType, typeParamsData): NetworkAttachmentDefinitionConfig => {
   const config: NetworkAttachmentDefinitionConfig = {
     name,
-    type: networkType,
     cniVersion: '0.3.1',
   };
 
