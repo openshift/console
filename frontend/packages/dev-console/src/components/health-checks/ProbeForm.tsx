@@ -12,25 +12,20 @@ import { RequestType } from './health-checks-types';
 import FormSection from '../import/section/FormSection';
 import './ProbeForm.scss';
 
-const getRequestTypeForm = (
-  value: string,
-  probeType: string,
-  ports?: { [port: number]: number },
-) => {
+const getRequestTypeForm = (value: string, probeType: string) => {
   switch (value) {
     case RequestType.HTTPGET:
-      return <HTTPRequestTypeForm ports={ports} probeType={probeType} />;
+      return <HTTPRequestTypeForm probeType={probeType} />;
     case RequestType.ContainerCommand:
       return <CommandRequestTypeForm probeType={probeType} />;
     case RequestType.TCPSocket:
-      return <TCPRequestTypeForm ports={ports} probeType={probeType} />;
+      return <TCPRequestTypeForm probeType={probeType} />;
     default:
       return null;
   }
 };
 
 interface ProbeFormProps {
-  containerPorts?: { [port: number]: number };
   onSubmit: () => void;
   onClose: () => void;
   probeType: string;
@@ -42,7 +37,7 @@ enum RequestTypeOptions {
   tcpSocket = 'TCP Socket',
 }
 
-const ProbeForm: React.FC<ProbeFormProps> = ({ onSubmit, onClose, containerPorts, probeType }) => {
+const ProbeForm: React.FC<ProbeFormProps> = ({ onSubmit, onClose, probeType }) => {
   const {
     values: { healthChecks },
     errors,
@@ -58,11 +53,7 @@ const ProbeForm: React.FC<ProbeFormProps> = ({ onSubmit, onClose, containerPorts
           title={RequestType.HTTPGET}
           fullWidth
         />
-        {getRequestTypeForm(
-          healthChecks?.[probeType]?.data?.requestType,
-          probeType,
-          containerPorts,
-        )}
+        {getRequestTypeForm(healthChecks?.[probeType]?.data?.requestType, probeType)}
         <InputField
           type={TextInputTypes.number}
           name={`healthChecks.${probeType}.data.failureThreshold`}
