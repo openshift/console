@@ -18,7 +18,7 @@ export type NetworkAttachmentDefinitionPlugin = {
 export type NetworkAttachmentDefinitionConfig = {
   cniVersion: string;
   name: string;
-  type: string;
+  type?: string;
   bridge?: string;
   isGateway?: true;
   ipam?: IPAMConfig;
