@@ -76,8 +76,10 @@ export const UninstallOperatorModal = withHandlePromise((props: UninstallOperato
         <YellowExclamationTriangleIcon className="co-icon-space-r" /> Uninstall Operator?
       </ModalTitle>
       <ModalBody>
-        This will remove operator <strong>{name}</strong> from {context}. Your application will keep
-        running, but it will no longer receive updates or configuration changes.
+        This will remove operator <strong>{name}</strong> from {context}. Removing the operator will
+        not remove any of its custom resource definitions or managed resources. If your operator has
+        deployed applications on the cluster or configured off-cluster resources, these will
+        continue to run and need to be cleaned up manually.
         {uninstallMessage && (
           <>
             <h2>Message from operator developer</h2>
