@@ -76,3 +76,7 @@ export const vmDetailNodeSelector = (namespace, vmName) =>
   $(vmDetailItemId(namespace, vmName, 'node-selector'));
 export const vmDetailNodeSelectorEditButton = (namespace, vmName) =>
   $(vmDetailItemId(namespace, vmName, 'node-selector-edit'));
+export const vmDetailTolerations = (namespace, vmName) =>
+  $(vmDetailItemId(namespace, vmName, 'tolerations'));
+export const vmDetailTolerationsEditButton = (namespace, vmName) =>
+  $(vmDetailItemId(namespace, vmName, 'tolerations-edit'));
