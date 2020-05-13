@@ -43,6 +43,7 @@ import {
 } from './utils/mocks';
 import { VirtualMachine } from './models/virtualMachine';
 import { CloneVirtualMachineDialog } from './dialogs/cloneVirtualMachineDialog';
+import { Wizard } from './models/wizard';
 
 describe('Test clone VM.', () => {
   const leakedResources = new Set<string>();
@@ -297,8 +298,9 @@ describe('Test clone VM.', () => {
           rootDisk,
           { name: 'cloudinitdisk', size: '', interface: 'VirtIO', storageClass: '-' },
         ];
-        const ciVM = new VirtualMachine(ciVMConfig);
-        await ciVM.create(ciVMConfig);
+
+        const wizard = new Wizard();
+        const ciVM = await wizard.createVirtualMachine(ciVMConfig);
         await withResource(leakedResources, ciVM.asResource(), async () => {
           await ciVM.action(VM_ACTION.Clone);
           await cloneDialog.clone();

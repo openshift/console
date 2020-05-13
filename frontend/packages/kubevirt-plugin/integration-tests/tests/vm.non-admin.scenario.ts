@@ -18,7 +18,7 @@ import { restrictedAccessBlock, hintBlockTitle } from '../views/vms.list.view';
 import { createProject } from './utils/utils';
 import { vmConfig, getProvisionConfigs } from './vm.wizard.configs';
 import { ProvisionConfigName } from './utils/constants/wizard';
-import { VirtualMachine } from './models/virtualMachine';
+import { Wizard } from './models/wizard';
 import {
   VM_ACTION,
   VM_STATUS,
@@ -38,6 +38,7 @@ const {
 
 describe('Kubevirt non-admin Flow', () => {
   const leakedResources = new Set<string>();
+  const wizard = new Wizard();
   const configName = ProvisionConfigName.URL;
   const provisionConfigs = getProvisionConfigs();
   const provisionConfig = provisionConfigs.get(configName);
@@ -45,7 +46,6 @@ describe('Kubevirt non-admin Flow', () => {
 
   const vm1Config = vmConfig(configName.toLowerCase(), testNonAdminNamespace, provisionConfig);
   vm1Config.startOnCreation = false;
-  const vm = new VirtualMachine(vm1Config);
 
   beforeAll(async () => {
     await loginView.logout();
@@ -69,12 +69,11 @@ describe('Kubevirt non-admin Flow', () => {
       await browser.wait(until.textToBePresentInElement(hintBlockTitle, 'Getting Started'));
 
       await createProject(testNonAdminNamespace);
-
+      const vm = await wizard.createVirtualMachine(vm1Config);
       await withResource(
         leakedResources,
         vm.asResource(),
         async () => {
-          await vm.create(vm1Config);
           await vm.action(VM_ACTION.Start, false); // Without waiting for the VM to be Running
           await vm.waitForStatus(VM_STATUS.Starting); // Just to make sure it is actually starting,
           await vm.action(VM_ACTION.Delete, false);

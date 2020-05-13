@@ -11,6 +11,7 @@ import { VirtualMachine } from './models/virtualMachine';
 import { VirtualMachineTemplate } from './models/virtualMachineTemplate';
 import { ProvisionConfig } from './utils/types';
 import { ProvisionConfigName } from './utils/constants/wizard';
+import { Wizard } from './models/wizard';
 
 describe('Test adding/removing discs/nics to/from a VM template', () => {
   const provisionConfigContainer = getProvisionConfigs().get(ProvisionConfigName.CONTAINER);
@@ -44,19 +45,20 @@ describe('Test adding/removing discs/nics to/from a VM template', () => {
       networkResources: [],
     };
   };
+  const wizard = new Wizard();
+  let vmTemplate: VirtualMachineTemplate;
+  let vm: VirtualMachine;
 
   const templateCfg = vmTemplateConfig(
     `tmpl-${provisionConfigContainer.provision.method.toLowerCase()}`,
     provisionConfigContainer,
   );
-  const vmTemplate = new VirtualMachineTemplate(templateCfg);
 
-  const vmCfg = vmConfig(`vmfromtmpl-${vmTemplate.name}`, templateCfg);
-  const vm = new VirtualMachine(vmCfg);
+  const vmCfg = vmConfig(`vmfromtmpl-${templateCfg.name}`, templateCfg);
 
   beforeAll(async () => {
     createResource(multusNAD);
-    await vmTemplate.create(templateCfg);
+    vmTemplate = await wizard.createVirtualMachineTemplate(templateCfg);
   }, TEMPLATE_ACTIONS_TIMEOUT_SECS);
 
   afterAll(() => {
@@ -69,7 +71,7 @@ describe('Test adding/removing discs/nics to/from a VM template', () => {
     beforeAll(async () => {
       await vmTemplate.addDisk(hddDisk);
       await vmTemplate.addNIC(multusNetworkInterface);
-      await vm.create(vmCfg);
+      vm = await wizard.createVirtualMachine(vmCfg);
     }, TEMPLATE_ACTIONS_TIMEOUT_SECS);
 
     afterAll(() => {
@@ -89,7 +91,7 @@ describe('Test adding/removing discs/nics to/from a VM template', () => {
     beforeAll(async () => {
       await vmTemplate.removeDisk(hddDisk.name);
       await vmTemplate.removeNIC(multusNetworkInterface.name);
-      await vm.create(vmCfg);
+      vm = await wizard.createVirtualMachine(vmCfg);
     }, TEMPLATE_ACTIONS_TIMEOUT_SECS);
 
     afterAll(() => {

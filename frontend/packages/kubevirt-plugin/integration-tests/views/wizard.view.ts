@@ -12,6 +12,10 @@ export const nextButton = element(by.buttonText('Next'));
 export const createVirtualMachineButton = element(by.partialButtonText('Create Virtual Machine'));
 export const modalCancelButton = $('.modal-content').element(by.buttonText('Cancel'));
 
+// Errors
+export const footerError = $('div[aria-label="Danger Alert"]');
+export const footerErrorDescroption = footerError.$('.pf-c-alert__description');
+
 // Basic Settings tab
 export const templateSelect = $('#template-dropdown');
 export const provisionSourceSelect = $('#image-source-type-dropdown');

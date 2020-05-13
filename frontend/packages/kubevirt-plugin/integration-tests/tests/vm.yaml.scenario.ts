@@ -19,7 +19,7 @@ import {
   createResource,
   deleteResource,
 } from '@console/shared/src/test-utils/utils';
-import { VirtualMachineModel } from '../../src/models/index';
+import { VirtualMachineModel } from '@console/kubevirt-plugin/src/models';
 import { VirtualMachine } from './models/virtualMachine';
 import {
   VM_BOOTUP_TIMEOUT_SECS,

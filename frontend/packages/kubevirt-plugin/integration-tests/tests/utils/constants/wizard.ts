@@ -17,10 +17,10 @@ export const OSIDLookup = {
 };
 
 export enum Flavor {
-  TINY = 'tiny',
-  SMALL = 'small',
-  MEDIUM = 'medium',
-  LARGE = 'large',
+  TINY = 'Tiny',
+  SMALL = 'Small',
+  MEDIUM = 'Medium',
+  LARGE = 'Large',
   CUSTOM = 'Custom',
 }
 

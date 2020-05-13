@@ -10,15 +10,17 @@ import {
   deleteResources,
   deleteResource,
 } from '@console/shared/src/test-utils/utils';
-import { VM_BOOTUP_TIMEOUT_SECS, TAB, NOT_AVAILABLE } from './utils/consts';
+import { VM_BOOTUP_TIMEOUT_SECS, NOT_AVAILABLE, VMT_ACTION } from './utils/consts';
 import { basicVMConfig, multusNAD } from './utils/mocks';
 import { getProvisionConfigs, getTestDataVolume, VMTemplateTestCaseIDs } from './vm.wizard.configs';
 import { VirtualMachine } from './models/virtualMachine';
 import { VirtualMachineTemplate } from './models/virtualMachineTemplate';
-import { ProvisionConfigName } from './utils/constants/wizard';
+import { ProvisionConfigName, Flavor } from './utils/constants/wizard';
+import { Wizard } from './models/wizard';
 
 describe('Create VM from Template using wizard', () => {
   const leakedResources = new Set<string>();
+  const wizard = new Wizard();
   const provisionConfigs = getProvisionConfigs();
   const testDataVolume = getTestDataVolume();
   const commonSettings = {
@@ -73,14 +75,13 @@ describe('Create VM from Template using wizard', () => {
       `${VMTemplateTestCaseIDs[configName]} Create VM Template using ${configName}.`,
       async () => {
         const templateCfg = vmTemplateConfig(configName.toLowerCase(), provisionConfig);
-        const vmTemplate = new VirtualMachineTemplate(templateCfg);
-        const vmCfg = vmConfig(configName.toLowerCase(), templateCfg);
-        const vm = new VirtualMachine(vmCfg);
-
+        const vmTemplate = await wizard.createVirtualMachineTemplate(templateCfg);
         await withResource(leakedResources, vmTemplate.asResource(), async () => {
-          await vmTemplate.create(templateCfg);
+          const vm = await wizard.createVirtualMachine(
+            vmConfig(configName.toLowerCase(), templateCfg),
+          );
           await withResource(leakedResources, vm.asResource(), async () => {
-            await vm.create(vmCfg);
+            await vm.navigateToDetail();
           });
         });
       },
@@ -94,10 +95,9 @@ describe('Create VM from Template using wizard', () => {
       provisionConfig.provision.method.toLowerCase(),
       provisionConfig,
     );
-    const vmTemplate = new VirtualMachineTemplate(templateCfg);
+    const vmTemplate = await wizard.createVirtualMachineTemplate(templateCfg);
     await withResource(leakedResources, vmTemplate.asResource(), async () => {
-      await vmTemplate.create(templateCfg);
-      await vmTemplate.navigateToTab(TAB.Details);
+      await vmTemplate.navigateToDetail();
 
       const expectation = {
         name: vmTemplate.name,
@@ -105,7 +105,7 @@ describe('Create VM from Template using wizard', () => {
         os: templateCfg.operatingSystem,
         profile: templateCfg.workloadProfile,
         bootOrder: ['rootdisk (Disk)'],
-        flavor: '1 vCPU, 1 GiB Memory',
+        flavor: `${templateCfg.flavorConfig.flavor}: 1 vCPU, 1 GiB Memory`,
         cdrom: NOT_AVAILABLE,
       };
 
@@ -134,11 +134,21 @@ describe('Create VM from Template using wizard', () => {
       provisionConfig.provision.method.toLowerCase(),
       provisionConfig,
     );
-    const vmTemplate = new VirtualMachineTemplate(templateCfg);
+    const getVMCfg = (name: string) => {
+      return {
+        name,
+        namespace: testName,
+        flavorConfig: { flavor: Flavor.TINY },
+        storageResources: [],
+        networkResources: [],
+      };
+    };
+
+    let vmTemplate: VirtualMachineTemplate;
     let vm: VirtualMachine;
 
     beforeAll(async () => {
-      await vmTemplate.create(templateCfg);
+      vmTemplate = await wizard.createVirtualMachineTemplate(templateCfg);
     });
 
     afterAll(() => {
@@ -149,16 +159,20 @@ describe('Create VM from Template using wizard', () => {
       deleteResource(vm.asResource());
     });
 
-    it('ID(CNV-4097) Creates VM using VM Template kebab menu ', async () => {
-      const vmCfg = vmConfig('vm-from-vmt-kebab', templateCfg);
-      vmCfg.startOnCreation = false;
-      vm = await vmTemplate.createVM(vmCfg);
+    it('ID(CNV-4202) Creates VM using VM Template actions dropdown ', async () => {
+      const vmCfg = getVMCfg('vm-from-vmt-detail');
+      vm = new VirtualMachine(vmCfg);
+
+      await vmTemplate.action(VMT_ACTION.Create);
+      await wizard.processWizard(vmCfg);
     });
 
-    it('ID(CNV-4202) Creates VM using VM Template actions dropdown ', async () => {
-      const vmCfg = vmConfig('vm-from-vmt-actions', templateCfg);
-      vmCfg.startOnCreation = false;
-      vm = await vmTemplate.createVM(vmCfg);
+    it('ID(CNV-4097) Creates VM using VM Template kebab menu ', async () => {
+      const vmCfg = getVMCfg('vm-from-vmt-listview');
+
+      vm = new VirtualMachine(vmCfg);
+      await vmTemplate.listViewAction(VMT_ACTION.Create);
+      await wizard.processWizard(vmCfg);
     });
   });
 });

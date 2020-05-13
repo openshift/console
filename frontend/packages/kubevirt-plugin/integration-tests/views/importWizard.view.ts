@@ -9,7 +9,7 @@ export const vcenterHostnameInput = $('#vcenter-hostname-dropdown');
 export const usernameInput = $('#vcenter-username');
 export const vcenterPasswordInput = $('#vcenter-password');
 export const vcenterSaveInstanceCheckbox = $('#vcenter-remember-credentials');
-export const connectInstanceButton = $('#vcenter-connect');
+export const connectInstanceButton = $('#provider-vmware-connect');
 export const vmwarePodStatusLoader = $('#v2v-vmware-status-status');
 export const virtualMachineSelect = $('#vcenter-vm-dropdown');
 

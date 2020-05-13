@@ -25,6 +25,7 @@ export const vmConfig = (
   startOnCreation: boolean = true,
 ) => {
   const commonSettings = {
+    waitForDiskImport: true,
     startOnCreation,
     cloudInit: {
       useCloudInit: false,

@@ -35,10 +35,12 @@ import { vmConfig, getProvisionConfigs } from './vm.wizard.configs';
 import { ProvisionConfigName } from './utils/constants/wizard';
 import { windowsVMConfig, multusNAD } from './utils/mocks';
 import { getWindowsVM } from './utils/templates/windowsVMForRDPL2';
+import { Wizard } from './models/wizard';
 
 const VM_IP = '123.123.123.123';
 
 describe('KubeVirt VM console - RDP', () => {
+  const wizard = new Wizard();
   beforeAll(async () => {
     createResource(multusNAD);
     // for cmd-line scripts only
@@ -73,9 +75,8 @@ describe('KubeVirt VM console - RDP', () => {
         windowsVMConfig,
         true, // startOnCreation
       );
-      const vm = new VirtualMachine(windowsConfig);
+      const vm = await wizard.createVirtualMachine(windowsConfig);
       await withResource(leakedResources, vm.asResource(), async () => {
-        await vm.create(windowsConfig);
         await vm.navigateToConsoles();
 
         await browser.wait(until.presenceOf(consoleTypeSelector));
