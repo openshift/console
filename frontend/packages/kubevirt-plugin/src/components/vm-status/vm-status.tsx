@@ -105,7 +105,7 @@ const ImporterPods: React.FC<ImporterPodsProps> = ({ statuses }) => (
   </>
 );
 
-const VIEW_POD_OVERVIEW = 'View pod overview';
+const VIEW_POD_EVENTS = 'View pod events';
 const VIEW_VM_EVENTS = 'View VM events';
 
 const getPodLink = (pod: PodKind) =>
@@ -134,7 +134,7 @@ export const VMStatus: React.FC<VMStatusProps> = ({ vm, vmi, vmStatusBundle }) =
   }
 
   if (pod) {
-    links.push({ to: getPodLink(pod), message: VIEW_POD_OVERVIEW });
+    links.push({ to: `${getPodLink(pod)}/events`, message: VIEW_POD_EVENTS });
   }
 
   let icon = UnknownIcon;
