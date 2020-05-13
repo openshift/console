@@ -63,6 +63,12 @@ export const getKafkaSourceResource = (formData: EventSourceFormData): K8sResour
     limits: { cpu, memory },
   } = formData;
   const baseResource = getEventSourcesDepResource(formData);
+  const { net } = baseResource.spec;
+  baseResource.spec.net = {
+    ...net,
+    ...(!net.sasl?.enable && { sasl: { user: {}, password: {} } }),
+    ...(!net.tls?.enable && { tls: { caCert: {}, cert: {}, key: {} } }),
+  };
   const kafkaSource = {
     spec: {
       resources: {
