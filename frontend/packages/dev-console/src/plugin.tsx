@@ -737,7 +737,7 @@ const plugin: Plugin<ConsumedExtensions> = [
     properties: {
       perspective: 'dev',
       exact: false,
-      path: ['/k8s/all-namespaces/:plural'],
+      path: ['/k8s/all-namespaces/((!import):plural)'],
       loader: async () =>
         (
           await import(
