@@ -17,10 +17,10 @@ export interface AddPageProps {
 }
 
 interface ResourcesType {
-  deploymentConfigs: K8sResourceKind;
-  deployments: K8sResourceKind;
-  daemonSets: K8sResourceKind;
-  statefulSets: K8sResourceKind;
+  deploymentConfigs?: K8sResourceKind;
+  deployments?: K8sResourceKind;
+  daemonSets?: K8sResourceKind;
+  statefulSets?: K8sResourceKind;
   knativeService?: K8sResourceKind;
 }
 interface EmptyStateLoaderProps {
@@ -34,29 +34,25 @@ const handleProjectCreate = (project: K8sResourceKind) =>
 
 const EmptyStateLoader: React.FC<EmptyStateLoaderProps> = ({ resources, loaded, loadError }) => {
   const [noWorkloads, setNoWorkloads] = React.useState(false);
-  const knativeData = _.get(resources, ['knativeService', 'data'], null);
+  const daemonSets = resources?.daemonSets?.data;
+  const deploymentConfigs = resources?.deploymentConfigs?.data;
+  const deployments = resources?.deployments?.data;
+  const statefulSets = resources?.statefulSets?.data;
+  const knativeService = resources?.knativeService?.data;
 
   React.useEffect(() => {
     if (loaded) {
       setNoWorkloads(
-        _.isEmpty(resources.deploymentConfigs.data) &&
-          _.isEmpty(resources.deployments.data) &&
-          _.isEmpty(resources.daemonSets.data) &&
-          _.isEmpty(resources.statefulSets.data) &&
-          _.isEmpty(knativeData),
+        _.isEmpty(daemonSets) &&
+          _.isEmpty(deploymentConfigs) &&
+          _.isEmpty(deployments) &&
+          _.isEmpty(statefulSets) &&
+          _.isEmpty(knativeService),
       );
     } else if (loadError) {
       setNoWorkloads(false);
     }
-  }, [
-    loadError,
-    loaded,
-    resources.daemonSets.data,
-    resources.deploymentConfigs.data,
-    resources.deployments.data,
-    resources.statefulSets.data,
-    knativeData,
-  ]);
+  }, [loaded, loadError, daemonSets, deploymentConfigs, deployments, statefulSets, knativeService]);
   return noWorkloads ? (
     <ODCEmptyState
       title="Add"
