@@ -11,7 +11,7 @@ import DetailsBody from '@console/shared/src/components/dashboard/details-card/D
 import DetailItem from '@console/shared/src/components/dashboard/details-card/DetailItem';
 import DashboardCardLink from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardLink';
 import { DashboardItemProps, withDashboardResources } from '../../with-dashboard-resources';
-import { InfrastructureModel, ClusterVersionModel } from '../../../../models';
+import { ClusterVersionModel } from '../../../../models';
 import {
   referenceForModel,
   getOpenShiftVersion,
@@ -24,15 +24,14 @@ import {
   getClusterVersionChannel,
   ClusterUpdateStatus,
   getOCMLink,
-  K8sResourceKind,
 } from '../../../../module/k8s';
 import { flagPending, featureReducerName } from '../../../../reducers/features';
 import { ExternalLink } from '../../../utils';
 import { RootState } from '../../../../redux';
 import { clusterUpdateModal } from '../../../modals';
 import { Link } from 'react-router-dom';
-import { useK8sGet } from '../../../utils/k8s-get-hook';
 import { useK8sWatchResource, WatchK8sResource } from '../../../utils/k8s-watch-hook';
+import { ClusterDashboardContext } from './context';
 
 const ClusterVersion: React.FC<ClusterVersionProps> = ({ cv }) => {
   const desiredVersion = getDesiredClusterVersion(cv);
@@ -91,13 +90,11 @@ const mapStateToProps = (state: RootState) => ({
 
 export const DetailsCard_ = connect(mapStateToProps)(
   ({ watchK8sResource, stopWatchK8sResource, openshiftFlag }: DetailsCardProps) => {
+    const { infrastructure, infrastructureLoaded, infrastructureError } = React.useContext(
+      ClusterDashboardContext,
+    );
     const [k8sVersion, setK8sVersion] = React.useState<Response>();
     const [k8sVersionError, setK8sVersionError] = React.useState();
-
-    const [infrastructure, infrastructureLoaded, infrastructureError] = useK8sGet<K8sResourceKind>(
-      InfrastructureModel,
-      'cluster',
-    );
 
     const [clusterVersionData, clusterVersionLoaded, clusterVersionError] = useK8sWatchResource<
       ClusterVersionKind
