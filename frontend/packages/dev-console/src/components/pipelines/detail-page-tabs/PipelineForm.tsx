@@ -58,8 +58,9 @@ const PipelineForm: React.FC<PipelineFormProps> = ({
         onSubmit={handleSubmit}
         onReset={handleReset}
         validationSchema={validationSchema}
-        render={(props) => <PipelineFormComponent namespace={obj.metadata.namespace} {...props} />}
-      />
+      >
+        {(props) => <PipelineFormComponent namespace={obj.metadata.namespace} {...props} />}
+      </Formik>
     </div>
   );
 };

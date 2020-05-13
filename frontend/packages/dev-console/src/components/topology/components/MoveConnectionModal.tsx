@@ -149,11 +149,9 @@ class MoveConnectionModal extends PromiseComponent<
       target: edge.getTarget(),
     };
     return (
-      <Formik
-        initialValues={initialValues}
-        onSubmit={this.handleSubmit}
-        render={(formProps) => <MoveConnectionForm {...formProps} {...this.props} />}
-      />
+      <Formik initialValues={initialValues} onSubmit={this.handleSubmit}>
+        {(formProps) => <MoveConnectionForm {...formProps} {...this.props} />}
+      </Formik>
     );
   }
 }

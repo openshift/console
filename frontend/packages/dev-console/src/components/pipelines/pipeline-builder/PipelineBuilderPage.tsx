@@ -74,14 +74,15 @@ const PipelineBuilderPage: React.FC<PipelineBuilderPageProps> = (props) => {
         onSubmit={handleSubmit}
         onReset={history.goBack}
         validationSchema={validationSchema}
-        render={(formikProps) => (
+      >
+        {(formikProps) => (
           <PipelineBuilderForm
             {...formikProps}
             namespace={ns}
             existingPipeline={existingPipeline}
           />
         )}
-      />
+      </Formik>
     </div>
   );
 };

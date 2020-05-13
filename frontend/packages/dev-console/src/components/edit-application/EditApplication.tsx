@@ -82,8 +82,9 @@ const EditApplication: React.FC<EditApplicationProps & StateProps> = ({
       validationSchema={
         _.get(initialValues, 'build.strategy') ? gitValidationSchema : deployValidationSchema
       }
-      render={renderForm}
-    />
+    >
+      {renderForm}
+    </Formik>
   );
 };
 
