@@ -6,7 +6,6 @@ import {
 import {
   ANNOTATION_FIRST_BOOT,
   ANNOTATION_PXE_INTERFACE,
-  CUSTOM_FLAVOR,
   DataVolumeSourceType,
   VolumeType,
 } from '../../../../constants/vm';
@@ -24,6 +23,7 @@ import { StorageUISource } from '../../../../components/modals/disk-modal/storag
 import { insertName, joinIDs } from '../../../../utils';
 import { VM_TEMPLATE_NAME_PARAMETER } from '../../../../constants/vm-templates';
 import { CreateVMParams } from './types';
+import { isCustomFlavor } from '../../../../selectors/vm-like/flavor';
 
 const resolveDataVolumeName = (
   dataVolumeWrapper: DataVolumeWrapper,
@@ -111,7 +111,7 @@ export const initializeVM = (params: CreateVMParams, vm: VMWrapper) => {
   const settings = asSimpleSettings(vmSettings);
   const isRunning = settings[VMSettingsField.START_VM];
 
-  if (settings[VMSettingsField.FLAVOR] === CUSTOM_FLAVOR) {
+  if (isCustomFlavor(settings[VMSettingsField.FLAVOR])) {
     vm.setCPU({ sockets: 1, cores: parseInt(settings[VMSettingsField.CPU], 10), threads: 1 });
     vm.setMemory(settings[VMSettingsField.MEMORY]);
   }

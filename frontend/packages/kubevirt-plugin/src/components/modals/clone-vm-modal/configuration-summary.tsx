@@ -1,14 +1,14 @@
 import * as React from 'react';
 import { DASH, getName, getNamespace } from '@console/shared';
 import { K8sResourceKind } from '@console/internal/module/k8s';
-import { CUSTOM_FLAVOR } from '../../../constants/vm';
 import { VMKind } from '../../../types/vm';
 import {
+  getCPU,
   getDataVolumeTemplates,
   getDisks,
   getFlavor,
-  getFlavorDescription,
   getInterfaces,
+  getMemory,
   getOperatingSystemName,
   getVolumes,
   getWorkloadProfile,
@@ -19,6 +19,7 @@ import {
   getDataVolumeStorageClassName,
 } from '../../../selectors/dv/selectors';
 import { getPvcResources, getPvcStorageClassName } from '../../../selectors/pvc/selectors';
+import { getFlavorText } from '../../../selectors/vm/flavor-text';
 
 import './_clone-vm-modal.scss';
 
@@ -64,15 +65,6 @@ const getDisksDescription = (
   });
 };
 
-const getFullFlavorDescription = (vm: VMKind) => {
-  const flavorDesc = getFlavorDescription(vm);
-  const flavor = getFlavor(vm) || CUSTOM_FLAVOR;
-  if (!flavorDesc) {
-    return flavor;
-  }
-  return `${flavor} - ${flavorDesc}`;
-};
-
 export const ConfigurationSummary: React.FC<ConfigurationSummaryProps> = ({
   id,
   vm,
@@ -86,7 +78,13 @@ export const ConfigurationSummary: React.FC<ConfigurationSummaryProps> = ({
       <dt>Operating System</dt>
       <dd>{getOperatingSystemName(vm) || DASH}</dd>
       <dt>Flavor</dt>
-      <dd>{getFullFlavorDescription(vm)}</dd>
+      <dd>
+        {getFlavorText({
+          flavor: getFlavor(vm),
+          cpu: getCPU(vm),
+          memory: getMemory(vm),
+        })}
+      </dd>
       <dt>Workload Profile</dt>
       <dd>{getWorkloadProfile(vm) || DASH}</dd>
       <dt>NICs</dt>

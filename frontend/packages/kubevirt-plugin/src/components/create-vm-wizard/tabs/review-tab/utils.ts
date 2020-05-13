@@ -3,12 +3,12 @@ import { getBooleanReadableValue } from '../../../../utils/strings';
 import { iGetFieldValue } from '../../selectors/immutable/field';
 import { VMSettingsField } from '../../types';
 import { iGet, iGetIn, toShallowJS } from '../../../../utils/immutable';
-import { CUSTOM_FLAVOR } from '../../../../constants/vm';
 import { iGetRelevantTemplate } from '../../../../selectors/immutable/template/combined';
 import { VMTemplateWrapper } from '../../../../k8s/wrapper/vm/vm-template-wrapper';
 import { Map as ImmutableMap } from 'immutable';
 import { ITemplate } from '../../../../types/template';
 import { getFlavorText } from '../../../../selectors/vm/flavor-text';
+import { isCustomFlavor } from '../../../../selectors/vm-like/flavor';
 
 export const getReviewValue = (field: any, fieldType: FormFieldType) => {
   const value = iGetFieldValue(field);
@@ -33,7 +33,7 @@ export const getFlavorValue = ({
   let cpu;
   let memory;
 
-  if (flavor === CUSTOM_FLAVOR) {
+  if (isCustomFlavor(flavor)) {
     cpu = {
       sockets: 1,
       cores: parseInt(getFieldValue(iVMSettings, VMSettingsField.CPU), 10),

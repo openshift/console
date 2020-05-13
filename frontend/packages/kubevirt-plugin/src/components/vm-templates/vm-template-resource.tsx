@@ -146,7 +146,7 @@ export const VMTemplateSchedulingList: React.FC<VMTemplateResourceSummaryProps> 
   const vm = asVM(template);
   const vmWrapper = new VMWrapper(vm);
   const flavorText = getFlavorText({
-    flavor: getFlavor(vm),
+    flavor: getFlavor(template),
     cpu: vmWrapper.getCPU(),
     memory: vmWrapper.getMemory(),
   });

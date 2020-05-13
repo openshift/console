@@ -20,7 +20,6 @@ import {
   getVolumePersistentVolumeClaimName,
   getVolumeCloudInitNoCloud,
 } from './volume';
-import { vCPUCount } from './cpu';
 import { getVMIDisks } from '../vmi/basic';
 import { VirtualMachineModel } from '../../models';
 import { V1Volume } from '../../types/vm/disk/V1Volume';
@@ -94,15 +93,6 @@ export const getUsedNetworks = (vm: VMKind): NetworkWrapper[] => {
   return interfaces
     .map((i) => new NetworkWrapper(networkLookup[i.name]))
     .filter((i) => i.getType());
-};
-
-export const getFlavorDescription = (vm: VMKind) => {
-  const cpu = vCPUCount(getCPU(vm));
-  const memory = getMemory(vm);
-  const cpuStr = cpu ? `${cpu} CPU` : '';
-  const memoryStr = memory ? `${memory} Memory` : '';
-  const resourceStr = cpuStr && memoryStr ? `${cpuStr}, ${memoryStr}` : `${cpuStr}${memoryStr}`;
-  return resourceStr || undefined;
 };
 
 export const getVMStatusConditions = (vm: VMILikeEntityKind) =>

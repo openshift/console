@@ -1,3 +1,4 @@
+import * as _ from 'lodash';
 import * as React from 'react';
 import { FormSelect, FormSelectOption } from '@patternfly/react-core';
 import { ValidationErrorType, asValidationObject } from '@console/shared/src/utils/validation';
@@ -125,7 +126,7 @@ export const OSFlavor: React.FC<OSFlavorProps> = React.memo(
                 isDisabled={!!flavor}
               />
               {flavors.map((f) => {
-                return <FormSelectOption key={f} value={f} label={f} />;
+                return <FormSelectOption key={f} value={f} label={_.capitalize(f)} />;
               })}
             </FormSelect>
           </FormField>

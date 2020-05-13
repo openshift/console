@@ -4,12 +4,13 @@ import { VMGenericLikeEntityKind, VMLikeEntityKind } from '../../../types/vmLike
 import { getAnnotations, getDescription } from '../../../selectors/selectors';
 import { getFlavor, getCPU, getMemory, parseCPU, DEFAULT_CPU } from '../../../selectors/vm';
 import { isTemplate, isVM } from '../../../selectors/check-type';
-import { CUSTOM_FLAVOR, TEMPLATE_FLAVOR_LABEL } from '../../../constants';
+import { TEMPLATE_FLAVOR_LABEL, TEMPLATE_VM_SIZE_LABEL } from '../../../constants';
 import { getVMLikePatches } from '../vm-template';
 import { selectVM } from '../../../selectors/vm-template/basic';
 import { CPU, VMITemplate, VMKind } from '../../../types/vm';
 import { PatchBuilder } from '@console/shared/src/k8s';
 import { getLabels } from '@console/shared/src';
+import { isCustomFlavor } from '../../../selectors/vm-like/flavor';
 
 const getDomainPatches = (vm: VMKind): Patch[] => {
   let patch: Patch = null;
@@ -62,7 +63,8 @@ const getUpdateFlavorPatchesImpl = (
     isVM(vmLike) || isTemplate(vmLike) ? '/metadata/labels' : '/spec/template/metadata/labels'; // or VMITemplate
 
   const patches = [];
-  if (oldFlavor !== newFlavor) {
+  // also remove old unused Custom labels
+  if (isCustomFlavor(newFlavor) || oldFlavor !== newFlavor) {
     const labels = getLabels(vmLike);
     const flavorLabel = Object.keys(labels || {}).find((key) =>
       key.startsWith(TEMPLATE_FLAVOR_LABEL),
@@ -70,11 +72,13 @@ const getUpdateFlavorPatchesImpl = (
     if (flavorLabel) {
       patches.push(new PatchBuilder(path).setObjectRemove(flavorLabel, labels).build());
     }
-    patches.push(
-      new PatchBuilder(path)
-        .setObjectUpdate(`${TEMPLATE_FLAVOR_LABEL}/${newFlavor}`, 'true', labels)
-        .build(),
-    );
+    if (!isCustomFlavor(newFlavor)) {
+      patches.push(
+        new PatchBuilder(path)
+          .setObjectUpdate(`${TEMPLATE_FLAVOR_LABEL}/${newFlavor}`, 'true', labels)
+          .build(),
+      );
+    }
   }
   return patches;
 };
@@ -168,6 +172,26 @@ export const getUpdateDescriptionPatches = (
   return patches;
 };
 
+const getSizeLabelPatch = (flavor: string, vmi: VMITemplate): Patch[] => {
+  const patches = [];
+
+  if (isCustomFlavor(flavor)) {
+    patches.push(
+      new PatchBuilder('/spec/template/metadata/labels')
+        .setObjectRemove(TEMPLATE_VM_SIZE_LABEL, getLabels(vmi))
+        .build(),
+    );
+  } else {
+    patches.push(
+      new PatchBuilder('/spec/template/metadata/labels')
+        .setObjectUpdate(TEMPLATE_VM_SIZE_LABEL, flavor, getLabels(vmi))
+        .build(),
+    );
+  }
+
+  return patches;
+};
+
 export const getUpdateFlavorPatches = (
   vmLike: VMLikeEntityKind,
   template: TemplateKind,
@@ -182,7 +206,7 @@ export const getUpdateFlavorPatches = (
     threads: 1,
   };
   let customMem = mem;
-  if (flavor !== CUSTOM_FLAVOR) {
+  if (!isCustomFlavor(flavor)) {
     const templateVm = selectVM(template);
     customCpu = parseCPU(getCPU(templateVm), DEFAULT_CPU);
     customMem = getMemory(templateVm);
@@ -193,9 +217,7 @@ export const getUpdateFlavorPatches = (
     ...getVMLikePatches(vmLike, (vm: VMKind) => {
       const vmi = vm.spec?.template;
       const additionalPatches = [
-        new PatchBuilder('/spec/template/metadata/labels')
-          .setObjectUpdate(`kubevirt.io/size`, flavor, getLabels(vmi))
-          .build(),
+        ...getSizeLabelPatch(flavor, vmi),
         ...getUpdateCpuMemoryPatch(vm, customCpu, customMem),
       ];
 
