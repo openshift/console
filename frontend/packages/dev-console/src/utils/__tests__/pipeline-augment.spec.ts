@@ -1,3 +1,4 @@
+import * as _ from 'lodash';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { pipelineTestData, DataState, PipelineExampleNames } from '../../test/pipeline-data';
 import {
@@ -9,6 +10,7 @@ import {
   getRunStatusColor,
   runStatus,
   getResourceModelFromTask,
+  pipelineRefExists,
 } from '../pipeline-augment';
 import { ClusterTaskModel, PipelineRunModel, TaskModel } from '../../models';
 import { testData } from './pipeline-augment-test-data';
@@ -272,5 +274,25 @@ describe('PipelineAugment test successfully determine Task type', () => {
 
     const model = getResourceModelFromTask(complexTestData.pipeline.spec.tasks[0]);
     expect(model).toBe(ClusterTaskModel);
+  });
+});
+
+describe('Pipeline exists test to determine whether a pipeline is linked to a pipelinerun', () => {
+  it('expect to return true if pipelineref is available in pipelinerun spec', () => {
+    const pipelineRunWithPipelineRef =
+      pipelineTestData[PipelineExampleNames.SIMPLE_PIPELINE].pipelineRuns[DataState.SUCCESS];
+
+    const pipelineFound = pipelineRefExists(pipelineRunWithPipelineRef);
+    expect(pipelineFound).toBeTruthy();
+  });
+
+  it('expect to return false if pipelineref is missing in pipelinerun spec', () => {
+    const pipelineRunWithoutPipelineRef = _.omit(
+      pipelineTestData[PipelineExampleNames.SIMPLE_PIPELINE].pipelineRuns[DataState.SUCCESS],
+      'spec.pipelineRef',
+    );
+
+    const pipelineFound = pipelineRefExists(pipelineRunWithoutPipelineRef);
+    expect(pipelineFound).toBeFalsy();
   });
 });
