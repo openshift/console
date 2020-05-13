@@ -737,7 +737,21 @@ const plugin: Plugin<ConsumedExtensions> = [
     properties: {
       perspective: 'dev',
       exact: false,
-      path: ['/k8s/all-namespaces/((!import):plural)'],
+      path: ['/k8s/all-namespaces/import'],
+      loader: async () =>
+        (
+          await import(
+            '@console/internal/components/import-yaml' /* webpackChunkName: "import-yaml" */
+          )
+        ).ImportYamlPage,
+    },
+  },
+  {
+    type: 'Page/Route',
+    properties: {
+      perspective: 'dev',
+      exact: false,
+      path: ['/k8s/all-namespaces/:plural'],
       loader: async () =>
         (
           await import(
