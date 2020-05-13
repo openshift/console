@@ -10,7 +10,10 @@ import { NetworkWrapper } from '../../wrapper/vm/network-wrapper';
 import { NetworkInterfaceWrapper } from '../../wrapper/vm/network-interface-wrapper';
 import { getShiftBootOrderPatches } from './utils';
 
-export const getRemoveNICPatches = (vmLikeEntity: VMLikeEntityKind, nic: any): Patch[] => {
+export const getRemoveNICPatches = (
+  vmLikeEntity: VMLikeEntityKind,
+  nic: V1NetworkInterface,
+): Patch[] => {
   return getVMLikePatches(vmLikeEntity, (vm) => {
     const nicName = nic.name;
     const nics = getInterfaces(vm);

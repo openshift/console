@@ -3,7 +3,7 @@ import { TableData, TableRow, RowFunction } from '@console/internal/components/f
 import { asAccessReview, Kebab, KebabOption } from '@console/internal/components/utils';
 import { TemplateModel } from '@console/internal/models';
 import { DASH, dimensifyRow, getDeletetionTimestamp } from '@console/shared';
-import { deleteDeviceModal, DeviceType } from '../modals/delete-device-modal';
+import { deleteNICModal } from '../modals/delete-nic-modal/delete-nic-modal';
 import { VirtualMachineModel } from '../../models';
 import { asVM, isVMRunning } from '../../selectors/vm';
 import { isVM, isVMI } from '../../selectors/check-type';
@@ -49,14 +49,7 @@ const menuActionDelete = (
   { withProgress }: VMNicRowActionOpts,
 ): KebabOption => ({
   label: 'Delete',
-  callback: () =>
-    withProgress(
-      deleteDeviceModal({
-        deviceType: DeviceType.NIC,
-        device: nic,
-        vmLikeEntity,
-      }).result,
-    ),
+  callback: () => withProgress(deleteNICModal({ nic, vmLikeEntity }).result),
   accessReview: asAccessReview(
     isVM(vmLikeEntity) ? VirtualMachineModel : TemplateModel,
     vmLikeEntity,
