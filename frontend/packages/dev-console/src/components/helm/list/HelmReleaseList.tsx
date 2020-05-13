@@ -30,6 +30,7 @@ const HelmReleaseList: React.FC<HelmReleaseListProps> = ({ namespace, secrets })
       fetchCustomResources={getHelmReleases}
       dependentResource={memoizedSecrets}
       queryArg="rowFilter-helm-release-status"
+      textFilter="name"
       rowFilters={helmReleasesRowFilters}
       sortBy="name"
       sortOrder={SortByDirection.asc}
