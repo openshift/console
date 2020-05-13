@@ -57,5 +57,5 @@ export const getOCSVersion = (items: FirehoseResult): string => {
     itemsData,
     (item) => _.get(item, 'spec.name') === OCS_OPERATOR,
   );
-  return _.get(operator, 'status.currentCSV');
+  return _.get(operator, 'status.installedCSV');
 };
