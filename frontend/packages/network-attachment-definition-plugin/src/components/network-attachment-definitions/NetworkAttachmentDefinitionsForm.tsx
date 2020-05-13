@@ -41,6 +41,9 @@ const buildConfig = (name, networkType, typeParamsData): NetworkAttachmentDefini
   }
 
   if (networkType === 'cnv-bridge') {
+    // cnv-bridge should not define type on root
+    delete config.type;
+
     const vlan = _.get(typeParamsData, 'vlanTagNum.value', '');
     config.plugins = [
       {
