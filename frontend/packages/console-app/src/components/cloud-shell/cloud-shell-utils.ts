@@ -1,10 +1,14 @@
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { getRandomChars } from '@console/shared';
+import { coFetchJSON } from '@console/internal/co-fetch';
+
+export type InitResponseObject = { pod: string; container: string; cmd: string[] };
 
 type environment = {
   value: string;
   name: string;
 };
+
 type DevfileComponent = {
   type?: string;
   id?: string;
@@ -59,21 +63,21 @@ export const newCloudShellWorkSpace = (
   spec: {
     started: true,
     devfile: {
-      apiVersion: '0.0.1',
+      apiVersion: '1.0.0',
       metadata: {
-        name: 'cloud-shell',
+        name,
       },
       components: [
         {
-          alias: 'cloud-shell',
+          alias: 'command-line-terminal',
           type: 'cheEditor',
-          id: 'eclipse/cloud-shell/nightly',
+          id: 'che-incubator/command-line-terminal/4.5.0',
         },
         {
           type: 'dockerimage',
           memoryLimit: '256Mi',
           alias: 'dev',
-          image: 'quay.io/eclipse/che-sidecar-openshift-connector:0.1.2-2601509',
+          image: 'registry.redhat.io/codeready-workspaces/plugin-openshift-rhel8:2.1',
           args: ['tail', '-f', '/dev/null'],
           env: [
             {
@@ -86,3 +90,17 @@ export const newCloudShellWorkSpace = (
     },
   },
 });
+
+export const initTerminal = (
+  username: string,
+  workspaceName: string,
+  workspaceNamespace: string,
+): Promise<InitResponseObject> => {
+  const consumeUrl = `/api/terminal/${workspaceNamespace}/${workspaceName}/exec/init`;
+  return coFetchJSON.post(consumeUrl, {
+    kubeconfig: {
+      username,
+      namespace: workspaceNamespace,
+    },
+  });
+};
