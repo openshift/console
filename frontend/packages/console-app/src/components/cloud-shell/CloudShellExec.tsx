@@ -1,13 +1,14 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
 import { Base64 } from 'js-base64';
+import Measure from 'react-measure';
 import store from '@console/internal/redux';
 import { LoadingBox } from '@console/internal/components/utils';
-import { WSFactory } from '@console/internal/module/ws-factory';
-import { connectToFlags, WithFlagsProps } from '@console/internal//reducers/features';
+import { connectToFlags } from '@console/internal/reducers/features';
 import { FLAGS } from '@console/shared';
-import { Terminal } from './generalTerminal';
-import { resourceURL } from '@console/internal//module/k8s';
+import { Terminal } from './terminal2';
+import { WSFactory } from '@console/internal/module/ws-factory';
+import { resourceURL } from '@console/internal/module/k8s';
 import { PodModel } from '@console/internal/models';
 
 // pod exec WS protocol is FD prefixed, base64 encoded data (sometimes json stringified)
@@ -19,29 +20,27 @@ import { PodModel } from '@console/internal/models';
 const NO_SH =
   'starting container process caused "exec: \\"sh\\": executable file not found in $PATH"';
 
-type CloudShellExecProps = WithFlagsProps & {
-  message?: string;
-  container: string;
-  podname: string;
-  namespace: string;
-  command: string;
-};
+class CloudShellExec extends React.PureComponent<any, any> {
+  private terminal;
+  private onData;
+  private ws;
+  constructor(props) {
+    super(props);
+    this.state = {
+      open: false,
+      dimensions: {
+        width: 0,
+        height: 0,
+      },
+    };
+    this.terminal = React.createRef();
+    this.onData = (d) => this.onData_(d);
+  }
 
-const CloudShellExec: React.FC<CloudShellExecProps> = ({
-  message = null,
-  container,
-  podname,
-  namespace,
-  command,
-  flags,
-}) => {
-  const [WsError, setWsError] = React.useState();
-  const [open, setOpen] = React.useState(false);
-  let terminal: React.RefObject<any> = React.createRef();
-  let ws = null;
+  connect_() {
+    const { container, podname, command, namespace } = this.props;
+    const usedClient = this.props.flags[FLAGS.OPENSHIFT] ? 'oc' : 'kubectl';
 
-  React.useEffect(() => {
-    const usedClient = flags[FLAGS.OPENSHIFT] ? 'oc' : 'kubectl';
     const params = {
       ns: namespace,
       name: podname,
@@ -52,19 +51,23 @@ const CloudShellExec: React.FC<CloudShellExecProps> = ({
         stderr: '1',
         tty: '1',
         container: container,
-        command: command
-          ? command
-          : ['sh', '-i', '-c', 'TERM=xterm sh'].map((c) => encodeURIComponent(c)).join('&command='),
+        command: ['sh', '-i', '-c', 'TERM=xterm sh']
+          .map((c) => encodeURIComponent(c))
+          .join('&command='),
       },
     };
-    if (ws) {
-      ws.destroy();
-      terminal.current && terminal.current.onConnectionClosed(`connecting to ${container}`);
+
+    if (this.ws) {
+      this.ws.destroy();
+      const { current } = this.terminal;
+      current && current.onConnectionClosed(`connecting to ${container}`);
     }
+
     const impersonate = store.getState().UI.get('impersonate', {});
     const subprotocols = (impersonate.subprotocols || []).concat('base64.channel.k8s.io');
+
     let previous;
-    ws = new WSFactory(`${name}-terminal`, {
+    this.ws = new WSFactory(`${podname}-terminal`, {
       host: 'auto',
       reconnect: true,
       path: resourceURL(PodModel, params),
@@ -72,15 +75,15 @@ const CloudShellExec: React.FC<CloudShellExecProps> = ({
       subprotocols,
     })
       .onmessage((raw) => {
-        const { current } = terminal;
+        const { current } = this.terminal;
         // error channel
         if (raw[0] === '3') {
           if (previous.includes(NO_SH)) {
             current.reset();
             current.onConnectionClosed(
-              `This container doesn't have a /bin/sh shell. Try specifying your command in a terminal with:\r\n\r\n ${usedClient} -n ${namespace} exec ${name} -ti <command>`,
+              `This container doesn't have a /bin/sh shell. Try specifying your command in a terminal with:\r\n\r\n ${usedClient} -n ${metadata.namespace} exec ${metadata.name} -ti <command>`,
             );
-            ws.destroy();
+            this.ws.destroy();
             previous = '';
             return;
           }
@@ -90,45 +93,96 @@ const CloudShellExec: React.FC<CloudShellExecProps> = ({
         previous = data;
       })
       .onopen(() => {
-        const { current } = terminal;
+        const { current } = this.terminal;
         current && current.reset();
         previous = '';
-        setWsError(null);
-        setOpen(true);
+        this.setState({ open: true, error: null });
       })
       .onclose((evt) => {
-        if (evt && evt.wasClean !== true) {
-          const error = evt.reason || 'The terminal connection has closed.';
-          setWsError(error);
-          terminal.current && terminal.current.onConnectionClosed(error);
-          ws.destroy();
+        if (!evt || evt.wasClean === true) {
+          return;
         }
+        const error = evt.reason || 'The terminal connection has closed.';
+        this.setState({ error });
+        this.terminal.current && this.terminal.current.onConnectionClosed(error);
+        this.ws.destroy();
       }) // eslint-disable-next-line no-console
-      .onerror((evt) => setWsError(evt ? evt : 'Some problem occured'));
-
-    return () => {
-      console.log('destroying socket');
-      ws.destroy();
-      ws = null;
-    };
-  }, []);
-
-  const onData = (data) => {
-    ws && ws.send(`0${Base64.encode(data)}`);
-  };
-
-  if (WsError) {
-    return <div className="text-center cos-error-title">{WsError}</div>;
+      .onerror((evt) => console.error(`WS error?! ${evt}`));
   }
 
-  if (open) {
-    return (
-      <div>
-        {message}
-        <Terminal onData={onData} ref={terminal} />
-      </div>
-    );
+  componentDidMount() {
+    this.connect_();
   }
-  return <LoadingBox message="Connecting to Terminal" />;
-};
+
+  componentWillUnmount() {
+    this.ws && this.ws.destroy();
+    delete this.ws;
+  }
+
+  static getDerivedStateFromProps(nextProps, prevState) {
+    const containers = _.get(nextProps.obj, 'spec.containers', []).map((n) => n.name);
+    if (_.isEqual(containers, prevState.containers)) {
+      return null;
+    }
+    return { containers };
+  }
+
+  onChangeContainer_(index) {
+    const name = this.state.containers[index];
+
+    if (!name) {
+      // eslint-disable-next-line no-console
+      console.warn(`no name, how did that happen? ${index}`);
+      return;
+    }
+    if (name === this.state.activeContainer) {
+      return;
+    }
+    this.setState({ activeContainer: name }, () => {
+      this.connect_();
+      this.terminal.current && this.terminal.current.focus();
+    });
+  }
+
+  setFullscreen(fullscreen) {
+    this.terminal.current.setFullscreen(fullscreen);
+  }
+
+  onData_(data) {
+    this.ws && this.ws.send(`0${Base64.encode(data)}`);
+  }
+
+  render() {
+    const { open, error } = this.state;
+    const { message } = this.props;
+    if (error) {
+      return <div className="text-center cos-error-title">{error}</div>;
+    }
+    if (open) {
+      return (
+        <Measure
+          bounds
+          onResize={(contentRect) => {
+            this.setState(contentRect.bounds);
+            console.log('resized cloudexec');
+          }}
+        >
+          {({ measureRef = this.props.ref }) => (
+            <div style={{ width: '100%', height: '100%' }} ref={measureRef}>
+              {message}
+              <Terminal
+                measureRef={measureRef}
+                style={this.state.dimensions}
+                onData={this.onData}
+                ref={this.terminal}
+              />
+            </div>
+          )}
+        </Measure>
+      );
+    }
+    return <LoadingBox message="Connecting to OpenShift Terminal" />;
+  }
+}
+
 export default connectToFlags(FLAGS.OPENSHIFT)(CloudShellExec);

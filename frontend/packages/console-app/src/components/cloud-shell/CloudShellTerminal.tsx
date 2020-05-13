@@ -5,7 +5,7 @@ import { referenceForModel } from '@console/internal/module/k8s/k8s';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { LoadingBox, StatusBox } from '@console/internal/components/utils/status-box';
 import { WorkspaceModel } from '../../models';
-import CloudShellExec from './CloudShellExec';
+import { CloudExec } from './CloudShellExec2';
 import {
   CLOUD_SHELL_LABEL,
   CLOUD_SHELL_USER_ANNOTATION,
@@ -71,7 +71,7 @@ const CloudShellTerminal: React.FC<CloudShellTerminalProps> = ({ username, onCan
     }
   }, [data]);
 
-  console.log('render', loaded, loadError, workSpacePod);
+  console.log('render', initializing, workSpacePod);
 
   if (loadError) {
     return (
@@ -83,17 +83,19 @@ const CloudShellTerminal: React.FC<CloudShellTerminalProps> = ({ username, onCan
     return <LoadingBox />;
   }
 
-  if (initializing) {
-    <div style={{ background: 'black', color: 'blue' }}>
-      <LoadingBox message="Connecting you to OpenShift command line terminal" />;
-    </div>;
+  if (!workSpacePod && initializing) {
+    return (
+      <div style={{ background: 'black', color: '#3385ff', height: '100%', width: '100%' }}>
+        <LoadingBox message="Connecting you to OpenShift command line terminal" />;
+      </div>
+    );
   }
 
   if (apiError) return <h1>{apiError}</h1>;
 
   if (workSpacePod) {
     return (
-      <CloudShellExec
+      <CloudExec
         container={workSpacePod.container}
         podname={workSpacePod.pod}
         namespace={namespace}
