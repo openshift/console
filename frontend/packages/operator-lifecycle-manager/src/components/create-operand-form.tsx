@@ -513,7 +513,7 @@ const OperandFormInputGroup: React.FC<OperandFormInputGroupProps> = ({ error, fi
 // We should also break this down into smaller components and dispatch actions from those
 // components to update parent state.
 export const CreateOperandForm: React.FC<CreateOperandFormProps> = ({
-  buffer,
+  buffer = {},
   clusterServiceVersion,
   openAPI,
   operandModel,
