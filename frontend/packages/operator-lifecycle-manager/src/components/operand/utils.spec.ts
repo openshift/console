@@ -14,22 +14,14 @@ import { HIDDEN_UI_SCHEMA } from './const';
 describe('getJSONSchemaOrder', () => {
   it('Accurately converts descriptors to a uiSchema with correct "ui:order" properties:', () => {
     const testUISchema = {
-      select: {
-        'ui:descriptor': true,
-      },
-      number: {
-        'ui:descriptor': true,
-      },
+      select: { 'ui:descriptor': true },
+      number: { 'ui:descriptor': true },
       fieldGroup: {
-        itemTwo: {
-          'ui:descriptor': true,
-        },
+        itemTwo: { 'ui:descriptor': true },
       },
       arrayFieldGroup: {
         items: {
-          itemTwo: {
-            'ui:descriptor': true,
-          },
+          itemTwo: { 'ui:descriptor': true },
         },
       },
     };
@@ -81,34 +73,37 @@ describe('capabilitiesToUISchema', () => {
 describe('hasNoFields', () => {
   it('Applies hidden widget and label properties to empty schemas', () => {
     const schema: JSONSchema6 = {
-      type: 'object',
+      type: SchemaType.object,
       properties: {
         shown: {
-          type: 'object',
+          type: SchemaType.object,
           properties: {
-            test: { type: 'string' },
+            test: { type: SchemaType.string },
           },
         },
+        alsoShown: {
+          type: SchemaType.object,
+          additionalProperties: { type: SchemaType.string },
+        },
         hidden: {
-          type: 'object',
+          type: SchemaType.object,
           properties: {
             emptyArray: {
-              type: 'array',
+              type: SchemaType.array,
               items: {
-                type: 'object',
+                type: SchemaType.object,
                 properties: {
-                  empty: { type: 'object' },
+                  empty: { type: SchemaType.object },
                 },
               },
             },
-            emptyObject: {
-              type: 'object',
-            },
+            emptyObject: { type: SchemaType.object },
           },
         },
       },
     };
     expect(hasNoFields(schema.properties.shown as JSONSchema6)).toBeFalsy();
+    expect(hasNoFields(schema.properties.alsoShown as JSONSchema6)).toBeFalsy();
     expect(hasNoFields(schema.properties.hidden as JSONSchema6)).toBeTruthy();
   });
 });

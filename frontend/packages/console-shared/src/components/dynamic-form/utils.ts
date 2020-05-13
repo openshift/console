@@ -13,14 +13,6 @@ export const getSchemaErrors = (schema: JSONSchema6): SchemaError[] => {
           },
         ]
       : []),
-    ...(_.isArray(schema.type)
-      ? [
-          {
-            title: 'Unsupported Type Array',
-            message: `Cannot generate form fields for JSON schema with type defined as an array.`,
-          },
-        ]
-      : []),
     ..._.map(
       _.intersection(_.keys(schema), UNSUPPORTED_SCHEMA_PROPERTIES),
       (unsupportedProperty) => ({

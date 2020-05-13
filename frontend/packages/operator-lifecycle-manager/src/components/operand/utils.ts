@@ -2,10 +2,9 @@ import * as _ from 'lodash';
 import * as Immutable from 'immutable';
 import { JSONSchema6 } from 'json-schema';
 import { SpecCapability, Descriptor } from '../descriptors/types';
-import { modelFor, definitionFor } from '@console/internal/module/k8s';
+import { modelFor } from '@console/internal/module/k8s';
 import { capabilityFieldMap, capabilityWidgetMap } from '../descriptors/spec/spec-descriptor-input';
 import {
-  DEFAULT_K8S_SCHEMA,
   HIDDEN_UI_SCHEMA,
   REGEXP_K8S_RESOURCE_SUFFIX,
   REGEXP_SELECT_OPTION,
@@ -32,13 +31,6 @@ export const jsonSchemaHas = (jsonSchema: JSONSchema6, schemaPath: string[]): bo
     return jsonSchemaHas(nextSchema, rest);
   }
   return !!nextSchema;
-};
-
-// Gets a JSONSchema from the CRD or stored swagger definition with some default types defined.
-export const getJSONSchema = (crd, model) => {
-  const baseSchema =
-    crd?.spec?.validation?.openAPIV3Schema ?? (definitionFor(model) as JSONSchema6);
-  return _.defaultsDeep({}, DEFAULT_K8S_SCHEMA, _.omit(baseSchema, 'properties.status'));
 };
 
 // Applies a hidden widget and label configuration to every property of the given schema.
@@ -70,14 +62,14 @@ export const getDefaultUISchemaForPropertyName = (name) =>
 
 // Determine if a schema will produce an empty form field.
 export const hasNoFields = (jsonSchema: JSONSchema6): boolean => {
-  const type = getSchemaType(jsonSchema ?? {});
+  const type = getSchemaType(jsonSchema ?? {}) ?? '';
   const handleArray = () => {
     return hasNoFields(jsonSchema.items as JSONSchema6);
   };
   const handleObject = () => {
     return (
       _.every(jsonSchema?.properties, hasNoFields) &&
-      _.every(jsonSchema?.additionalProperties as JSONSchema6, hasNoFields)
+      hasNoFields(jsonSchema?.additionalProperties as JSONSchema6)
     );
   };
 
@@ -86,6 +78,8 @@ export const hasNoFields = (jsonSchema: JSONSchema6): boolean => {
       return handleArray();
     case SchemaType.object:
       return handleObject();
+    case '':
+      return true;
     default:
       return false;
   }

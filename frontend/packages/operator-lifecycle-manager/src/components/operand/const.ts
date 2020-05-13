@@ -11,18 +11,17 @@ export const DEFAULT_K8S_SCHEMA: JSONSchema6 = {
   type: SchemaType.object,
   properties: {
     metadata: {
-      type: 'object',
+      type: SchemaType.object,
       properties: {
-        namespace: {
-          type: 'string',
-        },
+        namespace: { type: SchemaType.string },
         name: {
-          type: 'string',
+          type: SchemaType.string,
           default: 'example',
         },
         labels: {
-          type: 'object',
-          additionalProperties: { type: 'string' },
+          type: SchemaType.object,
+          properties: {},
+          additionalProperties: { type: SchemaType.string },
         },
       },
       required: ['name'],

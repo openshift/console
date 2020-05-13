@@ -61,7 +61,7 @@ export const SyncedEditor: React.FC<SyncedEditorProps> = ({
     <>
       <EditorToggle value={type} onChange={onChangeType} />
       {type === EditorType.Form ? (
-        <FormEditor initialData={formData} onChange={handleFormDataChange} {...formContext} />
+        <FormEditor formData={formData} onChange={handleFormDataChange} {...formContext} />
       ) : (
         <YAMLEditor initialYAML={yaml} onChange={handleYAMLChange} {...yamlContext} />
       )}
