@@ -2,8 +2,8 @@ import * as React from 'react';
 import { LoadingInline } from '@console/internal/components/utils';
 import { k8sList } from '@console/internal/module/k8s';
 import { useFormikContext, FormikValues } from 'formik';
-import { Alert, Badge, Expandable, Flex, FlexItem, FlexModifiers } from '@patternfly/react-core';
-import { CheckboxField } from '@console/shared';
+import { Alert, Expandable, Flex, FlexItem, FlexModifiers } from '@patternfly/react-core';
+import { CheckboxField, InlineDevPreviewBadge } from '@console/shared';
 import { CLUSTER_PIPELINE_NS } from '../../../const';
 import { PipelineModel } from '../../../models';
 import PipelineVisualization from '../../pipelines/detail-page-tabs/pipeline-details/PipelineVisualization';
@@ -109,7 +109,7 @@ const PipelineTemplate: React.FC<PipelineTemplateProps> = ({ builderImages }) =>
           <CheckboxField label="Add pipeline" name="pipeline.enabled" />
         </FlexItem>
         <FlexItem>
-          <Badge isRead>Dev Preview</Badge>
+          <InlineDevPreviewBadge />
         </FlexItem>
       </Flex>
       <Expandable
