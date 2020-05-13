@@ -37,7 +37,9 @@ export const resourcePathFromModel = (model: K8sKind, name?: string, namespace?:
   }
 
   if (name) {
-    url += `/${name}`;
+    // Some resources have a name that needs to be encoded. For instance,
+    // Users can have special characters in the name like `#`.
+    url += `/${encodeURIComponent(name)}`;
   }
 
   return url;
