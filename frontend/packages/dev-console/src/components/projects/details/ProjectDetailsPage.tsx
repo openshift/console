@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { match as RMatch } from 'react-router';
-import { history, useAccessReview } from '@console/internal/components/utils';
+import { history, useAccessReview, Page } from '@console/internal/components/utils';
 import { ALL_NAMESPACES_KEY } from '@console/shared';
 import { NamespaceDetails, projectMenuActions } from '@console/internal/components/namespace';
 import { ProjectModel, RoleBindingModel } from '@console/internal/models';
@@ -48,6 +48,26 @@ export const PageContents: React.FC<MonitoringPageProps> = ({
     namespace: activeNamespace,
   });
 
+  const pages: Page[] = [
+    {
+      href: '',
+      name: 'Overview',
+      component: ProjectDashboard,
+    },
+    {
+      href: 'details',
+      name: 'Details',
+      component: NamespaceDetails,
+    },
+  ];
+  if (canListRoleBindings && canCreateRoleBindings) {
+    pages.push({
+      href: 'access',
+      name: 'Project Access',
+      component: ProjectAccessPage,
+    });
+  }
+
   return !noProjectsAvailable && activeNamespace ? (
     <DetailsPage
       {...props}
@@ -58,24 +78,7 @@ export const PageContents: React.FC<MonitoringPageProps> = ({
       kindObj={ProjectModel}
       menuActions={projectMenuActions}
       customData={{ activeNamespace, hideHeading: true }}
-      pages={[
-        {
-          href: '',
-          name: 'Overview',
-          component: ProjectDashboard,
-        },
-        {
-          href: 'details',
-          name: 'Details',
-          component: NamespaceDetails,
-        },
-        canListRoleBindings &&
-          canCreateRoleBindings && {
-            href: 'access',
-            name: 'Project Access',
-            component: ProjectAccessPage,
-          },
-      ]}
+      pages={pages}
     />
   ) : (
     <ProjectListPage title="Project Details">Select a project to view its details</ProjectListPage>
