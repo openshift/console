@@ -5,8 +5,6 @@ import PipelineParameterSection from '../common/PipelineParameterSection';
 import TriggerBindingSection from './TriggerBindingSection';
 import { AddTriggerFormValues } from './types';
 
-import './AddTriggerForm.scss';
-
 type AddTriggerFormProps = FormikProps<AddTriggerFormValues>;
 
 const AddTriggerForm: React.FC<AddTriggerFormProps> = (props) => {
