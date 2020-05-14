@@ -210,31 +210,14 @@ If you your local Chrome version doesn't match the Chromedriver version from the
 ```
 yarn run webdriver-update --versions.chrome=77.0.3865.120
 ```
-Or if you are using macOS (OS X), run:
+For Fedora, you can use:
 ```
-# automatically select the correct Chrome version
+yarn run webdriver-update-fedora
+```
+For macOS, you can use:
+```
 yarn run webdriver-update-macos
 ```
-
-
-You can look up the version number you need at [omahaProxy.appspot.com](https://omahaproxy.appspot.com/).
-
-#### Using specific version of Chrome browser (Linux only)
-
-Integration tests are run in a headless Chrome driven by a [ChromeDriver](https://chromedriver.chromium.org/downloads). Each ChromeDriver supports specific Chrome versions.
-
-By default test use the Chrome browser installed by the system. On Linux systems, it is possible to [download](https://www.chromium.org/getting-involved/download-chromium)
-a specific version of Chrome browser by setting a [branch position](https://omahaproxy.appspot.com/) and sha256sum (of zip package) using environment variables.
-Downloading chrome requires `curl`, `unzip`, and `sha256sum` command line utilities installed.
-
-```
-# # For Chrome Version 76.0.3809.0 (Developer Build) (64-bit)
-$ export FORCE_CHROME_BRANCH_BASE="665006"
-$ export FORCE_CHROME_BRANCH_SHA256SUM="a1ae2e0950828f991119825f62c24464ab3765aa219d150a94fb782a4c66a744"
-$ ./test-gui.sh e2e
-```
-
-Chromium version to be used by CI jobs is defined in [chromium-version.sh](chromium-version.sh) script.
 
 #### How the Integration Tests Run in CI
 
