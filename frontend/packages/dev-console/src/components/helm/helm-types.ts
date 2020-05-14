@@ -18,7 +18,7 @@ export interface HelmRelease {
 }
 
 export interface HelmChart {
-  files: object[];
+  files: { name: string; data: string }[];
   metadata: {
     name: string;
     version: string;

@@ -24,7 +24,7 @@ export const HelmInstallPage: React.FunctionComponent<HelmInstallPageProps> = ({
   const chartURL = decodeURIComponent(searchParams.get('chartURL'));
   const chartName = searchParams.get('chartName');
   const preselectedNamespace = searchParams.get('preselected-ns');
-  const [chartData, setChartData] = React.useState<HelmChart>();
+  const [YAMLData, setYAMLData] = React.useState<string>('');
   const [chartDataLoaded, setChartDataLoaded] = React.useState(false);
   const [chartHasValues, setChartHasValues] = React.useState(false);
 
@@ -40,9 +40,14 @@ export const HelmInstallPage: React.FunctionComponent<HelmInstallPageProps> = ({
       }
       if (ignore) return;
 
-      setChartData(res);
+      const orderedValuesFile = res?.files?.find((file) => file.name === 'ordered-values.yaml');
+      const orderedValues = orderedValuesFile ? atob(orderedValuesFile.data) : '';
+      const unorderedValues = !_.isEmpty(res?.values) ? safeDump(res?.values) : '';
+      const values = orderedValues || unorderedValues;
+
+      setYAMLData(values);
+      setChartHasValues(!!values);
       setChartDataLoaded(true);
-      !_.isEmpty(res.values) && setChartHasValues(true);
     };
 
     fetchHelmReleases();
@@ -54,7 +59,7 @@ export const HelmInstallPage: React.FunctionComponent<HelmInstallPageProps> = ({
 
   const initialValues: HelmInstallFormData = {
     releaseName: chartName || '',
-    chartValuesYAML: chartData ? safeDump(chartData.values) : undefined,
+    chartValuesYAML: YAMLData,
   };
 
   const validationSchema = yup.object().shape({
