@@ -16,7 +16,7 @@ import {
 import { DataVolumeModel } from '../../../models';
 import { V1LocalObjectReference } from '../../../types/vm/disk/V1LocalObjectReference';
 
-type VolumeReferencedObject = {
+export type VolumeReferencedObject = {
   name: string;
   model: K8sKind;
 };

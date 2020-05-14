@@ -1,14 +1,8 @@
-import * as _ from 'lodash';
 import * as React from 'react';
 import { HandlePromiseProps, withHandlePromise } from '@console/internal/components/utils';
 import { YellowExclamationTriangleIcon } from '@console/shared/src/components/status/icons';
-import { getName, getNamespace, getOwnerReferences } from '@console/shared/src/selectors/common';
-import { compareOwnerReference } from '@console/shared/src/utils/owner-references';
+import { getName, getNamespace } from '@console/shared/src/selectors/common';
 import { PersistentVolumeClaimModel } from '@console/internal/models';
-import {
-  useK8sWatchResource,
-  WatchK8sResource,
-} from '@console/internal/components/utils/k8s-watch-hook';
 import {
   createModalLauncher,
   ModalTitle,
@@ -16,20 +10,15 @@ import {
   ModalSubmitFooter,
   ModalComponentProps,
 } from '@console/internal/components/factory';
-import {
-  apiVersionForModel,
-  k8sKill,
-  k8sPatch,
-  K8sResourceCommon,
-} from '@console/internal/module/k8s';
+import { apiVersionForModel, k8sPatch } from '@console/internal/module/k8s';
 import { VMLikeEntityKind } from '../../../types/vmLike';
 import { getVMLikeModel } from '../../../selectors/vm';
 import { getRemoveDiskPatches } from '../../../k8s/patches/vm/vm-disk-patches';
 import { V1Disk } from '../../../types/vm/disk/V1Disk';
 import { V1Volume } from '../../../types/vm/disk/V1Volume';
-import { VolumeWrapper } from '../../../k8s/wrapper/vm/volume-wrapper';
 import { DataVolumeModel } from '../../../models';
-import { PatchBuilder } from '@console/shared/src/k8s';
+import { useOwnedVolumeReferencedResources } from '../../../hooks/use-owned-volume-referenced-resources';
+import { freeOwnedResources } from '../../../k8s/requests/free-owned-resources';
 
 export const DeleteDiskModal = withHandlePromise((props: DeleteDiskModalProps) => {
   const {
@@ -44,26 +33,8 @@ export const DeleteDiskModal = withHandlePromise((props: DeleteDiskModalProps) =
   } = props;
   const [deleteReferencedResource, setDeleteReferencedResource] = React.useState<boolean>(true);
 
-  const volumeWrapper = new VolumeWrapper(volume);
   const entityModel = getVMLikeModel(vmLikeEntity);
   const namespace = getNamespace(vmLikeEntity);
-  const resourceReference = volumeWrapper.getReferencedObject();
-  const resourceReferenceWatch: WatchK8sResource = React.useMemo(
-    () =>
-      resourceReference && {
-        name: resourceReference.name,
-        kind: resourceReference.model.kind, // referenceForModel does not work for basic types like Secret, DataVolume
-        namespace,
-        isList: false,
-      },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [namespace, volume],
-  );
-
-  const [referencedResource, loaded, loadError] = useK8sWatchResource<K8sResourceCommon>(
-    resourceReferenceWatch,
-  );
-  const referencedResourceLoaded = loaded || !!loadError;
 
   const vmReference = {
     name: getName(vmLikeEntity),
@@ -71,11 +42,11 @@ export const DeleteDiskModal = withHandlePromise((props: DeleteDiskModalProps) =
     apiVersion: apiVersionForModel(entityModel),
   } as any;
 
-  const ownsReferencedObject =
-    !_.isEmpty(referencedResource) &&
-    (getOwnerReferences(referencedResource) || []).some((ownerReference) =>
-      compareOwnerReference(ownerReference, vmReference),
-    );
+  const [ownedResources, isOwnedResourcesLoaded] = useOwnedVolumeReferencedResources(
+    vmReference,
+    namespace,
+    [volume],
+  );
 
   const diskName = disk?.name;
   const entityName = getName(vmLikeEntity);
@@ -85,21 +56,7 @@ export const DeleteDiskModal = withHandlePromise((props: DeleteDiskModalProps) =
 
     const promise = k8sPatch(entityModel, vmLikeEntity, getRemoveDiskPatches(vmLikeEntity, disk));
     return handlePromise(promise)
-      .then(() => {
-        if (ownsReferencedObject) {
-          if (deleteReferencedResource) {
-            return k8sKill(resourceReference.model, referencedResource);
-          }
-          return k8sPatch(resourceReference.model, referencedResource, [
-            new PatchBuilder('/metadata/ownerReferences')
-              .setListRemove(getOwnerReferences(referencedResource), (ownerReference) =>
-                compareOwnerReference(ownerReference, vmReference),
-              )
-              .build(),
-          ]);
-        }
-        return Promise.resolve();
-      })
+      .then(() => freeOwnedResources(ownedResources, vmReference, deleteReferencedResource))
       .then(close);
   };
 
@@ -112,7 +69,7 @@ export const DeleteDiskModal = withHandlePromise((props: DeleteDiskModalProps) =
       <ModalBody>
         Are you sure you want to delete <strong className="co-break-word">{diskName}</strong> disk
         from <strong className="co-break-word">{entityName} </strong>?
-        {ownsReferencedObject && (
+        {ownedResources.length > 0 && (
           <div className="checkbox">
             <label className="control-label">
               <input
@@ -120,8 +77,8 @@ export const DeleteDiskModal = withHandlePromise((props: DeleteDiskModalProps) =
                 onChange={() => setDeleteReferencedResource(!deleteReferencedResource)}
                 checked={deleteReferencedResource}
               />
-              Delete {resourceReference.model.label}
-              {resourceReference.model === DataVolumeModel &&
+              Delete {ownedResources[0].model.label}
+              {ownedResources[0].model === DataVolumeModel &&
                 ` and ${PersistentVolumeClaimModel.label}`}
             </label>
           </div>
@@ -129,8 +86,8 @@ export const DeleteDiskModal = withHandlePromise((props: DeleteDiskModalProps) =
       </ModalBody>
       <ModalSubmitFooter
         errorMessage={errorMessage}
-        submitDisabled={inProgress || !referencedResourceLoaded}
-        inProgress={inProgress || !referencedResourceLoaded}
+        submitDisabled={inProgress || !isOwnedResourcesLoaded}
+        inProgress={inProgress || !isOwnedResourcesLoaded}
         submitText="Delete Disk"
         submitDanger
         cancel={cancel}
