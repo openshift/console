@@ -22,6 +22,10 @@ export const metricsQuery = {
   PODS_BY_FILESYSTEM: 'Filesystem Usage',
   PODS_BY_NETWORK_IN: 'Receive Bandwidth',
   PODS_BY_NETWORK_OUT: 'Transmit Bandwidth',
+  RATE_OF_RECEIVED_PACKETS: 'Rate of Received Packets',
+  RATE_OF_TRANSMITTED_PACKETS: 'Rate of Transmitted Packets',
+  RATE_OF_RECEIVED_PACKETS_DROPPED: 'Rate of Received Packets Dropped',
+  RATE_OF_TRANSMITTED_PACKETS_DROPPED: 'Rate of Transmitted Packets Dropped',
 };
 
 export const monitoringDashboardQueries: MonitoringQuery[] = [
@@ -218,6 +222,10 @@ const topMetricsQueries = {
   ),
   PODS_BY_NETWORK_IN: getMetricsQuery('Receive Bandwidth'),
   PODS_BY_NETWORK_OUT: getMetricsQuery('Transmit Bandwidth'),
+  RATE_OF_RECEIVED_PACKETS: getMetricsQuery('Rate of Received Packets'),
+  RATE_OF_TRANSMITTED_PACKETS: getMetricsQuery('Rate of Transmitted Packets'),
+  RATE_OF_RECEIVED_PACKETS_DROPPED: getMetricsQuery('Rate of Received Packets Dropped'),
+  RATE_OF_TRANSMITTED_PACKETS_DROPPED: getMetricsQuery('Rate of Transmitted Packets Dropped'),
 };
 
 export const getTopMetricsQueries = (namespace: string) => ({
@@ -232,4 +240,20 @@ export const getTopMetricsQueries = (namespace: string) => ({
   [metricsQuery.PODS_BY_NETWORK_OUT]: topMetricsQueries.PODS_BY_NETWORK_OUT({
     namespace,
   }),
+  [metricsQuery.RATE_OF_RECEIVED_PACKETS]: topMetricsQueries.RATE_OF_RECEIVED_PACKETS({
+    namespace,
+  }),
+  [metricsQuery.RATE_OF_TRANSMITTED_PACKETS]: topMetricsQueries.RATE_OF_TRANSMITTED_PACKETS({
+    namespace,
+  }),
+  [metricsQuery.RATE_OF_RECEIVED_PACKETS_DROPPED]: topMetricsQueries.RATE_OF_RECEIVED_PACKETS_DROPPED(
+    {
+      namespace,
+    },
+  ),
+  [metricsQuery.RATE_OF_TRANSMITTED_PACKETS_DROPPED]: topMetricsQueries.RATE_OF_TRANSMITTED_PACKETS_DROPPED(
+    {
+      namespace,
+    },
+  ),
 });
