@@ -5,6 +5,7 @@ import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager'
 import { BreadCrumbs } from '@console/internal/components/utils';
 import { getAnnotations } from '@console/shared/src/selectors/common';
 import { Radio, Title } from '@patternfly/react-core';
+import { getRequiredKeys, createDownloadFile } from '../independent-mode/utils';
 import { OCSServiceModel } from '../../models';
 import InstallExternalCluster from '../independent-mode/install';
 import { CreateOCSServiceForm } from './create-form';
@@ -24,6 +25,10 @@ const InstallCluster: React.FC<InstallClusterProps> = ({ match }) => {
   } = match;
 
   const [isIndependent, setIsIndependent] = React.useState(false);
+  const [independentReqdKeys, setIndependentReqdKeys] = React.useState<{ [key: string]: string[] }>(
+    null,
+  );
+  const [downloadFile, setDownloadFile] = React.useState(null);
   const [mode, setMode] = React.useState(MODES.CONVERGED);
   const [clusterServiceVersion, setClusterServiceVersion] = React.useState(null);
 
@@ -35,9 +40,20 @@ const InstallCluster: React.FC<InstallClusterProps> = ({ match }) => {
   React.useEffect(() => {
     k8sGet(ClusterServiceVersionModel, appName, ns)
       .then((clusterServiceVersionObj) => {
-        setIsIndependent(
-          getAnnotations(clusterServiceVersionObj)[OCS_SUPPORT_ANNOTATION].includes('external'),
-        );
+        const isIndependentSupported = getAnnotations(clusterServiceVersionObj)[
+          OCS_SUPPORT_ANNOTATION
+        ].includes('external');
+        if (isIndependentSupported) {
+          setIsIndependent(true);
+          const { configMaps = [], secrets = [], storageClasses = [] } = getRequiredKeys(
+            clusterServiceVersionObj,
+          );
+          setIndependentReqdKeys({ configMaps, secrets, storageClasses });
+          setDownloadFile(
+            createDownloadFile(getAnnotations(clusterServiceVersionObj)?.['externalClusterScript']),
+          );
+        }
+
         try {
           setClusterServiceVersion(clusterServiceVersionObj);
         } catch (e) {
@@ -82,6 +98,7 @@ const InstallCluster: React.FC<InstallClusterProps> = ({ match }) => {
                 isChecked={mode === MODES.CONVERGED}
                 onChange={handleModeChange}
                 id="radio-1"
+                className="ceph-install--no-margin"
                 label="Converged"
                 name="converged-mode"
               />
@@ -94,6 +111,7 @@ const InstallCluster: React.FC<InstallClusterProps> = ({ match }) => {
                 id="radio-2"
                 label="Independent - For external storage"
                 name="independent-mode"
+                className="ceph-install--no-margin"
               />
             </div>
           </div>
@@ -101,7 +119,13 @@ const InstallCluster: React.FC<InstallClusterProps> = ({ match }) => {
         {(isIndependent === false || mode === MODES.CONVERGED) && (
           <CreateOCSServiceForm match={match} />
         )}
-        {mode === MODES.INDEPENDENT && <InstallExternalCluster match={match} />}
+        {mode === MODES.INDEPENDENT && (
+          <InstallExternalCluster
+            match={match}
+            minRequiredKeys={independentReqdKeys}
+            downloadFile={downloadFile}
+          />
+        )}
       </div>
     </>
   );

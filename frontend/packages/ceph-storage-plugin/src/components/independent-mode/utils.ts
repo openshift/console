@@ -1,26 +1,82 @@
 import * as _ from 'lodash';
+import { Base64 } from 'js-base64';
 import { HealthState } from '@console/shared/src/components/dashboard/status-card/states';
-import { DataValidator, DataState, ErrorType, Field } from './types';
 import { K8sResourceKind } from '@console/internal/module/k8s';
+import { ClusterServiceVersionKind } from '@console/operator-lifecycle-manager';
+import { getAnnotations } from '@console/shared';
 
-export const getValidJSON: DataValidator = (fData) => {
+const pluralize = (count: number, singular: string, plural: string = `${singular}s`): string =>
+  count > 1 ? plural : singular;
+
+export const isValidJSON = (fData: string): boolean => {
   try {
-    // Just see if it fails
-    const parsedData = JSON.parse(fData);
-    return { isValid: true, parsedData };
+    JSON.parse(fData);
+    return true;
   } catch (e) {
-    return { isValid: false, errorMessage: 'File is not a valid JSON file.' };
+    return false;
   }
 };
 
-export const checkError = (data: DataState): ErrorType[] => {
-  const errors: ErrorType[] = [];
-  for (const key in data) {
-    if (!_.isNull(data[key]) && _.isEmpty(_.trim(data[key])))
-      errors.push({ field: key as Field, message: `${key} cannot be empty` });
-    else errors.push({ field: key as Field, message: '' });
+export const createDownloadFile = (data: string): string =>
+  `data:application/octet-stream;charset=utf-8,${encodeURIComponent(Base64.decode(data))}`;
+
+export const checkError = (
+  data: string = '{}',
+  requiredKeys = [],
+  requiresEncodingKeys = [],
+): string => {
+  const parsedData = JSON.parse(data);
+  const providedKeys = _.map(parsedData, (item) => item.name);
+  const emptyKeys = [];
+  const base64ErrorKeys = [];
+  _.map(parsedData, (item) => {
+    if (_.isEmpty(item.data)) emptyKeys.push(item.name ?? 'Unrecongnized key');
+    if (requiresEncodingKeys.includes(item.name)) {
+      _.isEmpty(item.data?.userKey) &&
+        _.isEmpty(item.data?.adminKey) &&
+        base64ErrorKeys.push(item.name ?? 'Unrecognized key');
+      try {
+        atob(item.data?.userKey);
+      } catch (e) {
+        base64ErrorKeys.push(item.name ?? 'Unrecognized key');
+      }
+    }
+  });
+
+  // Check for missing keys
+  const missingKeys = _.difference(_.concat(requiredKeys, requiresEncodingKeys), providedKeys);
+  if (missingKeys.length > 0 && providedKeys.length > 0) {
+    return `${_.uniq(missingKeys).join(', ')} ${pluralize(
+      _.uniq(missingKeys).length,
+      'is',
+      'are',
+    )} missing.`;
   }
-  return errors;
+
+  if (emptyKeys.length > 0) {
+    return `${_.uniq(emptyKeys).join(', ')} ${pluralize(
+      emptyKeys.length,
+      'has',
+      'have',
+    )} empty ${pluralize(emptyKeys.length, 'value')}.`;
+  }
+
+  if (base64ErrorKeys.length > 0) {
+    return `${_.uniq(base64ErrorKeys).join(', ')} ${pluralize(
+      base64ErrorKeys.length,
+      'key',
+    )} ${pluralize(base64ErrorKeys.length, 'has', 'have')} malformed Base64 encoding ${pluralize(
+      base64ErrorKeys.length,
+      'value',
+    )}.`;
+  }
+  return '';
+};
+
+export const getRequiredKeys = (csv: ClusterServiceVersionKind): { [key: string]: string[] } => {
+  // external.ocs.openshift.io/validation: '{"configMaps":["x", "y"], "secrets": ["x", "y", "z"], "storageClasses": ["x"]}'
+  const keys = getAnnotations(csv)?.['external.features.ocs.openshift.io/validation'] ?? '{}';
+  return JSON.parse(keys);
 };
 
 enum ClusterPhase {
@@ -49,3 +105,19 @@ export const getClusterHealth = (cluster: K8sResourceKind, loaded: boolean, erro
   if (!_.isEmpty(cluster)) return PhaseToState[phase];
   return HealthState.NOT_AVAILABLE;
 };
+
+export const prettifyJSON = (data: string) =>
+  _.isEmpty(data)
+    ? ''
+    : (() => {
+        const jsonData = JSON.parse(data);
+        let container = ``;
+        _.map(
+          jsonData,
+          (item) =>
+            (container += `${_.upperCase(item.name ?? 'Unrecognized key')} = ${
+              item.data ? JSON.stringify(item.data) : 'Unrecognized value'
+            }\n`),
+        );
+        return container;
+      })();

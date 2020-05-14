@@ -9,3 +9,7 @@
 .ceph-install__select-node__title {
   margin-top: var(--pf-global--spacer--lg);
 }
+
+.ceph-install--no-margin > input {
+  margin: auto;
+}
