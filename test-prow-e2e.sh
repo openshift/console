@@ -27,7 +27,4 @@ export BRIDGE_BASE_ADDRESS
 oc apply -f ./frontend/integration-tests/data/htpasswd-secret.yaml
 oc patch oauths cluster --patch "$(cat ./frontend/integration-tests/data/patch-htpasswd.yaml)" --type=merge
 
-# get the branch base position for a specific chromium version using https://omahaproxy.appspot.com/
-source ./chromium-version.sh
-
-./test-gui.sh "${1:-e2e}"
+CHROME_VERSION=$(google-chrome --version) ./test-gui.sh "${1:-e2e}"
