@@ -120,7 +120,7 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
     volume.getContainerImage() || '',
   );
 
-  const [pvcName, setPVCName] = React.useState<string>(combinedDisk.getPVCName(source));
+  const [pvcName, setPVCName] = React.useState<string>(combinedDisk.getPVCNameBySource(source));
 
   const [name, setName] = React.useState<string>(
     disk.getName() || getSequenceName('disk', usedDiskNames),

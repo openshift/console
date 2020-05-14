@@ -60,7 +60,8 @@ const menuActionDelete = (
   callback: () =>
     withProgress(
       deleteDiskModal({
-        disk: disk.diskWrapper.asResource(),
+        disk: disk.diskWrapper.asResource(true),
+        volume: disk.volumeWrapper.asResource(true),
         vmLikeEntity,
       }).result,
     ),

@@ -1,5 +1,7 @@
 import * as React from 'react';
 import { HandlePromiseProps, withHandlePromise } from '@console/internal/components/utils';
+import { YellowExclamationTriangleIcon } from '@console/shared/src/components/status/icons';
+import { getName } from '@console/shared/src/selectors/common';
 import {
   createModalLauncher,
   ModalTitle,
@@ -8,7 +10,6 @@ import {
   ModalComponentProps,
 } from '@console/internal/components/factory';
 import { k8sPatch } from '@console/internal/module/k8s';
-import { getName } from '@console/shared';
 import { VMLikeEntityKind } from '../../../types/vmLike';
 import { getVMLikeModel } from '../../../selectors/vm';
 import { getRemoveNICPatches } from '../../../k8s/patches/vm/vm-nic-patches';
@@ -34,16 +35,18 @@ export const DeleteNICModal = withHandlePromise((props: DeleteNICModalProps) => 
   return (
     <form onSubmit={submit} className="modal-content">
       <ModalTitle>
-        Delete {nicName} from {entityName}
+        <YellowExclamationTriangleIcon className="co-icon-space-r" /> Delete {nicName} from{' '}
+        {entityName}
       </ModalTitle>
       <ModalBody>
-        Are you sure you want to delete <strong>{nicName}</strong> from{' '}
-        <strong>{entityName} </strong>?
+        Are you sure you want to delete <strong className="co-break-word">{nicName}</strong> network
+        interface from <strong className="co-break-word">{entityName} </strong>?
       </ModalBody>
       <ModalSubmitFooter
         errorMessage={errorMessage}
         inProgress={inProgress}
-        submitText="Delete"
+        submitText="Delete NIC"
+        submitDanger
         cancel={cancel}
       />
     </form>
