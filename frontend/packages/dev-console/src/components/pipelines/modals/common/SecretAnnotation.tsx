@@ -2,6 +2,7 @@ import * as React from 'react';
 import { TextInputTypes } from '@patternfly/react-core';
 import { InputField, DropdownField } from '@console/shared';
 import { SecretAnnotationType } from '../../const';
+import './SecretAnnotation.scss';
 
 type SecretAnnotationParam = {
   fieldName: string;
@@ -11,8 +12,9 @@ type SecretAnnotationParam = {
 const SecretAnnotation: React.FC<SecretAnnotationParam> = (props) => {
   const { fieldName, isReadOnly = false } = props;
   return (
-    <div className="row">
-      <div className="col-lg-6">
+    <div className="odc-secret-annotation">
+      <p className="odc-secret-annotation__label">Designate provider to be authenticated</p>
+      <div className="form-group">
         <DropdownField
           name={`${fieldName}.key`}
           items={SecretAnnotationType}
@@ -22,9 +24,10 @@ const SecretAnnotation: React.FC<SecretAnnotationParam> = (props) => {
           required
         />
       </div>
-      <div className="col-lg-6">
+      <div className="form-group">
         <InputField
           name={`${fieldName}.value`}
+          helpText="The base server url (e.g. https://github.com)"
           type={TextInputTypes.text}
           isReadOnly={isReadOnly}
           label="Server URL"

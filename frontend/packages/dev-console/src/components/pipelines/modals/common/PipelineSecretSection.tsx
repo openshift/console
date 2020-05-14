@@ -66,7 +66,10 @@ const PipelineSecretSection: React.FC<PipelineSecretSectionProps> = ({ namespace
   return (
     <ExpandCollapse textExpanded="Hide Credential Options" textCollapsed="Show Credential Options">
       <div className="odc-pipeline-secret-section">
-        <p>The following secrets are available for all pipelines in this namespace:</p>
+        <p>
+          The following secrets are available for all pipelines in this namespace to authenticate to
+          the specified git server or docker registry:
+        </p>
         <div className="odc-pipeline-secret-section__secrets">
           <SecretsList namespace={namespace} />
           {secretOpenField.value ? (

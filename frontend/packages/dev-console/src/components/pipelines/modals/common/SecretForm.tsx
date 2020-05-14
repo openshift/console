@@ -1,8 +1,7 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import { FormikValues, useFormikContext } from 'formik';
-import { ActionGroup, Button, ButtonVariant, TextInputTypes } from '@patternfly/react-core';
-import { CheckIcon, CloseIcon } from '@patternfly/react-icons';
+import { TextInputTypes } from '@patternfly/react-core';
 import { ButtonBar } from '@console/internal/components/utils';
 import {
   SecretType,
@@ -10,7 +9,7 @@ import {
   SSHAuthSubform,
   CreateConfigSubform,
 } from '@console/internal/components/secrets/create-secret';
-import { DropdownField, InputField } from '@console/shared';
+import { DropdownField, InputField, ActionGroupWithIcons } from '@console/shared';
 import SecretAnnotation from './SecretAnnotation';
 import './SecretForm.scss';
 
@@ -79,10 +78,7 @@ const SecretForm: React.FC<FormikValues> = ({
 
   return (
     <div className="odc-secret-form">
-      <h1 className="odc-secret-form__title">Create Secret</h1>
-      <p className="odc-secret-form__help-text help-block">
-        Source secrets let you authenticate against a Git server.
-      </p>
+      <h1 className="co-section-heading-tertiary odc-secret-form__title">Create Source Secret</h1>
       <div className="form-group">
         <InputField
           type={TextInputTypes.text}
@@ -107,27 +103,8 @@ const SecretForm: React.FC<FormikValues> = ({
         />
       </div>
       {renderSecretForm(values.type, stringData, onDataChanged)}
-      <ButtonBar errorMessage={status && status.submitError} inProgress={isSubmitting}>
-        <ActionGroup className="pf-c-form pf-c-form__actions--right pf-c-form__group--no-top-margin">
-          <Button
-            type="button"
-            variant={ButtonVariant.link}
-            onClick={handleSubmit}
-            className="odc-pipeline-resource-param__action-btn"
-            aria-label="create"
-          >
-            <CheckIcon />
-          </Button>
-          <Button
-            type="button"
-            className="odc-pipeline-resource-param__action-btn"
-            variant={ButtonVariant.plain}
-            onClick={handleReset}
-            aria-label="close"
-          >
-            <CloseIcon />
-          </Button>
-        </ActionGroup>
+      <ButtonBar errorMessage={status?.submitError} inProgress={isSubmitting}>
+        <ActionGroupWithIcons onSubmit={handleSubmit} onClose={handleReset} />
       </ButtonBar>
     </div>
   );

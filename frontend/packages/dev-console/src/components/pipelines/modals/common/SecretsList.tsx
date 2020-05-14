@@ -37,23 +37,19 @@ const Secrets: React.FC<SecretsProps> = ({ secrets, serviceaccounts }) => {
 
   return (
     <div className="odc-secrets-list">
-      <label>Secrets ({sortedFilterData.length})</label>
-      <div className="odc-secrets-list__secrets">
-        {sortedFilterData.map((secret) => {
-          return (
-            <ResourceLink
-              className="odc-secrets-list__secretsItem"
-              key={secret.metadata.uid}
-              kind={SecretModel.kind}
-              name={secret.metadata.name}
-              namespace={secret.metadata.namespace}
-              title={secret.metadata.name}
-              linkTo={false}
-            />
-          );
-        })}
-        {_.isEmpty(sortedFilterData) && <SecondaryStatus status="No source secrets found" />}
-      </div>
+      {sortedFilterData.map((secret) => {
+        return (
+          <ResourceLink
+            key={secret.metadata.uid}
+            kind={SecretModel.kind}
+            name={secret.metadata.name}
+            namespace={secret.metadata.namespace}
+            title={secret.metadata.name}
+            linkTo={false}
+          />
+        );
+      })}
+      {_.isEmpty(sortedFilterData) && <SecondaryStatus status="No source secrets found" />}
     </div>
   );
 };
