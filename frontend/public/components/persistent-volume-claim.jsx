@@ -31,12 +31,12 @@ const PVCStatus = ({ pvc }) => (
 );
 
 const tableColumnClasses = [
-  classNames('col-lg-2', 'col-md-2', 'col-sm-4', 'col-xs-6'),
-  classNames('col-lg-2', 'col-md-2', 'col-sm-4', 'col-xs-6'),
-  classNames('col-lg-2', 'col-md-2', 'col-sm-4', 'hidden-xs'),
-  classNames('col-lg-2', 'col-md-2', 'hidden-sm', 'hidden-xs'),
-  classNames('col-lg-2', 'col-md-2', 'hidden-sm', 'hidden-xs'),
-  classNames('col-lg-2', 'col-md-2', 'hidden-sm', 'hidden-xs'),
+  '', // name
+  '', // namespace
+  classNames('pf-m-hidden', 'pf-m-visible-on-lg'), // status
+  classNames('pf-m-hidden', 'pf-m-visible-on-xl'), // persistence volume
+  classNames('pf-m-hidden', 'pf-m-visible-on-xl'), // capacity
+  classNames('pf-m-hidden', 'pf-m-visible-on-2xl'), // storage class
   Kebab.columnClass,
 ];
 
