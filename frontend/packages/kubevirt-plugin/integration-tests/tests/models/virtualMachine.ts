@@ -54,7 +54,7 @@ export class VirtualMachine extends BaseVirtualMachine {
     );
   }
 
-  async validateReviewTab(config, isCreate: boolean = false) {
+  async validateReviewTab(config) {
     expect(await wizardView.nameReviewValue.getText()).toEqual(config.name);
     expect(await wizardView.descriptionReviewValue.getText()).toEqual(config.description);
     expect(await wizardView.osReviewValue.getText()).toEqual(config.operatingSystem);
@@ -63,12 +63,6 @@ export class VirtualMachine extends BaseVirtualMachine {
     expect(enabledAsBoolean(await wizardView.cloudInitReviewValue.getText())).toEqual(
       config.cloudInit.useCloudInit,
     );
-
-    if (isCreate) {
-      expect(await wizardView.provisionSourceTypeReviewValue.getText()).toEqual(
-        config.provisionSource?.source,
-      );
-    }
   }
 
   async create(config: VMConfig) {
@@ -154,7 +148,7 @@ export class VirtualMachine extends BaseVirtualMachine {
     if (startOnCreation) {
       await wizard.startOnCreation();
     }
-    await this.validateReviewTab(config, true);
+    await this.validateReviewTab(config);
 
     // Create
     await wizard.confirmAndCreate();
