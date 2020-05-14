@@ -18,7 +18,13 @@ import {
   saveButton,
   getEditorContent,
 } from '@console/internal-integration-tests/views/yaml.view';
-import { STORAGE_CLASS, PAGE_LOAD_TIMEOUT_SECS, SEC } from './consts';
+import {
+  STORAGE_CLASS,
+  PAGE_LOAD_TIMEOUT_SECS,
+  SEC,
+  diskAccessMode,
+  diskVolumeMode,
+} from './consts';
 import { NodePortService, Status } from './types';
 import { filterCount } from '../../views/vms.list.view';
 
@@ -171,6 +177,18 @@ export function pauseVM(name: string, namespace: string): void {
   execSync(`virtctl pause vmi ${name} -n ${namespace}`);
 }
 
-export function enabledAsBoolean(enabledStr: string): boolean {
+export const enabledAsBoolean = (enabledStr: string): boolean => {
   return enabledStr === 'Enabled' || false;
-}
+};
+
+export const selectNonDefaultAccessMode = (defaultAccessMode) => {
+  const accessModeKeys = _.keys(diskAccessMode);
+  accessModeKeys.filter((k) => k !== defaultAccessMode);
+  return diskAccessMode[accessModeKeys[0]];
+};
+
+export const selectNonDefaultVolumeMode = (defaultVolumeMode) => {
+  const volumeModeKeys = _.keys(diskVolumeMode);
+  volumeModeKeys.filter((k) => k !== defaultVolumeMode);
+  return diskVolumeMode[volumeModeKeys[0]];
+};

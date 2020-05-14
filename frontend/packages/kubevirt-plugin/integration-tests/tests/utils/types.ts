@@ -27,6 +27,8 @@ export type StorageResource = {
   size?: string;
   storageClass: string;
   interface: string;
+  volumeMode?: string;
+  accessMode?: string;
   sourceConfig?: DiskSourceConfig;
   source?: DISK_SOURCE;
 };

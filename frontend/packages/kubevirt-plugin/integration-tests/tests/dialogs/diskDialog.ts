@@ -3,7 +3,7 @@ import { selectOptionByText, getSelectedOptionText, getSelectOptions } from '../
 import * as view from '../../views/dialogs/diskDialog.view';
 import { modalSubmitButton, saveButton } from '../../views/kubevirtUIResource.view';
 import { StorageResource, DiskSourceConfig } from '../utils/types';
-import { DISK_SOURCE } from '../utils/consts';
+import { diskAccessMode, DISK_SOURCE } from '../utils/consts';
 import { waitForNoLoaders, modalCancelButton } from '../../views/wizard.view';
 import { browser, ExpectedConditions as until, $ } from 'protractor';
 
@@ -52,6 +52,24 @@ export class DiskDialog {
     }
   }
 
+  async openAdvancedSettingsDrawer() {
+    if (await view.advancedDrawerToggle.isPresent()) {
+      await click(view.advancedDrawerToggle);
+    }
+  }
+
+  async selectVolumeMode(volumeMode: string) {
+    if (await view.diskVolumeMode.isPresent()) {
+      await selectOptionByText(view.diskVolumeMode, volumeMode);
+    }
+  }
+
+  async selectAccessMode(accessMode: string) {
+    if (await view.diskAccessMode.isPresent()) {
+      await selectOptionByText(view.diskAccessMode, diskAccessMode[accessMode].label);
+    }
+  }
+
   async getDiskSource() {
     return getSelectedOptionText(view.diskSource);
   }
@@ -72,6 +90,7 @@ export class DiskDialog {
     if (disk.size) {
       await this.fillSize(disk.size);
     }
+
     await this.selectInterface(disk.interface);
     await this.selectStorageClass(disk.storageClass);
     await click(modalSubmitButton);
@@ -85,6 +104,19 @@ export class DiskDialog {
     if (disk.size) {
       await this.fillSize(disk.size);
     }
+
+    if (disk.accessMode || disk.volumeMode) {
+      await this.openAdvancedSettingsDrawer();
+
+      if (disk.accessMode) {
+        await this.selectAccessMode(disk.accessMode);
+      }
+
+      if (disk.volumeMode) {
+        await this.selectVolumeMode(disk.volumeMode);
+      }
+    }
+
     await click(saveButton);
     await waitForNoLoaders();
   }

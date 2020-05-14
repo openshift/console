@@ -506,6 +506,7 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
               toggleText="Advanced"
               isExpanded={advancedDrawerIsOpen}
               onToggle={onToggleAdvancedDrawer}
+              className="disk-advanced-drawer"
             >
               {source.requiresVolumeMode() && (
                 <FormRow title="Volume Mode" fieldId={asId('volume-mode')}>
