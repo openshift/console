@@ -22,8 +22,8 @@ import {
   ModalTitle,
   ModalBody,
   ModalComponentProps,
-  ModalFooter,
 } from '@console/internal/components/factory';
+import { ModalFooter } from '../modal/modal-footer';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { NamespaceModel, PersistentVolumeClaimModel, ProjectModel } from '@console/internal/models';
 import { getName, getNamespace, ValidationErrorType } from '@console/shared';
@@ -208,20 +208,15 @@ export const CloneVMModal = withHandlePromise((props: CloneVMModalProps) => {
           </FormGroup>
         </Form>
       </ModalBody>
-      <ModalFooter inProgress={inProgress} errorMessage={errorMessage}>
-        <button type="button" onClick={onCancelClick} className="btn btn-default">
-          Cancel
-        </button>
-        <button
-          type="button"
-          disabled={!isValid}
-          onClick={submit}
-          className="btn btn-primary"
-          id="confirm-action"
-        >
-          Clone Virtual Machine
-        </button>
-      </ModalFooter>
+      <ModalFooter
+        id="clone-vm"
+        errorMessage={errorMessage}
+        inProgress={inProgress}
+        isDisabled={!isValid || inProgress}
+        submitButtonText="Clone Virtual Machine"
+        onSubmit={submit}
+        onCancel={onCancelClick}
+      />
     </div>
   );
 });
