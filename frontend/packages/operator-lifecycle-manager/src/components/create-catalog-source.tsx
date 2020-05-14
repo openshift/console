@@ -78,11 +78,11 @@ export const CreateCatalogSource: React.FC<CreateCatalogSourceProps> = withHandl
         <Helmet>
           <title>Create Catalog Source</title>
         </Helmet>
+        <h1 className="co-m-pane__heading">Create Catalog Source</h1>
+        <p className="co-m-pane__explanation">
+          Create a catalog source in order to make operators available in OperatorHub.
+        </p>
         <Form onSubmit={onSave}>
-          <h1 className="co-m-pane__heading">Create Catalog Source</h1>
-          <p className="co-m-pane__explanation">
-            Create a catalog source in order to make operators available in OperatorHub.
-          </p>
           <FormGroup fieldId="catalog-source-name" isRequired label="Catalog source name">
             <TextInput
               id="catalog-source-name"
@@ -149,7 +149,7 @@ export const CreateCatalogSource: React.FC<CreateCatalogSourceProps> = withHandl
             </FormGroup>
           )}
           <ButtonBar errorMessage={errorMessage} inProgress={inProgress}>
-            <ActionGroup className="pf-c-form">
+            <ActionGroup className="pf-c-form__group--no-top-margin">
               <Button type="submit" variant="primary" id="save-changes">
                 Create
               </Button>
