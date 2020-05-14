@@ -102,7 +102,7 @@ export type VMDiskSimpleRowProps = {
 export const DiskSimpleRow: React.FC<VMDiskSimpleRowProps> = ({
   data: { name, source, size, diskInterface, storageClass },
   validation = {},
-  columnClasses,
+  columnClasses = [],
   actionsComponent,
   index,
   style,

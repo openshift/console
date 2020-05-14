@@ -63,7 +63,7 @@ const NoDataEmptyMsg = () => <EmptyBox label="Disks" />;
 export const VMDisksTable: React.FC<VMDisksTableProps> = ({
   data,
   customData,
-  row: Row,
+  row = DiskRow,
   columnClasses,
 }) => {
   return (
@@ -106,7 +106,7 @@ export const VMDisksTable: React.FC<VMDisksTableProps> = ({
           columnClasses,
         )
       }
-      Row={Row}
+      Row={row}
       customData={{ ...customData, columnClasses }}
       virtualize
       loaded
