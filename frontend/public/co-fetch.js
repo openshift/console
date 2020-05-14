@@ -96,7 +96,7 @@ const getCSRFToken = () =>
     .map((c) => c.slice(cookiePrefix.length))
     .pop();
 
-export const coFetch = (url, options = {}, timeout = 20000) => {
+export const coFetch = (url, options = {}, timeout = 60000) => {
   const allOptions = _.defaultsDeep({}, initDefaults, options);
   if (allOptions.method !== 'GET') {
     allOptions.headers['X-CSRFToken'] = getCSRFToken();
@@ -109,13 +109,19 @@ export const coFetch = (url, options = {}, timeout = 20000) => {
     delete allOptions.headers['X-CSRFToken'];
   }
 
+  const fetchPromise = fetch(url, allOptions).then((response) => validateStatus(response, url));
+
+  // return fetch promise directly if timeout <= 0
+  if (timeout < 1) {
+    return fetchPromise;
+  }
+
+  const timeoutPromise = new Promise((unused, reject) =>
+    setTimeout(() => reject(new TimeoutError(url, timeout)), timeout),
+  );
+
   // Initiate both the fetch promise and a timeout promise
-  return Promise.race([
-    fetch(url, allOptions).then((response) => validateStatus(response, url)),
-    new Promise((unused, reject) =>
-      setTimeout(() => reject(new TimeoutError(url, timeout)), timeout),
-    ),
-  ]);
+  return Promise.race([fetchPromise, timeoutPromise]);
 };
 
 const parseJson = (response) => response.json();
@@ -124,7 +130,7 @@ export const coFetchUtils = {
   parseJson,
 };
 
-export const coFetchJSON = (url, method = 'GET', options = {}) => {
+export const coFetchJSON = (url, method = 'GET', options = {}, timeout) => {
   const headers = { Accept: 'application/json' };
   const { kind, name } = store.getState().UI.get('impersonate', {});
   if ((kind === 'User' || kind === 'Group') && name) {
@@ -136,7 +142,7 @@ export const coFetchJSON = (url, method = 'GET', options = {}) => {
   }
   // Pass headers last to let callers to override Accept.
   const allOptions = _.defaultsDeep({ method }, options, { headers });
-  return coFetch(url, allOptions).then((response) => {
+  return coFetch(url, allOptions, timeout).then((response) => {
     if (!response.ok) {
       return response.text();
     }
@@ -149,7 +155,7 @@ export const coFetchJSON = (url, method = 'GET', options = {}) => {
   });
 };
 
-const coFetchSendJSON = (url, method, json = null, options = {}) => {
+const coFetchSendJSON = (url, method, json = null, options = {}, timeout) => {
   const allOptions = {
     headers: {
       Accept: 'application/json',
@@ -161,12 +167,17 @@ const coFetchSendJSON = (url, method, json = null, options = {}) => {
   if (json) {
     allOptions.body = JSON.stringify(json);
   }
-  return coFetchJSON(url, method, _.defaultsDeep(allOptions, options));
+  return coFetchJSON(url, method, _.defaultsDeep(allOptions, options), timeout);
 };
 
-coFetchJSON.delete = (url, options = {}, json = null) => {
-  return json ? coFetchSendJSON(url, 'DELETE', json, options) : coFetchJSON(url, 'DELETE', options);
+coFetchJSON.delete = (url, options = {}, json = null, timeout) => {
+  return json
+    ? coFetchSendJSON(url, 'DELETE', json, options, timeout)
+    : coFetchJSON(url, 'DELETE', options, timeout);
 };
-coFetchJSON.post = (url, json, options = {}) => coFetchSendJSON(url, 'POST', json, options);
-coFetchJSON.put = (url, json, options = {}) => coFetchSendJSON(url, 'PUT', json, options);
-coFetchJSON.patch = (url, json, options = {}) => coFetchSendJSON(url, 'PATCH', json, options);
+coFetchJSON.post = (url, json, options = {}, timeout) =>
+  coFetchSendJSON(url, 'POST', json, options, timeout);
+coFetchJSON.put = (url, json, options = {}, timeout) =>
+  coFetchSendJSON(url, 'PUT', json, options, timeout);
+coFetchJSON.patch = (url, json, options = {}, timeout) =>
+  coFetchSendJSON(url, 'PATCH', json, options, timeout);

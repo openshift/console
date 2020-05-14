@@ -88,7 +88,7 @@ export const HelmInstallPage: React.FunctionComponent<HelmInstallPageProps> = ({
     };
 
     coFetchJSON
-      .post('/api/helm/release', payload, null)
+      .post('/api/helm/release', payload, null, -1)
       .then(() => {
         actions.setSubmitting(false);
         history.push(`/topology/ns/${preselectedNamespace}`);
