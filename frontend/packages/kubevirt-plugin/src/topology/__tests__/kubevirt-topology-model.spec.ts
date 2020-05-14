@@ -1,7 +1,7 @@
 import * as _ from 'lodash';
 import { ALL_APPLICATIONS_KEY } from '@console/shared/src';
 import { DEFAULT_TOPOLOGY_FILTERS } from '@console/dev-console/src/components/topology/redux/const';
-import { TopologyFilters } from '@console/dev-console/src/components/topology/filters/filter-utils';
+import { TopologyFilters } from '@console/dev-console/src/components/topology/filters';
 import {
   transformTopologyData,
   topologyModelFromDataModel,

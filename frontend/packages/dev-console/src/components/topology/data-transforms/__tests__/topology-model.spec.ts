@@ -8,7 +8,7 @@ import {
 } from '../../__tests__/topology-test-data';
 import { topologyModelFromDataModel } from '../topology-model';
 import { transformTopologyData } from '../data-transformer';
-import { TopologyFilters } from '../../filters/filter-utils';
+import { TopologyFilters } from '../../filters';
 import { allowedResources } from '../../topology-utils';
 import { DEFAULT_TOPOLOGY_FILTERS } from '../../redux/const';
 

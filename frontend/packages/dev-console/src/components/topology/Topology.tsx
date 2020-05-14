@@ -57,7 +57,7 @@ import {
   TopologyFilters,
   TOPOLOGY_SEARCH_FILTER_KEY,
   FILTER_ACTIVE_CLASS,
-} from './filters/filter-utils';
+} from './filters';
 import TopologyHelmReleasePanel from './helm/TopologyHelmReleasePanel';
 import { TYPE_HELM_RELEASE } from './helm/components/const';
 import { HelmComponentFactory } from './helm/components/helmComponentFactory';

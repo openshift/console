@@ -16,7 +16,7 @@ import {
   getOperatorGroupModel,
   getOperatorNodeModel,
 } from '../operators/operators-topology-model';
-import { TopologyFilters } from '../filters/filter-utils';
+import { TopologyFilters } from '../filters';
 import { TopologyDataModel, TopologyDataObject, Node } from '../topology-types';
 import {
   TYPE_APPLICATION_GROUP,
