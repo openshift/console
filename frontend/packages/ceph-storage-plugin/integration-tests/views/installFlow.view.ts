@@ -2,47 +2,90 @@ import { $, ExpectedConditions as until, browser, $$ } from 'protractor';
 import * as crudView from '@console/internal-integration-tests/views/crud.view';
 import * as sideNavView from '@console/internal-integration-tests/views/sidenav.view';
 import { click, getOperatorHubCardIndex } from '@console/shared/src/test-utils/utils';
-import { appHost } from '@console/internal-integration-tests/protractor.conf';
-import { MINUTE, NS, OCS_OP, SECOND, OCS_OPERATOR_NAME } from '../utils/consts';
-import { waitFor, refreshIfNotVisible } from '../utils/helpers';
+import { OCS_OP, SECOND, OCS_OPERATOR_NAME } from '../utils/consts';
+import { waitFor, refreshIfNotVisible, waitUntil } from '../utils/helpers';
 
-// Primary Create Button
-export const primaryButton = $('.pf-m-primary');
+/**
+ * Env vars affect what selectors are activated and what tests are run
+ */
+export const LIVE = process.env.OCS_LIVE;
+export const VERSION = process.env.OCP_VERSION || 'LATEST';
+export const TEST_PLATFORM = process.env.TEST_PLATFORM || 'OCP';
 
-// Operator Hub & Installed Operators
-export const ocsOperator = $('a[data-test-operator-row="OpenShift Container Storage"]');
-export const ocsOperatorStatus = $('.co-clusterserviceversion-row__status');
-export const createLink = $('.pf-c-card__footer a');
-export const searchInputOperators = $('input[placeholder="Filter by name..."]');
-const searchInputOperatorHub = $('input[placeholder="Filter by keyword..."]');
+/**
+ * All generic selectors go into Defaults
+ * All OCPX.Y selectors that are not compatible with > X.(Y + 1) OCP goes into its own object.
+ * Everything else in DEFAULTS
+ */
 
-// Subscription Page
-const dropdownForNamespace = $('#dropdown-selectbox');
-const customNamespaceRadio = $('input[value="OwnNamespace"]');
-const selectNamespace = (namespace: string) => $(`#${namespace}-Project-link`);
-const statuses = $$('.co-icon-and-text');
-const status = statuses.get(0);
+const DEFAULTS = {
+  primaryButton: $('.pf-m-primary'),
 
-// Create storage cluster page
-const selectAllBtn = $('[aria-label="Select all rows"]');
-const live = process.env.OCS_LIVE;
-let CATALOG_SRC = 'ocs-catalogsource';
-if (live === '1') CATALOG_SRC = 'redhat-operators';
-const OCS_NAME = 'ocs-operator';
-const ocsLink = (elem, catalogSource) =>
-  $(`a[data-test="${elem}-${catalogSource}-openshift-marketplace"]`);
+  // Operator Hub & Installed Operators
+  ocsOperator: $('a[data-test-operator-row="OpenShift Container Storage"]'),
+  ocsOperatorStatus: $('.co-clusterserviceversion-row__status'),
+  createLink: $('.pf-c-card__footer a'),
+  searchInputOperatorHub: $('input[placeholder="Filter by keyword..."]'),
+  searchInputOperators: $('[data-test-id="list-page-search-input"]'),
 
-// General Items
-export const namespaceDropdown = $('.co-namespace-selector button');
-export const openshiftStorageItem = $('#openshift-storage-link');
+  // Subscription Page
+  dropdownForNamespace: $('#dropdown-selectbox'),
+  customNamespaceRadio: $('input[value="OwnNamespace"]'),
+  selectNamespace: (namespace: string) => $(`#${namespace}-Project-link`),
 
-// Size Dropdown
-export const sizeDropdown = $('button[id="ocs-service-capacity-dropdown"]');
-export const optionSmallSize = $('button[id="512Gi-link"]');
+  // Create storage cluster page
+  selectAllBtn: $('[data-key="0"] input'),
 
-// Namespace
-const labelValue = 'true';
-const label = `openshift.io/cluster-monitoring=${labelValue}`;
+  CATALOG_SRC: LIVE !== '1' ? 'redhat-operators' : 'ocs-catalogsource',
+  OCS_NAME: 'ocs-operator',
+  ocsLink: (elem, catalogSource) =>
+    $(`a[data-test="${elem}-${catalogSource}-openshift-marketplace"]`),
+
+  // General Items
+  namespaceDropdown: $('.co-namespace-selector button'),
+  openshiftStorageItem: $('#openshift-storage-link'),
+
+  // Size Dropdown
+  sizeDropdown: $('button[id="ocs-service-capacity-dropdown"]'),
+  optionSmallSize: $('button[id="512Gi-link"]'),
+
+  // Namespace
+  label: `openshift.io/cluster-monitoring=true`,
+
+  nodeListHandler: async () => {
+    // Node list fluctautes
+    await browser.wait(until.and(crudView.untilNoLoadersPresent));
+    await browser.wait(until.visibilityOf($('[aria-label="Node Table"] tbody tr')));
+    const rowCount = async () => $$('[aria-label="Node Table"] tbody tr').count();
+    await waitUntil(rowCount, 3, 5);
+  },
+
+  getStorageClusterLink: async () => {
+    const index = await getOperatorHubCardIndex('Storage Cluster');
+    return $(`article:nth-child(${index + 1}) a`);
+  },
+
+  // Node names in the Node List Table
+  nodeNames: $$('tbody [data-key="1"]'),
+  // Node locations in the Node List Table
+  nodeLocations: $$('tbody [data-key="3"'),
+};
+
+const OCP_44 = {
+  ocsOperator: $('a[data-test-operator-row="OpenShift Container Storage"]'),
+  ocsOperatorStatus: $('.co-clusterserviceversion-row__status'),
+  createLink: $('.pf-c-card__footer a'),
+  searchInputOperators: $('input[placeholder="Filter by name..."]'),
+};
+
+export const currentSelectors = (() => {
+  switch (VERSION) {
+    case 'OCP_4.4':
+      return Object.assign(DEFAULTS, OCP_44);
+    default:
+      return DEFAULTS;
+  }
+})();
 
 // Navigation
 export const goToInstalledOperators = async () => {
@@ -56,9 +99,9 @@ export const goToOperatorHub = async () => {
 };
 
 export const searchInOperatorHub = async (searchParam, catalogSource) => {
-  await browser.wait(until.visibilityOf(searchInputOperatorHub));
-  await searchInputOperatorHub.sendKeys(searchParam);
-  const ocs = await ocsLink(OCS_NAME, catalogSource);
+  await browser.wait(until.visibilityOf(currentSelectors.searchInputOperatorHub));
+  await currentSelectors.searchInputOperatorHub.sendKeys(searchParam);
+  const ocs = await currentSelectors.ocsLink(currentSelectors.OCS_NAME, catalogSource);
   await browser.wait(until.visibilityOf(ocs));
   return ocs;
 };
@@ -67,54 +110,22 @@ export const goToWorkLoads = async () => {
   await browser.wait(until.and(crudView.untilNoLoadersPresent));
   await sideNavView.clickNavLink(['Workloads', 'Pods']);
   await browser.wait(until.and(crudView.untilNoLoadersPresent));
-  await browser.wait(until.visibilityOf(namespaceDropdown));
+  await browser.wait(until.visibilityOf(currentSelectors.namespaceDropdown));
   await $('.co-namespace-selector button').click();
-  await browser.wait(until.elementToBeClickable(openshiftStorageItem));
+  await browser.wait(until.elementToBeClickable(currentSelectors.openshiftStorageItem));
   await $('#openshift-storage-link').click();
   await browser.wait(until.and(crudView.untilNoLoadersPresent));
 };
 
 // Operators page
 export const selectWorkerRows = async () => {
-  // Wait for 3 inputs to show up
-  const selectedNodes = [];
-  await browser.wait(until.presenceOf($('[data-label="Role"]')), 10000);
-  await browser.sleep(5 * SECOND);
-  expect(await browser.wait($$('tbody tr').count())).toBeGreaterThanOrEqual(3);
-  const isAllSeleted = await selectAllBtn.isSelected();
-  if (isAllSeleted === true) await selectAllBtn.click();
-  await browser.wait(until.not(until.elementToBeSelected(selectAllBtn)));
-  const workerAz = [];
-  const table = $('.pf-c-table.pf-m-compact tbody');
-  const rows = table.$$('tr');
-  rows.each(async (row, index) => {
-    const currRow = JSON.stringify(await row.getText());
-    const newCurrRow = currRow.replace(/\\n/g, ' ');
-    let splitedRow = [];
-    splitedRow = newCurrRow.split(/\s/g);
-    if (splitedRow[3] === 'worker') {
-      workerAz.push(splitedRow[4]);
-      if (
-        !(await $$('tbody input')
-          .get(index)
-          .isSelected())
-      ) {
-        await browser.sleep(1 * SECOND);
-        await $$('tbody input')
-          .get(index)
-          .click();
-        await browser.wait(until.elementToBeSelected($$('tbody input').get(index)));
-        selectedNodes.push(
-          await table
-            .$$('tbody a')
-            .get(index)
-            .getText(),
-        );
-      }
-    }
-    await browser.sleep(SECOND);
-  });
-  return selectedNodes;
+  const isAllSeleted = await currentSelectors.selectAllBtn.isSelected();
+  if (isAllSeleted === false) await click(currentSelectors.selectAllBtn);
+  const nodeNames = await currentSelectors.nodeNames;
+  const nodesLocations = await currentSelectors.nodeLocations;
+  const selectedNodes = nodeNames.map((nodeName) => nodeName.getText());
+  const workersAZ = nodesLocations.map((nodeName) => nodeName.getText());
+  return { selectedNodes, workersAZ };
 };
 
 export const filterInput = $('[placeholder="Filter by name..."]');
@@ -124,84 +135,39 @@ export const goToStorageClasses = async () => {
 };
 
 export class InstallCluster {
-  namespace: string;
-
-  constructor(namespace: string) {
-    this.namespace = namespace;
-  }
-
-  async subscribeToOperator(catalogSource = CATALOG_SRC) {
+  async subscribeToOperator(catalogSource = currentSelectors.CATALOG_SRC) {
     await goToOperatorHub();
     const ocsOp = await searchInOperatorHub(OCS_OP, catalogSource);
     await click(ocsOp);
     await browser.sleep(2 * SECOND);
-    await click(primaryButton);
+    await click(currentSelectors.primaryButton);
     await browser.refresh();
-    await this.installOperator();
-    await browser.wait(until.visibilityOf(ocsOperator));
+    await browser.wait(until.and(crudView.untilNoLoadersPresent), 100000);
+    await click(currentSelectors.primaryButton);
+    await browser.wait(until.visibilityOf(currentSelectors.searchInputOperators));
+    await currentSelectors.searchInputOperators.sendKeys(OCS_OPERATOR_NAME);
     // Sometimes operator changes few times its status so we will wait for
     // for 5 Succeeded status in row to be sure we have operator is
     // installed properly.
-    await waitFor(ocsOperatorStatus, 'Succeeded', 5);
-  }
-
-  async installOperator() {
-    await browser.wait(until.and(crudView.untilNoLoadersPresent), 100000);
-    await customNamespaceRadio.click();
-    await browser.wait(until.and(crudView.untilNoLoadersPresent));
-    await browser.wait(until.visibilityOf(dropdownForNamespace));
-    await dropdownForNamespace.click();
-    const nsTag = selectNamespace(this.namespace);
-    await nsTag.click();
-    await primaryButton.click();
-    await browser.wait(until.and(crudView.untilNoLoadersPresent));
-    await browser.wait(until.visibilityOf(crudView.textFilter));
-    await crudView.textFilter.sendKeys(OCS_OPERATOR_NAME);
+    await waitFor(currentSelectors.ocsOperatorStatus, 'Succeeded', 5);
   }
 
   async createStorageCluster() {
-    await goToInstalledOperators();
-    await browser.wait(until.visibilityOf(searchInputOperators));
-    await searchInputOperators.sendKeys(OCS_OPERATOR_NAME);
-    await click(ocsOperator);
-    const storageClusterIndex = await getOperatorHubCardIndex('Storage Cluster');
-    const link = $(`article:nth-child(${storageClusterIndex}) a`);
-    // Operators page does not directly show tiles so refresh until it shows
-    await refreshIfNotVisible(link, 5);
-    await click(link);
-    await browser.wait(until.and(crudView.untilNoLoadersPresent));
-    // Node list fluctautes
-    await browser.sleep(20 * SECOND);
-    const nodes = await selectWorkerRows();
-    // Fluctating
-    await browser.sleep(5 * SECOND);
-    await click(primaryButton);
-    // Let it move to the other page
-    await browser.sleep(1000);
-    await browser.wait(until.visibilityOf(status));
-    await browser.wait(until.visibilityOf(crudView.resourceTitle));
-    return nodes;
-  }
-
-  async createNamespace() {
-    await browser.get(`${appHost}/k8s/cluster/namespaces`);
-    await crudView.isLoaded();
-    const exists = await crudView.rowForName(this.namespace).isPresent();
-    if (!exists) {
-      await crudView.createYAMLButton.click();
-      await browser.wait(until.presenceOf($('.modal-body__field')));
-      await $$('.modal-body__field')
-        .get(0)
-        .$('input')
-        .sendKeys(NS);
-      await $$('.modal-body__field')
-        .get(1)
-        .$('input')
-        .sendKeys(label);
-      await $('.modal-content')
-        .$('#confirm-action')
-        .click();
-      await browser.wait(until.urlContains(`/${this.namespace}`), MINUTE);
+    await click(currentSelectors.ocsOperator);
+    // In fresh clusters APIs are not shown (Last seen in OCP 4.3)
+    try {
+      await browser.wait(until.visibilityOf(currentSelectors.createLink), 10 * SECOND);
+    } catch {
+      await refreshIfNotVisible(currentSelectors.createLink, 5);
     }
+    const storageClusterLink = await currentSelectors.getStorageClusterLink();
+    await click(storageClusterLink);
+    await currentSelectors.nodeListHandler();
+    const { selectedNodes, workersAZ } = await selectWorkerRows();
+    await click(currentSelectors.sizeDropdown);
+    await click(currentSelectors.optionSmallSize);
+    await click(currentSelectors.primaryButton);
+    await browser.wait(until.and(crudView.untilNoLoadersPresent));
+    return { selectedNodes, workersAZ };
   }
 }

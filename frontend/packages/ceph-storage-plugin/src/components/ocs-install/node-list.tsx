@@ -139,6 +139,7 @@ const NodeTable: React.FC<NodeTableProps> = (props) => {
       <div className="ceph-node-list__max-height">
         <Table
           aria-label="Node Table"
+          data-test-id="select-nodes-table"
           {...props}
           Rows={getRows}
           Header={getColumns}

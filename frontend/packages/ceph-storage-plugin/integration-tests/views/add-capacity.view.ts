@@ -1,16 +1,12 @@
 import { browser, ExpectedConditions as until, $ } from 'protractor';
 import * as crudView from '@console/internal-integration-tests/views/crud.view';
 import * as sideNavView from '@console/internal-integration-tests/views/sidenav.view';
-import { click, getOperatorHubCardIndex } from '@console/shared/src/test-utils/utils';
+import { click } from '@console/shared/src/test-utils/utils';
 import { CAPACITY_UNIT, CAPACITY_VALUE, OCS_OP } from '../utils/consts';
-import { namespaceDropdown, openshiftStorageItem } from './installFlow.view';
+import { currentSelectors } from './installFlow.view';
 
 export const ocsOp = $(`a[data-test-operator-row='${OCS_OP}']`);
-export const getStorageClusterLink = async () => {
-  const index = await getOperatorHubCardIndex('Storage Cluster');
-  const link = $(`article:nth-child(${index + 1}) a`);
-  return link;
-};
+
 export const actionForLabel = (label: string) => $(`button[data-test-action='${label}']`);
 export const confirmButton = $('#confirm-action');
 export const storageClusterRow = (uid) => $(`tr[data-id='${uid}']`);
@@ -38,7 +34,7 @@ export const goToInstalledOperators = async () => {
   await browser.wait(until.and(crudView.untilNoLoadersPresent));
   await sideNavView.clickNavLink(['Operators', 'Installed Operators']);
   await browser.wait(until.and(crudView.untilNoLoadersPresent));
-  await click(namespaceDropdown);
-  await click(openshiftStorageItem);
+  await click(currentSelectors.namespaceDropdown);
+  await click(currentSelectors.openshiftStorageItem);
   await browser.wait(until.and(crudView.untilNoLoadersPresent));
 };
