@@ -143,7 +143,7 @@ const cancelSilence = (silence: Silence) => ({
       btnText: 'Expire Silence',
       executeFn: () =>
         coFetchJSON
-          .delete(`${window.SERVER_FLAGS.alertManagerBaseURL}/api/v1/silence/${silence.id}`)
+          .delete(`${window.SERVER_FLAGS.alertManagerBaseURL}/api/v2/silence/${silence.id}`)
           .then(() => refreshNotificationPollers()),
     }),
 });
@@ -1387,11 +1387,11 @@ const SilenceForm_: React.FC<SilenceFormProps> = ({ defaults, Info, title }) => 
     };
 
     coFetchJSON
-      .post(`${alertManagerBaseURL}/api/v1/silences`, body)
-      .then(({ data }) => {
+      .post(`${alertManagerBaseURL}/api/v2/silences`, body)
+      .then(({ silenceID }) => {
         setError(undefined);
         refreshNotificationPollers();
-        history.push(`${SilenceResource.plural}/${encodeURIComponent(_.get(data, 'silenceId'))}`);
+        history.push(`${SilenceResource.plural}/${encodeURIComponent(silenceID)}`);
       })
       .catch((err) => {
         setError(_.get(err, 'json.error') || err.message || 'Error saving Silence');
