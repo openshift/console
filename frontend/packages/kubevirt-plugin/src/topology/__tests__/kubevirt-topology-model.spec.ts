@@ -1,5 +1,6 @@
 import * as _ from 'lodash';
 import { ALL_APPLICATIONS_KEY } from '@console/shared/src';
+import { DEFAULT_TOPOLOGY_FILTERS } from '@console/dev-console/src/components/topology/redux/const';
 import { TopologyFilters } from '@console/dev-console/src/components/topology/filters/filter-utils';
 import {
   transformTopologyData,
@@ -14,19 +15,7 @@ describe('topology model ', () => {
 
   beforeEach(() => {
     mockResources = _.cloneDeep(kubevirtResources as any);
-    filters = {
-      display: {
-        podCount: true,
-        eventSources: true,
-        virtualMachines: true,
-        showLabels: true,
-        knativeServices: true,
-        appGrouping: true,
-        operatorGrouping: true,
-        helmGrouping: true,
-      },
-      searchQuery: '',
-    };
+    filters = _.cloneDeep(DEFAULT_TOPOLOGY_FILTERS);
   });
 
   it('should create nodes and edges for Virtual Machines', () => {

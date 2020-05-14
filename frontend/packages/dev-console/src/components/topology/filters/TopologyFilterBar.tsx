@@ -6,10 +6,14 @@ import { RootState } from '@console/internal/redux';
 import { TextFilter } from '@console/internal/components/factory';
 import { InfoCircleIcon } from '@patternfly/react-icons';
 import { Visualization } from '@console/topology';
-import { setQueryArgument, removeQueryArgument } from '@console/internal/components/utils';
 import { setTopologyFilters } from '../redux/action';
-import { TOPOLOGY_SEARCH_FILTER_KEY } from '../redux/const';
-import { TopologyFilters, DisplayFilters, getTopologyFilters } from './filter-utils';
+import {
+  TopologyFilters,
+  DisplayFilters,
+  getTopologyFilters,
+  getTopologySearchQuery,
+} from './filter-utils';
+
 import FilterDropdown from './FilterDropdown';
 import './TopologyFilterBar.scss';
 
@@ -23,22 +27,38 @@ type DispatchProps = {
 
 type OwnProps = {
   visualization: Visualization;
+  onSearchChange: (searchQuery: string) => void;
 };
 
 type MergeProps = {
   onDisplayFiltersChange: (display: DisplayFilters) => void;
-  onSearchQueryChange: (searchQuery: string) => void;
 } & StateProps &
   OwnProps;
 
 type TopologyFilterBarProps = MergeProps;
 
 const TopologyFilterBar: React.FC<TopologyFilterBarProps> = ({
-  filters: { display, searchQuery },
+  filters: { display },
   onDisplayFiltersChange,
-  onSearchQueryChange,
+  onSearchChange,
   visualization,
 }) => {
+  const [searchQuery, setSearchQuery] = React.useState<string>('');
+
+  React.useEffect(() => {
+    const query = getTopologySearchQuery();
+    setSearchQuery(query);
+  }, []);
+
+  const onTextFilterChange = React.useCallback(
+    (text) => {
+      const query = text?.trim();
+      setSearchQuery(query);
+      onSearchChange(query);
+    },
+    [onSearchChange],
+  );
+
   return (
     <Toolbar className="co-namespace-bar odc-topology-filter-bar">
       <ToolbarGroup>
@@ -52,7 +72,7 @@ const TopologyFilterBar: React.FC<TopologyFilterBarProps> = ({
             placeholder="Find by name..."
             value={searchQuery}
             autoFocus
-            onChange={onSearchQueryChange}
+            onChange={onTextFilterChange}
           />
         </ToolbarItem>
         <ToolbarItem>
@@ -92,20 +112,13 @@ const dispatchToProps = (dispatch: Dispatch): DispatchProps => ({
 const mergeProps = (
   { filters }: StateProps,
   { onFiltersChange }: DispatchProps,
-  { visualization }: OwnProps,
+  { visualization, onSearchChange }: OwnProps,
 ): MergeProps => ({
   filters,
   onDisplayFiltersChange: (display: DisplayFilters) => {
     onFiltersChange({ ...filters, display });
   },
-  onSearchQueryChange: (searchQuery) => {
-    onFiltersChange({ ...filters, searchQuery });
-    if (searchQuery.length > 0) {
-      setQueryArgument(TOPOLOGY_SEARCH_FILTER_KEY, searchQuery);
-    } else {
-      removeQueryArgument(TOPOLOGY_SEARCH_FILTER_KEY);
-    }
-  },
+  onSearchChange,
   visualization,
 });
 
