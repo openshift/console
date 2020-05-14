@@ -4,7 +4,7 @@
   flex-grow: 0;
   flex-shrink: 0;
   transition: opacity 175ms ease-out, transform 225ms ease-out;
-  border-top: 1px solid var(--pf-global--palette--black-400);
+  box-shadow: var(--pf-global--BoxShadow--sm-top);
   display: flex;
   flex-direction: column;
 
