@@ -83,13 +83,13 @@ const initializeStorage = (params: CreateVMParams, vm: VMWrapper) => {
     };
   });
 
-  vm.setStorages(resolvedStorages);
+  vm.setWizardStorages(resolvedStorages);
 
   return { storages: resolvedStorages };
 };
 
 const initializeNetworks = ({ networks, vmSettings }: CreateVMParams, vm: VMWrapper) => {
-  vm.setNetworks(networks);
+  vm.setWizardNetworks(networks);
   const hasPodNetwork = networks.some((network) =>
     new NetworkWrapper(network.network).isPodNetwork(),
   );

@@ -5,7 +5,7 @@ import { K8sResourceKindMethods } from '../types/types';
 import { BootableDeviceType } from '../../../types';
 
 export interface VMILikeMethods extends K8sResourceKindMethods {
-  getInterfaces: (defaultValue: V1NetworkInterface[]) => V1NetworkInterface[];
+  getNetworkInterfaces: (defaultValue: V1NetworkInterface[]) => V1NetworkInterface[];
 
   getDisks: (defaultValue: V1Disk[]) => V1Disk[];
 
