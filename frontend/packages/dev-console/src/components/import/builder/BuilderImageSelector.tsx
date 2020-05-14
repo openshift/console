@@ -17,16 +17,14 @@ const BuilderImageSelector: React.FC<BuilderImageSelectorProps> = ({
   builderImages,
 }) => {
   const { values, setFieldValue, setFieldTouched } = useFormikContext<FormikValues>();
+  const { selected, recommended, isRecommending, couldNotRecommend } = values.image;
 
   React.useEffect(() => {
-    if (values.image.selected) {
-      setFieldValue(
-        'image.tag',
-        _.get(builderImages, `${values.image.selected}.recentTag.name`, ''),
-      );
+    if (selected) {
+      setFieldValue('image.tag', _.get(builderImages, `${selected}.recentTag.name`, ''));
       setFieldTouched('image.tag', true);
     }
-  }, [values.image.selected, setFieldValue, setFieldTouched, builderImages]);
+  }, [selected, setFieldValue, setFieldTouched, builderImages]);
 
   const fieldId = getFieldId('image.name', 'selector');
 
@@ -36,19 +34,19 @@ const BuilderImageSelector: React.FC<BuilderImageSelectorProps> = ({
         itemList={builderImages}
         name="image.selected"
         loadingItems={loadingImageStream}
-        recommended={values.image.recommended}
+        recommended={recommended}
       />
     );
   }
 
   return (
     <FormGroup fieldId={fieldId} label="Builder Image">
-      {values.image.isRecommending && (
+      {isRecommending && (
         <>
           <LoadingInline /> Detecting recommended builder images...
         </>
       )}
-      {values.image.recommended && (
+      {recommended && builderImages.hasOwnProperty(recommended) && (
         <>
           <Alert variant="success" title="Builder image(s) detected." isInline>
             Recommended builder images are represented by{' '}
@@ -57,7 +55,7 @@ const BuilderImageSelector: React.FC<BuilderImageSelectorProps> = ({
           <br />
         </>
       )}
-      {values.image.couldNotRecommend && (
+      {(couldNotRecommend || (recommended && !builderImages.hasOwnProperty(recommended))) && (
         <>
           <Alert variant="warning" title="Unable to detect the builder image." isInline>
             Select the most appropriate one from the list to continue.
