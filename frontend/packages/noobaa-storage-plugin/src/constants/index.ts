@@ -7,6 +7,7 @@ export const BY_EGRESS = 'Egress';
 export const PROJECTS = 'Projects';
 export const BUCKET_CLASS = 'Bucket Class';
 export const OCS_NS = 'openshift-storage';
+export const NB_PROVISIONER = 'noobaa.io/obc';
 
 export const CHART_LABELS = {
   [BY_LOGICAL_USAGE]: 'Logical used capacity per account',

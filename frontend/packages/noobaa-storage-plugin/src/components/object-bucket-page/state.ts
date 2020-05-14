@@ -3,6 +3,7 @@ import { K8sResourceKind } from '@console/internal/module/k8s';
 type State = {
   name: string;
   scName: string;
+  scProvisioner: string;
   sizeValue: string;
   sizeUnit: string;
   progress: boolean;
@@ -14,6 +15,7 @@ type State = {
 export const defaultState = {
   name: '',
   scName: '',
+  scProvisioner: '',
   progress: false,
   error: '',
   payload: {},
@@ -25,6 +27,7 @@ export const defaultState = {
 type Action =
   | { type: 'setName'; name: string }
   | { type: 'setStorage'; name: string }
+  | { type: 'setProvisioner'; name: string }
   | { type: 'setProgress' }
   | { type: 'unsetProgress' }
   | { type: 'setError'; message: string }
@@ -38,6 +41,8 @@ export const commonReducer = (state: State, action: Action) => {
       return Object.assign({}, state, { name: action.name });
     case 'setStorage':
       return Object.assign({}, state, { scName: action.name });
+    case 'setProvisioner':
+      return Object.assign({}, state, { scProvisioner: action.name });
     case 'setProgress':
       return Object.assign({}, state, { progress: true });
     case 'unsetProgress':
