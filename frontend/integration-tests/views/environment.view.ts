@@ -6,6 +6,7 @@ const inputs = $$('.pf-c-form-control');
 export const rowsKey = $('[placeholder="name"]');
 export const rowsValue = $('[placeholder="value"]');
 export const deleteBtn = $$('[data-test-id="pairs-list__delete-btn"]').first();
+export const deleteFromBtn = $('[data-test-id="pairs-list__delete-from-btn"]');
 export const saveBtn = element(by.cssContainingText('.pf-m-primary', 'Save'));
 
 export const prefix = $('[data-test-id=env-prefix]');
@@ -62,6 +63,14 @@ export const deleteVariable = async () => {
   await isLoaded();
   await browser.wait(until.elementToBeClickable(saveBtn), BROWSER_TIMEOUT);
   await deleteBtn.click();
+  await browser.wait(until.elementToBeClickable(saveBtn), BROWSER_TIMEOUT);
+  await saveBtn.click();
+};
+
+export const deleteFromVariable = async () => {
+  await isLoaded();
+  await browser.wait(until.elementToBeClickable(saveBtn), BROWSER_TIMEOUT);
+  await deleteFromBtn.click();
   await browser.wait(until.elementToBeClickable(saveBtn), BROWSER_TIMEOUT);
   await saveBtn.click();
 };
