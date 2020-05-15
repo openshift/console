@@ -139,7 +139,11 @@ const StatusCard: React.FC<DashboardItemProps> = ({
               />
             </GalleryItem>
             <GalleryItem>
-              <HealthItem title="Data Resiliency" state={dataResiliencyState.state} />
+              <HealthItem
+                title="Data Resiliency"
+                state={dataResiliencyState.state}
+                details={dataResiliencyState.message}
+              />
             </GalleryItem>
           </Gallery>
         </HealthBody>

@@ -12,6 +12,7 @@ const CephHealthStatus = {
   },
   HEALTH_ERR: {
     state: HealthState.ERROR,
+    message: 'Error',
   },
 };
 
@@ -43,7 +44,7 @@ export const getDataResiliencyState: PrometheusHealthHandler = (responses) => {
     return { state: HealthState.UNKNOWN };
   }
   if (progress < 1) {
-    return { state: HealthState.PROGRESS };
+    return { state: HealthState.PROGRESS, message: 'Progressing' };
   }
   return { state: HealthState.OK };
 };

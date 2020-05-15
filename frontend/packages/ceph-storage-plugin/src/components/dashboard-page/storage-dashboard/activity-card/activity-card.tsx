@@ -6,11 +6,7 @@ import DashboardCardHeader from '@console/shared/src/components/dashboard/dashbo
 import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
 import { EventKind, K8sResourceKind } from '@console/internal/module/k8s';
 import { FirehoseResource, FirehoseResult } from '@console/internal/components/utils';
-import {
-  EventModel,
-  PersistentVolumeClaimModel,
-  PersistentVolumeModel,
-} from '@console/internal/models';
+import { EventModel, PersistentVolumeClaimModel } from '@console/internal/models';
 import ActivityBody, {
   RecentEventsBody,
   OngoingActivityBody,
@@ -51,10 +47,11 @@ export const getOCSSubscription = (subscriptions: FirehoseResult): SubscriptionK
   return _.find(itemsData, (item) => item?.spec?.name === OCS_OPERATOR) as SubscriptionKind;
 };
 
-const ocsEventNamespaceKindFilter = (event: EventKind): boolean =>
-  getNamespace(event) === CEPH_STORAGE_NAMESPACE ||
-  _.get(event, 'involvedObject.kind') ===
-    (PersistentVolumeClaimModel.kind || PersistentVolumeModel.kind);
+const ocsEventNamespaceKindFilter = (event: EventKind): boolean => {
+  const eventKind = event?.involvedObject?.kind;
+  const eventNamespace = getNamespace(event);
+  return eventNamespace === CEPH_STORAGE_NAMESPACE || eventKind === PersistentVolumeClaimModel.kind;
+};
 
 const RecentEvent = withDashboardResources(
   ({ watchK8sResource, stopWatchK8sResource, resources }: DashboardItemProps) => {
