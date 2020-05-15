@@ -1,7 +1,15 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
 import * as classNames from 'classnames';
-import { sortable } from '@patternfly/react-table';
+import {
+  sortable,
+  SortByDirection,
+  Table as PFTable,
+  TableBody,
+  TableHeader,
+  TableVariant,
+} from '@patternfly/react-table';
+
 import { BanIcon } from '@patternfly/react-icons';
 
 import { DetailsPage, ListPage, Table, TableRow, TableData, RowFunction } from './factory';
@@ -19,6 +27,7 @@ import {
 } from './utils';
 import {
   CRDVersion,
+  crdVersionSort,
   CustomResourceDefinitionKind,
   getLatestVersionForCRD,
   K8sKind,
@@ -116,48 +125,63 @@ const Established: React.FC<{ crd: CustomResourceDefinitionKind }> = ({ crd }) =
 
 const EmptyVersionsMsg: React.FC<{}> = () => <EmptyBox label="CRD Versions" />;
 
-const CRDVersionsHeader = () => [
+const CRDVersionsHeader = [
   {
     title: 'Name',
-    sortField: 'name',
     transforms: [sortable],
   },
   {
     title: 'Served',
-    sortField: 'served',
     transforms: [sortable],
   },
   {
     title: 'Storage',
-    sortField: 'storage',
     transforms: [sortable],
   },
 ];
 
-const CRDVersionsRows = ({ componentProps: { data } }) =>
-  _.map(data, (version: CRDVersion) => [
-    {
-      title: version.name,
-    },
-    {
-      title: version.served.toString(),
-    },
-    {
-      title: version.storage.toString(),
-    },
+const CRDVersionsRows = (versions: CRDVersion[]) =>
+  _.map(versions, (version: CRDVersion) => [
+    version.name,
+    version.served.toString(),
+    version.storage.toString(),
   ]);
 
-const CRDVersionList: React.FC<CRDVersionProps> = ({ crdVersions }) => {
-  return (
-    <Table
-      EmptyMsg={EmptyVersionsMsg}
-      Header={CRDVersionsHeader}
-      Rows={CRDVersionsRows}
+const CRDVersionTable: React.FC<CRDVersionProps> = ({ versions }) => {
+  const [versionRows, setVersionRows] = React.useState<string[][]>(CRDVersionsRows(versions));
+  const [sortBy, setSortBy] = React.useState<PFSortState>({});
+
+  const onSort = (_event, index, direction) => {
+    let sortedRows;
+    if (index === 0) {
+      sortedRows = versionRows.sort((a, b) => crdVersionSort(a[index], b[index]));
+    } else {
+      sortedRows = versionRows.sort((a, b) =>
+        a[index] < b[index] ? -1 : a[index] > b[index] ? 1 : 0,
+      );
+    }
+    setVersionRows(direction === SortByDirection.asc ? sortedRows : sortedRows.reverse());
+
+    setSortBy({
+      index,
+      direction,
+    });
+  };
+
+  return versionRows.length > 0 ? (
+    <PFTable
+      variant={TableVariant.compact}
       aria-label="CRD Versions"
-      data={crdVersions}
-      loaded
-      virtualize={false}
-    />
+      cells={CRDVersionsHeader}
+      rows={versionRows}
+      onSort={onSort}
+      sortBy={sortBy}
+    >
+      <TableHeader />
+      <TableBody />
+    </PFTable>
+  ) : (
+    <EmptyVersionsMsg />
   );
 };
 
@@ -182,9 +206,7 @@ const CRDTableRow: RowFunction<CustomResourceDefinitionKind> = ({
       <TableData className={classNames(tableColumnClasses[1], 'co-break-word')}>
         {crd.spec.group}
       </TableData>
-      <TableData className={tableColumnClasses[2]}>
-        {getLatestVersionForCRD(crd.spec.versions, crd.spec.version)}
-      </TableData>
+      <TableData className={tableColumnClasses[2]}>{getLatestVersionForCRD(crd)}</TableData>
       <TableData className={tableColumnClasses[3]}>{namespaced(crd) ? 'Yes' : 'No'}</TableData>
       <TableData className={tableColumnClasses[4]}>
         <Established crd={crd} />
@@ -226,7 +248,7 @@ const Details: React.FC<{ obj: CustomResourceDefinitionKind }> = ({ obj: crd }) 
       </div>
       <div className="co-m-pane__body">
         <SectionHeading text="Versions" />
-        <CRDVersionList crdVersions={crd.spec.versions} />
+        <CRDVersionTable versions={crd.spec.versions} />
       </div>
     </>
   );
@@ -301,5 +323,10 @@ type CustomResourceDefinitionsDetailsPageProps = {
 };
 
 export type CRDVersionProps = {
-  crdVersions: CRDVersion[];
+  versions: CRDVersion[];
+};
+
+type PFSortState = {
+  index?: number;
+  direction?: SortByDirection;
 };

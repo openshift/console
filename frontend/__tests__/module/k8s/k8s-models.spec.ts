@@ -10,16 +10,22 @@ import {
   modelsToMap,
 } from '../../../public/module/k8s';
 import {
-  testNamespace,
   testCRD,
-  testOwnedResourceInstance,
+  testCRDInvalidVersion,
+  testCRDInvalidVersionTwo,
   testCRDVersionV1Alpha1,
   testCRDVersionV1Alpha2,
-  testCRDVersionV8,
+  testCRDVersionV8Unserved,
   testCRDVersionV2Beta1,
   testCRDVersionV2Alpha1,
   testCRDVersionV3Beta1,
   testCRDVersionV1,
+  testForNoVersionsCRD,
+  testForValidVersionsCRD,
+  testForUnservedVersionsCRD,
+  testForInvalidVersionsCRD,
+  testNamespace,
+  testOwnedResourceInstance,
 } from '../../../__mocks__/k8sResourcesMocks';
 import {
   PodModel,
@@ -100,46 +106,67 @@ describe('modelsToMap', () => {
 describe('crdVersionSort', () => {
   it('returns a CRDVersion array in correct sort order', () => {
     expect(
-      crdVersionSort([
-        testCRDVersionV1Alpha1,
-        testCRDVersionV1Alpha2,
-        testCRDVersionV8,
-        testCRDVersionV2Beta1,
-        testCRDVersionV2Alpha1,
-        testCRDVersionV3Beta1,
-        testCRDVersionV1,
-      ]),
+      [
+        testCRDVersionV1Alpha1.name,
+        testCRDVersionV1Alpha2.name,
+        testCRDVersionV8Unserved.name,
+        testCRDVersionV2Beta1.name,
+        testCRDVersionV2Alpha1.name,
+        testCRDVersionV3Beta1.name,
+        testCRDVersionV1.name,
+      ].sort(crdVersionSort),
     ).toEqual([
-      testCRDVersionV8,
-      testCRDVersionV1,
-      testCRDVersionV3Beta1,
-      testCRDVersionV2Beta1,
-      testCRDVersionV2Alpha1,
-      testCRDVersionV1Alpha2,
-      testCRDVersionV1Alpha1,
+      testCRDVersionV8Unserved.name,
+      testCRDVersionV1.name,
+      testCRDVersionV3Beta1.name,
+      testCRDVersionV2Beta1.name,
+      testCRDVersionV2Alpha1.name,
+      testCRDVersionV1Alpha2.name,
+      testCRDVersionV1Alpha1.name,
+    ]);
+  });
+
+  it('returns a CRDVersion array with some null values in correct sort order', () => {
+    expect(
+      [
+        testCRDVersionV1Alpha1.name,
+        testCRDVersionV1Alpha2.name,
+        testCRDVersionV8Unserved.name,
+        testCRDInvalidVersion.name,
+        testCRDVersionV2Beta1.name,
+        testCRDVersionV2Alpha1.name,
+        testCRDVersionV3Beta1.name,
+        testCRDVersionV1.name,
+        testCRDInvalidVersionTwo.name,
+      ]
+        .sort(crdVersionSort)
+        .slice(0, 7),
+    ).toEqual([
+      testCRDVersionV8Unserved.name,
+      testCRDVersionV1.name,
+      testCRDVersionV3Beta1.name,
+      testCRDVersionV2Beta1.name,
+      testCRDVersionV2Alpha1.name,
+      testCRDVersionV1Alpha2.name,
+      testCRDVersionV1Alpha1.name,
     ]);
   });
 });
 
 describe('getLatestVersionForCRD', () => {
   it('returns latest version from array of versions', () => {
-    expect(
-      getLatestVersionForCRD(
-        [
-          testCRDVersionV1Alpha1,
-          testCRDVersionV1Alpha2,
-          testCRDVersionV8,
-          testCRDVersionV2Beta1,
-          testCRDVersionV2Alpha1,
-          testCRDVersionV3Beta1,
-          testCRDVersionV1,
-        ],
-        'invalid-version',
-      ),
-    ).toEqual(testCRDVersionV1.name);
+    expect(getLatestVersionForCRD(testForValidVersionsCRD)).toEqual(testCRDVersionV1.name);
   });
 
   it('returns deprecated version string from array of unserved versions', () => {
-    expect(getLatestVersionForCRD([testCRDVersionV8], 'valid-version')).toEqual('valid-version');
+    expect(getLatestVersionForCRD(testForUnservedVersionsCRD)).toEqual('correct-version');
+  });
+
+  it('returns deprecated version string from array of invalid versions', () => {
+    expect(getLatestVersionForCRD(testForInvalidVersionsCRD)).toEqual('correct-version');
+  });
+
+  it('returns deprecated version string for crd with no versions', () => {
+    expect(getLatestVersionForCRD(testForNoVersionsCRD)).toEqual('correct-version');
   });
 });
