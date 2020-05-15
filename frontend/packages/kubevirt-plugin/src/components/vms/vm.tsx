@@ -13,6 +13,7 @@ import {
   getNamespace,
   getOwnerReferences,
   getUID,
+  getLabels,
 } from '@console/shared';
 import { compareOwnerReference } from '@console/shared/src/utils/owner-references';
 import { NamespaceModel, PodModel, NodeModel } from '@console/internal/models';
@@ -329,6 +330,7 @@ const VirtualMachinesPage: React.FC<VirtualMachinesPageProps> = (props) => {
             vmStatusBundle,
             vmImportStatus,
             lookupID,
+            labels: getLabels(obj),
           },
           ...objectBundle,
         };
