@@ -12,14 +12,14 @@ import { K8sResourceWithModel } from '../types/k8s-resource-with-model';
 export const useOwnedVolumeReferencedResources = (
   initialOwner: OwnerReference,
   initialNamespace: string,
-  initialVolumes: V1Volume[],
+  volumes: V1Volume[],
 ) => {
   const volumeOwner = React.useMemo(() => initialOwner, []);
   const namespace = React.useMemo(() => initialNamespace, []);
-  const volumes = React.useMemo(() => initialVolumes, []);
+
   const referencedObjectLookup = React.useMemo(
     () =>
-      volumes.reduce((acc, volume) => {
+      (volumes || []).reduce((acc, volume) => {
         const ref = new VolumeWrapper(volume).getReferencedObject();
         if (ref) {
           acc[volume.name] = ref;

@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { HandlePromiseProps, withHandlePromise } from '@console/internal/components/utils';
 import { YellowExclamationTriangleIcon } from '@console/shared/src/components/status/icons';
-import { getName } from '@console/shared/src/selectors/common';
 import {
   createModalLauncher,
   ModalTitle,
@@ -19,7 +18,6 @@ export const DeleteNICModal = withHandlePromise((props: DeleteNICModalProps) => 
   const { vmLikeEntity, nic, inProgress, errorMessage, handlePromise, close, cancel } = props;
 
   const nicName = nic?.name;
-  const entityName = getName(vmLikeEntity);
 
   const submit = (e) => {
     e.preventDefault();
@@ -35,17 +33,16 @@ export const DeleteNICModal = withHandlePromise((props: DeleteNICModalProps) => 
   return (
     <form onSubmit={submit} className="modal-content">
       <ModalTitle>
-        <YellowExclamationTriangleIcon className="co-icon-space-r" /> Delete {nicName} from{' '}
-        {entityName}
+        <YellowExclamationTriangleIcon className="co-icon-space-r" /> Delete {nicName} NIC
       </ModalTitle>
       <ModalBody>
         Are you sure you want to delete <strong className="co-break-word">{nicName}</strong> network
-        interface from <strong className="co-break-word">{entityName} </strong>?
+        interface?
       </ModalBody>
       <ModalSubmitFooter
         errorMessage={errorMessage}
         inProgress={inProgress}
-        submitText="Delete NIC"
+        submitText="Delete"
         submitDanger
         cancel={cancel}
       />

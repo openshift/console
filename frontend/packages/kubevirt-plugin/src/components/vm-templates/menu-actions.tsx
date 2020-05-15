@@ -1,10 +1,10 @@
 import { getName, getNamespace } from '@console/shared';
 import { K8sKind, TemplateKind } from '@console/internal/module/k8s';
 import { asAccessReview, Kebab, KebabOption } from '@console/internal/components/utils';
-import { deleteModal } from '@console/internal/components/modals/delete-modal';
 import { VMWizardName, VMWizardMode } from '../../constants/vm';
 import { VirtualMachineModel } from '../../models';
 import { getVMWizardCreateLink } from '../../utils/url';
+import { deleteVMLikeEntityModal } from '../modals/delete-vm-like-entity-modal/delete-vm-like-entity-modal';
 
 const vmTemplateEditAction = (kind: K8sKind, obj: TemplateKind) => ({
   label: `Edit Virtual Machine Template`,
@@ -25,16 +25,14 @@ const vmTemplateCreateVMAction = (kind: K8sKind, obj: TemplateKind) => ({
 
 export const menuActionDeleteVMTemplate = (
   kindObj: K8sKind,
-  vmTempalte: TemplateKind,
+  vmTemplate: TemplateKind,
 ): KebabOption => ({
   label: `Delete Virtual Machine Template`,
   callback: () =>
-    deleteModal({
-      kind: kindObj,
-      resource: vmTempalte,
-      redirectTo: `/k8s/ns/${getNamespace(vmTempalte)}/virtualization/templates`,
+    deleteVMLikeEntityModal({
+      vmLikeEntity: vmTemplate,
     }),
-  accessReview: asAccessReview(kindObj, vmTempalte, 'delete'),
+  accessReview: asAccessReview(kindObj, vmTemplate, 'delete'),
 });
 
 export const menuActions = [

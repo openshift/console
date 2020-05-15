@@ -2,7 +2,6 @@ import * as React from 'react';
 import { HandlePromiseProps, withHandlePromise } from '@console/internal/components/utils';
 import { YellowExclamationTriangleIcon } from '@console/shared/src/components/status/icons';
 import { getName, getNamespace } from '@console/shared/src/selectors/common';
-import { PersistentVolumeClaimModel } from '@console/internal/models';
 import {
   createModalLauncher,
   ModalTitle,
@@ -36,40 +35,43 @@ export const DeleteDiskModal = withHandlePromise((props: DeleteDiskModalProps) =
   const entityModel = getVMLikeModel(vmLikeEntity);
   const namespace = getNamespace(vmLikeEntity);
 
-  const vmReference = {
+  const vmLikeReference = {
     name: getName(vmLikeEntity),
     kind: entityModel.kind,
     apiVersion: apiVersionForModel(entityModel),
   } as any;
 
+  const volumes = React.useMemo(() => [volume], [volume]);
+
   const [ownedResources, isOwnedResourcesLoaded] = useOwnedVolumeReferencedResources(
-    vmReference,
+    vmLikeReference,
     namespace,
-    [volume],
+    volumes,
   );
+  const ownedResource = ownedResources?.length > 0 ? ownedResources[0] : null;
+  const isInProgress = inProgress || !isOwnedResourcesLoaded;
 
   const diskName = disk?.name;
-  const entityName = getName(vmLikeEntity);
 
   const submit = (e) => {
     e.preventDefault();
 
-    const promise = k8sPatch(entityModel, vmLikeEntity, getRemoveDiskPatches(vmLikeEntity, disk));
-    return handlePromise(promise)
-      .then(() => freeOwnedResources(ownedResources, vmReference, deleteReferencedResource))
-      .then(close);
+    const promise = k8sPatch(
+      entityModel,
+      vmLikeEntity,
+      getRemoveDiskPatches(vmLikeEntity, disk),
+    ).then(() => freeOwnedResources(ownedResources, vmLikeReference, deleteReferencedResource));
+    return handlePromise(promise).then(close);
   };
 
   return (
     <form onSubmit={submit} className="modal-content">
       <ModalTitle>
-        <YellowExclamationTriangleIcon className="co-icon-space-r" /> Delete {diskName} from{' '}
-        {entityName}
+        <YellowExclamationTriangleIcon className="co-icon-space-r" /> Delete {diskName} disk
       </ModalTitle>
       <ModalBody>
-        Are you sure you want to delete <strong className="co-break-word">{diskName}</strong> disk
-        from <strong className="co-break-word">{entityName} </strong>?
-        {ownedResources.length > 0 && (
+        Are you sure you want to delete <strong className="co-break-word">{diskName}</strong> disk?
+        {ownedResource && (
           <div className="checkbox">
             <label className="control-label">
               <input
@@ -77,18 +79,17 @@ export const DeleteDiskModal = withHandlePromise((props: DeleteDiskModalProps) =
                 onChange={() => setDeleteReferencedResource(!deleteReferencedResource)}
                 checked={deleteReferencedResource}
               />
-              Delete {ownedResources[0].model.label}
-              {ownedResources[0].model === DataVolumeModel &&
-                ` and ${PersistentVolumeClaimModel.label}`}
+              Delete {getName(ownedResource.resource)} {ownedResource.model.label}
+              {ownedResource.model === DataVolumeModel && ` and PVC`}
             </label>
           </div>
         )}
       </ModalBody>
       <ModalSubmitFooter
         errorMessage={errorMessage}
-        submitDisabled={inProgress || !isOwnedResourcesLoaded}
-        inProgress={inProgress || !isOwnedResourcesLoaded}
-        submitText="Delete Disk"
+        submitDisabled={isInProgress}
+        inProgress={isInProgress}
+        submitText="Delete"
         submitDanger
         cancel={cancel}
       />

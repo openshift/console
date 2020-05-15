@@ -1,15 +1,15 @@
 import * as _ from 'lodash';
 import * as React from 'react';
-import { asAccessReview, Kebab, KebabOption, history } from '@console/internal/components/utils';
+import { asAccessReview, Kebab, KebabOption } from '@console/internal/components/utils';
 import { K8sKind, K8sResourceCommon, K8sResourceKind, PodKind } from '@console/internal/module/k8s';
-import { getName, getNamespace, YellowExclamationTriangleIcon } from '@console/shared';
+import { getName, getNamespace } from '@console/shared';
 import { confirmModal, deleteModal } from '@console/internal/components/modals';
 import { ModifyApplication } from '@console/dev-console/src/actions/modify-application';
 import { VMIKind, VMKind } from '../../types/vm';
 import { isVMRunning, isVMRunningWithVMI } from '../../selectors/vm';
 import { getMigrationVMIName } from '../../selectors/vmi-migration';
 import { VirtualMachineInstanceMigrationModel } from '../../models';
-import { deleteVM, restartVM, startVM, stopVM, VMActionType } from '../../k8s/requests/vm';
+import { restartVM, startVM, stopVM, VMActionType } from '../../k8s/requests/vm';
 import { startVMIMigration } from '../../k8s/requests/vmi';
 import { cancelMigration } from '../../k8s/requests/vmim';
 import { cloneVMModal } from '../modals/clone-vm-modal';
@@ -20,6 +20,7 @@ import { unpauseVMI, VMIActionType } from '../../k8s/requests/vmi/actions';
 import { VMImportKind } from '../../types/vm-import/ovirt/vm-import';
 import { V1alpha1DataVolume } from '../../types/vm/disk/V1alpha1DataVolume';
 import { VMStatusBundle } from '../../statuses/vm/types';
+import { deleteVMLikeEntityModal } from '../modals/delete-vm-like-entity-modal/delete-vm-like-entity-modal';
 
 type ActionArgs = {
   vmi?: VMIKind;
@@ -186,41 +187,14 @@ const menuActionCdEdit = (
   };
 };
 
-export const menuActionDeleteVM = (kindObj: K8sKind, vm: VMKind): KebabOption => {
-  const title = (
-    <>
-      <YellowExclamationTriangleIcon className="co-icon-space-r" /> Delete Virtual Machine ?
-    </>
-  );
-
-  const message = (
-    <>
-      Are you sure you want to delete <strong className="co-break-word">{getName(vm)}</strong> in
-      namespace <strong>{getNamespace(vm)}</strong> ?
-    </>
-  );
-
-  const redirectFn = () => {
-    // If we are currently on the deleted resource's page, redirect to the resource list page
-    const re = new RegExp(`/${getName(vm)}(/|$)`);
-    if (re.test(window.location.pathname)) {
-      history.push(`/k8s/ns/${getNamespace(vm)}/virtualization`);
-    }
-  };
-
-  return {
-    label: `Delete ${kindObj.label}`,
-    callback: () =>
-      confirmModal({
-        title,
-        message,
-        submitDanger: true,
-        btnText: 'Delete',
-        executeFn: () => deleteVM(vm).then(redirectFn),
-      }),
-    accessReview: asAccessReview(kindObj, vm, 'delete'),
-  };
-};
+export const menuActionDeleteVM = (kindObj: K8sKind, vm: VMKind): KebabOption => ({
+  label: `Delete ${kindObj.label}`,
+  callback: () =>
+    deleteVMLikeEntityModal({
+      vmLikeEntity: vm,
+    }),
+  accessReview: asAccessReview(kindObj, vm, 'delete'),
+});
 
 export const menuActionDeleteVMI = (kindObj: K8sKind, vmi: VMIKind): KebabOption => ({
   label: `Delete ${kindObj.label}`,
