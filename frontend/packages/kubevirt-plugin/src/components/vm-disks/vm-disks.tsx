@@ -1,6 +1,5 @@
 import * as React from 'react';
-import { Button, ButtonVariant } from '@patternfly/react-core';
-import { Table, RowFunction } from '@console/internal/components/factory';
+import { RowFunction, Table, MultiListPage } from '@console/internal/components/factory';
 import { PersistentVolumeClaimModel, TemplateModel } from '@console/internal/models';
 import { Firehose, FirehoseResult, EmptyBox } from '@console/internal/components/utils';
 import { useSafetyFirst } from '@console/internal/components/safety-first';
@@ -24,6 +23,7 @@ import {
   getVMTemplateNamespacedName,
   getTemplateValidationsFromTemplate,
 } from '../../selectors/vm-template/selectors';
+import { diskSourceFilter } from './table-filters';
 
 const getStoragesData = ({
   vmLikeEntity,
@@ -48,68 +48,65 @@ const getStoragesData = ({
     diskInterface: disk.getDiskInterface(),
     size: disk.getReadableSize(),
     storageClass: disk.getStorageClassName(),
+    metadata: { name: disk.getName(), type: disk.getType() },
   }));
 };
 
 export type VMDisksTableProps = {
   data?: any[];
   customData?: object;
-  row: RowFunction;
-  columnClasses: string[];
+  Row: RowFunction;
+  loaded: boolean;
 };
 
 const NoDataEmptyMsg = () => <EmptyBox label="Disks" />;
 
-export const VMDisksTable: React.FC<VMDisksTableProps> = ({
-  data,
-  customData,
-  row = DiskRow,
-  columnClasses,
-}) => {
+const HeaderFacroty = (columnClasses: string[]) => () =>
+  dimensifyHeader(
+    [
+      {
+        title: 'Name',
+        sortField: 'name',
+        transforms: [sortable],
+      },
+      {
+        title: 'Source',
+        sortField: 'source',
+        transforms: [sortable],
+      },
+      {
+        title: 'Size',
+        sortField: 'size',
+        transforms: [sortable],
+      },
+      {
+        title: 'Interface',
+        sortField: 'diskInterface',
+        transforms: [sortable],
+      },
+      {
+        title: 'Storage Class',
+        sortField: 'storageClass',
+        transforms: [sortable],
+      },
+      {
+        title: '',
+      },
+    ],
+    columnClasses,
+  );
+
+export const VMDisksTable: React.FC<React.ComponentProps<typeof Table> | VMDisksTableProps> = (
+  props,
+) => {
   return (
     <Table
+      {...props}
       aria-label="VM Disks List"
-      data={data}
       NoDataEmptyMsg={NoDataEmptyMsg}
-      Header={() =>
-        dimensifyHeader(
-          [
-            {
-              title: 'Name',
-              sortField: 'name',
-              transforms: [sortable],
-            },
-            {
-              title: 'Source',
-              sortField: 'source',
-              transforms: [sortable],
-            },
-            {
-              title: 'Size',
-              sortField: 'size',
-              transforms: [sortable],
-            },
-            {
-              title: 'Interface',
-              sortField: 'diskInterface',
-              transforms: [sortable],
-            },
-            {
-              title: 'Storage Class',
-              sortField: 'storageClass',
-              transforms: [sortable],
-            },
-            {
-              title: '',
-            },
-          ],
-          columnClasses,
-        )
-      }
-      Row={row}
-      customData={{ ...customData, columnClasses }}
+      Header={HeaderFacroty(props?.customData?.columnClasses)}
+      Row={props.Row || DiskRow}
       virtualize
-      loaded
     />
   );
 };
@@ -121,70 +118,69 @@ type VMDisksProps = {
   vmTemplate?: FirehoseResult<TemplateKind>;
 };
 
-export const VMDisks: React.FC<VMDisksProps> = ({
-  vmLikeEntity,
-  pvcs,
-  datavolumes,
-  vmTemplate,
-}) => {
+export const VMDisks: React.FC<VMDisksProps> = ({ vmLikeEntity, vmTemplate }) => {
+  const namespace = getNamespace(vmLikeEntity);
   const [isLocked, setIsLocked] = useSafetyFirst(false);
   const withProgress = wrapWithProgress(setIsLocked);
   const templateValidations = getTemplateValidationsFromTemplate(getLoadedData(vmTemplate));
-
-  return (
-    <div className="co-m-list">
-      {!isVMI(vmLikeEntity) && (
-        <div className="co-m-pane__filter-bar">
-          <div className="co-m-pane__filter-bar-group">
-            <Button
-              variant={ButtonVariant.primary}
-              id="create-disk-btn"
-              onClick={() =>
-                withProgress(
-                  diskModalEnhanced({
-                    blocking: true,
-                    vmLikeEntity,
-                    templateValidations,
-                  }).result,
-                )
-              }
-              isDisabled={isLocked}
-            >
-              {ADD_DISK}
-            </Button>
-          </div>
-        </div>
-      )}
-      <div className="co-m-pane__body">
-        <VMDisksTable
-          data={getStoragesData({ vmLikeEntity, pvcs, datavolumes })}
-          customData={{
-            vmLikeEntity,
-            withProgress,
-            isDisabled: isLocked,
-            templateValidations,
-          }}
-          row={DiskRow}
-          columnClasses={diskTableColumnClasses}
-        />
-      </div>
-    </div>
-  );
-};
-
-export const VMDisksFirehose: React.FC<VMLikeEntityTabProps> = ({ obj: vmLikeEntity }) => {
-  const namespace = getNamespace(vmLikeEntity);
-  const vmTemplate = getVMTemplateNamespacedName(vmLikeEntity);
 
   const resources = [
     getResource(PersistentVolumeClaimModel, {
       namespace,
       prop: 'pvcs',
+      optional: true,
     }),
     getResource(DataVolumeModel, {
       namespace,
       prop: 'datavolumes',
+      optional: true,
     }),
+  ];
+
+  const flatten = ({ datavolumes, pvcs }) =>
+    getStoragesData({
+      vmLikeEntity,
+      datavolumes: getLoadedData(datavolumes),
+      pvcs: getLoadedData(pvcs),
+    });
+
+  const createFn = () =>
+    withProgress(
+      diskModalEnhanced({
+        blocking: true,
+        vmLikeEntity: !isVMI(vmLikeEntity) && vmLikeEntity,
+        templateValidations,
+      }).result,
+    );
+
+  return (
+    <MultiListPage
+      ListComponent={VMDisksTable}
+      resources={resources}
+      flatten={flatten}
+      createButtonText={ADD_DISK}
+      canCreate={!isVMI(vmLikeEntity)}
+      createProps={{
+        isDisabled: isLocked,
+        onClick: createFn,
+      }}
+      rowFilters={[diskSourceFilter]}
+      customData={{
+        vmLikeEntity,
+        withProgress,
+        isDisabled: isLocked,
+        templateValidations,
+        columnClasses: diskTableColumnClasses,
+      }}
+      hideLabelFilter
+    />
+  );
+};
+
+export const VMDisksFirehose: React.FC<VMLikeEntityTabProps> = ({ obj: vmLikeEntity }) => {
+  const vmTemplate = getVMTemplateNamespacedName(vmLikeEntity);
+
+  const resources = [
     getResource(TemplateModel, {
       name: vmTemplate?.name,
       namespace: vmTemplate?.namespace,

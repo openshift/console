@@ -126,7 +126,6 @@ const StorageTabFirehose: React.FC<StorageTabFirehoseProps> = ({
       {showStorages && (
         <>
           <VMDisksTable
-            columnClasses={diskTableColumnClasses}
             data={getStoragesData(storages, persistentVolumeClaims)}
             customData={{
               isDisabled: isLocked,
@@ -135,8 +134,10 @@ const StorageTabFirehose: React.FC<StorageTabFirehoseProps> = ({
               wizardReduxID,
               isDeleteDisabled,
               isUpdateDisabled,
+              columnClasses: diskTableColumnClasses,
             }}
-            row={VmWizardStorageRow}
+            Row={VmWizardStorageRow}
+            loaded
           />
           {isBootDiskRequired && (
             <StorageBootSource
