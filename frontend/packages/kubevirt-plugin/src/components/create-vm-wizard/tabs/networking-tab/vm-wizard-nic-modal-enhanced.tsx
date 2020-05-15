@@ -9,7 +9,6 @@ import { NetworkInterfaceWrapper } from '../../../../k8s/wrapper/vm/network-inte
 import { iGetCommonData } from '../../selectors/immutable/selectors';
 import { VMWizardNetwork, VMWizardNetworkType, VMWizardProps } from '../../types';
 import { NICModal } from '../../../modals/nic-modal/nic-modal';
-import { NetworkType } from '../../../../constants/vm';
 import { vmWizardActions } from '../../redux/actions';
 import { ActionType } from '../../redux/types';
 import { getNetworks } from '../../selectors/selectors';
@@ -33,18 +32,6 @@ const VMWizardNICModal: React.FC<VMWizardNICModalProps> = (props) => {
       .filter((n) => n && n !== networkInterfaceWrapper.getName()),
   );
 
-  const usedMultusNetworkNames: Set<string> = new Set(
-    networks
-      .filter(({ network: usedNetwork }) => {
-        const usedNetworkWrapper = new NetworkWrapper(usedNetwork);
-        return (
-          usedNetworkWrapper.getType() === NetworkType.MULTUS &&
-          usedNetworkWrapper.getMultusNetworkName() !== networkWrapper.getMultusNetworkName()
-        );
-      })
-      .map(({ network: net }) => new NetworkWrapper(net).getMultusNetworkName()),
-  );
-
   const allowPodNetwork =
     networkWrapper.isPodNetwork() ||
     !networks.find(({ network: net }) => new NetworkWrapper(net).isPodNetwork());
@@ -53,7 +40,6 @@ const VMWizardNICModal: React.FC<VMWizardNICModalProps> = (props) => {
     <NICModal
       {...restProps}
       usedInterfacesNames={usedInterfacesNames}
-      usedMultusNetworkNames={usedMultusNetworkNames}
       allowPodNetwork={allowPodNetwork}
       nic={new NetworkInterfaceWrapper(networkInterface, true)}
       network={new NetworkWrapper(network, true)}

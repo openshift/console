@@ -28,21 +28,13 @@ export const validateNetworks = (options: UpdateOptions) => {
   const validatedNetworks = networks.map(
     ({ networkInterfaceWrapper, networkWrapper, ...networkBundle }) => {
       const otherNetworkBundles = networks.filter((n) => n.id !== networkBundle.id); // to discard networks with a same name
-      const usedMultusNetworkNames = new Set(
-        otherNetworkBundles
-          .map(({ networkWrapper: nw }) => nw.getMultusNetworkName())
-          .filter((n) => n),
-      );
       const usedInterfacesNames = new Set(
         otherNetworkBundles.map(({ networkInterfaceWrapper: niw }) => niw.getName()),
       );
 
       return {
         ...networkBundle,
-        validation: validateNIC(networkInterfaceWrapper, networkWrapper, {
-          usedInterfacesNames,
-          usedMultusNetworkNames,
-        }),
+        validation: validateNIC(networkInterfaceWrapper, networkWrapper, { usedInterfacesNames }),
       };
     },
   );

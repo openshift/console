@@ -6,7 +6,7 @@ import {
   withHandlePromise,
 } from '@console/internal/components/utils';
 import { ModalBody, ModalComponentProps, ModalTitle } from '@console/internal/components/factory';
-import { ValidationErrorType } from '@console/shared';
+import { getName, ValidationErrorType } from '@console/shared';
 import { NetworkAttachmentDefinitionModel } from '@console/network-attachment-definition-plugin';
 import { getLoadedData, getLoadError, isLoaded, prefixedID } from '../../../utils';
 import { validateNIC } from '../../../utils/validations/vm';
@@ -18,11 +18,10 @@ import {
   FormSelectPlaceholderOption,
 } from '../../form/form-select-placeholder-option';
 import {
-  NetworkInterfaceType,
   NetworkInterfaceModel,
+  NetworkInterfaceType,
   NetworkType,
 } from '../../../constants/vm/network';
-import { getNetworkChoices } from '../../../selectors/nad';
 import { NetworkInterfaceWrapper } from '../../../k8s/wrapper/vm/network-interface-wrapper';
 import { NetworkWrapper } from '../../../k8s/wrapper/vm/network-wrapper';
 import { ADD, EDIT, getDialogUIError, getSequenceName, SAVE } from '../../../utils/strings';
@@ -30,12 +29,26 @@ import { ModalFooter } from '../modal/modal-footer';
 import { useShowErrorToggler } from '../../../hooks/use-show-error-toggler';
 import { UINetworkEditConfig } from '../../../types/ui/nic';
 import { isFieldDisabled } from '../../../utils/ui/edit-config';
+import { K8sResourceKind } from '@console/internal/module/k8s';
+
+const getNetworkChoices = (nads: K8sResourceKind[], allowPodNetwork): NetworkWrapper[] => {
+  const networkChoices = nads.map((nad) => {
+    const networkName = getName(nad);
+    return new NetworkWrapper().setType(NetworkType.MULTUS, {
+      networkName,
+    });
+  });
+
+  if (allowPodNetwork) {
+    networkChoices.push(new NetworkWrapper().setType(NetworkType.POD));
+  }
+  return networkChoices;
+};
 
 export type NetworkProps = {
   id: string;
   isDisabled: boolean;
   nads?: FirehoseResult;
-  usedMultusNetworkNames: Set<string>;
   allowPodNetwork: boolean;
   network?: NetworkWrapper;
   onChange: (networkChoice: NetworkType, network: string) => void;
@@ -48,17 +61,14 @@ export const Network: React.FC<NetworkProps> = ({
   network,
   onChange,
   nads,
-  usedMultusNetworkNames,
   allowPodNetwork,
   acceptEmptyValues,
 }) => {
   const nadsLoading = !isLoaded(nads);
   const nadsLoadError = getLoadError(nads, NetworkAttachmentDefinitionModel);
-  const networkChoices = getNetworkChoices(
-    getLoadedData(nads, []),
-    usedMultusNetworkNames,
-    allowPodNetwork,
-  ).filter((n) => n.getType().isSupported());
+  const networkChoices = getNetworkChoices(getLoadedData(nads, []), allowPodNetwork).filter((n) =>
+    n.getType().isSupported(),
+  );
 
   return (
     <FormRow
@@ -113,7 +123,6 @@ export const NICModal = withHandlePromise((props: NICModalProps) => {
     showInitialValidation,
     isEditing,
     usedInterfacesNames,
-    usedMultusNetworkNames,
     allowPodNetwork,
     onSubmit,
     inProgress,
@@ -244,7 +253,6 @@ export const NICModal = withHandlePromise((props: NICModalProps) => {
             network={resultNetwork}
             onChange={onNetworkChoiceChange}
             nads={nads}
-            usedMultusNetworkNames={usedMultusNetworkNames}
             allowPodNetwork={allowPodNetwork}
             acceptEmptyValues={editConfig?.acceptEmptyValuesOverride?.network}
           />
@@ -309,7 +317,6 @@ export type NICModalProps = {
   onSubmit: (networkInterface: NetworkInterfaceWrapper, network: NetworkWrapper) => Promise<any>;
   nads?: FirehoseResult;
   usedInterfacesNames: Set<string>;
-  usedMultusNetworkNames: Set<string>;
   allowPodNetwork: boolean;
   editConfig?: UINetworkEditConfig;
 } & ModalComponentProps &
