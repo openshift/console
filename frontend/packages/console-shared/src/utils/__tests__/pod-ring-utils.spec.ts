@@ -3,7 +3,7 @@ import { K8sResourceKind } from '@console/internal/module/k8s';
 import { DeploymentConfigModel } from '@console/internal/models';
 import { RevisionModel } from '@console/knative-plugin';
 import * as utils from '../pod-utils';
-import { usePodScalingAccessStatus, podRingLabel } from '../pod-ring-utils';
+import { usePodScalingAccessStatus, podRingLabel, getFailedPods } from '../pod-ring-utils';
 import { testHook } from '../../test-utils/hooks-utils';
 import {
   deployment,
@@ -115,6 +115,29 @@ describe('pod-ring utils:', () => {
       podRingLabel(mockStatefulSetData, mockStatefulSetData.kind, [mockPod as ExtPodKind]).subTitle,
     ).toEqual('pods');
   });
+
+  it('should return proper title, subtitle for podRingLabel for failed pods', () => {
+    const mockDeploymentData = _.set(_.cloneDeep(deployment), 'spec.replicas', 1);
+    const containerStatuses = [
+      {
+        state: {
+          waiting: {
+            reason: 'CrashLoopBackOff',
+          },
+        },
+      },
+    ];
+    const mockFailedPod = _.set(
+      _.cloneDeep(mockPod),
+      'status.containerStatuses',
+      containerStatuses,
+    );
+    const podRingLabelData = podRingLabel(mockDeploymentData, mockDeploymentData.kind, [
+      mockFailedPod as ExtPodKind,
+    ]);
+    expect(podRingLabelData.title).toEqual('1');
+    expect(podRingLabelData.subTitle).toEqual('pod');
+  });
 });
 
 describe('usePodScalingAccessStatus', () => {
@@ -164,5 +187,23 @@ describe('usePodScalingAccessStatus', () => {
       expect(usePodScalingAccessStatus(obj, DeploymentConfigModel, [], true)).toBe(false);
       done();
     });
+  });
+});
+
+describe('getFailedPods', () => {
+  it('should return 0 when there are no failed pods', () => {
+    expect(getFailedPods([mockPod as ExtPodKind])).toEqual(0);
+  });
+  it('should return the number of faailed pods', () => {
+    const mockFailedPod = _.set(_.cloneDeep(mockPod), 'status.containerStatuses', [
+      {
+        state: {
+          waiting: {
+            reason: 'CrashLoopBackOff',
+          },
+        },
+      },
+    ]);
+    expect(getFailedPods([mockPod as ExtPodKind, mockFailedPod as ExtPodKind])).toEqual(1);
   });
 });
