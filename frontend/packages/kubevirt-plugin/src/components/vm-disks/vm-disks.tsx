@@ -61,7 +61,7 @@ export type VMDisksTableProps = {
 
 const NoDataEmptyMsg = () => <EmptyBox label="Disks" />;
 
-const HeaderFacroty = (columnClasses: string[]) => () =>
+const getHeader = (columnClasses: string[]) => () =>
   dimensifyHeader(
     [
       {
@@ -104,7 +104,7 @@ export const VMDisksTable: React.FC<React.ComponentProps<typeof Table> | VMDisks
       {...props}
       aria-label="VM Disks List"
       NoDataEmptyMsg={NoDataEmptyMsg}
-      Header={HeaderFacroty(props?.customData?.columnClasses)}
+      Header={getHeader(props?.customData?.columnClasses)}
       Row={props.Row || DiskRow}
       virtualize
     />

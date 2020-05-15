@@ -45,13 +45,6 @@ export enum DeviceType {
   DISK = 'DISK',
 }
 
-export enum VM_DISK_CATEGORY {
-  CDROM = 'CD-ROM',
-  DISK = 'Disk',
-  ENVIRONMENT = 'Environment',
-  OTHER = 'Other',
-}
-
 export const VM_DETAIL_EVENTS_HREF = 'events';
 
 export const PAUSED_VM_MODAL_MESSAGE =

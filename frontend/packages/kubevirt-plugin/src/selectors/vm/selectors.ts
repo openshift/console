@@ -7,7 +7,6 @@ import {
   TEMPLATE_OS_LABEL,
   TEMPLATE_OS_NAME_ANNOTATION,
   TEMPLATE_WORKLOAD_LABEL,
-  VM_DISK_CATEGORY,
 } from '../../constants/vm';
 import { V1Network, V1NetworkInterface, VMKind, VMIKind, CPURaw } from '../../types';
 import { findKeySuffixValue, getSimpleName, getValueByPrefix } from '../utils';
@@ -152,23 +151,3 @@ export const getNodeSelector = (vm: VMKind) => vm?.spec?.template?.spec?.nodeSel
 export const getTolerations = (vm: VMKind) => vm?.spec?.template?.spec?.tolerations;
 
 export const getAffinity = (vm: VMKind) => vm?.spec?.template?.spec?.affinity;
-
-export const getDiskCategory = (d: any, volumes: any[]) => {
-  // Check for cdrom category
-  if (d?.cdrom) {
-    return VM_DISK_CATEGORY.CDROM;
-  }
-
-  // Check for disk category
-  if (d?.disk) {
-    const v = volumes.filter((vol) => vol?.name === d?.name)?.[0];
-    if (v?.secret || v?.serviceAccount || v?.configMap) {
-      return VM_DISK_CATEGORY.ENVIRONMENT;
-    }
-
-    return VM_DISK_CATEGORY.DISK;
-  }
-
-  // Other category
-  return VM_DISK_CATEGORY.OTHER;
-};
