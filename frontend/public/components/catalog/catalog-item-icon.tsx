@@ -76,6 +76,7 @@ import * as rabbitmqImg from '../../imgs/logos/rabbitmq.svg';
 import * as railsImg from '../../imgs/logos/rails.svg';
 import * as redisImg from '../../imgs/logos/redis.svg';
 import * as rhIntegrationImg from '../../imgs/logos/rh-integration.svg';
+import * as rhSpringBoot from '../../imgs/logos/rh-spring-boot.svg';
 import * as rhTomcatImg from '../../imgs/logos/rh-tomcat.svg';
 import * as rubyImg from '../../imgs/logos/ruby.svg';
 import * as scalaImg from '../../imgs/logos/scala.svg';
@@ -168,6 +169,7 @@ const logos = new Map()
   .set('icon-rails', railsImg)
   .set('icon-redis', redisImg)
   .set('icon-rh-integration', rhIntegrationImg)
+  .set('icon-rh-spring-boot', rhSpringBoot)
   .set('icon-java', openjdkImg)
   // Use the upstream icon.
   .set('icon-redhat', redhatImg)
