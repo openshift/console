@@ -373,8 +373,8 @@ class OverviewMainContent_ extends React.Component<
   }
 
   render() {
-    const { loaded, loadError, project, namespace } = this.props;
-    const { filteredItems, groupedItems } = this.state;
+    const { loaded, loadError, project, namespace, EmptyMsg, emptyBodyClass } = this.props;
+    const { items, filteredItems, groupedItems } = this.state;
     const OverviewEmptyState = () => (
       <MsgBox
         title="No Workloads Found."
@@ -396,17 +396,22 @@ class OverviewMainContent_ extends React.Component<
       </div>
     );
 
+    const hasItems = items?.length > 0;
     return (
       <div className="co-m-pane">
-        <OverviewHeading project={_.get(project, 'data')} />
-        <div className="co-m-pane__body co-m-pane__body--no-top-margin">
+        {hasItems && <OverviewHeading project={_.get(project, 'data')} />}
+        <div
+          className={
+            (!hasItems && emptyBodyClass) || 'co-m-pane__body co-m-pane__body--no-top-margin'
+          }
+        >
           <StatusBox
             skeleton={skeletonOverview}
             data={filteredItems}
             label="Resources"
             loaded={loaded}
             loadError={loadError}
-            EmptyMsg={OverviewEmptyState}
+            EmptyMsg={EmptyMsg || OverviewEmptyState}
           >
             <ProjectOverview groups={groupedItems} />
           </StatusBox>
@@ -448,6 +453,8 @@ const Overview_: React.SFC<OverviewProps> = ({
   resourceList,
   title,
   dismissDetails,
+  EmptyMsg,
+  emptyBodyClass,
 }) => {
   const namespace = _.get(match, 'params.name');
   const sidebarOpen = !_.isEmpty(selectedItem);
@@ -487,6 +494,8 @@ const Overview_: React.SFC<OverviewProps> = ({
               selectedItem={selectedItem}
               title={title}
               utils={utils}
+              EmptyMsg={EmptyMsg}
+              emptyBodyClass={emptyBodyClass}
             />
           </Firehose>
         </div>
@@ -586,6 +595,8 @@ type OverviewMainContentOwnProps = {
   title?: string;
   clusterServiceVersions?: FirehoseResult<ClusterServiceVersionKind[]>;
   utils?: Function[];
+  EmptyMsg?: React.ComponentType;
+  emptyBodyClass?: string;
 };
 
 export type OverviewMainContentProps = OverviewMainContentPropsFromState &
@@ -611,6 +622,8 @@ type OverviewOwnProps = {
   mock: boolean;
   match: any;
   title: string;
+  EmptyMsg?: React.ComponentType;
+  emptyBodyClass?: string;
 };
 
 type OverviewProps = OverviewPropsFromState & OverviewPropsFromDispatch & OverviewOwnProps;
