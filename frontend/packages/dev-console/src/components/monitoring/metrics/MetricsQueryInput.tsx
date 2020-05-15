@@ -7,11 +7,17 @@ import { useSelector, useDispatch } from 'react-redux';
 import * as fuzzy from 'fuzzysearch';
 import { RootState } from '@console/internal/redux';
 import { Button } from '@patternfly/react-core';
-import { Dropdown, removeQueryArgument } from '@console/internal/components/utils';
-import { queryBrowserRunQueries, queryBrowserPatchQuery } from '@console/internal/actions/ui';
+import { Dropdown, removeQueryArgument, useSafeFetch } from '@console/internal/components/utils';
+import {
+  queryBrowserRunQueries,
+  queryBrowserPatchQuery,
+  queryBrowserSetMetrics,
+} from '@console/internal/actions/ui';
 import { getActiveNamespace } from '@console/internal/reducers/ui';
 import { QueryInput } from '@console/internal/components/monitoring/metrics';
 import { QueryObj } from '@console/internal/components/monitoring/query-browser';
+import { getPrometheusURL, PrometheusEndpoint } from '@console/internal/components/graphs/helpers';
+import { PROMETHEUS_BASE_PATH } from '@console/internal/components/graphs';
 import { metricsQuery, getTopMetricsQueries } from '../queries';
 import './MetricsQueryInput.scss';
 
@@ -42,6 +48,7 @@ const MetricsQueryInput: React.FC<MetricsQueryInputProps> = ({ query }) => {
   const [metric, setMetric] = React.useState('');
   const [showPromQl, setShowPromQl] = React.useState(false);
   const [isPromQlDisabled, setIsPromQlDisabled] = React.useState(false);
+  const safeFetch = React.useCallback(useSafeFetch(), []);
   React.useEffect(() => {
     const runQueries = () => dispatch(queryBrowserRunQueries());
     const patchQuery = (v: QueryObj) => dispatch(queryBrowserPatchQuery(0, v));
@@ -73,6 +80,25 @@ const MetricsQueryInput: React.FC<MetricsQueryInputProps> = ({ query }) => {
       selectedQuery ? setSelectedKey(sKey) : setTitle(CUSTOM_QUERY);
     }
   }, [query, namespace, items]);
+
+  React.useEffect(() => {
+    const setMetrics = (metrics: string[]) => dispatch(queryBrowserSetMetrics(metrics));
+    const url = namespace
+      ? getPrometheusURL({
+          endpoint: PrometheusEndpoint.QUERY,
+          namespace,
+          query: `count({namespace="${namespace}"}) by (__name__)`,
+        })
+      : `${PROMETHEUS_BASE_PATH}/${PrometheusEndpoint.LABEL}/__name__/values`;
+    safeFetch(url)
+      .then((response) => {
+        const metrics = namespace
+          ? _.map(_.get(response, 'data.result'), 'metric.__name__').sort()
+          : _.get(response, 'data');
+        setMetrics(metrics);
+      })
+      .catch(() => {});
+  }, [namespace, safeFetch, dispatch]);
 
   const onChange = (selectedValue: string) => {
     setMetric(metricsQuery[selectedValue]);
