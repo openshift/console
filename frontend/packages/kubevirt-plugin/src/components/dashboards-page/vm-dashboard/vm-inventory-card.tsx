@@ -28,6 +28,7 @@ export const VMInventoryCard: React.FC<VMInventoryCardProps> = () => {
   const disks = vm ? getDisks(vm) : getVMIDisks(vmi);
   const diskCount = disks.filter((d) => d?.disk).length;
   const cdromCount = disks.filter((d) => d?.cdrom).length;
+  const lunCount = disks.filter((d) => d?.lun).length;
   // TODO: per design, snapshots should be added here (snapshots are not implemented at all atm)
 
   const basePath = resourcePath(getVMLikeModel(vmiLike).kind, name, namespace);
@@ -51,6 +52,16 @@ export const VMInventoryCard: React.FC<VMInventoryCardProps> = () => {
     ),
     [basePath],
   );
+  const LUNTitle = React.useCallback(
+    ({ children }) => (
+      <Link
+        to={`${basePath}/${VM_DETAIL_DISKS_HREF}?rowFilter-disk-types=${DiskType.LUN.getValue()}`}
+      >
+        {children}
+      </Link>
+    ),
+    [basePath],
+  );
   const NicsTitle = React.useCallback(
     ({ children }) => <Link to={`${basePath}/${VM_DETAIL_NETWORKS_HREF}`}>{children}</Link>,
     [basePath],
@@ -62,24 +73,38 @@ export const VMInventoryCard: React.FC<VMInventoryCardProps> = () => {
         <DashboardCardTitle>Inventory</DashboardCardTitle>
       </DashboardCardHeader>
       <DashboardCardBody isLoading={isLoading}>
-        <InventoryItem
-          isLoading={isLoading}
-          title="NIC"
-          count={nicCount}
-          TitleComponent={NicsTitle}
-        />
-        <InventoryItem
-          isLoading={isLoading}
-          title="Disk"
-          count={diskCount}
-          TitleComponent={DisksTitle}
-        />
-        <InventoryItem
-          isLoading={isLoading}
-          title="CD-ROM"
-          count={cdromCount}
-          TitleComponent={CDROMTitle}
-        />
+        {nicCount > 0 && (
+          <InventoryItem
+            isLoading={isLoading}
+            title="NIC"
+            count={nicCount}
+            TitleComponent={NicsTitle}
+          />
+        )}
+        {diskCount > 0 && (
+          <InventoryItem
+            isLoading={isLoading}
+            title="Disk"
+            count={diskCount}
+            TitleComponent={DisksTitle}
+          />
+        )}
+        {cdromCount > 0 && (
+          <InventoryItem
+            isLoading={isLoading}
+            title="CD-ROM"
+            count={cdromCount}
+            TitleComponent={CDROMTitle}
+          />
+        )}
+        {lunCount > 0 && (
+          <InventoryItem
+            isLoading={isLoading}
+            title="LUN"
+            count={lunCount}
+            TitleComponent={LUNTitle}
+          />
+        )}
       </DashboardCardBody>
     </DashboardCard>
   );
