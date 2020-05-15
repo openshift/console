@@ -48,7 +48,8 @@ const getStoragesData = ({
     diskInterface: disk.getDiskInterface(),
     size: disk.getReadableSize(),
     storageClass: disk.getStorageClassName(),
-    metadata: { name: disk.getName(), type: disk.getType() },
+    type: disk.getType(),
+    metadata: { name: disk.getName() },
   }));
 };
 

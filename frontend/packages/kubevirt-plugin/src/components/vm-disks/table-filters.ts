@@ -2,43 +2,24 @@ import * as _ from 'lodash';
 import { RowFilter } from '@console/internal/components/filter-toolbar';
 import { DiskType } from '../../constants/vm/storage';
 
-const sourceReducer = (obj) => {
-  const source = obj?.source;
-  const type = obj?.metadata?.type;
+const typeReducer = (obj) => {
+  const diskType = obj?.type;
 
-  if (type === DiskType.CDROM) {
-    return 'cdrom';
-  }
-
-  if (['Config Map', 'Secret', 'Service Account'].includes(source)) {
-    return 'env';
-  }
-
-  return 'disk';
+  return diskType ? diskType.getValue() : DiskType.DISK.getValue();
 };
 
 export const diskSourceFilter: RowFilter = {
-  filterGroupName: 'Category',
-  type: 'disks',
-  reducer: sourceReducer,
-  items: [
-    {
-      id: 'disk',
-      title: 'Disks',
-    },
-    {
-      id: 'cdrom',
-      title: 'CD ROMs',
-    },
-    {
-      id: 'env',
-      title: 'Envionment Volumes',
-    },
-  ],
+  filterGroupName: 'Disk Type',
+  type: 'disk-types',
+  reducer: typeReducer,
+  items: DiskType.getAll().map((diskType) => ({
+    id: diskType.getValue(),
+    title: diskType.toString(),
+  })),
   filter: (disks, obj) => {
-    const source = sourceReducer(obj);
+    const diskType = typeReducer(obj);
     return (
-      disks.selected.size === 0 || disks.selected.has(source) || !_.includes(disks.all, source)
+      disks.selected.size === 0 || disks.selected.has(diskType) || !_.includes(disks.all, diskType)
     );
   },
 };

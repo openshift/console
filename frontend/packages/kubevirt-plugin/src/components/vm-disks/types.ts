@@ -27,7 +27,8 @@ export type StorageBundle = StorageSimpleData & {
   disk: CombinedDisk;
   templateValidations?: TemplateValidations;
   diskValidations?: UIStorageValidation;
-  metadata?: { name?: string; type?: DiskType };
+  type?: DiskType;
+  metadata?: { name?: string };
 };
 
 export type VMStorageRowActionOpts = {

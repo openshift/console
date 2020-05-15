@@ -12,7 +12,7 @@ import { VMDashboardContext } from '../../vms/vm-dashboard-context';
 import { getVMLikeModel } from '../../../selectors/vm/vmlike';
 import { getNetworks, getDisks } from '../../../selectors/vm';
 import { getVMINetworks, getVMIDisks } from '../../../selectors/vmi';
-import { VM_DETAIL_DISKS_HREF, VM_DETAIL_NETWORKS_HREF } from '../../../constants';
+import { VM_DETAIL_DISKS_HREF, VM_DETAIL_NETWORKS_HREF, DiskType } from '../../../constants';
 
 export const VMInventoryCard: React.FC<VMInventoryCardProps> = () => {
   const vmDashboardContext = React.useContext(VMDashboardContext);
@@ -33,13 +33,21 @@ export const VMInventoryCard: React.FC<VMInventoryCardProps> = () => {
   const basePath = resourcePath(getVMLikeModel(vmiLike).kind, name, namespace);
   const DisksTitle = React.useCallback(
     ({ children }) => (
-      <Link to={`${basePath}/${VM_DETAIL_DISKS_HREF}?rowFilter-disks=disk`}>{children}</Link>
+      <Link
+        to={`${basePath}/${VM_DETAIL_DISKS_HREF}?rowFilter-disk-types=${DiskType.DISK.getValue()}`}
+      >
+        {children}
+      </Link>
     ),
     [basePath],
   );
   const CDROMTitle = React.useCallback(
     ({ children }) => (
-      <Link to={`${basePath}/${VM_DETAIL_DISKS_HREF}?rowFilter-disks=cdrom`}>{children}</Link>
+      <Link
+        to={`${basePath}/${VM_DETAIL_DISKS_HREF}?rowFilter-disk-types=${DiskType.CDROM.getValue()}`}
+      >
+        {children}
+      </Link>
     ),
     [basePath],
   );
