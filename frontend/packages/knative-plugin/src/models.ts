@@ -3,6 +3,7 @@ import {
   chart_color_red_300 as knativeEventingColor,
 } from '@patternfly/react-tokens';
 import { K8sKind } from '@console/internal/module/k8s';
+import { BadgeType } from '@console/shared/src/components/badges/badge-factory';
 import {
   KNATIVE_EVENT_SOURCE_APIGROUP,
   KNATIVE_EVENT_SOURCE_APIGROUP_DEP,
@@ -50,6 +51,7 @@ export const KnativeEventingModel: K8sKind = {
   abbr: 'KE',
   namespaced: true,
   crd: true,
+  badge: BadgeType.TECH,
   color: knativeEventingColor.value,
 };
 
