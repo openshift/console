@@ -17,18 +17,6 @@ export class StorageUISource extends ObjectEnum<string> {
     DataVolumeSourceType.HTTP,
   );
   static readonly CONTAINER = new StorageUISource('Container', VolumeType.CONTAINER_DISK);
-  static readonly CLOUD_INIT = new StorageUISource('Cloud Init', VolumeType.CLOUD_INIT_NO_CLOUD);
-  static readonly CLOUD_INIT_CONFIG_DRIVE = new StorageUISource(
-    'Cloud Init Config Drive',
-    VolumeType.CLOUD_INIT_CONFIG_DRIVE,
-  );
-  static readonly CONFIG_MAP = new StorageUISource('Config Map', VolumeType.CONFIG_MAP);
-  static readonly SECRET = new StorageUISource('Secret', VolumeType.SECRET);
-  static readonly SERVICE_ACCOUNT = new StorageUISource(
-    'Service Account',
-    VolumeType.SERVICE_ACCOUNT,
-  );
-  static readonly EMPTY_DISK = new StorageUISource('Empty Disk', VolumeType.EMPTY_DISK);
   static readonly ATTACH_CLONED_DISK = new StorageUISource(
     'Attach Cloned Disk',
     VolumeType.DATA_VOLUME,
