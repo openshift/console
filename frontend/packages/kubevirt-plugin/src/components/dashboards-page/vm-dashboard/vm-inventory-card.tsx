@@ -42,11 +42,15 @@ export const VMInventoryCard: React.FC<VMInventoryCardProps> = () => {
 
   const basePath = resourcePath(getVMLikeModel(vmiLike).kind, name, namespace);
   const DisksTitle = React.useCallback(
-    ({ children }) => <Link to={`${basePath}/${VM_DETAIL_DISKS_HREF}`}>{children}</Link>,
+    ({ children }) => (
+      <Link to={`${basePath}/${VM_DETAIL_DISKS_HREF}?rowFilter-disks=disk`}>{children}</Link>
+    ),
     [basePath],
   );
   const CDROMTitle = React.useCallback(
-    ({ children }) => <Link to={`${basePath}/${VM_DETAIL_DISKS_HREF}`}>{children}</Link>,
+    ({ children }) => (
+      <Link to={`${basePath}/${VM_DETAIL_DISKS_HREF}?rowFilter-disks=cdrom`}>{children}</Link>
+    ),
     [basePath],
   );
   const EnvTitle = React.useCallback(
