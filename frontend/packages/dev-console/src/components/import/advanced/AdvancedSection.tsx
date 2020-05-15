@@ -57,7 +57,6 @@ const AdvancedSection: React.FC<AdvancedSectionProps> = ({ values, appResources 
           <DeploymentConfigSection
             namespace={values.project.name}
             resource={appResources?.editAppResource?.data}
-            isServerless={values.resources === Resources.KnativeService}
           />
         </ProgressiveListItem>
         <ProgressiveListItem name="Scaling">

@@ -16,6 +16,7 @@ import {
   getPodLabels,
   mergeData,
   getCommonAnnotations,
+  getTriggerAnnotation,
 } from '../../utils/resource-label-utils';
 import { createRoute, createService, dryRunOpt } from '../../utils/shared-submit-utils';
 import { getProbesData } from '../health-checks/create-health-checks-probe-utils';
@@ -141,7 +142,11 @@ export const createOrUpdateDeployment = (
     project: { name: namespace },
     name,
     isi: { image, ports, tag: imageStreamTag },
-    deployment: { env, replicas },
+    deployment: {
+      env,
+      replicas,
+      triggers: { image: imageChange },
+    },
     labels: userLabels,
     limits: { cpu, memory },
     imageStream: { image: imgName, namespace: imgNamespace },
@@ -152,16 +157,8 @@ export const createOrUpdateDeployment = (
   const defaultAnnotations = {
     ...annotations,
     'alpha.image.policy.openshift.io/resolve-names': '*',
-    'image.openshift.io/triggers': JSON.stringify([
-      {
-        from: {
-          kind: 'ImageStreamTag',
-          name: `${imgName || name}:${imageStreamTag}`,
-          namespace: imgNamespace || namespace,
-        },
-        fieldPath: `spec.template.spec.containers[?(@.name=="${name}")].image`,
-      },
-    ]),
+    ...(imageChange &&
+      getTriggerAnnotation(imgName || name, imgNamespace || namespace, imageStreamTag)),
   };
 
   const { labels, podLabels, volumes, volumeMounts } = getMetadata(formData);
@@ -353,9 +350,10 @@ export const createOrUpdateDeployImageResources = async (
   const {
     name,
     registry,
+    project: { name: namespace },
     route: { create: canCreateRoute, disable },
     isi: { ports, tag: imageStreamTag, image },
-    imageStream: { namespace: internalImageNamespace },
+    imageStream: { image: internalImageStreamName, namespace: internalImageStreamNamespace },
   } = formData;
   const internalImageName = getRuntime(image.metadata?.labels);
   const requests: Promise<K8sResourceKind>[] = [];
@@ -435,7 +433,12 @@ export const createOrUpdateDeployImageResources = async (
       imageStreamUrl,
       internalImageName || name,
       imageStreamTag,
-      internalImageNamespace,
+      internalImageStreamNamespace,
+      getTriggerAnnotation(
+        internalImageStreamName || name,
+        internalImageStreamNamespace || namespace,
+        imageStreamTag,
+      ),
       _.get(appResources, 'editAppResource.data'),
     );
     requests.push(

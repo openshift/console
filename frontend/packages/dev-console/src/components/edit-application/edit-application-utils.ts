@@ -45,8 +45,15 @@ export const getPageHeading = (buildStrategy: string): string => {
   }
 };
 
-const checkIfTriggerExists = (triggers: { [key: string]: string | {} }[], type: string) => {
+const checkIfTriggerExists = (
+  triggers: { [key: string]: any }[],
+  type: string,
+  resourceKind?: string,
+) => {
   return !!_.find(triggers, (trigger) => {
+    if (resourceKind === DeploymentConfigModel.kind && type === 'ImageChange') {
+      return trigger.type === type && trigger.imageChangeParams?.automatic;
+    }
     return trigger.type === type;
   });
 };
@@ -149,32 +156,44 @@ export const getServerlessData = (resource: K8sResourceKind) => {
 };
 
 export const getDeploymentData = (resource: K8sResourceKind) => {
-  let deploymentData: DeploymentData = {
+  const deploymentData: DeploymentData = {
     env: [],
     replicas: 1,
     triggers: { image: true, config: true },
   };
-  const containers = _.get(resource, 'spec.template.spec.containers', []);
-  if (getResourcesType(resource) === Resources.KnativeService) {
-    deploymentData = {
-      ...deploymentData,
-      env: containers[0]?.env || [],
-      triggers: {
-        image: containers[0]?.imagePullPolicy === ImagePullPolicy.Always,
-      },
-    };
-  } else {
-    const triggers = _.get(resource, 'spec.triggers');
-    deploymentData = {
-      env: _.get(containers[0], 'env', []),
-      triggers: {
-        image: checkIfTriggerExists(triggers, 'ImageChange'),
-        config: checkIfTriggerExists(triggers, 'ConfigChange'),
-      },
-      replicas: _.get(resource, 'spec.replicas', 1),
-    };
+  const container = resource.spec?.template?.spec?.containers?.[0];
+  const env = container?.env ?? [];
+  switch (getResourcesType(resource)) {
+    case Resources.KnativeService:
+      return {
+        ...deploymentData,
+        env,
+        triggers: {
+          image: container?.imagePullPolicy === ImagePullPolicy.Always,
+        },
+      };
+    case Resources.OpenShift: {
+      const triggers = resource.spec?.triggers;
+      return {
+        env,
+        triggers: {
+          image: checkIfTriggerExists(triggers, 'ImageChange', resource.kind),
+          config: checkIfTriggerExists(triggers, 'ConfigChange'),
+        },
+        replicas: resource.spec?.replicas ?? 1,
+      };
+    }
+    case Resources.Kubernetes:
+      return {
+        env,
+        triggers: {
+          image: !!resource.metadata?.annotations?.['image.openshift.io/triggers'],
+        },
+        replicas: resource.spec?.replicas ?? 1,
+      };
+    default:
+      return deploymentData;
   }
-  return deploymentData;
 };
 
 export const getLimitsData = (resource: K8sResourceKind) => {
