@@ -1,9 +1,8 @@
 import * as React from 'react';
-import * as _ from 'lodash';
-import { Table, TextFilter } from '@console/internal/components/factory';
-import { CheckBoxes } from '@console/internal/components/row-filter';
+import { Table } from '@console/internal/components/factory';
 import { getQueryArgument } from '@console/internal/components/utils';
 import { CustomResourceListProps } from './custom-resource-list-types';
+import { FilterToolbar } from '@console/internal/components/filter-toolbar';
 
 const CustomResourceList: React.FC<CustomResourceListProps> = ({
   dependentResource,
@@ -11,6 +10,7 @@ const CustomResourceList: React.FC<CustomResourceListProps> = ({
   queryArg,
   rowFilters,
   rowFilterReducer,
+  textFilter,
   textFilterReducer,
   resourceHeader,
   resourceRow,
@@ -18,14 +18,10 @@ const CustomResourceList: React.FC<CustomResourceListProps> = ({
   sortOrder,
 }) => {
   const [listItems, setListItems] = React.useState([]);
-  const [filteredListItems, setFilteredListItems] = React.useState([]);
   const [fetched, setFetched] = React.useState(false);
 
   React.useEffect(() => {
     let ignore = false;
-
-    const queryArgument = queryArg ? getQueryArgument(queryArg) : undefined;
-    const activeFilters = queryArgument?.split(',');
 
     const fetchListItems = async () => {
       let newListItems: any;
@@ -42,13 +38,6 @@ const CustomResourceList: React.FC<CustomResourceListProps> = ({
 
       setListItems(newListItems || []);
       setFetched(true);
-
-      if (activeFilters) {
-        const filteredItems = rowFilterReducer(newListItems, activeFilters);
-        setFilteredListItems(filteredItems);
-      } else {
-        setFilteredListItems(newListItems);
-      }
     };
 
     fetchListItems();
@@ -56,66 +45,49 @@ const CustomResourceList: React.FC<CustomResourceListProps> = ({
     return () => {
       ignore = true;
     };
-  }, [dependentResource, fetchCustomResources, queryArg, rowFilters, rowFilterReducer]);
+  }, [dependentResource, fetchCustomResources]);
 
-  const applyRowFilter = React.useCallback(
-    (filter) => {
-      const filteredItems = rowFilterReducer(listItems, filter);
-      setFilteredListItems(filteredItems);
-    },
-    [listItems, rowFilterReducer],
-  );
+  const applyFilters = React.useCallback(() => {
+    const queryArgument = queryArg ? getQueryArgument(queryArg) : undefined;
+    const activeFilters = queryArgument?.split(',');
+    const params = new URLSearchParams(window.location.search);
+    const filteredText = params.get(textFilter);
 
-  const applyTextFilter = React.useCallback(
-    (filter) => {
-      const filteredItems = textFilterReducer(listItems, filter);
-      setFilteredListItems(filteredItems);
-    },
-    [listItems, textFilterReducer],
-  );
+    let filteredItems = listItems;
+    if (activeFilters) {
+      filteredItems = rowFilterReducer(filteredItems, activeFilters);
+    }
+    if (filteredText) {
+      filteredItems = textFilterReducer(filteredItems, filteredText);
+    }
+    return filteredItems;
+  }, [listItems, queryArg, rowFilterReducer, textFilter, textFilterReducer]);
 
-  const rowsOfRowFilters = _.map(
-    rowFilters,
-    ({ items: filterItems, reducer, selected, type }, i) => {
-      return (
-        <CheckBoxes
-          key={i}
-          onFilterChange={applyRowFilter}
-          items={filterItems}
-          itemCount={_.size(listItems)}
-          numbers={_.countBy(listItems, reducer)}
-          selected={selected}
-          type={type}
-          reduxIDs={[]}
-        />
-      );
-    },
-  );
+  const filteredListItems = applyFilters();
 
   return (
-    <>
-      {textFilterReducer && (
-        <div className="co-m-pane__filter-bar">
-          <div className="co-m-pane__filter-bar-group co-m-pane__filter-bar-group--filter">
-            <TextFilter label="by name" onChange={applyTextFilter} />
-          </div>
-        </div>
-      )}
-
-      <div className="co-m-pane__body">
-        {!_.isEmpty(listItems) && rowsOfRowFilters}
-        <Table
-          data={filteredListItems}
-          defaultSortField={sortBy}
-          defaultSortOrder={sortOrder}
-          aria-label="CustomResources"
-          Header={resourceHeader}
-          Row={resourceRow}
-          loaded={fetched}
-          virtualize
+    <div className="co-m-pane__body">
+      {(rowFilters || textFilter) && (
+        <FilterToolbar
+          rowFilters={rowFilters}
+          data={listItems}
+          textFilter={textFilter}
+          hideNameFilter={false}
+          hideLabelFilter
+          reduxIDs={[]}
         />
-      </div>
-    </>
+      )}
+      <Table
+        data={filteredListItems}
+        defaultSortField={sortBy}
+        defaultSortOrder={sortOrder}
+        aria-label="CustomResources"
+        Header={resourceHeader}
+        Row={resourceRow}
+        loaded={fetched}
+        virtualize
+      />
+    </div>
   );
 };
 

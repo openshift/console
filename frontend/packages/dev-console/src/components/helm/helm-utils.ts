@@ -12,7 +12,7 @@ import {
   HelmActionConfigType,
   HelmActionOrigins,
 } from './helm-types';
-import { CustomResourceListRowFilter } from '../custom-resource-list/custom-resource-list-types';
+import { RowFilter } from '@console/internal/components/filter-toolbar';
 
 export const HelmReleaseStatusLabels = {
   [HelmReleaseStatus.Deployed]: 'Deployed',
@@ -43,10 +43,10 @@ export const releaseStatusReducer = (release: HelmRelease) => {
   return release.info.status;
 };
 
-export const helmReleasesRowFilters: CustomResourceListRowFilter[] = [
+export const helmReleasesRowFilters: RowFilter[] = [
   {
+    filterGroupName: 'Status',
     type: 'helm-release-status',
-    selected: SelectedReleaseStatuses,
     reducer: releaseStatusReducer,
     items: SelectedReleaseStatuses.map((status) => ({
       id: status,

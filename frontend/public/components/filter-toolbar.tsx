@@ -1,7 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import { withRouter, RouteComponentProps } from 'react-router';
-import { compose } from 'redux';
 import { connect } from 'react-redux';
 import {
   Checkbox,
@@ -352,5 +351,5 @@ export type RowFilter = {
   filter?: any;
 };
 
-export const FilterToolbar = compose(withRouter, connect(null, { filterList }))(FilterToolbar_);
+export const FilterToolbar = withRouter(connect(null, { filterList })(FilterToolbar_));
 FilterToolbar.displayName = 'FilterToolbar';

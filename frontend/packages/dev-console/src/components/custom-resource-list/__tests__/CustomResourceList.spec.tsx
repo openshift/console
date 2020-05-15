@@ -2,18 +2,10 @@ import * as React from 'react';
 import { shallow } from 'enzyme';
 import * as fuzzy from 'fuzzysearch';
 import { SortByDirection, sortable } from '@patternfly/react-table';
-import {
-  TableRow,
-  TableData,
-  Table,
-  TextFilter,
-  RowFunction,
-} from '@console/internal/components/factory';
+import { TableRow, TableData, Table, RowFunction } from '@console/internal/components/factory';
+import { RowFilter, FilterToolbar } from '@console/internal/components/filter-toolbar';
 import CustomResourceList from '../CustomResourceList';
-import {
-  CustomResourceListProps,
-  CustomResourceListRowFilter,
-} from '../custom-resource-list-types';
+import { CustomResourceListProps } from '../custom-resource-list-types';
 
 let customResourceListProps: CustomResourceListProps;
 
@@ -91,10 +83,10 @@ describe('CustomeResourceList', () => {
 
   const mockSelectedStatuses = ['successful', 'failed'];
 
-  const mockRowFilters: CustomResourceListRowFilter[] = [
+  const mockRowFilters: RowFilter[] = [
     {
+      filterGroupName: 'Status',
       type: 'mock-filter',
-      selected: mockSelectedStatuses,
       reducer: mockReducer,
       items: mockSelectedStatuses.map((status) => ({
         id: status,
@@ -106,6 +98,7 @@ describe('CustomeResourceList', () => {
   customResourceListProps = {
     queryArg: '',
     fetchCustomResources: getItems,
+    textFilter: 'name',
     rowFilters: mockRowFilters,
     sortBy: 'version',
     sortOrder: SortByDirection.desc,
@@ -115,15 +108,31 @@ describe('CustomeResourceList', () => {
     resourceHeader: MockTableHeader,
   };
 
-  const customResourceList = shallow(<CustomResourceList {...customResourceListProps} />);
   it('should render Table component', () => {
+    const customResourceList = shallow(<CustomResourceList {...customResourceListProps} />);
     expect(customResourceList.find(Table).exists()).toBe(true);
   });
 
-  it('should render TextFilter component only when textFilterReducer is present', () => {
-    expect(customResourceList.find(TextFilter).exists()).toBe(true);
-    customResourceListProps.textFilterReducer = undefined;
-    const customResourceListNew = shallow(<CustomResourceList {...customResourceListProps} />);
-    expect(customResourceListNew.find(TextFilter).exists()).toBe(false);
+  it('should render FilterToolbar component when either rowFilters or textFilter is present', () => {
+    let customResourceList;
+
+    // Both filters
+    customResourceList = shallow(<CustomResourceList {...customResourceListProps} />);
+    expect(customResourceList.find(FilterToolbar).exists()).toBe(true);
+
+    // Only text filter
+    customResourceListProps.rowFilters = undefined;
+    customResourceList = shallow(<CustomResourceList {...customResourceListProps} />);
+    expect(customResourceList.find(FilterToolbar).exists()).toBe(true);
+
+    // Neither text nor row filters
+    customResourceListProps.textFilter = undefined;
+    customResourceList = shallow(<CustomResourceList {...customResourceListProps} />);
+    expect(customResourceList.find(FilterToolbar).exists()).toBe(false);
+
+    // Only row filters
+    customResourceListProps.rowFilters = mockRowFilters;
+    customResourceList = shallow(<CustomResourceList {...customResourceListProps} />);
+    expect(customResourceList.find(FilterToolbar).exists()).toBe(true);
   });
 });
