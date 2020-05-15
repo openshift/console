@@ -12,11 +12,7 @@ import { VMDashboardContext } from '../../vms/vm-dashboard-context';
 import { getVMLikeModel } from '../../../selectors/vm/vmlike';
 import { getNetworks, getDisks } from '../../../selectors/vm';
 import { getVMINetworks, getVMIDisks } from '../../../selectors/vmi';
-import {
-  VM_DETAIL_DETAILS_HREF,
-  VM_DETAIL_DISKS_HREF,
-  VM_DETAIL_NETWORKS_HREF,
-} from '../../../constants';
+import { VM_DETAIL_DISKS_HREF, VM_DETAIL_NETWORKS_HREF, DiskType } from '../../../constants';
 
 export const VMInventoryCard: React.FC<VMInventoryCardProps> = () => {
   const vmDashboardContext = React.useContext(VMDashboardContext);
@@ -32,15 +28,38 @@ export const VMInventoryCard: React.FC<VMInventoryCardProps> = () => {
   const disks = vm ? getDisks(vm) : getVMIDisks(vmi);
   const diskCount = disks.filter((d) => d?.disk).length;
   const cdromCount = disks.filter((d) => d?.cdrom).length;
+  const lunCount = disks.filter((d) => d?.lun).length;
   // TODO: per design, snapshots should be added here (snapshots are not implemented at all atm)
 
   const basePath = resourcePath(getVMLikeModel(vmiLike).kind, name, namespace);
   const DisksTitle = React.useCallback(
-    ({ children }) => <Link to={`${basePath}/${VM_DETAIL_DISKS_HREF}`}>{children}</Link>,
+    ({ children }) => (
+      <Link
+        to={`${basePath}/${VM_DETAIL_DISKS_HREF}?rowFilter-disk-types=${DiskType.DISK.getValue()}`}
+      >
+        {children}
+      </Link>
+    ),
     [basePath],
   );
   const CDROMTitle = React.useCallback(
-    ({ children }) => <Link to={`${basePath}/${VM_DETAIL_DETAILS_HREF}`}>{children}</Link>,
+    ({ children }) => (
+      <Link
+        to={`${basePath}/${VM_DETAIL_DISKS_HREF}?rowFilter-disk-types=${DiskType.CDROM.getValue()}`}
+      >
+        {children}
+      </Link>
+    ),
+    [basePath],
+  );
+  const LUNTitle = React.useCallback(
+    ({ children }) => (
+      <Link
+        to={`${basePath}/${VM_DETAIL_DISKS_HREF}?rowFilter-disk-types=${DiskType.LUN.getValue()}`}
+      >
+        {children}
+      </Link>
+    ),
     [basePath],
   );
   const NicsTitle = React.useCallback(
@@ -54,24 +73,42 @@ export const VMInventoryCard: React.FC<VMInventoryCardProps> = () => {
         <DashboardCardTitle>Inventory</DashboardCardTitle>
       </DashboardCardHeader>
       <DashboardCardBody isLoading={isLoading}>
-        <InventoryItem
-          isLoading={isLoading}
-          title="NIC"
-          count={nicCount}
-          TitleComponent={NicsTitle}
-        />
-        <InventoryItem
-          isLoading={isLoading}
-          title="Disk"
-          count={diskCount}
-          TitleComponent={DisksTitle}
-        />
-        <InventoryItem
-          isLoading={isLoading}
-          title="CD-ROM"
-          count={cdromCount}
-          TitleComponent={CDROMTitle}
-        />
+        {nicCount > 0 && (
+          <InventoryItem
+            isLoading={isLoading}
+            title="NIC"
+            count={nicCount}
+            TitleComponent={NicsTitle}
+            key="nic-inventoy-item"
+          />
+        )}
+        {diskCount > 0 && (
+          <InventoryItem
+            isLoading={isLoading}
+            title={DiskType.DISK.toString()}
+            count={diskCount}
+            TitleComponent={DisksTitle}
+            key="disk-inventoy-item"
+          />
+        )}
+        {cdromCount > 0 && (
+          <InventoryItem
+            isLoading={isLoading}
+            title={DiskType.CDROM.toString()}
+            count={cdromCount}
+            TitleComponent={CDROMTitle}
+            key="cdrom-inventoy-item"
+          />
+        )}
+        {lunCount > 0 && (
+          <InventoryItem
+            isLoading={isLoading}
+            title={DiskType.LUN.toString()}
+            count={lunCount}
+            TitleComponent={LUNTitle}
+            key="lun-inventoy-item"
+          />
+        )}
       </DashboardCardBody>
     </DashboardCard>
   );
