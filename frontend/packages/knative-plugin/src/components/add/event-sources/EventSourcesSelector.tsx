@@ -14,12 +14,13 @@ interface EventSourcesSelectorProps {
 
 const EventSourcesSelector: React.FC<EventSourcesSelectorProps> = ({ eventSourceList }) => {
   const eventSourceItems = Object.keys(eventSourceList).length;
-  const { setFieldValue, setFieldTouched, validateForm, setErrors } = useFormikContext<
+  const { setFieldValue, setFieldTouched, validateForm, setErrors, setStatus } = useFormikContext<
     FormikValues
   >();
   const handleItemChange = React.useCallback(
     (item: string) => {
       setErrors({});
+      setStatus({});
       if (isKnownEventSource(item)) {
         const nameData = `data.${item.toLowerCase()}`;
         const sourceData = getEventSourceData(item.toLowerCase());
@@ -36,7 +37,7 @@ const EventSourcesSelector: React.FC<EventSourcesSelectorProps> = ({ eventSource
       setFieldTouched('apiVersion', true);
       validateForm();
     },
-    [setErrors, setFieldValue, setFieldTouched, validateForm],
+    [setErrors, setStatus, setFieldValue, setFieldTouched, validateForm],
   );
 
   const itemSelectorField = (
