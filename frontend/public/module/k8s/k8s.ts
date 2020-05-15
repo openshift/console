@@ -45,14 +45,20 @@ const parseAPIVersion = (version: string) => {
     : null;
 };
 
-export const crdVersionSort = (v1: string, v2: string) => {
+export const apiVersionCompare = (v1: string, v2: string) => {
   const v1Parsed = parseAPIVersion(v1);
   const v2Parsed = parseAPIVersion(v2);
 
   // Check null parsed versions first
-  if (_.isEmpty(v1Parsed) || _.isEmpty(v2Parsed)) {
+  if (!v1Parsed || !v2Parsed) {
     // If a value fails null check order it last
-    return v1Parsed ? -1 : v2Parsed ? 1 : 0;
+    if (v1Parsed) {
+      return -1;
+    }
+    if (v2Parsed) {
+      return 1;
+    }
+    return v1.localeCompare(v2);
   }
   // Then sort on major version with no qualifiers: v3 > v1
   if (
@@ -83,11 +89,8 @@ export const crdVersionSort = (v1: string, v2: string) => {
 export const getLatestVersionForCRD = (crd: CustomResourceDefinitionKind) => {
   const sorted = crd.spec.versions
     ?.filter((version) => version.served)
-    ?.reduce((acc, servedVersion) => {
-      acc.push(servedVersion.name);
-      return acc;
-    }, [])
-    ?.sort(crdVersionSort);
+    ?.map(({ name }) => name)
+    ?.sort(apiVersionCompare);
   return parseAPIVersion(sorted?.[0]) ? sorted[0] : crd.spec.version;
 };
 

@@ -1,5 +1,5 @@
 import {
-  crdVersionSort,
+  apiVersionCompare,
   getLatestVersionForCRD,
   referenceFor,
   referenceForCRD,
@@ -24,9 +24,8 @@ import {
   testForValidVersionsCRD,
   testForUnservedVersionsCRD,
   testForInvalidVersionsCRD,
-  testNamespace,
-  testOwnedResourceInstance,
-} from '../../../__mocks__/k8sResourcesMocks';
+} from '../../../__mocks__/crds';
+import { testNamespace, testOwnedResourceInstance } from '../../../__mocks__/k8sResourcesMocks';
 import {
   PodModel,
   DeploymentModel,
@@ -114,7 +113,7 @@ describe('crdVersionSort', () => {
         testCRDVersionV2Alpha1.name,
         testCRDVersionV3Beta1.name,
         testCRDVersionV1.name,
-      ].sort(crdVersionSort),
+      ].sort(apiVersionCompare),
     ).toEqual([
       testCRDVersionV8Unserved.name,
       testCRDVersionV1.name,
@@ -138,9 +137,7 @@ describe('crdVersionSort', () => {
         testCRDVersionV3Beta1.name,
         testCRDVersionV1.name,
         testCRDInvalidVersionTwo.name,
-      ]
-        .sort(crdVersionSort)
-        .slice(0, 7),
+      ].sort(apiVersionCompare),
     ).toEqual([
       testCRDVersionV8Unserved.name,
       testCRDVersionV1.name,
@@ -149,6 +146,8 @@ describe('crdVersionSort', () => {
       testCRDVersionV2Alpha1.name,
       testCRDVersionV1Alpha2.name,
       testCRDVersionV1Alpha1.name,
+      testCRDInvalidVersionTwo.name,
+      testCRDInvalidVersion.name,
     ]);
   });
 });

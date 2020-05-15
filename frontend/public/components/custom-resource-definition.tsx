@@ -26,8 +26,8 @@ import {
   SectionHeading,
 } from './utils';
 import {
+  apiVersionCompare,
   CRDVersion,
-  crdVersionSort,
   CustomResourceDefinitionKind,
   getLatestVersionForCRD,
   K8sKind,
@@ -125,7 +125,7 @@ const Established: React.FC<{ crd: CustomResourceDefinitionKind }> = ({ crd }) =
 
 const EmptyVersionsMsg: React.FC<{}> = () => <EmptyBox label="CRD Versions" />;
 
-const CRDVersionsHeader = [
+const crdVersionTableHeaders = [
   {
     title: 'Name',
     transforms: [sortable],
@@ -140,39 +140,34 @@ const CRDVersionsHeader = [
   },
 ];
 
-const CRDVersionsRows = (versions: CRDVersion[]) =>
-  _.map(versions, (version: CRDVersion) => [
+const CRDVersionTable: React.FC<CRDVersionProps> = ({ versions }) => {
+  const [sortBy, setSortBy] = React.useState<PFSortState>({});
+
+  const compare = (a, b) => {
+    const aVal = a?.[sortBy.index] ?? '';
+    const bVal = b?.[sortBy.index] ?? '';
+    return sortBy.index === 0 ? apiVersionCompare(aVal, bVal) : aVal.localeCompare(bVal);
+  };
+
+  const versionRows = _.map(versions, (version: CRDVersion) => [
     version.name,
     version.served.toString(),
     version.storage.toString(),
   ]);
 
-const CRDVersionTable: React.FC<CRDVersionProps> = ({ versions }) => {
-  const [versionRows, setVersionRows] = React.useState<string[][]>(CRDVersionsRows(versions));
-  const [sortBy, setSortBy] = React.useState<PFSortState>({});
+  sortBy.direction === SortByDirection.asc
+    ? versionRows.sort(compare)
+    : versionRows.sort(compare).reverse();
 
   const onSort = (_event, index, direction) => {
-    let sortedRows;
-    if (index === 0) {
-      sortedRows = versionRows.sort((a, b) => crdVersionSort(a[index], b[index]));
-    } else {
-      sortedRows = versionRows.sort((a, b) =>
-        a[index] < b[index] ? -1 : a[index] > b[index] ? 1 : 0,
-      );
-    }
-    setVersionRows(direction === SortByDirection.asc ? sortedRows : sortedRows.reverse());
-
-    setSortBy({
-      index,
-      direction,
-    });
+    setSortBy({ index, direction });
   };
 
   return versionRows.length > 0 ? (
     <PFTable
       variant={TableVariant.compact}
       aria-label="CRD Versions"
-      cells={CRDVersionsHeader}
+      cells={crdVersionTableHeaders}
       rows={versionRows}
       onSort={onSort}
       sortBy={sortBy}
