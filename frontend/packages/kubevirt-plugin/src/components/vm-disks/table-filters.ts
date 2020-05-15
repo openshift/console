@@ -3,9 +3,8 @@ import { RowFilter } from '@console/internal/components/filter-toolbar';
 import { DiskType } from '../../constants/vm/storage';
 
 const typeReducer = (obj) => {
-  const diskType = obj?.type;
-
-  return diskType ? diskType.getValue() : DiskType.DISK.getValue();
+  const diskType = obj?.type || DiskType.DISK;
+  return diskType.getValue();
 };
 
 export const diskSourceFilter: RowFilter = {
