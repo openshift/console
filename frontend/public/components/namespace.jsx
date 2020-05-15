@@ -20,7 +20,8 @@ import { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
 
 import { NamespaceModel, ProjectModel, SecretModel } from '../models';
 import { coFetchJSON } from '../co-fetch';
-import { k8sGet } from '../module/k8s';
+import { k8sGet, referenceForModel } from '../module/k8s';
+import * as k8sActions from '../actions/k8s';
 import * as UIActions from '../actions/ui';
 import { DetailsPage, ListPage, Table, TableRow, TableData } from './factory';
 import {
@@ -61,6 +62,7 @@ import {
   getNamespaceDashboardConsoleLinks,
   ProjectDashboard,
 } from './dashboard/project-dashboard/project-dashboard';
+import { removeQueryArgument } from './utils/router';
 
 const getModel = (useProjects) => (useProjects ? ProjectModel : NamespaceModel);
 const getDisplayName = (obj) =>
@@ -266,23 +268,29 @@ const projectTableHeader = ({ showMetrics, showActions }) => {
   ];
 };
 
-const ProjectLink = connect(null, { setActiveNamespace: UIActions.setActiveNamespace })(
-  ({ project, setActiveNamespace }) => (
-    <span className="co-resource-item co-resource-item--truncate">
-      <ResourceIcon kind="Project" />
-      <Button
-        isInline
-        title={project.metadata.name}
-        type="button"
-        className="co-resource-item__resource-name"
-        onClick={() => setActiveNamespace(project.metadata.name)}
-        variant="link"
-      >
-        {project.metadata.name}
-      </Button>
-    </span>
-  ),
-);
+const ProjectLink = connect(null, {
+  setActiveNamespace: UIActions.setActiveNamespace,
+  filterList: k8sActions.filterList,
+})(({ project, setActiveNamespace, filterList }) => (
+  <span className="co-resource-item co-resource-item--truncate">
+    <ResourceIcon kind="Project" />
+    <Button
+      isInline
+      title={project.metadata.name}
+      type="button"
+      className="co-resource-item__resource-name"
+      onClick={() => {
+        setActiveNamespace(project.metadata.name);
+        removeQueryArgument('project-name');
+        // clear project-name filter when active namespace is changed
+        filterList(referenceForModel(ProjectModel), 'project-name', '');
+      }}
+      variant="link"
+    >
+      {project.metadata.name}
+    </Button>
+  </span>
+));
 const projectHeaderWithoutActions = () =>
   projectTableHeader({ showMetrics: false, showActions: false });
 
@@ -662,11 +670,15 @@ class NamespaceBarDropdowns_ extends React.Component {
       if (newNamespace === CREATE_NEW_RESOURCE) {
         createProjectModal({
           blocking: true,
-          onSubmit: (newProject) => setActiveNamespace(newProject.metadata.name),
+          onSubmit: (newProject) => {
+            setActiveNamespace(newProject.metadata.name);
+            removeQueryArgument('project-name');
+          },
         });
       } else {
         onNamespaceChange && onNamespaceChange(newNamespace);
         setActiveNamespace(newNamespace);
+        removeQueryArgument('project-name');
       }
     };
 
