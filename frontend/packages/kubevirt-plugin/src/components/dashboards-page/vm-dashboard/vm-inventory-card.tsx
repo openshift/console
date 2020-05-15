@@ -79,30 +79,34 @@ export const VMInventoryCard: React.FC<VMInventoryCardProps> = () => {
             title="NIC"
             count={nicCount}
             TitleComponent={NicsTitle}
+            key="nic-inventoy-item"
           />
         )}
         {diskCount > 0 && (
           <InventoryItem
             isLoading={isLoading}
-            title="Disk"
+            title={DiskType.DISK.toString()}
             count={diskCount}
             TitleComponent={DisksTitle}
+            key="disk-inventoy-item"
           />
         )}
         {cdromCount > 0 && (
           <InventoryItem
             isLoading={isLoading}
-            title="CD-ROM"
+            title={DiskType.CDROM.toString()}
             count={cdromCount}
             TitleComponent={CDROMTitle}
+            key="cdrom-inventoy-item"
           />
         )}
         {lunCount > 0 && (
           <InventoryItem
             isLoading={isLoading}
-            title="LUN"
+            title={DiskType.LUN.toString()}
             count={lunCount}
             TitleComponent={LUNTitle}
+            key="lun-inventoy-item"
           />
         )}
       </DashboardCardBody>
