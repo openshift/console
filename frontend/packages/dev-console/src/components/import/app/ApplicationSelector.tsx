@@ -28,9 +28,10 @@ const ApplicationSelector: React.FC<ApplicationSelectorProps> = ({
   useFormikValidationFix(selectedKey.value);
 
   const onDropdownChange = (key: string, application: string) => {
+    setFieldValue('application.selectedKey', key);
     setFieldTouched('application.selectedKey', true);
     setFieldValue('application.name', sanitizeApplicationValue(application, key));
-    setFieldValue('application.selectedKey', key);
+    setFieldTouched('application.name', true);
   };
 
   const handleOnLoad = (applicationList: { [key: string]: string }) => {
