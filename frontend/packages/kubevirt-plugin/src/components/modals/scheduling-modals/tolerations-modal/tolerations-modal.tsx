@@ -1,11 +1,12 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import { ModalTitle, ModalBody, ModalComponentProps } from '@console/internal/components/factory';
-import { Button, ButtonVariant } from '@patternfly/react-core';
+import { Button, ButtonVariant, Text, TextVariants } from '@patternfly/react-core';
 import {
   FirehoseResult,
   withHandlePromise,
   HandlePromiseProps,
+  ExternalLink,
 } from '@console/internal/components/utils';
 import { k8sPatch, NodeKind } from '@console/internal/module/k8s';
 import { NodeModel } from '@console/internal/models';
@@ -15,8 +16,6 @@ import { VMLikeEntityKind } from '../../../../types/vmLike';
 import { getVMLikeTolerations } from '../../../../selectors/vm-like/selectors';
 import { getVMLikeModel } from '../../../../selectors/vm';
 import { getTolerationsPatch } from '../../../../k8s/patches/vm/vm-scheduling-patches';
-import { NodeChecker } from '../shared/NodeChecker/node-checker';
-import { useNodeQualifier } from '../shared/hooks';
 import { LabelsList } from '../../../LabelsList/labels-list';
 import { TOLERATIONS_MODAL_TITLE, TOLERATIONS_EFFECTS } from '../shared/consts';
 import { useIDEntities } from '../../../../hooks/use-id-entities';
@@ -24,6 +23,8 @@ import { useCollisionChecker } from '../../../../hooks/use-collision-checker';
 import { TolerationRow } from './toleration-row';
 import { TolerationHeader } from './toleration-header';
 import { TolerationLabel } from './types';
+
+import '../affinity-modal/affinity-modal.scss';
 
 export const TModal = withHandlePromise(
   ({
@@ -47,8 +48,6 @@ export const TModal = withHandlePromise(
     ] = useIDEntities<TolerationLabel>(
       getVMLikeTolerations(vmLikeEntity)?.map((toleration, id) => ({ ...toleration, id })),
     );
-
-    const qualifiedNodes = useNodeQualifier(nodes, 'taint', tolerationsLabels);
 
     const [showCollisionAlert, reload] = useCollisionChecker<VMLikeEntityKind>(
       vmLikeFinal,
@@ -95,6 +94,22 @@ export const TModal = withHandlePromise(
       <div className="modal-content">
         <ModalTitle>{TOLERATIONS_MODAL_TITLE}</ModalTitle>
         <ModalBody>
+          <div className="affinity-modal__desc-container">
+            <Text className="affinity-modal__desc" component={TextVariants.small}>
+              {
+                'Tolerations are applied to VMs, and allow (but do not require) the VMs to schedule onto nodes with matching taints.'
+              }
+            </Text>
+            <Text className="affinity-modal__desc" component={TextVariants.small}>
+              {'Add tolerations to allow a VM to schedule onto nodes with matching taints.'}
+            </Text>
+            <ExternalLink
+              text="Taints and Tolerations documentation"
+              href={
+                'https://kubevirt.io/user-guide/#/usage/node-placement?id=taints-and-tolerations'
+              }
+            />
+          </div>
           <LabelsList
             isEmpty={tolerationsLabels.length === 0}
             kind="Node"
@@ -116,7 +131,6 @@ export const TModal = withHandlePromise(
               </>
             )}
           </LabelsList>
-          <NodeChecker qualifiedNodes={qualifiedNodes} />
         </ModalBody>
         <ModalFooter
           id="tolerations"

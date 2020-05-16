@@ -13,7 +13,7 @@ export const TolerationRow = ({ label, onChange, onDelete }: TolerationRowProps)
         <TextInput
           id={`toleration-${id}-key-input`}
           className="kv-label__key"
-          placeholder="key"
+          placeholder="taint key"
           isRequired
           type="text"
           value={key}
@@ -25,7 +25,7 @@ export const TolerationRow = ({ label, onChange, onDelete }: TolerationRowProps)
         <TextInput
           id={`toleration-${id}-value-input`}
           className="kv-label__value"
-          placeholder="value"
+          placeholder="taint value"
           isRequired
           type="text"
           value={value}
