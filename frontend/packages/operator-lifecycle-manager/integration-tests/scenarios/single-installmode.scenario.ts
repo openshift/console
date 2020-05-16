@@ -148,8 +148,8 @@ describe('Interacting with a `OwnNamespace` install mode Operator (Prometheus)',
   it('displays metadata about Prometheus Operator in the "Overview" section', async () => {
     await browser.get(`${appHost}/k8s/ns/${testName}/clusterserviceversions`);
     await crudView.isLoaded();
-    await operatorView.rowForOperator('Prometheus Operator').click();
-    await browser.wait(until.presenceOf($('.loading-box__loaded')), 5000);
+    await operatorView.operatorNameLink('Prometheus Operator').click();
+    await browser.wait(until.presenceOf($('.loading-box__loaded')));
 
     expect($('.co-m-pane__details').isDisplayed()).toBe(true);
   });
@@ -157,6 +157,7 @@ describe('Interacting with a `OwnNamespace` install mode Operator (Prometheus)',
   it('displays empty message in the "All Instances" section', async () => {
     await element(by.linkText('All Instances')).click();
     await crudView.isLoaded();
+    await browser.wait(until.visibilityOf(crudView.statusMessageTitle));
 
     expect(crudView.statusMessageTitle.getText()).toEqual('No Operands Found');
     expect(crudView.statusMessageDetail.getText()).toEqual(
@@ -167,7 +168,7 @@ describe('Interacting with a `OwnNamespace` install mode Operator (Prometheus)',
   it('displays form editor for creating a new `Prometheus` instance', async () => {
     await browser.wait(until.visibilityOf(element(by.buttonText('Create New'))));
     await element(by.buttonText('Create New')).click();
-    await browser.wait(until.visibilityOf($$('.pf-c-dropdown__menu').first()), 1000);
+    await browser.wait(until.visibilityOf($$('.pf-c-dropdown__menu').first()));
     await $$('.pf-c-dropdown__menu')
       .first()
       .element(by.buttonText('Prometheus'))
@@ -188,7 +189,7 @@ describe('Interacting with a `OwnNamespace` install mode Operator (Prometheus)',
 
   it('displays metadata about the created `Prometheus` in its "Overview" section', async () => {
     await retry(() => operatorView.operandLink('example').click());
-    await browser.wait(until.presenceOf($('.loading-box__loaded')), 5000);
+    await browser.wait(until.presenceOf($('.loading-box__loaded')));
 
     expect($('.co-operand-details__section--info').isDisplayed()).toBe(true);
   });
@@ -199,7 +200,7 @@ describe('Interacting with a `OwnNamespace` install mode Operator (Prometheus)',
     await $('.yaml-editor__buttons')
       .element(by.buttonText('Save'))
       .click();
-    await browser.wait(until.visibilityOf(crudView.successMessage), 1000);
+    await browser.wait(until.visibilityOf(crudView.successMessage));
 
     expect(crudView.successMessage.getText()).toContain('example has been updated to version');
   });
@@ -231,10 +232,7 @@ describe('Interacting with a `OwnNamespace` install mode Operator (Prometheus)',
     await browser.wait(until.visibilityOf($('.co-catalog-install-modal')));
     await element(by.cssContainingText('#confirm-action', 'Uninstall')).click();
     await crudView.isLoaded();
-    await browser.wait(
-      until.invisibilityOf(operatorView.rowForOperator('Prometheus Operator')),
-      5000,
-    );
+    await browser.wait(until.invisibilityOf(operatorView.rowForOperator('Prometheus Operator')));
 
     expect(operatorView.rowForOperator('Prometheus Operator').isPresent()).toBe(false);
   });

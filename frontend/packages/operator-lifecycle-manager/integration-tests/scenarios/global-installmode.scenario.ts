@@ -12,6 +12,7 @@ import * as crudView from '@console/internal-integration-tests/views/crud.view';
 import * as catalogView from '@console/internal-integration-tests/views/catalog.view';
 import * as catalogPageView from '@console/internal-integration-tests/views/catalog-page.view';
 import * as sidenavView from '@console/internal-integration-tests/views/sidenav.view';
+import * as yamlView from '@console/internal-integration-tests/views/yaml.view';
 import * as operatorView from '../views/operator.view';
 import * as operatorHubView from '../views/operator-hub.view';
 import { click } from '@console/shared/src/test-utils/utils';
@@ -94,7 +95,7 @@ describe('Interacting with an `AllNamespaces` install mode Operator (Jaeger)', (
     await catalogView.categoryTabs.get(0).click();
     await catalogPageView.clickFilterCheckbox(customProviderUID);
     await catalogPageView.catalogTileByID(jaegerTileID).click();
-    await browser.wait(until.visibilityOf(operatorHubView.operatorModal));
+    await browser.wait(until.visibilityOf(operatorHubView.operatorModalInstallBtn));
     await operatorHubView.operatorModalInstallBtn.click();
     await operatorHubView.createSubscriptionFormLoaded();
 
@@ -146,8 +147,8 @@ describe('Interacting with an `AllNamespaces` install mode Operator (Jaeger)', (
   it('displays metadata about Operator in the "Overview" section', async () => {
     await browser.get(`${appHost}/k8s/ns/${testName}/clusterserviceversions`);
     await crudView.isLoaded();
-    await operatorView.rowForOperator('Jaeger Tracing').click();
-    await browser.wait(until.presenceOf($('.loading-box__loaded')), 5000);
+    await operatorView.operatorNameLink('Jaeger Tracing').click();
+    await browser.wait(until.presenceOf($('.loading-box__loaded')));
 
     expect($('.co-m-pane__details').isDisplayed()).toBe(true);
   });
@@ -155,6 +156,7 @@ describe('Interacting with an `AllNamespaces` install mode Operator (Jaeger)', (
   it('displays empty message in the "Jaeger" section', async () => {
     await element(by.linkText('Jaeger')).click();
     await crudView.isLoaded();
+    await browser.wait(until.visibilityOf(crudView.statusMessageDetail));
 
     expect(crudView.statusMessageTitle.getText()).toEqual('No Operands Found');
     expect(crudView.statusMessageDetail.getText()).toEqual(
@@ -180,18 +182,16 @@ describe('Interacting with an `AllNamespaces` install mode Operator (Jaeger)', (
 
   it('displays metadata about the created `Jaeger` in its "Overview" section', async () => {
     await retry(() => operatorView.operandLink(jaegerName).click());
-    await browser.wait(until.presenceOf($('.loading-box__loaded')), 5000);
+    await browser.wait(until.presenceOf($('.loading-box__loaded')));
 
     expect($('.co-operand-details__section--info').isDisplayed()).toBe(true);
   });
 
   it('displays the raw YAML for the `Jaeger`', async () => {
     await element(by.linkText('YAML')).click();
-    await browser.wait(until.presenceOf($('.yaml-editor__buttons')));
-    await $('.yaml-editor__buttons')
-      .element(by.buttonText('Save'))
-      .click();
-    await browser.wait(until.visibilityOf(crudView.successMessage), 2000);
+    await yamlView.isLoaded();
+    await yamlView.saveButton.click();
+    await browser.wait(until.visibilityOf(crudView.successMessage));
 
     expect(crudView.successMessage.getText()).toContain(
       `${jaegerName} has been updated to version`,
@@ -225,7 +225,7 @@ describe('Interacting with an `AllNamespaces` install mode Operator (Jaeger)', (
     await browser.wait(until.visibilityOf($('.co-catalog-install-modal')));
     await element(by.cssContainingText('#confirm-action', 'Uninstall')).click();
     await crudView.isLoaded();
-    await browser.wait(until.invisibilityOf(operatorView.rowForOperator('Jaeger Tracing')), 5000);
+    await browser.wait(until.invisibilityOf(operatorView.rowForOperator('Jaeger Tracing')));
 
     expect(operatorView.rowForOperator('Jaeger Tracing').isPresent()).toBe(false);
   });
