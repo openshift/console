@@ -150,6 +150,10 @@ const getPreferredPodTermFromRowData = ({
 });
 
 export const getAffinityFromRowsData = (affinityRows: AffinityRowData[]) => {
+  if (affinityRows.length === 0) {
+    return null;
+  }
+
   const pickRows = (rowType, rowCondition, mapper) =>
     affinityRows
       .filter(({ type, condition }) => type === rowType && condition === rowCondition)
