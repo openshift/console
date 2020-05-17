@@ -40,14 +40,14 @@ export const CDRomRow: React.FC<CDRomRowProps> = ({
         fieldId="cd-rom-modal-grid"
         className="kubevirt-cdrom-modal__grid pf-l-grid pf-m-11-col-on-md"
       >
-        <FormGroup label="Media type" fieldId="cd-rom-modal-type" className="pf-m-3-col-on-md">
+        <FormGroup label="Source" fieldId="cd-rom-modal-type" className="pf-m-3-col-on-md">
           <FormSelect
             value={type}
             onChange={(v) => onChange(name, 'type', v)}
             id={`cd-rom-modal-select-type-${name}`}
           >
             <FormSelectOption key="container-option" value="container" label="Container" />
-            <FormSelectOption key="pvc-option" value="pvc" label="Persistent Volume Claim" />
+            <FormSelectOption key="pvc-option" value="pvc" label="Attach Disk" />
             <FormSelectOption key="url-option" value="url" label="URL" />
             {isWindows && (
               <FormSelectOption
@@ -124,6 +124,7 @@ export const CDRomRow: React.FC<CDRomRowProps> = ({
           <div className="pf-m-8-col-on-md">
             <K8sResourceSelectRow
               key="pvc-select"
+              title="Attach Disk"
               id={`cdrom-pvc-input-${name}`}
               isDisabled={inProgress}
               name={pvc}
