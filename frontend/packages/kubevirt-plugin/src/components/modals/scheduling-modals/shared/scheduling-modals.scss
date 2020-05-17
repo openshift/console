@@ -1,13 +1,13 @@
-.affinity-modal__add-btn {
+.scheduling-modals__add-btn {
   padding: var(--pf-global--spacer--xl);
 }
 
-.affinity-modal__desc-container {
+.scheduling-modals__desc-container {
   display: flex;
   flex-direction: column;
   margin-bottom: var(--pf-global--spacer--md);
 
-  .affinity-modal__desc {
+  .scheduling-modals__desc {
     color: var(--pf-global--Color--200);
   }
 }

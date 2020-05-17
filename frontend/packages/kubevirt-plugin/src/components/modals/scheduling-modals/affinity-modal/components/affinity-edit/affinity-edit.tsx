@@ -98,8 +98,8 @@ export const AffinityEdit: React.FC<AffinityEditProps> = ({
   return (
     <>
       <ModalBody>
-        <div className="affinity-modal__desc-container">
-          <Text className="affinity-modal__desc" component={TextVariants.small}>
+        <div className="scheduling-modals__desc-container">
+          <Text className="scheduling-modals__desc" component={TextVariants.small}>
             {
               'Define an affinity rule. This rule will be added to the list of affinity rules applied to this workload.'
             }
@@ -203,24 +203,24 @@ export const AffinityEdit: React.FC<AffinityEditProps> = ({
                 : 'Missing fields in workload labels'
             }
           >
-            <div className="affinity-modal__desc-container">
+            <div className="scheduling-modals__desc-container">
               {isNodeAffinity ? (
                 <>
-                  <Text className="affinity-modal__desc" component={TextVariants.small}>
+                  <Text className="scheduling-modals__desc" component={TextVariants.small}>
                     {'Select nodes that must have all the following expressions.'}
                   </Text>
-                  <Text className="affinity-modal__desc" component={TextVariants.small}>
+                  <Text className="scheduling-modals__desc" component={TextVariants.small}>
                     {
                       'Note that for Node field expressions, entering a full path is required in the Key field (e.g. `metadata.name: value`)'
                     }
                   </Text>
-                  <Text className="affinity-modal__desc" component={TextVariants.small}>
+                  <Text className="scheduling-modals__desc" component={TextVariants.small}>
                     {'A list of matching nodes will be provided on label input below.'}
                   </Text>
                 </>
               ) : (
                 <>
-                  <Text className="affinity-modal__desc" component={TextVariants.small}>
+                  <Text className="scheduling-modals__desc" component={TextVariants.small}>
                     {'Select workloads that must have all the following expressions.'}
                   </Text>
                 </>

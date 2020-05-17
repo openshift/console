@@ -65,7 +65,8 @@ export const useNodeQualifier = <T extends IDLabel = IDLabel>(
             nodeTaints &&
             filteredConstraints.every(({ key, value, effect }) =>
               nodeTaints.some(
-                (taint) => taint.key === key && taint.value === value && taint.effect === effect,
+                (taint) =>
+                  taint.key === key && (!value || taint.value === value) && taint.effect === effect,
               ),
             )
           ) {

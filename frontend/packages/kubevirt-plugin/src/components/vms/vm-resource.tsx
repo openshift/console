@@ -229,11 +229,7 @@ export const VMSchedulingList: React.FC<VMSchedulingListProps> = ({
   });
   const isCPUPinned = vmiLikeWrapper?.isDedicatedCPUPlacement();
   const nodeSelector = vmiLikeWrapper?.getNodeSelector();
-  const tolerations = vmiLikeWrapper?.getTolerations() || [];
-  const tolerationsLabels = tolerations.reduce((acc, { key, value }) => {
-    acc[key] = value;
-    return acc;
-  }, {});
+  const tolerationsWrapperCount = (vmiLikeWrapper?.getTolerations() || []).length;
   const affinityWrapperCount = getRowsDataFromAffinity(vmiLikeWrapper?.getAffinity())?.length;
 
   return (
@@ -263,7 +259,11 @@ export const VMSchedulingList: React.FC<VMSchedulingListProps> = ({
               })
             }
           >
-            <Selector kind="Node" selector={tolerationsLabels} />
+            {tolerationsWrapperCount > 0 ? (
+              `${tolerationsWrapperCount} Tolerations rules`
+            ) : (
+              <p className="text-muted">No tolerations</p>
+            )}
           </VMDetailsItem>
 
           <VMDetailsItem
