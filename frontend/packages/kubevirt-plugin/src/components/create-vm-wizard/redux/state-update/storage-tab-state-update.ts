@@ -97,11 +97,16 @@ export const internalStorageDiskBusUpdater = ({
         VMWizardStorageType.WINDOWS_GUEST_TOOLS,
       ].includes(type)
     ) {
-      const resultValidation = newValidations.validateBus(new DiskWrapper(disk).getDiskBus());
+      const diskWrapper = new DiskWrapper(disk);
+      const diskType = diskWrapper.getType();
+      const diskBus = diskWrapper.getDiskBus();
+      const resultValidation = newValidations.validateBus(diskType, diskBus);
       if (!resultValidation.isValid && resultValidation.type === ValidationErrorType.Error) {
         someBusChanged = true;
         finalDisk = new DiskWrapper(disk, true)
-          .appendTypeData({ bus: newValidations.getDefaultBus().getValue() })
+          .appendTypeData({
+            bus: newValidations.getDefaultBus(diskType).getValue(),
+          })
           .asResource();
       }
     }

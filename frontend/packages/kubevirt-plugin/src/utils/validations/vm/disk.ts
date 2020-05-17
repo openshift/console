@@ -140,7 +140,9 @@ export const validateDisk = (
 
   if (diskType !== DiskType.FLOPPY) {
     addRequired(disk.getDiskBus());
-    validations.diskInterface = tValidations.validateBus(disk.getDiskBus()).asValidationObject();
+    validations.diskInterface = tValidations
+      .validateBus(disk.getType(), disk.getDiskBus())
+      .asValidationObject();
   }
 
   return {

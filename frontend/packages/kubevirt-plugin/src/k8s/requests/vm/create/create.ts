@@ -8,12 +8,7 @@ import {
   getFieldValue,
 } from '../../../../components/create-vm-wizard/selectors/vm-settings';
 import { VMTemplateWrapper } from '../../../wrapper/vm/vm-template-wrapper';
-import {
-  TEMPLATE_PARAM_VM_NAME,
-  TEMPLATE_PARAM_VM_NAME_DESC,
-  TEMPLATE_TYPE_LABEL,
-  TEMPLATE_TYPE_VM,
-} from '../../../../constants/vm';
+import { TEMPLATE_PARAM_VM_NAME, TEMPLATE_PARAM_VM_NAME_DESC } from '../../../../constants/vm';
 import { DataVolumeWrapper } from '../../../wrapper/vm/data-volume-wrapper';
 import { buildOwnerReference } from '../../../../utils';
 import { VMWrapper } from '../../../wrapper/vm/vm-wrapper';
@@ -21,7 +16,11 @@ import { toShallowJS } from '../../../../utils/immutable';
 import { iGetRelevantTemplate } from '../../../../selectors/immutable/template/combined';
 import { CreateVMParams } from './types';
 import { initializeVM } from './initialize-vm';
-import { initializeCommonMetadata, initializeCommonVMMetadata } from './common';
+import {
+  initializeCommonMetadata,
+  initializeCommonVMMetadata,
+  initializeCommonTemplateMetadata,
+} from './common';
 import { selectVM } from '../../../../selectors/vm-template/basic';
 import { ProcessedTemplatesModel } from '../../../../models/models';
 import { ImporterResult, OnVMCreate } from '../types';
@@ -70,9 +69,6 @@ export const createVMTemplate = async (params: CreateVMParams) => {
   const finalTemplate = new VMTemplateWrapper().init({
     name: combinedSimpleSettings[VMSettingsField.NAME],
     namespace,
-    labels: {
-      [TEMPLATE_TYPE_LABEL]: TEMPLATE_TYPE_VM,
-    },
     objects: [template.getVM().asResource()],
     parameters: [
       {
@@ -84,6 +80,7 @@ export const createVMTemplate = async (params: CreateVMParams) => {
   });
 
   initializeCommonMetadata(combinedSimpleSettings, finalTemplate, template.asResource());
+  initializeCommonTemplateMetadata(finalTemplate, template.asResource());
 
   const templateResult = await k8sWrapperCreate(finalTemplate);
 
