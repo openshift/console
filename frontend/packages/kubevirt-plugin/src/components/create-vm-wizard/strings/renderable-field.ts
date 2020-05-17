@@ -11,10 +11,10 @@ import { ProvisionSource } from '../../../constants/vm/provision-source';
 export const titleResolver: RenderableFieldResolver = {
   [OvirtProviderField.OVIRT_ENGINE_SECRET_NAME]: 'RHV Instance',
   [OvirtProviderField.API_URL]: 'API URL',
+  [OvirtProviderField.CERTIFICATE]: 'CA certificate',
   [OvirtProviderField.USERNAME]: 'Username',
   [OvirtProviderField.PASSWORD]: 'Password',
   [OvirtProviderField.REMEMBER_PASSWORD]: 'Save as new RHV Instance secret',
-  [OvirtProviderField.CERTIFICATE]: 'CA certificate',
   [OvirtProviderField.CLUSTER]: 'Cluster',
   [OvirtProviderField.VM]: 'VM to Import',
   [OvirtProviderField.STATUS]: '',
