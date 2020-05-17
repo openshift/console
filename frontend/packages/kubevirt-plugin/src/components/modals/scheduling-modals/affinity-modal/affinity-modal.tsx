@@ -38,7 +38,8 @@ import {
   columnClasses,
 } from './helpers';
 import { getAffinityPatch } from '../../../../k8s/patches/vm/vm-scheduling-patches';
-import './affinity-modal.scss';
+
+import '../shared/scheduling-modals.scss';
 
 export const AffinityModal = withHandlePromise<AffinityModalProps>(
   ({
@@ -142,7 +143,7 @@ export const AffinityModal = withHandlePromise<AffinityModalProps>(
             <ModalTitle>{modalTitle}</ModalTitle>
           </SplitItem>
           <SplitItem isFilled />
-          <SplitItem className="affinity-modal__add-btn">
+          <SplitItem className="scheduling-modals__add-btn">
             {!isEditing && affinities.length > 0 && (
               <Button onClick={() => onAffinityClickAdd()} variant="secondary">
                 Add Affinity rule
@@ -161,19 +162,19 @@ export const AffinityModal = withHandlePromise<AffinityModalProps>(
           <>
             <ModalBody>
               {affinities.length > 0 && (
-                <div className="affinity-modal__desc-container">
-                  <Text className="affinity-modal__desc" component={TextVariants.small}>
+                <div className="scheduling-modals__desc-container">
+                  <Text className="scheduling-modals__desc" component={TextVariants.small}>
                     {
                       'Set scheduling requirements and affect the ranking of the nodes candidate for scheduling.'
                     }
                   </Text>
-                  <Text className="affinity-modal__desc" component={TextVariants.small}>
+                  <Text className="scheduling-modals__desc" component={TextVariants.small}>
                     {
                       "Rules with 'Preferred' condition will stack with an 'AND' relation between them."
                     }
                   </Text>
 
-                  <Text className="affinity-modal__desc" component={TextVariants.small}>
+                  <Text className="scheduling-modals__desc" component={TextVariants.small}>
                     {
                       "Rules with 'Required' condition will stack with an 'OR' relation between them."
                     }
@@ -198,19 +199,19 @@ export const AffinityModal = withHandlePromise<AffinityModalProps>(
                     No Affinity rules found
                   </Title>
                   <EmptyStateBody>
-                    <div className="affinity-modal__desc-container">
-                      <Text className="affinity-modal__desc" component={TextVariants.small}>
+                    <div className="scheduling-modals__desc-container">
+                      <Text className="scheduling-modals__desc" component={TextVariants.small}>
                         {
                           'Set scheduling requirements and affect the ranking of the nodes candidate for scheduling.'
                         }
                       </Text>
-                      <Text className="affinity-modal__desc" component={TextVariants.small}>
+                      <Text className="scheduling-modals__desc" component={TextVariants.small}>
                         {
                           "Rules with 'Preferred' condition will stack with an 'AND' relation between them."
                         }
                       </Text>
 
-                      <Text className="affinity-modal__desc" component={TextVariants.small}>
+                      <Text className="scheduling-modals__desc" component={TextVariants.small}>
                         {
                           "Rules with 'Required' condition will stack with an 'OR' relation between them."
                         }

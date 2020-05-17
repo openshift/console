@@ -32,7 +32,7 @@ import { TolerationRow } from './toleration-row';
 import { TolerationHeader } from './toleration-header';
 import { TolerationLabel } from './types';
 
-import '../affinity-modal/affinity-modal.scss';
+import '../shared/scheduling-modals.scss';
 
 export const TModal = withHandlePromise(
   ({
@@ -104,13 +104,13 @@ export const TModal = withHandlePromise(
       <div className="modal-content">
         <ModalTitle>{TOLERATIONS_MODAL_TITLE}</ModalTitle>
         <ModalBody>
-          <div className="affinity-modal__desc-container">
-            <Text className="affinity-modal__desc" component={TextVariants.small}>
+          <div className="scheduling-modals__desc-container">
+            <Text className="scheduling-modals__desc" component={TextVariants.small}>
               {
                 'Tolerations are applied to VMs, and allow (but do not require) the VMs to schedule onto nodes with matching taints.'
               }
             </Text>
-            <Text className="affinity-modal__desc" component={TextVariants.small}>
+            <Text className="scheduling-modals__desc" component={TextVariants.small}>
               {'Add tolerations to allow a VM to schedule onto nodes with matching taints.'}
             </Text>
             <ExternalLink
