@@ -333,7 +333,7 @@ const Topology: React.FC<ComponentProps> = ({
         return null;
       }
       if (selectedEntity.getType() === TYPE_VIRTUAL_MACHINE) {
-        return <TopologyVmPanel vm={selectedEntity} />;
+        return <TopologyVmPanel vmNode={selectedEntity} />;
       }
       return <TopologyResourcePanel item={selectedEntity.getData() as TopologyDataObject} />;
     }

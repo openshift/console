@@ -20,7 +20,6 @@ import {
   TopologyDataObject,
   getTopologyResourceObject,
 } from '@console/dev-console/src/components/topology';
-import { ModifyApplication } from '@console/dev-console/src/actions/modify-application';
 import { vmMenuActions } from '../../components/vms/menu-actions';
 import { VmNode } from './nodes/VmNode';
 import { TYPE_VIRTUAL_MACHINE } from './const';
@@ -37,7 +36,6 @@ export const vmActions = (vm: TopologyDataObject<VMNodeData>): KebabOption[] => 
 
   const model = modelFor(referenceFor(contextMenuResource));
   return [
-    ModifyApplication(model, contextMenuResource),
     ...vmMenuActions.map((action) => {
       return action(model, contextMenuResource, {
         vmi,
