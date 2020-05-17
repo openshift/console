@@ -7,7 +7,7 @@ import { V1alpha1DataVolume } from '../../types/vm/disk/V1alpha1DataVolume';
 export type VMTabProps = {
   obj?: VMILikeEntityKind;
   vm?: VMKind;
-  vmi?: VMIKind;
+  vmis?: VMIKind[];
   pods?: PodKind[];
   migrations?: K8sResourceKind[];
   templates?: TemplateKind[];

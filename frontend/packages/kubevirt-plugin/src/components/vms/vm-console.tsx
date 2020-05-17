@@ -129,7 +129,7 @@ const VmConsolesWrapper: React.FC<VmConsolesWrapperProps> = (props) => {
 export const VMConsoleFirehose: React.FC<VMTabProps> = ({
   obj: objProp,
   vm: vmProp,
-  vmi: vmiProp,
+  vmis: vmisProp,
   vmImports,
   pods,
   migrations,
@@ -137,7 +137,7 @@ export const VMConsoleFirehose: React.FC<VMTabProps> = ({
   customData: { kindObj },
 }) => {
   const vm = kindObj === VirtualMachineModel && isVM(objProp) ? objProp : vmProp;
-  const vmi = kindObj === VirtualMachineInstanceModel && isVMI(objProp) ? objProp : vmiProp;
+  const vmi = kindObj === VirtualMachineInstanceModel && isVMI(objProp) ? objProp : vmisProp[0];
 
   const namespace = getNamespace(vm);
 
