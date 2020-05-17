@@ -250,7 +250,8 @@ export const AffinityEdit: React.FC<AffinityEditProps> = ({
                   onDelete={onFieldDelete}
                 />
               </FormRow>
-              <NodeChecker qualifiedNodes={getQualifiedNodes()} />
+              {(affinityExpressions.length > 0 || affinityFields.length > 0) &&
+                !isAffinityInvalid && <NodeChecker qualifiedNodes={getQualifiedNodes()} />}
             </>
           )}
         </Form>
