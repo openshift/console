@@ -23,7 +23,11 @@ import {
 } from '../consts';
 import './node-checker.scss';
 
-export const NodeChecker: React.FC<NodeCheckerProps> = ({ qualifiedNodes }) => {
+export const NodeChecker: React.FC<NodeCheckerProps> = ({
+  qualifiedNodes,
+  wariningTitle,
+  warningMessage,
+}) => {
   const size = qualifiedNodes.length;
   const buttonText = pluralize(size, 'Node');
   return (
@@ -31,7 +35,11 @@ export const NodeChecker: React.FC<NodeCheckerProps> = ({ qualifiedNodes }) => {
       className="kv-node-checker"
       variant={size > 0 ? 'success' : 'warning'}
       isInline
-      title={size > 0 ? SCHEDULING_NODES_MATCH_TEXT(size) : SCHEDULING_NO_NODES_MATCH_TEXT}
+      title={
+        size > 0
+          ? SCHEDULING_NODES_MATCH_TEXT(size)
+          : wariningTitle || SCHEDULING_NO_NODES_MATCH_TEXT
+      }
     >
       <Popover
         headerContent={<div>{buttonText} found</div>}
@@ -49,7 +57,7 @@ export const NodeChecker: React.FC<NodeCheckerProps> = ({ qualifiedNodes }) => {
           <Text component={TextVariants.h4}>
             {size > 0
               ? SCHEDULING_NODES_MATCH_BUTTON_TEXT(size)
-              : SCHEDULING_NO_NODES_MATCH_BUTTON_TEXT}
+              : warningMessage || SCHEDULING_NO_NODES_MATCH_BUTTON_TEXT}
           </Text>
         </Button>
       </Popover>
@@ -59,4 +67,6 @@ export const NodeChecker: React.FC<NodeCheckerProps> = ({ qualifiedNodes }) => {
 
 type NodeCheckerProps = {
   qualifiedNodes: NodeKind[];
+  wariningTitle?: string;
+  warningMessage?: string;
 };

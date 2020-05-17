@@ -15,11 +15,19 @@ import { ModalFooter } from '../../modal/modal-footer';
 import { VMLikeEntityKind } from '../../../../types/vmLike';
 import { getVMLikeTolerations } from '../../../../selectors/vm-like/selectors';
 import { getVMLikeModel } from '../../../../selectors/vm';
+import { NodeChecker } from '../shared/NodeChecker/node-checker';
+import { useNodeQualifier } from '../shared/hooks';
 import { getTolerationsPatch } from '../../../../k8s/patches/vm/vm-scheduling-patches';
 import { LabelsList } from '../../../LabelsList/labels-list';
-import { TOLERATIONS_MODAL_TITLE, TOLERATIONS_EFFECTS } from '../shared/consts';
+import {
+  TOLERATIONS_MODAL_TITLE,
+  TOLERATIONS_EFFECTS,
+  SCHEDULING_NO_NODES_TAINTED_MATCH_TEXT,
+  SCHEDULING_NO_NODES_TAINTED_MATCH_BUTTON_TEXT,
+} from '../shared/consts';
 import { useIDEntities } from '../../../../hooks/use-id-entities';
 import { useCollisionChecker } from '../../../../hooks/use-collision-checker';
+
 import { TolerationRow } from './toleration-row';
 import { TolerationHeader } from './toleration-header';
 import { TolerationLabel } from './types';
@@ -48,6 +56,8 @@ export const TModal = withHandlePromise(
     ] = useIDEntities<TolerationLabel>(
       getVMLikeTolerations(vmLikeEntity)?.map((toleration, id) => ({ ...toleration, id })),
     );
+
+    const qualifiedNodes = useNodeQualifier(nodes, 'taint', tolerationsLabels);
 
     const [showCollisionAlert, reload] = useCollisionChecker<VMLikeEntityKind>(
       vmLikeFinal,
@@ -131,6 +141,13 @@ export const TModal = withHandlePromise(
               </>
             )}
           </LabelsList>
+          {tolerationsLabels.length > 0 && isLoaded(nodes) && !inProgress && !loadError && (
+            <NodeChecker
+              qualifiedNodes={qualifiedNodes}
+              wariningTitle={SCHEDULING_NO_NODES_TAINTED_MATCH_TEXT}
+              warningMessage={SCHEDULING_NO_NODES_TAINTED_MATCH_BUTTON_TEXT}
+            />
+          )}
         </ModalBody>
         <ModalFooter
           id="tolerations"
