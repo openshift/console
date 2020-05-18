@@ -52,13 +52,8 @@ const DEFAULTS = {
   // Namespace
   label: `openshift.io/cluster-monitoring=true`,
 
-  nodeListHandler: async () => {
-    // Node list fluctautes
-    await browser.wait(until.and(crudView.untilNoLoadersPresent));
-    await browser.wait(until.visibilityOf($('[aria-label="Node Table"] tbody tr')));
-    const rowCount = async () => $$('[aria-label="Node Table"] tbody tr').count();
-    await waitUntil(rowCount, 3, 5);
-  },
+  // Table Row
+  tableRows: $('[aria-label="Node Table"] tbody tr'),
 
   getStorageClusterLink: async () => {
     const index = await getOperatorHubCardIndex('Storage Cluster');
@@ -69,13 +64,15 @@ const DEFAULTS = {
   nodeNames: $$('tbody [data-key="1"]'),
   // Node locations in the Node List Table
   nodeLocations: $$('tbody [data-key="3"'),
+
+  filterInput: $('[placeholder="Filter by name..."]'),
 };
 
 const OCP_44 = {
   ocsOperator: $('a[data-test-operator-row="OpenShift Container Storage"]'),
-  ocsOperatorStatus: $('.co-clusterserviceversion-row__status'),
-  createLink: $('.pf-c-card__footer a'),
   searchInputOperators: $('input[placeholder="Filter by name..."]'),
+  tableRows: $('[aria-label="node list table"] tbody tr'),
+  filterInput: $('[placeholder="Filter by name..."]'),
 };
 
 export const currentSelectors = (() => {
@@ -134,6 +131,14 @@ export const goToStorageClasses = async () => {
   await browser.wait(until.and(crudView.untilNoLoadersPresent));
 };
 
+export const nodeListHandler = async () => {
+  await browser.wait(until.and(crudView.untilNoLoadersPresent));
+  await browser.wait(until.visibilityOf(currentSelectors.tableRows));
+  await browser.wait(until.visibilityOf($('[aria-label="Node Table"] tbody tr')));
+  const rowCount = async () => $$('[aria-label="Node Table"] tbody tr').count();
+  await waitUntil(rowCount, 3, 5);
+};
+
 export class InstallCluster {
   async subscribeToOperator(catalogSource = currentSelectors.CATALOG_SRC) {
     await goToOperatorHub();
@@ -162,7 +167,7 @@ export class InstallCluster {
     }
     const storageClusterLink = await currentSelectors.getStorageClusterLink();
     await click(storageClusterLink);
-    await currentSelectors.nodeListHandler();
+    await nodeListHandler();
     const { selectedNodes, workersAZ } = await selectWorkerRows();
     await click(currentSelectors.sizeDropdown);
     await click(currentSelectors.optionSmallSize);

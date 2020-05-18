@@ -13,7 +13,6 @@ import {
 } from '../../utils/consts';
 import {
   InstallCluster,
-  filterInput,
   goToStorageClasses,
   currentSelectors,
   TEST_PLATFORM,
@@ -185,13 +184,13 @@ if (TEST_PLATFORM === 'OCS') {
 
     it('tests if all ceph-rbd, cephfs, noobaa storage classes are shown', async () => {
       await goToStorageClasses();
-      await sendKeys(filterInput, STORAGE_CLASS_PATTERNS.RBD);
+      await sendKeys(currentSelectors.filterInput, STORAGE_CLASS_PATTERNS.RBD);
       const rdbClass = await getDataFromRowAndCol(0, 1, podNameFilter);
       expect(rdbClass.includes(STORAGE_CLASS_PATTERNS.RBD)).toBe(true);
-      await sendKeys(filterInput, STORAGE_CLASS_PATTERNS.FS);
+      await sendKeys(currentSelectors.filterInput, STORAGE_CLASS_PATTERNS.FS);
       const fsClass = await getDataFromRowAndCol(0, 1, podNameFilter);
       expect(fsClass.includes(STORAGE_CLASS_PATTERNS.FS)).toBe(true);
-      await sendKeys(filterInput, STORAGE_CLASS_PATTERNS.NOOBAA);
+      await sendKeys(currentSelectors.filterInput, STORAGE_CLASS_PATTERNS.NOOBAA);
       const noobaaClass = await getDataFromRowAndCol(0, 1, podNameFilter);
       expect(noobaaClass.includes(STORAGE_CLASS_PATTERNS.NOOBAA)).toBe(true);
     });
