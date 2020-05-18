@@ -5,15 +5,9 @@ import {
   ValidationErrorType,
   ValidationObject,
 } from '@console/shared';
-import {
-  MAC_ADDRESS_INVALID_ERROR,
-  NETWORK_MULTUS_NAME_EXISTS,
-  NETWORK_REQUIRED,
-  NIC_NAME_EXISTS,
-} from '../strings';
+import { MAC_ADDRESS_INVALID_ERROR, NETWORK_REQUIRED, NIC_NAME_EXISTS } from '../strings';
 import { NetworkInterfaceWrapper } from '../../../k8s/wrapper/vm/network-interface-wrapper';
 import { NetworkWrapper } from '../../../k8s/wrapper/vm/network-wrapper';
-import { NetworkType } from '../../../constants/vm';
 import { isValidMAC } from './validations';
 import { UINetworkInterfaceValidation } from '../../../types/ui/nic';
 
@@ -31,20 +25,9 @@ export const validateNicName = (
   return validation;
 };
 
-export const validateNetwork = (
-  network: NetworkWrapper,
-  usedMultusNetworkNames: Set<string>,
-): ValidationObject => {
+export const validateNetwork = (network: NetworkWrapper): ValidationObject => {
   if (!network.hasType()) {
     return asValidationObject(NETWORK_REQUIRED, ValidationErrorType.TrivialError);
-  }
-
-  if (
-    network.getType() === NetworkType.MULTUS &&
-    usedMultusNetworkNames &&
-    usedMultusNetworkNames.has(network.getMultusNetworkName())
-  ) {
-    return asValidationObject(NETWORK_MULTUS_NAME_EXISTS);
   }
 
   return null;
@@ -60,18 +43,16 @@ export const validateNIC = (
   network: NetworkWrapper,
   {
     usedInterfacesNames,
-    usedMultusNetworkNames,
     acceptEmptyNetwork,
   }: {
     usedInterfacesNames?: Set<string>;
-    usedMultusNetworkNames?: Set<string>;
     acceptEmptyNetwork?: boolean; // do not use for strict validation
   },
 ): UINetworkInterfaceValidation => {
   const validations = {
     name: validateNicName(interfaceWrapper && interfaceWrapper.getName(), usedInterfacesNames),
     macAddress: validateMACAddress(interfaceWrapper && interfaceWrapper.getMACAddress()),
-    network: validateNetwork(network, usedMultusNetworkNames),
+    network: validateNetwork(network),
   };
 
   let hasAllRequiredFilled =

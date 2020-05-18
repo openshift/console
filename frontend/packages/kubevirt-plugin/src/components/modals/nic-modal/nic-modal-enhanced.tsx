@@ -6,7 +6,6 @@ import { k8sPatch, referenceForModel } from '@console/internal/module/k8s';
 import { NetworkAttachmentDefinitionModel } from '@console/network-attachment-definition-plugin';
 import { getName, getNamespace } from '@console/shared';
 import { getLoadedData } from '../../../utils';
-import { NetworkType } from '../../../constants/vm';
 import { getInterfaces, getUsedNetworks, asVM, getVMLikeModel } from '../../../selectors/vm';
 import { NetworkInterfaceWrapper } from '../../../k8s/wrapper/vm/network-interface-wrapper';
 import { VMLikeEntityKind } from '../../../types/vmLike';
@@ -30,16 +29,6 @@ const NICModalFirehoseComponent: React.FC<NICModalFirehoseComponentProps> = (pro
     getInterfaces(vm)
       .map(getSimpleName)
       .filter((n) => n && n !== nicWrapper.getName()),
-  );
-
-  const usedMultusNetworkNames: Set<string> = new Set(
-    usedNetworksChoices
-      .filter(
-        (usedNetwork) =>
-          usedNetwork.getType() === NetworkType.MULTUS &&
-          usedNetwork.getMultusNetworkName() !== networkWrapper.getMultusNetworkName(),
-      )
-      .map((usedNetwork) => usedNetwork.getMultusNetworkName()),
   );
 
   const allowPodNetwork =
@@ -69,7 +58,6 @@ const NICModalFirehoseComponent: React.FC<NICModalFirehoseComponentProps> = (pro
     <NICModal
       {...restProps}
       usedInterfacesNames={usedInterfacesNames}
-      usedMultusNetworkNames={usedMultusNetworkNames}
       allowPodNetwork={allowPodNetwork}
       nic={new NetworkInterfaceWrapper(nicWrapper, true)}
       network={new NetworkWrapper(networkWrapper, true)}
