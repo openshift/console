@@ -56,6 +56,7 @@ const DataConsumptionCard: React.FC<DashboardItemProps> = ({
   let suffixLabel = '';
   let maxVal: number;
   let maxUnit: string;
+  let body: React.ReactNode;
 
   const isLoading = _.values(result).includes(undefined);
 
@@ -81,6 +82,73 @@ const DataConsumptionCard: React.FC<DashboardItemProps> = ({
     if (suffixLabel) suffixLabel = `(in ${suffixLabel})`;
   }
 
+  if (isLoading) {
+    body = (
+      <>
+        <div className="skeleton-text nb-data-consumption-card__chart-skeleton" />
+        <GraphEmpty height={200} loading />
+        <div className="skeleton-text nb-data-consumption-card__chart-legend-skeleton" />
+      </>
+    );
+  } else if (!error && !chartData.some(_.isEmpty)) {
+    body = (
+      <>
+        <div className="nb-data-consumption-card__chart-label text-secondary">
+          {CHART_LABELS[sortByKpi]} {suffixLabel}
+        </div>
+        <Chart
+          containerComponent={
+            <ChartVoronoiContainer
+              labelComponent={<ChartTooltip style={{ fontSize: 8, paddingBottom: 0 }} />}
+              labels={({ datum }) => `${datum.y} ${maxUnit}`}
+              voronoiDimension="x"
+            />
+          }
+          minDomain={{ y: 0 }}
+          maxDomain={{ y: maxVal + Math.round(maxVal * 0.25) }}
+          domainPadding={{ x: [padding, padding] }}
+          legendComponent={
+            <ChartLegend
+              themeColor={ChartThemeColor.purple}
+              data={legendData}
+              orientation="horizontal"
+              symbolSpacer={5}
+              gutter={2}
+              height={30}
+              padding={{ top: 50, bottom: 0 }}
+              style={{ labels: { fontSize: 8 } }}
+            />
+          }
+          legendPosition="bottom-left"
+          padding={{
+            bottom: 50,
+            left: 30,
+            right: 20,
+            top: 30,
+          }}
+          themeColor={ChartThemeColor.purple}
+        >
+          <ChartAxis style={{ tickLabels: { fontSize: 8, padding: 2 } }} />
+          <ChartAxis
+            dependentAxis
+            showGrid
+            tickCount={10}
+            style={{
+              tickLabels: { fontSize: 8, padding: 0 },
+            }}
+          />
+          <ChartGroup offset={sortByKpi === BY_EGRESS ? 0 : 11}>
+            {chartData.map((data, i) => (
+              <ChartBar key={`chartbar-${i}`} data={data} /> // eslint-disable-line react/no-array-index-key
+            ))}
+          </ChartGroup>
+        </Chart>
+      </>
+    );
+  } else {
+    body = <GraphEmpty />;
+  }
+
   return (
     <DashboardCard>
       <DashboardCardHeader>
@@ -92,64 +160,7 @@ const DataConsumptionCard: React.FC<DashboardItemProps> = ({
           setKpi={setsortByKpi}
         />
       </DashboardCardHeader>
-      <DashboardCardBody className="co-dashboard-card__body--top-margin" isLoading={isLoading}>
-        {!error && !chartData.some(_.isEmpty) ? (
-          <>
-            <div className="nb-data-consumption-card__chart-label text-secondary">
-              {CHART_LABELS[sortByKpi]} {suffixLabel}
-            </div>
-            <Chart
-              containerComponent={
-                <ChartVoronoiContainer
-                  labelComponent={<ChartTooltip style={{ fontSize: 8, paddingBottom: 0 }} />}
-                  labels={({ datum }) => `${datum.y} ${maxUnit}`}
-                  voronoiDimension="x"
-                />
-              }
-              minDomain={{ y: 0 }}
-              maxDomain={{ y: maxVal + 10 }}
-              domainPadding={{ x: [padding, padding] }}
-              legendComponent={
-                <ChartLegend
-                  themeColor={ChartThemeColor.purple}
-                  data={legendData}
-                  orientation="horizontal"
-                  symbolSpacer={5}
-                  gutter={2}
-                  height={30}
-                  padding={{ top: 50, bottom: 0 }}
-                  style={{ labels: { fontSize: 8 } }}
-                />
-              }
-              legendPosition="bottom-left"
-              padding={{
-                bottom: 50,
-                left: 30,
-                right: 20,
-                top: 30,
-              }}
-              themeColor={ChartThemeColor.purple}
-            >
-              <ChartAxis style={{ tickLabels: { fontSize: 8, padding: 2 } }} />
-              <ChartAxis
-                dependentAxis
-                showGrid
-                tickCount={10}
-                style={{
-                  tickLabels: { fontSize: 8, padding: 0 },
-                }}
-              />
-              <ChartGroup offset={sortByKpi === BY_EGRESS ? 0 : 11}>
-                {chartData.map((data, i) => (
-                  <ChartBar key={i} data={data} /> // eslint-disable-line react/no-array-index-key
-                ))}
-              </ChartGroup>
-            </Chart>
-          </>
-        ) : (
-          <GraphEmpty />
-        )}
-      </DashboardCardBody>
+      <DashboardCardBody className="co-dashboard-card__body--top-margin">{body}</DashboardCardBody>
     </DashboardCard>
   );
 };

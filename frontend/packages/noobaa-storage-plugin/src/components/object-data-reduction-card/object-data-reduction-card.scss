@@ -1,5 +1,3 @@
-@import '~@patternfly/patternfly/sass-utilities/colors';
-
 .nb-object-data-reduction-card__row-status {
   align-items: center;
   display: flex;
@@ -21,4 +19,8 @@
 
 .nb-object-data-reduction-card__row-title {
   margin-right: 0.5em;
+}
+
+.nb-object-data-reduction__item-body--loading {
+  width: 9rem;
 }
