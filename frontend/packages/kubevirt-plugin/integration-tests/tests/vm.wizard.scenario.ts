@@ -7,13 +7,13 @@ import {
   deleteResources,
 } from '@console/shared/src/test-utils/utils';
 import { getAnnotations, getLabels } from '../../src/selectors/selectors';
-import { VirtualMachine } from './models/virtualMachine';
 import {
   getResourceObject,
   resolveStorageDataAttribute,
   selectNonDefaultAccessMode,
   selectNonDefaultVolumeMode,
 } from './utils/utils';
+import { Wizard } from './models/wizard';
 import {
   VM_BOOTUP_TIMEOUT_SECS,
   CLONE_VM_TIMEOUT_SECS,
@@ -23,6 +23,8 @@ import {
   commonTemplateVersion,
   COMMON_TEMPLATES_REVISION,
   INNER_TEMPLATE_VERSION,
+  DISK_INTERFACE,
+  STORAGE_CLASS,
 } from './utils/consts';
 import { multusNAD, cdGuestTools, basicVMConfig } from './utils/mocks';
 import {
@@ -46,6 +48,7 @@ describe('Kubevirt create VM using wizard', () => {
   const testDataVolume = getTestDataVolume();
   const defaultAccessMode = resolveStorageDataAttribute(kubevirtStorage, 'accessMode');
   const defaultVolumeMode = resolveStorageDataAttribute(kubevirtStorage, 'volumeMode');
+  const wizard = new Wizard();
 
   beforeAll(async () => {
     createResources([multusNAD, testDataVolume]);
@@ -65,11 +68,11 @@ describe('Kubevirt create VM using wizard', () => {
     it(
       `${VMTestCaseIDs[configName]} Create VM using ${configName}.`,
       async () => {
-        const vm = new VirtualMachine(
+        const vm = await wizard.createVirtualMachine(
           vmConfig(configName.toLowerCase(), testName, provisionConfig),
         );
         await withResource(leakedResources, vm.asResource(), async () => {
-          await vm.create(vmConfig(configName.toLowerCase(), testName, provisionConfig));
+          await vm.navigateToDetail();
         });
       },
       specTimeout,
@@ -80,11 +83,11 @@ describe('Kubevirt create VM using wizard', () => {
     const vmName = 'vm-with-cdrom';
     const provisionConfig = provisionConfigs.get(ProvisionConfigName.CONTAINER);
     provisionConfig.CDRoms = [cdGuestTools];
-    const vmCfg = vmConfig(vmName, testName, provisionConfig, basicVMConfig, false);
-    const vm = new VirtualMachine(vmCfg);
-
+    const vm = await wizard.createVirtualMachine(
+      vmConfig(vmName, testName, provisionConfig, basicVMConfig, false),
+    );
     await withResource(leakedResources, vm.asResource(), async () => {
-      await vm.create(vmCfg);
+      await vm.navigateToDetail();
     });
   });
 
@@ -104,13 +107,11 @@ describe('Kubevirt create VM using wizard', () => {
       testVMConfig.startOnCreation = false; // do not check as there is only medium/large profile present and we would get insufficient memory.
       const osID = OSIDLookup[testVMConfig.operatingSystem];
 
-      const vm = new VirtualMachine(testVMConfig);
-
-      await withResource(leakedResources, vm.asResource(), async () => {
-        await vm.create(testVMConfig);
-        const vmResult = vm.getResource();
-        const annotations = getAnnotations(vmResult);
-        const labels = getLabels(vmResult);
+      const vm = await wizard.createVirtualMachine(testVMConfig);
+      const vmResource = vm.getResource();
+      await withResource(leakedResources, vmResource, async () => {
+        const annotations = getAnnotations(vmResource);
+        const labels = getLabels(vmResource);
 
         expect(annotations).toBeDefined();
         expect(labels).toBeDefined();
@@ -149,10 +150,9 @@ describe('Kubevirt create VM using wizard', () => {
         provisionConfigs.get(ProvisionConfigName.URL),
       );
       testVMConfig.networkResources = [];
-      const vm = new VirtualMachine(testVMConfig);
+      const vm = await wizard.createVirtualMachine(testVMConfig);
 
       await withResource(leakedResources, vm.asResource(), async () => {
-        await vm.create(testVMConfig);
         const vmDataVolume = getResourceObject(`${vm.name}-rootdisk`, vm.namespace, 'dv');
 
         expect(vmDataVolume.spec.pvc.accessModes[0]).toEqual(defaultAccessMode);
@@ -170,25 +170,29 @@ describe('Kubevirt create VM using wizard', () => {
       const expectedAccessMode = selectNonDefaultAccessMode(defaultAccessMode).value;
       const expectedVolumeMode = selectNonDefaultVolumeMode(defaultVolumeMode);
 
-      const clonedDiskProvisionConfig = provisionConfigs.get(ProvisionConfigName.DISK);
-      clonedDiskProvisionConfig.storageResources[0].accessMode = expectedAccessMode;
-      clonedDiskProvisionConfig.storageResources[0].volumeMode = expectedVolumeMode;
+      const customAccessVolumeRootDisk = {
+        name: 'rootdisk',
+        size: '1',
+        interface: DISK_INTERFACE.VirtIO,
+        storageClass: `${STORAGE_CLASS}`,
+        accessMode: expectedAccessMode,
+        volumeMode: expectedVolumeMode,
+      };
+      const testVMConfig = vmConfig('test-dv', testName, {
+        provision: {
+          method: ProvisionConfigName.URL,
+          source: basicVMConfig.sourceURL,
+        },
+        storageResources: [customAccessVolumeRootDisk],
+        networkResources: [],
+      });
+      // Do not attempt to start or wait for import as it's likely the created PVC won't bind
+      testVMConfig.startOnCreation = false;
+      testVMConfig.waitForDiskImport = false;
 
-      const testVMConfig = vmConfig(
-        'test-dv',
-        testName,
-        provisionConfigs.get(ProvisionConfigName.URL),
-      );
-      testVMConfig.networkResources = [];
-      const vm = new VirtualMachine(testVMConfig);
-
+      const vm = await wizard.createVirtualMachine(testVMConfig);
       await withResource(leakedResources, vm.asResource(), async () => {
-        await vm.create(testVMConfig);
-        const vmDataVolume = getResourceObject(
-          `${vm.name}-${testDataVolume.metadata.name}`,
-          vm.namespace,
-          'dv',
-        );
+        const vmDataVolume = getResourceObject(`${vm.name}-rootdisk`, vm.namespace, 'dv');
 
         expect(vmDataVolume.spec.pvc.accessModes[0]).toEqual(expectedAccessMode);
         expect(vmDataVolume.spec.pvc.volumeMode).toEqual(expectedVolumeMode);
@@ -205,15 +209,13 @@ describe('Kubevirt create VM using wizard', () => {
       const vm2Config = vmConfig('vm2', testName, clonedDiskProvisionConfig);
       vm1Config.startOnCreation = false;
       vm1Config.networkResources = [];
-      const vm1 = new VirtualMachine(vm1Config);
-      const vm2 = new VirtualMachine(vm2Config);
 
+      const vm1 = await wizard.createVirtualMachine(vm1Config);
       await withResource(leakedResources, vm1.asResource(), async () => {
-        await vm1.create(vm1Config);
         // Don't wait for the first VM to be running
         await vm1.action(VM_ACTION.Start, false);
+        const vm2 = await wizard.createVirtualMachine(vm2Config);
         await withResource(leakedResources, vm2.asResource(), async () => {
-          await vm2.create(vm2Config);
           // Come back to the first VM and verify it is Running as well
           await vm1.waitForStatus(VM_STATUS.Running, CLONED_VM_BOOTUP_TIMEOUT_SECS);
           // Verify that DV of VM created with Cloned disk method points to correct PVC

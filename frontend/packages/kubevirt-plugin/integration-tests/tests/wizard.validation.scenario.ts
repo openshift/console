@@ -1,6 +1,7 @@
 import { execSync } from 'child_process';
 import { browser } from 'protractor';
 import { click, waitForStringInElement } from '@console/shared/src/test-utils/utils';
+import { VirtualMachineModel } from '@console/kubevirt-plugin/src/models';
 import {
   KUBEVIRT_TEMPLATES_PATH,
   KEBAP_ACTION,
@@ -21,7 +22,6 @@ import { getRandStr } from './utils/utils';
 import { diskInterfaceHelper } from '../views/dialogs/diskDialog.view';
 import { DiskDialog } from './dialogs/diskDialog';
 import { saveButton } from '../views/kubevirtUIResource.view';
-import { VirtualMachineModel } from '../../src/models/index';
 
 describe('Wizard validation', () => {
   const wizard = new Wizard();

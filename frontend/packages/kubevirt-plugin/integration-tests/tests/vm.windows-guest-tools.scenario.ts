@@ -2,7 +2,7 @@ import { browser, ExpectedConditions as until } from 'protractor';
 import { testName } from '@console/internal-integration-tests/protractor.conf';
 import { withResource } from '@console/shared/src/test-utils/utils';
 import { isWinToolsImage, getVolumeContainerImage, getVolumes } from '../../src/selectors/vm';
-import { VirtualMachine } from './models/virtualMachine';
+import { Wizard } from './models/wizard';
 import { VM_BOOTUP_TIMEOUT_SECS } from './utils/consts';
 import { getProvisionConfigs, vmConfig } from './vm.wizard.configs';
 import { ProvisionConfigName } from './utils/constants/wizard';
@@ -11,6 +11,7 @@ import { windowsGuestToolsCDElement } from '../views/dialogs/editCDView';
 
 describe('Kubevirt Windows Guest tools', () => {
   const leakedResources = new Set<string>();
+  const wizard = new Wizard();
   const provisionConfigs = getProvisionConfigs();
 
   const configName = ProvisionConfigName.CONTAINER;
@@ -29,7 +30,7 @@ describe('Kubevirt Windows Guest tools', () => {
         windowsVMConfig,
         false, // dont startOnCreation
       );
-      const vm = new VirtualMachine(windowsConfig);
+      const vm = await wizard.createVirtualMachine(windowsConfig);
 
       const isWindowsCDMounted = () =>
         !!getVolumes(vm.getResource()).some((volume) =>
@@ -37,7 +38,6 @@ describe('Kubevirt Windows Guest tools', () => {
         );
 
       await withResource(leakedResources, vm.asResource(), async () => {
-        await vm.create(windowsConfig);
         await browser.wait(until.presenceOf(windowsGuestToolsCDElement));
         expect(isWindowsCDMounted()).toBeTruthy();
       });

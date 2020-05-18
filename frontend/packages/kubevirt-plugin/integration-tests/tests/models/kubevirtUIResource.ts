@@ -92,7 +92,7 @@ export class KubevirtUIResource extends UIResource {
   }
 
   async navigateToConsoles() {
-    await this.navigateToTab(TAB.Consoles);
+    await this.navigateToTab(TAB.Console);
     await isLoaded();
   }
 

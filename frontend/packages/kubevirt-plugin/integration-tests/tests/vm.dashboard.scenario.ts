@@ -1,7 +1,7 @@
 import { browser, ExpectedConditions as until } from 'protractor';
 import { testName } from '@console/internal-integration-tests/protractor.conf';
 import { createResources, deleteResources } from '@console/shared/src/test-utils/utils';
-import { VirtualMachineModel } from '../../src/models';
+import { VirtualMachineModel } from '@console/kubevirt-plugin/src/models';
 import {
   vmDetailsName,
   vmDetailsNamespace,

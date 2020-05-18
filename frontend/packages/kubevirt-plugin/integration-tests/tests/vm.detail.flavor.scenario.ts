@@ -7,7 +7,7 @@ import {
 } from '@console/shared/src/test-utils/utils';
 import * as virtualMachineView from '../views/virtualMachine.view';
 import { VM_CREATE_AND_EDIT_TIMEOUT_SECS } from './utils/consts';
-import { VirtualMachine } from './models/virtualMachine';
+import { Wizard } from './models/wizard';
 import { vmConfig, getProvisionConfigs } from './vm.wizard.configs';
 import * as editFlavorView from '../views/dialogs/editFlavorView';
 import { selectOptionByText, getSelectedOptionText } from './utils/utils';
@@ -16,8 +16,8 @@ import { getCPU, getMemory } from '../../src/selectors/vm/selectors';
 
 describe('KubeVirt VM detail - edit flavor', () => {
   const leakedResources = new Set<string>();
+  const wizard = new Wizard();
   const provisionConfigs = getProvisionConfigs();
-
   const configName = ProvisionConfigName.CONTAINER;
   const provisionConfig = provisionConfigs.get(configName);
 
@@ -35,9 +35,10 @@ describe('KubeVirt VM detail - edit flavor', () => {
       const vm1Config = vmConfig(configName.toLowerCase(), testName, provisionConfig);
       vm1Config.startOnCreation = false;
 
-      const vm = new VirtualMachine(vmConfig(configName.toLowerCase(), testName, provisionConfig));
+      const vm = await wizard.createVirtualMachine(
+        vmConfig(configName.toLowerCase(), testName, provisionConfig),
+      );
       await withResource(leakedResources, vm.asResource(), async () => {
-        await vm.create(vm1Config);
         await vm.navigateToDetail();
         await vm.modalEditFlavor();
         expect(await getSelectedOptionText(editFlavorView.flavorDropdown)).toEqual('Tiny');

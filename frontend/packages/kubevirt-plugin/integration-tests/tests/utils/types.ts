@@ -58,16 +58,17 @@ export type NodePortService = {
   type: string;
 };
 
-export type VMConfig = {
+export type KubevirtResourceConfig = {
   name: string;
-  description: string;
+  description?: string;
+  flavorConfig: FlavorConfig;
   template?: string;
   provisionSource?: ProvisionOption;
   operatingSystem?: string;
-  flavorConfig?: FlavorConfig;
   workloadProfile?: string;
-  startOnCreation: boolean;
-  cloudInit: CloudInitConfig;
+  startOnCreation?: boolean;
+  waitForDiskImport?: boolean;
+  cloudInit?: CloudInitConfig;
   storageResources: StorageResource[];
   CDRoms?: StorageResource[];
   networkResources: NetworkResource[];
@@ -110,18 +111,6 @@ export type ProvisionConfig = {
   networkResources: NetworkResource[];
   storageResources: StorageResource[];
   CDRoms?: StorageResource[];
-};
-
-export type VMTemplateConfig = {
-  name: string;
-  description: string;
-  provisionSource?: ProvisionOption;
-  operatingSystem?: string;
-  flavorConfig?: FlavorConfig;
-  workloadProfile?: string;
-  cloudInit?: CloudInitConfig;
-  storageResources?: StorageResource[];
-  networkResources?: NetworkResource[];
 };
 
 export type Status = VM_STATUS | POD_STATUS;

@@ -10,6 +10,7 @@ import {
   deleteResource,
   withResource,
 } from '@console/shared/src/test-utils/utils';
+import { VirtualMachineModel } from '@console/kubevirt-plugin/src/models';
 import { createNICButton } from '../views/kubevirtUIResource.view';
 import { nicNetwork, nicType } from '../views/dialogs/networkInterface.view';
 import { getInterfaces } from '../../src/selectors/vm/selectors';
@@ -38,7 +39,6 @@ import {
 import { VirtualMachine } from './models/virtualMachine';
 import { Wizard } from './models/wizard';
 import { NetworkInterfaceDialog } from './dialogs/networkInterfaceDialog';
-import { VirtualMachineModel } from '../../src/models/index';
 
 describe('Add/remove disks and NICs on respective VM pages', () => {
   const testVm = getVMManifest('Container', testName, `vm-disk-nic-${testName}`);

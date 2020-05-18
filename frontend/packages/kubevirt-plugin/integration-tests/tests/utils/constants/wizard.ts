@@ -7,7 +7,7 @@ export enum ProvisionConfigName {
 }
 
 export enum OperatingSystem {
-  RHEL7_6 = 'Red Hat Enterprise Linux 7.6',
+  RHEL7 = 'Red Hat Enterprise Linux 7.0 or higher',
   WINDOWS_10 = 'Microsoft Windows 10',
   VALIDATION_TEST = 'Validation Test',
 }
@@ -17,10 +17,10 @@ export const OSIDLookup = {
 };
 
 export enum Flavor {
-  TINY = 'tiny',
-  SMALL = 'small',
-  MEDIUM = 'medium',
-  LARGE = 'large',
+  TINY = 'Tiny',
+  SMALL = 'Small',
+  MEDIUM = 'Medium',
+  LARGE = 'Large',
   CUSTOM = 'Custom',
 }
 

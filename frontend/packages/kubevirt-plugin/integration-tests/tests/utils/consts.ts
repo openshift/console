@@ -45,10 +45,7 @@ export const NOT_RECOMMENDED_BUS_TYPE_WARN = 'Not recommended bus type';
 export const IMPORT_WIZARD_CONN_NAME_PREFIX = 'administrator';
 
 // Web-UI Exceptions
-export const WAIT_TIMEOUT_ERROR = 'Wait Timeout Error.';
-export const WIZARD_CREATE_VM_SUCCESS = 'Successfully created virtual machine';
-export const WIZARD_CREATE_VM_ERROR = 'Creating VM failed';
-export const WIZARD_CREATE_TEMPLATE_ERROR = 'Creating Template failed';
+export const WIZARD_CREATE_SUCCESS = 'Successfully created';
 
 // Framework Exception
 export const UNEXPECTED_ACTION_ERROR = 'Received unexpected action.';
@@ -78,7 +75,7 @@ export const KUBEVIRT_TEMPLATES_PATH =
 export enum TAB {
   Overview = 'Overview',
   Details = 'Details',
-  Consoles = 'Consoles',
+  Console = 'Console',
   Disks = 'Disks',
   Events = 'Events',
   NetworkInterfaces = 'Network Interfaces',
@@ -103,6 +100,12 @@ export enum VMI_ACTION {
   Delete = 'Delete Virtual Machine Instance',
   EditAnnotations = 'Edit Annotations',
   EditLabels = 'Edit Labels',
+}
+
+export enum VMT_ACTION {
+  Create = 'Create Virtual Machine',
+  Delete = 'Delete Template',
+  Edit = 'Edit VM Template',
 }
 
 export enum VM_STATUS {

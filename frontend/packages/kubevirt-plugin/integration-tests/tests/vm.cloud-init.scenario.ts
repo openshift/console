@@ -6,10 +6,11 @@ import { basicVMConfig } from './utils/mocks';
 import { CloudInitConfig, ProvisionConfig } from './utils/types';
 import { ProvisionConfigName } from './utils/constants/wizard';
 import { vmConfig } from './vm.wizard.configs';
-import { VirtualMachine } from './models/virtualMachine';
+import { Wizard } from './models/wizard';
 
 describe('Kubevirt create VM using cloud-init', () => {
   const leakedResources = new Set<string>();
+  const wizard = new Wizard();
 
   const sourceContainer = 'kubevirt/fedora-cloud-container-disk-demo';
   const provisionConfig: ProvisionConfig = {
@@ -40,9 +41,8 @@ describe('Kubevirt create VM using cloud-init', () => {
     testVMConfig.cloudInit = cloudinitConfig;
     testVMConfig.startOnCreation = false;
 
-    const vm = new VirtualMachine(testVMConfig);
+    const vm = await wizard.createVirtualMachine(testVMConfig);
     await withResource(leakedResources, vm.asResource(), async () => {
-      await vm.create(testVMConfig);
       const volumeUserData = get(
         getCloudInitVolume(vm.getResource()),
         'cloudInitNoCloud.userData',
@@ -58,9 +58,8 @@ describe('Kubevirt create VM using cloud-init', () => {
     testVMConfig.cloudInit = customScript;
     testVMConfig.startOnCreation = false;
 
-    const vm = new VirtualMachine(testVMConfig);
+    const vm = await wizard.createVirtualMachine(testVMConfig);
     await withResource(leakedResources, vm.asResource(), async () => {
-      await vm.create(testVMConfig);
       const volumeUserData = get(
         getCloudInitVolume(vm.getResource()),
         'cloudInitNoCloud.userData',

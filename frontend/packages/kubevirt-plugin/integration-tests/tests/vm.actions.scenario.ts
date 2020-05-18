@@ -3,7 +3,6 @@ import { testName } from '@console/internal-integration-tests/protractor.conf';
 import {
   resourceRows,
   resourceRowsPresent,
-  textFilter,
 } from '@console/internal-integration-tests/views/crud.view';
 import {
   addLeakableResource,
@@ -11,7 +10,6 @@ import {
   removeLeakedResources,
   removeLeakableResource,
   waitForCount,
-  fillInput,
   click,
 } from '@console/shared/src/test-utils/utils';
 import { getVMManifest } from './utils/mocks';
@@ -48,7 +46,6 @@ describe('Test VM actions', () => {
 
       // Navigate to Virtual Machines page
       await vm.navigateToListView();
-      await fillInput(textFilter, vmName);
       await resourceRowsPresent();
       await browser.wait(
         until.textToBePresentInElement(resourceRows.first(), VM_STATUS.Off),

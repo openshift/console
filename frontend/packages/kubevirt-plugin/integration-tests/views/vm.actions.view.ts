@@ -1,6 +1,7 @@
 import { $, $$, browser, ExpectedConditions as until } from 'protractor';
 import { rowForName } from '@console/internal-integration-tests/views/crud.view';
 import { waitForCount, click } from '@console/shared/src/test-utils/utils';
+import { PAGE_LOAD_TIMEOUT_SECS } from '../tests/utils/consts';
 
 const disabledDropdownButtons = $$('.pf-m-disabled');
 
@@ -16,9 +17,10 @@ export async function confirmAction() {
       until.presenceOf(confirmActionButton),
       until.elementToBeClickable(confirmActionButton),
     ),
+    PAGE_LOAD_TIMEOUT_SECS,
   );
   await confirmActionButton.click();
-  await browser.wait(until.not(until.presenceOf(dialogOverlay)));
+  await browser.wait(until.not(until.presenceOf(dialogOverlay)), PAGE_LOAD_TIMEOUT_SECS);
 }
 
 /**
