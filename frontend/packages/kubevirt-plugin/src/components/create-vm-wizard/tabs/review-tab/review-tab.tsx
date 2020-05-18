@@ -15,7 +15,7 @@ export const ReviewTabConnected: React.FC<ReviewTabProps> = (props) => {
   const { wizardReduxID } = props;
 
   return (
-    <div className="co-m-pane__body co-m-pane__form">
+    <div>
       <h2 className="pf-c-title pf-m-xl">Review and confirm your settings</h2>
 
       <section className="kubevirt-create-vm-modal__review-tab-section">

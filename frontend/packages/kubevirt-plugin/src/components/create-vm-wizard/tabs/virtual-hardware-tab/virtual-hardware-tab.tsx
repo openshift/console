@@ -110,7 +110,7 @@ const VirtualHardwareTabFirehose: React.FC<VirtualHardwareTabFirehoseProps> = ({
   );
 
   return (
-    <div className="co-m-pane__body co-m-pane__form kubevirt-create-vm-modal__virtual-hardware-tab-container">
+    <div className="kubevirt-create-vm-modal__virtual-hardware-tab-container">
       <Title headingLevel="h5" size="lg">
         Virtual Hardware
       </Title>

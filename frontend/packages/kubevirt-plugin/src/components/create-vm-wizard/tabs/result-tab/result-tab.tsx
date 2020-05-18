@@ -42,7 +42,7 @@ const ResultTabComponent: React.FC<ResultTabComponentProps> = ({
   }
 
   return (
-    <div className="co-m-pane__body co-m-pane__form kubevirt-create-vm-modal__result-tab-outer-container">
+    <div className="kubevirt-create-vm-modal__result-tab-outer-container">
       <div className="kubevirt-create-vm-modal__result-tab-inner-container">{content}</div>
     </div>
   );

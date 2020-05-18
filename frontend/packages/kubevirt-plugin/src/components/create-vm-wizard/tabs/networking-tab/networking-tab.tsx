@@ -81,7 +81,7 @@ const NetworkingTabComponent: React.FC<NetworkingTabComponentProps> = ({
   };
 
   return (
-    <div className="co-m-pane__body co-m-pane__form kubevirt-create-vm-modal__networking-tab-container">
+    <div className="kubevirt-create-vm-modal__networking-tab-container">
       <Split>
         <SplitItem isFilled>
           <Title headingLevel="h5" size="lg">
