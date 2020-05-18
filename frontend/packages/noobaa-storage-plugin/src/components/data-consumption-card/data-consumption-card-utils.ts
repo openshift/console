@@ -126,14 +126,14 @@ export const getDataConsumptionChartData: GetDataConsumptionChartData = (
       max = firstBarMax.value > secondBarMax.value ? firstBarMax : secondBarMax;
       chartData = [
         getChartData(
-          result.physicalUsage,
+          result.logicalUsage,
           metric,
           humanizeBinaryBytes,
           max.unit,
           'Total Logical Used Capacity',
         ),
         getChartData(
-          result.logicalUsage,
+          result.physicalUsage,
           metric,
           humanizeBinaryBytes,
           max.unit,
@@ -143,13 +143,13 @@ export const getDataConsumptionChartData: GetDataConsumptionChartData = (
       legendData = [
         {
           name: `Total Logical Used Capacity ${getLegendData(
-            result.totalPhysicalUsage,
+            result.totalLogicalUsage,
             humanizeBinaryBytes,
           )}`,
         },
         {
           name: `Total Physical Used Capacity ${getLegendData(
-            result.totalLogicalUsage,
+            result.totalPhysicalUsage,
             humanizeBinaryBytes,
           )}`,
         },
