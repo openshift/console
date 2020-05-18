@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { shallow, ShallowWrapper } from 'enzyme';
 import * as _ from 'lodash';
-import { referenceForModel, K8sResourceKind } from '@console/internal/module/k8s';
+import { referenceForModel } from '@console/internal/module/k8s';
 import {
   Table,
   MultiListPage,
@@ -37,6 +37,7 @@ import {
   SubscriptionUpdates,
   SubscriptionUpdatesProps,
   SubscriptionUpdatesState,
+  SubscriptionStatus,
 } from './subscription';
 import { Button } from '@patternfly/react-core';
 
@@ -51,7 +52,7 @@ describe('SubscriptionTableRow', () => {
   let subscription: SubscriptionKind;
 
   const updateWrapper = () => {
-    const rowArgs: RowFunctionArgs<K8sResourceKind> = {
+    const rowArgs: RowFunctionArgs<SubscriptionKind> = {
       obj: subscription,
       index: 0,
       key: '0',
@@ -195,6 +196,7 @@ describe('SubscriptionTableRow', () => {
       wrapper
         .find('tr')
         .childAt(2)
+        .find(SubscriptionStatus)
         .shallow()
         .text(),
     ).toContain('Upgrade available');
@@ -205,6 +207,7 @@ describe('SubscriptionTableRow', () => {
       wrapper
         .find('tr')
         .childAt(2)
+        .find(SubscriptionStatus)
         .shallow()
         .text(),
     ).toEqual('Unknown failure');
@@ -218,6 +221,7 @@ describe('SubscriptionTableRow', () => {
       wrapper
         .find('tr')
         .childAt(2)
+        .find(SubscriptionStatus)
         .shallow()
         .text(),
     ).toContain('Upgrading');
@@ -231,6 +235,7 @@ describe('SubscriptionTableRow', () => {
       wrapper
         .find('tr')
         .childAt(2)
+        .find(SubscriptionStatus)
         .shallow()
         .text(),
     ).toContain('Up to date');

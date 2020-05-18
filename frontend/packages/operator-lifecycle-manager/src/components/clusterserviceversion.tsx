@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { Link, match as RouterMatch } from 'react-router-dom';
 import * as _ from 'lodash';
+import { Link, match as RouterMatch } from 'react-router-dom';
 import { connect } from 'react-redux';
 import * as classNames from 'classnames';
 import { sortable, wrappable } from '@patternfly/react-table';
@@ -83,7 +83,12 @@ import { getInternalObjects, isInternalObject } from '../utils';
 import { ProvidedAPIsPage, ProvidedAPIPage } from './operand';
 import { createUninstallOperatorModal } from './modals/uninstall-operator-modal';
 import { operatorGroupFor, operatorNamespaceFor } from './operator-group';
-import { SubscriptionDetails, catalogSourceForSubscription } from './subscription';
+import {
+  SubscriptionDetails,
+  catalogSourceForSubscription,
+  upgradeRequiresApproval,
+  UpgradeApprovalLink,
+} from './subscription';
 import { ClusterServiceVersionLogo, referenceForProvidedAPI, providedAPIsFor } from './index';
 import { getBreadcrumbPath } from '@console/internal/components/utils/breadcrumbs';
 
@@ -208,14 +213,39 @@ const menuActionsForCSV = (
     : [() => editSubscription(subscription), () => uninstall(subscription, csv)];
 };
 
+const SourceMissingStatus = () => (
+  <>
+    <WarningStatus title="Cannot update" />
+    <span className="text-muted">Catalog source was removed.</span>
+  </>
+);
+
+const SubscriptionStatus = ({ muted = false, subscription }) => {
+  if (!subscription) {
+    return null;
+  }
+
+  if (upgradeRequiresApproval(subscription)) {
+    return <UpgradeApprovalLink subscription={subscription} />;
+  }
+
+  const subscriptionStatus = getSubscriptionStatus(subscription);
+  return (
+    <span className={muted ? 'text-muted' : 'co-icon-and-text'}>
+      {muted ? (
+        subscriptionStatus.title
+      ) : (
+        <Status status={subscriptionStatus.status || 'Unknown'} />
+      )}
+    </span>
+  );
+};
+
 const ClusterServiceVersionStatus: React.FC<ClusterServiceVersionStatusProps> = ({
-  catalogSourceMissing,
   obj,
   subscription,
 }) => {
-  const status = _.get(obj, 'status.phase');
-  const subscriptionStatus = getSubscriptionStatus(subscription);
-
+  const status = obj?.status?.phase;
   if (obj.metadata.deletionTimestamp) {
     return (
       <span className="co-icon-and-text">
@@ -223,22 +253,12 @@ const ClusterServiceVersionStatus: React.FC<ClusterServiceVersionStatusProps> = 
       </span>
     );
   }
-
-  if (catalogSourceMissing) {
-    return (
-      <>
-        <WarningStatus title="Cannot update" />
-        <span className="text-muted">Catalog source was removed</span>
-      </>
-    );
-  }
-
   return status ? (
     <>
       <span className="co-icon-and-text">
         <Status status={status} />
       </span>
-      {subscription && <span className="text-muted">{subscriptionStatus.title}</span>}
+      <SubscriptionStatus muted subscription={subscription} />
     </>
   ) : null;
 };
@@ -320,11 +340,11 @@ export const NamespacedClusterServiceVersionTableRow = withFallback<
       {/* Status */}
       <TableData className={statusColumnClass}>
         <div className="co-clusterserviceversion-row__status">
-          <ClusterServiceVersionStatus
-            catalogSourceMissing={catalogSourceMissing}
-            obj={obj}
-            subscription={subscription}
-          />
+          {catalogSourceMissing ? (
+            <SourceMissingStatus />
+          ) : (
+            <ClusterServiceVersionStatus obj={obj} subscription={subscription} />
+          )}
         </div>
       </TableData>
 
@@ -379,23 +399,7 @@ const NamespacedSubscriptionTableRow: React.FC<SubscriptionTableRowProps> = ({
   const menuActions = [Kebab.factory.Edit, () => uninstall(obj)];
   const namespace = getNamespace(obj);
   const route = resourceObjPath(obj, referenceForModel(SubscriptionModel));
-  const subscriptionState = _.get(obj, 'status.state', 'Unknown');
   const uid = getUID(obj);
-  const getStatus = () => {
-    if (catalogSourceMissing) {
-      return (
-        <>
-          <WarningStatus title="Cannot update" />
-          <span className="text-muted">Catalog source was removed</span>
-        </>
-      );
-    }
-    return (
-      <span className="co-icon-and-text">
-        <Status status={subscriptionState} />
-      </span>
-    );
-  };
 
   return (
     <TableRow id={uid} trKey={rowKey} index={index} style={style}>
@@ -424,7 +428,9 @@ const NamespacedSubscriptionTableRow: React.FC<SubscriptionTableRowProps> = ({
       </TableData>
 
       {/* Status */}
-      <TableData className={statusColumnClass}>{getStatus()}</TableData>
+      <TableData className={statusColumnClass}>
+        {catalogSourceMissing ? <SourceMissingStatus /> : <SubscriptionStatus subscription={obj} />}
+      </TableData>
 
       {/* Last Updated */}
       <TableData className={lastUpdatedColumnClass}>
@@ -1067,7 +1073,6 @@ export const ClusterServiceVersionsDetailsPage: React.FC<ClusterServiceVersionsD
 };
 
 type ClusterServiceVersionStatusProps = {
-  catalogSourceMissing: boolean;
   obj: ClusterServiceVersionKind;
   subscription: SubscriptionKind;
 };

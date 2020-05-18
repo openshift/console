@@ -4,7 +4,7 @@ import { match, Link } from 'react-router-dom';
 import { sortable } from '@patternfly/react-table';
 import * as classNames from 'classnames';
 import { Alert, Button } from '@patternfly/react-core';
-import { InProgressIcon, PencilAltIcon } from '@patternfly/react-icons';
+import { ArrowCircleUpIcon, InProgressIcon, PencilAltIcon } from '@patternfly/react-icons';
 import {
   DetailsPage,
   MultiListPage,
@@ -22,6 +22,7 @@ import {
   ResourceSummary,
   LoadingInline,
   SectionHeading,
+  resourcePathFromModel,
 } from '@console/internal/components/utils';
 import { removeQueryArgument } from '@console/internal/components/utils/router';
 import {
@@ -30,7 +31,6 @@ import {
   k8sPatch,
   k8sKill,
   k8sUpdate,
-  K8sResourceKind,
 } from '@console/internal/module/k8s';
 import {
   YellowExclamationTriangleIcon,
@@ -109,6 +109,12 @@ export const installPlanForSubscription = (
     },
   });
 
+export const upgradeRequiresApproval = (subscription: SubscriptionKind): boolean =>
+  subscription?.status?.state === SubscriptionState.SubscriptionStateUpgradePending &&
+  (subscription.status?.conditions ?? []).filter(
+    ({ status, reason }) => status === 'True' && reason === 'RequiresApproval',
+  ).length > 0;
+
 const tableColumnClasses = [
   classNames('col-md-3', 'col-sm-4', 'col-xs-6'),
   classNames('col-md-3', 'col-sm-4', 'col-xs-6'),
@@ -152,8 +158,27 @@ export const SubscriptionTableHeader = () => {
 };
 SubscriptionTableHeader.displayName = 'SubscriptionTableHeader';
 
-const subscriptionState = (state: SubscriptionState) => {
-  switch (state) {
+export const UpgradeApprovalLink: React.FC<{ subscription: SubscriptionKind }> = ({
+  subscription,
+}) => {
+  const to = resourcePathFromModel(
+    InstallPlanModel,
+    subscription.status.installplan.name,
+    subscription.metadata.namespace,
+  );
+  return (
+    <span className="co-icon-and-text">
+      <Link to={to}>
+        <ArrowCircleUpIcon className="update-pending" /> Upgrade available
+      </Link>
+    </span>
+  );
+};
+
+export const SubscriptionStatus: React.FC<{ subscription: SubscriptionKind }> = ({
+  subscription,
+}) => {
+  switch (subscription.status.state) {
     case SubscriptionState.SubscriptionStateUpgradeAvailable:
       return (
         <span>
@@ -161,7 +186,9 @@ const subscriptionState = (state: SubscriptionState) => {
         </span>
       );
     case SubscriptionState.SubscriptionStateUpgradePending:
-      return (
+      return upgradeRequiresApproval(subscription) && subscription.status.installplan ? (
+        <UpgradeApprovalLink subscription={subscription} />
+      ) : (
         <span>
           <InProgressIcon className="text-primary" /> Upgrading
         </span>
@@ -174,7 +201,9 @@ const subscriptionState = (state: SubscriptionState) => {
       );
     default:
       return (
-        <span className={_.isEmpty(state) ? 'text-muted' : ''}>{state || 'Unknown failure'}</span>
+        <span className={_.isEmpty(subscription.status.state) ? 'text-muted' : ''}>
+          {subscription.status.state || 'Unknown failure'}
+        </span>
       );
   }
 };
@@ -202,7 +231,7 @@ const menuActions = [
   },
 ];
 
-export const SubscriptionTableRow: RowFunction<K8sResourceKind> = ({ obj, index, key, style }) => {
+export const SubscriptionTableRow: RowFunction<SubscriptionKind> = ({ obj, index, key, style }) => {
   return (
     <TableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
       <TableData className={tableColumnClasses[0]}>
@@ -222,7 +251,7 @@ export const SubscriptionTableRow: RowFunction<K8sResourceKind> = ({ obj, index,
         />
       </TableData>
       <TableData className={tableColumnClasses[2]}>
-        {subscriptionState(_.get(obj.status, 'state'))}
+        <SubscriptionStatus subscription={obj} />
       </TableData>
       <TableData className={classNames(tableColumnClasses[3], 'co-truncate', 'co-select-to-copy')}>
         {obj.spec.channel || 'default'}
@@ -485,7 +514,9 @@ export class SubscriptionUpdates extends React.Component<
             <dl className="co-m-pane__details">
               <dt className="co-detail-table__section-header">Upgrade Status</dt>
               {catalogSource ? (
-                <dd>{subscriptionState(_.get(obj.status, 'state'))}</dd>
+                <dd>
+                  <SubscriptionStatus subscription={obj} />
+                </dd>
               ) : (
                 <dd>
                   <WarningStatus title="Cannot update" />
