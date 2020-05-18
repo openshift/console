@@ -247,10 +247,8 @@ const LegendContainer = ({ children }: { children?: React.ReactNode }) => {
   );
 };
 
-const Graph: React.FC<GraphProps> = React.memo(
-  ({ allSeries, disabledSeries, formatLegendLabel, isStack, span, xDomain }) => {
-    const [containerRef, width] = useRefWidth();
-
+const GraphInner: React.FC<GraphInnerProps> = React.memo(
+  ({ allSeries, disabledSeries, formatLegendLabel, isStack, span, width, xDomain }) => {
     // Remove any disabled series
     const data = _.flatMap(allSeries, (series, i) => {
       return _.map(series, ([metric, values]) => {
@@ -313,50 +311,55 @@ const Graph: React.FC<GraphProps> = React.memo(
       : undefined;
 
     return (
-      <div ref={containerRef} style={{ width: '100%' }}>
-        {width > 0 && (
-          <Chart
-            containerComponent={graphContainer}
-            domain={domain}
-            domainPadding={{ y: 1 }}
-            height={200}
-            scale={{ x: 'time', y: 'linear' }}
-            theme={chartTheme}
-            width={width}
-          >
-            <ChartAxis style={xAxisStyle} tickCount={5} tickFormat={xTickFormat} />
-            <ChartAxis crossAxis={false} dependentAxis tickCount={6} tickFormat={yTickFormat} />
-            {isStack ? (
-              <ChartStack>
-                {_.map(data, (values, i) => (
-                  <ChartArea key={i} data={values} />
-                ))}
-              </ChartStack>
-            ) : (
-              <ChartGroup>
-                {_.map(data, (values, i) => (
-                  <ChartLine key={i} data={values} />
-                ))}
-              </ChartGroup>
-            )}
-            {legendData && (
-              <ChartLegend
-                data={legendData}
-                groupComponent={<LegendContainer />}
-                itemsPerRow={4}
-                orientation="vertical"
-                style={{
-                  labels: { fontSize: 11 },
-                }}
-                symbolSpacer={4}
-              />
-            )}
-          </Chart>
+      <Chart
+        containerComponent={graphContainer}
+        domain={domain}
+        domainPadding={{ y: 1 }}
+        height={200}
+        scale={{ x: 'time', y: 'linear' }}
+        theme={chartTheme}
+        width={width}
+      >
+        <ChartAxis style={xAxisStyle} tickCount={5} tickFormat={xTickFormat} />
+        <ChartAxis crossAxis={false} dependentAxis tickCount={6} tickFormat={yTickFormat} />
+        {isStack ? (
+          <ChartStack>
+            {_.map(data, (values, i) => (
+              <ChartArea key={i} data={values} />
+            ))}
+          </ChartStack>
+        ) : (
+          <ChartGroup>
+            {_.map(data, (values, i) => (
+              <ChartLine key={i} data={values} />
+            ))}
+          </ChartGroup>
         )}
-      </div>
+        {legendData && (
+          <ChartLegend
+            data={legendData}
+            groupComponent={<LegendContainer />}
+            itemsPerRow={4}
+            orientation="vertical"
+            style={{
+              labels: { fontSize: 11 },
+            }}
+            symbolSpacer={4}
+          />
+        )}
+      </Chart>
     );
   },
 );
+
+const Graph: React.FC<GraphProps> = (props) => {
+  const [containerRef, width] = useRefWidth();
+  return (
+    <div ref={containerRef} style={{ width: '100%' }}>
+      {width > 0 && <GraphInner {...props} width={width} />}
+    </div>
+  );
+};
 
 const formatSeriesValues = (
   values: PrometheusValue[],
@@ -765,6 +768,8 @@ type GraphEmptyStateProps = {
   children: React.ReactNode;
   title: string;
 };
+
+type GraphInnerProps = GraphProps & { width: number };
 
 type GraphProps = {
   allSeries: Series[][];
