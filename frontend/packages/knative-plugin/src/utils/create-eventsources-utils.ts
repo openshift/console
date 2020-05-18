@@ -1,20 +1,21 @@
+import * as React from 'react';
 import * as _ from 'lodash';
 import { safeLoad } from 'js-yaml';
-import { K8sResourceKind, K8sKind } from '@console/internal/module/k8s';
-import { useAccessReview } from '@console/internal/components/utils';
+import { K8sResourceKind } from '@console/internal/module/k8s';
+import { checkAccess } from '@console/internal/components/utils';
 import {
   getAppLabels,
   getCommonAnnotations,
 } from '@console/dev-console/src/utils/resource-label-utils';
-
+import { useSafetyFirst } from '@console/internal/components/safety-first';
 import {
   EventSources,
   EventSourceFormData,
-  NormalizedEventSources,
+  EventSourceListData,
 } from '../components/add/import-types';
 import { ServiceModel } from '../models';
 import { getKnativeEventSourceIcon } from './get-knative-icon';
-import { getEventSourceModels } from './fetch-dynamic-eventsources-utils';
+import { useEventSourceModels } from './fetch-dynamic-eventsources-utils';
 
 export const isKnownEventSource = (eventSource: string): boolean =>
   Object.keys(EventSources).includes(eventSource);
@@ -183,36 +184,42 @@ export const getEventSourceData = (source: string) => {
   return eventSourceData[source];
 };
 
-export const useKnativeEventingAccess = (model: K8sKind, namespace: string): boolean => {
-  const canCreateEventSource = useAccessReview({
-    group: model.apiGroup,
-    resource: model.plural,
-    namespace,
-    verb: 'create',
-  });
-  return canCreateEventSource;
-};
-
-export const useEventSourceList = (namespace: string): NormalizedEventSources => {
-  const eventSourceList = _.reduce(
-    getEventSourceModels(),
-    (accumulator, eventSourceModel) => {
-      // Defined extensions are immutable. This check will be consistent.
-      // eslint-disable-next-line react-hooks/rules-of-hooks
-      const checkAccessVal = useKnativeEventingAccess(eventSourceModel, namespace);
-      return {
-        ...accumulator,
-        ...(checkAccessVal && {
-          [eventSourceModel.kind]: {
-            name: eventSourceModel.kind,
-            iconUrl: getKnativeEventSourceIcon(eventSourceModel.kind),
-            displayName: eventSourceModel.kind,
-            title: eventSourceModel.kind,
+export const useEventSourceList = (namespace: string): EventSourceListData | null => {
+  const [accessData, setAccessData] = useSafetyFirst({ loaded: false, eventSourceList: {} });
+  const { eventSourceModels, loaded: modelLoaded } = useEventSourceModels();
+  React.useEffect(() => {
+    const accessList = [];
+    if (modelLoaded) {
+      eventSourceModels.map((model) => {
+        const { apiGroup, plural, kind } = model;
+        const modelData = {
+          [model.kind]: {
+            name: kind,
+            iconUrl: getKnativeEventSourceIcon(kind),
+            displayName: kind,
+            title: kind,
           },
-        }),
-      };
-    },
-    {},
-  );
-  return eventSourceList;
+        };
+        return accessList.push(
+          checkAccess({
+            group: apiGroup,
+            resource: plural,
+            namespace,
+            verb: 'create',
+          }).then((result) => (result.status.allowed ? modelData : {})),
+        );
+      });
+      Promise.all(accessList)
+        .then((results) => {
+          const eventSourceList = results.reduce((acc, result) => {
+            return { ...acc, ...result };
+          }, {});
+          setAccessData({ loaded: true, eventSourceList });
+        })
+        // eslint-disable-next-line no-console
+        .catch((err) => console.warn(err.message));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [modelLoaded]);
+  return eventSourceModels.length === 0 && modelLoaded ? null : accessData;
 };
