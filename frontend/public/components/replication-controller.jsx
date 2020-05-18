@@ -22,6 +22,7 @@ import {
   asAccessReview,
   OwnerReferences,
   Timestamp,
+  PodsComponent,
 } from './utils';
 
 import { VolumesTable } from './volumes-table';
@@ -131,6 +132,10 @@ const CancelAction = (kind, obj) => ({
   accessReview: asAccessReview(kind, obj, 'patch'),
 });
 
+const ReplicationControllerPods = (props) => (
+  <PodsComponent {...props} customData={{ showNodes: true }} />
+);
+
 const menuActions = [CancelAction, ...replicaSetMenuActions];
 
 export const ReplicationControllersDetailsPage = (props) => (
@@ -143,7 +148,7 @@ export const ReplicationControllersDetailsPage = (props) => (
     pages={[
       details(Details),
       editYaml(),
-      pods(),
+      pods(ReplicationControllerPods),
       envEditor(environmentComponent),
       events(ResourceEventStream),
     ]}

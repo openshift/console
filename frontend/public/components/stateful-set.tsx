@@ -18,6 +18,7 @@ import {
   SectionHeading,
   navFactory,
   LoadingInline,
+  PodsComponent,
 } from './utils';
 import { VolumesTable } from './volumes-table';
 import { StatefulSetModel } from '../models';
@@ -115,10 +116,14 @@ export const StatefulSetsPage: React.FC<StatefulSetsPageProps> = (props) => (
   <ListPage {...props} ListComponent={StatefulSetsList} kind={kind} canCreate={true} />
 );
 
+const StatefulSetPods: React.FC<StatefulSetPodsProps> = (props) => (
+  <PodsComponent {...props} customData={{ showNodes: true }} />
+);
+
 const pages = [
   navFactory.details(StatefulSetDetails),
   navFactory.editYaml(),
-  navFactory.pods(),
+  navFactory.pods(StatefulSetPods),
   navFactory.envEditor(EnvironmentTab),
   navFactory.events(ResourceEventStream),
 ];
@@ -146,6 +151,10 @@ type StatefulSetsPageProps = {
   showTitle?: boolean;
   namespace?: string;
   selector?: any;
+};
+
+type StatefulSetPodsProps = {
+  obj: K8sResourceKind;
 };
 
 type StatefulSetsDetailsPageProps = {

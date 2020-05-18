@@ -21,6 +21,7 @@ import {
   ResourceKebab,
   OwnerReferences,
   Timestamp,
+  PodsComponent,
 } from './utils';
 import { ResourceEventStream } from './events';
 import { VolumesTable } from './volumes-table';
@@ -89,6 +90,8 @@ const environmentComponent = (props) => (
   />
 );
 
+const ReplicaSetPods = (props) => <PodsComponent {...props} customData={{ showNodes: true }} />;
+
 const { details, editYaml, pods, envEditor, events } = navFactory;
 const ReplicaSetsDetailsPage = (props) => (
   <DetailsPage
@@ -97,7 +100,7 @@ const ReplicaSetsDetailsPage = (props) => (
     pages={[
       details(Details),
       editYaml(),
-      pods(),
+      pods(ReplicaSetPods),
       envEditor(environmentComponent),
       events(ResourceEventStream),
     ]}

@@ -22,12 +22,13 @@ export const viewYamlComponent = (props) => (
   />
 );
 
-class PodsComponent extends React.PureComponent<PodsComponentProps> {
+export class PodsComponent extends React.PureComponent<PodsComponentProps> {
   render() {
     const {
       metadata: { namespace },
       spec: { selector },
     } = this.props.obj;
+    const { customData } = this.props;
     if (_.isEmpty(selector)) {
       return <EmptyBox label="Pods" />;
     }
@@ -36,7 +37,13 @@ class PodsComponent extends React.PureComponent<PodsComponentProps> {
     // Otherwise it might seem like you click "Create Pod" to add replicas instead
     // of scaling the owner.
     return (
-      <PodsPage showTitle={false} namespace={namespace} selector={selector} canCreate={false} />
+      <PodsPage
+        showTitle={false}
+        namespace={namespace}
+        selector={selector}
+        canCreate={false}
+        customData={customData}
+      />
     );
   }
 }
@@ -251,6 +258,7 @@ export const HorizontalNav = React.memo((props: HorizontalNavProps) => {
 
 export type PodsComponentProps = {
   obj: K8sResourceKind;
+  customData?: any;
 };
 
 export type NavBarProps = {

@@ -15,6 +15,7 @@ import {
   detailsPage,
   LabelList,
   navFactory,
+  PodsComponent,
   ResourceKebab,
   ResourceLink,
   ResourceSummary,
@@ -204,6 +205,10 @@ export const DaemonSetsPage: React.FC<DaemonSetsPageProps> = (props) => (
   <ListPage canCreate={true} ListComponent={DaemonSets} kind={kind} {...props} />
 );
 
+const DaemonSetPods: React.FC<DaemonSetPodsProps> = (props) => (
+  <PodsComponent {...props} customData={{ showNodes: true }} />
+);
+
 export const DaemonSetsDetailsPage: React.FC<DaemonSetsDetailsPageProps> = (props) => (
   <DetailsPage
     {...props}
@@ -212,7 +217,7 @@ export const DaemonSetsDetailsPage: React.FC<DaemonSetsDetailsPageProps> = (prop
     pages={[
       details(detailsPage(DaemonSetDetails)),
       editYaml(),
-      pods(),
+      pods(DaemonSetPods),
       envEditor(EnvironmentTab),
       events(ResourceEventStream),
     ]}
@@ -242,6 +247,10 @@ type DaemonSetsPageProps = {
   showTitle?: boolean;
   namespace?: string;
   selector?: any;
+};
+
+type DaemonSetPodsProps = {
+  obj: K8sResourceKind;
 };
 
 type DaemonSetsDetailsPageProps = {
