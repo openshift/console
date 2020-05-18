@@ -47,7 +47,7 @@ export class VMSettingsTabComponent extends React.Component<VMSettingsTabCompone
     } = this.props;
 
     return (
-      <Form>
+      <Form className="co-m-pane__body co-m-pane__form">
         <FormFieldMemoRow
           field={this.getField(VMSettingsField.NAME)}
           fieldType={FormFieldType.TEXT}
