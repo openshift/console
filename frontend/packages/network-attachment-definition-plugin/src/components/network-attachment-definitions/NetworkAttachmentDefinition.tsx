@@ -123,7 +123,7 @@ NetworkAttachmentDefinitionsList.displayName = 'NetworkAttachmentDefinitionsList
 export const NetworkAttachmentDefinitionsPage: React.FC<NetworkAttachmentDefinitionsPageProps> = (
   props,
 ) => {
-  const namespace = props.namespace || props.match.params.ns || 'default';
+  const namespace = props.namespace || props.match?.params?.ns || 'default';
   const createProps = {
     to: `/k8s/ns/${namespace}/${referenceForModel(NetworkAttachmentDefinitionModel)}/~new/form`,
   };
