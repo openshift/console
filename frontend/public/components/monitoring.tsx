@@ -1416,109 +1416,94 @@ const SilenceForm_: React.FC<SilenceFormProps> = ({ defaults, Info, title }) => 
       {Info && <Info />}
 
       <div className="co-m-pane__body">
-        <form onSubmit={onSubmit}>
+        <form onSubmit={onSubmit} className="monitoring-silence-alert">
           <div className="co-m-pane__body-group">
-            <div className="form-group row">
-              <div className="col-xs-9">
-                <SectionHeading text="Duration" />
-                <div className="row">
-                  <div className="col-xs-5">
-                    <label>Silence alert from...</label>
-                    {isStartNow ? (
-                      <DatetimeTextInput isDisabled value="Now" />
-                    ) : (
-                      <DatetimeTextInput
-                        isRequired
-                        onChange={(v: string) => setStartsAt(v)}
-                        value={startsAt}
-                      />
-                    )}
-                  </div>
-                  <div className="col-xs-2">
-                    <label>For...</label>
-                    <Dropdown
-                      dropDownClassName="dropdown--full-width"
-                      items={durationItems}
-                      onChange={(v: string) => setDuration(v)}
-                      selectedKey={duration}
-                    />
-                  </div>
-                  <div className="col-xs-5">
-                    <label>Until...</label>
-                    {duration === durationOff ? (
-                      <DatetimeTextInput
-                        isRequired
-                        onChange={(v: string) => setEndsAt(v)}
-                        value={endsAt}
-                      />
-                    ) : (
-                      <DatetimeTextInput
-                        isDisabled
-                        value={isStartNow ? `${duration} from now` : getEndsAtValue()}
-                      />
-                    )}
-                  </div>
-                </div>
+            <SectionHeading text="Duration" />
+            <div className="row">
+              <div className="form-group col-sm-4 col-md-5">
+                <label>Silence alert from...</label>
+                {isStartNow ? (
+                  <DatetimeTextInput isDisabled value="Now" />
+                ) : (
+                  <DatetimeTextInput
+                    isRequired
+                    onChange={(v: string) => setStartsAt(v)}
+                    value={startsAt}
+                  />
+                )}
+              </div>
+              <div className="form-group col-sm-4 col-md-2">
+                <label>For...</label>
+                <Dropdown
+                  dropDownClassName="dropdown--full-width"
+                  items={durationItems}
+                  onChange={(v: string) => setDuration(v)}
+                  selectedKey={duration}
+                />
+              </div>
+              <div className="form-group col-sm-4 col-md-5">
+                <label>Until...</label>
+                {duration === durationOff ? (
+                  <DatetimeTextInput
+                    isRequired
+                    onChange={(v: string) => setEndsAt(v)}
+                    value={endsAt}
+                  />
+                ) : (
+                  <DatetimeTextInput
+                    isDisabled
+                    value={isStartNow ? `${duration} from now` : getEndsAtValue()}
+                  />
+                )}
               </div>
             </div>
-            <div className="form-group row">
-              <div className="col-xs-9">
-                <label>
-                  <input
-                    checked={isStartNow}
-                    onChange={(e) => setIsStartNow(e.currentTarget.checked)}
-                    type="checkbox"
-                  />
-                  &nbsp; Start Immediately
-                </label>
-              </div>
+            <div className="form-group">
+              <label>
+                <input
+                  checked={isStartNow}
+                  onChange={(e) => setIsStartNow(e.currentTarget.checked)}
+                  type="checkbox"
+                />
+                &nbsp; Start Immediately
+              </label>
             </div>
           </div>
 
           <div className="co-m-pane__body-group">
-            <div className="form-group row">
-              <div className="col-xs-9">
-                <SectionHeading text="Alert Labels" />
-                <p className="co-help-text">
-                  Alerts with labels that match these selectors will be silenced instead of firing.
-                  Label values can be matched exactly or with a{' '}
-                  <ExternalLink
-                    href="https://github.com/google/re2/wiki/Syntax"
-                    text="regular expression"
-                  />
-                </p>
-              </div>
-            </div>
+            <SectionHeading text="Alert Labels" />
+            <p className="co-help-text">
+              Alerts with labels that match these selectors will be silenced instead of firing.
+              Label values can be matched exactly or with a{' '}
+              <ExternalLink
+                href="https://github.com/google/re2/wiki/Syntax"
+                text="regular expression"
+              />
+            </p>
 
             {_.map(matchers, (matcher, i: number) => (
-              <div className="form-group row" key={i}>
-                <div className="col-xs-9">
-                  <div className="row">
-                    <div className="col-xs-6">
-                      <label>Label name</label>
-                      <TextInput
-                        aria-label="Label name"
-                        isRequired
-                        onChange={(v: string) => setMatcherField(i, 'name', v)}
-                        placeholder="Name"
-                        value={matcher.name}
-                      />
-                    </div>
-                    <div className="col-xs-6">
-                      <label>Label value</label>
-                      <TextInput
-                        aria-label="Label value"
-                        isRequired
-                        onChange={(v: string) => setMatcherField(i, 'value', v)}
-                        placeholder="Value"
-                        value={matcher.value}
-                      />
-                    </div>
-                  </div>
+              <div className="row" key={i}>
+                <div className="form-group col-sm-4">
+                  <label>Label name</label>
+                  <TextInput
+                    aria-label="Label name"
+                    isRequired
+                    onChange={(v: string) => setMatcherField(i, 'name', v)}
+                    placeholder="Name"
+                    value={matcher.name}
+                  />
                 </div>
-                <div className="col-xs-3 monitoring-silence-reg-ex">
-                  <label>&nbsp;</label>
-                  <div>
+                <div className="form-group col-sm-4">
+                  <label>Label value</label>
+                  <TextInput
+                    aria-label="Label value"
+                    isRequired
+                    onChange={(v: string) => setMatcherField(i, 'value', v)}
+                    placeholder="Value"
+                    value={matcher.value}
+                  />
+                </div>
+                <div className="form-group col-sm-4">
+                  <div className="monitoring-silence-alert__label-options">
                     <label>
                       <input
                         type="checkbox"
@@ -1528,7 +1513,6 @@ const SilenceForm_: React.FC<SilenceFormProps> = ({ defaults, Info, title }) => 
                       &nbsp; Use RegEx
                     </label>
                     <Button
-                      className="monitoring-silence-remove-button"
                       type="button"
                       onClick={() => removeMatcher(i)}
                       aria-label="Remove matcher"
@@ -1541,54 +1525,49 @@ const SilenceForm_: React.FC<SilenceFormProps> = ({ defaults, Info, title }) => 
               </div>
             ))}
 
-            <div className="form-group row">
-              <div className="col-xs-9">
-                <Button
-                  className="pf-m-link--align-left"
-                  onClick={addMatcher}
-                  type="button"
-                  variant="link"
-                >
-                  <PlusCircleIcon className="co-icon-space-r" />
-                  Add Label
+            <div className="form-group">
+              <Button
+                className="pf-m-link--align-left"
+                onClick={addMatcher}
+                type="button"
+                variant="link"
+              >
+                <PlusCircleIcon className="co-icon-space-r" />
+                Add Label
+              </Button>
+            </div>
+          </div>
+
+          <div className="co-m-pane__body-group">
+            <SectionHeading text="Info" />
+            <div className="form-group">
+              <label>Creator</label>
+              <TextInput
+                aria-label="Creator"
+                onChange={(v: string) => setCreatedBy(v)}
+                value={createdBy}
+              />
+            </div>
+            <div className="form-group">
+              <label className="co-required">Comment</label>
+              <TextArea
+                aria-label="Comment"
+                isRequired
+                onChange={(v: string) => setComment(v)}
+                value={comment}
+              />
+            </div>
+            <ButtonBar errorMessage={error} inProgress={inProgress}>
+              <ActionGroup className="pf-c-form">
+                <Button type="submit" variant="primary">
+                  Silence
                 </Button>
-              </div>
-            </div>
+                <Button onClick={history.goBack} variant="secondary">
+                  Cancel
+                </Button>
+              </ActionGroup>
+            </ButtonBar>
           </div>
-
-          <div className="row">
-            <div className="col-xs-9">
-              <SectionHeading text="Info" />
-              <div className="form-group">
-                <label>Creator</label>
-                <TextInput
-                  aria-label="Creator"
-                  onChange={(v: string) => setCreatedBy(v)}
-                  value={createdBy}
-                />
-              </div>
-              <div className="form-group">
-                <label className="co-required">Comment</label>
-                <TextArea
-                  aria-label="Comment"
-                  isRequired
-                  onChange={(v: string) => setComment(v)}
-                  value={comment}
-                />
-              </div>
-            </div>
-          </div>
-
-          <ButtonBar errorMessage={error} inProgress={inProgress}>
-            <ActionGroup className="pf-c-form">
-              <Button type="submit" variant="primary">
-                Silence
-              </Button>
-              <Button onClick={history.goBack} variant="secondary">
-                Cancel
-              </Button>
-            </ActionGroup>
-          </ButtonBar>
         </form>
       </div>
     </>
