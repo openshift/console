@@ -65,6 +65,27 @@ class OvirtImportProviderConnected extends React.Component<OvirtImportProviderPr
           </FormField>
         </FormFieldMemoRow>
         <FormFieldMemoRow
+          key={OvirtProviderField.CERTIFICATE}
+          field={this.getField(OvirtProviderField.CERTIFICATE)}
+          fieldType={FormFieldType.TEXT_AREA}
+          fieldHelp={
+            <a
+              href="https://ovirt.github.io/ovirt-engine-api-model/master/#_obtaining_the_ca_certificate"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Obtaining the CA certificate
+            </a>
+          }
+        >
+          <FormField>
+            <TextArea
+              onChange={this.onChange(OvirtProviderField.CERTIFICATE)}
+              className="kubevirt-create-vm-modal__ovirt-provider-ca"
+            />
+          </FormField>
+        </FormFieldMemoRow>
+        <FormFieldMemoRow
           key={OvirtProviderField.USERNAME}
           field={this.getField(OvirtProviderField.USERNAME)}
           fieldType={FormFieldType.TEXT}
@@ -84,27 +105,6 @@ class OvirtImportProviderConnected extends React.Component<OvirtImportProviderPr
               id={getFieldId(OvirtProviderField.REMEMBER_PASSWORD)}
               onChange={this.onChange(OvirtProviderField.REMEMBER_PASSWORD)}
               className="kubevirt-create-vm-modal__ovirt-provider-remember-password"
-            />
-          </FormField>
-        </FormFieldMemoRow>
-        <FormFieldMemoRow
-          key={OvirtProviderField.CERTIFICATE}
-          field={this.getField(OvirtProviderField.CERTIFICATE)}
-          fieldType={FormFieldType.TEXT_AREA}
-          fieldHelp={
-            <a
-              href="https://ovirt.github.io/ovirt-engine-api-model/master/#_obtaining_the_ca_certificate"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Obtaining the CA certificate
-            </a>
-          }
-        >
-          <FormField>
-            <TextArea
-              onChange={this.onChange(OvirtProviderField.CERTIFICATE)}
-              className="kubevirt-create-vm-modal__ovirt-provider-ca"
             />
           </FormField>
         </FormFieldMemoRow>

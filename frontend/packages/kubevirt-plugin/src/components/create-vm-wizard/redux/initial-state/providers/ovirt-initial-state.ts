@@ -10,6 +10,9 @@ export const getOvirtInitialState = (): OvirtSettings => {
     [OvirtProviderField.API_URL]: {
       isHidden: hiddenByOvirtEngine,
     },
+    [OvirtProviderField.CERTIFICATE]: {
+      isHidden: hiddenByOvirtEngine,
+    },
     [OvirtProviderField.USERNAME]: {
       isHidden: hiddenByOvirtEngine,
     },
@@ -19,9 +22,6 @@ export const getOvirtInitialState = (): OvirtSettings => {
     [OvirtProviderField.REMEMBER_PASSWORD]: {
       isHidden: hiddenByOvirtEngine,
       value: true,
-    },
-    [OvirtProviderField.CERTIFICATE]: {
-      isHidden: hiddenByOvirtEngine,
     },
     [OvirtProviderField.VM]: {
       isDisabled: asDisabled(true, OvirtProviderField.VM),

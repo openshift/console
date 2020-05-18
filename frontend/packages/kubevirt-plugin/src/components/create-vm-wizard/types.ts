@@ -117,10 +117,10 @@ export enum VMWareProviderField {
 export enum OvirtProviderField {
   OVIRT_ENGINE_SECRET_NAME = 'ovirt_OVIRT_ENGINE_SECRET_NAME',
   API_URL = 'ovirt_API_URL',
+  CERTIFICATE = 'ovirt_CERTIFICATE',
   USERNAME = 'ovirt_USERNAME',
   PASSWORD = 'ovirt_PASSWORD',
   REMEMBER_PASSWORD = 'ovirt_REMEMBER_PASSWORD',
-  CERTIFICATE = 'ovirt_CERTIFICATE',
 
   VM = 'ovirt_VM',
   CLUSTER = 'ovirt_CLUSTER',
@@ -156,10 +156,10 @@ export type VMWareProviderRenderableField =
 export type OvirtProviderRenderableField =
   | OvirtProviderField.OVIRT_ENGINE_SECRET_NAME
   | OvirtProviderField.API_URL
+  | OvirtProviderField.CERTIFICATE
   | OvirtProviderField.USERNAME
   | OvirtProviderField.PASSWORD
   | OvirtProviderField.REMEMBER_PASSWORD
-  | OvirtProviderField.CERTIFICATE
   | OvirtProviderField.STATUS
   | OvirtProviderField.CLUSTER
   | OvirtProviderField.VM;
