@@ -15,7 +15,7 @@ import { normalizeIconClass } from './catalog-item-icon';
 import { CatalogTileDetails } from './catalog-item-details';
 import { TileViewPage } from '../utils/tile-view-page';
 
-type Metadata = { uid?: string; name: string; namespace?: string };
+type Metadata = { uid?: string; name?: string; namespace?: string };
 
 export type Item = {
   obj?: {
@@ -31,7 +31,11 @@ export type Item = {
   tileProvider?: string;
   tileDescription?: string;
   tags?: string[];
-  documentationUrl?: string | undefined;
+  longDescription?: string;
+  documentationUrl?: string;
+  supportUrl?: string;
+  markdownDescription?: () => Promise<string>;
+  customProperties?: React.ReactElement;
 };
 
 export type CatalogTileViewPageProps = {
