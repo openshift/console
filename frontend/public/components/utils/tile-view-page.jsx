@@ -320,6 +320,7 @@ const getActiveFilters = (
   keywordFilter,
   groupFilters,
   activeFilters,
+  categoryFilter = null,
   storeFilterKey = null,
   filterRetentionPreference = null,
 ) => {
@@ -346,6 +347,14 @@ const getActiveFilters = (
       console.error('Failed parsing user filter settings.');
     }
   }
+
+  if (categoryFilter) {
+    // removing default and localstore filters if category filters are present over URL
+    _.each(_.keys(activeFilters.kind), (key) =>
+      _.set(activeFilters, ['kind', key, 'active'], false),
+    );
+  }
+
   _.forOwn(groupFilters, (filterValues, filterType) => {
     // removing default and localstore filters if Filters are present over URL
     _.each(_.keys(activeFilters[filterType]), (key) =>
@@ -495,6 +504,7 @@ const getActiveValuesFromURL = (
     keywordFilter,
     groupFilters,
     availableFilters,
+    categoryParam,
     storeFilterKey,
     filterRetentionPreference,
   );
@@ -657,6 +667,18 @@ export class TileViewPage extends React.Component {
     }
   }
 
+  storeFilters(filters) {
+    if (this.props.storeFilterKey && this.props.filterRetentionPreference) {
+      const storeFilters = {};
+      _.each(this.props.filterRetentionPreference, (filterGroup) => {
+        if (filters[filterGroup]) {
+          storeFilters[filterGroup] = filters[filterGroup];
+        }
+      });
+      localStorage.setItem(this.props.storeFilterKey, JSON.stringify(storeFilters));
+    }
+  }
+
   clearFilters() {
     const { filterGroups } = this.props;
     const { activeFilters, categories, selectedCategoryId } = this.state;
@@ -672,9 +694,7 @@ export class TileViewPage extends React.Component {
       this.filterByKeywordInput.focus({ preventScroll: true });
     }
 
-    if (this.props.storeFilterKey) {
-      localStorage.removeItem(this.props.storeFilterKey);
-    }
+    this.storeFilters(clearedFilters);
   }
 
   selectCategory(categoryId) {
@@ -704,15 +724,7 @@ export class TileViewPage extends React.Component {
 
     this.updateMountedState(this.getUpdatedState(categories, selectedCategoryId, updatedFilters));
 
-    if (this.props.storeFilterKey && this.props.filterRetentionPreference) {
-      const storeFilters = {};
-      _.each(this.props.filterRetentionPreference, (filterGroup) => {
-        if (updatedFilters[filterGroup]) {
-          storeFilters[filterGroup] = updatedFilters[filterGroup];
-        }
-      });
-      localStorage.setItem(this.props.storeFilterKey, JSON.stringify(storeFilters));
-    }
+    this.storeFilters(updatedFilters);
   }
 
   onKeywordChange(value) {
