@@ -1,17 +1,3 @@
-.monitoring-heading {
-  display: flex;
-  justify-content: space-between;
-}
-
-.monitoring-header-link {
-  font-size: $font-size-base;
-  margin-left: 14px;
-}
-
-.monitoring-grid-head {
-  padding-bottom: 5px;
-}
-
 $monitoring-line-height: 18px;
 
 .monitoring-description, .monitoring-label-list, .monitoring-timestamp {
@@ -30,13 +16,22 @@ $monitoring-line-height: 18px;
   text-overflow: ellipsis;
 }
 
-.monitoring-silence-reg-ex {
-  padding-left: 0;
+.monitoring-grid-head {
+  padding-bottom: 5px;
 }
 
-.monitoring-silence-remove-button {
-  padding-left: 30px !important;
-  padding-right: 0 !important;
+.monitoring-header-link {
+  font-size: $font-size-base;
+  margin-left: 14px;
+}
+
+.monitoring-heading {
+  display: flex;
+  justify-content: space-between;
+}
+
+.monitoring-query {
+  color: $color-pf-blue-400;
 }
 
 .monitoring-timestamp {
@@ -45,8 +40,17 @@ $monitoring-line-height: 18px;
   font-size: ($font-size-base - 1);
 }
 
-.monitoring-query {
-  color: $color-pf-blue-400;
+.monitoring-silence-alert {
+  max-width: 950px;
+
+  &__label-options {
+    align-items: baseline;
+    display: flex;
+    justify-content: space-between;
+    @media(min-width: $grid-float-breakpoint) {
+      padding-top: 26px;
+    }
+  }
 }
 
 .monitoring-state-icon--pending {
