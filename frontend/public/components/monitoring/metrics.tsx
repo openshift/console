@@ -23,7 +23,6 @@ import {
   TimesIcon,
 } from '@patternfly/react-icons';
 import {
-  IDecorator,
   ISortBy,
   sortable,
   Table,
@@ -31,6 +30,7 @@ import {
   TableGridBreakpoint,
   TableHeader,
   TableVariant,
+  wrappable,
 } from '@patternfly/react-table';
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
@@ -676,7 +676,7 @@ const QueryTable_: React.FC<QueryTableProps> = ({
 
   const cellProps = {
     props: { className: 'query-browser__table-cell' },
-    transforms: [sortable as (v: unknown) => IDecorator],
+    transforms: [sortable, wrappable],
   };
 
   // TableBody's shouldComponentUpdate seems to struggle with SeriesButton, so add a unique key to help TableBody
