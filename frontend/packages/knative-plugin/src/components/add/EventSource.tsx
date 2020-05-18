@@ -91,6 +91,8 @@ const EventSource: React.FC<Props> = ({ namespace, activeApplication, contextSou
       initialValues={initialValues}
       onSubmit={handleSubmit}
       onReset={history.goBack}
+      validateOnBlur={false}
+      validateOnChange={false}
       validationSchema={eventSourceValidationSchema}
     >
       {(props) => <EventSourceForm {...props} namespace={namespace} />}
