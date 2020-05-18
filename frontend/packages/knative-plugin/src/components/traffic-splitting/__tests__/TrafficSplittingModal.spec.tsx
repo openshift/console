@@ -19,6 +19,7 @@ describe('TrafficSplittingModal', () => {
       status: { error: 'checkErrorProp' },
       values: { trafficSplitting: mockTrafficData },
       revisionItems: mockRevisionItems,
+      cancel: jest.fn(),
     };
     wrapper = shallow(<TrafficSplittingModal {...formProps} />);
   });
