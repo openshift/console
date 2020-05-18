@@ -25,7 +25,7 @@ import { isVM, isVMI } from '../../selectors/check-type';
 export const VMDetailsFirehose: React.FC<VMTabProps> = ({
   obj: objProp,
   vm: vmProp,
-  vmi: vmiProp,
+  vmis: vmisProp,
   vmImports,
   pods,
   migrations,
@@ -38,8 +38,8 @@ export const VMDetailsFirehose: React.FC<VMTabProps> = ({
   const vmi =
     kindObj === VirtualMachineInstanceModel && isVMI(objProp)
       ? objProp
-      : isVMI(vmiProp)
-      ? vmiProp
+      : isVMI(vmisProp[0])
+      ? vmisProp[0]
       : null;
 
   const resources = [

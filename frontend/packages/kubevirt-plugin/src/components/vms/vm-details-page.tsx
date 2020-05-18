@@ -90,11 +90,11 @@ export const VirtualMachinesDetailsPage: React.FC<VirtualMachinesDetailsPageProp
 
   const resources = [
     getResource(VirtualMachineInstanceModel, {
-      name,
       namespace,
-      isList: false,
-      prop: 'vmi',
+      isList: true,
+      prop: 'vmis',
       optional: true,
+      fieldSelector: `metadata.name=${name}`, // Note(yaacov): we look for a list, instead of one obj, to avoid 404 response if no VMI exist.
     }),
     getResource(PodModel, { namespace, prop: 'pods' }),
     getResource(VirtualMachineInstanceMigrationModel, { namespace, prop: 'migrations' }),
