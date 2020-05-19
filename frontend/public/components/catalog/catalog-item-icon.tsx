@@ -82,6 +82,7 @@ import * as rubyImg from '../../imgs/logos/ruby.svg';
 import * as scalaImg from '../../imgs/logos/scala.svg';
 import * as shadowmanImg from '../../imgs/logos/shadowman.svg';
 import * as springImg from '../../imgs/logos/spring.svg';
+import * as springBootImg from '../../imgs/logos/spring-boot.svg';
 import * as ssoImg from '../../imgs/logos/sso.svg';
 import * as stackoverflowImg from '../../imgs/logos/stackoverflow.svg';
 import * as suseImg from '../../imgs/logos/suse.svg';
@@ -179,6 +180,7 @@ const logos = new Map()
   .set('icon-scala', scalaImg)
   .set('icon-shadowman', shadowmanImg)
   .set('icon-spring', springImg)
+  .set('icon-spring-boot', springBootImg)
   .set('icon-sso', ssoImg)
   .set('icon-stackoverflow', stackoverflowImg)
   .set('icon-suse', suseImg)
