@@ -62,12 +62,14 @@ const virtualMachineConfigurations = (namespace: string): FirehoseResource[] => 
       kind: models.VirtualMachineModel.kind,
       namespace,
       prop: 'virtualmachines',
+      optional: true,
     },
     {
       isList: true,
       kind: models.VirtualMachineInstanceModel.kind,
       namespace,
       prop: 'virtualmachineinstances',
+      optional: true,
     },
     {
       isList: true,
@@ -76,12 +78,14 @@ const virtualMachineConfigurations = (namespace: string): FirehoseResource[] => 
       selector: {
         matchLabels: { 'template.kubevirt.io/type': 'base' },
       },
+      optional: true,
     },
     {
       isList: true,
       kind: models.VirtualMachineInstanceMigrationModel.kind,
       namespace,
       prop: 'migrations',
+      optional: true,
     },
     {
       isList: true,
