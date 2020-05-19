@@ -331,17 +331,15 @@ export const NamespacedClusterServiceVersionTableRow = withFallback<
 
       {/* Provided APIs */}
       <TableData className={providedAPIsColumnClass}>
-        {!_.isEmpty(providedAPIs) ? (
-          _.take(providedAPIs, 4).map((desc) => (
-            <div key={referenceForProvidedAPI(desc)}>
-              <Link to={`${route}/${referenceForProvidedAPI(desc)}`} title={desc.name}>
-                {desc.displayName}
-              </Link>
-            </div>
-          ))
-        ) : (
-          <div> - </div>
-        )}
+        {!_.isEmpty(providedAPIs)
+          ? _.take(providedAPIs, 4).map((desc) => (
+              <div key={referenceForProvidedAPI(desc)}>
+                <Link to={`${route}/${referenceForProvidedAPI(desc)}`} title={desc.name}>
+                  {desc.displayName || desc.kind}
+                </Link>
+              </div>
+            ))
+          : '-'}
         {providedAPIs.length > 4 && (
           <Link to={route} title={`View ${providedAPIsFor(obj).length - 4} more...`}>
             {`View ${providedAPIsFor(obj).length - 4} more...`}
@@ -702,7 +700,7 @@ export const CRDCard: React.SFC<CRDCardProps> = (props) => {
           kind={referenceForProvidedAPI(crd)}
           title={crd.name}
           linkTo={false}
-          displayName={crd.displayName}
+          displayName={crd.displayName || crd.kind}
         />
       </CardHeader>
       <CardBody>
