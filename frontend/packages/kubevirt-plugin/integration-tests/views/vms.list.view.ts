@@ -31,3 +31,5 @@ export const filterCount = async (status: Status): Promise<number> => {
   await click(filterToggle);
   return Number(count);
 };
+
+export const rowForUID = (UID: string) => $(`[data-id="${UID}"]`);
