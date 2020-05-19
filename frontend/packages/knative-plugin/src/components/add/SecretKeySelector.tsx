@@ -6,7 +6,7 @@ import { SecretModel } from '@console/internal/models';
 import { errorModal } from '@console/internal/components/modals/error-modal';
 import { FormGroup } from '@patternfly/react-core';
 import { ValueFromPair } from '@console/internal/components/utils/value-from-pair';
-import { getFieldId } from '@console/shared';
+import { getFieldId, useFormikValidationFix } from '@console/shared';
 import { getActiveNamespace } from '@console/internal/reducers/ui';
 import { RootState } from '@console/internal/redux';
 
@@ -29,7 +29,19 @@ const SecretKeySelector: React.FC<SecretKeySelectorProps & StateProps> = ({
   const [secrets, setSecrets] = React.useState({});
   const fieldId = getFieldId(name, 'secret-key-input');
   const isValid = !(touched && error);
-  const errorMessage = !isValid ? error : '';
+
+  const getErrorMessage = (err: string | { name?: string; key?: string }): string => {
+    let errMsg = '';
+    if (typeof err === 'string') {
+      errMsg = err;
+    } else {
+      errMsg = err?.name || err?.key;
+    }
+    return errMsg;
+  };
+  const errorMessage = !isValid ? getErrorMessage(error) : '';
+
+  useFormikValidationFix(field.value);
 
   React.useEffect(() => {
     k8sGet(SecretModel, null, namespace)
@@ -44,7 +56,13 @@ const SecretKeySelector: React.FC<SecretKeySelectorProps & StateProps> = ({
   }, [namespace]);
 
   return (
-    <FormGroup fieldId={fieldId} label={label} helperTextInvalid={errorMessage} isValid={isValid}>
+    <FormGroup
+      fieldId={fieldId}
+      label={label}
+      helperTextInvalid={errorMessage}
+      isValid={isValid}
+      isRequired
+    >
       <ValueFromPair
         pair={{ secretKeyRef: field.value }}
         secrets={secrets}

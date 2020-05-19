@@ -80,6 +80,59 @@ export const sourceDataSpecSchema = yup
         bootstrapServers: yup.string().required('Required'),
         consumerGroup: yup.string().required('Required'),
         topics: yup.string().required('Required'),
+        net: yup.object().shape({
+          sasl: yup.object().shape({
+            enable: yup.boolean(),
+            user: yup.object().when('enable', {
+              is: true,
+              then: yup.object().shape({
+                secretKeyRef: yup.object().shape({
+                  name: yup.string().required('Required'),
+                  key: yup.string().required('Required'),
+                }),
+              }),
+            }),
+            password: yup.object().when('enable', {
+              is: true,
+              then: yup.object().shape({
+                secretKeyRef: yup.object().shape({
+                  name: yup.string().required('Required'),
+                  key: yup.string().required('Required'),
+                }),
+              }),
+            }),
+          }),
+          tls: yup.object().shape({
+            enable: yup.boolean(),
+            caCert: yup.object().when('enable', {
+              is: true,
+              then: yup.object().shape({
+                secretKeyRef: yup.object().shape({
+                  name: yup.string().required('Required'),
+                  key: yup.string().required('Required'),
+                }),
+              }),
+            }),
+            cert: yup.object().when('enable', {
+              is: true,
+              then: yup.object().shape({
+                secretKeyRef: yup.object().shape({
+                  name: yup.string().required('Required'),
+                  key: yup.string().required('Required'),
+                }),
+              }),
+            }),
+            key: yup.object().when('enable', {
+              is: true,
+              then: yup.object().shape({
+                secretKeyRef: yup.object().shape({
+                  name: yup.string().required('Required'),
+                  key: yup.string().required('Required'),
+                }),
+              }),
+            }),
+          }),
+        }),
       }),
     }),
   })
