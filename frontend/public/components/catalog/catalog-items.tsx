@@ -285,6 +285,35 @@ export class CatalogTileViewPage extends React.Component<
     this.setState({ detailsItem: null });
   };
 
+  render() {
+    const { items } = this.props;
+    const { detailsItem } = this.state;
+    return (
+      <>
+        <TileViewPage
+          items={items}
+          itemsSorter={(itemsToSort) =>
+            _.sortBy(itemsToSort, ({ tileName }) => tileName.toLowerCase())
+          }
+          getAvailableCategories={() => catalogCategories}
+          // TODO(alecmerdler): Dynamic filters for each Operator and its provided APIs
+          getAvailableFilters={getAvailableFilters}
+          filterGroups={filterGroups}
+          storeFilterKey={filterKey}
+          filterGroupNameMap={filterGroupNameMap}
+          keywordCompare={keywordCompare}
+          filterRetentionPreference={filterPreference}
+          renderTile={this.renderTile}
+          pageDescription={pageDescription}
+          emptyStateInfo="No developer catalog items are being shown due to the filters being applied."
+          groupItems={groupItems}
+          groupByTypes={GroupByTypes}
+        />
+        {this.renderModal(detailsItem)}
+      </>
+    );
+  }
+
   renderTile = (item: Item): React.ReactElement => {
     if (!item) {
       return null;
@@ -316,66 +345,42 @@ export class CatalogTileViewPage extends React.Component<
     );
   };
 
-  render() {
-    const { items } = this.props;
-    const { detailsItem } = this.state;
+  renderModal = (detailsItem: Item) => {
+    if (!detailsItem) {
+      return null;
+    }
     return (
-      <>
-        <TileViewPage
-          items={items}
-          itemsSorter={(itemsToSort) =>
-            _.sortBy(itemsToSort, ({ tileName }) => tileName.toLowerCase())
-          }
-          getAvailableCategories={() => catalogCategories}
-          // TODO(alecmerdler): Dynamic filters for each Operator and its provided APIs
-          getAvailableFilters={getAvailableFilters}
-          filterGroups={filterGroups}
-          storeFilterKey={filterKey}
-          filterGroupNameMap={filterGroupNameMap}
-          keywordCompare={keywordCompare}
-          filterRetentionPreference={filterPreference}
-          renderTile={this.renderTile}
-          pageDescription={pageDescription}
-          emptyStateInfo="No developer catalog items are being shown due to the filters being applied."
-          groupItems={groupItems}
-          groupByTypes={GroupByTypes}
-        />
-        {detailsItem && (
-          <Modal
-            className="co-catalog-page__overlay co-catalog-page__overlay--right"
-            header={
-              <>
-                <CatalogItemHeader
-                  title={detailsItem.tileName}
-                  vendor={
-                    detailsItem.tileProvider ? `Provided by ${detailsItem.tileProvider}` : null
-                  }
-                  iconClass={
-                    detailsItem.tileIconClass ? normalizeIconClass(detailsItem.tileIconClass) : null
-                  }
-                  iconImg={detailsItem.tileImgUrl}
-                />
-                <div className="co-catalog-page__overlay-actions">
-                  <Link
-                    className="pf-c-button pf-m-primary co-catalog-page__overlay-action"
-                    to={detailsItem.href}
-                    role="button"
-                    title={detailsItem.createLabel}
-                    onClick={this.closeOverlay}
-                  >
-                    {detailsItem.createLabel}
-                  </Link>
-                </div>
-              </>
-            }
-            isOpen={!!detailsItem}
-            onClose={this.closeOverlay}
-            title={detailsItem.tileName}
-          >
-            <CatalogTileDetails item={detailsItem} closeOverlay={this.closeOverlay} />
-          </Modal>
-        )}
-      </>
+      <Modal
+        className="co-catalog-page__overlay co-catalog-page__overlay--right"
+        header={
+          <>
+            <CatalogItemHeader
+              title={detailsItem.tileName}
+              vendor={detailsItem.tileProvider ? `Provided by ${detailsItem.tileProvider}` : null}
+              iconClass={
+                detailsItem.tileIconClass ? normalizeIconClass(detailsItem.tileIconClass) : null
+              }
+              iconImg={detailsItem.tileImgUrl}
+            />
+            <div className="co-catalog-page__overlay-actions">
+              <Link
+                className="pf-c-button pf-m-primary co-catalog-page__overlay-action"
+                to={detailsItem.href}
+                role="button"
+                title={detailsItem.createLabel}
+                onClick={this.closeOverlay}
+              >
+                {detailsItem.createLabel}
+              </Link>
+            </div>
+          </>
+        }
+        isOpen={!!detailsItem}
+        onClose={this.closeOverlay}
+        title={detailsItem.tileName}
+      >
+        <CatalogTileDetails item={detailsItem} closeOverlay={this.closeOverlay} />
+      </Modal>
     );
-  }
+  };
 }
