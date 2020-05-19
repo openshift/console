@@ -211,7 +211,7 @@ export const AffinityEdit: React.FC<AffinityEditProps> = ({
                   </Text>
                   <Text className="scheduling-modals__desc" component={TextVariants.small}>
                     {
-                      'Note that for Node field expressions, entering a full path is required in the Key field (e.g. `metadata.name: value`)'
+                      'Label selectors let you select Nodes based on the value of one or more labels.'
                     }
                   </Text>
                   <Text className="scheduling-modals__desc" component={TextVariants.small}>
@@ -236,12 +236,30 @@ export const AffinityEdit: React.FC<AffinityEditProps> = ({
           </FormRow>
           {isNodeAffinity && (
             <>
+              <Divider component="div" />
               <FormRow
                 title="Node Fields"
                 fieldId={'fields'}
                 validationType={isFieldsInvalid && ValidationErrorType.Error}
                 validationMessage={isFieldsInvalid && 'Missing fields in node fields'}
               >
+                <div className="scheduling-modals__desc-container">
+                  <>
+                    <Text className="scheduling-modals__desc" component={TextVariants.small}>
+                      {
+                        'Field selectors let you select Nodes based on the value of one or more resource fields.'
+                      }
+                    </Text>
+                    <Text className="scheduling-modals__desc" component={TextVariants.small}>
+                      {
+                        'Note that for Node field expressions, entering a full path is required in the Key field (e.g. `metadata.name: value`).'
+                      }
+                    </Text>
+                    <Text className="scheduling-modals__desc" component={TextVariants.small}>
+                      {'Some fields may not be supported.'}
+                    </Text>
+                  </>
+                </div>
                 <AffinityExpressionList
                   expressions={affinityFields}
                   addRowText="Add Field"
