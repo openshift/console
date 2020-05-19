@@ -198,20 +198,28 @@ const Secret: React.FC<SpecCapabilityProps> = (props) => {
 
   return (
     <>
-      <Button type="button" onClick={() => setReveal(!reveal)}>
-        {reveal ? (
-          <>
-            <EyeSlashIcon className="co-icon-space-r" />
-            Hide Values
-          </>
-        ) : (
-          <>
-            <EyeIcon className="co-icon-space-r" />
-            Reveal Values
-          </>
-        )}
-      </Button>
-      <SecretValue value={props.value} encoded={false} reveal={reveal} />
+      <div className="co-toggle-reveal-value">
+        <Button
+          type="button"
+          variant="link"
+          isInline
+          className="pf-m-link--align-right co-toggle-reveal-value__btn"
+          onClick={() => setReveal(!reveal)}
+        >
+          {reveal ? (
+            <>
+              <EyeSlashIcon className="co-icon-space-r" />
+              Hide Values
+            </>
+          ) : (
+            <>
+              <EyeIcon className="co-icon-space-r" />
+              Reveal Values
+            </>
+          )}
+        </Button>
+        <SecretValue value={props.value} encoded={false} reveal={reveal} />
+      </div>
     </>
   );
 };

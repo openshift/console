@@ -1,0 +1,8 @@
+.co-toggle-reveal-value {
+  display: flex;
+  flex-direction: column;
+
+  &__btn {
+    align-self: flex-end;
+  }
+}
