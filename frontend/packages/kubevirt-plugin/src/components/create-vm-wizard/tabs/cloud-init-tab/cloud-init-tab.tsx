@@ -274,7 +274,7 @@ const CloudInitTabComponent: React.FC<ResultTabComponentProps> = ({
     }
   };
   return (
-    <div className="co-m-pane__body co-m-pane__form">
+    <div>
       {!isDisabled && !isEditable && (
         <Errors
           endMargin
