@@ -53,7 +53,7 @@ describe(CatalogTileViewPage.displayName, () => {
     expect(filterItems.at(2).props().checked).toBe(false); // filter templates should be false by default
     expect(filterItems.at(3).props().count).toBe(2); // total count for imagestreams
     expect(filterItems.at(3).props().checked).toBe(false); // filter imagestreams should be false by default
-    expect(filterItems.at(4).props().count).toBe(11); // total count for clusterServiceClasses
+    expect(filterItems.at(4).props().count).toBe(12); // total count for clusterServiceClasses
     expect(filterItems.at(4).props().checked).toBe(false); // filter clusterServiceClasses should be false by default
   });
 
@@ -67,7 +67,7 @@ describe(CatalogTileViewPage.displayName, () => {
     const tiles = wrapper.find<any>(CatalogTile);
 
     expect(tiles.exists()).toBe(true);
-    expect(tiles.length).toEqual(22);
+    expect(tiles.length).toEqual(23);
 
     const cakeSqlTileProps = tiles.at(2).props();
     expect(cakeSqlTileProps.title).toEqual('CakePHP + MySQL');
@@ -80,7 +80,7 @@ describe(CatalogTileViewPage.displayName, () => {
       ),
     ).toBe(true);
 
-    const amqTileProps = tiles.at(19).props();
+    const amqTileProps = tiles.at(20).props();
     expect(amqTileProps.title).toEqual('Red Hat JBoss A-MQ 6.3 (Ephemeral, no SSL)');
     expect(amqTileProps.iconImg).toEqual('test-file-stub');
     expect(amqTileProps.iconClass).toBe(null);
@@ -91,7 +91,7 @@ describe(CatalogTileViewPage.displayName, () => {
       ),
     ).toBe(true);
 
-    const wildflyTileProps = tiles.at(21).props();
+    const wildflyTileProps = tiles.at(22).props();
     expect(wildflyTileProps.title).toEqual('WildFly');
     expect(wildflyTileProps.iconImg).toEqual('test-file-stub');
     expect(wildflyTileProps.iconClass).toBe(null);
@@ -101,6 +101,13 @@ describe(CatalogTileViewPage.displayName, () => {
         'Build and run WildFly 10.1 applications on CentOS 7. For more information about using this builder image',
       ),
     ).toBe(true);
+
+    const faIconTileProps = tiles.at(5).props();
+    expect(faIconTileProps.title).toEqual('FA icon example');
+    expect(faIconTileProps.iconImg).toBe(null);
+    expect(faIconTileProps.iconClass).toBe('fa fa-fill-drip');
+    expect(faIconTileProps.vendor).toEqual('provided by Red Hat, Inc.');
+    expect(faIconTileProps.description).toEqual('Example to validate icon');
   });
 
   it('categorizes catalog items', () => {

@@ -318,11 +318,9 @@ export class CatalogTileViewPage extends React.Component<
     if (!item) {
       return null;
     }
-    const { obj, tileName, tileImgUrl, tileIconClass, tileProvider, tileDescription, kind } = item;
+    const { obj, tileName, tileProvider, tileDescription, kind } = item;
     const uid = obj.metadata.uid;
-    const iconClass = tileIconClass ? normalizeIconClass(tileIconClass) : null;
     const vendor = tileProvider ? `provided by ${tileProvider}` : null;
-    const iconImgUrl = tileImgUrl || catalogImg;
     const { kind: filters } = getAvailableFilters({ kind });
     const filter = _.find(filters, ['value', kind]);
     return (
@@ -336,8 +334,7 @@ export class CatalogTileViewPage extends React.Component<
             <Badge isRead>{filter.label}</Badge>
           </CatalogTileBadge>,
         ]}
-        iconImg={iconImgUrl}
-        iconClass={iconClass}
+        {...this.getIconProps(item)}
         vendor={vendor}
         description={tileDescription}
         data-test={`${kind}-${obj.metadata.name}`}
@@ -357,10 +354,7 @@ export class CatalogTileViewPage extends React.Component<
             <CatalogItemHeader
               title={detailsItem.tileName}
               vendor={detailsItem.tileProvider ? `Provided by ${detailsItem.tileProvider}` : null}
-              iconClass={
-                detailsItem.tileIconClass ? normalizeIconClass(detailsItem.tileIconClass) : null
-              }
-              iconImg={detailsItem.tileImgUrl}
+              {...this.getIconProps(detailsItem)}
             />
             <div className="co-catalog-page__overlay-actions">
               <Link
@@ -382,5 +376,15 @@ export class CatalogTileViewPage extends React.Component<
         <CatalogTileDetails item={detailsItem} closeOverlay={this.closeOverlay} />
       </Modal>
     );
+  };
+
+  getIconProps = (item: Item) => {
+    const { tileImgUrl, tileIconClass } = item;
+    if (tileImgUrl) {
+      return { iconImg: tileImgUrl, iconClass: null };
+    } else if (tileIconClass) {
+      return { iconImg: null, iconClass: normalizeIconClass(tileIconClass) };
+    }
+    return { iconImg: catalogImg, iconClass: null };
   };
 }
