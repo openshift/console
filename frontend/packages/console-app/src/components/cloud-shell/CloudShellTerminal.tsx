@@ -2,14 +2,19 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { RootState } from '@console/internal/redux';
 import { referenceForModel } from '@console/internal/module/k8s/k8s';
-import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
+import {
+  useK8sWatchResource,
+  WatchK8sResource,
+} from '@console/internal/components/utils/k8s-watch-hook';
 import { StatusBox, LoadError } from '@console/internal/components/utils/status-box';
+import { UserKind } from '@console/internal/module/k8s';
 import { WorkspaceModel } from '../../models';
 import CloudshellExec from './CloudShellExec';
 import TerminalLoadingBox from './TerminalLoadingBox';
 import {
   CLOUD_SHELL_LABEL,
-  CLOUD_SHELL_USER_ANNOTATION,
+  CLOUD_SHELL_IMMUTABLE_ANNOTATION,
+  CLOUD_SHELL_CREATOR_LABEL,
   CloudShellResource,
   TerminalInitData,
   initTerminal,
@@ -18,7 +23,7 @@ import CloudShellSetup from './setup/CloudShellSetup';
 import './CloudShellTerminal.scss';
 
 type StateProps = {
-  username: string;
+  user: UserKind;
 };
 
 type Props = {
@@ -27,15 +32,23 @@ type Props = {
 
 type CloudShellTerminalProps = StateProps & Props;
 
-const resource = {
-  kind: referenceForModel(WorkspaceModel),
-  isList: true,
-  selector: {
-    matchLabels: { [CLOUD_SHELL_LABEL]: 'true' },
-  },
-};
-
-const CloudShellTerminal: React.FC<CloudShellTerminalProps> = ({ username, onCancel }) => {
+const CloudShellTerminal: React.FC<CloudShellTerminalProps> = ({ user, onCancel }) => {
+  const uid = user?.metadata?.uid;
+  const username = user?.metadata?.name;
+  const isKubeAdmin = !uid && username === 'kube:admin';
+  const resource: WatchK8sResource = React.useMemo(
+    () => ({
+      kind: referenceForModel(WorkspaceModel),
+      isList: true,
+      selector: {
+        matchLabels: {
+          [CLOUD_SHELL_LABEL]: 'true',
+          [CLOUD_SHELL_CREATOR_LABEL]: isKubeAdmin ? '' : uid,
+        },
+      },
+    }),
+    [isKubeAdmin, uid],
+  );
   const [data, loaded, loadError] = useK8sWatchResource<CloudShellResource[]>(resource);
   const [initData, setInitData] = React.useState<TerminalInitData>();
   const [initError, setInitError] = React.useState<string>();
@@ -46,7 +59,7 @@ const CloudShellTerminal: React.FC<CloudShellTerminalProps> = ({ username, onCan
 
   if (Array.isArray(data)) {
     workspace = data.find(
-      (ws) => ws?.metadata?.annotations?.[CLOUD_SHELL_USER_ANNOTATION] === username,
+      (d) => d?.metadata?.annotations?.[CLOUD_SHELL_IMMUTABLE_ANNOTATION] === 'true',
     );
     workspacePhase = workspace?.status?.phase;
     workspaceName = workspace?.metadata?.name;
@@ -109,7 +122,7 @@ const CloudShellTerminal: React.FC<CloudShellTerminalProps> = ({ username, onCan
 export const InternalCloudShellTerminal = CloudShellTerminal;
 
 const stateToProps = (state: RootState): StateProps => ({
-  username: state.UI.get('user')?.metadata?.name || '',
+  user: state.UI.get('user'),
 });
 
 export default connect(stateToProps)(CloudShellTerminal);
