@@ -24,3 +24,6 @@ export const omitEmpty = (obj, justUndefined = false) => {
   };
   omit(obj);
 };
+
+export const isSetEqual = (set: Set<any>, otherSet: Set<any>) =>
+  set.size === otherSet.size && [...set].every((s) => otherSet.has(s));

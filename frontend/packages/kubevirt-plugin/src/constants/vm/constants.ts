@@ -4,6 +4,7 @@ export const READABLE_VIRTIO = 'VirtIO';
 export const ANNOTATION_FIRST_BOOT = 'kubevirt.ui/firstBoot';
 export const ANNOTATION_DESCRIPTION = 'description';
 export const ANNOTATION_PXE_INTERFACE = 'kubevirt.ui/pxeInterface';
+export const ANNOTATION_VALIDATIONS = 'validations';
 export const CUSTOM_FLAVOR = 'Custom';
 
 export const APP = 'app';

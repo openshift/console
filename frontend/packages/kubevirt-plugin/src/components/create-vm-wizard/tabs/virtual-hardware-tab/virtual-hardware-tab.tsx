@@ -86,7 +86,7 @@ const VirtualHardwareTabFirehose: React.FC<VirtualHardwareTabFirehoseProps> = ({
   const diskWrapper = DiskWrapper.initializeFromSimpleData({
     name: availableCDName,
     type: DiskType.CDROM,
-    bus: templateValidations.getDefaultBus(),
+    bus: templateValidations.getDefaultBus(DiskType.CDROM),
   });
 
   const addButton = (
