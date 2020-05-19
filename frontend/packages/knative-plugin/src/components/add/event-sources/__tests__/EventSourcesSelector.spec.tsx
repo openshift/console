@@ -14,6 +14,7 @@ jest.mock('formik', () => ({
     setFieldValue: jest.fn(),
     setFieldTouched: jest.fn(),
     validateForm: jest.fn(),
+    setErrors: jest.fn(),
     values: {
       type: 'SinkBinding',
       name: 'sink-binding',

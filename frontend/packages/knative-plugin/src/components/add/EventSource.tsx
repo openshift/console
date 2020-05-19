@@ -97,6 +97,8 @@ const EventSource: React.FC<Props> = ({
       initialValues={initialValues}
       onSubmit={handleSubmit}
       onReset={history.goBack}
+      validateOnBlur={false}
+      validateOnChange={false}
       validationSchema={eventSourceValidationSchema}
     >
       {(props) => (

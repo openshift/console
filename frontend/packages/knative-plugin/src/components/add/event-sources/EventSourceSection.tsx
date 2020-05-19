@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { useFormikContext, FormikValues } from 'formik';
 import * as _ from 'lodash';
+import { useFormikValidationFix } from '@console/shared';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import AppSection from '@console/dev-console/src/components/import/app/AppSection';
@@ -25,11 +26,10 @@ const EventSourceSection: React.FC<EventSourceSectionProps> = ({ namespace }) =>
   const { values } = useFormikContext<FormikValues>();
   const projectResource = { kind: ProjectModel.kind, prop: ProjectModel.id, isList: true };
   const [data, loaded] = useK8sWatchResource<K8sResourceKind[]>(projectResource);
-
+  useFormikValidationFix(values);
   if (!values.type) {
     return null;
   }
-
   let EventSource: React.ReactElement;
   switch (values.type) {
     case EventSources.CronJobSource:
