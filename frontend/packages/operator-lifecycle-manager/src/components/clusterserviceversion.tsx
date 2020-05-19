@@ -267,7 +267,7 @@ export const ClusterServiceVersionTableRow = withFallback<ClusterServiceVersionT
           ).map((desc) => (
             <div key={referenceForProvidedAPI(desc)}>
               <Link to={`${route}/${referenceForProvidedAPI(desc)}`} title={desc.name}>
-                {desc.displayName}
+                {desc.displayName || desc.kind}
               </Link>
             </div>
           ))}
@@ -542,7 +542,7 @@ export const CRDCard: React.SFC<CRDCardProps> = (props) => {
           kind={referenceForProvidedAPI(crd)}
           title={crd.name}
           linkTo={false}
-          displayName={crd.displayName}
+          displayName={crd.displayName || crd.kind}
         />
       </CardHeader>
       <CardBody>
@@ -794,7 +794,7 @@ export const ClusterServiceVersionsDetailsPage: React.FC<ClusterServiceVersionsD
                 ...acc,
                 {
                   href: referenceForProvidedAPI(desc),
-                  name: desc.displayName,
+                  name: desc.displayName || desc.kind,
                   component: React.memo(
                     () => (
                       <ProvidedAPIPage
