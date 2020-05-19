@@ -1,5 +1,5 @@
 import { TemplateKind } from '@console/internal/module/k8s';
-import { getName, getNamespace } from '@console/shared/src';
+import { getName, getNamespace, getAnnotations } from '@console/shared/src';
 import { VMSettingsField } from '../../../../components/create-vm-wizard/types';
 import {
   asSimpleSettings,
@@ -7,6 +7,7 @@ import {
 } from '../../../../components/create-vm-wizard/selectors/vm-settings';
 import {
   ANNOTATION_DESCRIPTION,
+  ANNOTATION_VALIDATIONS,
   LABEL_USED_TEMPLATE_NAME,
   LABEL_USED_TEMPLATE_NAMESPACE,
   TEMPLATE_FLAVOR_LABEL,
@@ -15,6 +16,8 @@ import {
   TEMPLATE_WORKLOAD_LABEL,
   TEMPLATE_VM_DOMAIN_LABEL,
   TEMPLATE_VM_NAME_LABEL,
+  TEMPLATE_TYPE_LABEL,
+  TEMPLATE_TYPE_VM,
   APP,
 } from '../../../../constants/vm';
 import { MutableVMWrapper } from '../../../wrapper/vm/vm-wrapper';
@@ -104,4 +107,14 @@ export const initializeCommonVMMetadata = (
       'true',
     );
   }
+};
+
+export const initializeCommonTemplateMetadata = (
+  entity: MutableVMTemplateWrapper,
+  template?: TemplateKind,
+) => {
+  const validations = getAnnotations(template)?.[ANNOTATION_VALIDATIONS];
+
+  entity.addLabel(TEMPLATE_TYPE_LABEL, TEMPLATE_TYPE_VM);
+  validations && entity.addAnotation(ANNOTATION_VALIDATIONS, validations);
 };

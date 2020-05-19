@@ -6,12 +6,7 @@ import {
   MutableVMTemplateWrapper,
   VMTemplateWrapper,
 } from '../../../wrapper/vm/vm-template-wrapper';
-import {
-  TEMPLATE_PARAM_VM_NAME,
-  TEMPLATE_PARAM_VM_NAME_DESC,
-  TEMPLATE_TYPE_LABEL,
-  TEMPLATE_TYPE_VM,
-} from '../../../../constants/vm';
+import { TEMPLATE_PARAM_VM_NAME, TEMPLATE_PARAM_VM_NAME_DESC } from '../../../../constants/vm';
 import { DataVolumeModel, VirtualMachineModel } from '../../../../models';
 import { MutableDataVolumeWrapper } from '../../../wrapper/vm/data-volume-wrapper';
 import { buildOwnerReference } from '../../../../utils';
@@ -21,7 +16,12 @@ import { toShallowJS } from '../../../../utils/immutable';
 import { iGetRelevantTemplate } from '../../../../selectors/immutable/template/combined';
 import { CreateVMEnhancedParams, CreateVMParams } from './types';
 import { initializeVM } from './initialize-vm';
-import { getOS, initializeCommonMetadata, initializeCommonVMMetadata } from './common';
+import {
+  getOS,
+  initializeCommonMetadata,
+  initializeCommonVMMetadata,
+  initializeCommonTemplateMetadata,
+} from './common';
 import { selectVM } from '../../../../selectors/vm-template/basic';
 
 export const getInitializedVMTemplate = (params: CreateVMEnhancedParams) => {
@@ -68,9 +68,6 @@ export const createVMTemplate = async (params: CreateVMParams) => {
   const finalTemplate = VMTemplateWrapper.initializeFromSimpleData({
     name: settings[VMSettingsField.NAME],
     namespace,
-    labels: {
-      [TEMPLATE_TYPE_LABEL]: TEMPLATE_TYPE_VM,
-    },
     objects: [template.getMutableVM().asMutableResource()],
     parameters: [
       {
@@ -88,6 +85,7 @@ export const createVMTemplate = async (params: CreateVMParams) => {
     mutableFinalTemplate,
     template.asMutableResource(),
   );
+  initializeCommonTemplateMetadata(mutableFinalTemplate, template.asResource());
 
   const templateResult = await k8sCreate(TemplateModel, mutableFinalTemplate.asMutableResource());
 

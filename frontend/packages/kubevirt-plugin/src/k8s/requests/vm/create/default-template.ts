@@ -12,13 +12,11 @@ import {
   TEMPLATE_OS_NAME_ANNOTATION,
   TEMPLATE_PARAM_VM_NAME,
   TEMPLATE_PARAM_VM_NAME_DESC,
-  TEMPLATE_TYPE_LABEL,
-  TEMPLATE_TYPE_VM,
   VolumeType,
 } from '../../../../constants/vm';
 import { findHighestKeyBySuffixValue, getValueByPrefix } from '../../../../selectors/utils';
 import { getAnnotations } from '../../../../selectors/selectors';
-import { initializeCommonMetadata } from './common';
+import { initializeCommonMetadata, initializeCommonTemplateMetadata } from './common';
 import { VMSettingsField } from '../../../../components/create-vm-wizard/types';
 import { getFlavor, getWorkloadProfile } from '../../../../selectors/vm';
 import { DiskWrapper } from '../../../wrapper/vm/disk-wrapper';
@@ -50,9 +48,6 @@ export const getDefaultVMTemplate = (params: DefaultTemplateParams): TemplateKin
   const finalTemplate = VMTemplateWrapper.initializeFromSimpleData({
     name,
     namespace,
-    labels: {
-      [TEMPLATE_TYPE_LABEL]: TEMPLATE_TYPE_VM,
-    },
     objects: [vm.asMutableResource()],
     parameters: [
       {
@@ -86,6 +81,7 @@ export const getDefaultVMTemplate = (params: DefaultTemplateParams): TemplateKin
     mutableFinalTemplate,
     commonTemplate,
   );
+  initializeCommonTemplateMetadata(mutableFinalTemplate, commonTemplate);
 
   return mutableFinalTemplate.asMutableResource();
 };

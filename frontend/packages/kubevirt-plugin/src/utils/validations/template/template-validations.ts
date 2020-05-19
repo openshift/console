@@ -1,21 +1,26 @@
 /* eslint-disable lines-between-class-members */
 import * as _ from 'lodash';
 import { ValidationErrorType } from '@console/shared/src';
-import { ValueEnum, DiskBus } from '../../../constants';
+import { ValueEnum, DiskBus, DiskType } from '../../../constants';
 import { CommonTemplatesValidation } from '../../../types/template';
 import {
   IntervalValidationResult,
   MemoryIntervalValidationResult,
 } from './interval-validation-result';
 import { DiskBusValidationResult } from './disk-bus-validation-result';
+import { isSetEqual } from '../../common';
 
-// TODO: Add all the fields in the form
 export class ValidationJSONPath extends ValueEnum<string> {
   static readonly CPU = new ValidationJSONPath('jsonpath::.spec.domain.cpu.cores');
   static readonly MEMORY = new ValidationJSONPath(
     'jsonpath::.spec.domain.resources.requests.memory',
   );
-  static readonly BUS = new ValidationJSONPath('jsonpath::.spec.domain.devices.disks[*].disk.bus');
+  static readonly DISK_BUS = new ValidationJSONPath(
+    'jsonpath::.spec.domain.devices.disks[*].disk.bus',
+  );
+  static readonly CD_BUS = new ValidationJSONPath(
+    'jsonpath::.spec.domain.devices.disks[*].cdrom.bus',
+  );
 }
 
 export class TemplateValidations {
@@ -39,71 +44,92 @@ export class TemplateValidations {
   };
 
   getAllowedBuses = (
+    diskType: DiskType,
     validationErrorType: ValidationErrorType = ValidationErrorType.Error,
   ): Set<DiskBus> => {
-    const allowedBuses = this.getAllowedEnumValues(ValidationJSONPath.BUS, validationErrorType).map(
-      DiskBus.fromString,
-    );
+    const allowedBuses = this.getAllowedEnumValues(
+      diskType === DiskType.CDROM ? ValidationJSONPath.CD_BUS : ValidationJSONPath.DISK_BUS,
+      validationErrorType,
+    ).map(DiskBus.fromString);
 
     return new Set(allowedBuses.length === 0 ? DiskBus.getAll() : allowedBuses);
   };
 
-  getRecommendedBuses = (): Set<DiskBus> => {
-    const allowedBuses = this.getAllowedBuses();
-    const recommendedBuses = [...this.getAllowedBuses(ValidationErrorType.Warn)].filter((b) =>
-      allowedBuses.has(b),
-    );
+  getRecommendedBuses = (diskType: DiskType): Set<DiskBus> => {
+    const allowedBuses = this.getAllowedBuses(diskType);
+    const recommendedBuses = [
+      ...this.getAllowedBuses(diskType, ValidationErrorType.Warn),
+    ].filter((b) => allowedBuses.has(b));
     return recommendedBuses.length === 0 ? allowedBuses : new Set(recommendedBuses);
   };
 
   areBusesEqual = (otherTempValidations: TemplateValidations): boolean => {
+    if (!otherTempValidations) {
+      return false;
+    }
+
     if (this === otherTempValidations) {
       return true;
     }
 
     // Check if two sets of bus validations are the same - if the allowed and recommended buses are the same
-    const allowedBuses = this.getAllowedBuses();
-    const recommendedBuses = this.getRecommendedBuses();
-    const otherAllowedBuses = otherTempValidations.getAllowedBuses();
-    const otherRecommendedBuses = otherTempValidations.getRecommendedBuses();
+    const allowedBuses = this.getAllowedBuses(DiskType.DISK);
+    const otherAllowedBuses = otherTempValidations.getAllowedBuses(DiskType.DISK);
+    if (!isSetEqual(allowedBuses, otherAllowedBuses)) {
+      return false;
+    }
 
-    return (
-      allowedBuses.size === otherAllowedBuses.size &&
-      recommendedBuses.size === otherRecommendedBuses.size &&
-      [...allowedBuses].every((bus) => otherAllowedBuses.has(bus)) &&
-      [...recommendedBuses].every((bus) => otherRecommendedBuses.has(bus))
-    );
+    const recommendedBuses = this.getRecommendedBuses(DiskType.DISK);
+    const otherRecommendedBuses = otherTempValidations.getRecommendedBuses(DiskType.DISK);
+    if (!isSetEqual(recommendedBuses, otherRecommendedBuses)) {
+      return false;
+    }
+
+    const allowedCDBuses = this.getAllowedBuses(DiskType.CDROM);
+    const otherAllowedCDBuses = otherTempValidations.getAllowedBuses(DiskType.CDROM);
+    if (!isSetEqual(allowedCDBuses, otherAllowedCDBuses)) {
+      return false;
+    }
+
+    const recommendedCDBuses = this.getRecommendedBuses(DiskType.CDROM);
+    const otherRecommendedCDBuses = otherTempValidations.getRecommendedBuses(DiskType.CDROM);
+    if (!isSetEqual(recommendedCDBuses, otherRecommendedCDBuses)) {
+      return false;
+    }
+
+    return true;
   };
 
   validateBus = (
-    bus: DiskBus,
+    diskType: DiskType,
+    diskBus: DiskBus,
     validationErrorType: ValidationErrorType = ValidationErrorType.Error,
   ): DiskBusValidationResult => {
-    const allowedBuses = this.getAllowedBuses();
-    if (allowedBuses.has(bus)) {
-      const recommededBuses = this.getRecommendedBuses();
+    const allowedBuses = this.getAllowedBuses(diskType);
+    if (allowedBuses.has(diskBus)) {
+      const recommededBuses = this.getRecommendedBuses(diskType);
       return new DiskBusValidationResult({
         allowedBuses: recommededBuses,
         type: ValidationErrorType.Warn,
-        isValid: recommededBuses.has(bus),
+        isValid: recommededBuses.has(diskBus),
       });
     }
 
     return new DiskBusValidationResult({
       allowedBuses,
       type: validationErrorType,
-      isValid: allowedBuses.has(bus),
+      isValid: allowedBuses.has(diskBus),
     });
   };
 
-  getDefaultBus = (defaultBus = DiskBus.VIRTIO): DiskBus => {
-    const allowedBuses = this.getAllowedBuses();
+  getDefaultBus = (diskType: DiskType = DiskType.DISK, defaultBus = DiskBus.VIRTIO): DiskBus => {
+    const allowedBuses = this.getAllowedBuses(diskType);
 
     if (allowedBuses.size === 0) {
       return defaultBus;
     }
 
-    const recommendedBuses = this.getRecommendedBuses();
+    const recommendedBuses = this.getRecommendedBuses(diskType);
 
     if (recommendedBuses.has(defaultBus)) {
       return defaultBus;
