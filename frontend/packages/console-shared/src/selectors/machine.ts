@@ -33,5 +33,5 @@ export const getMachineAddresses = (machine: MachineKind) => machine?.status?.ad
 
 export const getMachinePhase = (obj: MachineKind): string => {
   const phase = obj?.status?.phase;
-  return phase === 'Running' ? 'Provisioned as node' : phase;
+  return phase || 'Provisioned as node';
 };
