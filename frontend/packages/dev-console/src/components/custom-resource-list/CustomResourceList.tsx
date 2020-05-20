@@ -59,7 +59,6 @@ const CustomResourceList: React.FC<CustomResourceListProps> = ({
           rowFilters={rowFilters}
           data={resources}
           textFilter={textFilter}
-          hideNameFilter={false}
           hideLabelFilter
           reduxIDs={[]}
         />
