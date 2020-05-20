@@ -46,20 +46,6 @@ export const hideAllExistingProperties = (schema: JSONSchema6) => {
   );
 };
 
-// Map common json schem property names to default widgets or fields
-export const getDefaultUISchemaForPropertyName = (name) =>
-  ({
-    resources: { 'ui:field': 'ResourceRequirementsField', 'ui:title': 'Resource Requirements' },
-    installPlan: { 'ui:field': 'InstallPlanField', 'ui:title': 'Install Plan' },
-    imagePullPolicy: { 'ui:widget': 'ImagePullPolicyWidget', 'ui:title': 'Image Pull Policy' },
-    updateStrategy: { 'ui:field': 'UpdateStrategyField', 'ui:title': 'Update Strategy' },
-    nodeAffinity: { 'ui:field': 'NodeAffinityField', 'ui:title': 'Node Affinity' },
-    podAffinity: { 'ui:field': 'PodAffinityField', 'ui:title': 'Pod Affinity' },
-    podAntiAffinity: { 'ui:field': 'PodAffinityField', 'ui:title': 'Pod Anti-Affinity' },
-    replicas: { 'ui:widget': 'PodCountWidget', 'ui:title': 'Replicas' },
-    matchExpressions: { 'ui:field': 'MatchExpressionsField', 'ui:title': 'Match Expressions' },
-  }?.[name] ?? {});
-
 // Determine if a schema will produce an empty form field.
 export const hasNoFields = (jsonSchema: JSONSchema6): boolean => {
   const type = getSchemaType(jsonSchema ?? {}) ?? '';
@@ -93,27 +79,21 @@ export const getDefaultUISchema = (jsonSchema: JSONSchema6): UiSchema => {
   }
 
   const handleArray = () => {
-    const descendatnUISchema = getDefaultUISchema(jsonSchema.items as JSONSchema6);
-    return !_.isEmpty(descendatnUISchema) ? { items: descendatnUISchema } : {};
+    const itemsUISchema = getDefaultUISchema(jsonSchema.items as JSONSchema6);
+    return !_.isEmpty(itemsUISchema) ? { items: itemsUISchema } : {};
   };
 
   const handleObject = () => {
     return _.reduce(
       jsonSchema.properties,
       (uiSchemaAccumulator: UiSchema, property: JSONSchema6, name: string) => {
-        const defaultSchema = getDefaultUISchemaForPropertyName(name);
-        const schemaForProperty = {
-          ...defaultSchema,
-          ...getDefaultUISchema(property),
-        };
-        if (_.isEmpty(schemaForProperty)) {
-          return uiSchemaAccumulator;
-        }
-
-        return {
-          ...(uiSchemaAccumulator ?? {}),
-          [name]: schemaForProperty,
-        };
+        const propertyUISchema = getDefaultUISchema(property);
+        return _.isEmpty(propertyUISchema)
+          ? uiSchemaAccumulator
+          : {
+              ...(uiSchemaAccumulator ?? {}),
+              [name]: propertyUISchema,
+            };
       },
       {},
     );

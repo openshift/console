@@ -109,57 +109,6 @@ describe('hasNoFields', () => {
 });
 
 describe('getDefaultUISchema', () => {
-  it('Creates correct default ui schema based on property names', () => {
-    const schema = {
-      type: SchemaType.object,
-      properties: {
-        resources: { type: SchemaType.string },
-        installPlan: { type: SchemaType.string },
-        imagePullPolicy: { type: SchemaType.string },
-        updateStrategy: { type: SchemaType.string },
-        nodeAffinity: { type: SchemaType.string },
-        podAffinity: { type: SchemaType.string },
-        podAntiAffinity: { type: SchemaType.string },
-        replicas: { type: SchemaType.string },
-        matchExpressions: { type: SchemaType.string },
-      },
-    };
-    const uiSchema = getDefaultUISchema(schema);
-    expect(uiSchema.resources).toEqual({
-      'ui:field': 'ResourceRequirementsField',
-      'ui:title': 'Resource Requirements',
-    });
-    expect(uiSchema.installPlan).toEqual({
-      'ui:field': 'InstallPlanField',
-      'ui:title': 'Install Plan',
-    });
-    expect(uiSchema.imagePullPolicy).toEqual({
-      'ui:widget': 'ImagePullPolicyWidget',
-      'ui:title': 'Image Pull Policy',
-    });
-    expect(uiSchema.updateStrategy).toEqual({
-      'ui:field': 'UpdateStrategyField',
-      'ui:title': 'Update Strategy',
-    });
-    expect(uiSchema.nodeAffinity).toEqual({
-      'ui:field': 'NodeAffinityField',
-      'ui:title': 'Node Affinity',
-    });
-    expect(uiSchema.podAffinity).toEqual({
-      'ui:field': 'PodAffinityField',
-      'ui:title': 'Pod Affinity',
-    });
-    expect(uiSchema.podAntiAffinity).toEqual({
-      'ui:field': 'PodAffinityField',
-      'ui:title': 'Pod Anti-Affinity',
-    });
-    expect(uiSchema.replicas).toEqual({ 'ui:widget': 'PodCountWidget', 'ui:title': 'Replicas' });
-    expect(uiSchema.matchExpressions).toEqual({
-      'ui:field': 'MatchExpressionsField',
-      'ui:title': 'Match Expressions',
-    });
-  });
-
   it('Creates correct ui schema for empty schema property', () => {
     const uiSchema = getDefaultUISchema(testCRD.spec.validation.openAPIV3Schema as JSONSchema6);
     expect(uiSchema.spec.hiddenFieldGroup).toEqual(HIDDEN_UI_SCHEMA);
