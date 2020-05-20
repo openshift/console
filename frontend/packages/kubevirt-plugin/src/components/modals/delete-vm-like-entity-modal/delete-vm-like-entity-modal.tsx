@@ -1,4 +1,5 @@
 import * as React from 'react';
+import * as _ from 'lodash';
 import { HandlePromiseProps, history, withHandlePromise } from '@console/internal/components/utils';
 import { YellowExclamationTriangleIcon } from '@console/shared/src/components/status/icons';
 import { getName, getNamespace } from '@console/shared/src/selectors/common';
@@ -56,6 +57,7 @@ export const DeleteVMLikeEntityModal = withHandlePromise((props: DeleteVMLikeEnt
     getVolumes(asVM(vmLikeEntity), null),
   );
   const isInProgress = inProgress || !vmImportLoaded || !isOwnedVolumeResourcesLoaded;
+  const numOfAllResources = _.sum([ownedVolumeResources.length, vmImport ? 1 : 0]);
 
   const submit = (e) => {
     e.preventDefault();
@@ -91,6 +93,12 @@ export const DeleteVMLikeEntityModal = withHandlePromise((props: DeleteVMLikeEnt
         Are you sure you want to delete{' '}
         <strong className="co-break-word">{getName(vmLikeEntity)}</strong> in namespace{' '}
         <strong>{getNamespace(vmLikeEntity)}</strong> ?
+        {numOfAllResources > 0 && (
+          <p>
+            The following resources will be deleted along with this virtual machine. Unchecked items
+            will not be deleted.
+          </p>
+        )}
         {ownedVolumeResources.length > 0 && (
           <div className="checkbox">
             <label className="control-label">
