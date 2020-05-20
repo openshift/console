@@ -76,11 +76,13 @@ import * as rabbitmqImg from '../../imgs/logos/rabbitmq.svg';
 import * as railsImg from '../../imgs/logos/rails.svg';
 import * as redisImg from '../../imgs/logos/redis.svg';
 import * as rhIntegrationImg from '../../imgs/logos/rh-integration.svg';
+import * as rhSpringBoot from '../../imgs/logos/rh-spring-boot.svg';
 import * as rhTomcatImg from '../../imgs/logos/rh-tomcat.svg';
 import * as rubyImg from '../../imgs/logos/ruby.svg';
 import * as scalaImg from '../../imgs/logos/scala.svg';
 import * as shadowmanImg from '../../imgs/logos/shadowman.svg';
 import * as springImg from '../../imgs/logos/spring.svg';
+import * as springBootImg from '../../imgs/logos/spring-boot.svg';
 import * as ssoImg from '../../imgs/logos/sso.svg';
 import * as stackoverflowImg from '../../imgs/logos/stackoverflow.svg';
 import * as suseImg from '../../imgs/logos/suse.svg';
@@ -168,6 +170,7 @@ const logos = new Map()
   .set('icon-rails', railsImg)
   .set('icon-redis', redisImg)
   .set('icon-rh-integration', rhIntegrationImg)
+  .set('icon-rh-spring-boot', rhSpringBoot)
   .set('icon-java', openjdkImg)
   // Use the upstream icon.
   .set('icon-redhat', redhatImg)
@@ -177,6 +180,7 @@ const logos = new Map()
   .set('icon-scala', scalaImg)
   .set('icon-shadowman', shadowmanImg)
   .set('icon-spring', springImg)
+  .set('icon-spring-boot', springBootImg)
   .set('icon-sso', ssoImg)
   .set('icon-stackoverflow', stackoverflowImg)
   .set('icon-suse', suseImg)
