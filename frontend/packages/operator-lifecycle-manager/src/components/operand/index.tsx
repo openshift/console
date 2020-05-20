@@ -160,17 +160,17 @@ export const OperandTableHeader = () => {
       title: 'Labels',
       sortField: 'metadata.labels',
       transforms: [sortable],
-      props: { className: tableColumnClasses[4] },
+      props: { className: tableColumnClasses[3] },
     },
     {
       title: 'Last Updated',
       sortField: 'metadata.creationTimestamp',
       transforms: [sortable],
-      props: { className: tableColumnClasses[5] },
+      props: { className: tableColumnClasses[4] },
     },
     {
       title: '',
-      props: { className: tableColumnClasses[6] },
+      props: { className: tableColumnClasses[5] },
     },
   ];
 };
@@ -258,13 +258,13 @@ export const OperandTableRow: React.FC<OperandTableRowProps> = ({
       <TableData className={tableColumnClasses[2]}>
         <OperandStatus operand={obj} />
       </TableData>
-      <TableData className={tableColumnClasses[4]}>
+      <TableData className={tableColumnClasses[3]}>
         <LabelList kind={obj.kind} labels={obj.metadata.labels} />
       </TableData>
-      <TableData className={tableColumnClasses[5]}>
+      <TableData className={tableColumnClasses[4]}>
         <Timestamp timestamp={obj.metadata.creationTimestamp} />
       </TableData>
-      <TableData className={tableColumnClasses[6]}>
+      <TableData className={tableColumnClasses[5]}>
         <ResourceKebab actions={actions} kind={referenceFor(obj)} resource={obj} />
       </TableData>
     </TableRow>
