@@ -224,6 +224,12 @@ const PVCType: React.FC<PVCTypeProps> = ({ state, dispatch }) => {
     }
   };
 
+  const add = () => {
+    if (state.numVolumes < 20) {
+      dispatch({ type: 'setVolumes', value: state.numVolumes + 1 });
+    }
+  };
+
   return (
     <>
       <FormGroup
@@ -234,13 +240,11 @@ const PVCType: React.FC<PVCTypeProps> = ({ state, dispatch }) => {
       >
         <InputGroup>
           <InputGroupText>
-            <MinusIcon onClick={substract} />{' '}
+            <MinusIcon onClick={substract} />
           </InputGroupText>
           <TextInput value={state.numVolumes} aria-label="Number of Volumes" />
           <InputGroupText>
-            <PlusIcon
-              onClick={() => dispatch({ type: 'setVolumes', value: state.numVolumes + 1 })}
-            />{' '}
+            <PlusIcon onClick={add} />
           </InputGroupText>
         </InputGroup>
       </FormGroup>
