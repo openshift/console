@@ -1,13 +1,22 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
 import * as classNames from 'classnames';
-import { sortable } from '@patternfly/react-table';
+import {
+  sortable,
+  SortByDirection,
+  Table as PFTable,
+  TableBody,
+  TableHeader,
+  TableVariant,
+} from '@patternfly/react-table';
+
 import { BanIcon } from '@patternfly/react-icons';
 
 import { DetailsPage, ListPage, Table, TableRow, TableData, RowFunction } from './factory';
 import {
   AsyncComponent,
   DetailsItem,
+  EmptyBox,
   Kebab,
   KebabAction,
   navFactory,
@@ -16,7 +25,14 @@ import {
   ResourceSummary,
   SectionHeading,
 } from './utils';
-import { CustomResourceDefinitionKind, K8sKind, referenceForCRD } from '../module/k8s';
+import {
+  apiVersionCompare,
+  CRDVersion,
+  CustomResourceDefinitionKind,
+  getLatestVersionForCRD,
+  K8sKind,
+  referenceForCRD,
+} from '../module/k8s';
 import { CustomResourceDefinitionModel } from '../models';
 import { Conditions } from './conditions';
 import { resourceListPages } from './resource-pages';
@@ -107,6 +123,63 @@ const Established: React.FC<{ crd: CustomResourceDefinitionKind }> = ({ crd }) =
   );
 };
 
+const EmptyVersionsMsg: React.FC<{}> = () => <EmptyBox label="CRD Versions" />;
+
+const crdVersionTableHeaders = [
+  {
+    title: 'Name',
+    transforms: [sortable],
+  },
+  {
+    title: 'Served',
+    transforms: [sortable],
+  },
+  {
+    title: 'Storage',
+    transforms: [sortable],
+  },
+];
+
+const CRDVersionTable: React.FC<CRDVersionProps> = ({ versions }) => {
+  const [sortBy, setSortBy] = React.useState<PFSortState>({});
+
+  const compare = (a, b) => {
+    const aVal = a?.[sortBy.index] ?? '';
+    const bVal = b?.[sortBy.index] ?? '';
+    return sortBy.index === 0 ? apiVersionCompare(aVal, bVal) : aVal.localeCompare(bVal);
+  };
+
+  const versionRows = _.map(versions, (version: CRDVersion) => [
+    version.name,
+    version.served.toString(),
+    version.storage.toString(),
+  ]);
+
+  sortBy.direction === SortByDirection.asc
+    ? versionRows.sort(compare)
+    : versionRows.sort(compare).reverse();
+
+  const onSort = (_event, index, direction) => {
+    setSortBy({ index, direction });
+  };
+
+  return versionRows.length > 0 ? (
+    <PFTable
+      variant={TableVariant.compact}
+      aria-label="CRD Versions"
+      cells={crdVersionTableHeaders}
+      rows={versionRows}
+      onSort={onSort}
+      sortBy={sortBy}
+    >
+      <TableHeader />
+      <TableBody />
+    </PFTable>
+  ) : (
+    <EmptyVersionsMsg />
+  );
+};
+
 const CRDTableRow: RowFunction<CustomResourceDefinitionKind> = ({
   obj: crd,
   index,
@@ -128,7 +201,7 @@ const CRDTableRow: RowFunction<CustomResourceDefinitionKind> = ({
       <TableData className={classNames(tableColumnClasses[1], 'co-break-word')}>
         {crd.spec.group}
       </TableData>
-      <TableData className={tableColumnClasses[2]}>{crd.spec.version}</TableData>
+      <TableData className={tableColumnClasses[2]}>{getLatestVersionForCRD(crd)}</TableData>
       <TableData className={tableColumnClasses[3]}>{namespaced(crd) ? 'Yes' : 'No'}</TableData>
       <TableData className={tableColumnClasses[4]}>
         <Established crd={crd} />
@@ -167,6 +240,10 @@ const Details: React.FC<{ obj: CustomResourceDefinitionKind }> = ({ obj: crd }) 
       <div className="co-m-pane__body">
         <SectionHeading text="Conditions" />
         <Conditions conditions={crd.status.conditions} />
+      </div>
+      <div className="co-m-pane__body">
+        <SectionHeading text="Versions" />
+        <CRDVersionTable versions={crd.spec.versions} />
       </div>
     </>
   );
@@ -238,4 +315,13 @@ CustomResourceDefinitionsPage.displayName = 'CustomResourceDefinitionsPage';
 
 type CustomResourceDefinitionsDetailsPageProps = {
   match: any;
+};
+
+export type CRDVersionProps = {
+  versions: CRDVersion[];
+};
+
+type PFSortState = {
+  index?: number;
+  direction?: SortByDirection;
 };
