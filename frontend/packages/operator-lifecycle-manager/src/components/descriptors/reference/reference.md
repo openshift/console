@@ -15,12 +15,14 @@
   12. [podAffinity](#12-podaffinity)
   13. [podAntiAffinity](#13-podantiaffinity)
   14. [selector](#14-selector)
-  15. [fieldGroup](#15-fieldgroup)
-  16. [arrayFieldGroup](#16-arrayFieldGroup)
+  15. [_DEPRECATED_ fieldGroup](#fieldGroup) 
+  16. [_DEPRECATED_ arrayFieldGroup](#arrayFieldGroup)
   17. [select](#17-select)
   18. [advanced](#18-advanced)
   19. [endpointList](#19-endpointList)
   20. [fieldDependency](#20-fielddependency)
+  21. [hidden](#21-hidden)
+---------------------------------------
 
 #### [statusDescriptors](#statusDescriptors-1):
   1. [podStatuses](#1-podStatuses)
@@ -30,14 +32,33 @@
   5. [k8sPhase](#5-k8sPhase)
   6. [k8sPhaseReason](#6-k8sPhaseReason)
   7. [k8sResourcePrefix](#7-k8sResourcePrefix)
-
+---------------------------------------
 
 #### [DEPRECATED Descriptors](#deprecated-descriptors-1)
+  15. [fieldGroup](#fieldGroup)
+  16. [arrayFieldGroup](#arrayFieldGroup)
+
 
 ## specDescriptors
-A specDescriptor is for describing the property of a `spec` field in your Custom Resource. Each specDescriptor provides UI widget(s) for creating/mutating CR instance on different views (i.e. CREATION, DISPLAY, and MODIFY views) in the OpenShift Console.
+A specDescriptor is for describing the property of a `spec` field in your Custom Resource. Each entry should contain the following:
+* `displayName` - _The user-friendly name of the field_
+* `description` - _Concise information about what the field represents_
+* `path` - _The dot-delimited path of the field in the object_
+* `x-descriptors` (Optional) - _UI component information about the field capabilities_
 
-### 1. podCount
+You can customize how a field is presented in the UI with a specDescriptor. Use a user-friendly `displayName` and concise `description` to overwrite the field name and potentially lengthy description of a field in the schema based on where the `path` is pointing to. This applies to any schema property and in any level of the nested structures.
+
+The `x-descriptors` is used to determine which "capabilities" this descriptor has and which UI component to use on different views in the OpenShift Console.
+
+For example, some `x-descriptors` also provides a "DISPLAY VIEW" that allows you to expose the specified schema property on Operand's Details view in the console as well as on the Creation Form. A canonical list of React UI `x-descriptors` for OpenShift can be found below.
+
+You can see more information on [Operand's Creation Forms](../../descriptors#create-operand-form).
+
+
+
+### x-descriptors
+
+#### 1. podCount
 
 **x-descriptors**
 
@@ -68,7 +89,7 @@ This descriptor allows you to specify the number of pods for your instance. See 
 </table>
 
 
-### 2. resourceRequirements
+#### 2. resourceRequirements
 
 **x-descriptors**
 
@@ -101,7 +122,7 @@ This descriptor allows you to specify the mini/max amount of compute resources r
 </table>
 
 
-### 3. k8sResourcePrefix
+#### 3. k8sResourcePrefix
 
 **x-descriptors**
 
@@ -134,7 +155,7 @@ This descriptor allows you to specify the prerequisite kubernetes object (e.g. _
 </table>
 
 
-### 4. booleanSwitch
+#### 4. booleanSwitch
 
 **x-descriptors**
 
@@ -165,7 +186,7 @@ This descriptor allows you to specify the _true_ or _false_ value for the config
 </table>
 
 
-### 5. checkbox
+#### 5. checkbox
 
 **x-descriptors**
 
@@ -197,7 +218,7 @@ This descriptor allows you to specify the _true_ or _false_ value for the config
 </table>
 
 
-### 6. text
+#### 6. text
 
 **x-descriptors**
 
@@ -229,7 +250,7 @@ This descriptor allows you to specify a text input for a _string_ data type. See
 </table>
 
 
-### 7. number
+#### 7. number
 
 **x-descriptors**
 
@@ -261,7 +282,7 @@ This descriptor allows you to specify a number input for a _number_ data type. S
 </table>
 
 
-### 8. password
+#### 8. password
 
 **x-descriptors**
 
@@ -294,7 +315,7 @@ This descriptor allows you to specify a text input for a _password_ data type. S
 </table>
 
 
-### 9. updateStrategy
+#### 9. updateStrategy
 
 **x-descriptors**
 
@@ -326,7 +347,7 @@ This descriptor allows you to specify the strategy of your pods being replaced w
 </table>
 
 
-### 10. imagePullPolicy
+#### 10. imagePullPolicy
 
 **x-descriptors**
 
@@ -359,7 +380,7 @@ This descriptor allows you to specify the policy for pulling your container imag
 </table>
 
 
-### 11. nodeAffinity
+#### 11. nodeAffinity
 
 **x-descriptors**
 
@@ -380,7 +401,6 @@ This descriptor allows you to specify which nodes your pod is eligible to be sch
   <tr valign="top">
     <td width="50%">CREATION VIEW
       <img src="img/spec/11-1_nodeaff-new.png" />
-      <h6><small><b>[TODO]</b><i> the dropdown for "OPERATOR" field is not wide enough to display "NotIn", "Exists", "DoesNotExist" (only as "...") when collapsed.</small></i></p></td>
     <td width="50%">DISPLAY VIEW
       <img src="img/spec/11-2_nodeaff-dis.png" />
       <h6><small><b>[TODO]</b><i> cannot display the configuration</small></i></p></td>
@@ -394,7 +414,7 @@ This descriptor allows you to specify which nodes your pod is eligible to be sch
 </table>
 
 
-### 12. podAffinity
+#### 12. podAffinity
 
 **x-descriptors**
 
@@ -415,7 +435,6 @@ This descriptor allows you to specify which nodes your pod is eligible to be sch
   <tr valign="top">
     <td width="50%">CREATION VIEW
       <img src="img/spec/12-1_podaff-new.png" />
-      <h6><small><b>[TODO]</b><i> the dropdown for "OPERATOR" field is not wide enough to display "NotIn", "Exists", "DoesNotExist" (only as "...") when collapsed.</small></i></p></td>
     <td width="50%">DISPLAY VIEW
       <img src="img/spec/12-2_podaff-dis.png" />
       <h6><small><b>[TODO]</b><i> cannot display the configuration</small></i></p></td>
@@ -429,7 +448,7 @@ This descriptor allows you to specify which nodes your pod is eligible to be sch
 </table>
 
 
-### 13. podAntiAffinity
+#### 13. podAntiAffinity
 
 **x-descriptors**
 
@@ -450,7 +469,6 @@ This descriptor allows you to specify which nodes your pod is eligible to be sch
   <tr valign="top">
     <td width="50%">CREATION VIEW
       <img src="img/spec/13-1_podantiaff-new.png" />
-      <h6><small><b>[TODO]</b><i> the dropdown for "OPERATOR" field is not wide enough to display "NotIn", "Exists", "DoesNotExist" (only as "...") when collapsed.</small></i></p></td>
     <td width="50%">DISPLAY VIEW
       <img src="img/spec/13-2_podantiaff-dis.png" />
       <h6><small><b>[TODO]</b><i> cannot display the configuration</small></i></p></td>
@@ -464,7 +482,7 @@ This descriptor allows you to specify which nodes your pod is eligible to be sch
 </table>
 
 
-### 14. selector
+#### 14. selector
 
 **x-descriptors**
 
@@ -500,92 +518,17 @@ See Kubernetes doc for details in
 [resources-that-support-set-based-requirement](https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/#resources-that-support-set-based-requirements).
 
 
-### 15. fieldGroup
+#### 15. fieldGroup
+This x-descriptor has been __deprecated__. See the [entry in the deprecated](#fieldGroup) section.
+
+#### 16. arrayFieldGroup
+This x-descriptor has been __deprecated__. See the [entry in the deprecated](#arrayFieldGroup) section.
+
+#### 17. select
 
 **x-descriptors**
 
-This descriptor allows you to specify a set of fields together as a _group_. Nested fields will automatically be grouped using the CRD&#39;s OpenAPI validation. See example for Portworx Operator:
-
-```yaml
-…
-- displayName: Enabled
-  description: Specifies if Stork is enabled.
-  path: stork.enabled
-  x-descriptors:
-    - 'urn:alm:descriptor:com.tectonic.ui:fieldGroup:Stork'
-    - 'urn:alm:descriptor:com.tectonic.ui:booleanSwitch'
-- displayName: Image
-  description: The docker image name and version of Stork.
-  path: stork.image
-  x-descriptors:
-    - 'urn:alm:descriptor:com.tectonic.ui:fieldGroup:stork'
-    - 'urn:alm:descriptor:com.tectonic.ui:text'
-…
-```
-
-**UI**
-<table style="width:100%">
-  <tr valign="top">
-    <td width="50%">CREATION VIEW
-      <img src="img/spec/15-1_fieldgroup-new.png" />
-    <td width="50%">DISPLAY VIEW
-      <img src="img/spec/15-2_fieldgroup-dis.png" />
-      <h6><small><b>[TODO]</b><i> Cannot display fields in a group</small></i></p></td>
-  </tr>
-  <tr valign="top">
-    <td colspan="2">MODIFY VIEW
-      <h6><small><b>[TODO]</b><i> * boolean toggles are not displayed as toggle so cannot edit the config</i></small></h6>
-      </td>
-  </tr>
-</table>
-
-
-### 16. arrayFieldGroup
-
-**x-descriptors**
-
-This descriptor allows you to specify a set of fields together as an _array item_. Nested fields of an array item will automatically be grouped using the CRD&#39;s OpenAPI validation. See example for Strimzi Operator:
-
-```yaml
-…
-- description: The Broker ID to be assigned with the specified Storage Class.
-  displayName: Broker ID
-  path: kafka.storage.overrides[0].broker
-  x-descriptors:
-    - 'urn:alm:descriptor:com.tectonic.ui:arrayFieldGroup:overrides'
-    - 'urn:alm:descriptor:com.tectonic.ui:number'
-- description: The Storage Class to be assigned.
-  displayName: Storage Class
-  path: kafka.storage.overrides[0].class
-  x-descriptors:
-    - 'urn:alm:descriptor:com.tectonic.ui:arrayFieldGroup:overrides'
-    - 'urn:alm:descriptor:io.kubernetes:StorageClass'
-…
-```
-
-**UI**
-<table style="width:100%">
-  <tr valign="top">
-    <td width="50%">CREATION VIEW
-      <img src="img/spec/16-1_arrayfieldgroup-new.png" />
-      <h6><small><b>[TODO]</b><i> Currently the widget doesn't support add/remove item</i></p></td>
-    <td width="50%">DISPLAY VIEW
-      <img src="img/spec/16-2_arrayfieldgroup-dis.png" />
-      <h6><small><b>[TODO]</b><i> Cannot display fields in a group</small></i></p></td>
-  </tr>
-  <tr valign="top">
-    <td colspan="2">MODIFY VIEW
-      <h6><small><b>* </b><i> Currently Missing.</i></small></h6>
-      </td>
-  </tr>
-</table>
-
-
-### 17. select
-
-**x-descriptors**
-
-This descriptor allows you to specify a set of predefined options (e.g. `enum:` type) for a dropdownUI component. See example for Strimzi Apache Kafka Operator:
+This descriptor allows you to specify a set of predefined options (e.g. `enum:` type) for a dropdownUI component. See example from [[CSV] Strimzi Apache Kafka Operator](https://github.com/operator-framework/community-operators/blob/master/community-operators/strimzi-kafka-operator/0.17.0/strimzi-cluster-operator.v0.17.0.clusterserviceversion.yaml#L335-L341):
 
 ```yaml
 …
@@ -615,11 +558,11 @@ This descriptor allows you to specify a set of predefined options (e.g. `enum:` 
 </table>
 
 
-### 18. advanced
+#### 18. advanced
 
 **x-descriptors**
 
-This descriptor allows you to specify fields as &quot;Advanced&quot; options and will be displayed at the latter section of the form. See example for Business Automation Operator:
+This descriptor allows you to specify fields as &quot;Advanced Configurations&quot; for any schema property. The advanced fields will be displayed within a collapsible section at the bottom of the parent schema structure.  See example for Business Automation Operator:
 
 ```yaml
 …
@@ -655,7 +598,7 @@ This descriptor allows you to specify fields as &quot;Advanced&quot; options and
 </table>
 
 
-### 19. endpointList
+#### 19. endpointList
 
 **x-descriptors**
 
@@ -687,19 +630,24 @@ This descriptor is created specifically for Prometheus Operator to specify a lis
 </table>
 
 
-### 20. fieldDependency
+#### 20. fieldDependency
 
 **x-descriptors**
 
-This descriptor allows you to specify a field as the dependent of a Control Field and shows the field when the current value of the Control Field is equal to the expected value:
+This descriptor allows you to specify a field as the dependent of a Control Field and shows the Dependent Field when the current value of the Control Field is equal to the expected value:
 ```yaml
 'urn:alm:descriptor:com.tectonic.ui:fieldDependency:CONTROL_FIELD_PATH:EXPECTED_VALUE'
 ```
 
 **Usage**
-1. Add “fieldDependency” to 'x-descriptors' array of the Dependent Field(s).
-2. Replace “CONTROL_FIELD_PATH” with the 'path' property of the Control Field object.
-3. Replace “EXPECTED_VALUE” with the actual expected value.
+1. Add &quot;fieldDependency&quot; to 'x-descriptors' array of the Dependent Field(s).
+2. Replace &quot;CONTROL_FIELD_PATH&quot; with the 'path' property of the Control Field object.
+3. Replace &quot;EXPECTED_VALUE&quot; with the actual expected value.
+
+**Requirements**
+1. &quot;Field dependency&quot; only exists between sibling fields in CRD's schema.
+2. The Dependent Field will be exposed right after the Control Field on the form (_ignores the rules mentioned in [Ordering of Form Fields](../../descriptors#ordering-of-form-fields)_).
+3. The Dependent Field doesn't have to be a &quot;leaf&quot; in the schema.
 
 The Dependent Field(s) will be displayed only when the current value of the Control Field is equal to the expected value.
 
@@ -707,7 +655,7 @@ The Dependent Field(s) will be displayed only when the current value of the Cont
 ```yaml
 …
 - displayName: Enable Upgrades
-  description:  >-
+  description: >-
       Set true to enable automatic micro version product upgrades, it is disabled by default.
   path: upgrades.enabled
   x-descriptors:
@@ -733,7 +681,8 @@ The Dependent Field(s) will be displayed only when the current value of the Cont
       <img src="img/spec/20-2_fielddependency-new.png" />
       </td></td>
     <td width="50%">DISPLAY VIEW
-      <img src="img/spec/20-2_fielddependency-dis.png" /></td>
+      <img src="img/spec/20-2_fielddependency-dis.png" />
+      <h6><small><b>[TODO]</b><i> cannot display the dependency</small></i></p></td>
   </tr>
   <tr valign="top">
     <td colspan="2">MODIFY VIEW
@@ -742,10 +691,44 @@ The Dependent Field(s) will be displayed only when the current value of the Cont
   </tr>
 </table>
 
-## statusDescriptors
-A statusDescriptor is for describing the property of a `status` field in your Custom Resource. Each statusDescriptor provides a UI widget for exposing the CR instance on the DISPLAY view in the OpenShift Console.
 
-### 1. podStatuses
+#### 21. hidden
+
+**x-descriptors**
+
+This descriptor allows you to exclude non-user facing fields from the &quot;auto-generated creation form&quot; by specifying them as &quot;hidden&quot; schema fields. See example for Portworx Operator:
+
+```yaml
+…
+ - displayName: HIDDEN FIELDS - Network and all its children fields
+   description: >-
+      HIDDEN FIELDS - The network related fields to be used by Portworx for data traffic.
+   path: network
+   x-descriptors:
+     - 'urn:alm:descriptor:com.tectonic.ui:hidden'
+ - displayName: HIDDEN FIELDS - Start Port
+   description: >-
+      HIDDEN FIELDS - It is the starting port in the range of ports used by Portworx.
+   path: startPort
+   x-descriptors:
+     - 'urn:alm:descriptor:com.tectonic.ui:hidden'
+…
+```
+
+**Usage**
+1. You can apply &quot;hidden&quot; to any schema property path (doesn't have to be a &quot;leaf&quot; in the schema). All the children properties, if any, will be hidden as well.
+2. The descriptor will hide the target property and all of its child fields.
+3. The field(s) will be hidden on the UI but can still be accessed through the YAML editor.
+
+---------------------------------------
+
+
+## statusDescriptors
+A statusDescriptor is for describing the property of a `status` field in your Custom Resource. The structure of the statusDescriptors is similar to specDescriptors and includes the same fields. The only difference is the set of valid `x-descriptors` described below.
+
+### x-descriptors
+
+#### 1. podStatuses
 
 **x-descriptors**
 
@@ -821,7 +804,7 @@ status:
   </tr>
 </table>
 
-### 2. w3Link
+#### 2. w3Link
 
 **x-descriptors**
 
@@ -871,7 +854,7 @@ status:
   </tr>
 </table>
 
-### 3. conditions
+#### 3. conditions
 
 **x-descriptors**
 
@@ -944,7 +927,7 @@ status:
   </tr>
 </table>
 
-### 4. text
+#### 4. text
 
 **x-descriptors**
 
@@ -986,7 +969,7 @@ status:
   </tr>
 </table>
 
-### 5. k8sPhase
+#### 5. k8sPhase
 
 **x-descriptors**
 
@@ -1026,7 +1009,7 @@ status:
   </tr>
 </table>
 
-### 6. k8sPhaseReason
+#### 6. k8sPhaseReason
 
 **x-descriptors**
 
@@ -1067,7 +1050,7 @@ status:
   </tr>
 </table>
 
-### 7. k8sResourcePrefix
+#### 7. k8sResourcePrefix
 
 **x-descriptors**
 
@@ -1109,13 +1092,13 @@ status:
   </tr>
 </table>
 
-
+---------------------------------------
 
 ### DEPRECATED Descriptors
 
-#### Label **[DEPRECATED]**
+#### Label
 
-**x-descriptors**
+**x-descriptors [DEPRECATED]**
 ```yaml
 …
 x-descriptors:
@@ -1125,9 +1108,9 @@ x-descriptors:
 * Use [text](#6-text) specDescriptor instead for `string` data type input/output.
 
 
-#### namespaceSelector **[DEPRECATED]**
+#### namespaceSelector
 
-**x-descriptors**
+**x-descriptors [DEPRECATED]**
 ```yaml
 …
 x-descriptors:
@@ -1135,3 +1118,118 @@ x-descriptors:
 …
 ```
 * Use [k8sResourcePrefix](#3-k8sResourcePrefix) specDescriptor instead to specify Namespace object.
+
+#### fieldGroup
+
+**x-descriptors [DEPRECATED]**
+
+This x-descriptor is **NO longer necessary**.
+
+Starting from OCP 4.5, the field grouping of _object_ and _array_ structures are now schema-based and auto-generated for the Creation View.
+
+You can still overwrite the `displayName` and `description` for _objects_ and/or _arrays_ in the same way as individual fields. Simply use a [specDescriptors](#specDescriptors-1) directly against the _object/array_ (no `x-descriptors` are necessary).
+
+**Example**
+
+See an example for Portworx Operator. To customize the displayName and fields on the "stork" object:
+1. Add a specDescriptor to overwrite the `displayName` with `path` property of the "stork".
+2. Add a specDescriptor with [booleanSwitch](#4-booleanswitch) x-descriptor, and `path` property of "stork.enabled".
+3. Add a specDescriptor with [text](#6-text) x-descriptor,  and `path` property of "stork.image".
+
+
+```yaml
+…
+- displayName: Stork Configurations
+  description: Specifies the configurations for Stork.
+  path: stork
+- displayName: Enabled
+  description: Specifies if Stork is enabled.
+  path: stork.enabled
+  x-descriptors:
+    - 'urn:alm:descriptor:com.tectonic.ui:booleanSwitch'
+- displayName: Image
+  description: The docker image name and version of Stork.
+  path: stork.image
+  x-descriptors:
+    - 'urn:alm:descriptor:com.tectonic.ui:text'
+…
+```
+
+**UI**
+<table style="width:100%">
+  <tr valign="top">
+    <td width="50%">CREATION VIEW
+      <img src="img/spec/15-1_fieldgroup-new.png" />
+    <td width="50%">DISPLAY VIEW
+      <img src="img/spec/15-2_fieldgroup-dis.png" />
+      <h6><small><b>[TODO]</b><i> Cannot display fields in a group</small></i></p></td></h6>
+  </tr>
+  <tr valign="top">
+    <td colspan="2">MODIFY VIEW
+      <h6><small><b>[TODO]</b><i> * Currently Missing</i></small></h6>
+      </td>
+  </tr>
+</table>
+
+
+#### arrayFieldGroup
+
+**x-descriptors [DEPRECATED]**
+
+This x-descriptor is **NO longer necessary**.
+
+Starting from OCP 4.5, the grouping of _object_ and _array_ structures are now schema-based and auto-generated in the Creation View.
+
+You can still provide your own `displayName` and `description` for _objects_ and/or _arrays_ in the same way as individual fields. Simply use a [specDescriptor](#specDescriptors-1) directly against the _object/array_ (no `x-descriptors` are necessary).
+
+**Example**
+
+See an example for Strimzi Operator. To customize the displayName and fields on the "overrides" (kafka.storage.overrides) array structure:
+1. Add a specDescriptor to overwrite the `displayName` with `path` property "kafka.storage.overrides".
+
+2. Add a specDescriptor with [number](#7-number) x-descriptor, and `path` property of "**kafka.storage.overrides[0].broker**".
+<h6><small><b>Note:</b><i> Need to add the "array index notation" in the path property of the descriptor</i></small></h6>
+
+3. Add a specDescriptor with [text](#6-text) x-descriptor,  and `path` property of "**kafka.storage.overrides[0].class**".
+<h6><small><b>Note:</b><i> Need to add the "array index notation" in the path property of the descriptor</i></small></h6>
+
+
+```yaml
+…
+- displayName: Kafka Storage Override Configurations
+  description: Specifies the configurations for storage overrides.
+  path: kafka.storage.overrides
+- description: The Broker ID to be assigned with the specified Storage Class.
+  displayName: Broker ID
+  path: kafka.storage.overrides[0].broker
+  x-descriptors:
+    - 'urn:alm:descriptor:com.tectonic.ui:number'
+- description: The Storage Class to be assigned.
+  displayName: Storage Class
+  path: kafka.storage.overrides[0].class
+  x-descriptors:
+    - 'urn:alm:descriptor:io.kubernetes:StorageClass'
+…
+```
+
+**UI**
+<table style="width:100%">
+  <tr valign="top">
+    <td width="50%">CREATION VIEW
+      <img src="img/spec/16-1_arrayfieldgroup-new.png" />
+      <h6><small><b>Note:</b>
+      <i>The * required field has a higher "sort weight" and will be rendered earlier in the form.  <br><br>
+      In this example, "Kafka Storage" (kafka.storage.type) is a required field of "Storage" (kafka.storage) object, so it is rendered before "Kafka Storage Override Configurations" (kafka.storage.overrides) array structure.
+      <br><br>
+      See more information on <a href="../../descriptors#ordering-of-form-fields">Ordering of Form Fields</a>.
+      </i></h6></td>
+    <td width="50%">DISPLAY VIEW
+      <img src="img/spec/16-2_arrayfieldgroup-dis.png" />
+      <h6><small><b>[TODO]</b><i> Cannot display fields in a group</small></i></p></td>
+  </tr>
+  <tr valign="top">
+    <td colspan="2">MODIFY VIEW
+      <h6><small><b>[TODO]</b><i> * Currently Missing</i></small></h6>
+      </td>
+  </tr>
+</table>
