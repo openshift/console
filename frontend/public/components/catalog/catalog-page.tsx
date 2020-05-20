@@ -238,13 +238,13 @@ export const CatalogListPage = withExtensions<CatalogListPageExtensionProps>({
 
             const maintainers = chart.maintainers?.length > 0 && (
               <>
-                {chart.maintainers?.map((maintainer) => (
-                  <>
+                {chart.maintainers?.map((maintainer, index) => (
+                  <React.Fragment key={index}>
                     {maintainer.name}
                     <br />
                     <a href={`mailto:${maintainer.email}`}>{maintainer.email}</a>
                     <br />
-                  </>
+                  </React.Fragment>
                 ))}
               </>
             );
