@@ -28,7 +28,7 @@ class ImportProvidersTabComponent extends React.Component<ImportProvidersTabComp
     const { wizardReduxID } = this.props;
 
     return (
-      <Form>
+      <Form className="co-m-pane__body co-m-pane__form">
         <FormFieldMemoRow
           key={ImportProvidersField.PROVIDER}
           field={this.getField(ImportProvidersField.PROVIDER)}
