@@ -141,8 +141,8 @@ export const VMDisks: React.FC<VMDisksProps> = ({ vmLikeEntity, vmTemplate }) =>
   const flatten = ({ datavolumes, pvcs }) =>
     getStoragesData({
       vmLikeEntity,
-      datavolumes: getLoadedData(datavolumes),
-      pvcs: getLoadedData(pvcs),
+      datavolumes,
+      pvcs,
     });
 
   const createFn = () =>
