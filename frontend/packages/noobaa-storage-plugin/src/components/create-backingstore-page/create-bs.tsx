@@ -198,6 +198,12 @@ const PVCType: React.FC<PVCTypeProps> = ({ state, dispatch }) => {
     TiB: 'TiB',
   };
 
+  // Noobaa expected Ti console standrad is to show TiB
+  const unitConverter = {
+    GiB: 'Gi',
+    TiB: 'Ti',
+  };
+
   // Fix for updating the storage class by force rerender
   const forceUpdate = React.useCallback(() => updateState({}), []);
 
@@ -207,7 +213,7 @@ const PVCType: React.FC<PVCTypeProps> = ({ state, dispatch }) => {
 
   const onChange = (event) => {
     const { value, unit } = event;
-    const input = `${value} ${unit}`;
+    const input = `${value}${unitConverter[unit]}`;
     setSize(value);
     dispatch({ type: 'setVolumeSize', value: input });
   };
@@ -546,6 +552,11 @@ const CreateBackingStoreForm: React.FC<CreateBackingStoreFormProps> = withHandle
       bsPayload.spec['pvPool'] = {
         numVolumes: providerDataState.numVolumes,
         storageClass: providerDataState.storageClass,
+        resources: {
+          requests: {
+            storage: providerDataState.volumeSize,
+          },
+        },
       };
     } else if (externalProviders.includes(provider)) {
       bsPayload.spec = {
