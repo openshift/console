@@ -261,7 +261,7 @@ export const vmImportMenuActions = [
 ];
 
 export type ExtraResources = {
-  vmi: VMIKind;
+  vmis: VMIKind[];
   pods: PodKind[];
   migrations: K8sResourceKind[];
   dataVolumes: V1alpha1DataVolume[];
@@ -271,8 +271,9 @@ export type ExtraResources = {
 export const vmMenuActionsCreator = (
   kindObj: K8sKind,
   vm: VMKind,
-  { vmi, pods, migrations, vmImports, dataVolumes }: ExtraResources,
+  { vmis, pods, migrations, vmImports, dataVolumes }: ExtraResources,
 ) => {
+  const vmi = vmis && vmis[0];
   const vmStatusBundle = getVMStatus({ vm, vmi, pods, migrations, dataVolumes, vmImports });
 
   return vmMenuActions.map((action) => {
