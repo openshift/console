@@ -15,7 +15,7 @@ const TrafficSplittingFields: React.FC<Props> = ({ revisionItems, values }) => {
     <MultiColumnField
       name="trafficSplitting"
       addLabel="Add Revision"
-      headers={['Split', 'Tag', 'Revision']}
+      headers={[{ name: 'Split', required: true }, 'Tag', { name: 'Revision', required: true }]}
       emptyValues={{ percent: '', tag: '', revisionName: '' }}
       disableDeleteRow={values.trafficSplitting.length === 1}
       spans={[2, 3, 7]}
@@ -23,7 +23,6 @@ const TrafficSplittingFields: React.FC<Props> = ({ revisionItems, values }) => {
       <InputField
         name="percent"
         type={TextInputTypes.number}
-        placeholder="100"
         style={{ maxWidth: '100%' }}
         required
       />

@@ -20,4 +20,9 @@
   &__empty-message {
     margin-bottom: var(--pf-global--spacer--sm);
   }
+  &__header--required-label {
+    margin-left: var(--pf-global--spacer--xs);
+    font-size: var(--pf-global--FontSize--sm);
+    color: var(--pf-global--danger-color--100);
+  }
 }

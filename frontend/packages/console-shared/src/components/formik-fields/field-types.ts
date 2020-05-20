@@ -77,7 +77,7 @@ export interface MultiColumnFieldProps extends FieldProps {
   toolTip?: string;
   emptyValues: { [name: string]: string };
   emptyMessage?: string;
-  headers: string[];
+  headers: ({ name: string; required: boolean } | string)[];
   children: React.ReactNode;
   spans?: gridItemSpanValueShape[];
 }
