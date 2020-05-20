@@ -2,8 +2,6 @@ import { K8sResourceKind } from '@console/internal/module/k8s';
 import { getRandomChars } from '@console/shared';
 import { coFetchJSON } from '@console/internal/co-fetch';
 
-export type InitResponseObject = { pod: string; container: string; cmd: string[] };
-
 type environment = {
   value: string;
   name: string;
@@ -37,6 +35,8 @@ export type CloudShellResource = K8sResourceKind & {
     devfile?: Devfile;
   };
 };
+
+export type TerminalInitData = { pod: string; container: string; cmd: string[] };
 
 export const CLOUD_SHELL_LABEL = 'console.openshift.io/cloudshell';
 export const CLOUD_SHELL_USER_ANNOTATION = 'console.openshift.io/cloudshell-user';
@@ -95,12 +95,13 @@ export const initTerminal = (
   username: string,
   workspaceName: string,
   workspaceNamespace: string,
-): Promise<InitResponseObject> => {
-  const consumeUrl = `/api/terminal/${workspaceNamespace}/${workspaceName}/exec/init`;
-  return coFetchJSON.post(consumeUrl, {
+): Promise<TerminalInitData> => {
+  const url = `/api/terminal/${workspaceNamespace}/${workspaceName}/exec/init`;
+  const payload = {
     kubeconfig: {
       username,
       namespace: workspaceNamespace,
     },
-  });
+  };
+  return coFetchJSON.post(url, payload);
 };

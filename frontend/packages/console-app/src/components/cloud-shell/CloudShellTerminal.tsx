@@ -11,8 +11,8 @@ import {
   CLOUD_SHELL_LABEL,
   CLOUD_SHELL_USER_ANNOTATION,
   CloudShellResource,
+  TerminalInitData,
   initTerminal,
-  InitResponseObject,
 } from './cloud-shell-utils';
 import CloudShellSetup from './setup/CloudShellSetup';
 import './CloudShellTerminal.scss';
@@ -36,65 +36,69 @@ const resource = {
 };
 
 const CloudShellTerminal: React.FC<CloudShellTerminalProps> = ({ username, onCancel }) => {
-  const [data, loaded, loadError] = useK8sWatchResource<CloudShellResource>(resource);
-  const [workspacePod, setWorkspacePod] = React.useState<InitResponseObject>(null);
-  const [apiError, setApiError] = React.useState<string>(null);
+  const [data, loaded, loadError] = useK8sWatchResource<CloudShellResource[]>(resource);
+  const [initData, setInitData] = React.useState<TerminalInitData>();
+  const [initDataLoading, setInitDataLoading] = React.useState<boolean>(false);
+  const [initError, setInitError] = React.useState<string>();
+  const [workspaceNamespace, setWorkspaceNamespace] = React.useState<string>();
 
   React.useEffect(() => {
+    let destroy = false;
     if (Array.isArray(data)) {
       const workspace = data.find(
-        (d) => d?.metadata?.annotations?.[CLOUD_SHELL_USER_ANNOTATION] === username,
+        (ws) => ws?.metadata?.annotations?.[CLOUD_SHELL_USER_ANNOTATION] === username,
       );
+      const running = workspace?.status?.phase === 'Running';
 
-      if (workspace && !workspacePod) {
-        const running = workspace.status?.phase === 'Running';
-        if (running) {
-          initTerminal(username, workspace.metadata.name, workspace.metadata.namespace)
-            .then((res) => {
-              setWorkspacePod({
-                pod: res.pod,
-                container: res.container,
-                cmd: res.cmd || [],
-              });
-            })
-            .catch(() => {
-              setApiError('Failed to connect to your OpenShift command line terminal');
-            });
-        }
+      if (running) {
+        setInitDataLoading(true);
+        const { name, namespace } = workspace.metadata;
+        initTerminal(username, name, namespace)
+          .then((res: TerminalInitData) => {
+            if (destroy) return;
+            setInitData(res);
+            setInitDataLoading(false);
+            setWorkspaceNamespace(namespace);
+          })
+          .catch(() => {
+            if (destroy) return;
+            setInitDataLoading(false);
+            setInitError('Failed to connect to your OpenShift command line terminal');
+          });
       }
     }
-  }, [data, username, workspacePod]);
 
-  let workSpace = null;
+    return () => {
+      destroy = true;
+    };
+  }, [data, username]);
 
-  if (Array.isArray(data)) {
-    workSpace = data.find(
-      (d) => d?.metadata?.annotations?.[CLOUD_SHELL_USER_ANNOTATION] === username,
-    );
-  }
-
-  if (loadError || apiError) {
+  if (loadError || initError) {
     return (
       <StatusBox
         loaded={loaded}
-        loadError={loadError || apiError}
+        loadError={loadError || initError}
         label="OpenShift command line terminal"
       />
     );
   }
 
-  if (!loaded || (workSpace?.metadata.namespace && !workspacePod)) {
-    return <TerminalLoadingBox message={!loaded ? 'Loading ...' : null} />;
+  if (!loaded || initDataLoading) {
+    return (
+      <div className="odc-cloudshell-terminal__container">
+        <TerminalLoadingBox />
+      </div>
+    );
   }
 
-  if (workspacePod) {
+  if (initData) {
     return (
       <div className="odc-cloudshell-terminal__container">
         <CloudshellExec
-          container={workspacePod.container}
-          podname={workspacePod.pod}
-          namespace={workSpace?.metadata.namespace}
-          shcommand={workspacePod.cmd}
+          namespace={workspaceNamespace}
+          container={initData.container}
+          podname={initData.pod}
+          shcommand={initData.cmd || []}
         />
       </div>
     );

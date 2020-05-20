@@ -1,11 +1,9 @@
 .co-cloud-shell-tab {
-  position: fixed;
-  top: 0px;
-  left: 0px;
-  right: 0px;
-  bottom: 0px;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
   overflow: hidden;
-  padding-bottom: var(--pf-global--spacer--xl);
   background-color: var(--pf-global--Color--dark-100);
   &__header {
     flex-shrink: 0;

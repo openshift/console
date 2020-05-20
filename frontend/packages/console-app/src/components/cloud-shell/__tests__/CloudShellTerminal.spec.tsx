@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { shallow } from 'enzyme';
+import { shallow, mount } from 'enzyme';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { LoadingBox } from '@console/internal/components/utils/status-box';
 import { InternalCloudShellTerminal } from '../CloudShellTerminal';
@@ -12,7 +12,7 @@ jest.mock('@console/internal/components/utils/k8s-watch-hook', () => ({
 describe('CloudShellTerminal', () => {
   it('should display loading box', () => {
     (useK8sWatchResource as jest.Mock).mockReturnValueOnce([null, false]);
-    const wrapper = shallow(<InternalCloudShellTerminal username="user" />);
+    const wrapper = mount(<InternalCloudShellTerminal username="user" />);
     expect(wrapper.find(LoadingBox)).toHaveLength(1);
   });
 

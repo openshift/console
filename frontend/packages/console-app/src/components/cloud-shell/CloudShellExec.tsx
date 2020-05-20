@@ -17,13 +17,20 @@ import TerminalLoadingBox from './TerminalLoadingBox';
 // The server only reads from STDIN, writes to the other three.
 // see also: https://github.com/kubernetes/kubernetes/pull/13885
 
-type CloudShellExecProps = {
+type Props = {
   container: string;
   podname: string;
   namespace: string;
   shcommand?: string[];
-  message?: string;
 };
+
+type StateProps = {
+  impersonate?: {
+    subprotocols: string[];
+  };
+};
+
+type CloudShellExecProps = Props & StateProps & WithFlagsProps;
 
 type CloudShellExecState = {
   open: boolean;
@@ -33,10 +40,7 @@ type CloudShellExecState = {
 const NO_SH =
   'starting container process caused "exec: \\"sh\\": executable file not found in $PATH"';
 
-class CloudShellExec extends React.PureComponent<
-  CloudShellExecProps & StateProps & WithFlagsProps,
-  CloudShellExecState
-> {
+class CloudShellExec extends React.PureComponent<CloudShellExecProps, CloudShellExecState> {
   private terminal;
 
   private ws;
@@ -49,6 +53,19 @@ class CloudShellExec extends React.PureComponent<
     };
     this.terminal = React.createRef();
   }
+
+  componentDidMount() {
+    this.connect();
+  }
+
+  componentWillUnmount() {
+    this.ws && this.ws.destroy();
+    delete this.ws;
+  }
+
+  onData = (data: string): void => {
+    this.ws && this.ws.send(`0${Base64.encode(data)}`);
+  };
 
   connect() {
     const { container, podname, namespace, shcommand, flags, impersonate } = this.props;
@@ -121,19 +138,6 @@ class CloudShellExec extends React.PureComponent<
       .onerror((evt) => console.error(`WS error?! ${evt}`));
   }
 
-  componentDidMount() {
-    this.connect();
-  }
-
-  componentWillUnmount() {
-    this.ws && this.ws.destroy();
-    delete this.ws;
-  }
-
-  onData = (data: string): void => {
-    this.ws && this.ws.send(`0${Base64.encode(data)}`);
-  };
-
   render() {
     const { open, error } = this.state;
     if (error) {
@@ -145,12 +149,6 @@ class CloudShellExec extends React.PureComponent<
     return <TerminalLoadingBox />;
   }
 }
-
-type StateProps = {
-  impersonate?: {
-    subprotocols: string[];
-  };
-};
 
 export default connect<StateProps>(impersonateStateToProps)(
   connectToFlags<CloudShellExecProps & WithFlagsProps>(FLAGS.OPENSHIFT)(CloudShellExec),
