@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Select, SelectVariant, SelectOption, SelectGroup } from '@patternfly/react-core';
-import { ShowFiltersKeyValue, ExpandFiltersKeyValue, DisplayFilters } from './filter-utils';
+import { ShowFiltersKeyValue, ExpandFiltersKeyValue, DisplayFilters } from './filter-types';
 
 type FilterDropdownProps = {
   filters: DisplayFilters;

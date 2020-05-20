@@ -1,5 +1,5 @@
 import { NodeModel, EdgeModel } from '@console/topology';
-import { TopologyFilters as Filters } from '../filters/filter-utils';
+import { TopologyFilters as Filters } from '../filters';
 import {
   TopologyDataModel as DataModel,
   TopologyDataObject,

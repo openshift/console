@@ -7,12 +7,8 @@ import { TextFilter } from '@console/internal/components/factory';
 import { InfoCircleIcon } from '@patternfly/react-icons';
 import { Visualization } from '@console/topology';
 import { setTopologyFilters } from '../redux/action';
-import {
-  TopologyFilters,
-  DisplayFilters,
-  getTopologyFilters,
-  getTopologySearchQuery,
-} from './filter-utils';
+import { TopologyFilters, DisplayFilters } from './filter-types';
+import { getTopologyFilters, getTopologySearchQuery } from './filter-utils';
 
 import FilterDropdown from './FilterDropdown';
 import './TopologyFilterBar.scss';

@@ -2,7 +2,7 @@ import * as React from 'react';
 import { shallow } from 'enzyme';
 import { SelectOption } from '@patternfly/react-core';
 import FilterDropdown from '../FilterDropdown';
-import { DisplayFilters } from '../filter-utils';
+import { DisplayFilters } from '../filter-types';
 
 const VALID_FILTERS = {
   podCount: true,

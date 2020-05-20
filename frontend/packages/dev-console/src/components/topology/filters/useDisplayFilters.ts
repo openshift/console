@@ -3,7 +3,8 @@
 // @ts-ignore
 import { useSelector } from 'react-redux';
 import { RootState } from '@console/internal/redux';
-import { DisplayFilters, getTopologyFilters } from './filter-utils';
+import { DisplayFilters } from './filter-types';
+import { getTopologyFilters } from './filter-utils';
 
 const useDisplayFilters = (): DisplayFilters => {
   return useSelector((state: RootState) => getTopologyFilters(state).display);

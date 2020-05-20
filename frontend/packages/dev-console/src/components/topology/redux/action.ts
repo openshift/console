@@ -1,5 +1,5 @@
 import { action, ActionType } from 'typesafe-actions';
-import { TopologyFilters } from '../filters/filter-utils';
+import { TopologyFilters } from '../filters/filter-types';
 import { TOPOLOGY_DISPLAY_FILTERS_LOCAL_STORAGE_KEY } from './const';
 
 export enum Actions {
