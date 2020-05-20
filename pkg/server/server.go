@@ -225,7 +225,9 @@ func (s *Server) HTTPHandler() http.Handler {
 		TLSClientConfig: s.K8sProxyConfig.TLSClientConfig,
 		ClusterEndpoint: s.K8sProxyConfig.Endpoint,
 	}
-	handle(terminal.Endpoint, authHandlerWithUser(terminalProxy.Handle))
+	handle(terminal.Endpoint, authHandlerWithUser(terminalProxy.HandleProxy))
+
+	handleFunc(terminal.AvailableEndpoint, terminalProxy.HandleProxyEnabled)
 
 	if s.prometheusProxyEnabled() {
 		// Only proxy requests to the Prometheus API, not the UI.

@@ -7,19 +7,17 @@ import (
 	"net/url"
 	"strings"
 
+	"github.com/openshift/console/pkg/auth"
+	"github.com/openshift/console/pkg/proxy"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/apimachinery/pkg/runtime/schema"
-	"k8s.io/client-go/dynamic"
-	"k8s.io/client-go/rest"
-
-	"github.com/openshift/console/pkg/auth"
-	"github.com/openshift/console/pkg/proxy"
 )
 
 const (
-	//Endpoint that Proxy is supposed to handle
-	Endpoint = "/api/terminal/"
+	// Endpoint that Proxy is supposed to handle
+	Endpoint          = "/api/terminal/"
+	AvailableEndpoint = "/api/terminal/available/"
 )
 
 // Proxy provides handlers to handle terminal related requests
@@ -42,19 +40,36 @@ var (
 	}
 )
 
-// Handle evaluates the namespace and workspace names from URL and after check that
+// HandleProxy evaluates the namespace and workspace names from URL and after check that
 // it's created by the current user - proxies the request there
-func (p *Proxy) Handle(user *auth.User, w http.ResponseWriter, r *http.Request) {
+func (p *Proxy) HandleProxy(user *auth.User, w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case
 		"GET",
 		"HEAD",
 		"OPTIONS",
 		"TRACE":
-		//These methods are considered as not vulnerable for CSRF attack, so the corresponding CSRF token check is skipped.
+		// These methods are considered as not vulnerable for CSRF attack, so the corresponding CSRF token check is skipped.
 		// But in terminal-proxy we must make sure that it's a request made by OpenShift Console
 		// before proxying request with passed token
 		w.WriteHeader(http.StatusForbidden)
+		return
+	}
+	operatorRunning, err := workspaceOperatorIsRunning()
+	if err != nil {
+		http.Error(w, "Failed to check workspace operator state. Cause: "+err.Error(), http.StatusInternalServerError)
+	}
+	if !operatorRunning {
+		http.Error(w, "Terminal endpoint is disabled: workspace operator is not deployed.", http.StatusForbidden)
+		return
+	}
+
+	enabledForUser, err := p.checkUserPermissions(user.Token)
+	if err != nil {
+		http.Error(w, "Failed to check workspace operator state. Cause: "+err.Error(), http.StatusInternalServerError)
+	}
+	if !enabledForUser {
+		http.Error(w, "Terminal is disabled for cluster-admin users.", http.StatusForbidden)
 		return
 	}
 
@@ -72,7 +87,7 @@ func (p *Proxy) Handle(user *auth.User, w http.ResponseWriter, r *http.Request) 
 
 	userId := user.ID
 	if userId == "" {
-		//user id is missing, auth is used that does not support user info propagated, like OpenShift OAuth
+		// user id is missing, auth is used that does not support user info propagated, like OpenShift OAuth
 		userInfo, err := client.Resource(UserGroupVersionResource).Get("~", metav1.GetOptions{})
 		if err != nil {
 			http.Error(w, "Failed to retrieve the current user info. Cause: "+err.Error(), http.StatusInternalServerError)
@@ -81,7 +96,7 @@ func (p *Proxy) Handle(user *auth.User, w http.ResponseWriter, r *http.Request) 
 
 		userId = string(userInfo.GetUID())
 		if userId == "" {
-			//uid is missing. it must be kube:admin
+			// uid is missing. it must be kube:admin
 			if "kube:admin" != userInfo.GetName() {
 				http.Error(w, "User must have UID to proceed authorization", http.StatusInternalServerError)
 				return
@@ -110,7 +125,27 @@ func (p *Proxy) Handle(user *auth.User, w http.ResponseWriter, r *http.Request) 
 	p.proxyToWorkspace(terminalHost, path, user.Token, r, w)
 }
 
-//stripTerminalAPIPrefix strips path prefix that is expected for Terminal API request
+func (p *Proxy) HandleProxyEnabled(w http.ResponseWriter, r *http.Request) {
+	if r.Method != "GET" {
+		w.Header().Set("Allow", "GET")
+		w.WriteHeader(http.StatusMethodNotAllowed)
+		return
+	}
+
+	enabled, err := workspaceOperatorIsRunning()
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	if !enabled {
+		w.WriteHeader(http.StatusServiceUnavailable)
+		return
+	}
+	w.WriteHeader(http.StatusNoContent)
+	return
+}
+
+// stripTerminalAPIPrefix strips path prefix that is expected for Terminal API request
 func stripTerminalAPIPrefix(requestPath string) (ok bool, namespace string, workspaceName string, path string) {
 	// URL is supposed to have the following format
 	// ->   /api/terminal/{namespace}/{workspace-name}/{path} < optional
@@ -128,7 +163,7 @@ func stripTerminalAPIPrefix(requestPath string) (ok bool, namespace string, work
 	}
 }
 
-//getBaseTerminalHost evaluates ideUrl from the specified workspace and extract host from it
+// getBaseTerminalHost evaluates ideUrl from the specified workspace and extract host from it
 func (p *Proxy) getBaseTerminalHost(ws *unstructured.Unstructured) (*url.URL, error) {
 	ideUrl, success, err := unstructured.NestedString(ws.UnstructuredContent(), "status", "ideUrl")
 	if !success {
@@ -161,7 +196,7 @@ func (p *Proxy) proxyToWorkspace(workspaceIdeHost *url.URL, path string, token s
 
 	r2.URL.Path = path
 
-	//TODO a new proxy per request is created. Must be revised and probably changed
+	// TODO a new proxy per request is created. Must be revised and probably changed
 	terminalProxy := proxy.NewProxy(&proxy.Config{
 		Endpoint:        workspaceIdeHost,
 		TLSClientConfig: p.TLSClientConfig,
@@ -170,29 +205,3 @@ func (p *Proxy) proxyToWorkspace(workspaceIdeHost *url.URL, path string, token s
 	terminalProxy.ServeHTTP(w, r2)
 }
 
-//createDynamicClient create dynamic client with the configured token to be used
-func (p *Proxy) createDynamicClient(token string) (dynamic.Interface, error) {
-	var tlsClientConfig rest.TLSClientConfig
-	if p.TLSClientConfig.InsecureSkipVerify {
-		//off-cluster mode
-		tlsClientConfig.Insecure = true
-	} else {
-		inCluster, err := rest.InClusterConfig()
-		if err != nil {
-			return nil, err
-		}
-		tlsClientConfig = inCluster.TLSClientConfig
-	}
-
-	config := &rest.Config{
-		Host:            p.ClusterEndpoint.Host,
-		TLSClientConfig: tlsClientConfig,
-		BearerToken:     token,
-	}
-
-	client, err := dynamic.NewForConfig(dynamic.ConfigFor(config))
-	if err != nil {
-		return nil, err
-	}
-	return client, nil
-}
