@@ -105,7 +105,7 @@ const ImporterPods: React.FC<ImporterPodsProps> = ({ statuses }) => (
   </>
 );
 
-const VIEW_POD_EVENTS = 'View pod events';
+const VIEW_POD_EVENTS = 'View Pod events';
 const VIEW_VM_EVENTS = 'View VM events';
 
 const getPodLink = (pod: PodKind) =>
