@@ -91,7 +91,7 @@ const CloudShellTerminal: React.FC<CloudShellTerminalProps> = ({ username, onCan
     );
   }
 
-  if (initData) {
+  if (initData && workspaceNamespace) {
     return (
       <div className="odc-cloudshell-terminal__container">
         <CloudshellExec
