@@ -29,7 +29,6 @@ import {
   StatusBox,
   Timestamp,
   navFactory,
-  resourcePathFromModel,
 } from '@console/internal/components/utils';
 import { connectToModel, connectToPlural } from '@console/internal/kinds';
 import {
@@ -431,9 +430,7 @@ export const ProvidedAPIPage = connectToModel((props: ProvidedAPIPageProps) => {
     );
   }
 
-  const to = kindObj.namespaced
-    ? `/k8s/ns/${csv.metadata.namespace}/${ClusterServiceVersionModel.plural}/${csv.metadata.name}/${kind}/~new`
-    : `${resourcePathFromModel(kindObj)}/~new`;
+  const to = `/k8s/ns/${csv.metadata.namespace}/${ClusterServiceVersionModel.plural}/${csv.metadata.name}/${kind}/~new`;
   return (
     <ListPage
       kind={kind}
