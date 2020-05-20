@@ -84,7 +84,7 @@ const CloudInitFormRows: React.FC<CloudInitFormRowsProps> = ({
     authKeys.push('');
   }
   return (
-    <>
+    <span className="co-m-pane__body co-m-pane__form">
       <FormRow title="Hostname" fieldId={asId(CloudInitDataFormKeys.HOSTNAME)}>
         <TextInput
           id={asId(CloudInitDataFormKeys.HOSTNAME)}
@@ -155,7 +155,7 @@ const CloudInitFormRows: React.FC<CloudInitFormRowsProps> = ({
           Add SSH Key
         </Button>
       </FormRow>
-    </>
+    </span>
   );
 };
 
