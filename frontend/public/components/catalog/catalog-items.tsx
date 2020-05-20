@@ -15,7 +15,7 @@ import { normalizeIconClass } from './catalog-item-icon';
 import { CatalogTileDetails } from './catalog-item-details';
 import { TileViewPage } from '../utils/tile-view-page';
 
-type Metadata = { uid?: string; name: string; namespace?: string };
+type Metadata = { uid?: string; name?: string; namespace?: string };
 
 export type Item = {
   obj?: {
@@ -31,7 +31,11 @@ export type Item = {
   tileProvider?: string;
   tileDescription?: string;
   tags?: string[];
-  documentationUrl?: string | undefined;
+  longDescription?: string;
+  documentationUrl?: string;
+  supportUrl?: string;
+  markdownDescription?: () => Promise<string>;
+  customProperties?: React.ReactElement;
 };
 
 export type CatalogTileViewPageProps = {
@@ -281,37 +285,6 @@ export class CatalogTileViewPage extends React.Component<
     this.setState({ detailsItem: null });
   };
 
-  renderTile = (item: Item): React.ReactElement => {
-    if (!item) {
-      return null;
-    }
-    const { obj, tileName, tileImgUrl, tileIconClass, tileProvider, tileDescription, kind } = item;
-    const uid = obj.metadata.uid;
-    const iconClass = tileIconClass ? normalizeIconClass(tileIconClass) : null;
-    const vendor = tileProvider ? `provided by ${tileProvider}` : null;
-    const iconImgUrl = tileImgUrl || catalogImg;
-    const { kind: filters } = getAvailableFilters({ kind });
-    const filter = _.find(filters, ['value', kind]);
-    return (
-      <CatalogTile
-        className="co-catalog-tile"
-        key={uid}
-        onClick={() => this.openOverlay(item)}
-        title={tileName}
-        badges={[
-          <CatalogTileBadge key="type">
-            <Badge isRead>{filter.label}</Badge>
-          </CatalogTileBadge>,
-        ]}
-        iconImg={iconImgUrl}
-        iconClass={iconClass}
-        vendor={vendor}
-        description={tileDescription}
-        data-test={`${kind}-${obj.metadata.name}`}
-      />
-    );
-  };
-
   render() {
     const { items } = this.props;
     const { detailsItem } = this.state;
@@ -336,42 +309,82 @@ export class CatalogTileViewPage extends React.Component<
           groupItems={groupItems}
           groupByTypes={GroupByTypes}
         />
-        {detailsItem && (
-          <Modal
-            className="co-catalog-page__overlay co-catalog-page__overlay--right"
-            header={
-              <>
-                <CatalogItemHeader
-                  title={detailsItem.tileName}
-                  vendor={
-                    detailsItem.tileProvider ? `Provided by ${detailsItem.tileProvider}` : null
-                  }
-                  iconClass={
-                    detailsItem.tileIconClass ? normalizeIconClass(detailsItem.tileIconClass) : null
-                  }
-                  iconImg={detailsItem.tileImgUrl}
-                />
-                <div className="co-catalog-page__overlay-actions">
-                  <Link
-                    className="pf-c-button pf-m-primary co-catalog-page__overlay-action"
-                    to={detailsItem.href}
-                    role="button"
-                    title={detailsItem.createLabel}
-                    onClick={this.closeOverlay}
-                  >
-                    {detailsItem.createLabel}
-                  </Link>
-                </div>
-              </>
-            }
-            isOpen={!!detailsItem}
-            onClose={this.closeOverlay}
-            title={detailsItem.tileName}
-          >
-            <CatalogTileDetails item={detailsItem} closeOverlay={this.closeOverlay} />
-          </Modal>
-        )}
+        {this.renderModal(detailsItem)}
       </>
     );
   }
+
+  renderTile = (item: Item): React.ReactElement => {
+    if (!item) {
+      return null;
+    }
+    const { obj, tileName, tileProvider, tileDescription, kind } = item;
+    const uid = obj.metadata.uid;
+    const vendor = tileProvider ? `provided by ${tileProvider}` : null;
+    const { kind: filters } = getAvailableFilters({ kind });
+    const filter = _.find(filters, ['value', kind]);
+    return (
+      <CatalogTile
+        className="co-catalog-tile"
+        key={uid}
+        onClick={() => this.openOverlay(item)}
+        title={tileName}
+        badges={[
+          <CatalogTileBadge key="type">
+            <Badge isRead>{filter.label}</Badge>
+          </CatalogTileBadge>,
+        ]}
+        {...this.getIconProps(item)}
+        vendor={vendor}
+        description={tileDescription}
+        data-test={`${kind}-${obj.metadata.name}`}
+      />
+    );
+  };
+
+  renderModal = (detailsItem: Item) => {
+    if (!detailsItem) {
+      return null;
+    }
+    return (
+      <Modal
+        className="co-catalog-page__overlay co-catalog-page__overlay--right"
+        header={
+          <>
+            <CatalogItemHeader
+              title={detailsItem.tileName}
+              vendor={detailsItem.tileProvider ? `Provided by ${detailsItem.tileProvider}` : null}
+              {...this.getIconProps(detailsItem)}
+            />
+            <div className="co-catalog-page__overlay-actions">
+              <Link
+                className="pf-c-button pf-m-primary co-catalog-page__overlay-action"
+                to={detailsItem.href}
+                role="button"
+                title={detailsItem.createLabel}
+                onClick={this.closeOverlay}
+              >
+                {detailsItem.createLabel}
+              </Link>
+            </div>
+          </>
+        }
+        isOpen={!!detailsItem}
+        onClose={this.closeOverlay}
+        title={detailsItem.tileName}
+      >
+        <CatalogTileDetails item={detailsItem} closeOverlay={this.closeOverlay} />
+      </Modal>
+    );
+  };
+
+  getIconProps = (item: Item) => {
+    const { tileImgUrl, tileIconClass } = item;
+    if (tileImgUrl) {
+      return { iconImg: tileImgUrl, iconClass: null };
+    } else if (tileIconClass) {
+      return { iconImg: null, iconClass: normalizeIconClass(tileIconClass) };
+    }
+    return { iconImg: catalogImg, iconClass: null };
+  };
 }

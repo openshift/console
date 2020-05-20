@@ -210,6 +210,24 @@ export const catalogListPageProps = {
           removedFromBrokerCatalog: false,
         },
       },
+      {
+        metadata: {
+          name: 'c01f3bb8-c641-11e8-be32-54e1ad486c15',
+          uid: 'cbe7e8db-c641-11e8-8889-0242ac110004',
+        },
+        spec: {
+          tags: ['quickstart', 'fa-icon'],
+          externalMetadata: {
+            'console.openshift.io/iconClass': 'fa fa-fill-drip',
+            displayName: 'FA icon example',
+            providerDisplayName: 'Red Hat, Inc.',
+          },
+          description: 'Example to validate icon',
+        },
+        status: {
+          removedFromBrokerCatalog: false,
+        },
+      },
     ],
     filters: {},
     loadError: '',

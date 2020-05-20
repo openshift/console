@@ -5,7 +5,7 @@ import { safeLoad } from 'js-yaml';
 
 import { PropertyItem } from '@patternfly/react-catalog-view-extension';
 import { ANNOTATIONS, FLAGS, APIError } from '@console/shared';
-import { CatalogTileViewPage } from './catalog-items';
+import { CatalogTileViewPage, Item } from './catalog-items';
 import {
   k8sListPartialMetadata,
   referenceForModel,
@@ -13,6 +13,7 @@ import {
   K8sResourceCommon,
   K8sResourceKind,
   PartialObjectMetadata,
+  TemplateKind,
 } from '../../module/k8s';
 import { withStartGuide } from '../start-guide';
 import { connectToFlags, flagPending, FlagsObject } from '../../reducers/features';
@@ -69,7 +70,7 @@ export class CatalogListPage extends React.Component<CatalogListPageProps, Catal
     }
   }
 
-  getItems() {
+  getItems(): Item[] {
     const extensionItems = _.flatten(
       plugins.registry
         .getDevCatalogModels()
@@ -77,7 +78,7 @@ export class CatalogListPage extends React.Component<CatalogListPageProps, Catal
         .map(({ properties }) =>
           properties.normalize(_.get(this.props, [referenceForModel(properties.model), 'data'])),
         ),
-    );
+    ) as Item[];
 
     const {
       clusterServiceClasses,
@@ -87,11 +88,11 @@ export class CatalogListPage extends React.Component<CatalogListPageProps, Catal
       helmCharts,
       loaded,
     } = this.props;
-    let clusterServiceClassItems = [];
-    let imageStreamItems = [];
-    let templateItems = [];
-    let projectTemplateItems = [];
-    let helmChartItems = [];
+    let clusterServiceClassItems: Item[] = [];
+    let imageStreamItems: Item[] = [];
+    let templateItems: Item[] = [];
+    let projectTemplateItems: Item[] = [];
+    let helmChartItems: Item[] = [];
 
     if (!loaded) {
       return [];
@@ -119,7 +120,7 @@ export class CatalogListPage extends React.Component<CatalogListPageProps, Catal
       helmChartItems = this.normalizeHelmCharts(helmCharts);
     }
 
-    const items = [
+    const items: Item[] = [
       ...clusterServiceClassItems,
       ...imageStreamItems,
       ...templateItems,
@@ -131,7 +132,7 @@ export class CatalogListPage extends React.Component<CatalogListPageProps, Catal
     return _.sortBy(items, 'tileName');
   }
 
-  normalizeClusterServiceClasses(serviceClasses) {
+  normalizeClusterServiceClasses(serviceClasses: K8sResourceKind[]) {
     const { namespace = '' } = this.props;
     return _.reduce(
       serviceClasses,
@@ -164,11 +165,11 @@ export class CatalogListPage extends React.Component<CatalogListPageProps, Catal
         });
         return acc;
       },
-      [],
+      [] as Item[],
     );
   }
 
-  normalizeTemplates(templates) {
+  normalizeTemplates(templates: Array<TemplateKind | PartialObjectMetadata>): Item[] {
     return _.reduce(
       templates,
       (acc, template) => {
@@ -197,11 +198,11 @@ export class CatalogListPage extends React.Component<CatalogListPageProps, Catal
         });
         return acc;
       },
-      [],
+      [] as Item[],
     );
   }
 
-  normalizeHelmCharts(chartEntries: HelmChartEntries) {
+  normalizeHelmCharts(chartEntries: HelmChartEntries): Item[] {
     const { namespace: currentNamespace = '' } = this.props;
 
     return _.reduce(
@@ -275,11 +276,11 @@ export class CatalogListPage extends React.Component<CatalogListPageProps, Catal
         });
         return normalizedCharts;
       },
-      [],
+      [] as Item[],
     );
   }
 
-  normalizeImageStreams(imageStreams) {
+  normalizeImageStreams(imageStreams: K8sResourceKind[]): Item[] {
     const builderimageStreams = _.filter(imageStreams, isBuilder);
     return _.map(builderimageStreams, (imageStream) => {
       const { namespace: currentNamespace = '' } = this.props;
@@ -488,7 +489,7 @@ export type CatalogListPageProps = {
 };
 
 export type CatalogListPageState = {
-  items: any[];
+  items: Item[];
 };
 
 export type CatalogProps = {
