@@ -81,20 +81,21 @@ const VirtualHardwareTabFirehose: React.FC<VirtualHardwareTabFirehoseProps> = ({
   const virtualStorages = getVirtualStoragesData(storages, persistentVolumeClaims);
   const showStorages = virtualStorages.length > 0;
   const disableAddCD = isLocked || virtualStorages.length > 1 || isCreateDisabled;
-  const availableCDName = getAvailableCDName(storages.map((storage) => storage.disk));
   const withProgress = wrapWithProgress(setTabLocked);
-  const diskWrapper = DiskWrapper.initializeFromSimpleData({
-    name: availableCDName,
-    type: DiskType.CDROM,
-    bus: templateValidations.getDefaultBus(DiskType.CDROM),
-  });
 
   const addButton = (
     <AddCDButton
       className="virtual-hardware-tab-add-btn"
       text={ATTACH_CD}
       isDisabled={disableAddCD}
-      onClick={() =>
+      onClick={() => {
+        const availableCDName = getAvailableCDName(storages.map((storage) => storage.disk));
+        const diskWrapper = new DiskWrapper()
+          .init({
+            name: availableCDName,
+          })
+          .setType(DiskType.CDROM, { bus: templateValidations.getDefaultBus(DiskType.CDROM) });
+
         withProgress(
           vmWizardStorageModalEnhanced({
             storage: {
@@ -104,8 +105,8 @@ const VirtualHardwareTabFirehose: React.FC<VirtualHardwareTabFirehoseProps> = ({
             blocking: true,
             wizardReduxID,
           }).result,
-        )
-      }
+        );
+      }}
     />
   );
 
