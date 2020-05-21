@@ -9,6 +9,8 @@ import { getHealthChecksData } from '../create-health-checks-probe-utils';
 import { getResourcesType } from '../../edit-application/edit-application-utils';
 import HealthChecks from '../HealthChecks';
 
+jest.mock('formik', () => ({ useFormikContext: () => ({ values: [] }) }));
+
 let addHealthCheckProbs: React.ComponentProps<typeof AddHealthChecks>;
 
 describe('AddHealthCheck', () => {
