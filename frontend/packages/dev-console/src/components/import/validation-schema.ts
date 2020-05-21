@@ -34,10 +34,13 @@ export const projectNameValidationSchema = yup.object().shape({
 
 export const applicationNameValidationSchema = yup.object().shape({
   selectedKey: yup.string(),
-  name: yup.string().when('selectedKey', {
-    is: CREATE_APPLICATION_KEY,
-    then: yup.string().required('Required'),
-  }),
+  name: yup
+    .string()
+    .max(63, 'Cannot be longer than 63 characters.')
+    .when('selectedKey', {
+      is: CREATE_APPLICATION_KEY,
+      then: yup.string().required('Required'),
+    }),
 });
 
 export const deploymentValidationSchema = yup.object().shape({
