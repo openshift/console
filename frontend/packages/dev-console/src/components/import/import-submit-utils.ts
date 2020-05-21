@@ -470,13 +470,21 @@ export const createOrUpdateResources = async (
     }
     const [imageStreamResponse] = await Promise.all(requests);
     const imageStreamURL = imageStreamResponse.status.dockerImageRepository;
+
+    const originalAnnotations = appResources?.editAppResource?.data?.metadata?.annotations || {};
+    const triggerAnnotations = getTriggerAnnotation(generatedImageStreamName || name, namespace);
+    const annotations = {
+      ...originalAnnotations,
+      ...defaultAnnotations,
+      ...triggerAnnotations,
+    };
     const knDeploymentResource = getKnativeServiceDepResource(
       formData,
       imageStreamURL,
       imageStreamName,
       undefined,
       undefined,
-      { ...defaultAnnotations, ...getTriggerAnnotation(name, namespace) },
+      annotations,
       _.get(appResources, 'editAppResource.data'),
     );
     return Promise.all([
