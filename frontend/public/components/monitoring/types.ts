@@ -96,13 +96,17 @@ export type ListPageProps = {
   loadError?: string;
   match: { path: string };
   nameFilterID: string;
+  labelFilter?: string;
   reduxID: string;
   Row: RowFunction;
   rowFilter: {
+    filterGroupName: string;
     type: string;
     selected: string[];
     reducer: (monitoringResource: Alert | Rule | Silence) => string;
     items: { id: string; title: string }[];
   };
   showTitle?: boolean;
+  hideLabelFilter?: boolean;
+  labelPath?: string;
 };

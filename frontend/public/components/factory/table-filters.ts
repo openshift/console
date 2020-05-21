@@ -44,15 +44,35 @@ export const tableFilters: TableFilterMap = {
     return haystack.includes(needle);
   },
 
-  'alert-state': (filter, alert) => filter.selected.has(alertState(alert)),
+  'alert-list-label': (values, alert) => {
+    const labels = getLabelsAsString(alert, 'labels');
+    if (!values.all) {
+      return true;
+    }
+    return !!values.all.every((v) => labels.includes(v));
+  },
 
-  'alerting-rule-active': (filter, rule) => filter.selected.has(alertingRuleIsActive(rule)),
+  'alert-state': (filter, alert) =>
+    filter.selected.has(alertState(alert)) || _.isEmpty(filter.selected),
+
+  'alerting-rule-active': (filter, rule) =>
+    filter.selected.has(alertingRuleIsActive(rule)) || _.isEmpty(filter.selected),
 
   'alerting-rule-name': (filter, rule) => fuzzyCaseInsensitive(filter, rule.name),
 
-  'silence-name': (filter, silence) => fuzzyCaseInsensitive(filter, silence.name),
+  'alerting-rule-label': (values, rule) => {
+    const labels = getLabelsAsString(rule, 'labels');
+    if (!values.all) {
+      return true;
+    }
+    return !!values.all.every((v) => labels.includes(v));
+  },
 
-  'silence-state': (filter, silence) => filter.selected.has(silenceState(silence)),
+  'silence-name': (filter, silence) =>
+    fuzzyCaseInsensitive(filter, silence.name) || _.isEmpty(filter.selected),
+
+  'silence-state': (filter, silence) =>
+    filter.selected.has(silenceState(silence)) || _.isEmpty(filter.selected),
 
   // Filter role by role kind
   'role-kind': (filter, role) => filter.selected.has(roleType(role)) || filter.selected.size === 0,
