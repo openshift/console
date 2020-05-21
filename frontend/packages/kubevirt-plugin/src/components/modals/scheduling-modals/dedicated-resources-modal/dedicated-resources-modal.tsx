@@ -93,7 +93,7 @@ export const DedicatedResourcesModal = withHandlePromise<DedicatedResourcesModal
           isSimpleError={!!loadError}
           onSubmit={onSubmit}
           onCancel={close}
-          submitButtonText="Apply"
+          submitButtonText="Save"
           infoTitle={showCollisionAlert && 'Policy has been updated outside this flow.'}
           infoMessage={
             <>

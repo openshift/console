@@ -156,7 +156,7 @@ export const TModal = withHandlePromise(
           isSimpleError={!!loadError}
           onSubmit={onSubmit}
           onCancel={close}
-          submitButtonText="Apply"
+          submitButtonText="Save"
           infoTitle={showCollisionAlert && 'Tolerations has been updated outside this flow.'}
           infoMessage={
             <>
