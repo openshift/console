@@ -8,11 +8,12 @@ import {
   resourcePathFromModel,
 } from '@console/internal/components/utils';
 import * as UIActions from '@console/internal/actions/ui';
-import { Node } from '@console/topology';
+import { observer } from '@console/topology';
 import { modelFor } from '@console/internal/module/k8s';
 import { vmActions } from './components/kubevirtComponentFactory';
 import { TopologyVmDetailsPanel } from './TopologyVmDetailsPanel';
 import { TopologyVmResourcesPanel } from './TopologyVmResourcesPanel';
+import { VMNode } from './types';
 
 type PropsFromState = {
   selectedDetailsTab?: any;
@@ -31,24 +32,22 @@ const dispatchToProps = (dispatch): PropsFromDispatch => ({
 });
 
 type OwnProps = {
-  vm: Node;
+  vmNode: VMNode;
 };
 
 type TopologyVmPanelProps = PropsFromState & PropsFromDispatch & OwnProps;
 
 export const ConnectedTopologyVmPanel: React.FC<TopologyVmPanelProps> = ({
-  vm,
+  vmNode,
   selectedDetailsTab,
   onClickTab,
 }: TopologyVmPanelProps) => {
-  const name = vm.getLabel();
-  const vmData = vm.getData();
+  const name = vmNode.getLabel();
+  const vmData = vmNode.getData();
   const vmObj = vmData.resources.obj;
   const { namespace } = vmObj.metadata;
-  const detailsComponent = () => <TopologyVmDetailsPanel vm={vm} />;
-  const resourcesComponent = () => <TopologyVmResourcesPanel vmNode={vm} />;
+  const actions = vmActions(vmData);
 
-  const actions = vmActions(vm.getData());
   return (
     <div className="overview__sidebar-pane">
       <div className="overview__sidebar-pane-head resource-overview__heading">
@@ -75,10 +74,10 @@ export const ConnectedTopologyVmPanel: React.FC<TopologyVmPanelProps> = ({
         selectedTab={selectedDetailsTab || 'Resources'}
         onClickTab={onClickTab}
         tabs={[
-          { name: 'Details', component: detailsComponent },
-          { name: 'Resources', component: resourcesComponent },
+          { name: 'Details', component: TopologyVmDetailsPanel },
+          { name: 'Resources', component: TopologyVmResourcesPanel },
         ]}
-        tabProps={{ obj: vmObj }}
+        tabProps={{ vmNode }}
         additionalClassNames="co-m-horizontal-nav__menu--within-sidebar co-m-horizontal-nav__menu--within-overview-sidebar"
       />
     </div>
@@ -88,6 +87,6 @@ export const ConnectedTopologyVmPanel: React.FC<TopologyVmPanelProps> = ({
 const TopologyVmPanel = connect<PropsFromState, PropsFromDispatch, TopologyVmPanelProps>(
   stateToProps,
   dispatchToProps,
-)(ConnectedTopologyVmPanel);
+)(observer(ConnectedTopologyVmPanel));
 
 export default TopologyVmPanel;
