@@ -247,7 +247,7 @@ const LegendContainer = ({ children }: { children?: React.ReactNode }) => {
   );
 };
 
-const GraphInner: React.FC<GraphInnerProps> = React.memo(
+const Graph: React.FC<GraphProps> = React.memo(
   ({ allSeries, disabledSeries, formatLegendLabel, isStack, span, width, xDomain }) => {
     // Remove any disabled series
     const data = _.flatMap(allSeries, (series, i) => {
@@ -352,15 +352,6 @@ const GraphInner: React.FC<GraphInnerProps> = React.memo(
   },
 );
 
-const Graph: React.FC<GraphProps> = (props) => {
-  const [containerRef, width] = useRefWidth();
-  return (
-    <div ref={containerRef} style={{ width: '100%' }}>
-      {width > 0 && <GraphInner {...props} width={width} />}
-    </div>
-  );
-};
-
 const formatSeriesValues = (
   values: PrometheusValue[],
   samples: number,
@@ -422,6 +413,7 @@ const ZoomableGraph: React.FC<ZoomableGraphProps> = ({
   isStack,
   onZoom,
   span,
+  width,
   xDomain,
 }) => {
   const [isZooming, setIsZooming] = React.useState(false);
@@ -450,10 +442,10 @@ const ZoomableGraph: React.FC<ZoomableGraphProps> = ({
       return;
     }
 
-    const { width } = e.currentTarget.getBoundingClientRect();
+    const zoomWidth = e.currentTarget.getBoundingClientRect().width;
     const oldFrom = _.get(xDomain, '[0]', Date.now() - span);
-    let from = oldFrom + (span * xMin) / width;
-    let to = oldFrom + (span * xMax) / width;
+    let from = oldFrom + (span * xMin) / zoomWidth;
+    let to = oldFrom + (span * xMax) / zoomWidth;
     let newSpan = to - from;
 
     if (newSpan < minSpan) {
@@ -481,6 +473,7 @@ const ZoomableGraph: React.FC<ZoomableGraphProps> = ({
         formatLegendLabel={formatLegendLabel}
         isStack={isStack}
         span={span}
+        width={width}
         xDomain={xDomain}
       />
     </div>
@@ -526,6 +519,8 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
   const [graphData, setGraphData] = React.useState(null);
   const [samples, setSamples] = React.useState(maxSamplesForSpan);
   const [updating, setUpdating] = React.useState(true);
+
+  const [containerRef, width] = useRefWidth();
 
   const endTime = _.get(xDomain, '[1]');
 
@@ -640,7 +635,18 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
   );
 
   if (hideGraphs) {
-    return error && !isRangeVector ? <Error error={error} /> : null;
+    // Still render the graph containers so that `width` continues to be tracked while the graph is
+    // hidden. This ensures we can render at the correct width when the graph is shown again.
+    return (
+      <>
+        {error && !isRangeVector && <Error error={error} />}
+        <div className="query-browser__wrapper query-browser__wrapper--hidden">
+          <div className="graph-wrapper graph-wrapper--query-browser">
+            <div ref={containerRef} style={{ width: '100%' }}></div>
+          </div>
+        </div>
+      </>
+    );
   }
 
   if (isRangeVector) {
@@ -699,26 +705,34 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
             />
           )}
           <div className="graph-wrapper graph-wrapper--query-browser">
-            {hideControls ? (
-              <Graph
-                allSeries={graphData}
-                disabledSeries={disabledSeries}
-                formatLegendLabel={formatLegendLabel}
-                isStack={stack}
-                span={span}
-                xDomain={xDomain}
-              />
-            ) : (
-              <ZoomableGraph
-                allSeries={graphData}
-                disabledSeries={disabledSeries}
-                formatLegendLabel={formatLegendLabel}
-                isStack={stack}
-                onZoom={onZoom}
-                span={span}
-                xDomain={xDomain}
-              />
-            )}
+            <div ref={containerRef} style={{ width: '100%' }}>
+              {width > 0 && (
+                <>
+                  {hideControls ? (
+                    <Graph
+                      allSeries={graphData}
+                      disabledSeries={disabledSeries}
+                      formatLegendLabel={formatLegendLabel}
+                      isStack={stack}
+                      span={span}
+                      width={width}
+                      xDomain={xDomain}
+                    />
+                  ) : (
+                    <ZoomableGraph
+                      allSeries={graphData}
+                      disabledSeries={disabledSeries}
+                      formatLegendLabel={formatLegendLabel}
+                      isStack={stack}
+                      onZoom={onZoom}
+                      span={span}
+                      width={width}
+                      xDomain={xDomain}
+                    />
+                  )}
+                </>
+              )}
+            </div>
           </div>
         </>
       )}
@@ -769,26 +783,17 @@ type GraphEmptyStateProps = {
   title: string;
 };
 
-type GraphInnerProps = GraphProps & { width: number };
-
 type GraphProps = {
   allSeries: Series[][];
   disabledSeries?: PrometheusLabels[][];
   formatLegendLabel?: FormatLegendLabel;
   isStack?: boolean;
   span: number;
+  width: number;
   xDomain?: AxisDomain;
 };
 
-type ZoomableGraphProps = {
-  allSeries: Series[][];
-  disabledSeries?: PrometheusLabels[][];
-  formatLegendLabel?: FormatLegendLabel;
-  isStack?: boolean;
-  onZoom: (from: number, to: number) => void;
-  span: number;
-  xDomain?: AxisDomain;
-};
+type ZoomableGraphProps = GraphProps & { onZoom: (from: number, to: number) => void };
 
 export type QueryBrowserProps = {
   defaultSamples?: number;
