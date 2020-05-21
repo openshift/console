@@ -356,10 +356,12 @@ export const EditYAML_ = connect(stateToProps)(
         const sampleObj = generateObjToLoad(kind, id, yaml, this.props.obj.metadata.namespace);
         this.setState({ sampleObj });
         return sampleObj;
-      } catch ({ message, name }) {
+      } catch (error) {
         errorModal({
           title: 'Failed to Parse YAML Sample',
-          error: <div className="co-pre-line">{message || name || 'An error occurred.'}</div>,
+          error: (
+            <div className="co-pre-line">{error.message || error.name || 'An error occurred.'}</div>
+          ),
         });
       }
     }
