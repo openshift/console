@@ -68,7 +68,6 @@ export class VMSettingsTabComponent extends React.Component<VMSettingsTabCompone
           </FormField>
         </FormFieldMemoRow>
         <UserTemplates
-          key={VMSettingsField.USER_TEMPLATE}
           userTemplateField={this.getField(VMSettingsField.USER_TEMPLATE)}
           forceSingleUserTemplateName={userTemplateName}
           userTemplates={userTemplates}
@@ -77,7 +76,6 @@ export class VMSettingsTabComponent extends React.Component<VMSettingsTabCompone
           onChange={this.props.onFieldChange}
         />
         <FormFieldMemoRow
-          key={VMSettingsField.PROVISION_SOURCE_TYPE}
           field={this.getField(VMSettingsField.PROVISION_SOURCE_TYPE)}
           fieldType={FormFieldType.SELECT}
         >

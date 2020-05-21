@@ -18,23 +18,40 @@ export enum FormFieldType {
   SELECT = 'SELECT',
   CHECKBOX = 'CHECKBOX',
   INLINE_CHECKBOX = 'INLINE_CHECKBOX',
+  FILE_UPLOAD = 'FILE_UPLOAD',
   CUSTOM = 'CUSTOM',
 }
 
-const hasValue = new Set([FormFieldType.TEXT, FormFieldType.TEXT_AREA, FormFieldType.SELECT]);
+const hasValue = new Set([
+  FormFieldType.TEXT,
+  FormFieldType.TEXT_AREA,
+  FormFieldType.SELECT,
+  FormFieldType.FILE_UPLOAD,
+]);
 const hasIsDisabled = new Set([
   FormFieldType.TEXT,
   FormFieldType.SELECT,
   FormFieldType.CHECKBOX,
   FormFieldType.INLINE_CHECKBOX,
+  FormFieldType.FILE_UPLOAD,
   FormFieldType.CUSTOM,
 ]);
 const hasDisabled = new Set([FormFieldType.TEXT_AREA]);
 const hasIsChecked = new Set([FormFieldType.CHECKBOX, FormFieldType.INLINE_CHECKBOX]);
+const hasValidated = new Set([FormFieldType.FILE_UPLOAD]);
+const hasIsValid = new Set([
+  FormFieldType.TEXT,
+  FormFieldType.TEXT_AREA,
+  FormFieldType.SELECT,
+  FormFieldType.CHECKBOX,
+  FormFieldType.INLINE_CHECKBOX,
+  FormFieldType.CUSTOM,
+]);
 const hasIsRequired = new Set([
   FormFieldType.TEXT,
   FormFieldType.TEXT_AREA,
   FormFieldType.SELECT,
+  FormFieldType.FILE_UPLOAD,
   FormFieldType.CUSTOM,
 ]);
 const hasLabel = new Set([FormFieldType.INLINE_CHECKBOX]);
@@ -59,6 +76,7 @@ export const FormField: React.FC<FormFieldProps> = ({ children, isDisabled, valu
         const val = value || iGetFieldValue(field);
         const key = iGetFieldKey(field);
         const disabled = isDisabled || isFieldDisabled(field) || isLoading;
+        const isValid = iGetIn(field, ['validation', 'type']) !== ValidationErrorType.Error;
 
         return inject(
           children,
@@ -69,7 +87,8 @@ export const FormField: React.FC<FormFieldProps> = ({ children, isDisabled, valu
               isDisabled: set(hasIsDisabled, disabled),
               disabled: set(hasDisabled, disabled),
               isRequired: set(hasIsRequired, isFieldRequired(field)),
-              isValid: iGetIn(field, ['validation', 'type']) !== ValidationErrorType.Error,
+              isValid: set(hasIsValid, isValid),
+              validated: set(hasValidated, isValid ? undefined : 'error'),
               id: getFieldId(key),
               label: set(hasLabel, getFieldTitle(key)),
             },
