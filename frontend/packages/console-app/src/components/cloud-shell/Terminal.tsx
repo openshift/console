@@ -1,8 +1,6 @@
 import * as React from 'react';
 import { Terminal as XTerminal } from 'xterm';
-import * as fit from 'xterm/lib/addons/fit/fit';
-
-XTerminal.applyAddon(fit);
+import { fit } from 'xterm/lib/addons/fit/fit';
 
 const terminalOptions = {
   fontFamily: 'monospace',
@@ -17,58 +15,69 @@ type TerminalProps = {
   onData: (data: string) => void;
 };
 
-class Terminal extends React.Component<TerminalProps> {
-  private terminalRef;
+export type ImperativeTerminalType = {
+  focus: () => void;
+  reset: () => void;
+  onDataReceived: (data) => void;
+  onConnectionClosed: (msg: string) => void;
+};
 
-  private terminal;
+const Terminal = React.forwardRef<ImperativeTerminalType, TerminalProps>(({ onData }, ref) => {
+  const terminal = React.useRef<XTerminal>();
+  const terminalRef = React.useRef<HTMLDivElement>();
 
-  private resizeObserver;
-
-  constructor(props) {
-    super(props);
-    this.terminalRef = React.createRef<HTMLDivElement>();
-    this.terminal = new XTerminal(terminalOptions);
-    this.terminal.on('data', this.props.onData);
-  }
-
-  componentDidMount() {
-    this.terminal.open(this.terminalRef.current);
-    this.resizeObserver = new ResizeObserver(() => {
-      window.requestAnimationFrame(() => this.terminal.fit());
-    });
-    this.resizeObserver.observe(this.terminalRef.current);
-    this.focus();
-  }
-
-  componentWillUnmount() {
-    this.terminal.destroy();
-    this.resizeObserver.disconnect();
-  }
-
-  focus() {
-    this.terminal && this.terminal.focus();
-  }
-
-  reset() {
-    this.terminal.reset();
-    this.terminal.clear();
-    this.terminal.setOption('disableStdin', false);
-  }
-
-  onDataReceived(data) {
-    this.terminal && this.terminal.write(data);
-  }
-
-  onConnectionClosed = (reason) => {
-    this.terminal.write(`\x1b[31m${reason || 'disconnected'}\x1b[m\r\n`);
-    this.terminal.cursorHidden = true;
-    this.terminal.setOption('disableStdin', true);
-    this.terminal.refresh(this.terminal.y, this.terminal.y);
+  const focus = () => {
+    terminal.current && terminal.current.focus();
   };
 
-  render() {
-    return <div ref={this.terminalRef} style={{ width: '100%', height: '100%' }} />;
-  }
-}
+  const reset = () => {
+    if (!terminal.current) return;
+    terminal.current.reset();
+    terminal.current.clear();
+    terminal.current.setOption('disableStdin', false);
+  };
+
+  const onDataReceived = (data) => {
+    terminal.current && terminal.current.write(data);
+  };
+
+  const onConnectionClosed = (msg) => {
+    if (!terminal.current) return;
+    terminal.current.write(`\x1b[31m${msg || 'disconnected'}\x1b[m\r\n`);
+    terminal.current.setOption('disableStdin', true);
+  };
+
+  React.useEffect(() => {
+    const term: XTerminal = new XTerminal(terminalOptions);
+    term.on('data', onData);
+    term.open(terminalRef.current);
+    term.focus();
+
+    const resizeObserver: ResizeObserver = new ResizeObserver(() => {
+      window.requestAnimationFrame(() => fit(term));
+    });
+
+    resizeObserver.observe(terminalRef.current);
+
+    if (terminal.current !== term) {
+      terminal.current && terminal.current.destroy();
+      terminal.current = term;
+    }
+
+    return () => {
+      term.destroy();
+      resizeObserver.disconnect();
+    };
+  }, [onData]);
+
+  React.useImperativeHandle(ref, () => ({
+    focus,
+    reset,
+    onDataReceived,
+    onConnectionClosed,
+  }));
+
+  return <div ref={terminalRef} style={{ width: '100%', height: '100%' }} />;
+});
 
 export default Terminal;

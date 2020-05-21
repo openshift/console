@@ -40,38 +40,42 @@ const CloudShellTerminal: React.FC<CloudShellTerminalProps> = ({ username, onCan
   const [initData, setInitData] = React.useState<TerminalInitData>();
   const [initDataLoading, setInitDataLoading] = React.useState<boolean>(false);
   const [initError, setInitError] = React.useState<string>();
-  const [workspaceNamespace, setWorkspaceNamespace] = React.useState<string>();
+  let workspace: CloudShellResource;
+  let workspaceName: string;
+  let workspaceNamespace: string;
+  let workspacePhase: string;
+
+  if (Array.isArray(data)) {
+    workspace = data.find(
+      (ws) => ws?.metadata?.annotations?.[CLOUD_SHELL_USER_ANNOTATION] === username,
+    );
+    workspacePhase = workspace?.status?.phase;
+    workspaceName = workspace?.metadata?.name;
+    workspaceNamespace = workspace?.metadata?.namespace;
+  }
 
   React.useEffect(() => {
-    let destroy = false;
-    if (Array.isArray(data)) {
-      const workspace = data.find(
-        (ws) => ws?.metadata?.annotations?.[CLOUD_SHELL_USER_ANNOTATION] === username,
-      );
-      const running = workspace?.status?.phase === 'Running';
+    let unmounted = false;
 
-      if (running) {
-        setInitDataLoading(true);
-        const { name, namespace } = workspace.metadata;
-        initTerminal(username, name, namespace)
-          .then((res: TerminalInitData) => {
-            if (destroy) return;
-            setInitData(res);
-            setInitDataLoading(false);
-            setWorkspaceNamespace(namespace);
-          })
-          .catch(() => {
-            if (destroy) return;
-            setInitDataLoading(false);
-            setInitError('Failed to connect to your OpenShift command line terminal');
-          });
-      }
+    if (workspacePhase === 'Running') {
+      setInitDataLoading(true);
+      initTerminal(username, workspaceName, workspaceNamespace)
+        .then((res: TerminalInitData) => {
+          if (unmounted) return;
+          setInitData(res);
+          setInitDataLoading(false);
+        })
+        .catch(() => {
+          if (unmounted) return;
+          setInitDataLoading(false);
+          setInitError('Failed to connect to your OpenShift command line terminal');
+        });
     }
 
     return () => {
-      destroy = true;
+      unmounted = true;
     };
-  }, [data, username]);
+  }, [username, workspaceName, workspaceNamespace, workspacePhase]);
 
   if (loadError || initError) {
     return (
@@ -103,7 +107,10 @@ const CloudShellTerminal: React.FC<CloudShellTerminalProps> = ({ username, onCan
       </div>
     );
   }
-  return <CloudShellSetup onCancel={onCancel} />;
+
+  if (loaded && !workspace) return <CloudShellSetup onCancel={onCancel} />;
+
+  return null;
 };
 
 // For testing
