@@ -113,7 +113,7 @@ export const NSModal = withHandlePromise(
           isSimpleError={!!loadError}
           onSubmit={onSubmit}
           onCancel={close}
-          submitButtonText="Apply"
+          submitButtonText="Save"
           infoTitle={showCollisionAlert && 'Node Selector has been updated outside this flow.'}
           infoMessage={
             <>
