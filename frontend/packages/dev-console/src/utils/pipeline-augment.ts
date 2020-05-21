@@ -118,7 +118,7 @@ export interface TaskRuns {
 
 export interface PipelineRun extends K8sResourceKind {
   spec?: {
-    pipelineRef: { name: string };
+    pipelineRef?: { name: string };
     params?: PipelineRunParam[];
     workspaces?: PipelineRunWorkspace[];
     resources?: PipelineRunResource[];
@@ -399,3 +399,6 @@ export const getResourceModelFromTask = (task: PipelineTask): K8sKind => {
 
   return getResourceModelFromTaskKind(kind);
 };
+
+export const pipelineRefExists = (pipelineRun: PipelineRun): boolean =>
+  !!pipelineRun.spec.pipelineRef?.name;
