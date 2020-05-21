@@ -1,5 +1,10 @@
 import * as _ from 'lodash';
-import { K8sResourceKind } from '@console/internal/module/k8s';
+import {
+  K8sResourceKind,
+  isGroupVersionKind,
+  kindForReference,
+  apiVersionForReference,
+} from '@console/internal/module/k8s';
 import { getImageForIconClass } from '@console/internal/components/catalog/catalog-item-icon';
 import { getKnativeTopologyDataModel } from '@console/knative-plugin/src/topology/data-transformer';
 import {
@@ -125,7 +130,22 @@ export const transformTopologyData = (
   const allResourceTypes = [...allowedResources, ...kubevirtAllowedResources];
   const allResourcesList = _.flatten(
     allResourceTypes.map((resourceKind) => {
-      return resources[resourceKind] ? resources[resourceKind].data : [];
+      return resources[resourceKind]
+        ? resources[resourceKind].data.map((res) => {
+            const resKind = resources[resourceKind].kind;
+            let kind = resKind;
+            let apiVersion;
+            if (resKind && isGroupVersionKind(resKind)) {
+              kind = kindForReference(resKind);
+              apiVersion = apiVersionForReference(resKind);
+            }
+            return {
+              kind,
+              apiVersion,
+              ...res,
+            };
+          })
+        : [];
     }),
   );
   if (trafficData) {
