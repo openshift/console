@@ -81,28 +81,23 @@ export const ResourceRequirements: React.FC<ResourceRequirementsProps> = (props)
 export const ResourceRequirementsModal = withHandlePromise(
   (props: ResourceRequirementsModalProps) => {
     const { t } = useTranslation();
-    const { obj, path, type, model } = props;
+    const { obj, path, type, model, close, handlePromise } = props;
     const [cpu, setCPU] = React.useState<string>(_.get(obj.spec, `${path}.${type}.cpu`, ''));
     const [memory, setMemory] = React.useState<string>(
       _.get(obj.spec, `${path}.${type}.memory`, ''),
     );
     const [storage, setStorage] = React.useState<string>(
-      _.get(obj.spec, `${path}.${type}.ephemeral-storage`),
+      _.get(obj.spec, `${path}.${type}.ephemeral-storage`, ''),
     );
 
     const submit = (e) => {
       e.preventDefault();
-
-      let newObj = _.cloneDeep(obj);
-      if (cpu !== '' || memory !== '' || storage !== '') {
-        newObj = _.set(newObj, `spec.${path}.${type}`, {
-          cpu,
-          memory,
-          'ephemeral-storage': storage,
-        });
-      }
-
-      return props.handlePromise(k8sUpdate(model, newObj), props.close);
+      const newObj = _.set(_.cloneDeep(obj), `spec.${path}.${type}`, {
+        ...(cpu && { cpu }),
+        ...(memory && { memory }),
+        ...(storage && { 'ephemeral-storage': storage }),
+      });
+      return handlePromise(k8sUpdate(model, newObj), close);
     };
 
     return (
