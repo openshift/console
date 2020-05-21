@@ -35,7 +35,7 @@ import {
   PackageManifestModel,
   ClusterServiceVersionModel,
 } from '../../models';
-import { NamespaceModel } from '@console/internal/models';
+import { NamespaceModel, RoleBindingModel, RoleModel } from '@console/internal/models';
 import {
   OperatorGroupKind,
   PackageManifestKind,
@@ -216,6 +216,44 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
       },
     };
 
+    const rbacName = `${selectedTargetNamespace}-prometheus`;
+    const prometheusRole = {
+      kind: RoleModel.kind,
+      apiVersion: `${RoleModel.apiGroup}/${RoleModel.apiVersion}`,
+      metadata: {
+        name: rbacName,
+        namespace: selectedTargetNamespace,
+      },
+      rules: [
+        {
+          apiGroups: [''],
+          resources: ['services', 'endpoints', 'pods'],
+          verbs: ['get', 'list', 'watch'],
+        },
+      ],
+    };
+
+    const prometheusRoleBinding = {
+      kind: RoleBindingModel.kind,
+      apiVersion: `${RoleBindingModel.apiGroup}/${RoleBindingModel.apiVersion}`,
+      metadata: {
+        name: rbacName,
+        namespace: selectedTargetNamespace,
+      },
+      roleRef: {
+        kind: 'Role',
+        name: rbacName,
+        apiGroup: RoleBindingModel.apiGroup,
+      },
+      subjects: [
+        {
+          kind: 'ServiceAccount',
+          name: 'prometheus-operator',
+          namespace: 'openshift-monitoring',
+        },
+      ],
+    };
+
     const operatorGroup: OperatorGroupKind = {
       apiVersion: apiVersionForModel(OperatorGroupModel) as OperatorGroupKind['apiVersion'],
       kind: 'OperatorGroup',
@@ -252,6 +290,10 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
     try {
       if (isSuggestedNamespaceSelected && !suggestedNamespaceExists) {
         await k8sCreate(NamespaceModel, ns);
+        if (operatorRequestsMonitoring && enableMonitoring) {
+          await k8sCreate(RoleModel, prometheusRole);
+          await k8sCreate(RoleBindingModel, prometheusRoleBinding);
+        }
       }
       if (
         !props.operatorGroup.data.some(
