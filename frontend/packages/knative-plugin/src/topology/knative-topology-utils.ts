@@ -394,8 +394,9 @@ export const transformKnNodeData = (
         break;
       }
       case NodeType.Revision: {
+        const revisionItem = _.omit(item, ['pipelines', 'pipelineRuns', 'buildConfigs']);
         knDataModel.topology[uid] = createTopologyNodeData(
-          item.pipelines ? _.omit(item, ['pipelines', 'pipelineRuns']) : item,
+          revisionItem,
           type,
           getImageForIconClass(`icon-openshift`),
         );
