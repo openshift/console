@@ -110,7 +110,7 @@ func (p *Proxy) HandleProxy(user *auth.User, w http.ResponseWriter, r *http.Requ
 		return
 	}
 
-	creator := ws.GetAnnotations()["org.eclipse.che.workspace/creator"]
+	creator := ws.GetLabels()["org.eclipse.che.workspace/creator"]
 	if creator != userId {
 		http.Error(w, "User is not a owner of the requested workspace", http.StatusForbidden)
 		return
