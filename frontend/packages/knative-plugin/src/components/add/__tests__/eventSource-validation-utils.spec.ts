@@ -68,7 +68,7 @@ describe('Event Source ValidationUtils', () => {
     it('should throw an error for required fields if empty', async () => {
       const defaultEventingData = getDefaultEventingData(EventSources.KafkaSource);
       const mockData = _.cloneDeep(defaultEventingData);
-      mockData.data.kafkasource.bootstrapServers = '';
+      mockData.data.kafkasource.bootstrapServers = [''];
       await eventSourceValidationSchema
         .resolve({ value: mockData })
         .isValid(mockData)
@@ -95,7 +95,7 @@ describe('Event Source ValidationUtils', () => {
       const ContainerSourceData = {
         ...getDefaultEventingData(EventSources.ContainerSource),
       };
-      ContainerSourceData.data.containersource.containers[0].image = '';
+      ContainerSourceData.data.containersource.template.spec.containers[0].image = '';
       await eventSourceValidationSchema
         .resolve({ value: ContainerSourceData })
         .isValid(ContainerSourceData)

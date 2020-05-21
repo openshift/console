@@ -91,33 +91,11 @@ export const getKafkaSourceResource = (formData: EventSourceFormData): K8sResour
   return _.merge({}, baseResource, kafkaSource);
 };
 
-export const getContainerSourceResource = (formData: EventSourceFormData): K8sResourceKind => {
-  const baseResource = _.omit(getEventSourcesDepResource(formData), ['spec.containers']);
-  const containersourceData = {
-    spec: {
-      template: {
-        spec: {
-          containers: _.map(formData.data.containersource?.containers, (container) => {
-            return {
-              image: container.image,
-              name: container.name,
-              args: container.args.map((arg) => arg.name),
-              env: container.env,
-            };
-          }),
-        },
-      },
-    },
-  };
-
-  return _.merge({}, baseResource, containersourceData);
-};
 export const getEventSourceResource = (formData: EventSourceFormData): K8sResourceKind => {
   switch (formData.type) {
     case EventSources.KafkaSource:
       return getKafkaSourceResource(formData);
     case EventSources.ContainerSource:
-      return getContainerSourceResource(formData);
     case EventSources.CronJobSource:
     case EventSources.ApiServerSource:
     case EventSources.SinkBinding:
@@ -158,8 +136,8 @@ export const getEventSourceData = (source: string) => {
       ],
     },
     kafkasource: {
-      bootstrapServers: '',
-      topics: '',
+      bootstrapServers: [''],
+      topics: [''],
       consumerGroup: '',
       net: {
         sasl: {
@@ -177,14 +155,18 @@ export const getEventSourceData = (source: string) => {
       serviceAccountName: '',
     },
     containersource: {
-      containers: [
-        {
-          image: '',
-          name: '',
-          args: [{ name: '' }],
-          env: [],
+      template: {
+        spec: {
+          containers: [
+            {
+              image: '',
+              name: '',
+              args: [''],
+              env: [],
+            },
+          ],
         },
-      ],
+      },
     },
   };
   return eventSourceData[source];

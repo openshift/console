@@ -284,8 +284,8 @@ const eventSourceData = {
     ],
   },
   kafkasource: {
-    bootstrapServers: 'my-cluster-kafka-bootstrap.kafka:9092',
-    topics: 'knative-demo-topic',
+    bootstrapServers: ['my-cluster-kafka-bootstrap.kafka:9092'],
+    topics: ['knative-demo-topic'],
     consumerGroup: 'knative-group',
     net: {
       sasl: {
@@ -303,14 +303,18 @@ const eventSourceData = {
     serviceAccountName: '',
   },
   containersource: {
-    containers: [
-      {
-        image: 'test-knative-image',
-        name: '',
-        args: [{ name: '' }],
-        env: [],
+    template: {
+      spec: {
+        containers: [
+          {
+            image: 'test-knative-image',
+            name: '',
+            args: [''],
+            env: [],
+          },
+        ],
       },
-    ],
+    },
   },
 };
 

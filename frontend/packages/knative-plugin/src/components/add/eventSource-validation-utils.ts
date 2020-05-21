@@ -77,9 +77,9 @@ export const sourceDataSpecSchema = yup
     is: EventSources.KafkaSource,
     then: yup.object().shape({
       kafkasource: yup.object().shape({
-        bootstrapServers: yup.string().required('Required'),
+        bootstrapServers: yup.array().of(yup.string().required('Required')),
         consumerGroup: yup.string().required('Required'),
-        topics: yup.string().required('Required'),
+        topics: yup.array().of(yup.string().required('Required')),
         net: yup.object().shape({
           sasl: yup.object().shape({
             enable: yup.boolean(),
@@ -140,11 +140,15 @@ export const sourceDataSpecSchema = yup
     is: EventSources.ContainerSource,
     then: yup.object().shape({
       containersource: yup.object().shape({
-        containers: yup.array().of(
-          yup.object({
-            image: yup.string().required('Required'),
+        template: yup.object({
+          spec: yup.object({
+            containers: yup.array().of(
+              yup.object({
+                image: yup.string().required('Required'),
+              }),
+            ),
           }),
-        ),
+        }),
       }),
     }),
   });
