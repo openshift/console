@@ -3,7 +3,7 @@ import { Alert } from '@patternfly/react-core';
 import { k8sGet } from '@console/internal/module/k8s';
 import { PipelineModel } from '../../../models';
 import PipelineVisualization from '../../pipelines/detail-page-tabs/pipeline-details/PipelineVisualization';
-import { Pipeline, PipelineRun } from '../../../utils/pipeline-augment';
+import { Pipeline, PipelineRun, pipelineRefExists } from '../../../utils/pipeline-augment';
 
 type PipelineRunVisualizationProps = {
   pipelineRun: PipelineRun;
@@ -14,11 +14,13 @@ const PipelineRunVisualization: React.FC<PipelineRunVisualizationProps> = ({ pip
   const [pipeline, setPipeline] = React.useState<Pipeline>(null);
 
   React.useEffect(() => {
-    k8sGet(PipelineModel, pipelineRun.spec.pipelineRef.name, pipelineRun.metadata.namespace)
-      .then((res: Pipeline) => setPipeline(res))
-      .catch((error) =>
-        setErrorMessage(error?.message || 'Could not load visualization at this time.'),
-      );
+    if (pipelineRefExists(pipelineRun)) {
+      k8sGet(PipelineModel, pipelineRun.spec.pipelineRef.name, pipelineRun.metadata.namespace)
+        .then((res: Pipeline) => setPipeline(res))
+        .catch((error) =>
+          setErrorMessage(error?.message || 'Could not load visualization at this time.'),
+        );
+    }
   }, [pipelineRun, setPipeline]);
 
   if (errorMessage) {
