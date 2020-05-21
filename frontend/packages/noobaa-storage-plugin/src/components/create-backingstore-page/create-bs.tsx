@@ -403,7 +403,7 @@ const initialState: ProviderDataState = {
   target: '',
   endpoint: '',
   numVolumes: 1,
-  volumeSize: '',
+  volumeSize: '50Gi',
   storageClass: '',
 };
 
