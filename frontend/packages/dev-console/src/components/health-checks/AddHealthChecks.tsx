@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import Helmet from 'react-helmet';
-import { FormikProps, FormikValues } from 'formik';
+import { useFormikContext, FormikProps, FormikValues } from 'formik';
 import { Form, Button } from '@patternfly/react-core';
 import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 import {
@@ -30,7 +30,6 @@ const AddHealthChecks: React.FC<FormikProps<FormikValues> & AddHealthChecksProps
   currentContainer,
   handleSubmit,
   handleReset,
-  dirty,
   errors,
   status,
   isSubmitting,
@@ -50,6 +49,10 @@ const AddHealthChecks: React.FC<FormikProps<FormikValues> & AddHealthChecksProps
   } = resource;
   const kindForCRDResource = referenceFor(resource);
   const resourceKind = modelFor(kindForCRDResource).crd ? kindForCRDResource : kind;
+  const {
+    values: { healthChecks },
+  } = useFormikContext<FormikValues>();
+  const isFormClean = _.every(healthChecks, { enabled: false });
 
   const handleSelectContainer = (containerName: string) => {
     const containerIndex = _.findIndex(resource.spec.template.spec.containers, [
@@ -117,7 +120,7 @@ const AddHealthChecks: React.FC<FormikProps<FormikValues> & AddHealthChecksProps
             errorMessage={status && status?.errors?.json?.message}
             isSubmitting={isSubmitting}
             submitLabel={healthCheckAdded ? 'Save' : 'Add'}
-            disableSubmit={!dirty || !_.isEmpty(errors)}
+            disableSubmit={isFormClean || !_.isEmpty(errors)}
             resetLabel="Cancel"
           />
         </Form>
