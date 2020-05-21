@@ -13,6 +13,7 @@ jest.mock('formik', () => ({
   useFormikContext: jest.fn(() => ({
     setFieldValue: jest.fn(),
     setFieldTouched: jest.fn(),
+    setStatus: jest.fn(),
     validateForm: jest.fn(),
     setErrors: jest.fn(),
     values: {
