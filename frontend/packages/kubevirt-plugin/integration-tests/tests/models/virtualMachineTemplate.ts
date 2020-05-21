@@ -1,10 +1,10 @@
 /* eslint-disable no-await-in-loop */
 import { click } from '@console/shared/src/test-utils/utils';
+import { detailViewAction, listViewAction } from '@console/shared/src/test-utils/actions.view';
 import { VirtualMachineTemplateModel } from '../utils/types';
 import { getResourceUID } from '../utils/utils';
 import { KubevirtUIResource } from './kubevirtUIResource';
 import { VMT_ACTION } from '../utils/consts';
-import { detailViewAction, listViewAction } from '../../views/vm.actions.view';
 import { templateCreateVMLink } from '../../views/template.view';
 
 const confirmedActions: VMT_ACTION[] = [VMT_ACTION.Delete];

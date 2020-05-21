@@ -4,8 +4,16 @@ import { clickHorizontalTab } from '@console/internal-integration-tests/views/ho
 import { createYAMLLink, isLoaded } from '@console/internal-integration-tests/views/crud.view';
 import { isLoaded as yamlPageIsLoaded } from '@console/internal-integration-tests/views/yaml.view';
 import { click } from '@console/shared/src/test-utils/utils';
+import { listViewAction, detailViewAction } from '@console/shared/src/test-utils/actions.view';
 import * as NADListView from '../../views/nad.list.view';
 import { NADForm } from './nadForm';
+import { NAD_ACTION } from '../utils/constants';
+
+const noConfirmDialogActions: NAD_ACTION[] = [
+  NAD_ACTION.Edit,
+  NAD_ACTION.EditAnnotations,
+  NAD_ACTION.EditLabels,
+];
 
 export class NADDetail {
   readonly name: string;
@@ -47,5 +55,15 @@ export class NADDetail {
     await this.navigateToForm();
     await click(createYAMLLink);
     await yamlPageIsLoaded();
+  }
+
+  async detailViewAction(action: NAD_ACTION) {
+    await this.navigateToDetail();
+    await detailViewAction(action, !noConfirmDialogActions.includes(action));
+  }
+
+  async listViewAction(action: NAD_ACTION) {
+    await this.navigateToListView();
+    await listViewAction(this.name)(action, !noConfirmDialogActions.includes(action));
   }
 }

@@ -1,6 +1,6 @@
 /* eslint-disable no-await-in-loop, no-console */
+import { detailViewAction, listViewAction } from '@console/shared/src/test-utils/actions.view';
 import { TAB, VMI_ACTION } from '../utils/consts';
-import { detailViewAction, listViewAction } from '../../views/vm.actions.view';
 import { VirtualMachineInstanceModel } from '../../../src/models/index';
 import { BaseVirtualMachine } from './baseVirtualMachine';
 

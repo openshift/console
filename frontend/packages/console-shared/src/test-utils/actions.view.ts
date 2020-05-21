@@ -1,10 +1,10 @@
 import { $, $$, browser, ExpectedConditions as until } from 'protractor';
 import { rowForName } from '@console/internal-integration-tests/views/crud.view';
-import { waitForCount, click } from '@console/shared/src/test-utils/utils';
-import { PAGE_LOAD_TIMEOUT_SECS } from '../tests/utils/consts';
+import { waitForCount, click } from './utils';
+
+const PAGE_LOAD_TIMEOUT_SECS = 15 * 1000;
 
 const disabledDropdownButtons = $$('.pf-m-disabled');
-
 const listViewKebabDropdown = '[data-test-id="kebab-button"]';
 export const detailViewDropdown = '[data-test-id="actions-menu-button"]';
 export const detailViewDropdownMenu = '[data-test-id="action-items"]';
@@ -30,13 +30,13 @@ const selectDropdownItem = (getActionsDropdown) => async (action: string) => {
   await browser
     .wait(until.elementToBeClickable(getActionsDropdown()))
     .then(() => getActionsDropdown().click());
-  await browser.wait(until.presenceOf($('[data-test-id="action-items"]')));
+  await browser.wait(until.presenceOf($(detailViewDropdownMenu)));
   await browser.wait(waitForCount(disabledDropdownButtons, 0));
   await click($(`[data-test-action="${action}"]`));
 };
 
 /**
- * Performs action for VM via list view kebab menu.
+ * Performs action via list view kebab menu.
  */
 export const listViewAction = (name) => async (action: string, confirm?: boolean) => {
   const getActionsDropdown = () =>
@@ -50,7 +50,7 @@ export const listViewAction = (name) => async (action: string, confirm?: boolean
 };
 
 /**
- * Performs action for VM on its detail page.
+ * Performs action on detail page.
  */
 export const detailViewAction = async (action, confirm?) => {
   const getActionsDropdown = () => $(detailViewDropdown);

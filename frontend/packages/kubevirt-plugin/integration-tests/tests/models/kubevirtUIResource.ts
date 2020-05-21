@@ -2,13 +2,13 @@
 import { browser, ExpectedConditions as until } from 'protractor';
 import { appHost, testName } from '@console/internal-integration-tests/protractor.conf';
 import { click, waitForCount } from '@console/shared/src/test-utils/utils';
+import { confirmAction } from '@console/shared/src/test-utils/actions.view';
 import { resourceRows, isLoaded } from '@console/internal-integration-tests/views/crud.view';
 import { clickHorizontalTab } from '@console/internal-integration-tests/views/horizontal-nav.view';
 import { clickNavLink } from '@console/internal-integration-tests/views/sidenav.view';
 import { TAB, diskTabCol, networkTabCol, PAGE_LOAD_TIMEOUT_SECS } from '../utils/consts';
 import { StorageResource, NetworkResource, VirtualMachineTemplateModel } from '../utils/types';
 import * as kubevirtDetailView from '../../views/kubevirtUIResource.view';
-import { confirmAction } from '../../views/vm.actions.view';
 import {
   vmDetailFlavorEditButton,
   vmDetailCdEditButton,

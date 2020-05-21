@@ -5,7 +5,7 @@ import {
   deleteResource,
   waitForStringInElement,
 } from '@console/shared/src/test-utils/utils';
-import { getDetailActionDropdownOptions } from '../views/vm.actions.view';
+import { getDetailActionDropdownOptions } from '@console/shared/src/test-utils/actions.view';
 import { vmDetailNode } from '../views/virtualMachine.view';
 import { getRandStr } from './utils/utils';
 import { getVMManifest } from './utils/mocks';
