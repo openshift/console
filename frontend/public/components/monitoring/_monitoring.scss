@@ -391,6 +391,15 @@ $screen-phone-landscape-min-width: 567px;
   overflow: visible;
   padding: 10px;
   width: 100%;
+
+  &--hidden {
+    border-bottom: none;
+    border-top: none;
+    height: 0;
+    margin: 0;
+    padding-bottom: 0;
+    padding-top: 0;
+  }
 }
 
 .query-browser__zoom {
