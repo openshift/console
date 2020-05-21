@@ -222,7 +222,7 @@ const RoleBindingsTableRow = ({ obj: binding, index, key, style }) => {
         {binding.metadata.namespace ? (
           <ResourceLink kind="Namespace" name={binding.metadata.namespace} />
         ) : (
-          'all'
+          'All Namespaces'
         )}
       </TableData>
       <TableData className={tableColumnClasses[5]}>

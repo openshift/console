@@ -244,7 +244,7 @@ const ManagedNamespaces: React.FC<ManagedNamespacesProps> = ({ obj }) => {
   const managedNamespaces = olmTargetNamespaces?.split(',') || [];
 
   if (managedNamespaces.length === 1 && managedNamespaces[0] === '') {
-    return <span className="text-muted">All Namespaces</span>;
+    return <>All Namespaces</>;
   }
 
   switch (managedNamespaces.length) {
@@ -861,7 +861,7 @@ export const ClusterServiceVersionDetails: React.SFC<ClusterServiceVersionDetail
                 </dt>
                 <dd>
                   {olmTargetNamespaces === '' ? (
-                    <span className="text-muted">All Namespaces</span>
+                    'All Namespaces'
                   ) : (
                     <ResourceLink
                       kind="Namespace"
