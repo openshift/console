@@ -1,8 +1,9 @@
 import * as React from 'react';
 import { connectToFlags, FlagsObject } from '@console/internal/reducers/features';
-import { Alert } from '@patternfly/react-core';
+import { Alert, Split, SplitItem } from '@patternfly/react-core';
 import { getActiveNamespace } from '@console/internal/actions/ui';
 import { useAccessReview } from '@console/internal/components/utils';
+import { TechPreviewBadge } from '@console/shared';
 import { useFormikContext, FormikValues } from 'formik';
 import { PipelineModel, PipelineResourceModel } from '../../../models';
 import { FLAG_OPENSHIFT_PIPELINE, CLUSTER_PIPELINE_NS } from '../../../const';
@@ -46,8 +47,16 @@ const PipelineSection: React.FC<PipelineSectionProps> = ({ flags, builderImages 
   const hasCreatePipelineAccess = usePipelineAccessReview();
 
   if (flags[FLAG_OPENSHIFT_PIPELINE] && hasCreatePipelineAccess) {
+    const title = (
+      <Split gutter="md">
+        <SplitItem className="odc-form-section__heading">Pipelines</SplitItem>
+        <SplitItem>
+          <TechPreviewBadge />
+        </SplitItem>
+      </Split>
+    );
     return (
-      <FormSection title="Pipelines">
+      <FormSection title={title}>
         {values.image.selected || values.build.strategy === 'Docker' ? (
           <PipelineTemplate builderImages={builderImages} />
         ) : (

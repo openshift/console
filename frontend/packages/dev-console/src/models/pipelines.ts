@@ -75,7 +75,7 @@ export const PipelineResourceModel: K8sKind = {
   id: 'pipelineresource',
   labelPlural: 'Pipeline Resources',
   crd: true,
-  badge: BadgeType.DEV,
+  badge: BadgeType.TECH,
   color,
 };
 
@@ -120,7 +120,7 @@ export const TriggerBindingModel: K8sKind = {
   id: 'triggerbinding',
   labelPlural: 'Trigger Bindings',
   crd: true,
-  badge: BadgeType.DEV,
+  badge: BadgeType.TECH,
   color,
 };
 
@@ -135,7 +135,7 @@ export const ClusterTriggerBindingModel: K8sKind = {
   id: 'clustertriggerbinding',
   labelPlural: 'Cluster Trigger Bindings',
   crd: true,
-  badge: BadgeType.DEV,
+  badge: BadgeType.TECH,
   color,
 };
 
@@ -150,7 +150,7 @@ export const TriggerTemplateModel: K8sKind = {
   id: 'triggertemplate',
   labelPlural: 'Trigger Templates',
   crd: true,
-  badge: BadgeType.DEV,
+  badge: BadgeType.TECH,
   color,
 };
 
@@ -165,6 +165,6 @@ export const EventListenerModel: K8sKind = {
   id: 'eventlistener',
   labelPlural: 'Event Listeners',
   crd: true,
-  badge: BadgeType.DEV,
+  badge: BadgeType.TECH,
   color,
 };
