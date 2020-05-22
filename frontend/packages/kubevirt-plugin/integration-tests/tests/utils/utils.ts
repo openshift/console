@@ -192,3 +192,9 @@ export const selectNonDefaultVolumeMode = (defaultVolumeMode) => {
   volumeModeKeys.filter((k) => k !== defaultVolumeMode);
   return diskVolumeMode[volumeModeKeys[0]];
 };
+
+export function getResourceUID(kind: string, name: string, namespace: string): string {
+  return execSync(
+    `kubectl get --ignore-not-found ${kind} ${name} -n ${namespace} -o jsonpath='{.metadata.uid}'`,
+  ).toString();
+}

@@ -3,6 +3,7 @@ import { isEqual } from 'lodash';
 import { testName } from '@console/internal-integration-tests/protractor.conf';
 import { resourceTitle } from '@console/internal-integration-tests/views/crud.view';
 import * as detailView from '../views/virtualMachine.view';
+
 import {
   removeLeakedResources,
   withResource,
@@ -172,6 +173,14 @@ describe('Create VM from Template using wizard', () => {
 
       vm = new VirtualMachine(vmCfg);
       await vmTemplate.listViewAction(VMT_ACTION.Create);
+      await wizard.processWizard(vmCfg);
+    });
+
+    it('ID(CNV-4290) Creates VM using VM Template create virtual machine link', async () => {
+      const vmCfg = getVMCfg('vm-from-vmt-createlink');
+
+      vm = new VirtualMachine(vmCfg);
+      await vmTemplate.createVMFromRowLink();
       await wizard.processWizard(vmCfg);
     });
   });
