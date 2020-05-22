@@ -14,11 +14,11 @@ func (p *Proxy) checkUserPermissions(token string) (bool, error) {
 	}
 
 	sar := &authv1.SelfSubjectAccessReview{
-		Spec:       authv1.SelfSubjectAccessReviewSpec{
+		Spec: authv1.SelfSubjectAccessReviewSpec{
 			ResourceAttributes: &authv1.ResourceAttributes{
-				Namespace:   "openshift-operators",
-				Verb:        "create",
-				Resource:    "pods",
+				Namespace: "openshift-operators",
+				Verb:      "create",
+				Resource:  "pods",
 			},
 		},
 	}

@@ -16,7 +16,7 @@ import (
 
 const (
 	// ProxyEndpoint path that that Proxy is supposed to handle
-	ProxyEndpoint     = "/api/terminal/proxy/"
+	ProxyEndpoint = "/api/terminal/proxy/"
 	// AvailableEndpoint path used to check if functionality is enabled
 	AvailableEndpoint = "/api/terminal/available/"
 )
