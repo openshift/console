@@ -15,8 +15,9 @@ import (
 )
 
 const (
-	// Endpoint that Proxy is supposed to handle
-	Endpoint          = "/api/terminal/"
+	// ProxyEndpoint path that that Proxy is supposed to handle
+	ProxyEndpoint     = "/api/terminal/proxy/"
+	// AvailableEndpoint path used to check if functionality is enabled
 	AvailableEndpoint = "/api/terminal/available/"
 )
 
@@ -148,16 +149,16 @@ func (p *Proxy) HandleProxyEnabled(w http.ResponseWriter, r *http.Request) {
 // stripTerminalAPIPrefix strips path prefix that is expected for Terminal API request
 func stripTerminalAPIPrefix(requestPath string) (ok bool, namespace string, workspaceName string, path string) {
 	// URL is supposed to have the following format
-	// ->   /api/terminal/{namespace}/{workspace-name}/{path} < optional
-	// -> 0 / 1 /    2   /    3      /        4       / 5
+	// ->   /api/terminal/proxy/{namespace}/{workspace-name}/{path} < optional
+	// -> 0 / 1 /    2   /  3  /    4      /        5       /  6
 	segments := strings.SplitN(requestPath, "/", 6)
-	if len(segments) < 5 {
+	if len(segments) < 6 {
 		return false, "", "", ""
 	} else {
-		namespace = segments[3]
-		workspaceName = segments[4]
-		if len(segments) == 6 {
-			path = segments[5]
+		namespace = segments[4]
+		workspaceName = segments[5]
+		if len(segments) == 7 {
+			path = segments[6]
 		}
 		return true, namespace, workspaceName, path
 	}
@@ -204,4 +205,3 @@ func (p *Proxy) proxyToWorkspace(workspaceIdeHost *url.URL, path string, token s
 
 	terminalProxy.ServeHTTP(w, r2)
 }
-

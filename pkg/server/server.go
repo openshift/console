@@ -225,7 +225,7 @@ func (s *Server) HTTPHandler() http.Handler {
 		TLSClientConfig: s.K8sProxyConfig.TLSClientConfig,
 		ClusterEndpoint: s.K8sProxyConfig.Endpoint,
 	}
-	handle(terminal.Endpoint, authHandlerWithUser(terminalProxy.HandleProxy))
+	handle(terminal.ProxyEndpoint, authHandlerWithUser(terminalProxy.HandleProxy))
 
 	handleFunc(terminal.AvailableEndpoint, terminalProxy.HandleProxyEnabled)
 

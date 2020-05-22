@@ -96,7 +96,7 @@ export const initTerminal = (
   workspaceName: string,
   workspaceNamespace: string,
 ): Promise<TerminalInitData> => {
-  const url = `/api/terminal/${workspaceNamespace}/${workspaceName}/exec/init`;
+  const url = `/api/terminal/proxy/${workspaceNamespace}/${workspaceName}/exec/init`;
   const payload = {
     kubeconfig: {
       username,
