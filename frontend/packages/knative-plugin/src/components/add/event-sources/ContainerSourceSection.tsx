@@ -47,6 +47,7 @@ const ContainerSourceSection: React.FC = () => {
         type={TextInputTypes.text}
         name={containerPaths.Image}
         label="Image"
+        helpText="The image to run inside of the container"
         required
         onChange={(e) => {
           setFieldValue(containerPaths.Name, getSuggestedName(e.target.value));
@@ -57,6 +58,7 @@ const ContainerSourceSection: React.FC = () => {
         type={TextInputTypes.text}
         name={containerPaths.Name}
         label="Name"
+        helpText="The name of the image"
       />
       <TextColumnField
         data-test-id="container-arg-field"
@@ -64,10 +66,14 @@ const ContainerSourceSection: React.FC = () => {
         label="Arguments"
         addLabel="Add args"
         placeholder="argument"
-        helpText="The command to run inside the container."
+        helpText="Arguments passed to the container"
         disableDeleteRow={args?.length === 1}
       />
-      <FormGroup fieldId="containersource-env" label="Environment variables">
+      <FormGroup
+        fieldId="containersource-env"
+        label="Environment variables"
+        helperText="The list of variables to set in the container"
+      >
         <AsyncComponent
           loader={() =>
             import('@console/internal/components/utils/name-value-editor').then(

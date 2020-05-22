@@ -20,6 +20,7 @@ const KafkaSourceSection: React.FC = () => {
         name="data.kafkasource.bootstrapServers"
         label="BootstrapServers"
         addLabel="Add Bootstrapservers"
+        helpText="The address of the Kafka broker"
         required
         disableDeleteRow={bootstrapServers?.length === 1}
       />
@@ -28,6 +29,7 @@ const KafkaSourceSection: React.FC = () => {
         name="data.kafkasource.topics"
         label="Topics"
         addLabel="Add Topics"
+        helpText="Virtual groups across Kafka brokers"
         required
         disableDeleteRow={topics?.length === 1}
       />
@@ -36,6 +38,7 @@ const KafkaSourceSection: React.FC = () => {
         type={TextInputTypes.text}
         name="data.kafkasource.consumerGroup"
         label="ConsumerGroup"
+        helpText="A group that tracks maximum offset consumed"
         required
       />
       <KafkaSourceNetSection />
