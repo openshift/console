@@ -10,6 +10,7 @@ import { resourceURL } from '@console/internal/module/k8s';
 import { PodModel } from '@console/internal/models';
 import Terminal, { ImperativeTerminalType } from './Terminal';
 import TerminalLoadingBox from './TerminalLoadingBox';
+import useActivityTick from './useActivityTick';
 
 // pod exec WS protocol is FD prefixed, base64 encoded data (sometimes json stringified)
 
@@ -18,6 +19,7 @@ import TerminalLoadingBox from './TerminalLoadingBox';
 // see also: https://github.com/kubernetes/kubernetes/pull/13885
 
 type Props = {
+  workspaceName: string;
   container: string;
   podname: string;
   namespace: string;
@@ -36,6 +38,7 @@ const NO_SH =
   'starting container process caused "exec: \\"sh\\": executable file not found in $PATH"';
 
 const CloudShellExec: React.FC<CloudShellExecProps> = ({
+  workspaceName,
   container,
   podname,
   namespace,
@@ -48,9 +51,15 @@ const CloudShellExec: React.FC<CloudShellExecProps> = ({
   const ws = React.useRef<WSFactory>();
   const terminal = React.useRef<ImperativeTerminalType>();
 
-  const onData = React.useCallback((data: string): void => {
-    ws.current && ws.current.send(`0${Base64.encode(data)}`);
-  }, []);
+  const tick = useActivityTick(workspaceName, namespace);
+
+  const onData = React.useCallback(
+    (data: string): void => {
+      tick();
+      ws.current && ws.current.send(`0${Base64.encode(data)}`);
+    },
+    [tick],
+  );
 
   React.useEffect(() => {
     let unmounted: boolean;
@@ -98,6 +107,7 @@ const CloudShellExec: React.FC<CloudShellExecProps> = ({
             return;
           }
         }
+        tick();
         const data = Base64.decode(msg.slice(1));
         currentTerminal && currentTerminal.onDataReceived(data);
         previous = data;
@@ -131,7 +141,7 @@ const CloudShellExec: React.FC<CloudShellExecProps> = ({
       unmounted = true;
       websocket.destroy();
     };
-  }, [container, flags, impersonate, namespace, podname, shcommand]);
+  }, [tick, container, flags, impersonate, namespace, podname, shcommand]);
 
   if (wsError) {
     return <LoadError message={wsError} label="OpenShift command line terminal" canRetry={false} />;

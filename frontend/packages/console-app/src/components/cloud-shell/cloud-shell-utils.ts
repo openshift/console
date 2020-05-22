@@ -1,6 +1,6 @@
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { getRandomChars } from '@console/shared';
-import { coFetchJSON } from '@console/internal/co-fetch';
+import { coFetchJSON, coFetch } from '@console/internal/co-fetch';
 
 type environment = {
   value: string;
@@ -102,3 +102,9 @@ export const initTerminal = (
   };
   return coFetchJSON.post(url, payload);
 };
+
+export const sendActivityTick = (workspaceName: string, namespace: string): void => {
+  coFetch(`/api/terminal/proxy/${namespace}/${workspaceName}/activity/tick`, { method: 'POST' });
+};
+
+export const checkTerminalAvailable = () => coFetch('/api/terminal/available');
