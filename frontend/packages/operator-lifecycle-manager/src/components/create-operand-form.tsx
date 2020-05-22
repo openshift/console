@@ -665,39 +665,58 @@ export const CreateOperandForm: React.FC<CreateOperandFormProps> = ({
   const updateFormData = (path, value) =>
     dispatchFormDataAction({ action: 'update', payload: { path, value } });
 
+  const validate = () => {
+    const newErrors = fields.reduce<FieldErrors>((allErrors, field) => {
+      const formVal = getFormData(field.path);
+      // Don't validate null, non-required fields
+      if (!field.required && _.isNil(formVal)) {
+        return allErrors;
+      }
+
+      // NOTE: Use server-side validation in Kubernetes 1.16 (https://github.com/kubernetes/kubernetes/issues/80718#issuecomment-521081640)
+      const fieldErrors = _.reduce(
+        field.validation ?? {},
+        (errorAccumulator, val, rule: Validations) => {
+          switch (rule) {
+            case Validations.minimum:
+              return formVal >= val
+                ? errorAccumulator
+                : [...errorAccumulator, `Must be greater than ${val}.`];
+            case Validations.maximum:
+              return formVal <= val
+                ? errorAccumulator
+                : [...errorAccumulator, `Must be less than ${val}.`];
+            case Validations.minLength:
+              return formVal.length >= val
+                ? errorAccumulator
+                : [...errorAccumulator, `Must be at least ${val} characters.`];
+            case Validations.maxLength:
+              return formVal.length <= val
+                ? errorAccumulator
+                : [...errorAccumulator, `Must be greater than ${val} characters.`];
+            case Validations.pattern:
+              return new RegExp(val as string).test(formVal)
+                ? errorAccumulator
+                : [...errorAccumulator, `Does not match required pattern ${val}`];
+            default:
+              return errorAccumulator;
+          }
+        },
+        [],
+      );
+      return {
+        ...allErrors,
+        ...(fieldErrors.length > 0 && { [field.path]: _.first(fieldErrors) }),
+      };
+    }, {});
+    setFormErrors(newErrors);
+    return _.isEmpty(newErrors);
+  };
+
   // Validate form and submit API request if no validation failures
   const submit = (event) => {
     event.preventDefault();
-    const errors = fields
-      .filter((f) => !_.isNil(f.validation) || !_.isEmpty(f.validation))
-      .filter((f) => f.required || !_.isEqual(getFormData(f.path), defaultValueFor(f.capabilities)))
-      .reduce<FieldErrors>((allErrors, field) => {
-        // NOTE: Use server-side validation in Kubernetes 1.16 (https://github.com/kubernetes/kubernetes/issues/80718#issuecomment-521081640)
-        const fieldErrors = _.map(field.validation, (val, rule: Validations) => {
-          const formVal = getFormData(field.path);
-          switch (rule) {
-            case Validations.minimum:
-              return formVal >= val ? null : `Must be greater than ${val}.`;
-            case Validations.maximum:
-              return formVal <= val ? null : `Must be less than ${val}.`;
-            case Validations.minLength:
-              return formVal.length >= val ? null : `Must be at least ${val} characters.`;
-            case Validations.maxLength:
-              return formVal.length <= val ? null : `Must be greater than ${val} characters.`;
-            case Validations.pattern:
-              return new RegExp(val as string).test(formVal)
-                ? null
-                : `Does not match required pattern ${val}`;
-            default:
-              return null;
-          }
-        });
-        // Just use first error
-        return { ...allErrors, [field.path]: fieldErrors.find((e) => !_.isNil(e)) };
-      }, {});
-    setFormErrors(errors);
-
-    if (_.isEmpty(_.compact(_.values(errors)))) {
+    if (validate()) {
       k8sCreate(operandModel, formData.setIn(['metadata', 'namespace'], namespace).toJS())
         .then(() =>
           history.push(
@@ -1199,7 +1218,7 @@ export const CreateOperandForm: React.FC<CreateOperandFormProps> = ({
               {renderNormalFields()}
               {renderAdvancedFields()}
             </Accordion>
-            {(!_.isEmpty(error) || !_.isEmpty(_.compact(_.values(formErrors)))) && (
+            {(!_.isEmpty(error) || !_.isEmpty(formErrors)) && (
               <Alert
                 isInline
                 className="co-alert co-break-word co-alert--scrollable"
@@ -1287,7 +1306,7 @@ type FieldErrors = {
 type OperandFormInputGroupProps = {
   field: OperandField;
   input: JSX.Element;
-  error: string;
+  error?: string;
 };
 
 type ProvidedAPI = CRDDescription | APIServiceDefinition;
