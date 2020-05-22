@@ -314,6 +314,30 @@ export const getPipelineRunWorkspaces = (
   );
 };
 
+export const calculateRelativeTime = (startTime: string, completionTime?: string) => {
+  const start = new Date(startTime).getTime();
+  const end = completionTime ? new Date(completionTime).getTime() : new Date().getTime();
+  const secondsAgo = (end - start) / 1000;
+  const minutesAgo = secondsAgo / 60;
+  const hoursAgo = minutesAgo / 60;
+
+  if (minutesAgo > 90) {
+    const count = Math.round(hoursAgo);
+    return `about ${count} hours`;
+  }
+  if (minutesAgo > 45) {
+    return 'about an hour';
+  }
+  if (secondsAgo > 90) {
+    const count = Math.round(minutesAgo);
+    return `about ${count} minutes`;
+  }
+  if (secondsAgo > 45) {
+    return 'about a minute';
+  }
+  return 'a few seconds';
+};
+
 export const pipelineRunDuration = (run: PipelineRun): string => {
   const startTime = _.get(run, ['status', 'startTime'], null);
   const completionTime = _.get(run, ['status', 'completionTime'], null);
@@ -322,13 +346,7 @@ export const pipelineRunDuration = (run: PipelineRun): string => {
   if (!startTime || (!completionTime && pipelineRunStatus(run) !== 'Running')) {
     return '-';
   }
-  const start = new Date(startTime).getTime();
-
-  // For running pipelines duration must be current time - starttime.
-  const duration = completionTime
-    ? new Date(completionTime).getTime() - start
-    : new Date().getTime() - start;
-  return formatDuration(duration);
+  return calculateRelativeTime(startTime, completionTime);
 };
 
 export const updateServiceAccount = (

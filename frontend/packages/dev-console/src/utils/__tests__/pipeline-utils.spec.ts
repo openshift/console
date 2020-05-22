@@ -14,6 +14,7 @@ import {
   getPipelineRunParams,
   pipelineRunDuration,
   getSecretAnnotations,
+  calculateRelativeTime,
 } from '../pipeline-utils';
 import {
   constructPipelineData,
@@ -103,7 +104,7 @@ describe('pipeline-utils ', () => {
   it('expect duration to be a time formatted string for PipelineRun with start and end Time', () => {
     const duration = pipelineRunDuration(mockRunDurationTest[2]);
     expect(duration).not.toBeNull();
-    expect(duration).toBe('1m 13s');
+    expect(duration).toBe('about a minute');
   });
   it('expect annotation to return an empty object if keyValue pair is not passed', () => {
     const annotation = getSecretAnnotations(null);
@@ -128,5 +129,30 @@ describe('pipeline-utils ', () => {
     expect(annotation).toEqual({
       'tekton.dev/docker-0': 'docker.io',
     });
+  });
+
+  it('expected relative time should be "a few seconds"', () => {
+    const relativeTime = calculateRelativeTime('2020-05-22T11:57:53Z', '2020-05-22T11:57:57Z');
+    expect(relativeTime).toBe('a few seconds');
+  });
+
+  it('expected relative time should be "about a minute"', () => {
+    const relativeTime = calculateRelativeTime('2020-05-22T10:57:00Z', '2020-05-22T10:57:57Z');
+    expect(relativeTime).toBe('about a minute');
+  });
+
+  it('expected relative time should be "about 4 minutes"', () => {
+    const relativeTime = calculateRelativeTime('2020-05-22T11:57:53Z', '2020-05-22T12:02:20Z');
+    expect(relativeTime).toBe('about 4 minutes');
+  });
+
+  it('expected relative time should be "about an hour"', () => {
+    const relativeTime = calculateRelativeTime('2020-05-22T11:57:53Z', '2020-05-22T12:57:57Z');
+    expect(relativeTime).toBe('about an hour');
+  });
+
+  it('expected relative time should be "about 2 hours"', () => {
+    const relativeTime = calculateRelativeTime('2020-05-22T10:57:53Z', '2020-05-22T12:57:57Z');
+    expect(relativeTime).toBe('about 2 hours');
   });
 });
