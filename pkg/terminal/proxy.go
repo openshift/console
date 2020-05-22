@@ -44,18 +44,12 @@ var (
 // HandleProxy evaluates the namespace and workspace names from URL and after check that
 // it's created by the current user - proxies the request there
 func (p *Proxy) HandleProxy(user *auth.User, w http.ResponseWriter, r *http.Request) {
-	switch r.Method {
-	case
-		"GET",
-		"HEAD",
-		"OPTIONS",
-		"TRACE":
-		// These methods are considered as not vulnerable for CSRF attack, so the corresponding CSRF token check is skipped.
-		// But in terminal-proxy we must make sure that it's a request made by OpenShift Console
-		// before proxying request with passed token
-		w.WriteHeader(http.StatusForbidden)
+	if r.Method != "POST" {
+		w.Header().Add("Allow", "POST")
+		w.WriteHeader(http.StatusMethodNotAllowed)
 		return
 	}
+
 	operatorRunning, err := workspaceOperatorIsRunning()
 	if err != nil {
 		http.Error(w, "Failed to check workspace operator state. Cause: "+err.Error(), http.StatusInternalServerError)
@@ -178,12 +172,12 @@ func (p *Proxy) getBaseTerminalHost(ws *unstructured.Unstructured) (*url.URL, er
 
 	terminalUrl, err := url.Parse(ideUrl)
 	if err != nil {
-		return nil, errors.New("Failed to parse workspace ideUrl " + ideUrl)
+		return nil, errors.New("failed to parse workspace ideUrl " + ideUrl)
 	}
 
 	terminalHost, err := url.Parse(terminalUrl.Scheme + "://" + terminalUrl.Host)
 	if err != nil {
-		return nil, errors.New("Failed to parse workspace ideUrl host " + ideUrl)
+		return nil, errors.New("failed to parse workspace ideUrl host " + ideUrl)
 	}
 
 	return terminalHost, nil
