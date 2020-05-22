@@ -59,6 +59,7 @@ func (p *Proxy) HandleProxy(user *auth.User, w http.ResponseWriter, r *http.Requ
 	operatorRunning, err := workspaceOperatorIsRunning()
 	if err != nil {
 		http.Error(w, "Failed to check workspace operator state. Cause: "+err.Error(), http.StatusInternalServerError)
+		return
 	}
 	if !operatorRunning {
 		http.Error(w, "Terminal endpoint is disabled: workspace operator is not deployed.", http.StatusForbidden)
@@ -68,6 +69,7 @@ func (p *Proxy) HandleProxy(user *auth.User, w http.ResponseWriter, r *http.Requ
 	enabledForUser, err := p.checkUserPermissions(user.Token)
 	if err != nil {
 		http.Error(w, "Failed to check workspace operator state. Cause: "+err.Error(), http.StatusInternalServerError)
+		return
 	}
 	if !enabledForUser {
 		http.Error(w, "Terminal is disabled for cluster-admin users.", http.StatusForbidden)
