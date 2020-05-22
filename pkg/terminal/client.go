@@ -8,22 +8,9 @@ import (
 
 // createDynamicClient create dynamic client with the configured token to be used
 func (p *Proxy) createDynamicClient(token string) (dynamic.Interface, error) {
-	var tlsClientConfig rest.TLSClientConfig
-	if p.TLSClientConfig.InsecureSkipVerify {
-		// off-cluster mode
-		tlsClientConfig.Insecure = true
-	} else {
-		inCluster, err := rest.InClusterConfig()
-		if err != nil {
-			return nil, err
-		}
-		tlsClientConfig = inCluster.TLSClientConfig
-	}
-
-	config := &rest.Config{
-		Host:            p.ClusterEndpoint.Host,
-		TLSClientConfig: tlsClientConfig,
-		BearerToken:     token,
+	config, err := p.getConfig(token)
+	if err != nil {
+		return nil, err
 	}
 
 	client, err := dynamic.NewForConfig(dynamic.ConfigFor(config))
@@ -34,6 +21,15 @@ func (p *Proxy) createDynamicClient(token string) (dynamic.Interface, error) {
 }
 
 func (p *Proxy) createTypedClient(token string) (*kubernetes.Clientset, error) {
+	config, err := p.getConfig(token)
+	if err != nil {
+		return nil, err
+	}
+
+	return kubernetes.NewForConfig(config)
+}
+
+func (p *Proxy) getConfig(token string) (*rest.Config, error) {
 	var tlsClientConfig rest.TLSClientConfig
 	if p.TLSClientConfig.InsecureSkipVerify {
 		// off-cluster mode
@@ -46,11 +42,9 @@ func (p *Proxy) createTypedClient(token string) (*kubernetes.Clientset, error) {
 		tlsClientConfig = inCluster.TLSClientConfig
 	}
 
-	config := &rest.Config{
+	return &rest.Config{
 		Host:            p.ClusterEndpoint.Host,
 		TLSClientConfig: tlsClientConfig,
 		BearerToken:     token,
-	}
-
-	return kubernetes.NewForConfig(config)
+	}, nil
 }
