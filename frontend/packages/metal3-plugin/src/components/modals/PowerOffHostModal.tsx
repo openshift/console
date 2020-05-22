@@ -110,7 +110,7 @@ const ForcePowerOffDialog: React.FC<ForcePowerOffDialogProps> = ({
 
 const isPowerOffSafe = (status: string, nodePods?: PodKind[]) => {
   const safeStates = [NODE_STATUS_UNDER_MAINTENANCE, HOST_STATUS_READY, HOST_STATUS_AVAILABLE];
-  return safeStates.includes(status) && getStaticPods(nodePods).length > 0;
+  return safeStates.includes(status) && !getStaticPods(nodePods).length;
 };
 
 export type PowerOffHostModalProps = {

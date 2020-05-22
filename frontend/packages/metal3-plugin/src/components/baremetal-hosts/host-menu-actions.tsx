@@ -104,6 +104,10 @@ export const Deprovision = (
   const title = 'Deprovision';
   return {
     hidden:
+      [HOST_POWER_STATUS_POWERED_OFF, HOST_POWER_STATUS_POWERING_OFF].includes(
+        getHostPowerStatus(host),
+      ) ||
+      isHostScheduledForRestart(host) ||
       !machine ||
       !!getAnnotations(machine, {})[DELETE_MACHINE_ANNOTATION] ||
       (getMachineMachineSetOwner(machine) && !machineSet),
