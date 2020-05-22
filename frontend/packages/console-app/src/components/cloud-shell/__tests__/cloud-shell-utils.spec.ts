@@ -1,7 +1,7 @@
 import {
   newCloudShellWorkSpace,
   CLOUD_SHELL_LABEL,
-  CLOUD_SHELL_USER_ANNOTATION,
+  CLOUD_SHELL_IMMUTABLE_ANNOTATION,
 } from '../cloud-shell-utils';
 
 describe('CloudShell Utils', () => {
@@ -9,13 +9,12 @@ describe('CloudShell Utils', () => {
     const name = 'cloudshell';
     const namespace = 'default';
     const kind = 'Workspace';
-    const username = 'test-user';
 
-    const newResource = newCloudShellWorkSpace(name, namespace, username);
+    const newResource = newCloudShellWorkSpace(name, namespace);
     expect(newResource.kind).toEqual(kind);
     expect(newResource.metadata.name).toEqual(name);
     expect(newResource.metadata.namespace).toEqual(namespace);
     expect(newResource.metadata.labels[CLOUD_SHELL_LABEL]).toEqual('true');
-    expect(newResource.metadata.annotations[CLOUD_SHELL_USER_ANNOTATION]).toEqual(username);
+    expect(newResource.metadata.annotations[CLOUD_SHELL_IMMUTABLE_ANNOTATION]).toEqual('true');
   });
 });

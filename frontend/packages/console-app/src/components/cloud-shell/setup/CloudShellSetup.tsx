@@ -29,7 +29,6 @@ const CloudShellSetup: React.FunctionComponent<Props> = ({
   activeNamespace,
   onSubmit,
   onCancel,
-  username,
 }) => {
   const initialValues: CloudShellSetupFormData = {
     namespace: activeNamespace === ALL_NAMESPACES_KEY ? undefined : activeNamespace,
@@ -49,7 +48,7 @@ const CloudShellSetup: React.FunctionComponent<Props> = ({
       }
       await k8sCreate(
         WorkspaceModel,
-        newCloudShellWorkSpace(createCloudShellResourceName(), namespace, username),
+        newCloudShellWorkSpace(createCloudShellResourceName(), namespace),
       );
       onSubmit && onSubmit();
     } catch (err) {

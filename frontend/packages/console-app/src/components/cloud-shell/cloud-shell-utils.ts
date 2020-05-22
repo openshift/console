@@ -39,15 +39,12 @@ export type CloudShellResource = K8sResourceKind & {
 export type TerminalInitData = { pod: string; container: string; cmd: string[] };
 
 export const CLOUD_SHELL_LABEL = 'console.openshift.io/cloudshell';
-export const CLOUD_SHELL_USER_ANNOTATION = 'console.openshift.io/cloudshell-user';
+export const CLOUD_SHELL_CREATOR_LABEL = 'org.eclipse.che.workspace/creator';
+export const CLOUD_SHELL_IMMUTABLE_ANNOTATION = 'org.eclipse.che.workspace/immutable';
 
 export const createCloudShellResourceName = () => `terminal-${getRandomChars(6)}`;
 
-export const newCloudShellWorkSpace = (
-  name: string,
-  namespace: string,
-  username: string,
-): CloudShellResource => ({
+export const newCloudShellWorkSpace = (name: string, namespace: string): CloudShellResource => ({
   apiVersion: 'workspace.che.eclipse.org/v1alpha1',
   kind: 'Workspace',
   metadata: {
@@ -57,7 +54,7 @@ export const newCloudShellWorkSpace = (
       [CLOUD_SHELL_LABEL]: 'true',
     },
     annotations: {
-      [CLOUD_SHELL_USER_ANNOTATION]: username,
+      [CLOUD_SHELL_IMMUTABLE_ANNOTATION]: 'true',
     },
   },
   spec: {
@@ -96,7 +93,7 @@ export const initTerminal = (
   workspaceName: string,
   workspaceNamespace: string,
 ): Promise<TerminalInitData> => {
-  const url = `/api/terminal/${workspaceNamespace}/${workspaceName}/exec/init`;
+  const url = `/api/terminal/proxy/${workspaceNamespace}/${workspaceName}/exec/init`;
   const payload = {
     kubeconfig: {
       username,
