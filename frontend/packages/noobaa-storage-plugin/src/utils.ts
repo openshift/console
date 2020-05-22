@@ -2,6 +2,7 @@ import * as _ from 'lodash';
 import { Alert } from '@console/internal/components/monitoring';
 import { PrometheusResponse } from '@console/internal/components/graphs';
 import { K8sResourceKind } from '@console/internal/module/k8s';
+import { StorageClass } from '@console/internal/components/storage-class-form';
 
 export const filterNooBaaAlerts = (alerts: Alert[]): Alert[] =>
   alerts.filter((alert) => _.get(alert, 'annotations.storage_type') === 'NooBaa');
@@ -21,3 +22,5 @@ export const getPhase = (obj: K8sResourceKind): string => {
 };
 
 export const isBound = (obj: K8sResourceKind): boolean => getPhase(obj) === 'Bound';
+
+export const getSCProvisioner = (obj: StorageClass) => obj.provisioner;

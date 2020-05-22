@@ -25,7 +25,7 @@ import {
 import { ActionGroup, Button } from '@patternfly/react-core';
 import { getName, ResourceDropdown, isObjectSC } from '@console/shared';
 import { commonReducer, defaultState } from '../object-bucket-page/state';
-import { OCS_NS } from '../../constants';
+import { OCS_NS, NB_PROVISIONER } from '../../constants';
 import './create-obc.scss';
 
 export const CreateOBCPage: React.FC<CreateOBCPageProps> = (props) => {
@@ -74,6 +74,11 @@ export const CreateOBCPage: React.FC<CreateOBCPageProps> = (props) => {
       });
   };
 
+  const onScChange = (sc) => {
+    dispatch({ type: 'setStorage', name: getName(sc) });
+    dispatch({ type: 'setProvisioner', name: sc?.provisioner });
+  };
+
   return (
     <div className="co-m-pane__body co-m-pane__form">
       <Helmet>
@@ -113,7 +118,7 @@ export const CreateOBCPage: React.FC<CreateOBCPageProps> = (props) => {
             </div>
             <div className="form-group">
               <StorageClassDropdown
-                onChange={(sc) => dispatch({ type: 'setStorage', name: getName(sc) })}
+                onChange={onScChange}
                 required
                 name="storageClass"
                 hideClassName="co-required"
@@ -124,31 +129,33 @@ export const CreateOBCPage: React.FC<CreateOBCPageProps> = (props) => {
                 Defines the object-store service and the bucket provisioner.
               </p>
             </div>
-            <div className="form-group">
-              <label className="control-label co-required" htmlFor="obc-name">
-                Bucket Class
-              </label>
-              <Firehose
-                resources={[
-                  {
-                    isList: true,
-                    kind: referenceForModel(NooBaaBucketClassModel),
-                    namespace: OCS_NS,
-                    prop: 'bucketClass',
-                  },
-                ]}
-              >
-                <ResourceDropdown
-                  onChange={(sc) => dispatch({ type: 'setBucketClass', name: sc })}
-                  dataSelector={['metadata', 'name']}
-                  selectedKey={state.bucketClass}
-                  placeholder="Select Bucket Class"
-                  dropDownClassName="dropdown--full-width"
-                  className="nb-create-obc__bc-dropdown"
-                  id="bc-dropdown"
-                />
-              </Firehose>
-            </div>
+            {state.scProvisioner.includes(NB_PROVISIONER) && !_.isEmpty(state.scProvisioner) && (
+              <div className="form-group">
+                <label className="control-label co-required" htmlFor="obc-name">
+                  Bucket Class
+                </label>
+                <Firehose
+                  resources={[
+                    {
+                      isList: true,
+                      kind: referenceForModel(NooBaaBucketClassModel),
+                      namespace: OCS_NS,
+                      prop: 'bucketClass',
+                    },
+                  ]}
+                >
+                  <ResourceDropdown
+                    onChange={(sc) => dispatch({ type: 'setBucketClass', name: sc })}
+                    dataSelector={['metadata', 'name']}
+                    selectedKey={state.bucketClass}
+                    placeholder="Select Bucket Class"
+                    dropDownClassName="dropdown--full-width"
+                    className="nb-create-obc__bc-dropdown"
+                    id="bc-dropdown"
+                  />
+                </Firehose>
+              </div>
+            )}
           </div>
         </div>
         <ButtonBar errorMessage={state.error} inProgress={state.progress}>
