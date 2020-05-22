@@ -6,10 +6,9 @@ import { referenceForModel } from '@console/internal/module/k8s';
 import { pipelineFilterReducer } from '../../../utils/pipeline-filter-reducer';
 import { Pipeline } from '../../../utils/pipeline-augment';
 import { PipelineModel, PipelineRunModel } from '../../../models';
-import { getPipelineKebabActions } from '../../../utils/pipeline-actions';
 import LinkedPipelineRunTaskStatus from '../../pipelineruns/status/LinkedPipelineRunTaskStatus';
-import { ResourceKebabWithUserLabel } from '../../pipelineruns/triggered-by';
 import { tableColumnClasses } from './pipeline-table';
+import PipelineRowKebabActions from './PipelineRowKebabActions';
 
 const pipelineReference = referenceForModel(PipelineModel);
 const pipelinerunReference = referenceForModel(PipelineRunModel);
@@ -62,11 +61,7 @@ const PipelineRow: RowFunction<Pipeline> = ({ obj, index, key, style }) => {
           '-'}
       </TableData>
       <TableData className={tableColumnClasses[6]}>
-        <ResourceKebabWithUserLabel
-          actions={getPipelineKebabActions(obj.latestRun)}
-          kind={pipelineReference}
-          resource={obj}
-        />
+        <PipelineRowKebabActions pipeline={obj} />
       </TableData>
     </TableRow>
   );

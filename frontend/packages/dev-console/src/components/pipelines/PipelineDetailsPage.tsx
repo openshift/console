@@ -4,7 +4,7 @@ import { KebabAction, navFactory } from '@console/internal/components/utils';
 import { k8sGet, k8sList } from '@console/internal/module/k8s';
 import { ErrorPage404 } from '@console/internal/components/error';
 import { getPipelineKebabActions } from '../../utils/pipeline-actions';
-import { getLatestRun } from '../../utils/pipeline-augment';
+import { getLatestRun, PipelineRun } from '../../utils/pipeline-augment';
 import { PipelineRunModel, PipelineModel } from '../../models';
 import { useMenuActionsWithUserLabel } from '../pipelineruns/triggered-by';
 import {
@@ -16,12 +16,13 @@ import {
   parametersValidationSchema,
   resourcesValidationSchema,
 } from './detail-page-tabs';
+import { usePipelineTriggerTemplateNames } from './utils/triggers';
 
 const PipelineDetailsPage: React.FC<DetailsPageProps> = (props) => {
   const [errorCode, setErrorCode] = React.useState(null);
-  const [menuActions, setMenuActions] = React.useState<KebabAction[]>([]);
-
+  const [latestPipelineRun, setLatestPipelineRun] = React.useState<PipelineRun>({});
   const { name, namespace } = props;
+  const templateNames = usePipelineTriggerTemplateNames(name, namespace) || [];
 
   React.useEffect(() => {
     k8sGet(PipelineModel, name, namespace)
@@ -33,7 +34,7 @@ const PipelineDetailsPage: React.FC<DetailsPageProps> = (props) => {
         })
           .then((listres) => {
             const latestRun = getLatestRun({ data: listres }, 'creationTimestamp');
-            setMenuActions(getPipelineKebabActions(latestRun));
+            setLatestPipelineRun(latestRun);
           })
           .catch((error) => {
             setErrorCode(error.response.status);
@@ -42,7 +43,9 @@ const PipelineDetailsPage: React.FC<DetailsPageProps> = (props) => {
       .catch((error) => setErrorCode(error.response.status));
   }, [name, namespace]);
 
-  const augmentedMenuActions: KebabAction[] = useMenuActionsWithUserLabel(menuActions);
+  const augmentedMenuActions: KebabAction[] = useMenuActionsWithUserLabel(
+    getPipelineKebabActions(latestPipelineRun, templateNames.length > 0),
+  );
 
   if (errorCode === 404) {
     return <ErrorPage404 />;
@@ -51,6 +54,7 @@ const PipelineDetailsPage: React.FC<DetailsPageProps> = (props) => {
     <DetailsPage
       {...props}
       menuActions={augmentedMenuActions}
+      customData={templateNames}
       pages={[
         navFactory.details(PipelineDetails),
         navFactory.editYaml(),

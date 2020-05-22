@@ -14,11 +14,15 @@ type TriggerTemplateSelectorProps = {
 
 const TriggerTemplateSelector: React.FC<TriggerTemplateSelectorProps> = (props) => {
   const { name, pipeline, placeholder } = props;
+  const {
+    metadata: { name: pipelineName, namespace },
+  } = pipeline;
 
   const [field] = useField(name);
   const selection = field.value;
 
-  const templateNames: RouteTemplate[] = usePipelineTriggerTemplateNames(pipeline) || [];
+  const templateNames: RouteTemplate[] =
+    usePipelineTriggerTemplateNames(pipelineName, namespace) || [];
   const items = templateNames.reduce(
     (acc, { triggerTemplateName }) => ({ ...acc, [triggerTemplateName]: triggerTemplateName }),
     {},
