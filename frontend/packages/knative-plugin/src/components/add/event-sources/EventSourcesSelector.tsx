@@ -7,6 +7,7 @@ import { NormalizedEventSources } from '../import-types';
 import { KNATIVE_EVENT_SOURCE_APIGROUP } from '../../../const';
 import { getEventSourceModels } from '../../../utils/fetch-dynamic-eventsources-utils';
 import { isKnownEventSource, getEventSourceData } from '../../../utils/create-eventsources-utils';
+import { CREATE_APPLICATION_KEY } from '@console/dev-console/src/const';
 
 interface EventSourcesSelectorProps {
   eventSourceList: NormalizedEventSources;
@@ -14,9 +15,16 @@ interface EventSourcesSelectorProps {
 
 const EventSourcesSelector: React.FC<EventSourcesSelectorProps> = ({ eventSourceList }) => {
   const eventSourceItems = Object.keys(eventSourceList).length;
-  const { setFieldValue, setFieldTouched, validateForm, setErrors, setStatus } = useFormikContext<
-    FormikValues
-  >();
+  const {
+    values: {
+      application: { selectedKey },
+    },
+    setFieldValue,
+    setFieldTouched,
+    validateForm,
+    setErrors,
+    setStatus,
+  } = useFormikContext<FormikValues>();
   const handleItemChange = React.useCallback(
     (item: string) => {
       setErrors({});
@@ -31,13 +39,18 @@ const EventSourcesSelector: React.FC<EventSourcesSelectorProps> = ({ eventSource
       const selApiVersion = selDataModel
         ? `${selDataModel?.apiGroup}/${selDataModel?.apiVersion}`
         : `${KNATIVE_EVENT_SOURCE_APIGROUP}/v1alpha1`;
-      setFieldValue('name', _.kebabCase(item));
+      const name = _.kebabCase(item);
+      setFieldValue('name', name);
       setFieldTouched('name', true);
+      if (!selectedKey || selectedKey === CREATE_APPLICATION_KEY) {
+        setFieldValue('application.name', `${name}-app`);
+        setFieldTouched('application.name', true);
+      }
       setFieldValue('apiVersion', selApiVersion);
       setFieldTouched('apiVersion', true);
       validateForm();
     },
-    [setErrors, setStatus, setFieldValue, setFieldTouched, validateForm],
+    [setErrors, setStatus, setFieldValue, setFieldTouched, selectedKey, validateForm],
   );
 
   const itemSelectorField = (
