@@ -1,14 +1,15 @@
 import * as React from 'react';
-import { Terminal as XTerminal } from 'xterm';
+import { Terminal as XTerminal, ITerminalOptions } from 'xterm';
 import { fit } from 'xterm/lib/addons/fit/fit';
 
-const terminalOptions = {
+import './Terminal.scss';
+
+const terminalOptions: ITerminalOptions = {
   fontFamily: 'monospace',
   fontSize: 16,
   cursorBlink: false,
   cols: 80,
   rows: 25,
-  padding: 4,
 };
 
 type TerminalProps = {
@@ -26,30 +27,8 @@ const Terminal = React.forwardRef<ImperativeTerminalType, TerminalProps>(({ onDa
   const terminal = React.useRef<XTerminal>();
   const terminalRef = React.useRef<HTMLDivElement>();
 
-  const focus = () => {
-    terminal.current && terminal.current.focus();
-  };
-
-  const reset = () => {
-    if (!terminal.current) return;
-    terminal.current.reset();
-    terminal.current.clear();
-    terminal.current.setOption('disableStdin', false);
-  };
-
-  const onDataReceived = (data) => {
-    terminal.current && terminal.current.write(data);
-  };
-
-  const onConnectionClosed = (msg) => {
-    if (!terminal.current) return;
-    terminal.current.write(`\x1b[31m${msg || 'disconnected'}\x1b[m\r\n`);
-    terminal.current.setOption('disableStdin', true);
-  };
-
   React.useEffect(() => {
     const term: XTerminal = new XTerminal(terminalOptions);
-    term.on('data', onData);
     term.open(terminalRef.current);
     term.focus();
 
@@ -68,16 +47,38 @@ const Terminal = React.forwardRef<ImperativeTerminalType, TerminalProps>(({ onDa
       term.destroy();
       resizeObserver.disconnect();
     };
+  }, []);
+
+  React.useEffect(() => {
+    const term = terminal.current;
+    term.on('data', onData);
+
+    return () => {
+      term.off('data', onData);
+    };
   }, [onData]);
 
   React.useImperativeHandle(ref, () => ({
-    focus,
-    reset,
-    onDataReceived,
-    onConnectionClosed,
+    focus: () => {
+      terminal.current && terminal.current.focus();
+    },
+    reset: () => {
+      if (!terminal.current) return;
+      terminal.current.reset();
+      terminal.current.clear();
+      terminal.current.setOption('disableStdin', false);
+    },
+    onDataReceived: (data) => {
+      terminal.current && terminal.current.write(data);
+    },
+    onConnectionClosed: (msg) => {
+      if (!terminal.current) return;
+      terminal.current.write(`\x1b[31m${msg || 'disconnected'}\x1b[m\r\n`);
+      terminal.current.setOption('disableStdin', true);
+    },
   }));
 
-  return <div ref={terminalRef} style={{ width: '100%', height: '100%' }} />;
+  return <div className="co-terminal" ref={terminalRef} />;
 });
 
 export default Terminal;

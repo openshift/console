@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { RootState } from '@console/internal/redux';
 import { referenceForModel } from '@console/internal/module/k8s/k8s';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
-import { StatusBox } from '@console/internal/components/utils/status-box';
+import { StatusBox, LoadError } from '@console/internal/components/utils/status-box';
 import { WorkspaceModel } from '../../models';
 import CloudshellExec from './CloudShellExec';
 import TerminalLoadingBox from './TerminalLoadingBox';
@@ -38,7 +38,6 @@ const resource = {
 const CloudShellTerminal: React.FC<CloudShellTerminalProps> = ({ username, onCancel }) => {
   const [data, loaded, loadError] = useK8sWatchResource<CloudShellResource[]>(resource);
   const [initData, setInitData] = React.useState<TerminalInitData>();
-  const [initDataLoading, setInitDataLoading] = React.useState<boolean>(false);
   const [initError, setInitError] = React.useState<string>();
   let workspace: CloudShellResource;
   let workspaceName: string;
@@ -58,17 +57,12 @@ const CloudShellTerminal: React.FC<CloudShellTerminalProps> = ({ username, onCan
     let unmounted = false;
 
     if (workspacePhase === 'Running') {
-      setInitDataLoading(true);
       initTerminal(username, workspaceName, workspaceNamespace)
         .then((res: TerminalInitData) => {
-          if (unmounted) return;
-          setInitData(res);
-          setInitDataLoading(false);
+          if (!unmounted) setInitData(res);
         })
         .catch(() => {
-          if (unmounted) return;
-          setInitDataLoading(false);
-          setInitError('Failed to connect to your OpenShift command line terminal');
+          if (!unmounted) setInitError('Failed to connect to your OpenShift command line terminal');
         });
     }
 
@@ -77,19 +71,19 @@ const CloudShellTerminal: React.FC<CloudShellTerminalProps> = ({ username, onCan
     };
   }, [username, workspaceName, workspaceNamespace, workspacePhase]);
 
-  if (loadError || initError) {
+  if (loadError) {
     return (
-      <StatusBox
-        loaded={loaded}
-        loadError={loadError || initError}
-        label="OpenShift command line terminal"
-      />
+      <StatusBox loaded={loaded} loadError={loadError} label="OpenShift command line terminal" />
     );
   }
 
-  if (!loaded || initDataLoading) {
+  if (initError) {
+    return <LoadError message={initError} label="OpenShift command line terminal" />;
+  }
+
+  if (!loaded || (workspaceName && !initData)) {
     return (
-      <div className="odc-cloudshell-terminal__container">
+      <div className="co-cloudshell-terminal__container">
         <TerminalLoadingBox />
       </div>
     );
@@ -97,7 +91,7 @@ const CloudShellTerminal: React.FC<CloudShellTerminalProps> = ({ username, onCan
 
   if (initData && workspaceNamespace) {
     return (
-      <div className="odc-cloudshell-terminal__container">
+      <div className="co-cloudshell-terminal__container">
         <CloudshellExec
           namespace={workspaceNamespace}
           container={initData.container}
@@ -108,9 +102,7 @@ const CloudShellTerminal: React.FC<CloudShellTerminalProps> = ({ username, onCan
     );
   }
 
-  if (loaded && !workspace) return <CloudShellSetup onCancel={onCancel} />;
-
-  return null;
+  return <CloudShellSetup onCancel={onCancel} />;
 };
 
 // For testing
