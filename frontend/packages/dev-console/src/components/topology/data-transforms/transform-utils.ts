@@ -98,7 +98,7 @@ export const createTopologyNodeData = (
         type && (type === TYPE_EVENT_SOURCE || type === TYPE_KNATIVE_REVISION)
           ? true
           : isKnativeServing(deploymentConfig, 'metadata.labels'),
-      build: _.get(buildConfigs[0], 'builds[0]'),
+      build: buildConfigs?.[0]?.builds?.[0],
       connectedPipeline: {
         pipeline: pipelines[0],
         pipelineRuns,
