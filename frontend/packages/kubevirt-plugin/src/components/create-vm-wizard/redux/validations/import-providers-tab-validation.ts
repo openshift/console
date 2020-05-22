@@ -6,6 +6,14 @@ import { iGetImportProviders } from '../../selectors/immutable/import-providers'
 import { getFieldsValidity } from './utils';
 import { getProviders } from '../../provider-definitions';
 
+export const validateImportProviderTab = (options: UpdateOptions) => {
+  for (const provider of getProviders()) {
+    if (provider.validate) {
+      provider.validate(options);
+    }
+  }
+};
+
 export const setImportProvidersTabValidity = (options: UpdateOptions) => {
   const { id, dispatch, getState } = options;
   const state = getState();

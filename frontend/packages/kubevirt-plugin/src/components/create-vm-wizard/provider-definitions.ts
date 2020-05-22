@@ -8,7 +8,10 @@ import { getOvirtInitialState } from './redux/initial-state/providers/ovirt-init
 import { getOvirtProviderStateUpdater } from './redux/state-update/providers/ovirt/ovirt-state-update';
 import { getProviderName } from './strings/import-providers';
 import { cleanupOvirtProvider } from './redux/state-update/providers/ovirt/ovirt-cleanup';
-import { getOvirtProviderProvidersTabValidity } from './redux/validations/providers/ovirt-provider-tab-validation';
+import {
+  getOvirtProviderProvidersTabValidity,
+  validateOvirtSettings,
+} from './redux/validations/providers/ovirt-provider-tab-validation';
 
 type Provider = {
   id: VMImportProvider;
@@ -18,6 +21,7 @@ type Provider = {
   getImportProvidersTabValidity?: (
     options: UpdateOptions,
   ) => { hasAllRequiredFilled: boolean; isValid: boolean; error: string };
+  validate?: (options: UpdateOptions) => any;
   cleanup?: (options: UpdateOptions) => any;
 };
 
@@ -29,6 +33,7 @@ export const getProviders = (): Provider[] => [
     getInitialState: getOvirtInitialState,
     getStateUpdater: getOvirtProviderStateUpdater,
     getImportProvidersTabValidity: getOvirtProviderProvidersTabValidity,
+    validate: validateOvirtSettings,
     cleanup: cleanupOvirtProvider,
   },
   {

@@ -8,12 +8,7 @@ import {
 import { VMSettingsField, VMWizardProps, VMWizardTab } from '../../types';
 import { hasVmSettingsChanged, iGetVmSettings } from '../../selectors/immutable/vm-settings';
 import { iGetFieldKey, iGetFieldValue } from '../../selectors/immutable/field';
-import {
-  InternalActionType,
-  UpdateOptions,
-  VMSettingsValidationConfig,
-  VmSettingsValidator,
-} from '../types';
+import { InternalActionType, UpdateOptions, ValidationConfig, Validator } from '../types';
 import { vmWizardInternalActions } from '../internal-actions';
 import {
   validateUserTemplateProvisionSource,
@@ -39,7 +34,7 @@ import { getFieldsValidity, getValidationUpdate } from './utils';
 import { getTemplateValidations } from '../../selectors/template';
 import { BinaryUnit, convertToBytes } from '../../../form/size-unit-utils';
 
-const validateVm: VmSettingsValidator = (field, options) => {
+const validateVm: Validator = (field, options) => {
   const { getState, id } = options;
   const state = getState();
 
@@ -65,7 +60,7 @@ const validateVm: VmSettingsValidator = (field, options) => {
   );
 };
 
-const validateUserTemplate: VmSettingsValidator = (field, options) => {
+const validateUserTemplate: Validator = (field, options) => {
   const { getState, id } = options;
   const state = getState();
 
@@ -94,7 +89,7 @@ const validateUserTemplate: VmSettingsValidator = (field, options) => {
   return validateUserTemplateProvisionSource(userTemplate && userTemplate.toJSON());
 };
 
-export const validateOperatingSystem: VmSettingsValidator = (field) => {
+export const validateOperatingSystem: Validator = (field) => {
   const os = iGetFieldValue(field);
   const guestFullName = iGet(field, 'guestFullName');
 
@@ -107,7 +102,7 @@ export const validateOperatingSystem: VmSettingsValidator = (field) => {
   return asValidationObject(`Select matching for: ${guestFullName}`, ValidationErrorType.Info);
 };
 
-const memoryValidation: VmSettingsValidator = (field, options): ValidationObject => {
+const memoryValidation: Validator = (field, options): ValidationObject => {
   const memValue = iGetFieldValue(field);
   if (memValue == null || memValue === '' || BinaryUnit[memValue]) {
     return validateEmptyValue(memValue, {
@@ -149,7 +144,7 @@ const asVMSettingsFieldValidator = (
     subject: getFieldTitle(iGetFieldKey(field)),
   });
 
-const validationConfig: VMSettingsValidationConfig = {
+const validationConfig: ValidationConfig = {
   [VMSettingsField.NAME]: {
     detectValueChanges: [VMSettingsField.NAME],
     detectCommonDataChanges: (field, options) => {

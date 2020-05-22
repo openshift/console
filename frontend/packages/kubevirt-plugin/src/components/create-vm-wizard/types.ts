@@ -194,9 +194,9 @@ export type VMWizardTabState = VMWizardTabMetadata & {
   value: any;
 };
 
-export type VMSettingsFieldType = {
+export type SettingsFieldType<Field = VMSettingsField> = {
   value: any;
-  key: VMSettingsField;
+  key: Field;
   isRequired?: any;
   isHidden?: any;
   isDisabled?: any;

@@ -37,7 +37,7 @@ export const hasOvirtSettingsChanged = (
   state,
   id: string,
   ...keys: OvirtProviderField[]
-) => keys.find((key) => iGetOvirtField(prevState, id, key) !== iGetOvirtField(state, id, key));
+) => !!keys.find((key) => iGetOvirtField(prevState, id, key) !== iGetOvirtField(state, id, key));
 
 export const hasOvirtSettingsValueChanged = (
   prevState,
@@ -45,6 +45,6 @@ export const hasOvirtSettingsValueChanged = (
   id: string,
   ...keys: OvirtProviderField[]
 ) =>
-  keys.find(
+  !!keys.find(
     (key) => iGetOvirtFieldValue(prevState, id, key) !== iGetOvirtFieldValue(state, id, key),
   );

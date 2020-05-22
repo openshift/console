@@ -1,10 +1,75 @@
-import { UpdateOptions } from '../../types';
-import { OvirtProviderField } from '../../../types';
+import * as _ from 'lodash';
+import { InternalActionType, UpdateOptions, ValidationConfig } from '../../types';
+import { OvirtProviderField, VMImportProvider } from '../../../types';
 import {
+  hasOvirtSettingsChanged,
+  iGetOvirtData,
   iGetOvirtFieldAttribute,
   iGetOvirtFieldValue,
   isOvirtProvider,
 } from '../../../selectors/immutable/provider/ovirt/selectors';
+import { getValidationUpdate } from '../utils';
+import { vmWizardInternalActions } from '../../internal-actions';
+import { iGetFieldValue } from '../../../selectors/immutable/field';
+import { asValidationObject, ValidationErrorType } from '@console/shared/src';
+
+const validationConfig: ValidationConfig<OvirtProviderField> = {
+  [OvirtProviderField.API_URL]: {
+    detectValueChanges: [OvirtProviderField.API_URL],
+    validator: (field) => {
+      const apiURL = iGetFieldValue(field);
+
+      if (apiURL && !apiURL.endsWith('/ovirt-engine/api')) {
+        return asValidationObject(
+          `URL should end with "/ovirt-engine/api"`,
+          ValidationErrorType.Info,
+        );
+      }
+
+      return null;
+    },
+  },
+  [OvirtProviderField.USERNAME]: {
+    detectValueChanges: [OvirtProviderField.USERNAME],
+    validator: (field) => {
+      const username = iGetFieldValue(field);
+
+      if (username && (!username.includes('@') || username.endsWith('@'))) {
+        return asValidationObject(`Username should end with "@profile"`, ValidationErrorType.Info);
+      }
+
+      return null;
+    },
+  },
+};
+
+export const validateOvirtSettings = (options: UpdateOptions) => {
+  const { id, dispatch, getState } = options;
+  const state = getState();
+
+  if (!isOvirtProvider(state, id)) {
+    return;
+  }
+
+  const ovirtSettings = iGetOvirtData(state, id);
+
+  const update = getValidationUpdate(
+    validationConfig,
+    options,
+    ovirtSettings,
+    hasOvirtSettingsChanged,
+  );
+
+  if (!_.isEmpty(update)) {
+    dispatch(
+      vmWizardInternalActions[InternalActionType.UpdateImportProvider](
+        id,
+        VMImportProvider.OVIRT,
+        update,
+      ),
+    );
+  }
+};
 
 export const getOvirtProviderProvidersTabValidity = (
   options: UpdateOptions,
