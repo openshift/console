@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import Helmet from 'react-helmet';
-import { useFormikContext, FormikProps, FormikValues } from 'formik';
+import { FormikProps, FormikValues } from 'formik';
 import { Form, Button } from '@patternfly/react-core';
 import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 import {
@@ -34,6 +34,7 @@ const AddHealthChecks: React.FC<FormikProps<FormikValues> & AddHealthChecksProps
   status,
   isSubmitting,
   setFieldValue,
+  values,
 }) => {
   const [currentKey, setCurrentKey] = React.useState(currentContainer);
   const containers = resource?.spec?.template?.spec?.containers;
@@ -49,10 +50,7 @@ const AddHealthChecks: React.FC<FormikProps<FormikValues> & AddHealthChecksProps
   } = resource;
   const kindForCRDResource = referenceFor(resource);
   const resourceKind = modelFor(kindForCRDResource).crd ? kindForCRDResource : kind;
-  const {
-    values: { healthChecks },
-  } = useFormikContext<FormikValues>();
-  const isFormClean = _.every(healthChecks, { enabled: false });
+  const isFormClean = _.every(values.healthChecks, { modified: false });
 
   const handleSelectContainer = (containerName: string) => {
     const containerIndex = _.findIndex(resource.spec.template.spec.containers, [

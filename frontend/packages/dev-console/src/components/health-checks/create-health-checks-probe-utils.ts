@@ -52,6 +52,7 @@ export const getHealthChecksData = (
   const healthChecks = {
     readinessProbe: {
       showForm: false,
+      modified: false,
       enabled: !_.isEmpty(readinessProbe),
       data: !_.isEmpty(readinessProbe)
         ? {
@@ -65,6 +66,7 @@ export const getHealthChecksData = (
     },
     livenessProbe: {
       showForm: false,
+      modified: false,
       enabled: !_.isEmpty(livenessProbe),
       data: !_.isEmpty(livenessProbe)
         ? {
@@ -78,6 +80,7 @@ export const getHealthChecksData = (
     },
     startupProbe: {
       showForm: false,
+      modified: false,
       enabled: !_.isEmpty(startupProbe),
       data: !_.isEmpty(startupProbe)
         ? {

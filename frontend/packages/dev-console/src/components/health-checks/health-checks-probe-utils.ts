@@ -31,6 +31,7 @@ export const getHealthChecksProbeConfig = (probe: string) => {
 export const healthChecksDefaultValues: HealthCheckProbe = {
   showForm: false,
   enabled: false,
+  modified: false,
   data: {
     failureThreshold: 3,
     requestType: RequestType.HTTPGET,
