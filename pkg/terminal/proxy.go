@@ -153,7 +153,7 @@ func stripTerminalAPIPrefix(requestPath string) (ok bool, namespace string, work
 	// URL is supposed to have the following format
 	// ->   /api/terminal/proxy/{namespace}/{workspace-name}/{path} < optional
 	// -> 0 / 1 /    2   /  3  /    4      /        5       /  6
-	segments := strings.SplitN(requestPath, "/", 6)
+	segments := strings.SplitN(requestPath, "/", 7)
 	if len(segments) < 6 {
 		return false, "", "", ""
 	} else {
