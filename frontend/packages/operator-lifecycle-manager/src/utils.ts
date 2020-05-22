@@ -1,9 +1,12 @@
+import * as _ from 'lodash';
 import { ClusterServiceVersionKind, CRDDescription } from './types';
 import { referenceForProvidedAPI } from './components';
 
-export const getInternalObjects = (csv: ClusterServiceVersionKind) => {
-  const internals: string =
-    csv?.metadata?.annotations?.['operators.operatorframework.io/internal-objects'];
+export const getInternalObjects = (csv: any, path: string = 'metadata.annotations') => {
+  const internals: string = _.get(csv, [
+    ..._.toPath(path),
+    'operators.operatorframework.io/internal-objects',
+  ]);
   if (!internals) {
     return [];
   }
