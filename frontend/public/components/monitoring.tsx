@@ -1051,7 +1051,7 @@ const MonitoringListPage = connect(filtersToProps)(
           </Helmet>
           <div className="co-m-pane__body">
             {CreateButton && (
-              <div className="co-m-pane__createLink co-m-pane__createLink--no-title">
+              <div className="co-m-pane__createLink--no-title">
                 <CreateButton />
               </div>
             )}
@@ -1095,7 +1095,7 @@ const AlertsPage_ = (props) => (
     reduxID="monitoringAlerts"
     Row={AlertTableRow}
     rowFilter={alertsRowFilter}
-    labelFilter="alert-list-label"
+    labelFilter="alerts"
     labelPath="labels"
   />
 );
@@ -1163,7 +1163,7 @@ const RulesPage_ = (props) => (
     Header={ruleTableHeader}
     kindPlural="Alerting Rules"
     nameFilterID="alerting-rule-name"
-    labelFilter="alerting-rule-label"
+    labelFilter="alerts"
     reduxID="monitoringRules"
     Row={RuleTableRow}
     rowFilter={rulesRowFilter}

@@ -3,13 +3,12 @@ import * as classNames from 'classnames';
 import { useDocumentListener, getLabelsAsString } from '@console/shared';
 import { KeyEventModes } from '@console/shared/src/hooks';
 import { fuzzyCaseInsensitive } from './factory/table-filters';
-import { K8sResourceCommon } from '../module/k8s';
 import { TextFilter } from './factory';
 
 const MAX_SUGGESTIONS = 5;
 
-const labelParser = (resources: K8sResourceCommon[], labelPath: string): Set<string> => {
-  return resources.reduce((acc: Set<string>, resource: K8sResourceCommon) => {
+const labelParser = (resources: any, labelPath: string): Set<string> => {
+  return resources.reduce((acc: Set<string>, resource: any) => {
     getLabelsAsString(resource, labelPath).forEach((label) => acc.add(label));
     return acc;
   }, new Set<string>());

@@ -44,7 +44,7 @@ export const tableFilters: TableFilterMap = {
     return haystack.includes(needle);
   },
 
-  'alert-list-label': (values, alert) => {
+  alerts: (values, alert) => {
     const labels = getLabelsAsString(alert, 'labels');
     if (!values.all) {
       return true;
@@ -60,16 +60,7 @@ export const tableFilters: TableFilterMap = {
 
   'alerting-rule-name': (filter, rule) => fuzzyCaseInsensitive(filter, rule.name),
 
-  'alerting-rule-label': (values, rule) => {
-    const labels = getLabelsAsString(rule, 'labels');
-    if (!values.all) {
-      return true;
-    }
-    return !!values.all.every((v) => labels.includes(v));
-  },
-
-  'silence-name': (filter, silence) =>
-    fuzzyCaseInsensitive(filter, silence.name) || _.isEmpty(filter.selected),
+  'silence-name': (filter, silence) => fuzzyCaseInsensitive(filter, silence.name),
 
   'silence-state': (filter, silence) =>
     filter.selected.has(silenceState(silence)) || _.isEmpty(filter.selected),

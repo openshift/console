@@ -161,7 +161,6 @@ const FilterToolbar_: React.FC<FilterToolbarProps & RouteComponentProps> = (prop
   };
 
   const updateSearchFilter = (value: string) => {
-    // If it is handled externally then do nothing
     switch (filterType) {
       case FilterType.NAME:
         updateNameFilter(value);
