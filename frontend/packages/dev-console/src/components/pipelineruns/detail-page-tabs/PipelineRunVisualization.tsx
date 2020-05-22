@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { K8sResourceKind, k8sGet } from '@console/internal/module/k8s';
 import { getPipelineTasks } from '../../../utils/pipeline-utils';
+import { pipelineRefExists } from '../../../utils/pipeline-augment';
 import { PipelineModel } from '../../../models';
 import { pipelineRunFilterReducer } from '../../../utils/pipeline-filter-reducer';
 import { PipelineVisualizationGraph } from '../../pipelines/detail-page-tabs/pipeline-details/PipelineVisualizationGraph';
@@ -27,22 +28,24 @@ export class PipelineRunVisualization extends React.Component<
   }
 
   componentDidMount() {
-    k8sGet(
-      PipelineModel,
-      this.props.pipelineRun.spec.pipelineRef.name,
-      this.props.pipelineRun.metadata.namespace,
-    )
-      .then((res) => {
-        this.setState({
-          pipeline: res,
-        });
-      })
-      .catch((error) => this.setState({ errorCode: error.response.status }));
+    if (pipelineRefExists(this.props.pipelineRun)) {
+      k8sGet(
+        PipelineModel,
+        this.props.pipelineRun.spec.pipelineRef.name,
+        this.props.pipelineRun.metadata.namespace,
+      )
+        .then((res) => {
+          this.setState({
+            pipeline: res,
+          });
+        })
+        .catch((error) => this.setState({ errorCode: error.response.status }));
+    }
   }
 
   render() {
     const { pipelineRun } = this.props;
-    if (this.state.errorCode === 404) {
+    if (!pipelineRefExists(pipelineRun) || this.state.errorCode === 404) {
       return null;
     }
     return (
