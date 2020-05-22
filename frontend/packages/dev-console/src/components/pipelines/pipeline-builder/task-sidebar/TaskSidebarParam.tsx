@@ -1,6 +1,7 @@
 import * as React from 'react';
-import { FormGroup, TextInput } from '@patternfly/react-core';
+import { FormGroup } from '@patternfly/react-core';
 import { PipelineResourceTaskParam, PipelineTaskParam } from '../../../../utils/pipeline-augment';
+import { ArrayParam, ParameterProps, SidebarInputWrapper, StringParam } from './temp-utils';
 
 type TaskSidebarParamProps = {
   hasParamError?: boolean;
@@ -13,31 +14,36 @@ const TaskSidebarParam: React.FC<TaskSidebarParamProps> = (props) => {
   const { hasParamError, onChange, resourceParam, taskParam } = props;
   const [dirty, setDirty] = React.useState(false);
 
-  const currentValue = taskParam?.value?.toString() || '';
+  const currentValue = taskParam?.value;
   const emptyIsInvalid = !resourceParam.default;
 
-  const isValid = !(dirty && hasParamError && emptyIsInvalid && currentValue === '');
+  const isValid = !(dirty && hasParamError && emptyIsInvalid && currentValue != null);
+
+  const paramRenderProps: ParameterProps = {
+    currentValue,
+    defaultValue: resourceParam.default,
+    isValid,
+    name: resourceParam.name,
+    onChange,
+    setDirty,
+  };
 
   return (
     <FormGroup
       fieldId={resourceParam.name}
       label={resourceParam.name}
-      helperText={resourceParam.description}
+      helperText={resourceParam.type === 'string' ? resourceParam.description : null}
       helperTextInvalid="Required"
       isValid={isValid}
       isRequired={emptyIsInvalid}
     >
-      <TextInput
-        id={resourceParam.name}
-        isValid={isValid}
-        isRequired={!resourceParam.default}
-        onBlur={() => setDirty(true)}
-        onChange={(value) => {
-          onChange(value);
-        }}
-        placeholder={resourceParam.default}
-        value={currentValue}
-      />
+      {resourceParam.type === 'array' ? (
+        <ArrayParam {...paramRenderProps} description={resourceParam.description} />
+      ) : (
+        <SidebarInputWrapper>
+          <StringParam {...paramRenderProps} />
+        </SidebarInputWrapper>
+      )}
     </FormGroup>
   );
 };

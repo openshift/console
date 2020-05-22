@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { FormGroup, TextInput, TextInputTypes } from '@patternfly/react-core';
+import { SidebarInputWrapper } from './temp-utils';
 
 type TaskSidebarNameProps = {
   initialName: string;
@@ -35,23 +36,25 @@ const TaskSidebarName: React.FC<TaskSidebarNameProps> = (props) => {
       isValid={isValid}
       isRequired
     >
-      <TextInput
-        id="task-name"
-        isValid={isValid}
-        isRequired
-        onChange={(value) => {
-          setInterimName(value);
-          setError(getError(value));
-        }}
-        onBlur={() => {
-          if (isValid) {
-            onChange(interimName);
-          }
-        }}
-        placeholder={taskName}
-        type={TextInputTypes.text}
-        value={interimName}
-      />
+      <SidebarInputWrapper>
+        <TextInput
+          id="task-name"
+          isValid={isValid}
+          isRequired
+          onChange={(value) => {
+            setInterimName(value);
+            setError(getError(value));
+          }}
+          onBlur={() => {
+            if (isValid) {
+              onChange(interimName);
+            }
+          }}
+          placeholder={taskName}
+          type={TextInputTypes.text}
+          value={interimName}
+        />
+      </SidebarInputWrapper>
     </FormGroup>
   );
 };
