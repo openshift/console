@@ -271,7 +271,7 @@ const VirtualMachinesPage: React.FC<VirtualMachinesPageProps> = (props) => {
 
     const uniqueVMImportsByTargetName = _.sortedUniqBy(
       [...(loadedVMImports || [])].sort((a, b) =>
-        getCreationTimestamp(a) > getCreationTimestamp(b) ? -1 : 1,
+        new Date(getCreationTimestamp(a)) > new Date(getCreationTimestamp(b)) ? -1 : 1,
       ),
       (vmImport) => new VMImportWrappper(vmImport).getResolvedVMTargetName(),
     );
