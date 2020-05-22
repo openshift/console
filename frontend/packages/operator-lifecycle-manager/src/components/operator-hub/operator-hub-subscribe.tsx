@@ -342,17 +342,26 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
   const showMonitoringCheckbox =
     operatorRequestsMonitoring && _.startsWith(selectedTargetNamespace, 'openshift-');
 
-  const createNamespaceDetails = isSuggestedNamespaceSelected && !suggestedNamespaceExists && (
+  const suggestedNamespaceDetails = isSuggestedNamespaceSelected && (
     <>
       <Alert
         isInline
         className="co-alert co-alert--scrollable"
-        variant="info"
-        title="Namespace creation"
+        variant={suggestedNamespaceExists ? 'warning' : 'info'}
+        title={suggestedNamespaceExists ? 'Namespace already exists' : 'Namespace creation'}
       >
-        Namespace <b>{suggestedNamespace}</b> does not exist and will be created.
+        {suggestedNamespaceExists ? (
+          <>
+            Namespace <b>{suggestedNamespace}</b> already exists and will be used. Other users can
+            already have access to this namespace.
+          </>
+        ) : (
+          <>
+            Namespace <b>{suggestedNamespace}</b> does not exist and will be created.
+          </>
+        )}
       </Alert>
-      {showMonitoringCheckbox && (
+      {showMonitoringCheckbox && !suggestedNamespaceExists && (
         <div className="co-form-subsection">
           <Checkbox
             id="enable-monitoring-checkbox"
@@ -409,7 +418,7 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
           }}
         />
       </div>
-      {createNamespaceDetails}
+      {suggestedNamespaceDetails}
     </>
   );
 
@@ -434,7 +443,7 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
         <ResourceIcon kind="Project" />
         <b>{suggestedNamespace}</b>
       </RadioInput>
-      {useSuggestedNSForSingleInstallMode && createNamespaceDetails}
+      {useSuggestedNSForSingleInstallMode && suggestedNamespaceDetails}
       <RadioInput
         onChange={() => {
           setUseSuggestedNSForSingleInstallMode(false);
