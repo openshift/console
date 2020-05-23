@@ -53,6 +53,7 @@ import {
 } from '../index';
 import { installedFor, supports, providedAPIsFor, isGlobal } from '../operator-group';
 import { CRDCard } from '../clusterserviceversion';
+import { getInternalObjects, isInternalObject } from '../../utils';
 
 export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> = (props) => {
   const [targetNamespace, setTargetNamespace] = React.useState(null);
@@ -94,6 +95,7 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
     currentCSVDesc.annotations?.['operatorframework.io/suggested-namespace'];
   const operatorRequestsMonitoring =
     currentCSVDesc.annotations?.['operatorframework.io/cluster-monitoring'] === 'true';
+  const internalObjects = getInternalObjects(currentCSVDesc, 'annotations');
 
   const globalNS =
     (props.operatorGroup?.data || ([] as OperatorGroupKind[])).find(
@@ -454,6 +456,10 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
     </div>
   );
 
+  const providedAPIs = providedAPIsForChannel(props.packageManifest.data[0])(
+    selectedUpdateChannel,
+  ).filter((item) => !isInternalObject(internalObjects, item.name));
+
   return (
     <div className="row">
       <div className="col-xs-6">
@@ -557,14 +563,10 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
         />
         <h4>Provided APIs</h4>
         <div className="co-crd-card-row">
-          {_.isEmpty(
-            providedAPIsForChannel(props.packageManifest.data[0])(selectedUpdateChannel),
-          ) ? (
+          {!providedAPIs.length ? (
             <span className="text-muted">No Kubernetes APIs are provided by this Operator.</span>
           ) : (
-            providedAPIsForChannel(props.packageManifest.data[0])(
-              selectedUpdateChannel,
-            ).map((api) => (
+            providedAPIs.map((api) => (
               <CRDCard key={referenceForProvidedAPI(api)} canCreate={false} crd={api} csv={null} />
             ))
           )}
