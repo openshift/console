@@ -16,6 +16,7 @@ export const TEMPLATE_OS_LABEL = 'os.template.kubevirt.io';
 export const TEMPLATE_PARAM_VM_NAME = 'NAME';
 export const TEMPLATE_PARAM_VM_NAME_DESC = 'Name for the new VM';
 export const TEMPLATE_TYPE_LABEL = 'template.kubevirt.io/type';
+export const TEMPLATE_VERSION_LABEL = 'template.kubevirt.io/version';
 export const TEMPLATE_TYPE_VM = 'vm';
 export const TEMPLATE_TYPE_BASE = 'base';
 export const TEMPLATE_WORKLOAD_LABEL = 'workload.template.kubevirt.io';
@@ -26,8 +27,6 @@ export const TEMPLATE_VM_SIZE_LABEL = 'kubevirt.io/size';
 
 export const LABEL_USED_TEMPLATE_NAME = 'vm.kubevirt.io/template';
 export const LABEL_USED_TEMPLATE_NAMESPACE = 'vm.kubevirt.io/template.namespace';
-export const LABEL_TEMPLATE_REVISION = 'vm.kubevirt.io/template.revision';
-export const LABEL_TEMPLATE_VERSION = 'vm.kubevirt.io/template.version';
 
 export const DEFAULT_RDP_PORT = 3389;
 

@@ -48,7 +48,7 @@ export const ignoreCaseSort = <T>(
   return array.sort((a, b) => resolve(a).localeCompare(resolve(b)));
 };
 
-const getOSVersion = (osID: string): number[] =>
+export const splitVersion = (osID: string): number[] =>
   (osID || '')
     .split(/\D/)
     .filter((x) => x)
@@ -58,29 +58,29 @@ const getOSVersion = (osID: string): number[] =>
  *
  *
  * Compare the numbers between the two versions by the order of their appearance
- * in the OS name.
+ * eg in the OS name.
  *
  * For example:
- * osVersion1: [10,2] for OS: 'Windows 10 R2',
- * osVersion2: [10] for OS: 'Windows 10',
+ * version1: [10,2] for OS: 'Windows 10 R2',
+ * version2: [10] for OS: 'Windows 10',
  * (return 1)
  *
- * osVersion1: [9,10] for OS: 'ubuntu9.10',
- * osVersion2: [10,4] for OS: 'ubuntu10.04',
+ * version1: [9,10] for OS: 'ubuntu9.10',
+ * version2: [10,4] for OS: 'ubuntu10.04',
  * (return -1)
  *
  * return 0 when equal.
  *
  */
-export const compareVersions = (osVersion1: number[], osVersion2: number[]): number => {
-  if (!osVersion1 && !osVersion2) {
+export const compareVersions = (version1: number[], version2: number[]): number => {
+  if (!version1 && !version2) {
     return 0;
   }
 
-  const osVer1 = osVersion1 || [];
-  const osVer2 = osVersion2 || [];
+  const finalVersion1 = version1 || [];
+  const finalVersion2 = version2 || [];
 
-  const zipped = _.zip(osVer1, osVer2);
+  const zipped = _.zip(finalVersion1, finalVersion2);
   let idx = 0;
   while (idx < zipped.length) {
     /*
@@ -111,7 +111,7 @@ const descSortOSes = (os1: OperatingSystemRecord, os2: OperatingSystemRecord): n
     return nameCMP * -1;
   }
 
-  return compareVersions(getOSVersion(os1.id), getOSVersion(os2.id)) * -1;
+  return compareVersions(splitVersion(os1.id), splitVersion(os2.id)) * -1;
 };
 
 export const removeOSDups = (osArr: OperatingSystemRecord[]): OperatingSystemRecord[] =>
