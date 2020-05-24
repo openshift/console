@@ -1,7 +1,13 @@
 import * as React from 'react';
 import { AccessConsoles, VncConsole } from '@patternfly/react-console';
-import { Firehose, FirehoseResult, LoadingInline } from '@console/internal/components/utils';
-import { getNamespace } from '@console/shared';
+import { Button, Alert, AlertActionCloseButton } from '@patternfly/react-core';
+import {
+  Firehose,
+  FirehoseResult,
+  LoadingInline,
+  WindowPortal,
+} from '@console/internal/components/utils';
+import { getNamespace, getName } from '@console/shared';
 import { PodKind } from '@console/internal/module/k8s';
 import { ServiceModel } from '@console/internal/models';
 import { VirtualMachineInstanceModel, VirtualMachineModel } from '../../models';
@@ -27,6 +33,7 @@ import { DesktopViewerSelector } from './desktop-viewer-selector';
 import { VMTabProps } from './types';
 import { VMStatusBundle } from '../../statuses/vm/types';
 import { VMStatus } from '../../constants/vm/vm-status';
+import './vm-console.scss';
 
 const { VNC_CONSOLE_TYPE } = AccessConsoles.constants;
 
@@ -64,6 +71,9 @@ const VMConsoles: React.FC<VMConsolesProps> = ({
   rdp,
   LoadingComponent,
 }) => {
+  const [openNewWindow, setOpenNewWindow] = React.useState(false);
+  const [isWindowCreateFail, setIsWindowCreateFail] = React.useState(false);
+
   if (!isVMIRunning(vmi)) {
     if (vmStatusBundle?.status?.isImporting() || vmStatusBundle?.status?.isMigrating()) {
       return <VMCannotBeStarted />;
@@ -91,13 +101,49 @@ const VMConsoles: React.FC<VMConsolesProps> = ({
   ) : null;
 
   return (
-    <div className="co-m-pane__body">
-      <AccessConsoles preselectedType={VNC_CONSOLE_TYPE} disconnectByChange={false}>
-        <SerialConsoleConnector {...serial} />
-        <VncConsole {...vnc} />
-        {desktopViewverSelector}
-      </AccessConsoles>
-    </div>
+    <>
+      <div className="vm-console-actions">
+        {isWindowCreateFail && (
+          <Alert
+            variant="danger"
+            className="vm-console-bottom-gutter"
+            isInline
+            action={<AlertActionCloseButton onClose={() => setIsWindowCreateFail(false)} />}
+            title="Failed to open a new Window, try disabling ad blockers"
+          />
+        )}
+        <Button isDisabled={openNewWindow} variant="primary" onClick={() => setOpenNewWindow(true)}>
+          {openNewWindow
+            ? 'Console is displayed on a separate window'
+            : 'Open Console in new Window'}
+        </Button>
+      </div>
+      <div className="co-m-pane__body">
+        {openNewWindow ? (
+          <WindowPortal
+            title={getName(vmi)}
+            onWindowClose={() => setOpenNewWindow(false)}
+            height={850}
+            onWindowCreateFail={() => {
+              setIsWindowCreateFail(true);
+              setOpenNewWindow(false);
+            }}
+          >
+            <AccessConsoles preselectedType={VNC_CONSOLE_TYPE} disconnectByChange={false}>
+              <SerialConsoleConnector {...serial} />
+              <VncConsole {...vnc} />
+              {desktopViewverSelector}
+            </AccessConsoles>
+          </WindowPortal>
+        ) : (
+          <AccessConsoles preselectedType={VNC_CONSOLE_TYPE} disconnectByChange={false}>
+            <SerialConsoleConnector {...serial} />
+            <VncConsole {...vnc} />
+            {desktopViewverSelector}
+          </AccessConsoles>
+        )}
+      </div>
+    </>
   );
 };
 
