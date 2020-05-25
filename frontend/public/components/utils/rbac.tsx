@@ -87,10 +87,11 @@ export const checkAccess = (
   );
 };
 
-export const useAccessReview = (
+export const useAccessReview2 = (
   resourceAttributes: AccessReviewResourceAttributes,
   impersonate?,
-): boolean => {
+): [boolean, boolean] => {
+  const [loading, setLoading] = useSafetyFirst(true);
   const [isAllowed, setAllowed] = useSafetyFirst(false);
   // Destructure the attributes to pass them as dependencies to `useEffect`,
   // which doesn't do deep comparison of object dependencies.
@@ -107,6 +108,7 @@ export const useAccessReview = (
     checkAccessInternal(group, resource, subresource, verb, name, namespace, impersonateKey)
       .then((result: SelfSubjectAccessReviewKind) => {
         setAllowed(result.status.allowed);
+        setLoading(false);
       })
       .catch((e) => {
         // eslint-disable-next-line no-console
@@ -115,11 +117,17 @@ export const useAccessReview = (
         // don't incorrectly block users from actions they can perform. The server
         // still enforces access control.
         setAllowed(true);
+        setLoading(false);
       });
-  }, [setAllowed, group, resource, subresource, verb, name, namespace, impersonateKey]);
+  }, [setLoading, setAllowed, group, resource, subresource, verb, name, namespace, impersonateKey]);
 
-  return isAllowed;
+  return [isAllowed, loading];
 };
+
+export const useAccessReview = (
+  resourceAttributes: AccessReviewResourceAttributes,
+  impersonate?,
+): boolean => useAccessReview2(resourceAttributes, impersonate)[0];
 
 const RequireCreatePermission_: React.FC<RequireCreatePermissionProps> = ({
   model,
