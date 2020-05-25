@@ -85,16 +85,17 @@ const createTopologyVMNodeData = (
 ): TopologyDataObject<VMNodeData> => {
   const vm = vmOverview.obj as VMKind;
   const { uid, name, labels } = vm.metadata;
-  const vmis = resources.virtualmachineinstances.data;
+  const vmis = resources.virtualmachineinstances?.data;
   const vmi = vmis.find((instance) => instance.metadata.name === name) as VMIKind;
-  const migrations = resources.migrations.data;
+  const pods = resources.pods?.data;
+  const migrations = resources.migrations?.data;
   const dataVolumes = resources.dataVolumes?.data as V1alpha1DataVolume[];
   const vmImports = resources.vmImports?.data as VMImportKind[];
 
   const vmStatusBundle = getVMStatus({
     vm,
     vmi,
-    pods: vmOverview.pods,
+    pods,
     migrations,
     dataVolumes,
     vmImports,
