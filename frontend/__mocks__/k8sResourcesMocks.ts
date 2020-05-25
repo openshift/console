@@ -1,4 +1,4 @@
-import { CustomResourceDefinitionKind, K8sResourceKind } from '../public/module/k8s';
+import { K8sResourceKind } from '../public/module/k8s';
 
 export const testNamespace: K8sResourceKind = {
   apiVersion: 'v1',
@@ -6,34 +6,6 @@ export const testNamespace: K8sResourceKind = {
   metadata: {
     name: 'default',
     annotations: { 'alm-manager': 'tectonic-system.alm-operator' },
-  },
-};
-
-export const testCRD: CustomResourceDefinitionKind = {
-  apiVersion: 'apiextensions.k8s.io/v1beta1',
-  kind: 'CustomResourceDefinition',
-  metadata: {
-    name: 'testresources.testapp.coreos.com',
-    labels: {
-      'owner-testapp': 'testapp.clusterserviceversions.coreos.com',
-    },
-    annotations: {
-      displayName: 'Dashboard',
-      description: 'Test Dashboard',
-    },
-  },
-  spec: {
-    group: 'testapp.coreos.com',
-    version: 'v1alpha1',
-    validation: {
-      openAPIV3Schema: {},
-    },
-    names: {
-      kind: 'TestResource',
-      plural: 'testresources',
-      singular: 'testresource',
-      listKind: 'TestResourceList',
-    },
   },
 };
 
