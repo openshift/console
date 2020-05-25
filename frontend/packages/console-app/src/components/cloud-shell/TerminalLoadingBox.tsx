@@ -6,7 +6,7 @@ type TerminalLoadingBoxProps = {
 };
 
 const TerminalLoadingBox: React.FC<TerminalLoadingBoxProps> = ({ message }) => (
-  <LoadingBox message={message || 'Connecting to your OpenShift command line terminal ...'} />
+  <LoadingBox message={message ?? 'Connecting to your OpenShift command line terminal ...'} />
 );
 
 export default TerminalLoadingBox;

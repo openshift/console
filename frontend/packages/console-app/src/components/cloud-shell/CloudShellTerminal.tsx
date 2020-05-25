@@ -1,25 +1,19 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { RootState } from '@console/internal/redux';
-import { referenceForModel } from '@console/internal/module/k8s/k8s';
-import {
-  useK8sWatchResource,
-  WatchK8sResource,
-} from '@console/internal/components/utils/k8s-watch-hook';
 import { StatusBox, LoadError } from '@console/internal/components/utils/status-box';
 import { UserKind } from '@console/internal/module/k8s';
-import { WorkspaceModel } from '../../models';
 import CloudshellExec from './CloudShellExec';
 import TerminalLoadingBox from './TerminalLoadingBox';
 import {
-  CLOUD_SHELL_LABEL,
-  CLOUD_SHELL_IMMUTABLE_ANNOTATION,
-  CLOUD_SHELL_CREATOR_LABEL,
-  CloudShellResource,
   TerminalInitData,
   initTerminal,
+  getCloudShellNamespace,
+  setCloudShellNamespace,
 } from './cloud-shell-utils';
 import CloudShellSetup from './setup/CloudShellSetup';
+import useCloudShellWorkspace from './useCloudShellWorkspace';
+
 import './CloudShellTerminal.scss';
 
 type StateProps = {
@@ -33,45 +27,37 @@ type Props = {
 type CloudShellTerminalProps = StateProps & Props;
 
 const CloudShellTerminal: React.FC<CloudShellTerminalProps> = ({ user, onCancel }) => {
-  const uid = user?.metadata?.uid;
-  const username = user?.metadata?.name;
-  const isKubeAdmin = !uid && username === 'kube:admin';
-  const resource: WatchK8sResource = React.useMemo(
-    () => ({
-      kind: referenceForModel(WorkspaceModel),
-      isList: true,
-      selector: {
-        matchLabels: {
-          [CLOUD_SHELL_LABEL]: 'true',
-          [CLOUD_SHELL_CREATOR_LABEL]: isKubeAdmin ? '' : uid,
-        },
-      },
-    }),
-    [isKubeAdmin, uid],
-  );
-  const [data, loaded, loadError] = useK8sWatchResource<CloudShellResource[]>(resource);
+  const [namespace, setNamespace] = React.useState(getCloudShellNamespace());
   const [initData, setInitData] = React.useState<TerminalInitData>();
   const [initError, setInitError] = React.useState<string>();
-  let workspace: CloudShellResource;
-  let workspaceName: string;
-  let workspaceNamespace: string;
-  let workspacePhase: string;
 
-  if (Array.isArray(data)) {
-    workspace = data.find(
-      (d) =>
-        d?.metadata?.annotations?.[CLOUD_SHELL_IMMUTABLE_ANNOTATION] === 'true' &&
-        !d?.metadata?.deletionTimestamp,
-    );
-    workspacePhase = workspace?.status?.phase;
-    workspaceName = workspace?.metadata?.name;
-    workspaceNamespace = workspace?.metadata?.namespace;
-  }
+  const [workspace, loaded, loadError] = useCloudShellWorkspace(user, namespace);
 
+  const workspacePhase = workspace?.status?.phase;
+  const workspaceName = workspace?.metadata?.name;
+  const workspaceNamespace = workspace?.metadata?.namespace;
+
+  const username = user?.metadata?.name;
+
+  // save the namespace once the workspace has loaded
+  React.useEffect(() => {
+    if (loaded && !loadError) {
+      // workspace may be undefined which is ok
+      setCloudShellNamespace(workspaceNamespace);
+      setNamespace(workspaceNamespace);
+    }
+  }, [loaded, loadError, workspaceNamespace]);
+
+  // clear the init data and error if the workspace changes
+  React.useEffect(() => {
+    setInitData(undefined);
+    setInitError(undefined);
+  }, [username, workspaceName, workspaceNamespace]);
+
+  // initialize the terminal once it is Running
   React.useEffect(() => {
     let unmounted = false;
 
-    setInitError(undefined);
     if (workspacePhase === 'Running') {
       initTerminal(username, workspaceName, workspaceNamespace)
         .then((res: TerminalInitData) => {
@@ -102,17 +88,25 @@ const CloudShellTerminal: React.FC<CloudShellTerminalProps> = ({ user, onCancel 
     };
   }, [username, workspaceName, workspaceNamespace, workspacePhase]);
 
+  // failed to load the workspace
   if (loadError) {
     return (
       <StatusBox loaded={loaded} loadError={loadError} label="OpenShift command line terminal" />
     );
   }
 
+  // failed to init the terminal
   if (initError) {
     return <LoadError message={initError} label="OpenShift command line terminal" />;
   }
 
-  if (!loaded || (workspaceName && !initData)) {
+  // loading the workspace resource
+  if (!loaded) {
+    return <TerminalLoadingBox message="" />;
+  }
+
+  // waiting for the workspace to start and initialize the terminal
+  if (workspaceName && !initData) {
     return (
       <div className="co-cloudshell-terminal__container">
         <TerminalLoadingBox />
@@ -134,7 +128,16 @@ const CloudShellTerminal: React.FC<CloudShellTerminalProps> = ({ user, onCancel 
     );
   }
 
-  return <CloudShellSetup onCancel={onCancel} />;
+  // show the form to let the user create a new workspace
+  return (
+    <CloudShellSetup
+      onCancel={onCancel}
+      onSubmit={(ns: string) => {
+        setCloudShellNamespace(ns);
+        setNamespace(ns);
+      }}
+    />
+  );
 };
 
 // For testing
