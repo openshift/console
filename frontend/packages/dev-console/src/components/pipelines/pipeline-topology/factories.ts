@@ -7,11 +7,12 @@ import {
   Graph,
 } from '@console/topology';
 import { NodeType, PipelineLayout } from './const';
+import BuilderNode from './BuilderNode';
+import InvalidTaskListNode from './InvalidTaskListNode';
 import SpacerNode from './SpacerNode';
 import TaskNode from './TaskNode';
 import TaskEdge from './TaskEdge';
 import TaskListNode from './TaskListNode';
-import BuilderNode from './BuilderNode';
 import { getLayoutData } from './utils';
 
 export const componentFactory: ComponentFactory = (kind: ModelKind, type: string) => {
@@ -28,6 +29,8 @@ export const componentFactory: ComponentFactory = (kind: ModelKind, type: string
           return SpacerNode;
         case NodeType.TASK_LIST_NODE:
           return TaskListNode;
+        case NodeType.INVALID_TASK_LIST_NODE:
+          return InvalidTaskListNode;
         case NodeType.BUILDER_NODE:
           return BuilderNode;
         default:

@@ -1,10 +1,10 @@
 import * as React from 'react';
 import * as FocusTrap from 'focus-trap-react';
-import { Button } from '@patternfly/react-core';
+import { Button, Flex, FlexItem, FlexModifiers } from '@patternfly/react-core';
 import { CaretDownIcon } from '@patternfly/react-icons';
 import Popper from '@console/shared/src/components/popper/Popper';
 import { KebabItem, KebabOption } from '@console/internal/components/utils';
-import { observer, Node } from '@console/topology';
+import { observer, Node, NodeModel } from '@console/topology';
 import { PipelineResourceTask } from '../../../utils/pipeline-augment';
 import { NewTaskNodeCallback, TaskListNodeModelData } from './types';
 
@@ -23,16 +23,16 @@ const taskToOption = (task: PipelineResourceTask, callback: NewTaskNodeCallback)
   };
 };
 
-const TaskListNode: React.FC<{ element: Node }> = ({ element }) => {
+type TaskListNodeProps = {
+  element: Node<NodeModel, TaskListNodeModelData>;
+  unselectedText?: string;
+};
+
+const TaskListNode: React.FC<TaskListNodeProps> = ({ element, unselectedText }) => {
   const triggerRef = React.useRef(null);
   const [isMenuOpen, setMenuOpen] = React.useState(false);
   const { height, width } = element.getBounds();
-  const {
-    clusterTaskList,
-    namespaceTaskList,
-    onNewTask,
-    onRemoveTask,
-  } = element.getData() as TaskListNodeModelData;
+  const { clusterTaskList, namespaceTaskList, onNewTask, onRemoveTask } = element.getData();
 
   const options = [
     ...namespaceTaskList.map((task) => taskToOption(task, onNewTask)),
@@ -53,9 +53,22 @@ const TaskListNode: React.FC<{ element: Node }> = ({ element }) => {
           {options.length === 0 ? (
             'No Tasks'
           ) : (
-            <>
-              Select task <CaretDownIcon />
-            </>
+            <Flex
+              breakpointMods={[
+                { modifier: FlexModifiers.nowrap },
+                { modifier: FlexModifiers['space-items-none'] },
+              ]}
+            >
+              <FlexItem
+                className="odc-task-list-node__label"
+                breakpointMods={[{ modifier: FlexModifiers.grow }]}
+              >
+                {unselectedText || 'Select task'}
+              </FlexItem>
+              <FlexItem>
+                <CaretDownIcon />
+              </FlexItem>
+            </Flex>
           )}
         </Button>
       </div>

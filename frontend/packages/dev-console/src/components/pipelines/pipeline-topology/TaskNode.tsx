@@ -1,16 +1,18 @@
 import * as React from 'react';
-import { observer, Node } from '@console/topology';
+import { observer, Node, NodeModel } from '@console/topology';
 import { pipelineRunFilterReducer } from '../../../utils/pipeline-filter-reducer';
 import { PipelineVisualizationTask } from '../detail-page-tabs/pipeline-details/PipelineVisualizationTask';
 import { DROP_SHADOW_SPACING } from './const';
 import { TaskNodeModelData } from './types';
 
-const TaskNode: React.FC<{ element: Node; disableTooltip?: boolean }> = ({
-  element,
-  disableTooltip,
-}) => {
+type TaskNodeProps = {
+  element: Node<NodeModel, TaskNodeModelData>;
+  disableTooltip?: boolean;
+};
+
+const TaskNode: React.FC<TaskNodeProps> = ({ element, disableTooltip }) => {
   const { height, width } = element.getBounds();
-  const { pipeline, pipelineRun, task, selected } = element.getData() as TaskNodeModelData;
+  const { pipeline, pipelineRun, task, selected } = element.getData();
 
   return (
     <foreignObject width={width} height={height + DROP_SHADOW_SPACING}>

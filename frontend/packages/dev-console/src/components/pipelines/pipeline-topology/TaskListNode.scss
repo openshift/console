@@ -1,6 +1,11 @@
 .odc-task-list-node {
   border: 1px solid var(--pf-global--BorderColor--light-100);
 
+  &__label {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
   &__trigger-background {
     background: var(--pf-global--BackgroundColor--light-100);
   }
