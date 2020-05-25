@@ -62,26 +62,13 @@ export const newCloudShellWorkSpace = (name: string, namespace: string): CloudSh
     devfile: {
       apiVersion: '1.0.0',
       metadata: {
-        name,
+        name: 'command-line-terminal',
       },
       components: [
         {
           alias: 'command-line-terminal',
           type: 'cheEditor',
           id: 'che-incubator/command-line-terminal/4.5.0',
-        },
-        {
-          type: 'dockerimage',
-          memoryLimit: '256Mi',
-          alias: 'dev',
-          image: 'registry.redhat.io/codeready-workspaces/plugin-openshift-rhel8:2.1',
-          args: ['tail', '-f', '/dev/null'],
-          env: [
-            {
-              value: '\\[\\e[34m\\]>\\[\\e[m\\]\\[\\e[33m\\]>\\[\\e[m\\]',
-              name: 'PS1',
-            },
-          ],
         },
       ],
     },
