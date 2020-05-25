@@ -1,11 +1,10 @@
-import { $ } from 'protractor';
+import { $, by, element } from 'protractor';
 
 export const modalTitle = $('[data-test-id="modal-title"]');
-export const addAffinityBtn = $('#add-affinity-btn');
-export const submitBtn = $('#affinity-submit');
-export const editSubmitBtn = $('#affinity-edit-submit');
+export const addAffinityBtn = element(by.buttonText('Add Affinity rule'));
+export const editSubmitBtn = element(by.buttonText('Save Affinity rule'));
 export const valuesSelectElement = $('.pf-c-select__toggle-typeahead');
-export const createValueBtn = $('#affinity-value-0');
+export const createValueBtn = element(by.partialButtonText('Create'));
 export const kebab = $('[data-test-id="kebab-button"]');
 export const kebabDelete = $('[data-test-action="Delete"]');
 export const affinityKeyInputByID = (id) => $(`#affinity-${id}-key-input`);

@@ -3,6 +3,7 @@ import { testName } from '@console/internal-integration-tests/protractor.conf';
 import { createResource, deleteResource, click } from '@console/shared/src/test-utils/utils';
 import * as editTolerationsView from '../views/editTolerationsView';
 import * as virtualMachineView from '../views/virtualMachine.view';
+import { saveButton } from '../views/kubevirtUIResource.view';
 import { VM_CREATE_AND_EDIT_TIMEOUT_SECS } from './utils/consts';
 import { VirtualMachine } from './models/virtualMachine';
 import { getVMManifest } from './utils/mocks';
@@ -28,22 +29,22 @@ describe('KubeVirt VM detail - edit Tolerations', () => {
       await click(editTolerationsView.addLabelBtn);
       await editTolerationsView.tolerationKeyInputByID(0).sendKeys('key');
       await editTolerationsView.tolerationValueInputByID(0).sendKeys('value');
-      await click(editTolerationsView.submitBtn);
+      await click(saveButton);
 
       await browser.wait(
         until.textToBePresentInElement(
           virtualMachineView.vmDetailTolerations(vm.namespace, vm.name),
-          'key=value',
+          '1 Toleration rules',
         ),
       );
 
       await vm.modalEditTolerations();
       await click(editTolerationsView.deleteBtnByID(0));
-      await click(editTolerationsView.submitBtn);
+      await click(saveButton);
       await browser.wait(
         until.textToBePresentInElement(
           virtualMachineView.vmDetailTolerations(vm.namespace, vm.name),
-          'No selector',
+          'No Toleration rules',
         ),
       );
     },

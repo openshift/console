@@ -3,6 +3,7 @@ import { testName } from '@console/internal-integration-tests/protractor.conf';
 import { createResource, deleteResource, click } from '@console/shared/src/test-utils/utils';
 import * as editAffinityView from '../views/editAffinityView';
 import * as virtualMachineView from '../views/virtualMachine.view';
+import { saveButton } from '../views/kubevirtUIResource.view';
 import { VM_CREATE_AND_EDIT_TIMEOUT_SECS } from './utils/consts';
 import { VirtualMachine } from './models/virtualMachine';
 import { getVMManifest } from './utils/mocks';
@@ -31,7 +32,7 @@ describe('KubeVirt VM detail - edit Affinity', () => {
       await editAffinityView.valuesSelectElement.sendKeys('affinity-value');
       await click(editAffinityView.createValueBtn);
       await click(editAffinityView.editSubmitBtn);
-      await click(editAffinityView.submitBtn);
+      await click(saveButton);
 
       await browser.wait(
         until.textToBePresentInElement(
@@ -43,12 +44,12 @@ describe('KubeVirt VM detail - edit Affinity', () => {
       await vm.modalEditAffinity();
       await click(editAffinityView.kebab);
       await click(editAffinityView.kebabDelete);
-      await click(editAffinityView.submitBtn);
+      await click(saveButton);
 
       await browser.wait(
         until.textToBePresentInElement(
           virtualMachineView.vmDetailAffinity(vm.namespace, vm.name),
-          '0 Affinity rules',
+          'No Affinity rules',
         ),
       );
     },
