@@ -21,6 +21,9 @@ export class ValidationJSONPath extends ObjectEnum<string> {
   static readonly CD_BUS = new ValidationJSONPath(
     'jsonpath::.spec.domain.devices.disks[*].cdrom.bus',
   );
+
+  static getDiskBusPath = (diskType: DiskType) =>
+    diskType === DiskType.CDROM ? ValidationJSONPath.CD_BUS : ValidationJSONPath.DISK_BUS;
 }
 
 export class TemplateValidations {
@@ -47,12 +50,18 @@ export class TemplateValidations {
     diskType: DiskType,
     validationErrorType: ValidationErrorType = ValidationErrorType.Error,
   ): Set<DiskBus> => {
-    const allowedBuses = this.getAllowedEnumValues(
-      diskType === DiskType.CDROM ? ValidationJSONPath.CD_BUS : ValidationJSONPath.DISK_BUS,
+    const finalDiskType = diskType || DiskType.DISK;
+
+    let allowedBuses: readonly DiskBus[] = this.getAllowedEnumValues(
+      ValidationJSONPath.getDiskBusPath(finalDiskType),
       validationErrorType,
     ).map(DiskBus.fromString);
 
-    return new Set(allowedBuses.length === 0 ? DiskBus.getAll() : allowedBuses);
+    if (allowedBuses.length === 0) {
+      allowedBuses = DiskBus.getAll();
+    }
+
+    return new Set(allowedBuses.filter((bus) => finalDiskType.isBusSupported(bus)));
   };
 
   getRecommendedBuses = (diskType: DiskType): Set<DiskBus> => {
@@ -122,24 +131,38 @@ export class TemplateValidations {
     });
   };
 
-  getDefaultBus = (diskType: DiskType = DiskType.DISK, defaultBus = DiskBus.VIRTIO): DiskBus => {
+  getDefaultBus = (diskType: DiskType = DiskType.DISK, defaultBus?: DiskBus): DiskBus => {
+    let resolvedDefaultBus = defaultBus;
+
+    if (!resolvedDefaultBus) {
+      resolvedDefaultBus = diskType === DiskType.CDROM ? DiskBus.SATA : DiskBus.VIRTIO;
+    }
+
+    if (!diskType.isBusSupported(resolvedDefaultBus)) {
+      resolvedDefaultBus = undefined;
+      // eslint-disable-next-line no-console
+      console.error(`${resolvedDefaultBus} is not a supported disk bus for ${diskType} disks`);
+    }
+
     const allowedBuses = this.getAllowedBuses(diskType);
 
     if (allowedBuses.size === 0) {
-      return defaultBus;
+      return resolvedDefaultBus;
     }
 
     const recommendedBuses = this.getRecommendedBuses(diskType);
 
-    if (recommendedBuses.has(defaultBus)) {
-      return defaultBus;
+    if (resolvedDefaultBus && recommendedBuses.has(resolvedDefaultBus)) {
+      return resolvedDefaultBus;
     }
 
     if (recommendedBuses.size > 0) {
       return [...recommendedBuses][0];
     }
 
-    return allowedBuses.has(defaultBus) ? defaultBus : [...allowedBuses][0];
+    return resolvedDefaultBus && allowedBuses.has(resolvedDefaultBus)
+      ? resolvedDefaultBus
+      : [...allowedBuses][0];
   };
 
   private validateMemoryByType = (
