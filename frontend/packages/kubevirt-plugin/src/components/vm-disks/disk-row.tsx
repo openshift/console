@@ -8,7 +8,7 @@ import {
 } from '@console/internal/components/utils';
 import { DASH, dimensifyRow, getDeletetionTimestamp } from '@console/shared';
 import { TemplateModel } from '@console/internal/models';
-import { deleteDeviceModal, DeviceType } from '../modals/delete-device-modal';
+import { deleteDiskModal } from '../modals/delete-disk-modal/delete-disk-modal';
 import { VMLikeEntityKind } from '../../types/vmLike';
 import { asVM, isVMRunning } from '../../selectors/vm';
 import { isVM, isVMI } from '../../selectors/check-type';
@@ -59,9 +59,9 @@ const menuActionDelete = (
   label: 'Delete',
   callback: () =>
     withProgress(
-      deleteDeviceModal({
-        deviceType: DeviceType.DISK,
-        device: disk.diskWrapper.asResource(),
+      deleteDiskModal({
+        disk: disk.diskWrapper.asResource(true),
+        volume: disk.volumeWrapper.asResource(true),
         vmLikeEntity,
       }).result,
     ),

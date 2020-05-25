@@ -1,6 +1,7 @@
 import * as _ from 'lodash';
-import { K8sResourceKind } from '@console/internal/module/k8s';
-import { createBasicLookup, getName, getNamespace } from '@console/shared/src';
+import { K8sResourceKind } from '@console/internal/module/k8s/types';
+import { apiVersionForModel } from '@console/internal/module/k8s/k8s';
+import { createBasicLookup, getName, getNamespace, getOwnerReferences } from '@console/shared/src';
 import { FirehoseResult } from '@console/internal/components/utils';
 import { V1Disk } from '../../../types/vm/disk/V1Disk';
 import { V1Volume } from '../../../types/vm/disk/V1Volume';
@@ -18,6 +19,8 @@ import { VolumeWrapper } from './volume-wrapper';
 import { PersistentVolumeClaimWrapper } from './persistent-volume-claim-wrapper';
 import { asVMILikeWrapper } from '../utils/convert';
 import { V1PersistentVolumeClaim } from '../../../types/vm/disk/V1PersistentVolumeClaim';
+import { DataVolumeModel } from '../../../models';
+import { compareOwnerReference } from '@console/shared/src/utils/owner-references';
 
 export class CombinedDisk {
   private readonly dataVolumesLoading: boolean;
@@ -151,15 +154,14 @@ export class CombinedDisk {
       (dataVolumeWrapper) => dataVolumeWrapper.getVolumeModeEnum(),
     );
 
-  getPVCName = (source?: StorageUISource) => {
-    const resolvedSource = source || this.source;
-    if (resolvedSource === StorageUISource.IMPORT_DISK) {
+  getPVCNameBySource = (source?: StorageUISource) => {
+    if (source === StorageUISource.IMPORT_DISK) {
       return this.persistentVolumeClaimWrapper?.getName();
     }
-    if (resolvedSource === StorageUISource.ATTACH_DISK) {
+    if (source === StorageUISource.ATTACH_DISK) {
       return this.volumeWrapper?.getPersistentVolumeClaimName();
     }
-    if (resolvedSource === StorageUISource.ATTACH_CLONED_DISK) {
+    if (source === StorageUISource.ATTACH_CLONED_DISK) {
       return this.dataVolumeWrapper?.getPesistentVolumeClaimName();
     }
 
@@ -175,13 +177,13 @@ export class CombinedDisk {
         return this.dataVolumeWrapper.getURL();
       }
       case StorageUISource.IMPORT_DISK: {
-        return this.getPVCName(this.source);
+        return this.getPVCNameBySource(this.source);
       }
       case StorageUISource.ATTACH_DISK: {
-        return this.getPVCName(this.source);
+        return this.getPVCNameBySource(this.source);
       }
       case StorageUISource.ATTACH_CLONED_DISK: {
-        return this.getPVCName(this.source);
+        return this.getPVCNameBySource(this.source);
       }
       default:
         return null;
@@ -235,6 +237,8 @@ export class CombinedDiskFactory {
 
   private readonly volumes: V1Volume[];
 
+  private readonly dataVolumeTemplates: V1alpha1DataVolume[];
+
   private readonly dataVolumes: V1alpha1DataVolume[];
 
   private readonly pvcs: K8sResourceKind[];
@@ -253,10 +257,8 @@ export class CombinedDiskFactory {
     return new CombinedDiskFactory({
       disks: vmiLikeWrapper?.getDisks() || [],
       volumes: vmiLikeWrapper?.getVolumes() || [],
-      dataVolumes: [
-        ...getDataVolumeTemplates(asVM(vmLikeEntity)),
-        ...getLoadedData(datavolumes, []),
-      ],
+      dataVolumeTemplates: getDataVolumeTemplates(asVM(vmLikeEntity)),
+      dataVolumes: getLoadedData(datavolumes, []),
       pvcs: getLoadedData(pvcs),
       dataVolumesLoading: !isLoaded(datavolumes),
       pvcsLoading: !isLoaded(pvcs),
@@ -268,6 +270,7 @@ export class CombinedDiskFactory {
     disks,
     volumes,
     dataVolumes,
+    dataVolumeTemplates,
     dataVolumesLoading,
     pvcs,
     pvcsLoading,
@@ -275,6 +278,7 @@ export class CombinedDiskFactory {
   }: {
     disks: V1Disk[];
     volumes: V1Volume[];
+    dataVolumeTemplates?: V1alpha1DataVolume[];
     dataVolumes?: V1alpha1DataVolume[];
     dataVolumesLoading?: boolean;
     pvcs?: K8sResourceKind[];
@@ -283,6 +287,7 @@ export class CombinedDiskFactory {
   }) {
     this.disks = disks;
     this.volumes = volumes;
+    this.dataVolumeTemplates = dataVolumeTemplates;
     this.dataVolumes =
       dataVolumes &&
       dataVolumes.filter((dataVolume) => {
@@ -301,6 +306,7 @@ export class CombinedDiskFactory {
 
   getCombinedDisks = (): CombinedDisk[] => {
     const volumeLookup = createBasicLookup(this.volumes, getSimpleName);
+    const datavolumeTemplateLookup = createBasicLookup(this.dataVolumeTemplates, getName);
     const datavolumeLookup = createBasicLookup(this.dataVolumes, getName);
     const pvcLookup = createBasicLookup(this.pvcs, getName);
 
@@ -308,14 +314,38 @@ export class CombinedDiskFactory {
       const diskWrapper = new DiskWrapper(disk);
       const volume = volumeLookup[diskWrapper.getName()];
       const volumeWrapper = new VolumeWrapper(volume);
-      const dataVolume =
-        volumeWrapper.getType() === VolumeType.DATA_VOLUME
-          ? datavolumeLookup[volumeWrapper.getDataVolumeName()]
-          : undefined;
-      const pvc =
-        volumeWrapper.getType() === VolumeType.PERSISTENT_VOLUME_CLAIM
-          ? pvcLookup[volumeWrapper.getPersistentVolumeClaimName()]
-          : undefined;
+      let dataVolumeName: string;
+      let dataVolume;
+      let dataVolumeTemplate;
+      let pvc;
+
+      switch (volumeWrapper.getType()) {
+        case VolumeType.DATA_VOLUME:
+          dataVolumeName = volumeWrapper.getDataVolumeName();
+          dataVolumeTemplate = datavolumeTemplateLookup[dataVolumeName];
+          dataVolume = datavolumeLookup[dataVolumeName];
+          if (!dataVolume) {
+            dataVolume = dataVolumeTemplate;
+          }
+
+          if (dataVolume && this.pvcs) {
+            pvc = this.pvcs.find((p) =>
+              getOwnerReferences(p).some((ownerReference) =>
+                compareOwnerReference(ownerReference, {
+                  name: dataVolumeName,
+                  kind: DataVolumeModel.kind,
+                  apiVersion: apiVersionForModel(DataVolumeModel),
+                } as any),
+              ),
+            );
+          }
+          break;
+        case VolumeType.PERSISTENT_VOLUME_CLAIM:
+          pvc = pvcLookup[volumeWrapper.getPersistentVolumeClaimName()];
+          break;
+        default:
+          break;
+      }
 
       return new CombinedDisk({
         diskWrapper,
@@ -332,5 +362,9 @@ export class CombinedDiskFactory {
     new Set(this.disks.map(getSimpleName).filter((n) => n && n !== excludeName));
 
   getUsedDataVolumeNames = (excludeName: string): Set<string> =>
-    new Set(this.dataVolumes.map((dv) => getName(dv)).filter((n) => n && n !== excludeName));
+    new Set(
+      [...this.dataVolumeTemplates, ...this.dataVolumes]
+        .map((dv) => getName(dv))
+        .filter((n) => n && n !== excludeName),
+    );
 }

@@ -1,6 +1,7 @@
 /* eslint-disable lines-between-class-members */
 import * as _ from 'lodash';
-import { getLabels } from '@console/shared/src';
+import { getLabels } from '@console/shared/src/selectors/common';
+import { compareOwnerReference } from '@console/shared/src/utils/owner-references';
 import { K8sResourceWrapper } from '../common/k8s-resource-wrapper';
 import { CPURaw, V1NetworkInterface, VMKind } from '../../../types/vm';
 import {
@@ -28,7 +29,8 @@ import { VolumeWrapper } from './volume-wrapper';
 import { V1Disk } from '../../../types/vm/disk/V1Disk';
 import { V1Volume } from '../../../types/vm/disk/V1Volume';
 import { V1alpha1DataVolume } from '../../../types/vm/disk/V1alpha1DataVolume';
-import { VirtualMachineModel } from '../../../models';
+import { VirtualMachineImportModel, VirtualMachineModel } from '../../../models';
+import { buildOwnerReferenceForModel } from '../../../utils';
 
 export class VMWrapper extends K8sResourceWrapper<VMKind, VMWrapper> implements VMILikeMethods {
   constructor(vm?: VMKind | VMWrapper | any, copy = false) {
@@ -79,6 +81,16 @@ export class VMWrapper extends K8sResourceWrapper<VMKind, VMWrapper> implements 
   getAffinity = () => getAffinity(this.data);
 
   isDedicatedCPUPlacement = () => isDedicatedCPUPlacement(this.data);
+
+  getVMImportOwnerReference = () => {
+    return (this.getOwnerReferences() || []).find((reference) =>
+      compareOwnerReference(
+        reference,
+        buildOwnerReferenceForModel(VirtualMachineImportModel),
+        true,
+      ),
+    );
+  };
 
   addTemplateLabel = (key: string, value: string) => {
     if (key) {

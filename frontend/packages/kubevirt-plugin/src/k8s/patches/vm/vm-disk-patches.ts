@@ -17,7 +17,7 @@ import { V1Volume } from '../../../types/vm/disk/V1Volume';
 import { V1alpha1DataVolume } from '../../../types/vm/disk/V1alpha1DataVolume';
 import { getShiftBootOrderPatches } from './utils';
 
-export const getRemoveDiskPatches = (vmLikeEntity: VMLikeEntityKind, disk): Patch[] => {
+export const getRemoveDiskPatches = (vmLikeEntity: VMLikeEntityKind, disk: V1Disk): Patch[] => {
   return getVMLikePatches(vmLikeEntity, (vm) => {
     const diskWrapper = new DiskWrapper(disk);
     const diskName = diskWrapper.getName();
