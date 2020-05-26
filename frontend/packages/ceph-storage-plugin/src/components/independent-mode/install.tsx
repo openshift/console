@@ -1,6 +1,9 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import { match } from 'react-router';
+// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+// @ts-ignore
+import { useDispatch } from 'react-redux';
 import {
   ButtonBar,
   withHandlePromise,
@@ -27,10 +30,13 @@ import {
 } from '@patternfly/react-core';
 import { history } from '@console/internal/components/utils/router';
 import { SecretModel } from '@console/internal/models';
+import { setFlag } from '@console/internal/actions/features';
 import { getName } from '@console/shared';
 import { OCSServiceModel } from '../../models';
 import FileUpload from './fileUpload';
 import { isValidJSON, checkError, prettifyJSON } from './utils';
+import { OCS_INDEPENDENT_FLAG, OCS_FLAG } from '../../features';
+import { OCS_INDEPENDENT_CR_NAME } from '../../constants';
 import './install.scss';
 
 const InstallExternalCluster = withHandlePromise((props: InstallExternalClusterProps) => {
@@ -47,6 +53,7 @@ const InstallExternalCluster = withHandlePromise((props: InstallExternalClusterP
   const [clusterServiceVersion, setClusterServiceVersion] = React.useState(null);
   const [fileData, setFileData] = React.useState('');
   const [dataError, setDataError] = React.useState('');
+  const dispatch = useDispatch();
 
   const plainKeys = _.concat(configMaps, storageClasses);
 
@@ -88,7 +95,7 @@ const InstallExternalCluster = withHandlePromise((props: InstallExternalClusterP
       apiVersion: apiVersionForModel(OCSServiceModel),
       kind: OCSServiceModel.kind,
       metadata: {
-        name: 'ocs-independent-storagecluster',
+        name: OCS_INDEPENDENT_CR_NAME,
         namespace: ns,
       },
       spec: {
@@ -100,6 +107,8 @@ const InstallExternalCluster = withHandlePromise((props: InstallExternalClusterP
 
     handlePromise(Promise.all([k8sCreate(SecretModel, secret), k8sCreate(OCSServiceModel, ocsObj)]))
       .then((data) => {
+        dispatch(setFlag(OCS_INDEPENDENT_FLAG, true));
+        dispatch(setFlag(OCS_FLAG, true));
         history.push(
           `/k8s/ns/${ns}/clusterserviceversions/${getName(
             clusterServiceVersion,
