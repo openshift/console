@@ -151,28 +151,32 @@ const PipelineBuilderForm: React.FC<PipelineBuilderFormProps> = (props) => {
         }}
       >
         {() => (
-          <TaskSidebar
-            // Intentional remount when selection changes
-            key={selectedTask.taskIndex}
-            resourceList={values.resources || []}
-            errorMap={status?.tasks || {}}
-            onUpdateTask={(data: UpdateOperationUpdateTaskData) => {
-              updateTasks(applyChange(taskGroup, { type: UpdateOperationType.UPDATE_TASK, data }));
-            }}
-            onRemoveTask={(taskName) => {
-              removeTaskModal(taskName, () => {
-                setSelectedTask(null);
+          <div className="pf-c-form">
+            <TaskSidebar
+              // Intentional remount when selection changes
+              key={selectedTask.taskIndex}
+              resourceList={values.resources || []}
+              errorMap={status?.tasks || {}}
+              onUpdateTask={(data: UpdateOperationUpdateTaskData) => {
                 updateTasks(
-                  applyChange(taskGroup, {
-                    type: UpdateOperationType.REMOVE_TASK,
-                    data: { taskName },
-                  }),
+                  applyChange(taskGroup, { type: UpdateOperationType.UPDATE_TASK, data }),
                 );
-              });
-            }}
-            selectedPipelineTaskIndex={selectedTask.taskIndex}
-            taskResource={selectedTask.resource}
-          />
+              }}
+              onRemoveTask={(taskName) => {
+                removeTaskModal(taskName, () => {
+                  setSelectedTask(null);
+                  updateTasks(
+                    applyChange(taskGroup, {
+                      type: UpdateOperationType.REMOVE_TASK,
+                      data: { taskName },
+                    }),
+                  );
+                });
+              }}
+              selectedPipelineTaskIndex={selectedTask.taskIndex}
+              taskResource={selectedTask.resource}
+            />
+          </div>
         )}
       </Sidebar>
     </>
