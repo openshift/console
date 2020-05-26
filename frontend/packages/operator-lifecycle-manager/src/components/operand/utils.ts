@@ -16,6 +16,7 @@ import {
 import { UiSchema } from 'react-jsonschema-form';
 import { SchemaType } from '@console/shared/src/components/dynamic-form';
 import { getSchemaType } from 'react-jsonschema-form/lib/utils';
+import { getSchemaErrors } from '@console/shared/src/components/dynamic-form/utils';
 
 // Transform a path string from a descriptor to a JSON schema path array
 export const descriptorPathToUISchemaPath = (path: string): string[] =>
@@ -47,8 +48,13 @@ export const hideAllExistingProperties = (schema: JSONSchema6) => {
 };
 
 // Determine if a schema will produce an empty form field.
-export const hasNoFields = (jsonSchema: JSONSchema6): boolean => {
-  const type = getSchemaType(jsonSchema ?? {}) ?? '';
+export const hasNoFields = (jsonSchema: JSONSchema6 = {}): boolean => {
+  // If schema is empty or has unsupported properties, it will not render any fields on the form
+  if (getSchemaErrors(jsonSchema).length > 0) {
+    return true;
+  }
+
+  const type = getSchemaType(jsonSchema) ?? '';
   const handleArray = () => {
     return hasNoFields(jsonSchema.items as JSONSchema6);
   };
