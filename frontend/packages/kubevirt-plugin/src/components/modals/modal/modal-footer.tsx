@@ -1,7 +1,13 @@
 import * as React from 'react';
 import classNames from 'classnames';
-import { Alert, Button, ButtonVariant, AlertProps, ActionGroup } from '@patternfly/react-core';
-import { LoadingInline } from '@console/internal/components/utils';
+import {
+  Alert,
+  Button,
+  ButtonVariant,
+  AlertProps,
+  ActionGroup,
+  Spinner,
+} from '@patternfly/react-core';
 
 import './modal-footer.scss';
 
@@ -49,10 +55,13 @@ type ModalFooterProps = {
   isSimpleError?: boolean;
   onSubmit: (e) => void;
   onCancel: (e) => void;
+  onSaveAndRestart?: (e) => void;
   isDisabled?: boolean;
   inProgress?: boolean;
+  isSaveAndRestart?: boolean;
   submitButtonText?: string;
   cancelButtonText?: string;
+  saveAndRestartText?: string;
   infoTitle?: string;
   infoMessage?: React.ReactNode;
 };
@@ -63,11 +72,14 @@ export const ModalFooter: React.FC<ModalFooterProps> = ({
   warningMessage = null,
   isDisabled = false,
   inProgress = false,
+  isSaveAndRestart = false,
   isSimpleError = false,
   onSubmit,
   onCancel,
+  onSaveAndRestart,
   submitButtonText = 'Add',
   cancelButtonText = 'Cancel',
+  saveAndRestartText = 'Save and Restart',
   infoMessage = null,
   infoTitle = null,
 }) => (
@@ -90,6 +102,16 @@ export const ModalFooter: React.FC<ModalFooterProps> = ({
       >
         {cancelButtonText}
       </Button>
+      {isSaveAndRestart && (
+        <Button
+          type="button"
+          variant={ButtonVariant.secondary}
+          id="save-and-restart"
+          onClick={onSaveAndRestart}
+        >
+          {saveAndRestartText}
+        </Button>
+      )}
       <Button
         variant={ButtonVariant.primary}
         isDisabled={isDisabled}
@@ -100,6 +122,6 @@ export const ModalFooter: React.FC<ModalFooterProps> = ({
       </Button>
     </ActionGroup>
 
-    {inProgress && <LoadingInline />}
+    {inProgress && <Spinner />}
   </footer>
 );

@@ -15,6 +15,7 @@ import {
 } from '../../../selectors/vm/volume';
 import { DataVolumeModel } from '../../../models';
 import { V1LocalObjectReference } from '../../../types/vm/disk/V1LocalObjectReference';
+import * as _ from 'lodash';
 
 export type VolumeReferencedObject = {
   name: string;
@@ -143,4 +144,31 @@ export class VolumeWrapper extends ObjectWithTypePropertyWrapper<
         return null;
     }
   }
+
+  isVolumeEqual = (otherVolume: V1Volume, omitRuntimeData?: boolean) => {
+    if (!otherVolume) {
+      return false;
+    }
+
+    if (!omitRuntimeData) {
+      return _.isEqual(this.data, otherVolume);
+    }
+
+    const volWrapper = new VolumeWrapper(otherVolume);
+    const thisType = this.getType();
+
+    if (thisType !== volWrapper.getType()) {
+      return false;
+    }
+
+    switch (thisType) {
+      case VolumeType.CONTAINER_DISK:
+        return _.isEqual(
+          _.omit(this.data, 'containerDisk.imagePullPolicy'),
+          _.omit(otherVolume, 'containerDisk.imagePullPolicy'),
+        );
+      default:
+        return _.isEqual(this.data, otherVolume);
+    }
+  };
 }

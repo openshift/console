@@ -71,4 +71,31 @@ export class DiskWrapper extends ObjectWithTypePropertyWrapper<
         };
     }
   }
+
+  isDiskEqual = (otherDisk: V1Disk, omitRuntimeData?: boolean): boolean => {
+    if (!otherDisk) {
+      return false;
+    }
+
+    if (!omitRuntimeData) {
+      return _.isEqual(this.data, otherDisk);
+    }
+
+    const diskWrapper = new DiskWrapper(otherDisk);
+    const thisDiskType = this.getType();
+
+    if (diskWrapper.getType() !== thisDiskType) {
+      return false;
+    }
+
+    switch (thisDiskType) {
+      case DiskType.CDROM:
+        return _.isEqual(
+          _.omit(this.data, 'cdrom.readonly', 'cdrom.tray'),
+          _.omit(otherDisk, 'cdrom.readonly', 'cdrom.tray'),
+        );
+      default:
+        return _.isEqual(this.data, otherDisk);
+    }
+  };
 }

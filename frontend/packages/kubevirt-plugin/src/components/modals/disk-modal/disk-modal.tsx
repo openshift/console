@@ -57,6 +57,8 @@ import { TemplateValidations } from '../../../utils/validations/template/templat
 import { ConfigMapKind } from '@console/internal/module/k8s';
 import { UIStorageEditConfig } from '../../../types/ui/storage';
 import { isFieldDisabled } from '../../../utils/ui/edit-config';
+import { PendingChangesAlert } from '../../Alerts/PendingChangesAlert';
+import { MODAL_RESTART_IS_REQUIRED } from '../../../strings/vm/status';
 
 import './disk-modal.scss';
 
@@ -84,6 +86,7 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
     templateValidations,
     storageClassConfigMap: _storageClassConfigMap,
     editConfig,
+    isVMRunning,
   } = props;
   const inProgress = _inProgress || !isLoaded(_storageClassConfigMap);
   const isDisabled = (fieldName: string, disabled?: boolean) =>
@@ -317,6 +320,7 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
         {isEditing ? EDIT : ADD} {type.toString()}
       </ModalTitle>
       <ModalBody>
+        {isVMRunning && <PendingChangesAlert warningMsg={MODAL_RESTART_IS_REQUIRED} />}
         <Form>
           <FormRow title="Source" fieldId={asId('source')} isRequired>
             <FormSelect
@@ -614,5 +618,6 @@ export type DiskModalProps = {
   usedDiskNames: Set<string>;
   usedPVCNames: Set<string>;
   editConfig?: UIStorageEditConfig;
+  isVMRunning?: boolean;
 } & ModalComponentProps &
   HandlePromiseProps;

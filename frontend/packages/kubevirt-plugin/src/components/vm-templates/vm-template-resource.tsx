@@ -96,8 +96,6 @@ export const VMTemplateDetailsList: React.FC<VMTemplateResourceListProps> = ({
   dataVolumeLookup,
   canUpdateTemplate,
 }) => {
-  const [isBootOrderModalOpen, setBootOrderModalOpen] = React.useState<boolean>(false);
-
   const vm = asVM(template);
   const id = getBasicID(template);
   const devices = getDevices(template);
@@ -109,14 +107,9 @@ export const VMTemplateDetailsList: React.FC<VMTemplateResourceListProps> = ({
         title="Boot Order"
         canEdit
         editButtonId={prefixedID(id, 'boot-order-edit')}
-        onEditClick={() => setBootOrderModalOpen(true)}
+        onEditClick={() => BootOrderModal({ vmLikeEntity: template, modalClassName: 'modal-lg' })}
         idValue={prefixedID(id, 'boot-order')}
       >
-        <BootOrderModal
-          isOpen={isBootOrderModalOpen}
-          setOpen={setBootOrderModalOpen}
-          vmLikeEntity={template}
-        />
         <BootOrderSummary devices={devices} />
       </VMDetailsItem>
 

@@ -56,6 +56,7 @@ import { V1alpha1DataVolume } from '../../types/vm/disk/V1alpha1DataVolume';
 import { VMImportWrappper } from '../../k8s/wrapper/vm-import/vm-import-wrapper';
 import { getVMImportStatusAsVMStatus } from '../../statuses/vm-import/vm-import-status';
 import { V2VVMImportStatus } from '../../constants/v2v-import/ovirt/v2v-vm-import-status';
+import { hasPendingChanges } from '../../utils/pending-changes';
 
 import './vm.scss';
 
@@ -131,6 +132,8 @@ const VMRow: RowFunction<VMRowObjType> = ({ obj, index, key, style }) => {
     options = vmiMenuActions.map((action) => action(model, vmi));
   }
 
+  const arePendingChanges = hasPendingChanges(vm, vmi);
+
   return (
     <TableRow key={`${key}${name}`} id={uid} index={index} trKey={key} style={style}>
       <TableData className={dimensify()}>
@@ -140,7 +143,13 @@ const VMRow: RowFunction<VMRowObjType> = ({ obj, index, key, style }) => {
         <ResourceLink kind={NamespaceModel.kind} name={namespace} title={namespace} />
       </TableData>
       <TableData className={dimensify()}>
-        <VMStatus vm={vm} vmi={vmi} vmStatusBundle={vmStatusBundle} />
+        <VMStatus
+          vm={vm}
+          vmi={vmi}
+          vmStatusBundle={vmStatusBundle}
+          arePendingChanges={arePendingChanges}
+        />
+        {arePendingChanges && <div>Pending changes</div>}
       </TableData>
       <TableData className={dimensify()}>
         <Timestamp timestamp={creationTimestamp} />

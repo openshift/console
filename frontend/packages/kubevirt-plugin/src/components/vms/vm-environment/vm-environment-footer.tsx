@@ -8,7 +8,7 @@ export const VMEnvironmentFooter: React.FC<VMEnvironmentFooterProps> = ({
   errorMsg,
   isSuccess,
   isSaveBtnDisabled,
-  isReloadBtnDisabled,
+  isReloadBtnDisabled = false,
 }) => {
   return (
     <footer className="co-m-btn-bar">
@@ -32,5 +32,5 @@ type VMEnvironmentFooterProps = {
   errorMsg: string;
   isSuccess: boolean;
   isSaveBtnDisabled: boolean;
-  isReloadBtnDisabled: boolean;
+  isReloadBtnDisabled?: boolean;
 };

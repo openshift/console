@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { getNamespace } from '@console/shared';
+import { getNamespace, getName } from '@console/shared';
 import { Firehose } from '@console/internal/components/utils';
 import { createModalLauncher, ModalComponentProps } from '@console/internal/components/factory';
 import { PersistentVolumeClaimModel, StorageClassModel } from '@console/internal/models';
@@ -8,6 +8,7 @@ import { asVM } from '../../../selectors/vm';
 import { V1alpha1DataVolume } from '../../../types/vm/disk/V1alpha1DataVolume';
 import { CDRomModal } from './cdrom-modal';
 import { WINTOOLS_CONTAINER_NAMES } from './constants';
+import { VirtualMachineInstanceModel } from '../../../models';
 
 const CDRomModalFirehose: React.FC<CDRomModalFirehoseProps> = (props) => {
   const { vmLikeEntity } = props;
@@ -26,6 +27,12 @@ const CDRomModalFirehose: React.FC<CDRomModalFirehoseProps> = (props) => {
       isList: true,
       namespace: getNamespace(asVM(vmLikeEntity)),
       prop: 'persistentVolumeClaims',
+    },
+    {
+      kind: VirtualMachineInstanceModel.kind,
+      namespace: getNamespace(asVM(vmLikeEntity)),
+      name: getName(asVM(vmLikeEntity)),
+      prop: 'vmi',
     },
   ];
 

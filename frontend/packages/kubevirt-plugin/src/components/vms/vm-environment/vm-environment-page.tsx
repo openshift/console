@@ -26,7 +26,7 @@ import {
   withHandlePromise,
 } from '@console/internal/components/utils';
 import { VMTabProps } from '../types';
-import { getVMLikeModel, isVMRunningOrExpectedRunning } from '../../../selectors/vm';
+import { getVMLikeModel } from '../../../selectors/vm';
 import { isVM } from '../../../selectors/check-type';
 import * as _ from 'lodash';
 import {
@@ -42,6 +42,7 @@ import {
   setNewSourceVolume,
   areThereDupSerials,
   getSerial,
+  getDiskNameBySource,
 } from './selectors';
 import { SOURCES, EnvDisk, NameValuePairs } from './types';
 import { VMWrapper } from '../../../k8s/wrapper/vm/vm-wrapper';
@@ -60,7 +61,6 @@ import {
   serialWithoutResourceErrorMsg,
 } from './constants';
 import { VMEnvironmentFooter } from './vm-environment-footer';
-import './vm-environment.scss';
 import {
   getTemplateValidationsFromTemplate,
   getVMTemplateNamespacedName,
@@ -70,6 +70,8 @@ import { getVMLikePatches } from '../../../k8s/patches/vm-template';
 import { V1Volume } from '../../../types/vm/disk/V1Volume';
 import { VirtualMachineModel } from '../../../models';
 import { V1Disk } from '../../../types/vm/disk/V1Disk';
+
+import './vm-environment.scss';
 
 export const VMEnvironmentFirehose: React.FC<VMTabProps> = ({
   obj: objProp,
@@ -146,7 +148,6 @@ const VMEnvironment = withHandlePromise<VMEnvironmentProps>(
     const serviceAccounts = serviceAccountsResource?.data;
     const template = templateResource?.data;
     const vmWrapper = new VMWrapper(vm);
-    const isVMRunning = isVMRunningOrExpectedRunning(vm);
 
     const [errMsg, setErrMsg] = React.useState(errorMessage);
     const [isSuccess, setIsSuccess] = React.useState(false);
@@ -337,7 +338,8 @@ const VMEnvironment = withHandlePromise<VMEnvironmentProps>(
         const sourceName = getSourceName(ed);
 
         if (sourceName) {
-          const sourceDiskName = getNewDiskName(sourceName);
+          const sourceDiskName =
+            getDiskNameBySource(sourceName, vmWrapper) || getNewDiskName(sourceName);
           const newDisk = setNewSourceDisk(sourceDiskName, getSerial(ed), diskBus);
           const newVolume = setNewSourceVolume(getSourceKind(ed), sourceName, sourceDiskName);
           newSourcesDisks = [...newSourcesDisks, newDisk];
@@ -398,7 +400,6 @@ const VMEnvironment = withHandlePromise<VMEnvironmentProps>(
       : toListObj(serviceAccountList, []);
 
     const addButtonDisabled =
-      isVMRunning ||
       envDisks.length >= configMaps?.length + secrets?.length + serviceAccounts?.length;
 
     return (
@@ -415,7 +416,6 @@ const VMEnvironment = withHandlePromise<VMEnvironmentProps>(
             nameValueId={0}
             nameValuePairs={envDisks}
             updateParentData={updateEnvDisks}
-            readOnly={isVMRunning}
             configMaps={availableConfigMaps}
             secrets={availableSecrets}
             serviceAccounts={availableServiceAccounts}
@@ -431,8 +431,7 @@ const VMEnvironment = withHandlePromise<VMEnvironmentProps>(
             reload={onReload}
             errorMsg={errMsg}
             isSuccess={isSuccess}
-            isSaveBtnDisabled={isVMRunning || isSaveBtnDisabled()}
-            isReloadBtnDisabled={isVMRunning}
+            isSaveBtnDisabled={isSaveBtnDisabled()}
           />
         </div>
       </>

@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { Alert } from '@patternfly/react-core';
 import {
   Firehose,
   StatusBox,
@@ -19,14 +18,15 @@ import { VirtualMachineInstanceModel, VirtualMachineModel } from '../../models';
 import { getServicesForVmi } from '../../selectors/service';
 import { VMResourceSummary, VMDetailsList, VMSchedulingList } from './vm-resource';
 import { VMUsersList } from './vm-users';
-import { VMTabProps } from './types';
 import { useGuestAgentInfo } from '../../hooks/use-guest-agent-info';
 import { GuestAgentInfoWrapper } from '../../k8s/wrapper/vm/guest-agent-info/guest-agent-info-wrapper';
+import { VMTabProps } from './types';
 import { getVMStatus } from '../../statuses/vm/vm-status';
 import { VMStatusBundle } from '../../statuses/vm/types';
 import { isWindows } from '../../selectors/vm/combined';
 import { isVM, isVMI } from '../../selectors/check-type';
 import { HashAnchor } from '../hash-anchor/hash-anchor';
+import { Alert } from '@patternfly/react-core';
 
 export const VMDetailsFirehose: React.FC<VMTabProps> = ({
   obj: objProp,
