@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { OverviewItem, PodRing } from '@console/shared';
 import { DaemonSetModel } from '../../models';
-import { ResourceSummary } from '../utils';
+import { KebabAction, ResourceSummary } from '../utils';
 import { menuActions, DaemonSetDetailsList } from '../daemon-set';
 import { OverviewDetailsResourcesTab } from './resource-overview-page';
 import { ResourceOverviewDetails } from './resource-overview-details';
@@ -33,11 +33,11 @@ const tabs = [
   },
 ];
 
-export const DaemonSetOverview: React.SFC<DaemonSetOverviewProps> = ({ item }) => (
+export const DaemonSetOverview: React.SFC<DaemonSetOverviewProps> = ({ item, customActions }) => (
   <ResourceOverviewDetails
     item={item}
     kindObj={DaemonSetModel}
-    menuActions={menuActions}
+    menuActions={customActions ? [...customActions, ...menuActions] : menuActions}
     tabs={tabs}
   />
 );
@@ -48,4 +48,5 @@ type DaemonSetOverviewDetailsProps = {
 
 type DaemonSetOverviewProps = {
   item: OverviewItem;
+  customActions?: KebabAction[];
 };

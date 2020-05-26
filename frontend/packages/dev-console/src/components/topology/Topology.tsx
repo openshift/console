@@ -35,6 +35,8 @@ import {
 } from '@console/internal/components/utils';
 import KnativeComponentFactory from '@console/knative-plugin/src/topology/components/knativeComponentFactory';
 import { KubevirtComponentFactory } from '@console/kubevirt-plugin/src/topology/components/kubevirtComponentFactory';
+import { TYPE_VIRTUAL_MACHINE } from '@console/kubevirt-plugin/src/topology/components/const';
+import TopologyVmPanel from '@console/kubevirt-plugin/src/topology/TopologyVmPanel';
 import { useAddToProjectAccess } from '../../utils/useAddToProjectAccess';
 import TopologySideBar from './TopologySideBar';
 import {
@@ -59,13 +61,12 @@ import {
   FILTER_ACTIVE_CLASS,
 } from './filters';
 import TopologyHelmReleasePanel from './helm/TopologyHelmReleasePanel';
-import { TYPE_HELM_RELEASE } from './helm/components/const';
+import { TYPE_HELM_RELEASE, TYPE_HELM_WORKLOAD } from './helm/components/const';
 import { HelmComponentFactory } from './helm/components/helmComponentFactory';
 import { TYPE_OPERATOR_BACKED_SERVICE } from './operators/components/const';
 import { OperatorsComponentFactory } from './operators/components/operatorsComponentFactory';
 import { getServiceBindingStatus } from './topology-utils';
-import { TYPE_VIRTUAL_MACHINE } from '@console/kubevirt-plugin/src/topology/components/const';
-import TopologyVmPanel from '@console/kubevirt-plugin/src/topology/TopologyVmPanel';
+import TopologyHelmWorkloadPanel from './helm/TopologyHelmWorkloadPanel';
 
 interface StateProps {
   filters: TopologyFilters;
@@ -328,6 +329,9 @@ const Topology: React.FC<ComponentProps> = ({
       // TODO: Use Plugins
       if (selectedEntity.getType() === TYPE_HELM_RELEASE) {
         return <TopologyHelmReleasePanel helmRelease={selectedEntity} />;
+      }
+      if (selectedEntity.getType() === TYPE_HELM_WORKLOAD) {
+        return <TopologyHelmWorkloadPanel item={selectedEntity.getData() as TopologyDataObject} />;
       }
       if (selectedEntity.getType() === TYPE_OPERATOR_BACKED_SERVICE) {
         return null;

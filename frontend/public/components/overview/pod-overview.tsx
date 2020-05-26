@@ -4,6 +4,7 @@ import { PodResourceSummary, PodDetailsList, menuActions } from '../pod';
 import { PodModel } from '../../models';
 import { ResourceOverviewDetails } from './resource-overview-details';
 import { NetworkingOverview } from './networking-overview';
+import { KebabAction } from '../utils';
 
 const PodOverviewDetails: React.SFC<PodOverviewDetailsProps> = ({ item: { obj: pod } }) => {
   return (
@@ -35,8 +36,13 @@ const tabs = [
   },
 ];
 
-export const PodOverviewPage: React.SFC<PodOverviewPageProps> = ({ item }) => (
-  <ResourceOverviewDetails item={item} kindObj={PodModel} menuActions={menuActions} tabs={tabs} />
+export const PodOverviewPage: React.SFC<PodOverviewPageProps> = ({ item, customActions }) => (
+  <ResourceOverviewDetails
+    item={item}
+    kindObj={PodModel}
+    menuActions={customActions ? [...customActions, ...menuActions] : menuActions}
+    tabs={tabs}
+  />
 );
 
 type PodOverviewDetailsProps = {
@@ -49,4 +55,5 @@ type PodResourcesTabProps = {
 
 type PodOverviewPageProps = {
   item: PodOverviewItem;
+  customActions?: KebabAction[];
 };
