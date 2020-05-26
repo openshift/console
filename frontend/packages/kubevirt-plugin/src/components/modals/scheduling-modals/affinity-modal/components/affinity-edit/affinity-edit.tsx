@@ -44,14 +44,22 @@ export const AffinityEdit: React.FC<AffinityEditProps> = ({
     onExpressionAdd,
     onExpressionChange,
     onExpressionDelete,
+    initialAffinityExpressionChanged,
   ] = useIDEntities<AffinityLabel>(affinity?.expressions);
 
   const onLabelExpressionAdd = () =>
     onExpressionAdd({ id: null, key: '', values: [], operator: 'In' } as AffinityLabel);
 
-  const [affinityFields, , onFieldAdd, onFieldChange, onFieldDelete] = useIDEntities<AffinityLabel>(
-    affinity?.fields,
-  );
+  const [
+    affinityFields,
+    ,
+    onFieldAdd,
+    onFieldChange,
+    onFieldDelete,
+    initialAffinityFieldChanged,
+  ] = useIDEntities<AffinityLabel>(affinity?.fields);
+
+  const initialAffinityChanged = initialAffinityFieldChanged || initialAffinityExpressionChanged;
 
   const onLabelFieldAdd = () =>
     onFieldAdd({ id: null, key: '', values: [], operator: 'In' } as AffinityLabel);
@@ -196,9 +204,11 @@ export const AffinityEdit: React.FC<AffinityEditProps> = ({
           <FormRow
             title={isNodeAffinity ? 'Node Labels' : 'Workload Labels'}
             fieldId={'expressions'}
-            validationType={isExpressionsInvalid && ValidationErrorType.Error}
+            validationType={
+              isExpressionsInvalid && initialAffinityChanged && ValidationErrorType.Error
+            }
             validationMessage={
-              isExpressionsInvalid && isNodeAffinity
+              isExpressionsInvalid && initialAffinityChanged && isNodeAffinity
                 ? 'Missing fields in node labels'
                 : 'Missing fields in workload labels'
             }
@@ -240,8 +250,12 @@ export const AffinityEdit: React.FC<AffinityEditProps> = ({
               <FormRow
                 title="Node Fields"
                 fieldId={'fields'}
-                validationType={isFieldsInvalid && ValidationErrorType.Error}
-                validationMessage={isFieldsInvalid && 'Missing fields in node fields'}
+                validationType={
+                  isFieldsInvalid && initialAffinityChanged && ValidationErrorType.Error
+                }
+                validationMessage={
+                  isFieldsInvalid && initialAffinityChanged && 'Missing fields in node fields'
+                }
               >
                 <div className="scheduling-modals__desc-container">
                   <>
