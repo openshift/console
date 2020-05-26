@@ -94,6 +94,9 @@ const clusterServiceVersionStateToProps = (state: RootState): ClusterServiceVers
 
 const isSubscription = (obj) => referenceFor(obj) === referenceForModel(SubscriptionModel);
 const isCSV = (obj) => referenceFor(obj) === referenceForModel(ClusterServiceVersionModel);
+const isPackageServer = (obj) =>
+  obj.metadata.name === 'packageserver' &&
+  obj.metadata.namespace === 'openshift-operator-lifecycle-manager';
 
 const nameColumnClass = '';
 const namespaceColumnClass = '';
@@ -384,7 +387,7 @@ const NamespacedSubscriptionTableRow: React.FC<SubscriptionTableRowProps> = ({
       return (
         <>
           <WarningStatus title="Cannot update" />
-          <span className="text-muted">Catalog source was removed.</span>
+          <span className="text-muted">Catalog source was removed</span>
         </>
       );
     }
@@ -455,9 +458,12 @@ const InstalledOperatorTableRow: React.FC<InstalledOperatorTableRowProps> = ({
   const subscription = isCSV(obj)
     ? subscriptionForCSV(subscriptions, obj as ClusterServiceVersionKind)
     : (obj as SubscriptionKind);
-  // Only warn about missing catalog sources if the user was able to list them.
+  // Only warn about missing catalog sources if the user was able to list them
+  // but exclude PackageServer as it does not have a subscription.
   const catalogSourceMissing =
-    !_.isEmpty(catalogSources) && !catalogSourceForSubscription(catalogSources, subscription);
+    !_.isEmpty(catalogSources) &&
+    !catalogSourceForSubscription(catalogSources, subscription) &&
+    !isPackageServer(obj);
 
   return isCSV(obj) ? (
     <ClusterServiceVersionTableRow
