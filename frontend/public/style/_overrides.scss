@@ -296,6 +296,19 @@ h6 {
   }
 }
 
+// Fix for the notification drawer appearing due to tabbing through components
+// Remove this when the pf4 breaking changes dependency is contributed
+@keyframes pf-c-drawer-hide-panel {
+  to {
+    visibility: hidden;
+  }
+}
+.pf-c-drawer__panel[hidden] {
+  animation-name: pf-c-drawer-hide-panel;
+  animation-delay: var(--pf-c-drawer__panel--TransitionDuration);
+  animation-fill-mode: forwards;
+}
+
 .pf-c-page__sidebar {
   --pf-c-page__sidebar-body--PaddingTop: 0;
   bottom: 0;
