@@ -10,7 +10,10 @@ import {
 import { setNetworksTabValidity, validateNetworks } from './validations/networks-tab-validation';
 import { setStoragesTabValidity, validateStorages } from './validations/storage-tab-validation';
 import { setVirtualHardwareTabValidity } from './validations/virtual-hardware-tab-validation';
-import { setImportProvidersTabValidity } from './validations/import-providers-tab-validation';
+import {
+  setImportProvidersTabValidity,
+  validateImportProviderTab,
+} from './validations/import-providers-tab-validation';
 import { finalizeImportProviderStateUpdate } from './finalize-state-update/import-provider-finalize-state-update';
 
 const UPDATE_TABS = [
@@ -28,6 +31,7 @@ const updaterResolver = {
 };
 
 const validateTabResolver = {
+  [VMWizardTab.IMPORT_PROVIDERS]: validateImportProviderTab,
   [VMWizardTab.VM_SETTINGS]: validateVmSettings,
   [VMWizardTab.NETWORKING]: validateNetworks,
   [VMWizardTab.STORAGE]: validateStorages,

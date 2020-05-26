@@ -1,16 +1,16 @@
 import { Map as ImmutableMap } from 'immutable';
 import * as _ from 'lodash';
 import { ValidationObject, ValidationErrorType } from '@console/shared';
-import { UpdateOptions, VMSettingsValidationConfig } from '../types';
-import { VMSettingsFieldType } from '../../types';
+import { UpdateOptions, ValidationConfig } from '../types';
+import { SettingsFieldType } from '../../types';
 import { isFieldRequired } from '../../selectors/immutable/field';
 import { describeFields } from '../../utils/renderable-field-utils';
 import { BinaryUnit } from '../../../form/size-unit-utils';
 
-export const getValidationUpdate = (
-  config: VMSettingsValidationConfig,
+export const getValidationUpdate = <FieldType>(
+  config: ValidationConfig<FieldType>,
   options: UpdateOptions,
-  fields: ImmutableMap<string, VMSettingsFieldType>,
+  fields: ImmutableMap<string, SettingsFieldType<FieldType>>,
   compareField: (prevState, state, id: string, key: any) => boolean,
 ) => {
   const { id, changedCommonData, prevState, getState } = options;

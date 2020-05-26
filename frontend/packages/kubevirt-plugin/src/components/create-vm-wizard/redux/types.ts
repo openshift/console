@@ -7,7 +7,7 @@ import {
   OvirtProviderField,
   VMImportProvider,
   VMSettingsField,
-  VMSettingsFieldType,
+  SettingsFieldType,
   VMWareProviderField,
   VMWizardNetwork,
   VMWizardStorage,
@@ -121,17 +121,17 @@ export type UpdateOptions = {
   prevState: any;
 };
 
-export type VmSettingsValidator = (
-  field: VMSettingsFieldType,
+export type Validator<Field = VMSettingsField> = (
+  field: SettingsFieldType<Field>,
   options: UpdateOptions,
 ) => ValidationObject;
 
-export type VMSettingsValidationConfig = {
+export type ValidationConfig<Field = VMSettingsField> = {
   [key: string]: {
-    detectValueChanges?: ((field, options) => VMSettingsField[]) | VMSettingsField[];
+    detectValueChanges?: ((field, options) => Field[]) | Field[];
     detectCommonDataChanges?:
       | ((field, options) => ChangedCommonDataProp[])
       | ChangedCommonDataProp[];
-    validator: VmSettingsValidator;
+    validator: Validator<Field>;
   };
 };
