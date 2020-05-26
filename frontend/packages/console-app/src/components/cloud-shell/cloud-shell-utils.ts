@@ -38,7 +38,7 @@ export type CloudShellResource = K8sResourceKind & {
 
 export type TerminalInitData = { pod: string; container: string; cmd: string[] };
 
-export const CLOUD_SHELL_LABEL = 'console.openshift.io/cloudshell';
+export const CLOUD_SHELL_LABEL = 'console.openshift.io/terminal';
 export const CLOUD_SHELL_CREATOR_LABEL = 'org.eclipse.che.workspace/creator';
 export const CLOUD_SHELL_IMMUTABLE_ANNOTATION = 'org.eclipse.che.workspace/immutable';
 
