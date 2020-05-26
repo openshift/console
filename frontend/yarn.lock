@@ -2190,6 +2190,14 @@
     "@types/prop-types" "*"
     csstype "^2.2.0"
 
+"@types/react@^16.9.11":
+  version "16.9.35"
+  resolved "https://registry.yarnpkg.com/@types/react/-/react-16.9.35.tgz#a0830d172e8aadd9bd41709ba2281a3124bbd368"
+  integrity sha512-q0n0SsWcGc8nDqH2GJfWQWUOmZSJhXV64CjVN5SvcNti3TdEaA3AH0D8DwNmMdzjMAC/78tB8nAZIlV8yTz+zQ==
+  dependencies:
+    "@types/prop-types" "*"
+    csstype "^2.2.0"
+
 "@types/selenium-webdriver@^3.0.0":
   version "3.0.16"
   resolved "https://registry.yarnpkg.com/@types/selenium-webdriver/-/selenium-webdriver-3.0.16.tgz#50a4755f8e33edacd9c406729e9b930d2451902a"
@@ -3767,7 +3775,7 @@ bootstrap-slider@^9.9.0:
   version "9.10.0"
   resolved "https://registry.yarnpkg.com/bootstrap-slider/-/bootstrap-slider-9.10.0.tgz#1103d6bc00cfbfa8cfc9a2599ab518c55643da3f"
 
-bootstrap-switch@3.3.4, bootstrap-switch@~3.3.4:
+bootstrap-switch@3.3.4:
   version "3.3.4"
   resolved "https://registry.yarnpkg.com/bootstrap-switch/-/bootstrap-switch-3.3.4.tgz#70e0aeb2a877c0dc766991de108e2170fc29a2ff"
 
@@ -3775,7 +3783,7 @@ bootstrap-touchspin@~3.1.1:
   version "3.1.1"
   resolved "https://registry.yarnpkg.com/bootstrap-touchspin/-/bootstrap-touchspin-3.1.1.tgz#9779deac72aaf577e5e762b8512c747c871d9597"
 
-bootstrap@3.3.x, bootstrap@^3.3, bootstrap@~3.3.7:
+bootstrap@^3.3:
   version "3.3.7"
   resolved "https://registry.yarnpkg.com/bootstrap/-/bootstrap-3.3.7.tgz#5a389394549f23330875a3b150656574f8a9eb71"
 
@@ -3783,10 +3791,6 @@ bootstrap@^3.4.1, bootstrap@~3.4.1:
   version "3.4.1"
   resolved "https://registry.yarnpkg.com/bootstrap/-/bootstrap-3.4.1.tgz#c3a347d419e289ad11f4033e3c4132b87c081d72"
   integrity sha512-yN5oZVmRCwe5aKwzRj6736nSmKDX7pLYwsXiCj/EYmo16hODaBiT4En5btW/jhBF/seV+XMx3aYwukYC3A49DA==
-
-bootstrap@~3.4.0:
-  version "3.4.0"
-  resolved "https://registry.yarnpkg.com/bootstrap/-/bootstrap-3.4.0.tgz#f8d77540dd3062283d2ae7687e21c1e691961640"
 
 boxen@^3.0.0:
   version "3.2.0"
@@ -5890,6 +5894,13 @@ dom-converter@~0.1:
 "dom-helpers@^2.4.0 || ^3.0.0", dom-helpers@^3.2.0, dom-helpers@^3.2.1, dom-helpers@^3.3.1:
   version "3.3.1"
   resolved "https://registry.yarnpkg.com/dom-helpers/-/dom-helpers-3.3.1.tgz#fc1a4e15ffdf60ddde03a480a9c0fece821dd4a6"
+
+dom-helpers@^3.4.0:
+  version "3.4.0"
+  resolved "https://registry.yarnpkg.com/dom-helpers/-/dom-helpers-3.4.0.tgz#e9b369700f959f62ecde5a6babde4bccd9169af8"
+  integrity sha512-LnuPJ+dwqKDIyotW1VzmOZ5TONUN7CwkCR5hrgawTUbkBGYdeoNLZo6nNfGkCrjtE1nXXaj7iMMpDa8/d9WoIA==
+  dependencies:
+    "@babel/runtime" "^7.1.2"
 
 dom-serializer@0:
   version "0.1.0"
@@ -9599,18 +9610,10 @@ jquery-match-height@^0.7.2:
   version "0.7.2"
   resolved "https://registry.yarnpkg.com/jquery-match-height/-/jquery-match-height-0.7.2.tgz#f8d9f3ba5314daab109cf07408674be204be5f0e"
 
-"jquery@>= 2.1.x", jquery@>=1.7, jquery@>=1.7.0, "jquery@>=1.7.1 <4.0.0", jquery@>=1.8, "jquery@^1.8.3 || ^2.0 || ^3.0":
-  version "3.3.1"
-  resolved "https://registry.yarnpkg.com/jquery/-/jquery-3.3.1.tgz#958ce29e81c9790f31be7792df5d4d95fc57fbca"
-
-jquery@^3.4.1, jquery@~3.4.1:
-  version "3.4.1"
-  resolved "https://registry.yarnpkg.com/jquery/-/jquery-3.4.1.tgz#714f1f8d9dde4bdfa55764ba37ef214630d80ef2"
-  integrity sha512-36+AdBzCL+y6qjw5Tx7HgzeGCzC81MDDgaUP8ld2zhx58HdqXGoBd+tHdrBMiyjGQs0Hxs/MLZTu/eHNJJuWPw==
-
-jquery@~3.2.1:
-  version "3.2.1"
-  resolved "https://registry.yarnpkg.com/jquery/-/jquery-3.2.1.tgz#5c4d9de652af6cd0a770154a631bba12b015c787"
+jquery@3.5.1, jquery@>=1.7, jquery@>=1.7.0, "jquery@>=1.7.1 <4.0.0", jquery@>=1.8, "jquery@^1.8.3 || ^2.0 || ^3.0", jquery@^3.4.1, jquery@~3.4.1:
+  version "3.5.1"
+  resolved "https://registry.yarnpkg.com/jquery/-/jquery-3.5.1.tgz#d7b4d08e1bfdb86ad2f1a3d039ea17304717abb5"
+  integrity sha512-XwIBPqcMn57FxfT+Go5pzySnm4KWkT1Tv7gjrpT1srtf8Weynl6R273VJ5GjkRb51IzMp5nbaPjJXMWeju2MKg==
 
 js-base64@^2.1.8, js-base64@^2.1.9:
   version "2.4.3"
@@ -11867,13 +11870,6 @@ patternfly-bootstrap-combobox@~1.1.7:
   version "1.1.7"
   resolved "https://registry.yarnpkg.com/patternfly-bootstrap-combobox/-/patternfly-bootstrap-combobox-1.1.7.tgz#6a5e3ccd1170c21b3c4b4aa168a7413e1ddbb6e1"
 
-patternfly-bootstrap-treeview@~2.1.0:
-  version "2.1.7"
-  resolved "https://registry.yarnpkg.com/patternfly-bootstrap-treeview/-/patternfly-bootstrap-treeview-2.1.7.tgz#3e325d4ca34040c24e7e3f701c8021b1700a6f5d"
-  dependencies:
-    bootstrap "3.3.x"
-    jquery ">= 2.1.x"
-
 patternfly-bootstrap-treeview@~2.1.10:
   version "2.1.10"
   resolved "https://registry.yarnpkg.com/patternfly-bootstrap-treeview/-/patternfly-bootstrap-treeview-2.1.10.tgz#f96043734bb4ecac951783e2745e3f9a8873ffd4"
@@ -11882,18 +11878,18 @@ patternfly-bootstrap-treeview@~2.1.10:
     bootstrap "^3.4.1"
     jquery "^3.4.1"
 
-patternfly-react@2.32.3:
-  version "2.32.3"
-  resolved "https://registry.yarnpkg.com/patternfly-react/-/patternfly-react-2.32.3.tgz#a66d580c6e93cd061ade3e6059cd02af48b79a68"
-  integrity sha512-PslQ8pS6VDyBSYP1+HXHeuZ8FTFToj9ZUqkMeXnTJHqCdWcuQTijBimQ4lAvxXFKAPO7cbcdIUWiO/95cAZvXQ==
+patternfly-react@2.39.16:
+  version "2.39.16"
+  resolved "https://registry.yarnpkg.com/patternfly-react/-/patternfly-react-2.39.16.tgz#ceae9f9ffecbdbdb27307f48ac0bf636cab063e4"
+  integrity sha512-1Om7jt+1CqWgH4O167OsAfVxts35epKwVfmtnmO0Dff1KiivKscVtnwMePJJvXrEeCIHFwWY2L7i2Avvh/3Xeg==
   dependencies:
     bootstrap-slider-without-jquery "^10.0.0"
     breakjs "^1.0.0"
     classnames "^2.2.5"
     css-element-queries "^1.0.1"
-    lodash "^4.17.11"
-    patternfly "^3.58.0"
-    react-bootstrap "^0.32.1"
+    lodash "^4.17.15"
+    patternfly "^3.59.4"
+    react-bootstrap "^0.33.0"
     react-bootstrap-switch "^15.5.3"
     react-bootstrap-typeahead "^3.4.1"
     react-c3js "^0.1.20"
@@ -11910,52 +11906,21 @@ patternfly-react@2.32.3:
     sortabular "^1.5.1"
     table-resolver "^3.2.0"
 
-patternfly@^3.58.0:
-  version "3.58.0"
-  resolved "https://registry.yarnpkg.com/patternfly/-/patternfly-3.58.0.tgz#c94516a9fbf2b645b63a53e58fcf39c45bf66a8b"
+patternfly@^3.59.4:
+  version "3.59.4"
+  resolved "https://registry.yarnpkg.com/patternfly/-/patternfly-3.59.4.tgz#455c8b73af5088893083467b8cd9918eee25000a"
+  integrity sha512-xkXTmmQFyscfQ/2Vbh8OUFQPPPCgncKb1FMwNwxUXgCjJRqohmkOAR8enMYGNVbFruzrZKxJVOdHnGduLlETDQ==
   dependencies:
-    bootstrap "~3.3.7"
+    bootstrap "~3.4.1"
     font-awesome "^4.7.0"
-    jquery "~3.2.1"
-  optionalDependencies:
-    "@types/c3" "^0.6.0"
-    bootstrap-datepicker "^1.7.1"
-    bootstrap-sass "^3.3.7"
-    bootstrap-select "1.12.2"
-    bootstrap-slider "^9.9.0"
-    bootstrap-switch "~3.3.4"
-    bootstrap-touchspin "~3.1.1"
-    c3 "~0.4.11"
-    d3 "~3.5.17"
-    datatables.net "^1.10.15"
-    datatables.net-colreorder "^1.4.1"
-    datatables.net-colreorder-bs "~1.3.2"
-    datatables.net-select "~1.2.0"
-    drmonty-datatables-colvis "~1.1.2"
-    eonasdan-bootstrap-datetimepicker "^4.17.47"
-    font-awesome-sass "^4.7.0"
-    google-code-prettify "~1.0.5"
-    jquery-match-height "^0.7.2"
-    moment "^2.19.1"
-    moment-timezone "^0.4.1"
-    patternfly-bootstrap-combobox "~1.1.7"
-    patternfly-bootstrap-treeview "~2.1.0"
-
-patternfly@^3.59.1:
-  version "3.59.1"
-  resolved "https://registry.yarnpkg.com/patternfly/-/patternfly-3.59.1.tgz#4adea89223e7386551bc9560ad5bed99e37df904"
-  integrity sha512-0Q/P58yaxcQXwnXo/OssiXaZmuX0g9QvWdpsYHyml4ihqnN2lL/yGdadFarA6UAQb//15XtNjKHZocoJXCkWYg==
-  dependencies:
-    bootstrap "~3.4.0"
-    font-awesome "^4.7.0"
-    jquery "~3.2.1"
+    jquery "~3.4.1"
   optionalDependencies:
     "@types/c3" "^0.6.0"
     bootstrap-datepicker "^1.7.1"
     bootstrap-sass "^3.4.0"
     bootstrap-select "1.12.2"
     bootstrap-slider "^9.9.0"
-    bootstrap-switch "~3.3.4"
+    bootstrap-switch "3.3.4"
     bootstrap-touchspin "~3.1.1"
     c3 "~0.4.11"
     d3 "~3.5.17"
@@ -11971,12 +11936,12 @@ patternfly@^3.59.1:
     moment "^2.19.1"
     moment-timezone "^0.4.1"
     patternfly-bootstrap-combobox "~1.1.7"
-    patternfly-bootstrap-treeview "~2.1.0"
+    patternfly-bootstrap-treeview "~2.1.10"
 
-patternfly@^3.59.4:
-  version "3.59.4"
-  resolved "https://registry.yarnpkg.com/patternfly/-/patternfly-3.59.4.tgz#455c8b73af5088893083467b8cd9918eee25000a"
-  integrity sha512-xkXTmmQFyscfQ/2Vbh8OUFQPPPCgncKb1FMwNwxUXgCjJRqohmkOAR8enMYGNVbFruzrZKxJVOdHnGduLlETDQ==
+patternfly@^3.59.5:
+  version "3.59.5"
+  resolved "https://registry.yarnpkg.com/patternfly/-/patternfly-3.59.5.tgz#5f515a65b47c4a159d9c300f93134f7c523b8e86"
+  integrity sha512-SMQynv9eFrWWG0Ujta5+jPjxHdQB3xkTLiDW5VP8XXc0nGUxXb4EnZh21qiMeGGJYaKpu9CzaPEpCvuBxgYWHQ==
   dependencies:
     bootstrap "~3.4.1"
     font-awesome "^4.7.0"
@@ -12933,9 +12898,10 @@ react-bootstrap-typeahead@^3.4.1:
     react-popper "^1.0.0"
     warning "^4.0.1"
 
-react-bootstrap@^0.32.1:
-  version "0.32.4"
-  resolved "https://registry.yarnpkg.com/react-bootstrap/-/react-bootstrap-0.32.4.tgz#8efc4cbfc4807215d75b7639bee0d324c8d740d1"
+react-bootstrap@^0.33.0:
+  version "0.33.1"
+  resolved "https://registry.yarnpkg.com/react-bootstrap/-/react-bootstrap-0.33.1.tgz#e072592aa143b9792526281272eca754bc9a4940"
+  integrity sha512-qWTRravSds87P8WC82tETy2yIso8qDqlIm0czsrduCaYAFtHuyLu0XDbUlfLXeRzqgwm5sRk2wRaTNoiVkk/YQ==
   dependencies:
     "@babel/runtime-corejs2" "^7.0.0"
     classnames "^2.2.5"
@@ -12944,10 +12910,10 @@ react-bootstrap@^0.32.1:
     keycode "^2.2.0"
     prop-types "^15.6.1"
     prop-types-extra "^1.0.1"
-    react-overlays "^0.8.0"
+    react-overlays "^0.9.0"
     react-prop-types "^0.4.0"
     react-transition-group "^2.0.0"
-    uncontrollable "^5.0.0"
+    uncontrollable "^7.0.2"
     warning "^3.0.0"
 
 react-c3js@^0.1.20:
@@ -13277,7 +13243,7 @@ react-motion@^0.5.2:
     prop-types "^15.5.8"
     raf "^3.1.0"
 
-react-overlays@^0.8.0, react-overlays@^0.8.1:
+react-overlays@^0.8.1:
   version "0.8.3"
   resolved "https://registry.yarnpkg.com/react-overlays/-/react-overlays-0.8.3.tgz#fad65eea5b24301cca192a169f5dddb0b20d3ac5"
   dependencies:
@@ -13286,6 +13252,18 @@ react-overlays@^0.8.0, react-overlays@^0.8.1:
     prop-types "^15.5.10"
     prop-types-extra "^1.0.1"
     react-transition-group "^2.2.0"
+    warning "^3.0.0"
+
+react-overlays@^0.9.0:
+  version "0.9.1"
+  resolved "https://registry.yarnpkg.com/react-overlays/-/react-overlays-0.9.1.tgz#d4702bfe5b5e9335b676ff5a940253771fdeed12"
+  integrity sha512-b0asy/zHtRd0i2+2/uNxe3YVprF3bRT1guyr791DORjCzE/HSBMog+ul83CdtKQ1kZ+pLnxWCu5W3BMysFhHdQ==
+  dependencies:
+    classnames "^2.2.5"
+    dom-helpers "^3.2.1"
+    prop-types "^15.5.10"
+    prop-types-extra "^1.0.1"
+    react-transition-group "^2.2.1"
     warning "^3.0.0"
 
 react-popper-tooltip@^2.8.3:
@@ -13431,6 +13409,16 @@ react-transition-group@^2.0.0, react-transition-group@^2.2.0:
   resolved "https://registry.yarnpkg.com/react-transition-group/-/react-transition-group-2.5.0.tgz#70bca0e3546102c4dc5cf3f5f57f73447cce6874"
   dependencies:
     dom-helpers "^3.3.1"
+    loose-envify "^1.4.0"
+    prop-types "^15.6.2"
+    react-lifecycles-compat "^3.0.4"
+
+react-transition-group@^2.2.1:
+  version "2.9.0"
+  resolved "https://registry.yarnpkg.com/react-transition-group/-/react-transition-group-2.9.0.tgz#df9cdb025796211151a436c69a8f3b97b5b07c8d"
+  integrity sha512-+HzNTCHpeQyl4MJ/bdE0u6XRMe9+XG/+aL4mCxVN4DnPBQ0/5bfHWPDuOZUzYdMj94daZaZdCCc1Dzt9R/xSSg==
+  dependencies:
+    dom-helpers "^3.4.0"
     loose-envify "^1.4.0"
     prop-types "^15.6.2"
     react-lifecycles-compat "^3.0.4"
@@ -15829,11 +15817,15 @@ uid-number@^0.0.6:
   version "0.0.6"
   resolved "https://registry.yarnpkg.com/uid-number/-/uid-number-0.0.6.tgz#0ea10e8035e8eb5b8e4449f06da1c730663baa81"
 
-uncontrollable@^5.0.0:
-  version "5.1.0"
-  resolved "https://registry.yarnpkg.com/uncontrollable/-/uncontrollable-5.1.0.tgz#7e9a1c50ea24e3c78b625e52d21ff3f758c7bd59"
+uncontrollable@^7.0.2:
+  version "7.1.1"
+  resolved "https://registry.yarnpkg.com/uncontrollable/-/uncontrollable-7.1.1.tgz#f67fed3ef93637126571809746323a9db815d556"
+  integrity sha512-EcPYhot3uWTS3w00R32R2+vS8Vr53tttrvMj/yA1uYRhf8hbTG2GyugGqWDY0qIskxn0uTTojVd6wPYW9ZEf8Q==
   dependencies:
+    "@babel/runtime" "^7.6.3"
+    "@types/react" "^16.9.11"
     invariant "^2.2.4"
+    react-lifecycles-compat "^3.0.4"
 
 underscore@~1.4.4:
   version "1.4.4"
