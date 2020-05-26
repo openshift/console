@@ -100,7 +100,7 @@ export const CommandRequestTypeForm: React.FC<RequestTypeFormProps> = ({ probeTy
   const {
     values: { healthChecks },
   } = useFormikContext<FormikValues>();
-  const commands = healthChecks?.[probeType]?.data?.exec?.command;
+  const commands = healthChecks?.[probeType]?.data?.exec?.command || [''];
   return (
     <TextColumnField
       name={`healthChecks.${probeType}.data.exec.command`}
