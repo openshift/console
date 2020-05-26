@@ -1,7 +1,8 @@
 import * as React from 'react';
 import { AccessConsoles, VncConsole } from '@patternfly/react-console/dist/js';
+import { Alert, AlertActionCloseButton, Button, Stack, StackItem } from '@patternfly/react-core';
 import { Firehose, FirehoseResult, LoadingInline } from '@console/internal/components/utils';
-import { getNamespace } from '@console/shared';
+import { getNamespace, getName } from '@console/shared';
 import { PodKind } from '@console/internal/module/k8s';
 import { ServiceModel } from '@console/internal/models';
 import { VirtualMachineInstanceModel, VirtualMachineModel } from '../../models';
@@ -19,7 +20,12 @@ import {
 import { getVMStatus } from '../../statuses/vm/vm-status';
 import { getLoadedData, getResource } from '../../utils';
 import { findVMIPod } from '../../selectors/pod/selectors';
-import { isWindows, asVM } from '../../selectors/vm';
+import {
+  isWindows,
+  asVM,
+  getIsGraphicsConsoleAttached,
+  getIsSerialConsoleAttached,
+} from '../../selectors/vm';
 import { isVM, isVMI } from '../../selectors/check-type';
 import { VMIKind, VMKind } from '../../types/vm';
 import { SerialConsoleConnector } from './serial-console-connector';
@@ -27,8 +33,7 @@ import { DesktopViewerSelector } from './desktop-viewer-selector';
 import { VMTabProps } from './types';
 import { VMStatusBundle } from '../../statuses/vm/types';
 import { VMStatus } from '../../constants/vm/vm-status';
-
-const { VNC_CONSOLE_TYPE } = AccessConsoles.constants;
+import { ConsoleType } from '../../constants/vm/console-type';
 
 const VMIsDown: React.FC = () => (
   <div className="co-m-pane__body">
@@ -63,7 +68,13 @@ const VMConsoles: React.FC<VMConsolesProps> = ({
   serial,
   rdp,
   LoadingComponent,
+  type,
+  showOpenInNewWindow = true,
 }) => {
+  const [showAlert, setShowAlert] = React.useState(true);
+  const showVNCOption = getIsGraphicsConsoleAttached(vm) !== false;
+  const showSerialOption = getIsSerialConsoleAttached(vm) !== false;
+
   if (!isVMIRunning(vmi)) {
     if (vmStatusBundle?.status?.isImporting() || vmStatusBundle?.status?.isMigrating()) {
       return <VMCannotBeStarted />;
@@ -76,11 +87,28 @@ const VMConsoles: React.FC<VMConsolesProps> = ({
       <VMIsDown />
     );
   }
-
   const vncServiceManual = (vnc && vnc.manual) || undefined;
   const rdpServiceManual = (rdp && rdp.manual) || undefined;
 
-  const desktopViewverSelector = isWindows(vm) ? (
+  const vmName = getName(vm);
+  const namespace = getNamespace(vm);
+  const typeNotSupported =
+    (!showVNCOption && type === ConsoleType.VNC) ||
+    (!showSerialOption && type === ConsoleType.SERIAL);
+
+  const getAvailableType = () => {
+    if (showVNCOption) {
+      return ConsoleType.VNC;
+    }
+    if (showSerialOption) {
+      return ConsoleType.SERIAL;
+    }
+    return null;
+  };
+
+  const consoleType = typeNotSupported || type == null ? getAvailableType() : type;
+
+  const desktopViewerSelector = isWindows(vm) ? (
     <DesktopViewerSelector
       vncServiceManual={vncServiceManual}
       rdpServiceManual={rdpServiceManual}
@@ -91,18 +119,45 @@ const VMConsoles: React.FC<VMConsolesProps> = ({
   ) : null;
 
   return (
-    <div className="co-m-pane__body">
-      <AccessConsoles preselectedType={VNC_CONSOLE_TYPE} disconnectByChange={false}>
-        <SerialConsoleConnector {...serial} />
-        <VncConsole {...vnc} />
-        {desktopViewverSelector}
-      </AccessConsoles>
-    </div>
+    <Stack gutter="sm">
+      {showOpenInNewWindow && consoleType && (
+        <StackItem>
+          <Button
+            component="a"
+            target="_blank"
+            variant="secondary"
+            href={`/k8s/ns/${namespace}/virtualmachineinstances/${vmName}/standaloneconsole?type=${consoleType.toString()}`}
+          >
+            Open Console in new Window
+          </Button>
+        </StackItem>
+      )}
+      {typeNotSupported && showAlert && (
+        <StackItem>
+          <Alert
+            isInline
+            variant="danger"
+            action={<AlertActionCloseButton onClose={() => setShowAlert(false)} />}
+            title={`Selected type ${type.toPatternflyLabel()} is unsupported, falling back to a supported type`}
+          />
+        </StackItem>
+      )}
+      <StackItem>
+        <AccessConsoles
+          preselectedType={consoleType?.toPatternflyLabel()}
+          disconnectByChange={false}
+        >
+          {showSerialOption && <SerialConsoleConnector {...serial} />}
+          {showVNCOption && <VncConsole {...vnc} />}
+          {desktopViewerSelector}
+        </AccessConsoles>
+      </StackItem>
+    </Stack>
   );
 };
 
-const VmConsolesWrapper: React.FC<VmConsolesWrapperProps> = (props) => {
-  const { vm: vmProp, vmi, pods, vmStatusBundle } = props;
+export const VMConsolesWrapper: React.FC<VMConsolesWrapperProps> = (props) => {
+  const { vm: vmProp, vmi, pods, vmStatusBundle, type, showOpenInNewWindow } = props;
   const vm = asVM(vmProp);
   const services = getLoadedData(props.services);
 
@@ -122,6 +177,8 @@ const VmConsolesWrapper: React.FC<VmConsolesWrapperProps> = (props) => {
       serial={getSerialConsoleConnectionDetails(vmi)}
       rdp={rdp}
       LoadingComponent={LoadingInline}
+      type={type}
+      showOpenInNewWindow={showOpenInNewWindow}
     />
   );
 };
@@ -135,10 +192,12 @@ export const VMConsoleFirehose: React.FC<VMTabProps> = ({
   migrations,
   dataVolumes,
   customData: { kindObj },
+  showOpenInNewWindow,
 }) => {
   const vm = kindObj === VirtualMachineModel && isVM(objProp) ? objProp : vmProp;
   const vmi = kindObj === VirtualMachineInstanceModel && isVMI(objProp) ? objProp : vmisProp[0];
-
+  const params = new URLSearchParams(window.location.search);
+  const type = ConsoleType.fromString(params.get('type'));
   const namespace = getNamespace(vm);
 
   const resources = [
@@ -159,18 +218,27 @@ export const VMConsoleFirehose: React.FC<VMTabProps> = ({
   return (
     <div className="co-m-pane__body">
       <Firehose resources={resources}>
-        <VmConsolesWrapper vm={vm} vmi={vmi} vmStatusBundle={vmStatusBundle} pods={pods} />
+        <VMConsolesWrapper
+          vm={vm}
+          vmi={vmi}
+          vmStatusBundle={vmStatusBundle}
+          pods={pods}
+          type={type}
+          showOpenInNewWindow={showOpenInNewWindow}
+        />
       </Firehose>
     </div>
   );
 };
 
-type VmConsolesWrapperProps = {
+type VMConsolesWrapperProps = {
   vm?: VMKind;
   vmi?: VMIKind;
   services?: FirehoseResult;
   pods?: PodKind[];
   vmStatusBundle: VMStatusBundle;
+  type?: ConsoleType;
+  showOpenInNewWindow?: boolean;
 };
 
 type VMConsolesProps = {
@@ -181,6 +249,8 @@ type VMConsolesProps = {
   serial?: SerialConsoleConnectionDetailsType;
   rdp?: RDPConnectionDetailsType;
   vmStatusBundle: VMStatusBundle;
+  type?: ConsoleType;
+  showOpenInNewWindow?: boolean;
 };
 
 type VMIsStartingProps = {

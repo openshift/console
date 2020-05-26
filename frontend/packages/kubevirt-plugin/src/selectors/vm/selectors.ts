@@ -182,3 +182,9 @@ export const getNodeSelector = (vm: VMKind) => vm?.spec?.template?.spec?.nodeSel
 export const getTolerations = (vm: VMKind) => vm?.spec?.template?.spec?.tolerations;
 
 export const getAffinity = (vm: VMKind) => vm?.spec?.template?.spec?.affinity;
+
+export const getIsGraphicsConsoleAttached = (vm: VMKind) =>
+  vm?.spec?.template?.spec?.domain?.devices?.autoattachGraphicsDevice;
+
+export const getIsSerialConsoleAttached = (vm: VMKind) =>
+  vm?.spec?.template?.spec?.domain?.devices?.autoattachSerialConsole;
