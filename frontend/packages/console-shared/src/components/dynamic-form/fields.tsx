@@ -53,7 +53,7 @@ const FieldWrapper: React.FC<FieldProps> = ({
 };
 
 export const ResourceRequirementsField: React.FC<FieldProps> = (props) => {
-  const { formData, idSchema, onChange } = props;
+  const { formData = {}, idSchema, onChange } = props;
   return (
     <FieldSet {...props}>
       <dl id={idSchema.$id} style={{ marginLeft: '15px' }}>
@@ -91,7 +91,7 @@ export const ResourceRequirementsField: React.FC<FieldProps> = (props) => {
 };
 
 export const UpdateStrategyField: React.FC<FieldProps> = (props) => {
-  const { formData, idSchema, onChange } = props;
+  const { formData = {}, idSchema, onChange } = props;
   return (
     <FieldWrapper {...props}>
       <ConfigureUpdateStrategy
@@ -113,7 +113,7 @@ export const UpdateStrategyField: React.FC<FieldProps> = (props) => {
 };
 
 export const NodeAffinityField: React.FC<FieldProps> = (props) => {
-  const { formData, idSchema, onChange } = props;
+  const { formData = {}, idSchema, onChange } = props;
   return (
     <FieldSet {...props}>
       <NodeAffinity
@@ -126,7 +126,7 @@ export const NodeAffinityField: React.FC<FieldProps> = (props) => {
 };
 
 export const PodAffinityField: React.FC<FieldProps> = (props) => {
-  const { formData, idSchema, onChange } = props;
+  const { formData = {}, idSchema, onChange } = props;
   return (
     <FieldSet {...props}>
       <PodAffinity
@@ -139,7 +139,7 @@ export const PodAffinityField: React.FC<FieldProps> = (props) => {
 };
 
 export const MatchExpressionsField: React.FC<FieldProps> = (props) => {
-  const { formData, idSchema, onChange } = props;
+  const { formData = {}, idSchema, onChange } = props;
   return (
     <FieldSet {...props}>
       <MatchExpressions
