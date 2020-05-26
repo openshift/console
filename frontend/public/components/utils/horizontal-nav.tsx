@@ -197,7 +197,7 @@ export const HorizontalNav = React.memo((props: HorizontalNavProps) => {
   };
 
   const componentProps = {
-    ..._.pick(props, ['filters', 'selected', 'match']),
+    ..._.pick(props, ['filters', 'selected', 'match', 'loaded']),
     obj: _.get(props.obj, 'data'),
   };
   const extraResources = _.reduce(
