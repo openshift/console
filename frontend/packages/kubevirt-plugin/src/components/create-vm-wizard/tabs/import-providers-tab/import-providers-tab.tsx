@@ -6,7 +6,7 @@ import { FormFieldMemoRow } from '../../form/form-field-row';
 import { FormField, FormFieldType } from '../../form/form-field';
 import { FormSelectPlaceholderOption } from '../../../form/form-select-placeholder-option';
 import { vmWizardActions } from '../../redux/actions';
-import { ImportProviderRenderableField, ImportProvidersField, VMImportProvider } from '../../types';
+import { ImportProviderRenderableField, ImportProvidersField } from '../../types';
 import { ActionType } from '../../redux/types';
 import { getPlaceholder } from '../../utils/renderable-field-utils';
 import { VMWareImportProvider } from './providers/vmware-import-provider/vmware-import-provider';
@@ -30,7 +30,6 @@ class ImportProvidersTabComponent extends React.Component<ImportProvidersTabComp
     return (
       <Form className="co-m-pane__body co-m-pane__form">
         <FormFieldMemoRow
-          key={ImportProvidersField.PROVIDER}
           field={this.getField(ImportProvidersField.PROVIDER)}
           fieldType={FormFieldType.SELECT}
         >
@@ -48,8 +47,8 @@ class ImportProvidersTabComponent extends React.Component<ImportProvidersTabComp
             </FormSelect>
           </FormField>
         </FormFieldMemoRow>
-        <OvirtImportProvider key={VMImportProvider.OVIRT} wizardReduxID={wizardReduxID} />
-        <VMWareImportProvider key={VMImportProvider.VMWARE} wizardReduxID={wizardReduxID} />
+        <OvirtImportProvider wizardReduxID={wizardReduxID} />
+        <VMWareImportProvider wizardReduxID={wizardReduxID} />
       </Form>
     );
   }

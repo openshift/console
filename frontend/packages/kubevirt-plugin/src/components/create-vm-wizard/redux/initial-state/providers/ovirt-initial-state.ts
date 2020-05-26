@@ -12,6 +12,7 @@ export const getOvirtInitialState = (): OvirtSettings => {
     },
     [OvirtProviderField.CERTIFICATE]: {
       isHidden: hiddenByOvirtEngine,
+      filename: '',
     },
     [OvirtProviderField.USERNAME]: {
       isHidden: hiddenByOvirtEngine,

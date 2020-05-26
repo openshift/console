@@ -45,9 +45,8 @@ class VMWareImportProviderConnected extends React.Component<VMWareImportProvider
 
     return (
       <>
-        <VMImportSecrets key="secrets" wizardReduxID={wizardReduxID} provider={provider} />
+        <VMImportSecrets wizardReduxID={wizardReduxID} provider={provider} />
         <FormFieldMemoRow
-          key={VMWareProviderField.HOSTNAME}
           field={this.getField(VMWareProviderField.HOSTNAME)}
           fieldType={FormFieldType.TEXT}
         >
@@ -56,7 +55,6 @@ class VMWareImportProviderConnected extends React.Component<VMWareImportProvider
           </FormField>
         </FormFieldMemoRow>
         <FormFieldMemoRow
-          key={VMWareProviderField.USERNAME}
           field={this.getField(VMWareProviderField.USERNAME)}
           fieldType={FormFieldType.TEXT}
         >
@@ -64,9 +62,8 @@ class VMWareImportProviderConnected extends React.Component<VMWareImportProvider
             <TextInput onChange={this.onChange(VMWareProviderField.USERNAME)} />
           </FormField>
         </FormFieldMemoRow>
-        <VMImportPassword key="password" wizardReduxID={wizardReduxID} provider={provider} />
+        <VMImportPassword wizardReduxID={wizardReduxID} provider={provider} />
         <FormFieldMemoRow
-          key={VMWareProviderField.REMEMBER_PASSWORD}
           field={this.getField(VMWareProviderField.REMEMBER_PASSWORD)}
           fieldType={FormFieldType.INLINE_CHECKBOX}
         >
@@ -78,23 +75,14 @@ class VMWareImportProviderConnected extends React.Component<VMWareImportProvider
             />
           </FormField>
         </FormFieldMemoRow>
-        <VMWareVMs key="vms" wizardReduxID={wizardReduxID} />
-        <VMImportProviderControllerErrors
-          key="errors"
-          wizardReduxID={wizardReduxID}
-          provider={provider}
-        />
+        <VMWareVMs wizardReduxID={wizardReduxID} />
+        <VMImportProviderControllerErrors wizardReduxID={wizardReduxID} provider={provider} />
         <VMImportProviderControllerStatusRow
-          key="controllerstatus-row"
           wizardReduxID={wizardReduxID}
           provider={provider}
           id="v2v-vmware-status"
         />
-        <VMImportProviderObjectStatus
-          key="object-status"
-          wizardReduxID={wizardReduxID}
-          provider={provider}
-        />
+        <VMImportProviderObjectStatus wizardReduxID={wizardReduxID} provider={provider} />
       </>
     );
   }
