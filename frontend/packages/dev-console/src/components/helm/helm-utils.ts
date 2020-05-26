@@ -132,7 +132,7 @@ export const getHelmActionConfig = (
         title: 'Upgrade Helm Release',
         subTitle:
           'Upgrade by selecting a new chart version or manually changing the YAML shown in the editor below.',
-        helmReleaseApi: `/api/helm/release?ns=${namespace}&release_name=${releaseName}`,
+        helmReleaseApi: `/api/helm/release?ns=${namespace}&name=${releaseName}`,
         fetch: coFetchJSON.put,
         redirectURL: getOriginRedirectURL(actionOrigin, namespace, releaseName),
       };
