@@ -1,7 +1,9 @@
 package terminal
 
 import (
+	"context"
 	authv1 "k8s.io/api/authorization/v1"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
 // checkUserPermissions checks if the terminal proxy is supported for a given user.
@@ -22,7 +24,7 @@ func (p *Proxy) checkUserPermissions(token string) (bool, error) {
 			},
 		},
 	}
-	res, err := client.AuthorizationV1().SelfSubjectAccessReviews().Create(sar)
+	res, err := client.AuthorizationV1().SelfSubjectAccessReviews().Create(context.TODO(), sar, metav1.CreateOptions{})
 	if err != nil || res == nil {
 		return false, err
 	}

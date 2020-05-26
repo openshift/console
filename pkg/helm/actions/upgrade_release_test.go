@@ -114,11 +114,11 @@ func TestUpgradeNonExistRelease(t *testing.T) {
 		err          error
 	}{
 		{
-			testName:     "upgrade non exist release should return no revision found",
+			testName:     "upgrade non exist release should return no release found",
 			chartPath:    "",
 			chartName:    "influxdb",
 			chartVersion: "3.0.2",
-			err:          ErrReleaseRevisionNotFound,
+			err:          ErrReleaseNotFound,
 		},
 	}
 	for _, tt := range tests {

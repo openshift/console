@@ -1,6 +1,7 @@
 package terminal
 
 import (
+	"context"
 	"k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes"
@@ -23,7 +24,7 @@ func workspaceOperatorIsRunning() (bool, error) {
 		return false, err
 	}
 
-	_, err = client.AdmissionregistrationV1().MutatingWebhookConfigurations().Get(webhookName, metav1.GetOptions{})
+	_, err = client.AdmissionregistrationV1().MutatingWebhookConfigurations().Get(context.TODO(), webhookName, metav1.GetOptions{})
 	if err != nil {
 		if errors.IsNotFound(err) {
 			return false, nil
@@ -31,7 +32,7 @@ func workspaceOperatorIsRunning() (bool, error) {
 		return false, err
 	}
 
-	_, err = client.AdmissionregistrationV1().ValidatingWebhookConfigurations().Get(webhookName, metav1.GetOptions{})
+	_, err = client.AdmissionregistrationV1().ValidatingWebhookConfigurations().Get(context.TODO(), webhookName, metav1.GetOptions{})
 	if err != nil {
 		if errors.IsNotFound(err) {
 			return false, nil

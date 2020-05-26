@@ -386,7 +386,7 @@ func TestHelmHandlers_HandleGetReleaseHistory(t *testing.T) {
 		{
 			name:                "NotFound error should be returned if release does not exist",
 			error:               actions.ErrReleaseNotFound,
-			expectedResponse:    `{"error":"Failed to list helm release history: release not found"}`,
+			expectedResponse:    `{"error":"Failed to list helm release history: release: not found"}`,
 			httpStatusCode:      http.StatusNotFound,
 			expectedContentType: "application/json",
 			releaseName:         "test",
@@ -447,7 +447,7 @@ func TestHelmHandlers_HandleHelmUninstallRelease(t *testing.T) {
 		{
 			name:                "uninstalling non exist release should return not found",
 			error:               actions.ErrReleaseNotFound,
-			expectedResponse:    `{"error":"Failed to uninstall helm release: release not found"}`,
+			expectedResponse:    `{"error":"Failed to uninstall helm release: release: not found"}`,
 			httpStatusCode:      http.StatusNotFound,
 			expectedContentType: "application/json",
 			releaseName:         "test",

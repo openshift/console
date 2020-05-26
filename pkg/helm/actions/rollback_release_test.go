@@ -90,7 +90,7 @@ func TestRollbackNonExistRelease(t *testing.T) {
 		{
 			name:        "rolling back non exist release should error out with no release found",
 			releaseName: "invalid-release",
-			err:         ErrReleaseRevisionNotFound,
+			err:         ErrReleaseNotFound,
 			rollbackTo:  1,
 		},
 	}

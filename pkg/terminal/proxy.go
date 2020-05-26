@@ -2,6 +2,7 @@ package terminal
 
 import (
 	"bytes"
+	"context"
 	"crypto/tls"
 	"errors"
 	"io"
@@ -111,7 +112,7 @@ func (p *Proxy) HandleProxy(user *auth.User, w http.ResponseWriter, r *http.Requ
 	userId := user.ID
 	if userId == "" {
 		// user id is missing, auth is used that does not support user info propagated, like OpenShift OAuth
-		userInfo, err := client.Resource(UserGroupVersionResource).Get("~", metav1.GetOptions{})
+		userInfo, err := client.Resource(UserGroupVersionResource).Get(context.TODO(), "~", metav1.GetOptions{})
 		if err != nil {
 			http.Error(w, "Failed to retrieve the current user info. Cause: "+err.Error(), http.StatusInternalServerError)
 			return
@@ -127,7 +128,7 @@ func (p *Proxy) HandleProxy(user *auth.User, w http.ResponseWriter, r *http.Requ
 		}
 	}
 
-	ws, err := client.Resource(WorkspaceGroupVersionResource).Namespace(namespace).Get(workspaceName, metav1.GetOptions{})
+	ws, err := client.Resource(WorkspaceGroupVersionResource).Namespace(namespace).Get(context.TODO(), workspaceName, metav1.GetOptions{})
 	if err != nil {
 		http.Error(w, "Failed to get the requested workspace. Cause: "+err.Error(), http.StatusForbidden)
 		return
