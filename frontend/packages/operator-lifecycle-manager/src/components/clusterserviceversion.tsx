@@ -66,6 +66,7 @@ import {
   PackageManifestModel,
   CatalogSourceModel,
   InstallPlanModel,
+  OperatorGroupModel,
 } from '../models';
 import {
   APIServiceDefinition,
@@ -73,7 +74,6 @@ import {
   ClusterServiceVersionKind,
   ClusterServiceVersionPhase,
   CRDDescription,
-  CSVConditionReason,
   InstallPlanKind,
   PackageManifestKind,
   SubscriptionKind,
@@ -904,17 +904,17 @@ export const ClusterServiceVersionDetails: React.SFC<ClusterServiceVersionDetail
                 </>
               )}
               <dt>Operator Group</dt>
-              {_.get(status, 'reason') === CSVConditionReason.CSVReasonCopied ? (
-                <dd>
+              <dd>
+                {operatorGroupFor(props.obj) ? (
                   <ResourceLink
-                    name={metadata.name}
+                    name={operatorGroupFor(props.obj)}
                     namespace={operatorNamespaceFor(props.obj)}
-                    kind={referenceFor(props.obj)}
+                    kind={referenceForModel(OperatorGroupModel)}
                   />
-                </dd>
-              ) : (
-                <dd>{operatorGroupFor(props.obj) || '-'}</dd>
-              )}
+                ) : (
+                  '-'
+                )}
+              </dd>
             </div>
           </div>
         </div>
