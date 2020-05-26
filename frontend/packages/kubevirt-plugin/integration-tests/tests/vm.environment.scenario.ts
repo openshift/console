@@ -1,6 +1,6 @@
 import { getSecret, getConfigMap, getServiceAccount } from './utils/mocks';
 import { createResource, deleteResource, click } from '@console/shared/src/test-utils/utils';
-import { browser, ExpectedConditions as until, Key, element, by } from 'protractor';
+import { browser, ExpectedConditions as until, Key } from 'protractor';
 import { createExampleVMViaYAML } from './utils/utils';
 import { testName } from '@console/internal-integration-tests/protractor.conf';
 import { isLoaded } from '@console/internal-integration-tests/views/crud.view';
@@ -50,10 +50,7 @@ describe('Test VM enviromnet tab', () => {
     await vmEnv.addSource(secretName);
 
     // Add Service Account
-    await click(
-      element(by.buttonText('Add Config Map, Secret or Service Account')),
-      PAGE_LOAD_TIMEOUT_SECS,
-    );
+    await click(vmEnv.addVariableButton, PAGE_LOAD_TIMEOUT_SECS);
     await addVariableFrom(serviceAccountName, null, true);
     await browser.wait(until.presenceOf(vmEnv.successAlert));
     expect(vmEnv.successAlert.isDisplayed()).toEqual(true);
@@ -80,8 +77,6 @@ describe('Test VM enviromnet tab', () => {
   it('ID(CNV-4186) Error when resource has no serial', async () => {
     await vmEnv.serialField.get(1).clear();
     await vmEnv.serialField.get(1).sendKeys('i', Key.BACK_SPACE); // workaround: for some reason clear() is not enough
-    await browser.wait(until.elementToBeClickable(vmEnv.saveBtn), PAGE_LOAD_TIMEOUT_SECS);
-    await click(vmEnv.saveBtn, PAGE_LOAD_TIMEOUT_SECS);
     await browser.wait(until.presenceOf(vmEnv.errorAlert), PAGE_LOAD_TIMEOUT_SECS);
     const errorText = await vmEnv.errorAlert.getText();
     expect(vmEnv.errorAlert.isDisplayed()).toEqual(true);
@@ -92,8 +87,6 @@ describe('Test VM enviromnet tab', () => {
     const firstSerial = await vmEnv.serialField.get(0).getAttribute('value');
     await vmEnv.serialField.get(1).clear();
     await vmEnv.serialField.get(1).sendKeys(firstSerial);
-    await browser.wait(until.elementToBeClickable(vmEnv.saveBtn), PAGE_LOAD_TIMEOUT_SECS);
-    await click(vmEnv.saveBtn, PAGE_LOAD_TIMEOUT_SECS);
     await browser.wait(until.presenceOf(vmEnv.errorAlert), PAGE_LOAD_TIMEOUT_SECS);
     expect(vmEnv.errorAlert.isDisplayed()).toEqual(true);
     const errorText = await vmEnv.errorAlert.getText();
@@ -101,10 +94,7 @@ describe('Test VM enviromnet tab', () => {
   });
 
   it('ID(CNV-4188) Cannot use the same resource more than once', async () => {
-    await click(
-      element(by.buttonText('Add All From Config Map or Secret')),
-      PAGE_LOAD_TIMEOUT_SECS,
-    );
+    await click(vmEnv.addVariableButton, PAGE_LOAD_TIMEOUT_SECS);
     await isLoaded();
     await vmEnv.dropDownBtn
       .filter(async (elem) => {
