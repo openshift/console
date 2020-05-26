@@ -7,6 +7,8 @@ import { getHostPowerStatus } from '../../../selectors';
 import { BareMetalHostModel } from '../../../models';
 import { BareMetalHostKind } from '../../../types';
 
+import './status-activity.scss';
+
 const BareMetalStatusActivity: React.FC<BareMetalStatusActivityProps> = ({ resource }) => (
   <ActivityItem>
     {getHostPowerStatus(resource)}{' '}
@@ -16,6 +18,7 @@ const BareMetalStatusActivity: React.FC<BareMetalStatusActivityProps> = ({ resou
       kind={referenceForModel(BareMetalHostModel)}
       name={getName(resource)}
       namespace={getNamespace(resource)}
+      className="bmh-status-activity"
     />
   </ActivityItem>
 );
