@@ -36,7 +36,12 @@ const ApiServerSection: React.FC = () => {
   const fieldId = getFieldId(values.type, 'res-input');
   return (
     <FormSection title="ApiServerSource" extraMargin>
-      <FormGroup fieldId={fieldId} label="Resource" isRequired>
+      <FormGroup
+        fieldId={fieldId}
+        label="Resource"
+        helperText="The list of resources to watch"
+        isRequired
+      >
         <AsyncComponent
           loader={() =>
             import('@console/internal/components/utils/name-value-editor').then(
@@ -57,6 +62,7 @@ const ApiServerSection: React.FC = () => {
         label="Mode"
         items={modeItems}
         title={modeItems.Ref}
+        helpText="The mode the receive adapter controller runs under"
         fullWidth
       />
       <ServiceAccountDropdown name="data.apiserversource.serviceAccountName" />

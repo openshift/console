@@ -5,7 +5,12 @@ import FormSection from '@console/dev-console/src/components/import/section/Form
 
 const PingSourceSection: React.FC = () => (
   <FormSection title="PingSource" extraMargin>
-    <InputField type={TextInputTypes.text} name="data.pingsource.data" label="Data" />
+    <InputField
+      type={TextInputTypes.text}
+      name="data.pingsource.data"
+      label="Data"
+      helpText="The data posted to the target function"
+    />
     <InputField
       type={TextInputTypes.text}
       name="data.pingsource.schedule"

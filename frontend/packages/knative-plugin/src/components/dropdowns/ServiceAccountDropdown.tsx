@@ -36,6 +36,7 @@ const ServiceAccountDropdown: React.FC<ServiceAccountDropdownProps & StateProps>
       dataSelector={['metadata', 'name']}
       placeholder="Select a Service Account Name"
       autocompleteFilter={autocompleteFilter}
+      helpText="The name of Service Account use to run this"
       fullWidth
       showBadge
     />
