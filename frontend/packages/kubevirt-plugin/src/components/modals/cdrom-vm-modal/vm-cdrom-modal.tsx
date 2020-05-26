@@ -8,6 +8,7 @@ import { asVM } from '../../../selectors/vm';
 import { V1alpha1DataVolume } from '../../../types/vm/disk/V1alpha1DataVolume';
 import { CDRomModal } from './cdrom-modal';
 import { WINTOOLS_CONTAINER_NAMES } from './constants';
+import { VirtualMachineInstanceModel } from '../../../models';
 
 const CDRomModalFirehose: React.FC<CDRomModalFirehoseProps> = (props) => {
   const { vmLikeEntity } = props;
@@ -26,6 +27,12 @@ const CDRomModalFirehose: React.FC<CDRomModalFirehoseProps> = (props) => {
       isList: true,
       namespace: getNamespace(asVM(vmLikeEntity)),
       prop: 'persistentVolumeClaims',
+    },
+    {
+      kind: VirtualMachineInstanceModel.kind,
+      namespace: getNamespace(asVM(vmLikeEntity)),
+      prop: 'vmis',
+      isList: true,
     },
   ];
 

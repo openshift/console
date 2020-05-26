@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { Alert } from '@patternfly/react-core';
 import {
   Firehose,
   StatusBox,
@@ -19,14 +18,21 @@ import { VirtualMachineInstanceModel, VirtualMachineModel } from '../../models';
 import { getServicesForVmi } from '../../selectors/service';
 import { VMResourceSummary, VMDetailsList, VMSchedulingList } from './vm-resource';
 import { VMUsersList } from './vm-users';
-import { VMTabProps } from './types';
 import { useGuestAgentInfo } from '../../hooks/use-guest-agent-info';
 import { GuestAgentInfoWrapper } from '../../k8s/wrapper/vm/guest-agent-info/guest-agent-info-wrapper';
+import { VMTabProps, IsPendingChange } from './types';
 import { getVMStatus } from '../../statuses/vm/vm-status';
 import { VMStatusBundle } from '../../statuses/vm/types';
 import { isWindows } from '../../selectors/vm/combined';
 import { isVM, isVMI } from '../../selectors/check-type';
 import { HashAnchor } from '../hash-anchor/hash-anchor';
+import { Alert, AlertVariant, List, ListItem, Button } from '@patternfly/react-core';
+import { detectNextRunChanges } from '../../selectors/vm-like/nextRunChanges';
+import { VMCDRomModal } from '../modals/cdrom-vm-modal/vm-cdrom-modal';
+import { vmFlavorModal } from '../modals/vm-flavor-modal/vm-flavor-modal';
+import { BootOrderModal } from '../modals/boot-order-modal/boot-order-modal';
+
+import './vm-details.scss';
 
 export const VMDetailsFirehose: React.FC<VMTabProps> = ({
   obj: objProp,
@@ -98,6 +104,24 @@ export const VMDetails: React.FC<VMDetailsProps> = (props) => {
       one.
     </Alert>
   );
+  const vmConfChanges = detectNextRunChanges(vm, vmi);
+  const isVMRequireRestart = !!vmi && Object.values(vmConfChanges).some((x) => !!x);
+
+  const openModal = (key) => {
+    switch (key) {
+      case IsPendingChange.flavor:
+        vmFlavorModal({ vmLike: vm, blocking: true });
+        break;
+      case IsPendingChange.cdroms:
+        VMCDRomModal({ vmLikeEntity: vm, modalClassName: 'modal-lg' });
+        break;
+      case IsPendingChange.bootOrder:
+        BootOrderModal({ vmLikeEntity: vm, modalClassName: 'modal-lg' });
+        break;
+      default:
+        break;
+    }
+  };
 
   return (
     <StatusBox data={vmiLike} {...restProps}>
@@ -106,6 +130,27 @@ export const VMDetails: React.FC<VMDetailsProps> = (props) => {
         {OSMismatchAlert}
         <HashAnchor hash="details" />
         <SectionHeading text={`${kindObj.label} Details`} />
+        {kindObj === VirtualMachineModel && isVMRequireRestart && (
+          <Alert
+            title="Pending Changes"
+            isInline
+            variant={AlertVariant.warning}
+            className="kv-vm__pending-changes-alert"
+          >
+            <List>
+              {Object.keys(vmConfChanges).map(
+                (key) =>
+                  vmConfChanges[key] && (
+                    <ListItem key={key}>
+                      <Button onClick={() => openModal(key)} isInline variant="link">
+                        {key}
+                      </Button>
+                    </ListItem>
+                  ),
+              )}
+            </List>
+          </Alert>
+        )}
         <div className="row">
           <div className="col-sm-6">
             <VMResourceSummary
