@@ -37,7 +37,7 @@ describe('topology model ', () => {
       ALL_APPLICATIONS_KEY,
       filters,
     );
-    expect(newModel.nodes.filter((n) => !n.group).length).toBe(6);
+    expect(newModel.nodes.filter((n) => !n.group).length).toBe(7);
     expect(newModel.nodes.filter((n) => n.group).length).toBe(3);
     expect(newModel.edges.length).toBe(1);
   });
@@ -51,7 +51,7 @@ describe('topology model ', () => {
       sampleHelmResourcesMap,
     );
     const newModel = topologyModelFromDataModel(topologyTransformedData, 'application-1', filters);
-    expect(newModel.nodes.filter((n) => !n.group).length).toBe(6);
+    expect(newModel.nodes.filter((n) => !n.group).length).toBe(7);
     expect(newModel.nodes.filter((n) => !n.group && n.visible).length).toBe(2);
     expect(newModel.nodes.filter((n) => n.group).length).toBe(3);
     expect(newModel.nodes.filter((n) => n.group && n.visible).length).toBe(1);

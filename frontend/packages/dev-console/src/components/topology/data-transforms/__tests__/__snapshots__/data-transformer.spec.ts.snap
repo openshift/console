@@ -59,6 +59,11 @@ Object {
         "name": "nodejs",
         "type": "workload",
       },
+      Object {
+        "id": "02f680df-b69e-5254003f9382",
+        "name": "nodejs-ex",
+        "type": "workload",
+      },
     ],
   },
   "topology": Object {
@@ -193,6 +198,25 @@ Object {
                 },
                 "spec": Object {},
               },
+              "triggers": Array [
+                Object {
+                  "imageChangeParams": Object {
+                    "automatic": true,
+                    "containerNames": Array [
+                      "nodejs",
+                    ],
+                    "from": Object {
+                      "kind": "ImageStreamTag",
+                      "name": "nodejs:latest",
+                      "namespace": "testproject1",
+                    },
+                  },
+                  "type": "ImageChange",
+                },
+                Object {
+                  "type": "ConfigChange",
+                },
+              ],
             },
             "status": Object {
               "availableReplicas": 1,
@@ -301,7 +325,44 @@ Object {
       ],
       "resources": Object {
         "alerts": Object {},
-        "buildConfigs": Array [],
+        "buildConfigs": Array [
+          Object {
+            "builds": Array [],
+            "kind": "BuildConfig",
+            "metadata": Object {
+              "creationTimestamp": "2019-04-26T10:35:29Z",
+              "labels": Object {
+                "app": "nodejs",
+              },
+              "name": "nodejs",
+              "namespace": "testproject3",
+              "resourceVersion": "1160891",
+              "selfLink": "/apis/build.openshift.io/v1/namespaces/testproject3/buildconfigs/nodejs",
+              "uid": "02fc958f-680f-11e9-b69e-5254003f9382",
+            },
+            "spec": Object {
+              "output": Object {
+                "to": Object {
+                  "kind": "ImageStreamTag",
+                  "name": "nodejs:latest",
+                },
+              },
+              "triggers": Array [
+                Object {
+                  "generic": Object {},
+                  "type": "Generic",
+                },
+                Object {
+                  "github": Object {},
+                  "type": "Github",
+                },
+              ],
+            },
+            "status": Object {
+              "lastVersion": 1,
+            },
+          },
+        ],
         "current": Object {
           "alerts": Object {},
           "obj": Object {
@@ -427,6 +488,25 @@ Object {
               },
               "spec": Object {},
             },
+            "triggers": Array [
+              Object {
+                "imageChangeParams": Object {
+                  "automatic": true,
+                  "containerNames": Array [
+                    "nodejs",
+                  ],
+                  "from": Object {
+                    "kind": "ImageStreamTag",
+                    "name": "nodejs:latest",
+                    "namespace": "testproject1",
+                  },
+                },
+                "type": "ImageChange",
+              },
+              Object {
+                "type": "ConfigChange",
+              },
+            ],
           },
           "status": Object {
             "availableReplicas": 1,
@@ -575,6 +655,185 @@ Object {
                 "observedGeneration": 2,
                 "readyReplicas": 1,
                 "replicas": 1,
+              },
+            }
+          }
+        />,
+      },
+      "type": "workload",
+    },
+    "02f680df-b69e-5254003f9382": Object {
+      "data": Object {
+        "build": undefined,
+        "builderImage": "test-file-stub",
+        "connectedPipeline": Object {
+          "pipeline": undefined,
+          "pipelineRuns": Array [],
+        },
+        "donutStatus": Object {
+          "current": undefined,
+          "dc": Object {
+            "apiVersion": "apps.openshift.io/v1",
+            "kind": "DeploymentConfig",
+            "metadata": Object {
+              "annotations": Object {
+                "app.openshift.io/vcs-ref": "master",
+                "app.openshift.io/vcs-uri": "https://github.com/redhat-developer/topology-example",
+              },
+              "creationTimestamp": "2019-04-22T11:58:33Z",
+              "generation": 2,
+              "labels": Object {
+                "app": "nodejs-ex",
+                "app.kubernetes.io/instance": "nodejs-ex",
+                "app.openshift.io/runtime": "nodejs",
+              },
+              "name": "nodejs-ex",
+              "namespace": "testproject1",
+              "resourceVersion": "732186",
+              "selfLink": "/apis/apps.openshift.io/v1/namespaces/testproject1/deploymentconfigs/nodejs",
+              "uid": "02f680df-b69e-5254003f9382",
+            },
+            "spec": Object {
+              "strategy": Object {
+                "type": "Rolling",
+              },
+              "template": Object {
+                "metadata": Object {
+                  "creationTimestamp": null,
+                  "labels": Object {
+                    "app": "nodejs-ex",
+                    "deploymentconfig": "nodejs-ex",
+                  },
+                },
+                "spec": Object {},
+              },
+            },
+            "status": Object {
+              "availableReplicas": 1,
+              "latestVersion": 1,
+              "readyReplicas": 1,
+              "replicas": 1,
+              "unavailableReplicas": 0,
+              "updatedReplicas": 1,
+            },
+          },
+          "isRollingOut": undefined,
+          "pods": Array [],
+          "previous": undefined,
+        },
+        "editURL": undefined,
+        "isKnativeResource": false,
+        "kind": "apps.openshift.io~v1~DeploymentConfig",
+        "url": null,
+        "vcsURI": "https://github.com/redhat-developer/topology-example",
+      },
+      "id": "02f680df-b69e-5254003f9382",
+      "name": "nodejs-ex",
+      "operatorBackedService": false,
+      "pods": Array [],
+      "resources": Object {
+        "alerts": Object {},
+        "buildConfigs": Array [],
+        "current": undefined,
+        "isMonitorable": true,
+        "isOperatorBackedService": false,
+        "isRollingOut": undefined,
+        "obj": Object {
+          "apiVersion": "apps.openshift.io/v1",
+          "kind": "DeploymentConfig",
+          "metadata": Object {
+            "annotations": Object {
+              "app.openshift.io/vcs-ref": "master",
+              "app.openshift.io/vcs-uri": "https://github.com/redhat-developer/topology-example",
+            },
+            "creationTimestamp": "2019-04-22T11:58:33Z",
+            "generation": 2,
+            "labels": Object {
+              "app": "nodejs-ex",
+              "app.kubernetes.io/instance": "nodejs-ex",
+              "app.openshift.io/runtime": "nodejs",
+            },
+            "name": "nodejs-ex",
+            "namespace": "testproject1",
+            "resourceVersion": "732186",
+            "selfLink": "/apis/apps.openshift.io/v1/namespaces/testproject1/deploymentconfigs/nodejs",
+            "uid": "02f680df-b69e-5254003f9382",
+          },
+          "spec": Object {
+            "strategy": Object {
+              "type": "Rolling",
+            },
+            "template": Object {
+              "metadata": Object {
+                "creationTimestamp": null,
+                "labels": Object {
+                  "app": "nodejs-ex",
+                  "deploymentconfig": "nodejs-ex",
+                },
+              },
+              "spec": Object {},
+            },
+          },
+          "status": Object {
+            "availableReplicas": 1,
+            "latestVersion": 1,
+            "readyReplicas": 1,
+            "replicas": 1,
+            "unavailableReplicas": 0,
+            "updatedReplicas": 1,
+          },
+        },
+        "pods": Array [],
+        "previous": undefined,
+        "routes": Array [],
+        "services": Array [],
+        "status": <Unknown
+          desired={undefined}
+          ready={1}
+          resource={
+            Object {
+              "apiVersion": "apps.openshift.io/v1",
+              "kind": "DeploymentConfig",
+              "metadata": Object {
+                "annotations": Object {
+                  "app.openshift.io/vcs-ref": "master",
+                  "app.openshift.io/vcs-uri": "https://github.com/redhat-developer/topology-example",
+                },
+                "creationTimestamp": "2019-04-22T11:58:33Z",
+                "generation": 2,
+                "labels": Object {
+                  "app": "nodejs-ex",
+                  "app.kubernetes.io/instance": "nodejs-ex",
+                  "app.openshift.io/runtime": "nodejs",
+                },
+                "name": "nodejs-ex",
+                "namespace": "testproject1",
+                "resourceVersion": "732186",
+                "selfLink": "/apis/apps.openshift.io/v1/namespaces/testproject1/deploymentconfigs/nodejs",
+                "uid": "02f680df-b69e-5254003f9382",
+              },
+              "spec": Object {
+                "strategy": Object {
+                  "type": "Rolling",
+                },
+                "template": Object {
+                  "metadata": Object {
+                    "creationTimestamp": null,
+                    "labels": Object {
+                      "app": "nodejs-ex",
+                      "deploymentconfig": "nodejs-ex",
+                    },
+                  },
+                  "spec": Object {},
+                },
+              },
+              "status": Object {
+                "availableReplicas": 1,
+                "latestVersion": 1,
+                "readyReplicas": 1,
+                "replicas": 1,
+                "unavailableReplicas": 0,
+                "updatedReplicas": 1,
               },
             }
           }

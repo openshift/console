@@ -34,7 +34,6 @@ import { getOperatorBackedServiceKindMap } from '@console/shared';
 import { CREATE_APPLICATION_KEY, UNASSIGNED_KEY } from '../const';
 import { TopologyDataObject, ConnectsToData } from '../components/topology/topology-types';
 import { detectGitType } from '../components/import/import-validation-utils';
-import { GitTypes } from '../components/import/import-types';
 import { ServiceBindingRequestModel } from '../models';
 
 export const sanitizeApplicationValue = (
@@ -406,37 +405,65 @@ export const removeResourceConnection = (
   });
 };
 
+const safeKill = async (model: K8sKind, obj: K8sResourceKind) => {
+  const resp = await checkAccess({
+    group: model.apiGroup,
+    resource: model.plural,
+    verb: 'delete',
+    name: obj.metadata.name,
+    namespace: obj.metadata.namespace,
+  });
+  if (resp.status.allowed) {
+    return k8sKill(model, obj);
+  }
+  return null;
+};
+
+const deleteWebhooks = (
+  resource: K8sResourceKind,
+  workload: TopologyDataObject<{ isKnativeResource?: boolean }>,
+) => {
+  const isKnativeResource = workload?.data?.isKnativeResource ?? false;
+  const deploymentsAnnotations = resource.metadata?.annotations ?? {};
+  const gitType = detectGitType(deploymentsAnnotations['app.openshift.io/vcs-uri']);
+  const buildConfigs = workload?.resources?.buildConfigs;
+  return buildConfigs?.reduce((requests, bc) => {
+    const triggers = bc.spec?.triggers ?? [];
+    const reqs = triggers.reduce((a, t) => {
+      let obj: K8sResourceKind;
+      const webhookType = t.generic ? 'generic' : gitType;
+      const webhookTypeObj = t.generic || (!isKnativeResource && t[gitType]);
+      if (webhookTypeObj) {
+        obj = {
+          ...resource,
+          metadata: {
+            name:
+              webhookTypeObj.secretReference?.name ??
+              `${resource.metadata.name}-${webhookType}-webhook-secret`,
+            namespace: resource.metadata.namespace,
+          },
+        };
+      }
+      return obj ? [...a, safeKill(SecretModel, obj)] : a;
+    }, []);
+    return [...requests, ...reqs];
+  }, []);
+};
+
 export const cleanUpWorkload = (
   resource: K8sResourceKind,
   workload: TopologyDataObject,
 ): Promise<K8sResourceKind[]> => {
   const reqs = [];
-  const webhooks = [];
-  let webhooksAvailable = false;
-  const deleteModels = [BuildConfigModel, ServiceModel, RouteModel];
-  const knativeDeleteModels = [
-    KnativeServiceModel,
-    KnativeRouteModel,
-    BuildConfigModel,
-    ImageStreamModel,
-  ];
-  const deploymentsAnnotations = _.get(resource, 'metadata.annotations', {});
-  const isKnativeResource = _.get(workload, 'data.isKnativeResource', false);
-  const gitType = detectGitType(deploymentsAnnotations['app.openshift.io/vcs-uri']);
+  const isBuildConfigPresent = !_.isEmpty(workload?.resources?.buildConfigs);
+
+  const deleteModels = [ServiceModel, RouteModel];
+  const knativeDeleteModels = [KnativeServiceModel, KnativeRouteModel, ImageStreamModel];
+  if (isBuildConfigPresent) {
+    deleteModels.push(BuildConfigModel);
+    knativeDeleteModels.push(BuildConfigModel);
+  }
   const resourceData = _.cloneDeep(resource);
-  const safeKill = async (model: K8sKind, obj: K8sResourceKind) => {
-    const resp = await checkAccess({
-      group: model.apiGroup,
-      resource: model.plural,
-      verb: 'delete',
-      name: obj.metadata.name,
-      namespace: obj.metadata.namespace,
-    });
-    if (resp.status.allowed) {
-      return k8sKill(model, obj);
-    }
-    return null;
-  };
   const deleteRequest = (model: K8sKind, resourceObj: K8sResourceKind) => {
     const req = safeKill(model, resourceObj);
     req && reqs.push(req);
@@ -456,31 +483,14 @@ export const cleanUpWorkload = (
       deleteRequest(modelFor(resource.kind), resource);
       batchDeleteRequests(deleteModels, resource);
       deleteRequest(ImageStreamModel, resource); // delete imageStream
-      webhooksAvailable = true;
       break;
     case KnativeServiceModel.kind:
       batchDeleteRequests(knativeDeleteModels, resourceData);
-      webhooksAvailable = true;
       break;
     default:
       break;
   }
-  if (webhooksAvailable) {
-    webhooks.push('generic');
-    if (!isKnativeResource && gitType !== GitTypes.unsure) {
-      webhooks.push(gitType);
-    }
-  }
-  webhooks.forEach((hookName) => {
-    const obj = {
-      ...resource,
-      metadata: {
-        name: `${resourceData.metadata.name}-${hookName}-webhook-secret`,
-        namespace: resourceData.metadata.namespace,
-      },
-    };
-    deleteRequest(SecretModel, obj);
-  });
+  isBuildConfigPresent && reqs.push(...deleteWebhooks(resource, workload));
   return Promise.all(reqs);
 };
 

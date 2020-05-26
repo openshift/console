@@ -65,6 +65,68 @@ export const sampleDeploymentConfigs: FirehoseResult = {
           },
           spec: {},
         },
+        triggers: [
+          {
+            type: 'ImageChange',
+            imageChangeParams: {
+              automatic: true,
+              containerNames: ['nodejs'],
+              from: {
+                kind: 'ImageStreamTag',
+                namespace: 'testproject1',
+                name: 'nodejs:latest',
+              },
+            },
+          },
+          {
+            type: 'ConfigChange',
+          },
+        ],
+      },
+      status: {
+        availableReplicas: 1,
+        unavailableReplicas: 0,
+        latestVersion: 1,
+        updatedReplicas: 1,
+        replicas: 1,
+        readyReplicas: 1,
+      },
+    },
+    {
+      kind: 'DeploymentConfig',
+      apiVersion: 'apps/v1',
+      metadata: {
+        name: 'nodejs-ex',
+        namespace: 'testproject1',
+        selfLink: '/apis/apps.openshift.io/v1/namespaces/testproject1/deploymentconfigs/nodejs',
+        uid: '02f680df-b69e-5254003f9382',
+        resourceVersion: '732186',
+        generation: 2,
+        creationTimestamp: '2019-04-22T11:58:33Z',
+        labels: {
+          app: 'nodejs-ex',
+          'app.kubernetes.io/instance': 'nodejs-ex',
+          'app.openshift.io/runtime': 'nodejs',
+        },
+        annotations: {
+          'app.openshift.io/vcs-uri': 'https://github.com/redhat-developer/topology-example',
+          'app.openshift.io/vcs-ref': 'master',
+        },
+      },
+      spec: {
+        strategy: {
+          type: 'Rolling',
+        },
+        template: {
+          metadata: {
+            creationTimestamp: null,
+            labels: {
+              app: 'nodejs-ex',
+              deploymentconfig: 'nodejs-ex',
+            },
+          },
+          spec: {},
+        },
       },
       status: {
         availableReplicas: 1,
@@ -1138,7 +1200,18 @@ export const sampleBuildConfigs: FirehoseResult = {
           app: 'nodejs',
         },
       },
-      spec: {},
+      spec: {
+        output: {
+          to: {
+            kind: 'ImageStreamTag',
+            name: 'nodejs:latest',
+          },
+        },
+        triggers: [
+          { type: 'Generic', generic: {} },
+          { type: 'Github', github: {} },
+        ],
+      },
       status: {
         lastVersion: 1,
       },

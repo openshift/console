@@ -75,7 +75,29 @@ describe('ApplicationUtils ', () => {
       .catch((err) => fail(err));
   });
 
-  it('Should delete all the specific models related to knative deployments', (done) => {
+  it('Should delete all the specific models related to deployment config if the build config is not present i.e. for resource created through deploy image form', (done) => {
+    const { resource, topologyTransformedData } = getTopologyData(
+      MockResources,
+      ['deploymentConfigs'],
+      'nodejs-ex',
+    );
+
+    cleanUpWorkload(resource, topologyTransformedData)
+      .then(() => {
+        const allArgs = spy.calls.allArgs();
+        const removedModels = allArgs.map((arg) => arg[0]);
+
+        expect(spy.calls.count()).toEqual(4);
+        expect(removedModels).toContain(DeploymentConfigModel);
+        expect(removedModels).toContain(ImageStreamModel);
+        expect(removedModels).toContain(ServiceModel);
+        expect(removedModels).toContain(RouteModel);
+        done();
+      })
+      .catch((err) => fail(err));
+  });
+
+  it('Should delete all the specific models related to knative deployments if the build config is not present i.e. for resource created through deploy image form', (done) => {
     const { resource, topologyTransformedData } = getTopologyData(
       MockKnativeResources,
       ['deployments'],
@@ -85,12 +107,10 @@ describe('ApplicationUtils ', () => {
       .then(() => {
         const allArgs = spy.calls.allArgs();
         const removedModels = allArgs.map((arg) => arg[0]);
-        expect(spy.calls.count()).toEqual(5);
+        expect(spy.calls.count()).toEqual(3);
         expect(removedModels).toContain(KnativeServiceModel);
         expect(removedModels).toContain(KnativeRouteModel);
-        expect(removedModels).toContain(BuildConfigModel);
         expect(removedModels).toContain(ImageStreamModel);
-        expect(removedModels.filter((model) => model.kind === 'Secret')).toHaveLength(1);
         done();
       })
       .catch((err) => fail(err));
