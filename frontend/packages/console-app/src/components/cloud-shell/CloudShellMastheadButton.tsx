@@ -9,6 +9,7 @@ import { connectToFlags, WithFlagsProps } from '@console/internal/reducers/featu
 import { FLAG_DEVWORKSPACE } from '../../consts';
 import { toggleCloudShellExpanded } from '../../redux/actions/cloud-shell-actions';
 import cloudShellConfirmationModal from './cloudShellConfirmationModal';
+import { checkTerminalAvailable } from './cloud-shell-utils';
 
 type DispatchProps = {
   onClick: () => void;
@@ -21,16 +22,40 @@ type StateProps = {
 type Props = WithFlagsProps & StateProps & DispatchProps;
 
 const ClouldShellMastheadButton: React.FC<Props> = ({ flags, onClick, open }) => {
+  const [terminalAvailable, setTerminalAvailable] = React.useState(false);
+  const flagEnabled = flags[FLAG_DEVWORKSPACE];
+  React.useEffect(() => {
+    let mounted = true;
+    if (flagEnabled) {
+      checkTerminalAvailable()
+        .then(() => {
+          if (mounted) {
+            setTerminalAvailable(true);
+          }
+        })
+        .catch(() => {
+          if (mounted) {
+            setTerminalAvailable(false);
+          }
+        });
+    } else {
+      setTerminalAvailable(false);
+    }
+    return () => {
+      mounted = false;
+    };
+  }, [flagEnabled]);
+
+  if (!flagEnabled || !terminalAvailable) {
+    return null;
+  }
+
   const toggleTerminal = () => {
     if (open) {
       return cloudShellConfirmationModal(onClick);
     }
     return onClick();
   };
-
-  if (!flags[FLAG_DEVWORKSPACE]) {
-    return null;
-  }
 
   return (
     <ToolbarItem>

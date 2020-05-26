@@ -1,6 +1,6 @@
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { getRandomChars } from '@console/shared';
-import { coFetchJSON } from '@console/internal/co-fetch';
+import { coFetchJSON, coFetch } from '@console/internal/co-fetch';
 
 type environment = {
   value: string;
@@ -62,26 +62,13 @@ export const newCloudShellWorkSpace = (name: string, namespace: string): CloudSh
     devfile: {
       apiVersion: '1.0.0',
       metadata: {
-        name,
+        name: 'command-line-terminal',
       },
       components: [
         {
           alias: 'command-line-terminal',
           type: 'cheEditor',
           id: 'che-incubator/command-line-terminal/4.5.0',
-        },
-        {
-          type: 'dockerimage',
-          memoryLimit: '256Mi',
-          alias: 'dev',
-          image: 'registry.redhat.io/codeready-workspaces/plugin-openshift-rhel8:2.1',
-          args: ['tail', '-f', '/dev/null'],
-          env: [
-            {
-              value: '\\[\\e[34m\\]>\\[\\e[m\\]\\[\\e[33m\\]>\\[\\e[m\\]',
-              name: 'PS1',
-            },
-          ],
         },
       ],
     },
@@ -102,3 +89,9 @@ export const initTerminal = (
   };
   return coFetchJSON.post(url, payload);
 };
+
+export const sendActivityTick = (workspaceName: string, namespace: string): void => {
+  coFetch(`/api/terminal/proxy/${namespace}/${workspaceName}/activity/tick`, { method: 'POST' });
+};
+
+export const checkTerminalAvailable = () => coFetch('/api/terminal/available');

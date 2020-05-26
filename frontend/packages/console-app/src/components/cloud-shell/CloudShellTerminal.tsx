@@ -59,7 +59,9 @@ const CloudShellTerminal: React.FC<CloudShellTerminalProps> = ({ user, onCancel 
 
   if (Array.isArray(data)) {
     workspace = data.find(
-      (d) => d?.metadata?.annotations?.[CLOUD_SHELL_IMMUTABLE_ANNOTATION] === 'true',
+      (d) =>
+        d?.metadata?.annotations?.[CLOUD_SHELL_IMMUTABLE_ANNOTATION] === 'true' &&
+        !d?.metadata?.deletionTimestamp,
     );
     workspacePhase = workspace?.status?.phase;
     workspaceName = workspace?.metadata?.name;
@@ -69,13 +71,29 @@ const CloudShellTerminal: React.FC<CloudShellTerminalProps> = ({ user, onCancel 
   React.useEffect(() => {
     let unmounted = false;
 
+    setInitError(undefined);
     if (workspacePhase === 'Running') {
       initTerminal(username, workspaceName, workspaceNamespace)
         .then((res: TerminalInitData) => {
           if (!unmounted) setInitData(res);
         })
-        .catch(() => {
-          if (!unmounted) setInitError('Failed to connect to your OpenShift command line terminal');
+        .catch((e) => {
+          if (!unmounted) {
+            const defaultError = 'Failed to connect to your OpenShift command line terminal';
+            if (e?.response?.headers?.get('Content-Type')?.startsWith('text/plain')) {
+              // eslint-disable-next-line promise/no-nesting
+              e.response
+                .text()
+                .then((text) => {
+                  setInitError(text);
+                })
+                .catch(() => {
+                  setInitError(defaultError);
+                });
+            } else {
+              setInitError(defaultError);
+            }
+          }
         });
     }
 
@@ -106,6 +124,7 @@ const CloudShellTerminal: React.FC<CloudShellTerminalProps> = ({ user, onCancel 
     return (
       <div className="co-cloudshell-terminal__container">
         <CloudshellExec
+          workspaceName={workspaceName}
           namespace={workspaceNamespace}
           container={initData.container}
           podname={initData.pod}
