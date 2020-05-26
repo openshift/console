@@ -33,13 +33,14 @@ import {
   CloudInitDataHelper,
   formAllowedKeys,
 } from '../../../../k8s/wrapper/vm/cloud-init-data-helper';
-
-import './cloud-init-tab.scss';
 import {
   hasStepCreateDisabled,
   hasStepDeleteDisabled,
   hasStepUpdateDisabled,
 } from '../../selectors/immutable/wizard-selectors';
+
+import '../../create-vm-wizard-footer.scss';
+import './cloud-init-tab.scss';
 
 type CustomScriptProps = {
   id: string;
@@ -274,7 +275,7 @@ const CloudInitTabComponent: React.FC<ResultTabComponentProps> = ({
     }
   };
   return (
-    <div className={isForm && 'co-m-pane__body co-m-pane__form'}>
+    <div className={isForm && 'co-m-pane__body co-m-pane__form kubevirt-create-vm-modal__form'}>
       {!isDisabled && !isEditable && (
         <Errors
           endMargin

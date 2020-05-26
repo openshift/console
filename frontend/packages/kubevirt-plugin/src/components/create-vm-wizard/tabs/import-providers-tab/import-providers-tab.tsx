@@ -13,6 +13,8 @@ import { VMWareImportProvider } from './providers/vmware-import-provider/vmware-
 import { iGetImportProviders } from '../../selectors/immutable/import-providers';
 import { OvirtImportProvider } from './providers/ovirt-import-provider/ovirt-import-provider';
 
+import '../../create-vm-wizard-footer.scss';
+
 class ImportProvidersTabComponent extends React.Component<ImportProvidersTabComponentProps> {
   getField = (key: ImportProvidersField) => iGet(this.props.importProviders, key);
 
@@ -28,7 +30,7 @@ class ImportProvidersTabComponent extends React.Component<ImportProvidersTabComp
     const { wizardReduxID } = this.props;
 
     return (
-      <Form className="co-m-pane__body co-m-pane__form">
+      <Form className="co-m-pane__body co-m-pane__form kubevirt-create-vm-modal__form">
         <FormFieldMemoRow
           field={this.getField(ImportProvidersField.PROVIDER)}
           fieldType={FormFieldType.SELECT}
