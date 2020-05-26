@@ -315,6 +315,7 @@ const Label = ({ k, v }) => (
 const queryBrowserURL = (query) => `/monitoring/query-browser?query0=${encodeURIComponent(query)}`;
 
 const Graph_: React.FC<GraphProps> = ({
+  deleteAll,
   filterLabels = undefined,
   hideGraphs,
   patchQuery,
@@ -326,6 +327,9 @@ const Graph_: React.FC<GraphProps> = ({
   React.useEffect(() => {
     patchQuery(0, { query });
   }, [patchQuery, query]);
+
+  // Clear queries on unmount
+  React.useEffect(() => deleteAll, [deleteAll]);
 
   const queries = React.useMemo(() => [query], [query]);
 
@@ -347,7 +351,10 @@ const Graph_: React.FC<GraphProps> = ({
     />
   );
 };
-const Graph = connect(graphStateToProps, { patchQuery: UIActions.queryBrowserPatchQuery })(Graph_);
+const Graph = connect(graphStateToProps, {
+  deleteAll: UIActions.queryBrowserDeleteAllQueries,
+  patchQuery: UIActions.queryBrowserPatchQuery,
+})(Graph_);
 
 const tableSilenceClasses = [
   classNames('col-sm-5', 'col-xs-8'),
@@ -1927,6 +1934,7 @@ type AlertingPageProps = {
 };
 
 type GraphProps = {
+  deleteAll: () => never;
   filterLabels?: PrometheusLabels;
   hideGraphs: boolean;
   patchQuery: (index: number, patch: QueryObj) => any;
