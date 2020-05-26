@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Button, Flex, FlexItem, FlexItemModifiers } from '@patternfly/react-core';
 import { warnYAML } from './modals';
-import { DevPreviewBadge } from '@console/shared';
+import { TechPreviewBadge } from '@console/shared';
 import { Pipeline } from '../../../utils/pipeline-augment';
 import { goToYAML } from './utils';
 
@@ -32,7 +32,7 @@ const PipelineBuilderHeader: React.FC<PipelineBuilderHeaderProps> = (props) => {
           </Button>
         </FlexItem>
         <FlexItem>
-          <DevPreviewBadge />
+          <TechPreviewBadge />
         </FlexItem>
       </Flex>
       <hr />
