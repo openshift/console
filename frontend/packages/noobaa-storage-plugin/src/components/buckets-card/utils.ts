@@ -15,6 +15,6 @@ const OBC_STATUS_GROUP_MAPPING = {
 };
 
 export const getObStatusGroups: StatusGroupMapper = (resources) =>
-  getStatusGroups(resources, OB_STATUS_GROUP_MAPPING, (ob) => ob.status.phase, 'ob-status');
+  getStatusGroups(resources, OB_STATUS_GROUP_MAPPING, (ob) => ob?.status?.phase, 'ob-status');
 export const getObcStatusGroups: StatusGroupMapper = (resources) =>
-  getStatusGroups(resources, OBC_STATUS_GROUP_MAPPING, (obc) => obc.status.phase, 'obc-status');
+  getStatusGroups(resources, OBC_STATUS_GROUP_MAPPING, (obc) => obc?.status?.phase, 'obc-status');
