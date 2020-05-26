@@ -56,7 +56,7 @@ describe('Test VM overview', () => {
       os: basicVMConfig.operatingSystem,
       profile: basicVMConfig.workloadProfile,
       template: NOT_AVAILABLE,
-      bootOrder: ['rootdisk (Disk)', 'nic0 (NIC)', 'cloudinitdisk (Disk)'],
+      bootOrder: ['rootdisk (Disk)', 'nic-0 (NIC)', 'cloudinitdisk (Disk)'],
       flavorConfig: 'Tiny: 1 vCPU, 1 GiB Memory',
       ip: NOT_AVAILABLE,
       pod: NOT_AVAILABLE,

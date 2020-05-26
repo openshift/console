@@ -71,7 +71,7 @@ Object.freeze(basicVMConfig.flavorConfig);
 Object.freeze(basicVMConfig);
 
 export const defaultWizardPodNetworkingInterface = {
-  name: 'nic0',
+  name: 'nic-0',
   mac: '-',
   model: NIC_MODEL.VirtIO,
   type: NIC_TYPE.masquerade,
@@ -188,7 +188,7 @@ function getMetadata(
   const metadata = {
     name: vmName,
     annotations: {
-      'name.os.template.kubevirt.io/rhel7.6': 'Red Hat Enterprise Linux 7.6',
+      'name.os.template.kubevirt.io/rhel7.8': 'Red Hat Enterprise Linux 7.0 or higher',
       description: namespace,
     },
     finalizers,
@@ -315,7 +315,7 @@ function getMetadata(
           {
             bootOrder: 2,
             masquerade: {},
-            name: 'nic0',
+            name: 'nic-0',
             model: 'virtio',
           },
         ],
@@ -331,7 +331,7 @@ function getMetadata(
     terminationGracePeriodSeconds: 0,
     networks: [
       {
-        name: 'nic0',
+        name: 'nic-0',
         pod: {},
       },
     ],

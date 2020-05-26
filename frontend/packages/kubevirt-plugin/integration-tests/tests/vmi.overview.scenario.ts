@@ -59,7 +59,7 @@ describe('Test VMI Details', () => {
       description: testName,
       os: basicVMConfig.operatingSystem,
       profile: basicVMConfig.workloadProfile,
-      bootOrderTexts: ['rootdisk (Disk)', 'nic0 (NIC)', 'cloudinitdisk (Disk)'],
+      bootOrderTexts: ['rootdisk (Disk)', 'nic-0 (NIC)', 'cloudinitdisk (Disk)'],
       flavorText: 'Tiny: 1 vCPU, 1 GiB Memory',
     };
 

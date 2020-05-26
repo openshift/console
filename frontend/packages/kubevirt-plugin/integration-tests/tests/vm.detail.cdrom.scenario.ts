@@ -9,6 +9,7 @@ import {
 } from '@console/shared/src/test-utils/utils';
 import * as editCdView from '../views/dialogs/editCDView';
 import * as virtualMachineView from '../views/virtualMachine.view';
+import { saveButton } from '../views/kubevirtUIResource.view';
 import { VM_CREATE_AND_EDIT_TIMEOUT_SECS, STORAGE_CLASS, NOT_AVAILABLE } from './utils/consts';
 import { selectOptionByOptionValue, getRandStr } from './utils/utils';
 import { VirtualMachine } from './models/virtualMachine';
@@ -45,12 +46,12 @@ describe('KubeVirt VM detail - edit cdroms', () => {
       await vm.modalEditCDRoms();
 
       await click(editCdView.cdAddBtn);
-      await click(editCdView.saveButton);
+      await click(saveButton);
       await browser.wait(until.presenceOf(editCdView.diskSummary));
 
       await vm.modalEditCDRoms();
       await click(editCdView.cdDeleteBtn);
-      await click(editCdView.saveButton);
+      await click(saveButton);
       await browser.wait(
         until.textToBePresentInElement(
           virtualMachineView.vmDetailCd(vm.namespace, vm.name),
@@ -69,7 +70,7 @@ describe('KubeVirt VM detail - edit cdroms', () => {
 
       await click(editCdView.cdAddBtn);
       await click(editCdView.cdAddBtn);
-      await click(editCdView.saveButton);
+      await click(saveButton);
       await browser.wait(until.presenceOf(editCdView.diskSummary));
 
       await vm.modalEditCDRoms();
@@ -80,7 +81,7 @@ describe('KubeVirt VM detail - edit cdroms', () => {
       await selectOptionByOptionValue(editCdView.cdStorageClassSelect(1), STORAGE_CLASS);
       await selectOptionByOptionValue(editCdView.cdTypeSelect(2), 'pvc');
       await selectOptionByOptionValue(editCdView.cdPVCSelect(2), testDataVolume.metadata.name);
-      await click(editCdView.saveButton);
+      await click(saveButton);
 
       await browser.wait(
         until.textToBePresentInElement(editCdView.diskSummary, testDataVolume.metadata.name),
