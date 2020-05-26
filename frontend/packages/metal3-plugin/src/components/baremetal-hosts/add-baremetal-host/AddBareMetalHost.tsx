@@ -12,6 +12,7 @@ import { BareMetalHostKind } from '../../../types';
 import {
   getHostBMCAddress,
   getHostBootMACAddress,
+  getHostDisableCertificateVerification,
   getHostDescription,
   isHostOnline,
 } from '../../../selectors';
@@ -30,6 +31,7 @@ const getInitialValues = (
   BMCAddress: getHostBMCAddress(host) || '',
   username: getSecretUsername(secret) || '',
   password: getSecretPassword(secret) || '',
+  disableCertificateVerification: getHostDisableCertificateVerification(host) || false,
   bootMACAddress: getHostBootMACAddress(host) || '',
   online: isHostOnline(host) || true,
   description: getHostDescription(host) || '',

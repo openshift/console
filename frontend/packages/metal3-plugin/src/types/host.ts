@@ -45,6 +45,7 @@ export type BareMetalHostKind = {
     bmc: {
       address: string;
       credentialsName: string;
+      disableCertificateVerification: boolean;
     };
     bootMACAddress: string;
     consumerRef?: {

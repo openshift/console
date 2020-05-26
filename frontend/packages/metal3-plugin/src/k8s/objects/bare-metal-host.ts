@@ -23,6 +23,7 @@ export const buildBareMetalHostObject = (
   namespace,
   BMCAddress,
   bootMACAddress,
+  disableCertificateVerification = false,
   online = true,
   description = '',
 ): BareMetalHostKind => ({
@@ -36,6 +37,7 @@ export const buildBareMetalHostObject = (
     bmc: {
       address: BMCAddress,
       credentialsName: getSecretName(name),
+      disableCertificateVerification,
     },
     bootMACAddress,
     description,

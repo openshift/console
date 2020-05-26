@@ -3,7 +3,13 @@ import * as _ from 'lodash';
 import { history } from '@console/internal/components/utils';
 import { FormikProps } from 'formik';
 import { Form, TextInputTypes } from '@patternfly/react-core';
-import { InputField, TextAreaField, SwitchField, FormFooter } from '@console/shared/src';
+import {
+  InputField,
+  TextAreaField,
+  SwitchField,
+  FormFooter,
+  CheckboxField,
+} from '@console/shared/src';
 import { AddBareMetalHostFormValues } from './types';
 
 type AddBareMetalHostFormProps = FormikProps<AddBareMetalHostFormValues> & {
@@ -44,6 +50,12 @@ const AddBareMetalHostForm: React.FC<AddBareMetalHostFormProps> = ({
       label="BMC Address"
       helpText="The URL for communicating with the BMC (Baseboard Management Controller) on the host, based on the provider being used."
       required
+    />
+    <CheckboxField
+      data-test-id="add-baremetal-host-form-disable-certificate-verification-input"
+      name="disableCertificateVerification"
+      label="Disable Certificate Verification"
+      helpText="Disable verification of server certificates when using HTTPS to connect to the BMC. This is required when the server certificate is self-signed, but is insecure because it allows a man-in-the-middle to intercept the connection."
     />
     <InputField
       type={TextInputTypes.text}

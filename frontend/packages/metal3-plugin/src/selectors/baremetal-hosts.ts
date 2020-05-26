@@ -27,6 +27,8 @@ export const getHostMachineName = (host: BareMetalHostKind): string =>
   _.get(host, 'spec.consumerRef.name');
 export const getHostBMCAddress = (host: BareMetalHostKind): string =>
   _.get(host, 'spec.bmc.address');
+export const getHostDisableCertificateVerification = (host: BareMetalHostKind): boolean =>
+  _.get(host, 'spec.bmc.disableCertificateVerification', false);
 export const getHostBootMACAddress = (host: BareMetalHostKind) =>
   _.get(host, 'spec') && host.spec.bootMACAddress;
 export const isHostOnline = (host: BareMetalHostKind): boolean => _.get(host, 'spec.online', false);

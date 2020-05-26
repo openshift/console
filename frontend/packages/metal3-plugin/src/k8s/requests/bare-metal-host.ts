@@ -68,6 +68,7 @@ export const deprovision = async (machine: MachineKind, machineSet?: MachineSetK
 export type BareMetalHostOpts = {
   name: string;
   BMCAddress: string;
+  disableCertificateVerification: boolean;
   username: string;
   password: string;
   bootMACAddress: string;
@@ -79,6 +80,7 @@ export const createBareMetalHost = async ({
   name,
   BMCAddress,
   bootMACAddress,
+  disableCertificateVerification,
   description,
   namespace,
   password,
@@ -91,6 +93,7 @@ export const createBareMetalHost = async ({
     namespace,
     BMCAddress,
     bootMACAddress,
+    disableCertificateVerification,
     online,
     description,
   );
@@ -105,6 +108,7 @@ export const updateBareMetalHost = async (
     name,
     BMCAddress,
     bootMACAddress,
+    disableCertificateVerification,
     description,
     namespace,
     password,
@@ -129,7 +133,7 @@ export const updateBareMetalHost = async (
       host.spec,
     ),
     ...new PatchBuilder('/spec/bmc').buildAddObjectKeysPatches(
-      { address: BMCAddress, credentialsName: getSecretName(name) },
+      { address: BMCAddress, credentialsName: getSecretName(name), disableCertificateVerification },
       host.spec.bmc,
     ),
   ];
