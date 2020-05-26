@@ -1,14 +1,17 @@
 package terminal
 
 import (
+	"bytes"
 	"crypto/tls"
 	"errors"
+	"io"
+	"io/ioutil"
 	"net/http"
 	"net/url"
 	"strings"
+	"time"
 
 	"github.com/openshift/console/pkg/auth"
-	"github.com/openshift/console/pkg/proxy"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/apimachinery/pkg/runtime/schema"
@@ -19,6 +22,10 @@ const (
 	ProxyEndpoint = "/api/terminal/proxy/"
 	// AvailableEndpoint path used to check if functionality is enabled
 	AvailableEndpoint = "/api/terminal/available/"
+	// WorkspaceInitEndpoint is used to initialize a kubeconfig in the workspace
+	WorkspaceInitEndpoint = "exec/init"
+	// WorkspaceActivityEndpoint is used to prevent idle timeout in a workspace
+	WorkspaceActivityEndpoint = "activity/tick"
 )
 
 // Proxy provides handlers to handle terminal related requests
@@ -75,6 +82,9 @@ func (p *Proxy) HandleProxy(user *auth.User, w http.ResponseWriter, r *http.Requ
 		http.NotFound(w, r)
 		return
 	}
+	if path != WorkspaceInitEndpoint && path != WorkspaceActivityEndpoint {
+		http.Error(w, "Unsupported path", http.StatusForbidden)
+	}
 
 	client, err := p.createDynamicClient(user.Token)
 	if err != nil {
@@ -118,8 +128,16 @@ func (p *Proxy) HandleProxy(user *auth.User, w http.ResponseWriter, r *http.Requ
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+	if terminalHost.Scheme != "https" {
+		http.Error(w, "Workspace is not served over https", http.StatusForbidden)
+	}
 
-	p.proxyToWorkspace(terminalHost, path, user.Token, r, w)
+	terminalHost.Path = path
+	if path == WorkspaceInitEndpoint {
+		p.handleExecInit(terminalHost, user.Token, r, w)
+	} else if path == WorkspaceActivityEndpoint {
+		p.handleActivity(terminalHost, user.Token, w)
+	}
 }
 
 func (p *Proxy) HandleProxyEnabled(w http.ResponseWriter, r *http.Request) {
@@ -140,6 +158,34 @@ func (p *Proxy) HandleProxyEnabled(w http.ResponseWriter, r *http.Request) {
 	}
 	w.WriteHeader(http.StatusNoContent)
 	return
+}
+
+func (p *Proxy) handleExecInit(host *url.URL, token string, r *http.Request, w http.ResponseWriter) {
+	body, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		http.Error(w, "Failed to read body of request: "+err.Error(), http.StatusInternalServerError)
+	}
+
+	wkspReq, err := http.NewRequest(http.MethodPost, host.String(), ioutil.NopCloser(bytes.NewReader(body)))
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	wkspReq.Header.Set("Content-type", "application/json")
+	wkspReq.Header.Set("X-Forwarded-Access-Token", token)
+
+	p.proxyToWorkspace(wkspReq, w)
+}
+
+func (p *Proxy) handleActivity(host *url.URL, token string, w http.ResponseWriter) {
+	wkspReq, err := http.NewRequest(http.MethodPost, host.String(), nil)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	wkspReq.Header.Set("X-Forwarded-Access-Token", token)
+	p.proxyToWorkspace(wkspReq, w)
 }
 
 // stripTerminalAPIPrefix strips path prefix that is expected for Terminal API request
@@ -183,21 +229,26 @@ func (p *Proxy) getBaseTerminalHost(ws *unstructured.Unstructured) (*url.URL, er
 	return terminalHost, nil
 }
 
-func (p *Proxy) proxyToWorkspace(workspaceIdeHost *url.URL, path string, token string, r *http.Request, w http.ResponseWriter) {
-	r2 := new(http.Request)
-	*r2 = *r
-	r2.URL = new(url.URL)
-	*r2.URL = *r.URL
+func (p *Proxy) proxyToWorkspace(wkspReq *http.Request, w http.ResponseWriter) {
+	client := &http.Client{
+		Timeout: 10 * time.Second,
+	}
+	wkspResp, err := client.Do(wkspReq)
+	if err != nil {
+		http.Error(w, "Failed to proxy request. Cause: "+err.Error(), http.StatusInternalServerError)
+		return
+	}
 
-	r2.Header.Set("X-Forwarded-Access-Token", token)
+	for k, vv := range wkspResp.Header {
+		for _, v := range vv {
+			w.Header().Add(k, v)
+		}
+	}
+	w.WriteHeader(wkspResp.StatusCode)
 
-	r2.URL.Path = path
-
-	// TODO a new proxy per request is created. Must be revised and probably changed
-	terminalProxy := proxy.NewProxy(&proxy.Config{
-		Endpoint:        workspaceIdeHost,
-		TLSClientConfig: p.TLSClientConfig,
-	})
-
-	terminalProxy.ServeHTTP(w, r2)
+	_, err = io.Copy(w, wkspResp.Body)
+	if err != nil {
+		panic(http.ErrAbortHandler)
+	}
+	_ = wkspResp.Body.Close()
 }
