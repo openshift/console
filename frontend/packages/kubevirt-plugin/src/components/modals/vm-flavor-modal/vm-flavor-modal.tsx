@@ -23,6 +23,7 @@ import {
   getMemory,
   getVMLikeModel,
   vCPUCount,
+  isVMRunningOrExpectedRunning,
 } from '../../../selectors/vm';
 import { getUpdateFlavorPatches } from '../../../k8s/patches/vm/vm-patches';
 import { CUSTOM_FLAVOR } from '../../../constants';
@@ -40,6 +41,11 @@ import { flavorSort } from '../../../utils/sort';
 import { getTemplateFlavors } from '../../../selectors/vm-template/advanced';
 import { getVMTemplateNamespacedName } from '../../../selectors/vm-template/selectors';
 import { toUIFlavor, isCustomFlavor } from '../../../selectors/vm-like/flavor';
+import { PendingChangesAlert } from '../../../selectors/vm-like/nextRunChanges';
+import { restartVM, VMActionType } from '../../../k8s/requests/vm/actions';
+import { confirmVMIModal } from '../menu-actions-modals/confirm-vmi-modal';
+import { getActionMessage } from '../../vms/constants';
+import { VMDashboardContext } from '../../vms/vm-dashboard-context';
 
 const getId = (field: string) => `vm-flavor-modal-${field}`;
 
@@ -52,9 +58,11 @@ const getAvailableFlavors = (template: TemplateKind) => {
 
 const VMFlavorModal = withHandlePromise((props: VMFlavornModalProps) => {
   const { vmLike, template, errorMessage, handlePromise, close, cancel, loadError, loaded } = props;
+
   const inProgress = props.inProgress || !loaded;
   const vm = asVM(vmLike);
   const underlyingTemplate = getLoadedData(template);
+  const { vmi } = React.useContext(VMDashboardContext);
 
   const flavors = getAvailableFlavors(underlyingTemplate);
   const vmFlavor = toUIFlavor(getFlavor(vmLike) || flavors[flavors.length - 1]);
@@ -83,9 +91,7 @@ const VMFlavorModal = withHandlePromise((props: VMFlavornModalProps) => {
 
   const [showUIError, setShowUIError] = useShowErrorToggler(false, isValid, isValid);
 
-  const submit = (e) => {
-    e.preventDefault();
-
+  const saveChanges = () => {
     if (isValid) {
       const patches = getUpdateFlavorPatches(
         vmLike,
@@ -105,10 +111,16 @@ const VMFlavorModal = withHandlePromise((props: VMFlavornModalProps) => {
     }
   };
 
+  const submit = (e) => {
+    e.preventDefault();
+    saveChanges();
+  };
+
   return (
     <div className="modal-content">
       <ModalTitle>Edit Flavor</ModalTitle>
       <ModalBody>
+        {isVMRunningOrExpectedRunning(vm) && <PendingChangesAlert />}
         <Form>
           <FormRow title="Flavor" fieldId={getId('flavor')} isRequired>
             <FormSelect
@@ -178,11 +190,26 @@ const VMFlavorModal = withHandlePromise((props: VMFlavornModalProps) => {
         isSimpleError={showUIError}
         isDisabled={inProgress}
         inProgress={inProgress}
+        isSaveAndRestart={isVMRunningOrExpectedRunning(vm)}
         onSubmit={submit}
         submitButtonText="Save"
         onCancel={(e) => {
           e.stopPropagation();
           cancel();
+        }}
+        onSaveAndRestart={() => {
+          confirmVMIModal({
+            vmi,
+            title: 'Restart Virtual Machine',
+            alertTitle: 'Restart Virtual Machine alert',
+            message: getActionMessage(vm, VMActionType.Restart),
+            btnText: _.capitalize(VMActionType.Restart),
+            executeFn: () => {
+              saveChanges();
+              return restartVM(vm);
+            },
+            cancel: () => saveChanges(),
+          });
         }}
       />
     </div>
@@ -204,6 +231,7 @@ const VMFlavorModalFirehose = (props) => {
       prop: 'template',
     });
   }
+
   return (
     <Firehose resources={resources}>
       <VMFlavorModal {...props} />

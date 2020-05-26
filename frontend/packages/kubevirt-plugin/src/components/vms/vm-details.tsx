@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { Alert } from '@patternfly/react-core';
 import {
   Firehose,
   StatusBox,
@@ -15,18 +14,25 @@ import { ServiceModel } from '@console/internal/models';
 import { ServicesList } from '@console/internal/components/service';
 import { VMKind, VMIKind } from '../../types';
 import { getLoadedData, getResource } from '../../utils';
-import { VirtualMachineInstanceModel, VirtualMachineModel } from '../../models';
+import { VirtualMachineInstanceModel, VirtualMachineModel, DataVolumeModel } from '../../models';
 import { getServicesForVmi } from '../../selectors/service';
 import { VMResourceSummary, VMDetailsList, VMSchedulingList } from './vm-resource';
 import { VMUsersList } from './vm-users';
-import { VMTabProps } from './types';
 import { useGuestAgentInfo } from '../../hooks/use-guest-agent-info';
 import { GuestAgentInfoWrapper } from '../../k8s/wrapper/vm/guest-agent-info/guest-agent-info-wrapper';
+import { VMTabProps, IsPendingChange } from './types';
 import { getVMStatus } from '../../statuses/vm/vm-status';
 import { VMStatusBundle } from '../../statuses/vm/types';
 import { isWindows } from '../../selectors/vm/combined';
 import { isVM, isVMI } from '../../selectors/check-type';
 import { HashAnchor } from '../hash-anchor/hash-anchor';
+import { Alert, AlertVariant, List, ListItem, Button } from '@patternfly/react-core';
+import { detectNextRunChanges } from '../../selectors/vm-like/nextRunChanges';
+import { VMCDRomModal } from '../modals/cdrom-vm-modal/vm-cdrom-modal';
+import { vmFlavorModal } from '../modals/vm-flavor-modal/vm-flavor-modal';
+import { BootOrderModal } from '../modals/boot-order-modal/boot-order-modal';
+
+import './vm-details.scss';
 
 export const VMDetailsFirehose: React.FC<VMTabProps> = ({
   obj: objProp,
@@ -50,6 +56,12 @@ export const VMDetailsFirehose: React.FC<VMTabProps> = ({
 
   const resources = [
     getResource(ServiceModel, { namespace: getNamespace(objProp), prop: 'services' }),
+    {
+      kind: DataVolumeModel.kind,
+      isList: true,
+      namespace: getNamespace(objProp),
+      prop: 'dataVolumes',
+    },
   ];
 
   const vmStatusBundle = getVMStatus({
@@ -79,6 +91,7 @@ export const VMDetailsFirehose: React.FC<VMTabProps> = ({
 
 export const VMDetails: React.FC<VMDetailsProps> = (props) => {
   const { kindObj, vm, vmi, pods, vmStatusBundle, templates, ...restProps } = props;
+  const [isBootOrderModalOpen, setBootOrderModalOpen] = React.useState(false);
 
   const vmiLike = kindObj === VirtualMachineModel ? vm : vmi;
   const vmServicesData = getServicesForVmi(getLoadedData(props.services, []), vmi);
@@ -87,6 +100,14 @@ export const VMDetails: React.FC<VMDetailsProps> = (props) => {
   const [guestAgentInfoRaw] = useGuestAgentInfo({ vmi });
   const guestAgentInfo = new GuestAgentInfoWrapper(guestAgentInfoRaw);
   const operatingSystemID = guestAgentInfo.getOSInfo().getId();
+  const [dvs, setDataVolumes] = React.useState(null);
+  const loadedDataVolumes = getLoadedData(props.dataVolumes);
+
+  React.useEffect(() => {
+    if (loadedDataVolumes) {
+      setDataVolumes(loadedDataVolumes);
+    }
+  }, [loadedDataVolumes]);
 
   const OSMismatchExists =
     vmi && guestAgentInfoRaw && isWindows(vmiLike) !== (operatingSystemID === 'mswindows');
@@ -98,6 +119,24 @@ export const VMDetails: React.FC<VMDetailsProps> = (props) => {
       one.
     </Alert>
   );
+  const vmConfChanges = detectNextRunChanges(vm, vmi, dvs);
+  const isVMRequireRestart = !!vmi && Object.values(vmConfChanges).some((x) => !!x);
+
+  const openModal = (key) => {
+    switch (key) {
+      case IsPendingChange.flavor:
+        vmFlavorModal({ vmLike: vm, blocking: true });
+        break;
+      case IsPendingChange.cdroms:
+        VMCDRomModal({ vmLikeEntity: vm, modalClassName: 'modal-lg' });
+        break;
+      case IsPendingChange.bootOrder:
+        setBootOrderModalOpen(true);
+        break;
+      default:
+        break;
+    }
+  };
 
   return (
     <StatusBox data={vmiLike} {...restProps}>
@@ -106,6 +145,34 @@ export const VMDetails: React.FC<VMDetailsProps> = (props) => {
         {OSMismatchAlert}
         <HashAnchor hash="details" />
         <SectionHeading text={`${kindObj.label} Details`} />
+        {kindObj === VirtualMachineModel && isVMRequireRestart && (
+          <div>
+            <Alert
+              title="Pending Changes"
+              isInline
+              variant={AlertVariant.warning}
+              className="kubevirt-vm-details__pending-changes-class-alert"
+            >
+              <List>
+                {Object.keys(vmConfChanges).map(
+                  (key) =>
+                    vmConfChanges[key] && (
+                      <ListItem key={key}>
+                        <Button onClick={() => openModal(key)} isInline variant="link">
+                          {key}
+                        </Button>
+                      </ListItem>
+                    ),
+                )}
+              </List>
+            </Alert>
+            <BootOrderModal
+              isOpen={isBootOrderModalOpen}
+              setOpen={setBootOrderModalOpen}
+              vmLikeEntity={vm}
+            />
+          </div>
+        )}
         <div className="row">
           <div className="col-sm-6">
             <VMResourceSummary
@@ -124,6 +191,7 @@ export const VMDetails: React.FC<VMDetailsProps> = (props) => {
               vmi={vmi}
               pods={pods}
               vmStatusBundle={vmStatusBundle}
+              dataVolumes={dvs}
             />
           </div>
         </div>
@@ -155,6 +223,7 @@ type VMDetailsProps = {
   vmi?: VMIKind;
   pods?: PodKind[];
   services?: FirehoseResult;
+  dataVolumes?: FirehoseResult;
   templates?: TemplateKind[];
   vmStatusBundle?: VMStatusBundle;
 };

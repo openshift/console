@@ -18,7 +18,7 @@ import {
   getVolumeContainerImage,
   getVolumePersistentVolumeClaimName,
 } from './volume';
-import { getVMIDisks } from '../vmi/basic';
+import { getVMIDisks, getVMIVolumes } from '../vmi/basic';
 import { VirtualMachineModel } from '../../models';
 import { V1Volume } from '../../types/vm/disk/V1Volume';
 import { VMGenericLikeEntityKind, VMILikeEntityKind } from '../../types/vmLike';
@@ -150,14 +150,23 @@ export const getCDRoms = (vm: VMILikeEntityKind) =>
     ? getDisks(vm as VMKind).filter((device) => !!device.cdrom)
     : getVMIDisks(vm as VMIKind).filter((device) => !!device.cdrom);
 
-export const getContainerImageByDisk = (vm: VMKind, name: string) =>
-  getVolumeContainerImage(getVolumes(vm).find((vol) => name === vol.name));
+export const getContainerImageByDisk = (vm: VMILikeEntityKind, name: string) =>
+  vm.kind === VirtualMachineModel.kind
+    ? getVolumeContainerImage(getVolumes(vm as VMKind).find((vol) => name === vol.name))
+    : getVolumeContainerImage(getVMIVolumes(vm as VMIKind).find((vol) => name === vol.name));
 
-export const getPVCSourceByDisk = (vm: VMKind, diskName: string) =>
-  getVolumePersistentVolumeClaimName(getVolumes(vm).find((vol) => vol.name === diskName));
+export const getPVCSourceByDisk = (vm: VMILikeEntityKind, diskName: string) =>
+  vm.kind === VirtualMachineModel.kind
+    ? getVolumePersistentVolumeClaimName(
+        getVolumes(vm as VMKind).find((vol) => vol.name === diskName),
+      )
+    : getVolumePersistentVolumeClaimName(
+        getVMIVolumes(vm as VMIKind).find((vol) => vol.name === diskName),
+      );
 
 export const getURLSourceByDisk = (vm: VMKind, name: string) => {
   const dvTemplate = getDataVolumeTemplates(vm).find((vol) => getName(vol).includes(name));
+
   return (
     dvTemplate &&
     dvTemplate.spec &&

@@ -11,7 +11,6 @@ import {
   getVMIAffinity,
 } from '../../../selectors/vmi';
 import { VMILikeMethods } from './types';
-import { transformDevices } from '../../../selectors/vm';
 import { findKeySuffixValue } from '../../../selectors/utils';
 import {
   TEMPLATE_FLAVOR_LABEL,
@@ -19,6 +18,7 @@ import {
   TEMPLATE_WORKLOAD_LABEL,
 } from '../../../constants/vm';
 import { VirtualMachineInstanceModel } from '../../../models';
+import { transformDevices } from '../../../selectors/vm/devices';
 
 export class VMIWrapper extends K8sResourceWrapper<VMIKind, VMIWrapper> implements VMILikeMethods {
   constructor(vmi?: VMIKind | VMIWrapper | any, copy = false) {

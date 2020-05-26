@@ -8,11 +8,22 @@ import { k8sPatch } from '@console/internal/module/k8s';
 import { PatchBuilder } from '@console/shared/src/k8s';
 import { BootableDeviceType } from '../../../types';
 import { VMLikeEntityKind } from '../../../types/vmLike';
-import { getVMLikeModel, getDevices, getBootableDevices } from '../../../selectors/vm';
+import {
+  getVMLikeModel,
+  getDevices,
+  getBootableDevices,
+  asVM,
+  isVMRunningOrExpectedRunning,
+} from '../../../selectors/vm';
 import { getVMLikePatches } from '../../../k8s/patches/vm-template';
 import { BootOrder, deviceKey } from '../../boot-order';
 import { DeviceType } from '../../../constants';
 import { ModalFooter } from '../modal/modal-footer';
+import { PendingChangesAlert } from '../../../selectors/vm-like/nextRunChanges';
+import { VMDashboardContext } from '../../vms/vm-dashboard-context';
+import { confirmVMIModal } from '../menu-actions-modals/confirm-vmi-modal';
+import { getActionMessage } from '../../vms/constants';
+import { VMActionType, restartVM } from '../../../k8s/requests/vm/actions';
 
 import './boot-order-modal.scss';
 
@@ -35,6 +46,8 @@ const BootOrderModalComponent = ({
   );
   const [showUpdatedAlert, setUpdatedAlert] = React.useState<boolean>(false);
   const [showPatchError, setPatchError] = React.useState<boolean>(false);
+  const vm = asVM(vmLikeEntity);
+  const { vmi } = React.useContext(VMDashboardContext);
 
   const onReload = React.useCallback(() => {
     const updatedDevices = getBootableDevices(vmLikeEntity);
@@ -73,10 +86,7 @@ const BootOrderModalComponent = ({
     }
   }, [isOpen]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // Send new bootOrder to k8s.
-  const onSubmit = async (event) => {
-    event.preventDefault();
-
+  const saveChanges = () => {
     // Copy only bootOrder from devices to current device list.
     const currentDevices = _.cloneDeep(getDevices(vmLikeEntity));
     const devicesMap = createBasicLookup(currentDevices, deviceKey);
@@ -122,10 +132,17 @@ const BootOrderModalComponent = ({
       .catch(() => setPatchError(true));
   };
 
+  // Send new bootOrder to k8s.
+  const onSubmit = async (event) => {
+    event.preventDefault();
+    saveChanges();
+  };
+
   const footer = (
     <ModalFooter
       errorMessage={showPatchError && errorMessage}
       inProgress={inProgress}
+      isSaveAndRestart={isVMRunningOrExpectedRunning(vm)}
       onSubmit={onSubmit}
       onCancel={() => setOpen(false)}
       submitButtonText="Save"
@@ -142,6 +159,20 @@ const BootOrderModalComponent = ({
         </>
       }
       className={'kubevirt-boot-order-modal__footer'}
+      onSaveAndRestart={() => {
+        confirmVMIModal({
+          vmi,
+          title: 'Restart Virtual Machine',
+          alertTitle: 'Restart Virtual Machine alert',
+          message: getActionMessage(vm, VMActionType.Restart),
+          btnText: _.capitalize(VMActionType.Restart),
+          executeFn: () => {
+            saveChanges();
+            return restartVM(vm);
+          },
+          cancel: () => saveChanges(),
+        });
+      }}
     />
   );
 
@@ -149,6 +180,7 @@ const BootOrderModalComponent = ({
     <Modal
       title={title}
       isOpen={isOpen}
+      description={isVMRunningOrExpectedRunning(asVM(vmLikeEntity)) && <PendingChangesAlert />}
       variant="small"
       onClose={() => setOpen(false)}
       footer={footer}

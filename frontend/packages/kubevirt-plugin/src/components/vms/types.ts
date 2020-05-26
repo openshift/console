@@ -22,3 +22,9 @@ export type VMTabProps = {
 export type VMLikeEntityTabProps = {
   obj?: VMGenericLikeEntityKind;
 };
+
+export enum IsPendingChange {
+  flavor = 'Flavor',
+  cdroms = 'CD-ROMs',
+  bootOrder = 'Boot Order',
+}

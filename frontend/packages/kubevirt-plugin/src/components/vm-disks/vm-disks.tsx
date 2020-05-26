@@ -26,7 +26,6 @@ import { diskSourceFilter } from './table-filters';
 import { asVM, isVMRunningOrExpectedRunning } from '../../selectors/vm';
 import { VMTabProps } from '../vms/types';
 import { getVMStatus } from '../../statuses/vm/vm-status';
-
 import { FileSystemsList } from './guest-agent-file-systems';
 
 const getStoragesData = ({
