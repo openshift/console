@@ -193,11 +193,12 @@ const detectCanCreateProject = (dispatch) =>
     },
   );
 
-const loggingConfigMapPath = `${k8sBasePath}/api/v1/namespaces/openshift-logging/configmaps/sharing-config`;
 const detectLoggingURL = (dispatch) =>
-  coFetchJSON(loggingConfigMapPath).then(
+  coFetchJSON(
+    '/api/kubernetes/apis/console.openshift.io/v1/consolelinks/kibana-app-public-url',
+  ).then(
     (res) => {
-      const { kibanaAppURL } = res.data;
+      const kibanaAppURL = res?.spec?.href;
       if (!_.isEmpty(kibanaAppURL)) {
         dispatch(setMonitoringURL(MonitoringRoutes.Kibana, kibanaAppURL));
       }
