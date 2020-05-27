@@ -42,10 +42,10 @@ export const titleResolver: RenderableFieldResolver = {
 
 export const placeholderResolver = {
   [ImportProvidersField.PROVIDER]: '--- Select Provider ---',
-  [OvirtProviderField.OVIRT_ENGINE_SECRET_NAME]: '--- Select RHV Instance Secret ---',
+  [OvirtProviderField.OVIRT_ENGINE_SECRET_NAME]: '--- Select RHV Instance ---',
   [OvirtProviderField.CLUSTER]: '--- Select Cluster ---',
   [OvirtProviderField.VM]: '--- Select VM ---',
-  [VMWareProviderField.VCENTER_SECRET_NAME]: '--- Select vCenter Instance Secret ---',
+  [VMWareProviderField.VCENTER_SECRET_NAME]: '--- Select vCenter Instance ---',
   [VMWareProviderField.VM]: '--- Select VM or Template ---',
   [VMSettingsField.USER_TEMPLATE]: '--- Select Template ---',
   [VMSettingsField.PROVISION_SOURCE_TYPE]: '--- Select Source ---',
@@ -69,6 +69,8 @@ const providerHelpResolver = {
 export const helpResolver = {
   [ImportProvidersField.PROVIDER]: (provider) => providerHelpResolver[provider],
   [OvirtProviderField.USERNAME]: () => 'Should be in the following format: admin@internal',
+  [OvirtProviderField.OVIRT_ENGINE_SECRET_NAME]: () =>
+    'Select secret containing connection details for RHV API.',
   [VMWareProviderField.VCENTER_SECRET_NAME]: () =>
     'Select secret containing connection details for a vCenter instance.',
   [VMWareProviderField.HOSTNAME]: () =>
