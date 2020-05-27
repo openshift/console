@@ -13,17 +13,17 @@ import { DetailsPage } from '@console/internal/components/factory';
 import { K8sResourceKindReference } from '@console/internal/module/k8s';
 import { Status } from '@console/shared';
 import { Badge } from '@patternfly/react-core';
-import { fetchHelmReleases } from '../helm-utils';
-import HelmReleaseResources from './resources/HelmReleaseResources';
-import HelmReleaseOverview from './overview/HelmReleaseOverview';
-import HelmReleaseHistory from './history/HelmReleaseHistory';
 import {
   deleteHelmRelease,
   upgradeHelmRelease,
   rollbackHelmRelease,
 } from '../../../actions/modify-helm-release';
-import HelmReleaseNotes from './HelmReleaseNotes';
 import { HelmRelease, HelmActionOrigins } from '../helm-types';
+import { fetchHelmReleases } from '../helm-utils';
+import HelmReleaseResources from './resources/HelmReleaseResources';
+import HelmReleaseOverview from './overview/HelmReleaseOverview';
+import HelmReleaseHistory from './history/HelmReleaseHistory';
+import HelmReleaseNotes from './notes/HelmReleaseNotes';
 
 const SecretReference: K8sResourceKindReference = 'Secret';
 const HelmReleaseReference = 'HelmRelease';

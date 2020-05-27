@@ -72,7 +72,7 @@ export const mockHelmReleases: HelmRelease[] = [
       deleted: '',
       description: 'Install complete',
       status: 'failed',
-      notes: 'node-test-chart release notes',
+      notes: '',
     },
     chart: {
       metadata: {
