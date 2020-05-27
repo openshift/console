@@ -71,6 +71,19 @@ const plugin: Plugin<ConsumedExtensions> = [
     type: 'Page/Route',
     properties: {
       exact: false,
+      path: `/k8s/ns/:ns/${referenceForModel(
+        ClusterServiceVersionModel,
+      )}/:appName/${referenceForModel(ImageManifestVulnModel)}/~/new`,
+      loader: () =>
+        import(
+          './components/image-manifest-vuln' /* webpackChunkName: "container-security" */
+        ).then((m) => m.ImageManifestVulnDetailsPage),
+    },
+  },
+  {
+    type: 'Page/Route',
+    properties: {
+      exact: false,
       path: `/k8s/ns/:ns/${ClusterServiceVersionModel.plural}/:appName/${referenceForModel(
         ImageManifestVulnModel,
       )}/:name`,
