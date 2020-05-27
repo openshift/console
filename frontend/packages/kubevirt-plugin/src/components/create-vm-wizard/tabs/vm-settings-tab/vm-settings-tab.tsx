@@ -24,6 +24,7 @@ import { MemoryCPU } from './memory-cpu';
 import { ContainerSource } from './container-source';
 import { URLSource } from './url-source';
 
+import '../../create-vm-wizard-footer.scss';
 import './vm-settings-tab.scss';
 
 export class VMSettingsTabComponent extends React.Component<VMSettingsTabComponentProps> {
@@ -47,7 +48,7 @@ export class VMSettingsTabComponent extends React.Component<VMSettingsTabCompone
     } = this.props;
 
     return (
-      <Form className="co-m-pane__body co-m-pane__form">
+      <Form className="co-m-pane__body co-m-pane__form kubevirt-create-vm-modal__form">
         <FormFieldMemoRow
           field={this.getField(VMSettingsField.NAME)}
           fieldType={FormFieldType.TEXT}

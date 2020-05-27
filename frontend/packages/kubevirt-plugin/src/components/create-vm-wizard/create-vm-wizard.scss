@@ -4,6 +4,16 @@
   flex-direction: column;
 }
 
+.kubevirt-create-vm-modal__form {
+  @media (min-width: 1200px) {
+    // match OCP form width by compensating for PF wizard padding (32px)
+    // and wizard nav (150px) and then removing OCP padding (60px)
+    max-width: calc(50% + 32px + 150px - 60px);
+  }
+  margin: 0;
+  padding: 0;
+}
+
 .kubevirt-create-vm-modal__wizard-content {
   flex-flow: wrap
 }
