@@ -123,14 +123,29 @@ const NodeTable: React.FC<NodeTableProps> = (props) => {
     if (rowIndex === -1) {
       if (isSelected) {
         const uniqueUIDs = _.uniq([...visibleUIDs, ...selectedUIDs]);
-        setSelectedNodes(visibleRows.filter((node) => uniqueUIDs.includes(node.metadata.uid)));
+        setSelectedNodes(
+          _.uniqBy(
+            [...visibleRows, ...selectedNodes].filter((node) =>
+              uniqueUIDs.includes(node.metadata.uid),
+            ),
+            (n) => n.metadata.uid,
+          ),
+        );
       } else {
-        const uniqueUIDs = _.xor(visibleUIDs, selectedUIDs);
-        setSelectedNodes(visibleRows.filter((node) => uniqueUIDs.includes(node.metadata.uid)));
+        setSelectedNodes(
+          _.uniqBy(
+            selectedNodes.filter((node) => !visibleUIDs.includes(node.metadata.uid)),
+            (n) => n.metadata.uid,
+          ),
+        );
       }
     } else {
       const uniqueUIDs = _.xor(selectedUIDs, [rowData.props.id]);
-      setSelectedNodes(visibleRows.filter((node) => uniqueUIDs.includes(node.metadata.uid)));
+      const data = _.uniqBy(
+        [...visibleRows, ...selectedNodes].filter((node) => uniqueUIDs.includes(node.metadata.uid)),
+        (n) => n.metadata.uid,
+      );
+      setSelectedNodes(data);
     }
   };
 

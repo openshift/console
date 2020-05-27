@@ -1,9 +1,11 @@
 .upload-component {
   display: inline-flex;
+  cursor: grab;
 }
 
 .input-btn {
   display: inline-flex;
+  cursor: grab;
 }
 
 .custom-input-btn {
@@ -21,4 +23,8 @@
 
 .upload-component__textInput {
   color: var(--pf-global--Color--dark-200);
+}
+
+#inputButton::-webkit-file-upload-button {
+  cursor: grab;
 }

@@ -123,7 +123,7 @@ export const CreateOCSServiceForm = withHandlePromise<
     <Form className="co-m-pane__body-group">
       <FormGroup fieldId="select-nodes" label="Nodes">
         <p>
-          Selected nodes will be labeled with
+          Selected nodes will be labeled with{' '}
           <code>cluster.ocs.openshift.io/openshift-storage=&quot;&quot;</code> to create the OCS
           Service.
         </p>

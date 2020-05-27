@@ -10,7 +10,6 @@ import {
   k8sGet,
   k8sCreate,
   referenceForModel,
-  k8sKill,
   apiVersionForModel,
 } from '@console/internal/module/k8s';
 import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager';
@@ -109,8 +108,6 @@ const InstallExternalCluster = withHandlePromise((props: InstallExternalClusterP
       .catch((e) => {
         // eslint-disable-next-line no-console
         console.error(e);
-        // Remove secret if cluster creation was not possible
-        handlePromise(k8sKill(SecretModel, secret));
       });
   };
 
@@ -133,16 +130,17 @@ const InstallExternalCluster = withHandlePromise((props: InstallExternalClusterP
           <Title size="lg" headingLevel="h5" className="nb-bs-page-title__main">
             <div className="im-install-page-sub-header__title">Connect to external cluster</div>
           </Title>
-          <p className="im--light">
-            Run metadata exporter script to obtain metadata needed for connecting to the external
-            cluster.{' '}
+          <p className="im--light im-install-page--margin-top">
+            Download <code>ceph-external-cluster-details-exporter.py</code> script and run on the
+            RHCS cluster, then upload the results(JSON) in the External cluster metadata field.{' '}
             {downloadFile && (
               <a
                 id="downloadAnchorElem"
                 href={downloadFile}
-                download="exporter.py"
+                download="ceph-external-cluster-details-exporter.py"
                 target="_blank"
                 rel="noopener noreferrer"
+                className=""
               >
                 Download Script
               </a>
@@ -167,6 +165,7 @@ const InstallExternalCluster = withHandlePromise((props: InstallExternalClusterP
                 aria-label="Upload JSON File"
                 value="Upload Credentials file"
                 className="im-install-page__input-box"
+                isDisabled
               />
               <FileUpload onUpload={onUpload} />
             </InputGroup>
@@ -177,6 +176,7 @@ const InstallExternalCluster = withHandlePromise((props: InstallExternalClusterP
               className="im-install-page__text-box"
               isValid={!dataError}
               aria-label="JSON data"
+              disabled
             />
           </FormGroup>
           <ButtonBar errorMessage={dataError || errorMessage} inProgress={inProgress}>
