@@ -152,9 +152,18 @@ export const transformTopologyData = (
     topologyGraphAndNodeData.graph.edges = getTrafficConnectors(trafficData, allResourcesList);
   }
 
+  // Copy the resources into a mutable list of resources, we don't want to effect the incoming lists
+  const dataResources: TopologyDataResources = Object.keys(resources).reduce((obj, key) => {
+    obj[key] = {
+      ...resources[key],
+      data: [...resources[key].data],
+    };
+    return obj;
+  }, {} as TopologyDataResources);
+
   // TODO: plugins
   const knativeModel = getKnativeTopologyDataModel(
-    resources,
+    dataResources,
     allResourcesList,
     installedOperators,
     utils,
@@ -162,7 +171,7 @@ export const transformTopologyData = (
   addToTopologyDataModel(knativeModel, topologyGraphAndNodeData);
 
   const operatorsModel = getOperatorTopologyDataModel(
-    resources,
+    dataResources,
     allResourcesList,
     installedOperators,
     utils,
@@ -172,7 +181,7 @@ export const transformTopologyData = (
   addToTopologyDataModel(operatorsModel, topologyGraphAndNodeData);
 
   const helmModel = getHelmTopologyDataModel(
-    resources,
+    dataResources,
     allResourcesList,
     installedOperators,
     utils,
@@ -183,7 +192,7 @@ export const transformTopologyData = (
   addToTopologyDataModel(helmModel, topologyGraphAndNodeData);
 
   const vmsModel = getKubevirtTopologyDataModel(
-    resources,
+    dataResources,
     allResourcesList,
     installedOperators,
     utils,
@@ -193,7 +202,7 @@ export const transformTopologyData = (
   addToTopologyDataModel(vmsModel, topologyGraphAndNodeData);
 
   const baseModel = getBaseTopologyDataModel(
-    resources,
+    dataResources,
     allResourcesList,
     installedOperators,
     utils,
