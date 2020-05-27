@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 import { HorizontalNav, PageHeading, history } from '@console/internal/components/utils';
 import { featureReducerName } from '@console/internal/reducers/features';
 import { TechPreviewBadge, ALL_NAMESPACES_KEY, FLAGS } from '@console/shared';
+import { withStartGuide } from '@console/internal/components/start-guide';
 import NamespacedPage, { NamespacedPageVariants } from '../NamespacedPage';
 import ProjectListPage from '../projects/ProjectListPage';
 import ConnectedMonitoringDashboard from './dashboard/MonitoringDashboard';
@@ -31,7 +32,7 @@ const handleNamespaceChange = (newNamespace: string): void => {
   }
 };
 
-export const MonitoringPage: React.FC<Props> = ({ match, canAccess }) => {
+export const PageContents: React.FC<Props> = ({ match, canAccess }) => {
   const activeNamespace = match.params.ns;
   const canAccessPrometheus = canAccess && !!window.SERVER_FLAGS.prometheusBaseURL;
 
@@ -60,30 +61,34 @@ export const MonitoringPage: React.FC<Props> = ({ match, canAccess }) => {
     [canAccessPrometheus],
   );
 
-  return (
+  return activeNamespace ? (
     <>
-      <Helmet>
-        <title>Monitoring</title>
-      </Helmet>
-      <NamespacedPage
-        hideApplications
-        variant={NamespacedPageVariants.light}
-        onNamespaceChange={handleNamespaceChange}
-      >
-        {activeNamespace ? (
-          <>
-            <PageHeading badge={<TechPreviewBadge />} title="Monitoring" />
-            <HorizontalNav pages={pages} match={match} noStatusBox />
-          </>
-        ) : (
-          <ProjectListPage badge={<TechPreviewBadge />} title="Monitoring">
-            Select a project to view monitoring metrics
-          </ProjectListPage>
-        )}
-      </NamespacedPage>
+      <PageHeading badge={<TechPreviewBadge />} title="Monitoring" />
+      <HorizontalNav pages={pages} match={match} noStatusBox />
     </>
+  ) : (
+    <ProjectListPage badge={<TechPreviewBadge />} title="Monitoring">
+      Select a project to view monitoring metrics
+    </ProjectListPage>
   );
 };
+
+const PageContentsWithStartGuide = withStartGuide(PageContents);
+
+export const MonitoringPage: React.FC<Props> = (props) => (
+  <>
+    <Helmet>
+      <title>Monitoring</title>
+    </Helmet>
+    <NamespacedPage
+      hideApplications
+      variant={NamespacedPageVariants.light}
+      onNamespaceChange={handleNamespaceChange}
+    >
+      <PageContentsWithStartGuide {...props} />
+    </NamespacedPage>
+  </>
+);
 
 const stateToProps = (state) => ({
   canAccess: !!state[featureReducerName].get(FLAGS.CAN_GET_NS),

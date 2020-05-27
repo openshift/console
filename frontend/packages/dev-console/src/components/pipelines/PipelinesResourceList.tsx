@@ -34,6 +34,7 @@ const PipelinesResourceList: React.FC<PipelinesResourceListProps> = (props) => {
           ? `/k8s/ns/${namespace}/${referenceForModel(PipelineModel)}/~new/builder`
           : `/k8s/cluster/${referenceForModel(PipelineModel)}/~new`,
       }}
+      createAccessReview={{ model: PipelineModel, namespace }}
       filterLabel="by name"
       textFilter="name"
       resources={resources}

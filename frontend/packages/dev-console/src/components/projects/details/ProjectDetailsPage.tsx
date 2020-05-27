@@ -18,6 +18,7 @@ interface MonitoringPageProps {
   match: RMatch<{
     ns?: string;
   }>;
+  noProjectsAvailable?: boolean;
 }
 
 const handleNamespaceChange = (newNamespace: string): void => {
@@ -26,7 +27,11 @@ const handleNamespaceChange = (newNamespace: string): void => {
   }
 };
 
-export const ProjectDetailsPage: React.FC<MonitoringPageProps> = ({ match, ...props }) => {
+export const PageContents: React.FC<MonitoringPageProps> = ({
+  noProjectsAvailable,
+  match,
+  ...props
+}) => {
   const activeNamespace = match.params.ns;
 
   const canListRoleBindings = useAccessReview({
@@ -43,53 +48,55 @@ export const ProjectDetailsPage: React.FC<MonitoringPageProps> = ({ match, ...pr
     namespace: activeNamespace,
   });
 
-  return (
-    <>
-      <Helmet>
-        <title>Project Details</title>
-      </Helmet>
-      <NamespacedPage
-        hideApplications
-        variant={NamespacedPageVariants.light}
-        onNamespaceChange={handleNamespaceChange}
-      >
-        {activeNamespace ? (
-          <DetailsPage
-            {...props}
-            match={match}
-            breadcrumbsFor={() => []}
-            name={activeNamespace}
-            kind={ProjectModel.kind}
-            kindObj={ProjectModel}
-            menuActions={projectMenuActions}
-            customData={{ activeNamespace, hideHeading: true }}
-            pages={[
-              {
-                href: '',
-                name: 'Overview',
-                component: ProjectDashboard,
-              },
-              {
-                href: 'details',
-                name: 'Details',
-                component: NamespaceDetails,
-              },
-              canListRoleBindings &&
-                canCreateRoleBindings && {
-                  href: 'access',
-                  name: 'Project Access',
-                  component: ProjectAccessPage,
-                },
-            ]}
-          />
-        ) : (
-          <ProjectListPage title="Project Details">
-            Select a project to view its details
-          </ProjectListPage>
-        )}
-      </NamespacedPage>
-    </>
+  return !noProjectsAvailable && activeNamespace ? (
+    <DetailsPage
+      {...props}
+      match={match}
+      breadcrumbsFor={() => []}
+      name={activeNamespace}
+      kind={ProjectModel.kind}
+      kindObj={ProjectModel}
+      menuActions={projectMenuActions}
+      customData={{ activeNamespace, hideHeading: true }}
+      pages={[
+        {
+          href: '',
+          name: 'Overview',
+          component: ProjectDashboard,
+        },
+        {
+          href: 'details',
+          name: 'Details',
+          component: NamespaceDetails,
+        },
+        canListRoleBindings &&
+          canCreateRoleBindings && {
+            href: 'access',
+            name: 'Project Access',
+            component: ProjectAccessPage,
+          },
+      ]}
+    />
+  ) : (
+    <ProjectListPage title="Project Details">Select a project to view its details</ProjectListPage>
   );
 };
 
-export default withStartGuide(ProjectDetailsPage);
+const PageContentsWithStartGuide = withStartGuide(PageContents);
+
+export const ProjectDetailsPage: React.FC<MonitoringPageProps> = (props) => (
+  <>
+    <Helmet>
+      <title>Project Details</title>
+    </Helmet>
+    <NamespacedPage
+      hideApplications
+      variant={NamespacedPageVariants.light}
+      onNamespaceChange={handleNamespaceChange}
+    >
+      <PageContentsWithStartGuide {...props} />
+    </NamespacedPage>
+  </>
+);
+
+export default ProjectDetailsPage;
