@@ -5,13 +5,14 @@ import { PropertiesSidePanel, PropertyItem } from '@patternfly/react-catalog-vie
 
 import { ClusterServicePlanModel } from '../../models';
 import { k8sGet } from '../../module/k8s';
-import { Timestamp, ExternalLink, SectionHeading } from '../utils';
+import { Timestamp, ExternalLink, SectionHeading, LoadingBox } from '../utils';
 import { SyncMarkdownView } from '../markdown-view';
 
 export class CatalogTileDetails extends React.Component {
   state = {
     plans: [],
     markdown: '',
+    markdownLoading: false,
   };
 
   componentDidMount() {
@@ -21,7 +22,10 @@ export class CatalogTileDetails extends React.Component {
     }
 
     if (_.isFunction(markdownDescription)) {
-      markdownDescription().then((md) => this.setState({ markdown: md }));
+      this.setState({ markdownLoading: true });
+      markdownDescription()
+        .then((md) => this.setState({ markdown: md, markdownLoading: false }))
+        .catch(() => this.setState({ markdownLoading: false }));
     } else {
       this.setState({ markdown: markdownDescription });
     }
@@ -49,7 +53,7 @@ export class CatalogTileDetails extends React.Component {
       sampleRepo,
       customProperties,
     } = this.props.item;
-    const { plans, markdown } = this.state;
+    const { plans, markdown, markdownLoading } = this.state;
 
     const creationTimestamp = _.get(obj, 'metadata.creationTimestamp');
 
@@ -67,7 +71,6 @@ export class CatalogTileDetails extends React.Component {
     const planItems = _.map(plans, (plan) => (
       <li key={plan.metadata.uid}>{plan.spec.description || plan.spec.externalName}</li>
     ));
-
     return (
       <div className="modal-body modal-body-border">
         <div className="modal-body-content">
@@ -87,6 +90,7 @@ export class CatalogTileDetails extends React.Component {
               <div className="co-catalog-page__overlay-description">
                 <SectionHeading text="Description" />
                 {tileDescription && <p>{tileDescription}</p>}
+                {markdownLoading && <LoadingBox message="Loading Markdown..." />}
                 {markdown && <SyncMarkdownView content={markdown} />}
                 {longDescription && <p>{longDescription}</p>}
                 {sampleRepo && <p>Sample repository: {sampleRepoLink}</p>}
