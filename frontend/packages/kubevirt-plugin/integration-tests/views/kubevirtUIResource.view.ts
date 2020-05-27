@@ -2,8 +2,8 @@ import { $, browser, ExpectedConditions as until, element, by } from 'protractor
 import { resourceRows } from '@console/internal-integration-tests/views/crud.view';
 import { click } from '@console/shared/src/test-utils/utils';
 
-export const createNICButton = $('#create-nic-btn');
-export const createDiskButton = $('#create-disk-btn');
+export const createNICButton = $('#add-nic');
+export const createDiskButton = $('#add-disk');
 
 export const modalSubmitButton = $('.modal-content .pf-m-primary');
 export const cancelButton = element(by.buttonText('Cancel'));

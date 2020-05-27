@@ -164,6 +164,7 @@ export const VMDisks: React.FC<VMDisksProps> = ({ vmLikeEntity, vmTemplate }) =>
       createProps={{
         isDisabled: isLocked,
         onClick: createFn,
+        id: 'add-disk',
       }}
       rowFilters={[diskSourceFilter]}
       customData={{

@@ -117,7 +117,7 @@ export const VMNics: React.FC<VMLikeEntityTabProps> = ({ obj: vmLikeEntity }) =>
           <div className="co-m-pane__filter-bar-group">
             <Button
               variant={ButtonVariant.primary}
-              id="create-nic-btn"
+              id="add-nic"
               onClick={() =>
                 withProgress(
                   nicModalEnhanced({
