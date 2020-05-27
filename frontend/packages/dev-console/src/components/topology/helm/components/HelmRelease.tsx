@@ -21,7 +21,7 @@ export type HelmReleaseProps = {
   WithDndDropProps;
 
 const HelmRelease: React.FC<HelmReleaseProps> = (props) => {
-  const secretObj = getTopologyResourceObject(props.element.getData().resources.obj);
+  const secretObj = getTopologyResourceObject(props.element.getData());
   const resourceModel = secretObj ? modelFor(referenceFor(secretObj)) : null;
   const editAccess = useAccessReview({
     group: resourceModel?.apiGroup,
