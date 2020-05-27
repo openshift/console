@@ -6,17 +6,20 @@ import {
   PipelineTask,
 } from '../../../../utils/pipeline-augment';
 import { TriggerTemplateModel } from '../../../../models';
-import { usePipelineTriggerTemplateNames, RouteTemplate } from '../../utils/triggers';
+import { RouteTemplate } from '../../utils/triggers';
 import DynamicResourceLinkList from '../../resource-overview/DynamicResourceLinkList';
 import TriggerTemplateResourceLink from '../../resource-overview/TriggerTemplateResourceLink';
 import PipelineVisualization from './PipelineVisualization';
 
 interface PipelineDetailsProps {
   obj: Pipeline;
+  customData: RouteTemplate[];
 }
 
-const PipelineDetails: React.FC<PipelineDetailsProps> = ({ obj: pipeline }) => {
-  const routeTemplates: RouteTemplate[] = usePipelineTriggerTemplateNames(pipeline) || [];
+const PipelineDetails: React.FC<PipelineDetailsProps> = ({
+  obj: pipeline,
+  customData: routeTemplates,
+}) => {
   const taskLinks = pipeline.spec.tasks
     .filter((pipelineTask: PipelineTask) => !!pipelineTask.taskRef)
     .map((task) => ({

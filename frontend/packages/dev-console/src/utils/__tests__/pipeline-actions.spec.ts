@@ -4,6 +4,7 @@ import {
   rerunPipelineAndRedirect,
   reRunPipelineRun,
   startPipeline,
+  getPipelineKebabActions,
 } from '../pipeline-actions';
 import { PipelineRun, Pipeline } from '../pipeline-augment';
 
@@ -81,5 +82,34 @@ describe('PipelineAction testing stopPipelineRun create correct labels and callb
     expect(stopAction.label).toBe('Stop');
     expect(stopAction.callback).not.toBeNull();
     expect(stopAction.hidden).not.toBeFalsy();
+  });
+});
+
+describe('getPipelineKebabActions', () => {
+  it('expect Remove Trigger option is present', () => {
+    const pipelineKebabActions = getPipelineKebabActions(actionPipelineRuns[0], true);
+    expect(pipelineKebabActions.length).toBe(6);
+    expect(pipelineKebabActions[3](PipelineModel, actionPipelines[0]).label).toBe('Remove Trigger');
+  });
+  it('expect Remove Trigger option is not present', () => {
+    const pipelineKebabActions = getPipelineKebabActions(actionPipelineRuns[0], false);
+    expect(pipelineKebabActions.length).toBe(5);
+    expect(pipelineKebabActions[3](PipelineModel, actionPipelines[0]).label).not.toBe(
+      'Remove Trigger',
+    );
+  });
+  it('expect Start Last Run option is present', () => {
+    const pipelineKebabActions = getPipelineKebabActions(actionPipelineRuns[0], false);
+    expect(pipelineKebabActions.length).toBe(5);
+    expect(pipelineKebabActions[1](PipelineRunModel, actionPipelineRuns[0]).label).toBe(
+      'Start Last Run',
+    );
+  });
+  it('expect Start Last Run option is not present', () => {
+    const pipelineKebabActions = getPipelineKebabActions(undefined, false);
+    expect(pipelineKebabActions.length).toBe(4);
+    expect(pipelineKebabActions[1](PipelineRunModel, actionPipelineRuns[0]).label).not.toBe(
+      'Start Last Run',
+    );
   });
 });

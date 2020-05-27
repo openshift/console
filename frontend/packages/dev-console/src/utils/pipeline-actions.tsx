@@ -228,11 +228,14 @@ const removeTrigger: KebabAction = (kind: K8sKind, pipeline: Pipeline) => ({
     verb: 'delete',
   },
 });
-export const getPipelineKebabActions = (pipelineRun?: PipelineRun): KebabAction[] => [
+export const getPipelineKebabActions = (
+  pipelineRun?: PipelineRun,
+  isTriggerPresent?: boolean,
+): KebabAction[] => [
   (model, resource: Pipeline) => startPipeline(model, resource, handlePipelineRunSubmit),
   ...(pipelineRun ? [() => rerunPipelineAndRedirect(PipelineRunModel, pipelineRun)] : []),
   (model, pipeline) => addTrigger(EventListenerModel, pipeline),
-  (model, pipeline) => removeTrigger(EventListenerModel, pipeline),
+  ...(isTriggerPresent ? [(model, pipeline) => removeTrigger(EventListenerModel, pipeline)] : []),
   editPipeline,
   Kebab.factory.Delete,
 ];
