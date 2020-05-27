@@ -260,9 +260,9 @@ export const VMSchedulingList: React.FC<VMSchedulingListProps> = ({
             }
           >
             {tolerationsWrapperCount > 0 ? (
-              `${tolerationsWrapperCount} Tolerations rules`
+              `${tolerationsWrapperCount} Toleration rules`
             ) : (
-              <p className="text-muted">No tolerations</p>
+              <p className="text-muted">No Toleration rules</p>
             )}
           </VMDetailsItem>
 
