@@ -6,6 +6,7 @@ import * as classNames from 'classnames';
 import { ActionGroup, Button } from '@patternfly/react-core';
 
 import { ANNOTATIONS } from '@console/shared';
+import * as catalogImg from '../imgs/logos/catalog-icon.svg';
 import {
   getImageForIconClass,
   getTemplateIcon,
@@ -57,7 +58,7 @@ const TemplateInfo: React.FC<TemplateInfoProps> = ({ template }) => {
   const { description } = annotations;
   const displayName = annotations[ANNOTATIONS.displayName] || template.metadata.name;
   const iconClass = getTemplateIcon(template);
-  const imgURL = getImageForIconClass(iconClass);
+  const imgURL = iconClass ? getImageForIconClass(iconClass) : catalogImg;
   const tags = (annotations.tags || '').split(/\s*,\s*/);
   const documentationURL = annotations[ANNOTATIONS.documentationURL];
   const supportURL = annotations[ANNOTATIONS.supportURL];
