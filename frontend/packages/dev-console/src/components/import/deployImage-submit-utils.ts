@@ -426,13 +426,15 @@ export const createOrUpdateDeployImageResources = async (
       const imageStreamRepo = imageStreamResponse.status.dockerImageRepository;
       imageStreamUrl = imageStreamTag ? `${imageStreamRepo}:${imageStreamTag}` : imageStreamRepo;
     }
+    const originalAnnotations = appResources?.editAppResource?.data?.metadata?.annotations || {};
+    const newAnnotations = { ...originalAnnotations, ...annotations };
     const knDeploymentResource = getKnativeServiceDepResource(
       formData,
       imageStreamUrl,
       internalImageName || name,
       imageStreamTag,
       internalImageNamespace,
-      annotations,
+      newAnnotations,
       _.get(appResources, 'editAppResource.data'),
     );
     requests.push(
