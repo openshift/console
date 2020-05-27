@@ -35,7 +35,11 @@ export const validationSchema = yup.object().shape({
 });
 
 const hasDomain = (url: string, domain: string): boolean => {
-  return url.includes(`https://${domain}/`) || url.includes(`@${domain}:`);
+  return (
+    url.startsWith(`https://${domain}/`) ||
+    url.startsWith(`https://www.${domain}/`) ||
+    url.includes(`@${domain}:`)
+  );
 };
 
 export const detectGitType = (url: string): string => {
