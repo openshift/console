@@ -8,10 +8,8 @@ import {
   VolumeType,
 } from '../../../../constants/vm/storage';
 import { VolumeWrapper } from '../../../../k8s/wrapper/vm/volume-wrapper';
-import { prefixedID } from '../../../../utils';
 import { DataVolumeWrapper } from '../../../../k8s/wrapper/vm/data-volume-wrapper';
 import { ProvisionSource } from '../../../../constants/vm/provision-source';
-import { VM_TEMPLATE_NAME_PARAMETER } from '../../../../constants/vm-templates';
 import { BinaryUnit } from '../../../form/size-unit-utils';
 import { WINTOOLS_CONTAINER_NAMES } from '../../../modals/cdrom-vm-modal/constants';
 import { InitialStepStateGetter } from './types';
@@ -20,6 +18,8 @@ import {
   getDefaultSCVolumeMode,
 } from '../../../../selectors/config-map/sc-defaults';
 import { toShallowJS } from '../../../../utils/immutable';
+import { generateDataVolumeName } from '../../../../utils';
+import { DUMMY_VM_NAME } from '../../../../constants/vm';
 
 const ROOT_DISK_NAME = 'rootdisk';
 const WINTOOLS_DISK_NAME = 'windows-guest-tools';
@@ -60,35 +60,39 @@ export const windowsToolsStorage: VMWizardStorage = {
   }).asResource(),
 };
 
-const getUrlStorage = (storageClassConfigMap: ConfigMapKind) => ({
-  type: VMWizardStorageType.PROVISION_SOURCE_DISK,
-  disk: DiskWrapper.initializeFromSimpleData({
-    name: ROOT_DISK_NAME,
-    type: DiskType.DISK,
-    bus: DiskBus.VIRTIO,
-    bootOrder: 1,
-  }).asResource(),
-  volume: VolumeWrapper.initializeFromSimpleData({
-    name: ROOT_DISK_NAME,
-    type: VolumeType.DATA_VOLUME,
-    typeData: { name: prefixedID(VM_TEMPLATE_NAME_PARAMETER, ROOT_DISK_NAME) },
-  }).asResource(),
-  dataVolume: DataVolumeWrapper.initializeFromSimpleData({
-    name: prefixedID(VM_TEMPLATE_NAME_PARAMETER, ROOT_DISK_NAME),
-    type: DataVolumeSourceType.HTTP,
-    typeData: { url: '' },
-    size: 10,
-    unit: BinaryUnit.Gi,
-  })
-    .setVolumeMode(getDefaultSCVolumeMode(storageClassConfigMap))
-    .setAccessModes(getDefaultSCAccessModes(storageClassConfigMap))
-    .asResource(),
-  editConfig: {
-    isFieldEditableOverride: {
-      source: false,
+const getUrlStorage = (storageClassConfigMap: ConfigMapKind) => {
+  const dataVolumeName = generateDataVolumeName(DUMMY_VM_NAME, ROOT_DISK_NAME);
+
+  return {
+    type: VMWizardStorageType.PROVISION_SOURCE_DISK,
+    disk: DiskWrapper.initializeFromSimpleData({
+      name: ROOT_DISK_NAME,
+      type: DiskType.DISK,
+      bus: DiskBus.VIRTIO,
+      bootOrder: 1,
+    }).asResource(),
+    volume: VolumeWrapper.initializeFromSimpleData({
+      name: ROOT_DISK_NAME,
+      type: VolumeType.DATA_VOLUME,
+      typeData: { name: dataVolumeName },
+    }).asResource(),
+    dataVolume: new DataVolumeWrapper()
+      .init({
+        name: dataVolumeName,
+        size: 10,
+        unit: BinaryUnit.Gi,
+      })
+      .setType(DataVolumeSourceType.HTTP, { url: '' })
+      .setVolumeMode(getDefaultSCVolumeMode(storageClassConfigMap))
+      .setAccessModes(getDefaultSCAccessModes(storageClassConfigMap))
+      .asResource(),
+    editConfig: {
+      isFieldEditableOverride: {
+        source: false,
+      },
     },
-  },
-});
+  };
+};
 
 export const getProvisionSourceStorage = (
   provisionSource: ProvisionSource,

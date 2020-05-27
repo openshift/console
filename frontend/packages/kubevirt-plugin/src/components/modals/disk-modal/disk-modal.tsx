@@ -20,7 +20,7 @@ import {
   StorageClassModel,
 } from '@console/internal/models';
 import { getName } from '@console/shared/src';
-import { getLoadedData, isLoaded, prefixedID } from '../../../utils';
+import { getLoadedData, isLoaded, prefixedID, resolveDataVolumeName } from '../../../utils';
 import { validateDisk } from '../../../utils/validations/vm';
 import { isValidationError } from '../../../utils/validations/common';
 import { FormRow } from '../../form/form-row';
@@ -72,7 +72,8 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
     namespaces,
     onNamespaceChanged,
     usedDiskNames,
-    isCreateTemplate,
+    isTemplate = false,
+    isInWizard = false,
     onSubmit,
     inProgress: _inProgress,
     isEditing,
@@ -172,7 +173,15 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
     type,
   });
 
-  const resultDataVolumeName = prefixedID(vmName, name);
+  const isPlainDataVolume = source.isPlainDataVolume(isInWizard && isTemplate);
+
+  // We can generate a random name every time, because this modal should not operate on disks with live datavolumes
+  const resultDataVolumeName = resolveDataVolumeName({
+    diskName: name,
+    vmLikeEntityName: vmName,
+    isTemplate,
+    isPlainDataVolume,
+  });
 
   const resultVolume = VolumeWrapper.initializeFromSimpleData({
     name,
@@ -186,14 +195,14 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
 
   let resultDataVolume;
   if (source.requiresDatavolume()) {
-    resultDataVolume = DataVolumeWrapper.initializeFromSimpleData({
-      name: resultDataVolumeName,
-      storageClassName: storageClassName || null, // || null is to enable merging
-      type: source.getDataVolumeSourceType(),
-      size,
-      unit,
-      typeData: { name: pvcName, namespace, url },
-    })
+    resultDataVolume = new DataVolumeWrapper()
+      .init({
+        name: resultDataVolumeName,
+        unit,
+        size,
+        storageClassName: storageClassName || null, // || null is to enable merging
+      })
+      .setType(source.getDataVolumeSourceType(), { name: pvcName, namespace, url })
       .setVolumeMode(volumeMode || null)
       .setAccessModes(accessMode ? [accessMode] : null);
   }
@@ -495,7 +504,7 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
               onChange={(sc) => onStorageClassNameChanged(sc || '')}
             />
           )}
-          {source.isPlainDataVolume(isCreateTemplate) && (
+          {isPlainDataVolume && (
             <Alert
               variant={AlertVariant.warning}
               isInline
@@ -581,7 +590,8 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
 export type DiskModalProps = {
   disk?: DiskWrapper;
   showInitialValidation?: boolean;
-  isCreateTemplate?: boolean;
+  isTemplate?: boolean;
+  isInWizard?: boolean;
   isEditing?: boolean;
   volume?: VolumeWrapper;
   dataVolume?: DataVolumeWrapper;

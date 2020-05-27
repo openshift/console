@@ -52,3 +52,5 @@ export const PAUSED_VM_MODAL_MESSAGE =
 export const VIRTUAL_MACHINE_IS_NOT_RUNNING = 'Virtual Machine is not running';
 export const NO_GUEST_AGENT_MESSAGE =
   'This VM does not have guest agent installed. Some metrics and management features will not be available';
+
+export const DUMMY_VM_NAME = 'vm';

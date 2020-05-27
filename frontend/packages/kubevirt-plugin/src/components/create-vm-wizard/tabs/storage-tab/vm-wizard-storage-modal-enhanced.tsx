@@ -16,13 +16,13 @@ import { DiskWrapper } from '../../../../k8s/wrapper/vm/disk-wrapper';
 import { VolumeWrapper } from '../../../../k8s/wrapper/vm/volume-wrapper';
 import { DataVolumeWrapper } from '../../../../k8s/wrapper/vm/data-volume-wrapper';
 import { DiskModal } from '../../../modals/disk-modal';
-import { VM_TEMPLATE_NAME_PARAMETER } from '../../../../constants/vm-templates';
 import { PersistentVolumeClaimWrapper } from '../../../../k8s/wrapper/vm/persistent-volume-claim-wrapper';
 import { TemplateValidations } from '../../../../utils/validations/template/template-validations';
 import { getTemplateValidation } from '../../selectors/template';
 import { ConfigMapKind } from '@console/internal/module/k8s';
 import { toShallowJS } from '../../../../utils/immutable';
 import { getStorages } from '../../selectors/selectors';
+import { DUMMY_VM_NAME } from '../../../../constants/vm';
 
 const VMWizardStorageModal: React.FC<VMWizardStorageModalProps> = (props) => {
   const {
@@ -84,7 +84,7 @@ const VMWizardStorageModal: React.FC<VMWizardStorageModalProps> = (props) => {
       <DiskModal
         {...restProps}
         storageClassConfigMap={storageClassConfigMap}
-        vmName={VM_TEMPLATE_NAME_PARAMETER}
+        vmName={DUMMY_VM_NAME}
         vmNamespace={vmNamespace}
         namespace={namespace}
         onNamespaceChanged={(n) => setNamespace(n)}
@@ -97,7 +97,8 @@ const VMWizardStorageModal: React.FC<VMWizardStorageModalProps> = (props) => {
         persistentVolumeClaim={
           persistentVolumeClaim && new PersistentVolumeClaimWrapper(persistentVolumeClaim, true)
         }
-        isCreateTemplate={isCreateTemplate}
+        isTemplate={isCreateTemplate}
+        isInWizard
         editConfig={editConfig}
         onSubmit={(
           resultDiskWrapper,

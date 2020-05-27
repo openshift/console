@@ -1,7 +1,6 @@
 import { DefaultVMLikeEntityParams } from './types';
 import { TemplateKind } from '@console/internal/module/k8s';
 import { VMTemplateWrapper } from '../../../wrapper/vm/vm-template-wrapper';
-import { VM_TEMPLATE_NAME_PARAMETER } from '../../../../constants/vm-templates';
 import {
   DiskBus,
   DiskType,
@@ -20,6 +19,7 @@ import { getFlavor, getWorkloadProfile } from '../../../../selectors/vm';
 import { DiskWrapper } from '../../../wrapper/vm/disk-wrapper';
 import { VolumeWrapper } from '../../../wrapper/vm/volume-wrapper';
 import { NetworkInterfaceWrapper } from '../../../wrapper/vm/network-interface-wrapper';
+import { VM_TEMPLATE_NAME_PARAMETER } from '../../../../constants/vm-templates/constants';
 
 export const resolveDefaultVMTemplate = (params: DefaultVMLikeEntityParams): TemplateKind => {
   const { commonTemplate, name, namespace, containerImage, baseOSName } = params;
