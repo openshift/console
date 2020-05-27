@@ -56,6 +56,7 @@ export const fetchEventSourcesCrd = async () => {
       resolvedRes?.items,
       (accumulator, crd) => {
         const {
+          metadata: { labels },
           spec: {
             group,
             versions,
@@ -64,7 +65,7 @@ export const fetchEventSourcesCrd = async () => {
         } = crd;
         const { name: version } = versions?.find((ver) => ver.served && ver.storage);
         if (version) {
-          accumulator.push({
+          const sourceModel = {
             apiGroup: group,
             apiVersion: version,
             kind,
@@ -76,7 +77,14 @@ export const fetchEventSourcesCrd = async () => {
             namespaced: true,
             crd: true,
             color: knativeEventingColor.value,
-          });
+          };
+          const sourceIndex = _.findIndex(accumulator, ['kind', kind]);
+          // added check as some sources has multiple entries with deprecated APIgroups
+          if (sourceIndex === -1) {
+            accumulator.push(sourceModel);
+          } else if (!labels?.['eventing.knative.dev/deprecated'] === true) {
+            accumulator.splice(sourceIndex, 1, sourceModel);
+          }
         }
         return accumulator;
       },
