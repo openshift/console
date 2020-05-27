@@ -857,17 +857,14 @@ const QueryBrowserWrapper_: React.FC<QueryBrowserWrapperProps> = ({
 }) => {
   const queries = queriesList.toJS();
 
-  const isInitRef = React.useRef(true);
-
   // Initialize queries from URL parameters
-  if (isInitRef.current) {
+  React.useEffect(() => {
     const searchParams = getURLSearchParams();
     for (let i = 0; _.has(searchParams, `query${i}`); ++i) {
       const query = searchParams[`query${i}`];
       patchQuery(i, { isEnabled: true, isExpanded: true, query, text: query });
     }
-    isInitRef.current = false;
-  }
+  }, [patchQuery]);
 
   /* eslint-disable react-hooks/exhaustive-deps */
   // Use React.useMemo() to prevent these two arrays being recreated on every render, which would trigger unnecessary
