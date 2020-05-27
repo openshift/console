@@ -6,27 +6,36 @@ import ActivityItem, {
 import { ResourceLink } from '@console/internal/components/utils';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { K8sActivityProps } from '@console/plugin-sdk';
+import { TemplateModel } from '@console/internal/models';
 import { VirtualMachineModel } from '../../../models';
-
-const VM_IMPORT_TITLE = 'Importing VM disk';
+import { diskImportKindMapping } from './utils';
+import { VMTemplateLink } from '../../vm-templates/vm-template-link';
 
 export const DiskImportActivity: React.FC<K8sActivityProps> = ({ resource }) => {
   const progress = parseInt(resource?.status?.progress, 10);
-  const vmLink = (
-    <ResourceLink
-      kind={referenceForModel(VirtualMachineModel)}
-      name={resource.metadata.ownerReferences[0].name}
-      namespace={resource.metadata.namespace}
-    />
-  );
+  const { kind, name, uid } = resource.metadata.ownerReferences[0];
+  const model = diskImportKindMapping[kind];
+  const ownerLink =
+    model === TemplateModel ? (
+      <VMTemplateLink name={name} namespace={resource.metadata.namespace} uid={uid} />
+    ) : (
+      <ResourceLink
+        kind={referenceForModel(model)}
+        name={name}
+        namespace={resource.metadata.namespace}
+      />
+    );
+  const title = `Importing ${
+    model === TemplateModel ? `${VirtualMachineModel.label} ${model.label}` : model.label
+  } disk`;
   return Number.isNaN(progress) ? (
     <>
-      <ActivityItem>{VM_IMPORT_TITLE}</ActivityItem>
-      {vmLink}
+      <ActivityItem>{title}</ActivityItem>
+      {ownerLink}
     </>
   ) : (
-    <ActivityProgress title={VM_IMPORT_TITLE} progress={progress}>
-      {vmLink}
+    <ActivityProgress title={title} progress={progress}>
+      {ownerLink}
     </ActivityProgress>
   );
 };

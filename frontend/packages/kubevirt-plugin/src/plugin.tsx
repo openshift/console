@@ -32,6 +32,7 @@ import {
 } from './components/dashboards-page/overview-dashboard/inventory';
 import kubevirtReducer from './redux';
 import { accessReviewImportVM } from './utils/accessReview-v2v';
+import { diskImportKindMapping } from './components/dashboards-page/overview-dashboard/utils';
 
 import './style.scss';
 
@@ -381,7 +382,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       },
       isActivity: (resource) =>
         resource?.status?.phase === 'ImportInProgress' &&
-        !!resource?.metadata?.ownerReferences?.[0],
+        Object.keys(diskImportKindMapping).includes(resource?.metadata?.ownerReferences?.[0]?.kind),
       getTimestamp: (resource) => new Date(resource.metadata.creationTimestamp),
       loader: () =>
         import(
