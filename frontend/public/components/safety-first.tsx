@@ -11,11 +11,11 @@ export const useSafetyFirst = <S extends any>(
   React.useEffect(() => () => (mounted.current = false), []);
 
   const [value, setValue] = React.useState(initialState);
-  const setValueSafe = (newValue: S) => {
+  const setValueSafe = React.useCallback((newValue: S) => {
     if (mounted.current) {
       setValue(newValue);
     }
-  };
+  }, []);
 
   return [value, setValueSafe];
 };

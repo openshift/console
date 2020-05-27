@@ -1,15 +1,11 @@
 import * as React from 'react';
-import { mount } from 'enzyme';
-import { Provider } from 'react-redux';
-import store from '@console/internal/redux';
+import { shallow } from 'enzyme';
 import CloudShellTab from '../CloudShellTab';
 import CloudShellTerminal from '../CloudShellTerminal';
 
-describe('CloudShell Tab Test', () => {
-  it('should render cloudshellterminal', () => {
-    const cloudShellTabWrapper = mount(<CloudShellTab />, {
-      wrappingComponent: ({ children }) => <Provider store={store}>{children}</Provider>,
-    });
+describe('CloudShellTab', () => {
+  it('should render CloudShellTerminal', () => {
+    const cloudShellTabWrapper = shallow(<CloudShellTab />);
     expect(cloudShellTabWrapper.find(CloudShellTerminal).exists()).toBe(true);
   });
 });

@@ -21,7 +21,7 @@ interface StateProps {
 }
 
 type Props = StateProps & {
-  onSubmit?: () => void;
+  onSubmit?: (namespace: string) => void;
   onCancel?: () => void;
 };
 
@@ -50,7 +50,7 @@ const CloudShellSetup: React.FunctionComponent<Props> = ({
         WorkspaceModel,
         newCloudShellWorkSpace(createCloudShellResourceName(), namespace),
       );
-      onSubmit && onSubmit();
+      onSubmit && onSubmit(namespace);
     } catch (err) {
       actions.setStatus({ submitError: err.message });
     }

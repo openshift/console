@@ -1,6 +1,9 @@
-import { K8sResourceKind } from '@console/internal/module/k8s';
-import { getRandomChars } from '@console/shared';
+import { K8sResourceKind, k8sPatch } from '@console/internal/module/k8s';
+import { STORAGE_PREFIX, getRandomChars } from '@console/shared';
 import { coFetchJSON, coFetch } from '@console/internal/co-fetch';
+import { WorkspaceModel } from '../../models';
+
+const CLOUD_SHELL_NAMESPACE = `${STORAGE_PREFIX}/command-line-terminal-namespace`;
 
 type environment = {
   value: string;
@@ -33,12 +36,13 @@ export type CloudShellResource = K8sResourceKind & {
   spec?: {
     started?: boolean;
     devfile?: Devfile;
+    routingClass?: string;
   };
 };
 
 export type TerminalInitData = { pod: string; container: string; cmd: string[] };
 
-export const CLOUD_SHELL_LABEL = 'console.openshift.io/cloudshell';
+export const CLOUD_SHELL_LABEL = 'console.openshift.io/terminal';
 export const CLOUD_SHELL_CREATOR_LABEL = 'org.eclipse.che.workspace/creator';
 export const CLOUD_SHELL_IMMUTABLE_ANNOTATION = 'org.eclipse.che.workspace/immutable';
 
@@ -59,6 +63,7 @@ export const newCloudShellWorkSpace = (name: string, namespace: string): CloudSh
   },
   spec: {
     started: true,
+    routingClass: 'openshift-terminal',
     devfile: {
       apiVersion: '1.0.0',
       metadata: {
@@ -74,6 +79,16 @@ export const newCloudShellWorkSpace = (name: string, namespace: string): CloudSh
     },
   },
 });
+
+export const startWorkspace = (workspace: CloudShellResource) => {
+  return k8sPatch(WorkspaceModel, workspace, [
+    {
+      path: '/spec/started',
+      op: 'replace',
+      value: true,
+    },
+  ]);
+};
 
 export const initTerminal = (
   username: string,
@@ -95,3 +110,12 @@ export const sendActivityTick = (workspaceName: string, namespace: string): void
 };
 
 export const checkTerminalAvailable = () => coFetch('/api/terminal/available');
+
+export const getCloudShellNamespace = () => localStorage.getItem(CLOUD_SHELL_NAMESPACE);
+export const setCloudShellNamespace = (namespace: string) => {
+  if (!namespace) {
+    localStorage.removeItem(CLOUD_SHELL_NAMESPACE);
+  } else {
+    localStorage.setItem(CLOUD_SHELL_NAMESPACE, namespace);
+  }
+};
