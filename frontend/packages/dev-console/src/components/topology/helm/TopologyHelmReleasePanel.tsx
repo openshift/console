@@ -64,8 +64,7 @@ export const ConnectedTopologyHelmReleasePanel: React.FC<TopologyHelmReleasePane
       />
     ) : null;
 
-  const releaseNotesComponent = () =>
-    releaseNotes ? <TopologyHelmReleaseNotesPanel releaseNotes={releaseNotes} /> : null;
+  const releaseNotesComponent = () => <TopologyHelmReleaseNotesPanel releaseNotes={releaseNotes} />;
 
   const actions = helmReleaseActions(helmRelease);
   return (

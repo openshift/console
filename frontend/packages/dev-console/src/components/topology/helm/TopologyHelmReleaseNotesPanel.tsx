@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { SyncMarkdownView } from '@console/internal/components/markdown-view';
+import HelmReleaseNotesEmptyState from '../../helm/details/notes/HelmReleaseNotesEmptyState';
 
 type TopologyHelmReleaseNotesPanelProps = {
   releaseNotes: string;
@@ -7,10 +8,13 @@ type TopologyHelmReleaseNotesPanelProps = {
 
 const TopologyHelmReleaseNotesPanel: React.SFC<TopologyHelmReleaseNotesPanelProps> = ({
   releaseNotes,
-}) => (
-  <div className="overview__sidebar-pane-body">
-    {releaseNotes && <SyncMarkdownView content={releaseNotes} />}
-  </div>
-);
+}) =>
+  releaseNotes ? (
+    <div className="overview__sidebar-pane-body">
+      <SyncMarkdownView content={releaseNotes} />
+    </div>
+  ) : (
+    <HelmReleaseNotesEmptyState />
+  );
 
 export default TopologyHelmReleaseNotesPanel;

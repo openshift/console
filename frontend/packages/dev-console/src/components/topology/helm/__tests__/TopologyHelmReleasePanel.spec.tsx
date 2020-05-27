@@ -6,6 +6,7 @@ import TopologyHelmReleaseResourcesPanel from '../TopologyHelmReleaseResourcesPa
 import TopologyHelmReleaseNotesPanel from '../TopologyHelmReleaseNotesPanel';
 import { SyncMarkdownView } from '@console/internal/components/markdown-view';
 import { ConnectedTopologyHelmReleasePanel } from '../TopologyHelmReleasePanel';
+import HelmReleaseNotesEmptyState from '../../../helm/details/notes/HelmReleaseNotesEmptyState';
 
 describe('TopologyHelmReleasePanel', () => {
   it('should render the resources tab by default', () => {
@@ -56,10 +57,12 @@ describe('TopologyHelmReleaseNotesPanel', () => {
   const releaseNotes = mockReleaseNotes;
 
   it('should render markdown when release notes are given', () => {
-    let component = mount(<TopologyHelmReleaseNotesPanel releaseNotes={releaseNotes} />);
+    const component = mount(<TopologyHelmReleaseNotesPanel releaseNotes={releaseNotes} />);
     expect(component.find(SyncMarkdownView)).toHaveLength(1);
+  });
 
-    component = mount(<TopologyHelmReleaseNotesPanel releaseNotes="" />);
-    expect(component.find(SyncMarkdownView)).toHaveLength(0);
+  it('should render empty state when release notes are not given', () => {
+    const component = mount(<TopologyHelmReleaseNotesPanel releaseNotes="" />);
+    expect(component.find(HelmReleaseNotesEmptyState)).toHaveLength(1);
   });
 });
