@@ -8,7 +8,6 @@ import {
   Checkbox,
   FormSelect,
   FormSelectOption,
-  Alert,
 } from '@patternfly/react-core';
 import {
   Firehose,
@@ -108,6 +107,10 @@ export const CloneVMModal = withHandlePromise((props: CloneVMModalProps) => {
     cancel();
   };
 
+  const vmRunningWarning =
+    isVMRunning(vm) &&
+    `The VM ${getName(vm)} is still running. It will be powered off while cloning.`;
+
   return (
     <div className="modal-content">
       <ModalTitle>Clone Virtual Machine</ModalTitle>
@@ -132,13 +135,6 @@ export const CloneVMModal = withHandlePromise((props: CloneVMModalProps) => {
             },
           ].filter((err) => err.message)}
         />
-        {isVMRunning(vm) && (
-          <Alert
-            variant="warning"
-            title={`The VM ${getName(vm)} is still running. It will be powered off while cloning.`}
-            className="kubevirt-clone-vm-modal__error-group--end "
-          />
-        )}
         <Form isHorizontal>
           <FormGroup
             label="Name"
@@ -211,6 +207,8 @@ export const CloneVMModal = withHandlePromise((props: CloneVMModalProps) => {
       <ModalFooter
         id="clone-vm"
         errorMessage={errorMessage}
+        isSimpleError={!!vmRunningWarning && !errorMessage}
+        warningMessage={vmRunningWarning}
         inProgress={inProgress}
         isDisabled={!isValid || inProgress}
         submitButtonText="Clone Virtual Machine"
