@@ -82,8 +82,10 @@ func (p *Proxy) HandleProxy(user *auth.User, w http.ResponseWriter, r *http.Requ
 		http.NotFound(w, r)
 		return
 	}
+
 	if path != WorkspaceInitEndpoint && path != WorkspaceActivityEndpoint {
 		http.Error(w, "Unsupported path", http.StatusForbidden)
+		return
 	}
 
 	client, err := p.createDynamicClient(user.Token)
@@ -130,6 +132,7 @@ func (p *Proxy) HandleProxy(user *auth.User, w http.ResponseWriter, r *http.Requ
 	}
 	if terminalHost.Scheme != "https" {
 		http.Error(w, "Workspace is not served over https", http.StatusForbidden)
+		return
 	}
 
 	terminalHost.Path = path
@@ -157,13 +160,13 @@ func (p *Proxy) HandleProxyEnabled(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	w.WriteHeader(http.StatusNoContent)
-	return
 }
 
 func (p *Proxy) handleExecInit(host *url.URL, token string, r *http.Request, w http.ResponseWriter) {
 	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {
 		http.Error(w, "Failed to read body of request: "+err.Error(), http.StatusInternalServerError)
+		return
 	}
 
 	wkspReq, err := http.NewRequest(http.MethodPost, host.String(), ioutil.NopCloser(bytes.NewReader(body)))
