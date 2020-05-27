@@ -30,11 +30,12 @@ const AddHealthChecks: React.FC<FormikProps<FormikValues> & AddHealthChecksProps
   currentContainer,
   handleSubmit,
   handleReset,
-  dirty,
   errors,
   status,
   isSubmitting,
   setFieldValue,
+  values,
+  dirty,
 }) => {
   const [currentKey, setCurrentKey] = React.useState(currentContainer);
   const containers = resource?.spec?.template?.spec?.containers;
@@ -50,6 +51,7 @@ const AddHealthChecks: React.FC<FormikProps<FormikValues> & AddHealthChecksProps
   } = resource;
   const kindForCRDResource = referenceFor(resource);
   const resourceKind = modelFor(kindForCRDResource).crd ? kindForCRDResource : kind;
+  const isFormClean = _.every(values.healthChecks, { modified: false });
 
   const handleSelectContainer = (containerName: string) => {
     const containerIndex = _.findIndex(resource.spec.template.spec.containers, [
@@ -117,7 +119,7 @@ const AddHealthChecks: React.FC<FormikProps<FormikValues> & AddHealthChecksProps
             errorMessage={status && status?.errors?.json?.message}
             isSubmitting={isSubmitting}
             submitLabel={healthCheckAdded ? 'Save' : 'Add'}
-            disableSubmit={!dirty || !_.isEmpty(errors)}
+            disableSubmit={isFormClean || !dirty || !_.isEmpty(errors)}
             resetLabel="Cancel"
           />
         </Form>

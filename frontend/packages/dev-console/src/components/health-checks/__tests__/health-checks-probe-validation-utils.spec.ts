@@ -13,6 +13,7 @@ describe('healthChecksValidationSchema', () => {
   beforeEach(() => {
     mockData = cloneDeep(mockHealthCheckFormData);
     mockData.healthChecks.readinessProbe.showForm = true;
+    mockData.healthChecks.readinessProbe.modified = false;
   });
 
   it('should validate the form data', async () => {

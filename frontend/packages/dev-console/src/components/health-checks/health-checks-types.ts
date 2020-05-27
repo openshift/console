@@ -34,5 +34,6 @@ export interface HealthCheckProbeData {
 export interface HealthCheckProbe {
   showForm?: boolean;
   enabled?: boolean;
+  modified?: boolean;
   data: HealthCheckProbeData;
 }

@@ -25,6 +25,11 @@ const HealthCheckProbe: React.FC<HealthCheckProbeProps> = ({ probeType }) => {
 
   const handleDeleteProbe = () => {
     setFieldValue(`healthChecks.${probeType}`, healthChecksDefaultValues);
+    if (healthChecks?.[probeType]?.modified) {
+      setFieldValue(`healthChecks.${probeType}.modified`, false);
+    } else {
+      setFieldValue(`healthChecks.${probeType}.modified`, true);
+    }
   };
 
   const handleReset = () => {
@@ -34,11 +39,13 @@ const HealthCheckProbe: React.FC<HealthCheckProbeProps> = ({ probeType }) => {
       setFieldValue(`healthChecks.${probeType}.showForm`, false);
       setFieldValue(`healthChecks.${probeType}.data`, temporaryProbeData);
     }
+    setFieldValue(`healthChecks.${probeType}.modified`, false);
   };
 
   const handleSubmit = () => {
     setFieldValue(`healthChecks.${probeType}.showForm`, false);
     setFieldValue(`healthChecks.${probeType}.enabled`, true);
+    setFieldValue(`healthChecks.${probeType}.modified`, true);
   };
 
   const handleAddProbe = () => {

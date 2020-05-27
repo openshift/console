@@ -6,6 +6,7 @@ export const healthChecksValidationSchema = yup.object().shape({
   containerName: yup.string(),
   showForm: yup.boolean(),
   enabled: yup.boolean(),
+  modified: yup.boolean(),
   data: yup.object().when('showForm', {
     is: true,
     then: yup.object().shape({

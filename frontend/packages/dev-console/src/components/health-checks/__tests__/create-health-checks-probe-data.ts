@@ -6,6 +6,7 @@ export const healthChecksData: HealthChecksData = {
   readinessProbe: {
     showForm: false,
     enabled: true,
+    modified: false,
     data: {
       failureThreshold: 3,
       requestType: RequestType.HTTPGET,
@@ -24,6 +25,7 @@ export const healthChecksData: HealthChecksData = {
   livenessProbe: {
     showForm: false,
     enabled: true,
+    modified: false,
     data: {
       failureThreshold: 3,
       requestType: RequestType.ContainerCommand,
@@ -42,6 +44,7 @@ export const healthChecksInputData = {
     readinessProbe: {
       showForm: false,
       enabled: true,
+      modified: false,
       data: {
         ...healthChecksDefaultValues.data,
         httpGet: {
@@ -56,6 +59,7 @@ export const healthChecksInputData = {
     startupProbe: {
       showForm: false,
       enabled: true,
+      modified: false,
       data: {
         ...healthChecksDefaultValues.data,
         requestType: RequestType.TCPSocket,
