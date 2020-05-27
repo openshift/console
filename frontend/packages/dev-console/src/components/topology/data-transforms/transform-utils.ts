@@ -182,24 +182,24 @@ export const getTopologyEdgeItems = (
     // look for multiple backing services first in `backingServiceSelectors`
     // followed by a fallback to the single reference in `backingServiceSelector`
     _.forEach(sbr.spec.backingServiceSelectors || [sbr.spec.backingServiceSelector], (bss) => {
-      // handles multiple edges
-      const targetNode = _.get(
-        _.find(resources, (deployment) => {
-          const name = _.get(deployment, 'metadata.ownerReferences[0].name');
-          const kind = _.get(deployment, 'metadata.ownerReferences[0].kind');
-          return bss.kind === kind && bss.resourceRef === name;
-        }),
-        ['metadata', 'uid'],
-      );
-      const uid = _.get(dc, ['metadata', 'uid']);
-      if (targetNode) {
-        edges.push({
-          id: `${uid}_${targetNode}`,
-          type: TYPE_SERVICE_BINDING,
-          source: uid,
-          target: targetNode,
-          data: { sbr },
-        });
+      if (bss) {
+        // handles multiple edges
+        const targetResource = resources.find(
+          (deployment) =>
+            deployment?.metadata?.ownerReferences?.[0]?.kind === bss.kind &&
+            deployment?.metadata?.ownerReferences?.[0]?.name === bss.resourceRef,
+        );
+        const target = targetResource?.metadata?.uid;
+        const source = dc?.metadata?.uid;
+        if (source && target) {
+          edges.push({
+            id: `${source}_${target}`,
+            type: TYPE_SERVICE_BINDING,
+            source,
+            target,
+            data: { sbr },
+          });
+        }
       }
     });
   });
