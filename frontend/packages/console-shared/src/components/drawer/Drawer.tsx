@@ -98,6 +98,7 @@ const Drawer: React.FC<DrawerProps> = ({
   };
 
   const handleResizeStart = (e: DraggableEvent) => {
+    e.preventDefault();
     lastObservedHeightRef.current = currentHeight;
     // always start with actual drawer height
     const drawerHeight = drawerRef.current?.offsetHeight || currentHeight;

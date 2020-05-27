@@ -85,13 +85,14 @@ describe('DrawerComponent', () => {
   });
 
   it('should handle resizing', () => {
+    const preventDefault = jest.fn();
     const data = {} as DraggableData;
     const onChange = jest.fn();
     const wrapper = shallow(<Drawer resizable defaultHeight={100} onChange={onChange} />);
     wrapper
       .find(DraggableCoreIFrameFix)
       .props()
-      .onStart({ pageY: 500 } as any, data);
+      .onStart({ pageY: 500, preventDefault } as any, data);
     expect(wrapper.find('.ocs-drawer').prop('style').height).toBe(100);
     wrapper
       .find(DraggableCoreIFrameFix)
