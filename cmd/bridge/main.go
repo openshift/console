@@ -305,7 +305,7 @@ func main() {
 
 		k8sAuthServiceAccountBearerToken = string(bearerToken)
 
-		// If running in an OpenShift cluster, set up a proxy to the prometheus-k8s serivce running in the openshift-monitoring namespace.
+		// If running in an OpenShift cluster, set up a proxy to the prometheus-k8s service running in the openshift-monitoring namespace.
 		if *fServiceCAFile != "" {
 			serviceCertPEM, err := ioutil.ReadFile(*fServiceCAFile)
 			if err != nil {
@@ -344,6 +344,7 @@ func main() {
 				HeaderBlacklist: []string{"Cookie", "X-CSRFToken"},
 				Endpoint:        &url.URL{Scheme: "https", Host: openshiftMeteringHost, Path: "/api"},
 			}
+			srv.TerminalProxyTLSConfig = serviceProxyTLSConfig
 		}
 
 	case "off-cluster":
@@ -400,6 +401,8 @@ func main() {
 				Endpoint:        offClusterMeteringURL,
 			}
 		}
+
+		srv.TerminalProxyTLSConfig = serviceProxyTLSConfig
 
 	default:
 		bridge.FlagFatalf("k8s-mode", "must be one of: in-cluster, off-cluster")

@@ -1,6 +1,7 @@
 package server
 
 import (
+	"crypto/tls"
 	"fmt"
 	"html/template"
 	"io"
@@ -98,6 +99,7 @@ type Server struct {
 	ThanosTenancyProxyConfig *proxy.Config
 	AlertManagerProxyConfig  *proxy.Config
 	MeteringProxyConfig      *proxy.Config
+	TerminalProxyTLSConfig   *tls.Config
 	// A lister for resource listing of a particular kind
 	MonitoringDashboardConfigMapLister ResourceLister
 	KnativeEventSourceCRDLister        ResourceLister
@@ -221,12 +223,12 @@ func (s *Server) HTTPHandler() http.Handler {
 		})),
 	)
 
-	terminalProxy := &terminal.Proxy{
-		TLSClientConfig: s.K8sProxyConfig.TLSClientConfig,
-		ClusterEndpoint: s.K8sProxyConfig.Endpoint,
-	}
-	handle(terminal.ProxyEndpoint, authHandlerWithUser(terminalProxy.HandleProxy))
+	terminalProxy := terminal.NewProxy(
+		s.TerminalProxyTLSConfig,
+		s.K8sProxyConfig.TLSClientConfig,
+		s.K8sProxyConfig.Endpoint)
 
+	handle(terminal.ProxyEndpoint, authHandlerWithUser(terminalProxy.HandleProxy))
 	handleFunc(terminal.AvailableEndpoint, terminalProxy.HandleProxyEnabled)
 
 	if s.prometheusProxyEnabled() {

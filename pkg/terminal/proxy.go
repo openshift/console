@@ -11,10 +11,11 @@ import (
 	"strings"
 	"time"
 
-	"github.com/openshift/console/pkg/auth"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/apimachinery/pkg/runtime/schema"
+
+	"github.com/openshift/console/pkg/auth"
 )
 
 const (
@@ -30,8 +31,21 @@ const (
 
 // Proxy provides handlers to handle terminal related requests
 type Proxy struct {
-	TLSClientConfig *tls.Config
-	ClusterEndpoint *url.URL
+	// A client with the correct TLS setup for communicating with servers withing cluster.
+	workspaceHttpClient *http.Client
+	TLSClientConfig     *tls.Config
+	ClusterEndpoint     *url.URL
+}
+
+func NewProxy(serviceTLS *tls.Config, TLSClientConfig *tls.Config, clusterEndpoint *url.URL) *Proxy {
+	return &Proxy{
+		workspaceHttpClient: &http.Client{
+			Timeout:   10 * time.Second,
+			Transport: &http.Transport{TLSClientConfig: serviceTLS},
+		},
+		TLSClientConfig: TLSClientConfig,
+		ClusterEndpoint: clusterEndpoint,
+	}
 }
 
 var (
@@ -140,6 +154,8 @@ func (p *Proxy) HandleProxy(user *auth.User, w http.ResponseWriter, r *http.Requ
 		p.handleExecInit(terminalHost, user.Token, r, w)
 	} else if path == WorkspaceActivityEndpoint {
 		p.handleActivity(terminalHost, user.Token, w)
+	} else {
+		http.Error(w, "Unknown path", http.StatusForbidden)
 	}
 }
 
@@ -233,10 +249,7 @@ func (p *Proxy) getBaseTerminalHost(ws *unstructured.Unstructured) (*url.URL, er
 }
 
 func (p *Proxy) proxyToWorkspace(wkspReq *http.Request, w http.ResponseWriter) {
-	client := &http.Client{
-		Timeout: 10 * time.Second,
-	}
-	wkspResp, err := client.Do(wkspReq)
+	wkspResp, err := p.workspaceHttpClient.Do(wkspReq)
 	if err != nil {
 		http.Error(w, "Failed to proxy request. Cause: "+err.Error(), http.StatusInternalServerError)
 		return
