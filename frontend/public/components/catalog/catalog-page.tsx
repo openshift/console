@@ -242,7 +242,7 @@ export class CatalogListPage extends React.Component<CatalogListPageProps, Catal
             </>
           );
 
-          const homePage = (
+          const homePage = chart.home && (
             <ExternalLink href={chart.home} additionalClassName="co-break-all" text={chart.home} />
           );
 
@@ -250,7 +250,7 @@ export class CatalogListPage extends React.Component<CatalogListPageProps, Catal
             <>
               <PropertyItem label="Chart Version" value={chartVersion} />
               <PropertyItem label="App Version" value={appVersion} />
-              <PropertyItem label="Home Page" value={homePage} />
+              {homePage && <PropertyItem label="Home Page" value={homePage} />}
               {maintainers && <PropertyItem label="Maintainers" value={maintainers} />}
             </>
           );
