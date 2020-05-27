@@ -1,6 +1,7 @@
 package server
 
 import (
+	"crypto/tls"
 	"fmt"
 	"html/template"
 	"io"
@@ -17,6 +18,7 @@ import (
 	helmhandlerspkg "github.com/openshift/console/pkg/helm/handlers"
 	"github.com/openshift/console/pkg/proxy"
 	"github.com/openshift/console/pkg/serverutils"
+	"github.com/openshift/console/pkg/terminal"
 	"github.com/openshift/console/pkg/version"
 )
 
@@ -97,6 +99,7 @@ type Server struct {
 	ThanosTenancyProxyConfig *proxy.Config
 	AlertManagerProxyConfig  *proxy.Config
 	MeteringProxyConfig      *proxy.Config
+	TerminalProxyTLSConfig   *tls.Config
 	// A lister for resource listing of a particular kind
 	MonitoringDashboardConfigMapLister ResourceLister
 	KnativeEventSourceCRDLister        ResourceLister
@@ -219,6 +222,14 @@ func (s *Server) HTTPHandler() http.Handler {
 			k8sProxy.ServeHTTP(w, r)
 		})),
 	)
+
+	terminalProxy := terminal.NewProxy(
+		s.TerminalProxyTLSConfig,
+		s.K8sProxyConfig.TLSClientConfig,
+		s.K8sProxyConfig.Endpoint)
+
+	handle(terminal.ProxyEndpoint, authHandlerWithUser(terminalProxy.HandleProxy))
+	handleFunc(terminal.AvailableEndpoint, terminalProxy.HandleProxyEnabled)
 
 	if s.prometheusProxyEnabled() {
 		// Only proxy requests to the Prometheus API, not the UI.
