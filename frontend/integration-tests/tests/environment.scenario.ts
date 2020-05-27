@@ -13,6 +13,7 @@ const WORKLOAD_NAME = `env-${testName}`;
 const Actions = {
   add: 'add',
   delete: 'delete',
+  deleteFrom: 'deleteFrom',
   addFrom: 'addFrom',
 };
 
@@ -62,6 +63,7 @@ describe('Interacting with the environment variable editor', () => {
     checkErrors();
   });
 
+  const present = true;
   const validateKeyAndValue = async (key: string, value: string, isPresent: boolean) => {
     let keyFound = 0;
 
@@ -80,9 +82,16 @@ describe('Interacting with the environment variable editor', () => {
     }
   };
 
-  const validateValueFrom = async (valueFrom: string, prefix: string) => {
-    expect(environmentView.resources.last().getText()).toEqual(valueFrom);
-    expect(environmentView.prefix.getAttribute('value')).toEqual(prefix);
+  const validateValueFrom = async (valueFrom: string, prefix: string, isPresent: boolean) => {
+    const resourceText = await environmentView.resources.last().getText();
+    const prefixText = await environmentView.prefix.getAttribute('value');
+    if (isPresent) {
+      expect(resourceText).toEqual(valueFrom);
+      expect(prefixText).toEqual(prefix);
+    } else {
+      expect(resourceText).toEqual('hello-openshift');
+      expect(prefixText).toEqual('');
+    }
   };
 
   const environmentEditor = async (action: string, key: string, value: string) => {
@@ -95,6 +104,10 @@ describe('Interacting with the environment variable editor', () => {
       }
       case Actions.delete: {
         await environmentView.deleteVariable();
+        break;
+      }
+      case Actions.deleteFrom: {
+        await environmentView.deleteFromVariable();
         break;
       }
       case Actions.addFrom: {
@@ -116,7 +129,7 @@ describe('Interacting with the environment variable editor', () => {
       const value = 'value';
       await environmentEditor(Actions.add, key, value);
       await environmentView.isLoaded();
-      await validateKeyAndValue(key, value, true);
+      await validateKeyAndValue(key, value, present);
     });
   });
 
@@ -126,7 +139,7 @@ describe('Interacting with the environment variable editor', () => {
       const value = 'value';
       await environmentEditor(Actions.delete, key, value);
       await environmentView.isLoaded();
-      await validateKeyAndValue(key, value, false);
+      await validateKeyAndValue(key, value, !present);
     });
   });
 
@@ -136,17 +149,37 @@ describe('Interacting with the environment variable editor', () => {
       const envPrefix = 'testcm';
       await environmentEditor(Actions.addFrom, resourceName, envPrefix);
       await environmentView.isLoaded();
-      await validateValueFrom(resourceName, envPrefix);
+      await validateValueFrom(resourceName, envPrefix, present);
     });
   });
 
-  xdescribe('CONSOLE-1504 - When a variable is added from a secret', () => {
+  describe('When a variable is deleted from a config map', () => {
+    it('shows the correct variables', async () => {
+      const resourceName = 'my-config';
+      const envPrefix = 'testcm';
+      await environmentEditor(Actions.deleteFrom, resourceName, envPrefix);
+      await environmentView.isLoaded();
+      await validateValueFrom(resourceName, envPrefix, !present);
+    });
+  });
+
+  describe('When a variable is added from a secret', () => {
     it('shows the correct variables', async () => {
       const resourceName = 'my-secret';
       const envPrefix = 'testsecret';
       await environmentEditor(Actions.addFrom, resourceName, envPrefix);
       await environmentView.isLoaded();
-      await validateValueFrom(resourceName, envPrefix);
+      await validateValueFrom(resourceName, envPrefix, true);
+    });
+  });
+
+  describe('When a variable is deleted from a secret', () => {
+    it('shows the correct variables', async () => {
+      const resourceName = 'my-secret';
+      const envPrefix = 'testsecret';
+      await environmentEditor(Actions.deleteFrom, resourceName, envPrefix);
+      await environmentView.isLoaded();
+      await validateValueFrom(resourceName, envPrefix, false);
     });
   });
 });

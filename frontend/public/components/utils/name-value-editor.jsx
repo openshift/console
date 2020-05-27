@@ -672,6 +672,7 @@ const EnvFromPairElement = DragSource(
                 <div className="col-xs-1 pairs-list__action">
                   <Button
                     type="button"
+                    data-test-id="pairs-list__delete-from-btn"
                     className="pairs-list__span-btns"
                     onClick={this._onRemove}
                     variant="plain"
