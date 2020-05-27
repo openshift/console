@@ -87,7 +87,7 @@ export const ResourceDetailsPage = connectToPlural((props: ResourceDetailsPagePr
         namespace={ns}
         kind={props.modelRef}
         kindObj={kindObj}
-        name={name}
+        name={decodeURIComponent(name)}
         badge={getBadgeFromType(kindObj.badge)}
       />
     </>
