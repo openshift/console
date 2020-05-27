@@ -1,10 +1,9 @@
 .odc-item-selector-field {
-    display: flex;
+    display: inline-flex;
     flex-direction: column;
     flex-flow: wrap;
     background: var(--pf-global--Color--light-200);
     padding: 4px;
-    width: fit-content;
   
     &__success-icon {
       color: var(--pf-global--success-color--200);
