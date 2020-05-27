@@ -14,20 +14,22 @@ export const HelmReleaseListPage: React.FC<HelmReleaseListPageProps> = (props) =
       params: { ns: namespace },
     },
   } = props;
-  return namespace ? (
+  return (
     <NamespacedPage variant={NamespacedPageVariants.light} hideApplications>
       <Helmet>
         <title>Helm Releases</title>
       </Helmet>
-      <div>
-        <PageHeading title="Helm Releases" />
-        <HelmReleaseList namespace={namespace} />
-      </div>
+      {namespace ? (
+        <div>
+          <PageHeading title="Helm Releases" />
+          <HelmReleaseList namespace={namespace} />
+        </div>
+      ) : (
+        <ProjectListPage title="Helm Releases">
+          Select a project to view the list of Helm Releases
+        </ProjectListPage>
+      )}
     </NamespacedPage>
-  ) : (
-    <ProjectListPage title="Helm Releases">
-      Select a project to view the list of Helm Releases
-    </ProjectListPage>
   );
 };
 
