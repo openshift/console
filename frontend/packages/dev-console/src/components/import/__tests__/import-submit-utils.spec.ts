@@ -36,6 +36,7 @@ describe('Import Submit Utils', () => {
         {
           from: { kind: 'ImageStreamTag', name: 'nodejs-ex-git:latest' },
           fieldPath: 'spec.template.spec.containers[?(@.name=="nodejs-ex-git")].image',
+          pause: 'false',
         },
       ]);
       done();

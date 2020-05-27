@@ -238,7 +238,11 @@ export const createOrUpdateDeployment = (
     project: { name: namespace },
     application: { name: application },
     image: { ports, tag },
-    deployment: { env, replicas },
+    deployment: {
+      env,
+      replicas,
+      triggers: { image: imageChange },
+    },
     labels: userLabels,
     limits: { cpu, memory },
     git: { url: repository, ref },
@@ -253,6 +257,7 @@ export const createOrUpdateDeployment = (
       {
         from: { kind: 'ImageStreamTag', name: `${name}:latest` },
         fieldPath: `spec.template.spec.containers[?(@.name=="${name}")].image`,
+        pause: `${!imageChange}`,
       },
     ]),
   };

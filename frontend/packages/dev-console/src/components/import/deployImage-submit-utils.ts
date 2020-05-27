@@ -142,7 +142,11 @@ export const createOrUpdateDeployment = (
     project: { name: namespace },
     name,
     isi: { image, ports, tag: imageStreamTag },
-    deployment: { env, replicas },
+    deployment: {
+      env,
+      replicas,
+      triggers: { image: imageChange },
+    },
     labels: userLabels,
     limits: { cpu, memory },
     imageStream: { image: imgName, namespace: imgNamespace },
@@ -159,6 +163,7 @@ export const createOrUpdateDeployment = (
           namespace: imgNamespace || namespace,
         },
         fieldPath: `spec.template.spec.containers[?(@.name=="${name}")].image`,
+        pause: `${!imageChange}`,
       },
     ]),
   };

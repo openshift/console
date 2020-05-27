@@ -414,7 +414,7 @@ export const gitImportInitialValues: GitImportFormData = {
   },
   git: {
     url: 'https://github.com/divyanshiGupta/nationalparks-py',
-    type: 'Git',
+    type: 'github',
     ref: '',
     dir: '/',
     showGitType: false,
