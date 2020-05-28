@@ -18,6 +18,7 @@ export const HOST_STATUS_REGISTRATION_ERROR = 'registration error';
 export const HOST_STATUS_INSPECTION_ERROR = 'inspection error';
 export const HOST_STATUS_PROVISIONING_ERROR = 'provisioning error';
 export const HOST_STATUS_POWER_MANAGEMENT_ERROR = 'power management error';
+export const HOST_STATUS_DELETING = 'deleting';
 
 export const HOST_POWER_STATUS_POWERED_ON = 'Powered on';
 export const HOST_POWER_STATUS_POWERED_OFF = 'Powered off';
@@ -42,6 +43,7 @@ export const HOST_STATUS_TITLES = {
   [HOST_STATUS_PROVISIONING_ERROR]: 'Provisioning error',
   [HOST_STATUS_POWER_MANAGEMENT_ERROR]: 'Power Management Error',
   [HOST_STATUS_MATCH_PROFILE]: 'Matching profile',
+  [HOST_STATUS_DELETING]: 'Deleting',
   [HOST_STATUS_UNKNOWN]: 'Unknown',
 };
 
@@ -86,6 +88,7 @@ export const HOST_PROGRESS_STATES = [
   HOST_STATUS_DEPROVISIONING,
   HOST_STATUS_REGISTERING,
   HOST_STATUS_MATCH_PROFILE,
+  HOST_STATUS_DELETING,
 ];
 
 export const HOST_SUCCESS_STATES = [
