@@ -68,8 +68,11 @@ func fakeGetManifest(mockedManifest string, err error) func(name string, url str
 	}
 }
 
-func fakeGetRelease(mockedRelease *release.Release, err error) func(releaseName string, conf *action.Configuration) (*release.Release, error) {
+func fakeGetRelease(name string, t *testing.T, mockedRelease *release.Release, err error) func(releaseName string, conf *action.Configuration) (*release.Release, error) {
 	return func(releaseName string, conf *action.Configuration) (r *release.Release, er error) {
+		if name != releaseName {
+			t.Errorf("release name mismatch expected is %s, received %s", name, releaseName)
+		}
 		return mockedRelease, err
 	}
 }
@@ -263,6 +266,7 @@ func TestHelmHandlers_HandleGetRelease(t *testing.T) {
 		name             string
 		expectedResponse string
 		release          *release.Release
+		releaseName      string
 		error
 		httpStatusCode int
 	}{
@@ -270,21 +274,23 @@ func TestHelmHandlers_HandleGetRelease(t *testing.T) {
 			name:             "Error occurred at finding release",
 			error:            errors.New("unknown error occurred"),
 			httpStatusCode:   http.StatusBadGateway,
+			releaseName:      "Test",
 			expectedResponse: `{"error":"Failed to find helm release: unknown error occurred"}`,
 		},
 		{
 			name:             "Return the requested release serialized in JSON format",
 			expectedResponse: `{"name":"Test"}`,
 			release:          &fakeRelease,
+			releaseName:      "Test",
 			httpStatusCode:   http.StatusOK,
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			handlers := fakeHelmHandler()
-			handlers.getRelease = fakeGetRelease(tt.release, tt.error)
+			handlers.getRelease = fakeGetRelease(tt.releaseName, t, tt.release, tt.error)
 
-			request := httptest.NewRequest("", "/foo", strings.NewReader("{}"))
+			request := httptest.NewRequest("", "/foo?name="+tt.releaseName, strings.NewReader("{}"))
 			response := httptest.NewRecorder()
 
 			handlers.HandleGetRelease(&auth.User{}, response, request)

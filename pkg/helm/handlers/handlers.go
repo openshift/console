@@ -51,7 +51,7 @@ type helmHandlers struct {
 	upgradeRelease    func(string, string, string, map[string]interface{}, *action.Configuration) (*release.Release, error)
 	uninstallRelease  func(string, *action.Configuration) (*release.UninstallReleaseResponse, error)
 	rollbackRelease   func(string, int, *action.Configuration) (*release.Release, error)
-	getRelease        func(releaseName string, conf *action.Configuration) (*release.Release, error)
+	getRelease        func(string, *action.Configuration) (*release.Release, error)
 	getChart          func(chartUrl string, conf *action.Configuration) (*chart.Chart, error)
 	getReleaseHistory func(releaseName string, conf *action.Configuration) ([]*release.Release, error)
 }
@@ -117,7 +117,7 @@ func (h *helmHandlers) HandleHelmList(user *auth.User, w http.ResponseWriter, r 
 func (h *helmHandlers) HandleGetRelease(user *auth.User, w http.ResponseWriter, r *http.Request) {
 	queryParams := r.URL.Query()
 	ns := queryParams.Get("ns")
-	chartName := queryParams.Get("release_name")
+	chartName := queryParams.Get("name")
 
 	conf := h.getActionConfigurations(h.ApiServerHost, ns, user.Token, &h.Transport)
 	release, err := h.getRelease(chartName, conf)

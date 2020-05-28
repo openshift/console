@@ -40,7 +40,7 @@
  
    `ns=[string]` - Namespace
    
-   `release_name=[string]` - Helm Release Name
+   `name=[string]` - Helm Release Name
 
 * **Success Response:**
   
