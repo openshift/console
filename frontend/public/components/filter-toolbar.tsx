@@ -78,11 +78,13 @@ const getDropdownItems = (rowFilters: RowFilter[], selectedItems, data, props) =
 
 const FilterToolbar_: React.FC<FilterToolbarProps & RouteComponentProps> = (props) => {
   const {
-    rowFilters = [],
     data,
-    hideToolbar,
+    filterList,
     hideLabelFilter,
+    hideToolbar,
     location,
+    reduxIDs,
+    rowFilters = [],
     textFilter = filterTypeMap[FilterType.NAME],
   } = props;
 
@@ -115,29 +117,20 @@ const FilterToolbar_: React.FC<FilterToolbarProps & RouteComponentProps> = (prop
     return acc;
   }, {});
 
-  // (url) => {nameFilter, labelFilters, rowFilters}
-  const { name: nameFilter, labels: labelFilters, rowFiltersFromURL: selectedRowFilters } = (() => {
-    const rowFiltersFromURL: string[] = [];
-    const params = new URLSearchParams(location.search);
-    const q = params.get('label');
-    const name = params.get(textFilter);
-    _.map(filterKeys, (f) => {
+  const params = new URLSearchParams(location.search);
+  const q = params.get('label');
+  const labelFilters = q ? q.split(',') : [];
+  const nameFilter = params.get(textFilter);
+  const selectedRowFilters = _.reduce(
+    filterKeys,
+    (acc: string[], f: string) => {
       const vals = params.get(f);
-      if (vals) {
-        rowFiltersFromURL.push(...vals.split(','));
-      }
-    });
-    const labels = q ? q.split(',') : [];
-    return { name, labels, rowFiltersFromURL };
-  })();
+      return vals ? [...acc, ...vals.split(',')] : acc;
+    },
+    [],
+  );
 
   /* Logic for Name and Label Filter */
-
-  const applyFilter = (input: string | string[], type: FilterType) => {
-    const filter = type === FilterType.NAME ? textFilter : filterTypeMap[FilterType.LABEL];
-    const value = type === FilterType.NAME ? input : { all: input };
-    props.reduxIDs.forEach((id) => props.filterList(id, filter, value));
-  };
 
   const updateLabelFilter = (filterValues: string[]) => {
     if (filterValues.length > 0) {
@@ -146,7 +139,6 @@ const FilterToolbar_: React.FC<FilterToolbarProps & RouteComponentProps> = (prop
       removeQueryArgument('label');
     }
     setInputText('');
-    applyFilter(filterValues, FilterType.LABEL);
   };
 
   const updateNameFilter = (filterValue: string) => {
@@ -156,7 +148,6 @@ const FilterToolbar_: React.FC<FilterToolbarProps & RouteComponentProps> = (prop
       removeQueryArgument(textFilter);
     }
     setInputText(filterValue);
-    applyFilter(filterValue, FilterType.NAME);
   };
 
   const updateSearchFilter = (value: string) => {
@@ -170,21 +161,6 @@ const FilterToolbar_: React.FC<FilterToolbarProps & RouteComponentProps> = (prop
       default:
         break;
     }
-  };
-
-  /* Logic Related to Row Filters Ex:(Status, Type) */
-
-  const applyRowFilter = (selected: string[]) => {
-    rowFilters.forEach((filter) => {
-      const rowItems = filter.itemsGenerator
-        ? filter.itemsGenerator(props, props?.kinds)
-        : filter.items;
-      const all = _.map(rowItems, 'id');
-      const recognized = _.intersection(selected, all);
-      (props.reduxIDs || []).forEach((id) =>
-        props.filterList(id, filter.type, { selected: new Set(recognized), all }),
-      );
-    });
   };
 
   const setQueryParameters = (selected: string[]) => {
@@ -202,7 +178,6 @@ const FilterToolbar_: React.FC<FilterToolbarProps & RouteComponentProps> = (prop
 
   const updateRowFilterSelected = (id: string[]) => {
     const selectedNew = _.xor(selectedRowFilters, id);
-    applyRowFilter(selectedNew);
     setQueryParameters(selectedNew);
     setOpen(false);
   };
@@ -222,13 +197,34 @@ const FilterToolbar_: React.FC<FilterToolbarProps & RouteComponentProps> = (prop
     updateLabelFilter([]);
   };
 
-  // Initial URL parsing
+  // Apply label filter on changes.
   React.useEffect(() => {
-    !_.isEmpty(labelFilters) && applyFilter(labelFilters, FilterType.LABEL);
-    !_.isEmpty(nameFilter) && applyFilter(nameFilter, FilterType.NAME);
-    !_.isEmpty(selectedRowFilters) && applyRowFilter(selectedRowFilters);
+    reduxIDs?.forEach((id) =>
+      filterList(id, filterTypeMap[FilterType.LABEL], { all: labelFilters }),
+    );
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [q, reduxIDs?.join(',')]);
+
+  // Apply name filter on changes.
+  React.useEffect(() => {
+    reduxIDs?.forEach((id) => filterList(id, textFilter, nameFilter));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [nameFilter, textFilter, reduxIDs?.join(',')]);
+
+  // Apply row filters on changes.
+  React.useEffect(() => {
+    rowFilters.forEach((filter) => {
+      const rowItems = filter.itemsGenerator
+        ? filter.itemsGenerator(props, props?.kinds)
+        : filter.items;
+      const all = _.map(rowItems, 'id');
+      const recognized = _.intersection(selectedRowFilters, all);
+      reduxIDs?.forEach((id) =>
+        filterList(id, filter.type, { selected: new Set(recognized), all }),
+      );
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedRowFilters.join(','), reduxIDs?.join(',')]);
 
   const switchFilter = (type: FilterType) => {
     setFilterType(FilterType[type]);

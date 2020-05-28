@@ -38,7 +38,7 @@ import confirmNavUnpinModal from './nav/confirmNavUnpinModal';
 import { SearchFilterDropdown, searchFilterValues } from './search-filter-dropdown';
 import { useExtensions, isResourceListPage, ResourceListPage } from '@console/plugin-sdk';
 
-const ResourceList = connectToModel(({ kindObj, mock, namespace, selector, nameFilter }) => {
+const ResourceList = connectToModel(({ kindObj, mock, namespace, selector }) => {
   const resourceListPageExtensions = useExtensions<ResourceListPage>(isResourceListPage);
   if (!kindObj) {
     return <LoadingBox />;
@@ -55,10 +55,10 @@ const ResourceList = connectToModel(({ kindObj, mock, namespace, selector, nameF
       loader={componentLoader}
       namespace={ns}
       selector={selector}
-      nameFilter={nameFilter}
       kind={kindObj.crd ? referenceForModel(kindObj) : kindObj.kind}
       showTitle={false}
       hideTextFilter
+      textFilter="name"
       autoFocus={false}
       mock={mock}
       badge={getBadgeFromType(kindObj.badge)}
@@ -291,7 +291,6 @@ const SearchPage_: React.FC<SearchProps & StateProps & DispatchProps> = (props) 
                     <ResourceList
                       kind={resource}
                       selector={selectorFromString(labelFilter.join(','))}
-                      nameFilter={typeaheadNameFilter}
                       namespace={namespace}
                       mock={noProjectsAvailable}
                       key={resource}

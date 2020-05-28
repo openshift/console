@@ -115,7 +115,6 @@ export const FireMan_ = connect(null, { filterList })(
     constructor(props) {
       super(props);
       this.onExpandChange = this.onExpandChange.bind(this);
-      this.applyFilter = this.applyFilter.bind(this);
 
       const reduxIDs = props.resources.map((r) =>
         makeReduxID(kindObj(r.kind), makeQuery(r.namespace, r.selector, r.fieldSelector, r.name)),
@@ -138,39 +137,6 @@ export const FireMan_ = connect(null, { filterList })(
 
     onExpandChange(expand) {
       this.setState({ expand });
-    }
-
-    updateURL(filterName, options) {
-      if (filterName !== this.props.textFilter) {
-        // TODO (ggreer): support complex filters (objects, not just strings)
-        return;
-      }
-      const params = new URLSearchParams(window.location.search);
-      if (options) {
-        params.set(filterName, options);
-      } else {
-        params.delete(filterName);
-      }
-      const url = new URL(window.location);
-      history.replace(`${url.pathname}?${params.toString()}${url.hash}`);
-    }
-
-    applyFilter(filterName, options) {
-      // TODO: (ggreer) lame blacklist of query args. Use a whitelist based on resource filters
-      if (['q', 'kind', 'orderBy', 'sortBy'].includes(filterName)) {
-        return;
-      }
-      if (filterName.indexOf(storagePrefix) === 0) {
-        return;
-      }
-      this.state.reduxIDs.forEach((id) => this.props.filterList(id, filterName, options));
-      this.updateURL(filterName, options);
-    }
-
-    UNSAFE_componentWillMount() {
-      const params = new URLSearchParams(window.location.search);
-      this.defaultValue = params.get(this.props.textFilter);
-      params.forEach((v, k) => this.applyFilter(k, v));
     }
 
     runOrNavigate = (itemName) => {
@@ -265,7 +231,6 @@ export const FireMan_ = connect(null, { filterList })(
               resources,
               expand: this.state.expand,
               reduxIDs: this.state.reduxIDs,
-              applyFilter: this.applyFilter,
             })}
           </div>
         </>
@@ -325,7 +290,6 @@ export const ListPage = withFallback((props) => {
     ListComponent,
     mock,
     name,
-    nameFilter,
     namespace,
     selector,
     showTitle = true,
@@ -364,7 +328,7 @@ export const ListPage = withFallback((props) => {
       filters,
       kind,
       limit,
-      name: name || nameFilter,
+      name,
       namespaced,
       selector,
     },
