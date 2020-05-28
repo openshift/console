@@ -4,7 +4,7 @@ import { saveAs } from 'file-saver';
 import { Button, Flex, FlexItem, FlexModifiers } from '@patternfly/react-core';
 import { DownloadIcon, CompressIcon, ExpandIcon } from '@patternfly/react-icons';
 import { ContainerStatus, PodKind, ContainerSpec } from '@console/internal/module/k8s';
-import { LoadingInline } from '@console/internal/components/utils';
+import { LoadingInline, LOG_SOURCE_WAITING } from '@console/internal/components/utils';
 import { errorModal } from '@console/internal/components/modals/error-modal';
 import { useFullscreen, useScrollDirection, ScrollDirection } from '@console/shared';
 import { containerToLogSourceStatus } from '../../../utils/pipeline-utils';
@@ -146,16 +146,19 @@ export const MultiStreamLogs: React.FC<MultiStreamLogsProps> = ({
           onScroll={handleScrollCallback}
         >
           {containers.map((container, idx) => {
+            const resourceStatus = containerToLogSourceStatus(containerStatus[idx]);
             return (
-              <Logs
-                key={container.name}
-                resource={resource}
-                container={container}
-                resourceStatus={containerToLogSourceStatus(containerStatus[idx])}
-                onComplete={handleComplete}
-                render={renderToCount >= idx}
-                autoScroll={autoScroll}
-              />
+              resourceStatus !== LOG_SOURCE_WAITING && (
+                <Logs
+                  key={container.name}
+                  resource={resource}
+                  container={container}
+                  resourceStatus={resourceStatus}
+                  onComplete={handleComplete}
+                  render={renderToCount >= idx}
+                  autoScroll={autoScroll}
+                />
+              )
             );
           })}
         </div>
