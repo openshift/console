@@ -21,7 +21,6 @@ import {
   getNamespace,
 } from '@console/shared';
 import NodeIPList from '@console/app/src/components/nodes/NodeIPList';
-import NodeGraphs from '@console/app/src/components/nodes/NodeGraphs';
 import { BareMetalHostModel } from '../../models';
 import { BareMetalHostKind } from '../../types';
 import BareMetalNodeStatus from './BareMetalNodeStatus';
@@ -50,7 +49,6 @@ const BareMetalNodeDetailsOverview: React.FC<BareMetalNodeDetailsOverviewProps> 
   return (
     <div className="co-m-pane__body">
       <SectionHeading text="Node Details" />
-      <NodeGraphs node={node} />
       <div className="row">
         <div className="col-md-6 col-xs-12">
           <dl className="co-m-pane__details">
