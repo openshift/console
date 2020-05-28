@@ -1,88 +1,104 @@
 import * as React from 'react';
-import { useFormikContext, FormikValues, useField } from 'formik';
+import { useFormikContext, FormikValues, FormikTouched } from 'formik';
 import { Alert, TextInputTypes, ValidatedOptions } from '@patternfly/react-core';
 import { getGitService, GitProvider } from '@console/git-service';
-import { InputField, DropdownField, useFormikValidationFix } from '@console/shared';
+import {
+  InputField,
+  DropdownField,
+  useFormikValidationFix,
+  useDebounceCallback,
+} from '@console/shared';
 import { GitReadableTypes, GitTypes } from '../import-types';
 import { detectGitType, detectGitRepoName } from '../import-validation-utils';
 import { getSampleRepo, getSampleRef, getSampleContextDir } from '../../../utils/imagestream-utils';
 import FormSection from '../section/FormSection';
 import SampleRepo from './SampleRepo';
 import AdvancedGitOptions from './AdvancedGitOptions';
-import { UNASSIGNED_KEY } from '../../../const';
+import { UNASSIGNED_KEY, CREATE_APPLICATION_KEY } from '../../../const';
 
 export interface GitSectionProps {
   showSample?: boolean;
 }
 
 const GitSection: React.FC<GitSectionProps> = ({ showSample }) => {
-  const { values, setFieldValue, setFieldTouched } = useFormikContext<FormikValues>();
-  const [, { touched: gitTypeTouched }] = useField('git.type');
-  const [, { touched: userSelection }] = useField('image.selected');
+  const { values, setFieldValue, setFieldTouched, touched, dirty } = useFormikContext<
+    FormikValues
+  >();
   const tag = values.image.tagObj;
   const sampleRepo = showSample && getSampleRepo(tag);
+  const { application = {}, name: nameTouched, git = {}, image = {} } = touched;
+  const { type: gitTypeTouched } = git as FormikTouched<{ type: boolean }>;
+  const { name: applicationNameTouched } = application as FormikTouched<{ name: boolean }>;
+  const { selected: imageSelectorTouched } = image as FormikTouched<{ selected: boolean }>;
+  const [validated, setValidated] = React.useState<ValidatedOptions>(ValidatedOptions.default);
 
-  const handleGitUrlBlur: React.ReactEventHandler = React.useCallback(async () => {
-    const { url, ref } = values.git;
+  const handleGitUrlChange = React.useCallback(
+    async (url: string, ref: string) => {
+      setFieldValue('git.isUrlValidating', true);
+      setValidated(ValidatedOptions.default);
 
-    setFieldValue('git.isUrlValidating', true);
+      const gitType = detectGitType(url);
+      const gitRepoName = detectGitRepoName(url);
+      const showGitType = gitType === GitTypes.unsure;
 
-    const gitType = detectGitType(url);
+      setFieldValue('git.type', gitType);
+      setFieldValue('git.showGitType', showGitType);
+      showGitType && setFieldTouched('git.type', false);
+
+      const gitService = getGitService({ url, ref }, gitType as GitProvider);
+      const isReachable = gitService && (await gitService.isRepoReachable());
+      setFieldValue('git.isUrlValidating', false);
+      if (isReachable) {
+        setValidated(ValidatedOptions.success);
+        gitRepoName && !values.name && setFieldValue('name', gitRepoName);
+        gitRepoName &&
+          !values.application.name &&
+          values.application.selectedKey !== UNASSIGNED_KEY &&
+          setFieldValue('application.name', `${gitRepoName}-app`);
+        setFieldValue('image.isRecommending', true);
+        const buildTools = await gitService.detectBuildTypes();
+        setFieldValue('image.isRecommending', false);
+        if (buildTools.length > 0) {
+          const buildTool = buildTools[0].buildType;
+          setFieldValue('image.couldNotRecommend', false);
+          setFieldValue('image.recommended', buildTool);
+        } else {
+          setFieldValue('image.couldNotRecommend', true);
+          setFieldValue('image.recommended', '');
+        }
+      } else {
+        setFieldValue('image.recommended', '');
+        setFieldValue('image.couldNotRecommend', false);
+        setValidated(ValidatedOptions.error);
+      }
+    },
+    [
+      setFieldTouched,
+      setFieldValue,
+      values.application.name,
+      values.application.selectedKey,
+      values.name,
+    ],
+  );
+
+  const debouncedHandleGitUrlChange = useDebounceCallback(handleGitUrlChange, [handleGitUrlChange]);
+
+  const handleGitUrlBlur = React.useCallback(() => {
+    const { url } = values.git;
     const gitRepoName = detectGitRepoName(url);
-    const showGitType = gitType === GitTypes.unsure;
-
-    setFieldValue('git.type', gitType);
-    setFieldValue('git.showGitType', showGitType);
-    if (gitRepoName && !values.name) {
-      setFieldValue('name', gitRepoName);
-      setFieldTouched('name', true);
-    }
+    gitRepoName && setFieldValue('name', gitRepoName);
     gitRepoName &&
       !values.application.name &&
       values.application.selectedKey !== UNASSIGNED_KEY &&
       setFieldValue('application.name', `${gitRepoName}-app`);
     setFieldTouched('git.url', true);
-    showGitType && setFieldTouched('git.type', false);
-
-    const gitService = getGitService({ url, ref }, gitType as GitProvider);
-    const isReachable = gitService && (await gitService.isRepoReachable());
-    setFieldValue('git.isUrlValidating', false);
-    if (isReachable) {
-      setFieldValue('git.urlValidation', ValidatedOptions.success);
-      setFieldValue('image.isRecommending', true);
-      const buildTools = await gitService.detectBuildTypes();
-      setFieldValue('image.isRecommending', false);
-      if (buildTools.length > 0) {
-        const buildTool = buildTools[0].buildType;
-        setFieldValue('image.couldNotRecommend', false);
-        setFieldValue('image.recommended', buildTool);
-      } else {
-        setFieldValue('image.couldNotRecommend', true);
-        setFieldValue('image.recommended', '');
-      }
-    } else {
-      setFieldValue('image.recommended', '');
-      setFieldValue('image.couldNotRecommend', false);
-      setFieldValue('git.urlValidation', ValidatedOptions.error);
-    }
   }, [
     setFieldTouched,
     setFieldValue,
     values.application.name,
     values.application.selectedKey,
     values.git,
-    values.name,
   ]);
-
-  const handleGitUrlChange: React.ReactEventHandler = React.useCallback(() => {
-    setFieldValue('git.urlValidation', ValidatedOptions.default);
-    if (!userSelection) {
-      setFieldValue('image.selected', '');
-      setFieldValue('image.tag', '');
-    }
-    values.image.recommended && setFieldValue('image.recommended', '');
-    values.image.couldNotRecommend && setFieldValue('image.couldNotRecommend', false);
-  }, [setFieldValue, values.image.couldNotRecommend, values.image.recommended, userSelection]);
 
   const fillSample: React.ReactEventHandler<HTMLButtonElement> = React.useCallback(() => {
     const url = sampleRepo;
@@ -110,18 +126,46 @@ const GitSection: React.FC<GitSectionProps> = ({ showSample }) => {
     values.name,
   ]);
 
+  React.useEffect(() => {
+    const { url, ref } = values.git;
+    !dirty && url && handleGitUrlChange(url, ref);
+  }, [dirty, handleGitUrlChange, values.git]);
+
   const getHelpText = () => {
     if (values.git.isUrlValidating) {
       return 'Validating...';
     }
-    if (values.git.urlValidation === ValidatedOptions.success) {
+
+    if (validated === ValidatedOptions.success) {
       return 'Validated';
+    }
+    if (validated === ValidatedOptions.error) {
+      return 'Git repository is not reachable.';
     }
     return '';
   };
 
-  useFormikValidationFix(values.git.url);
+  const resetFields = () => {
+    if (!imageSelectorTouched) {
+      setFieldValue('image.selected', '');
+      setFieldValue('image.tag', '');
+    }
+    values.image.recommended && setFieldValue('image.recommended', '');
+    values.image.couldNotRecommend && setFieldValue('image.couldNotRecommend', false);
+    if (values.formType === 'edit') {
+      values.application.selectedKey !== UNASSIGNED_KEY &&
+        values.application.selectedKey === CREATE_APPLICATION_KEY &&
+        !applicationNameTouched &&
+        setFieldValue('application.name', '');
+      return;
+    }
+    !nameTouched && setFieldValue('name', '');
+    values.application.selectedKey !== UNASSIGNED_KEY &&
+      !applicationNameTouched &&
+      setFieldValue('application.name', '');
+  };
 
+  useFormikValidationFix(values.git.url);
   return (
     <FormSection title="Git">
       <InputField
@@ -129,9 +173,13 @@ const GitSection: React.FC<GitSectionProps> = ({ showSample }) => {
         name="git.url"
         label="Git Repo URL"
         helpText={getHelpText()}
-        helpTextInvalid="Git repository is not reachable."
-        validated={values.git.urlValidation}
-        onChange={handleGitUrlChange}
+        helpTextInvalid={getHelpText()}
+        validated={validated}
+        onChange={(e: React.SyntheticEvent) => {
+          resetFields();
+          setValidated(ValidatedOptions.default);
+          debouncedHandleGitUrlChange((e.target as HTMLInputElement).value, values.git.ref);
+        }}
         onBlur={handleGitUrlBlur}
         data-test-id="git-form-input-url"
         required
