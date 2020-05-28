@@ -84,7 +84,7 @@ describe('TransformResourceData', () => {
     const transformedData = transformResourceData.createDeploymentConfigItems(
       sampleDeploymentConfigs.data,
     );
-    expect(transformedData).toHaveLength(1);
+    expect(transformedData).toHaveLength(2);
     expect(transformedData[0]).toHaveProperties(dcKeys);
   });
 
@@ -92,7 +92,7 @@ describe('TransformResourceData', () => {
     const transformedData = transformResourceData.createDeploymentConfigItems(
       sampleDeploymentConfigs.data,
     );
-    expect(transformedData).toHaveLength(1);
+    expect(transformedData).toHaveLength(2);
     expect(transformedData[0]).not.toHaveProperties([...dcKeys, 'revisions']);
   });
 
@@ -150,7 +150,7 @@ describe('TransformResourceData', () => {
     const transformedData = transformResourceData.getPodsForDeploymentConfigs(
       sampleDeploymentConfigs.data,
     );
-    expect(transformedData).toHaveLength(1);
+    expect(transformedData).toHaveLength(2);
     expect(transformedData[0]).toHaveProperties(podRCKeys);
   });
 
