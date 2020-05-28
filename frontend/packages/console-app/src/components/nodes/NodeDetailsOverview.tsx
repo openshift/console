@@ -17,7 +17,6 @@ import { PencilAltIcon } from '@patternfly/react-icons';
 import { getNodeMachineNameAndNamespace, getNodeAddresses } from '@console/shared';
 import NodeIPList from './NodeIPList';
 import NodeStatus from './NodeStatus';
-import NodeGraphs from './NodeGraphs';
 
 type NodeDetailsOverviewProps = {
   node: NodeKind;
@@ -35,7 +34,6 @@ const NodeDetailsOverview: React.FC<NodeDetailsOverviewProps> = ({ node }) => {
   return (
     <div className="co-m-pane__body">
       <SectionHeading text="Node Details" />
-      <NodeGraphs node={node} />
       <div className="row">
         <div className="col-md-6 col-xs-12">
           <dl className="co-m-pane__details">
