@@ -16,6 +16,7 @@ const BareMetalHostDashboard: React.FC<BareMetalHostDashboardProps> = ({
   obj,
   machines,
   nodes,
+  loaded,
 }) => {
   const machine = getHostMachine(obj, machines);
   const node = getMachineNode(machine, nodes);
@@ -23,6 +24,7 @@ const BareMetalHostDashboard: React.FC<BareMetalHostDashboardProps> = ({
     obj,
     machine,
     node,
+    loaded,
   };
 
   const mainCards = [{ Card: StatusCard }, { Card: UtilizationCard }];
@@ -42,6 +44,7 @@ type BareMetalHostDashboardProps = {
   obj: BareMetalHostKind;
   machines: MachineKind[];
   nodes: NodeKind[];
+  loaded: boolean;
 };
 
 export default BareMetalHostDashboard;

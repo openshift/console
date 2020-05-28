@@ -8,4 +8,5 @@ type BareMetalDashboardContext = {
   obj?: BareMetalHostKind;
   machine?: MachineKind;
   node?: NodeKind;
+  loaded?: boolean;
 };

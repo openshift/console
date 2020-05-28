@@ -1,9 +1,4 @@
 import * as React from 'react';
-import * as _ from 'lodash';
-import {
-  DashboardItemProps,
-  withDashboardResources,
-} from '@console/internal/components/dashboard/with-dashboard-resources';
 import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
 import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
 import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
@@ -11,67 +6,55 @@ import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboa
 import InventoryItem, {
   ResourceInventoryItem,
 } from '@console/shared/src/components/dashboard/inventory-card/InventoryItem';
-import { K8sResourceKind, MachineKind } from '@console/internal/module/k8s';
 import { PodModel, NodeModel } from '@console/internal/models';
-import { getNamespace, getMachineNodeName, getName } from '@console/shared';
+import { getNamespace, getName } from '@console/shared/src/selectors/common';
 import { getPodStatusGroups } from '@console/shared/src/components/dashboard/inventory-card/utils';
 import { resourcePathFromModel } from '@console/internal/components/utils/resource-link';
+import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
+import { PodKind } from '@console/internal/module/k8s/types';
 import { Link } from 'react-router-dom';
 import { getHostStorage, getHostNICs, getHostCPU } from '../../../selectors';
 import { BareMetalHostModel } from '../../../models';
 import { BareMetalHostDashboardContext } from './BareMetalHostDashboardContext';
 
-const PodInventoryItem = React.memo(
-  withDashboardResources<PodInventoryItemProps>(
-    ({ machine, resources, watchK8sResource, stopWatchK8sResource }) => {
-      const nodeName = getMachineNodeName(machine);
-      React.useEffect(() => {
-        if (!nodeName) {
-          return () => {};
-        }
-        const podResource = {
-          isList: true,
-          kind: PodModel.kind,
-          prop: 'pods',
-          fieldSelector: `spec.nodeName=${nodeName}`,
-        };
-        watchK8sResource(podResource);
-        return () => stopWatchK8sResource(podResource);
-      }, [nodeName, watchK8sResource, stopWatchK8sResource]);
+const PodInventoryItem: React.FC = () => {
+  const { node, loaded } = React.useContext(BareMetalHostDashboardContext);
+  const nodeName = getName(node);
 
-      if (!nodeName || !machine) {
-        return (
-          <InventoryItem
-            title={PodModel.label}
-            count={0}
-            isLoading={!machine}
-            error={machine && !nodeName}
-          />
-        );
-      }
+  const podResource = React.useMemo(
+    () =>
+      loaded && nodeName
+        ? {
+            isList: true,
+            kind: PodModel.kind,
+            fieldSelector: `spec.nodeName=${nodeName}`,
+          }
+        : null,
+    [nodeName, loaded],
+  );
 
-      const podsData = _.get(resources.pods, 'data', []) as K8sResourceKind[];
-      const podsLoaded = _.get(resources.pods, 'loaded');
-      const podsError = _.get(resources.pods, 'loadError');
+  const [pods, podsLoaded, podsError] = useK8sWatchResource<PodKind[]>(podResource);
 
-      const basePath = `${resourcePathFromModel(NodeModel, nodeName)}/pods`;
+  if (!nodeName || !loaded) {
+    return <InventoryItem title={PodModel.label} count={0} isLoading={!loaded} />;
+  }
 
-      return (
-        <ResourceInventoryItem
-          resources={podsData}
-          basePath={basePath}
-          mapper={getPodStatusGroups}
-          kind={PodModel}
-          isLoading={!podsLoaded}
-          error={!!podsError}
-        />
-      );
-    },
-  ),
-);
+  const basePath = `${resourcePathFromModel(NodeModel, nodeName)}/pods`;
+
+  return (
+    <ResourceInventoryItem
+      resources={pods}
+      basePath={basePath}
+      mapper={getPodStatusGroups}
+      kind={PodModel}
+      isLoading={!podsLoaded}
+      error={!!podsError}
+    />
+  );
+};
 
 const InventoryCard: React.FC = () => {
-  const { obj, machine } = React.useContext(BareMetalHostDashboardContext);
+  const { obj } = React.useContext(BareMetalHostDashboardContext);
 
   const namespace = getNamespace(obj);
   const hostName = getName(obj);
@@ -100,7 +83,7 @@ const InventoryCard: React.FC = () => {
         <DashboardCardTitle>Inventory</DashboardCardTitle>
       </DashboardCardHeader>
       <DashboardCardBody>
-        <PodInventoryItem machine={machine} />
+        <PodInventoryItem />
         <InventoryItem
           title="Disk"
           isLoading={!obj}
@@ -119,8 +102,4 @@ const InventoryCard: React.FC = () => {
   );
 };
 
-export default withDashboardResources(InventoryCard);
-
-type PodInventoryItemProps = DashboardItemProps & {
-  machine: MachineKind;
-};
+export default InventoryCard;
