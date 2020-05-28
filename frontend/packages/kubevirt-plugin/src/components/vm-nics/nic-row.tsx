@@ -5,7 +5,7 @@ import { TemplateModel } from '@console/internal/models';
 import { DASH, dimensifyRow, getDeletetionTimestamp } from '@console/shared';
 import { deleteNICModal } from '../modals/delete-nic-modal/delete-nic-modal';
 import { VirtualMachineModel } from '../../models';
-import { asVM, isVMRunning } from '../../selectors/vm';
+import { asVM, isVMRunningOrExpectedRunning } from '../../selectors/vm';
 import { isVM, isVMI } from '../../selectors/check-type';
 import { VMLikeEntityKind } from '../../types/vmLike';
 import { nicModalEnhanced } from '../modals/nic-modal/nic-modal-enhanced';
@@ -58,7 +58,7 @@ const menuActionDelete = (
 });
 
 const getActions = (nic, network, vmLikeEntity: VMLikeEntityKind, opts: VMNicRowActionOpts) => {
-  if (isVMI(vmLikeEntity) || isVMRunning(asVM(vmLikeEntity))) {
+  if (isVMI(vmLikeEntity) || isVMRunningOrExpectedRunning(asVM(vmLikeEntity))) {
     return [];
   }
   const actions = [menuActionEdit, menuActionDelete];
@@ -126,7 +126,7 @@ export const NicRow: RowFunction<NetworkBundle, VMNicRowCustomData> = ({
           isDisabled ||
           isVMI(vmLikeEntity) ||
           !!getDeletetionTimestamp(vmLikeEntity) ||
-          isVMRunning(asVM(vmLikeEntity))
+          isVMRunningOrExpectedRunning(asVM(vmLikeEntity))
         }
         id={`kebab-for-${name}`}
       />

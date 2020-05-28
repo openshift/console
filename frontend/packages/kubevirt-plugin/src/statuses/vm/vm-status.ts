@@ -1,6 +1,6 @@
 import { K8sResourceKind, PodKind } from '@console/internal/module/k8s';
 import { createBasicLookup } from '@console/shared/src/utils/utils';
-import { getName, getOwnerReferences } from '@console/shared/src/selectors/common'; // do not import just from shared - causes cycles
+import { getName, getNamespace, getOwnerReferences } from '@console/shared/src/selectors/common'; // do not import just from shared - causes cycles
 import { compareOwnerReference } from '@console/shared/src/utils/owner-references';
 import {
   buildOwnerReference,
@@ -8,19 +8,19 @@ import {
   parseNumber,
   parsePercentage,
 } from '../../utils';
-import { getAnnotationKeySuffix, getLabelValue, getStatusPhase } from '../../selectors/selectors';
+import {
+  getAnnotationKeySuffix,
+  getLabelValue,
+  getStatusConditionOfType,
+  getStatusPhase,
+} from '../../selectors/selectors';
 import {
   findVMIMigration,
   getMigrationStatusPhase,
   isMigrating,
 } from '../../selectors/vmi-migration';
 import { findVMIPod, getPodStatusPhase, getVMImporterPods } from '../../selectors/pod/selectors';
-import {
-  findConversionPod,
-  getVMStatusConditions,
-  isVMCreated,
-  isVMRunning,
-} from '../../selectors/vm';
+import { findConversionPod, isVMCreated, isVMExpectedRunning } from '../../selectors/vm';
 import { getPodStatus } from '../pod/pod';
 import {
   POD_PHASE_PENDING,
@@ -126,7 +126,10 @@ const isBeingMigrated = (
   vmi: VMIKind,
   migrations?: K8sResourceKind[],
 ): VMStatusBundle => {
-  const migration = findVMIMigration(vm || vmi, migrations);
+  const name = getName(vm || vmi);
+  const namespace = getNamespace(vm || vmi);
+
+  const migration = findVMIMigration(name, namespace, migrations);
   if (isMigrating(migration)) {
     return {
       status: VMStatus.MIGRATING,
@@ -193,13 +196,20 @@ const isBeingImported = (
   return null;
 };
 
-const isBeingStopped = (vm: VMKind, vmi: VMIKind = null): VMStatusBundle => {
-  const vmiPhase = getStatusPhase<VMIPhase>(vmi);
-  // according to https://github.com/kubevirt/kubevirt/blob/master/pkg/virt-api/rest/subresource.go
-  const isFinalPhase =
-    !vmiPhase || [VMIPhase.Unknown, VMIPhase.Failed, VMIPhase.Succeeded].includes(vmiPhase);
+const isVMError = (vm: VMKind): VMStatusBundle => {
+  const vmFailureCond = getStatusConditionOfType(vm, 'Failure');
+  if (vmFailureCond) {
+    return {
+      status: VMStatus.VM_ERROR,
+      detailedMessage: vmFailureCond.message,
+    };
+  }
 
-  if (vm && !isVMRunning(vm) && vmi && !isFinalPhase) {
+  return null;
+};
+
+const isBeingStopped = (vm: VMKind): VMStatusBundle => {
+  if (vm && !isVMExpectedRunning(vm) && isVMCreated(vm)) {
     return {
       status: VMStatus.STOPPING,
     };
@@ -208,17 +218,14 @@ const isBeingStopped = (vm: VMKind, vmi: VMIKind = null): VMStatusBundle => {
   return null;
 };
 
-const isOff = (vm: VMKind): VMStatusBundle =>
-  !vm || isVMRunning(vm) ? null : { status: VMStatus.OFF };
+const isOff = (vm: VMKind): VMStatusBundle => {
+  return vm && !isVMExpectedRunning(vm) ? { status: VMStatus.OFF } : null;
+};
 
-const isVMError = (vm: VMKind, vmi: VMIKind, launcherPod: PodKind): VMStatusBundle => {
-  // is an issue with the VM definition?
-  const condition = getVMStatusConditions(vmi || vm)[0];
-  if (condition) {
-    // Do we need to analyze additional conditions in the array? Probably not.
-    if (condition.type === 'Failure') {
-      return { status: VMStatus.VM_ERROR, detailedMessage: condition.message };
-    }
+const isError = (vm: VMKind, vmi: VMIKind, launcherPod: PodKind): VMStatusBundle => {
+  const vmiFailureCond = getStatusConditionOfType(vmi, 'Failure');
+  if (vmiFailureCond) {
+    return { status: VMStatus.VMI_ERROR, detailedMessage: vmiFailureCond.message };
   }
 
   if ((vmi || isVMCreated(vm)) && launcherPod) {
@@ -244,7 +251,7 @@ const isRunning = (vmi: VMIKind): VMStatusBundle => {
 };
 
 const isStarting = (vm: VMKind, launcherPod: PodKind = null): VMStatusBundle => {
-  if (isVMCreated(vm)) {
+  if (vm && isVMExpectedRunning(vm) && isVMCreated(vm)) {
     // created but not yet ready
     if (launcherPod) {
       const podStatus = getPodStatus(launcherPod);
@@ -264,8 +271,7 @@ const isStarting = (vm: VMKind, launcherPod: PodKind = null): VMStatusBundle => 
 };
 
 const isWaitingForVMI = (vm: VMKind): VMStatusBundle => {
-  // assumption: spec.running === true
-  if (!isVMCreated(vm)) {
+  if (vm && isVMExpectedRunning(vm) && !isVMCreated(vm)) {
     return { status: VMStatus.VMI_WAITING, message: VMI_WAITING_MESSAGE };
   }
   return null;
@@ -294,18 +300,22 @@ export const getVMStatus = ({
     isV2VVMImportConversion(vm, vmImports) ||
     isBeingMigrated(vm, vmi, migrations) ||
     isBeingImported(vm, pods, dataVolumes) ||
-    isBeingStopped(vm, vmi) ||
+    isVMError(vm) ||
+    isBeingStopped(vm) ||
     isOff(vm) ||
-    isVMError(vm, vmi, launcherPod) ||
+    isError(vm, vmi, launcherPod) ||
     isRunning(vmi) ||
     isStarting(vm, launcherPod) ||
-    (!vmi && vm && isWaitingForVMI(vm)) ||
+    isWaitingForVMI(vm) ||
     ([VMIPhase.Scheduling, VMIPhase.Scheduled].includes(getStatusPhase<VMIPhase>(vmi)) && {
       status: VMStatus.STARTING,
       message: STARTING_MESSAGE,
     }) ||
-    (getStatusPhase(vmi) === VMIPhase.Pending && { status: VMStatus.VMI_WAITING }) ||
-    (getStatusPhase(vmi) === VMIPhase.Failed && { status: VMStatus.VM_ERROR }) || {
+    (getStatusPhase(vmi) === VMIPhase.Pending && {
+      status: VMStatus.VMI_WAITING,
+      message: VMI_WAITING_MESSAGE,
+    }) ||
+    (getStatusPhase(vmi) === VMIPhase.Failed && { status: VMStatus.VMI_ERROR }) || {
       status: VMStatus.UNKNOWN,
     }
   );

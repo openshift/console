@@ -2,28 +2,27 @@ import * as _ from 'lodash';
 import { getName } from '@console/shared/src/selectors/common';
 import { createBasicLookup } from '@console/shared/src/utils/utils';
 import {
-  BUS_VIRTIO,
   TEMPLATE_FLAVOR_LABEL,
   TEMPLATE_OS_LABEL,
   TEMPLATE_OS_NAME_ANNOTATION,
   TEMPLATE_WORKLOAD_LABEL,
 } from '../../constants/vm';
-import { V1Network, V1NetworkInterface, VMKind, VMIKind, CPURaw } from '../../types';
+import { CPURaw, V1Network, V1NetworkInterface, VMIKind, VMKind } from '../../types';
 import { findKeySuffixValue, getSimpleName, getValueByPrefix } from '../utils';
 import { getAnnotations, getLabels } from '../selectors';
 import { NetworkWrapper } from '../../k8s/wrapper/vm/network-wrapper';
-import { getDataVolumeStorageSize, getDataVolumeStorageClassName } from '../dv/selectors';
+import { getDataVolumeStorageClassName, getDataVolumeStorageSize } from '../dv/selectors';
 import { V1Disk } from '../../types/vm/disk/V1Disk';
-import { getDiskBus } from './disk';
 import {
+  getVolumeCloudInitNoCloud,
   getVolumeContainerImage,
   getVolumePersistentVolumeClaimName,
-  getVolumeCloudInitNoCloud,
 } from './volume';
 import { getVMIDisks } from '../vmi/basic';
 import { VirtualMachineModel } from '../../models';
 import { V1Volume } from '../../types/vm/disk/V1Volume';
 import { VMGenericLikeEntityKind, VMILikeEntityKind } from '../../types/vmLike';
+import { RunStrategy, StateChangeRequest } from '../../constants/vm/vm';
 
 export const getMemory = (vm: VMKind) =>
   _.get(vm, 'spec.template.spec.domain.resources.requests.memory');
@@ -69,22 +68,50 @@ export const getWorkloadProfile = (vm: VMGenericLikeEntityKind) =>
 export const getFlavor = (vmLike: VMGenericLikeEntityKind) =>
   findKeySuffixValue(getLabels(vmLike), TEMPLATE_FLAVOR_LABEL);
 
-export const isVMRunning = (value: VMKind) =>
-  (_.get(value, 'spec.runStrategy', null) === null &&
-    _.get(value, 'spec.running', null) === true) ||
-  (_.get(value, 'spec.running', null) === null &&
-    _.get(value, 'spec.runStrategy', null) !== 'Halted');
+export const isVMReady = (vm: VMKind) => !!vm?.status?.ready;
 
-export const isVMReady = (value: VMKind) =>
-  _.get(value, 'status.ready', false) as VMKind['status']['ready'];
+export const isVMCreated = (vm: VMKind) => !!vm?.status?.created;
 
-export const isVMCreated = (value: VMKind) =>
-  _.get(value, 'status.created', false) as VMKind['status']['created'];
+export const isVMExpectedRunning = (vm: VMKind) => {
+  if (!vm?.spec) {
+    return false;
+  }
+  const { running, runStrategy } = vm.spec;
 
-export const getVmPreferableDiskBus = (vm: VMKind) =>
-  getDisks(vm)
-    .map((disk) => getDiskBus(disk))
-    .find((bus) => bus) || BUS_VIRTIO;
+  if (running != null) {
+    return running;
+  }
+
+  if (runStrategy != null) {
+    let changeRequests;
+    switch (runStrategy as RunStrategy) {
+      case RunStrategy.Halted:
+        return false;
+      case RunStrategy.Always:
+      case RunStrategy.RerunOnFailure:
+        return true;
+      case RunStrategy.Manual:
+      default:
+        changeRequests = new Set(
+          (vm.status?.stateChangeRequests || []).map((chRequest) => chRequest?.action),
+        );
+
+        if (changeRequests.has(StateChangeRequest.Stop)) {
+          return false;
+        }
+        if (changeRequests.has(StateChangeRequest.Start)) {
+          return true;
+        }
+
+        return isVMCreated(vm); // if there is no change request we can assume created is representing running (current and expected)
+    }
+  }
+  return false;
+};
+
+export const isVMRunningOrExpectedRunning = (vm: VMKind) => {
+  return isVMCreated(vm) || isVMExpectedRunning(vm);
+};
 
 export const getUsedNetworks = (vm: VMKind): NetworkWrapper[] => {
   const interfaces = getInterfaces(vm);
@@ -94,9 +121,6 @@ export const getUsedNetworks = (vm: VMKind): NetworkWrapper[] => {
     .map((i) => new NetworkWrapper(networkLookup[i.name]))
     .filter((i) => i.getType());
 };
-
-export const getVMStatusConditions = (vm: VMILikeEntityKind) =>
-  _.get(vm, 'status.conditions', []) as VMKind['status']['conditions'];
 
 export const getCloudInitVolume = (vm: VMKind) => {
   const cloudInitVolume = getVolumes(vm).find(getVolumeCloudInitNoCloud);

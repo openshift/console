@@ -8,6 +8,7 @@ export const VMEnvironmentFooter: React.FC<VMEnvironmentFooterProps> = ({
   errorMsg,
   isSuccess,
   isSaveBtnDisabled,
+  isReloadBtnDisabled,
 }) => {
   return (
     <footer className="co-m-btn-bar">
@@ -17,7 +18,7 @@ export const VMEnvironmentFooter: React.FC<VMEnvironmentFooterProps> = ({
         <Button isDisabled={isSaveBtnDisabled} type="submit" variant="primary" onClick={save}>
           Save
         </Button>
-        <Button isDisabled={false} type="button" variant="secondary" onClick={reload}>
+        <Button isDisabled={isReloadBtnDisabled} type="button" variant="secondary" onClick={reload}>
           Reload
         </Button>
       </ActionGroup>
@@ -31,4 +32,5 @@ type VMEnvironmentFooterProps = {
   errorMsg: string;
   isSuccess: boolean;
   isSaveBtnDisabled: boolean;
+  isReloadBtnDisabled: boolean;
 };

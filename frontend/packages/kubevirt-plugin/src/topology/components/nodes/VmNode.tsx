@@ -110,6 +110,7 @@ const ObservedVmNode: React.FC<VmNodeProps> = ({
     case VMStatus.V2V_CONVERSION_ERROR:
     case VMStatus.POD_ERROR:
     case VMStatus.VM_ERROR:
+    case VMStatus.VMI_ERROR:
     case VMStatus.CDI_IMPORT_ERROR:
     case VMStatus.V2V_VM_IMPORT_ERROR:
     case VMStatus.PAUSED:

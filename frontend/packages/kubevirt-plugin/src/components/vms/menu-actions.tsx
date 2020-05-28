@@ -6,7 +6,11 @@ import { getName, getNamespace } from '@console/shared';
 import { confirmModal, deleteModal } from '@console/internal/components/modals';
 import { ModifyApplication } from '@console/dev-console/src/actions/modify-application';
 import { VMIKind, VMKind } from '../../types/vm';
-import { isVMRunning, isVMRunningWithVMI } from '../../selectors/vm';
+import {
+  isVMCreated,
+  isVMExpectedRunning,
+  isVMRunningOrExpectedRunning,
+} from '../../selectors/vm/selectors';
 import { getMigrationVMIName } from '../../selectors/vmi-migration';
 import { VirtualMachineInstanceMigrationModel } from '../../models';
 import { restartVM, startVM, stopVM, VMActionType } from '../../k8s/requests/vm';
@@ -44,7 +48,7 @@ export const menuActionStart = (
     hidden:
       vmStatusBundle?.status?.isImporting() ||
       vmStatusBundle?.status?.isMigrating() ||
-      isVMRunning(vm),
+      isVMRunningOrExpectedRunning(vm),
     label: title,
     callback: () => startVM(vm),
     accessReview: asAccessReview(kindObj, vm, 'patch'),
@@ -54,7 +58,7 @@ export const menuActionStart = (
 const menuActionStop = (kindObj: K8sKind, vm: VMKind): KebabOption => {
   const title = 'Stop Virtual Machine';
   return {
-    hidden: !isVMRunning(vm),
+    hidden: !isVMExpectedRunning(vm),
     label: title,
     callback: () =>
       confirmModal({
@@ -70,14 +74,15 @@ const menuActionStop = (kindObj: K8sKind, vm: VMKind): KebabOption => {
 const menuActionRestart = (
   kindObj: K8sKind,
   vm: VMKind,
-  { vmStatusBundle, vmi }: ActionArgs,
+  { vmStatusBundle }: ActionArgs,
 ): KebabOption => {
   const title = 'Restart Virtual Machine';
   return {
     hidden:
       vmStatusBundle?.status?.isImporting() ||
       vmStatusBundle?.status?.isMigrating() ||
-      !isVMRunningWithVMI({ vm, vmi }),
+      !isVMExpectedRunning(vm) ||
+      !isVMCreated(vm),
     label: title,
     callback: () =>
       confirmModal({
@@ -115,7 +120,8 @@ const menuActionMigrate = (
     hidden:
       vmStatusBundle?.status?.isImporting() ||
       vmStatusBundle?.status?.isMigrating() ||
-      !isVMRunningWithVMI({ vm, vmi }),
+      !isVMExpectedRunning(vm) ||
+      !isVMCreated(vm),
     label: title,
     callback: () =>
       confirmModal({
@@ -180,7 +186,7 @@ const menuActionCdEdit = (
     hidden:
       vmStatusBundle?.status?.isImporting() ||
       vmStatusBundle?.status?.isMigrating() ||
-      isVMRunning(vm),
+      isVMRunningOrExpectedRunning(vm),
     label: 'Edit CD-ROMs',
     callback: () => VMCDRomModal({ vmLikeEntity: vm, modalClassName: 'modal-lg' }),
     accessReview: asAccessReview(kindObj, vm, 'patch'),

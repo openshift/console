@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { AccessConsoles, VncConsole } from '@patternfly/react-console';
+import { AccessConsoles, VncConsole } from '@patternfly/react-console/dist/js';
 import { Firehose, FirehoseResult, LoadingInline } from '@console/internal/components/utils';
 import { getNamespace } from '@console/shared';
 import { PodKind } from '@console/internal/module/k8s';
