@@ -15,6 +15,7 @@ import FormSection from '../import/section/FormSection';
 import ApplicationSelector from '../import/app/ApplicationSelector';
 import { updateResourceApplication } from '../../utils/application-utils';
 import { updateTopologyResourceApplication } from '../topology/topology-utils';
+import { UNASSIGNED_KEY } from '../../const';
 
 type EditApplicationFormProps = {
   resource: K8sResourceKind;
@@ -92,7 +93,7 @@ class EditApplicationModal extends PromiseComponent<
     const initialValues = {
       application: {
         name: application,
-        selectedKey: application,
+        selectedKey: application || UNASSIGNED_KEY,
       },
     };
     return (

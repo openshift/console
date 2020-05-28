@@ -2,7 +2,7 @@ import * as React from 'react';
 
 import { StatefulSetModel } from '../../models';
 import { menuActions } from '../stateful-set';
-import { ResourceSummary } from '../utils';
+import { KebabAction, ResourceSummary } from '../utils';
 import PodRingSet from '@console/shared/src/components/pod/PodRingSet';
 
 import { OverviewDetailsResourcesTab } from './resource-overview-page';
@@ -42,11 +42,14 @@ const tabs = [
   },
 ];
 
-export const StatefulSetOverview: React.SFC<StatefulSetOverviewProps> = ({ item }) => (
+export const StatefulSetOverview: React.SFC<StatefulSetOverviewProps> = ({
+  item,
+  customActions,
+}) => (
   <ResourceOverviewDetails
     item={item}
     kindObj={StatefulSetModel}
-    menuActions={menuActions}
+    menuActions={customActions ? [...customActions, ...menuActions] : menuActions}
     tabs={tabs}
   />
 );
@@ -57,4 +60,5 @@ type StatefulSetOverviewDetailsProps = {
 
 type StatefulSetOverviewProps = {
   item: OverviewItem;
+  customActions?: KebabAction[];
 };

@@ -35,25 +35,33 @@ export const OverviewDetailsResourcesTab: React.SFC<OverviewDetailsResourcesTabP
   );
 };
 
-export const DefaultOverviewPage = connectToModel(({ kindObj: kindObject, item }) => (
-  <div className="overview__sidebar-pane resource-overview">
-    <ResourceOverviewHeading
-      actions={[...Kebab.getExtensionsActionsForKind(kindObject), ...common]}
-      kindObj={kindObject}
-      resource={item.obj}
-    />
-    <div className="overview__sidebar-pane-body resource-overview__body">
-      <div className="resource-overview__summary">
-        <ResourceSummary resource={item.obj} />
+export const DefaultOverviewPage = connectToModel(
+  ({ kindObj: kindObject, item, customActions }) => (
+    <div className="overview__sidebar-pane resource-overview">
+      <ResourceOverviewHeading
+        actions={[
+          ...(customActions ? customActions : []),
+          ...Kebab.getExtensionsActionsForKind(kindObject),
+          ...common,
+        ]}
+        kindObj={kindObject}
+        resource={item.obj}
+      />
+      <div className="overview__sidebar-pane-body resource-overview__body">
+        <div className="resource-overview__summary">
+          <ResourceSummary resource={item.obj} />
+        </div>
       </div>
     </div>
-  </div>
-));
+  ),
+);
 
-export const ResourceOverviewPage = connectToModel(({ kindObj, item }) => {
+export const ResourceOverviewPage = connectToModel(({ kindObj, item, customActions }) => {
   const ref = referenceForModel(kindObj);
   const loader = resourceOverviewPages.get(ref, () => Promise.resolve(DefaultOverviewPage));
-  return <AsyncComponent loader={loader} kindObj={kindObj} item={item} />;
+  return (
+    <AsyncComponent loader={loader} kindObj={kindObj} item={item} customActions={customActions} />
+  );
 });
 
 export type OverviewDetailsResourcesTabProps = {

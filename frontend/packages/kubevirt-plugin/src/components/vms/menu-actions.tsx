@@ -208,6 +208,7 @@ export const menuActionDeleteVMI = (kindObj: K8sKind, vmi: VMIKind): KebabOption
 });
 
 export const vmMenuActions = [
+  ModifyApplication,
   menuActionStart,
   menuActionStop,
   menuActionRestart,
@@ -218,7 +219,6 @@ export const vmMenuActions = [
   menuActionCdEdit,
   Kebab.factory.ModifyLabels,
   Kebab.factory.ModifyAnnotations,
-  ModifyApplication,
   menuActionDeleteVM,
 ];
 

@@ -7,7 +7,7 @@ import { RootState } from '@console/internal/redux';
 import { OverviewItem } from '@console/shared';
 import { ModifyApplication } from '@console/dev-console/src/actions/modify-application';
 import { KNATIVE_SERVING_APIGROUP } from '../../const';
-import { RevisionModel, ServiceModel } from '../../models';
+import { RevisionModel } from '../../models';
 import { getRevisionActions } from '../../actions/getRevisionActions';
 import { isDynamicEventResourceKind } from '../../utils/fetch-dynamic-eventsources-utils';
 import OverviewDetailsKnativeResourcesTab from './OverviewDetailsKnativeResourcesTab';
@@ -50,13 +50,14 @@ export const KnativeResourceOverviewPage: React.ComponentType<KnativeResourceOve
   );
 
   const actions = [];
-  if (resourceModel.kind === ServiceModel.kind) {
-    actions.push(ModifyApplication);
-  }
   if (resourceModel.kind === RevisionModel.kind) {
     actions.push(...getRevisionActions());
   } else {
-    actions.push(...Kebab.getExtensionsActionsForKind(resourceModel), ...Kebab.factory.common);
+    actions.push(
+      ModifyApplication,
+      ...Kebab.getExtensionsActionsForKind(resourceModel),
+      ...Kebab.factory.common,
+    );
   }
 
   return (

@@ -52,7 +52,11 @@ export const knativeContextMenu = (element: Node) => {
   if (model.kind === RevisionModel.kind) {
     actions.push(...getRevisionActions());
   } else {
-    actions.push(...Kebab.getExtensionsActionsForKind(model), ...Kebab.factory.common);
+    actions.push(
+      ModifyApplication,
+      ...Kebab.getExtensionsActionsForKind(model),
+      ...Kebab.factory.common,
+    );
   }
 
   const kebabOptions = actions.map((action) => {

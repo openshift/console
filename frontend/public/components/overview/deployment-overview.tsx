@@ -3,7 +3,7 @@ import * as React from 'react';
 import { DeploymentModel } from '../../models';
 import { DeploymentKind } from '../../module/k8s';
 import { DeploymentDetailsList, menuActions } from '../deployment';
-import { LoadingInline, ResourceSummary, WorkloadPausedAlert } from '../utils';
+import { KebabAction, LoadingInline, ResourceSummary, WorkloadPausedAlert } from '../utils';
 
 import { OverviewDetailsResourcesTab } from './resource-overview-page';
 import { ResourceOverviewDetails } from './resource-overview-details';
@@ -65,11 +65,14 @@ const tabs = [
   },
 ];
 
-export const DeploymentOverviewPage: React.SFC<DeploymentOverviewProps> = ({ item }) => (
+export const DeploymentOverviewPage: React.SFC<DeploymentOverviewProps> = ({
+  item,
+  customActions,
+}) => (
   <ResourceOverviewDetails
     item={item}
     kindObj={DeploymentModel}
-    menuActions={menuActions}
+    menuActions={customActions ? [...customActions, ...menuActions] : menuActions}
     tabs={tabs}
   />
 );
@@ -80,4 +83,5 @@ type DeploymentOverviewDetailsProps = {
 
 type DeploymentOverviewProps = {
   item: OverviewItem<DeploymentKind>;
+  customActions?: KebabAction[];
 };
