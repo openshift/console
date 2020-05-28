@@ -909,7 +909,7 @@ const plugin: Plugin<ConsumedExtensions> = [
     type: 'AddAction',
     properties: {
       id: 'operator-backed',
-      url: '/catalog/ns/:namespace?kind=%5B"ClusterServiceVersion"%5D',
+      url: '/catalog?kind=%5B"ClusterServiceVersion"%5D',
       label: 'Operator Backed',
       description: 'Browse the catalog to discover and deploy operator managed services',
       icon: <BoltIcon />,
@@ -936,6 +936,13 @@ const plugin: Plugin<ConsumedExtensions> = [
       label: 'Pipeline',
       description: 'Create a Tekton Pipeline to automate delivery of your application',
       icon: pipelineIcon,
+      accessReview: [
+        {
+          group: PipelineModel.apiGroup,
+          resource: PipelineModel.plural,
+          verb: 'create',
+        },
+      ],
     },
   },
 ];
