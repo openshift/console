@@ -65,7 +65,6 @@ const {
   EventListenerModel,
   TriggerTemplateModel,
   TriggerBindingModel,
-  ClusterTriggerBindingModel,
 } = models;
 
 type ConsumedExtensions =
@@ -404,18 +403,6 @@ const plugin: Plugin<ConsumedExtensions> = [
         (
           await import(
             './components/pipelines/TriggerBindingPage' /* webpackChunkName: "trigger-binding-details" */
-          )
-        ).default,
-    },
-  },
-  {
-    type: 'Page/Resource/Details',
-    properties: {
-      model: ClusterTriggerBindingModel,
-      loader: async () =>
-        (
-          await import(
-            './components/pipelines/TriggerBindingPage' /* webpackChunkName: "cluster-trigger-binding-details" */
           )
         ).default,
     },
