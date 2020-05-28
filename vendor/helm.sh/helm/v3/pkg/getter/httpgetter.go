@@ -17,6 +17,7 @@ package getter
 
 import (
 	"bytes"
+	"crypto/tls"
 	"io"
 	"net/http"
 
@@ -27,7 +28,7 @@ import (
 	"helm.sh/helm/v3/internal/version"
 )
 
-// HTTPGetter is the efault HTTP(/S) backend handler
+// HTTPGetter is the default HTTP(/S) backend handler
 type HTTPGetter struct {
 	opts options
 }
@@ -111,5 +112,19 @@ func (g *HTTPGetter) httpClient() (*http.Client, error) {
 
 		return client, nil
 	}
+
+	if g.opts.insecureSkipVerifyTLS {
+		client := &http.Client{
+			Transport: &http.Transport{
+				TLSClientConfig: &tls.Config{
+					InsecureSkipVerify: true,
+				},
+				Proxy: http.ProxyFromEnvironment,
+			},
+		}
+
+		return client, nil
+	}
+
 	return http.DefaultClient, nil
 }

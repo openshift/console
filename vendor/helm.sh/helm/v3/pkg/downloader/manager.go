@@ -19,6 +19,7 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
+	"log"
 	"net/url"
 	"os"
 	"path"
@@ -81,12 +82,35 @@ func (m *Manager) Build() error {
 
 	// Check that all of the repos we're dependent on actually exist.
 	req := c.Metadata.Dependencies
+
+	// If using apiVersion v1, calculate the hash before resolve repo names
+	// because resolveRepoNames will change req if req uses repo alias
+	// and Helm 2 calculate the digest from the original req
+	// Fix for: https://github.com/helm/helm/issues/7619
+	var v2Sum string
+	if c.Metadata.APIVersion == chart.APIVersionV1 {
+		v2Sum, err = resolver.HashV2Req(req)
+		if err != nil {
+			return errors.New("the lock file (requirements.lock) is out of sync with the dependencies file (requirements.yaml). Please update the dependencies")
+		}
+	}
+
 	if _, err := m.resolveRepoNames(req); err != nil {
 		return err
 	}
 
 	if sum, err := resolver.HashReq(req, lock.Dependencies); err != nil || sum != lock.Digest {
-		return errors.New("Chart.lock is out of sync with Chart.yaml")
+		// If lock digest differs and chart is apiVersion v1, it maybe because the lock was built
+		// with Helm 2 and therefore should be checked with Helm v2 hash
+		// Fix for: https://github.com/helm/helm/issues/7233
+		if c.Metadata.APIVersion == chart.APIVersionV1 {
+			log.Println("warning: a valid Helm v3 hash was not found. Checking against Helm v2 hash...")
+			if v2Sum != lock.Digest {
+				return errors.New("the lock file (requirements.lock) is out of sync with the dependencies file (requirements.yaml). Please update the dependencies")
+			}
+		} else {
+			return errors.New("the lock file (Chart.lock) is out of sync with the dependencies file (Chart.yaml). Please update the dependencies")
+		}
 	}
 
 	// Check that all of the repos we're dependent on actually exist.
@@ -163,7 +187,7 @@ func (m *Manager) Update() error {
 	}
 
 	// Finally, we need to write the lockfile.
-	return writeLock(m.ChartPath, lock)
+	return writeLock(m.ChartPath, lock, c.Metadata.APIVersion == chart.APIVersionV1)
 }
 
 func (m *Manager) loadChartDir() (*chart.Chart, error) {
@@ -215,6 +239,7 @@ func (m *Manager) downloadAll(deps []*chart.Dependency) error {
 
 	fmt.Fprintf(m.Out, "Saving %d charts\n", len(deps))
 	var saveError error
+	churls := make(map[string]struct{})
 	for _, dep := range deps {
 		// No repository means the chart is in charts directory
 		if dep.Repository == "" {
@@ -254,8 +279,6 @@ func (m *Manager) downloadAll(deps []*chart.Dependency) error {
 			continue
 		}
 
-		fmt.Fprintf(m.Out, "Downloading %s from repo %s\n", dep.Name, dep.Repository)
-
 		// Any failure to resolve/download a chart should fail:
 		// https://github.com/helm/helm/issues/1439
 		churl, username, password, err := m.findChartURL(dep.Name, dep.Version, dep.Repository, repos)
@@ -263,6 +286,13 @@ func (m *Manager) downloadAll(deps []*chart.Dependency) error {
 			saveError = errors.Wrapf(err, "could not find %s", churl)
 			break
 		}
+
+		if _, ok := churls[churl]; ok {
+			fmt.Fprintf(m.Out, "Already downloaded %s from repo %s\n", dep.Name, dep.Repository)
+			continue
+		}
+
+		fmt.Fprintf(m.Out, "Downloading %s from repo %s\n", dep.Name, dep.Repository)
 
 		dl := ChartDownloader{
 			Out:              m.Out,
@@ -280,6 +310,8 @@ func (m *Manager) downloadAll(deps []*chart.Dependency) error {
 			saveError = errors.Wrapf(err, "could not download %s", churl)
 			break
 		}
+
+		churls[churl] = struct{}{}
 	}
 
 	if saveError == nil {
@@ -634,12 +666,16 @@ func (m *Manager) loadChartRepositories() (map[string]*repo.ChartRepository, err
 }
 
 // writeLock writes a lockfile to disk
-func writeLock(chartpath string, lock *chart.Lock) error {
+func writeLock(chartpath string, lock *chart.Lock, legacyLockfile bool) error {
 	data, err := yaml.Marshal(lock)
 	if err != nil {
 		return err
 	}
-	dest := filepath.Join(chartpath, "Chart.lock")
+	lockfileName := "Chart.lock"
+	if legacyLockfile {
+		lockfileName = "requirements.lock"
+	}
+	dest := filepath.Join(chartpath, lockfileName)
 	return ioutil.WriteFile(dest, data, 0644)
 }
 
