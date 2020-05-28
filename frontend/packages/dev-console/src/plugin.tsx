@@ -568,7 +568,7 @@ const plugin: Plugin<ConsumedExtensions> = [
           await import(
             './components/pipelines/PipelinesPage' /* webpackChunkName: "pipeline-page" */
           )
-        ).PipelinesPage,
+        ).default,
     },
   },
   {

@@ -1,11 +1,11 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
 import { HorizontalNav, PageHeading } from '@console/internal/components/utils';
-import { MonitoringPage } from '../MonitoringPage';
+import { PageContents } from '../MonitoringPage';
 import ProjectListPage from '../../projects/ProjectListPage';
 
 describe('Monitoring Page ', () => {
-  let monPageProps: React.ComponentProps<typeof MonitoringPage>;
+  let monPageProps: React.ComponentProps<typeof PageContents>;
 
   it('should render ProjectList page when in all-projects namespace', () => {
     monPageProps = {
@@ -17,7 +17,7 @@ describe('Monitoring Page ', () => {
       },
       canAccess: true,
     };
-    const component = shallow(<MonitoringPage {...monPageProps} />);
+    const component = shallow(<PageContents {...monPageProps} />);
     expect(component.find(ProjectListPage).exists()).toBe(true);
     expect(component.find(ProjectListPage).prop('title')).toBe('Monitoring');
   });
@@ -38,7 +38,7 @@ describe('Monitoring Page ', () => {
 
     window.SERVER_FLAGS.prometheusBaseURL = 'http://some-mock-url.com';
 
-    const component = shallow(<MonitoringPage {...monPageProps} />);
+    const component = shallow(<PageContents {...monPageProps} />);
     expect(component.find(PageHeading).exists()).toBe(true);
     expect(component.find(PageHeading).prop('title')).toBe('Monitoring');
     expect(component.find(HorizontalNav).exists()).toBe(true);
@@ -65,7 +65,7 @@ describe('Monitoring Page ', () => {
 
     window.SERVER_FLAGS.prometheusBaseURL = 'http://some-mock-url.com';
 
-    const component = shallow(<MonitoringPage {...monPageProps} />);
+    const component = shallow(<PageContents {...monPageProps} />);
     expect(component.find(PageHeading).exists()).toBe(true);
     expect(component.find(PageHeading).prop('title')).toBe('Monitoring');
     expect(component.find(HorizontalNav).exists()).toBe(true);
@@ -92,7 +92,7 @@ describe('Monitoring Page ', () => {
 
     window.SERVER_FLAGS.prometheusBaseURL = undefined;
 
-    const component = shallow(<MonitoringPage {...monPageProps} />);
+    const component = shallow(<PageContents {...monPageProps} />);
     expect(component.find(PageHeading).exists()).toBe(true);
     expect(component.find(PageHeading).prop('title')).toBe('Monitoring');
     expect(component.find(HorizontalNav).exists()).toBe(true);
