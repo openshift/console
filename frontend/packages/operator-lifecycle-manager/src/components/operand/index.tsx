@@ -459,7 +459,6 @@ export const OperandDetails = connectToModel((props: OperandDetailsProps) => {
     !_.isEmpty(descriptor) ? _.get(block, descriptor.path, descriptor.value) : undefined;
 
   const { kind, metadata, spec, status } = props.obj;
-  const conditions = status && status.conditions;
 
   // Find the matching CRD spec for the kind of this resource in the CSV.
   const ownedDefinitions = _.get(
@@ -576,10 +575,10 @@ export const OperandDetails = connectToModel((props: OperandDetailsProps) => {
           <div className="co-m-pane__body">{details}</div>
         </>
       )}
-      {conditions && (
+      {_.isArray(status?.conditions) && (
         <div className="co-m-pane__body">
           <SectionHeading text="Conditions" />
-          <Conditions conditions={conditions} />
+          <Conditions conditions={status.conditions} />
         </div>
       )}
     </div>
