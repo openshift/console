@@ -158,12 +158,12 @@ describe('Test network type presets and options', () => {
     await click(wizardView.addNICButton);
     expect((await getSelectOptions(nicType)).sort()).toEqual(bindingMethods);
     await click(wizardView.modalCancelButton);
-
     await wizard.addNIC(multusNetworkInterface);
-
     await wizardView.clickKebabAction(multusNetworkInterface.name, 'Edit');
     // expect masquerade is not available option
     expect((await getSelectOptions(nicType)).sort()).toEqual(nonPodNetworkBindingMethods);
+    await click(wizardView.modalCancelButton);
+    await wizard.closeWizard();
   });
 
   xit('BZ(1828739) ID(CNV-4038) Test NIC default type in example VM', async () => {
@@ -185,6 +185,7 @@ describe('Test network type presets and options', () => {
       await click(createNICButton);
       await NICDialog.selectNetwork(multusNAD.metadata.name);
       expect((await getSelectOptions(nicType)).sort()).toEqual(nonPodNetworkBindingMethods);
+      await vm.navigateToListView();
     });
   });
 });
