@@ -11,13 +11,12 @@ metadata:
   annotations:
     kubevirt.io/latest-observed-api-version: v1alpha3
     kubevirt.io/storage-observed-api-version: v1alpha3
-    name.os.template.kubevirt.io/win10: Microsoft Windows 10
+    name.os.template.kubevirt.io/win2k16: Microsoft Windows Server 2016
   name: ${name}
   labels:
-    app: fake-windows
-    flavor.template.kubevirt.io/medium: 'true'
-    os.template.kubevirt.io/win10: 'true'
-    vm.kubevirt.io/template: win2k12r2-server-medium-${commonTemplateVersion()}
+    app: ${name}
+    os.template.kubevirt.io/win2k16: 'true'
+    vm.kubevirt.io/template: win2k12r2-server-large-${commonTemplateVersion()}
     vm.kubevirt.io/template.namespace: ${COMMON_TEMPLATES_NAMESPACE}
     vm.kubevirt.io/template.revision: '${COMMON_TEMPLATES_REVISION}'
     vm.kubevirt.io/template.version: ${commonTemplateVersion()}
@@ -29,10 +28,22 @@ spec:
       creationTimestamp: null
       labels:
         kubevirt.io/domain: ${name}
-        kubevirt.io/size: medium
+        kubevirt.io/size: large
+        os.template.kubevirt.io/win2k16: 'true'
         vm.kubevirt.io/name: ${name}
+        workload.template.kubevirt.io/server: 'true'
     spec:
       domain:
+        clock:
+          timer:
+            hpet:
+              present: false
+            hyperv: {}
+            pit:
+              tickPolicy: delay
+            rtc:
+              tickPolicy: catchup
+          utc: {}
         cpu:
           cores: 1
           sockets: 1
@@ -41,36 +52,54 @@ spec:
           disks:
             - bootOrder: 1
               disk:
-                bus: virtio
+                bus: sata
               name: rootdisk
             - disk:
-                bus: virtio
+                bus: sata
               name: cloudinitdisk
+            - cdrom:
+                bus: sata
+              name: windows-guest-tools
+          inputs:
+            - bus: usb
+              name: tablet
+              type: tablet
           interfaces:
             - masquerade: {}
               model: virtio
-              name: nic0
+              name: nic-0
             - bridge: {}
               model: virtio
-              name: nic1
+              name: nic-1
+
+        features:
+          acpi: {}
+          apic: {}
+          hyperv:
+            relaxed: {}
+            spinlocks:
+              spinlocks: 8191
+            vapic: {}
         machine:
-          type: ''
+          type: q35
         resources:
           requests:
             memory: 1Gi
-      evictionStrategy: LiveMigrate
-      hostname: fake-windows
+      hostname: ${name}
       networks:
-        - name: nic0
+        - name: nic-0
           pod: {}
         - multus:
             networkName: ${networkName}
-          name: nic1
+          name: nic-1
       terminationGracePeriodSeconds: 0
       volumes:
         - containerDisk:
             image: 'kubevirt/fedora-cloud-registry-disk-demo:latest'
           name: rootdisk
+        - containerDisk:
+            image: kubevirt/virtio-container-disk
+          name: windows-guest-tools
         - cloudInitNoCloud:
             userData: |
               #cloud-config
@@ -81,4 +110,5 @@ spec:
               - dnf install -y qemu-guest-agent
               - systemctl start qemu-guest-agent
           name: cloudinitdisk
+status: {}
 `;

@@ -103,7 +103,7 @@ describe('Kubevirt create VM using wizard', () => {
       testVMConfig.networkResources = [];
       testVMConfig.operatingSystem = OperatingSystem.WINDOWS_10;
       testVMConfig.flavorConfig.flavor = Flavor.MEDIUM;
-      testVMConfig.workloadProfile = WorkloadProfile.SERVER;
+      testVMConfig.workloadProfile = WorkloadProfile.DESKTOP;
       testVMConfig.startOnCreation = false; // do not check as there is only medium/large profile present and we would get insufficient memory.
       const osID = OSIDLookup[testVMConfig.operatingSystem];
 
@@ -122,11 +122,8 @@ describe('Kubevirt create VM using wizard', () => {
 
         const requiredLabels = {
           [`workload.template.kubevirt.io/${testVMConfig.workloadProfile}`]: 'true',
-          [`flavor.template.kubevirt.io/${testVMConfig.flavorConfig.flavor}`]: 'true',
           [`os.template.kubevirt.io/${osID}`]: 'true',
-          'vm.kubevirt.io/template': `windows-${testVMConfig.workloadProfile}-${
-            testVMConfig.flavorConfig.flavor
-          }-${commonTemplateVersion()}`,
+          'vm.kubevirt.io/template': `windows10-${testVMConfig.workloadProfile.toLowerCase()}-${testVMConfig.flavorConfig.flavor.toLowerCase()}-${commonTemplateVersion()}`,
           'vm.kubevirt.io/template.revision': COMMON_TEMPLATES_REVISION,
           'vm.kubevirt.io/template.version': INNER_TEMPLATE_VERSION,
         };

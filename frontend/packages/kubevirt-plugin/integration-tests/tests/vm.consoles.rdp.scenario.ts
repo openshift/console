@@ -32,7 +32,7 @@ import {
 } from './utils/consts';
 import { VirtualMachine } from './models/virtualMachine';
 import { vmConfig, getProvisionConfigs } from './vm.wizard.configs';
-import { ProvisionConfigName } from './utils/constants/wizard';
+import { ProvisionConfigName, Flavor } from './utils/constants/wizard';
 import { windowsVMConfig, multusNAD } from './utils/mocks';
 import { getWindowsVM } from './utils/templates/windowsVMForRDPL2';
 import { Wizard } from './models/wizard';
@@ -75,6 +75,7 @@ describe('KubeVirt VM console - RDP', () => {
         windowsVMConfig,
         true, // startOnCreation
       );
+      windowsConfig.flavorConfig = { flavor: Flavor.CUSTOM, cpu: '1', memory: '2' };
       const vm = await wizard.createVirtualMachine(windowsConfig);
       await withResource(leakedResources, vm.asResource(), async () => {
         await vm.navigateToConsoles();
@@ -113,11 +114,11 @@ describe('KubeVirt VM console - RDP', () => {
         expect(launchRemoteDesktopButton.isEnabled()).toBe(true);
 
         // there should be just the single laucher-pod
-        const hostIP = execSync("kubectl get pod -o yaml|grep hostIP| cut -d ':' -f 2")
+        const hostIP = execSync("kubectl get pod -o json | jq '.items[0].status.hostIP' -r")
           .toString()
           .trim();
         const port = execSync(
-          `kubectl get service ${vm.name}-rdp -o yaml|grep nodePort| cut -d ':' -f 2`,
+          `kubectl get service ${vm.name}-rdp -o json | jq '.spec.ports[0].nodePort' -r`,
         )
           .toString()
           .trim();
@@ -147,7 +148,7 @@ describe('KubeVirt VM console - RDP', () => {
     'ID(CNV-1726) connects via L2 network',
     async () => {
       // created just for reusing the later navigation
-      const windowsConfig = vmConfig(configName.toLowerCase(), testName, provisionConfig);
+      const windowsConfig = vmConfig(`${configName.toLowerCase()}-l2`, testName, provisionConfig);
       const vm = new VirtualMachine(windowsConfig);
       await withResource(leakedResources, vm.asResource(), async () => {
         /* Pre-requisite:
@@ -193,7 +194,7 @@ describe('KubeVirt VM console - RDP', () => {
         await click(consoleTypeSelector); // close before re-opening
         await selectDropdownOption(consoleTypeSelectorId, 'Desktop Viewer');
 
-        await selectDropdownOptionById(networkSelectorId, 'nic1-link');
+        await selectDropdownOptionById(networkSelectorId, 'nic-1-link');
         await browser.wait(
           until.textToBePresentInElement(manualConnectionTitle, 'Manual Connection'),
         );

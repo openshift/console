@@ -2,7 +2,7 @@ import { $, element, by } from 'protractor';
 
 export const modalDialog = $('.ReactModal__Content');
 
-export const warningMessage = $('.kubevirt-clone-vm-modal__error-group--end');
+export const warningMessage = $('[aria-label="Warning Alert"]');
 
 export const nameHelperMessage = $('#clone-dialog-vm-name-helper');
 
