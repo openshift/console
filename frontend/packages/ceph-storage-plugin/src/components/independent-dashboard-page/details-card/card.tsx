@@ -18,7 +18,7 @@ const k8sResources: FirehoseResource[] = [
   {
     kind: referenceForModel(OCSServiceModel),
     namespaced: true,
-    isList: false,
+    isList: true,
     namespace: 'openshift-storage',
     prop: 'ocs',
   },

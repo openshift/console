@@ -36,7 +36,7 @@ export const checkError = (
         _.isEmpty(item.data?.adminKey) &&
         base64ErrorKeys.push(item.name ?? 'Unrecognized key');
       try {
-        atob(item.data?.userKey);
+        atob(item.data?.userKey ?? item.data?.adminKey);
       } catch (e) {
         base64ErrorKeys.push(item.name ?? 'Unrecognized key');
       }

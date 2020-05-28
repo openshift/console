@@ -50,7 +50,11 @@ const InstallCluster: React.FC<InstallClusterProps> = ({ match }) => {
           );
           setIndependentReqdKeys({ configMaps, secrets, storageClasses });
           setDownloadFile(
-            createDownloadFile(getAnnotations(clusterServiceVersionObj)?.['externalClusterScript']),
+            createDownloadFile(
+              getAnnotations(clusterServiceVersionObj)?.[
+                'external.features.ocs.openshift.io/export-script'
+              ],
+            ),
           );
         }
 

@@ -4,11 +4,12 @@
 
 .im-install-page {
   margin-top: var(--pf-global--spacer--lg);
-  margin-left: var(--pf-global--spacer--lg);
-  margin-right: var(--pf-global--spacer--lg);
   margin-bottom: var(--pf-global--spacer--md);
   &--error {
     color: var(--pf-chart-global--danger--Color--100);
+  }
+  &--margin-top {
+    margin-top: var(--pf-global--spacer--sm);
   }
 }
 
@@ -36,5 +37,7 @@
 
 .im-install-page__text-box {
   min-height: 15em;
-  color: var(--pf-global--palette--black-700);
+  color: var(--pf-global--palette--black-500);
+  background-color: var(--pf-global--BackgroundColor--light-100) !important;
+  border: var(--pf-global--BorderWidth--sm) solid var(--pf-global--BorderColor--100) !important;
 }
