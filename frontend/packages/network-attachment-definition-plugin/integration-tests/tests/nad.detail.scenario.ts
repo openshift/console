@@ -26,7 +26,7 @@ describe('Test NAD overview', () => {
     await isLoaded();
   });
 
-  it('Check NAD details in overview', async () => {
+  it('ID(CNV-4291) Check NAD details in overview', async () => {
     // check NAD
     const expected = {
       name: nadName,

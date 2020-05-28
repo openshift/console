@@ -13,7 +13,7 @@ import {
 describe('Create network attachment definition using form', () => {
   const configs = getNADConfigs(testName);
 
-  it(`Creates NAD using CNV bridge`, async () => {
+  it(`ID(CNV-3256) Creates NAD using CNV bridge`, async () => {
     const config = configs.get(CONFIG_NAME_CNV_BRIDGE);
     const nad = new NetworkAttachmentDefinition(config);
     await nad.create(config, CNV_BRIDGE_ITEM_ID);
@@ -21,7 +21,7 @@ describe('Create network attachment definition using form', () => {
   });
 
   describe('Test network attachment definition form validation', () => {
-    it('Displays warning in NAD form when invalid name is entered', async () => {
+    it('ID(CNV-4307) Displays warning in NAD form when invalid name is entered', async () => {
       const config = configs.get(CONFIG_NAME_INVALID_NAME);
       const nad = new NetworkAttachmentDefinition(config);
       await nad.navigateToForm();
@@ -38,7 +38,7 @@ describe('Create network attachment definition using form', () => {
       expect(nadFormView.createBtn.isEnabled()).toBeFalsy();
     });
 
-    it('Does not enable create button until all required fields are filled', async () => {
+    it('ID(CNV-4308) Does not enable create button until all required fields are filled', async () => {
       const config = configs.get(CONFIG_NAME_CNV_BRIDGE);
       const nad = new NetworkAttachmentDefinition(config);
       await nad.navigateToForm();
