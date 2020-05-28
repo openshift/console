@@ -1,11 +1,10 @@
 import * as React from 'react';
-
 import { Timestamp } from './utils';
 import { CamelCaseWrap } from './utils/camel-case-wrap';
 import { K8sResourceCondition } from '../module/k8s';
 
 export const Conditions: React.SFC<ConditionsProps> = ({ conditions }) => {
-  const rows = (conditions || []).map((condition: K8sResourceCondition, i: number) => (
+  const rows = conditions?.map?.((condition: K8sResourceCondition, i: number) => (
     <div className="row" data-test-id={condition.type} key={i}>
       <div className="col-xs-4 col-sm-2 col-md-2">
         <CamelCaseWrap value={condition.type} />
