@@ -107,6 +107,8 @@ const getUpdateNotificationEntries = (
   isLoaded && !_.isEmpty(updateData)
     ? [
         <NotificationEntry
+          actionPath="/settings/cluster"
+          actionText="Update cluster"
           key="cluster-udpate"
           description={updateData[0].version || 'Unknown'}
           type={NotificationTypes.update}
