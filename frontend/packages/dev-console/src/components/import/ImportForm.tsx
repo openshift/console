@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { Formik } from 'formik';
 import * as _ from 'lodash';
-import { ValidatedOptions } from '@patternfly/react-core';
 import { history, AsyncComponent } from '@console/internal/components/utils';
 import { getActivePerspective, getActiveApplication } from '@console/internal/reducers/ui';
 import { RootState } from '@console/internal/redux';
@@ -61,7 +60,6 @@ const ImportForm: React.FC<ImportFormProps & StateProps> = ({
       dir: '/',
       showGitType: false,
       secret: '',
-      urlValidation: ValidatedOptions.default,
       isUrlValidating: false,
     },
     docker: {

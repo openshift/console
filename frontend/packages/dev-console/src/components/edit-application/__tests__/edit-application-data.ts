@@ -1,4 +1,3 @@
-import { ValidatedOptions } from '@patternfly/react-core';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { ServiceModel } from '@console/knative-plugin';
 import { UNASSIGNED_KEY } from '../../../const';
@@ -421,7 +420,6 @@ export const gitImportInitialValues: GitImportFormData = {
     dir: '/',
     showGitType: false,
     secret: '',
-    urlValidation: ValidatedOptions.default,
     isUrlValidating: false,
   },
   docker: { dockerfilePath: 'Dockerfile', containerPort: 8080 },

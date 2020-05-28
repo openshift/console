@@ -142,7 +142,6 @@ export interface GitData {
   dir: string;
   showGitType: boolean;
   secret: string;
-  urlValidation: ValidatedOptions;
   isUrlValidating: boolean;
 }
 

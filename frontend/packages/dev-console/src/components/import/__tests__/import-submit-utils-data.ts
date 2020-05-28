@@ -1,4 +1,3 @@
-import { ValidatedOptions } from '@patternfly/react-core';
 import { GitImportFormData, Resources } from '../import-types';
 import { healthChecksProbeInitialData } from '../../health-checks/health-checks-probe-utils';
 
@@ -166,7 +165,6 @@ export const defaultData: GitImportFormData = {
     dir: '/',
     showGitType: false,
     secret: '',
-    urlValidation: ValidatedOptions.default,
     isUrlValidating: false,
   },
   docker: {
