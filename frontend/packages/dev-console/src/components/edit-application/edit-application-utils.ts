@@ -10,10 +10,11 @@ import { BuildStrategyType } from '@console/internal/components/build';
 import { DeploymentConfigModel, DeploymentModel } from '@console/internal/models';
 import { ServiceModel } from '@console/knative-plugin';
 import { UNASSIGNED_KEY } from '../../const';
-import { Resources, DeploymentData } from '../import/import-types';
+import { Resources, DeploymentData, GitReadableTypes } from '../import/import-types';
 import { AppResources } from './edit-application-types';
 import { RegistryType } from '../../utils/imagestream-utils';
 import { getHealthChecksData } from '../health-checks/create-health-checks-probe-utils';
+import { detectGitType } from '../import/import-validation-utils';
 
 export enum CreateApplicationFlow {
   Git = 'Import from Git',
@@ -59,9 +60,10 @@ const checkIfTriggerExists = (
 };
 
 export const getGitData = (buildConfig: K8sResourceKind) => {
+  const url = buildConfig?.spec?.source?.git?.uri ?? '';
   const gitData = {
-    url: _.get(buildConfig, 'spec.source.git.uri', ''),
-    type: _.get(buildConfig, 'spec.source.type', ''),
+    url,
+    type: detectGitType(url),
     ref: _.get(buildConfig, 'spec.source.git.ref', ''),
     dir: _.get(buildConfig, 'spec.source.contextDir', ''),
     showGitType: false,
@@ -106,7 +108,7 @@ export const getRouteData = (route: K8sResourceKind, resource: K8sResourceKind) 
   return routeData;
 };
 
-export const getBuildData = (buildConfig: K8sResourceKind) => {
+export const getBuildData = (buildConfig: K8sResourceKind, gitType: string) => {
   const buildStrategyType = _.get(buildConfig, 'spec.strategy.type', '');
   let buildStrategyData;
   switch (buildStrategyType) {
@@ -123,7 +125,7 @@ export const getBuildData = (buildConfig: K8sResourceKind) => {
   const buildData = {
     env: buildStrategyData.env || [],
     triggers: {
-      webhook: checkIfTriggerExists(triggers, 'GitHub'),
+      webhook: checkIfTriggerExists(triggers, GitReadableTypes[gitType]),
       image: checkIfTriggerExists(triggers, 'ImageChange'),
       config: checkIfTriggerExists(triggers, 'ConfigChange'),
     },
@@ -183,14 +185,18 @@ export const getDeploymentData = (resource: K8sResourceKind) => {
         replicas: resource.spec?.replicas ?? 1,
       };
     }
-    case Resources.Kubernetes:
+    case Resources.Kubernetes: {
+      const imageTrigger = JSON.parse(
+        resource.metadata?.annotations?.['image.openshift.io/triggers'] ?? '[]',
+      )?.[0];
       return {
         env,
         triggers: {
-          image: !!resource.metadata?.annotations?.['image.openshift.io/triggers'],
+          image: imageTrigger?.pause === 'false',
         },
         replicas: resource.spec?.replicas ?? 1,
       };
+    }
     default:
       return deploymentData;
   }
@@ -282,8 +288,9 @@ export const getGitAndDockerfileInitialValues = (
     _.get(buildConfig, 'spec.strategy.sourceStrategy.from.name', ''),
     ':',
   );
+  const git = getGitData(buildConfig);
   const initialValues = {
-    git: getGitData(buildConfig),
+    git,
     docker: {
       dockerfilePath: _.get(
         buildConfig,
@@ -301,7 +308,7 @@ export const getGitAndDockerfileInitialValues = (
       isRecommending: false,
       couldNotRecommend: false,
     },
-    build: getBuildData(buildConfig),
+    build: getBuildData(buildConfig, git.type),
   };
   return initialValues;
 };

@@ -252,7 +252,7 @@ export const createOrUpdateDeployment = (
     ...getGitAnnotations(repository, ref),
     ...getCommonAnnotations(),
     'alpha.image.policy.openshift.io/resolve-names': '*',
-    ...(imageChange && getTriggerAnnotation(name, namespace)),
+    ...getTriggerAnnotation(name, namespace, imageChange),
   };
   const podLabels = getPodLabels(name);
 
@@ -417,6 +417,9 @@ export const createOrUpdateResources = async (
       strategy: buildStrategy,
       triggers: { webhook: webhookTrigger },
     },
+    deployment: {
+      triggers: { image: imageChange },
+    },
     git: { url: repository, type: gitType, ref },
     pipeline,
     resources,
@@ -472,7 +475,11 @@ export const createOrUpdateResources = async (
     const imageStreamURL = imageStreamResponse.status.dockerImageRepository;
 
     const originalAnnotations = appResources?.editAppResource?.data?.metadata?.annotations || {};
-    const triggerAnnotations = getTriggerAnnotation(generatedImageStreamName || name, namespace);
+    const triggerAnnotations = getTriggerAnnotation(
+      generatedImageStreamName || name,
+      namespace,
+      imageChange,
+    );
     const annotations = {
       ...originalAnnotations,
       ...defaultAnnotations,

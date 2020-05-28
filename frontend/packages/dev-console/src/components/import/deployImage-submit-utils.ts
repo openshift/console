@@ -157,8 +157,12 @@ export const createOrUpdateDeployment = (
   const defaultAnnotations = {
     ...annotations,
     'alpha.image.policy.openshift.io/resolve-names': '*',
-    ...(imageChange &&
-      getTriggerAnnotation(imgName || name, imgNamespace || namespace, imageStreamTag)),
+    ...getTriggerAnnotation(
+      imgName || name,
+      imgNamespace || namespace,
+      imageChange,
+      imageStreamTag,
+    ),
   };
 
   const { labels, podLabels, volumes, volumeMounts } = getMetadata(formData);
@@ -354,6 +358,9 @@ export const createOrUpdateDeployImageResources = async (
     route: { create: canCreateRoute, disable },
     isi: { ports, tag: imageStreamTag, image },
     imageStream: { image: internalImageStreamName, namespace: internalImageStreamNamespace },
+    deployment: {
+      triggers: { image: imageChange },
+    },
   } = formData;
   const internalImageName = getRuntime(image.metadata?.labels);
   const requests: Promise<K8sResourceKind>[] = [];
@@ -432,6 +439,7 @@ export const createOrUpdateDeployImageResources = async (
     const triggerAnnotations = getTriggerAnnotation(
       internalImageStreamName || name,
       internalImageStreamNamespace || namespace,
+      imageChange,
       imageStreamTag,
     );
     const annotations = {

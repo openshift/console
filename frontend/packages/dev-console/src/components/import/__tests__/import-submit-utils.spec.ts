@@ -34,8 +34,13 @@ describe('Import Submit Utils', () => {
       const annotations = _.get(returnValue, 'data.metadata.annotations');
       expect(JSON.parse(annotations['image.openshift.io/triggers'])).toEqual([
         {
-          from: { kind: 'ImageStreamTag', name: 'nodejs-ex-git:latest', namespace: 'gijohn' },
+          from: {
+            kind: 'ImageStreamTag',
+            name: 'nodejs-ex-git:latest',
+            namespace: 'gijohn',
+          },
           fieldPath: 'spec.template.spec.containers[?(@.name=="nodejs-ex-git")].image',
+          pause: 'false',
         },
       ]);
       done();

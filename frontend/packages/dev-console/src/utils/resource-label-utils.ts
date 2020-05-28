@@ -46,11 +46,17 @@ export const getCommonAnnotations = () => {
   };
 };
 
-export const getTriggerAnnotation = (name: string, namespace: string, tag: string = 'latest') => ({
+export const getTriggerAnnotation = (
+  name: string,
+  namespace: string,
+  imageTrigger: boolean,
+  tag: string = 'latest',
+) => ({
   [TRIGGERS_ANNOTATION]: JSON.stringify([
     {
       from: { kind: 'ImageStreamTag', name: `${name}:${tag}`, namespace },
       fieldPath: `spec.template.spec.containers[?(@.name=="${name}")].image`,
+      pause: `${!imageTrigger}`,
     },
   ]),
 });
