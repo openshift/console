@@ -6,6 +6,7 @@ Background:
    And user is on dev perspective topology page
    And at least one workload with knative type resource should be available
 
+
 @regression, @smoke
 Scenario Outline: Verify the knative revision context menu options
    Given searched results are displayed with knative revision name "<knative_revision_name>" on topology page
@@ -16,6 +17,7 @@ Scenario Outline: Verify the knative revision context menu options
 Examples:
 | knative_revision_name  | number_of_context_menu_options |
 | nodejs-ex-git-1-q5rb8  | 4                              |
+
 
 @regression
 Scenario Outline: Add label to the exisitng labels list
@@ -29,6 +31,7 @@ Examples:
 | knative_revision_name  | context_menu_option | label_name |
 | nodejs-ex-git-1-q5rb8  | Edit Labels         | app=label  |
 
+
 @regression
 Scenario Outline: Remove label from exisitng labels list
    Given searched results are displayed with knative revision name "<knative_revision_name>" on topology page
@@ -41,6 +44,7 @@ Examples:
 | knative_revision_name  | context_menu_option | label_name |
 | nodejs-ex-git-1-q5rb8  | Edit Labels         | app=label  |
 
+
 @regression
 Scenario Outline: perform cancel action on Edit Labels
    Given searched results are displayed with knative revision name "<knative_revision_name>" on topology page
@@ -52,6 +56,7 @@ Scenario Outline: perform cancel action on Edit Labels
 Examples:
 | knative_revision_name  | context_menu_option | label_name |
 | nodejs-ex-git-1-q5rb8  | Edit Labels         | app=label  |
+
 
 @regression
 Scenario Outline: Add annotation to the exisitng annonations list
@@ -68,6 +73,7 @@ Examples:
 | knative_revision_name  | context_menu_option | key_name                    | key_value  |
 | nodejs-ex-git-1-q5rb8  | Edit Annotaions     | serving.knative.dev/creator | kube:admin |
 
+
 @regression
 Scenario Outline: perform cancel action on Edit Annotations
    Given searched results are displayed with knative revision name "<knative_revision_name>" on topology page
@@ -81,6 +87,7 @@ Examples:
 | knative_revision_name  | context_menu_option | key_name                    |
 | nodejs-ex-git-1-q5rb8  | Edit Annotaions     | serving.knative.dev/creator |
 
+
 Scenario Outline: Remove annotation from exisitng annonations list
    Given searched results are displayed with knative revision name "<knative_revision_name>" on topology page
    And number of annotations are "6" present in side pane - details tab
@@ -92,6 +99,7 @@ Scenario Outline: Remove annotation from exisitng annonations list
 Examples:
 | knative_revision_name  | context_menu_option | key_name                    |
 | nodejs-ex-git-1-q5rb8  | Edit Annotaions     | serving.knative.dev/creator |
+
 
 @regression
 Scenario Outline: Edit revision
@@ -106,6 +114,7 @@ Examples:
 | knative_revision_name  | context_menu_option |
 | nodejs-ex-git-1-q5rb8  | Edit Revision       |
 
+
 @regression
 Scenario Outline: Delete revision from service with multiple revisions [TBD]
    Given searched results are displayed with knative revision name "<knative_revision_name>" on topology page
@@ -117,6 +126,7 @@ Scenario Outline: Delete revision from service with multiple revisions [TBD]
 Examples:
 | knative_revision_name  | context_menu_option |
 | nodejs-ex-git-1-q5rb8  | Delete Revision     |
+
 
 @regression
 Scenario Outline: Delete revision from service with one revision

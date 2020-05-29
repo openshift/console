@@ -8,6 +8,7 @@ Background:
     And one service "nodejs-ex-git-1" should be available
     And one revision "nodejs-ex-git-1-q5rb8" should be available
 
+
 Scenario: Verify the revision details in side pane 
     Given searched results are displayed with knative revision name "nodejs-ex-git-1-q5rb8"
     When user clcik on the knative revision name "nodejs-ex-git-1-q5rb8"
@@ -19,6 +20,7 @@ Scenario: Verify the revision details in side pane
     And Annotations section should contain "{number of annotations} Annotations"
     And "Created on" field display the date in format "{month date, hour:minutes am/pm}" 
     And owner field should be displayed
+
 
 Scenario: Verify the revision resources in side pane
 
@@ -33,6 +35,7 @@ Scenario: view the service details in side pane
     And Annotations section should contain "{number of annotations} Annotations"
     And "Created on" field display the date in format "{month date, hour:minutes am/pm}" 
     And owner field should be displayed
+
 
 Scenario: Verify the service resources in side pane
 

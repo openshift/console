@@ -3,12 +3,12 @@ Feature: Create Application from +Add page
 
 Background:
     Given user logged into the openshift application
-    And user is on dev perspecitve
-    And user is on a project namespace "AUT_MB_Demo"
+    And user navigates to dev perspecitve
+    And user navigates to a project namespace "AUT_MB_Demo"
 
 @regression
-Scenario Outline: Verify the Builder iamge detection for all workloads
-   Given user is on "git" form with header name "Import from git"
+Scenario Outline: Verify the Builder iamge for "<git_url>"
+   Given user navigates to "git" form with header name "Import from git"
    When user type "Git Repo url" as "<git_url>"
    Then "Validated" message should be displayed
    And "Builder image(s) detected" message should be displayed under Builder Section
@@ -29,9 +29,10 @@ Examples:
 | https://github.com/jboss-openshift/openshift-quickstarts  | Deployment    | openshift-quickstarts-app | openshift-quickstarts |
 | https://github.com/sclorg/nodejs-ex.git                   | Deployment    | nodejs-ex.git-app         | nodejs-ex.git         |
 
+
 @regression
 Scenario Outline: Add new git workload with new application
-   Given user is on "git" form with header name "Import from git"
+   Given user navigates to "git" form with header name "Import from git"
    When user type "Git Repo url" as "<git_url>"
    Then "Validated" message should be displayed
    And "Builder image(s) detected" message should be displayed under Builder Section
@@ -51,7 +52,7 @@ Examples:
 
 @regression
 Scenario Outline: Add new git workload to the existing application
-   Given user is on "git" form with header name "Import from git"
+   Given user navigates to "git" form with header name "Import from git"
    When user type "Git Repo url" as "<git_url>"
    Then "Validated" message should be displayed
    And "Builder image(s) detected" message should be displayed under Builder Section
@@ -71,7 +72,7 @@ Examples:
 
 @regression
 Scenario Outline: Create a git workload with advanced option "Routing"
-   Given user is on "git" form with header name "Import from git"
+   Given user navigates to "git" form with header name "Import from git"
    When user type "Git Repo url" as "<git_url>"
    And type name as "<name>" in General section
    And click "Routing" link in Advanced Options section
@@ -86,9 +87,10 @@ Examples:
 | git_url                                 | hostname | path  | name            |
 | https://github.com/sclorg/nodejs-ex.git | home     | /home | nodejs-ex.git-1 |
 
+
 @regression
 Scenario Outline: Create a git workload with advanced option "Build Configuration" [TBD - Then]
-   Given user is on "git" form with header name "Import from git"
+   Given user navigates to "git" form with header name "Import from git"
    When user type "Git Repo url" as "<git_url>"
    And type name as "<name>" in General section
    And click "Build Configuration" link in Advanced Options section
@@ -104,9 +106,10 @@ Examples:
 | git_url                                 | name | value | name            |
 | https://github.com/sclorg/nodejs-ex.git | home | value | nodejs-ex.git-2 |
 
+
 @regression
 Scenario Outline: Create a git workload with advanced option "Deployment" [TBD - Then]
-   Given user is on "git" form with header name "Import from git"
+   Given user navigates to "git" form with header name "Import from git"
    When user type "Git Repo url" as "<git_url>"
    And type name as "<name>" in General section
    And click "Deployment" link in Advanced Options section
@@ -120,9 +123,10 @@ Examples:
 | git_url                                 | name | value | name            |
 | https://github.com/sclorg/nodejs-ex.git | home | value | nodejs-ex.git-3 |
 
+
 @regression
 Scenario Outline: Create a git workload with advanced option "Resource Limits" [TBD - Then]
-   Given user is on "git" form with header name "Import from git"
+   Given user navigates to "git" form with header name "Import from git"
    When user type "Git Repo url" as "<git_url>"
    And type name as "<name>" in General section
    And click "Resource Limits" link in Advanced Options section
@@ -137,9 +141,10 @@ Examples:
 | git_url                                 | cpu_request | cpu_limit | memory_request | memory_limit | name            |
 | https://github.com/sclorg/nodejs-ex.git | 10          | 12        | 200            | 300          | nodejs-ex.git-3 |
 
+
 @regression
 Scenario Outline: Create a git workload with advanced option "Scaling" [TBD - Then]
-   Given user is on "git" form with header name "Import from git"
+   Given user navigates to "git" form with header name "Import from git"
    When user type "Git Repo url" as "<git_url>"
    And type name as "<name>" in General section
    And click "Scaling" link in Advanced Options section
@@ -151,9 +156,10 @@ Examples:
 | git_url                                 | replica_set_value | name            |
 | https://github.com/sclorg/nodejs-ex.git | 5                 | nodejs-ex.git-4 |
 
+
 @regression
 Scenario Outline: Create a git workload with advanced option "Labels"
-   Given user is on "git" form with header name "Import from git"
+   Given user navigates to "git" form with header name "Import from git"
    When user type "Git Repo url" as "<git_url>"
    And type name as "<name>" in General section
    And click "Labels" link in Advanced Options section
@@ -166,9 +172,10 @@ Examples:
 | git_url                                 | label_name   | name            |
 | https://github.com/sclorg/nodejs-ex.git | app=frontend | nodejs-ex.git-5 |
 
+
 @smoke
 Scenario Outline: Create a git workload
-   Given user is on "git" form with header name "Import from git"
+   Given user navigates to "git" form with header name "Import from git"
    When user type "Git Repo url" as "<git_url>"
    And type name as "<name>" in General section
    And select "<resource_type>" radio button in Resources section

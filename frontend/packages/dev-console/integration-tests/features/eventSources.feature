@@ -2,7 +2,7 @@ Feature: Event Sources
     As a developer I want to create event sources and perfrom various actions in topology
 
 Background:
-Given developer is on project topology page
+Given developer navigates to project topology page
 
 Scenario: Display the event source page by selecting the event source on node right click
    Given topology page should contain at least one node
@@ -11,12 +11,14 @@ Scenario: Display the event source page by selecting the event source on node ri
    And select the Event Source option
    Then event source page form should be displayed
 
+
 Scenario: Verify the sections of the event source page
    Given topology page should contain at least one node
    When developer hovers on the node gesture
    And  select the Event Source option from the context menu
    Then event source page form should be displayed
    And verify Type, Sink, General, Advanced Options sections
+
 
 Scenario: Create the event source for CronJob source type by selecting the event source option from Actions Menu
    Given topology page should contain at least one node
@@ -33,6 +35,7 @@ Scenario: Create the event source for CronJob source type by selecting the event
    And click on create button
    Then event source is created along with the sink connector in topology page
 
+
 Scenario: Move the sink via gestures to link knative services
    Given knative service, event source and sink connector are present in topology page
    When developer selects the end point of sink connector
@@ -40,11 +43,13 @@ Scenario: Move the sink via gestures to link knative services
    Then connector should get connected to knative service
    And on hover it displays tooltip Move Sink
 
+
 Scenario: Move the sink via context menu to link knative Service
    Given knative service, event source and sink connector are present in topology page
    When right click on the knative service 
    And  select the “Move Sink” from context menu
    Then modal should be displayed with the multiple new knative sink details existing/newly created knative services
+
 
 Scenario: Non knative services should not display in “Move Sink” modal
    Given knative service, event source and sink connector are present in topology page
@@ -52,6 +57,7 @@ Scenario: Non knative services should not display in “Move Sink” modal
    And  select the “Move Sink” from context menu
    Then modal should be displayed
    And verify the non knative services display
+
 
 Scenario: Move the sink via Action menu to link knative Service
    Given knative service, event source and sink connector are present in topology page

@@ -3,12 +3,13 @@ Feature: Create Application from Docker file
 
 Background:
     Given user logged into the openshift application
-    And user is on dev perspecitve
-    And user is on a project namespace "AUT_MB_Docker_Demo"
+    And user navigates to dev perspecitve
+    And user navigates to a project namespace "AUT_MB_Docker_Demo"
+
 
 @regression
 Scenario Outline: Create a workload from Docker file card on Add page
-   Given user is on "<form_name>" form with header name "<header_name>"
+   Given user navigates to "<form_name>" form with header name "<header_name>"
    When user type "<docker_git_url>" into the "Git Repo url" text box
    And select "<resource_type>" radio button in Resoruce type section
    And click "Create" button on Add page   

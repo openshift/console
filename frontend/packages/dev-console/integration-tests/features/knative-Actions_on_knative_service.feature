@@ -2,9 +2,10 @@ Feature: Perform actions on knative service
     As a user I want to perform edit or delete operations and Set Traffic Distribution on knative Service in topology page
 
 Background:
-Given open shift cluster is installed with Serverless operator
-And user is on dev perspective - topology page
-And at least one workload with knative type resource should be available
+    Given open shift cluster is installed with Serverless operator
+    And user navigates to dev perspective - topology page
+    And at least one workload with knative type resource should be available
+
 
 @regression
 Scenario Outline: Verify the knative service context menu options
@@ -17,6 +18,7 @@ Examples:
 | knative_service_name | number_of_context_menu_options |
 | nodejs-ex-git-1      | 8                              |
 
+
 @regression
 Scenario Outline: Remove label from exisitng labels list
    Given searched results are displayed with knative service name "<knative_service_name>" on topology page
@@ -28,6 +30,7 @@ Scenario Outline: Remove label from exisitng labels list
 Examples:
 | knative_service_name | context_menu_option | label_name |
 | nodejs-ex-git-1      | Edit Labels         | app=label  |
+
 
 @regression
 Scenario Outline: perform cancel action on Edit Labels
@@ -42,6 +45,7 @@ Examples:
 | knative_service_name | context_menu_option | label_name |
 | nodejs-ex-git-1      | Edit Labels         | app=label  |
 
+
 @regression
 Scenario Outline: Add label to the exisitng labels list
    Given searched results are displayed with knative service name "<knative_service_name>" on topology page
@@ -53,6 +57,7 @@ Scenario Outline: Add label to the exisitng labels list
 Examples:
 | knative_service_name | context_menu_option | label_name |
 | nodejs-ex-git-1      | Edit Labels         | app=label  |
+
 
 @regression
 Scenario Outline: Remove annotation from exisitng annonations list
@@ -80,6 +85,7 @@ Examples:
 | knative_service_name | context_menu_option | annotation_name             |
 | nodejs-ex-git-1      | Edit Annotations    | serving.knative.dev/creator |
 
+
 @regression
 Scenario Outline: Add annotation to the exisitng annonations list
    Given searched results are displayed with knative service name "<knative_service_name>" on topology page
@@ -95,6 +101,7 @@ Examples:
 | knative_service_name | context_menu_option | annotation_name             | annotation_value |
 | nodejs-ex-git-1      | Edit Annotations    | serving.knative.dev/creator | kube:admin       |
 
+
 @regression
 Scenario Outline: Edit service
    Given searched results are displayed with knative service name "<knative_service_name>" on topology page
@@ -107,6 +114,7 @@ Scenario Outline: Edit service
 Examples:
 | knative_service_name | context_menu_option |
 | nodejs-ex-git-1      | Edit Service        |
+
 
 @regression
 Scenario Outline: Update the service to different application group existing in same project
@@ -122,6 +130,7 @@ Examples:
 | knative_service_name | context_menu_option       | application_name |
 | nodejs-ex-git-1      | Edit Application Grouping | openshift-app    |
 
+
 @regression
 Scenario Outline: Perform cancel operation while editing application group
    Given searched results are displayed with knative service name "<knative_service_name>" on topology page
@@ -135,6 +144,7 @@ Scenario Outline: Perform cancel operation while editing application group
 Examples:
 | knative_service_name | context_menu_option       | application_name |
 | nodejs-ex-git-1      | Edit Application Grouping | openshift-app    |
+
 
 @regression
 Scenario Outline: Update the service to new application group
@@ -167,6 +177,7 @@ Examples:
 | knative_service_name | context_menu_option      |
 | nodejs-ex-git-1      | Set Traffic Distribution |
 
+
 @regression
 Scenario Outline: Set traffic distribution less than 100% for the Revisions of the Knative Service
    Given searched results are displayed with knative service name "<knative_service_name>" on topology page
@@ -182,6 +193,7 @@ Scenario Outline: Set traffic distribution less than 100% for the Revisions of t
 Examples:
 | knative_service_name | context_menu_option      |
 | nodejs-ex-git-1      | Set Traffic Distribution |
+
 
 @regression
 Scenario Outline: Set traffic distribution equal to 100% for the Revisions of the Knative Service
@@ -199,12 +211,14 @@ Examples:
 | knative_service_name | context_menu_option      |
 | nodejs-ex-git-1      | Set Traffic Distribution |
 
+
 @regression
 Scenario Outline: Perform cancel opeartion on Edit Health Checks for a service
    Given searched results are displayed with knative service name "<knative_service_name>" on topology page
    When user selects "Edit Health Checks" option from knative service context menu
    And click on "cancel" button
    Then page should navigate to Topology page
+
 
 @regression
 Scenario Outline: Edit Health Checks for a service [TBD]
@@ -214,12 +228,14 @@ Scenario Outline: Edit Health Checks for a service [TBD]
    And click on "Save" button
    Then 
 
+
 @regression
 Scenario Outline: Perform cancel opeartion on Edit NameOfWorkload for a service
    Given searched results are displayed with knative service name "<knative_service_name>" on topology page
    When user selects "Edit nodejs-ex-git-1" option from knative service context menu
    And click on "cancel" button present in redirected page
    Then page should navigate to Topology page
+
 
 @regression
 Scenario Outline: Edit NameOfWorkload for a service [TBD]
@@ -229,6 +245,7 @@ Scenario Outline: Edit NameOfWorkload for a service [TBD]
    And click on "Save" button
    Then 
 
+
 @regression
 Scenario Outline: Delete service
    Given searched results are displayed with knative service name "<knative_service_name>" on topology page
@@ -236,6 +253,7 @@ Scenario Outline: Delete service
    Then popup displayed with header name "Delete Service?" with message as "Are you sure you want to delete {service name} in namespace {project name}?"
    And modal should get closed on clicking "Delete" button
    And service should not be displayed in project
+
 
 @regression
 Scenario Outline: Perform cancel operation on Delete service
