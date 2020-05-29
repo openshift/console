@@ -89,7 +89,7 @@ const getDiskMappings = (storage: VMWizardStorage[]) =>
           source: { id },
           target: {
             name:
-              new PersistentVolumeClaimWrapper(persistentVolumeClaim).getStorageClassName() || null,
+              new PersistentVolumeClaimWrapper(persistentVolumeClaim).getStorageClassName() || '',
           },
         } as DiskMapping),
     );
