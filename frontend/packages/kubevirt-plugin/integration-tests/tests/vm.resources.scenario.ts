@@ -1,5 +1,5 @@
 import * as _ from 'lodash';
-import { browser, ExpectedConditions as until } from 'protractor';
+import { browser } from 'protractor';
 import { testName, appHost } from '@console/internal-integration-tests/protractor.conf';
 import { isLoaded } from '@console/internal-integration-tests/views/crud.view';
 import {
@@ -12,7 +12,7 @@ import {
 } from '@console/shared/src/test-utils/utils';
 import { VirtualMachineModel } from '@console/kubevirt-plugin/src/models';
 import { createNICButton } from '../views/kubevirtUIResource.view';
-import { nicNetwork, nicType } from '../views/dialogs/networkInterface.view';
+import { nicType } from '../views/dialogs/networkInterface.view';
 import { getInterfaces } from '../../src/selectors/vm/selectors';
 import { getVMIDisks } from '../../src/selectors/vmi/basic';
 import * as wizardView from '../views/wizard.view';
@@ -25,12 +25,19 @@ import {
   defaultWizardPodNetworkingInterface,
   defaultYAMLPodNetworkingInterface,
 } from './utils/mocks';
-import { getSelectOptions, getRandStr, createExampleVMViaYAML } from './utils/utils';
+import {
+  getSelectOptions,
+  getRandomMacAddress,
+  getRandStr,
+  createExampleVMViaYAML,
+  getResourceObject,
+} from './utils/utils';
 import {
   VM_BOOTUP_TIMEOUT_SECS,
   VM_ACTIONS_TIMEOUT_SECS,
   TAB,
   VM_ACTION,
+  NIC_MODEL,
   NIC_TYPE,
   DISK_SOURCE,
   networkTabCol,
@@ -58,7 +65,8 @@ describe('Add/remove disks and NICs on respective VM pages', () => {
       await vm.addDisk(hddDisk);
       expect(await vm.getAttachedDisks()).toContain(hddDisk);
       await vm.action(VM_ACTION.Start);
-      expect(_.find(getVMIDisks(vm.getResource()), (o) => o.name === hddDisk.name)).toBeDefined();
+      const vmi = getResourceObject(vm.name, vm.namespace, 'VirtualMachineInstance');
+      expect(_.find(getVMIDisks(vmi), (o) => o.name === hddDisk.name)).toBeDefined();
       await vm.action(VM_ACTION.Stop);
       await vm.removeDisk(hddDisk.name);
       expect(await vm.getAttachedDisks()).not.toContain(hddDisk);
@@ -82,45 +90,38 @@ describe('Add/remove disks and NICs on respective VM pages', () => {
     VM_ACTIONS_TIMEOUT_SECS,
   );
 
-  it('ID(CNV-1722) NIC cannot be added twice using one net-attach-def', async () => {
-    await vm.navigateToTab(TAB.NetworkInterfaces);
-    if (
-      (await vm.getAttachedNICs()).filter((nic) => nic.name === multusNetworkInterface.name)
-        .length === 0
-    ) {
+  it(
+    'ID(CNV-1722) NIC can be added twice using one net-attach-def',
+    async () => {
+      const secondMultusInterface = {
+        name: `nic2-${testName.slice(-5)}`,
+        model: NIC_MODEL.VirtIO,
+        mac: getRandomMacAddress(),
+        type: NIC_TYPE.bridge,
+        network: multusNAD.metadata.name,
+      };
       await vm.addNIC(multusNetworkInterface);
-    }
-
-    // Verify the NIC is added in VM Manifest
-    expect(
-      _.find(getInterfaces(vm.getResource()), (o) => o.name === multusNetworkInterface.name),
-    ).toBeDefined();
-
-    // Try to add the NIC again
-    await click(createNICButton, 1000);
-    await browser.sleep(1000).then(() => browser.wait(until.presenceOf(nicNetwork)));
-
-    // The network dropdown should be either empty (disabled) or not containing the already used net-attach-def
-    await browser.wait(
-      until.or(
-        async () => {
-          return !(await nicNetwork.isEnabled());
-        },
-        async () => {
-          return !(await getSelectOptions(nicNetwork)).includes(multusNetworkInterface.network);
-        },
-      ),
-    );
-  });
+      await vm.addNIC(secondMultusInterface);
+      expect(await vm.getAttachedNICs()).toContain(multusNetworkInterface);
+      expect(await vm.getAttachedNICs()).toContain(secondMultusInterface);
+      await vm.action(VM_ACTION.Start);
+      const vmInterfaces = _.filter(
+        getInterfaces(vm.getResource()),
+        (o) => o.name === multusNetworkInterface.name || o.name === secondMultusInterface.name,
+      );
+      expect(vmInterfaces.length).toEqual(2);
+      await vm.action(VM_ACTION.Stop);
+      await vm.removeNIC(multusNetworkInterface.name);
+      await vm.removeNIC(secondMultusInterface.name);
+      expect(await vm.getAttachedNICs()).not.toContain(multusNetworkInterface);
+      expect(await vm.getAttachedNICs()).not.toContain(secondMultusInterface);
+    },
+    VM_ACTIONS_TIMEOUT_SECS,
+  );
 });
 
 describe('Test network type presets and options', () => {
-  const bindingMethods = [
-    NIC_TYPE.bridge,
-    NIC_TYPE.masquerade,
-    NIC_TYPE.slirp,
-    NIC_TYPE.sriov,
-  ].sort();
+  const bindingMethods = [NIC_TYPE.bridge, NIC_TYPE.masquerade, NIC_TYPE.sriov].sort();
   const nonPodNetworkBindingMethods = [NIC_TYPE.bridge, NIC_TYPE.sriov].sort();
   const wizard = new Wizard();
   const leakedResources = new Set<string>();
@@ -166,7 +167,7 @@ describe('Test network type presets and options', () => {
     await wizard.closeWizard();
   });
 
-  xit('BZ(1828739) ID(CNV-4038) Test NIC default type in example VM', async () => {
+  it('ID(CNV-4038) Test NIC default type in example VM', async () => {
     await createExampleVMViaYAML();
     const vm = new VirtualMachine({ name: DEFAULT_YAML_VM_NAME, namespace: testName });
     const NICDialog = new NetworkInterfaceDialog();

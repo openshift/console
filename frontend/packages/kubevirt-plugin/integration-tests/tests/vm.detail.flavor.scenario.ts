@@ -6,6 +6,7 @@ import {
   removeLeakedResources,
 } from '@console/shared/src/test-utils/utils';
 import * as virtualMachineView from '../views/virtualMachine.view';
+import { saveButton } from '../views/kubevirtUIResource.view';
 import { VM_CREATE_AND_EDIT_TIMEOUT_SECS } from './utils/consts';
 import { Wizard } from './models/wizard';
 import { vmConfig, getProvisionConfigs } from './vm.wizard.configs';
@@ -45,13 +46,10 @@ describe('KubeVirt VM detail - edit flavor', () => {
         await selectOptionByText(editFlavorView.flavorDropdown, 'Custom');
         await fillInput(editFlavorView.cpusInput(), '2');
         await fillInput(editFlavorView.memoryInput(), '3');
-        await click(editFlavorView.saveButton());
+        await click(saveButton);
 
         expect(getCPU(vm.getResource()).cores).toEqual(2);
         expect(getMemory(vm.getResource())).toEqual('3Gi');
-        expect(
-          await virtualMachineView.vmDetailLabelValue('flavor.template.kubevirt.io/Custom'),
-        ).toBe('true');
         expect(
           (await virtualMachineView.vmDetailLabelValue('vm.kubevirt.io/template')).startsWith(
             'rhel7-desktop-tiny-', // template is not changed (might be in the future)
