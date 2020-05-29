@@ -43,7 +43,7 @@ export type VMITemplate = {
 export type VMSpec = {
   template: VMITemplate;
   running?: boolean;
-  runStrategy?: any;
+  runStrategy?: string;
   dataVolumeTemplates?: V1alpha1DataVolume[];
 };
 
@@ -51,7 +51,13 @@ export type VMStatus = {
   conditions?: any[];
   created?: boolean;
   ready?: boolean;
-  stateChangeRequests?: any[];
+  stateChangeRequests?: VMStatusStateChangeRequest[];
+};
+
+export type VMStatusStateChangeRequest = {
+  action: string;
+  uid: string;
+  data: { [key: string]: string };
 };
 
 // https://kubevirt.io/api-reference/master/definitions.html#_v1_virtualmachine

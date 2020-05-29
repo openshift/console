@@ -36,7 +36,7 @@ import {
   getVolumeDataVolumeName,
   getVolumePersistentVolumeClaimName,
   getVolumes,
-  isVMRunning,
+  isVMExpectedRunning,
 } from '../../../selectors/vm';
 import { VIRTUAL_MACHINE_EXISTS } from '../../../utils/validations/strings';
 import { Errors } from '../../errors/errors';
@@ -108,7 +108,7 @@ export const CloneVMModal = withHandlePromise((props: CloneVMModalProps) => {
   };
 
   const vmRunningWarning =
-    isVMRunning(vm) &&
+    isVMExpectedRunning(vm) &&
     `The VM ${getName(vm)} is still running. It will be powered off while cloning.`;
 
   return (

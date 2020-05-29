@@ -19,7 +19,7 @@ import {
   getPVCSourceByDisk,
   getStorageSizeByDisk,
   getStorageClassNameByDisk,
-  isVMRunning,
+  isVMRunningOrExpectedRunning,
 } from '../../../selectors/vm/selectors';
 import { isValidationError, validateURL } from '../../../utils/validations/common';
 import { VMLikeEntityKind } from '../../../types/vmLike';
@@ -179,7 +179,7 @@ export const CDRomModal = withHandlePromise((props: CDRomModalProps) => {
     <div className="modal-content">
       <ModalTitle>Edit CD-ROMs</ModalTitle>
       <ModalBody>
-        {showRestartAlert && isVMRunning(vm) && (
+        {showRestartAlert && isVMRunningOrExpectedRunning(vm) && (
           <Alert
             variant="info"
             isInline

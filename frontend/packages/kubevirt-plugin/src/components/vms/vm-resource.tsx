@@ -21,7 +21,11 @@ import { EditButton } from '../edit-button';
 import { VMStatus } from '../vm-status/vm-status';
 import { DiskSummary } from '../vm-disks/disk-summary';
 import { BootOrderSummary } from '../boot-order';
-import { getOperatingSystemName, getOperatingSystem } from '../../selectors/vm';
+import {
+  getOperatingSystemName,
+  getOperatingSystem,
+  isVMRunningOrExpectedRunning,
+} from '../../selectors/vm';
 import { getVmiIpAddresses } from '../../selectors/vmi/ip-address';
 import { findVMIPod } from '../../selectors/pod/selectors';
 import { isVMIPaused, getVMINodeName } from '../../selectors/vmi';
@@ -122,7 +126,11 @@ export const VMDetailsList: React.FC<VMResourceListProps> = ({
   const vmiLike = isVM ? vm : vmi;
   const vmiLikeWrapper = asVMILikeWrapper(vmiLike);
 
-  const canEdit = vmiLike && canUpdateVM && kindObj !== VirtualMachineInstanceModel;
+  const canEdit =
+    vmiLike &&
+    canUpdateVM &&
+    kindObj !== VirtualMachineInstanceModel &&
+    !isVMRunningOrExpectedRunning(vm);
 
   const [isStatusModalOpen, setStatusModalOpen] = React.useState<boolean>(false);
 
@@ -219,7 +227,11 @@ export const VMSchedulingList: React.FC<VMSchedulingListProps> = ({
   const isVM = kindObj === VirtualMachineModel;
   const vmiLike = isVM ? vm : vmi;
   const vmiLikeWrapper = asVMILikeWrapper(vmiLike);
-  const canEdit = vmiLike && canUpdateVM && kindObj !== VirtualMachineInstanceModel;
+  const canEdit =
+    vmiLike &&
+    canUpdateVM &&
+    kindObj !== VirtualMachineInstanceModel &&
+    !isVMRunningOrExpectedRunning(vm);
 
   const id = getBasicID(vmiLike);
   const flavorText = getFlavorText({

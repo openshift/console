@@ -20,7 +20,7 @@ import {
 import { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
 import { VMDashboardContext } from '../../vms/vm-dashboard-context';
 import { findVMIPod } from '../../../selectors/pod/selectors';
-import { isVMRunningWithVMI } from '../../../selectors/vm';
+import { isVMCreated } from '../../../selectors/vm';
 import { getUtilizationQueries, getMultilineUtilizationQueries, VMQueries } from './queries';
 import { getPrometheusQueryEndTimestamp } from '@console/internal/components/graphs/helpers';
 
@@ -52,7 +52,7 @@ export const VMUtilizationCard: React.FC = () => {
   const vmName = getName(vmiLike);
   const namespace = getNamespace(vmiLike);
   const launcherPodName = getName(findVMIPod(vmi, pods));
-  const vmIsRunning = isVMRunningWithVMI({ vm, vmi });
+  const vmiIsRunning = isVMCreated(vm) && !!vmi;
 
   const queries = React.useMemo(
     () =>
@@ -93,7 +93,7 @@ export const VMUtilizationCard: React.FC = () => {
           adjustDuration={adjustDuration}
           setTimestamps={setTimestamps}
           namespace={namespace}
-          isDisabled={!vmIsRunning}
+          isDisabled={!vmiIsRunning}
         />
         <PrometheusUtilizationItem
           title="Memory"
@@ -103,7 +103,7 @@ export const VMUtilizationCard: React.FC = () => {
           duration={duration}
           namespace={namespace}
           adjustDuration={adjustDuration}
-          isDisabled={!vmIsRunning}
+          isDisabled={!vmiIsRunning}
         />
         <PrometheusUtilizationItem
           title="Filesystem"
@@ -113,7 +113,7 @@ export const VMUtilizationCard: React.FC = () => {
           duration={duration}
           namespace={namespace}
           adjustDuration={adjustDuration}
-          isDisabled={!vmIsRunning}
+          isDisabled={!vmiIsRunning}
         />
         <PrometheusMultilineUtilizationItem
           title="Network Transfer"
@@ -123,7 +123,7 @@ export const VMUtilizationCard: React.FC = () => {
           duration={duration}
           namespace={namespace}
           adjustDuration={adjustDuration}
-          isDisabled={!vmIsRunning}
+          isDisabled={!vmiIsRunning}
         />
       </UtilizationBody>
     </DashboardCard>

@@ -10,7 +10,7 @@ import { DASH, dimensifyRow, getDeletetionTimestamp } from '@console/shared';
 import { TemplateModel } from '@console/internal/models';
 import { deleteDiskModal } from '../modals/delete-disk-modal/delete-disk-modal';
 import { VMLikeEntityKind } from '../../types/vmLike';
-import { asVM, isVMRunning } from '../../selectors/vm';
+import { asVM, isVMRunningOrExpectedRunning } from '../../selectors/vm';
 import { isVM, isVMI } from '../../selectors/check-type';
 import { VirtualMachineModel } from '../../models';
 import { ValidationCell } from '../table/validation-cell';
@@ -78,7 +78,7 @@ const getActions = (
   opts: VMStorageRowActionOpts,
 ) => {
   const actions = [];
-  if (isVMI(vmLikeEntity) || isVMRunning(asVM(vmLikeEntity))) {
+  if (isVMI(vmLikeEntity) || isVMRunningOrExpectedRunning(asVM(vmLikeEntity))) {
     return actions;
   }
 
@@ -181,7 +181,7 @@ export const DiskRow: RowFunction<StorageBundle, VMStorageRowCustomData> = ({
             isDisabled ||
             isVMI(vmLikeEntity) ||
             !!getDeletetionTimestamp(vmLikeEntity) ||
-            isVMRunning(asVM(vmLikeEntity))
+            isVMRunningOrExpectedRunning(asVM(vmLikeEntity))
           }
           id={`kebab-for-${disk.getName()}`}
         />

@@ -24,6 +24,7 @@ import {
   getTemplateValidationsFromTemplate,
 } from '../../selectors/vm-template/selectors';
 import { diskSourceFilter } from './table-filters';
+import { asVM, isVMRunningOrExpectedRunning } from '../../selectors/vm';
 
 const getStoragesData = ({
   vmLikeEntity,
@@ -162,7 +163,7 @@ export const VMDisks: React.FC<VMDisksProps> = ({ vmLikeEntity, vmTemplate }) =>
       createButtonText={ADD_DISK}
       canCreate={!isVMI(vmLikeEntity)}
       createProps={{
-        isDisabled: isLocked,
+        isDisabled: isLocked || isVMRunningOrExpectedRunning(asVM(vmLikeEntity)),
         onClick: createFn,
         id: 'add-disk',
       }}

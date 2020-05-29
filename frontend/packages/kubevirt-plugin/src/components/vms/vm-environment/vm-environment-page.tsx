@@ -26,7 +26,7 @@ import {
   withHandlePromise,
 } from '@console/internal/components/utils';
 import { VMTabProps } from '../types';
-import { getVMLikeModel } from '../../../selectors/vm';
+import { getVMLikeModel, isVMRunningOrExpectedRunning } from '../../../selectors/vm';
 import { isVM } from '../../../selectors/check-type';
 import * as _ from 'lodash';
 import {
@@ -146,6 +146,7 @@ const VMEnvironment = withHandlePromise<VMEnvironmentProps>(
     const serviceAccounts = serviceAccountsResource?.data;
     const template = templateResource?.data;
     const vmWrapper = new VMWrapper(vm);
+    const isVMRunning = isVMRunningOrExpectedRunning(vm);
 
     const [errMsg, setErrMsg] = React.useState(errorMessage);
     const [isSuccess, setIsSuccess] = React.useState(false);
@@ -397,6 +398,7 @@ const VMEnvironment = withHandlePromise<VMEnvironmentProps>(
       : toListObj(serviceAccountList, []);
 
     const addButtonDisabled =
+      isVMRunning ||
       envDisks.length >= configMaps?.length + secrets?.length + serviceAccounts?.length;
 
     return (
@@ -413,7 +415,7 @@ const VMEnvironment = withHandlePromise<VMEnvironmentProps>(
             nameValueId={0}
             nameValuePairs={envDisks}
             updateParentData={updateEnvDisks}
-            readOnly={false}
+            readOnly={isVMRunning}
             configMaps={availableConfigMaps}
             secrets={availableSecrets}
             serviceAccounts={availableServiceAccounts}
@@ -429,7 +431,8 @@ const VMEnvironment = withHandlePromise<VMEnvironmentProps>(
             reload={onReload}
             errorMsg={errMsg}
             isSuccess={isSuccess}
-            isSaveBtnDisabled={isSaveBtnDisabled()}
+            isSaveBtnDisabled={isVMRunning || isSaveBtnDisabled()}
+            isReloadBtnDisabled={isVMRunning}
           />
         </div>
       </>
