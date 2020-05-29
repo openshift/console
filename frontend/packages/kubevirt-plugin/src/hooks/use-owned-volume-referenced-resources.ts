@@ -53,7 +53,9 @@ export const useOwnedVolumeReferencedResources = (
       const { data, loaded, loadError } = results[volumeName];
 
       if (!loaded || loadError) {
-        isLoaded = false;
+        if (loadError?.json?.code !== 404) {
+          isLoaded = false;
+        }
         return null;
       }
 
