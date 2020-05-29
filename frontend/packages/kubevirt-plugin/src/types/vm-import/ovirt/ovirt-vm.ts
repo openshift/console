@@ -29,6 +29,7 @@ export type OvirtVM = {
   id: string;
   memory: number;
   name: string;
+  description: string;
   nics: OvirtNIC[];
   os: {
     ostype: string;

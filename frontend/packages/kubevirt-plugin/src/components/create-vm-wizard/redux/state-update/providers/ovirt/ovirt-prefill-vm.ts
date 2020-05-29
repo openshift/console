@@ -152,7 +152,7 @@ export const prefillUpdateCreator = (options: UpdateOptions) => {
   const iVM = iGetOvirtFieldAttribute(state, id, OvirtProviderField.VM, 'vm');
   const vm: OvirtVM = JSON.parse(iVM.getIn(['detail', 'raw'])) || {};
 
-  const { memory, name } = vm;
+  const { memory, name, description } = vm;
 
   const memWithUnit = memory ? convertToHighestUnit(memory, BinaryUnit.B) : null;
 
@@ -166,6 +166,9 @@ export const prefillUpdateCreator = (options: UpdateOptions) => {
     vmWizardInternalActions[InternalActionType.UpdateVmSettings](id, {
       [VMSettingsField.NAME]: {
         value: alignWithDNS1123(name),
+      },
+      [VMSettingsField.DESCRIPTION]: {
+        value: description || null,
       },
       [VMSettingsField.MEMORY]: {
         value: memWithUnit ? `${memWithUnit.value}${memWithUnit.unit}` : null,

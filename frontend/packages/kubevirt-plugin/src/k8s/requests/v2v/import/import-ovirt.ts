@@ -26,6 +26,8 @@ import { DiskMapping, NetworkMapping } from '../../../../types/vm-import/ovirt/v
 import { PersistentVolumeClaimWrapper } from '../../../wrapper/vm/persistent-volume-claim-wrapper';
 import { SecretWrappper } from '../../../wrapper/k8s/secret-wrapper';
 import { buildOwnerReference } from '../../../../utils';
+import { VM_IMPORT_PROPAGATE_ANNOTATIONS_ANNOTATION } from '../../../../constants/v2v-import/constants';
+import { ANNOTATION_DESCRIPTION } from '../../../../constants/vm';
 
 const SUPPORTED_NETWORK_TYPES = new Set([NetworkType.POD, NetworkType.MULTUS]);
 
@@ -107,7 +109,13 @@ const createVMImport = async (
 ) => {
   const simpleSettings = asSimpleSettings(vmSettings);
   const targetVMName = simpleSettings[VMSettingsField.NAME];
+  const description = simpleSettings[VMSettingsField.DESCRIPTION];
   const vm = getOvirtAttribute(importProviders, OvirtProviderField.VM, 'vm');
+  const vmAnnotations = {};
+
+  if (description) {
+    vmAnnotations[ANNOTATION_DESCRIPTION] = description;
+  }
 
   const vmImport = new VMImportWrappper()
     .init({ generateName: `vm-import-${targetVMName}-`, namespace })
@@ -118,6 +126,13 @@ const createVMImport = async (
       getOvirtField(importProviders, OvirtProviderField.CURRENT_RESOLVED_OVIRT_ENGINE_SECRET_NAME),
       namespace,
     );
+
+  if (!_.isEmpty(vmAnnotations)) {
+    vmImport.addAnotation(
+      VM_IMPORT_PROPAGATE_ANNOTATIONS_ANNOTATION,
+      JSON.stringify(vmAnnotations),
+    );
+  }
 
   vmImport
     .getOvirtSourceWrapper()
