@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { shallow, ShallowWrapper } from 'enzyme';
 import * as _ from 'lodash';
 import { Table, TableRow } from '@console/internal/components/factory';
+import * as UIActions from '@console/internal/actions/ui';
 import { testPackageManifest, testCatalogSource, testSubscription } from '../../mocks';
 import { PackageManifestKind } from '../types';
 import {
@@ -33,6 +34,7 @@ describe(PackageManifestTableRow.displayName, () => {
   let wrapper: ShallowWrapper<PackageManifestTableRowProps>;
 
   beforeEach(() => {
+    jest.spyOn(UIActions, 'getActiveNamespace').mockReturnValue('default');
     wrapper = shallow(
       <PackageManifestTableRow
         index={0}

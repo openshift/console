@@ -7,6 +7,7 @@ import { useExtensions } from '@console/plugin-sdk';
 import { RootState } from '@console/internal/redux';
 import { isAddAction, AddAction } from '../extensions/add-actions';
 import './EmptyState.scss';
+import { ALL_NAMESPACES_KEY } from '@console/shared';
 
 const navigateTo = (e: React.SyntheticEvent, url: string) => {
   history.push(url);
@@ -29,6 +30,10 @@ const Item: React.FC<ItemProps> = ({
     // Defined extensions are immutable. This check will be consistent.
     // eslint-disable-next-line react-hooks/rules-of-hooks
     accessReview.map((descriptor) => useAccessReview({ namespace, ...descriptor })).every((x) => x);
+  if (namespace === ALL_NAMESPACES_KEY && url.match(/:namespace\b/)) {
+    // URL expects namespace scope
+    return null;
+  }
   const resolvedUrl = url.replace(/:namespace\b/g, namespace);
   return access ? (
     <GalleryItem>

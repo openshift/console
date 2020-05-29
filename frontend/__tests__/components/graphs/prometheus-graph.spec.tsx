@@ -59,6 +59,7 @@ describe('<PrometheusGraphLink />', () => {
     let wrapper;
 
     store.dispatch(setFlag(FLAGS.CAN_GET_NS, false));
+    store.dispatch(UIActions.setActiveNamespace('default'));
     store.dispatch(UIActions.setActivePerspective('dev'));
     wrapper = getWrapper('');
     expect(wrapper.find(Link).exists()).toBe(false);

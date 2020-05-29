@@ -87,7 +87,7 @@ export default (state: UIState, action: UIAction): UIState => {
     return ImmutableMap({
       activeNavSectionId: 'workloads',
       location: pathname,
-      activeNamespace: activeNamespace || 'default',
+      activeNamespace: activeNamespace || ALL_NAMESPACES_KEY,
       activeApplication: ALL_APPLICATIONS_KEY,
       activePerspective: getDefaultPerspective(),
       createProjectMessage: '',
