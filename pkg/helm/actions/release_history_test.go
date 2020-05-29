@@ -101,7 +101,7 @@ func TestNonExistGetReleaseHistory(t *testing.T) {
 			}
 
 			resp, err := GetReleaseHistory(tt.release.Name, actionConfig)
-			if err != tt.err {
+			if err.Error() != tt.err.Error() {
 				t.Error(err)
 			}
 			if tt.noOfVersions != len(resp) {

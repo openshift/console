@@ -62,7 +62,7 @@ func TestUninstallInvalidRelease(t *testing.T) {
 			release: &release.Release{
 				Name: "invalid-release",
 			},
-			err: errors.New("no release provided"),
+			err: ErrReleaseNotFound,
 		},
 	}
 

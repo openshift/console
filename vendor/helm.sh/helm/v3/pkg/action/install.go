@@ -29,16 +29,20 @@ import (
 
 	"github.com/Masterminds/sprig/v3"
 	"github.com/pkg/errors"
+	v1 "k8s.io/api/core/v1"
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/cli-runtime/pkg/resource"
+	"sigs.k8s.io/yaml"
 
 	"helm.sh/helm/v3/pkg/chart"
 	"helm.sh/helm/v3/pkg/chartutil"
 	"helm.sh/helm/v3/pkg/cli"
 	"helm.sh/helm/v3/pkg/downloader"
-	"helm.sh/helm/v3/pkg/engine"
 	"helm.sh/helm/v3/pkg/getter"
+	"helm.sh/helm/v3/pkg/kube"
 	kubefake "helm.sh/helm/v3/pkg/kube/fake"
+	"helm.sh/helm/v3/pkg/postrender"
 	"helm.sh/helm/v3/pkg/release"
 	"helm.sh/helm/v3/pkg/releaseutil"
 	"helm.sh/helm/v3/pkg/repo"
@@ -67,25 +71,35 @@ type Install struct {
 
 	ChartPathOptions
 
-	ClientOnly       bool
-	DryRun           bool
-	DisableHooks     bool
-	Replace          bool
-	Wait             bool
-	Devel            bool
-	DependencyUpdate bool
-	Timeout          time.Duration
-	Namespace        string
-	ReleaseName      string
-	GenerateName     bool
-	NameTemplate     string
-	OutputDir        string
-	Atomic           bool
-	SkipCRDs         bool
-	SubNotes         bool
+	ClientOnly               bool
+	CreateNamespace          bool
+	DryRun                   bool
+	DisableHooks             bool
+	Replace                  bool
+	Wait                     bool
+	Devel                    bool
+	DependencyUpdate         bool
+	Timeout                  time.Duration
+	Namespace                string
+	ReleaseName              string
+	GenerateName             bool
+	NameTemplate             string
+	Description              string
+	OutputDir                string
+	Atomic                   bool
+	SkipCRDs                 bool
+	SubNotes                 bool
+	DisableOpenAPIValidation bool
+	IncludeCRDs              bool
 	// APIVersions allows a manual set of supported API Versions to be passed
 	// (for things like templating). These are ignored if ClientOnly is false
 	APIVersions chartutil.VersionSet
+	// Used by helm template to render charts with .Release.IsUpgrade. Ignored if Dry-Run is false
+	IsUpgrade bool
+	// Used by helm template to add the release as part of OutputDir path
+	// OutputDir/<ReleaseName>
+	UseReleaseName bool
+	PostRenderer   postrender.PostRenderer
 }
 
 // ChartPathOptions captures common options used for controlling chart paths
@@ -108,12 +122,12 @@ func NewInstall(cfg *Configuration) *Install {
 	}
 }
 
-func (i *Install) installCRDs(crds []*chart.File) error {
+func (i *Install) installCRDs(crds []chart.CRD) error {
 	// We do these one file at a time in the order they were read.
 	totalItems := []*resource.Info{}
 	for _, obj := range crds {
 		// Read in the resources
-		res, err := i.cfg.KubeClient.Build(bytes.NewBuffer(obj.Data), false)
+		res, err := i.cfg.KubeClient.Build(bytes.NewBuffer(obj.File.Data), false)
 		if err != nil {
 			return errors.Wrapf(err, "failed to install CRD %s", obj.Name)
 		}
@@ -126,24 +140,28 @@ func (i *Install) installCRDs(crds []*chart.File) error {
 				i.cfg.Log("CRD %s is already present. Skipping.", crdName)
 				continue
 			}
-			return errors.Wrapf(err, "failed to instal CRD %s", obj.Name)
+			return errors.Wrapf(err, "failed to install CRD %s", obj.Name)
 		}
 		totalItems = append(totalItems, res...)
 	}
-	// Invalidate the local cache, since it will not have the new CRDs
-	// present.
-	discoveryClient, err := i.cfg.RESTClientGetter.ToDiscoveryClient()
-	if err != nil {
-		return err
+	if len(totalItems) > 0 {
+		// Invalidate the local cache, since it will not have the new CRDs
+		// present.
+		discoveryClient, err := i.cfg.RESTClientGetter.ToDiscoveryClient()
+		if err != nil {
+			return err
+		}
+		i.cfg.Log("Clearing discovery cache")
+		discoveryClient.Invalidate()
+		// Give time for the CRD to be recognized.
+
+		if err := i.cfg.KubeClient.Wait(totalItems, 60*time.Second); err != nil {
+			return err
+		}
+
+		// Make sure to force a rebuild of the cache.
+		discoveryClient.ServerGroups()
 	}
-	i.cfg.Log("Clearing discovery cache")
-	discoveryClient.Invalidate()
-	// Give time for the CRD to be recognized.
-	if err := i.cfg.KubeClient.Wait(totalItems, 60*time.Second); err != nil {
-		return err
-	}
-	// Make sure to force a rebuild of the cache.
-	discoveryClient.ServerGroups()
 	return nil
 }
 
@@ -164,7 +182,7 @@ func (i *Install) Run(chrt *chart.Chart, vals map[string]interface{}) (*release.
 
 	// Pre-install anything in the crd/ directory. We do this before Helm
 	// contacts the upstream server and builds the capabilities object.
-	if crds := chrt.CRDs(); !i.ClientOnly && !i.SkipCRDs && len(crds) > 0 {
+	if crds := chrt.CRDObjects(); !i.ClientOnly && !i.SkipCRDs && len(crds) > 0 {
 		// On dry run, bail here
 		if i.DryRun {
 			i.cfg.Log("WARNING: This chart or one of its subcharts contains CRDs. Rendering may fail or contain inaccuracies.")
@@ -179,7 +197,10 @@ func (i *Install) Run(chrt *chart.Chart, vals map[string]interface{}) (*release.
 		i.cfg.Capabilities = chartutil.DefaultCapabilities
 		i.cfg.Capabilities.APIVersions = append(i.cfg.Capabilities.APIVersions, i.APIVersions...)
 		i.cfg.KubeClient = &kubefake.PrintingKubeClient{Out: ioutil.Discard}
-		i.cfg.Releases = storage.Init(driver.NewMemory())
+
+		mem := driver.NewMemory()
+		mem.SetNamespace(i.Namespace)
+		i.cfg.Releases = storage.Init(mem)
 	} else if !i.ClientOnly && len(i.APIVersions) > 0 {
 		i.cfg.Log("API Version list given outside of client only mode, this list will be ignored")
 	}
@@ -197,11 +218,14 @@ func (i *Install) Run(chrt *chart.Chart, vals map[string]interface{}) (*release.
 		return nil, err
 	}
 
+	//special case for helm template --is-upgrade
+	isUpgrade := i.IsUpgrade && i.DryRun
 	options := chartutil.ReleaseOptions{
 		Name:      i.ReleaseName,
 		Namespace: i.Namespace,
 		Revision:  1,
-		IsInstall: true,
+		IsInstall: !isUpgrade,
+		IsUpgrade: isUpgrade,
 	}
 	valuesToRender, err := chartutil.ToRenderValues(chrt, vals, options, caps)
 	if err != nil {
@@ -211,7 +235,7 @@ func (i *Install) Run(chrt *chart.Chart, vals map[string]interface{}) (*release.
 	rel := i.createRelease(chrt, vals)
 
 	var manifestDoc *bytes.Buffer
-	rel.Hooks, manifestDoc, rel.Info.Notes, err = i.cfg.renderResources(chrt, valuesToRender, i.OutputDir, i.SubNotes)
+	rel.Hooks, manifestDoc, rel.Info.Notes, err = i.cfg.renderResources(chrt, valuesToRender, i.ReleaseName, i.OutputDir, i.SubNotes, i.UseReleaseName, i.IncludeCRDs, i.PostRenderer, i.DryRun)
 	// Even for errors, attach this if available
 	if manifestDoc != nil {
 		rel.Manifest = manifestDoc.String()
@@ -226,9 +250,16 @@ func (i *Install) Run(chrt *chart.Chart, vals map[string]interface{}) (*release.
 	// Mark this release as in-progress
 	rel.SetStatus(release.StatusPendingInstall, "Initial install underway")
 
-	resources, err := i.cfg.KubeClient.Build(bytes.NewBufferString(rel.Manifest), true)
+	var toBeAdopted kube.ResourceList
+	resources, err := i.cfg.KubeClient.Build(bytes.NewBufferString(rel.Manifest), !i.DisableOpenAPIValidation)
 	if err != nil {
 		return nil, errors.Wrap(err, "unable to build kubernetes objects from release manifest")
+	}
+
+	// It is safe to use "force" here because these are resources currently rendered by the chart.
+	err = resources.Visit(setMetadataVisitor(rel.Name, rel.Namespace, true))
+	if err != nil {
+		return nil, err
 	}
 
 	// Install requires an extra validation step of checking that resources
@@ -237,8 +268,9 @@ func (i *Install) Run(chrt *chart.Chart, vals map[string]interface{}) (*release.
 	// we'll end up in a state where we will delete those resources upon
 	// deleting the release because the manifest will be pointing at that
 	// resource
-	if !i.ClientOnly {
-		if err := existingResourceConflict(resources); err != nil {
+	if !i.ClientOnly && !isUpgrade && len(resources) > 0 {
+		toBeAdopted, err = existingResourceConflict(resources, rel.Name, rel.Namespace)
+		if err != nil {
 			return nil, errors.Wrap(err, "rendered manifests contain a resource that already exists. Unable to continue with install")
 		}
 	}
@@ -247,6 +279,32 @@ func (i *Install) Run(chrt *chart.Chart, vals map[string]interface{}) (*release.
 	if i.DryRun {
 		rel.Info.Description = "Dry run complete"
 		return rel, nil
+	}
+
+	if i.CreateNamespace {
+		ns := &v1.Namespace{
+			TypeMeta: metav1.TypeMeta{
+				APIVersion: "v1",
+				Kind:       "Namespace",
+			},
+			ObjectMeta: metav1.ObjectMeta{
+				Name: i.Namespace,
+				Labels: map[string]string{
+					"name": i.Namespace,
+				},
+			},
+		}
+		buf, err := yaml.Marshal(ns)
+		if err != nil {
+			return nil, err
+		}
+		resourceList, err := i.cfg.KubeClient.Build(bytes.NewBuffer(buf), true)
+		if err != nil {
+			return nil, err
+		}
+		if _, err := i.cfg.KubeClient.Create(resourceList); err != nil && !apierrors.IsAlreadyExists(err) {
+			return nil, err
+		}
 	}
 
 	// If Replace is true, we need to supercede the last release.
@@ -275,8 +333,14 @@ func (i *Install) Run(chrt *chart.Chart, vals map[string]interface{}) (*release.
 	// At this point, we can do the install. Note that before we were detecting whether to
 	// do an update, but it's not clear whether we WANT to do an update if the re-use is set
 	// to true, since that is basically an upgrade operation.
-	if _, err := i.cfg.KubeClient.Create(resources); err != nil {
-		return i.failRelease(rel, err)
+	if len(toBeAdopted) == 0 && len(resources) > 0 {
+		if _, err := i.cfg.KubeClient.Create(resources); err != nil {
+			return i.failRelease(rel, err)
+		}
+	} else if len(resources) > 0 {
+		if _, err := i.cfg.KubeClient.Update(toBeAdopted, resources, false); err != nil {
+			return i.failRelease(rel, err)
+		}
 	}
 
 	if i.Wait {
@@ -292,7 +356,11 @@ func (i *Install) Run(chrt *chart.Chart, vals map[string]interface{}) (*release.
 		}
 	}
 
-	rel.SetStatus(release.StatusDeployed, "Install complete")
+	if len(i.Description) > 0 {
+		rel.SetStatus(release.StatusDeployed, i.Description)
+	} else {
+		rel.SetStatus(release.StatusDeployed, "Install complete")
+	}
 
 	// This is a tricky case. The release has been created, but the result
 	// cannot be recorded. The truest thing to tell the user is that the
@@ -301,7 +369,9 @@ func (i *Install) Run(chrt *chart.Chart, vals map[string]interface{}) (*release.
 	//
 	// One possible strategy would be to do a timed retry to see if we can get
 	// this stored in the future.
-	i.recordRelease(rel)
+	if err := i.recordRelease(rel); err != nil {
+		i.cfg.Log("failed to record the release: %s", err)
+	}
 
 	return rel, nil
 }
@@ -408,83 +478,6 @@ func (i *Install) replaceRelease(rel *release.Release) error {
 	return i.recordRelease(last)
 }
 
-// renderResources renders the templates in a chart
-func (c *Configuration) renderResources(ch *chart.Chart, values chartutil.Values, outputDir string, subNotes bool) ([]*release.Hook, *bytes.Buffer, string, error) {
-	hs := []*release.Hook{}
-	b := bytes.NewBuffer(nil)
-
-	caps, err := c.getCapabilities()
-	if err != nil {
-		return hs, b, "", err
-	}
-
-	if ch.Metadata.KubeVersion != "" {
-		if !chartutil.IsCompatibleRange(ch.Metadata.KubeVersion, caps.KubeVersion.String()) {
-			return hs, b, "", errors.Errorf("chart requires kubeVersion: %s which is incompatible with Kubernetes %s", ch.Metadata.KubeVersion, caps.KubeVersion.String())
-		}
-	}
-
-	files, err := engine.Render(ch, values)
-	if err != nil {
-		return hs, b, "", err
-	}
-
-	// NOTES.txt gets rendered like all the other files, but because it's not a hook nor a resource,
-	// pull it out of here into a separate file so that we can actually use the output of the rendered
-	// text file. We have to spin through this map because the file contains path information, so we
-	// look for terminating NOTES.txt. We also remove it from the files so that we don't have to skip
-	// it in the sortHooks.
-	var notesBuffer bytes.Buffer
-	for k, v := range files {
-		if strings.HasSuffix(k, notesFileSuffix) {
-			if subNotes || (k == path.Join(ch.Name(), "templates", notesFileSuffix)) {
-				// If buffer contains data, add newline before adding more
-				if notesBuffer.Len() > 0 {
-					notesBuffer.WriteString("\n")
-				}
-				notesBuffer.WriteString(v)
-			}
-			delete(files, k)
-		}
-	}
-	notes := notesBuffer.String()
-
-	// Sort hooks, manifests, and partials. Only hooks and manifests are returned,
-	// as partials are not used after renderer.Render. Empty manifests are also
-	// removed here.
-	hs, manifests, err := releaseutil.SortManifests(files, caps.APIVersions, releaseutil.InstallOrder)
-	if err != nil {
-		// By catching parse errors here, we can prevent bogus releases from going
-		// to Kubernetes.
-		//
-		// We return the files as a big blob of data to help the user debug parser
-		// errors.
-		for name, content := range files {
-			if strings.TrimSpace(content) == "" {
-				continue
-			}
-			fmt.Fprintf(b, "---\n# Source: %s\n%s\n", name, content)
-		}
-		return hs, b, "", err
-	}
-
-	// Aggregate all valid manifests into one big doc.
-	fileWritten := make(map[string]bool)
-	for _, m := range manifests {
-		if outputDir == "" {
-			fmt.Fprintf(b, "---\n# Source: %s\n%s\n", m.Name, m.Content)
-		} else {
-			err = writeToFile(outputDir, m.Name, m.Content, fileWritten[m.Name])
-			if err != nil {
-				return hs, b, "", err
-			}
-			fileWritten[m.Name] = true
-		}
-	}
-
-	return hs, b, notes, nil
-}
-
 // write the <data> to <output-dir>/<name>. <append> controls if the file is created or content will be appended
 func writeToFile(outputDir string, name string, data string, append bool) error {
 	outfileName := strings.Join([]string{outputDir, name}, string(filepath.Separator))
@@ -541,6 +534,10 @@ func (i *Install) NameAndChart(args []string) (string, string, error) {
 			return errors.New("cannot set --name-template and also specify a name")
 		}
 		return nil
+	}
+
+	if len(args) > 2 {
+		return args[0], args[1], errors.Errorf("expected at most two arguments, unexpected arguments: %v", strings.Join(args[2:], ", "))
 	}
 
 	if len(args) == 2 {
@@ -646,6 +643,7 @@ func (c *ChartPathOptions) LocateChart(name string, settings *cli.EnvSettings) (
 		Getters: getter.All(settings),
 		Options: []getter.Option{
 			getter.WithBasicAuth(c.Username, c.Password),
+			getter.WithTLSClientConfig(c.CertFile, c.KeyFile, c.CaFile),
 		},
 		RepositoryConfig: settings.RepositoryConfig,
 		RepositoryCache:  settings.RepositoryCache,

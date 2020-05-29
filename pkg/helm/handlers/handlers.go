@@ -164,7 +164,7 @@ func (h *helmHandlers) HandleUpgradeRelease(user *auth.User, w http.ResponseWrit
 	conf := h.getActionConfigurations(h.ApiServerHost, req.Namespace, user.Token, &h.Transport)
 	resp, err := h.upgradeRelease(req.Namespace, req.Name, req.ChartUrl, req.Values, conf)
 	if err != nil {
-		if err == actions.ErrReleaseRevisionNotFound {
+		if err.Error() == actions.ErrReleaseRevisionNotFound.Error() {
 			serverutils.SendResponse(w, http.StatusNotFound, serverutils.ApiError{Err: fmt.Sprintf("Failed to rollback helm releases: %v", err)})
 			return
 		}
@@ -185,7 +185,7 @@ func (h *helmHandlers) HandleUninstallRelease(user *auth.User, w http.ResponseWr
 	conf := h.getActionConfigurations(h.ApiServerHost, ns, user.Token, &h.Transport)
 	resp, err := h.uninstallRelease(rel, conf)
 	if err != nil {
-		if err == actions.ErrReleaseNotFound {
+		if err.Error() == actions.ErrReleaseNotFound.Error() {
 			serverutils.SendResponse(w, http.StatusNotFound, serverutils.ApiError{Err: fmt.Sprintf("Failed to uninstall helm release: %v", err)})
 			return
 		}
@@ -209,7 +209,7 @@ func (h *helmHandlers) HandleRollbackRelease(user *auth.User, w http.ResponseWri
 	conf := h.getActionConfigurations(h.ApiServerHost, req.Namespace, user.Token, &h.Transport)
 	rel, err := h.rollbackRelease(req.Name, req.Version, conf)
 	if err != nil {
-		if err == actions.ErrReleaseRevisionNotFound {
+		if err.Error() == actions.ErrReleaseRevisionNotFound.Error() {
 			serverutils.SendResponse(w, http.StatusNotFound, serverutils.ApiError{Err: fmt.Sprintf("Failed to rollback helm releases: %v", err)})
 			return
 		}
@@ -229,7 +229,7 @@ func (h *helmHandlers) HandleGetReleaseHistory(user *auth.User, w http.ResponseW
 	conf := h.getActionConfigurations(h.ApiServerHost, ns, user.Token, &h.Transport)
 	rels, err := h.getReleaseHistory(name, conf)
 	if err != nil {
-		if err == actions.ErrReleaseNotFound {
+		if err.Error() == actions.ErrReleaseNotFound.Error() {
 			serverutils.SendResponse(w, http.StatusNotFound, serverutils.ApiError{Err: fmt.Sprintf("Failed to list helm release history: %v", err)})
 			return
 		}
