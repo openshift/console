@@ -31,10 +31,11 @@ import {
 } from '@patternfly/react-core';
 
 import { coFetchJSON } from '../co-fetch';
-import { FirehoseResult } from './utils/types';
-import { ClusterUpdate, ClusterVersionKind } from '../module/k8s';
+import { ClusterUpdate, ClusterVersionKind, referenceForModel } from '../module/k8s';
+import { ClusterVersionModel } from '../models';
 import { getSortedUpdates } from './modals/cluster-update-modal';
 import { usePrevious } from '@console/metal3-plugin/src/hooks';
+import { useK8sWatchResource, WatchK8sResource } from './utils/k8s-watch-hook';
 
 const criticalCompare = (a: Alert): boolean => getAlertSeverity(a) === 'critical';
 const otherAlertCompare = (a: Alert): boolean => getAlertSeverity(a) !== 'critical';
@@ -106,6 +107,8 @@ const getUpdateNotificationEntries = (
   isLoaded && !_.isEmpty(updateData)
     ? [
         <NotificationEntry
+          actionPath="/settings/cluster"
+          actionText="Update cluster"
           key="cluster-udpate"
           description={updateData[0].version || 'Unknown'}
           type={NotificationTypes.update}
@@ -118,6 +121,13 @@ const getUpdateNotificationEntries = (
 
 const pollerTimeouts = {};
 const pollers = {};
+const cvResource: WatchK8sResource = {
+  kind: referenceForModel(ClusterVersionModel),
+  namespaced: false,
+  name: 'version',
+  isList: false,
+  optional: true,
+};
 
 export const refreshNotificationPollers = () => {
   _.each(pollerTimeouts, clearTimeout);
@@ -133,7 +143,6 @@ export const ConnectedNotificationDrawer_: React.FC<ConnectedNotificationDrawerP
   onDrawerChange,
   notificationsRead,
   alerts,
-  resources,
   children,
 }) => {
   React.useEffect(() => {
@@ -181,13 +190,14 @@ export const ConnectedNotificationDrawer_: React.FC<ConnectedNotificationDrawerP
 
     return () => _.each(pollerTimeouts, clearTimeout);
   }, []);
-  const cv: ClusterVersionKind = resources.cv?.data;
-  const cvLoaded: boolean = resources.cv?.loaded;
-  const updateData: ClusterUpdate[] = getSortedUpdates(cv);
+  const [clusterVersionData, clusterVersionLoaded] = useK8sWatchResource<ClusterVersionKind>(
+    cvResource,
+  );
+  const updateData: ClusterUpdate[] = getSortedUpdates(clusterVersionData);
   const { data, loaded, loadError } = alerts || {};
 
   const updateList: React.ReactNode[] = getUpdateNotificationEntries(
-    cvLoaded,
+    clusterVersionLoaded,
     updateData,
     toggleNotificationDrawer,
   );
@@ -209,7 +219,7 @@ export const ConnectedNotificationDrawer_: React.FC<ConnectedNotificationDrawerP
   const [isNonCriticalAlertExpanded, toggleNonCriticalAlertExpanded] = React.useState<boolean>(
     true,
   );
-  const [isClusterUpdateExpanded, toggleClusterUpdateExpanded] = React.useState<boolean>(false);
+  const [isClusterUpdateExpanded, toggleClusterUpdateExpanded] = React.useState<boolean>(true);
   const prevDrawerToggleState = usePrevious(isDrawerExpanded);
 
   const hasCriticalAlerts = criticalAlertList.length > 0;
@@ -319,9 +329,6 @@ export type ConnectedNotificationDrawerProps = {
   notificationsRead: boolean;
   onDrawerChange: () => void;
   alerts: NotificationAlerts;
-  resources?: {
-    cv: FirehoseResult<ClusterVersionKind>;
-  };
 };
 
 const notificationStateToProps = ({ UI }: RootState): WithNotificationsProps => ({

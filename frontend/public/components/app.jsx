@@ -13,11 +13,10 @@ import { getBrandingDetails, Masthead } from './masthead';
 import { ConsoleNotifier } from './console-notifier';
 import { ConnectedNotificationDrawer } from './notification-drawer';
 import { Navigation } from './nav';
-import { history, Firehose } from './utils';
+import { history } from './utils';
 import * as UIActions from '../actions/ui';
-import { fetchSwagger, getCachedResources, referenceForModel } from '../module/k8s';
+import { fetchSwagger, getCachedResources } from '../module/k8s';
 import { receivedResources, watchAPIServices } from '../actions/k8s';
-import { ClusterVersionModel } from '../models';
 // cloud shell imports must come later than features
 import CloudShell from '@console/app/src/components/cloud-shell/CloudShell';
 import CloudShellTab from '@console/app/src/components/cloud-shell/CloudShellTab';
@@ -29,17 +28,6 @@ import { Page } from '@patternfly/react-core';
 
 const breakpointMD = 768;
 const NOTIFICATION_DRAWER_BREAKPOINT = 1800;
-
-const cvResource = [
-  {
-    kind: referenceForModel(ClusterVersionModel),
-    namespaced: false,
-    name: 'version',
-    isList: false,
-    prop: 'cv',
-    optional: true,
-  },
-];
 
 // Edge lacks URLSearchParams
 import 'url-search-params-polyfill';
@@ -152,14 +140,12 @@ class App extends React.PureComponent {
             />
           }
         >
-          <Firehose resources={cvResource}>
-            <ConnectedNotificationDrawer
-              isDesktop={isDrawerInline}
-              onDrawerChange={this._onNotificationDrawerToggle}
-            >
-              <AppContents />
-            </ConnectedNotificationDrawer>
-          </Firehose>
+          <ConnectedNotificationDrawer
+            isDesktop={isDrawerInline}
+            onDrawerChange={this._onNotificationDrawerToggle}
+          >
+            <AppContents />
+          </ConnectedNotificationDrawer>
         </Page>
         <CloudShell />
         <ConsoleNotifier location="BannerBottom" />

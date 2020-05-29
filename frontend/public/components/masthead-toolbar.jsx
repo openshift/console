@@ -2,7 +2,6 @@ import * as React from 'react';
 import * as _ from 'lodash-es';
 import { connect } from 'react-redux';
 import {
-  ArrowCircleUpIcon,
   BellIcon,
   CaretDownIcon,
   EllipsisVIcon,
@@ -14,7 +13,6 @@ import {
   ApplicationLauncherGroup,
   ApplicationLauncherItem,
   ApplicationLauncherSeparator,
-  Button,
   NotificationBadge,
   Toolbar,
   ToolbarGroup,
@@ -22,7 +20,6 @@ import {
   TooltipPosition,
   Tooltip,
 } from '@patternfly/react-core';
-import classNames from 'classnames';
 import { Link } from 'react-router-dom';
 import { FLAGS, YellowExclamationTriangleIcon } from '@console/shared';
 import { formatNamespacedRouteForResource } from '@console/shared/src/utils';
@@ -31,14 +28,10 @@ import * as UIActions from '../actions/ui';
 import { connectToFlags, flagPending, featureReducerName } from '../reducers/features';
 import { authSvc } from '../module/auth';
 import { getOCMLink } from '../module/k8s';
-import { history, Firehose } from './utils';
+import { Firehose } from './utils';
 import { openshiftHelpBase } from './utils/documentation';
 import { AboutModal } from './about-modal';
-import {
-  clusterVersionReference,
-  getAvailableClusterUpdates,
-  getReportBugLink,
-} from '../module/k8s/cluster-settings';
+import { clusterVersionReference, getReportBugLink } from '../module/k8s/cluster-settings';
 import * as redhatLogoImg from '../imgs/logos/redhat.svg';
 
 const SystemStatusButton = ({ statuspageData, className }) =>
@@ -55,17 +48,6 @@ const SystemStatusButton = ({ statuspageData, className }) =>
       </a>
     </ToolbarItem>
   ) : null;
-
-const UpdatesAvailableButton = ({ cv, onClick, systemStatusButtonPresent }) => {
-  const updatesAvailable = !_.isEmpty(getAvailableClusterUpdates(cv));
-  return updatesAvailable ? (
-    <ToolbarItem className={classNames({ 'hidden-sm': systemStatusButtonPresent })}>
-      <Button variant="plain" aria-label="Cluster Updates Available" onClick={onClick}>
-        <ArrowCircleUpIcon color="#08c" className="co-masthead-icon" />
-      </Button>
-    </ToolbarItem>
-  ) : null;
-};
 
 class MastheadToolbarContents_ extends React.Component {
   constructor(props) {
@@ -88,7 +70,6 @@ class MastheadToolbarContents_ extends React.Component {
     this._onKebabDropdownToggle = this._onKebabDropdownToggle.bind(this);
     this._onKebabDropdownSelect = this._onKebabDropdownSelect.bind(this);
     this._renderMenu = this._renderMenu.bind(this);
-    this._onClusterUpdatesAvailable = this._onClusterUpdatesAvailable.bind(this);
     this._onApplicationLauncherDropdownSelect = this._onApplicationLauncherDropdownSelect.bind(
       this,
     );
@@ -162,10 +143,6 @@ class MastheadToolbarContents_ extends React.Component {
     this.setState({
       isKebabDropdownOpen: !this.state.isKebabDropdownOpen,
     });
-  }
-
-  _onClusterUpdatesAvailable() {
-    history.push('/settings/cluster');
   }
 
   _onApplicationLauncherDropdownSelect() {
@@ -518,7 +495,7 @@ class MastheadToolbarContents_ extends React.Component {
       showAboutModal,
       statuspageData,
     } = this.state;
-    const { consoleLinks, cv, drawerToggle, notificationsRead, canAccessNS } = this.props;
+    const { consoleLinks, drawerToggle, notificationsRead, canAccessNS } = this.props;
     const launchActions = this._launchActions();
     const alertAccess = canAccessNS && !!window.SERVER_FLAGS.prometheusBaseURL;
     return (
@@ -527,14 +504,6 @@ class MastheadToolbarContents_ extends React.Component {
           <ToolbarGroup className="hidden-xs">
             {/* desktop -- (system status button) */}
             <SystemStatusButton statuspageData={statuspageData} />
-            {/* desktop -- (updates button) */}
-            {cv && cv.data && (
-              <UpdatesAvailableButton
-                cv={cv.data}
-                onClick={this._onClusterUpdatesAvailable}
-                systemStatusButtonPresent={!_.isEmpty(_.get(statuspageData, 'incidents'))}
-              />
-            )}
             {/* desktop -- (application launcher dropdown), import yaml, help dropdown [documentation, about] */}
             {!_.isEmpty(launchActions) && (
               <ToolbarItem>
