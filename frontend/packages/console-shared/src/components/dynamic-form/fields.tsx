@@ -15,7 +15,7 @@ import { Switch } from '@patternfly/react-core';
 import SchemaField, {
   SchemaFieldProps,
 } from 'react-jsonschema-form/lib/components/fields/SchemaField';
-import { getSchemaErrors } from './utils';
+import { hasNoFields } from './utils';
 
 export const DescriptionField: React.FC<FieldProps> = ({ id, description }) =>
   description ? (
@@ -201,13 +201,10 @@ export const DropdownField: React.FC<FieldProps> = ({
 };
 
 export const CustomSchemaField: React.FC<SchemaFieldProps> = (props) => {
-  const errors = getSchemaErrors(props.schema ?? {});
-  if (errors.length) {
-    // eslint-disable-next-line no-console
-    console.warn('DynamicForm component does not support the provided JSON schema: ', errors);
+  // If a the provided schema will not generate any form field elements, return null.
+  if (hasNoFields(props.schema, props.uiSchema)) {
     return null;
   }
-
   return <SchemaField {...props} />;
 };
 

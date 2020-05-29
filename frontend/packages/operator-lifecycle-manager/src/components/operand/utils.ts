@@ -16,7 +16,6 @@ import {
 import { UiSchema } from 'react-jsonschema-form';
 import { SchemaType } from '@console/shared/src/components/dynamic-form';
 import { getSchemaType } from 'react-jsonschema-form/lib/utils';
-import { getSchemaErrors } from '@console/shared/src/components/dynamic-form/utils';
 
 // Transform a path string from a descriptor to a JSON schema path array
 export const descriptorPathToUISchemaPath = (path: string): string[] =>
@@ -45,74 +44,6 @@ export const hideAllExistingProperties = (schema: JSONSchema6) => {
     }),
     {},
   );
-};
-
-// Determine if a schema will produce an empty form field.
-export const hasNoFields = (jsonSchema: JSONSchema6 = {}): boolean => {
-  // If schema is empty or has unsupported properties, it will not render any fields on the form
-  if (getSchemaErrors(jsonSchema).length > 0) {
-    return true;
-  }
-
-  const type = getSchemaType(jsonSchema) ?? '';
-  const handleArray = () => {
-    return hasNoFields(jsonSchema.items as JSONSchema6);
-  };
-  const handleObject = () => {
-    return (
-      _.every(jsonSchema?.properties, hasNoFields) &&
-      hasNoFields(jsonSchema?.additionalProperties as JSONSchema6)
-    );
-  };
-
-  switch (type) {
-    case SchemaType.array:
-      return handleArray();
-    case SchemaType.object:
-      return handleObject();
-    case '':
-      return true;
-    default:
-      return false;
-  }
-};
-
-// Map json schema to default ui schema
-export const getDefaultUISchema = (jsonSchema: JSONSchema6): UiSchema => {
-  const type = getSchemaType(jsonSchema ?? {});
-  if (hasNoFields(jsonSchema)) {
-    return HIDDEN_UI_SCHEMA;
-  }
-
-  const handleArray = () => {
-    const itemsUISchema = getDefaultUISchema(jsonSchema.items as JSONSchema6);
-    return !_.isEmpty(itemsUISchema) ? { items: itemsUISchema } : {};
-  };
-
-  const handleObject = () => {
-    return _.reduce(
-      jsonSchema.properties,
-      (uiSchemaAccumulator: UiSchema, property: JSONSchema6, name: string) => {
-        const propertyUISchema = getDefaultUISchema(property);
-        return _.isEmpty(propertyUISchema)
-          ? uiSchemaAccumulator
-          : {
-              ...(uiSchemaAccumulator ?? {}),
-              [name]: propertyUISchema,
-            };
-      },
-      {},
-    );
-  };
-
-  switch (type) {
-    case SchemaType.array:
-      return handleArray();
-    case SchemaType.object:
-      return handleObject();
-    default:
-      return {};
-  }
 };
 
 const k8sResourceCapabilityToUISchema = (capability: SpecCapability): UiSchema => {
@@ -368,31 +299,28 @@ export const descriptorsToUISchema = (
 
 // Use jsonSchema, descriptors, and some defaults to generate a uiSchema
 export const getUISchema = (jsonSchema, providedAPI) => {
-  return _.defaultsDeep(
-    {
-      metadata: {
-        ...hideAllExistingProperties(jsonSchema?.properties?.metadata as JSONSchema6),
-        name: {
-          'ui:title': 'Name',
-          'ui:widget': 'TextWidget',
-        },
-        labels: {
-          'ui:title': 'Labels',
-          'ui:field': 'LabelsField',
-        },
-        'ui:options': {
-          label: false,
-        },
-        'ui:order': ['name', 'labels', '*'],
+  return {
+    metadata: {
+      ...hideAllExistingProperties(jsonSchema?.properties?.metadata as JSONSchema6),
+      name: {
+        'ui:title': 'Name',
+        'ui:widget': 'TextWidget',
       },
-      spec: {
-        ...descriptorsToUISchema(providedAPI?.specDescriptors, jsonSchema?.properties?.spec),
-        'ui:options': {
-          label: false,
-        },
+      labels: {
+        'ui:title': 'Labels',
+        'ui:field': 'LabelsField',
       },
-      'ui:order': ['metadata', 'spec', '*'],
+      'ui:options': {
+        label: false,
+      },
+      'ui:order': ['name', 'labels', '*'],
     },
-    getDefaultUISchema(jsonSchema),
-  );
+    spec: {
+      ...descriptorsToUISchema(providedAPI?.specDescriptors, jsonSchema?.properties?.spec),
+      'ui:options': {
+        label: false,
+      },
+    },
+    'ui:order': ['metadata', 'spec', '*'],
+  };
 };

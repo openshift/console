@@ -32,8 +32,8 @@ import { OperandForm } from './operand-form';
 import { OperandYAML } from './operand-yaml';
 import { exampleForModel, providedAPIForModel } from '..';
 import { FORM_HELP_TEXT, YAML_HELP_TEXT, DEFAULT_K8S_SCHEMA } from './const';
-import { getSchemaErrors } from '@console/shared/src/components/dynamic-form/utils';
-import { hasNoFields } from './utils';
+import { getSchemaErrors, hasNoFields } from '@console/shared/src/components/dynamic-form/utils';
+
 // eslint-disable-next-line @typescript-eslint/camelcase
 import { DEPRECATED_CreateOperandForm } from './DEPRECATED_operand-form';
 
