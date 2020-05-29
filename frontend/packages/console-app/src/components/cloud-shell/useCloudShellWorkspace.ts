@@ -78,18 +78,18 @@ const useCloudShellWorkspace = (
   const workspace = findWorkspace(data);
 
   const searchNamespaces =
-    // wait for access review to return
-    !loadingAccessReview &&
-    // user cannot list workspaces at the cluster scope
-    !canListWorkspaces &&
-    // fetching the workspace succeeded or failed
-    (loaded || loadError) &&
-    // was a workspace was found
-    !workspace &&
-    // did a previous search result in no namespace found
-    !noNamespaceFound &&
     // are we currently searching
-    !searching;
+    searching ||
+    // wait for access review to return
+    (!loadingAccessReview &&
+      // user cannot list workspaces at the cluster scope
+      !canListWorkspaces &&
+      // fetching the workspace succeeded or failed
+      (loaded || loadError) &&
+      // was a workspace was found
+      !workspace &&
+      // did a previous search result in no namespace found
+      !noNamespaceFound);
 
   // FIXME need to use a service account on the backend to find the workspace instead of inefficiently looping through namespaces
   React.useEffect(() => {
