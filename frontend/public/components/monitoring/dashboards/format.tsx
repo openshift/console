@@ -1,5 +1,4 @@
 import * as _ from 'lodash-es';
-import * as React from 'react';
 
 import {
   humanizeBinaryBytes,
@@ -8,10 +7,10 @@ import {
   humanizePacketsPerSec,
 } from '../../utils';
 
-export const formatNumber = (s: string, decimals = 2, format = 'short'): React.ReactNode => {
+export const formatNumber = (s: string, decimals = 2, format = 'short'): string => {
   const value = Number(s);
   if (_.isNil(s) || isNaN(value)) {
-    return s || <span className="text-muted">-</span>;
+    return s || '-';
   }
 
   switch (format) {
