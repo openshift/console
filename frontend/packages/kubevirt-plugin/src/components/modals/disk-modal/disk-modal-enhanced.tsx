@@ -11,7 +11,7 @@ import {
   StorageClassModel,
 } from '@console/internal/models';
 import { getLoadedData } from '../../../utils';
-import { asVM, getVMLikeModel } from '../../../selectors/vm';
+import { getVMLikeModel } from '../../../selectors/vm';
 import { VMLikeEntityKind } from '../../../types/vmLike';
 import { DiskWrapper } from '../../../k8s/wrapper/vm/disk-wrapper';
 import { VolumeWrapper } from '../../../k8s/wrapper/vm/volume-wrapper';
@@ -29,7 +29,6 @@ const DiskModalFirehoseComponent: React.FC<DiskModalFirehoseComponentProps> = (p
   const { disk, volume, dataVolume, vmLikeEntity, vmLikeEntityLoading, ...restProps } = props;
 
   const vmLikeFinal = getLoadedData(vmLikeEntityLoading, vmLikeEntity); // default old snapshot before loading a new one
-  const vm = asVM(vmLikeFinal);
 
   const diskWrapper = new DiskWrapper(disk);
   const volumeWrapper = new VolumeWrapper(volume);
@@ -61,8 +60,8 @@ const DiskModalFirehoseComponent: React.FC<DiskModalFirehoseComponentProps> = (p
       storageClassConfigMap={storageClassConfigMap}
       usedDiskNames={combinedDiskFactory.getUsedDiskNames(diskWrapper.getName())}
       usedPVCNames={combinedDiskFactory.getUsedDataVolumeNames(dataVolumeWrapper.getName())}
-      vmName={getName(vm)}
-      vmNamespace={getNamespace(vm)}
+      vmName={getName(vmLikeFinal)}
+      vmNamespace={getNamespace(vmLikeFinal)}
       disk={new DiskWrapper(diskWrapper, true)}
       volume={new VolumeWrapper(volumeWrapper, true)}
       dataVolume={new DataVolumeWrapper(dataVolumeWrapper, true)}
