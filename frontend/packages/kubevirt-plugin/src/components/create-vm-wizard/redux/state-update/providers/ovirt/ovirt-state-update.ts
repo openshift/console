@@ -276,7 +276,9 @@ const providerUpdater = (options: UpdateOptions) => {
       [VMSettingsField.NAME]: {
         value: needsValuesReset ? null : undefined,
       },
-      [VMSettingsField.DESCRIPTION]: vmFieldUpdate,
+      [VMSettingsField.DESCRIPTION]: {
+        value: needsValuesReset ? null : undefined,
+      },
       [VMSettingsField.OPERATING_SYSTEM]: {
         ...vmFieldUpdate,
         display: needsValuesReset ? null : undefined,
