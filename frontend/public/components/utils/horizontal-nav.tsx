@@ -53,6 +53,7 @@ export type Page = {
   path?: string;
   name: string;
   component?: React.ComponentType<PageComponentProps>;
+  pageData?: any;
 };
 
 type NavFactory = { [name: string]: (c?: React.ComponentType<any>) => Page };
@@ -238,6 +239,7 @@ export const HorizontalNav = React.memo((props: HorizontalNavProps) => {
         <p.component
           {...componentProps}
           {...extraResources}
+          {...p.pageData}
           params={params}
           customData={props.customData}
         />

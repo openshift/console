@@ -980,16 +980,12 @@ export const ClusterServiceVersionsDetailsPage: React.FC<ClusterServiceVersionsD
                   name: ['Details', 'YAML', 'Subscription', 'Events'].includes(desc.displayName)
                     ? `${desc.displayName} Operand`
                     : desc.displayName || desc.kind,
-                  component: React.memo(
-                    () => (
-                      <ProvidedAPIPage
-                        csv={obj}
-                        kind={referenceForProvidedAPI(desc)}
-                        namespace={obj.metadata.namespace}
-                      />
-                    ),
-                    _.isEqual,
-                  ),
+                  component: ProvidedAPIPage,
+                  pageData: {
+                    csv: obj,
+                    kind: referenceForProvidedAPI(desc),
+                    namespace: obj.metadata.namespace,
+                  },
                 },
               ]
             : acc,
