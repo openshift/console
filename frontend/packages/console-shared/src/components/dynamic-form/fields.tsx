@@ -19,7 +19,7 @@ import {
   NodeAffinity,
   PodAffinity,
 } from '@console/operator-lifecycle-manager/src/components/descriptors/spec/affinity';
-import { getSchemaErrors, useSchemaDescription, useSchemaLabel } from './utils';
+import { hasNoFields, useSchemaDescription, useSchemaLabel } from './utils';
 
 const Description = ({ id, description }) =>
   description ? (
@@ -323,13 +323,10 @@ export const DropdownField: React.FC<FieldProps> = ({
 };
 
 export const CustomSchemaField: React.FC<SchemaFieldProps> = (props) => {
-  const errors = getSchemaErrors(props.schema ?? {});
-  if (errors.length) {
-    // eslint-disable-next-line no-console
-    console.warn('DynamicForm component does not support the provided JSON schema: ', errors);
+  // If a the provided schema will not generate any form field elements, return null.
+  if (hasNoFields(props.schema, props.uiSchema)) {
     return null;
   }
-
   return <SchemaField {...props} />;
 };
 
