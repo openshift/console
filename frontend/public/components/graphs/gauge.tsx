@@ -9,7 +9,7 @@ import classNames from 'classnames';
 import { PrometheusGraph, PrometheusGraphLink } from './prometheus-graph';
 import { usePrometheusPoll } from './prometheus-poll-hook';
 import { PrometheusEndpoint } from './helpers';
-import { useRefWidth, humanizePercentage, Humanize } from '../utils';
+import { humanizePercentage, Humanize } from '../utils';
 import { getInstantVectorStats } from './utils';
 import { DataPoint } from '.';
 
@@ -32,24 +32,13 @@ export const GaugeChart: React.FC<GaugeChartProps> = ({
   secondaryTitle = usedLabel,
   className,
 }) => {
-  const [ref, width] = useRefWidth();
   const ready = !error && !loading;
   const status = loading ? 'Loading' : error;
   const labels = ({ datum: { x, y } }) => (x ? `${x} ${usedLabel}` : `${y} ${remainderLabel}`);
   return (
-    <PrometheusGraph
-      className={classNames('graph-wrapper--title-center graph-wrapper--gauge', className)}
-      ref={ref}
-      title={title}
-    >
+    <PrometheusGraph className={classNames('graph-wrapper--title-center', className)} title={title}>
       <PrometheusGraphLink query={query}>
-        <ChartDonutThreshold
-          data={thresholds}
-          height={width} // Changes the scale of the graph, not actual width and height
-          padding={0}
-          width={width}
-          y="value"
-        >
+        <ChartDonutThreshold data={thresholds} height={160} padding={0} width={160} y="value">
           <ChartDonutUtilization
             labels={labels}
             data={ready ? data : { y: 0 }}
