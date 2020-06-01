@@ -9,9 +9,4 @@
   &__info-icon {
     margin-left: var(--pf-global--spacer--sm);
   }
-
-  // TODO: Remove when https://github.com/patternfly/patternfly-react/pull/3976 is available
-  .pf-c-select__toggle-badge {
-    display: none;
-  }
 }
