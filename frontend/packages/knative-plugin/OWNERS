@@ -6,15 +6,17 @@ reviewers:
   - divyanshiGupta
   - christianvogt
   - invincibleJai
+  - jerolimov
   - karthikjeeyar
   - nemesis09
   - rohitkrai03
+  - rottencandy
   - sahil143
   - vikram-raj
 approvers:
   - andrewballantyne
   - christianvogt
-  - rohitkrai03
   - invincibleJai
+  - rohitkrai03
 labels:
   - component/knative
