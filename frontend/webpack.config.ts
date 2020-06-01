@@ -5,6 +5,7 @@ import * as HtmlWebpackPlugin from 'html-webpack-plugin';
 import * as ForkTsCheckerWebpackPlugin from 'fork-ts-checker-webpack-plugin';
 import * as MiniCssExtractPlugin from 'mini-css-extract-plugin';
 import * as VirtualModulesPlugin from 'webpack-virtual-modules';
+import * as ReactRefreshWebpackPlugin from '@pmmmwh/react-refresh-webpack-plugin';
 
 import { resolvePluginPackages, getActivePluginsModule } from '@console/plugin-sdk/src/codegen';
 import { Configuration as WebpackDevServerConfiguration } from 'webpack-dev-server';
@@ -23,6 +24,7 @@ const CHECK_CYCLES = process.env.CHECK_CYCLES || 'false';
 /* Helpers */
 const extractCSS = new MiniCssExtractPlugin({ filename: 'app-bundle.[contenthash].css' });
 const overpassTest = /overpass-.*\.(woff2?|ttf|eot|otf)(\?.*$|$)/;
+const isDevelopment = NODE_ENV !== 'production';
 
 const config: Configuration = {
   entry: [
@@ -68,6 +70,16 @@ const config: Configuration = {
               workers: require('os').cpus().length - 1,
             },
           },
+          ...(isDevelopment
+            ? [
+                {
+                  loader: 'babel-loader',
+                  options: {
+                    plugins: ['react-refresh/babel'],
+                  },
+                },
+              ]
+            : []),
           {
             loader: 'ts-loader',
             options: {
@@ -160,6 +172,7 @@ const config: Configuration = {
     }),
     new webpack.IgnorePlugin(/prettier/),
     extractCSS,
+    ...(isDevelopment ? [new ReactRefreshWebpackPlugin()] : []),
   ],
   devtool: 'cheap-module-source-map',
   stats: 'minimal',
@@ -184,7 +197,6 @@ if (NODE_ENV === 'production') {
   config.optimization.concatenateModules = false;
   config.stats = 'normal';
 }
-
 /* Console plugin support */
 config.plugins.push(
   new VirtualModulesPlugin({
