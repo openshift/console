@@ -62,6 +62,7 @@ describe('Modal Annotations', () => {
   ) {
     let keyFound = 0;
 
+    await browser.wait(until.presenceOf(modalAnnotationsView.annotationRowsKey.first()));
     await modalAnnotationsView.annotationRowsKey.each(async function(item, index) {
       const annKey = await item.getAttribute('value');
       if (annKey === annotationKey) {

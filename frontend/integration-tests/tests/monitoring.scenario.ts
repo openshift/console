@@ -23,13 +23,14 @@ const testDetailsPage = (subTitle, alertName, expectLabel = true) => {
 const testSilenceTimeInputs = async () => {
   // Default start and end times
   expect(monitoringView.silenceStartNowCheckbox.getAttribute('checked')).toBeTruthy();
+  await browser.wait(until.presenceOf(monitoringView.silenceStartsAtInput));
   expect(monitoringView.silenceStartsAtInput.getAttribute('value')).toEqual('Now');
   expect(monitoringView.silenceDurationMenuButton.getText()).toEqual('2h');
   expect(monitoringView.silenceEndsAtInput.getAttribute('value')).toEqual('2h from now');
 
   // Change duration
   await monitoringView.silenceDurationMenuButton.click();
-  await monitoringView.wait(until.presenceOf(monitoringView.silenceDurationOption('1h')));
+  await monitoringView.wait(until.elementToBeClickable(monitoringView.silenceDurationOption('1h')));
   await monitoringView.silenceDurationOption('1h').click();
   expect(monitoringView.silenceEndsAtInput.getAttribute('value')).toEqual('1h from now');
 
@@ -282,6 +283,7 @@ describe('Alertmanager: Configuration', () => {
     await monitoringView.alertRoutingEditButton.click();
     await crudView.isLoaded();
 
+    await browser.wait(until.elementToBeClickable(firstElementByTestID('input-group-by')));
     await firstElementByTestID('input-group-by').sendKeys(', cluster');
     await firstElementByTestID('input-group-wait').clear();
     await firstElementByTestID('input-group-wait').sendKeys('60s');

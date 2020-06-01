@@ -134,7 +134,7 @@ describe('CRD extensions', () => {
           await browser.get(`${appHost}`);
           // reload the app so the new CRD link is visible
           await browser.refresh();
-          await browser.wait(until.presenceOf(dropdownToggle));
+          await browser.wait(until.elementToBeClickable(dropdownToggle));
           await browser.wait(dropdownToggle.click());
           await browser.wait(
             until.presenceOf(

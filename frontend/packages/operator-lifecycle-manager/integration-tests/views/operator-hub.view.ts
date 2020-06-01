@@ -4,7 +4,7 @@ export const operatorModal = $('.pf-c-modal-box');
 export const operatorModalBody = $('[data-test-id="operator-modal-box"]');
 export const operatorModalHeader = $('[data-test-id="operator-modal-header"]');
 export const operatorModalIsLoaded = () =>
-  browser.wait(until.presenceOf(operatorModalBody), 1000).then(() => browser.sleep(500));
+  browser.wait(until.presenceOf(operatorModalBody)).then(() => browser.sleep(500));
 export const operatorModalTitle = operatorModalHeader.$('.catalog-item-header-pf-title');
 export const operatorModalInstallBtn = $('[data-test-id="operator-install-btn"]');
 export const operatorModalUninstallBtn = $('[data-test-id="operator-uninstall-btn"]');
