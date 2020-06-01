@@ -8,6 +8,7 @@ import { Kebab, SectionHeading, navFactory, ResourceSummary } from './utils';
 import { humanizeBinaryBytes } from './utils/units';
 import { ExampleDockerCommandPopover } from './image-stream';
 import { ImageStreamTimeline } from './image-stream-timeline';
+import { getBreadcrumbPath } from '@console/internal/components/utils/breadcrumbs';
 
 const ImageStreamTagsReference: K8sResourceKindReference = 'ImageStreamTag';
 const ImageStreamsReference: K8sResourceKindReference = 'ImageStream';
@@ -178,10 +179,10 @@ export const ImageStreamTagsDetailsPage: React.SFC<ImageStreamTagsDetailsPagePro
     breadcrumbsFor={(obj) => {
       const { imageStreamName } = getImageStreamNameAndTag(obj);
       return [
-        { name: 'Image Streams', path: `/k8s/ns/${props.match.params.ns}/imagestreams` },
+        { name: 'Image Streams', path: getBreadcrumbPath(props.match, 'imagestreams') },
         {
           name: imageStreamName,
-          path: `/k8s/ns/${props.match.params.ns}/imagestreams/${imageStreamName}`,
+          path: `${getBreadcrumbPath(props.match, 'imagestreams')}/${imageStreamName}`,
         },
         {
           name: 'Image Stream Tag Details',

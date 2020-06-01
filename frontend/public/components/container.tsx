@@ -28,6 +28,7 @@ import {
   Timestamp,
 } from './utils';
 import { resourcePath } from './utils/resource-link';
+import { getBreadcrumbPath } from '@console/internal/components/utils/breadcrumbs';
 
 const formatComputeResources = (resources: ResourceList) =>
   _.map(resources, (v, k) => `${k}: ${v}`).join(', ');
@@ -383,7 +384,7 @@ export const ContainersDetailsPage: React.FC<ContainerDetailsPageProps> = (props
         title={props.match.params.name}
         kind="Container"
         breadcrumbsFor={() => [
-          { name: 'Pods', path: `/k8s/ns/${props.match.params.ns}/pods` },
+          { name: 'Pods', path: getBreadcrumbPath(props.match, 'pods') },
           {
             name: props.match.params.podName,
             path: resourcePath('Pod', props.match.params.podName, props.match.params.ns),

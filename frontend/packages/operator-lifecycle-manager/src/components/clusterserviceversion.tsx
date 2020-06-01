@@ -85,6 +85,7 @@ import { createUninstallOperatorModal } from './modals/uninstall-operator-modal'
 import { operatorGroupFor, operatorNamespaceFor } from './operator-group';
 import { SubscriptionDetails, catalogSourceForSubscription } from './subscription';
 import { ClusterServiceVersionLogo, referenceForProvidedAPI, providedAPIsFor } from './index';
+import { getBreadcrumbPath } from '@console/internal/components/utils/breadcrumbs';
 
 const clusterServiceVersionStateToProps = (state: RootState): ClusterServiceVersionStateProps => {
   return {
@@ -1038,7 +1039,7 @@ export const ClusterServiceVersionsDetailsPage: React.FC<ClusterServiceVersionsD
       breadcrumbsFor={() => [
         {
           name: 'Installed Operators',
-          path: `/k8s/ns/${props.match.params.ns}/${props.match.params.plural}`,
+          path: getBreadcrumbPath(props.match),
         },
         { name: 'Operator Details', path: props.match.url },
       ]}
