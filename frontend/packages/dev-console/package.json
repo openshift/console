@@ -6,13 +6,31 @@
   "scripts": {
     "coverage": "yarn test --coverage --collectCoverageFrom='[\"packages/dev-console/src/**\",\"!**/__tests__/**\",\"!packages/dev-console/src/test/**\"]'",
     "lint": "yarn --cwd ../.. eslint packages/dev-console",
-    "test": "yarn --cwd ../.. run test packages/dev-console"
+    "test": "yarn --cwd ../.. run test packages/dev-console",
+    "cy:open": "cypress open",
+    "cy:update-snapshots": "cypress run --env updateSnapshots=true",
+    "cy:run--snapshot-tests-with-reporter": "cypress run --reporter cypress-image-snapshot/reporter",
+    "cy:run-tests-with-no-failure": "cypress run --env failOnSnapshotDiff=false",
+    "clean-reports": "rm -rf cypress/reports && rm -rf allure-results",
+    "cy:test": "cypress run -b chrome -r mocha-allure-reporter -s **/features/*.feature",
+    "merge-report": "npx mochawesome-merge --reportDir cypress/reports/separate-reports > cypress/reports/full_report.json",
+    "generate-report": "npx mochawesome-report-generator --reportDir cypress/reports cypress/reports/full_report.json",
+    "after:tests": "npm run merge-report; npm run generate-report",
+    "report": "allure generate allure-results --clean -o allure-report && allure open allure-report",
+    "cypress": "npm run clean-reports; npm run cy:test; npm run after:tests; npm run report"
   },
   "dependencies": {
     "@console/git-service": "0.0.0-fixed",
     "@console/knative-plugin": "0.0.0-fixed",
     "@console/plugin-sdk": "0.0.0-fixed",
     "@console/topology": "0.0.0-fixed"
+  },
+  "devDependencies": {
+  },
+  "cypress-cucumber-preprocessor": {
+    "nonGlobalStepDefinitions": false,
+    "step_definitions": "cypress/integration/step_definitions/",
+    "features": "cypress/integration/features"
   },
   "consolePlugin": {
     "entry": "src/plugin.tsx",

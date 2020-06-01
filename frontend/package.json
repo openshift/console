@@ -28,7 +28,18 @@
     "test-suite": "ts-node -O '{\"module\":\"commonjs\"}' ./node_modules/.bin/protractor integration-tests/protractor.conf.ts",
     "debug-test-suite": "TS_NODE_COMPILER_OPTIONS='{\"module\":\"commonjs\"}' node -r ts-node/register --inspect-brk ./node_modules/.bin/protractor integration-tests/protractor.conf.ts",
     "analyze": "NODE_ENV=production NODE_OPTIONS=--max-old-space-size=4096 ts-node -O '{\"module\":\"commonjs\"}' ./node_modules/.bin/webpack --mode=production --profile --json | awk '{if(NR>2)print}' > public/dist/stats.json && ts-node -O '{\"module\":\"commonjs\"}' ./node_modules/.bin/webpack-bundle-analyzer --mode static -r public/dist/report.html public/dist/stats.json",
-    "prettier-all": "prettier --write '**/*.{js,jsx,ts,tsx,json}'"
+    "prettier-all": "prettier --write '**/*.{js,jsx,ts,tsx,json}'",
+    "cy:open": "cypress open",
+    "cy:update-snapshots": "cypress run --env updateSnapshots=true",
+    "cy:run--snapshot-tests-with-reporter": "cypress run --reporter cypress-image-snapshot/reporter",
+    "cy:run-tests-with-no-failure": "cypress run --env failOnSnapshotDiff=false",
+    "clean-reports": "rm -rf cypress/reports && rm -rf allure-results",
+    "cy:test": "cypress run -b chrome -r mocha-allure-reporter -s **/features/*.feature",
+    "merge-report": "npx mochawesome-merge --reportDir cypress/reports/separate-reports > cypress/reports/full_report.json",
+    "generate-report": "npx mochawesome-report-generator --reportDir cypress/reports cypress/reports/full_report.json",
+    "after:tests": "npm run merge-report; npm run generate-report",
+    "report": "allure generate allure-results --clean -o allure-report && allure open allure-report",
+    "cypress": "npm run clean-reports; npm run cy:test; npm run after:tests; npm run report"
   },
   "jest": {
     "moduleFileExtensions": [
@@ -206,7 +217,21 @@
     "webpack-bundle-analyzer": "^3.5.0",
     "webpack-cli": "^3.3.9",
     "webpack-dev-server": "^3.8.1",
-    "webpack-virtual-modules": "^0.1.10"
+    "webpack-virtual-modules": "^0.1.10",
+    "cypress": "^4.5.0",
+    "cypress-cucumber-preprocessor": "^1.9.1",
+    "@cypress/webpack-preprocessor": "^4.1.3",
+    "cypress-jest-adapter": "^0.1.1",
+    "cypress-multi-reporters": "^1.4.0",
+    "eslint-plugin-cypress": "^2.10.3",
+    "cypress-image-snapshot": "^3.1.1",
+    "fs-extra": "^7.0.1",
+    "mocha": "5.2.0",
+    "mocha-allure-reporter": "^1.4.0",
+    "allure-commandline": "^2.0.0",
+    "mochawesome": "4.1.0",
+    "mochawesome-merge": "2.0.1",
+    "mochawesome-report-generator": "4.0.1"
   },
   "engines": {
     "node": ">=8.x"

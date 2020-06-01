@@ -1,0 +1,32 @@
+
+{
+    "baseUrl": "localhost",
+    "viewportWidth":1920,
+    "viewportHeight":1080,
+    "watchForFileChanges": true,
+    "chromeWebSecurity": false,
+    "waitForAnimation": true,
+    "animationDistanceThreshold": 20,
+    "defaultCommandTimeout": 6000,
+    "execTimeout": 60000,
+    "pageLoadTimeout": 60000,
+    "requestTimeout": 15000,
+    "responseTimeout": 15000,
+    "video": false,
+    "supportFile": "./support",
+    "failOnStatusCode": false,
+    "integrationFolder":"*/features",
+    "ignoreTestFiles": ["*.ts"],
+    "testFiles": "*/*.{feature,features}",
+    "reporter": "./node_modules/mochawesome/src/mochawesome.js",
+    "reporterOptions": {
+      "reportDir": "cypress/reports/separate-reports",
+      "overwrite": false,
+      "html": false,
+      "json": true,
+      "charts": true
+    },
+    "env": {
+      "TAGS": "@smoke or @regression"
+  }
+}
