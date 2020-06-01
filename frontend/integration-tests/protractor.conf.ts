@@ -15,9 +15,10 @@ import {
 
 const tap = !!process.env.TAP;
 
+export const BROWSER_NAME = process.env.BRIDGE_E2E_BROWSER_NAME || 'chrome';
 export const BROWSER_TIMEOUT = 15000;
-export const JASMSPEC_TIMEOUT = process.env.JASMINE_TIMEOUT
-  ? Number(process.env.JASMINE_TIMEOUT)
+export const JASMSPEC_TIMEOUT = process.env.BRIDGE_JASMINE_TIMEOUT
+  ? Number(process.env.BRIDGE_JASMINE_TIMEOUT)
   : 120000;
 export const appHost = `${process.env.BRIDGE_BASE_ADDRESS || 'http://localhost:9000'}${(
   process.env.BRIDGE_BASE_PATH || '/'
@@ -156,7 +157,7 @@ export const config = {
   logLevel: tap ? 'ERROR' : 'INFO',
   plugins: process.env.NO_FAILFAST ? [] : [failFast.init()],
   capabilities: {
-    browserName: 'chrome',
+    browserName: BROWSER_NAME,
     acceptInsecureCerts: true,
     chromeOptions: {
       // A path to chrome binary, if undefined will use system chrome browser.
