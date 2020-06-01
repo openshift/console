@@ -138,8 +138,9 @@ const formatValue = (value, options) => {
     maximumFractionDigits: fractionDigits,
   });
 
-  if (!isFinite(value)) {
-    return Intl.NumberFormat(locales, rest).format(0);
+  // 2nd check converts -0 to 0.
+  if (!isFinite(value) || value === 0) {
+    value = 0;
   }
   return Intl.NumberFormat(locales, rest).format(value);
 };
@@ -230,7 +231,8 @@ export const humanizeCpuCores = (v) => {
   };
 };
 export const humanizePercentage = (value) => {
-  if (!isFinite(value)) {
+  // 2nd check converts -0 to 0.
+  if (!isFinite(value) || value === 0) {
     value = 0;
   }
   return {
