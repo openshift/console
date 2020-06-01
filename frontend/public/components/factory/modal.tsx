@@ -62,6 +62,32 @@ export const createModalLauncher: CreateModalLauncher = (Component) => (props) =
   return createModal(getModalContainer);
 };
 
+export const createPF4ModalLauncher: CreateModalLauncher = (Component) => (props) => {
+  const getModalContainer: GetModalContainer = (onClose) => {
+    const _handleClose = (e: React.SyntheticEvent) => {
+      onClose && onClose(e);
+      props.close && props.close();
+    };
+    const _handleCancel = (e: React.SyntheticEvent) => {
+      props.cancel && props.cancel();
+      _handleClose(e);
+    };
+
+    return (
+      <Provider store={store}>
+        <Router {...{ history, basename: window.SERVER_FLAGS.basePath }}>
+          <Component
+            {...(_.omit(props, 'blocking', 'modalClassName') as any)}
+            cancel={_handleCancel}
+            close={_handleClose}
+          />
+        </Router>
+      </Provider>
+    );
+  };
+  return createModal(getModalContainer);
+};
+
 export const ModalTitle: React.SFC<ModalTitleProps> = ({
   children,
   className = 'modal-header',
@@ -86,16 +112,79 @@ export const ModalFooter: React.SFC<ModalFooterProps> = ({
   errorMessage,
   inProgress,
   children,
+  noClassName,
 }) => {
   return (
     <ButtonBar
-      className="modal-footer"
+      className={noClassName ? null : 'modal-footer'}
       errorMessage={errorMessage}
       infoMessage={message}
       inProgress={inProgress}
     >
       {children}
     </ButtonBar>
+  );
+};
+
+export const PF4ModalSubmitFooter: React.SFC<ModalSubmitFooterProps> = ({
+  message,
+  errorMessage,
+  inProgress,
+  cancel,
+  submit,
+  submitText,
+  cancelText,
+  submitDisabled,
+  submitDanger,
+  form,
+}) => {
+  const onCancelClick = (e) => {
+    e.stopPropagation();
+    cancel(e);
+  };
+
+  const onSubmitClick = (e) => {
+    e.stopPropagation();
+    submit(e);
+  };
+
+  return (
+    <ModalFooter noClassName inProgress={inProgress} errorMessage={errorMessage} message={message}>
+      <ActionGroup className="pf-c-form pf-c-form__group--no-top-margin">
+        {submitDanger ? (
+          <Button
+            form={form}
+            onClick={onSubmitClick}
+            type="submit"
+            variant="danger"
+            isDisabled={submitDisabled}
+            id="confirm-action"
+          >
+            {submitText}
+          </Button>
+        ) : (
+          <Button
+            form={form}
+            onClick={onSubmitClick}
+            type="submit"
+            variant="primary"
+            isDisabled={submitDisabled}
+            id="confirm-action"
+          >
+            {submitText}
+          </Button>
+        )}
+        <Button
+          form={form}
+          type="button"
+          variant="secondary"
+          data-test-id="modal-cancel-action"
+          onClick={onCancelClick}
+        >
+          {cancelText || 'Cancel'}
+        </Button>
+      </ActionGroup>
+    </ModalFooter>
   );
 };
 
@@ -165,17 +254,20 @@ export type ModalFooterProps = {
   message?: string;
   errorMessage?: string;
   inProgress: boolean;
+  noClassName?: boolean;
 };
 
 export type ModalSubmitFooterProps = {
   message?: string;
   errorMessage?: string;
   inProgress: boolean;
+  submit?: (e: React.SyntheticEvent<any, Event>) => void;
   cancel: (e: React.SyntheticEvent<any, Event>) => void;
   cancelText?: React.ReactNode;
   submitText: React.ReactNode;
   submitDisabled?: boolean;
   submitDanger?: boolean;
+  form?: string;
 };
 
 export type CreateModalLauncher = <P extends ModalComponentProps>(

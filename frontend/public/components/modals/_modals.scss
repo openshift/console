@@ -53,6 +53,10 @@
   }
 }
 
+.modal-body-inner-shadow-covers-no-padding {
+  padding: 0;
+}
+
 .modal-content {
   display: flex;
   flex-direction: column;

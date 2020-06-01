@@ -1,10 +1,11 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
+import { Form, FormGroup, TextInput, TextArea, Modal } from '@patternfly/react-core';
 
 import { FLAGS } from '@console/shared';
 import { k8sCreate, referenceFor } from '../../module/k8s';
 import { NamespaceModel, ProjectRequestModel, NetworkPolicyModel } from '../../models';
-import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '../factory/modal';
+import { createPF4ModalLauncher, PF4ModalSubmitFooter } from '../factory/modal';
 import { Dropdown, history, PromiseComponent, resourceObjPath, SelectorInput } from '../utils';
 import { setFlag } from '../../actions/features';
 
@@ -30,17 +31,29 @@ const CreateNamespaceModal = connect(
   class CreateNamespaceModal extends PromiseComponent {
     constructor(props) {
       super(props);
-      this.state.np = allow;
-      this.handleChange = this.handleChange.bind(this);
+      this.state = {
+        np: allow,
+        name: '',
+        displayName: '',
+        description: '',
+        isValid: true,
+      };
       this.onLabels = this.onLabels.bind(this);
+      this.handleNameTextInputChange = this.handleNameTextInputChange.bind(this);
+      this.handleDisplayNameTextInputChange = this.handleDisplayNameTextInputChange.bind(this);
+      this.handleDescriptionTextInputChange = this.handleDescriptionTextInputChange.bind(this);
     }
 
-    handleChange(e) {
-      const name = e.target.name;
-      const value = e.target.value;
-      this.setState({
-        [name]: value,
-      });
+    handleNameTextInputChange(name) {
+      this.setState({ name });
+    }
+
+    handleDisplayNameTextInputChange(displayName) {
+      this.setState({ displayName });
+    }
+
+    handleDescriptionTextInputChange(description) {
+      this.setState({ description });
     }
 
     createNamespace() {
@@ -75,7 +88,14 @@ const CreateNamespaceModal = connect(
     _submit(event) {
       event.preventDefault();
       const { createProject, close, onSubmit } = this.props;
-
+      const { name, isValid } = this.state;
+      if (/^$/.test(name)) {
+        this.setState({ isValid: false });
+        return;
+      }
+      if (isValid !== true) {
+        this.setState({ isValid: true });
+      }
       let promise = createProject ? this.createProject() : this.createNamespace();
       if (this.state.np === deny) {
         promise = promise.then((ns) => {
@@ -86,7 +106,6 @@ const CreateNamespaceModal = connect(
           return k8sCreate(NetworkPolicyModel, policy).then(() => ns);
         });
       }
-
       this.handlePromise(promise).then((obj) => {
         close();
         if (onSubmit) {
@@ -108,107 +127,97 @@ const CreateNamespaceModal = connect(
         [deny]: 'Deny all inbound traffic',
       };
       return (
-        <form
-          onSubmit={this._submit.bind(this)}
-          name="form"
-          className="modal-content modal-content--no-inner-scroll"
+        <Modal
+          className="modal-content"
+          title={`Create ${label}`}
+          isOpen={true}
+          onClose={this.props.close.bind(this)}
+          isSmall
+          footer={
+            <PF4ModalSubmitFooter
+              errorMessage={this.state.errorMessage}
+              inProgress={this.state.inProgress}
+              submitText="Create"
+              cancel={this.props.cancel.bind(this)}
+              submit={this._submit.bind(this)}
+              form="create"
+            />
+          }
         >
-          <ModalTitle>Create {label}</ModalTitle>
-          <ModalBody>
-            <div className="form-group">
-              <label htmlFor="input-name" className="control-label co-required">
-                Name
-              </label>
-              <div className="modal-body__field">
-                <input
-                  id="input-name"
-                  name="name"
-                  type="text"
-                  className="pf-c-form-control"
-                  onChange={this.handleChange}
-                  value={this.state.name || ''}
-                  autoFocus
-                  required
-                />
+          <div className="modal-body">
+            <div className="modal-body-content">
+              <div className="modal-body-inner-shadow-covers modal-body-inner-shadow-covers-no-padding">
+                <Form id="create">
+                  <FormGroup
+                    label="Name"
+                    isRequired
+                    fieldId="input-name"
+                    helperTextInvalid="Please fill out this field."
+                    isValid={this.state.isValid}
+                  >
+                    <TextInput
+                      isRequired
+                      type="text"
+                      id="input-name"
+                      name="name"
+                      aria-describedby="input-name"
+                      value={this.state.name || ''}
+                      onChange={this.handleNameTextInputChange}
+                      className="pf-c-form-control"
+                    />
+                  </FormGroup>
+                  {this.props.createProject && (
+                    <FormGroup label="Display Name" fieldId="input-display-name">
+                      <TextInput
+                        type="text"
+                        id="input-display-name"
+                        name="displayName"
+                        value={this.state.displayName || ''}
+                        onChange={this.handleDisplayNameTextInputChange}
+                      />
+                    </FormGroup>
+                  )}
+                  {this.props.createProject && (
+                    <FormGroup label="Description" fieldId="input-description">
+                      <TextArea
+                        id="input-descripton"
+                        name="description"
+                        value={this.state.description || ''}
+                        onChange={this.handleDescriptionTextInputChange}
+                      />
+                    </FormGroup>
+                  )}
+                  {!this.props.createProject && (
+                    <FormGroup label="Labels" fieldId="tags-input">
+                      <SelectorInput
+                        labelClassName="co-text-namespace"
+                        onChange={this.onLabels}
+                        tags={[]}
+                      />
+                    </FormGroup>
+                  )}
+                  {!this.props.createProject && (
+                    <FormGroup label="Default Network Policy" fieldId="network-policy">
+                      <Dropdown
+                        selectedKey={this.state.np}
+                        items={defaultNetworkPolicies}
+                        dropDownClassName="dropdown--full-width"
+                        id="dropdown-selectbox"
+                        onChange={(np) => this.setState({ np })}
+                      />
+                    </FormGroup>
+                  )}
+                </Form>
               </div>
             </div>
-            {this.props.createProject && (
-              <div className="form-group">
-                <label htmlFor="input-display-name" className="control-label">
-                  Display Name
-                </label>
-                <div className="modal-body__field">
-                  <input
-                    id="input-display-name"
-                    name="displayName"
-                    type="text"
-                    className="pf-c-form-control"
-                    onChange={this.handleChange}
-                    value={this.state.displayName || ''}
-                  />
-                </div>
-              </div>
-            )}
-            {this.props.createProject && (
-              <div className="form-group">
-                <label htmlFor="input-description" className="control-label">
-                  Description
-                </label>
-                <div className="modal-body__field">
-                  <textarea
-                    id="input-description"
-                    name="description"
-                    className="pf-c-form-control"
-                    onChange={this.handleChange}
-                    value={this.state.description || ''}
-                  />
-                </div>
-              </div>
-            )}
-            {!this.props.createProject && (
-              <div className="form-group">
-                <label htmlFor="tags-input" className="control-label">
-                  Labels
-                </label>
-                <div className="modal-body__field">
-                  <SelectorInput
-                    labelClassName="co-text-namespace"
-                    onChange={this.onLabels}
-                    tags={[]}
-                  />
-                </div>
-              </div>
-            )}
-            {!this.props.createProject && (
-              <div className="form-group">
-                <label htmlFor="network-policy" className="control-label">
-                  Default Network Policy
-                </label>
-                <div className="modal-body__field ">
-                  <Dropdown
-                    selectedKey={this.state.np}
-                    items={defaultNetworkPolicies}
-                    dropDownClassName="dropdown--full-width"
-                    id="dropdown-selectbox"
-                    onChange={(np) => this.setState({ np })}
-                  />
-                </div>
-              </div>
-            )}
-          </ModalBody>
-          <ModalSubmitFooter
-            errorMessage={this.state.errorMessage}
-            inProgress={this.state.inProgress}
-            submitText="Create"
-            cancel={this.props.cancel.bind(this)}
-          />
-        </form>
+          </div>
+        </Modal>
       );
     }
   },
 );
 
-export const createNamespaceModal = createModalLauncher(CreateNamespaceModal);
-export const createProjectModal = createModalLauncher((props) => (
+export const createNamespaceModal = createPF4ModalLauncher(CreateNamespaceModal);
+export const createProjectModal = createPF4ModalLauncher((props) => (
   <CreateNamespaceModal {...props} createProject={true} />
 ));
