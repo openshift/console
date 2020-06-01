@@ -9,8 +9,6 @@ export class NetworkType extends ObjectEnum<string> {
   ]);
   static readonly POD = new NetworkType('pod', NetworkInterfaceType.MASQUERADE, [
     NetworkInterfaceType.MASQUERADE,
-    NetworkInterfaceType.BRIDGE,
-    NetworkInterfaceType.SRIOV,
   ]);
   static readonly GENIE = new NetworkType(
     'genie',
