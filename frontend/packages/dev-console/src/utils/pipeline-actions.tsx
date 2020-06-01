@@ -236,6 +236,8 @@ export const getPipelineKebabActions = (
   ...(pipelineRun ? [() => rerunPipelineAndRedirect(PipelineRunModel, pipelineRun)] : []),
   (model, pipeline) => addTrigger(EventListenerModel, pipeline),
   ...(isTriggerPresent ? [(model, pipeline) => removeTrigger(EventListenerModel, pipeline)] : []),
+  Kebab.factory.ModifyLabels,
+  Kebab.factory.ModifyAnnotations,
   editPipeline,
   Kebab.factory.Delete,
 ];
