@@ -450,18 +450,28 @@ const deleteWebhooks = (
   }, []);
 };
 
-export const cleanUpWorkload = (
+export const cleanUpWorkload = async (
   resource: K8sResourceKind,
   workload: TopologyDataObject,
 ): Promise<K8sResourceKind[]> => {
   const reqs = [];
   const isBuildConfigPresent = !_.isEmpty(workload?.resources?.buildConfigs);
-
+  const isImageStreamPresent = await k8sGet(
+    ImageStreamModel,
+    resource.metadata.name,
+    resource.metadata.namespace,
+  )
+    .then(() => true)
+    .catch(() => false);
   const deleteModels = [ServiceModel, RouteModel];
-  const knativeDeleteModels = [KnativeServiceModel, KnativeRouteModel, ImageStreamModel];
+  const knativeDeleteModels = [KnativeServiceModel, KnativeRouteModel];
   if (isBuildConfigPresent) {
     deleteModels.push(BuildConfigModel);
     knativeDeleteModels.push(BuildConfigModel);
+  }
+  if (isImageStreamPresent) {
+    deleteModels.push(ImageStreamModel);
+    knativeDeleteModels.push(ImageStreamModel);
   }
   const resourceData = _.cloneDeep(resource);
   const deleteRequest = (model: K8sKind, resourceObj: K8sResourceKind) => {
@@ -482,7 +492,6 @@ export const cleanUpWorkload = (
     case DeploymentConfigModel.kind:
       deleteRequest(modelFor(resource.kind), resource);
       batchDeleteRequests(deleteModels, resource);
-      deleteRequest(ImageStreamModel, resource); // delete imageStream
       break;
     case KnativeServiceModel.kind:
       batchDeleteRequests(knativeDeleteModels, resourceData);
