@@ -2,7 +2,7 @@ import { execSync } from 'child_process';
 import * as _ from 'lodash';
 import { ExpectedConditions as until, browser, $ } from 'protractor';
 import * as crudView from '@console/internal-integration-tests/views/crud.view';
-import { OSD, POD_NAME_PATTERNS, SECOND, ocsTaint } from './consts';
+import { OSD, SECOND, ocsTaint } from './consts';
 
 export const checkIfClusterIsReady = async () => {
   let stillLoading = true;
@@ -105,10 +105,6 @@ export const isPodPresent = (pods, podName) => {
   const podObj = pods.items.find((pod) => getPodName(pod) === podName);
   return podObj || '';
 };
-
-export const getOSDPreparePodsCnt = (pods) =>
-  pods.items.filter((pod) => getPodName(pod).includes(POD_NAME_PATTERNS.ROOK_CEPH_OSD_PREPARE))
-    .length;
 
 export const refreshIfNotVisible = async (element, maxTimes = 1) => {
   let isVisible = await element.isPresent();

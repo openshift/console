@@ -26,7 +26,7 @@ const StorageClassDropdown = (props: any) => {
     scConfig.resources.StorageClass.data = filteredSCData;
   }
 
-  return <StorageClassDropdownInner {...scConfig} />;
+  return <StorageClassDropdownInner {...scConfig} id="ceph-sc-dropdown" />;
 };
 
 export const OCSStorageClassDropdown: React.FC<OCSStorageClassDropdownProps> = (props) => {
