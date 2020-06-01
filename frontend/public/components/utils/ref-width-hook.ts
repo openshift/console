@@ -2,12 +2,12 @@ import { useEffect, useRef, useState } from 'react';
 
 export const useRefWidth = () => {
   const ref = useRef<HTMLDivElement>(null);
-  const [width, setWidth] = useState(0);
+  const [width, setWidth] = useState<number>();
 
-  const clientWidth = ref?.current?.clientWidth ?? 0;
+  const clientWidth = ref?.current?.clientWidth;
 
   useEffect(() => {
-    const handleResize = () => setWidth(ref?.current?.clientWidth ?? 0);
+    const handleResize = () => setWidth(ref?.current?.clientWidth);
     window.addEventListener('resize', handleResize);
     window.addEventListener('sidebar_toggle', handleResize);
     return () => {
