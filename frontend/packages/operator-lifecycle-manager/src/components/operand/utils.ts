@@ -6,9 +6,6 @@ import { modelFor } from '@console/internal/module/k8s';
 import { capabilityFieldMap, capabilityWidgetMap } from '../descriptors/spec/spec-descriptor-input';
 import {
   HIDDEN_UI_SCHEMA,
-  REGEXP_K8S_RESOURCE_SUFFIX,
-  REGEXP_SELECT_OPTION,
-  REGEXP_FIELD_DEPENDENCY_PATH_VALUE,
   SORT_WEIGHT_SCALE_1,
   SORT_WEIGHT_SCALE_2,
   SORT_WEIGHT_SCALE_3,
@@ -16,6 +13,11 @@ import {
 import { UiSchema } from 'react-jsonschema-form';
 import { SchemaType } from '@console/shared/src/components/dynamic-form';
 import { getSchemaType } from 'react-jsonschema-form/lib/utils';
+import {
+  REGEXP_K8S_RESOURCE_SUFFIX,
+  REGEXP_FIELD_DEPENDENCY_PATH_VALUE,
+  REGEXP_SELECT_OPTION,
+} from '../descriptors/const';
 
 // Transform a path string from a descriptor to a JSON schema path array
 export const descriptorPathToUISchemaPath = (path: string): string[] =>
@@ -47,7 +49,8 @@ export const hideAllExistingProperties = (schema: JSONSchema6) => {
 };
 
 const k8sResourceCapabilityToUISchema = (capability: SpecCapability): UiSchema => {
-  const [, groupVersionKind] = capability.match(REGEXP_K8S_RESOURCE_SUFFIX) ?? [];
+  const [, suffix] = capability.match(REGEXP_K8S_RESOURCE_SUFFIX) ?? [];
+  const groupVersionKind = suffix?.replace(/:/g, '~');
   const model = groupVersionKind && modelFor(groupVersionKind);
   if (model) {
     return {
