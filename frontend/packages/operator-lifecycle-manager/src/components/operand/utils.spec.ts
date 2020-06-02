@@ -1,15 +1,7 @@
 import { testCRD } from '../../../integration-tests/mocks';
-import {
-  getJSONSchemaOrder,
-  capabilitiesToUISchema,
-  getDefaultUISchema,
-  hasNoFields,
-} from './utils';
+import { getJSONSchemaOrder, capabilitiesToUISchema } from './utils';
 import { ServiceAccountModel } from '@console/internal/models';
 import { SpecCapability } from '../descriptors/types';
-import { JSONSchema6 } from 'json-schema';
-import { SchemaType } from '@console/shared/src/components/dynamic-form';
-import { HIDDEN_UI_SCHEMA } from './const';
 
 describe('getJSONSchemaOrder', () => {
   it('Accurately converts descriptors to a uiSchema with correct "ui:order" properties:', () => {
@@ -67,50 +59,5 @@ describe('capabilitiesToUISchema', () => {
       FATAL: 'FATAL',
     });
     expect(uiSchema['ui:field']).toEqual('DropdownField');
-  });
-});
-
-describe('hasNoFields', () => {
-  it('Applies hidden widget and label properties to empty schemas', () => {
-    const schema: JSONSchema6 = {
-      type: SchemaType.object,
-      properties: {
-        shown: {
-          type: SchemaType.object,
-          properties: {
-            test: { type: SchemaType.string },
-          },
-        },
-        alsoShown: {
-          type: SchemaType.object,
-          additionalProperties: { type: SchemaType.string },
-        },
-        hidden: {
-          type: SchemaType.object,
-          properties: {
-            emptyArray: {
-              type: SchemaType.array,
-              items: {
-                type: SchemaType.object,
-                properties: {
-                  empty: { type: SchemaType.object },
-                },
-              },
-            },
-            emptyObject: { type: SchemaType.object },
-          },
-        },
-      },
-    };
-    expect(hasNoFields(schema.properties.shown as JSONSchema6)).toBeFalsy();
-    expect(hasNoFields(schema.properties.alsoShown as JSONSchema6)).toBeFalsy();
-    expect(hasNoFields(schema.properties.hidden as JSONSchema6)).toBeTruthy();
-  });
-});
-
-describe('getDefaultUISchema', () => {
-  it('Creates correct ui schema for empty schema property', () => {
-    const uiSchema = getDefaultUISchema(testCRD.spec.validation.openAPIV3Schema as JSONSchema6);
-    expect(uiSchema.spec.hiddenFieldGroup).toEqual(HIDDEN_UI_SCHEMA);
   });
 });
