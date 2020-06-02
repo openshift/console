@@ -56,23 +56,30 @@ export const getCSVStatus = (
   };
 };
 
-export const getSubscriptionStatus = (
-  subscription: SubscriptionKind,
-): { status: SubscriptionState; title?: string } => {
-  const state = _.get(subscription, 'status.state', SubscriptionState.SubscriptionStateNone);
-  let title: string;
-  switch (state) {
+export const getSubscriptionStatus = (subscription: SubscriptionKind): SubscriptionStatus => {
+  const status = subscription?.status?.state ?? SubscriptionState.SubscriptionStateNone;
+  switch (status) {
     case SubscriptionState.SubscriptionStateUpgradeAvailable:
-      title = 'Upgrade available';
-      break;
+      return {
+        status,
+        title: 'Upgrade available',
+      };
     case SubscriptionState.SubscriptionStateUpgradePending:
-      title = 'Upgrading';
-      break;
+      return {
+        status,
+        title: 'Upgrading',
+      };
     case SubscriptionState.SubscriptionStateAtLatest:
-      title = 'Up to date';
-      break;
+      return {
+        status,
+        title: 'Up to date',
+      };
     default:
-      title = '';
+      return {
+        status,
+        title: '',
+      };
   }
-  return { status: state, title };
 };
+
+type SubscriptionStatus = { status: SubscriptionState; title?: string };

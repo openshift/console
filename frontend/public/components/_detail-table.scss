@@ -1,7 +1,7 @@
 .co-detail-table {
   text-align: center;
   border-width: 1px;
-  max-width: 600px;
+  max-width: 610px;
   white-space: nowrap;
 
   &--lg {
@@ -15,7 +15,8 @@
     margin-right: 0;
   }
 
-  &, &__section {
+  &,
+  &__section {
     border-color: #eee;
     border-style: solid;
   }
