@@ -58,11 +58,7 @@ export const PipelineVisualizationTask: React.FC<PipelineVisualizationTaskProp> 
     reason: runStatus.Idle,
   };
   if (pipelineRunStatus === runStatus.Failed || pipelineRunStatus === runStatus.Cancelled) {
-    if (
-      task.status &&
-      task.status.reason !== runStatus.Succeeded &&
-      task.status.reason !== runStatus.Failed
-    ) {
+    if (task?.status?.reason === runStatus.Idle || task?.status?.reason === runStatus.Pending) {
       taskStatus.reason = runStatus.Cancelled;
     }
   }
@@ -121,6 +117,11 @@ const TaskComponent: React.FC<TaskProps> = ({
   const path = pipelineRunName
     ? `${resourcePathFromModel(PipelineRunModel, pipelineRunName, namespace)}/logs/${name}`
     : undefined;
+  const enableLogLink =
+    status?.reason !== runStatus.Idle &&
+    status?.reason !== runStatus.Pending &&
+    status?.reason !== runStatus.Cancelled &&
+    !!path;
 
   let taskPill = (
     <div className={cx('odc-pipeline-vis-task__content', { 'is-selected': selected })}>
@@ -164,6 +165,8 @@ const TaskComponent: React.FC<TaskProps> = ({
     </>
   );
   return (
-    <div className="odc-pipeline-vis-task">{path ? <Link to={path}>{visTask}</Link> : visTask}</div>
+    <div className={cx('odc-pipeline-vis-task', { 'is-linked': enableLogLink })}>
+      {enableLogLink ? <Link to={path}>{visTask}</Link> : visTask}
+    </div>
   );
 };

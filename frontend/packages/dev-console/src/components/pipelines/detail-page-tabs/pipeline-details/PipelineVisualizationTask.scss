@@ -4,6 +4,7 @@ $border-color: var(--pf-global--BorderColor--light-100);
 .odc-pipeline-vis-task {
   position: relative;
   width: 10em;
+  cursor: default;
 
   &__content {
     width: inherit;
@@ -48,14 +49,14 @@ $border-color: var(--pf-global--BorderColor--light-100);
     display: flex;
     flex-direction: column;
     min-width: 0;
-    &:hover {
-      cursor: pointer;
-    }
     &.is-text-center {
       text-align: center;
       margin: 0 auto;
       flex: 0 0 100px;
     }
+  }
+  &.is-linked {
+    cursor: pointer;
   }
 
   &__title {
