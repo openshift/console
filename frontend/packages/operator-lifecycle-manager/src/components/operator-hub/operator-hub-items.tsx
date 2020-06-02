@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { Link } from 'react-router-dom';
 import * as _ from 'lodash';
-import LazyLoad from 'react-lazyload';
 import { CatalogItemHeader, CatalogTile } from '@patternfly/react-catalog-view-extension';
 import * as classNames from 'classnames';
 import { ExternalLinkAltIcon } from '@patternfly/react-icons';
@@ -20,7 +19,6 @@ import {
 } from '@console/shared';
 import { history } from '@console/internal/components/utils/router';
 import { TileViewPage } from '@console/internal/components/utils/tile-view-page';
-import * as operatorLogo from '@console/internal/imgs/operator.svg';
 import { SubscriptionModel } from '../../models';
 import { OperatorHubItemDetails } from './operator-hub-item-details';
 import { communityOperatorWarningModal } from './operator-hub-community-provider-modal';
@@ -383,16 +381,7 @@ export const OperatorHubTileView: React.FC<OperatorHubTileViewProps> = (props) =
     const badges = [COMMUNITY_PROVIDER_TYPE, MARKETPLACE_PROVIDER_TYPE].includes(item.providerType)
       ? [badge(item.providerType)]
       : [];
-    const icon = (
-      <LazyLoad
-        offset={1000}
-        once
-        placeholder={<img className="catalog-tile-pf-icon" src={operatorLogo} alt="" />}
-        scrollContainer="#content-scrollable"
-      >
-        <img className="catalog-tile-pf-icon" src={imgUrl} alt="" />
-      </LazyLoad>
-    );
+    const icon = <img className="catalog-tile-pf-icon" loading="lazy" src={imgUrl} alt="" />;
     return (
       <CatalogTile
         className="co-catalog-tile"
