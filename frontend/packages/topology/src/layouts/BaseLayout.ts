@@ -48,7 +48,7 @@ class LayoutNode {
 
   public readonly distance: number;
 
-  public parent: LayoutGroup;
+  public parent?: LayoutGroup;
 
   public index: number;
 
@@ -157,11 +157,11 @@ class LayoutNode {
 class LayoutGroup {
   protected readonly node: Node;
 
-  public leaves: LayoutNode[];
+  public leaves: LayoutNode[] = [];
 
-  public groups: LayoutGroup[];
+  public groups: LayoutGroup[] = [];
 
-  public parent: LayoutGroup;
+  public parent?: LayoutGroup;
 
   public padding: number;
 

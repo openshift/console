@@ -34,7 +34,7 @@ class DagreNode extends LayoutNode implements dagre.Node {
 class DagreGroup extends LayoutGroup {}
 
 class DagreLink extends LayoutLink {
-  public points: any[];
+  public points?: { x: number; y: number }[];
 
   updateBendpoints(): void {
     if (this.points && !this.isFalse && this.points.length > 2) {
