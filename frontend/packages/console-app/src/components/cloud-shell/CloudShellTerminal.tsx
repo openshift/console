@@ -44,7 +44,6 @@ const CloudShellTerminal: React.FC<CloudShellTerminalProps> = ({ user, onCancel 
     if (loaded && !loadError) {
       // workspace may be undefined which is ok
       setCloudShellNamespace(workspaceNamespace);
-      setNamespace(workspaceNamespace);
     }
   }, [loaded, loadError, workspaceNamespace]);
 
