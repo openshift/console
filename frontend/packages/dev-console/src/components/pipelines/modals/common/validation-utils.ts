@@ -121,6 +121,17 @@ export const startPipelineSchema = commonPipelineSchema.shape({
     }),
   ),
   secretOpen: yup.boolean().equals([false]),
+  secretForm: yup.object().when('secretOpen', {
+    is: true,
+    then: yup.object().shape({
+      secretName: yup.string().required('Required'),
+      type: yup.string().required('Required'),
+      annotations: yup.object({
+        key: yup.string().required('Required'),
+        value: yup.string().required('Required'),
+      }),
+    }),
+  }),
 });
 
 export const addTriggerSchema = commonPipelineSchema.shape({
@@ -134,14 +145,5 @@ export const addTriggerSchema = commonPipelineSchema.shape({
         }),
       })
       .required('Required'),
-  }),
-});
-
-export const advancedSectionValidationSchema = yup.object().shape({
-  secretName: yup.string().required('Required'),
-  type: yup.string().required('Required'),
-  annotations: yup.object().shape({
-    key: yup.string().required('Required'),
-    value: yup.string().required('Required'),
   }),
 });

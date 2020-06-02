@@ -1,66 +1,57 @@
 import * as React from 'react';
-import { Formik, useField, useFormikContext, FormikValues } from 'formik';
+import { useFormikContext, FormikValues } from 'formik';
 import { PlusCircleIcon } from '@patternfly/react-icons';
 import { Button } from '@patternfly/react-core';
 import { ExpandCollapse } from '@console/internal/components/utils';
-import { SecretType } from '@console/internal/components/secrets/create-secret';
 import { SecretModel } from '@console/internal/models';
-import { k8sCreate } from '@console/internal/module/k8s';
-import {
-  associateServiceAccountToSecret,
-  getSecretAnnotations,
-} from '../../../../utils/pipeline-utils';
-import { SecretAnnotationId } from '../../const';
-import { advancedSectionValidationSchema } from './validation-utils';
+import { SecretKind } from '@console/internal/module/k8s';
+import { getSecretAnnotations } from '../../../../utils/pipeline-utils';
 import SecretForm from './SecretForm';
 import SecretsList from './SecretsList';
+import { secretFormDefaultValues, isDuplicate } from './utils';
+import { useFetchSecrets } from './hooks';
 
 import './PipelineSecretSection.scss';
-
-const initialValues = {
-  secretName: '',
-  annotations: { key: SecretAnnotationId.Image, value: '' },
-  type: SecretType.dockerconfigjson,
-  formData: {},
-};
 
 type PipelineSecretSectionProps = {
   namespace: string;
 };
 
 const PipelineSecretSection: React.FC<PipelineSecretSectionProps> = ({ namespace }) => {
-  const [secretOpenField] = useField<boolean>('secretOpen');
-  const { setFieldValue } = useFormikContext<FormikValues>();
+  const {
+    setFieldValue,
+    values: { newSecrets, secretOpen, secretForm },
+    setFieldTouched,
+    setFieldError,
+  } = useFormikContext<FormikValues>();
+  const existingSecrets: SecretKind[] = useFetchSecrets(namespace);
 
-  const handleSubmit = (values, actions) => {
-    actions.setSubmitting(true);
-    const newSecret = {
-      apiVersion: SecretModel.apiVersion,
-      kind: SecretModel.kind,
-      metadata: {
-        name: values.secretName,
-        namespace,
-        annotations: getSecretAnnotations(values.annotations),
-      },
-      type: values.type,
-      stringData: values.formData,
-    };
-    k8sCreate(SecretModel, newSecret)
-      .then((resp) => {
-        actions.setSubmitting(false);
-        setFieldValue(secretOpenField.name, false);
-        associateServiceAccountToSecret(resp, namespace);
-      })
-      .catch((err) => {
-        actions.setSubmitting(false);
-        setFieldValue(secretOpenField.name, false);
-        actions.setStatus({ submitError: err.message });
-      });
+  const resetSecretForm = () => {
+    setFieldTouched(`secretForm`, false);
+    setFieldValue(`secretForm`, secretFormDefaultValues);
+    setFieldValue(`secretOpen`, false);
   };
 
-  const handleReset = (values, actions) => {
-    actions.resetForm({ values: initialValues, status: {} });
-    setFieldValue(secretOpenField.name, false);
+  const handleSubmit = () => {
+    if (isDuplicate(existingSecrets, secretForm.secretName)) {
+      setFieldError(`secretForm.secretName`, 'Secret name already exists.');
+    } else if (isDuplicate(newSecrets, secretForm.secretName)) {
+      setFieldError(`secretForm.secretName`, 'Secret name already added.');
+    } else {
+      const newSecret: SecretKind = {
+        apiVersion: SecretModel.apiVersion,
+        kind: SecretModel.kind,
+        metadata: {
+          name: secretForm.secretName,
+          namespace,
+          annotations: getSecretAnnotations(secretForm.annotations),
+        },
+        type: secretForm.type,
+        stringData: secretForm.formData,
+      };
+      setFieldValue(`newSecrets`, [...newSecrets, newSecret]);
+      resetSecretForm();
+    }
   };
 
   return (
@@ -71,23 +62,16 @@ const PipelineSecretSection: React.FC<PipelineSecretSectionProps> = ({ namespace
           the specified git server or docker registry:
         </p>
         <div className="odc-pipeline-secret-section__secrets">
-          <SecretsList namespace={namespace} />
-          {secretOpenField.value ? (
+          <SecretsList namespace={namespace} secrets={existingSecrets} />
+          {secretOpen ? (
             <div className="odc-pipeline-secret-section__secret-form">
-              <Formik
-                initialValues={initialValues}
-                validationSchema={advancedSectionValidationSchema}
-                onSubmit={handleSubmit}
-                onReset={handleReset}
-              >
-                {(props) => <SecretForm {...props} />}
-              </Formik>
+              <SecretForm onSubmit={handleSubmit} onClose={resetSecretForm} />
             </div>
           ) : (
             <Button
               variant="link"
               onClick={() => {
-                setFieldValue(secretOpenField.name, true);
+                setFieldValue(`secretOpen`, true);
               }}
               className="odc-pipeline-secret-section__secret-action"
               icon={<PlusCircleIcon />}

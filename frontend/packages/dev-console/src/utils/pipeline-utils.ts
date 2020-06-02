@@ -350,19 +350,35 @@ export const pipelineRunDuration = (run: PipelineRun): string => {
 };
 
 export const updateServiceAccount = (
-  secretName: string,
+  secretNames: string[],
   originalServiceAccount: ServiceAccountType,
 ): Promise<ServiceAccountType> => {
   const updatedServiceAccount = _.cloneDeep(originalServiceAccount);
-  updatedServiceAccount.secrets = [...updatedServiceAccount.secrets, { name: secretName }];
+  _.forEach(secretNames, (secretName) => {
+    updatedServiceAccount.secrets = [...updatedServiceAccount.secrets, { name: secretName }];
+  });
   return k8sUpdate(ServiceAccountModel, updatedServiceAccount);
 };
 
-export const associateServiceAccountToSecret = (secret: SecretKind, namespace: string) => {
+export const associateServiceAccountToSecrets = (secrets: SecretKind[], namespace: string) => {
   k8sGet(ServiceAccountModel, PIPELINE_SERVICE_ACCOUNT, namespace)
     .then((serviceAccount) => {
-      if (_.find(serviceAccount.secrets, (s) => s.name === secret.metadata.name) === undefined) {
-        updateServiceAccount(secret.metadata.name, serviceAccount);
+      const secretNames: string[] = _.reduce(
+        secrets,
+        (checkItems, secret) => {
+          const onServiceAccount = !!_.find(
+            serviceAccount.secrets,
+            (s) => s.name === secret.metadata.name,
+          );
+          if (!onServiceAccount) {
+            checkItems.push(secret.metadata.name);
+          }
+          return checkItems;
+        },
+        [],
+      );
+      if (secretNames.length !== 0) {
+        updateServiceAccount(secretNames, serviceAccount);
       }
     })
     .catch((err) => {

@@ -1,4 +1,6 @@
-import { k8sCreate, K8sResourceCommon } from '@console/internal/module/k8s';
+import { k8sCreate, K8sResourceCommon, SecretKind } from '@console/internal/module/k8s';
+import { SecretModel } from '@console/internal/models';
+import { associateServiceAccountToSecrets } from '../../../../utils/pipeline-utils';
 import { PipelineRunModel } from '../../../../models';
 import { Pipeline, PipelineRun } from '../../../../utils/pipeline-augment';
 import {
@@ -25,13 +27,11 @@ export const resourceSubmit = async (
     : createPipelineResource(params, type, namespace);
 };
 
-export const submitStartPipeline = async (
+export const createResources = async (
+  namespace: string,
   values: StartPipelineFormValues,
-  pipeline: Pipeline,
-  labels: { [key: string]: string },
-): Promise<PipelineRun> => {
-  const { namespace, resources } = values;
-
+  resources: PipelineModalFormResource[],
+): Promise<StartPipelineFormValues> => {
   const toCreateResources: { [index: string]: PipelineModalFormResource } = resources.reduce(
     (acc, resource, index) => {
       return resource.selection === CREATE_PIPELINE_RESOURCE ? { ...acc, [index]: resource } : acc;
@@ -61,11 +61,25 @@ export const submitStartPipeline = async (
       ),
     };
   }
+  return formValues;
+};
 
-  const pipelineRunResource: PipelineRun = await k8sCreate(
-    PipelineRunModel,
-    getPipelineRunFromForm(pipeline, formValues, labels),
+export const createSecrets = async (secrets: SecretKind[], namespace: string) => {
+  const createdSecrets: SecretKind[] = await Promise.all(
+    secrets.map((secret: SecretKind) => k8sCreate(SecretModel, secret)),
   );
+  associateServiceAccountToSecrets(createdSecrets, namespace);
+};
 
-  return Promise.resolve(pipelineRunResource);
+export const submitStartPipeline = async (
+  values: StartPipelineFormValues,
+  pipeline: Pipeline,
+  labels: { [key: string]: string },
+): Promise<PipelineRun> => {
+  const { namespace, resources, newSecrets } = values;
+
+  const formValues = await createResources(namespace, values, resources);
+  await createSecrets(newSecrets, values.namespace);
+
+  return k8sCreate(PipelineRunModel, getPipelineRunFromForm(pipeline, formValues, labels));
 };

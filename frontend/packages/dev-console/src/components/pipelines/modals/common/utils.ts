@@ -1,5 +1,7 @@
 import * as _ from 'lodash';
 import { getRandomChars } from '@console/shared';
+import { SecretKind } from '@console/internal/module/k8s';
+import { SecretType } from '@console/internal/components/secrets/create-secret';
 import {
   Pipeline,
   PipelineResource,
@@ -11,6 +13,7 @@ import {
 } from '../../../../utils/pipeline-augment';
 import { PipelineRunModel } from '../../../../models';
 import { getPipelineRunParams, getPipelineRunWorkspaces } from '../../../../utils/pipeline-utils';
+import { SecretAnnotationId } from '../../const';
 import { CREATE_PIPELINE_RESOURCE, initialResourceFormValues } from './const';
 import { CommonPipelineModalFormikValues, PipelineModalFormResource } from './types';
 
@@ -154,4 +157,15 @@ export const getPipelineRunFromForm = (
     },
   };
   return getPipelineRunData(pipeline, pipelineRunData);
+};
+
+export const secretFormDefaultValues = {
+  secretName: '',
+  annotations: { key: SecretAnnotationId.Image, value: '' },
+  type: SecretType.dockerconfigjson,
+  formData: {},
+};
+
+export const isDuplicate = (secrets: SecretKind[], newSecretName: string): boolean => {
+  return !!_.find(secrets, (obj) => obj.metadata.name === newSecretName);
 };

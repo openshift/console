@@ -2,7 +2,6 @@ import * as React from 'react';
 import * as _ from 'lodash';
 import { FormikValues, useFormikContext } from 'formik';
 import { TextInputTypes } from '@patternfly/react-core';
-import { ButtonBar } from '@console/internal/components/utils';
 import {
   SecretType,
   BasicAuthSubform,
@@ -12,6 +11,11 @@ import {
 import { DropdownField, InputField, ActionGroupWithIcons } from '@console/shared';
 import SecretAnnotation from './SecretAnnotation';
 import './SecretForm.scss';
+
+interface SecretFormProps {
+  onSubmit: () => void;
+  onClose: () => void;
+}
 
 const authTypes = {
   [SecretType.dockerconfigjson]: 'Image Registry Credentials',
@@ -47,33 +51,29 @@ const renderSecretForm = (
   }
 };
 
-const SecretForm: React.FC<FormikValues> = ({
-  handleSubmit,
-  handleReset,
-  status,
-  isSubmitting,
-}) => {
-  const { values, setFieldValue } = useFormikContext<FormikValues>();
+const SecretForm: React.FC<SecretFormProps> = ({ onSubmit, onClose }) => {
+  const {
+    values: { secretForm },
+    setFieldValue,
+    errors,
+  } = useFormikContext<FormikValues>();
   const [stringData, setStringData] = React.useState({
     [SecretType.basicAuth]: {},
     [SecretType.sshAuth]: {},
     [SecretType.dockerconfigjson]: {},
   });
 
-  const setValues = (type: SecretType) => {
-    if (type === SecretType.dockerconfigjson) {
+  const onDataChanged = (value: string) => {
+    const newStringData: typeof stringData = _.merge({}, stringData, { [secretForm.type]: value });
+    setStringData(newStringData);
+    if (secretForm.type === SecretType.dockerconfigjson) {
       setFieldValue(
-        'formData',
-        _.mapValues({ '.dockerconfigjson': stringData[type] }, JSON.stringify),
+        'secretForm.formData',
+        _.mapValues({ '.dockerconfigjson': newStringData[secretForm.type] }, JSON.stringify),
       );
     } else {
-      setFieldValue('formData', stringData[type]);
+      setFieldValue('secretForm.formData', newStringData[secretForm.type]);
     }
-  };
-
-  const onDataChanged = (value: string) => {
-    setStringData(_.merge(stringData, { [values.type]: value }));
-    setValues(values.type);
   };
 
   return (
@@ -83,29 +83,30 @@ const SecretForm: React.FC<FormikValues> = ({
         <InputField
           type={TextInputTypes.text}
           required
-          name="secretName"
+          name="secretForm.secretName"
           label="Secret Name"
           helpText="Unique name of the new secret."
         />
       </div>
       <div className="form-group">
-        <SecretAnnotation fieldName="annotations" />
+        <SecretAnnotation fieldName="secretForm.annotations" />
       </div>
       <div className="form-group">
         <DropdownField
-          name="type"
+          name="secretForm.type"
           label="Authentication Type"
           items={authTypes}
-          title={authTypes[values.type]}
-          onChange={(type: SecretType) => setValues(type)}
+          title={authTypes[secretForm.type]}
           fullWidth
           required
         />
       </div>
-      {renderSecretForm(values.type, stringData, onDataChanged)}
-      <ButtonBar errorMessage={status?.submitError} inProgress={isSubmitting}>
-        <ActionGroupWithIcons onSubmit={handleSubmit} onClose={handleReset} />
-      </ButtonBar>
+      {renderSecretForm(secretForm.type, stringData, onDataChanged)}
+      <ActionGroupWithIcons
+        onSubmit={onSubmit}
+        onClose={onClose}
+        isDisabled={!_.isEmpty(errors?.secretForm)}
+      />
     </div>
   );
 };

@@ -4,11 +4,10 @@ import {
   createModalLauncher,
   ModalComponentProps,
 } from '@console/internal/components/factory/modal';
-import { errorModal } from '@console/internal/components/modals';
 import { Pipeline, PipelineRun, PipelineWorkspace } from '../../../../utils/pipeline-augment';
 import { useUserLabelForManualStart } from '../../../pipelineruns/triggered-by';
 import ModalStructure from '../common/ModalStructure';
-import { convertPipelineToModalData } from '../common/utils';
+import { convertPipelineToModalData, secretFormDefaultValues } from '../common/utils';
 import { startPipelineSchema } from '../common/validation-utils';
 import StartPipelineForm from './StartPipelineForm';
 import { submitStartPipeline } from './submit-utils';
@@ -31,7 +30,9 @@ const StartPipelineModal: React.FC<StartPipelineModalProps & ModalComponentProps
       ...workspace,
       type: 'EmptyDirectory',
     })),
+    newSecrets: [],
     secretOpen: false,
+    secretForm: secretFormDefaultValues,
   };
 
   const handleSubmit = (values: StartPipelineFormValues, actions): void => {
@@ -46,8 +47,6 @@ const StartPipelineModal: React.FC<StartPipelineModalProps & ModalComponentProps
       .catch((err) => {
         actions.setSubmitting(false);
         actions.setStatus({ submitError: err.message });
-        errorModal({ error: err.message });
-        close();
       });
   };
 

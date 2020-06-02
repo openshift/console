@@ -1,80 +1,64 @@
 import * as React from 'react';
 import * as _ from 'lodash';
-import {
-  ResourceLink,
-  Firehose,
-  FirehoseResult,
-  FirehoseResource,
-} from '@console/internal/components/utils';
-import { SecretModel, ServiceAccountModel } from '@console/internal/models';
+import { useFormikContext, FormikValues } from 'formik';
+import { ResourceLink } from '@console/internal/components/utils';
+import { SecretModel } from '@console/internal/models';
 import { SecretType } from '@console/internal/components/secrets/create-secret';
 import { SecondaryStatus } from '@console/shared';
 import { SecretKind } from '@console/internal/module/k8s';
 import { ServiceAccountType } from '../../../../utils/pipeline-utils';
-import { PIPELINE_SERVICE_ACCOUNT } from '../../const';
+import { useFetchServiceAccount } from './hooks';
 import './SecretsList.scss';
-
-type SecretsProps = {
-  secrets?: FirehoseResult<SecretKind[]>;
-  serviceaccounts?: FirehoseResult<ServiceAccountType>;
-};
 
 type SecretsListProps = {
   namespace: string;
+  secrets: SecretKind[];
 };
 
 const secretTypes = [SecretType.dockerconfigjson, SecretType.basicAuth, SecretType.sshAuth];
 
-const Secrets: React.FC<SecretsProps> = ({ secrets, serviceaccounts }) => {
-  const serviceAccountSecrets = _.map(serviceaccounts.data.secrets, 'name');
+const SecretsList: React.FC<SecretsListProps> = ({ namespace, secrets }) => {
+  const {
+    values: { newSecrets },
+  } = useFormikContext<FormikValues>();
+
+  const serviceAccount: ServiceAccountType = useFetchServiceAccount(namespace);
+
+  const serviceAccountSecrets = _.map(serviceAccount?.secrets, 'name');
   const filterData = _.filter(
-    secrets.data,
+    secrets,
     (secret) =>
       _.includes(secretTypes, secret.type) &&
       _.includes(serviceAccountSecrets, secret.metadata.name),
   );
   const sortedFilterData = _.sortBy(filterData, (data) => data.metadata.name);
+  const finalData = _.concat(newSecrets, sortedFilterData);
 
   return (
     <div className="odc-secrets-list">
-      {sortedFilterData.map((secret) => {
+      {finalData.map((secret) => {
         return (
           <ResourceLink
-            key={secret.metadata.uid}
+            key={secret.metadata.uid || secret.metadata.name}
             kind={SecretModel.kind}
-            name={secret.metadata.name}
+            name={
+              secret.metadata.uid ? (
+                secret.metadata.name
+              ) : (
+                <>
+                  {secret.metadata.name}
+                  <span className="text-muted odc-secrets-list__name">(Pending)</span>
+                </>
+              )
+            }
             namespace={secret.metadata.namespace}
             title={secret.metadata.name}
             linkTo={false}
           />
         );
       })}
-      {_.isEmpty(sortedFilterData) && <SecondaryStatus status="No source secrets found" />}
+      {_.isEmpty(finalData) && <SecondaryStatus status="No source secrets found" />}
     </div>
-  );
-};
-
-const SecretsList: React.FC<SecretsListProps> = ({ namespace }) => {
-  const resources: FirehoseResource[] = [
-    {
-      isList: true,
-      namespace,
-      kind: SecretModel.kind,
-      prop: SecretModel.plural,
-    },
-    {
-      isList: false,
-      namespace,
-      kind: ServiceAccountModel.kind,
-      prop: ServiceAccountModel.plural,
-      name: PIPELINE_SERVICE_ACCOUNT,
-    },
-  ];
-
-  return (
-    <Firehose resources={resources}>
-      <Secrets />
-    </Firehose>
   );
 };
 
