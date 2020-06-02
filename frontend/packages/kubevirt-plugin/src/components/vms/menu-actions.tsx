@@ -4,7 +4,6 @@ import { asAccessReview, Kebab, KebabOption } from '@console/internal/components
 import { K8sKind, K8sResourceCommon, K8sResourceKind, PodKind } from '@console/internal/module/k8s';
 import { getName, getNamespace } from '@console/shared';
 import { confirmModal, deleteModal } from '@console/internal/components/modals';
-import { ModifyApplication } from '@console/dev-console/src/actions/modify-application';
 import { VMIKind, VMKind } from '../../types/vm';
 import {
   isVMCreated,
@@ -214,7 +213,6 @@ export const menuActionDeleteVMI = (kindObj: K8sKind, vmi: VMIKind): KebabOption
 });
 
 export const vmMenuActions = [
-  ModifyApplication,
   menuActionStart,
   menuActionStop,
   menuActionRestart,
