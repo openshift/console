@@ -979,7 +979,7 @@ export const ClusterServiceVersionsDetailsPage: React.FC<ClusterServiceVersionsD
                   href: referenceForProvidedAPI(desc),
                   name: ['Details', 'YAML', 'Subscription', 'Events'].includes(desc.displayName)
                     ? `${desc.displayName} Operand`
-                    : desc.displayName,
+                    : desc.displayName || desc.kind,
                   component: React.memo(
                     () => (
                       <ProvidedAPIPage
