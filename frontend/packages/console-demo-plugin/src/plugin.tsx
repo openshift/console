@@ -188,6 +188,16 @@ const plugin: Plugin<ConsumedExtensions> = [
     },
   },
   {
+    type: 'NavItem/Href',
+    properties: {
+      perspective: 'test',
+      componentProps: {
+        name: 'Test Root Window Page',
+        href: '/test-root',
+      },
+    },
+  },
+  {
     type: 'NavItem/ResourceCluster',
     properties: {
       perspective: 'test',
@@ -204,6 +214,15 @@ const plugin: Plugin<ConsumedExtensions> = [
       exact: true,
       path: '/test',
       render: () => <h1>Test Page</h1>,
+    },
+  },
+  {
+    type: 'Page/Route',
+    properties: {
+      exact: true,
+      path: '/test-root',
+      rootWindow: true,
+      render: () => <h1>Test Root Window Page</h1>,
     },
   },
   {

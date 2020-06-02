@@ -8,7 +8,7 @@ import { Route, Router, Switch } from 'react-router-dom';
 import 'abort-controller/polyfill';
 import store from '../redux';
 import { detectFeatures } from '../actions/features';
-import AppContents from './app-contents';
+import { AppContents, getPluginRootWindowRoutes } from './app-contents';
 import { getBrandingDetails, Masthead } from './masthead';
 import { ConsoleNotifier } from './console-notifier';
 import { ConnectedNotificationDrawer } from './notification-drawer';
@@ -215,6 +215,7 @@ render(
   <Provider store={store}>
     <Router history={history} basename={window.SERVER_FLAGS.basePath}>
       <Switch>
+        {getPluginRootWindowRoutes()}
         <Route path="/terminal" component={CloudShellTab} />
         <Route path="/" component={App} />
       </Switch>

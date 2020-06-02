@@ -91,6 +91,7 @@ const getPluginPageRoutes = (activePerspective: string, flags: FlagsObject) =>
   plugins.registry
     .getRoutePages()
     .filter((e) => plugins.registry.isExtensionInUse(e, flags))
+    .filter((r) => !r.properties?.rootWindow)
     .map((r) => {
       if (r.properties.perspective && r.properties.perspective !== activePerspective) {
         return null;
@@ -98,6 +99,15 @@ const getPluginPageRoutes = (activePerspective: string, flags: FlagsObject) =>
       const Component = r.properties.loader ? LazyRoute : Route;
       return <Component {...r.properties} key={Array.from(r.properties.path).join(',')} />;
     });
+
+const getPluginRootWindowRoutes = () =>
+  plugins.registry.getRoutePages().map((r) => {
+    if (!r.properties.rootWindow) {
+      return null;
+    }
+    const Component = r.properties.loader ? LazyRoute : Route;
+    return <Component {...r.properties} key={Array.from(r.properties.path).join(',')} />;
+  });
 
 type AppContentsProps = {
   activePerspective: string;
@@ -651,4 +661,4 @@ const AppContents = connect((state: RootState) => ({
   activePerspective: getActivePerspective(state),
 }))(connectToFlags(...plugins.registry.getGatingFlagNames([plugins.isRoutePage]))(AppContents_));
 
-export default AppContents;
+export { AppContents, getPluginRootWindowRoutes };
