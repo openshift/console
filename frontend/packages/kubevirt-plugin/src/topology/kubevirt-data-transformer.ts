@@ -30,8 +30,8 @@ import { VMNodeData } from './types';
 export const kubevirtAllowedResources = ['virtualmachines'];
 
 export const getOperatingSystemImage = (vm: VMKind, templates: K8sResourceKind[]): string => {
-  const templateName = vm.metadata.labels['vm.kubevirt.io/template'];
-  const template = templates.find((t) => t.metadata.name === templateName);
+  const templateName = vm.metadata?.labels?.['vm.kubevirt.io/template'];
+  const template = templateName && templates.find((t) => t.metadata.name === templateName);
   if (!template) {
     return '';
   }
