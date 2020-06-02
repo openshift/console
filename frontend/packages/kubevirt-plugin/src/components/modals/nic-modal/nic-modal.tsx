@@ -95,8 +95,8 @@ export const Network: React.FC<NetworkProps> = ({
           isDisabled={!acceptEmptyValues}
           placeholder={
             networkChoices.length === 0
-              ? '--- Network Attachment Definitions not available ---'
-              : '--- Select Attachment Network Definition ---'
+              ? '--- No Network Attachment Definitions available ---'
+              : '--- Select Network Attachment Definition ---'
           }
         />
         {ignoreCaseSort(networkChoices, undefined, (n) => n.getReadableName()).map(
