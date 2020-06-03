@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import { Helmet } from 'react-helmet';
 import Dashboard from '@console/shared/src/components/dashboard/Dashboard';
 import { RootState } from '@console/internal/redux';
-import { getURLSearchParams } from '@console/internal/components/utils';
+import { getURLSearchParams, ResourceLink } from '@console/internal/components/utils';
 import {
   TimespanDropdown,
   PollIntervalDropdown,
@@ -36,10 +36,10 @@ export const MonitoringDashboard: React.FC<Props> = ({ match, timespan, pollInte
   const namespace = match.params.ns;
   const params = getURLSearchParams();
   const { workloadName, workloadType } = params;
-  const queries: MonitoringQuery[] =
-    workloadName && workloadType
-      ? [...topWorkloadMetricsQueries, ...workloadMetricsQueries]
-      : monitoringDashboardQueries;
+  const workLoadPresent = workloadName && workloadType;
+  const queries: MonitoringQuery[] = workLoadPresent
+    ? [...topWorkloadMetricsQueries, ...workloadMetricsQueries]
+    : monitoringDashboardQueries;
 
   return (
     <>
@@ -51,13 +51,25 @@ export const MonitoringDashboard: React.FC<Props> = ({ match, timespan, pollInte
           <TimespanDropdown />
           <PollIntervalDropdown />
         </div>
+        {workLoadPresent && (
+          <div className="odc-monitoring-dashboard__resource-link">
+            Showing metrics for &nbsp;
+            <ResourceLink
+              kind={workloadType}
+              name={workloadName}
+              namespace={namespace}
+              title={workloadName}
+              inline
+            />
+          </div>
+        )}
         <Dashboard>
           {_.map(queries, (q) => (
             <ConnectedMonitoringDashboardGraph
               title={q.title}
               namespace={namespace}
               graphType={q.chartType}
-              query={q.query({ namespace, workloadName, workloadType })}
+              query={q.query({ namespace, workloadName, workloadType: _.toLower(workloadType) })}
               humanize={q.humanize}
               byteDataType={q.byteDataType}
               key={q.title}
