@@ -1,7 +1,6 @@
 import * as _ from 'lodash';
 import * as classnames from 'classnames';
 import * as React from 'react';
-import { JSONSchema6TypeName } from 'json-schema';
 import {
   ArrayFieldTemplateProps,
   FieldTemplateProps,
@@ -140,7 +139,7 @@ export const FieldTemplate: React.FC<FieldTemplateProps> = (props) => {
   if (hidden || !dependencyMet) {
     return null;
   }
-  const isGroup = JSON_SCHEMA_GROUP_TYPES.includes(type as JSONSchema6TypeName);
+  const isGroup = JSON_SCHEMA_GROUP_TYPES.includes(type);
   return isGroup ? children : <AtomicFieldTemplate {...props} />;
 };
 

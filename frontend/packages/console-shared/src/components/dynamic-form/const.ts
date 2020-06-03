@@ -1,5 +1,3 @@
-import { JSONSchema6TypeName } from 'json-schema';
-
 export const K8S_UI_SCHEMA = {
   apiVersion: {
     'ui:widget': 'hidden',
@@ -27,4 +25,5 @@ export const K8S_UI_SCHEMA = {
   'ui:order': ['metadata', 'spec', '*'],
 };
 
-export const JSON_SCHEMA_GROUP_TYPES: JSONSchema6TypeName[] = ['object', 'array'];
+export const JSON_SCHEMA_GROUP_TYPES: string[] = ['object', 'array'];
+export const JSON_SCHEMA_NUMBER_TYPES: string[] = ['number', 'integer'];
