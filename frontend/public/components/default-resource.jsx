@@ -91,17 +91,16 @@ TableRowForKind.displayName = 'TableRowForKind';
 
 const DetailsForKind = (kind) =>
   function DetailsForKind_({ obj }) {
-    const conditions = obj.status && obj.status.conditions;
     return (
       <>
         <div className="co-m-pane__body">
           <SectionHeading text={`${kindForReference(kind)} Details`} />
           <ResourceSummary resource={obj} podSelector="spec.podSelector" showNodeSelector={false} />
         </div>
-        {conditions && (
+        {_.isArray(obj?.status?.conditions) && (
           <div className="co-m-pane__body">
             <SectionHeading text="Conditions" />
-            <Conditions conditions={conditions} />
+            <Conditions conditions={obj.status.conditions} />
           </div>
         )}
       </>
