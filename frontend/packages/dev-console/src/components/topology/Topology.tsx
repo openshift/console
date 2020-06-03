@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as classNames from 'classnames';
 import { action } from 'mobx';
 import { connect } from 'react-redux';
-import { Button, ToolbarItem, Tooltip } from '@patternfly/react-core';
+import { Button, PageHeaderToolsItem, Tooltip } from '@patternfly/react-core';
 import { TopologyIcon } from '@patternfly/react-icons';
 import {
   TopologyView,
@@ -279,7 +279,7 @@ const Topology: React.FC<ComponentProps> = ({
       >
         <div className="odc-topology__layout-group">
           <Tooltip content="Layout 1">
-            <ToolbarItem className="odc-topology__layout-button" tabIndex={-1}>
+            <PageHeaderToolsItem className="odc-topology__layout-button" tabIndex={-1}>
               <Button
                 className={classNames('pf-topology-control-bar__button', {
                   'pf-m-active': layout === COLA_LAYOUT,
@@ -290,10 +290,10 @@ const Topology: React.FC<ComponentProps> = ({
                 <TopologyIcon className="odc-topology__layout-button__icon" />1
                 <span className="sr-only">Layout 1</span>
               </Button>
-            </ToolbarItem>
+            </PageHeaderToolsItem>
           </Tooltip>
           <Tooltip content="Layout 2">
-            <ToolbarItem className="odc-topology__layout-button" tabIndex={-1}>
+            <PageHeaderToolsItem className="odc-topology__layout-button" tabIndex={-1}>
               <Button
                 className={classNames('pf-topology-control-bar__button', {
                   'pf-m-active': layout === COLA_FORCE_LAYOUT,
@@ -304,7 +304,7 @@ const Topology: React.FC<ComponentProps> = ({
                 <TopologyIcon className="odc-topology__layout-button__icon" />2
                 <span className="sr-only">Layout 2</span>
               </Button>
-            </ToolbarItem>
+            </PageHeaderToolsItem>
           </Tooltip>
         </div>
       </TopologyControlBar>

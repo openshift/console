@@ -18,7 +18,7 @@ const PipelineBuilderHeader: React.FC<PipelineBuilderHeaderProps> = (props) => {
   return (
     <div className="odc-pipeline-builder-header">
       <Flex className="odc-pipeline-builder-header__content">
-        <FlexItem breakpointMods={[{ modifier: FlexItemModifiers.grow }]}>
+        <FlexItem grow={{"default":"grow"}} >
           <h1 className="odc-pipeline-builder-header__title">Pipeline Builder</h1>
         </FlexItem>
         <FlexItem>

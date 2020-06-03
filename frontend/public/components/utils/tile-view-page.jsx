@@ -869,7 +869,7 @@ export class TileViewPage extends React.Component {
 
   renderItems(items, renderTile) {
     return (
-      <Gallery gutter="sm" className="co-catalog-tile-view">
+      <Gallery hasGutter className="co-catalog-tile-view">
         {_.map(items, (item) => (
           <GalleryItem key={item.uid ? `gallery-${item.uid}` : `gallery-${item.obj.metadata.uid}`}>
             {renderTile(item)}

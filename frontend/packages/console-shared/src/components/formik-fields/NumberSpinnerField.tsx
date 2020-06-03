@@ -22,7 +22,7 @@ const NumberSpinnerField: React.FC<FieldProps> = ({ label, helpText, required, .
       label={label}
       helperText={helpText}
       helperTextInvalid={errorMessage}
-      isValid={isValid}
+      validated={(isValid) ? 'default' : 'error'}
       isRequired={required}
     >
       <NumberSpinner

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Tooltip, Flex, FlexItem, FlexModifiers, Button } from '@patternfly/react-core';
+import { Tooltip, Flex, FlexItem,  Button } from '@patternfly/react-core';
 import { CloseIcon, ExternalLinkAltIcon } from '@patternfly/react-icons';
 import { InlineTechPreviewBadge } from '@console/shared';
 import Drawer from '@console/shared/src/components/drawer/Drawer';
@@ -32,7 +32,7 @@ const CloudShellDrawer: React.FC<CloudShellDrawerProps> = ({ children, onClose }
       <FlexItem>
         <InlineTechPreviewBadge />
       </FlexItem>
-      <FlexItem breakpointMods={[{ modifier: FlexModifiers['align-right'] }]}>
+      <FlexItem align={{"default":"alignRight"}} >
         <Tooltip content="Open terminal in new tab">
           <Button
             variant="plain"

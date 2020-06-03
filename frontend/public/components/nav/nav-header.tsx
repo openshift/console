@@ -51,10 +51,10 @@ const NavHeader_: React.FC<NavHeaderProps & StateProps> = ({
       <DropdownToggle
         isOpen={isPerspectiveDropdownOpen}
         onToggle={togglePerspectiveOpen}
-        iconComponent={CaretDownIcon}
+        toggleIndicator={CaretDownIcon}
         data-test-id="perspective-switcher-toggle"
       >
-        <Title size="md">
+        <Title headingLevel="h2" size="md">
           <span className="oc-nav-header__icon">{icon}</span>
           {name}
         </Title>
@@ -74,7 +74,7 @@ const NavHeader_: React.FC<NavHeaderProps & StateProps> = ({
           isHovered={nextPerspective.properties.id === activePerspective}
           component="button"
         >
-          <Title size="md">
+          <Title headingLevel="h2" size="md">
             <span className="oc-nav-header__icon">{nextPerspective.properties.icon}</span>
             {nextPerspective.properties.name}
           </Title>

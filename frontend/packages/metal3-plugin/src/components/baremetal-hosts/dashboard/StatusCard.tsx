@@ -89,7 +89,7 @@ const HealthCard: React.FC<HealthCardProps> = ({
       </DashboardCardHeader>
       <DashboardCardBody>
         <HealthBody>
-          <Gallery className="co-overview-status__health" gutter="md">
+          <Gallery className="co-overview-status__health" hasGutter>
             <GalleryItem>
               <HealthItem title="Status" state={health.state} details={health.title} />
             </GalleryItem>

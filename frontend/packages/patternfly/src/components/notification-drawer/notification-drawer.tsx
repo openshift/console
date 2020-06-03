@@ -4,7 +4,7 @@ import {
   DrawerContent,
   DrawerPanelContent,
   DrawerPanelBody,
-} from '@patternfly/react-core/dist/js/experimental/components/Drawer';
+} from '@patternfly/react-core';
 
 import NotificationDrawerHeading from './notification-drawer-heading';
 
@@ -18,7 +18,7 @@ const NotificationDrawer: React.FC<NotificationDrawerProps> = ({
   const panelContent = (
     <DrawerPanelContent className={className}>
       <NotificationDrawerHeading>{notificationEntries}</NotificationDrawerHeading>
-      <DrawerPanelBody noPadding />
+      <DrawerPanelBody hasNoPadding />
     </DrawerPanelContent>
   );
   return (

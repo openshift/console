@@ -64,7 +64,7 @@ export const Masthead = React.memo(({ onNavToggle }) => {
       id="page-main-header"
       logo={<Brand src={details.logoImg} alt={details.productName} />}
       logoProps={logoProps}
-      toolbar={<MastheadToolbar />}
+      headerTools={<MastheadToolbar />}
       showNavToggle
       onNavToggle={onNavToggle}
     />

@@ -25,7 +25,7 @@ const GeneralPage: React.FC<GeneralPageProps> = ({ dispatch, state }) => {
           variant="info"
           title="What is a Bucket Class?"
           className="nb-create-bc-step-page__info"
-          action={<AlertActionCloseButton onClose={() => setShowHelp(false)} />}
+          actionClose={<AlertActionCloseButton onClose={() => setShowHelp(false)} />}
         >
           <p>An MCG Bucket&apos;s data location is determined by a policy called a Bucket Class</p>
           <ExternalLink

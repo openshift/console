@@ -3,7 +3,7 @@ import { FieldArray, useField } from 'formik';
 import {
   Flex,
   FlexItem,
-  FlexModifiers,
+  
   FormGroup,
   TextInputTypes,
   Button,
@@ -49,7 +49,7 @@ const TextColumnField: React.FC<TextColumnFieldProps> = ({
             <FormGroup
               fieldId={fieldId}
               label={label}
-              isValid={isValid}
+              validated={(isValid) ? 'default' : 'error'}
               isRequired={required}
               helperText={helpText}
             >
@@ -59,7 +59,7 @@ const TextColumnField: React.FC<TextColumnFieldProps> = ({
                     key={`${idx.toString()}`}
                     style={{ marginBottom: 'var(--pf-global--spacer--sm)' }}
                   >
-                    <FlexItem breakpointMods={[{ modifier: FlexModifiers.grow }]}>
+                    <FlexItem grow={{"default":"grow"}} >
                       <InputField
                         type={TextInputTypes.text}
                         name={`${name}.${idx}`}

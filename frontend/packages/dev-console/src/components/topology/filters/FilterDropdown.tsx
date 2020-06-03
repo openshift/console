@@ -40,7 +40,7 @@ const FilterDropdown: React.FC<FilterDropdownProps> = ({ filters, onChange }) =>
       variant={SelectVariant.checkbox}
       onToggle={onToggle}
       selections={selected}
-      isExpanded={isOpen}
+      isOpen={isOpen}
       onSelect={onSelect}
       placeholderText="Display Options"
       isGrouped

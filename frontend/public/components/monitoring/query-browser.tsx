@@ -80,8 +80,8 @@ export const Error: React.FC<ErrorProps> = ({ error, title = 'An error occurred'
 const GraphEmptyState: React.FC<GraphEmptyStateProps> = ({ children, title }) => (
   <div className="query-browser__wrapper graph-empty-state">
     <EmptyState variant={EmptyStateVariant.full}>
-      <EmptyStateIcon size="sm" icon={ChartLineIcon} />
-      <Title size="sm">{title}</Title>
+      <EmptyStateIcon  icon={ChartLineIcon} />
+      <Title headingLevel="h2" size="md">{title}</Title>
       <EmptyStateBody>{children}</EmptyStateBody>
     </EmptyState>
   </div>
@@ -114,7 +114,7 @@ const SpanControls: React.FC<SpanControlsProps> = React.memo(
         <TextInput
           aria-label="graph timespan"
           className="query-browser__span-text"
-          isValid={isValid}
+          validated={(isValid) ? 'default' : 'error'}
           onChange={(v) => setSpan(v, true)}
           type="text"
           value={text}

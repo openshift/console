@@ -23,7 +23,7 @@ export const WorkloadPausedAlert = ({ model, obj }) => {
       className="co-alert"
       variant="info"
       title={<>{obj.metadata.name} is paused</>}
-      action={
+      actionLinks={
         <AlertActionLink
           onClick={() =>
             togglePaused(model, obj).catch((err) => errorModal({ error: err.message }))

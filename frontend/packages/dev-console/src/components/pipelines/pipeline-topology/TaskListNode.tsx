@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as FocusTrap from 'focus-trap-react';
-import { Button, Flex, FlexItem, FlexModifiers } from '@patternfly/react-core';
+import { Button, Flex, FlexItem  } from '@patternfly/react-core';
 import { CaretDownIcon } from '@patternfly/react-icons';
 import Popper from '@console/shared/src/components/popper/Popper';
 import { KebabItem, KebabOption } from '@console/internal/components/utils';
@@ -54,14 +54,11 @@ const TaskListNode: React.FC<TaskListNodeProps> = ({ element, unselectedText }) 
             'No Tasks'
           ) : (
             <Flex
-              breakpointMods={[
-                { modifier: FlexModifiers.nowrap },
-                { modifier: FlexModifiers['space-items-none'] },
-              ]}
+              flexWrap={{"default":"nowrap"}} spaceItems={{"default":"spaceItemsNone"}} 
             >
               <FlexItem
                 className="odc-task-list-node__label"
-                breakpointMods={[{ modifier: FlexModifiers.grow }]}
+                grow={{"default":"grow"}} 
               >
                 {unselectedText || 'Select task'}
               </FlexItem>

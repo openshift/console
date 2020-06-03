@@ -63,14 +63,14 @@ export const AffinityExpressionRow = ({
         <Select
           isDisabled={!enableValueField}
           variant={SelectVariant.typeaheadMulti}
-          isExpanded={isValuesExpanded}
+          isOpen={isValuesExpanded}
           isCreatable
-          ariaLabelTypeAhead="Enter Value"
+          typeAheadAriaLabel="Enter Value"
           onToggle={() => setIsValuesExpanded(!isValuesExpanded)}
           onClear={() => onChange({ ...expression, values: [] })}
           onSelect={onSelect}
           selections={enableValueField ? values : []}
-          ariaLabelledBy="values select"
+          aria-labelledby="values select"
           placeholderText={enableValueField ? 'Enter Value' : ''}
         >
           {values.map((option, index) => (

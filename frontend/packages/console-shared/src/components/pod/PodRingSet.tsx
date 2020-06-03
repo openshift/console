@@ -28,7 +28,7 @@ const PodRingSet: React.FC<PodRingSetProps> = ({ podData, resourceKind, obj, pat
   const progressRC = inProgressDeploymentData && current;
   const completedRC = !!inProgressDeploymentData && completedDeploymentData ? previous : current;
   return (
-    <Split gutter="lg">
+    <Split hasGutter>
       <SplitItem>
         <PodRing
           key={inProgressDeploymentData ? 'deploy' : 'notDeploy'}

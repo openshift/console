@@ -43,7 +43,7 @@ export const SearchFilterDropdown: React.SFC<SearchFilterDropdownProps> = (props
       <Dropdown
         onSelect={onSelect}
         toggle={
-          <DropdownToggle id="toggle-id" onToggle={onToggle} iconComponent={CaretDownIcon}>
+          <DropdownToggle id="toggle-id" onToggle={onToggle} toggleIndicator={CaretDownIcon}>
             <>
               <FilterIcon className="span--icon__right-margin" /> {selected}
             </>

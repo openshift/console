@@ -242,7 +242,7 @@ const NodeHealth: React.FC = () => {
   const { obj } = React.useContext(NodeDashboardContext);
   return (
     <HealthBody>
-      <Gallery className="co-overview-status__health" gutter="md">
+      <Gallery className="co-overview-status__health" hasGutter>
         <GalleryItem>
           <NodeStatus node={obj} className="co-node-health__status" />
         </GalleryItem>

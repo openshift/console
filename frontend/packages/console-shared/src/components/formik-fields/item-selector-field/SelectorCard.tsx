@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as classNames from 'classnames';
-import { Card, CardHeader, CardBody } from '@patternfly/react-core';
+import { Card, CardHeader, CardBody, CardTitle, CardHeaderMain } from '@patternfly/react-core';
 import { StarIcon } from '@patternfly/react-icons';
 import './SelectorCard.scss';
 
@@ -32,9 +32,9 @@ const SelectorCard: React.FC<SelectorCardProps> = ({
       className={classes}
       onClick={() => onChange(name)}
     >
-      <CardHeader>
+      <CardTitle>
         <img className="odc-selector-card__icon" src={iconUrl} alt={displayName ?? title} />
-      </CardHeader>
+      </CardTitle>
       <CardBody>
         <span className="odc-selector-card__title">{title}</span>
       </CardBody>

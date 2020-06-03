@@ -789,7 +789,7 @@ const NamespaceAlert_: React.FC<{ dismiss: () => undefined; isDismissed: boolean
 }) =>
   isDismissed ? null : (
     <Alert
-      action={<AlertActionCloseButton onClose={dismiss} />}
+      actionClose={<AlertActionCloseButton onClose={dismiss} />}
       isInline
       className="co-alert"
       title="Queries entered here are limited to the data available in the currently selected project."
@@ -901,8 +901,8 @@ const QueryBrowserWrapper_: React.FC<QueryBrowserWrapperProps> = ({
   return queryStrings.join('') === '' ? (
     <div className="query-browser__wrapper graph-empty-state">
       <EmptyState variant={EmptyStateVariant.full}>
-        <EmptyStateIcon size="sm" icon={ChartLineIcon} />
-        <Title size="sm">No Query Entered</Title>
+        <EmptyStateIcon  icon={ChartLineIcon} />
+        <Title headingLevel="h2" size="md">No Query Entered</Title>
         <EmptyStateBody>
           Enter a query in the box below to explore metrics for this cluster.
         </EmptyStateBody>

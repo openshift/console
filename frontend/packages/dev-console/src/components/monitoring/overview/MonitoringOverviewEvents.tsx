@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash';
-import { Flex, FlexItem, FlexModifiers } from '@patternfly/react-core';
+import { Flex, FlexItem  } from '@patternfly/react-core';
 import { twentyFourHourTime } from '@console/internal/components/utils/datetime';
 import { YellowExclamationTriangleIcon } from '@console/shared';
 import { referenceFor, EventKind } from '@console/internal/module/k8s';
@@ -17,7 +17,7 @@ const MonitoringOverviewEvents: React.FC<MonitoringOverviewEventsProps> = ({ eve
       _.map(events, (e: EventKind) => {
         return (
           <div className="odc-monitoring-events__event-item" key={e.metadata.uid}>
-            <Flex breakpointMods={[{ modifier: FlexModifiers['align-self-baseline'] }]}>
+            <Flex alignSelf={{"default":"alignSelfBaseline"}} >
               <FlexItem title={e.lastTimestamp} className="text-secondary">
                 {twentyFourHourTime(new Date(getLastTime(e)))}
               </FlexItem>

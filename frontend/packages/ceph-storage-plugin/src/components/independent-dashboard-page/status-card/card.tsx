@@ -23,7 +23,7 @@ const StatusCard: React.FC = () => {
       </DashboardCardHeader>
       <DashboardCardBody>
         <HealthBody>
-          <Gallery className="co-overview-status__health" gutter="md">
+          <Gallery className="co-overview-status__health" hasGutter>
             <GalleryItem>
               <HealthItem
                 title="OCS Cluster"

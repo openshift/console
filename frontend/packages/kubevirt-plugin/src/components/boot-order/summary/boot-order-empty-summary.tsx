@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Expandable, Text, TextVariants } from '@patternfly/react-core';
+import { ExpandableSection, Text, TextVariants } from '@patternfly/react-core';
 import { BootableDeviceType } from '../../../types';
 import { deviceLabel, deviceKey, bootOrderEmptyTitle, bootOrderEmptyMessage } from '../constants';
 
@@ -20,7 +20,7 @@ export const BootOrderEmptySummary: React.FC<BootOrderEmptySummaryProps> = ({ de
         {bootOrderEmptyMessage}
       </Text>
       {options.length > 0 && (
-        <Expandable
+        <ExpandableSection
           toggleText={isExpanded ? 'Hide default boot disks' : 'Show default boot disks'}
           onToggle={onToggle}
           isExpanded={isExpanded}
@@ -31,7 +31,7 @@ export const BootOrderEmptySummary: React.FC<BootOrderEmptySummaryProps> = ({ de
               <li key={deviceKey(option)}>{deviceLabel(option)}</li>
             ))}
           </ol>
-        </Expandable>
+        </ExpandableSection>
       )}
     </>
   );

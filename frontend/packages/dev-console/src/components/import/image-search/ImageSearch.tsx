@@ -198,7 +198,7 @@ const ImageSearch: React.FC = () => {
           className="co-alert"
           variant="success"
           title={`Secret ${newImageSecret} was created.`}
-          action={<AlertActionCloseButton onClose={() => shouldHideAlert(false)} />}
+          actionClose={<AlertActionCloseButton onClose={() => shouldHideAlert(false)} />}
         />
       )}
     </>

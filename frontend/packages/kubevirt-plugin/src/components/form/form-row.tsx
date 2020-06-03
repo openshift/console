@@ -29,7 +29,7 @@ export const FormRow: React.FC<FormRowProps> = ({
       label={title}
       isRequired={isRequired}
       fieldId={fieldId}
-      isValid={type !== ValidationErrorType.Error}
+      validated={(type !== ValidationErrorType.Error) ? 'default' : 'error'}
       helperTextInvalid={type === ValidationErrorType.Error ? message : undefined}
       helperText={
         type === ValidationErrorType.Info || type === ValidationErrorType.Warn ? message : undefined

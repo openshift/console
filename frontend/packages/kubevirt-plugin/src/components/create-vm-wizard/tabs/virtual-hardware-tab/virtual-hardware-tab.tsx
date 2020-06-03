@@ -140,7 +140,7 @@ const VirtualHardwareTabFirehose: React.FC<VirtualHardwareTabFirehoseProps> = ({
       )}
       {!showStorages && (
         <div className="virtual-hardware-tab-empty-state">
-          <Title size="sm">There are no CD-ROMs currently attached.</Title>
+          <Title headingLevel="h2" size="md">There are no CD-ROMs currently attached.</Title>
           {addButton}
         </div>
       )}

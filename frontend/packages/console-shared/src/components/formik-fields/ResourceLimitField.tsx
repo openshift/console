@@ -28,7 +28,7 @@ const ResourceLimitField: React.FC<ResourceLimitFieldProps> = ({
       label={label}
       helperText={helpText}
       helperTextInvalid={errorMessage}
-      isValid={isValid}
+      validated={(isValid) ? 'default' : 'error'}
       isRequired={props.required}
     >
       <RequestSizeInput
