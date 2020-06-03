@@ -18,10 +18,12 @@ import {
   CustomFeatureFlag,
 } from '@console/plugin-sdk';
 import {
-  OCS_INDEPENDENT_FLAG,
-  detectIndependentMode,
+  detectOCS,
   detectOCSSupportedFeatures,
+  CEPH_FLAG,
+  OCS_INDEPENDENT_FLAG,
   OCS_SUPPORT_FLAGS,
+  OCS_CONVERGED_FLAG,
 } from './features';
 import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager/src/models';
 import { GridPosition } from '@console/shared/src/components/dashboard/DashboardGrid';
@@ -49,8 +51,6 @@ type ConsumedExtensions =
   | KebabActions
   | DashboardsOverviewResourceActivity;
 
-const CEPH_FLAG = 'CEPH';
-
 const apiObjectRef = referenceForModel(models.OCSServiceModel);
 
 const plugin: Plugin<ConsumedExtensions> = [
@@ -71,6 +71,12 @@ const plugin: Plugin<ConsumedExtensions> = [
     type: 'FeatureFlag/Custom',
     properties: {
       detect: detectOCSSupportedFeatures,
+    },
+  },
+  {
+    type: 'FeatureFlag/Custom',
+    properties: {
+      detect: detectOCS,
     },
   },
   {
@@ -95,7 +101,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       title: 'Persistent Storage',
     },
     flags: {
-      required: [CEPH_FLAG],
+      required: [OCS_CONVERGED_FLAG],
       disallowed: [OCS_INDEPENDENT_FLAG],
     },
   },
@@ -108,7 +114,6 @@ const plugin: Plugin<ConsumedExtensions> = [
         import('./components/ocs-install/install-page' /* webpackChunkName: "install-page" */).then(
           (m) => m.default,
         ),
-      required: CEPH_FLAG,
     },
   },
   // Ceph Storage Dashboard Left cards
@@ -258,13 +263,6 @@ const plugin: Plugin<ConsumedExtensions> = [
           './components/converged-credentials/credentials' /* webpackChunkName: "ceph-storage-export-credentials" */
         ).then((m) => m.default({})),
       disallowed: [OCS_INDEPENDENT_FLAG],
-    },
-  },
-  // Independent mode dashboard
-  {
-    type: 'FeatureFlag/Custom',
-    properties: {
-      detect: detectIndependentMode,
     },
   },
   {
