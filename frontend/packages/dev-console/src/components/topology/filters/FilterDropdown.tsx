@@ -44,6 +44,7 @@ const FilterDropdown: React.FC<FilterDropdownProps> = ({ filters, onChange }) =>
       onSelect={onSelect}
       placeholderText="Display Options"
       isGrouped
+      isCheckboxSelectionBadgeHidden
     >
       {showOptions}
       {expandOptions}
