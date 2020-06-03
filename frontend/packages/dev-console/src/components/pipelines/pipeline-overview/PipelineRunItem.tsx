@@ -24,7 +24,7 @@ const PipelineRunItem: React.FC<PipelineRunItemProps> = ({ pipelineRun }) => {
     : creationTimestamp;
   return (
     <li className="list-group-item">
-      <Grid gutter="md">
+      <Grid hasGutter>
         <GridItem span={6}>
           <Link to={`${path}`}>{name}</Link>
           {lastUpdated && <span className="text-muted">&nbsp;({fromNow(lastUpdated)})</span>}

@@ -154,7 +154,7 @@ const CreateBucketClass: React.FC<CreateBCProps> = ({ match }) => {
       </div>
       <div className="nb-create-bc-wizard">
         <Wizard
-          isCompactNav
+          
           isInPage
           isOpen
           title="Create new Bucket Class"

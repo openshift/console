@@ -162,7 +162,7 @@ const BackingStorePage: React.FC<BackingStorePageProps> = React.memo(
             isInline
             variant="info"
             title="What is a Backing Store?"
-            action={<AlertActionCloseButton onClose={() => setShowHelp(false)} />}
+            actionClose={<AlertActionCloseButton onClose={() => setShowHelp(false)} />}
           >
             <p>
               Backing Store represents a storage target to be used as the underlying storage for the

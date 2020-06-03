@@ -60,7 +60,7 @@ const SecretKeySelector: React.FC<SecretKeySelectorProps & StateProps> = ({
       fieldId={fieldId}
       label={label}
       helperTextInvalid={errorMessage}
-      isValid={isValid}
+      validated={(isValid) ? 'default' : 'error'}
       isRequired
     >
       <ValueFromPair

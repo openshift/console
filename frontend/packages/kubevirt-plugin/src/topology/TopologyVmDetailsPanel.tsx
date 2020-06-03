@@ -38,7 +38,7 @@ const LoadedTopologyVmDetailsPanel: React.FC<LoadedTopologyVmDetailsPanelProps> 
       return <LoadingBox />;
     }
     return (
-      <Grid gutter="md">
+      <Grid hasGutter>
         <GridItem span={6}>
           <VMResourceSummary
             canUpdateVM={canUpdate}

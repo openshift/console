@@ -27,7 +27,7 @@ const NSDropdownField: React.FC<DropdownFieldProps> = ({
       label={label}
       helperText={helpText}
       helperTextInvalid={errorMessage}
-      isValid={isValid}
+      validated={(isValid) ? 'default' : 'error'}
       isRequired={required}
     >
       <NsDropdown

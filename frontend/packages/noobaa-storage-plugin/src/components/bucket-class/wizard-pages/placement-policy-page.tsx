@@ -24,7 +24,7 @@ const PlacementPolicyPage: React.FC<PlacementPolicyPageProps> = ({ dispatch, sta
           variant="info"
           title="What is a Placement Policy?"
           className="nb-create-bc-step-page__info"
-          action={<AlertActionCloseButton onClose={() => setShowHelp(false)} />}
+          actionClose={<AlertActionCloseButton onClose={() => setShowHelp(false)} />}
         >
           <p>
             Data placement capabilities are built as a multi-layer structure, here are the layers

@@ -50,7 +50,7 @@ const ResourceDropdownField: React.FC<ResourceDropdownFieldProps> = ({
       label={label}
       helperText={helpText}
       helperTextInvalid={errorMessage}
-      isValid={isValid}
+      validated={(isValid) ? 'default' : 'error'}
       isRequired={required}
     >
       <Firehose resources={resources}>

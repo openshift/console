@@ -13,7 +13,7 @@ const RemoveTriggerForm: React.FC<RemoveTriggerFormProps> = (props) => {
   const { pipeline } = props;
 
   return (
-    <Split className="odc-modal-content" gutter="md">
+    <Split className="odc-modal-content" hasGutter>
       <SplitItem>
         <ExclamationTriangleIcon size="md" color={warningColor.value} />
       </SplitItem>

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Dispatch } from 'redux';
 import { connect } from 'react-redux';
-import { Toolbar, ToolbarGroup, ToolbarItem, Popover, Button } from '@patternfly/react-core';
+import { PageHeaderTools, PageHeaderToolsGroup, PageHeaderToolsItem, Popover, Button } from '@patternfly/react-core';
 import { RootState } from '@console/internal/redux';
 import { TextFilter } from '@console/internal/components/factory';
 import { InfoCircleIcon } from '@patternfly/react-icons';
@@ -56,22 +56,22 @@ const TopologyFilterBar: React.FC<TopologyFilterBarProps> = ({
   );
 
   return (
-    <Toolbar className="co-namespace-bar odc-topology-filter-bar">
-      <ToolbarGroup>
-        <ToolbarItem>
+    <PageHeaderTools className="co-namespace-bar odc-topology-filter-bar">
+      <PageHeaderToolsGroup>
+        <PageHeaderToolsItem>
           <FilterDropdown filters={display} onChange={onDisplayFiltersChange} />
-        </ToolbarItem>
-      </ToolbarGroup>
-      <ToolbarGroup className="odc-topology-filter-bar__search">
-        <ToolbarItem>
+        </PageHeaderToolsItem>
+      </PageHeaderToolsGroup>
+      <PageHeaderToolsGroup className="odc-topology-filter-bar__search">
+        <PageHeaderToolsItem>
           <TextFilter
             placeholder="Find by name..."
             value={searchQuery}
             autoFocus
             onChange={onTextFilterChange}
           />
-        </ToolbarItem>
-        <ToolbarItem>
+        </PageHeaderToolsItem>
+        <PageHeaderToolsItem>
           <Popover
             aria-label="Find by name"
             position="left"
@@ -89,9 +89,9 @@ const TopologyFilterBar: React.FC<TopologyFilterBarProps> = ({
               <InfoCircleIcon />
             </Button>
           </Popover>
-        </ToolbarItem>
-      </ToolbarGroup>
-    </Toolbar>
+        </PageHeaderToolsItem>
+      </PageHeaderToolsGroup>
+    </PageHeaderTools>
   );
 };
 

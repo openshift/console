@@ -6,7 +6,7 @@ import {
   FormSelect,
   FormSelectOption,
   TextInput,
-  Expandable,
+  ExpandableSection,
 } from '@patternfly/react-core';
 import {
   FirehoseResult,
@@ -336,7 +336,7 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
           {source.requiresURL() && (
             <FormRow title="URL" fieldId={asId('url')} isRequired validation={urlValidation}>
               <TextInput
-                isValid={!isValidationError(urlValidation)}
+                validated={(!isValidationError(urlValidation)) ? 'default' : 'error'}
                 key="url"
                 isDisabled={isDisabled('url')}
                 isRequired
@@ -354,7 +354,7 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
               validation={containerValidation}
             >
               <TextInput
-                isValid={!isValidationError(containerValidation)}
+                validated={(!isValidationError(containerValidation)) ? 'default' : 'error'}
                 key="container"
                 isDisabled={isDisabled('container')}
                 isRequired
@@ -403,7 +403,7 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
             validation={nameValidation}
           >
             <TextInput
-              isValid={!isValidationError(nameValidation)}
+              validated={(!isValidationError(nameValidation)) ? 'default' : 'error'}
               isDisabled={isDisabled(
                 'name',
                 !usedDiskNames || !source.isNameEditingSupported(type),
@@ -456,7 +456,7 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
               onChange={React.useCallback((diskBus) => setBus(DiskBus.fromString(diskBus)), [
                 setBus,
               ])}
-              isValid={!isValidationError(busValidation)}
+              validated={(!isValidationError(busValidation)) ? 'default' : 'error'}
               value={asFormSelectValue(bus)}
               id={asId('interface')}
               isDisabled={isDisabled('interface')}
@@ -503,7 +503,7 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
             />
           )}
           {source.requiresVolumeModeOrAccessModes() && (
-            <Expandable
+            <ExpandableSection
               toggleText="Advanced"
               isExpanded={advancedDrawerIsOpen}
               onToggle={onToggleAdvancedDrawer}
@@ -557,7 +557,7 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
                   </FormSelect>
                 </FormRow>
               )}
-            </Expandable>
+            </ExpandableSection>
           )}
         </Form>
       </ModalBody>

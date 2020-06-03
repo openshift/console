@@ -252,7 +252,7 @@ const SearchPage_: React.FC<SearchProps & StateProps & DispatchProps> = (props) 
         </DataToolbar>
       </PageHeading>
       <div className="co-search">
-        <Accordion className="co-search__accordion" asDefinitionList={false} noBoxShadow>
+        <Accordion className="co-search__accordion" asDefinitionList={false} >
           {[...selectedItems].map((resource) => {
             const isCollapsed = collapsedKinds.has(resource);
             return (

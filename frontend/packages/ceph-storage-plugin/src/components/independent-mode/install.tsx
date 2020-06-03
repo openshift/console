@@ -183,7 +183,7 @@ const InstallExternalCluster = withHandlePromise((props: InstallExternalClusterP
             <TextArea
               value={prettifyJSON(fileData)}
               className="im-install-page__text-box"
-              isValid={!dataError}
+              validated={(!dataError) ? 'default' : 'error'}
               aria-label="JSON data"
               disabled
             />

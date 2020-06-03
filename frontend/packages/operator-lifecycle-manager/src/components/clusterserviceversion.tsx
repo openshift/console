@@ -13,7 +13,7 @@ import {
   CardBody,
   CardFooter,
   CardHeader,
-  Popover,
+  Popover, CardTitle, CardHeaderMain,
 } from '@patternfly/react-core';
 import { ALL_NAMESPACES_KEY, Status, WarningStatus, getNamespace, getUID } from '@console/shared';
 import {
@@ -708,14 +708,14 @@ export const CRDCard: React.SFC<CRDCardProps> = (props) => {
     `/k8s/ns/${csv.metadata.namespace}/${ClusterServiceVersionModel.plural}/${csv.metadata.name}/${reference}/~new`;
   return (
     <Card>
-      <CardHeader>
+      <CardTitle>
         <ResourceLink
           kind={referenceForProvidedAPI(crd)}
           title={crd.name}
           linkTo={false}
           displayName={crd.displayName || crd.kind}
         />
-      </CardHeader>
+      </CardTitle>
       <CardBody>
         <p>{crd.description}</p>
       </CardBody>

@@ -268,7 +268,7 @@ const FilterToolbar_: React.FC<FilterToolbarProps & RouteComponentProps> = (prop
                     <DropdownToggle
                       data-test-id="filter-dropdown-toggle"
                       onToggle={() => setOpen(!isOpen)}
-                      iconComponent={CaretDownIcon}
+                      toggleIndicator={CaretDownIcon}
                     >
                       <FilterIcon className="span--icon__right-margin" />
                       Filter

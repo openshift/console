@@ -2,7 +2,7 @@ import * as React from 'react';
 import { shallow, ShallowWrapper, mount, ReactWrapper } from 'enzyme';
 import { Link } from 'react-router-dom';
 import * as _ from 'lodash';
-import { CardHeader, CardBody, CardFooter } from '@patternfly/react-core';
+import { CardHeader, CardBody, CardFooter, CardTitle, CardHeaderMain } from '@patternfly/react-core';
 import { ErrorBoundary } from '@console/shared/src/components/error/error-boundary';
 import {
   DetailsPage,

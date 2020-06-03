@@ -61,7 +61,7 @@ const ApplicationSelector: React.FC<ApplicationSelectorProps> = ({
           fieldId={fieldId}
           label="Application"
           helperTextInvalid={errorMessage}
-          isValid={isValid}
+          validated={(isValid) ? 'default' : 'error'}
           helperText="Select an application for your grouping or Unassigned to not use an application grouping."
         >
           <ApplicationDropdown

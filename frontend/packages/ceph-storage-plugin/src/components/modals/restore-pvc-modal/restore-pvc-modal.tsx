@@ -91,7 +91,7 @@ export const RestorePVCModal = withHandlePromise((props: RestorePVCModalProps) =
             />
           </FormGroup>
           <div className="ceph-restore-pvc-modal__details-section">
-            <Grid gutter="md">
+            <Grid hasGutter>
               <GridItem span={6}>
                 <div>
                   <p className="ceph-restore-pvc-modal__pvc-details">Date</p>

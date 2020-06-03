@@ -82,7 +82,7 @@ const ODCEmptyState: React.FC<Props> = ({
         )}
       </div>
       <div className="odc-empty-state__content">
-        <Gallery className="co-catalog-tile-view" gutter="sm">
+        <Gallery className="co-catalog-tile-view" hasGutter>
           {addActionExtensions.map((action) => (
             <Item key={action.properties.id} namespace={activeNamespace} action={action} />
           ))}

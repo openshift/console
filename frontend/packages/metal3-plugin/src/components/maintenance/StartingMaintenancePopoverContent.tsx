@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { Timestamp } from '@console/internal/components/utils';
-import { Progress, ProgressSize, Alert, Expandable, Button } from '@patternfly/react-core';
+import { Progress, ProgressSize, Alert, ExpandableSection, Button } from '@patternfly/react-core';
 import {
   getNodeMaintenanceReason,
   getNodeMaintenanceCreationTimestamp,
@@ -53,9 +53,9 @@ const StartingMaintenancePopoverContent: React.FC<StartingMaintenancePopoverCont
         size={ProgressSize.sm}
       />
       <br />
-      <Expandable toggleText={`Show remaining workloads (${pendingPods.length})`}>
+      <ExpandableSection toggleText={`Show remaining workloads (${pendingPods.length})`}>
         <MaintenancePopoverPodList pods={pendingPods} />
-      </Expandable>
+      </ExpandableSection>
       <br />
       <Button variant="link" onClick={() => stopNodeMaintenanceModal(nodeMaintenance)} isInline>
         Stop

@@ -70,7 +70,7 @@ const MultipleResourceKeySelector: React.FC<StateProps & MultipleResourceKeySele
     <FormGroup
       fieldId={fieldId}
       label={label}
-      isValid={isValid}
+      validated={(isValid) ? 'default' : 'error'}
       className="odc-multiple-key-selector"
       isRequired={required}
     >

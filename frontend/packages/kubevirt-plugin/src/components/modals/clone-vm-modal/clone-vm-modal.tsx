@@ -140,11 +140,11 @@ export const CloneVMModal = withHandlePromise((props: CloneVMModalProps) => {
             label="Name"
             isRequired
             fieldId={asId('name')}
-            isValid={!(nameError && nameError.type === ValidationErrorType.Error)}
+            validated={(!(nameError && nameError.type === ValidationErrorType.Error)) ? 'default' : 'error'}
             helperTextInvalid={nameError && nameError.message}
           >
             <TextInput
-              isValid={!(nameError && nameError.type === ValidationErrorType.Error)}
+              validated={(!(nameError && nameError.type === ValidationErrorType.Error)) ? 'default' : 'error'}
               isRequired
               type="text"
               id={asId('name')}

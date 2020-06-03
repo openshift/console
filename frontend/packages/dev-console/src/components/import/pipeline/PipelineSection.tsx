@@ -48,7 +48,7 @@ const PipelineSection: React.FC<PipelineSectionProps> = ({ flags, builderImages 
 
   if (flags[FLAG_OPENSHIFT_PIPELINE] && hasCreatePipelineAccess) {
     const title = (
-      <Split gutter="md">
+      <Split hasGutter>
         <SplitItem className="odc-form-section__heading">Pipelines</SplitItem>
         <SplitItem>
           <TechPreviewBadge />

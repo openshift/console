@@ -47,7 +47,7 @@ const VMStatusPopoverContent: React.FC<VMStatusPopoverContentProps> = ({
     {children && <div className="kubevirt-vm-status__detail-section">{children}</div>}
     {progress != null && (
       <div className="kubevirt-vm-status__detail-section">
-        <Progress value={progress} variant={ProgressVariant.info} size={ProgressSize.sm} />
+        <Progress value={progress}  size={ProgressSize.sm} />
       </div>
     )}
     {links &&
@@ -92,7 +92,7 @@ const ImporterPods: React.FC<ImporterPodsProps> = ({ statuses }) => (
                 <Progress
                   className="kubevirt-vm-status__detail-small-section"
                   value={progress}
-                  variant={ProgressVariant.info}
+                  
                   size={ProgressSize.sm}
                 />
               )}

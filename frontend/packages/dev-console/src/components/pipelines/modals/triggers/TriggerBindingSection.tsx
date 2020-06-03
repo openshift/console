@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useFormikContext } from 'formik';
-import { Badge, Expandable, FormHelperText } from '@patternfly/react-core';
+import { Badge, ExpandableSection, FormHelperText } from '@patternfly/react-core';
 import FormSection from '../../../import/section/FormSection';
 import { TriggerBindingKind, TriggerBindingParam } from '../../resource-types';
 import TriggerBindingSelector from './TriggerBindingSelector';
@@ -28,7 +28,7 @@ const TriggerBindingSection: React.FC = () => {
           onChange={updateTriggerBindingVariables}
         />
         {bindingVars && (
-          <Expandable toggleTextExpanded="Hide Variables" toggleTextCollapsed="Show Variables">
+          <ExpandableSection toggleTextExpanded="Hide Variables" toggleTextCollapsed="Show Variables">
             <div className="odc-trigger-binding-section__variable-container">
               <p className="odc-trigger-binding-section__variable-descriptor">
                 The following variables can be used in the Parameters or when created new Resources.
@@ -46,7 +46,7 @@ const TriggerBindingSection: React.FC = () => {
               Use this format when referencing variables in this form:{' '}
               <code>{'$(params.parameter)'}</code>
             </FormHelperText>
-          </Expandable>
+          </ExpandableSection>
         )}
       </FormSection>
     </div>

@@ -22,7 +22,7 @@ const DropdownField: React.FC<DropdownFieldProps> = ({ label, helpText, required
       label={label}
       helperText={helpText}
       helperTextInvalid={errorMessage}
-      isValid={isValid}
+      validated={(isValid) ? 'default' : 'error'}
       isRequired={required}
     >
       <Dropdown

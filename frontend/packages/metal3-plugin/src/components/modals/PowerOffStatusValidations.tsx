@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash';
-import { Alert, Expandable } from '@patternfly/react-core';
+import { Alert, ExpandableSection } from '@patternfly/react-core';
 import { DaemonSetModel, PodModel } from '@console/internal/models';
 import { FirehoseResult, ResourceLink } from '@console/internal/components/utils';
 import { PodKind } from '@console/internal/module/k8s';
@@ -91,7 +91,7 @@ const ExpandableResources: React.FC<ExpandableResourcesProps> = ({
   const toggleText = `${isExpanded ? 'Hide' : 'Show'} ${subject} (${resources.length})`;
 
   return (
-    <Expandable onToggle={onToggle} isExpanded={isExpanded} toggleText={toggleText}>
+    <ExpandableSection onToggle={onToggle} isExpanded={isExpanded} toggleText={toggleText}>
       {resources
         .sort((a, b) => a.name.localeCompare(b.name))
         .map((resource) => (
@@ -109,7 +109,7 @@ const ExpandableResources: React.FC<ExpandableResourcesProps> = ({
             />
           </div>
         ))}
-    </Expandable>
+    </ExpandableSection>
   );
 };
 

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Expandable } from '@patternfly/react-core';
+import { ExpandableSection } from '@patternfly/react-core';
 
 interface ExpandCollapseProps {
   textExpanded: string;
@@ -13,11 +13,11 @@ export const ExpandCollapse: React.FC<ExpandCollapseProps> = ({
 }) => {
   const [isExpanded, toggleExpandCollapse] = React.useState(false);
   return (
-    <Expandable
+    <ExpandableSection
       toggleText={isExpanded ? textExpanded : textCollapsed}
       onToggle={() => toggleExpandCollapse(!isExpanded)}
     >
       {children}
-    </Expandable>
+    </ExpandableSection>
   );
 };

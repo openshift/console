@@ -60,7 +60,7 @@ const CreateBackingStoreFormPage: React.FC<CreateBackingStoreFormPageProps> = ({
             isInline
             variant="info"
             title="What is a Backing Store?"
-            action={<AlertActionCloseButton onClose={() => setShowHelp(false)} />}
+            actionClose={<AlertActionCloseButton onClose={() => setShowHelp(false)} />}
           >
             A backing store represents a storage target to be used as the underlying storage layer
             in MCG buckets.

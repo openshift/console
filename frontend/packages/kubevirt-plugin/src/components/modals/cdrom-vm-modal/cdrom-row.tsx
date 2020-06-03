@@ -65,7 +65,7 @@ export const CDRomRow: React.FC<CDRomRowProps> = ({
               className="pf-m-3-col-on-md"
               fieldId="cd-rom-modal-url"
               id={`cd-url-text-input-${name}`}
-              isValid={isURLValid}
+              validated={(isURLValid) ? 'default' : 'error'}
               helperTextInvalid="Invalid URL"
             >
               <TextInput

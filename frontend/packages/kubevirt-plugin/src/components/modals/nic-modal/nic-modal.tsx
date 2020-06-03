@@ -218,7 +218,7 @@ export const NICModal = withHandlePromise((props: NICModalProps) => {
             validation={nameValidation}
           >
             <TextInput
-              isValid={!isValidationError(nameValidation)}
+              validated={(!isValidationError(nameValidation)) ? 'default' : 'error'}
               isDisabled={isDisabled('name', !usedInterfacesNames)}
               isRequired
               id={asId('name')}
@@ -282,7 +282,7 @@ export const NICModal = withHandlePromise((props: NICModalProps) => {
             validation={macAddressValidation}
           >
             <TextInput
-              isValid={!isValidationError(macAddressValidation)}
+              validated={(!isValidationError(macAddressValidation)) ? 'default' : 'error'}
               isDisabled={isDisabled('macAddress', resultNetwork.isPodNetwork())}
               id={asId('mac-address')}
               value={macAddress}
