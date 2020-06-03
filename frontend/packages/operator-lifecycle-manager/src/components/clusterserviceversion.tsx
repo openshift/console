@@ -12,8 +12,8 @@ import {
   Card,
   CardBody,
   CardFooter,
-  CardHeader,
-  Popover, CardTitle, CardHeaderMain,
+  Popover, 
+  CardTitle
 } from '@patternfly/react-core';
 import { ALL_NAMESPACES_KEY, Status, WarningStatus, getNamespace, getUID } from '@console/shared';
 import {

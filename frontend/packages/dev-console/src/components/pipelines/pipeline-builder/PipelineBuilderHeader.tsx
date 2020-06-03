@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Button, Flex, FlexItem, FlexItemModifiers } from '@patternfly/react-core';
+import { Button, Flex, FlexItem } from '@patternfly/react-core';
 import { warnYAML } from './modals';
 import { TechPreviewBadge } from '@console/shared';
 import { Pipeline } from '../../../utils/pipeline-augment';

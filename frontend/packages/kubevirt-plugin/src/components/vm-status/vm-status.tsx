@@ -13,7 +13,6 @@ import { RedExclamationCircleIcon } from '@console/shared/src/components/status/
 import GenericStatus from '@console/shared/src/components/status/GenericStatus';
 import {
   Progress,
-  ProgressVariant,
   ProgressSize,
   Button,
   ButtonVariant,
@@ -137,7 +136,7 @@ export const VMStatus: React.FC<VMStatusProps> = ({ vm, vmi, vmStatusBundle }) =
     links.push({ to: `${getPodLink(pod)}/logs`, message: VIEW_POD_LOGS });
   }
 
-  let icon = UnknownIcon;
+  let icon: React.ComponentClass | React.FC = UnknownIcon;
 
   if (isPaused) {
     icon = PausedIcon;

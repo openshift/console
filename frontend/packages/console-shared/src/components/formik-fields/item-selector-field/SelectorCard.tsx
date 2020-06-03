@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as classNames from 'classnames';
-import { Card, CardHeader, CardBody, CardTitle, CardHeaderMain } from '@patternfly/react-core';
+import { Card, CardBody, CardTitle } from '@patternfly/react-core';
 import { StarIcon } from '@patternfly/react-icons';
 import './SelectorCard.scss';
 
