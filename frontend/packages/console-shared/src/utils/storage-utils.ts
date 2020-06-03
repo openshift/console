@@ -9,7 +9,7 @@ export const cephStorageProvisioners = [
 
 const objectStorageProvisioners = [
   'openshift-storage.noobaa.io/obc',
-  'openshift-storage-ceph.rook.io/bucket',
+  'openshift-storage.ceph.rook.io/bucket',
 ];
 
 // To check if the provisioner is OCS based

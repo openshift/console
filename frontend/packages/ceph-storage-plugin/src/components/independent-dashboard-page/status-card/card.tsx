@@ -25,7 +25,11 @@ const StatusCard: React.FC = () => {
         <HealthBody>
           <Gallery className="co-overview-status__health" gutter="md">
             <GalleryItem>
-              <HealthItem title="OCS Cluster" state={cephHealth.state} />
+              <HealthItem
+                title="OCS Cluster"
+                state={cephHealth.state}
+                details={cephHealth.message}
+              />
             </GalleryItem>
           </Gallery>
         </HealthBody>

@@ -1,4 +1,3 @@
-import * as _ from 'lodash';
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
 import { match } from 'react-router';
@@ -31,7 +30,8 @@ import './create-obc.scss';
 export const CreateOBCPage: React.FC<CreateOBCPageProps> = (props) => {
   const [state, dispatch] = React.useReducer(commonReducer, defaultState);
 
-  const namespace = _.get(props, 'match.params.ns');
+  const namespace = props?.match?.params?.ns;
+  const isNoobaa = state.scProvisioner?.includes(NB_PROVISIONER);
 
   React.useEffect(() => {
     const obj: K8sResourceKind = {
@@ -54,11 +54,11 @@ export const CreateOBCPage: React.FC<CreateOBCPageProps> = (props) => {
       obj.metadata.generateName = 'bucketclaim-';
       obj.spec.generateBucketName = 'bucket-';
     }
-    if (state.bucketClass) {
+    if (state.bucketClass && isNoobaa) {
       obj.spec.additionalConfig = { bucketclass: state.bucketClass };
     }
     dispatch({ type: 'setPayload', payload: obj });
-  }, [namespace, state.name, state.scName, state.bucketClass]);
+  }, [namespace, state.name, state.scName, state.bucketClass, isNoobaa]);
 
   const save = (e: React.FormEvent<EventTarget>) => {
     e.preventDefault();
@@ -129,7 +129,7 @@ export const CreateOBCPage: React.FC<CreateOBCPageProps> = (props) => {
                 Defines the object-store service and the bucket provisioner.
               </p>
             </div>
-            {state.scProvisioner.includes(NB_PROVISIONER) && !_.isEmpty(state.scProvisioner) && (
+            {isNoobaa && (
               <div className="form-group">
                 <label className="control-label co-required" htmlFor="obc-name">
                   Bucket Class
