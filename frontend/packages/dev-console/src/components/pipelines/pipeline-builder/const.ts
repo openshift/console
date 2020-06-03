@@ -6,6 +6,7 @@ export enum UpdateOperationType {
   UPDATE_TASK,
   REMOVE_TASK,
   DELETE_LIST_TASK,
+  FIX_INVALID_LIST_TASK,
 }
 
 export enum TaskErrorType {

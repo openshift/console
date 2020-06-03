@@ -67,6 +67,11 @@ export type UpdateOperationConvertToTaskData = UpdateOperationBaseData & {
   resource: PipelineResourceTask;
   runAfter?: string[];
 };
+export type UpdateOperationFixInvalidTaskListData = UpdateOperationBaseData & {
+  existingName: string;
+  resource: PipelineResourceTask;
+  runAfter?: string[];
+};
 export type UpdateOperationDeleteListTaskData = UpdateOperationBaseData & {
   listTaskName: string;
 };

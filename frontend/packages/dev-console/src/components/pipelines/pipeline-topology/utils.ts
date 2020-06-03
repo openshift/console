@@ -41,6 +41,9 @@ export const createSpacerNode: NodeCreator<SpacerNodeModelData> = createGenericN
 export const createTaskListNode: NodeCreator<TaskListNodeModelData> = createGenericNode(
   NodeType.TASK_LIST_NODE,
 );
+export const createInvalidTaskListNode: NodeCreator<TaskListNodeModelData> = createGenericNode(
+  NodeType.INVALID_TASK_LIST_NODE,
+);
 export const createBuilderNode: NodeCreator<BuilderNodeModelData> = createGenericNode(
   NodeType.BUILDER_NODE,
 );

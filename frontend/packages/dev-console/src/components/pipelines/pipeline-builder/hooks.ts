@@ -16,6 +16,7 @@ import {
   PipelineTaskListNodeModel,
 } from '../pipeline-topology/types';
 import {
+  createInvalidTaskListNode,
   createTaskListNode,
   handleParallelToParallelNodes,
   tasksToBuilderNodes,
@@ -27,6 +28,7 @@ import {
   UpdateErrors,
   UpdateOperationAddData,
   UpdateOperationConvertToTaskData,
+  UpdateOperationFixInvalidTaskListData,
   UpdateTasksCallback,
 } from './types';
 import { nodeTaskErrors, TaskErrorType, UpdateOperationType } from './const';
@@ -114,9 +116,9 @@ export const useNodes = (
 
   const getTask = (taskRef: PipelineTaskRef) => {
     if (taskRef.kind === ClusterTaskModel.kind) {
-      return clusterTasks.find((task) => task.metadata.name === taskRef.name);
+      return clusterTasks?.find((task) => task.metadata.name === taskRef.name);
     }
-    return namespacedTasks.find((task) => task.metadata.name === taskRef.name);
+    return namespacedTasks?.find((task) => task.metadata.name === taskRef.name);
   };
 
   const taskGroupRef = React.useRef(taskGroup);
@@ -159,11 +161,44 @@ export const useNodes = (
       },
     });
   const soloTask = (name = 'initial-node') => newListNode(name, undefined, true);
+  const newInvalidListNode = (name: string, runAfter?: string[]): PipelineTaskListNodeModel =>
+    createInvalidTaskListNode(name, {
+      namespaceTaskList: namespacedTasks?.filter(noDuplicates),
+      clusterTaskList: clusterTasks?.filter(noDuplicates),
+      onNewTask: (resource: PipelineResourceTask) => {
+        const data: UpdateOperationFixInvalidTaskListData = {
+          existingName: name,
+          resource,
+          runAfter,
+        };
 
+        onUpdateTasks(taskGroupRef.current, {
+          type: UpdateOperationType.FIX_INVALID_LIST_TASK,
+          data,
+        });
+      },
+      onRemoveTask: () => {
+        onUpdateTasks(taskGroupRef.current, {
+          type: UpdateOperationType.REMOVE_TASK,
+          data: { taskName: name },
+        });
+      },
+      task: {
+        name,
+        runAfter: runAfter || [],
+      },
+    });
+
+  const invalidTaskList = taskGroup.tasks.filter((task) => !getTask(task.taskRef));
+  const validTaskList = taskGroup.tasks.filter((task) => !!getTask(task.taskRef));
+
+  const invalidTaskListNodes: PipelineTaskListNodeModel[] = invalidTaskList.map((task) =>
+    newInvalidListNode(task.name, task.runAfter),
+  );
   const taskNodes: PipelineBuilderTaskNodeModel[] =
-    taskGroup.tasks.length > 0
+    validTaskList.length > 0
       ? tasksToBuilderNodes(
-          taskGroup.tasks,
+          validTaskList,
           onNewListNode,
           (task) => onTaskSelection(task, getTask(task.taskRef)),
           getErrorMessage(nodeTaskErrors, tasksInError),
@@ -178,6 +213,7 @@ export const useNodes = (
   const nodes: PipelineMixedNodeModel[] = handleParallelToParallelNodes([
     ...taskNodes,
     ...taskListNodes,
+    ...invalidTaskListNodes,
   ]);
 
   const localTaskCount = namespacedTasks?.length || 0;

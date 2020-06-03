@@ -20,6 +20,7 @@ import {
   UpdateOperationAddData,
   UpdateOperationConvertToTaskData,
   UpdateOperationDeleteListTaskData,
+  UpdateOperationFixInvalidTaskListData,
   UpdateOperationRemoveTaskData,
   UpdateOperationUpdateTaskData,
   UpdateTaskParamData,
@@ -379,6 +380,29 @@ const updateTask: UpdateOperationAction<UpdateOperationUpdateTaskData> = (
   };
 };
 
+const fixInvalidListTask: UpdateOperationAction<UpdateOperationFixInvalidTaskListData> = (
+  tasks,
+  listTasks,
+  data,
+) => {
+  const { existingName, resource, runAfter } = data;
+
+  const newPipelineTask: PipelineTask = convertResourceToTask(resource, runAfter);
+
+  return {
+    tasks: [
+      ...tasks
+        .filter((pipelineTask) => pipelineTask.name !== existingName)
+        .map((pipelineTask) =>
+          mapReplaceRelatedInOthers(newPipelineTask.name, existingName, pipelineTask),
+        ),
+      newPipelineTask,
+    ],
+    listTasks,
+    errors: getErrors(newPipelineTask, resource),
+  };
+};
+
 export const applyChange = (
   taskGroup: PipelineBuilderTaskGroup,
   op: UpdateOperation,
@@ -397,6 +421,8 @@ export const applyChange = (
       return removeTask(tasks, listTasks, data as UpdateOperationRemoveTaskData);
     case UpdateOperationType.UPDATE_TASK:
       return updateTask(tasks, listTasks, data as UpdateOperationUpdateTaskData);
+    case UpdateOperationType.FIX_INVALID_LIST_TASK:
+      return fixInvalidListTask(tasks, listTasks, data as UpdateOperationFixInvalidTaskListData);
     default:
       throw new Error(`Invalid update operation ${type}`);
   }

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Node, observer } from '@console/topology';
+import { Node, NodeModel, observer } from '@console/topology';
 import {
   AddNodeDirection,
   BUILDER_NODE_ADD_RADIUS,
@@ -12,10 +12,14 @@ import TaskNode from './TaskNode';
 import { BuilderNodeModelData } from './types';
 import { TooltipPosition } from '@patternfly/react-core';
 
-const BuilderNode: React.FC<{ element: Node }> = ({ element }) => {
+type BuilderNodeProps = {
+  element: Node<NodeModel, BuilderNodeModelData>;
+};
+
+const BuilderNode: React.FC<BuilderNodeProps> = ({ element }) => {
   const [showAdd, setShowAdd] = React.useState(false);
   const { width, height } = element.getBounds();
-  const data: BuilderNodeModelData = element.getData();
+  const data = element.getData();
   const { error, onAddNode, onNodeSelection } = data;
 
   return (
