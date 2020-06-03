@@ -368,11 +368,16 @@ export const getTaskStatus = (pipelinerun: PipelineRun, pipeline: Pipeline): Tas
         taskStatus[runStatus.Pending]++;
       }
     });
-    taskStatus[runStatus.Failed] > 0 || taskStatus[runStatus.Cancelled] > 0
-      ? (taskStatus[runStatus.Cancelled] +=
-          totalTasks >= plrTaskLength ? totalTasks - plrTaskLength : totalTasks)
-      : (taskStatus[runStatus.Pending] +=
-          totalTasks >= plrTaskLength ? totalTasks - plrTaskLength : totalTasks);
+
+    const pipelineRunHasFailure = taskStatus[runStatus.Failed] > 0;
+    const pipelineRunIsCancelled = pipelineRunFilterReducer(pipelinerun) === runStatus.Cancelled;
+    const unhandledTasks = totalTasks >= plrTaskLength ? totalTasks - plrTaskLength : totalTasks;
+
+    if (pipelineRunHasFailure || pipelineRunIsCancelled) {
+      taskStatus[runStatus.Cancelled] += unhandledTasks;
+    } else {
+      taskStatus[runStatus.Pending] += unhandledTasks;
+    }
   } else if (
     pipelinerun &&
     pipelinerun.status &&

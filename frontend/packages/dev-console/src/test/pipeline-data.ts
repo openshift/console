@@ -6,7 +6,10 @@ export enum DataState {
   CANCELLED1 = 'Cancelled at stage1',
   CANCELLED2 = 'Cancelled at stage2 paralell task',
   CANCELLED3 = 'Cancelled at stage3 single task',
-  FAILED = 'Completed But Failed',
+  FAILED1 = 'Failed at stage1',
+  FAILED2 = 'Failed at stage 2',
+  FAILED3 = 'Failed at stage 3',
+  FAILED_BUT_COMPLETE = 'Completed But Failed',
 }
 
 export enum PipelineExampleNames {
@@ -156,7 +159,7 @@ export const pipelineTestData: PipelineTestData = {
       },
     },
     pipelineRuns: {
-      [DataState.FAILED]: {
+      [DataState.FAILED_BUT_COMPLETE]: {
         apiVersion: 'tekton.dev/v1alpha1',
         kind: 'PipelineRun',
         metadata: {
@@ -239,6 +242,39 @@ export const pipelineTestData: PipelineTestData = {
         status: {
           conditions: [
             {
+              reason: 'PipelineRunCancelled',
+              status: 'False',
+              type: 'Succeeded',
+            },
+          ],
+          taskRuns: {
+            'complex-pipeline-fm4hax-build-app-gpq78': {
+              pipelineTaskName: 'build-app',
+              status: {
+                conditions: [{ status: 'True', type: 'Succeeded' }],
+              },
+            },
+          },
+        },
+      },
+      [DataState.FAILED1]: {
+        apiVersion: 'tekton.dev/v1alpha1',
+        kind: 'PipelineRun',
+        metadata: {
+          name: 'complex-pipeline-fm4hax',
+          namespace: 'tekton-pipelines',
+        },
+        spec: {
+          params: [{ name: 'APP_NAME', value: '' }],
+          pipelineRef: { name: 'complex-pipeline' },
+          resources: [
+            { name: 'app-git', resourceRef: { name: 'mapit-git' } },
+            { name: 'app-image', resourceRef: { name: 'mapit-image' } },
+          ],
+        },
+        status: {
+          conditions: [
+            {
               status: 'False',
               type: 'Succeeded',
             },
@@ -284,8 +320,7 @@ export const pipelineTestData: PipelineTestData = {
               status: {
                 conditions: [
                   {
-                    reason: 'TaskRunCancelled',
-                    status: 'False',
+                    status: 'True',
                     type: 'Succeeded',
                   },
                 ],
@@ -296,8 +331,7 @@ export const pipelineTestData: PipelineTestData = {
               status: {
                 conditions: [
                   {
-                    reason: 'TaskRunCancelled',
-                    status: 'False',
+                    status: 'True',
                     type: 'Succeeded',
                   },
                 ],
@@ -311,6 +345,143 @@ export const pipelineTestData: PipelineTestData = {
                   {
                     reason: 'Succeeded',
                     status: 'True',
+                    type: 'Succeeded',
+                  },
+                ],
+              },
+            },
+          },
+        },
+      },
+      [DataState.FAILED2]: {
+        apiVersion: 'tekton.dev/v1alpha1',
+        kind: 'PipelineRun',
+        metadata: {
+          name: 'complex-pipeline-fm4hax',
+          namespace: 'tekton-pipelines',
+        },
+        spec: {
+          params: [{ name: 'APP_NAME', value: '' }],
+          pipelineRef: { name: 'complex-pipeline' },
+          resources: [
+            { name: 'app-git', resourceRef: { name: 'mapit-git' } },
+            { name: 'app-image', resourceRef: { name: 'mapit-image' } },
+          ],
+        },
+        status: {
+          conditions: [
+            {
+              status: 'False',
+              type: 'Succeeded',
+            },
+          ],
+          startTime: '2019-12-09T08:59:05Z',
+          taskRuns: {
+            'simple-pipeline-7ergyh-build-1-cht9h': {
+              pipelineTaskName: 'build-1',
+              status: {
+                conditions: [
+                  {
+                    status: 'True',
+                    type: 'Succeeded',
+                  },
+                ],
+              },
+            },
+            'simple-pipeline-7ergyh-build-2-x8jq2': {
+              pipelineTaskName: 'build-2',
+              status: {
+                conditions: [
+                  {
+                    status: 'True',
+                    type: 'Succeeded',
+                  },
+                ],
+              },
+            },
+            'simple-pipeline-7ergyh-push-n2r2q': {
+              pipelineTaskName: 'push',
+              status: {
+                completionTime: '2019-12-09T08:59:26Z',
+                conditions: [
+                  {
+                    status: 'False',
+                    type: 'Succeeded',
+                  },
+                ],
+              },
+            },
+          },
+        },
+      },
+      [DataState.FAILED3]: {
+        apiVersion: 'tekton.dev/v1alpha1',
+        kind: 'PipelineRun',
+        metadata: {
+          name: 'complex-pipeline-fm4hax',
+          namespace: 'tekton-pipelines',
+        },
+        spec: {
+          params: [{ name: 'APP_NAME', value: '' }],
+          pipelineRef: { name: 'complex-pipeline' },
+          resources: [
+            { name: 'app-git', resourceRef: { name: 'mapit-git' } },
+            { name: 'app-image', resourceRef: { name: 'mapit-image' } },
+          ],
+        },
+        status: {
+          conditions: [
+            {
+              status: 'False',
+              type: 'Succeeded',
+            },
+          ],
+          startTime: '2019-12-10T11:18:38Z',
+          taskRuns: {
+            'simple-pipeline-haeml4-build-1-fddrb': {
+              pipelineTaskName: 'build-1',
+              status: {
+                completionTime: '2019-12-10T11:19:18Z',
+                conditions: [
+                  {
+                    reason: 'Succeeded',
+                    status: 'True',
+                    type: 'Succeeded',
+                  },
+                ],
+              },
+            },
+            'simple-pipeline-haeml4-build-2-l5scg': {
+              pipelineTaskName: 'build-2',
+              status: {
+                completionTime: '2019-12-10T11:19:19Z',
+                conditions: [
+                  {
+                    status: 'True',
+                    type: 'Succeeded',
+                  },
+                ],
+                startTime: '2019-12-10T11:18:58Z',
+              },
+            },
+            'simple-pipeline-haeml4-deploy-qtpnz': {
+              pipelineTaskName: 'deploy',
+              status: {
+                conditions: [
+                  {
+                    status: 'False',
+                    type: 'Succeeded',
+                  },
+                ],
+              },
+            },
+            'simple-pipeline-haeml4-push-4gj8n': {
+              pipelineTaskName: 'push',
+              status: {
+                completionTime: '2019-12-10T11:18:58Z',
+                conditions: [
+                  {
+                    status: 'False',
                     type: 'Succeeded',
                   },
                 ],
@@ -377,8 +548,7 @@ export const pipelineTestData: PipelineTestData = {
               status: {
                 conditions: [
                   {
-                    reason: 'TaskRunCancelled',
-                    status: 'False',
+                    status: 'True',
                     type: 'Succeeded',
                   },
                 ],
@@ -390,7 +560,6 @@ export const pipelineTestData: PipelineTestData = {
                 completionTime: '2019-12-10T11:18:58Z',
                 conditions: [
                   {
-                    reason: 'Succeeded',
                     status: 'True',
                     type: 'Succeeded',
                   },
