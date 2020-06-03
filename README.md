@@ -20,7 +20,7 @@ The console is a more friendly `kubectl` in the form of a single page webapp.  I
 2. [go](https://golang.org/) >= 1.13+
 3. [oc](https://mirror.openshift.com/pub/openshift-v4/clients/oc/4.4/) or [kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl/) and an OpenShift or Kubernetes cluster
 4. `jq` (for `contrib/environment.sh`)
-5. Google Chrome/Chromium for integration tests
+5. Google Chrome/Chromium or Firefox for integration tests
 
 ### Build everything:
 
@@ -185,7 +185,9 @@ Run frontend tests:
 
 ### Integration Tests
 
-Integration tests are run in a headless Chrome driven by [protractor](http://www.protractortest.org/#/).  Requirements include Chrome, a working cluster, kubectl, and bridge itself (see building above).
+Integration tests are run in a headless browser driven by [protractor](http://www.protractortest.org/#/).
+Requirements include Chrome or Firefox, a working cluster, kubectl, and bridge itself (see building above).
+By default, it will look for Chrome in the system and use it, but if you want to use Firefox instead, set `BRIDGE_E2E_BROWSER_NAME` environment variable in your shell with the value `firefox`.
 
 Setup (or any time you change node_modules - `yarn add` or `yarn install`)
 ```
@@ -204,7 +206,7 @@ yarn run test-gui-openshift
 This will include the normal k8s CRUD tests and CRUD tests for OpenShift
 resources.
 
-If you get Jasmine spec timeout errors during runs perhaps against a busy cluster or over slow network, you can try setting a bigger timeout in milliseconds to `JASMINE_TIMEOUT` environment variable in your shell before running the tests. Default 120000 (2 minutes).
+If you get Jasmine spec timeout errors during runs perhaps against a busy cluster or over slow network, you can try setting a bigger timeout in milliseconds to `BRIDGE_JASMINE_TIMEOUT` environment variable in your shell before running the tests. Default 120000 (2 minutes).
 
 If you your local Chrome version doesn't match the Chromedriver version from the console dependencies, override the version with:
 ```
