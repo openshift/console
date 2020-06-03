@@ -485,9 +485,9 @@ $co-external-link-padding-right: 15px;
       border-bottom: solid 1px #eee;
     }
   }
-  [class*='col-'],
   .row {
     vertical-align: middle;
+    position: relative;
   }
   .co-m-table-grid {
     padding-left: 20px;

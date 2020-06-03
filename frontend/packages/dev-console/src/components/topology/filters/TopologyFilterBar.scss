@@ -1,7 +1,14 @@
+@import '../../../../../../public/style/vars';
+@import '../../../../../../node_modules/bootstrap-sass/assets/stylesheets/bootstrap/variables.scss';
+
 .odc-topology-filter-bar {
   background-color: var(--pf-chart-global--Fill--Color--white);
-  padding-top: 6px;
-  padding-bottom: 6px;
+  padding: 6px ($grid-gutter-width / 2);
+
+  @media (min-width: $grid-float-breakpoint) {
+    padding-left: $grid-gutter-width;
+    padding-right: $grid-gutter-width;
+  }
 
   &__search {
     margin-left: auto;

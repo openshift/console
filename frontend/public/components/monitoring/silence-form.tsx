@@ -44,7 +44,7 @@ const DatetimeTextInput = (props) => {
           {...props}
           aria-label="Datetime"
           data-test-id="datetime"
-          isValid={isValid || !!props.isDisabled}
+          validated={isValid || !!props.isDisabled ? 'default' : 'error'}
           pattern={pattern}
           placeholder="YYYY/MM/DD hh:mm:ss"
         />

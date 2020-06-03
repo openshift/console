@@ -26,7 +26,7 @@ const RadioGroupField: React.FC<RadioGroupFieldProps> = ({
       fieldId={fieldId}
       helperText={helpText}
       helperTextInvalid={errorMessage}
-      isValid={isValid}
+      validated={isValid ? 'default' : 'error'}
       isRequired={required}
       label={label}
     >

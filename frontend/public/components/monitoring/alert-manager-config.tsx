@@ -352,7 +352,9 @@ ReceiversTable.displayName = 'ReceiversTable';
 
 const ReceiversEmptyState: React.FC = () => (
   <EmptyState variant={EmptyStateVariant.full}>
-    <Title size="lg">No Receivers Found</Title>
+    <Title headingLevel="h2" size="lg">
+      No Receivers Found
+    </Title>
     <EmptyStateBody>
       Create a receiver to get OpenShift alerts through other services such as email or a chat
       platform. The first receiver you create will become the default receiver and will

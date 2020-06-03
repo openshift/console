@@ -2,10 +2,9 @@ import * as React from 'react';
 import * as classNames from 'classnames';
 import { action } from 'mobx';
 import { connect } from 'react-redux';
-import { Button, ToolbarItem, Tooltip } from '@patternfly/react-core';
+import { Button, PageHeaderToolsItem, Tooltip, Stack, StackItem } from '@patternfly/react-core';
 import { TopologyIcon } from '@patternfly/react-icons';
 import {
-  TopologyView,
   TopologyControlBar,
   createTopologyControlButtons,
   defaultControlButtonsOptions,
@@ -385,7 +384,7 @@ const Topology: React.FC<ComponentProps> = ({
       >
         <div className="odc-topology__layout-group">
           <Tooltip content="Layout 1">
-            <ToolbarItem className="odc-topology__layout-button" tabIndex={-1}>
+            <PageHeaderToolsItem className="odc-topology__layout-button" tabIndex={-1}>
               <Button
                 className={classNames('pf-topology-control-bar__button', {
                   'pf-m-active': layout === COLA_LAYOUT,
@@ -393,13 +392,12 @@ const Topology: React.FC<ComponentProps> = ({
                 variant="tertiary"
                 onClick={() => setLayout(COLA_LAYOUT)}
               >
-                <TopologyIcon className="odc-topology__layout-button__icon" />1
-                <span className="sr-only">Layout 1</span>
+                <TopologyIcon className="odc-topology__layout-button__icon" aria-label="Layout" />1
               </Button>
-            </ToolbarItem>
+            </PageHeaderToolsItem>
           </Tooltip>
           <Tooltip content="Layout 2">
-            <ToolbarItem className="odc-topology__layout-button" tabIndex={-1}>
+            <PageHeaderToolsItem className="odc-topology__layout-button" tabIndex={-1}>
               <Button
                 className={classNames('pf-topology-control-bar__button', {
                   'pf-m-active': layout === COLA_FORCE_LAYOUT,
@@ -407,10 +405,9 @@ const Topology: React.FC<ComponentProps> = ({
                 variant="tertiary"
                 onClick={() => setLayout(COLA_FORCE_LAYOUT)}
               >
-                <TopologyIcon className="odc-topology__layout-button__icon" />2
-                <span className="sr-only">Layout 2</span>
+                <TopologyIcon className="odc-topology__layout-button__icon" aria-label="Layout" />2
               </Button>
-            </ToolbarItem>
+            </PageHeaderToolsItem>
           </Tooltip>
         </div>
       </TopologyControlBar>
@@ -479,18 +476,25 @@ const Topology: React.FC<ComponentProps> = ({
 
   const sideBar = renderSideBar();
 
+  const containerClasses = classNames('pf-topology-container', {
+    'pf-topology-container__with-sidebar': sideBar,
+    'pf-topology-container__with-sidebar--open': sideBar,
+  });
+
   return (
-    <TopologyView
-      viewToolbar={
+    <Stack>
+      <StackItem isFilled={false}>
         <TopologyFilterBar visualization={visualization} onSearchChange={onSearchChange} />
-      }
-      controlBar={renderControlBar()}
-      sideBar={sideBar}
-      sideBarOpen={!!sideBar}
-    >
-      <VisualizationSurface visualization={visualization} state={{ selectedIds }} />
-      {dragHint && <div className="odc-topology__hint-container">{dragHint}</div>}
-    </TopologyView>
+      </StackItem>
+      <StackItem isFilled className={containerClasses}>
+        <div className="pf-topology-content">
+          <VisualizationSurface visualization={visualization} state={{ selectedIds }} />
+          {dragHint && <div className="odc-topology__hint-container">{dragHint}</div>}
+          <span className="pf-topology-control-bar">{renderControlBar()}</span>
+        </div>
+        {sideBar}
+      </StackItem>
+    </Stack>
   );
 };
 

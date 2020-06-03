@@ -7,7 +7,7 @@ import {
   FormGroup,
   TextInput,
   Radio,
-  Expandable,
+  ExpandableSection,
   TextInputTypes,
   Text,
   TextVariants,
@@ -182,7 +182,7 @@ const CreateLocalVolumeSet: React.FC = withHandlePromise<CreateLocalVolumeSetPro
             onChange={(type: DiskType) => setVolumeType(type)}
           />
         </FormGroup>
-        <Expandable toggleText="Advanced" data-test-id="create-lvs-form-advanced">
+        <ExpandableSection toggleText="Advanced" data-test-id="create-lvs-form-advanced">
           <FormGroup
             label="Volume Mode"
             fieldId="create-lso--volume-mode-dropdown"
@@ -209,7 +209,7 @@ const CreateLocalVolumeSet: React.FC = withHandlePromise<CreateLocalVolumeSetPro
               onChange={(maxLimit) => setMaxVolumeLimit(maxLimit)}
             />
           </FormGroup>
-        </Expandable>
+        </ExpandableSection>
         <ButtonBar errorMessage={errorMessage} inProgress={inProgress}>
           <ActionGroup>
             <Button type="submit" variant="primary">

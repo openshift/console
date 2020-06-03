@@ -174,7 +174,7 @@ export const StatusCard = connect<StatusCardProps>(mapStateToProps)(({ k8sModels
       </DashboardCardHeader>
       <DashboardCardBody>
         <HealthBody>
-          <Gallery className="co-overview-status__health" gutter="md">
+          <Gallery className="co-overview-status__health" hasGutter>
             {healthItems.map((item) => {
               return <GalleryItem key={item.title}>{item.Component}</GalleryItem>;
             })}

@@ -47,7 +47,7 @@ const EditApplicationForm: React.FC<FormikProps<FormikValues> & EditApplicationF
     <form onSubmit={handleSubmit} className="modal-content modal-content--no-inner-scroll">
       <ModalTitle>Edit Application Grouping</ModalTitle>
       <ModalBody>
-        <Title size="sm" className="co-m-form-row">
+        <Title headingLevel="h2" size="md" className="co-m-form-row">
           Select an application group to add the component
           <strong>{` ${resource.metadata.name} `}</strong>
           to

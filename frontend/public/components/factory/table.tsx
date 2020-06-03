@@ -672,7 +672,7 @@ export type TableInnerProps = {
   sortList?: (listId: string, field: string, func: any, orderBy: string, column: string) => any;
   selectedResourcesForKind?: string[];
   onSelect?: (
-    event: React.MouseEvent,
+    event: React.FormEvent<HTMLInputElement>,
     isSelected: boolean,
     rowIndex: number,
     rowData: IRowData,

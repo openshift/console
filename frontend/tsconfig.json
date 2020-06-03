@@ -5,6 +5,7 @@
     "moduleResolution": "node",
     "outDir": "./public/dist/build/",
     "target": "es2016",
+    "skipLibCheck": true,
     "jsx": "react",
     "allowJs": true,
     "experimentalDecorators": true,

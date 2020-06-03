@@ -14,9 +14,9 @@ import {
   ApplicationLauncherItem,
   ApplicationLauncherSeparator,
   NotificationBadge,
-  Toolbar,
-  ToolbarGroup,
-  ToolbarItem,
+  PageHeaderTools,
+  PageHeaderToolsGroup,
+  PageHeaderToolsItem,
   TooltipPosition,
   Tooltip,
 } from '@patternfly/react-core';
@@ -36,7 +36,7 @@ import * as redhatLogoImg from '../imgs/logos/redhat.svg';
 
 const SystemStatusButton = ({ statuspageData, className }) =>
   !_.isEmpty(_.get(statuspageData, 'incidents')) ? (
-    <ToolbarItem className={className}>
+    <PageHeaderToolsItem className={className}>
       <a
         className="pf-c-button pf-m-plain"
         aria-label="System Status"
@@ -46,7 +46,7 @@ const SystemStatusButton = ({ statuspageData, className }) =>
       >
         <YellowExclamationTriangleIcon className="co-masthead-icon" />
       </a>
-    </ToolbarItem>
+    </PageHeaderToolsItem>
   ) : null;
 
 class MastheadToolbarContents_ extends React.Component {
@@ -503,13 +503,13 @@ class MastheadToolbarContents_ extends React.Component {
     const alertAccess = canAccessNS && !!window.SERVER_FLAGS.prometheusBaseURL;
     return (
       <>
-        <Toolbar>
-          <ToolbarGroup className="hidden-xs">
+        <PageHeaderTools>
+          <PageHeaderToolsGroup className="hidden-xs">
             {/* desktop -- (system status button) */}
             <SystemStatusButton statuspageData={statuspageData} />
             {/* desktop -- (application launcher dropdown), import yaml, help dropdown [documentation, about] */}
             {!_.isEmpty(launchActions) && (
-              <ToolbarItem>
+              <PageHeaderToolsItem>
                 <ApplicationLauncher
                   className="co-app-launcher"
                   data-test-id="application-launcher"
@@ -520,11 +520,11 @@ class MastheadToolbarContents_ extends React.Component {
                   position="right"
                   isGrouped
                 />
-              </ToolbarItem>
+              </PageHeaderToolsItem>
             )}
             {/* desktop -- (notification drawer button) */
             alertAccess && (
-              <ToolbarItem>
+              <PageHeaderToolsItem>
                 <NotificationBadge
                   aria-label="Notification Drawer"
                   onClick={drawerToggle}
@@ -532,9 +532,9 @@ class MastheadToolbarContents_ extends React.Component {
                 >
                   <BellIcon />
                 </NotificationBadge>
-              </ToolbarItem>
+              </PageHeaderToolsItem>
             )}
-            <ToolbarItem>
+            <PageHeaderToolsItem>
               <Tooltip content="Import YAML" position={TooltipPosition.bottom}>
                 <Link
                   to={this._getImportYAMLPath()}
@@ -544,9 +544,9 @@ class MastheadToolbarContents_ extends React.Component {
                   <PlusCircleIcon className="co-masthead-icon" />
                 </Link>
               </Tooltip>
-            </ToolbarItem>
+            </PageHeaderToolsItem>
             <CloudShellMastheadButton />
-            <ToolbarItem>
+            <PageHeaderToolsItem>
               <ApplicationLauncher
                 aria-label="Help menu"
                 className="co-app-launcher"
@@ -563,12 +563,12 @@ class MastheadToolbarContents_ extends React.Component {
                 toggleIcon={<QuestionCircleIcon />}
                 isGrouped
               />
-            </ToolbarItem>
-          </ToolbarGroup>
-          <ToolbarGroup>
+            </PageHeaderToolsItem>
+          </PageHeaderToolsGroup>
+          <PageHeaderToolsGroup>
             {/* mobile -- (notification drawer button) */
             alertAccess && !notificationsRead && (
-              <ToolbarItem className="visible-xs-block">
+              <PageHeaderToolsItem className="visible-xs-block">
                 <NotificationBadge
                   aria-label="Notification Drawer"
                   onClick={drawerToggle}
@@ -576,16 +576,20 @@ class MastheadToolbarContents_ extends React.Component {
                 >
                   <BellIcon />
                 </NotificationBadge>
-              </ToolbarItem>
+              </PageHeaderToolsItem>
             )}
             {/* mobile -- (system status button) */}
             <SystemStatusButton statuspageData={statuspageData} className="visible-xs-block" />
             {/* mobile -- kebab dropdown [(application launcher |) import yaml | documentation, about (| logout)] */}
-            <ToolbarItem className="visible-xs-block">{this._renderMenu(true)}</ToolbarItem>
+            <PageHeaderToolsItem className="visible-xs-block">
+              {this._renderMenu(true)}
+            </PageHeaderToolsItem>
             {/* desktop -- (user dropdown [logout]) */}
-            <ToolbarItem className="hidden-xs">{this._renderMenu(false)}</ToolbarItem>
-          </ToolbarGroup>
-        </Toolbar>
+            <PageHeaderToolsItem className="hidden-xs">
+              {this._renderMenu(false)}
+            </PageHeaderToolsItem>
+          </PageHeaderToolsGroup>
+        </PageHeaderTools>
         <AboutModal isOpen={showAboutModal} closeAboutModal={this._closeAboutModal} />
       </>
     );

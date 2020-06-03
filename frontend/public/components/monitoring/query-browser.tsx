@@ -53,12 +53,10 @@ import {
 
 const spans = ['5m', '15m', '30m', '1h', '2h', '6h', '12h', '1d', '2d', '1w', '2w'];
 const dropdownItems = _.zipObject(spans, spans);
-const chartTheme = getCustomTheme(
-  ChartThemeColor.multi,
-  ChartThemeVariant.light,
-  queryBrowserTheme,
-);
-export const colors = chartTheme.line.colorScale;
+// Note: Victory incorrectly typed ThemeBaseProps.padding as number instead of PaddingProps
+// @ts-ignore
+const theme = getCustomTheme(ChartThemeColor.multi, ChartThemeVariant.light, queryBrowserTheme);
+export const colors = theme.line.colorScale;
 
 // Use exponential notation for small or very large numbers to avoid labels with too many characters
 const formatPositiveValue = (v: number): string =>
@@ -74,8 +72,10 @@ export const Error: React.FC<ErrorProps> = ({ error, title = 'An error occurred'
 const GraphEmptyState: React.FC<GraphEmptyStateProps> = ({ children, title }) => (
   <div className="query-browser__wrapper graph-empty-state">
     <EmptyState variant={EmptyStateVariant.full}>
-      <EmptyStateIcon size="sm" icon={ChartLineIcon} />
-      <Title size="sm">{title}</Title>
+      <EmptyStateIcon icon={ChartLineIcon} />
+      <Title headingLevel="h2" size="md">
+        {title}
+      </Title>
       <EmptyStateBody>{children}</EmptyStateBody>
     </EmptyState>
   </div>
@@ -108,7 +108,7 @@ const SpanControls: React.FC<SpanControlsProps> = React.memo(
         <TextInput
           aria-label="graph timespan"
           className="query-browser__span-text"
-          isValid={isValid}
+          validated={isValid ? 'default' : 'error'}
           onChange={(v) => setSpan(v, true)}
           type="text"
           value={text}
@@ -221,12 +221,7 @@ const graphLabelComponent = <ChartTooltip center={{ x: 0, y: 0 }} flyoutComponen
 // Set activateData to false to work around VictoryVoronoiContainer crash (see
 // https://github.com/FormidableLabs/victory/issues/1314)
 const graphContainer = (
-  <ChartVoronoiContainer
-    activateData={false}
-    className="query-browser__graph-container"
-    labelComponent={graphLabelComponent}
-    labels={() => ''}
-  />
+  <ChartVoronoiContainer activateData={false} className="query-browser__graph-container" />
 );
 
 const LegendContainer = ({ children }: { children?: React.ReactNode }) => {
@@ -311,7 +306,7 @@ const Graph: React.FC<GraphProps> = React.memo(
         domainPadding={{ y: 1 }}
         height={200}
         scale={{ x: 'time', y: 'linear' }}
-        theme={chartTheme}
+        theme={theme}
         width={width}
       >
         <ChartAxis style={xAxisStyle} tickCount={5} tickFormat={xTickFormat} />
@@ -319,13 +314,23 @@ const Graph: React.FC<GraphProps> = React.memo(
         {isStack ? (
           <ChartStack>
             {_.map(data, (values, i) => (
-              <ChartArea key={i} data={values} />
+              <ChartArea
+                key={i}
+                data={values}
+                labels={() => ' '}
+                labelComponent={graphLabelComponent}
+              />
             ))}
           </ChartStack>
         ) : (
           <ChartGroup>
             {_.map(data, (values, i) => (
-              <ChartLine key={i} data={values} />
+              <ChartLine
+                key={i}
+                data={values}
+                labels={() => ' '}
+                labelComponent={graphLabelComponent}
+              />
             ))}
           </ChartGroup>
         )}

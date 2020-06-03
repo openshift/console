@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Dispatch } from 'redux';
 import { connect } from 'react-redux';
-import { Toolbar, ToolbarGroup, ToolbarItem, Popover, Button } from '@patternfly/react-core';
+import { Popover, Button, ToolbarGroup, ToolbarContent } from '@patternfly/react-core';
 import { RootState } from '@console/internal/redux';
 import { TextFilter } from '@console/internal/components/factory';
 import { InfoCircleIcon } from '@patternfly/react-icons';
@@ -62,46 +62,40 @@ const TopologyFilterBar: React.FC<TopologyFilterBarProps> = ({
   );
 
   return (
-    <Toolbar className="co-namespace-bar odc-topology-filter-bar">
+    <ToolbarContent className="co-namespace-bar odc-topology-filter-bar">
       <ToolbarGroup>
-        <ToolbarItem>
-          <FilterDropdown
-            filters={filters}
-            supportedFilters={supportedFilters}
-            onChange={onDisplayFiltersChange}
-          />
-        </ToolbarItem>
+        <FilterDropdown
+          filters={filters}
+          supportedFilters={supportedFilters}
+          onChange={onDisplayFiltersChange}
+        />
       </ToolbarGroup>
       <ToolbarGroup className="odc-topology-filter-bar__search">
-        <ToolbarItem>
-          <TextFilter
-            placeholder="Find by name..."
-            value={searchQuery}
-            autoFocus
-            onChange={onTextFilterChange}
-          />
-        </ToolbarItem>
-        <ToolbarItem>
-          <Popover
-            aria-label="Find by name"
-            position="left"
-            bodyContent={
-              <>
-                Search results may appear outside of the visible area.{' '}
-                <Button variant="link" onClick={() => visualization.getGraph().fit(80)} isInline>
-                  Click here
-                </Button>{' '}
-                to fit to the screen.
-              </>
-            }
-          >
-            <Button variant="link" className="odc-topology-filter-bar__info-icon" isInline>
-              <InfoCircleIcon />
-            </Button>
-          </Popover>
-        </ToolbarItem>
+        <TextFilter
+          placeholder="Find by name..."
+          value={searchQuery}
+          autoFocus
+          onChange={onTextFilterChange}
+        />
+        <Popover
+          aria-label="Find by name"
+          position="left"
+          bodyContent={
+            <>
+              Search results may appear outside of the visible area.{' '}
+              <Button variant="link" onClick={() => visualization.getGraph().fit(80)} isInline>
+                Click here
+              </Button>{' '}
+              to fit to the screen.
+            </>
+          }
+        >
+          <Button variant="link" className="odc-topology-filter-bar__info-icon" isInline>
+            <InfoCircleIcon />
+          </Button>
+        </Popover>
       </ToolbarGroup>
-    </Toolbar>
+    </ToolbarContent>
   );
 };
 

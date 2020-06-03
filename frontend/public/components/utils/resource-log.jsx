@@ -393,7 +393,7 @@ class ResourceLog_ extends React.Component {
             className="co-alert"
             variant="danger"
             title="An error occurred while retrieving the requested logs."
-            action={<AlertActionLink onClick={this._restartStream}>Retry</AlertActionLink>}
+            actionLinks={<AlertActionLink onClick={this._restartStream}>Retry</AlertActionLink>}
           />
         )}
         {stale && (
@@ -402,7 +402,7 @@ class ResourceLog_ extends React.Component {
             className="co-alert"
             variant="info"
             title={`The logs for this ${resource.kind} may be stale.`}
-            action={<AlertActionLink onClick={this._restartStream}>Refresh</AlertActionLink>}
+            actionLinks={<AlertActionLink onClick={this._restartStream}>Refresh</AlertActionLink>}
           />
         )}
         <div

@@ -35,7 +35,7 @@ const TaskSidebarParam: React.FC<TaskSidebarParamProps> = (props) => {
       label={resourceParam.name}
       helperText={resourceParam.type === 'string' ? resourceParam.description : null}
       helperTextInvalid="Required"
-      isValid={isValid}
+      validated={isValid ? 'default' : 'error'}
       isRequired={emptyIsInvalid}
     >
       {resourceParam.type === 'array' ? (

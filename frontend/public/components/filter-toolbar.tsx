@@ -4,11 +4,11 @@ import { withRouter, RouteComponentProps } from 'react-router';
 import { connect } from 'react-redux';
 import {
   Checkbox,
-  DataToolbar,
-  DataToolbarContent,
-  DataToolbarFilter,
-  DataToolbarChip,
-  DataToolbarItem,
+  Toolbar,
+  ToolbarContent,
+  ToolbarFilter,
+  ToolbarChip,
+  ToolbarItem,
   DropdownItem,
   Dropdown,
   DropdownToggle,
@@ -80,7 +80,7 @@ const FilterToolbar_: React.FC<FilterToolbarProps & RouteComponentProps> = (prop
   const {
     rowFilters = [],
     data,
-    hideToolbar,
+    hideNameFilter,
     hideLabelFilter,
     location,
     textFilter = filterTypeMap[FilterType.NAME],
@@ -218,8 +218,12 @@ const FilterToolbar_: React.FC<FilterToolbarProps & RouteComponentProps> = (prop
 
   const clearAll = () => {
     updateRowFilterSelected(selectedRowFilters);
-    updateNameFilter('');
-    updateLabelFilter([]);
+    if (!hideNameFilter) {
+      updateNameFilter('');
+    }
+    if (!hideLabelFilter) {
+      updateLabelFilter([]);
+    }
   };
 
   // Initial URL parsing
@@ -238,69 +242,67 @@ const FilterToolbar_: React.FC<FilterToolbarProps & RouteComponentProps> = (prop
   const dropdownItems = getDropdownItems(rowFilters, selectedRowFilters, data, props);
 
   return (
-    !hideToolbar && (
-      <DataToolbar id="filter-toolbar" clearAllFilters={clearAll}>
-        <DataToolbarContent>
-          {rowFilters.length > 0 && (
-            <DataToolbarItem>
-              {_.reduce(
-                Object.keys(filters),
-                (acc, key) => (
-                  <DataToolbarFilter
-                    key={key}
-                    chips={_.intersection(selectedRowFilters, filters[key]).map((item) => {
-                      return { key: item, node: filtersNameMap[item] };
-                    })}
-                    deleteChip={(filter, chip: DataToolbarChip) =>
-                      updateRowFilterSelected([chip.key])
-                    }
-                    categoryName={key}
-                    deleteChipGroup={() => clearAllRowFilter(key)}
+    <Toolbar id="filter-toolbar" clearAllFilters={clearAll}>
+      <ToolbarContent>
+        {rowFilters.length > 0 && (
+          <ToolbarItem>
+            {_.reduce(
+              Object.keys(filters),
+              (acc, key) => (
+                <ToolbarFilter
+                  key={key}
+                  chips={_.intersection(selectedRowFilters, filters[key]).map((item) => {
+                    return { key: item, node: filtersNameMap[item] };
+                  })}
+                  deleteChip={(filter, chip: ToolbarChip) => updateRowFilterSelected([chip.key])}
+                  categoryName={key}
+                  deleteChipGroup={() => clearAllRowFilter(key)}
+                >
+                  {acc}
+                </ToolbarFilter>
+              ),
+              <Dropdown
+                dropdownItems={dropdownItems}
+                onSelect={onRowFilterSelect}
+                isOpen={isOpen}
+                toggle={
+                  <DropdownToggle
+                    data-test-id="filter-dropdown-toggle"
+                    onToggle={() => setOpen(!isOpen)}
+                    toggleIndicator={CaretDownIcon}
                   >
-                    {acc}
-                  </DataToolbarFilter>
-                ),
-                <Dropdown
-                  dropdownItems={dropdownItems}
-                  onSelect={onRowFilterSelect}
-                  isOpen={isOpen}
-                  toggle={
-                    <DropdownToggle
-                      data-test-id="filter-dropdown-toggle"
-                      onToggle={() => setOpen(!isOpen)}
-                      iconComponent={CaretDownIcon}
-                    >
-                      <FilterIcon className="span--icon__right-margin" />
-                      Filter
-                    </DropdownToggle>
-                  }
-                />,
-              )}
-            </DataToolbarItem>
-          )}
-          <DataToolbarItem className="co-filter-search--full-width">
-            <DataToolbarFilter
-              deleteChipGroup={() => updateLabelFilter([])}
-              chips={!hideLabelFilter ? [...labelFilters] : []}
-              deleteChip={(filter, chip: string) =>
-                updateLabelFilter(_.difference(labelFilters, [chip]))
-              }
-              categoryName="Label"
+                    <FilterIcon className="span--icon__right-margin" />
+                    Filter
+                  </DropdownToggle>
+                }
+              />,
+            )}
+          </ToolbarItem>
+        )}
+        <ToolbarItem className="co-filter-search--full-width">
+          <ToolbarFilter
+            deleteChipGroup={() => updateLabelFilter([])}
+            chips={[...labelFilters]}
+            deleteChip={(filter, chip: string) =>
+              updateLabelFilter(_.difference(labelFilters, [chip]))
+            }
+            categoryName="Label"
+          >
+            <ToolbarFilter
+              chips={nameFilter && nameFilter.length > 0 ? [nameFilter] : []}
+              deleteChip={() => updateNameFilter('')}
+              categoryName="Name"
             >
-              <DataToolbarFilter
-                chips={nameFilter?.length ? [nameFilter] : []}
-                deleteChip={() => updateNameFilter('')}
-                categoryName="Name"
-              >
-                <div className="pf-c-input-group">
-                  {!hideLabelFilter && (
-                    <DropdownInternal
-                      items={FilterType}
-                      onChange={switchFilter}
-                      selectedKey={filterType}
-                      title={filterType}
-                    />
-                  )}
+              <div className="pf-c-input-group">
+                {!hideLabelFilter && (
+                  <DropdownInternal
+                    items={FilterType}
+                    onChange={switchFilter}
+                    selectedKey={filterType}
+                    title={filterType}
+                  />
+                )}
+                {!hideNameFilter && (
                   <AutocompleteInput
                     className="co-text-node"
                     onSuggestionSelect={(selected) => {
@@ -314,13 +316,13 @@ const FilterToolbar_: React.FC<FilterToolbarProps & RouteComponentProps> = (prop
                     }
                     data={data}
                   />
-                </div>
-              </DataToolbarFilter>
-            </DataToolbarFilter>
-          </DataToolbarItem>
-        </DataToolbarContent>
-      </DataToolbar>
-    )
+                )}
+              </div>
+            </ToolbarFilter>
+          </ToolbarFilter>
+        </ToolbarItem>
+      </ToolbarContent>
+    </Toolbar>
   );
 };
 
@@ -330,7 +332,7 @@ type FilterToolbarProps = {
   reduxIDs?: string[];
   filterList?: any;
   textFilter?: string;
-  hideToolbar?: boolean;
+  hideNameFilter?: boolean;
   hideLabelFilter?: boolean;
   parseAutoComplete?: any;
   kinds?: any;

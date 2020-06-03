@@ -110,7 +110,7 @@ const StatusCard: React.FC<DashboardItemProps> = ({
       </DashboardCardHeader>
       <DashboardCardBody>
         <HealthBody>
-          <Gallery className="nb-status-card__health" gutter="md">
+          <Gallery className="nb-status-card__health" hasGutter>
             <GalleryItem>
               <HealthItem
                 title="Multi Cloud Object Gateway"

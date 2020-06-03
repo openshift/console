@@ -68,7 +68,6 @@ const MonitoringOverview: React.FC<MonitoringOverviewProps> = (props) => {
     <div className="odc-monitoring-overview">
       <Accordion
         asDefinitionList={false}
-        noBoxShadow
         className="odc-monitoring-overview__metric-accordion"
         headingLevel="h5"
       >
@@ -115,7 +114,9 @@ const MonitoringOverview: React.FC<MonitoringOverviewProps> = (props) => {
                   className="odc-monitoring-overview__empty-state-icon"
                   icon={InfoCircleIcon}
                 />
-                <Title size="md">No Metrics Found</Title>
+                <Title headingLevel="h2" size="md">
+                  No Metrics Found
+                </Title>
                 <EmptyStateBody>
                   Deployment Configuration metrics are not yet supported.
                 </EmptyStateBody>

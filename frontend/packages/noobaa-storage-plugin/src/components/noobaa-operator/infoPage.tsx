@@ -74,14 +74,18 @@ const InfoPage: React.FC<InfoPageProps> = ({ obj }) => {
       </div>
       <div className="nb-data-section__right">
         <div className="nb-data-section__right-entry">
-          <Title size="xl">Description</Title>
+          <Title headingLevel="h2" size="xl">
+            Description
+          </Title>
           <p className="nb-data-section__right-entry--faded">
             Multi Cloud Gateway is a data platform for object data federation across private and
             public clouds.
           </p>
         </div>
         <div className="nb-data-section__right-entry">
-          <Title size="xl">FAQ</Title>
+          <Title headingLevel="h2" size="xl">
+            FAQ
+          </Title>
           <ul className="nb-data-section__right-faq">
             <li>
               <ExternalLink href={FAQ_LINK_1} text={FAQ_TEXT_1} />

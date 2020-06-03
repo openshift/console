@@ -10,9 +10,9 @@ import {
   defaultControlButtonsOptions,
 } from '@patternfly/react-topology';
 import {
-  Toolbar,
-  ToolbarGroup,
-  ToolbarItem,
+  PageHeaderTools,
+  PageHeaderToolsGroup,
+  PageHeaderToolsItem,
   Split,
   SplitItem,
   Dropdown,
@@ -189,11 +189,11 @@ const TopologyViewComponent: React.FC<TopologyViewComponentProps> = ({ vis, useS
     </Split>
   );
   const viewToolbar = (
-    <Toolbar className="pf-u-mx-md pf-u-my-md">
-      <ToolbarGroup>
-        <ToolbarItem>{layoutDropdown}</ToolbarItem>
-      </ToolbarGroup>
-    </Toolbar>
+    <PageHeaderTools className="pf-u-mx-md pf-u-my-md">
+      <PageHeaderToolsGroup>
+        <PageHeaderToolsItem>{layoutDropdown}</PageHeaderToolsItem>
+      </PageHeaderToolsGroup>
+    </PageHeaderTools>
   );
 
   return (

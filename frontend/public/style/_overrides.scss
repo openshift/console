@@ -215,6 +215,9 @@ h6 {
     .pf-c-app-launcher__toggle {
       font-size: $pf-header-icon-fontsize !important;
     }
+    .pf-c-notification-badge {
+      font-size: $pf-header-icon-fontsize;
+    }
   }
 
   &__main {
@@ -229,10 +232,10 @@ h6 {
   }
 
   // `.pf-c-page` specificity required
-  .pf-c-data-toolbar {
-    --pf-c-data-toolbar--PaddingTop: 0;
-    --pf-c-data-toolbar__content--PaddingLeft: 0;
-    --pf-c-data-toolbar__content--PaddingRight: 0;
+  .pf-c-toolbar {
+    --pf-c-toolbar--PaddingTop: 0;
+    --pf-c-toolbar__content--PaddingLeft: 0;
+    --pf-c-toolbar__content--PaddingRight: 0;
   }
 
   .pf-c-page__main-section {
@@ -250,7 +253,7 @@ h6 {
 
 @media screen and (min-width: $grid-float-breakpoint) {
   .pf-m-expanded + .pf-c-page__main {
-    left: var(--pf-c-page__sidebar--md--Width);
+    left: var(--pf-c-page__sidebar--Width);
   }
 }
 
@@ -323,7 +326,7 @@ h6 {
 
   &.pf-m-expanded {
     width: var(
-      --pf-c-page__sidebar--md--Width
+      --pf-c-page__sidebar--Width
     ) !important; // maintain desktop width so size doesn't animate before hiding when resizing to mobile
   }
 
@@ -344,22 +347,13 @@ h6 {
       --pf-c-nav__simple-list-link--nested--PaddingLeft: var(--pf-global--spacer--xl);
     }
 
-    font-size: $co-side-nav-font-size;
+    .pf-c-nav__link {
+      font-size: $co-side-nav-section-font-size;
+    }
 
-    .pf-c-nav__simple-list .pf-c-nav__link {
-      font-size: $font-size-base;
-      // fix bug where nav items retain focus after navigation
-      // see https://github.com/patternfly/patternfly-next/issues/2463
-      &:focus {
-        background-color: transparent;
-        color: var(--pf-global--Color--light-300); // escape PF var chaos
-        font-weight: var(--pf-c-nav__list-link--FontWeight);
-      }
-      &:focus:hover,
-      &.pf-m-current:focus {
-        background-color: var(--pf-c-nav__simple-list-link--focus--BackgroundColor);
-        color: var(--pf-c-nav__simple-list-link--focus--Color);
-        font-weight: var(--pf-c-nav__simple-list-link--m-current--FontWeight);
+    .pf-c-nav__subnav {
+      .pf-c-nav__link {
+        font-size: $co-side-nav-font-size;
       }
     }
 
@@ -367,12 +361,6 @@ h6 {
     ul {
       list-style: none;
     }
-  }
-
-  // fix bug where nav items retain focus after navigation
-  // see https://github.com/patternfly/patternfly-next/issues/2463
-  .pf-c-nav__item.pf-m-current .pf-c-nav__simple-list .pf-c-nav__link:focus {
-    color: var(--pf-global--Color--light-100); // escape PF var chaos
   }
 }
 
@@ -387,11 +375,11 @@ h6 {
 }
 
 .pf-c-table tr > * {
-  --pf-c-table-cell--FontSize: $font-size-base;
-  --pf-c-table-cell--PaddingLeft: 12px;
-  --pf-c-table-cell--PaddingRight: 12px;
-  --pf-c-table--m-compact-cell--first-last-child--PaddingLeft: 12px;
-  --pf-c-table--m-compact-cell--first-last-child--PaddingRight: 12px;
+  --pf-c-table--cell--FontSize: $font-size-base;
+  --pf-c-table--cell--PaddingLeft: 12px;
+  --pf-c-table--cell--PaddingRight: 12px;
+  --pf-c-table--m-compact--cell--first-last-child--PaddingLeft: 12px;
+  --pf-c-table--m-compact--cell--first-last-child--PaddingRight: 12px;
 }
 
 .pf-c-table.pf-c-virtualized tr {

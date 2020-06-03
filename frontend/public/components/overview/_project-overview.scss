@@ -83,7 +83,6 @@
 
   .project-overview__item-heading--name {
     @include co-truncate;
-    font-family: var(--pf-global--FontFamily--redhatfont--heading--sans-serif);
     font-size: 16px !important;
     white-space: nowrap;
   }

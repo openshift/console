@@ -7,7 +7,12 @@ import {
   createTopologyControlButtons,
   defaultControlButtonsOptions,
 } from '@patternfly/react-topology';
-import { Toolbar, ToolbarGroup, ToolbarItem, Checkbox } from '@patternfly/react-core';
+import {
+  PageHeaderTools,
+  PageHeaderToolsGroup,
+  PageHeaderToolsItem,
+  Checkbox,
+} from '@patternfly/react-core';
 import {
   EdgeModel,
   Model,
@@ -138,58 +143,58 @@ const TopologyViewComponent: React.FC<TopologyViewComponentProps> = ({ vis }) =>
   });
 
   const viewToolbar = (
-    <Toolbar className="pf-u-mx-md pf-u-my-md">
-      <ToolbarGroup>
-        <ToolbarItem>
+    <PageHeaderTools className="pf-u-mx-md pf-u-my-md">
+      <PageHeaderToolsGroup>
+        <PageHeaderToolsItem>
           <Checkbox
             id="collapse-blue"
             label="Collapse Blue"
             isChecked={collapseBlue}
             onChange={(checked) => setCollapseBlue(checked)}
           />
-        </ToolbarItem>
-      </ToolbarGroup>
-      <ToolbarGroup>
-        <ToolbarItem>
+        </PageHeaderToolsItem>
+      </PageHeaderToolsGroup>
+      <PageHeaderToolsGroup>
+        <PageHeaderToolsItem>
           <Checkbox
             id="collapse-light-blue"
             label="Collapse Light Blue"
             isChecked={collapseLightBlue}
             onChange={(checked) => setCollapseLightBlue(checked)}
           />
-        </ToolbarItem>
-      </ToolbarGroup>
-      <ToolbarGroup>
-        <ToolbarItem>
+        </PageHeaderToolsItem>
+      </PageHeaderToolsGroup>
+      <PageHeaderToolsGroup>
+        <PageHeaderToolsItem>
           <Checkbox
             id="collapse-cyan"
             label="Collapse Cyan"
             isChecked={collapseCyan}
             onChange={(checked) => setCollapseCyan(checked)}
           />
-        </ToolbarItem>
-      </ToolbarGroup>
-      <ToolbarGroup>
-        <ToolbarItem>
+        </PageHeaderToolsItem>
+      </PageHeaderToolsGroup>
+      <PageHeaderToolsGroup>
+        <PageHeaderToolsItem>
           <Checkbox
             id="collapse-orange"
             label="Collapse Orange"
             isChecked={collapseOrange}
             onChange={(checked) => setCollapseOrange(checked)}
           />
-        </ToolbarItem>
-      </ToolbarGroup>
-      <ToolbarGroup>
-        <ToolbarItem>
+        </PageHeaderToolsItem>
+      </PageHeaderToolsGroup>
+      <PageHeaderToolsGroup>
+        <PageHeaderToolsItem>
           <Checkbox
             id="collapse-pink"
             label="Collapse Pink"
             isChecked={collapsePink}
             onChange={(checked) => setCollapsePink(checked)}
           />
-        </ToolbarItem>
-      </ToolbarGroup>
-    </Toolbar>
+        </PageHeaderToolsItem>
+      </PageHeaderToolsGroup>
+    </PageHeaderTools>
   );
 
   React.useEffect(() => {

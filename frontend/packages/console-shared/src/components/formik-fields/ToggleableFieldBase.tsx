@@ -29,7 +29,7 @@ const ToggleableFieldBase: React.FC<ToggleableFieldBaseProps> = ({
       label={formLabel}
       helperText={helpText}
       helperTextInvalid={errorMessage}
-      isValid={isValid}
+      validated={isValid ? 'default' : 'error'}
       isRequired={required}
     >
       {children({

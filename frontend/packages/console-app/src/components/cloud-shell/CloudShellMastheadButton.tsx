@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { RootState } from '@console/internal/redux';
 import { TerminalIcon } from '@patternfly/react-icons';
 import { isCloudShellExpanded } from '../../redux/reducers/cloud-shell-reducer';
-import { Button, ToolbarItem, Tooltip, TooltipPosition } from '@patternfly/react-core';
+import { Button, PageHeaderToolsItem, Tooltip, TooltipPosition } from '@patternfly/react-core';
 import { connectToFlags, WithFlagsProps } from '@console/internal/reducers/features';
 import { FLAG_DEVWORKSPACE } from '../../consts';
 import { toggleCloudShellExpanded } from '../../redux/actions/cloud-shell-actions';
@@ -58,7 +58,7 @@ const ClouldShellMastheadButton: React.FC<Props> = ({ flags, onClick, open }) =>
   };
 
   return (
-    <ToolbarItem>
+    <PageHeaderToolsItem>
       <Tooltip
         content={open ? 'Close command line terminal' : 'Open command line terminal'}
         position={TooltipPosition.bottom}
@@ -72,7 +72,7 @@ const ClouldShellMastheadButton: React.FC<Props> = ({ flags, onClick, open }) =>
           <TerminalIcon className="co-masthead-icon" />
         </Button>
       </Tooltip>
-    </ToolbarItem>
+    </PageHeaderToolsItem>
   );
 };
 

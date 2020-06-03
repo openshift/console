@@ -39,7 +39,7 @@ describe(VolumeSnapshotModal.name, () => {
   });
 
   it('renders a modal form', () => {
-    expect(wrapper.find('Form').props().name).toEqual('form');
+    expect(wrapper.find({ name: 'form' })).toHaveLength(1);
     expect(wrapper.find(ModalTitle).exists()).toBe(true);
     expect(wrapper.find(ModalSubmitFooter).props().submitText).toEqual('Create');
   });
@@ -73,7 +73,7 @@ describe(VolumeSnapshotModal.name, () => {
       })
       .catch((err) => fail(err));
     wrapper
-      .find('Form')
+      .find({ name: 'form' })
       .at(0)
       .simulate('submit', new Event('submit'));
   });

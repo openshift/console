@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Flex, FlexItem, Button, FlexModifiers } from '@patternfly/react-core';
+import { Flex, FlexItem, Button } from '@patternfly/react-core';
 import { GuidedTourStatus } from './utils/guided-tour-status';
 
 type TourItemFooterProps = {
@@ -7,7 +7,7 @@ type TourItemFooterProps = {
   unmetPrerequisite?: boolean;
 };
 const TourItemFooter: React.FC<TourItemFooterProps> = ({ status, unmetPrerequisite = false }) => (
-  <Flex breakpointMods={[{ modifier: FlexModifiers['justify-content-space-between'] }]}>
+  <Flex justifyContent={{ default: 'justifyContentSpaceBetween' }}>
     {status === GuidedTourStatus.NOT_STARTED && (
       <FlexItem>
         <Button variant="link" isInline isDisabled={unmetPrerequisite}>

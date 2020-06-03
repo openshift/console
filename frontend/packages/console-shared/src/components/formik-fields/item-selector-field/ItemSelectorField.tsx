@@ -87,7 +87,7 @@ const ItemSelectorField: React.FC<ItemSelectorFieldProps> = ({
     <FormGroup
       fieldId={fieldId}
       helperTextInvalid={errorMessage}
-      isValid={isValid}
+      validated={isValid ? 'default' : 'error'}
       label={label}
       isRequired
     >

@@ -72,7 +72,7 @@ const PipelineResourceDropdown: React.FC<PipelineResourceDropdownProps> = (props
     <Select
       className="odc-pipeline-resource-dropdown"
       selections={selectedKey}
-      isExpanded={isExpanded}
+      isOpen={isExpanded}
       onToggle={() => setExpanded(!isExpanded)}
       onSelect={(e, value) => {
         setFieldValue(name, value);
