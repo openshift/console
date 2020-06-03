@@ -102,14 +102,11 @@ $catalog-tile-width: $co-m-catalog-tile-width;
 
 .co-catalog-page {
   background: $color-pf-white;
-  box-shadow: 0 0.0625rem 0.125rem 0 rgba(3,3,3,.2);
+  border: 1px solid var(--pf-global--BorderColor--300);
   display: flex;
   flex:1;
   margin: 0 ($grid-gutter-width / 2);
   padding: ($grid-gutter-width / 2) 0 0;
-  @media (min-width: $screen-sm-min) {
-    margin: 0 ($grid-gutter-width / 2) 0 $grid-gutter-width;
-  }
 
   &__btn-group__group-by {
     display: inline;
