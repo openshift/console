@@ -30,7 +30,7 @@ const findWorkspace = (data?: CloudShellResource[]): CloudShellResource | undefi
 
 const useCloudShellWorkspace = (
   user: UserKind,
-  defaultNamespace?: string,
+  defaultNamespace: string = null,
 ): WatchK8sResult<CloudShellResource> => {
   const [namespace, setNamespace] = useSafetyFirst(defaultNamespace);
   const [searching, setSearching] = useSafetyFirst<boolean>(false);
