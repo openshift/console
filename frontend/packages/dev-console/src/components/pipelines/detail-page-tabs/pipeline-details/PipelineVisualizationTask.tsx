@@ -58,7 +58,7 @@ export const PipelineVisualizationTask: React.FC<PipelineVisualizationTaskProp> 
     reason: runStatus.Idle,
   };
   if (pipelineRunStatus === runStatus.Failed || pipelineRunStatus === runStatus.Cancelled) {
-    if (task?.status?.reason === runStatus.Idle || task?.status?.reason === runStatus.Pending) {
+    if (task.status?.reason === runStatus.Idle || task.status?.reason === runStatus.Pending) {
       taskStatus.reason = runStatus.Cancelled;
     }
   }
