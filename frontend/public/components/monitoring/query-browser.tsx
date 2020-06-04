@@ -125,7 +125,7 @@ const SpanControls: React.FC<SpanControlsProps> = React.memo(
           items={dropdownItems}
           menuClassName="query-browser__span-dropdown-menu"
           noSelection={true}
-          onChange={(v) => setSpan(v)}
+          onChange={(v: string) => setSpan(v)}
         />
         <Button
           className="query-browser__inline-control"
