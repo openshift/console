@@ -11,20 +11,21 @@ set password_prompt "Password: "
 set prompt "$"
 
 set response_delay 3
-set timeout 10
 set send_human {.1 .3 1 .05 2}
 
 set source_path1 "/home/fedora/source1"
 set source_path2 "/home/fedora/source2"
 set source_path3 "/home/fedora/source3"
 
-spawn virtctl console $vm_name -n $vm_namespace
+spawn virtctl console $vm_name -n $vm_namespace --timeout 7
 
 send -h "\n"
 
-sleep 1
+sleep 3
 
 send -h \004
+
+set timeout 300
 
 # Enter username
 expect $login_prompt {

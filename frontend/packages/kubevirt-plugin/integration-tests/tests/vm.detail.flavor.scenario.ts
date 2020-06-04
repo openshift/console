@@ -36,9 +36,7 @@ describe('KubeVirt VM detail - edit flavor', () => {
       const vm1Config = vmConfig(configName.toLowerCase(), testName, provisionConfig);
       vm1Config.startOnCreation = false;
 
-      const vm = await wizard.createVirtualMachine(
-        vmConfig(configName.toLowerCase(), testName, provisionConfig),
-      );
+      const vm = await wizard.createVirtualMachine(vm1Config);
       await withResource(leakedResources, vm.asResource(), async () => {
         await vm.navigateToDetail();
         await vm.modalEditFlavor();
