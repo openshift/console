@@ -22,7 +22,6 @@ import {
   VM_STATUS,
   commonTemplateVersion,
   COMMON_TEMPLATES_REVISION,
-  INNER_TEMPLATE_VERSION,
   DISK_INTERFACE,
   STORAGE_CLASS,
 } from './utils/consts';
@@ -125,7 +124,6 @@ describe('Kubevirt create VM using wizard', () => {
           [`os.template.kubevirt.io/${osID}`]: 'true',
           'vm.kubevirt.io/template': `windows10-${testVMConfig.workloadProfile.toLowerCase()}-${testVMConfig.flavorConfig.flavor.toLowerCase()}-${commonTemplateVersion()}`,
           'vm.kubevirt.io/template.revision': COMMON_TEMPLATES_REVISION,
-          'vm.kubevirt.io/template.version': INNER_TEMPLATE_VERSION,
         };
 
         expect(_.pick(annotations, Object.keys(requiredAnnotations))).toEqual(requiredAnnotations);
@@ -172,8 +170,10 @@ describe('Kubevirt create VM using wizard', () => {
         size: '1',
         interface: DISK_INTERFACE.VirtIO,
         storageClass: `${STORAGE_CLASS}`,
-        accessMode: expectedAccessMode,
-        volumeMode: expectedVolumeMode,
+        advanced: {
+          accessMode: expectedAccessMode,
+          volumeMode: expectedVolumeMode,
+        },
       };
       const testVMConfig = vmConfig('test-dv', testName, {
         provision: {

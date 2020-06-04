@@ -52,9 +52,26 @@ export class DiskDialog {
     }
   }
 
+  async selectAdvancedOptions(advancedOptions) {
+    if (advancedOptions) {
+      await this.openAdvancedSettingsDrawer();
+
+      if (advancedOptions.accessMode) {
+        await this.selectAccessMode(advancedOptions.accessMode);
+      }
+
+      if (advancedOptions.volumeMode) {
+        await this.selectVolumeMode(advancedOptions.volumeMode);
+      }
+    }
+  }
+
   async openAdvancedSettingsDrawer() {
     if (await view.advancedDrawerToggle.isPresent()) {
-      await click(view.advancedDrawerToggle);
+      if ((await view.advancedDrawerToggle.getAttribute('aria-expanded')) === 'false') {
+        // Only click the Advanced button if it isn't already expanded
+        await click(view.advancedDrawerToggle);
+      }
     }
   }
 
@@ -104,19 +121,7 @@ export class DiskDialog {
     if (disk.size) {
       await this.fillSize(disk.size);
     }
-
-    if (disk.accessMode || disk.volumeMode) {
-      await this.openAdvancedSettingsDrawer();
-
-      if (disk.accessMode) {
-        await this.selectAccessMode(disk.accessMode);
-      }
-
-      if (disk.volumeMode) {
-        await this.selectVolumeMode(disk.volumeMode);
-      }
-    }
-
+    await this.selectAdvancedOptions(disk.advanced);
     await click(saveButton);
     await waitForNoLoaders();
   }
