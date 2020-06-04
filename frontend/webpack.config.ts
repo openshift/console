@@ -41,6 +41,7 @@ const config: Configuration = {
     progress: true,
     hot: HOT_RELOAD !== 'false',
     inline: HOT_RELOAD !== 'false',
+    contentBase: false,
   },
   resolve: {
     extensions: ['.glsl', '.ts', '.tsx', '.js', '.jsx'],
