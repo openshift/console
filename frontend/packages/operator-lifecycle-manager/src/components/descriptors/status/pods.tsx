@@ -32,6 +32,7 @@ export const PodStatusChart: React.SFC<PodStatusChartProps> = ({ statuses, statu
     <div ref={ref} className="graph-wrapper--gauge">
       <ChartDonut
         colorScale={colorScale}
+        constrainToVisibleArea
         data={data}
         height={width}
         title={total.toString()}
