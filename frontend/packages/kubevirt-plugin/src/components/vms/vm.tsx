@@ -252,7 +252,7 @@ const VirtualMachinesPage: React.FC<VirtualMachinesPageProps> = (props) => {
     const loadedMigrations = getLoadedData(migrations);
     const loadedVMImports = getLoadedData(vmImports);
     const loadedDataVolumes = getLoadedData(dataVolumes);
-    const isVMImportLoaded = !vmImports || vmImports.loaded; // go in when CRD missing
+    const isVMImportLoaded = !vmImports || vmImports.loaded || vmImports.loadError; // go in when CRD missing or no permissions
 
     if (
       ![
