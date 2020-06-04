@@ -78,33 +78,33 @@ import {
   YellowExclamationTriangleIcon,
 } from '@console/shared';
 
-const AlertResource = {
+const AlertResource: MonitoringResource = {
   kind: 'Alert',
   label: 'Alert',
   plural: '/monitoring/alerts',
   abbr: 'AL',
 };
 
-const RuleResource = {
+const RuleResource: MonitoringResource = {
   kind: 'AlertRule',
   label: 'Alerting Rule',
   plural: '/monitoring/alertrules',
   abbr: 'AR',
 };
 
-const SilenceResource = {
+const SilenceResource: MonitoringResource = {
   kind: 'Silence',
   label: 'Silence',
   plural: '/monitoring/silences',
   abbr: 'SL',
 };
 
-const labelsToParams = (labels) =>
+const labelsToParams = (labels: PrometheusLabels) =>
   _.map(labels, (v, k) => `${encodeURIComponent(k)}=${encodeURIComponent(v)}`).join('&');
 
-export const alertURL = (alert, ruleID) =>
+export const alertURL = (alert: Alert, ruleID: string) =>
   `${AlertResource.plural}/${ruleID}?${labelsToParams(alert.labels)}`;
-const ruleURL = (rule) => `${RuleResource.plural}/${_.get(rule, 'id')}`;
+const ruleURL = (rule: Rule) => `${RuleResource.plural}/${_.get(rule, 'id')}`;
 
 const alertsToProps = ({ UI }) => UI.getIn(['monitoring', 'alerts']) || {};
 
@@ -161,20 +161,17 @@ const SilenceActionsMenu = ({ silence }) => (
   </div>
 );
 
-const MonitoringResourceIcon = (props) => {
-  const { className, resource } = props;
-  return (
-    <span
-      className={classNames(
-        `co-m-resource-icon co-m-resource-${resource.kind.toLowerCase()}`,
-        className,
-      )}
-      title={resource.label}
-    >
-      {resource.abbr}
-    </span>
-  );
-};
+const MonitoringResourceIcon: React.FC<MonitoringResourceIconProps> = ({ className, resource }) => (
+  <span
+    className={classNames(
+      `co-m-resource-icon co-m-resource-${resource.kind.toLowerCase()}`,
+      className,
+    )}
+    title={resource.label}
+  >
+    {resource.abbr}
+  </span>
+);
 
 const stateIcons = {
   [AlertStates.Firing]: <BellIcon />,
@@ -182,7 +179,7 @@ const stateIcons = {
   [AlertStates.Pending]: <OutlinedBellIcon />,
 };
 
-const AlertState: React.SFC<AlertStateProps> = ({ state }) => {
+const AlertState: React.FC<AlertStateProps> = ({ state }) => {
   const icon = stateIcons[state];
   return icon ? (
     <>
@@ -312,7 +309,8 @@ const Label = ({ k, v }) => (
   </div>
 );
 
-const queryBrowserURL = (query) => `/monitoring/query-browser?query0=${encodeURIComponent(query)}`;
+const queryBrowserURL = (query: string) =>
+  `/monitoring/query-browser?query0=${encodeURIComponent(query)}`;
 
 const Graph_: React.FC<GraphProps> = ({
   deleteAll,
@@ -1671,7 +1669,7 @@ const Tab: React.FC<{ active: boolean; children: React.ReactNode }> = ({ active,
   </li>
 );
 
-const AlertingPage: React.SFC<AlertingPageProps> = ({ match }) => {
+const AlertingPage: React.FC<AlertingPageProps> = ({ match }) => {
   const alertsPath = '/monitoring/alerts';
   const rulesPath = '/monitoring/alertrules';
   const silencesPath = '/monitoring/silences';
@@ -1809,6 +1807,13 @@ export const MonitoringUI = () => (
   </Switch>
 );
 
+type MonitoringResource = {
+  abbr: string;
+  kind: string;
+  label: string;
+  plural: string;
+};
+
 type Silence = {
   comment: string;
   createdBy: string;
@@ -1923,7 +1928,7 @@ export type ListPageProps = {
   rowFilter: {
     type: string;
     selected: string[];
-    reducer: (any) => string;
+    reducer: (monitoringResource: Alert | Rule | Silence) => string;
     items: { id: string; title: string }[];
   };
   showTitle?: boolean;
@@ -1939,6 +1944,11 @@ type GraphProps = {
   hideGraphs: boolean;
   patchQuery: (index: number, patch: QueryObj) => any;
   rule: Rule;
+};
+
+type MonitoringResourceIconProps = {
+  className?: string;
+  resource: MonitoringResource;
 };
 
 type Group = {
