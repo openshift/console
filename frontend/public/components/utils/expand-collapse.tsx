@@ -4,18 +4,24 @@ import { Expandable } from '@patternfly/react-core';
 interface ExpandCollapseProps {
   textExpanded: string;
   textCollapsed: string;
+  onToggle?: (isExpanded: boolean) => void;
 }
 
 export const ExpandCollapse: React.FC<ExpandCollapseProps> = ({
   textCollapsed,
   textExpanded,
+  onToggle,
   children,
 }) => {
   const [isExpanded, toggleExpandCollapse] = React.useState(false);
   return (
     <Expandable
-      toggleText={isExpanded ? textExpanded : textCollapsed}
-      onToggle={() => toggleExpandCollapse(!isExpanded)}
+      toggleTextExpanded={textExpanded}
+      toggleTextCollapsed={textCollapsed}
+      onToggle={() => {
+        onToggle?.(!isExpanded);
+        toggleExpandCollapse(!isExpanded);
+      }}
     >
       {children}
     </Expandable>

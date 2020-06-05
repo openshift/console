@@ -14,29 +14,7 @@ import { history } from '../utils/router';
 import { normalizeIconClass } from './catalog-item-icon';
 import { CatalogTileDetails } from './catalog-item-details';
 import { TileViewPage } from '../utils/tile-view-page';
-
-type Metadata = { uid?: string; name?: string; namespace?: string };
-
-export type Item = {
-  obj?: {
-    metadata?: Metadata;
-    csv?: { kind?: string; spec: { displayName: string }; metadata?: Metadata };
-  };
-  createLabel: string;
-  href: string;
-  kind?: string;
-  tileName?: string;
-  tileImgUrl?: string;
-  tileIconClass?: string;
-  tileProvider?: string;
-  tileDescription?: string;
-  tags?: string[];
-  longDescription?: string;
-  documentationUrl?: string;
-  supportUrl?: string;
-  markdownDescription?: () => Promise<string>;
-  customProperties?: React.ReactElement;
-};
+import { Item } from './types';
 
 export type CatalogTileViewPageProps = {
   items: Item[];
@@ -373,7 +351,7 @@ export class CatalogTileViewPage extends React.Component<
         onClose={this.closeOverlay}
         title={detailsItem.tileName}
       >
-        <CatalogTileDetails item={detailsItem} closeOverlay={this.closeOverlay} />
+        <CatalogTileDetails item={detailsItem} />
       </Modal>
     );
   };
