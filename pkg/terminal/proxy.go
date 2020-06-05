@@ -12,6 +12,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/coreos/pkg/capnslog"
+
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/apimachinery/pkg/runtime/schema"
@@ -28,7 +30,15 @@ const (
 	WorkspaceInitEndpoint = "exec/init"
 	// WorkspaceActivityEndpoint is used to prevent idle timeout in a workspace
 	WorkspaceActivityEndpoint = "activity/tick"
+	// WorkspaceCreatorLabel stores the UID of the user that created the workspace. Only this user should be able to
+	// access the workspace
+	WorkspaceCreatorLabel = "controller.devfile.io/creator"
+	// WorkspaceRestrictedAcccessAnnotation signifies that a workspace expects webhooks to be enabled. If they are not,
+	// startup is blocked.
+	WorkspaceRestrictedAcccessAnnotation = "controller.devfile.io/restricted-access"
 )
+
+var log = capnslog.NewPackageLogger("github.com/openshift/console", "terminal")
 
 // Proxy provides handlers to handle terminal related requests
 type Proxy struct {
@@ -51,9 +61,9 @@ func NewProxy(serviceTLS *tls.Config, TLSClientConfig *tls.Config, clusterEndpoi
 
 var (
 	WorkspaceGroupVersionResource = schema.GroupVersionResource{
-		Group:    "workspace.che.eclipse.org",
+		Group:    "workspace.devfile.io",
 		Version:  "v1alpha1",
-		Resource: "workspaces",
+		Resource: "devworkspaces",
 	}
 
 	UserGroupVersionResource = schema.GroupVersionResource{
@@ -134,9 +144,15 @@ func (p *Proxy) HandleProxy(user *auth.User, w http.ResponseWriter, r *http.Requ
 		return
 	}
 
-	creator := ws.GetLabels()["org.eclipse.che.workspace/creator"]
+	creator := ws.GetLabels()[WorkspaceCreatorLabel]
 	if creator != userId {
 		http.Error(w, "User is not a owner of the requested workspace", http.StatusForbidden)
+		return
+	}
+
+	restrictAccess := ws.GetAnnotations()[WorkspaceRestrictedAcccessAnnotation]
+	if restrictAccess != "true" {
+		http.Error(w, "Workspace must have restricted access annotation", http.StatusForbidden)
 		return
 	}
 
@@ -169,6 +185,7 @@ func (p *Proxy) HandleProxyEnabled(w http.ResponseWriter, r *http.Request) {
 
 	enabled, err := workspaceOperatorIsRunning()
 	if err != nil {
+		log.Errorf("Failed to check if workspace operator is running: %s", err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
