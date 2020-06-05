@@ -15,6 +15,7 @@ import {
 import { GridPosition } from '@console/shared/src/components/dashboard/DashboardGrid';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager';
+import { OCS_FLAG } from '@console/ceph-storage-plugin/src/features';
 import * as models from './models';
 
 type ConsumedExtensions =
@@ -96,7 +97,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       title: 'Object Service',
     },
     flags: {
-      required: [NOOBAA_FLAG],
+      required: [NOOBAA_FLAG, OCS_FLAG],
     },
   },
   {

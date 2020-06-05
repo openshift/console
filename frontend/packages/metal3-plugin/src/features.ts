@@ -6,7 +6,6 @@ import { FeatureDetector } from '@console/plugin-sdk';
 
 export const BAREMETAL_FLAG = 'BAREMETAL';
 export const NODE_MAINTENANCE_FLAG = 'NODE_MAINTENANCE';
-export const CEPH_FLAG = 'CEPH';
 
 export const detectBaremetalPlatform: FeatureDetector = (dispatch) =>
   k8sGet(InfrastructureModel, 'cluster').then(

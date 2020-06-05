@@ -1,6 +1,9 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import { match } from 'react-router';
+// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+// @ts-ignore
+import { useDispatch } from 'react-redux';
 import { Alert, ActionGroup, Button, Form, FormGroup } from '@patternfly/react-core';
 import {
   NodeKind,
@@ -19,6 +22,7 @@ import {
   FieldLevelHelp,
   ButtonBar,
 } from '@console/internal/components/utils';
+import { setFlag } from '@console/internal/actions/features';
 import {
   ocsRequestData,
   labelTooltip,
@@ -33,6 +37,7 @@ import { OSDSizeDropdown } from '../../utils/osd-size-dropdown';
 import { cephStorageLabel } from '../../selectors';
 import NodeTable from './node-list';
 import { PVsAvailableCapacity } from './pvs-available-capacity';
+import { OCS_FLAG, OCS_CONVERGED_FLAG } from '../../features';
 import './ocs-install.scss';
 
 const makeLabelNodesRequest = (selectedNodes: NodeKind[]): Promise<NodeKind>[] => {
@@ -95,11 +100,14 @@ export const CreateOCSServiceForm = withHandlePromise<
   const [visibleRows, setVisibleRows] = React.useState<NodeKind[]>(null);
   const [osdSize, setOSDSize] = React.useState(defaultRequestSize.NON_BAREMETAL);
   const [storageClass, setStorageClass] = React.useState<StorageClassResourceKind>(null);
+  const dispatch = useDispatch();
 
   const submit = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
     // eslint-disable-next-line promise/catch-or-return
     handlePromise(makeOCSRequest(selectedNodes, storageClass, osdSize)).then(() => {
+      dispatch(setFlag(OCS_CONVERGED_FLAG, true));
+      dispatch(setFlag(OCS_FLAG, true));
       history.push(
         `/k8s/ns/${ns}/clusterserviceversions/${appName}/${referenceForModel(
           OCSServiceModel,
