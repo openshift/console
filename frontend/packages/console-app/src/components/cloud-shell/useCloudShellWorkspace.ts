@@ -9,7 +9,7 @@ import {
   CLOUD_SHELL_LABEL,
   CLOUD_SHELL_CREATOR_LABEL,
   CloudShellResource,
-  CLOUD_SHELL_IMMUTABLE_ANNOTATION,
+  CLOUD_SHELL_RESTRICTED_ANNOTATION,
   startWorkspace,
 } from './cloud-shell-utils';
 import { useAccessReview2 } from '@console/internal/components/utils';
@@ -21,7 +21,7 @@ const findWorkspace = (data?: CloudShellResource[]): CloudShellResource | undefi
   if (Array.isArray(data)) {
     return data.find(
       (d) =>
-        d?.metadata?.annotations?.[CLOUD_SHELL_IMMUTABLE_ANNOTATION] === 'true' &&
+        d?.metadata?.annotations?.[CLOUD_SHELL_RESTRICTED_ANNOTATION] === 'true' &&
         !d?.metadata?.deletionTimestamp,
     );
   }
