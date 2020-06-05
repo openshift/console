@@ -21,6 +21,9 @@
       ],
       "ceph-storage": [
         "integration-tests/**/*.scenario.ts"
+      ],
+      "e2e": [
+        "integration-tests/**/1-install/*.scenario.ts"
       ]
     }
   }
