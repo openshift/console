@@ -75,7 +75,16 @@ export enum OCP_TEXT_STATUS {
 }
 
 export enum OCP_HEALTH_ICON_COLORS {
-  GREEN = 'var(--pf-chart-color-green-400)',
+  GREEN = '#486b00',
   YELLOW = '#f0ab00',
   RED = '#c9190b',
 }
+
+export const EXAMPLE_PVC = {
+  name: 'expample-pvc',
+  namespace: NS,
+  size: '5',
+  sizeUnits: SIZE_UNITS.GI,
+  storageClass: STORAGE_CLASS_PATTERNS.RBD,
+  accessMode: VOLUME_ACCESS_MODES.RWO,
+};
