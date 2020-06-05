@@ -56,19 +56,25 @@ export const providedAPIsForChannel = (pkg: PackageManifestKind) => (channel: st
     ]),
   );
 
-export const iconFor = (pkg: PackageManifestKind) =>
-  resourceURL(PackageManifestModel, {
-    ns: _.get(pkg.status, 'catalogSourceNamespace'),
+export const iconFor = (pkg: PackageManifestKind) => {
+  const defaultChannel = pkg?.status?.defaultChannel
+    ? pkg.status.channels?.find((ch) => ch.name === pkg.status.defaultChannel)
+    : pkg?.status?.channels?.[0];
+  if (!defaultChannel) {
+    return null;
+  }
+
+  return resourceURL(PackageManifestModel, {
+    ns: pkg?.status?.catalogSourceNamespace,
     name: pkg.metadata.name,
     path: 'icon',
     queryParams: {
-      resourceVersion: [
-        pkg.metadata.name,
-        _.get(pkg.status, 'channels[0].name'),
-        _.get(pkg.status, 'channels[0].currentCSV'),
-      ].join('.'),
+      resourceVersion: [pkg.metadata.name, defaultChannel.name, defaultChannel.currentCSV].join(
+        '.',
+      ),
     },
   });
+};
 
 export const ClusterServiceVersionLogo: React.SFC<ClusterServiceVersionLogoProps> = (props) => {
   const { icon, displayName, provider, version } = props;
