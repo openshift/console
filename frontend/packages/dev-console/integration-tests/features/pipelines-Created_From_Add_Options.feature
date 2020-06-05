@@ -115,7 +115,7 @@ Examples:
 |                |
 
 
-Scenario: Create a pipeline with S2I builder images : P-02-TC05
+Scenario Outline: Create a pipeline with s2i builder images : P-02-TC05
    Given user is at "Developer Catalog" form with builder images
    When the user enters "node" into the Builder Image search bar
    And create the application with the selected builder image
@@ -128,3 +128,17 @@ Scenario: Create a pipeline with S2I builder images : P-02-TC05
 Examples:
 | git_url                                 | 
 | https://github.com/sclorg/nodejs-ex.git |
+
+
+@regression
+Scenario: Pipelines section in topology page: P-02-TC09
+   Given user is at "topology" page
+   When the user enters "<node_name>" into the search bar
+   And user clicks node on topology page
+   Then right side pane opens in topology page
+   And pipelines section is displayed
+   And "Start LastRun" button is disabled
+
+Examples:
+| node_name       | 
+| nodejs-ex.git-D |

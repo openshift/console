@@ -129,8 +129,8 @@ Examples:
 | nodejs-ex.git |
 
 
-@regression, @smoke
-Scenario Outline: Perform Start Last Run for the basic pipeline from pipelines page: P-05-TC03
+@regression
+Scenario Outline: Start Last Run for the basic pipeline from pipelines page: P-05-TC03
     Given user is at the Pipelines page
     And pipeline "<pipeline_name>" consists of task "<task_name>" without parameters and resources
     When user selects "Start Last Run" from the kebab menu

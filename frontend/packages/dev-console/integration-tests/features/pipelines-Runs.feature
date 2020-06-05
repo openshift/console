@@ -37,18 +37,14 @@ Examples:
 
 
 @regression, @smoke
-Scenario Outline: Pipeline Run Details page for pipeline without resource : P-06-TC03
+Scenario: Pipeline Run Details page for pipeline without resource : P-06-TC03
     Given user is at the Pipelines page
     And pipeline run is displayed
-    When user clicks Last Run value of the pipeline "<pipeline_name>"
+    When user clicks Last Run value of pipeline
     Then user redirects to Pipeline Run Details page
     And user is able to see Details, YAML and Logs tabs
     And Details tab is displayed with field names "Name", "Namespace", "Labels", "Annotations", "Created At", "Owner", "Pipeline" and "Triggered by"
     And Actions dropdown display on the top right corner of the page
-
-Examples:
-| pipeline_name              |
-| pipe-task-without-resoruce |
 
 
 @regression
@@ -95,9 +91,49 @@ Scenario Outline: Start the pipeline from Pipeline Details page : P-04-TC04
     Given user is at the Pipeline Runs page
 
 
-@regression, @smoke
+@regression, @manual
 Scenario Outline: Download the logs from Pipeline Details page : P-04-TC05
     Given user is at the Pipeline Details page
 
 
+@regression
+Scenario Outline: kebab menu options in pipelines page : P-04-TC07
+    Given user is at the Pipelines page
 
+
+@regression
+Scenario Outline: Start LastRun from topolgy page : P-05- TC04
+    Given user is at the topolgy page
+    And one pipeline run is completed with the workload
+
+
+@regression
+Scenario Outline: Start LastRun from topolgy page : P-05- TC04
+    Given user is at the topolgy page
+    And one pipeline run is completed with the workload
+
+
+@regression, @smoke
+Scenario Outline: Maximum pipeline runs display in topology page: P-05-TC05
+    Given user is at the topolgy page
+    And 5 pipeline runs are completed with the workload
+
+
+@regression, @manual
+Scenario Outline: Download the logs from Pipeline Details page after pipleine run: P-05-TC06
+    Given user is at the Pipeline Details page
+
+
+Scenario Outline: Start the pipeline wtih cancelled tasks: P-07- TC04
+    Given user is at the Pipeline Details page
+    And pi[peline run is available with cancelled tasks
+
+
+Scenario Outline: Start the pipeline wtih failed tasks: P-07- TC05
+    Given user is at the Pipeline Details page
+    And pi[peline run is available with failed tasks
+
+
+Scenario Outline: Start the pipeline wtih successful tasks: P-07- TC06
+    Given user is at the Pipeline Details page
+    And pi[peline run is available with failed tasks

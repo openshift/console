@@ -58,7 +58,7 @@ Scenario: Add Paramters to the pipeline in pipeline builder page : P-03-TC04
 
 
 @regression, @smoke
-Scenario Outline: Create a pipeline with parallel tasks : P-03-TC03
+Scenario Outline: Create a pipeline with parallel tasks : P-03-TC03, P-07- TC02
     Given user is at Pipeline Builder page 
     When user types "Name" as "<pipeline_name>"
     And select "<task_name>" from "Task" drop down
@@ -72,7 +72,7 @@ Examples:
 | pipelines-one | kn        | Sn          |
 
 @regression, @smoke
-Scenario Outline: Create a pipeline with series tasks : P-03-TC03
+Scenario Outline: Create a pipeline with series tasks : P-03-TC03, P-07- TC03
     Given user is at Pipeline Builder page 
     When user types "Name" as "<pipeline_name>"
     And select "<task_name>" from "Task" drop down
@@ -84,3 +84,8 @@ Scenario Outline: Create a pipeline with series tasks : P-03-TC03
 Examples:
 | pipeline_name | task_name | task_name_1 |
 | pipelines-one | kn        | Sn          |
+
+
+@regression, @manual
+Scenario: Create the pipeline from yaml editor : P-07- TC01
+    Given user is at Pipeline Builder page
