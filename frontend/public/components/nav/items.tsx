@@ -4,7 +4,10 @@ import { Link, LinkProps } from 'react-router-dom';
 import * as _ from 'lodash-es';
 import { NavItem } from '@patternfly/react-core';
 import { connect } from 'react-redux';
-import { formatNamespacedRouteForResource } from '@console/shared/src/utils';
+import {
+  formatNamespacedRouteForResource,
+  formatNamespacedRouteForView,
+} from '@console/shared/src/utils';
 import { referenceForModel, K8sKind } from '../../module/k8s';
 import { stripBasePath } from '../utils';
 import * as plugins from '../../plugins';
@@ -108,6 +111,22 @@ export class ResourceNSLink extends NavLink<ResourceNSLinkProps> {
   }
 }
 
+export class ViewNSLink extends NavLink<ViewNSLinkProps> {
+  static isActive(props, resourcePath, activeNamespace) {
+    const href = stripNS(formatNamespacedRouteForView(props.viewName, activeNamespace));
+    return matchesPath(resourcePath, href);
+  }
+
+  get to() {
+    const { viewName, activeNamespace } = this.props;
+    const lastNamespace = localStorage.getItem(LAST_NAMESPACE_NAME_LOCAL_STORAGE_KEY);
+    return formatNamespacedRouteForView(
+      viewName,
+      lastNamespace === ALL_NAMESPACES_KEY ? lastNamespace : activeNamespace,
+    );
+  }
+}
+
 export class ResourceClusterLink extends NavLink<ResourceClusterLinkProps> {
   static isActive(props, resourcePath) {
     return (
@@ -154,6 +173,11 @@ export type ResourceNSLinkProps = NavLinkProps & {
   activeNamespace?: string;
 };
 
+export type ViewNSLinkProps = NavLinkProps & {
+  viewName: string;
+  activeNamespace?: string;
+};
+
 export type ResourceClusterLinkProps = NavLinkProps & {
   resource: string;
   model?: K8sKind;
@@ -178,6 +202,9 @@ export const createLink = (item: plugins.NavItem, rootNavLink = false): React.Re
     }
     if (plugins.isResourceClusterNavItem(item)) {
       Component = ResourceClusterLink;
+    }
+    if (plugins.isViewNSNavItem(item)) {
+      Component = ViewNSLink;
     }
     if (Component) {
       const key = item.properties.componentProps.name;

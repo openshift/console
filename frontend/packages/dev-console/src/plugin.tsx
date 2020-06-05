@@ -14,6 +14,7 @@ import {
   KebabActions,
   HrefNavItem,
   ResourceNSNavItem,
+  ViewNSNavItem,
   ResourceClusterNavItem,
   ResourceListPage,
   ResourceDetailsPage,
@@ -93,6 +94,7 @@ type ConsumedExtensions =
   | HrefNavItem
   | ResourceClusterNavItem
   | ResourceNSNavItem
+  | ViewNSNavItem
   | ResourceListPage
   | ResourceDetailsPage
   | Perspective
@@ -150,13 +152,13 @@ const plugin: Plugin<ConsumedExtensions> = [
     },
   },
   {
-    type: 'NavItem/Href',
+    type: 'NavItem/ViewNS',
     properties: {
       perspective: 'dev',
       group: 'top',
       componentProps: {
         name: 'Topology',
-        href: '/topology',
+        viewName: 'topology',
         testID: 'topology-header',
       },
     },
