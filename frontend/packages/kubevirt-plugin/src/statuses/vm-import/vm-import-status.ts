@@ -11,7 +11,7 @@ import {
 import { VirtualMachineImportConditionType, VMImportStatusBundle } from './types';
 import { VM_IMPORT_PROGRESS_ANNOTATION } from '../../constants/v2v-import/constants';
 import { V2VVMImportStatus } from '../../constants/v2v-import/ovirt/v2v-vm-import-status';
-import { IMPORTING_ERROR_OVIRT_MESSAGE, IMPORTING_OVIRT_MESSAGE } from '../../strings/vm/status';
+import { VMImportWrappper } from '../../k8s/wrapper/vm-import/vm-import-wrapper';
 import { VMStatus as VMStatusEnum } from '../../constants/vm/vm-status';
 import { VMStatusBundle } from '../vm/types';
 
@@ -45,7 +45,7 @@ const isV2VVMImportConversion = (vmImport?: VMImportKind): VMImportStatusBundle 
 
     return {
       status: V2VVMImportStatus.ERROR,
-      message: IMPORTING_ERROR_OVIRT_MESSAGE,
+      message: `${new VMImportWrappper(vmImport).getResolvedVMTargetName()} could not be imported.`,
       detailedMessage: failedCond && `${failedCond.reason}: ${failedCond.message}`,
     };
   }
@@ -77,7 +77,7 @@ const isV2VVMImportConversion = (vmImport?: VMImportKind): VMImportStatusBundle 
 
   return {
     status: V2VVMImportStatus.IN_PROGRESS,
-    message: IMPORTING_OVIRT_MESSAGE,
+    message: `${new VMImportWrappper(vmImport).getResolvedVMTargetName()} is being imported.`,
     detailedMessage: progressingCond && `${progressingCond.reason}: ${progressingCond.message}`,
     progress,
   };

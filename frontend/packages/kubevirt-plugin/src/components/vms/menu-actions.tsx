@@ -2,7 +2,7 @@ import * as _ from 'lodash';
 import * as React from 'react';
 import { asAccessReview, Kebab, KebabOption } from '@console/internal/components/utils';
 import { K8sKind, K8sResourceCommon, K8sResourceKind, PodKind } from '@console/internal/module/k8s';
-import { getName, getNamespace } from '@console/shared';
+import { getName, getNamespace, YellowExclamationTriangleIcon } from '@console/shared';
 import { confirmModal, deleteModal } from '@console/internal/components/modals';
 import { VMIKind, VMKind } from '../../types/vm';
 import {
@@ -11,7 +11,7 @@ import {
   isVMRunningOrExpectedRunning,
 } from '../../selectors/vm/selectors';
 import { getMigrationVMIName } from '../../selectors/vmi-migration';
-import { VirtualMachineInstanceMigrationModel } from '../../models';
+import { VirtualMachineImportModel, VirtualMachineInstanceMigrationModel } from '../../models';
 import { restartVM, startVM, stopVM, VMActionType } from '../../k8s/requests/vm';
 import { startVMIMigration } from '../../k8s/requests/vmi';
 import { cancelMigration } from '../../k8s/requests/vmim';
@@ -24,6 +24,9 @@ import { VMImportKind } from '../../types/vm-import/ovirt/vm-import';
 import { V1alpha1DataVolume } from '../../types/vm/disk/V1alpha1DataVolume';
 import { VMStatusBundle } from '../../statuses/vm/types';
 import { deleteVMLikeEntityModal } from '../modals/delete-vm-like-entity-modal/delete-vm-like-entity-modal';
+import { VMImportWrappper } from '../../k8s/wrapper/vm-import/vm-import-wrapper';
+import { StatusGroup } from '../../constants/status-group';
+import { cancelVMImport } from '../../k8s/requests/vmimport';
 
 type ActionArgs = {
   vmi?: VMIKind;
@@ -36,6 +39,49 @@ const getActionMessage = (obj: K8sResourceCommon, action: VMActionType | VMIActi
     <strong>{getNamespace(obj)}</strong>?
   </>
 );
+
+export const menuActionDeleteVMImport = (
+  kindObj: K8sKind,
+  vmimport: VMImportKind,
+  actionArgs?: ActionArgs,
+  innerArgs?: { vm?: VMKind },
+): KebabOption => {
+  const vmName = new VMImportWrappper(vmimport).getResolvedVMTargetName();
+  const titleText = 'Cancel Import';
+  const title = (
+    <>
+      <YellowExclamationTriangleIcon className="co-icon-space-r" /> {titleText}?
+    </>
+  );
+
+  const vmElem = <strong className="co-break-word">{vmName}</strong>;
+  const vmImportElem = <strong className="co-break-word">{getName(vmimport)}</strong>;
+  const nsElem = <strong className="co-break-word">{getNamespace(vmimport)}</strong>;
+
+  const message = innerArgs?.vm ? (
+    <>
+      Are you sure you want to cancel importing {vmImportElem}? It will also delete the newly
+      created {vmElem} in the {nsElem} namespace?
+    </>
+  ) : (
+    <>
+      Are you sure you want to cancel importing {vmImportElem} in the {nsElem} namespace?
+    </>
+  );
+
+  return {
+    label: titleText,
+    callback: () =>
+      confirmModal({
+        title,
+        message,
+        submitDanger: true,
+        btnText: 'Cancel Import',
+        executeFn: () => cancelVMImport(vmimport, innerArgs?.vm),
+      }),
+    accessReview: asAccessReview(kindObj, vmimport, 'delete'),
+  };
+};
 
 export const menuActionStart = (
   kindObj: K8sKind,
@@ -201,6 +247,21 @@ export const menuActionDeleteVM = (kindObj: K8sKind, vm: VMKind): KebabOption =>
   accessReview: asAccessReview(kindObj, vm, 'delete'),
 });
 
+export const menuActionDeleteVMorCancelImport = (
+  kindObj: K8sKind,
+  vm: VMKind,
+  actionArgs: ActionArgs,
+): KebabOption => {
+  const { status, vmImport } = actionArgs.vmStatusBundle;
+  if (status.getGroup() === StatusGroup.RHV && !status.isCompleted() && vmImport) {
+    return menuActionDeleteVMImport(VirtualMachineImportModel, vmImport, actionArgs, {
+      vm,
+    });
+  }
+
+  return menuActionDeleteVM(kindObj, vm);
+};
+
 export const menuActionDeleteVMI = (kindObj: K8sKind, vmi: VMIKind): KebabOption => ({
   label: `Delete ${kindObj.label}`,
   callback: () =>
@@ -223,7 +284,7 @@ export const vmMenuActions = [
   menuActionCdEdit,
   Kebab.factory.ModifyLabels,
   Kebab.factory.ModifyAnnotations,
-  menuActionDeleteVM,
+  menuActionDeleteVMorCancelImport,
 ];
 
 export const vmiMenuActions = [
@@ -235,7 +296,7 @@ export const vmiMenuActions = [
 export const vmImportMenuActions = [
   Kebab.factory.ModifyLabels,
   Kebab.factory.ModifyAnnotations,
-  Kebab.factory.Delete,
+  menuActionDeleteVMImport,
 ];
 
 export type ExtraResources = {

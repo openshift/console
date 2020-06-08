@@ -1,19 +1,13 @@
-import {
-  apiVersionForModel,
-  k8sGet,
-  k8sKill,
-  k8sPatch,
-  resourceURL,
-} from '@console/internal/module/k8s';
-import { getName, getNamespace, getDeletetionTimestamp } from '@console/shared/src';
+import { apiVersionForModel, k8sKill, k8sPatch, resourceURL } from '@console/internal/module/k8s';
+import { getName, getNamespace } from '@console/shared/src';
 import { coFetch } from '@console/internal/co-fetch';
 import { getPxeBootPatch } from '../../patches/vm/vm-boot-patches';
-import { VirtualMachineImportModel, VirtualMachineModel } from '../../../models';
+import { VirtualMachineModel } from '../../../models';
 import { VMKind } from '../../../types/vm';
-import { VMWrapper } from '../../wrapper/vm/vm-wrapper';
 import { freeOwnedResources } from '../free-owned-resources';
 import { VMImportKind } from '../../../types/vm-import/ovirt/vm-import';
 import { K8sResourceWithModel } from '../../../types/k8s-resource-with-model';
+import { cancelVMImport } from '../vmimport';
 
 export enum VMActionType {
   Start = 'start',
@@ -79,20 +73,7 @@ export const deleteVM = async (
   }
 
   if (vmImport && deleteVMImport) {
-    await k8sKill(VirtualMachineImportModel, vmImport);
-    if (new VMWrapper(vm).getVMImportOwnerReference()) {
-      try {
-        const deletingVM = await k8sGet(VirtualMachineModel, getName(vm), getNamespace(vm));
-        if (deletingVM && !getDeletetionTimestamp(deletingVM)) {
-          // just lost reference - kill again
-          await k8sKill(VirtualMachineModel, vm);
-        }
-      } catch (ignored) {
-        // 404 expected
-      }
-    } else {
-      await k8sKill(VirtualMachineModel, vm);
-    }
+    await cancelVMImport(vmImport, vm);
   } else {
     await k8sKill(VirtualMachineModel, vm);
   }
