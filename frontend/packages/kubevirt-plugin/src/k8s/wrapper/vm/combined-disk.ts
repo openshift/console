@@ -330,7 +330,7 @@ export class CombinedDiskFactory {
 
           if (dataVolume && this.pvcs) {
             pvc = this.pvcs.find((p) =>
-              getOwnerReferences(p).some((ownerReference) =>
+              (getOwnerReferences(p) || []).some((ownerReference) =>
                 compareOwnerReference(ownerReference, {
                   name: dataVolumeName,
                   kind: DataVolumeModel.kind,
