@@ -1,5 +1,4 @@
 reviewers:
-  - benjaminapetersen
   - dtaylor113
   - jcaianirh
   - jeff-phillips-18
@@ -10,7 +9,6 @@ reviewers:
   - TheRealJon
   - zherman0
 approvers:
-  - benjaminapetersen
   - bparees
   - christianvogt
   - jhadvig
