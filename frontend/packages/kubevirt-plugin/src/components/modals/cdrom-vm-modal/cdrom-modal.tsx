@@ -31,7 +31,13 @@ import { CD, CDMap } from './types';
 import { VMKind } from '../../../types/vm';
 import { useStorageClassConfigMap } from '../../../hooks/storage-class-config-map';
 
-export const AddCDButton = ({ className, text, onClick, isDisabled }: AddCDButtonProps) => (
+export const AddCDButton = ({
+  className,
+  text,
+  onClick,
+  isDisabled,
+  isMaxCDsReached,
+}: AddCDButtonProps) => (
   <div className={className}>
     <Button
       className="pf-m-link--align-left"
@@ -43,7 +49,7 @@ export const AddCDButton = ({ className, text, onClick, isDisabled }: AddCDButto
     >
       {text}
     </Button>
-    {isDisabled && (
+    {isMaxCDsReached && (
       <Tooltip
         position="bottom"
         trigger="click mouseenter"
@@ -120,6 +126,7 @@ export const CDRomModal = withHandlePromise((props: CDRomModalProps) => {
   const [showRestartAlert, setShowRestartAlert] = React.useState<boolean>(false);
   const [shouldPatch, setShouldPatch] = React.useState<boolean>(false);
 
+  const isMaxCDsReached = _.size(cds) > 1;
   const onCDChange = (cdName: string, key: string, value: string) => {
     setShowRestartAlert(true);
     setShouldPatch(true);
@@ -212,7 +219,8 @@ export const CDRomModal = withHandlePromise((props: CDRomModalProps) => {
             className="kubevirt-add-cd-btn"
             text="Add CD-ROM"
             onClick={onCDAdd}
-            isDisabled={_.size(cds) > 1}
+            isDisabled={inProgress || isMaxCDsReached}
+            isMaxCDsReached={isMaxCDsReached}
           />
         </Form>
       </ModalBody>
@@ -236,6 +244,7 @@ type AddCDButtonProps = {
   className: string;
   text: string;
   isDisabled: boolean;
+  isMaxCDsReached: boolean;
   onClick: () => void;
 };
 

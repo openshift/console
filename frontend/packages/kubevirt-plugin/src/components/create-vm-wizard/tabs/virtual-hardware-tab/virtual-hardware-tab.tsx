@@ -80,7 +80,8 @@ const VirtualHardwareTabFirehose: React.FC<VirtualHardwareTabFirehoseProps> = ({
 }) => {
   const virtualStorages = getVirtualStoragesData(storages, persistentVolumeClaims);
   const showStorages = virtualStorages.length > 0;
-  const disableAddCD = isLocked || virtualStorages.length > 1 || isCreateDisabled;
+  const isMaxCDsReached = virtualStorages.length > 1;
+  const disableAddCD = isLocked || isCreateDisabled || isMaxCDsReached;
   const withProgress = wrapWithProgress(setTabLocked);
 
   const addButton = (
@@ -88,6 +89,7 @@ const VirtualHardwareTabFirehose: React.FC<VirtualHardwareTabFirehoseProps> = ({
       className="virtual-hardware-tab-add-btn"
       text={ATTACH_CD}
       isDisabled={disableAddCD}
+      isMaxCDsReached={isMaxCDsReached}
       onClick={() => {
         const availableCDName = getAvailableCDName(storages.map((storage) => storage.disk));
         const diskWrapper = new DiskWrapper()
