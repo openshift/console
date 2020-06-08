@@ -61,6 +61,19 @@ import {
 import { setAllQueryArguments } from '../utils/router';
 import { colors, Error, QueryObj, QueryBrowser } from './query-browser';
 
+const operators = [
+  'and',
+  'by()',
+  'group_left()',
+  'group_right()',
+  'ignoring()',
+  'offset',
+  'on()',
+  'or',
+  'unless',
+  'without()',
+];
+
 const aggregationOperators = [
   'avg()',
   'bottomk()',
@@ -448,6 +461,7 @@ const QueryInput_: React.FC<QueryInputProps> = ({
       ? {}
       : _.omitBy(
           {
+            ['Operators']: filterSuggestions(operators),
             ['Aggregation Operators']: filterSuggestions(aggregationOperators),
             ['Functions']: filterSuggestions(prometheusFunctions),
             ['Metrics']: filterSuggestions(metrics),
