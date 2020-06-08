@@ -169,9 +169,9 @@ export const ConnectedNotificationDrawer_: React.FC<ConnectedNotificationDrawerP
     }
 
     if (alertManagerBaseURL) {
-      poll(`${alertManagerBaseURL}/api/v1/silences`, 'silences', ({ data }) => {
+      poll(`${alertManagerBaseURL}/api/v2/silences`, 'silences', (silences) => {
         // Set a name field on the Silence to make things easier
-        _.each(data, (s) => {
+        _.each(silences, (s) => {
           s.name = _.get(_.find(s.matchers, { name: 'alertname' }), 'value');
           if (!s.name) {
             // No alertname, so fall back to displaying the other matchers
@@ -180,7 +180,7 @@ export const ConnectedNotificationDrawer_: React.FC<ConnectedNotificationDrawerP
               .join(', ');
           }
         });
-        return data;
+        return silences;
       });
     } else {
       store.dispatch(
