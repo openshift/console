@@ -1,4 +1,5 @@
 import { Map as ImmutableMap } from 'immutable';
+import { ResourceDetailsPage, ResourcePage, ResourceListPage } from '@console/plugin-sdk';
 
 import { ReportReference, ReportGenerationQueryReference } from './chargeback';
 import { referenceForModel, GroupVersionKind } from '../module/k8s';
@@ -61,11 +62,9 @@ import {
   UserModel,
 } from '../models';
 
-import * as plugins from '../plugins';
-
 const addResourcePage = (
   map: ImmutableMap<ResourceMapKey, ResourceMapValue>,
-  page: plugins.ResourcePage,
+  page: ResourcePage,
 ) => {
   const key = page.properties?.modelParser
     ? page.properties?.modelParser(page.properties.model)
@@ -319,13 +318,14 @@ export const baseDetailsPages = ImmutableMap<ResourceMapKey, ResourceMapValue>()
     ),
   );
 
-export const resourceDetailsPages = ImmutableMap<ResourceMapKey, ResourceMapValue>()
-  .merge(baseDetailsPages)
-  .withMutations((map) => {
-    plugins.registry.getResourceDetailsPages().forEach((page) => {
-      addResourcePage(map, page);
+export const getResourceDetailsPages = (pluginPages: ResourceDetailsPage[] = []) =>
+  ImmutableMap<ResourceMapKey, ResourceMapValue>()
+    .merge(baseDetailsPages)
+    .withMutations((map) => {
+      pluginPages.forEach((page) => {
+        addResourcePage(map, page);
+      });
     });
-  });
 
 export const baseListPages = ImmutableMap<ResourceMapKey, ResourceMapValue>()
   .set(referenceForModel(ClusterServiceClassModel), () =>
@@ -537,10 +537,11 @@ export const baseListPages = ImmutableMap<ResourceMapKey, ResourceMapValue>()
     ),
   );
 
-export const resourceListPages = ImmutableMap<ResourceMapKey, ResourceMapValue>()
-  .merge(baseListPages)
-  .withMutations((map) => {
-    plugins.registry.getResourceListPages().forEach((page) => {
-      addResourcePage(map, page);
+export const getResourceListPages = (pluginPages: ResourceListPage[] = []) =>
+  ImmutableMap<ResourceMapKey, ResourceMapValue>()
+    .merge(baseListPages)
+    .withMutations((map) => {
+      pluginPages.forEach((page) => {
+        addResourcePage(map, page);
+      });
     });
-  });

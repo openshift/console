@@ -30,7 +30,7 @@ import { CheckBox, CheckBoxControls } from './row-filter';
 import { DefaultPage } from './default-resource';
 import { Table, TextFilter } from './factory';
 import { fuzzyCaseInsensitive } from './factory/table-filters';
-import { resourceListPages } from './resource-pages';
+import { getResourceListPages } from './resource-pages';
 import { ExploreType } from './sidebars/explore-type-sidebar';
 import {
   AsyncComponent,
@@ -46,6 +46,7 @@ import {
   ScrollToTopOnMount,
   setQueryArgument,
 } from './utils';
+import { isResourceListPage, useExtensions, ResourceListPage } from '@console/plugin-sdk';
 
 const mapStateToProps = (state: RootState): APIResourceLinkStateProps => {
   return {
@@ -402,8 +403,10 @@ const APIResourceSchema: React.FC<APIResourceTabProps> = ({ customData: { kindOb
 const APIResourceInstances: React.FC<APIResourceTabProps> = ({
   customData: { kindObj, namespace },
 }) => {
-  const componentLoader = resourceListPages.get(referenceForModel(kindObj), () =>
-    Promise.resolve(DefaultPage),
+  const resourceListPageExtensions = useExtensions<ResourceListPage>(isResourceListPage);
+  const componentLoader = getResourceListPages(resourceListPageExtensions).get(
+    referenceForModel(kindObj),
+    () => Promise.resolve(DefaultPage),
   );
   const ns = kindObj.namespaced ? namespace : undefined;
 

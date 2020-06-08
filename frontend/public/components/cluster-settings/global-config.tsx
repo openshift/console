@@ -3,19 +3,17 @@ import * as _ from 'lodash-es';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { AlertVariant } from '@patternfly/react-core';
-import * as plugins from '../../plugins';
 
 import { RootState } from '../../redux';
-import { featureReducerName, flagPending, FeatureState } from '../../reducers/features';
 import { K8sKind, k8sList, referenceForModel, getResourceDescription } from '../../module/k8s';
 import { EmptyBox, ExpandableAlert, Kebab, LoadingBox, resourcePathFromModel } from '../utils';
 import { addIDPItems } from './oauth';
 import { TextFilter } from '../factory';
 import { fuzzyCaseInsensitive } from '../factory/table-filters';
+import { withExtensions, isGlobalConfig, GlobalConfig } from '@console/plugin-sdk';
 
 const stateToProps = (state: RootState) => ({
   configResources: state.k8s.getIn(['RESOURCES', 'configResources']),
-  flags: state[featureReducerName],
 });
 
 const editYAMLMenuItem = (name: string, resourceLink: string) => ({
@@ -59,10 +57,6 @@ class GlobalConfigPage_ extends React.Component<GlobalConfigPageProps, GlobalCon
     textFilter: '',
   };
 
-  getGlobalConfigs(): plugins.GlobalConfig[] {
-    return plugins.registry.getGlobalConfigs();
-  }
-
   componentDidMount() {
     Promise.all(
       this.props.configResources.map((model: K8sKind) => {
@@ -85,10 +79,7 @@ class GlobalConfigPage_ extends React.Component<GlobalConfigPageProps, GlobalCon
         kind: item.kind,
       }));
 
-      const globalConfigs = this.getGlobalConfigs();
-      const usableConfigs = globalConfigs
-        .filter((item) => this.checkFlags(item))
-        .map((item) => item.properties);
+      const usableConfigs = this.props.globalConfigs.map((item) => item.properties);
 
       const allItems = [...winnowedResponses, ...usableConfigs]
         .map((item) => {
@@ -131,18 +122,6 @@ class GlobalConfigPage_ extends React.Component<GlobalConfigPageProps, GlobalCon
         loading: false,
       });
     });
-  }
-
-  checkFlags(c: plugins.GlobalConfig): GlobalConfigObjectProps {
-    const { flags } = this.props;
-    const { required } = c.properties;
-
-    const requiredArray = required ? _.castArray(required) : [];
-    const requirementMissing = _.some(
-      requiredArray,
-      (flag) => flag && (flagPending(flags.get(flag)) || !flags.get(flag)),
-    );
-    return requirementMissing ? null : c.properties;
   }
 
   render() {
@@ -204,11 +183,16 @@ class GlobalConfigPage_ extends React.Component<GlobalConfigPageProps, GlobalCon
   }
 }
 
-export const GlobalConfigPage = connect(stateToProps)(GlobalConfigPage_);
+export const GlobalConfigPage = connect(stateToProps)(
+  withExtensions<GlobalConfigPageExtensions>({ globalConfigs: isGlobalConfig })(GlobalConfigPage_),
+);
 
-type GlobalConfigPageProps = {
+type GlobalConfigPageExtensions = {
+  globalConfigs: GlobalConfig[];
+};
+
+type GlobalConfigPageProps = GlobalConfigPageExtensions & {
   configResources: K8sKind[];
-  flags?: FeatureState;
 };
 
 type GlobalConfigPageState = {
@@ -216,12 +200,4 @@ type GlobalConfigPageState = {
   items: any;
   loading: boolean;
   textFilter: string;
-};
-
-type GlobalConfigObjectProps = {
-  kind: string;
-  model: K8sKind;
-  name: string;
-  namespace: string;
-  uid: string;
 };

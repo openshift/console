@@ -6,7 +6,6 @@ import { resolvePluginPackages, loadActivePlugins } from '@console/plugin-sdk/sr
 const testedPlugins = loadActivePlugins(resolvePluginPackages());
 const testedPluginStore = new PluginStore(testedPlugins);
 
-export const testedRegistry = testedPluginStore.registry; // TODO(vojtech): legacy, remove
 export const testedExtensions = ImmutableList<Extension>(testedPluginStore.getAllExtensions());
 
 export const getDuplicates = (values: string[]) => {

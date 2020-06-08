@@ -2,7 +2,7 @@ import { Map as ImmutableMap } from 'immutable';
 
 import { GroupVersionKind, referenceForModel } from '../module/k8s';
 import * as k8sModels from '../models';
-import * as plugins from '../plugins';
+import { YAMLTemplate } from '@console/plugin-sdk';
 
 /**
  * Sample YAML manifests for some of the statically-defined Kubernetes models.
@@ -1193,18 +1193,16 @@ spec:
 `,
   );
 
-const pluginTemplates = ImmutableMap<
-  GroupVersionKind,
-  ImmutableMap<string, string>
->().withMutations((map) => {
-  plugins.registry.getYAMLTemplates().forEach((yt) => {
-    const modelRef = referenceForModel(yt.properties.model);
-    const templateName = yt.properties.templateName || 'default';
+export const getYAMLTemplates = (extensionTemplates: YAMLTemplate[] = []) =>
+  ImmutableMap<GroupVersionKind, ImmutableMap<string, string>>()
+    .merge(baseTemplates)
+    .withMutations((map) => {
+      extensionTemplates.forEach((yt) => {
+        const modelRef = referenceForModel(yt.properties.model);
+        const templateName = yt.properties.templateName || 'default';
 
-    if (!baseTemplates.hasIn([modelRef, templateName])) {
-      map.setIn([modelRef, templateName], yt.properties.template);
-    }
-  });
-});
-
-export const yamlTemplates = baseTemplates.merge(pluginTemplates);
+        if (!baseTemplates.hasIn([modelRef, templateName])) {
+          map.setIn([modelRef, templateName], yt.properties.template);
+        }
+      });
+    });

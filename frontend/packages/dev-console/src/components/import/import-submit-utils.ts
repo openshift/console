@@ -13,7 +13,6 @@ import { k8sCreate, K8sResourceKind, k8sUpdate, K8sVerb } from '@console/interna
 import { ServiceModel as KnServiceModel } from '@console/knative-plugin';
 import { getKnativeServiceDepResource } from '@console/knative-plugin/src/utils/create-knative-utils';
 import { SecretType } from '@console/internal/components/secrets/create-secret';
-import * as plugins from '@console/internal/plugins';
 import { history } from '@console/internal/components/utils';
 import { getRandomChars } from '@console/shared/src/utils';
 import {
@@ -35,6 +34,7 @@ import {
   Resources,
 } from './import-types';
 import { createPipelineForImportFlow } from './pipeline/pipeline-template-utils';
+import { Perspective } from '@console/plugin-sdk';
 
 export const generateSecret = () => {
   // http://stackoverflow.com/questions/105034/create-guid-uuid-in-javascript
@@ -547,10 +547,12 @@ export const createOrUpdateResources = async (
   return Promise.all(requests);
 };
 
-export const handleRedirect = (project: string, perspective: string) => {
-  const perspectiveData = plugins.registry
-    .getPerspectives()
-    .find((item) => item.properties.id === perspective);
+export const handleRedirect = (
+  project: string,
+  perspective: string,
+  perspectiveExtensions: Perspective[],
+) => {
+  const perspectiveData = perspectiveExtensions.find((item) => item.properties.id === perspective);
   const redirectURL = perspectiveData.properties.getImportRedirectURL(project);
   history.push(redirectURL);
 };

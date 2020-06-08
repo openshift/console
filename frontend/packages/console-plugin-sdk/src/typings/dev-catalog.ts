@@ -4,7 +4,6 @@ import { Extension } from './base';
 namespace ExtensionProperties {
   export interface DevCatalogModel {
     model: K8sKind;
-    flag?: string;
     normalize: (data: K8sResourceKind[]) => K8sResourceKind[];
   }
 }

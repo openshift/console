@@ -3,7 +3,7 @@ import uiReducer, { getActivePerspective, getDefaultPerspective } from '../../pu
 import { LAST_PERSPECTIVE_LOCAL_STORAGE_KEY } from '@console/shared';
 import * as UIActions from '../../public/actions/ui';
 import { RootState } from '@console/internal/redux';
-import * as plugins from '../../public/plugins';
+import { pluginStore, Perspective } from '../../public/plugins';
 import '../../__mocks__/localStorage';
 
 describe('getDefaultPerspective', () => {
@@ -19,27 +19,27 @@ describe('getDefaultPerspective', () => {
 
   it('should default to perspective extension marked default', () => {
     // return Perspectives extension with one marked as the default
-    spyOn(plugins.registry, 'getPerspectives').and.returnValue([
+    spyOn(pluginStore, 'getAllExtensions').and.returnValue([
       {
         type: 'Perspective',
         properties: {
           id: 'admin',
           default: true,
         },
-      } as plugins.Perspective,
+      } as Perspective,
     ]);
     expect(getDefaultPerspective()).toBe('admin');
   });
 
   it('should default to localStorage if perspective is a valid extension', () => {
     // return Perspectives extension whose id matches that in the localStorage
-    spyOn(plugins.registry, 'getPerspectives').and.returnValue([
+    spyOn(pluginStore, 'getAllExtensions').and.returnValue([
       {
         type: 'Perspective',
         properties: {
           id: 'test',
         },
-      } as plugins.Perspective,
+      } as Perspective,
     ]);
     localStorage.setItem(LAST_PERSPECTIVE_LOCAL_STORAGE_KEY, 'test');
     expect(getDefaultPerspective()).toBe('test');

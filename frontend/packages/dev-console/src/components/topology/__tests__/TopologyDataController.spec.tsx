@@ -1,21 +1,25 @@
 import * as React from 'react';
-import { shallow, ShallowWrapper } from 'enzyme';
+import { mount, ReactWrapper } from 'enzyme';
+import { Provider } from 'react-redux';
+import store from '@console/internal/redux';
 import { TopologyDataControllerProps, TopologyDataController } from '../TopologyDataController';
 
 const TestInner = () => null;
 const testProjectMatch = { url: '', params: { name: 'namespace' }, isExact: true, path: '' };
 
 describe('TopologyDataController', () => {
-  let wrapper: ShallowWrapper<TopologyDataControllerProps>;
+  let wrapper: ReactWrapper<TopologyDataControllerProps>;
 
   beforeEach(() => {
-    wrapper = shallow(
+    wrapper = mount(
       <TopologyDataController
-        resourceList={[]}
         match={testProjectMatch}
         serviceBinding={false}
         render={() => <TestInner />}
       />,
+      {
+        wrappingComponent: ({ children }) => <Provider store={store}>{children}</Provider>,
+      },
     );
   });
 

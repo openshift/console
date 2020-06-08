@@ -50,8 +50,10 @@ const plugin: Plugin<ConsumedExtensions> = [
     type: 'DevCatalogModel',
     properties: {
       model: models.ClusterServiceVersionModel,
-      flag: Flags.OPERATOR_LIFECYCLE_MANAGER,
       normalize: normalizeClusterServiceVersions,
+    },
+    flags: {
+      required: [Flags.OPERATOR_LIFECYCLE_MANAGER],
     },
   },
   {

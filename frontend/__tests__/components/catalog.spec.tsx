@@ -1,6 +1,7 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
 import { mount, ReactWrapper } from 'enzyme';
+import { Provider } from 'react-redux';
 
 import {
   CatalogTile,
@@ -8,6 +9,7 @@ import {
   VerticalTabsTab,
 } from '@patternfly/react-catalog-view-extension';
 
+import store from '@console/internal/redux';
 import {
   CatalogListPage,
   CatalogListPageProps,
@@ -31,7 +33,9 @@ describe(CatalogTileViewPage.displayName, () => {
   let wrapper: ReactWrapper<CatalogListPageProps, CatalogListPageState>;
 
   beforeEach(() => {
-    wrapper = mount(<CatalogListPage {...catalogListPageProps} />);
+    wrapper = mount(<CatalogListPage {...catalogListPageProps} />, {
+      wrappingComponent: ({ children }) => <Provider store={store}>{children}</Provider>,
+    });
   });
 
   it('renders main and sub category tabs', () => {

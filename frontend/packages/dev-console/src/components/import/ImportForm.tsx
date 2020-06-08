@@ -7,6 +7,7 @@ import { getActivePerspective, getActiveApplication } from '@console/internal/re
 import { RootState } from '@console/internal/redux';
 import { connect } from 'react-redux';
 import { ALL_APPLICATIONS_KEY } from '@console/shared';
+import { useExtensions, Perspective, isPerspective } from '@console/plugin-sdk';
 import { NormalizedBuilderImages, normalizeBuilderImages } from '../../utils/imagestream-utils';
 import { doContextualBinding, sanitizeApplicationValue } from '../../utils/application-utils';
 import { ALLOW_SERVICE_BINDING } from '../../const';
@@ -42,6 +43,7 @@ const ImportForm: React.FC<ImportFormProps & StateProps> = ({
   projects,
   serviceBindingAvailable,
 }) => {
+  const perspectiveExtensions = useExtensions<Perspective>(isPerspective);
   const initialValues: GitImportFormData = {
     name: '',
     project: {
@@ -172,7 +174,7 @@ const ImportForm: React.FC<ImportFormProps & StateProps> = ({
     resourceActions
       .then(() => {
         actions.setSubmitting(false);
-        handleRedirect(projectName, perspective);
+        handleRedirect(projectName, perspective, perspectiveExtensions);
       })
       .catch((err) => {
         actions.setSubmitting(false);

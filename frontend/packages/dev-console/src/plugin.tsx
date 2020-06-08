@@ -226,8 +226,10 @@ const plugin: Plugin<ConsumedExtensions> = [
     type: 'Overview/CRD',
     properties: {
       resources: tknPipelineAndPipelineRunsResources,
-      required: FLAG_OPENSHIFT_PIPELINE,
       utils: getPipelinesAndPipelineRunsForResource,
+    },
+    flags: {
+      required: [FLAG_OPENSHIFT_PIPELINE],
     },
   },
   {

@@ -8,8 +8,9 @@ import { receivedResources } from './k8s';
 import { coFetchJSON } from '../co-fetch';
 import { MonitoringRoutes } from '../reducers/monitoring';
 import { setMonitoringURL } from './monitoring';
-import * as plugins from '../plugins';
+import { pluginStore } from '../plugins';
 import { setClusterID, setCreateProjectMessage, setUser, setConsoleLinks } from './common';
+import { isCustomFeatureFlag } from '@console/plugin-sdk';
 
 export enum ActionType {
   SetFlag = 'setFlag',
@@ -261,5 +262,8 @@ export const detectFeatures = () => (dispatch: Dispatch) =>
     detectLoggingURL,
     detectConsoleLinks,
     ...ssarCheckActions,
-    ...plugins.registry.getCustomFeatureFlags().map((ff) => ff.properties.detect),
+    ...pluginStore
+      .getAllExtensions()
+      .filter(isCustomFeatureFlag)
+      .map((ff) => ff.properties.detect),
   ].forEach((detect) => detect(dispatch));

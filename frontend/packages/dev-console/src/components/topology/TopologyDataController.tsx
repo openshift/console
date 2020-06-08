@@ -2,7 +2,6 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { match as RMatch } from 'react-router';
 import { Firehose } from '@console/internal/components/utils';
-import * as plugins from '@console/internal/plugins';
 import { getResourceList } from '@console/shared';
 import { referenceForModel, K8sResourceKind } from '@console/internal/module/k8s';
 import { RootState } from '@console/internal/redux';
@@ -13,6 +12,7 @@ import { allowedResources, getHelmReleaseKey, getServiceBindingStatus } from './
 import { TopologyDataModel, TopologyDataResources, TrafficData } from './topology-types';
 import { HelmReleaseResourcesMap } from '../helm/helm-types';
 import { fetchHelmReleases } from '../helm/helm-utils';
+import { isOverviewCRD, useExtensions, OverviewCRD } from '@console/internal/plugins';
 
 export interface RenderProps {
   data?: TopologyDataModel;
@@ -23,7 +23,6 @@ export interface RenderProps {
 }
 
 interface StateProps {
-  resourceList: plugins.OverviewCRD[];
   serviceBinding: boolean;
 }
 
@@ -116,11 +115,11 @@ const Controller: React.FC<ControllerProps> = ({
 export const TopologyDataController: React.FC<TopologyDataControllerProps> = ({
   match,
   render,
-  resourceList,
   serviceBinding,
 }) => {
+  const resourceListExtensions = useExtensions<OverviewCRD>(isOverviewCRD);
   const namespace = match.params.name;
-  const { resources, utils } = getResourceList(namespace, resourceList);
+  const { resources, utils } = getResourceList(namespace, resourceListExtensions);
   if (serviceBinding) {
     resources.push({
       isList: true,
@@ -143,14 +142,8 @@ export const TopologyDataController: React.FC<TopologyDataControllerProps> = ({
   );
 };
 
-const DataControllerStateToProps = (state: RootState) => {
-  const resourceList = plugins.registry
-    .getOverviewCRDs()
-    .filter((resource) => state.FLAGS.get(resource.properties.required));
-  return {
-    resourceList,
-    serviceBinding: getServiceBindingStatus(state),
-  };
-};
+const DataControllerStateToProps = (state: RootState) => ({
+  serviceBinding: getServiceBindingStatus(state),
+});
 
 export default connect(DataControllerStateToProps)(TopologyDataController);

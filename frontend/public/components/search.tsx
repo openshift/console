@@ -22,7 +22,7 @@ import { connectToModel } from '../kinds';
 import { DefaultPage } from './default-resource';
 import { requirementFromString } from '../module/k8s/selector-requirement';
 import { ResourceListDropdown } from './resource-dropdown';
-import { resourceListPages } from './resource-pages';
+import { getResourceListPages } from './resource-pages';
 import { withStartGuide } from './start-guide';
 import { split, selectorFromString } from '../module/k8s/selector';
 import { kindForReference, modelFor, referenceForModel } from '../module/k8s';
@@ -36,14 +36,17 @@ import {
 } from './utils';
 import confirmNavUnpinModal from './nav/confirmNavUnpinModal';
 import { SearchFilterDropdown, searchFilterValues } from './search-filter-dropdown';
+import { useExtensions, isResourceListPage, ResourceListPage } from '@console/plugin-sdk';
 
 const ResourceList = connectToModel(({ kindObj, mock, namespace, selector, nameFilter }) => {
+  const resourceListPageExtensions = useExtensions<ResourceListPage>(isResourceListPage);
   if (!kindObj) {
     return <LoadingBox />;
   }
 
-  const componentLoader = resourceListPages.get(referenceForModel(kindObj), () =>
-    Promise.resolve(DefaultPage),
+  const componentLoader = getResourceListPages(resourceListPageExtensions).get(
+    referenceForModel(kindObj),
+    () => Promise.resolve(DefaultPage),
   );
   const ns = kindObj.namespaced ? namespace : undefined;
 
