@@ -166,12 +166,11 @@ func TestRedirectAuthError(t *testing.T) {
 	}
 
 	a, err := newUnstartedAuthenticator(ccfg)
-
-	a.redirectAuthError(w, "fake_error", err)
 	if err != nil {
 		t.Fatal("error instantiating test authenticator")
 	}
 
+	a.redirectAuthError(w, "fake_error")
 	if w.Code != http.StatusSeeOther {
 		t.Fatalf("wrong http status, want: %d, got: %d", http.StatusSeeOther, w.Code)
 		return

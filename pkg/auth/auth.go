@@ -357,7 +357,7 @@ func (a *Authenticator) CallbackFunc(fn func(loginInfo LoginJSON, successURL str
 		cookieState, err := r.Cookie(stateCookieName)
 		if err != nil {
 			log.Errorf("failed to parse state cookie: %v", err)
-			a.redirectAuthError(w, errorMissingState, err)
+			a.redirectAuthError(w, errorMissingState)
 			return
 		}
 
@@ -369,13 +369,13 @@ func (a *Authenticator) CallbackFunc(fn func(loginInfo LoginJSON, successURL str
 
 		if code == "" {
 			log.Infof("missing auth code in query param")
-			a.redirectAuthError(w, errorMissingCode, nil)
+			a.redirectAuthError(w, errorMissingCode)
 			return
 		}
 
 		if urlState != cookieState.Value {
 			log.Errorf("State in url does not match State cookie")
-			a.redirectAuthError(w, errorInvalidState, nil)
+			a.redirectAuthError(w, errorInvalidState)
 			return
 		}
 		ctx := oidc.ClientContext(context.TODO(), a.clientFunc())
@@ -383,14 +383,14 @@ func (a *Authenticator) CallbackFunc(fn func(loginInfo LoginJSON, successURL str
 		token, err := oauthConfig.Exchange(ctx, code)
 		if err != nil {
 			log.Infof("unable to verify auth code with issuer: %v", err)
-			a.redirectAuthError(w, errorInvalidCode, err)
+			a.redirectAuthError(w, errorInvalidCode)
 			return
 		}
 
 		ls, err := lm.login(w, token)
 		if err != nil {
 			log.Errorf("error constructing login state: %v", err)
-			a.redirectAuthError(w, errorInternal, nil)
+			a.redirectAuthError(w, errorInternal)
 			return
 		}
 
@@ -409,7 +409,7 @@ func (a *Authenticator) getLoginMethod() loginMethod {
 	return lm
 }
 
-func (a *Authenticator) redirectAuthError(w http.ResponseWriter, authErr string, err error) {
+func (a *Authenticator) redirectAuthError(w http.ResponseWriter, authErr string) {
 	var u url.URL
 	up, err := url.Parse(a.errorURL)
 	if err != nil {
@@ -420,9 +420,6 @@ func (a *Authenticator) redirectAuthError(w http.ResponseWriter, authErr string,
 	q := url.Values{}
 	q.Set("error", authErr)
 	q.Set("error_type", "auth")
-	if err != nil {
-		q.Set("error_msg", err.Error())
-	}
 	u.RawQuery = q.Encode()
 	w.Header().Set("Location", u.String())
 	w.WriteHeader(http.StatusSeeOther)
