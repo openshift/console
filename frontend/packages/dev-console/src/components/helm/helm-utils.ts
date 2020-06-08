@@ -86,7 +86,7 @@ export const getChartVersions = (chartEntries: HelmChartMetaData[]) => {
   const chartVersions = _.reduce(
     chartEntries,
     (obj, chart) => {
-      obj[chart.version] = chart.version;
+      obj[chart.version] = `${chart.version} / App Version ${chart.appVersion}`;
       return obj;
     },
     {},

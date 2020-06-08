@@ -2,14 +2,13 @@ import * as React from 'react';
 import { shallow } from 'enzyme';
 import { InputField, YAMLEditorField } from '@console/shared';
 import HelmInstallUpgradeForm from '../HelmInstallUpgradeForm';
-import HelmChartVersionDropdown from '../HelmChartVersionDropdown';
 
 let helmInstallUpgradeFormProps: React.ComponentProps<typeof HelmInstallUpgradeForm>;
 
 describe('HelmInstallUpgradeForm', () => {
   helmInstallUpgradeFormProps = {
     chartHasValues: true,
-    submitLabel: 'Install',
+    helmAction: 'Install',
     values: {
       helmReleaseName: 'helm-release',
       chartName: 'helm-release',
@@ -60,23 +59,13 @@ describe('HelmInstallUpgradeForm', () => {
 
   let helmInstallUpgradeForm = shallow(<HelmInstallUpgradeForm {...helmInstallUpgradeFormProps} />);
 
-  it('should render only the input field component and not the dropdown field when no active version exists', () => {
-    expect(helmInstallUpgradeForm.find(InputField).exists()).toBe(true);
-    expect(helmInstallUpgradeForm.find(InputField).props().isDisabled).toBe(false);
-    expect(helmInstallUpgradeForm.find(HelmChartVersionDropdown).exists()).toBe(false);
-  });
-
   it('should render the YAML Editor component', () => {
     expect(helmInstallUpgradeForm.find(YAMLEditorField).exists()).toBe(true);
   });
 
-  it('should render the Dropdown Field component when active version exists', () => {
-    helmInstallUpgradeFormProps.values.chartVersion = '0.1';
+  it('should have the Release Name field disabled in the Helm Upgrade Form', () => {
+    helmInstallUpgradeFormProps.helmAction = 'Upgrade';
     helmInstallUpgradeForm = shallow(<HelmInstallUpgradeForm {...helmInstallUpgradeFormProps} />);
-    expect(helmInstallUpgradeForm.find(HelmChartVersionDropdown).exists()).toBe(true);
-  });
-
-  it('should have the Release Name field disabled when active version exists', () => {
     expect(helmInstallUpgradeForm.find(InputField).props().label).toBe('Release Name');
     expect(helmInstallUpgradeForm.find(InputField).props().isDisabled).toBe(true);
   });

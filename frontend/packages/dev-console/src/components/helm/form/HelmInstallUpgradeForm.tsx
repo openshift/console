@@ -9,7 +9,7 @@ import HelmChartVersionDropdown from './HelmChartVersionDropdown';
 
 export interface HelmInstallUpgradeFormProps {
   chartHasValues: boolean;
-  submitLabel: string;
+  helmAction: string;
 }
 
 const HelmInstallUpgradeForm: React.FC<FormikProps<FormikValues> & HelmInstallUpgradeFormProps> = ({
@@ -19,28 +19,32 @@ const HelmInstallUpgradeForm: React.FC<FormikProps<FormikValues> & HelmInstallUp
   handleReset,
   status,
   isSubmitting,
-  submitLabel,
+  helmAction,
   values,
   dirty,
 }) => {
   const { chartName, chartVersion } = values;
+  const isSubmitDisabled =
+    (helmAction === HelmActionType.Upgrade && !dirty) || status?.isSubmitting || !_.isEmpty(errors);
   return (
     <FlexForm onSubmit={handleSubmit}>
       <FormSection fullWidth>
         <Grid gutter={'md'}>
-          <GridItem span={submitLabel === HelmActionType.Install ? 12 : 6}>
+          <GridItem span={6}>
             <InputField
               type={TextInputTypes.text}
               name="helmReleaseName"
               label="Release Name"
               helpText="A unique name for the Helm Chart release."
               required
-              isDisabled={!!chartVersion}
+              isDisabled={helmAction === HelmActionType.Upgrade}
             />
           </GridItem>
-          {chartVersion && (
-            <HelmChartVersionDropdown chartName={chartName} chartVersion={chartVersion} />
-          )}
+          <HelmChartVersionDropdown
+            chartName={chartName}
+            chartVersion={chartVersion}
+            helmAction={helmAction}
+          />
         </Grid>
       </FormSection>
       {chartHasValues && <YAMLEditorField name="chartValuesYAML" onSave={handleSubmit} />}
@@ -48,8 +52,8 @@ const HelmInstallUpgradeForm: React.FC<FormikProps<FormikValues> & HelmInstallUp
         handleReset={handleReset}
         errorMessage={status && status.submitError}
         isSubmitting={status?.isSubmitting || isSubmitting}
-        submitLabel={submitLabel}
-        disableSubmit={(chartVersion && !dirty) || status?.isSubmitting || !_.isEmpty(errors)}
+        submitLabel={helmAction}
+        disableSubmit={isSubmitDisabled}
         resetLabel="Cancel"
       />
     </FlexForm>
