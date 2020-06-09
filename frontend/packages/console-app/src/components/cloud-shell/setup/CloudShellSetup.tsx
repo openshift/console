@@ -66,7 +66,7 @@ const CloudShellSetup: React.FunctionComponent<Props> = ({
         onReset={onCancel}
         validate={cloudShellSetupValidation}
       >
-        {(props) => <CloudSehellSetupForm {...props} />}
+        {(formikProps) => <CloudSehellSetupForm {...formikProps} />}
       </Formik>
     </div>
   );

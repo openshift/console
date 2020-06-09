@@ -80,7 +80,7 @@ const PipelineSecretSection: React.FC<PipelineSecretSectionProps> = ({ namespace
                 onSubmit={handleSubmit}
                 onReset={handleReset}
               >
-                {(props) => <SecretForm {...props} />}
+                {(formikProps) => <SecretForm {...formikProps} />}
               </Formik>
             </div>
           ) : (

@@ -45,9 +45,9 @@ const AddTriggerModal: React.FC<AddTriggerModalProps> = ({ pipeline, close }) =>
       onSubmit={handleSubmit}
       validationSchema={addTriggerSchema}
     >
-      {(props) => (
-        <ModalStructure submitBtnText="Add" title="Add Trigger" close={close} {...props}>
-          <AddTriggerForm {...props} />
+      {(formikProps) => (
+        <ModalStructure submitBtnText="Add" title="Add Trigger" close={close} {...formikProps}>
+          <AddTriggerForm {...formikProps} />
         </ModalStructure>
       )}
     </Formik>

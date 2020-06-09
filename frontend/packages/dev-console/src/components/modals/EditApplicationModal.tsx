@@ -98,8 +98,8 @@ class EditApplicationModal extends PromiseComponent<
     };
     return (
       <Formik initialValues={initialValues} onSubmit={this.handleSubmit}>
-        {(formProps) => (
-          <EditApplicationForm {...formProps} {...this.props} initialApplication={application} />
+        {(formikProps) => (
+          <EditApplicationForm {...formikProps} {...this.props} initialApplication={application} />
         )}
       </Formik>
     );

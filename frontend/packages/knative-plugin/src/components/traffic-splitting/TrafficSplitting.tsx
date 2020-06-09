@@ -60,8 +60,8 @@ const TrafficSplitting: React.FC<TrafficSplittingProps> = ({
       onReset={cancel}
       initialStatus={{ error: '' }}
     >
-      {(props) => (
-        <TrafficSplittingModal {...props} cancel={cancel} revisionItems={revisionItems} />
+      {(formikProps) => (
+        <TrafficSplittingModal {...formikProps} cancel={cancel} revisionItems={revisionItems} />
       )}
     </Formik>
   );

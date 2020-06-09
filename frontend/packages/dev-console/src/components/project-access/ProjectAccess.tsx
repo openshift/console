@@ -114,7 +114,7 @@ const ProjectAccess: React.FC<ProjectAccessProps> = ({ formName, namespace, role
             onReset={handleReset}
             validationSchema={validationSchema}
           >
-            {(props) => <ProjectAccessForm {...props} />}
+            {(formikProps) => <ProjectAccessForm {...formikProps} />}
           </Formik>
         )}
       </div>

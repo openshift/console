@@ -177,7 +177,7 @@ const DeployImage: React.FC<Props> = ({
       onReset={history.goBack}
       validationSchema={deployValidationSchema}
     >
-      {(props) => <DeployImageForm {...props} projects={projects} />}
+      {(formikProps) => <DeployImageForm {...formikProps} projects={projects} />}
     </Formik>
   );
 };

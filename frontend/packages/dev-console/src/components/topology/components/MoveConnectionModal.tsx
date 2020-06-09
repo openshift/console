@@ -150,7 +150,7 @@ class MoveConnectionModal extends PromiseComponent<
     };
     return (
       <Formik initialValues={initialValues} onSubmit={this.handleSubmit}>
-        {(formProps) => <MoveConnectionForm {...formProps} {...this.props} />}
+        {(formikProps) => <MoveConnectionForm {...formikProps} {...this.props} />}
       </Formik>
     );
   }
