@@ -51,7 +51,7 @@ describe(CatalogTileViewPage.displayName, () => {
     expect(filterItems.length).toEqual(5); // Filter by Types
     expect(filterItems.at(0).props().count).toBe(0); // total count for Operator Backed
     expect(filterItems.at(0).props().checked).toBe(true); // Check operator backed filter is true by default
-    expect(filterItems.at(1).props().count).toBe(0); // total count for Helm Charts
+    expect(filterItems.at(1).props().count).toBe(2); // total count for Helm Charts
     expect(filterItems.at(1).props().checked).toBe(false); // Check Helm Charts filter is true by default
     expect(filterItems.at(2).props().count).toBe(9); // total count for templates
     expect(filterItems.at(2).props().checked).toBe(false); // filter templates should be false by default
@@ -71,7 +71,7 @@ describe(CatalogTileViewPage.displayName, () => {
     const tiles = wrapper.find<any>(CatalogTile);
 
     expect(tiles.exists()).toBe(true);
-    expect(tiles.length).toEqual(23);
+    expect(tiles.length).toEqual(25);
 
     const cakeSqlTileProps = tiles.at(2).props();
     expect(cakeSqlTileProps.title).toEqual('CakePHP + MySQL');
@@ -84,7 +84,7 @@ describe(CatalogTileViewPage.displayName, () => {
       ),
     ).toBe(true);
 
-    const amqTileProps = tiles.at(20).props();
+    const amqTileProps = tiles.at(22).props();
     expect(amqTileProps.title).toEqual('Red Hat JBoss A-MQ 6.3 (Ephemeral, no SSL)');
     expect(amqTileProps.iconImg).toEqual('test-file-stub');
     expect(amqTileProps.iconClass).toBe(null);
@@ -95,7 +95,7 @@ describe(CatalogTileViewPage.displayName, () => {
       ),
     ).toBe(true);
 
-    const wildflyTileProps = tiles.at(22).props();
+    const wildflyTileProps = tiles.at(24).props();
     expect(wildflyTileProps.title).toEqual('WildFly');
     expect(wildflyTileProps.iconImg).toEqual('test-file-stub');
     expect(wildflyTileProps.iconClass).toBe(null);
