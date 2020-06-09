@@ -316,6 +316,7 @@ export const getGitAndDockerfileInitialValues = (
 const deployImageInitialValues = {
   searchTerm: '',
   registry: 'external',
+  allowInsecureRegistry: false,
   imageStream: {
     image: '',
     tag: '',
@@ -349,11 +350,14 @@ export const getExternalImageInitialValues = (appResources: AppResources) => {
     return {};
   }
   const imageStream = _.orderBy(imageStreamList, ['metadata.resourceVersion'], ['desc']);
-  const name = imageStream.length && imageStream[0]?.spec?.tags?.[0]?.from?.name;
+  const imageStreamData = imageStream?.[0]?.spec?.tags?.[0];
+  const name = imageStreamData?.from?.name;
+  const isAllowInsecureRegistry = imageStreamData?.importPolicy?.insecure || false;
   return {
     ...deployImageInitialValues,
     searchTerm: name,
     registry: 'external',
+    allowInsecureRegistry: isAllowInsecureRegistry,
     imageStream: {
       ...deployImageInitialValues.imageStream,
       grantAccess: true,

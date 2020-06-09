@@ -497,6 +497,7 @@ export const externalImageValues: DeployImageFormData = {
   },
   searchTerm: undefined,
   registry: 'external',
+  allowInsecureRegistry: false,
   imageStream: { image: '', tag: '', namespace: '', grantAccess: true },
   isi: {
     name: '',
@@ -572,6 +573,7 @@ export const internalImageValues: DeployImageFormData = {
   },
   searchTerm: '',
   registry: 'internal',
+  allowInsecureRegistry: false,
   imageStream: { image: 'python', tag: '3.6', namespace: 'div' },
   isi: {
     name: '',
@@ -667,6 +669,7 @@ export const knExternalImageValues: DeployImageFormData = {
     unknownTargetPort: '',
   },
   searchTerm: 'openshift/hello-openshift',
+  allowInsecureRegistry: false,
   serverless: { scaling: { concurrencylimit: '', concurrencytarget: '', maxpods: '', minpods: 0 } },
   healthChecks: healthChecksProbeInitialData,
 };

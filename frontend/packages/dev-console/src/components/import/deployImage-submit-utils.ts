@@ -63,6 +63,7 @@ export const createOrUpdateImageStream = (
     project: { name: namespace },
     application: { name: application },
     name,
+    allowInsecureRegistry,
     isi: { name: isiName, tag },
     labels: userLabels,
   } = formData;
@@ -87,7 +88,7 @@ export const createOrUpdateImageStream = (
             kind: 'DockerImage',
             name: `${isiName}`,
           },
-          importPolicy: {},
+          importPolicy: { insecure: allowInsecureRegistry },
         },
       ],
     },

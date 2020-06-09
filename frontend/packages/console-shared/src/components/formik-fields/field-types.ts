@@ -43,6 +43,7 @@ export enum GroupTextType {
 export interface CheckboxFieldProps extends FieldProps {
   formLabel?: string;
   value?: string;
+  onChange?: (val: boolean) => void;
 }
 
 export interface SearchInputFieldProps extends BaseInputFieldProps {

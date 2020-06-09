@@ -15,6 +15,7 @@ export const defaultData: DeployImageFormData = {
   name: '',
   searchTerm: '',
   registry: 'external',
+  allowInsecureRegistry: false,
   imageStream: {
     image: '',
     tag: '',
@@ -107,6 +108,7 @@ export const dataWithTargetPort: DeployImageFormData = {
   name: 'helloworld-go',
   searchTerm: 'docker.io/mgencur/helloworld-go',
   registry: 'external',
+  allowInsecureRegistry: false,
   imageStream: {
     image: '',
     tag: '',
@@ -221,6 +223,7 @@ export const dataWithPorts: DeployImageFormData = {
   name: 'test-admin-console',
   searchTerm: 'rohitkrai03/test-admin-console',
   registry: 'external',
+  allowInsecureRegistry: false,
   imageStream: {
     image: '',
     tag: '',
@@ -443,6 +446,7 @@ export const dataWithoutPorts: DeployImageFormData = {
   name: 'helloworld-go',
   searchTerm: 'docker.io/mgencur/helloworld-go',
   registry: 'external',
+  allowInsecureRegistry: false,
   imageStream: {
     image: '',
     tag: '',
@@ -565,6 +569,7 @@ export const internalImageData: DeployImageFormData = {
   name: 'react-web-app',
   searchTerm: '',
   registry: 'internal',
+  allowInsecureRegistry: false,
   imageStream: {
     image: 'react-web-app',
     tag: 'latest',

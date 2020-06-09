@@ -62,6 +62,7 @@ export interface DeployImageFormData {
   application: ApplicationData;
   name: string;
   searchTerm: string;
+  allowInsecureRegistry: boolean;
   registry: string;
   imageStream: {
     image: string;
