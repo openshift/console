@@ -1,8 +1,11 @@
 Feature: Event Sources
-    As a developer I want to create event sources and perfrom various actions in topology
+    As a developer I want to create event sources and perfrom various actions in topology page
 
 Background:
-Given developer navigates to project topology page
+   Given open shift cluster is installed with Serverless operator
+   And user is on dev perspective +Add page
+   And create the project "AUT-create-knative-event-source"
+
 
 Scenario: Display the event source page by selecting the event source on node right click
    Given topology page should contain at least one node
