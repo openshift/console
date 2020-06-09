@@ -1,5 +1,5 @@
 import { getSecret, getConfigMap, getServiceAccount } from './utils/mocks';
-import { createResource, deleteResource, click } from '@console/shared/src/test-utils/utils';
+import { click, createResources, deleteResources } from '@console/shared/src/test-utils/utils';
 import { browser, ExpectedConditions as until, Key } from 'protractor';
 import { createExampleVMViaYAML } from './utils/utils';
 import { testName } from '@console/internal-integration-tests/protractor.conf';
@@ -15,30 +15,25 @@ import {
 import { execSync } from 'child_process';
 import { VirtualMachine } from './models/virtualMachine';
 
-const expecScriptPath = `${KUBEVIRT_SCRIPTS_PATH}/expect-vm-env-readable.sh`;
-const vmName = 'vm-example';
+const environmentExpecScriptPath = `${KUBEVIRT_SCRIPTS_PATH}/expect-vm-env-readable.sh`;
 const configmapName = 'configmap-mock';
 const secretName = 'secret-mock';
 const serviceAccountName = 'service-account-mock';
 
 describe('Test VM enviromnet tab', () => {
   const secret = getSecret(testName, secretName);
-  const configmap = getConfigMap(testName, configmapName);
+  const configMap = getConfigMap(testName, configmapName);
   const serviceAccount = getServiceAccount(testName, serviceAccountName);
   let vm: VirtualMachine;
 
   beforeAll(async () => {
-    createResource(secret);
-    createResource(configmap);
-    createResource(serviceAccount);
+    createResources([secret, configMap, serviceAccount]);
     const vmObj = await createExampleVMViaYAML(true);
     vm = new VirtualMachine(vmObj.metadata);
   });
 
   afterAll(() => {
-    deleteResource(secret);
-    deleteResource(configmap);
-    deleteResource(serviceAccount);
+    deleteResources([secret, configMap, serviceAccount, vm.asResource()]);
   });
 
   beforeEach(async () => {
@@ -67,9 +62,12 @@ describe('Test VM enviromnet tab', () => {
     'ID(CNV-4185) Verify all sources are readable inside the VM',
     async () => {
       await vm.action(VM_ACTION.Start);
-      const out = execSync(`expect ${expecScriptPath} ${vmName} ${testName}`).toString();
+      const out = execSync(
+        `expect ${environmentExpecScriptPath} ${vm.name} ${vm.namespace}`,
+      ).toString();
       const isFailedTest = out.split('\n').find((line) => line === 'FAILED');
       expect(!isFailedTest).toBeTruthy();
+      await vm.action(VM_ACTION.Stop);
     },
     VM_BOOTUP_TIMEOUT_SECS * 2, // VM boot time + test sources time
   );

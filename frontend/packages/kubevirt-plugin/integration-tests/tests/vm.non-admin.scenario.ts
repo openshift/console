@@ -14,7 +14,7 @@ import {
   textFilter,
   resourceRows,
 } from '@console/internal-integration-tests/views/crud.view';
-import { restrictedAccessBlock, hintBlockTitle } from '../views/vms.list.view';
+import { restrictedAccessBlock } from '../views/vms.list.view';
 import { createProject } from './utils/utils';
 import { vmConfig, getProvisionConfigs } from './vm.wizard.configs';
 import { ProvisionConfigName } from './utils/constants/wizard';
@@ -50,6 +50,7 @@ describe('Kubevirt non-admin Flow', () => {
   beforeAll(async () => {
     await loginView.logout();
     await loginView.login(BRIDGE_HTPASSWD_IDP, BRIDGE_HTPASSWD_USERNAME, BRIDGE_HTPASSWD_PASSWORD);
+    await createProject(testNonAdminNamespace);
   });
 
   afterAll(async () => {
@@ -60,15 +61,8 @@ describe('Kubevirt non-admin Flow', () => {
   });
 
   it(
-    'ID(CNV-1718) non-admin create project and create/remove vm',
+    'ID(CNV-1718) non-admin create and remove a vm',
     async () => {
-      // Navigate to Virtual Machines page
-      await browser.get(`${appHost}/k8s/ns/${testNonAdminNamespace}/virtualmachines`);
-
-      // Check to make sure Access is Restricted.
-      await browser.wait(until.textToBePresentInElement(hintBlockTitle, 'Getting Started'));
-
-      await createProject(testNonAdminNamespace);
       const vm = await wizard.createVirtualMachine(vm1Config);
       await withResource(
         leakedResources,
