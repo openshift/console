@@ -1,5 +1,7 @@
 import { execSync } from 'child_process';
 import { browser } from 'protractor';
+import * as _ from 'lodash';
+import { Base64 } from 'js-base64';
 import * as crudView from '@console/internal-integration-tests/views/crud.view';
 import {
   MINUTE,
@@ -17,6 +19,9 @@ import {
   goToStorageClasses,
   currentSelectors,
   TEST_PLATFORM,
+  MODE,
+  Platform,
+  Mode,
 } from '../../views/installFlow.view';
 import {
   checkIfClusterIsReady,
@@ -29,6 +34,7 @@ import {
   verifyNodeLabels,
   testPodIsSucceeded,
 } from '../../utils/helpers';
+import { ClusterMetadata } from '../../mocks/independent-external-cluster-data';
 
 const Installer = new InstallCluster();
 
@@ -68,40 +74,69 @@ describe('Testing OCS Subscription', () => {
   });
 });
 
-describe('Test creation of Storage Cluster', () => {
-  it(
-    'creates a storage cluster',
-    async () => {
-      const { selectedNodes } = await Installer.createStorageCluster();
-      browser.sleep(2 * SECOND);
-      const text = await crudView.resourceTitle.getText();
-      expect(text).toEqual(STORAGE_CLUSTER_NAME);
-      // Verify all the nodes have the required labels
-      // Wait for 5 seconds for label to apply
-      await browser.sleep(5 * SECOND);
-      let nodes: string[] = await Promise.all(selectedNodes);
-      // Data syntax Node\nN\n<node-name>
-      nodes = nodes.map((node) => node.split('\n')[2]);
-      nodes.forEach((node) => expect(verifyNodeLabels(node, OCS_NODE_LABEL)).toBeTruthy());
-      const storageCR = JSON.parse(
+if (TEST_PLATFORM === Platform.OCP || (TEST_PLATFORM === Platform.OCS && MODE === Mode.CONVERGED)) {
+  describe('Test creation of Converged Storage Cluster', () => {
+    it(
+      'creates a storage cluster',
+      async () => {
+        const { selectedNodes } = await Installer.createConvergedStorageCluster();
+        browser.sleep(2 * SECOND);
+        const text = await crudView.resourceTitle.getText();
+        expect(text).toEqual(STORAGE_CLUSTER_NAME);
+        // Verify all the nodes have the required labels
+        // Wait for 5 seconds for label to apply
+        await browser.sleep(5 * SECOND);
+        let nodes: string[] = await Promise.all(selectedNodes);
+        // Data syntax Node\nN\n<node-name>
+        nodes = nodes.map((node) => node.split('\n')[2]);
+        nodes.forEach((node) => expect(verifyNodeLabels(node, OCS_NODE_LABEL)).toBeTruthy());
+        const storageCR = JSON.parse(
+          execSync(
+            `kubectl get storageclusters ${STORAGE_CLUSTER_NAME} -n ${OCS_NS} -o json`,
+          ).toString(),
+        );
+        const scFromCR =
+          storageCR?.spec?.storageDeviceSets?.[0]?.dataPVCTemplate?.spec?.storageClassName;
+        const sizeFromCR =
+          storageCR?.spec?.storageDeviceSets?.[0]?.dataPVCTemplate?.spec?.resources?.requests
+            ?.storage;
+        const defaultSC = execSync(`kubectl get storageclasses | grep -Po '\\w+(?=.*default)'`)
+          .toString()
+          .trim();
+        expect(sizeFromCR).toEqual('512Gi');
+        expect(defaultSC).toEqual(scFromCR);
+      },
+      16 * MINUTE,
+    );
+  });
+}
+
+if (TEST_PLATFORM === Platform.OCP || (TEST_PLATFORM === Platform.OCS && MODE === Mode.EXTERNAL)) {
+  describe('Test creation of External Storage Cluster', () => {
+    beforeAll(async () => {
+      await Installer.createExternalStorageCluster();
+    });
+
+    it('Test secret is created with required data', async () => {
+      const secret = JSON.parse(
         execSync(
-          `kubectl get storageclusters ${STORAGE_CLUSTER_NAME} -n ${OCS_NS} -o json`,
+          `kubectl get secret rook-ceph-external-cluster-details -n openshift-storage -o json`,
         ).toString(),
       );
-      const scFromCR =
-        storageCR?.spec?.storageDeviceSets?.[0]?.dataPVCTemplate?.spec?.storageClassName;
-      const size =
-        storageCR?.spec?.storageDeviceSets?.[0]?.dataPVCTemplate?.spec?.resources?.requests
-          ?.storage;
-      const defaultSC = execSync(`kubectl get storageclasses | grep -Po '\\w+(?=.*default)'`)
-        .toString()
-        .trim();
-      expect(size).toEqual('512Gi');
-      expect(defaultSC).toEqual(scFromCR);
-    },
-    16 * MINUTE,
-  );
-});
+      const fileData = JSON.parse(Base64.decode(secret.data.external_cluster_details));
+      expect(_.isEqual(fileData, ClusterMetadata)).toEqual(true);
+    });
+
+    it('Test Storage Cluster CR is created with externalStorage set to true', async () => {
+      const storageCluster = JSON.parse(
+        execSync(
+          `kubectl get storagecluster ocs-independent-storagecluster -n openshift-storage -o json`,
+        ).toString(),
+      );
+      expect(storageCluster.spec.externalStorage.enable).toEqual(true);
+    });
+  });
+}
 
 if (TEST_PLATFORM === 'OCS') {
   describe('Tests for pods and storage classes', () => {
