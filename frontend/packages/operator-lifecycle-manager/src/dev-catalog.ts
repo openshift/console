@@ -54,7 +54,7 @@ export const normalizeClusterServiceVersions = (
         ...desc,
       },
       kind: 'InstalledOperator',
-      tileName: desc.displayName,
+      tileName: desc.displayName || desc.kind,
       tileIconClass: null,
       capabilityLevel: _.get(desc, ['csv', 'metadata', 'annotations', 'capabilities'], '')
         .toLowerCase()
