@@ -43,13 +43,13 @@ const MultiTabListPage: React.FC<MultiTabListPageProps> = ({
         title={title}
         badge={badge}
         menuActions={menuActions}
-        style={{ display: 'flex', alignItems: 'flex-start' }}
+        className="multi-tab-list-page__heading"
       >
         <ActionsMenu
           actions={menuActions}
           title="Create"
-          actionsMenuClass="actions-menu"
-          toggleButtonClass="toggle-button"
+          actionsMenuClass="multi-tab-list-page__actions-menu"
+          toggleButtonClass="multi-tab-list-page__toggle-button"
         />
       </PageHeading>
       <HorizontalNav pages={pages} match={match} noStatusBox />
