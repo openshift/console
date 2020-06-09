@@ -11,12 +11,14 @@ import {
   ResourceNSNavItem,
   RoutePage,
   YAMLTemplate,
+  ProjectDashboardInventoryItem,
 } from '@console/plugin-sdk';
 import { GridPosition } from '@console/shared/src/components/dashboard/DashboardGrid';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager';
 import { OCS_FLAG } from '@console/ceph-storage-plugin/src/features';
 import * as models from './models';
+import { getObcStatusGroups } from './components/buckets-card/utils';
 
 type ConsumedExtensions =
   | ModelFeatureFlag
@@ -28,7 +30,8 @@ type ConsumedExtensions =
   | ResourceListPage
   | ResourceDetailsPage
   | YAMLTemplate
-  | RoutePage;
+  | RoutePage
+  | ProjectDashboardInventoryItem;
 
 const NOOBAA_FLAG = 'NOOBAA';
 
@@ -287,6 +290,17 @@ const plugin: Plugin<ConsumedExtensions> = [
           './components/object-bucket-claim-page/create-obc' /* webpackChunkName: "create-obc" */
         ).then((m) => m.CreateOBCPage),
       required: NOOBAA_FLAG,
+    },
+  },
+  {
+    type: 'Project/Dashboard/Inventory/Item',
+    properties: {
+      model: models.NooBaaObjectBucketClaimModel,
+      useAbbr: true,
+      mapper: getObcStatusGroups,
+    },
+    flags: {
+      required: [NOOBAA_FLAG],
     },
   },
 ];
