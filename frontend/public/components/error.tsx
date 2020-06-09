@@ -30,26 +30,13 @@ const urlMessage = () => {
   const error = getQueryArgument('error');
   return type && error ? getMessage(type, error) : '';
 };
-const getErrMessage = () => {
-  const msg = getQueryArgument('error_msg');
-  if (msg) {
-    try {
-      return decodeURIComponent(msg);
-    } catch (e) {
-      // eslint-disable-next-line no-console
-      console.log(e);
-    }
-  }
-  return '';
-};
 
-const ErrorComponent: React.SFC<ErrorComponentProps> = ({ title, message, errMessage }) => (
+const ErrorComponent: React.SFC<ErrorComponentProps> = ({ title, message }) => (
   <>
     <PageHeading detail={true} title="Error" />
     <div className="co-m-pane__body" data-test-id="error-page">
       <h1 className="co-m-pane__heading co-m-pane__heading--center">{title}</h1>
       {message && <div className="text-center">{message}</div>}
-      {errMessage && <div className="text-center text-muted">{errMessage}</div>}
     </div>
   </>
 );
@@ -59,11 +46,7 @@ export const ErrorPage: React.SFC<ErrorPageProps> = () => (
     <Helmet>
       <title>Error</title>
     </Helmet>
-    <ErrorComponent
-      title="Oh no! Something went wrong."
-      message={urlMessage()}
-      errMessage={getErrMessage()}
-    />
+    <ErrorComponent title="Oh no! Something went wrong." message={urlMessage()} />
   </div>
 );
 
@@ -72,11 +55,7 @@ export const ErrorPage404: React.SFC<ErrorPage404Props> = (props) => (
     <Helmet>
       <title>Page Not Found (404)</title>
     </Helmet>
-    <ErrorComponent
-      title="404: Page Not Found"
-      message={props.message}
-      errMessage={props.errMessage}
-    />
+    <ErrorComponent title="404: Page Not Found" message={props.message} />
   </div>
 );
 
@@ -108,7 +87,6 @@ export const ErrorBoundaryFallback: React.SFC<ErrorBoundaryFallbackProps> = (pro
 export type ErrorComponentProps = {
   title: string;
   message?: string;
-  errMessage?: string;
 };
 
 export type ErrorPageProps = {};
