@@ -3,7 +3,7 @@ import { merge } from 'lodash';
 // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
 // @ts-ignore
 import { useSelector } from 'react-redux';
-import { KebabAction } from '@console/internal/components/utils';
+import { KebabAction, Kebab } from '@console/internal/components/utils';
 import { K8sResourceCommon } from '@console/internal/module/k8s';
 import { PipelineRun } from '../../../utils/pipeline-augment';
 import { StartedByLabel } from '../../pipelines/const';
@@ -33,6 +33,9 @@ export const useMenuActionsWithUserLabel = (menuActions: KebabAction[]): KebabAc
   const labels = useUserLabelForManualStart();
 
   return menuActions.map((kebabAction) => {
+    if (Object.values(Kebab.factory).includes(kebabAction)) {
+      return kebabAction;
+    }
     return (kind, resource, ...rest) =>
       kebabAction(kind, mergeLabelsWithResource(labels, resource), ...rest);
   });
