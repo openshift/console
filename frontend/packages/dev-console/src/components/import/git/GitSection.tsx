@@ -33,7 +33,10 @@ const GitSection: React.FC<GitSectionProps> = ({ showSample }) => {
 
     setFieldValue('git.type', gitType);
     setFieldValue('git.showGitType', showGitType);
-    gitRepoName && !values.name && setFieldValue('name', gitRepoName);
+    if (gitRepoName && !values.name) {
+      setFieldValue('name', gitRepoName);
+      setFieldTouched('name', true);
+    }
     gitRepoName &&
       !values.application.name &&
       values.application.selectedKey !== UNASSIGNED_KEY &&
