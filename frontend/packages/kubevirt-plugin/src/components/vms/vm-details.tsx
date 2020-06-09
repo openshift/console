@@ -17,6 +17,7 @@ import { getLoadedData, getResource } from '../../utils';
 import { VirtualMachineInstanceModel, VirtualMachineModel } from '../../models';
 import { getServicesForVmi } from '../../selectors/service';
 import { VMResourceSummary, VMDetailsList, VMSchedulingList } from './vm-resource';
+import { VMUsersList } from './vm-users';
 import { VMTabProps } from './types';
 import { getVMStatus } from '../../statuses/vm/vm-status';
 import { VMStatusBundle } from '../../statuses/vm/types';
@@ -114,6 +115,10 @@ export const VMDetails: React.FC<VMDetailsProps> = (props) => {
       <div className="co-m-pane__body">
         <SectionHeading text="Services" />
         <ServicesList {...restProps} data={vmServicesData} label="Services" />
+      </div>
+      <div className="co-m-pane__body">
+        <SectionHeading text="Logged in users" />
+        <VMUsersList {...restProps} vmi={vmi} vmStatusBundle={vmStatusBundle} />
       </div>
     </StatusBox>
   );

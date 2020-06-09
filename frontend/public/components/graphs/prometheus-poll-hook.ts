@@ -1,16 +1,12 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-import { useCallback, useState } from 'react';
-
-import { usePoll, useSafeFetch } from '../utils';
+import { useURLPoll } from '../utils/url-poll-hook';
 import { getPrometheusURL, PrometheusEndpoint } from './helpers';
 import { PrometheusResponse } from '.';
 
-const DEFAULT_DELAY = 15000; // 15 seconds
 const DEFAULT_SAMPLES = 60;
 const DEFAULT_TIMESPAN = 60 * 60 * 1000; // 1 hour
 
 export const usePrometheusPoll = ({
-  delay = DEFAULT_DELAY,
+  delay,
   endpoint,
   endTime = undefined,
   namespace,
@@ -20,34 +16,8 @@ export const usePrometheusPoll = ({
   timespan = DEFAULT_TIMESPAN,
 }: PrometheusPollProps) => {
   const url = getPrometheusURL({ endpoint, endTime, namespace, query, samples, timeout, timespan });
-  const [error, setError] = useState();
-  const [response, setResponse] = useState();
-  const [loading, setLoading] = useState(true);
-  const safeFetch = useSafeFetch();
-  const tick = useCallback(() => {
-    if (url) {
-      safeFetch(url)
-        .then((data) => {
-          setResponse(data);
-          setError(undefined);
-          setLoading(false);
-        })
-        .catch((err) => {
-          if (err.name !== 'AbortError') {
-            setError(err);
-            setLoading(false);
-            // eslint-disable-next-line no-console
-            console.error(`Error polling Prometheus: ${err}`);
-          }
-        });
-    } else {
-      setLoading(false);
-    }
-  }, [url]);
 
-  usePoll(tick, delay, endTime, query, timespan);
-
-  return [response, error, loading] as [PrometheusResponse, Error, boolean];
+  return useURLPoll<PrometheusResponse>(url, delay, endTime, query, timespan);
 };
 
 type PrometheusPollProps = {
