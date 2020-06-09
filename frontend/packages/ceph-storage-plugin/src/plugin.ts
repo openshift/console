@@ -1,6 +1,5 @@
 import * as _ from 'lodash';
 import * as models from './models';
-import { CAPACITY_USAGE_QUERIES, StorageDashboardQuery } from './constants/queries';
 import {
   ClusterServiceVersionAction,
   DashboardsCard,
@@ -27,7 +26,6 @@ import {
 } from './features';
 import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager/src/models';
 import { GridPosition } from '@console/shared/src/components/dashboard/DashboardGrid';
-import { OverviewQuery } from '@console/internal/components/dashboard/dashboards-page/cluster-dashboard/queries';
 import { referenceForModel, referenceFor } from '@console/internal/module/k8s';
 import { PersistentVolumeClaimModel } from '@console/internal/models';
 import { getCephHealthState } from './components/dashboard-page/storage-dashboard/status-card/utils';
@@ -215,17 +213,6 @@ const plugin: Plugin<ConsumedExtensions> = [
         },
       },
       healthHandler: getCephHealthState,
-    },
-    flags: {
-      required: [CEPH_FLAG],
-    },
-  },
-  {
-    type: 'Dashboards/Overview/Utilization/Item',
-    properties: {
-      id: OverviewQuery.STORAGE_UTILIZATION,
-      query: CAPACITY_USAGE_QUERIES[StorageDashboardQuery.CEPH_CAPACITY_USED],
-      totalQuery: CAPACITY_USAGE_QUERIES[StorageDashboardQuery.CEPH_CAPACITY_TOTAL],
     },
     flags: {
       required: [CEPH_FLAG],
