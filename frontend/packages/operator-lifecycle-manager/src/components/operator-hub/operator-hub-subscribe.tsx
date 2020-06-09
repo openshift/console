@@ -525,8 +525,6 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
               onChange={(e) => {
                 setUpdateChannel(e.currentTarget.value);
                 setInstallMode(null);
-                setTargetNamespace(null);
-                setCannotResolve(false);
               }}
             />
           </div>
