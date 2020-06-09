@@ -88,3 +88,7 @@ export const EXAMPLE_PVC = {
   storageClass: STORAGE_CLASS_PATTERNS.RBD,
   accessMode: VOLUME_ACCESS_MODES.RWO,
 };
+
+export const CHANNEL_43 = 'stable-4.3';
+export const CHANNEL_44 = 'stable-4.4';
+export const CHANNEL_45 = 'stable-4.5';
