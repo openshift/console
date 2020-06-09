@@ -4,7 +4,6 @@ export const cdModalSelectType = '#cd-rom-modal-select-type';
 export const cdModalSelectPVC = '#cdrom-pvc-input';
 export const cdModalSelectContainer = '#cdrom-container-input';
 export const cdModalSelectURL = '#cdrom-url-input';
-export const cdEjectBtn = '.vm-cd-eject-btn';
 export const diskSummaryTitle = '#kubevirt-disk-summary-disk-title';
 
 export const cdTypeSelect = (number) => $(`#cd-rom-modal-select-type-cd-drive-${number}`);

@@ -1,27 +1,18 @@
 import { browser } from 'protractor';
 import * as _ from 'lodash';
-import { testName } from '@console/internal-integration-tests/protractor.conf';
-import { click, createResource, deleteResource } from '@console/shared/src/test-utils/utils';
+import { click } from '@console/shared/src/test-utils/utils';
 import { isLoaded } from '@console/internal-integration-tests/views/crud.view';
 import * as bootOrderView from '../views/dialogs/editBootOrderView';
 import { getBootableDevicesInOrder, getNonBootableDevices } from '../../src/selectors/vm/devices';
 import { VM_CREATE_AND_EDIT_TIMEOUT_SECS } from './utils/consts';
-import { VirtualMachine } from './models/virtualMachine';
-import { getVMManifest, hddDisk } from './utils/mocks';
-import { getRandStr, getSelectOptions, selectOptionByText } from './utils/utils';
+import { hddDisk } from './utils/mocks';
+import { getSelectOptions, selectOptionByText } from './utils/utils';
 import { dragAndDrop } from './utils/scripts/drag-drop';
+import { vm } from './vm.setup.scenario';
 
 describe('KubeVirt VM detail - Boot Order Dialog', () => {
-  const testVM = getVMManifest('Container', testName, `bootordervm-${getRandStr(5)}`);
-  const vm = new VirtualMachine(testVM.metadata);
-
   beforeAll(async () => {
-    createResource(testVM);
     await vm.addDisk(hddDisk);
-  });
-
-  afterAll(() => {
-    deleteResource(testVM);
   });
 
   beforeEach(async () => {
@@ -118,9 +109,11 @@ describe('KubeVirt VM detail - Boot Order Dialog', () => {
 
       // Find devices at indexes 0 and 1 representing first and second device
       const source = bootOrderView.draggablePointer(0);
-      const destination = bootOrderView.draggablePointer(1);
+      const destination = bootOrderView.draggablePointer(2);
+      const destination1 = bootOrderView.draggablePointer(1);
 
       await browser.executeScript(dragAndDrop, source, destination);
+      await browser.executeScript(dragAndDrop, source, destination1);
       // Wait for the DOM structure to update
       await browser.sleep(300);
       // Click and wait for the changes to be applied

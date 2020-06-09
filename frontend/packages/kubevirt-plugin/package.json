@@ -17,7 +17,38 @@
     "entry": "src/plugin.tsx",
     "integrationTestSuites": {
       "kubevirt": [
-        "integration-tests/tests/*.scenario.ts"
+        "integration-tests/tests/vm.setup.scenario.ts",
+        "integration-tests/tests/vm.detail.*.scenario.ts",
+        "integration-tests/tests/vm.teardown.scenario.ts",
+        "integration-tests/tests/vm.tab.*.scenario.ts",
+        "integration-tests/tests/vm.action.*.scenario.ts",
+        "integration-tests/tests/vm.cloud-init.scenario.ts",
+        "integration-tests/tests/vm.resources.scenario.ts",
+        "integration-tests/tests/vm.list-filtering.scenario.ts",
+        "integration-tests/tests/vm.yaml.scenario.ts",
+        "integration-tests/tests/vm.windows-guest-tools.scenario.ts",
+        "integration-tests/tests/vm.wizard.scenario.ts",
+        "integration-tests/tests/wizard.validation.scenario.ts",
+        "integration-tests/tests/vmi.*.scenario.ts",
+        "integration-tests/tests/vmtemplate.*.scenario.ts",
+        "integration-tests/tests/vm.non-admin.scenario.ts"
+      ],
+      "tabs": [
+        "integration-tests/tests/vm.tab.*.scenario.ts"
+      ],
+      "details": [
+        "integration-tests/tests/vm.setup.scenario.ts",
+        "integration-tests/tests/vm.detail.*.scenario.ts",
+        "integration-tests/tests/vm.teardown.scenario.ts"
+      ],
+      "actions": [
+        "integration-tests/tests/vm.action.*.scenario.ts"
+      ],
+      "vmis": [
+        "integration-tests/tests/vmi.*.scenario.ts"
+      ],
+      "vmtemplate": [
+        "integration-tests/tests/vmtemplate.*.scenario.ts"
       ],
       "kubevirt-v2v": [
         "integration-tests/v2v/*.scenario.ts"
