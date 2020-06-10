@@ -85,17 +85,10 @@ const InvalidMessage: React.SFC<CVStatusMessageProps> = ({ cv }) => (
   </>
 );
 
-const UpdatesAvailableMessage: React.SFC<CVStatusMessageProps> = ({ cv }) => (
-  <>
-    <div className="co-update-status">
-      <ArrowCircleUpIcon className="update-pending" /> Update available
-    </div>
-    <div>
-      <Button onClick={() => clusterUpdateModal({ cv })} variant="primary">
-        Update now
-      </Button>
-    </div>
-  </>
+const UpdatesAvailableMessage: React.SFC<CVStatusMessageProps> = () => (
+  <div className="co-update-status">
+    <ArrowCircleUpIcon className="update-pending" /> Available Updates
+  </div>
 );
 
 const UpdatingMessage: React.SFC<CVStatusMessageProps> = ({ cv }) => {
@@ -108,7 +101,8 @@ const UpdatingMessage: React.SFC<CVStatusMessageProps> = ({ cv }) => {
     <>
       {updatingCondition.message && (
         <div>
-          <SyncAltIcon className="fa-spin" /> {updatingCondition.message}
+          <SyncAltIcon className="fa-spin co-icon-space-r" />
+          {updatingCondition.message}
         </div>
       )}
       <Link to="/settings/cluster/clusteroperators">View details</Link>
@@ -207,9 +201,10 @@ export const UpdateLink: React.SFC<CurrentVersionProps> = ({ cv }) => {
       {updatesAvailable &&
       (status === ClusterUpdateStatus.ErrorRetrieving ||
         status === ClusterUpdateStatus.Failing ||
+        status === ClusterUpdateStatus.UpdatesAvailable ||
         status === ClusterUpdateStatus.Updating) ? (
-        <Button variant="link" type="button" onClick={() => clusterUpdateModal({ cv })}>
-          Update to another version
+        <Button variant="primary" type="button" onClick={() => clusterUpdateModal({ cv })}>
+          Update
         </Button>
       ) : null}
     </>
@@ -242,36 +237,38 @@ export const ClusterVersionDetailsTable: React.SFC<ClusterVersionDetailsTablePro
     <>
       <div className="co-m-pane__body">
         <div className="co-m-pane__body-group">
-          <div className="co-detail-table co-detail-table--lg">
-            <div className="co-detail-table__row row">
-              <div className="co-detail-table__section col-sm-4 col-md-3">
-                <dl className="co-m-pane__details">
-                  <dt className="co-detail-table__section-header">Channel</dt>
-                  <dd>
-                    <CurrentChannel cv={cv} />
-                  </dd>
-                </dl>
-              </div>
-              <div className="co-detail-table__section col-sm-4 col-md-4">
-                <dl className="co-m-pane__details">
-                  <dt className="co-detail-table__section-header">
+          <div className="co-cluster-settings">
+            <div className="co-cluster-settings__row">
+              <div className="co-cluster-settings__section co-cluster-settings__section--current">
+                <dl className="co-m-pane__details co-cluster-settings__details">
+                  <dt>
                     <CurrentVersionHeader cv={cv} />
                   </dt>
                   <dd>
-                    <div>
-                      <CurrentVersion cv={cv} />
-                    </div>
-                    <UpdateLink cv={cv} />
+                    <CurrentVersion cv={cv} />
                   </dd>
                 </dl>
               </div>
-              <div className="co-detail-table__section col-sm-4 col-md-4">
-                <dl className="co-m-pane__details">
-                  <dt className="co-detail-table__section-header">Update Status</dt>
-                  <dd>
-                    <UpdateStatus cv={cv} />
-                  </dd>
-                </dl>
+              <div className="co-cluster-settings__section">
+                <div className="co-cluster-settings__row">
+                  <dl className="co-m-pane__details co-cluster-settings__details co-cluster-settings__details--status">
+                    <dt>Update Status</dt>
+                    <dd>
+                      <UpdateStatus cv={cv} />
+                    </dd>
+                  </dl>
+                  <div className="co-cluster-settings__row">
+                    <dl className="co-m-pane__details co-cluster-settings__details">
+                      <dt>Channel</dt>
+                      <dd>
+                        <CurrentChannel cv={cv} />
+                      </dd>
+                    </dl>
+                    <div className="co-cluster-settings__details">
+                      <UpdateLink cv={cv} />
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
