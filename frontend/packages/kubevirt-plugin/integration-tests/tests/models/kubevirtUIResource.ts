@@ -26,17 +26,12 @@ import {
   switchClusterNamespace,
 } from '../../views/uiResource.view';
 import * as vmsListView from '../../views/vms.list.view';
-import * as editCD from '../../views/dialogs/editCDView';
 import * as editBootOrder from '../../views/dialogs/editBootOrderView';
 import * as editDedicatedResourcesView from '../../views/dialogs/editDedicatedResourcesView';
 import * as editStatusView from '../../views/dialogs/editStatusView';
-import * as editNodeSelectorView from '../../views/editNodeSelectorView';
-import * as editTolerationsView from '../../views/editTolerationsView';
-import * as editAffinityView from '../../views/editAffinityView';
 import { NetworkInterfaceDialog } from '../dialogs/networkInterfaceDialog';
 import { DiskDialog } from '../dialogs/diskDialog';
 import { UIResource } from './uiResource';
-import * as editFlavor from '../../views/dialogs/editFlavorView';
 import { waitForNoLoaders } from '../../views/wizard.view';
 
 export class KubevirtUIResource extends UIResource {
@@ -166,13 +161,13 @@ export class KubevirtUIResource extends UIResource {
 
   async modalEditFlavor() {
     await click(vmDetailFlavorEditButton(this.namespace, this.name));
-    await browser.wait(until.presenceOf(editFlavor.modalTitle()));
+    await browser.wait(until.presenceOf(kubevirtDetailView.modalTitle));
     await waitForNoLoaders();
   }
 
   async modalEditCDRoms() {
     await click(vmDetailCdEditButton(this.namespace, this.name));
-    await browser.wait(until.presenceOf(editCD.modalTitle));
+    await browser.wait(until.presenceOf(kubevirtDetailView.modalTitle));
     await isLoaded();
   }
 
@@ -196,16 +191,16 @@ export class KubevirtUIResource extends UIResource {
 
   async modalEditNodeSelector() {
     await click(vmDetailNodeSelectorEditButton(this.namespace, this.name));
-    await browser.wait(until.presenceOf(editNodeSelectorView.modalTitle));
+    await browser.wait(until.presenceOf(kubevirtDetailView.modalTitle));
   }
 
   async modalEditTolerations() {
     await click(vmDetailTolerationsEditButton(this.namespace, this.name));
-    await browser.wait(until.presenceOf(editTolerationsView.modalTitle));
+    await browser.wait(until.presenceOf(kubevirtDetailView.modalTitle));
   }
 
   async modalEditAffinity() {
     await click(vmDetailAffinityEditButton(this.namespace, this.name));
-    await browser.wait(until.presenceOf(editAffinityView.modalTitle));
+    await browser.wait(until.presenceOf(kubevirtDetailView.modalTitle));
   }
 }

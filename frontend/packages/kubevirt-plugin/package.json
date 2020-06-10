@@ -19,6 +19,16 @@
       "kubevirt": [
         "integration-tests/tests/*.scenario.ts"
       ],
+      "kubevirt-tabs": [
+        "integration-tests/tests/vm.tab.*.scenario.ts",
+        "integration-tests/tests/vm.detail.*.scenario.ts"
+      ],
+      "kubevirt-actions": [
+        "integration-tests/tests/vm.action.*.scenario.ts"
+      ],
+      "kubevirt-vmis": [
+        "integration-tests/tests/vmi.*.scenario.ts"
+      ],
       "kubevirt-v2v": [
         "integration-tests/v2v/*.scenario.ts"
       ],

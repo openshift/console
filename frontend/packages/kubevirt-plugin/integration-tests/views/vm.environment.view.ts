@@ -14,7 +14,6 @@ export const option = $$('[role="option"]');
 export const deleteButton = $$('.pf-c-button.pf-m-plain.pairs-list__span-btns');
 
 export const serialField = $$('[data-test-id=env-prefix]');
-export const saveBtn = element(by.cssContainingText('.pf-m-primary', 'Save'));
 
 export const noSerialError = 'Some sources are missing a Serial Number';
 export const dupSerialsError = 'There are two or more sources with the same Serial Number';

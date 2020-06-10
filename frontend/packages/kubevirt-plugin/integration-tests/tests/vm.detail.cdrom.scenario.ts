@@ -1,12 +1,6 @@
-import { browser, by, element, ExpectedConditions as until } from 'protractor';
+import { browser, ExpectedConditions as until } from 'protractor';
 import { testName } from '@console/internal-integration-tests/protractor.conf';
-import {
-  createResources,
-  deleteResources,
-  createResource,
-  deleteResource,
-  click,
-} from '@console/shared/src/test-utils/utils';
+import { createResources, deleteResources, click } from '@console/shared/src/test-utils/utils';
 import * as editCdView from '../views/dialogs/editCDView';
 import * as virtualMachineView from '../views/virtualMachine.view';
 import { saveButton } from '../views/kubevirtUIResource.view';
@@ -18,25 +12,15 @@ import { getVMManifest } from './utils/mocks';
 
 describe('KubeVirt VM detail - edit cdroms', () => {
   const testDataVolume = getTestDataVolume();
-  let testVM;
-  let vm;
+  const testVM = getVMManifest('Container', testName, `cdrom-vm-${getRandStr(5)}`);
+  const vm = new VirtualMachine(testVM.metadata);
 
   beforeAll(() => {
-    createResources([testDataVolume]);
+    createResources([testDataVolume, testVM]);
   });
 
   afterAll(() => {
-    deleteResources([testDataVolume]);
-  });
-
-  beforeEach(() => {
-    testVM = getVMManifest('Container', testName, `bootordervm-${getRandStr(5)}`);
-    createResource(testVM);
-    vm = new VirtualMachine(testVM.metadata);
-  });
-
-  afterEach(() => {
-    deleteResource(vm.asResource());
+    deleteResources([testDataVolume, testVM]);
   });
 
   it(
@@ -74,9 +58,6 @@ describe('KubeVirt VM detail - edit cdroms', () => {
       await browser.wait(until.presenceOf(editCdView.diskSummary));
 
       await vm.modalEditCDRoms();
-      await element
-        .all(by.css(editCdView.cdEjectBtn))
-        .then((ejects) => ejects.forEach((eject) => click(eject)));
       await selectOptionByOptionValue(editCdView.cdTypeSelect(1), 'url');
       await selectOptionByOptionValue(editCdView.cdStorageClassSelect(1), STORAGE_CLASS);
       await selectOptionByOptionValue(editCdView.cdTypeSelect(2), 'pvc');
