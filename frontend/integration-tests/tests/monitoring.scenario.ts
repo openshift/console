@@ -242,9 +242,9 @@ describe('Alertmanager: YAML', () => {
     await crudView.isLoaded();
     await horizontalnavView.clickHorizontalTab('Global Configuration');
     await crudView.isLoaded();
-    await monitoringView.wait(until.elementToBeClickable(firstElementByTestID('alertmanager')));
-    expect(firstElementByTestID('alertmanager').getText()).toContain('Alertmanager');
-    await firstElementByTestID('alertmanager').click();
+    await monitoringView.wait(until.elementToBeClickable(firstElementByTestID('Alertmanager')));
+    expect(firstElementByTestID('Alertmanager').getText()).toContain('Alertmanager');
+    await firstElementByTestID('Alertmanager').click();
     await crudView.isLoaded();
     await horizontalnavView.clickHorizontalTab('YAML');
     await yamlView.isLoaded();

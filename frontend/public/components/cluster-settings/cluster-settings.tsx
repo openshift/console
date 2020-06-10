@@ -31,11 +31,14 @@ import {
   getAvailableClusterUpdates,
   getClusterID,
   getClusterUpdateStatus,
+  getClusterVersionChannel,
   getClusterVersionCondition,
+  getCurrentVersion,
   getDesiredClusterVersion,
   getErrataLink,
   getLastCompletedUpdate,
   getOCMLink,
+  getReleaseNotesLink,
   getSortedUpdates,
   k8sPatch,
   K8sResourceConditionStatus,
@@ -183,14 +186,27 @@ export const UpdateStatus: React.SFC<UpdateStatusProps> = ({ cv }) => {
   }
 };
 
+export const ReleaseNotesLink: React.FC<ReleaseNotesLinkProps> = ({ channel, version }) => {
+  const releaseNotesLink = getReleaseNotesLink(channel, version);
+  return releaseNotesLink && <ExternalLink text="View release notes" href={releaseNotesLink} />;
+};
+
 export const CurrentVersion: React.SFC<CurrentVersionProps> = ({ cv }) => {
   const desiredVersion = getDesiredClusterVersion(cv);
   const lastVersion = getLastCompletedUpdate(cv);
   const status = getClusterUpdateStatus(cv);
+  const channel = getClusterVersionChannel(cv);
 
   if (status === ClusterUpdateStatus.UpToDate || status === ClusterUpdateStatus.UpdatesAvailable) {
     return desiredVersion ? (
-      <span className="co-select-to-copy">{desiredVersion}</span>
+      <>
+        <div>
+          <span className="co-select-to-copy" data-test-id="cluster-version">
+            {desiredVersion}
+          </span>
+        </div>
+        <ReleaseNotesLink channel={channel} version={getCurrentVersion(cv)} />
+      </>
     ) : (
       <>
         <YellowExclamationTriangleIcon />
@@ -199,7 +215,18 @@ export const CurrentVersion: React.SFC<CurrentVersionProps> = ({ cv }) => {
     );
   }
 
-  return lastVersion ? <span className="co-select-to-copy">{lastVersion}</span> : <>None</>;
+  return lastVersion ? (
+    <>
+      <div>
+        <span className="co-select-to-copy" data-test-id="cluster-version">
+          {lastVersion}
+        </span>
+      </div>
+      <ReleaseNotesLink channel={channel} version={getLastCompletedUpdate(cv)} />
+    </>
+  ) : (
+    <>None</>
+  );
 };
 
 export const UpdateLink: React.SFC<CurrentVersionProps> = ({ cv }) => {
@@ -310,8 +337,22 @@ const ChannelVersion: React.FC<ChannelVersionProps> = ({ children, current }) =>
   );
 };
 
-const ChannelVersionDot: React.FC<ChannelVersionDotProps> = ({ current }) => {
-  return (
+const ChannelVersionDot: React.FC<ChannelVersionDotProps> = ({ channel, current, version }) => {
+  const releaseNotesLink = getReleaseNotesLink(channel, version);
+
+  return releaseNotesLink ? (
+    <Popover
+      headerContent={<>Version {version}</>}
+      bodyContent={<ReleaseNotesLink channel={channel} version={version} />}
+    >
+      <Button
+        variant="secondary"
+        className={classNames('co-channel-version-dot', {
+          'co-channel-version-dot--current': current,
+        })}
+      />
+    </Popover>
+  ) : (
     <div
       className={classNames('co-channel-version-dot', {
         'co-channel-version-dot--current': current,
@@ -349,13 +390,13 @@ const UpdatesGraph: React.FC<UpdatesGraphProps> = ({ cv }) => {
           <ChannelPath current>
             <ChannelLine>
               <ChannelVersion current>{lastVersion}</ChannelVersion>
-              <ChannelVersionDot current />
+              <ChannelVersionDot current channel={currentChannel} version={lastVersion} />
             </ChannelLine>
             <ChannelLine>
               {availableUpdates.length === 2 && (
                 <>
                   <ChannelVersion>{secondNewestVersion}</ChannelVersion>
-                  <ChannelVersionDot />
+                  <ChannelVersionDot channel={currentChannel} version={secondNewestVersion} />
                 </>
               )}
               {availableUpdates.length > 2 && (
@@ -372,7 +413,10 @@ const UpdatesGraph: React.FC<UpdatesGraphProps> = ({ cv }) => {
               {(newestVersion || status === ClusterUpdateStatus.Updating) && (
                 <>
                   <ChannelVersion>{newestVersion || desiredVersion}</ChannelVersion>
-                  <ChannelVersionDot />
+                  <ChannelVersionDot
+                    channel={currentChannel}
+                    version={newestVersion || desiredVersion}
+                  />
                 </>
               )}
             </ChannelLine>
@@ -602,6 +646,11 @@ type UpdateStatusProps = {
   cv: ClusterVersionKind;
 };
 
+type ReleaseNotesLinkProps = {
+  channel: string;
+  version: string;
+};
+
 type CVStatusMessageProps = {
   cv: ClusterVersionKind;
 };
@@ -640,7 +689,9 @@ type ChannelVersionProps = {
 };
 
 type ChannelVersionDotProps = {
+  channel: string;
   current?: boolean;
+  version: string;
 };
 
 type UpdatesGraphProps = {

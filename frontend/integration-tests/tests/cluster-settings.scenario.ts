@@ -1,13 +1,13 @@
 import { browser } from 'protractor';
 
-import { appHost, checkLogs, checkErrors, testName } from '../protractor.conf';
+import { appHost, checkLogs, checkErrors } from '../protractor.conf';
 import * as crudView from '../views/crud.view';
 import * as clusterSettingsView from '../views/cluster-settings.view';
 import * as horizontalnavView from '../views/horizontal-nav.view';
 
 describe('Cluster Settings', () => {
   beforeEach(async () => {
-    await browser.get(`${appHost}/settings/cluster/${testName}`);
+    await browser.get(`${appHost}/settings/cluster`);
     await crudView.isLoaded();
   });
 
@@ -18,7 +18,7 @@ describe('Cluster Settings', () => {
 
   it('display page title, horizontal navigation tab headings and pages', async () => {
     expect(clusterSettingsView.heading.isPresent()).toBe(true);
-    await horizontalnavView.clickHorizontalTab('Overview');
+    await horizontalnavView.clickHorizontalTab('Details');
     await crudView.isLoaded();
     await horizontalnavView.clickHorizontalTab('Cluster Operators');
     await crudView.isLoaded();
@@ -26,7 +26,7 @@ describe('Cluster Settings', () => {
     await crudView.isLoaded();
   });
   it('display overview channel update modal, select value and click cancel', async () => {
-    await horizontalnavView.clickHorizontalTab('Overview');
+    await horizontalnavView.clickHorizontalTab('Details');
     await crudView.isLoaded();
     expect(clusterSettingsView.channelUpdateLink.isDisplayed()).toBe(true);
     await clusterSettingsView.channelUpdateLink.click();

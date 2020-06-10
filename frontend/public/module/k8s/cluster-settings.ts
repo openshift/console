@@ -48,8 +48,7 @@ export const getDesiredClusterVersion = (cv: ClusterVersionKind): string => {
   return _.get(cv, 'status.desired.version');
 };
 
-export const getClusterVersionChannel = (cv: ClusterVersionKind): string =>
-  cv && cv.spec ? cv.spec.channel : undefined;
+export const getClusterVersionChannel = (cv: ClusterVersionKind): string => cv?.spec?.channel;
 
 export const getLastCompletedUpdate = (cv: ClusterVersionKind): string => {
   const history: UpdateHistory[] = _.get(cv, 'status.history', []);
@@ -153,7 +152,7 @@ type ParsedVersion = {
   prerelease: string[];
 };
 
-const getCurrentVersion = (cv: ClusterVersionKind): string => {
+export const getCurrentVersion = (cv: ClusterVersionKind): string => {
   return _.get(cv, 'status.history[0].version') || _.get(cv, 'spec.desiredUpdate.version');
 };
 
@@ -197,6 +196,32 @@ export const getErrataLink = (cv: ClusterVersionKind): string => {
 
   // TODO: Determine architecture instead of assuming x86_64.
   return `https://access.redhat.com/downloads/content/290/ver=${major}.${minor}/rhel---7/${major}.${minor}.${patch}/x86_64/product-errata`;
+};
+
+export const showReleaseNotes = (channel: string): boolean => {
+  return (
+    window.SERVER_FLAGS.branding === 'ocp' &&
+    (channel?.startsWith('fast-') || channel?.startsWith('stable-'))
+  );
+};
+
+// example link: https://docs.openshift.com/container-platform/4.2/release_notes/ocp-4-2-release-notes.html#ocp-4-2-4
+export const getReleaseNotesLink = (channel: string, version: string): string => {
+  if (!showReleaseNotes(channel)) {
+    return null;
+  }
+
+  const parsed: ParsedVersion = semver.parse(version);
+  if (!parsed) {
+    return null;
+  }
+
+  const { major, minor, patch, prerelease } = parsed;
+  if (major !== 4 || !_.isEmpty(prerelease)) {
+    return null;
+  }
+
+  return `https://docs.openshift.com/container-platform/${major}.${minor}/release_notes/ocp-${major}-${minor}-release-notes.html#ocp-${major}-${minor}-${patch}`;
 };
 
 export const getClusterName = (): string => window.SERVER_FLAGS.kubeAPIServerURL || null;

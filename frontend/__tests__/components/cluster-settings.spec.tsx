@@ -238,7 +238,9 @@ describe('Current Version', () => {
   });
 
   it('should render the Current Version value', () => {
-    expect(wrapper.text()).toBe('4.2.0-0.ci-2019-07-22-025130');
+    expect(wrapper.find('[data-test-id="cluster-version"]').text()).toBe(
+      '4.2.0-0.ci-2019-07-22-025130',
+    );
   });
 });
 describe('Current Version Header', () => {
