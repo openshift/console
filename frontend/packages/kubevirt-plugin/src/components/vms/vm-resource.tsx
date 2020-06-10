@@ -41,6 +41,7 @@ import {
   TOLERATIONS_MODAL_TITLE,
   AFFINITY_MODAL_TITLE,
 } from '../modals/scheduling-modals/shared/consts';
+import { useGuestAgentInfo } from '../../hooks/use-guest-agent-info';
 import { VMStatusBundle } from '../../statuses/vm/types';
 
 import './vm-resource.scss';
@@ -82,6 +83,8 @@ export const VMResourceSummary: React.FC<VMResourceSummaryProps> = ({
   const description = getDescription(vmiLike);
   const os = getOperatingSystemName(vmiLike) || getOperatingSystem(vmiLike);
 
+  const [guestAgentInfo] = useGuestAgentInfo({ vmi });
+
   return (
     <ResourceSummary resource={vmiLike}>
       <VMDetailsItem
@@ -98,8 +101,12 @@ export const VMResourceSummary: React.FC<VMResourceSummaryProps> = ({
         </EditButton>
       </VMDetailsItem>
 
-      <VMDetailsItem title="Operating System" idValue={prefixedID(id, 'os')} isNotAvail={!os}>
-        {os}
+      <VMDetailsItem
+        title="Operating System"
+        idValue={prefixedID(id, 'os')}
+        isNotAvail={!(guestAgentInfo?.os?.prettyName || os)}
+      >
+        {guestAgentInfo?.os?.prettyName || os}
       </VMDetailsItem>
 
       {isVM && (
@@ -121,6 +128,7 @@ export const VMDetailsList: React.FC<VMResourceListProps> = ({
   canUpdateVM,
   kindObj,
 }) => {
+  const [guestAgentInfo] = useGuestAgentInfo({ vmi });
   const [isBootOrderModalOpen, setBootOrderModalOpen] = React.useState<boolean>(false);
   const isVM = kindObj === VirtualMachineModel;
   const vmiLike = isVM ? vm : vmi;
@@ -197,6 +205,22 @@ export const VMDetailsList: React.FC<VMResourceListProps> = ({
         isNotAvail={!launcherPod || !ipAddrs}
       >
         {launcherPod && ipAddrs}
+      </VMDetailsItem>
+
+      <VMDetailsItem
+        title="Hostname"
+        idValue={prefixedID(id, 'hostname')}
+        isNotAvail={!guestAgentInfo?.hostname}
+      >
+        {guestAgentInfo?.hostname}
+      </VMDetailsItem>
+
+      <VMDetailsItem
+        title="Time Zone"
+        idValue={prefixedID(id, 'timezone')}
+        isNotAvail={!guestAgentInfo?.timezone}
+      >
+        {guestAgentInfo?.timezone}
       </VMDetailsItem>
 
       <VMDetailsItem

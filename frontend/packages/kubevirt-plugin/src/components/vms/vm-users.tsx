@@ -4,10 +4,6 @@ import { sortable } from '@patternfly/react-table';
 import { fromNow } from '@console/internal/components/utils/datetime';
 import { Table, TableRow, TableData } from '@console/internal/components/factory';
 import { Timestamp } from '@console/internal/components/utils/timestamp';
-import {
-  useURLPoll,
-  URL_POLL_DEFAULT_DELAY,
-} from '@console/internal/components/utils/url-poll-hook';
 import { StatusItem } from '@console/shared/src/components/dashboard/status-card/AlertItem';
 import { BlueInfoCircleIcon } from '@console/shared/src/components/status';
 import {
@@ -16,14 +12,9 @@ import {
 } from '../../constants/vm/constants';
 import { VMStatus } from '../../constants/vm/vm-status';
 import { isGuestAgentInstalled } from '../dashboards-page/vm-dashboard/vm-alerts';
+import { useGuestAgentInfo } from '../../hooks/use-guest-agent-info';
 import { VMStatusBundle } from '../../statuses/vm/types';
 import { VMIKind } from '../../types';
-import { getVMIApiPath, getVMISubresourcePath } from '../../selectors/vmi/selectors';
-
-const guestAgentURL = (vmi: VMIKind) =>
-  vmi &&
-  isGuestAgentInstalled(vmi) &&
-  `/${getVMISubresourcePath()}/${getVMIApiPath(vmi)}/guestosinfo`;
 
 const tableColumnClasses = [
   classNames('col-lg-3', 'col-md-3', 'col-sm-4', 'col-sm-4'),
@@ -75,15 +66,8 @@ const UsersTableRow = ({ obj: user, index, key, style }) => {
   );
 };
 
-export const VMUsersList: React.FC<VMUsersListProps> = ({
-  vmi,
-  vmStatusBundle,
-  delay = URL_POLL_DEFAULT_DELAY,
-}) => {
-  const [response, error, loading] = useURLPoll<VirtualMachineInstanceGuestAgentInfo>(
-    guestAgentURL(vmi),
-    delay,
-  );
+export const VMUsersList: React.FC<VMUsersListProps> = ({ vmi, vmStatusBundle, delay }) => {
+  const [response, error, loading] = useGuestAgentInfo({ vmi, delay });
 
   if (vmStatusBundle.status !== VMStatus.RUNNING) {
     return <div className="text-center">{VIRTUAL_MACHINE_IS_NOT_RUNNING}</div>;
@@ -117,16 +101,6 @@ export const VMUsersList: React.FC<VMUsersListProps> = ({
       virtualize
     />
   );
-};
-
-type VirtualMachineInstanceGuestOSUser = {
-  userName: string;
-  domain?: string;
-  loginTime?: number;
-};
-
-type VirtualMachineInstanceGuestAgentInfo = {
-  userList?: VirtualMachineInstanceGuestOSUser[];
 };
 
 type VMUsersListProps = {
