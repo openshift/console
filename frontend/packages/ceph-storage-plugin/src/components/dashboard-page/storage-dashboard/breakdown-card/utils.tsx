@@ -29,8 +29,7 @@ const addOthers = (
 
 export const addAvailable = (
   stats: StackDataPoint[],
-  capacityTotal: string,
-  capacityUsed: string,
+  capacityAvailable: string,
   metricTotal: string,
   humanize: Humanize,
 ) => {
@@ -41,8 +40,8 @@ export const addAvailable = (
     othersData = addOthers(stats, metricTotal, humanize);
     newChartData = [...stats, othersData] as StackDataPoint[];
   }
-  if (capacityTotal) {
-    const availableInBytes = Number(capacityTotal) - Number(capacityUsed);
+  if (capacityAvailable) {
+    const availableInBytes = Number(capacityAvailable);
     availableData = {
       x: '0',
       y: availableInBytes,
