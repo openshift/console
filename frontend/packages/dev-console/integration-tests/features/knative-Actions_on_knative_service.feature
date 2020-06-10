@@ -191,7 +191,7 @@ Scenario: Perform cancel opeartion on Edit Health Checks for a service : Kn-04-T
 
 
 @regression
-Scenario: Edit Health Checks for a service: Kn-04-TC11
+Scenario: Edit Health Checks for a service: Kn-04-TC09
    Given knative service name "nodejs-ex-git-1" is higlighted on topology page
    When user selects "Edit Health Checks" option from knative service context menu
    And 

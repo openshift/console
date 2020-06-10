@@ -57,8 +57,19 @@ Scenario: Install the knative apache camel operator : Kn-08-TC01
    Given cluster is installed with knative serverless and eventing operators
    And user is at operator hub page
    When user search and installs the kantive Camel operator with default values
-   Then page redirects to Installed operators
+   Then user redirects to Installed operators page
    And page will contain knative apache camel operator
+
+
+@regression, @smoke, @manual
+Scenario: Install the dynamic event operator : Kn-09-TC01, Kn-09-TC02
+   Given cluster is installed with knative serverless operator
+   And user logged into the cluster via cli
+   When user executes "kubectl apply -f https://github.com/knative/eventing-contrib/releases/download/v0.14.1/github.yaml"
+   And user navigates to Add page
+   And user clicks on Event sources page
+   Then user redirects to page with header "Event Sources"
+   And GitHub Source is displayed in Types section
 
 
 Scenario: Uninstall the Knative serverless operator from Operator Hub page 
