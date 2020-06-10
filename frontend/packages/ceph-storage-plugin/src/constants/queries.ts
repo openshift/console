@@ -23,6 +23,7 @@ export enum StorageDashboardQuery {
   NODES_BY_USED = 'NODES_BY_USED',
   USED_CAPACITY = 'USED_CAPACITY',
   REQUESTED_CAPACITY = 'REQUESTED_CAPACITY',
+  CEPH_CAPACITY_AVAILABLE = 'CEPH_CAPACITY_AVAILABLE',
 }
 
 export const INDEPENDENT_UTILIZATION_QUERIES = {
@@ -41,7 +42,8 @@ export const DATA_RESILIENCY_QUERY = {
 };
 
 export const UTILIZATION_QUERY = {
-  [StorageDashboardQuery.CEPH_CAPACITY_USED]: 'ceph_cluster_total_used_bytes',
+  [StorageDashboardQuery.CEPH_CAPACITY_USED]:
+    'sum(kubelet_volume_stats_used_bytes * on (namespace,persistentvolumeclaim) group_left(storageclass, provisioner) (kube_persistentvolumeclaim_info * on (storageclass)  group_left(provisioner) kube_storageclass_info {provisioner=~"(.*rbd.csi.ceph.com)|(.*cephfs.csi.ceph.com)"}))',
   [StorageDashboardQuery.UTILIZATION_IOPS_QUERY]:
     '(sum(rate(ceph_pool_wr[1m])) + sum(rate(ceph_pool_rd[1m])))',
   [StorageDashboardQuery.UTILIZATION_LATENCY_QUERY]:
@@ -79,7 +81,10 @@ export const CAPACITY_BREAKDOWN_QUERIES = {
   [StorageDashboardQuery.PODS_BY_USED]:
     'sum((kubelet_volume_stats_used_bytes * on (namespace,persistentvolumeclaim) group_right() kube_pod_spec_volumes_persistentvolumeclaims_info) * on (namespace,persistentvolumeclaim) group_left(storageclass, provisioner) (kube_persistentvolumeclaim_info * on (storageclass)  group_left(provisioner) kube_storageclass_info {provisioner=~"(.*rbd.csi.ceph.com)|(.*cephfs.csi.ceph.com)|(ceph.rook.io/block)"})) by (pod,namespace)',
   [StorageDashboardQuery.CEPH_CAPACITY_TOTAL]: 'ceph_cluster_total_bytes',
-  [StorageDashboardQuery.CEPH_CAPACITY_USED]: 'ceph_cluster_total_used_bytes',
+  [StorageDashboardQuery.CEPH_CAPACITY_USED]:
+    'sum(kubelet_volume_stats_used_bytes * on (namespace,persistentvolumeclaim) group_left(storageclass, provisioner) (kube_persistentvolumeclaim_info * on (storageclass)  group_left(provisioner) kube_storageclass_info {provisioner=~"(.*rbd.csi.ceph.com)|(.*cephfs.csi.ceph.com)"}))',
+  [StorageDashboardQuery.CEPH_CAPACITY_AVAILABLE]:
+    'max(ceph_pool_max_avail * on (pool_id) group_left(name)ceph_pool_metadata{name=~"(.*file.*)|(.*block.*)"})',
 };
 
 export const breakdownQueryMap = {
@@ -92,8 +97,8 @@ export const breakdownQueryMap = {
       })))`,
       [StorageDashboardQuery.PROJECTS_TOTAL_USED]:
         CAPACITY_BREAKDOWN_QUERIES[StorageDashboardQuery.PROJECTS_TOTAL_USED],
-      [StorageDashboardQuery.CEPH_CAPACITY_TOTAL]:
-        CAPACITY_BREAKDOWN_QUERIES[StorageDashboardQuery.CEPH_CAPACITY_TOTAL],
+      [StorageDashboardQuery.CEPH_CAPACITY_AVAILABLE]:
+        CAPACITY_BREAKDOWN_QUERIES[StorageDashboardQuery.CEPH_CAPACITY_AVAILABLE],
       [StorageDashboardQuery.CEPH_CAPACITY_USED]:
         CAPACITY_BREAKDOWN_QUERIES[StorageDashboardQuery.CEPH_CAPACITY_USED],
     },
@@ -107,8 +112,8 @@ export const breakdownQueryMap = {
       })))`,
       [StorageDashboardQuery.STORAGE_CLASSES_TOTAL_USED]:
         CAPACITY_BREAKDOWN_QUERIES[StorageDashboardQuery.STORAGE_CLASSES_TOTAL_USED],
-      [StorageDashboardQuery.CEPH_CAPACITY_TOTAL]:
-        CAPACITY_BREAKDOWN_QUERIES[StorageDashboardQuery.CEPH_CAPACITY_TOTAL],
+      [StorageDashboardQuery.CEPH_CAPACITY_AVAILABLE]:
+        CAPACITY_BREAKDOWN_QUERIES[StorageDashboardQuery.CEPH_CAPACITY_AVAILABLE],
       [StorageDashboardQuery.CEPH_CAPACITY_USED]:
         CAPACITY_BREAKDOWN_QUERIES[StorageDashboardQuery.CEPH_CAPACITY_USED],
     },
@@ -122,8 +127,8 @@ export const breakdownQueryMap = {
       })))`,
       [StorageDashboardQuery.PODS_TOTAL_USED]:
         CAPACITY_BREAKDOWN_QUERIES[StorageDashboardQuery.PODS_TOTAL_USED],
-      [StorageDashboardQuery.CEPH_CAPACITY_TOTAL]:
-        CAPACITY_BREAKDOWN_QUERIES[StorageDashboardQuery.CEPH_CAPACITY_TOTAL],
+      [StorageDashboardQuery.CEPH_CAPACITY_AVAILABLE]:
+        CAPACITY_BREAKDOWN_QUERIES[StorageDashboardQuery.CEPH_CAPACITY_AVAILABLE],
       [StorageDashboardQuery.CEPH_CAPACITY_USED]:
         CAPACITY_BREAKDOWN_QUERIES[StorageDashboardQuery.CEPH_CAPACITY_USED],
     },
