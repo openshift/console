@@ -3,6 +3,7 @@ import * as _ from 'lodash';
 import LazyLoad from 'react-lazyload';
 import { Modal } from 'patternfly-react';
 import { CatalogTile } from 'patternfly-react-extensions';
+import { EmptyState, EmptyStateBody, EmptyStateVariant, Title } from '@patternfly/react-core';
 import { GreenCheckCircleIcon } from '@console/shared';
 import { history } from '@console/internal/components/utils/router';
 import { COMMUNITY_PROVIDERS_WARNING_LOCAL_STORAGE_KEY } from '@console/internal/const';
@@ -11,6 +12,54 @@ import * as operatorLogo from '@console/internal/imgs/operator.svg';
 import { OperatorHubItemDetails } from './operator-hub-item-details';
 import { communityOperatorWarningModal } from './operator-hub-community-provider-modal';
 import { OperatorHubItem, InstalledState, ProviderType, CapabilityLevel } from './index';
+
+const osBaseLabel = 'operatorframework.io/os.';
+const targetGOOSLabel = window.SERVER_FLAGS.GOOS ? `${osBaseLabel}${window.SERVER_FLAGS.GOOS}` : '';
+const archBaseLabel = 'operatorframework.io/arch.';
+const targetGOARCHLabel = window.SERVER_FLAGS.GOARCH
+  ? `${archBaseLabel}${window.SERVER_FLAGS.GOARCH}`
+  : '';
+// if no label present, these are the assumed defaults
+const archDefaultAMD64Label = 'operatorframework.io/arch.amd64';
+const osDefaultLinuxLabel = 'operatorframework.io/os.linux';
+const filterByArchAndOS = (items: OperatorHubItem[]): OperatorHubItem[] => {
+  if (!window.SERVER_FLAGS.GOARCH || !window.SERVER_FLAGS.GOOS) {
+    return items;
+  }
+  return items.filter((item: OperatorHubItem) => {
+    // - if the operator has no flags, treat it with the defaults
+    // - if it has any flags, it must list all flags (no defaults applied)
+    const relevantLabels = _.reduce(
+      _.get(item, 'obj.metadata.labels', []),
+      (result, value: string, label: string): { arch: string[]; os: string[] } => {
+        if (label.includes(archBaseLabel) && value === 'supported') {
+          result.arch.push(label);
+        }
+        if (label.includes(osBaseLabel) && value === 'supported') {
+          result.os.push(label);
+        }
+        return result;
+      },
+      {
+        arch: [],
+        os: [],
+      },
+    );
+
+    if (_.isEmpty(relevantLabels.os)) {
+      relevantLabels.os.push(osDefaultLinuxLabel);
+    }
+
+    if (_.isEmpty(relevantLabels.os)) {
+      relevantLabels.arch.push(archDefaultAMD64Label);
+    }
+
+    return (
+      _.includes(relevantLabels.os, targetGOOSLabel) &&
+      _.includes(relevantLabels.arch, targetGOARCHLabel)
+    );
+  });
+};
 
 const badge = (text: string) => (
   <span key="1" className="pf-c-badge pf-m-read">
@@ -221,12 +270,14 @@ export const OperatorHubTileView: React.FC<OperatorHubTileViewProps> = (props) =
   const [detailsItem, setDetailsItem] = React.useState(null);
   const [showDetails, setShowDetails] = React.useState(false);
 
+  const filteredItems = filterByArchAndOS(props.items);
+
   React.useEffect(() => {
     const detailsItemID = new URLSearchParams(window.location.search).get('details-item');
-    const currentItem = _.find(props.items, { uid: detailsItemID });
+    const currentItem = _.find(filteredItems, { uid: detailsItemID });
     setDetailsItem(currentItem);
     setShowDetails(!_.isNil(currentItem));
-  }, [props.items]);
+  }, [filteredItems]);
 
   const showCommunityOperator = (item: OperatorHubItem) => (ignoreWarning = false) => {
     const params = new URLSearchParams(window.location.search);
@@ -306,10 +357,28 @@ export const OperatorHubTileView: React.FC<OperatorHubTileViewProps> = (props) =
     );
   };
 
+  if (_.isEmpty(filteredItems)) {
+    return (
+      <>
+        <EmptyState variant={EmptyStateVariant.full} className="co-status-card__alerts-msg">
+          <Title headingLevel="h5" size="lg">
+            No operators available
+          </Title>
+          {window.SERVER_FLAGS.GOOS && window.SERVER_FLAGS.GOARCH && (
+            <EmptyStateBody>
+              There are no operators that match operating system {window.SERVER_FLAGS.GOOS} and
+              architecture {window.SERVER_FLAGS.GOARCH}.
+            </EmptyStateBody>
+          )}
+        </EmptyState>
+      </>
+    );
+  }
+
   return (
     <>
       <TileViewPage
-        items={props.items}
+        items={filteredItems}
         itemsSorter={(itemsToSort) => _.sortBy(itemsToSort, ({ name }) => name.toLowerCase())}
         getAvailableCategories={determineCategories}
         getAvailableFilters={determineAvailableFilters}

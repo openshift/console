@@ -32,6 +32,8 @@ declare interface Window {
     prometheusTenancyBaseURL: string;
     requestTokenURL: string;
     statuspageID: string;
+    GOARCH: string;
+    GOOS: string;
   };
   windowError?: boolean;
   __REDUX_DEVTOOLS_EXTENSION_COMPOSE__?: Function;
