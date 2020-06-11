@@ -21,6 +21,7 @@ export const defaultData: DeployImageFormData = {
   name: '',
   searchTerm: '',
   registry: 'external',
+  allowInsecureRegistry: false,
   imageStream: {
     image: '',
     tag: '',

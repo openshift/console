@@ -15,6 +15,7 @@ export const mockDeployImageFormData: DeployImageFormData = {
   name: 'test-app',
   searchTerm: 'test-app',
   registry: 'external',
+  allowInsecureRegistry: false,
   imageStream: {
     image: '',
     tag: '',

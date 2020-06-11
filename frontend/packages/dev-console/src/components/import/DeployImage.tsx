@@ -48,6 +48,7 @@ const DeployImage: React.FC<Props> = ({
     name: '',
     searchTerm: '',
     registry: 'external',
+    allowInsecureRegistry: false,
     imageStream: {
       image: '',
       tag: '',
@@ -175,8 +176,9 @@ const DeployImage: React.FC<Props> = ({
       onSubmit={handleSubmit}
       onReset={history.goBack}
       validationSchema={deployValidationSchema}
-      render={(props) => <DeployImageForm {...props} projects={projects} />}
-    />
+    >
+      {(props) => <DeployImageForm {...props} projects={projects} />}
+    </Formik>
   );
 };
 

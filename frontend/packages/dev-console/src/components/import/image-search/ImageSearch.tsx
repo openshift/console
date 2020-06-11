@@ -11,7 +11,7 @@ import {
   ValidatedOptions,
 } from '@patternfly/react-core';
 import { SecretTypeAbstraction } from '@console/internal/components/secrets/create-secret';
-import { InputField, useDebounceCallback } from '@console/shared';
+import { InputField, useDebounceCallback, CheckboxField } from '@console/shared';
 import { getSuggestedName, getPorts, makePortName } from '../../../utils/imagestream-utils';
 import { secretModalLauncher } from '../CreateSecretModal';
 import { UNASSIGNED_KEY, CREATE_APPLICATION_KEY } from '../../../const';
@@ -26,7 +26,7 @@ const ImageSearch: React.FC = () => {
   const { name: applicationNameTouched } = application as FormikTouched<{ name: boolean }>;
 
   const handleSearch = React.useCallback(
-    (searchTermImage: string) => {
+    (searchTermImage: string, isAllowInsecureRegistry = values.allowInsecureRegistry) => {
       setFieldValue('isSearchingForImage', true);
       setValidated(ValidatedOptions.default);
       const importImage = {
@@ -44,6 +44,7 @@ const ImageSearch: React.FC = () => {
                 kind: 'DockerImage',
                 name: _.trim(searchTermImage),
               },
+              importPolicy: { insecure: isAllowInsecureRegistry },
             },
           ],
         },
@@ -98,6 +99,7 @@ const ImageSearch: React.FC = () => {
       values.application.selectedKey,
       values.name,
       values.project.name,
+      values.allowInsecureRegistry,
       initialValues.route.targetPort,
     ],
   );
@@ -201,6 +203,13 @@ const ImageSearch: React.FC = () => {
           action={<AlertActionCloseButton onClose={() => shouldHideAlert(false)} />}
         />
       )}
+      <CheckboxField
+        name="allowInsecureRegistry"
+        label="Allow images from insecure registries"
+        onChange={(val: boolean) => {
+          values.searchTerm && handleSearch(values.searchTerm, val);
+        }}
+      />
     </>
   );
 };

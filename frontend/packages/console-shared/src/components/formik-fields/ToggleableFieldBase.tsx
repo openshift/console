@@ -15,6 +15,7 @@ const ToggleableFieldBase: React.FC<ToggleableFieldBaseProps> = ({
   required,
   children,
   value,
+  onChange,
   name,
   ...props
 }) => {
@@ -40,7 +41,10 @@ const ToggleableFieldBase: React.FC<ToggleableFieldBaseProps> = ({
         isChecked: field.checked,
         isValid,
         'aria-describedby': `${fieldId}-helper`,
-        onChange: (val, event) => field.onChange(event),
+        onChange: (val, event) => {
+          field.onChange(event);
+          onChange && onChange(val);
+        },
       })}
     </FormGroup>
   );
