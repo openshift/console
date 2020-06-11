@@ -423,9 +423,9 @@ export const filterNonKnativeDeployments = (resources: DeploymentKind[]): Deploy
   const KNATIVE_CONFIGURATION = 'serving.knative.dev/configuration';
   const KNATIVE_EVENTS_CRONJOB = 'sources.eventing.knative.dev/cronJobSource';
   const KNATIVE_EVENTS_CONTAINER = 'sources.eventing.knative.dev/containerSource';
-  const KNATIVE_EVENTS_APISERVER = 'sources.eventing.knative.dev/apiServerSource';
-  const KNATIVE_EVENTS_CAMEL = 'sources.eventing.knative.dev/camelSource';
-  const KNATIVE_EVENTS_KAFKA = 'sources.eventing.knative.dev/kafkaSource';
+  const KNATIVE_EVENTS_APISERVER = 'sources.knative.dev/apiServerSource';
+  const KNATIVE_EVENTS_CAMEL = 'sources.knative.dev/camelSource';
+  const KNATIVE_EVENTS_KAFKA = 'sources.knative.dev/kafkaSource';
   return _.filter(resources, (d) => {
     return (
       !_.get(d, ['metadata', 'labels', KNATIVE_CONFIGURATION]) &&

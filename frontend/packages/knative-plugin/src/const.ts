@@ -10,4 +10,5 @@ export const FLAG_EVENT_SOURCE_CAMEL = 'EVENT_SOURCE_CAMEL';
 export const FLAG_EVENT_SOURCE_KAFKA = 'EVENT_SOURCE_KAFKA';
 export const KNATIVE_SERVING_LABEL = 'serving.knative.dev/service';
 export const KNATIVE_SERVING_APIGROUP = 'serving.knative.dev';
-export const KNATIVE_EVENT_SOURCE_APIGROUP = 'sources.eventing.knative.dev';
+export const KNATIVE_EVENT_SOURCE_APIGROUP_DEP = 'sources.eventing.knative.dev';
+export const KNATIVE_EVENT_SOURCE_APIGROUP = 'sources.knative.dev';
