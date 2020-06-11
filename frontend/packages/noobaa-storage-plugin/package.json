@@ -12,7 +12,7 @@
     "entry": "src/plugin.ts",
     "integrationTestSuites": {
       "noobaa": [
-        "integration-tests/**/*.scenario.ts"
+        "integration-tests/**/objectServiceDashboard.scenario.ts"
       ]
     }
   }
