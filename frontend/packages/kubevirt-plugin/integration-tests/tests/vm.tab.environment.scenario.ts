@@ -4,6 +4,7 @@ import { browser, ExpectedConditions as until, Key } from 'protractor';
 import { createExampleVMViaYAML } from './utils/utils';
 import { testName } from '@console/internal-integration-tests/protractor.conf';
 import { isLoaded } from '@console/internal-integration-tests/views/crud.view';
+import { saveButton } from '../views/kubevirtUIResource.view';
 import * as vmEnv from '../views/vm.environment.view';
 import { addVariableFrom } from '@console/internal-integration-tests/views/environment.view';
 import {
@@ -113,8 +114,8 @@ describe('Test VM enviromnet tab', () => {
   it('ID(CNV-4189) Delete a source', async () => {
     const pairCountBefore = await vmEnv.allPairRows.count();
     await vmEnv.deleteButton.first().click();
-    await browser.wait(until.elementToBeClickable(vmEnv.saveBtn), PAGE_LOAD_TIMEOUT_SECS);
-    await click(vmEnv.saveBtn, PAGE_LOAD_TIMEOUT_SECS);
+    await browser.wait(until.elementToBeClickable(saveButton), PAGE_LOAD_TIMEOUT_SECS);
+    await click(saveButton, PAGE_LOAD_TIMEOUT_SECS);
     const pairCountAfter = await vmEnv.allPairRows.count();
     expect(pairCountBefore).toEqual(pairCountAfter + 1);
   });

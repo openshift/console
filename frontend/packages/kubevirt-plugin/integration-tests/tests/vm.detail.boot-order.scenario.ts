@@ -4,6 +4,7 @@ import { testName } from '@console/internal-integration-tests/protractor.conf';
 import { click, createResource, deleteResource } from '@console/shared/src/test-utils/utils';
 import { isLoaded } from '@console/internal-integration-tests/views/crud.view';
 import * as bootOrderView from '../views/dialogs/editBootOrderView';
+import { saveButton } from '../views/kubevirtUIResource.view';
 import { getBootableDevicesInOrder, getNonBootableDevices } from '../../src/selectors/vm/devices';
 import { VM_CREATE_AND_EDIT_TIMEOUT_SECS } from './utils/consts';
 import { VirtualMachine } from './models/virtualMachine';
@@ -53,7 +54,7 @@ describe('KubeVirt VM detail - Boot Order Dialog', () => {
       const FIRST_DEVICE_POSITION = 1;
       const initialBootableDevices = getBootableDevicesInOrder(vm.getResource());
       await click(bootOrderView.deleteDeviceButton(FIRST_DEVICE_POSITION));
-      await click(bootOrderView.saveButton);
+      await click(saveButton);
       // Wait for the boot Order to update
       await bootOrderView.waitForBootDevicesCount(
         vm.name,
@@ -91,7 +92,7 @@ describe('KubeVirt VM detail - Boot Order Dialog', () => {
         bootOrderView.addDeviceSelect,
         nonBootableDevicesSelectOptions[nonBootableDevicesSelectOptions.length - 1],
       );
-      await click(bootOrderView.saveButton);
+      await click(saveButton);
       // Wait for the boot Order to update
       await bootOrderView.waitForBootDevicesCount(
         vm.name,
@@ -124,7 +125,7 @@ describe('KubeVirt VM detail - Boot Order Dialog', () => {
       // Wait for the DOM structure to update
       await browser.sleep(300);
       // Click and wait for the changes to be applied
-      await click(bootOrderView.saveButton);
+      await click(saveButton);
       await isLoaded();
       // Renavigate to force the page to update
       await vm.navigateToDetail();

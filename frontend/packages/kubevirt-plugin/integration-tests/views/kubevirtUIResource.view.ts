@@ -2,13 +2,14 @@ import { $, browser, ExpectedConditions as until, element, by } from 'protractor
 import { resourceRows } from '@console/internal-integration-tests/views/crud.view';
 import { click } from '@console/shared/src/test-utils/utils';
 
-export const createNICButton = $('#add-nic');
-export const createDiskButton = $('#add-disk');
-
+export const modalTitle = $('[data-test-id="modal-title"]');
 export const modalSubmitButton = $('.modal-content .pf-m-primary');
 export const cancelButton = element(by.buttonText('Cancel'));
 export const applyButton = element(by.buttonText('Add'));
 export const saveButton = element(by.buttonText('Save'));
+
+export const createNICButton = $('#add-nic');
+export const createDiskButton = $('#add-disk');
 
 // Used to determine presence of a new row by looking for confirmation buttons
 export const newResourceRow = $('.kubevirt-vm-create-device-row__confirmation-buttons');

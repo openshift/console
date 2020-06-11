@@ -1,7 +1,7 @@
 import { browser, ExpectedConditions as until } from 'protractor';
 import { testName } from '@console/internal-integration-tests/protractor.conf';
 import { createResource, deleteResource, click } from '@console/shared/src/test-utils/utils';
-import * as editTolerationsView from '../views/editTolerationsView';
+import * as editTolerationsView from '../views/dialogs/editTolerationsView';
 import * as virtualMachineView from '../views/virtualMachine.view';
 import { saveButton } from '../views/kubevirtUIResource.view';
 import { VM_CREATE_AND_EDIT_TIMEOUT_SECS } from './utils/consts';

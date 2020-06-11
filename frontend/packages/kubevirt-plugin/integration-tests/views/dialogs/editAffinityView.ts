@@ -1,6 +1,5 @@
 import { $, by, element } from 'protractor';
 
-export const modalTitle = $('[data-test-id="modal-title"]');
 export const addAffinityBtn = element(by.buttonText('Add Affinity rule'));
 export const editSubmitBtn = element(by.buttonText('Save Affinity rule'));
 export const valuesSelectElement = $('.pf-c-select__toggle-typeahead');

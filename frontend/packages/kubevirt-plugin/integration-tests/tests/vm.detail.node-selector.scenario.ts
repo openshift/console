@@ -1,7 +1,7 @@
 import { browser, ExpectedConditions as until } from 'protractor';
 import { testName } from '@console/internal-integration-tests/protractor.conf';
 import { createResource, deleteResource, click } from '@console/shared/src/test-utils/utils';
-import * as editNodeSelectorView from '../views/editNodeSelectorView';
+import * as editNodeSelectorView from '../views/dialogs/editNodeSelectorView';
 import * as virtualMachineView from '../views/virtualMachine.view';
 import { saveButton } from '../views/kubevirtUIResource.view';
 import { VM_CREATE_AND_EDIT_TIMEOUT_SECS } from './utils/consts';
