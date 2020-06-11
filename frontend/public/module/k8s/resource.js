@@ -33,7 +33,8 @@ export const resourceURL = (model, options) => {
   }
   u += `/${model.plural}`;
   if (options.name) {
-    u += `/${options.name}`;
+    // Some resources like Users can have special characters in the name.
+    u += `/${encodeURIComponent(options.name)}`;
   }
   if (options.path) {
     u += `/${options.path}`;
