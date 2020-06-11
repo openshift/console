@@ -3,7 +3,7 @@ import * as _ from 'lodash';
 import { TableData, RowFunctionArgs } from '@console/internal/components/factory';
 import { ResourceLink } from '@console/internal/components/utils';
 import { K8sResourceConditionStatus } from '@console/internal/module/k8s';
-import { revisionObj } from '@console/dev-console/src/components/topology/__tests__/topology-knative-test-data';
+import { revisionObj } from '../../../topology/__tests__/topology-knative-test-data';
 import RevisionRow from '../RevisionRow';
 import { ConditionTypes, RevisionKind } from '../../../types';
 

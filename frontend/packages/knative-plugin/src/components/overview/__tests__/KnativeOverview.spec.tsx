@@ -3,7 +3,7 @@ import { shallow } from 'enzyme';
 import * as _ from 'lodash';
 import { PodRing, OverviewItem } from '@console/shared';
 import { ResourceSummary } from '@console/internal/components/utils';
-import { revisionObj } from '@console/dev-console/src/components/topology/__tests__/topology-knative-test-data';
+import { revisionObj } from '../../../topology/__tests__/topology-knative-test-data';
 import { RevisionModel } from '../../../models';
 import KnativeOverview from '../KnativeOverview';
 

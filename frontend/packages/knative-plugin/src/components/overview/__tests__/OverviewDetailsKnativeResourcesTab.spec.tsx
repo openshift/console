@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
-import { MockKnativeResources } from '@console/dev-console/src/components/topology/__tests__/topology-knative-test-data';
 import OperatorBackedOwnerReferences from '@console/internal/components/utils';
 import * as fetchDynamicEventSources from '../../../utils/fetch-dynamic-eventsources-utils';
 import OverviewDetailsKnativeResourcesTab from '../OverviewDetailsKnativeResourcesTab';
@@ -10,6 +9,12 @@ import RevisionsOverviewList from '../RevisionsOverviewList';
 import KSRoutesOverviewList from '../RoutesOverviewList';
 import ConfigurationsOverviewList from '../ConfigurationsOverviewList';
 import EventSinkServicesOverviewList from '../EventSinkServicesOverviewList';
+import {
+  MockKnativeResources,
+  getEventSourceResponse,
+  sampleEventSourceSinkbinding,
+} from '../../../topology/__tests__/topology-knative-test-data';
+import { EventSourceCronJobModel } from '../../../models';
 
 type OverviewDetailsKnativeResourcesTabProps = React.ComponentProps<
   typeof OverviewDetailsKnativeResourcesTab
@@ -49,7 +54,7 @@ describe('OverviewDetailsKnativeResourcesTab', () => {
       .mockImplementationOnce(() => true);
     knItem.item = {
       ...knItem.item,
-      ...{ obj: MockKnativeResources.eventSourceContainers.data[0] },
+      ...{ obj: getEventSourceResponse(EventSourceCronJobModel).data[0] },
     };
     const wrapper = shallow(<OverviewDetailsKnativeResourcesTab {...knItem} />);
     expect(wrapper.find(EventSinkServicesOverviewList)).toHaveLength(1);
@@ -61,7 +66,7 @@ describe('OverviewDetailsKnativeResourcesTab', () => {
       .mockImplementationOnce(() => true);
     knItem.item = {
       ...knItem.item,
-      ...{ obj: MockKnativeResources.eventSourceSinkbinding.data[0] },
+      ...{ obj: sampleEventSourceSinkbinding.data[0] },
     };
     const wrapper = shallow(<OverviewDetailsKnativeResourcesTab {...knItem} />);
     expect(wrapper.find(EventSinkServicesOverviewList)).toHaveLength(1);

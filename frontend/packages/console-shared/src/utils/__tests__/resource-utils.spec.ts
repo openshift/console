@@ -14,7 +14,7 @@ import {
 import {
   sampleKnativeDeployments,
   MockKnativeResources,
-} from '@console/dev-console/src/components/topology/__tests__/topology-knative-test-data';
+} from '@console/knative-plugin/src/topology/__tests__/topology-knative-test-data';
 import { TransformResourceData } from '../transformResourceData';
 
 declare global {

@@ -4,7 +4,7 @@ import { PodControllerOverviewItem } from '@console/shared';
 import {
   sampleKnativeReplicaSets,
   sampleKnativePods,
-} from '@console/dev-console/src/components/topology/__tests__/topology-knative-test-data';
+} from '../../../topology/__tests__/topology-knative-test-data';
 import { ResourceLink, SidebarSectionHeading } from '@console/internal/components/utils';
 import DeploymentOverviewList from '../DeploymentOverviewList';
 

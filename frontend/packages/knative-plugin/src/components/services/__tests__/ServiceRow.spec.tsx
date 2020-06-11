@@ -2,7 +2,7 @@ import { shallow, ShallowWrapper } from 'enzyme';
 import * as _ from 'lodash';
 import { TableData, RowFunctionArgs } from '@console/internal/components/factory';
 import { ExternalLink } from '@console/internal/components/utils';
-import { knativeServiceObj } from '@console/dev-console/src/components/topology/__tests__/topology-knative-test-data';
+import { knativeServiceObj } from '../../../topology/__tests__/topology-knative-test-data';
 import ServiceRow from '../ServiceRow';
 import { ServiceKind } from '../../../types';
 

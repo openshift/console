@@ -1,6 +1,6 @@
 import { DeploymentModel } from '@console/internal/models';
 import { ServiceModel } from '@console/knative-plugin';
-import { knativeServiceObj } from '@console/dev-console/src/components/topology/__tests__/topology-knative-test-data';
+import { knativeServiceObj } from '@console/knative-plugin/src/topology/__tests__/topology-knative-test-data';
 import { sampleDeployments } from '@console/dev-console/src/components/topology/__tests__/topology-test-data';
 import { EditApplication } from '../modify-application';
 

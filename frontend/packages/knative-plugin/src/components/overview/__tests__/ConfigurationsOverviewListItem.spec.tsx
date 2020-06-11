@@ -2,7 +2,7 @@ import * as React from 'react';
 import { shallow } from 'enzyme';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { ResourceLink } from '@console/internal/components/utils';
-import { sampleKnativeConfigurations } from '@console/dev-console/src/components/topology/__tests__/topology-knative-test-data';
+import { sampleKnativeConfigurations } from '../../../topology/__tests__/topology-knative-test-data';
 import ConfigurationsOverviewListItem from '../ConfigurationsOverviewListItem';
 import { ConfigurationModel } from '../../../models';
 

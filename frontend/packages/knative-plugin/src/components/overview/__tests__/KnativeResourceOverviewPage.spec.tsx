@@ -3,7 +3,7 @@ import { shallow } from 'enzyme';
 import { OverviewItem } from '@console/shared';
 import { LoadingBox } from '@console/internal/components/utils';
 import { ResourceOverviewDetails } from '@console/internal/components/overview/resource-overview-details';
-import { revisionObj } from '@console/dev-console/src/components/topology/__tests__/topology-knative-test-data';
+import { revisionObj } from '../../../topology/__tests__/topology-knative-test-data';
 import { RevisionModel } from '../../../models';
 import { KnativeResourceOverviewPage } from '../KnativeResourceOverviewPage';
 

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
-import { sampleKnativeConfigurations } from '@console/dev-console/src/components/topology/__tests__/topology-knative-test-data';
+import { sampleKnativeConfigurations } from '../../../topology/__tests__/topology-knative-test-data';
 import ConfigurationsOverviewList from '../ConfigurationsOverviewList';
 import ConfigurationsOverviewListItem from '../ConfigurationsOverviewListItem';
 
