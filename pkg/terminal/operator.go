@@ -2,6 +2,7 @@ package terminal
 
 import (
 	"context"
+
 	"k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes"
@@ -9,7 +10,7 @@ import (
 )
 
 const (
-	webhookName = "workspace.che.eclipse.org"
+	webhookName = "controller.devfile.io"
 )
 
 // workspaceOperatorIsRunning checks if the workspace operator is running and webhooks are enabled,
