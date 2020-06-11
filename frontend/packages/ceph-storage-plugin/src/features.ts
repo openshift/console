@@ -43,6 +43,7 @@ export const detectOCS: FeatureDetector = async (dispatch) => {
     await k8sGet(OCSServiceModel, OCS_CONVERGED_CR_NAME, CEPH_STORAGE_NAMESPACE);
     dispatch(setFlag(OCS_FLAG, true));
     dispatch(setFlag(OCS_CONVERGED_FLAG, true));
+    dispatch(setFlag(OCS_INDEPENDENT_FLAG, false));
   } catch (e) {
     e?.response?.status !== 404
       ? handleError(e, [OCS_CONVERGED_FLAG], dispatch, detectOCS)
@@ -51,6 +52,7 @@ export const detectOCS: FeatureDetector = async (dispatch) => {
       await k8sGet(OCSServiceModel, OCS_INDEPENDENT_CR_NAME, CEPH_STORAGE_NAMESPACE);
       dispatch(setFlag(OCS_FLAG, true));
       dispatch(setFlag(OCS_INDEPENDENT_FLAG, true));
+      dispatch(setFlag(OCS_CONVERGED_FLAG, false));
     } catch (err) {
       err?.response?.status !== 404
         ? handleError(err, [OCS_INDEPENDENT_FLAG], dispatch, detectOCS)
