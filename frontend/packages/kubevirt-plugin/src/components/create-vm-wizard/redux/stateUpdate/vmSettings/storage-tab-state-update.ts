@@ -18,7 +18,7 @@ import { getStorages } from '../../../selectors/selectors';
 import { vmWizardInternalActions } from '../../internal-actions';
 import { getTemplateValidation } from '../../../selectors/template';
 import { TemplateValidations } from '../../../../../utils/validations/template/template-validations';
-import { DiskWrapper, MutableDiskWrapper } from '../../../../../k8s/wrapper/vm/disk-wrapper';
+import { MutableDiskWrapper } from '../../../../../k8s/wrapper/vm/disk-wrapper';
 
 export const prefillInitialDiskUpdater = ({ id, prevState, dispatch, getState }: UpdateOptions) => {
   const state = getState();
@@ -94,13 +94,14 @@ export const internalStorageDiskBusUpdater = ({
         VMWizardStorageType.WINDOWS_GUEST_TOOLS,
       ].includes(type)
     ) {
-      const resultValidation = newValidations.validateBus(
-        DiskWrapper.initialize(disk).getDiskBus(),
-      );
+      const diskWrapper = new MutableDiskWrapper(disk);
+      const diskType = diskWrapper.getType();
+      const diskBus = diskWrapper.getDiskBus();
+      const resultValidation = newValidations.validateBus(diskType, diskBus);
       if (!resultValidation.isValid && resultValidation.type === ValidationErrorType.Error) {
         someBusChanged = true;
         finalDisk = new MutableDiskWrapper(disk, true)
-          .appendTypeData({ bus: newValidations.getDefaultBus() })
+          .appendTypeData({ bus: newValidations.getDefaultBus(diskType) })
           .asMutableResource();
       }
     }

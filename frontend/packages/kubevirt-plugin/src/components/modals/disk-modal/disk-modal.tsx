@@ -84,8 +84,8 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
   const volume = props.volume || VolumeWrapper.EMPTY;
   const dataVolume = props.dataVolume || DataVolumeWrapper.EMPTY;
   const tValidations = templateValidations || new TemplateValidations();
-  const validAllowedBuses = tValidations.getAllowedBuses();
-  const recommendedBuses = tValidations.getRecommendedBuses();
+  const validAllowedBuses = tValidations.getAllowedBuses(disk.getType());
+  const recommendedBuses = tValidations.getRecommendedBuses(disk.getType());
 
   const combinedDisk = new CombinedDisk({
     diskWrapper: disk,
