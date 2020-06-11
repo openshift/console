@@ -29,7 +29,12 @@ $no-wrap-breakpoint: 915px;
       }
     }
   }
-  &__resource-link {
+  &__resource-toolbar {
     padding: var(--pf-global--spacer--sm) var(--pf-global--spacer--xl);
+  }
+  &__workload-filter {
+    li[role='presentation'] {
+      list-style: none;
+    }
   }
 }
