@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Alert } from '@patternfly/react-core';
 import {
   Firehose,
   StatusBox,
@@ -19,8 +20,10 @@ import { getServicesForVmi } from '../../selectors/service';
 import { VMResourceSummary, VMDetailsList, VMSchedulingList } from './vm-resource';
 import { VMUsersList } from './vm-users';
 import { VMTabProps } from './types';
+import { useGuestAgentInfo } from '../../hooks/use-guest-agent-info';
 import { getVMStatus } from '../../statuses/vm/vm-status';
 import { VMStatusBundle } from '../../statuses/vm/types';
+import { isWindows } from '../../selectors/vm/combined';
 import { isVM, isVMI } from '../../selectors/check-type';
 
 export const VMDetailsFirehose: React.FC<VMTabProps> = ({
@@ -78,11 +81,24 @@ export const VMDetails: React.FC<VMDetailsProps> = (props) => {
   const vmiLike = kindObj === VirtualMachineModel ? vm : vmi;
   const vmServicesData = getServicesForVmi(getLoadedData(props.services, []), vmi);
   const canUpdate = useAccessReview(asAccessReview(kindObj, vmiLike || {}, 'patch')) && !!vmiLike;
+  const [guestAgentInfo] = useGuestAgentInfo({ vmi });
+
+  const OSMismatchExists =
+    vmi && guestAgentInfo && isWindows(vmiLike) !== (guestAgentInfo?.os?.id === 'mswindows');
+  const OSMismatchAlert = OSMismatchExists && (
+    <Alert className="co-alert" variant="warning" title="Operating system mismatch" isInline>
+      The operating system defined for this virtual machine does not match what is being reported by
+      the Guest Agent. In order to correct this, you need to re-create the virtual machine with the
+      correct VM selection. The disks of this virtual machine can be attached to the newly created
+      one.
+    </Alert>
+  );
 
   return (
     <StatusBox data={vmiLike} {...restProps}>
       <ScrollToTopOnMount />
       <div className="co-m-pane__body">
+        {OSMismatchAlert}
         <SectionHeading text={`${kindObj.label} Details`} />
         <div className="row">
           <div className="col-sm-6">
