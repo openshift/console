@@ -7,11 +7,13 @@ import FormSection from '../section/FormSection';
 export interface DeploymentConfigSectionProps {
   namespace: string;
   resource?: K8sResourceKind;
+  isServerless?: boolean;
 }
 
 const DeploymentConfigSection: React.FC<DeploymentConfigSectionProps> = ({
   namespace,
   resource,
+  isServerless,
 }) => {
   const deploymentConfigObj = resource || {
     kind: 'DeploymentConfig',
@@ -26,10 +28,12 @@ const DeploymentConfigSection: React.FC<DeploymentConfigSectionProps> = ({
         name="deployment.triggers.image"
         label="Auto deploy when new image is available"
       />
-      <CheckboxField
-        name="deployment.triggers.config"
-        label="Auto deploy when deployment configuration changes"
-      />
+      {!isServerless && (
+        <CheckboxField
+          name="deployment.triggers.config"
+          label="Auto deploy when deployment configuration changes"
+        />
+      )}
       <EnvironmentField
         name="deployment.env"
         label="Environment Variables (Runtime only)"

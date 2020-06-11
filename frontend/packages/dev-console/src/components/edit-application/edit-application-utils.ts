@@ -1,11 +1,16 @@
 import * as _ from 'lodash';
 import { ValidatedOptions } from '@patternfly/react-core';
-import { K8sResourceKind, referenceFor, referenceForModel } from '@console/internal/module/k8s';
+import {
+  K8sResourceKind,
+  referenceFor,
+  referenceForModel,
+  ImagePullPolicy,
+} from '@console/internal/module/k8s';
 import { BuildStrategyType } from '@console/internal/components/build';
 import { DeploymentConfigModel, DeploymentModel } from '@console/internal/models';
 import { ServiceModel } from '@console/knative-plugin';
 import { UNASSIGNED_KEY } from '../../const';
-import { Resources } from '../import/import-types';
+import { Resources, DeploymentData } from '../import/import-types';
 import { AppResources } from './edit-application-types';
 
 export enum CreateApplicationFlow {
@@ -141,9 +146,21 @@ export const getServerlessData = (resource: K8sResourceKind) => {
 };
 
 export const getDeploymentData = (resource: K8sResourceKind) => {
-  let deploymentData = { env: [], replicas: 1, triggers: { image: true, config: true } };
-  if (getResourcesType(resource) !== Resources.KnativeService) {
-    const containers = _.get(resource, 'spec.template.spec.containers', []);
+  let deploymentData: DeploymentData = {
+    env: [],
+    replicas: 1,
+    triggers: { image: true, config: true },
+  };
+  const containers = _.get(resource, 'spec.template.spec.containers', []);
+  if (getResourcesType(resource) === Resources.KnativeService) {
+    deploymentData = {
+      ...deploymentData,
+      env: containers[0]?.env || [],
+      triggers: {
+        image: containers[0]?.imagePullPolicy === ImagePullPolicy.Always,
+      },
+    };
+  } else {
     const triggers = _.get(resource, 'spec.triggers');
     deploymentData = {
       env: _.get(containers[0], 'env', []),

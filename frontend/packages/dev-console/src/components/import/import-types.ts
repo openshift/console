@@ -178,7 +178,7 @@ export interface BuildData {
 export interface DeploymentData {
   triggers: {
     image: boolean;
-    config: boolean;
+    config?: boolean;
   };
   replicas: number;
   env: (NameValuePair | NameValueFromPair)[];

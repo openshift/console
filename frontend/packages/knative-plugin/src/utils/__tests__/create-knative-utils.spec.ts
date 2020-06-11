@@ -1,5 +1,5 @@
 import { FirehoseResource } from '@console/internal/components/utils';
-import { K8sResourceKind } from '@console/internal/module/k8s';
+import { K8sResourceKind, ImagePullPolicy } from '@console/internal/module/k8s';
 import {
   getKnativeServiceDepResource,
   knativeServingResourcesServices,
@@ -135,6 +135,38 @@ describe('Create knative Utils', () => {
         'imgStream',
       );
       expect(knDeploymentResource.metadata.labels['app.kubernetes.io/part-of']).toBeUndefined();
+    });
+
+    it('expect to have environment added if provided', () => {
+      defaultData.deployment.env = [{ name: 'NAME', value: 'myvar' }];
+      const knDeploymentResource: K8sResourceKind = getKnativeServiceDepResource(
+        defaultData,
+        'imgStream',
+      );
+      expect(knDeploymentResource.spec.template.spec.containers[0].env[0].name).toEqual('NAME');
+      expect(knDeploymentResource.spec.template.spec.containers[0].env[0].value).toEqual('myvar');
+    });
+
+    it('expect to have imagePullPolicy as Always if checked', () => {
+      defaultData.deployment.triggers.image = true;
+      const knDeploymentResource: K8sResourceKind = getKnativeServiceDepResource(
+        defaultData,
+        'imgStream',
+      );
+      expect(knDeploymentResource.spec.template.spec.containers[0].imagePullPolicy).toEqual(
+        ImagePullPolicy.Always,
+      );
+    });
+
+    it('expect to have imagePullPolicy as IfNotPresent if not checked', () => {
+      defaultData.deployment.triggers.image = false;
+      const knDeploymentResource: K8sResourceKind = getKnativeServiceDepResource(
+        defaultData,
+        'imgStream',
+      );
+      expect(knDeploymentResource.spec.template.spec.containers[0].imagePullPolicy).toEqual(
+        ImagePullPolicy.IfNotPresent,
+      );
     });
   });
 });
