@@ -92,7 +92,7 @@ const ObservedWorkloadNode: React.FC<WorkloadNodeProps> = ({
                   x={cx + radius - decoratorRadius * 0.7}
                   y={cy + radius - decoratorRadius * 0.7}
                   radius={decoratorRadius}
-                  href={workloadData.editUrl}
+                  href={editUrl}
                   external
                 >
                   <g transform={`translate(-${decoratorRadius / 2}, -${decoratorRadius / 2})`}>
