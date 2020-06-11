@@ -24,6 +24,7 @@ import { V1Disk } from '../../../types/vm/disk/V1Disk';
 import { V1Volume } from '../../../types/vm/disk/V1Volume';
 import { V1alpha1DataVolume } from '../../../types/vm/disk/V1alpha1DataVolume';
 import { useStorageClassConfigMapWrapped } from '../../../hooks/storage-class-config-map';
+import { isTemplate } from '../../../selectors/check-type';
 
 const DiskModalFirehoseComponent: React.FC<DiskModalFirehoseComponentProps> = (props) => {
   const { disk, volume, dataVolume, vmLikeEntity, vmLikeEntityLoading, ...restProps } = props;
@@ -123,6 +124,7 @@ const DiskModalFirehose: React.FC<DiskModalFirehoseProps> = (props) => {
         vmLikeEntity={vmLikeEntity}
         namespace={namespace}
         onNamespaceChanged={(n) => setNamespace(n)}
+        isTemplate={isTemplate(vmLikeEntity)}
         {...restProps}
       />
     </Firehose>
@@ -137,6 +139,7 @@ type DiskModalFirehoseProps = ModalComponentProps & {
   isEditing?: boolean;
   useProjects: boolean;
   templateValidations?: TemplateValidations;
+  isTemplate?: boolean;
 };
 
 const diskModalStateToProps = ({ k8s }) => {

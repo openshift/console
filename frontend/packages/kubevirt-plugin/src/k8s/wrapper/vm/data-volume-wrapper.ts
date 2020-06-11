@@ -1,7 +1,5 @@
-import * as _ from 'lodash';
 import { getOwnerReferences } from '@console/shared/src';
 import { compareOwnerReference } from '@console/shared/src/utils/owner-references';
-import { apiVersionForModel } from '@console/internal/module/k8s';
 import { V1alpha1DataVolume } from '../../../types/vm/disk/V1alpha1DataVolume';
 import { AccessMode, DataVolumeSourceType, VolumeMode } from '../../../constants/vm/storage';
 import {
@@ -31,58 +29,6 @@ export class DataVolumeWrapper extends K8sResourceObjectWithTypePropertyWrapper<
   CombinedTypeData,
   DataVolumeWrapper
 > {
-  /**
-   * @deprecated FIXME deprecate initializeFromSimpleData in favor of init
-   */
-  static initializeFromSimpleData = ({
-    name,
-    namespace,
-    type,
-    typeData,
-    accessModes,
-    volumeMode,
-    size,
-    unit,
-    storageClassName,
-  }: {
-    name?: string;
-    namespace?: string;
-    type?: DataVolumeSourceType;
-    typeData?: CombinedTypeData;
-    accessModes?: object[] | string[];
-    volumeMode?: object | string;
-    size?: string | number;
-    unit?: string;
-    storageClassName?: string;
-  }) => {
-    const resources =
-      size == null
-        ? undefined
-        : {
-            requests: {
-              storage: size && unit ? `${size}${unit}` : size,
-            },
-          };
-
-    return new DataVolumeWrapper({
-      apiVersion: apiVersionForModel(DataVolumeModel),
-      kind: DataVolumeModel.kind,
-      metadata: {
-        name,
-        namespace,
-      },
-      spec: {
-        pvc: {
-          accessModes: _.cloneDeep(accessModes),
-          volumeMode: _.cloneDeep(volumeMode),
-          resources,
-          storageClassName,
-        },
-        source: {},
-      },
-    }).setType(type, typeData);
-  };
-
   constructor(dataVolumeTemplate?: V1alpha1DataVolume | DataVolumeWrapper, copy = false) {
     super(DataVolumeModel, dataVolumeTemplate, copy, DataVolumeSourceType, ['spec', 'source']);
   }

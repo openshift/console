@@ -14,7 +14,7 @@ import {
   getKind,
   getUID,
 } from '@console/shared/src/selectors';
-import { VM_TEMPLATE_NAME_PARAMETER } from '../constants/vm-templates';
+import { getRandomChars } from '@console/shared/src/utils/utils';
 import { pluralize } from './strings';
 
 export const getBasicID = <A extends K8sResourceKind = K8sResourceKind>(entity: A) =>
@@ -24,6 +24,25 @@ export const prefixedID = (idPrefix: string, id: string) =>
   idPrefix && id ? `${idPrefix}-${id}` : null;
 
 export const joinIDs = (...ids: string[]) => ids.join('-');
+
+export const generateDataVolumeName = (vmName: string, volumeName: string): string =>
+  joinIDs(vmName, volumeName, getRandomChars(5));
+
+export const resolveDataVolumeName = ({
+  diskName,
+  vmLikeEntityName,
+  isTemplate,
+  isPlainDataVolume,
+}: {
+  diskName: string;
+  vmLikeEntityName: string;
+  isTemplate: boolean;
+  isPlainDataVolume: boolean;
+}) => {
+  return isTemplate && !isPlainDataVolume
+    ? joinIDs(vmLikeEntityName, diskName)
+    : generateDataVolumeName(vmLikeEntityName, diskName);
+};
 
 export const isLoaded = (result: FirehoseResult<K8sResourceKind | K8sResourceKind[]>) =>
   result && result.loaded;
@@ -62,13 +81,6 @@ export const getLoadError = (
   }
 
   return null;
-};
-
-export const insertName = (value: string, name) => {
-  if (value.indexOf(VM_TEMPLATE_NAME_PARAMETER) > -1) {
-    return value.replace(VM_TEMPLATE_NAME_PARAMETER, name);
-  }
-  return joinIDs(name, value);
 };
 
 export const parseNumber = (value, defaultValue = null) => {

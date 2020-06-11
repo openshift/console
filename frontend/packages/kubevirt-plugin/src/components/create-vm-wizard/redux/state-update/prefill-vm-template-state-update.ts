@@ -26,6 +26,7 @@ import {
   NetworkInterfaceModel,
   VolumeType,
 } from '../../../../constants/vm';
+import { DUMMY_VM_NAME } from '../../../../constants/vm/constants';
 import {
   DEFAULT_CPU,
   getCPU,
@@ -58,11 +59,10 @@ import { CloudInitDataHelper } from '../../../../k8s/wrapper/vm/cloud-init-data-
 import { getStorages } from '../../selectors/selectors';
 import { DataVolumeWrapper } from '../../../../k8s/wrapper/vm/data-volume-wrapper';
 import { V1alpha1DataVolume } from '../../../../types/vm/disk/V1alpha1DataVolume';
-import { joinIDs } from '../../../../utils';
-import { VM_TEMPLATE_NAME_PARAMETER } from '../../../../constants/vm-templates';
 import { selectVM } from '../../../../selectors/vm-template/basic';
 import { convertToHighestUnitFromUnknown } from '../../../form/size-unit-utils';
-import { toUIFlavor, isCustomFlavor } from '../../../../selectors/vm-like/flavor';
+import { isCustomFlavor, toUIFlavor } from '../../../../selectors/vm-like/flavor';
+import { generateDataVolumeName } from '../../../../utils';
 
 export const prefillVmTemplateUpdater = ({ id, dispatch, getState }: UpdateOptions) => {
   const state = getState();
@@ -200,7 +200,7 @@ export const prefillVmTemplateUpdater = ({ id, dispatch, getState }: UpdateOptio
           isCloudInitForm = false;
         }
       } else if (volumeWrapper.getType() === VolumeType.DATA_VOLUME && !dataVolume) {
-        const newDataVolumeName = joinIDs(VM_TEMPLATE_NAME_PARAMETER, diskWrapper.getName());
+        const newDataVolumeName = generateDataVolumeName(DUMMY_VM_NAME, diskWrapper.getName());
 
         dataVolume = new DataVolumeWrapper(
           standaloneDataVolumeLookup[volumeWrapper.getDataVolumeName()],

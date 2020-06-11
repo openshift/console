@@ -1,7 +1,7 @@
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { createBasicLookup, getName, getNamespace } from '@console/shared';
 import { VMKind } from '../../types/vm';
-import { getBasicID, joinIDs } from '../../utils';
+import { generateDataVolumeName, getBasicID } from '../../utils';
 import {
   getPvcAccessModes,
   getPvcStorageClassName,
@@ -103,7 +103,7 @@ export class VMClone {
 
         if (pvc) {
           const clonedDVTemplate = new DataVolumeTemplate({
-            name: joinIDs(name, pvcName, 'clone'),
+            name: generateDataVolumeName(name, volume.name),
             pvcSourceName: pvcName,
             pvcSourceNamespace: this.oldVMNamespace,
             accessModes: getPvcAccessModes(pvc),
@@ -135,7 +135,7 @@ export class VMClone {
 
         if (dataVolume) {
           const clonedDVTemplate = new DataVolumeTemplate({
-            name: joinIDs(name, dvName, 'clone'),
+            name: generateDataVolumeName(name, volume.name),
             pvcSourceName: dvName,
             pvcSourceNamespace: this.oldVMNamespace,
             accessModes: getDataVolumeAccessModes(dataVolume),
