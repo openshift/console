@@ -114,6 +114,15 @@ const plugin: Plugin<ConsumedExtensions> = [
     },
   },
   {
+    type: 'Page/Resource/List',
+    properties: {
+      model: models.SubscriptionModel,
+      loader: async () =>
+        (await import('./components/subscription' /* webpackChunkName: "subscriptions" */))
+          .SubscriptionsPage,
+    },
+  },
+  {
     type: 'Page/Resource/Details',
     properties: {
       model: models.SubscriptionModel,
