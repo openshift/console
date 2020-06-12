@@ -47,9 +47,9 @@ import {
 } from '../../strings/vm/status';
 import { CDI_KUBEVIRT_IO, STORAGE_IMPORT_PVC_NAME } from '../../constants';
 import { CONVERSION_PROGRESS_ANNOTATION } from '../../constants/v2v';
-import { PAUSED_VM_MODAL_MESSAGE } from '../../constants/vm';
 import { V1alpha1DataVolume } from '../../types/vm/disk/V1alpha1DataVolume';
 import { VMIPhase } from '../../constants/vmi/phase';
+import { PAUSED_VM_MODAL_MESSAGE } from '../../strings/vm/messages';
 
 const isPaused = (vmi: VMIKind): VMStatusBundle =>
   isVMIPaused(vmi) ? { status: VMStatus.PAUSED, message: PAUSED_VM_MODAL_MESSAGE } : null;

@@ -3,7 +3,7 @@ import { Modal } from '@patternfly/react-core';
 import { HandlePromiseProps, withHandlePromise } from '@console/internal/components/utils';
 import { ModalComponentProps } from '@console/internal/components/factory';
 import { ModalFooter } from '../modal/modal-footer';
-import { PAUSED_VM_MODAL_MESSAGE } from '../../../constants/vm';
+import { PAUSED_VM_MODAL_MESSAGE } from '../../../strings/vm/messages';
 import { VMIKind } from '../../../types';
 import { unpauseVMI } from '../../../k8s/requests/vmi/actions';
 

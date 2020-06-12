@@ -44,8 +44,11 @@ import {
 import { useGuestAgentInfo } from '../../hooks/use-guest-agent-info';
 import { GuestAgentInfoWrapper } from '../../k8s/wrapper/vm/guest-agent-info/guest-agent-info-wrapper';
 import { VMStatusBundle } from '../../statuses/vm/types';
+import { NOT_AVAILABLE_MESSAGE } from '../../strings/vm/messages';
+import { isGuestAgentInstalled } from '../dashboards-page/vm-dashboard/vm-alerts';
 
 import './vm-resource.scss';
+import { getGuestAgentFieldNotAvailMsg } from '../../utils/strings';
 
 export const VMDetailsItem: React.FC<VMDetailsItemProps> = ({
   title,
@@ -54,6 +57,7 @@ export const VMDetailsItem: React.FC<VMDetailsItemProps> = ({
   onEditClick,
   idValue,
   isNotAvail = false,
+  isNotAvailMessage = NOT_AVAILABLE_MESSAGE,
   valueClassName,
   children,
 }) => {
@@ -63,7 +67,7 @@ export const VMDetailsItem: React.FC<VMDetailsItemProps> = ({
         {title} <EditButton id={editButtonId} canEdit={canEdit} onClick={onEditClick} />
       </dt>
       <dd id={idValue} className={valueClassName}>
-        {isNotAvail ? <span className="text-secondary">Not available</span> : children}
+        {isNotAvail ? <span className="text-secondary">{isNotAvailMessage}</span> : children}
       </dd>
     </>
   );
@@ -140,6 +144,7 @@ export const VMDetailsList: React.FC<VMResourceListProps> = ({
   const isVM = kindObj === VirtualMachineModel;
   const vmiLike = isVM ? vm : vmi;
   const vmiLikeWrapper = asVMILikeWrapper(vmiLike);
+  const guestAgentFieldNotAvailMsg = getGuestAgentFieldNotAvailMsg(isGuestAgentInstalled(vmi));
 
   const canEdit =
     vmiLike &&
@@ -214,11 +219,21 @@ export const VMDetailsList: React.FC<VMResourceListProps> = ({
         {launcherPod && ipAddrs}
       </VMDetailsItem>
 
-      <VMDetailsItem title="Hostname" idValue={prefixedID(id, 'hostname')} isNotAvail={!hostname}>
+      <VMDetailsItem
+        title="Hostname"
+        idValue={prefixedID(id, 'hostname')}
+        isNotAvail={!hostname}
+        isNotAvailMessage={guestAgentFieldNotAvailMsg}
+      >
         {hostname}
       </VMDetailsItem>
 
-      <VMDetailsItem title="Time Zone" idValue={prefixedID(id, 'timezone')} isNotAvail={!timeZone}>
+      <VMDetailsItem
+        title="Time Zone"
+        idValue={prefixedID(id, 'timezone')}
+        isNotAvail={!timeZone}
+        isNotAvailMessage={guestAgentFieldNotAvailMsg}
+      >
         {timeZone}
       </VMDetailsItem>
 
@@ -354,6 +369,7 @@ type VMDetailsItemProps = {
   onEditClick?: () => void;
   idValue?: string;
   isNotAvail?: boolean;
+  isNotAvailMessage?: string;
   valueClassName?: string;
   children: React.ReactNode;
 };

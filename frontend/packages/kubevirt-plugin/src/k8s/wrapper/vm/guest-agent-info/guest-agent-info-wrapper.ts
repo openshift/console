@@ -1,3 +1,4 @@
+import * as _ from 'lodash';
 import { V1VirtualMachineInstanceGuestAgentInfo } from '../../../../types/vmi-guest-data-info/vmi-guest-agent-info';
 import { Wrapper } from '../../common/wrapper';
 import { GuestAgentOSInfoWrapper } from './guest-agent-os-info-wrapper';
@@ -8,27 +9,28 @@ export class GuestAgentInfoWrapper extends Wrapper<
   V1VirtualMachineInstanceGuestAgentInfo,
   GuestAgentInfoWrapper
 > {
-  private readonly guestAgentOSInfo: GuestAgentOSInfoWrapper;
-
-  private readonly guestAgentFSInfo: GuestAgentFSInfoWrapper;
-
-  private readonly guestOSUserList: GuestOSUserWrapper[];
-
   constructor(
     guestAgentInfo?: V1VirtualMachineInstanceGuestAgentInfo | GuestAgentInfoWrapper | any,
     copy = false,
   ) {
     super(guestAgentInfo, copy);
-    this.guestAgentOSInfo = new GuestAgentOSInfoWrapper(guestAgentInfo?.os);
-    this.guestAgentFSInfo = new GuestAgentFSInfoWrapper(guestAgentInfo?.fsInfo);
-    this.guestOSUserList = guestAgentInfo?.userList?.map((user) => new GuestOSUserWrapper(user));
   }
 
-  getFSInfo = (): GuestAgentFSInfoWrapper => this.guestAgentFSInfo;
+  getFSInfo = (): GuestAgentFSInfoWrapper => new GuestAgentFSInfoWrapper(this.data?.fsInfo);
 
-  getOSInfo = (): GuestAgentOSInfoWrapper => this.guestAgentOSInfo;
+  getOSInfo = (): GuestAgentOSInfoWrapper => new GuestAgentOSInfoWrapper(this.data?.os);
 
-  getUserList = (): GuestOSUserWrapper[] => this.guestOSUserList;
+  getUserList = (): GuestOSUserWrapper[] =>
+    this.data?.userList?.map((user) => new GuestOSUserWrapper(user));
+
+  getNumLoggedInUsers = (): number | null => {
+    if (_.isEmpty(this.data)) {
+      return null;
+    }
+
+    const userList = this.getUserList();
+    return userList ? userList.length : 0;
+  };
 
   getAPIVersion = (): string => this.data?.apiVersion;
 
