@@ -21,6 +21,8 @@ import { VMResourceSummary, VMDetailsList, VMSchedulingList } from './vm-resourc
 import { VMUsersList } from './vm-users';
 import { VMTabProps } from './types';
 import { useGuestAgentInfo } from '../../hooks/use-guest-agent-info';
+import { getGuestAgentInfoOS } from '../../selectors/vmi-guest-agent-info/guest-agent-info';
+import { getGuestOSID } from '../../selectors/vmi-guest-agent-info/guest-os-info';
 import { getVMStatus } from '../../statuses/vm/vm-status';
 import { VMStatusBundle } from '../../statuses/vm/types';
 import { isWindows } from '../../selectors/vm/combined';
@@ -82,9 +84,12 @@ export const VMDetails: React.FC<VMDetailsProps> = (props) => {
   const vmServicesData = getServicesForVmi(getLoadedData(props.services, []), vmi);
   const canUpdate = useAccessReview(asAccessReview(kindObj, vmiLike || {}, 'patch')) && !!vmiLike;
   const [guestAgentInfo] = useGuestAgentInfo({ vmi });
+  const guestAgentInfoOS = getGuestAgentInfoOS(guestAgentInfo);
 
   const OSMismatchExists =
-    vmi && guestAgentInfo && isWindows(vmiLike) !== (guestAgentInfo?.os?.id === 'mswindows');
+    vmi &&
+    guestAgentInfo &&
+    isWindows(vmiLike) !== (getGuestOSID(guestAgentInfoOS) === 'mswindows');
   const OSMismatchAlert = OSMismatchExists && (
     <Alert className="co-alert" variant="warning" title="Operating system mismatch" isInline>
       The operating system defined for this virtual machine does not match what is being reported by
@@ -122,17 +127,17 @@ export const VMDetails: React.FC<VMDetailsProps> = (props) => {
           </div>
         </div>
       </div>
-      <div className="co-m-pane__body">
+      <div id="scheduling" className="co-m-pane__body">
         <SectionHeading text="Scheduling and resources requirements" />
         <div className="row">
           <VMSchedulingList kindObj={kindObj} canUpdateVM={canUpdate} vm={vm} vmi={vmi} />
         </div>
       </div>
-      <div className="co-m-pane__body">
+      <div id="services" className="co-m-pane__body">
         <SectionHeading text="Services" />
         <ServicesList {...restProps} data={vmServicesData} label="Services" />
       </div>
-      <div className="co-m-pane__body">
+      <div id="logged-in-users" className="co-m-pane__body">
         <SectionHeading text="Logged in users" />
         <VMUsersList {...restProps} vmi={vmi} vmStatusBundle={vmStatusBundle} />
       </div>

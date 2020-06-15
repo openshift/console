@@ -29,6 +29,10 @@ export const getGuestAgentInfoTimezone = (
   guestAgentInfo: V1VirtualMachineInstanceGuestAgentInfo,
 ): string => guestAgentInfo?.timezone;
 
+export const getGuestAgentInfoTimezoneName = (
+  guestAgentInfo: V1VirtualMachineInstanceGuestAgentInfo,
+): string => guestAgentInfo?.timezone && guestAgentInfo?.timezone.split(',')[0];
+
 export const getGuestAgentInfoUserList = (
   guestAgentInfo: V1VirtualMachineInstanceGuestAgentInfo,
 ): V1VirtualMachineInstanceGuestOSUser[] => guestAgentInfo?.userList;

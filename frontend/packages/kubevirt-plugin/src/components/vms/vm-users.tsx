@@ -13,6 +13,12 @@ import {
 import { VMStatus } from '../../constants/vm/vm-status';
 import { isGuestAgentInstalled } from '../dashboards-page/vm-dashboard/vm-alerts';
 import { useGuestAgentInfo } from '../../hooks/use-guest-agent-info';
+import { getGuestAgentInfoUserList } from '../../selectors/vmi-guest-agent-info/guest-agent-info';
+import {
+  getGuestOSUserUserName,
+  getGuestOSUserLoginTimeSec,
+  getGuestOSUserDomain,
+} from '../../selectors/vmi-guest-agent-info/guest-os-user-list';
 import { VMStatusBundle } from '../../statuses/vm/types';
 import { VMIKind } from '../../types';
 
@@ -79,13 +85,13 @@ export const VMUsersList: React.FC<VMUsersListProps> = ({ vmi, vmStatusBundle, d
 
   const data =
     response &&
-    response?.userList &&
-    response?.userList.map((user, uid) => ({
+    getGuestAgentInfoUserList(response) &&
+    getGuestAgentInfoUserList(response).map((user, uid) => ({
       metadata: {
         uid,
-        userName: user?.userName,
-        domain: user?.domain,
-        loginTime: user?.loginTime && user.loginTime * 1000,
+        userName: getGuestOSUserUserName(user),
+        domain: getGuestOSUserDomain(user),
+        loginTime: getGuestOSUserLoginTimeSec(user),
       },
     }));
 

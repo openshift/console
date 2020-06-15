@@ -42,6 +42,12 @@ import {
   AFFINITY_MODAL_TITLE,
 } from '../modals/scheduling-modals/shared/consts';
 import { useGuestAgentInfo } from '../../hooks/use-guest-agent-info';
+import {
+  getGuestAgentInfoOS,
+  getGuestAgentInfoHostname,
+  getGuestAgentInfoTimezoneName,
+} from '../../selectors/vmi-guest-agent-info/guest-agent-info';
+import { getGuestOSPrettyName } from '../../selectors/vmi-guest-agent-info/guest-os-info';
 import { VMStatusBundle } from '../../statuses/vm/types';
 
 import './vm-resource.scss';
@@ -84,6 +90,7 @@ export const VMResourceSummary: React.FC<VMResourceSummaryProps> = ({
   const os = getOperatingSystemName(vmiLike) || getOperatingSystem(vmiLike);
 
   const [guestAgentInfo] = useGuestAgentInfo({ vmi });
+  const guestAgentInfoOS = getGuestAgentInfoOS(guestAgentInfo);
 
   return (
     <ResourceSummary resource={vmiLike}>
@@ -104,9 +111,9 @@ export const VMResourceSummary: React.FC<VMResourceSummaryProps> = ({
       <VMDetailsItem
         title="Operating System"
         idValue={prefixedID(id, 'os')}
-        isNotAvail={!(guestAgentInfo?.os?.prettyName || os)}
+        isNotAvail={!(getGuestOSPrettyName(guestAgentInfoOS) || os)}
       >
-        {guestAgentInfo?.os?.prettyName || os}
+        {getGuestOSPrettyName(guestAgentInfoOS) || os}
       </VMDetailsItem>
 
       {isVM && (
@@ -210,17 +217,17 @@ export const VMDetailsList: React.FC<VMResourceListProps> = ({
       <VMDetailsItem
         title="Hostname"
         idValue={prefixedID(id, 'hostname')}
-        isNotAvail={!guestAgentInfo?.hostname}
+        isNotAvail={!getGuestAgentInfoHostname(guestAgentInfo)}
       >
-        {guestAgentInfo?.hostname}
+        {getGuestAgentInfoHostname(guestAgentInfo)}
       </VMDetailsItem>
 
       <VMDetailsItem
         title="Time Zone"
         idValue={prefixedID(id, 'timezone')}
-        isNotAvail={!guestAgentInfo?.timezone}
+        isNotAvail={!getGuestAgentInfoTimezoneName(guestAgentInfo)}
       >
-        {guestAgentInfo?.timezone}
+        {getGuestAgentInfoTimezoneName(guestAgentInfo)}
       </VMDetailsItem>
 
       <VMDetailsItem

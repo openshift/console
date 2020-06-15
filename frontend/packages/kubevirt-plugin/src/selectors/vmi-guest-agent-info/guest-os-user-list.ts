@@ -10,6 +10,10 @@ export const getGuestOSUserDomain = (guestOSUser: V1VirtualMachineInstanceGuestO
 export const getGuestOSUserLoginTime = (guestOSUser: V1VirtualMachineInstanceGuestOSUser): number =>
   guestOSUser?.loginTime;
 
+export const getGuestOSUserLoginTimeSec = (
+  guestOSUser: V1VirtualMachineInstanceGuestOSUser,
+): number => guestOSUser?.loginTime && guestOSUser?.loginTime * 1000;
+
 export const getGuestOSUserUserName = (guestOSUser: V1VirtualMachineInstanceGuestOSUser): string =>
   guestOSUser?.userName;
 
