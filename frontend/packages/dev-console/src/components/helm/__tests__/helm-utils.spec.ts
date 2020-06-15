@@ -54,9 +54,13 @@ describe('Helm Releases Utils', () => {
     );
   });
 
-  it('should return the chart versions available for the helm chart', () => {
+  it('should return the chart versions, contenated with the App Version, available for the helm chart', () => {
     const chartVersions = getChartVersions(mockHelmChartData);
-    expect(chartVersions).toEqual({ '1.0.3': '1.0.3', '1.0.2': '1.0.2', '1.0.1': '1.0.1' });
+    expect(chartVersions).toEqual({
+      '1.0.1': '1.0.1 / App Version 3.10.5',
+      '1.0.2': '1.0.2 / App Version 3.12',
+      '1.0.3': '1.0.3 / App Version 3.12',
+    });
   });
 
   it('should omit resources with no data and flatten them', () => {
