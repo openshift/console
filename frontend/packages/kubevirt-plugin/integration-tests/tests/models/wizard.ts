@@ -66,16 +66,18 @@ export class Wizard {
       .accept();
   }
 
-  async next() {
+  async next(ignoreWarnings: boolean = false) {
     await click(wizardView.nextButton);
-    try {
-      await browser.wait(until.presenceOf(wizardView.footerError), 1 * SEC);
-    } catch (e) {
-      // footerError wasn't displayed, everything is OK
-      return;
+    if (!ignoreWarnings) {
+      try {
+        await browser.wait(until.presenceOf(wizardView.footerError), 2 * SEC);
+      } catch (e) {
+        // footerError wasn't displayed, everything is OK
+        return;
+      }
+      // An error is displayed
+      throw new Error(await wizardView.footerErrorDescroption.getText());
     }
-    // An error is displayed
-    throw new Error(await wizardView.footerErrorDescroption.getText());
   }
 
   async fillName(name: string) {

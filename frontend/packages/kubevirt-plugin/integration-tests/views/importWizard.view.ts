@@ -13,7 +13,9 @@ export const connectInstanceButton = $('#provider-vmware-connect');
 export const vmwarePodStatusLoader = $('#v2v-vmware-status-status');
 export const virtualMachineSelect = $('#vcenter-vm-dropdown');
 
-export const instanceConnectionStatus = $('fa-spin.co-icon-and-text__icon.co-icon-flex-child');
+export const spinnerIcon = $('svg.fa-spin');
 export const connectionWarning = $('h4.pf-c-alert__title');
 
 export const seeDetailPageButton = element(by.buttonText('See virtual machine details'));
+
+export const importButon = element(by.buttonText('Import'));

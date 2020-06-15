@@ -1,5 +1,5 @@
 /* eslint-disable no-await-in-loop */
-import { browser, ExpectedConditions as until } from 'protractor';
+import { browser } from 'protractor';
 import { createItemButton, isLoaded } from '@console/internal-integration-tests/views/crud.view';
 import { click, fillInput, asyncForEach } from '@console/shared/src/test-utils/utils';
 import { VirtualMachineModel } from '@console/kubevirt-plugin/src/models';
@@ -8,8 +8,6 @@ import { DiskDialog } from '../dialogs/diskDialog';
 import { tableRows, saveButton } from '../../views/kubevirtUIResource.view';
 import { selectOptionByText, setCheckboxState } from '../utils/utils';
 import {
-  POD_CREATION_TIMEOUT_SECS,
-  V2V_INSTANCE_CONNECTION_TIMEOUT,
   IMPORT_WIZARD_CONN_TO_NEW_INSTANCE,
   networkTabCol,
   STORAGE_CLASS,
@@ -88,6 +86,10 @@ export class ImportWizard extends Wizard {
     await selectOptionByText(view.virtualMachineSelect, sourceVirtualMachine);
   }
 
+  async confirmAndCreate() {
+    await click(view.importButon);
+  }
+
   /**
    * Edits attributes of a NICs that are being imported from source VM.
    */
@@ -157,15 +159,42 @@ export class ImportWizard extends Wizard {
     await isLoaded();
   }
 
-  async waitForVMWarePod() {
-    await browser.wait(until.invisibilityOf(view.vmwarePodStatusLoader), POD_CREATION_TIMEOUT_SECS);
-  }
+  /**
+   * Waits for loading icon on Import tab to disappear.
+   * As the icon disappears and re-appears several times when loading VM details
+   * we need to sample it's presence multiple times to make sure all data is loaded.
+   */
+  async waitForSpinner() {
+    // TODO: In a followup, we should use this implementation of waitFor and
+    // deprecate the one we have in kubevirt-plugin/integration-tests/utils/utils.ts
+    // because this is more general
+    const waitFor = async (
+      func: () => Promise<boolean>,
+      interval = 1500,
+      count = 4,
+      attempts = 30,
+    ) => {
+      let sequenceNumber = 0;
+      let attemptNumber = 0;
+      let res;
+      while (sequenceNumber !== count) {
+        if (attemptNumber > attempts) {
+          throw Error('Exceeded number of attempts');
+        }
+        res = await func();
+        if (res) {
+          sequenceNumber += 1;
+        } else {
+          sequenceNumber = 0;
+        }
+        attemptNumber += 1;
+        await browser.sleep(interval);
+      }
+    };
 
-  async waitForInstanceSync() {
-    await browser.wait(
-      until.invisibilityOf(view.instanceConnectionStatus),
-      V2V_INSTANCE_CONNECTION_TIMEOUT,
-    );
+    await waitFor(async () => {
+      return !(await view.spinnerIcon.isPresent());
+    });
   }
 
   async import(config: VMImportConfig) {
@@ -187,14 +216,16 @@ export class ImportWizard extends Wizard {
 
     // General section
     await importWizard.selectProvider(provider);
-    await importWizard.waitForVMWarePod();
+    await importWizard.waitForSpinner();
     await importWizard.configureInstance(instanceConfig);
 
     await importWizard.connectToInstance();
-    await importWizard.waitForInstanceSync();
+    await importWizard.waitForSpinner();
 
     await importWizard.selectSourceVirtualMachine(sourceVMName);
-    await importWizard.waitForInstanceSync();
+    await importWizard.waitForSpinner();
+
+    await importWizard.next(true);
 
     if (operatingSystem) {
       await importWizard.selectOperatingSystem(operatingSystem as string);
