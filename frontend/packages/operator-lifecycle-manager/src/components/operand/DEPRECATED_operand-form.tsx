@@ -26,7 +26,6 @@ import {
   k8sCreate,
   K8sResourceKind,
   kindForReference,
-  Status,
   modelFor,
   NodeAffinity as NodeAffinityType,
 } from '@console/internal/module/k8s';
@@ -520,7 +519,7 @@ export const DEPRECATED_CreateOperandForm: React.FC<OperandFormProps> = ({
       const existing = immutableFormData.getIn([...pathToArray(pathBeforeIndex), 0]);
       const item = Immutable.Map(existing || {}).setIn(pathToArray(pathAfterIndex), value);
       const list = Immutable.List([item]);
-      onChange(immutableFormData.setIn(pathToArray(pathBeforeIndex), list));
+      onChange(immutableFormData.setIn(pathToArray(pathBeforeIndex), list).toJS());
     }
     onChange(immutableFormData.setIn(pathToArray(path), value).toJS());
   };
@@ -702,11 +701,14 @@ export const DEPRECATED_CreateOperandForm: React.FC<OperandFormProps> = ({
     setFormErrors(errors);
 
     if (_.isEmpty(_.compact(_.values(errors)))) {
-      k8sCreate(model, immutableFormData.setIn(['metadata', 'namespace'], match.params.ns).toJS())
+      k8sCreate(
+        model,
+        model.namespaced
+          ? immutableFormData.setIn(['metadata', 'namespace'], match.params.ns).toJS()
+          : immutableFormData.toJS(),
+      )
         .then(() => history.push(next))
-        .catch((err: { json: Status }) => {
-          setError(err.json.message);
-        });
+        .catch((err: Error) => setError(err.message || 'Unknown error.'));
     }
   };
 
