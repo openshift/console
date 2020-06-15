@@ -192,8 +192,67 @@ $screen-phone-landscape-min-width: 567px;
   flex-wrap: wrap;
 }
 
+$monitoring-line-height: 18px;
+
+.monitoring-description, .monitoring-label-list, .monitoring-timestamp {
+  line-height: $monitoring-line-height;
+  margin-top: 4px;
+}
+
+.monitoring-description {
+  // Limit to $num-lines lines of text. Truncate with an ellipsis in WebKit. Just overflow hidden for other browsers.
+  $num-lines: 2;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: $num-lines;
+  height: $num-lines * $monitoring-line-height;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.monitoring-grid-head {
+  padding-bottom: 5px;
+}
+
+.monitoring-header-link {
+  font-size: $font-size-base;
+  margin-left: 14px;
+}
+
+.monitoring-heading {
+  display: flex;
+  justify-content: space-between;
+}
+
 .monitoring-icon-wrap {
   margin-right: 10px;
+}
+
+.monitoring-query {
+  color: $color-pf-blue-400;
+}
+
+.monitoring-silence-alert {
+  max-width: 950px;
+
+  &__label-options {
+    align-items: baseline;
+    display: flex;
+    justify-content: space-between;
+    @media(min-width: $grid-float-breakpoint) {
+      padding-top: 26px;
+    }
+  }
+}
+
+.monitoring-state-icon--pending {
+  color: $color-pf-black-700;
+}
+
+.monitoring-timestamp {
+  display: flex;
+  flex-flow: row wrap;
+  font-size: ($font-size-base - 1);
 }
 
 .query-browser__clear-icon {
