@@ -13,6 +13,7 @@ import { ResourceRequirementsModalLink } from './resource-requirements';
 import { EndpointList } from './endpoint';
 import { configureSizeModal } from './configure-size';
 import { configureUpdateStrategyModal } from './configure-update-strategy';
+import { REGEXP_K8S_RESOURCE_SUFFIX } from '../const';
 
 const Default: React.SFC<SpecCapabilityProps> = ({ value }) => {
   if (_.isEmpty(value) && !_.isNumber(value) && !_.isBoolean(value)) {
@@ -72,17 +73,18 @@ const K8sResourceLink: React.SFC<SpecCapabilityProps> = (props) => {
     return <span className="text-muted">None</span>;
   }
 
-  const kind = props.capability.split(SpecCapability.k8sResourcePrefix)[1];
+  const [, suffix] = props.capability.match(REGEXP_K8S_RESOURCE_SUFFIX) ?? [];
+  const gvk = suffix?.replace(/:/g, '~');
   if (!_.isString(props.value)) {
     return (
       <>
         <YellowExclamationTriangleIcon /> Invalid spec descriptor: value at path &apos;
-        {props.descriptor.path}&apos; must be a {kind} resource name.
+        {props.descriptor.path}&apos; must be a {gvk} resource name.
       </>
     );
   }
 
-  return <ResourceLink kind={kind} name={props.value} namespace={props.namespace} />;
+  return <ResourceLink kind={gvk} name={props.value} namespace={props.namespace} />;
 };
 
 const BasicSelector: React.SFC<SpecCapabilityProps> = ({ value, capability }) => (

@@ -198,7 +198,7 @@ describe(SpecDescriptor.name, () => {
         .shallow()
         .find(ResourceLink)
         .props().kind,
-    ).toEqual('core:v1:Service');
+    ).toEqual('Service');
     expect(
       wrapper
         .find('dd')
