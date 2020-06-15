@@ -28,7 +28,7 @@ The `x-descriptors` field can be thought of as "capabilities" (and is referenced
 
 The `value` field is an optional field. If present, the value of this spec is the same for all instances of the CRD and can be found here instead of on the CR. This should not be used to apply a default value to a given custom resource for consumption by the console.
 
-You can assign the default value of the field on CRD in OpenAPI v3 validation schema (see [Defaulting](https://kubernetes.io/docs/tasks/access-kubernetes-api/custom-resources/custom-resource-definitions/#defaulting) feature in Kubernetes 1.17). Alternatively, you can specify the value of a field in [CRD Templates](https://github.com/operator-framework/operator-lifecycle-manager/blob/master/doc/design/building-your-csv.md#crd-templates) in the `ClusterServiceVersion` to set (or override) the default value on the CRD.
+You can assign the default value of the field on CRD in OpenAPI v3 validation schema (see [Defaulting](https://kubernetes.io/docs/tasks/access-kubernetes-api/custom-resources/custom-resource-definitions/#defaulting) for CRD in `apiextensions.k8s.io/v1`). Alternatively, you can specify the value of a field in [CRD Templates](https://github.com/operator-framework/operator-lifecycle-manager/blob/master/doc/design/building-your-csv.md#crd-templates) in the `ClusterServiceVersion` to set (or override) the default value on the CRD.
 
 
 ## Example
@@ -69,13 +69,25 @@ Which yields this UI:
 
 ![screenshot_20180821_163304](https://user-images.githubusercontent.com/11700385/44427562-eb1fb500-a55f-11e8-83e5-98e7008dabdb.png)
 
-## OLM Descriptor Reference
-Checkout the [reference](reference/reference.md) of different specDescriptors and statusDescriptors available with sample code snippets and screenshots.
 
+## Create Operand Form
+In Kubernetes 1.8, CRDs gained the ability to define an optional [OpenAPI v3 based validation schema](https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.0.md#schemaObject). This is important for data consistency, security, and can also be used to auto-generate forms for creating CRD instances (or "Operands").
 
-## Create Forms
+### Auto-generated Form
+With a [structural schema](https://kubernetes.io/docs/tasks/access-kubernetes-api/custom-resources/custom-resource-definitions/#specifying-a-structural-schema) (mandatory for CRD in `apiextensions.k8s.io/v1`), OpenShift Console can automatically generate creation forms for operands. Schema properties are mapped to appropriate form field UI components using [react-jsonschema-form](https://rjsf-team.github.io/react-jsonschema-form/). These mappings are primarily based on schema types (e.g. `boolean`, `text`, `integer`, `string`, `string` with `enum`, `object`, and `array`).
 
-TODO(alecmerdler): Docs for descriptor-powered forms
+### Customized Creation Form with specDescriptors
+The auto-generated creation form is already powerful, but you may want to customize how the form is rendered. For example, you may want a more user-friendly `displayName`, a more concise `description`, to change [form field ordering](#ordering-of-form-fields), or to [exclude some non-user facing fields](reference/reference.md#21-hidden). This is where "specDescriptors" come in.
+
+Check out the `x-descriptors` [reference guide](reference/reference.md) which provides more detailed descriptions and examples of how to use them in specDescriptors and statusDescriptors.
+
+### Ordering of Form Fields
+The ordering of form fields depends on whether a field has a specDescriptor, is "required" (a `required:` property in the schema), "optional", or "advanced" (assigned with an [advanced](reference/reference.md#18-advanced) specDecriptor). In general, fields with specDescriptors will be sorted higher than those without and required fields will be sorted higher than optional fields. The full set of sorting rules are as follows:
+1. "required" fields with specDescriptors other than advanced
+2. "required" fields without specDescriptors
+3. "optional" fields with specDescriptors other than advanced
+4. "optional" fields without specDescriptors
+5. Fields with advanced specDescriptors wrapped in the 'Advanced Configuration' group
 
 ## Contributing
 
