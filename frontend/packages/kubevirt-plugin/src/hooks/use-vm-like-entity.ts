@@ -1,10 +1,10 @@
 import * as React from 'react';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { getName, getNamespace } from '@console/shared/src/selectors/common';
-import { VMLikeEntityKind } from '../types/vmLike';
+import { VMGenericLikeEntityKind } from '../types/vmLike';
 import { getVMLikeModel } from '../selectors/vm';
 
-export const useUpToDateVMLikeEntity = (vmLikeEntity: VMLikeEntityKind): VMLikeEntityKind => {
+export const useUpToDateVMLikeEntity = <P extends VMGenericLikeEntityKind>(vmLikeEntity: P): P => {
   const vmName = getName(vmLikeEntity);
   const namespace = getNamespace(vmLikeEntity);
   const model = getVMLikeModel(vmLikeEntity);
@@ -26,5 +26,5 @@ export const useUpToDateVMLikeEntity = (vmLikeEntity: VMLikeEntityKind): VMLikeE
   if (!loaded) {
     return vmLikeEntity;
   }
-  return data as VMLikeEntityKind;
+  return data as P;
 };

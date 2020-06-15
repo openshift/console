@@ -3,7 +3,7 @@ import * as React from 'react';
 import { asAccessReview, Kebab, KebabOption } from '@console/internal/components/utils';
 import { K8sKind, K8sResourceCommon, K8sResourceKind, PodKind } from '@console/internal/module/k8s';
 import { getName, getNamespace, YellowExclamationTriangleIcon } from '@console/shared';
-import { confirmModal, deleteModal } from '@console/internal/components/modals';
+import { confirmModal } from '@console/internal/components/modals';
 import { VMIKind, VMKind } from '../../types/vm';
 import {
   isVMCreated,
@@ -23,7 +23,9 @@ import { unpauseVMI, VMIActionType } from '../../k8s/requests/vmi/actions';
 import { VMImportKind } from '../../types/vm-import/ovirt/vm-import';
 import { V1alpha1DataVolume } from '../../types/vm/disk/V1alpha1DataVolume';
 import { VMStatusBundle } from '../../statuses/vm/types';
-import { deleteVMLikeEntityModal } from '../modals/delete-vm-like-entity-modal/delete-vm-like-entity-modal';
+import { confirmVMIModal } from '../modals/menu-actions-modals/confirm-vmi-modal';
+import { deleteVMModal } from '../modals/menu-actions-modals/delete-vm-modal';
+import { deleteVMIModal } from '../modals/menu-actions-modals/delete-vmi-modal';
 import { VMImportWrappper } from '../../k8s/wrapper/vm-import/vm-import-wrapper';
 import { StatusGroup } from '../../constants/status-group';
 import { cancelVMImport } from '../../k8s/requests/vmimport';
@@ -100,14 +102,16 @@ export const menuActionStart = (
   };
 };
 
-const menuActionStop = (kindObj: K8sKind, vm: VMKind): KebabOption => {
+const menuActionStop = (kindObj: K8sKind, vm: VMKind, { vmi }: ActionArgs): KebabOption => {
   const title = 'Stop Virtual Machine';
   return {
     hidden: !isVMExpectedRunning(vm),
     label: title,
     callback: () =>
-      confirmModal({
+      confirmVMIModal({
+        vmi,
         title,
+        alertTitle: 'Stop Virtual Machine alert',
         message: getActionMessage(vm, VMActionType.Stop),
         btnText: _.capitalize(VMActionType.Stop),
         executeFn: () => stopVM(vm),
@@ -119,7 +123,7 @@ const menuActionStop = (kindObj: K8sKind, vm: VMKind): KebabOption => {
 const menuActionRestart = (
   kindObj: K8sKind,
   vm: VMKind,
-  { vmStatusBundle }: ActionArgs,
+  { vmi, vmStatusBundle }: ActionArgs,
 ): KebabOption => {
   const title = 'Restart Virtual Machine';
   return {
@@ -130,8 +134,10 @@ const menuActionRestart = (
       !isVMCreated(vm),
     label: title,
     callback: () =>
-      confirmModal({
+      confirmVMIModal({
+        vmi,
         title,
+        alertTitle: 'Restart Virtual Machine alert',
         message: getActionMessage(vm, VMActionType.Restart),
         btnText: _.capitalize(VMActionType.Restart),
         executeFn: () => restartVM(vm),
@@ -238,11 +244,12 @@ const menuActionCdEdit = (
   };
 };
 
-export const menuActionDeleteVM = (kindObj: K8sKind, vm: VMKind): KebabOption => ({
+export const menuActionDeleteVM = (kindObj: K8sKind, vm: VMKind, vmi: VMIKind): KebabOption => ({
   label: `Delete ${kindObj.label}`,
   callback: () =>
-    deleteVMLikeEntityModal({
-      vmLikeEntity: vm,
+    deleteVMModal({
+      vm,
+      vmi,
     }),
   accessReview: asAccessReview(kindObj, vm, 'delete'),
 });
@@ -259,16 +266,14 @@ export const menuActionDeleteVMorCancelImport = (
     });
   }
 
-  return menuActionDeleteVM(kindObj, vm);
+  return menuActionDeleteVM(kindObj, vm, actionArgs?.vmi);
 };
 
 export const menuActionDeleteVMI = (kindObj: K8sKind, vmi: VMIKind): KebabOption => ({
   label: `Delete ${kindObj.label}`,
   callback: () =>
-    deleteModal({
-      kind: kindObj,
-      resource: vmi,
-      redirectTo: `/k8s/ns/${getNamespace(vmi)}/virtualization`,
+    deleteVMIModal({
+      vmi,
     }),
   accessReview: asAccessReview(kindObj, vmi, 'delete'),
 });

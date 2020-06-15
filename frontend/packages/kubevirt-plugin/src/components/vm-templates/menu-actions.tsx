@@ -4,7 +4,7 @@ import { asAccessReview, Kebab, KebabOption } from '@console/internal/components
 import { VMWizardName, VMWizardMode } from '../../constants/vm';
 import { VirtualMachineModel } from '../../models';
 import { getVMWizardCreateLink } from '../../utils/url';
-import { deleteVMLikeEntityModal } from '../modals/delete-vm-like-entity-modal/delete-vm-like-entity-modal';
+import { deleteVMTemplateModal } from '../modals/menu-actions-modals/delete-vm-template-modal';
 
 const vmTemplateEditAction = (kind: K8sKind, obj: TemplateKind) => ({
   label: `Edit Virtual Machine Template`,
@@ -29,8 +29,8 @@ export const menuActionDeleteVMTemplate = (
 ): KebabOption => ({
   label: `Delete Virtual Machine Template`,
   callback: () =>
-    deleteVMLikeEntityModal({
-      vmLikeEntity: vmTemplate,
+    deleteVMTemplateModal({
+      vmTemplate,
     }),
   accessReview: asAccessReview(kindObj, vmTemplate, 'delete'),
 });
