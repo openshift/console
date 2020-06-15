@@ -124,11 +124,11 @@ export const getMultilineQueries = (node: string): { [key: string]: QueryWithDes
   [NodeQueries.NETWORK_UTILIZATION]: [
     {
       query: queries[NodeQueries.NETWORK_IN_UTILIZATION]({ node }),
-      desc: 'In',
+      desc: 'in',
     },
     {
       query: queries[NodeQueries.NETWORK_OUT_UTILIZATION]({ node }),
-      desc: 'Out',
+      desc: 'out',
     },
   ],
 });

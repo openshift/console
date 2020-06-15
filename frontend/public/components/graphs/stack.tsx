@@ -1,47 +1,33 @@
 import * as React from 'react';
 import {
-  Chart,
   ChartArea,
   ChartAxis,
+  ChartVoronoiContainer,
+  Chart,
+  ChartStack,
   ChartThemeColor,
   ChartThemeVariant,
-  ChartVoronoiContainer,
   getCustomTheme,
-  ChartGroup,
 } from '@patternfly/react-charts';
-import {
-  global_warning_color_100 as warningColor,
-  global_danger_color_100 as dangerColor,
-} from '@patternfly/react-tokens';
 import { processFrame, ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
 import { twentyFourHourTime } from '../utils/datetime';
-import { humanizeNumber, useRefWidth, Humanize } from '../utils';
+import { humanizeNumber, useRefWidth } from '../utils';
 import { PrometheusEndpoint } from './helpers';
 import { PrometheusGraph, PrometheusGraphLink } from './prometheus-graph';
 import { usePrometheusPoll } from './prometheus-poll-hook';
-import { areaTheme } from './themes';
 import { DataPoint, CursorVoronoiContainer } from './';
-import { mapLimitsRequests } from './utils';
+import { getRangeVectorStats } from './utils';
 import { GraphEmpty } from './graph-empty';
 import { ChartLegendTooltip } from './tooltip';
+import { areaTheme } from './themes';
+import { AreaChart, AreaChartProps } from './area';
 
 const DEFAULT_HEIGHT = 180;
 const DEFAULT_SAMPLES = 60;
 const DEFAULT_TICK_COUNT = 3;
 const DEFAULT_TIMESPAN = 60 * 60 * 1000; // 1 hour
 
-export enum AreaChartStatus {
-  ERROR = 'ERROR',
-  WARNING = 'WARNING',
-}
-
-export const chartStatusColors = {
-  [AreaChartStatus.ERROR]: dangerColor.value,
-  [AreaChartStatus.WARNING]: warningColor.value,
-};
-
-// @ts-ignore
-export const AreaChart: React.FC<AreaChartProps> = ({
+export const StackChart: React.FC<AreaChartProps> = ({
   className,
   data = [],
   formatDate = twentyFourHourTime,
@@ -56,11 +42,14 @@ export const AreaChart: React.FC<AreaChartProps> = ({
   yAxis = true,
   chartStyle,
   byteDataType = '',
-  showAllTooltip,
 }) => {
-  // Note: Victory incorrectly typed ThemeBaseProps.padding as number instead of PaddingProps
-  // @ts-ignore
-  const theme = getCustomTheme(ChartThemeColor.blue, ChartThemeVariant.light, areaTheme);
+  const theme = getCustomTheme(
+    ChartThemeColor.multiUnordered,
+    ChartThemeVariant.default,
+    // Note: Victory incorrectly typed ThemeBaseProps.padding as number instead of PaddingProps
+    // @ts-ignore
+    areaTheme,
+  );
   const [containerRef, width] = useRefWidth();
 
   const [processedData, unit] = React.useMemo(() => {
@@ -81,7 +70,7 @@ export const AreaChart: React.FC<AreaChartProps> = ({
       const { x, y } = prop.datum as DataPoint<Date>;
       const value = humanize(y, unit, unit).string;
       const date = formatDate(x);
-      return includeDate ? `${value} at ${date}` : value;
+      return includeDate ? `${value} at ${date}` : `${value} -`;
     },
     [humanize, unit, formatDate],
   );
@@ -91,9 +80,9 @@ export const AreaChart: React.FC<AreaChartProps> = ({
   const container = React.useMemo(() => {
     if (multiLine) {
       const legendData = processedData.map((d) => ({
-        childName: d[0].description,
-        name: d[0].description,
-        symbol: d[0].symbol,
+        childName: d[0]?.description,
+        name: d[0]?.description,
+        symbol: d[0]?.symbol,
       }));
       return (
         <CursorVoronoiContainer
@@ -102,9 +91,13 @@ export const AreaChart: React.FC<AreaChartProps> = ({
           labels={(props) => getLabel(props, false)}
           labelComponent={
             <ChartLegendTooltip
-              stack={showAllTooltip}
               legendData={legendData}
-              title={(d) => (showAllTooltip ? formatDate(d[0].x) : getLabel({ datum: d[0] }))}
+              stack
+              title={(d) => {
+                const y = d.reduce((acc, curr) => acc + curr.y, 0);
+                const value = humanize(y, unit, unit).string;
+                return `${value} total at ${formatDate(d[0].x)}`;
+              }}
             />
           }
           voronoiDimension="x"
@@ -112,7 +105,7 @@ export const AreaChart: React.FC<AreaChartProps> = ({
       );
     }
     return <ChartVoronoiContainer voronoiDimension="x" labels={getLabel} activateData={false} />;
-  }, [formatDate, getLabel, multiLine, processedData, showAllTooltip]);
+  }, [formatDate, getLabel, humanize, multiLine, processedData, unit]);
 
   return (
     <PrometheusGraph className={className} ref={containerRef} title={title}>
@@ -123,22 +116,24 @@ export const AreaChart: React.FC<AreaChartProps> = ({
             domainPadding={{ y: 20 }}
             height={height}
             width={width}
-            theme={theme}
             scale={{ x: 'time', y: 'linear' }}
             padding={padding}
+            theme={theme}
           >
             {xAxis && <ChartAxis tickCount={tickCount} tickFormat={formatDate} />}
             {yAxis && <ChartAxis dependentAxis tickCount={tickCount} tickFormat={tickFormat} />}
-            <ChartGroup>
+            <ChartStack height={height} width={width}>
               {processedData.map((datum, index) => (
                 <ChartArea
+                  height={height}
+                  width={width}
                   key={index}
                   data={datum}
                   style={chartStyle && chartStyle[index]}
                   name={datum[0]?.description}
                 />
               ))}
-            </ChartGroup>
+            </ChartStack>
           </Chart>
         </PrometheusGraphLink>
       ) : (
@@ -148,17 +143,16 @@ export const AreaChart: React.FC<AreaChartProps> = ({
   );
 };
 
-export const Area: React.FC<AreaProps> = ({
+export const Stack: React.FC<StackProps> = ({
   namespace,
   query,
-  limitQuery,
-  requestedQuery,
   samples = DEFAULT_SAMPLES,
   timeout,
   timespan = DEFAULT_TIMESPAN,
+  metric,
   ...rest
 }) => {
-  const [utilization, , utilizationLoading] = usePrometheusPoll({
+  const [utilization, , loading] = usePrometheusPoll({
     endpoint: PrometheusEndpoint.QUERY_RANGE,
     namespace,
     query,
@@ -166,58 +160,17 @@ export const Area: React.FC<AreaProps> = ({
     timeout,
     timespan,
   });
-  const [limit, , limitLoading] = usePrometheusPoll({
-    endpoint: PrometheusEndpoint.QUERY_RANGE,
-    namespace,
-    query: limitQuery,
-    samples,
-    timeout,
-    timespan,
-  });
-  const [requested, , requestedLoading] = usePrometheusPoll({
-    endpoint: PrometheusEndpoint.QUERY_RANGE,
-    namespace,
-    query: requestedQuery,
-    samples,
-    timeout,
-    timespan,
-  });
-  const { data, chartStyle } = mapLimitsRequests(utilization, limit, requested);
-  const loading =
-    utilizationLoading &&
-    (limitQuery ? limitLoading : true) &&
-    (requestedQuery ? requestedLoading : true);
-  return (
-    <AreaChart data={data} loading={loading} query={query} chartStyle={chartStyle} {...rest} />
-  );
+  const data = getRangeVectorStats(utilization, null, null, metric);
+  const ChartComponent = data?.length === 1 ? AreaChart : StackChart;
+  return <ChartComponent data={data} loading={loading} query={query} {...rest} />;
 };
 
-export type AreaChartProps = {
-  className?: string;
-  formatDate?: (date: Date) => string;
-  humanize?: Humanize;
-  height?: number;
-  loading?: boolean;
-  query?: string;
-  theme?: any; // TODO figure out the best way to import VictoryThemeDefinition
-  tickCount?: number;
-  title?: string;
-  data?: DataPoint[][];
-  xAxis?: boolean;
-  yAxis?: boolean;
-  padding?: object;
-  chartStyle?: object[];
-  byteDataType?: ByteDataTypes; //Use this to process the whole data frame at once
-  showAllTooltip?: boolean;
-};
-
-type AreaProps = AreaChartProps & {
+type StackProps = AreaChartProps & {
   namespace?: string;
   query: string;
   samples?: number;
   timeout?: string;
   timespan?: number;
   byteDataType?: ByteDataTypes;
-  limitQuery?: string;
-  requestedQuery?: string;
+  metric?: string;
 };

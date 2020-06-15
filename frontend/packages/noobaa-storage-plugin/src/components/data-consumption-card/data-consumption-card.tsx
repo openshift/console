@@ -41,11 +41,11 @@ const DataConsumptionCard: React.FC = () => {
   const parser = React.useMemo(
     () =>
       // Todo (bipuladh): Fix data consumption utils to work with getInstantVectorStats
-      serviceType === ServiceType.MCG ? (args: PrometheusResponse) => args : getRangeVectorStats,
+      serviceType === ServiceType.MCG ? null : getRangeVectorStats,
     [serviceType],
   );
 
-  const [data, loading, loadError] = usePrometheusQueries<PrometheusResponse | DataPoint[]>(
+  const [data, loading, loadError] = usePrometheusQueries<PrometheusResponse | DataPoint<Date>[]>(
     queries,
     parser,
     null,
