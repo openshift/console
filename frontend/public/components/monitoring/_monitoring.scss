@@ -1,11 +1,33 @@
 $tooltip-background-color: #151515;
 
+.co-alert-manager-config__edit-alert-routing-btn {
+  margin-bottom: 10px;
+}
+
+.co-alert-manager-config__save-as-default-label {
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
 .co-resource-item.co-resource-item--monitoring-alert {
   margin: 0 5px;
 }
 
+.co-routing-label-editor__error-message {
+  margin-top: -15px;
+}
+
 .graph-empty-state {
   min-height: 310px;
+}
+
+.graph-wrapper__horizontal-bar {
+  padding-right: 10px;
+}
+
+.graph-wrapper--query-browser {
+  padding-left: 50px;
+  padding-right: 10px;
 }
 
 .monitoring-dashboards__card {
@@ -71,6 +93,12 @@ $tooltip-background-color: #151515;
   margin-right: 20px;
 }
 
+.monitoring-dashboards__header {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
 .monitoring-dashboards__label-column-header {
   // Set a min-width to avoid aggressive wrapping, which makes the table much taller.
   min-width: 175px;
@@ -86,12 +114,6 @@ $tooltip-background-color: #151515;
   svg {
     max-height: 50px; // Required for Chrome. legend-wrap - scrollbar height
   }
-}
-
-.monitoring-dashboards__header {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
 }
 
 .monitoring-dashboards__options {
@@ -174,20 +196,6 @@ $screen-phone-landscape-min-width: 567px;
   margin-right: 10px;
 }
 
-.query-browser__toggle-graph {
-  margin-bottom: 5px;
-  float: right;
-}
-
-.graph-wrapper__horizontal-bar {
-  padding-right: 10px;
-}
-
-.graph-wrapper--query-browser {
-  padding-left: 50px;
-  padding-right: 10px;
-}
-
 .query-browser__clear-icon {
   font-size: 18px !important;
   padding: 4px !important;
@@ -195,21 +203,6 @@ $screen-phone-landscape-min-width: 567px;
   right: 0;
   top: 0;
   width: 30px;
-}
-
-.query-browser__dropdown--subtitle {
-  padding: 1px 10px;
-}
-
-.query-browser__expand-button {
-  border: none;
-  height: 30px;
-  padding: 0 14px !important; // align with series buttons
-}
-
-.query-browser__expand-icon {
-  font-size: 30px;
-  vertical-align: middle;
 }
 
 .query-browser__controls {
@@ -227,6 +220,25 @@ $screen-phone-landscape-min-width: 567px;
 .query-browser__controls--right {
   display: flex;
   margin-left: auto;
+}
+
+.query-browser__dropdown--subtitle {
+  padding: 1px 10px;
+}
+
+.query-browser__expand-button {
+  border: none;
+  height: 30px;
+  padding: 0 14px !important; // align with series buttons
+}
+
+.query-browser__expand-icon {
+  font-size: 30px;
+  vertical-align: middle;
+}
+
+.query-browser__graph-container {
+  z-index: 1;
 }
 
 .query-browser__inline-control {
@@ -279,6 +291,17 @@ $screen-phone-landscape-min-width: 567px;
   resize: vertical;
 }
 
+.query-browser__series-btn {
+  border: 1px solid transparent;
+  border-radius: var(--pf-global--BorderRadius--sm);
+  height: 20px;
+  padding: 0 !important;
+  width: 20px;
+  &--disabled {
+    border: 1px solid #888 !important;
+  }
+}
+
 .query-browser__series-btn-wrap {
   border: 1px solid transparent;
   border-radius: var(--pf-global--BorderRadius--sm);
@@ -289,17 +312,6 @@ $screen-phone-landscape-min-width: 567px;
   &:hover {
     background-color: var(--pf-global--active-color--200);
     border-color: var(--pf-global--active-color--100);
-  }
-}
-
-.query-browser__series-btn {
-  border: 1px solid transparent;
-  border-radius: var(--pf-global--BorderRadius--sm);
-  height: 20px;
-  padding: 0 !important;
-  width: 20px;
-  &--disabled {
-    border: 1px solid #888 !important;
   }
 }
 
@@ -339,12 +351,9 @@ $screen-phone-landscape-min-width: 567px;
   margin: 0 10px;
 }
 
-.query-browser__tooltip-wrap {
-  align-items: center;
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  width: 100%;
+.query-browser__toggle-graph {
+  margin-bottom: 5px;
+  float: right;
 }
 
 .query-browser__tooltip {
@@ -385,6 +394,14 @@ $screen-phone-landscape-min-width: 567px;
   font-weight: var(--pf-global--FontWeight--bold);
 }
 
+.query-browser__tooltip-wrap {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+}
+
 .query-browser__wrapper {
   border: 1px solid $color-grey-background-border;
   margin: 0 0 20px 0;
@@ -413,21 +430,4 @@ $screen-phone-landscape-min-width: 567px;
   position: absolute;
   top: 0;
   z-index: $zindex-modal;
-}
-
-.query-browser__graph-container {
-  z-index: 1;
-}
-
-.co-alert-manager-config__edit-alert-routing-btn {
-  margin-bottom: 10px;
-}
-
-.co-alert-manager-config__save-as-default-label {
-  padding-left: 4px;
-  padding-right: 4px;
-}
-
-.co-routing-label-editor__error-message {
-  margin-top: -15px;
 }

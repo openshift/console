@@ -34,12 +34,6 @@ $monitoring-line-height: 18px;
   color: $color-pf-blue-400;
 }
 
-.monitoring-timestamp {
-  display: flex;
-  flex-flow: row wrap;
-  font-size: ($font-size-base - 1);
-}
-
 .monitoring-silence-alert {
   max-width: 950px;
 
@@ -55,4 +49,10 @@ $monitoring-line-height: 18px;
 
 .monitoring-state-icon--pending {
   color: $color-pf-black-700;
+}
+
+.monitoring-timestamp {
+  display: flex;
+  flex-flow: row wrap;
+  font-size: ($font-size-base - 1);
 }
