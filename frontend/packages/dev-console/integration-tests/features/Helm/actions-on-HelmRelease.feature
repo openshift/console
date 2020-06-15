@@ -33,3 +33,4 @@ Scenario: Uninstall Helm Release through Context Menu: HR-08-TC04
     And user enters the release name
     And user clicks on the Delete button
     Then Helm release gets deleted
+    

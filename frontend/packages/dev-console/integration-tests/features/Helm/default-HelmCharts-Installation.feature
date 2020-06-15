@@ -53,3 +53,4 @@ Scenario: Open context menu and check the actions available: HR-07-TC01
     And user sees the Upgrade action item
     And user sees the Rollback action item
     And user sees the Uninstall Helm Release action item
+    
