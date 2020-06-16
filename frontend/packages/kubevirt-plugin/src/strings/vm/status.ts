@@ -1,8 +1,6 @@
 export const IMPORTING_VMWARE_MESSAGE =
   'The virtual machine is being imported. Disks will be converted to the libvirt format.';
 export const IMPORTING_ERROR_VMWARE_MESSAGE = 'The virtual machine could not be imported.';
-export const IMPORTING_OVIRT_MESSAGE = 'The virtual machine is being imported.';
-export const IMPORTING_ERROR_OVIRT_MESSAGE = 'The virtual machine could not be imported.';
 export const IMPORTING_CDI_MESSAGE =
   'The virtual machine is being imported. Disks are being copied from the source image.';
 export const IMPORTING_CDI_ERROR_MESSAGE = 'The virtual machine could not be imported.';
