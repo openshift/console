@@ -251,12 +251,17 @@ export type TableRowProps = {
   className?: string;
 };
 
-export const TableData: React.SFC<TableDataProps> = ({ className, ...props }) => {
-  return <td {...props} className={className} role="gridcell" />;
+export const TableData: React.SFC<TableDataProps> = ({
+  className,
+  isFiltered = false,
+  ...props
+}) => {
+  return !isFiltered && <td {...props} className={className} role="gridcell" />;
 };
 TableData.displayName = 'TableData';
 export type TableDataProps = {
   id?: string;
+  isFiltered?: boolean;
   className?: string;
 };
 
