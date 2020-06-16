@@ -21,8 +21,7 @@ import { VMResourceSummary, VMDetailsList, VMSchedulingList } from './vm-resourc
 import { VMUsersList } from './vm-users';
 import { VMTabProps } from './types';
 import { useGuestAgentInfo } from '../../hooks/use-guest-agent-info';
-import { getGuestAgentInfoOS } from '../../selectors/vmi-guest-agent-info/guest-agent-info';
-import { getGuestOSID } from '../../selectors/vmi-guest-agent-info/guest-os-info';
+import { GuestAgentInfoWrapper } from '../../k8s/wrapper/vm/guest-agent-info/guest-agent-info-wrapper';
 import { getVMStatus } from '../../statuses/vm/vm-status';
 import { VMStatusBundle } from '../../statuses/vm/types';
 import { isWindows } from '../../selectors/vm/combined';
@@ -83,13 +82,13 @@ export const VMDetails: React.FC<VMDetailsProps> = (props) => {
   const vmiLike = kindObj === VirtualMachineModel ? vm : vmi;
   const vmServicesData = getServicesForVmi(getLoadedData(props.services, []), vmi);
   const canUpdate = useAccessReview(asAccessReview(kindObj, vmiLike || {}, 'patch')) && !!vmiLike;
-  const [guestAgentInfo] = useGuestAgentInfo({ vmi });
-  const guestAgentInfoOS = getGuestAgentInfoOS(guestAgentInfo);
+
+  const [guestAgentInfoRaw] = useGuestAgentInfo({ vmi });
+  const guestAgentInfo = new GuestAgentInfoWrapper(guestAgentInfoRaw);
+  const operatingSystemID = guestAgentInfo.getOSInfo().getId();
 
   const OSMismatchExists =
-    vmi &&
-    guestAgentInfo &&
-    isWindows(vmiLike) !== (getGuestOSID(guestAgentInfoOS) === 'mswindows');
+    vmi && guestAgentInfoRaw && isWindows(vmiLike) !== (operatingSystemID === 'mswindows');
   const OSMismatchAlert = OSMismatchExists && (
     <Alert className="co-alert" variant="warning" title="Operating system mismatch" isInline>
       The operating system defined for this virtual machine does not match what is being reported by
