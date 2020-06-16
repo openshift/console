@@ -2,7 +2,7 @@ import * as _ from 'lodash';
 import { BootableDeviceType, V1NetworkInterface } from '../../types';
 import { DiskWrapper } from '../../k8s/wrapper/vm/disk-wrapper';
 import { DeviceType } from '../../constants';
-import { getBootableDisks, getInterfaces } from './selectors';
+import { getBootableDisks, getInterfaces, getDisks } from './selectors';
 import { asVM } from './vmlike';
 import { VMLikeEntityKind } from '../../types/vmLike';
 import { V1Disk } from '../../types/vm/disk/V1Disk';
@@ -33,18 +33,23 @@ export const transformDevices = (
 
 export const getDevices = (vmLikeEntity: VMLikeEntityKind): BootableDeviceType[] => {
   const vm = asVM(vmLikeEntity);
+  return transformDevices(getDisks(vm), getInterfaces(vm));
+};
+
+export const getBootableDevices = (vmLikeEntity: VMLikeEntityKind): BootableDeviceType[] => {
+  const vm = asVM(vmLikeEntity);
   return transformDevices(getBootableDisks(vm), getInterfaces(vm));
 };
 
-export const getBootableDevices = (vm: VMLikeEntityKind): BootableDeviceType[] => {
-  const devices = getDevices(vm).filter((device) => device.value.bootOrder);
+export const getSelectedBootableDevices = (vm: VMLikeEntityKind): BootableDeviceType[] => {
+  const devices = getBootableDevices(vm).filter((device) => device.value.bootOrder);
   return [...devices];
 };
 
 export const getBootableDevicesInOrder = (vm: VMLikeEntityKind): BootableDeviceType[] =>
-  _.sortBy(getBootableDevices(vm), 'value.bootOrder');
+  _.sortBy(getSelectedBootableDevices(vm), 'value.bootOrder');
 
 export const getNonBootableDevices = (vm: VMLikeEntityKind): BootableDeviceType[] => {
-  const devices = getDevices(vm).filter((device) => !device.value.bootOrder);
+  const devices = getBootableDevices(vm).filter((device) => !device.value.bootOrder);
   return [...devices];
 };

@@ -38,8 +38,6 @@ export const getDisks = (vm: VMKind, defaultValue: V1Disk[] = []): V1Disk[] =>
     ? defaultValue
     : vm.spec.template.spec.domain.devices.disks;
 
-export const getBootableDisks = (vm: VMKind, defaultValue: V1Disk[] = []): V1Disk[] =>
-  getDisks(vm, defaultValue).filter((disk) => !Object.keys(disk).includes('serial'));
 export const getInterfaces = (
   vm: VMKind,
   defaultValue: V1NetworkInterface[] = [],
@@ -54,6 +52,52 @@ export const getVolumes = (vm: VMKind, defaultValue: V1Volume[] = []): V1Volume[
   _.get(vm, 'spec.template.spec.volumes') == null ? defaultValue : vm.spec.template.spec.volumes;
 export const getDataVolumeTemplates = (vm: VMKind, defaultValue = []) =>
   _.get(vm, 'spec.dataVolumeTemplates') == null ? defaultValue : vm.spec.dataVolumeTemplates;
+
+export const getConfigMapVolumes = (vm: VMKind, defaultValue: V1Volume[] = []): V1Volume[] =>
+  getVolumes(vm, defaultValue).filter((vol) => Object.keys(vol).includes('configMap'));
+
+export const getSecretVolumes = (vm: VMKind, defaultValue: V1Volume[] = []): V1Volume[] =>
+  getVolumes(vm, defaultValue).filter((vol) => Object.keys(vol).includes('secret'));
+
+export const getServiceAccountVolumes = (vm: VMKind, defaultValue: V1Volume[] = []): V1Volume[] =>
+  getVolumes(vm, defaultValue).filter((vol) => Object.keys(vol).includes('serviceAccount'));
+
+export const getEnvDiskVolumes = (vm: VMKind, defaultValue: V1Volume[] = []): V1Volume[] => [
+  ...getConfigMapVolumes(vm, defaultValue),
+  ...getSecretVolumes(vm, defaultValue),
+  ...getServiceAccountVolumes(vm, defaultValue),
+];
+
+export const getConfigMapDisks = (vm: VMKind, defaultValue: V1Disk[] = []): V1Disk[] =>
+  getDisks(vm, defaultValue).filter(
+    (disk) => !!getConfigMapVolumes(vm).find((vol) => vol.name === disk.name),
+  );
+
+export const getSecretDisks = (vm: VMKind, defaultValue: V1Disk[] = []): V1Disk[] =>
+  getDisks(vm, defaultValue).filter(
+    (disk) => !!getSecretVolumes(vm).find((vol) => vol.name === disk.name),
+  );
+
+export const getServiceAccountDisks = (vm: VMKind, defaultValue: V1Disk[] = []): V1Disk[] =>
+  getDisks(vm, defaultValue).filter(
+    (disk) => !!getServiceAccountVolumes(vm).find((vol) => vol.name === disk.name),
+  );
+
+export const getEnvDisks = (vm: VMKind, defaultValue: V1Disk[] = []): V1Disk[] => [
+  ...getConfigMapDisks(vm, defaultValue),
+  ...getSecretDisks(vm, defaultValue),
+  ...getServiceAccountDisks(vm, defaultValue),
+];
+
+export const getBootableDisks = (vm: VMKind, defaultValue: V1Disk[] = []): V1Disk[] =>
+  getDisks(vm, defaultValue).filter(
+    (disk) => !getEnvDisks(vm).find((envDisk) => envDisk.name === disk.name),
+  );
+
+export const getNonBootableDisks = (vm: VMKind, defaultValue: V1Disk[] = []): V1Disk[] =>
+  getDisks(vm, defaultValue).filter((disk) =>
+    getEnvDisks(vm).find((envDisk) => envDisk.name === disk.name),
+  );
 
 export const getOperatingSystem = (vmLike: VMGenericLikeEntityKind): string =>
   findKeySuffixValue(getLabels(vmLike), TEMPLATE_OS_LABEL);
