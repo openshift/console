@@ -6,7 +6,7 @@ Background:
     And user is at developer perspecitve
 
 
-@regression, @smoke
+@regression, @smoke, @ODC-2993
 Scenario: Perform Upgrade action on Helm Release through Context Menu: HR-08-TC02
     Given user is at Topology page
     When user right clicks on the Helm Release to open the context menu

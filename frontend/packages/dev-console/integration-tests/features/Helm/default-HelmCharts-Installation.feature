@@ -12,7 +12,7 @@ Scenario: The Helm Chart option on the +Add Page: HR-01-TC01
     Then user can see Helm Chart card on the +Add page
 
 
-@regression, @smoke
+@regression, @smoke, @ODC-3022, @ODC-2993
 Scenario: Install Helm Chart from +Add Page using Form View: HR-02-TC01
     Given user is at +Add page
     When user clicks on the Helm Chart card on the +Add page
@@ -27,7 +27,7 @@ Scenario: Install Helm Chart from +Add Page using Form View: HR-02-TC01
     And Topology page have the helm chart workload 
 
 
-@regression
+@regression, @ODC-3022, @ODC-2993
 Scenario: Install Helm Chart from Developer Catalog Page using YAML View: HR-03
     Given user is at +Add page
     When user clicks on the Developer Catalog card on the +Add page
