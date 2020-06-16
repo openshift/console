@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as _ from 'lodash-es';
 import { Helmet } from 'react-helmet';
 import { safeLoad } from 'js-yaml';
-
+import * as semver from 'semver';
 import { PropertyItem } from '@patternfly/react-catalog-view-extension';
 import { ANNOTATIONS, FLAGS, APIError } from '@console/shared';
 import {
@@ -21,6 +21,8 @@ import {
   PartialObjectMetadata,
   TemplateKind,
 } from '../../module/k8s';
+import { k8sVersion } from '../../module/status';
+import { getK8sGitVersion } from '../../module/k8s/cluster-settings';
 import { withStartGuide } from '../start-guide';
 import { connectToFlags, flagPending, FlagsObject } from '../../reducers/features';
 import {
@@ -64,6 +66,7 @@ export const CatalogListPage = withExtensions<CatalogListPageExtensionProps>({
         helmCharts,
         namespace,
         loaded,
+        kubernetesVersion,
       } = this.props;
       if (
         (!prevProps.loaded && loaded) ||
@@ -72,7 +75,8 @@ export const CatalogListPage = withExtensions<CatalogListPageExtensionProps>({
         !_.isEqual(templateMetadata, prevProps.templateMetadata) ||
         !_.isEqual(projectTemplateMetadata, prevProps.projectTemplateMetadata) ||
         !_.isEqual(imageStreams, prevProps.imageStreams) ||
-        !_.isEqual(helmCharts, prevProps.helmCharts)
+        !_.isEqual(helmCharts, prevProps.helmCharts) ||
+        !_.isEqual(kubernetesVersion, prevProps.kubernetesVersion)
       ) {
         const items = this.getItems();
         this.setState({ items });
@@ -211,12 +215,19 @@ export const CatalogListPage = withExtensions<CatalogListPageExtensionProps>({
     }
 
     normalizeHelmCharts(chartEntries: HelmChartEntries): Item[] {
-      const { namespace: currentNamespace = '' } = this.props;
+      const { namespace: currentNamespace = '', kubernetesVersion } = this.props;
 
       return _.reduce(
         chartEntries,
         (normalizedCharts, charts) => {
           charts.forEach((chart: HelmChart) => {
+            if (
+              chart?.kubeVersion &&
+              semver.valid(kubernetesVersion) &&
+              !semver.satisfies(kubernetesVersion, chart?.kubeVersion)
+            ) {
+              return;
+            }
             const tags = chart.keywords;
             const chartName = chart.name;
             const chartVersion = chart.version;
@@ -390,6 +401,7 @@ export const Catalog = connectToFlags<CatalogProps>(
   );
   const [projectTemplateError, setProjectTemplateError] = React.useState<APIError>();
   const [helmCharts, setHelmCharts] = React.useState<HelmChartEntries>();
+  const [kubernetesVersion, setKubernetesVersion] = React.useState<string>();
 
   const loadTemplates = openshiftFlag && !mock;
 
@@ -433,6 +445,12 @@ export const Catalog = connectToFlags<CatalogProps>(
       const json = safeLoad(yaml);
       setHelmCharts(json.entries);
     });
+  }, []);
+
+  React.useEffect(() => {
+    k8sVersion()
+      .then((response) => setKubernetesVersion(getK8sGitVersion(response) || '-'))
+      .catch(() => setKubernetesVersion('unknown'));
   }, []);
 
   const error = templateError || projectTemplateError;
@@ -482,6 +500,7 @@ export const Catalog = connectToFlags<CatalogProps>(
           templateMetadata={templateMetadata}
           projectTemplateMetadata={projectTemplateMetadata}
           helmCharts={helmCharts}
+          kubernetesVersion={kubernetesVersion}
           {...(props as any)}
         />
       </Firehose>
@@ -524,6 +543,7 @@ export type CatalogListPageProps = CatalogListPageExtensionProps & {
   loaded: boolean;
   loadError?: string;
   namespace?: string;
+  kubernetesVersion?: string;
 };
 
 export type CatalogListPageState = {
@@ -542,18 +562,19 @@ export type HelmChartEntries = {
 
 export type HelmChart = {
   apiVersion: string;
-  appVersion: string;
+  appVersion?: string;
   created: string;
-  description: string;
-  digest: string;
-  home: string;
-  icon: string;
-  keywords: string[];
-  maintainers: Array<{ email: string; name: string }>;
+  description?: string;
+  digest?: string;
+  home?: string;
+  icon?: string;
+  keywords?: string[];
+  maintainers?: Array<{ name: string; email?: string; url?: string }>;
   name: string;
-  tillerVersion: string;
+  tillerVersion?: string;
   urls: string[];
   version: string;
+  kubeVersion?: string;
 };
 
 CatalogPage.displayName = 'CatalogPage';

@@ -6,7 +6,9 @@ import { GridItem } from '@patternfly/react-core';
 import { coFetchJSON, coFetch } from '@console/internal/co-fetch';
 import { DropdownField } from '@console/shared';
 import { confirmModal } from '@console/internal/components/modals/confirm-modal';
-import { HelmChartMetaData, HelmRelease, HelmChart, HelmActionType } from '../helm-types';
+import { k8sVersion } from '@console/internal/module/status';
+import { getK8sGitVersion } from '@console/internal/module/k8s';
+import { HelmChartMetaData, HelmChart, HelmActionType, HelmChartEntries } from '../helm-types';
 import { getChartURL, getChartVersions, getChartValuesYAML } from '../helm-utils';
 
 export type HelmChartVersionDropdownProps = {
@@ -29,6 +31,7 @@ const HelmChartVersionDropdown: React.FunctionComponent<HelmChartVersionDropdown
   const [helmChartVersions, setHelmChartVersions] = React.useState({});
   const [helmChartEntries, setHelmChartEntries] = React.useState<HelmChartMetaData[]>([]);
   const [initialChartYAMLValues, setInitialChartYAMLValues] = React.useState('');
+  const [kubernetesVersion, setKubernetesVersion] = React.useState<string>();
 
   const warnOnChartVersionChange = (
     onAccept: ModalCallback,
@@ -60,6 +63,12 @@ const HelmChartVersionDropdown: React.FunctionComponent<HelmChartVersionDropdown
   };
 
   React.useEffect(() => {
+    k8sVersion()
+      .then((response) => setKubernetesVersion(getK8sGitVersion(response) || '-'))
+      .catch(() => setKubernetesVersion('unknown'));
+  }, []);
+
+  React.useEffect(() => {
     setInitialChartYAMLValues(chartValuesYAML);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -68,7 +77,7 @@ const HelmChartVersionDropdown: React.FunctionComponent<HelmChartVersionDropdown
     let ignore = false;
 
     const fetchChartVersions = async () => {
-      let json: HelmRelease;
+      let json: { entries: HelmChartEntries };
 
       try {
         const response = await coFetch('/api/helm/charts/index.yaml');
@@ -78,14 +87,14 @@ const HelmChartVersionDropdown: React.FunctionComponent<HelmChartVersionDropdown
         if (ignore) return;
       }
       if (ignore) return;
-      setHelmChartEntries(_.get(json, ['entries', chartName]));
-      setHelmChartVersions(getChartVersions(_.get(json, ['entries', chartName])));
+      setHelmChartEntries(json?.entries?.[chartName]);
+      setHelmChartVersions(getChartVersions(json?.entries?.[chartName], kubernetesVersion));
     };
     fetchChartVersions();
     return () => {
       ignore = true;
     };
-  }, [chartName]);
+  }, [chartName, kubernetesVersion]);
 
   const onChartVersionChange = (value: string) => {
     const chartURL = getChartURL(helmChartEntries, value);

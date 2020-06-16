@@ -146,6 +146,7 @@ export const mockHelmChartData: HelmChartMetaData[] = [
       'https://raw.githubusercontent.com/IBM/charts/master/repo/community/hazelcast-enterprise-1.0.2.tgz',
     ],
     version: '1.0.2',
+    kubeVersion: '>=1.10.0',
   },
   {
     appVersion: '3.10.5',
@@ -156,6 +157,7 @@ export const mockHelmChartData: HelmChartMetaData[] = [
       'https://raw.githubusercontent.com/IBM/charts/master/repo/community/hazelcast-enterprise-1.0.1.tgz',
     ],
     version: '1.0.1',
+    kubeVersion: '>=1.11.0',
   },
 ];
 

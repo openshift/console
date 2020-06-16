@@ -40,7 +40,12 @@ export interface HelmChartMetaData {
   dependencies?: object[];
   type?: string;
   urls: string[];
+  kubeVersion?: string;
 }
+
+export type HelmChartEntries = {
+  [name: string]: HelmChartMetaData[];
+};
 
 export interface HelmReleaseResourcesData {
   releaseName: string;
