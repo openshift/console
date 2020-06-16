@@ -13,12 +13,7 @@ import {
 import { VMStatus } from '../../constants/vm/vm-status';
 import { isGuestAgentInstalled } from '../dashboards-page/vm-dashboard/vm-alerts';
 import { useGuestAgentInfo } from '../../hooks/use-guest-agent-info';
-import { getGuestAgentInfoUserList } from '../../selectors/vmi-guest-agent-info/guest-agent-info';
-import {
-  getGuestOSUserUserName,
-  getGuestOSUserLoginTimeSec,
-  getGuestOSUserDomain,
-} from '../../selectors/vmi-guest-agent-info/guest-os-user-list';
+import { GuestAgentInfoWrapper } from '../../k8s/wrapper/vm/guest-agent-info/guest-agent-info-wrapper';
 import { VMStatusBundle } from '../../statuses/vm/types';
 import { VMIKind } from '../../types';
 
@@ -73,7 +68,9 @@ const UsersTableRow = ({ obj: user, index, key, style }) => {
 };
 
 export const VMUsersList: React.FC<VMUsersListProps> = ({ vmi, vmStatusBundle, delay }) => {
-  const [response, error, loading] = useGuestAgentInfo({ vmi, delay });
+  const [guestAgentInfoRaw, error, loading] = useGuestAgentInfo({ vmi, delay });
+  const guestAgentInfo = new GuestAgentInfoWrapper(guestAgentInfoRaw);
+  const userList = guestAgentInfo.getUserList();
 
   if (vmStatusBundle.status !== VMStatus.RUNNING) {
     return <div className="text-center">{VIRTUAL_MACHINE_IS_NOT_RUNNING}</div>;
@@ -84,14 +81,14 @@ export const VMUsersList: React.FC<VMUsersListProps> = ({ vmi, vmStatusBundle, d
   }
 
   const data =
-    response &&
-    getGuestAgentInfoUserList(response) &&
-    getGuestAgentInfoUserList(response).map((user, uid) => ({
+    guestAgentInfoRaw &&
+    userList &&
+    userList.map((user, uid) => ({
       metadata: {
         uid,
-        userName: getGuestOSUserUserName(user),
-        domain: getGuestOSUserDomain(user),
-        loginTime: getGuestOSUserLoginTimeSec(user),
+        userName: user.getUserName(),
+        domain: user.getDomain(),
+        loginTime: user.getLoginTimeInMilliSec(),
       },
     }));
 

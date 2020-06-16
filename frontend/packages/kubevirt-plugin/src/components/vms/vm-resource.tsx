@@ -42,12 +42,7 @@ import {
   AFFINITY_MODAL_TITLE,
 } from '../modals/scheduling-modals/shared/consts';
 import { useGuestAgentInfo } from '../../hooks/use-guest-agent-info';
-import {
-  getGuestAgentInfoOS,
-  getGuestAgentInfoHostname,
-  getGuestAgentInfoTimezoneName,
-} from '../../selectors/vmi-guest-agent-info/guest-agent-info';
-import { getGuestOSPrettyName } from '../../selectors/vmi-guest-agent-info/guest-os-info';
+import { GuestAgentInfoWrapper } from '../../k8s/wrapper/vm/guest-agent-info/guest-agent-info-wrapper';
 import { VMStatusBundle } from '../../statuses/vm/types';
 
 import './vm-resource.scss';
@@ -89,8 +84,9 @@ export const VMResourceSummary: React.FC<VMResourceSummaryProps> = ({
   const description = getDescription(vmiLike);
   const os = getOperatingSystemName(vmiLike) || getOperatingSystem(vmiLike);
 
-  const [guestAgentInfo] = useGuestAgentInfo({ vmi });
-  const guestAgentInfoOS = getGuestAgentInfoOS(guestAgentInfo);
+  const [guestAgentInfoRaw] = useGuestAgentInfo({ vmi });
+  const guestAgentInfo = new GuestAgentInfoWrapper(guestAgentInfoRaw);
+  const operatingSystem = guestAgentInfo.getOSInfo().getPrettyName();
 
   return (
     <ResourceSummary resource={vmiLike}>
@@ -111,9 +107,9 @@ export const VMResourceSummary: React.FC<VMResourceSummaryProps> = ({
       <VMDetailsItem
         title="Operating System"
         idValue={prefixedID(id, 'os')}
-        isNotAvail={!(getGuestOSPrettyName(guestAgentInfoOS) || os)}
+        isNotAvail={!(operatingSystem || os)}
       >
-        {getGuestOSPrettyName(guestAgentInfoOS) || os}
+        {operatingSystem || os}
       </VMDetailsItem>
 
       {isVM && (
@@ -135,7 +131,11 @@ export const VMDetailsList: React.FC<VMResourceListProps> = ({
   canUpdateVM,
   kindObj,
 }) => {
-  const [guestAgentInfo] = useGuestAgentInfo({ vmi });
+  const [guestAgentInfoRaw] = useGuestAgentInfo({ vmi });
+  const guestAgentInfo = new GuestAgentInfoWrapper(guestAgentInfoRaw);
+  const hostname = guestAgentInfo.getHostname();
+  const timeZone = guestAgentInfo.getTimezoneName();
+
   const [isBootOrderModalOpen, setBootOrderModalOpen] = React.useState<boolean>(false);
   const isVM = kindObj === VirtualMachineModel;
   const vmiLike = isVM ? vm : vmi;
@@ -214,20 +214,12 @@ export const VMDetailsList: React.FC<VMResourceListProps> = ({
         {launcherPod && ipAddrs}
       </VMDetailsItem>
 
-      <VMDetailsItem
-        title="Hostname"
-        idValue={prefixedID(id, 'hostname')}
-        isNotAvail={!getGuestAgentInfoHostname(guestAgentInfo)}
-      >
-        {getGuestAgentInfoHostname(guestAgentInfo)}
+      <VMDetailsItem title="Hostname" idValue={prefixedID(id, 'hostname')} isNotAvail={!hostname}>
+        {hostname}
       </VMDetailsItem>
 
-      <VMDetailsItem
-        title="Time Zone"
-        idValue={prefixedID(id, 'timezone')}
-        isNotAvail={!getGuestAgentInfoTimezoneName(guestAgentInfo)}
-      >
-        {getGuestAgentInfoTimezoneName(guestAgentInfo)}
+      <VMDetailsItem title="Time Zone" idValue={prefixedID(id, 'timezone')} isNotAvail={!timeZone}>
+        {timeZone}
       </VMDetailsItem>
 
       <VMDetailsItem
