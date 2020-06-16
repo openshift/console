@@ -1,6 +1,7 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import { Gallery, GalleryItem } from '@patternfly/react-core';
+import { SubsystemHealth } from '@console/plugin-sdk';
 import AlertsBody from '@console/shared/src/components/dashboard/status-card/AlertsBody';
 import AlertItem from '@console/shared/src/components/dashboard/status-card/AlertItem';
 import { alertURL } from '@console/internal/components/monitoring';
@@ -19,9 +20,9 @@ import { FirehoseResource, FirehoseResult } from '@console/internal/components/u
 import { referenceForModel } from '@console/internal/module/k8s';
 import { getDataResiliencyState } from '@console/ceph-storage-plugin/src/components/dashboard-page/storage-dashboard/status-card/utils';
 import { filterNooBaaAlerts } from '../../utils';
-import { DATA_RESILIENCE_QUERIES, StatusCardQueries } from '../../queries';
+import { StatusCardQueries } from '../../queries';
 import { NooBaaSystemModel } from '../../models';
-import { getNooBaaState, ObjectServiceState } from './statuses';
+import { getNooBaaState } from './statuses';
 import './status-card.scss';
 
 const statusCardQueries = Object.keys(StatusCardQueries);
@@ -65,61 +66,40 @@ const StatusCard: React.FC<DashboardItemProps> = ({
   React.useEffect(() => {
     watchK8sResource(noobaaResource);
     statusCardQueries.forEach((key) => watchPrometheus(StatusCardQueries[key]));
-    watchPrometheus(DATA_RESILIENCE_QUERIES.REBUILD_PROGRESS_QUERY);
     return () => {
       stopWatchK8sResource(noobaaResource);
       statusCardQueries.forEach((key) => stopWatchPrometheusQuery(StatusCardQueries[key]));
-      stopWatchPrometheusQuery(DATA_RESILIENCE_QUERIES.REBUILD_PROGRESS_QUERY);
     };
   }, [watchK8sResource, stopWatchK8sResource, watchPrometheus, stopWatchPrometheusQuery]);
 
-  const buckets = prometheusResults.getIn([
-    StatusCardQueries.BUCKETS_COUNT,
-    'data',
-  ]) as PrometheusResponse;
-
-  const unhealthyBuckets = prometheusResults.getIn([
-    StatusCardQueries.UNHEALTHY_BUCKETS,
-    'data',
-  ]) as PrometheusResponse;
-
-  const pools = prometheusResults.getIn([
-    StatusCardQueries.POOLS_COUNT,
-    'data',
-  ]) as PrometheusResponse;
-
-  const unhealthyPools = prometheusResults.getIn([
-    StatusCardQueries.UNHEALTHY_POOLS,
+  const healthStatusResult = prometheusResults.getIn([
+    StatusCardQueries.HEALTH_QUERY,
     'data',
   ]) as PrometheusResponse;
 
   const progressResult = prometheusResults.getIn([
-    DATA_RESILIENCE_QUERIES.REBUILD_PROGRESS_QUERY,
+    StatusCardQueries.REBUILD_PROGRESS_QUERY,
     'data',
   ]) as PrometheusResponse;
+
+  const healthStatusError = prometheusResults.getIn([
+    StatusCardQueries.HEALTH_QUERY,
+    'loadError',
+  ]) as PrometheusResponse;
+
   const progressError = prometheusResults.getIn([
-    DATA_RESILIENCE_QUERIES.REBUILD_PROGRESS_QUERY,
+    StatusCardQueries.REBUILD_PROGRESS_QUERY,
     'loadError',
   ]);
 
   const noobaa = _.get(resources, 'noobaa') as FirehoseResult;
 
-  const queriesLoadError = statusCardQueries.some((q) => {
-    return prometheusResults.getIn([StatusCardQueries[q], 'loadError']);
-  });
-
-  const hasStatusLoadError = _.get(noobaa, 'loadError') || queriesLoadError;
-  const allStatusLoaded =
-    _.get(noobaa, 'loaded') && buckets && unhealthyBuckets && pools && unhealthyPools;
-
-  const objectServiceState: ObjectServiceState = getNooBaaState(
-    [buckets, unhealthyBuckets, pools, unhealthyPools],
-    !!hasStatusLoadError,
-    !allStatusLoaded,
+  const objectServiceState: SubsystemHealth = getNooBaaState(
+    [{ response: healthStatusResult, error: healthStatusError }],
     noobaa,
   );
 
-  const dataResiliencyState: ObjectServiceState = getDataResiliencyState([
+  const dataResiliencyState: SubsystemHealth = getDataResiliencyState([
     { response: progressResult, error: progressError },
   ]);
 

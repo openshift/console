@@ -1,77 +1,45 @@
-import * as _ from 'lodash';
+import { PrometheusHealthHandler } from '@console/plugin-sdk';
 import { HealthState } from '@console/shared/src/components/dashboard/status-card/states';
-import { PrometheusResponse } from '@console/internal/components/graphs';
-import { FirehoseResult } from '@console/internal/components/utils';
 import { getGaugeValue } from '../../utils';
 
-const NooBaaStatus = [
-  {
-    state: HealthState.ERROR,
-    message: 'MCG is not running',
-  },
-  {
+const nooBaaStatus = {
+  '0': { state: HealthState.OK },
+  '1': {
     state: HealthState.ERROR,
     message: 'All resources are unhealthy',
   },
-  {
+  '2': {
     state: HealthState.WARNING,
     message: 'Object Bucket has an issue',
   },
-  {
+  '3': {
     state: HealthState.ERROR,
     message: 'Many buckets have issues',
   },
-  {
+  '4': {
     state: HealthState.WARNING,
     message: 'Some buckets have issues',
   },
-];
-
-export const getNooBaaState: GetObjectServiceStatus = (
-  prometheusResponses = [],
-  hasLoadError,
-  isLoading,
-  k8sResponse,
-) => {
-  const [buckets, unhealthyBuckets, pools, unhealthyPools] = prometheusResponses.map((r) =>
-    getGaugeValue(r),
-  );
-  const noobaaPhase = _.get(k8sResponse, 'data[0].status.phase');
-  const unhealthyBucketsRatio = unhealthyBuckets / buckets;
-  const noData = !(buckets && unhealthyBuckets && pools && unhealthyPools && noobaaPhase);
-
-  if (hasLoadError) {
-    return { state: HealthState.UNKNOWN };
-  }
-  if (noData) {
-    return { state: HealthState.NOT_AVAILABLE };
-  }
-  if (isLoading) {
-    return { state: HealthState.LOADING };
-  }
-  if (noobaaPhase !== 'Ready') {
-    return NooBaaStatus[0];
-  }
-  if (Number(pools) === Number(unhealthyPools)) {
-    return NooBaaStatus[1];
-  }
-  if (Number(unhealthyBuckets) === 1) {
-    return NooBaaStatus[2];
-  }
-  if (unhealthyBucketsRatio >= 0.5) {
-    return NooBaaStatus[3];
-  }
-  if (unhealthyBucketsRatio >= 0.3) {
-    return NooBaaStatus[4];
-  }
-  return { state: HealthState.OK };
 };
 
-export type ObjectServiceState = { state: HealthState; message?: string };
+export const getNooBaaState: PrometheusHealthHandler = (responses, noobaa) => {
+  const { response, error } = responses[0];
+  const noobaaLoaded = noobaa?.loaded;
+  const noobaaLoadError = noobaa?.loadError;
+  const statusIndex: string = getGaugeValue(response);
 
-type GetObjectServiceStatus = (
-  prometheusResponses: PrometheusResponse[],
-  hasLoadError: boolean,
-  isLoading: boolean,
-  k8sResponse?: FirehoseResult,
-) => ObjectServiceState;
+  if (error || noobaaLoadError) {
+    return { state: HealthState.NOT_AVAILABLE };
+  }
+  if (!noobaaLoaded || !response) {
+    return { state: HealthState.LOADING };
+  }
+  if (!statusIndex) {
+    return { state: HealthState.NOT_AVAILABLE };
+  }
+  return (
+    nooBaaStatus[statusIndex] || {
+      state: HealthState.UNKNOWN,
+    }
+  );
+};
