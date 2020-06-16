@@ -42,8 +42,14 @@ class ListDropdown_ extends React.Component {
     this.UNSAFE_componentWillReceiveProps(this.props);
   }
 
-  UNSAFE_componentWillReceiveProps(nextProps) {
-    const { loaded, loadError } = nextProps;
+  UNSAFE_componentWillReceiveProps({
+    desc,
+    placeholder,
+    loaded,
+    loadError,
+    resources,
+    dataFilter,
+  }) {
     if (!loaded) {
       return;
     }
@@ -51,12 +57,9 @@ class ListDropdown_ extends React.Component {
     this.setState(({ selectedKey }) => {
       if (loadError) {
         return {
-          title: <div className="cos-error-title">Error Loading {nextProps.desc}</div>,
+          title: <div className="cos-error-title">Error Loading {desc}</div>,
         };
       }
-
-      const state = {};
-      const { resources, dataFilter } = nextProps;
 
       const unsortedList = {};
       _.each(resources, ({ data }, kindLabel) => {
@@ -81,31 +84,20 @@ class ListDropdown_ extends React.Component {
         .forEach((key) => {
           sortedList[key] = unsortedList[key];
         });
-
-      state.items = sortedList;
-
-      // did we switch from !loaded -> loaded ?
-      if (!this.props.loaded && !selectedKey) {
-        state.title = nextProps.placeholder;
-      }
-
-      if (selectedKey) {
-        const item = state.items[selectedKey];
-        // item may not exist if selectedKey is a role and then user switches to creating a ClusterRoleBinding
-        if (item) {
-          state.title = <ResourceName kind={item.kindLabel} name={item.name} />;
-        }
-      }
-
-      return state;
+      const selectedItem = sortedList[selectedKey];
+      return {
+        items: sortedList,
+        title: selectedItem ? (
+          <ResourceName kind={selectedItem.kindLabel} name={selectedItem.name} />
+        ) : (
+          placeholder
+        ),
+      };
     });
   }
 
   shouldComponentUpdate(nextProps, nextState) {
-    if (_.isEqual(this.state, nextState)) {
-      return false;
-    }
-    return true;
+    return !_.isEqual(this.state, nextState);
   }
 
   render() {
