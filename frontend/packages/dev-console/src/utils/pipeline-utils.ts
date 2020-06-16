@@ -85,6 +85,24 @@ export const ListFilterLabels = {
   [ListFilterId.Other]: 'Other',
 };
 
+export enum PipelineResourceListFilterId {
+  Git = 'git',
+  PullRequest = 'pullRequest',
+  Image = 'image',
+  Cluster = 'cluster',
+  Storage = 'storage',
+  CloudEvent = 'cloudEvent',
+}
+
+export const PipelineResourceListFilterLabels = {
+  [PipelineResourceListFilterId.Git]: 'Git',
+  [PipelineResourceListFilterId.PullRequest]: 'Pull Request',
+  [PipelineResourceListFilterId.Image]: 'Image',
+  [PipelineResourceListFilterId.Cluster]: 'Cluster',
+  [PipelineResourceListFilterId.Storage]: 'Storage',
+  [PipelineResourceListFilterId.CloudEvent]: 'Cloud Event',
+};
+
 // to be used by both Pipeline and Pipelinerun visualisation
 const sortTasksByRunAfterAndFrom = (
   tasks: PipelineVisualizationTaskItem[],
