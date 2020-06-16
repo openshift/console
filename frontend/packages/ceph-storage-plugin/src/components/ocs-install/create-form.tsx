@@ -4,6 +4,8 @@ import { match } from 'react-router';
 // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
 // @ts-ignore
 import { useDispatch } from 'react-redux';
+import { exampleForModel, ClusterServiceVersionKind } from '@console/operator-lifecycle-manager';
+
 import { Alert, ActionGroup, Button, Form, FormGroup } from '@patternfly/react-core';
 import {
   NodeKind,
@@ -11,6 +13,7 @@ import {
   k8sCreate,
   referenceForModel,
   StorageClassResourceKind,
+  K8sResourceKind,
 } from '@console/internal/module/k8s';
 import { ListPage } from '@console/internal/components/factory';
 import { NodeModel } from '@console/internal/models';
@@ -24,13 +27,15 @@ import {
 } from '@console/internal/components/utils';
 import { setFlag } from '@console/internal/actions/features';
 import {
-  ocsRequestData,
   labelTooltip,
   minSelectedNode,
   storageClassTooltip,
   defaultRequestSize,
+  MON_DATA_DIR_HOST_PATH,
+  DEFAULT_REPLICA,
+  STORAGE_DEVICE_SET_NAME,
 } from '../../constants/ocs-install';
-import { NO_PROVISIONER } from '../../constants';
+import { NO_PROVISIONER, OCS_CONVERGED_CR_NAME } from '../../constants';
 import { OCSServiceModel } from '../../models';
 import { OCSStorageClassDropdown } from '../modals/storage-class-dropdown';
 import { OSDSizeDropdown } from '../../utils/osd-size-dropdown';
@@ -60,21 +65,28 @@ const makeLabelNodesRequest = (selectedNodes: NodeKind[]): Promise<NodeKind>[] =
 };
 
 const makeOCSRequest = (
+  storageClusterExample: K8sResourceKind,
   selectedData: NodeKind[],
   storageClass: StorageClassResourceKind,
   osdSize: string,
 ): Promise<any> => {
   const promises = makeLabelNodesRequest(selectedData);
-  const ocsObj = _.cloneDeep(ocsRequestData);
+  const ocsObj = _.cloneDeep(storageClusterExample);
+  const scName = getName(storageClass);
 
   // for baremetal infra
   if (storageClass?.provisioner === NO_PROVISIONER) {
-    ocsObj.spec.monDataDirHostPath = '/var/lib/rook';
+    delete ocsObj.spec?.monPVCTemplate;
+    ocsObj.spec.monDataDirHostPath = MON_DATA_DIR_HOST_PATH;
     ocsObj.spec.storageDeviceSets[0].portable = false;
   }
+  if (storageClass?.provisioner !== NO_PROVISIONER) {
+    ocsObj.spec.monPVCTemplate.spec.storageClassName = scName;
+  }
 
-  const scName = getName(storageClass);
+  ocsObj.metadata.name = OCS_CONVERGED_CR_NAME;
   ocsObj.spec.storageDeviceSets[0].dataPVCTemplate.spec.storageClassName = scName;
+  ocsObj.spec.storageDeviceSets[0].name = STORAGE_DEVICE_SET_NAME;
   ocsObj.spec.storageDeviceSets[0].dataPVCTemplate.spec.resources.requests.storage = osdSize;
 
   return Promise.all(promises).then(() => {
@@ -95,25 +107,29 @@ export const CreateOCSServiceForm = withHandlePromise<
     match: {
       params: { appName, ns },
     },
+    csv,
   } = props;
   const [selectedNodes, setSelectedNodes] = React.useState<NodeKind[]>(null);
   const [visibleRows, setVisibleRows] = React.useState<NodeKind[]>(null);
   const [osdSize, setOSDSize] = React.useState(defaultRequestSize.NON_BAREMETAL);
   const [storageClass, setStorageClass] = React.useState<StorageClassResourceKind>(null);
   const dispatch = useDispatch();
+  const storageClusterExample = exampleForModel(csv, OCSServiceModel);
 
   const submit = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
     // eslint-disable-next-line promise/catch-or-return
-    handlePromise(makeOCSRequest(selectedNodes, storageClass, osdSize)).then(() => {
-      dispatch(setFlag(OCS_CONVERGED_FLAG, true));
-      dispatch(setFlag(OCS_FLAG, true));
-      history.push(
-        `/k8s/ns/${ns}/clusterserviceversions/${appName}/${referenceForModel(
-          OCSServiceModel,
-        )}/${getName(ocsRequestData)}`,
-      );
-    });
+    handlePromise(makeOCSRequest(storageClusterExample, selectedNodes, storageClass, osdSize)).then(
+      () => {
+        dispatch(setFlag(OCS_CONVERGED_FLAG, true));
+        dispatch(setFlag(OCS_FLAG, true));
+        history.push(
+          `/k8s/ns/${ns}/clusterserviceversions/${appName}/${referenceForModel(
+            OCSServiceModel,
+          )}/${OCS_CONVERGED_CR_NAME}`,
+        );
+      },
+    );
   };
 
   const handleStorageClass = (sc: StorageClassResourceKind) => {
@@ -170,7 +186,7 @@ export const CreateOCSServiceForm = withHandlePromise<
         </div>
         {storageClass?.provisioner === NO_PROVISIONER && (
           <PVsAvailableCapacity
-            replica={ocsRequestData.spec.storageDeviceSets[0].replica}
+            replica={DEFAULT_REPLICA}
             data-test-id="ceph-ocs-install-pvs-available-capacity"
             sc={storageClass}
           />
@@ -215,4 +231,5 @@ export const CreateOCSServiceForm = withHandlePromise<
 
 type CreateOCSServiceFormProps = {
   match: match<{ appName: string; ns: string }>;
+  csv: ClusterServiceVersionKind;
 };
