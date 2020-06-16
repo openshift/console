@@ -8,7 +8,6 @@ import {
   Page,
   Dropdown,
 } from '@console/internal/components/utils';
-import { ALL_NAMESPACES_KEY } from '@console/shared';
 import { referenceForModel } from '@console/internal/module/k8s';
 import NamespacedPage, { NamespacedPageVariants } from '../NamespacedPage';
 import { MenuActions, MenuAction } from './multi-tab-list-page-types';
@@ -31,19 +30,6 @@ const MultiTabListPage: React.FC<MultiTabListPageProps> = ({
   const {
     params: { ns },
   } = match;
-  const multiTabListPageTitle = (
-    <span style={{ display: 'flex', alignItems: 'flex-end' }}>
-      {title}
-      <span style={{ marginLeft: 'var(--pf-global--spacer--md)' }}>{badge}</span>
-    </span>
-  );
-  const handleNamespaceChange = (newNamespace: string): void => {
-    if (newNamespace === ALL_NAMESPACES_KEY) {
-      history.push('/pipelines/all-namespaces');
-    } else {
-      history.push('/pipelines/ns/:ns');
-    }
-  };
   const onSelectCreateAction = (actionName: string): void => {
     const selectedMenuItem: MenuAction = menuActions[actionName];
     const namespace = selectedMenuItem.model.namespaced ? ns || 'default' : ns;
@@ -58,25 +44,19 @@ const MultiTabListPage: React.FC<MultiTabListPageProps> = ({
   };
 
   return (
-    <NamespacedPage
-      variant={NamespacedPageVariants.light}
-      hideApplications
-      onNamespaceChange={handleNamespaceChange}
-    >
-      <PageHeading title={multiTabListPageTitle} className="co-m-nav-title--row">
-        <div className="co-m-primary-action">
-          <Dropdown
-            buttonClassName="pf-m-primary"
-            menuClassName="pf-m-align-right-on-md"
-            title="Create"
-            noSelection
-            items={_.mapValues(
-              menuActions,
-              (menuAction: MenuAction) => menuAction.label || menuAction.model.label,
-            )}
-            onChange={onSelectCreateAction}
-          />
-        </div>
+    <NamespacedPage variant={NamespacedPageVariants.light} hideApplications>
+      <PageHeading className="co-m-nav-title--row" title={title} badge={badge}>
+        <Dropdown
+          buttonClassName="pf-m-primary"
+          menuClassName="pf-m-align-right-on-md"
+          title="Create"
+          noSelection
+          items={_.mapValues(
+            menuActions,
+            (menuAction: MenuAction) => menuAction.label || menuAction.model.label,
+          )}
+          onChange={onSelectCreateAction}
+        />
       </PageHeading>
       <HorizontalNav pages={pages} match={match} noStatusBox />
     </NamespacedPage>

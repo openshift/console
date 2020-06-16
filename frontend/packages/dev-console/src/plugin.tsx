@@ -524,7 +524,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       loader: async () =>
         (
           await import(
-            './components/pipelines-lists/PipelinesListsPage' /* webpackChunkName: "dev-console-pipeline" */
+            './components/pipelines-lists/PipelinesListsPage' /* webpackChunkName: "admin-pipeline" */
           )
         ).default,
     },

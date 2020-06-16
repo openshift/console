@@ -11,9 +11,10 @@ interface PipelineRunsResourceListProps {
 }
 
 const PipelineRunsResourceList: React.FC<Omit<
-  React.ComponentProps<typeof ListPage> & PipelineRunsResourceListProps,
+  React.ComponentProps<typeof ListPage>,
   'canCreate' | 'kind' | 'ListComponent' | 'rowFilters'
->> = (props) => {
+> &
+  PipelineRunsResourceListProps> = (props) => {
   return (
     <ListPage
       {...props}

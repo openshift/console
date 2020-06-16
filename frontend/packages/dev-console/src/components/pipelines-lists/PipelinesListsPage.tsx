@@ -8,41 +8,17 @@ import {
   ConditionModel,
   PipelineRunModel,
 } from '../../models';
-import { Page, Firehose } from '@console/internal/components/utils';
-import { filters } from '../pipelines/list-page/PipelineAugmentRuns';
-import PipelineAugmentRunsWrapper from '../pipelines/list-page/PipelineAugmentRunsWrapper';
+import { Page } from '@console/internal/components/utils';
 import { TechPreviewBadge } from '@console/shared';
 import PipelineRunsResourceList from '../pipelineruns/PipelineRunsResourceList';
 import { DefaultPage } from '@console/internal/components/default-resource';
 import PipelineResourcesListPage from '../pipeline-resources/list-page/PipelineResourcesListPage';
 import { MenuAction, MenuActions } from '../multi-tab-list/multi-tab-list-page-types';
+import PipelinesList from '../pipelines/list-page/PipelinesList';
 
 interface PipelinesListPageProps {
   match: Rmatch<any>;
 }
-
-export const PipelinesResourceList: React.FC<PipelinesListPageProps> = ({
-  match: {
-    params: { ns: namespace },
-  },
-}) => {
-  const resources = [
-    {
-      isList: true,
-      kind: referenceForModel(PipelineModel),
-      namespace,
-      prop: PipelineModel.id,
-      filters: { ...filters },
-    },
-  ];
-  return (
-    <div className="co-m-pane__body">
-      <Firehose resources={resources}>
-        <PipelineAugmentRunsWrapper />
-      </Firehose>
-    </div>
-  );
-};
 
 const PipelinesListPage: React.FC<PipelinesListPageProps> = ({ match }) => {
   const {
@@ -62,22 +38,22 @@ const PipelinesListPage: React.FC<PipelinesListPageProps> = ({ match }) => {
     {
       href: '',
       name: PipelineModel.labelPlural,
-      component: PipelinesResourceList,
+      component: PipelinesList,
     },
     {
-      href: '/pipeline-runs',
+      href: 'pipeline-runs',
       name: PipelineRunModel.labelPlural,
       component: PipelineRunsResourceList,
       pageData: { showTitle, hideBadge },
     },
     {
-      href: '/pipeline-resources',
+      href: 'pipeline-resources',
       name: PipelineResourceModel.labelPlural,
       component: PipelineResourcesListPage,
       pageData: { showTitle, hideBadge },
     },
     {
-      href: '/conditions',
+      href: 'conditions',
       name: ConditionModel.labelPlural,
       component: DefaultPage,
       pageData: {
