@@ -624,12 +624,7 @@ Dropdown.propTypes = {
 
 class ActionsMenuDropdown extends DropdownMixin {
   render() {
-    const {
-      actions,
-      title = undefined,
-      actionsMenuClass = undefined,
-      toggleButtonClass = undefined,
-    } = this.props;
+    const { actions, title = undefined } = this.props;
     const onClick = (event, option) => {
       event.preventDefault();
 
@@ -646,20 +641,17 @@ class ActionsMenuDropdown extends DropdownMixin {
     return (
       <div
         ref={this.dropdownElement}
-        className={classNames(
-          {
-            'co-actions-menu pf-c-dropdown': true,
-            'pf-m-expanded': this.state.active,
-          },
-          actionsMenuClass,
-        )}
+        className={classNames({
+          'co-actions-menu pf-c-dropdown': true,
+          'pf-m-expanded': this.state.active,
+        })}
       >
         <button
           type="button"
           aria-haspopup="true"
           aria-label="Actions"
           aria-expanded={this.state.active}
-          className={classNames('pf-c-dropdown__toggle', toggleButtonClass)}
+          className="pf-c-dropdown__toggle"
           onClick={this.toggle}
           data-test-id="actions-menu-button"
         >
@@ -672,13 +664,7 @@ class ActionsMenuDropdown extends DropdownMixin {
   }
 }
 
-const ActionsMenu_ = ({
-  actions,
-  impersonate,
-  title = undefined,
-  actionsMenuClass = undefined,
-  toggleButtonClass = undefined,
-}) => {
+const ActionsMenu_ = ({ actions, impersonate, title = undefined }) => {
   const [isVisible, setVisible] = useSafetyFirst(false);
 
   // Check if any actions are visible when actions have access reviews.
@@ -706,14 +692,7 @@ const ActionsMenu_ = ({
       .catch(() => setVisible(true));
   }, [actions, impersonate, setVisible]);
 
-  return isVisible ? (
-    <ActionsMenuDropdown
-      actions={actions}
-      title={title}
-      actionsMenuClass={actionsMenuClass}
-      toggleButtonClass={toggleButtonClass}
-    />
-  ) : null;
+  return isVisible ? <ActionsMenuDropdown actions={actions} title={title} /> : null;
 };
 export const ActionsMenu = connect(impersonateStateToProps)(ActionsMenu_);
 
@@ -727,8 +706,6 @@ ActionsMenu.propTypes = {
     }),
   ).isRequired,
   title: PropTypes.node,
-  actionsMenuClass: PropTypes.string,
-  toggleButtonClass: PropTypes.string,
 };
 
 const containerLabel = (container) => (

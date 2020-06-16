@@ -7,14 +7,13 @@ import { runFilters } from '../pipelines/detail-page-tabs/PipelineRuns';
 import PipelineRunsList from './list-page/PipelineRunList';
 
 interface PipelineRunsResourceListProps {
-  showBadge?: boolean;
+  hideBadge?: boolean;
 }
 
 const PipelineRunsResourceList: React.FC<Omit<
   React.ComponentProps<typeof ListPage> & PipelineRunsResourceListProps,
   'canCreate' | 'kind' | 'ListComponent' | 'rowFilters'
 >> = (props) => {
-  const { showBadge = true } = props;
   return (
     <ListPage
       {...props}
@@ -22,7 +21,7 @@ const PipelineRunsResourceList: React.FC<Omit<
       kind={referenceForModel(PipelineRunModel)}
       ListComponent={PipelineRunsList}
       rowFilters={runFilters}
-      badge={showBadge ? getBadgeFromType(PipelineRunModel.badge) : null}
+      badge={props.hideBadge ? null : getBadgeFromType(PipelineRunModel.badge)}
     />
   );
 };
