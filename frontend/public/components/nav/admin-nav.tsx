@@ -5,7 +5,6 @@ import { NavItemSeparator } from '@patternfly/react-core';
 import { FLAGS } from '@console/shared';
 import { formatNamespacedRouteForResource } from '@console/shared/src/utils';
 import { featureReducerName } from '../../reducers/features';
-import { monitoringReducerName, MonitoringRoutes } from '../../reducers/monitoring';
 
 import {
   BuildConfigModel,
@@ -24,7 +23,7 @@ import {
 } from '../../models';
 
 import { referenceForModel } from '../../module/k8s';
-import { ExternalLink, HrefLink, ResourceNSLink, ResourceClusterLink } from './items';
+import { HrefLink, ResourceNSLink, ResourceClusterLink } from './items';
 import { NavSection } from './section';
 
 type SeparatorProps = {
@@ -59,13 +58,12 @@ const apiExplorerStartsWith = ['api-explorer', 'api-resource'];
 
 const monitoringNavSectionStateToProps = (state) => ({
   canAccess: !!state[featureReducerName].get(FLAGS.CAN_GET_NS),
-  kibanaURL: state[monitoringReducerName].get(MonitoringRoutes.Kibana),
 });
 
-const MonitoringNavSection_ = ({ canAccess, kibanaURL }) => {
+const MonitoringNavSection_ = ({ canAccess }) => {
   const canAccessPrometheus = canAccess && !!window.SERVER_FLAGS.prometheusBaseURL;
   const showSilences = canAccess && !!window.SERVER_FLAGS.alertManagerBaseURL;
-  return canAccessPrometheus || showSilences || kibanaURL ? (
+  return canAccessPrometheus || showSilences ? (
     <NavSection title="Monitoring">
       {canAccessPrometheus && (
         <HrefLink
@@ -82,7 +80,6 @@ const MonitoringNavSection_ = ({ canAccess, kibanaURL }) => {
         />
       )}
       {canAccessPrometheus && <HrefLink href="/monitoring/dashboards" name="Dashboards" />}
-      {kibanaURL && <ExternalLink href={kibanaURL} name="Logging" />}
     </NavSection>
   ) : null;
 };

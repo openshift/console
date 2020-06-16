@@ -2,7 +2,6 @@ import { applyMiddleware, combineReducers, createStore, compose, ReducersMapObje
 import * as _ from 'lodash-es';
 
 import { featureReducer, featureReducerName, FeatureState } from './reducers/features';
-import { monitoringReducer, monitoringReducerName, MonitoringState } from './reducers/monitoring';
 import k8sReducers, { K8sState } from './reducers/k8s';
 import UIReducers, { UIState } from './reducers/ui';
 import { dashboardsReducer, DashboardsState } from './reducers/dashboards';
@@ -34,7 +33,6 @@ export type RootState = {
   k8s: K8sState;
   UI: UIState;
   [featureReducerName]: FeatureState;
-  [monitoringReducerName]: MonitoringState;
   dashboards: DashboardsState;
   plugins?: {
     [namespace: string]: any;
@@ -45,7 +43,6 @@ const baseReducers = Object.freeze({
   k8s: k8sReducers, // data
   UI: UIReducers,
   [featureReducerName]: featureReducer,
-  [monitoringReducerName]: monitoringReducer,
   dashboards: dashboardsReducer,
 });
 
