@@ -136,6 +136,7 @@ const GitSection: React.FC<GitSectionProps> = ({ showSample }) => {
         data-test-id="git-form-input-url"
         required
       />
+      {sampleRepo && <SampleRepo onClick={fillSample} />}
       {values.git.showGitType && (
         <>
           <DropdownField
@@ -153,7 +154,6 @@ const GitSection: React.FC<GitSectionProps> = ({ showSample }) => {
           )}
         </>
       )}
-      {sampleRepo && <SampleRepo onClick={fillSample} />}
       <AdvancedGitOptions />
     </FormSection>
   );
