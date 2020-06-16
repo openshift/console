@@ -17,7 +17,7 @@ import { Navigation } from './nav';
 import { history, AsyncComponent } from './utils';
 import * as UIActions from '../actions/ui';
 import { fetchSwagger, getCachedResources } from '../module/k8s';
-import { receivedResources, watchAPIServices } from '../actions/k8s';
+import { receivedResources, watchCRDs } from '../actions/k8s';
 // cloud shell imports must come later than features
 import CloudShell from '@console/app/src/components/cloud-shell/CloudShell';
 import CloudShellTab from '@console/app/src/components/cloud-shell/CloudShellTab';
@@ -191,7 +191,7 @@ class App_ extends React.PureComponent {
 
 const App = withExtensions({ contextProviderExtensions: isContextProvider })(App_);
 
-const startDiscovery = () => store.dispatch(watchAPIServices());
+const startDiscovery = () => store.dispatch(watchCRDs());
 
 // Load cached API resources from localStorage to speed up page load.
 getCachedResources()

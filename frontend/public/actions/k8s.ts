@@ -9,14 +9,13 @@ import {
 } from '../module/k8s/get-resources';
 import { k8sList, k8sWatch, k8sGet } from '../module/k8s/resource';
 import { makeReduxID } from '../components/utils/k8s-watcher';
-import { APIServiceModel } from '../models';
+import { CustomResourceDefinitionModel } from '../models';
 import { coFetchJSON } from '../co-fetch';
 import { referenceForModel, K8sResourceKind, K8sKind } from '../module/k8s';
 
 export enum ActionType {
   ReceivedResources = 'resources',
   GetResourcesInFlight = 'getResourcesInFlight',
-  SetAPIGroups = 'setAPIGroups',
 
   StartWatchK8sObject = 'startWatchK8sObject',
   StartWatchK8sList = 'startWatchK8sList',
@@ -37,9 +36,14 @@ const REF_COUNTS = {};
 
 const nop = () => {};
 const paginationLimit = 250;
-const apiGroups = 'apiGroups';
+const crds = 'crds';
 
 type K8sEvent = { type: 'ADDED' | 'DELETED' | 'MODIFIED'; object: K8sResourceKind };
+type PartialCRD = {
+  metadata: {
+    uid: string;
+  };
+};
 
 export const updateListFromWS = (id: string, k8sObjects: K8sEvent[]) =>
   action(ActionType.UpdateListFromWS, { id, k8sObjects });
@@ -56,17 +60,19 @@ export const getResourcesInFlight = () => action(ActionType.GetResourcesInFlight
 export const receivedResources = (resources: DiscoveryResources) =>
   action(ActionType.ReceivedResources, { resources });
 
-export const getResources = () => (dispatch: Dispatch) => {
-  dispatch(getResourcesInFlight());
-  getResources_()
-    .then((resources) => {
-      // Cache the resources whenever discovery completes to improve console load times.
-      cacheResources(resources);
-      dispatch(receivedResources(resources));
-    })
-    // eslint-disable-next-line no-console
-    .catch((err) => console.error(err));
-};
+// Throttle `getResources` to prevent bursts of CRD status updates from triggering API discovery too often.
+export const getResources = () =>
+  _.throttle((dispatch: Dispatch) => {
+    dispatch(getResourcesInFlight());
+    getResources_()
+      .then((resources) => {
+        // Cache the resources whenever discovery completes to improve console load times.
+        cacheResources(resources);
+        dispatch(receivedResources(resources));
+      })
+      // eslint-disable-next-line no-console
+      .catch((err) => console.error(err));
+  }, 15 * 1000);
 
 export const filterList = (id: string, name: string, value: string) =>
   action(ActionType.FilterList, { id, name, value });
@@ -276,40 +282,41 @@ export const watchK8sList = (
   pollAndWatch();
 };
 
-export const setAPIGroups = (value: number) => action(ActionType.SetAPIGroups, { value });
-
-export const watchAPIServices = () => (dispatch, getState) => {
-  if (getState().k8s.has('apiservices') || POLLs[apiGroups]) {
-    return;
-  }
+export const watchCRDs = () => (dispatch) => {
   dispatch({ type: ActionType.GetResourcesInFlight });
 
-  k8sList(APIServiceModel, {})
+  k8sList(CustomResourceDefinitionModel, {})
     .then(() =>
       dispatch(
         watchK8sList(
-          makeReduxID(APIServiceModel, {}),
+          makeReduxID(CustomResourceDefinitionModel, {}),
           {},
-          APIServiceModel,
-          (id: string, events: K8sEvent[]) => {
-            // Only re-run API discovery on added or removed API services. A
-            // misbehaving API service can trigger frequent watch updates,
-            // which could cause console to thrash.
-            return events.some(({ type }) => type !== 'MODIFIED') ? getResources() : _.noop;
-          },
+          CustomResourceDefinitionModel,
+          getResources,
         ),
       ),
     )
     .catch(() => {
+      let previous: string[];
+      dispatch(getResources());
       const poller = () =>
-        coFetchJSON('api/kubernetes/apis').then((d) => {
-          if (d.groups.length !== getState().k8s.getIn(['RESOURCES', apiGroups], 0)) {
-            dispatch(getResources());
-          }
-          dispatch(setAPIGroups(d.groups.length));
-        });
+        coFetchJSON('api/console/crds')
+          .then((response) => {
+            const current: string[] = response.items.map((item: PartialCRD) => item.metadata.uid);
+            if (
+              previous &&
+              (previous.length !== current.length || _.xor(current, previous).length > 0)
+            ) {
+              dispatch(getResources());
+            }
+            previous = current;
+          })
+          .catch((e) => {
+            // eslint-disable-next-line no-console
+            console.error('Unable to poll for CRD updates.', e);
+          });
 
-      POLLs[apiGroups] = setInterval(poller, 30 * 1000);
+      POLLs[crds] = setInterval(poller, 30 * 1000);
       poller();
     });
 };
@@ -326,7 +333,6 @@ const k8sActions = {
   startWatchK8sObject,
   startWatchK8sList,
   stopWatchK8s,
-  setAPIGroups,
 };
 
 export type K8sAction = Action<typeof k8sActions>;

@@ -86,8 +86,6 @@ export default (state: K8sState, action: K8sAction): K8sState => {
   switch (action.type) {
     case ActionType.GetResourcesInFlight:
       return state.setIn(['RESOURCES', 'inFlight'], true);
-    case ActionType.SetAPIGroups:
-      return state.setIn(['RESOURCES', 'apiGroups'], action.payload.value);
     case ActionType.ReceivedResources:
       return (
         action.payload.resources.models

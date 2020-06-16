@@ -115,6 +115,7 @@ type Server struct {
 	TerminalProxyTLSConfig           *tls.Config
 	GitOpsProxyConfig                *proxy.Config
 	// A lister for resource listing of a particular kind
+	CRDLister                          ResourceLister
 	MonitoringDashboardConfigMapLister ResourceLister
 	KnativeEventSourceCRDLister        ResourceLister
 	KnativeChannelCRDLister            ResourceLister
@@ -370,6 +371,7 @@ func (s *Server) HTTPHandler() http.Handler {
 		)
 	}
 
+	handle("/api/console/crds", authHandler(s.handleCRDs))
 	handle("/api/console/monitoring-dashboard-config", authHandler(s.handleMonitoringDashboardConfigmaps))
 	handle("/api/console/knative-event-sources", authHandler(s.handleKnativeEventSourceCRDs))
 	handle("/api/console/knative-channels", authHandler(s.handleKnativeChannelCRDs))
@@ -416,6 +418,10 @@ func (s *Server) HTTPHandler() http.Handler {
 	mux.HandleFunc(s.BaseURL.Path, s.indexHandler)
 
 	return securityHeadersMiddleware(http.Handler(mux))
+}
+
+func (s *Server) handleCRDs(w http.ResponseWriter, r *http.Request) {
+	s.CRDLister.HandleResources(w, r)
 }
 
 func (s *Server) handleMonitoringDashboardConfigmaps(w http.ResponseWriter, r *http.Request) {

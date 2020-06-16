@@ -5,12 +5,12 @@ import * as _ from 'lodash-es';
 import * as k8sActions from '../../public/actions/k8s';
 import * as k8sResource from '../../public/module/k8s/resource';
 import { K8sResourceKind, K8sKind } from '../../public/module/k8s';
-import { PodModel, APIServiceModel } from '../../public/models';
+import { CustomResourceDefinitionModel, PodModel } from '../../public/models';
 import { testResourceInstance } from '../../__mocks__/k8sResourcesMocks';
 import * as coFetch from '../../public/co-fetch';
 
-describe('watchAPIServices', () => {
-  const { watchAPIServices } = k8sActions;
+describe('watchCRDs', () => {
+  const { watchCRDs } = k8sActions;
 
   const spyAndExpect = (spy: Spy) => (returnValue: any) =>
     new Promise((resolve) =>
@@ -20,20 +20,7 @@ describe('watchAPIServices', () => {
       }),
     );
 
-  it('does nothing if already watching `APIServices`', (done) => {
-    const getState = jasmine
-      .createSpy('getState')
-      .and.returnValue({ k8s: ImmutableMap().set('apiservices', []) });
-    const dispatch = jasmine.createSpy('dispatch').and.callFake((action) => {
-      fail(`Should not dispatch action: ${JSON.stringify(action)}`);
-    });
-
-    watchAPIServices()(dispatch, getState);
-    done();
-  });
-
-  it('dispatches `getResourcesInFlight` action before listing `APIServices`', (done) => {
-    const getState = jasmine.createSpy('getState').and.returnValue({ k8s: ImmutableMap() });
+  it('dispatches `getResourcesInFlight` action before listing `CustomResourceDefinitions`', (done) => {
     const dispatch = jasmine.createSpy('dispatch');
     spyOn(k8sActions, 'watchK8sList').and.returnValue({});
 
@@ -42,33 +29,31 @@ describe('watchAPIServices', () => {
       done();
     });
 
-    watchAPIServices()(dispatch, getState);
+    watchCRDs()(dispatch);
   });
 
-  it('attempts to list `APIServices`', (done) => {
-    const getState = jasmine.createSpy('getState').and.returnValue({ k8s: ImmutableMap() });
+  it('attempts to list `CustomResourceDefinitions`', (done) => {
     const dispatch = jasmine.createSpy('dispatch');
     spyOn(k8sActions, 'watchK8sList');
 
     spyAndExpect(spyOn(k8sResource, 'k8sList'))(Promise.resolve({})).then(([model]) => {
-      expect(model).toEqual(APIServiceModel);
+      expect(model).toEqual(CustomResourceDefinitionModel);
       done();
     });
 
-    watchAPIServices()(dispatch, getState);
+    watchCRDs()(dispatch);
   });
 
-  it('falls back to polling Kubernetes `/apis` endpoint if cannot list `APIServices`', (done) => {
-    const getState = jasmine.createSpy('getState').and.returnValue({ k8s: ImmutableMap() });
+  it('falls back to polling Kubernetes `/api/console/crds` endpoint if cannot list `CustomResourceDefinitions`', (done) => {
     const dispatch = jasmine.createSpy('dispatch');
     spyOn(k8sResource, 'k8sList').and.returnValue(Promise.reject());
 
-    spyAndExpect(spyOn(coFetch, 'coFetchJSON'))(Promise.resolve({ groups: [] })).then(([path]) => {
-      expect(path).toEqual('api/kubernetes/apis');
+    spyAndExpect(spyOn(coFetch, 'coFetchJSON'))(Promise.resolve({ items: [] })).then(([path]) => {
+      expect(path).toEqual('api/console/crds');
       done();
     });
 
-    watchAPIServices()(dispatch, getState);
+    watchCRDs()(dispatch);
   });
 });
 

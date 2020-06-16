@@ -19,6 +19,7 @@ import (
 
 	"github.com/openshift/console/pkg/auth"
 	"github.com/openshift/console/pkg/bridge"
+	"github.com/openshift/console/pkg/crd"
 	"github.com/openshift/console/pkg/helm/chartproxy"
 	"github.com/openshift/console/pkg/knative"
 	"github.com/openshift/console/pkg/proxy"
@@ -563,6 +564,21 @@ func main() {
 	default:
 		bridge.FlagFatalf("k8s-mode", "must be one of: service-account, bearer-token, oidc, openshift")
 	}
+
+	srv.CRDLister = server.NewResourceLister(
+		resourceListerToken,
+		&url.URL{
+			Scheme: k8sEndpoint.Scheme,
+			Host:   k8sEndpoint.Host,
+			Path:   "/apis/apiextensions.k8s.io/v1/customresourcedefinitions",
+		},
+		&http.Client{
+			Transport: &http.Transport{
+				TLSClientConfig: srv.K8sProxyConfig.TLSClientConfig,
+			},
+		},
+		crd.CRDFilter,
+	)
 
 	srv.MonitoringDashboardConfigMapLister = server.NewResourceLister(
 		resourceListerToken,
