@@ -27,6 +27,7 @@ import {
   PipelineTaskRef,
   PipelineWorkspace,
   PipelineRunWorkspace,
+  TaskRunKind,
 } from './pipeline-augment';
 import { pipelineFilterReducer, pipelineRunStatus } from './pipeline-filter-reducer';
 
@@ -356,11 +357,11 @@ export const calculateRelativeTime = (startTime: string, completionTime?: string
   return 'a few seconds';
 };
 
-export const pipelineRunDuration = (run: PipelineRun): string => {
+export const pipelineRunDuration = (run: PipelineRun | TaskRunKind): string => {
   const startTime = _.get(run, ['status', 'startTime'], null);
   const completionTime = _.get(run, ['status', 'completionTime'], null);
 
-  // Duration cannot be computed if start time is missing or a completed/failed pipeline has no end time
+  // Duration cannot be computed if start time is missing or a completed/failed pipeline/task has no end time
   if (!startTime || (!completionTime && pipelineRunStatus(run) !== 'Running')) {
     return '-';
   }

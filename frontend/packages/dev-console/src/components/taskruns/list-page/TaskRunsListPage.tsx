@@ -11,9 +11,10 @@ interface TaskRunsListPageProps {
 }
 
 const TaskRunsListPage: React.FC<Omit<
-  React.ComponentProps<typeof ListPage> & TaskRunsListPageProps,
+  React.ComponentProps<typeof ListPage>,
   'canCreate' | 'kind' | 'ListComponent' | 'rowFilters'
->> = (props) => {
+> &
+  TaskRunsListPageProps> = (props) => {
   return (
     <ListPage
       {...props}

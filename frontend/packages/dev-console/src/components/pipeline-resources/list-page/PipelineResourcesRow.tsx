@@ -5,6 +5,8 @@ import { referenceForModel } from '@console/internal/module/k8s';
 import { PipelineResourceKind } from '../../../utils/pipeline-augment';
 import { PipelineResourceModel } from '../../../models';
 import { tableColumnClasses } from './pipeline-resources-table';
+import { PipelineResourceListFilterLabels } from '../../../utils/pipeline-utils';
+import { pipelineResourceFilterReducer } from '../../../utils/pipeline-filter-reducer';
 
 const PipelineResourcesRow: RowFunction<PipelineResourceKind> = ({ obj, index, key, style }) => {
   const pipelineResourcesReference = referenceForModel(PipelineResourceModel);
@@ -22,7 +24,9 @@ const PipelineResourcesRow: RowFunction<PipelineResourceKind> = ({ obj, index, k
       <TableData className={tableColumnClasses[1]}>
         <ResourceLink kind="Namespace" name={obj.metadata.namespace} />
       </TableData>
-      <TableData className={tableColumnClasses[2]}>{obj.spec.type}</TableData>
+      <TableData className={tableColumnClasses[2]}>
+        {PipelineResourceListFilterLabels[pipelineResourceFilterReducer(obj)]}
+      </TableData>
       <TableData className={tableColumnClasses[3]}>
         <Timestamp timestamp={obj.metadata.creationTimestamp} />
       </TableData>
