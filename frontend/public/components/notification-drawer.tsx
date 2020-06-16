@@ -31,9 +31,13 @@ import {
 } from '@patternfly/react-core';
 
 import { coFetchJSON } from '../co-fetch';
-import { ClusterUpdate, ClusterVersionKind, referenceForModel } from '../module/k8s';
+import {
+  ClusterUpdate,
+  ClusterVersionKind,
+  getSortedUpdates,
+  referenceForModel,
+} from '../module/k8s';
 import { ClusterVersionModel } from '../models';
-import { getSortedUpdates } from './modals/cluster-update-modal';
 import { usePrevious } from '@console/metal3-plugin/src/hooks';
 import { useK8sWatchResource, WatchK8sResource } from './utils/k8s-watch-hook';
 

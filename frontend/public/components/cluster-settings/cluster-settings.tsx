@@ -1,5 +1,7 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
+import * as classNames from 'classnames';
+import * as semver from 'semver';
 import { Helmet } from 'react-helmet';
 import { Button, Popover, Tooltip } from '@patternfly/react-core';
 import { Link } from 'react-router-dom';
@@ -12,7 +14,12 @@ import {
 } from '@patternfly/react-icons';
 
 import { ClusterOperatorPage } from './cluster-operator';
-import { clusterChannelModal, clusterUpdateModal, errorModal } from '../modals';
+import {
+  clusterChannelModal,
+  clusterMoreUpdatesModal,
+  clusterUpdateModal,
+  errorModal,
+} from '../modals';
 import { GlobalConfigPage } from './global-config';
 import { ClusterAutoscalerModel, ClusterVersionModel } from '../../models';
 import {
@@ -20,6 +27,7 @@ import {
   ClusterVersionConditionType,
   ClusterVersionKind,
   clusterVersionReference,
+  getAvailableClusterChannels,
   getAvailableClusterUpdates,
   getClusterID,
   getClusterUpdateStatus,
@@ -28,6 +36,7 @@ import {
   getErrataLink,
   getLastCompletedUpdate,
   getOCMLink,
+  getSortedUpdates,
   k8sPatch,
   K8sResourceConditionStatus,
   K8sResourceKind,
@@ -247,6 +256,153 @@ const ChannelHeader: React.FC<{}> = () => {
   );
 };
 
+const Channel: React.FC<ChannelProps> = ({ children, endOfLife }) => {
+  return (
+    <div
+      className={classNames('co-channel', {
+        'co-channel--end-of-life': endOfLife,
+      })}
+    >
+      {children}
+    </div>
+  );
+};
+
+const ChannelLine: React.FC<ChannelLineProps> = ({ children, start }) => {
+  return (
+    <li className={classNames('co-channel-line', { 'co-channel-start': start })}>{children}</li>
+  );
+};
+
+const ChannelName: React.FC<ChannelNameProps> = ({ children, current }) => {
+  return (
+    <span
+      className={classNames('co-channel-name', {
+        'co-channel-name--current': current,
+      })}
+    >
+      {children}
+    </span>
+  );
+};
+
+const ChannelPath: React.FC<ChannelPathProps> = ({ children, current }) => {
+  return (
+    <ul
+      className={classNames('co-channel-path', {
+        'co-channel-path--current': current,
+      })}
+    >
+      {children}
+    </ul>
+  );
+};
+
+const ChannelVersion: React.FC<ChannelVersionProps> = ({ children, current }) => {
+  return (
+    <span
+      className={classNames('co-channel-version', {
+        'co-channel-version--current': current,
+      })}
+    >
+      {children}
+    </span>
+  );
+};
+
+const ChannelVersionDot: React.FC<ChannelVersionDotProps> = ({ current }) => {
+  return (
+    <div
+      className={classNames('co-channel-version-dot', {
+        'co-channel-version-dot--current': current,
+      })}
+    ></div>
+  );
+};
+
+const splitChannel = (channel: string) => {
+  const parsed = /^(.+)-(\d\.\d+)$/.exec(channel);
+  return parsed ? { prefix: parsed[1], version: parsed[2] } : null;
+};
+
+const UpdatesGraph: React.FC<UpdatesGraphProps> = ({ cv }) => {
+  const status = getClusterUpdateStatus(cv);
+  const availableUpdates = getSortedUpdates(cv);
+  const upToDate = status === ClusterUpdateStatus.UpToDate;
+  const desiredVersion = getDesiredClusterVersion(cv);
+  const lastVersion = getLastCompletedUpdate(cv);
+  const newestVersion = availableUpdates[0]?.version;
+  const secondNewestVersion = availableUpdates[1]?.version;
+  const currentChannel = cv.spec.channel;
+  const currentPrefix = splitChannel(currentChannel)?.prefix;
+  const similarChannels = _.keys(getAvailableClusterChannels()).filter((channel: string) => {
+    return currentPrefix && splitChannel(channel)?.prefix === currentPrefix;
+  });
+  const newerChannel = similarChannels.find(
+    // find the next minor version, which there should never be more than one
+    (channel) => semver.gt(semver.coerce(channel).version, semver.coerce(currentChannel).version),
+  );
+
+  return (
+    status !== ClusterUpdateStatus.ErrorRetrieving && (
+      <div className="co-cluster-settings__updates-graph">
+        <Channel>
+          <ChannelPath current>
+            {/* Segment 1 */}
+            <ChannelLine>
+              <ChannelVersion current>{lastVersion}</ChannelVersion>
+              <ChannelVersionDot current />
+            </ChannelLine>
+            {/* Segment 2 */}
+            {(upToDate || availableUpdates.length < 2) && <ChannelLine />}
+            {availableUpdates.length === 2 && (
+              <ChannelLine>
+                <ChannelVersion>{secondNewestVersion}</ChannelVersion>
+                <ChannelVersionDot />
+              </ChannelLine>
+            )}
+            {availableUpdates.length > 2 && (
+              <ChannelLine>
+                <Button
+                  variant="secondary"
+                  className="co-channel-more-versions"
+                  onClick={() => clusterMoreUpdatesModal({ cv })}
+                >
+                  + More
+                </Button>
+              </ChannelLine>
+            )}
+            {/* Segment 3 */}
+            {upToDate ? (
+              <ChannelLine />
+            ) : (
+              (newestVersion || status === ClusterUpdateStatus.Updating) && (
+                <ChannelLine>
+                  <ChannelVersion>{newestVersion || desiredVersion}</ChannelVersion>
+                  <ChannelVersionDot />
+                </ChannelLine>
+              )
+            )}
+          </ChannelPath>
+          <ChannelName current>{currentChannel} channel</ChannelName>
+        </Channel>
+        {newerChannel && (
+          <Channel>
+            <ChannelPath>
+              <ChannelLine start={true}>
+                <div className="co-channel-switch"></div>
+              </ChannelLine>
+              <ChannelLine />
+              <ChannelLine />
+            </ChannelPath>
+            <ChannelName>{newerChannel} channel</ChannelName>
+          </Channel>
+        )}
+      </div>
+    )
+  );
+};
+
 export const ClusterVersionDetailsTable: React.SFC<ClusterVersionDetailsTableProps> = ({
   obj: cv,
   autoscalers,
@@ -296,6 +452,7 @@ export const ClusterVersionDetailsTable: React.SFC<ClusterVersionDetailsTablePro
                     </div>
                   </div>
                 </div>
+                <UpdatesGraph cv={cv} />
               </div>
             </div>
           </div>
@@ -461,6 +618,39 @@ type CurrentChannelProps = {
 };
 
 type CurrentVersionProps = {
+  cv: ClusterVersionKind;
+};
+
+type ChannelProps = {
+  children: React.ReactNode;
+  endOfLife?: boolean;
+};
+
+type ChannelLineProps = {
+  children?: React.ReactNode;
+  start?: boolean;
+};
+
+type ChannelNameProps = {
+  children: React.ReactNode;
+  current?: boolean;
+};
+
+type ChannelPathProps = {
+  children: React.ReactNode;
+  current?: boolean;
+};
+
+type ChannelVersionProps = {
+  children: React.ReactNode;
+  current?: boolean;
+};
+
+type ChannelVersionDotProps = {
+  current?: boolean;
+};
+
+type UpdatesGraphProps = {
   cv: ClusterVersionKind;
 };
 

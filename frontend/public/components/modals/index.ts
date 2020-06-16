@@ -71,6 +71,11 @@ export const clusterChannelModal = (props) =>
     m.clusterChannelModal(props),
   );
 
+export const clusterMoreUpdatesModal = (props) =>
+  import(
+    './cluster-more-updates-modal' /* webpackChunkName: "cluster-more-updates-modal" */
+  ).then((m) => m.clusterMoreUpdatesModal(props));
+
 export const clusterUpdateModal = (props) =>
   import('./cluster-update-modal' /* webpackChunkName: "cluster-update-modal" */).then((m) =>
     m.clusterUpdateModal(props),
