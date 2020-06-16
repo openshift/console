@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import { sortable } from '@patternfly/react-table';
 import * as classNames from 'classnames';
 import * as _ from 'lodash-es';
-import { ALL_NAMESPACES_KEY, Status } from '@console/shared';
+import { Status } from '@console/shared';
 import { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
 
 import * as UIActions from '../actions/ui';
@@ -115,6 +115,7 @@ const podRowStateToProps = ({ UI }) => ({
 
 const PodTableRow = connect<PodTableRowPropsFromState, null, PodTableRowProps>(podRowStateToProps)(
   ({
+    columns,
     obj: pod,
     index,
     rowKey,
@@ -135,7 +136,7 @@ const PodTableRow = connect<PodTableRowPropsFromState, null, PodTableRowProps>(p
         </TableData>
         <TableData
           className={classNames(tableColumnClasses[1], 'co-break-word')}
-          isFiltered={UIActions.getActiveNamespace() !== ALL_NAMESPACES_KEY}
+          isFiltered={_.findIndex(columns, { title: 'Namespace' }) < 0}
         >
           <ResourceLink kind="Namespace" name={namespace} />
         </TableData>
@@ -190,7 +191,6 @@ const getHeader = (showNodes) => {
         sortField: 'metadata.namespace',
         transforms: [sortable],
         props: { className: tableColumnClasses[1] },
-        isFiltered: UIActions.getActiveNamespace() !== ALL_NAMESPACES_KEY,
       },
       {
         title: 'Status',
@@ -238,7 +238,7 @@ const getHeader = (showNodes) => {
         title: '',
         props: { className: tableColumnClasses[9] },
       },
-    ].filter((column) => !column.isFiltered);
+    ];
   };
 };
 
@@ -522,6 +522,7 @@ const getRow = (showNodes) => {
       rowKey={rowArgs.key}
       style={rowArgs.style}
       showNodes={showNodes}
+      columns={rowArgs.columns}
     />
   );
 };
@@ -639,6 +640,7 @@ type PodDetailsProps = {
 };
 
 type PodTableRowProps = {
+  columns: any;
   obj: PodKind;
   index: number;
   rowKey: string;

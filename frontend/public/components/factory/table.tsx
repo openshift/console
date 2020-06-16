@@ -3,6 +3,7 @@ import * as PropTypes from 'prop-types';
 import * as React from 'react';
 import { connect } from 'react-redux';
 import {
+  ALL_NAMESPACES_KEY,
   getNodeRoles,
   getMachinePhase,
   nodeMemory,
@@ -67,6 +68,21 @@ const getAllTableFilters = (rowFilters) => ({
   ...tableFilters,
   ...rowFiltersToFilterFuncs(rowFilters),
 });
+
+const globalColumnFilter = {
+  title: 'Namespace',
+};
+
+const isColumnFiltered = (columnTitle) => {
+  return columnTitle !== globalColumnFilter.title;
+};
+
+const getFilteredHeader = (Header, componentProps) => {
+  if (UIActions.getActiveNamespace() !== ALL_NAMESPACES_KEY) {
+    return Header(componentProps).filter((column) => isColumnFiltered(column.title));
+  }
+  return Header(componentProps);
+};
 
 const getFilteredRows = (_filters, rowFilters, objects) => {
   if (_.isEmpty(_filters)) {
@@ -468,7 +484,7 @@ export const Table = connect<
         'match',
         'kindObj',
       ]);
-      const columns = props.Header(componentProps);
+      const columns = getFilteredHeader(props.Header, componentProps);
       const { currentSortField, currentSortFunc, currentSortOrder } = props;
 
       this._columnShift = props.onSelect ? 1 : 0; //shift indexes by 1 if select provided
@@ -499,7 +515,7 @@ export const Table = connect<
         'match',
         'kindObj',
       ]);
-      const columns = this.props.Header(componentProps);
+      const columns = getFilteredHeader(this.props.Header, componentProps);
       const sp = new URLSearchParams(window.location.search);
       const columnIndex = _.findIndex(columns, { title: sp.get('sortBy') });
 
@@ -542,7 +558,7 @@ export const Table = connect<
         'match',
         'kindObj',
       ]);
-      const columns = this.props.Header(componentProps);
+      const columns = getFilteredHeader(this.props.Header, componentProps);
       const sortColumn = columns[index - this._columnShift];
       this._applySort(sortColumn.sortField, sortColumn.sortFunc, direction, sortColumn.title);
       this.setState({
@@ -577,7 +593,7 @@ export const Table = connect<
         'match',
         'kindObj',
       ]);
-      const columns = Header(componentProps);
+      const columns = getFilteredHeader(Header, componentProps);
       const ariaRowCount = componentProps.data && componentProps.data.length;
       const scrollNode = typeof scrollElement === 'function' ? scrollElement() : scrollElement;
       const renderVirtualizedTable = (scrollContainer) => (
