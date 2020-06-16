@@ -9,10 +9,7 @@ Background:
 @regression, @smoke
 Scenario: The Helm Chart option on the +Add Page: HR-01-TC01
     Given user is at +Add page
-    When user clicks on the Helm Chart card on the +Add page
-    Then the Developer Catalog page gets open 
-    And the checkbox for Helm Charts checked
-    And there are Helm Charts listed
+    Then user can see Helm Chart card on the +Add page
 
 
 @regression, @smoke
@@ -53,4 +50,3 @@ Scenario: Open context menu and check the actions available: HR-07-TC01
     And user sees the Upgrade action item
     And user sees the Rollback action item
     And user sees the Uninstall Helm Release action item
-    
