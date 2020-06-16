@@ -5,6 +5,7 @@ import {
   FirehoseResource,
   FirehoseResult,
   LoadingBox,
+  NsDropdown,
 } from '@console/internal/components/utils';
 import { NodeKind, PodKind } from '@console/internal/module/k8s';
 import { getRandomChars } from '@console/shared/src/utils';
@@ -12,12 +13,19 @@ import { PodExecLoader } from '../../../../../public/components/pod';
 import { ImageStreamTagModel, PodModel } from '../../../../../public/models';
 import { k8sCreate, k8sGet, k8sKillByName } from '../../../../../public/module/k8s';
 
+import './NodeTerminal.scss';
+
 type NodeTerminalErrorProps = {
   error: React.ReactNode;
 };
 
 type NodeTerminalInnerProps = {
   obj?: FirehoseResult<PodKind>;
+};
+
+type NodeTerminalContentsProps = {
+  obj: NodeKind;
+  namespace: string;
 };
 
 type NodeTerminalProps = {
@@ -119,13 +127,12 @@ const NodeTerminalInner: React.FC<NodeTerminalInnerProps> = ({ obj }) => {
   }
 };
 
-const NodeTerminal: React.FC<NodeTerminalProps> = ({ obj: node }) => {
+const NodeTerminalContents: React.FC<NodeTerminalContentsProps> = ({ obj: node, namespace }) => {
   const [resources, setResources] = React.useState<FirehoseResource[]>([]);
   const [errorMessage, setErrorMessage] = React.useState('');
   const nodeName = node.metadata.name;
   React.useEffect(() => {
     const name = `${nodeName}-debug-${getRandomChars()}`;
-    const namespace = 'default';
     getDebugPod(name, namespace, nodeName)
       .then((debugPod: PodKind) => k8sCreate(PodModel, debugPod))
       .then(() => {
@@ -153,8 +160,7 @@ const NodeTerminal: React.FC<NodeTerminalProps> = ({ obj: node }) => {
       deletePod();
       window.removeEventListener('beforeunload', deletePod);
     };
-    //  eslint-disable-next-line
-  }, [nodeName]);
+  }, [nodeName, namespace]);
 
   return errorMessage ? (
     <NodeTerminalError error={errorMessage} />
@@ -162,6 +168,26 @@ const NodeTerminal: React.FC<NodeTerminalProps> = ({ obj: node }) => {
     <Firehose resources={resources}>
       <NodeTerminalInner />
     </Firehose>
+  );
+};
+
+const NodeTerminal: React.FC<NodeTerminalProps> = ({ obj: node }) => {
+  const [targetNamespace, setTargetNamespace] = React.useState<string>(null);
+
+  return targetNamespace ? (
+    <NodeTerminalContents obj={node} namespace={targetNamespace} />
+  ) : (
+    <div className="co-m-pane__body">
+      <div className="form-group co-node-terminal-namespace">
+        <label className="control-label" htmlFor="dropdown-selectbox">
+          Namespace for the Terminal Debug Pod
+        </label>
+        <NsDropdown
+          id="dropdown-selectbox"
+          onChange={(selectedKey: string) => setTargetNamespace(selectedKey)}
+        />
+      </div>
+    </div>
   );
 };
 
