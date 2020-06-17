@@ -12,34 +12,29 @@ Scenario: The Helm Chart option on the +Add Page: HR-01-TC01
     Then user can see Helm Chart card on the +Add page
 
 
-@regression, @smoke, @ODC-3022, @ODC-2993
-Scenario: Install Helm Chart from +Add Page using Form View: HR-02-TC01
+@regression, @smoke
+Scenario: Install Helm Chart from +Add Page: HR-02-TC01
     Given user is at +Add page
     When user clicks on the Helm Chart card on the +Add page
-    And user searches for the 'Node-ex-k' helm chart 
+    And user searches for the 'Node-ex-k' helm chart
     And user clicks on the 'Node-ex-k' helm chart card
     And user clicks on the Install Helm Chart button
-    And user selects the Form View
-    And user enters the required field
-    And user updates the Chart Version
     And user clicks on the Install button
     Then user is redirected to Topology page
-    And Topology page have the helm chart workload 
+    And Topology page have the helm chart workload
 
 
-@regression, @ODC-3022, @ODC-2993
-Scenario: Install Helm Chart from Developer Catalog Page using YAML View: HR-03
+@regression
+Scenario: Install Helm Chart from Developer Catalog Page: HR-03-TC01
     Given user is at +Add page
     When user clicks on the Developer Catalog card on the +Add page
     And user checks the Helm Charts checkbox
-    And user searches for the 'Node-ex-k' helm chart 
+    And user searches for the 'Node-ex-k' helm chart
     And user clicks on the 'Node-ex-k' helm chart card
     And user clicks on the Install Helm Chart button
-    And user selects the YAML View
-    And user updates the Chart Version
     And user clicks on the Install button
     Then user is redirected to Topology page
-    And Topology page have the helm chart workload 
+    And Topology page have the helm chart workload
 
 
 @regression, @smoke

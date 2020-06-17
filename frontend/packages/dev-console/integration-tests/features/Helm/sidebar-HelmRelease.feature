@@ -13,9 +13,6 @@ Scenario: Install Helm Chart: HR-02-TC01
     And user searches for the 'Node-ex-k' helm chart
     And user clicks on the 'Node-ex-k' helm chart card
     And user clicks on the Install Helm Chart button
-    And user selects the Form View
-    And user enters the required field
-    And user updates the Chart Version
     And user clicks on the Install button
     Then user is redirected to Topology page
     And Topology page have the helm chart workload
