@@ -112,6 +112,16 @@ $co-external-link-padding-right: 15px;
   }
 }
 
+.co-m-pane__heading-owner {
+  display: block;
+  font-size: $font-size-base;
+  line-height: var(--pf-global--LineHeight--md);
+  padding-top: var(--pf-global--spacer--sm);
+  span {
+    display: inline;
+  }
+}
+
 .co-m-pane__heading-link {
   font-size: $font-size-base;
 }
