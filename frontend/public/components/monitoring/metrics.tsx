@@ -753,38 +753,26 @@ const QueryTable_: React.FC<QueryTableProps> = ({
     }
   }
 
-  // Set the result table's break point based on the number of columns
-  let breakPoint: keyof typeof TableGridBreakpoint = 'grid';
-  if (columns.length <= 2) {
-    breakPoint = 'none';
-  } else if (columns.length <= 5) {
-    breakPoint = 'gridMd';
-  } else if (columns.length <= 8) {
-    breakPoint = 'gridLg';
-  } else if (columns.length <= 11) {
-    breakPoint = 'gridXl';
-  } else if (columns.length <= 14) {
-    breakPoint = 'grid2xl';
-  }
-
   const onSort = (e, i, direction) => setSortBy({ index: i, direction });
 
   const tableRows = rows.slice((page - 1) * perPage, page * perPage).map((cells) => ({ cells }));
 
   return (
     <>
-      <Table
-        aria-label="query results table"
-        cells={columns}
-        gridBreakPoint={TableGridBreakpoint[breakPoint]}
-        onSort={onSort}
-        rows={tableRows}
-        sortBy={sortBy}
-        variant={TableVariant.compact}
-      >
-        <TableHeader />
-        <TableBody />
-      </Table>
+      <div className="query-browser__table-wrapper">
+        <Table
+          aria-label="query results table"
+          cells={columns}
+          gridBreakPoint={TableGridBreakpoint.none}
+          onSort={onSort}
+          rows={tableRows}
+          sortBy={sortBy}
+          variant={TableVariant.compact}
+        >
+          <TableHeader />
+          <TableBody />
+        </Table>
+      </div>
       <TablePagination
         itemCount={rows.length}
         page={page}

@@ -398,7 +398,18 @@ $monitoring-line-height: 18px;
 
 .query-browser__table-cell {
   @include co-break-word;
-  padding-right: 0 !important;
+  min-width: 120px;
+  --pf-c-table-cell--PaddingRight: 0;
+  --pf-c-table__sort-indicator--MarginLeft: 4px;
+}
+
+.query-browser__table-wrapper {
+  overflow-x: scroll;
+  width: 100%;
+
+  table {
+    table-layout: auto;
+  }
 }
 
 .query-browser__table-message {
