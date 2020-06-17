@@ -1,18 +1,20 @@
 import * as React from 'react';
 
 import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '../factory/modal';
-import { PromiseComponent, RequestSizeInput, resourceObjPath, history } from '../utils';
+import { PromiseComponent, RequestSizeInput, resourceObjPath, history, validate } from '../utils';
 import { k8sPatch, referenceFor } from '../../module/k8s/';
+import { getRequestedPVCSize } from '@console/shared';
 
 // Modal for expanding persistent volume claims
 class ExpandPVCModal extends PromiseComponent {
   constructor(props) {
     super(props);
+    const defaultSize = validate.split(getRequestedPVCSize(props.resource));
     this.state = {
       inProgress: false,
       errorMessage: '',
-      requestSizeValue: '',
-      requestSizeUnit: 'Gi',
+      requestSizeValue: defaultSize[0] || '',
+      requestSizeUnit: defaultSize[1] || 'Gi',
     };
     this._handleRequestSizeInputChange = this._handleRequestSizeInputChange.bind(this);
     this._cancel = this.props.cancel.bind(this);
