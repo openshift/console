@@ -15,6 +15,7 @@ export type HelmChartVersionDropdownProps = {
   chartVersion: string;
   chartName: string;
   helmAction: string;
+  onVersionChange: (chart: HelmChart) => void;
 };
 type ModalCallback = () => void;
 
@@ -22,6 +23,7 @@ const HelmChartVersionDropdown: React.FunctionComponent<HelmChartVersionDropdown
   chartVersion,
   chartName,
   helmAction,
+  onVersionChange,
 }) => {
   const {
     setFieldValue,
@@ -104,6 +106,7 @@ const HelmChartVersionDropdown: React.FunctionComponent<HelmChartVersionDropdown
 
     coFetchJSON(`/api/helm/chart?url=${chartURL}`)
       .then((res: HelmChart) => {
+        onVersionChange(res);
         const chartValues = getChartValuesYAML(res);
         setFieldValue('chartValuesYAML', chartValues);
         setInitialChartYAMLValues(chartValues);

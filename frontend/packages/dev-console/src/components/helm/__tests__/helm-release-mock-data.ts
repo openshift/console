@@ -57,7 +57,7 @@ export const mockHelmReleases: HelmRelease[] = [
       templates: [],
       values: {},
       schema: '',
-      files: [],
+      files: [{ name: 'README.md', data: btoa('example readme content') }],
     },
     manifest: '',
     hooks: [],

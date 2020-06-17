@@ -10,6 +10,7 @@ import { ActionGroup, Button } from '@patternfly/react-core';
 import store from '../../redux';
 import { ButtonBar } from '../utils/button-bar';
 import { history } from '../utils/router';
+import { CloseButton } from '../utils/close-button';
 
 export const createModal: CreateModal = (getModalContainer) => {
   const modalContainer = document.getElementById('modal-container');
@@ -65,10 +66,19 @@ export const createModalLauncher: CreateModalLauncher = (Component) => (props) =
 export const ModalTitle: React.SFC<ModalTitleProps> = ({
   children,
   className = 'modal-header',
+  close,
 }) => (
   <div className={className}>
     <h1 className="pf-c-title pf-m-2xl" data-test-id="modal-title">
       {children}
+      {close && (
+        <CloseButton
+          onClick={(e) => {
+            e.stopPropagation();
+            close(e);
+          }}
+        />
+      )}
     </h1>
   </div>
 );
@@ -155,6 +165,7 @@ export type ModalComponentProps = {
 
 export type ModalTitleProps = {
   className?: string;
+  close?: (e: React.SyntheticEvent<any, Event>) => void;
 };
 
 export type ModalBodyProps = {

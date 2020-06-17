@@ -7,6 +7,7 @@ import {
   getChartURL,
   getChartVersions,
   flattenReleaseResources,
+  getHelmChartReadme,
 } from '../helm-utils';
 import { HelmReleaseStatus } from '../helm-types';
 import {
@@ -108,5 +109,9 @@ describe('Helm Releases Utils', () => {
     mockHelmChartData[2].kubeVersion = '>= 1.13.0 < 1.14.0 || >= 1.14.1 < 1.15.0';
     chartVersions = getChartVersions(mockHelmChartData, kubernetesVersion);
     expect(chartVersions).toEqual(_.omit(expectedChartVersions, '1.0.1'));
+  });
+
+  it('should return the readme for the chart provided', () => {
+    expect(getHelmChartReadme(mockHelmReleases[0].chart)).toEqual('example readme content');
   });
 });

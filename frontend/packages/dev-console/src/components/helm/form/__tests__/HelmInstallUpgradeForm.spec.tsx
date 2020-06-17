@@ -9,6 +9,7 @@ describe('HelmInstallUpgradeForm', () => {
   helmInstallUpgradeFormProps = {
     chartHasValues: true,
     helmAction: 'Install',
+    onVersionChange: jest.fn(),
     values: {
       helmReleaseName: 'helm-release',
       chartName: 'helm-release',
