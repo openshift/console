@@ -17,6 +17,10 @@ import {
   ReduxReducer,
   ProjectDashboardInventoryItem,
   DashboardsOverviewResourceActivity,
+  ContextProvider,
+  PVCCreateProp,
+  PVCAlert,
+  PVCStatus,
 } from '@console/plugin-sdk';
 import { DashboardsStorageCapacityDropdownItem } from '@console/ceph-storage-plugin';
 import { TemplateModel, PodModel } from '@console/internal/models';
@@ -34,8 +38,12 @@ import kubevirtReducer from './redux';
 import { accessReviewImportVM } from './utils/accessReview-v2v';
 import { diskImportKindMapping } from './components/dashboards-page/overview-dashboard/utils';
 import { TopologyConsumedExtensions, getTopologyPlugin } from './topology/topology-plugin';
-
+import {
+  CDIUploadContext,
+  useCDIUploadHook,
+} from './components/cdi-upload-provider/cdi-upload-provider';
 import './style.scss';
+import { isPvcUploading } from './selectors/pvc/selectors';
 
 type ConsumedExtensions =
   | ResourceNSNavItem
@@ -54,7 +62,11 @@ type ConsumedExtensions =
   | ProjectDashboardInventoryItem
   | DashboardsOverviewResourceActivity
   | AddAction
-  | TopologyConsumedExtensions;
+  | TopologyConsumedExtensions
+  | ContextProvider
+  | PVCCreateProp
+  | PVCAlert
+  | PVCStatus;
 
 export const FLAG_KUBEVIRT = 'KUBEVIRT';
 
@@ -156,6 +168,20 @@ const plugin: Plugin<ConsumedExtensions> = [
       model: TemplateModel,
       template: VMTemplateYAMLTemplates.getIn(['vm-template']),
       templateName: 'vm-template',
+    },
+  },
+  {
+    type: 'Page/Route',
+    properties: {
+      exact: true,
+      path: ['/k8s/ns/:ns/persistentvolumeclaims/~new/upload-form'],
+      loader: () =>
+        import(
+          './components/cdi-upload-provider/upload-pvc-form/upload-pvc-form' /* webpackChunkName: "kubevirt" */
+        ).then((m) => m.UploadPVCPage),
+    },
+    flags: {
+      required: [FLAG_KUBEVIRT],
     },
   },
   {
@@ -452,6 +478,52 @@ const plugin: Plugin<ConsumedExtensions> = [
     },
   },
   ...getTopologyPlugin([FLAG_KUBEVIRT]),
+  {
+    type: 'ContextProvider',
+    properties: {
+      Provider: CDIUploadContext.Provider,
+      useValueHook: useCDIUploadHook,
+    },
+    flags: {
+      required: [FLAG_KUBEVIRT],
+    },
+  },
+  {
+    type: 'PVCCreateProp',
+    properties: {
+      label: 'New with Data Upload',
+      path: '~new/upload-form',
+    },
+    flags: {
+      required: [FLAG_KUBEVIRT],
+    },
+  },
+  {
+    type: 'PVCAlert',
+    properties: {
+      loader: () =>
+        import('./components/cdi-upload-provider/pvc-alert-extension').then(
+          (m) => m.PVCAlertExtension,
+        ),
+    },
+    flags: {
+      required: [FLAG_KUBEVIRT],
+    },
+  },
+  {
+    type: 'PVCStatus',
+    properties: {
+      priority: 10,
+      predicate: isPvcUploading,
+      loader: () =>
+        import('./components/cdi-upload-provider/upload-pvc-popover').then(
+          (m) => m.UploadPVCPopover,
+        ),
+    },
+    flags: {
+      required: [FLAG_KUBEVIRT],
+    },
+  },
 ];
 
 export default plugin;
