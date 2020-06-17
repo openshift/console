@@ -6,7 +6,7 @@ Background:
     And user is at developer perspecitve
 
 
-@regression, @smoke, @ODC-3022, @ODC-2993
+@regression, @smoke
 Scenario: Install Helm Chart: HR-02-TC01
     Given user is at +Add page
     When user clicks on the Helm Chart card on the +Add page
