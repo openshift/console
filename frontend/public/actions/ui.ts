@@ -63,6 +63,7 @@ export enum ActionType {
   SetPodMetrics = 'setPodMetrics',
   SetNamespaceMetrics = 'setNamespaceMetrics',
   SetNodeMetrics = 'setNodeMetrics',
+  SetPVCMetrics = 'setPVCMetrics',
   SetPinnedResources = 'setPinnedResources',
 }
 
@@ -91,6 +92,10 @@ export type NodeMetrics = {
   totalMemory: MetricValuesByName;
   usedStorage: MetricValuesByName;
   totalStorage: MetricValuesByName;
+};
+
+export type PVCMetrics = {
+  usedCapacity: MetricValuesByName;
 };
 
 // URL routes that can be namespaced
@@ -123,6 +128,11 @@ export const getPodMetric = (pod: PodKind, metric: string): number => {
 export const getNodeMetric = (node: NodeKind, metric: string): number => {
   const metrics = store.getState().UI.getIn(['metrics', 'node']);
   return metrics?.[metric]?.[node.metadata.name] ?? 0;
+};
+
+export const getPVCMetric = (pvc: K8sResourceKind, metric: string): number => {
+  const metrics = store.getState().UI.getIn(['metrics', 'pvc']);
+  return metrics?.[metric]?.[pvc.metadata.namespace]?.[pvc.metadata.name] ?? 0;
 };
 
 export const formatNamespaceRoute = (activeNamespace, originalPath, location?) => {
@@ -348,6 +358,8 @@ export const setNamespaceMetrics = (namespaceMetrics: NamespaceMetrics) =>
   action(ActionType.SetNamespaceMetrics, { namespaceMetrics });
 export const setNodeMetrics = (nodeMetrics: NodeMetrics) =>
   action(ActionType.SetNodeMetrics, { nodeMetrics });
+export const setPVCMetrics = (pvcMetrics: PVCMetrics) =>
+  action(ActionType.SetPVCMetrics, { pvcMetrics });
 
 // TODO(alecmerdler): Implement all actions using `typesafe-actions` and add them to this export
 const uiActions = {
@@ -396,6 +408,7 @@ const uiActions = {
   setPodMetrics,
   setNamespaceMetrics,
   setNodeMetrics,
+  setPVCMetrics,
   notificationDrawerToggleExpanded,
   notificationDrawerToggleRead,
   setPinnedResources,
