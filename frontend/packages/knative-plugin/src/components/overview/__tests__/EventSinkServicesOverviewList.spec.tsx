@@ -68,7 +68,7 @@ describe('EventSinkServicesOverviewList', () => {
       'spec',
     );
     const wrapper = shallow(<EventSinkServicesOverviewList obj={mockData} />);
-    expect(wrapper.find('span').text()).toBe('No services found for this resource.');
+    expect(wrapper.find('span').text()).toBe('No sink found for this resource.');
   });
 
   it('should have ResourceLink with proper kind', () => {

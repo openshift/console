@@ -413,7 +413,7 @@ export const getEventSourceResponse = (eventSourceModel: K8sKind): FirehoseResul
         },
         spec: {
           sink: {
-            apiVersion: 'serving.knative.dev/v1alpha1',
+            apiVersion: 'serving.knative.dev/v1',
             kind: 'Service',
             name: 'overlayimage',
           },

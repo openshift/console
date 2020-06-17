@@ -36,11 +36,14 @@ import {
   getKnativeServingConfigurations,
   getKnativeServingRoutes,
   getKnativeServingServices,
+  knativeEventingResourcesSubscription,
 } from './utils/get-knative-resources';
 import { getKebabActionsForKind } from './utils/kebab-actions';
 import {
   fetchEventSourcesCrd,
+  fetchChannelsCrd,
   getDynamicEventSourcesResourceList,
+  getDynamicChannelResourceList,
   hideDynamicEventSourceCard,
 } from './utils/fetch-dynamic-eventsources-utils';
 import { TopologyConsumedExtensions, topologyPlugin } from './topology/topology-plugin';
@@ -64,7 +67,7 @@ type ConsumedExtensions =
 
 // Added it to perform discovery of Dynamic event sources on cluster on app load as kebab option needed models upfront
 fetchEventSourcesCrd();
-
+fetchChannelsCrd();
 const plugin: Plugin<ConsumedExtensions> = [
   {
     type: 'ModelDefinition',
@@ -217,6 +220,24 @@ const plugin: Plugin<ConsumedExtensions> = [
     type: 'Overview/CRD',
     properties: {
       resources: getDynamicEventSourcesResourceList,
+    },
+    flags: {
+      required: [FLAG_KNATIVE_EVENTING],
+    },
+  },
+  {
+    type: 'Overview/CRD',
+    properties: {
+      resources: knativeEventingResourcesSubscription,
+    },
+    flags: {
+      required: [FLAG_KNATIVE_EVENTING],
+    },
+  },
+  {
+    type: 'Overview/CRD',
+    properties: {
+      resources: getDynamicChannelResourceList,
     },
     flags: {
       required: [FLAG_KNATIVE_EVENTING],

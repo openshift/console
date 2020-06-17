@@ -8,6 +8,7 @@ import {
   KNATIVE_EVENT_SOURCE_APIGROUP,
   KNATIVE_EVENT_SOURCE_APIGROUP_DEP,
   KNATIVE_SERVING_APIGROUP,
+  KNATIVE_EVENT_MESSAGE_APIGROUP,
 } from './const';
 
 const apiVersion = 'v1';
@@ -190,6 +191,20 @@ export const EventSourceSinkBindingModel: K8sKind = {
   plural: 'sinkbindings',
   id: 'sinkbindingsource',
   abbr: 'SBS',
+  namespaced: true,
+  crd: true,
+  color: knativeEventingColor.value,
+};
+
+export const EventingSubscriptionModel: K8sKind = {
+  apiGroup: KNATIVE_EVENT_MESSAGE_APIGROUP,
+  apiVersion: 'v1beta1',
+  kind: 'Subscription',
+  label: 'Subscription',
+  labelPlural: 'Subscriptions',
+  plural: 'subscriptions',
+  id: 'subscriptioneventing',
+  abbr: 'S',
   namespaced: true,
   crd: true,
   color: knativeEventingColor.value,

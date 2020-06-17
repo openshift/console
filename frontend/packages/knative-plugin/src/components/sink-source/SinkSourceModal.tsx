@@ -9,6 +9,7 @@ import {
 import { ResourceDropdownField } from '@console/shared';
 import FormSection from '@console/dev-console/src/components/import/section/FormSection';
 import { knativeServingResourcesServices } from '../../utils/get-knative-resources';
+import { getDynamicChannelResourceList } from '../../utils/fetch-dynamic-eventsources-utils';
 
 export interface SinkSourceModalProps {
   namespace: string;
@@ -52,6 +53,10 @@ const SinkSourceModal: React.FC<Props> = ({
     [setFieldValue, setFieldTouched, validateForm],
   );
   const dirty = values?.sink?.ref?.name !== initialValues.sink.ref.name;
+  const resourcesDropdownField = [
+    ...knativeServingResourcesServices(namespace),
+    ...getDynamicChannelResourceList(namespace),
+  ];
   return (
     <form className="modal-content modal-content--no-inner-scroll" onSubmit={handleSubmit}>
       <ModalTitle>Move Sink</ModalTitle>
@@ -62,7 +67,7 @@ const SinkSourceModal: React.FC<Props> = ({
         <FormSection fullWidth>
           <ResourceDropdownField
             name="sink.ref.name"
-            resources={knativeServingResourcesServices(namespace)}
+            resources={resourcesDropdownField}
             dataSelector={['metadata', 'name']}
             fullWidth
             required

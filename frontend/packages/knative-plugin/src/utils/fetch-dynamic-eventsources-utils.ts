@@ -17,11 +17,13 @@ import {
 interface EventSourcetData {
   loaded: boolean;
   eventSourceModels: K8sKind[];
+  eventSourceChannels?: K8sKind[];
 }
 
 const eventSourceData: EventSourcetData = {
   loaded: false,
   eventSourceModels: [],
+  eventSourceChannels: [],
 };
 
 // To order sources with known followed by CamelSource and everything else
@@ -168,3 +170,70 @@ export const isDynamicEventResourceKind = (resourceRef: string): boolean => {
 
 export const hideDynamicEventSourceCard = () =>
   eventSourceData.eventSourceModels && eventSourceData.eventSourceModels.length > 0;
+
+export const fetchChannelsCrd = async () => {
+  const url =
+    '/api/kubernetes/apis/apiextensions.k8s.io/v1/customresourcedefinitions?labelSelector=messaging.knative.dev/subscribable=true';
+  try {
+    const res = await coFetch(url);
+    const resolvedRes = await res.json();
+
+    const allChannelModels = _.reduce(
+      resolvedRes?.items,
+      (accumulator, crd) => {
+        const {
+          spec: {
+            group,
+            versions,
+            names: { kind, plural, singular },
+          },
+        } = crd;
+        const { name: version } = versions?.find((ver) => ver.served && ver.storage);
+        const sourceModel = {
+          apiGroup: group,
+          apiVersion: version,
+          kind,
+          plural,
+          id: singular,
+          label: singular,
+          labelPlural: plural,
+          abbr: kindToAbbr(kind),
+          namespaced: true,
+          crd: true,
+          color: knativeEventingColor.value,
+        };
+        accumulator.push(sourceModel);
+        return accumulator;
+      },
+      [],
+    );
+
+    eventSourceData.eventSourceChannels = allChannelModels;
+  } catch {
+    eventSourceData.eventSourceChannels = [];
+  }
+  return eventSourceData.eventSourceChannels;
+};
+
+export const getDynamicChannelResourceList = (namespace: string) => {
+  return eventSourceData.eventSourceChannels.map((model) => {
+    return {
+      isList: true,
+      kind: referenceForModel(model),
+      namespace,
+      prop: referenceForModel(model),
+      optional: true,
+    };
+  });
+};
+
+export const getDynamicChannelModelRefs = (): string[] => {
+  return eventSourceData.eventSourceChannels.map((model: K8sKind) => referenceForModel(model));
+};
+
+export const isEventingChannelResourceKind = (resourceRef: string): boolean => {
+  const index = eventSourceData.eventSourceChannels.findIndex(
+    (model: K8sKind) => referenceForModel(model) === resourceRef,
+  );
+  return index !== -1;
+};

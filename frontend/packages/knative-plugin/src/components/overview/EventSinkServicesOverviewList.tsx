@@ -1,6 +1,11 @@
 import * as React from 'react';
 import * as _ from 'lodash';
-import { K8sResourceKind, referenceForModel, PodKind } from '@console/internal/module/k8s';
+import {
+  K8sResourceKind,
+  referenceForGroupVersionKind,
+  groupVersionFor,
+  PodKind,
+} from '@console/internal/module/k8s';
 import {
   ResourceLink,
   ExternalLink,
@@ -9,7 +14,6 @@ import {
 import { PodControllerOverviewItem } from '@console/shared';
 import { PodModel } from '@console/internal/models';
 import { PodsOverview } from '@console/internal/components/overview/pods-overview';
-import { ServiceModel } from '../../models';
 
 export type EventSinkServicesOverviewListProps = {
   obj: K8sResourceKind;
@@ -23,26 +27,30 @@ const EventSinkServicesOverviewList: React.FC<EventSinkServicesOverviewListProps
   current,
 }) => {
   const {
-    kind: resKind,
+    kind,
     apiVersion,
     metadata: { name, namespace },
+    spec,
   } = obj;
-  const sink = _.get(obj, 'spec.sink.ref') || _.get(obj, 'spec.sink');
+  const { name: sinkName, kind: sinkKind, apiVersion: sinkApiversion } =
+    spec?.sink?.ref || spec?.sink || {};
   const sinkUri = obj?.status?.sinkUri;
   const deploymentData = current?.obj?.metadata?.ownerReferences?.[0];
   const apiGroup = apiVersion.split('/')[0];
   const linkUrl = `/search/ns/${namespace}?kind=${PodModel.kind}&q=${encodeURIComponent(
-    `${apiGroup}/${_.lowerFirst(resKind)}=${name}`,
+    `${apiGroup}/${_.lowerFirst(kind)}=${name}`,
   )}`;
+  const { group, version } = (sinkApiversion && groupVersionFor(sinkApiversion)) || {};
+  const isSinkReference = !!(sinkKind && sinkName && group && version);
   return (
     <>
-      <SidebarSectionHeading text="Knative Services" />
-      {sink && sink.kind === ServiceModel.kind ? (
+      <SidebarSectionHeading text="Sink" />
+      {isSinkReference ? (
         <ul className="list-group">
           <li className="list-group-item">
             <ResourceLink
-              kind={referenceForModel(ServiceModel)}
-              name={sink.name}
+              kind={referenceForGroupVersionKind(group)(version)(sinkKind)}
+              name={sinkName}
               namespace={namespace}
             />
             {sinkUri && (
@@ -58,7 +66,7 @@ const EventSinkServicesOverviewList: React.FC<EventSinkServicesOverviewListProps
           </li>
         </ul>
       ) : (
-        <span className="text-muted">No services found for this resource.</span>
+        <span className="text-muted">No sink found for this resource.</span>
       )}
       {pods?.length > 0 && <PodsOverview pods={pods} obj={obj} allPodsLink={linkUrl} />}
       {deploymentData?.name && (
