@@ -5,3 +5,4 @@ export * from './fullscreen';
 export * from './scroll';
 export * from './plugins-overview-tab-section';
 export * from './debounce';
+export * from './select-list';
