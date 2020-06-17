@@ -8,7 +8,7 @@ import { k8sPatch } from '@console/internal/module/k8s';
 import { PatchBuilder } from '@console/shared/src/k8s';
 import { BootableDeviceType } from '../../../types';
 import { VMLikeEntityKind } from '../../../types/vmLike';
-import { getVMLikeModel, getDevices } from '../../../selectors/vm';
+import { getVMLikeModel, getDevices, getBootableDevices } from '../../../selectors/vm';
 import { getVMLikePatches } from '../../../k8s/patches/vm-template';
 import { BootOrder, deviceKey } from '../../boot-order';
 import { DeviceType } from '../../../constants';
@@ -27,15 +27,17 @@ const BootOrderModalComponent = ({
   inProgress,
   errorMessage,
 }: BootOrderModalProps) => {
-  const [devices, setDevices] = React.useState<BootableDeviceType[]>(getDevices(vmLikeEntity));
+  const [devices, setDevices] = React.useState<BootableDeviceType[]>(
+    getBootableDevices(vmLikeEntity),
+  );
   const [initialDeviceList, setInitialDeviceList] = React.useState<BootableDeviceType[]>(
-    getDevices(vmLikeEntity),
+    getBootableDevices(vmLikeEntity),
   );
   const [showUpdatedAlert, setUpdatedAlert] = React.useState<boolean>(false);
   const [showPatchError, setPatchError] = React.useState<boolean>(false);
 
   const onReload = React.useCallback(() => {
-    const updatedDevices = getDevices(vmLikeEntity);
+    const updatedDevices = getBootableDevices(vmLikeEntity);
 
     setInitialDeviceList(updatedDevices);
     setDevices(updatedDevices);
@@ -50,7 +52,7 @@ const BootOrderModalComponent = ({
     }
 
     // Compare only bootOrder from initialDeviceList to current device list.
-    const devicesMap = createBasicLookup(getDevices(vmLikeEntity), deviceKey);
+    const devicesMap = createBasicLookup(getBootableDevices(vmLikeEntity), deviceKey);
     const updated =
       initialDeviceList.length &&
       initialDeviceList.some((d) => {
@@ -97,6 +99,7 @@ const BootOrderModalComponent = ({
         .filter((source) => source.type === DeviceType.DISK)
         .map((source) => source.value),
     ];
+
     const interfaces = [
       ...currentDevices
         .filter((source) => source.type === DeviceType.NIC)
