@@ -457,6 +457,10 @@ $co-external-link-padding-right: 15px;
   padding: 0 0 30px 0;
 }
 
+.co-hide-no-active-namespace > tbody > tr > :nth-child(2) {
+  display: none;
+}
+
 .co-m-table-grid {
   &__body {
     min-height: 50px;

@@ -2,6 +2,7 @@ import * as _ from 'lodash-es';
 import * as PropTypes from 'prop-types';
 import * as React from 'react';
 import { connect } from 'react-redux';
+import * as classNames from 'classnames';
 import {
   ALL_NAMESPACES_KEY,
   getNodeRoles,
@@ -74,12 +75,17 @@ const globalColumnFilter = {
 };
 
 const isColumnFiltered = (columnTitle) => {
-  return columnTitle !== globalColumnFilter.title;
+  return columnTitle === globalColumnFilter.title;
 };
 
 const getFilteredHeader = (Header, componentProps) => {
   if (UIActions.getActiveNamespace() !== ALL_NAMESPACES_KEY) {
-    return Header(componentProps).filter((column) => isColumnFiltered(column.title));
+    return Header(componentProps).map((column) => {
+      if (isColumnFiltered(column.title)) {
+        column.props.className = classNames('pf-m-hidden');
+      }
+      return column;
+    });
   }
   return Header(componentProps);
 };
@@ -351,7 +357,14 @@ const VirtualBody: React.SFC<VirtualBodyProps> = (props) => {
   return (
     <VirtualTableBody
       autoHeight
-      className="pf-c-table pf-m-compact pf-m-border-rows pf-c-virtualized pf-c-window-scroller"
+      className={classNames(
+        'pf-c-table',
+        'pf-m-compact',
+        'pf-m-border-rows',
+        'pf-c-virtualized',
+        'pf-c-window-scroller',
+        { 'co-hide-no-active-namespace': UIActions.getActiveNamespace() !== ALL_NAMESPACES_KEY },
+      )}
       deferredMeasurementCache={cellMeasurementCache}
       rowHeight={cellMeasurementCache.rowHeight}
       height={height || 0}

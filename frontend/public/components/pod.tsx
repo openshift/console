@@ -115,7 +115,6 @@ const podRowStateToProps = ({ UI }) => ({
 
 const PodTableRow = connect<PodTableRowPropsFromState, null, PodTableRowProps>(podRowStateToProps)(
   ({
-    columns,
     obj: pod,
     index,
     rowKey,
@@ -134,10 +133,7 @@ const PodTableRow = connect<PodTableRowPropsFromState, null, PodTableRowProps>(p
         <TableData className={tableColumnClasses[0]}>
           <ResourceLink kind={kind} name={name} namespace={namespace} />
         </TableData>
-        <TableData
-          className={classNames(tableColumnClasses[1], 'co-break-word')}
-          isFiltered={_.findIndex(columns, { title: 'Namespace' }) < 0}
-        >
+        <TableData className={classNames(tableColumnClasses[1], 'co-break-word')}>
           <ResourceLink kind="Namespace" name={namespace} />
         </TableData>
         <TableData className={tableColumnClasses[2]}>
@@ -522,7 +518,6 @@ const getRow = (showNodes) => {
       rowKey={rowArgs.key}
       style={rowArgs.style}
       showNodes={showNodes}
-      columns={rowArgs.columns}
     />
   );
 };
@@ -640,7 +635,6 @@ type PodDetailsProps = {
 };
 
 type PodTableRowProps = {
-  columns: any;
   obj: PodKind;
   index: number;
   rowKey: string;
