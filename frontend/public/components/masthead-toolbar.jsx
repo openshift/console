@@ -268,6 +268,10 @@ class MastheadToolbarContents_ extends React.Component {
       isSection: true,
       actions: [
         {
+          label: 'Guided Tours',
+          href: '/tours/',
+        },
+        {
           label: 'Documentation',
           externalLink: true,
           href: openshiftHelpBase,

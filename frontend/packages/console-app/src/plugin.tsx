@@ -8,6 +8,7 @@ import {
   Perspective,
   ModelFeatureFlag,
   ModelDefinition,
+  RoutePage,
   DashboardsOverviewResourceActivity,
   DashboardsOverviewHealthURLSubsystem,
   DashboardsOverviewHealthPrometheusSubsystem,
@@ -52,6 +53,7 @@ type ConsumedExtensions =
   | Perspective
   | ModelDefinition
   | ModelFeatureFlag
+  | RoutePage
   | DashboardsOverviewResourceActivity
   | DashboardsOverviewHealthURLSubsystem<any>
   | DashboardsOverviewHealthPrometheusSubsystem
@@ -186,6 +188,19 @@ const plugin: Plugin<ConsumedExtensions> = [
     },
     flags: {
       required: [FLAGS.CLUSTER_VERSION],
+    },
+  },
+  {
+    type: 'Page/Route',
+    properties: {
+      exact: true,
+      path: ['/tours/'],
+      loader: async () =>
+        (
+          await import(
+            './components/guided-tours/GuidedTours' /* webpackChunkName: "co-guided-tour" */
+          )
+        ).default,
     },
   },
   {
