@@ -48,7 +48,7 @@ Scenario: Enable the deployed helm charts' filter: HR-11-TC02
 
 
 @regression
-Scenario: Enable the failed helm charts' filter: HR-11-TC02
+Scenario: Enable the failed helm charts' filter: HR-11-TC03
     Given user is at the Helm page
     When user clicks on the filter drop down menu
     And user selects checkbox for the Failed Helm charts
@@ -57,7 +57,7 @@ Scenario: Enable the failed helm charts' filter: HR-11-TC02
 
 
 @regression
-Scenario: Enable the other helm charts' filter: HR-11-TC02
+Scenario: Enable the other helm charts' filter: HR-11-TC04
     Given user is at the Helm page
     When user clicks on the filter drop down menu
     And user selects checkbox for the Other Helm charts
@@ -67,7 +67,7 @@ Scenario: Enable the other helm charts' filter: HR-11-TC02
 
 
 @regression
-Scenario: Select all filters: HR-11-TC02
+Scenario: Select all filters: HR-11-TC05
     Given user is at Helm page
     When user clicks on the filter drop down menu 
     And user selects checkbox for the Deployed Helm charts
@@ -79,21 +79,21 @@ Scenario: Select all filters: HR-11-TC02
 
 
 @regression
-Scenario: Clear all filters: HR-11-TC02
+Scenario: Clear all filters: HR-11-TC06
     Given user has selected all filters
     When user click on the clear all filters button
     Then all filters selected will get removed
 
 
 @regression
-Scenario: Search for the Helm Chart: HR-11-TC02
+Scenario: Search for the Helm Chart: HR-11-TC07
     Given user is at Helm page
     When user searches for a helm chart
     Then the helm charts with that search name will be shown
 
 
 @regression, @smoke
-Scenario: Click on the helm chart name to open the helm release details page: HR-11-TC03
+Scenario: Click on the helm chart name to open the helm release details page: HR-11-TC08
     Given user is at Helm page
     When user clicks on the helm release name
     Then user will see the Details page opened
