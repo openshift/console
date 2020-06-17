@@ -1,3 +1,5 @@
+import { NOT_AVAILABLE_MESSAGE, GUEST_AGENT_REQUIRED_MESSAGE } from '../strings/vm/messages';
+
 export const COULD_NOT_LOAD_DATA = 'Could not load data';
 
 export const CREATED = 'created';
@@ -13,6 +15,8 @@ export const ADD = 'Add';
 
 export const ADD_DISK = 'Add Disk';
 export const ADD_NETWORK_INTERFACE = 'Add Network Interface';
+
+export const NO_LOGGED_IN_USERS_MSG = 'No users logged in';
 
 export const getDialogUIError = (hasAllRequiredFilled) =>
   hasAllRequiredFilled
@@ -74,3 +78,18 @@ export const createUniqueNameResolver = (data: { name: string }[]) => {
     return `${name}-${nameCounts[name].next - 1}`;
   };
 };
+
+export const getNumLoggedInUsersMessage = (numLoggedInUsers: number | null) => {
+  if (numLoggedInUsers == null) {
+    return NOT_AVAILABLE_MESSAGE;
+  }
+
+  if (numLoggedInUsers === 0) {
+    return NO_LOGGED_IN_USERS_MSG;
+  }
+
+  return `${numLoggedInUsers} ${pluralize(numLoggedInUsers, 'user')}`;
+};
+
+export const getGuestAgentFieldNotAvailMsg = (isGuestAgentInstalled: boolean): string =>
+  isGuestAgentInstalled ? NOT_AVAILABLE_MESSAGE : GUEST_AGENT_REQUIRED_MESSAGE;

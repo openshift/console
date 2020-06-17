@@ -2,10 +2,17 @@ import * as React from 'react';
 import * as classNames from 'classnames';
 
 export const DetailItem: React.FC<DetailItemProps> = React.memo(
-  ({ title, isLoading = false, children, error = false, valueClassName }) => {
+  ({
+    title,
+    isLoading = false,
+    children,
+    error = false,
+    valueClassName,
+    errorMessage = 'Not available',
+  }) => {
     let status: React.ReactNode;
     if (error) {
-      status = <span className="text-secondary">Not available</span>;
+      status = <span className="text-secondary">{errorMessage}</span>;
     } else if (isLoading) {
       status = <div className="skeleton-text" />;
     } else {
@@ -28,4 +35,5 @@ type DetailItemProps = {
   isLoading?: boolean;
   error?: boolean;
   valueClassName?: string;
+  errorMessage?: string;
 };

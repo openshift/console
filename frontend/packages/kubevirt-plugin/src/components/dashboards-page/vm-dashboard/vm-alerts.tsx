@@ -2,9 +2,9 @@ import * as React from 'react';
 import AlertsBody from '@console/shared/src/components/dashboard/status-card/AlertsBody';
 import { StatusItem } from '@console/shared/src/components/dashboard/status-card/AlertItem';
 import { BlueInfoCircleIcon } from '@console/shared/src/components/status';
-import { NO_GUEST_AGENT_MESSAGE } from '../../../constants/vm/constants';
 import { VMIKind } from '../../../types';
 import { getVMIConditionsByType } from '../../../selectors/vmi';
+import { NO_GUEST_AGENT_MESSAGE } from '../../../strings/vm/messages';
 
 // Based on: https://github.com/kubevirt/kubevirt/blob/f71e9c9615a6c36178169d66814586a93ba515b5/staging/src/kubevirt.io/client-go/api/v1/types.go#L337
 const VMI_CONDITION_AGENT_CONNECTED = 'AgentConnected';

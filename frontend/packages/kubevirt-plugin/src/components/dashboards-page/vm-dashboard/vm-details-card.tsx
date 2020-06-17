@@ -19,11 +19,19 @@ import { VirtualMachineModel, VirtualMachineInstanceModel } from '../../../model
 import { getVmiIpAddresses, getVMINodeName } from '../../../selectors/vmi';
 import { VM_DETAIL_DETAILS_HREF } from '../../../constants';
 import { findVMIPod } from '../../../selectors/pod/selectors';
+import { useGuestAgentInfo } from '../../../hooks/use-guest-agent-info';
+import { GuestAgentInfoWrapper } from '../../../k8s/wrapper/vm/guest-agent-info/guest-agent-info-wrapper';
+import { getNumLoggedInUsersMessage, getGuestAgentFieldNotAvailMsg } from '../../../utils/strings';
+import { isGuestAgentInstalled } from './vm-alerts';
 
 export const VMDetailsCard: React.FC<VMDetailsCardProps> = () => {
   const vmDashboardContext = React.useContext(VMDashboardContext);
   const { vm, vmi, pods } = vmDashboardContext;
   const vmiLike = vm || vmi;
+
+  const [guestAgentInfoRaw] = useGuestAgentInfo({ vmi });
+  const guestAgentInfo = new GuestAgentInfoWrapper(guestAgentInfoRaw);
+  const guestAgentFieldNotAvailMsg = getGuestAgentFieldNotAvailMsg(isGuestAgentInstalled(vmi));
 
   const launcherPod = findVMIPod(vmi, pods);
 
@@ -38,6 +46,12 @@ export const VMDetailsCard: React.FC<VMDetailsCardProps> = () => {
     name,
     namespace,
   )}/${VM_DETAIL_DETAILS_HREF}`;
+
+  // guest agent fields
+  const hostname = guestAgentInfo.getHostname();
+  const operatingSystem = guestAgentInfo.getOSInfo().getPrettyName();
+  const timeZone = guestAgentInfo.getTimezoneName();
+  const numLoggedInUsers: number | null = guestAgentInfo.getNumLoggedInUsers();
 
   return (
     <DashboardCard>
@@ -66,6 +80,14 @@ export const VMDetailsCard: React.FC<VMDetailsCardProps> = () => {
           <DetailItem title="Created" error={false} isLoading={!vmiLike}>
             <Timestamp timestamp={getCreationTimestamp(vmiLike)} />
           </DetailItem>
+          <DetailItem
+            title="Hostname"
+            error={!hostname}
+            isLoading={!vmiLike}
+            errorMessage={guestAgentFieldNotAvailMsg}
+          >
+            {hostname}
+          </DetailItem>
           <DetailItem title="Node" error={!launcherPod || !nodeName} isLoading={!vmiLike}>
             {launcherPod && nodeName && <NodeLink name={nodeName} />}
           </DetailItem>
@@ -76,6 +98,30 @@ export const VMDetailsCard: React.FC<VMDetailsCardProps> = () => {
             valueClassName="co-select-to-copy"
           >
             {launcherPod && ipAddrs}
+          </DetailItem>
+          <DetailItem
+            title="Operating System"
+            error={!operatingSystem}
+            isLoading={!vmiLike}
+            errorMessage={guestAgentFieldNotAvailMsg}
+          >
+            {operatingSystem}
+          </DetailItem>
+          <DetailItem
+            title="Time Zone"
+            error={!timeZone}
+            isLoading={!vmiLike}
+            errorMessage={guestAgentFieldNotAvailMsg}
+          >
+            {timeZone}
+          </DetailItem>
+          <DetailItem
+            title="Logged In Users"
+            error={numLoggedInUsers == null}
+            isLoading={!vmiLike}
+            errorMessage={guestAgentFieldNotAvailMsg}
+          >
+            {numLoggedInUsers != null && getNumLoggedInUsersMessage(numLoggedInUsers)}
           </DetailItem>
         </DetailsBody>
       </DashboardCardBody>
