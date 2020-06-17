@@ -6,8 +6,6 @@ import { GroupModel, SelfSubjectAccessReviewModel, UserModel } from '../models';
 import { k8sBasePath, ClusterVersionKind, k8sCreate } from '../module/k8s';
 import { receivedResources } from './k8s';
 import { coFetchJSON } from '../co-fetch';
-import { MonitoringRoutes } from '../reducers/monitoring';
-import { setMonitoringURL } from './monitoring';
 import { pluginStore } from '../plugins';
 import { setClusterID, setCreateProjectMessage, setUser, setConsoleLinks } from './common';
 import { isCustomFeatureFlag } from '@console/plugin-sdk';
@@ -194,22 +192,6 @@ const detectCanCreateProject = (dispatch) =>
     },
   );
 
-const loggingConfigMapPath = `${k8sBasePath}/api/v1/namespaces/openshift-logging/configmaps/sharing-config`;
-const detectLoggingURL = (dispatch) =>
-  coFetchJSON(loggingConfigMapPath).then(
-    (res) => {
-      const { kibanaAppURL } = res.data;
-      if (!_.isEmpty(kibanaAppURL)) {
-        dispatch(setMonitoringURL(MonitoringRoutes.Kibana, kibanaAppURL));
-      }
-    },
-    (err) => {
-      if (!_.includes([401, 403, 404, 500], _.get(err, 'response.status'))) {
-        setTimeout(() => detectLoggingURL(dispatch), 15000);
-      }
-    },
-  );
-
 const detectUser = (dispatch) =>
   coFetchJSON('api/kubernetes/apis/user.openshift.io/v1/users/~').then(
     (user) => {
@@ -259,7 +241,6 @@ export const detectFeatures = () => (dispatch: Dispatch) =>
     detectCanCreateProject,
     detectClusterVersion,
     detectUser,
-    detectLoggingURL,
     detectConsoleLinks,
     ...ssarCheckActions,
     ...pluginStore
