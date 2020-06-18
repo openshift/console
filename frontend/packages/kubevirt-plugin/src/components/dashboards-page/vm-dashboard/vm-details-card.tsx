@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Link } from 'react-router-dom';
 import { DashboardItemProps } from '@console/internal/components/dashboard/with-dashboard-resources';
 import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
 import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
@@ -52,6 +53,7 @@ export const VMDetailsCard: React.FC<VMDetailsCardProps> = () => {
   const operatingSystem = guestAgentInfo.getOSInfo().getPrettyName();
   const timeZone = guestAgentInfo.getTimezoneName();
   const numLoggedInUsers: number | null = guestAgentInfo.getNumLoggedInUsers();
+  const numLoggedInUsersMsg: string = getNumLoggedInUsersMessage(numLoggedInUsers);
 
   return (
     <DashboardCard>
@@ -121,7 +123,13 @@ export const VMDetailsCard: React.FC<VMDetailsCardProps> = () => {
             isLoading={!vmiLike}
             errorMessage={guestAgentFieldNotAvailMsg}
           >
-            {numLoggedInUsers != null && getNumLoggedInUsersMessage(numLoggedInUsers)}
+            {numLoggedInUsers != null && numLoggedInUsers > 0 ? (
+              <Link to={`/k8s/ns/${namespace}/virtualmachines/${name}/details#logged-in-users`}>
+                {numLoggedInUsersMsg}
+              </Link>
+            ) : (
+              numLoggedInUsersMsg
+            )}
           </DetailItem>
         </DetailsBody>
       </DashboardCardBody>
