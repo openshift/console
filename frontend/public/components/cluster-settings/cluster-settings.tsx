@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
 import { Helmet } from 'react-helmet';
-import { Button, Tooltip } from '@patternfly/react-core';
+import { Button, Popover, Tooltip } from '@patternfly/react-core';
 import { Link } from 'react-router-dom';
 
 import {
@@ -222,6 +222,31 @@ export const CurrentVersionHeader: React.SFC<CurrentVersionProps> = ({ cv }) => 
   );
 };
 
+const ChannelHeader: React.FC<{}> = () => {
+  return (
+    <Popover
+      headerContent={<>Channel</>}
+      bodyContent={
+        <>
+          <p>
+            Channels help to control the pace of updates and recommend the appropriate release
+            versions. Update channels are tied to a minor version of OpenShift Container Platform,
+            for example 4.5
+          </p>
+          <ExternalLink
+            href="https://docs.openshift.com/container-platform/latest/updating/updating-cluster-between-minor.html#understanding-upgrade-channels_updating-cluster-between-minor"
+            text="Learn more about OpenShift update channels"
+          />
+        </>
+      }
+    >
+      <Button variant="plain" className="co-m-pane__details-popover-button">
+        Channel
+      </Button>
+    </Popover>
+  );
+};
+
 export const ClusterVersionDetailsTable: React.SFC<ClusterVersionDetailsTableProps> = ({
   obj: cv,
   autoscalers,
@@ -259,7 +284,9 @@ export const ClusterVersionDetailsTable: React.SFC<ClusterVersionDetailsTablePro
                   </dl>
                   <div className="co-cluster-settings__row">
                     <dl className="co-m-pane__details co-cluster-settings__details">
-                      <dt>Channel</dt>
+                      <dt>
+                        <ChannelHeader />
+                      </dt>
                       <dd>
                         <CurrentChannel cv={cv} />
                       </dd>
@@ -274,13 +301,15 @@ export const ClusterVersionDetailsTable: React.SFC<ClusterVersionDetailsTablePro
           </div>
         </div>
         <div className="co-m-pane__body-group">
-          {window.SERVER_FLAGS.branding !== 'okd' && window.SERVER_FLAGS.branding !== 'azure' && (
-            <p className="co-m-pane__explanation">
-              View this cluster and manage subscription settings in{' '}
-              <ExternalLink text="OpenShift Cluster Manager" href={getOCMLink(clusterID)} />.
-            </p>
-          )}
           <dl className="co-m-pane__details">
+            {window.SERVER_FLAGS.branding !== 'okd' && window.SERVER_FLAGS.branding !== 'azure' && (
+              <>
+                <dt>Subscription</dt>
+                <dd>
+                  <ExternalLink text="OpenShift Cluster Manager" href={getOCMLink(clusterID)} />.
+                </dd>
+              </>
+            )}
             <dt>Cluster ID</dt>
             <dd className="co-break-all co-select-to-copy" data-test-id="cv-details-table-cid">
               {clusterID}
