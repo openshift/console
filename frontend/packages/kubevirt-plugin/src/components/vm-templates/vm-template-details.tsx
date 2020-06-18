@@ -19,6 +19,7 @@ import {
   VMTemplateDetailsList,
   VMTemplateSchedulingList,
 } from './vm-template-resource';
+import { HashAnchor } from '../hash-anchor/hash-anchor';
 
 const VMTemplateDetailsFirehose: React.FC<VMTemplateDetailsFirehoseProps> = (props) => {
   const { obj: template, hasDataVolumes } = props;
@@ -67,6 +68,7 @@ const VMTemplateDetails: React.FC<VMTemplateDetailsProps> = (props) => {
     <StatusBox data={template} {...restProps} loaded={loaded}>
       <ScrollToTopOnMount />
       <div className="co-m-pane__body">
+        <HashAnchor hash="details" />
         <SectionHeading text="VM Template Details" />
         <div className="row">
           <div className="col-sm-6">
@@ -81,7 +83,8 @@ const VMTemplateDetails: React.FC<VMTemplateDetailsProps> = (props) => {
           </div>
         </div>
       </div>
-      <div className="co-m-pane__body">
+      <div id="scheduling" className="co-m-pane__body">
+        <HashAnchor hash="scheduling" />
         <SectionHeading text="Scheduling and resources requirements" />
         <div className="row">
           <VMTemplateSchedulingList template={template} canUpdateTemplate={canUpdate} />
