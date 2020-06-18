@@ -8344,6 +8344,13 @@ eslint-module-utils@^2.4.1:
     debug "^2.6.9"
     pkg-dir "^2.0.0"
 
+eslint-plugin-cucumber@^1.4.0:
+  version "1.4.0"
+  resolved "https://registry.yarnpkg.com/eslint-plugin-cucumber/-/eslint-plugin-cucumber-1.4.0.tgz#d08d38ca6b195127e458552820dc9355b1f8c1f1"
+  integrity sha512-+PP6ke5emqppwe7PQw9BUxZMrphdi8Pw36O6S5UbworyAiZYZgLHUW63Kbja8OcyLN4PkK8givEgi4RhMrAlHg==
+  dependencies:
+    lodash "^4.17.15"
+
 eslint-plugin-cypress@^2.10.3:
   version "2.11.1"
   resolved "https://registry.yarnpkg.com/eslint-plugin-cypress/-/eslint-plugin-cypress-2.11.1.tgz#a945e2774b88211e2c706a059d431e262b5c2862"
