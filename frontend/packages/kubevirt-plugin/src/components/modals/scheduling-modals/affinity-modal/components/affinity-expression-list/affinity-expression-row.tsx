@@ -73,7 +73,7 @@ export const AffinityExpressionRow = ({
           ariaLabelledBy="values select"
           placeholderText={enableValueField ? 'Enter Value' : ''}
         >
-          {values.map((option, index) => (
+          {values?.map((option, index) => (
             // eslint-disable-next-line react/no-array-index-key
             <SelectOption isDisabled={false} key={index} value={option} />
           ))}
