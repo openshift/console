@@ -24,6 +24,7 @@ import { useGuestAgentInfo } from '../../../hooks/use-guest-agent-info';
 import { GuestAgentInfoWrapper } from '../../../k8s/wrapper/vm/guest-agent-info/guest-agent-info-wrapper';
 import { getNumLoggedInUsersMessage, getGuestAgentFieldNotAvailMsg } from '../../../utils/strings';
 import { isGuestAgentInstalled } from './vm-alerts';
+import { getOperatingSystemName, getOperatingSystem } from '../../../selectors/vm';
 
 export const VMDetailsCard: React.FC<VMDetailsCardProps> = () => {
   const vmDashboardContext = React.useContext(VMDashboardContext);
@@ -37,6 +38,7 @@ export const VMDetailsCard: React.FC<VMDetailsCardProps> = () => {
   const launcherPod = findVMIPod(vmi, pods);
 
   const ipAddrs = getVmiIpAddresses(vmi).join(', ');
+  const os = getOperatingSystemName(vmiLike) || getOperatingSystem(vmiLike);
 
   const name = getName(vmiLike);
   const namespace = getNamespace(vmiLike);
@@ -103,11 +105,11 @@ export const VMDetailsCard: React.FC<VMDetailsCardProps> = () => {
           </DetailItem>
           <DetailItem
             title="Operating System"
-            error={!operatingSystem}
+            error={!(operatingSystem || os)}
             isLoading={!vmiLike}
             errorMessage={guestAgentFieldNotAvailMsg}
           >
-            {operatingSystem}
+            {operatingSystem || os}
           </DetailItem>
           <DetailItem
             title="Time Zone"
