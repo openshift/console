@@ -26,6 +26,7 @@ import { getVMStatus } from '../../statuses/vm/vm-status';
 import { VMStatusBundle } from '../../statuses/vm/types';
 import { isWindows } from '../../selectors/vm/combined';
 import { isVM, isVMI } from '../../selectors/check-type';
+import { HashAnchor } from '../hash-anchor/hash-anchor';
 
 export const VMDetailsFirehose: React.FC<VMTabProps> = ({
   obj: objProp,
@@ -103,6 +104,7 @@ export const VMDetails: React.FC<VMDetailsProps> = (props) => {
       <ScrollToTopOnMount />
       <div className="co-m-pane__body">
         {OSMismatchAlert}
+        <HashAnchor hash="details" />
         <SectionHeading text={`${kindObj.label} Details`} />
         <div className="row">
           <div className="col-sm-6">
@@ -127,16 +129,19 @@ export const VMDetails: React.FC<VMDetailsProps> = (props) => {
         </div>
       </div>
       <div id="scheduling" className="co-m-pane__body">
+        <HashAnchor hash="scheduling" />
         <SectionHeading text="Scheduling and resources requirements" />
         <div className="row">
           <VMSchedulingList kindObj={kindObj} canUpdateVM={canUpdate} vm={vm} vmi={vmi} />
         </div>
       </div>
       <div id="services" className="co-m-pane__body">
+        <HashAnchor hash="services" />
         <SectionHeading text="Services" />
         <ServicesList {...restProps} data={vmServicesData} label="Services" />
       </div>
       <div id="logged-in-users" className="co-m-pane__body">
+        <HashAnchor hash="logged-in-users" />
         <SectionHeading text="Logged in users" />
         <VMUsersList {...restProps} vmi={vmi} vmStatusBundle={vmStatusBundle} />
       </div>
