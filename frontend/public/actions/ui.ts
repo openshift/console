@@ -328,7 +328,7 @@ export const monitoringLoaded = (
     data: { loaded: true, loadError: null, data: alerts, perspective },
   });
 export const monitoringErrored = (
-  key: 'alerts' | 'silences' | 'notificationAlerts',
+  key: 'alerts' | 'silences' | 'notificationAlerts' | 'devAlerts',
   loadError: any,
   perspective = 'admin',
 ) =>

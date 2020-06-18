@@ -12,6 +12,7 @@ import {
   Rule,
   Silences,
 } from './types';
+import { getActivePerspective } from '../../reducers/ui';
 
 export const AlertResource: MonitoringResource = {
   kind: 'Alert',
@@ -72,7 +73,8 @@ export const alertsToProps = ({ UI }, perspective?: string) =>
   UI.getIn(['monitoring', perspective === 'dev' ? 'devAlerts' : 'alerts']) || {};
 
 export const rulesToProps = (state: RootState) => {
-  const data = state.UI.getIn(['monitoring', 'rules']);
+  const activePerspective = getActivePerspective(state);
+  const data = state.UI.getIn(['monitoring', activePerspective === 'dev' ? 'devRules' : 'rules']);
   const { loaded, loadError }: Alerts = alertsToProps(state);
   return { data, loaded, loadError };
 };

@@ -10,7 +10,7 @@ import {
   LAST_PERSPECTIVE_LOCAL_STORAGE_KEY,
   PINNED_RESOURCES_LOCAL_STORAGE_KEY,
 } from '@console/shared/src/constants';
-import { AlertStates, isSilenced, SilenceStates } from '../reducers/monitoring';
+import { AlertStates, isSilenced, SilenceStates, RuleStates } from '../reducers/monitoring';
 import { legalNamePattern, getNamespace } from '../components/utils/link';
 import { OverviewSpecialGroup } from '../components/overview/constants';
 import { RootState } from '../redux';
@@ -55,6 +55,26 @@ const silenceFiringAlerts = (firingAlerts, silences) => {
           ruleAlert.state = AlertStates.Silenced;
         }
       });
+    }
+  });
+};
+
+const silenceFiringRules = (firingRules, silences) => {
+  _.each(firingRules, (r) => {
+    const silenceAlerts = _.map(r.alerts, (a) => {
+      return _.filter(
+        _.get(silences, 'data'),
+        (s) => _.get(s, 'status.state') === SilenceStates.Active && isSilenced(a, s),
+      );
+    });
+    if (!_.isEmpty(silenceAlerts[0]) && !_.isEmpty(r.alerts)) {
+      r.state = RuleStates.Silenced;
+      r.silencedBy = _.filter(
+        _.get(silences, 'data'),
+        (s) =>
+          _.get(s, 'status.state') === SilenceStates.Active &&
+          isSilenced(r?.alerts?.[0] as Alert, s),
+      );
     }
   });
 };
@@ -195,9 +215,21 @@ export default (state: UIState, action: UIAction): UIState => {
           };
       return state.mergeIn(['monitoringDashboards', 'variables', key], ImmutableMap(patch));
     }
-    case ActionType.MonitoringSetRules:
-      return state.setIn(['monitoring', action.payload.key], action.payload.data);
-
+    case ActionType.MonitoringSetRules: {
+      const ruleKey = state.get('activePerspective') === 'admin' ? 'rules' : 'devRules';
+      const rules =
+        action.payload.key === ruleKey ? action.payload.data : state.getIn(['monitoring', ruleKey]);
+      const isRuleFiring = (rule) =>
+        rule?.state === RuleStates.Firing || rule?.state === RuleStates.Silenced;
+      const firingRules = _.filter(rules, isRuleFiring);
+      const silences = state.getIn(['monitoring', 'silences']);
+      silenceFiringRules(firingRules, silences);
+      state = state.setIn(['monitoring', ruleKey], rules);
+      _.each(_.get(silences, 'data'), (s) => {
+        s.firingRules = _.filter(firingRules, (a) => isSilenced(a, s));
+      });
+      return state.setIn(['monitoring', 'silences'], silences);
+    }
     case ActionType.SetMonitoringData: {
       const alertKey = action.payload.data.perspective === 'admin' ? 'alerts' : 'devAlerts';
       const alerts =
@@ -219,7 +251,6 @@ export default (state: UIState, action: UIAction): UIState => {
       const firingAlerts = _.filter(alerts?.data, isAlertFiring);
       silenceFiringAlerts(firingAlerts, silences);
       silenceFiringAlerts(_.filter(notificationAlerts?.data, isAlertFiring), silences);
-      // filter out silenced alerts from notificationAlerts
       notificationAlerts.data = _.reject(notificationAlerts.data, { state: AlertStates.Silenced });
       state = state.setIn(['monitoring', alertKey], alerts);
       state = state.setIn(['monitoring', 'notificationAlerts'], notificationAlerts);

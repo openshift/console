@@ -66,9 +66,7 @@ export const MonitoringAlerts: React.FC<props> = ({ match, rules, filters, listS
   );
 
   React.useEffect(() => {
-    const sortThanosRules = _.sortBy(thanosAlertsAndRules.rules, (rule) =>
-      alertingRuleStateOrder(rule),
-    );
+    const sortThanosRules = _.sortBy(thanosAlertsAndRules.rules, alertingRuleStateOrder);
     dispatch(monitoringSetRules('devRules', sortThanosRules));
     dispatch(monitoringLoaded('devAlerts', thanosAlertsAndRules.alerts, 'dev'));
   }, [dispatch, thanosAlertsAndRules]);
@@ -98,7 +96,7 @@ export const MonitoringAlerts: React.FC<props> = ({ match, rules, filters, listS
     const { id } = rows[rowKey].cells[0];
     if (!_.includes(collapsedRowsIds, id)) {
       setCollapsedRowsIds([...collapsedRowsIds, id]);
-    } else if (_.includes(collapsedRowsIds, id) && isOpen) {
+    } else if (_.includes(collapsedRowsIds, id)) {
       setCollapsedRowsIds(_.without(collapsedRowsIds, id));
     }
     setRows([...rows]);

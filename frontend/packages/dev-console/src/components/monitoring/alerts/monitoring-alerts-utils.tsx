@@ -27,10 +27,12 @@ import {
 import { Alert, Rule } from '@console/internal/components/monitoring/types';
 import { YellowExclamationTriangleIcon } from '@console/shared';
 import { labelsToParams } from '@console/internal/components/monitoring/utils';
+import SilenceAlert from './SilenceAlert';
 
-const viewAlertRule = {
+const viewAlertRule = (rule: Rule, ns: string) => ({
   label: 'View Alerting Rule',
-};
+  href: `/dev-monitoring/ns/${ns}/rules/${rule.id}`,
+});
 
 type MonitoringAlertColumn = {
   title: string;
@@ -60,6 +62,7 @@ export const monitoringAlertColumn: MonitoringAlertColumn[] = [
     fieldName: 'alertState',
     sortFunc: 'alertingRuleStateOrder',
   },
+  { title: 'Notifications', transforms: [cellWidth(20)] },
   { title: '' },
 ];
 
@@ -72,7 +75,9 @@ export const monitoringAlertRows = (
   _.forEach(alertrules, (rls) => {
     rows.push({
       ...(rls.state !== RuleStates.Inactive && {
-        isOpen: rls.state === RuleStates.Firing && !_.includes(collapsedRowsIds, rls.name),
+        isOpen:
+          (rls.state === RuleStates.Firing && !_.includes(collapsedRowsIds, rls.name)) ||
+          (rls.state !== RuleStates.Firing && _.includes(collapsedRowsIds, rls.name)),
       }),
       cells: [
         {
@@ -93,9 +98,12 @@ export const monitoringAlertRows = (
           title: _.isEmpty(rls.alerts) ? 'Not Firing' : <StateCounts alerts={rls.alerts} />,
         },
         {
+          title: <SilenceAlert rule={rls} namespace={namespace} />,
+        },
+        {
           title: (
             <div className="odc-monitoring-alerts--kebab">
-              <Kebab options={[viewAlertRule]} />
+              <Kebab options={[viewAlertRule(rls, namespace)]} />
             </div>
           ),
         },
@@ -124,7 +132,7 @@ export const monitoringAlertRows = (
                 <AlertState state={alertState(alert)} />
               </div>
             ),
-            props: { colSpan: 2 },
+            props: { colSpan: 3 },
           },
         ],
       });

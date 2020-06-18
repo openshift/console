@@ -72,6 +72,7 @@ export type PrometheusRule = {
 
 export type Rule = PrometheusRule & {
   id: string;
+  silencedBy?: Silence[];
 };
 
 export type Rules = {

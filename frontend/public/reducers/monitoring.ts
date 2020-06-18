@@ -19,6 +19,7 @@ export const enum RuleStates {
   Firing = 'firing',
   Inactive = 'inactive',
   Pending = 'pending',
+  Silenced = 'silenced',
 }
 
 export const enum SilenceStates {
