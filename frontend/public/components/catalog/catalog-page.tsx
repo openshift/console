@@ -5,7 +5,13 @@ import { safeLoad } from 'js-yaml';
 
 import { PropertyItem } from '@patternfly/react-catalog-view-extension';
 import { ANNOTATIONS, FLAGS, APIError } from '@console/shared';
-import { CatalogTileViewPage, Item } from './catalog-items';
+import {
+  withExtensions,
+  isDevCatalogModel,
+  DevCatalogModel,
+  useExtensions,
+} from '@console/plugin-sdk';
+import { CatalogTileViewPage } from './catalog-items';
 import {
   k8sListPartialMetadata,
   referenceForModel,
@@ -36,12 +42,7 @@ import {
 } from './catalog-item-icon';
 import { ClusterServiceClassModel, TemplateModel } from '../../models';
 import { coFetch, coFetchJSON } from '../../co-fetch';
-import {
-  withExtensions,
-  isDevCatalogModel,
-  DevCatalogModel,
-  useExtensions,
-} from '@console/plugin-sdk';
+import { Item } from './types';
 
 export const CatalogListPage = withExtensions<CatalogListPageExtensionProps>({
   devCatalogExtensions: isDevCatalogModel,

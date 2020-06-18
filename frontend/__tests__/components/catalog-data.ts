@@ -1,4 +1,4 @@
-import { Item } from '../../public/components/catalog/catalog-items';
+import { Item } from '@console/internal/components/catalog/types';
 
 export const developerCatalogItems: Item[] = [
   {
