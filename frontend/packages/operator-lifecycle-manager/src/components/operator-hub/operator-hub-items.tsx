@@ -303,6 +303,7 @@ export const keywordCompare = (filterString, item) => {
   if (!item) {
     return false;
   }
+  const keywords = item.keywords?.map((k) => k.toLowerCase()) ?? [];
 
   return (
     item.name.toLowerCase().includes(filterString) ||
@@ -310,7 +311,8 @@ export const keywordCompare = (filterString, item) => {
       .toLowerCase()
       .includes(filterString) ||
     (item.description && item.description.toLowerCase().includes(filterString)) ||
-    (item.tags && item.tags.includes(filterString))
+    (item.tags && item.tags.includes(filterString)) ||
+    keywords.includes(filterString)
   );
 };
 

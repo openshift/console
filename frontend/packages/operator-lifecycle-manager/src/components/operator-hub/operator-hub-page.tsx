@@ -133,6 +133,7 @@ export const OperatorHubList: React.SFC<OperatorHubListProps> = (props) => {
             marketplaceSupportWorkflow,
             validSubscription,
             infraFeatures,
+            keywords: currentCSVDesc.keywords,
           };
         },
       );
