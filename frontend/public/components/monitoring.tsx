@@ -155,7 +155,7 @@ const stateIcons = {
   [AlertStates.Pending]: <OutlinedBellIcon />,
 };
 
-const AlertState: React.FC<AlertStateProps> = ({ state }) => {
+export const AlertState: React.FC<AlertStateProps> = ({ state }) => {
   const icon = stateIcons[state];
   return icon ? (
     <>
@@ -207,7 +207,7 @@ const SeverityIcon: React.FC<{ severity: string }> = ({ severity }) => {
   return <Icon />;
 };
 
-const Severity: React.FC<{ severity: string }> = ({ severity }) =>
+export const Severity: React.FC<{ severity: string }> = ({ severity }) =>
   _.isNil(severity) ? (
     <>-</>
   ) : (
@@ -250,7 +250,7 @@ const SeverityCounts: React.FC<{ alerts: Alert[] }> = ({ alerts }) => {
   );
 };
 
-const StateCounts: React.FC<{ alerts: PrometheusAlert[] }> = ({ alerts }) => {
+export const StateCounts: React.FC<{ alerts: PrometheusAlert[] }> = ({ alerts }) => {
   const counts = _.countBy(alerts, 'state');
   const states = [AlertStates.Firing, AlertStates.Pending, AlertStates.Silenced].filter(
     (s) => counts[s] > 0,
@@ -259,9 +259,9 @@ const StateCounts: React.FC<{ alerts: PrometheusAlert[] }> = ({ alerts }) => {
   return (
     <>
       {states.map((s) => (
-        <span className="monitoring-icon-wrap" key={s}>
+        <div className="monitoring-icon-wrap" key={s}>
           {stateIcons[s]} {counts[s]} {_.startCase(s)}
-        </span>
+        </div>
       ))}
     </>
   );
@@ -992,7 +992,7 @@ const HeaderAlertmanagerLink = ({ path }) =>
     </span>
   );
 
-const severityRowFilter: RowFilter = {
+export const severityRowFilter: RowFilter = {
   filterGroupName: 'Severity',
   items: [
     { id: AlertSeverity.Critical, title: 'Critical' },
@@ -1004,7 +1004,7 @@ const severityRowFilter: RowFilter = {
   type: 'alert-severity',
 };
 
-const alertsRowFilters: RowFilter[] = [
+export const alertsRowFilters: RowFilter[] = [
   {
     defaultSelected: [AlertStates.Firing],
     filterGroupName: 'Alert',
@@ -1100,7 +1100,7 @@ const AlertsPage_: React.FC<Alerts> = ({ data, loaded, loadError }) => (
     labelPath="labels"
     loaded={loaded}
     loadError={loadError}
-    nameFilterID="alert-list-text"
+    nameFilterID="resource-list-text"
     reduxID="monitoringAlerts"
     Row={AlertTableRow}
     rowFilters={alertsRowFilters}
@@ -1330,19 +1330,20 @@ const PollerPages = () => {
     const { prometheusBaseURL } = window.SERVER_FLAGS;
 
     if (prometheusBaseURL) {
-      const key = 'alerts';
-      store.dispatch(UIActions.monitoringLoading(key));
+      const alertsKey = 'alerts';
+      const rulesKey = 'rules';
+      store.dispatch(UIActions.monitoringLoading(alertsKey));
       const poller = (): void => {
         coFetchJSON(`${prometheusBaseURL}/api/v1/rules`)
           .then(({ data }) => {
             const { alerts, rules } = getAlertsAndRules(data);
-            store.dispatch(UIActions.monitoringLoaded(key, alerts));
-            store.dispatch(UIActions.monitoringSetRules(rules));
+            store.dispatch(UIActions.monitoringLoaded(alertsKey, alerts));
+            store.dispatch(UIActions.monitoringSetRules(rulesKey, rules));
           })
-          .catch((e) => store.dispatch(UIActions.monitoringErrored(key, e)))
-          .then(() => (pollerTimeouts[key] = setTimeout(poller, 15 * 1000)));
+          .catch((e) => store.dispatch(UIActions.monitoringErrored(alertsKey, e)))
+          .then(() => (pollerTimeouts[alertsKey] = setTimeout(poller, 15 * 1000)));
       };
-      pollers[key] = poller;
+      pollers[alertsKey] = poller;
       poller();
     } else {
       store.dispatch(UIActions.monitoringErrored('alerts', new Error('prometheusBaseURL not set')));

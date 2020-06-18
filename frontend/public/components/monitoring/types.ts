@@ -38,7 +38,7 @@ export type PrometheusAlert = {
     severity?: AlertSeverity | string;
   };
   state: AlertStates;
-  value?: number;
+  value?: number | string;
 };
 
 export type Alert = PrometheusAlert & {
@@ -62,6 +62,7 @@ export type PrometheusRule = {
   name: string;
   query: string;
   state: RuleStates;
+  type: string;
 };
 
 export type Rule = PrometheusRule & {
@@ -77,7 +78,6 @@ export type Rules = {
 type Group = {
   rules: PrometheusRule[];
   file: string;
-  inverval: number;
   name: string;
 };
 

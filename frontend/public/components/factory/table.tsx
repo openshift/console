@@ -73,7 +73,7 @@ const getAllTableFilters = (rowFilters) => ({
   ...rowFiltersToFilterFuncs(rowFilters),
 });
 
-const getFilteredRows = (_filters, rowFilters, objects) => {
+export const getFilteredRows = (_filters, rowFilters, objects) => {
   if (_.isEmpty(_filters)) {
     return objects;
   }

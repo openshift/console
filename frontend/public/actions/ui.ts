@@ -16,6 +16,7 @@ import { allModels } from '../module/k8s/k8s-models';
 import { detectFeatures, clearSSARFlags } from './features';
 import { OverviewSpecialGroup } from '../components/overview/constants';
 import { setClusterID, setCreateProjectMessage, setUser, setConsoleLinks } from './common';
+import { Rule } from '../components/monitoring/types';
 
 export enum ActionType {
   DismissOverviewDetails = 'dismissOverviewDetails',
@@ -320,7 +321,8 @@ export const monitoringErrored = (
   key: 'alerts' | 'silences' | 'notificationAlerts',
   loadError: any,
 ) => action(ActionType.SetMonitoringData, { key, data: { loaded: true, loadError, data: null } });
-export const monitoringSetRules = (rules: any) => action(ActionType.MonitoringSetRules, { rules });
+export const monitoringSetRules = (key: 'rules' | 'devRules', rules: Rule[]) =>
+  action(ActionType.MonitoringSetRules, { key, data: rules });
 export const monitoringToggleGraphs = () => action(ActionType.ToggleMonitoringGraphs);
 export const notificationDrawerToggleExpanded = () =>
   action(ActionType.NotificationDrawerToggleExpanded);
