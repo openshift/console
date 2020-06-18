@@ -31,7 +31,7 @@ const HelmChartSummary: React.FC<HelmChartSummaryProps> = ({ obj, helmRelease })
       <dt>Chart Version</dt>
       <dd>{chartVersion}</dd>
       <dt>App Version</dt>
-      <dd>{appVersion}</dd>
+      <dd>{appVersion || '-'}</dd>
       <dt>Revision</dt>
       <dd>{revision}</dd>
       <dt>Updated</dt>

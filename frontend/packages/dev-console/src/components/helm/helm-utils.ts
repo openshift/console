@@ -83,6 +83,10 @@ export const getChartURL = (helmChartData: HelmChartMetaData[], chartVersion: st
   return chartData?.urls[0];
 };
 
+export const concatVersions = (chartVersion: string, appVersion: string): string => {
+  return appVersion ? `${chartVersion} / App Version ${appVersion}` : chartVersion;
+};
+
 export const getChartVersions = (chartEntries: HelmChartMetaData[], kubernetesVersion: string) => {
   const chartVersions = _.reduce(
     chartEntries,
@@ -94,7 +98,7 @@ export const getChartVersions = (chartEntries: HelmChartMetaData[], kubernetesVe
       ) {
         return obj;
       }
-      obj[chart.version] = `${chart.version} / App Version ${chart.appVersion}`;
+      obj[chart.version] = concatVersions(chart.version, chart.appVersion);
       return obj;
     },
     {},

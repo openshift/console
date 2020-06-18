@@ -9,7 +9,7 @@ import { confirmModal } from '@console/internal/components/modals/confirm-modal'
 import { k8sVersion } from '@console/internal/module/status';
 import { getK8sGitVersion } from '@console/internal/module/k8s';
 import { HelmChartMetaData, HelmChart, HelmActionType, HelmChartEntries } from '../helm-types';
-import { getChartURL, getChartVersions, getChartValuesYAML } from '../helm-utils';
+import { getChartURL, getChartVersions, getChartValuesYAML, concatVersions } from '../helm-utils';
 
 export type HelmChartVersionDropdownProps = {
   chartVersion: string;
@@ -138,7 +138,7 @@ const HelmChartVersionDropdown: React.FunctionComponent<HelmChartVersionDropdown
         items={helmChartVersions}
         helpText={helpText}
         disabled={_.isEmpty(helmChartVersions) || _.keys(helmChartVersions).length === 1}
-        title={helmChartVersions[chartVersion] || `${chartVersion} / App Version ${appVersion}`}
+        title={helmChartVersions[chartVersion] || concatVersions(chartVersion, appVersion)}
         onChange={handleChartVersionChange}
         required
         fullWidth

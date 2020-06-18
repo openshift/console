@@ -12,6 +12,7 @@ import { HelmReleaseStatus } from '../helm-types';
 import {
   mockHelmReleases,
   mockHelmChartData,
+  mockHelmChartData2,
   mockReleaseResources,
   flattenedMockReleaseResources,
 } from './helm-release-mock-data';
@@ -60,6 +61,14 @@ describe('Helm Releases Utils', () => {
     expect(chartVersions).toEqual({
       '1.0.1': '1.0.1 / App Version 3.10.5',
       '1.0.2': '1.0.2 / App Version 3.12',
+      '1.0.3': '1.0.3 / App Version 3.12',
+    });
+  });
+
+  it('should concatenate App Version with the Chart Version only when it is available', () => {
+    const chartVersions = getChartVersions(mockHelmChartData2, 'v1.18.2');
+    expect(chartVersions).toEqual({
+      '1.0.2': '1.0.2',
       '1.0.3': '1.0.3 / App Version 3.12',
     });
   });
