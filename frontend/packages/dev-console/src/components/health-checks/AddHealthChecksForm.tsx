@@ -69,8 +69,12 @@ const AddHealthChecksForm: React.FC<AddHealthChecksFormProps> = ({
       onSubmit={handleSubmit}
       onReset={history.goBack}
     >
-      {(props) => (
-        <AddHealthChecks resource={resource.data} currentContainer={currentContainer} {...props} />
+      {(formikProps) => (
+        <AddHealthChecks
+          resource={resource.data}
+          currentContainer={currentContainer}
+          {...formikProps}
+        />
       )}
     </Formik>
   );

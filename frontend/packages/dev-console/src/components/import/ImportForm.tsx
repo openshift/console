@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Formik } from 'formik';
+import { Formik, FormikProps } from 'formik';
 import * as _ from 'lodash';
 import { ValidatedOptions } from '@patternfly/react-core';
 import { history, AsyncComponent } from '@console/internal/components/utils';
@@ -182,10 +182,10 @@ const ImportForm: React.FC<ImportFormProps & StateProps> = ({
       });
   };
 
-  const renderForm = (props) => {
+  const renderForm = (formikProps: FormikProps<any>) => {
     return (
       <AsyncComponent
-        {...props}
+        {...formikProps}
         projects={projects}
         builderImages={builderImages}
         loader={importData.loader}
@@ -199,8 +199,9 @@ const ImportForm: React.FC<ImportFormProps & StateProps> = ({
       onSubmit={handleSubmit}
       onReset={history.goBack}
       validationSchema={validationSchema}
-      render={renderForm}
-    />
+    >
+      {renderForm}
+    </Formik>
   );
 };
 

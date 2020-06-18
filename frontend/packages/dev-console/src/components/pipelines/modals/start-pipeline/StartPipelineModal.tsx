@@ -57,9 +57,9 @@ const StartPipelineModal: React.FC<StartPipelineModalProps & ModalComponentProps
       onSubmit={handleSubmit}
       validationSchema={startPipelineSchema}
     >
-      {(props) => (
-        <ModalStructure submitBtnText="Start" title="Start Pipeline" close={close} {...props}>
-          <StartPipelineForm {...props} />
+      {(formikProps) => (
+        <ModalStructure submitBtnText="Start" title="Start Pipeline" close={close} {...formikProps}>
+          <StartPipelineForm {...formikProps} />
         </ModalStructure>
       )}
     </Formik>

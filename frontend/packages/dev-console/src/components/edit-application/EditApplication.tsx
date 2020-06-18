@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Formik } from 'formik';
+import { Formik, FormikProps } from 'formik';
 import * as _ from 'lodash';
 import { connect } from 'react-redux';
 import { getActivePerspective } from '@console/internal/reducers/ui';
@@ -62,12 +62,12 @@ const EditApplication: React.FC<EditApplicationProps & StateProps> = ({
       });
   };
 
-  const renderForm = (props) => {
+  const renderForm = (formikProps: FormikProps<any>) => {
     return (
       <EditApplicationForm
-        {...props}
+        {...formikProps}
         appResources={appResources}
-        enableReinitialize="true"
+        enableReinitialize
         createFlowType={pageHeading}
         builderImages={builderImages}
       />
@@ -82,8 +82,9 @@ const EditApplication: React.FC<EditApplicationProps & StateProps> = ({
       validationSchema={
         _.get(initialValues, 'build.strategy') ? gitValidationSchema : deployValidationSchema
       }
-      render={renderForm}
-    />
+    >
+      {renderForm}
+    </Formik>
   );
 };
 

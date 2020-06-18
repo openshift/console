@@ -173,9 +173,9 @@ const HelmInstallUpgradePage: React.FunctionComponent<HelmInstallUpgradePageProp
           onReset={history.goBack}
           validationSchema={getHelmActionValidationSchema(helmAction)}
         >
-          {(props) => (
+          {(formikProps) => (
             <HelmInstallUpgradeForm
-              {...props}
+              {...formikProps}
               chartHasValues={chartHasValues}
               helmAction={helmAction}
             />

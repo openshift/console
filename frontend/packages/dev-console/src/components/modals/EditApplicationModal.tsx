@@ -97,13 +97,11 @@ class EditApplicationModal extends PromiseComponent<
       },
     };
     return (
-      <Formik
-        initialValues={initialValues}
-        onSubmit={this.handleSubmit}
-        render={(formProps) => (
-          <EditApplicationForm {...formProps} {...this.props} initialApplication={application} />
+      <Formik initialValues={initialValues} onSubmit={this.handleSubmit}>
+        {(formikProps) => (
+          <EditApplicationForm {...formikProps} {...this.props} initialApplication={application} />
         )}
-      />
+      </Formik>
     );
   }
 }
@@ -144,10 +142,8 @@ class GroupEditApplicationModal extends PromiseComponent<
       },
     };
     return (
-      <Formik
-        initialValues={initialValues}
-        onSubmit={this.handleSubmit}
-        render={(formProps) => (
+      <Formik initialValues={initialValues} onSubmit={this.handleSubmit}>
+        {(formProps) => (
           <EditApplicationForm
             {...formProps}
             {...this.props}
@@ -155,7 +151,7 @@ class GroupEditApplicationModal extends PromiseComponent<
             initialApplication={application}
           />
         )}
-      />
+      </Formik>
     );
   }
 }

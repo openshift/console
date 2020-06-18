@@ -91,7 +91,7 @@ class DeleteResourceModal extends PromiseComponent<
     };
     return (
       <Formik initialValues={initialValues} onSubmit={this.handleSubmit}>
-        {(formProps) => <DeleteResourceForm {...formProps} {...this.props} />}
+        {(formikProps) => <DeleteResourceForm {...formikProps} {...this.props} />}
       </Formik>
     );
   }

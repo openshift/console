@@ -33,13 +33,14 @@ export const TextFilter = (props) => {
     placeholder = `Filter ${label}...`,
     autoFocus = false,
     parentClassName,
+    ...otherInputProps
   } = props;
   const { ref } = useDocumentListener();
 
   return (
     <div className={classNames('has-feedback', parentClassName)}>
       <TextInput
-        {...props}
+        {...otherInputProps}
         className={classNames('co-text-filter', className)}
         data-test-id="item-filter"
         aria-label={placeholder}

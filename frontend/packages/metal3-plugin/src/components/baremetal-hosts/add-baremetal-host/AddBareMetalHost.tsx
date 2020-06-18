@@ -118,8 +118,8 @@ const AddBareMetalHost: React.FC<AddBareMetalHostProps> = ({
       onReset={() => setReload(true)}
       validationSchema={addHostValidationSchema}
     >
-      {(props) => (
-        <AddBareMetalHostForm {...props} isEditing={isEditing} showUpdated={showUpdated} />
+      {(formikProps) => (
+        <AddBareMetalHostForm {...formikProps} isEditing={isEditing} showUpdated={showUpdated} />
       )}
     </Formik>
   );

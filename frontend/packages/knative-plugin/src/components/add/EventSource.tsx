@@ -101,8 +101,12 @@ const EventSource: React.FC<Props> = ({
       validateOnChange={false}
       validationSchema={eventSourceValidationSchema}
     >
-      {(props) => (
-        <EventSourceForm {...props} namespace={namespace} eventSourceStatus={eventSourceStatus} />
+      {(formikProps) => (
+        <EventSourceForm
+          {...formikProps}
+          namespace={namespace}
+          eventSourceStatus={eventSourceStatus}
+        />
       )}
     </Formik>
   );

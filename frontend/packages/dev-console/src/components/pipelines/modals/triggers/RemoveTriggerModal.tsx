@@ -40,9 +40,9 @@ const RemoveTriggerModal: React.FC<RemoveTriggerModalProps> = ({ pipeline, close
       onSubmit={handleSubmit}
       validationSchema={removeTriggerSchema}
     >
-      {(props) => (
+      {(formikProps) => (
         <ModalStructure
-          {...props}
+          {...formikProps}
           submitBtnText="Remove"
           submitDanger
           title="Remove Trigger"

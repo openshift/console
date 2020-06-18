@@ -51,8 +51,13 @@ const SinkSource: React.FC<SinkSourceProps> = ({ source, cancel, close }) => {
       onReset={cancel}
       initialStatus={{ error: '' }}
     >
-      {(props) => (
-        <SinkSourceModal {...props} namespace={namespace} resourceName={name} cancel={cancel} />
+      {(formikProps) => (
+        <SinkSourceModal
+          {...formikProps}
+          namespace={namespace}
+          resourceName={name}
+          cancel={cancel}
+        />
       )}
     </Formik>
   );
