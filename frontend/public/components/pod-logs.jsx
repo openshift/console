@@ -73,7 +73,6 @@ export class PodLogs extends React.Component {
     if (!currentKey) {
       const firstContainer = _.find(newState.containers, { order: 0 });
       newState.currentKey = firstContainer ? firstContainer.name : '';
-      setQueryArgument('container', newState.currentKey);
     }
     return newState;
   }
