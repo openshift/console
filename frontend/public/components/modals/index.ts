@@ -114,6 +114,11 @@ export const createAlertRoutingModal = (props) =>
     m.createAlertRoutingModal(props),
   );
 
+export const createColumnManagementModal = (props) =>
+  import('./column-management-modal' /* webpackChunkName: "column-management-modal" */).then((m) =>
+    m.createColumnManagementModal(props),
+  );
+
 export const addUsersModal = (props) =>
   import('./add-users-modal' /* webpackChunkName: "add-users-modal" */).then((m) =>
     m.addUsersModal(props),

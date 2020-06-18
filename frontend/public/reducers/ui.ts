@@ -112,6 +112,12 @@ export default (state: UIState, action: UIAction): UIState => {
   }
 
   switch (action.type) {
+    case ActionType.ColumnManagementSetFilter:
+      return state.setIn(
+        ['columnManagement', 'filters', action.payload.kind],
+        action.payload.filter,
+      );
+
     case ActionType.SetActiveApplication:
       return state.set('activeApplication', action.payload.application);
 

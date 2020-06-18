@@ -19,6 +19,7 @@ import { setClusterID, setCreateProjectMessage, setUser, setConsoleLinks } from 
 import { Rule } from '../components/monitoring/types';
 
 export enum ActionType {
+  ColumnManagementSetFilter = 'columnManagementSetFilter',
   DismissOverviewDetails = 'dismissOverviewDetails',
   SelectOverviewDetailsTab = 'selectOverviewDetailsTab',
   SelectOverviewItem = 'selectOverviewItem',
@@ -282,6 +283,8 @@ export const sortList = (
 
   return action(ActionType.SortList, { listId, field, func, orderBy });
 };
+export const columnManagementSetFilter = (kind: string, filter: any) =>
+  action(ActionType.ColumnManagementSetFilter, { kind, filter });
 export const selectOverviewItem = (uid: string) => action(ActionType.SelectOverviewItem, { uid });
 export const selectOverviewDetailsTab = (tab: string) =>
   action(ActionType.SelectOverviewDetailsTab, { tab });
@@ -383,6 +386,7 @@ export const setPVCMetrics = (pvcMetrics: PVCMetrics) =>
 
 // TODO(alecmerdler): Implement all actions using `typesafe-actions` and add them to this export
 const uiActions = {
+  columnManagementSetFilter,
   setCurrentLocation,
   setActiveApplication,
   setActiveNamespace,

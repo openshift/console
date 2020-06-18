@@ -264,12 +264,13 @@ export type TableRowProps = {
   className?: string;
 };
 
-export const TableData: React.SFC<TableDataProps> = ({ className, ...props }) => {
-  return <td {...props} className={className} role="gridcell" />;
+export const TableData: React.SFC<TableDataProps> = ({ className, visible = true, ...props }) => {
+  return visible && <td {...props} className={className} role="gridcell" />;
 };
 TableData.displayName = 'TableData';
 export type TableDataProps = {
   id?: string;
+  visible?: boolean;
   className?: string;
 };
 
@@ -476,7 +477,7 @@ export const Table = connect<
         'match',
         'kindObj',
       ]);
-      const columns = props.Header(componentProps);
+      const columns = props.Header(componentProps).filter((column) => column.visible);
       const { currentSortField, currentSortFunc, currentSortOrder } = props;
 
       this._columnShift = props.onSelect ? 1 : 0; //shift indexes by 1 if select provided
@@ -507,7 +508,7 @@ export const Table = connect<
         'match',
         'kindObj',
       ]);
-      const columns = this.props.Header(componentProps);
+      const columns = this.props.Header(componentProps).filter((column) => column.visible);
       const sp = new URLSearchParams(window.location.search);
       const columnIndex = _.findIndex(columns, { title: sp.get('sortBy') });
 
@@ -550,7 +551,7 @@ export const Table = connect<
         'match',
         'kindObj',
       ]);
-      const columns = this.props.Header(componentProps);
+      const columns = this.props.Header(componentProps).filter((column) => column.visible);
       const sortColumn = columns[index - this._columnShift];
       this._applySort(sortColumn.sortField, sortColumn.sortFunc, direction, sortColumn.title);
       this.setState({
@@ -585,7 +586,7 @@ export const Table = connect<
         'match',
         'kindObj',
       ]);
-      const columns = Header(componentProps);
+      const columns = Header(componentProps).filter((column) => column.visible);
       const ariaRowCount = componentProps.data && componentProps.data.length;
       const scrollNode = typeof scrollElement === 'function' ? scrollElement() : scrollElement;
       const renderVirtualizedTable = (scrollContainer) => (

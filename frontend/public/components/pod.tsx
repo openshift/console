@@ -52,6 +52,7 @@ import {
 import { VolumesTable } from './volumes-table';
 import { PodModel } from '../models';
 import { Conditions } from './conditions';
+import store from '../redux';
 
 // Only request metrics if the device's screen width is larger than the
 // breakpoint where metrics are visible.
@@ -104,6 +105,10 @@ const tableColumnClasses = [
   classNames('pf-m-hidden', { 'pf-m-visible-on-xl pf-u-w-10-on-2xl': showMetrics }),
   classNames('pf-m-hidden', { 'pf-m-visible-on-xl pf-u-w-10-on-2xl': showMetrics }),
   classNames('pf-m-hidden', 'pf-m-visible-on-2xl pf-u-w-10-on-2xl'),
+  classNames('pf-m-hidden', 'pf-m-visible-on-xl'),
+  classNames('pf-m-hidden', 'pf-m-visible-on-xl'),
+  classNames('pf-m-hidden', 'pf-m-visible-on-xl'),
+
   Kebab.columnClass,
 ];
 
@@ -111,6 +116,7 @@ const kind = 'Pod';
 
 const podRowStateToProps = ({ UI }) => ({
   metrics: UI.getIn(['metrics', 'pod']),
+  columnFilters: UI.getIn(['columnManagement', 'filters']),
 });
 
 const PodTableRow = connect<PodTableRowPropsFromState, null, PodTableRowProps>(podRowStateToProps)(
@@ -121,6 +127,7 @@ const PodTableRow = connect<PodTableRowPropsFromState, null, PodTableRowProps>(p
     style,
     metrics,
     showNodes,
+    columnFilters,
   }: PodTableRowProps & PodTableRowPropsFromState) => {
     const { name, namespace, creationTimestamp } = pod.metadata;
     const { readyCount, totalContainers } = podReadiness(pod);
@@ -128,35 +135,68 @@ const PodTableRow = connect<PodTableRowPropsFromState, null, PodTableRowProps>(p
     const restarts = podRestarts(pod);
     const bytes: number = _.get(metrics, ['memory', namespace, name]);
     const cores: number = _.get(metrics, ['cpu', namespace, name]);
+    const columnFilter = columnFilters?.get('Pod');
     return (
       <TableRow id={pod.metadata.uid} index={index} trKey={rowKey} style={style}>
         <TableData className={tableColumnClasses[0]}>
           <ResourceLink kind={kind} name={name} namespace={namespace} />
         </TableData>
-        <TableData className={classNames(tableColumnClasses[1], 'co-break-word')}>
+        <TableData className={classNames(tableColumnClasses[1], 'co-break-word')} visible={false}>
           <ResourceLink kind="Namespace" name={namespace} />
         </TableData>
-        <TableData className={tableColumnClasses[2]}>
+        <TableData
+          className={tableColumnClasses[2]}
+          visible={columnFilter?.find((col) => col.title === 'Status' && col.visible === true)}
+        >
           <Status status={phase} />
         </TableData>
-        <TableData className={tableColumnClasses[3]}>
+        <TableData
+          className={tableColumnClasses[3]}
+          visible={columnFilter?.find((col) => col.title === 'Ready' && col.visible === true)}
+        >
           {readyCount}/{totalContainers}
         </TableData>
-        <TableData className={tableColumnClasses[4]}>{restarts}</TableData>
-        <TableData className={tableColumnClasses[5]}>
+        <TableData
+          className={tableColumnClasses[4]}
+          visible={columnFilter?.find((col) => col.title === 'Restarts' && col.visible === true)}
+        >
+          {restarts}
+        </TableData>
+        <TableData
+          className={tableColumnClasses[5]}
+          visible={columnFilter?.find((col) => col.title === 'Owner' && col.visible === true)}
+        >
           {showNodes ? (
             <ResourceLink kind="Node" name={pod.spec.nodeName} namespace={namespace} />
           ) : (
             <OwnerReferences resource={pod} />
           )}
         </TableData>
-        <TableData className={tableColumnClasses[6]}>
+        <TableData
+          className={tableColumnClasses[6]}
+          visible={columnFilter?.find((col) => col.title === 'Memory' && col.visible === true)}
+        >
           {bytes ? `${formatBytesAsMiB(bytes)} MiB` : '-'}
         </TableData>
-        <TableData className={tableColumnClasses[7]}>
+        <TableData
+          className={tableColumnClasses[7]}
+          visible={columnFilter?.find((col) => col.title === 'CPU' && col.visible === true)}
+        >
           {cores ? `${formatCores(cores)} cores` : '-'}
         </TableData>
-        <TableData className={tableColumnClasses[8]}>
+        <TableData
+          className={tableColumnClasses[8]}
+          visible={columnFilter?.find((col) => col.title === 'Created' && col.visible === true)}
+        >
+          <Timestamp timestamp={creationTimestamp} />
+        </TableData>
+        <TableData className={tableColumnClasses[8]} visible={false}>
+          <Timestamp timestamp={creationTimestamp} />
+        </TableData>
+        <TableData className={tableColumnClasses[8]} visible={false}>
+          <Timestamp timestamp={creationTimestamp} />
+        </TableData>
+        <TableData className={tableColumnClasses[8]} visible={false}>
           <Timestamp timestamp={creationTimestamp} />
         </TableData>
         <TableData className={tableColumnClasses[9]}>
@@ -175,64 +215,109 @@ PodTableRow.displayName = 'PodTableRow';
 
 const getHeader = (showNodes) => {
   return () => {
+    if (
+      store.getState().UI.getIn(['columnManagement', 'filters']) &&
+      store
+        .getState()
+        .UI.getIn(['columnManagement', 'filters'])
+        .has('Pod')
+    ) {
+      return store
+        .getState()
+        .UI.getIn(['columnManagement', 'filters'])
+        .get('Pod');
+    }
     return [
       {
         title: 'Name',
         sortField: 'metadata.name',
         transforms: [sortable],
         props: { className: tableColumnClasses[0] },
+        visible: true,
       },
       {
         title: 'Namespace',
         sortField: 'metadata.namespace',
         transforms: [sortable],
         props: { className: tableColumnClasses[1] },
+        visible: false,
       },
       {
         title: 'Status',
         sortFunc: 'podPhase',
         transforms: [sortable],
         props: { className: tableColumnClasses[2] },
+        visible: true,
       },
       {
         title: 'Ready',
         sortFunc: 'podReadiness',
         transforms: [sortable],
         props: { className: tableColumnClasses[3] },
+        visible: true,
       },
       {
         title: 'Restarts',
         sortFunc: 'podRestarts',
         transforms: [sortable],
         props: { className: tableColumnClasses[4] },
+        visible: true,
       },
       {
         title: showNodes ? 'Node' : 'Owner',
         sortField: showNodes ? 'spec.nodeName' : 'metadata.ownerReferences[0].name',
         transforms: [sortable],
         props: { className: tableColumnClasses[5] },
+        visible: true,
       },
       {
         title: 'Memory',
         sortFunc: 'podMemory',
         transforms: [sortable],
         props: { className: tableColumnClasses[6] },
+        visible: true,
       },
       {
         title: 'CPU',
         sortFunc: 'podCPU',
         transforms: [sortable],
         props: { className: tableColumnClasses[7] },
+        visible: true,
       },
       {
         title: 'Created',
         sortField: 'metadata.creationTimestamp',
         transforms: [sortable],
         props: { className: tableColumnClasses[8] },
+        visible: true,
+      },
+      {
+        title: 'Node',
+        sortField: 'spec.nodeName',
+        transforms: [sortable],
+        props: { className: tableColumnClasses[9] },
+        visible: false,
+        additional: true,
+      },
+      {
+        title: 'Labels',
+        sortField: 'metadata.labels',
+        transforms: [sortable],
+        props: { className: tableColumnClasses[10] },
+        visible: false,
+        additional: true,
+      },
+      {
+        title: 'IP Address',
+        sortField: 'status.hostIP',
+        transforms: [sortable],
+        props: { className: tableColumnClasses[11] },
+        additional: true,
       },
       {
         title: '',
         props: { className: tableColumnClasses[9] },
+        visible: true,
       },
     ];
   };
@@ -592,6 +677,7 @@ export const PodsPage = connect<{}, PodPagePropsFromDispatch, PodPageProps>(
       ListComponent={PodList}
       rowFilters={filters}
       namespace={namespace}
+      Header={getHeader(props?.customData?.showNodes)}
       customData={customData}
     />
   );
@@ -644,6 +730,7 @@ type PodTableRowProps = {
 
 type PodTableRowPropsFromState = {
   metrics: UIActions.PodMetrics;
+  columnFilters: any;
 };
 
 type PodListProps = {

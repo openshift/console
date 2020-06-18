@@ -2,7 +2,6 @@
   background-color: #fff;
   z-index: 5;
   width: 100%;
-  max-width: 270px;
   @media (max-width: $screen-xs-min) {
     max-width: calc(100% - 95px);
   }
