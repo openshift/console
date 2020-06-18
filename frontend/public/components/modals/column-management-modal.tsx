@@ -1,5 +1,8 @@
 import * as React from 'react';
-import { connect, Dispatch } from 'react-redux';
+// FIXME upgrading redux types is causing many errors at this time
+// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+// @ts-ignore
+import { useDispatch, useSelector } from 'react-redux';
 import * as _ from 'lodash';
 import {
   Alert,
@@ -43,9 +46,16 @@ const getDataListRows = (
     </DataListItem>
   ));
 
-export const ColumnManagementModal: React.FC<ColumnManagementModalProps &
-  StateProps &
-  DispatchProps> = ({ kinds, cancel, close, columns, columnFilters, setColumnFilters }) => {
+export const ColumnManagementModal: React.FC<ColumnManagementModalProps> = ({
+  kinds,
+  cancel,
+  close,
+  columns,
+}) => {
+  const columnFilters = useSelector<RootState, string>(({ UI }) =>
+    UI.getIn(['columnManagement', 'filters']),
+  );
+  const dispatch = useDispatch();
   const initialDefaultColumns =
     columnFilters && columnFilters.has(kinds[0])
       ? _.cloneDeep(columnFilters.get(kinds[0])).filter(
@@ -85,7 +95,7 @@ export const ColumnManagementModal: React.FC<ColumnManagementModalProps &
 
   const submit = (event): void => {
     event.preventDefault();
-    setColumnFilters(kinds[0], [...defaultColumns, ...additionalColumns]);
+    dispatch(columnManagementSetFilter(kinds[0], [...defaultColumns, ...additionalColumns]));
     close();
   };
 
@@ -152,33 +162,8 @@ export const ColumnManagementModal: React.FC<ColumnManagementModalProps &
   );
 };
 
-interface StateProps {
-  columnFilters: any;
-}
-
-const mapStateToProps = (state: RootState): StateProps => ({
-  columnFilters: state.UI.getIn(['columnManagement', 'filters']),
-});
-
-interface DispatchProps {
-  setColumnFilters: (kind: string, filter: any) => void;
-}
-
-const mapDispatchToProps = (dispatch: Dispatch): DispatchProps => ({
-  setColumnFilters: (kind: string, filter: any) => {
-    dispatch(columnManagementSetFilter(kind, filter));
-  },
-});
-
-const ConnectedColumnManagementModal = connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(ColumnManagementModal);
-
-export const createColumnManagementModal = createModalLauncher(
-  (props: ColumnManagementModalProps & DispatchProps & StateProps) => (
-    <ConnectedColumnManagementModal {...props} />
-  ),
+export const createColumnManagementModal = createModalLauncher<ColumnManagementModalProps>(
+  ColumnManagementModal,
 );
 
 export type ColumnManagementModalProps = {
