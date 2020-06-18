@@ -133,6 +133,22 @@ const config: Configuration = {
         test: overpassTest,
         loader: 'null-loader',
       },
+      {
+        test: /\.feature$/,
+        use: [
+          {
+            loader: 'cypress-cucumber-preprocessor/loader',
+          },
+        ],
+      },
+      {
+        test: /\.features$/,
+        use: [
+          {
+            loader: 'cypress-cucumber-preprocessor/lib/featuresLoader',
+          },
+        ],
+      },
     ],
   },
   optimization: {

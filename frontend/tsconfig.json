@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "skipLibCheck": true,
     "baseUrl": ".",
     "module": "esnext",
     "moduleResolution": "node",
@@ -10,7 +11,7 @@
     "experimentalDecorators": true,
     "sourceMap": true,
     "noUnusedLocals": true,
-    "types": ["jest"],
+    "types": ["jest", "cypress"],
     "paths": {
       "protractor": ["integration-tests/protractor.d.ts"]
     }

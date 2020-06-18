@@ -1,0 +1,6 @@
+{
+    "name": "@console/cypress-devconsole-integration-tests",
+    "version": "0.0.0-fixed",
+    "description": "Dev Console integration tests",
+    "private": true
+  }
