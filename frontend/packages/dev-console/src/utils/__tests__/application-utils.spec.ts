@@ -44,11 +44,14 @@ const getTopologyData = (
 describe('ApplicationUtils ', () => {
   let spy;
   let checkAccessSpy;
+  let spyK8sGet;
   beforeEach(() => {
     spy = spyOn(k8s, 'k8sKill');
     checkAccessSpy = spyOn(utils, 'checkAccess');
+    spyK8sGet = spyOn(k8s, 'k8sGet');
     spyAndReturn(spy)(Promise.resolve({}));
     spyAndReturn(checkAccessSpy)(Promise.resolve({ status: { allowed: true } }));
+    spyAndReturn(spyK8sGet)(Promise.resolve(true));
   });
 
   it('Should delete all the specific models related to deployment config', (done) => {
