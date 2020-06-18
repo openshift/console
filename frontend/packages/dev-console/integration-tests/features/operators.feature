@@ -5,7 +5,6 @@ Background:
     Given user logged into the openshift application
     And user is at admin perspecitve
 
-
 @regression, @smoke
 Scenario: OpenShift Pipeline operator subscription page : P-01-TC01
    Given user is at Operator Hub page with the header name "Operator Hub"
