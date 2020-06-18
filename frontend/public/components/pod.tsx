@@ -190,16 +190,16 @@ const PodTableRow = connect<PodTableRowPropsFromState, null, PodTableRowProps>(p
         >
           <Timestamp timestamp={creationTimestamp} />
         </TableData>
-        <TableData className={tableColumnClasses[8]} visible={false}>
+        <TableData className={tableColumnClasses[9]} visible={false}>
           <Timestamp timestamp={creationTimestamp} />
         </TableData>
-        <TableData className={tableColumnClasses[8]} visible={false}>
+        <TableData className={tableColumnClasses[10]} visible={false}>
           <Timestamp timestamp={creationTimestamp} />
         </TableData>
-        <TableData className={tableColumnClasses[8]} visible={false}>
+        <TableData className={tableColumnClasses[11]} visible={false}>
           <Timestamp timestamp={creationTimestamp} />
         </TableData>
-        <TableData className={tableColumnClasses[9]}>
+        <TableData className={tableColumnClasses[12]}>
           <ResourceKebab
             actions={menuActions}
             kind={kind}
@@ -312,11 +312,12 @@ const getHeader = (showNodes) => {
         sortField: 'status.hostIP',
         transforms: [sortable],
         props: { className: tableColumnClasses[11] },
+        visible: false,
         additional: true,
       },
       {
         title: '',
-        props: { className: tableColumnClasses[9] },
+        props: { className: tableColumnClasses[12] },
         visible: true,
       },
     ];
