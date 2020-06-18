@@ -1,16 +1,33 @@
 import { $, ExpectedConditions as until, browser, $$ } from 'protractor';
+import * as path from 'path';
 import * as crudView from '@console/internal-integration-tests/views/crud.view';
 import * as sideNavView from '@console/internal-integration-tests/views/sidenav.view';
 import { click, getOperatorHubCardIndex } from '@console/shared/src/test-utils/utils';
 import { OCS_OP, SECOND, OCS_OPERATOR_NAME } from '../utils/consts';
 import { waitFor, refreshIfNotVisible, waitUntil } from '../utils/helpers';
 
+enum Version {
+  OCP_44 = 'OCP_4.4',
+  LATEST = 'LATEST',
+}
+
+export enum Platform {
+  OCP = 'OCP',
+  OCS = 'OCS',
+}
+
+export enum Mode {
+  CONVERGED = 'CONVERGED',
+  EXTERNAL = 'EXTERNAL',
+}
+
 /**
  * Env vars affect what selectors are activated and what tests are run
  */
 export const LIVE = process.env.OCS_LIVE;
-export const VERSION = process.env.OCP_VERSION || 'LATEST';
-export const TEST_PLATFORM = process.env.TEST_PLATFORM || 'OCP';
+export const VERSION = process.env.OCP_VERSION || Version.LATEST;
+export const TEST_PLATFORM = process.env.TEST_PLATFORM || Platform.OCP;
+export const MODE = process.env.MODE || Mode.CONVERGED;
 
 /**
  * All generic selectors go into Defaults
@@ -69,6 +86,11 @@ const DEFAULTS = {
   nodeNames: $$('tbody [data-key="1"]'),
   // Node locations in the Node List Table
   nodeLocations: $$('tbody [data-key="3"'),
+
+  // Select Installation Mode
+  independentModeButton: $('input[name="independent-mode"]'),
+
+  fileUploadButton: $('#inputButton'),
 };
 
 const OCP_44 = {
@@ -80,7 +102,7 @@ const OCP_44 = {
 
 export const currentSelectors = (() => {
   switch (VERSION) {
-    case 'OCP_4.4':
+    case Version.OCP_44:
       return Object.assign(DEFAULTS, OCP_44);
     default:
       return DEFAULTS;
@@ -152,7 +174,7 @@ export class InstallCluster {
     await waitFor(currentSelectors.ocsOperatorStatus, 'Succeeded', 5);
   }
 
-  async createStorageCluster() {
+  async storageClusterCreationCommon() {
     await click(currentSelectors.ocsOperator);
     // In fresh clusters APIs are not shown (Last seen in OCP 4.3)
     try {
@@ -162,6 +184,10 @@ export class InstallCluster {
     }
     const storageClusterLink = await currentSelectors.getStorageClusterLink();
     await click(storageClusterLink);
+  }
+
+  async createConvergedStorageCluster() {
+    await this.storageClusterCreationCommon();
     await currentSelectors.nodeListHandler();
     const { selectedNodes, workersAZ } = await selectWorkerRows();
     await click(currentSelectors.sizeDropdown);
@@ -169,5 +195,15 @@ export class InstallCluster {
     await click(currentSelectors.primaryButton);
     await browser.wait(until.and(crudView.untilNoLoadersPresent));
     return { selectedNodes, workersAZ };
+  }
+
+  async createExternalStorageCluster() {
+    const UPLOAD_FILE_PATH = path.resolve(__dirname, '../mocks/testFile.json');
+    await this.storageClusterCreationCommon();
+    await click(currentSelectors.independentModeButton);
+    await browser.wait(until.and(crudView.untilNoLoadersPresent));
+    await currentSelectors.fileUploadButton.sendKeys(UPLOAD_FILE_PATH);
+    await click(currentSelectors.primaryButton);
+    await browser.wait(until.and(crudView.untilNoLoadersPresent));
   }
 }
