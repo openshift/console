@@ -6,7 +6,7 @@ const color = tektonGroupColor.value;
 
 export const PipelineModel: K8sKind = {
   apiGroup: 'tekton.dev',
-  apiVersion: 'v1alpha1',
+  apiVersion: 'v1beta1',
   label: 'Pipeline',
   plural: 'pipelines',
   abbr: 'PL',
@@ -15,13 +15,13 @@ export const PipelineModel: K8sKind = {
   id: 'pipeline',
   labelPlural: 'Pipelines',
   crd: true,
-  badge: BadgeType.DEV,
+  badge: BadgeType.TECH,
   color,
 };
 
 export const PipelineRunModel: K8sKind = {
   apiGroup: 'tekton.dev',
-  apiVersion: 'v1alpha1',
+  apiVersion: 'v1beta1',
   label: 'Pipeline Run',
   plural: 'pipelineruns',
   abbr: 'PLR',
@@ -30,13 +30,13 @@ export const PipelineRunModel: K8sKind = {
   id: 'pipelinerun',
   labelPlural: 'Pipeline Runs',
   crd: true,
-  badge: BadgeType.DEV,
+  badge: BadgeType.TECH,
   color,
 };
 
 export const TaskModel: K8sKind = {
   apiGroup: 'tekton.dev',
-  apiVersion: 'v1alpha1',
+  apiVersion: 'v1beta1',
   label: 'Task',
   plural: 'tasks',
   abbr: 'T',
@@ -45,13 +45,13 @@ export const TaskModel: K8sKind = {
   id: 'task',
   labelPlural: 'Tasks',
   crd: true,
-  badge: BadgeType.DEV,
+  badge: BadgeType.TECH,
   color,
 };
 
 export const TaskRunModel: K8sKind = {
   apiGroup: 'tekton.dev',
-  apiVersion: 'v1alpha1',
+  apiVersion: 'v1beta1',
   label: 'Task Run',
   plural: 'taskruns',
   abbr: 'TR',
@@ -60,7 +60,7 @@ export const TaskRunModel: K8sKind = {
   id: 'taskrun',
   labelPlural: 'Task Runs',
   crd: true,
-  badge: BadgeType.DEV,
+  badge: BadgeType.TECH,
   color,
 };
 
@@ -81,7 +81,7 @@ export const PipelineResourceModel: K8sKind = {
 
 export const ClusterTaskModel: K8sKind = {
   apiGroup: 'tekton.dev',
-  apiVersion: 'v1alpha1',
+  apiVersion: 'v1beta1',
   label: 'Cluster Task',
   plural: 'clustertasks',
   abbr: 'CT',
@@ -90,7 +90,7 @@ export const ClusterTaskModel: K8sKind = {
   id: 'clustertask',
   labelPlural: 'Cluster Tasks',
   crd: true,
-  badge: BadgeType.DEV,
+  badge: BadgeType.TECH,
   color,
 };
 

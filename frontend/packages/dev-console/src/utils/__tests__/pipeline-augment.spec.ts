@@ -1,4 +1,5 @@
 import * as _ from 'lodash';
+import { referenceForModel } from '@console/internal/module/k8s';
 import { pipelineTestData, DataState, PipelineExampleNames } from '../../test/pipeline-data';
 import {
   getResources,
@@ -11,7 +12,7 @@ import {
   getResourceModelFromTask,
   pipelineRefExists,
 } from '../pipeline-augment';
-import { ClusterTaskModel, TaskModel } from '../../models';
+import { ClusterTaskModel, PipelineRunModel, TaskModel } from '../../models';
 import { testData } from './pipeline-augment-test-data';
 
 describe('PipelineAugment test getResources create correct resources for firehose', () => {
@@ -30,7 +31,7 @@ describe('PipelineAugment test getResources create correct resources for firehos
   it('expect resources to be of length 1 and have the following properties & childprops', () => {
     const resources = getResources(testData[2].data);
     expect(resources.resources.length).toBe(1);
-    expect(resources.resources[0].kind).toBe('tekton.dev~v1alpha1~PipelineRun');
+    expect(resources.resources[0].kind).toBe(referenceForModel(PipelineRunModel));
     expect(resources.resources[0].namespace).toBe(testData[2].data[0].metadata.namespace);
     expect(resources.propsReferenceForRuns.length).toBe(1);
   });
@@ -38,8 +39,8 @@ describe('PipelineAugment test getResources create correct resources for firehos
   it('expect resources to be of length 2 and have the following properties & childprops', () => {
     const resources = getResources(testData[3].data);
     expect(resources.resources.length).toBe(2);
-    expect(resources.resources[0].kind).toBe('tekton.dev~v1alpha1~PipelineRun');
-    expect(resources.resources[1].kind).toBe('tekton.dev~v1alpha1~PipelineRun');
+    expect(resources.resources[0].kind).toBe(referenceForModel(PipelineRunModel));
+    expect(resources.resources[1].kind).toBe(referenceForModel(PipelineRunModel));
     expect(resources.resources[0].namespace).toBe(testData[3].data[0].metadata.namespace);
     expect(resources.resources[0].namespace).toBe(testData[3].data[1].metadata.namespace);
     expect(resources.propsReferenceForRuns.length).toBe(2);
