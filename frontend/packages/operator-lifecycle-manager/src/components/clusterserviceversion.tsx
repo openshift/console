@@ -163,9 +163,8 @@ const menuActionsForCSV = (
   subscription: SubscriptionKind,
 ): KebabAction[] => {
   return _.isEmpty(subscription)
-    ? [Kebab.factory.Edit, Kebab.factory.Delete]
+    ? [Kebab.factory.Delete]
     : [
-        Kebab.factory.Edit,
         () => editSubscription(subscription),
         () => uninstall(subscription, _.get(csv, 'spec.displayName')),
       ];
@@ -818,7 +817,6 @@ export const ClusterServiceVersionsDetailsPage: React.FC<ClusterServiceVersionsD
   ) => {
     const subscription = subscriptionForCSV(subscriptions, obj);
     return [
-      Kebab.factory.Edit(model, obj),
       ...(_.isEmpty(subscription)
         ? [Kebab.factory.Delete(model, obj)]
         : [editSubscription(subscription), uninstall(subscription)]),
