@@ -233,41 +233,13 @@ const plugin: Plugin<ConsumedExtensions> = [
     },
   },
   {
-    type: 'NavItem/ResourceNS',
+    type: 'NavItem/Href',
     properties: {
       perspective: 'admin',
       section: 'Pipelines',
       componentProps: {
         name: PipelineModel.labelPlural,
-        resource: referenceForModel(PipelineModel),
-      },
-    },
-    flags: {
-      required: [FLAG_OPENSHIFT_PIPELINE],
-    },
-  },
-  {
-    type: 'NavItem/ResourceNS',
-    properties: {
-      perspective: 'admin',
-      section: 'Pipelines',
-      componentProps: {
-        name: PipelineRunModel.labelPlural,
-        resource: referenceForModel(PipelineRunModel),
-      },
-    },
-    flags: {
-      required: [FLAG_OPENSHIFT_PIPELINE],
-    },
-  },
-  {
-    type: 'NavItem/ResourceNS',
-    properties: {
-      perspective: 'admin',
-      section: 'Pipelines',
-      componentProps: {
-        name: PipelineResourceModel.labelPlural,
-        resource: referenceForModel(PipelineResourceModel),
+        href: '/pipelines',
       },
     },
     flags: {
@@ -457,6 +429,7 @@ const plugin: Plugin<ConsumedExtensions> = [
         '/project-details',
         '/dev-monitoring',
         '/helm-releases',
+        '/pipelines',
       ],
       component: NamespaceRedirect,
     },
@@ -539,6 +512,19 @@ const plugin: Plugin<ConsumedExtensions> = [
         (
           await import(
             './components/BuildConfigPage' /* webpackChunkName: "dev-console-buildconfigs" */
+          )
+        ).default,
+    },
+  },
+  {
+    type: 'Page/Route',
+    properties: {
+      exact: false,
+      path: ['/pipelines/all-namespaces', '/pipelines/ns/:ns'],
+      loader: async () =>
+        (
+          await import(
+            './components/pipelines-lists/PipelinesListsPage' /* webpackChunkName: "admin-pipeline" */
           )
         ).default,
     },
