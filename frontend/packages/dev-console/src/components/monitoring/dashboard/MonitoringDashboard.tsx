@@ -5,7 +5,11 @@ import { connect } from 'react-redux';
 import { Helmet } from 'react-helmet';
 import Dashboard from '@console/shared/src/components/dashboard/Dashboard';
 import { RootState } from '@console/internal/redux';
-import { getURLSearchParams, ResourceLink } from '@console/internal/components/utils';
+import {
+  getURLSearchParams,
+  setQueryArgument,
+  removeQueryArgument,
+} from '@console/internal/components/utils';
 import {
   TimespanDropdown,
   PollIntervalDropdown,
@@ -14,9 +18,9 @@ import ConnectedMonitoringDashboardGraph from './MonitoringDashboardGraph';
 import {
   monitoringDashboardQueries,
   workloadMetricsQueries,
-  MonitoringQuery,
   topWorkloadMetricsQueries,
 } from '../queries';
+import { MonitoringWorkloadFilter, OptionTypes } from './MonitoringWorkloadFilter';
 import './MonitoringDashboard.scss';
 
 type MonitoringDashboardProps = {
@@ -35,11 +39,67 @@ type Props = MonitoringDashboardProps & StateProps;
 export const MonitoringDashboard: React.FC<Props> = ({ match, timespan, pollInterval }) => {
   const namespace = match.params.ns;
   const params = getURLSearchParams();
-  const { workloadName, workloadType } = params;
-  const workLoadPresent = workloadName && workloadType;
-  const queries: MonitoringQuery[] = workLoadPresent
-    ? [...topWorkloadMetricsQueries, ...workloadMetricsQueries]
-    : monitoringDashboardQueries;
+  const [workloadName, setWorkloadName] = React.useState(
+    params.workloadName || OptionTypes.selectAll,
+  );
+  const [workloadType, setWorkloadType] = React.useState(params.workloadType);
+  const [initialRun, setInitialRun] = React.useState(true);
+  const selectedTaskRef = React.useRef<string>(workloadName);
+  selectedTaskRef.current = workloadName;
+
+  const getQueries = React.useCallback(() => {
+    return workloadName && workloadType && workloadName !== OptionTypes.selectAll
+      ? [...topWorkloadMetricsQueries, ...workloadMetricsQueries]
+      : monitoringDashboardQueries;
+  }, [workloadName, workloadType]);
+
+  const [queries, setQueries] = React.useState(getQueries());
+
+  const removeQueryParams = React.useCallback(() => {
+    if (!initialRun) {
+      removeQueryArgument('workloadName');
+      removeQueryArgument('workloadType');
+      setWorkloadType(null);
+      setWorkloadName(OptionTypes.selectAll);
+      setQueries(getQueries());
+    }
+  }, [getQueries, initialRun]);
+
+  React.useEffect(
+    () => {
+      setQueries(getQueries());
+      if (workloadName !== OptionTypes.selectAll && workloadType) {
+        setQueryArgument('workloadName', workloadName);
+        setQueryArgument('workloadType', workloadType);
+      } else if (
+        workloadName === OptionTypes.selectAll &&
+        !initialRun &&
+        !_.isEmpty(getURLSearchParams())
+      ) {
+        removeQueryParams();
+      }
+    }, // eslint-disable-next-line react-hooks/exhaustive-deps
+    [workloadName, workloadType, getQueries, namespace],
+  );
+
+  React.useEffect(
+    () => {
+      initialRun ? setInitialRun(false) : removeQueryParams();
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [namespace],
+  );
+
+  const onSelect = React.useCallback(
+    (key: string, type: string = null): void => {
+      if (selectedTaskRef.current !== key) {
+        selectedTaskRef.current = key;
+        setWorkloadName(key);
+        setWorkloadType(type);
+      }
+    },
+    [setWorkloadType, setWorkloadName],
+  );
 
   return (
     <>
@@ -51,18 +111,15 @@ export const MonitoringDashboard: React.FC<Props> = ({ match, timespan, pollInte
           <TimespanDropdown />
           <PollIntervalDropdown />
         </div>
-        {workLoadPresent && (
-          <div className="odc-monitoring-dashboard__resource-link">
-            Showing metrics for &nbsp;
-            <ResourceLink
-              kind={workloadType}
+        <div className="row odc-monitoring-dashboard__resource-toolbar">
+          <div className="col-lg-3 col-md-3 col-sm-4 col-xs-6">
+            <MonitoringWorkloadFilter
               name={workloadName}
               namespace={namespace}
-              title={workloadName}
-              inline
+              onChange={onSelect}
             />
           </div>
-        )}
+        </div>
         <Dashboard>
           {_.map(queries, (q) => (
             <ConnectedMonitoringDashboardGraph

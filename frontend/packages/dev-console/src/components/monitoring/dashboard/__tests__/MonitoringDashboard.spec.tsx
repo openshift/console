@@ -5,7 +5,10 @@ import {
   TimespanDropdown,
   PollIntervalDropdown,
 } from '@console/internal/components/monitoring/dashboards';
+import { ResourceDropdown } from '@console/shared';
+import { Firehose } from '@console/internal/components/utils/firehose';
 import { MonitoringDashboard } from '../MonitoringDashboard';
+import { OptionTypes, MonitoringWorkloadFilter } from '../MonitoringWorkloadFilter';
 import ConnectedMonitoringDashboardGraph from '../MonitoringDashboardGraph';
 import { monitoringDashboardQueries, topWorkloadMetricsQueries } from '../../queries';
 
@@ -68,20 +71,42 @@ describe('Monitoring Dashboard Tab', () => {
     expect(wrapper.find(PollIntervalDropdown).exists()).toBe(true);
   });
 
-  it('should render ResourceLink for workload queries dashboard', () => {
+  it('should render workload filter dropdown with preselected workload in dashboard', () => {
     const spygetURLSearchParams = jest.spyOn(link, 'getURLSearchParams');
     spygetURLSearchParams.mockReturnValue({
       workloadName: 'calculator-react',
       workloadType: 'Deployment',
     });
     const wrapper = shallow(<MonitoringDashboard {...monitoringDashboardProps} />);
-    expect(wrapper.find(link.ResourceLink).exists()).toBe(true);
+    const filterDropdown = wrapper.find(MonitoringWorkloadFilter);
+    expect(filterDropdown.exists()).toBe(true);
+    expect(filterDropdown.props().name).toBe('calculator-react');
   });
 
-  it('should not render ResourceLink for namespace queries dashboard', () => {
+  it('should render filter dropdown with no selection for namespace queries dashboard', () => {
     const spygetURLSearchParams = jest.spyOn(link, 'getURLSearchParams');
     spygetURLSearchParams.mockReturnValue({});
     const wrapper = shallow(<MonitoringDashboard {...monitoringDashboardProps} />);
-    expect(wrapper.find(link.ResourceLink).exists()).toBe(false);
+    const filterDropdown = wrapper.find(MonitoringWorkloadFilter);
+    expect(filterDropdown.exists()).toBe(true);
+    expect(filterDropdown.props().name).toBe(OptionTypes.selectAll);
+  });
+
+  it('should render filter dropdown with correct resources and select all option', () => {
+    const wrapper = shallow(<MonitoringDashboard {...monitoringDashboardProps} />);
+    const filterDropdown = wrapper.find(MonitoringWorkloadFilter);
+    const FirehoseResources = filterDropdown.dive().find(Firehose);
+    expect(FirehoseResources.props().resources).toHaveLength(3);
+  });
+
+  it('should render filter dropdown with badge', () => {
+    const wrapper = shallow(<MonitoringDashboard {...monitoringDashboardProps} />);
+    const filterDropdown = wrapper.find(MonitoringWorkloadFilter);
+    expect(
+      filterDropdown
+        .dive()
+        .find(ResourceDropdown)
+        .props().showBadge,
+    ).toBeTruthy();
   });
 });
