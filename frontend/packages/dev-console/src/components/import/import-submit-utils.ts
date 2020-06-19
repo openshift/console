@@ -238,7 +238,11 @@ export const createOrUpdateDeployment = (
     project: { name: namespace },
     application: { name: application },
     image: { ports, tag },
-    deployment: { env, replicas },
+    deployment: {
+      env,
+      replicas,
+      triggers: { image: imageChange },
+    },
     labels: userLabels,
     limits: { cpu, memory },
     git: { url: repository, ref },
@@ -253,6 +257,7 @@ export const createOrUpdateDeployment = (
       {
         from: { kind: 'ImageStreamTag', name: `${name}:latest` },
         fieldPath: `spec.template.spec.containers[?(@.name=="${name}")].image`,
+        pause: `${!imageChange}`,
       },
     ]),
   };
@@ -469,13 +474,15 @@ export const createOrUpdateResources = async (
     }
     const [imageStreamResponse] = await Promise.all(requests);
     const imageStreamURL = imageStreamResponse.status.dockerImageRepository;
+    const originalAnnotations = appResources?.editAppResource?.data?.metadata?.annotations || {};
+    const newAnnotations = { ...originalAnnotations, ...defaultAnnotations };
     const knDeploymentResource = getKnativeServiceDepResource(
       formData,
       imageStreamURL,
       imageStreamName,
       undefined,
       undefined,
-      defaultAnnotations,
+      newAnnotations,
       _.get(appResources, 'editAppResource.data'),
     );
     return Promise.all([

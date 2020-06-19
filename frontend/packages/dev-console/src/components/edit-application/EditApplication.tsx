@@ -51,12 +51,12 @@ const EditApplication: React.FC<EditApplicationProps & StateProps> = ({
     updateResources(values)
       .then(() => {
         actions.setSubmitting(false);
-        actions.setStatus({ error: '' });
+        actions.setStatus({ submitError: '' });
         handleRedirect(namespace, perspective);
       })
       .catch((err) => {
         actions.setSubmitting(false);
-        actions.setStatus({ error: err.message });
+        actions.setStatus({ submitError: err.message });
       });
   };
 

@@ -142,7 +142,11 @@ export const createOrUpdateDeployment = (
     project: { name: namespace },
     name,
     isi: { image, ports, tag: imageStreamTag },
-    deployment: { env, replicas },
+    deployment: {
+      env,
+      replicas,
+      triggers: { image: imageChange },
+    },
     labels: userLabels,
     limits: { cpu, memory },
     imageStream: { image: imgName, namespace: imgNamespace },
@@ -159,6 +163,7 @@ export const createOrUpdateDeployment = (
           namespace: imgNamespace || namespace,
         },
         fieldPath: `spec.template.spec.containers[?(@.name=="${name}")].image`,
+        pause: `${!imageChange}`,
       },
     ]),
   };
@@ -421,13 +426,15 @@ export const createOrUpdateDeployImageResources = async (
       const imageStreamRepo = imageStreamResponse.status.dockerImageRepository;
       imageStreamUrl = imageStreamTag ? `${imageStreamRepo}:${imageStreamTag}` : imageStreamRepo;
     }
+    const originalAnnotations = appResources?.editAppResource?.data?.metadata?.annotations || {};
+    const newAnnotations = { ...originalAnnotations, ...annotations };
     const knDeploymentResource = getKnativeServiceDepResource(
       formData,
       imageStreamUrl,
       internalImageName || name,
       imageStreamTag,
       internalImageNamespace,
-      annotations,
+      newAnnotations,
       _.get(appResources, 'editAppResource.data'),
     );
     requests.push(
