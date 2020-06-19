@@ -8,4 +8,14 @@
   &__children {
     padding: var(--pf-global--spacer--md) 0;
   }
+
+  &--inline {
+    display: flex;
+    align-items: flex-start;
+
+    > .pf-c-form__label, .pf-c-radio {
+      margin-right: var(--pf-global--spacer--md);
+    }
+
+  }
 }
