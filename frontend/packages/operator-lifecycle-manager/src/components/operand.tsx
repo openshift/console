@@ -465,9 +465,7 @@ export const OperandDetails = connectToModel((props: OperandDetailsProps) => {
   const primaryDescriptors = statusDescriptors.filter((descriptor) => isMainDescriptor(descriptor));
 
   const header = (
-    <h2 className="co-section-heading">{`${
-      thisDefinition ? thisDefinition.displayName : kind
-    } Overview`}</h2>
+    <h2 className="co-section-heading">{thisDefinition?.displayName || kind} Overview</h2>
   );
 
   const primaryDescriptor = primaryDescriptors.map((statusDescriptor: Descriptor) => {
