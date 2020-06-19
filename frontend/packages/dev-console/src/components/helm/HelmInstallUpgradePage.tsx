@@ -1,5 +1,7 @@
 import * as React from 'react';
 import * as _ from 'lodash';
+import * as Ajv from 'ajv';
+import { JSONSchema6 } from 'json-schema';
 import { safeDump, safeLoad } from 'js-yaml';
 import { Formik } from 'formik';
 import { Helmet } from 'react-helmet';
@@ -22,6 +24,8 @@ import { getHelmActionValidationSchema } from './helm-validation-utils';
 import { getHelmActionConfig, getChartValuesYAML, getHelmChartReadme } from './helm-utils';
 import NamespacedPage, { NamespacedPageVariants } from '../NamespacedPage';
 import HelmInstallUpgradeForm from './form/HelmInstallUpgradeForm';
+import HelmChartMetaDescription from './form/HelmChartMetaDescription';
+import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
 
 export type HelmInstallUpgradePageProps = RouteComponentProps<{
   ns?: string;
@@ -29,12 +33,15 @@ export type HelmInstallUpgradePageProps = RouteComponentProps<{
 }>;
 
 export type HelmInstallUpgradeFormData = {
-  helmReleaseName: string;
-  helmChartURL?: string;
+  releaseName: string;
+  chartURL?: string;
   chartName: string;
-  chartValuesYAML: string;
   chartVersion: string;
   appVersion: string;
+  yamlData: string;
+  formData: any;
+  formSchema: JSONSchema6;
+  editorType: EditorType;
 };
 
 const HelmInstallUpgradePage: React.FunctionComponent<HelmInstallUpgradePageProps> = ({
@@ -43,26 +50,36 @@ const HelmInstallUpgradePage: React.FunctionComponent<HelmInstallUpgradePageProp
 }) => {
   const searchParams = new URLSearchParams(location.search);
 
-  const chartURL = decodeURIComponent(searchParams.get('chartURL'));
   const namespace = match.params.ns || searchParams.get('preselected-ns');
-  const releaseName = match.params.releaseName || '';
+  const initialChartURL = decodeURIComponent(searchParams.get('chartURL'));
+  const initialReleaseName = match.params.releaseName || '';
   const helmChartName = searchParams.get('chartName');
   const helmActionOrigin = searchParams.get('actionOrigin') as HelmActionOrigins;
 
-  const [chartDataLoaded, setChartDataLoaded] = React.useState<boolean>(false);
+  const [chartData, setChartData] = React.useState<HelmChart>(null);
   const [chartName, setChartName] = React.useState<string>('');
-  const [chartHasValues, setChartHasValues] = React.useState<boolean>(false);
-  const [YAMLData, setYAMLData] = React.useState<string>('');
-  const [activeChartVersion, setActiveChartVersion] = React.useState<string>('');
+  const [chartVersion, setChartVersion] = React.useState<string>('');
   const [appVersion, setAppVersion] = React.useState<string>('');
   const [chartReadme, setChartReadme] = React.useState<string>('');
+  const [chartHasValues, setChartHasValues] = React.useState<boolean>(false);
+
+  const [initialYamlData, setInitialYamlData] = React.useState<string>('');
+  const [initialFormData, setInitialFormData] = React.useState<object>();
+  const [initialFormSchema, setInitialFormSchema] = React.useState<JSONSchema6>();
 
   const helmAction: HelmActionType =
-    chartURL !== 'null' ? HelmActionType.Install : HelmActionType.Upgrade;
+    initialChartURL !== 'null' ? HelmActionType.Install : HelmActionType.Upgrade;
 
   const config = React.useMemo<HelmActionConfigType>(
-    () => getHelmActionConfig(helmAction, releaseName, namespace, helmActionOrigin, chartURL),
-    [chartURL, helmAction, helmActionOrigin, namespace, releaseName],
+    () =>
+      getHelmActionConfig(
+        helmAction,
+        initialReleaseName,
+        namespace,
+        helmActionOrigin,
+        initialChartURL,
+      ),
+    [helmAction, helmActionOrigin, initialChartURL, initialReleaseName, namespace],
   );
 
   React.useEffect(() => {
@@ -77,14 +94,18 @@ const HelmInstallUpgradePage: React.FunctionComponent<HelmInstallUpgradePageProp
       const chart: HelmChart = res?.chart || res;
       const chartValues = getChartValuesYAML(chart);
       const releaseValues = !_.isEmpty(res?.config) ? safeDump(res?.config) : '';
-      const values = releaseValues || chartValues;
-      setChartReadme(getHelmChartReadme(chart));
-      setYAMLData(values);
+      const valuesYAML = releaseValues || chartValues;
+      const valuesJSON = (res?.config || chart?.values) ?? {};
+      const valuesSchema = chart?.schema && JSON.parse(atob(chart?.schema));
+      setInitialYamlData(valuesYAML);
+      setInitialFormData(valuesJSON);
+      setInitialFormSchema(valuesSchema);
       setChartName(chart.metadata.name);
-      setActiveChartVersion(chart.metadata.version);
+      setChartVersion(chart.metadata.version);
       setAppVersion(chart.metadata.appVersion);
-      setChartHasValues(!!values);
-      setChartDataLoaded(true);
+      setChartReadme(getHelmChartReadme(chart));
+      setChartHasValues(!!valuesYAML);
+      setChartData(chart);
     };
 
     fetchHelmRelease();
@@ -95,21 +116,42 @@ const HelmInstallUpgradePage: React.FunctionComponent<HelmInstallUpgradePageProp
   }, [config.helmReleaseApi, helmAction]);
 
   const initialValues: HelmInstallUpgradeFormData = {
-    helmReleaseName: releaseName || helmChartName || '',
-    helmChartURL: chartURL,
+    releaseName: initialReleaseName || helmChartName || '',
+    chartURL: initialChartURL,
     chartName,
-    chartValuesYAML: YAMLData,
     appVersion,
-    chartVersion: activeChartVersion,
+    chartVersion,
+    yamlData: initialYamlData,
+    formData: initialFormData,
+    formSchema: initialFormSchema,
+    editorType: initialFormSchema ? EditorType.Form : EditorType.YAML,
   };
 
   const handleSubmit = (values, actions) => {
     actions.setStatus({ isSubmitting: true });
-    const { helmReleaseName, helmChartURL, chartValuesYAML }: HelmInstallUpgradeFormData = values;
+    const {
+      releaseName,
+      chartURL,
+      yamlData,
+      formData,
+      formSchema,
+      editorType,
+    }: HelmInstallUpgradeFormData = values;
     let valuesObj;
-    if (chartValuesYAML) {
+
+    if (editorType === EditorType.Form) {
+      const ajv = new Ajv();
+      const validSchema = ajv.validateSchema(formSchema);
+      const validFormData = validSchema && ajv.validate(formSchema, formData);
+      if (validFormData) {
+        valuesObj = formData;
+      } else {
+        actions.setStatus({ submitError: `Errors in the Form - ${ajv.errorsText()}` });
+        return;
+      }
+    } else if (yamlData) {
       try {
-        valuesObj = safeLoad(chartValuesYAML);
+        valuesObj = safeLoad(yamlData);
       } catch (err) {
         actions.setStatus({ submitError: `Invalid YAML - ${err}` });
         return;
@@ -118,11 +160,8 @@ const HelmInstallUpgradePage: React.FunctionComponent<HelmInstallUpgradePageProp
 
     const payload = {
       namespace,
-      name: helmReleaseName,
-      ...(helmChartURL !== 'null' || undefined
-        ? // eslint-disable-next-line @typescript-eslint/camelcase
-          { chart_url: helmChartURL }
-        : {}),
+      name: releaseName,
+      ...(chartURL !== 'null' || undefined ? { chart_url: chartURL } : {}), // eslint-disable-line @typescript-eslint/camelcase
       ...(valuesObj ? { values: valuesObj } : {}),
     };
 
@@ -159,7 +198,7 @@ const HelmInstallUpgradePage: React.FunctionComponent<HelmInstallUpgradePageProp
       });
   };
 
-  if (!chartDataLoaded) {
+  if (!chartData) {
     return <LoadingBox />;
   }
 
@@ -174,6 +213,8 @@ const HelmInstallUpgradePage: React.FunctionComponent<HelmInstallUpgradePageProp
         modalClassName: 'modal-lg',
       }),
     );
+
+  const chartMetaDescription = <HelmChartMetaDescription chart={chartData} />;
 
   return (
     <NamespacedPage variant={NamespacedPageVariants.light} disabled hideApplications>
@@ -210,6 +251,7 @@ const HelmInstallUpgradePage: React.FunctionComponent<HelmInstallUpgradePageProp
               chartHasValues={chartHasValues}
               helmAction={helmAction}
               onVersionChange={handleChartVersionChange}
+              chartMetaDescription={chartMetaDescription}
             />
           )}
         </Formik>
