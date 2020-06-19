@@ -34,8 +34,3 @@ export const HIDDEN_UI_SCHEMA = {
   'ui:widget': 'hidden',
   'ui:options': { label: false },
 };
-
-const SORT_WEIGHT_BASE = 10;
-export const SORT_WEIGHT_SCALE_1 = SORT_WEIGHT_BASE ** 1;
-export const SORT_WEIGHT_SCALE_2 = SORT_WEIGHT_BASE ** 2;
-export const SORT_WEIGHT_SCALE_3 = SORT_WEIGHT_BASE ** 3;

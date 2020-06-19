@@ -1,0 +1,14 @@
+@import '../../../../../public/style/vars';
+
+.ocs-synced-editor-field {
+  &__editor-toggle {
+    padding-top: var(--pf-global--spacer--sm);
+    margin: var(--pf-global--spacer--md) 0;
+    border-bottom: 1px solid #ddd;
+    border-top: 1px solid #ddd;
+  }
+
+  &__yaml-warning {
+    margin: $grid-gutter-width $grid-gutter-width 0;
+  }
+}

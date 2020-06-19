@@ -13,6 +13,7 @@ import {
   AccordionContent,
   Button,
   Alert,
+  FormHelperText,
 } from '@patternfly/react-core';
 import { MinusCircleIcon, PlusCircleIcon } from '@patternfly/react-icons';
 import { JSON_SCHEMA_GROUP_TYPES } from './const';
@@ -61,11 +62,13 @@ export const AtomicFieldTemplate: React.FC<FieldTemplateProps> = ({
         {children}
         {description}
         {!_.isEmpty(rawErrors) && (
-          <ul className="co-error">
+          <>
             {_.map(rawErrors, (error) => (
-              <li className="co-error">{error}</li>
+              <FormHelperText key={error} isHidden={false} isError>
+                {_.capitalize(error)}
+              </FormHelperText>
             ))}
-          </ul>
+          </>
         )}
       </>
     </FormField>
