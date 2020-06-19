@@ -11,6 +11,7 @@ import { PipelineRunModel } from '../../../models';
 
 export const runFilters = [
   {
+    filterGroupName: 'Status',
     type: 'pipelinerun-status',
     selected: [
       ListFilterId.Succeeded,

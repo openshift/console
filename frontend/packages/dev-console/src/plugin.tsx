@@ -247,13 +247,13 @@ const plugin: Plugin<ConsumedExtensions> = [
     },
   },
   {
-    type: 'NavItem/ResourceNS',
+    type: 'NavItem/Href',
     properties: {
       perspective: 'admin',
       section: 'Pipelines',
       componentProps: {
         name: TaskModel.labelPlural,
-        resource: referenceForModel(TaskModel),
+        href: '/tasks',
       },
     },
     flags: {
@@ -261,27 +261,13 @@ const plugin: Plugin<ConsumedExtensions> = [
     },
   },
   {
-    type: 'NavItem/ResourceNS',
+    type: 'NavItem/Href',
     properties: {
       perspective: 'admin',
       section: 'Pipelines',
       componentProps: {
-        name: TaskRunModel.labelPlural,
-        resource: referenceForModel(TaskRunModel),
-      },
-    },
-    flags: {
-      required: [FLAG_OPENSHIFT_PIPELINE],
-    },
-  },
-  {
-    type: 'NavItem/ResourceCluster',
-    properties: {
-      perspective: 'admin',
-      section: 'Pipelines',
-      componentProps: {
-        name: ClusterTaskModel.labelPlural,
-        resource: referenceForModel(ClusterTaskModel),
+        name: 'Triggers',
+        href: '/triggers',
       },
     },
     flags: {
@@ -430,6 +416,8 @@ const plugin: Plugin<ConsumedExtensions> = [
         '/dev-monitoring',
         '/helm-releases',
         '/pipelines',
+        '/tasks',
+        '/triggers',
       ],
       component: NamespaceRedirect,
     },
@@ -525,6 +513,32 @@ const plugin: Plugin<ConsumedExtensions> = [
         (
           await import(
             './components/pipelines-lists/PipelinesListsPage' /* webpackChunkName: "admin-pipeline" */
+          )
+        ).default,
+    },
+  },
+  {
+    type: 'Page/Route',
+    properties: {
+      exact: false,
+      path: ['/tasks/all-namespaces', '/tasks/ns/:ns'],
+      loader: async () =>
+        (
+          await import(
+            './components/tasks-lists/TasksListsPage' /* webpackChunkName: "admin-tasks`" */
+          )
+        ).default,
+    },
+  },
+  {
+    type: 'Page/Route',
+    properties: {
+      exact: false,
+      path: ['/triggers/all-namespaces', '/triggers/ns/:ns'],
+      loader: async () =>
+        (
+          await import(
+            './components/triggers-lists/TriggersPage' /* webpackChunkName: "admin-triggers" */
           )
         ).default,
     },

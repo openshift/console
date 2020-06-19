@@ -46,3 +46,15 @@ export const pipelineRunStatusFilter = (phases, pipeline) => {
   const status = pipelineRunFilterReducer(pipeline);
   return phases.selected.has(status) || !_.includes(phases.all, status);
 };
+
+export const pipelineResourceFilterReducer = (pipelineResource): string => {
+  return pipelineResource.spec.type;
+};
+
+export const pipelineResourceTypeFilter = (filters, pipelineResource): boolean => {
+  if (!filters || !filters.selected || !filters.selected.size) {
+    return true;
+  }
+  const type = pipelineResourceFilterReducer(pipelineResource);
+  return filters.selected.has(type) || !_.includes(filters.all, type);
+};
