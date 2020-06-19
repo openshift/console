@@ -271,8 +271,7 @@ export const CatalogListPage = withExtensions<CatalogListPageExtensionProps>({
               ...chart,
               ...{ metadata: { uid: chart.digest, creationTimestamp: chart.created } },
             };
-
-            normalizedCharts.push({
+            const helmChart = {
               obj,
               kind: 'HelmChart',
               tileName,
@@ -284,7 +283,27 @@ export const CatalogListPage = withExtensions<CatalogListPageExtensionProps>({
               markdownDescription,
               customProperties,
               href: `/catalog/helm-install?chartName=${chartName}&chartURL=${encodedChartURL}&preselected-ns=${currentNamespace}`,
+            };
+
+            // group Helm chart with same name and different version together
+            const existingChartIndex = normalizedCharts.findIndex((hlc) => {
+              const currentChart = hlc.obj as HelmChart;
+              return currentChart?.name === chartName;
             });
+            if (existingChartIndex > -1) {
+              const existingChart = normalizedCharts[existingChartIndex].obj as HelmChart;
+              const versionCompare = helmChart.obj?.version?.localeCompare(
+                existingChart?.version,
+                undefined,
+                { numeric: true, sensitivity: 'base' },
+              );
+
+              if (versionCompare === 1) {
+                normalizedCharts[existingChartIndex] = helmChart;
+              }
+            } else {
+              normalizedCharts.push(helmChart);
+            }
           });
           return normalizedCharts;
         },
