@@ -1,8 +1,18 @@
 {
-    "integrationFolder": "features",
+  "integrationFolder": "features",
     "screenshotsFolder": "../../../gui_test_screenshots/cypress/screenshots",
     "videosFolder": "../../../gui_test_screenshots/cypress/videos",
     "video": true,
+    "viewportWidth":1920,
+    "viewportHeight":1080,
+    "watchForFileChanges": true,
+    "chromeWebSecurity": false,
+    "waitForAnimation": true,
+    "animationDistanceThreshold": 20,
+    "execTimeout": 60000,
+    "pageLoadTimeout": 60000,
+    "requestTimeout": 15000,
+    "responseTimeout": 15000,
     "reporter": "../../../node_modules/cypress-multi-reporters",
     "reporterOptions": {
       "configFile": "reporter-config.json"
@@ -12,3 +22,4 @@
     "fixturesFolder": "fixtures",
     "defaultCommandTimeout": 22000
   }
+  
