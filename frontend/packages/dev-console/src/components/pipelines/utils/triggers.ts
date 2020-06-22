@@ -165,7 +165,7 @@ export const useEventListenerTriggerTemplateNames = (
     (acc, trigger) => [
       ...acc,
       {
-        routeURL: route && routeLoaded ? getRouteWebURL(route) : null,
+        routeURL: route && route?.status?.ingress && routeLoaded ? getRouteWebURL(route) : null,
         triggerTemplateName: trigger.template.name,
       },
     ],
