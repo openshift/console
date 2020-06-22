@@ -4,7 +4,6 @@ import { mount, ReactWrapper } from 'enzyme';
 import { Provider } from 'react-redux';
 
 import {
-  CatalogTile,
   FilterSidePanelCategoryItem,
   VerticalTabsTab,
 } from '@patternfly/react-catalog-view-extension';
@@ -59,59 +58,6 @@ describe(CatalogTileViewPage.displayName, () => {
     expect(filterItems.at(3).props().checked).toBe(false); // filter imagestreams should be false by default
     expect(filterItems.at(4).props().count).toBe(12); // total count for clusterServiceClasses
     expect(filterItems.at(4).props().checked).toBe(false); // filter clusterServiceClasses should be false by default
-  });
-
-  it('renders tiles correctly', () => {
-    // De-activating all filters to render all tiles
-    const filterItems = wrapper.find<any>(FilterSidePanelCategoryItem);
-    filterItems.forEach((filter) => {
-      filter.find('input').simulate('click', { target: { checked: false } });
-    });
-
-    const tiles = wrapper.find<any>(CatalogTile);
-
-    expect(tiles.exists()).toBe(true);
-    expect(tiles.length).toEqual(25);
-
-    const cakeSqlTileProps = tiles.at(2).props();
-    expect(cakeSqlTileProps.title).toEqual('CakePHP + MySQL');
-    expect(cakeSqlTileProps.iconImg).toEqual('test-file-stub');
-    expect(cakeSqlTileProps.iconClass).toBe(null);
-    expect(cakeSqlTileProps.vendor).toEqual('provided by Red Hat, Inc.');
-    expect(
-      cakeSqlTileProps.description.startsWith(
-        'An example CakePHP application with a MySQL database',
-      ),
-    ).toBe(true);
-
-    const amqTileProps = tiles.at(22).props();
-    expect(amqTileProps.title).toEqual('Red Hat JBoss A-MQ 6.3 (Ephemeral, no SSL)');
-    expect(amqTileProps.iconImg).toEqual('test-file-stub');
-    expect(amqTileProps.iconClass).toBe(null);
-    expect(amqTileProps.vendor).toEqual('provided by Red Hat, Inc.');
-    expect(
-      amqTileProps.description.startsWith(
-        "Application template for JBoss A-MQ brokers. These can be deployed as standalone or in a mesh. This template doesn't feature SSL support.",
-      ),
-    ).toBe(true);
-
-    const wildflyTileProps = tiles.at(24).props();
-    expect(wildflyTileProps.title).toEqual('WildFly');
-    expect(wildflyTileProps.iconImg).toEqual('test-file-stub');
-    expect(wildflyTileProps.iconClass).toBe(null);
-    expect(wildflyTileProps.vendor).toEqual('provided by Red Hat, Inc.');
-    expect(
-      wildflyTileProps.description.startsWith(
-        'Build and run WildFly 10.1 applications on CentOS 7. For more information about using this builder image',
-      ),
-    ).toBe(true);
-
-    const faIconTileProps = tiles.at(5).props();
-    expect(faIconTileProps.title).toEqual('FA icon example');
-    expect(faIconTileProps.iconImg).toBe(null);
-    expect(faIconTileProps.iconClass).toBe('fa fa-fill-drip');
-    expect(faIconTileProps.vendor).toEqual('provided by Red Hat, Inc.');
-    expect(faIconTileProps.description).toEqual('Example to validate icon');
   });
 
   it('categorizes catalog items', () => {

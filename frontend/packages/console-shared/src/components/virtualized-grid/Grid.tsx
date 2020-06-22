@@ -2,6 +2,7 @@ import * as React from 'react';
 import { CellMeasurerCache, Grid as GridComponent, GridCellProps } from 'react-virtualized';
 import { IDEAL_CELL_WIDTH, IDEAL_SPACE_BW_TILES, OVERSCAN_ROW_COUNT } from './const';
 import { Item, GridChildrenProps } from './types';
+import './Grid.scss';
 
 type GridProps = {
   height: number;
@@ -33,7 +34,7 @@ const Grid: React.FC<GridProps> = ({
   const cellRenderer = (data: GridCellProps) => children({ data, cache, columnCount, items });
   return (
     <GridComponent
-      className="ocs-virtualized-grid"
+      className="ocs-grid"
       autoHeight
       ref={registerChild}
       height={height}

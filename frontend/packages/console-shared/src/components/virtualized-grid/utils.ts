@@ -8,7 +8,7 @@ import { GroupedItems, CellItem } from './types';
  * groupedItems = {
  *    header: [item1, item2, item3, item4]
  * }
- * array of length 4 with header
+ * array of length 4 with header and number of columns 3
  * Based on the fixed width of column and number of items in the array Grid would be:
  *        |header              |
  *        |item1   item2  item3|

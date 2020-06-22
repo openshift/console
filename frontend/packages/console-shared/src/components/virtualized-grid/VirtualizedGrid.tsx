@@ -4,10 +4,13 @@ import { Item, GroupedItems, GridChildrenProps, RenderHeader, RenderCell } from 
 import GroupByFilterGrid from './GroupByFilterGrid';
 import Grid from './Grid';
 import Cell from './Cell';
-import './VirtualizedGrid.scss';
 
 type VirtualizedGridProps = {
   items: Item[] | GroupedItems;
+  /**
+   * Default: window
+   * scroll container for the virtualized grid
+   */
   scrollElement?: Element;
   renderCell: RenderCell;
   /**
