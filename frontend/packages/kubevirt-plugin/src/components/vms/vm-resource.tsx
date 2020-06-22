@@ -48,7 +48,7 @@ import { NOT_AVAILABLE_MESSAGE } from '../../strings/vm/messages';
 import { isGuestAgentInstalled } from '../dashboards-page/vm-dashboard/vm-alerts';
 
 import './vm-resource.scss';
-import { getGuestAgentFieldNotAvailMsg } from '../../utils/strings';
+import { getGuestAgentFieldNotAvailMsg } from '../../utils/guest-agent-strings';
 
 export const VMDetailsItem: React.FC<VMDetailsItemProps> = ({
   title,
@@ -144,7 +144,11 @@ export const VMDetailsList: React.FC<VMResourceListProps> = ({
   const isVM = kindObj === VirtualMachineModel;
   const vmiLike = isVM ? vm : vmi;
   const vmiLikeWrapper = asVMILikeWrapper(vmiLike);
-  const guestAgentFieldNotAvailMsg = getGuestAgentFieldNotAvailMsg(isGuestAgentInstalled(vmi));
+  const { status } = vmStatusBundle;
+  const guestAgentFieldNotAvailMsg = getGuestAgentFieldNotAvailMsg(
+    isGuestAgentInstalled(vmi),
+    status,
+  );
 
   const canEdit =
     vmiLike &&
