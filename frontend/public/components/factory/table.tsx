@@ -172,6 +172,7 @@ const stateToProps = (
     reduxIDs = null,
     staticFilters = [{}],
     rowFilters = [],
+    kind = '',
   },
 ) => {
   const allFilters = staticFilters ? Object.assign({}, filters, ...staticFilters) : filters;
@@ -185,6 +186,13 @@ const stateToProps = (
   );
   const currentSortFunc = UI.getIn(['listSorts', listId, 'func'], defaultSortFunc);
   const currentSortOrder = UI.getIn(['listSorts', listId, 'orderBy'], defaultSortOrder);
+  const columnManagement = UI.getIn(['columnManagement', kind]);
+  const activeColumns = columnManagement
+    ? columnManagement.reduce((acc, curr) => {
+        acc[curr.title] = curr.visible;
+        return acc;
+      }, {})
+    : {};
 
   if (loaded) {
     let sortBy: string | Function = 'metadata.name';
@@ -230,6 +238,7 @@ const stateToProps = (
     data: newData,
     unfilteredData: data,
     listId,
+    activeColumns,
   };
 };
 
@@ -407,6 +416,7 @@ export type TableProps = {
   reduxID?: string;
   reduxIDs?: string[];
   label?: string;
+  kind?: string; // for column management
 };
 
 type TablePropsFromState = {};
@@ -425,13 +435,23 @@ type ComponentProps = {
   kindObj?: K8sResourceKindReference;
 };
 
+const getActiveColumns = (Header, componentProps, activeColumns) => {
+  let columns = Header(componentProps);
+  if (!_.isEmpty(activeColumns)) {
+    columns = columns?.filter((col) => activeColumns?.[col.title] || col.title === '');
+  }
+  return columns;
+};
+
 export const Table = connect<
   TablePropsFromState,
   TablePropsFromDispatch,
   TableProps,
   TableOptionProps
 >(stateToProps, { sortList: UIActions.sortList }, null, {
-  areStatesEqual: ({ UI: next }, { UI: prev }) => next.get('listSorts') === prev.get('listSorts'),
+  areStatesEqual: ({ UI: next }, { UI: prev }) =>
+    next.get('listSorts') === prev.get('listSorts') &&
+    next.get('columnManagement') === prev.get('columnManagement'),
 })(
   class TableInner extends React.Component<TableInnerProps, TableInnerState> {
     static propTypes = {
@@ -465,6 +485,7 @@ export const Table = connect<
       sortList: PropTypes.func,
       onSelect: PropTypes.func,
       scrollElement: PropTypes.oneOf([PropTypes.object, PropTypes.func]),
+      kind: PropTypes.string, // for column management should use gvk
     };
     _columnShift: number;
 
@@ -477,7 +498,7 @@ export const Table = connect<
         'match',
         'kindObj',
       ]);
-      const columns = props.Header(componentProps).filter((column) => column.visible);
+      const columns = getActiveColumns(this.props.Header, componentProps, this.props.activeColumns);
       const { currentSortField, currentSortFunc, currentSortOrder } = props;
 
       this._columnShift = props.onSelect ? 1 : 0; //shift indexes by 1 if select provided
@@ -508,7 +529,7 @@ export const Table = connect<
         'match',
         'kindObj',
       ]);
-      const columns = this.props.Header(componentProps).filter((column) => column.visible);
+      const columns = getActiveColumns(this.props.Header, componentProps, this.props.activeColumns);
       const sp = new URLSearchParams(window.location.search);
       const columnIndex = _.findIndex(columns, { title: sp.get('sortBy') });
 
@@ -551,7 +572,7 @@ export const Table = connect<
         'match',
         'kindObj',
       ]);
-      const columns = this.props.Header(componentProps).filter((column) => column.visible);
+      const columns = getActiveColumns(this.props.Header, componentProps, this.props.activeColumns);
       const sortColumn = columns[index - this._columnShift];
       this._applySort(sortColumn.sortField, sortColumn.sortFunc, direction, sortColumn.title);
       this.setState({
@@ -577,6 +598,7 @@ export const Table = connect<
         customData,
         gridBreakPoint = TableGridBreakpoint.none,
         Header,
+        activeColumns,
       } = this.props;
       const { sortBy } = this.state;
       const componentProps: any = _.pick(this.props, [
@@ -586,7 +608,7 @@ export const Table = connect<
         'match',
         'kindObj',
       ]);
-      const columns = Header(componentProps).filter((column) => column.visible);
+      const columns = getActiveColumns(Header, componentProps, activeColumns);
       const ariaRowCount = componentProps.data && componentProps.data.length;
       const scrollNode = typeof scrollElement === 'function' ? scrollElement() : scrollElement;
       const renderVirtualizedTable = (scrollContainer) => (
@@ -663,6 +685,7 @@ export type TableInnerProps = {
   data?: any[];
   defaultSortField?: string;
   defaultSortFunc?: string;
+  activeColumns?: any;
   unfilteredData?: any[];
   NoDataEmptyMsg?: React.ComponentType<{}>;
   EmptyMsg?: React.ComponentType<{}>;
@@ -695,6 +718,7 @@ export type TableInnerProps = {
   virtualize?: boolean;
   gridBreakPoint?: 'grid' | 'grid-md' | 'grid-lg' | 'grid-xl' | 'grid-2xl';
   scrollElement?: HTMLElement | (() => HTMLElement);
+  kind?: string; // for column management
 };
 
 export type TableInnerState = {

@@ -107,16 +107,15 @@ export default (state: UIState, action: UIAction): UIState => {
         pollInterval: null,
         queries: ImmutableList([newQueryBrowserQuery()]),
       }),
+      columnManagement: ImmutableMap(),
       pinnedResources,
     });
   }
 
   switch (action.type) {
-    case ActionType.ColumnManagementSetFilter:
-      return state.setIn(
-        ['columnManagement', 'filters', action.payload.kind],
-        action.payload.filter,
-      );
+    case ActionType.SetColumnManagementFilter:
+      // use groupVersionKind to uniquely identify the
+      return state.setIn(['columnManagement', action.payload.id], action.payload.filter);
 
     case ActionType.SetActiveApplication:
       return state.set('activeApplication', action.payload.application);

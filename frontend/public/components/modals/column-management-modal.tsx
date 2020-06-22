@@ -15,10 +15,12 @@ import {
 } from '@patternfly/react-core';
 
 import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '../factory';
-import { columnManagementSetFilter } from '../../actions/ui';
+import { setColumnManagementFilter } from '../../actions/ui';
 import { RootState } from '../../redux';
 
 const MAX_VIEW_COLS = 9;
+
+const OVERRIDES = ['Name'];
 
 const getDataListRows = (
   rowData: any[],
@@ -29,7 +31,7 @@ const getDataListRows = (
     <DataListItem aria-labelledby="table-column-management-item1" key={column.title}>
       <DataListItemRow>
         <DataListCheck
-          isDisabled={disableUncheckedRows && !column.visible}
+          isDisabled={(disableUncheckedRows && !column.visible) || OVERRIDES.includes(column.title)}
           aria-labelledby="table-column-management-item1"
           checked={column.visible}
           name={column.title}
@@ -50,22 +52,19 @@ export const ColumnManagementModal: React.FC<ColumnManagementModalProps> = ({
   kinds,
   cancel,
   close,
-  columns,
 }) => {
-  const columnFilters = useSelector<RootState, string>(({ UI }) =>
-    UI.getIn(['columnManagement', 'filters']),
-  );
+  const columnFilters = useSelector<RootState, string>(({ UI }) => UI.getIn(['columnManagement']));
   const dispatch = useDispatch();
   const initialDefaultColumns =
-    columnFilters && columnFilters.has(kinds[0])
+    !_.isEmpty(columnFilters) && columnFilters.has(kinds[0])
       ? _.cloneDeep(columnFilters.get(kinds[0])).filter(
           (column) => column.title.length > 0 && !column.additional,
         )
-      : columns.filter((column) => column.title.length > 0 && !column.additional);
+      : {};
   const initialAdditionalColumns =
-    columnFilters && columnFilters.has(kinds[0])
+    !_.isEmpty(columnFilters) && columnFilters.has(kinds[0])
       ? _.cloneDeep(columnFilters.get(kinds[0])).filter((column) => column.additional)
-      : columns.filter((column) => column.additional);
+      : {};
   const [defaultColumns, setDefaultColumns] = React.useState<any[]>(initialDefaultColumns);
 
   const [additionalColumns, setAdditionalColumns] = React.useState<ColumnHeaderRow[]>(
@@ -95,7 +94,7 @@ export const ColumnManagementModal: React.FC<ColumnManagementModalProps> = ({
 
   const submit = (event): void => {
     event.preventDefault();
-    dispatch(columnManagementSetFilter(kinds[0], [...defaultColumns, ...additionalColumns]));
+    dispatch(setColumnManagementFilter(kinds[0], [...defaultColumns, ...additionalColumns]));
     close();
   };
 
@@ -118,6 +117,13 @@ export const ColumnManagementModal: React.FC<ColumnManagementModalProps> = ({
           <p>Checked categories will be displayed in the table.</p>
         </div>
         <div className="row co-m-form-row">
+          <Alert
+            isInline
+            title={`You can select up to ${MAX_VIEW_COLS - 1} columns`}
+            variant="info"
+          />
+        </div>
+        <div className="row co-m-form-row">
           <div className="col-sm-12">
             <span className="col-sm-6">
               <label className="control-label">{`Default ${kinds[0]} Columns`}</label>
@@ -130,7 +136,7 @@ export const ColumnManagementModal: React.FC<ColumnManagementModalProps> = ({
               </DataList>
             </span>
             <span className="col-sm-6">
-              <label className="control-label">All Columns</label>
+              <label className="control-label">Additional Columns</label>
               <DataList
                 aria-label="Table column management"
                 id="additional-column-management"
@@ -141,15 +147,6 @@ export const ColumnManagementModal: React.FC<ColumnManagementModalProps> = ({
             </span>
           </div>
         </div>
-        {areMaxColumnsDisplayed && (
-          <div className="row co-m-form-row">
-            <Alert
-              isInline
-              title={`The maximum number of columns is ${MAX_VIEW_COLS}`}
-              variant="info"
-            >{`To change the viewable columns, first deselect one from the list.`}</Alert>
-          </div>
-        )}
       </ModalBody>
       <ModalSubmitFooter
         inProgress={false}
@@ -170,7 +167,6 @@ export type ColumnManagementModalProps = {
   cancel: () => void;
   close: () => void;
   kinds: any;
-  columns: any;
 };
 
 type ColumnHeaderRow = {

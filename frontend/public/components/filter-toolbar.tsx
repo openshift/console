@@ -81,10 +81,10 @@ const getDropdownItems = (rowFilters: RowFilter[], selectedItems, data, props) =
 
 const FilterToolbar_: React.FC<FilterToolbarProps & RouteComponentProps> = (props) => {
   const {
-    Header,
     rowFilters = [],
     data,
     hideNameFilter,
+    hideColumnFilter = true,
     hideLabelFilter,
     location,
     textFilter = filterTypeMap[FilterType.NAME],
@@ -331,22 +331,23 @@ const FilterToolbar_: React.FC<FilterToolbarProps & RouteComponentProps> = (prop
             </ToolbarFilter>
           </ToolbarFilter>
         </ToolbarItem>
-        <ToolbarItem>
-          <Button
-            variant="plain"
-            onClick={() => createColumnManagementModal({ kinds: props.kinds, columns: Header() })}
-            aria-label="Column Management"
-          >
-            <ColumnsIcon />
-          </Button>
-        </ToolbarItem>
-      </ToolbarContent>
+        {!hideColumnFilter && (
+          <ToolbarItem>
+            <Button
+              variant="plain"
+              onClick={() => createColumnManagementModal({ kinds: props.kinds, columns: Header() })}
+              aria-label="Column Management"
+            >
+              <ColumnsIcon />
+            </Button>
+          </ToolbarItem>
+        )}
+        </ToolbarContent>
     </Toolbar>
   );
 };
 
 type FilterToolbarProps = {
-  Header?: any;
   rowFilters?: RowFilter[];
   data?: any;
   reduxIDs?: string[];
@@ -354,6 +355,7 @@ type FilterToolbarProps = {
   textFilter?: string;
   hideNameFilter?: boolean;
   labelFilter?: string;
+  hideColumnFilter?: boolean;
   hideLabelFilter?: boolean;
   parseAutoComplete?: any;
   kinds?: any;
