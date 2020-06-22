@@ -189,14 +189,19 @@ const numberOfIncompleteReceivers = (): number => {
   const { route, receivers } = config;
   const { receiver: defaultReceiverName } = route;
 
+  // if no receivers or default receiver, then no longer initial setup, hide info alerts
+  if (!receivers || !defaultReceiverName) {
+    return 0;
+  }
   const defaultReceiver = receivers.filter((receiver) => receiver.name === defaultReceiverName);
   const criticalReceiver = receivers.filter(
     (receiver) => receiver.name === InitialReceivers.Critical,
   );
 
-  const numIncompleteReceivers: number = _.isEmpty(getIntegrationTypes(defaultReceiver[0])) ? 1 : 0;
+  const numIncompleteReceivers =
+    !_.isEmpty(defaultReceiver) && _.isEmpty(getIntegrationTypes(defaultReceiver[0])) ? 1 : 0;
 
-  return _.isEmpty(getIntegrationTypes(criticalReceiver[0]))
+  return !_.isEmpty(criticalReceiver) && _.isEmpty(getIntegrationTypes(criticalReceiver[0]))
     ? numIncompleteReceivers + 1
     : numIncompleteReceivers;
 };
