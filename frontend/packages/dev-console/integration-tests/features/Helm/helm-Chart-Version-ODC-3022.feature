@@ -26,7 +26,7 @@ Scenario: Grouping of Helm multiple chart versions together in developer catalog
     Given user is at the developer catalog page
     When user checks the Helm Charts checkbox
     And user searches for the 'Node-ex-k' helm chart
-    Then user will see the only one helm chart item for all chart versions   
+    Then user will see the only one helm chart item for all chart versions
 
 
 @regression
@@ -44,7 +44,7 @@ Scenario: Chart versions drop down menu
 Scenario: Update the chart version to see the alert modal
     Given user is at the Install Helm Chart page
     When user does some changes on the yaml editor
-    And user clicks on the Chart Versioon dropdown menu 
+    And user clicks on the Chart Versioon dropdown menu
     And user selects the different chart version
     Then modal will get popped up
     And modal will have the old and new chart versions
@@ -54,7 +54,7 @@ Scenario: Update the chart version to see the alert modal
 @regression, @manual
 Scenario: README should be updated when chart version is updated
     Given user is at the Install Helm Chart page
-    When user clicks on the Chart Versioon dropdown menu 
+    When user clicks on the Chart Versioon dropdown menu
     And user selects the different chart version
     And modal will get popped up
     And user clicks on yes to update the chart version
