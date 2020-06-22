@@ -1,9 +1,187 @@
+$co-channel-height: 60px;
+
 .cluster-channel-modal__dropdown .pf-c-dropdown {
   width: 100%;
 }
 
 .cluster-update-modal__dropdown .pf-c-dropdown {
   width: 100%;
+}
+
+.co-channel {
+  align-items: center;
+  display: flex;
+  font-size: ($font-size-small - 1);
+}
+
+.co-channel-line {
+  align-items: center;
+  display: flex;
+  height: $co-channel-height;
+  justify-content: center;
+  position: relative;
+  min-width: 50px;
+  width: 100%;
+
+  &:before {
+    background-color: $pf-global--BorderColor--100;
+    content: '';
+    height: 4px;
+    position: absolute;
+    width: 100%;
+
+    .co-channel-path--current & {
+      background-color: $pf-global--primary-color--100;
+    }
+  }
+
+  &:last-child::after {
+    background: transparent;
+    border: 8px solid transparent;
+    border-left-color: $pf-global--BorderColor--100;
+    border-width: 8px 12px;
+    content: '';
+    position: absolute;
+    right: -15px;
+
+    .co-channel-path--current & {
+      border-left-color: $pf-global--primary-color--100;
+    }
+
+    .co-channel--end-of-life & {
+      background-color: $pf-global--primary-color--100;
+      border: 0;
+      height: 16px;
+      right: 0px;
+      width: 3px;
+    }
+  }
+}
+
+.co-channel-more-versions {
+  background: var(--pf-c-drawer__content--BackgroundColor) !important;
+  border: 1px solid !important;
+  border-radius: 15px !important;
+  display: inline-block !important;
+  font-size: ($font-size-small - 1) !important;
+  font-weight: bold !important;
+  justify-content: center;
+  padding: 0 8px !important;
+  position: absolute !important;
+
+  &::after {
+    display: none;
+  }
+
+  &:hover,
+  &:focus {
+    background: $pf-global--primary-color--100 !important;
+    border-color: $pf-global--primary-color--100 !important;
+    color: var(--pf-c-drawer__content--BackgroundColor) !important;
+  }
+
+  &:focus {
+    outline: 0 !important;
+  }
+}
+
+.co-channel-name {
+  color: $pf-global--BorderColor--200;
+  padding: 0 10px 0 20px;
+  min-width: 150px;
+  white-space: nowrap;
+
+  &--current {
+    color: inherit;
+    padding-top: 20px;
+  }
+}
+
+.co-channel-path {
+  display: flex;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  position: relative;
+  width: 100%;
+
+  &--current {
+    margin-top: 20px;
+  }
+}
+
+.co-channel-start::before {
+  position: absolute;
+  right: 0;
+  width: 25%;
+}
+
+.co-channel-switch {
+  position: absolute;
+  top: -28px;
+  width: 100%;
+  height: $co-channel-height;
+  z-index: 1;
+
+  &::after,
+  &::before {
+    background: linear-gradient(to left bottom, transparent 50%, $pf-global--BorderColor--100 50%);
+    content: '';
+    display: block;
+    height: $co-channel-height;
+    position: absolute;
+    right: 0;
+    top: -3px;
+    width: 50%;
+  }
+
+  &::after {
+    background: linear-gradient(to left bottom, transparent 50%, var(--pf-c-drawer__content--BackgroundColor) 50%);
+    right: 3px;
+    top: 0;
+  }
+}
+
+.co-channel-version {
+  color: initial;
+  display: flex;
+  flex-direction: column;
+  height: 35px;
+  justify-content: flex-end;
+  line-height: 1;
+  position: absolute;
+  text-align: center;
+  top: -20px;
+
+  &--current {
+    font-weight: var(--pf-global--FontWeight--bold);
+  }
+}
+
+.co-channel-version-dot {
+  background: $pf-global--primary-color--100;
+  border-radius: 16px;
+  content: '';
+  height: 16px;
+  position: absolute;
+  width: 16px;
+  z-index: 2;
+
+  &--current::after {
+    background: transparent !important;
+  }
+
+  &::after {
+    background: var(--pf-c-drawer__content--BackgroundColor);
+    border: 2px solid var(--pf-c-drawer__content--BackgroundColor);
+    border-radius: 12px;
+    content: '';
+    height: 12px;
+    left: 2px;
+    position: absolute;
+    top: 2px;
+    width: 12px;
+  }
 }
 
 .co-cluster-settings {
@@ -30,7 +208,7 @@
     display: flex;
     justify-content: space-between;
 
-    @media(max-width: $grid-float-breakpoint) {
+    @media(max-width: $screen-md) {
       flex-wrap: wrap;
     }
   }
@@ -45,6 +223,13 @@
 
     &--current {
       flex-grow: 0;
+    }
+  }
+
+  &__updates-graph {
+    padding: 0 var(--pf-global--spacer--lg) 0 0;
+    @media(max-width: 400px) {
+      display: none;
     }
   }
 }

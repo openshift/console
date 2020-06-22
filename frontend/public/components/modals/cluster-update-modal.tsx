@@ -1,14 +1,13 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
-import * as semver from 'semver';
 
 import { ClusterVersionModel } from '../../models';
 import { Dropdown, PromiseComponent } from '../utils';
 import {
-  ClusterUpdate,
   ClusterVersionKind,
   getAvailableClusterUpdates,
   getDesiredClusterVersion,
+  getSortedUpdates,
   k8sPatch,
 } from '../../module/k8s';
 import {
@@ -18,17 +17,6 @@ import {
   ModalSubmitFooter,
   ModalTitle,
 } from '../factory/modal';
-
-export const getSortedUpdates = (cv: ClusterVersionKind): ClusterUpdate[] => {
-  const available = getAvailableClusterUpdates(cv) || [];
-  try {
-    return available.sort(({ version: left }, { version: right }) => semver.rcompare(left, right));
-  } catch (e) {
-    // eslint-disable-next-line no-console
-    console.error('error sorting cluster updates', e);
-    return available;
-  }
-};
 
 class ClusterUpdateModal extends PromiseComponent<
   ClusterUpdateModalProps,

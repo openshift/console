@@ -27,6 +27,17 @@ export const getAvailableClusterUpdates = (cv: ClusterVersionKind): ClusterUpdat
   return _.get(cv, 'status.availableUpdates', []);
 };
 
+export const getSortedUpdates = (cv: ClusterVersionKind): ClusterUpdate[] => {
+  const available = getAvailableClusterUpdates(cv) || [];
+  try {
+    return available.sort(({ version: left }, { version: right }) => semver.rcompare(left, right));
+  } catch (e) {
+    // eslint-disable-next-line no-console
+    console.error('error sorting cluster updates', e);
+    return available;
+  }
+};
+
 export const getAvailableClusterChannels = () => ({
   'stable-4.5': 'stable-4.5',
   'fast-4.5': 'fast-4.5',
