@@ -101,6 +101,9 @@ const InstallExternalCluster = withHandlePromise((props: InstallExternalClusterP
         externalStorage: {
           enable: true,
         },
+        labelSelector: {
+          matchExpressions: [],
+        },
       },
     };
 
