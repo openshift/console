@@ -219,7 +219,10 @@ const ReceiverBaseForm: React.FC<ReceiverBaseFormProps> = ({
   }
 
   const doesReceiverNameAlreadyExist = (receiverName: string): boolean => {
-    const receiverNames = config?.receivers
+    if (!config?.receivers) {
+      return false;
+    }
+    const receiverNames = config.receivers
       .filter((receiver) => receiver.name !== editReceiverNamed)
       .map((receiver) => receiver.name);
     return receiverNames.includes(receiverName);
@@ -274,8 +277,11 @@ const ReceiverBaseForm: React.FC<ReceiverBaseFormProps> = ({
   }
 
   const { receiver: defaultReceiver } = route || {}; // top level route.receiver is the default receiver for all alarms
-  // if no default receiver defined or editing the default receiver
-  const isDefaultReceiver = defaultReceiver === undefined || defaultReceiver === editReceiverNamed;
+  // if default receiver name defined but no receiver exists with that name, or editing the default receiver,
+  const isDefaultReceiver = defaultReceiver
+    ? _.isEmpty(config?.receivers?.filter((receiver) => receiver.name === defaultReceiver)) ||
+      defaultReceiver === editReceiverNamed
+    : true; // defaultReceiver (the name stored in config.routes.receiver) is not defined, so this should be the default receiver
 
   INITIAL_STATE.routeLabels = getRouteLabelsForEditor(
     isDefaultReceiver,
