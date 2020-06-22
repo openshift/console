@@ -5,3 +5,5 @@ export const NO_GUEST_AGENT_MESSAGE =
   'A guest agent has not been found for this VM. This could be because the VM has not finished booting or a guest agent is not installed. Without a guest agent installed, some management features will not be available and some metrics may be inaccurate.';
 export const GUEST_AGENT_REQUIRED_MESSAGE = 'Guest agent required';
 export const NOT_AVAILABLE_MESSAGE = 'Not available';
+export const VM_NOT_RUNNING_MESSAGE = 'VM not running';
+export const NO_LOGGED_IN_USERS_MSG = 'No users logged in';

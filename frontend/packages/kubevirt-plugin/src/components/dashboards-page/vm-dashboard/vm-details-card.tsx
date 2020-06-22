@@ -22,18 +22,25 @@ import { VM_DETAIL_DETAILS_HREF } from '../../../constants';
 import { findVMIPod } from '../../../selectors/pod/selectors';
 import { useGuestAgentInfo } from '../../../hooks/use-guest-agent-info';
 import { GuestAgentInfoWrapper } from '../../../k8s/wrapper/vm/guest-agent-info/guest-agent-info-wrapper';
-import { getNumLoggedInUsersMessage, getGuestAgentFieldNotAvailMsg } from '../../../utils/strings';
 import { isGuestAgentInstalled } from './vm-alerts';
 import { getOperatingSystemName, getOperatingSystem } from '../../../selectors/vm';
+import {
+  getNumLoggedInUsersMessage,
+  getGuestAgentFieldNotAvailMsg,
+} from '../../../utils/guest-agent-strings';
 
 export const VMDetailsCard: React.FC<VMDetailsCardProps> = () => {
   const vmDashboardContext = React.useContext(VMDashboardContext);
-  const { vm, vmi, pods } = vmDashboardContext;
+  const { vm, vmi, pods, vmStatusBundle } = vmDashboardContext;
   const vmiLike = vm || vmi;
+  const { status } = vmStatusBundle;
 
   const [guestAgentInfoRaw] = useGuestAgentInfo({ vmi });
   const guestAgentInfo = new GuestAgentInfoWrapper(guestAgentInfoRaw);
-  const guestAgentFieldNotAvailMsg = getGuestAgentFieldNotAvailMsg(isGuestAgentInstalled(vmi));
+  const guestAgentFieldNotAvailMsg = getGuestAgentFieldNotAvailMsg(
+    isGuestAgentInstalled(vmi),
+    status,
+  );
 
   const launcherPod = findVMIPod(vmi, pods);
 
