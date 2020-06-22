@@ -1,9 +1,22 @@
 Feature: Helm Chart
     User will be able to perform the actions on the helm releases
 
+
 Background:
     Given user logged into the openshift application
     And user is at developer perspecitve
+
+
+@regression, @smoke
+Scenario: Install Helm Chart from +Add Page: HR-02-TC01
+    Given user is at +Add page
+    When user clicks on the Helm Chart card on the +Add page
+    And user searches for the 'Node-ex-k' helm chart
+    And user clicks on the 'Node-ex-k' helm chart card
+    And user clicks on the Install Helm Chart button
+    And user clicks on the Install button
+    Then user is redirected to Topology page
+    And Topology page have the helm chart workload
 
 
 @regression, @smoke
