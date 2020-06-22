@@ -15,7 +15,7 @@ Scenario: Install Helm Chart from +Add Page using Form View: HR-02-TC01
     And user clicks on the 'Node-ex-k' helm chart card
     And user clicks on the Install Helm Chart button
     And user selects the Form View
-    And user enters the required field
+    And user enters a Release name
     And user clicks on the Install button
     Then user is redirected to Topology page
     And Topology page have the helm chart workload
@@ -78,3 +78,12 @@ Scenario: Perform Upgrade action on Helm Release from Helm release page using YA
     And user clicks on the upgrade button
     Then the helm release should get upgradaed
     And user gets redirected to topology page
+
+
+@regression, @smoke, @manual
+Scenario: When Helm chart doesn't have a JSON schema and cannot generate dynamic form
+    Given user is at +Add page
+    When user clicks on the Helm Chart card on the +Add page
+    And user searches for the helm chart
+    And user clicks on the 'Node-ex-k' helm chart card
+    Then user sees that Helm chart install page have only YAML view

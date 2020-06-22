@@ -1,5 +1,5 @@
 Feature: Helm Chart
-    User will be able to updated the chart versions of the helm charts
+    User will be able to update the chart versions or values config of a helm release
 
 
 Background:
@@ -14,7 +14,7 @@ Scenario: Install Helm Chart from +Add Page using Form View: HR-02-TC01
     And user searches for the 'Node-ex-k' helm chart
     And user clicks on the 'Node-ex-k' helm chart card
     And user clicks on the Install Helm Chart button
-    And user enters the required field
+    And user enters a Release name
     And user updates the Chart Version
     And user clicks on the Install button
     Then user is redirected to Topology page
@@ -37,13 +37,14 @@ Scenario: Chart versions drop down menu
     And user clicks on the 'Node-ex-k' helm chart card
     And user will see the information of all the chart versions together
     And user clicks on the Install Helm Chart button
-    Then user will see the dropdown of chart version
+    Then the user will see the chart version dropdown
 
 
-@regression
-Scenario: Update the chart version to see the data lost
+@regression, @manual
+Scenario: Update the chart version to see the alert modal
     Given user is at the Install Helm Chart page
-    When user clicks on the Chart Versioon dropdown menu 
+    When user does some changes on the yaml editor
+    And user clicks on the Chart Versioon dropdown menu 
     And user selects the different chart version
     Then modal will get popped up
     And modal will have the old and new chart versions
@@ -51,7 +52,7 @@ Scenario: Update the chart version to see the data lost
 
 
 @regression, @manual
-Scenario: README should be updated with updating chart version
+Scenario: README should be updated when chart version is updated
     Given user is at the Install Helm Chart page
     When user clicks on the Chart Versioon dropdown menu 
     And user selects the different chart version
