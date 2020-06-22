@@ -1,6 +1,7 @@
 import * as fuzzy from 'fuzzysearch';
 import * as _ from 'lodash';
 import { safeDump } from 'js-yaml';
+import * as semver from 'semver';
 import { coFetchJSON } from '@console/internal/co-fetch';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import {
@@ -82,10 +83,17 @@ export const getChartURL = (helmChartData: HelmChartMetaData[], chartVersion: st
   return chartData?.urls[0];
 };
 
-export const getChartVersions = (chartEntries: HelmChartMetaData[]) => {
+export const getChartVersions = (chartEntries: HelmChartMetaData[], kubernetesVersion: string) => {
   const chartVersions = _.reduce(
     chartEntries,
     (obj, chart) => {
+      if (
+        chart?.kubeVersion &&
+        semver.valid(kubernetesVersion) &&
+        !semver.satisfies(kubernetesVersion, chart?.kubeVersion)
+      ) {
+        return obj;
+      }
       obj[chart.version] = `${chart.version} / App Version ${chart.appVersion}`;
       return obj;
     },
