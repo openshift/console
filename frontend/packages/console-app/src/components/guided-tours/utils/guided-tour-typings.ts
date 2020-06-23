@@ -11,3 +11,8 @@ export type TourStatus = {
   active?: boolean;
   status: string;
 };
+
+export type GuidedTourCatalogItem = GuidedTourItem &
+  TourStatus & {
+    unmetPrerequisite?: boolean;
+  };

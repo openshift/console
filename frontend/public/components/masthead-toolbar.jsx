@@ -268,8 +268,7 @@ class MastheadToolbarContents_ extends React.Component {
       isSection: true,
       actions: [
         {
-          label: 'Guided Tours',
-          href: '/tours/',
+          component: <Link to="/tours">Guided Tours</Link>,
         },
         {
           label: 'Documentation',

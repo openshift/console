@@ -9,9 +9,8 @@ describe('TourItemFooter', () => {
     const TourItemFooterWrapper = shallow(<TourItemFooter status={GuidedTourStatus.COMPLETE} />);
     const footerButtons = TourItemFooterWrapper.find(Button);
     expect(footerButtons.exists()).toBeTruthy();
-    expect(footerButtons.length).toEqual(2);
+    expect(footerButtons.length).toEqual(1);
     expect(footerButtons.at(0).find('Review the Tour')).toBeTruthy();
-    expect(footerButtons.at(1).find('Restart the Tour')).toBeTruthy();
   });
   it('should load proper footer links for in progress tours', () => {
     const TourItemFooterWrapper = shallow(<TourItemFooter status={GuidedTourStatus.IN_PROGRESS} />);

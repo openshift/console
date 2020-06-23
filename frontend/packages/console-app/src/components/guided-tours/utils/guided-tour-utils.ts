@@ -1,7 +1,6 @@
-import { mockGuidedTours, mockStatus } from './guided-tour-mocks';
-import { TourStatus, GuidedTourItem } from './guided-tour-typings';
+import { mockGuidedTours, mockStatus, mockPrerequisiteStatus } from './guided-tour-mocks';
+import { GuidedTourCatalogItem, GuidedTourItem } from './guided-tour-typings';
 
-type GuidedTourCatalogItem = GuidedTourItem & TourStatus;
 const getGuidedTours = (): GuidedTourItem[] => {
   return mockGuidedTours;
 };
@@ -9,6 +8,10 @@ const getGuidedTours = (): GuidedTourItem[] => {
 export const getGuidedToursWithStatus = (): GuidedTourCatalogItem[] => {
   const items = getGuidedTours();
   return items.map((item) => {
-    return { ...item, ...mockStatus[item.name] };
+    return {
+      ...item,
+      ...mockStatus[item.name],
+      unmetPrerequisite: mockPrerequisiteStatus[item.name],
+    };
   });
 };

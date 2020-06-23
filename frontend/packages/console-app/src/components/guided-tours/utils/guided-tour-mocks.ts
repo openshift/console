@@ -37,3 +37,9 @@ export const mockStatus: Record<string, TourStatus> = {
   'Serverless Aplications': { status: GuidedTourStatus.IN_PROGRESS, active: true },
   'Build Pipelines': { status: GuidedTourStatus.NOT_STARTED },
 };
+
+export const mockPrerequisiteStatus: Record<string, boolean> = {
+  'Explore Serverless': false,
+  'Serverless Aplications': false,
+  'Build Pipelines': true,
+};

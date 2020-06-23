@@ -1,6 +1,8 @@
-.odc-tour-item-description {
-  &--section {
+.oc-tour-item-description {
+  &__section {
     margin: 0 0 var(--pf-global--spacer--md) 0;
-    height: 100%;
+  }
+  &__unmetprerequisites {
+    color: var(--pf-global--Color--200);
   }
 }

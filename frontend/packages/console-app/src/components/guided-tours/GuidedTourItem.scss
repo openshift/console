@@ -1,3 +1,7 @@
-.odc-guided-tour-item {
+.oc-guided-tour-item {
   height: 100%;
+  & .catalog-tile-pf-description .has-footer {
+    display: block;
+    -webkit-line-clamp: unset;
+  }
 }

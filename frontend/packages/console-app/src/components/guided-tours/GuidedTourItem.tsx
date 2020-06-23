@@ -1,12 +1,12 @@
 import * as React from 'react';
 import { CatalogTile } from '@patternfly/react-catalog-view-extension';
-import { GuidedTourItem, TourStatus } from './utils/guided-tour-typings';
+import { GuidedTourItem, GuidedTourCatalogItem } from './utils/guided-tour-typings';
 import TourItemHeader from './TourItemHeader';
 import TourItemDescription from './TourItemDescription';
 import TourItemFooter from './TourItemFooter';
 import './GuidedTourItem.scss';
 
-type GuidedTourItemProps = GuidedTourItem & TourStatus;
+type GuidedTourItemProps = GuidedTourCatalogItem;
 
 const GuidedTourItem: React.FC<GuidedTourItemProps> = ({
   iconURL,
@@ -17,21 +17,22 @@ const GuidedTourItem: React.FC<GuidedTourItemProps> = ({
   active,
   duration,
   prerequisites,
+  unmetPrerequisite,
 }) => (
   <CatalogTile
-    className="odc-guided-tour-item"
+    iconImg={iconURL}
+    iconAlt={altIcon}
+    className="oc-guided-tour-item"
     featured={active}
-    title={
-      <TourItemHeader
-        iconURL={iconURL}
-        altIcon={altIcon}
-        name={name}
-        status={status}
-        duration={duration}
+    title={<TourItemHeader name={name} status={status} duration={duration} />}
+    description={
+      <TourItemDescription
+        description={description}
+        prerequisites={prerequisites}
+        unmetPrerequisite={unmetPrerequisite}
       />
     }
-    description={<TourItemDescription description={description} prerequisites={prerequisites} />}
-    footer={<TourItemFooter status={status} />}
+    footer={<TourItemFooter unmetPrerequisite={unmetPrerequisite} status={status} />}
   />
 );
 

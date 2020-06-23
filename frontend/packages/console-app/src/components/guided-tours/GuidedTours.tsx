@@ -10,9 +10,7 @@ const GuidedTours: React.FC = () => {
       <Helmet>
         <title>Guided Tours</title>
       </Helmet>
-      <div className="odc-empty-state__title">
-        <PageHeading title="Guided Tours" />
-      </div>
+      <PageHeading title="Guided Tours" />
       <GuidedTourCatalog tours={getGuidedToursWithStatus()} />
     </>
   );

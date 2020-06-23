@@ -1,10 +1,11 @@
-.odc-tour-item-header {
+.oc-tour-item-header {
   &__status {
     margin: var(--pf-global--spacer--sm) 0;
   }
-  &__icon {
-    width: var(--pf-global--spacer--lg);
-    height: var(--pf-global--spacer--lg);
-    margin: 0 var(--pf-global--spacer--sm) 0 0;
+  &--rightmargin {
+    margin-right: var(--pf-global--spacer--sm);
+  }
+  & .pf-c-badge:not(:last-of-type) {
+    margin-right: var(--pf-global--spacer--sm);
   }
 }
