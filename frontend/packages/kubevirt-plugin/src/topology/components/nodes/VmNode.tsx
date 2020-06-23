@@ -108,7 +108,7 @@ const ObservedVmNode: React.FC<VmNodeProps> = ({
       statusClass = 'kubevirt-m-pending';
       break;
     case VMStatus.V2V_CONVERSION_ERROR:
-    case VMStatus.POD_ERROR:
+    case VMStatus.LAUNCHER_POD_ERROR:
     case VMStatus.VM_ERROR:
     case VMStatus.VMI_ERROR:
     case VMStatus.CDI_IMPORT_ERROR:
