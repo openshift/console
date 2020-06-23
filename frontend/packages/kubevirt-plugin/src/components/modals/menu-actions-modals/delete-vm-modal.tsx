@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash';
-import { HandlePromiseProps, history, withHandlePromise } from '@console/internal/components/utils';
+import { HandlePromiseProps, withHandlePromise } from '@console/internal/components/utils';
 import { YellowExclamationTriangleIcon } from '@console/shared/src/components/status/icons';
 import { getName, getNamespace } from '@console/shared/src/selectors/common';
 import {
@@ -11,50 +11,37 @@ import {
   ModalComponentProps,
 } from '@console/internal/components/factory';
 import { apiVersionForModel } from '@console/internal/module/k8s';
-import { VMLikeEntityKind } from '../../../types/vmLike';
-import { asVM, getVMLikeModel, getVolumes } from '../../../selectors/vm';
+import { VMKind, VMIKind } from '../../../types/vm';
+import { VirtualMachineModel, VirtualMachineImportModel } from '../../../models';
+import { getVolumes } from '../../../selectors/vm';
 import { useOwnedVolumeReferencedResources } from '../../../hooks/use-owned-volume-referenced-resources';
-import { isTemplate, isVM } from '../../../selectors/check-type';
 import { useVirtualMachineImport } from '../../../hooks/use-virtual-machine-import';
 import { useUpToDateVMLikeEntity } from '../../../hooks/use-vm-like-entity';
-import { VirtualMachineImportModel } from '../../../models';
 import { deleteVM } from '../../../k8s/requests/vm';
-import { deleteVMTemplate } from '../../../k8s/requests/vmtemplate/actions';
+import { VMIUsersAlert } from './vmi-users-alert';
+import { redirectToList } from './utils';
 
-const redirectFn = (vmLikeEntity: VMLikeEntityKind) => {
-  // If we are currently on the deleted resource's page, redirect to the resource list page
-  const re = new RegExp(`/${getName(vmLikeEntity)}(/|$)`);
-  if (re.test(window.location.pathname)) {
-    history.push(
-      `/k8s/ns/${getNamespace(vmLikeEntity)}/virtualization${
-        isTemplate(vmLikeEntity) ? '/templates' : ''
-      }`,
-    );
-  }
-};
+export const DeleteVMModal = withHandlePromise((props: DeleteVMModalProps) => {
+  const { inProgress, errorMessage, handlePromise, close, cancel, vm, vmi } = props;
 
-export const DeleteVMLikeEntityModal = withHandlePromise((props: DeleteVMLikeEntityModalProps) => {
-  const { inProgress, errorMessage, handlePromise, close, cancel } = props;
-  const vmLikeEntity = useUpToDateVMLikeEntity(props.vmLikeEntity);
+  const vmUpToDate = useUpToDateVMLikeEntity<VMKind>(vm);
   const [deleteDisks, setDeleteDisks] = React.useState<boolean>(true);
   const [deleteVMImport, setDeleteVMImport] = React.useState<boolean>(true);
 
-  const entityModel = getVMLikeModel(vmLikeEntity);
-  const namespace = getNamespace(vmLikeEntity);
+  const namespace = getNamespace(vmUpToDate);
+  const name = getName(vmUpToDate);
 
-  const vmLikeReference = {
-    name: getName(vmLikeEntity),
-    kind: entityModel.kind,
-    apiVersion: apiVersionForModel(entityModel),
+  const vmReference = {
+    name,
+    kind: VirtualMachineModel.kind,
+    apiVersion: apiVersionForModel(VirtualMachineModel),
   } as any;
 
-  const [vmImport, vmImportLoaded] = useVirtualMachineImport(
-    isVM(vmLikeEntity) ? vmLikeEntity : null,
-  );
+  const [vmImport, vmImportLoaded] = useVirtualMachineImport(vmUpToDate);
   const [ownedVolumeResources, isOwnedVolumeResourcesLoaded] = useOwnedVolumeReferencedResources(
-    vmLikeReference,
+    vmReference,
     namespace,
-    getVolumes(asVM(vmLikeEntity), null),
+    getVolumes(vmUpToDate, null),
   );
   const isInProgress = inProgress || !vmImportLoaded || !isOwnedVolumeResourcesLoaded;
   const numOfAllResources = _.sum([ownedVolumeResources.length, vmImport ? 1 : 0]);
@@ -62,37 +49,27 @@ export const DeleteVMLikeEntityModal = withHandlePromise((props: DeleteVMLikeEnt
   const submit = (e) => {
     e.preventDefault();
 
-    let promise;
-
-    if (isVM(vmLikeEntity)) {
-      promise = deleteVM(vmLikeEntity, {
-        vmImport,
-        deleteVMImport,
-        ownedVolumeResources,
-        deleteOwnedVolumeResources: deleteDisks,
-      });
-    } else if (isTemplate(vmLikeEntity)) {
-      promise = deleteVMTemplate(vmLikeEntity, {
-        ownedVolumeResources,
-        deleteOwnedVolumeResources: deleteDisks,
-      });
-    }
+    const promise = deleteVM(vmUpToDate, {
+      vmImport,
+      deleteVMImport,
+      ownedVolumeResources,
+      deleteOwnedVolumeResources: deleteDisks,
+    });
 
     return handlePromise(promise)
       .then(close)
-      .then(() => redirectFn(vmLikeEntity));
+      .then(() => redirectToList(vmUpToDate));
   };
 
   return (
     <form onSubmit={submit} className="modal-content">
       <ModalTitle>
-        <YellowExclamationTriangleIcon className="co-icon-space-r" /> Delete{' '}
-        {isTemplate(vmLikeEntity) ? 'Virtual Machine Template' : entityModel.label}?
+        <YellowExclamationTriangleIcon className="co-icon-space-r" />
+        Delete {VirtualMachineModel.label}?
       </ModalTitle>
       <ModalBody>
-        Are you sure you want to delete{' '}
-        <strong className="co-break-word">{getName(vmLikeEntity)}</strong> in namespace{' '}
-        <strong>{getNamespace(vmLikeEntity)}</strong> ?
+        Are you sure you want to delete <strong className="co-break-word">{name}</strong> in
+        namespace <strong>{namespace}</strong>?
         {numOfAllResources > 0 && (
           <p>
             The following resources will be deleted along with this virtual machine. Unchecked items
@@ -124,6 +101,7 @@ export const DeleteVMLikeEntityModal = withHandlePromise((props: DeleteVMLikeEnt
           </div>
         )}
       </ModalBody>
+      <VMIUsersAlert vmi={vmi} cancel={cancel} alertTitle="Delete Virtual Machine alert" />
       <ModalSubmitFooter
         errorMessage={errorMessage}
         submitDisabled={isInProgress}
@@ -136,9 +114,10 @@ export const DeleteVMLikeEntityModal = withHandlePromise((props: DeleteVMLikeEnt
   );
 });
 
-export type DeleteVMLikeEntityModalProps = {
-  vmLikeEntity: VMLikeEntityKind;
+export type DeleteVMModalProps = {
+  vm: VMKind;
+  vmi?: VMIKind;
 } & ModalComponentProps &
   HandlePromiseProps;
 
-export const deleteVMLikeEntityModal = createModalLauncher(DeleteVMLikeEntityModal);
+export const deleteVMModal = createModalLauncher(DeleteVMModal);
