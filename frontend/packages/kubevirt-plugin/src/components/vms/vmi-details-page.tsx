@@ -107,9 +107,8 @@ export const VirtualMachinesInstanceDetailsPage: React.FC<VirtualMachinesInstanc
         title={`Virtual Machine Instance ${name}`}
       >
         <p>
-          This is a VirtualMachineInstance overview page. Please consider using a VirtualMachine
-          that will provide additional management capabilities to a VirtualMachineInstance inside
-          the cluster.
+          Consider using a Virtual Machine that will provide additional management capabilities to a
+          VirtualMachineInstance inside the cluster.
         </p>
         <ExternalLink
           href="https://kubevirt.io/user-guide/#/architecture?id=virtualmachine"
