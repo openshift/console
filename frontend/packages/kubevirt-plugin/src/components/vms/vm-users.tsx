@@ -64,8 +64,8 @@ const UsersTableRow = ({ obj: user, index, key, style }) => {
   );
 };
 
-export const VMUsersList: React.FC<VMUsersListProps> = ({ vmi, vmStatusBundle, delay }) => {
-  const [guestAgentInfoRaw, error, loading] = useGuestAgentInfo({ vmi, delay });
+export const VMUsersList: React.FC<VMUsersListProps> = ({ vmi, vmStatusBundle }) => {
+  const [guestAgentInfoRaw, error, loading] = useGuestAgentInfo({ vmi });
   const guestAgentInfo = new GuestAgentInfoWrapper(guestAgentInfoRaw);
   const userList = guestAgentInfo.getUserList();
 
@@ -106,5 +106,4 @@ export const VMUsersList: React.FC<VMUsersListProps> = ({ vmi, vmStatusBundle, d
 type VMUsersListProps = {
   vmi?: VMIKind;
   vmStatusBundle?: VMStatusBundle;
-  delay?: number;
 };
