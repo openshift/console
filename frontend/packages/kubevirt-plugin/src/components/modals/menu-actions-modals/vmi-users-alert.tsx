@@ -38,8 +38,8 @@ export const VMIUsersAlert: React.FC<VMIUsersAlertProps> = ({
       <Button variant="link" isInline onClick={onLinkClick}>
         {pluralize(userListLength, 'User')}
       </Button>{' '}
-      currently logged in to this VM. Proceeding with this operation may cause logged in users data
-      loss.
+      currently logged in to this VM. Proceeding with this operation may cause logged in users to
+      lose data.
     </>
   );
 
