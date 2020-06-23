@@ -25,8 +25,8 @@ describe('virtualized-grid-utils', () => {
     };
 
     const result3 = getItemsAndRowCount(data3, 1);
-    expect(result3.rowCount).toEqual(3);
-    expect(result3.items).toEqual(['header1', 'header2', {}]);
-    expect(result3.headerRows).toEqual([0, 1]);
+    expect(result3.rowCount).toEqual(2);
+    expect(result3.items).toEqual(['header2', {}]);
+    expect(result3.headerRows).toEqual([0]);
   });
 });

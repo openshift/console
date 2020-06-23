@@ -18,7 +18,7 @@ const Cell: React.FC<CellProps> = ({
 }) => {
   const {
     key,
-    style: { height: cellHeight, width, left, ...style },
+    style: { height: cellHeight, width: cellWidth, left, top, ...style },
     columnIndex,
     rowIndex,
     parent,
@@ -26,12 +26,22 @@ const Cell: React.FC<CellProps> = ({
   const index = rowIndex * columnCount + columnIndex;
   const item: CellItem = items[index];
   const isItemString = typeof item === 'string';
-  const height = item && (isItemString ? cellHeight : Number(cellHeight) - IDEAL_SPACE_BW_TILES);
+  const height = item
+    ? isItemString
+      ? cellHeight
+      : Number(cellHeight) - IDEAL_SPACE_BW_TILES
+    : undefined;
+  const width = item
+    ? isItemString
+      ? '100%'
+      : Number(cellWidth) - IDEAL_SPACE_BW_TILES
+    : undefined;
   const wrapperStyles = {
     ...style,
     height,
-    width: Number(width) - IDEAL_SPACE_BW_TILES,
+    width,
     left: Number(left) + IDEAL_SPACE_BW_TILES,
+    top: Number(top) + IDEAL_SPACE_BW_TILES,
   };
   return item ? (
     <CellMeasurer

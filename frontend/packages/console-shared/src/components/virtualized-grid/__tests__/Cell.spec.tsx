@@ -58,22 +58,7 @@ describe('Grid-cell', () => {
       />,
     );
     expect(wrapper.find('div').prop('style').height).toBe(50);
-    expect(renderHeader).toHaveBeenCalledWith('string');
-    expect(renderCell).not.toHaveBeenCalled();
-  });
-
-  it('should render Cell and not the Header when item is neither string nor null and height should be changed', () => {
-    const wrapper = shallow(
-      <Cell
-        data={data}
-        renderCell={renderCell}
-        cache={cache}
-        columnCount={1}
-        items={['string']}
-        renderHeader={renderHeader}
-      />,
-    );
-    expect(wrapper.find('div').prop('style').height).toBe(50);
+    expect(wrapper.find('div').prop('style').width).toBe('100%');
     expect(renderHeader).toHaveBeenCalledWith('string');
     expect(renderCell).not.toHaveBeenCalled();
   });
@@ -84,6 +69,7 @@ describe('Grid-cell', () => {
       <Cell data={data} renderCell={renderCell} cache={cache} columnCount={1} items={[item]} />,
     );
     expect(wrapper.find('div').prop('style').height).toBe(50 - IDEAL_SPACE_BW_TILES);
+    expect(wrapper.find('div').prop('style').width).toBe(50 - IDEAL_SPACE_BW_TILES);
     expect(renderCell).toHaveBeenCalledWith(item);
     expect(renderHeader).not.toHaveBeenCalled();
   });

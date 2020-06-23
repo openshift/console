@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { CellMeasurerCache, Grid as GridComponent, GridCellProps } from 'react-virtualized';
-import { IDEAL_CELL_WIDTH, IDEAL_SPACE_BW_TILES, OVERSCAN_ROW_COUNT } from './const';
+import { IDEAL_CELL_WIDTH, IDEAL_SPACE_BW_TILES, OVERSCAN_ROW_COUNT, CELL_PADDING } from './const';
 import { Item, GridChildrenProps } from './types';
 import './Grid.scss';
 
@@ -40,7 +40,7 @@ const Grid: React.FC<GridProps> = ({
       height={height}
       width={width}
       scrollTop={scrollTop - cache.rowHeight({ index: 0 })}
-      rowHeight={cache.rowHeight}
+      rowHeight={(params) => cache.rowHeight(params) + CELL_PADDING}
       deferredMeasurementCache={cache}
       columnWidth={idealItemWidth}
       rowCount={rowCount}

@@ -85,7 +85,7 @@ $catalog-tile-width: $co-m-catalog-tile-width;
     max-height: $catalog-item-icon-size-sm;
     max-width: $catalog-item-icon-size-sm;
 
-    &[src$=".svg"] {
+    &[src$='.svg'] {
       width: $catalog-item-icon-size-sm;
     }
 
@@ -93,7 +93,7 @@ $catalog-tile-width: $co-m-catalog-tile-width;
       max-height: $catalog-item-icon-size-lg;
       max-width: $catalog-item-icon-size-lg;
 
-      &[src$=".svg"] {
+      &[src$='.svg'] {
         width: $catalog-item-icon-size-lg;
       }
     }
@@ -104,7 +104,7 @@ $catalog-tile-width: $co-m-catalog-tile-width;
   background: $color-pf-white;
   border: 1px solid var(--pf-global--BorderColor--300);
   display: flex;
-  flex:1;
+  flex: 1;
   margin: 0 ($grid-gutter-width / 2);
   padding: ($grid-gutter-width / 2) 0 0;
 
@@ -138,7 +138,6 @@ $catalog-tile-width: $co-m-catalog-tile-width;
 
   &__grid {
     background-color: $color-pf-black-150;
-    padding: 30px;
   }
 
   &__grouped-items {
@@ -240,7 +239,7 @@ $catalog-tile-width: $co-m-catalog-tile-width;
     padding-left: var(--pf-global--spacer--lg);
     padding-right: var(--pf-global--spacer--lg);
     padding-top: var(--pf-global--spacer--md);
-    @media(min-width: $screen-sm-min) {
+    @media (min-width: $screen-sm-min) {
       display: flex;
     }
   }
@@ -251,7 +250,9 @@ $catalog-tile-width: $co-m-catalog-tile-width;
     // TODO: find fix for urls that don't wrap
     // fix below causes undesirable wrapping on non-urls
     // word-break: break-all;
-    h1, h2, h3 {
+    h1,
+    h2,
+    h3 {
       color: #333; // same color as styles hardcoded in markdown text component
     }
 
@@ -259,16 +260,18 @@ $catalog-tile-width: $co-m-catalog-tile-width;
       font-size: 20px;
     }
 
-    p, li, ol {
+    p,
+    li,
+    ol {
       color: #333; // same color as styles hardcoded in markdown text component
       font-size: $font-size-base !important;
     }
 
-    @media(min-width: $screen-sm-min) {
-        flex: 1 1 auto;
-        margin-left: 20px;
-        margin-top: 0;
-      }
+    @media (min-width: $screen-sm-min) {
+      flex: 1 1 auto;
+      margin-left: 20px;
+      margin-top: 0;
+    }
   }
 
   &__tabs {
@@ -332,10 +335,11 @@ $catalog-tile-width: $co-m-catalog-tile-width;
     }
   }
 
-  &::before { // empty circle
+  &::before {
+    // empty circle
     border: 1px solid $catalog-capability-level-inactive-color;
     border-radius: 10px;
-    content: "";
+    content: '';
     height: 14px;
     left: $catalog-capability-level-icon-left;
     position: absolute;
@@ -343,9 +347,10 @@ $catalog-tile-width: $co-m-catalog-tile-width;
     width: 14px;
   }
 
-  &:not(:last-child)::after { // pipe after circle
+  &:not(:last-child)::after {
+    // pipe after circle
     background: $catalog-capability-level-inactive-color;
-    content: "";
+    content: '';
     height: 6px;
     left: -13px;
     position: absolute;

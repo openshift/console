@@ -5,6 +5,7 @@ import {
   IDEAL_SPACE_BW_TILES,
   HEADER_FIXED_HEIGHT,
   OVERSCAN_ROW_COUNT,
+  CELL_PADDING,
 } from './const';
 import { getItemsAndRowCount } from './utils';
 import { Params, GroupedItems, GridChildrenProps } from './types';
@@ -40,7 +41,7 @@ const GroupByFilterGrid: React.FC<GroupByFilterGridProps> = ({
       if (headerRows.includes(index)) {
         return HEADER_FIXED_HEIGHT;
       }
-      return cache.rowHeight({ index });
+      return cache.rowHeight({ index }) + CELL_PADDING;
     },
     [cache, headerRows],
   );

@@ -31,15 +31,16 @@ export const getItemsAndRowCount = (
   columnCount: number,
 ): { items: CellItem[]; rowCount: number; columnCount: number; headerRows: number[] } =>
   Object.keys(groupedItems).reduce(
-    (
-      {
+    (accumulatedValues, currentKey) => {
+      // if there are no item for one of the groupings return accumulator
+      if (groupedItems[currentKey].length < 1) return accumulatedValues;
+
+      const {
         items: accItems,
         rowCount: accRowCount,
         columnCount: accColumnCount,
         headerRows: accHeaderRow,
-      },
-      currentKey,
-    ) => {
+      } = accumulatedValues;
       const items = [];
       const headerRows = [...accHeaderRow];
       // push header to the items at 0th column of row, and null for all other columns in the same row
