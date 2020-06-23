@@ -4,15 +4,12 @@ import { sortable } from '@patternfly/react-table';
 import { fromNow } from '@console/internal/components/utils/datetime';
 import { Table, TableRow, TableData } from '@console/internal/components/factory';
 import { Timestamp } from '@console/internal/components/utils/timestamp';
-import { StatusItem } from '@console/shared/src/components/dashboard/status-card/AlertItem';
-import { BlueInfoCircleIcon } from '@console/shared/src/components/status';
-import { VMStatus } from '../../constants/vm/vm-status';
+import { getGuestAgentFieldNotAvailMsg } from '../../utils/guest-agent-strings';
 import { isGuestAgentInstalled } from '../dashboards-page/vm-dashboard/vm-alerts';
 import { useGuestAgentInfo } from '../../hooks/use-guest-agent-info';
 import { GuestAgentInfoWrapper } from '../../k8s/wrapper/vm/guest-agent-info/guest-agent-info-wrapper';
 import { VMStatusBundle } from '../../statuses/vm/types';
 import { VMIKind } from '../../types';
-import { NO_GUEST_AGENT_MESSAGE, VIRTUAL_MACHINE_IS_NOT_RUNNING } from '../../strings/vm/messages';
 
 const tableColumnClasses = [
   classNames('col-lg-3', 'col-md-3', 'col-sm-4', 'col-sm-4'),
@@ -69,12 +66,13 @@ export const VMUsersList: React.FC<VMUsersListProps> = ({ vmi, vmStatusBundle, d
   const guestAgentInfo = new GuestAgentInfoWrapper(guestAgentInfoRaw);
   const userList = guestAgentInfo.getUserList();
 
-  if (vmStatusBundle.status !== VMStatus.RUNNING) {
-    return <div className="text-center">{VIRTUAL_MACHINE_IS_NOT_RUNNING}</div>;
-  }
+  const guestAgentFieldNotAvailMsg = getGuestAgentFieldNotAvailMsg(
+    isGuestAgentInstalled(vmi),
+    vmStatusBundle.status,
+  );
 
-  if (!isGuestAgentInstalled(vmi)) {
-    return <StatusItem Icon={BlueInfoCircleIcon} message={NO_GUEST_AGENT_MESSAGE} />;
+  if (!guestAgentInfoRaw) {
+    return <div className="text-center">{guestAgentFieldNotAvailMsg}</div>;
   }
 
   const data =
