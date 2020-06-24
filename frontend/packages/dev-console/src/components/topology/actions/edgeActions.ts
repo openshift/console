@@ -7,6 +7,7 @@ import {
   TYPE_EVENT_SOURCE_LINK,
   TYPE_KNATIVE_REVISION,
   TYPE_KNATIVE_SERVICE,
+  TYPE_EVENT_PUB_SUB,
   TYPE_REVISION_TRAFFIC,
 } from '@console/knative-plugin/src/topology/const';
 import { getTopologyResourceObject } from '../topology-utils';
@@ -68,7 +69,7 @@ export const edgeActions = (edge: Edge, nodes: Node[]): KebabOption[] => {
         case TYPE_SERVICE_BINDING:
           return false;
         case TYPE_EVENT_SOURCE_LINK:
-          return n.getType() === TYPE_KNATIVE_SERVICE;
+          return n.getType() === TYPE_KNATIVE_SERVICE || n.getType() === TYPE_EVENT_PUB_SUB;
         case TYPE_REVISION_TRAFFIC:
           return false;
         case TYPE_TRAFFIC_CONNECTOR:

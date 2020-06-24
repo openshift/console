@@ -3,8 +3,11 @@ import { shallow } from 'enzyme';
 import { OverviewItem } from '@console/shared';
 import { LoadingBox } from '@console/internal/components/utils';
 import { ResourceOverviewDetails } from '@console/internal/components/overview/resource-overview-details';
-import { revisionObj } from '../../../topology/__tests__/topology-knative-test-data';
-import { RevisionModel } from '../../../models';
+import {
+  revisionObj,
+  EventSubscriptionObj,
+} from '../../../topology/__tests__/topology-knative-test-data';
+import { RevisionModel, EventingSubscriptionModel } from '../../../models';
 import { KnativeResourceOverviewPage } from '../KnativeResourceOverviewPage';
 
 describe('KnativeResourceOverviewPage', () => {
@@ -37,5 +40,19 @@ describe('KnativeResourceOverviewPage', () => {
       />,
     );
     expect(wrapper.find(ResourceOverviewDetails)).toHaveLength(1);
+  });
+  it('should render ResourceOverviewDetails for subscription with proper action menu', () => {
+    const itemData = { ...item, ...{ obj: EventSubscriptionObj } };
+    const wrapper = shallow(
+      <KnativeResourceOverviewPage
+        item={itemData}
+        knativeModels={[EventingSubscriptionModel]}
+        kindsInFlight={false}
+      />,
+    );
+    const resourceOverviewDetails = wrapper.find(ResourceOverviewDetails);
+    expect(resourceOverviewDetails).toHaveLength(1);
+    expect(resourceOverviewDetails.at(0).props().menuActions).toHaveLength(4);
+    expect(resourceOverviewDetails.at(0).props().kindObj).toEqual(EventingSubscriptionModel);
   });
 });

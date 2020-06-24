@@ -451,7 +451,7 @@ const Topology: React.FC<ComponentProps> = ({
     if (isEdge(selectedEntity)) {
       if (selectedEntity.getType() === TYPE_EVENT_PUB_SUB_LINK) {
         const itemResources = selectedEntity.getData();
-        return <KnativeResourceOverviewPage item={itemResources.data.resources} />;
+        return <KnativeResourceOverviewPage item={itemResources.resources} />;
       }
       return <ConnectedTopologyEdgePanel edge={selectedEntity as BaseEdge} model={filteredModel} />;
     }

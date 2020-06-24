@@ -9,10 +9,13 @@ import RevisionsOverviewList from '../RevisionsOverviewList';
 import KSRoutesOverviewList from '../RoutesOverviewList';
 import ConfigurationsOverviewList from '../ConfigurationsOverviewList';
 import EventSinkServicesOverviewList from '../EventSinkServicesOverviewList';
+import EventPubSubResources from '../EventPubSubResources';
 import {
   MockKnativeResources,
   getEventSourceResponse,
   sampleEventSourceSinkbinding,
+  EventIMCObj,
+  EventSubscriptionObj,
 } from '../../../topology/__tests__/topology-knative-test-data';
 import { EventSourceCronJobModel } from '../../../models';
 
@@ -92,5 +95,26 @@ describe('OverviewDetailsKnativeResourcesTab', () => {
     expect(wrapper.find(RevisionsOverviewList)).toHaveLength(1);
     expect(wrapper.find(KSRoutesOverviewList)).toHaveLength(1);
     expect(wrapper.find(ConfigurationsOverviewList)).toHaveLength(1);
+  });
+
+  it('should render EventPubSubResources on sidebar for Subscription', () => {
+    knItem.item = {
+      ...knItem.item,
+      ...{ obj: EventSubscriptionObj },
+    };
+    const wrapper = shallow(<OverviewDetailsKnativeResourcesTab {...knItem} />);
+    expect(wrapper.find(EventPubSubResources)).toHaveLength(1);
+  });
+
+  it('should render EventPubSubResources on sidebar for channel', () => {
+    jest
+      .spyOn(fetchDynamicEventSources, 'isEventingChannelResourceKind')
+      .mockImplementationOnce(() => true);
+    knItem.item = {
+      ...knItem.item,
+      ...{ obj: EventIMCObj },
+    };
+    const wrapper = shallow(<OverviewDetailsKnativeResourcesTab {...knItem} />);
+    expect(wrapper.find(EventPubSubResources)).toHaveLength(1);
   });
 });

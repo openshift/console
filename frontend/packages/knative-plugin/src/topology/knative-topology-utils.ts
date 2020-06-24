@@ -16,7 +16,7 @@ import {
   getRoutesForServices,
   getServicesForResource,
 } from '@console/shared';
-import { Model, EdgeModel, Node, NodeModel, NodeShape } from '@console/topology';
+import { Model, Edge, EdgeModel, Node, NodeModel, NodeShape } from '@console/topology';
 import {
   TopologyDataResources,
   TopologyDataObject,
@@ -76,7 +76,6 @@ export const getKnNodeModelProps = (type: string) => {
           padding: NODE_PADDING,
         },
       };
-      break;
     case NodeType.KnService:
       return {
         width: KNATIVE_GROUP_NODE_WIDTH,
@@ -89,10 +88,17 @@ export const getKnNodeModelProps = (type: string) => {
           padding: KNATIVE_GROUP_NODE_PADDING,
         },
       };
-      break;
+    case NodeType.PubSub:
+      return {
+        width: NODE_WIDTH,
+        height: NODE_HEIGHT / 2,
+        visible: true,
+        style: {
+          padding: NODE_PADDING,
+        },
+      };
     default:
       return WorkloadModelProps;
-      break;
   }
 };
 
@@ -274,17 +280,11 @@ const createKnativeDeploymentItems = (
   };
 };
 
-export const getKnativeEventSources = (resources: TopologyDataResources): K8sResourceKind[] => {
-  const evenSourceProps = getDynamicEventSourcesModelRefs();
-  return evenSourceProps.reduce((acc, currProp) => {
-    const currPropResource = resources[currProp]?.data ?? [];
-    return [...acc, ...currPropResource];
-  }, []);
-};
-
-export const getKnativeChannelResources = (resources: TopologyDataResources): K8sResourceKind[] => {
-  const evenSourceProps = getDynamicChannelModelRefs();
-  return evenSourceProps.reduce((acc, currProp) => {
+export const getKnativeDynamicResources = (
+  resources: TopologyDataResources,
+  dynamicProps: string[],
+): K8sResourceKind[] => {
+  return dynamicProps.reduce((acc, currProp) => {
     const currPropResource = resources[currProp]?.data ?? [];
     return [...acc, ...currPropResource];
   }, []);
@@ -299,9 +299,10 @@ export const createPubSubDataItems = (
     metadata: { name },
     spec,
   } = resource;
-  const subscriptionData = _.get(resources, 'eventingsubscription.data', []);
+  const subscriptionData = resources?.eventingsubscription?.data ?? [];
+  const eventSourceProps = getDynamicEventSourcesModelRefs();
   const eventSources = _.reduce(
-    getKnativeEventSources(resources),
+    getKnativeDynamicResources(resources, eventSourceProps),
     (acc, evSrc) => {
       const sinkRes = _.get(evSrc, 'spec.sink.ref', {});
       if (resKind === sinkRes.kind && name === sinkRes.name) {
@@ -314,7 +315,7 @@ export const createPubSubDataItems = (
   const channelSubsData = _.reduce(
     subscriptionData,
     (acc, subs) => {
-      const subUid = subs.metadata?.uid;
+      const subUid = _.get(subs, 'metadata.uid');
       const subscribers = spec?.subscribable?.subscribers || spec?.subscribers;
       const isSubscribableData = _.findIndex(subscribers, function({ uid }) {
         return uid === subUid;
@@ -397,9 +398,9 @@ export const getEventTopologyEdgeItems = (resource: K8sResourceKind, { data }): 
   if (sinkTarget) {
     _.forEach(data, (res) => {
       const {
-        metadata: { uid: resUid, name: resname },
+        metadata: { uid: resUid, name: resName },
       } = res;
-      if (resname === sinkTarget.name) {
+      if (resName === sinkTarget.name) {
         edges.push({
           id: `${uid}_${resUid}`,
           type: EdgeType.EventSource,
@@ -412,11 +413,13 @@ export const getEventTopologyEdgeItems = (resource: K8sResourceKind, { data }): 
   return edges;
 };
 
-export const getSubscriptionTopologyEdgeItems = (resource: K8sResourceKind, resources): Edge[] => {
+export const getSubscriptionTopologyEdgeItems = (
+  resource: K8sResourceKind,
+  resources,
+): EdgeModel[] => {
   const {
     metadata: { uid, name },
   } = resource;
-  // const subscriptionData = resources?.eventingsubscription;
   const { eventingsubscription, ksservices } = resources;
   const edges = [];
   _.forEach(eventingsubscription?.data, (subRes) => {
@@ -425,9 +428,9 @@ export const getSubscriptionTopologyEdgeItems = (resource: K8sResourceKind, reso
       const svcData = _.get(subRes, ['spec', 'subscriber', 'ref']);
       _.forEach(ksservices?.data, (res) => {
         const {
-          metadata: { uid: resUid, name: resname },
+          metadata: { uid: resUid, name: resName },
         } = res;
-        if (resname === svcData.name) {
+        if (resName === svcData.name) {
           edges.push({
             id: `${uid}_${resUid}`,
             type: EdgeType.EventPubSubLink,
@@ -549,9 +552,10 @@ export const transformKnNodeData = (
         knDataModel.nodes.push(...getKnativeTopologyNodeItems(res, type, data, resources));
         knDataModel.edges.push(...getEventTopologyEdgeItems(res, resources.ksservices));
         // form connections for channels
-        const eventingChannels = getDynamicChannelModelRefs();
-        _.forEach(eventingChannels, (currentProp) => {
-          knDataModel.graph.edges.push(...getEventTopologyEdgeItems(res, resources[currentProp]));
+        const channelResourceProps = getDynamicChannelModelRefs();
+        _.forEach(channelResourceProps, (currentProp) => {
+          resources[currentProp] &&
+            knDataModel.edges.push(...getEventTopologyEdgeItems(res, resources[currentProp]));
         });
         const newGroup = getTopologyGroupItems(res);
         mergeGroup(newGroup, knDataModel.nodes);
@@ -571,7 +575,7 @@ export const transformKnNodeData = (
         knDataModel.nodes.push(...getKnativeTopologyNodeItems(res, type, data, resources));
         knDataModel.edges.push(...getSubscriptionTopologyEdgeItems(res, resources));
         const newGroup = getTopologyGroupItems(res);
-        mergeGroup(newGroup, knDataModel.graph.groups);
+        mergeGroup(newGroup, knDataModel.nodes);
         break;
       }
       default:
@@ -650,50 +654,35 @@ export const createSinkConnection = (
   return createTopologySinkConnection(sourceNode.getData(), targetNode.getData());
 };
 
-export const createEventingPubSubSink = (
-  subObj,
-  source: K8sResourceKind,
-  target: K8sResourceKind,
-) => {
-  if (!subObj || !source || !target || source === target) {
+export const createEventingPubSubSink = (subObj: K8sResourceKind, target: K8sResourceKind) => {
+  if (!subObj || !target) {
     return Promise.reject();
   }
   const subscriptionObj = _.omit(subObj, 'status');
   const sink = {
-    channel: {
-      apiVersion: source.apiVersion,
-      kind: source.kind,
-      name: source.metadata?.name,
-    },
-    subscriber: {
-      ref: {
-        apiVersion: target.apiVersion,
-        kind: target.kind,
-        name: target.metadata?.name,
-      },
+    ref: {
+      apiVersion: target.apiVersion,
+      kind: target.kind,
+      name: target.metadata?.name,
     },
   };
   const updatePayload = {
     ...subscriptionObj,
-    spec: { ...subscriptionObj.spec, ...sink },
+    spec: { ...subscriptionObj.spec, subscriber: { ...sink } },
   };
+
   return k8sUpdate(modelFor(referenceFor(subscriptionObj)), updatePayload);
 };
 
 export const createSinkPubSubConnection = (
-  connector: any,
-  sourceNode: Node,
+  connector: Edge,
   targetNode: Node,
 ): Promise<K8sResourceKind> => {
-  const { resources } = connector.data;
-  const source = sourceNode.getData();
+  const { resources } = connector.getData();
   const target = targetNode.getData();
-  if (!source || !target || source === target || !resources?.obj) {
+  if (!target || !resources?.obj) {
     return Promise.reject();
   }
-
-  const sourceObj = getTopologyResourceObject(source);
   const targetObj = getTopologyResourceObject(target);
-
-  return createEventingPubSubSink(resources?.obj, sourceObj, targetObj);
+  return createEventingPubSubSink(resources.obj, targetObj);
 };

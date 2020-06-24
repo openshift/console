@@ -143,11 +143,7 @@ export const eventingPubSubLinkDragSourceSpec = (): DragSourceSpec<
       dropResult &&
       canDropPubSubSinkOnNode(monitor.getOperation().type, props.element, dropResult)
     ) {
-      createSinkPubSubConnection(
-        props.element.getData(),
-        props.element.getSource(),
-        dropResult,
-      ).catch((error) => {
+      createSinkPubSubConnection(props.element, dropResult).catch((error) => {
         errorModal({
           title: 'Error while sink',
           error: error.message,

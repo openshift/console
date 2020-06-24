@@ -7,21 +7,22 @@ import {
   ModalSubmitFooter,
 } from '@console/internal/components/factory/modal';
 import { ResourceDropdownField } from '@console/shared';
+import { FirehoseResource } from '@console/internal/components/utils';
 import FormSection from '@console/dev-console/src/components/import/section/FormSection';
-import { knativeServingResourcesServices } from '../../utils/get-knative-resources';
-import { getDynamicChannelResourceList } from '../../utils/fetch-dynamic-eventsources-utils';
 
 export interface SinkSourceModalProps {
-  namespace: string;
   resourceName: string;
+  resourceDropdown: FirehoseResource[];
+  labelTitle: string;
   cancel?: () => void;
 }
 
 type Props = FormikProps<FormikValues> & SinkSourceModalProps;
 
 const SinkSourceModal: React.FC<Props> = ({
-  namespace,
   resourceName,
+  resourceDropdown,
+  labelTitle,
   handleSubmit,
   cancel,
   isSubmitting,
@@ -37,37 +38,33 @@ const SinkSourceModal: React.FC<Props> = ({
     (selectedValue, target) => {
       const modelResource = target?.props?.model;
       if (selectedValue) {
-        setFieldTouched('sink.ref.name', true);
-        setFieldValue('sink.ref.name', selectedValue);
+        setFieldTouched('ref.name', true);
+        setFieldValue('ref.name', selectedValue);
         if (modelResource) {
           const { apiGroup, apiVersion, kind } = modelResource;
           const sinkApiversion = `${apiGroup}/${apiVersion}`;
-          setFieldValue('sink.ref.apiVersion', sinkApiversion);
-          setFieldTouched('sink.ref.apiVersion', true);
-          setFieldValue('sink.ref.kind', kind);
-          setFieldTouched('sink.ref.kind', true);
+          setFieldValue('ref.apiVersion', sinkApiversion);
+          setFieldTouched('ref.apiVersion', true);
+          setFieldValue('ref.kind', kind);
+          setFieldTouched('ref.kind', true);
         }
         validateForm();
       }
     },
     [setFieldValue, setFieldTouched, validateForm],
   );
-  const dirty = values?.sink?.ref?.name !== initialValues.sink.ref.name;
-  const resourcesDropdownField = [
-    ...knativeServingResourcesServices(namespace),
-    ...getDynamicChannelResourceList(namespace),
-  ];
+  const dirty = values?.ref?.name !== initialValues.ref.name;
   return (
     <form className="modal-content modal-content--no-inner-scroll" onSubmit={handleSubmit}>
-      <ModalTitle>Move Sink</ModalTitle>
+      <ModalTitle>{labelTitle}</ModalTitle>
       <ModalBody>
         <p>
-          Select a sink to move the event source <strong>{resourceName}</strong> to
+          Connects <strong>{resourceName}</strong> to
         </p>
         <FormSection fullWidth>
           <ResourceDropdownField
-            name="sink.ref.name"
-            resources={resourcesDropdownField}
+            name="ref.name"
+            resources={resourceDropdown}
             dataSelector={['metadata', 'name']}
             fullWidth
             required
@@ -76,7 +73,7 @@ const SinkSourceModal: React.FC<Props> = ({
             autocompleteFilter={autocompleteFilter}
             onChange={onSinkChange}
             autoSelect
-            selectedKey={values?.sink?.ref?.name}
+            selectedKey={values?.ref?.name}
           />
         </FormSection>
       </ModalBody>

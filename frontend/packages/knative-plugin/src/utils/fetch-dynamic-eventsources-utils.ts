@@ -227,6 +227,18 @@ export const getDynamicChannelResourceList = (namespace: string) => {
   });
 };
 
+export const getDynamicEventingChannelWatchers = (namespace: string) => {
+  return eventSourceData.eventSourceChannels.reduce((acc, model) => {
+    acc[referenceForModel(model)] = {
+      isList: true,
+      kind: referenceForModel(model),
+      namespace,
+      optional: true,
+    };
+    return acc;
+  }, {});
+};
+
 export const getDynamicChannelModelRefs = (): string[] => {
   return eventSourceData.eventSourceChannels.map((model: K8sKind) => referenceForModel(model));
 };

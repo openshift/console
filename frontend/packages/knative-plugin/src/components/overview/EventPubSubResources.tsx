@@ -11,10 +11,14 @@ type PubSubResourceOverviewListProps = {
 };
 
 type EventPubSubResourcesProps = {
-  item: OverviewItem;
+  item: OverviewItem & {
+    eventSources?: K8sResourceKind[];
+    eventingsubscription?: K8sResourceKind[];
+    connections?: K8sResourceKind[];
+  };
 };
 
-const PubSubResourceOverviewList: React.FC<PubSubResourceOverviewListProps> = ({
+export const PubSubResourceOverviewList: React.FC<PubSubResourceOverviewListProps> = ({
   items,
   title,
 }) => (
@@ -39,20 +43,23 @@ const PubSubResourceOverviewList: React.FC<PubSubResourceOverviewListProps> = ({
 );
 
 const EventPubSubResources: React.FC<EventPubSubResourcesProps> = ({ item }) => {
-  const { obj } = item;
-  const sinkServices = _.get(item, 'ksservices', []);
-  const sinkSources = _.get(item, 'eventSources', []);
-  const sinkSubscription = _.get(item, 'eventingsubscription', []);
-  const sinkConnections = _.get(item, 'connections', []);
+  const {
+    obj,
+    ksservices = [],
+    eventSources = [],
+    eventingsubscription = [],
+    connections = [],
+  } = item;
+
   switch (obj.kind) {
     case EventingSubscriptionModel.kind:
-      return <PubSubResourceOverviewList items={sinkConnections} title="Connections" />;
+      return <PubSubResourceOverviewList items={connections} title="Connections" />;
     default:
       return (
         <>
-          <PubSubResourceOverviewList items={sinkServices} title="Knative Service" />
-          <PubSubResourceOverviewList items={sinkSources} title="Event Source" />
-          <PubSubResourceOverviewList items={sinkSubscription} title="Subscription" />
+          <PubSubResourceOverviewList items={ksservices} title="Knative Service" />
+          <PubSubResourceOverviewList items={eventSources} title="Event Source" />
+          <PubSubResourceOverviewList items={eventingsubscription} title="Subscription" />
         </>
       );
   }

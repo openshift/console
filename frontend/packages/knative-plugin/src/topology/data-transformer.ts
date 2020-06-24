@@ -4,14 +4,12 @@ import {
   TopologyDataResources,
   addToTopologyDataModel,
 } from '@console/dev-console/src/components/topology';
-import { getDynamicEventSourcesModelRefs } from '../utils/fetch-dynamic-eventsources-utils';
 import {
   getRevisionsData,
   KnativeUtil,
   NodeType,
   transformKnNodeData,
-  getKnativeEventSources,
-  getKnativeChannelResources,
+  getKnativeDynamicResources,
 } from './knative-topology-utils';
 import {
   getKnativeServingConfigurations,
@@ -19,24 +17,10 @@ import {
   getKnativeServingRoutes,
   getKnativeServingServices,
 } from '../utils/get-knative-resources';
-
-/**
- * Filter out deployments not created via revisions/eventsources
- */
-// export const filterNonKnativeDeployments = (
-//   resources: DeploymentKind[],
-//   eventSources?: K8sResourceKind[],
-// ): DeploymentKind[] => {
-//   const KNATIVE_CONFIGURATION = 'serving.knative.dev/configuration';
-//   const isEventSourceKind = (uid: string): boolean =>
-//     uid && !!eventSources?.find((eventSource) => eventSource.metadata?.uid === uid);
-//   return _.filter(resources, (d) => {
-//     return (
-//       !_.get(d, ['metadata', 'labels', KNATIVE_CONFIGURATION], false) &&
-//       !isEventSourceKind(d.metadata?.ownerReferences?.[0].uid)
-//     );
-//   });
-// };
+import {
+  getDynamicEventSourcesModelRefs,
+  getDynamicChannelModelRefs,
+} from '../utils/fetch-dynamic-eventsources-utils';
 
 const addKnativeTopologyData = (
   graphModel: Model,
@@ -64,11 +48,16 @@ export const getKnativeTopologyDataModel = (
     getKnativeServingRoutes,
     getKnativeServingServices,
   ];
+  const eventSourceProps = getDynamicEventSourcesModelRefs();
+  const channelResourceProps = getDynamicChannelModelRefs();
   const knativeTopologyGraphModel: Model = { nodes: [], edges: [] };
   const knSvcResources: K8sResourceKind[] = resources?.ksservices?.data ?? [];
-  const knEventSources: K8sResourceKind[] = getKnativeEventSources(resources);
+  const knEventSources: K8sResourceKind[] = getKnativeDynamicResources(resources, eventSourceProps);
   const knRevResources: K8sResourceKind[] = resources?.revisions?.data ?? [];
-  const knChannelResources: K8sResourceKind[] = getKnativeChannelResources(resources);
+  const knChannelResources: K8sResourceKind[] = getKnativeDynamicResources(
+    resources,
+    channelResourceProps,
+  );
 
   addKnativeTopologyData(
     knativeTopologyGraphModel,

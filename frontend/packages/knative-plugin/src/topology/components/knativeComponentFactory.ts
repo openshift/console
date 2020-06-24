@@ -104,18 +104,17 @@ export const getKnativeComponentFactory = (): ComponentFactory => {
           ),
         );
       case TYPE_EVENT_PUB_SUB:
-        return withCreateConnector(
-          createConnectorCallback(),
-          CreateConnector,
-        )(
-          withDndDrop<
-            any,
-            any,
-            { droppable?: boolean; hover?: boolean; canDrop?: boolean; dropTarget?: boolean },
-            NodeComponentProps
-          >(pubSubDropTargetSpec)(
-            withEditReviewAccess('update')(
-              withSelection(false, true)(withContextMenu(knativeContextMenu)(EventingPubSubNode)),
+        return withEditReviewAccess('update')(
+          withDragNode(nodeDragSourceSpec(type))(
+            withSelection(
+              false,
+              true,
+            )(
+              withContextMenu(knativeContextMenu)(
+                withDndDrop<any, any, {}, NodeComponentProps>(pubSubDropTargetSpec)(
+                  EventingPubSubNode,
+                ),
+              ),
             ),
           ),
         );

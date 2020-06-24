@@ -2,6 +2,8 @@ import * as React from 'react';
 import { Formik, FormikValues, FormikHelpers } from 'formik';
 import { K8sResourceKind, k8sUpdate, referenceFor, modelFor } from '@console/internal/module/k8s';
 import SinkSourceModal from './SinkSourceModal';
+import { knativeServingResourcesServices } from '../../utils/get-knative-resources';
+import { getDynamicChannelResourceList } from '../../utils/fetch-dynamic-eventsources-utils';
 
 export interface SinkSourceProps {
   source: K8sResourceKind;
@@ -11,27 +13,28 @@ export interface SinkSourceProps {
 
 const SinkSource: React.FC<SinkSourceProps> = ({ source, cancel, close }) => {
   const {
+    kind: sourceKind,
     metadata: { namespace, name },
-    spec: {
-      sink: {
-        ref: { name: sinkName, apiVersion, kind },
-      },
-    },
+    spec,
   } = source;
-
+  const isPubSubSink = !!spec?.subscriber;
+  const { name: sinkName, apiVersion, kind } = isPubSubSink
+    ? spec?.subscriber?.ref
+    : spec?.sink?.ref;
   const initialValues = {
-    sink: {
-      ref: {
-        apiVersion: apiVersion || '',
-        kind: kind || '',
-        name: sinkName || '',
-      },
+    ref: {
+      apiVersion: apiVersion || '',
+      kind: kind || '',
+      name: sinkName || '',
     },
   };
   const handleSubmit = (values: FormikValues, action: FormikHelpers<FormikValues>) => {
     const updatePayload = {
       ...source,
-      ...(sinkName !== values?.sink?.ref?.name && { spec: { ...source.spec, ...values } }),
+      ...(sinkName !== values?.ref?.name &&
+        !isPubSubSink && { spec: { ...source.spec, sink: { ...values } } }),
+      ...(sinkName !== values?.ref?.name &&
+        isPubSubSink && { spec: { ...source.spec, subscriber: { ...values } } }),
     };
     k8sUpdate(modelFor(referenceFor(source)), updatePayload)
       .then(() => {
@@ -44,6 +47,13 @@ const SinkSource: React.FC<SinkSourceProps> = ({ source, cancel, close }) => {
       });
   };
 
+  const resourcesDropdownField = knativeServingResourcesServices(namespace);
+  let labelTitle = `Move ${sourceKind}`;
+  if (!isPubSubSink) {
+    resourcesDropdownField.push(...getDynamicChannelResourceList(namespace));
+    labelTitle = 'Move Sink';
+  }
+
   return (
     <Formik
       initialValues={initialValues}
@@ -54,8 +64,9 @@ const SinkSource: React.FC<SinkSourceProps> = ({ source, cancel, close }) => {
       {(formikProps) => (
         <SinkSourceModal
           {...formikProps}
-          namespace={namespace}
           resourceName={name}
+          resourceDropdown={resourcesDropdownField}
+          labelTitle={labelTitle}
           cancel={cancel}
         />
       )}

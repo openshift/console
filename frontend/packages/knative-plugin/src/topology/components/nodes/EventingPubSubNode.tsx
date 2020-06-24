@@ -1,8 +1,6 @@
 import * as React from 'react';
 import * as classNames from 'classnames';
 import { Tooltip } from '@patternfly/react-core';
-import { useAccessReview } from '@console/internal/components/utils';
-import { modelFor, referenceFor } from '@console/internal/module/k8s';
 import {
   Node,
   observer,
@@ -11,10 +9,9 @@ import {
   WithDndDropProps,
   WithContextMenuProps,
   useSvgAnchor,
-  useDragNode,
   useCombineRefs,
-  WithCreateConnectorProps,
   createSvgIdUrl,
+  WithDragNodeProps,
 } from '@console/topology';
 import SvgBoxedText from '@console/dev-console/src/components/svg/SvgBoxedText';
 import {
@@ -23,10 +20,9 @@ import {
   NODE_SHADOW_FILTER_ID,
   useSearchFilter,
   useDisplayFilters,
-  nodeDragSourceSpec,
-  getTopologyResourceObject,
+  getFilterById,
+  SHOW_LABELS_FILTER_ID,
 } from '@console/dev-console/src/components/topology';
-import { TYPE_EVENT_PUB_SUB } from '../../const';
 
 import './EventingPubSubNode.scss';
 
@@ -34,11 +30,12 @@ export type EventingPubSubNodeProps = {
   element: Node;
   canDrop?: boolean;
   dropTarget?: boolean;
+  dragging?: boolean;
   edgeDragging?: boolean;
 } & WithSelectionProps &
+  WithDragNodeProps &
   WithDndDropProps &
-  WithContextMenuProps &
-  WithCreateConnectorProps;
+  WithContextMenuProps;
 
 const EventingPubSubNode: React.FC<EventingPubSubNodeProps> = ({
   element,
@@ -48,46 +45,21 @@ const EventingPubSubNode: React.FC<EventingPubSubNodeProps> = ({
   onSelect,
   onContextMenu,
   contextMenuOpen,
+  dragNodeRef,
   dndDropRef,
+  dragging,
   edgeDragging,
-  onHideCreateConnector,
-  onShowCreateConnector,
 }) => {
   const svgAnchorRef = useSvgAnchor();
   const [hover, hoverRef] = useHover();
 
-  const resourceObj = getTopologyResourceObject(element.getData());
-  const resourceModel = modelFor(referenceFor(resourceObj));
-  const editAccess = useAccessReview({
-    group: resourceModel.apiGroup,
-    verb: 'patch',
-    resource: resourceModel.plural,
-    name: resourceObj.metadata.name,
-    namespace: resourceObj.metadata.namespace,
-  });
-  const [{ dragging }, dragNodeRef] = useDragNode(
-    nodeDragSourceSpec(TYPE_EVENT_PUB_SUB, true, editAccess),
-    {
-      element,
-    },
-  );
-
   const groupRefs = useCombineRefs(dragNodeRef, dndDropRef, hoverRef);
   const [filtered] = useSearchFilter(element.getLabel());
   const displayFilters = useDisplayFilters();
-  const showLabels = displayFilters.showLabels || hover;
+  const showLabelsFilter = getFilterById(SHOW_LABELS_FILTER_ID, displayFilters);
+  const showLabels = showLabelsFilter?.value || hover;
   const { width, height } = element.getBounds();
   const { data } = element.getData();
-
-  React.useLayoutEffect(() => {
-    if (editAccess) {
-      if (hover) {
-        onShowCreateConnector && onShowCreateConnector();
-      } else {
-        onHideCreateConnector && onHideCreateConnector();
-      }
-    }
-  }, [editAccess, hover, onShowCreateConnector, onHideCreateConnector]);
 
   return (
     <Tooltip
@@ -98,9 +70,11 @@ const EventingPubSubNode: React.FC<EventingPubSubNodeProps> = ({
     >
       <g
         className={classNames('odc-eventing-pubsub', {
-          'is-filtered': filtered,
-          'is-dragging': dragging || edgeDragging,
+          'is-dragging': dragging,
+          'is-highlight': canDrop || edgeDragging,
           'is-selected': selected,
+          'is-dropTarget': canDrop && dropTarget,
+          'is-filtered': filtered,
         })}
         onClick={onSelect}
         onContextMenu={onContextMenu}
@@ -113,11 +87,11 @@ const EventingPubSubNode: React.FC<EventingPubSubNodeProps> = ({
           x={0}
           y={0}
           width={width}
-          height={height / 2}
+          height={height}
           rx="15"
           ry="15"
           filter={createSvgIdUrl(
-            hover || dragging || contextMenuOpen
+            hover || dragging || contextMenuOpen || dropTarget
               ? NODE_SHADOW_FILTER_ID_HOVER
               : NODE_SHADOW_FILTER_ID,
           )}
@@ -126,11 +100,10 @@ const EventingPubSubNode: React.FC<EventingPubSubNodeProps> = ({
           <SvgBoxedText
             className="odc-eventing-pubsub__label odc-base-node__label"
             x={width / 2}
-            y={height - 30}
+            y={height + 20}
             paddingX={8}
             paddingY={4}
             kind={data.kind}
-            typeIconClass="icon-knative"
           >
             {element.getLabel()}
           </SvgBoxedText>

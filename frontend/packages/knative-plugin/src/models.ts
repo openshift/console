@@ -209,3 +209,31 @@ export const EventingSubscriptionModel: K8sKind = {
   crd: true,
   color: knativeEventingColor.value,
 };
+
+export const EventingIMCModel: K8sKind = {
+  apiGroup: KNATIVE_EVENT_MESSAGE_APIGROUP,
+  apiVersion: 'v1beta1',
+  kind: 'InMemoryChannel',
+  label: 'InMemoryChannel',
+  labelPlural: 'inmemorychannels',
+  plural: 'inmemorychannels',
+  id: 'inmemorychannel',
+  abbr: 'IMC',
+  namespaced: true,
+  crd: true,
+  color: knativeEventingColor.value,
+};
+
+export const EventingChannelModel: K8sKind = {
+  apiGroup: KNATIVE_EVENT_MESSAGE_APIGROUP,
+  apiVersion: 'v1beta1',
+  kind: 'Channel',
+  label: 'Channel',
+  labelPlural: 'channels',
+  plural: 'channels',
+  id: 'channel',
+  abbr: 'C',
+  namespaced: true,
+  crd: true,
+  color: knativeEventingColor.value,
+};
