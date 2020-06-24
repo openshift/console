@@ -328,7 +328,6 @@ const splitChannel = (channel: string) => {
 const UpdatesGraph: React.FC<UpdatesGraphProps> = ({ cv }) => {
   const status = getClusterUpdateStatus(cv);
   const availableUpdates = getSortedUpdates(cv);
-  const upToDate = status === ClusterUpdateStatus.UpToDate;
   const desiredVersion = getDesiredClusterVersion(cv);
   const lastVersion = getLastCompletedUpdate(cv);
   const newestVersion = availableUpdates[0]?.version;
@@ -348,21 +347,18 @@ const UpdatesGraph: React.FC<UpdatesGraphProps> = ({ cv }) => {
       <div className="co-cluster-settings__updates-graph">
         <Channel>
           <ChannelPath current>
-            {/* Segment 1 */}
             <ChannelLine>
               <ChannelVersion current>{lastVersion}</ChannelVersion>
               <ChannelVersionDot current />
             </ChannelLine>
-            {/* Segment 2 */}
-            {(upToDate || availableUpdates.length < 2) && <ChannelLine />}
-            {availableUpdates.length === 2 && (
-              <ChannelLine>
-                <ChannelVersion>{secondNewestVersion}</ChannelVersion>
-                <ChannelVersionDot />
-              </ChannelLine>
-            )}
-            {availableUpdates.length > 2 && (
-              <ChannelLine>
+            <ChannelLine>
+              {availableUpdates.length === 2 && (
+                <>
+                  <ChannelVersion>{secondNewestVersion}</ChannelVersion>
+                  <ChannelVersionDot />
+                </>
+              )}
+              {availableUpdates.length > 2 && (
                 <Button
                   variant="secondary"
                   className="co-channel-more-versions"
@@ -370,26 +366,23 @@ const UpdatesGraph: React.FC<UpdatesGraphProps> = ({ cv }) => {
                 >
                   + More
                 </Button>
-              </ChannelLine>
-            )}
-            {/* Segment 3 */}
-            {upToDate ? (
-              <ChannelLine />
-            ) : (
-              (newestVersion || status === ClusterUpdateStatus.Updating) && (
-                <ChannelLine>
+              )}
+            </ChannelLine>
+            <ChannelLine>
+              {(newestVersion || status === ClusterUpdateStatus.Updating) && (
+                <>
                   <ChannelVersion>{newestVersion || desiredVersion}</ChannelVersion>
                   <ChannelVersionDot />
-                </ChannelLine>
-              )
-            )}
+                </>
+              )}
+            </ChannelLine>
           </ChannelPath>
           <ChannelName current>{currentChannel} channel</ChannelName>
         </Channel>
         {newerChannel && (
           <Channel>
             <ChannelPath>
-              <ChannelLine start={true}>
+              <ChannelLine start>
                 <div className="co-channel-switch"></div>
               </ChannelLine>
               <ChannelLine />
