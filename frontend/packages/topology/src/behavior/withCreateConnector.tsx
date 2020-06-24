@@ -17,6 +17,10 @@ export type ConnectorChoice = {
 };
 
 export type CreateConnectorOptions = {
+  operationType?: {
+    type: string;
+    edit?: boolean;
+  };
   handleAngle?: number;
   handleLength?: number;
 };
@@ -77,7 +81,7 @@ const CreateConnectorWidget: React.FC<CreateConnectorWidgetProps> = observer((pr
   const spec = React.useMemo(() => {
     const dragSourceSpec: DragSourceSpec<any, any, any, CollectProps> = {
       item: { type: CREATE_CONNECTOR_DROP_TYPE },
-      operation: { type: CREATE_CONNECTOR_OPERATION },
+      operation: props.operationType || { type: CREATE_CONNECTOR_OPERATION },
       begin: (monitor: DragSourceMonitor, dragProps: CreateConnectorWidgetProps) => {
         setActive(true);
         return dragProps.element;
@@ -115,7 +119,7 @@ const CreateConnectorWidget: React.FC<CreateConnectorWidgetProps> = observer((pr
       }),
     };
     return dragSourceSpec;
-  }, [setActive]);
+  }, [props.operationType]);
   const [{ dragging, event, hints }, dragRef] = useDndDrag(spec, props);
 
   if (!active && dragging && !event) {

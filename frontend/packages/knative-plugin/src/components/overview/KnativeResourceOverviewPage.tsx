@@ -6,7 +6,11 @@ import { groupVersionFor, K8sKind, referenceForModel } from '@console/internal/m
 import { RootState } from '@console/internal/redux';
 import { OverviewItem } from '@console/shared';
 import { ModifyApplication } from '@console/dev-console/src/actions/modify-application';
-import { KNATIVE_SERVING_APIGROUP, KNATIVE_EVENT_MESSAGE_APIGROUP } from '../../const';
+import {
+  KNATIVE_SERVING_APIGROUP,
+  KNATIVE_EVENT_MESSAGE_APIGROUP,
+  KNATIVE_EVENTING_APIGROUP,
+} from '../../const';
 import { RevisionModel, EventingSubscriptionModel } from '../../models';
 import { getRevisionActions } from '../../actions/getRevisionActions';
 import {
@@ -83,6 +87,7 @@ const mapStateToProps = (state: RootState): StateProps => {
       .filter(
         (model: K8sKind) =>
           model.apiGroup === KNATIVE_SERVING_APIGROUP ||
+          model.apiGroup === KNATIVE_EVENTING_APIGROUP ||
           model.apiGroup === KNATIVE_EVENT_MESSAGE_APIGROUP ||
           isDynamicEventResourceKind(referenceForModel(model)) ||
           isEventingChannelResourceKind(referenceForModel(model)),

@@ -3,6 +3,7 @@ import { Model } from '@console/topology/src/types';
 import { TYPE_EVENT_SOURCE } from './const';
 import { getTopologyResourceObject } from '@console/dev-console/src/components/topology';
 import { DeploymentModel } from '@console/internal/models';
+import { EventingBrokerModel } from '../models';
 
 const KNATIVE_CONFIGURATION = 'serving.knative.dev/configuration';
 
@@ -22,6 +23,10 @@ export const isKnativeResource = (resource: K8sResourceKind, model: Model): bool
     uid && !!eventSources?.find((eventSource) => eventSource.metadata?.uid === uid);
 
   if (isEventSourceKind(resource.metadata?.ownerReferences?.[0].uid)) {
+    return true;
+  }
+
+  if (resource.metadata?.ownerReferences?.[0].kind === EventingBrokerModel.kind) {
     return true;
   }
 

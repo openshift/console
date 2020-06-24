@@ -38,6 +38,9 @@ export const getAddPageUrl = (
     case ImportOptions.EVENTSOURCE:
       pageUrl = `/event-source/ns/${ns}`;
       break;
+    case ImportOptions.EVENTPUBSUB:
+      pageUrl = `/add/ns/${ns}`;
+      break;
     default:
       throw new Error('Invalid Import option provided');
   }

@@ -21,6 +21,8 @@ import {
   EventSourceApiServerModel,
   EventingSubscriptionModel,
   EventingIMCModel,
+  EventingBrokerModel,
+  EventingTriggerModel,
 } from '../../models';
 import {
   RevisionKind,
@@ -29,6 +31,7 @@ import {
   ServiceKind as knativeServiceKind,
   EventSubscriptionKind,
   EventChannelKind,
+  EventTriggerKind,
 } from '../../types';
 
 export const sampleKnativeDeployments: FirehoseResult<DeploymentKind[]> = {
@@ -42,9 +45,9 @@ export const sampleKnativeDeployments: FirehoseResult<DeploymentKind[]> = {
         annotations: {
           'deployment.kubernetes.io/revision': '1',
         },
-        selfLink: '/apis/apps/v1/namespaces/testproject1/deployments/overlayimage-9jsl8-deployment',
+        selfLink: '/apis/apps/v1/namespaces/testproject1/deployments/default-ingress',
         resourceVersion: '726179',
-        name: 'overlayimage-9jsl8-deployment',
+        name: 'default-ingress',
         uid: 'bccad3e4-8ce0-11e9-bb7b-0ebb55b110b8',
         creationTimestamp: '2019-04-22T11:35:43Z',
         generation: 2,
@@ -107,6 +110,71 @@ export const sampleKnativeDeployments: FirehoseResult<DeploymentKind[]> = {
       },
       status: {},
     },
+    {
+      apiVersion: 'apps/v1',
+      kind: 'Deployment',
+      metadata: {
+        annotations: {
+          'deployment.kubernetes.io/revision': '1',
+        },
+        selfLink: '/apis/apps/v1/namespaces/testproject1/deployments/default-ingress',
+        resourceVersion: '726179',
+        name: 'default-ingress',
+        uid: 'bccad3e4-8ce0-11e9-bb7b-0ebb55b110b8',
+        namespace: 'testproject1',
+        labels: {
+          'eventing.knative.dev/broker': 'default',
+        },
+        ownerReferences: [
+          {
+            apiVersion: `${EventingBrokerModel.apiGroup}/${EventingBrokerModel.apiVersion}`,
+            kind: EventingBrokerModel.kind,
+            name: 'default',
+            uid: '02c34a0e-9638-1110-b134-06a61d886b62',
+            controller: true,
+            blockOwnerDeletion: true,
+          },
+        ],
+      },
+      spec: {
+        replicas: 0,
+        selector: {
+          matchLabels: {
+            'serving.knative.dev/revisionUID': 'bca0fb96-8ce0-11e9-bb7b-0ebb55b110b8',
+          },
+        },
+        template: {
+          metadata: {
+            creationTimestamp: null,
+            labels: {
+              app: 'overlayimage-9jsl8',
+              'serving.knative.dev/configuration': 'overlayimage',
+              'serving.knative.dev/configurationGeneration': '1',
+              'serving.knative.dev/revision': 'overlayimage-9jsl8',
+              'serving.knative.dev/revisionUID': 'bca0fb96-8ce0-11e9-bb7b-0ebb55b110b8',
+              'serving.knative.dev/service': 'overlayimage',
+            },
+            annotations: {
+              'sidecar.istio.io/inject': 'true',
+              'traffic.sidecar.istio.io/includeOutboundIPRanges': '172.30.0.0/16',
+            },
+          },
+          spec: {
+            containers: [],
+          },
+        },
+        strategy: {
+          type: 'RollingUpdate',
+          rollingUpdate: {
+            maxUnavailable: '25%',
+            maxSurge: '25%',
+          },
+        },
+        revisionHistoryLimit: 10,
+        progressDeadlineSeconds: 600,
+      },
+      status: {},
+    },
   ],
 };
 
@@ -123,10 +191,9 @@ export const sampleKnativeReplicaSets: FirehoseResult = {
           'deployment.kubernetes.io/max-replicas': '0',
           'deployment.kubernetes.io/revision': '1',
         },
-        selfLink:
-          '/apis/apps/v1/namespaces/testproject3/replicasets/overlayimage-9jsl8-deployment-5d9685cc74',
+        selfLink: '/apis/apps/v1/namespaces/testproject3/replicasets/default-ingress-5d9685cc74',
         resourceVersion: '1389053',
-        name: 'overlayimage-9jsl8-deployment-5d9685cc74',
+        name: 'default-ingress-5d9685cc74',
         uid: 'bccd5351-8ce0-11e9-9020-0ab4b49bd478',
         creationTimestamp: '2019-06-12T07:07:27Z',
         generation: 1,
@@ -135,7 +202,7 @@ export const sampleKnativeReplicaSets: FirehoseResult = {
           {
             apiVersion: 'apps/v1',
             kind: 'Deployment',
-            name: '"overlayimage-9jsl8-deployment"',
+            name: '"default-ingress"',
             uid: 'bccad3e4-8ce0-11e9-bb7b-0ebb55b110b8',
             controller: true,
             blockOwnerDeletion: true,
@@ -727,6 +794,65 @@ export const EventIMCObj: EventChannelKind = {
   },
 };
 
+export const EventBrokerObj: EventChannelKind = {
+  apiVersion: `${EventingBrokerModel.apiGroup}/${EventingBrokerModel.apiVersion}`,
+  kind: EventingBrokerModel.kind,
+  metadata: {
+    name: 'default',
+    namespace: 'testproject3',
+    uid: 'a35e6244-3233-473d-9120-ed274c7ae811',
+  },
+  spec: {
+    subscriber: [
+      {
+        subscriberUri: 'http://channel-display0.testproject3.svc.cluster.local',
+        uid: 'ae670cb1-cb66-4444-aead-c366552e7cef',
+      },
+    ],
+  },
+  status: {
+    address: {
+      url: 'http://channel-display1.testproject3.svc.cluster.local',
+    },
+  },
+};
+
+export const EventTriggerObj: EventTriggerKind = {
+  apiVersion: `${EventingTriggerModel.apiGroup}/${EventingTriggerModel.apiVersion}`,
+  kind: EventingTriggerModel.kind,
+  metadata: {
+    name: 'my-service-trigger',
+    namespace: 'default',
+  },
+  spec: {
+    broker: 'default',
+    filter: {
+      attributes: {
+        type: 'dev.knative.sources.ping',
+      },
+    },
+    subscriber: {
+      ref: {
+        apiVersion: 'serving.knative.dev/v1',
+        kind: 'Service',
+        name: knativeServiceObj.metadata.name,
+      },
+    },
+  },
+};
+
+const sampleBrokers: FirehoseResult = {
+  loaded: true,
+  loadError: '',
+  data: [EventBrokerObj],
+};
+
+const sampleTriggers: FirehoseResult = {
+  loaded: true,
+  loadError: '',
+  data: [EventTriggerObj],
+};
+
 export const MockKnativeResources: TopologyDataResources = {
   deployments: sampleKnativeDeployments,
   deploymentConfigs: sampleKnativeDeploymentConfigs,
@@ -751,4 +877,6 @@ export const MockKnativeResources: TopologyDataResources = {
   [referenceForModel(EventSourcePingModel)]: getEventSourceResponse(EventSourcePingModel),
   [referenceForModel(EventSourceApiServerModel)]: getEventSourceResponse(EventSourceApiServerModel),
   clusterServiceVersions: sampleClusterServiceVersions,
+  triggers: sampleTriggers,
+  brokers: sampleBrokers,
 };

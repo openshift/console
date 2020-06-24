@@ -1,7 +1,7 @@
 import * as _ from 'lodash';
 import * as k8s from '@console/internal/module/k8s';
 import { getPodStatus, podStatus, ALL_APPLICATIONS_KEY } from '@console/shared';
-import { Model, NodeModel } from '@console/topology';
+import { Model, NodeModel, EdgeModel } from '@console/topology';
 import {
   baseDataModelGetter,
   getFilterById,
@@ -12,6 +12,7 @@ import {
   WORKLOAD_TYPES,
   WorkloadData,
   DEFAULT_TOPOLOGY_FILTERS,
+  TopologyDataModelDepicted,
 } from '@console/dev-console/src/components/topology';
 import {
   MockBaseResources,
@@ -21,13 +22,14 @@ import { cleanUpWorkload } from '@console/dev-console/src/utils/application-util
 import * as utils from '@console/internal/components/utils';
 import { getKnativeTopologyDataModel } from '../data-transformer';
 import { MockKnativeResources } from './topology-knative-test-data';
-import { RouteModel, ServiceModel } from '../../models';
+import { RouteModel, ServiceModel, EventingBrokerModel } from '../../models';
 import {
   applyKnativeDisplayOptions,
   EXPAND_KNATIVE_SERVICES_FILTER_ID,
   getTopologyFilters,
 } from '../knativeFilters';
 import { isKnativeResource } from '../isKnativeResource';
+import { TYPE_EVENT_PUB_SUB, TYPE_EVENT_PUB_SUB_LINK } from '../const';
 
 import Spy = jasmine.Spy;
 
@@ -39,15 +41,32 @@ const spyAndReturn = (spy: Spy) => (returnValue: any) =>
     }),
   );
 
-const getTransformedTopologyData = (mockData: TopologyDataResources) => {
+const getTransformedTopologyData = (
+  mockData: TopologyDataResources,
+  dataModelDepicters: TopologyDataModelDepicted[] = [],
+) => {
   const workloadResources = getWorkloadResources(mockData, TEST_KINDS_MAP, WORKLOAD_TYPES);
   return getKnativeTopologyDataModel('test-project', mockData).then((model) => {
-    return baseDataModelGetter(model, 'test-project', mockData, workloadResources, []);
+    return baseDataModelGetter(
+      model,
+      'test-project',
+      mockData,
+      workloadResources,
+      dataModelDepicters,
+    );
   });
 };
 
 const getNodeById = (id: string, graphData: Model): NodeModel => {
   return graphData.nodes.find((n) => n.id === id);
+};
+
+const getNodesByType = (type: string, graphData: Model): NodeModel[] => {
+  return graphData.nodes.filter((n) => n.type === type);
+};
+
+const getEdgesByType = (type: string, graphData: Model): EdgeModel[] => {
+  return graphData.edges.filter((n) => n.type === type);
 };
 
 const filterers = [applyKnativeDisplayOptions];
@@ -106,8 +125,8 @@ describe('knative data transformer ', () => {
     const filteredResources = workloadResources.filter((resource) =>
       isKnativeResource(resource, graphData),
     );
-    expect(workloadResources).toHaveLength(4);
-    expect(filteredResources).toHaveLength(1);
+    expect(workloadResources).toHaveLength(5);
+    expect(filteredResources).toHaveLength(2);
   });
 
   it('Should delete all the specific models related to knative deployments if the build config is not present i.e. for resource created through deploy image form', async (done) => {
@@ -141,5 +160,32 @@ describe('knative data transformer ', () => {
     const newModel = updateModelFromFilters(graphData, filters, ALL_APPLICATIONS_KEY, filterers);
     expect(newModel.nodes.filter((n) => n.group).length).toBe(2);
     expect(newModel.nodes.filter((n) => n.group && n.collapsed).length).toBe(1);
+  });
+
+  it('should return eventpub nodes and link for event brokers', async () => {
+    mockResources.deployments.data = [
+      ...mockResources.deployments.data,
+      ...MockBaseResources.deployments.data,
+    ];
+    const graphData = await getTransformedTopologyData(mockResources, [isKnativeResource]);
+    const eventPubSubNodes = getNodesByType(TYPE_EVENT_PUB_SUB, graphData);
+    const eventPubSubLinks = getEdgesByType(TYPE_EVENT_PUB_SUB_LINK, graphData);
+    expect(eventPubSubNodes).toHaveLength(1);
+    expect(eventPubSubLinks).toHaveLength(1);
+  });
+
+  it('should contain the broker resources in broker kind node', async () => {
+    mockResources.deployments.data = [
+      ...mockResources.deployments.data,
+      ...MockBaseResources.deployments.data,
+    ];
+    const graphData = await getTransformedTopologyData(mockResources, [isKnativeResource]);
+    const eventPubSubNodes = getNodesByType(TYPE_EVENT_PUB_SUB, graphData);
+    const [brokerNode] = eventPubSubNodes.filter(
+      (node) => node?.data?.data.kind === k8s.referenceForModel(EventingBrokerModel),
+    );
+    expect(brokerNode.data.resources.deployments).toHaveLength(1);
+    expect(brokerNode.data.resources.ksservices).toHaveLength(1);
+    expect(brokerNode.data.resources.triggers).toHaveLength(1);
   });
 });

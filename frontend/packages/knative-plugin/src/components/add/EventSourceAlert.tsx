@@ -8,7 +8,7 @@ import {
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import {
   knativeServingResourcesServicesWatchers,
-  knativeEventingResourcesBrokerWatchers,
+  knativeEventingBrokerResourceWatchers,
 } from '../../utils/get-knative-resources';
 import { getDynamicEventingChannelWatchers } from '../../utils/fetch-dynamic-eventsources-utils';
 import { EventSourceListData } from './import-types';
@@ -24,7 +24,7 @@ const EventSourceAlert: React.FC<EventSourceAlertProps> = ({ namespace, eventSou
   const getKnResources = React.useMemo(
     () => ({
       ...knativeServingResourcesServicesWatchers(namespace),
-      ...knativeEventingResourcesBrokerWatchers(namespace),
+      ...knativeEventingBrokerResourceWatchers(namespace),
       ...getDynamicEventingChannelWatchers(namespace),
     }),
     [namespace],

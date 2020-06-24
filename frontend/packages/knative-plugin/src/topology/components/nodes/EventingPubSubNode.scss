@@ -21,7 +21,6 @@
     stroke: $selected-stroke-color;
   }
   &.is-highlight &__bg {
-    fill: $group-node-fill-color;
     stroke: $interactive-stroke-color;
   }
   &.is-dropTarget &__bg {
@@ -34,7 +33,8 @@
 .odc-m-filter-active {
   .odc-eventing-pubsub {
     opacity: $de-emphasize-opacity;
-    &.is-dragging {
+    &.is-dragging,
+    &.is-highlight {
       opacity: 1;
     }
   }

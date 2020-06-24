@@ -13,6 +13,7 @@ import {
   createSvgIdUrl,
   WithDragNodeProps,
   AnchorEnd,
+  WithCreateConnectorProps,
 } from '@console/topology';
 import SvgBoxedText from '@console/dev-console/src/components/svg/SvgBoxedText';
 import {
@@ -23,11 +24,19 @@ import {
   useDisplayFilters,
   getFilterById,
   SHOW_LABELS_FILTER_ID,
+  getTopologyResourceObject,
 } from '@console/dev-console/src/components/topology';
 import PubSubSourceAnchor from '../anchors/PubSubSourceAnchor';
 import PubSubTargetAnchor from '../anchors/PubSubTargetAnchor';
 
 import './EventingPubSubNode.scss';
+import { modelFor, referenceFor } from '@console/internal/module/k8s';
+import { useAccessReview } from '@console/internal/components/utils';
+import {
+  EventingTriggerModel,
+  EventingBrokerModel,
+  EventingSubscriptionModel,
+} from '../../../models';
 
 export type EventingPubSubNodeProps = {
   element: Node;
@@ -38,7 +47,8 @@ export type EventingPubSubNodeProps = {
 } & WithSelectionProps &
   WithDragNodeProps &
   WithDndDropProps &
-  WithContextMenuProps;
+  WithContextMenuProps &
+  WithCreateConnectorProps;
 
 const EventingPubSubNode: React.FC<EventingPubSubNodeProps> = ({
   element,
@@ -52,6 +62,8 @@ const EventingPubSubNode: React.FC<EventingPubSubNodeProps> = ({
   dndDropRef,
   dragging,
   edgeDragging,
+  onShowCreateConnector,
+  onHideCreateConnector,
 }) => {
   useAnchor(PubSubSourceAnchor, AnchorEnd.source);
   useAnchor(PubSubTargetAnchor, AnchorEnd.target);
@@ -65,9 +77,31 @@ const EventingPubSubNode: React.FC<EventingPubSubNodeProps> = ({
   const { width, height } = element.getBounds();
   const { data } = element.getData();
 
+  const resourceObj = getTopologyResourceObject(element.getData());
+  const resourceModel =
+    modelFor(referenceFor(resourceObj)) === EventingBrokerModel
+      ? EventingTriggerModel
+      : EventingSubscriptionModel;
+  const createAccess = useAccessReview({
+    group: resourceModel.apiGroup,
+    verb: 'create',
+    resource: resourceModel.plural,
+    name: resourceObj.metadata.name,
+    namespace: resourceObj.metadata.namespace,
+  });
+  React.useLayoutEffect(() => {
+    if (createAccess) {
+      if (hover) {
+        onShowCreateConnector && onShowCreateConnector();
+      } else {
+        onHideCreateConnector && onHideCreateConnector();
+      }
+    }
+  }, [hover, onShowCreateConnector, onHideCreateConnector, createAccess]);
+
   return (
     <Tooltip
-      content="Move sink to Channel"
+      content={`Move sink to ${resourceObj.kind}`}
       trigger="manual"
       isVisible={dropTarget && canDrop}
       tippyProps={{ duration: 0, delay: 0 }}
@@ -91,8 +125,8 @@ const EventingPubSubNode: React.FC<EventingPubSubNodeProps> = ({
           y={0}
           width={width}
           height={height}
-          rx="15"
-          ry="15"
+          rx="25"
+          ry="25"
           filter={createSvgIdUrl(
             hover || dragging || contextMenuOpen || dropTarget
               ? NODE_SHADOW_FILTER_ID_HOVER

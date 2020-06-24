@@ -3,6 +3,7 @@ import {
   TopologyComponentFactory,
   TopologyDataModelFactory,
   TopologyDisplayFilters,
+  TopologyCreateConnector,
 } from '@console/dev-console/src/extensions/topology';
 
 import {
@@ -11,6 +12,7 @@ import {
   getKnativeTopologyDataModel,
   getTopologyFilters,
   applyDisplayOptions,
+  getCreateConnector,
 } from './index';
 import {
   FLAG_KNATIVE_EVENTING,
@@ -26,6 +28,8 @@ import {
   knativeServingResourcesRoutesWatchers,
   knativeServingResourcesServicesWatchers,
   knativeEventingResourcesSubscriptionWatchers,
+  knativeEventingBrokerResourceWatchers,
+  knativeEventingTriggerResourceWatchers,
 } from '../utils/get-knative-resources';
 import {
   getDynamicEventSourcesWatchers,
@@ -41,13 +45,16 @@ export const getKnativeResources = (namespace: string) => {
     ...knativeEventingResourcesSubscriptionWatchers(namespace),
     ...getDynamicEventSourcesWatchers(namespace),
     ...getDynamicEventingChannelWatchers(namespace),
+    ...knativeEventingBrokerResourceWatchers(namespace),
+    ...knativeEventingTriggerResourceWatchers(namespace),
   };
 };
 
 export type TopologyConsumedExtensions =
   | TopologyComponentFactory
   | TopologyDataModelFactory
-  | TopologyDisplayFilters;
+  | TopologyDisplayFilters
+  | TopologyCreateConnector;
 
 export const topologyPlugin: Plugin<TopologyConsumedExtensions> = [
   {
@@ -92,6 +99,15 @@ export const topologyPlugin: Plugin<TopologyConsumedExtensions> = [
     properties: {
       getTopologyFilters,
       applyDisplayOptions,
+    },
+  },
+  {
+    type: 'Topology/CreateConnector',
+    properties: {
+      getCreateConnector,
+    },
+    flags: {
+      required: [FLAG_KNATIVE_EVENTING],
     },
   },
 ];

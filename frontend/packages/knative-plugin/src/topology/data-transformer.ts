@@ -58,28 +58,17 @@ export const getKnativeTopologyDataModel = (
     resources,
     channelResourceProps,
   );
+  const knBrokerResources: K8sResourceKind[] = resources?.brokers?.data ?? [];
 
-  addKnativeTopologyData(
-    knativeTopologyGraphModel,
-    knSvcResources,
-    NodeType.KnService,
-    resources,
-    utils,
-  );
-  addKnativeTopologyData(
-    knativeTopologyGraphModel,
-    knEventSources,
-    NodeType.EventSource,
-    resources,
-    utils,
-  );
-  addKnativeTopologyData(
-    knativeTopologyGraphModel,
-    knChannelResources,
-    NodeType.PubSub,
-    resources,
-    utils,
-  );
+  const addTopologyData = (KnResources: K8sResourceKind[], type?: string) => {
+    addKnativeTopologyData(knativeTopologyGraphModel, KnResources, type, resources, utils);
+  };
+
+  addTopologyData(knSvcResources, NodeType.KnService);
+  addTopologyData(knEventSources, NodeType.EventSource);
+  addTopologyData(knChannelResources, NodeType.PubSub);
+  addTopologyData(knBrokerResources, NodeType.PubSub);
+
   const revisionData = getRevisionsData(knRevResources, resources, utils);
 
   knativeTopologyGraphModel.nodes.forEach((n) => {

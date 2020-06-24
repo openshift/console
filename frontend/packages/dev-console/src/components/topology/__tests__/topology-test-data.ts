@@ -38,6 +38,8 @@ export const TEST_KINDS_MAP = {
   migrations: 'VirtualMachineInstanceMigration',
   dataVolumes: 'DataVolume',
   vmImports: 'VirtualMachineImport',
+  brokers: 'Broker',
+  triggers: 'Trigger',
 };
 
 export const resources: TopologyDataResources = {

@@ -2,7 +2,13 @@ import * as React from 'react';
 import { OverviewItem } from '@console/shared';
 import OperatorBackedOwnerReferences from '@console/internal/components/utils';
 import { referenceFor } from '@console/internal/module/k8s';
-import { RevisionModel, ServiceModel, EventingSubscriptionModel } from '../../models';
+import {
+  RevisionModel,
+  ServiceModel,
+  EventingSubscriptionModel,
+  EventingTriggerModel,
+  EventingBrokerModel,
+} from '../../models';
 import KnativeServiceResources from './KnativeServiceResources';
 import KnativeRevisionResources from './KnativeRevisionResources';
 import RevisionsOverviewList from './RevisionsOverviewList';
@@ -40,6 +46,8 @@ const getSidebarResources = (item: OverviewItem) => {
       );
     case ServiceModel.kind:
       return <KnativeServiceResources item={item} />;
+    case EventingBrokerModel.kind:
+    case EventingTriggerModel.kind:
     case EventingSubscriptionModel.kind:
       return <EventPubSubResources item={item} />;
     default:
