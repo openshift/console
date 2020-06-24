@@ -215,13 +215,14 @@ export const createConnector = () => {
           source: Node,
           target: Node | Graph,
           event: DragEvent,
+          dropHints: string[],
           choice: ColorChoice | undefined,
-        ): any[] | null => {
+        ): Promise<any[] | null> => {
           if (!choice) {
-            return [
+            return Promise.resolve([
               { label: 'Create Annotation', color: 'red' },
               { label: 'Create Binding', color: 'green' },
-            ];
+            ]);
           }
 
           let targetId;
@@ -255,7 +256,7 @@ export const createConnector = () => {
             },
           });
           vis.fromModel(model);
-          return null;
+          return Promise.resolve(null);
         },
       )(
         withDndDrop<

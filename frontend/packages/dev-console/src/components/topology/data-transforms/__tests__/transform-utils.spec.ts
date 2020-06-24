@@ -1,20 +1,27 @@
-import { Group } from '../../topology-types';
 import { mergeGroup } from '../transform-utils';
+import { NodeModel } from '@console/topology/src/types';
 
 describe('transform-utils', () => {
   describe('mergeGroup-util', () => {
-    let mockgroupData: Group[];
+    let mockgroupData: NodeModel[];
     beforeEach(() => {
       mockgroupData = [
-        { id: '0001', name: 'gryffindor', type: 'hogwarts', nodes: ['011', '012', '013'] },
+        {
+          id: '0001',
+          label: 'gryffindor',
+          type: 'hogwarts',
+          group: true,
+          children: ['011', '012', '013'],
+        },
       ];
     });
     it('should create a new group if newGroup doesnt already exists', () => {
-      const newGroup: Group = {
+      const newGroup: NodeModel = {
         id: '0002',
-        name: 'slytherin',
+        label: 'slytherin',
         type: 'hogwarts',
-        nodes: ['021', '022', '023'],
+        group: true,
+        children: ['021', '022', '023'],
       };
       const expectedResult = [...mockgroupData, newGroup];
       mergeGroup(newGroup, mockgroupData);
@@ -25,11 +32,14 @@ describe('transform-utils', () => {
     it('should add the data to an existing group if new group already exists', () => {
       const newGroup = {
         id: '0001',
-        name: 'gryffindor',
+        label: 'gryffindor',
         type: 'hogwarts',
-        nodes: ['011', '015', '016'],
+        group: true,
+        children: ['011', '015', '016'],
       };
-      const expectedResult = [{ ...mockgroupData[0], nodes: ['011', '012', '013', '015', '016'] }];
+      const expectedResult = [
+        { ...mockgroupData[0], children: ['011', '012', '013', '015', '016'] },
+      ];
       mergeGroup(newGroup, mockgroupData);
       expect(mockgroupData).toHaveLength(1);
       expect(mockgroupData).toEqual(expectedResult);

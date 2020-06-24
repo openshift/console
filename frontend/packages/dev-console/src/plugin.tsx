@@ -16,6 +16,7 @@ import {
   RoutePage,
   OverviewResourceTab,
   OverviewCRD,
+  OverviewResourceUtil,
   YAMLTemplate,
   OverviewTabSection,
   ReduxReducer,
@@ -23,6 +24,7 @@ import {
 import { NamespaceRedirect } from '@console/internal/components/utils/namespace-redirect';
 import { FLAGS } from '@console/shared/src/constants';
 import { referenceForModel } from '@console/internal/module/k8s';
+import * as helmIcon from '@console/internal/imgs/logos/helm.svg';
 import {
   BuildConfigModel,
   ImageStreamModel,
@@ -33,12 +35,11 @@ import {
   ImageStreamImportsModel,
   ConfigMapModel,
 } from '@console/internal/models';
-import * as helmIcon from '@console/internal/imgs/logos/helm.svg';
 import * as models from './models';
 import { getKebabActionsForKind } from './utils/kebab-actions';
 import {
-  tknPipelineAndPipelineRunsResources,
   getPipelinesAndPipelineRunsForResource,
+  tknPipelineAndPipelineRunsResources,
 } from './utils/pipeline-plugin-utils';
 import { FLAG_OPENSHIFT_PIPELINE, ALLOW_SERVICE_BINDING } from './const';
 import {
@@ -54,6 +55,15 @@ import * as yamlIcon from './images/yaml.svg';
 import * as importGitIcon from './images/from-git.svg';
 import * as dockerfileIcon from './images/dockerfile.svg';
 import * as pipelineIcon from './images/pipeline.svg';
+import { operatorResources } from './components/topology/operators/operator-resources';
+import {
+  HelmTopologyConsumedExtensions,
+  helmTopologyPlugin,
+} from './components/topology/helm/helmTopologyPlugin';
+import {
+  OperatorsTopologyConsumedExtensions,
+  operatorsTopologyPlugin,
+} from './components/topology/operators/operatorsTopologyPlugin';
 
 const {
   ClusterTaskModel,
@@ -82,9 +92,12 @@ type ConsumedExtensions =
   | KebabActions
   | OverviewResourceTab
   | OverviewCRD
+  | OverviewResourceUtil
   | YAMLTemplate
   | OverviewTabSection
-  | AddAction;
+  | AddAction
+  | HelmTopologyConsumedExtensions
+  | OperatorsTopologyConsumedExtensions;
 
 const plugin: Plugin<ConsumedExtensions> = [
   {
@@ -226,7 +239,15 @@ const plugin: Plugin<ConsumedExtensions> = [
     type: 'Overview/CRD',
     properties: {
       resources: tknPipelineAndPipelineRunsResources,
-      utils: getPipelinesAndPipelineRunsForResource,
+    },
+    flags: {
+      required: [FLAG_OPENSHIFT_PIPELINE],
+    },
+  },
+  {
+    type: 'Overview/ResourceUtil',
+    properties: {
+      getResources: getPipelinesAndPipelineRunsForResource,
     },
     flags: {
       required: [FLAG_OPENSHIFT_PIPELINE],
@@ -934,6 +955,17 @@ const plugin: Plugin<ConsumedExtensions> = [
       ],
     },
   },
+  {
+    type: 'Overview/CRD',
+    properties: {
+      resources: operatorResources,
+    },
+    flags: {
+      required: [ALLOW_SERVICE_BINDING],
+    },
+  },
+  ...helmTopologyPlugin,
+  ...operatorsTopologyPlugin,
 ];
 
 export default plugin;

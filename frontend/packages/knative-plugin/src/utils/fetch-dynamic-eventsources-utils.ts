@@ -137,6 +137,18 @@ export const getDynamicEventSourcesResourceList = (namespace: string) => {
   });
 };
 
+export const getDynamicEventSourcesWatchers = (namespace: string) => {
+  return eventSourceData.eventSourceModels.reduce((acc, model) => {
+    acc[referenceForModel(model)] = {
+      isList: true,
+      kind: referenceForModel(model),
+      namespace,
+      optional: true,
+    };
+    return acc;
+  }, {});
+};
+
 export const getDynamicEventSourceModel = (resourceRef: string): K8sKind => {
   return eventSourceData.eventSourceModels.find(
     (model: K8sKind) => referenceForModel(model) === resourceRef,

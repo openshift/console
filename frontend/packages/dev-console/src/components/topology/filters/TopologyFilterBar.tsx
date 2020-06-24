@@ -7,18 +7,23 @@ import { TextFilter } from '@console/internal/components/factory';
 import { InfoCircleIcon } from '@patternfly/react-icons';
 import { Visualization } from '@console/topology';
 import { setTopologyFilters } from '../redux/action';
-import { TopologyFilters, DisplayFilters } from './filter-types';
-import { getTopologyFilters, getTopologySearchQuery } from './filter-utils';
+import { DisplayFilters } from '../topology-types';
+import {
+  getSupportedTopologyFilters,
+  getTopologyFilters,
+  getTopologySearchQuery,
+} from './filter-utils';
 
 import FilterDropdown from './FilterDropdown';
 import './TopologyFilterBar.scss';
 
 type StateProps = {
-  filters: TopologyFilters;
+  filters: DisplayFilters;
+  supportedFilters: string[];
 };
 
 type DispatchProps = {
-  onFiltersChange: (filters: TopologyFilters) => void;
+  onFiltersChange: (filters: DisplayFilters) => void;
 };
 
 type OwnProps = {
@@ -34,7 +39,8 @@ type MergeProps = {
 type TopologyFilterBarProps = MergeProps;
 
 const TopologyFilterBar: React.FC<TopologyFilterBarProps> = ({
-  filters: { display },
+  filters,
+  supportedFilters,
   onDisplayFiltersChange,
   onSearchChange,
   visualization,
@@ -59,7 +65,11 @@ const TopologyFilterBar: React.FC<TopologyFilterBarProps> = ({
     <Toolbar className="co-namespace-bar odc-topology-filter-bar">
       <ToolbarGroup>
         <ToolbarItem>
-          <FilterDropdown filters={display} onChange={onDisplayFiltersChange} />
+          <FilterDropdown
+            filters={filters}
+            supportedFilters={supportedFilters}
+            onChange={onDisplayFiltersChange}
+          />
         </ToolbarItem>
       </ToolbarGroup>
       <ToolbarGroup className="odc-topology-filter-bar__search">
@@ -97,22 +107,24 @@ const TopologyFilterBar: React.FC<TopologyFilterBarProps> = ({
 
 const mapStateToProps = (state: RootState): StateProps => ({
   filters: getTopologyFilters(state),
+  supportedFilters: getSupportedTopologyFilters(state),
 });
 
 const dispatchToProps = (dispatch: Dispatch): DispatchProps => ({
-  onFiltersChange: (filters: TopologyFilters) => {
+  onFiltersChange: (filters: DisplayFilters) => {
     dispatch(setTopologyFilters(filters));
   },
 });
 
 const mergeProps = (
-  { filters }: StateProps,
+  { filters, supportedFilters }: StateProps,
   { onFiltersChange }: DispatchProps,
   { visualization, onSearchChange }: OwnProps,
 ): MergeProps => ({
   filters,
-  onDisplayFiltersChange: (display: DisplayFilters) => {
-    onFiltersChange({ ...filters, display });
+  supportedFilters,
+  onDisplayFiltersChange: (changedFilters: DisplayFilters) => {
+    onFiltersChange(changedFilters);
   },
   onSearchChange,
   visualization,

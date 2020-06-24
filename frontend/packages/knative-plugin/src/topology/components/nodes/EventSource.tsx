@@ -19,6 +19,8 @@ import {
   NODE_SHADOW_FILTER_ID,
   useSearchFilter,
   useDisplayFilters,
+  getFilterById,
+  SHOW_LABELS_FILTER_ID,
 } from '@console/dev-console/src/components/topology';
 import { getKnativeEventSourceIcon } from '../../../utils/get-knative-icon';
 
@@ -49,7 +51,8 @@ const EventSource: React.FC<EventSourceProps> = ({
   const groupRefs = useCombineRefs(dragNodeRef, dndDropRef, hoverRef);
   const [filtered] = useSearchFilter(element.getLabel());
   const displayFilters = useDisplayFilters();
-  const showLabels = displayFilters.showLabels || hover;
+  const showLabelsFilter = getFilterById(SHOW_LABELS_FILTER_ID, displayFilters);
+  const showLabels = showLabelsFilter?.value || hover;
   const { width, height } = element.getBounds();
   const size = Math.min(width, height);
   const { data } = element.getData();

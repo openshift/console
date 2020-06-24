@@ -2,7 +2,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import * as classNames from 'classnames';
 import * as _ from 'lodash';
-import { Edge } from '@console/topology';
+import { Model, Edge } from '@console/topology';
 import { RootState } from '@console/internal/redux';
 import { referenceFor, K8sResourceKind } from '@console/internal/module/k8s';
 import {
@@ -17,7 +17,7 @@ import {
 } from '@console/knative-plugin/src/topology/const';
 import { TYPE_CONNECTS_TO, TYPE_SERVICE_BINDING, TYPE_TRAFFIC_CONNECTOR } from './components/const';
 import { edgeActions } from './actions/edgeActions';
-import { TopologyDataModel, TopologyDataObject } from './topology-types';
+import { TopologyDataObject } from './topology-types';
 import { getKialiLink } from './topology-utils';
 
 type StateProps = {
@@ -26,7 +26,7 @@ type StateProps = {
 
 export type TopologyEdgePanelProps = {
   edge: Edge;
-  data: TopologyDataModel;
+  model: Model;
 } & StateProps;
 
 const connectorTypeToTitle = (type: string): string => {
@@ -46,11 +46,11 @@ const connectorTypeToTitle = (type: string): string => {
   }
 };
 
-const TopologyEdgePanel: React.FC<TopologyEdgePanelProps> = ({ edge, data, consoleLinks }) => {
+const TopologyEdgePanel: React.FC<TopologyEdgePanelProps> = ({ edge, model, consoleLinks }) => {
   const source: TopologyDataObject = edge.getSource().getData();
   const target: TopologyDataObject = edge.getTarget().getData();
   const resources = [source?.resources?.obj, target?.resources?.obj];
-  const nodes = data.graph.nodes.map((n) => edge.getController().getNodeById(n.id));
+  const nodes = model.nodes.map((n) => edge.getController().getNodeById(n.id));
   const {
     metadata: { namespace },
   } = resources[1];

@@ -1,26 +1,28 @@
-import * as _ from 'lodash';
+import { safeLoadAll } from 'js-yaml';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { SecretModel } from '@console/internal/models';
 import { getImageForIconClass } from '@console/internal/components/catalog/catalog-item-icon';
+import { createOverviewItemsForType } from '@console/shared';
+import { Model, NodeModel } from '@console/topology';
+import { TopologyDataResources } from '../topology-types';
 import {
-  TopologyDataModel,
-  TopologyDataResources,
-  TopologyDataMap,
-  Group,
-} from '../topology-types';
-import { TYPE_HELM_RELEASE, TYPE_HELM_WORKLOAD } from './components/const';
+  HELM_GROUP_HEIGHT,
+  HELM_GROUP_WIDTH,
+  HELM_GROUP_PADDING,
+  TYPE_HELM_RELEASE,
+  TYPE_HELM_WORKLOAD,
+} from './components/const';
 import { HelmReleaseResourcesMap } from '../../helm/helm-types';
-import { getHelmReleaseKey } from '../topology-utils';
+import { fetchHelmReleases } from '../../helm/helm-utils';
+import { getHelmReleaseKey, WORKLOAD_TYPES } from '../topology-utils';
 import {
-  dataObjectFromModel,
   addToTopologyDataModel,
-  createInstanceForResource,
   createTopologyNodeData,
-  getTopologyEdgeItems,
   getTopologyGroupItems,
   getTopologyNodeItem,
   mergeGroup,
   mergeGroups,
+  WorkloadModelProps,
 } from '../data-transforms/transform-utils';
 
 export const isHelmReleaseNode = (
@@ -37,14 +39,14 @@ export const getTopologyHelmReleaseGroupItem = (
   obj: K8sResourceKind,
   helmResourcesMap: HelmReleaseResourcesMap,
   secrets: K8sResourceKind[],
-): { groups: Group[]; dataModel: TopologyDataMap } => {
+): NodeModel[] => {
   const resourceKindName = getHelmReleaseKey(obj);
   const helmResources = helmResourcesMap[resourceKindName];
   const releaseName = helmResources?.releaseName;
   const releaseVersion = helmResources?.releaseVersion;
   const releaseNotes = helmResources?.releaseNotes;
-  const uid = _.get(obj, ['metadata', 'uid'], null);
-  const returnData = { groups: [], dataModel: {} };
+  const uid = obj?.metadata?.uid ?? null;
+  const returnData = [];
 
   if (!releaseName) {
     return returnData;
@@ -58,96 +60,154 @@ export const getTopologyHelmReleaseGroupItem = (
   if (secret) {
     const appGroup = getTopologyGroupItems(secret);
     if (appGroup) {
-      mergeGroup(appGroup, returnData.groups);
+      mergeGroup(appGroup, returnData);
     }
   }
 
-  const helmGroup = {
+  const { kind, apiVersion } = SecretModel;
+  const helmGroup: NodeModel = {
     id: secret ? secret.metadata.uid : `${TYPE_HELM_RELEASE}:${releaseName}`,
     type: TYPE_HELM_RELEASE,
-    name: releaseName,
-    nodes: [uid],
+    group: true,
+    label: releaseName,
+    children: [uid],
+    width: HELM_GROUP_WIDTH,
+    height: HELM_GROUP_HEIGHT,
+    visible: true,
+    style: {
+      padding: HELM_GROUP_PADDING,
+    },
+    data: {
+      resources: {
+        obj: secret ? { ...secret, kind, apiVersion } : null,
+        buildConfigs: null,
+        services: null,
+        routes: null,
+      },
+      data: {
+        chartIcon: helmResources?.chartIcon,
+        manifestResources: helmResources?.manifestResources || [],
+        releaseNotes,
+      },
+    },
   };
 
-  const dataModel = dataObjectFromModel(helmGroup);
-  const { kind, apiVersion } = SecretModel;
-  dataModel.resources = {
-    obj: secret ? { ...secret, kind, apiVersion } : null,
-    buildConfigs: null,
-    services: null,
-    routes: null,
-  };
-  dataModel.data = {
-    chartIcon: helmResources?.chartIcon,
-    manifestResources: helmResources?.manifestResources || [],
-    releaseNotes,
-  };
-  returnData.dataModel[helmGroup.id] = dataModel;
-  returnData.groups.push(helmGroup);
+  returnData.push(helmGroup);
 
   return returnData;
 };
 
-export const getHelmTopologyDataModel = (
+export const getHelmGraphModelFromMap = (
+  helmResourcesMap: HelmReleaseResourcesMap,
   resources: TopologyDataResources,
-  allResources: K8sResourceKind[],
-  installedOperators,
-  utils: Function[],
-  transformBy: string[],
-  serviceBindingRequests: K8sResourceKind[],
-  helmResourcesMap?: HelmReleaseResourcesMap,
-): TopologyDataModel => {
-  const helmDataModel: TopologyDataModel = {
-    graph: { nodes: [], edges: [], groups: [] },
-    topology: {},
+) => {
+  const helmDataModel: Model = {
+    nodes: [],
+    edges: [],
   };
-  const helmResources = {};
-  const transformResourceData = createInstanceForResource(resources, utils, installedOperators);
 
-  const secrets = _.get(resources, 'secrets.data', []);
-  _.forEach(transformBy, (key) => {
+  const helmResources = {};
+
+  const secrets = resources?.secrets?.data ?? [];
+  WORKLOAD_TYPES.forEach((key) => {
     helmResources[key] = [];
-    if (!_.isEmpty(resources[key].data)) {
-      const typedDataModel: TopologyDataModel = {
-        graph: { nodes: [], edges: [], groups: [] },
-        topology: {},
+    if (resources[key]?.data && resources[key].data.length) {
+      const typedDataModel: Model = {
+        nodes: [],
+        edges: [],
       };
 
-      transformResourceData[key](resources[key].data).forEach((item) => {
+      createOverviewItemsForType(key, resources).forEach((item) => {
         const { obj: deploymentConfig } = item;
-        const uid = _.get(deploymentConfig, ['metadata', 'uid']);
+        const uid = deploymentConfig?.metadata?.uid;
         if (isHelmReleaseNode(deploymentConfig, helmResourcesMap)) {
           helmResources[key].push(uid);
-          typedDataModel.topology[uid] = createTopologyNodeData(
+          const data = createTopologyNodeData(
             item,
             TYPE_HELM_WORKLOAD,
             getImageForIconClass(`icon-openshift`),
           );
-          typedDataModel.graph.nodes.push(
-            getTopologyNodeItem(deploymentConfig, TYPE_HELM_WORKLOAD),
+          typedDataModel.nodes.push(
+            getTopologyNodeItem(deploymentConfig, TYPE_HELM_WORKLOAD, data, WorkloadModelProps),
           );
-          typedDataModel.graph.edges.push(
-            ...getTopologyEdgeItems(deploymentConfig, allResources, serviceBindingRequests),
-          );
-          const { groups, dataModel } = getTopologyHelmReleaseGroupItem(
+          const groups = getTopologyHelmReleaseGroupItem(
             deploymentConfig,
             helmResourcesMap,
             secrets,
           );
-          mergeGroups(groups, typedDataModel.graph.groups);
-          typedDataModel.topology = _.merge(typedDataModel.topology, dataModel);
+          mergeGroups(groups, typedDataModel.nodes);
         }
       });
       addToTopologyDataModel(typedDataModel, helmDataModel);
     }
   });
 
-  _.forEach(transformBy, (key) => {
-    if (!_.isEmpty(resources[key].data) && !_.isEmpty(helmResources[key])) {
-      resources[key].data = resources[key].data.filter(
-        (resource) => !helmResources[key].find((uid) => uid === resource.metadata.uid),
-      );
+  helmDataModel.nodes.forEach((node) => {
+    if (node.type === TYPE_HELM_RELEASE) {
+      node.data.groupResources =
+        node.children?.map((id) => helmDataModel.nodes.find((n) => id === n.id)?.data) ?? [];
     }
   });
+
   return helmDataModel;
+};
+
+const getHelmReleaseMap = (namespace: string) => {
+  return fetchHelmReleases(namespace)
+    .then((releases) =>
+      releases.reduce((acc, release) => {
+        try {
+          const manifestResources: K8sResourceKind[] = safeLoadAll(release.manifest);
+          manifestResources.forEach((resource) => {
+            const resourceKindName = getHelmReleaseKey(resource);
+            if (!acc.hasOwnProperty(resourceKindName)) {
+              acc[resourceKindName] = {
+                releaseName: release.name,
+                releaseVersion: release.version,
+                chartIcon: release.chart.metadata.icon,
+                manifestResources,
+                releaseNotes: release.info.notes,
+              };
+            }
+          });
+        } catch (e) {
+          // eslint-disable-next-line no-console
+          console.error(e);
+        }
+        return acc;
+      }, {}),
+    )
+    .catch(() => ({}));
+};
+
+export const getHelmTopologyDataModel = () => {
+  let secretCount = -1;
+  let mapNamespace = '';
+  let helmResourcesMap = null;
+
+  return (namespace: string, resources: TopologyDataResources): Promise<Model> => {
+    const count = resources?.secrets?.data?.length ?? 0;
+    let retrieveNewReleaseMap = false;
+    if (
+      namespace !== mapNamespace ||
+      (resources.secrets?.loaded && count !== secretCount) ||
+      resources.secrets?.loadError
+    ) {
+      secretCount = count;
+      mapNamespace = namespace;
+      if (resources.secrets?.loadError || count === 0) {
+        helmResourcesMap = {};
+      } else {
+        retrieveNewReleaseMap = true;
+      }
+    }
+    if (retrieveNewReleaseMap) {
+      return getHelmReleaseMap(namespace).then((map) => {
+        helmResourcesMap = map;
+        return getHelmGraphModelFromMap(helmResourcesMap, resources);
+      });
+    }
+
+    return Promise.resolve(getHelmGraphModelFromMap(helmResourcesMap, resources));
+  };
 };

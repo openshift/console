@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { connect } from 'react-redux';
 import { FormGroup, Title, Dropdown, DropdownItem, DropdownToggle } from '@patternfly/react-core';
 import { CaretDownIcon } from '@patternfly/react-icons';
 import { Formik, FormikProps, FormikValues } from 'formik';
@@ -15,14 +14,9 @@ import { Edge, Node } from '@console/topology';
 import FormSection from '../../import/section/FormSection';
 import { TYPE_EVENT_SOURCE_LINK } from '@console/knative-plugin/src/topology/const';
 import { createSinkConnection } from '@console/knative-plugin/src/topology/knative-topology-utils';
-import { RootState } from '@console/internal/redux';
-import { getServiceBindingStatus } from '../topology-utils';
 import { TYPE_CONNECTS_TO, TYPE_SERVICE_BINDING } from './const';
 import { createConnection } from './createConnection';
 
-interface StateProps {
-  serviceBinding: boolean;
-}
 type MoveConnectionModalProps = {
   edge: Edge;
   availableTargets: Node[];
@@ -112,16 +106,16 @@ const MoveConnectionForm: React.FC<FormikProps<FormikValues> & MoveConnectionMod
 };
 
 class MoveConnectionModal extends PromiseComponent<
-  MoveConnectionModalProps & StateProps,
+  MoveConnectionModalProps,
   MoveConnectionModalState
 > {
   private onSubmit = (newTarget: Node): Promise<K8sResourceKind[] | K8sResourceKind> => {
-    const { edge, serviceBinding } = this.props;
+    const { edge } = this.props;
     switch (edge.getType()) {
       case TYPE_CONNECTS_TO:
-        return createConnection(edge.getSource(), newTarget, edge.getTarget(), serviceBinding);
+        return createConnection(edge.getSource(), newTarget, edge.getTarget());
       case TYPE_SERVICE_BINDING:
-        return createConnection(edge.getSource(), newTarget, edge.getTarget(), serviceBinding);
+        return createConnection(edge.getSource(), newTarget, edge.getTarget());
       case TYPE_EVENT_SOURCE_LINK:
         return createSinkConnection(edge.getSource(), newTarget);
       default:
@@ -156,14 +150,6 @@ class MoveConnectionModal extends PromiseComponent<
   }
 }
 
-const mapStateToProps = (state: RootState): StateProps => {
-  return {
-    serviceBinding: getServiceBindingStatus(state),
-  };
-};
-
-const ConnectedMoveConnectionModal = connect(mapStateToProps)(MoveConnectionModal);
-
 export const moveConnectionModal = createModalLauncher((props: MoveConnectionModalProps) => (
-  <ConnectedMoveConnectionModal {...props} />
+  <MoveConnectionModal {...props} />
 ));

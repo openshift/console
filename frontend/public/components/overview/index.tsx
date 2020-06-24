@@ -17,8 +17,13 @@ import {
   createStatefulSetItems,
   formatNamespacedRouteForResource,
 } from '@console/shared';
-import { OverviewCRD, isOverviewCRD, useExtensions } from '@console/plugin-sdk';
-import { ClusterServiceVersionKind } from '@console/operator-lifecycle-manager';
+import {
+  OverviewCRD,
+  isOverviewCRD,
+  OverviewResourceUtil,
+  isOverviewResourceUtil,
+  useExtensions,
+} from '@console/plugin-sdk';
 import { coFetchJSON } from '../../co-fetch';
 import { PROMETHEUS_TENANCY_BASE_PATH } from '../graphs';
 import { TextFilter } from '../factory';
@@ -323,30 +328,14 @@ class OverviewMainContent_ extends React.Component<
     }
 
     const items = [
-      ...createDaemonSetItems(
-        this.props.daemonSets.data,
-        this.props,
-        this.props?.clusterServiceVersions?.data,
-        this.props.utils,
-      ),
-      ...createDeploymentItems(
-        this.props.deployments.data,
-        this.props,
-        this.props?.clusterServiceVersions?.data,
-        this.props.utils,
-      ),
+      ...createDaemonSetItems(this.props.daemonSets.data, this.props, this.props.utils),
+      ...createDeploymentItems(this.props.deployments.data, this.props, this.props.utils),
       ...createDeploymentConfigItems(
         this.props.deploymentConfigs.data,
         this.props,
-        this.props?.clusterServiceVersions?.data,
         this.props.utils,
       ),
-      ...createStatefulSetItems(
-        this.props.statefulSets.data,
-        this.props,
-        this.props?.clusterServiceVersions?.data,
-        this.props.utils,
-      ),
+      ...createStatefulSetItems(this.props.statefulSets.data, this.props, this.props.utils),
       ...createPodItems(this.props),
     ];
 
@@ -452,6 +441,7 @@ const Overview_: React.SFC<OverviewProps> = ({
   emptyBodyClass,
 }) => {
   const resourceListExtensions = useExtensions<OverviewCRD>(isOverviewCRD);
+  const overviewUtils = useExtensions<OverviewResourceUtil>(isOverviewResourceUtil);
   const namespace = _.get(match, 'params.name');
   const sidebarOpen = !_.isEmpty(selectedItem);
   const className = classnames('overview', { 'overview--sidebar-shown': sidebarOpen });
@@ -472,7 +462,7 @@ const Overview_: React.SFC<OverviewProps> = ({
     };
   });
 
-  const { resources, utils } = getResourceList(namespace, resourceListExtensions);
+  const resources = getResourceList(namespace, resourceListExtensions);
   resources.push({
     isList: false,
     kind: 'Project',
@@ -489,7 +479,7 @@ const Overview_: React.SFC<OverviewProps> = ({
               namespace={namespace}
               selectedItem={selectedItem}
               title={title}
-              utils={utils}
+              utils={overviewUtils}
               EmptyMsg={EmptyMsg}
               emptyBodyClass={emptyBodyClass}
             />
@@ -589,10 +579,9 @@ type OverviewMainContentOwnProps = {
   selectedItem: OverviewItem;
   statefulSets?: FirehoseResult;
   title?: string;
-  clusterServiceVersions?: FirehoseResult<ClusterServiceVersionKind[]>;
-  utils?: Function[];
   EmptyMsg?: React.ComponentType;
   emptyBodyClass?: string;
+  utils?: OverviewResourceUtil[];
 };
 
 export type OverviewMainContentProps = OverviewMainContentPropsFromState &

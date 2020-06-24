@@ -1,86 +1,48 @@
-import { ComponentType } from 'react';
-import { FirehoseResult, KebabOption } from '@console/internal/components/utils';
+import * as React from 'react';
 import { ExtPodKind, OverviewItem, PodControllerOverviewItem } from '@console/shared';
-import { DeploymentKind, K8sResourceKind, PodKind, EventKind } from '@console/internal/module/k8s';
+import { K8sResourceKind } from '@console/internal/module/k8s';
+import { Graph, Node as TopologyNode, EventListener, Model } from '@console/topology/src/types';
+import { WatchK8sResults } from '@console/internal/components/utils/k8s-watch-hook';
 import { Pipeline, PipelineRun } from '../../utils/pipeline-augment';
-import { Node as TopologyNode, EventListener } from '@console/topology/src/types';
 
 export type Point = [number, number];
 
-export interface TopologyDataResources {
-  replicationControllers: FirehoseResult;
-  pods: FirehoseResult<PodKind[]>;
-  deploymentConfigs: FirehoseResult;
-  services: FirehoseResult;
-  routes: FirehoseResult;
-  deployments: FirehoseResult<DeploymentKind[]>;
-  replicaSets: FirehoseResult;
-  buildConfigs: FirehoseResult;
-  builds: FirehoseResult;
-  daemonSets?: FirehoseResult;
-  secrets?: FirehoseResult;
-  ksroutes?: FirehoseResult;
-  configurations?: FirehoseResult;
-  revisions?: FirehoseResult;
-  ksservices?: FirehoseResult;
-  statefulSets?: FirehoseResult;
-  pipelines?: FirehoseResult;
-  pipelineRuns?: FirehoseResult;
-  eventSourceCronjob?: FirehoseResult;
-  eventSourceContainers?: FirehoseResult;
-  eventSourceApiserver?: FirehoseResult;
-  eventSourceCamel?: FirehoseResult;
-  eventSourceKafka?: FirehoseResult;
-  eventSourceSinkbinding?: FirehoseResult;
-  clusterServiceVersions?: FirehoseResult;
-  events?: FirehoseResult<EventKind[]>;
-  // TODO: Plugin?
-  serviceBindingRequests?: FirehoseResult;
-  virtualmachines?: FirehoseResult;
-  virtualmachineinstances?: FirehoseResult;
-  virtualmachinetemplates?: FirehoseResult;
-  migrations?: FirehoseResult;
-  dataVolumes?: FirehoseResult;
-  vmImports?: FirehoseResult;
+export type TopologyResourcesObject = { [key: string]: K8sResourceKind[] };
+
+export type TopologyDataResources = WatchK8sResults<TopologyResourcesObject>;
+
+export type TopologyDataModelGetter = (
+  namespace: string,
+  resources: TopologyDataResources,
+  workloads: K8sResourceKind[],
+) => Promise<Model>;
+
+export type TopologyDataModelDepicted = (resource: K8sResourceKind, model: Model) => boolean;
+
+export type CreateConnection = (
+  source: TopologyNode,
+  target: TopologyNode | Graph,
+) => Promise<React.ReactElement[] | null>;
+
+export type CreateConnectionGetter = (createHints: string[]) => CreateConnection;
+
+export enum TopologyDisplayFilterType {
+  show = 'show',
+  expand = 'expand',
 }
 
-export interface Node {
+export type TopologyDisplayOption = {
+  type: TopologyDisplayFilterType;
   id: string;
-  type?: string;
-  name?: string;
-  children?: string[];
-  data?: {};
-}
+  label: string;
+  priority: number;
+  value: boolean;
+};
 
-export interface Edge {
-  id?: string;
-  type?: string;
-  source: string;
-  target: string;
-  data?: { [key: string]: any };
-}
+export type DisplayFilters = TopologyDisplayOption[];
 
-export interface Group {
-  id?: string;
-  type?: string;
-  name: string;
-  nodes: string[];
-}
-
-export interface GraphModel {
-  nodes: Node[];
-  edges: Edge[];
-  groups: Group[];
-}
-
-export interface TopologyDataMap {
-  [id: string]: TopologyDataObject;
-}
-
-export interface TopologyDataModel {
-  graph: GraphModel;
-  topology: TopologyDataMap;
-}
+// Applies the filters on the model and returns the ids of filters that were relevant
+export type TopologyApplyDisplayOptions = (model: Model, filters: DisplayFilters) => string[];
 
 export type TopologyOverviewItem = OverviewItem & {
   pipelines?: Pipeline[];
@@ -94,7 +56,6 @@ export interface TopologyDataObject<D = {}> {
   resources: OverviewItem;
   pods?: ExtPodKind[];
   data: D;
-  operatorBackedService: boolean;
   groupResources?: TopologyDataObject[];
 }
 
@@ -240,22 +201,11 @@ export type KialiEdge = {
 
 export type ConnectsToData = { apiVersion: string; kind: string; name: string };
 
-export type NodeProvider = (type: string) => ComponentType<NodeProps>;
-
-export type EdgeProvider = (type: string) => ComponentType<EdgeProps>;
-
-export type GroupProvider = (type: string) => ComponentType<GroupProps>;
-
-export type ActionProvider = (type: GraphElementType, id: string) => KebabOption[];
-
-export type ContextMenuProvider = {
-  open: (type: GraphElementType, id: string, eventX: number, eventY: number) => boolean;
-};
-
 export type GraphData = {
   namespace: string;
   createResourceAccess: string[];
   eventSourceEnabled: boolean;
+  createConnectorExtensions?: CreateConnectionGetter[];
 };
 
 export const SHOW_GROUPING_HINT_EVENT = 'show-regroup-hint';

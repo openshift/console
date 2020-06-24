@@ -1,4 +1,3 @@
-import * as _ from 'lodash';
 import * as k8s from '@console/internal/module/k8s';
 import {
   createTopologyResourceConnection,
@@ -12,29 +11,45 @@ import {
   sampleHelmResourcesMap,
   sampleDeployments,
 } from './topology-test-data';
-import { serviceBindingRequest } from './service-binding-test-data';
+
+let patchData = null;
 
 describe('Topology Utils', () => {
   beforeAll(() => {
-    jest.spyOn(k8s, 'k8sCreate').mockImplementation((data) => Promise.resolve({ data }));
+    jest.spyOn(k8s, 'k8sPatch').mockImplementation((model, item, patch) => {
+      patchData = patch;
+      return Promise.resolve();
+    });
   });
 
   afterAll(() => {
     jest.restoreAllMocks();
   });
 
-  it('should create topology resource service binding', (done) => {
-    const source = topologyDataModel.topology['e187afa2-53b1-406d-a619-cf9ff1468031'];
-    const target = topologyDataModel.topology['e187afa2-53b1-406d-a619-cf9ff1468032'];
-    createTopologyResourceConnection(source, target, null, true)
-      .then((resp) => {
-        const data = _.get(resp, 'data');
-        expect(data).toEqual(serviceBindingRequest.data);
-        done();
-      })
-      .catch(() => {
-        done();
-      });
+  it('should create topology visual connector', async (done) => {
+    const source = topologyDataModel.nodes[0].data;
+    const target = topologyDataModel.nodes[1].data;
+    await createTopologyResourceConnection(source, target, null).catch(() => {
+      // Expected, network request failure for update
+    });
+    const expectedConnectsToValue = [
+      target.resources.obj.metadata.labels['app.kubernetes.io/instance'],
+      {
+        apiVersion: target.resources.obj.apiVersion,
+        kind: target.resources.obj.kind,
+        name: target.resources.obj.metadata.name,
+      },
+    ];
+    const expectedPatchData = {
+      op: 'replace',
+      path: '/metadata/annotations',
+      value: {
+        'app.openshift.io/connects-to': JSON.stringify(expectedConnectsToValue),
+      },
+    };
+
+    expect(patchData[0]).toEqual(expectedPatchData);
+    done();
   });
 
   it('should return true for nodes created by helm charts', () => {
@@ -43,9 +58,7 @@ describe('Topology Utils', () => {
   });
 
   it('should return topology resource object', () => {
-    const topologyResourceObject = getTopologyResourceObject(
-      topologyDataModel.topology['e187afa2-53b1-406d-a619-cf9ff1468031'],
-    );
+    const topologyResourceObject = getTopologyResourceObject(topologyDataModel.nodes[0].data);
     expect(topologyResourceObject).toEqual(sampleDeployments.data[0]);
   });
 });

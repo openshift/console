@@ -3,18 +3,23 @@ import { mount, ReactWrapper } from 'enzyme';
 import { Provider } from 'react-redux';
 import store from '@console/internal/redux';
 import { TopologyDataControllerProps, TopologyDataController } from '../TopologyDataController';
+import { TopologyExtensionLoader } from '../TopologyExtensionLoader';
 
 const TestInner = () => null;
-const testProjectMatch = { url: '', params: { name: 'namespace' }, isExact: true, path: '' };
+
+jest.mock('@console/plugin-sdk/src/useExtensions', () => ({
+  useExtensions: () => [],
+}));
 
 describe('TopologyDataController', () => {
   let wrapper: ReactWrapper<TopologyDataControllerProps>;
 
   beforeEach(() => {
+    const testProjectMatch = { url: '', params: { name: 'test-project' }, isExact: true, path: '' };
     wrapper = mount(
       <TopologyDataController
         match={testProjectMatch}
-        serviceBinding={false}
+        kindsInFlight={false}
         render={() => <TestInner />}
       />,
       {
@@ -24,7 +29,6 @@ describe('TopologyDataController', () => {
   });
 
   it('should render inner component', () => {
-    // TODO: Find a way to actually test this component, following line will ALWAYS return true (should test for length or existence)
-    expect(wrapper.find(<TestInner />)).toBeTruthy();
+    expect(wrapper.find(TopologyExtensionLoader)).toHaveLength(1);
   });
 });

@@ -19,7 +19,12 @@ import {
   hullPath,
 } from '@console/topology';
 import * as classNames from 'classnames';
-import { useDisplayFilters, useSearchFilter } from '../../filters';
+import {
+  getFilterById,
+  useDisplayFilters,
+  useSearchFilter,
+  SHOW_LABELS_FILTER_ID,
+} from '../../filters';
 import SvgBoxedText from '../../../svg/SvgBoxedText';
 import { NodeShadows, NODE_SHADOW_FILTER_ID, NODE_SHADOW_FILTER_ID_HOVER } from '../NodeShadows';
 
@@ -79,7 +84,8 @@ const ApplicationGroup: React.FC<ApplicationGroupProps> = ({
   const refs = useCombineRefs<SVGPathElement>(hoverRef, dragNodeRef);
   const [filtered] = useSearchFilter(element.getLabel());
   const displayFilters = useDisplayFilters();
-  const showLabels = displayFilters.showLabels || hover;
+  const showLabelsFilter = getFilterById(SHOW_LABELS_FILTER_ID, displayFilters);
+  const showLabels = showLabelsFilter?.value || hover;
 
   // cast to number and coerce
   const padding = maxPadding(element.getStyle<NodeStyle>().padding);

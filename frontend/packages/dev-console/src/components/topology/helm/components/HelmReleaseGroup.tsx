@@ -18,7 +18,12 @@ import {
   NODE_SHADOW_FILTER_ID,
 } from '../../components/NodeShadows';
 import SvgBoxedText from '../../../svg/SvgBoxedText';
-import { useDisplayFilters, useSearchFilter } from '../../filters';
+import {
+  getFilterById,
+  useDisplayFilters,
+  useSearchFilter,
+  SHOW_LABELS_FILTER_ID,
+} from '../../filters';
 import { nodeDragSourceSpec } from '../../components/componentUtils';
 import { TYPE_HELM_RELEASE } from './const';
 
@@ -50,7 +55,8 @@ const HelmReleaseGroup: React.FC<HelmReleaseGroupProps> = ({
   const nodeRefs = useCombineRefs(innerHoverRef, dragNodeRef);
   const [filtered] = useSearchFilter(element.getLabel());
   const displayFilters = useDisplayFilters();
-  const showLabels = displayFilters.showLabels || hover || innerHover;
+  const showLabelsFilter = getFilterById(SHOW_LABELS_FILTER_ID, displayFilters);
+  const showLabels = showLabelsFilter?.value || hover || innerHover;
   const hasChildren = element.getChildren()?.length > 0;
   const { x, y, width, height } = element.getBounds();
 

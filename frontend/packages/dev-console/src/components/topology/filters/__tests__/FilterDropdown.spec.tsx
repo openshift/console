@@ -2,34 +2,47 @@ import * as React from 'react';
 import { shallow } from 'enzyme';
 import { SelectOption } from '@patternfly/react-core';
 import FilterDropdown from '../FilterDropdown';
-import { DisplayFilters } from '../filter-types';
-
-const VALID_FILTERS = {
-  podCount: true,
-  eventSources: true,
-  virtualMachines: true,
-  showLabels: true,
-  knativeServices: true,
-  appGrouping: true,
-  operatorGrouping: true,
-  helmGrouping: true,
-};
+import { DisplayFilters } from '../../topology-types';
+import { DEFAULT_TOPOLOGY_FILTERS } from '../const';
 
 describe(FilterDropdown.displayName, () => {
   let dropdownFilter: DisplayFilters;
   let onChange: () => void;
   beforeEach(() => {
-    dropdownFilter = { ...VALID_FILTERS };
+    dropdownFilter = [...DEFAULT_TOPOLOGY_FILTERS];
     onChange = jasmine.createSpy();
   });
 
   it('should exists', () => {
-    const wrapper = shallow(<FilterDropdown filters={dropdownFilter} onChange={onChange} />);
+    const wrapper = shallow(
+      <FilterDropdown
+        filters={dropdownFilter}
+        supportedFilters={dropdownFilter.map((f) => f.id)}
+        onChange={onChange}
+      />,
+    );
     expect(wrapper.exists()).toBeTruthy();
   });
 
-  it('should have 8 filters in total', () => {
-    const wrapper = shallow(<FilterDropdown filters={dropdownFilter} onChange={onChange} />);
-    expect(wrapper.find(SelectOption)).toHaveLength(Object.keys(VALID_FILTERS).length);
+  it('should have the correct number of filters', () => {
+    const wrapper = shallow(
+      <FilterDropdown
+        filters={dropdownFilter}
+        supportedFilters={dropdownFilter.map((f) => f.id)}
+        onChange={onChange}
+      />,
+    );
+    expect(wrapper.find(SelectOption)).toHaveLength(Object.keys(DEFAULT_TOPOLOGY_FILTERS).length);
+  });
+
+  it('should hide unsupported filters', () => {
+    const wrapper = shallow(
+      <FilterDropdown
+        filters={dropdownFilter}
+        supportedFilters={[dropdownFilter[0].id]}
+        onChange={onChange}
+      />,
+    );
+    expect(wrapper.find(SelectOption)).toHaveLength(1);
   });
 });

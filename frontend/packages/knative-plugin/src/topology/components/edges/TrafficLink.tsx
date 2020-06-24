@@ -9,7 +9,7 @@ type TrafficLinkProps = {
 };
 
 const TrafficLink: React.FC<TrafficLinkProps> = ({ element }) => {
-  const { percent } = element.getData().data;
+  const { percent } = element.getData();
   let text = null;
   if (percent != null) {
     const startPoint = element.getStartPoint();

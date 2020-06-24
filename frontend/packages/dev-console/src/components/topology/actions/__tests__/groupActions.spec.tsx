@@ -18,7 +18,7 @@ describe('groupActions: ', () => {
   const application: TopologyApplicationObject = {
     id: 'app-test-id-123',
     name: 'application-1',
-    resources: [topologyDataModel.topology['e187afa2-53b1-406d-a619-cf9ff1468031']],
+    resources: [topologyDataModel.nodes[0].data],
   };
   it('should return the correct menu and sub menu items when all permissions are allowed', () => {
     const actions = groupActions(graphData, application);
@@ -37,7 +37,7 @@ describe('groupActions: ', () => {
   });
 
   it('should not return sub menu when connector source is passed', () => {
-    connectorSource.setData(topologyDataModel.topology['e187afa2-53b1-406d-a619-cf9ff1468031']);
+    connectorSource.setData(topologyDataModel.nodes[0].data);
     const actions = groupActions(graphData, application, connectorSource);
     expect(actions).toHaveLength(3);
     expect(actions.filter((a) => a.path)).toHaveLength(0);

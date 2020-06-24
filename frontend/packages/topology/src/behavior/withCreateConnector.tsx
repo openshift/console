@@ -37,8 +37,9 @@ type CreateConnectorWidgetProps = {
     element: Node,
     target: Node | Graph,
     event: DragEvent,
+    dropHints: string[] | undefined,
     choice?: ConnectorChoice,
-  ) => ConnectorChoice[] | void | undefined | null | React.ReactElement[];
+  ) => Promise<ConnectorChoice[] | void | undefined | null | React.ReactElement[]>;
   ConnectorComponent: CreateConnectorRenderer;
   contextMenuClass?: string;
 } & CreateConnectorOptions;
@@ -91,14 +92,21 @@ const CreateConnectorWidget: React.FC<CreateConnectorWidgetProps> = observer((pr
       ) => {
         const event = monitor.getDragEvent();
         if ((isNode(dropResult) || isGraph(dropResult)) && event) {
-          const choices = dragProps.onCreate(dragProps.element, dropResult, event);
-          if (choices && choices.length) {
-            setPrompt({ element: dragProps.element, target: dropResult, event, choices });
-            return;
-          }
+          dragProps
+            .onCreate(dragProps.element, dropResult, event, monitor.getDropHints())
+            .then((choices) => {
+              if (choices && choices.length) {
+                setPrompt({ element: dragProps.element, target: dropResult, event, choices });
+                return;
+              }
+              setActive(false);
+              dragProps.onKeepAlive(false);
+            })
+            .catch(() => {
+              setActive(false);
+              dragProps.onKeepAlive(false);
+            });
         }
-        setActive(false);
-        dragProps.onKeepAlive(false);
       },
       collect: (monitor) => ({
         dragging: !!monitor.getItem(),
@@ -190,7 +198,7 @@ const CreateConnectorWidget: React.FC<CreateConnectorWidgetProps> = observer((pr
                 <ContextMenuItem
                   key={c.label}
                   onClick={() => {
-                    onCreate(prompt.element, prompt.target, prompt.event, c);
+                    onCreate(prompt.element, prompt.target, prompt.event, hintsRef.current, c);
                   }}
                 >
                   {c.label}

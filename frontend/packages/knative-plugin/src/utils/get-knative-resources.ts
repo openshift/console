@@ -3,6 +3,7 @@ import { K8sResourceKind, PodKind, referenceForModel } from '@console/internal/m
 import { FirehoseResource } from '@console/internal/components/utils';
 import { KNATIVE_SERVING_LABEL } from '../const';
 import { ServiceModel, RevisionModel, ConfigurationModel, RouteModel } from '../models';
+import { WatchK8sResources } from '@console/internal/components/utils/k8s-watch-hook';
 
 export type KnativeItem = {
   revisions?: K8sResourceKind[];
@@ -114,5 +115,61 @@ export const knativeServingResourcesServices = (namespace: string): FirehoseReso
       optional: true,
     },
   ];
+  return knativeResource;
+};
+
+export const knativeServingResourcesRevisionWatchers = (
+  namespace: string,
+): WatchK8sResources<any> => {
+  const knativeResource = {
+    revisions: {
+      isList: true,
+      kind: referenceForModel(RevisionModel),
+      namespace,
+      optional: true,
+    },
+  };
+  return knativeResource;
+};
+
+export const knativeServingResourcesConfigurationsWatchers = (
+  namespace: string,
+): WatchK8sResources<any> => {
+  const knativeResource = {
+    configurations: {
+      isList: true,
+      kind: referenceForModel(ConfigurationModel),
+      namespace,
+      optional: true,
+    },
+  };
+  return knativeResource;
+};
+
+export const knativeServingResourcesRoutesWatchers = (
+  namespace: string,
+): WatchK8sResources<any> => {
+  const knativeResource = {
+    ksroutes: {
+      isList: true,
+      kind: referenceForModel(RouteModel),
+      namespace,
+      optional: true,
+    },
+  };
+  return knativeResource;
+};
+
+export const knativeServingResourcesServicesWatchers = (
+  namespace: string,
+): WatchK8sResources<any> => {
+  const knativeResource = {
+    ksservices: {
+      isList: true,
+      kind: referenceForModel(ServiceModel),
+      namespace,
+      optional: true,
+    },
+  };
   return knativeResource;
 };

@@ -6,6 +6,7 @@ import {
   ModelDefinition,
   OverviewResourceTab,
   OverviewCRD,
+  OverviewResourceUtil,
   ResourceListPage,
   ResourceDetailsPage,
   RoutePage,
@@ -27,14 +28,14 @@ import {
   FLAG_KNATIVE_EVENTING,
 } from './const';
 import {
-  getKnativeServingConfigurations,
-  getKnativeServingRoutes,
-  getKnativeServingRevisions,
-  getKnativeServingServices,
   knativeServingResourcesRevision,
   knativeServingResourcesConfigurations,
   knativeServingResourcesRoutes,
   knativeServingResourcesServices,
+  getKnativeServingRevisions,
+  getKnativeServingConfigurations,
+  getKnativeServingRoutes,
+  getKnativeServingServices,
 } from './utils/get-knative-resources';
 import { getKebabActionsForKind } from './utils/kebab-actions';
 import {
@@ -42,6 +43,7 @@ import {
   getDynamicEventSourcesResourceList,
   hideDynamicEventSourceCard,
 } from './utils/fetch-dynamic-eventsources-utils';
+import { TopologyConsumedExtensions, topologyPlugin } from './topology/topology-plugin';
 import * as eventSourceIcon from './imgs/event-source.svg';
 
 type ConsumedExtensions =
@@ -51,15 +53,18 @@ type ConsumedExtensions =
   | GlobalConfig
   | OverviewResourceTab
   | OverviewCRD
+  | OverviewResourceUtil
   | ResourceListPage
   | RoutePage
   | KebabActions
   | YAMLTemplate
   | ResourceDetailsPage
-  | AddAction;
+  | AddAction
+  | TopologyConsumedExtensions;
 
 // Added it to perform discovery of Dynamic event sources on cluster on app load as kebab option needed models upfront
 fetchEventSourcesCrd();
+
 const plugin: Plugin<ConsumedExtensions> = [
   {
     type: 'ModelDefinition',
@@ -176,7 +181,6 @@ const plugin: Plugin<ConsumedExtensions> = [
     type: 'Overview/CRD',
     properties: {
       resources: knativeServingResourcesRevision,
-      utils: getKnativeServingRevisions,
     },
     flags: {
       required: [FLAG_KNATIVE_SERVING_REVISION],
@@ -186,7 +190,6 @@ const plugin: Plugin<ConsumedExtensions> = [
     type: 'Overview/CRD',
     properties: {
       resources: knativeServingResourcesConfigurations,
-      utils: getKnativeServingConfigurations,
     },
     flags: {
       required: [FLAG_KNATIVE_SERVING_CONFIGURATION],
@@ -196,7 +199,6 @@ const plugin: Plugin<ConsumedExtensions> = [
     type: 'Overview/CRD',
     properties: {
       resources: knativeServingResourcesRoutes,
-      utils: getKnativeServingRoutes,
     },
     flags: {
       required: [FLAG_KNATIVE_SERVING_ROUTE],
@@ -206,7 +208,6 @@ const plugin: Plugin<ConsumedExtensions> = [
     type: 'Overview/CRD',
     properties: {
       resources: knativeServingResourcesServices,
-      utils: getKnativeServingServices,
     },
     flags: {
       required: [FLAG_KNATIVE_SERVING_REVISION],
@@ -216,10 +217,45 @@ const plugin: Plugin<ConsumedExtensions> = [
     type: 'Overview/CRD',
     properties: {
       resources: getDynamicEventSourcesResourceList,
-      utils: () => null,
     },
     flags: {
       required: [FLAG_KNATIVE_EVENTING],
+    },
+  },
+  {
+    type: 'Overview/ResourceUtil',
+    properties: {
+      getResources: getKnativeServingRevisions,
+    },
+    flags: {
+      required: [FLAG_KNATIVE_SERVING_REVISION],
+    },
+  },
+  {
+    type: 'Overview/ResourceUtil',
+    properties: {
+      getResources: getKnativeServingConfigurations,
+    },
+    flags: {
+      required: [FLAG_KNATIVE_SERVING_CONFIGURATION],
+    },
+  },
+  {
+    type: 'Overview/ResourceUtil',
+    properties: {
+      getResources: getKnativeServingRoutes,
+    },
+    flags: {
+      required: [FLAG_KNATIVE_SERVING_ROUTE],
+    },
+  },
+  {
+    type: 'Overview/ResourceUtil',
+    properties: {
+      getResources: getKnativeServingServices,
+    },
+    flags: {
+      required: [FLAG_KNATIVE_SERVING_SERVICE],
     },
   },
   {
@@ -325,6 +361,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       hide: hideDynamicEventSourceCard,
     },
   },
+  ...topologyPlugin,
 ];
 
 export default plugin;

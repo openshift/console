@@ -2,12 +2,12 @@ import * as React from 'react';
 import {
   GraphElement,
   ModelKind,
-  ComponentFactory as TopologyComponentFactory,
   withPanZoom,
   withDragNode,
   withTargetDrag,
   withSelection,
   withDndDrop,
+  withCreateConnector,
   withRemoveConnector,
 } from '@console/topology';
 import { Application } from './groups';
@@ -24,6 +24,7 @@ import {
   removeConnectorCallback,
   MOVE_CONNECTOR_DROP_TYPE,
   withContextMenu,
+  createConnectorCallback,
 } from './componentUtils';
 import './ContextMenu.scss';
 import {
@@ -31,61 +32,57 @@ import {
   TYPE_CONNECTS_TO,
   TYPE_APPLICATION_GROUP,
   TYPE_AGGREGATE_EDGE,
-  TYPE_SERVICE_BINDING,
   TYPE_TRAFFIC_CONNECTOR,
 } from './const';
 import { createConnection } from './createConnection';
 import { withEditReviewAccess } from './withEditReviewAccess';
-import { AggregateEdge, ConnectsTo, ServiceBinding, TrafficConnector } from './edges';
-import { AbstractSBRComponentFactory } from './AbstractSBRComponentFactory';
+import { AggregateEdge, ConnectsTo, CreateConnector, TrafficConnector } from './edges';
 
-class ComponentFactory extends AbstractSBRComponentFactory {
-  getFactory = (): TopologyComponentFactory => {
-    return (kind, type): React.ComponentType<{ element: GraphElement }> | undefined => {
-      switch (type) {
-        case TYPE_APPLICATION_GROUP:
-          return withDndDrop(applicationGroupDropTargetSpec)(
-            withSelection(false, true)(withContextMenu(groupContextMenu)(Application)),
-          );
-        case TYPE_WORKLOAD:
-          return this.withAddResourceConnector()(
-            withDndDrop<
-              any,
-              any,
-              { droppable?: boolean; hover?: boolean; canDrop?: boolean },
-              NodeComponentProps
-            >(nodeDropTargetSpec)(
-              withEditReviewAccess('patch')(
-                withDragNode(nodeDragSourceSpec(type))(
-                  withSelection(false, true)(withContextMenu(workloadContextMenu)(WorkloadNode)),
-                ),
-              ),
+export const componentFactory = (
+  kind,
+  type,
+): React.ComponentType<{ element: GraphElement }> | undefined => {
+  switch (type) {
+    case TYPE_APPLICATION_GROUP:
+      return withDndDrop(applicationGroupDropTargetSpec)(
+        withSelection(false, true)(withContextMenu(groupContextMenu)(Application)),
+      );
+    case TYPE_WORKLOAD:
+      return withCreateConnector(
+        createConnectorCallback(),
+        CreateConnector,
+      )(
+        withDndDrop<
+          any,
+          any,
+          { droppable?: boolean; hover?: boolean; canDrop?: boolean },
+          NodeComponentProps
+        >(nodeDropTargetSpec)(
+          withEditReviewAccess('patch')(
+            withDragNode(nodeDragSourceSpec(type))(
+              withSelection(false, true)(withContextMenu(workloadContextMenu)(WorkloadNode)),
+            ),
+          ),
+        ),
+      );
+    case TYPE_CONNECTS_TO:
+      return withTargetDrag(edgeDragSourceSpec(MOVE_CONNECTOR_DROP_TYPE, createConnection))(
+        withRemoveConnector(removeConnectorCallback)(ConnectsTo),
+      );
+    case TYPE_AGGREGATE_EDGE:
+      return AggregateEdge;
+    case TYPE_TRAFFIC_CONNECTOR:
+      return TrafficConnector;
+    default:
+      switch (kind) {
+        case ModelKind.graph:
+          return withDndDrop(graphDropTargetSpec)(
+            withPanZoom()(
+              withSelection(false, true)(withContextMenu(graphContextMenu)(GraphComponent)),
             ),
           );
-        case TYPE_CONNECTS_TO:
-          return withTargetDrag(
-            edgeDragSourceSpec(MOVE_CONNECTOR_DROP_TYPE, this.serviceBinding, createConnection),
-          )(withRemoveConnector(removeConnectorCallback)(ConnectsTo));
-        case TYPE_SERVICE_BINDING:
-          return withRemoveConnector(removeConnectorCallback)(ServiceBinding);
-        case TYPE_AGGREGATE_EDGE:
-          return AggregateEdge;
-        case TYPE_TRAFFIC_CONNECTOR:
-          return TrafficConnector;
         default:
-          switch (kind) {
-            case ModelKind.graph:
-              return withDndDrop(graphDropTargetSpec)(
-                withPanZoom()(
-                  withSelection(false, true)(withContextMenu(graphContextMenu)(GraphComponent)),
-                ),
-              );
-            default:
-              return undefined;
-          }
+          return undefined;
       }
-    };
-  };
-}
-
-export { ComponentFactory };
+  }
+};

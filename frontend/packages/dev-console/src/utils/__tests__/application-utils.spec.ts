@@ -8,17 +8,21 @@ import {
   DaemonSetModel,
   StatefulSetModel,
 } from '@console/internal/models';
-import {
-  ServiceModel as KnativeServiceModel,
-  RouteModel as KnativeRouteModel,
-} from '@console/knative-plugin';
 import * as utils from '@console/internal/components/utils';
-import { MockKnativeResources } from '@console/knative-plugin/src/topology/__tests__/topology-knative-test-data';
 import { TopologyDataResources } from '../../components/topology/topology-types';
-import { getTopologyResourceObject } from '../../components/topology/topology-utils';
-import { transformTopologyData } from '../../components/topology/data-transforms/data-transformer';
+import {
+  getTopologyResourceObject,
+  WORKLOAD_TYPES,
+} from '../../components/topology/topology-utils';
 import { cleanUpWorkload } from '../application-utils';
-import { MockResources } from '../../components/topology/__tests__/topology-test-data';
+import {
+  MockResources,
+  TEST_KINDS_MAP,
+} from '../../components/topology/__tests__/topology-test-data';
+import {
+  baseDataModelGetter,
+  getWorkloadResources,
+} from '../../components/topology/data-transforms';
 
 import Spy = jasmine.Spy;
 
@@ -29,18 +33,17 @@ const spyAndReturn = (spy: Spy) => (returnValue: any) =>
       return returnValue;
     }),
   );
-const getTopologyData = (
-  mockData: TopologyDataResources,
-  transformByProp: string[],
-  name: string,
-) => {
-  const result = transformTopologyData(mockData, transformByProp);
-  const topologyTransformedData = result.topology;
-  const keys = Object.keys(topologyTransformedData);
-  const itemKey = keys.find((key) => result.topology[key].resources.obj.metadata.name === name);
-  const resource = getTopologyResourceObject(result.topology[itemKey]);
-  return { resource, topologyTransformedData: result.topology[itemKey] };
+
+const getTopologyData = (mockData: TopologyDataResources, name: string) => {
+  const model = { nodes: [], edges: [] };
+  const workloadResources = getWorkloadResources(mockData, TEST_KINDS_MAP, WORKLOAD_TYPES);
+  const result = baseDataModelGetter(model, 'test-project', mockData, workloadResources, []);
+
+  const node = result.nodes.find((n) => n.data.resources.obj.metadata.name === name);
+  const resource = node ? getTopologyResourceObject(node.data) : undefined;
+  return { resource, topologyTransformedData: node?.data };
 };
+
 describe('ApplicationUtils ', () => {
   let spy;
   let checkAccessSpy;
@@ -54,12 +57,8 @@ describe('ApplicationUtils ', () => {
     spyAndReturn(spyK8sGet)(Promise.resolve(true));
   });
 
-  it('Should delete all the specific models related to deployment config', (done) => {
-    const { resource, topologyTransformedData } = getTopologyData(
-      MockResources,
-      ['deploymentConfigs'],
-      'nodejs',
-    );
+  it('Should delete all the specific models related to deployment config', async (done) => {
+    const { resource, topologyTransformedData } = await getTopologyData(MockResources, 'nodejs');
 
     cleanUpWorkload(resource, topologyTransformedData)
       .then(() => {
@@ -78,12 +77,8 @@ describe('ApplicationUtils ', () => {
       .catch((err) => fail(err));
   });
 
-  it('Should delete all the specific models related to deployment config if the build config is not present i.e. for resource created through deploy image form', (done) => {
-    const { resource, topologyTransformedData } = getTopologyData(
-      MockResources,
-      ['deploymentConfigs'],
-      'nodejs-ex',
-    );
+  it('Should delete all the specific models related to deployment config if the build config is not present i.e. for resource created through deploy image form', async (done) => {
+    const { resource, topologyTransformedData } = await getTopologyData(MockResources, 'nodejs-ex');
 
     cleanUpWorkload(resource, topologyTransformedData)
       .then(() => {
@@ -100,29 +95,9 @@ describe('ApplicationUtils ', () => {
       .catch((err) => fail(err));
   });
 
-  it('Should delete all the specific models related to knative deployments if the build config is not present i.e. for resource created through deploy image form', (done) => {
-    const { resource, topologyTransformedData } = getTopologyData(
-      MockKnativeResources,
-      ['deployments'],
-      'overlayimage',
-    );
-    cleanUpWorkload(resource, topologyTransformedData)
-      .then(() => {
-        const allArgs = spy.calls.allArgs();
-        const removedModels = allArgs.map((arg) => arg[0]);
-        expect(spy.calls.count()).toEqual(3);
-        expect(removedModels).toContain(KnativeServiceModel);
-        expect(removedModels).toContain(KnativeRouteModel);
-        expect(removedModels).toContain(ImageStreamModel);
-        done();
-      })
-      .catch((err) => fail(err));
-  });
-
-  it('Should delete all the specific models related to daemonsets', (done) => {
-    const { resource, topologyTransformedData } = getTopologyData(
+  it('Should delete all the specific models related to daemonsets', async (done) => {
+    const { resource, topologyTransformedData } = await getTopologyData(
       MockResources,
-      ['daemonSets'],
       'daemonset-testing',
     );
     cleanUpWorkload(resource, topologyTransformedData)
@@ -137,10 +112,9 @@ describe('ApplicationUtils ', () => {
       .catch((err) => fail(err));
   });
 
-  it('Should delete all the specific models related to statefulsets', (done) => {
-    const { resource, topologyTransformedData } = getTopologyData(
+  it('Should delete all the specific models related to statefulsets', async (done) => {
+    const { resource, topologyTransformedData } = await getTopologyData(
       MockResources,
-      ['statefulSets'],
       'alertmanager-main',
     );
     cleanUpWorkload(resource, topologyTransformedData)
@@ -154,12 +128,8 @@ describe('ApplicationUtils ', () => {
       })
       .catch((err) => fail(err));
   });
-  it('Should not delete any of the models, if delete access is not available', (done) => {
-    const { resource, topologyTransformedData } = getTopologyData(
-      MockResources,
-      ['deploymentConfigs'],
-      'nodejs',
-    );
+  it('Should not delete any of the models, if delete access is not available', async (done) => {
+    const { resource, topologyTransformedData } = await getTopologyData(MockResources, 'nodejs');
     spyAndReturn(checkAccessSpy)(Promise.resolve({ status: { allowed: false } }));
     cleanUpWorkload(resource, topologyTransformedData)
       .then(() => {

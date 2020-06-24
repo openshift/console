@@ -1,5 +1,4 @@
 export * from './const';
-export * from './AbstractSBRComponentFactory';
 export * from './componentUtils';
 export * from './componentFactory';
 export * from './NodeShadows';

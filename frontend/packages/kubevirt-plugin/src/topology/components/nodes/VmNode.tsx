@@ -27,6 +27,8 @@ import {
   NODE_SHADOW_FILTER_ID_HOVER,
   NodeShadows,
   TopologyDataObject,
+  getFilterById,
+  SHOW_LABELS_FILTER_ID,
 } from '@console/dev-console/src/components/topology';
 import { NodeModel } from '@console/topology/src/types';
 import './VmNode.scss';
@@ -77,7 +79,8 @@ const ObservedVmNode: React.FC<VmNodeProps> = ({
   const displayFilters = useDisplayFilters();
   const [filtered] = useSearchFilter(element.getLabel());
   const iconRadius = Math.min(width, height) * 0.25;
-  const showLabels = displayFilters.showLabels || hover;
+  const showLabelsFilter = getFilterById(SHOW_LABELS_FILTER_ID, displayFilters);
+  const showLabels = showLabelsFilter?.value || hover;
   const tipContent = `Create a visual connector`;
   const resourceObj = getTopologyResourceObject(element.getData());
   const resourceModel = modelFor(referenceFor(resourceObj));
