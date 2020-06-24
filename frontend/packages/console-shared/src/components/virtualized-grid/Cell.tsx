@@ -2,6 +2,7 @@ import * as React from 'react';
 import { CellMeasurer } from 'react-virtualized';
 import { IDEAL_SPACE_BW_TILES } from './const';
 import { RenderCell, RenderHeader, GridChildrenProps, Item, CellItem } from './types';
+import { getHeightAndWidthOfCell } from './utils';
 
 type CellProps = {
   renderCell: RenderCell;
@@ -26,16 +27,7 @@ const Cell: React.FC<CellProps> = ({
   const index = rowIndex * columnCount + columnIndex;
   const item: CellItem = items[index];
   const isItemString = typeof item === 'string';
-  const height = item
-    ? isItemString
-      ? cellHeight
-      : Number(cellHeight) - IDEAL_SPACE_BW_TILES
-    : undefined;
-  const width = item
-    ? isItemString
-      ? '100%'
-      : Number(cellWidth) - IDEAL_SPACE_BW_TILES
-    : undefined;
+  const { width, height } = getHeightAndWidthOfCell(cellHeight, cellWidth, item);
   const wrapperStyles = {
     ...style,
     height,

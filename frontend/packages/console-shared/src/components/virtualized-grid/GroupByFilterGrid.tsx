@@ -50,7 +50,7 @@ const GroupByFilterGrid: React.FC<GroupByFilterGridProps> = ({
       className="ocs-grid"
       autoHeight
       ref={registerChild}
-      height={height}
+      height={height ?? 0}
       width={width}
       scrollTop={scrollTop}
       rowHeight={getRowHeight}

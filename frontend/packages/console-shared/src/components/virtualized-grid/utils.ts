@@ -1,4 +1,5 @@
-import { GroupedItems, CellItem } from './types';
+import { GroupedItems, CellItem, CellSize } from './types';
+import { IDEAL_SPACE_BW_TILES } from './const';
 
 /**
  *
@@ -81,3 +82,35 @@ export const getItemsAndRowCount = (
       headerRows: [],
     },
   );
+
+/**
+ *
+ * @param h height provided by cell renderer style prop
+ * @param w width provided by cell renderer style prop
+ * @param item item to render in cell
+ *
+ * calculate the height and width of rendered cell
+ */
+export const getHeightAndWidthOfCell = (
+  h: string | number,
+  w: string | number,
+  item: CellItem,
+): CellSize => {
+  let height: string | number;
+  let width: string | number;
+  if (!item) return { height, width };
+  const isItemString = typeof item === 'string';
+
+  if (Number.isNaN(Number(h))) {
+    height = h;
+  } else {
+    height = isItemString ? h : Number(h) - IDEAL_SPACE_BW_TILES;
+  }
+
+  if (Number.isNaN(Number(w))) {
+    width = w;
+  } else {
+    width = isItemString ? '100%' : Number(w) - IDEAL_SPACE_BW_TILES;
+  }
+  return { height, width };
+};

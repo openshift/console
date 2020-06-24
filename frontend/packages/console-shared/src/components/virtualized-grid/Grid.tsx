@@ -37,7 +37,7 @@ const Grid: React.FC<GridProps> = ({
       className="ocs-grid"
       autoHeight
       ref={registerChild}
-      height={height}
+      height={height ?? 0}
       width={width}
       scrollTop={scrollTop - cache.rowHeight({ index: 0 })}
       rowHeight={(params) => cache.rowHeight(params) + CELL_PADDING}
