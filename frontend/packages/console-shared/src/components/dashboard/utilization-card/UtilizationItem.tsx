@@ -81,7 +81,7 @@ export const MultilineUtilizationItem: React.FC<MultilineUtilizationItemProps> =
         <div className="co-utilization-card__item-description">
           <div className="co-utilization-card__item-section-multiline">
             <h4 className="pf-c-title pf-m-md">{title}</h4>
-            {error || (!isLoading && !data.every((datum) => datum.length)) ? (
+            {error || (!isLoading && !(data.length && data.every((datum) => datum.length))) ? (
               <div className="text-secondary">Not available</div>
             ) : (
               <div className="co-utilization-card__item-description">{currentValue}</div>
