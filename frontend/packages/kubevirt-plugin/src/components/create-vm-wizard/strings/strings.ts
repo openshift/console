@@ -4,8 +4,7 @@ export const CREATE_VM = 'Create Virtual Machine';
 export const CREATE_VM_TEMPLATE = `${CREATE_VM} Template`;
 export const IMPORT = `Import`;
 export const IMPORT_VM = 'Import Virtual Machine';
-export const REVIEW_AND_CREATE = 'Review and create';
-export const REVIEW_AND_IMPORT = 'Review and import';
+export const REVIEW_AND_CONFIRM = 'Review and confirm';
 export const NO_TEMPLATE = 'None';
 export const SELECT_TEMPLATE = '--- Select Template ---';
 export const NO_TEMPLATE_AVAILABLE = 'No template available';
@@ -15,9 +14,6 @@ export const WIZARD_CLOSE_PROMPT =
 
 export const getCreateVMLikeEntityLabel = (isTemplate: boolean, isProviderImport: boolean) =>
   isProviderImport ? IMPORT : isTemplate ? CREATE_VM_TEMPLATE : CREATE_VM;
-
-export const getReviewAndCreateVMLikeEntityLabel = (isProviderImport: boolean) =>
-  isProviderImport ? REVIEW_AND_IMPORT : REVIEW_AND_CREATE;
 
 export const TabTitleResolver = {
   [VMWizardTab.IMPORT_PROVIDERS]: 'Connect to Provider',
