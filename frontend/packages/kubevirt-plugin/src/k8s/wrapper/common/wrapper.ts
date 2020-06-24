@@ -14,6 +14,8 @@ export abstract class Wrapper<RESOURCE extends {}, SELF extends Wrapper<RESOURCE
 
   asResource = (copy = false): RESOURCE => (copy ? _.cloneDeep(this.data) : this.data);
 
+  isEmpty = () => _.isEmpty(this.data);
+
   mergeWith(...wrappers: SELF[]): SELF {
     if (wrappers) {
       const update = _.merge({}, ...wrappers.filter((w) => w?.data).map((w) => w.data));
