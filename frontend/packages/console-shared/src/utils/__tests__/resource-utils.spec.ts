@@ -17,11 +17,12 @@ import {
   sampleKnativeDeployments,
   MockKnativeResources,
 } from '@console/knative-plugin/src/topology/__tests__/topology-knative-test-data';
+import { DaemonSetModel, StatefulSetModel } from '@console/internal/models';
 import {
-  createDaemonSetItems,
   createDeploymentConfigItems,
+  createOverviewItemsForType,
   createPodItems,
-  createStatefulSetItems,
+  createWorkloadItems,
   getPodsForDeploymentConfigs,
   getPodsForDeployments,
 } from '../resource-utils';
@@ -92,6 +93,7 @@ enum Keys {
   ROLLINGOUT = 'isRollingOut',
   OBJ = 'obj',
   PODS = 'pods',
+  JOBS = 'jobs',
   PREVIOUS = 'previous',
   ROUTES = 'routes',
   STATUS = 'status',
@@ -160,7 +162,8 @@ describe('TransformResourceData', () => {
   });
 
   it('should create StatefulSets Items for a provided ss', () => {
-    const transformedData = createStatefulSetItems(
+    const transformedData = createWorkloadItems(
+      StatefulSetModel,
       sampleStatefulSets.data,
       MockResources,
       knativeOverviewResourceUtils,
@@ -170,17 +173,22 @@ describe('TransformResourceData', () => {
   });
 
   it('should not have rc current or previous prop for created StatefulSets Items for a provided ss', () => {
-    const transformedData = createStatefulSetItems(
+    const transformedData = createWorkloadItems(
+      StatefulSetModel,
       sampleStatefulSets.data,
       MockResources,
       knativeOverviewResourceUtils,
     );
     expect(transformedData).toHaveLength(1);
-    expect(transformedData[0]).not.toHaveProperties([...dsAndSSKeys, 'previous']);
+    expect(transformedData[0][Keys.CURRENT]).toBeUndefined();
+    expect(transformedData[0][Keys.PREVIOUS]).toBeUndefined();
+    expect(transformedData[0][Keys.ROLLINGOUT]).toBeUndefined();
+    expect(transformedData[0][Keys.BC]).toHaveLength(0);
   });
 
   it('should create DaemonSets Items for a provided ds', () => {
-    const transformedData = createDaemonSetItems(
+    const transformedData = createWorkloadItems(
+      DaemonSetModel,
       sampleDaemonSets.data,
       MockResources,
       knativeOverviewResourceUtils,
@@ -190,13 +198,17 @@ describe('TransformResourceData', () => {
   });
 
   it('should not have rc current or previous prop for created DaemonSets Items for a provided ds', () => {
-    const transformedData = createDaemonSetItems(
+    const transformedData = createWorkloadItems(
+      DaemonSetModel,
       sampleDaemonSets.data,
       MockResources,
       knativeOverviewResourceUtils,
     );
     expect(transformedData).toHaveLength(1);
-    expect(transformedData[0]).not.toHaveProperties([...dsAndSSKeys, 'current']);
+    expect(transformedData[0][Keys.CURRENT]).toBeUndefined();
+    expect(transformedData[0][Keys.PREVIOUS]).toBeUndefined();
+    expect(transformedData[0][Keys.ROLLINGOUT]).toBeUndefined();
+    expect(transformedData[0][Keys.BC]).toHaveLength(0);
   });
 
   it('should return pods and replication controllers for a given DeploymentConfig', () => {
@@ -227,5 +239,25 @@ describe('TransformResourceData', () => {
     transformedData.forEach((element) => {
       expect(element).not.toHaveProperties([...podKeys, 'current', 'previous']);
     });
+  });
+
+  it('should create standalone Job Items', () => {
+    const transformedData = createOverviewItemsForType('jobs', MockResources);
+    expect(transformedData).toHaveLength(1);
+    expect(transformedData[0][Keys.CURRENT]).toBeUndefined();
+    expect(transformedData[0][Keys.PREVIOUS]).toBeUndefined();
+    expect(transformedData[0][Keys.ROLLINGOUT]).toBeUndefined();
+    expect(transformedData[0][Keys.BC]).toHaveLength(0);
+  });
+
+  it('should create CronJob Items', () => {
+    const transformedData = createOverviewItemsForType('cronJobs', MockResources);
+    expect(transformedData).toHaveLength(1);
+    expect(transformedData[0][Keys.CURRENT]).toBeUndefined();
+    expect(transformedData[0][Keys.PREVIOUS]).toBeUndefined();
+    expect(transformedData[0][Keys.ROLLINGOUT]).toBeUndefined();
+    expect(transformedData[0][Keys.BC]).toHaveLength(1);
+    expect(transformedData[0][Keys.JOBS]).toHaveLength(2);
+    expect(transformedData[0][Keys.PODS]).toHaveLength(2);
   });
 });

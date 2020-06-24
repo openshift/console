@@ -42,7 +42,7 @@ const ModifyJobParallelism: KebabAction = (kind: K8sKind, obj: JobKind) => ({
     verb: 'patch',
   },
 });
-const menuActions: KebabAction[] = [
+export const menuActions: KebabAction[] = [
   ModifyJobParallelism,
   ...Kebab.getExtensionsActionsForKind(JobModel),
   ...Kebab.factory.common,
@@ -138,7 +138,7 @@ const jobStatus = (job: JobKind): string => {
   return job && job.status ? _.get(job, 'status.conditions[0].type', 'In Progress') : null;
 };
 
-const JobDetails: React.FC<JobsDetailsProps> = ({ obj: job }) => (
+export const JobDetails: React.FC<JobsDetailsProps> = ({ obj: job }) => (
   <>
     <div className="co-m-pane__body">
       <div className="row">

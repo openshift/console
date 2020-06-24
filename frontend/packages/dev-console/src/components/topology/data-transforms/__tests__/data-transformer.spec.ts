@@ -103,6 +103,7 @@ describe('data transformer ', () => {
     const graphData = getTransformedTopologyData(mockResources, [
       'deploymentConfigs',
       'deployments',
+      'pods',
     ]);
     const node = getNodeForName('nodejs', graphData);
     const status = getPodStatus((node.data.data as WorkloadData).donutStatus.pods[0]);
@@ -143,14 +144,16 @@ describe('data transformer ', () => {
   });
 
   it('should return a valid daemon set', () => {
-    const graphData = getTransformedTopologyData(mockResources, ['daemonSets']);
-    expect(graphData.nodes).toHaveLength(1);
+    const graphData = getTransformedTopologyData(mockResources, ['daemonSets', 'pods']);
+    expect(graphData.nodes).toHaveLength(2);
     expect(graphData.nodes[0].data.resources.obj.kind).toEqual('DaemonSet');
   });
+
   it('should return a daemon set pod ', () => {
-    const graphData = getTransformedTopologyData(mockResources, ['daemonSets']);
-    expect(graphData.nodes).toHaveLength(1);
-    expect((graphData.nodes[0].data.data as WorkloadData).donutStatus.pods).toHaveLength(1);
+    const graphData = getTransformedTopologyData(mockResources, ['daemonSets', 'pods']);
+    expect(graphData.nodes).toHaveLength(2);
+    const daemonSets = graphData.nodes.filter((n) => n.data.resources.obj.kind === 'DaemonSet');
+    expect((daemonSets[0].data.data as WorkloadData).donutStatus.pods).toHaveLength(1);
   });
 
   it('should return a valid stateful set', () => {
@@ -158,10 +161,51 @@ describe('data transformer ', () => {
     expect(graphData.nodes).toHaveLength(1);
     expect(graphData.nodes[0].data.resources.obj.kind).toEqual('StatefulSet');
   });
+
   it('should return a stateful set pod ', () => {
-    const graphData = getTransformedTopologyData(mockResources, ['statefulSets']);
+    const graphData = getTransformedTopologyData(mockResources, ['statefulSets', 'pods']);
+    expect(graphData.nodes).toHaveLength(2);
+    const statefulSets = graphData.nodes.filter((n) => n.data.resources.obj.kind === 'StatefulSet');
+    expect((statefulSets[0].data.data as WorkloadData).donutStatus.pods).toHaveLength(1);
+  });
+
+  it('should return a valid standalone pod', () => {
+    const graphData = getTransformedTopologyData(mockResources, ['pods']);
+    expect(graphData.nodes).toHaveLength(1);
+    expect(graphData.nodes[0].data.resources.obj.kind).toEqual('Pod');
+  });
+
+  it('should return a standalone pod pod ', () => {
+    const graphData = getTransformedTopologyData(mockResources, ['pods']);
     expect(graphData.nodes).toHaveLength(1);
     expect((graphData.nodes[0].data.data as WorkloadData).donutStatus.pods).toHaveLength(1);
+  });
+
+  it('should return a valid standalone job', () => {
+    const graphData = getTransformedTopologyData(mockResources, ['jobs']);
+    expect(graphData.nodes).toHaveLength(1);
+    expect(graphData.nodes[0].data.resources.obj.kind).toEqual('Job');
+  });
+
+  it('should return a standalone job pod ', () => {
+    const graphData = getTransformedTopologyData(mockResources, ['jobs', 'pods']);
+    expect(graphData.nodes).toHaveLength(2);
+    const jobs = graphData.nodes.filter((n) => n.data.resources.obj.kind === 'Job');
+    expect((jobs[0].data.data as WorkloadData).donutStatus.pods).toHaveLength(1);
+  });
+
+  it('should return a valid cronjobs', () => {
+    const graphData = getTransformedTopologyData(mockResources, ['cronJobs']);
+    expect(graphData.nodes).toHaveLength(1);
+    expect(graphData.nodes[0].data.resources.obj.kind).toEqual('CronJob');
+  });
+
+  it('should return a CronJob pod ', () => {
+    const graphData = getTransformedTopologyData(mockResources, ['cronJobs', 'jobs', 'pods']);
+    expect(graphData.nodes).toHaveLength(3);
+    const cronJobs = graphData.nodes.filter((n) => n.data.resources.obj.kind === 'CronJob');
+    expect(cronJobs[0].data.resources.jobs).toHaveLength(2);
+    expect((cronJobs[0].data.data as WorkloadData).donutStatus.pods).toHaveLength(2);
   });
 
   it('should return a valid che workspace factory URL if cheURL is there', () => {

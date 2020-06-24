@@ -8,6 +8,8 @@ import {
   ReplicationControllerModel,
   ReplicaSetModel,
   PodModel,
+  JobModel,
+  CronJobModel,
 } from '@console/internal/models';
 import { ChartLabel } from '@patternfly/react-charts';
 import {
@@ -64,8 +66,8 @@ const applyPods = (podsData: PodRingData, dc: PodRCData) => {
   return podsData;
 };
 
-const pluralizeString = (count: number, singularString: string, expectedString?: string) =>
-  count && count > 1 ? expectedString || `${singularString}s` : singularString;
+const podKindString = (count: number) =>
+  (count === 1 ? PodModel.label : PodModel.plural).toLowerCase();
 
 const isPendingPods = (
   pods: ExtPodKind[],
@@ -76,6 +78,10 @@ const isPendingPods = (
   (!currentPodCount && !!desiredPodCount);
 
 export const getFailedPods = (pods: ExtPodKind[]): number => {
+  if (!pods?.length) {
+    return 0;
+  }
+
   return pods.reduce((acc, currValue) => {
     if ([AllPodStatus.CrashLoopBackOff, AllPodStatus.Failed].includes(getPodStatus(currValue))) {
       return acc + 1;
@@ -106,7 +112,7 @@ const getTitleAndSubtitle = (
   if (currentPodCount) {
     titlePhrase = currentPodCount.toString();
     if (currentPodCount === desiredPodCount) {
-      subTitlePhrase = pluralizeString(currentPodCount, 'pod');
+      subTitlePhrase = podKindString(currentPodCount);
     } else {
       subTitlePhrase = `scaling to ${desiredPodCount}`;
       longSubtitle = true;
@@ -167,11 +173,24 @@ export const podRingLabel = (
         subTitle = `scaling to ${desiredPodCount}`;
       } else {
         title = currentPodCount;
-        subTitle = pluralizeString(currentPodCount, 'pod');
+        subTitle = podKindString(currentPodCount);
       }
       return {
         title,
         subTitle,
+        titleComponent: getTitleComponent(),
+      };
+    case PodModel.kind:
+    case JobModel.kind:
+      return {
+        title: '1',
+        subTitle: PodModel.label,
+        titleComponent: getTitleComponent(),
+      };
+    case CronJobModel.kind:
+      return {
+        title: `${pods.length}`,
+        subTitle: podKindString(currentPodCount),
         titleComponent: getTitleComponent(),
       };
     default:

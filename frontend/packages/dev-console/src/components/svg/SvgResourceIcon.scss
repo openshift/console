@@ -12,10 +12,15 @@
 }
 .odc-resource-icon-deployment,
 .odc-resource-icon-daemonset,
-.odc-resource-icon-deploymentconfig {
+.odc-resource-icon-deploymentconfig,
+.odc-resource-icon-job
+{
   fill: $color-pod-overlord;
 }
 .odc-resource-icon-application {
   fill: $color-application-dark;
+}
+.odc-resource-icon-pod {
+  fill: $color-pod-dark;
 }
 

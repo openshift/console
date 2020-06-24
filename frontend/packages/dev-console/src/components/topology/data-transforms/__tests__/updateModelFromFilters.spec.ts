@@ -44,7 +44,7 @@ describe('topology model ', () => {
 
   it('should have the correct nodes, groups, and edges when no filters', () => {
     const topologyTransformedData = getTransformedTopologyData();
-    expect(topologyTransformedData.nodes.filter((n) => !n.group)).toHaveLength(7);
+    expect(topologyTransformedData.nodes.filter((n) => !n.group)).toHaveLength(10);
     expect(topologyTransformedData.nodes.filter((n) => n.group)).toHaveLength(2);
     expect(topologyTransformedData.edges).toHaveLength(1);
   });
@@ -57,7 +57,7 @@ describe('topology model ', () => {
       'application-1',
       filterers,
     );
-    expect(newModel.nodes.filter((n) => !n.group).length).toBe(7);
+    expect(newModel.nodes.filter((n) => !n.group).length).toBe(10);
     expect(newModel.nodes.filter((n) => !n.group && n.visible).length).toBe(2);
     expect(newModel.nodes.filter((n) => n.group).length).toBe(2);
     expect(newModel.nodes.filter((n) => n.group && n.visible).length).toBe(1);

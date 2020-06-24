@@ -365,6 +365,18 @@ export const getBaseWatchedResources = (namespace: string): WatchK8sResources<an
       namespace,
       optional: true,
     },
+    jobs: {
+      isList: true,
+      kind: 'Job',
+      namespace,
+      optional: true,
+    },
+    cronJobs: {
+      isList: true,
+      kind: 'CronJob',
+      namespace,
+      optional: true,
+    },
     buildConfigs: {
       isList: true,
       kind: 'BuildConfig',
