@@ -9,7 +9,6 @@ import {
 } from '@console/internal/components/factory';
 import { VMIKind } from '../../../types';
 import { VMIUsersAlert } from './vmi-users-alert';
-import { redirectToList } from './utils';
 
 export const ConfirmVMIModal = withHandlePromise((props: ConfirmVMIModalProps) => {
   const {
@@ -31,9 +30,7 @@ export const ConfirmVMIModal = withHandlePromise((props: ConfirmVMIModalProps) =
   const submit = (e) => {
     e.preventDefault();
 
-    return handlePromise(executeFn())
-      .then(close)
-      .then(() => redirectToList(vmi));
+    return handlePromise(executeFn()).then(close);
   };
 
   return (
