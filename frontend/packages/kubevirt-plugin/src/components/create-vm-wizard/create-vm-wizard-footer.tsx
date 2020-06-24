@@ -30,7 +30,7 @@ import { iGetCommonData } from './selectors/immutable/selectors';
 import { setActiveNamespace, getActiveNamespace } from '@console/internal/actions/ui';
 import {
   getCreateVMLikeEntityLabel,
-  getReviewAndCreateVMLikeEntityLabel,
+  REVIEW_AND_CONFIRM,
   WIZARD_CLOSE_PROMPT,
 } from './strings/strings';
 import { vmWizardActions } from './redux/actions';
@@ -191,7 +191,7 @@ const CreateVMWizardFooterComponent: React.FC<CreateVMWizardFooterComponentProps
                   }
                 }}
               >
-                {getReviewAndCreateVMLikeEntityLabel(isProviderImport)}
+                {REVIEW_AND_CONFIRM}
               </Button>
             )}
             {areMainTabsHidden && canNavigateEverywhere && (
