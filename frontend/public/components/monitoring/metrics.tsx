@@ -895,7 +895,7 @@ const QueryBrowserWrapper_: React.FC<QueryBrowserWrapperProps> = ({
     // Pick a suitable example query based on whether we are limiting results to a single namespace
     const text = namespace
       ? 'sum(rate(container_cpu_usage_seconds_total{image!="", container!="POD"}[5m])) by (pod)'
-      : 'sum(sort_desc(sum_over_time(ALERTS{alertstate="firing"}[24h]))) by (alertname)';
+      : 'sort_desc(sum(sum_over_time(ALERTS{alertstate="firing"}[24h])) by (alertname))';
 
     patchQuery(index, { isEnabled: true, query: text, text });
   };
