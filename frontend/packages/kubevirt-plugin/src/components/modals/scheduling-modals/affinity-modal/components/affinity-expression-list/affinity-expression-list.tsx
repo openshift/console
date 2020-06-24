@@ -11,6 +11,7 @@ export const AffinityExpressionList = ({
   onAdd,
   onChange,
   onDelete,
+  rowID,
 }: AffinityExpressionListProps) => {
   return (
     <LabelsList
@@ -36,6 +37,7 @@ export const AffinityExpressionList = ({
               expression={expression}
               onChange={onChange}
               onDelete={onDelete}
+              rowID={rowID}
             />
           ))}
         </>
@@ -50,4 +52,5 @@ type AffinityExpressionListProps = {
   onAdd: () => void;
   onChange: (aff: AffinityLabel) => void;
   onDelete: (id: any) => void;
+  rowID: string;
 };

@@ -18,6 +18,7 @@ export const AffinityExpressionRow = ({
   expression,
   onChange,
   onDelete,
+  rowID = 'affinity',
 }: AffinityExpressionRowProps) => {
   const { id, key, values, operator } = expression;
   const enableValueField = operator !== 'Exists' && operator !== 'DoesNotExist';
@@ -35,7 +36,7 @@ export const AffinityExpressionRow = ({
     <>
       <GridItem span={4}>
         <TextInput
-          id={`affinity-${id}-key-input`}
+          id={`${rowID}-${id}-key-input`}
           className="kv-affinity-expression-row__key-input"
           placeholder="key"
           isRequired
@@ -47,7 +48,7 @@ export const AffinityExpressionRow = ({
       </GridItem>
       <GridItem span={2}>
         <FormSelect
-          id={`affinity-${id}-effect-select`}
+          id={`${rowID}-${id}-effect-select`}
           className="kv-affinity-expression-row__operator-input"
           isRequired
           value={operator}
@@ -80,7 +81,7 @@ export const AffinityExpressionRow = ({
         </Select>
       </GridItem>
       <GridItem span={1}>
-        <Button id={`affinity-${id}-delete-btn`} onClick={() => onDelete(id)} variant="plain">
+        <Button id={`${rowID}-${id}-delete-btn`} onClick={() => onDelete(id)} variant="plain">
           <MinusCircleIcon />
         </Button>
       </GridItem>
@@ -92,4 +93,5 @@ type AffinityExpressionRowProps = {
   expression: AffinityLabel;
   onChange: (label: AffinityLabel) => void;
   onDelete: (id: any) => void;
+  rowID?: string;
 };

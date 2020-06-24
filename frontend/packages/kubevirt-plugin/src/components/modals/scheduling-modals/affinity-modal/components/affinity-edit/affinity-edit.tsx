@@ -242,6 +242,7 @@ export const AffinityEdit: React.FC<AffinityEditProps> = ({
               onAdd={onLabelExpressionAdd}
               onChange={onExpressionChange}
               onDelete={onExpressionDelete}
+              rowID="affinity-expression"
             />
           </FormRow>
           {isNodeAffinity && (
@@ -280,6 +281,7 @@ export const AffinityEdit: React.FC<AffinityEditProps> = ({
                   onAdd={onLabelFieldAdd}
                   onChange={onFieldChange}
                   onDelete={onFieldDelete}
+                  rowID="affinity-field"
                 />
               </FormRow>
               {(affinityExpressions.length > 0 || affinityFields.length > 0) &&
