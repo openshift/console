@@ -379,6 +379,9 @@ export type NodeKind = {
     unschedulable?: boolean;
   };
   status?: {
+    allocatable?: {
+      [key: string]: string;
+    };
     capacity?: {
       [key: string]: string;
     };

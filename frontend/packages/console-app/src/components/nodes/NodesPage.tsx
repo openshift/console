@@ -14,12 +14,14 @@ import {
   RowFunctionArgs,
 } from '@console/internal/components/factory';
 import {
+  convertToBaseValue,
   Kebab,
   ResourceKebab,
   ResourceLink,
   Timestamp,
   humanizeBinaryBytes,
-  formatCores,
+  humanizePercentage,
+  formatToFractionalDigits,
 } from '@console/internal/components/utils';
 import { NodeMetrics, setNodeMetrics } from '@console/internal/actions/ui';
 import { PROMETHEUS_BASE_PATH } from '@console/internal/components/graphs';
@@ -108,6 +110,11 @@ type NodesRowMapFromStateProps = {
   metrics: NodeMetrics;
 };
 
+const humanizeNodeBytes = (value: number): string => {
+  const humanized = humanizeBinaryBytes(value);
+  return `${formatToFractionalDigits(humanized.value, 1)} ${humanized.unit}`;
+};
+
 const NodesTableRow = connect<NodesRowMapFromStateProps, null, NodesTableRowProps>(mapStateToProps)(
   ({
     obj: node,
@@ -119,18 +126,38 @@ const NodesTableRow = connect<NodesRowMapFromStateProps, null, NodesTableRowProp
     const nodeName = getName(node);
     const nodeUID = getUID(node);
     const usedMem = metrics?.usedMemory?.[nodeName];
-    const totalMem = metrics?.totalMemory?.[nodeName];
+    const totalMem = convertToBaseValue(node.status?.allocatable?.memory);
     const memory =
-      Number.isFinite(usedMem) && Number.isFinite(totalMem)
-        ? `${humanizeBinaryBytes(usedMem).string} / ${humanizeBinaryBytes(totalMem).string}`
-        : '-';
-    const cores = metrics?.cpu?.[nodeName];
+      Number.isFinite(usedMem) && Number.isFinite(totalMem) ? (
+        <span title={humanizeNodeBytes(usedMem)}>
+          {humanizePercentage((usedMem / totalMem) * 100).string} of {humanizeNodeBytes(totalMem)}
+        </span>
+      ) : (
+        '-'
+      );
+    const usedCPU = metrics?.cpu?.[nodeName];
+    const totalCPU = convertToBaseValue(node.status?.allocatable?.cpu);
+    const cpu =
+      Number.isFinite(usedCPU) && Number.isFinite(totalCPU) ? (
+        <span title={`${formatToFractionalDigits(usedCPU, 1)} cores`}>
+          {humanizePercentage((usedCPU / totalCPU) * 100).string} of{' '}
+          {formatToFractionalDigits(totalCPU, 1)}
+          &nbsp;cores
+        </span>
+      ) : (
+        '-'
+      );
     const usedStrg = metrics?.usedStorage?.[nodeName];
     const totalStrg = metrics?.totalStorage?.[nodeName];
     const storage =
-      Number.isFinite(usedStrg) && Number.isFinite(totalStrg)
-        ? `${humanizeBinaryBytes(usedStrg).string} / ${humanizeBinaryBytes(totalStrg).string}`
-        : '-';
+      Number.isFinite(usedStrg) && Number.isFinite(totalStrg) ? (
+        <span title={humanizeNodeBytes(usedStrg)}>
+          {humanizePercentage((usedStrg / totalStrg) * 100).string} of{' '}
+          {humanizeNodeBytes(totalStrg)}
+        </span>
+      ) : (
+        '-'
+      );
     const pods = metrics?.pods?.[nodeName] ?? '-';
     return (
       <TableRow id={nodeUID} index={index} trKey={rowKey} style={style}>
@@ -145,9 +172,7 @@ const NodesTableRow = connect<NodesRowMapFromStateProps, null, NodesTableRowProp
         </TableData>
         <TableData className={tableColumnClasses[3]}>{pods}</TableData>
         <TableData className={tableColumnClasses[4]}>{memory}</TableData>
-        <TableData className={tableColumnClasses[5]}>
-          {cores ? `${formatCores(cores)} cores` : '-'}
-        </TableData>
+        <TableData className={tableColumnClasses[5]}>{cpu}</TableData>
         <TableData className={tableColumnClasses[6]}>{storage}</TableData>
         <TableData className={tableColumnClasses[7]}>
           <Timestamp timestamp={node.metadata.creationTimestamp} />
@@ -223,10 +248,6 @@ const fetchNodeMetrics = (): Promise<NodeMetrics> => {
     {
       key: 'usedMemory',
       query: 'sum by (instance) (node_memory_MemTotal_bytes - node_memory_MemAvailable_bytes)',
-    },
-    {
-      key: 'totalMemory',
-      query: 'sum by (instance) (node_memory_MemTotal_bytes)',
     },
     {
       key: 'usedStorage',
