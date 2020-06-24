@@ -20,6 +20,7 @@ export class AsyncComponent extends React.Component<AsyncComponentProps, AsyncCo
 
   private retryCount: number = 0;
   private maxRetries: number = 25;
+  private isAsyncMounted: boolean = false;
 
   static getDerivedStateFromProps(props, state) {
     if (!sameLoader(props.loader)(state.loader)) {
@@ -35,9 +36,14 @@ export class AsyncComponent extends React.Component<AsyncComponentProps, AsyncCo
   }
 
   componentDidMount() {
+    this.isAsyncMounted = true;
     if (this.state.Component === null) {
       this.loadComponent();
     }
+  }
+
+  componentWillUnmount() {
+    this.isAsyncMounted = false;
   }
 
   private loadComponent() {
@@ -47,7 +53,7 @@ export class AsyncComponent extends React.Component<AsyncComponentProps, AsyncCo
         if (!Component) {
           return Promise.reject(AsyncComponentError.ComponentNotFound);
         }
-        this.setState({ Component });
+        this.isAsyncMounted && this.setState({ Component });
       })
       .catch((error) => {
         if (error === AsyncComponentError.ComponentNotFound) {
