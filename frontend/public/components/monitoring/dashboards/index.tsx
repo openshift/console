@@ -441,10 +441,17 @@ const MonitoringDashboardsPage_: React.FC<MonitoringDashboardsPageProps> = ({
         setLoaded();
         setError(undefined);
 
-        const getBoardData = (item): Board => ({
-          data: JSON.parse(_.values(item?.data)[0]),
-          name: item.metadata.name,
-        });
+        const getBoardData = (item): Board => {
+          try {
+            return {
+              data: JSON.parse(_.values(item.data)[0]),
+              name: item.metadata.name,
+            };
+          } catch (e) {
+            setError(`Could not parse JSON data for dashboard "${item.metadata.name}"`);
+          }
+        };
+
         const newBoards = _.sortBy(_.map(response.items, getBoardData), (v) =>
           _.toLower(v?.data?.title),
         );
