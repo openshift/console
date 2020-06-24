@@ -22,6 +22,9 @@
       ],
       "testOBC": [
         "integration-tests/tests/obcTest.scenario.ts"
+      ],
+      "dashboard-test": [
+        "integration-tests/**/objectServiceDashboard.scenario.ts"
       ]
     }
   }
