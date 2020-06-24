@@ -626,7 +626,7 @@ const QueryTable_: React.FC<QueryTableProps> = ({
   const safeFetch = React.useCallback(useSafeFetch(), []);
 
   const tick = () => {
-    if (query) {
+    if (isEnabled && isExpanded && query) {
       safeFetch(getPrometheusURL({ endpoint: PrometheusEndpoint.QUERY, namespace, query }))
         .then((response) => {
           setData(_.get(response, 'data'));
