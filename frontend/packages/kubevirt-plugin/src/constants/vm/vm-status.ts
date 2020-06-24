@@ -45,7 +45,11 @@ export class VMStatus extends StatusEnum<VMStatusSimpleLabel | StatusSimpleLabel
   });
   static readonly VM_ERROR = new VMStatus('VMStatus_VM_ERROR', 'VM error', { isError: true });
   static readonly VMI_ERROR = new VMStatus('VMStatus_VMI_ERROR', 'VMI error', { isError: true });
-  static readonly POD_ERROR = new VMStatus('VMStatus_POD_ERROR', 'Pod error', { isError: true });
+  static readonly LAUNCHER_POD_ERROR = new VMStatus(
+    'VMStatus_LAUNCHER_POD_ERROR',
+    'Launcher pod error',
+    { isError: true },
+  );
   static readonly CDI_IMPORT_ERROR = new VMStatus('VMStatus_CDI_IMPORT_ERROR', 'Import error', {
     isError: true,
     group: StatusGroup.CDI,

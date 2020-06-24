@@ -233,7 +233,7 @@ const isError = (vm: VMKind, vmi: VMIKind, launcherPod: PodKind): VMStatusBundle
     if (POD_STATUS_ALL_ERROR.includes(podStatus.status)) {
       return {
         ...podStatus,
-        status: VMStatus.POD_ERROR,
+        status: VMStatus.LAUNCHER_POD_ERROR,
         pod: launcherPod,
       };
     }
