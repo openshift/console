@@ -41,10 +41,16 @@ export type LocalVolumeSetKind = K8sResourceCommon & {
 export type GetRows = (
   {
     componentProps,
+    customData,
   }: {
     componentProps: { data: NodeKind[] };
+    customData?: {
+      filteredNodes: string[];
+      preSelected?: string[];
+    };
   },
   visibleRows: Set<string>,
   setVisibleRows: React.Dispatch<React.SetStateAction<Set<string>>>,
   selectedNodes: Set<string>,
+  setSelectedNodes?: (nodes: NodeKind[]) => void,
 ) => NodeTableRow[];

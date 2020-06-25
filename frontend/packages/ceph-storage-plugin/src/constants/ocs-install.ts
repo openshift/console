@@ -17,3 +17,9 @@ export enum defaultRequestSize {
   BAREMETAL = '1',
   NON_BAREMETAL = '2Ti',
 }
+
+export enum CreateStepsSC {
+  DISCOVER = 'DISCOVER',
+  STORAGECLASS = 'STORAGECLASS',
+  STORAGECLUSTER = 'STORAGECLUSTER',
+}

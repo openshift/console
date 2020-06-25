@@ -23,6 +23,8 @@ export const OCS_FLAG = 'OCS';
 // Todo(bipuladh): Remove this completely in 4.6
 export const CEPH_FLAG = 'CEPH';
 
+export const LSO_FLAG = 'LSO';
+
 /* Key and Value should be same value received in CSV  */
 export const OCS_SUPPORT_FLAGS = {
   SNAPSHOT: 'SNAPSHOT',

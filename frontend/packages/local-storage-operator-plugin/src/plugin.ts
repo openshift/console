@@ -99,6 +99,22 @@ const plugin: Plugin<ConsumedExtensions> = [
       required: [LSO_DEVICE_DISCOVERY],
     },
   },
+  {
+    type: 'Page/Route',
+    properties: {
+      exact: true,
+      path: `/k8s/ns/:ns/${ClusterServiceVersionModel.plural}/:appName/${referenceForModel(
+        models.LocalVolumeDiscovery,
+      )}/~new`,
+      loader: () =>
+        import(
+          './components/auto-detect-volume/auto-detect-volume' /* webpackChunkName: "lso-auto-detect-volume" */
+        ).then((m) => m.default),
+    },
+    flags: {
+      required: [LSO_FLAG],
+    },
+  },
 ];
 
 export default plugin;

@@ -57,10 +57,21 @@ const getColumns = () => {
   ];
 };
 
-const getRows: GetRows = ({ componentProps }, visibleRows, setVisibleRows, selectedNodes) => {
+const getRows: GetRows = (
+  { componentProps, customData },
+  visibleRows,
+  setVisibleRows,
+  selectedNodes,
+  setSelectedNodes,
+) => {
   const { data } = componentProps;
+  const { filteredNodes, preSelected } = customData;
 
-  const filteredData = data.filter((node: NodeKind) => !hasTaints(node));
+  const nodeList = filteredNodes?.length ? filteredNodes : data.map(getName);
+  const filteredData = data.filter(
+    (node: NodeKind) => !hasTaints(node) && nodeList.includes(getName(node)),
+  );
+
   const rows = filteredData.map((node: NodeKind) => {
     const cpuSpec: string = getNodeCPUCapacity(node);
     const memSpec: string = getNodeAllocatableMemory(node);
@@ -95,6 +106,10 @@ const getRows: GetRows = ({ componentProps }, visibleRows, setVisibleRows, selec
 
   if (!_.isEqual(uids, visibleRows)) {
     setVisibleRows(uids);
+    if (preSelected && !selectedNodes?.size && filteredData.length) {
+      const preSelectedRows = filteredData.filter((node) => preSelected.includes(getName(node)));
+      setSelectedNodes(preSelectedRows);
+    }
   }
   return rows;
 };
@@ -102,21 +117,28 @@ const getRows: GetRows = ({ componentProps }, visibleRows, setVisibleRows, selec
 export const NodesSelectionList: React.FC<NodesSelectionListProps> = (props) => {
   const [visibleRows, setVisibleRows] = React.useState<Set<string>>();
 
-  const { onSelect, selectedRows: selectedNodes } = useSelectList<NodeKind>(
-    props.data,
-    visibleRows,
-    props.customData.onRowSelected,
-  );
+  const {
+    onSelect,
+    selectedRows: selectedNodes,
+    updateSelectedRows: setSelectedNodes,
+  } = useSelectList<NodeKind>(props.data, visibleRows, props.customData.onRowSelected);
 
   return (
     <>
-      <div className="lso-node-selection-table__table--scroll">
+      <div
+        className={classNames(
+          'lso-node-selection-table__table--scroll',
+          props.customData.className,
+        )}
+      >
         <Table
           {...props}
           aria-label="Select nodes for creating volume filter"
           data-test-id="create-lvs-form-node-selection-table"
           Header={getColumns}
-          Rows={(rowProps) => getRows(rowProps, visibleRows, setVisibleRows, selectedNodes)}
+          Rows={(rowProps) =>
+            getRows(rowProps, visibleRows, setVisibleRows, selectedNodes, setSelectedNodes)
+          }
           customData={props.customData}
           virtualize={false}
           onSelect={onSelect}
@@ -133,5 +155,7 @@ type NodesSelectionListProps = {
   data: NodeKind[];
   customData: {
     onRowSelected: (nodes: NodeKind[]) => void;
+    className?: string;
+    preSelected?: string[];
   };
 };

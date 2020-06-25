@@ -27,13 +27,19 @@ export const LocalVolumeSetInner: React.FC<LocalVolumeSetInnerProps> = (props) =
   const { dispatch, state } = props;
 
   React.useEffect(() => {
-    if (!state.showNodesList) {
-      dispatch({ type: 'setNodeNames', value: state.allNodeNames });
+    if (!state.showNodesListOnLVS) {
+      // explicitly needs to set this in order to make the validation works
+      dispatch({ type: 'setNodeNames', value: [] });
+      dispatch({ type: 'setNodeNamesForLVS', value: state.nodeNamesForLVS });
+    } else {
+      dispatch({ type: 'setNodeNames', value: state.nodeNames });
     }
-  }, [dispatch, state.allNodeNames, state.showNodesList]);
+    // TODO: Neha- Find out a better way
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dispatch, state.nodeNamesForLVS, state.showNodesListOnLVS]);
 
   const toggleShowNodesList = () => {
-    dispatch({ type: 'setShowNodesList', value: !state.showNodesList });
+    dispatch({ type: 'setShowNodesListOnLVS', value: !state.showNodesListOnLVS });
   };
 
   const onMaxSizeChange = (size: string) => {
@@ -64,6 +70,7 @@ export const LocalVolumeSetInner: React.FC<LocalVolumeSetInnerProps> = (props) =
           type={TextInputTypes.text}
           id="create-lvs--storage-class-name"
           value={state.storageClassName}
+          placeholder={state.volumeSetName}
           onChange={(name: string) => dispatch({ type: 'setStorageClassName', name })}
         />
       </FormGroup>
@@ -71,28 +78,29 @@ export const LocalVolumeSetInner: React.FC<LocalVolumeSetInnerProps> = (props) =
         Filter Disks
       </Text>
       <FormGroup label="Node Selector" fieldId="create-lvs--radio-group-node-selector">
-        <div id="create-lvs--radio-group-node-selector">
+        <div id="create-lvs-radio-group-node-selector">
           <Radio
             label="All nodes"
             name="nodes-selection"
-            id="create-lvs--radio-all-nodes"
+            id="create-lvs-radio-all-nodes"
             className="lso-create-lvs__all-nodes-radio--padding"
             value="allNodes"
             onChange={toggleShowNodesList}
-            description="Selecting all nodes will search for available disks storage on all nodes."
-            defaultChecked
+            description="Selecting all nodes will use the available disks that match the selected filters on all nodes."
+            checked={!state.showNodesListOnLVS}
           />
           <Radio
             label="Select nodes"
             name="nodes-selection"
-            id="create-lvs--radio-select-nodes"
+            id="create-lvs-radio-select-nodes"
             value="selectedNodes"
             onChange={toggleShowNodesList}
-            description="Selecting nodes allow you to limit the search for available disks to specific nodes."
+            description="Selecting all nodes will use the available disks that match the selected filters only on selected nodes."
+            checked={state.showNodesListOnLVS}
           />
         </div>
       </FormGroup>
-      {state.showNodesList && (
+      {state.showNodesListOnLVS && (
         <ListPage
           showTitle={false}
           kind={NodeModel.kind}
@@ -102,6 +110,8 @@ export const LocalVolumeSetInner: React.FC<LocalVolumeSetInnerProps> = (props) =
               const nodes = selectedNodes.map(getName);
               dispatch({ type: 'setNodeNames', value: nodes });
             },
+            filteredNodes: state.nodeNamesForLVS,
+            preSelected: state.nodeNames,
           }}
         />
       )}

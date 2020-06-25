@@ -153,14 +153,7 @@ const CreateBucketClass: React.FC<CreateBCProps> = ({ match }) => {
         </div>
       </div>
       <div className="nb-create-bc-wizard">
-        <Wizard
-          isOpen
-          title="Create new Bucket Class"
-          description="NooBaa Bucket Class is a CRD representing a class for buckets that defines policies for data placement and more"
-          steps={steps}
-          onSave={finalStep}
-          onClose={() => history.goBack()}
-        />
+        <Wizard steps={steps} onSave={finalStep} onClose={() => history.goBack()} />
       </div>
     </>
   );
