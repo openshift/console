@@ -46,7 +46,7 @@ const markdownConvert = (markdown) => {
 };
 
 export class SyncMarkdownView extends React.Component<
-  { content: string; styles?: string; exactHeight?: boolean },
+  { content: string; styles?: string; exactHeight?: boolean; truncateContent?: boolean },
   {}
 > {
   private frame: any;
@@ -89,13 +89,20 @@ export class SyncMarkdownView extends React.Component<
         <link rel="stylesheet" href="${link.href}">`,
       '',
     );
+    const content = this.props.truncateContent
+      ? _.truncate(this.props.content, {
+          length: 256,
+          separator: ' ',
+          omission: '\u2026',
+        })
+      : this.props.content;
 
     const contents = `
       ${linkRefs}
       <style type="text/css">
       body {
         background-color: transparent !important;
-        color: ${this.props.content ? '#333' : '#999'};
+        color: ${content ? '#333' : '#999'};
         font-family: var(--pf-global--FontFamily--sans-serif);
         min-width: auto !important;
       }
@@ -116,7 +123,7 @@ export class SyncMarkdownView extends React.Component<
       ${this.props.styles ? this.props.styles : ''}
       </style>
       <body class="pf-m-redhat-font"><div style="overflow-y: auto;">${markdownConvert(
-        this.props.content || 'Not available',
+        content || 'Not available',
       )}</div></body>`;
     return (
       <iframe

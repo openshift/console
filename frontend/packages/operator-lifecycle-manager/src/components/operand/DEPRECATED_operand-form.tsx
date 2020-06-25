@@ -40,6 +40,7 @@ import {
 import { ClusterServiceVersionLogo } from '../index';
 import { ResourceRequirements } from '../descriptors/spec/resource-requirements';
 import { Descriptor, SpecCapability, StatusCapability } from '../descriptors/types';
+import { SyncMarkdownView } from '@console/internal/components/markdown-view';
 import {
   NodeAffinity,
   PodAffinity,
@@ -1208,7 +1209,7 @@ export const DEPRECATED_CreateOperandForm: React.FC<OperandFormProps> = ({
                 icon={_.get(csv, 'spec.icon[0]')}
                 provider={_.get(csv, 'spec.provider')}
               />
-              {providedAPI.description}
+              <SyncMarkdownView content={providedAPI.description} />
             </div>
           )}
         </div>

@@ -689,6 +689,7 @@ export const MarkdownView = (props: {
   content: string;
   styles?: string;
   exactHeight?: boolean;
+  truncateContent?: boolean;
 }) => {
   return (
     <AsyncComponent
@@ -717,7 +718,7 @@ export const CRDCard: React.SFC<CRDCardProps> = (props) => {
         />
       </CardHeader>
       <CardBody>
-        <p>{crd.description}</p>
+        <MarkdownView content={crd.description} truncateContent />
       </CardBody>
       {canCreate && (
         <RequireCreatePermission model={model} namespace={csv.metadata.namespace}>
