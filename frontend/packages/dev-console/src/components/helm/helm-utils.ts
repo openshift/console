@@ -174,3 +174,8 @@ export const getChartValuesYAML = (chart: HelmChart): string => {
 
   return !_.isEmpty(chart?.values) ? safeDump(chart?.values) : '';
 };
+
+export const getHelmChartReadme = (chart: HelmChart): string => {
+  const readmeFile = chart?.files?.find((file) => file.name === 'README.md');
+  return (readmeFile?.data && atob(readmeFile?.data)) ?? '';
+};

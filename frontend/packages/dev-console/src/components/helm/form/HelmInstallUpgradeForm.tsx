@@ -4,12 +4,13 @@ import { FormikProps, FormikValues } from 'formik';
 import { TextInputTypes, Grid, GridItem } from '@patternfly/react-core';
 import { InputField, FormFooter, FlexForm, YAMLEditorField } from '@console/shared';
 import FormSection from '../../import/section/FormSection';
-import { HelmActionType } from '../helm-types';
+import { HelmActionType, HelmChart } from '../helm-types';
 import HelmChartVersionDropdown from './HelmChartVersionDropdown';
 
 export interface HelmInstallUpgradeFormProps {
   chartHasValues: boolean;
   helmAction: string;
+  onVersionChange: (chart: HelmChart) => void;
 }
 
 const HelmInstallUpgradeForm: React.FC<FormikProps<FormikValues> & HelmInstallUpgradeFormProps> = ({
@@ -22,6 +23,7 @@ const HelmInstallUpgradeForm: React.FC<FormikProps<FormikValues> & HelmInstallUp
   helmAction,
   values,
   dirty,
+  onVersionChange,
 }) => {
   const { chartName, chartVersion } = values;
   const isSubmitDisabled =
@@ -44,6 +46,7 @@ const HelmInstallUpgradeForm: React.FC<FormikProps<FormikValues> & HelmInstallUp
             chartName={chartName}
             chartVersion={chartVersion}
             helmAction={helmAction}
+            onVersionChange={onVersionChange}
           />
         </Grid>
       </FormSection>
