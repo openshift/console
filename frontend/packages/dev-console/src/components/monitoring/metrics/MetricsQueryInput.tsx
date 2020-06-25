@@ -1,4 +1,5 @@
 import * as React from 'react';
+import * as _ from 'lodash';
 // FIXME upgrading redux types is causing many errors at this time
 // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
 // @ts-ignore
@@ -6,7 +7,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import * as fuzzy from 'fuzzysearch';
 import { RootState } from '@console/internal/redux';
 import { Button } from '@patternfly/react-core';
-import { Dropdown } from '@console/internal/components/utils';
+import { Dropdown, removeQueryArgument } from '@console/internal/components/utils';
 import { queryBrowserRunQueries, queryBrowserPatchQuery } from '@console/internal/actions/ui';
 import { getActiveNamespace } from '@console/internal/reducers/ui';
 import { QueryInput } from '@console/internal/components/monitoring/metrics';
@@ -17,7 +18,11 @@ import './MetricsQueryInput.scss';
 const ADD_NEW_QUERY = '#ADD_NEW_QUERY#';
 const CUSTOM_QUERY = 'Custom Query';
 
-const MetricsQueryInput: React.FC = () => {
+type MetricsQueryInputProps = {
+  query?: string;
+};
+
+const MetricsQueryInput: React.FC<MetricsQueryInputProps> = ({ query }) => {
   const items = metricsQuery;
   const autocompleteFilter = (strText, item) => fuzzy(strText, item);
   const defaultActionItem = [
@@ -32,8 +37,8 @@ const MetricsQueryInput: React.FC = () => {
     state.UI.getIn(['queryBrowser', 'queries', 0]).toJS(),
   );
   const dispatch = useDispatch();
-
   const [title, setTitle] = React.useState('Select Query');
+  const [selectedKey, setSelectedKey] = React.useState('');
   const [metric, setMetric] = React.useState('');
   const [showPromQl, setShowPromQl] = React.useState(false);
   const [isPromQlDisabled, setIsPromQlDisabled] = React.useState(false);
@@ -48,13 +53,26 @@ const MetricsQueryInput: React.FC = () => {
   }, [dispatch, metric, namespace]);
 
   React.useEffect(() => {
-    const query = queries?.query;
+    const q = queries?.query;
     const text = queries?.text;
-    if (text && text.localeCompare(query) !== 0) {
+    if (text && text.localeCompare(q) !== 0) {
       setTitle(CUSTOM_QUERY);
       setIsPromQlDisabled(true);
+      if (query) {
+        removeQueryArgument('query0');
+      }
     }
-  }, [queries]);
+  }, [query, queries]);
+
+  React.useEffect(() => {
+    if (query) {
+      const topMetricsQueries = getTopMetricsQueries(namespace);
+      const selectedQuery = _.findKey(topMetricsQueries, (topQuery) => topQuery === query);
+      const sKey = _.findKey(items, (item) => item === selectedQuery);
+      setMetric(selectedQuery);
+      selectedQuery ? setSelectedKey(sKey) : setTitle(CUSTOM_QUERY);
+    }
+  }, [query, namespace, items]);
 
   const onChange = (selectedValue: string) => {
     setMetric(metricsQuery[selectedValue]);
@@ -66,6 +84,9 @@ const MetricsQueryInput: React.FC = () => {
       setTitle(metricsQuery[selectedValue]);
       setIsPromQlDisabled(false);
     }
+    if (query) {
+      removeQueryArgument('query0');
+    }
   };
 
   return (
@@ -75,6 +96,7 @@ const MetricsQueryInput: React.FC = () => {
           <Dropdown
             autocompleteFilter={autocompleteFilter}
             items={items || {}}
+            selectedKey={selectedKey}
             actionItems={defaultActionItem}
             dropDownClassName="odc-metrics-query-input dropdown--full-width"
             menuClassName="odc-metrics-query-input__menu dropdown-menu--text-wrap"

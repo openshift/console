@@ -16,8 +16,10 @@ export const MonitoringMetrics: React.FC<MonitoringMetricsProps> = ({ patchQuery
   const params = getURLSearchParams();
   const query = params.query0;
   React.useEffect(() => {
-    patchQuery({ text: query });
-    runQueries();
+    if (query) {
+      patchQuery({ text: query });
+      runQueries();
+    }
   }, [query, patchQuery, runQueries]);
 
   return (
@@ -26,7 +28,7 @@ export const MonitoringMetrics: React.FC<MonitoringMetricsProps> = ({ patchQuery
         <title>Metrics</title>
       </Helmet>
       <div className="co-m-pane__body">
-        <MetricsQueryInput />
+        <MetricsQueryInput query={query} />
         <div className="row">
           <div className="col-xs-12">
             <ConnectedMetricsChart />
