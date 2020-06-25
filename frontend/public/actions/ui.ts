@@ -10,6 +10,7 @@ import {
   ALL_NAMESPACES_KEY,
   LAST_NAMESPACE_NAME_LOCAL_STORAGE_KEY,
   LAST_PERSPECTIVE_LOCAL_STORAGE_KEY,
+  COLUMN_MANAGEMENT_LOCAL_STORAGE_KEY,
 } from '@console/shared/src/constants';
 import { K8sResourceKind, PodKind, NodeKind } from '../module/k8s';
 import { allModels } from '../module/k8s/k8s-models';
@@ -283,8 +284,13 @@ export const sortList = (
 
   return action(ActionType.SortList, { listId, field, func, orderBy });
 };
-export const setColumnManagementFilter = (id: string, filter: any) =>
-  action(ActionType.SetColumnManagementFilter, { id, filter });
+export const setColumnManagementFilter = (id: string, filter: any) => {
+  const currentFilters =
+    JSON.parse(localStorage.getItem(COLUMN_MANAGEMENT_LOCAL_STORAGE_KEY)) ?? {};
+  currentFilters[id] = filter;
+  localStorage.setItem(COLUMN_MANAGEMENT_LOCAL_STORAGE_KEY, JSON.stringify(currentFilters));
+  return action(ActionType.SetColumnManagementFilter, { id, filter });
+};
 export const selectOverviewItem = (uid: string) => action(ActionType.SelectOverviewItem, { uid });
 export const selectOverviewDetailsTab = (tab: string) =>
   action(ActionType.SelectOverviewDetailsTab, { tab });

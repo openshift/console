@@ -9,6 +9,7 @@ import {
   NAMESPACE_LOCAL_STORAGE_KEY,
   LAST_PERSPECTIVE_LOCAL_STORAGE_KEY,
   PINNED_RESOURCES_LOCAL_STORAGE_KEY,
+  COLUMN_MANAGEMENT_LOCAL_STORAGE_KEY,
 } from '@console/shared/src/constants';
 import { AlertStates, isSilenced, SilenceStates } from '../reducers/monitoring';
 import { legalNamePattern, getNamespace } from '../components/utils/link';
@@ -78,6 +79,8 @@ export default (state: UIState, action: UIAction): UIState => {
 
     const storedPins = localStorage.getItem(PINNED_RESOURCES_LOCAL_STORAGE_KEY);
     const pinnedResources = storedPins ? JSON.parse(storedPins) : {};
+    const storedColumnFilters =
+      JSON.parse(localStorage.getItem(COLUMN_MANAGEMENT_LOCAL_STORAGE_KEY)) ?? {};
 
     return ImmutableMap({
       activeNavSectionId: 'workloads',
@@ -107,7 +110,7 @@ export default (state: UIState, action: UIAction): UIState => {
         pollInterval: null,
         queries: ImmutableList([newQueryBrowserQuery()]),
       }),
-      columnManagement: ImmutableMap(),
+      columnManagement: ImmutableMap(storedColumnFilters),
       pinnedResources,
     });
   }
