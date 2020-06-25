@@ -218,6 +218,13 @@ const CreateSC: React.FC<CreateSCProps> = ({ match }) => {
 
   return (
     <>
+      {!state.finalStep && (
+        <Alert className="co-alert" variant="info" title="Missing storage class" isInline>
+          The storage cluster needs to use a storage class to consume the local storage. In order to
+          create one you need to discover the available disks and create a storage class using the
+          filters to select the disks you wish to use.
+        </Alert>
+      )}
       <div className="ceph-create-sc-wizard">
         <Wizard steps={steps} onClose={() => history.goBack()} footer={CustomFooter} />
       </div>

@@ -31,7 +31,7 @@ const InstallCluster: React.FC<InstallClusterProps> = ({ match }) => {
     null,
   );
   const [downloadFile, setDownloadFile] = React.useState(null);
-  const [mode, setMode] = React.useState(MODES.ATTACHED_DEVICES);
+  const [mode, setMode] = React.useState(MODES.INTERNAL);
   const [clusterServiceVersion, setClusterServiceVersion] = React.useState(null);
 
   const handleModeChange = (event: React.FormEvent<HTMLInputElement>) => {

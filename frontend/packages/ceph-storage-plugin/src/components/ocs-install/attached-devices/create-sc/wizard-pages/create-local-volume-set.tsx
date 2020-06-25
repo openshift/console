@@ -9,8 +9,13 @@ import {
 import { getNodes } from '@console/local-storage-operator-plugin/src/utils';
 import { getLocalVolumeSetRequestData } from '@console/local-storage-operator-plugin/src/components/local-volume-set/local-volume-set-request-data';
 import { State, Action } from '../state';
-import { minSelectedNode } from '../../../../../constants';
 import { DiscoveryDonutChart } from './donut-chart';
+import {
+  minSelectedNode,
+  diskTypeDropdownItems,
+  diskModeDropdownItems,
+  allNodesSelectorTxt,
+} from '../../../../../constants';
 import '../../attached-devices.scss';
 
 const makeLocalVolumeSetCall = (state: State, dispatch: React.Dispatch<Action>) => {
@@ -20,6 +25,7 @@ const makeLocalVolumeSetCall = (state: State, dispatch: React.Dispatch<Action>) 
     .then(() => {
       state.onNextClick();
       dispatch({ type: 'setIsLoading', value: false });
+      dispatch({ type: 'setFinalStep', value: true });
     })
     .catch((err) => {
       dispatch({ type: 'setError', value: err.message });
@@ -35,7 +41,13 @@ export const CreateLocalVolumeSet: React.FC<CreateLocalVolumeSetProps> = ({ stat
       <LocalVolumeSetHeader />
       <div className="ceph-ocs-install__form-wrapper">
         <Form noValidate={false} className="ceph-ocs-install__create-sc-form">
-          <LocalVolumeSetInner state={state} dispatch={dispatch} />
+          <LocalVolumeSetInner
+            state={state}
+            dispatch={dispatch}
+            diskTypeOptions={diskTypeDropdownItems}
+            diskModeOptions={diskModeDropdownItems}
+            allNodesHelpTxt={allNodesSelectorTxt}
+          />
         </Form>
         <DiscoveryDonutChart state={state} dispatch={dispatch} />
       </div>

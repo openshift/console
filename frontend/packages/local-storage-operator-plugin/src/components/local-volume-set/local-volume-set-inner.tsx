@@ -15,12 +15,21 @@ import { getName } from '@console/shared';
 import { NodeModel } from '@console/internal/models';
 import { NodesSelectionList } from './nodes-selection-list';
 import { State, Action } from './state';
-import { diskModeDropdownItems, diskTypeDropdownItems, diskSizeUnitOptions } from '../../constants';
+import {
+  diskModeDropdownItems,
+  diskTypeDropdownItems,
+  diskSizeUnitOptions,
+  allNodesSelectorTxt,
+} from '../../constants';
 import './create-local-volume-set.scss';
 
-export const LocalVolumeSetInner: React.FC<LocalVolumeSetInnerProps> = (props) => {
-  const { dispatch, state } = props;
-
+export const LocalVolumeSetInner: React.FC<LocalVolumeSetInnerProps> = ({
+  dispatch,
+  state,
+  diskTypeOptions = diskTypeDropdownItems,
+  diskModeOptions = diskModeDropdownItems,
+  allNodesHelpTxt = allNodesSelectorTxt,
+}) => {
   React.useEffect(() => {
     if (!state.showNodesListOnLVS) {
       // explicitly needs to set this in order to make the validation works
@@ -78,7 +87,7 @@ export const LocalVolumeSetInner: React.FC<LocalVolumeSetInnerProps> = (props) =
             className="lso-create-lvs__all-nodes-radio--padding"
             value="allNodes"
             onChange={toggleShowNodesList}
-            description="Selecting all nodes will use the available disks that match the selected filters on all nodes."
+            description={allNodesHelpTxt}
             checked={!state.showNodesListOnLVS}
           />
           <Radio
@@ -111,7 +120,7 @@ export const LocalVolumeSetInner: React.FC<LocalVolumeSetInnerProps> = (props) =
         <Dropdown
           id="create-lvs--disk-type-dropdown"
           dropDownClassName="dropdown--full-width"
-          items={diskTypeDropdownItems}
+          items={diskTypeOptions}
           title={state.diskType}
           selectedKey={state.diskType}
           onChange={(type: string) =>
@@ -128,7 +137,7 @@ export const LocalVolumeSetInner: React.FC<LocalVolumeSetInnerProps> = (props) =
           <Dropdown
             id="create-lso--disk-mode-dropdown"
             dropDownClassName="dropdown--full-width"
-            items={diskModeDropdownItems}
+            items={diskModeOptions}
             title={state.diskMode}
             selectedKey={state.diskMode}
             onChange={(mode: string) => {
@@ -203,6 +212,9 @@ export const LocalVolumeSetInner: React.FC<LocalVolumeSetInnerProps> = (props) =
 type LocalVolumeSetInnerProps = {
   state: State;
   dispatch: React.Dispatch<Action>;
+  diskTypeOptions?: { [key: string]: string };
+  diskModeOptions?: { [key: string]: string };
+  allNodesHelpTxt?: string;
 };
 
 export const LocalVolumeSetHeader = () => (

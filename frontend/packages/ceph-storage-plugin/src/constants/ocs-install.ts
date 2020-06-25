@@ -23,3 +23,14 @@ export enum CreateStepsSC {
   STORAGECLASS = 'STORAGECLASS',
   STORAGECLUSTER = 'STORAGECLUSTER',
 }
+
+export const diskModeDropdownItems = Object.freeze({
+  BLOCK: 'Block',
+});
+
+export const diskTypeDropdownItems = Object.freeze({
+  SSD: 'SSD / NVMe',
+});
+
+export const allNodesSelectorTxt =
+  'Selecting all nodes will use the available disks that match the selected filters on all nodes selected on previous step.';
