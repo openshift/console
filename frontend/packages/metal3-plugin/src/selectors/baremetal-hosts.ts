@@ -14,6 +14,7 @@ import {
   HOST_POWER_STATUS_POWERING_OFF,
   HOST_POWER_STATUS_POWERING_ON,
   HOST_POWER_STATUS_POWERED_OFF,
+  HOST_STATUS_UNMANAGED,
 } from '../constants';
 
 const ANNOTATION_HOST_RESTART = 'reboot.metal3.io';
@@ -76,3 +77,6 @@ export const getHostMachine = (
   machines: MachineKind[] = [],
 ): MachineKind =>
   machines.find((machine: MachineKind) => getHostMachineName(host) === getName(machine));
+
+export const hasPowerManagement = (host: BareMetalHostKind): boolean =>
+  getHostProvisioningState(host) !== HOST_STATUS_UNMANAGED;

@@ -4,7 +4,6 @@ import {
   HOST_STATUS_TITLES,
   HOST_STATUS_DESCRIPTIONS,
   HOST_STATUS_ERROR,
-  HOST_STATUS_DISCOVERED,
   HOST_PROGRESS_STATES,
   HOST_STATUS_DEPROVISIONING,
   HOST_STATUS_UNKNOWN,
@@ -18,7 +17,7 @@ export const getBareMetalHostStatus = (host: BareMetalHostKind): StatusProps => 
   const provisioningState = getHostProvisioningState(host);
   const errorType = getHostErrorType(host);
 
-  let hostStatus;
+  let hostStatus: string;
 
   if (operationalStatus === HOST_STATUS_ERROR) {
     if (errorType) {
@@ -26,8 +25,6 @@ export const getBareMetalHostStatus = (host: BareMetalHostKind): StatusProps => 
     } else {
       hostStatus = HOST_STATUS_ERROR;
     }
-  } else if (operationalStatus === HOST_STATUS_DISCOVERED) {
-    hostStatus = HOST_STATUS_DISCOVERED;
   } else if (provisioningState) {
     hostStatus = provisioningState;
   } else {
