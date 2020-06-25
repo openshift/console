@@ -216,6 +216,7 @@ export const CatalogListPage = withExtensions<CatalogListPageExtensionProps>({
 
     normalizeHelmCharts(chartEntries: HelmChartEntries): Item[] {
       const { namespace: currentNamespace = '', kubernetesVersion } = this.props;
+      const notAvailable = <span className="properties-side-panel-pf-property-label">N/A</span>;
 
       return _.reduce(
         chartEntries,
@@ -272,9 +273,9 @@ export const CatalogListPage = withExtensions<CatalogListPageExtensionProps>({
             const customProperties = (
               <>
                 <PropertyItem label="Chart Version" value={chartVersion} />
-                <PropertyItem label="App Version" value={appVersion} />
+                <PropertyItem label="App Version" value={appVersion || notAvailable} />
                 {homePage && <PropertyItem label="Home Page" value={homePage} />}
-                {maintainers && <PropertyItem label="Maintainers" value={maintainers} />}
+                <PropertyItem label="Maintainers" value={maintainers || notAvailable} />
               </>
             );
 

@@ -29,14 +29,14 @@ export interface HelmChart {
 export interface HelmChartMetaData {
   name: string;
   version: string;
-  description: string;
+  description?: string;
   apiVersion: string;
-  appVersion: string;
+  appVersion?: string;
   keywords?: string[];
   home?: string;
   icon?: string;
   sources?: string[];
-  maintainers?: object[];
+  maintainers?: { name: string; email?: string; url?: string }[];
   dependencies?: object[];
   type?: string;
   urls: string[];

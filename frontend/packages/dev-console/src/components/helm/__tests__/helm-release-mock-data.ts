@@ -161,6 +161,26 @@ export const mockHelmChartData: HelmChartMetaData[] = [
   },
 ];
 
+export const mockHelmChartData2: HelmChartMetaData[] = [
+  {
+    appVersion: '3.12',
+    apiVersion: 'v1',
+    name: 'hazelcast-enterprise',
+    urls: [
+      'https://raw.githubusercontent.com/IBM/charts/master/repo/community/hazelcast-enterprise-1.0.3.tgz',
+    ],
+    version: '1.0.3',
+  },
+  {
+    apiVersion: 'v1',
+    name: 'hazelcast-enterprise',
+    urls: [
+      'https://raw.githubusercontent.com/IBM/charts/master/repo/community/hazelcast-enterprise-1.0.2.tgz',
+    ],
+    version: '1.0.2',
+  },
+];
+
 export const mockReleaseResources: {
   [key: string]: { data: K8sResourceKind };
 } = {

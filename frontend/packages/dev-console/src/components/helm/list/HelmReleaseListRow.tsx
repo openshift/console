@@ -42,7 +42,7 @@ const HelmReleaseListRow: RowFunction<HelmRelease> = ({ obj, index, key, style }
         {obj.chart.metadata.version}
       </TableData>
       <TableData className={tableColumnClasses.appVersion}>
-        {obj.chart.metadata.appVersion}
+        {obj.chart.metadata.appVersion || '-'}
       </TableData>
       <TableData className={tableColumnClasses.kebab}>
         <Kebab options={menuActions} />
