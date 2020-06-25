@@ -311,33 +311,35 @@ export const getTopologyEdgeItems = (
     // look for multiple backing services first in `backingServiceSelectors`
     // followed by a fallback to the single reference in `backingServiceSelector`
     _.forEach(sbr.spec.backingServiceSelectors || [sbr.spec.backingServiceSelector], (bss) => {
-      // handles multiple edges
-      const targetNode = _.get(
-        _.find(resources, (deployment) => {
-          const name = _.get(deployment, 'metadata.ownerReferences[0].name');
-          const kind = _.get(deployment, 'metadata.ownerReferences[0].kind');
-          const targetFound = bss.kind === kind && bss.resourceRef === name;
-          if (targetFound) {
-            const appGroup = _.get(
-              deployment,
-              ['metadata', 'labels', 'app.kubernetes.io/part-of'],
-              null,
-            );
-            return !application || application === appGroup;
-          }
-          return false;
-        }),
-        ['metadata', 'uid'],
-      );
-      const uid = _.get(dc, ['metadata', 'uid']);
-      if (targetNode) {
-        edges.push({
-          id: `${uid}_${targetNode}`,
-          type: TYPE_SERVICE_BINDING,
-          source: uid,
-          target: targetNode,
-          data: { sbr },
-        });
+      if (bss) {
+        // handles multiple edges
+        const targetNode = _.get(
+          _.find(resources, (deployment) => {
+            const name = _.get(deployment, 'metadata.ownerReferences[0].name');
+            const kind = _.get(deployment, 'metadata.ownerReferences[0].kind');
+            const targetFound = bss.kind === kind && bss.resourceRef === name;
+            if (targetFound) {
+              const appGroup = _.get(
+                deployment,
+                ['metadata', 'labels', 'app.kubernetes.io/part-of'],
+                null,
+              );
+              return !application || application === appGroup;
+            }
+            return false;
+          }),
+          ['metadata', 'uid'],
+        );
+        const uid = _.get(dc, ['metadata', 'uid']);
+        if (targetNode) {
+          edges.push({
+            id: `${uid}_${targetNode}`,
+            type: TYPE_SERVICE_BINDING,
+            source: uid,
+            target: targetNode,
+            data: { sbr },
+          });
+        }
       }
     });
   });
