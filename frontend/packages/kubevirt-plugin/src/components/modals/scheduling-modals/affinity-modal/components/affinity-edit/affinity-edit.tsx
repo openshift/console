@@ -97,7 +97,7 @@ export const AffinityEdit: React.FC<AffinityEditProps> = ({
   const isWeightInvalid = !isWeightValid(focusedAffinity);
 
   const isAffinityInvalid =
-    (affinityExpressions.length === 0 && affinityFields.length === 0) ||
+    (affinityExpressions?.length === 0 && affinityFields?.length === 0) ||
     isWeightInvalid ||
     isExpressionsInvalid ||
     (isNodeAffinity && isFieldsInvalid) ||

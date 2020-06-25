@@ -6,9 +6,9 @@ export const isWeightValid = (focusedAffinity: AffinityRowData) =>
   (focusedAffinity.weight > 0 && focusedAffinity.weight <= 100);
 
 export const isTermsInvalid = (terms: AffinityLabel[]) =>
-  terms.some(
+  terms?.some(
     ({ key, values, operator }) =>
-      !key || ((operator === 'In' || operator === 'NotIn') && values.length === 0),
+      !key || ((operator === 'In' || operator === 'NotIn') && values?.length === 0),
   );
 
 export const getTopologyKeyValidation = ({ type, condition, topologyKey }: AffinityRowData) => {
