@@ -2,13 +2,15 @@ import { Dispatch } from 'react-redux';
 import * as _ from 'lodash-es';
 import { ActionType as Action, action } from 'typesafe-actions';
 import { FLAGS } from '@console/shared/src/constants/common';
-import { GroupModel, SelfSubjectAccessReviewModel, UserModel } from '../models';
-import { k8sBasePath, ClusterVersionKind, k8sCreate } from '../module/k8s';
+import { GroupModel, UserModel } from '../models';
+import { ClusterVersionKind } from '../module/k8s';
 import { receivedResources } from './k8s';
-import { coFetchJSON } from '../co-fetch';
 import { pluginStore } from '../plugins';
 import { setClusterID, setCreateProjectMessage, setUser, setConsoleLinks } from './common';
 import { isCustomFeatureFlag } from '@console/plugin-sdk';
+import client, { fetchURL } from '../graphql/client';
+import { SSARQuery } from './features.gql';
+import { SSARQueryType, SSARQueryVariables } from '../../@types/gql/schema';
 
 export enum ActionType {
   SetFlag = 'setFlag',
@@ -27,7 +29,7 @@ const retryFlagDetection = (dispatch, cb) => {
 };
 
 export const handleError = (res, flag, dispatch, cb) => {
-  const status = _.get(res, 'response.status');
+  const status = res?.response?.status;
   if (_.includes([403, 502], status)) {
     dispatch(setFlag(flag, undefined));
   }
@@ -36,7 +38,7 @@ export const handleError = (res, flag, dispatch, cb) => {
   }
 };
 
-const projectListPath = `${k8sBasePath}/apis/project.openshift.io/v1/projects?limit=1`;
+const projectListPath = '/apis/project.openshift.io/v1/projects?limit=1';
 const detectShowOpenShiftStartGuide = (dispatch, canListNS: boolean = false) => {
   // Skip the project check if we know the user can list all namespaces. This
   // avoids potentially listing thousands of projects more than once (projects
@@ -52,10 +54,10 @@ const detectShowOpenShiftStartGuide = (dispatch, canListNS: boolean = false) => 
     return;
   }
 
-  coFetchJSON(projectListPath).then(
+  fetchURL(projectListPath).then(
     (res) => dispatch(setFlag(FLAGS.SHOW_OPENSHIFT_START_GUIDE, _.isEmpty(res.items))),
     (err) =>
-      _.get(err, 'response.status') === 404
+      err?.response?.status === 404
         ? dispatch(setFlag(FLAGS.SHOW_OPENSHIFT_START_GUIDE, false))
         : handleError(
             err,
@@ -150,26 +152,26 @@ export type FeatureAction = Action<
   typeof featureActions | typeof receivedResources | typeof clearFlags
 >;
 
-const openshiftPath = `${k8sBasePath}/apis/apps.openshift.io/v1`;
+const openshiftPath = '/apis/apps.openshift.io/v1';
 const detectOpenShift = (dispatch) =>
-  coFetchJSON(openshiftPath).then(
+  fetchURL(openshiftPath).then(
     (res) => dispatch(setFlag(FLAGS.OPENSHIFT, _.size(res.resources) > 0)),
     (err) =>
-      _.get(err, 'response.status') === 404
+      err?.response?.status === 404
         ? dispatch(setFlag(FLAGS.OPENSHIFT, false))
         : handleError(err, FLAGS.OPENSHIFT, dispatch, detectOpenShift),
   );
 
-const clusterVersionPath = `${k8sBasePath}/apis/config.openshift.io/v1/clusterversions/version`;
+const clusterVersionPath = '/apis/config.openshift.io/v1/clusterversions/version';
 const detectClusterVersion = (dispatch) =>
-  coFetchJSON(clusterVersionPath).then(
-    (clusterVersion: ClusterVersionKind) => {
+  fetchURL<ClusterVersionKind>(clusterVersionPath).then(
+    (clusterVersion) => {
       const hasClusterVersion = !_.isEmpty(clusterVersion);
       dispatch(setFlag(FLAGS.CLUSTER_VERSION, hasClusterVersion));
       dispatch(setClusterID(clusterVersion.spec.clusterID));
     },
     (err) => {
-      if (_.includes([403, 404], _.get(err, 'response.status'))) {
+      if (_.includes([403, 404], err?.response?.status)) {
         dispatch(setFlag(FLAGS.CLUSTER_VERSION, false));
       } else {
         handleError(err, FLAGS.CLUSTER_VERSION, dispatch, detectClusterVersion);
@@ -177,12 +179,12 @@ const detectClusterVersion = (dispatch) =>
     },
   );
 
-const projectRequestPath = `${k8sBasePath}/apis/project.openshift.io/v1/projectrequests`;
+const projectRequestPath = '/apis/project.openshift.io/v1/projectrequests';
 const detectCanCreateProject = (dispatch) =>
-  coFetchJSON(projectRequestPath).then(
+  fetchURL(projectRequestPath).then(
     (res) => dispatch(setFlag(FLAGS.CAN_CREATE_PROJECT, res.status === 'Success')),
     (err) => {
-      const status = _.get(err, 'response.status');
+      const status = err?.response?.status;
       if (status === 403) {
         dispatch(setFlag(FLAGS.CAN_CREATE_PROJECT, false));
         dispatch(setCreateProjectMessage(_.get(err, 'json.details.causes[0].message')));
@@ -193,45 +195,46 @@ const detectCanCreateProject = (dispatch) =>
   );
 
 const detectUser = (dispatch) =>
-  coFetchJSON('api/kubernetes/apis/user.openshift.io/v1/users/~').then(
+  fetchURL('/apis/user.openshift.io/v1/users/~').then(
     (user) => {
       dispatch(setUser(user));
     },
     (err) => {
-      if (!_.includes([401, 403, 404, 500], _.get(err, 'response.status'))) {
+      if (!_.includes([401, 403, 404, 500], err?.response?.status)) {
         setTimeout(() => detectUser(dispatch), 15000);
       }
     },
   );
 
 const detectConsoleLinks = (dispatch) =>
-  coFetchJSON('api/kubernetes/apis/console.openshift.io/v1/consolelinks').then(
+  fetchURL('/apis/console.openshift.io/v1/consolelinks').then(
     (consoleLinks) => {
       dispatch(setConsoleLinks(_.get(consoleLinks, 'items')));
     },
     (err) => {
-      if (!_.includes([401, 403, 404, 500], _.get(err, 'response.status'))) {
+      if (!_.includes([401, 403, 404, 500], err?.response?.status)) {
         setTimeout(() => detectConsoleLinks(dispatch), 15000);
       }
     },
   );
 
 const ssarCheckActions = ssarChecks.map(({ flag, resourceAttributes, after }) => {
-  const req = {
-    spec: { resourceAttributes },
-  };
-  const fn = (dispatch) => {
-    return k8sCreate(SelfSubjectAccessReviewModel, req).then(
-      (res) => {
-        const allowed: boolean = res.status.allowed;
-        dispatch(setFlag(flag, allowed));
-        if (after) {
-          after(dispatch, allowed);
-        }
-      },
-      (err) => handleError(err, flag, dispatch, fn),
-    );
-  };
+  const fn = (dispatch: Dispatch) =>
+    client
+      .query<SSARQueryType, SSARQueryVariables>({
+        query: SSARQuery,
+        variables: resourceAttributes,
+      })
+      .then(
+        (res) => {
+          const allowed: boolean = res.data.selfSubjectAccessReview.status.allowed;
+          dispatch(setFlag(flag, allowed));
+          if (after) {
+            after(dispatch, allowed);
+          }
+        },
+        (err) => handleError({ response: err.graphQLErrors[0].extensions }, flag, dispatch, fn),
+      );
   return fn;
 });
 

@@ -1,0 +1,7 @@
+query SSARQuery($resource: String, $verb: String, $group: String, $namespace: String) {
+  selfSubjectAccessReview(resource: $resource, verb: $verb, group: $group, namespace: $namespace) {
+    status {
+      allowed
+    }
+  }
+}

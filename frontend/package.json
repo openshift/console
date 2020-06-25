@@ -10,12 +10,12 @@
   ],
   "scripts": {
     "clean": "rm -rf ./public/dist",
-    "dev": "yarn clean && NODE_OPTIONS=--max-old-space-size=4096 ts-node -O '{\"module\":\"commonjs\"}' ./node_modules/.bin/webpack-dev-server",
-    "dev-once": "yarn clean && NODE_OPTIONS=--max-old-space-size=4096 ts-node -O '{\"module\":\"commonjs\"}' ./node_modules/.bin/webpack --mode=development",
-    "build": "yarn clean && NODE_ENV=production NODE_OPTIONS=--max-old-space-size=4096 ts-node -O '{\"module\":\"commonjs\"}' ./node_modules/.bin/webpack --mode=production",
+    "dev": "yarn clean && yarn gql-generate && NODE_OPTIONS=--max-old-space-size=4096 ts-node -O '{\"module\":\"commonjs\"}' ./node_modules/.bin/webpack-dev-server",
+    "dev-once": "yarn clean && yarn gql-generate && NODE_OPTIONS=--max-old-space-size=4096 ts-node -O '{\"module\":\"commonjs\"}' ./node_modules/.bin/webpack --mode=development",
+    "build": "yarn clean && yarn gql-generate && NODE_ENV=production NODE_OPTIONS=--max-old-space-size=4096 ts-node -O '{\"module\":\"commonjs\"}' ./node_modules/.bin/webpack --mode=production",
     "check-cycles": "CHECK_CYCLES=true yarn dev-once",
     "coverage": "jest --coverage .",
-    "eslint": "eslint --ext .js,.jsx,.ts,.tsx,.json --color",
+    "eslint": "eslint --ext .js,.jsx,.ts,.tsx,.json,.gql,.graphql --color",
     "lint": "NODE_OPTIONS=--max-old-space-size=4096 yarn eslint .",
     "test": "jest",
     "debug-test": "node --inspect-brk node_modules/.bin/jest --runInBand",
@@ -28,7 +28,8 @@
     "test-suite": "ts-node -O '{\"module\":\"commonjs\"}' ./node_modules/.bin/protractor integration-tests/protractor.conf.ts",
     "debug-test-suite": "TS_NODE_COMPILER_OPTIONS='{\"module\":\"commonjs\"}' node -r ts-node/register --inspect-brk ./node_modules/.bin/protractor integration-tests/protractor.conf.ts",
     "analyze": "NODE_ENV=production NODE_OPTIONS=--max-old-space-size=4096 ts-node -O '{\"module\":\"commonjs\"}' ./node_modules/.bin/webpack --mode=production --profile --json | awk '{if(NR>2)print}' > public/dist/stats.json && ts-node -O '{\"module\":\"commonjs\"}' ./node_modules/.bin/webpack-bundle-analyzer --mode static -r public/dist/report.html public/dist/stats.json",
-    "prettier-all": "prettier --write '**/*.{js,jsx,ts,tsx,json}'"
+    "prettier-all": "prettier --write '**/*.{js,jsx,ts,tsx,json}'",
+    "gql-generate": "graphql-codegen"
   },
   "jest": {
     "moduleFileExtensions": [
@@ -36,7 +37,9 @@
       "jsx",
       "ts",
       "tsx",
-      "json"
+      "json",
+      "gql",
+      "graphql"
     ],
     "moduleNameMapper": {
       "\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$": "<rootDir>/__mocks__/fileMock.js",
@@ -46,7 +49,8 @@
       "^react-dnd-html5-backend$": "react-dnd-html5-backend/dist/cjs"
     },
     "transform": {
-      ".(ts|tsx|js|jsx)": "./node_modules/ts-jest/preprocessor.js"
+      ".(ts|tsx|js|jsx)": "./node_modules/ts-jest/preprocessor.js",
+      ".(gql|graphql)$": "jest-transform-graphql"
     },
     "transformIgnorePatterns": [
       "<rootDir>/node_modules/(?!(lodash-es|@console|@novnc|@spice-project)/.*)"
@@ -58,6 +62,7 @@
       "./__mocks__/matchMedia.js",
       "./__mocks__/serverFlags.js",
       "./__mocks__/mutationObserver.js",
+      "./__mocks__/websocket.js",
       "./before-tests.js"
     ],
     "coverageDirectory": "__coverage__",
@@ -77,14 +82,17 @@
   "dependencies": {
     "@fortawesome/fontawesome-free": "^5.9.0",
     "@patternfly/patternfly": "2.71.5",
+    "@patternfly/react-catalog-view-extension": "1.4.58",
     "@patternfly/react-charts": "5.3.19",
     "@patternfly/react-core": "3.153.13",
     "@patternfly/react-table": "2.28.39",
     "@patternfly/react-tokens": "2.8.13",
     "@patternfly/react-topology": "2.14.58",
     "@patternfly/react-virtualized-extension": "1.4.59",
-    "@patternfly/react-catalog-view-extension": "1.4.58",
     "abort-controller": "3.0.0",
+    "apollo-cache-inmemory": "^1.6.5",
+    "apollo-client": "^2.6.8",
+    "apollo-link-ws": "^1.0.20",
     "classnames": "2.x",
     "core-js": "2.x",
     "d3": "^5.9.2",
@@ -92,6 +100,7 @@
     "focus-trap-react": "^6.0.0",
     "formik": "2.0.3",
     "fuzzysearch": "1.0.x",
+    "graphql": "^14.0.0",
     "history": "4.x",
     "immutable": "3.x",
     "js-base64": "^2.5.1",
@@ -131,6 +140,7 @@
     "screenfull": "4.x",
     "semver": "^6.0.0",
     "showdown": "1.8.x",
+    "subscriptions-transport-ws": "^0.9.16",
     "text-encoding": "0.x",
     "typesafe-actions": "^4.2.1",
     "url-polyfill": "^1.1.5",
@@ -142,6 +152,10 @@
     "yup": "^0.27.0"
   },
   "devDependencies": {
+    "@graphql-codegen/cli": "^1.15.1",
+    "@graphql-codegen/typescript": "^1.15.1",
+    "@graphql-codegen/typescript-graphql-files-modules": "^1.15.1",
+    "@graphql-codegen/typescript-operations": "^1.15.1",
     "@types/classnames": "^2.2.7",
     "@types/enzyme": "3.10.x",
     "@types/glob": "7.x",
@@ -170,12 +184,14 @@
     "css-loader": "0.28.x",
     "enzyme": "3.10.x",
     "enzyme-adapter-react-16": "1.15.2",
+    "eslint-plugin-graphql": "^4.0.0",
     "file-loader": "1.x",
     "find-up": "4.x",
     "fork-ts-checker-webpack-plugin": "0.x",
     "geckodriver": "1.x",
     "glob": "7.x",
     "glslify-loader": "1.x",
+    "graphql-tag": "^2.10.3",
     "html-webpack-plugin": "3.x",
     "husky": "^4.2.5",
     "jasmine-console-reporter": "2.x",
@@ -183,8 +199,10 @@
     "jasmine-reporters": "2.x",
     "jest": "21.x",
     "jest-cli": "21.x",
+    "jest-transform-graphql": "^2.1.0",
     "lint-staged": "^10.2.2",
     "mini-css-extract-plugin": "0.4.x",
+    "mock-socket": "^9.0.3",
     "moment": "2.22.x",
     "monaco-editor-core": "0.14.0",
     "monaco-editor-webpack-plugin": "^1.7.0",
@@ -221,6 +239,6 @@
     }
   },
   "lint-staged": {
-    "*.{js,jsx,ts,tsx,json}": "eslint --color --fix"
+    "*.{js,jsx,ts,tsx,json,gql,graphql}": "eslint --color --fix"
   }
 }

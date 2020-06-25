@@ -1,10 +1,12 @@
 package server
 
 import (
+	"context"
 	"crypto/tls"
 	"fmt"
 	"html/template"
 	"io"
+	"io/ioutil"
 	"net/http"
 	"net/url"
 	"os"
@@ -20,6 +22,12 @@ import (
 	"github.com/openshift/console/pkg/serverutils"
 	"github.com/openshift/console/pkg/terminal"
 	"github.com/openshift/console/pkg/version"
+
+	graphql "github.com/graph-gophers/graphql-go"
+	"github.com/graph-gophers/graphql-go/relay"
+	"github.com/rawagner/graphql-transport-ws/graphqlws"
+
+	"github.com/openshift/console/pkg/graphql/resolver"
 )
 
 const (
@@ -32,6 +40,7 @@ const (
 	AuthLoginErrorEndpoint         = "/error"
 	authLogoutEndpoint             = "/auth/logout"
 	k8sProxyEndpoint               = "/api/kubernetes/"
+	graphQLEndpoint                = "/api/graphql"
 	prometheusProxyEndpoint        = "/api/prometheus"
 	prometheusTenancyProxyEndpoint = "/api/prometheus-tenancy"
 	alertManagerProxyEndpoint      = "/api/alertmanager"
@@ -73,6 +82,7 @@ type jsGlobals struct {
 	LoadTestFactor           int    `json:"loadTestFactor"`
 	GOARCH                   string `json:"GOARCH"`
 	GOOS                     string `json:"GOOS"`
+	GraphQLBaseURL           string `json:"graphqlBaseURL"`
 }
 
 type Server struct {
@@ -230,6 +240,24 @@ func (s *Server) HTTPHandler() http.Handler {
 
 	handle(terminal.ProxyEndpoint, authHandlerWithUser(terminalProxy.HandleProxy))
 	handleFunc(terminal.AvailableEndpoint, terminalProxy.HandleProxyEnabled)
+
+	graphQLSchema, err := ioutil.ReadFile("pkg/graphql/schema.graphql")
+	if err != nil {
+		panic(err)
+	}
+	opts := []graphql.SchemaOpt{graphql.UseFieldResolvers()}
+	k8sResolver := resolver.K8sResolver{K8sProxy: k8sProxy}
+	rootResolver := resolver.RootResolver{K8sResolver: &k8sResolver}
+	schema := graphql.MustParseSchema(string(graphQLSchema), &rootResolver, opts...)
+	graphQLHandler := graphqlws.NewHandlerFunc(schema, &relay.Handler{Schema: schema})
+	handle("/api/graphql", authHandlerWithUser(func(user *auth.User, w http.ResponseWriter, r *http.Request) {
+		ctx := context.WithValue(context.Background(), resolver.HeadersKey, map[string]string{
+			"Authorization":     fmt.Sprintf("Bearer %s", user.Token),
+			"Impersonate-User":  r.Header.Get("Impersonate-User"),
+			"Impersonate-Group": r.Header.Get("Impersonate-Group"),
+		})
+		graphQLHandler(w, r.WithContext(ctx))
+	}))
 
 	if s.prometheusProxyEnabled() {
 		// Only proxy requests to the Prometheus API, not the UI.
@@ -394,6 +422,7 @@ func (s *Server) indexHandler(w http.ResponseWriter, r *http.Request) {
 		GOARCH:                s.GOARCH,
 		GOOS:                  s.GOOS,
 		LoadTestFactor:        s.LoadTestFactor,
+		GraphQLBaseURL:        proxy.SingleJoiningSlash(s.BaseURL.Path, graphQLEndpoint),
 	}
 
 	if !s.authDisabled() {

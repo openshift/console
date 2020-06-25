@@ -1,0 +1,15 @@
+type SelfSubjectAccessReviewStatus {
+    allowed: Boolean!
+}
+
+type SelfSubjectAccessReview {
+    status: SelfSubjectAccessReviewStatus!
+}
+
+type Query {
+    fetchURL(url: String!): String
+    selfSubjectAccessReview(group: String, resource: String, verb: String, namespace: String): SelfSubjectAccessReview
+}
+type Subscription {
+    fetchURL(url: String!): String
+}

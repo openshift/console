@@ -3,7 +3,7 @@
     "node": true,
     "es6": true
   },
-  "extends": ["../.eslintrc"],
+  "extends": ["../.eslintrc.js"],
   "globals": {},
   "rules": {
     "no-console": ["error", { "allow": ["warn", "error", "log", "info"] }]

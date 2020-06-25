@@ -133,6 +133,11 @@ const config: Configuration = {
         test: overpassTest,
         loader: 'null-loader',
       },
+      {
+        test: /\.(graphql|gql)$/,
+        exclude: /node_modules/,
+        loader: 'graphql-tag/loader',
+      },
     ],
   },
   optimization: {

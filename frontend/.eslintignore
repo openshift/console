@@ -5,3 +5,4 @@ public/dist
 public/lib
 **/node_modules
 Godeps
+@types

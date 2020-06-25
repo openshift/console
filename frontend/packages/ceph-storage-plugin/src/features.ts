@@ -1,10 +1,11 @@
 import * as _ from 'lodash';
 import { Dispatch } from 'react-redux';
-import { k8sGet } from '@console/internal/module/k8s';
+import { K8sResourceKind } from '@console/internal/module/k8s';
 import { ClusterServiceVersionModel, SubscriptionModel } from '@console/operator-lifecycle-manager';
 import { setFlag } from '@console/internal/actions/features';
 import { FeatureDetector } from '@console/plugin-sdk';
 import { getAnnotations } from '@console/shared/src/selectors/common';
+import { fetchK8s } from '@console/internal/graphql/client';
 import { OCSServiceModel } from './models';
 import {
   OCS_INDEPENDENT_CR_NAME,
@@ -40,7 +41,7 @@ const handleError = (res: any, flags: string[], dispatch: Dispatch, cb: FeatureD
 
 export const detectOCS: FeatureDetector = async (dispatch) => {
   try {
-    await k8sGet(OCSServiceModel, OCS_CONVERGED_CR_NAME, CEPH_STORAGE_NAMESPACE);
+    await fetchK8s(OCSServiceModel, OCS_CONVERGED_CR_NAME, CEPH_STORAGE_NAMESPACE);
     dispatch(setFlag(OCS_FLAG, true));
     dispatch(setFlag(OCS_CONVERGED_FLAG, true));
     dispatch(setFlag(OCS_INDEPENDENT_FLAG, false));
@@ -49,7 +50,7 @@ export const detectOCS: FeatureDetector = async (dispatch) => {
       ? handleError(e, [OCS_CONVERGED_FLAG], dispatch, detectOCS)
       : dispatch(setFlag(OCS_CONVERGED_FLAG, false));
     try {
-      await k8sGet(OCSServiceModel, OCS_INDEPENDENT_CR_NAME, CEPH_STORAGE_NAMESPACE);
+      await fetchK8s(OCSServiceModel, OCS_INDEPENDENT_CR_NAME, CEPH_STORAGE_NAMESPACE);
       dispatch(setFlag(OCS_FLAG, true));
       dispatch(setFlag(OCS_INDEPENDENT_FLAG, true));
       dispatch(setFlag(OCS_CONVERGED_FLAG, false));
@@ -63,12 +64,12 @@ export const detectOCS: FeatureDetector = async (dispatch) => {
 
 export const detectOCSSupportedFeatures: FeatureDetector = async (dispatch) => {
   try {
-    const subscription = await k8sGet(
+    const subscription = await fetchK8s<K8sResourceKind>(
       SubscriptionModel,
       'ocs-subscription',
       CEPH_STORAGE_NAMESPACE,
     );
-    const ocsCSV = await k8sGet(
+    const ocsCSV = await fetchK8s(
       ClusterServiceVersionModel,
       subscription?.status?.currentCSV,
       CEPH_STORAGE_NAMESPACE,

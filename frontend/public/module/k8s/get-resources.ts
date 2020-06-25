@@ -1,9 +1,9 @@
 import * as _ from 'lodash-es';
 import { plural } from 'pluralize';
 
-import { coFetchJSON } from '../../co-fetch';
 import { K8sKind, K8sVerb } from '../../module/k8s';
 import { API_DISCOVERY_RESOURCES_LOCAL_STORAGE_KEY } from '@console/shared/src/constants';
+import { fetchURL } from '../../graphql/client';
 
 const ADMIN_RESOURCES = new Set([
   'roles',
@@ -97,13 +97,13 @@ export const pluralizeKind = (kind: string): string => {
 };
 
 export const getResources = () =>
-  coFetchJSON('api/kubernetes/apis').then((res) => {
+  fetchURL('/apis').then((res) => {
     const preferredVersions = res.groups.map((group) => group.preferredVersion);
-    const all: Promise<APIResourceList>[] = _.flatten(
+    const all = _.flatten<string>(
       res.groups.map((group) => group.versions.map((version) => `/apis/${version.groupVersion}`)),
     )
       .concat(['/api/v1'])
-      .map((p) => coFetchJSON(`api/kubernetes${p}`).catch((err) => err));
+      .map((p) => fetchURL<APIResourceList>(p).catch((err) => err));
 
     return Promise.all(all).then((data) => {
       const resourceSet = new Set<string>();
