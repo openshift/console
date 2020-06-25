@@ -2,11 +2,11 @@ import { execSync } from 'child_process';
 import { $, browser, ExpectedConditions as until } from 'protractor';
 import { goToInstalledOperators } from '@console/ceph-storage-plugin/integration-tests/views/add-capacity.view';
 import * as crudView from '@console/internal-integration-tests/views/crud.view';
-import { BucketClassHandler, createBucketClassLink, Tier } from '../views/createBC.view';
+import { BucketClassHandler, Tier } from '../views/createBC.view';
 import { click } from '@console/shared/src/test-utils/utils';
 import { appHost, testName } from '@console/internal-integration-tests/protractor.conf';
 import { NS } from '@console/ceph-storage-plugin/integration-tests/utils/consts';
-import { ocsOperator } from '../views/createBS.view';
+import { ocsOperator, getOperatorHubAPILink } from '../views/createBS.view';
 
 const bcName = `${testName}-bucketclass`;
 const description = `${testName}-bucketClass is a bucket class being used for testing purposes. Please do not use it for real storage purposes in case the test fails and the class is not deleted`;
@@ -25,8 +25,8 @@ describe('Tests creation of Bucket Class', () => {
     await browser.wait(until.and(crudView.untilNoLoadersPresent));
     await browser.wait(until.visibilityOf(ocsOperator));
     await ocsOperator.click();
-    await browser.wait(until.visibilityOf(createBucketClassLink));
-    await click(createBucketClassLink);
+    const bcLink = await getOperatorHubAPILink('Bucket Class');
+    await click(bcLink);
   });
 
   afterEach(async () => {
@@ -40,7 +40,6 @@ describe('Tests creation of Bucket Class', () => {
     bcHandler.setTiers([Tier.SPREAD]);
     const bc = await bcHandler.createBC();
     expect(bc.name).toEqual(bcName);
-    expect(bc.namespace).toContain(NS);
     expect(bc.tier1Policy.toLocaleUpperCase()).toContain(Tier.SPREAD);
     const cliData = getBucketClassObject();
     expect(cliData?.metadata?.name).toEqual(bc.name);
@@ -50,7 +49,6 @@ describe('Tests creation of Bucket Class', () => {
     bcHandler.setTiers([Tier.MIRROR]);
     const bc = await bcHandler.createBC();
     expect(bc.name).toEqual(bcName);
-    expect(bc.namespace).toContain(NS);
     expect(bc.tier1Policy.toLocaleUpperCase()).toContain(Tier.MIRROR);
     const cliData = getBucketClassObject();
     expect(cliData?.metadata?.name).toEqual(bc.name);
@@ -60,7 +58,6 @@ describe('Tests creation of Bucket Class', () => {
     bcHandler.setTiers([Tier.SPREAD, Tier.SPREAD]);
     const bc = await bcHandler.createBC();
     expect(bc.name).toEqual(bcName);
-    expect(bc.namespace).toContain(NS);
     expect(bc.tier1Policy.toLocaleUpperCase()).toContain(Tier.SPREAD);
     expect(bc.tier2Policy.toLocaleUpperCase()).toContain(Tier.SPREAD);
     const cliData = getBucketClassObject();
@@ -71,7 +68,6 @@ describe('Tests creation of Bucket Class', () => {
     bcHandler.setTiers([Tier.SPREAD, Tier.MIRROR]);
     const bc = await bcHandler.createBC();
     expect(bc.name).toEqual(bcName);
-    expect(bc.namespace).toContain(NS);
     expect(bc.tier1Policy.toLocaleUpperCase()).toContain(Tier.SPREAD);
     expect(bc.tier2Policy.toLocaleUpperCase()).toContain(Tier.MIRROR);
     const cliData = getBucketClassObject();
@@ -82,7 +78,6 @@ describe('Tests creation of Bucket Class', () => {
     bcHandler.setTiers([Tier.MIRROR, Tier.MIRROR]);
     const bc = await bcHandler.createBC();
     expect(bc.name).toEqual(bcName);
-    expect(bc.namespace).toContain(NS);
     expect(bc.tier1Policy.toLocaleUpperCase()).toContain(Tier.MIRROR);
     expect(bc.tier2Policy.toLocaleUpperCase()).toContain(Tier.MIRROR);
     const cliData = getBucketClassObject();

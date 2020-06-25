@@ -2,7 +2,9 @@ import { $, by, element, ExpectedConditions as until, browser } from 'protractor
 import * as sideNavView from '@console/internal-integration-tests/views/sidenav.view';
 import * as crudView from '@console/internal-integration-tests/views/crud.view';
 import { SECOND } from '@console/ceph-storage-plugin/integration-tests/utils/consts';
-import { getOperatorHubCardIndex } from '@console/shared/src/test-utils/utils';
+import { getOperatorHubCardIndex, click } from '@console/shared/src/test-utils/utils';
+import { refreshIfNotVisible } from '@console/ceph-storage-plugin/integration-tests/utils/helpers';
+import { currentSelectors } from '@console/ceph-storage-plugin/integration-tests/views/installFlow.view';
 
 const ENDPOINT = 'http://test-endpoint.com';
 const ACC_KEY = 'my_dummy_test_key';
@@ -13,10 +15,14 @@ export const operatorsPage = async () => {
   await sideNavView.clickNavLink(['Operators', 'Installed Operators']);
 };
 
-export const getBackingStoreLink = async () => {
-  const index = await getOperatorHubCardIndex('BackingStore');
-  const link = $(`article:nth-child(${index}) a`);
-  return link;
+export const getOperatorHubAPILink = async (name: string) => {
+  try {
+    await browser.wait(until.visibilityOf(currentSelectors.createLink), 10 * SECOND);
+  } catch {
+    await refreshIfNotVisible(currentSelectors.createLink, 5);
+  }
+  const index = await getOperatorHubCardIndex(name);
+  return $(`article:nth-child(${index + 1}) a`);
 };
 
 export const ocsOperator = $('a[data-test-operator-row="OpenShift Container Storage"]');
@@ -28,7 +34,7 @@ export const providerDropdown = element(by.partialButtonText('AWS S3'));
 const backingStoreNameInput = $('input[aria-label="Backing Store Name"]');
 
 // AwS S3
-export const regionDropdown = $('form > div:nth-child(4) > div > div > button');
+export const regionDropdown = $('form > div:nth-child(3) > div > div > button');
 export const usEast1 = element(by.partialButtonText('us-east-1'));
 export const endpointInput = $('input[aria-label="Endpoint Address"]');
 
@@ -53,7 +59,7 @@ export enum Providers {
 }
 
 const inputCustomSecret = async () => {
-  await switchToCreds.click();
+  await click(switchToCreds);
   await browser.wait(until.visibilityOf(accessKeyField));
   await accessKeyField.sendKeys(ACC_KEY);
   await secretKeyField.sendKeys(SEC_KEY);
@@ -69,22 +75,22 @@ const setupS3Type = async () => {
 
 export const setupAWS = async () => {
   await browser.wait(until.visibilityOf(regionDropdown));
-  await regionDropdown.click();
+  await click(regionDropdown);
   await browser.wait(until.visibilityOf(usEast1));
-  await usEast1.click();
-  await setupS3Type();
+  await click(usEast1);
+  await inputCustomSecret();
   await targetBucket.sendKeys(TARGET);
 };
 
 export const setupAzure = async () => {
-  await providerDropdown.click();
-  await providerDropdownItem(Providers.AZURE).click();
-  await setupS3Type();
+  await click(providerDropdown);
+  await click(providerDropdownItem(Providers.AZURE));
+  await inputCustomSecret();
   await targetContainer.sendKeys(TARGET);
 };
 
 export const setupS3 = async () => {
-  await providerDropdown.click();
+  await click(providerDropdown);
   await providerDropdownItem(Providers.S3).click();
   await setupS3Type();
   await targetBucket.sendKeys(TARGET);
@@ -107,7 +113,7 @@ export class BackingStoreHandler {
     await browser.wait(until.visibilityOf(backingStoreNameInput));
     await backingStoreNameInput.sendKeys(this.name);
     await this.setupProvider(provider);
-    await createBtn.click();
+    await click(createBtn);
     await browser.wait(until.and(crudView.untilNoLoadersPresent));
     await browser.wait(until.visibilityOf(crudView.resourceTitle));
     const name = await crudView.resourceTitle.getText();

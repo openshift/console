@@ -13,6 +13,15 @@
     "integrationTestSuites": {
       "noobaa": [
         "integration-tests/**/*.scenario.ts"
+      ],
+      "testBC": [
+        "integration-tests/tests/bucketClassTest.scenario.ts"
+      ],
+      "testBS": [
+        "integration-tests/tests/backingStoreTest.scenario.ts"
+      ],
+      "testOBC": [
+        "integration-tests/tests/obcTest.scenario.ts"
       ]
     }
   }

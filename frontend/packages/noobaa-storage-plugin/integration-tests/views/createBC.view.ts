@@ -4,9 +4,10 @@ import { $, $$, browser, by, element, ExpectedConditions as until } from 'protra
 import * as crudView from '@console/internal-integration-tests/views/crud.view';
 import { click } from '@console/shared/src/test-utils/utils';
 import { testName } from '@console/internal-integration-tests/protractor.conf';
+import { TEST_PLATFORM } from '@console/ceph-storage-plugin/integration-tests/views/installFlow.view';
+import { mockDefaultBS } from '../mocks/default-backing-store';
+import { MOCK_SECRET } from '../utils/consts';
 
-// Backing Store is the third one in API details page
-export const createBucketClassLink = $('article:nth-child(3) a');
 const tier1TableCheckBoxes = $$('table[aria-label="Select Backing Store for Tier 1"] input');
 const tier2TableCheckBoxes = $$('table[aria-label="Select Backing Store for Tier 2"] input');
 
@@ -25,7 +26,6 @@ const addTierButton = $('button[data-testid="add-tier-btn"]');
 
 // Review Page Data
 const bcName = $('p[data-testid="bc-name"]');
-const bcNamespace = $('p[data-testid="namespace-value"]');
 const bcDescription = $('p[data-testid="bc-desc"]');
 const tier1Policy = $('h5[data-testid="tier1-policy"]');
 const tier2Policy = $('h5[data-testid="tier2-policy"]');
@@ -48,11 +48,36 @@ const getBackingStoreRequiredCount = (tiers: Tier[]) => {
 };
 
 const createDummyBackingStore = (name: string) => {
-  const defaultBS = JSON.parse(
-    execSync(
-      'kubectl get backingstores.noobaa.io noobaa-default-backing-store -n openshift-storage -o json',
-    ).toString(),
-  );
+  let defaultBS = null;
+  if (TEST_PLATFORM === 'OCP') {
+    try {
+      defaultBS = JSON.parse(
+        execSync(
+          'kubectl get backingstores.noobaa.io noobaa-default-backing-store -n openshift-storage -o json',
+        ).toString(),
+      );
+    } catch {
+      // Create a default backing store by ourselves
+      // Create secret to be consumed by the backingstore
+      execSync(
+        `oc create secret generic ${MOCK_SECRET} -n openshift-storage --from-literal=password='iamthewatcherofthewall'`,
+      );
+      execSync(
+        `echo '${JSON.stringify(mockDefaultBS)}' | kubectl create -n openshift-storage -f -`,
+      );
+      defaultBS = JSON.parse(
+        execSync(
+          'kubectl get backingstores.noobaa.io noobaa-default-backing-store -n openshift-storage -o json',
+        ).toString(),
+      );
+    }
+  } else {
+    defaultBS = JSON.parse(
+      execSync(
+        'kubectl get backingstores.noobaa.io noobaa-default-backing-store -n openshift-storage -o json',
+      ).toString(),
+    );
+  }
   const customObj = _.pick(defaultBS, ['apiVersion', 'kind', 'metadata', 'spec']);
   customObj.metadata = Object.assign(_.pick(customObj.metadata, ['name', 'namespace']), {
     name,
@@ -147,7 +172,6 @@ export class BucketClassHandler {
   async getReviewPageData() {
     const dump = {
       name: await bcName.getText(),
-      namespace: await bcNamespace.getText(),
       description: await bcDescription.getText(),
       tier1Policy: await tier1Policy.getText(),
       tier2Policy: null,
