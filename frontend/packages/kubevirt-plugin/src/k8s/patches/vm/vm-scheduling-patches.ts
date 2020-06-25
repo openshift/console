@@ -31,6 +31,10 @@ export const getTolerationsPatch = (
 };
 
 export const getAffinityPatch = (vmLikeEntity: VMLikeEntityKind, affinity: Affinity): Patch[] =>
-  getVMLikePatches(vmLikeEntity, () => [
-    new PatchBuilder('/spec/template/spec/affinity').replace(affinity).build(),
-  ]);
+  affinity
+    ? getVMLikePatches(vmLikeEntity, () => [
+        new PatchBuilder('/spec/template/spec/affinity').replace(affinity).build(),
+      ])
+    : getVMLikePatches(vmLikeEntity, () => [
+        new PatchBuilder('/spec/template/spec/affinity').remove().build(),
+      ]);
