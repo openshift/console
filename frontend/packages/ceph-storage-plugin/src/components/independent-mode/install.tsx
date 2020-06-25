@@ -35,10 +35,10 @@ import { OCSServiceModel } from '../../models';
 import FileUpload from './fileUpload';
 import { isValidJSON, checkError, prettifyJSON } from './utils';
 import { OCS_INDEPENDENT_FLAG, OCS_FLAG } from '../../features';
-import { OCS_INDEPENDENT_CR_NAME } from '../../constants';
+import { OCS_EXTERNAL_CR_NAME } from '../../constants';
 import './install.scss';
 
-const InstallExternalCluster = withHandlePromise((props: InstallExternalClusterProps) => {
+const CreateExternalCluster = withHandlePromise((props: CreateExternalClusterProps) => {
   const {
     inProgress,
     errorMessage,
@@ -94,7 +94,7 @@ const InstallExternalCluster = withHandlePromise((props: InstallExternalClusterP
       apiVersion: apiVersionForModel(OCSServiceModel),
       kind: OCSServiceModel.kind,
       metadata: {
-        name: OCS_INDEPENDENT_CR_NAME,
+        name: OCS_EXTERNAL_CR_NAME,
         namespace: ns,
       },
       spec: {
@@ -137,7 +137,7 @@ const InstallExternalCluster = withHandlePromise((props: InstallExternalClusterP
 
   return (
     <>
-      <div className="im-install-page">
+      <div className="im-install-page co-m-pane__body co-m-pane__form">
         <div className="im-install-page__sub-header">
           <Title size="lg" headingLevel="h5" className="nb-bs-page-title__main">
             <div className="im-install-page-sub-header__title">Connect to external cluster</div>
@@ -212,10 +212,10 @@ const InstallExternalCluster = withHandlePromise((props: InstallExternalClusterP
   );
 });
 
-type InstallExternalClusterProps = HandlePromiseProps & {
+type CreateExternalClusterProps = HandlePromiseProps & {
   match: match<{ ns?: string; appName?: string }>;
   minRequiredKeys?: { [key: string]: string[] };
   downloadFile: string;
 };
 
-export default InstallExternalCluster;
+export default CreateExternalCluster;

@@ -10,16 +10,11 @@ export type NodeTableRow = {
 };
 
 export enum DiskType {
-  SSD = 'SSD',
-  HDD = 'HDD',
-}
-
-export enum DeviceType {
-  RawDisk = 'RawDisk',
+  RawDisk = 'disk',
   Partition = 'Partition',
 }
 
-export enum DeviceMechanicalProperty {
+export enum DiskMechanicalProperty {
   SSD = 'Rotational',
   HDD = 'NonRotational',
 }
@@ -29,17 +24,15 @@ export type LocalVolumeSetKind = K8sResourceCommon & {
     storageClassName: string;
     volumeMode: string;
     deviceInclusionSpec: {
-      deviceTypes: DeviceType[];
-      deviceMechanicalProperty: DeviceMechanicalProperty[];
-      minSize?: number;
-      maxSize?: number;
+      deviceTypes: DiskType[];
+      deviceMechanicalProperty: DiskMechanicalProperty[];
+      minSize?: string;
+      maxSize?: string;
     };
     nodeSelector?: {
-      nodeSelectorTerms: [
-        {
-          matchExpressions: [{ key: string; operator: string; values: string[] }];
-        },
-      ];
+      nodeSelectorTerms: {
+        matchExpressions: { key: string; operator: string; values: string[] }[];
+      }[];
     };
     maxDeviceCount?: number;
   };

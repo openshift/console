@@ -15,6 +15,7 @@ import { Table } from '@console/internal/components/factory';
 import { IRow } from '@patternfly/react-table';
 import { hasOCSTaint, hasTaints, getConvertedUnits } from '../../utils/install';
 import { cephStorageLabel } from '../../selectors';
+import { GetRows, NodeTableProps } from './types';
 
 import './ocs-install.scss';
 
@@ -27,7 +28,7 @@ const tableColumnClasses = [
   classNames('col-md-2', 'hidden-sm', 'hidden-xs'),
 ];
 
-const getColumns = () => {
+export const getColumns = () => {
   return [
     {
       title: 'Name',
@@ -51,20 +52,6 @@ const getColumns = () => {
     },
   ];
 };
-
-const isSelected = (selected: Set<string>, nodeUID: string): boolean => selected.has(nodeUID);
-
-type GetRows = (
-  {
-    componentProps,
-  }: {
-    componentProps: { data: NodeKind[] };
-  },
-  visibleRows: Set<string>,
-  setVisibleRows: React.Dispatch<React.SetStateAction<Set<string>>>,
-  selectedNodes: Set<string>,
-  setSelectedNodes: (nodes: NodeKind[]) => void,
-) => NodeTableRow[];
 
 const getRows: GetRows = (
   { componentProps },
@@ -101,7 +88,7 @@ const getRows: GetRows = (
     return {
       cells,
       selected: selectedNodes
-        ? isSelected(selectedNodes, node.metadata.uid)
+        ? selectedNodes.has(node.metadata.uid)
         : hasLabel(node, cephStorageLabel),
       props: {
         id: node.metadata.uid,
@@ -154,19 +141,3 @@ const NodeTable: React.FC<NodeTableProps> = (props) => {
 };
 
 export default NodeTable;
-
-type NodeTableProps = {
-  data: NodeKind[];
-  customData: {
-    onRowSelected: (nodes: NodeKind[]) => void;
-  };
-  filters: { name: string; label: { all: string[] } };
-};
-
-type NodeTableRow = {
-  cells: IRow['cells'];
-  props: {
-    id: string;
-  };
-  selected: boolean;
-};

@@ -8,10 +8,10 @@ import { getAnnotations } from '@console/shared/src/selectors/common';
 import { fetchK8s } from '@console/internal/graphql/client';
 import { OCSServiceModel } from './models';
 import {
-  OCS_INDEPENDENT_CR_NAME,
+  OCS_EXTERNAL_CR_NAME,
   CEPH_STORAGE_NAMESPACE,
   OCS_SUPPORT_ANNOTATION,
-  OCS_CONVERGED_CR_NAME,
+  OCS_INTERNAL_CR_NAME,
 } from './constants';
 
 export const OCS_INDEPENDENT_FLAG = 'OCS_INDEPENDENT';
@@ -41,7 +41,7 @@ const handleError = (res: any, flags: string[], dispatch: Dispatch, cb: FeatureD
 
 export const detectOCS: FeatureDetector = async (dispatch) => {
   try {
-    await fetchK8s(OCSServiceModel, OCS_CONVERGED_CR_NAME, CEPH_STORAGE_NAMESPACE);
+    await fetchK8s(OCSServiceModel, OCS_INTERNAL_CR_NAME, CEPH_STORAGE_NAMESPACE);
     dispatch(setFlag(OCS_FLAG, true));
     dispatch(setFlag(OCS_CONVERGED_FLAG, true));
     dispatch(setFlag(OCS_INDEPENDENT_FLAG, false));
@@ -50,7 +50,7 @@ export const detectOCS: FeatureDetector = async (dispatch) => {
       ? handleError(e, [OCS_CONVERGED_FLAG], dispatch, detectOCS)
       : dispatch(setFlag(OCS_CONVERGED_FLAG, false));
     try {
-      await fetchK8s(OCSServiceModel, OCS_INDEPENDENT_CR_NAME, CEPH_STORAGE_NAMESPACE);
+      await fetchK8s(OCSServiceModel, OCS_EXTERNAL_CR_NAME, CEPH_STORAGE_NAMESPACE);
       dispatch(setFlag(OCS_FLAG, true));
       dispatch(setFlag(OCS_INDEPENDENT_FLAG, true));
       dispatch(setFlag(OCS_CONVERGED_FLAG, false));

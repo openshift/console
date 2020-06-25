@@ -30,7 +30,7 @@ const StorageClassDropdown = (props: any) => {
 };
 
 export const OCSStorageClassDropdown: React.FC<OCSStorageClassDropdownProps> = (props) => {
-  const { onChange, defaultClass } = props;
+  const { onChange, defaultClass, filter } = props;
 
   return (
     <>
@@ -40,6 +40,7 @@ export const OCSStorageClassDropdown: React.FC<OCSStorageClassDropdownProps> = (
           name="storageClass"
           defaultClass={defaultClass}
           hideClassName="ceph-sc-dropdown__hide-default"
+          filter={filter}
           required
         />
       </Firehose>
@@ -50,4 +51,5 @@ export const OCSStorageClassDropdown: React.FC<OCSStorageClassDropdownProps> = (
 type OCSStorageClassDropdownProps = {
   onChange: (sc: StorageClassResourceKind) => void;
   defaultClass?: string;
+  filter?: (sc: StorageClassResourceKind) => boolean;
 };

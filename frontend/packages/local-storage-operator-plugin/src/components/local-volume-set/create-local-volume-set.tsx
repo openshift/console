@@ -1,94 +1,88 @@
 import * as React from 'react';
 import { match as RouterMatch } from 'react-router';
-import {
-  ActionGroup,
-  Button,
-  Form,
-  FormGroup,
-  TextInput,
-  Radio,
-  ExpandableSection,
-  TextInputTypes,
-  Text,
-  TextVariants,
-} from '@patternfly/react-core';
+import { ActionGroup, Button, Form } from '@patternfly/react-core';
 import {
   resourcePathFromModel,
   BreadCrumbs,
-  Dropdown,
   resourceObjPath,
   withHandlePromise,
   HandlePromiseProps,
   ButtonBar,
 } from '@console/internal/components/utils';
 import { history } from '@console/internal/components/utils/router';
-import { ListPage } from '@console/internal/components/factory';
-import { k8sCreate, referenceFor, NodeKind } from '@console/internal/module/k8s';
-import { NodeModel } from '@console/internal/models';
+import {
+  k8sCreate,
+  referenceFor,
+  apiVersionForModel,
+  NodeKind,
+} from '@console/internal/module/k8s';
+import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
+import { getName } from '@console/shared';
 import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager';
 import { LocalVolumeSetModel } from '../../models';
-import { NodesSelectionList } from './nodes-selection-list';
-import { LocalVolumeSetKind, DeviceType, DiskType, DeviceMechanicalProperty } from './types';
-import { getName } from '@console/shared';
+import { LocalVolumeSetKind, DiskType, DiskMechanicalProperty } from './types';
+import { LocalVolumeSetHeader, LocalVolumeSetInner } from './local-volume-set-inner';
+import { reducer, initialState } from './state';
+import { LSO_NAMESPACE, MAX_DISK_SIZE } from '../../constants';
+import { nodeResource } from '../../constants/resources';
+import { hasTaints } from '../../utils';
+
 import './create-local-volume-set.scss';
 
-const volumeModeDropdownItems = {
-  Block: 'Block',
-  Filesystem: 'Filesystem',
-};
-
-const volumeTypeDropdownItems = {
-  [DiskType.SSD]: 'SSD / NVMe',
-  [DiskType.HDD]: 'HDD',
-};
-
-const CreateLocalVolumeSet: React.FC = withHandlePromise<CreateLocalVolumeSetProps>((props) => {
+const CreateLocalVolumeSet: React.FC = withHandlePromise<
+  CreateLocalVolumeSetProps & HandlePromiseProps
+>((props) => {
   const { match, handlePromise, inProgress, errorMessage } = props;
-  const [volumeSetName, setVolumeSetName] = React.useState('');
-  const [storageClassName, setStorageClassName] = React.useState('');
-  const [showNodesList, setShowNodesList] = React.useState(false);
-  const [volumeType, setVolumeType] = React.useState<DiskType>(DiskType.SSD);
-  const [volumeMode, setVolumeMode] = React.useState(volumeModeDropdownItems.Block);
-  const [maxVolumeLimit, setMaxVolumeLimit] = React.useState('');
-  const [nodeNames, setNodeNames] = React.useState<string[]>([]);
+  const [state, dispatch] = React.useReducer(reducer, initialState);
+  const [nodeData, nodeLoaded, nodeLoadError] = useK8sWatchResource<NodeKind[]>(nodeResource);
 
-  const { ns, appName } = match.params;
+  const { appName, ns } = match.params;
   const modelName = LocalVolumeSetModel.label;
 
-  const toggleShowNodesList = () => {
-    setShowNodesList(!showNodesList);
-  };
+  React.useEffect(() => {
+    if ((nodeLoadError || nodeData.length === 0) && nodeLoaded) {
+      dispatch({ type: 'setAllNodeNames', value: [] });
+    } else if (nodeLoaded) {
+      const allNodeNames = nodeData.filter((node) => !hasTaints(node)).map((node) => getName(node));
+      dispatch({ type: 'setAllNodeNames', value: allNodeNames });
+    }
+  }, [nodeData, nodeLoaded, nodeLoadError]);
 
   const onSubmit = (event: React.FormEvent<EventTarget>) => {
     event.preventDefault();
 
     const requestData: LocalVolumeSetKind = {
-      apiVersion: LocalVolumeSetModel.apiVersion,
+      apiVersion: apiVersionForModel(LocalVolumeSetModel),
       kind: LocalVolumeSetModel.kind,
-      metadata: { name: volumeSetName },
+      metadata: { name: state.volumeSetName, namespace: LSO_NAMESPACE },
       spec: {
-        storageClassName,
-        volumeMode,
+        storageClassName: state.storageClassName || state.volumeSetName,
+        volumeMode: state.diskMode,
         deviceInclusionSpec: {
-          // Only Raw disk supported for 4.5
-          deviceTypes: [DeviceType.RawDisk],
-          deviceMechanicalProperty: [DeviceMechanicalProperty[volumeType]],
+          // Only Raw disk supported for 4.6
+          deviceTypes: [DiskType.RawDisk],
+          deviceMechanicalProperty:
+            state.diskType === 'HDD'
+              ? [DiskMechanicalProperty[state.diskType]]
+              : [DiskMechanicalProperty.SSD],
+        },
+        nodeSelector: {
+          nodeSelectorTerms: [
+            {
+              matchExpressions: [
+                { key: 'kubernetes.io/hostname', operator: 'In', values: state.nodeNames },
+              ],
+            },
+          ],
         },
       },
     };
 
-    if (showNodesList) {
-      requestData.spec.nodeSelector = {
-        nodeSelectorTerms: [
-          {
-            matchExpressions: [
-              { key: 'kubernetes.io/hostname', operator: 'In', values: nodeNames },
-            ],
-          },
-        ],
-      };
-    }
-    if (maxVolumeLimit) requestData.spec.maxDeviceCount = +maxVolumeLimit;
+    if (state.maxDiskLimit) requestData.spec.maxDeviceCount = +state.maxDiskLimit;
+    if (state.minDiskSize)
+      requestData.spec.deviceInclusionSpec.minSize = state.minDiskSize.toString();
+    if (state.maxDiskSize && state.maxDiskSize !== MAX_DISK_SIZE)
+      requestData.spec.deviceInclusionSpec.maxSize = state.maxDiskSize.toString();
 
     handlePromise(k8sCreate(LocalVolumeSetModel, requestData))
       .then((resource) => history.push(resourceObjPath(resource, referenceFor(resource))))
@@ -109,107 +103,10 @@ const CreateLocalVolumeSet: React.FC = withHandlePromise<CreateLocalVolumeSetPro
             ]}
           />
         </div>
-        <h1 className="co-create-operand__header-text">{`Create ${modelName}`}</h1>
-        <p className="help-block">
-          A {modelName} allows you to filter a set of storage volumes, group them and create a
-          dedicated storage class to consume storage for them.
-        </p>
+        <LocalVolumeSetHeader />
       </div>
       <Form noValidate={false} className="co-m-pane__body co-m-pane__form" onSubmit={onSubmit}>
-        <FormGroup label="Volume Set Name" isRequired fieldId="create-lvs--volume-set-name">
-          <TextInput
-            type={TextInputTypes.text}
-            id="create-lvs--volume-set-name"
-            value={volumeSetName}
-            onChange={(name) => setVolumeSetName(name)}
-            isRequired
-          />
-        </FormGroup>
-        <FormGroup label="Storage Class Name" fieldId="create-lvs--storage-class-name">
-          <TextInput
-            type={TextInputTypes.text}
-            id="create-lvs--storage-class-name"
-            value={storageClassName}
-            onChange={(name) => setStorageClassName(name)}
-            isRequired
-          />
-        </FormGroup>
-        <Text component={TextVariants.h3} className="lso-create-lvs__filter-volumes-text--margin">
-          Filter Volumes
-        </Text>
-        <FormGroup label="Node Selector" fieldId="create-lvs--radio-group-node-selector">
-          <div id="create-lvs--radio-group-node-selector">
-            <Radio
-              label="All nodes"
-              name="nodes-selection"
-              id="create-lvs--radio-all-nodes"
-              className="lso-create-lvs__all-nodes-radio--padding"
-              value="allNodes"
-              onChange={toggleShowNodesList}
-              description="Selecting all nodes will search for available volume storage on all nodes."
-              defaultChecked
-            />
-            <Radio
-              label="Select nodes"
-              name="nodes-selection"
-              id="create-lvs--radio-select-nodes"
-              value="selectedNodes"
-              onChange={toggleShowNodesList}
-              description="Selecting nodes allow you to limit the search for available volumes to specific nodes."
-            />
-          </div>
-        </FormGroup>
-        {showNodesList && (
-          <ListPage
-            showTitle={false}
-            kind={NodeModel.kind}
-            ListComponent={NodesSelectionList}
-            customData={{
-              onRowSelected: (selectedNodes: NodeKind[]) => {
-                const nodes = selectedNodes.map((n) => getName(n));
-                setNodeNames(nodes);
-              },
-            }}
-          />
-        )}
-        <FormGroup label="Volume Type" fieldId="create-lvs--volume-type-dropdown">
-          <Dropdown
-            id="create-lvs--volume-type-dropdown"
-            dropDownClassName="dropdown--full-width"
-            items={volumeTypeDropdownItems}
-            title={volumeTypeDropdownItems[volumeType]}
-            selectedKey={volumeType}
-            onChange={(type: DiskType) => setVolumeType(type)}
-          />
-        </FormGroup>
-        <ExpandableSection toggleText="Advanced" data-test-id="create-lvs-form-advanced">
-          <FormGroup
-            label="Volume Mode"
-            fieldId="create-lso--volume-mode-dropdown"
-            className="lso-create-lvs__volume-mode-dropdown--margin"
-          >
-            <Dropdown
-              id="create-lso--volume-mode-dropdown"
-              dropDownClassName="dropdown--full-width"
-              items={volumeModeDropdownItems}
-              title={volumeModeDropdownItems[volumeMode]}
-              selectedKey={volumeMode}
-              onChange={(mode: string) => setVolumeMode(mode)}
-            />
-          </FormGroup>
-          <FormGroup label="Max Volume Limit" fieldId="create-lvs--max-volume-limit">
-            <p className="help-block lso-create-lvs__max-volume-limit-help-text--margin">
-              Volume limit will set the maximum number of PVs to create on a node. If the field is
-              empty, will create PVs for all available volumes on the matching nodes.
-            </p>
-            <TextInput
-              type={TextInputTypes.number}
-              id="create-lvs--max-volume-limit"
-              value={maxVolumeLimit}
-              onChange={(maxLimit) => setMaxVolumeLimit(maxLimit)}
-            />
-          </FormGroup>
-        </ExpandableSection>
+        <LocalVolumeSetInner dispatch={dispatch} state={state} />
         <ButtonBar errorMessage={errorMessage} inProgress={inProgress}>
           <ActionGroup>
             <Button type="submit" variant="primary">
