@@ -19,7 +19,7 @@ export const AffinityExpressionRow = ({
   onChange,
   onDelete,
 }: AffinityExpressionRowProps) => {
-  const { id, key, values, operator } = expression;
+  const { id, key, values = [], operator } = expression;
   const enableValueField = operator !== 'Exists' && operator !== 'DoesNotExist';
   const [isValuesExpanded, setIsValuesExpanded] = React.useState(false);
 
