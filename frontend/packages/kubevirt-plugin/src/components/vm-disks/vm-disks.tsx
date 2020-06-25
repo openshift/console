@@ -6,9 +6,8 @@ import { useSafetyFirst } from '@console/internal/components/safety-first';
 import { K8sResourceKind, TemplateKind } from '@console/internal/module/k8s';
 import { dimensifyHeader, getNamespace } from '@console/shared';
 import { sortable } from '@patternfly/react-table';
-import { DataVolumeModel } from '../../models';
+import { DataVolumeModel, VirtualMachineModel, VirtualMachineInstanceModel } from '../../models';
 import { VMGenericLikeEntityKind } from '../../types/vmLike';
-import { VMLikeEntityTabProps } from '../vms/types';
 import { getResource, getLoadedData } from '../../utils';
 import { wrapWithProgress } from '../../utils/utils';
 import { diskModalEnhanced } from '../modals/disk-modal/disk-modal-enhanced';
@@ -17,7 +16,7 @@ import { V1alpha1DataVolume } from '../../types/vm/disk/V1alpha1DataVolume';
 import { StorageBundle } from './types';
 import { DiskRow } from './disk-row';
 import { diskTableColumnClasses } from './utils';
-import { isVMI } from '../../selectors/check-type';
+import { isVMI, isVM } from '../../selectors/check-type';
 import { ADD_DISK } from '../../utils/strings';
 import {
   getVMTemplateNamespacedName,
@@ -25,6 +24,10 @@ import {
 } from '../../selectors/vm-template/selectors';
 import { diskSourceFilter } from './table-filters';
 import { asVM, isVMRunningOrExpectedRunning } from '../../selectors/vm';
+import { VMTabProps } from '../vms/types';
+import { getVMStatus } from '../../statuses/vm/vm-status';
+
+import { FileSystemsList } from './guest-agent-file-systems';
 
 const getStoragesData = ({
   vmLikeEntity,
@@ -102,14 +105,18 @@ export const VMDisksTable: React.FC<React.ComponentProps<typeof Table> | VMDisks
   props,
 ) => {
   return (
-    <Table
-      {...props}
-      aria-label="VM Disks List"
-      NoDataEmptyMsg={NoDataEmptyMsg}
-      Header={getHeader(props?.customData?.columnClasses)}
-      Row={props.Row || DiskRow}
-      virtualize
-    />
+    <div>
+      <h3>Disks</h3>
+      The following information is provided by the OpenShift Virtualization operator.
+      <Table
+        {...props}
+        aria-label="VM Disks List"
+        NoDataEmptyMsg={NoDataEmptyMsg}
+        Header={getHeader(props?.customData?.columnClasses)}
+        Row={props.Row || DiskRow}
+        virtualize
+      />
+    </div>
   );
 };
 
@@ -180,7 +187,16 @@ export const VMDisks: React.FC<VMDisksProps> = ({ vmLikeEntity, vmTemplate }) =>
   );
 };
 
-export const VMDisksFirehose: React.FC<VMLikeEntityTabProps> = ({ obj: vmLikeEntity }) => {
+export const VMDisksFirehose: React.FC<VMTabProps> = ({
+  obj: vmLikeEntity,
+  vm: vmProp,
+  vmis: vmisProp,
+  vmImports,
+  pods,
+  migrations,
+  dataVolumes,
+  customData: { kindObj },
+}) => {
   const vmTemplate = getVMTemplateNamespacedName(vmLikeEntity);
 
   const resources = [
@@ -192,9 +208,32 @@ export const VMDisksFirehose: React.FC<VMLikeEntityTabProps> = ({ obj: vmLikeEnt
     }),
   ];
 
+  const vm =
+    kindObj === VirtualMachineModel && isVM(vmLikeEntity)
+      ? vmLikeEntity
+      : isVM(vmProp)
+      ? vmProp
+      : null;
+  const vmi =
+    kindObj === VirtualMachineInstanceModel && isVMI(vmLikeEntity)
+      ? vmLikeEntity
+      : isVMI(vmisProp[0])
+      ? vmisProp[0]
+      : null;
+
+  const vmStatusBundle = getVMStatus({
+    vm,
+    vmi,
+    pods,
+    migrations,
+    dataVolumes,
+    vmImports,
+  });
+
   return (
     <Firehose resources={resources}>
       <VMDisks vmLikeEntity={vmLikeEntity} />
+      <FileSystemsList vmi={vmi} vmStatusBundle={vmStatusBundle} />
     </Firehose>
   );
 };

@@ -14,5 +14,5 @@ export class GuestAgentFSInfoWrapper extends Wrapper<
   }
 
   getDisks = (): GuestAgentFileSystemWrapper[] =>
-    this.data?.disks.map((disk) => new GuestAgentFileSystemWrapper(disk));
+    this.data?.disks?.map((disk) => new GuestAgentFileSystemWrapper(disk));
 }
