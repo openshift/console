@@ -181,16 +181,13 @@ Browser: ${window.navigator.userAgent}
       };
 };
 
-export const showReleaseNotes = (channel: string): boolean => {
-  return (
-    window.SERVER_FLAGS.branding === 'ocp' &&
-    (channel?.startsWith('fast-') || channel?.startsWith('stable-'))
-  );
+export const showReleaseNotes = (): boolean => {
+  return window.SERVER_FLAGS.branding === 'ocp';
 };
 
 // example link: https://docs.openshift.com/container-platform/4.2/release_notes/ocp-4-2-release-notes.html#ocp-4-2-4
-export const getReleaseNotesLink = (channel: string, version: string): string => {
-  if (!showReleaseNotes(channel)) {
+export const getReleaseNotesLink = (version: string): string => {
+  if (!showReleaseNotes()) {
     return null;
   }
 

@@ -26,7 +26,6 @@ import {
   getAvailableClusterUpdates,
   getClusterID,
   getClusterUpdateStatus,
-  getClusterVersionChannel,
   getClusterVersionCondition,
   getCurrentVersion,
   getDesiredClusterVersion,
@@ -182,8 +181,8 @@ export const UpdateStatus: React.SFC<UpdateStatusProps> = ({ cv }) => {
   }
 };
 
-export const ReleaseNotesLink: React.FC<ReleaseNotesLinkProps> = ({ channel, version }) => {
-  const releaseNotesLink = getReleaseNotesLink(channel, version);
+export const ReleaseNotesLink: React.FC<ReleaseNotesLinkProps> = ({ version }) => {
+  const releaseNotesLink = getReleaseNotesLink(version);
   return releaseNotesLink && <ExternalLink text="View release notes" href={releaseNotesLink} />;
 };
 
@@ -191,7 +190,6 @@ export const CurrentVersion: React.SFC<CurrentVersionProps> = ({ cv }) => {
   const desiredVersion = getDesiredClusterVersion(cv);
   const lastVersion = getLastCompletedUpdate(cv);
   const status = getClusterUpdateStatus(cv);
-  const channel = getClusterVersionChannel(cv);
 
   if (status === ClusterUpdateStatus.UpToDate || status === ClusterUpdateStatus.UpdatesAvailable) {
     return desiredVersion ? (
@@ -201,7 +199,7 @@ export const CurrentVersion: React.SFC<CurrentVersionProps> = ({ cv }) => {
             {desiredVersion}
           </span>
         </div>
-        <ReleaseNotesLink channel={channel} version={getCurrentVersion(cv)} />
+        <ReleaseNotesLink version={getCurrentVersion(cv)} />
       </>
     ) : (
       <>
@@ -218,7 +216,7 @@ export const CurrentVersion: React.SFC<CurrentVersionProps> = ({ cv }) => {
           {lastVersion}
         </span>
       </div>
-      <ReleaseNotesLink channel={channel} version={getLastCompletedUpdate(cv)} />
+      <ReleaseNotesLink version={getLastCompletedUpdate(cv)} />
     </>
   ) : (
     <>None</>
@@ -333,13 +331,13 @@ const ChannelVersion: React.FC<ChannelVersionProps> = ({ children, current }) =>
   );
 };
 
-const ChannelVersionDot: React.FC<ChannelVersionDotProps> = ({ channel, current, version }) => {
-  const releaseNotesLink = getReleaseNotesLink(channel, version);
+const ChannelVersionDot: React.FC<ChannelVersionDotProps> = ({ current, version }) => {
+  const releaseNotesLink = getReleaseNotesLink(version);
 
   return releaseNotesLink ? (
     <Popover
       headerContent={<>Version {version}</>}
-      bodyContent={<ReleaseNotesLink channel={channel} version={version} />}
+      bodyContent={<ReleaseNotesLink version={version} />}
     >
       <Button
         variant="secondary"
@@ -445,8 +443,7 @@ export const ClusterVersionDetailsTable: React.SFC<ClusterVersionDetailsTablePro
   const desiredImage: string = _.get(cv, 'status.desired.image') || '';
   // Split image on `@` to emphasize the digest.
   const imageParts = desiredImage.split('@');
-  const channel = getClusterVersionChannel(cv);
-  const releaseNotes = showReleaseNotes(channel);
+  const releaseNotes = showReleaseNotes();
 
   return (
     <>
@@ -579,7 +576,7 @@ export const ClusterVersionDetailsTable: React.SFC<ClusterVersionDetailsTablePro
                     </td>
                     {releaseNotes && (
                       <td className="hidden-xs hidden-sm">
-                        <ReleaseNotesLink channel={channel} version={update.version} />
+                        <ReleaseNotesLink version={update.version} />
                       </td>
                     )}
                   </tr>
@@ -644,7 +641,6 @@ type UpdateStatusProps = {
 };
 
 type ReleaseNotesLinkProps = {
-  channel: string;
   version: string;
 };
 
