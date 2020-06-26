@@ -31,6 +31,7 @@ import {
   SectionHeading,
 } from '../utils';
 import { GreenCheckCircleIcon, YellowExclamationTriangleIcon } from '@console/shared';
+import RelatedObjectsPage from './related-objects';
 
 export const clusterOperatorReference: K8sResourceKindReference = referenceForModel(
   ClusterOperatorModel,
@@ -250,7 +251,15 @@ export const ClusterOperatorDetailsPage: React.SFC<ClusterOperatorDetailsPagePro
   <DetailsPage
     {...props}
     kind={clusterOperatorReference}
-    pages={[navFactory.details(ClusterOperatorDetails), navFactory.editYaml()]}
+    pages={[
+      navFactory.details(ClusterOperatorDetails),
+      navFactory.editYaml(),
+      {
+        href: 'related-objects',
+        name: 'Related Objects',
+        component: RelatedObjectsPage,
+      },
+    ]}
     breadcrumbsFor={() => [
       { name: 'Cluster Operators', path: '/settings/cluster/clusteroperators' },
       { name: 'Cluster Operator Details', path: props.match.url },

@@ -7,11 +7,11 @@ import * as fuzzy from 'fuzzysearch';
 
 import { Dropdown, ResourceIcon } from './utils';
 import {
-  apiVersionForReference,
   K8sKind,
   K8sResourceKindReference,
   modelFor,
   referenceForModel,
+  DiscoveryResources,
 } from '../module/k8s';
 import { Badge, Checkbox } from '@patternfly/react-core';
 
@@ -53,8 +53,7 @@ const DropdownItem: React.SFC<DropdownItemProps> = ({ model, showGroup, checked 
 );
 
 const ResourceListDropdown_: React.SFC<ResourceListDropdownProps> = (props) => {
-  const { selected, onChange, allModels, showAll, className, preferredVersions } = props;
-
+  const { selected, onChange, allModels, showAll, className, groupToVersionMap } = props;
   const resources = allModels
     .filter(({ apiGroup, apiVersion, kind, verbs }) => {
       // Remove blacklisted items.
@@ -72,9 +71,8 @@ const ResourceListDropdown_: React.SFC<ResourceListDropdownProps> = (props) => {
 
       // Only show preferred version for resources in the same API group.
       const preferred = (m: K8sKind) =>
-        preferredVersions.some(
-          (v) => v.groupVersion === apiVersionForReference(referenceForModel(m)),
-        );
+        groupToVersionMap?.[m.apiGroup]?.preferredVersion === m.apiVersion;
+
       const sameGroupKind = (m: K8sKind) =>
         m.kind === kind && m.apiGroup === apiGroup && m.apiVersion !== apiVersion;
 
@@ -152,18 +150,16 @@ const ResourceListDropdown_: React.SFC<ResourceListDropdownProps> = (props) => {
 
 const resourceListDropdownStateToProps = ({ k8s }) => ({
   allModels: k8s.getIn(['RESOURCES', 'models']),
-  preferredVersions: k8s.getIn(['RESOURCES', 'preferredVersions']),
+  groupToVersionMap: k8s.getIn(['RESOURCES', 'groupToVersionMap']),
 });
 
-export const ResourceListDropdown = connect(resourceListDropdownStateToProps)(
-  ResourceListDropdown_,
-);
+export const ResourceListDropdown = connect<ResourceListDropdownStateToProps>(
+  resourceListDropdownStateToProps,
+)(ResourceListDropdown_);
 
-export type ResourceListDropdownProps = {
+export type ResourceListDropdownProps = ResourceListDropdownStateToProps & {
   selected: K8sResourceKindReference[];
   onChange: (value: string) => void;
-  allModels: ImmutableMap<K8sResourceKindReference, K8sKind>;
-  preferredVersions: { groupVersion: string; version: string }[];
   className?: string;
   id?: string;
   showAll?: boolean;
@@ -173,4 +169,9 @@ type DropdownItemProps = {
   model: K8sKind;
   showGroup?: boolean;
   checked?: boolean;
+};
+
+type ResourceListDropdownStateToProps = {
+  allModels: ImmutableMap<K8sResourceKindReference, K8sKind>;
+  groupToVersionMap: DiscoveryResources['groupVersionMap'];
 };

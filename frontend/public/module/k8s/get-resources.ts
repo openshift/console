@@ -82,8 +82,13 @@ export type DiscoveryResources = {
   configResources: K8sKind[];
   models: K8sKind[];
   namespacedSet: Set<string>;
-  preferredVersions: { groupVersion: string; version: string }[];
   safeResources: string[];
+  groupVersionMap: {
+    [key: string]: {
+      versions: string[];
+      preferredVersion: string;
+    };
+  };
 };
 
 export const pluralizeKind = (kind: string): string => {
@@ -98,7 +103,16 @@ export const pluralizeKind = (kind: string): string => {
 
 export const getResources = () =>
   fetchURL('/apis').then((res) => {
-    const preferredVersions = res.groups.map((group) => group.preferredVersion);
+    const groupVersionMap = res.groups.reduce(
+      (acc, { name, versions, preferredVersion: { version } }) => {
+        acc[name] = {
+          versions: _.map(versions, 'version'),
+          preferredVersion: version,
+        };
+        return acc;
+      },
+      {},
+    );
     const all = _.flatten<string>(
       res.groups.map((group) => group.versions.map((version) => `/apis/${version.groupVersion}`)),
     )
@@ -162,7 +176,7 @@ export const getResources = () =>
         configResources,
         namespacedSet,
         models,
-        preferredVersions,
+        groupVersionMap,
       } as DiscoveryResources;
     });
   });

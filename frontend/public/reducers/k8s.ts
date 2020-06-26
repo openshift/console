@@ -122,7 +122,7 @@ export default (state: K8sState, action: K8sAction): K8sState => {
           .setIn(['RESOURCES', 'adminResources'], action.payload.resources.adminResources)
           .setIn(['RESOURCES', 'configResources'], action.payload.resources.configResources)
           .setIn(['RESOURCES', 'namespacedSet'], action.payload.resources.namespacedSet)
-          .setIn(['RESOURCES', 'preferredVersions'], action.payload.resources.preferredVersions)
+          .setIn(['RESOURCES', 'groupToVersionMap'], action.payload.resources.groupVersionMap)
           .setIn(['RESOURCES', 'inFlight'], false)
       );
 
