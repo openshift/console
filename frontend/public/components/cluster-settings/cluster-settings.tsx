@@ -30,7 +30,6 @@ import {
   getClusterVersionCondition,
   getCurrentVersion,
   getDesiredClusterVersion,
-  getErrataLink,
   getLastCompletedUpdate,
   getOCMLink,
   getReleaseNotesLink,
@@ -39,6 +38,7 @@ import {
   K8sResourceConditionStatus,
   K8sResourceKind,
   referenceForModel,
+  showReleaseNotes,
 } from '../../module/k8s';
 import {
   EmptyBox,
@@ -442,10 +442,11 @@ export const ClusterVersionDetailsTable: React.SFC<ClusterVersionDetailsTablePro
 }) => {
   const { history = [] } = cv.status;
   const clusterID = getClusterID(cv);
-  const errataLink = getErrataLink(cv);
   const desiredImage: string = _.get(cv, 'status.desired.image') || '';
   // Split image on `@` to emphasize the digest.
   const imageParts = desiredImage.split('@');
+  const channel = getClusterVersionChannel(cv);
+  const releaseNotes = showReleaseNotes(channel);
 
   return (
     <>
@@ -541,13 +542,7 @@ export const ClusterVersionDetailsTable: React.SFC<ClusterVersionDetailsTablePro
         </div>
       </div>
       <div className="co-m-pane__body">
-        <SectionHeading text="Update History">
-          {errataLink && (
-            <small>
-              <ExternalLink text="View errata" href={errataLink} />
-            </small>
-          )}
-        </SectionHeading>
+        <SectionHeading text="Update History" />
         {_.isEmpty(history) ? (
           <EmptyBox label="History" />
         ) : (
@@ -559,6 +554,7 @@ export const ClusterVersionDetailsTable: React.SFC<ClusterVersionDetailsTablePro
                   <th>State</th>
                   <th>Started</th>
                   <th>Completed</th>
+                  {releaseNotes && <th className="hidden-xs hidden-sm">Release Notes</th>}
                 </tr>
               </thead>
               <tbody>
@@ -581,6 +577,11 @@ export const ClusterVersionDetailsTable: React.SFC<ClusterVersionDetailsTablePro
                         '-'
                       )}
                     </td>
+                    {releaseNotes && (
+                      <td className="hidden-xs hidden-sm">
+                        <ReleaseNotesLink channel={channel} version={update.version} />
+                      </td>
+                    )}
                   </tr>
                 ))}
               </tbody>

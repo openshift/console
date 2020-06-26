@@ -12,17 +12,18 @@ import { Link } from 'react-router-dom';
 import { FLAGS } from '@console/shared';
 import { connectToFlags, FlagsObject } from '../reducers/features';
 import { getBrandingDetails } from './masthead';
-import { ExternalLink, Firehose } from './utils';
+import { Firehose } from './utils';
 import { ClusterVersionModel } from '../models';
 import { ClusterVersionKind, referenceForModel } from '../module/k8s';
 import { k8sVersion } from '../module/status';
 import {
-  hasAvailableUpdates,
+  getClusterID,
+  getCurrentVersion,
   getK8sGitVersion,
   getOpenShiftVersion,
-  getClusterID,
-  getErrataLink,
+  hasAvailableUpdates,
 } from '../module/k8s/cluster-settings';
+import { ReleaseNotesLink } from './cluster-settings/cluster-settings';
 
 const AboutModalItems: React.FC<AboutModalItemsProps> = ({ closeAboutModal, cv }) => {
   const [kubernetesVersion, setKubernetesVersion] = React.useState('');
@@ -36,7 +37,6 @@ const AboutModalItems: React.FC<AboutModalItemsProps> = ({ closeAboutModal, cv }
   const clusterID = getClusterID(clusterVersion);
   const channel: string = _.get(cv, 'data.spec.channel');
   const openshiftVersion = getOpenShiftVersion(clusterVersion);
-  const errataLink = getErrataLink(clusterVersion);
   return (
     <>
       {clusterVersion && hasAvailableUpdates(clusterVersion) && (
@@ -60,11 +60,7 @@ const AboutModalItems: React.FC<AboutModalItemsProps> = ({ closeAboutModal, cv }
               <TextListItem component="dt">OpenShift Version</TextListItem>
               <TextListItem component="dd">
                 <div className="co-select-to-copy">{openshiftVersion}</div>
-                {errataLink && (
-                  <div>
-                    <ExternalLink text="View errata" href={errataLink} />
-                  </div>
-                )}
+                <ReleaseNotesLink channel={channel} version={getCurrentVersion(clusterVersion)} />
               </TextListItem>
             </>
           )}
