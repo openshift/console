@@ -37,19 +37,23 @@ const reportPages = [
 const { common } = Kebab.factory;
 const menuActions = [...Kebab.getExtensionsActionsForKind(ChargebackReportModel), ...common];
 
-const dataURL = (obj, format = 'json') => {
+const dataURL = (obj: K8sResourceKind, format = 'json') => {
   return `${window.SERVER_FLAGS.meteringBaseURL}/api/v2/reports/${obj.metadata.namespace}/${obj.metadata.name}/table?format=${format}`;
 };
 
-const ChargebackNavBar: React.SFC<{ match: { url: string } }> = (props) => (
+const removeLastPathElement = (path: string) =>
+  path
+    .split('/')
+    .slice(0, -1)
+    .join('/');
+
+const ChargebackNavBar: React.SFC<{ match: { url: string; path: string } }> = (props) => (
   <div>
     <PageHeading title="Chargeback Reporting" style={{ paddingBottom: 15 }} />
     <NavBar
       pages={reportPages}
-      basePath={props.match.url
-        .split('/')
-        .slice(0, -1)
-        .join('/')}
+      basePath={removeLastPathElement(props.match.path)}
+      baseURL={removeLastPathElement(props.match.url)}
     />
   </div>
 );
@@ -650,7 +654,10 @@ export type DataTableRowsProps = {
 export type ReportsPageProps = {
   filterLabel: string;
   flags: { [_: string]: boolean };
-  match: { url: string };
+  match: {
+    url: string;
+    path: string;
+  };
 };
 
 export type ReportsDetailsPageProps = {
@@ -667,7 +674,10 @@ export type ReportGenerationQueriesDetailsProps = {
 
 export type ReportGenerationQueriesPageProps = {
   filterLabel: string;
-  match: { url: string };
+  match: {
+    url: string;
+    path: string;
+  };
 };
 
 export type ReportGenerationQueriesDetailsPageProps = {
