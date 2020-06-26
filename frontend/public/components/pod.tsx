@@ -536,7 +536,7 @@ export const PodList: React.FC<PodListProps> = (props) => {
 };
 PodList.displayName = 'PodList';
 
-const filters = [
+export const filters = [
   {
     filterGroupName: 'Status',
     type: 'pod-status',

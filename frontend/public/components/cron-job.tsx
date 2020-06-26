@@ -3,11 +3,21 @@ import * as React from 'react';
 import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
 
-import { DetailsPage, ListPage, Table, TableRow, TableData, RowFunction } from './factory';
-import { CronJobKind } from '../module/k8s';
+import { getPodsForResource } from '@console/shared';
+import {
+  DetailsPage,
+  ListPage,
+  Table,
+  TableRow,
+  TableData,
+  RowFunction,
+  ListPageWrapper_ as ListPageWrapper,
+} from './factory';
+import { CronJobKind, K8sResourceKind } from '../module/k8s';
 import {
   ContainerTable,
   DetailsItem,
+  Firehose,
   Kebab,
   ResourceKebab,
   ResourceLink,
@@ -19,6 +29,8 @@ import {
 } from './utils';
 import { ResourceEventStream } from './events';
 import { CronJobModel } from '../models';
+import { PodList, filters as PodFilters } from './pod';
+import { JobsList } from './job';
 
 const { common } = Kebab.factory;
 const menuActions = [...Kebab.getExtensionsActionsForKind(CronJobModel), ...common];
@@ -165,6 +177,83 @@ const CronJobDetails: React.FC<CronJobDetailsProps> = ({ obj: cronjob }) => {
   );
 };
 
+export type CronJobPodsComponentProps = {
+  obj: K8sResourceKind;
+};
+
+const getJobsWatcher = (namespace: string) => {
+  return [
+    {
+      prop: 'jobs',
+      isList: true,
+      kind: 'Job',
+      namespace,
+    },
+  ];
+};
+
+const getPodsWatcher = (namespace: string) => {
+  return [
+    ...getJobsWatcher(namespace),
+    {
+      prop: 'pods',
+      isList: true,
+      kind: 'Pod',
+      namespace,
+    },
+  ];
+};
+
+export const CronJobPodsComponent: React.FC<CronJobPodsComponentProps> = ({ obj }) => (
+  <div className="co-m-pane__body">
+    <Firehose resources={getPodsWatcher(obj.metadata.namespace)}>
+      <ListPageWrapper
+        flatten={(_resources) => {
+          if (!_resources.jobs.loaded || !_resources.pods.loaded) {
+            return [];
+          }
+          const jobs = _resources.jobs.data.filter((job) =>
+            job.metadata?.ownerReferences?.find((ref) => ref.uid === obj.metadata.uid),
+          );
+          return (
+            jobs &&
+            jobs.reduce((acc, job) => {
+              acc.push(...getPodsForResource(job, _resources));
+              return acc;
+            }, [])
+          );
+        }}
+        kinds={['Pods']}
+        ListComponent={PodList}
+        rowFilters={PodFilters}
+      />
+    </Firehose>
+  </div>
+);
+
+export type CronJobJobsComponentProps = {
+  obj: K8sResourceKind;
+};
+
+export const CronJobJobsComponent: React.FC<CronJobJobsComponentProps> = ({ obj }) => (
+  <div className="co-m-pane__body">
+    <Firehose resources={getJobsWatcher(obj.metadata.namespace)}>
+      <ListPageWrapper
+        flatten={(_resources) => {
+          if (!_resources.jobs.loaded) {
+            return [];
+          }
+          return _resources.jobs.data.filter((job) =>
+            job.metadata?.ownerReferences?.find((ref) => ref.uid === obj.metadata.uid),
+          );
+        }}
+        kinds={['Jobs']}
+        ListComponent={JobsList}
+      />
+    </Firehose>
+  </div>
+);
+
 export const CronJobsList: React.FC = (props) => (
   <Table
     {...props}
@@ -187,6 +276,8 @@ export const CronJobsDetailsPage: React.FC<CronJobsDetailsPageProps> = (props) =
     pages={[
       navFactory.details(CronJobDetails),
       navFactory.editYaml(),
+      navFactory.pods(CronJobPodsComponent),
+      navFactory.jobs(CronJobJobsComponent),
       navFactory.events(ResourceEventStream),
     ]}
   />

@@ -83,6 +83,11 @@ export const navFactory: NavFactory = {
     name: 'Pods',
     component: component || PodsComponent,
   }),
+  jobs: (component) => ({
+    href: 'jobs',
+    name: 'Jobs',
+    component,
+  }),
   roles: (component) => ({
     href: 'roles',
     name: 'Role Bindings',
