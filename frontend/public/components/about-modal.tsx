@@ -60,7 +60,7 @@ const AboutModalItems: React.FC<AboutModalItemsProps> = ({ closeAboutModal, cv }
               <TextListItem component="dt">OpenShift Version</TextListItem>
               <TextListItem component="dd">
                 <div className="co-select-to-copy">{openshiftVersion}</div>
-                <ReleaseNotesLink channel={channel} version={getCurrentVersion(clusterVersion)} />
+                <ReleaseNotesLink version={getCurrentVersion(clusterVersion)} />
               </TextListItem>
             </>
           )}
