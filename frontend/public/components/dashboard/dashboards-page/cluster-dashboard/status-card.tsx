@@ -13,9 +13,8 @@ import {
   isDashboardsOverviewHealthResourceSubsystem,
   isDashboardsOverviewHealthOperator,
 } from '@console/plugin-sdk';
-import { ArrowCircleUpIcon } from '@patternfly/react-icons';
 import { Gallery, GalleryItem, Button } from '@patternfly/react-core';
-import { FLAGS, getInfrastructurePlatform } from '@console/shared';
+import { BlueArrowCircleUpIcon, FLAGS, getInfrastructurePlatform } from '@console/shared';
 import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
 import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
 import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
@@ -88,10 +87,7 @@ const ClusterAlerts = withDashboardResources(
     const { data: alerts, loaded: alertsLoaded, loadError: alertsResponseError } =
       notificationAlerts || {};
 
-    const UpdateIcon = React.useCallback(
-      () => <ArrowCircleUpIcon className="update-pending" />,
-      [],
-    );
+    const UpdateIcon = React.useCallback(() => <BlueArrowCircleUpIcon />, []);
 
     const items: React.ReactNode[] = [];
 

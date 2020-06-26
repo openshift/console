@@ -6,12 +6,7 @@ import { Helmet } from 'react-helmet';
 import { Button, Popover, Tooltip } from '@patternfly/react-core';
 import { Link } from 'react-router-dom';
 
-import {
-  AddCircleOIcon,
-  ArrowCircleUpIcon,
-  SyncAltIcon,
-  PencilAltIcon,
-} from '@patternfly/react-icons';
+import { AddCircleOIcon, SyncAltIcon, PencilAltIcon } from '@patternfly/react-icons';
 
 import { ClusterOperatorPage } from './cluster-operator';
 import {
@@ -57,6 +52,7 @@ import {
   truncateMiddle,
 } from '../utils';
 import {
+  BlueArrowCircleUpIcon,
   GreenCheckCircleIcon,
   RedExclamationCircleIcon,
   YellowExclamationTriangleIcon,
@@ -99,7 +95,7 @@ const InvalidMessage: React.SFC<CVStatusMessageProps> = ({ cv }) => (
 
 const UpdatesAvailableMessage: React.SFC<CVStatusMessageProps> = () => (
   <div className="co-update-status">
-    <ArrowCircleUpIcon className="update-pending" /> Available Updates
+    <BlueArrowCircleUpIcon /> Available Updates
   </div>
 );
 

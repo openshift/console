@@ -3,13 +3,12 @@ import * as _ from 'lodash';
 import * as React from 'react';
 import { Link } from 'react-router-dom';
 import {
-  YellowExclamationTriangleIcon,
-  GreenCheckCircleIcon,
+  BlueArrowCircleUpIcon,
   BlueInfoCircleIcon,
+  GreenCheckCircleIcon,
   RedExclamationCircleIcon,
+  YellowExclamationTriangleIcon,
 } from '@console/shared';
-import { ArrowCircleUpIcon } from '@patternfly/react-icons';
-import { global_info_color_100 as blueInfoColor } from '@patternfly/react-tokens';
 import { history, Timestamp } from '@console/internal/components/utils';
 
 export enum NotificationTypes {
@@ -23,7 +22,7 @@ export enum NotificationTypes {
 const NotificationIcon: React.FC<NotificationIconTypes> = ({ type }) => {
   switch (type) {
     case NotificationTypes.update:
-      return <ArrowCircleUpIcon color={blueInfoColor.value} />;
+      return <BlueArrowCircleUpIcon />;
     case NotificationTypes.success:
       return <GreenCheckCircleIcon />;
     case NotificationTypes.critical:

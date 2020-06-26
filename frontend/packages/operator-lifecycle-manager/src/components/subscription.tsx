@@ -4,7 +4,7 @@ import { match, Link } from 'react-router-dom';
 import { sortable } from '@patternfly/react-table';
 import * as classNames from 'classnames';
 import { Alert, Button } from '@patternfly/react-core';
-import { ArrowCircleUpIcon, InProgressIcon, PencilAltIcon } from '@patternfly/react-icons';
+import { InProgressIcon, PencilAltIcon } from '@patternfly/react-icons';
 import {
   DetailsPage,
   MultiListPage,
@@ -33,11 +33,12 @@ import {
   k8sUpdate,
 } from '@console/internal/module/k8s';
 import {
-  YellowExclamationTriangleIcon,
-  GreenCheckCircleIcon,
-  getNamespace,
+  BlueArrowCircleUpIcon,
   getName,
+  getNamespace,
+  GreenCheckCircleIcon,
   WarningStatus,
+  YellowExclamationTriangleIcon,
 } from '@console/shared';
 import {
   SubscriptionModel,
@@ -169,7 +170,7 @@ export const UpgradeApprovalLink: React.FC<{ subscription: SubscriptionKind }> =
   return (
     <span className="co-icon-and-text">
       <Link to={to}>
-        <ArrowCircleUpIcon className="update-pending" /> Upgrade available
+        <BlueArrowCircleUpIcon /> Upgrade available
       </Link>
     </span>
   );
