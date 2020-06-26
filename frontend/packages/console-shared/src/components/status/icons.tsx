@@ -11,11 +11,12 @@ import {
   ResourcesFullIcon,
 } from '@patternfly/react-icons';
 import {
-  global_warning_color_100 as warningColor,
   global_danger_color_100 as dangerColor,
-  global_success_color_200 as okColor,
-  global_info_color_100 as blueInfoColor,
+  global_default_color_200 as blueDefaultColor,
   global_disabled_color_100 as disabledColor,
+  global_info_color_100 as blueInfoColor,
+  global_success_color_200 as okColor,
+  global_warning_color_100 as warningColor,
 } from '@patternfly/react-tokens';
 
 export const GreenCheckCircleIcon: React.FC<ColoredIconProps> = ({ className, alt }) => (
@@ -51,7 +52,7 @@ export const YellowResourcesAlmostFullIcon: React.FC<ColoredIconProps> = ({ clas
 );
 
 export const BlueArrowCircleUpIcon: React.FC<ColoredIconProps> = ({ className, alt }) => (
-  <ArrowCircleUpIcon color={blueInfoColor.value} className={className} alt={alt} />
+  <ArrowCircleUpIcon color={blueDefaultColor.value} className={className} alt={alt} />
 );
 
 export type ColoredIconProps = {
