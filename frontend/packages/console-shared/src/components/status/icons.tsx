@@ -1,5 +1,6 @@
 import * as React from 'react';
 import {
+  ArrowCircleUpIcon,
   CheckCircleIcon,
   ExclamationCircleIcon,
   ExclamationTriangleIcon,
@@ -47,6 +48,10 @@ export const RedResourcesFullIcon: React.FC<ColoredIconProps> = ({ className, al
 
 export const YellowResourcesAlmostFullIcon: React.FC<ColoredIconProps> = ({ className, alt }) => (
   <ResourcesAlmostFullIcon color={warningColor.value} className={className} alt={alt} />
+);
+
+export const BlueArrowCircleUpIcon: React.FC<ColoredIconProps> = ({ className, alt }) => (
+  <ArrowCircleUpIcon color={blueInfoColor.value} className={className} alt={alt} />
 );
 
 export type ColoredIconProps = {

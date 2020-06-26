@@ -1,8 +1,13 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { Button } from '@patternfly/react-core';
-import { ArrowCircleUpIcon, InProgressIcon } from '@patternfly/react-icons';
-import { FLAGS, getInfrastructureAPIURL, getInfrastructurePlatform } from '@console/shared';
+import { InProgressIcon } from '@patternfly/react-icons';
+import {
+  BlueArrowCircleUpIcon,
+  FLAGS,
+  getInfrastructureAPIURL,
+  getInfrastructurePlatform,
+} from '@console/shared';
 import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
 import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
 import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
@@ -60,7 +65,7 @@ const ClusterVersion: React.FC<ClusterVersionProps> = ({ cv }) => {
               variant="link"
               className="btn-link--no-btn-default-values"
               onClick={() => clusterUpdateModal({ cv })}
-              icon={<ArrowCircleUpIcon />}
+              icon={<BlueArrowCircleUpIcon />}
               isInline
             >
               Update
