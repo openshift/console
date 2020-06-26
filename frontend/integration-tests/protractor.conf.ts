@@ -100,6 +100,7 @@ const testSuites = {
     'tests/dashboards/cluster-dashboard.scenario.ts',
     'tests/dashboards/project-dashboard.scenario.ts',
     'tests/event.scenario.ts',
+    'tests/cluster-settings.scenario.ts',
   ]),
   release: suite([
     'tests/crud.scenario.ts',
@@ -136,6 +137,7 @@ const testSuites = {
     'tests/dashboards/cluster-dashboard.scenario.ts',
     'tests/dashboards/project-dashboard.scenario.ts',
     'tests/event.scenario.ts',
+    'tests/cluster-settings.scenario.ts',
   ]),
   clusterSettings: suite(['tests/cluster-settings.scenario.ts']),
   alertmanager: suite(['tests/alertmanager.scenario.ts']),

@@ -1,7 +1,12 @@
 import * as React from 'react';
 import { ActionGroup, Button } from '@patternfly/react-core';
 
-import { ClusterVersionKind, getSortedUpdates } from '../../module/k8s';
+import {
+  ClusterVersionKind,
+  getClusterVersionChannel,
+  getSortedUpdates,
+  showReleaseNotes,
+} from '../../module/k8s';
 import {
   ModalBody,
   ModalComponentProps,
@@ -9,10 +14,13 @@ import {
   ModalTitle,
   createModalLauncher,
 } from '../factory/modal';
+import { ReleaseNotesLink } from '../cluster-settings/cluster-settings';
 
 export const ClusterMoreUpdatesModal: React.FC<ClusterMoreUpdatesModalProps> = ({ cancel, cv }) => {
   const availableUpdates = getSortedUpdates(cv);
   const moreAvailableUpdates = availableUpdates.slice(1).reverse();
+  const channel = getClusterVersionChannel(cv);
+  const releaseNotes = showReleaseNotes(channel);
 
   return (
     <div className="modal-content">
@@ -22,6 +30,7 @@ export const ClusterMoreUpdatesModal: React.FC<ClusterMoreUpdatesModalProps> = (
           <thead>
             <tr>
               <th>Version</th>
+              {releaseNotes && <th>Release Notes</th>}
             </tr>
           </thead>
           <tbody>
@@ -29,6 +38,11 @@ export const ClusterMoreUpdatesModal: React.FC<ClusterMoreUpdatesModalProps> = (
               return (
                 <tr key={update.version}>
                   <td>{update.version}</td>
+                  {releaseNotes && (
+                    <td>
+                      <ReleaseNotesLink channel={channel} version={update.version} />
+                    </td>
+                  )}
                 </tr>
               );
             })}

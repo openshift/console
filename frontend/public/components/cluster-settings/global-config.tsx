@@ -35,7 +35,7 @@ const ItemRow = ({ item }) => {
   return (
     <div className="row co-resource-list__item" data-test-action={item.label}>
       <div className="col-xs-10 col-sm-4">
-        <Link to={item.path} data-test-id={item.id}>
+        <Link to={item.path} data-test-id={item.label}>
           {item.label}
         </Link>
       </div>
