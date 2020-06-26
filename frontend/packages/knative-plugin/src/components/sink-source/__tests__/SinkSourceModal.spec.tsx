@@ -16,21 +16,20 @@ describe('SinkSourceModal Form', () => {
   let formProps: SinkSourceModalProps;
   let sinkSourceModalWrapper: ShallowWrapper<SinkSourceModalProps>;
   const formValues = {
-    sink: {
-      ref: {
-        apiVersion: `${ServiceModel.apiGroup}/${ServiceModel.apiVersion}`,
-        kind: ServiceModel.kind,
-        name: 'event-greeter',
-      },
+    ref: {
+      apiVersion: `${ServiceModel.apiGroup}/${ServiceModel.apiVersion}`,
+      kind: ServiceModel.kind,
+      name: 'event-greeter',
     },
   };
   beforeEach(() => {
     formProps = {
       ...formikFormProps,
       values: formValues,
-      namespace: 'myapp',
       resourceName: 'myappes',
       initialValues: formValues,
+      resourceDropdown: [],
+      labelTitle: 'Move Sink',
     };
     sinkSourceModalWrapper = shallow(<SinkSourceModal {...formProps} />);
   });
@@ -43,7 +42,7 @@ describe('SinkSourceModal Form', () => {
   it('should render ResourceDropdownField for service', () => {
     const serviceDropDown = sinkSourceModalWrapper.find(ResourceDropdownField);
     expect(serviceDropDown).toHaveLength(1);
-    expect(serviceDropDown.get(0).props.name).toBe('sink.ref.name');
+    expect(serviceDropDown.get(0).props.name).toBe('ref.name');
     expect(serviceDropDown.get(0).props.selectedKey).toBe('event-greeter');
   });
 
@@ -67,12 +66,10 @@ describe('SinkSourceModal Form', () => {
 
   it('Save should be enabled if value is  changed', () => {
     const sinkValues = {
-      sink: {
-        ref: {
-          apiVersion: `${ServiceModel.apiGroup}/${ServiceModel.apiVersion}`,
-          kind: ServiceModel.kind,
-          name: 'event-greeter-new',
-        },
+      ref: {
+        apiVersion: `${ServiceModel.apiGroup}/${ServiceModel.apiVersion}`,
+        kind: ServiceModel.kind,
+        name: 'event-greeter-new',
       },
     };
     formProps = {
@@ -81,6 +78,8 @@ describe('SinkSourceModal Form', () => {
         ...formProps.values,
         ...sinkValues,
       },
+      resourceDropdown: [],
+      labelTitle: 'Move Sink',
     };
     sinkSourceModalWrapper = shallow(<SinkSourceModal {...formProps} />);
     const modalSubmitFooter = sinkSourceModalWrapper.find(ModalSubmitFooter);

@@ -10,7 +10,12 @@ import {
   SidebarSectionHeading,
 } from '@console/internal/components/utils';
 import { getEventSourceResponse } from '../../../topology/__tests__/topology-knative-test-data';
-import { ServiceModel, EventSourceApiServerModel, EventSourceCamelModel } from '../../../models';
+import {
+  ServiceModel,
+  EventSourceApiServerModel,
+  EventSourceCamelModel,
+  EventingIMCModel,
+} from '../../../models';
 import EventSinkServicesOverviewList from '../EventSinkServicesOverviewList';
 
 describe('EventSinkServicesOverviewList', () => {
@@ -68,10 +73,10 @@ describe('EventSinkServicesOverviewList', () => {
       'spec',
     );
     const wrapper = shallow(<EventSinkServicesOverviewList obj={mockData} />);
-    expect(wrapper.find('span').text()).toBe('No services found for this resource.');
+    expect(wrapper.find('span').text()).toBe('No sink found for this resource.');
   });
 
-  it('should have ResourceLink with proper kind', () => {
+  it('should have ResourceLink with proper kind for sink to knSvc', () => {
     const wrapper = shallow(
       <EventSinkServicesOverviewList
         obj={getEventSourceResponse(EventSourceApiServerModel).data[0]}
@@ -80,6 +85,24 @@ describe('EventSinkServicesOverviewList', () => {
     const findResourceLink = wrapper.find(ResourceLink);
     expect(findResourceLink).toHaveLength(1);
     expect(findResourceLink.at(0).props().kind).toEqual(referenceForModel(ServiceModel));
+  });
+
+  it('should have ResourceLink with proper kind for sink to channel', () => {
+    const sinkData = {
+      sink: {
+        apiVersion: `${EventingIMCModel.apiGroup}/${EventingIMCModel.apiVersion}`,
+        kind: EventingIMCModel.kind,
+        name: 'testchannel',
+      },
+    };
+    const sinkChannelData = {
+      ...getEventSourceResponse(EventSourceApiServerModel).data[0],
+      ...{ spec: sinkData },
+    };
+    const wrapper = shallow(<EventSinkServicesOverviewList obj={sinkChannelData} />);
+    const findResourceLink = wrapper.find(ResourceLink);
+    expect(findResourceLink).toHaveLength(1);
+    expect(findResourceLink.at(0).props().kind).toEqual(referenceForModel(EventingIMCModel));
   });
 
   it('should have ExternaLink when sinkUri is present', () => {

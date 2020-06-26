@@ -2,8 +2,14 @@ import * as _ from 'lodash';
 import { K8sResourceKind, PodKind, referenceForModel } from '@console/internal/module/k8s';
 import { FirehoseResource } from '@console/internal/components/utils';
 import { KNATIVE_SERVING_LABEL } from '../const';
-import { ServiceModel, RevisionModel, ConfigurationModel, RouteModel } from '../models';
 import { WatchK8sResources } from '@console/internal/components/utils/k8s-watch-hook';
+import {
+  ServiceModel,
+  RevisionModel,
+  ConfigurationModel,
+  RouteModel,
+  EventingSubscriptionModel,
+} from '../models';
 
 export type KnativeItem = {
   revisions?: K8sResourceKind[];
@@ -118,6 +124,19 @@ export const knativeServingResourcesServices = (namespace: string): FirehoseReso
   return knativeResource;
 };
 
+export const knativeEventingResourcesSubscription = (namespace: string): FirehoseResource[] => {
+  const knativeResource = [
+    {
+      isList: true,
+      kind: referenceForModel(EventingSubscriptionModel),
+      namespace,
+      prop: 'eventingsubscription',
+      optional: true,
+    },
+  ];
+  return knativeResource;
+};
+
 export const knativeServingResourcesRevisionWatchers = (
   namespace: string,
 ): WatchK8sResources<any> => {
@@ -167,6 +186,20 @@ export const knativeServingResourcesServicesWatchers = (
     ksservices: {
       isList: true,
       kind: referenceForModel(ServiceModel),
+      namespace,
+      optional: true,
+    },
+  };
+  return knativeResource;
+};
+
+export const knativeEventingResourcesSubscriptionWatchers = (
+  namespace: string,
+): WatchK8sResources<any> => {
+  const knativeResource = {
+    eventingsubscription: {
+      isList: true,
+      kind: referenceForModel(EventingSubscriptionModel),
       namespace,
       optional: true,
     },

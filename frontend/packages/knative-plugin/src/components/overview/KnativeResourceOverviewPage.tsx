@@ -6,10 +6,13 @@ import { groupVersionFor, K8sKind, referenceForModel } from '@console/internal/m
 import { RootState } from '@console/internal/redux';
 import { OverviewItem } from '@console/shared';
 import { ModifyApplication } from '@console/dev-console/src/actions/modify-application';
-import { KNATIVE_SERVING_APIGROUP } from '../../const';
-import { RevisionModel } from '../../models';
+import { KNATIVE_SERVING_APIGROUP, KNATIVE_EVENT_MESSAGE_APIGROUP } from '../../const';
+import { RevisionModel, EventingSubscriptionModel } from '../../models';
 import { getRevisionActions } from '../../actions/getRevisionActions';
-import { isDynamicEventResourceKind } from '../../utils/fetch-dynamic-eventsources-utils';
+import {
+  isDynamicEventResourceKind,
+  isEventingChannelResourceKind,
+} from '../../utils/fetch-dynamic-eventsources-utils';
 import OverviewDetailsKnativeResourcesTab from './OverviewDetailsKnativeResourcesTab';
 import KnativeOverview from './KnativeOverview';
 
@@ -52,6 +55,8 @@ export const KnativeResourceOverviewPage: React.ComponentType<KnativeResourceOve
   const actions = [];
   if (resourceModel.kind === RevisionModel.kind) {
     actions.push(...getRevisionActions());
+  } else if (resourceModel.kind === EventingSubscriptionModel.kind) {
+    actions.push(...Kebab.getExtensionsActionsForKind(resourceModel), ...Kebab.factory.common);
   } else {
     actions.push(
       ModifyApplication,
@@ -78,7 +83,9 @@ const mapStateToProps = (state: RootState): StateProps => {
       .filter(
         (model: K8sKind) =>
           model.apiGroup === KNATIVE_SERVING_APIGROUP ||
-          isDynamicEventResourceKind(referenceForModel(model)),
+          model.apiGroup === KNATIVE_EVENT_MESSAGE_APIGROUP ||
+          isDynamicEventResourceKind(referenceForModel(model)) ||
+          isEventingChannelResourceKind(referenceForModel(model)),
       ),
   };
 };

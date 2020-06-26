@@ -25,8 +25,12 @@ import {
   knativeServingResourcesRevisionWatchers,
   knativeServingResourcesRoutesWatchers,
   knativeServingResourcesServicesWatchers,
+  knativeEventingResourcesSubscriptionWatchers,
 } from '../utils/get-knative-resources';
-import { getDynamicEventSourcesWatchers } from '../utils/fetch-dynamic-eventsources-utils';
+import {
+  getDynamicEventSourcesWatchers,
+  getDynamicEventingChannelWatchers,
+} from '../utils/fetch-dynamic-eventsources-utils';
 
 export const getKnativeResources = (namespace: string) => {
   return {
@@ -34,7 +38,9 @@ export const getKnativeResources = (namespace: string) => {
     ...knativeServingResourcesConfigurationsWatchers(namespace),
     ...knativeServingResourcesRoutesWatchers(namespace),
     ...knativeServingResourcesServicesWatchers(namespace),
+    ...knativeEventingResourcesSubscriptionWatchers(namespace),
     ...getDynamicEventSourcesWatchers(namespace),
+    ...getDynamicEventingChannelWatchers(namespace),
   };
 };
 

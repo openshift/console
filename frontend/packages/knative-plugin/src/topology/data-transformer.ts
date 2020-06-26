@@ -4,12 +4,12 @@ import {
   TopologyDataResources,
   addToTopologyDataModel,
 } from '@console/dev-console/src/components/topology';
-import { getDynamicEventSourcesModelRefs } from '../utils/fetch-dynamic-eventsources-utils';
 import {
   getRevisionsData,
   KnativeUtil,
   NodeType,
   transformKnNodeData,
+  getKnativeDynamicResources,
 } from './knative-topology-utils';
 import {
   getKnativeServingConfigurations,
@@ -17,6 +17,10 @@ import {
   getKnativeServingRoutes,
   getKnativeServingServices,
 } from '../utils/get-knative-resources';
+import {
+  getDynamicEventSourcesModelRefs,
+  getDynamicChannelModelRefs,
+} from '../utils/fetch-dynamic-eventsources-utils';
 
 const addKnativeTopologyData = (
   graphModel: Model,
@@ -34,14 +38,6 @@ const addKnativeTopologyData = (
   addToTopologyDataModel(knativeResourceDataModel, graphModel);
 };
 
-const getKnativeEventSources = (resources: TopologyDataResources): K8sResourceKind[] => {
-  const evenSourceProps = getDynamicEventSourcesModelRefs();
-  return evenSourceProps.reduce((acc, currProp) => {
-    const currPropResource = resources[currProp]?.data ?? [];
-    return [...acc, ...currPropResource];
-  }, []);
-};
-
 export const getKnativeTopologyDataModel = (
   namespace: string,
   resources: TopologyDataResources,
@@ -52,10 +48,16 @@ export const getKnativeTopologyDataModel = (
     getKnativeServingRoutes,
     getKnativeServingServices,
   ];
+  const eventSourceProps = getDynamicEventSourcesModelRefs();
+  const channelResourceProps = getDynamicChannelModelRefs();
   const knativeTopologyGraphModel: Model = { nodes: [], edges: [] };
   const knSvcResources: K8sResourceKind[] = resources?.ksservices?.data ?? [];
-  const knEventSources: K8sResourceKind[] = getKnativeEventSources(resources);
+  const knEventSources: K8sResourceKind[] = getKnativeDynamicResources(resources, eventSourceProps);
   const knRevResources: K8sResourceKind[] = resources?.revisions?.data ?? [];
+  const knChannelResources: K8sResourceKind[] = getKnativeDynamicResources(
+    resources,
+    channelResourceProps,
+  );
 
   addKnativeTopologyData(
     knativeTopologyGraphModel,
@@ -68,6 +70,13 @@ export const getKnativeTopologyDataModel = (
     knativeTopologyGraphModel,
     knEventSources,
     NodeType.EventSource,
+    resources,
+    utils,
+  );
+  addKnativeTopologyData(
+    knativeTopologyGraphModel,
+    knChannelResources,
+    NodeType.PubSub,
     resources,
     utils,
   );

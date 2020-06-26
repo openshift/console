@@ -19,12 +19,16 @@ import {
   EventSourcePingModel,
   EventSourceSinkBindingModel,
   EventSourceApiServerModel,
+  EventingSubscriptionModel,
+  EventingIMCModel,
 } from '../../models';
 import {
   RevisionKind,
   ConditionTypes,
   RouteKind,
   ServiceKind as knativeServiceKind,
+  EventSubscriptionKind,
+  EventChannelKind,
 } from '../../types';
 
 export const sampleKnativeDeployments: FirehoseResult<DeploymentKind[]> = {
@@ -413,7 +417,7 @@ export const getEventSourceResponse = (eventSourceModel: K8sKind): FirehoseResul
         },
         spec: {
           sink: {
-            apiVersion: 'serving.knative.dev/v1alpha1',
+            apiVersion: 'serving.knative.dev/v1',
             kind: 'Service',
             name: 'overlayimage',
           },
@@ -664,6 +668,63 @@ export const sampleEventSourceDeployments: FirehoseResult<DeploymentKind[]> = {
       status: {},
     },
   ],
+};
+
+export const EventSubscriptionObj: EventSubscriptionKind = {
+  apiVersion: `${EventingSubscriptionModel.apiGroup}/${EventingSubscriptionModel.apiVersion}`,
+  kind: EventingSubscriptionModel.kind,
+  metadata: {
+    name: 'sub1',
+    namespace: 'testproject3',
+    selfLink: '/apis/messaging.knative.dev/v1beta1/namespaces/testproject3/subscriptions/sub2',
+    uid: '4de9aba5-432c-46d8-8492-a5bedb10c89a',
+    resourceVersion: '235775100',
+    generation: 1,
+  },
+  spec: {
+    channel: {
+      apiVersion: `${EventingIMCModel.apiGroup}/${EventingIMCModel.apiVersion}`,
+      kind: EventingIMCModel.kind,
+      name: 'testchannel',
+    },
+    subscriber: {
+      ref: { apiVersion: 'serving.knative.dev/v1', kind: 'Service', name: 'overlayimage' },
+    },
+  },
+  status: {
+    observedGeneration: 1,
+    physicalSubscription: {
+      subscriberURI: 'http://channel-display1.testproject3.svc.cluster.local',
+    },
+  },
+};
+
+export const EventIMCObj: EventChannelKind = {
+  apiVersion: `${EventingIMCModel.apiGroup}/${EventingIMCModel.apiVersion}`,
+  kind: EventingIMCModel.kind,
+  metadata: {
+    name: 'testchannel',
+    namespace: 'testproject3',
+    selfLink:
+      '/apis/messaging.knative.dev/v1beta1/namespaces/testproject3/inmemorychannels/testchannel',
+    uid: 'a35e6244-3233-473d-9120-ed274c7ae811',
+    resourceVersion: '235628221',
+    generation: 1,
+  },
+  spec: {
+    subscriber: [
+      {
+        subscriberUri: 'http://channel-display0.testproject3.svc.cluster.local',
+        uid: 'ae670cb1-cb66-4444-aead-c366552e7cef',
+      },
+    ],
+  },
+  status: {
+    observedGeneration: 1,
+    address: {
+      url: 'http://channel-display1.testproject3.svc.cluster.local',
+    },
+  },
 };
 
 export const MockKnativeResources: TopologyDataResources = {

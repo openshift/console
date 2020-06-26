@@ -51,3 +51,25 @@ export type RoutesOverviewListItem = {
   name: string;
   namespace: string;
 };
+
+export type EventSubscriptionKind = {
+  metadata?: {
+    generation?: number;
+  };
+  status: {
+    physicalSubscription: {
+      subscriberURI: string;
+    };
+  };
+} & K8sResourceKind;
+
+export type EventChannelKind = {
+  metadata?: {
+    generation?: number;
+  };
+  status: {
+    address: {
+      url: string;
+    };
+  };
+} & K8sResourceKind;

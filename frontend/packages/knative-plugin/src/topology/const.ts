@@ -5,6 +5,8 @@ import {
 
 export const TYPE_EVENT_SOURCE = 'event-source';
 export const TYPE_EVENT_SOURCE_LINK = 'event-source-link';
+export const TYPE_EVENT_PUB_SUB = 'event-pubsub';
+export const TYPE_EVENT_PUB_SUB_LINK = 'event-pubsub-link';
 export const TYPE_KNATIVE_SERVICE = 'knative-service';
 export const TYPE_REVISION_TRAFFIC = 'revision-traffic';
 export const TYPE_KNATIVE_REVISION = 'knative-revision';

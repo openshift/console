@@ -5,7 +5,7 @@ import { EditApplication } from '@console/dev-console/src/actions/modify-applica
 import { AddHealthChecks, EditHealthChecks } from '@console/app/src/actions/modify-health-checks';
 import { setTrafficDistribution } from '../actions/traffic-splitting';
 import { setSinkSource } from '../actions/sink-source';
-import { ServiceModel } from '../models';
+import { ServiceModel, EventingSubscriptionModel } from '../models';
 import { getDynamicEventSourcesModelRefs } from './fetch-dynamic-eventsources-utils';
 
 export const getKebabActionsForKind = (resourceKind: K8sKind): KebabAction[] => {
@@ -16,6 +16,9 @@ export const getKebabActionsForKind = (resourceKind: K8sKind): KebabAction[] => 
       menuActions.push(setTrafficDistribution, AddHealthChecks, EditApplication, EditHealthChecks);
     }
     if (_.includes(eventSourceModelrefs, referenceForModel(resourceKind))) {
+      menuActions.push(setSinkSource);
+    }
+    if (referenceForModel(resourceKind) === referenceForModel(EventingSubscriptionModel)) {
       menuActions.push(setSinkSource);
     }
   }
