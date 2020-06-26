@@ -113,16 +113,19 @@ export interface SecretKeyRef {
 }
 
 export interface RadioButtonFieldProps extends FieldProps {
-  value: string | number;
+  value: React.ReactText;
   description?: React.ReactNode;
+  onChange?: (value: React.ReactText) => void;
 }
 
 export interface RadioGroupFieldProps extends FieldProps {
+  inline?: boolean;
   options: RadioGroupOption[];
+  onChange?: (value: React.ReactText) => void;
 }
 
 export interface RadioGroupOption {
-  value: string | number;
+  value: React.ReactText;
   label: React.ReactNode;
   isDisabled?: boolean;
   children?: React.ReactNode;

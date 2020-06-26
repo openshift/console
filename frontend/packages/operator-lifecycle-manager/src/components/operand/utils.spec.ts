@@ -1,6 +1,7 @@
 import { testCRD } from '../../../integration-tests/mocks';
-import { getJSONSchemaOrder, capabilitiesToUISchema } from './utils';
+import { getJSONSchemaOrder } from '@console/shared/src/components/dynamic-form/utils';
 import { ServiceAccountModel } from '@console/internal/models';
+import { capabilitiesToUISchema } from './utils';
 import { SpecCapability } from '../descriptors/types';
 
 describe('getJSONSchemaOrder', () => {

@@ -4,9 +4,15 @@ import { Radio } from '@patternfly/react-core';
 import { RadioButtonFieldProps } from './field-types';
 import { getFieldId } from './field-utils';
 
-const RadioButtonField: React.FC<RadioButtonFieldProps> = ({ name, label, value, ...props }) => {
+const RadioButtonField: React.FC<RadioButtonFieldProps> = ({
+  name,
+  label,
+  value,
+  onChange,
+  ...props
+}) => {
   const [field, { touched, error }] = useField(name);
-  const { setFieldValue } = useFormikContext<FormikValues>();
+  const { setFieldValue, setFieldTouched } = useFormikContext<FormikValues>();
   const fieldId = getFieldId(`${name}-${value}`, 'radiobutton');
   const isValid = !(touched && error);
   return (
@@ -20,7 +26,14 @@ const RadioButtonField: React.FC<RadioButtonFieldProps> = ({ name, label, value,
       isValid={isValid}
       isDisabled={props.isDisabled}
       aria-label={`${fieldId}-${label}`}
-      onChange={() => setFieldValue(name, value)}
+      onChange={() => {
+        if (onChange) {
+          onChange(value);
+        } else {
+          setFieldValue(name, value);
+        }
+        setFieldTouched(name, true);
+      }}
     />
   );
 };

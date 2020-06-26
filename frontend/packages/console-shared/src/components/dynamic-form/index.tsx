@@ -31,6 +31,9 @@ export const DynamicForm: React.FC<DynamicFormProps> = ({
   schema,
   uiSchema = {},
   widgets = {},
+  customUISchema,
+  noActions,
+  ...restProps
 }) => {
   const schemaErrors = getSchemaErrors(schema);
   // IF the top level schema is unsupported, don't render a form at all.
@@ -58,6 +61,7 @@ export const DynamicForm: React.FC<DynamicFormProps> = ({
       />
       <Accordion asDefinitionList={false} className="co-dynamic-form__accordion">
         <Form
+          {...restProps}
           className="co-dynamic-form"
           noValidate={noValidate}
           ArrayFieldTemplate={ArrayFieldTemplate}
@@ -73,20 +77,22 @@ export const DynamicForm: React.FC<DynamicFormProps> = ({
           schema={schema}
           // Don't show the react-jsonschema-form error list at top
           showErrorList={false}
-          uiSchema={_.defaultsDeep({}, K8S_UI_SCHEMA, uiSchema)}
+          uiSchema={customUISchema ? uiSchema : _.defaultsDeep({}, K8S_UI_SCHEMA, uiSchema)}
           widgets={{ ...defaultWidgets, ...widgets }}
         >
           {errors.length > 0 && <ErrorTemplate errors={errors} />}
-          <div style={{ paddingBottom: '30px' }}>
-            <ActionGroup className="pf-c-form">
-              <Button type="submit" variant="primary">
-                Create
-              </Button>
-              <Button onClick={history.goBack} variant="secondary">
-                Cancel
-              </Button>
-            </ActionGroup>
-          </div>
+          {!noActions && (
+            <div style={{ paddingBottom: '30px' }}>
+              <ActionGroup className="pf-c-form">
+                <Button type="submit" variant="primary">
+                  Create
+                </Button>
+                <Button onClick={history.goBack} variant="secondary">
+                  Cancel
+                </Button>
+              </ActionGroup>
+            </div>
+          )}
         </Form>
       </Accordion>
     </>
@@ -96,6 +102,8 @@ export const DynamicForm: React.FC<DynamicFormProps> = ({
 type DynamicFormProps = FormProps<any> & {
   errors?: string[];
   ErrorTemplate?: React.FC<{ errors: string[] }>;
+  noActions?: boolean;
+  customUISchema?: boolean;
 };
 
 export * from './types';

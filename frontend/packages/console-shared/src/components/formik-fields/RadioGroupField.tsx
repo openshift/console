@@ -1,4 +1,5 @@
 import * as React from 'react';
+import * as classNames from 'classnames';
 import { useField } from 'formik';
 import { FormGroup } from '@patternfly/react-core';
 import { RadioGroupFieldProps } from './field-types';
@@ -11,6 +12,8 @@ const RadioGroupField: React.FC<RadioGroupFieldProps> = ({
   options,
   helpText,
   required,
+  inline,
+  onChange,
   ...props
 }) => {
   const [field, { touched, error }] = useField(props.name);
@@ -19,7 +22,7 @@ const RadioGroupField: React.FC<RadioGroupFieldProps> = ({
   const errorMessage = !isValid ? error : '';
   return (
     <FormGroup
-      className="ocs-radio-group-field"
+      className={classNames('ocs-radio-group-field', { 'ocs-radio-group-field--inline': inline })}
       fieldId={fieldId}
       helperText={helpText}
       helperTextInvalid={errorMessage}
@@ -48,6 +51,7 @@ const RadioGroupField: React.FC<RadioGroupFieldProps> = ({
               isDisabled={option.isDisabled}
               aria-describedby={`${fieldId}-helper`}
               description={description}
+              onChange={onChange}
             />
           </React.Fragment>
         );
