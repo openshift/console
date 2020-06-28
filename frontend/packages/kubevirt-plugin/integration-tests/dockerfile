@@ -1,0 +1,40 @@
+FROM centos:7
+
+USER root
+
+RUN curl -sL https://rpm.nodesource.com/setup_10.x | bash - && \
+    curl --silent --location https://dl.yarnpkg.com/rpm/yarn.repo | tee /etc/yum.repos.d/yarn.repo && \
+    rpm --import https://dl.yarnpkg.com/rpm/pubkey.gpg
+
+RUN yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+
+RUN yum update -y && yum install -y \
+    git \
+    wget \
+    gcc \
+    nodejs \
+    yarn \
+    jq \
+    chromedriver \
+    chromium \
+    xorg-x11-server-Xvfb
+
+RUN wget https://dl.google.com/go/go1.13.3.linux-amd64.tar.gz && \
+    tar -xzf go1.13.3.linux-amd64.tar.gz && \
+    mv go /usr/local && \
+    mkdir srcs
+
+RUN wget https://github.com/openshift/origin/releases/download/v1.5.1/openshift-origin-client-tools-v1.5.1-7b451fc-linux-64bit.tar.gz && \
+    tar xf openshift-origin-client-tools-v1.5.1-7b451fc-linux-64bit.tar.gz && \
+    cp openshift-origin-client-tools-v1.5.1-7b451fc-linux-64bit/oc /bin
+
+ENV GOROOT "/usr/local/go"
+
+ENV GOPATH "$HOME"
+
+ENV PATH "$GOPATH/bin:$GOROOT/bin:$PATH"
+
+ENV CHROME_VERSION "81.0.4044.138"
+
+RUN git clone https://github.com/openshift/console.git && \
+    cd console && ./build.sh
