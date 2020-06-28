@@ -152,6 +152,8 @@
     "yup": "^0.27.0"
   },
   "devDependencies": {
+    "@babel/core": "^7.10.3",
+    "@pmmmwh/react-refresh-webpack-plugin": "^0.4.0-beta.6",
     "@graphql-codegen/cli": "^1.15.1",
     "@graphql-codegen/typescript": "^1.15.1",
     "@graphql-codegen/typescript-graphql-files-modules": "^1.15.1",
@@ -175,6 +177,7 @@
     "@types/react-transition-group": "2.x",
     "@types/react-virtualized": "9.x",
     "@types/webpack": "4.x",
+    "babel-loader": "^8.1.0",
     "bootstrap-sass": "^3.3.7",
     "browser-env": "3.x",
     "cache-loader": "1.x",
@@ -211,6 +214,7 @@
     "protractor": "5.4.x",
     "protractor-fail-fast": "3.x",
     "protractor-jasmine2-screenshot-reporter": "0.5.x",
+    "react-refresh": "^0.8.3",
     "read-pkg": "5.x",
     "redux-mock-store": "^1.5.3",
     "resolve-url-loader": "2.x",
@@ -221,10 +225,10 @@
     "ts-loader": "^6.2.2",
     "ts-node": "5.x",
     "typescript": "3.8.3",
-    "webpack": "4.40.2",
+    "webpack": "4.43.0",
     "webpack-bundle-analyzer": "^3.5.0",
     "webpack-cli": "^3.3.9",
-    "webpack-dev-server": "^3.8.1",
+    "webpack-dev-server": "^3.11.0",
     "webpack-virtual-modules": "^0.1.10"
   },
   "engines": {

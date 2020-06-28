@@ -5,6 +5,7 @@ import * as HtmlWebpackPlugin from 'html-webpack-plugin';
 import * as ForkTsCheckerWebpackPlugin from 'fork-ts-checker-webpack-plugin';
 import * as MiniCssExtractPlugin from 'mini-css-extract-plugin';
 import * as VirtualModulesPlugin from 'webpack-virtual-modules';
+import * as ReactRefreshWebpackPlugin from '@pmmmwh/react-refresh-webpack-plugin';
 
 import { resolvePluginPackages, getActivePluginsModule } from '@console/plugin-sdk/src/codegen';
 import { Configuration as WebpackDevServerConfiguration } from 'webpack-dev-server';
@@ -19,6 +20,7 @@ const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin');
 const NODE_ENV = process.env.NODE_ENV || 'development';
 const HOT_RELOAD = process.env.HOT_RELOAD || 'true';
 const CHECK_CYCLES = process.env.CHECK_CYCLES || 'false';
+const IS_WDS = process.env.WEBPACK_DEV_SERVER;
 
 /* Helpers */
 const extractCSS = new MiniCssExtractPlugin({ filename: 'app-bundle.[contenthash].css' });
@@ -42,6 +44,7 @@ const config: Configuration = {
     hot: HOT_RELOAD !== 'false',
     inline: HOT_RELOAD !== 'false',
     contentBase: false,
+    transportMode: 'ws',
   },
   resolve: {
     extensions: ['.glsl', '.ts', '.tsx', '.js', '.jsx'],
@@ -69,6 +72,16 @@ const config: Configuration = {
               workers: require('os').cpus().length - 1,
             },
           },
+          ...(IS_WDS
+            ? [
+                {
+                  loader: 'babel-loader',
+                  options: {
+                    plugins: ['react-refresh/babel'],
+                  },
+                },
+              ]
+            : []),
           {
             loader: 'ts-loader',
             options: {
@@ -166,6 +179,7 @@ const config: Configuration = {
     }),
     new webpack.IgnorePlugin(/prettier/),
     extractCSS,
+    ...(IS_WDS ? [new ReactRefreshWebpackPlugin()] : []),
   ],
   devtool: 'cheap-module-source-map',
   stats: 'minimal',
