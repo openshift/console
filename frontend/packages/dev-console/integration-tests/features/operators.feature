@@ -7,11 +7,11 @@ Background:
 
 @regression, @smoke
 Scenario: OpenShift Pipeline operator subscription page : P-01-TC01
-   Given user is at Operator Hub page with the header name "Operator Hub"
+   Given user is at Operator Hub page with the header name "OperatorHub"
    When user searches for "OpenShift Pipelines Operator"
-   And clicks "OpenShift Pipelines Operator" card on Operator Hub page
+   And clicks OpenShift Pipelines Operator card on Operator Hub page
    And click install button present on the right side pane
-   Then OpenShift Pipeline operator will be displayed
+   Then OpenShift Pipeline operator subscription page will be displayed
 
 
 @regression, @smoke
@@ -19,7 +19,7 @@ Scenario: Install the Pipeline Operator from Operator Hub page : P-01-TC02
    Given user is at OpenShift Pipeline Operator subscription page
    When user installs the pipeline operator with default values
    Then page redirects to Installed operators
-   And page will contain OpenShift Pipeline Operator 
+   And Installed operators page will contain "OpenShift Pipelines Operator"
 
 
 @regression, @smoke
@@ -55,7 +55,7 @@ Scenario: Install the knative eventing operator : Kn-07-TC01, Kn-07-TC02
 @regression, @smoke
 Scenario: Install the knative apache camel operator : Kn-08-TC01
    Given cluster is installed with knative serverless and eventing operators
-   And user is at operator hub page
+   And user is at Operator Hub page with the header name "Operator Hub"
    When user search and installs the kantive Camel operator with default values
    Then user redirects to Installed operators page
    And page will contain knative apache camel operator

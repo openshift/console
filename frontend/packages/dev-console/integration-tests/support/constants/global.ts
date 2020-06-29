@@ -8,6 +8,8 @@ export enum devNavigationMenu {
   ProjectDetails = 'Project Details',
   ProjectAccess = 'Project Access',
   Pipelines = 'Pipelines',
+  ConfigMaps = 'Config Maps',
+  Secrets = 'Secrets',
 }
 
 export enum switchPerspective {
