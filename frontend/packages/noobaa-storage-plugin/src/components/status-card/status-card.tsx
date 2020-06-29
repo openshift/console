@@ -4,7 +4,7 @@ import { Gallery, GalleryItem } from '@patternfly/react-core';
 import { SubsystemHealth } from '@console/plugin-sdk';
 import AlertsBody from '@console/shared/src/components/dashboard/status-card/AlertsBody';
 import AlertItem from '@console/shared/src/components/dashboard/status-card/AlertItem';
-import { alertURL } from '@console/internal/components/monitoring';
+import { alertURL } from '@console/internal/components/monitoring/utils';
 import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
 import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
 import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';

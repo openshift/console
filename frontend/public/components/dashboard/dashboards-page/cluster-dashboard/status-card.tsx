@@ -26,7 +26,7 @@ import { withDashboardResources } from '../../with-dashboard-resources';
 import AlertItem, {
   StatusItem,
 } from '@console/shared/src/components/dashboard/status-card/AlertItem';
-import { alertURL } from '../../../monitoring';
+import { alertURL } from '../../../monitoring/utils';
 import {
   ClusterVersionKind,
   referenceForModel,

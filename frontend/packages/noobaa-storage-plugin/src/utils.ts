@@ -1,5 +1,5 @@
 import * as _ from 'lodash';
-import { Alert } from '@console/internal/components/monitoring';
+import { Alert } from '@console/internal/components/monitoring/types';
 import { PrometheusResponse } from '@console/internal/components/graphs';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { StorageClass } from '@console/internal/components/storage-class-form';

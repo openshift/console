@@ -3,7 +3,7 @@ import * as _ from 'lodash';
 import * as classNames from 'classnames';
 import { match } from 'react-router-dom';
 import { CreateYAML } from '@console/internal/components/create-yaml';
-import { ListPageProps } from '@console/internal/components/monitoring';
+import { ListPageProps } from '@console/internal/components/monitoring/types';
 import { sortable } from '@patternfly/react-table';
 import { Button } from '@patternfly/react-core';
 import { withFallback } from '@console/shared/src/components/error/error-boundary';

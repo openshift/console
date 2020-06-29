@@ -10,7 +10,8 @@ import {
 } from '@console/patternfly';
 import * as UIActions from '@console/internal/actions/ui';
 import store, { RootState } from '@console/internal/redux';
-import { Alert, alertURL } from '@console/internal/components/monitoring';
+import { Alert } from '@console/internal/components/monitoring/types';
+import { alertURL } from '@console/internal/components/monitoring/utils';
 import { NotificationAlerts } from '@console/internal/reducers/ui';
 import { RedExclamationCircleIcon } from '@console/shared';
 import {

@@ -1,15 +1,6 @@
 import * as classNames from 'classnames';
 import * as _ from 'lodash-es';
-import { murmur3 } from 'murmurhash-js';
-import {
-  Alert,
-  ActionGroup,
-  Badge,
-  Button,
-  TextArea,
-  TextInput,
-  Tooltip,
-} from '@patternfly/react-core';
+import { Badge, Button } from '@patternfly/react-core';
 import { sortable } from '@patternfly/react-table';
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
@@ -20,11 +11,15 @@ import {
   BellIcon,
   BellSlashIcon,
   HourglassHalfIcon,
-  MinusCircleIcon,
   OutlinedBellIcon,
-  PlusCircleIcon,
 } from '@patternfly/react-icons';
 
+import {
+  BlueInfoCircleIcon,
+  GreenCheckCircleIcon,
+  RedExclamationCircleIcon,
+  YellowExclamationTriangleIcon,
+} from '@console/shared';
 import { withFallback } from '@console/shared/src/components/error/error-boundary';
 import * as k8sActions from '../actions/k8s';
 import * as UIActions from '../actions/ui';
@@ -51,70 +46,51 @@ import {
 } from '../reducers/monitoring';
 import store, { RootState } from '../redux';
 import { RowFunction, Table, TableData, TableRow, TextFilter } from './factory';
-import { confirmModal } from './modals';
-import MonitoringDashboardsPage from './monitoring/dashboards';
-import { QueryBrowserPage, ToggleGraph } from './monitoring/metrics';
 import { PrometheusLabels } from './graphs';
-import { QueryBrowser, QueryObj } from './monitoring/query-browser';
-import { CheckBoxes } from './row-filter';
+import { confirmModal } from './modals';
 import { AlertmanagerYAMLEditorWrapper } from './monitoring/alert-manager-yaml-editor';
 import { AlertmanagerConfigWrapper } from './monitoring/alert-manager-config';
-import { refreshNotificationPollers } from './notification-drawer';
-import { ActionsMenu, Dropdown } from './utils/dropdown';
-import { ButtonBar } from './utils/button-bar';
-import { ExternalLink, getURLSearchParams } from './utils/link';
-import { Firehose } from './utils/firehose';
-import { history } from './utils/router';
-import { Kebab } from './utils/kebab';
-import { ResourceLink } from './utils/resource-link';
-import { LoadingInline, StatusBox } from './utils/status-box';
-import { SectionHeading, ActionButtons } from './utils/headings';
-import { Timestamp } from './utils/timestamp';
-import { formatPrometheusDuration, parsePrometheusDuration } from './utils/datetime';
+import MonitoringDashboardsPage from './monitoring/dashboards';
+import { QueryBrowserPage, ToggleGraph } from './monitoring/metrics';
+import { QueryBrowser, QueryObj } from './monitoring/query-browser';
+import { CreateSilence, EditSilence } from './monitoring/silence-form';
 import {
-  BlueInfoCircleIcon,
-  GreenCheckCircleIcon,
-  RedExclamationCircleIcon,
-  YellowExclamationTriangleIcon,
-} from '@console/shared';
+  Alert,
+  Alerts,
+  ListPageProps,
+  MonitoringResource,
+  PrometheusAlert,
+  Rule,
+  Rules,
+  Silence,
+  Silences,
+} from './monitoring/types';
+import {
+  AlertResource,
+  alertsToProps,
+  alertURL,
+  getAlertsAndRules,
+  labelsToParams,
+  RuleResource,
+  rulesToProps,
+  silenceParamToProps,
+  SilenceResource,
+  silencesToProps,
+} from './monitoring/utils';
+import { refreshNotificationPollers } from './notification-drawer';
+import { CheckBoxes } from './row-filter';
+import { formatPrometheusDuration } from './utils/datetime';
+import { ActionsMenu } from './utils/dropdown';
+import { Firehose } from './utils/firehose';
+import { SectionHeading, ActionButtons } from './utils/headings';
+import { Kebab } from './utils/kebab';
+import { ExternalLink, getURLSearchParams } from './utils/link';
+import { ResourceLink } from './utils/resource-link';
+import { history } from './utils/router';
+import { LoadingInline, StatusBox } from './utils/status-box';
+import { Timestamp } from './utils/timestamp';
 
-const AlertResource: MonitoringResource = {
-  kind: 'Alert',
-  label: 'Alert',
-  plural: '/monitoring/alerts',
-  abbr: 'AL',
-};
-
-const RuleResource: MonitoringResource = {
-  kind: 'AlertRule',
-  label: 'Alerting Rule',
-  plural: '/monitoring/alertrules',
-  abbr: 'AR',
-};
-
-const SilenceResource: MonitoringResource = {
-  kind: 'Silence',
-  label: 'Silence',
-  plural: '/monitoring/silences',
-  abbr: 'SL',
-};
-
-const labelsToParams = (labels: PrometheusLabels) =>
-  _.map(labels, (v, k) => `${encodeURIComponent(k)}=${encodeURIComponent(v)}`).join('&');
-
-export const alertURL = (alert: Alert, ruleID: string) =>
-  `${AlertResource.plural}/${ruleID}?${labelsToParams(alert.labels)}`;
 const ruleURL = (rule: Rule) => `${RuleResource.plural}/${_.get(rule, 'id')}`;
-
-const alertsToProps = ({ UI }) => UI.getIn(['monitoring', 'alerts']) || {};
-
-const rulesToProps = (state: RootState) => {
-  const data = state.UI.getIn(['monitoring', 'rules']);
-  const { loaded, loadError }: Alerts = alertsToProps(state);
-  return { data, loaded, loadError };
-};
-
-const silencesToProps = ({ UI }) => UI.getIn(['monitoring', 'silences']) || {};
 
 const pollers = {};
 const pollerTimeouts = {};
@@ -829,13 +805,6 @@ const SilencedAlertsList = ({ alerts }) =>
     </div>
   );
 
-const silenceParamToProps = (state: RootState, { match }) => {
-  const { data: silences, loaded, loadError }: Silences = silencesToProps(state);
-  const { loaded: alertsLoaded }: Alerts = alertsToProps(state);
-  const silence = _.find(silences, { id: _.get(match, 'params.id') });
-  return { alertsLoaded, loaded, loadError, silence, silences };
-};
-
 const SilencesDetailsPage = withFallback(
   connect(silenceParamToProps)((props: SilencesDetailsPageProps) => {
     const { alertsLoaded, loaded, loadError, silence } = props;
@@ -1257,367 +1226,6 @@ const SilencesPage_ = (props) => (
 );
 const SilencesPage = withFallback(connect(silencesToProps)(SilencesPage_));
 
-const pad = (i: number): string => (i < 10 ? `0${i}` : String(i));
-
-const formatDate = (d: Date): string =>
-  `${d.getFullYear()}/${pad(d.getMonth() + 1)}/${pad(d.getDate())} ${pad(d.getHours())}:${pad(
-    d.getMinutes(),
-  )}:${pad(d.getSeconds())}`;
-
-const DatetimeTextInput = (props) => {
-  const pattern =
-    '\\d{4}/(0?[1-9]|1[012])/(0?[1-9]|[12]\\d|3[01]) (0?\\d|1\\d|2[0-3]):[0-5]\\d(:[0-5]\\d)?';
-  const isValid = new RegExp(`^${pattern}$`).test(props.value);
-
-  return (
-    <div>
-      <Tooltip
-        content={[
-          <span className="co-nowrap" key="co-timestamp">
-            {isValid ? new Date(props.value).toISOString() : 'Invalid date / time'}
-          </span>,
-        ]}
-      >
-        <TextInput
-          {...props}
-          aria-label="Datetime"
-          data-test-id="datetime"
-          isValid={isValid || !!props.isDisabled}
-          pattern={pattern}
-          placeholder="YYYY/MM/DD hh:mm:ss"
-        />
-      </Tooltip>
-    </div>
-  );
-};
-
-const durationOff = '-';
-const durations = [durationOff, '30m', '1h', '2h', '6h', '12h', '1d', '2d', '1w'];
-const durationItems = _.zipObject(durations, durations);
-
-const SilenceForm_: React.FC<SilenceFormProps> = ({ defaults, Info, title }) => {
-  const now = new Date();
-
-  // Default to starting now if we have no default start time or if the default start time is in the
-  // past (because Alertmanager will change a time in the past to the current time on save anyway)
-  const defaultIsStartNow = _.isEmpty(defaults.startsAt) || new Date(defaults.startsAt) < now;
-
-  let defaultDuration = _.isEmpty(defaults.endsAt) ? '2h' : durationOff;
-
-  // If we have both a default start and end time and the difference between them exactly matches
-  // one of the duration options, automatically select that option in the duration menu
-  if (!defaultIsStartNow && defaults.startsAt && defaults.endsAt) {
-    const durationFromDefaults = formatPrometheusDuration(
-      Date.parse(defaults.endsAt) - Date.parse(defaults.startsAt),
-    );
-    if (durations.includes(durationFromDefaults)) {
-      defaultDuration = durationFromDefaults;
-    }
-  }
-
-  const [comment, setComment] = React.useState(defaults.comment ?? '');
-  const [createdBy, setCreatedBy] = React.useState(defaults.createdBy ?? '');
-  const [duration, setDuration] = React.useState(defaultDuration);
-  const [endsAt, setEndsAt] = React.useState(
-    defaults.endsAt ?? formatDate(new Date(new Date(now).setHours(now.getHours() + 2))),
-  );
-  const [error, setError] = React.useState<string>();
-  const [inProgress, setInProgress] = React.useState(false);
-  const [isStartNow, setIsStartNow] = React.useState(defaultIsStartNow);
-  const [matchers, setMatchers] = React.useState(
-    defaults.matchers ?? [{ isRegex: false, name: '', value: '' }],
-  );
-  const [startsAt, setStartsAt] = React.useState(defaults.startsAt ?? formatDate(now));
-
-  const getEndsAtValue = (): string => {
-    const startsAtDate = Date.parse(startsAt);
-    return startsAtDate
-      ? formatDate(new Date(startsAtDate + parsePrometheusDuration(duration)))
-      : '-';
-  };
-
-  const setMatcherField = (i: number, field: string, v: any): void => {
-    const newMatchers = _.clone(matchers);
-    _.set(newMatchers, [i, field], v);
-    setMatchers(newMatchers);
-  };
-
-  const addMatcher = (): void => {
-    setMatchers([...matchers, { isRegex: false, name: '', value: '' }]);
-  };
-
-  const removeMatcher = (i: number): void => {
-    const newMatchers = _.clone(matchers);
-    newMatchers.splice(i, 1);
-
-    // If all matchers have been removed, add back a single blank matcher
-    setMatchers(_.isEmpty(newMatchers) ? [{ isRegex: false, name: '', value: '' }] : newMatchers);
-  };
-
-  const onSubmit: React.FormEventHandler<HTMLFormElement> = (e) => {
-    e.preventDefault();
-
-    // Don't allow comments to only contain whitespace
-    if (_.trim(comment) === '') {
-      setError('Comment is required.');
-      return;
-    }
-
-    const { alertManagerBaseURL } = window.SERVER_FLAGS;
-    if (!alertManagerBaseURL) {
-      setError('Alertmanager URL not set');
-      return;
-    }
-
-    setInProgress(true);
-
-    const saveStartsAt: Date = isStartNow ? new Date() : new Date(startsAt);
-    const saveEndsAt: Date =
-      duration === durationOff
-        ? new Date(endsAt)
-        : new Date(saveStartsAt.getTime() + parsePrometheusDuration(duration));
-
-    const body = {
-      comment,
-      createdBy,
-      endsAt: saveEndsAt.toISOString(),
-      id: defaults.id,
-      matchers,
-      startsAt: saveStartsAt.toISOString(),
-    };
-
-    coFetchJSON
-      .post(`${alertManagerBaseURL}/api/v2/silences`, body)
-      .then(({ silenceID }) => {
-        setError(undefined);
-        refreshNotificationPollers();
-        history.push(`${SilenceResource.plural}/${encodeURIComponent(silenceID)}`);
-      })
-      .catch((err) => {
-        setError(_.get(err, 'json.error') || err.message || 'Error saving Silence');
-        setInProgress(false);
-      });
-  };
-
-  return (
-    <>
-      <Helmet>
-        <title>{title}</title>
-      </Helmet>
-      <div className="co-m-nav-title co-m-nav-title--detail">
-        <h1 className="co-m-pane__heading">{title}</h1>
-        <p className="co-m-pane__explanation">
-          Silences temporarily mute alerts based on a set of label selectors that you define.
-          Notifications will not be sent for alerts that match all the listed values or regular
-          expressions.
-        </p>
-      </div>
-
-      {Info && <Info />}
-
-      <div className="co-m-pane__body">
-        <form onSubmit={onSubmit} className="monitoring-silence-alert">
-          <div className="co-m-pane__body-group">
-            <SectionHeading text="Duration" />
-            <div className="row">
-              <div className="form-group col-sm-4 col-md-5">
-                <label>Silence alert from...</label>
-                {isStartNow ? (
-                  <DatetimeTextInput isDisabled value="Now" />
-                ) : (
-                  <DatetimeTextInput
-                    isRequired
-                    onChange={(v: string) => setStartsAt(v)}
-                    value={startsAt}
-                  />
-                )}
-              </div>
-              <div className="form-group col-sm-4 col-md-2">
-                <label>For...</label>
-                <Dropdown
-                  dropDownClassName="dropdown--full-width"
-                  items={durationItems}
-                  onChange={(v: string) => setDuration(v)}
-                  selectedKey={duration}
-                />
-              </div>
-              <div className="form-group col-sm-4 col-md-5">
-                <label>Until...</label>
-                {duration === durationOff ? (
-                  <DatetimeTextInput
-                    isRequired
-                    onChange={(v: string) => setEndsAt(v)}
-                    value={endsAt}
-                  />
-                ) : (
-                  <DatetimeTextInput
-                    isDisabled
-                    value={isStartNow ? `${duration} from now` : getEndsAtValue()}
-                  />
-                )}
-              </div>
-            </div>
-            <div className="form-group">
-              <label>
-                <input
-                  checked={isStartNow}
-                  onChange={(e) => setIsStartNow(e.currentTarget.checked)}
-                  type="checkbox"
-                />
-                &nbsp; Start Immediately
-              </label>
-            </div>
-          </div>
-
-          <div className="co-m-pane__body-group">
-            <SectionHeading text="Alert Labels" />
-            <p className="co-help-text">
-              Alerts with labels that match these selectors will be silenced instead of firing.
-              Label values can be matched exactly or with a{' '}
-              <ExternalLink
-                href="https://github.com/google/re2/wiki/Syntax"
-                text="regular expression"
-              />
-            </p>
-
-            {_.map(matchers, (matcher, i: number) => (
-              <div className="row" key={i}>
-                <div className="form-group col-sm-4">
-                  <label>Label name</label>
-                  <TextInput
-                    aria-label="Label name"
-                    isRequired
-                    onChange={(v: string) => setMatcherField(i, 'name', v)}
-                    placeholder="Name"
-                    value={matcher.name}
-                  />
-                </div>
-                <div className="form-group col-sm-4">
-                  <label>Label value</label>
-                  <TextInput
-                    aria-label="Label value"
-                    isRequired
-                    onChange={(v: string) => setMatcherField(i, 'value', v)}
-                    placeholder="Value"
-                    value={matcher.value}
-                  />
-                </div>
-                <div className="form-group col-sm-4">
-                  <div className="monitoring-silence-alert__label-options">
-                    <label>
-                      <input
-                        type="checkbox"
-                        onChange={(e) => setMatcherField(i, 'isRegex', e.currentTarget.checked)}
-                        checked={matcher.isRegex}
-                      />
-                      &nbsp; Use RegEx
-                    </label>
-                    <Button
-                      type="button"
-                      onClick={() => removeMatcher(i)}
-                      aria-label="Remove matcher"
-                      variant="plain"
-                    >
-                      <MinusCircleIcon />
-                    </Button>
-                  </div>
-                </div>
-              </div>
-            ))}
-
-            <div className="form-group">
-              <Button
-                className="pf-m-link--align-left"
-                onClick={addMatcher}
-                type="button"
-                variant="link"
-              >
-                <PlusCircleIcon className="co-icon-space-r" />
-                Add Label
-              </Button>
-            </div>
-          </div>
-
-          <div className="co-m-pane__body-group">
-            <SectionHeading text="Info" />
-            <div className="form-group">
-              <label>Creator</label>
-              <TextInput
-                aria-label="Creator"
-                onChange={(v: string) => setCreatedBy(v)}
-                value={createdBy}
-              />
-            </div>
-            <div className="form-group">
-              <label className="co-required">Comment</label>
-              <TextArea
-                aria-label="Comment"
-                isRequired
-                onChange={(v: string) => setComment(v)}
-                value={comment}
-              />
-            </div>
-            <ButtonBar errorMessage={error} inProgress={inProgress}>
-              <ActionGroup className="pf-c-form">
-                <Button type="submit" variant="primary">
-                  Silence
-                </Button>
-                <Button onClick={history.goBack} variant="secondary">
-                  Cancel
-                </Button>
-              </ActionGroup>
-            </ButtonBar>
-          </div>
-        </form>
-      </div>
-    </>
-  );
-};
-const SilenceForm = withFallback(SilenceForm_);
-
-const EditInfo = () => (
-  <Alert isInline className="co-alert" variant="info" title="Overwriting current silence">
-    When changes are saved, the currently existing silence will be expired and a new silence with
-    the new configuration will take its place.
-  </Alert>
-);
-
-const EditSilence = connect(silenceParamToProps)(({ loaded, loadError, silence }) => {
-  const isExpired = silenceState(silence) === SilenceStates.Expired;
-  const defaults = _.pick(silence, [
-    'comment',
-    'createdBy',
-    'endsAt',
-    'id',
-    'matchers',
-    'startsAt',
-  ]);
-  defaults.startsAt = isExpired ? undefined : formatDate(new Date(defaults.startsAt));
-  defaults.endsAt = isExpired ? undefined : formatDate(new Date(defaults.endsAt));
-  return (
-    <StatusBox data={silence} label={SilenceResource.label} loaded={loaded} loadError={loadError}>
-      <SilenceForm
-        defaults={defaults}
-        Info={isExpired ? undefined : EditInfo}
-        title={isExpired ? 'Recreate Silence' : 'Edit Silence'}
-      />
-    </StatusBox>
-  );
-});
-
-const CreateSilence_ = ({ createdBy }) => {
-  const matchers = _.map(getURLSearchParams(), (value, name) => ({ name, value, isRegex: false }));
-  return _.isEmpty(matchers) ? (
-    <SilenceForm defaults={{ createdBy }} title="Create Silence" />
-  ) : (
-    <SilenceForm defaults={{ createdBy, matchers }} title="Silence Alert" />
-  );
-};
-const createSilenceStateToProps = ({ UI }: RootState) => ({
-  createdBy: UI.get('user')?.metadata?.name,
-});
-const CreateSilence = connect(createSilenceStateToProps)(CreateSilence_);
-
 const AlertmanagerYAML = () => {
   return (
     <Firehose
@@ -1722,36 +1330,6 @@ const AlertingPage: React.FC<AlertingPageProps> = ({ match }) => {
   );
 };
 
-const getAlertsAndRules = (
-  data: PrometheusRulesResponse['data'],
-): { alerts: Alert[]; rules: Rule[] } => {
-  // Flatten the rules data to make it easier to work with, discard non-alerting rules since those are the only
-  // ones we will be using and add a unique ID to each rule.
-  const groups = _.get(data, 'groups') as PrometheusRulesResponse['data']['groups'];
-  const rules = _.flatMap(groups, (g) => {
-    const addID = (r: PrometheusRule): Rule => {
-      const key = [
-        g.file,
-        g.name,
-        r.name,
-        r.duration,
-        r.query,
-        ..._.map(r.labels, (k, v) => `${k}=${v}`),
-      ].join(',');
-      return { ...r, id: String(murmur3(key, 'monitoring-salt')) };
-    };
-
-    return _.filter(g.rules, { type: 'alerting' }).map(addID);
-  });
-
-  // Add `rule` object to each alert
-  const alerts = _.flatMap(rules, (rule) => rule.alerts.map((a) => ({ rule, ...a })));
-
-  return { alerts, rules };
-};
-
-export const getAlerts = (data: PrometheusRulesResponse['data']) => getAlertsAndRules(data).alerts;
-
 const PollerPages = () => {
   React.useEffect(() => {
     const { prometheusBaseURL } = window.SERVER_FLAGS;
@@ -1802,73 +1380,6 @@ export const MonitoringUI = () => (
   </Switch>
 );
 
-type MonitoringResource = {
-  abbr: string;
-  kind: string;
-  label: string;
-  plural: string;
-};
-
-type Silence = {
-  comment: string;
-  createdBy: string;
-  endsAt: string;
-  // eslint-disable-next-line no-use-before-define
-  firingAlerts: Alert[];
-  id?: string;
-  matchers: { name: string; value: string; isRegex: boolean }[];
-  name?: string;
-  startsAt: string;
-  status?: { state: SilenceStates };
-  updatedAt?: string;
-};
-
-type Silences = {
-  data: Silence[];
-  loaded: boolean;
-  loadError?: string;
-};
-
-type PrometheusAlert = {
-  activeAt?: string;
-  annotations: PrometheusLabels;
-  labels: PrometheusLabels & {
-    alertname: string;
-  };
-  state: AlertStates;
-  value?: number;
-};
-
-export type Alert = PrometheusAlert & {
-  rule: Rule;
-  silencedBy?: Silence[];
-};
-
-type PrometheusRule = {
-  alerts: PrometheusAlert[];
-  annotations: PrometheusLabels;
-  duration: number;
-  labels: PrometheusLabels;
-  name: string;
-  query: string;
-};
-
-type Rule = PrometheusRule & {
-  id: string;
-};
-
-type Rules = {
-  data: Rule[];
-  loaded: boolean;
-  loadError?: string;
-};
-
-type Alerts = {
-  data: Alert[];
-  loaded: boolean;
-  loadError?: string;
-};
-
 type AlertStateProps = {
   state: AlertStates;
 };
@@ -1900,35 +1411,6 @@ type SilencesDetailsPageProps = {
   silence: Silence;
 };
 
-type SilenceFormProps = {
-  defaults: any;
-  Info?: React.ComponentType<{}>;
-  title: string;
-};
-
-export type ListPageProps = {
-  alertmanagerLinkPath: string;
-  CreateButton: React.ComponentType<{}>;
-  data: Rule[] | Silence[];
-  filters: { [key: string]: any };
-  Header: (...args) => any[];
-  itemCount: number;
-  kindPlural: string;
-  loaded: boolean;
-  loadError?: string;
-  match: { path: string };
-  nameFilterID: string;
-  reduxID: string;
-  Row: RowFunction;
-  rowFilter: {
-    type: string;
-    selected: string[];
-    reducer: (monitoringResource: Alert | Rule | Silence) => string;
-    items: { id: string; title: string }[];
-  };
-  showTitle?: boolean;
-};
-
 type AlertingPageProps = {
   match: any;
 };
@@ -1943,18 +1425,4 @@ type GraphProps = {
 type MonitoringResourceIconProps = {
   className?: string;
   resource: MonitoringResource;
-};
-
-type Group = {
-  rules: PrometheusRule[];
-  file: string;
-  inverval: number;
-  name: string;
-};
-
-export type PrometheusRulesResponse = {
-  data: {
-    groups: Group[];
-  };
-  status: string;
 };
