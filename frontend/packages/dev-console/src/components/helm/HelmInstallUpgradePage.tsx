@@ -6,8 +6,7 @@ import { safeDump, safeLoad } from 'js-yaml';
 import { Formik } from 'formik';
 import { Helmet } from 'react-helmet';
 import { RouteComponentProps } from 'react-router-dom';
-import { Button } from '@patternfly/react-core';
-import { PageHeading, history, LoadingBox } from '@console/internal/components/utils';
+import { history, LoadingBox } from '@console/internal/components/utils';
 import { coFetchJSON } from '@console/internal/co-fetch';
 import { PageBody } from '@console/shared';
 import { SecretModel } from '@console/internal/models';
@@ -21,7 +20,7 @@ import {
   HelmActionOrigins,
 } from './helm-types';
 import { getHelmActionValidationSchema } from './helm-validation-utils';
-import { getHelmActionConfig, getChartValuesYAML, getHelmChartReadme } from './helm-utils';
+import { getHelmActionConfig, getChartValuesYAML, getChartReadme } from './helm-utils';
 import NamespacedPage, { NamespacedPageVariants } from '../NamespacedPage';
 import HelmInstallUpgradeForm from './form/HelmInstallUpgradeForm';
 import HelmChartMetaDescription from './form/HelmChartMetaDescription';
@@ -37,6 +36,7 @@ export type HelmInstallUpgradeFormData = {
   chartURL?: string;
   chartName: string;
   chartVersion: string;
+  chartReadme: string;
   appVersion: string;
   yamlData: string;
   formData: any;
@@ -103,7 +103,7 @@ const HelmInstallUpgradePage: React.FunctionComponent<HelmInstallUpgradePageProp
       setChartName(chart.metadata.name);
       setChartVersion(chart.metadata.version);
       setAppVersion(chart.metadata.appVersion);
-      setChartReadme(getHelmChartReadme(chart));
+      setChartReadme(getChartReadme(chart));
       setChartHasValues(!!valuesYAML);
       setChartData(chart);
     };
@@ -121,6 +121,7 @@ const HelmInstallUpgradePage: React.FunctionComponent<HelmInstallUpgradePageProp
     chartName,
     appVersion,
     chartVersion,
+    chartReadme,
     yamlData: initialYamlData,
     formData: initialFormData,
     formSchema: initialFormSchema,
@@ -202,18 +203,6 @@ const HelmInstallUpgradePage: React.FunctionComponent<HelmInstallUpgradePageProp
     return <LoadingBox />;
   }
 
-  const handleChartVersionChange = (chart: HelmChart) => {
-    setChartReadme(getHelmChartReadme(chart));
-  };
-
-  const launchReadmeModal = () =>
-    import('./HelmReadmeModal').then((m) =>
-      m.helmReadmeModalLauncher({
-        readme: chartReadme,
-        modalClassName: 'modal-lg',
-      }),
-    );
-
   const chartMetaDescription = <HelmChartMetaDescription chart={chartData} />;
 
   return (
@@ -221,23 +210,6 @@ const HelmInstallUpgradePage: React.FunctionComponent<HelmInstallUpgradePageProp
       <Helmet>
         <title>{config.title}</title>
       </Helmet>
-      <PageHeading title={config.title}>
-        {chartHasValues && `${config.subTitle} `}
-        {chartReadme && (
-          <>
-            For more information on the chart, refer to this{' '}
-            <Button
-              type="button"
-              variant="link"
-              data-test-id="helm-readme-modal"
-              onClick={launchReadmeModal}
-              isInline
-            >
-              README
-            </Button>
-          </>
-        )}
-      </PageHeading>
       <PageBody flexLayout>
         <Formik
           initialValues={initialValues}
@@ -249,9 +221,9 @@ const HelmInstallUpgradePage: React.FunctionComponent<HelmInstallUpgradePageProp
             <HelmInstallUpgradeForm
               {...formikProps}
               chartHasValues={chartHasValues}
-              helmAction={helmAction}
-              onVersionChange={handleChartVersionChange}
               chartMetaDescription={chartMetaDescription}
+              helmActionConfig={config}
+              onVersionChange={setChartData}
             />
           )}
         </Formik>

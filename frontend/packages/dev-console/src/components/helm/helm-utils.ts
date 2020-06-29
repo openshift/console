@@ -133,17 +133,24 @@ export const getHelmActionConfig = (
   switch (helmAction) {
     case HelmActionType.Install:
       return {
+        type: HelmActionType.Install,
         title: 'Install Helm Chart',
-        subTitle: 'The helm chart will be installed using the YAML shown in the editor below.',
+        subTitle: {
+          form:
+            'The Helm chart can be installed by completing the form. Default values may be provided by the Helm chart authors. ',
+          yaml:
+            'The Helm chart can be installed by manually entering YAML or JSON definitions, or by dragging and dropping a file into the editor. ',
+        },
         helmReleaseApi: `/api/helm/chart?url=${chartURL}`,
         fetch: coFetchJSON.post,
         redirectURL: getOriginRedirectURL(HelmActionOrigins.topology, namespace, releaseName),
       };
     case HelmActionType.Upgrade:
       return {
+        type: HelmActionType.Upgrade,
         title: 'Upgrade Helm Release',
         subTitle:
-          'Upgrade by selecting a new chart version or manually changing the YAML shown in the editor below.',
+          'Upgrade by selecting a new chart version or manually changing the YAML shown in the editor below. ',
         helmReleaseApi: `/api/helm/release?ns=${namespace}&name=${releaseName}`,
         fetch: coFetchJSON.put,
         redirectURL: getOriginRedirectURL(actionOrigin, namespace, releaseName),
@@ -151,6 +158,7 @@ export const getHelmActionConfig = (
 
     case HelmActionType.Rollback:
       return {
+        type: HelmActionType.Rollback,
         title: 'Rollback Helm Release',
         subTitle: ``,
         helmReleaseApi: `/api/helm/release/history?ns=${namespace}&name=${releaseName}`,
@@ -179,7 +187,7 @@ export const getChartValuesYAML = (chart: HelmChart): string => {
   return !_.isEmpty(chart?.values) ? safeDump(chart?.values) : '';
 };
 
-export const getHelmChartReadme = (chart: HelmChart): string => {
+export const getChartReadme = (chart: HelmChart): string => {
   const readmeFile = chart?.files?.find((file) => file.name === 'README.md');
   return (readmeFile?.data && atob(readmeFile?.data)) ?? '';
 };

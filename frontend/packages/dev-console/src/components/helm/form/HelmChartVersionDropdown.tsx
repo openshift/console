@@ -11,7 +11,13 @@ import { k8sVersion } from '@console/internal/module/status';
 import { getK8sGitVersion } from '@console/internal/module/k8s';
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
 import { HelmChartMetaData, HelmChart, HelmActionType, HelmChartEntries } from '../helm-types';
-import { getChartURL, getChartVersions, getChartValuesYAML, concatVersions } from '../helm-utils';
+import {
+  getChartURL,
+  getChartVersions,
+  getChartValuesYAML,
+  getChartReadme,
+  concatVersions,
+} from '../helm-utils';
 
 export type HelmChartVersionDropdownProps = {
   chartVersion: string;
@@ -116,15 +122,16 @@ const HelmChartVersionDropdown: React.FunctionComponent<HelmChartVersionDropdown
       .then((res: HelmChart) => {
         onVersionChange(res);
 
+        const chartReadme = getChartReadme(res);
         const valuesYAML = getChartValuesYAML(res);
         const valuesJSON = res?.values;
         const valuesSchema = res?.schema && JSON.parse(atob(res?.schema));
         const editorType = valuesSchema ? EditorType.Form : EditorType.YAML;
         setFieldValue('editorType', editorType);
         setFieldValue('formSchema', valuesSchema);
-
         setFieldValue('yamlData', valuesYAML);
         setFieldValue('formData', valuesJSON);
+        setFieldValue('chartReadme', chartReadme);
         setInitialYamlData(valuesYAML);
         setInitialFormData(valuesJSON);
       })
