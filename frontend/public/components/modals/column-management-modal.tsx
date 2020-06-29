@@ -2,7 +2,7 @@ import * as React from 'react';
 // FIXME upgrading redux types is causing many errors at this time
 // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
 // @ts-ignore
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import * as _ from 'lodash';
 import {
   Alert,
@@ -16,7 +16,6 @@ import {
 
 import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '../factory';
 import { setColumnManagementFilter } from '../../actions/ui';
-import { RootState } from '../../redux';
 
 const MAX_VIEW_COLS = 9;
 
@@ -52,19 +51,15 @@ export const ColumnManagementModal: React.FC<ColumnManagementModalProps> = ({
   kinds,
   cancel,
   close,
+  columnFilters,
 }) => {
-  const columnFilters = useSelector<RootState, string>(({ UI }) => UI.getIn(['columnManagement']));
   const dispatch = useDispatch();
-  const initialDefaultColumns =
-    !_.isEmpty(columnFilters) && columnFilters.has(kinds[0])
-      ? _.cloneDeep(columnFilters.get(kinds[0])).filter(
-          (column) => column.title.length > 0 && !column.additional,
-        )
-      : {};
-  const initialAdditionalColumns =
-    !_.isEmpty(columnFilters) && columnFilters.has(kinds[0])
-      ? _.cloneDeep(columnFilters.get(kinds[0])).filter((column) => column.additional)
-      : {};
+  const initialDefaultColumns = !_.isEmpty(columnFilters)
+    ? _.cloneDeep(columnFilters).filter((column) => column.title.length > 0 && !column.additional)
+    : {};
+  const initialAdditionalColumns = !_.isEmpty(columnFilters)
+    ? _.cloneDeep(columnFilters).filter((column) => column.additional)
+    : {};
   const [defaultColumns, setDefaultColumns] = React.useState<any[]>(initialDefaultColumns);
 
   const [additionalColumns, setAdditionalColumns] = React.useState<ColumnHeaderRow[]>(
@@ -167,6 +162,7 @@ export type ColumnManagementModalProps = {
   cancel: () => void;
   close: () => void;
   kinds: any;
+  columnFilters: any;
 };
 
 type ColumnHeaderRow = {

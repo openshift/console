@@ -679,28 +679,18 @@ export const filters = [
 
 const dispatchToProps = (dispatch): PodPagePropsFromDispatch => ({
   setPodMetrics: (metrics) => dispatch(UIActions.setPodMetrics(metrics)),
-  setColumnFilters: (id, filter: any) => {
-    dispatch(UIActions.setColumnManagementFilter(id, filter));
-  },
 });
 
 export const PodsPage = connect<{}, PodPagePropsFromDispatch, PodPageProps>(
   null,
   dispatchToProps,
 )((props: PodPageProps & PodPagePropsFromDispatch) => {
-  const {
-    canCreate = true,
-    namespace,
-    setColumnFilters,
-    setPodMetrics,
-    customData,
-    ...listProps
-  } = props;
-  const columnFilters = useSelector<RootState, string>(({ UI }) =>
+  const { canCreate = true, namespace, setPodMetrics, customData, ...listProps } = props;
+  let columnFilters = useSelector<RootState, string>(({ UI }) =>
     UI.getIn(['columnManagement', kind]),
   );
   if (_.isEmpty(columnFilters)) {
-    setColumnFilters(kind, getHeader(props?.customData?.showNodes)());
+    columnFilters = getHeader(props?.customData?.showNodes)();
   }
   /* eslint-disable react-hooks/exhaustive-deps */
   React.useEffect(() => {
@@ -733,6 +723,7 @@ export const PodsPage = connect<{}, PodPagePropsFromDispatch, PodPageProps>(
       Header={getHeader(props?.customData?.showNodes)}
       customData={customData}
       hideColumnFilter={false}
+      columnFilters={columnFilters}
     />
   );
 });
@@ -802,7 +793,6 @@ type PodPageProps = {
 
 type PodPagePropsFromDispatch = {
   setPodMetrics: (metrics) => void;
-  setColumnFilters: (kind: string, filter: any) => void;
 };
 
 type PodDetailsPageProps = {

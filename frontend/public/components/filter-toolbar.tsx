@@ -85,6 +85,7 @@ const FilterToolbar_: React.FC<FilterToolbarProps & RouteComponentProps> = (prop
     data,
     hideNameFilter,
     hideColumnFilter = true,
+    columnFilters,
     hideLabelFilter,
     location,
     textFilter = filterTypeMap[FilterType.NAME],
@@ -335,14 +336,14 @@ const FilterToolbar_: React.FC<FilterToolbarProps & RouteComponentProps> = (prop
           <ToolbarItem>
             <Button
               variant="plain"
-              onClick={() => createColumnManagementModal({ kinds: props.kinds, columns: Header() })}
+              onClick={() => createColumnManagementModal({ kinds: props.kinds, columns: columnFilters })}
               aria-label="Column Management"
             >
               <ColumnsIcon />
             </Button>
           </ToolbarItem>
         )}
-        </ToolbarContent>
+      </ToolbarContent>
     </Toolbar>
   );
 };
@@ -360,6 +361,7 @@ type FilterToolbarProps = {
   parseAutoComplete?: any;
   kinds?: any;
   labelPath?: string;
+  columnFilters?: any;
 };
 
 export type RowFilter = {
