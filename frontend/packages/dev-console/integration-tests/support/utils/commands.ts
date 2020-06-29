@@ -4,6 +4,10 @@ declare global {
   namespace Cypress {
     interface Chainable<Subject> {
       clickNavLink(path: [string, string]): Chainable<Element>;
+      byTestID(selector: string): Chainable<Element>;
+      byTestActionID(selector: string): Chainable<Element>;
+      byLegacyTestID(selector: string): Chainable<Element>;
+      byButtonText(selector: string): Chainable<Element>;
     }
   }
 }
@@ -18,3 +22,14 @@ Cypress.Commands.add('clickNavLink', (path: [string, string]) => {
     .contains(path[1])
     .click();
 });
+
+Cypress.Commands.add('byTestID', (selector: string) => cy.get(`[data-test="${selector}"]`));
+Cypress.Commands.add('byTestActionID', (selector: string) =>
+  cy.get(`[data-test-action="${selector}"]:not(.pf-m-disabled)`),
+);
+Cypress.Commands.add('byLegacyTestID', (selector: string) =>
+  cy.get(`[data-test-id="${selector}"]`),
+);
+Cypress.Commands.add('byButtonText', (selector: string) =>
+  cy.get('button[type="button"]').contains(`${selector}`),
+);

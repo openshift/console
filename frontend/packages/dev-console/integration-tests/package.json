@@ -2,5 +2,10 @@
     "name": "@console/cypress-devconsole-integration-tests",
     "version": "0.0.0-fixed",
     "description": "Dev Console integration tests",
-    "private": true
+    "private": true,
+    "cypress-cucumber-preprocessor": {
+      "nonGlobalStepDefinitions": false,
+      "step_definitions": "*./step-definitions/",
+      "features": "*./features"
+    }
   }

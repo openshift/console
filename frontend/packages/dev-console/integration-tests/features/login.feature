@@ -12,8 +12,8 @@ Feature: Login to Application
         Then user should be able to login
 
 Examples:
-| userName   | password                 |
-| kubeadmin  | ThUtv-zK9uj-9YHQi-RcdbF  |
+| userName   | password                |
+| kubeadmin  | uMRpJ-NFVxs-qi4vZ-XpnXk |
 
 
     Scenario Outline: Invalid Login
