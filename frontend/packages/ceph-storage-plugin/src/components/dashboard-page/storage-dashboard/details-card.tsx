@@ -90,7 +90,7 @@ const DetailsCard: React.FC<DashboardItemProps> = ({
           >
             {infrastructurePlatform}
           </DetailItem>
-          <DetailItem title="Mode">Converged</DetailItem>
+          <DetailItem title="Mode">Internal</DetailItem>
           <DetailItem
             key="version"
             title="Version"

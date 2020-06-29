@@ -103,7 +103,7 @@ const InstallCluster: React.FC<InstallClusterProps> = ({ match }) => {
                 onChange={handleModeChange}
                 id="radio-1"
                 className="ceph-install--no-margin"
-                label="Converged"
+                label="Internal"
                 name="converged-mode"
               />
             </div>
@@ -113,7 +113,7 @@ const InstallCluster: React.FC<InstallClusterProps> = ({ match }) => {
                 isChecked={mode === MODES.INDEPENDENT}
                 onChange={handleModeChange}
                 id="radio-2"
-                label="Independent - For external storage"
+                label="External"
                 name="independent-mode"
                 className="ceph-install--no-margin"
               />
