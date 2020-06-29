@@ -23,7 +23,7 @@ const DynamicFormField: React.FC<DynamicFormFieldProps> = ({
 
   return (
     <Grid gutter="md">
-      <GridItem span={6}>
+      <GridItem xl={6} lg={6} md={12} sm={12}>
         <AsyncComponent
           loader={() => import('../dynamic-form').then((c) => c.DynamicForm)}
           errors={errors}
@@ -38,7 +38,9 @@ const DynamicFormField: React.FC<DynamicFormFieldProps> = ({
           liveValidate
         />
       </GridItem>
-      <GridItem span={6}>{formDescription}</GridItem>
+      <GridItem xl={6} lg={6} md={12} sm={12}>
+        {formDescription}
+      </GridItem>
     </Grid>
   );
 };

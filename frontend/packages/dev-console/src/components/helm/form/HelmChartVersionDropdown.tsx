@@ -8,6 +8,7 @@ import { DropdownField } from '@console/shared';
 import { confirmModal } from '@console/internal/components/modals/confirm-modal';
 import { k8sVersion } from '@console/internal/module/status';
 import { getK8sGitVersion } from '@console/internal/module/k8s';
+import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
 import { HelmChartMetaData, HelmChart, HelmActionType, HelmChartEntries } from '../helm-types';
 import { getChartURL, getChartVersions, getChartValuesYAML, concatVersions } from '../helm-utils';
 
@@ -27,13 +28,14 @@ const HelmChartVersionDropdown: React.FunctionComponent<HelmChartVersionDropdown
 }) => {
   const {
     setFieldValue,
-    values: { chartValuesYAML, appVersion },
+    values: { yamlData, formData, appVersion },
     setFieldTouched,
   } = useFormikContext<FormikValues>();
   const [helmChartVersions, setHelmChartVersions] = React.useState({});
   const [helmChartEntries, setHelmChartEntries] = React.useState<HelmChartMetaData[]>([]);
-  const [initialChartYAMLValues, setInitialChartYAMLValues] = React.useState('');
   const [kubernetesVersion, setKubernetesVersion] = React.useState<string>();
+  const [initialYamlData, setInitialYamlData] = React.useState<string>('');
+  const [initialFormData, setInitialFormData] = React.useState<object>();
 
   const warnOnChartVersionChange = (
     onAccept: ModalCallback,
@@ -71,7 +73,8 @@ const HelmChartVersionDropdown: React.FunctionComponent<HelmChartVersionDropdown
   }, []);
 
   React.useEffect(() => {
-    setInitialChartYAMLValues(chartValuesYAML);
+    setInitialYamlData(yamlData);
+    setInitialFormData(formData);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -102,24 +105,33 @@ const HelmChartVersionDropdown: React.FunctionComponent<HelmChartVersionDropdown
     const chartURL = getChartURL(helmChartEntries, value);
 
     setFieldValue('chartVersion', value);
-    setFieldValue('helmChartURL', chartURL);
+    setFieldValue('chartURL', chartURL);
 
     coFetchJSON(`/api/helm/chart?url=${chartURL}`)
       .then((res: HelmChart) => {
         onVersionChange(res);
-        const chartValues = getChartValuesYAML(res);
-        setFieldValue('chartValuesYAML', chartValues);
-        setInitialChartYAMLValues(chartValues);
+
+        const valuesYAML = getChartValuesYAML(res);
+        const valuesJSON = res?.values;
+        const valuesSchema = res?.schema && JSON.parse(atob(res?.schema));
+        const editorType = valuesSchema ? EditorType.Form : EditorType.YAML;
+        setFieldValue('editorType', editorType);
+        setFieldValue('formSchema', valuesSchema);
+
+        setFieldValue('yamlData', valuesYAML);
+        setFieldValue('formData', valuesJSON);
+        setInitialYamlData(valuesYAML);
+        setInitialFormData(valuesJSON);
       })
       .catch((err) => {
-        // eslint-disable-next-line no-console
-        console.error(err);
+        console.error(err); // eslint-disable-line no-console
       });
   };
 
   const handleChartVersionChange = (val: string) => {
     if (val !== chartVersion) {
-      const isDirty = !_.isEqual(initialChartYAMLValues, chartValuesYAML);
+      const isDirty =
+        !_.isEqual(initialYamlData, yamlData) || !_.isEqual(initialFormData, formData);
       if (isDirty) {
         warnOnChartVersionChange(() => onChartVersionChange(val), chartVersion, val);
       } else {
