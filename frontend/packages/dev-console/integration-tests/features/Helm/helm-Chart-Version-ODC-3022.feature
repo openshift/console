@@ -54,7 +54,7 @@ Scenario: Update the chart version to see the alert modal
 @regression, @manual
 Scenario: README should be updated when chart version is updated
     Given user is at the Install Helm Chart page
-    When user clicks on the Chart Versioon dropdown menu
+    When user clicks on the Chart Version dropdown menu
     And user selects the different chart version
     And modal will get popped up
     And user clicks on yes to update the chart version
