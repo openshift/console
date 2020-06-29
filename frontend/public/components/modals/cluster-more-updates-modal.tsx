@@ -1,7 +1,12 @@
 import * as React from 'react';
 import { ActionGroup, Button } from '@patternfly/react-core';
 
-import { ClusterVersionKind, getSortedUpdates, showReleaseNotes } from '../../module/k8s';
+import {
+  ClusterVersionKind,
+  getReleaseNotesLink,
+  getSortedUpdates,
+  showReleaseNotes,
+} from '../../module/k8s';
 import {
   ModalBody,
   ModalComponentProps,
@@ -34,7 +39,11 @@ export const ClusterMoreUpdatesModal: React.FC<ClusterMoreUpdatesModalProps> = (
                   <td>{update.version}</td>
                   {releaseNotes && (
                     <td>
-                      <ReleaseNotesLink version={update.version} />
+                      {getReleaseNotesLink(update.version) ? (
+                        <ReleaseNotesLink version={update.version} />
+                      ) : (
+                        '-'
+                      )}
                     </td>
                   )}
                 </tr>

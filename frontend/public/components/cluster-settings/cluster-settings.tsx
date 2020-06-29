@@ -576,7 +576,11 @@ export const ClusterVersionDetailsTable: React.SFC<ClusterVersionDetailsTablePro
                     </td>
                     {releaseNotes && (
                       <td className="hidden-xs hidden-sm">
-                        <ReleaseNotesLink version={update.version} />
+                        {getReleaseNotesLink(update.version) ? (
+                          <ReleaseNotesLink version={update.version} />
+                        ) : (
+                          '-'
+                        )}
                       </td>
                     )}
                   </tr>
