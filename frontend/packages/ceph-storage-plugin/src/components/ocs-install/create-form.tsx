@@ -14,7 +14,7 @@ import {
 } from '@console/internal/module/k8s';
 import { ListPage } from '@console/internal/components/factory';
 import { NodeModel } from '@console/internal/models';
-import { hasLabel, getName } from '@console/shared';
+import { getName, hasLabel } from '@console/shared';
 import {
   withHandlePromise,
   HandlePromiseProps,
@@ -38,6 +38,7 @@ import { cephStorageLabel } from '../../selectors';
 import NodeTable from './node-list';
 import { PVsAvailableCapacity } from './pvs-available-capacity';
 import { OCS_FLAG, OCS_CONVERGED_FLAG } from '../../features';
+
 import './ocs-install.scss';
 
 const makeLabelNodesRequest = (selectedNodes: NodeKind[]): Promise<NodeKind>[] => {
@@ -96,16 +97,15 @@ export const CreateOCSServiceForm = withHandlePromise<
       params: { appName, ns },
     },
   } = props;
-  const [selectedNodes, setSelectedNodes] = React.useState<NodeKind[]>(null);
-  const [visibleRows, setVisibleRows] = React.useState<NodeKind[]>(null);
   const [osdSize, setOSDSize] = React.useState(defaultRequestSize.NON_BAREMETAL);
   const [storageClass, setStorageClass] = React.useState<StorageClassResourceKind>(null);
   const dispatch = useDispatch();
+  const [nodes, setNodes] = React.useState<NodeKind[]>([]);
 
   const submit = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
     // eslint-disable-next-line promise/catch-or-return
-    handlePromise(makeOCSRequest(selectedNodes, storageClass, osdSize)).then(() => {
+    handlePromise(makeOCSRequest(nodes, storageClass, osdSize)).then(() => {
       dispatch(setFlag(OCS_CONVERGED_FLAG, true));
       dispatch(setFlag(OCS_FLAG, true));
       history.push(
@@ -153,7 +153,9 @@ export const CreateOCSServiceForm = withHandlePromise<
           kind={NodeModel.kind}
           showTitle={false}
           ListComponent={NodeTable}
-          customData={{ selectedNodes, setSelectedNodes, visibleRows, setVisibleRows }}
+          customData={{
+            onRowSelected: setNodes,
+          }}
         />
       </FormGroup>
       <FormGroup
@@ -200,7 +202,7 @@ export const CreateOCSServiceForm = withHandlePromise<
             type="button"
             variant="primary"
             onClick={submit}
-            isDisabled={(selectedNodes?.length ?? 0) < minSelectedNode}
+            isDisabled={(nodes?.length ?? 0) < minSelectedNode}
           >
             Create
           </Button>

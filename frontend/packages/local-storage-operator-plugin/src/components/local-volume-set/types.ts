@@ -3,15 +3,10 @@ import { NodeKind, K8sResourceCommon } from '@console/internal/module/k8s';
 
 export type NodeTableRow = {
   cells: IRow['cells'];
-  selected: IRow['selected'];
   props: {
-    data: NodeKind;
-    uid: string;
+    id: string;
   };
-};
-
-export type RowUIDMap = {
-  [key: string]: NodeTableRow;
+  selected: boolean;
 };
 
 export enum DiskType {
@@ -49,3 +44,14 @@ export type LocalVolumeSetKind = K8sResourceCommon & {
     maxDeviceCount?: number;
   };
 };
+
+export type GetRows = (
+  {
+    componentProps,
+  }: {
+    componentProps: { data: NodeKind[] };
+  },
+  visibleRows: Set<string>,
+  setVisibleRows: React.Dispatch<React.SetStateAction<Set<string>>>,
+  selectedNodes: Set<string>,
+) => NodeTableRow[];

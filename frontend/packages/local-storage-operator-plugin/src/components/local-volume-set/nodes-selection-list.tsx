@@ -2,17 +2,18 @@ import * as React from 'react';
 import * as _ from 'lodash';
 import { Text, pluralize } from '@patternfly/react-core';
 import * as classNames from 'classnames';
-import { sortable, OnSelect } from '@patternfly/react-table';
+import { sortable, IRow } from '@patternfly/react-table';
 import { Table } from '@console/internal/components/factory';
 import {
   ResourceLink,
   humanizeBinaryBytes,
+  humanizeCpuCores,
   convertToBaseValue,
 } from '@console/internal/components/utils';
 import { NodeKind } from '@console/internal/module/k8s';
-import { getUID, getName, getNodeCPUCapacity, getNodeAllocatableMemory } from '@console/shared';
-import { NodeTableRow, RowUIDMap } from './types';
-import { getSelectedNodeUIDs } from './utils';
+import { getName, getNodeCPUCapacity, getNodeAllocatableMemory } from '@console/shared';
+import { useSelectList } from '@console/shared/src/hooks/select-list';
+import { GetRows } from './types';
 import './node-selection-list.scss';
 
 const tableColumnClasses = [
@@ -23,7 +24,7 @@ const tableColumnClasses = [
   classNames('pf-m-hidden', 'pf-m-visible-on-sm', 'pf-u-w-20-on-sm'),
 ];
 
-const setTableHeader = () => {
+const getColumns = () => {
   return [
     {
       title: 'Name',
@@ -50,87 +51,57 @@ const setTableHeader = () => {
   ];
 };
 
-const stateShouldUpdate = (rowUIDMap: RowUIDMap, rows: RowUIDMap): boolean => {
-  /* On initial render rows will be empty */
-  if (_.isEmpty(rows)) return true;
-  return Object.keys(rowUIDMap).some((uid) => rows?.[uid]?.selected !== rowUIDMap?.[uid]?.selected);
-};
+const isSelected = (selected: Set<string>, nodeUID: string): boolean => selected.has(nodeUID);
 
-const createNodeUIDMap = (nodes: NodeKind[]): NodeUIDMap =>
-  nodes.reduce((nodeUIDMap: NodeUIDMap, node: NodeKind) => {
-    const uid = getUID(node);
-    nodeUIDMap[uid] = node;
-    return nodeUIDMap;
-  }, {});
+const getRows: GetRows = ({ componentProps }, visibleRows, setVisibleRows, selectedNodes) => {
+  const { data: filteredData } = componentProps;
 
-const createRowUIDMap = (nodeUIDMap: NodeUIDMap, rows: RowUIDMap): RowUIDMap =>
-  Object.keys(nodeUIDMap).reduce((rowUIDMap, uid: string) => {
-    const node = nodeUIDMap[uid];
-    const nodeName = getName(node);
-    const nodeLocation = node.metadata.labels?.['failure-domain.beta.kubernetes.io/zone'] ?? '-';
-    const nodeCpuCapacity = getNodeCPUCapacity(node);
-    const nodeAllocatableMemory = getNodeAllocatableMemory(node);
+  const rows = filteredData.map((node: NodeKind) => {
+    const cpuSpec: string = getNodeCPUCapacity(node);
+    const memSpec: string = getNodeAllocatableMemory(node);
     const nodeTaints = node.spec?.taints?.length ?? 0;
-    const cells = [
+    const cells: IRow['cells'] = [
       {
-        title: <ResourceLink kind="Node" name={nodeName} title={uid} />,
+        title: <ResourceLink kind="Node" name={getName(node)} title={node.metadata.uid} />,
       },
       {
-        title: nodeCpuCapacity || '-',
+        title: `${humanizeCpuCores(cpuSpec).string || '-'}`,
       },
       {
-        title: humanizeBinaryBytes(convertToBaseValue(nodeAllocatableMemory)).string || '-',
+        title: humanizeBinaryBytes(convertToBaseValue(memSpec)).string ?? '-',
       },
       {
-        title: nodeLocation || '-',
+        title: node.metadata.labels?.['failure-domain.beta.kubernetes.io/zone'] ?? '-',
       },
       {
         title: pluralize(nodeTaints, 'taint'),
       },
     ];
-    rowUIDMap[uid] = {
+    return {
       cells,
-      selected: rows?.[uid]?.selected ?? false,
+      selected: selectedNodes ? isSelected(selectedNodes, node.metadata.uid) : false,
       props: {
-        data: nodeUIDMap[uid],
-        uid,
+        id: node.metadata.uid,
       },
     };
-    return rowUIDMap;
-  }, {});
+  });
 
-const setTableRows: SetTableRows = ({ componentProps, customData }) => {
-  const { data: filteredData } = componentProps;
-  const { rows, setRows, allSelected, setAllSelected } = customData;
+  const uids = new Set(filteredData.map((n) => n.metadata.uid));
 
-  const nodeUIDMap = createNodeUIDMap(filteredData);
-  const rowUIDMap = createRowUIDMap(nodeUIDMap, rows);
-  const tableRows = Object.values(rowUIDMap);
-
-  if (allSelected !== null) {
-    /* Selecting and deselecting visible table rows */
-    Object.keys(rowUIDMap).forEach((uid) => (rowUIDMap[uid].selected = allSelected));
-    setRows({ ...rows, ...rowUIDMap });
-    setAllSelected(null);
-  } else if (!_.isEmpty(rowUIDMap) && stateShouldUpdate(rowUIDMap, rows)) {
-    setRows({ ...rows, ...rowUIDMap });
+  if (!_.isEqual(uids, visibleRows)) {
+    setVisibleRows(uids);
   }
-  return tableRows;
+  return rows;
 };
 
 export const NodesSelectionList: React.FC<NodesSelectionListProps> = (props) => {
-  const { rows, setRows, setAllSelected } = props.customData;
+  const [visibleRows, setVisibleRows] = React.useState<Set<string>>();
 
-  const onSelectTableRows: OnSelect = (_event, isSelected, rowId, rowData) => {
-    const updatedRows: RowUIDMap = { ...rows };
-    if (rowId === -1) {
-      setAllSelected(isSelected);
-    } else {
-      const { uid } = rowData.props;
-      updatedRows[uid].selected = isSelected;
-      setRows({ ...updatedRows });
-    }
-  };
+  const { onSelect, selectedRows: selectedNodes } = useSelectList<NodeKind>(
+    props.data,
+    visibleRows,
+    props.customData.onRowSelected,
+  );
 
   return (
     <>
@@ -139,15 +110,15 @@ export const NodesSelectionList: React.FC<NodesSelectionListProps> = (props) => 
           {...props}
           aria-label="Select nodes for creating volume filter"
           data-test-id="create-lvs-form-node-selection-table"
-          Header={setTableHeader}
-          Rows={setTableRows}
-          onSelect={onSelectTableRows}
+          Header={getColumns}
+          Rows={(rowProps) => getRows(rowProps, visibleRows, setVisibleRows, selectedNodes)}
           customData={props.customData}
           virtualize={false}
+          onSelect={onSelect}
         />
       </div>
       <Text data-test-id="create-lvs-form-selected-nodes" component="h6">
-        {pluralize(getSelectedNodeUIDs(rows).length, 'node')} selected
+        {pluralize(selectedNodes?.size, 'node')} selected
       </Text>
     </>
   );
@@ -156,18 +127,6 @@ export const NodesSelectionList: React.FC<NodesSelectionListProps> = (props) => 
 type NodesSelectionListProps = {
   data: NodeKind[];
   customData: {
-    allSelected: boolean;
-    rows: RowUIDMap;
-    setAllSelected: React.Dispatch<React.SetStateAction<boolean>>;
-    setRows: React.Dispatch<React.SetStateAction<RowUIDMap>>;
+    onRowSelected: (nodes: NodeKind[]) => void;
   };
-};
-
-type SetTableRows = (props: {
-  componentProps: { data: NodeKind[] };
-  customData: NodesSelectionListProps['customData'];
-}) => NodeTableRow[];
-
-type NodeUIDMap = {
-  [key: string]: NodeKind;
 };
