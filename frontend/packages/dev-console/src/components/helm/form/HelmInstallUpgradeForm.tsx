@@ -80,17 +80,17 @@ const HelmInstallUpgradeForm: React.FC<FormikProps<FormikValues> & HelmInstallUp
 
   const formHelpText = (
     <>
-      {formSubTitle}
+      {chartHasValues && <>{formSubTitle} &nbsp;</>}
       {readmeText}
     </>
   );
 
   return (
     <FlexForm onSubmit={handleSubmit}>
-      <FormHeader title={title} helpText={formHelpText} flexLayout />
+      <FormHeader title={title} helpText={formHelpText} marginBottom="lg" />
       <FormSection fullWidth>
         <Grid gutter={'md'}>
-          <GridItem xl={6} lg={6} md={12} sm={12}>
+          <GridItem xl={7} lg={8} md={12}>
             <InputField
               type={TextInputTypes.text}
               name="releaseName"
@@ -100,7 +100,7 @@ const HelmInstallUpgradeForm: React.FC<FormikProps<FormikValues> & HelmInstallUp
               isDisabled={helmAction === HelmActionType.Upgrade}
             />
           </GridItem>
-          <GridItem xl={6} lg={6} md={12} sm={12}>
+          <GridItem xl={5} lg={4} md={12}>
             <HelmChartVersionDropdown
               chartName={chartName}
               chartVersion={chartVersion}

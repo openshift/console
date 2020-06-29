@@ -137,9 +137,9 @@ export const getHelmActionConfig = (
         title: 'Install Helm Chart',
         subTitle: {
           form:
-            'The Helm chart can be installed by completing the form. Default values may be provided by the Helm chart authors. ',
+            'The Helm chart can be installed by completing the form. Default values may be provided by the Helm chart authors.',
           yaml:
-            'The Helm chart can be installed by manually entering YAML or JSON definitions, or by dragging and dropping a file into the editor. ',
+            'The Helm chart can be installed by manually entering YAML or JSON definitions, or by dragging and dropping a file into the editor.',
         },
         helmReleaseApi: `/api/helm/chart?url=${chartURL}`,
         fetch: coFetchJSON.post,
@@ -149,8 +149,10 @@ export const getHelmActionConfig = (
       return {
         type: HelmActionType.Upgrade,
         title: 'Upgrade Helm Release',
-        subTitle:
-          'Upgrade by selecting a new chart version or manually changing the YAML shown in the editor below. ',
+        subTitle: {
+          form: 'Upgrade by selecting a new chart version or manually changing the form values.',
+          yaml: 'Upgrade by selecting a new chart version or manually changing YAML.',
+        },
         helmReleaseApi: `/api/helm/release?ns=${namespace}&name=${releaseName}`,
         fetch: coFetchJSON.put,
         redirectURL: getOriginRedirectURL(actionOrigin, namespace, releaseName),
