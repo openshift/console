@@ -3,6 +3,7 @@ import * as _ from 'lodash';
 import { safeLoad } from 'js-yaml';
 import { FormikValues, useFormikContext } from 'formik';
 import { GridItem } from '@patternfly/react-core';
+import { InfoCircleIcon } from '@patternfly/react-icons';
 import { coFetchJSON, coFetch } from '@console/internal/co-fetch';
 import { DropdownField } from '@console/shared';
 import { confirmModal } from '@console/internal/components/modals/confirm-modal';
@@ -46,15 +47,19 @@ const HelmChartVersionDropdown: React.FunctionComponent<HelmChartVersionDropdown
       title: 'Change Chart Version?',
       message: (
         <>
-          Are you sure you want to change the chart version from <strong>{currentVersion}</strong>{' '}
-          to <strong>{newVersion}</strong>? <br />
-          You have data entered for version <strong>{currentVersion}</strong> in the YAML editor.
-          All data entered will be lost when changed to <strong>{newVersion}</strong>.
+          <p>
+            Are you sure you want to change the chart version from <strong>{currentVersion}</strong>{' '}
+            to <strong>{newVersion}</strong>?{' '}
+          </p>
+          <p>
+            <InfoCircleIcon color="var(--pf-global--info-color--100)" /> All data entered for
+            version <strong>{currentVersion}</strong> will be reset.
+          </p>
         </>
       ),
-      submitDanger: true,
-      btnText: 'Yes',
-      cancelText: 'No',
+      submitDanger: false,
+      btnText: 'Proceed',
+      cancelText: 'Cancel',
       executeFn: () => {
         onAccept();
         return Promise.resolve();
