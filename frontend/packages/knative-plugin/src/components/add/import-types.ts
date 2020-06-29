@@ -33,8 +33,10 @@ export interface EventSourceData {
   [x: string]: any;
 }
 
-export interface KnativeServiceName {
-  knativeService: string;
+export interface SinkResourceData {
+  apiVersion: string;
+  name: string;
+  kind: string;
 }
 
 export interface EventSourceFormData {
@@ -43,7 +45,7 @@ export interface EventSourceFormData {
   name: string;
   apiVersion: string;
   type: string;
-  sink: KnativeServiceName;
+  sink: SinkResourceData;
   limits: LimitsData;
   data?: EventSourceData;
   yamlData?: string;

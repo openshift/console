@@ -8,7 +8,7 @@ import { EventSources } from './import-types';
 import { isKnownEventSource } from '../../utils/create-eventsources-utils';
 
 const sinkServiceSchema = yup.object().shape({
-  knativeService: yup.string().required('Required'),
+  name: yup.string().required('Required'),
 });
 
 export const sourceDataSpecSchema = yup

@@ -7,7 +7,7 @@ import NamespacedPage, {
   NamespacedPageVariants,
 } from '@console/dev-console/src/components/NamespacedPage';
 import { QUERY_PROPERTIES } from '@console/dev-console/src/const';
-import EventSource from './EventSource';
+import ConnectedEventSource from './EventSource';
 import { KnativeEventingModel } from '../../models';
 import EventSourceAlert from './EventSourceAlert';
 import { useEventSourceList } from '../../utils/create-eventsources-utils';
@@ -28,7 +28,7 @@ const EventSourcePage: React.FC<EventSourcePageProps> = ({ match, location }) =>
       </PageHeading>
       <PageBody flexLayout>
         <EventSourceAlert namespace={namespace} eventSourceStatus={eventSourceStatus} />
-        <EventSource
+        <ConnectedEventSource
           namespace={namespace}
           eventSourceStatus={eventSourceStatus}
           selectedApplication={searchParams.get(QUERY_PROPERTIES.APPLICATION)}

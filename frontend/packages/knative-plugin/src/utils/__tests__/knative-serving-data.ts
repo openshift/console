@@ -4,7 +4,7 @@ import {
   Resources,
 } from '@console/dev-console/src/components/import/import-types';
 import { EventSourceFormData } from '../../components/add/import-types';
-import { RevisionModel } from '../../models';
+import { RevisionModel, ServiceModel } from '../../models';
 import { healthChecksProbeInitialData } from '@console/dev-console/src/components/health-checks/health-checks-probe-utils';
 
 export const defaultData: DeployImageFormData = {
@@ -334,7 +334,9 @@ export const getDefaultEventingData = (typeEventSource: string): EventSourceForm
     },
     name: 'esmyapp',
     sink: {
-      knativeService: 'event-display',
+      apiVersion: `${ServiceModel.apiGroup}/${ServiceModel.apiVersion}`,
+      name: 'event-display',
+      kind: ServiceModel.kind,
     },
     limits: {
       cpu: {
