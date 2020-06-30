@@ -53,7 +53,7 @@ import store, { RootState } from '../redux';
 import { RowFunction, Table, TableData, TableRow, TextFilter } from './factory';
 import { confirmModal } from './modals';
 import MonitoringDashboardsPage from './monitoring/dashboards';
-import { graphStateToProps, QueryBrowserPage, ToggleGraph } from './monitoring/metrics';
+import { QueryBrowserPage, ToggleGraph } from './monitoring/metrics';
 import { PrometheusLabels } from './graphs';
 import { QueryBrowser, QueryObj } from './monitoring/query-browser';
 import { CheckBoxes } from './row-filter';
@@ -315,7 +315,6 @@ const queryBrowserURL = (query: string) =>
 const Graph_: React.FC<GraphProps> = ({
   deleteAll,
   filterLabels = undefined,
-  hideGraphs,
   patchQuery,
   rule,
 }) => {
@@ -331,10 +330,6 @@ const Graph_: React.FC<GraphProps> = ({
 
   const queries = React.useMemo(() => [query], [query]);
 
-  if (hideGraphs) {
-    return null;
-  }
-
   // 3 times the rule's duration, but not less than 30 minutes
   const timespan = Math.max(3 * duration, 30 * 60) * 1000;
 
@@ -349,7 +344,7 @@ const Graph_: React.FC<GraphProps> = ({
     />
   );
 };
-const Graph = connect(graphStateToProps, {
+const Graph = connect(null, {
   deleteAll: UIActions.queryBrowserDeleteAllQueries,
   patchQuery: UIActions.queryBrowserPatchQuery,
 })(Graph_);
@@ -1941,7 +1936,6 @@ type AlertingPageProps = {
 type GraphProps = {
   deleteAll: () => never;
   filterLabels?: PrometheusLabels;
-  hideGraphs: boolean;
   patchQuery: (index: number, patch: QueryObj) => any;
   rule: Rule;
 };

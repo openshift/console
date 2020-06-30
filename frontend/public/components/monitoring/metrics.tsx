@@ -205,7 +205,7 @@ const HeaderPrometheusLink_ = ({ url }) => {
 };
 const HeaderPrometheusLink = connect(headerPrometheusLinkStateToProps)(HeaderPrometheusLink_);
 
-export const graphStateToProps = ({ UI }: RootState) => ({
+const graphStateToProps = ({ UI }: RootState) => ({
   hideGraphs: !!UI.getIn(['monitoring', 'hideGraphs']),
 });
 
