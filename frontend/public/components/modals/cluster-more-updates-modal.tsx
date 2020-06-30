@@ -55,7 +55,7 @@ export const ClusterMoreUpdatesModal: React.FC<ClusterMoreUpdatesModalProps> = (
       <ModalFooter inProgress={false}>
         <ActionGroup className="pf-c-form pf-c-form__actions--right pf-c-form__group--no-top-margin">
           <Button type="button" variant="primary" onClick={cancel}>
-            Done
+            Close
           </Button>
         </ActionGroup>
       </ModalFooter>
