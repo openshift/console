@@ -1,6 +1,15 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
-import { Breadcrumb, BreadcrumbItem, Button, Popover } from '@patternfly/react-core';
+import * as classnames from 'classnames';
+import { PencilAltIcon } from '@patternfly/react-icons';
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  Button,
+  Popover,
+  Split,
+  SplitItem,
+} from '@patternfly/react-core';
 
 import {
   getPropertyDescription,
@@ -29,13 +38,24 @@ const PropertyPath: React.FC<{ kind: string; path: string | string[] }> = ({ kin
   );
 };
 
+const EditButton = (props) => (
+  <Button variant="link" isInline onClick={props.onClick}>
+    {props.children}
+    <PencilAltIcon className="co-icon-space-l pf-c-button-icon--plain" />
+  </Button>
+);
+
 export const DetailsItem: React.FC<DetailsItemProps> = ({
-  label,
-  obj,
-  path,
-  defaultValue = '-',
-  hideEmpty,
   children,
+  defaultValue = '-',
+  editAsGroup,
+  hideEmpty,
+  label,
+  labelClassName,
+  obj,
+  onEdit,
+  path,
+  valueClassName,
 }) => {
   if (hideEmpty && _.isEmpty(_.get(obj, path))) {
     return null;
@@ -47,36 +67,57 @@ export const DetailsItem: React.FC<DetailsItemProps> = ({
   const value: React.ReactNode = children || _.get(obj, path, defaultValue);
   return (
     <>
-      <dt>
-        {description ? (
-          <Popover
-            headerContent={<div>{label}</div>}
-            bodyContent={
-              <LinkifyExternal>
-                <div className="co-pre-line">{description}</div>
-              </LinkifyExternal>
-            }
-            footerContent={<PropertyPath kind={model.kind} path={path} />}
-            maxWidth="30rem"
-          >
-            <Button variant="plain" className="co-m-pane__details-popover-button">
-              {label}
-            </Button>
-          </Popover>
-        ) : (
-          label
-        )}
+      <dt className={classnames('details-item__label', labelClassName)}>
+        <Split>
+          <SplitItem className="details-item__label">
+            {description ? (
+              <Popover
+                headerContent={<div>{label}</div>}
+                bodyContent={
+                  <LinkifyExternal>
+                    <div className="co-pre-line">{description}</div>
+                  </LinkifyExternal>
+                }
+                footerContent={<PropertyPath kind={model.kind} path={path} />}
+                maxWidth="30rem"
+              >
+                <Button variant="plain" className="details-item__popover-button">
+                  {label}
+                </Button>
+              </Popover>
+            ) : (
+              label
+            )}
+          </SplitItem>
+          {onEdit && editAsGroup && (
+            <>
+              <SplitItem isFilled />
+              <SplitItem>
+                <EditButton onClick={onEdit}>Edit</EditButton>
+              </SplitItem>
+            </>
+          )}
+        </Split>
       </dt>
-      <dd>{value}</dd>
+      <dd
+        className={classnames('details-item__value', valueClassName, {
+          'details-item__value--editable': onEdit,
+        })}
+      >
+        {onEdit && !editAsGroup ? <EditButton onClick={onEdit}>{value}</EditButton> : value}
+      </dd>
     </>
   );
 };
 
 export type DetailsItemProps = {
-  label: string;
-  obj: K8sResourceKind;
-  path: string | string[];
   defaultValue?: React.ReactNode;
+  editAsGroup?: boolean;
   hideEmpty?: boolean;
-  children?: React.ReactNode;
+  label: string;
+  labelClassName?: string;
+  obj: K8sResourceKind;
+  onEdit?: (e: Event) => void;
+  path: string | string[];
+  valueClassName?: string;
 };
