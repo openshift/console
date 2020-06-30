@@ -31,6 +31,8 @@ import { PersistentVolumeClaimModel } from '@console/internal/models';
 import { getCephHealthState } from './components/dashboard-page/storage-dashboard/status-card/utils';
 import { isClusterExpandActivity } from './components/dashboard-page/storage-dashboard/activity-card/cluster-expand-activity';
 import { WatchCephResource } from './types';
+import { StorageClassProvisioner } from '@console/plugin-sdk/src/typings/storage-class-params';
+import { StorageClassFormProvisoners } from './utils/storage-class-params';
 
 type ConsumedExtensions =
   | ModelFeatureFlag
@@ -47,7 +49,8 @@ type ConsumedExtensions =
   | ResourceTabPage
   | ClusterServiceVersionAction
   | KebabActions
-  | DashboardsOverviewResourceActivity;
+  | DashboardsOverviewResourceActivity
+  | StorageClassProvisioner;
 
 const apiObjectRef = referenceForModel(models.OCSServiceModel);
 
@@ -75,6 +78,12 @@ const plugin: Plugin<ConsumedExtensions> = [
     type: 'FeatureFlag/Custom',
     properties: {
       detect: detectOCS,
+    },
+  },
+  {
+    type: 'StorageClass/Provisioner',
+    properties: {
+      getStorageClassProvisioner: StorageClassFormProvisoners,
     },
   },
   {

@@ -7,6 +7,12 @@ import * as _ from 'lodash-es';
 import { ActionGroup, Button } from '@patternfly/react-core';
 import { getName } from '@console/shared';
 import {
+  StorageClassProvisioner,
+  isStorageClassProvisioner,
+  ExtensionSCProvisionerProp,
+} from '@console/plugin-sdk/src/typings/storage-class-params';
+
+import {
   AsyncComponent,
   ButtonBar,
   Dropdown,
@@ -15,10 +21,17 @@ import {
   FirehoseResult,
   NameValueEditorPair,
   history,
+  resourceObjPath,
 } from './utils';
-import { k8sCreate, K8sResourceKind, referenceForModel } from './../module/k8s';
+import { k8sCreate, K8sResourceKind, referenceForModel, referenceFor } from './../module/k8s';
 import * as k8sActions from '../actions/k8s';
 import { CSIDriverModel, StorageClassModel } from './../models';
+import { withExtensions } from '../plugins';
+
+enum Provisioner {
+  CSI = 'csi',
+  OTHERS = 'others',
+}
 
 const NameValueEditorComponent = (props) => (
   <AsyncComponent
@@ -64,105 +77,35 @@ export class StorageClassForm_ extends React.Component<
 
   storageTypes = {};
 
+  // Fetch Storage type provisioners from different operators
+  // For CSI - provisionerType: 'csi'
+  // For Defaults - provisionerType: 'others'
+  getExtensionsStorageClassProvisioners = (provisionerType = Provisioner.OTHERS) => {
+    const extensionCSIProvisioners: ExtensionSCProvisionerProp = _.reduce(
+      this.props.params,
+      (res, value) => {
+        const obj = value.properties.getStorageClassProvisioner || {};
+        if (obj) {
+          const key = provisionerType;
+          const keyValue = obj[provisionerType];
+          res[key] = keyValue;
+        }
+        return res;
+      },
+      {},
+    );
+
+    return extensionCSIProvisioners[provisionerType];
+  };
+
+  // For 'csi' storage type
   CSIStorageTypes = Object.freeze({
-    'rbd.csi.ceph.com': {
-      title: 'Ceph RBD',
-      provisioner: 'rbd.csi.ceph.com',
-      documentationLink: 'https://rook.io/docs/rook/v1.1/',
-      parameters: {
-        clusterID: {
-          name: 'Cluster ID',
-          hintText: 'The namespace where Ceph is deployed',
-          required: true,
-        },
-        pool: {
-          name: 'Pool',
-          hintText: 'Ceph pool into which volume data shall be stored',
-          required: true,
-        },
-        imageFormat: {
-          name: 'Image Format',
-          hintText: 'RBD image format. Defaults to "2"',
-          values: { '2': '2' },
-          required: true,
-        },
-        imageFeatures: {
-          name: 'Image Features',
-          hintText: 'Ceph RBD image features',
-          values: { layering: 'layering' },
-          required: true,
-        },
-        'csi.storage.k8s.io/provisioner-secret-name': {
-          name: 'Provisioner Secret Name',
-          hintText: 'The name of provisioner secret',
-          required: true,
-        },
-        'csi.storage.k8s.io/provisioner-secret-namespace': {
-          name: 'Provisioner Secret Namespace',
-          hintText: 'The namespace where provisioner secret is created',
-          required: true,
-        },
-        'csi.storage.k8s.io/node-stage-secret-name': {
-          name: 'Node Stage Secret Name',
-          hintText: 'The name of Node Stage secret',
-          required: true,
-        },
-        'csi.storage.k8s.io/node-stage-secret-namespace': {
-          name: 'Node Stage Secret Namespace',
-          hintText: 'The namespace where provisioner secret is created',
-          required: true,
-        },
-        'csi.storage.k8s.io/fstype': {
-          name: 'Filesystem Type',
-          hintText: 'Ceph RBD filesystem type. Default set to ext4',
-          required: true,
-        },
-      },
-    },
-    'cephfs.csi.ceph.com': {
-      title: 'Ceph FS',
-      provisioner: 'cephfs.csi.ceph.com',
-      documentationLink: 'https://rook.io/docs/rook/v1.1/',
-      parameters: {
-        clusterID: {
-          name: 'Cluster ID',
-          hintText: 'The namespace where Ceph is deployed',
-          required: true,
-        },
-        pool: {
-          name: 'Pool',
-          hintText: 'Ceph pool into which volume data shall be stored',
-        },
-        fsName: {
-          name: 'Filesystem Name',
-          hintText: 'CephFS filesystem name into which the volume shall be created',
-          required: true,
-        },
-        'csi.storage.k8s.io/provisioner-secret-name': {
-          name: 'Provisioner Secret Name',
-          hintText: 'The name of provisioner secret',
-          required: true,
-        },
-        'csi.storage.k8s.io/provisioner-secret-namespace': {
-          name: 'Provisioner Secret Namespace',
-          hintText: 'The namespace where provisioner secret is created',
-          required: true,
-        },
-        'csi.storage.k8s.io/node-stage-secret-name': {
-          name: 'Node Stage Secret Name',
-          hintText: 'The name of Node Stage secret',
-          required: true,
-        },
-        'csi.storage.k8s.io/node-stage-secret-namespace': {
-          name: 'Node Stage Secret Namespace',
-          hintText: 'The namespace where provisioner secret is created',
-          required: true,
-        },
-      },
-    },
+    ...this.getExtensionsStorageClassProvisioners(Provisioner.CSI),
   });
 
+  // For 'other' storage type
   defaultStorageTypes = Object.freeze({
+    ...this.getExtensionsStorageClassProvisioners(Provisioner.OTHERS), // Plugin provisoners
     local: {
       title: 'Local',
       provisioner: 'kubernetes.io/no-provisioner',
@@ -648,40 +591,59 @@ export class StorageClassForm_ extends React.Component<
       : this.setState({ newStorageClass: newParams });
   };
 
+  addDefaultParams = () => {
+    const defaultParams = this.storageTypes?.[this.state?.newStorageClass?.type]?.parameters ?? {};
+    const hiddenParmas = {};
+    _.each(defaultParams, (values, param) => {
+      if (values.visible && !values.visible() && values.value) {
+        hiddenParmas[param] = values;
+      }
+    });
+    const value = { ...this.state.newStorageClass.parameters, ...hiddenParmas };
+    const newParams = {
+      ...this.state.newStorageClass,
+      parameters: value,
+    };
+
+    return newParams;
+  };
+
   createStorageClass = (e: React.FormEvent<EventTarget>) => {
     e.preventDefault();
 
     this.setState({
       loading: true,
+      error: null,
     });
+    this.setState({ newStorageClass: this.addDefaultParams() }, () => {
+      const { description, type, reclaim } = this.state.newStorageClass;
+      const dataParameters = this.getFormParams();
+      const annotations = description ? { description } : {};
+      const data: StorageClass = {
+        metadata: {
+          name: this.state.newStorageClass.name,
+          annotations,
+        },
+        provisioner: this.storageTypes[type].provisioner,
+        parameters: dataParameters,
+      };
 
-    const { description, type, reclaim } = this.state.newStorageClass;
-    const dataParameters = this.getFormParams();
-    const annotations = description ? { description } : {};
-    const data: StorageClass = {
-      metadata: {
-        name: this.state.newStorageClass.name,
-        annotations,
-      },
-      provisioner: this.storageTypes[type].provisioner,
-      parameters: dataParameters,
-    };
+      if (reclaim) {
+        data.reclaimPolicy = reclaim;
+      }
 
-    if (reclaim) {
-      data.reclaimPolicy = reclaim;
-    }
+      const volumeBindingMode = this.storageTypes[type]?.volumeBindingMode;
+      if (volumeBindingMode) {
+        data.volumeBindingMode = volumeBindingMode;
+      }
 
-    const volumeBindingMode = _.get(this.storageTypes[type], 'volumeBindingMode', null);
-    if (volumeBindingMode) {
-      data.volumeBindingMode = volumeBindingMode;
-    }
-
-    k8sCreate(StorageClassModel, data)
-      .then(() => {
-        this.setState({ loading: false });
-        history.push('/k8s/cluster/storageclasses');
-      })
-      .catch((error) => this.setState({ loading: false, error }));
+      k8sCreate(StorageClassModel, data)
+        .then((resource) => {
+          this.setState({ loading: false });
+          history.push(resourceObjPath(resource, referenceFor(resource)));
+        })
+        .catch((error) => this.setState({ loading: false, error }));
+    });
   };
 
   getFormParams = () => {
@@ -842,6 +804,16 @@ export class StorageClassForm_ extends React.Component<
         return null;
       }
 
+      if (parameter.Component) {
+        const { Component } = parameter;
+        return (
+          <Component
+            key={key}
+            onParamChange={(value: string) => this.setParameterHandler(key, value, false)}
+          />
+        );
+      }
+
       const children = parameter.values ? (
         <>
           <label
@@ -916,23 +888,25 @@ export class StorageClassForm_ extends React.Component<
       <>
         {dynamicContent}
 
-        <div className="form-group">
-          <label>Additional Parameters</label>
-          <p>
-            Specific fields for the selected provisioner. &nbsp;
-            <ExternalLink
-              href={this.storageTypes[this.state.newStorageClass.type].documentationLink}
-              text="What should I enter here?"
+        {this.storageTypes[this.state.newStorageClass.type].documentationLink && (
+          <div className="form-group">
+            <label>Additional Parameters</label>
+            <p>
+              Specific fields for the selected provisioner. &nbsp;
+              <ExternalLink
+                href={this.storageTypes[this.state.newStorageClass.type].documentationLink}
+                text="What should I enter here?"
+              />
+            </p>
+            <NameValueEditorComponent
+              nameValuePairs={this.state.customParams}
+              nameString="Parameter"
+              valueString="Value"
+              addString="Add Parameter"
+              updateParentData={this.updateCustomParams}
             />
-          </p>
-          <NameValueEditorComponent
-            nameValuePairs={this.state.customParams}
-            nameString="Parameter"
-            valueString="Value"
-            addString="Add Parameter"
-            updateParentData={this.updateCustomParams}
-          />
-        </div>
+          </div>
+        )}
       </>
     );
   };
@@ -1065,7 +1039,7 @@ const mapDispatchToProps = () => ({
   watchK8sList: k8sActions.watchK8sList,
 });
 
-export type StorageClassFormProps = {
+export type StorageClassFormProps = StorageClassParamsExtensions & {
   onClose: () => void;
   watchK8sList: (id: string, query: object, kind: object) => void;
   stopK8sWatch: (id: string) => void;
@@ -1109,7 +1083,15 @@ export type Resources = {
 export const ConnectedStorageClassForm = connect(
   mapStateToProps,
   mapDispatchToProps,
-)(StorageClassForm_);
+)(
+  withExtensions<StorageClassParamsExtensions>({ params: isStorageClassProvisioner })(
+    StorageClassForm_,
+  ),
+);
+
+export type StorageClassParamsExtensions = {
+  params: StorageClassProvisioner[];
+};
 
 export const StorageClassForm = (props) => {
   const resources = [

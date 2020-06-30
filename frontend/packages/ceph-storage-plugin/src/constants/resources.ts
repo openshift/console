@@ -5,7 +5,7 @@ import { WatchK8sResource } from '@console/internal/components/utils/k8s-watch-h
 import { SubscriptionModel } from '@console/operator-lifecycle-manager';
 import { LocalVolumeSetModel } from '@console/local-storage-operator-plugin/src/models';
 import { LSO_NAMESPACE } from '@console/local-storage-operator-plugin/src/constants';
-import { CephClusterModel } from '../models';
+import { CephClusterModel, CephBlockPoolModel } from '../models';
 
 export const cephClusterResource: FirehoseResource = {
   kind: referenceForModel(CephClusterModel),
@@ -37,4 +37,10 @@ export const LSOSubscriptionResource: WatchK8sResource = {
   namespace: LSO_NAMESPACE,
   isList: false,
   name: 'local-storage-operator',
+};
+
+export const cephBlockPoolResource: WatchK8sResource = {
+  kind: referenceForModel(CephBlockPoolModel),
+  namespaced: true,
+  isList: true,
 };

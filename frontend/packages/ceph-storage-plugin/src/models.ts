@@ -38,3 +38,16 @@ export const VolumeSnapshotModel: K8sKind = {
   labelPlural: 'Volume Snapshots',
   crd: true,
 };
+
+export const CephBlockPoolModel: K8sKind = {
+  label: 'Ceph Block Pool',
+  labelPlural: 'Ceph Block Pools',
+  apiVersion: 'v1',
+  apiGroup: 'ceph.rook.io',
+  plural: 'cephblockpools',
+  abbr: 'CBP',
+  namespaced: true,
+  kind: 'CephBlockPool',
+  id: 'cephblockpools',
+  crd: true,
+};
