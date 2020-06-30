@@ -968,7 +968,7 @@ const alertTableHeader = () => [
   },
   {
     title: 'Severity',
-    sortField: 'labels.severity',
+    sortFunc: 'alertSeverityOrder',
     transforms: [sortable],
     props: { className: tableAlertClasses[1] },
   },
@@ -1151,7 +1151,7 @@ const ruleTableHeader = () => [
   },
   {
     title: 'Severity',
-    sortField: 'labels.severity',
+    sortFunc: 'alertSeverityOrder',
     transforms: [sortable],
     props: { className: tableRuleClasses[1] },
   },

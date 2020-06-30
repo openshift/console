@@ -38,6 +38,18 @@ export const alertDescription = (alert: Alert): string =>
 
 type ListOrder = (number | string)[];
 
+// Severity sort order is "critical" > "warning" > (anything else in A-Z order) > "none"
+export const alertSeverityOrder = (alert: Alert): ListOrder => {
+  const { severity } = alert.labels;
+  const order: number =
+    {
+      [AlertSeverity.Critical]: 1,
+      [AlertSeverity.Warning]: 2,
+      [AlertSeverity.None]: 4,
+    }[severity] ?? 3;
+  return [order, severity];
+};
+
 // Sort alerts and silences by their state (sort first by the state itself, then by the timestamp
 // relevant to the state)
 export const alertStateOrder = (alert: Alert): ListOrder => [
