@@ -81,7 +81,7 @@ export enum ListFilterId {
 export const ListFilterLabels = {
   [ListFilterId.Running]: 'Running',
   [ListFilterId.Failed]: 'Failed',
-  [ListFilterId.Succeeded]: 'Complete',
+  [ListFilterId.Succeeded]: 'Succeeded',
   [ListFilterId.Cancelled]: 'Cancelled',
   [ListFilterId.Other]: 'Other',
 };
