@@ -39,9 +39,9 @@ export const getSortedUpdates = (cv: ClusterVersionKind): ClusterUpdate[] => {
 };
 
 export const getAvailableClusterChannels = () => ({
-  'stable-4.5': 'stable-4.5',
-  'fast-4.5': 'fast-4.5',
-  'candidate-4.5': 'candidate-4.5',
+  'stable-4.6': 'stable-4.6',
+  'fast-4.6': 'fast-4.6',
+  'candidate-4.6': 'candidate-4.6',
 });
 
 export const getDesiredClusterVersion = (cv: ClusterVersionKind): string => {
