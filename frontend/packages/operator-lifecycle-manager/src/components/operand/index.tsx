@@ -44,6 +44,7 @@ import {
   referenceFor,
   referenceForModel,
 } from '@console/internal/module/k8s';
+import { ResourceEventStream } from '@console/internal/components/events';
 import { deleteModal } from '@console/internal/components/modals';
 import { RootState } from '@console/internal/redux';
 import { ClusterServiceVersionModel } from '../../models';
@@ -632,6 +633,7 @@ export const OperandDetailsPage = connectToPlural((props: OperandDetailsPageProp
           href: 'resources',
           component: ResourcesTab,
         },
+        navFactory.events(ResourceEventStream),
       ]}
     />
   );
