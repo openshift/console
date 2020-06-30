@@ -1,4 +1,4 @@
-import { AlertStates, SilenceStates } from '../../reducers/monitoring';
+import { AlertStates, RuleStates, SilenceStates } from '../../reducers/monitoring';
 import { RowFunction } from '../factory';
 import { PrometheusLabels } from '../graphs';
 
@@ -57,6 +57,7 @@ export type PrometheusRule = {
   labels: PrometheusLabels;
   name: string;
   query: string;
+  state: RuleStates;
 };
 
 export type Rule = PrometheusRule & {
