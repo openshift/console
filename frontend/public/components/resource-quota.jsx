@@ -201,6 +201,7 @@ export const QuotaGaugeCharts = ({ quota, resourceTypes, chartClassName = null }
             thresholds={gaugeChartThresholds}
             title="CPU Request"
             className={chartClassName}
+            remainderLabel="used"
           />
         </div>
       ) : (
@@ -215,6 +216,7 @@ export const QuotaGaugeCharts = ({ quota, resourceTypes, chartClassName = null }
             thresholds={gaugeChartThresholds}
             title="CPU Limit"
             className={chartClassName}
+            remainderLabel="used"
           />
         </div>
       ) : (
@@ -234,6 +236,7 @@ export const QuotaGaugeCharts = ({ quota, resourceTypes, chartClassName = null }
             thresholds={gaugeChartThresholds}
             title="Memory Request"
             className={chartClassName}
+            remainderLabel="used"
           />
         </div>
       ) : (
@@ -248,6 +251,7 @@ export const QuotaGaugeCharts = ({ quota, resourceTypes, chartClassName = null }
             thresholds={gaugeChartThresholds}
             title="Memory Limit"
             className={chartClassName}
+            remainderLabel="used"
           />
         </div>
       ) : (
