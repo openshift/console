@@ -1,3 +1,6 @@
+$co-channel-background-color: var(--pf-c-drawer__content--BackgroundColor);
+$co-channel-color: var(--pf-global--disabled-color--100);
+$co-channel-current-color: var(--pf-global--primary-color--100);
 $co-channel-height: 60px;
 
 .cluster-channel-modal__dropdown .pf-c-dropdown {
@@ -24,32 +27,32 @@ $co-channel-height: 60px;
   width: 100%;
 
   &:before {
-    background-color: $pf-global--BorderColor--100;
+    background-color: $co-channel-color;
     content: '';
     height: 4px;
     position: absolute;
     width: 100%;
 
     .co-channel-path--current & {
-      background-color: $pf-global--primary-color--100;
+      background-color: $co-channel-current-color;
     }
   }
 
   &:last-child::after {
     background: transparent;
     border: 8px solid transparent;
-    border-left-color: $pf-global--BorderColor--100;
+    border-left-color: $co-channel-color;
     border-width: 8px 12px;
     content: '';
     position: absolute;
     right: -15px;
 
     .co-channel-path--current & {
-      border-left-color: $pf-global--primary-color--100;
+      border-left-color: $co-channel-current-color;
     }
 
     .co-channel--end-of-life & {
-      background-color: $pf-global--primary-color--100;
+      background-color: $co-channel-current-color;
       border: 0;
       height: 16px;
       right: 0px;
@@ -59,14 +62,14 @@ $co-channel-height: 60px;
 }
 
 .co-channel-more-versions {
-  background: var(--pf-c-drawer__content--BackgroundColor) !important;
+  background: $co-channel-background-color !important;
   border: 1px solid !important;
   border-radius: 15px !important;
   display: inline-block !important;
   font-size: ($font-size-small - 1) !important;
   font-weight: bold !important;
   justify-content: center;
-  padding: 0 8px !important;
+  padding: var(--pf-global--spacer--xs) var(--pf-global--spacer--sm) !important;
   position: absolute !important;
 
   &::after {
@@ -75,9 +78,9 @@ $co-channel-height: 60px;
 
   &:hover,
   &:focus {
-    background: $pf-global--primary-color--100 !important;
-    border-color: $pf-global--primary-color--100 !important;
-    color: var(--pf-c-drawer__content--BackgroundColor) !important;
+    background: $co-channel-current-color !important;
+    border-color: $co-channel-current-color !important;
+    color: $co-channel-background-color !important;
   }
 
   &:focus {
@@ -86,7 +89,7 @@ $co-channel-height: 60px;
 }
 
 .co-channel-name {
-  color: $pf-global--BorderColor--200;
+  color: $co-channel-color;
   padding: 0 10px 0 20px;
   min-width: 150px;
   white-space: nowrap;
@@ -125,7 +128,7 @@ $co-channel-height: 60px;
 
   &::after,
   &::before {
-    background: linear-gradient(to left bottom, transparent 50%, $pf-global--BorderColor--100 50%);
+    background: linear-gradient(to left bottom, transparent 50%, $co-channel-color 50%);
     content: '';
     display: block;
     height: $co-channel-height;
@@ -136,7 +139,7 @@ $co-channel-height: 60px;
   }
 
   &::after {
-    background: linear-gradient(to left bottom, transparent 50%, var(--pf-c-drawer__content--BackgroundColor) 50%);
+    background: linear-gradient(to left bottom, transparent 50%, $co-channel-background-color 50%);
     right: 3px;
     top: 0;
   }
@@ -159,7 +162,7 @@ $co-channel-height: 60px;
 }
 
 .co-channel-version-dot {
-  background: $pf-global--primary-color--100 !important;
+  background: $co-channel-current-color !important;
   border-radius: 16px !important;
   height: 16px !important;
   padding: 0 !important;
@@ -168,8 +171,8 @@ $co-channel-height: 60px;
   z-index: 2;
 
   &::after {
-    background: var(--pf-c-drawer__content--BackgroundColor) !important;
-    border: 2px solid var(--pf-c-drawer__content--BackgroundColor) !important;
+    background: $co-channel-background-color !important;
+    border: 2px solid $co-channel-background-color !important;
     border-radius: 12px !important;
     bottom: 2px !important;
     content: '';
