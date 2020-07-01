@@ -115,7 +115,8 @@ const NodeTerminalInner: React.FC<NodeTerminalInnerProps> = ({ obj }) => {
           error={
             <>
               The debug pod failed.{' '}
-              {obj?.data?.status?.containerStatuses[0]?.state?.terminated?.message}
+              {obj?.data?.status?.containerStatuses?.[0]?.state?.terminated?.message ||
+                obj?.data?.status?.message}
             </>
           }
         />
