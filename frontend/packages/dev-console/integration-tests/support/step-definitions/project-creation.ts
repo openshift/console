@@ -1,6 +1,6 @@
 import { Given, When, Then } from 'cypress-cucumber-preprocessor/steps';
-import { loginPage } from '../support/pages/login_page';
-import { perspective, projectNameSpace } from '../support/pages/app';
+import loginPage from '../pages/login_page';
+import { perspective, projectNameSpace } from '../pages/app';
 
 Given('user is logged into the openshift application', () => {
   loginPage.loginWithValidCredentials('kubeadmin', 'VpTYd-4YMhN-p3Q8f-PfNsz');

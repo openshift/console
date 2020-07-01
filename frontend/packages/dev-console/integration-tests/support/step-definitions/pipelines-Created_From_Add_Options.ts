@@ -1,9 +1,9 @@
 import { Given, When, Then } from 'cypress-cucumber-preprocessor/steps';
-import { loginPage } from '../support/pages/login_page';
-import { gitPage, seelctCardFromOptions } from '../support/pages/add_page';
-import { perspective, projectNameSpace as project, naviagteTo } from '../support/pages/app';
-import { devNavigationMenu as menu } from '../support/constants/global';
-import { addOptions } from '../support/constants/addPage';
+import loginPage from '../pages/login_page';
+import { gitPage, seelctCardFromOptions } from '../pages/add_page';
+import { perspective, projectNameSpace as project, naviagteTo } from '../pages/app';
+import { devNavigationMenu as menu } from '../constants/global';
+import { addOptions } from '../constants/addPage';
 
 // before(() => {
 //   loginPage.loginWithValidCredentials('kubeadmin', 'YcxoK-QLkqH-rh3Tr-qQdsJ');
@@ -18,7 +18,7 @@ Given('openshift cluster is installed with pipeline operator', () => {
 
 Given('user is at the project namespace {string} in dev perspecitve', (projectName) => {
   perspective.switchToDeveloper();
-  project.createProject(projectName);
+  // project.createProject(projectName);
   project.selectProject(projectName);
 });
 

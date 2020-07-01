@@ -4,8 +4,6 @@
     "description": "Dev Console integration tests",
     "private": true,
     "cypress-cucumber-preprocessor": {
-      "nonGlobalStepDefinitions": false,
-      "step_definitions": "*./step-definitions/",
-      "features": "*./features"
+      "nonGlobalStepDefinitions": false
     }
   }
