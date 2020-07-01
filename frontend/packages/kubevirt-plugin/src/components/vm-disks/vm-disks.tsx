@@ -106,8 +106,12 @@ export const VMDisksTable: React.FC<React.ComponentProps<typeof Table> | VMDisks
 ) => {
   return (
     <div>
-      <h3>Disks</h3>
-      The following information is provided by the OpenShift Virtualization operator.
+      {props?.customData?.showGuestAgentHelp && (
+        <>
+          <h3>Disks</h3>
+          The following information is provided by the OpenShift Virtualization operator.
+        </>
+      )}
       <Table
         {...props}
         aria-label="VM Disks List"
@@ -181,6 +185,7 @@ export const VMDisks: React.FC<VMDisksProps> = ({ vmLikeEntity, vmTemplate }) =>
         isDisabled: isLocked,
         templateValidations,
         columnClasses: diskTableColumnClasses,
+        showGuestAgentHelp: true,
       }}
       hideLabelFilter
     />
