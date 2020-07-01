@@ -31,12 +31,17 @@ export const GaugeChart: React.FC<GaugeChartProps> = ({
   label = data ? humanize(data.y).string : 'No Data',
   secondaryTitle = usedLabel,
   className,
+  totalUsedValue,
 }) => {
   const [ref, width] = useRefWidth();
   const ready = !error && !loading;
   const status = loading ? 'Loading' : error;
-  const labels = ({ datum: { x, y } }) =>
-    x ? `${x} ${remainderLabel}` : `${humanize(y).string} ${usedLabel}`;
+  const labels = ({ datum: { x, y } }) => {
+    const totalUsedLabel = totalUsedValue
+      ? `${totalUsedValue} ${usedLabel}`
+      : `${humanize(y).string} ${usedLabel}`;
+    return x ? `${x} ${remainderLabel}` : totalUsedLabel;
+  };
   return (
     <PrometheusGraph
       className={classNames('graph-wrapper--title-center graph-wrapper--gauge', className)}
@@ -123,6 +128,7 @@ type GaugeChartProps = {
   }[];
   title?: string;
   usedLabel?: string;
+  totalUsedValue?: number;
   className?: string;
 };
 
