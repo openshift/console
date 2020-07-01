@@ -10,6 +10,7 @@ import {
   KNATIVE_SERVING_APIGROUP,
   KNATIVE_EVENT_MESSAGE_APIGROUP,
   KNATIVE_EVENTING_APIGROUP,
+  STRIMZI_KAFKA_APIGROUP,
 } from './const';
 
 const apiVersion = 'v1';
@@ -265,4 +266,30 @@ export const EventingTriggerModel: K8sKind = {
   namespaced: true,
   crd: true,
   color: knativeEventingColor.value,
+};
+
+export const KafkaModel: K8sKind = {
+  apiGroup: STRIMZI_KAFKA_APIGROUP,
+  apiVersion: 'v1beta1',
+  kind: 'Kafka',
+  label: 'Kafka',
+  labelPlural: 'Kafkas',
+  plural: 'kafkas',
+  id: 'kafka',
+  abbr: 'K',
+  namespaced: true,
+  crd: true,
+};
+
+export const KafkaTopicModel: K8sKind = {
+  apiGroup: STRIMZI_KAFKA_APIGROUP,
+  apiVersion: 'v1beta1',
+  kind: 'KafkaTopic',
+  label: 'KafkaTopic',
+  labelPlural: 'KafkaTopics',
+  plural: 'kafkatopics',
+  id: 'kafkatopic',
+  abbr: 'KT',
+  namespaced: true,
+  crd: true,
 };

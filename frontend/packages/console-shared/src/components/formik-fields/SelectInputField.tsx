@@ -3,14 +3,9 @@ import { useField, useFormikContext, FormikValues } from 'formik';
 import * as _ from 'lodash';
 import { FormGroup, Select, SelectVariant, SelectOption } from '@patternfly/react-core';
 import { getFieldId } from './field-utils';
-import { FieldProps } from './field-types';
-
-interface SelectInputFieldProps extends FieldProps {
-  options: { value: string; disabled: boolean }[];
-  placeholderText?: React.ReactNode;
-  isCreatable?: boolean;
-  hasOnCreateOption?: boolean;
-}
+import { SelectInputFieldProps, SelectInputOption } from './field-types';
+import { useFormikValidationFix } from '../../hooks';
+import './SelectInputField.scss';
 
 const SelectInputField: React.FC<SelectInputFieldProps> = ({
   name,
@@ -24,15 +19,19 @@ const SelectInputField: React.FC<SelectInputFieldProps> = ({
 }) => {
   const [field, { touched, error }] = useField<string[]>(name);
   const { setFieldValue, setFieldTouched } = useFormikContext<FormikValues>();
-  const [isExpanded, setIsExpanded] = React.useState(false);
+  const [isExpanded, setIsExpanded] = React.useState<boolean>(false);
+  const [newOptions, setNewOptions] = React.useState<SelectInputOption[]>([]);
   const fieldId = getFieldId(name, 'select-input');
   const isValid = !(touched && error);
+  const errorMessage = !isValid ? error : '';
+
+  useFormikValidationFix(field.value);
 
   const onToggle = () => {
     setIsExpanded(!isExpanded);
   };
 
-  const onSelect = (event, selection) => {
+  const onSelect = (event, selection: string) => {
     const selections = field.value;
     if (_.includes(selections, selection)) {
       setFieldValue(name, _.pull(selections, selection));
@@ -42,10 +41,8 @@ const SelectInputField: React.FC<SelectInputFieldProps> = ({
     setFieldTouched(name);
   };
 
-  const onCreateOption = (newVal) => {
-    const selections = field.value;
-    setFieldValue(name, [...selections, newVal]);
-    setFieldTouched(name);
+  const onCreateOption = (newVal: string) => {
+    setNewOptions([...newOptions, { value: newVal, disabled: false }]);
   };
 
   const onClearSelection = () => {
@@ -59,6 +56,7 @@ const SelectInputField: React.FC<SelectInputFieldProps> = ({
       isValid={isValid}
       label={label}
       helperText={helpText}
+      helperTextInvalid={errorMessage}
       isRequired={required}
     >
       <Select
@@ -72,7 +70,7 @@ const SelectInputField: React.FC<SelectInputFieldProps> = ({
         isCreatable={isCreatable}
         onCreateOption={(hasOnCreateOption && onCreateOption) || undefined}
       >
-        {_.map(options, (op) => (
+        {_.map([...options, ...newOptions], (op) => (
           <SelectOption value={op.value} isDisabled={op.disabled} key={op.value} />
         ))}
       </Select>

@@ -10,3 +10,4 @@ export const KNATIVE_EVENTING_APIGROUP = 'eventing.knative.dev';
 export const KNATIVE_EVENT_MESSAGE_APIGROUP = 'messaging.knative.dev';
 export const KNATIVE_EVENT_SOURCE_APIGROUP_DEP = 'sources.eventing.knative.dev';
 export const KNATIVE_EVENT_SOURCE_APIGROUP = 'sources.knative.dev';
+export const STRIMZI_KAFKA_APIGROUP = 'kafka.strimzi.io';
