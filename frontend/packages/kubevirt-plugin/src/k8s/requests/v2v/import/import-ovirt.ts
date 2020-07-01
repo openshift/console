@@ -66,7 +66,7 @@ const getNetworkMappings = (networks: VMWizardNetwork[]) => {
       ({ network, importData }) =>
         SUPPORTED_NETWORK_TYPES.has(new NetworkWrapper(network).getType()) && importData?.vnicID,
     ),
-    (wizardNetwork) => wizardNetwork.importData?.vnicID, // should be mapped 1 to 1
+    (wizardNetwork) => wizardNetwork.importData?.vnicID, // should be mapped 1 to 1 - UI makes sure it duplicates contain the same network (type and data)
   );
 
   return networksToMap.map(({ network, importData: { vnicID } }) => {
