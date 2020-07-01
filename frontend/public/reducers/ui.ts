@@ -15,7 +15,7 @@ import { legalNamePattern, getNamespace } from '../components/utils/link';
 import { OverviewSpecialGroup } from '../components/overview/constants';
 import { RootState } from '../redux';
 import { pluginStore } from '../plugins';
-import { Alert } from '../components/monitoring';
+import { Alert } from '../components/monitoring/types';
 import { isPerspective } from '@console/plugin-sdk';
 
 export type UIState = ImmutableMap<string, any>;
