@@ -6,6 +6,7 @@ import * as React from 'react';
 import { ClusterServiceVersionKind, CRDDescription, APIServiceDefinition } from '../../types';
 import { ClusterServiceVersionLogo } from '../index';
 import { DynamicForm } from '@console/shared/src/components/dynamic-form';
+import { SyncMarkdownView } from '@console/internal/components/markdown-view';
 import { getUISchema } from './utils';
 import { prune } from '@console/shared';
 
@@ -54,7 +55,7 @@ export const OperandForm: React.FC<OperandFormProps> = ({
                 icon={_.get(csv, 'spec.icon[0]')}
                 provider={_.get(csv, 'spec.provider')}
               />
-              {providedAPI.description}
+              <SyncMarkdownView content={providedAPI.description} />
             </div>
           )}
         </div>
