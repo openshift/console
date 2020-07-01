@@ -7,6 +7,7 @@ import {
   VMSettingsField,
   VMWizardProps,
   VMWizardTab,
+  VMWizardNetwork,
 } from '../../../../types';
 import { InternalActionType, UpdateOptions } from '../../../types';
 import { iGetCommonData, iGetLoadedCommonData } from '../../../../selectors/immutable/selectors';
@@ -45,6 +46,8 @@ import { getLoadedVm } from '../../../../selectors/provider/selectors';
 import { cleanupOvirtProvider } from './ovirt-cleanup';
 import { iGetCreateVMWizardTabs } from '../../../../selectors/immutable/common';
 import { prefillUpdateCreator } from './ovirt-prefill-vm';
+import { iGetNetworks } from '../../../../selectors/immutable/networks';
+import { NetworkWrapper } from '../../../../../../k8s/wrapper/vm/network-wrapper';
 
 const startControllerAndCleanup = (options: UpdateOptions) => {
   const { id, prevState, getState } = options;
@@ -396,6 +399,73 @@ const secretUpdater = (options) => {
   }
 };
 
+const networksNicProfileDuplicatesUpdater = (options: UpdateOptions) => {
+  const { id, prevState, dispatch, getState } = options;
+  const state = getState();
+
+  if (!isOvirtProvider(state, id)) {
+    return;
+  }
+
+  const prevINetworks = iGetNetworks(prevState, id);
+  const iNetworks = iGetNetworks(state, id);
+
+  if (!iNetworks) {
+    return;
+  }
+
+  const changedInetworks = !prevINetworks
+    ? iNetworks
+    : iNetworks.filter((iNetwork, iNetworkIdx) => iNetwork !== prevINetworks.get(iNetworkIdx));
+
+  const changedInetworksWithMultipleVNics = changedInetworks.filter((iNetwork) =>
+    iGetIn(iNetwork, ['importData', 'networksWithSameVnicID']),
+  );
+
+  if (changedInetworksWithMultipleVNics.size === 0) {
+    return;
+  }
+
+  const changedNetworksVnicIDLookup = changedInetworksWithMultipleVNics.reduce(
+    (lookup, iNetwork) => {
+      const vnicID = iGetIn(iNetwork, ['importData', 'vnicID']);
+      if (vnicID) {
+        lookup[vnicID] = iNetwork;
+      }
+      return lookup;
+    },
+    {},
+  );
+
+  const updatedNetworks = iNetworks
+    .map((iNetwork) => {
+      const wizardNetwork: VMWizardNetwork = toShallowJS(iNetwork);
+      const changedPeerIwizardNetwork =
+        changedNetworksVnicIDLookup[wizardNetwork?.importData?.vnicID];
+
+      if (changedPeerIwizardNetwork && iNetwork !== changedPeerIwizardNetwork) {
+        const networkWrapper = new NetworkWrapper(wizardNetwork.network, true);
+        const changedPeerNetworkWrapper = new NetworkWrapper(
+          toShallowJS(changedPeerIwizardNetwork.get('network')),
+        );
+
+        networkWrapper.setType(
+          changedPeerNetworkWrapper.getType(),
+          changedPeerNetworkWrapper.getTypeData(),
+        );
+
+        return {
+          ...wizardNetwork,
+          network: networkWrapper.asResource(),
+        };
+      }
+      return wizardNetwork;
+    })
+    .toArray();
+
+  dispatch(vmWizardInternalActions[InternalActionType.SetNetworks](id, updatedNetworks));
+};
+
 export const getOvirtProviderStateUpdater = (options: UpdateOptions) =>
   [
     updateExtraWSQueries,
@@ -405,6 +475,7 @@ export const getOvirtProviderStateUpdater = (options: UpdateOptions) =>
     vmOrClusterChangedUpdater,
     providerUpdater,
     secretUpdater,
+    networksNicProfileDuplicatesUpdater,
   ].forEach((updater) => {
     updater && updater(options);
   });

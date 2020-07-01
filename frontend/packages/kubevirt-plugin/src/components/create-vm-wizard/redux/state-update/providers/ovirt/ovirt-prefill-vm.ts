@@ -1,5 +1,5 @@
 import * as _ from 'lodash';
-import { alignWithDNS1123 } from '@console/shared/src';
+import { alignWithDNS1123, joinGrammaticallyListOfItems } from '@console/shared/src';
 import { InternalActionType, UpdateOptions } from '../../../types';
 import {
   OvirtProviderField,
@@ -90,15 +90,25 @@ export const getDisks = (vm: OvirtVM, storageClassConfigMap: ConfigMapKind): VMW
 
 export const getNics = (vm: OvirtVM): VMWizardNetwork[] => {
   const getUniqueName = createUniqueNameResolver(vm.nics);
-  const nics = (vm.nics || []).filter((n) => n);
+  const nics = (vm.nics || []).filter(
+    (nic) => nic?.name && nic?.vnicid != null && nic?.vnicid !== '',
+  );
 
-  return nics.map((nic, idx) => {
+  const nicProfileMapping = {};
+
+  const results: VMWizardNetwork[] = nics.map((nic, idx) => {
     const name = alignWithDNS1123(getUniqueName(nic.name) || nic.id);
+
+    const nicNames = nicProfileMapping[nic.vnicid] || [];
+    nicNames.push(name);
+    nicProfileMapping[nic.vnicid] = nicNames;
+
     const networkWrapper = new NetworkWrapper().init({ name });
 
     if (nics.length === 1) {
       networkWrapper.setType(NetworkType.POD); // default to POD
     }
+
     return {
       id: `${nic.id}-${idx + 1}`,
       type: VMWizardNetworkType.V2V_OVIRT_IMPORT,
@@ -126,6 +136,21 @@ export const getNics = (vm: OvirtVM): VMWizardNetwork[] => {
       },
     };
   });
+
+  results.forEach((wizardNetwork) => {
+    const networksWithSameVnicID = nicProfileMapping[wizardNetwork.importData.vnicID].filter(
+      (nicName) => nicName !== wizardNetwork.networkInterface.name,
+    );
+    if (networksWithSameVnicID.length > 0) {
+      wizardNetwork.importData.networksWithSameVnicID = networksWithSameVnicID;
+      wizardNetwork.editConfig.allowPodNetworkOverride = false;
+      wizardNetwork.editConfig.warning = `This network interface has to use the same network as ${joinGrammaticallyListOfItems(
+        networksWithSameVnicID,
+      )}`;
+    }
+  });
+
+  return results;
 };
 
 const getWorkload = (vm: OvirtVM) => {

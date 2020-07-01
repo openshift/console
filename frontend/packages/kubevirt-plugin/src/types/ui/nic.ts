@@ -22,4 +22,6 @@ export type UINetworkEditConfig = {
   acceptEmptyValuesOverride?: {
     network?: boolean;
   };
+  allowPodNetworkOverride?: boolean;
+  warning?: string;
 };
