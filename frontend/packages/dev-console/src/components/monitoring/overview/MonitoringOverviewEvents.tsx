@@ -6,10 +6,11 @@ import { YellowExclamationTriangleIcon } from '@console/shared';
 import { referenceFor, EventKind } from '@console/internal/module/k8s';
 import { ResourceLink } from '@console/internal/components/utils';
 import { getLastTime } from '@console/internal/components/events';
-import MonitoringOverviewEventsWarning from './MonitoringOverviewEventsWarning';
 import './MonitoringOverviewEvents.scss';
 
-type MonitoringOverviewEventsProps = React.ComponentProps<typeof MonitoringOverviewEventsWarning>;
+interface MonitoringOverviewEventsProps {
+  events: EventKind[];
+}
 
 const MonitoringOverviewEvents: React.FC<MonitoringOverviewEventsProps> = ({ events }) => (
   <div className="odc-monitoring-events">

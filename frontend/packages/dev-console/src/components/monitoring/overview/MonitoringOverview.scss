@@ -2,12 +2,12 @@
   &__metric-accordion {
     padding: 0;
   }
-  &__event-warning-toggle {
+  &__alerts-toggle {
     .pf-c-accordion__toggle-text {
       width: 100%;
     }
   }
-  &__event-warning-body {
+  &__alerts-body {
     .pf-c-accordion__expanded-content-body {
       padding: var(--pf-global--spacer--sm) 0;
     }

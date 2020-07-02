@@ -427,7 +427,7 @@ const SilenceTableRow: RowFunction<Silence> = ({ index, key, obj, style }) => {
   );
 };
 
-const alertMessageResources: { [labelName: string]: K8sKind } = {
+export const alertMessageResources: { [labelName: string]: K8sKind } = {
   container: ContainerModel,
   daemonset: DaemonSetModel,
   deployment: DeploymentModel,

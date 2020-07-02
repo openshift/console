@@ -3,7 +3,7 @@ import * as classnames from 'classnames';
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { Button, Tooltip } from '@patternfly/react-core';
+import { Button, Tooltip, TooltipPosition } from '@patternfly/react-core';
 
 import { ListView, ListViewItem } from './list-view';
 import {
@@ -12,6 +12,9 @@ import {
   YellowExclamationTriangleIcon,
   PodControllerOverviewItem,
   OverviewItem,
+  AlertSeverityIcon,
+  getSeverityAlertType,
+  getFiringAlerts,
 } from '@console/shared';
 import { K8sResourceKind } from '../../module/k8s';
 import * as UIActions from '../../actions/ui';
@@ -245,6 +248,7 @@ const projectOverviewListItemDispatchToProps = (
 ): ProjectOverviewListItemPropsFromDispatch => ({
   selectItem: (uid) => dispatch(UIActions.selectOverviewItem(uid)),
   dismissDetails: () => dispatch(UIActions.dismissOverviewDetails()),
+  selectOverviewDetailsTab: (name) => dispatch(UIActions.selectOverviewDetailsTab(name)),
 });
 
 export const ResourceItemDeleting = () => (
@@ -260,73 +264,100 @@ const ProjectOverviewListItem = connect<
 >(
   projectOverviewListItemStateToProps,
   projectOverviewListItemDispatchToProps,
-)(({ dismissDetails, item, metrics, selectItem, selectedUID }: ProjectOverviewListItemProps) => {
-  const { current, obj } = item;
-  const { name, uid, deletionTimestamp } = obj.metadata;
-  const { kind } = obj;
-  // Hide metrics when a selection is active.
-  const hasSelection = !!selectedUID;
-  const isSelected = uid === selectedUID;
-  const className = classnames(`project-overview__item project-overview__item--${kind}`, {
-    'project-overview__item--selected': isSelected,
-  });
+)(
+  ({
+    dismissDetails,
+    item,
+    metrics,
+    selectItem,
+    selectedUID,
+    selectOverviewDetailsTab,
+  }: ProjectOverviewListItemProps) => {
+    const { current, obj, monitoringAlerts } = item;
+    const { name, uid, deletionTimestamp } = obj.metadata;
+    const { kind } = obj;
+    // Hide metrics when a selection is active.
+    const hasSelection = !!selectedUID;
+    const isSelected = uid === selectedUID;
+    const className = classnames(`project-overview__item project-overview__item--${kind}`, {
+      'project-overview__item--selected': isSelected,
+    });
+    const firingAlerts = getFiringAlerts(monitoringAlerts);
+    const severityAlertType = getSeverityAlertType(firingAlerts);
 
-  const onClick = (e: React.MouseEvent<any>) => {
-    // Don't toggle details if clicking on a link inside the row.
-    const target = e.target as HTMLElement;
-    if (target.tagName.toLowerCase() === 'a') {
-      return;
-    }
+    const onClick = (e: React.MouseEvent<any>) => {
+      // Don't toggle details if clicking on a link inside the row.
+      const target = e.target as HTMLElement;
+      if (target.tagName.toLowerCase() === 'a') {
+        return;
+      }
 
-    if (isSelected) {
-      dismissDetails();
-    } else {
+      if (isSelected) {
+        dismissDetails();
+      } else {
+        selectItem(uid);
+      }
+    };
+
+    const onSeverityIconClick = () => {
+      selectOverviewDetailsTab('Monitoring');
       selectItem(uid);
-    }
-  };
+    };
 
-  const heading = (
-    <h3 className="project-overview__item-heading">
-      <span className="co-resource-item co-resource-item--truncate">
-        <ResourceIcon kind={kind} />
-        <Button
-          type="button"
-          isInline
-          onClick={onClick}
-          className="pf-c-button--no-default-values project-overview__item-heading--name"
-          variant="link"
-        >
-          {name}
-        </Button>
-        {current && (
-          <>
-            ,&nbsp;
-            <ControllerLink controller={current} />
-          </>
-        )}
-        {deletionTimestamp && <ResourceItemDeleting />}
-      </span>
-    </h3>
-  );
+    const heading = (
+      <h3 className="project-overview__item-heading">
+        <span className="co-resource-item co-resource-item--truncate">
+          <ResourceIcon kind={kind} />
+          <Button
+            type="button"
+            isInline
+            onClick={onClick}
+            className="pf-c-button--no-default-values project-overview__item-heading--name"
+            variant="link"
+          >
+            {name}
+          </Button>
+          {current && (
+            <>
+              ,&nbsp;
+              <ControllerLink controller={current} />
+            </>
+          )}
+          {firingAlerts.length > 0 && (
+            <Tooltip
+              key="monitoringAlert"
+              content="Monitoring Alert"
+              position={TooltipPosition.right}
+            >
+              <Button onClick={onSeverityIconClick} variant="plain">
+                <AlertSeverityIcon severityAlertType={severityAlertType} />
+              </Button>
+            </Tooltip>
+          )}
+          {deletionTimestamp && <ResourceItemDeleting />}
+        </span>
+      </h3>
+    );
 
-  const additionalInfo = (
-    <div key={uid} className="project-overview__additional-info">
-      <Alerts item={item} />
-      {!hasSelection && <Metrics item={item} metrics={metrics} />}
-      <Status item={item} />
-    </div>
-  );
+    const additionalInfo = (
+      <div key={uid} className="project-overview__additional-info">
+        <Alerts item={item} />
+        {!hasSelection && <Metrics item={item} metrics={metrics} />}
+        <Status item={item} />
+      </div>
+    );
 
-  return (
-    <ListViewItem
-      onClick={onClick}
-      className={className}
-      heading={heading}
-      additionalInfo={[additionalInfo]}
-      id={uid}
-    />
-  );
-});
+    return (
+      <ListViewItem
+        onClick={onClick}
+        className={className}
+        heading={heading}
+        additionalInfo={[additionalInfo]}
+        id={uid}
+      />
+    );
+  },
+);
 
 const ProjectOverviewList: React.SFC<ProjectOverviewListProps> = ({ items }) => {
   const listItems = _.map(items, (item) => (
@@ -490,6 +521,7 @@ type ProjectOverviewListItemPropsFromState = {
 type ProjectOverviewListItemPropsFromDispatch = {
   selectItem: (uid: string) => void;
   dismissDetails: () => void;
+  selectOverviewDetailsTab: (name: string) => void;
 };
 
 type ProjectOverviewListItemOwnProps = {

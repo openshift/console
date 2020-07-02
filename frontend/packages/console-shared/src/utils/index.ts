@@ -10,3 +10,4 @@ export * from './useCombineRefs';
 export * from './icon-utils';
 export * from './namespace';
 export * from './label-filter';
+export * from './alert-utils';
