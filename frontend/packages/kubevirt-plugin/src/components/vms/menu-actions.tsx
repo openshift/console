@@ -278,6 +278,14 @@ export const menuActionDeleteVMI = (kindObj: K8sKind, vmi: VMIKind): KebabOption
   accessReview: asAccessReview(kindObj, vmi, 'delete'),
 });
 
+export const menuActionOpenConsole = (kindObj: K8sKind, vmi: VMIKind): KebabOption => ({
+  label: `Open Console`,
+  callback: () =>
+    window.open(
+      `/k8s/ns/${getNamespace(vmi)}/virtualmachineinstances/${getName(vmi)}/standaloneconsole`,
+    ),
+});
+
 export const vmMenuActions = [
   menuActionStart,
   menuActionStop,
@@ -287,6 +295,7 @@ export const vmMenuActions = [
   menuActionCancelMigration,
   menuActionClone,
   menuActionCdEdit,
+  menuActionOpenConsole,
   Kebab.factory.ModifyLabels,
   Kebab.factory.ModifyAnnotations,
   menuActionDeleteVMorCancelImport,

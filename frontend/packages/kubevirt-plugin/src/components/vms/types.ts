@@ -16,6 +16,7 @@ export type VMTabProps = {
   customData: {
     kindObj: K8sKind;
   };
+  showOpenInNewWindow?: boolean;
 };
 
 export type VMLikeEntityTabProps = {
