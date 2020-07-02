@@ -738,7 +738,7 @@ export type OperandVersion = {
   version: string;
 };
 
-type ClusterOperatorObjectReference = {
+export type ClusterOperatorObjectReference = {
   group: string;
   resource: string;
   namespace?: string;

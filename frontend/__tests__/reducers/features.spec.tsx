@@ -47,7 +47,7 @@ describe('featureReducer', () => {
       configResources: [],
       namespacedSet: null,
       safeResources: [],
-      preferredVersions: [],
+      groupVersionMap: {},
     });
     const initialState = Immutable.Map(defaults);
     const newState = featureReducer(initialState, action);
