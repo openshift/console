@@ -282,6 +282,7 @@ export type VMWizardNetwork = {
   importData?: {
     id?: string;
     vnicID?: string;
+    networksWithSameVnicID?: [];
   };
 };
 

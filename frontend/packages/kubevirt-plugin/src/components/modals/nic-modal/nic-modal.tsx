@@ -1,5 +1,12 @@
 import * as React from 'react';
-import { Form, FormSelect, FormSelectOption, TextInput } from '@patternfly/react-core';
+import {
+  Alert,
+  AlertVariant,
+  Form,
+  FormSelect,
+  FormSelectOption,
+  TextInput,
+} from '@patternfly/react-core';
 import {
   FirehoseResult,
   HandlePromiseProps,
@@ -210,6 +217,9 @@ export const NICModal = withHandlePromise((props: NICModalProps) => {
       <ModalTitle>{isEditing ? EDIT : ADD} Network Interface</ModalTitle>
       <ModalBody>
         <Form>
+          {editConfig?.warning && (
+            <Alert variant={AlertVariant.warning} isInline title={editConfig?.warning} />
+          )}
           <FormRow
             title="Name"
             fieldId={asId('name')}
@@ -253,7 +263,11 @@ export const NICModal = withHandlePromise((props: NICModalProps) => {
             network={resultNetwork}
             onChange={onNetworkChoiceChange}
             nads={nads}
-            allowPodNetwork={allowPodNetwork}
+            allowPodNetwork={
+              editConfig?.allowPodNetworkOverride != null
+                ? editConfig?.allowPodNetworkOverride
+                : allowPodNetwork
+            }
             acceptEmptyValues={editConfig?.acceptEmptyValuesOverride?.network}
           />
           <FormRow title="Type" fieldId={asId('type')} isRequired>
