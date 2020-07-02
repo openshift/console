@@ -272,7 +272,6 @@ func (s *Server) HTTPHandler() http.Handler {
 			tenancyQueryRangeSourcePath = prometheusTenancyProxyEndpoint + "/api/v1/query_range"
 			tenancyTargetAPIPath        = prometheusTenancyProxyEndpoint + "/api/"
 
-			prometheusProxy    = proxy.NewProxy(s.PrometheusProxyConfig)
 			thanosProxy        = proxy.NewProxy(s.ThanosProxyConfig)
 			thanosTenancyProxy = proxy.NewProxy(s.ThanosTenancyProxyConfig)
 		)
@@ -300,12 +299,13 @@ func (s *Server) HTTPHandler() http.Handler {
 			})),
 		)
 
-		// alerting (rules) have to be proxied via cluster monitoring prometheus
+		// alerting (rules) are being proxied via thanos querier
+		// such that both in-cluster and user workload alerts appear in console.
 		handle(rulesSourcePath, http.StripPrefix(
 			proxy.SingleJoiningSlash(s.BaseURL.Path, targetAPIPath),
 			authHandlerWithUser(func(user *auth.User, w http.ResponseWriter, r *http.Request) {
 				r.Header.Set("Authorization", fmt.Sprintf("Bearer %s", user.Token))
-				prometheusProxy.ServeHTTP(w, r)
+				thanosProxy.ServeHTTP(w, r)
 			})),
 		)
 
