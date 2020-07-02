@@ -360,6 +360,8 @@ export default (state: UIState, action: UIAction): UIState => {
       return state.setIn(['metrics', 'namespace'], action.payload.namespaceMetrics);
     case ActionType.SetNodeMetrics:
       return state.setIn(['metrics', 'node'], action.payload.nodeMetrics);
+    case ActionType.SetPVCMetrics:
+      return state.setIn(['metrics', 'pvc'], action.payload.pvcMetrics);
 
     case ActionType.SetPinnedResources: {
       const pinnedResources = { ...state.get('pinnedResources') };

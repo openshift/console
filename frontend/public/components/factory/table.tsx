@@ -9,6 +9,7 @@ import {
   nodeCPU,
   nodeFS,
   nodePods,
+  pvcUsed,
 } from '@console/shared';
 import * as UIActions from '../../actions/ui';
 import {
@@ -143,6 +144,7 @@ const sorts = {
   nodeFS: (node: NodeKind): number => nodeFS(node),
   machinePhase: (machine: MachineKind): string => getMachinePhase(machine),
   nodePods: (node: NodeKind): number => nodePods(node),
+  pvcUsed: (pvc: K8sResourceKind): number => pvcUsed(pvc),
 };
 
 const stateToProps = (
