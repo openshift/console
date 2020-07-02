@@ -5,6 +5,7 @@ import { sortable } from '@patternfly/react-table';
 import * as classNames from 'classnames';
 import { Alert, Button } from '@patternfly/react-core';
 import { InProgressIcon, PencilAltIcon } from '@patternfly/react-icons';
+import { Conditions } from '@console/internal/components/conditions';
 import {
   DetailsPage,
   MultiListPage,
@@ -14,15 +15,16 @@ import {
   RowFunction,
 } from '@console/internal/components/factory';
 import {
-  MsgBox,
-  ResourceLink,
-  ResourceKebab,
-  navFactory,
   Kebab,
-  ResourceSummary,
   LoadingInline,
-  SectionHeading,
+  MsgBox,
+  navFactory,
+  ResourceKebab,
+  ResourceLink,
   resourcePathFromModel,
+  ResourceStatus,
+  ResourceSummary,
+  SectionHeading,
 } from '@console/internal/components/utils';
 import { removeQueryArgument } from '@console/internal/components/utils/router';
 import {
@@ -37,6 +39,8 @@ import {
   getName,
   getNamespace,
   GreenCheckCircleIcon,
+  RedExclamationCircleIcon,
+  StatusIconAndText,
   WarningStatus,
   YellowExclamationTriangleIcon,
 } from '@console/shared';
@@ -324,6 +328,10 @@ export const SubscriptionDetails: React.FC<SubscriptionDetailsProps> = ({
   packageManifests = [],
 }) => {
   const catalogSource = catalogSourceForSubscription(catalogSources, obj);
+  const catalogSourceName = getName(catalogSource);
+  const catalogSourceHealthy = obj?.status?.catalogHealth?.find(
+    (ch) => (ch.catalogSourceRef.name = catalogSourceName),
+  )?.healthy;
   const installedCSV = installedCSVForSubscription(clusterServiceVersions, obj);
   const installPlan = installPlanForSubscription(installPlans, obj);
   const installStatusPhase = installPlan?.status?.phase;
@@ -341,86 +349,105 @@ export const SubscriptionDetails: React.FC<SubscriptionDetailsProps> = ({
   }
 
   return (
-    <div className="co-m-pane__body">
-      {!catalogSource && (
-        <Alert isInline className="co-alert" variant="warning" title="Catalog Source Removed">
-          The catalog source for this operator has been removed. The catalog source must be added
-          back in order for this operator to receive any updates.
-        </Alert>
-      )}
-      {installStatusPhase === InstallPlanPhase.InstallPlanPhaseFailed && (
-        <Alert
-          isInline
-          className="co-alert co-alert--scrollable"
-          variant="danger"
-          title={installStatusPhase}
-        >
-          {installFailedMessage}
-        </Alert>
-      )}
-      <SectionHeading text="Subscription Details" />
-      <div className="co-m-pane__body-group">
-        <SubscriptionUpdates
-          catalogSource={catalogSource}
-          pkg={pkg}
-          obj={obj}
-          installedCSV={installedCSV}
-          installPlan={installPlan}
-        />
-      </div>
-      <div className="co-m-pane__body-group">
-        <div className="row">
-          <div className="col-sm-6">
-            <ResourceSummary resource={obj} showAnnotations={false} />
-          </div>
-          <div className="col-sm-6">
-            <dl className="co-m-pane__details">
-              <dt>Installed Version</dt>
-              <dd>
-                {installedCSV ? (
-                  <ResourceLink
-                    kind={referenceForModel(ClusterServiceVersionModel)}
-                    name={getName(installedCSV)}
-                    namespace={getNamespace(installedCSV)}
-                    title={getName(installedCSV)}
-                  />
-                ) : (
-                  'None'
-                )}
-              </dd>
-              <dt>Starting Version</dt>
-              <dd>{obj.spec.startingCSV || 'None'}</dd>
-              <dt>Catalog Source</dt>
-              <dd>
-                {catalogSource ? (
-                  <ResourceLink
-                    kind={referenceForModel(CatalogSourceModel)}
-                    name={getName(catalogSource)}
-                    namespace={getNamespace(catalogSource)}
-                    title={getName(catalogSource)}
-                  />
-                ) : (
-                  'None'
-                )}
-              </dd>
-              <dt>Install Plan</dt>
-              <dd>
-                {installPlan ? (
-                  <ResourceLink
-                    kind={referenceForModel(InstallPlanModel)}
-                    name={getName(installPlan)}
-                    namespace={getNamespace(installPlan)}
-                    title={getName(installPlan)}
-                  />
-                ) : (
-                  'None'
-                )}
-              </dd>
-            </dl>
+    <>
+      <div className="co-m-pane__body">
+        {!catalogSource && (
+          <Alert isInline className="co-alert" variant="warning" title="Catalog Source Removed">
+            The catalog source for this operator has been removed. The catalog source must be added
+            back in order for this operator to receive any updates.
+          </Alert>
+        )}
+        {installStatusPhase === InstallPlanPhase.InstallPlanPhaseFailed && (
+          <Alert
+            isInline
+            className="co-alert co-alert--scrollable"
+            variant="danger"
+            title={installStatusPhase}
+          >
+            {installFailedMessage}
+          </Alert>
+        )}
+        <SectionHeading text="Subscription Details" />
+        <div className="co-m-pane__body-group">
+          <SubscriptionUpdates
+            catalogSource={catalogSource}
+            pkg={pkg}
+            obj={obj}
+            installedCSV={installedCSV}
+            installPlan={installPlan}
+          />
+        </div>
+        <div className="co-m-pane__body-group">
+          <div className="row">
+            <div className="col-sm-6">
+              <ResourceSummary resource={obj} showAnnotations={false} />
+            </div>
+            <div className="col-sm-6">
+              <dl className="co-m-pane__details">
+                <dt>Installed Version</dt>
+                <dd>
+                  {installedCSV ? (
+                    <ResourceLink
+                      kind={referenceForModel(ClusterServiceVersionModel)}
+                      name={getName(installedCSV)}
+                      namespace={getNamespace(installedCSV)}
+                      title={getName(installedCSV)}
+                    />
+                  ) : (
+                    'None'
+                  )}
+                </dd>
+                <dt>Starting Version</dt>
+                <dd>{obj.spec.startingCSV || 'None'}</dd>
+                <dt>Catalog Source</dt>
+                <dd>
+                  {catalogSource ? (
+                    <ResourceLink
+                      kind={referenceForModel(CatalogSourceModel)}
+                      name={catalogSourceName}
+                      namespace={getNamespace(catalogSource)}
+                      title={getName(catalogSource)}
+                    >
+                      {catalogSourceHealthy !== undefined && (
+                        <ResourceStatus badgeAlt>
+                          {catalogSourceHealthy ? (
+                            <StatusIconAndText icon={<GreenCheckCircleIcon />} title="Healthy" />
+                          ) : (
+                            <StatusIconAndText
+                              icon={<RedExclamationCircleIcon />}
+                              title="Unhealthy"
+                            />
+                          )}
+                        </ResourceStatus>
+                      )}
+                    </ResourceLink>
+                  ) : (
+                    'None'
+                  )}
+                </dd>
+                <dt>Install Plan</dt>
+                <dd>
+                  {installPlan ? (
+                    <ResourceLink
+                      kind={referenceForModel(InstallPlanModel)}
+                      name={getName(installPlan)}
+                      namespace={getNamespace(installPlan)}
+                      title={getName(installPlan)}
+                    />
+                  ) : (
+                    'None'
+                  )}
+                </dd>
+              </dl>
+            </div>
           </div>
         </div>
       </div>
-    </div>
+      <div className="co-m-pane__body">
+        <SectionHeading text="Conditions" />
+        <Conditions conditions={obj?.status?.conditions} />
+      </div>
+    </>
   );
 };
 

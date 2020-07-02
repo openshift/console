@@ -2,22 +2,16 @@ import * as React from 'react';
 import * as classNames from 'classnames';
 import * as _ from 'lodash-es';
 import { Link } from 'react-router-dom';
-import {
-  Badge,
-  Breadcrumb,
-  BreadcrumbItem,
-  Button,
-  SplitItem,
-  Split,
-} from '@patternfly/react-core';
+import { Breadcrumb, BreadcrumbItem, Button, SplitItem, Split } from '@patternfly/react-core';
 import { Status, HealthChecksAlert } from '@console/shared';
 import {
   ActionsMenu,
-  ResourceIcon,
-  KebabAction,
-  resourcePath,
   FirehoseResult,
+  KebabAction,
   KebabOption,
+  ResourceIcon,
+  resourcePath,
+  ResourceStatus,
 } from './index';
 import { connectToModel } from '../../kinds';
 import {
@@ -137,11 +131,9 @@ export const PageHeading = connectToModel((props: PageHeadingProps) => {
                 {resourceTitle}
               </span>
               {resourceStatus && (
-                <span className="co-resource-item__resource-status hidden-xs">
-                  <Badge className="co-resource-item__resource-status-badge" isRead>
-                    <Status status={resourceStatus} />
-                  </Badge>
-                </span>
+                <ResourceStatus additionalClassNames="hidden-xs">
+                  <Status status={resourceStatus} />
+                </ResourceStatus>
               )}
             </div>
           )}

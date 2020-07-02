@@ -1,6 +1,6 @@
 import * as classNames from 'classnames';
 import * as _ from 'lodash-es';
-import { Badge, Button } from '@patternfly/react-core';
+import { Button } from '@patternfly/react-core';
 import { sortable } from '@patternfly/react-table';
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
@@ -86,6 +86,7 @@ import { SectionHeading, ActionButtons } from './utils/headings';
 import { Kebab } from './utils/kebab';
 import { ExternalLink, getURLSearchParams } from './utils/link';
 import { ResourceLink } from './utils/resource-link';
+import { ResourceStatus } from './utils/resource-status';
 import { history } from './utils/router';
 import { LoadingInline, StatusBox } from './utils/status-box';
 import { Timestamp } from './utils/timestamp';
@@ -218,11 +219,9 @@ const Severity: React.FC<{ severity: string }> = ({ severity }) =>
 
 const SeverityBadge: React.FC<{ severity: string }> = ({ severity }) =>
   _.isNil(severity) || severity === 'none' ? null : (
-    <span className="co-resource-item__resource-status">
-      <Badge className="co-resource-item__resource-status-badge" isRead>
-        <Severity severity={severity} />
-      </Badge>
-    </span>
+    <ResourceStatus>
+      <Severity severity={severity} />
+    </ResourceStatus>
   );
 
 const SeverityCounts: React.FC<{ alerts: Alert[] }> = ({ alerts }) => {
