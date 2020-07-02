@@ -53,7 +53,6 @@ const PipelineSecretSection: React.FC<PipelineSecretSectionProps> = ({ namespace
       })
       .catch((err) => {
         actions.setSubmitting(false);
-        setFieldValue(secretOpenField.name, false);
         actions.setStatus({ submitError: err.message });
       });
   };
