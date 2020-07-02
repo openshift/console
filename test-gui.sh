@@ -5,10 +5,14 @@ set -exuo pipefail
 cd frontend
 
 yarn install
-if [ -z "${CHROME_VERSION-}" ]; then
+if [ "${BRIDGE_E2E_BROWSER_NAME-}" == 'firefox' ]; then
  yarn run webdriver-update
 else
- yarn run webdriver-update --versions.chrome="$CHROME_VERSION"
+ if [ -n "${CHROME_VERSION-}" ]; then
+  yarn run webdriver-update --versions.chrome="$CHROME_VERSION" --gecko=false
+ else
+  yarn run webdriver-update --gecko=false
+ fi
 fi
 
 if [ $# -gt 0 ] && [ -n "$1" ]; then
