@@ -1,46 +1,65 @@
 import * as React from 'react';
-import * as _ from 'lodash';
 import { Base64 } from 'js-base64';
 import { SecretValue } from '@console/internal/components/configmap-and-secret-data';
 import { ConfigMapModel, SecretModel } from '@console/internal/models';
-import { k8sGet, K8sResourceKind } from '@console/internal/module/k8s';
+import { K8sResourceKind, SecretKind, ConfigMapKind } from '@console/internal/module/k8s';
 import { getName, getNamespace } from '@console/shared';
 import { SectionHeading, EmptyBox } from '@console/internal/components/utils';
+import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { Button } from '@patternfly/react-core';
 import { EyeSlashIcon, EyeIcon } from '@patternfly/react-icons';
 
 export const GetSecret: React.FC<GetSecretProps> = ({ obj }) => {
   const [reveal, setReveal] = React.useState(false);
-  const [secretData, setSecretData] = React.useState([]);
 
   const name = getName(obj);
   const namespace = getNamespace(obj);
 
-  React.useEffect(() => {
-    const secret = k8sGet(SecretModel, name, namespace);
-    const configMap = k8sGet(ConfigMapModel, name, namespace);
-    Promise.all([secret, configMap])
-      .then((data) => {
-        const bucketName = _.get(data[1], 'data.BUCKET_NAME');
-        const endpoint = `${_.get(data[1], 'data.BUCKET_HOST')}:${_.get(
-          data[1],
-          'data.BUCKET_PORT',
-        )}`;
-        const accessKey = Base64.decode(_.get(data[0], 'data.AWS_ACCESS_KEY_ID'));
-        const secretKey = Base64.decode(_.get(data[0], 'data.AWS_SECRET_ACCESS_KEY'));
-        const secretValues = [
+  const [secretResource, cmResource] = React.useMemo(
+    () => [
+      {
+        kind: SecretModel.kind,
+        namespace,
+        name,
+        isList: false,
+      },
+      {
+        kind: ConfigMapModel.kind,
+        namespace,
+        name,
+        isList: false,
+      },
+    ],
+    [name, namespace],
+  );
+
+  const [secretData, secretLoaded, secretLoadError] = useK8sWatchResource<SecretKind>(
+    secretResource,
+  );
+
+  const [configData, configLoaded, configLoadError] = useK8sWatchResource<ConfigMapKind>(
+    cmResource,
+  );
+  const isLoaded = secretLoaded && configLoaded;
+  const error = secretLoadError || configLoadError;
+  const bucketName = configData?.data?.BUCKET_NAME;
+  const endpoint = `${configData?.data?.BUCKET_HOST}:${configData?.data?.BUCKET_PORT}`;
+  const accessKey = isLoaded && !error ? Base64.decode(secretData?.data?.AWS_ACCESS_KEY_ID) : '';
+  const secretKey =
+    isLoaded && !error ? Base64.decode(secretData?.data?.AWS_SECRET_ACCESS_KEY) : '';
+
+  const secretValues =
+    isLoaded && !error
+      ? [
           { field: 'Endpoint', value: endpoint },
           { field: 'Bucket Name', value: bucketName },
           { field: 'Access Key', value: accessKey },
           { field: 'Secret Key', value: secretKey },
-        ];
-        setSecretData(secretValues);
-      })
-      .catch(() => undefined);
-  }, [name, namespace]);
+        ]
+      : [];
 
-  const dl = secretData.length
-    ? secretData.reduce((acc, datum) => {
+  const dl = secretValues.length
+    ? secretValues.reduce((acc, datum) => {
         const { field, value } = datum;
         acc.push(<dt key={`${field}-k`}>{field}</dt>);
         acc.push(
@@ -55,7 +74,7 @@ export const GetSecret: React.FC<GetSecretProps> = ({ obj }) => {
   return dl.length ? (
     <div className="co-m-pane__body">
       <SectionHeading text="Object Bucket Claim Data">
-        {secretData.length ? (
+        {secretValues.length ? (
           <Button
             type="button"
             onClick={() => setReveal(!reveal)}
