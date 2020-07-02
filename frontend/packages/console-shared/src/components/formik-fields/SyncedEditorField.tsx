@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import { useField, useFormikContext, FormikValues } from 'formik';
-import { Alert, Button } from '@patternfly/react-core';
+import { Alert, Button, AlertActionCloseButton } from '@patternfly/react-core';
 import { EditorType } from '../synced-editor/editor-toggle';
 import RadioGroupField from './RadioGroupField';
 
@@ -32,6 +32,7 @@ const SyncedEditorField: React.FC<SyncedEditorFieldProps> = ({
   const yamlData = _.get(values, yamlContext.name);
 
   const [yamlWarning, setYAMLWarning] = React.useState<boolean>(false);
+  const [disabledFormAlert, setDisabledFormAlert] = React.useState<boolean>(formContext.isDisabled);
 
   const changeEditorType = (newType: EditorType): void => {
     setFieldValue(name, newType);
@@ -75,6 +76,10 @@ const SyncedEditorField: React.FC<SyncedEditorFieldProps> = ({
     }
   };
 
+  React.useEffect(() => {
+    setDisabledFormAlert(formContext.isDisabled);
+  }, [formContext.isDisabled]);
+
   return (
     <>
       <div className="ocs-synced-editor-field__editor-toggle">
@@ -114,10 +119,11 @@ const SyncedEditorField: React.FC<SyncedEditorFieldProps> = ({
           </Button>
         </Alert>
       )}
-      {formContext.isDisabled && (
+      {disabledFormAlert && (
         <Alert
           variant="default"
           title="Form view is disabled for this chart because the schema is not available"
+          action={<AlertActionCloseButton onClose={() => setDisabledFormAlert(false)} />}
           isInline
         />
       )}

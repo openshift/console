@@ -7,7 +7,7 @@ import {
   getChartURL,
   getChartVersions,
   flattenReleaseResources,
-  getHelmChartReadme,
+  getChartReadme,
 } from '../helm-utils';
 import { HelmReleaseStatus } from '../helm-types';
 import {
@@ -121,6 +121,6 @@ describe('Helm Releases Utils', () => {
   });
 
   it('should return the readme for the chart provided', () => {
-    expect(getHelmChartReadme(mockHelmReleases[0].chart)).toEqual('example readme content');
+    expect(getChartReadme(mockHelmReleases[0].chart)).toEqual('example readme content');
   });
 });

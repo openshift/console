@@ -4,7 +4,7 @@ import { Formik } from 'formik';
 import { RouteComponentProps } from 'react-router';
 import { PageBody } from '@console/shared';
 import { coFetchJSON } from '@console/internal/co-fetch';
-import { PageHeading, history, getQueryArgument } from '@console/internal/components/utils';
+import { history, getQueryArgument } from '@console/internal/components/utils';
 
 import { HelmRelease, HelmActionType, HelmActionOrigins } from './helm-types';
 import { getHelmActionConfig } from './helm-utils';
@@ -79,12 +79,16 @@ const HelmReleaseRollbackPage: React.FC<HelmReleaseRollbackPageProps> = ({ match
       <Helmet>
         <title>{config.title}</title>
       </Helmet>
-      <PageHeading title={config.title}>
-        Select the version to rollback <strong>{releaseName}</strong> to, from the table below:
-      </PageHeading>
       <PageBody>
         <Formik initialValues={initialValues} onSubmit={handleSubmit} onReset={history.goBack}>
-          {(props) => <HelmReleaseRollbackForm {...props} releaseHistory={releaseHistory} />}
+          {(props) => (
+            <HelmReleaseRollbackForm
+              {...props}
+              releaseName={releaseName}
+              releaseHistory={releaseHistory}
+              helmActionConfig={config}
+            />
+          )}
         </Formik>
       </PageBody>
     </NamespacedPage>

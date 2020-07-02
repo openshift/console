@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import { FormikProps, FormikValues } from 'formik';
-import { TextInputTypes, Grid, GridItem } from '@patternfly/react-core';
+import { TextInputTypes, Grid, GridItem, Button } from '@patternfly/react-core';
 import {
   InputField,
   FormFooter,
@@ -9,15 +9,17 @@ import {
   YAMLEditorField,
   DynamicFormField,
   SyncedEditorField,
+  FormHeader,
 } from '@console/shared';
 import { getJSONSchemaOrder } from '@console/shared/src/components/dynamic-form/utils';
 import FormSection from '../../import/section/FormSection';
-import { HelmActionType, HelmChart } from '../helm-types';
+import { helmReadmeModalLauncher } from '../HelmReadmeModal';
+import { HelmActionType, HelmChart, HelmActionConfigType } from '../helm-types';
 import HelmChartVersionDropdown from './HelmChartVersionDropdown';
 
 export interface HelmInstallUpgradeFormProps {
   chartHasValues: boolean;
-  helmAction: string;
+  helmActionConfig: HelmActionConfigType;
   chartMetaDescription: React.ReactNode;
   onVersionChange: (chart: HelmChart) => void;
 }
@@ -29,13 +31,14 @@ const HelmInstallUpgradeForm: React.FC<FormikProps<FormikValues> & HelmInstallUp
   handleReset,
   status,
   isSubmitting,
-  helmAction,
+  helmActionConfig,
   values,
   dirty,
   chartMetaDescription,
   onVersionChange,
 }) => {
-  const { chartName, chartVersion, formData, formSchema } = values;
+  const { chartName, chartVersion, chartReadme, formData, formSchema, editorType } = values;
+  const { type: helmAction, title, subTitle } = helmActionConfig;
 
   const isSubmitDisabled =
     (helmAction === HelmActionType.Upgrade && !dirty) || status?.isSubmitting || !_.isEmpty(errors);
@@ -50,13 +53,44 @@ const HelmInstallUpgradeForm: React.FC<FormikProps<FormikValues> & HelmInstallUp
       formDescription={chartMetaDescription}
     />
   );
+
   const yamlEditor = chartHasValues && <YAMLEditorField name="yamlData" onSave={handleSubmit} />;
+
+  const formSubTitle = _.isString(subTitle) ? subTitle : subTitle?.[editorType];
+
+  const readmeText = chartReadme && (
+    <>
+      For more information on the chart, refer to this{' '}
+      <Button
+        type="button"
+        variant="link"
+        data-test-id="helm-readme-modal"
+        onClick={() =>
+          helmReadmeModalLauncher({
+            readme: chartReadme,
+            modalClassName: 'modal-lg',
+          })
+        }
+        isInline
+      >
+        README
+      </Button>
+    </>
+  );
+
+  const formHelpText = (
+    <>
+      {chartHasValues && <>{formSubTitle} &nbsp;</>}
+      {readmeText}
+    </>
+  );
 
   return (
     <FlexForm onSubmit={handleSubmit}>
+      <FormHeader title={title} helpText={formHelpText} marginBottom="lg" />
       <FormSection fullWidth>
         <Grid gutter={'md'}>
-          <GridItem xl={6} lg={6} md={12} sm={12}>
+          <GridItem xl={7} lg={8} md={12}>
             <InputField
               type={TextInputTypes.text}
               name="releaseName"
@@ -66,7 +100,7 @@ const HelmInstallUpgradeForm: React.FC<FormikProps<FormikValues> & HelmInstallUp
               isDisabled={helmAction === HelmActionType.Upgrade}
             />
           </GridItem>
-          <GridItem xl={6} lg={6} md={12} sm={12}>
+          <GridItem xl={5} lg={4} md={12}>
             <HelmChartVersionDropdown
               chartName={chartName}
               chartVersion={chartVersion}

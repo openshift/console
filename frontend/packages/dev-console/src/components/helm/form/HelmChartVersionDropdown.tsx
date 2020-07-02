@@ -3,6 +3,7 @@ import * as _ from 'lodash';
 import { safeLoad } from 'js-yaml';
 import { FormikValues, useFormikContext } from 'formik';
 import { GridItem } from '@patternfly/react-core';
+import { InfoCircleIcon } from '@patternfly/react-icons';
 import { coFetchJSON, coFetch } from '@console/internal/co-fetch';
 import { DropdownField } from '@console/shared';
 import { confirmModal } from '@console/internal/components/modals/confirm-modal';
@@ -10,7 +11,13 @@ import { k8sVersion } from '@console/internal/module/status';
 import { getK8sGitVersion } from '@console/internal/module/k8s';
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
 import { HelmChartMetaData, HelmChart, HelmActionType, HelmChartEntries } from '../helm-types';
-import { getChartURL, getChartVersions, getChartValuesYAML, concatVersions } from '../helm-utils';
+import {
+  getChartURL,
+  getChartVersions,
+  getChartValuesYAML,
+  getChartReadme,
+  concatVersions,
+} from '../helm-utils';
 
 export type HelmChartVersionDropdownProps = {
   chartVersion: string;
@@ -46,15 +53,19 @@ const HelmChartVersionDropdown: React.FunctionComponent<HelmChartVersionDropdown
       title: 'Change Chart Version?',
       message: (
         <>
-          Are you sure you want to change the chart version from <strong>{currentVersion}</strong>{' '}
-          to <strong>{newVersion}</strong>? <br />
-          You have data entered for version <strong>{currentVersion}</strong> in the YAML editor.
-          All data entered will be lost when changed to <strong>{newVersion}</strong>.
+          <p>
+            Are you sure you want to change the chart version from <strong>{currentVersion}</strong>{' '}
+            to <strong>{newVersion}</strong>?{' '}
+          </p>
+          <p>
+            <InfoCircleIcon color="var(--pf-global--info-color--100)" /> All data entered for
+            version <strong>{currentVersion}</strong> will be reset.
+          </p>
         </>
       ),
-      submitDanger: true,
-      btnText: 'Yes',
-      cancelText: 'No',
+      submitDanger: false,
+      btnText: 'Proceed',
+      cancelText: 'Cancel',
       executeFn: () => {
         onAccept();
         return Promise.resolve();
@@ -111,15 +122,16 @@ const HelmChartVersionDropdown: React.FunctionComponent<HelmChartVersionDropdown
       .then((res: HelmChart) => {
         onVersionChange(res);
 
+        const chartReadme = getChartReadme(res);
         const valuesYAML = getChartValuesYAML(res);
         const valuesJSON = res?.values;
         const valuesSchema = res?.schema && JSON.parse(atob(res?.schema));
         const editorType = valuesSchema ? EditorType.Form : EditorType.YAML;
         setFieldValue('editorType', editorType);
         setFieldValue('formSchema', valuesSchema);
-
         setFieldValue('yamlData', valuesYAML);
         setFieldValue('formData', valuesJSON);
+        setFieldValue('chartReadme', chartReadme);
         setInitialYamlData(valuesYAML);
         setInitialFormData(valuesJSON);
       })
