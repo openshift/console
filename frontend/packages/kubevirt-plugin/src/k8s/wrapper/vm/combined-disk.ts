@@ -213,21 +213,26 @@ export class CombinedDisk {
     onDataVolumeWrapper: (dataVolumeWrapper: DataVolumeWrapper) => any,
   ) => {
     const volumeType = this.volumeWrapper?.getType();
-    if (volumeType === VolumeType.PERSISTENT_VOLUME_CLAIM) {
-      if (this.persistentVolumeClaimWrapper) {
-        return onPersistentVolumeClaimWrapper(this.persistentVolumeClaimWrapper) || null;
-      }
-      if (this.pvcsLoading) {
-        return undefined;
-      }
-    } else if (volumeType === VolumeType.DATA_VOLUME) {
-      if (this.dataVolumeWrapper) {
-        return onDataVolumeWrapper(this.dataVolumeWrapper) || null;
-      }
-      if (this.dataVolumesLoading) {
-        return undefined;
-      }
+
+    if (this.persistentVolumeClaimWrapper) {
+      return onPersistentVolumeClaimWrapper(this.persistentVolumeClaimWrapper) || null;
     }
+
+    if (this.dataVolumeWrapper) {
+      return onDataVolumeWrapper(this.dataVolumeWrapper) || null;
+    }
+
+    if (
+      [VolumeType.PERSISTENT_VOLUME_CLAIM, VolumeType.DATA_VOLUME].includes(volumeType) &&
+      this.pvcsLoading
+    ) {
+      return undefined;
+    }
+
+    if (volumeType === VolumeType.DATA_VOLUME && this.dataVolumesLoading) {
+      return undefined;
+    }
+
     return null;
   };
 }
