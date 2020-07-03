@@ -146,12 +146,12 @@ class PipelineRunLogs extends React.Component<PipelineRunLogsProps, PipelineRunL
                 onDownloadAll={downloadAllCallback}
               />
             </Firehose>
-          ) : _.has(obj, ['status', 'conditions', 0, 'message']) ? (
-            <div className="odc-pipeline-run-logs__log">
-              {_.get(obj, ['status', 'conditions', 0, 'message'], '-')}
-            </div>
           ) : (
-            <div>No Logs Found</div>
+            <div className="odc-pipeline-run-logs__log">
+              <div className="odc-pipeline-run-logs__logtext">
+                {_.get(obj, ['status', 'conditions', 0, 'message'], 'No Logs Found')}
+              </div>
+            </div>
           )}
         </div>
       </div>
