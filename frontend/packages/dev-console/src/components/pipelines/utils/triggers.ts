@@ -149,29 +149,26 @@ export const usePipelineTriggerTemplateNames = (
   }, []);
 };
 
-export const useEventListenerTriggerTemplateNames = (
+export const useEventListenerURL = (
   eventListener: EventListenerKind,
-): RouteTemplate[] | null => {
-  const {
-    metadata: { namespace },
-  } = eventListener;
-
+  namespace: string,
+): string | null => {
   const [route, routeLoaded] = useK8sGet<RouteKind>(
     RouteModel,
     getEventListenerGeneratedName(eventListener),
     namespace,
   );
-  return eventListener.spec.triggers.reduce(
-    (acc, trigger) => [
-      ...acc,
-      {
-        routeURL: route && routeLoaded ? getRouteWebURL(route) : null,
-        triggerTemplateName: trigger.template.name,
-      },
-    ],
-    [],
-  );
+
+  return routeLoaded ? getRouteWebURL(route) : null;
 };
+
+export const getEventListenerTriggerTemplateNames = (
+  eventListener: EventListenerKind,
+): ResourceModelLink[] =>
+  eventListener.spec.triggers.map((trigger) => ({
+    model: TriggerTemplateModel,
+    name: trigger.template.name,
+  }));
 
 export const getEventListenerTriggerBindingNames = (
   eventListener: EventListenerKind,

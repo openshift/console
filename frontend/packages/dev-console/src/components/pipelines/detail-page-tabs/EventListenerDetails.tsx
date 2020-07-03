@@ -2,13 +2,12 @@ import * as React from 'react';
 import { SectionHeading, ResourceSummary } from '@console/internal/components/utils';
 import { TriggerBindingModel, TriggerTemplateModel } from '../../../models';
 import { EventListenerKind } from '../resource-types';
+import EventListenerURL from './EventListenerURL';
 import DynamicResourceLinkList, {
   ResourceModelLink,
 } from '../resource-overview/DynamicResourceLinkList';
-import TriggerTemplateResourceLink from '../resource-overview/TriggerTemplateResourceLink';
 import {
-  RouteTemplate,
-  useEventListenerTriggerTemplateNames,
+  getEventListenerTriggerTemplateNames,
   getEventListenerTriggerBindingNames,
 } from '../utils/triggers';
 
@@ -17,7 +16,7 @@ export interface EventListenerDetailsProps {
 }
 
 const EventListenerDetails: React.FC<EventListenerDetailsProps> = ({ obj: eventListener }) => {
-  const routeTemplates: RouteTemplate[] = useEventListenerTriggerTemplateNames(eventListener) || [];
+  const templates: ResourceModelLink[] = getEventListenerTriggerTemplateNames(eventListener);
   const bindings: ResourceModelLink[] = getEventListenerTriggerBindingNames(eventListener);
   return (
     <div className="co-m-pane__body">
@@ -27,10 +26,14 @@ const EventListenerDetails: React.FC<EventListenerDetailsProps> = ({ obj: eventL
           <ResourceSummary resource={eventListener} />
         </div>
         <div className="col-sm-6">
-          <TriggerTemplateResourceLink
+          <EventListenerURL
+            eventListener={eventListener}
             namespace={eventListener.metadata.namespace}
-            model={TriggerTemplateModel}
-            links={routeTemplates}
+          />
+          <DynamicResourceLinkList
+            links={templates}
+            namespace={eventListener.metadata.namespace}
+            title={TriggerTemplateModel.labelPlural}
           />
           <DynamicResourceLinkList
             links={bindings}
