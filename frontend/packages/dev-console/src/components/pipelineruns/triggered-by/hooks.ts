@@ -17,6 +17,10 @@ const mergeLabelsWithResource = (labels: LabelMap, resource: K8sResourceCommon) 
 export const useUserLabelForManualStart = (): LabelMap => {
   const user = useSelector((state) => state.UI.get('user'));
 
+  if (!user?.metadata?.name) {
+    return {};
+  }
+
   return {
     // kube:admin is an invalid k8s label value
     [StartedByLabel.user]: user.metadata.name.replace(/:/, ''),
