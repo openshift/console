@@ -15,6 +15,7 @@ import {
   podSelectorModal,
   deleteModal,
   expandPVCModal,
+  clonePVCModal,
 } from '../modals';
 import { asAccessReview, checkAccess, history, resourceObjPath, useAccessReview } from './index';
 import {
@@ -335,6 +336,15 @@ const kebabFactory: KebabFactory = {
     href: `${resourceObjPath(obj, kind.crd ? referenceForModel(kind) : kind.kind)}/${
       VolumeSnapshotModel.plural
     }/~new/form`,
+    accessReview: asAccessReview(kind, obj, 'create'),
+  }),
+  ClonePVC: (kind, obj) => ({
+    label: 'Clone PVC',
+    callback: () =>
+      clonePVCModal({
+        kind,
+        resource: obj,
+      }),
     accessReview: asAccessReview(kind, obj, 'create'),
   }),
 };

@@ -29,11 +29,12 @@ import { setPVCMetrics } from '../actions/ui';
 import { PrometheusEndpoint } from './graphs/helpers';
 import { usePrometheusPoll } from './graphs/prometheus-poll-hook';
 
-const { common, ExpandPVC, PVCSnapshot } = Kebab.factory;
+const { common, ExpandPVC, PVCSnapshot, ClonePVC } = Kebab.factory;
 const menuActions = [
   ...Kebab.getExtensionsActionsForKind(PersistentVolumeClaimModel),
   ExpandPVC,
   PVCSnapshot,
+  ClonePVC,
   ...common,
 ];
 
