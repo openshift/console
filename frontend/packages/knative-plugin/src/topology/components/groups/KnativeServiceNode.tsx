@@ -22,7 +22,7 @@ import {
   GroupNode,
   useSearchFilter,
 } from '@console/dev-console/src/components/topology';
-import { TYPE_KNATIVE_SERVICE } from '../../const';
+import { TYPE_KNATIVE_SERVICE, EVENT_MARKER_RADIUS } from '../../const';
 
 type KnativeServiceNodeProps = {
   element: Node;
@@ -50,7 +50,7 @@ const KnativeServiceNode: React.FC<KnativeServiceNodeProps> = ({
   onHideCreateConnector,
   onShowCreateConnector,
 }) => {
-  useAnchor(React.useCallback((node: Node) => new RectAnchor(node, 1.5), []));
+  useAnchor(React.useCallback((node: Node) => new RectAnchor(node, 1.5 + EVENT_MARKER_RADIUS), []));
   const [hover, hoverRef] = useHover();
   const [{ dragging }, dragNodeRef] = useDragNode(
     nodeDragSourceSpec(TYPE_KNATIVE_SERVICE, true, editAccess),

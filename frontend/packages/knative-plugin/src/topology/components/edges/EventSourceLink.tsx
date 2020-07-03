@@ -4,6 +4,7 @@ import { modelFor, referenceFor } from '@console/internal/module/k8s';
 import { useAccessReview } from '@console/internal/components/utils';
 import { Edge, observer, WithSourceDragProps, WithTargetDragProps } from '@console/topology';
 import { getTopologyResourceObject, BaseEdge } from '@console/dev-console/src/components/topology';
+import { EVENT_MARKER_RADIUS } from '../../const';
 import './EventSourceLink.scss';
 
 type EventSourceLinkProps = {
@@ -36,7 +37,7 @@ const EventSourceLink: React.FC<EventSourceLinkProps> = ({
         ref={editAccess ? targetDragRef : null}
         cx={markerPoint.x}
         cy={markerPoint.y}
-        r={6}
+        r={EVENT_MARKER_RADIUS}
       />
     </BaseEdge>
   );

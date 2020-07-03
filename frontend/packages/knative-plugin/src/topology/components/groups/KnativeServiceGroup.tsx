@@ -31,7 +31,7 @@ import {
   SHOW_LABELS_FILTER_ID,
 } from '@console/dev-console/src/components/topology';
 import BuildDecorator from '@console/dev-console/src/components/topology/components/nodes/build-decorators/BuildDecorator';
-import { TYPE_KNATIVE_SERVICE } from '../../const';
+import { TYPE_KNATIVE_SERVICE, EVENT_MARKER_RADIUS } from '../../const';
 import RevisionTrafficSourceAnchor from '../anchors/RevisionTrafficSourceAnchor';
 
 export type KnativeServiceGroupProps = {
@@ -88,7 +88,7 @@ const KnativeServiceGroup: React.FC<KnativeServiceGroupProps> = ({
     AnchorEnd.source,
     'revision-traffic',
   );
-  useAnchor(React.useCallback((node: Node) => new RectAnchor(node, 1.5), []));
+  useAnchor(React.useCallback((node: Node) => new RectAnchor(node, 1.5 + EVENT_MARKER_RADIUS), []));
 
   const [filtered] = useSearchFilter(element.getLabel());
   const displayFilters = useDisplayFilters();

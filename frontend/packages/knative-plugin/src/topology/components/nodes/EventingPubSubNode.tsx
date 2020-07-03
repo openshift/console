@@ -8,10 +8,11 @@ import {
   WithSelectionProps,
   WithDndDropProps,
   WithContextMenuProps,
-  useSvgAnchor,
+  useAnchor,
   useCombineRefs,
   createSvgIdUrl,
   WithDragNodeProps,
+  AnchorEnd,
 } from '@console/topology';
 import SvgBoxedText from '@console/dev-console/src/components/svg/SvgBoxedText';
 import {
@@ -23,6 +24,8 @@ import {
   getFilterById,
   SHOW_LABELS_FILTER_ID,
 } from '@console/dev-console/src/components/topology';
+import PubSubSourceAnchor from '../anchors/PubSubSourceAnchor';
+import PubSubTargetAnchor from '../anchors/PubSubTargetAnchor';
 
 import './EventingPubSubNode.scss';
 
@@ -50,7 +53,8 @@ const EventingPubSubNode: React.FC<EventingPubSubNodeProps> = ({
   dragging,
   edgeDragging,
 }) => {
-  const svgAnchorRef = useSvgAnchor();
+  useAnchor(PubSubSourceAnchor, AnchorEnd.source);
+  useAnchor(PubSubTargetAnchor, AnchorEnd.target);
   const [hover, hoverRef] = useHover();
 
   const groupRefs = useCombineRefs(dragNodeRef, dndDropRef, hoverRef);
@@ -82,7 +86,6 @@ const EventingPubSubNode: React.FC<EventingPubSubNodeProps> = ({
       >
         <NodeShadows />
         <rect
-          ref={svgAnchorRef}
           className="odc-eventing-pubsub__bg"
           x={0}
           y={0}
