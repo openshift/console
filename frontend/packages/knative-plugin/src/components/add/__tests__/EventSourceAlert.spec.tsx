@@ -2,14 +2,14 @@ import * as React from 'react';
 import { shallow } from 'enzyme';
 import { Alert } from '@patternfly/react-core';
 import { referenceForModel } from '@console/internal/module/k8s';
-import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
+import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
 import EventSourceAlert from '../EventSourceAlert';
 import { knativeServiceObj } from '../../../topology/__tests__/topology-knative-test-data';
 import { getKnativeEventSourceIcon } from '../../../utils/get-knative-icon';
 import { EventSourceContainerModel } from '../../../models';
 
 jest.mock('@console/internal/components/utils/k8s-watch-hook', () => ({
-  useK8sWatchResource: jest.fn(),
+  useK8sWatchResources: jest.fn(),
 }));
 
 describe('EventSourceAlert', () => {
@@ -26,7 +26,9 @@ describe('EventSourceAlert', () => {
     },
   };
   it('should not display alert if service data not loaded and eventSources are there', () => {
-    (useK8sWatchResource as jest.Mock).mockReturnValueOnce([null, false]);
+    (useK8sWatchResources as jest.Mock).mockReturnValueOnce({
+      ksservices: { loaded: false, data: [] },
+    });
     const wrapper = shallow(
       <EventSourceAlert namespace={namespaceName} eventSourceStatus={eventSourceStatusData} />,
     );
@@ -34,7 +36,9 @@ describe('EventSourceAlert', () => {
   });
 
   it('should display alert if service loaded with empty data and eventSources are there', () => {
-    (useK8sWatchResource as jest.Mock).mockReturnValueOnce([[], true]);
+    (useK8sWatchResources as jest.Mock).mockReturnValueOnce({
+      ksservices: { loaded: true, data: [] },
+    });
     const wrapper = shallow(
       <EventSourceAlert namespace={namespaceName} eventSourceStatus={eventSourceStatusData} />,
     );
@@ -43,7 +47,9 @@ describe('EventSourceAlert', () => {
   });
 
   it('should not alert if service loaded with data and eventSources are there', () => {
-    (useK8sWatchResource as jest.Mock).mockReturnValueOnce([[knativeServiceObj], true]);
+    (useK8sWatchResources as jest.Mock).mockReturnValueOnce({
+      ksservices: { loaded: true, data: [knativeServiceObj] },
+    });
     const wrapper = shallow(
       <EventSourceAlert namespace={namespaceName} eventSourceStatus={eventSourceStatusData} />,
     );
@@ -51,7 +57,9 @@ describe('EventSourceAlert', () => {
   });
 
   it('should show alert if service loaded with data and eventSources is null', () => {
-    (useK8sWatchResource as jest.Mock).mockReturnValueOnce([[knativeServiceObj], true]);
+    (useK8sWatchResources as jest.Mock).mockReturnValueOnce({
+      ksservices: { loaded: true, data: [knativeServiceObj] },
+    });
     const wrapper = shallow(
       <EventSourceAlert namespace={namespaceName} eventSourceStatus={null} />,
     );
@@ -59,7 +67,9 @@ describe('EventSourceAlert', () => {
   });
 
   it('should show alert if service loaded with data and eventSources has loaded with no data', () => {
-    (useK8sWatchResource as jest.Mock).mockReturnValueOnce([[knativeServiceObj], true]);
+    (useK8sWatchResources as jest.Mock).mockReturnValueOnce({
+      ksservices: { loaded: true, data: [knativeServiceObj] },
+    });
     const eventSourceStatus = { loaded: true, eventSourceList: {} };
     const wrapper = shallow(
       <EventSourceAlert namespace={namespaceName} eventSourceStatus={eventSourceStatus} />,
@@ -68,7 +78,9 @@ describe('EventSourceAlert', () => {
   });
 
   it('should not alert if service loaded with data and eventSources has not loaded', () => {
-    (useK8sWatchResource as jest.Mock).mockReturnValueOnce([[knativeServiceObj], true]);
+    (useK8sWatchResources as jest.Mock).mockReturnValueOnce({
+      ksservices: { loaded: true, data: [knativeServiceObj] },
+    });
     const eventSourceStatus = { loaded: false, eventSourceList: {} };
     const wrapper = shallow(
       <EventSourceAlert namespace={namespaceName} eventSourceStatus={eventSourceStatus} />,

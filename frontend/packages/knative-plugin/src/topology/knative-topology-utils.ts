@@ -423,28 +423,29 @@ export const getSubscriptionTopologyEdgeItems = (
   const { eventingsubscription, ksservices } = resources;
   const edges = [];
   _.forEach(eventingsubscription?.data, (subRes) => {
-    const channelData = _.get(subRes, ['spec', 'channel']);
+    const channelData = subRes.spec?.channel;
     if (name === channelData?.name && ksservices) {
-      const svcData = _.get(subRes, ['spec', 'subscriber', 'ref']);
-      _.forEach(ksservices?.data, (res) => {
-        const {
-          metadata: { uid: resUid, name: resName },
-        } = res;
-        if (resName === svcData.name) {
-          edges.push({
-            id: `${uid}_${resUid}`,
-            type: EdgeType.EventPubSubLink,
-            source: uid,
-            target: resUid,
-            data: {
-              resources: {
-                obj: subRes,
-                connections: [resource, res],
+      const svcData = subRes.spec?.subscriber?.ref;
+      svcData &&
+        _.forEach(ksservices?.data, (res) => {
+          const {
+            metadata: { uid: resUid, name: resName },
+          } = res;
+          if (resName === svcData.name) {
+            edges.push({
+              id: `${uid}_${resUid}`,
+              type: EdgeType.EventPubSubLink,
+              source: uid,
+              target: resUid,
+              data: {
+                resources: {
+                  obj: subRes,
+                  connections: [resource, res],
+                },
               },
-            },
-          });
-        }
-      });
+            });
+          }
+        });
     }
   });
   return edges;

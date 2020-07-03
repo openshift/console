@@ -9,6 +9,7 @@ import {
   ConfigurationModel,
   RouteModel,
   EventingSubscriptionModel,
+  EventingBrokerModel,
 } from '../models';
 
 export type KnativeItem = {
@@ -137,6 +138,19 @@ export const knativeEventingResourcesSubscription = (namespace: string): Firehos
   return knativeResource;
 };
 
+export const knativeEventingResourcesBroker = (namespace: string): FirehoseResource[] => {
+  const knativeResource = [
+    {
+      isList: true,
+      kind: referenceForModel(EventingBrokerModel),
+      namespace,
+      prop: 'eventingbroker',
+      optional: true,
+    },
+  ];
+  return knativeResource;
+};
+
 export const knativeServingResourcesRevisionWatchers = (
   namespace: string,
 ): WatchK8sResources<any> => {
@@ -200,6 +214,20 @@ export const knativeEventingResourcesSubscriptionWatchers = (
     eventingsubscription: {
       isList: true,
       kind: referenceForModel(EventingSubscriptionModel),
+      namespace,
+      optional: true,
+    },
+  };
+  return knativeResource;
+};
+
+export const knativeEventingResourcesBrokerWatchers = (
+  namespace: string,
+): WatchK8sResources<any> => {
+  const knativeResource = {
+    eventingbroker: {
+      isList: true,
+      kind: referenceForModel(EventingBrokerModel),
       namespace,
       optional: true,
     },

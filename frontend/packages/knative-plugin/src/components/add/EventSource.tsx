@@ -5,7 +5,13 @@ import { history } from '@console/internal/components/utils';
 import { getActiveApplication } from '@console/internal/reducers/ui';
 import { RootState } from '@console/internal/redux';
 import { ALL_APPLICATIONS_KEY } from '@console/shared';
-import { K8sResourceKind, modelFor, referenceFor, k8sCreate } from '@console/internal/module/k8s';
+import {
+  K8sResourceKind,
+  modelFor,
+  referenceFor,
+  k8sCreate,
+  getGroupVersionKind,
+} from '@console/internal/module/k8s';
 import { sanitizeApplicationValue } from '@console/dev-console/src/utils/application-utils';
 import { eventSourceValidationSchema } from './eventSource-validation-utils';
 import EventSourceForm from './EventSourceForm';
@@ -25,13 +31,16 @@ interface StateProps {
 
 type Props = EventSourceProps & StateProps;
 
-const EventSource: React.FC<Props> = ({
+export const EventSource: React.FC<Props> = ({
   namespace,
   eventSourceStatus,
   activeApplication,
   contextSource,
 }) => {
-  const serviceName = contextSource?.split('/').pop() || '';
+  const [sinkGroupVersionKind = '', sinkName = ''] = contextSource?.split('/') ?? [];
+  const [sinkGroup = '', sinkVersion = '', sinkKind = ''] =
+    getGroupVersionKind(sinkGroupVersionKind) ?? [];
+  const sinkApiVersion = sinkGroup ? `${sinkGroup}/${sinkVersion}` : '';
   const initialValues: EventSourceFormData = {
     project: {
       name: namespace || '',
@@ -46,7 +55,9 @@ const EventSource: React.FC<Props> = ({
     name: '',
     apiVersion: '',
     sink: {
-      knativeService: serviceName,
+      apiVersion: sinkApiVersion,
+      kind: sinkKind,
+      name: sinkName,
     },
     limits: {
       cpu: {

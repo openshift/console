@@ -17,7 +17,11 @@ describe('Event Source ValidationUtils', () => {
     it('should throw an error for required fields if empty', async () => {
       const defaultEventingData = getDefaultEventingData(EventSources.CronJobSource);
       const mockData = _.cloneDeep(defaultEventingData);
-      mockData.sink.knativeService = '';
+      mockData.sink = {
+        apiVersion: '',
+        name: '',
+        kind: '',
+      };
       await eventSourceValidationSchema
         .resolve({ value: mockData })
         .isValid(mockData)
@@ -42,7 +46,11 @@ describe('Event Source ValidationUtils', () => {
     it('should throw an error for required fields if empty', async () => {
       const defaultEventingData = getDefaultEventingData(EventSources.ApiServerSource);
       const mockData = _.cloneDeep(defaultEventingData);
-      mockData.sink.knativeService = '';
+      mockData.sink = {
+        apiVersion: '',
+        name: '',
+        kind: '',
+      };
       mockData.data.apiserversource.resources[0] = { apiVersion: '', kind: '' };
       await eventSourceValidationSchema
         .resolve({ value: mockData })

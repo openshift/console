@@ -9,6 +9,7 @@ import {
   KNATIVE_EVENT_SOURCE_APIGROUP_DEP,
   KNATIVE_SERVING_APIGROUP,
   KNATIVE_EVENT_MESSAGE_APIGROUP,
+  KNATIVE_EVENT_EVENTING_APIGROUP,
 } from './const';
 
 const apiVersion = 'v1';
@@ -233,6 +234,20 @@ export const EventingChannelModel: K8sKind = {
   plural: 'channels',
   id: 'channel',
   abbr: 'C',
+  namespaced: true,
+  crd: true,
+  color: knativeEventingColor.value,
+};
+
+export const EventingBrokerModel: K8sKind = {
+  apiGroup: KNATIVE_EVENT_EVENTING_APIGROUP,
+  apiVersion: 'v1beta1',
+  kind: 'Broker',
+  label: 'Broker',
+  labelPlural: 'brokers',
+  plural: 'brokers',
+  id: 'broker',
+  abbr: 'B',
   namespaced: true,
   crd: true,
   color: knativeEventingColor.value,

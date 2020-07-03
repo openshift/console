@@ -13,7 +13,6 @@ import {
   EventSourceFormData,
   EventSourceListData,
 } from '../components/add/import-types';
-import { ServiceModel } from '../models';
 import { getKnativeEventSourceIcon } from './get-knative-icon';
 import { useEventSourceModels } from './fetch-dynamic-eventsources-utils';
 
@@ -28,11 +27,12 @@ export const getEventSourcesDepResource = (formData: EventSourceFormData): K8sRe
     application: { name: applicationName },
     project: { name: namespace },
     data,
-    sink: { knativeService },
+    sink,
   } = formData;
 
   const defaultLabel = getAppLabels(name, applicationName);
   const eventSrcData = data[type.toLowerCase()];
+  const { name: sinkName, kind: sinkKind, apiVersion: sinkApiVersion } = sink;
   const eventSourceResource: K8sResourceKind = {
     kind: type,
     apiVersion,
@@ -45,13 +45,17 @@ export const getEventSourcesDepResource = (formData: EventSourceFormData): K8sRe
       annotations: getCommonAnnotations(),
     },
     spec: {
-      sink: {
-        ref: {
-          apiVersion: `${ServiceModel.apiGroup}/${ServiceModel.apiVersion}`,
-          kind: ServiceModel.kind,
-          name: knativeService,
-        },
-      },
+      ...(sinkName &&
+        sinkApiVersion &&
+        sinkKind && {
+          sink: {
+            ref: {
+              apiVersion: sinkApiVersion,
+              kind: sinkKind,
+              name: sinkName,
+            },
+          },
+        }),
       ...(eventSrcData && eventSrcData),
     },
   };
