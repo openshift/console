@@ -5,7 +5,7 @@ import RevisionTrafficTargetAnchor from '../anchors/RevisionTrafficTargetAnchor'
 
 const DECORATOR_RADIUS = 13;
 const RevisionNode: React.FC<React.ComponentProps<typeof WorkloadNode>> = (props) => {
-  const hasDataUrl = !!props.element.getData().url;
+  const hasDataUrl = !!props.element.getData().data.url;
   useAnchor(
     React.useCallback(
       (node: Node) => new RevisionTrafficTargetAnchor(node, hasDataUrl ? DECORATOR_RADIUS : 0),
