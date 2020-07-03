@@ -6,7 +6,7 @@ import { GuidedTourStatus } from './utils/guided-tour-status';
 import './TourItemHeader.scss';
 
 type TourItemHeaderProps = {
-  status: string;
+  status: GuidedTourStatus;
   duration: number;
   name: string;
 };

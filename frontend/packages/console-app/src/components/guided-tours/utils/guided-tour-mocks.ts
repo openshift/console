@@ -6,6 +6,7 @@ export const mockGuidedTours: GuidedTourItem[] = [
     iconURL:
       '/api/kubernetes/apis/packages.operators.coreos.com/v1/namespaces/openshift-marketplace/packagemanifests/3scale-community-operator/icon?resourceVersion=3scale-community-operator.threescale-2.8.3scale-community-operator.v0.5.1',
     altIcon: 'KNative',
+    id: 'serverless-explore',
     name: 'Explore Serverless',
     duration: 5,
     description:
@@ -16,6 +17,7 @@ export const mockGuidedTours: GuidedTourItem[] = [
     iconURL:
       '/api/kubernetes/apis/packages.operators.coreos.com/v1/namespaces/openshift-marketplace/packagemanifests/serverless-operator/icon?resourceVersion=serverless-operator.4.3.serverless-operator.v1.7.1',
     altIcon: 'KNative',
+    id: 'serverless-applications',
     name: 'Serverless Aplications',
     duration: 10,
     description: 'Learn how to create a serverless application',
@@ -25,6 +27,7 @@ export const mockGuidedTours: GuidedTourItem[] = [
     iconURL:
       '/api/kubernetes/apis/packages.operators.coreos.com/v1/namespaces/openshift-marketplace/packagemanifests/serverless-operator/icon?resourceVersion=serverless-operator.4.3.serverless-operator.v1.7.1',
     altIcon: 'TKN',
+    id: 'pipelines-build',
     name: 'Build Pipelines',
     duration: 15,
     description: 'Release requirement if any installs x number of resources',

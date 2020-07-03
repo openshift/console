@@ -10,7 +10,8 @@ const NotificationDrawer: React.FC<NotificationDrawerProps> = ({
   notificationEntries,
   className,
 }) => {
-  const panelContent = (
+  // Added check for `isExpanded` due to flaw in patternfly drawer. Remove the check on patternfly version upgrade
+  const panelContent = isExpanded && (
     <DrawerPanelContent className={className}>
       <NotificationDrawerHeading>{notificationEntries}</NotificationDrawerHeading>
       <DrawerPanelBody hasNoPadding />
