@@ -37,6 +37,7 @@ export interface SinkResourceData {
   apiVersion: string;
   name: string;
   kind: string;
+  uri?: string;
 }
 
 export interface EventSourceFormData {
@@ -45,6 +46,7 @@ export interface EventSourceFormData {
   name: string;
   apiVersion: string;
   type: string;
+  sinkType: string;
   sink: SinkResourceData;
   limits: LimitsData;
   data?: EventSourceData;
@@ -67,3 +69,19 @@ export interface EventSourceListData {
   loaded: boolean;
   eventSourceList: NormalizedEventSources;
 }
+
+export enum SinkType {
+  Resource = 'resource',
+  Uri = 'uri',
+}
+
+export const sourceSinkType = {
+  Resource: {
+    value: SinkType.Resource,
+    label: 'Resource',
+  },
+  Uri: {
+    value: SinkType.Uri,
+    label: 'URI',
+  },
+};

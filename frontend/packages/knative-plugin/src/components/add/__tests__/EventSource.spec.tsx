@@ -21,11 +21,9 @@ describe('EventSourceSpec', () => {
     const FormikField = wrapper.find(Formik);
     expect(FormikField.exists()).toBe(true);
     expect(FormikField.get(0).props.initialValues.project.name).toBe('myApp');
-    expect(FormikField.get(0).props.initialValues.sink).toEqual({
-      apiVersion: '',
-      kind: '',
-      name: '',
-    });
+    expect(FormikField.get(0).props.initialValues.sink.apiVersion).toEqual('');
+    expect(FormikField.get(0).props.initialValues.sink.kind).toEqual('');
+    expect(FormikField.get(0).props.initialValues.sink.name).toEqual('');
   });
 
   it('should render form with proper initialvalues for sink if contextSource is passed', () => {
@@ -41,10 +39,10 @@ describe('EventSourceSpec', () => {
     const FormikField = wrapper.find(Formik);
     expect(FormikField.exists()).toBe(true);
     expect(FormikField.get(0).props.initialValues.project.name).toBe('myApp');
-    expect(FormikField.get(0).props.initialValues.sink).toEqual({
-      apiVersion: 'serving.knative.dev/v1',
-      kind: 'Service',
-      name: 'svc-display',
-    });
+    expect(FormikField.get(0).props.initialValues.sink.apiVersion).toEqual(
+      'serving.knative.dev/v1',
+    );
+    expect(FormikField.get(0).props.initialValues.sink.kind).toEqual('Service');
+    expect(FormikField.get(0).props.initialValues.sink.name).toEqual('svc-display');
   });
 });

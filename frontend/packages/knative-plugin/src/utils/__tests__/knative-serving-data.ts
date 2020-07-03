@@ -3,7 +3,7 @@ import {
   DeployImageFormData,
   Resources,
 } from '@console/dev-console/src/components/import/import-types';
-import { EventSourceFormData } from '../../components/add/import-types';
+import { EventSourceFormData, SinkType } from '../../components/add/import-types';
 import { RevisionModel, ServiceModel, KafkaModel } from '../../models';
 import { healthChecksProbeInitialData } from '@console/dev-console/src/components/health-checks/health-checks-probe-utils';
 
@@ -333,6 +333,7 @@ export const getDefaultEventingData = (typeEventSource: string): EventSourceForm
       selectedKey: 'mock-app',
     },
     name: 'esmyapp',
+    sinkType: SinkType.Resource,
     sink: {
       apiVersion: `${ServiceModel.apiGroup}/${ServiceModel.apiVersion}`,
       name: 'event-display',
