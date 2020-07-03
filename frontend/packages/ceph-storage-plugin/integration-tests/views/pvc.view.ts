@@ -2,8 +2,9 @@ import { $, $$, browser, ExpectedConditions as until, by } from 'protractor';
 import * as crudView from '@console/internal-integration-tests/views/crud.view';
 import * as sideNavView from '@console/internal-integration-tests/views/sidenav.view';
 import { click } from '@console/shared/src/test-utils/utils';
-import { PVC_STATUS } from '../utils/consts';
+import { PVC_STATUS, SECOND } from '../utils/consts';
 import { PvcType } from '../utils/helpers';
+import { isDeploymentReady } from '@console/noobaa-storage-plugin/integration-tests/views/obcPage.view';
 
 export const selectItemFromDropdown = async (item, dropdownElement) => {
   await click(dropdownElement);
@@ -37,8 +38,20 @@ export const deletePvc = $('[data-test-action="Delete Persistent Volume Claim"]'
 // list of PVCs
 export const nameInTable = (name) => $(`a[data-test-id=${name}]`);
 
+// PVC attach to deployment
+export const selectClaim = async (claimName) => {
+  click($('#claimName'));
+  click($(`#${claimName}-PersistentVolumeClaim-link`));
+};
+export const inputMountPath = $('#mount-path');
+
 export const goToPersistentVolumeClaims = async () => {
   await sideNavView.clickNavLink(['Storage', 'Persistent Volume Claims']);
+  await crudView.isLoaded();
+};
+
+export const goToDeployments = async () => {
+  await sideNavView.clickNavLink(['Workloads', 'Deployments']);
   await crudView.isLoaded();
 };
 
@@ -81,4 +94,22 @@ export const deletePersistentVolumeClaim = async (name: string, namespace: strin
   await crudView.filterForName(name);
   await crudView.isLoaded();
   await crudView.deleteRow('PersistentVolumeClaim')(name);
+};
+
+export const addStorage = async (deployment: string, pvc: string, namespace: string) => {
+  await goToDeployments();
+  await selectItemFromDropdown(namespace, namespaceDropdown);
+  await crudView.filterForName(deployment);
+  await crudView.isLoaded();
+  await crudView.clickKebabAction(deployment, 'Add Storage');
+  await browser.sleep(1 * SECOND);
+  await selectClaim(pvc);
+  await browser.sleep(1 * SECOND);
+  await inputMountPath.sendKeys('/mnt');
+  await click(crudView.saveChangesBtn);
+  await browser.wait(
+    isDeploymentReady(deployment, namespace),
+    180 * SECOND,
+    'All pods of the deployment should be in Running state within 3 minutes',
+  );
 };

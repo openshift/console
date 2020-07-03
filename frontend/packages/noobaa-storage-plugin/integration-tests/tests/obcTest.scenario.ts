@@ -2,7 +2,10 @@ import { execSync } from 'child_process';
 import { browser, ExpectedConditions as until } from 'protractor';
 import { testName } from '@console/internal-integration-tests/protractor.conf';
 import { CreateOBCHandler } from '../views/obcPage.view';
-import { deployment, testDeployment } from '../mocks/deploymentData';
+import {
+  deployment,
+  testDeployment,
+} from '@console/ceph-storage-plugin/integration-tests/mocks/deploymentData';
 import {
   ACCESS_KEY,
   BOUND,
