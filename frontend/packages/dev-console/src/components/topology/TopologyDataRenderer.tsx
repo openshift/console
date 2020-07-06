@@ -40,7 +40,7 @@ export const TopologyDataRenderer: React.FC<TopologyDataRendererProps> = ({
     const resourcesLoaded =
       !kindsInFlight &&
       Object.keys(resources).length > 0 &&
-      Object.keys(resources).every((key) => resources[key].loaded);
+      Object.keys(resources).every((key) => resources[key].loaded || resources[key].loadError);
     if (!resourcesLoaded) {
       setModel(null);
       return;
