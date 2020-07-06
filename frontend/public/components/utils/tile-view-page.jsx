@@ -892,7 +892,6 @@ export class TileViewPage extends React.Component {
         items={groupedItems}
         renderCell={renderTile}
         renderHeader={renderGroupHeader}
-        scrollElement={document.getElementById('content-scrollable')}
         isItemsGrouped
       />
     );
@@ -947,11 +946,7 @@ export class TileViewPage extends React.Component {
               {groupItems && groupBy !== groupByTypes.None ? (
                 this.renderGroupedItems(activeCategory.items, groupBy, renderTile, groupItems)
               ) : (
-                <VirtualizedGrid
-                  items={activeCategory.items}
-                  renderCell={renderTile}
-                  scrollElement={document.getElementById('content-scrollable')}
-                />
+                <VirtualizedGrid items={activeCategory.items} renderCell={renderTile} />
               )}
             </div>
           )}

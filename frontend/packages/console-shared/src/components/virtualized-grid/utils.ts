@@ -1,3 +1,5 @@
+import { useCallback, createContext } from 'react';
+import { defaultOverscanIndicesGetter, CellMeasurerCache } from 'react-virtualized';
 import { GroupedItems, CellItem, CellSize } from './types';
 import { IDEAL_SPACE_BW_TILES } from './const';
 
@@ -114,3 +116,32 @@ export const getHeightAndWidthOfCell = (
   }
   return { height, width };
 };
+
+export const useOverScanIndicesGetter = () =>
+  useCallback((args) => {
+    const { scrollDirection, cellCount } = args;
+    const {
+      overscanStartIndex: startIndex,
+      overscanStopIndex: stopIndex,
+    } = defaultOverscanIndicesGetter(args);
+    return {
+      overscanStartIndex:
+        scrollDirection === 1 ? (startIndex === 0 ? 0 : startIndex - 1) : startIndex,
+      overscanStopIndex:
+        scrollDirection === -1
+          ? stopIndex === cellCount - 1
+            ? stopIndex
+            : stopIndex + 1
+          : stopIndex,
+    };
+  }, []);
+
+type CellMeasurementContextType = {
+  cache?: CellMeasurerCache;
+  cellWidth?: number;
+  cellMargin?: number;
+  overscanRowCount?: number;
+  headerHeight?: number;
+};
+
+export const CellMeasurementContext = createContext<CellMeasurementContextType>({});

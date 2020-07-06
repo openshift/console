@@ -1,4 +1,4 @@
-import { GridCellProps, CellMeasurerCache } from 'react-virtualized';
+import { GridCellProps } from 'react-virtualized';
 
 export type Params = {
   index: number;
@@ -20,7 +20,6 @@ export type RenderCell = (item: Item) => React.ReactNode;
 
 export type GridChildrenProps = {
   data: GridCellProps;
-  cache: CellMeasurerCache;
   columnCount: number;
   items: CellItem[];
 };

@@ -2,14 +2,13 @@ import * as React from 'react';
 import { shallow } from 'enzyme';
 import Cell from '../Cell';
 import { RenderHeader, RenderCell } from '../types';
-import { GridCellProps, CellMeasurer, CellMeasurerCache } from 'react-virtualized';
+import { GridCellProps, CellMeasurer } from 'react-virtualized';
 import { IDEAL_SPACE_BW_TILES } from '../const';
 
 describe('Grid-cell', () => {
   let data: GridCellProps;
   let renderHeader: RenderHeader;
   let renderCell: RenderCell;
-  let cache: CellMeasurerCache;
 
   beforeEach(() => {
     data = {
@@ -29,19 +28,18 @@ describe('Grid-cell', () => {
     };
     renderHeader = jest.fn();
     renderCell = jest.fn();
-    cache = {} as CellMeasurerCache;
   });
 
   it('should return null when item is null', () => {
     const wrapper = shallow(
-      <Cell data={data} renderCell={renderCell} cache={cache} columnCount={1} items={[null]} />,
+      <Cell data={data} renderCell={renderCell} columnCount={1} items={[null]} />,
     );
     expect(wrapper.isEmptyRender()).toBeTruthy();
   });
 
   it('should render cellMeasurer when item is not null', () => {
     const wrapper = shallow(
-      <Cell data={data} renderCell={renderCell} cache={cache} columnCount={1} items={[{}]} />,
+      <Cell data={data} renderCell={renderCell} columnCount={1} items={[{}]} />,
     );
     expect(wrapper.find(CellMeasurer)).toHaveLength(1);
   });
@@ -51,7 +49,6 @@ describe('Grid-cell', () => {
       <Cell
         data={data}
         renderCell={renderCell}
-        cache={cache}
         columnCount={1}
         items={['string']}
         renderHeader={renderHeader}
@@ -66,7 +63,7 @@ describe('Grid-cell', () => {
   it('should render Cell and not the Header when item is neither string nor null and height should be changed', () => {
     const item = { id: 1 };
     const wrapper = shallow(
-      <Cell data={data} renderCell={renderCell} cache={cache} columnCount={1} items={[item]} />,
+      <Cell data={data} renderCell={renderCell} columnCount={1} items={[item]} />,
     );
     expect(wrapper.find('div').prop('style').height).toBe(50 - IDEAL_SPACE_BW_TILES);
     expect(wrapper.find('div').prop('style').width).toBe(50 - IDEAL_SPACE_BW_TILES);

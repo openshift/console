@@ -1,22 +1,15 @@
 import * as React from 'react';
 import { CellMeasurer } from 'react-virtualized';
-import { IDEAL_SPACE_BW_TILES } from './const';
 import { RenderCell, RenderHeader, GridChildrenProps, Item, CellItem } from './types';
-import { getHeightAndWidthOfCell } from './utils';
+import { getHeightAndWidthOfCell, CellMeasurementContext } from './utils';
 
 type CellProps = {
   renderCell: RenderCell;
   renderHeader?: RenderHeader;
 } & GridChildrenProps;
 
-const Cell: React.FC<CellProps> = ({
-  data,
-  columnCount,
-  cache,
-  items,
-  renderCell,
-  renderHeader,
-}) => {
+const Cell: React.FC<CellProps> = ({ data, columnCount, items, renderCell, renderHeader }) => {
+  const { cache, cellMargin } = React.useContext(CellMeasurementContext);
   const {
     key,
     style: { height: cellHeight, width: cellWidth, left, top, ...style },
@@ -27,13 +20,14 @@ const Cell: React.FC<CellProps> = ({
   const index = rowIndex * columnCount + columnIndex;
   const item: CellItem = items[index];
   const isItemString = typeof item === 'string';
+
   const { width, height } = getHeightAndWidthOfCell(cellHeight, cellWidth, item);
   const wrapperStyles = {
     ...style,
     height,
     width,
-    left: Number(left) + IDEAL_SPACE_BW_TILES,
-    top: Number(top) + IDEAL_SPACE_BW_TILES,
+    left: Number(left) + cellMargin,
+    top: Number(top) + cellMargin,
   };
   return item ? (
     <CellMeasurer
@@ -43,7 +37,7 @@ const Cell: React.FC<CellProps> = ({
       parent={parent}
       rowIndex={rowIndex}
     >
-      <div style={wrapperStyles} key={key}>
+      <div style={wrapperStyles}>
         {isItemString ? renderHeader(item as string) : renderCell(item as Item)}
       </div>
     </CellMeasurer>
