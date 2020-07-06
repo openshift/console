@@ -159,7 +159,7 @@ export const useEventListenerURL = (
     namespace,
   );
 
-  return routeLoaded ? getRouteWebURL(route) : null;
+  return routeLoaded && route?.status?.ingress ? getRouteWebURL(route) : null;
 };
 
 export const getEventListenerTriggerTemplateNames = (
