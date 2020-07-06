@@ -7,6 +7,8 @@ import {
   DeploymentConfigModel,
   StatefulSetModel,
   PodModel,
+  JobModel,
+  CronJobModel,
 } from '../../models';
 
 export const resourceOverviewPages = ImmutableMap<
@@ -35,4 +37,10 @@ export const resourceOverviewPages = ImmutableMap<
     import('./stateful-set-overview' /* webpackChunkName: "stateful-set"*/).then(
       (m) => m.StatefulSetOverview,
     ),
+  )
+  .set(referenceForModel(CronJobModel), () =>
+    import('./cron-job-overview' /* webpackChunkName: "cron-job"*/).then((m) => m.CronJobOverview),
+  )
+  .set(referenceForModel(JobModel), () =>
+    import('./job-overview' /* webpackChunkName: "job"*/).then((m) => m.JobOverview),
   );

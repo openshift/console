@@ -14,7 +14,15 @@ import { TYPE_OPERATOR_BACKED_SERVICE } from './operators/components/const';
 import { HelmReleaseResourcesMap } from '../helm/helm-types';
 import { ALLOW_SERVICE_BINDING } from '../../const';
 
-export const WORKLOAD_TYPES = ['deployments', 'deploymentConfigs', 'daemonSets', 'statefulSets'];
+export const WORKLOAD_TYPES = [
+  'deployments',
+  'deploymentConfigs',
+  'daemonSets',
+  'statefulSets',
+  'jobs',
+  'cronJobs',
+  'pods',
+];
 
 export const getServiceBindingStatus = ({ FLAGS }: RootState): boolean =>
   FLAGS.get(ALLOW_SERVICE_BINDING);

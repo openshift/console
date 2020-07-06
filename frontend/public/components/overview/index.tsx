@@ -10,11 +10,10 @@ import {
   METRICS_POLL_INTERVAL,
   OverviewItem,
   getResourceList,
-  createDaemonSetItems,
   createDeploymentConfigItems,
   createDeploymentItems,
+  createWorkloadItems,
   createPodItems,
-  createStatefulSetItems,
   formatNamespacedRouteForResource,
 } from '@console/shared';
 import {
@@ -33,6 +32,7 @@ import { CloseButton, Dropdown, Firehose, StatusBox, FirehoseResult, MsgBox } fr
 import { ProjectOverview } from './project-overview';
 import { ResourceOverviewPage } from './resource-overview-page';
 import { OverviewSpecialGroup } from './constants';
+import { DaemonSetModel, StatefulSetModel } from '../../models';
 
 const asOverviewGroups = (keyedItems: { [name: string]: OverviewItem[] }): OverviewGroup[] => {
   const compareGroups = (a: OverviewGroup, b: OverviewGroup) => {
@@ -328,14 +328,24 @@ class OverviewMainContent_ extends React.Component<
     }
 
     const items = [
-      ...createDaemonSetItems(this.props.daemonSets.data, this.props, this.props.utils),
+      ...createWorkloadItems(
+        DaemonSetModel,
+        this.props.daemonSets.data,
+        this.props,
+        this.props.utils,
+      ),
       ...createDeploymentItems(this.props.deployments.data, this.props, this.props.utils),
       ...createDeploymentConfigItems(
         this.props.deploymentConfigs.data,
         this.props,
         this.props.utils,
       ),
-      ...createStatefulSetItems(this.props.statefulSets.data, this.props, this.props.utils),
+      ...createWorkloadItems(
+        StatefulSetModel,
+        this.props.statefulSets.data,
+        this.props,
+        this.props.utils,
+      ),
       ...createPodItems(this.props),
     ];
 

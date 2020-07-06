@@ -1,14 +1,30 @@
 import * as React from 'react';
+import PodRingSet from '@console/shared/src/components/pod/PodRingSet';
 import { PodOverviewItem } from '.';
 import { PodResourceSummary, PodDetailsList, menuActions } from '../pod';
 import { PodModel } from '../../models';
 import { ResourceOverviewDetails } from './resource-overview-details';
 import { NetworkingOverview } from './networking-overview';
 import { KebabAction } from '../utils';
+import { PodsOverview } from './pods-overview';
 
 const PodOverviewDetails: React.SFC<PodOverviewDetailsProps> = ({ item: { obj: pod } }) => {
   return (
     <div className="overview__sidebar-pane-body resource-overview__body">
+      <div className="resource-overview__pod-counts">
+        <PodRingSet
+          key={pod.metadata.uid}
+          podData={{
+            pods: [pod],
+            current: undefined,
+            previous: undefined,
+            isRollingOut: true,
+          }}
+          obj={pod}
+          resourceKind={PodModel}
+          path=""
+        />
+      </div>
       <div className="resource-overview__summary">
         <PodResourceSummary pod={pod} />
       </div>
@@ -19,8 +35,9 @@ const PodOverviewDetails: React.SFC<PodOverviewDetailsProps> = ({ item: { obj: p
   );
 };
 
-const PodResourcesTab: React.SFC<PodResourcesTabProps> = ({ item: { routes, services } }) => (
+const PodResourcesTab: React.SFC<PodResourcesTabProps> = ({ item: { obj, routes, services } }) => (
   <div className="overview__sidebar-pane-body">
+    <PodsOverview pods={[obj]} obj={obj} />
     <NetworkingOverview services={services} routes={routes} />
   </div>
 );

@@ -54,6 +54,7 @@ $overview-sidebar-width: 550px;
 
 .overview__sidebar-pane-body {
   padding: 0 20px;
+  min-height: 200px;
 }
 
 .overview__sidebar-pane-head {
@@ -67,6 +68,10 @@ $overview-sidebar-width: 550px;
   .co-actions-menu {
     margin-top: -3px;
   }
+}
+
+.overview__pod-donut-sm {
+  width: var(--pf-global--icon--FontSize--lg);
 }
 
 .resource-overview {

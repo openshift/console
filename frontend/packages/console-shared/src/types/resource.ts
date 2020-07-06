@@ -1,4 +1,4 @@
-import { K8sResourceKind, PodKind, RouteKind } from '@console/internal/module/k8s';
+import { JobKind, K8sResourceKind, PodKind, RouteKind } from '@console/internal/module/k8s';
 import { DEPLOYMENT_STRATEGY } from '../constants';
 import { OverviewItemAlerts, PodControllerOverviewItem } from './pod';
 import { ClusterServiceVersionKind } from '@console/operator-lifecycle-manager';
@@ -28,6 +28,7 @@ export type OverviewItem<T = K8sResourceKind> = {
   previous?: PodControllerOverviewItem;
   routes: RouteKind[];
   services: K8sResourceKind[];
+  jobs?: JobKind[];
   status?: React.ReactNode;
   ksroutes?: K8sResourceKind[];
   configurations?: K8sResourceKind[];

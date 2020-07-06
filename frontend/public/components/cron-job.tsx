@@ -33,7 +33,7 @@ import { PodList, filters as PodFilters } from './pod';
 import { JobsList } from './job';
 
 const { common } = Kebab.factory;
-const menuActions = [...Kebab.getExtensionsActionsForKind(CronJobModel), ...common];
+export const menuActions = [...Kebab.getExtensionsActionsForKind(CronJobModel), ...common];
 
 const kind = 'CronJob';
 

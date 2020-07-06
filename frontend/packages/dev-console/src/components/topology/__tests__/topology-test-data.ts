@@ -458,6 +458,411 @@ export const samplePods: FirehoseResult<PodKind[]> = {
   loadError: '',
   data: [
     {
+      metadata: {
+        generateName: 'py-cron-1593000600-',
+        annotations: {
+          'k8s.v1.cni.cncf.io/network-status':
+            '[{\n    "name": "openshift-sdn",\n    "interface": "eth0",\n    "ips": [\n        "10.128.2.50"\n    ],\n    "default": true,\n    "dns": {}\n}]',
+          'k8s.v1.cni.cncf.io/networks-status':
+            '[{\n    "name": "openshift-sdn",\n    "interface": "eth0",\n    "ips": [\n        "10.128.2.50"\n    ],\n    "default": true,\n    "dns": {}\n}]',
+          'openshift.io/scc': 'restricted',
+        },
+        selfLink: '/api/v1/namespaces/jeff-project/pods/py-cron-1593000600-pq8jn',
+        resourceVersion: '104969',
+        name: 'py-cron-1593000600-pq8jn',
+        uid: 'd09c22d8-4d12-465c-b178-fbd76db43ed8',
+        creationTimestamp: '2020-06-24T12:10:43Z',
+        namespace: 'jeff-project',
+        ownerReferences: [
+          {
+            apiVersion: 'batch/v1',
+            kind: 'Job',
+            name: 'py-cron-1593000600',
+            uid: 'c9a27ca7-d258-4acf-a915-a146cacd6924',
+            controller: true,
+            blockOwnerDeletion: true,
+          },
+        ],
+        labels: {
+          'controller-uid': 'c9a27ca7-d258-4acf-a915-a146cacd6924',
+          'job-name': 'py-cron-1593000600',
+        },
+      },
+      spec: {
+        containers: [],
+      },
+      status: {
+        phase: 'Failed',
+      },
+    },
+    {
+      metadata: {
+        generateName: 'py-cron-1593000600-',
+        annotations: {
+          'k8s.v1.cni.cncf.io/network-status':
+            '[{\n    "name": "openshift-sdn",\n    "interface": "eth0",\n    "ips": [\n        "10.128.2.48"\n    ],\n    "default": true,\n    "dns": {}\n}]',
+          'k8s.v1.cni.cncf.io/networks-status':
+            '[{\n    "name": "openshift-sdn",\n    "interface": "eth0",\n    "ips": [\n        "10.128.2.48"\n    ],\n    "default": true,\n    "dns": {}\n}]',
+          'openshift.io/scc': 'restricted',
+        },
+        selfLink: '/api/v1/namespaces/jeff-project/pods/py-cron-1593000600-9v5lq',
+        resourceVersion: '104275',
+        name: 'py-cron-1593000600-9v5lq',
+        uid: 'f680a75a-9bd5-4b72-a5da-62477f0a4573',
+        creationTimestamp: '2020-06-24T12:10:13Z',
+        namespace: 'jeff-project',
+        ownerReferences: [
+          {
+            apiVersion: 'batch/v1',
+            kind: 'Job',
+            name: 'py-cron-1593000600',
+            uid: 'c9a27ca7-d258-4acf-a915-a146cacd6924',
+            controller: true,
+            blockOwnerDeletion: true,
+          },
+        ],
+        labels: {
+          'controller-uid': 'c9a27ca7-d258-4acf-a915-a146cacd6924',
+          'job-name': 'py-cron-1593000600',
+        },
+      },
+      spec: {
+        containers: [],
+      },
+      status: {
+        phase: 'Failed',
+      },
+    },
+    {
+      metadata: {
+        generateName: 'py-cron-1593002400-',
+        annotations: {
+          'k8s.v1.cni.cncf.io/network-status':
+            '[{\n    "name": "openshift-sdn",\n    "interface": "eth0",\n    "ips": [\n        "10.128.2.96"\n    ],\n    "default": true,\n    "dns": {}\n}]',
+          'k8s.v1.cni.cncf.io/networks-status':
+            '[{\n    "name": "openshift-sdn",\n    "interface": "eth0",\n    "ips": [\n        "10.128.2.96"\n    ],\n    "default": true,\n    "dns": {}\n}]',
+          'openshift.io/scc': 'restricted',
+        },
+        selfLink: '/api/v1/namespaces/jeff-project/pods/py-cron-1593002400-bzzmm',
+        resourceVersion: '132152',
+        name: 'py-cron-1593002400-bzzmm',
+        uid: 'c5f81e7f-a373-41f7-912a-55940642cc4e',
+        creationTimestamp: '2020-06-24T12:42:40Z',
+        namespace: 'jeff-project',
+        ownerReferences: [
+          {
+            apiVersion: 'batch/v1',
+            kind: 'Job',
+            name: 'py-cron-1593002400',
+            uid: '3410e32d-309d-453e-889a-065c116eada5',
+            controller: true,
+            blockOwnerDeletion: true,
+          },
+        ],
+        labels: {
+          'controller-uid': '3410e32d-309d-453e-889a-065c116eada5',
+          'job-name': 'py-cron-1593002400',
+        },
+      },
+      spec: {
+        containers: [],
+      },
+      status: {
+        phase: 'Failed',
+      },
+    },
+    {
+      metadata: {
+        annotations: {
+          'k8s.v1.cni.cncf.io/network-status':
+            '[{\n    "name": "openshift-sdn",\n    "interface": "eth0",\n    "ips": [\n        "10.131.0.15"\n    ],\n    "default": true,\n    "dns": {}\n}]',
+          'k8s.v1.cni.cncf.io/networks-status':
+            '[{\n    "name": "openshift-sdn",\n    "interface": "eth0",\n    "ips": [\n        "10.131.0.15"\n    ],\n    "default": true,\n    "dns": {}\n}]',
+          'openshift.io/build.name': 'py-cron-1',
+          'openshift.io/scc': 'privileged',
+        },
+        selfLink: '/api/v1/namespaces/jeff-project/pods/py-cron-1-build',
+        resourceVersion: '60137',
+        name: 'py-cron-1-build',
+        uid: '67120da8-0c67-4158-892e-d7278d62795d',
+        creationTimestamp: '2020-06-24T11:17:41Z',
+        namespace: 'jeff-project',
+        ownerReferences: [
+          {
+            apiVersion: 'build.openshift.io/v1',
+            kind: 'Build',
+            name: 'py-cron-1',
+            uid: '7b599334-c53b-4559-acfe-532db362106c',
+            controller: true,
+          },
+        ],
+        labels: {
+          'openshift.io/build.name': 'py-cron-1',
+        },
+      },
+      spec: {
+        containers: [],
+      },
+      status: {
+        phase: 'Succeeded',
+      },
+    },
+    {
+      metadata: {
+        generateName: 'py-cron-1593002400-',
+        annotations: {
+          'k8s.v1.cni.cncf.io/network-status':
+            '[{\n    "name": "openshift-sdn",\n    "interface": "eth0",\n    "ips": [\n        "10.128.2.91"\n    ],\n    "default": true,\n    "dns": {}\n}]',
+          'k8s.v1.cni.cncf.io/networks-status':
+            '[{\n    "name": "openshift-sdn",\n    "interface": "eth0",\n    "ips": [\n        "10.128.2.91"\n    ],\n    "default": true,\n    "dns": {}\n}]',
+          'openshift.io/scc': 'restricted',
+        },
+        selfLink: '/api/v1/namespaces/jeff-project/pods/py-cron-1593002400-hcnrb',
+        resourceVersion: '129932',
+        name: 'py-cron-1593002400-hcnrb',
+        uid: '1bb8b0f1-be63-4e41-b37c-88778fea1722',
+        creationTimestamp: '2020-06-24T12:40:06Z',
+        namespace: 'jeff-project',
+        ownerReferences: [
+          {
+            apiVersion: 'batch/v1',
+            kind: 'Job',
+            name: 'py-cron-1593002400',
+            uid: '3410e32d-309d-453e-889a-065c116eada5',
+            controller: true,
+            blockOwnerDeletion: true,
+          },
+        ],
+        labels: {
+          'controller-uid': '3410e32d-309d-453e-889a-065c116eada5',
+          'job-name': 'py-cron-1593002400',
+        },
+      },
+      spec: {
+        containers: [],
+      },
+      status: {
+        phase: 'Failed',
+      },
+    },
+    {
+      metadata: {
+        generateName: 'py-cron-1593002400-',
+        annotations: {
+          'k8s.v1.cni.cncf.io/network-status':
+            '[{\n    "name": "openshift-sdn",\n    "interface": "eth0",\n    "ips": [\n        "10.128.2.94"\n    ],\n    "default": true,\n    "dns": {}\n}]',
+          'k8s.v1.cni.cncf.io/networks-status':
+            '[{\n    "name": "openshift-sdn",\n    "interface": "eth0",\n    "ips": [\n        "10.128.2.94"\n    ],\n    "default": true,\n    "dns": {}\n}]',
+          'openshift.io/scc': 'restricted',
+        },
+        selfLink: '/api/v1/namespaces/jeff-project/pods/py-cron-1593002400-pvcgm',
+        resourceVersion: '130695',
+        name: 'py-cron-1593002400-pvcgm',
+        uid: '7f65e6ef-26a2-4c55-9665-cc57a6ba7ebe',
+        creationTimestamp: '2020-06-24T12:40:40Z',
+        namespace: 'jeff-project',
+        ownerReferences: [
+          {
+            apiVersion: 'batch/v1',
+            kind: 'Job',
+            name: 'py-cron-1593002400',
+            uid: '3410e32d-309d-453e-889a-065c116eada5',
+            controller: true,
+            blockOwnerDeletion: true,
+          },
+        ],
+        labels: {
+          'controller-uid': '3410e32d-309d-453e-889a-065c116eada5',
+          'job-name': 'py-cron-1593002400',
+        },
+      },
+      spec: {
+        containers: [],
+      },
+      status: {
+        phase: 'Failed',
+      },
+    },
+    {
+      metadata: {
+        generateName: 'standalone-job-',
+        annotations: {
+          'k8s.v1.cni.cncf.io/network-status':
+            '[{\n    "name": "openshift-sdn",\n    "interface": "eth0",\n    "ips": [\n        "10.129.2.16"\n    ],\n    "default": true,\n    "dns": {}\n}]',
+          'k8s.v1.cni.cncf.io/networks-status':
+            '[{\n    "name": "openshift-sdn",\n    "interface": "eth0",\n    "ips": [\n        "10.129.2.16"\n    ],\n    "default": true,\n    "dns": {}\n}]',
+          'openshift.io/scc': 'restricted',
+        },
+        selfLink: '/api/v1/namespaces/jeff-project/pods/standalone-job-jchzw',
+        resourceVersion: '59798',
+        name: 'standalone-job-jchzw',
+        uid: '100afa1b-58fd-40cc-b428-6c9c939c4e15',
+        creationTimestamp: '2020-06-24T11:17:41Z',
+        managedFields: [
+          {
+            manager: 'kube-controller-manager',
+            operation: 'Update',
+            apiVersion: 'v1',
+            time: '2020-06-24T11:17:41Z',
+            fieldsType: 'FieldsV1',
+            fieldsV1: {
+              'f:metadata': {
+                'f:generateName': {},
+                'f:labels': {
+                  '.': {},
+                  'f:controller-uid': {},
+                  'f:job-name': {},
+                },
+                'f:ownerReferences': {
+                  '.': {},
+                  'k:{"uid":"c1a988ed-3fd6-4a10-a4a5-7612a28eb48e"}': {
+                    '.': {},
+                    'f:apiVersion': {},
+                    'f:blockOwnerDeletion': {},
+                    'f:controller': {},
+                    'f:kind': {},
+                    'f:name': {},
+                    'f:uid': {},
+                  },
+                },
+              },
+              'f:spec': {
+                'f:containers': {
+                  'k:{"name":"pi"}': {
+                    '.': {},
+                    'f:command': {},
+                    'f:image': {},
+                    'f:imagePullPolicy': {},
+                    'f:name': {},
+                    'f:resources': {},
+                    'f:terminationMessagePath': {},
+                    'f:terminationMessagePolicy': {},
+                  },
+                },
+                'f:dnsPolicy': {},
+                'f:enableServiceLinks': {},
+                'f:restartPolicy': {},
+                'f:schedulerName': {},
+                'f:securityContext': {},
+                'f:terminationGracePeriodSeconds': {},
+              },
+            },
+          },
+          {
+            manager: 'multus',
+            operation: 'Update',
+            apiVersion: 'v1',
+            time: '2020-06-24T11:17:44Z',
+            fieldsType: 'FieldsV1',
+            fieldsV1: {
+              'f:metadata': {
+                'f:annotations': {
+                  'f:k8s.v1.cni.cncf.io/network-status': {},
+                  'f:k8s.v1.cni.cncf.io/networks-status': {},
+                },
+              },
+            },
+          },
+          {
+            manager: 'kubelet',
+            operation: 'Update',
+            apiVersion: 'v1',
+            time: '2020-06-24T11:18:42Z',
+            fieldsType: 'FieldsV1',
+            fieldsV1: {
+              'f:status': {
+                'f:conditions': {
+                  'k:{"type":"ContainersReady"}': {
+                    '.': {},
+                    'f:lastProbeTime': {},
+                    'f:lastTransitionTime': {},
+                    'f:reason': {},
+                    'f:status': {},
+                    'f:type': {},
+                  },
+                  'k:{"type":"Initialized"}': {
+                    '.': {},
+                    'f:lastProbeTime': {},
+                    'f:lastTransitionTime': {},
+                    'f:reason': {},
+                    'f:status': {},
+                    'f:type': {},
+                  },
+                  'k:{"type":"Ready"}': {
+                    '.': {},
+                    'f:lastProbeTime': {},
+                    'f:lastTransitionTime': {},
+                    'f:reason': {},
+                    'f:status': {},
+                    'f:type': {},
+                  },
+                },
+                'f:containerStatuses': {},
+                'f:hostIP': {},
+                'f:phase': {},
+                'f:podIP': {},
+                'f:podIPs': {
+                  '.': {},
+                  'k:{"ip":"10.129.2.16"}': {
+                    '.': {},
+                    'f:ip': {},
+                  },
+                },
+                'f:startTime': {},
+              },
+            },
+          },
+        ],
+        namespace: 'jeff-project',
+        ownerReferences: [
+          {
+            apiVersion: 'batch/v1',
+            kind: 'Job',
+            name: 'standalone-job',
+            uid: 'c1a988ed-3fd6-4a10-a4a5-7612a28eb48e',
+            controller: true,
+            blockOwnerDeletion: true,
+          },
+        ],
+        labels: {
+          'controller-uid': 'c1a988ed-3fd6-4a10-a4a5-7612a28eb48e',
+          'job-name': 'standalone-job',
+        },
+      },
+      spec: {
+        containers: [],
+      },
+      status: {
+        phase: 'Succeeded',
+      },
+    },
+    {
+      metadata: {
+        annotations: {
+          'k8s.v1.cni.cncf.io/network-status':
+            '[{\n    "name": "openshift-sdn",\n    "interface": "eth0",\n    "ips": [\n        "10.128.2.20"\n    ],\n    "default": true,\n    "dns": {}\n}]',
+          'k8s.v1.cni.cncf.io/networks-status':
+            '[{\n    "name": "openshift-sdn",\n    "interface": "eth0",\n    "ips": [\n        "10.128.2.20"\n    ],\n    "default": true,\n    "dns": {}\n}]',
+          'openshift.io/scc': 'anyuid',
+        },
+        selfLink: '/api/v1/namespaces/jeff-project/pods/standalone-pod',
+        resourceVersion: '59106',
+        name: 'standalone-pod',
+        uid: 'ef598095-c5d7-413f-8f41-e2b1da622dee',
+        creationTimestamp: '2020-06-24T11:17:41Z',
+        namespace: 'jeff-project',
+        labels: {
+          app: 'hello-openshift',
+        },
+      },
+      spec: {
+        containers: [],
+      },
+      status: {
+        phase: 'Running',
+      },
+    },
+    {
       apiVersion: 'v1',
       kind: 'Pod',
       metadata: {
@@ -1195,6 +1600,53 @@ export const sampleBuildConfigs: FirehoseResult = {
   loadError: '',
   data: [
     {
+      metadata: {
+        name: 'py-cron',
+        namespace: 'jeff-project',
+        selfLink: '/apis/build.openshift.io/v1/namespaces/jeff-project/buildconfigs/py-cron',
+        uid: '73d2d812-29aa-4b6a-87e0-d69fcf3ed0cd',
+        resourceVersion: '58983',
+        creationTimestamp: '2020-06-24T11:17:40Z',
+        labels: {
+          app: 'py-cron',
+        },
+      },
+      spec: {
+        nodeSelector: null,
+        output: {
+          to: {
+            kind: 'ImageStreamTag',
+            name: 'py-cron:1.0',
+          },
+        },
+        resources: {},
+        successfulBuildsHistoryLimit: 5,
+        failedBuildsHistoryLimit: 5,
+        strategy: {
+          type: 'Source',
+          sourceStrategy: {
+            from: {
+              kind: 'ImageStreamTag',
+              namespace: 'openshift',
+              name: 'python:3.6',
+            },
+          },
+        },
+        postCommit: {},
+        source: {
+          type: 'Git',
+          git: {
+            uri: 'https://github.com/clcollins/openshift-cronjob-example.git',
+            ref: 'master',
+          },
+        },
+        runPolicy: 'Serial',
+      },
+      status: {
+        lastVersion: 1,
+      },
+    },
+    {
       kind: 'BuildConfig',
       metadata: {
         name: 'analytics-build',
@@ -1600,6 +2052,665 @@ export const sampleStatefulSets: FirehoseResult = {
       kind: 'StatefulSet',
     },
   ],
+};
+
+export const sampleJobs: FirehoseResult = {
+  data: [
+    {
+      metadata: {
+        annotations: {
+          'alpha.image.policy.openshift.io/resolve-names': '*',
+        },
+        selfLink: '/apis/batch/v1/namespaces/jeff-project/jobs/py-cron-1593000600',
+        resourceVersion: '108691',
+        name: 'py-cron-1593000600',
+        uid: 'c9a27ca7-d258-4acf-a915-a146cacd6924',
+        creationTimestamp: '2020-06-24T12:10:09Z',
+        managedFields: [
+          {
+            manager: 'kube-controller-manager',
+            operation: 'Update',
+            apiVersion: 'batch/v1',
+            time: '2020-06-24T12:14:43Z',
+            fieldsType: 'FieldsV1',
+            fieldsV1: {
+              'f:metadata': {
+                'f:annotations': {
+                  '.': {},
+                  'f:alpha.image.policy.openshift.io/resolve-names': {},
+                },
+                'f:ownerReferences': {
+                  '.': {},
+                  'k:{"uid":"be644703-be4b-4ee5-9d86-fdeb9495569c"}': {
+                    '.': {},
+                    'f:apiVersion': {},
+                    'f:blockOwnerDeletion': {},
+                    'f:controller': {},
+                    'f:kind': {},
+                    'f:name': {},
+                    'f:uid': {},
+                  },
+                },
+              },
+              'f:spec': {
+                'f:backoffLimit': {},
+                'f:completions': {},
+                'f:parallelism': {},
+                'f:template': {
+                  'f:spec': {
+                    'f:containers': {
+                      'k:{"name":"py-cron"}': {
+                        '.': {},
+                        'f:env': {
+                          '.': {},
+                          'k:{"name":"HOST"}': {
+                            '.': {},
+                            'f:name': {},
+                            'f:value': {},
+                          },
+                          'k:{"name":"NAMESPACE"}': {
+                            '.': {},
+                            'f:name': {},
+                            'f:valueFrom': {
+                              '.': {},
+                              'f:fieldRef': {
+                                '.': {},
+                                'f:apiVersion': {},
+                                'f:fieldPath': {},
+                              },
+                            },
+                          },
+                        },
+                        'f:image': {},
+                        'f:imagePullPolicy': {},
+                        'f:name': {},
+                        'f:resources': {},
+                        'f:terminationMessagePath': {},
+                        'f:terminationMessagePolicy': {},
+                      },
+                    },
+                    'f:dnsPolicy': {},
+                    'f:restartPolicy': {},
+                    'f:schedulerName': {},
+                    'f:securityContext': {},
+                    'f:terminationGracePeriodSeconds': {},
+                  },
+                },
+              },
+              'f:status': {
+                'f:conditions': {
+                  '.': {},
+                  'k:{"type":"Failed"}': {
+                    '.': {},
+                    'f:lastProbeTime': {},
+                    'f:lastTransitionTime': {},
+                    'f:message': {},
+                    'f:reason': {},
+                    'f:status': {},
+                    'f:type': {},
+                  },
+                },
+                'f:failed': {},
+                'f:startTime': {},
+              },
+            },
+          },
+        ],
+        namespace: 'jeff-project',
+        ownerReferences: [
+          {
+            apiVersion: 'batch/v1beta1',
+            kind: 'CronJob',
+            name: 'py-cron',
+            uid: 'be644703-be4b-4ee5-9d86-fdeb9495569c',
+            controller: true,
+            blockOwnerDeletion: true,
+          },
+        ],
+        labels: {
+          'controller-uid': 'c9a27ca7-d258-4acf-a915-a146cacd6924',
+          'job-name': 'py-cron-1593000600',
+        },
+      },
+      spec: {
+        parallelism: 1,
+        completions: 1,
+        backoffLimit: 6,
+        selector: {
+          matchLabels: {
+            'controller-uid': 'c9a27ca7-d258-4acf-a915-a146cacd6924',
+          },
+        },
+        template: {
+          metadata: {
+            creationTimestamp: null,
+            labels: {
+              'controller-uid': 'c9a27ca7-d258-4acf-a915-a146cacd6924',
+              'job-name': 'py-cron-1593000600',
+            },
+          },
+          spec: {
+            containers: [
+              {
+                name: 'py-cron',
+                image:
+                  'image-registry.openshift-image-registry.svc:5000/jeff-project/py-cron@sha256:47c25f041c18c19f65b609df38a49a095ca0358dcfd11db77a21a0380905ecac',
+                env: [
+                  {
+                    name: 'NAMESPACE',
+                    valueFrom: {
+                      fieldRef: {
+                        apiVersion: 'v1',
+                        fieldPath: 'metadata.namespace',
+                      },
+                    },
+                  },
+                  {
+                    name: 'HOST',
+                    value: 'https://okd.host:port',
+                  },
+                ],
+                resources: {},
+                terminationMessagePath: '/dev/termination-log',
+                terminationMessagePolicy: 'File',
+                imagePullPolicy: 'Always',
+              },
+            ],
+            restartPolicy: 'Never',
+            terminationGracePeriodSeconds: 30,
+            dnsPolicy: 'ClusterFirst',
+            securityContext: {},
+            schedulerName: 'default-scheduler',
+          },
+        },
+      },
+      status: {
+        conditions: [
+          {
+            type: 'Failed',
+            status: 'True',
+            lastProbeTime: '2020-06-24T12:14:43Z',
+            lastTransitionTime: '2020-06-24T12:14:43Z',
+            reason: 'BackoffLimitExceeded',
+            message: 'Job has reached the specified backoff limit',
+          },
+        ],
+        startTime: '2020-06-24T12:10:09Z',
+        failed: 6,
+      },
+    },
+    {
+      metadata: {
+        name: 'standalone-job',
+        namespace: 'jeff-project',
+        selfLink: '/apis/batch/v1/namespaces/jeff-project/jobs/standalone-job',
+        uid: 'c1a988ed-3fd6-4a10-a4a5-7612a28eb48e',
+        resourceVersion: '59800',
+        creationTimestamp: '2020-06-24T11:17:41Z',
+        labels: {
+          'controller-uid': 'c1a988ed-3fd6-4a10-a4a5-7612a28eb48e',
+          'job-name': 'standalone-job',
+        },
+        managedFields: [
+          {
+            manager: 'oc',
+            operation: 'Update',
+            apiVersion: 'batch/v1',
+            time: '2020-06-24T11:17:41Z',
+            fieldsType: 'FieldsV1',
+            fieldsV1: {
+              'f:spec': {
+                'f:backoffLimit': {},
+                'f:completions': {},
+                'f:parallelism': {},
+                'f:selector': {},
+                'f:template': {
+                  'f:metadata': {
+                    'f:name': {},
+                  },
+                  'f:spec': {
+                    'f:containers': {
+                      'k:{"name":"pi"}': {
+                        '.': {},
+                        'f:command': {},
+                        'f:image': {},
+                        'f:imagePullPolicy': {},
+                        'f:name': {},
+                        'f:resources': {},
+                        'f:terminationMessagePath': {},
+                        'f:terminationMessagePolicy': {},
+                      },
+                    },
+                    'f:dnsPolicy': {},
+                    'f:restartPolicy': {},
+                    'f:schedulerName': {},
+                    'f:securityContext': {},
+                    'f:terminationGracePeriodSeconds': {},
+                  },
+                },
+              },
+            },
+          },
+          {
+            manager: 'kube-controller-manager',
+            operation: 'Update',
+            apiVersion: 'batch/v1',
+            time: '2020-06-24T11:18:42Z',
+            fieldsType: 'FieldsV1',
+            fieldsV1: {
+              'f:status': {
+                'f:completionTime': {},
+                'f:conditions': {
+                  '.': {},
+                  'k:{"type":"Complete"}': {
+                    '.': {},
+                    'f:lastProbeTime': {},
+                    'f:lastTransitionTime': {},
+                    'f:status': {},
+                    'f:type': {},
+                  },
+                },
+                'f:startTime': {},
+                'f:succeeded': {},
+              },
+            },
+          },
+        ],
+      },
+      spec: {
+        parallelism: 1,
+        completions: 1,
+        backoffLimit: 6,
+        selector: {
+          matchLabels: {
+            'controller-uid': 'c1a988ed-3fd6-4a10-a4a5-7612a28eb48e',
+          },
+        },
+        template: {
+          metadata: {
+            name: 'pi',
+            creationTimestamp: null,
+            labels: {
+              'controller-uid': 'c1a988ed-3fd6-4a10-a4a5-7612a28eb48e',
+              'job-name': 'standalone-job',
+            },
+          },
+          spec: {
+            containers: [
+              {
+                name: 'pi',
+                image: 'perl',
+                command: ['perl', '-Mbignum=bpi', '-wle', 'print bpi(2000)'],
+                resources: {},
+                terminationMessagePath: '/dev/termination-log',
+                terminationMessagePolicy: 'File',
+                imagePullPolicy: 'Always',
+              },
+            ],
+            restartPolicy: 'Never',
+            terminationGracePeriodSeconds: 30,
+            dnsPolicy: 'ClusterFirst',
+            securityContext: {},
+            schedulerName: 'default-scheduler',
+          },
+        },
+      },
+      status: {
+        conditions: [
+          {
+            type: 'Complete',
+            status: 'True',
+            lastProbeTime: '2020-06-24T11:18:42Z',
+            lastTransitionTime: '2020-06-24T11:18:42Z',
+          },
+        ],
+        startTime: '2020-06-24T11:17:41Z',
+        completionTime: '2020-06-24T11:18:42Z',
+        succeeded: 1,
+      },
+    },
+    {
+      kind: 'Job',
+      apiVersion: 'batch/v1',
+      metadata: {
+        annotations: {
+          'alpha.image.policy.openshift.io/resolve-names': '*',
+        },
+        selfLink: '/apis/batch/v1/namespaces/jeff-project/jobs/py-cron-1593002100',
+        resourceVersion: '125142',
+        name: 'py-cron-1593002100',
+        uid: '39d16c87-00b8-4423-a66a-ac712cda7701',
+        creationTimestamp: '2020-06-24T12:35:05Z',
+        managedFields: [
+          {
+            manager: 'kube-controller-manager',
+            operation: 'Update',
+            apiVersion: 'batch/v1',
+            time: '2020-06-24T12:35:05Z',
+            fieldsType: 'FieldsV1',
+            fieldsV1: {
+              'f:metadata': {
+                'f:annotations': {
+                  '.': {},
+                  'f:alpha.image.policy.openshift.io/resolve-names': {},
+                },
+                'f:ownerReferences': {
+                  '.': {},
+                  'k:{"uid":"be644703-be4b-4ee5-9d86-fdeb9495569c"}': {
+                    '.': {},
+                    'f:apiVersion': {},
+                    'f:blockOwnerDeletion': {},
+                    'f:controller': {},
+                    'f:kind': {},
+                    'f:name': {},
+                    'f:uid': {},
+                  },
+                },
+              },
+              'f:spec': {
+                'f:backoffLimit': {},
+                'f:completions': {},
+                'f:parallelism': {},
+                'f:template': {
+                  'f:spec': {
+                    'f:containers': {
+                      'k:{"name":"py-cron"}': {
+                        '.': {},
+                        'f:env': {
+                          '.': {},
+                          'k:{"name":"HOST"}': {
+                            '.': {},
+                            'f:name': {},
+                            'f:value': {},
+                          },
+                          'k:{"name":"NAMESPACE"}': {
+                            '.': {},
+                            'f:name': {},
+                            'f:valueFrom': {
+                              '.': {},
+                              'f:fieldRef': {
+                                '.': {},
+                                'f:apiVersion': {},
+                                'f:fieldPath': {},
+                              },
+                            },
+                          },
+                        },
+                        'f:image': {},
+                        'f:imagePullPolicy': {},
+                        'f:name': {},
+                        'f:resources': {},
+                        'f:terminationMessagePath': {},
+                        'f:terminationMessagePolicy': {},
+                      },
+                    },
+                    'f:dnsPolicy': {},
+                    'f:restartPolicy': {},
+                    'f:schedulerName': {},
+                    'f:securityContext': {},
+                    'f:terminationGracePeriodSeconds': {},
+                  },
+                },
+              },
+              'f:status': {
+                'f:active': {},
+                'f:startTime': {},
+              },
+            },
+          },
+        ],
+        namespace: 'jeff-project',
+        ownerReferences: [
+          {
+            apiVersion: 'batch/v1beta1',
+            kind: 'CronJob',
+            name: 'py-cron',
+            uid: 'be644703-be4b-4ee5-9d86-fdeb9495569c',
+            controller: true,
+            blockOwnerDeletion: true,
+          },
+        ],
+        labels: {
+          'controller-uid': '39d16c87-00b8-4423-a66a-ac712cda7701',
+          'job-name': 'py-cron-1593002100',
+        },
+      },
+      spec: {
+        parallelism: 1,
+        completions: 1,
+        backoffLimit: 6,
+        selector: {
+          matchLabels: {
+            'controller-uid': '39d16c87-00b8-4423-a66a-ac712cda7701',
+          },
+        },
+        template: {
+          metadata: {
+            creationTimestamp: null,
+            labels: {
+              'controller-uid': '39d16c87-00b8-4423-a66a-ac712cda7701',
+              'job-name': 'py-cron-1593002100',
+            },
+          },
+          spec: {
+            containers: [
+              {
+                name: 'py-cron',
+                image:
+                  'image-registry.openshift-image-registry.svc:5000/jeff-project/py-cron@sha256:47c25f041c18c19f65b609df38a49a095ca0358dcfd11db77a21a0380905ecac',
+                env: [
+                  {
+                    name: 'NAMESPACE',
+                    valueFrom: {
+                      fieldRef: {
+                        apiVersion: 'v1',
+                        fieldPath: 'metadata.namespace',
+                      },
+                    },
+                  },
+                  {
+                    name: 'HOST',
+                    value: 'https://okd.host:port',
+                  },
+                ],
+                resources: {},
+                terminationMessagePath: '/dev/termination-log',
+                terminationMessagePolicy: 'File',
+                imagePullPolicy: 'Always',
+              },
+            ],
+            restartPolicy: 'Never',
+            terminationGracePeriodSeconds: 30,
+            dnsPolicy: 'ClusterFirst',
+            securityContext: {},
+            schedulerName: 'default-scheduler',
+          },
+        },
+      },
+      status: {
+        startTime: '2020-06-24T12:35:05Z',
+        active: 1,
+      },
+    },
+  ],
+  loaded: true,
+  loadError: '',
+};
+
+export const sampleCronJobs: FirehoseResult = {
+  data: [
+    {
+      metadata: {
+        name: 'py-cron',
+        namespace: 'jeff-project',
+        selfLink: '/apis/batch/v1beta1/namespaces/jeff-project/cronjobs/py-cron',
+        uid: 'be644703-be4b-4ee5-9d86-fdeb9495569c',
+        resourceVersion: '125137',
+        creationTimestamp: '2020-06-24T11:17:41Z',
+        labels: {
+          app: 'py-cron',
+        },
+        managedFields: [
+          {
+            manager: 'oc',
+            operation: 'Update',
+            apiVersion: 'batch/v1beta1',
+            time: '2020-06-24T11:17:41Z',
+            fieldsType: 'FieldsV1',
+            fieldsV1: {
+              'f:metadata': {
+                'f:labels': {
+                  '.': {},
+                  'f:app': {},
+                },
+              },
+              'f:spec': {
+                'f:concurrencyPolicy': {},
+                'f:failedJobsHistoryLimit': {},
+                'f:jobTemplate': {
+                  'f:metadata': {
+                    'f:annotations': {
+                      '.': {},
+                      'f:alpha.image.policy.openshift.io/resolve-names': {},
+                    },
+                  },
+                  'f:spec': {
+                    'f:template': {
+                      'f:spec': {
+                        'f:containers': {
+                          'k:{"name":"py-cron"}': {
+                            '.': {},
+                            'f:env': {
+                              '.': {},
+                              'k:{"name":"HOST"}': {
+                                '.': {},
+                                'f:name': {},
+                                'f:value': {},
+                              },
+                              'k:{"name":"NAMESPACE"}': {
+                                '.': {},
+                                'f:name': {},
+                                'f:valueFrom': {
+                                  '.': {},
+                                  'f:fieldRef': {
+                                    '.': {},
+                                    'f:apiVersion': {},
+                                    'f:fieldPath': {},
+                                  },
+                                },
+                              },
+                            },
+                            'f:image': {},
+                            'f:imagePullPolicy': {},
+                            'f:name': {},
+                            'f:resources': {},
+                            'f:terminationMessagePath': {},
+                            'f:terminationMessagePolicy': {},
+                          },
+                        },
+                        'f:dnsPolicy': {},
+                        'f:restartPolicy': {},
+                        'f:schedulerName': {},
+                        'f:securityContext': {},
+                        'f:terminationGracePeriodSeconds': {},
+                      },
+                    },
+                  },
+                },
+                'f:schedule': {},
+                'f:startingDeadlineSeconds': {},
+                'f:successfulJobsHistoryLimit': {},
+                'f:suspend': {},
+              },
+            },
+          },
+          {
+            manager: 'kube-controller-manager',
+            operation: 'Update',
+            apiVersion: 'batch/v1beta1',
+            time: '2020-06-24T12:35:05Z',
+            fieldsType: 'FieldsV1',
+            fieldsV1: {
+              'f:status': {
+                'f:active': {},
+                'f:lastScheduleTime': {},
+              },
+            },
+          },
+        ],
+      },
+      spec: {
+        schedule: '*/5 * * * *',
+        startingDeadlineSeconds: 600,
+        concurrencyPolicy: 'Replace',
+        suspend: false,
+        jobTemplate: {
+          metadata: {
+            creationTimestamp: null,
+            annotations: {
+              'alpha.image.policy.openshift.io/resolve-names': '*',
+            },
+          },
+          spec: {
+            template: {
+              metadata: {
+                creationTimestamp: null,
+              },
+              spec: {
+                containers: [
+                  {
+                    name: 'py-cron',
+                    image: 'py-cron/py-cron:1.0',
+                    env: [
+                      {
+                        name: 'NAMESPACE',
+                        valueFrom: {
+                          fieldRef: {
+                            apiVersion: 'v1',
+                            fieldPath: 'metadata.namespace',
+                          },
+                        },
+                      },
+                      {
+                        name: 'HOST',
+                        value: 'https://okd.host:port',
+                      },
+                    ],
+                    resources: {},
+                    terminationMessagePath: '/dev/termination-log',
+                    terminationMessagePolicy: 'File',
+                    imagePullPolicy: 'Always',
+                  },
+                ],
+                restartPolicy: 'Never',
+                terminationGracePeriodSeconds: 30,
+                dnsPolicy: 'ClusterFirst',
+                securityContext: {},
+                schedulerName: 'default-scheduler',
+              },
+            },
+          },
+        },
+        successfulJobsHistoryLimit: 3,
+        failedJobsHistoryLimit: 1,
+      },
+      status: {
+        active: [
+          {
+            kind: 'Job',
+            namespace: 'jeff-project',
+            name: 'py-cron-1593002100',
+            uid: '39d16c87-00b8-4423-a66a-ac712cda7701',
+            apiVersion: 'batch/v1',
+            resourceVersion: '125136',
+          },
+        ],
+        lastScheduleTime: '2020-06-24T12:35:00Z',
+      },
+    },
+  ],
+  loaded: true,
+  loadError: '',
 };
 
 export const samplePipeline: FirehoseResult = {
@@ -2386,6 +3497,8 @@ export const MockResources: TopologyDataResources = {
   replicationControllers: sampleReplicationControllers,
   replicaSets: sampleReplicaSets,
   pods: samplePods,
+  jobs: sampleJobs,
+  cronJobs: sampleCronJobs,
   services: sampleServices,
   routes: sampleRoutes,
   buildConfigs: sampleBuildConfigs,
@@ -2404,6 +3517,8 @@ export const MockBaseResources: TopologyDataResources = {
   replicationControllers: sampleReplicationControllers,
   replicaSets: sampleReplicaSets,
   pods: samplePods,
+  jobs: sampleJobs,
+  cronJobs: sampleCronJobs,
   services: sampleServices,
   routes: sampleRoutes,
   buildConfigs: sampleBuildConfigs,
