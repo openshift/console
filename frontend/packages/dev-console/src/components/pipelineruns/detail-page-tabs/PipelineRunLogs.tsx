@@ -108,7 +108,7 @@ class PipelineRunLogs extends React.Component<PipelineRunLogsProps, PipelineRunL
       <div className="odc-pipeline-run-logs">
         <div className="odc-pipeline-run-logs__tasklist" data-test-id="logs-tasklist">
           {taskCount > 0 ? (
-            <Nav onSelect={this.onNavSelect}>
+            <Nav onSelect={this.onNavSelect} theme="light">
               <NavList className="odc-pipeline-run-logs__nav">
                 {taskRuns.map((task) => {
                   return (

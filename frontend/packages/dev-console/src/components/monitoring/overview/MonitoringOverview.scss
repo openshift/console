@@ -17,10 +17,10 @@
     text-align: right;
   }
   .pf-c-accordion__expanded-content.pf-m-expanded {
-    --pf-c-accordion__expanded-content--BorderLeftColor: transparent;
+    --pf-c-accordion__expanded-content-body--before--BackgroundColor: transparent;
   }
   .pf-c-accordion__toggle.pf-m-expanded {
-    --pf-c-accordion__toggle--BorderLeftColor: transparent;
+    --pf-c-accordion__toggle--before--BackgroundColor: transparent;
   }
   &__empty-state {
     &-icon {

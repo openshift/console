@@ -14,8 +14,8 @@ import {
   global_danger_color_100 as dangerColor,
   global_default_color_200 as blueDefaultColor,
   global_disabled_color_100 as disabledColor,
-  global_info_color_100 as blueInfoColor,
-  global_success_color_200 as okColor,
+  global_palette_blue_300 as blueInfoColor,
+  global_palette_green_500 as okColor,
   global_warning_color_100 as warningColor,
 } from '@patternfly/react-tokens';
 

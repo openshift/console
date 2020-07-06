@@ -37,17 +37,19 @@
 
     .pf-c-dropdown__toggle-icon {
       color: var(--pf-global--Color--light-100);
-      font-size: var(--pf-global--FontSize--md);
-      margin-right: 0;
+      font-size: $co-side-nav-section-font-size;
     }
 
     .pf-c-title {
       color: var(--pf-global--Color--light-100);
+      &.pf-m-md {
+        font-size: $co-side-nav-section-font-size;
+        font-family: var(--pf-global--FontFamily--sans-serif); // Use RedHatText to match side nav links because buttons by default use RedHatDisplay
+      }
     }
 
     &:before {
       border: none;
     }
   }
-
 }

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { MinusCircleIcon } from '@patternfly/react-icons';
 import { global_disabled_color_200 as disabledColor } from '@patternfly/react-tokens';
-import { Flex, FlexItem, FlexModifiers, TextInput } from '@patternfly/react-core';
+import { Flex, FlexItem, TextInput } from '@patternfly/react-core';
 import MultiColumnFieldFooter from '@console/shared/src/components/formik-fields/multi-column-field/MultiColumnFieldFooter';
 
 export type ParamValueType = string | string[];
@@ -21,7 +21,7 @@ export const StringParam: React.FC<ParameterProps> = (props) => {
   return (
     <TextInput
       id={name}
-      isValid={isValid}
+      validated={isValid ? 'default' : 'error'}
       isRequired={!defaultValue}
       onBlur={() => setDirty(true)}
       onChange={(value) => {
@@ -46,7 +46,7 @@ export const ArrayParam: React.FC<ParameterProps> = (props) => {
             key={`${index.toString()}`}
             style={{ marginBottom: 'var(--pf-global--spacer--xs)' }}
           >
-            <FlexItem breakpointMods={[{ modifier: FlexModifiers.grow }]}>
+            <FlexItem grow={{ default: 'grow' }}>
               <StringParam
                 {...props}
                 name={`${name}-${index}`}

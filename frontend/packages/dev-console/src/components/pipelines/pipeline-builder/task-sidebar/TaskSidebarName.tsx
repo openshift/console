@@ -33,13 +33,13 @@ const TaskSidebarName: React.FC<TaskSidebarNameProps> = (props) => {
       fieldId="task-name"
       label="Display Name"
       helperTextInvalid={error}
-      isValid={isValid}
+      validated={isValid ? 'default' : 'error'}
       isRequired
     >
       <SidebarInputWrapper>
         <TextInput
           id="task-name"
-          isValid={isValid}
+          validated={isValid ? 'default' : 'error'}
           isRequired
           onChange={(value) => {
             setInterimName(value);

@@ -48,8 +48,6 @@ const ContextMenu: React.FC<ContextMenuProps> = ({
           sectionTitleClass: styles.dropdownGroupTitle,
           sectionComponent: 'section',
           disabledClass: styles.modifiers.disabled,
-          hoverClass: styles.modifiers.hover,
-          separatorClass: styles.dropdownSeparator,
         }}
       >
         <div className="pf-c-dropdown pf-m-expanded topology-context-menu">

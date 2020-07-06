@@ -7,11 +7,11 @@ import {
   AccordionContent,
   AccordionItem,
   AccordionToggle,
-  DataToolbar,
-  DataToolbarChip,
-  DataToolbarContent,
-  DataToolbarFilter,
-  DataToolbarItem,
+  Toolbar,
+  ToolbarChip,
+  ToolbarContent,
+  ToolbarFilter,
+  ToolbarItem,
 } from '@patternfly/react-core';
 import { PlusCircleIcon, MinusCircleIcon } from '@patternfly/react-icons';
 import { getBadgeFromType } from '@console/shared';
@@ -62,7 +62,8 @@ const ResourceList = connectToModel(({ kindObj, mock, namespace, selector, nameF
       autoFocus={false}
       mock={mock}
       badge={getBadgeFromType(kindObj.badge)}
-      hideToolbar
+      hideNameFilter
+      hideLabelFilter
     />
   );
 });
@@ -112,7 +113,7 @@ const SearchPage_: React.FC<SearchProps & StateProps & DispatchProps> = (props) 
     setQueryArgument('kind', [...updateItems].join(','));
   };
 
-  const updateNewItems = (filter: string, { key }: DataToolbarChip) => {
+  const updateNewItems = (filter: string, { key }: ToolbarChip) => {
     const updateItems = selectedItems;
     updateItems.has(key) ? updateItems.delete(key) : updateItems.add(key);
     setSelectedItems(updateItems);
@@ -208,10 +209,10 @@ const SearchPage_: React.FC<SearchProps & StateProps & DispatchProps> = (props) 
         <title>Search</title>
       </Helmet>
       <PageHeading detail={true} title="Search">
-        <DataToolbar id="search-toolbar" clearAllFilters={clearAll}>
-          <DataToolbarContent>
-            <DataToolbarItem>
-              <DataToolbarFilter
+        <Toolbar id="search-toolbar" clearAllFilters={clearAll}>
+          <ToolbarContent>
+            <ToolbarItem>
+              <ToolbarFilter
                 deleteChipGroup={clearSelectedItems}
                 chips={[...selectedItems].map((resourceKind) => ({
                   key: resourceKind,
@@ -229,16 +230,16 @@ const SearchPage_: React.FC<SearchProps & StateProps & DispatchProps> = (props) 
                   selected={[...selectedItems]}
                   onChange={updateSelectedItems}
                 />
-              </DataToolbarFilter>
-            </DataToolbarItem>
-            <DataToolbarItem className="co-search-group__filter">
-              <DataToolbarFilter
+              </ToolbarFilter>
+            </ToolbarItem>
+            <ToolbarItem className="co-search-group__filter">
+              <ToolbarFilter
                 deleteChipGroup={clearLabelFilter}
                 chips={[...labelFilter]}
                 deleteChip={removeLabelFilter}
                 categoryName="Label"
               >
-                <DataToolbarFilter
+                <ToolbarFilter
                   chips={typeaheadNameFilter.length > 0 ? [typeaheadNameFilter] : []}
                   deleteChip={clearNameFilter}
                   categoryName="Name"
@@ -248,14 +249,14 @@ const SearchPage_: React.FC<SearchProps & StateProps & DispatchProps> = (props) 
                     nameFilterInput={typeaheadNameFilter}
                     labelFilterInput={labelFilterInput}
                   />
-                </DataToolbarFilter>
-              </DataToolbarFilter>
-            </DataToolbarItem>
-          </DataToolbarContent>
-        </DataToolbar>
+                </ToolbarFilter>
+              </ToolbarFilter>
+            </ToolbarItem>
+          </ToolbarContent>
+        </Toolbar>
       </PageHeading>
       <div className="co-search">
-        <Accordion className="co-search__accordion" asDefinitionList={false} noBoxShadow>
+        <Accordion className="co-search__accordion" asDefinitionList={false}>
           {[...selectedItems].map((resource) => {
             const isCollapsed = collapsedKinds.has(resource);
             return (

@@ -26,7 +26,7 @@ describe(RestorePVCModal.name, () => {
   });
 
   it('renders a modal form', () => {
-    expect(wrapper.find('Form').props().name).toEqual('form');
+    expect(wrapper.find({ name: 'form' })).toHaveLength(1);
     expect(wrapper.find(ModalTitle).exists()).toBe(true);
     expect(wrapper.find(ModalSubmitFooter).props().submitText).toEqual('Restore');
   });

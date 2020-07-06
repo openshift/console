@@ -162,7 +162,7 @@ const BackingStorePage: React.FC<BackingStorePageProps> = React.memo(
             isInline
             variant="info"
             title="What is a Backing Store?"
-            action={<AlertActionCloseButton onClose={() => setShowHelp(false)} />}
+            actionClose={<AlertActionCloseButton onClose={() => setShowHelp(false)} />}
           >
             <p>
               Backing Store represents a storage target to be used as the underlying storage for the
@@ -180,7 +180,7 @@ const BackingStorePage: React.FC<BackingStorePageProps> = React.memo(
         )}
         <Form className="nb-bc-step-page-form">
           <Title headingLevel="h3" size="xl" className="nb-bc-step-page-form__title">
-            <Flex breakpointMods={[{ modifier: 'justify-content-space-between' }] as any}>
+            <Flex justifyContent={{ default: 'justifyContentSpaceBetween' }}>
               <FlexItem>Tier 1 - Backing Store ({state.tier1Policy})</FlexItem>
               <FlexItem>
                 <Button

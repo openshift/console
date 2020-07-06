@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as classNames from 'classnames';
 import { saveAs } from 'file-saver';
-import { Button, Flex, FlexItem, FlexModifiers } from '@patternfly/react-core';
+import { Button, Flex, FlexItem } from '@patternfly/react-core';
 import { DownloadIcon, CompressIcon, ExpandIcon } from '@patternfly/react-icons';
 import { ContainerStatus, PodKind, ContainerSpec } from '@console/internal/module/k8s';
 import { LoadingInline, LOG_SOURCE_WAITING } from '@console/internal/components/utils';
@@ -86,10 +86,7 @@ export const MultiStreamLogs: React.FC<MultiStreamLogsProps> = ({
           'odc-multi-stream-logs--fullscreen': isFullscreen,
         })}
       >
-        <FlexItem
-          className="odc-multi-stream-logs__button"
-          breakpointMods={[{ modifier: FlexModifiers['align-right'] }]}
-        >
+        <FlexItem className="odc-multi-stream-logs__button" align={{ default: 'alignRight' }}>
           <Button variant="link" onClick={downloadLogs} isInline>
             <DownloadIcon className="odc-multi-stream-logs__icon" />
             Download

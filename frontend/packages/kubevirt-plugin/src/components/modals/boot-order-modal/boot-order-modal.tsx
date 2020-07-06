@@ -149,11 +149,10 @@ const BootOrderModalComponent = ({
     <Modal
       title={title}
       isOpen={isOpen}
-      isSmall
+      variant="small"
       onClose={() => setOpen(false)}
       footer={footer}
       showClose={false}
-      isFooterLeftAligned={false}
     >
       <BootOrder devices={devices} setDevices={setDevices} />
     </Modal>

@@ -36,10 +36,9 @@ const VMStatusModal = withHandlePromise<VMStatusModalProps>(
       <Modal
         title={title}
         isOpen={isOpen}
-        isSmall
+        variant="small"
         onClose={() => setOpen(false)}
         footer={footer}
-        isFooterLeftAligned
       >
         <div>{PAUSED_VM_MODAL_MESSAGE}</div>
       </Modal>

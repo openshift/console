@@ -2,7 +2,7 @@ import * as React from 'react';
 import { shallow, ShallowWrapper, mount, ReactWrapper } from 'enzyme';
 import { Link } from 'react-router-dom';
 import * as _ from 'lodash';
-import { CardHeader, CardBody, CardFooter } from '@patternfly/react-core';
+import { CardTitle, CardBody, CardFooter } from '@patternfly/react-core';
 import { ErrorBoundary } from '@console/shared/src/components/error/error-boundary';
 import {
   DetailsPage,
@@ -235,7 +235,7 @@ describe(CRDCard.displayName, () => {
   it('renders a card with title, body, and footer', () => {
     const wrapper = shallow(<CRDCard canCreate crd={crd} csv={testClusterServiceVersion} />);
 
-    expect(wrapper.find(CardHeader).exists()).toBe(true);
+    expect(wrapper.find(CardTitle).exists()).toBe(true);
     expect(wrapper.find(CardBody).exists()).toBe(true);
     expect(wrapper.find(CardFooter).exists()).toBe(true);
   });

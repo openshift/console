@@ -11,13 +11,7 @@ import {
 import { getNamespace, getName } from '@console/shared/src';
 import { RedExclamationCircleIcon } from '@console/shared/src/components/status/icons';
 import GenericStatus from '@console/shared/src/components/status/GenericStatus';
-import {
-  Progress,
-  ProgressVariant,
-  ProgressSize,
-  Button,
-  ButtonVariant,
-} from '@patternfly/react-core';
+import { Progress, ProgressSize, Button, ButtonVariant } from '@patternfly/react-core';
 import { Link } from 'react-router-dom';
 import { ResourceLink, resourcePath } from '@console/internal/components/utils';
 import { PersistentVolumeClaimModel, PodModel } from '@console/internal/models';
@@ -47,7 +41,7 @@ const VMStatusPopoverContent: React.FC<VMStatusPopoverContentProps> = ({
     {children && <div className="kubevirt-vm-status__detail-section">{children}</div>}
     {progress != null && (
       <div className="kubevirt-vm-status__detail-section">
-        <Progress value={progress} variant={ProgressVariant.info} size={ProgressSize.sm} />
+        <Progress value={progress} size={ProgressSize.sm} />
       </div>
     )}
     {links &&
@@ -92,7 +86,6 @@ const ImporterPods: React.FC<ImporterPodsProps> = ({ statuses }) => (
                 <Progress
                   className="kubevirt-vm-status__detail-small-section"
                   value={progress}
-                  variant={ProgressVariant.info}
                   size={ProgressSize.sm}
                 />
               )}
@@ -137,7 +130,7 @@ export const VMStatus: React.FC<VMStatusProps> = ({ vm, vmi, vmStatusBundle }) =
     links.push({ to: `${getPodLink(pod)}/logs`, message: VIEW_POD_LOGS });
   }
 
-  let icon = UnknownIcon;
+  let icon: React.ComponentClass | React.FC = UnknownIcon;
 
   if (isPaused) {
     icon = PausedIcon;

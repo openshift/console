@@ -73,7 +73,7 @@ const MoveConnectionForm: React.FC<FormikProps<FormikValues> & MoveConnectionMod
     <form onSubmit={handleSubmit} className="modal-content modal-content--no-inner-scroll">
       <ModalTitle>Move Connector</ModalTitle>
       <ModalBody>
-        <Title size="sm" className="co-m-form-row">
+        <Title headingLevel="h2" size="md" className="co-m-form-row">
           Connect
           <strong>{` ${edge.getSource().getLabel()} `}</strong>
           to
@@ -84,7 +84,7 @@ const MoveConnectionForm: React.FC<FormikProps<FormikValues> & MoveConnectionMod
               id="target-node-dropdown"
               className="dropdown--full-width"
               toggle={
-                <DropdownToggle id="toggle-id" onToggle={onToggle} iconComponent={CaretDownIcon}>
+                <DropdownToggle id="toggle-id" onToggle={onToggle} toggleIndicator={CaretDownIcon}>
                   {nodeItem(values.target)}
                 </DropdownToggle>
               }

@@ -192,15 +192,12 @@ $catalog-tile-width: $co-m-catalog-tile-width;
     right: 0;
     top: 4.75rem; // --pf-c-page__header--MinHeight
 
-    .catalog-item-header-pf {
-      padding: var(--pf-global--spacer--lg) var(--pf-global--spacer--lg) var(--pf-global--spacer--md) var(--pf-global--spacer--lg);
-    }
-
     .pf-c-modal-box__body {
       // Required to position scroll shadows correctly on Chrome
       display: flex;
       flex-direction: column;
       margin: 0 !important;
+      padding: 0;
     }
 
     .modal-body-inner-shadow-covers {
@@ -234,7 +231,7 @@ $catalog-tile-width: $co-m-catalog-tile-width;
   &__overlay-actions {
     display: flex;
     flex-wrap: wrap;
-    padding: var(--pf-global--spacer--sm) var(--pf-global--spacer--md) var(--pf-global--spacer--md) var(--pf-global--spacer--lg);
+    padding: var(--pf-global--spacer--lg) var(--pf-global--spacer--md) var(--pf-global--spacer--md) 0;
     white-space: normal;
   }
 

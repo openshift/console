@@ -4,7 +4,7 @@ import * as classNames from 'classnames';
 import * as PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
-import { Button, Chip, ChipGroup, ChipGroupToolbarItem } from '@patternfly/react-core';
+import { Button, Chip, ChipGroup } from '@patternfly/react-core';
 import { CloseIcon } from '@patternfly/react-icons';
 
 import { namespaceProptype } from '../propTypes';
@@ -213,22 +213,20 @@ export class EventsList extends React.Component {
             />
           </div>
           <div className="form-group">
-            <ChipGroup withToolbar defaultIsOpen={false}>
-              <ChipGroupToolbarItem key="resources-category" categoryName="Resource">
-                {[...selected].map((chip) => (
-                  <Chip key={chip} onClick={() => this.toggleSelected(chip)}>
-                    <ResourceIcon kind={chip} />
-                    {kindForReference(chip)}
-                  </Chip>
-                ))}
-                {selected.size > 0 && (
-                  <>
-                    <Button variant="plain" aria-label="Close" onClick={this.clearSelection}>
-                      <CloseIcon />
-                    </Button>
-                  </>
-                )}
-              </ChipGroupToolbarItem>
+            <ChipGroup key="resources-category" categoryName="Resource" defaultIsOpen={false}>
+              {[...selected].map((chip) => (
+                <Chip key={chip} onClick={() => this.toggleSelected(chip)}>
+                  <ResourceIcon kind={chip} />
+                  {kindForReference(chip)}
+                </Chip>
+              ))}
+              {selected.size > 0 && (
+                <>
+                  <Button variant="plain" aria-label="Close" onClick={this.clearSelection}>
+                    <CloseIcon />
+                  </Button>
+                </>
+              )}
             </ChipGroup>
           </div>
         </PageHeading>

@@ -327,7 +327,6 @@ class CreateVMWizardComponent extends React.Component<CreateVMWizardComponentPro
         )}
         <Wizard
           key="wizard"
-          isInPage
           className="kubevirt-create-vm-modal__wizard-content"
           onClose={this.onClose}
           onNext={({ id }, { prevId }) => {

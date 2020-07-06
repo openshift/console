@@ -32,7 +32,11 @@ const RouteRow: RowFunction<RouteKind> = ({ obj, index, key, style }) => (
     </TableData>
     <TableData className={tableColumnClasses[2]}>
       {(obj.status && obj.status.url && (
-        <ExternalLink href={obj.status.url} text={obj.status.url} />
+        <ExternalLink
+          href={obj.status.url}
+          additionalClassName="co-external-link--block"
+          text={obj.status.url}
+        />
       )) ||
         '-'}
     </TableData>

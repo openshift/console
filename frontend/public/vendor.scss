@@ -42,16 +42,16 @@
 @import '~@patternfly/react-catalog-view-extension/dist/sass/properties-side-panel';
 @import '~@patternfly/react-catalog-view-extension/dist/sass/vertical-tabs';
 @import '~@patternfly/patternfly/sass-utilities/all';
-@import "~@patternfly/patternfly/variables";
-@import "~@patternfly/patternfly/fonts";
-@import "~@patternfly/patternfly/base";
+@import "~@patternfly/patternfly/base/base";
+@import "~@patternfly/patternfly/base/fonts";
+@import "~@patternfly/patternfly/base/variables";
 @import "~@patternfly/patternfly/components/Drawer/drawer";
 @import "~@patternfly/patternfly/components/Form/form";
 @import "~@patternfly/patternfly/components/FormControl/form-control";
 @import "~@patternfly/patternfly/components/InputGroup/input-group";
-@import "~@patternfly/patternfly/components/DataToolbar/data-toolbar";
 @import "~@patternfly/patternfly/components/NotificationBadge/notification-badge";
 @import "~@patternfly/patternfly/components/NotificationDrawer/notification-drawer";
+@import "~@patternfly/patternfly/components/Toolbar/toolbar";
 @import "~@patternfly/patternfly/utilities/Sizing/sizing";
 @import "~@patternfly/patternfly/patternfly-charts";
 

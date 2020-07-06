@@ -84,7 +84,7 @@ const HealthChecksAlert: React.FC<HealthChecksAlertProps> = ({ resource }) => {
           <Alert
             variant="default"
             title="Health Checks"
-            action={<AlertActionCloseButton onClose={handleAlertAction} />}
+            actionClose={<AlertActionCloseButton onClose={handleAlertAction} />}
             isInline
           >
             {_.size(containersName) > 1

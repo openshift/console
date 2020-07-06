@@ -119,7 +119,7 @@ const VMConsoles: React.FC<VMConsolesProps> = ({
   ) : null;
 
   return (
-    <Stack gutter="sm">
+    <Stack hasGutter>
       {showOpenInNewWindow && consoleType && (
         <StackItem>
           <Button
@@ -137,7 +137,7 @@ const VMConsoles: React.FC<VMConsolesProps> = ({
           <Alert
             isInline
             variant="danger"
-            action={<AlertActionCloseButton onClose={() => setShowAlert(false)} />}
+            actionClose={<AlertActionCloseButton onClose={() => setShowAlert(false)} />}
             title={`Selected type ${type.toPatternflyLabel()} is unsupported, falling back to a supported type`}
           />
         </StackItem>

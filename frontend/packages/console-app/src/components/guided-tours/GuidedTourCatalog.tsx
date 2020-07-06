@@ -14,7 +14,7 @@ const GuidedTourCatalog: React.FC<GuidedTourCatalogProps> = ({ tours }) => (
     {!tours || tours.length === 0 ? (
       <EmptyBox label="Guided Tours" />
     ) : (
-      <Gallery gutter="sm">
+      <Gallery hasGutter>
         {tours.map((tour) => (
           <GalleryItem key={tour.name}>
             <GuidedTourItem {...tour} />

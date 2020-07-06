@@ -18,7 +18,6 @@ $consoleWebDistPath: './';
 $fa-font-path: $consoleWebDistPath + '/';
 // Use PatternFly 4 font family in PatternFly 3.
 $font-family-base: var(--pf-global--FontFamily--sans-serif);
-// Patternfly 3 defaults to 12px, which is too small in many cases.
 $font-size-base: 14px;
 // Use PatternFly 4 heading font sizes in Patternfly 3.
 $font-size-h1: var(--pf-global--FontSize--2xl);
@@ -39,13 +38,13 @@ $link-color: var(--pf-global--link--Color);
 $link-hover-color: var(--pf-global--link--Color--hover);
 // Disable PatternFly 4 reset.
 $pf-global--enable-reset: false;
+$pf-global--enable-shield: true;
 // PatternFly 4 font path.
 $pf-global--font-path: '~@patternfly/patternfly/assets/fonts';
 $table-border-color: $color-pf-black-200;
 
 :root {
-  --pf-chart-global--FontFamily: $font-family-base; // so charts get the correct font-family
-  --pf-global--FontSize--md: $font-size-base;
+  --pf-global--FontSize--md: 14px; // Numerical value required, same as $font-size-base
   --pf-global--FontSize--sm: 13px;
 }
 
@@ -54,7 +53,9 @@ $table-border-color: $color-pf-black-200;
 
 $co-m-label-line-height: 20px;
 $pf-header-icon-fontsize: 16px; // Patternfly 4 default
-$co-side-nav-font-size: 16px; // Side nav section (sub-section set by body)
+// Manually set because our default font size is different than PF 4
+$co-side-nav-font-size: 15.75px; // Matches PF 4 --pf-c-nav__subnav__link--FontSize
+$co-side-nav-section-font-size: 18px; // Matches PF 4 --pf-c-nav__link--FontSize
 $co-m-catalog-tile-height: 100%;
 $co-m-catalog-tile-width: 260px;
 

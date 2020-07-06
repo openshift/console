@@ -123,7 +123,7 @@ const SyncedEditorField: React.FC<SyncedEditorFieldProps> = ({
         <Alert
           variant="default"
           title="Form view is disabled for this chart because the schema is not available"
-          action={<AlertActionCloseButton onClose={() => setDisabledFormAlert(false)} />}
+          actionClose={<AlertActionCloseButton onClose={() => setDisabledFormAlert(false)} />}
           isInline
         />
       )}

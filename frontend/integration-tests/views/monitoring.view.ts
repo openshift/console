@@ -73,7 +73,7 @@ export const getFirstRowAsText = () => {
 
 export const saveAsDefault = firstElementByTestID('save-as-default');
 export const sendResolvedAlerts = firstElementByTestID('send-resolved-alerts');
-export const showAdvancedConfiguration = $('button.pf-c-expandable__toggle');
+export const showAdvancedConfiguration = $('button.pf-c-expandable-section__toggle');
 export const defaultAlertmanagerYaml = Base64.encode(`"global":
   "resolve_timeout": "5m"
 "inhibit_rules":

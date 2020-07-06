@@ -620,7 +620,7 @@ export const EnvironmentPage = connect(stateToProps)(
                     className="co-alert"
                     variant="success"
                     title={success}
-                    action={<AlertActionCloseButton onClose={this.dismissSuccess} />}
+                    actionClose={<AlertActionCloseButton onClose={this.dismissSuccess} />}
                   />
                 )}
                 {!readOnly && (

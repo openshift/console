@@ -42,7 +42,7 @@ const PipelinesOverview: React.FC<PipelinesOverviewProps> = ({
       </SidebarSectionHeading>
       <ul className="list-group">
         <li className="list-group-item pipeline-overview">
-          <Flex breakpointMods={[{ modifier: 'justify-content-space-between' }] as any}>
+          <Flex justifyContent={{ default: 'justifyContentSpaceBetween' }}>
             <FlexItem>
               <ResourceLink
                 inline

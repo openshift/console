@@ -89,7 +89,7 @@ const HelmInstallUpgradeForm: React.FC<FormikProps<FormikValues> & HelmInstallUp
     <FlexForm onSubmit={handleSubmit}>
       <FormHeader title={title} helpText={formHelpText} marginBottom="lg" />
       <FormSection fullWidth>
-        <Grid gutter={'md'}>
+        <Grid hasGutter>
           <GridItem xl={7} lg={8} md={12}>
             <InputField
               type={TextInputTypes.text}

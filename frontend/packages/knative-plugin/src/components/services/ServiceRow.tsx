@@ -39,7 +39,11 @@ const ServiceRow: RowFunction<ServiceKind> = ({ obj, index, key, style }) => {
       </TableData>
       <TableData className={cx(tableColumnClasses[2], 'co-break-word')}>
         {(obj.status && obj.status.url && (
-          <ExternalLink href={obj.status.url} text={obj.status.url} />
+          <ExternalLink
+            href={obj.status.url}
+            additionalClassName="co-external-link--block"
+            text={obj.status.url}
+          />
         )) ||
           '-'}
       </TableData>
