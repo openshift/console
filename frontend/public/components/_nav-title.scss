@@ -19,7 +19,8 @@
 }
 
 .co-m-nav-title {
-  padding: $grid-gutter-width ($grid-gutter-width / 2) 0;
+  margin-top: $grid-gutter-width;
+  padding: 0 ($grid-gutter-width / 2) 0;
   @media (min-width: $grid-float-breakpoint) {
     padding-left: $grid-gutter-width;
     padding-right: $grid-gutter-width;
@@ -40,6 +41,6 @@
   }
   // Positioned after --detail to take precedence, since they will be a siblings
   &--breadcrumbs {
-    padding-top: 0;
+    margin-top: 0;
   }
 }
