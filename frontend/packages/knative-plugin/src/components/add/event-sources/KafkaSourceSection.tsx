@@ -5,69 +5,49 @@ import { InputField, SelectInputField, SelectInputOption } from '@console/shared
 import { TextInputTypes } from '@patternfly/react-core';
 import KafkaSourceNetSection from './KafkaSourceNetSection';
 import ServiceAccountDropdown from '../../dropdowns/ServiceAccountDropdown';
-import { KafkaModel, KafkaTopicModel } from '../../../models';
-import { referenceForModel, K8sResourceKind } from '@console/internal/module/k8s';
+import { K8sResourceKind } from '@console/internal/module/k8s';
 import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
 import { getBootstrapServers } from '../../../utils/create-eventsources-utils';
+import { strimziResourcesWatcher } from '../../../utils/get-knative-resources';
 
 const KafkaSourceSection: React.FC = () => {
-  const [bootstrapServers, setBootstrapServers] = React.useState<SelectInputOption[]>([]);
-  const [bsPlaceholder, setBsPlaceholder] = React.useState<React.ReactNode>('');
-  const [kafkaTopics, setKafkaTopics] = React.useState<SelectInputOption[]>([]);
-  const [ktPlaceholder, setKtPlaceholder] = React.useState<React.ReactNode>('');
-
-  const memoResources = React.useMemo(
-    () => ({
-      kafka: {
-        isList: true,
-        kind: referenceForModel(KafkaModel),
-        optional: true,
-      },
-      kafkaTopic: {
-        isList: true,
-        kind: referenceForModel(KafkaTopicModel),
-        optional: true,
-      },
-    }),
-    [],
-  );
-  const { kafka, kafkaTopic } = useK8sWatchResources<{
+  const memoResources = React.useMemo(() => strimziResourcesWatcher(), []);
+  const { kafkas, kafkatopics } = useK8sWatchResources<{
     [key: string]: K8sResourceKind[];
   }>(memoResources);
 
-  React.useEffect(() => {
+  const [bootstrapServers, bsPlaceholder] = React.useMemo(() => {
     let bootstrapServersOptions: SelectInputOption[] = [];
     let placeholder: React.ReactNode = '';
-    if (kafka.loaded && !kafka.loadError) {
-      bootstrapServersOptions = !_.isEmpty(kafka.data)
-        ? _.map(getBootstrapServers(kafka.data), (bs) => ({
+    if (kafkas.loaded && !kafkas.loadError) {
+      bootstrapServersOptions = !_.isEmpty(kafkas.data)
+        ? _.map(getBootstrapServers(kafkas.data), (bs) => ({
             value: bs,
             disabled: false,
           }))
         : [
             {
-              value: 'No Bootstrapservers found',
+              value: 'No Bootstrap Servers found',
               disabled: true,
             },
           ];
-      placeholder = 'Add Bootstrapservers';
-    } else if (kafka.loadError) {
-      bootstrapServersOptions = [{ value: kafka.loadError?.message, disabled: true }];
-      placeholder = 'Error loading Bootstrapservers';
+      placeholder = 'Add Bootstrap Servers';
+    } else if (kafkas.loadError) {
+      bootstrapServersOptions = [{ value: kafkas.loadError?.message, disabled: true }];
+      placeholder = 'Error loading Bootstrap Servers';
     } else {
-      bootstrapServersOptions = [{ value: 'Loading Bootstrapservers...', disabled: true }];
+      bootstrapServersOptions = [{ value: 'Loading Bootstrap Servers...', disabled: true }];
       placeholder = '...';
     }
-    setBootstrapServers(bootstrapServersOptions);
-    setBsPlaceholder(placeholder);
-  }, [kafka.data, kafka.loaded, kafka.loadError]);
+    return [bootstrapServersOptions, placeholder];
+  }, [kafkas.data, kafkas.loaded, kafkas.loadError]);
 
-  React.useEffect(() => {
+  const [kafkaTopics, ktPlaceholder] = React.useMemo(() => {
     let topicsOptions: SelectInputOption[] = [];
     let placeholder: React.ReactNode = '';
-    if (kafkaTopic.loaded && !kafkaTopic.loadError) {
-      topicsOptions = !_.isEmpty(kafkaTopic.data)
-        ? _.map(kafkaTopic.data, (kt) => ({
+    if (kafkatopics.loaded && !kafkatopics.loadError) {
+      topicsOptions = !_.isEmpty(kafkatopics.data)
+        ? _.map(kafkatopics.data, (kt) => ({
             value: kt?.metadata.name,
             disabled: false,
           }))
@@ -78,23 +58,22 @@ const KafkaSourceSection: React.FC = () => {
             },
           ];
       placeholder = 'Add Topics';
-    } else if (kafkaTopic.loadError) {
-      topicsOptions = [{ value: kafkaTopic.loadError?.message, disabled: true }];
+    } else if (kafkatopics.loadError) {
+      topicsOptions = [{ value: kafkatopics.loadError?.message, disabled: true }];
       placeholder = 'Error loading Topics';
     } else {
       topicsOptions = [{ value: 'Loading Topics...', disabled: true }];
       placeholder = '...';
     }
-    setKafkaTopics(topicsOptions);
-    setKtPlaceholder(placeholder);
-  }, [kafkaTopic.data, kafkaTopic.loaded, kafkaTopic.loadError]);
+    return [topicsOptions, placeholder];
+  }, [kafkatopics.data, kafkatopics.loaded, kafkatopics.loadError]);
 
   return (
     <FormSection title="KafkaSource" extraMargin>
       <SelectInputField
         data-test-id="kafkasource-bootstrapservers-field"
         name="data.kafkasource.bootstrapServers"
-        label="Bootstrapservers"
+        label="Bootstrap Servers"
         options={bootstrapServers}
         placeholderText={bsPlaceholder}
         helpText="The address of the Kafka broker"
@@ -117,7 +96,7 @@ const KafkaSourceSection: React.FC = () => {
         data-test-id="kafkasource-consumergroup-field"
         type={TextInputTypes.text}
         name="data.kafkasource.consumerGroup"
-        label="ConsumerGroup"
+        label="Consumer Group"
         helpText="A group that tracks maximum offset consumed"
         required
       />

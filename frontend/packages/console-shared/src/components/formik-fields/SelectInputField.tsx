@@ -5,7 +5,6 @@ import { FormGroup, Select, SelectVariant, SelectOption } from '@patternfly/reac
 import { getFieldId } from './field-utils';
 import { SelectInputFieldProps, SelectInputOption } from './field-types';
 import { useFormikValidationFix } from '../../hooks';
-import './SelectInputField.scss';
 
 const SelectInputField: React.FC<SelectInputFieldProps> = ({
   name,
@@ -19,7 +18,7 @@ const SelectInputField: React.FC<SelectInputFieldProps> = ({
 }) => {
   const [field, { touched, error }] = useField<string[]>(name);
   const { setFieldValue, setFieldTouched } = useFormikContext<FormikValues>();
-  const [isExpanded, setIsExpanded] = React.useState<boolean>(false);
+  const [isOpen, setIsOpen] = React.useState<boolean>(false);
   const [newOptions, setNewOptions] = React.useState<SelectInputOption[]>([]);
   const fieldId = getFieldId(name, 'select-input');
   const isValid = !(touched && error);
@@ -28,7 +27,7 @@ const SelectInputField: React.FC<SelectInputFieldProps> = ({
   useFormikValidationFix(field.value);
 
   const onToggle = () => {
-    setIsExpanded(!isExpanded);
+    setIsOpen(!isOpen);
   };
 
   const onSelect = (event, selection: string) => {
@@ -53,7 +52,7 @@ const SelectInputField: React.FC<SelectInputFieldProps> = ({
   return (
     <FormGroup
       fieldId={fieldId}
-      isValid={isValid}
+      validated={isValid ? 'default' : 'error'}
       label={label}
       helperText={helpText}
       helperTextInvalid={errorMessage}
@@ -64,7 +63,7 @@ const SelectInputField: React.FC<SelectInputFieldProps> = ({
         onToggle={onToggle}
         onSelect={onSelect}
         onClear={onClearSelection}
-        isExpanded={isExpanded}
+        isOpen={isOpen}
         selections={field.value}
         placeholderText={placeholderText}
         isCreatable={isCreatable}

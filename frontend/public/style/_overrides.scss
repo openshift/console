@@ -474,3 +474,7 @@ button.pf-c-dropdown__menu-item.pf-m-disabled {
   // enables tooltips for disabled menu items
   pointer-events: auto;
 }
+
+.pf-c-select__menu {
+  list-style-type: none;
+}

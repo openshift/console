@@ -279,6 +279,7 @@ export const KafkaModel: K8sKind = {
   abbr: 'K',
   namespaced: true,
   crd: true,
+  color: knativeEventingColor.value,
 };
 
 export const KafkaTopicModel: K8sKind = {
@@ -292,4 +293,5 @@ export const KafkaTopicModel: K8sKind = {
   abbr: 'KT',
   namespaced: true,
   crd: true,
+  color: knativeEventingColor.value,
 };
