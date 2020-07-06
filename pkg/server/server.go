@@ -103,13 +103,14 @@ type Server struct {
 	LoadTestFactor       int
 	DexClient            api.DexClient
 	// A client with the correct TLS setup for communicating with the API server.
-	K8sClient                *http.Client
-	PrometheusProxyConfig    *proxy.Config
-	ThanosProxyConfig        *proxy.Config
-	ThanosTenancyProxyConfig *proxy.Config
-	AlertManagerProxyConfig  *proxy.Config
-	MeteringProxyConfig      *proxy.Config
-	TerminalProxyTLSConfig   *tls.Config
+	K8sClient                        *http.Client
+	PrometheusProxyConfig            *proxy.Config
+	ThanosProxyConfig                *proxy.Config
+	ThanosTenancyProxyConfig         *proxy.Config
+	ThanosTenancyProxyForRulesConfig *proxy.Config
+	AlertManagerProxyConfig          *proxy.Config
+	MeteringProxyConfig              *proxy.Config
+	TerminalProxyTLSConfig           *tls.Config
 	// A lister for resource listing of a particular kind
 	MonitoringDashboardConfigMapLister ResourceLister
 	KnativeEventSourceCRDLister        ResourceLister
@@ -128,7 +129,7 @@ func (s *Server) authDisabled() bool {
 }
 
 func (s *Server) prometheusProxyEnabled() bool {
-	return s.PrometheusProxyConfig != nil && s.ThanosTenancyProxyConfig != nil
+	return s.PrometheusProxyConfig != nil && s.ThanosTenancyProxyConfig != nil && s.ThanosTenancyProxyForRulesConfig != nil
 }
 
 func (s *Server) alertManagerProxyEnabled() bool {
@@ -270,11 +271,13 @@ func (s *Server) HTTPHandler() http.Handler {
 
 			tenancyQuerySourcePath      = prometheusTenancyProxyEndpoint + "/api/v1/query"
 			tenancyQueryRangeSourcePath = prometheusTenancyProxyEndpoint + "/api/v1/query_range"
+			tenancyRulesSourcePath      = prometheusTenancyProxyEndpoint + "/api/v1/rules"
 			tenancyTargetAPIPath        = prometheusTenancyProxyEndpoint + "/api/"
 
-			prometheusProxy    = proxy.NewProxy(s.PrometheusProxyConfig)
-			thanosProxy        = proxy.NewProxy(s.ThanosProxyConfig)
-			thanosTenancyProxy = proxy.NewProxy(s.ThanosTenancyProxyConfig)
+			prometheusProxy            = proxy.NewProxy(s.PrometheusProxyConfig)
+			thanosProxy                = proxy.NewProxy(s.ThanosProxyConfig)
+			thanosTenancyProxy         = proxy.NewProxy(s.ThanosTenancyProxyConfig)
+			thanosTenancyForRulesProxy = proxy.NewProxy(s.ThanosTenancyProxyForRulesConfig)
 		)
 
 		// global label, query, and query_range requests have to be proxied via thanos
@@ -322,6 +325,14 @@ func (s *Server) HTTPHandler() http.Handler {
 			authHandlerWithUser(func(user *auth.User, w http.ResponseWriter, r *http.Request) {
 				r.Header.Set("Authorization", fmt.Sprintf("Bearer %s", user.Token))
 				thanosTenancyProxy.ServeHTTP(w, r)
+			})),
+		)
+		// tenancy rules have to be proxied via thanos
+		handle(tenancyRulesSourcePath, http.StripPrefix(
+			proxy.SingleJoiningSlash(s.BaseURL.Path, tenancyTargetAPIPath),
+			authHandlerWithUser(func(user *auth.User, w http.ResponseWriter, r *http.Request) {
+				r.Header.Set("Authorization", fmt.Sprintf("Bearer %s", user.Token))
+				thanosTenancyForRulesProxy.ServeHTTP(w, r)
 			})),
 		)
 	}

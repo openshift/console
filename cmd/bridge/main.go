@@ -39,9 +39,13 @@ const (
 	// This is only accessible in-cluster. This is used for non-tenant global (alerting) rules requests.
 	openshiftPrometheusHost = "prometheus-k8s.openshift-monitoring.svc:9091"
 
-	// Well-known location of the tenant aware Thanos service for OpenShift. This is only accessible in-cluster.
+	// Well-known location of the tenant aware Thanos service for OpenShift exposing the query and query_range endpoints. This is only accessible in-cluster.
 	// Thanos proxies requests to both cluster monitoring and user workload monitoring prometheus instances.
 	openshiftThanosTenancyHost = "thanos-querier.openshift-monitoring.svc:9092"
+
+	// Well-known location of the tenant aware Thanos service for OpenShift exposing the rules endpoint. This is only accessible in-cluster.
+	// Thanos proxies requests to the cluster monitoring and user workload monitoring prometheus instances as well as Thanos ruler instances.
+	openshiftThanosTenancyForRulesHost = "thanos-querier.openshift-monitoring.svc:9093"
 
 	// Well-known location of the Thanos service for OpenShift. This is only accessible in-cluster.
 	// This is used for non-tenant global query requests
@@ -334,6 +338,11 @@ func main() {
 				HeaderBlacklist: []string{"Cookie", "X-CSRFToken"},
 				Endpoint:        &url.URL{Scheme: "https", Host: openshiftThanosTenancyHost, Path: "/api"},
 			}
+			srv.ThanosTenancyProxyForRulesConfig = &proxy.Config{
+				TLSClientConfig: serviceProxyTLSConfig,
+				HeaderBlacklist: []string{"Cookie", "X-CSRFToken"},
+				Endpoint:        &url.URL{Scheme: "https", Host: openshiftThanosTenancyForRulesHost, Path: "/api"},
+			}
 			srv.AlertManagerProxyConfig = &proxy.Config{
 				TLSClientConfig: serviceProxyTLSConfig,
 				HeaderBlacklist: []string{"Cookie", "X-CSRFToken"},
@@ -371,6 +380,11 @@ func main() {
 			offClusterThanosURL := bridge.ValidateFlagIsURL("k8s-mode-off-cluster-thanos", *fK8sModeOffClusterThanos)
 			offClusterThanosURL.Path = "/api"
 			srv.ThanosTenancyProxyConfig = &proxy.Config{
+				TLSClientConfig: serviceProxyTLSConfig,
+				HeaderBlacklist: []string{"Cookie", "X-CSRFToken"},
+				Endpoint:        offClusterThanosURL,
+			}
+			srv.ThanosTenancyProxyForRulesConfig = &proxy.Config{
 				TLSClientConfig: serviceProxyTLSConfig,
 				HeaderBlacklist: []string{"Cookie", "X-CSRFToken"},
 				Endpoint:        offClusterThanosURL,
