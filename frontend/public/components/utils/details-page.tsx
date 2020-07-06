@@ -12,6 +12,12 @@ import { Selector } from './selector';
 import { Timestamp } from './timestamp';
 import { useAccessReview } from './rbac';
 import { K8sResourceKind, modelFor, referenceFor, Toleration } from '../../module/k8s';
+import { labelsModal } from '../modals';
+
+const editLabelsModal = (e, props) => {
+  e.preventDefault();
+  labelsModal(props);
+};
 
 export const pluralize = (
   i: number,
@@ -72,7 +78,14 @@ export const ResourceSummary: React.SFC<ResourceSummaryProps> = ({
       )}
       {type ? <dt>Type</dt> : null}
       {type ? <dd>{type}</dd> : null}
-      <DetailsItem label="Labels" obj={resource} path="metadata.labels">
+      <DetailsItem
+        label="Labels"
+        obj={resource}
+        path="metadata.labels"
+        valueClassName="details-item__value--labels"
+        onEdit={(e) => editLabelsModal(e, { resource, kind: model })}
+        editAsGroup
+      >
         <LabelList kind={reference} labels={metadata.labels} />
       </DetailsItem>
       {showPodSelector && (
