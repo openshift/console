@@ -21,6 +21,7 @@ const NODE_ENV = process.env.NODE_ENV || 'development';
 const HOT_RELOAD = process.env.HOT_RELOAD || 'true';
 const CHECK_CYCLES = process.env.CHECK_CYCLES || 'false';
 const IS_WDS = process.env.WEBPACK_DEV_SERVER;
+const WDS_PORT = 8080;
 
 /* Helpers */
 const extractCSS = new MiniCssExtractPlugin({ filename: 'app-bundle.[contenthash].css' });
@@ -45,6 +46,7 @@ const config: Configuration = {
     inline: HOT_RELOAD !== 'false',
     contentBase: false,
     transportMode: 'ws',
+    port: WDS_PORT,
   },
   resolve: {
     extensions: ['.glsl', '.ts', '.tsx', '.js', '.jsx'],
@@ -179,7 +181,15 @@ const config: Configuration = {
     }),
     new webpack.IgnorePlugin(/prettier/),
     extractCSS,
-    ...(IS_WDS ? [new ReactRefreshWebpackPlugin()] : []),
+    ...(IS_WDS
+      ? [
+          new ReactRefreshWebpackPlugin({
+            overlay: {
+              sockPort: WDS_PORT,
+            },
+          }),
+        ]
+      : []),
   ],
   devtool: 'cheap-module-source-map',
   stats: 'minimal',
