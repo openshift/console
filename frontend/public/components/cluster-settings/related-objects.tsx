@@ -1,6 +1,7 @@
 import * as React from 'react';
 import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
+import '@patternfly/patternfly/patternfly-addons.css';
 import { Table, TableRow, TableData, RowFunctionArgs } from '../factory';
 import {
   referenceForModel,
@@ -10,7 +11,12 @@ import {
 } from '../../module/k8s';
 import { ResourceLink, EmptyBox } from '../utils';
 
-const tableColumnClasses = ['', classNames('pf-m-hidden', 'pf-m-visible-on-sm'), ''];
+const tableColumnClasses = [
+  '', // Name
+  classNames('pf-m-hidden', 'pf-m-visible-on-sm'), // Resource
+  classNames('pf-m-hidden', 'pf-m-visible-on-md'), // Group
+  '', // NS
+];
 
 const Header = () => [
   {
@@ -26,10 +32,16 @@ const Header = () => [
     props: { className: tableColumnClasses[1] },
   },
   {
+    title: 'Group',
+    sortField: 'group',
+    transforms: [sortable],
+    props: { className: tableColumnClasses[2] },
+  },
+  {
     title: 'Namespace',
     sortField: 'namespace',
     transforms: [sortable],
-    props: { className: tableColumnClasses[2] },
+    props: { className: tableColumnClasses[3] },
   },
 ];
 
@@ -43,8 +55,12 @@ const Row: React.FC<RowFunctionArgs> = ({ obj, index, key, style, customData: { 
       <TableData className={tableColumnClasses[0]}>
         {gsv ? <ResourceLink kind={gsv} name={name} namespace={namespace} /> : name}
       </TableData>
-      <TableData className={tableColumnClasses[1]}>{resource}</TableData>
-      <TableData className={tableColumnClasses[2]}>
+      <TableData className={tableColumnClasses[1]}>
+        {resource}
+        {group && <div className="pf-u-display-none-on-md text-muted">{group}</div>}
+      </TableData>
+      <TableData className={tableColumnClasses[2]}>{group || '-'}</TableData>
+      <TableData className={tableColumnClasses[3]}>
         {namespace ? <ResourceLink kind="Namespace" name={namespace} /> : '-'}
       </TableData>
     </TableRow>
