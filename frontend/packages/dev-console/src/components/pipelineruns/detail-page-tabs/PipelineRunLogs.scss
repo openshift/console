@@ -17,9 +17,15 @@
     text-overflow: ellipsis;
   }
   &__log {
-    margin-top: var(--pf-global--spacer--lg);
+    height: 100%;
+    padding-top: var(--pf-global--spacer--md);
+  }
+  &__logtext {
+    position: relative;
     background: #030303; // pod log background color
     color: var(--pf-global--BackgroundColor--100);
+    height: 100%;
+    padding: var(--pf-global--spacer--sm) var(--pf-global--spacer--md);
   }
   &__tasklist {
     max-width: 30%;
