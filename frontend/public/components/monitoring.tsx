@@ -1162,12 +1162,12 @@ const RulesPage_ = (props) => (
     {...props}
     Header={ruleTableHeader}
     kindPlural="Alerting Rules"
-    nameFilterID="alerting-rule-name"
     labelFilter="alerts"
+    labelPath="labels"
+    nameFilterID="alerting-rule-name"
     reduxID="monitoringRules"
     Row={RuleTableRow}
     rowFilter={rulesRowFilter}
-    labelPath="labels"
   />
 );
 const RulesPage = withFallback(connect(rulesToProps)(RulesPage_));
