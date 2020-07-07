@@ -253,6 +253,13 @@ export const CurrentVersionHeader: React.SFC<CurrentVersionProps> = ({ cv }) => 
   );
 };
 
+export const ChannelDocLink: React.FC<{}> = () => (
+  <ExternalLink
+    href={`${openshiftHelpBase}updating/updating-cluster-between-minor.html#understanding-upgrade-channels_updating-cluster-between-minor`}
+    text="Learn more about OpenShift update channels"
+  />
+);
+
 const ChannelHeader: React.FC<{}> = () => {
   return (
     <Popover
@@ -262,12 +269,9 @@ const ChannelHeader: React.FC<{}> = () => {
           <p>
             Channels help to control the pace of updates and recommend the appropriate release
             versions. Update channels are tied to a minor version of OpenShift Container Platform,
-            for example 4.5
+            for example 4.5.
           </p>
-          <ExternalLink
-            href={`${openshiftHelpBase}updating/updating-cluster-between-minor.html#understanding-upgrade-channels_updating-cluster-between-minor`}
-            text="Learn more about OpenShift update channels"
-          />
+          <ChannelDocLink />
         </>
       }
     >
