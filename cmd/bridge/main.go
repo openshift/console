@@ -574,6 +574,24 @@ func main() {
 		knative.EventSourceFilter,
 	)
 
+	srv.KnativeChannelCRDLister = server.NewResourceLister(
+		resourceListerToken,
+		&url.URL{
+			Scheme: k8sEndpoint.Scheme,
+			Host:   k8sEndpoint.Host,
+			Path:   "/apis/apiextensions.k8s.io/v1/customresourcedefinitions",
+			RawQuery: url.Values{
+				"labelSelector": {"duck.knative.dev/addressable=true,messaging.knative.dev/subscribable=true"},
+			}.Encode(),
+		},
+		&http.Client{
+			Transport: &http.Transport{
+				TLSClientConfig: srv.K8sProxyConfig.TLSClientConfig,
+			},
+		},
+		knative.ChannelFilter,
+	)
+
 	listenURL := bridge.ValidateFlagIsURL("listen", *fListen)
 	switch listenURL.Scheme {
 	case "http":

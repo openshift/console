@@ -26,3 +26,18 @@ func EventSourceFilter(w http.ResponseWriter, r *http.Response) {
 		serverutils.SendResponse(w, http.StatusInternalServerError, serverutils.ApiError{Err: err.Error()})
 	}
 }
+
+// ChannelFilter shall filter partial metadata from knative channel CRDs before propagating
+func ChannelFilter(w http.ResponseWriter, r *http.Response) {
+	var channelList ChannelList
+
+	if err := json.NewDecoder(r.Body).Decode(&channelList); err != nil {
+		plog.Errorf("Channel CRD response deserialization failed: %s", err)
+		serverutils.SendResponse(w, http.StatusInternalServerError, serverutils.ApiError{Err: err.Error()})
+	}
+
+	if err := json.NewEncoder(w).Encode(channelList); err != nil {
+		plog.Errorf("Channel CRD response serialization failed: %s", err)
+		serverutils.SendResponse(w, http.StatusInternalServerError, serverutils.ApiError{Err: err.Error()})
+	}
+}

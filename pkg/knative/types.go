@@ -40,3 +40,6 @@ type EventSourceList struct {
 	// items list individual EventSourceDefinition objects
 	Items []EventSourceDefinition `json:"items" protobuf:"bytes,2,rep,name=items"`
 }
+
+// ChannelList is a list of CRD per Channel
+type ChannelList = EventSourceList
