@@ -44,6 +44,7 @@ import {
   ExternalLink,
   Firehose,
   HorizontalNav,
+  openshiftHelpBase,
   ResourceLink,
   resourcePathFromModel,
   SectionHeading,
@@ -264,7 +265,7 @@ const ChannelHeader: React.FC<{}> = () => {
             for example 4.5
           </p>
           <ExternalLink
-            href="https://docs.openshift.com/container-platform/latest/updating/updating-cluster-between-minor.html#understanding-upgrade-channels_updating-cluster-between-minor"
+            href={`${openshiftHelpBase}updating/updating-cluster-between-minor.html#understanding-upgrade-channels_updating-cluster-between-minor`}
             text="Learn more about OpenShift update channels"
           />
         </>
