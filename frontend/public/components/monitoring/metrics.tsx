@@ -59,6 +59,7 @@ import {
   useSafeFetch,
 } from '../utils';
 import { setAllQueryArguments } from '../utils/router';
+import IntervalDropdown from './poll-interval-dropdown';
 import { colors, Error, QueryObj, QueryBrowser } from './query-browser';
 
 const operators = [
@@ -571,6 +572,7 @@ const QueryKebab = connect(
 const queryTableStateToProps = ({ UI }: RootState, { index }) => ({
   isEnabled: UI.getIn(['queryBrowser', 'queries', index, 'isEnabled']),
   isExpanded: UI.getIn(['queryBrowser', 'queries', index, 'isExpanded']),
+  pollInterval: UI.getIn(['queryBrowser', 'pollInterval']),
   query: UI.getIn(['queryBrowser', 'queries', index, 'query']),
   series: UI.getIn(['queryBrowser', 'queries', index, 'series']),
 });
@@ -614,6 +616,7 @@ const QueryTable_: React.FC<QueryTableProps> = ({
   isEnabled,
   isExpanded,
   namespace,
+  pollInterval = 15 * 1000,
   query,
   series,
 }) => {
@@ -641,7 +644,7 @@ const QueryTable_: React.FC<QueryTableProps> = ({
     }
   };
 
-  usePoll(tick, 15 * 1000, namespace, query);
+  usePoll(tick, pollInterval, namespace, query);
 
   React.useEffect(() => {
     setData(undefined);
@@ -967,6 +970,15 @@ const TechPreview = () => (
   </span>
 );
 
+const PollIntervalDropdown = connect(
+  ({ UI }: RootState) => ({
+    interval: UI.getIn(['queryBrowser', 'pollInterval']),
+  }),
+  {
+    setInterval: UIActions.queryBrowserSetPollInterval,
+  },
+)(IntervalDropdown);
+
 const QueryBrowserPage_: React.FC<QueryBrowserPageProps> = ({ deleteAll, namespace }) => {
   // Clear queries on unmount
   React.useEffect(() => deleteAll, [deleteAll]);
@@ -983,6 +995,7 @@ const QueryBrowserPage_: React.FC<QueryBrowserPageProps> = ({ deleteAll, namespa
             {namespace ? <TechPreview /> : <HeaderPrometheusLink />}
           </span>
           <div className="co-actions">
+            <PollIntervalDropdown />
             <MetricsActionsMenu />
           </div>
         </h1>
@@ -1079,6 +1092,7 @@ type QueryTableProps = {
   isEnabled: boolean;
   isExpanded: boolean;
   namespace?: string;
+  pollInterval: number;
   query: string;
   series: PrometheusLabels[];
 };
