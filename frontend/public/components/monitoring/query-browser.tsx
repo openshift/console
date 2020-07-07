@@ -497,8 +497,8 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
   isStack = false,
   namespace,
   patchQuery,
-  pollInterval,
   queries,
+  tickInterval,
   timespan,
 }) => {
   // For the default time span, use the first of the suggested span options that is at least as long
@@ -611,9 +611,14 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
 
   // Don't poll if an end time was set (because the latest data is not displayed) or if the graph is
   // hidden. Otherwise use a polling interval relative to the graph's timespan.
-  const tickInterval =
-    pollInterval === undefined ? Math.max(span / 120, minPollInterval) : pollInterval;
-  const delay = endTime || hideGraphs ? null : tickInterval;
+  let delay;
+  if (endTime || hideGraphs || tickInterval === null) {
+    delay = null;
+  } else if (tickInterval > 0) {
+    delay = tickInterval;
+  } else {
+    delay = Math.max(span / 120, minPollInterval);
+  }
 
   const queriesKey = _.reject(queries, _.isEmpty).join();
   usePoll(tick, delay, endTime, filterLabels, namespace, queriesKey, samples, span);
@@ -735,9 +740,15 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
   );
 };
 export const QueryBrowser = withFallback(
-  connect(({ UI }: RootState) => ({ hideGraphs: !!UI.getIn(['monitoring', 'hideGraphs']) }), {
-    patchQuery: UIActions.queryBrowserPatchQuery,
-  })(QueryBrowser_),
+  connect(
+    ({ UI }: RootState, { pollInterval }: { pollInterval?: number }) => ({
+      hideGraphs: !!UI.getIn(['monitoring', 'hideGraphs']),
+      tickInterval: pollInterval ?? UI.getIn(['queryBrowser', 'pollInterval']),
+    }),
+    {
+      patchQuery: UIActions.queryBrowserPatchQuery,
+    },
+  )(QueryBrowser_),
 );
 
 type AxisDomain = [number, number];
@@ -804,6 +815,7 @@ export type QueryBrowserProps = {
   patchQuery: PatchQuery;
   pollInterval?: number;
   queries: string[];
+  tickInterval: number;
   timespan?: number;
 };
 

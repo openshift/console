@@ -20,6 +20,7 @@ import { RootState } from '../../../redux';
 import { getPrometheusURL, PrometheusEndpoint } from '../../graphs/helpers';
 import { ExternalLink, history, LoadingInline, useSafeFetch } from '../../utils';
 import { formatPrometheusDuration, parsePrometheusDuration } from '../../utils/datetime';
+import IntervalDropdown from '../poll-interval-dropdown';
 import BarChart from './bar-chart';
 import Graph from './graph';
 import SingleStat from './single-stat';
@@ -238,47 +239,14 @@ export const TimespanDropdown = connect(
   },
 )(TimespanDropdown_);
 
-const pollOffText = 'Off';
-const pollIntervalOptions = {
-  [pollOffText]: pollOffText,
-  '15s': '15 seconds',
-  '30s': '30 seconds',
-  '1m': '1 minute',
-  '5m': '5 minutes',
-  '15m': '15 minutes',
-  '30m': '30 minutes',
-  '1h': '1 hour',
-  '2h': '2 hours',
-  '1d': '1 day',
-};
-
-const PollIntervalDropdown_: React.FC<PollIntervalDropdownProps> = ({
-  pollInterval,
-  setPollInterval,
-}) => {
-  const onChange = React.useCallback(
-    (v: string) => setPollInterval(v === pollOffText ? null : parsePrometheusDuration(v)),
-    [setPollInterval],
-  );
-
-  return (
-    <VariableDropdown
-      items={pollIntervalOptions}
-      label="Refresh Interval"
-      onChange={onChange}
-      selectedKey={pollInterval === null ? pollOffText : formatPrometheusDuration(pollInterval)}
-    />
-  );
-};
-
 export const PollIntervalDropdown = connect(
   ({ UI }: RootState) => ({
-    pollInterval: UI.getIn(['monitoringDashboards', 'pollInterval']),
+    interval: UI.getIn(['monitoringDashboards', 'pollInterval']),
   }),
   {
-    setPollInterval: UIActions.monitoringDashboardsSetPollInterval,
+    setInterval: UIActions.monitoringDashboardsSetPollInterval,
   },
-)(PollIntervalDropdown_);
+)(IntervalDropdown);
 
 // Matches Prometheus labels surrounded by {{ }} in the graph legend label templates
 const legendTemplateOptions = { interpolate: /{{([a-zA-Z_][a-zA-Z0-9_]*)}}/g };
@@ -523,7 +491,10 @@ const MonitoringDashboardsPage_: React.FC<MonitoringDashboardsPageProps> = ({
           </h1>
           <div className="monitoring-dashboards__options">
             <TimespanDropdown />
-            <PollIntervalDropdown />
+            <div className="form-group monitoring-dashboards__dropdown-wrap">
+              <label className="monitoring-dashboards__dropdown-title">Refresh Interval</label>
+              <PollIntervalDropdown />
+            </div>
           </div>
         </div>
         <div className="monitoring-dashboards__variables">
@@ -611,11 +582,6 @@ type AllVariableDropdownsProps = {
 type TimespanDropdownProps = {
   timespan: number;
   setTimespan: (v: number) => never;
-};
-
-type PollIntervalDropdownProps = {
-  pollInterval: number;
-  setPollInterval: (v: number) => never;
 };
 
 type CardBodyProps = {

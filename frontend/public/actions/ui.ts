@@ -46,6 +46,7 @@ export enum ActionType {
   QueryBrowserRunQueries = 'queryBrowserRunQueries',
   QueryBrowserSetAllExpanded = 'queryBrowserSetAllExpanded',
   QueryBrowserSetMetrics = 'queryBrowserSetMetrics',
+  QueryBrowserSetPollInterval = 'queryBrowserSetPollInterval',
   QueryBrowserToggleIsEnabled = 'queryBrowserToggleIsEnabled',
   QueryBrowserToggleSeries = 'queryBrowserToggleSeries',
   SetClusterID = 'setClusterID',
@@ -347,6 +348,8 @@ export const queryBrowserSetAllExpanded = (isExpanded: boolean) => {
 };
 export const queryBrowserSetMetrics = (metrics: string[]) =>
   action(ActionType.QueryBrowserSetMetrics, { metrics });
+export const queryBrowserSetPollInterval = (pollInterval: number) =>
+  action(ActionType.QueryBrowserSetPollInterval, { pollInterval });
 export const queryBrowserToggleIsEnabled = (index: number) =>
   action(ActionType.QueryBrowserToggleIsEnabled, { index });
 export const queryBrowserToggleSeries = (index: number, labels: { [key: string]: unknown }) => {
@@ -402,6 +405,7 @@ const uiActions = {
   queryBrowserRunQueries,
   queryBrowserSetAllExpanded,
   queryBrowserSetMetrics,
+  queryBrowserSetPollInterval,
   queryBrowserToggleIsEnabled,
   queryBrowserToggleSeries,
   setConsoleLinks,

@@ -111,6 +111,7 @@ export default (state: UIState, action: UIAction): UIState => {
       }),
       queryBrowser: ImmutableMap({
         metrics: [],
+        pollInterval: null,
         queries: ImmutableList([newQueryBrowserQuery()]),
       }),
       pinnedResources,
@@ -300,6 +301,9 @@ export default (state: UIState, action: UIAction): UIState => {
     }
     case ActionType.QueryBrowserSetMetrics:
       return state.setIn(['queryBrowser', 'metrics'], action.payload.metrics);
+
+    case ActionType.QueryBrowserSetPollInterval:
+      return state.setIn(['queryBrowser', 'pollInterval'], action.payload.pollInterval);
 
     case ActionType.QueryBrowserToggleIsEnabled: {
       const query = state.getIn(['queryBrowser', 'queries', action.payload.index]);
