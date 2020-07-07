@@ -17,20 +17,6 @@ describe('getDefaultPerspective', () => {
     expect(getDefaultPerspective()).toBeUndefined();
   });
 
-  it('should default to perspective extension marked default', () => {
-    // return Perspectives extension with one marked as the default
-    spyOn(pluginStore, 'getAllExtensions').and.returnValue([
-      {
-        type: 'Perspective',
-        properties: {
-          id: 'admin',
-          default: true,
-        },
-      } as Perspective,
-    ]);
-    expect(getDefaultPerspective()).toBe('admin');
-  });
-
   it('should default to localStorage if perspective is a valid extension', () => {
     // return Perspectives extension whose id matches that in the localStorage
     spyOn(pluginStore, 'getAllExtensions').and.returnValue([

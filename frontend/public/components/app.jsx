@@ -20,6 +20,8 @@ import { receivedResources, watchAPIServices } from '../actions/k8s';
 // cloud shell imports must come later than features
 import CloudShell from '@console/app/src/components/cloud-shell/CloudShell';
 import CloudShellTab from '@console/app/src/components/cloud-shell/CloudShellTab';
+import DetectPerspective from '@console/app/src/components/detect-perspective/DetectPerspective';
+
 const consoleLoader = () =>
   import(
     '@console/kubevirt-plugin/src/components/connected-vm-console/vm-console-page' /* webpackChunkName: "kubevirt" */
@@ -130,7 +132,7 @@ class App extends React.PureComponent {
     const { productName } = getBrandingDetails();
 
     return (
-      <>
+      <DetectPerspective>
         <Helmet titleTemplate={`%s · ${productName}`} defaultTitle={productName} />
         <ConsoleNotifier location="BannerTop" />
         <Page
@@ -152,7 +154,7 @@ class App extends React.PureComponent {
         </Page>
         <CloudShell />
         <ConsoleNotifier location="BannerBottom" />
-      </>
+      </DetectPerspective>
     );
   }
 }
