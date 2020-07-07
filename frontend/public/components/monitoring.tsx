@@ -993,6 +993,7 @@ const HeaderAlertmanagerLink = ({ path }) =>
   );
 
 const alertsRowFilter: RowFilter = {
+  defaultSelected: [AlertStates.Firing],
   type: 'alert-state',
   filterGroupName: 'Alert',
   reducer: alertState,
@@ -1173,6 +1174,7 @@ const RulesPage_ = (props) => (
 const RulesPage = withFallback(connect(rulesToProps)(RulesPage_));
 
 const silencesRowFilter: RowFilter = {
+  defaultSelected: [SilenceStates.Active, SilenceStates.Pending],
   type: 'silence-state',
   filterGroupName: 'Silence',
   reducer: silenceState,

@@ -235,6 +235,14 @@ const FilterToolbar_: React.FC<FilterToolbarProps & RouteComponentProps> = (prop
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // Default filters
+  React.useEffect(() => {
+    if (_.isEmpty(selectedRowFilters)) {
+      rowFilters.forEach((filter) => updateRowFilterSelected(filter.defaultSelected));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const switchFilter = (type: FilterType) => {
     setFilterType(FilterType[type]);
     setInputText(nameFilter && FilterType[type] === FilterType.NAME ? nameFilter : '');
@@ -343,6 +351,7 @@ type FilterToolbarProps = {
 };
 
 export type RowFilter = {
+  defaultSelected?: string[];
   filterGroupName: string;
   type: string;
   items?: {
