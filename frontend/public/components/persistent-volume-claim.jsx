@@ -109,7 +109,7 @@ PVCTableHeader.displayName = 'PVCTableHeader';
 const kind = 'PersistentVolumeClaim';
 
 const mapStateToProps = ({ UI }, { obj }) => ({
-  metrics: UI.getIn(['metrics', 'pvc', 'usedCapacity', getNamespace(obj), getName(obj)]),
+  metrics: UI.getIn(['metrics', 'pvc'])?.usedCapacity?.[getNamespace(obj)]?.[getName(obj)],
 });
 
 const PVCTableRow = connect(mapStateToProps)(({ obj, index, key, style, metrics }) => {
