@@ -11,6 +11,7 @@ import {
   DEFAULT_CELL_HEIGHT,
   OVERSCAN_ROW_COUNT,
   HEADER_FIXED_HEIGHT,
+  ESTIMATED_ROW_SIZE,
 } from './const';
 import { CellMeasurementContext } from './utils';
 
@@ -31,6 +32,7 @@ type VirtualizedGridProps = {
   celldefaultHeight?: number;
   overscanRowCount?: number;
   headerHeight?: number;
+  estimatedCellHeight?: number;
 };
 
 const VirtualizedGrid: React.FC<VirtualizedGridProps> = ({
@@ -43,6 +45,7 @@ const VirtualizedGrid: React.FC<VirtualizedGridProps> = ({
   celldefaultHeight = DEFAULT_CELL_HEIGHT,
   overscanRowCount = OVERSCAN_ROW_COUNT,
   headerHeight = HEADER_FIXED_HEIGHT,
+  estimatedCellHeight = ESTIMATED_ROW_SIZE,
 }) => {
   const cache: CellMeasurerCache = new CellMeasurerCache({
     defaultHeight: celldefaultHeight,
@@ -51,7 +54,7 @@ const VirtualizedGrid: React.FC<VirtualizedGridProps> = ({
   });
   return (
     <CellMeasurementContext.Provider
-      value={{ cache, cellMargin, cellWidth, overscanRowCount, headerHeight }}
+      value={{ cache, cellMargin, cellWidth, overscanRowCount, headerHeight, estimatedCellHeight }}
     >
       <WithScrollContainer>
         {(scrollElement) => (

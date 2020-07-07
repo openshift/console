@@ -22,6 +22,7 @@ export type GridChildrenProps = {
   data: GridCellProps;
   columnCount: number;
   items: CellItem[];
+  rowCount: number;
 };
 
 export type CellSize = {

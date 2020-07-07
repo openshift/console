@@ -1,7 +1,6 @@
-import { useCallback, createContext } from 'react';
-import { defaultOverscanIndicesGetter, CellMeasurerCache } from 'react-virtualized';
-import { GroupedItems, CellItem, CellSize } from './types';
-import { IDEAL_SPACE_BW_TILES } from './const';
+import { createContext } from 'react';
+import { CellMeasurerCache } from 'react-virtualized';
+import { GroupedItems, CellItem } from './types';
 
 /**
  *
@@ -85,63 +84,13 @@ export const getItemsAndRowCount = (
     },
   );
 
-/**
- *
- * @param h height provided by cell renderer style prop
- * @param w width provided by cell renderer style prop
- * @param item item to render in cell
- *
- * calculate the height and width of rendered cell
- */
-export const getHeightAndWidthOfCell = (
-  h: string | number,
-  w: string | number,
-  item: CellItem,
-): CellSize => {
-  let height: string | number;
-  let width: string | number;
-  if (!item) return { height, width };
-  const isItemString = typeof item === 'string';
-
-  if (Number.isNaN(Number(h))) {
-    height = h;
-  } else {
-    height = isItemString ? h : Number(h) - IDEAL_SPACE_BW_TILES;
-  }
-
-  if (Number.isNaN(Number(w))) {
-    width = w;
-  } else {
-    width = isItemString ? '100%' : Number(w) - IDEAL_SPACE_BW_TILES;
-  }
-  return { height, width };
-};
-
-export const useOverScanIndicesGetter = () =>
-  useCallback((args) => {
-    const { scrollDirection, cellCount } = args;
-    const {
-      overscanStartIndex: startIndex,
-      overscanStopIndex: stopIndex,
-    } = defaultOverscanIndicesGetter(args);
-    return {
-      overscanStartIndex:
-        scrollDirection === 1 ? (startIndex === 0 ? 0 : startIndex - 1) : startIndex,
-      overscanStopIndex:
-        scrollDirection === -1
-          ? stopIndex === cellCount - 1
-            ? stopIndex
-            : stopIndex + 1
-          : stopIndex,
-    };
-  }, []);
-
 type CellMeasurementContextType = {
   cache?: CellMeasurerCache;
   cellWidth?: number;
   cellMargin?: number;
   overscanRowCount?: number;
   headerHeight?: number;
+  estimatedCellHeight?: number;
 };
 
 export const CellMeasurementContext = createContext<CellMeasurementContextType>({});

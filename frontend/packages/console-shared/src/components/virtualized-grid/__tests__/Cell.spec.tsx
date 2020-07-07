@@ -3,7 +3,6 @@ import { shallow } from 'enzyme';
 import Cell from '../Cell';
 import { RenderHeader, RenderCell } from '../types';
 import { GridCellProps, CellMeasurer } from 'react-virtualized';
-import { IDEAL_SPACE_BW_TILES } from '../const';
 
 describe('Grid-cell', () => {
   let data: GridCellProps;
@@ -32,14 +31,14 @@ describe('Grid-cell', () => {
 
   it('should return null when item is null', () => {
     const wrapper = shallow(
-      <Cell data={data} renderCell={renderCell} columnCount={1} items={[null]} />,
+      <Cell data={data} renderCell={renderCell} columnCount={1} rowCount={2} items={[null]} />,
     );
     expect(wrapper.isEmptyRender()).toBeTruthy();
   });
 
   it('should render cellMeasurer when item is not null', () => {
     const wrapper = shallow(
-      <Cell data={data} renderCell={renderCell} columnCount={1} items={[{}]} />,
+      <Cell data={data} renderCell={renderCell} columnCount={1} rowCount={2} items={[{}]} />,
     );
     expect(wrapper.find(CellMeasurer)).toHaveLength(1);
   });
@@ -50,6 +49,7 @@ describe('Grid-cell', () => {
         data={data}
         renderCell={renderCell}
         columnCount={1}
+        rowCount={2}
         items={['string']}
         renderHeader={renderHeader}
       />,
@@ -63,10 +63,10 @@ describe('Grid-cell', () => {
   it('should render Cell and not the Header when item is neither string nor null and height should be changed', () => {
     const item = { id: 1 };
     const wrapper = shallow(
-      <Cell data={data} renderCell={renderCell} columnCount={1} items={[item]} />,
+      <Cell data={data} renderCell={renderCell} columnCount={1} rowCount={2} items={[item]} />,
     );
-    expect(wrapper.find('div').prop('style').height).toBe(50 - IDEAL_SPACE_BW_TILES);
-    expect(wrapper.find('div').prop('style').width).toBe(50 - IDEAL_SPACE_BW_TILES);
+    expect(wrapper.find('div').prop('style').height).toBe(50);
+    expect(wrapper.find('div').prop('style').width).toBe(50);
     expect(renderCell).toHaveBeenCalledWith(item);
     expect(renderHeader).not.toHaveBeenCalled();
   });

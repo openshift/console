@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { Grid as GridComponent, GridCellProps } from 'react-virtualized';
-import { CELL_PADDING } from './const';
 import { getItemsAndRowCount, CellMeasurementContext } from './utils';
 import { Params, GroupedItems, GridChildrenProps } from './types';
 import './Grid.scss';
@@ -20,22 +19,27 @@ const GroupByFilterGrid: React.FC<GroupByFilterGridProps> = ({
   items: groupedItems,
   children,
 }) => {
-  const { cache, cellWidth, cellMargin, overscanRowCount, headerHeight } = React.useContext(
-    CellMeasurementContext,
-  );
+  const {
+    cache,
+    cellWidth,
+    cellMargin,
+    overscanRowCount,
+    headerHeight,
+    estimatedCellHeight,
+  } = React.useContext(CellMeasurementContext);
   const idealItemWidth = cellWidth + cellMargin;
   const columnCountEstimate = Math.max(1, Math.floor(width / idealItemWidth));
   const { items, rowCount, columnCount, headerRows } = getItemsAndRowCount(
     groupedItems,
     columnCountEstimate,
   );
-  const cellRenderer = (data: GridCellProps) => children({ data, columnCount, items });
+  const cellRenderer = (data: GridCellProps) => children({ data, columnCount, items, rowCount });
   const getRowHeight = React.useCallback(
     ({ index }: Params): number => {
       if (headerRows.includes(index)) {
         return headerHeight;
       }
-      return cache.rowHeight({ index }) + CELL_PADDING;
+      return cache.rowHeight({ index });
     },
     [cache, headerHeight, headerRows],
   );
@@ -53,6 +57,7 @@ const GroupByFilterGrid: React.FC<GroupByFilterGridProps> = ({
       columnCount={columnCount}
       cellRenderer={cellRenderer}
       overscanRowCount={overscanRowCount}
+      estimatedRowSize={estimatedCellHeight}
     />
   );
 };
