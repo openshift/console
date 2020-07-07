@@ -239,7 +239,8 @@
   },
   "resolutions": {
     "jquery": "3.5.1",
-    "victory-shared-events": "34.3.8"
+    "victory-shared-events": "34.3.8",
+    "minimist": "1.2.5"
   },
   "husky": {
     "hooks": {
