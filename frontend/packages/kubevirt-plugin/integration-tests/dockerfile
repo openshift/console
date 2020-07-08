@@ -17,8 +17,10 @@ RUN yum update -y && yum install -y \
     jq \
     chromedriver \
     chromium \
-    google-chrome \
     xorg-x11-server-Xvfb
+
+RUN wget https://dl.google.com/linux/direct/google-chrome-stable_current_x86_64.rpm && \
+    yum install -y ./google-chrome-stable_current_*.rpm
 
 RUN wget https://dl.google.com/go/go1.13.3.linux-amd64.tar.gz && \
     tar -xzf go1.13.3.linux-amd64.tar.gz && \
