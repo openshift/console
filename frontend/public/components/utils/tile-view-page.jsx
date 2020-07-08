@@ -8,7 +8,6 @@ import {
   VerticalTabs,
   VerticalTabsTab,
 } from '@patternfly/react-catalog-view-extension';
-import { FormControl } from 'patternfly-react';
 import {
   Button,
   EmptyState,
@@ -18,6 +17,7 @@ import {
   Gallery,
   GalleryItem,
   Title,
+  TextInput,
 } from '@patternfly/react-core';
 
 import { history } from './router';
@@ -914,14 +914,13 @@ export class TileViewPage extends React.Component {
             <div className="co-catalog-page__heading text-capitalize">{activeCategory.label}</div>
             <div className="co-catalog-page__filter">
               <div>
-                <FormControl
+                <TextInput
                   className="co-catalog-page__input"
                   type="text"
-                  inputRef={(ref) => (this.filterByKeywordInput = ref)}
+                  ref={(ref) => (this.filterByKeywordInput = ref)}
                   placeholder="Filter by keyword..."
-                  bsClass="pf-c-form-control"
                   value={activeFilters.keyword.value}
-                  onChange={(e) => this.onKeywordChange(e.target.value)}
+                  onChange={(text) => this.onKeywordChange(text)}
                   aria-label="Filter by keyword..."
                 />
                 {groupItems && (
