@@ -1,17 +1,11 @@
 import * as React from 'react';
 import { Link } from 'react-router-dom';
 import { shallow } from 'enzyme';
-import GuidedTourTile from '../GuidedTourTile';
-import { getGuidedToursWithStatus } from '@console/app/src/components/guided-tours/utils/guided-tour-utils';
+import GuidedTourTile, { HIDE_TOUR_TILE_STORAGE_KEY } from '../GuidedTourTile';
 import { CardActions, Dropdown, CardBody, CardFooter } from '@patternfly/react-core';
 
-type GuidedTourTileProps = React.ComponentProps<typeof GuidedTourTile>;
-
 describe('GuidedTourTile', () => {
-  const guidedTourTileProps: GuidedTourTileProps = {
-    tours: getGuidedToursWithStatus(),
-  };
-  const guidedTourTileWrapper = shallow(<GuidedTourTile {...guidedTourTileProps} />);
+  const guidedTourTileWrapper = shallow(<GuidedTourTile />);
   it('should show proper CardAction', () => {
     const cardAction = guidedTourTileWrapper.find(CardActions);
     expect(cardAction.exists()).toBe(true);
@@ -27,5 +21,10 @@ describe('GuidedTourTile', () => {
     expect(cardFooter.exists()).toBe(true);
     expect(cardFooter.find(Link).exists()).toBe(true);
     expect(cardFooter.find(Link).prop('to')).toEqual('/tours');
+  });
+  it('should hide GuidedTourTile when locaStorage is set', () => {
+    localStorage.setItem(HIDE_TOUR_TILE_STORAGE_KEY, 'true');
+    const emptyWrapper = shallow(<GuidedTourTile />);
+    expect(emptyWrapper.find(GuidedTourTile).exists()).toBe(false);
   });
 });

@@ -11,41 +11,61 @@ import {
   DropdownItem,
   GalleryItem,
   KebabToggle,
+  Title,
 } from '@patternfly/react-core';
 import { ArrowRightIcon } from '@patternfly/react-icons';
-import {
-  GuidedTourItem,
-  TourStatus,
-} from '@console/app/src/components/guided-tours/utils/guided-tour-typings';
+import { getGuidedToursWithStatus } from '@console/app/src/components/guided-tours/utils/guided-tour-utils';
 import './GuidedTourTile.scss';
 
-type TourItem = GuidedTourItem & TourStatus;
-type GuidedTourTileProps = {
-  tours: TourItem[];
-};
+export const HIDE_TOUR_TILE_STORAGE_KEY = 'bridge/hide-tour-tile';
 
-const GuidedTourTile: React.FC<GuidedTourTileProps> = ({ tours }) => {
-  const [isOpen, setOpen] = React.useState(false);
+const GuidedTourTile: React.FC = () => {
+  const isTourTileHidden = localStorage.getItem(HIDE_TOUR_TILE_STORAGE_KEY) === 'true';
+  const [showTile, setShowTile] = React.useState<boolean>(!isTourTileHidden);
+  const [isOpen, setOpen] = React.useState<boolean>(false);
+  const tours = getGuidedToursWithStatus();
+
+  const onRemove = () => {
+    localStorage.setItem(HIDE_TOUR_TILE_STORAGE_KEY, 'true');
+    setShowTile(false);
+  };
+
   const onToggle = () => setOpen(!isOpen);
-  const actionDropdownItem = [<DropdownItem key="link">Remove guided tours</DropdownItem>];
-  const orderedTours = tours.length > 3 ? tours.slice(0, 3) : tours;
-  return (
-    <GalleryItem className="odc-guidedtour-tile">
+
+  const actionDropdownItem = [
+    <DropdownItem
+      onClick={() => {
+        onRemove();
+      }}
+      key="action"
+      component="button"
+    >
+      Remove guided tours
+    </DropdownItem>,
+  ];
+  const slicedTours = tours.length > 3 ? tours.slice(0, 3) : tours;
+
+  return slicedTours.length > 0 && showTile ? (
+    <GalleryItem>
       <Card className="odc-guidedtour-tile__card">
         <CardHeader>
-          <CardHeaderMain className="odc-guidedtour-tile__title">Guided Tours</CardHeaderMain>
+          <CardHeaderMain>
+            <Title headingLevel="h1" size="xl">
+              Guided Tours
+            </Title>
+          </CardHeaderMain>
           <CardActions>
             <Dropdown
               toggle={<KebabToggle onToggle={onToggle} />}
               isOpen={isOpen}
               isPlain
               dropdownItems={actionDropdownItem}
-              position={'right'}
+              position="right"
             />
           </CardActions>
         </CardHeader>
-        <CardBody className="odc-guidedtour-tile__body">
-          {orderedTours.map((tour) => (
+        <CardBody>
+          {slicedTours.map((tour) => (
             <div key={tour.name} className="odc-guidedtour-tile__tour">
               <Link to="/#">{tour.name}</Link>
             </div>
@@ -57,7 +77,7 @@ const GuidedTourTile: React.FC<GuidedTourTileProps> = ({ tours }) => {
         </CardFooter>
       </Card>
     </GalleryItem>
-  );
+  ) : null;
 };
 
 export default GuidedTourTile;

@@ -1,27 +1,19 @@
+@import '../../../../public/style/vars';
+
 .odc-guidedtour-tile {
   &__card {
-    height: 100%;
-  }
-  &__header {
-    padding: 0px var(--pf-global--spacer--md);
-    margin: 0px;
-  }
-  &__body {
-    padding: var(--pf-global--spacer--sm);
+    height: $co-m-catalog-tile-height;
+    width: $co-m-catalog-tile-width;
   }
   &__tour {
-    padding: var(--pf-global--spacer--sm) var(--pf-global--spacer--md);
-    text-align: left;
+    margin-bottom: var(--pf-global--spacer--sm);
   }
   &__arrowbtn {
-    margin-right: var(--pf-global--spacer--md);
+    margin-right: var(--pf-global--spacer--sm);
   }
   &__footer {
     border-top: 1px solid var(--pf-global--BorderColor--100);
-    padding: var(--pf-global--spacer--sm) var(--pf-global--spacer--lg);
-  }
-  &__title {
-    font-weight: var(--pf-global--FontWeight--bold);
-    font-size: var(--pf-global--FontSize--lg);
+    padding-top: var(--pf-global--spacer--sm);
+    padding-bottom: var(--pf-global--spacer--sm);
   }
 }

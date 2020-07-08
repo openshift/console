@@ -6,7 +6,8 @@ import { history, PageHeading, useAccessReview } from '@console/internal/compone
 import { useExtensions } from '@console/plugin-sdk';
 import { RootState } from '@console/internal/redux';
 import { isAddAction, AddAction } from '../extensions/add-actions';
-import GuidedTourAddAction from './GuidedTourAddAction';
+import GuidedTourTile from './GuidedTourTile';
+
 import './EmptyState.scss';
 import { ALL_NAMESPACES_KEY } from '@console/shared';
 
@@ -72,6 +73,7 @@ const ODCEmptyState: React.FC<Props> = ({
   const addActionExtensions = useExtensions<AddAction>(
     isAddAction,
   ).filter(({ properties: { hide } }) => (hide ? hide() : true));
+
   return (
     <>
       <div className="odc-empty-state__title">
@@ -84,7 +86,7 @@ const ODCEmptyState: React.FC<Props> = ({
       </div>
       <div className="odc-empty-state__content">
         <Gallery className="co-catalog-tile-view" hasGutter>
-          <GuidedTourAddAction />
+          <GuidedTourTile />
           {addActionExtensions.map((action) => (
             <Item key={action.properties.id} namespace={activeNamespace} action={action} />
           ))}
