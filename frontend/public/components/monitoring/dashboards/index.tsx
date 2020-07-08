@@ -239,6 +239,13 @@ export const TimespanDropdown = connect(
   },
 )(TimespanDropdown_);
 
+const PollIntervalDropdown_ = ({ interval, setInterval }) => (
+  <div className="form-group monitoring-dashboards__dropdown-wrap">
+    <label className="monitoring-dashboards__dropdown-title">Refresh Interval</label>
+    <IntervalDropdown interval={interval} setInterval={setInterval} />
+  </div>
+);
+
 export const PollIntervalDropdown = connect(
   ({ UI }: RootState) => ({
     interval: UI.getIn(['monitoringDashboards', 'pollInterval']),
@@ -246,7 +253,7 @@ export const PollIntervalDropdown = connect(
   {
     setInterval: UIActions.monitoringDashboardsSetPollInterval,
   },
-)(IntervalDropdown);
+)(PollIntervalDropdown_);
 
 // Matches Prometheus labels surrounded by {{ }} in the graph legend label templates
 const legendTemplateOptions = { interpolate: /{{([a-zA-Z_][a-zA-Z0-9_]*)}}/g };
@@ -491,10 +498,7 @@ const MonitoringDashboardsPage_: React.FC<MonitoringDashboardsPageProps> = ({
           </h1>
           <div className="monitoring-dashboards__options">
             <TimespanDropdown />
-            <div className="form-group monitoring-dashboards__dropdown-wrap">
-              <label className="monitoring-dashboards__dropdown-title">Refresh Interval</label>
-              <PollIntervalDropdown />
-            </div>
+            <PollIntervalDropdown />
           </div>
         </div>
         <div className="monitoring-dashboards__variables">
