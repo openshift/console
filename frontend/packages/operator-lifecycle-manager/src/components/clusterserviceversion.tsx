@@ -866,7 +866,7 @@ export const ClusterServiceVersionDetails: React.SFC<ClusterServiceVersionDetail
                     bodyContent={<div>Operands in this Namespace are managed by the Operator.</div>}
                     maxWidth="30rem"
                   >
-                    <Button variant="plain" className="co-m-pane__details-popover-button">
+                    <Button variant="plain" className="details-item__popover-button">
                       Managed Namespaces
                     </Button>
                   </Popover>

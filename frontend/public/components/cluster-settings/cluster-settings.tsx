@@ -270,7 +270,7 @@ const ChannelHeader: React.FC<{}> = () => {
         </>
       }
     >
-      <Button variant="plain" className="co-m-pane__details-popover-button">
+      <Button variant="plain" className="details-item__popover-button">
         Channel
       </Button>
     </Popover>
