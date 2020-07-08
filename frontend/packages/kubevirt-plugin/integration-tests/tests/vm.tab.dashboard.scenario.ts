@@ -1,19 +1,27 @@
 import { browser, ExpectedConditions as until } from 'protractor';
 import { testName } from '@console/internal-integration-tests/protractor.conf';
-import { createResources, deleteResources } from '@console/shared/src/test-utils/utils';
+import {
+  createResources,
+  deleteResources,
+  waitForStringInElement,
+} from '@console/shared/src/test-utils/utils';
 import { VirtualMachineModel } from '@console/kubevirt-plugin/src/models';
 import {
   vmDetailsName,
   vmDetailsNamespace,
+  vmDetailsHostname,
   vmDetailsNode,
   vmDetailsIPAddress,
+  vmDetailsOS,
+  vmDetailsTZ,
+  vmDetailsLoggedUser,
   vmStatus,
+  vmStatusAlert,
   vmInventoryNICs,
   vmInventoryDisks,
 } from '../views/dashboard.view';
 import { getVMManifest, hddDisk, multusNetworkInterface, multusNAD } from './utils/mocks';
 import { VirtualMachine } from './models/virtualMachine';
-import { waitForStringInElement } from '../../../console-shared/src/test-utils/utils';
 import {
   VM_STATUS,
   VM_BOOTUP_TIMEOUT_SECS,
@@ -23,10 +31,12 @@ import {
   VM_STOP_TIMEOUT_SECS,
   NOT_AVAILABLE,
   PAGE_LOAD_TIMEOUT_SECS,
+  VM_CREATE_AND_EDIT_AND_CLOUDINIT_TIMEOUT_SECS,
 } from './utils/consts';
 
 describe('Test VM dashboard', () => {
-  const testVM = getVMManifest('URL', testName, null, 'foo');
+  const cloudInit = `#cloud-config\nuser: cloud-user\npassword: atomic\nchpasswd: {expire: False}\nruncmd:\n- dnf install -y qemu-guest-agent\n- systemctl start qemu-guest-agent`;
+  const testVM = getVMManifest('Container', testName, null, cloudInit);
 
   let vm: VirtualMachine;
 
@@ -74,26 +84,39 @@ describe('Test VM dashboard', () => {
     await vm.removeNIC(multusNetworkInterface.name);
   });
 
-  it('ID(CNV-3330) Status card', async () => {
-    await vm.waitForStatus(VM_STATUS.Off);
-    await vm.navigateToOverview();
-    expect(vmStatus.getText()).toEqual(VM_STATUS.Off);
+  it(
+    'ID(CNV-3330) Status card',
+    async () => {
+      await vm.waitForStatus(VM_STATUS.Off);
+      await vm.navigateToOverview();
+      expect(vmStatus.getText()).toEqual(VM_STATUS.Off);
 
-    await vm.action(VM_ACTION.Start, true, VM_BOOTUP_TIMEOUT_SECS);
-    await vm.navigateToTab(TAB.Overview);
-    expect(vmStatus.getText()).toEqual(VM_STATUS.Running);
-  });
+      await vm.action(VM_ACTION.Start, true, VM_BOOTUP_TIMEOUT_SECS);
+      await vm.navigateToTab(TAB.Overview);
+      expect(vmStatus.getText()).toEqual(VM_STATUS.Running);
+      await browser.wait(until.stalenessOf(vmStatusAlert));
+    },
+    VM_CREATE_AND_EDIT_AND_CLOUDINIT_TIMEOUT_SECS,
+  );
 
   it('ID(CNV-3332) Details card', async () => {
+    await browser.wait(waitForStringInElement(vmDetailsHostname, vm.name));
     expect(vmDetailsName.getText()).toEqual(vm.name);
     expect(vmDetailsNamespace.getText()).toEqual(vm.namespace);
     expect(vmDetailsNode.getText()).not.toEqual(NOT_AVAILABLE);
     expect(vmDetailsIPAddress.getText()).not.toEqual(NOT_AVAILABLE);
+    expect(vmDetailsOS.getText()).toContain('Fedora');
+    expect(vmDetailsTZ.getText()).toContain('UTC');
+    expect(vmDetailsLoggedUser.getText()).toEqual('No users logged in');
 
     await vm.action(VM_ACTION.Stop, true, VM_STOP_TIMEOUT_SECS);
     await vm.navigateToTab(TAB.Overview);
 
-    await browser.wait(waitForStringInElement(vmDetailsNode, NOT_AVAILABLE));
-    await browser.wait(waitForStringInElement(vmDetailsIPAddress, NOT_AVAILABLE));
+    expect(vmDetailsNode.getText()).toEqual(NOT_AVAILABLE);
+    expect(vmDetailsIPAddress.getText()).toEqual(NOT_AVAILABLE);
+    expect(vmDetailsHostname.getText()).toEqual('VM not running');
+    expect(vmDetailsOS.getText()).toEqual('Red Hat Enterprise Linux 7.0 or higher');
+    expect(vmDetailsTZ.getText()).toEqual('VM not running');
+    expect(vmDetailsLoggedUser.getText()).toEqual('VM not running');
   });
 });

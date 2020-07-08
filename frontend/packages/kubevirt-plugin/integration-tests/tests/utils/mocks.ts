@@ -64,7 +64,7 @@ export const basicVMConfig: BaseVMConfig = {
   workloadProfile: WorkloadProfile.DESKTOP,
   sourceURL:
     'http://cnv-qe-server.rhevdev.lab.eng.rdu2.redhat.com/files/files-https/cirros/cirros-qcow2.img',
-  sourceContainer: 'kubevirt/cirros-registry-disk-demo',
+  sourceContainer: 'kubevirt/fedora-cloud-container-disk-demo',
   cloudInitScript: `#cloud-config\nuser: cloud-user\npassword: atomic\nchpasswd: {expire: False}\nhostname: vm-${testName}`,
 };
 Object.freeze(basicVMConfig.flavorConfig);
