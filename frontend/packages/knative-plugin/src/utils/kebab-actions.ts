@@ -5,8 +5,17 @@ import { EditApplication } from '@console/dev-console/src/actions/modify-applica
 import { AddHealthChecks, EditHealthChecks } from '@console/app/src/actions/modify-health-checks';
 import { setTrafficDistribution } from '../actions/traffic-splitting';
 import { setSinkSource } from '../actions/sink-source';
-import { ServiceModel, EventingSubscriptionModel } from '../models';
-import { getDynamicEventSourcesModelRefs } from './fetch-dynamic-eventsources-utils';
+import {
+  ServiceModel,
+  EventingSubscriptionModel,
+  EventingTriggerModel,
+  EventingBrokerModel,
+} from '../models';
+import {
+  getDynamicEventSourcesModelRefs,
+  isEventingChannelResourceKind,
+} from './fetch-dynamic-eventsources-utils';
+import { addSubscription, addTrigger } from '../actions';
 
 export const getKebabActionsForKind = (resourceKind: K8sKind): KebabAction[] => {
   const menuActions: KebabAction[] = [];
@@ -18,8 +27,17 @@ export const getKebabActionsForKind = (resourceKind: K8sKind): KebabAction[] => 
     if (_.includes(eventSourceModelrefs, referenceForModel(resourceKind))) {
       menuActions.push(setSinkSource);
     }
-    if (referenceForModel(resourceKind) === referenceForModel(EventingSubscriptionModel)) {
+    if (
+      referenceForModel(resourceKind) === referenceForModel(EventingSubscriptionModel) ||
+      referenceForModel(resourceKind) === referenceForModel(EventingTriggerModel)
+    ) {
       menuActions.push(setSinkSource);
+    }
+    if (referenceForModel(resourceKind) === referenceForModel(EventingBrokerModel)) {
+      menuActions.push(addTrigger);
+    }
+    if (isEventingChannelResourceKind(referenceForModel(resourceKind))) {
+      menuActions.push(addSubscription);
     }
   }
   return menuActions;

@@ -7,6 +7,8 @@ import {
   EventSubscriptionObj,
   EventIMCObj,
   knativeServiceObj,
+  EventBrokerObj,
+  EventTriggerObj,
 } from '../../../topology/__tests__/topology-knative-test-data';
 import EventPubSubResources, { PubSubResourceOverviewList } from '../EventPubSubResources';
 
@@ -46,9 +48,27 @@ describe('EventPubSubResources', () => {
     wrapper = shallow(<EventPubSubResources item={channelItemData} />);
     const findPubSubList = wrapper.find(PubSubResourceOverviewList);
     expect(findPubSubList).toHaveLength(3);
-    expect(findPubSubList.at(0).props().title).toEqual('Knative Service');
-    expect(findPubSubList.at(1).props().title).toEqual('Event Source');
-    expect(findPubSubList.at(2).props().title).toEqual('Subscription');
+    expect(findPubSubList.at(0).props().title).toEqual('Knative Services');
+    expect(findPubSubList.at(1).props().title).toEqual('Event Sources');
+    expect(findPubSubList.at(2).props().title).toEqual('Subscriptions');
+  });
+
+  it('should render broker section if the kind is Broker ', () => {
+    const brokerItemData = {
+      ...itemData,
+      obj: EventBrokerObj,
+      ksservices: [knativeServiceObj],
+      triggers: [EventTriggerObj],
+      connections: [EventBrokerObj, knativeServiceObj],
+    };
+    wrapper = shallow(<EventPubSubResources item={brokerItemData} />);
+    const findPubSubList = wrapper.find(PubSubResourceOverviewList);
+    expect(findPubSubList).toHaveLength(5);
+    expect(findPubSubList.at(0).props().title).toEqual('Knative Services');
+    expect(findPubSubList.at(1).props().title).toEqual('Event Sources');
+    expect(findPubSubList.at(2).props().title).toEqual('Triggers');
+    expect(findPubSubList.at(3).props().title).toEqual('Pods');
+    expect(findPubSubList.at(4).props().title).toEqual('Deployments');
   });
 });
 

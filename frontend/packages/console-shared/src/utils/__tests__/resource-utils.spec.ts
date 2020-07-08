@@ -147,7 +147,7 @@ describe('TransformResourceData', () => {
       MockKnativeResources,
       knativeOverviewResourceUtils,
     );
-    expect(transformedData).toHaveLength(1);
+    expect(transformedData).toHaveLength(2);
     expect(transformedData[0]).toHaveProperties(knativeKeys);
   });
 

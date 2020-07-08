@@ -47,6 +47,7 @@ import {
   eventSourceTargetSpec,
   eventSourceSinkDropTargetSpec,
   pubSubDropTargetSpec,
+  CREATE_PUB_SUB_CONNECTOR_OPERATION,
 } from './knativeComponentUtils';
 
 export const knativeContextMenu = (element: Node) => {
@@ -104,15 +105,22 @@ export const getKnativeComponentFactory = (): ComponentFactory => {
           ),
         );
       case TYPE_EVENT_PUB_SUB:
-        return withEditReviewAccess('update')(
-          withDragNode(nodeDragSourceSpec(type))(
-            withSelection(
-              false,
-              true,
-            )(
-              withContextMenu(knativeContextMenu)(
-                withDndDrop<any, any, {}, NodeComponentProps>(pubSubDropTargetSpec)(
-                  EventingPubSubNode,
+        return withCreateConnector(createConnectorCallback(), CreateConnector, '', {
+          operationType: {
+            type: CREATE_PUB_SUB_CONNECTOR_OPERATION,
+            edit: true,
+          },
+        })(
+          withEditReviewAccess('update')(
+            withDragNode(nodeDragSourceSpec(type))(
+              withSelection(
+                false,
+                true,
+              )(
+                withContextMenu(knativeContextMenu)(
+                  withDndDrop<any, any, {}, NodeComponentProps>(pubSubDropTargetSpec)(
+                    EventingPubSubNode,
+                  ),
                 ),
               ),
             ),

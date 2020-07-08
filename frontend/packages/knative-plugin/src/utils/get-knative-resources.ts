@@ -10,6 +10,7 @@ import {
   RouteModel,
   EventingSubscriptionModel,
   EventingBrokerModel,
+  EventingTriggerModel,
 } from '../models';
 
 export type KnativeItem = {
@@ -144,7 +145,7 @@ export const knativeEventingResourcesBroker = (namespace: string): FirehoseResou
       isList: true,
       kind: referenceForModel(EventingBrokerModel),
       namespace,
-      prop: 'eventingbroker',
+      prop: EventingBrokerModel.plural,
       optional: true,
     },
   ];
@@ -221,16 +222,24 @@ export const knativeEventingResourcesSubscriptionWatchers = (
   return knativeResource;
 };
 
-export const knativeEventingResourcesBrokerWatchers = (
-  namespace: string,
-): WatchK8sResources<any> => {
-  const knativeResource = {
-    eventingbroker: {
+export const knativeEventingBrokerResourceWatchers = (namespace: string) => {
+  return {
+    [EventingBrokerModel.plural]: {
       isList: true,
       kind: referenceForModel(EventingBrokerModel),
       namespace,
       optional: true,
     },
   };
-  return knativeResource;
+};
+
+export const knativeEventingTriggerResourceWatchers = (namespace: string) => {
+  return {
+    [EventingTriggerModel.plural]: {
+      isList: true,
+      kind: referenceForModel(EventingTriggerModel),
+      namespace,
+      optional: true,
+    },
+  };
 };

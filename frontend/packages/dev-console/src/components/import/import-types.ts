@@ -295,6 +295,7 @@ export enum ImportOptions {
   DOCKERFILE = 'DOCKERFILE',
   DATABASE = 'DATABASE',
   EVENTSOURCE = 'EVENTSOURCE',
+  EVENTPUBSUB = 'EVENTPUBSUB',
 }
 
 export interface HealthChecksData {

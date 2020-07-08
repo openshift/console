@@ -22,3 +22,8 @@ export const applyDisplayOptions = () =>
   import('./knativeFilters' /* webpackChunkName: "knative-components" */).then((m) =>
     m.applyDisplayOptions(),
   );
+
+export const getCreateConnector = () =>
+  import('./knative-topology-utils' /* webpackChunkName: "knative-create-connector" */).then(
+    (m) => m.getCreateConnector,
+  );

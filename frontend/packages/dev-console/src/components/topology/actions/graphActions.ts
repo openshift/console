@@ -1,17 +1,12 @@
 import * as _ from 'lodash';
 import { Node } from '@console/topology';
-import { ServiceModel, addEventSource } from '@console/knative-plugin';
-import { referenceForModel } from '@console/internal/module/k8s';
+import { getKnativeContextMenuAction } from '@console/knative-plugin/src/topology/knative-topology-utils';
 import { addResourceMenu, addResourceMenuWithoutCatalog } from '../../../actions/add-resources';
 import { GraphData } from '../topology-types';
 
 export const graphActions = (graphData: GraphData, connectorSource?: Node) => {
   let resourceMenu = connectorSource ? addResourceMenuWithoutCatalog : addResourceMenu;
-  const isKnativeService =
-    connectorSource?.getData()?.data?.kind === referenceForModel(ServiceModel);
-  if (isKnativeService && graphData.eventSourceEnabled) {
-    resourceMenu = [...addResourceMenuWithoutCatalog, addEventSource];
-  }
+  resourceMenu = getKnativeContextMenuAction(graphData, resourceMenu, connectorSource);
   return _.reduce(
     resourceMenu,
     (menuItems, menuItem) => {

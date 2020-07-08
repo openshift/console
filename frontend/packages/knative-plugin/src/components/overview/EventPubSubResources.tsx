@@ -3,7 +3,7 @@ import * as _ from 'lodash';
 import { OverviewItem } from '@console/shared';
 import { referenceFor, K8sResourceKind } from '@console/internal/module/k8s';
 import { ResourceLink, SidebarSectionHeading } from '@console/internal/components/utils';
-import { EventingSubscriptionModel } from '../../models';
+import { EventingSubscriptionModel, EventingTriggerModel, EventingBrokerModel } from '../../models';
 
 type PubSubResourceOverviewListProps = {
   items: K8sResourceKind[];
@@ -12,9 +12,12 @@ type PubSubResourceOverviewListProps = {
 
 type EventPubSubResourcesProps = {
   item: OverviewItem & {
+    triggers?: K8sResourceKind[];
     eventSources?: K8sResourceKind[];
     eventingsubscription?: K8sResourceKind[];
     connections?: K8sResourceKind[];
+    pods?: K8sResourceKind[];
+    deployments?: K8sResourceKind[];
   };
 };
 
@@ -48,18 +51,32 @@ const EventPubSubResources: React.FC<EventPubSubResourcesProps> = ({ item }) => 
     ksservices = [],
     eventSources = [],
     eventingsubscription = [],
+    triggers = [],
     connections = [],
+    pods = [],
+    deployments = [],
   } = item;
 
   switch (obj.kind) {
+    case EventingTriggerModel.kind:
     case EventingSubscriptionModel.kind:
       return <PubSubResourceOverviewList items={connections} title="Connections" />;
+    case EventingBrokerModel.kind:
+      return (
+        <>
+          <PubSubResourceOverviewList items={ksservices} title="Knative Services" />
+          <PubSubResourceOverviewList items={eventSources} title="Event Sources" />
+          <PubSubResourceOverviewList items={triggers} title="Triggers" />
+          <PubSubResourceOverviewList items={pods} title="Pods" />
+          <PubSubResourceOverviewList items={deployments} title="Deployments" />
+        </>
+      );
     default:
       return (
         <>
-          <PubSubResourceOverviewList items={ksservices} title="Knative Service" />
-          <PubSubResourceOverviewList items={eventSources} title="Event Source" />
-          <PubSubResourceOverviewList items={eventingsubscription} title="Subscription" />
+          <PubSubResourceOverviewList items={ksservices} title="Knative Services" />
+          <PubSubResourceOverviewList items={eventSources} title="Event Sources" />
+          <PubSubResourceOverviewList items={eventingsubscription} title="Subscriptions" />
         </>
       );
   }

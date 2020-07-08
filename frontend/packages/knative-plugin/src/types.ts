@@ -73,3 +73,35 @@ export type EventChannelKind = {
     };
   };
 } & K8sResourceKind;
+
+export type EventBrokerKind = {
+  metadata?: {
+    generation?: number;
+  };
+  status: {
+    address: {
+      url: string;
+    };
+  };
+} & K8sResourceKind;
+
+export type EventTriggerKind = {
+  metadata?: {
+    generation?: number;
+  };
+  spec: {
+    broker: string;
+    filter: {
+      attributes?: {
+        [key: string]: string;
+      };
+    };
+    subscriber: {
+      ref: {
+        apiVersion: string;
+        kind: string;
+        name: string;
+      };
+    };
+  };
+} & K8sResourceKind;

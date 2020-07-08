@@ -1,4 +1,5 @@
 import { PointTuple } from '../types';
+import Point from '../geom/Point';
 
 export function createSvgIdUrl(id: string): string {
   return `url(${`${window.location.pathname}${window.location.search}`}#${id})`;
@@ -105,4 +106,21 @@ export function hullPath(
       )},0,0,0,${segment[0]} L ${segment[1]}`;
     })
     .join(' ');
+}
+
+// Returns the perpendicular line SVG path data string for the given line based on the percentage
+export function getPathAlongTheLine(
+  startPoint: Point,
+  endPoint: Point,
+  percentage: number,
+  distance: number = 10,
+): string {
+  const angle = Math.atan2(endPoint.y - startPoint.y, endPoint.x - startPoint.x);
+  const path = {
+    x: startPoint.x * (1.0 - percentage) + endPoint.x * percentage,
+    y: startPoint.y * (1.0 - percentage) + endPoint.y * percentage,
+  };
+
+  return `M ${Math.sin(angle) * distance + path.x} ${-Math.cos(angle) * distance +
+    path.y}, L ${-Math.sin(angle) * distance + path.x} ${Math.cos(angle) * distance + path.y}`;
 }

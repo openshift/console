@@ -17,20 +17,19 @@ import {
   EdgeComponentProps,
   EditableDragOperationType,
 } from '@console/dev-console/src/components/topology';
-import {
-  TYPE_EVENT_SOURCE_LINK,
-  TYPE_EVENT_PUB_SUB_LINK,
-  TYPE_KNATIVE_SERVICE,
-  TYPE_EVENT_PUB_SUB,
-} from '../const';
+import { TYPE_EVENT_SOURCE_LINK, TYPE_KNATIVE_SERVICE, TYPE_EVENT_PUB_SUB } from '../const';
 import { createSinkConnection, createSinkPubSubConnection } from '../knative-topology-utils';
+import { EventingBrokerModel } from '../../models';
 
 export const MOVE_EV_SRC_CONNECTOR_OPERATION = 'moveeventsourceconnector';
 export const MOVE_PUB_SUB_CONNECTOR_OPERATION = 'movepubsubconnector';
+export const CREATE_PUB_SUB_CONNECTOR_OPERATION = 'createpubsubconnector';
 
 export const nodesEdgeIsDragging = (monitor, props) =>
   monitor.isDragging() &&
-  ((monitor.getOperation() === CREATE_CONNECTOR_OPERATION && monitor.getItem() === props.element) ||
+  (monitor.getOperation() === CREATE_CONNECTOR_OPERATION ||
+    (monitor.getOperation() === CREATE_PUB_SUB_CONNECTOR_OPERATION &&
+      monitor.getItem() === props.element) ||
     (monitor.getOperation() === MOVE_EV_SRC_CONNECTOR_OPERATION &&
       monitor.getItem().getSource()) === props.element);
 
@@ -46,24 +45,52 @@ export const canDropPubSubSinkOnNode = (operation: string, edge: Edge, node: Nod
   operation === MOVE_PUB_SUB_CONNECTOR_OPERATION &&
   !node.getTargetEdges().find((e) => e.getSource() === edge.getSource());
 
+export const isEventPubSubDroppable = (source: Node, target: Node) => {
+  return (
+    source.getType() === TYPE_EVENT_PUB_SUB &&
+    !source
+      .getSourceEdges()
+      .map((e) => e.getTarget())
+      .includes(target)
+  );
+};
+const getKnativeTooltip = (monitor): string => {
+  return monitor.getOperation()?.type === CREATE_PUB_SUB_CONNECTOR_OPERATION
+    ? monitor.getItem()?.getData()?.resources.obj.kind === EventingBrokerModel.kind
+      ? 'Add  Trigger'
+      : 'Add Subscription'
+    : 'Move sink to service';
+};
 export const eventSourceSinkDropTargetSpec: DropTargetSpec<
   Edge,
   any,
   { canDrop: boolean; dropTarget: boolean; edgeDragging: boolean },
   NodeComponentProps
 > = {
-  accept: [EDGE_DRAG_TYPE],
+  accept: [EDGE_DRAG_TYPE, CREATE_CONNECTOR_DROP_TYPE],
   canDrop: (item, monitor, props) =>
-    (item.getType() === TYPE_EVENT_SOURCE_LINK || item.getType() === TYPE_EVENT_PUB_SUB_LINK) &&
-    item.getSource() !== props.element,
+    (item.getType() === TYPE_EVENT_SOURCE_LINK && item.getSource() !== props.element) ||
+    monitor.getOperation()?.type === MOVE_PUB_SUB_CONNECTOR_OPERATION ||
+    (monitor.getOperation()?.type === CREATE_PUB_SUB_CONNECTOR_OPERATION &&
+      isEventPubSubDroppable(monitor.getItem(), props.element)),
   collect: (monitor, props) => ({
     canDrop:
       monitor.isDragging() &&
       (monitor.getOperation()?.type === MOVE_EV_SRC_CONNECTOR_OPERATION ||
-        monitor.getOperation()?.type === MOVE_PUB_SUB_CONNECTOR_OPERATION),
+        monitor.getOperation()?.type === MOVE_PUB_SUB_CONNECTOR_OPERATION ||
+        (monitor.getOperation()?.type === CREATE_PUB_SUB_CONNECTOR_OPERATION &&
+          isEventPubSubDroppable(monitor.getItem(), props.element))),
     dropTarget: monitor.isOver({ shallow: true }),
     edgeDragging: nodesEdgeIsDragging(monitor, props),
+    tooltipLabel: getKnativeTooltip(monitor),
   }),
+  dropHint: (item) => {
+    if (item) {
+      const resourceObj = item.getData().resources.obj;
+      return resourceObj.kind === EventingBrokerModel.kind ? 'createTrigger' : 'createSubscription';
+    }
+    return 'create';
+  },
 };
 
 export const pubSubDropTargetSpec: DropTargetSpec<

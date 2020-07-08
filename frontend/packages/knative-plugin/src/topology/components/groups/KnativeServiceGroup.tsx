@@ -41,6 +41,7 @@ export type KnativeServiceGroupProps = {
   dropTarget?: boolean;
   edgeDragging?: boolean;
   editAccess?: boolean;
+  tooltipLabel?: string;
 } & WithSelectionProps &
   WithDndDropProps &
   WithContextMenuProps &
@@ -58,6 +59,7 @@ const KnativeServiceGroup: React.FC<KnativeServiceGroupProps> = ({
   edgeDragging,
   dndDropRef,
   editAccess,
+  tooltipLabel,
   onHideCreateConnector,
   onShowCreateConnector,
 }) => {
@@ -108,7 +110,7 @@ const KnativeServiceGroup: React.FC<KnativeServiceGroupProps> = ({
 
   return (
     <Tooltip
-      content="Move sink to service"
+      content={tooltipLabel}
       trigger="manual"
       isVisible={dropTarget && canDrop}
       tippyProps={{ duration: 0, delay: 0 }}
