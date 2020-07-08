@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { observer, Node, NodeModel } from '@console/topology';
+import { observer, Node, NodeModel } from '@patternfly/react-topology';
 import { pipelineRunFilterReducer } from '../../../utils/pipeline-filter-reducer';
 import { PipelineVisualizationTask } from '../detail-page-tabs/pipeline-details/PipelineVisualizationTask';
 import { DROP_SHADOW_SPACING } from './const';

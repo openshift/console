@@ -1,4 +1,4 @@
-import { Graph, Layout, LayoutFactory } from '@console/topology';
+import { Graph, Layout, LayoutFactory } from '@patternfly/react-topology';
 import TopologyColaLayout from './TopologyColaLayout';
 
 const COLA_LAYOUT = 'Cola';

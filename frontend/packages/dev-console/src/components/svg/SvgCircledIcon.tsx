@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useSize, createSvgIdUrl } from '@console/topology';
+import { useSize, createSvgIdUrl } from '@patternfly/react-topology';
 import { isIconUrl } from '@console/shared/';
 import { getImageForIconClass } from '@console/internal/components/catalog/catalog-item-icon';
 import SvgDropShadowFilter from './SvgDropShadowFilter';

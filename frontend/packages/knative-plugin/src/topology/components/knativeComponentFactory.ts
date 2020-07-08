@@ -8,7 +8,7 @@ import {
   withSelection,
   withDndDrop,
   withCreateConnector,
-} from '@console/topology';
+} from '@patternfly/react-topology';
 import {
   NodeComponentProps,
   withContextMenu,
@@ -19,6 +19,7 @@ import {
   getTopologyResourceObject,
   createConnectorCallback,
   CreateConnector,
+  EditableDragOperationType,
 } from '@console/dev-console/src/components/topology';
 import { ModifyApplication } from '@console/dev-console/src/actions/modify-application';
 import { Kebab, kebabOptionsToMenu } from '@console/internal/components/utils';
@@ -72,6 +73,11 @@ export const knativeContextMenu = (element: Node) => {
   return createMenuItems(kebabOptionsToMenu(kebabOptions));
 };
 
+const dragOperation: EditableDragOperationType = {
+  type: CREATE_PUB_SUB_CONNECTOR_OPERATION,
+  edit: true,
+};
+
 export const getKnativeComponentFactory = (): ComponentFactory => {
   return (kind, type): React.ComponentType<{ element: GraphElement }> | undefined => {
     switch (type) {
@@ -87,17 +93,16 @@ export const getKnativeComponentFactory = (): ComponentFactory => {
             NodeComponentProps
           >(eventSourceSinkDropTargetSpec)(
             withEditReviewAccess('update')(
-              withSelection(false, true)(withContextMenu(knativeContextMenu)(KnativeService)),
+              withSelection({ controlled: true })(
+                withContextMenu(knativeContextMenu)(KnativeService),
+              ),
             ),
           ),
         );
       case TYPE_EVENT_SOURCE:
         return withEditReviewAccess('patch')(
           withDragNode(nodeDragSourceSpec(type))(
-            withSelection(
-              false,
-              true,
-            )(
+            withSelection({ controlled: true })(
               withContextMenu(knativeContextMenu)(
                 withDndDrop<any, any, {}, NodeComponentProps>(eventSourceTargetSpec)(EventSource),
               ),
@@ -106,17 +111,11 @@ export const getKnativeComponentFactory = (): ComponentFactory => {
         );
       case TYPE_EVENT_PUB_SUB:
         return withCreateConnector(createConnectorCallback(), CreateConnector, '', {
-          operationType: {
-            type: CREATE_PUB_SUB_CONNECTOR_OPERATION,
-            edit: true,
-          },
+          dragOperation,
         })(
           withEditReviewAccess('update')(
             withDragNode(nodeDragSourceSpec(type))(
-              withSelection(
-                false,
-                true,
-              )(
+              withSelection({ controlled: true })(
                 withContextMenu(knativeContextMenu)(
                   withDndDrop<any, any, {}, NodeComponentProps>(pubSubDropTargetSpec)(
                     EventingPubSubNode,
@@ -128,10 +127,9 @@ export const getKnativeComponentFactory = (): ComponentFactory => {
         );
       case TYPE_KNATIVE_REVISION:
         return withDragNode(nodeDragSourceSpec(type, false))(
-          withSelection(
-            false,
-            true,
-          )(withContextMenu(knativeContextMenu)(withNoDrop()(RevisionNode))),
+          withSelection({ controlled: true })(
+            withContextMenu(knativeContextMenu)(withNoDrop()(RevisionNode)),
+          ),
         );
       case TYPE_REVISION_TRAFFIC:
         return TrafficLink;

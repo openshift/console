@@ -1,6 +1,6 @@
 import { KebabOption } from '@console/internal/components/utils/kebab';
 import { modelFor, referenceFor } from '@console/internal/module/k8s';
-import { Node } from '@console/topology';
+import { Node } from '@patternfly/react-topology';
 import { editApplicationModal, groupEditApplicationModal } from '../../modals';
 
 export const regroupActions = (obj: Node, regroupChildren: boolean = false): KebabOption[] => {

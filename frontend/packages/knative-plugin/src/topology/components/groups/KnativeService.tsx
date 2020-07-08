@@ -6,7 +6,7 @@ import {
   WithContextMenuProps,
   WithDndDropProps,
   WithCreateConnectorProps,
-} from '@console/topology';
+} from '@patternfly/react-topology';
 import { modelFor, referenceFor } from '@console/internal/module/k8s';
 import { useAccessReview } from '@console/internal/components/utils';
 import { getTopologyResourceObject } from '@console/dev-console/src/components/topology';

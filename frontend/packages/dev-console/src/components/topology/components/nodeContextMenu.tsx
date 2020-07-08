@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ContextMenuItem, ContextSubMenuItem, Node, Graph } from '@console/topology';
+import { ContextMenuItem, ContextSubMenuItem, Node, Graph } from '@patternfly/react-topology';
 import {
   history,
   KebabItem,

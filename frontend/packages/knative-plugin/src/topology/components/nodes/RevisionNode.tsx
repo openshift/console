@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useAnchor, AnchorEnd, Node, observer } from '@console/topology';
+import { useAnchor, AnchorEnd, Node, observer } from '@patternfly/react-topology';
 import { WorkloadNode } from '@console/dev-console/src/components/topology';
 import RevisionTrafficTargetAnchor from '../anchors/RevisionTrafficTargetAnchor';
 

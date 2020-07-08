@@ -1,5 +1,5 @@
 import { createContext } from 'react';
-import { Model } from '@console/topology';
+import { Model } from '@patternfly/react-topology';
 import { WatchK8sResources } from '@console/internal/components/utils/k8s-watch-hook';
 import {
   TopologyDataModelDepicted,

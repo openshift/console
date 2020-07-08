@@ -1,7 +1,7 @@
 import * as _ from 'lodash';
 import { KebabOption } from '@console/internal/components/utils/kebab';
 import { modelFor, referenceFor } from '@console/internal/module/k8s';
-import { Model, Node } from '@console/topology';
+import { Model, Node } from '@patternfly/react-topology';
 import { asAccessReview } from '@console/internal/components/utils';
 import { getKnativeContextMenuAction } from '@console/knative-plugin/src/topology/knative-topology-utils';
 import { addResourceMenuWithoutCatalog } from '../../../actions/add-resources';

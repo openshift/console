@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ModelKind } from '@console/topology';
+import { ModelKind } from '@patternfly/react-topology';
 import PipelineVisualizationSurface from './PipelineVisualizationSurface';
 import { PipelineLayout } from './const';
 import { PipelineEdgeModel, PipelineMixedNodeModel } from './types';

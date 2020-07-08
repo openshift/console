@@ -1,4 +1,4 @@
-import { AbstractAnchor, getEllipseAnchorPoint, Node, Point } from '@console/topology';
+import { AbstractAnchor, getEllipseAnchorPoint, Node, Point } from '@patternfly/react-topology';
 
 export default class RevisionTrafficSourceAnchor extends AbstractAnchor {
   private radius: number;

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { getImageForIconClass } from '@console/internal/components/catalog/catalog-item-icon';
-import { createSvgIdUrl, SVGDefs } from '@console/topology';
+import { createSvgIdUrl, SVGDefs } from '@patternfly/react-topology';
 
 type KnativeIconProps = {
   x: number;

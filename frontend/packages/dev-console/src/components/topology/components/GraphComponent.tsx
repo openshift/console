@@ -1,6 +1,9 @@
 import * as React from 'react';
 import * as classNames from 'classnames';
-import { GraphComponent as BaseGraphComponent, WithContextMenuProps } from '@console/topology';
+import {
+  GraphComponent as BaseGraphComponent,
+  WithContextMenuProps,
+} from '@patternfly/react-topology';
 
 type GraphComponentProps = React.ComponentProps<typeof BaseGraphComponent> & {
   dragEditInProgress?: boolean;

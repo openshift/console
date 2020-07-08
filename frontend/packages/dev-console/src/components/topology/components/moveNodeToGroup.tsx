@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { confirmModal, errorModal } from '@console/internal/components/modals';
-import { Node } from '@console/topology';
+import { Node } from '@patternfly/react-topology';
 import { updateTopologyResourceApplication } from '../topology-utils';
 
 export const moveNodeToGroup = (node: Node, targetGroup: Node): Promise<void> => {

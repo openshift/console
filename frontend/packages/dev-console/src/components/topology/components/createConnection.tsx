@@ -1,4 +1,4 @@
-import { Node } from '@console/topology';
+import { Node } from '@patternfly/react-topology';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { createTopologyResourceConnection } from '../topology-utils';
 

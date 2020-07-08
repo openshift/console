@@ -9,7 +9,7 @@ import {
   observer,
   useHover,
   useSelection,
-} from '@console/topology';
+} from '@patternfly/react-topology';
 import { getTopologyResourceObject } from '../../topology-utils';
 import './BaseEdge.scss';
 
@@ -28,7 +28,7 @@ const ObservedBaseEdge: React.FC<BaseEdgeProps> = ({
   className,
 }) => {
   const [hover, hoverRef] = useHover();
-  const [selected, onSelect] = useSelection(false, true);
+  const [selected, onSelect] = useSelection({ controlled: true });
   const startPoint = element.getStartPoint();
   const endPoint = element.getEndPoint();
   const resourceObj = getTopologyResourceObject(element.getSource().getData());

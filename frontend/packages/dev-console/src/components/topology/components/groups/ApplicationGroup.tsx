@@ -17,7 +17,7 @@ import {
   WithContextMenuProps,
   createSvgIdUrl,
   hullPath,
-} from '@console/topology';
+} from '@patternfly/react-topology';
 import * as classNames from 'classnames';
 import {
   getFilterById,

@@ -2,7 +2,12 @@ import * as React from 'react';
 import * as classNames from 'classnames';
 import { modelFor, referenceFor } from '@console/internal/module/k8s';
 import { useAccessReview } from '@console/internal/components/utils';
-import { Edge, observer, WithSourceDragProps, WithTargetDragProps } from '@console/topology';
+import {
+  Edge,
+  observer,
+  WithSourceDragProps,
+  WithTargetDragProps,
+} from '@patternfly/react-topology';
 import { getTopologyResourceObject, BaseEdge } from '@console/dev-console/src/components/topology';
 import { EVENT_MARKER_RADIUS } from '../../const';
 import './EventSourceLink.scss';

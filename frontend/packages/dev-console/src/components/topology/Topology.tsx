@@ -8,17 +8,6 @@ import {
   TopologyControlBar,
   createTopologyControlButtons,
   defaultControlButtonsOptions,
-} from '@patternfly/react-topology';
-import { useExtensions } from '@console/plugin-sdk';
-import {
-  isTopologyComponentFactory,
-  TopologyComponentFactory,
-  isTopologyCreateConnector,
-  TopologyCreateConnector,
-  isTopologyDisplayFilter,
-  TopologyDisplayFilters,
-} from '../../extensions/topology';
-import {
   ComponentFactory,
   Visualization,
   VisualizationSurface,
@@ -32,7 +21,18 @@ import {
   TOP_LAYER,
   BOTTOM_LAYER,
   DEFAULT_LAYER,
-} from '@console/topology';
+  VisualizationProvider,
+} from '@patternfly/react-topology';
+import { useExtensions } from '@console/plugin-sdk';
+import {
+  isTopologyComponentFactory,
+  TopologyComponentFactory,
+  isTopologyCreateConnector,
+  TopologyCreateConnector,
+  isTopologyDisplayFilter,
+  TopologyDisplayFilters,
+} from '../../extensions/topology';
+
 import { RootState } from '@console/internal/redux';
 import { getActiveApplication } from '@console/internal/reducers/ui';
 import { selectOverviewDetailsTab } from '@console/internal/actions/ui';
@@ -482,19 +482,21 @@ const Topology: React.FC<ComponentProps> = ({
   });
 
   return (
-    <Stack>
-      <StackItem isFilled={false}>
-        <TopologyFilterBar visualization={visualization} onSearchChange={onSearchChange} />
-      </StackItem>
-      <StackItem isFilled className={containerClasses}>
-        <div className="pf-topology-content">
-          <VisualizationSurface visualization={visualization} state={{ selectedIds }} />
-          {dragHint && <div className="odc-topology__hint-container">{dragHint}</div>}
-          <span className="pf-topology-control-bar">{renderControlBar()}</span>
-        </div>
-        {sideBar}
-      </StackItem>
-    </Stack>
+    <VisualizationProvider controller={visualization}>
+      <Stack>
+        <StackItem isFilled={false}>
+          <TopologyFilterBar visualization={visualization} onSearchChange={onSearchChange} />
+        </StackItem>
+        <StackItem isFilled className={containerClasses}>
+          <div className="pf-topology-content">
+            <VisualizationSurface state={{ selectedIds }} />
+            {dragHint && <div className="odc-topology__hint-container">{dragHint}</div>}
+            <span className="pf-topology-control-bar">{renderControlBar()}</span>
+          </div>
+          {sideBar}
+        </StackItem>
+      </Stack>
+    </VisualizationProvider>
   );
 };
 

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { confirmModal, errorModal } from '@console/internal/components/modals';
 import { YellowExclamationTriangleIcon } from '@console/shared/src';
-import { Edge } from '@console/topology';
+import { Edge } from '@patternfly/react-topology';
 import { k8sKill } from '@console/internal/module/k8s';
 import { ServiceBindingRequestModel } from '../../../../models';
 

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { SVGDefs } from '@console/topology';
+import { SVGDefs } from '@patternfly/react-topology';
 
 export interface SvgDropShadowFilterProps {
   // The unique ID that identifies the filter.

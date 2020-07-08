@@ -1,5 +1,11 @@
 import * as _ from 'lodash';
-import { ColaGroup, ColaLink, ColaNode, getGroupPadding, LayoutOptions } from '@console/topology';
+import {
+  ColaGroup,
+  ColaLink,
+  ColaNode,
+  getGroupPadding,
+  LayoutOptions,
+} from '@patternfly/react-topology';
 import { TYPE_EVENT_SOURCE_LINK, TYPE_KNATIVE_SERVICE } from '../const';
 
 const getNodeTimeStamp = (node: ColaNode): Date => {

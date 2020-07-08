@@ -5,7 +5,7 @@ import {
   shouldTruncate,
   TruncateOptions,
 } from '@console/internal/components/utils';
-import { Node, useSize, useHover } from '@console/topology';
+import { Node, useSize, useHover } from '@patternfly/react-topology';
 import { RESOURCE_NAME_TRUNCATE_LENGTH } from '../../../../const';
 import SvgCircledIcon from '../../../svg/SvgCircledIcon';
 import { TopologyDataObject } from '../../topology-types';

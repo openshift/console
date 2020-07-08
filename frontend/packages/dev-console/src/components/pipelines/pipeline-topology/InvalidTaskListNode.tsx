@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Node, NodeModel, observer } from '@console/topology';
+import { Node, NodeModel, observer } from '@patternfly/react-topology';
 import { BUILDER_NODE_ERROR_RADIUS } from './const';
 import ErrorNodeDecorator from './ErrorNodeDecorator';
 import TaskListNode from './TaskListNode';

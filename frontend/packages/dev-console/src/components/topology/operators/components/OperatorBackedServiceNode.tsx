@@ -12,7 +12,7 @@ import {
   useHover,
   useDragNode,
   createSvgIdUrl,
-} from '@console/topology';
+} from '@patternfly/react-topology';
 import { useSearchFilter } from '../../filters/useSearchFilter';
 import { nodeDragSourceSpec } from '../../components/componentUtils';
 import { TYPE_OPERATOR_BACKED_SERVICE } from './const';

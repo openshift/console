@@ -5,7 +5,7 @@ import {
   WithDndDragProps,
   useCombineRefs,
   createSvgIdUrl,
-} from '@console/topology';
+} from '@patternfly/react-topology';
 import { truncateMiddle } from '@console/internal/components/utils';
 import { RESOURCE_NAME_TRUNCATE_LENGTH } from '../../const';
 import { SvgResourceIcon } from './SvgResourceIcon';

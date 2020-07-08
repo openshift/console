@@ -1,5 +1,5 @@
 import { K8sResourceKind } from '@console/internal/module/k8s';
-import { Model } from '@console/topology/src/types';
+import { Model } from '@patternfly/react-topology';
 import { TYPE_EVENT_SOURCE } from './const';
 import { getTopologyResourceObject } from '@console/dev-console/src/components/topology';
 import { DeploymentModel } from '@console/internal/models';

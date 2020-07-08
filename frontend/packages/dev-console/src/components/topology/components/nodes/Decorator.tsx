@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { createSvgIdUrl, useHover } from '@console/topology';
+import { createSvgIdUrl, useHover } from '@patternfly/react-topology';
 import SvgDropShadowFilter from '../../../svg/SvgDropShadowFilter';
 
 import './Decorator.scss';

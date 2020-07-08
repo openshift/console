@@ -5,7 +5,8 @@ import {
   Node,
   Visualization,
   VisualizationSurface,
-} from '@console/topology';
+  VisualizationProvider,
+} from '@patternfly/react-topology';
 import { componentFactory, layoutFactory } from './factories';
 import { DROP_SHADOW_SPACING, NODE_WIDTH, NODE_HEIGHT, PipelineLayout } from './const';
 import { getLayoutData } from './utils';
@@ -66,7 +67,9 @@ const PipelineVisualizationSurface: React.FC<PipelineVisualizationSurfaceProps> 
 
   return (
     <div style={{ height: maxSize?.height, width: maxSize?.width }}>
-      <VisualizationSurface visualization={vis} />
+      <VisualizationProvider controller={vis}>
+        <VisualizationSurface />
+      </VisualizationProvider>
     </div>
   );
 };

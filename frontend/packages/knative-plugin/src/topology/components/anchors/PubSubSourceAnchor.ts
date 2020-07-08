@@ -1,4 +1,4 @@
-import { AbstractAnchor, Point } from '@console/topology';
+import { AbstractAnchor, Point } from '@patternfly/react-topology';
 
 export default class PubSubAnchor extends AbstractAnchor {
   getLocation(): Point {

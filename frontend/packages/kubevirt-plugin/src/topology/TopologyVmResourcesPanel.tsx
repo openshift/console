@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { observer } from '@console/topology';
+import { observer } from '@patternfly/react-topology';
 import { PodsOverview } from '@console/internal/components/overview/pods-overview';
 import { NetworkingOverview } from '@console/internal/components/overview/networking-overview';
 import { VMNode } from './types';

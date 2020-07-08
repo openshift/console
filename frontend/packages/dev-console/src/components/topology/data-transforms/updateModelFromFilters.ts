@@ -1,4 +1,4 @@
-import { Model, NodeModel, createAggregateEdges } from '@console/topology';
+import { Model, NodeModel, createAggregateEdges } from '@patternfly/react-topology';
 import { ALL_APPLICATIONS_KEY } from '@console/shared/src';
 import {
   getFilterById,

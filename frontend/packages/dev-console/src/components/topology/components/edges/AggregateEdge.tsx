@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as classNames from 'classnames';
-import { Edge, Layer, useHover, EdgeConnectorArrow, observer } from '@console/topology';
+import { Edge, Layer, useHover, EdgeConnectorArrow, observer } from '@patternfly/react-topology';
 
 import './AggregateEdge.scss';
 

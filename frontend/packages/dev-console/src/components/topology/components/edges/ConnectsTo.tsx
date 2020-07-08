@@ -7,7 +7,7 @@ import {
   Edge,
   observer,
   EdgeConnectorArrow,
-} from '@console/topology';
+} from '@patternfly/react-topology';
 import { modelFor, referenceFor } from '@console/internal/module/k8s';
 import { useAccessReview } from '@console/internal/components/utils';
 import { getTopologyResourceObject } from '../../topology-utils';

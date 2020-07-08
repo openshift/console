@@ -11,7 +11,7 @@ import {
   useHover,
   createSvgIdUrl,
   useCombineRefs,
-} from '@console/topology';
+} from '@patternfly/react-topology';
 import SvgBoxedText from '../../../svg/SvgBoxedText';
 import { nodeDragSourceSpec } from '../../components/componentUtils';
 import { TYPE_OPERATOR_BACKED_SERVICE } from './const';

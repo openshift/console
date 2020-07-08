@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Edge } from '@console/topology';
+import { Edge } from '@patternfly/react-topology';
 import { YellowExclamationTriangleIcon } from '@console/shared/src';
 import { confirmModal, errorModal } from '@console/internal/components/modals';
 import { removeTopologyResourceConnection } from '../topology-utils';

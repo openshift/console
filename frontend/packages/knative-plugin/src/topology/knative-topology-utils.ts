@@ -19,7 +19,7 @@ import {
   getServicesForResource,
   getRandomChars,
 } from '@console/shared';
-import { Model, Edge, EdgeModel, Node, NodeModel, NodeShape } from '@console/topology';
+import { Model, Edge, EdgeModel, Node, NodeModel, NodeShape } from '@patternfly/react-topology';
 import {
   TopologyDataResources,
   TopologyDataObject,

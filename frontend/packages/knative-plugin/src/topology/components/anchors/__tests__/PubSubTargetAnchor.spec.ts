@@ -1,4 +1,4 @@
-import { Node, Point, Rect, Anchor } from '@console/topology';
+import { Node, Point, Rect, Anchor } from '@patternfly/react-topology';
 import PubSubTargetAnchor from '../PubSubTargetAnchor';
 import { EVENT_MARKER_RADIUS } from '../../../const';
 

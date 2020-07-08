@@ -1,7 +1,7 @@
 import { KebabOption } from '@console/internal/components/utils/kebab';
 import { modelFor, referenceFor } from '@console/internal/module/k8s';
 import { asAccessReview } from '@console/internal/components/utils';
-import { Edge, Node } from '@console/topology';
+import { Edge, Node } from '@patternfly/react-topology';
 import {
   TYPE_EVENT_SOURCE,
   TYPE_EVENT_SOURCE_LINK,

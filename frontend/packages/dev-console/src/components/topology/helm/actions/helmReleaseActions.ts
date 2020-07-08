@@ -1,5 +1,5 @@
 import { KebabOption } from '@console/internal/components/utils/kebab';
-import { Node } from '@console/topology';
+import { Node } from '@patternfly/react-topology';
 import {
   deleteHelmRelease,
   upgradeHelmRelease,

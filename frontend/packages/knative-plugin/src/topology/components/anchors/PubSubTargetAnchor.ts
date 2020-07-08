@@ -1,4 +1,4 @@
-import { AbstractAnchor, Point } from '@console/topology';
+import { AbstractAnchor, Point } from '@patternfly/react-topology';
 import { EVENT_MARKER_RADIUS } from '../../const';
 
 export default class PubSubAnchor extends AbstractAnchor {

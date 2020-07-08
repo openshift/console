@@ -3,7 +3,7 @@ import { K8sResourceKind } from '@console/internal/module/k8s';
 import { SecretModel } from '@console/internal/models';
 import { getImageForIconClass } from '@console/internal/components/catalog/catalog-item-icon';
 import { createOverviewItemsForType } from '@console/shared';
-import { Model, NodeModel } from '@console/topology';
+import { Model, NodeModel } from '@patternfly/react-topology';
 import { TopologyDataResources } from '../topology-types';
 import {
   HELM_GROUP_HEIGHT,

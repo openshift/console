@@ -9,7 +9,7 @@ import {
   withDndDrop,
   withCreateConnector,
   withRemoveConnector,
-} from '@console/topology';
+} from '@patternfly/react-topology';
 import { Application } from './groups';
 import { WorkloadNode } from './nodes';
 import GraphComponent from './GraphComponent';
@@ -45,7 +45,7 @@ export const componentFactory = (
   switch (type) {
     case TYPE_APPLICATION_GROUP:
       return withDndDrop(applicationGroupDropTargetSpec)(
-        withSelection(false, true)(withContextMenu(groupContextMenu)(Application)),
+        withSelection({ controlled: true })(withContextMenu(groupContextMenu)(Application)),
       );
     case TYPE_WORKLOAD:
       return withCreateConnector(
@@ -60,7 +60,9 @@ export const componentFactory = (
         >(nodeDropTargetSpec)(
           withEditReviewAccess('patch')(
             withDragNode(nodeDragSourceSpec(type))(
-              withSelection(false, true)(withContextMenu(workloadContextMenu)(WorkloadNode)),
+              withSelection({ controlled: true })(
+                withContextMenu(workloadContextMenu)(WorkloadNode),
+              ),
             ),
           ),
         ),
@@ -78,7 +80,9 @@ export const componentFactory = (
         case ModelKind.graph:
           return withDndDrop(graphDropTargetSpec)(
             withPanZoom()(
-              withSelection(false, true)(withContextMenu(graphContextMenu)(GraphComponent)),
+              withSelection({ controlled: true })(
+                withContextMenu(graphContextMenu)(GraphComponent),
+              ),
             ),
           );
         default:

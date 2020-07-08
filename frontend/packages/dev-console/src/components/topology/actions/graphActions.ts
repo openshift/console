@@ -1,5 +1,5 @@
 import * as _ from 'lodash';
-import { Node } from '@console/topology';
+import { Node } from '@patternfly/react-topology';
 import { getKnativeContextMenuAction } from '@console/knative-plugin/src/topology/knative-topology-utils';
 import { addResourceMenu, addResourceMenuWithoutCatalog } from '../../../actions/add-resources';
 import { GraphData } from '../topology-types';

@@ -17,7 +17,7 @@ import {
   DropTargetMonitor,
   DropTargetSpec,
   useDndDrop,
-} from '@console/topology';
+} from '@patternfly/react-topology';
 import { getServiceBindingStatus } from '../../topology-utils';
 import { WorkloadNode } from '../../components/nodes';
 import {

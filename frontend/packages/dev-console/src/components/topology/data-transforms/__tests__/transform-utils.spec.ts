@@ -1,5 +1,5 @@
+import { NodeModel } from '@patternfly/react-topology';
 import { mergeGroup } from '../transform-utils';
-import { NodeModel } from '@console/topology/src/types';
 
 describe('transform-utils', () => {
   describe('mergeGroup-util', () => {

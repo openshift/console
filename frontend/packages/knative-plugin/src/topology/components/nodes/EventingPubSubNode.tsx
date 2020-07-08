@@ -14,7 +14,7 @@ import {
   WithDragNodeProps,
   AnchorEnd,
   WithCreateConnectorProps,
-} from '@console/topology';
+} from '@patternfly/react-topology';
 import SvgBoxedText from '@console/dev-console/src/components/svg/SvgBoxedText';
 import {
   NodeShadows,

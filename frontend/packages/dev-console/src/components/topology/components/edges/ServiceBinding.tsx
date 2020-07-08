@@ -6,7 +6,7 @@ import {
   Edge,
   observer,
   EdgeConnectorArrow,
-} from '@console/topology';
+} from '@patternfly/react-topology';
 import { BaseEdge } from './BaseEdge';
 import './ServiceBinding.scss';
 

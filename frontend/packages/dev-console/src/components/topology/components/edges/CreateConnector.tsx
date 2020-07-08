@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as classNames from 'classnames';
-import { DefaultCreateConnector, Point } from '@console/topology';
+import { DefaultCreateConnector, Point } from '@patternfly/react-topology';
 
 import './CreateConnector.scss';
 
