@@ -68,8 +68,6 @@ export const getAlertsAndRules = (
   return { alerts, rules };
 };
 
-export const getAlerts = (data: PrometheusRulesResponse['data']) => getAlertsAndRules(data).alerts;
-
 export const alertsToProps = ({ UI }) => UI.getIn(['monitoring', 'alerts']) || {};
 
 export const rulesToProps = (state: RootState) => {

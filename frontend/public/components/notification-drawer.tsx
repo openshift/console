@@ -10,8 +10,8 @@ import {
 } from '@console/patternfly';
 import * as UIActions from '@console/internal/actions/ui';
 import store, { RootState } from '@console/internal/redux';
-import { Alert } from '@console/internal/components/monitoring/types';
-import { alertURL } from '@console/internal/components/monitoring/utils';
+import { Alert, PrometheusRulesResponse } from '@console/internal/components/monitoring/types';
+import { getAlertsAndRules, alertURL } from '@console/internal/components/monitoring/utils';
 import { NotificationAlerts } from '@console/internal/reducers/ui';
 import { RedExclamationCircleIcon } from '@console/shared';
 import {
@@ -20,7 +20,6 @@ import {
   getAlertName,
   getAlertSeverity,
   getAlertTime,
-  getAlerts,
 } from '@console/shared/src/components/dashboard/status-card/alert-utils';
 import {
   EmptyState,
@@ -139,6 +138,13 @@ export const refreshNotificationPollers = () => {
   _.invoke(pollers, 'silences');
   _.invoke(pollers, 'notificationAlerts');
 };
+
+const getAlerts = (alertsResults: PrometheusRulesResponse): Alert[] =>
+  alertsResults
+    ? getAlertsAndRules(alertsResults.data)
+        .alerts.filter((a) => a.state === 'firing' && getAlertName(a) !== 'Watchdog')
+        .sort((a, b) => +new Date(getAlertTime(b)) - +new Date(getAlertTime(a)))
+    : [];
 
 export const ConnectedNotificationDrawer_: React.FC<ConnectedNotificationDrawerProps> = ({
   isDesktop,
