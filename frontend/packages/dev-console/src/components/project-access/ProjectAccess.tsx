@@ -4,6 +4,7 @@ import { Formik } from 'formik';
 import { Link } from 'react-router-dom';
 import {
   LoadingBox,
+  openshiftHelpBase,
   PageHeading,
   ExternalLink,
   StatusBox,
@@ -99,7 +100,7 @@ const ProjectAccess: React.FC<ProjectAccessProps> = ({ formName, namespace, role
         <Link to={`/k8s/ns/${getActiveNamespace()}/${RoleBindingModel.plural}`}>Role Bindings</Link>
         . For more information, see the{' '}
         <ExternalLink
-          href="https://docs.openshift.com/container-platform/4.1/authentication/using-rbac.html"
+          href={`${openshiftHelpBase}authentication/using-rbac.html`}
           text="role-based access control documentation"
         />{' '}
         .
