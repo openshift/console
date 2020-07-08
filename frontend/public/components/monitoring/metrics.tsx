@@ -37,11 +37,7 @@ import { Helmet } from 'react-helmet';
 import { connect } from 'react-redux';
 
 import { withFallback } from '@console/shared/src/components/error/error-boundary';
-import {
-  RedExclamationCircleIcon,
-  TechPreviewBadge,
-  YellowExclamationTriangleIcon,
-} from '@console/shared';
+import { RedExclamationCircleIcon, YellowExclamationTriangleIcon } from '@console/shared';
 import * as UIActions from '../../actions/ui';
 import { RootState } from '../../redux';
 import { fuzzyCaseInsensitive } from '../factory/table-filters';
@@ -964,12 +960,6 @@ const QueriesList = connect(({ UI }: RootState) => ({
   count: UI.getIn(['queryBrowser', 'queries']).size,
 }))(QueriesList_);
 
-const TechPreview = () => (
-  <span className="query-browser__tech-preview">
-    <TechPreviewBadge />
-  </span>
-);
-
 const PollIntervalDropdown = connect(
   ({ UI }: RootState) => ({
     interval: UI.getIn(['queryBrowser', 'pollInterval']),
@@ -992,7 +982,7 @@ const QueryBrowserPage_: React.FC<QueryBrowserPageProps> = ({ deleteAll, namespa
         <h1 className="co-m-pane__heading">
           <span>
             Metrics
-            {namespace ? <TechPreview /> : <HeaderPrometheusLink />}
+            <HeaderPrometheusLink />
           </span>
           <div className="co-actions">
             <PollIntervalDropdown />
