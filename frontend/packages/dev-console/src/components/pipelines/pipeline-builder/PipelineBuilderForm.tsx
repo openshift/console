@@ -80,6 +80,12 @@ const PipelineBuilderForm: React.FC<PipelineBuilderFormProps> = (props) => {
     highlightedIds: selectedIds,
   };
 
+  const closeSidebarAndHandleReset = React.useCallback(() => {
+    setSelectedTask(null);
+    selectedTaskRef.current = null;
+    handleReset();
+  }, [handleReset]);
+
   return (
     <>
       <Stack className="odc-pipeline-builder-form">
@@ -126,7 +132,7 @@ const PipelineBuilderForm: React.FC<PipelineBuilderFormProps> = (props) => {
               <PipelineResources addLabel="Add Resources" fieldName="resources" />
             </div>
             <FormFooter
-              handleReset={handleReset}
+              handleReset={closeSidebarAndHandleReset}
               errorMessage={status?.submitError}
               isSubmitting={isSubmitting}
               submitLabel={existingPipeline ? 'Save' : 'Create'}
