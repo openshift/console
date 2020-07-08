@@ -18,3 +18,31 @@
 .pf-c-notification-drawer__list-item.pf-m-update {
   --pf-c-notification-drawer__list-item--before--BackgroundColor: var(--pf-global--default-color--200);
 }
+
+.pf-c-notification-drawer__group-list {
+  h1 {
+    // fix category caption style bug
+    margin: 0;
+    padding: 0;
+    font-size: $font-size-base;
+    font-family: $font-family-base;
+  }
+}
+
+.pf-c-notification-drawer__list-item-header-title {
+  // fix list item caption style bug
+  font-size: $font-size-base;
+}
+
+.pf-c-notification-drawer__group {
+  .pf-c-notification-drawer__list {
+    // fix scroll bar bug
+    overflow: visible !important;
+  }
+}
+
+.pf-c-notification-drawer__group.pf-m-expanded {
+  // fix display bugs when there are more than 3 items in a group
+  flex: none !important;
+  min-height: 0 !important;
+}
