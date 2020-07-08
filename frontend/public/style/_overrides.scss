@@ -380,6 +380,11 @@ h6 {
   --pf-c-table--cell--PaddingRight: 12px;
   --pf-c-table--m-compact--cell--first-last-child--PaddingLeft: 12px;
   --pf-c-table--m-compact--cell--first-last-child--PaddingRight: 12px;
+  // fix bug where .pf-c-table__button::before overlays entire page
+  // caused by conflict with Bootstrap 3
+  // see https://github.com/twbs/bootstrap/blob/v3.4.1/less/tables.less#L24
+  // and https://github.com/patternfly/patternfly/blob/prerelease-v4.16.7/src/patternfly/components/Table/table.scss#L252-L253
+  position: relative !important;
 }
 
 .pf-c-table.pf-c-virtualized tr {
