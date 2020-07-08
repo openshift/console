@@ -47,6 +47,7 @@ export const ResourceSummary: React.SFC<ResourceSummaryProps> = ({
   showNodeSelector = false,
   showAnnotations = true,
   showTolerations = false,
+  showLabelEditor = true,
   podSelector = 'spec.selector',
   nodeSelector = 'spec.template.spec.nodeSelector',
 }) => {
@@ -84,6 +85,7 @@ export const ResourceSummary: React.SFC<ResourceSummaryProps> = ({
         path="metadata.labels"
         valueClassName="details-item__value--labels"
         onEdit={(e) => editLabelsModal(e, { resource, kind: model })}
+        canEdit={showLabelEditor && canUpdate}
         editAsGroup
       >
         <LabelList kind={reference} labels={metadata.labels} />
@@ -160,6 +162,7 @@ export type ResourceSummaryProps = {
   showNodeSelector?: boolean;
   showAnnotations?: boolean;
   showTolerations?: boolean;
+  showLabelEditor?: boolean;
   podSelector?: string;
   nodeSelector?: string;
   children?: React.ReactNode;

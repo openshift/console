@@ -527,7 +527,8 @@ export const NamespaceSummary = ({ ns }) => {
   return (
     <div className="row">
       <div className="col-sm-6 col-xs-12">
-        <ResourceSummary resource={ns}>
+        {/* Labels aren't editable on kind Project, only Namespace. */}
+        <ResourceSummary resource={ns} showLabelEditor={ns.kind === 'Namespace'}>
           {displayName && <dt>Display Name</dt>}
           {displayName && <dd>{displayName}</dd>}
           {requester && <dt>Requester</dt>}
