@@ -31,10 +31,11 @@ const EventSinkServicesOverviewList: React.FC<EventSinkServicesOverviewListProps
     apiVersion,
     metadata: { name, namespace },
     spec,
+    status,
   } = obj;
   const { name: sinkName, kind: sinkKind, apiVersion: sinkApiversion } =
     spec?.sink?.ref || spec?.sink || {};
-  const sinkUri = obj?.status?.sinkUri;
+  const sinkUri = status?.sinkUri;
   const deploymentData = current?.obj?.metadata?.ownerReferences?.[0];
   const apiGroup = apiVersion.split('/')[0];
   const linkUrl = `/search/ns/${namespace}?kind=${PodModel.kind}&q=${encodeURIComponent(
@@ -45,14 +46,16 @@ const EventSinkServicesOverviewList: React.FC<EventSinkServicesOverviewListProps
   return (
     <>
       <SidebarSectionHeading text="Sink" />
-      {isSinkReference ? (
+      {isSinkReference || sinkUri ? (
         <ul className="list-group">
           <li className="list-group-item">
-            <ResourceLink
-              kind={referenceForGroupVersionKind(group)(version)(sinkKind)}
-              name={sinkName}
-              namespace={namespace}
-            />
+            {isSinkReference && (
+              <ResourceLink
+                kind={referenceForGroupVersionKind(group)(version)(sinkKind)}
+                name={sinkName}
+                namespace={namespace}
+              />
+            )}
             {sinkUri && (
               <>
                 <span className="text-muted">Sink URI: </span>

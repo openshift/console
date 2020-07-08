@@ -9,6 +9,8 @@ import {
 } from '../../../topology/__tests__/topology-knative-test-data';
 import { RevisionModel, EventingSubscriptionModel } from '../../../models';
 import { KnativeResourceOverviewPage } from '../KnativeResourceOverviewPage';
+import SinkUriResourcesTab from '../SinkUriResourcesTab';
+import { NodeType } from '../../../topology/knative-topology-utils';
 
 describe('KnativeResourceOverviewPage', () => {
   let item: OverviewItem;
@@ -54,5 +56,22 @@ describe('KnativeResourceOverviewPage', () => {
     expect(resourceOverviewDetails).toHaveLength(1);
     expect(resourceOverviewDetails.at(0).props().menuActions).toHaveLength(4);
     expect(resourceOverviewDetails.at(0).props().kindObj).toEqual(EventingSubscriptionModel);
+  });
+
+  it('should render SinkUriResourcesTab if NodeType is sink-uri', () => {
+    const itemData = {
+      ...item,
+      obj: {
+        metadata: {
+          uid: '02c34a0e-9638-11e9-b134-06a61d886b62_nodesinkuri',
+        },
+        spec: { sinkUri: 'http://overlayimage.testproject3.svc.cluster.local' },
+        type: { nodeType: NodeType.SinkUri },
+      },
+    };
+    const wrapper = shallow(
+      <KnativeResourceOverviewPage item={itemData} knativeModels={[RevisionModel]} kindsInFlight />,
+    );
+    expect(wrapper.find(SinkUriResourcesTab)).toHaveLength(1);
   });
 });

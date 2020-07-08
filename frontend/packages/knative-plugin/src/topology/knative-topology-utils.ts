@@ -70,6 +70,7 @@ export enum NodeType {
   KnService = 'knative-service',
   Revision = 'knative-revision',
   PubSub = 'event-pubsub',
+  SinkUri = 'sink-uri',
 }
 
 export enum EdgeType {
@@ -111,6 +112,16 @@ export const getKnNodeModelProps = (type: string) => {
         height: NODE_HEIGHT / 2,
         visible: true,
         shape: NodeShape.rect,
+        style: {
+          padding: NODE_PADDING,
+        },
+      };
+    case NodeType.SinkUri:
+      return {
+        width: NODE_WIDTH * 0.75,
+        height: NODE_HEIGHT * 0.75,
+        visible: true,
+        shape: NodeShape.circle,
         style: {
           padding: NODE_PADDING,
         },
@@ -436,6 +447,65 @@ export const getKnativeTopologyNodeItems = (
   return nodes;
 };
 
+export const getSinkUriTopologyNodeItems = (
+  type: string,
+  id: string,
+  data: TopologyDataObject,
+): NodeModel[] => {
+  const nodes = [];
+  const nodeProps = getKnNodeModelProps(type);
+  nodes.push({
+    id,
+    type,
+    resource: data.resource,
+    data,
+    ...(nodeProps || {}),
+  });
+  return nodes;
+};
+
+export const getSinkUriTopologyEdgeItems = (
+  resource: K8sResourceKind,
+  targetUid: string,
+): EdgeModel[] => {
+  const uid = resource?.metadata?.uid;
+  const sinkUri = resource?.spec?.sink?.uri;
+  const edges = [];
+  if (sinkUri && uid) {
+    edges.push({
+      id: `${uid}_${targetUid}`,
+      type: EdgeType.EventSource,
+      source: uid,
+      target: targetUid,
+    });
+  }
+  return edges;
+};
+
+const getSinkTargetUid = (nodeData: NodeModel[], sinkUri: string) => {
+  const sinkNodeData = _.find(nodeData, ({ data: nodeResData }) => {
+    return sinkUri === nodeResData?.data?.sinkUri;
+  });
+
+  return sinkNodeData?.id ?? '';
+};
+
+const getEventSourcesData = (sinkUri: string, resources) => {
+  const eventSourceProps = getDynamicEventSourcesModelRefs();
+  const eventSources = _.reduce(
+    getKnativeDynamicResources(resources, eventSourceProps),
+    (acc, evSrc) => {
+      const evSrcSinkUri = evSrc.spec?.sink?.uri || '';
+      if (sinkUri === evSrcSinkUri) {
+        acc.push(evSrc);
+      }
+      return acc;
+    },
+    [],
+  );
+  return eventSources;
+};
+
 /**
  * Form Edge data for event sources
  */
@@ -653,6 +723,35 @@ export const transformKnNodeData = (
         );
         knDataModel.nodes.push(...getKnativeTopologyNodeItems(res, type, data, resources));
         knDataModel.edges.push(...getEventTopologyEdgeItems(res, resources.ksservices));
+        // form node data for sink uri
+        const sinkUri = res.spec?.sink?.uri;
+        let sinkTargetUid = getSinkTargetUid(knDataModel.nodes, sinkUri);
+        if (sinkUri) {
+          if (!sinkTargetUid) {
+            sinkTargetUid = encodeURIComponent(sinkUri);
+            const eventSourcesData = getEventSourcesData(sinkUri, resources);
+            const sinkUriObj = {
+              metadata: {
+                uid: sinkTargetUid,
+                namespace: data.resources.obj.metadata.namespace || '',
+              },
+              spec: { sinkUri },
+              type: { nodeType: NodeType.SinkUri },
+            };
+            const sinkData: TopologyDataObject = {
+              id: sinkTargetUid,
+              name: 'URI',
+              type: NodeType.SinkUri,
+              resources: { ...data.resources, obj: sinkUriObj, eventSources: eventSourcesData },
+              data: { ...data.data, sinkUri },
+              resource: sinkUriObj,
+            };
+            knDataModel.nodes.push(
+              ...getSinkUriTopologyNodeItems(NodeType.SinkUri, sinkTargetUid, sinkData),
+            );
+          }
+          knDataModel.edges.push(...getSinkUriTopologyEdgeItems(res, sinkTargetUid));
+        }
         // form connections for channels
         if (!isInternalResource(res)) {
           const channelResourceProps = getDynamicChannelModelRefs();
@@ -730,15 +829,22 @@ export const createKnativeEventSourceSink = (
   if (!source || !target || source === target) {
     return Promise.reject();
   }
-  const targetName = _.get(target, 'metadata.name');
   const eventSourceObj = _.omit(source, 'status');
-  const sink = {
-    ref: {
-      apiVersion: target.apiVersion,
-      kind: target.kind,
-      name: targetName,
-    },
-  };
+  let sink = {};
+  if (NodeType.SinkUri === target.type?.nodeType) {
+    sink = {
+      uri: target?.spec?.sinkUri,
+    };
+  } else {
+    const targetName = _.get(target, 'metadata.name');
+    sink = {
+      ref: {
+        apiVersion: target.apiVersion,
+        kind: target.kind,
+        name: targetName,
+      },
+    };
+  }
   const updatePayload = {
     ...eventSourceObj,
     spec: { ...eventSourceObj.spec, sink },

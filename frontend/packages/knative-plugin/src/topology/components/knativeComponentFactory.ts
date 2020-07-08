@@ -34,6 +34,7 @@ import {
   TYPE_REVISION_TRAFFIC,
   TYPE_EVENT_PUB_SUB,
   TYPE_EVENT_PUB_SUB_LINK,
+  TYPE_SINK_URI,
 } from '../const';
 import KnativeService from './groups/KnativeService';
 import RevisionNode from './nodes/RevisionNode';
@@ -42,11 +43,13 @@ import EventSourceLink from './edges/EventSourceLink';
 import EventingPubSubLink from './edges/EventingPubSubLink';
 import EventSource from './nodes/EventSource';
 import EventingPubSubNode from './nodes/EventingPubSubNode';
+import SinkUriNode from './nodes/SinkUriNode';
 import {
   eventSourceLinkDragSourceSpec,
   eventingPubSubLinkDragSourceSpec,
   eventSourceTargetSpec,
   eventSourceSinkDropTargetSpec,
+  sinkUriDropTargetSpec,
   pubSubDropTargetSpec,
   CREATE_PUB_SUB_CONNECTOR_OPERATION,
 } from './knativeComponentUtils';
@@ -123,6 +126,12 @@ export const getKnativeComponentFactory = (): ComponentFactory => {
                 ),
               ),
             ),
+          ),
+        );
+      case TYPE_SINK_URI:
+        return withDragNode(nodeDragSourceSpec(type))(
+          withSelection({ controlled: true })(
+            withDndDrop<any, any, {}, NodeComponentProps>(sinkUriDropTargetSpec)(SinkUriNode),
           ),
         );
       case TYPE_KNATIVE_REVISION:

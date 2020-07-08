@@ -17,7 +17,12 @@ import {
   EdgeComponentProps,
   EditableDragOperationType,
 } from '@console/dev-console/src/components/topology';
-import { TYPE_EVENT_SOURCE_LINK, TYPE_KNATIVE_SERVICE, TYPE_EVENT_PUB_SUB } from '../const';
+import {
+  TYPE_EVENT_SOURCE_LINK,
+  TYPE_KNATIVE_SERVICE,
+  TYPE_EVENT_PUB_SUB,
+  TYPE_SINK_URI,
+} from '../const';
 import { createSinkConnection, createSinkPubSubConnection } from '../knative-topology-utils';
 import { EventingBrokerModel } from '../../models';
 
@@ -35,7 +40,7 @@ export const nodesEdgeIsDragging = (monitor, props) =>
 
 export const canDropEventSourceSinkOnNode = (operation: string, edge: Edge, node: Node): boolean =>
   edge.getSource() !== node &&
-  (node.getType() === TYPE_KNATIVE_SERVICE || node.getType() === TYPE_EVENT_PUB_SUB) &&
+  [TYPE_KNATIVE_SERVICE, TYPE_EVENT_PUB_SUB, TYPE_SINK_URI].includes(node.getType()) &&
   operation === MOVE_EV_SRC_CONNECTOR_OPERATION &&
   !node.getTargetEdges().find((e) => e.getSource() === edge.getSource());
 
@@ -94,6 +99,23 @@ export const eventSourceSinkDropTargetSpec: DropTargetSpec<
 };
 
 export const pubSubDropTargetSpec: DropTargetSpec<
+  Edge,
+  any,
+  { canDrop: boolean; dropTarget: boolean; edgeDragging: boolean },
+  NodeComponentProps
+> = {
+  accept: [EDGE_DRAG_TYPE],
+  canDrop: (item, monitor, props) =>
+    item.getType() === TYPE_EVENT_SOURCE_LINK && item.getSource() !== props.element,
+  collect: (monitor, props) => ({
+    canDrop:
+      monitor.isDragging() && monitor.getOperation()?.type === MOVE_EV_SRC_CONNECTOR_OPERATION,
+    dropTarget: monitor.isOver({ shallow: true }),
+    edgeDragging: nodesEdgeIsDragging(monitor, props),
+  }),
+};
+
+export const sinkUriDropTargetSpec: DropTargetSpec<
   Edge,
   any,
   { canDrop: boolean; dropTarget: boolean; edgeDragging: boolean },
