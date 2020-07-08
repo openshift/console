@@ -9,7 +9,7 @@ import { getVMIBootableDevicesInOrder } from '../vmi/devices';
 import { confirmVMIModal } from '../../components/modals/menu-actions-modals/confirm-vmi-modal';
 import { getActionMessage } from '../../components/vms/constants';
 import { VMActionType, restartVM } from '../../k8s/requests/vm';
-import { createBasicLookup } from '../../../../console-shared/src/utils/utils';
+import { createBasicLookup } from '@console/shared';
 import { getSimpleName } from '../utils';
 import { V1Disk } from '../../types/vm/disk/V1Disk';
 import { VolumeWrapper } from '../../k8s/wrapper/vm/volume-wrapper';
@@ -30,12 +30,15 @@ export const isFlavorChanged = (vm: VMWrapper, vmi: VMIWrapper): boolean => {
 export const isDisksChanged = (
   vm: VMWrapper,
   vmi: VMIWrapper,
-  vmDisks?: V1Disk[],
-  vmiDisks?: V1Disk[],
+  vmDsks?: V1Disk[],
+  vmiDsks?: V1Disk[],
 ): boolean => {
   if (vm.isEmpty() || vmi.isEmpty()) {
     return false;
   }
+
+  const vmDisks = vmDsks || vm.getDisks();
+  const vmiDisks = vmiDsks || vmi.getDisks();
 
   const vmVolumes = vm.getVolumesOfDisks(vmDisks || vm.getDisks());
   const vmiVolumes = vmi.getVolumesOfDisks(vmiDisks || vmi.getDisks());
@@ -45,16 +48,35 @@ export const isDisksChanged = (
   }
 
   const vmiVolLookup = createBasicLookup(vmiVolumes, getSimpleName);
+  const vmDiskLookup = createBasicLookup(vmDisks, getSimpleName);
+  const vmiDiskLookup = createBasicLookup(vmiDisks, getSimpleName);
 
   return !vmVolumes.every((vol) => {
     const volWrapper = new VolumeWrapper(vol);
-    const volType = volWrapper.getType();
-    switch (volType) {
-      case VolumeType.CONTAINER_DISK:
-        return _.isEqual(vol, _.omit(vmiVolLookup[vol.name], 'containerDisk.imagePullPolicy'));
-      default:
-        return _.isEqual(vol, vmiVolLookup[vol.name]);
+    const vmDisk = vmDiskLookup[vol.name];
+
+    const diskEqulity = _.isEqual(
+      vmDisk,
+      Object.keys(vmDisk).includes('cdrom')
+        ? _.omit(vmiDiskLookup[vol.name], 'cdrom.readonly', 'cdrom.tray')
+        : vmiDiskLookup[vol.name],
+    );
+
+    let volEquality = false;
+    if (diskEqulity) {
+      switch (volWrapper.getType()) {
+        case VolumeType.CONTAINER_DISK:
+          volEquality = _.isEqual(
+            vol,
+            _.omit(vmiVolLookup[vol.name], 'containerDisk.imagePullPolicy'),
+          );
+          break;
+        default:
+          volEquality = _.isEqual(vol, vmiVolLookup[vol.name]);
+      }
     }
+
+    return diskEqulity && volEquality;
   });
 };
 
@@ -66,7 +88,7 @@ export const isCDROMChanged = (vm: VMWrapper, vmi: VMIWrapper): boolean => {
 };
 
 export const isBootOrderChanged = (vm: VMWrapper, vmi: VMIWrapper): boolean => {
-  if (!vm || !vmi) {
+  if (vm.isEmpty() || vmi.isEmpty()) {
     return false;
   }
 
@@ -86,15 +108,31 @@ export const isBootOrderChanged = (vm: VMWrapper, vmi: VMIWrapper): boolean => {
   );
 };
 
-export const getRemovedDiskNames = (vm: VMWrapper, vmi: VMIWrapper): string[] => {
+export const isEnvDisksChanged = (vm: VMWrapper, vmi: VMIWrapper): boolean => {
   if (vm.isEmpty() || vmi.isEmpty()) {
-    return [];
+    return false;
   }
 
-  const vmDisks = vm.getDisks();
-  return vmi
-    .getDisks()
-    .map((vmiDisk) => !vmDisks.find((vmDisk) => vmDisk.name === vmiDisk.name) && vmiDisk.name);
+  const vmEnvDiskVolumeNames = [
+    ...vm.getConfigMaps(),
+    ...vm.getSecrets(),
+    ...vm.getServiceAccounts(),
+  ].map((vol) => vol.name);
+
+  const vmiEnvDiskVolumeNames = [
+    ...vmi.getConfigMaps(),
+    ...vmi.getSecrets(),
+    ...vmi.getServiceAccounts(),
+  ].map((vol) => vol.name);
+
+  if (vmEnvDiskVolumeNames.length !== vmiEnvDiskVolumeNames.length) {
+    return true;
+  }
+
+  const vmEnvDisks = vm.getDisks().filter((dsk) => vmEnvDiskVolumeNames.includes(dsk.name));
+  const vmiEnvDisks = vmi.getDisks().filter((dsk) => vmiEnvDiskVolumeNames.includes(dsk.name));
+
+  return isDisksChanged(vm, vmi, vmEnvDisks, vmiEnvDisks);
 };
 
 export const detectNextRunChanges = (vm: VMKind, vmi: VMIKind) => {

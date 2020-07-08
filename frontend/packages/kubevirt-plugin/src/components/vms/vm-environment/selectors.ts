@@ -18,6 +18,7 @@ import {
   ServiceAccountKind,
 } from '@console/internal/module/k8s';
 import { V1Disk } from 'packages/kubevirt-plugin/src/types/vm/disk/V1Disk';
+import { VMWrapper } from '../../../k8s/wrapper/vm/vm-wrapper';
 
 export const getSerial = (ed: EnvDisk): string => ed[0];
 export const getEnvVarSource = (ed: EnvDisk): EnvVarSource => ed[1];
@@ -27,6 +28,28 @@ export const getSourceName = (ed: EnvDisk): string => {
   return (
     source?.configMapRef?.name || source?.secretRef?.name || source?.serviceAccountRef?.name || ''
   );
+};
+
+const getConfigMapVolumeBySource = (sourceName: string, vmWrapper: VMWrapper) =>
+  vmWrapper.getConfigMaps().find((vol) => vol.configMap.name === sourceName);
+
+const getSecretVolumeBySource = (sourceName: string, vmWrapper: VMWrapper) =>
+  vmWrapper.getSecrets().find((vol) => vol.secret.secretName === sourceName);
+
+const getServiceAccountVolumeBySource = (sourceName: string, vmWrapper: VMWrapper) =>
+  vmWrapper
+    .getServiceAccounts()
+    .find((vol) => vol.serviceAccount.serviceAccountName === sourceName);
+
+const getVolumeBySource = (sourceName: string, vmWrapper: VMWrapper) =>
+  getConfigMapVolumeBySource(sourceName, vmWrapper) ||
+  getSecretVolumeBySource(sourceName, vmWrapper) ||
+  getServiceAccountVolumeBySource(sourceName, vmWrapper) ||
+  null;
+
+export const getDiskNameBySource = (sourceName: string, vmWrapper: VMWrapper): string => {
+  const volume = getVolumeBySource(sourceName, vmWrapper);
+  return volume ? volume.name : null;
 };
 
 export const getEnvDiskRefKind = (envDisk: EnvDisk) =>

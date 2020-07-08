@@ -65,6 +65,9 @@ export class VMWrapper extends K8sResourceWrapper<VMKind, VMWrapper> implements 
     return this.getVolumes().filter((vol) => diskNames.includes(vol.name));
   };
 
+  getVolumeByName = (volName: string): V1Volume =>
+    this.getVolumes().find((vol) => vol.name === volName);
+
   getLabeledDevices = () => transformDevices(this.getDisks(), this.getNetworkInterfaces());
 
   getNodeSelector = () => getNodeSelector(this.data);

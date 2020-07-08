@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { VMKind } from '../../../types/vm';
+import { VMKind, VMIKind } from '../../../types/vm';
 import {
   SecretKind,
   ConfigMapKind,
@@ -10,7 +10,7 @@ import {
   ServiceAccountKind,
 } from '@console/internal/module/k8s';
 import { getNamespace, getRandomChars } from '@console/shared';
-import { getResource } from '../../../utils';
+import { getResource, getLoadedData } from '../../../utils';
 import {
   SecretModel,
   ConfigMapModel,
@@ -42,6 +42,7 @@ import {
   setNewSourceVolume,
   areThereDupSerials,
   getSerial,
+  getDiskNameBySource,
 } from './selectors';
 import { SOURCES, EnvDisk, NameValuePairs } from './types';
 import { VMWrapper } from '../../../k8s/wrapper/vm/vm-wrapper';
@@ -68,8 +69,14 @@ import {
 import { PatchBuilder } from '@console/shared/src/k8s/patch';
 import { getVMLikePatches } from '../../../k8s/patches/vm-template';
 import { V1Volume } from '../../../types/vm/disk/V1Volume';
-import { VirtualMachineModel } from '../../../models';
+import { VirtualMachineModel, VirtualMachineInstanceModel } from '../../../models';
 import { V1Disk } from '../../../types/vm/disk/V1Disk';
+import { VMIWrapper } from '../../../k8s/wrapper/vm/vmi-wrapper';
+import { isEnvDisksChanged } from '../../../selectors/vm-like/nextRunChanges';
+import { VM_ENVIRONMENT_PENDING_CHANGES } from '../../../strings/vm/status';
+
+import './vm-environment-page.scss';
+import { PendingChangesAlert } from '../../Alerts/PendingChangesAlert';
 
 export const VMEnvironmentFirehose: React.FC<VMTabProps> = ({
   obj: objProp,
@@ -84,6 +91,12 @@ export const VMEnvironmentFirehose: React.FC<VMTabProps> = ({
       namespace: getNamespace(vm),
       prop: 'serviceAccountsResource',
     }),
+    {
+      kind: VirtualMachineInstanceModel.kind,
+      namespace: getNamespace(vm),
+      prop: 'vmis',
+      isList: true,
+    },
   ];
 
   const underlyingTemplate = getVMTemplateNamespacedName(vm);
@@ -140,6 +153,7 @@ const VMEnvironment = withHandlePromise<VMEnvironmentProps>(
     handlePromise,
     inProgress,
     errorMessage,
+    vmis,
   }) => {
     const configMaps = configmapsResource?.data;
     const secrets = secretsResource?.data;
@@ -147,6 +161,9 @@ const VMEnvironment = withHandlePromise<VMEnvironmentProps>(
     const template = templateResource?.data;
     const vmWrapper = new VMWrapper(vm);
     const isVMRunning = isVMRunningOrExpectedRunning(vm);
+    const loadedVMIs = getLoadedData(vmis);
+    const vmi = loadedVMIs && loadedVMIs.length > 0 && loadedVMIs[0];
+    const isVMRequiredRestart = isEnvDisksChanged(new VMWrapper(vm), new VMIWrapper(vmi));
 
     const [errMsg, setErrMsg] = React.useState(errorMessage);
     const [isSuccess, setIsSuccess] = React.useState(false);
@@ -337,7 +354,8 @@ const VMEnvironment = withHandlePromise<VMEnvironmentProps>(
         const sourceName = getSourceName(ed);
 
         if (sourceName) {
-          const sourceDiskName = getNewDiskName(sourceName);
+          const sourceDiskName =
+            getDiskNameBySource(sourceName, vmWrapper) || getNewDiskName(sourceName);
           const newDisk = setNewSourceDisk(sourceDiskName, getSerial(ed), diskBus);
           const newVolume = setNewSourceVolume(getSourceKind(ed), sourceName, sourceDiskName);
           newSourcesDisks = [...newSourcesDisks, newDisk];
@@ -398,12 +416,14 @@ const VMEnvironment = withHandlePromise<VMEnvironmentProps>(
       : toListObj(serviceAccountList, []);
 
     const addButtonDisabled =
-      isVMRunning ||
       envDisks.length >= configMaps?.length + secrets?.length + serviceAccounts?.length;
 
     return (
       <>
         <div className="co-m-pane__body-group">
+          {isVM(vm) && isVMRunning && isVMRequiredRestart && (
+            <PendingChangesAlert warningMsg={VM_ENVIRONMENT_PENDING_CHANGES} />
+          )}
           <h3 className="co-section-heading-tertiary">
             Include all values from existing config maps, secrets or service accounts (as Disk)
             <FieldLevelHelp>
@@ -415,7 +435,6 @@ const VMEnvironment = withHandlePromise<VMEnvironmentProps>(
             nameValueId={0}
             nameValuePairs={envDisks}
             updateParentData={updateEnvDisks}
-            readOnly={isVMRunning}
             configMaps={availableConfigMaps}
             secrets={availableSecrets}
             serviceAccounts={availableServiceAccounts}
@@ -431,8 +450,7 @@ const VMEnvironment = withHandlePromise<VMEnvironmentProps>(
             reload={onReload}
             errorMsg={errMsg}
             isSuccess={isSuccess}
-            isSaveBtnDisabled={isVMRunning || isSaveBtnDisabled()}
-            isReloadBtnDisabled={isVMRunning}
+            isSaveBtnDisabled={isSaveBtnDisabled()}
           />
         </div>
       </>
@@ -446,4 +464,5 @@ type VMEnvironmentProps = HandlePromiseProps & {
   configmapsResource?: FirehoseResult<ConfigMapKind[]>;
   serviceAccountsResource?: FirehoseResult<ServiceAccountKind[]>;
   templateResource?: FirehoseResult<TemplateKind>;
+  vmis?: FirehoseResult<VMIKind[]>;
 };

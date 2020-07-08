@@ -57,4 +57,14 @@ export class VMIWrapper extends K8sResourceWrapper<VMIKind, VMIWrapper> implemen
   getTolerations = () => getVMITolerations(this.data);
 
   getAffinity = () => getVMIAffinity(this.data);
+
+  getConfigMaps = () => this.getVolumes().filter((vol) => Object.keys(vol).includes('configMap'));
+
+  getSecrets = () => this.getVolumes().filter((vol) => Object.keys(vol).includes('secret'));
+
+  getServiceAccounts = () =>
+    this.getVolumes().filter((vol) => Object.keys(vol).includes('serviceAccount'));
+
+  getVolumeByName = (volName: string): V1Volume =>
+    this.getVolumes().find((vol) => vol.name === volName);
 }
