@@ -54,6 +54,7 @@ export const DetailsItem: React.FC<DetailsItemProps> = ({
   labelClassName,
   obj,
   onEdit,
+  canEdit = true,
   path,
   valueClassName,
 }) => {
@@ -65,6 +66,7 @@ export const DetailsItem: React.FC<DetailsItemProps> = ({
   const model: K8sKind = modelFor(reference);
   const description: string = getPropertyDescription(model, path);
   const value: React.ReactNode = children || _.get(obj, path, defaultValue);
+  const editable = onEdit && canEdit;
   return (
     <>
       <dt className={classnames('details-item__label', labelClassName)}>
@@ -89,7 +91,7 @@ export const DetailsItem: React.FC<DetailsItemProps> = ({
               label
             )}
           </SplitItem>
-          {onEdit && editAsGroup && (
+          {editable && editAsGroup && (
             <>
               <SplitItem isFilled />
               <SplitItem>
@@ -101,10 +103,10 @@ export const DetailsItem: React.FC<DetailsItemProps> = ({
       </dt>
       <dd
         className={classnames('details-item__value', valueClassName, {
-          'details-item__value--editable': onEdit,
+          'details-item__value--editable': editable,
         })}
       >
-        {onEdit && !editAsGroup ? <EditButton onClick={onEdit}>{value}</EditButton> : value}
+        {editable && !editAsGroup ? <EditButton onClick={onEdit}>{value}</EditButton> : value}
       </dd>
     </>
   );
@@ -118,6 +120,7 @@ export type DetailsItemProps = {
   labelClassName?: string;
   obj: K8sResourceKind;
   onEdit?: (e: Event) => void;
+  canEdit?: boolean;
   path: string | string[];
   valueClassName?: string;
 };
