@@ -346,7 +346,7 @@ type FilterToolbarProps = {
   labelPath?: string;
 };
 
-export type RowFilter = {
+export type RowFilter<R = any> = {
   defaultSelected?: string[];
   filterGroupName: string;
   type: string;
@@ -354,7 +354,7 @@ export type RowFilter = {
     [key: string]: string;
   }[];
   itemsGenerator?: (...args) => { [key: string]: string }[];
-  reducer: (param) => React.ReactText;
+  reducer: (param: R) => React.ReactText;
   filter?: any;
 };
 

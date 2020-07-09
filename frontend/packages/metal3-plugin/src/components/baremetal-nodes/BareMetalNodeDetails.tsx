@@ -1,30 +1,31 @@
 import * as React from 'react';
-import { NodeKind, K8sResourceKind } from '@console/internal/module/k8s';
 import NodeDetailsConditions from '@console/app/src/components/nodes/NodeDetailsConditions';
 import NodeDetailsImages from '@console/app/src/components/nodes/NodeDetailsImages';
 import { getNodeMachineName, getName, createBasicLookup } from '@console/shared';
-import { BareMetalHostKind } from '../../types';
 import { getNodeMaintenanceNodeName, getHostMachineName } from '../../selectors';
+import { getNodeServerCSR } from '../../selectors/csr';
 import BareMetalNodeDetailsOverview from './BareMetalNodeDetailsOverview';
+import { BareMetalNodeDetailsPageProps } from '../types';
 
-type BareMetalNodeDetailsProps = {
-  obj: NodeKind;
-  hosts: BareMetalHostKind[];
-  nodeMaintenances: K8sResourceKind[];
-};
-
-const BareMetalNodeDetails: React.FC<BareMetalNodeDetailsProps> = ({
+const BareMetalNodeDetails: React.FC<BareMetalNodeDetailsPageProps> = ({
   obj: node,
   hosts,
   nodeMaintenances,
+  csrs,
 }) => {
   const maintenancesByNodeName = createBasicLookup(nodeMaintenances, getNodeMaintenanceNodeName);
   const hostsByMachineName = createBasicLookup(hosts, getHostMachineName);
   const host = hostsByMachineName[getNodeMachineName(node)];
   const nodeMaintenance = maintenancesByNodeName[getName(node)];
+  const csr = getNodeServerCSR(csrs, node);
   return (
     <>
-      <BareMetalNodeDetailsOverview node={node} host={host} nodeMaintenance={nodeMaintenance} />
+      <BareMetalNodeDetailsOverview
+        node={node}
+        host={host}
+        nodeMaintenance={nodeMaintenance}
+        csr={csr}
+      />
       <NodeDetailsConditions node={node} />
       <NodeDetailsImages node={node} />
     </>

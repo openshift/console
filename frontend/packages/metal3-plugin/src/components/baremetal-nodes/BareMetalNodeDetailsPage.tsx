@@ -5,7 +5,7 @@ import { PodsPage } from '@console/internal/components/pod';
 import { ResourceEventStream } from '@console/internal/components/events';
 import { DetailsPage } from '@console/internal/components/factory';
 import { referenceForModel } from '@console/internal/module/k8s';
-import { MachineModel, NodeModel } from '@console/internal/models';
+import { MachineModel, NodeModel, CertificateSigningRequestModel } from '@console/internal/models';
 import { connectToPlural } from '@console/internal/kinds';
 import { ResourceDetailsPageProps } from '@console/internal/components/resource-list';
 import { useFlag } from '@console/shared/src/hooks/flag';
@@ -53,6 +53,12 @@ const BareMetalNodeDetailsPage = connectToPlural((props: BareMetalNodeDetailsPag
       namespaced: true,
       isList: true,
       prop: 'hosts',
+    },
+    {
+      kind: CertificateSigningRequestModel.kind,
+      namespaced: false,
+      isList: true,
+      prop: 'csrs',
     },
   ];
 

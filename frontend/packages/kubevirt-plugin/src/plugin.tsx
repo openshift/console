@@ -345,7 +345,10 @@ const plugin: Plugin<ConsumedExtensions> = [
         },
       },
       model: models.VirtualMachineModel,
-      mapper: getVMStatusGroups,
+      mapper: () =>
+        import(
+          './components/dashboards-page/overview-dashboard/inventory' /* webpackChunkName: "kubevirt" */
+        ).then((m) => m.getVMStatusGroups),
       useAbbr: true,
     },
     flags: {

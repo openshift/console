@@ -30,11 +30,6 @@ import {
 } from '@console/internal/models';
 import { referenceForModel, ClusterOperator } from '@console/internal/module/k8s';
 import {
-  getNodeStatusGroups,
-  getPodStatusGroups,
-  getPVCStatusGroups,
-} from '@console/shared/src/components/dashboard/inventory-card/utils';
-import {
   fetchK8sHealth,
   getK8sHealthState,
   getControlPlaneHealth,
@@ -150,14 +145,20 @@ const plugin: Plugin<ConsumedExtensions> = [
     type: 'Dashboards/Overview/Inventory/Item',
     properties: {
       model: NodeModel,
-      mapper: getNodeStatusGroups,
+      mapper: () =>
+        import(
+          '@console/shared/src/components/dashboard/inventory-card/utils' /* webpackChunkName: "console-app" */
+        ).then((m) => m.getNodeStatusGroups),
     },
   },
   {
     type: 'Dashboards/Overview/Inventory/Item',
     properties: {
       model: PodModel,
-      mapper: getPodStatusGroups,
+      mapper: () =>
+        import(
+          '@console/shared/src/components/dashboard/inventory-card/utils' /* webpackChunkName: "console-app" */
+        ).then((m) => m.getPodStatusGroups),
     },
   },
   {
@@ -170,7 +171,10 @@ const plugin: Plugin<ConsumedExtensions> = [
     type: 'Dashboards/Overview/Inventory/Item',
     properties: {
       model: PersistentVolumeClaimModel,
-      mapper: getPVCStatusGroups,
+      mapper: () =>
+        import(
+          '@console/shared/src/components/dashboard/inventory-card/utils' /* webpackChunkName: "console-app" */
+        ).then((m) => m.getPVCStatusGroups),
       useAbbr: true,
     },
   },

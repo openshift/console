@@ -32,7 +32,7 @@ import { FooBarModel } from './models';
 import { yamlTemplates } from './yaml-templates';
 import TestIcon from './components/test-icon';
 import { getFooHealthState, getBarHealthState } from './components/dashboards/health';
-import { getRouteStatusGroups, DemoGroupIcon } from './components/dashboards/inventory';
+import { DemoGroupIcon } from './components/dashboards/inventory';
 
 type ConsumedExtensions =
   | ModelDefinition
@@ -234,7 +234,10 @@ const plugin: Plugin<ConsumedExtensions> = [
     type: 'Dashboards/Overview/Inventory/Item',
     properties: {
       model: RouteModel,
-      mapper: getRouteStatusGroups,
+      mapper: () =>
+        import('./components/dashboards/inventory' /* webpackChunkName: "demo" */).then(
+          (m) => m.getRouteStatusGroups,
+        ),
       expandedComponent: () =>
         import(
           './components/dashboards/inventory' /* webpackChunkName: "demo-inventory-item" */
