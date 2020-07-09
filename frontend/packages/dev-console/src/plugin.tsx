@@ -41,7 +41,7 @@ import {
   getPipelinesAndPipelineRunsForResource,
   tknPipelineAndPipelineRunsResources,
 } from './utils/pipeline-plugin-utils';
-import { FLAG_OPENSHIFT_PIPELINE, ALLOW_SERVICE_BINDING } from './const';
+import { FLAG_OPENSHIFT_PIPELINE, ALLOW_SERVICE_BINDING, FLAG_OPENSHIFT_GITOPS } from './const';
 import {
   newPipelineTemplate,
   newTaskTemplate,
@@ -121,6 +121,13 @@ const plugin: Plugin<ConsumedExtensions> = [
     },
   },
   {
+    type: 'FeatureFlag/Model',
+    properties: {
+      model: models.GitOpsServiceModel,
+      flag: FLAG_OPENSHIFT_GITOPS,
+    },
+  },
+  {
     type: 'NavItem/Href',
     properties: {
       perspective: 'dev',
@@ -143,6 +150,20 @@ const plugin: Plugin<ConsumedExtensions> = [
     },
     flags: {
       required: [FLAGS.OPENSHIFT],
+    },
+  },
+  {
+    type: 'NavItem/Href',
+    properties: {
+      perspective: 'dev',
+      componentProps: {
+        name: 'GitOps',
+        href: '/gitops',
+        testID: 'gitops-header',
+      },
+    },
+    flags: {
+      required: [FLAG_OPENSHIFT_GITOPS],
     },
   },
   {
@@ -468,6 +489,19 @@ const plugin: Plugin<ConsumedExtensions> = [
         (
           await import(
             './components/topology/TopologyPage' /* webpackChunkName: "dev-console-topology" */
+          )
+        ).default,
+    },
+  },
+  {
+    type: 'Page/Route',
+    properties: {
+      exact: true,
+      path: '/gitops',
+      loader: async () =>
+        (
+          await import(
+            './components/gitops/GitOpsDashboard' /* webpackChunkName: "dev-console-gitops" */
           )
         ).default,
     },
