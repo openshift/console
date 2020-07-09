@@ -1,6 +1,7 @@
 export const ALLOW_SERVICE_BINDING = 'ALLOW_SERVICE_BINDING';
 export const FLAG_OPENSHIFT_PIPELINE = 'OPENSHIFT_PIPELINE';
 export const CLUSTER_PIPELINE_NS = 'openshift';
+export const FLAG_OPENSHIFT_GITOPS = 'OPENSHIFT_GITOPS';
 
 /** URL query params that adjust scope / purpose of the page */
 export enum QUERY_PROPERTIES {
