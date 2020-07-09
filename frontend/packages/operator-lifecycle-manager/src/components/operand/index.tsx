@@ -439,146 +439,129 @@ export const ProvidedAPIPage = connectToModel((props: ProvidedAPIPageProps) => {
   );
 });
 
-export const OperandDetails = connectToModel((props: OperandDetailsProps) => {
-  // TODO(alecmerdler): Use additional `x-descriptor` to specify if should be considered main?
-  const isMainDescriptor = (descriptor: Descriptor) => {
-    return ((descriptor['x-descriptors'] as StatusCapability[]) || []).some((type) => {
-      switch (type) {
-        case StatusCapability.podStatuses:
-          return true;
-        default:
-          return false;
-      }
-    });
-  };
+const OperandDetailsSection: React.FC = ({ children }) => (
+  <div className="co-operand-details__section co-operand-details__section--info">
+    <div className="row">{children}</div>
+  </div>
+);
 
-  const blockValue = (descriptor: Descriptor, block: { [key: string]: any }) =>
-    !_.isEmpty(descriptor) ? _.get(block, descriptor.path, descriptor.value) : undefined;
-
-  const { kind, metadata, spec, status } = props.obj;
-
-  // Find the matching CRD spec for the kind of this resource in the CSV.
-  const ownedDefinitions = _.get(
-    props.clusterServiceVersion,
-    'spec.customresourcedefinitions.owned',
-    [],
-  );
-  const reqDefinitions = _.get(
-    props.clusterServiceVersion,
-    'spec.customresourcedefinitions.required',
-    [],
-  );
-  const thisDefinition = _.find(
-    ownedDefinitions.concat(reqDefinitions),
-    (def) => def.name.split('.')[0] === props.kindObj.plural,
-  );
-  const statusDescriptors = _.get<Descriptor[]>(thisDefinition, 'statusDescriptors', []).filter(
-    // exclude Conditions since they are included in their own section
-    (descriptor) => descriptor.path !== 'conditions',
-  );
-  const specDescriptors = _.get<Descriptor[]>(thisDefinition, 'specDescriptors', []);
-  const currentStatus = _.find(statusDescriptors, { displayName: 'Status' });
-  const primaryDescriptors = statusDescriptors.filter((descriptor) => isMainDescriptor(descriptor));
-
-  const header = (
-    <h2 className="co-section-heading">{thisDefinition?.displayName || kind} Overview</h2>
-  );
-
-  const primaryDescriptor = primaryDescriptors.map((statusDescriptor: Descriptor) => {
-    return (
-      <div key={statusDescriptor.displayName} className="col-sm-6">
-        <StatusDescriptor
-          descriptor={statusDescriptor}
-          value={blockValue(statusDescriptor, status)}
-          obj={props.obj}
-          model={props.kindObj}
-        />
-      </div>
-    );
-  });
-
-  const [errorMessage, setErrorMessage] = React.useState(null);
-  const handleError = (errorMsg: string) => setErrorMessage(errorMsg);
-
-  const details = (
-    <div className="co-operand-details__section co-operand-details__section--info">
-      <div className="row">
-        <div className="col-sm-6">
-          <ResourceSummary resource={props.obj} />
-        </div>
-        {currentStatus && (
-          <div className="col-sm-6" key={currentStatus.path}>
+const PodStatuses: React.FC<PodStatusesProps> = ({ kindObj, obj, podStatusDescriptors }) =>
+  podStatusDescriptors?.length > 0 ? (
+    <div className="row">
+      {podStatusDescriptors.map((statusDescriptor: Descriptor) => {
+        return (
+          <div key={statusDescriptor.displayName} className="col-sm-6">
             <StatusDescriptor
-              namespace={metadata.namespace}
-              obj={props.obj}
-              model={props.kindObj}
-              descriptor={currentStatus}
-              value={blockValue(currentStatus, status)}
+              descriptor={statusDescriptor}
+              value={_.get(obj.status, statusDescriptor.path, statusDescriptor.value)}
+              obj={obj}
+              model={kindObj}
             />
           </div>
-        )}
-
-        {specDescriptors.map((specDescriptor: Descriptor) => (
-          <div key={specDescriptor.path} className="col-sm-6">
-            <SpecDescriptor
-              namespace={metadata.namespace}
-              obj={props.obj}
-              model={props.kindObj}
-              value={blockValue(specDescriptor, spec)}
-              descriptor={specDescriptor}
-              onHandleError={handleError}
-            />
-          </div>
-        ))}
-
-        {statusDescriptors
-          .filter(function(descriptor) {
-            return !isMainDescriptor(descriptor) && descriptor.displayName !== 'Status';
-          })
-          .map((statusDescriptor: Descriptor) => {
-            const statusValue = blockValue(statusDescriptor, status);
-            return (
-              <div className="col-sm-6" key={statusDescriptor.path}>
-                <StatusDescriptor
-                  namespace={metadata.namespace}
-                  obj={props.obj}
-                  model={props.kindObj}
-                  descriptor={statusDescriptor}
-                  value={statusValue}
-                />
-              </div>
-            );
-          })}
-      </div>
+        );
+      })}
     </div>
-  );
+  ) : null;
 
-  return (
-    <div className="co-operand-details co-m-pane">
-      {_.isEmpty(primaryDescriptors) ? (
+export const OperandDetails = connectToModel(
+  ({ clusterServiceVersion, kindObj, obj }: OperandDetailsProps) => {
+    const { kind, status } = obj;
+    const [errorMessage, setErrorMessage] = React.useState(null);
+    const handleError = (message: string) => setErrorMessage(message);
+
+    // Find the matching CRD spec for the kind of this resource in the CSV.
+    const { displayName, specDescriptors, statusDescriptors } =
+      [
+        ...(clusterServiceVersion?.spec?.customresourcedefinitions?.owned ?? []),
+        ...(clusterServiceVersion?.spec?.customresourcedefinitions?.required ?? []),
+      ].find((def) => def.name.split('.')[0] === kindObj.plural) ?? {};
+
+    const { podStatusDescriptors, otherStatusDescriptors } = (statusDescriptors ?? []).reduce<any>(
+      (descriptorAccumulator, descriptor) => {
+        // exclude Conditions since they are included in their own section
+        if (descriptor.path === 'conditions') {
+          return descriptorAccumulator;
+        }
+
+        // pod status descriptors are a special case since they are always rendered at the top, above
+        // the rest of the details
+        if (descriptor['x-descriptors']?.includes(StatusCapability.podStatuses)) {
+          return {
+            ...descriptorAccumulator,
+            podStatusDescriptors: [
+              ...(descriptorAccumulator.podStatusDescripors ?? []),
+              descriptor,
+            ],
+          };
+        }
+        return {
+          ...descriptorAccumulator,
+          otherStatusDescriptors:
+            // Make sure that the statusDescriptor for 'status' is first
+            descriptor.displayName === 'Status'
+              ? [descriptor, ...(descriptorAccumulator.otherStatusDescriptors ?? [])]
+              : [...(descriptorAccumulator.otherStatusDescriptors ?? []), descriptor],
+        };
+      },
+      {},
+    );
+    return (
+      <div className="co-operand-details co-m-pane">
         <div className="co-m-pane__body">
           {errorMessage && <ErrorAlert message={errorMessage} />}
-          {header}
-          {details}
+          <SectionHeading text={`${displayName || kind} Overview`} />
+          <PodStatuses kindObj={kindObj} obj={obj} podStatusDescriptors={podStatusDescriptors} />
+          <OperandDetailsSection>
+            <div className="col-sm-6">
+              <ResourceSummary resource={obj} />
+            </div>
+            {otherStatusDescriptors?.map((statusDescriptor: Descriptor) => {
+              return (
+                <div className="col-sm-6" key={statusDescriptor.path}>
+                  <StatusDescriptor
+                    namespace={obj.metadata.namespace}
+                    obj={obj}
+                    model={kindObj}
+                    descriptor={statusDescriptor}
+                    value={_.get(
+                      obj.status,
+                      _.toPath(statusDescriptor.path),
+                      statusDescriptor.value,
+                    )}
+                  />
+                </div>
+              );
+            })}
+          </OperandDetailsSection>
         </div>
-      ) : (
-        <>
+        {specDescriptors?.length > 0 && (
           <div className="co-m-pane__body">
-            {header}
-            <div className="row">{primaryDescriptor}</div>
+            <OperandDetailsSection>
+              {specDescriptors.map((specDescriptor: Descriptor) => (
+                <div key={specDescriptor.path} className="col-sm-6">
+                  <SpecDescriptor
+                    namespace={obj.metadata.namespace}
+                    obj={obj}
+                    model={kindObj}
+                    value={_.get(obj.spec, _.toPath(specDescriptor.path), specDescriptor.value)}
+                    descriptor={specDescriptor}
+                    onHandleError={handleError}
+                  />
+                </div>
+              ))}
+            </OperandDetailsSection>
           </div>
-          <div className="co-m-pane__body">{details}</div>
-        </>
-      )}
-      {_.isArray(status?.conditions) && (
-        <div className="co-m-pane__body">
-          <SectionHeading text="Conditions" />
-          <Conditions conditions={status.conditions} />
-        </div>
-      )}
-    </div>
-  );
-});
+        )}
+        {_.isArray(status?.conditions) && (
+          <div className="co-m-pane__body">
+            <SectionHeading text="Conditions" />
+            <Conditions conditions={status.conditions} />
+          </div>
+        )}
+      </div>
+    );
+  },
+);
 
 const ResourcesTab = (resourceProps) => (
   <Resources {...resourceProps} clusterServiceVersion={resourceProps.csv} />
@@ -673,6 +656,12 @@ export type ProvidedAPIPageProps = {
   kind: GroupVersionKind;
   kindObj: K8sKind;
   namespace: string;
+};
+
+type PodStatusesProps = {
+  kindObj: K8sKind;
+  obj: K8sResourceKind;
+  podStatusDescriptors: Descriptor[];
 };
 
 export type OperandDetailsProps = {

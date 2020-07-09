@@ -155,12 +155,12 @@ describe(OperandDetails.displayName, () => {
   });
 
   it('renders description title', () => {
-    const title = wrapper.find('.co-section-heading');
-    expect(title.text()).toEqual('Test Resource Overview');
+    const title = wrapper.find('SectionHeading').prop('text');
+    expect(title).toEqual('Test Resource Overview');
   });
 
   it('renders info section', () => {
-    const section = wrapper.find('.co-operand-details__section--info');
+    const section = wrapper.find('OperandDetailsSection');
 
     expect(section.exists()).toBe(true);
   });
