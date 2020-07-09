@@ -47,6 +47,7 @@ const (
 	meteringProxyEndpoint          = "/api/metering"
 	customLogoEndpoint             = "/custom-logo"
 	helmChartRepoProxyEndpoint     = "/api/helm/charts/"
+	gitopsEndpoint                 = "/api/gitops/"
 )
 
 var (
@@ -112,6 +113,7 @@ type Server struct {
 	AlertManagerProxyConfig          *proxy.Config
 	MeteringProxyConfig              *proxy.Config
 	TerminalProxyTLSConfig           *tls.Config
+	GitOpsProxyConfig                *proxy.Config
 	// A lister for resource listing of a particular kind
 	MonitoringDashboardConfigMapLister ResourceLister
 	KnativeEventSourceCRDLister        ResourceLister
@@ -140,6 +142,10 @@ func (s *Server) alertManagerProxyEnabled() bool {
 
 func (s *Server) meteringProxyEnabled() bool {
 	return s.MeteringProxyConfig != nil
+}
+
+func (s *Server) gitopsProxyEnabled() bool {
+	return s.GitOpsProxyConfig != nil
 }
 
 func (s *Server) HTTPHandler() http.Handler {
@@ -399,6 +405,18 @@ func (s *Server) HTTPHandler() http.Handler {
 	handle(helmChartRepoProxyEndpoint+"index.yaml", http.StripPrefix(
 		proxy.SingleJoiningSlash(s.BaseURL.Path, helmChartRepoProxyEndpoint),
 		http.HandlerFunc(helmChartRepoProxy.ServeHTTP)))
+
+	// GitOps proxy endpoints
+	if s.gitopsProxyEnabled() {
+		gitopsProxy := proxy.NewProxy(s.GitOpsProxyConfig)
+		handle(gitopsEndpoint, http.StripPrefix(
+			proxy.SingleJoiningSlash(s.BaseURL.Path, gitopsEndpoint),
+			authHandlerWithUser(func(user *auth.User, w http.ResponseWriter, r *http.Request) {
+				r.Header.Set("Authorization", fmt.Sprintf("Bearer %s", user.Token))
+				gitopsProxy.ServeHTTP(w, r)
+			})),
+		)
+	}
 
 	mux.HandleFunc(s.BaseURL.Path, s.indexHandler)
 
