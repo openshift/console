@@ -2,7 +2,7 @@ import * as React from 'react';
 import { navFactory, HintBlock, ExternalLink } from '@console/internal/components/utils';
 import { DetailsPage } from '@console/internal/components/factory';
 import { PodModel, TemplateModel } from '@console/internal/models';
-import { VMDisksFirehose } from '../vm-disks';
+import { VMDisksAndFileSystemsPage } from '../vm-disks/vm-disks';
 import { VMNics } from '../vm-nics';
 import {
   VirtualMachineInstanceMigrationModel,
@@ -58,7 +58,7 @@ export const VirtualMachinesInstanceDetailsPage: React.FC<VirtualMachinesInstanc
   const disksPage = {
     href: VM_DETAIL_DISKS_HREF,
     name: 'Disks',
-    component: VMDisksFirehose,
+    component: VMDisksAndFileSystemsPage,
   };
 
   const pages = [

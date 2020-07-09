@@ -24,9 +24,8 @@ import {
 } from '../../selectors/vm-template/selectors';
 import { diskSourceFilter } from './table-filters';
 import { asVM, isVMRunningOrExpectedRunning } from '../../selectors/vm';
-import { VMTabProps } from '../vms/types';
+import { VMLikeEntityTabProps, VMTabProps } from '../vms/types';
 import { getVMStatus } from '../../statuses/vm/vm-status';
-
 import { FileSystemsList } from './guest-agent-file-systems';
 
 const getStoragesData = ({
@@ -192,7 +191,26 @@ export const VMDisks: React.FC<VMDisksProps> = ({ vmLikeEntity, vmTemplate }) =>
   );
 };
 
-export const VMDisksFirehose: React.FC<VMTabProps> = ({
+export const VMDisksFirehose: React.FC<VMLikeEntityTabProps> = ({ obj: vmLikeEntity }) => {
+  const vmTemplate = getVMTemplateNamespacedName(vmLikeEntity);
+
+  const resources = [
+    getResource(TemplateModel, {
+      name: vmTemplate?.name,
+      namespace: vmTemplate?.namespace,
+      isList: false,
+      prop: 'vmTemplate',
+    }),
+  ];
+
+  return (
+    <Firehose resources={resources}>
+      <VMDisks vmLikeEntity={vmLikeEntity} />
+    </Firehose>
+  );
+};
+
+export const VMDisksAndFileSystemsPage: React.FC<VMTabProps> = ({
   obj: vmLikeEntity,
   vm: vmProp,
   vmis: vmisProp,
