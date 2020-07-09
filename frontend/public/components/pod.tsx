@@ -720,7 +720,6 @@ export const PodsPage = connect<{}, PodPagePropsFromDispatch, PodPageProps>(
       ListComponent={PodList}
       rowFilters={filters}
       namespace={namespace}
-      Header={getHeader(props?.customData?.showNodes)}
       customData={customData}
       hideColumnFilter={false}
       columnFilters={columnFilters}

@@ -63,7 +63,6 @@ TextFilter.displayName = 'TextFilter';
 export class ListPageWrapper_ extends React.PureComponent {
   render() {
     const {
-      Header,
       flatten,
       ListComponent,
       reduxIDs,
@@ -85,7 +84,6 @@ export class ListPageWrapper_ extends React.PureComponent {
         hideLabelFilter={hideLabelFilter}
         hideColumnFilter={hideColumnFilter}
         columnFilters={columnFilters}
-        Header={Header}
         {...this.props}
       />
     );
@@ -311,12 +309,11 @@ FireMan_.propTypes = {
   title: PropTypes.string,
 };
 
-/** @type {React.SFC<{ListComponent: React.ComponentType<any>, kind: string, helpText?: any, namespace?: string, filterLabel?: string, textFilter?: string, title?: string, showTitle?: boolean, rowFilters?: any[], selector?: any, fieldSelector?: string, canCreate?: boolean, createButtonText?: string, createProps?: any, mock?: boolean, badge?: React.ReactNode, createHandler?: any, hideToolbar?: boolean, hideLabelFilter?: boolean, hideColumnFilter?: boolean, columnFilters?: any, customData?: any, Header?: any} >} */
+/** @type {React.SFC<{ListComponent: React.ComponentType<any>, kind: string, helpText?: any, namespace?: string, filterLabel?: string, textFilter?: string, title?: string, showTitle?: boolean, rowFilters?: any[], selector?: any, fieldSelector?: string, canCreate?: boolean, createButtonText?: string, createProps?: any, mock?: boolean, badge?: React.ReactNode, createHandler?: any, hideToolbar?: boolean, hideLabelFilter?: boolean, hideColumnFilter?: boolean, columnFilters?: any, customData?: any} >} */
 export const ListPage = withFallback((props) => {
   const {
     autoFocus,
     canCreate,
-    Header,
     createButtonText,
     createHandler,
     customData,
@@ -387,7 +384,6 @@ export const ListPage = withFallback((props) => {
     <MultiListPage
       autoFocus={autoFocus}
       canCreate={canCreate}
-      Header={Header}
       createAccessReview={createAccessReview}
       createButtonText={createButtonText || `Create ${label}`}
       createProps={createProps}
@@ -421,7 +417,6 @@ export const MultiListPage = (props) => {
   const {
     autoFocus,
     canCreate,
-    Header,
     createAccessReview,
     createButtonText,
     createProps,
@@ -476,7 +471,6 @@ export const MultiListPage = (props) => {
           textFilter={textFilter}
           rowFilters={rowFilters}
           staticFilters={staticFilters}
-          Header={Header}
           customData={customData}
           hideToolbar={hideToolbar}
           hideLabelFilter={hideLabelFilter}
