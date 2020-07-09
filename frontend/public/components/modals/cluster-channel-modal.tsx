@@ -1,6 +1,7 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
 
+import { ChannelDocLink } from '../cluster-settings/cluster-settings';
 import { ClusterVersionModel } from '../../models';
 import { Dropdown, PromiseComponent } from '../utils';
 import {
@@ -53,6 +54,9 @@ class ClusterChannelModal extends PromiseComponent<
           <p>
             Select a channel that reflects your desired version. Critical security updates will be
             delivered to any vulnerable channels.
+          </p>
+          <p>
+            <ChannelDocLink />
           </p>
           <div className="form-group">
             <label htmlFor="channel_dropdown">Select Channel</label>
