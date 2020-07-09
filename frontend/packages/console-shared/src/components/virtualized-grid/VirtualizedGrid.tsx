@@ -65,19 +65,31 @@ const VirtualizedGrid: React.FC<VirtualizedGridProps> = ({
                   <div ref={registerChild}>
                     {isItemsGrouped ? (
                       <GroupByFilterGrid {...props} width={width} items={items as GroupedItems}>
-                        {(gridProps: GridChildrenProps) => (
-                          <Cell
-                            {...gridProps}
-                            renderHeader={renderHeader}
-                            renderCell={renderCell}
-                          />
-                        )}
+                        {(gridProps: GridChildrenProps) => {
+                          const {
+                            data: { key, style },
+                          } = gridProps;
+                          return (
+                            <Cell
+                              {...gridProps}
+                              key={key}
+                              style={style}
+                              renderHeader={renderHeader}
+                              renderCell={renderCell}
+                            />
+                          );
+                        }}
                       </GroupByFilterGrid>
                     ) : (
                       <Grid {...props} width={width} items={items as Item[]}>
-                        {(gridProps: GridChildrenProps) => (
-                          <Cell {...gridProps} renderCell={renderCell} />
-                        )}
+                        {(gridProps: GridChildrenProps) => {
+                          const {
+                            data: { key, style },
+                          } = gridProps;
+                          return (
+                            <Cell {...gridProps} key={key} style={style} renderCell={renderCell} />
+                          );
+                        }}
                       </Grid>
                     )}
                   </div>

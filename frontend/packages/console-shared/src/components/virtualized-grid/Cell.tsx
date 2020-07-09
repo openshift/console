@@ -6,6 +6,7 @@ import { CellMeasurementContext } from './utils';
 type CellProps = {
   renderCell: RenderCell;
   renderHeader?: RenderHeader;
+  style?: React.CSSProperties;
 } & GridChildrenProps;
 
 const Cell: React.FC<CellProps> = ({
@@ -13,17 +14,12 @@ const Cell: React.FC<CellProps> = ({
   columnCount,
   items,
   rowCount,
+  style: { width, ...style },
   renderCell,
   renderHeader,
 }) => {
   const { cache, cellMargin } = React.useContext(CellMeasurementContext);
-  const {
-    key,
-    style: { width, ...style },
-    columnIndex,
-    rowIndex,
-    parent,
-  } = data;
+  const { key, columnIndex, rowIndex, parent } = data;
   const index = rowIndex * columnCount + columnIndex;
   const item: CellItem = items[index];
   const isItemString = typeof item === 'string';
