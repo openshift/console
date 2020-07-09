@@ -1,5 +1,5 @@
 .kubevirt-vm-details__file-systems {
-  padding-left: 30px;
-  padding-right: 30px;
-  margin-top: 20px;
+  padding-left: var(--pf-global--spacer--xl);
+  padding-right: var(--pf-global--spacer--xl);
+  margin-top: var(--pf-global--spacer--lg);
 }

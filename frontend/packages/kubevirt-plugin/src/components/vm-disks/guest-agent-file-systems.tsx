@@ -1,6 +1,8 @@
 import * as React from 'react';
 import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
+import { Button, Popover } from '@patternfly/react-core';
+import { QuestionCircleIcon } from '@patternfly/react-icons';
 import { TableRow, TableData, Table } from '@console/internal/components/factory';
 import { humanizeBinaryBytes } from '@console/internal/components/utils';
 import { useGuestAgentInfo } from '../../hooks/use-guest-agent-info';
@@ -8,9 +10,10 @@ import { GuestAgentInfoWrapper } from '../../k8s/wrapper/vm/guest-agent-info/gue
 import { isGuestAgentInstalled } from '../dashboards-page/vm-dashboard/vm-alerts';
 import { VMIKind } from '../../types/vm';
 import { VMStatusBundle } from '../../statuses/vm/types';
+import { getGuestAgentFieldNotAvailMsg } from '../../utils/guest-agent-strings';
+import { GUEST_AGENT_FILE_SYSTEMS_DESCRIPTION } from '../../strings/vm/messages';
 
 import './guest-agent-file-systems.scss';
-import { getGuestAgentFieldNotAvailMsg } from '../../utils/guest-agent-strings';
 
 const tableColumnClasses = [
   classNames('col-lg-3', 'col-md-3', 'col-sm-4', 'col-sm-4'),
@@ -110,9 +113,18 @@ export const FileSystemsList: React.FC<FileSystemsListProps> = ({ vmi, vmStatusB
 
   return (
     <div className="kubevirt-vm-details__file-systems">
-      <h3>File Systems</h3>
-      The following information regarding how the disks are partitioned is provided by the guest
-      agent.
+      <h3>
+        File Systems
+        <Popover
+          aria-label="File systems description"
+          position="top"
+          bodyContent={<>{GUEST_AGENT_FILE_SYSTEMS_DESCRIPTION}</>}
+        >
+          <Button variant="plain">
+            <QuestionCircleIcon />
+          </Button>
+        </Popover>
+      </h3>
       {body()}
     </div>
   );
