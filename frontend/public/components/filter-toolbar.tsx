@@ -336,9 +336,7 @@ const FilterToolbar_: React.FC<FilterToolbarProps & RouteComponentProps> = (prop
           <ToolbarItem>
             <Button
               variant="plain"
-              onClick={() =>
-                createColumnManagementModal({ kinds: props.kinds, columns: columnFilters })
-              }
+              onClick={() => createColumnManagementModal({ kinds: props.kinds, columnFilters })}
               aria-label="Column Management"
             >
               <ColumnsIcon />
