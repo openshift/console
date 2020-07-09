@@ -3,7 +3,7 @@ import { navFactory } from '@console/internal/components/utils';
 import { DetailsPage } from '@console/internal/components/factory';
 import { PodModel, TemplateModel } from '@console/internal/models';
 import { VMDisksFirehose } from '../vm-disks';
-import { VMNics } from '../vm-nics';
+import { VMNicsFirehose } from '../vm-nics';
 import {
   DataVolumeModel,
   VirtualMachineImportModel,
@@ -62,7 +62,7 @@ export const VirtualMachinesDetailsPage: React.FC<VirtualMachinesDetailsPageProp
   const nicsPage = {
     href: VM_DETAIL_NETWORKS_HREF,
     name: 'Network Interfaces',
-    component: VMNics,
+    component: VMNicsFirehose,
   };
 
   const disksPage = {

@@ -3,10 +3,10 @@ import { Table, RowFunction } from '@console/internal/components/factory';
 import { sortable } from '@patternfly/react-table';
 import { useSafetyFirst } from '@console/internal/components/safety-first';
 import { createBasicLookup, dimensifyHeader } from '@console/shared';
-import { EmptyBox } from '@console/internal/components/utils';
+import { EmptyBox, Firehose } from '@console/internal/components/utils';
 import { Button, ButtonVariant } from '@patternfly/react-core';
 import { VMGenericLikeEntityKind } from '../../types/vmLike';
-import { isVMI } from '../../selectors/check-type';
+import { isVMI, isVM } from '../../selectors/check-type';
 import { VMLikeEntityTabProps } from '../vms/types';
 import { NetworkInterfaceWrapper } from '../../k8s/wrapper/vm/network-interface-wrapper';
 import { nicModalEnhanced } from '../modals/nic-modal/nic-modal-enhanced';
@@ -18,7 +18,16 @@ import { NetworkBundle } from './types';
 import { nicTableColumnClasses } from './utils';
 import { asVMILikeWrapper } from '../../k8s/wrapper/utils/convert';
 import { ADD_NETWORK_INTERFACE } from '../../utils/strings';
-import { asVM, isVMRunningOrExpectedRunning } from '../../selectors/vm';
+import { isVMRunningOrExpectedRunning } from '../../selectors/vm';
+import { FirehoseResult } from '../../../../../public/components/utils/types';
+import { VMIKind } from '../../types/vm';
+import { VirtualMachineInstanceModel } from '../../models';
+import { getNamespace } from '../../../../console-shared/src/selectors/common';
+import { getLoadedData } from '../../utils/index';
+import { isNicsChanged, PendingChangesAlert } from '../../selectors/vm-like/nextRunChanges';
+import { VMWrapper } from '../../k8s/wrapper/vm/vm-wrapper';
+import { VMIWrapper } from '../../k8s/wrapper/vm/vmi-wrapper';
+import { NIC_TAB_RESTART_IS_REQUIRED } from '../../strings/vm/status';
 
 const getNicsData = (vmLikeEntity: VMGenericLikeEntityKind): NetworkBundle[] => {
   const vmiLikeWrapper = asVMILikeWrapper(vmLikeEntity);
@@ -108,11 +117,24 @@ export const VMNicsTable: React.FC<VMNicsTableProps> = ({
   );
 };
 
-export const VMNics: React.FC<VMLikeEntityTabProps> = ({ obj: vmLikeEntity }) => {
+type VMNicsProps = {
+  obj: VMGenericLikeEntityKind;
+  vmis?: FirehoseResult<VMIKind[]>;
+};
+
+export const VMNics: React.FC<VMNicsProps> = ({ obj: vmLikeEntity, vmis }) => {
   const [isLocked, setIsLocked] = useSafetyFirst(false);
   const withProgress = wrapWithProgress(setIsLocked);
+
+  const loadedVMIs = vmis && getLoadedData(vmis);
+  const vmi = loadedVMIs && loadedVMIs.length > 0 && loadedVMIs[0];
+  const isVMRunning = isVM(vmLikeEntity) && isVMRunningOrExpectedRunning(vmLikeEntity);
+
   return (
     <div className="co-m-list">
+      {isVMRunning && isNicsChanged(new VMWrapper(vmLikeEntity), new VMIWrapper(vmi)) && (
+        <PendingChangesAlert warningMsg={NIC_TAB_RESTART_IS_REQUIRED} />
+      )}
       {!isVMI(vmLikeEntity) && (
         <div className="co-m-pane__filter-bar">
           <div className="co-m-pane__filter-bar-group">
@@ -127,7 +149,7 @@ export const VMNics: React.FC<VMLikeEntityTabProps> = ({ obj: vmLikeEntity }) =>
                   }).result,
                 )
               }
-              isDisabled={isLocked || isVMRunningOrExpectedRunning(asVM(vmLikeEntity))}
+              isDisabled={isLocked}
             >
               {ADD_NETWORK_INTERFACE}
             </Button>
@@ -147,5 +169,22 @@ export const VMNics: React.FC<VMLikeEntityTabProps> = ({ obj: vmLikeEntity }) =>
         />
       </div>
     </div>
+  );
+};
+
+export const VMNicsFirehose: React.FC<VMLikeEntityTabProps> = ({ obj: vmLikeEntity }) => {
+  const resources = [
+    {
+      kind: VirtualMachineInstanceModel.kind,
+      namespace: getNamespace(vmLikeEntity),
+      prop: 'vmis',
+      isList: true,
+    },
+  ];
+
+  return (
+    <Firehose resources={resources}>
+      <VMNics obj={vmLikeEntity} />
+    </Firehose>
   );
 };

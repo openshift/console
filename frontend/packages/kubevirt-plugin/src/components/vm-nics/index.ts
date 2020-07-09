@@ -1,1 +1,1 @@
-export { VMNics } from './vm-nics';
+export { VMNics, VMNicsFirehose } from './vm-nics';

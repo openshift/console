@@ -13,6 +13,29 @@ import { mapCDsToSource } from '../../components/modals/cdrom-vm-modal/helpers';
 import { K8sResourceKind } from '../../../../../public/module/k8s/types';
 
 import './nextRunChanges.scss';
+import { createBasicLookup } from '../../../../console-shared/src/utils/utils';
+import { getSimpleName } from '../utils';
+
+export const isNicsChanged = (vm: VMWrapper, vmi: VMIWrapper): boolean => {
+  if (!vm || !vmi) {
+    return false;
+  }
+
+  const vmNics = vm.getNetworkInterfaces();
+  const vmiNics = vmi.getNetworkInterfaces();
+
+  if (vmNics.length !== vmiNics.length) {
+    return true;
+  }
+
+  const vmNicsLookup = createBasicLookup(vmNics, getSimpleName);
+  const vmiNicsLookup = createBasicLookup(vmiNics, getSimpleName);
+
+  return !Object.keys(vmNicsLookup).every(
+    (vmNicName) =>
+      !!vmiNicsLookup[vmNicName] && _.isEqual(vmiNicsLookup[vmNicName], vmNicsLookup[vmNicName]),
+  );
+};
 
 export const isFlavorChanged = (vm: VMWrapper, vmi: VMIWrapper): boolean => {
   if (!vm || !vmi) {
@@ -94,13 +117,17 @@ export const detectNextRunChanges = (vm: VMKind, vmi: VMIKind, dataVolumes: K8sR
   };
 };
 
-export const PendingChangesAlert = () => (
+type PendingChangesAlertProps = {
+  warningMsg?: string;
+};
+
+export const PendingChangesAlert: React.FC<PendingChangesAlertProps> = ({ warningMsg }) => (
   <Alert
     title="Pending Changes"
     isInline
-    variant={AlertVariant.info}
+    variant={warningMsg ? AlertVariant.warning : AlertVariant.info}
     className="kubevirt-vm-details__restart_required-class-alert"
   >
-    {MODAL_RESTART_IS_REQUIRED}
+    {warningMsg || MODAL_RESTART_IS_REQUIRED}
   </Alert>
 );
