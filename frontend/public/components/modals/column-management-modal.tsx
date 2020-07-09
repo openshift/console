@@ -17,7 +17,7 @@ import {
 import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '../factory';
 import { setColumnManagementFilter } from '../../actions/ui';
 
-const MAX_VIEW_COLS = 9;
+export const MAX_VIEW_COLS = 9;
 
 const OVERRIDES = ['Name'];
 
@@ -113,6 +113,7 @@ export const ColumnManagementModal: React.FC<ColumnManagementModalProps> = ({
         </div>
         <div className="row co-m-form-row">
           <Alert
+            className="co-alert"
             isInline
             title={`You can select up to ${MAX_VIEW_COLS - 1} columns`}
             variant="info"
@@ -122,18 +123,14 @@ export const ColumnManagementModal: React.FC<ColumnManagementModalProps> = ({
           <div className="col-sm-12">
             <span className="col-sm-6">
               <label className="control-label">{`Default ${kinds[0]} Columns`}</label>
-              <DataList
-                aria-label="Table column management"
-                id="defalt-column-management"
-                isCompact
-              >
+              <DataList aria-label="default column list" id="defalt-column-management" isCompact>
                 {getDataListRows(defaultColumns, defaultColumnChange, areMaxColumnsDisplayed)}
               </DataList>
             </span>
             <span className="col-sm-6">
               <label className="control-label">Additional Columns</label>
               <DataList
-                aria-label="Table column management"
+                aria-label="Additional column list"
                 id="additional-column-management"
                 isCompact
               >
@@ -158,9 +155,11 @@ export const createColumnManagementModal = createModalLauncher<ColumnManagementM
   ColumnManagementModal,
 );
 
+ColumnManagementModal.displayName = 'ColumnManagementModal';
+
 export type ColumnManagementModalProps = {
-  cancel: () => void;
-  close: () => void;
+  cancel?: () => void;
+  close?: () => void;
   kinds: any;
   columnFilters: any;
 };
