@@ -7,7 +7,7 @@ import { TextFilter } from './factory';
 
 const MAX_SUGGESTIONS = 5;
 
-const labelParser = (resources: any, labelPath: string): Set<string> => {
+const labelParser = (resources: any[], labelPath: string): Set<string> => {
   return resources.reduce((acc: Set<string>, resource: any) => {
     getLabelsAsString(resource, labelPath).forEach((label) => acc.add(label));
     return acc;
@@ -29,6 +29,7 @@ const AutocompleteInput: React.FC<AutocompleteInputProps> = (props) => {
     showSuggestions,
     data,
     className,
+    labelPath,
   } = props;
 
   const onSelect = (value: string) => {
@@ -55,13 +56,13 @@ const AutocompleteInput: React.FC<AutocompleteInputProps> = (props) => {
 
   React.useEffect(() => {
     if (textValue && visible && showSuggestions) {
-      const processed = labelParser(data, props.labelPath);
+      const processed = labelParser(data, labelPath);
       const filtered = [...processed]
         .filter((item) => fuzzyCaseInsensitive(textValue, item))
         .slice(0, MAX_SUGGESTIONS);
       setSuggestions(filtered);
     }
-  }, [visible, textValue, showSuggestions, data, props.labelPath]);
+  }, [visible, textValue, showSuggestions, data, labelPath]);
 
   return (
     <div className="co-suggestion-box" ref={ref}>

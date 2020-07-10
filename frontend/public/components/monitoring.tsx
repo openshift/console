@@ -1057,13 +1057,13 @@ const MonitoringListPage = connect(filtersToProps)(
               </div>
             )}
             <FilterToolbar
-              rowFilters={[rowFilter]}
               data={data}
-              reduxIDs={[reduxID]}
-              textFilter={nameFilterID}
-              labelFilter={labelFilter}
               hideLabelFilter={hideLabelFilter}
+              labelFilter={labelFilter}
               labelPath={labelPath}
+              reduxIDs={[reduxID]}
+              rowFilters={[rowFilter]}
+              textFilter={nameFilterID}
             />
             <div className="row">
               <div className="col-xs-12">
@@ -1092,12 +1092,12 @@ const AlertsPage_ = (props) => (
     {...props}
     Header={alertTableHeader}
     kindPlural="Alerts"
+    labelFilter="alerts"
+    labelPath="labels"
     nameFilterID="alert-list-text"
     reduxID="monitoringAlerts"
     Row={AlertTableRow}
     rowFilter={alertsRowFilter}
-    labelFilter="alerts"
-    labelPath="labels"
   />
 );
 const AlertsPage = withFallback(connect(alertsToProps)(AlertsPage_));
@@ -1196,12 +1196,12 @@ const SilencesPage_ = (props) => (
     {...props}
     CreateButton={CreateButton}
     Header={silenceTableHeader}
+    hideLabelFilter
     kindPlural="Silences"
     nameFilterID="silence-name"
     reduxID="monitoringSilences"
     Row={SilenceTableRow}
     rowFilter={silencesRowFilter}
-    hideLabelFilter
   />
 );
 const SilencesPage = withFallback(connect(silencesToProps)(SilencesPage_));
