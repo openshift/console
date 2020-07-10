@@ -26,6 +26,7 @@ const AddBareMetalHostForm: React.FC<AddBareMetalHostFormProps> = ({
   dirty,
   isEditing,
   showUpdated,
+  values,
 }) => (
   <Form onSubmit={handleSubmit}>
     <InputField
@@ -34,7 +35,7 @@ const AddBareMetalHostForm: React.FC<AddBareMetalHostFormProps> = ({
       name="name"
       label="Name"
       placeholder="openshift-worker"
-      helpText="Provide unique name for the new Bare Metal Host."
+      helpText="Provide a unique name for the new Bare Metal Host."
       required
       isDisabled={isEditing}
     />
@@ -45,46 +46,56 @@ const AddBareMetalHostForm: React.FC<AddBareMetalHostFormProps> = ({
     />
     <InputField
       type={TextInputTypes.text}
-      data-test-id="add-baremetal-host-form-bmc-address-input"
-      name="BMCAddress"
-      label="BMC Address"
-      helpText="The URL for communicating with the BMC (Baseboard Management Controller) on the host, based on the provider being used."
-      required
-    />
-    <CheckboxField
-      data-test-id="add-baremetal-host-form-disable-certificate-verification-input"
-      name="disableCertificateVerification"
-      label="Disable Certificate Verification"
-      helpText="Disable verification of server certificates when using HTTPS to connect to the BMC. This is required when the server certificate is self-signed, but is insecure because it allows a man-in-the-middle to intercept the connection."
-    />
-    <InputField
-      type={TextInputTypes.text}
-      data-test-id="add-baremetal-host-form-username-input"
-      name="username"
-      label="BMC Username"
-      required
-    />
-    <InputField
-      type={TextInputTypes.password}
-      data-test-id="add-baremetal-host-form-password-input"
-      name="password"
-      label="BMC Password"
-      required
-    />
-    <InputField
-      type={TextInputTypes.text}
       data-test-id="add-baremetal-host-form-boot-mac-address-input"
       name="bootMACAddress"
       label="Boot MAC Address"
       helpText="The MAC address of the NIC connected to the network that will be used to provision the host."
       required
     />
-    {!isEditing && (
-      <SwitchField
-        name="online"
-        data-test-id="add-baremetal-host-form-online-switch"
-        label="Power host on after creation"
-      />
+    <CheckboxField
+      data-test-id="add-baremetal-host-form-enable-power-mgmt-input"
+      name="enablePowerManagement"
+      label="Enable power management"
+      helpText="Provide credentials for the host's baseboard management controller (BMC) device to enable OpenShift to control its power state. This is required for automatic machine health check remediation."
+    />
+    {values.enablePowerManagement && (
+      <>
+        <InputField
+          type={TextInputTypes.text}
+          data-test-id="add-baremetal-host-form-bmc-address-input"
+          name="BMCAddress"
+          label="Baseboard Management Console (BMC) Address"
+          helpText="The URL for communicating with the host's baseboard management controller device."
+          required
+        />
+        <CheckboxField
+          data-test-id="add-baremetal-host-form-disable-certificate-verification-input"
+          name="disableCertificateVerification"
+          label="Disable Certificate Verification"
+          helpText="Disable verification of server certificates when using HTTPS to connect to the BMC. This is required when the server certificate is self-signed, but is insecure because it allows a man-in-the-middle to intercept the connection."
+        />
+        <InputField
+          type={TextInputTypes.text}
+          data-test-id="add-baremetal-host-form-username-input"
+          name="username"
+          label="BMC Username"
+          required
+        />
+        <InputField
+          type={TextInputTypes.password}
+          data-test-id="add-baremetal-host-form-password-input"
+          name="password"
+          label="BMC Password"
+          required
+        />
+        {!isEditing && (
+          <SwitchField
+            name="online"
+            data-test-id="add-baremetal-host-form-online-switch"
+            label="Power host on after creation"
+          />
+        )}
+      </>
     )}
     <FormFooter
       isSubmitting={isSubmitting}

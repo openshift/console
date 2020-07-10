@@ -29,6 +29,7 @@ import {
   EmptyStateVariant,
   Title,
 } from '@patternfly/react-core';
+import { usePrevious } from '@console/shared/src/hooks/previous';
 
 import { coFetchJSON } from '../co-fetch';
 import {
@@ -38,7 +39,6 @@ import {
   referenceForModel,
 } from '../module/k8s';
 import { ClusterVersionModel } from '../models';
-import { usePrevious } from '@console/metal3-plugin/src/hooks';
 import { useK8sWatchResource, WatchK8sResource } from './utils/k8s-watch-hook';
 
 const criticalCompare = (a: Alert): boolean => getAlertSeverity(a) === 'critical';

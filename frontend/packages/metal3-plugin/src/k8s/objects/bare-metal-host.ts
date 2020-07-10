@@ -26,21 +26,27 @@ export const buildBareMetalHostObject = (
   disableCertificateVerification = false,
   online = true,
   description = '',
-): BareMetalHostKind => ({
-  apiVersion: `${BareMetalHostModel.apiGroup}/${BareMetalHostModel.apiVersion}`,
-  kind: BareMetalHostModel.kind,
-  metadata: {
-    name,
-    namespace,
-  },
-  spec: {
-    bmc: {
+  enablePowerManagement,
+): BareMetalHostKind => {
+  const bmh: BareMetalHostKind = {
+    apiVersion: `${BareMetalHostModel.apiGroup}/${BareMetalHostModel.apiVersion}`,
+    kind: BareMetalHostModel.kind,
+    metadata: {
+      name,
+      namespace,
+    },
+    spec: {
+      bootMACAddress,
+      description,
+      online,
+    },
+  };
+  if (enablePowerManagement) {
+    bmh.spec.bmc = {
       address: BMCAddress,
       credentialsName: getSecretName(name),
       disableCertificateVerification,
-    },
-    bootMACAddress,
-    description,
-    online,
-  },
-});
+    };
+  }
+  return bmh;
+};

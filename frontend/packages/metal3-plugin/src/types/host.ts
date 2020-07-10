@@ -42,7 +42,7 @@ export type BareMetalHostBios = {
 
 export type BareMetalHostKind = {
   spec?: {
-    bmc: {
+    bmc?: {
       address: string;
       credentialsName: string;
       disableCertificateVerification: boolean;

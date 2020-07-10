@@ -1,10 +1,10 @@
 import {
   k8sPatch,
   k8sCreate,
-  K8sResourceKind,
   MachineKind,
   MachineSetKind,
   k8sKill,
+  SecretKind,
 } from '@console/internal/module/k8s';
 import { MachineModel, MachineSetModel, SecretModel } from '@console/internal/models';
 import { PatchBuilder } from '@console/shared/src/k8s';
@@ -18,6 +18,7 @@ import {
   buildBareMetalHostSecret,
   getSecretName,
 } from '../objects/bare-metal-host';
+import { AddBareMetalHostFormValues } from '../../components/baremetal-hosts/add-baremetal-host/types';
 
 export const powerOffHost = (host: BareMetalHostKind) =>
   k8sPatch(BareMetalHostModel, host, [{ op: 'replace', path: '/spec/online', value: false }]);
@@ -65,14 +66,7 @@ export const deprovision = async (machine: MachineKind, machineSet?: MachineSetK
   }
 };
 
-export type BareMetalHostOpts = {
-  name: string;
-  BMCAddress: string;
-  disableCertificateVerification: boolean;
-  username: string;
-  password: string;
-  bootMACAddress: string;
-  description: string;
+export type BareMetalHostOpts = AddBareMetalHostFormValues & {
   namespace: string;
 };
 
@@ -86,8 +80,10 @@ export const createBareMetalHost = async ({
   password,
   username,
   online,
-}: BareMetalHostOpts & { online: boolean }) => {
-  const secret = buildBareMetalHostSecret(name, namespace, username, password);
+  enablePowerManagement,
+}: BareMetalHostOpts) => {
+  const secret =
+    enablePowerManagement && buildBareMetalHostSecret(name, namespace, username, password);
   const bareMetalHost = buildBareMetalHostObject(
     name,
     namespace,
@@ -96,14 +92,15 @@ export const createBareMetalHost = async ({
     disableCertificateVerification,
     online,
     description,
+    enablePowerManagement,
   );
-  await k8sCreate(SecretModel, secret);
+  enablePowerManagement && (await k8sCreate(SecretModel, secret));
   await k8sCreate(BareMetalHostModel, bareMetalHost);
 };
 
 export const updateBareMetalHost = async (
   host: BareMetalHostKind,
-  secret: K8sResourceKind,
+  secret: SecretKind,
   {
     name,
     BMCAddress,
@@ -113,30 +110,43 @@ export const updateBareMetalHost = async (
     namespace,
     password,
     username,
+    enablePowerManagement,
   }: BareMetalHostOpts,
 ) => {
-  if (secret) {
-    const patches = new PatchBuilder('/data').buildAddObjectKeysPatches(
-      { username: btoa(username), password: btoa(password) },
-      secret.data,
-    );
-
-    if (patches.length > 0) {
-      await k8sPatch(SecretModel, secret, patches);
-    }
-  } else {
-    await k8sCreate(SecretModel, buildBareMetalHostSecret(name, namespace, username, password));
-  }
   const patches = [
     ...new PatchBuilder('/spec').buildAddObjectKeysPatches(
       { description, bootMACAddress },
       host.spec,
     ),
-    ...new PatchBuilder('/spec/bmc').buildAddObjectKeysPatches(
-      { address: BMCAddress, credentialsName: getSecretName(name), disableCertificateVerification },
-      host.spec.bmc,
-    ),
   ];
+
+  if (enablePowerManagement) {
+    if (secret) {
+      const secretPatch = new PatchBuilder('/data').buildAddObjectKeysPatches(
+        { username: btoa(username), password: btoa(password) },
+        secret.data,
+      );
+
+      if (secretPatch.length > 0) {
+        await k8sPatch(SecretModel, secret, secretPatch);
+      }
+    } else {
+      await k8sCreate(SecretModel, buildBareMetalHostSecret(name, namespace, username, password));
+    }
+    patches.push(
+      ...new PatchBuilder('/spec/bmc').buildAddObjectKeysPatches(
+        {
+          address: BMCAddress,
+          credentialsName: getSecretName(name),
+          disableCertificateVerification,
+        },
+        host.spec.bmc,
+      ),
+    );
+  } else if (secret) {
+    await k8sKill(SecretModel, secret);
+    patches.push(new PatchBuilder('/spec/bmc').remove().build());
+  }
 
   if (patches.length > 0) {
     await k8sPatch(BareMetalHostModel, host, patches);
