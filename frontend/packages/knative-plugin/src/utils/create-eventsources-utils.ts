@@ -140,8 +140,8 @@ export const getEventSourceData = (source: string) => {
       ],
     },
     kafkasource: {
-      bootstrapServers: [''],
-      topics: [''],
+      bootstrapServers: [],
+      topics: [],
       consumerGroup: '',
       net: {
         sasl: {
@@ -214,4 +214,15 @@ export const useEventSourceList = (namespace: string): EventSourceListData | nul
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [modelLoaded]);
   return eventSourceModels.length === 0 && modelLoaded ? null : accessData;
+};
+
+export const getBootstrapServers = (kafkaResources: K8sResourceKind[]) => {
+  const servers = [];
+  _.forEach(kafkaResources, (kafka) => {
+    const listeners = kafka?.status?.listeners;
+    _.map(listeners, (l) => {
+      servers.push(..._.split(l?.bootstrapServers, ','));
+    });
+  });
+  return servers;
 };

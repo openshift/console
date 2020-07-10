@@ -18,5 +18,6 @@ export { default as InputGroupField } from './InputGroupField';
 export { default as TextColumnField } from './TextColumnField';
 export { default as DynamicFormField } from './DynamicFormField';
 export { default as SyncedEditorField } from './SyncedEditorField';
+export { default as SelectInputField } from './SelectInputField';
 export * from './field-utils';
 export * from './field-types';

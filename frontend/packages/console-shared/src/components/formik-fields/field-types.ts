@@ -131,3 +131,15 @@ export interface RadioGroupOption {
   children?: React.ReactNode;
   activeChildren?: React.ReactElement;
 }
+
+export interface SelectInputOption {
+  value: string;
+  disabled: boolean;
+}
+
+export interface SelectInputFieldProps extends FieldProps {
+  options: SelectInputOption[];
+  placeholderText?: React.ReactNode;
+  isCreatable?: boolean;
+  hasOnCreateOption?: boolean;
+}

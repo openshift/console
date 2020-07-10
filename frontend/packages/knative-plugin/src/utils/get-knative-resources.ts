@@ -11,6 +11,8 @@ import {
   EventingSubscriptionModel,
   EventingBrokerModel,
   EventingTriggerModel,
+  KafkaModel,
+  KafkaTopicModel,
 } from '../models';
 
 export type KnativeItem = {
@@ -242,4 +244,20 @@ export const knativeEventingTriggerResourceWatchers = (namespace: string) => {
       optional: true,
     },
   };
+};
+
+export const strimziResourcesWatcher = (): WatchK8sResources<any> => {
+  const strimziResources = {
+    [KafkaModel.plural]: {
+      isList: true,
+      kind: referenceForModel(KafkaModel),
+      optional: true,
+    },
+    [KafkaTopicModel.plural]: {
+      isList: true,
+      kind: referenceForModel(KafkaTopicModel),
+      optional: true,
+    },
+  };
+  return strimziResources;
 };

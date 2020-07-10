@@ -6,8 +6,8 @@ import {
   EventSourceSinkBindingModel,
   EventSourceKafkaModel,
 } from '../../models';
-import { getEventSourceResource } from '../create-eventsources-utils';
-import { getDefaultEventingData } from './knative-serving-data';
+import { getEventSourceResource, getBootstrapServers } from '../create-eventsources-utils';
+import { getDefaultEventingData, Kafkas } from './knative-serving-data';
 import { EventSources } from '../../components/add/import-types';
 
 describe('Create knative Utils', () => {
@@ -63,5 +63,14 @@ describe('Create knative Utils', () => {
     );
     expect(knEventingResource.spec?.resources?.limits?.cpu).toBe('200m');
     expect(knEventingResource.spec?.resources?.requests?.cpu).toBe('100m');
+  });
+
+  it('should return bootstrapServers', () => {
+    expect(getBootstrapServers(Kafkas)).toEqual([
+      'my-cluster-kafka-bootstrap.div.svc:9092',
+      'my-cluster-kafka-bootstrap.div.svc:9093',
+      'my-cluster2-kafka-bootstrap.div.svc:9092',
+      'my-cluster2-kafka-bootstrap.div.svc:9093',
+    ]);
   });
 });
