@@ -13,7 +13,7 @@ export const buildNodeMaintenance = ({
   apiVersion: apiVersionForModel(NodeMaintenanceModel),
   kind: NodeMaintenanceModel.kind,
   metadata: {
-    generateName: `${generateName || 'nm'}-`,
+    generateName: `${generateName || nodeName}-`,
   },
   spec: {
     nodeName,
