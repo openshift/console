@@ -240,6 +240,20 @@ export const EventingChannelModel: K8sKind = {
   color: knativeEventingColor.value,
 };
 
+export const EventingKafkaChannelModel: K8sKind = {
+  apiGroup: KNATIVE_EVENT_MESSAGE_APIGROUP,
+  apiVersion: 'v1beta1',
+  kind: 'KafkaChannel',
+  label: 'Kafka Channel',
+  labelPlural: 'Kafka Channels',
+  plural: 'kafkaChannels',
+  id: 'kafkaChannel',
+  abbr: 'KC',
+  namespaced: true,
+  crd: true,
+  color: knativeEventingColor.value,
+};
+
 export const EventingBrokerModel: K8sKind = {
   apiGroup: KNATIVE_EVENTING_APIGROUP,
   apiVersion: 'v1beta1',

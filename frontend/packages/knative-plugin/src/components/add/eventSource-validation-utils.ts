@@ -7,6 +7,7 @@ import {
 } from '@console/dev-console/src/components/import/validation-schema';
 import { EventSources, SinkType } from './import-types';
 import { isKnownEventSource } from '../../utils/create-eventsources-utils';
+import { isDefaultChannel, getChannelKind } from '../../utils/create-channel-utils';
 
 const sinkServiceSchema = yup
   .object()
@@ -185,6 +186,20 @@ export const eventSourceValidationSchema = yup.lazy((formData) => {
       name: nameValidationSchema,
       sink: sinkServiceSchema,
       data: sourceDataSpecSchema,
+    });
+  }
+  return yup.object().shape({
+    yamlData: yup.string(),
+  });
+});
+
+export const addChannelValidationSchema = yup.lazy((formData) => {
+  if (isDefaultChannel(getChannelKind(formData.type))) {
+    return yup.object().shape({
+      application: applicationNameValidationSchema,
+      name: nameValidationSchema,
+      data: sourceDataSpecSchema,
+      type: yup.string(),
     });
   }
   return yup.object().shape({

@@ -6,11 +6,13 @@ import {
 import {
   EventSourceFormData,
   SinkType,
+  AddChannelFormData,
   NormalizedEventSources,
 } from '../../components/add/import-types';
 import { ClusterServiceVersionKind, InstallModeType } from '@console/operator-lifecycle-manager';
 import { RevisionModel, ServiceModel, KafkaModel } from '../../models';
 import { healthChecksProbeInitialData } from '@console/dev-console/src/components/health-checks/health-checks-probe-utils';
+import { getChannelKind, getChannelData } from '../create-channel-utils';
 
 export const defaultData: DeployImageFormData = {
   project: {
@@ -702,3 +704,21 @@ export const camelCsvData: ClusterServiceVersionKind[] = [
     },
   },
 ];
+export const getDefaultChannelData = (ref: string): AddChannelFormData => {
+  const kind = getChannelKind(ref);
+  return {
+    application: {
+      initial: 'app-group-one',
+      name: 'app-group-one',
+      selectedKey: 'app-group-one',
+    },
+    name: '',
+    namespace: 'channel-ns',
+    apiVersion: '',
+    type: ref,
+    data: {
+      [kind.toLowerCase()]: getChannelData(getChannelKind(ref).toLowerCase()),
+    },
+    yamlData: '',
+  };
+};

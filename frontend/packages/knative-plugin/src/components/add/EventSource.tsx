@@ -86,7 +86,14 @@ export const EventSource: React.FC<Props> = ({
 
   const createResources = (rawFormData: any): Promise<K8sResourceKind> => {
     const knEventSourceResource = getEventSourceResource(rawFormData);
-    return k8sCreate(modelFor(referenceFor(knEventSourceResource)), knEventSourceResource);
+    if (knEventSourceResource?.kind && modelFor(referenceFor(knEventSourceResource))) {
+      return k8sCreate(modelFor(referenceFor(knEventSourceResource)), knEventSourceResource);
+    }
+    const errMessage =
+      knEventSourceResource?.kind && knEventSourceResource?.apiVersion
+        ? `No model registered for ${referenceFor(knEventSourceResource)}`
+        : 'Invalid YAML';
+    return Promise.reject(new Error(errMessage));
   };
 
   const handleSubmit = (values, actions) => {
