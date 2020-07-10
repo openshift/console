@@ -21,8 +21,8 @@ import {
   YellowExclamationTriangleIcon,
 } from '@console/shared';
 import { withFallback } from '@console/shared/src/components/error/error-boundary';
-import * as UIActions from '../actions/ui';
-import { coFetchJSON } from '../co-fetch';
+import * as UIActions from '../../actions/ui';
+import { coFetchJSON } from '../../co-fetch';
 import {
   ContainerModel,
   DaemonSetModel,
@@ -32,8 +32,8 @@ import {
   NodeModel,
   PodModel,
   StatefulSetModel,
-} from '../models';
-import { K8sKind } from '../module/k8s';
+} from '../../models';
+import { K8sKind } from '../../module/k8s';
 import {
   alertDescription,
   alertingRuleIsActive,
@@ -42,18 +42,18 @@ import {
   AlertStates,
   silenceState,
   SilenceStates,
-} from '../reducers/monitoring';
-import store, { RootState } from '../redux';
-import { RowFunction, Table, TableData, TableRow } from './factory';
-import { FilterToolbar, RowFilter } from './filter-toolbar';
-import { confirmModal } from './modals';
-import { PrometheusLabels } from './graphs';
-import { AlertmanagerYAMLEditorWrapper } from './monitoring/alert-manager-yaml-editor';
-import { AlertmanagerConfigWrapper } from './monitoring/alert-manager-config';
-import MonitoringDashboardsPage from './monitoring/dashboards';
-import { QueryBrowserPage, ToggleGraph } from './monitoring/metrics';
-import { QueryBrowser, QueryObj } from './monitoring/query-browser';
-import { CreateSilence, EditSilence } from './monitoring/silence-form';
+} from '../../reducers/monitoring';
+import store, { RootState } from '../../redux';
+import { RowFunction, Table, TableData, TableRow } from '../factory';
+import { FilterToolbar, RowFilter } from '../filter-toolbar';
+import { confirmModal } from '../modals';
+import { PrometheusLabels } from '../graphs';
+import { AlertmanagerYAMLEditorWrapper } from '../monitoring/alert-manager-yaml-editor';
+import { AlertmanagerConfigWrapper } from '../monitoring/alert-manager-config';
+import MonitoringDashboardsPage from '../monitoring/dashboards';
+import { QueryBrowserPage, ToggleGraph } from '../monitoring/metrics';
+import { QueryBrowser, QueryObj } from '../monitoring/query-browser';
+import { CreateSilence, EditSilence } from '../monitoring/silence-form';
 import {
   Alert,
   Alerts,
@@ -64,7 +64,7 @@ import {
   Rules,
   Silence,
   Silences,
-} from './monitoring/types';
+} from '../monitoring/types';
 import {
   AlertResource,
   alertsToProps,
@@ -76,19 +76,19 @@ import {
   silenceParamToProps,
   SilenceResource,
   silencesToProps,
-} from './monitoring/utils';
-import { refreshNotificationPollers } from './notification-drawer';
-import { formatPrometheusDuration } from './utils/datetime';
-import { ActionsMenu } from './utils/dropdown';
-import { Firehose } from './utils/firehose';
-import { SectionHeading, ActionButtons } from './utils/headings';
-import { Kebab } from './utils/kebab';
-import { ExternalLink, getURLSearchParams } from './utils/link';
-import { ResourceLink } from './utils/resource-link';
-import { ResourceStatus } from './utils/resource-status';
-import { history } from './utils/router';
-import { LoadingInline, StatusBox } from './utils/status-box';
-import { Timestamp } from './utils/timestamp';
+} from '../monitoring/utils';
+import { refreshNotificationPollers } from '../notification-drawer';
+import { formatPrometheusDuration } from '../utils/datetime';
+import { ActionsMenu } from '../utils/dropdown';
+import { Firehose } from '../utils/firehose';
+import { SectionHeading, ActionButtons } from '../utils/headings';
+import { Kebab } from '../utils/kebab';
+import { ExternalLink, getURLSearchParams } from '../utils/link';
+import { ResourceLink } from '../utils/resource-link';
+import { ResourceStatus } from '../utils/resource-status';
+import { history } from '../utils/router';
+import { LoadingInline, StatusBox } from '../utils/status-box';
+import { Timestamp } from '../utils/timestamp';
 
 const ruleURL = (rule: Rule) => `${RuleResource.plural}/${_.get(rule, 'id')}`;
 

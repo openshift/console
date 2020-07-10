@@ -14,7 +14,7 @@ import {
   AlertState,
   alertsRowFilters,
   severityRowFilter,
-} from '@console/internal/components/monitoring';
+} from '@console/internal/components/monitoring/alerting';
 import { Kebab } from '@console/internal/components/utils';
 import {
   alertDescription,
