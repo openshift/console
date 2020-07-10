@@ -3,10 +3,19 @@ import * as _ from 'lodash-es';
 import * as classNames from 'classnames';
 import * as semver from 'semver';
 import { Helmet } from 'react-helmet';
-import { Button, Popover, Tooltip } from '@patternfly/react-core';
+import {
+  Button,
+  Popover,
+  Progress,
+  ProgressSize,
+  ProgressVariant,
+  Tooltip,
+} from '@patternfly/react-core';
 import { Link } from 'react-router-dom';
+import { HashLink } from 'react-router-hash-link';
 
 import { AddCircleOIcon, SyncAltIcon, PencilAltIcon } from '@patternfly/react-icons';
+import { BlueInfoCircleIcon } from '@console/shared/src/components/status';
 
 import { ClusterOperatorPage } from './cluster-operator';
 import {
@@ -16,8 +25,14 @@ import {
   errorModal,
 } from '../modals';
 import { GlobalConfigPage } from './global-config';
-import { ClusterAutoscalerModel, ClusterVersionModel } from '../../models';
 import {
+  ClusterAutoscalerModel,
+  ClusterOperatorModel,
+  ClusterVersionModel,
+  MachineConfigPoolModel,
+} from '../../models';
+import {
+  ClusterOperator,
   ClusterUpdateStatus,
   ClusterVersionConditionType,
   ClusterVersionKind,
@@ -25,6 +40,7 @@ import {
   getAvailableClusterChannels,
   getAvailableClusterUpdates,
   getClusterID,
+  getClusterOperatorVersion,
   getClusterUpdateStatus,
   getClusterVersionCondition,
   getCurrentVersion,
@@ -36,8 +52,11 @@ import {
   k8sPatch,
   K8sResourceConditionStatus,
   K8sResourceKind,
+  MachineConfigPoolConditionType,
+  MachineConfigPoolKind,
   referenceForModel,
   showReleaseNotes,
+  UpdateHistory,
 } from '../../module/k8s';
 import {
   EmptyBox,
@@ -51,6 +70,10 @@ import {
   Timestamp,
   truncateMiddle,
 } from '../utils';
+import {
+  useK8sWatchResource,
+  WatchK8sResource,
+} from '@console/internal/components/utils/k8s-watch-hook';
 import {
   BlueArrowCircleUpIcon,
   GreenCheckCircleIcon,
@@ -68,6 +91,44 @@ const cancelUpdate = (cv: ClusterVersionKind) => {
 };
 
 export const clusterAutoscalerReference = referenceForModel(ClusterAutoscalerModel);
+
+const getMCPByName = (
+  machineConfigPools: MachineConfigPoolKind[],
+  name: string,
+): MachineConfigPoolKind => {
+  return machineConfigPools?.find((mcp) => mcp.metadata.name === name);
+};
+
+const getStartedTimeForCVDesiredVersion = (
+  cv: ClusterVersionKind,
+  desiredVersion: string,
+): string => {
+  const desiredHistory: UpdateHistory = cv?.status?.history?.find(
+    (update) => update.version === desiredVersion,
+  );
+  return desiredHistory?.startedTime;
+};
+
+const getUpdatingTimeForMCP = (machineConfigPool: MachineConfigPoolKind): string => {
+  const updatingCondition = machineConfigPool?.status?.conditions.find(
+    (condition) => condition.type === MachineConfigPoolConditionType.Updating,
+  );
+  return updatingCondition?.lastTransitionTime;
+};
+
+const getUpdatedOperatorsCount = (
+  clusterOperators: ClusterOperator[],
+  desiredVersion: string,
+): number => {
+  return (
+    clusterOperators?.filter((operator) => {
+      return getClusterOperatorVersion(operator) === desiredVersion;
+    })?.length ?? 0
+  );
+};
+
+const calculatePercentage = (numerator: number, denominator: number): number =>
+  Math.round((numerator / denominator) * 100);
 
 export const CurrentChannel: React.SFC<CurrentChannelProps> = ({ cv }) => (
   <Button
@@ -99,21 +160,48 @@ const UpdatesAvailableMessage: React.SFC<CVStatusMessageProps> = () => (
   </div>
 );
 
-const UpdatingMessage: React.SFC<CVStatusMessageProps> = ({ cv }) => {
-  const updatingCondition = getClusterVersionCondition(
+const FailingMessageText: React.FC<CVStatusMessageProps> = ({ cv }) => {
+  const failingCondition = getClusterVersionCondition(
     cv,
-    ClusterVersionConditionType.Progressing,
+    ClusterVersionConditionType.Failing,
     K8sResourceConditionStatus.True,
   );
   return (
+    <div>
+      <Tooltip content={truncateMiddle(failingCondition.message, { length: 256 })}>
+        <span>
+          <RedExclamationCircleIcon /> Failing
+        </span>
+      </Tooltip>
+    </div>
+  );
+};
+
+export const ClusterVersionConditionsLink: React.FC<ClusterVersionConditionsLinkProps> = ({
+  cv,
+}) => (
+  <HashLink
+    smooth
+    to={`${resourcePathFromModel(ClusterVersionModel, cv.metadata.name)}#conditions`}
+  >
+    View conditions
+  </HashLink>
+);
+
+export const UpdatingMessageText: React.FC<CVStatusMessageProps> = ({ cv }) => {
+  const version = getDesiredClusterVersion(cv);
+  return <>Update to {version} in progress</>;
+};
+
+const UpdatingMessage: React.FC<CVStatusMessageProps> = ({ cv, isFailing }) => {
+  return (
     <>
-      {updatingCondition.message && (
-        <div>
-          <SyncAltIcon className="fa-spin co-icon-space-r" />
-          {updatingCondition.message}
-        </div>
-      )}
-      <Link to="/settings/cluster/clusteroperators">View details</Link>
+      <div>
+        <SyncAltIcon className="fa-spin co-icon-space-r" />
+        <UpdatingMessageText cv={cv} />
+      </div>
+      {isFailing && <FailingMessageText cv={cv} />}
+      <ClusterVersionConditionsLink cv={cv} />
     </>
   );
 };
@@ -138,22 +226,11 @@ const ErrorRetrievingMessage: React.SFC<CVStatusMessageProps> = ({ cv }) => {
   );
 };
 
-const FailingMessage: React.SFC<CVStatusMessageProps> = ({ cv }) => {
-  const failingCondition = getClusterVersionCondition(
-    cv,
-    ClusterVersionConditionType.Failing,
-    K8sResourceConditionStatus.True,
-  );
+const FailingMessage: React.FC<CVStatusMessageProps> = ({ cv }) => {
   return (
     <>
-      <div>
-        <Tooltip content={truncateMiddle(failingCondition.message, { length: 256 })}>
-          <span>
-            <RedExclamationCircleIcon /> Failing
-          </span>
-        </Tooltip>
-      </div>
-      <Link to="/settings/cluster/clusteroperators">View details</Link>
+      <FailingMessageText cv={cv} />
+      <ClusterVersionConditionsLink cv={cv} />
     </>
   );
 };
@@ -164,7 +241,7 @@ const UpToDateMessage: React.SFC<{}> = () => (
   </span>
 );
 
-export const UpdateStatus: React.SFC<UpdateStatusProps> = ({ cv }) => {
+export const UpdateStatus: React.FC<UpdateStatusProps> = ({ cv }) => {
   const status = getClusterUpdateStatus(cv);
   switch (status) {
     case ClusterUpdateStatus.Invalid:
@@ -173,6 +250,8 @@ export const UpdateStatus: React.SFC<UpdateStatusProps> = ({ cv }) => {
       return <UpdatesAvailableMessage cv={cv} />;
     case ClusterUpdateStatus.Updating:
       return <UpdatingMessage cv={cv} />;
+    case ClusterUpdateStatus.UpdatingAndFailing:
+      return <UpdatingMessage cv={cv} isFailing />;
     case ClusterUpdateStatus.ErrorRetrieving:
       return <ErrorRetrievingMessage cv={cv} />;
     case ClusterUpdateStatus.Failing:
@@ -234,9 +313,11 @@ export const UpdateLink: React.SFC<CurrentVersionProps> = ({ cv }) => {
         status === ClusterUpdateStatus.Failing ||
         status === ClusterUpdateStatus.UpdatesAvailable ||
         status === ClusterUpdateStatus.Updating) ? (
-        <Button variant="primary" type="button" onClick={() => clusterUpdateModal({ cv })}>
-          Update
-        </Button>
+        <div className="co-cluster-settings__details">
+          <Button variant="primary" type="button" onClick={() => clusterUpdateModal({ cv })}>
+            Update
+          </Button>
+        </div>
       ) : null}
     </>
   );
@@ -366,9 +447,7 @@ const splitChannel = (channel: string) => {
 };
 
 const UpdatesGraph: React.FC<UpdatesGraphProps> = ({ cv }) => {
-  const status = getClusterUpdateStatus(cv);
   const availableUpdates = getSortedUpdates(cv);
-  const desiredVersion = getDesiredClusterVersion(cv);
   const lastVersion = getLastCompletedUpdate(cv);
   const newestVersion = availableUpdates[0]?.version;
   const secondNewestVersion = availableUpdates[1]?.version;
@@ -383,59 +462,170 @@ const UpdatesGraph: React.FC<UpdatesGraphProps> = ({ cv }) => {
   );
 
   return (
-    status !== ClusterUpdateStatus.ErrorRetrieving && (
-      <div className="co-cluster-settings__updates-graph">
+    <div className="co-cluster-settings__updates-graph">
+      <Channel>
+        <ChannelPath current>
+          <ChannelLine>
+            <ChannelVersion current>{lastVersion}</ChannelVersion>
+            <ChannelVersionDot current channel={currentChannel} version={lastVersion} />
+          </ChannelLine>
+          <ChannelLine>
+            {availableUpdates.length === 2 && (
+              <>
+                <ChannelVersion>{secondNewestVersion}</ChannelVersion>
+                <ChannelVersionDot channel={currentChannel} version={secondNewestVersion} />
+              </>
+            )}
+            {availableUpdates.length > 2 && (
+              <Button
+                variant="secondary"
+                className="co-channel-more-versions"
+                onClick={() => clusterMoreUpdatesModal({ cv })}
+              >
+                + More
+              </Button>
+            )}
+          </ChannelLine>
+          <ChannelLine>
+            {newestVersion && (
+              <>
+                <ChannelVersion>{newestVersion}</ChannelVersion>
+                <ChannelVersionDot channel={currentChannel} version={newestVersion} />
+              </>
+            )}
+          </ChannelLine>
+        </ChannelPath>
+        <ChannelName current>{currentChannel} channel</ChannelName>
+      </Channel>
+      {newerChannel && (
         <Channel>
-          <ChannelPath current>
-            <ChannelLine>
-              <ChannelVersion current>{lastVersion}</ChannelVersion>
-              <ChannelVersionDot current channel={currentChannel} version={lastVersion} />
+          <ChannelPath>
+            <ChannelLine start>
+              <div className="co-channel-switch"></div>
             </ChannelLine>
-            <ChannelLine>
-              {availableUpdates.length === 2 && (
-                <>
-                  <ChannelVersion>{secondNewestVersion}</ChannelVersion>
-                  <ChannelVersionDot channel={currentChannel} version={secondNewestVersion} />
-                </>
-              )}
-              {availableUpdates.length > 2 && (
-                <Button
-                  variant="secondary"
-                  className="co-channel-more-versions"
-                  onClick={() => clusterMoreUpdatesModal({ cv })}
-                >
-                  + More
-                </Button>
-              )}
-            </ChannelLine>
-            <ChannelLine>
-              {(newestVersion || status === ClusterUpdateStatus.Updating) && (
-                <>
-                  <ChannelVersion>{newestVersion || desiredVersion}</ChannelVersion>
-                  <ChannelVersionDot
-                    channel={currentChannel}
-                    version={newestVersion || desiredVersion}
-                  />
-                </>
-              )}
-            </ChannelLine>
+            <ChannelLine />
+            <ChannelLine />
           </ChannelPath>
-          <ChannelName current>{currentChannel} channel</ChannelName>
+          <ChannelName>{newerChannel} channel</ChannelName>
         </Channel>
-        {newerChannel && (
-          <Channel>
-            <ChannelPath>
-              <ChannelLine start>
-                <div className="co-channel-switch"></div>
-              </ChannelLine>
-              <ChannelLine />
-              <ChannelLine />
-            </ChannelPath>
-            <ChannelName>{newerChannel} channel</ChannelName>
-          </Channel>
-        )}
-      </div>
-    )
+      )}
+    </div>
+  );
+};
+
+const UpdatesBar: React.FC<UpdatesBarProps> = ({ children }) => {
+  return <div className="co-cluster-settings__updates-bar">{children}</div>;
+};
+
+const UpdatesGroup: React.FC<UpdatesGroupProps> = ({ children, divided }) => {
+  return (
+    <div
+      className={classNames('co-cluster-settings__updates-group', {
+        'co-cluster-settings__updates-group--divided': divided,
+      })}
+    >
+      {children}
+    </div>
+  );
+};
+
+const UpdatesType: React.FC<UpdatesTypeProps> = ({ children }) => {
+  return <div className="co-cluster-settings__updates-type">{children}</div>;
+};
+
+const ClusterOperatorsResource: WatchK8sResource = {
+  isList: true,
+  kind: referenceForModel(ClusterOperatorModel),
+};
+
+const MachineConfigPoolsResource: WatchK8sResource = {
+  isList: true,
+  kind: referenceForModel(MachineConfigPoolModel),
+};
+
+const UpdateProgress: React.FC<UpdateProgressProps> = ({ cv }) => {
+  const [clusterOperators] = useK8sWatchResource<ClusterOperator[]>(ClusterOperatorsResource);
+  const [machineConfigPools] = useK8sWatchResource<MachineConfigPoolKind[]>(
+    MachineConfigPoolsResource,
+  );
+  const desiredVersion = getDesiredClusterVersion(cv);
+  const updateStartedTime = getStartedTimeForCVDesiredVersion(cv, desiredVersion);
+  const totalOperatorsCount = clusterOperators?.length || 0;
+  const updatedOperatorsCount = getUpdatedOperatorsCount(clusterOperators, desiredVersion);
+  const percentOperators = calculatePercentage(updatedOperatorsCount, totalOperatorsCount);
+  const masterMachinePoolConfig = getMCPByName(machineConfigPools, 'master');
+  const masterMachinePoolConfigUpdatingTime = getUpdatingTimeForMCP(masterMachinePoolConfig);
+  const totalMasterNodes = masterMachinePoolConfig?.status?.machineCount || 0;
+  const updatedMasterNodes =
+    masterMachinePoolConfigUpdatingTime > updateStartedTime
+      ? masterMachinePoolConfig?.status?.updatedMachineCount
+      : 0;
+  const percentMasterNodes = calculatePercentage(updatedMasterNodes, totalMasterNodes);
+  const workerMachinePoolConfig = getMCPByName(machineConfigPools, 'worker');
+  const workerMachinePoolConfigUpdatingTime = getUpdatingTimeForMCP(workerMachinePoolConfig);
+  const totalWorkerNodes = workerMachinePoolConfig?.status?.machineCount || 0;
+  const updatedWorkerNodes =
+    workerMachinePoolConfigUpdatingTime > updateStartedTime
+      ? workerMachinePoolConfig?.status?.updatedMachineCount
+      : 0;
+  const percentWorkerNodes = calculatePercentage(updatedWorkerNodes, totalWorkerNodes);
+
+  return (
+    <div className="co-cluster-settings__updates-progress">
+      <UpdatesGroup>
+        <UpdatesType>
+          <Link to="/settings/cluster/clusteroperators">Cluster Operators</Link>
+        </UpdatesType>
+        <UpdatesBar>
+          <Progress
+            title={`${updatedOperatorsCount} of ${totalOperatorsCount}`}
+            value={!_.isNaN(percentOperators) ? percentOperators : null}
+            size={ProgressSize.sm}
+            variant={percentOperators === 100 ? ProgressVariant.success : null}
+          />
+        </UpdatesBar>
+      </UpdatesGroup>
+      {masterMachinePoolConfig && (
+        <UpdatesGroup>
+          <UpdatesType>
+            <Link to="/k8s/cluster/nodes?rowFilter-node-role=master">Master Nodes</Link>
+          </UpdatesType>
+          <UpdatesBar>
+            <Progress
+              title={`${updatedMasterNodes} of ${totalMasterNodes}`}
+              value={!_.isNaN(percentMasterNodes) ? percentMasterNodes : null}
+              size={ProgressSize.sm}
+              variant={percentMasterNodes === 100 ? ProgressVariant.success : null}
+            />
+          </UpdatesBar>
+        </UpdatesGroup>
+      )}
+      {workerMachinePoolConfig && (
+        <UpdatesGroup divided>
+          <UpdatesType>
+            <Link to="/k8s/cluster/nodes?rowFilter-node-role=worker">Worker Nodes</Link>
+            <Tooltip
+              content={
+                <>
+                  Worker nodes will continue to update after the update of master nodes and
+                  operators are complete.
+                </>
+              }
+            >
+              <BlueInfoCircleIcon className="co-icon-space-l" />
+            </Tooltip>
+          </UpdatesType>
+          <UpdatesBar>
+            <Progress
+              title={`${updatedWorkerNodes} of ${totalWorkerNodes}`}
+              value={!_.isNaN(percentWorkerNodes) ? percentWorkerNodes : null}
+              size={ProgressSize.sm}
+              variant={percentWorkerNodes === 100 ? ProgressVariant.success : null}
+            />
+          </UpdatesBar>
+        </UpdatesGroup>
+      )}
+    </div>
   );
 };
 
@@ -449,6 +639,7 @@ export const ClusterVersionDetailsTable: React.SFC<ClusterVersionDetailsTablePro
   // Split image on `@` to emphasize the digest.
   const imageParts = desiredImage.split('@');
   const releaseNotes = showReleaseNotes();
+  const status = getClusterUpdateStatus(cv);
 
   return (
     <>
@@ -483,12 +674,14 @@ export const ClusterVersionDetailsTable: React.SFC<ClusterVersionDetailsTablePro
                         <CurrentChannel cv={cv} />
                       </dd>
                     </dl>
-                    <div className="co-cluster-settings__details">
-                      <UpdateLink cv={cv} />
-                    </div>
+                    <UpdateLink cv={cv} />
                   </div>
                 </div>
-                <UpdatesGraph cv={cv} />
+                {(status === ClusterUpdateStatus.UpToDate ||
+                  status === ClusterUpdateStatus.UpdatesAvailable) && <UpdatesGraph cv={cv} />}
+                {(status === ClusterUpdateStatus.Failing ||
+                  status === ClusterUpdateStatus.UpdatingAndFailing ||
+                  status === ClusterUpdateStatus.Updating) && <UpdateProgress cv={cv} />}
               </div>
             </div>
           </div>
@@ -655,6 +848,7 @@ type ReleaseNotesLinkProps = {
 
 type CVStatusMessageProps = {
   cv: ClusterVersionKind;
+  isFailing?: boolean;
 };
 
 type CurrentChannelProps = {
@@ -696,13 +890,34 @@ type ChannelVersionDotProps = {
   version: string;
 };
 
+type UpdatesBarProps = {
+  children: React.ReactNode;
+};
+
 type UpdatesGraphProps = {
+  cv: ClusterVersionKind;
+};
+
+type UpdatesGroupProps = {
+  children: React.ReactNode;
+  divided?: boolean;
+};
+
+type UpdatesTypeProps = {
+  children: React.ReactNode;
+};
+
+type UpdateProgressProps = {
   cv: ClusterVersionKind;
 };
 
 type ClusterVersionDetailsTableProps = {
   obj: ClusterVersionKind;
   autoscalers: K8sResourceKind[];
+};
+
+type ClusterVersionConditionsLinkProps = {
+  cv: ClusterVersionKind;
 };
 
 type ClusterSettingsPageProps = {

@@ -32,6 +32,7 @@ import {
 } from '../utils';
 import { GreenCheckCircleIcon, YellowExclamationTriangleIcon } from '@console/shared';
 import RelatedObjectsPage from './related-objects';
+import { ClusterVersionConditionsLink, UpdatingMessageText } from './cluster-settings';
 
 export const clusterOperatorReference: K8sResourceKindReference = referenceForModel(
   ClusterOperatorModel,
@@ -154,8 +155,13 @@ const UpdateInProgressAlert: React.SFC<UpdateInProgressAlertProps> = ({ cv }) =>
     <>
       {updateCondition && (
         <div className="co-m-pane__body co-m-pane__body--section-heading">
-          <Alert isInline className="co-alert" variant="info" title="Cluster update in progress.">
-            {updateCondition.message}
+          <Alert
+            isInline
+            className="co-alert"
+            variant="info"
+            title={<UpdatingMessageText cv={cv} />}
+          >
+            <ClusterVersionConditionsLink cv={cv} />
           </Alert>
         </div>
       )}

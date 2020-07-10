@@ -239,6 +239,23 @@ $co-channel-height: 60px;
       display: none;
     }
   }
+
+  &__updates-group {
+    margin: 0 0 var(--pf-global--spacer--lg) 0;
+
+    &--divided {
+      border-top: 1px solid $color-pf-black-200;
+      padding-top: var(--pf-global--spacer--lg);
+    }
+  }
+
+  &__updates-progress {
+    padding: var(--pf-global--spacer--sm) var(--pf-global--spacer--lg) 0 0;
+  }
+
+  &__updates-type {
+    margin: 0 0 var(--pf-global--spacer--xs) 0;
+  }
 }
 
 .co-update-status {

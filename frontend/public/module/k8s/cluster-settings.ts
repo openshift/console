@@ -17,6 +17,7 @@ export enum ClusterUpdateStatus {
   UpdatesAvailable = 'Updates Available',
   Updating = 'Updating',
   Failing = 'Failing',
+  UpdatingAndFailing = 'Updating and Failing',
   ErrorRetrieving = 'Error Retrieving',
   Invalid = 'Invalid Cluster Version',
 }
@@ -115,6 +116,10 @@ export const hasAvailableUpdates = (cv: ClusterVersionKind): boolean => {
 export const getClusterUpdateStatus = (cv: ClusterVersionKind): ClusterUpdateStatus => {
   if (invalid(cv)) {
     return ClusterUpdateStatus.Invalid;
+  }
+
+  if (isProgressing(cv) && updateFailing(cv)) {
+    return ClusterUpdateStatus.UpdatingAndFailing;
   }
 
   if (updateFailing(cv)) {
