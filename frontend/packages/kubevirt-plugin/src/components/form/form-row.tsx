@@ -1,8 +1,9 @@
 import * as React from 'react';
 import { FormGroup } from '@patternfly/react-core';
 import { HelpIcon } from '@patternfly/react-icons';
+import * as classnames from 'classnames';
 import { LoadingInline } from '@console/internal/components/utils';
-import { PopoverStatus, ValidationErrorType } from '@console/shared';
+import { PopoverStatus, ValidationErrorType, StatusIconAndText } from '@console/shared';
 import './form-row.scss';
 
 export const FormRow: React.FC<FormRowProps> = ({
@@ -18,6 +19,9 @@ export const FormRow: React.FC<FormRowProps> = ({
   children,
   className,
 }) => {
+  const [isActive, setActive] = React.useState(false);
+  const onHide = React.useCallback(() => setActive(false), [setActive]);
+  const onShow = React.useCallback(() => setActive(true), [setActive]);
   if (isHidden) {
     return null;
   }
@@ -39,11 +43,21 @@ export const FormRow: React.FC<FormRowProps> = ({
       {help && (
         <span className="kubevirt-form-row__icon-status-container">
           <PopoverStatus
-            icon={<HelpIcon className="kubevirt-form-row__help-icon--hidden" />}
-            activeIcon={<HelpIcon />}
             title={`${fieldId} help`}
-            iconOnly
             hideHeader
+            onHide={onHide}
+            onShow={onShow}
+            statusBody={
+              <StatusIconAndText
+                title={`${fieldId} help`}
+                iconOnly
+                icon={
+                  <HelpIcon
+                    className={classnames({ 'kubevirt-form-row__help-icon--hidden': !isActive })}
+                  />
+                }
+              />
+            }
           >
             {help}
           </PopoverStatus>

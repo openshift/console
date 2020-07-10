@@ -1,22 +1,17 @@
 import * as React from 'react';
 import { Button, Popover, PopoverPosition } from '@patternfly/react-core';
 import { Instance as TippyInstance } from 'tippy.js';
-import StatusIconAndText from './StatusIconAndText';
 
 const PopoverStatus: React.FC<PopoverStatusProps> = ({
-  title,
   hideHeader,
-  icon,
-  activeIcon,
   children,
   isVisible = null,
   shouldClose = null,
-  ...other
+  statusBody,
+  title,
+  onHide,
+  onShow,
 }) => {
-  const [isActive, setActive] = React.useState(false);
-  const onHide = React.useCallback(() => setActive(false), [setActive]);
-  const onShow = React.useCallback(() => setActive(true), [setActive]);
-
   return (
     <Popover
       position={PopoverPosition.right}
@@ -29,18 +24,17 @@ const PopoverStatus: React.FC<PopoverStatusProps> = ({
       shouldClose={shouldClose}
     >
       <Button variant="link" isInline>
-        <StatusIconAndText
-          {...other}
-          title={title}
-          icon={isActive && activeIcon ? activeIcon : icon}
-        />
+        {statusBody}
       </Button>
     </Popover>
   );
 };
 
-type PopoverStatusProps = React.ComponentProps<typeof StatusIconAndText> & {
-  activeIcon?: React.ReactElement;
+type PopoverStatusProps = {
+  statusBody: React.ReactNode;
+  onHide?: () => void;
+  onShow?: () => void;
+  title?: string;
   hideHeader?: boolean;
   isVisible?: boolean;
   shouldClose?: (tip: TippyInstance) => void;

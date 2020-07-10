@@ -6,10 +6,6 @@ import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboa
 import DetailsBody from '@console/shared/src/components/dashboard/details-card/DetailsBody';
 import DetailItem from '@console/shared/src/components/dashboard/details-card/DetailItem';
 import DashboardCardLink from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardLink';
-import {
-  DashboardItemProps,
-  withDashboardResources,
-} from '@console/internal/components/dashboard/with-dashboard-resources';
 import { getName, getNamespace } from '@console/shared';
 import { MachineKind, NodeKind } from '@console/internal/module/k8s';
 import { resourcePathFromModel } from '@console/internal/components/utils';
@@ -56,9 +52,9 @@ const DetailsCard: React.FC<DetailsCardProps> = () => {
   );
 };
 
-export default withDashboardResources(DetailsCard);
+export default DetailsCard;
 
-type DetailsCardProps = DashboardItemProps & {
+type DetailsCardProps = {
   obj: BareMetalHostKind;
   machines: MachineKind[];
   nodes: NodeKind[];

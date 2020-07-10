@@ -22,6 +22,7 @@ import {
   getHostMachine,
   getHostPowerStatus,
   isHostScheduledForRestart,
+  hasPowerManagement,
 } from '../../selectors';
 import { BareMetalHostModel, NodeMaintenanceModel } from '../../models';
 import { getHostStatus } from '../../status/host-status';
@@ -31,7 +32,7 @@ import {
   HOST_POWER_STATUS_POWERING_OFF,
   HOST_POWER_STATUS_POWERING_ON,
   HOST_STATUS_AVAILABLE,
-  HOST_STATUS_DISCOVERED,
+  HOST_STATUS_UNMANAGED,
   HOST_STATUS_READY,
   HOST_ERROR_STATES,
   HOST_STATUS_UNKNOWN,
@@ -85,9 +86,10 @@ export const RemoveNodeMaintenance = (
 export const PowerOn = (kindObj: K8sKind, host: BareMetalHostKind): KebabOption => {
   const title = 'Power On';
   return {
-    hidden: [HOST_POWER_STATUS_POWERED_ON, HOST_POWER_STATUS_POWERING_ON].includes(
-      getHostPowerStatus(host),
-    ),
+    hidden:
+      [HOST_POWER_STATUS_POWERED_ON, HOST_POWER_STATUS_POWERING_ON].includes(
+        getHostPowerStatus(host),
+      ) || !hasPowerManagement(host),
     label: title,
     callback: () => {
       k8sPatch(BareMetalHostModel, host, [{ op: 'replace', path: '/spec/online', value: true }]);
@@ -132,9 +134,10 @@ export const PowerOff = (
   host: BareMetalHostKind,
   { nodeName, status }: ActionArgs,
 ) => ({
-  hidden: [HOST_POWER_STATUS_POWERED_OFF, HOST_POWER_STATUS_POWERING_OFF].includes(
-    getHostPowerStatus(host),
-  ),
+  hidden:
+    [HOST_POWER_STATUS_POWERED_OFF, HOST_POWER_STATUS_POWERING_OFF].includes(
+      getHostPowerStatus(host),
+    ) || !hasPowerManagement(host),
   label: 'Power Off',
   callback: () => powerOffHostModal({ host, nodeName, status }),
   accessReview: host && asAccessReview(BareMetalHostModel, host, 'update'),
@@ -144,7 +147,9 @@ export const Restart = (kindObj: K8sKind, host: BareMetalHostKind, { nodeName }:
   hidden:
     [HOST_POWER_STATUS_POWERED_OFF, HOST_POWER_STATUS_POWERING_OFF].includes(
       getHostPowerStatus(host),
-    ) || isHostScheduledForRestart(host),
+    ) ||
+    isHostScheduledForRestart(host) ||
+    !hasPowerManagement(host),
   label: 'Restart',
   callback: () => restartHostModal({ host, nodeName }),
   accessReview: host && asAccessReview(BareMetalHostModel, host, 'update'),
@@ -161,7 +166,7 @@ export const Delete = (
       HOST_STATUS_UNKNOWN,
       HOST_STATUS_READY,
       HOST_STATUS_AVAILABLE,
-      HOST_STATUS_DISCOVERED,
+      HOST_STATUS_UNMANAGED,
       ...HOST_ERROR_STATES,
     ].includes(status.status),
     label: title,

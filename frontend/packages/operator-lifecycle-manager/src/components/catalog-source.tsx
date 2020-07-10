@@ -35,7 +35,7 @@ import {
   RowFunction,
 } from '@console/internal/components/factory';
 import { ConfigMapModel } from '@console/internal/models';
-import { PopoverStatus } from '@console/shared';
+import { PopoverStatus, StatusIconAndText } from '@console/shared';
 import {
   SubscriptionModel,
   CatalogSourceModel,
@@ -394,10 +394,15 @@ const DisabledPopover: React.FC<DisabledPopoverProps> = ({ operatorHub, sourceNa
     [close, operatorHub, sourceName],
   );
   return (
-    <PopoverStatus title="Disabled" isVisible={visible} shouldClose={close}>
+    <PopoverStatus
+      title="Disabled"
+      isVisible={visible}
+      shouldClose={close}
+      statusBody={<StatusIconAndText title="Disabled" />}
+    >
       <p>
         Operators provided by this source will not appear in OperatorHub and any operators installed
-        from this source will not receive updates unitl this source is re-enabled.
+        from this source will not receive updates until this source is re-enabled.
       </p>
       <Button isInline variant="link" onClick={onClickEnable}>
         Enable source

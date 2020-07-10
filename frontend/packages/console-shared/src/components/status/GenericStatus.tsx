@@ -5,8 +5,8 @@ import StatusIconAndText from './StatusIconAndText';
 
 const GenericStatus: React.FC<GenericStatusProps> = (props) => {
   const { Icon, children, ...restProps } = props;
-  return children ? (
-    <PopoverStatus {...restProps} icon={<Icon />}>
+  return React.Children.toArray(children).length ? (
+    <PopoverStatus {...restProps} statusBody={<StatusIconAndText {...restProps} icon={<Icon />} />}>
       {children}
     </PopoverStatus>
   ) : (

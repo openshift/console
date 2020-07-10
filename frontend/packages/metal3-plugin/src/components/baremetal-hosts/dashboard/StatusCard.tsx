@@ -1,6 +1,7 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import { Gallery, GalleryItem } from '@patternfly/react-core';
+import { Link } from 'react-router-dom';
 import {
   DashboardItemProps,
   withDashboardResources,
@@ -13,18 +14,26 @@ import HealthBody from '@console/shared/src/components/dashboard/status-card/Hea
 import HealthItem from '@console/shared/src/components/dashboard/status-card/HealthItem';
 import { HealthState } from '@console/shared/src/components/dashboard/status-card/states';
 import AlertsBody from '@console/shared/src/components/dashboard/status-card/AlertsBody';
-import AlertItem from '@console/shared/src/components/dashboard/status-card/AlertItem';
 import { Alert } from '@console/internal/components/monitoring/types';
 import { alertURL } from '@console/internal/components/monitoring/utils';
+import { BlueInfoCircleIcon } from '@console/shared';
+import AlertItem, {
+  StatusItem,
+} from '@console/shared/src/components/dashboard/status-card/AlertItem';
+import { resourcePathFromModel } from '@console/internal/components/utils';
 import { getBareMetalHostStatus } from '../../../status/host-status';
 import {
+  HOST_STATUS_DESCRIPTIONS,
   HOST_SUCCESS_STATES,
   HOST_ERROR_STATES,
   HOST_PROGRESS_STATES,
   HOST_HARDWARE_ERROR_STATES,
+  HOST_STATUS_UNMANAGED,
 } from '../../../constants';
 import { BareMetalHostKind } from '../../../types';
 import { BareMetalHostDashboardContext } from './BareMetalHostDashboardContext';
+import { BareMetalHostModel } from '../../../models';
+import { hasPowerManagement } from '../../../selectors';
 
 const getHostHealthState = (obj: BareMetalHostKind): HostHealthState => {
   const { status, title } = getBareMetalHostStatus(obj);
@@ -92,7 +101,7 @@ const HealthCard: React.FC<HealthCardProps> = ({
         <HealthBody>
           <Gallery className="co-overview-status__health" hasGutter>
             <GalleryItem>
-              <HealthItem title="Status" state={health.state} details={health.title} />
+              <HealthItem title={health.title} state={health.state} />
             </GalleryItem>
             <GalleryItem>
               <HealthItem title="Hardware" state={hwHealth.state} details={hwHealth.title} />
@@ -100,6 +109,22 @@ const HealthCard: React.FC<HealthCardProps> = ({
           </Gallery>
         </HealthBody>
         <AlertsBody error={!_.isEmpty(loadError)}>
+          {!hasPowerManagement(obj) && (
+            <StatusItem
+              Icon={BlueInfoCircleIcon}
+              message={HOST_STATUS_DESCRIPTIONS[HOST_STATUS_UNMANAGED]}
+            >
+              <Link
+                to={`${resourcePathFromModel(
+                  BareMetalHostModel,
+                  obj.metadata.name,
+                  obj.metadata.namespace,
+                )}/edit`}
+              >
+                Add credentials
+              </Link>
+            </StatusItem>
+          )}
           {loaded && alerts.length !== 0
             ? alerts.map((alert) => (
                 <AlertItem key={alertURL(alert, alert.rule.id)} alert={alert} />

@@ -1,4 +1,4 @@
-import { K8sResourceKind } from '@console/internal/module/k8s';
+import { K8sResourceCommon } from '@console/internal/module/k8s';
 
 export type BareMetalHostNIC = {
   ip: string;
@@ -59,6 +59,8 @@ export type BareMetalHostKind = {
       url: string;
     };
     online: boolean;
+    externallyProvisioned?: boolean;
+    description?: string;
   };
   status?: {
     hardwareProfile: string;
@@ -86,4 +88,4 @@ export type BareMetalHostKind = {
     errorType?: string;
     errorMessage: string;
   };
-} & K8sResourceKind;
+} & K8sResourceCommon;

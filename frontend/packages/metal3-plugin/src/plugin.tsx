@@ -24,7 +24,7 @@ import { formatNamespacedRouteForResource } from '@console/shared/src/utils/name
 import { BareMetalHostModel, NodeMaintenanceModel } from './models';
 import { getBMHStatusGroups } from './components/baremetal-hosts/dashboard/utils';
 import { getBMNStatusGroups } from './components/baremetal-nodes/dashboard/utils';
-import { getHostPowerStatus } from './selectors';
+import { getHostPowerStatus, hasPowerManagement } from './selectors';
 import { HOST_POWER_STATUS_POWERING_OFF, HOST_POWER_STATUS_POWERING_ON } from './constants';
 import { BareMetalHostKind } from './types';
 import { detectBaremetalPlatform, BAREMETAL_FLAG, NODE_MAINTENANCE_FLAG } from './features';
@@ -243,7 +243,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       isActivity: (resource: BareMetalHostKind) =>
         [HOST_POWER_STATUS_POWERING_OFF, HOST_POWER_STATUS_POWERING_ON].includes(
           getHostPowerStatus(resource),
-        ),
+        ) && hasPowerManagement(resource),
       loader: () =>
         import(
           './components/baremetal-hosts/dashboard/BareMetalStatusActivity' /* webpackChunkName: "metal3-powering" */

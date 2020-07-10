@@ -2,7 +2,7 @@
 // once 'ready' status is replaced with 'available' in BMO
 export const HOST_STATUS_READY = 'ready';
 export const HOST_STATUS_AVAILABLE = 'available';
-export const HOST_STATUS_DISCOVERED = 'discovered';
+export const HOST_STATUS_UNMANAGED = 'unmanaged';
 export const HOST_STATUS_OK = 'OK';
 export const HOST_STATUS_ERROR = 'error';
 export const HOST_STATUS_UNKNOWN = 'Unknown';
@@ -28,7 +28,6 @@ export const HOST_POWER_STATUS_POWERING_ON = 'Powering on';
 export const HOST_STATUS_TITLES = {
   [HOST_STATUS_READY]: 'Available',
   [HOST_STATUS_AVAILABLE]: 'Available',
-  [HOST_STATUS_DISCOVERED]: 'Discovered',
   [HOST_STATUS_OK]: 'OK',
   [HOST_STATUS_ERROR]: 'Error',
   [HOST_STATUS_PROVISIONED]: 'Provisioned',
@@ -45,6 +44,7 @@ export const HOST_STATUS_TITLES = {
   [HOST_STATUS_MATCH_PROFILE]: 'Matching profile',
   [HOST_STATUS_DELETING]: 'Deleting',
   [HOST_STATUS_UNKNOWN]: 'Unknown',
+  [HOST_STATUS_UNMANAGED]: 'Unmanaged',
 };
 
 export const HOST_STATUS_DESCRIPTIONS = {
@@ -62,6 +62,10 @@ export const HOST_STATUS_DESCRIPTIONS = {
   [HOST_STATUS_PROVISIONING_ERROR]: 'The image could not be written to the host.',
   [HOST_STATUS_POWER_MANAGEMENT_ERROR]:
     'An error was found while trying to power the host either on or off.',
+  [HOST_STATUS_EXTERNALLY_PROVISIONED]:
+    'This host was provisioned outside of this cluster and added manually.',
+  [HOST_STATUS_UNMANAGED]:
+    'Power operations cannot be performed on this host until Baseboard Management Controller (BMC) credentials are provided.',
 };
 
 export const HOST_REGISTERING_STATES = [
@@ -94,12 +98,13 @@ export const HOST_PROGRESS_STATES = [
 export const HOST_SUCCESS_STATES = [
   HOST_STATUS_READY,
   HOST_STATUS_AVAILABLE,
-  HOST_STATUS_DISCOVERED,
   HOST_STATUS_OK,
   HOST_STATUS_PROVISIONED,
   HOST_STATUS_EXTERNALLY_PROVISIONED,
   HOST_STATUS_DEPROVISIONED,
 ];
+
+export const HOST_INFO_STATES = [HOST_STATUS_UNMANAGED];
 
 export const HOST_HARDWARE_ERROR_STATES = [HOST_STATUS_POWER_MANAGEMENT_ERROR];
 
