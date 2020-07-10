@@ -1,7 +1,9 @@
 import * as React from 'react';
+import * as classNames from 'classnames';
 import { Grid as GridComponent, GridCellProps } from 'react-virtualized';
 import { getItemsAndRowCount, CellMeasurementContext } from './utils';
 import { Params, GroupedItems, GridChildrenProps } from './types';
+import './Grid.scss';
 
 type GroupByFilterGridProps = {
   height: number;
@@ -22,6 +24,7 @@ const GroupByFilterGrid: React.FC<GroupByFilterGridProps> = ({
     cache,
     cellWidth,
     cellMargin,
+    className,
     overscanRowCount,
     headerHeight,
     estimatedCellHeight,
@@ -45,6 +48,7 @@ const GroupByFilterGrid: React.FC<GroupByFilterGridProps> = ({
   return (
     <GridComponent
       autoHeight
+      className={classNames('ocs-grid', className)}
       tabIndex={null}
       height={height ?? 0}
       width={width}
