@@ -38,3 +38,9 @@ export type Plan = {
     externalName?: string;
   };
 };
+
+export type FilterItem = {
+  label: string;
+  value: string;
+  active: boolean;
+};

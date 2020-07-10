@@ -19,6 +19,7 @@ import {
   Title,
   TextInput,
 } from '@patternfly/react-core';
+import { VirtualizedGrid } from '@console/shared';
 
 import { history } from './router';
 import { isModalOpen } from '../modals';
@@ -881,17 +882,18 @@ export class TileViewPage extends React.Component {
 
   renderGroupedItems(items, groupBy, renderTile, groupItems) {
     const groupedItems = groupItems(items, groupBy);
-    return _.map(
-      groupedItems,
-      (value, key) =>
-        value.length > 0 && (
-          <div key={key} className="co-catalog-page__grouped-items">
-            <Title className="co-catalog-page__group-title" headingLevel="h2" size="lg">
-              {key} ({_.size(value)})
-            </Title>
-            {this.renderItems(value, renderTile)}
-          </div>
-        ),
+    const renderGroupHeader = (heading) => (
+      <Title className="co-catalog-page__group-title" headingLevel="h2" size="lg">
+        {heading} ({_.size(groupedItems[heading])})
+      </Title>
+    );
+    return (
+      <VirtualizedGrid
+        items={groupedItems}
+        renderCell={renderTile}
+        renderHeader={renderGroupHeader}
+        isItemsGrouped
+      />
     );
   }
 
@@ -940,9 +942,11 @@ export class TileViewPage extends React.Component {
 
           {activeCategory.numItems > 0 && (
             <div className="co-catalog-page__grid">
-              {groupItems && groupBy !== groupByTypes.None
-                ? this.renderGroupedItems(activeCategory.items, groupBy, renderTile, groupItems)
-                : this.renderItems(activeCategory.items, renderTile)}
+              {groupItems && groupBy !== groupByTypes.None ? (
+                this.renderGroupedItems(activeCategory.items, groupBy, renderTile, groupItems)
+              ) : (
+                <VirtualizedGrid items={activeCategory.items} renderCell={renderTile} />
+              )}
             </div>
           )}
           {activeCategory.numItems === 0 && this.renderEmptyState()}

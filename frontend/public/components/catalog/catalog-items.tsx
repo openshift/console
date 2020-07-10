@@ -1,53 +1,21 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
 import { Link } from 'react-router-dom';
-import * as catalogImg from '../../imgs/logos/catalog-icon.svg';
-import { Badge, Modal } from '@patternfly/react-core';
-import {
-  CatalogItemHeader,
-  CatalogTile,
-  CatalogTileBadge,
-} from '@patternfly/react-catalog-view-extension';
-
+import { Modal } from '@patternfly/react-core';
+import { CatalogItemHeader } from '@patternfly/react-catalog-view-extension';
 import { DEV_CATALOG_FILTER_KEY as filterKey } from '@console/shared';
 import { history } from '../utils/router';
-import { normalizeIconClass } from './catalog-item-icon';
 import { CatalogTileDetails } from './catalog-item-details';
 import { TileViewPage } from '../utils/tile-view-page';
 import { Item } from './types';
+import CatalogTile from './catalog-tile';
+import { getAvailableFilters, getIconProps } from './utils';
 
 export type CatalogTileViewPageProps = {
   items: Item[];
 };
 export type CatalogTileViewPageState = {
   detailsItem: Item;
-};
-
-export type FilterItem = {
-  label: string;
-  value: string;
-  active: boolean;
-};
-
-type TypeFilters = {
-  ClusterServiceVersion: FilterItem;
-  HelmChart: FilterItem;
-  ImageStream: FilterItem;
-  Template: FilterItem;
-  ClusterServiceClass: FilterItem;
-};
-
-type CapabilityFilters = {
-  BasicInstall: FilterItem;
-  SeamlessUpgrades: FilterItem;
-  FullLifecycle: FilterItem;
-  DeepInsights: FilterItem;
-  AutoPilot: FilterItem;
-};
-
-type PageFilters = {
-  kind: TypeFilters;
-  capabilityLevel: CapabilityFilters;
 };
 
 export const catalogCategories: Record<
@@ -141,40 +109,6 @@ const pageDescription =
 
 // Filter property white list
 const filterGroups = ['kind'];
-
-// initialFilters cannot be typed as it has multiple usages
-const getAvailableFilters = (initialFilters): PageFilters => {
-  const filters: PageFilters = _.cloneDeep(initialFilters);
-  filters.kind = {
-    ClusterServiceVersion: {
-      label: 'Operator Backed',
-      value: 'InstalledOperator',
-      active: true,
-    },
-    HelmChart: {
-      label: 'Helm Charts',
-      value: 'HelmChart',
-      active: false,
-    },
-    ImageStream: {
-      label: 'Builder Image',
-      value: 'ImageStream',
-      active: false,
-    },
-    Template: {
-      label: 'Template',
-      value: 'Template',
-      active: false,
-    },
-    ClusterServiceClass: {
-      label: 'Service Class',
-      value: 'ClusterServiceClass',
-      active: false,
-    },
-  };
-
-  return filters;
-};
 
 const filterPreference = ['kind'];
 const filterGroupNameMap: Record<string, string> = {
@@ -292,33 +226,7 @@ export class CatalogTileViewPage extends React.Component<
     );
   }
 
-  renderTile = (item: Item): React.ReactElement => {
-    if (!item) {
-      return null;
-    }
-    const { obj, tileName, tileProvider, tileDescription, kind } = item;
-    const uid = obj.metadata.uid;
-    const vendor = tileProvider ? `provided by ${tileProvider}` : null;
-    const { kind: filters } = getAvailableFilters({ kind });
-    const filter = _.find(filters, ['value', kind]);
-    return (
-      <CatalogTile
-        className="co-catalog-tile"
-        key={uid}
-        onClick={() => this.openOverlay(item)}
-        title={tileName}
-        badges={[
-          <CatalogTileBadge key="type">
-            <Badge isRead>{filter.label}</Badge>
-          </CatalogTileBadge>,
-        ]}
-        {...this.getIconProps(item)}
-        vendor={vendor}
-        description={tileDescription}
-        data-test={`${kind}-${obj.metadata.name}`}
-      />
-    );
-  };
+  renderTile = (item: Item) => <CatalogTile item={item} onClick={this.openOverlay} />;
 
   renderModal = (detailsItem: Item) => {
     if (!detailsItem) {
@@ -332,7 +240,7 @@ export class CatalogTileViewPage extends React.Component<
             <CatalogItemHeader
               title={detailsItem.tileName}
               vendor={detailsItem.tileProvider ? `Provided by ${detailsItem.tileProvider}` : null}
-              {...this.getIconProps(detailsItem)}
+              {...getIconProps(detailsItem)}
             />
             <div className="co-catalog-page__overlay-actions">
               <Link
@@ -354,15 +262,5 @@ export class CatalogTileViewPage extends React.Component<
         <CatalogTileDetails item={detailsItem} />
       </Modal>
     );
-  };
-
-  getIconProps = (item: Item) => {
-    const { tileImgUrl, tileIconClass } = item;
-    if (tileImgUrl) {
-      return { iconImg: tileImgUrl, iconClass: null };
-    } else if (tileIconClass) {
-      return { iconImg: null, iconClass: normalizeIconClass(tileIconClass) };
-    }
-    return { iconImg: catalogImg, iconClass: null };
   };
 }
