@@ -84,6 +84,7 @@ const FilterToolbar_: React.FC<FilterToolbarProps & RouteComponentProps> = (prop
     hideLabelFilter,
     location,
     textFilter = filterTypeMap[FilterType.NAME],
+    labelFilter = filterTypeMap[FilterType.LABEL],
   } = props;
 
   const [inputText, setInputText] = React.useState('');
@@ -119,7 +120,7 @@ const FilterToolbar_: React.FC<FilterToolbarProps & RouteComponentProps> = (prop
   const { name: nameFilter, labels: labelFilters, rowFiltersFromURL: selectedRowFilters } = (() => {
     const rowFiltersFromURL: string[] = [];
     const params = new URLSearchParams(location.search);
-    const q = params.get('label');
+    const q = params.get(labelFilter);
     const name = params.get(textFilter);
     _.map(filterKeys, (f) => {
       const vals = params.get(f);
@@ -134,16 +135,16 @@ const FilterToolbar_: React.FC<FilterToolbarProps & RouteComponentProps> = (prop
   /* Logic for Name and Label Filter */
 
   const applyFilter = (input: string | string[], type: FilterType) => {
-    const filter = type === FilterType.NAME ? textFilter : filterTypeMap[FilterType.LABEL];
+    const filter = type === FilterType.NAME ? textFilter : labelFilter;
     const value = type === FilterType.NAME ? input : { all: input };
     props.reduxIDs.forEach((id) => props.filterList(id, filter, value));
   };
 
   const updateLabelFilter = (filterValues: string[]) => {
     if (filterValues.length > 0) {
-      setQueryArgument('label', filterValues.join(','));
+      setQueryArgument(labelFilter, filterValues.join(','));
     } else {
-      removeQueryArgument('label');
+      removeQueryArgument(labelFilter);
     }
     setInputText('');
     applyFilter(filterValues, FilterType.LABEL);
@@ -234,6 +235,14 @@ const FilterToolbar_: React.FC<FilterToolbarProps & RouteComponentProps> = (prop
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // Default filters
+  React.useEffect(() => {
+    if (_.isEmpty(selectedRowFilters)) {
+      rowFilters.forEach((filter) => updateRowFilterSelected(filter.defaultSelected));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const switchFilter = (type: FilterType) => {
     setFilterType(FilterType[type]);
     setInputText(nameFilter && FilterType[type] === FilterType.NAME ? nameFilter : '');
@@ -315,6 +324,7 @@ const FilterToolbar_: React.FC<FilterToolbarProps & RouteComponentProps> = (prop
                       FilterType.NAME === filterType ? 'Search by name...' : 'app=frontend'
                     }
                     data={data}
+                    labelPath={props.labelPath}
                   />
                 )}
               </div>
@@ -333,12 +343,15 @@ type FilterToolbarProps = {
   filterList?: any;
   textFilter?: string;
   hideNameFilter?: boolean;
+  labelFilter?: string;
   hideLabelFilter?: boolean;
   parseAutoComplete?: any;
   kinds?: any;
+  labelPath?: string;
 };
 
 export type RowFilter = {
+  defaultSelected?: string[];
   filterGroupName: string;
   type: string;
   items?: {

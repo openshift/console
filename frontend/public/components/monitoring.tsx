@@ -21,7 +21,6 @@ import {
   YellowExclamationTriangleIcon,
 } from '@console/shared';
 import { withFallback } from '@console/shared/src/components/error/error-boundary';
-import * as k8sActions from '../actions/k8s';
 import * as UIActions from '../actions/ui';
 import { coFetchJSON } from '../co-fetch';
 import {
@@ -45,9 +44,10 @@ import {
   SilenceStates,
 } from '../reducers/monitoring';
 import store, { RootState } from '../redux';
-import { RowFunction, Table, TableData, TableRow, TextFilter } from './factory';
-import { PrometheusLabels } from './graphs';
+import { RowFunction, Table, TableData, TableRow } from './factory';
+import { FilterToolbar, RowFilter } from './filter-toolbar';
 import { confirmModal } from './modals';
+import { PrometheusLabels } from './graphs';
 import { AlertmanagerYAMLEditorWrapper } from './monitoring/alert-manager-yaml-editor';
 import { AlertmanagerConfigWrapper } from './monitoring/alert-manager-config';
 import MonitoringDashboardsPage from './monitoring/dashboards';
@@ -78,7 +78,6 @@ import {
   silencesToProps,
 } from './monitoring/utils';
 import { refreshNotificationPollers } from './notification-drawer';
-import { CheckBoxes } from './row-filter';
 import { formatPrometheusDuration } from './utils/datetime';
 import { ActionsMenu } from './utils/dropdown';
 import { Firehose } from './utils/firehose';
@@ -993,9 +992,10 @@ const HeaderAlertmanagerLink = ({ path }) =>
     </span>
   );
 
-const alertsRowFilter = {
+const alertsRowFilter: RowFilter = {
+  defaultSelected: [AlertStates.Firing],
   type: 'alert-state',
-  selected: [AlertStates.Firing, AlertStates.Silenced, AlertStates.Pending],
+  filterGroupName: 'Alert',
   reducer: alertState,
   items: [
     { id: AlertStates.Firing, title: 'Firing' },
@@ -1013,35 +1013,14 @@ const filtersToProps = ({ k8s }, { reduxID }) => {
 const MonitoringListPage = connect(filtersToProps)(
   class InnerMonitoringListPage extends React.Component<ListPageProps> {
     props: ListPageProps;
-    defaultNameFilter: string;
 
     constructor(props) {
       super(props);
-      this.applyTextFilter = this.applyTextFilter.bind(this);
-    }
-
-    applyTextFilter(val) {
-      const { nameFilterID, reduxID } = this.props;
-      store.dispatch(k8sActions.filterList(reduxID, nameFilterID, val));
-
-      const params = new URLSearchParams(window.location.search);
-      if (val) {
-        params.set(nameFilterID, val);
-      } else {
-        params.delete(nameFilterID);
-      }
-      const url = new URL(window.location.href);
-      history.replace(`${url.pathname}?${params.toString()}${url.hash}`);
     }
 
     UNSAFE_componentWillMount() {
-      const { nameFilterID, reduxID } = this.props;
+      const { reduxID } = this.props;
       const params = new URLSearchParams(window.location.search);
-
-      // Ensure the current name filter value matches the name filter GET param
-      this.defaultNameFilter = params.get(nameFilterID);
-      store.dispatch(k8sActions.filterList(reduxID, nameFilterID, this.defaultNameFilter));
-
       if (!params.get('sortBy')) {
         // Sort by rule name by default
         store.dispatch(UIActions.sortList(reduxID, 'name', undefined, 'asc', 'Name'));
@@ -1054,9 +1033,13 @@ const MonitoringListPage = connect(filtersToProps)(
         data,
         filters,
         Header,
+        hideLabelFilter,
         kindPlural,
+        labelFilter,
+        labelPath,
         loaded,
         loadError,
+        nameFilterID,
         reduxID,
         Row,
         rowFilter,
@@ -1067,28 +1050,20 @@ const MonitoringListPage = connect(filtersToProps)(
           <Helmet>
             <title>Alerting</title>
           </Helmet>
-          <div className="co-m-pane__filter-bar">
+          <div className="co-m-pane__body">
             {CreateButton && (
-              <div className="co-m-pane__filter-bar-group">
+              <div className="co-m-pane__createLink--no-title">
                 <CreateButton />
               </div>
             )}
-            <div className="co-m-pane__filter-bar-group co-m-pane__filter-bar-group--filter">
-              <TextFilter
-                defaultValue={this.defaultNameFilter}
-                label={`${kindPlural} by name`}
-                onChange={this.applyTextFilter}
-              />
-            </div>
-          </div>
-          <div className="co-m-pane__body">
-            <CheckBoxes
-              items={rowFilter.items}
-              itemCount={_.size(data)}
-              numbers={_.countBy(data, rowFilter.reducer)}
+            <FilterToolbar
+              rowFilters={[rowFilter]}
+              data={data}
               reduxIDs={[reduxID]}
-              selected={rowFilter.selected}
-              type={rowFilter.type}
+              textFilter={nameFilterID}
+              labelFilter={labelFilter}
+              hideLabelFilter={hideLabelFilter}
+              labelPath={labelPath}
             />
             <div className="row">
               <div className="col-xs-12">
@@ -1121,13 +1096,15 @@ const AlertsPage_ = (props) => (
     reduxID="monitoringAlerts"
     Row={AlertTableRow}
     rowFilter={alertsRowFilter}
+    labelFilter="alerts"
+    labelPath="labels"
   />
 );
 const AlertsPage = withFallback(connect(alertsToProps)(AlertsPage_));
 
-const rulesRowFilter = {
+const rulesRowFilter: RowFilter = {
   type: 'alerting-rule-active',
-  selected: ['true', 'false'],
+  filterGroupName: 'Alerts',
   reducer: alertingRuleIsActive,
   items: [
     { id: 'true', title: 'Active' },
@@ -1186,6 +1163,8 @@ const RulesPage_ = (props) => (
     {...props}
     Header={ruleTableHeader}
     kindPlural="Alerting Rules"
+    labelFilter="alerts"
+    labelPath="labels"
     nameFilterID="alerting-rule-name"
     reduxID="monitoringRules"
     Row={RuleTableRow}
@@ -1194,9 +1173,10 @@ const RulesPage_ = (props) => (
 );
 const RulesPage = withFallback(connect(rulesToProps)(RulesPage_));
 
-const silencesRowFilter = {
+const silencesRowFilter: RowFilter = {
+  defaultSelected: [SilenceStates.Active, SilenceStates.Pending],
   type: 'silence-state',
-  selected: [SilenceStates.Active, SilenceStates.Pending],
+  filterGroupName: 'Silence',
   reducer: silenceState,
   items: [
     { id: SilenceStates.Active, title: 'Active' },
@@ -1221,6 +1201,7 @@ const SilencesPage_ = (props) => (
     reduxID="monitoringSilences"
     Row={SilenceTableRow}
     rowFilter={silencesRowFilter}
+    hideLabelFilter
   />
 );
 const SilencesPage = withFallback(connect(silencesToProps)(SilencesPage_));

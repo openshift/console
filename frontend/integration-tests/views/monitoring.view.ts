@@ -8,7 +8,7 @@ export const wait = async (condition) => await browser.wait(condition, 20000);
 
 // List pages
 export const listPageHeading = $('.co-m-pane__heading');
-export const createButton = $('.co-m-pane__filter-bar-group button');
+export const createButton = $('.co-m-pane__createLink--no-title button');
 
 // Details pages
 export const actionButton = $('.co-m-nav-title .pf-m-primary.co-action-buttons__btn');
