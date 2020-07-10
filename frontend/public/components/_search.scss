@@ -1,5 +1,12 @@
 .co-search__accordion {
   padding-top: 0 !important;
+  // Align with search results
+  @media (min-width: $screen-sm-min) {
+    .co-search-group__accordion-toggle {
+      padding-left: $grid-gutter-width;
+      padding-right: $grid-gutter-width;
+    }
+  }
   .co-m-pane__filter-bar {
     // Reduce the margin between the accordion toggle and the create button
     // so that the space is equal above and below the button.
