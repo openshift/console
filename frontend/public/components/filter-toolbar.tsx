@@ -231,14 +231,10 @@ const FilterToolbar_: React.FC<FilterToolbarProps & RouteComponentProps> = (prop
   React.useEffect(() => {
     !_.isEmpty(labelFilters) && applyFilter(labelFilters, FilterType.LABEL);
     !_.isEmpty(nameFilter) && applyFilter(nameFilter, FilterType.NAME);
-    !_.isEmpty(selectedRowFilters) && applyRowFilter(selectedRowFilters);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  // Default filters
-  React.useEffect(() => {
     if (_.isEmpty(selectedRowFilters)) {
       rowFilters.forEach((filter) => updateRowFilterSelected(filter.defaultSelected));
+    } else {
+      applyRowFilter(selectedRowFilters);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
