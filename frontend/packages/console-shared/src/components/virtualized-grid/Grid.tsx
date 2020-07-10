@@ -1,7 +1,9 @@
 import * as React from 'react';
+import * as classNames from 'classnames';
 import { Grid as GridComponent, GridCellProps } from 'react-virtualized';
 import { Item, GridChildrenProps } from './types';
 import { CellMeasurementContext } from './utils';
+import './Grid.scss';
 
 type GridProps = {
   height: number;
@@ -12,9 +14,14 @@ type GridProps = {
 };
 
 const Grid: React.FC<GridProps> = ({ height, width, scrollTop, items, children }) => {
-  const { cache, cellWidth, cellMargin, overscanRowCount, estimatedCellHeight } = React.useContext(
-    CellMeasurementContext,
-  );
+  const {
+    cache,
+    cellWidth,
+    cellMargin,
+    className,
+    overscanRowCount,
+    estimatedCellHeight,
+  } = React.useContext(CellMeasurementContext);
   const itemCount = items.length;
   const idealItemWidth = cellWidth + cellMargin;
   const columnCount = Math.max(1, Math.floor(width / idealItemWidth));
@@ -23,6 +30,7 @@ const Grid: React.FC<GridProps> = ({ height, width, scrollTop, items, children }
   return (
     <GridComponent
       autoHeight
+      className={classNames('ocs-grid', className)}
       tabIndex={null}
       height={height ?? 0}
       width={width}

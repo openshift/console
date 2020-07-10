@@ -27,25 +27,32 @@ type VirtualizedGridProps = {
    * should be set true when items are grouped
    */
   isItemsGrouped?: boolean;
+
+  /** Grid styles */
+  className?: string;
+
+  /** Cell Measurements */
   cellWidth?: number;
   cellMargin?: number;
   celldefaultHeight?: number;
+  estimatedCellHeight?: number;
+
   overscanRowCount?: number;
   headerHeight?: number;
-  estimatedCellHeight?: number;
 };
 
 const VirtualizedGrid: React.FC<VirtualizedGridProps> = ({
   items,
-  renderCell,
+  className,
   isItemsGrouped = false,
-  renderHeader,
   cellMargin = IDEAL_SPACE_BW_TILES,
   cellWidth = IDEAL_CELL_WIDTH,
   celldefaultHeight = DEFAULT_CELL_HEIGHT,
   overscanRowCount = OVERSCAN_ROW_COUNT,
   headerHeight = HEADER_FIXED_HEIGHT,
   estimatedCellHeight = ESTIMATED_ROW_SIZE,
+  renderCell,
+  renderHeader,
 }) => {
   const cache: CellMeasurerCache = new CellMeasurerCache({
     defaultHeight: celldefaultHeight,
@@ -54,7 +61,15 @@ const VirtualizedGrid: React.FC<VirtualizedGridProps> = ({
   });
   return (
     <CellMeasurementContext.Provider
-      value={{ cache, cellMargin, cellWidth, overscanRowCount, headerHeight, estimatedCellHeight }}
+      value={{
+        cache,
+        cellMargin,
+        cellWidth,
+        overscanRowCount,
+        headerHeight,
+        estimatedCellHeight,
+        className,
+      }}
     >
       <WithScrollContainer>
         {(scrollElement) => (

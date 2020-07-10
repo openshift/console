@@ -91,6 +91,7 @@ type CellMeasurementContextType = {
   overscanRowCount?: number;
   headerHeight?: number;
   estimatedCellHeight?: number;
+  className?: string;
 };
 
 export const CellMeasurementContext = createContext<CellMeasurementContextType>({});
