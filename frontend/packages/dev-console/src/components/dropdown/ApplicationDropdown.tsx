@@ -3,7 +3,13 @@ import { Firehose } from '@console/internal/components/utils';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { ServiceModel } from '@console/knative-plugin';
 import { VirtualMachineModel } from '@console/kubevirt-plugin/src/models';
+import { PodModel, JobModel, CronJobModel } from '@console/internal/models';
 import { ResourceDropdown } from '@console/shared';
+import {
+  getDynamicChannelResourceList,
+  getDynamicEventSourcesResourceList,
+} from '@console/knative-plugin/src/utils/fetch-dynamic-eventsources-utils';
+import { knativeEventingResourcesBroker } from '@console/knative-plugin/src/utils/get-knative-resources';
 
 interface ApplicationDropdownProps {
   id?: string;
@@ -77,6 +83,30 @@ const ApplicationDropdown: React.FC<ApplicationDropdownProps> = ({ namespace, ..
       prop: 'virtualMachines',
       optional: true,
     },
+    {
+      isList: true,
+      kind: CronJobModel.kind,
+      namespace,
+      prop: 'cronjobs',
+      optional: true,
+    },
+    {
+      isList: true,
+      kind: JobModel.kind,
+      namespace,
+      prop: 'jobs',
+      optional: true,
+    },
+    {
+      isList: true,
+      kind: PodModel.kind,
+      namespace,
+      prop: 'pods',
+      optional: true,
+    },
+    ...getDynamicChannelResourceList(namespace),
+    ...getDynamicEventSourcesResourceList(namespace),
+    ...knativeEventingResourcesBroker(namespace),
   ];
   return (
     <Firehose resources={resources}>
