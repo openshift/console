@@ -1,6 +1,8 @@
+import { toPath } from 'lodash';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { FirehoseResult } from '@console/internal/components/utils/types';
 import { getUID } from '../selectors/common';
+import { JSONSchema6 } from 'json-schema';
 
 export type EntityMap<A> = { [propertyName: string]: A };
 export type K8sEntityMap<A extends K8sResourceKind> = EntityMap<A>;
@@ -42,4 +44,22 @@ export const isValidUrl = (url: string): boolean => {
   } catch {
     return false;
   }
+};
+
+// Recursive helper for getSchemaAtPath
+const recursiveGetSchemaAtPath = (
+  schema: JSONSchema6,
+  [segment, ...path]: string[] = [],
+): JSONSchema6 => {
+  if (segment) {
+    return /^\d+$/.test(segment)
+      ? recursiveGetSchemaAtPath(schema?.items as JSONSchema6, path)
+      : recursiveGetSchemaAtPath(schema?.properties?.[segment] as JSONSchema6, path);
+  }
+  return schema;
+};
+
+// Get a schema at the provided path string.
+export const getSchemaAtPath = (schema: JSONSchema6, path: string): JSONSchema6 => {
+  return recursiveGetSchemaAtPath(schema, toPath(path));
 };

@@ -8,4 +8,4 @@ export const operatorNameLink = (displayName: string) =>
 export const operandLink = (name: string) => $(`[data-test-operand-link="${name}"]`);
 export const operandKind = (kind: string) => $(`[data-test-operand-kind="${kind}"]`);
 export const descriptorLabel = ({ displayName }: Descriptor) =>
-  $(`[data-test-descriptor-label="${displayName}"]`);
+  $(`[data-test-selector="details-item-label__${displayName}"]`);

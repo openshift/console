@@ -146,7 +146,7 @@ describe(OperandDetails.displayName, () => {
     };
     wrapper = shallow(
       <OperandDetails.WrappedComponent
-        clusterServiceVersion={testClusterServiceVersion}
+        csv={testClusterServiceVersion}
         obj={testResourceInstance}
         kindObj={resourceDefinition}
         appName={testClusterServiceVersion.metadata.name}
@@ -178,9 +178,9 @@ describe(OperandDetails.displayName, () => {
   });
 
   it('does not render any spec descriptor fields if there are none defined on the `ClusterServiceVersion`', () => {
-    const clusterServiceVersion = _.cloneDeep(testClusterServiceVersion);
-    clusterServiceVersion.spec.customresourcedefinitions.owned = [];
-    wrapper = wrapper.setProps({ clusterServiceVersion });
+    const csv = _.cloneDeep(testClusterServiceVersion);
+    csv.spec.customresourcedefinitions.owned = [];
+    wrapper = wrapper.setProps({ csv });
 
     expect(wrapper.find(SpecDescriptor).length).toEqual(0);
   });
@@ -192,15 +192,15 @@ describe(OperandDetails.displayName, () => {
   });
 
   it('renders spec descriptor fields if the custom resource is `required`', () => {
-    const clusterServiceVersion = _.cloneDeep(testClusterServiceVersion);
-    clusterServiceVersion.spec.customresourcedefinitions.required = _.cloneDeep(
-      clusterServiceVersion.spec.customresourcedefinitions.owned,
+    const csv = _.cloneDeep(testClusterServiceVersion);
+    csv.spec.customresourcedefinitions.required = _.cloneDeep(
+      csv.spec.customresourcedefinitions.owned,
     );
-    clusterServiceVersion.spec.customresourcedefinitions.owned = [];
-    wrapper = wrapper.setProps({ clusterServiceVersion });
+    csv.spec.customresourcedefinitions.owned = [];
+    wrapper = wrapper.setProps({ csv });
 
     expect(wrapper.find(SpecDescriptor).length).toEqual(
-      clusterServiceVersion.spec.customresourcedefinitions.required[0].specDescriptors.length,
+      csv.spec.customresourcedefinitions.required[0].specDescriptors.length,
     );
   });
 });
@@ -252,21 +252,20 @@ describe(OperandDetailsPage.displayName, () => {
 
   beforeEach(() => {
     match = {
-      params: { appName: 'etcd', plural: 'etcdclusters', name: 'my-etcd', ns: 'default' },
+      params: {
+        appName: 'testapp',
+        plural: 'testapp.coreos.com~v1alpha1~TestResource',
+        name: 'my-test-resource',
+        ns: 'default',
+      },
       isExact: false,
-      url: `/k8s/ns/default/${ClusterServiceVersionModel.plural}/etcd/etcdclusters/my-etcd`,
+      url: `/k8s/ns/default/${ClusterServiceVersionModel.plural}/testapp/testapp.coreos.com~v1alpha1~TestResource/my-test-resource`,
       path: `/k8s/ns/:ns/${ClusterServiceVersionModel.plural}/:appName/:plural/:name`,
     };
 
-    wrapper = mount(
-      <OperandDetailsPage.WrappedComponent
-        modelRef={k8sModels.referenceFor(testResourceInstance)}
-        match={match}
-      />,
-      {
-        wrappingComponent: ({ children }) => <Provider store={store}>{children}</Provider>,
-      },
-    );
+    wrapper = mount(<OperandDetailsPage match={match} />, {
+      wrappingComponent: ({ children }) => <Provider store={store}>{children}</Provider>,
+    });
   });
 
   it('renders a `DetailsPage` with the correct subpages', () => {
@@ -281,15 +280,13 @@ describe(OperandDetailsPage.displayName, () => {
   });
 
   it('renders a `DetailsPage` which also watches the parent CSV', () => {
-    expect(wrapper.find(DetailsPage).props().resources).toEqual([
-      {
-        kind: k8sModels.referenceForModel(ClusterServiceVersionModel),
-        name: match.params.appName,
-        namespace: match.params.ns,
-        isList: false,
-        prop: 'csv',
-      },
-    ]);
+    expect(wrapper.find(DetailsPage).prop('resources')[0]).toEqual({
+      kind: k8sModels.referenceForModel(ClusterServiceVersionModel),
+      name: match.params.appName,
+      namespace: match.params.ns,
+      isList: false,
+      prop: 'csv',
+    });
   });
 
   it('menu actions to `DetailsPage`', () => {
@@ -316,12 +313,12 @@ describe(OperandDetailsPage.displayName, () => {
     ).toEqual([
       { name: 'Installed Operators', path: `/k8s/ns/default/${ClusterServiceVersionModel.plural}` },
       {
-        name: 'etcd',
-        path: `/k8s/ns/default/${ClusterServiceVersionModel.plural}/etcd/etcdclusters`,
+        name: 'testapp',
+        path: `/k8s/ns/default/${ClusterServiceVersionModel.plural}/testapp/testapp.coreos.com~v1alpha1~TestResource`,
       },
       {
         name: `${testResourceInstance.kind} Details`,
-        path: `/k8s/ns/default/${ClusterServiceVersionModel.plural}/etcd/etcdclusters/my-etcd`,
+        path: `/k8s/ns/default/${ClusterServiceVersionModel.plural}/testapp/testapp.coreos.com~v1alpha1~TestResource/my-test-resource`,
       },
     ]);
   });
@@ -343,7 +340,7 @@ describe(OperandDetailsPage.displayName, () => {
       { name: 'Installed Operators', path: `/k8s/ns/example/${ClusterServiceVersionModel.plural}` },
       { name: 'example', path: `/k8s/ns/${ClusterServiceVersionModel.plural}/example/example` },
       {
-        name: `${testResourceInstance.kind} Details`,
+        name: `example Details`,
         path: `/k8s/ns/${ClusterServiceVersionModel.plural}/example/example/example`,
       },
     ]);

@@ -1,3 +1,4 @@
+import { JSONSchema6 } from 'json-schema';
 import { K8sKind, K8sResourceKind } from '@console/internal/module/k8s';
 
 export enum SpecCapability {
@@ -54,21 +55,23 @@ export type StatusDescriptor = Descriptor<StatusCapability>;
 
 export type DescriptorProps = {
   descriptor: Descriptor;
-  value: any;
-  obj: K8sResourceKind;
   model: K8sKind;
-  namespace?: string;
-  onHandleError?: (message: string) => void;
+  obj: K8sResourceKind;
+  onError?: (error: Error) => void;
+  schema?: JSONSchema6;
 };
 
 export type CapabilityProps<C extends SpecCapability | StatusCapability> = {
-  descriptor: Descriptor;
   capability: C;
-  value: any;
-  obj?: K8sResourceKind;
+  descriptor: Descriptor;
+  description?: string;
+  fullPath?: string[];
+  label?: string;
   model?: K8sKind;
   namespace?: string;
-  onHandleError?: (message: string) => void;
+  obj?: K8sResourceKind;
+  onError?: (error: Error) => void;
+  value: any;
 };
 
 export type Error = { message: string };

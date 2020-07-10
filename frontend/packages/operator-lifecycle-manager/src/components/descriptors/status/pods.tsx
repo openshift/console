@@ -9,12 +9,11 @@ import {
   /* eslint-enable camelcase */
 } from '@patternfly/react-tokens';
 import { useRefWidth } from '@console/internal/components/utils';
-import { Descriptor } from '../types';
 import { calculateRadius } from '@console/shared/';
 
 const colorScale = [blue300.value, blue200.value, blue100.value];
 
-export const PodStatusChart: React.SFC<PodStatusChartProps> = ({ statuses, statusDescriptor }) => {
+export const PodStatusChart: React.SFC<PodStatusChartProps> = ({ statuses, subTitle }) => {
   const [ref, width] = useRefWidth();
   const data = _.map(statuses, (podList, status) => {
     const x = status;
@@ -42,14 +41,14 @@ export const PodStatusChart: React.SFC<PodStatusChartProps> = ({ statuses, statu
       />
       {/* Use instead of `subTitle` on <ChartDonut> so long paths do not clip  */}
       <div className="graph-donut-subtitle" data-test-id="chart-donut-subtitle">
-        {statusDescriptor.path}
+        {subTitle}
       </div>
     </div>
   );
 };
 
 export type PodStatusChartProps = {
-  statusDescriptor: Descriptor;
+  subTitle: string;
   statuses: { [key: string]: string[] };
 };
 

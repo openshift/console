@@ -15,7 +15,7 @@ describe(PodStatusChart.displayName, () => {
       description: 'The desired number of member Pods for the etcd cluster.',
       'x-descriptors': [SpecCapability.podCount],
     };
-    wrapper = shallow(<PodStatusChart statusDescriptor={descriptor} statuses={{}} />);
+    wrapper = shallow(<PodStatusChart subTitle={descriptor.path} statuses={{}} />);
   });
 
   it('renders a donut chart component with correct props', () => {
