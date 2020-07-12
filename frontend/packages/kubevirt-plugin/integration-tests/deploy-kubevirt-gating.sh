@@ -19,3 +19,6 @@ oc create -f https://github.com/kubevirt/containerized-data-importer/releases/do
 oc project openshift
 oc create -f https://raw.githubusercontent.com/MarSik/kubevirt-ssp-operator/master/roles/KubevirtCommonTemplatesBundle/files/common-templates-v0.11.0.yaml
 oc project default
+
+# Wait for kubevirt to be available
+oc wait -n kubevirt kv kubevirt --for condition=Available --timeout 15m
