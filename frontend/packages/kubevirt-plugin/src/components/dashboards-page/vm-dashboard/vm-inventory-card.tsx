@@ -8,11 +8,23 @@ import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboa
 import { getName, getNamespace } from '@console/shared';
 import InventoryItem from '@console/shared/src/components/dashboard/inventory-card/InventoryItem';
 import { resourcePath } from '@console/internal/components/utils';
+import {
+  WatchK8sResource,
+  useK8sWatchResource,
+} from '@console/internal/components/utils/k8s-watch-hook';
 import { VMDashboardContext } from '../../vms/vm-dashboard-context';
 import { getVMLikeModel } from '../../../selectors/vm/vmlike';
 import { getNetworks, getDisks } from '../../../selectors/vm';
 import { getVMINetworks, getVMIDisks } from '../../../selectors/vmi';
-import { VM_DETAIL_DISKS_HREF, VM_DETAIL_NETWORKS_HREF, DiskType } from '../../../constants';
+import {
+  VM_DETAIL_DISKS_HREF,
+  VM_DETAIL_NETWORKS_HREF,
+  DiskType,
+  VM_DETAIL_SNAPSHOTS,
+} from '../../../constants';
+import { VirtualMachineSnapshotModel } from '../../../models';
+import { VMSnapshot } from '../../../types';
+import { getVmSnapshotVmName } from '../../../selectors/snapshot/snapshot';
 
 export const VMInventoryCard: React.FC<VMInventoryCardProps> = () => {
   const vmDashboardContext = React.useContext(VMDashboardContext);
@@ -29,8 +41,21 @@ export const VMInventoryCard: React.FC<VMInventoryCardProps> = () => {
   const diskCount = disks.filter((d) => d?.disk).length;
   const cdromCount = disks.filter((d) => d?.cdrom).length;
   const lunCount = disks.filter((d) => d?.lun).length;
-  // TODO: per design, snapshots should be added here (snapshots are not implemented at all atm)
 
+  const snapshotResource: WatchK8sResource = React.useMemo(
+    () => ({
+      isList: true,
+      kind: VirtualMachineSnapshotModel.kind,
+      namespaced: true,
+      namespace,
+    }),
+    [namespace],
+  );
+
+  const [snapshots, snapshotsLoaded, snapshotsError] = useK8sWatchResource<VMSnapshot[]>(
+    snapshotResource,
+  );
+  const filteredSnapshots = snapshots.filter((snap) => getVmSnapshotVmName(snap) === name);
   const basePath = resourcePath(getVMLikeModel(vmiLike).kind, name, namespace);
   const DisksTitle = React.useCallback(
     ({ children }) => (
@@ -66,6 +91,10 @@ export const VMInventoryCard: React.FC<VMInventoryCardProps> = () => {
     ({ children }) => <Link to={`${basePath}/${VM_DETAIL_NETWORKS_HREF}`}>{children}</Link>,
     [basePath],
   );
+  const SnapshotsTitle = React.useCallback(
+    ({ children }) => <Link to={`${basePath}/${VM_DETAIL_SNAPSHOTS}`}>{children}</Link>,
+    [basePath],
+  );
 
   return (
     <DashboardCard>
@@ -79,7 +108,7 @@ export const VMInventoryCard: React.FC<VMInventoryCardProps> = () => {
             title="NIC"
             count={nicCount}
             TitleComponent={NicsTitle}
-            key="nic-inventoy-item"
+            key="nic-inventory-item"
           />
         )}
         {diskCount > 0 && (
@@ -88,7 +117,7 @@ export const VMInventoryCard: React.FC<VMInventoryCardProps> = () => {
             title={DiskType.DISK.toString()}
             count={diskCount}
             TitleComponent={DisksTitle}
-            key="disk-inventoy-item"
+            key="disk-inventory-item"
           />
         )}
         {cdromCount > 0 && (
@@ -97,7 +126,7 @@ export const VMInventoryCard: React.FC<VMInventoryCardProps> = () => {
             title={DiskType.CDROM.toString()}
             count={cdromCount}
             TitleComponent={CDROMTitle}
-            key="cdrom-inventoy-item"
+            key="cdrom-inventory-item"
           />
         )}
         {lunCount > 0 && (
@@ -106,7 +135,17 @@ export const VMInventoryCard: React.FC<VMInventoryCardProps> = () => {
             title={DiskType.LUN.toString()}
             count={lunCount}
             TitleComponent={LUNTitle}
-            key="lun-inventoy-item"
+            key="lun-inventory-item"
+          />
+        )}
+        {filteredSnapshots?.length > 0 && (
+          <InventoryItem
+            isLoading={isLoading || !snapshotsLoaded}
+            error={snapshotsError}
+            title="Snapshot"
+            count={filteredSnapshots.length}
+            TitleComponent={SnapshotsTitle}
+            key="snapshots-inventory-item"
           />
         )}
       </DashboardCardBody>

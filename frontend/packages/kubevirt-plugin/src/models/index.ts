@@ -132,3 +132,27 @@ export const CDIConfigModel: K8sKind = {
   kind: 'CDIConfig',
   id: 'cdiconfig',
 };
+
+export const VirtualMachineSnapshotModel: K8sKind = {
+  label: 'Virtual Machine Snapshot',
+  labelPlural: 'Virtual Machine Snapshots',
+  apiVersion: 'v1alpha1',
+  apiGroup: 'snapshot.kubevirt.io',
+  plural: 'virtualmachinesnapshots',
+  abbr: 'VMS',
+  namespaced: true,
+  kind: 'VirtualMachineSnapshot',
+  id: 'virtualmachinesnapshot',
+};
+
+export const VirtualMachineRestoreModel: K8sKind = {
+  label: 'Virtual Machine Restore',
+  labelPlural: 'Virtual Machine Restores',
+  apiVersion: 'v1alpha1',
+  apiGroup: 'snapshot.kubevirt.io',
+  plural: 'virtualmachinerestores',
+  abbr: 'VMR',
+  namespaced: true,
+  kind: 'VirtualMachineRestore',
+  id: 'virtualmachinerestore',
+};

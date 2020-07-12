@@ -102,3 +102,26 @@ export type V1Network = {
 export type NodeSelector = {
   [key: string]: string;
 };
+
+export type VMSnapshot = {
+  spec: {
+    source: {
+      apiGroup: string;
+      kind: string;
+      name: string;
+    };
+  };
+} & K8sResourceKind;
+
+export type VMRestore = {
+  spec: {
+    target: {
+      apiGroup: string;
+      kind: string;
+      name: string;
+    };
+    virtualMachineSnapshotName: string;
+    includeVolumes: string[];
+    excludeVolumes: string[];
+  };
+} & K8sResourceKind;
