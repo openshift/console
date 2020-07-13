@@ -15,13 +15,14 @@ import {
   getClusterOperatorStatus,
   getTemplateInstanceStatus,
 } from '../../module/k8s';
-
 import {
   alertingRuleIsActive,
   alertDescription,
+  alertSeverity,
   alertState,
   silenceState,
 } from '../../reducers/monitoring';
+import { Alert, Rule, Silence } from '../monitoring/types';
 
 export const fuzzyCaseInsensitive = (a: string, b: string): boolean =>
   fuzzy(_.toLower(a), _.toLower(b));
@@ -32,7 +33,7 @@ export const tableFilters: TableFilterMap = {
 
   'catalog-source-name': (filter, obj) => fuzzyCaseInsensitive(filter, obj.name),
 
-  'alert-list-text': (filter, alert) => {
+  'alert-list-text': (filter, alert: Alert) => {
     if (fuzzyCaseInsensitive(filter, alert.labels?.alertname)) {
       return true;
     }
@@ -44,7 +45,7 @@ export const tableFilters: TableFilterMap = {
     return haystack.includes(needle);
   },
 
-  alerts: (values, alert) => {
+  alerts: (values, alert: Alert) => {
     const labels = getLabelsAsString(alert, 'labels');
     if (!values.all) {
       return true;
@@ -52,17 +53,20 @@ export const tableFilters: TableFilterMap = {
     return !!values.all.every((v) => labels.includes(v));
   },
 
-  'alert-state': (filter, alert) =>
+  'alert-severity': (filter, alert: Alert) =>
+    filter.selected.has(alertSeverity(alert)) || _.isEmpty(filter.selected),
+
+  'alert-state': (filter, alert: Alert) =>
     filter.selected.has(alertState(alert)) || _.isEmpty(filter.selected),
 
-  'alerting-rule-active': (filter, rule) =>
+  'alerting-rule-active': (filter, rule: Rule) =>
     filter.selected.has(alertingRuleIsActive(rule)) || _.isEmpty(filter.selected),
 
-  'alerting-rule-name': (filter, rule) => fuzzyCaseInsensitive(filter, rule.name),
+  'alerting-rule-name': (filter, rule: Rule) => fuzzyCaseInsensitive(filter, rule.name),
 
-  'silence-name': (filter, silence) => fuzzyCaseInsensitive(filter, silence.name),
+  'silence-name': (filter, silence: Silence) => fuzzyCaseInsensitive(filter, silence.name),
 
-  'silence-state': (filter, silence) =>
+  'silence-state': (filter, silence: Silence) =>
     filter.selected.has(silenceState(silence)) || _.isEmpty(filter.selected),
 
   // Filter role by role kind
