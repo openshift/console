@@ -12,7 +12,7 @@ const RadioGroupField: React.FC<RadioGroupFieldProps> = ({
   options,
   helpText,
   required,
-  inline,
+  isInline,
   onChange,
   ...props
 }) => {
@@ -22,13 +22,14 @@ const RadioGroupField: React.FC<RadioGroupFieldProps> = ({
   const errorMessage = !isValid ? error : '';
   return (
     <FormGroup
-      className={classNames('ocs-radio-group-field', { 'ocs-radio-group-field--inline': inline })}
+      className={classNames('ocs-radio-group-field', { 'ocs-radio-group-field--inline': isInline })}
       fieldId={fieldId}
       helperText={helpText}
       helperTextInvalid={errorMessage}
       validated={isValid ? 'default' : 'error'}
       isRequired={required}
       label={label}
+      isInline={isInline}
     >
       {options.map((option) => {
         const activeChild = field.value === option.value && option.activeChildren;
