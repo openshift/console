@@ -10,6 +10,7 @@ import {
   nodeFS,
   nodePods,
   pvcUsed,
+  snapshotSize,
 } from '@console/shared';
 import * as UIActions from '../../actions/ui';
 import {
@@ -36,6 +37,7 @@ import {
   serviceCatalogStatus,
   serviceClassDisplayName,
   MachineKind,
+  VolumeSnapshotKind,
 } from '../../module/k8s';
 
 import {
@@ -147,6 +149,7 @@ const sorts = {
   machinePhase: (machine: MachineKind): string => getMachinePhase(machine),
   nodePods: (node: NodeKind): number => nodePods(node),
   pvcUsed: (pvc: K8sResourceKind): number => pvcUsed(pvc),
+  volumeSnapshotSize: (snapshot: VolumeSnapshotKind): number => snapshotSize(snapshot),
 };
 
 const stateToProps = (

@@ -1,6 +1,6 @@
 import * as _ from 'lodash-es';
 import * as fuzzy from 'fuzzysearch';
-import { nodeStatus } from '@console/app/src/status/node';
+import { nodeStatus, volumeSnapshotStatus } from '@console/app/src/status';
 import { getNodeRole, getLabelsAsString } from '@console/shared';
 import { routeStatus } from '../routes';
 import { secretTypeFilterReducer } from '../secret';
@@ -14,6 +14,7 @@ import {
   servicePlanDisplayName,
   getClusterOperatorStatus,
   getTemplateInstanceStatus,
+  VolumeSnapshotKind,
 } from '../../module/k8s';
 import {
   alertingRuleIsActive,
@@ -255,6 +256,15 @@ export const tableFilters: TableFilterMap = {
     return (
       fuzzyCaseInsensitive(str, machine.metadata.name) || (node && fuzzyCaseInsensitive(str, node))
     );
+  },
+
+  'snapshot-status': (statuses, snapshot: VolumeSnapshotKind) => {
+    if (!statuses || !statuses.selected || !statuses.selected.size) {
+      return true;
+    }
+
+    const status = volumeSnapshotStatus(snapshot);
+    return statuses.selected.has(status) || !_.includes(statuses.all, status);
   },
 };
 

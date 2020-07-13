@@ -60,6 +60,7 @@ import {
   StorageClassModel,
   TemplateInstanceModel,
   UserModel,
+  VolumeSnapshotModel,
 } from '../models';
 
 const addResourcePage = (
@@ -316,6 +317,11 @@ export const baseDetailsPages = ImmutableMap<ResourceMapKey, ResourceMapValue>()
     import('./cluster-settings/oauth' /* webpackChunkName: "oauth" */).then(
       (m) => m.OAuthDetailsPage,
     ),
+  )
+  .set(referenceForModel(VolumeSnapshotModel), () =>
+    import(
+      '@console/app/src/components/volume-snapshot/volume-snapshot-details' /* webpackChunkName: "volume-snapshot-details" */
+    ).then((m) => m.default),
   );
 
 export const getResourceDetailsPages = (pluginPages: ResourceDetailsPage[] = []) =>
@@ -535,6 +541,11 @@ export const baseListPages = ImmutableMap<ResourceMapKey, ResourceMapValue>()
     import('./cluster-settings/cluster-operator' /* webpackChunkName: "cluster-operator" */).then(
       (m) => m.ClusterOperatorPage,
     ),
+  )
+  .set(referenceForModel(VolumeSnapshotModel), () =>
+    import(
+      '@console/app/src/components/volume-snapshot/volume-snapshot' /* webpackChunkName: "volume-snapshot" */
+    ).then((m) => m.default),
   );
 
 export const getResourceListPages = (pluginPages: ResourceListPage[] = []) =>
