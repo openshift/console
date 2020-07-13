@@ -1,11 +1,11 @@
 import { withResource } from '@console/shared/src/test-utils/utils';
-import { V2V_VM_IMPORT_TIMEOUT, VM_STATUS } from '../tests/utils/consts';
+import { V2V_VM_IMPORT_TIMEOUT, VM_STATUS } from '../../tests/utils/consts';
 import { flavorWorkloadConfigs } from './v2v.configs';
-import { ImportWizard } from '../tests/models/importWizard';
+import { VmwareImportWizard } from '../../tests/models/vmwareImportWizard';
 
 describe('Kubevirt create VMs using wizard, all flavors and profiles', () => {
   const leakedResources = new Set<string>();
-  const wizard = new ImportWizard();
+  const wizard = new VmwareImportWizard();
 
   flavorWorkloadConfigs.forEach((currentConfig) => {
     it(
