@@ -26,19 +26,6 @@ export const OCSServiceModel: K8sKind = {
   crd: true,
 };
 
-export const VolumeSnapshotModel: K8sKind = {
-  label: 'Volume Snapshot',
-  apiVersion: 'snapshot.storage.k8s.io/v1beta1',
-  apiGroup: '',
-  plural: 'volumesnapshots',
-  abbr: 'VS',
-  namespaced: true,
-  kind: 'VolumeSnapshot',
-  id: 'volumesnapshot',
-  labelPlural: 'Volume Snapshots',
-  crd: true,
-};
-
 export const CephBlockPoolModel: K8sKind = {
   label: 'Ceph Block Pool',
   labelPlural: 'Ceph Block Pools',
