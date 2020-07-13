@@ -14,7 +14,6 @@ import {
   KebabActions,
   HrefNavItem,
   ResourceNSNavItem,
-  ViewNSNavItem,
   ResourceClusterNavItem,
   ResourceListPage,
   ResourceDetailsPage,
@@ -94,7 +93,6 @@ type ConsumedExtensions =
   | HrefNavItem
   | ResourceClusterNavItem
   | ResourceNSNavItem
-  | ViewNSNavItem
   | ResourceListPage
   | ResourceDetailsPage
   | Perspective
@@ -148,17 +146,19 @@ const plugin: Plugin<ConsumedExtensions> = [
         name: '+Add',
         href: '/add',
         testID: '+Add-header',
+        namespaced: true,
       },
     },
   },
   {
-    type: 'NavItem/ViewNS',
+    type: 'NavItem/Href',
     properties: {
       perspective: 'dev',
       group: 'top',
       componentProps: {
         name: 'Topology',
-        viewName: 'topology',
+        namespaced: true,
+        href: '/topology',
         testID: 'topology-header',
       },
     },
@@ -176,6 +176,7 @@ const plugin: Plugin<ConsumedExtensions> = [
         href: '/dev-monitoring',
         testID: 'monitoring-header',
         'data-tour-id': 'tour-monitoring-nav',
+        namespaced: true,
       },
     },
     flags: {
@@ -192,6 +193,7 @@ const plugin: Plugin<ConsumedExtensions> = [
         href: '/search',
         testID: 'search-header',
         'data-tour-id': 'tour-search-nav',
+        namespaced: true,
       },
     },
   },
@@ -249,6 +251,7 @@ const plugin: Plugin<ConsumedExtensions> = [
         name: 'Helm',
         href: '/helm-releases',
         testID: 'helm-releases-header',
+        namespaced: true,
       },
     },
     flags: {
@@ -264,6 +267,7 @@ const plugin: Plugin<ConsumedExtensions> = [
         name: 'Project',
         href: '/project-details',
         testID: 'project-details-header',
+        namespaced: true,
       },
     },
     flags: {

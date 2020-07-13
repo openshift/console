@@ -2,7 +2,6 @@ import {
   NavLinkProps,
   HrefLinkProps,
   ResourceNSLinkProps,
-  ViewNSLinkProps,
   ResourceClusterLinkProps,
 } from '@console/internal/components/nav/items';
 import { Extension } from './base';
@@ -28,15 +27,12 @@ namespace ExtensionProperties {
   }
 
   export interface HrefNavItem extends NavItem {
-    componentProps: NavItem['componentProps'] & Pick<HrefLinkProps, 'href' | 'activePath'>;
+    componentProps: NavItem['componentProps'] &
+      Pick<HrefLinkProps, 'namespaced' | 'href' | 'activePath'>;
   }
 
   export interface ResourceNSNavItem extends NavItem {
     componentProps: NavItem['componentProps'] & Pick<ResourceNSLinkProps, 'resource' | 'model'>;
-  }
-
-  export interface ViewNSNavItem extends NavItem {
-    componentProps: NavItem['componentProps'] & Pick<ViewNSLinkProps, 'viewName'>;
   }
 
   export interface ResourceClusterNavItem extends NavItem {
@@ -57,16 +53,12 @@ export interface ResourceNSNavItem extends Extension<ExtensionProperties.Resourc
   type: 'NavItem/ResourceNS';
 }
 
-export interface ViewNSNavItem extends Extension<ExtensionProperties.ViewNSNavItem> {
-  type: 'NavItem/ViewNS';
-}
-
 export interface ResourceClusterNavItem
   extends Extension<ExtensionProperties.ResourceClusterNavItem> {
   type: 'NavItem/ResourceCluster';
 }
 
-export type NavItem = HrefNavItem | ViewNSNavItem | ResourceNSNavItem | ResourceClusterNavItem;
+export type NavItem = HrefNavItem | ResourceNSNavItem | ResourceClusterNavItem;
 
 export const isHrefNavItem = (e: Extension): e is HrefNavItem => {
   return e.type === 'NavItem/Href';
@@ -84,16 +76,6 @@ export const isSeparatorNavItem = (e: Extension): e is SeparatorNavItem => {
   return e.type === 'NavItem/Separator';
 };
 
-export const isViewNSNavItem = (e: Extension): e is ViewNSNavItem => {
-  return e.type === 'NavItem/ViewNS';
-};
-
 export const isNavItem = (e: Extension): e is NavItem => {
-  return (
-    isHrefNavItem(e) ||
-    isResourceNSNavItem(e) ||
-    isResourceClusterNavItem(e) ||
-    isViewNSNavItem(e) ||
-    isSeparatorNavItem(e)
-  );
+  return isHrefNavItem(e) || isResourceNSNavItem(e) || isResourceClusterNavItem(e);
 };

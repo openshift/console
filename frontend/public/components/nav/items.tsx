@@ -6,7 +6,7 @@ import { NavItem } from '@patternfly/react-core';
 import { connect } from 'react-redux';
 import {
   formatNamespacedRouteForResource,
-  formatNamespacedRouteForView,
+  formatNamespacedRouteForHref,
 } from '@console/shared/src/utils';
 import { referenceForModel, K8sKind } from '../../module/k8s';
 import { stripBasePath } from '../utils';
@@ -111,22 +111,6 @@ export class ResourceNSLink extends NavLink<ResourceNSLinkProps> {
   }
 }
 
-export class ViewNSLink extends NavLink<ViewNSLinkProps> {
-  static isActive(props, resourcePath, activeNamespace) {
-    const href = stripNS(formatNamespacedRouteForView(props.viewName, activeNamespace));
-    return matchesPath(resourcePath, href);
-  }
-
-  get to() {
-    const { viewName, activeNamespace } = this.props;
-    const lastNamespace = localStorage.getItem(LAST_NAMESPACE_NAME_LOCAL_STORAGE_KEY);
-    return formatNamespacedRouteForView(
-      viewName,
-      lastNamespace === ALL_NAMESPACES_KEY ? lastNamespace : activeNamespace,
-    );
-  }
-}
-
 export class ResourceClusterLink extends NavLink<ResourceClusterLinkProps> {
   static isActive(props, resourcePath) {
     return (
@@ -148,6 +132,14 @@ export class HrefLink extends NavLink<HrefLinkProps> {
   }
 
   get to() {
+    if (this.props.namespaced) {
+      const { href, activeNamespace } = this.props;
+      const lastNamespace = localStorage.getItem(LAST_NAMESPACE_NAME_LOCAL_STORAGE_KEY);
+      return formatNamespacedRouteForHref(
+        href,
+        lastNamespace === ALL_NAMESPACES_KEY ? lastNamespace : activeNamespace,
+      );
+    }
     return this.props.href;
   }
 }
@@ -185,6 +177,8 @@ export type ResourceClusterLinkProps = NavLinkProps & {
 
 export type HrefLinkProps = NavLinkProps & {
   href: string;
+  namespaced: boolean;
+  activeNamespace?: string;
 };
 
 export type NavLinkComponent<T extends NavLinkProps = NavLinkProps> = React.ComponentType<T> & {
@@ -202,9 +196,6 @@ export const createLink = (item: plugins.NavItem, rootNavLink = false): React.Re
     }
     if (plugins.isResourceClusterNavItem(item)) {
       Component = ResourceClusterLink;
-    }
-    if (plugins.isViewNSNavItem(item)) {
-      Component = ViewNSLink;
     }
     if (Component) {
       const key = item.properties.componentProps.name;

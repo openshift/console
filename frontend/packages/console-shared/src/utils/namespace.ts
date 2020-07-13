@@ -5,4 +5,5 @@ export const formatNamespacedRouteForResource = (resource, namespace) =>
     ? `/k8s/all-namespaces/${resource}`
     : `/k8s/ns/${namespace}/${resource}`;
 
-export const formatNamespacedRouteForView = (name, namespace) => `/${name}/ns/${namespace}`;
+export const formatNamespacedRouteForHref = (href: string, namespace: string) =>
+  `${href}/ns/${namespace}`;
