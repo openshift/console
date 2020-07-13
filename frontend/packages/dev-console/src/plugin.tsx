@@ -172,6 +172,22 @@ const plugin: Plugin<ConsumedExtensions> = [
       perspective: 'dev',
       group: 'top',
       componentProps: {
+        name: 'GitOps',
+        namespaced: true,
+        href: '/gitops',
+        testID: 'gitops-header',
+      },
+    },
+    flags: {
+      required: [FLAG_OPENSHIFT_GITOPS],
+    },
+  },
+  {
+    type: 'NavItem/Href',
+    properties: {
+      perspective: 'dev',
+      group: 'top',
+      componentProps: {
         name: 'Monitoring',
         href: '/dev-monitoring',
         testID: 'monitoring-header',
@@ -299,6 +315,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       section: 'Pipelines',
       componentProps: {
         name: PipelineModel.labelPlural,
+        namespaced: true,
         href: '/pipelines',
       },
     },
@@ -313,6 +330,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       section: 'Pipelines',
       componentProps: {
         name: TaskModel.labelPlural,
+        namespaced: true,
         href: '/tasks',
       },
     },
@@ -327,6 +345,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       section: 'Pipelines',
       componentProps: {
         name: 'Triggers',
+        namespaced: true,
         href: '/triggers',
       },
     },
