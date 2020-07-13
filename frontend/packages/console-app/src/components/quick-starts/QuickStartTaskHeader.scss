@@ -1,0 +1,35 @@
+.co-quick-start-task-header {
+    margin-bottom: var(--pf-global--spacer--md);
+    button::before {
+        content: none;
+    }
+    li {
+        list-style-type: none;
+    }
+    &__title {
+        display: inline-block;
+        margin-right: var(--pf-global--spacer--md) !important;
+        color: var(--pf-global--primary-color--100) !important;
+    }
+    &__title-success {
+        color: var(--pf-global--palette--green-500) !important;
+    }
+    &__title-failed {
+        color: var(--pf-chart-global--danger--Color--100) !important;
+    }
+    &__task-icon {
+        &-init {
+        border-radius: var(--pf-global--BorderRadius--lg);
+        background-color: var(--pf-global--palette--blue-400);
+        color: var(--pf-global--Color--light-100);
+        display: inline-block;
+        line-height: calc(var(--pf-global--spacer--xl) - var(--pf-global--spacer--sm));
+        min-width: calc(var(--pf-global--spacer--xl) - var(--pf-global--spacer--xs));
+        padding: var(--pf-global--BorderWidth--sm) var(--pf-global--BorderWidth--lg);
+        text-align: center;
+        }
+        &-success, &-failed {
+            vertical-align: middle !important;
+        }
+    }
+}

@@ -1,3 +1,5 @@
+import { QuickStartStatus as Status, TaskStatus } from './quick-start-status';
+
 export type QuickStartItem = {
   iconURL: string;
   altIcon?: string;
@@ -6,6 +8,20 @@ export type QuickStartItem = {
   duration: number;
   description: string;
   prerequisites?: string[];
+  introduction?: string;
+  tasks?: QuickStartTaskItem[];
+  conclusion?: string;
+};
+
+export type QuickStartTaskItem = {
+  title?: string;
+  description: string;
+  review?: string;
+  recapitulation?: {
+    success?: string;
+    failed?: string;
+  };
+  taskHelp?: string;
 };
 
 export type QuickStartStatus = {
@@ -18,4 +34,7 @@ export type QuickStartCatalogItem = QuickStartItem &
     unmetPrerequisite?: boolean;
   };
 
-export type QuickStartState = {};
+export type QuickStartState = {
+  tourStatus: Status;
+  taskStatus?: TaskStatus[];
+};
