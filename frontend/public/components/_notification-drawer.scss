@@ -1,6 +1,7 @@
 .co-notification-drawer {
   overflow-y: hidden !important;
   z-index: 10;
+  @include co-break-word;
 }
 
 .pf-c-drawer.pf-m-inline .pf-c-notification-drawer__header {
