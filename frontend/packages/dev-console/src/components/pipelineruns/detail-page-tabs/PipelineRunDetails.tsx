@@ -1,6 +1,8 @@
 import * as React from 'react';
 import { SectionHeading, ResourceSummary, ResourceLink } from '@console/internal/components/utils';
 import { referenceForModel } from '@console/internal/module/k8s';
+import { Status } from '@console/shared';
+import { pipelineRunFilterReducer } from '../../../utils/pipeline-filter-reducer';
 import {
   PipelineRun,
   PipelineRunReferenceResource,
@@ -8,6 +10,7 @@ import {
 } from '../../../utils/pipeline-augment';
 import { PipelineModel, PipelineResourceModel } from '../../../models';
 import ResourceLinkList from '../../pipelines/resource-overview/ResourceLinkList';
+import PipelineRunDetailsErrorLog from '../logs/PipelineRunDetailsErrorLog';
 import PipelineRunVisualization from './PipelineRunVisualization';
 import TriggeredBySection from './TriggeredBySection';
 
@@ -34,6 +37,13 @@ export const PipelineRunDetails: React.FC<PipelineRunDetailsProps> = ({ obj: pip
           <ResourceSummary resource={pipelineRun} />
         </div>
         <div className="col-sm-6 odc-pipeline-run-details__customDetails">
+          <dl>
+            <dt>Status</dt>
+            <dd>
+              <Status status={pipelineRunFilterReducer(pipelineRun)} />
+            </dd>
+          </dl>
+          <PipelineRunDetailsErrorLog pipelineRun={pipelineRun} />
           {pipelineRefExists(pipelineRun) && (
             <dl>
               <dt>Pipeline</dt>
@@ -47,7 +57,6 @@ export const PipelineRunDetails: React.FC<PipelineRunDetailsProps> = ({ obj: pip
             </dl>
           )}
           <TriggeredBySection pipelineRun={pipelineRun} />
-          <br />
           <ResourceLinkList
             model={PipelineResourceModel}
             links={renderResources}

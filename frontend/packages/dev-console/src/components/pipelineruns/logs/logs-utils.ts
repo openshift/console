@@ -15,7 +15,7 @@ import { PodModel } from '@console/internal/models';
 import { coFetchText } from '@console/internal/co-fetch';
 import { errorModal } from '@console/internal/components/modals';
 import { containerToLogSourceStatus } from '../../../utils/pipeline-utils';
-import { TaskRuns } from '../../../utils/pipeline-augment';
+import { PLRTaskRunData, PLRTaskRuns } from '../../../utils/pipeline-augment';
 
 const getSortedContainerStatus = (
   containers: ContainerSpec[],
@@ -78,21 +78,20 @@ type WatchURLStatus = {
 
 export const getDownloadAllLogsCallback = (
   sortedTaskRuns: string[],
-  taskRunFromYaml: TaskRuns,
+  taskRunFromYaml: PLRTaskRuns,
   namespace: string,
   pipelineRunName: string,
 ): (() => Promise<Error>) => {
   const getWatchUrls = async (): Promise<StepsWatchUrl> => {
     const stepsList: ContainerStatus[][] = await Promise.all(
       sortedTaskRuns.map((currTask) => {
-        const { status = {} } = taskRunFromYaml[currTask];
-        const { podName } = status;
-        return getOrderedStepsFromPod(podName, namespace);
+        const { status } = taskRunFromYaml[currTask] as PLRTaskRunData;
+        return getOrderedStepsFromPod(status?.podName, namespace);
       }),
     );
     return sortedTaskRuns.reduce((acc, currTask, i) => {
-      const { pipelineTaskName, status = {} } = taskRunFromYaml[currTask];
-      const { podName } = status;
+      const { pipelineTaskName, status } = taskRunFromYaml[currTask];
+      const podName = status?.podName;
       const steps = stepsList[i];
       const allStepUrls = steps.reduce((stepUrls, currentStep) => {
         const { name } = currentStep;
