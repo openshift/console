@@ -85,6 +85,20 @@ export const getResourceList = (namespace: string, resList?: any): FirehoseResou
     },
     {
       isList: true,
+      kind: 'Job',
+      namespace,
+      prop: 'jobs',
+      optional: true,
+    },
+    {
+      isList: true,
+      kind: 'CronJob',
+      namespace,
+      prop: 'cronJobs',
+      optional: true,
+    },
+    {
+      isList: true,
       kind: 'ReplicationController',
       namespace,
       prop: 'replicationControllers',
@@ -959,6 +973,7 @@ export const createPodItems = (resources: any): OverviewItem[] => {
           services,
           status,
           pods: [obj],
+          isMonitorable: isKindMonitorable(PodModel),
         },
       ];
     },
