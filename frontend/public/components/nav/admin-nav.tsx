@@ -73,6 +73,7 @@ const MonitoringNavSection_ = ({ canAccess }) => {
         <HrefLink
           href="/monitoring/alerts"
           name="Alerting"
+          namespaced={true}
           startsWith={monitoringAlertsStartsWith}
         />
       )}
@@ -80,10 +81,13 @@ const MonitoringNavSection_ = ({ canAccess }) => {
         <HrefLink
           href="/monitoring/query-browser?query0="
           name="Metrics"
+          namespaced={true}
           startsWith={['monitoring/query-browser']}
         />
       )}
-      {canAccessPrometheus && <HrefLink href="/monitoring/dashboards" name="Dashboards" />}
+      {canAccessPrometheus && (
+        <HrefLink href="/monitoring/dashboards" name="Dashboards" namespaced={true} />
+      )}
     </NavSection>
   ) : null;
 };
@@ -102,11 +106,12 @@ const AdminNav = () => {
           href="/dashboards"
           activePath="/dashboards/"
           name="Overview"
+          namespaced={false}
           required={[FLAGS.CAN_GET_NS, FLAGS.OPENSHIFT]}
         />
         <ResourceClusterLink resource="projects" name="Projects" required={FLAGS.OPENSHIFT} />
-        <HrefLink href="/search" name="Search" startsWith={searchStartsWith} />
-        <HrefLink href="/api-explorer" name="Explore" startsWith={apiExplorerStartsWith} />
+        <HrefLink href="/search" name="Search" namespaced={true} startsWith={searchStartsWith} />
+        <HrefLink href="/api-explorer" name="Explore" namespaced={false} startsWith={apiExplorerStartsWith} />
         <ResourceNSLink resource="events" name="Events" />
       </NavSection>
 
@@ -172,63 +177,75 @@ const AdminNav = () => {
         and admin-nav gets contributed through extensions. */}
       <NavSection title="Pipelines" />
 
-      <NavSection title="Service Catalog" required={FLAGS.SERVICE_CATALOG}>
-        <HrefLink
-          href="/provisionedservices"
-          name="Provisioned Services"
-          activePath="/provisionedservices/"
-          startsWith={provisionedServicesStartsWith}
-        />
-        <HrefLink
-          href="/brokermanagement"
-          name="Broker Management"
-          activePath="/brokermanagement/"
-          startsWith={brokerManagementStartsWith}
-        />
-      </NavSection>
+    <NavSection title="Service Catalog" required={FLAGS.SERVICE_CATALOG}>
+      <HrefLink
+        href="/provisionedservices"
+        name="Provisioned Services"
+        namespaced={true}
+        activePath="/provisionedservices/"
+        startsWith={provisionedServicesStartsWith}
+      />
+      <HrefLink
+        href="/brokermanagement"
+        name="Broker Management"
+        namespaced={false}
+        activePath="/brokermanagement/"
+        startsWith={brokerManagementStartsWith}
+      />
+    </NavSection>
 
       <MonitoringNavSection />
 
-      <NavSection title="Compute" required={FLAGS.CAN_LIST_NODE}>
-        <ResourceClusterLink resource="nodes" name="Nodes" />
-        <HrefLink
-          href={formatNamespacedRouteForResource(referenceForModel(MachineModel), machineNS)}
-          name="Machines"
-          required={FLAGS.CLUSTER_API}
-        />
-        <HrefLink
-          href={formatNamespacedRouteForResource(referenceForModel(MachineSetModel), machineNS)}
-          name="Machine Sets"
-          required={FLAGS.CLUSTER_API}
-        />
-        <HrefLink
-          href={formatNamespacedRouteForResource(
-            referenceForModel(MachineAutoscalerModel),
-            machineNS,
-          )}
-          name="Machine Autoscalers"
-          required={FLAGS.MACHINE_AUTOSCALER}
-        />
-        <HrefLink
-          href={formatNamespacedRouteForResource(
-            referenceForModel(MachineHealthCheckModel),
-            machineNS,
-          )}
-          name="Machine Health Checks"
-          required={FLAGS.MACHINE_HEALTH_CHECK}
-        />
-        <Separator required={FLAGS.MACHINE_CONFIG} name="ComputeSeparator" />
-        <ResourceClusterLink
-          resource={referenceForModel(MachineConfigModel)}
-          name="Machine Configs"
-          required={FLAGS.MACHINE_CONFIG}
-        />
-        <ResourceClusterLink
-          resource={referenceForModel(MachineConfigPoolModel)}
-          name="Machine Config Pools"
-          required={FLAGS.MACHINE_CONFIG}
-        />
-      </NavSection>
+    <NavSection title="Compute" required={FLAGS.CAN_LIST_NODE}>
+      <ResourceClusterLink resource="nodes" name="Nodes" />
+      <HrefLink
+        href={formatNamespacedRouteForResource(
+          referenceForModel(MachineModel),
+          'openshift-machine-api',
+        )}
+        name="Machines"
+        namespaced={false}
+        required={FLAGS.CLUSTER_API}
+      />
+      <HrefLink
+        href={formatNamespacedRouteForResource(
+          referenceForModel(MachineSetModel),
+          'openshift-machine-api',
+        )}
+        name="Machine Sets"
+        namespaced={false}
+        required={FLAGS.CLUSTER_API}
+      />
+      <HrefLink
+        href={formatNamespacedRouteForResource(
+          referenceForModel(MachineAutoscalerModel),
+          'openshift-machine-api',
+        )}
+        name="Machine Autoscalers"
+        namespaced={false}
+        required={FLAGS.MACHINE_AUTOSCALER}
+      />
+      <HrefLink
+        href={formatNamespacedRouteForResource(
+          referenceForModel(MachineHealthCheckModel),
+          'openshift-machine-api',
+        )}
+        name="Machine Health Checks"
+        namespaced={false}
+        required={FLAGS.MACHINE_HEALTH_CHECK}
+      />
+      <Separator required={FLAGS.MACHINE_CONFIG} name="ComputeSeparator" />
+      <ResourceClusterLink
+        resource={referenceForModel(MachineConfigModel)}
+        name="Machine Configs"
+        required={FLAGS.MACHINE_CONFIG}
+      />
+      <ResourceClusterLink
+        resource={referenceForModel(MachineConfigPoolModel)}
+        name="Machine Config Pools"
+        required={FLAGS.MACHINE_CONFIG}
+      />
+    </NavSection>
 
       <NavSection title="User Management">
         <ResourceClusterLink
@@ -250,38 +267,40 @@ const AdminNav = () => {
         />
       </NavSection>
 
-      <NavSection title="Administration">
-        <HrefLink
-          href="/settings/cluster"
-          activePath="/settings/cluster/"
-          name="Cluster Settings"
-          required={FLAGS.CLUSTER_VERSION}
-          startsWith={clusterSettingsStartsWith}
-        />
-        <ResourceClusterLink resource="namespaces" name="Namespaces" required={FLAGS.CAN_LIST_NS} />
-        <ResourceNSLink
-          resource="resourcequotas"
-          name="Resource Quotas"
-          startsWith={quotaStartsWith}
-        />
-        <ResourceNSLink resource="limitranges" name="Limit Ranges" />
-        <HrefLink
-          href={formatNamespacedRouteForResource(
-            referenceForModel(ChargebackReportModel),
-            'openshift-metering',
-          )}
-          name="Chargeback"
-          required={[FLAGS.CHARGEBACK, FLAGS.CAN_LIST_CHARGEBACK_REPORTS]}
-          startsWith={meteringStartsWith}
-        />
-        <ResourceClusterLink
-          resource="customresourcedefinitions"
-          name="Custom Resource Definitions"
-          required={FLAGS.CAN_LIST_CRD}
-        />
-      </NavSection>
-    </>
-  );
+    <NavSection title="Administration">
+      <HrefLink
+        href="/settings/cluster"
+        activePath="/settings/cluster/"
+        name="Cluster Settings"
+        namespaced={false}
+        required={FLAGS.CLUSTER_VERSION}
+        startsWith={clusterSettingsStartsWith}
+      />
+      <ResourceClusterLink resource="namespaces" name="Namespaces" required={FLAGS.CAN_LIST_NS} />
+      <ResourceNSLink
+        resource="resourcequotas"
+        name="Resource Quotas"
+        startsWith={quotaStartsWith}
+      />
+      <ResourceNSLink resource="limitranges" name="Limit Ranges" />
+      <HrefLink
+        href={formatNamespacedRouteForResource(
+          referenceForModel(ChargebackReportModel),
+          'openshift-metering',
+        )}
+        name="Chargeback"
+        namespaced={false}
+        required={[FLAGS.CHARGEBACK, FLAGS.CAN_LIST_CHARGEBACK_REPORTS]}
+        startsWith={meteringStartsWith}
+      />
+      <ResourceClusterLink
+        resource="customresourcedefinitions"
+        name="Custom Resource Definitions"
+        required={FLAGS.CAN_LIST_CRD}
+      />
+    </NavSection>
+  </>
+)
 };
 
 export default AdminNav;
