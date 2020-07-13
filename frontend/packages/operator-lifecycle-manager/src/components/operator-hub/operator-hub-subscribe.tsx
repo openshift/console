@@ -116,6 +116,13 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
       selectedTargetNamespace = globalNS;
     }
   }
+  if (
+    selectedInstallMode === InstallModeType.InstallModeTypeOwnNamespace &&
+    props.targetNamespace === globalNS
+  ) {
+    selectedTargetNamespace = targetNamespace || '';
+  }
+
   const isSuggestedNamespaceSelected =
     suggestedNamespace && suggestedNamespace === selectedTargetNamespace;
   const selectedApproval = approval || InstallPlanApproval.Automatic;
@@ -344,11 +351,22 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
           variant="danger"
           title="Namespace does not support installation mode"
         >
-          The operator group in the {selectedTargetNamespace} namespace does not support the
-          {selectedInstallMode === InstallModeType.InstallModeTypeAllNamespaces
-            ? ' global '
-            : ' single namespace '}
-          installation mode.
+          {selectedInstallMode === InstallModeType.InstallModeTypeOwnNamespace &&
+          selectedTargetNamespace === globalNS ? (
+            <>
+              The {selectedTargetNamespace} namespace is reserved for global operators that watch
+              all namespaces. To install an operator in a single namespace, select a different
+              namespace where the operand should run.
+            </>
+          ) : (
+            <>
+              The operator group in the {selectedTargetNamespace} namespace does not support the
+              {selectedInstallMode === InstallModeType.InstallModeTypeAllNamespaces
+                ? ' global '
+                : ' single namespace '}
+              installation mode. Select a different installation namespace that supports this mode.
+            </>
+          )}
         </Alert>
       )) ||
       (subscriptionExists(selectedTargetNamespace) && (
