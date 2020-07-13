@@ -61,11 +61,18 @@ export const alertStateOrder = (alert: Alert): ListOrder => [
     : _.get(alert, 'activeAt'),
 ];
 
+export const alertingRuleStateOrder = (rule: Rule): ListOrder => {
+  const counts = _.countBy(rule.alerts, 'state');
+  return [AlertStates.Firing, AlertStates.Pending, AlertStates.Silenced].map(
+    (state) => Number.MAX_SAFE_INTEGER - (counts[state] ?? 0),
+  );
+};
+
 export const silenceFiringAlertsOrder = (silence: Silence): ListOrder => {
-  const severityCounts = _.countBy(silence.firingAlerts, 'labels.severity');
+  const counts = _.countBy(silence.firingAlerts, 'labels.severity');
   return [
-    severityCounts[AlertSeverity.Critical],
-    severityCounts[AlertSeverity.Warning],
+    Number.MAX_SAFE_INTEGER - (counts[AlertSeverity.Critical] ?? 0),
+    Number.MAX_SAFE_INTEGER - (counts[AlertSeverity.Warning] ?? 0),
     silence.firingAlerts.length,
   ];
 };
