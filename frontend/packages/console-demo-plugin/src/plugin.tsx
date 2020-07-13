@@ -79,6 +79,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       componentProps: {
         name: 'Test Href Link',
         href: '/test',
+        namespaced: false,
       },
     },
     flags: {
@@ -184,6 +185,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       componentProps: {
         name: 'Test Home',
         href: '/test',
+        namespaced: false,
       },
     },
   },
