@@ -89,6 +89,9 @@ export const useK8sWatchResource = <R extends K8sResourceCommon | K8sResourceCom
   );
 
   return React.useMemo(() => {
+    if (!resource) {
+      return [undefined, true, undefined];
+    }
     if (!resourceK8s) {
       const data = resource?.isList ? [] : {};
       return modelsLoaded && !k8sModel

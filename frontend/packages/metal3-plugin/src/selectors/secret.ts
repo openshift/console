@@ -1,6 +1,6 @@
-import { K8sResourceKind } from '@console/internal/module/k8s';
+import { SecretKind } from '@console/internal/module/k8s/types';
 
-export const getSecretUsername = (secret: K8sResourceKind): string =>
+export const getSecretUsername = (secret: SecretKind): string =>
   secret && secret.data && atob(secret.data.username);
-export const getSecretPassword = (secret: K8sResourceKind): string =>
+export const getSecretPassword = (secret: SecretKind): string =>
   secret && secret.data && atob(secret.data.password);

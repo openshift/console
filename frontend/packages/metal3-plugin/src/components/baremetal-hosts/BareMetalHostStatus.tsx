@@ -34,7 +34,7 @@ export const HOST_STATUS_ACTIONS = {
           BareMetalHostModel,
           host.metadata.name,
           host.metadata.namespace,
-        )}/edit`}
+        )}/edit?powerMgmt`}
       >
         Add credentials
       </Link>

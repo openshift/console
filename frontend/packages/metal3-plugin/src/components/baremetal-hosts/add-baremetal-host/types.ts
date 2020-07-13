@@ -7,4 +7,5 @@ export type AddBareMetalHostFormValues = {
   bootMACAddress: string;
   online: boolean;
   description: string;
+  enablePowerManagement: boolean;
 };
