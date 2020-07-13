@@ -4,7 +4,7 @@ import * as _ from 'lodash-es';
 import * as classNames from 'classnames';
 import { DragSource, DropTarget } from 'react-dnd';
 import { DRAGGABLE_TYPE } from './draggable-item-types';
-import { Button } from '@patternfly/react-core';
+import { Button, Tooltip } from '@patternfly/react-core';
 import { PficonDragdropIcon, MinusCircleIcon, PlusCircleIcon } from '@patternfly/react-icons';
 
 import { NameValueEditorPair, EnvFromPair, EnvType } from './index';
@@ -475,6 +475,7 @@ const PairElement = DragSource(
               tabIndex="-1"
               isDisabled={disableReorder}
               variant="plain"
+              aria-label="Drag to reorder"
             >
               <PficonDragdropIcon className="pairs-list__action-icon--reorder" />
             </Button>
@@ -529,18 +530,20 @@ const PairElement = DragSource(
               )}
               {!readOnly && (
                 <div className="col-xs-1 pairs-list__action">
-                  <Button
-                    type="button"
-                    data-test-id="pairs-list__delete-btn"
-                    className={classNames({
-                      'pairs-list__span-btns': allowSorting,
-                    })}
-                    onClick={this._onRemove}
-                    isDisabled={isEmpty}
-                    variant="plain"
-                  >
-                    {deleteIcon}
-                  </Button>
+                  <Tooltip content={<>Delete</>}>
+                    <Button
+                      type="button"
+                      data-test-id="pairs-list__delete-btn"
+                      className={classNames({
+                        'pairs-list__span-btns': allowSorting,
+                      })}
+                      onClick={this._onRemove}
+                      isDisabled={isEmpty}
+                      variant="plain"
+                    >
+                      {deleteIcon}
+                    </Button>
+                  </Tooltip>
                 </div>
               )}
             </div>,
@@ -642,6 +645,7 @@ const EnvFromPairElement = DragSource(
                       className="pairs-list__action-icon"
                       tabIndex="-1"
                       variant="plain"
+                      aria-label="Drag to reorder"
                     >
                       <PficonDragdropIcon className="pairs-list__action-icon--reorder" />
                     </Button>
@@ -670,15 +674,17 @@ const EnvFromPairElement = DragSource(
               </div>
               {readOnly ? null : (
                 <div className="col-xs-1 pairs-list__action">
-                  <Button
-                    type="button"
-                    data-test-id="pairs-list__delete-from-btn"
-                    className="pairs-list__span-btns"
-                    onClick={this._onRemove}
-                    variant="plain"
-                  >
-                    {deleteButton}
-                  </Button>
+                  <Tooltip content={<>Delete</>}>
+                    <Button
+                      type="button"
+                      data-test-id="pairs-list__delete-from-btn"
+                      className="pairs-list__span-btns"
+                      onClick={this._onRemove}
+                      variant="plain"
+                    >
+                      {deleteButton}
+                    </Button>
+                  </Tooltip>
                 </div>
               )}
             </div>,
