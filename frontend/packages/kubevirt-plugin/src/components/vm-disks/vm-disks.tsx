@@ -1,11 +1,13 @@
 import * as React from 'react';
+import { Button, Popover } from '@patternfly/react-core';
+import { sortable } from '@patternfly/react-table';
+import { QuestionCircleIcon } from '@patternfly/react-icons';
 import { RowFunction, Table, MultiListPage } from '@console/internal/components/factory';
 import { PersistentVolumeClaimModel, TemplateModel } from '@console/internal/models';
 import { Firehose, FirehoseResult, EmptyBox } from '@console/internal/components/utils';
 import { useSafetyFirst } from '@console/internal/components/safety-first';
 import { K8sResourceKind, TemplateKind } from '@console/internal/module/k8s';
 import { dimensifyHeader, getNamespace } from '@console/shared';
-import { sortable } from '@patternfly/react-table';
 import { DataVolumeModel, VirtualMachineModel, VirtualMachineInstanceModel } from '../../models';
 import { VMGenericLikeEntityKind } from '../../types/vmLike';
 import { getResource, getLoadedData } from '../../utils';
@@ -27,6 +29,7 @@ import { asVM, isVMRunningOrExpectedRunning } from '../../selectors/vm';
 import { VMLikeEntityTabProps, VMTabProps } from '../vms/types';
 import { getVMStatus } from '../../statuses/vm/vm-status';
 import { FileSystemsList } from './guest-agent-file-systems';
+import { VM_DISKS_DESCRIPTION } from '../../strings/vm/messages';
 
 const getStoragesData = ({
   vmLikeEntity,
@@ -107,8 +110,18 @@ export const VMDisksTable: React.FC<React.ComponentProps<typeof Table> | VMDisks
     <div>
       {props?.customData?.showGuestAgentHelp && (
         <>
-          <h3>Disks</h3>
-          The following information is provided by the OpenShift Virtualization operator.
+          <h3>
+            Disks
+            <Popover
+              aria-label="Disks description"
+              position="top"
+              bodyContent={<>{VM_DISKS_DESCRIPTION}</>}
+            >
+              <Button variant="plain">
+                <QuestionCircleIcon />
+              </Button>
+            </Popover>
+          </h3>
         </>
       )}
       <Table

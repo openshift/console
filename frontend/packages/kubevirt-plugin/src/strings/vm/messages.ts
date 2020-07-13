@@ -7,3 +7,8 @@ export const GUEST_AGENT_REQUIRED_MESSAGE = 'Guest agent required';
 export const NOT_AVAILABLE_MESSAGE = 'Not available';
 export const VM_NOT_RUNNING_MESSAGE = 'VM not running';
 export const NO_LOGGED_IN_USERS_MSG = 'No users logged in';
+
+export const GUEST_AGENT_FILE_SYSTEMS_DESCRIPTION =
+  'The following information regarding how the disks are partitioned is provided by the guest agent.';
+export const VM_DISKS_DESCRIPTION =
+  'The following information is provided by the OpenShift Virtualization operator.';
