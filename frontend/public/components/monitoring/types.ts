@@ -1,5 +1,6 @@
 import { AlertStates, RuleStates, SilenceStates } from '../../reducers/monitoring';
 import { RowFunction } from '../factory';
+import { RowFilter } from '../filter-toolbar';
 import { PrometheusLabels } from '../graphs';
 
 export type MonitoringResource = {
@@ -99,13 +100,7 @@ export type ListPageProps = {
   labelFilter?: string;
   reduxID: string;
   Row: RowFunction;
-  rowFilter: {
-    filterGroupName: string;
-    type: string;
-    selected: string[];
-    reducer: (monitoringResource: Alert | Rule | Silence) => string;
-    items: { id: string; title: string }[];
-  };
+  rowFilters: RowFilter[];
   showTitle?: boolean;
   hideLabelFilter?: boolean;
   labelPath?: string;

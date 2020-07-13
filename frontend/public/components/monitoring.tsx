@@ -38,6 +38,7 @@ import {
   alertDescription,
   alertingRuleIsActive,
   AlertSeverity,
+  alertSeverity,
   alertState,
   AlertStates,
   silenceState,
@@ -992,17 +993,30 @@ const HeaderAlertmanagerLink = ({ path }) =>
     </span>
   );
 
-const alertsRowFilter: RowFilter = {
-  defaultSelected: [AlertStates.Firing],
-  type: 'alert-state',
-  filterGroupName: 'Alert',
-  reducer: alertState,
-  items: [
-    { id: AlertStates.Firing, title: 'Firing' },
-    { id: AlertStates.Silenced, title: 'Silenced' },
-    { id: AlertStates.Pending, title: 'Pending' },
-  ],
-};
+const alertsRowFilters: RowFilter[] = [
+  {
+    defaultSelected: [AlertStates.Firing],
+    filterGroupName: 'Alert',
+    items: [
+      { id: AlertStates.Firing, title: 'Firing' },
+      { id: AlertStates.Silenced, title: 'Silenced' },
+      { id: AlertStates.Pending, title: 'Pending' },
+    ],
+    reducer: alertState,
+    type: 'alert-state',
+  },
+  {
+    filterGroupName: 'Severity',
+    items: [
+      { id: AlertSeverity.Critical, title: 'Critical' },
+      { id: AlertSeverity.Warning, title: 'Warning' },
+      { id: AlertSeverity.Info, title: 'Info' },
+      { id: AlertSeverity.None, title: 'None' },
+    ],
+    reducer: alertSeverity,
+    type: 'alert-severity',
+  },
+];
 
 // Row filter settings are stored in "k8s"
 const filtersToProps = ({ k8s }, { reduxID }) => {
@@ -1042,7 +1056,7 @@ const MonitoringListPage = connect(filtersToProps)(
         nameFilterID,
         reduxID,
         Row,
-        rowFilter,
+        rowFilters,
       } = this.props;
 
       return (
@@ -1062,7 +1076,7 @@ const MonitoringListPage = connect(filtersToProps)(
               labelFilter={labelFilter}
               labelPath={labelPath}
               reduxIDs={[reduxID]}
-              rowFilters={[rowFilter]}
+              rowFilters={rowFilters}
               textFilter={nameFilterID}
             />
             <div className="row">
@@ -1097,20 +1111,22 @@ const AlertsPage_ = (props) => (
     nameFilterID="alert-list-text"
     reduxID="monitoringAlerts"
     Row={AlertTableRow}
-    rowFilter={alertsRowFilter}
+    rowFilters={alertsRowFilters}
   />
 );
 const AlertsPage = withFallback(connect(alertsToProps)(AlertsPage_));
 
-const rulesRowFilter: RowFilter = {
-  type: 'alerting-rule-active',
-  filterGroupName: 'Alerts',
-  reducer: alertingRuleIsActive,
-  items: [
-    { id: 'true', title: 'Active' },
-    { id: 'false', title: 'Inactive' },
-  ],
-};
+const rulesRowFilters: RowFilter[] = [
+  {
+    type: 'alerting-rule-active',
+    filterGroupName: 'Alerts',
+    reducer: alertingRuleIsActive,
+    items: [
+      { id: 'true', title: 'Active' },
+      { id: 'false', title: 'Inactive' },
+    ],
+  },
+];
 
 const tableRuleClasses = [
   classNames('col-sm-6', 'col-xs-7'),
@@ -1168,22 +1184,24 @@ const RulesPage_ = (props) => (
     nameFilterID="alerting-rule-name"
     reduxID="monitoringRules"
     Row={RuleTableRow}
-    rowFilter={rulesRowFilter}
+    rowFilters={rulesRowFilters}
   />
 );
 const RulesPage = withFallback(connect(rulesToProps)(RulesPage_));
 
-const silencesRowFilter: RowFilter = {
-  defaultSelected: [SilenceStates.Active, SilenceStates.Pending],
-  type: 'silence-state',
-  filterGroupName: 'Silence',
-  reducer: silenceState,
-  items: [
-    { id: SilenceStates.Active, title: 'Active' },
-    { id: SilenceStates.Pending, title: 'Pending' },
-    { id: SilenceStates.Expired, title: 'Expired' },
-  ],
-};
+const silencesRowFilters: RowFilter[] = [
+  {
+    defaultSelected: [SilenceStates.Active, SilenceStates.Pending],
+    type: 'silence-state',
+    filterGroupName: 'Silence',
+    reducer: silenceState,
+    items: [
+      { id: SilenceStates.Active, title: 'Active' },
+      { id: SilenceStates.Pending, title: 'Pending' },
+      { id: SilenceStates.Expired, title: 'Expired' },
+    ],
+  },
+];
 
 const CreateButton = () => (
   <Link className="co-m-primary-action" to="/monitoring/silences/~new">
@@ -1201,7 +1219,7 @@ const SilencesPage_ = (props) => (
     nameFilterID="silence-name"
     reduxID="monitoringSilences"
     Row={SilenceTableRow}
-    rowFilter={silencesRowFilter}
+    rowFilters={silencesRowFilters}
   />
 );
 const SilencesPage = withFallback(connect(silencesToProps)(SilencesPage_));
