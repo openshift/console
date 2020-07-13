@@ -63,6 +63,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       componentProps: {
         name: 'OperatorHub',
         href: '/operatorhub',
+        namespaced: true,
       },
     },
     flags: {
