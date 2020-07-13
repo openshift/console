@@ -558,7 +558,6 @@ export const EnvironmentPage = connect(stateToProps)(
               nameValueId={containerIndex}
               nameValuePairs={envVar[EnvType.ENV]}
               updateParentData={this.updateEnvVars}
-              addString="Add Value"
               nameString="Name"
               readOnly={readOnly}
               allowSorting={true}

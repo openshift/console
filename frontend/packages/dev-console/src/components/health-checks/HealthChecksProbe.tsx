@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useFormikContext, FormikValues } from 'formik';
 import { PlusCircleIcon, MinusCircleIcon } from '@patternfly/react-icons';
 import { GreenCheckCircleIcon } from '@console/shared';
-import { Button, ButtonVariant } from '@patternfly/react-core';
+import { Button, ButtonVariant, Tooltip } from '@patternfly/react-core';
 import ProbeForm from './ProbeForm';
 import { getHealthChecksProbeConfig, healthChecksDefaultValues } from './health-checks-probe-utils';
 import { HealthCheckProbeData } from './health-checks-types';
@@ -62,13 +62,15 @@ const HealthCheckProbe: React.FC<HealthCheckProbeProps> = ({ probeType }) => {
           <span className="odc-heath-check-probe__successText">
             <GreenCheckCircleIcon /> {`${getHealthChecksProbeConfig(probeType).formTitle} Added`}
           </span>
-          <Button
-            className="pf-m-plain--align-left"
-            variant={ButtonVariant.plain}
-            onClick={handleDeleteProbe}
-          >
-            <MinusCircleIcon />
-          </Button>
+          <Tooltip content="Remove" position="right">
+            <Button
+              className="pf-m-plain--align-left"
+              variant={ButtonVariant.plain}
+              onClick={handleDeleteProbe}
+            >
+              <MinusCircleIcon />
+            </Button>
+          </Tooltip>
         </>
       );
     }

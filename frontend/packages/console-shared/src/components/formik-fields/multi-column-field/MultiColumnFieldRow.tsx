@@ -22,36 +22,6 @@ export interface MultiColumnFieldRowProps {
   spans: gridItemSpanValueShape[];
 }
 
-const minusCircleIcon = (onDelete: () => void, disableDeleteRow?: boolean, toolTip?: string) => {
-  return (
-    <div className={'odc-multi-column-field__col--button'}>
-      <Button
-        aria-label="Delete"
-        variant={ButtonVariant.plain}
-        type={ButtonType.button}
-        isInline
-        onClick={onDelete}
-        isDisabled={disableDeleteRow}
-      >
-        <MinusCircleIcon />
-      </Button>
-      <span className="sr-only">{toolTip || 'Delete'}</span>
-    </div>
-  );
-};
-
-const renderMinusCircleIcon = (
-  onDelete: () => void,
-  toolTip?: string,
-  disableDeleteRow?: boolean,
-) => {
-  return toolTip ? (
-    <Tooltip content={toolTip}>{minusCircleIcon(onDelete, disableDeleteRow, toolTip)}</Tooltip>
-  ) : (
-    minusCircleIcon(onDelete, disableDeleteRow)
-  );
-};
-
 const MultiColumnFieldRow: React.FC<MultiColumnFieldRowProps> = ({
   name,
   toolTip,
@@ -74,7 +44,22 @@ const MultiColumnFieldRow: React.FC<MultiColumnFieldRowProps> = ({
         );
       })}
     </Grid>
-    {!isReadOnly && renderMinusCircleIcon(onDelete, toolTip, disableDeleteRow)}
+    {!isReadOnly && (
+      <div className={'odc-multi-column-field__col--button'}>
+        <Tooltip content={toolTip || 'Remove'}>
+          <Button
+            aria-label={toolTip || 'Remove'}
+            variant={ButtonVariant.plain}
+            type={ButtonType.button}
+            isInline
+            onClick={onDelete}
+            isDisabled={disableDeleteRow}
+          >
+            <MinusCircleIcon />
+          </Button>
+        </Tooltip>
+      </div>
+    )}
   </div>
 );
 

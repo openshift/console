@@ -280,7 +280,6 @@ export const CreatePVCForm: React.FC<CreatePVCFormProps> = (props) => {
             nameValuePairs={nameValuePairs}
             valueString="Selector"
             nameString="Label"
-            addString="Add Value"
             readOnly={false}
             allowSorting={false}
             updateParentData={handleNameValuePairs}

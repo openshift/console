@@ -1,6 +1,6 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
-import { Button } from '@patternfly/react-core';
+import { Button, Tooltip } from '@patternfly/react-core';
 import { MinusCircleIcon, PlusCircleIcon } from '@patternfly/react-icons';
 
 import { Dropdown, EmptyBox, PromiseComponent } from '../utils';
@@ -205,15 +205,17 @@ class TolerationsModal extends PromiseComponent<TolerationsModalProps, Toleratio
                     </div>
                     <div className="col-md-1 col-sm-2 col-xs-2">
                       {this._isEditable(t) && (
-                        <Button
-                          type="button"
-                          className="toleration-modal__delete-icon"
-                          onClick={() => this._remove(i)}
-                          aria-label="Delete"
-                          variant="plain"
-                        >
-                          <MinusCircleIcon className="pairs-list__side-btn pairs-list__delete-icon" />
-                        </Button>
+                        <Tooltip content="Remove">
+                          <Button
+                            type="button"
+                            className="toleration-modal__delete-icon"
+                            onClick={() => this._remove(i)}
+                            aria-label="Remove"
+                            variant="plain"
+                          >
+                            <MinusCircleIcon className="pairs-list__side-btn pairs-list__delete-icon" />
+                          </Button>
+                        </Tooltip>
                       )}
                     </div>
                   </div>
@@ -228,7 +230,7 @@ class TolerationsModal extends PromiseComponent<TolerationsModalProps, Toleratio
             variant="link"
           >
             <PlusCircleIcon data-test-id="pairs-list__add-icon" className="co-icon-space-r" />
-            Add More
+            Add
           </Button>
         </ModalBody>
         <ModalSubmitFooter

@@ -3,7 +3,7 @@ import { PlusCircleIcon } from '@patternfly/react-icons';
 import { Button } from '@patternfly/react-core';
 
 export interface MultiColumnFieldHeader {
-  addLabel: string;
+  addLabel?: string;
   onAdd: () => void;
   disableAddRow?: boolean;
 }
@@ -20,7 +20,7 @@ const MultiColumnFieldFooter: React.FC<MultiColumnFieldHeader> = ({
     icon={<PlusCircleIcon />}
     isInline
   >
-    {addLabel || 'Add values'}
+    {addLabel || 'Add'}
   </Button>
 );
 

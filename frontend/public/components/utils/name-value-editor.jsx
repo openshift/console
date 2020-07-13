@@ -88,6 +88,7 @@ export const NameValueEditor = withDragDropContext(
         configMaps,
         secrets,
         addConfigMapSecret,
+        toolTip,
       } = this.props;
       const pairElems = nameValuePairs.map((pair, i) => {
         const key = _.get(pair, [NameValueEditorPair.Index], i);
@@ -110,6 +111,7 @@ export const NameValueEditor = withDragDropContext(
             secrets={secrets}
             isEmpty={isEmpty}
             disableReorder={nameValuePairs.length === 1}
+            toolTip={toolTip}
           />
         );
       });
@@ -184,11 +186,12 @@ NameValueEditor.propTypes = {
   configMaps: PropTypes.object,
   secrets: PropTypes.object,
   addConfigMapSecret: PropTypes.bool,
+  toolTip: PropTypes.string,
 };
 NameValueEditor.defaultProps = {
   nameString: 'Key',
   valueString: 'Value',
-  addString: 'Add More',
+  addString: 'Add',
   allowSorting: false,
   readOnly: false,
   nameValueId: 0,
@@ -460,6 +463,7 @@ const PairElement = DragSource(
           secrets,
           isEmpty,
           disableReorder,
+          toolTip,
         } = this.props;
         const deleteIcon = (
           <>
@@ -530,7 +534,7 @@ const PairElement = DragSource(
               )}
               {!readOnly && (
                 <div className="col-xs-1 pairs-list__action">
-                  <Tooltip content={<>Delete</>}>
+                  <Tooltip content={toolTip || 'Remove'}>
                     <Button
                       type="button"
                       data-test-id="pairs-list__delete-btn"
@@ -572,6 +576,7 @@ PairElement.propTypes = {
   rowSourceId: PropTypes.number.isRequired,
   configMaps: PropTypes.object,
   secrets: PropTypes.object,
+  toolTip: PropTypes.string,
 };
 
 const EnvFromPairElement = DragSource(
@@ -587,7 +592,6 @@ const EnvFromPairElement = DragSource(
     class EnvFromPairElement extends React.Component {
       constructor(props) {
         super(props);
-
         this._onRemove = this._onRemove.bind(this);
         this._onChangePrefix = this._onChangePrefix.bind(this);
         this._onChangeResource = this._onChangeResource.bind(this);
@@ -674,7 +678,7 @@ const EnvFromPairElement = DragSource(
               </div>
               {readOnly ? null : (
                 <div className="col-xs-1 pairs-list__action">
-                  <Tooltip content={<>Delete</>}>
+                  <Tooltip content="Remove">
                     <Button
                       type="button"
                       data-test-id="pairs-list__delete-from-btn"

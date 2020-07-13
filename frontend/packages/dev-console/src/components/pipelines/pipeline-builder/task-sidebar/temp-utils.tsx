@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { MinusCircleIcon } from '@patternfly/react-icons';
 import { global_disabled_color_200 as disabledColor } from '@patternfly/react-tokens';
-import { Flex, FlexItem, TextInput } from '@patternfly/react-core';
+import { Flex, FlexItem, TextInput, Tooltip } from '@patternfly/react-core';
 import MultiColumnFieldFooter from '@console/shared/src/components/formik-fields/multi-column-field/MultiColumnFieldFooter';
 
 export type ParamValueType = string | string[];
@@ -59,21 +59,23 @@ export const ArrayParam: React.FC<ParameterProps> = (props) => {
               />
             </FlexItem>
             <FlexItem>
-              <MinusCircleIcon
-                aria-hidden="true"
-                style={{ color: values.length === 1 ? disabledColor.value : null }}
-                onClick={() => {
-                  if (values.length === 1) {
-                    return;
-                  }
+              <Tooltip content="Remove">
+                <MinusCircleIcon
+                  aria-hidden="true"
+                  style={{ color: values.length === 1 ? disabledColor.value : null }}
+                  onClick={() => {
+                    if (values.length === 1) {
+                      return;
+                    }
 
-                  setDirty(true);
-                  setTimeout(
-                    () => onChange([...values.slice(0, index), ...values.slice(index + 1)]),
-                    0,
-                  );
-                }}
-              />
+                    setDirty(true);
+                    setTimeout(
+                      () => onChange([...values.slice(0, index), ...values.slice(index + 1)]),
+                      0,
+                    );
+                  }}
+                />
+              </Tooltip>
             </FlexItem>
           </Flex>
         );
@@ -85,7 +87,6 @@ export const ArrayParam: React.FC<ParameterProps> = (props) => {
         {description}
       </p>
       <MultiColumnFieldFooter
-        addLabel="Add another value"
         onAdd={() => {
           setDirty(true);
           onChange([...values, '']);

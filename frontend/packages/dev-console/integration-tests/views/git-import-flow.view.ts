@@ -55,7 +55,7 @@ export const buildConfigObj = {
   buildTriggerConfigField: element(by.css('input#form-checkbox-build-triggers-config-field')),
 
   // Add Environment Value
-  addValue: element(by.buttonText('Add Value')), // [data-test-id="pairs-list__add-icon"]
+  addValue: element(by.buttonText('Add')), // [data-test-id="pairs-list__add-icon"]
   envName: element.all(by.css('input[placeholder="name"]')),
   envValue: element.all(by.css('input[placeholder="value"]')),
 
@@ -71,7 +71,7 @@ export const deploymentObj = {
   deploymentTriggerImage: element(by.css('input#form-checkbox-deployment-triggers-image-field')),
   deploymentImageConfig: element(by.css('input#form-checkbox-deployment-triggers-config-field')),
   // Add Environment Value
-  addValue: element(by.buttonText('Add Value')), // [data-test-id="pairs-list__add-icon"]
+  addValue: element(by.buttonText('Add')), // [data-test-id="pairs-list__add-icon"]
   envName: element.all(by.css('input[placeholder="name"]')),
   envValue: element.all(by.css('input[placeholder="value"]')),
 

@@ -64,7 +64,6 @@ const EnvironmentField: React.FC<EnvironmentFieldProps> = ({
         nameValuePairs={nameValue}
         valueString="Value"
         nameString="Name"
-        addString="Add Value"
         readOnly={false}
         allowSorting={false}
         updateParentData={handleNameValuePairs}
