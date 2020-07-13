@@ -8,7 +8,6 @@ import { ClusterServiceVersionLogo } from '../index';
 import { DynamicForm } from '@console/shared/src/components/dynamic-form';
 import { SyncMarkdownView } from '@console/internal/components/markdown-view';
 import { getUISchema } from './utils';
-import { prune } from '@console/shared';
 
 export const OperandForm: React.FC<OperandFormProps> = ({
   csv,
@@ -18,20 +17,21 @@ export const OperandForm: React.FC<OperandFormProps> = ({
   next,
   onChange,
   providedAPI,
+  prune,
   schema,
 }) => {
   const [errors, setErrors] = React.useState<string[]>([]);
   // const [formData, setFormData] = React.useState(initialData);
 
-  const processFormData = ({ metadata, spec, ...rest }) => {
-    return {
+  const processFormData = ({ metadata, ...rest }) => {
+    const data = {
       metadata: {
         ...metadata,
         ...(match?.params?.ns && model.namespaced && { namespace: match.params.ns }),
       },
-      spec: prune(spec),
       ...rest,
     };
+    return prune?.(data) ?? data;
   };
 
   const handleSubmit = ({ formData: submitFormData }) => {
@@ -87,5 +87,6 @@ export type OperandFormProps = {
   csv: ClusterServiceVersionKind;
   model: K8sKind;
   providedAPI: ProvidedAPI;
+  prune?: (data: any) => any;
   schema: JSONSchema6;
 };

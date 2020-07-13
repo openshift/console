@@ -57,8 +57,8 @@ export const hasNoFields = (jsonSchema: JSONSchema6 = {}, uiSchema: UiSchema = {
   }
 };
 
-// Given a JSONSchema and associated uiSchema, create the appropriat ui schema order property for the jsonSchema.
-// Orders properties according to the following rules:
+// Given a JSONSchema and associated uiSchema, create the appropriat ui schema order property for
+// the jsonSchema. Orders properties according to the following rules:
 //  - required properties with an associated ui schema come first,
 //  - required properties without an associated ui schema next,
 //  - optional fields with an associated ui schema next,
@@ -76,7 +76,8 @@ export const getJSONSchemaOrder = (jsonSchema, uiSchema) => {
       return {};
     }
 
-    // Map control fields to an array so that  an index can be used to apply a modifier to sort weigths of dependent fields
+    // Map control fields to an array so that  an index can be used to apply a modifier to sort
+    // weigths of dependent fields
     const controlProperties = _.reduce(
       uiSchema,
       (controlPropertyAccumulator, { 'ui:dependency': dependency }) => {
@@ -87,8 +88,9 @@ export const getJSONSchemaOrder = (jsonSchema, uiSchema) => {
     );
 
     /**
-     * Give a property name a sort wieght based on whether it has a descriptor (uiSchema has property), is required, or is a control
-     * field for a property with a field dependency. A lower weight means higher sort order. Fields are weighted according to the following criteria:
+     * Give a property name a sort wieght based on whether it has a descriptor (uiSchema has
+     * property), is required, or is a control field for a property with a field dependency. A lower
+     * weight means higher sort order. Fields are weighted according to the following criteria:
      *  - Required fields with descriptor - 0 to 999
      *  - Required fields without descriptor 1000 to 1999
      *  - Optional fields with descriptor 2000 to 2999
@@ -100,14 +102,15 @@ export const getJSONSchemaOrder = (jsonSchema, uiSchema) => {
      *   - Control field - base weight  + (nth control field) * 100
      *   - Dependent field - corresponding control field weight + 10
      *
-     * These weight numbers are arbitrary, but spaced far enough apart to leave room for multiple levels of sorting.
+     * These weight numbers are arbitrary, but spaced far enough apart to leave room for multiple
+     * levels of sorting.
      */
     const getSortWeight = (property: string): number => {
       // This property's control field, if it exists
       const control = _.last<string>(uiSchema?.[property]?.['ui:dependency']?.path ?? []);
 
-      // A small offset that is added to the base weight so that control fields get sorted last within
-      // their appropriate group
+      // A small offset that is added to the base weight so that control fields get sorted last
+      // within their appropriate group
       const controlOffset = (controlProperties.indexOf(property) + 1) * SORT_WEIGHT_SCALE_2;
 
       // If this property is a dependent, it's weight is based on it's control property
@@ -140,8 +143,7 @@ export const getJSONSchemaOrder = (jsonSchema, uiSchema) => {
         return SORT_WEIGHT_SCALE_3 * 4 + controlOffset;
       }
 
-      // All other fields are sorted in the order in which they are encountered
-      // in the schema
+      // All other fields are sorted in the order in which they are encountered in the schema
       return Infinity;
     };
 
@@ -176,6 +178,45 @@ export const getJSONSchemaOrder = (jsonSchema, uiSchema) => {
     default:
       return {};
   }
+};
+
+// Returns true if a value is not nil and is empty
+const definedAndEmpty = (value) => !_.isNil(value) && _.isEmpty(value);
+
+// Helper function for prune
+// TODO (jon) Make this pure
+const pruneRecursive = (current: any, sample: any): any => {
+  const valueIsEmpty = (value, key) =>
+    _.isNil(value) ||
+    _.isNaN(value) ||
+    (_.isString(value) && _.isEmpty(value)) ||
+    (_.isObject(value) && _.isEmpty(pruneRecursive(value, sample?.[key])));
+
+  // Value should be pruned if it is empty and the correspondeing sample is not explicitly
+  // defined as an empty value.
+  const shouldPrune = (value, key) => valueIsEmpty(value, key) && !definedAndEmpty(sample?.[key]);
+
+  // Prune each property of current value that meets the pruning criteria
+  _.forOwn(current, (value, key) => {
+    if (shouldPrune(value, key)) {
+      delete current[key];
+    }
+  });
+
+  // remove any leftover undefined values from the delete operation on an array
+  if (_.isArray(current)) {
+    _.pull(current, undefined);
+  }
+
+  return current;
+};
+
+// Deeply remove all empty, NaN, null, or undefined values from an object or array. If a value meets
+// the above criteria, but the corresponding sample is explicitly defined as an empty vaolue, it
+// will not be pruned.
+// Based on https://stackoverflow.com/a/26202058/8895304
+export const prune = (obj: any, sample?: any): any => {
+  return pruneRecursive(_.cloneDeep(obj), sample);
 };
 
 type SchemaError = {
