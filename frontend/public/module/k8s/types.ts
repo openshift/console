@@ -968,3 +968,21 @@ export type MachineHealthCheckKind = K8sResourceCommon & {
     unhealthyConditions: MachineHealthCondition[];
   };
 };
+
+export type VolumeSnapshotKind = K8sResourceCommon & {
+  status: {
+    readyToUse: boolean;
+    boundVolumeSnapshotContentName?: string;
+    restoreSize?: string;
+    error?: {
+      message: string;
+      time: string;
+    };
+  };
+  spec: {
+    source: {
+      persistentVolumeClaimName: string;
+    };
+    volumeSnapshotClassName: string;
+  };
+};

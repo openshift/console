@@ -22,6 +22,7 @@ import {
   MachineModel,
   MachineSetModel,
   UserModel,
+  VolumeSnapshotModel,
 } from '../../models';
 
 import { referenceForModel } from '../../module/k8s';
@@ -149,6 +150,7 @@ const AdminNav = () => {
         />
         <ResourceNSLink resource="persistentvolumeclaims" name="Persistent Volume Claims" />
         <ResourceClusterLink resource="storageclasses" name="Storage Classes" />
+        <ResourceNSLink resource={referenceForModel(VolumeSnapshotModel)} name="Volume Snapshots" />
       </NavSection>
 
       <NavSection title="Builds" required={FLAGS.OPENSHIFT}>

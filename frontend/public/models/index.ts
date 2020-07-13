@@ -945,3 +945,42 @@ export const ConsoleYAMLSampleModel: K8sKind = {
   id: 'consoleyamlsample',
   crd: true,
 };
+
+export const VolumeSnapshotModel: K8sKind = {
+  label: 'Volume Snapshot',
+  apiVersion: 'v1beta1',
+  apiGroup: 'snapshot.storage.k8s.io',
+  plural: 'volumesnapshots',
+  abbr: 'VS',
+  namespaced: true,
+  kind: 'VolumeSnapshot',
+  id: 'volumesnapshot',
+  labelPlural: 'Volume Snapshots',
+  crd: true,
+};
+
+export const VolumeSnapshotClassModel: K8sKind = {
+  label: 'Volume Snapshot Class',
+  apiVersion: 'v1beta1',
+  apiGroup: 'snapshot.storage.k8s.io',
+  plural: 'volumesnapshotclasses',
+  abbr: 'VSC',
+  namespaced: false,
+  kind: 'VolumeSnapshotClass',
+  id: 'volumesnapshotclass',
+  labelPlural: 'Volume Snaphot Classes',
+  crd: true,
+};
+
+export const VolumeSnapshotContentModel: K8sKind = {
+  label: 'Volume Snapshot Content',
+  apiVersion: 'v1beta1',
+  apiGroup: 'snapshot.storage.k8s.io',
+  plural: 'volumesnapshotcontents',
+  abbr: 'VSC',
+  namespaced: false,
+  kind: 'VolumeSnapshotContent',
+  id: 'volumesnapshotcontents',
+  labelPlural: 'Volume Snaphot Contents',
+  crd: true,
+};
