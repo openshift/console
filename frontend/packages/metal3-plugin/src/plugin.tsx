@@ -80,6 +80,7 @@ const plugin: Plugin<ConsumedExtensions> = [
           referenceForModel(BareMetalHostModel),
           'openshift-machine-api',
         ),
+        namespaced: false,
       },
       mergeBefore: 'ComputeSeparator',
     },
