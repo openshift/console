@@ -20,6 +20,8 @@ namespace ExtensionProperties {
     getK8sLandingPageURL: GetLandingPage;
     /** The function to get redirect URL for import flow. */
     getImportRedirectURL: (project: string) => string;
+    /** The hook to detect default perspective */
+    usePerspectiveDetection?: () => [boolean, boolean]; // [enablePerspective: boolean, loading: boolean]
   }
 }
 

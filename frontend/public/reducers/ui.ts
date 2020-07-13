@@ -30,13 +30,6 @@ export function getDefaultPerspective() {
     // invalid saved perspective
     activePerspective = undefined;
   }
-  if (!activePerspective) {
-    // assign default perspective
-    const defaultPerspective = perspectiveExtensions.find((p) => p.properties.default);
-    if (defaultPerspective) {
-      activePerspective = defaultPerspective.properties.id;
-    }
-  }
   return activePerspective || undefined;
 }
 

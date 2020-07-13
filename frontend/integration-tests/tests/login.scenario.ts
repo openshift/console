@@ -19,6 +19,8 @@ const {
 describe('Auth test', () => {
   beforeAll(async () => {
     await browser.get(appHost);
+    // Stop the perspective detection from running by setting last perspective in localStorage
+    await browser.executeScript('window.localStorage.setItem("bridge/last-perspective", "admin")');
     await browser.sleep(3000); // Wait long enough for the login redirect to complete
   });
 

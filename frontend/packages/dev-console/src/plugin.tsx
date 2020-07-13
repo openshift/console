@@ -64,6 +64,7 @@ import {
   OperatorsTopologyConsumedExtensions,
   operatorsTopologyPlugin,
 } from './components/topology/operators/operatorsTopologyPlugin';
+import { usePerspectiveDetection } from './utils/usePerspectiveDetection';
 
 const {
   ClusterTaskModel,
@@ -443,6 +444,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       getLandingPageURL: () => '/topology',
       getK8sLandingPageURL: () => '/add',
       getImportRedirectURL: (project) => `/topology/ns/${project}`,
+      usePerspectiveDetection,
     },
   },
   {
